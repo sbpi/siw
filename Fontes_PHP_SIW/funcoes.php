@@ -49,6 +49,31 @@ function SortArray() {
 }
 
 // =========================================================================
+// Gera um link chamando o arquivo desejado
+// -------------------------------------------------------------------------
+function LinkArquivo ($p_classe, $p_cliente, $p_arquivo, $p_target, $p_hint, $p_descricao, $p_retorno) {
+
+  // Monta a chamada para a página que retorna o arquivo
+  $l_link = 'file.php?force=false&cliente='.$p_cliente.'&id='.$p_arquivo;
+
+  If (strtoupper(Nvl($p_retorno,'')) == 'WORD') { // Se for geraçao de Word, dispensa sessão ativa
+     // Altera a chamada padrão, dispensando a sessão
+     $l_link = 'file.asp?force=false&sessao=false&cliente=' & $p_cliente & '&id=' & $p_arquivo;
+  } ElseIf (strtoupper(Nvl($p_retorno,'')) <> 'EMBED') { // Se não for objeto incorporado, monta tag anchor
+     // Trata a possibilidade da chamada ter passado classe, target e hint
+     If (Nvl($p_classe,'') > '') $l_classe = ' class="' . $p_classe . '" ';  Else $l_classe = '';
+     If (Nvl($p_target,'') > '') $l_target = ' target="' . $p_target . '" '; Else $l_target = '';
+     If (Nvl($p_hint,'')   > '') $l_hint   = ' title="' . $p_hint . '" ';    Else $l_hint   = '';
+
+     // Montagem da tag anchor
+     $l_link = '<A ' . $l_classe . 'href="' . replace($l_link,'force=false','force=true') . '"' . $l_target . $l_hint . '>' . $p_descricao . '</a>';
+  }
+  
+  // Retorno ao chamador
+  return $l_link;
+}
+
+// =========================================================================
 // Declaração inicial para páginas OLE com Word
 // -------------------------------------------------------------------------
 function headerWord() {
@@ -468,7 +493,7 @@ function AbreForm($p_Name,$p_Action,$p_Method,$p_onSubmit,$p_Target,$p_P1,$p_P2,
 // -------------------------------------------------------------------------
 function MontaRadioNS($label,$chave,$campo) {
   extract($GLOBALS);
-  ShowHTML('          <td><font size="1">');
+  ShowHTML('          <td>');
   if (Nvl($label,'')>'') { ShowHTML($label.'</b><br>'); }
   if ($chave=='S') {
      ShowHTML('              <input '.$w_Disabled.' type="radio" name="'.$campo.'" value="S" checked> Sim <input '.$w_Disabled.' type="radio" name="'.$campo.'" value="N"> Não');
@@ -482,7 +507,7 @@ function MontaRadioNS($label,$chave,$campo) {
 // -------------------------------------------------------------------------
 function MontaRadioSN($label,$chave,$campo) {
   extract($GLOBALS);
-  ShowHTML('          <td><font size="1">');
+  ShowHTML('          <td>');
   if (Nvl($label,'')>'') { ShowHTML($label.'</b><br>'); }
   if ($chave=='N') {
      ShowHTML('              <input '.$w_Disabled.' type="radio" name="'.$campo.'" value="S"> Sim <input '.$w_Disabled.' type="radio" name="'.$campo.'" value="N" checked> Não');
@@ -594,12 +619,13 @@ function RetornaMenu($p_cliente,$p_sigla) {
 // -------------------------------------------------------------------------
 function RetornaCliente() {
   extract($GLOBALS);
+  include_once($w_dir_volta.'classes/sp/db_getCompanyData.php');
   // Se receber o código do cliente do SIW, o cliente será determinado por parâmetro;
   // caso contrário, o cliente será a empresa ao qual o usuário logado está vinculado.
   if ($_REQUEST['w_cgccpf']>'' && strlen($_REQUEST['w_cgccpf'])>11) {
-     $RS = db_getCompanyData::getInstanceOf($dbms,$_SESSION['P_CLIENTE'], $_REQUEST('w_cgccpf'));
+     $RS = db_getCompanyData::getInstanceOf($dbms,$_SESSION['P_CLIENTE'], $_REQUEST['w_cgccpf']);
      if (count($RS) > 0) {
-        return $RS['SQ_PESSOA'];
+        return f($RS,'sq_pessoa');
      } else {
         return $_SESSION['P_CLIENTE'];
      }

@@ -11,7 +11,7 @@ include_once("classes/db/DatabaseQueriesFactory.php");
 class db_getCustomerData {
    function getInstanceOf($dbms, $p_cliente) {
      $sql='sp_getCustomerData';
-     $params=array("p_cliente"  =>array($p_cliente,     B_NUMERIC,   null),
+     $params=array("p_cliente"  =>array($p_cliente,     B_NUMERIC,     32),
                    "p_result"   =>array(null,           B_CURSOR,      -1)
                   );
      $l_rs = DatabaseQueriesFactory::getInstanceOf($sql, $dbms, $params, DB_TYPE);

@@ -11,7 +11,7 @@ include_once("classes/db/DatabaseQueriesFactory.php");
 class db_getMenuCode {
    function getInstanceOf($dbms, $p_cliente, $p_sigla) {
      $sql='sp_getMenuCode';
-     $params=array("p_cliente"  =>array($p_cliente,     B_NUMERIC,   null),
+     $params=array("p_cliente"  =>array($p_cliente,     B_NUMERIC,     32),
                    "p_sigla"    =>array($p_sigla,       B_VARCHAR,     20),
                    "p_result"   =>array(null,           B_CURSOR,      -1)
                   );

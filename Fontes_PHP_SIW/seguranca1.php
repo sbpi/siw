@@ -894,7 +894,7 @@ function Endereco() {
   $w_troca   = $_REQUEST['w_troca'];
   $w_sq_menu = $_REQUEST['w_sq_menu'];
 
-  $RS = db_getAddressList::getInstanceOf($dbms,$w_cliente,null,'FISICO');
+  $RS = db_getAddressList::getInstanceOf($dbms,$w_cliente,null,'FISICO', null);
   Cabecalho();
   ShowHTML('<HEAD>');
   ShowHTML('<TITLE>'.$conSgSistema.' - Endereços</TITLE>');

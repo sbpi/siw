@@ -13,7 +13,7 @@ include_once('classes/sp/db_getCustomerData.php');
 include_once('classes/sp/db_getCodigo.php');
 include_once('classes/sp/db_VerificaAssinatura.php');
 include_once('classes/sp/dml_CoTipoVinc.php');
-include_once('classes/sp/dml_SiwCliConf.php');
+include_once('classes/sp/dml_putSiwCliConf.php');
 include_once('classes/sp/dml_putCodigoExterno.php');
 include_once('funcoes/selecaoTipoPessoa.php');
 // =========================================================================
@@ -308,11 +308,11 @@ function ParSeguranca() {
   global $w_Disabled;
 
   $RS = db_getCustomerData::getInstanceOf($dbms,$w_cliente);
-  $w_tamanho_minimo_senha   = f($RS,'TAMANHO_MIN_SENHA');
-  $w_tamanho_maximo_senha   = f($RS,'TAMANHO_MAX_SENHA');
+  $w_tamanho_minimo_senha   = f($RS,'tamanho_min_senha');
+  $w_tamanho_maximo_senha   = f($RS,'tamanho_max_senha');
   $w_maximo_tentativas      = f($RS,'maximo_tentativas');
-  $w_dias_vigencia_senha    = f($RS,'DIAS_VIG_SENHA');
-  $w_dias_aviso_expiracao   = f($RS,'DIAS_AVISO_EXPIR');
+  $w_dias_vigencia_senha    = f($RS,'dias_vig_senha');
+  $w_dias_aviso_expiracao   = f($RS,'dias_aviso_expir');
 
   Cabecalho();
   ShowHTML('<HEAD>');
@@ -582,7 +582,7 @@ function Grava() {
     case 'PARSEG':
       // Verifica se a Assinatura Eletrônica é válida
       if (VerificaAssinaturaEletronica($_SESSION['USERNAME'],strtoupper($_REQUEST['w_assinatura'])) || $w_assinatura=='') {
-        dml_SiwCliConf::getInstanceOf($dbms, $w_cliente,$_REQUEST['w_tamanho_minimo_senha'],$_REQUEST['w_tamanho_maximo_senha'],
+        dml_putSiwCliConf::getInstanceOf($dbms, $w_cliente,$_REQUEST['w_tamanho_minimo_senha'],$_REQUEST['w_tamanho_maximo_senha'],
             $_REQUEST['w_maximo_tentativas'],$_REQUEST['w_dias_vigencia_senha'],
             $_REQUEST['w_dias_aviso_expiracao'],null,null,null,null,null,null,null,
             'AUTENTICACAO',null);

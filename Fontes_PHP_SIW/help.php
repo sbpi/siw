@@ -324,7 +324,7 @@ function Menu() {
 
   if ($O=='L') {
      // Recupera os módulos contratados pelo cliente
-     $RS = db_getSiwCliModLis::getInstanceOf($dbms, $w_cliente, null);
+     $RS = db_getSiwCliModLis::getInstanceOf($dbms, $w_cliente, null, null);
   }
   
   Cabecalho();

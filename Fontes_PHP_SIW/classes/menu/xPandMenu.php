@@ -23,14 +23,12 @@ define('NODE_DEFAULT_ALT_IMG',$conRootSIW.'images/folder/folder_win_o.gif');
 define('LEAF_DEFAULT_ALT_IMG',$conRootSIW.'images/folder/document_win_o.gif');
 
 // Reference to the File class for saving and loading the generated menu
-include_once 'File.php';
+//include_once 'File.php';
 
 
 
 // Xmenu class
-class XMenu
-{
-
+class XMenu {
 	
 	// Sub-nodes contained in this menu (references to Xnode objects)
 	var $items = array();

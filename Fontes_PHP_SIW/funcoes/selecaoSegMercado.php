@@ -7,10 +7,9 @@ function selecaoSegMercado($label,$accesskey,$hint,$chave,$chaveAux,$campo,$rest
   extract($GLOBALS);
 
 
-  $RS = db_getSegList::getInstanceOf($dbms);
+  $RS = db_getSegList::getInstanceOf($dbms, null);
   array_key_case_change(&$RS);
   $RS = SortArray($RS,'nome','asc');
-  //$RS->Filter='ativo = \'S\'';
   if (!isset($hint)) {
     ShowHTML('          <td valign="top"><font size="1"><b>'.$label.'</b><br><SELECT ACCESSKEY="'.$accesskey.'" CLASS="sts" NAME="'.$campo.'" '.$w_Disabled.' '.$atributo.'>');
   } else {

@@ -5,10 +5,9 @@ include_once($w_dir_volta.'classes/sp/db_getCountryList.php');
 // -------------------------------------------------------------------------
 function selecaoPais($label,$accesskey,$hint,$chave,$chaveAux,$campo,$restricao,$atributo) {
   extract($GLOBALS);
+  $RS = db_getCountryList::getInstanceOf($dbms, $restricao, null, null, null);
   array_key_case_change(&$RS);
-  $RS = SortArray($RS,'padrao','asc','nome','asc');
-  $RS = db_getCountryList::getInstanceOf($dbms);
-  //if ($restricao>'') { $RS->Filter=$restricao; }
+  $RS = SortArray($RS,'padrao','desc','nome','asc');
   if (!isset($hint)) {
      ShowHTML('          <td valign="top"><font size="1"><b>'.$label.'</b><br><SELECT ACCESSKEY="'.$accesskey.'" CLASS="sts" NAME="'.$campo.'" '.$w_Disabled.' '.$atributo.'>');
   } else {

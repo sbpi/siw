@@ -80,7 +80,7 @@ function Mesa() {
   extract($GLOBALS);
   if ($O=="L") {
      // Verifica se o cliente tem o módulo de telefonia contratado
-     $RS = db_getSiwCliModLis::getInstanceOf($dbms, $w_cliente, 'TELEFONIA');
+     $RS = db_getSiwCliModLis::getInstanceOf($dbms, $w_cliente, null, 'TT');
      foreach ($RS as $row) {
        $w_telefonia = f($row,'nome');
      }

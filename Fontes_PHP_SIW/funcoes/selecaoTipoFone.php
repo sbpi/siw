@@ -5,7 +5,7 @@ include_once($w_dir_volta.'classes/sp/db_getFoneTypeList.php');
 // -------------------------------------------------------------------------
 function selecaoTipoFone($label,$accesskey,$hint,$chave,$chaveAux,$campo,$restricao,$atributo) {
   extract($GLOBALS);
-  $RS = db_getFoneTypeList::getInstanceOf($dbms);
+  $RS = db_getFoneTypeList::getInstanceOf($dbms, $chaveAux, null, null);
   array_key_case_change(&$RS);
   $RS = SortArray($RS,'nome','asc');
   //if ($restricao>'') {

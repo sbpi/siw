@@ -13,7 +13,7 @@ function selecaoCCSubordination($label,$accesskey,$hint,$chave,$pai,$campo,$rest
   }
   ShowHTML('          <OPTION VALUE="">---');
   foreach($RS as $row)  {
-    if (f($row,'sq_cc')]==nvl($pai,0)) {
+    if (f($row,'sq_cc')==nvl($pai,0)) {
       ShowHTML('          <option value="'.f($row,'sq_cc').'" SELECTED>'.f($row,'nome'));
     } else {
       ShowHTML('          <option value="'.f($row,'sq_cc').'">'.f($row,'nome'));

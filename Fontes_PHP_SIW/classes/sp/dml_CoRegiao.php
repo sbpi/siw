@@ -1,0 +1,25 @@
+<?
+include_once('classes/db/DatabaseQueriesFactory.php');
+/**
+* class dml_CoRegiao
+*
+* { Description :- 
+*    Manipula registros de CO_REGIAO
+* }
+*/
+
+class dml_CoRegiao {
+   function getInstanceOf($dbms, $operacao, $chave, $p_sq_pais, $p_nome, $p_sigla, $p_ordem) {
+     $sql='sp_putCoRegiao';
+     $params=array('operacao'          =>array($operacao,          B_VARCHAR,      1),
+                   'chave'             =>array($chave,             B_NUMERIC,     32),
+                   'p_sq_pais'         =>array($p_sq_pais,         B_NUMERIC,     32),
+                   'p_nome'            =>array($p_nome,            B_VARCHAR,     20),
+                   'p_sigla'           =>array($p_sigla,           B_VARCHAR,      2),
+                   'p_ordem'           =>array($p_ordem,           B_VARCHAR,      4)
+                  );
+     $l_rs = DatabaseQueriesFactory::getInstanceOf($sql, $dbms, $params, DB_TYPE);
+     if(!$l_rs->executeQuery()) return false;  else return true;
+   }
+}
+?>

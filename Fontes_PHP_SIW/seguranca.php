@@ -1861,7 +1861,7 @@ function TelaUnidade() {
   ShowHTML('              <td><b>Fax</td>');
   ShowHTML('              <td><b>Endereço</td>');
   ShowHTML('            </tr>');
-  $RS = DB_GetaddressList::getInstanceOf($dbms, $w_cliente, $w_sq_unidade, 'LISTALOCALIZACAO');
+  $RS = DB_GetaddressList::getInstanceOf($dbms, $w_cliente, $w_sq_unidade, 'LISTALOCALIZACAO', null);
   foreach($RS as $row) {
     ShowHTML('            <tr bgcolor="'.$conTrBgColor.'" valign="top">');
     ShowHTML('              <td>'.f($row,'nome').'</td>');

@@ -9,10 +9,12 @@ include_once("classes/db/DatabaseQueriesFactory.php");
 */
 
 class db_getCityList {
-   function getInstanceOf($dbms, $p_pais, $p_estado) {
+   function getInstanceOf($dbms, $p_pais, $p_estado, $p_nome, $p_restricao) {
      $sql='sp_getCityList';
-     $params=array("p_pais"     =>array($p_pais,   B_NUMERIC,   null),
-                   "p_estado"   =>array($p_estado, B_VARCHAR,      2),
+     $params=array("p_pais"      =>array($p_pais,       B_NUMERIC,     32),
+                   "p_estado"    =>array($p_estado,     B_VARCHAR,      2),
+                   "p_nome"      =>array($p_nome,       B_VARCHAR,     60),
+                   "p_restricao" =>array($p_restricao,  B_VARCHAR,     30),
                    "p_result"   =>array(null,      B_CURSOR,      -1)
                   );
      

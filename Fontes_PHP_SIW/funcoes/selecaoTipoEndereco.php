@@ -6,7 +6,7 @@ include_once($w_dir_volta.'classes/sp/db_getAdressTypeList.php');
 function selecaoTipoEndereco($label,$accesskey,$hint,$chave,$chaveAux,$campo,$restricao,$atributo) {
   extract($GLOBALS);
 
-  $RS = db_getAdressTypeList::getInstanceOf($dbms);
+  $RS = db_getAdressTypeList::getInstanceOf($dbms, $chaveAux, null, null);
   array_key_case_change(&$RS);
   $RS = SortArray($RS,'nome','asc');
   //if ($restricao>'') {

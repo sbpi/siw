@@ -263,7 +263,7 @@ function LogOn()
   ShowHTML('<INPUT TYPE="HIDDEN" NAME="Login" VALUE=""> ');
   ShowHTML('<INPUT TYPE="HIDDEN" NAME="Password" VALUE=""> ');
   ShowHTML('<INPUT TYPE="HIDDEN" NAME="par" VALUE="Log"> ');
-  ShowHTML('<INPUT TYPE="HIDDEN" NAME="p_dbms" VALUE="1"> ');
+  ShowHTML('<INPUT TYPE="HIDDEN" NAME="p_dbms" VALUE="4"> ');
   ShowHTML('<INPUT TYPE="HIDDEN" NAME="p_cliente" VALUE="1"> ');
   ShowHTML('<table width="770" height="31" border="0" cellpadding=0 cellspacing=0>');
   ShowHTML('  <tr><td valign="middle" width="100%" height="100%">');

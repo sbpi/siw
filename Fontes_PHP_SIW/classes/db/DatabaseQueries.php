@@ -490,7 +490,7 @@ class PgSqlDatabaseQueryProc extends PgSqlDatabaseQueries {
                 $par = "rollback; begin; select $this->query (".substr($par, 1).'); commit;';
           }
         }
-        // echo $par;
+        //echo $par;
 
         $this->result = pg_query($this->conHandle, $par);
         if(is_resource($this->result)) { 

@@ -6,8 +6,7 @@ include_once($w_dir_volta.'classes/sp/db_getBankList.php');
 function selecaoBanco($label,$accesskey,$hint,$chave,$chaveAux,$campo,$restricao,$atributo) {
   extract($GLOBALS);
 
-  $RS = db_getBankList::getInstanceOf($dbms);
-  //$RS->Filter="ativo='S'";
+  $RS = db_getBankList::getInstanceOf($dbms, null, null, 'S');
   if (!isset($hint)) {
     ShowHTML('          <td valign="top"><font size="1"><b>'.$label.'</b><br><SELECT ACCESSKEY="'.$accesskey.'" CLASS="sts" NAME="'.$campo.'" '.$w_Disabled.' '.$atributo.'>');
   } else {

@@ -4,7 +4,7 @@ include_once("classes/db/DatabaseQueriesFactory.php");
 * class sp_getCountryList
 *
 * { Description :- 
-*    Recupera os paises existentes.
+*    Recupera os países existentes.
 * }
 */
 

@@ -4,17 +4,18 @@ include_once("classes/db/DatabaseQueriesFactory.php");
 * class sp_getAddressList
 *
 * { Description :- 
-*    Recupera os endereços de um cliente.
+*    Recupera os endereços de um cliente
 * }
 */
 
 class db_getAddressList {
-   function getInstanceOf($dbms, $p_cliente, $p_chave, $p_restricao) {
+   function getInstanceOf($dbms, $p_cliente, $p_chave, $p_restricao, $p_tipo_endereco) {
      $sql='sp_getAddressList';
-     $params=array("p_cliente"  =>array($p_cliente,     B_NUMERIC,     32),
-                   "p_chave"    =>array($p_chave,       B_NUMERIC,     32),
-                   "p_restricao"=>array($p_restricao,   B_VARCHAR,     20),
-                   "p_result"   =>array(null,           B_CURSOR,      -1)
+     $params=array("p_cliente"       =>array($p_cliente,       B_NUMERIC,     32),
+                   "p_chave"         =>array($p_chave,         B_NUMERIC,     32),
+                   "p_restricao"     =>array($p_restricao,     B_VARCHAR,     20),
+                   "p_tipo_endereco" =>array($p_tipo_endereco,         B_NUMERIC,     32),
+                   "p_result"        =>array(null,             B_CURSOR,      -1)
                   );
      $l_rs = DatabaseQueriesFactory::getInstanceOf($sql, $dbms, $params, DB_TYPE);
      if(!$l_rs->executeQuery()) { die("Cannot query"); }
