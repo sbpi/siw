@@ -1,6 +1,7 @@
 create or replace function SP_GetTramiteList
    (p_chave     numeric,
     p_restricao varchar,
+    p_ativo     varchar,
     p_result    refcursor
    ) returns refcursor as $$
 begin
@@ -16,6 +17,7 @@ begin
                 end as nm_chefia
          from siw_tramite a 
          where a.sq_menu = p_chave
+           and (p_ativo is null or (p_ativo is not null and a.ativo = p_ativo))
         order by a.ordem;
    Elsif upper(p_restricao) = 'ERRO' Then
       open p_result for
@@ -33,6 +35,7 @@ begin
                                        and b.ordem         <= (select ordem from siw_tramite where sq_siw_tramite = p_chave)
                                        and b.ativo = 'S'
                                    )
+           and (p_ativo is null or (p_ativo is not null and a.ativo = p_ativo))                                   
         order by a.ordem;
    Elsif upper(p_restricao) = 'PROXIMO' Then
       open p_result for
@@ -47,7 +50,8 @@ begin
               inner join siw_tramite b on (a.sq_menu        = b.sq_menu and
                                            b.ordem          = a.ordem + 1
                                           )
-         where a.sq_siw_tramite = p_chave;
+         where a.sq_siw_tramite = p_chave
+           and (p_ativo is null or (p_ativo is not null and a.ativo = p_ativo));
    Elsif upper(p_restricao) = 'ANTERIOR' Then
       open p_result for
          select b.sq_siw_tramite, b.sq_menu, b.nome, b.ordem,
@@ -61,7 +65,8 @@ begin
               inner join siw_tramite b on (a.sq_menu        = b.sq_menu and
                                            b.ordem          = a.ordem - 1
                                           )
-         where a.sq_siw_tramite = p_chave;
+         where a.sq_siw_tramite = p_chave
+           and (p_ativo is null or (p_ativo is not null and a.ativo = p_ativo));
    Else
       open p_result for
          select a.sq_siw_tramite, a.sq_menu, a.nome, a.ordem,  
@@ -84,6 +89,7 @@ begin
                                             b.ativo = 'S'
                                            )
                                    )
+           and (p_ativo is null or (p_ativo is not null and a.ativo = p_ativo))                                   
         order by a.ordem;
    End If;
    return p_result;
