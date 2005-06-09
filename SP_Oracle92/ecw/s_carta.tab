@@ -1,0 +1,39 @@
+create table S_CARTA
+(
+  CO_CARTA      NUMBER(10) not null,
+  DS_NOME_CARTA CHAR(30),
+  CO_UNIDADE    CHAR(5) not null,
+  TC_CODIGO     NUMBER(10),
+  MODELO        BLOB,
+  ORIGEM        BLOB
+)
+tablespace SGE
+  pctfree 10
+  initrans 1
+  maxtrans 255
+  storage
+  (
+    initial 66K
+    minextents 1
+    maxextents unlimited
+  );
+alter table S_CARTA
+  add constraint U142_53 primary key (CO_CARTA,CO_UNIDADE)
+  using index 
+  tablespace SGE
+  pctfree 10
+  initrans 2
+  maxtrans 255
+  storage
+  (
+    initial 66K
+    minextents 1
+    maxextents unlimited
+  );
+alter table S_CARTA
+  add constraint CARTAS_TP_CONSULTA foreign key (TC_CODIGO)
+  references TIPO_CONSULTA (TC_CODIGO) on delete cascade;
+alter table S_CARTA
+  add constraint R129_547 foreign key (CO_UNIDADE)
+  references S_UNIDADE (CO_UNIDADE) on delete cascade;
+

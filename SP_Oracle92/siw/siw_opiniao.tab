@@ -1,0 +1,47 @@
+create table SIW_OPINIAO
+(
+  SQ_SIW_OPINIAO NUMBER(18) not null,
+  CLIENTE        NUMBER(18) not null,
+  NOME           VARCHAR2(60) not null,
+  ORDEM          NUMBER(2) not null
+)
+tablespace USERS
+  pctfree 10
+  initrans 1
+  maxtrans 255
+  storage
+  (
+    initial 132K
+    minextents 1
+    maxextents unlimited
+  );
+comment on table SIW_OPINIAO
+  is 'Opiniões possíveis para um serviço';
+alter table SIW_OPINIAO
+  add constraint PK_SIW_OPINIAO primary key (SQ_SIW_OPINIAO)
+  using index 
+  tablespace USERS
+  pctfree 10
+  initrans 2
+  maxtrans 255
+  storage
+  (
+    initial 132K
+    minextents 1
+    maxextents unlimited
+  );
+alter table SIW_OPINIAO
+  add constraint FK_SIWOPI_SIWCLI foreign key (CLIENTE)
+  references SIW_CLIENTE (SQ_PESSOA);
+create unique index IN_SIWOPI_ORDEM on SIW_OPINIAO (ORDEM)
+  tablespace USERS
+  pctfree 10
+  initrans 2
+  maxtrans 255
+  storage
+  (
+    initial 132K
+    minextents 1
+    maxextents unlimited
+  );
+

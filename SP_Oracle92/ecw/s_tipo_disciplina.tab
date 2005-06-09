@@ -1,0 +1,30 @@
+create table S_TIPO_DISCIPLINA
+(
+  CO_TIPO_DISCIPLINA NUMBER(10) not null,
+  DS_TIPO_DISCIPLINA VARCHAR2(60),
+  SG_DISCIPLINA      CHAR(4)
+)
+tablespace SGE
+  pctfree 10
+  initrans 1
+  maxtrans 255
+  storage
+  (
+    initial 66K
+    minextents 1
+    maxextents unlimited
+  );
+alter table S_TIPO_DISCIPLINA
+  add constraint PKS_TIPO_DISC primary key (CO_TIPO_DISCIPLINA)
+  using index 
+  tablespace SGE
+  pctfree 10
+  initrans 2
+  maxtrans 255
+  storage
+  (
+    initial 66K
+    minextents 1
+    maxextents unlimited
+  );
+

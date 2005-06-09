@@ -1,0 +1,73 @@
+create table DC_ESQUEMA_ATRIBUTO
+(
+  SQ_ESQUEMA_ATRIBUTO NUMBER(18) not null,
+  SQ_ESQUEMA_TABELA   NUMBER(18) not null,
+  SQ_COLUNA           NUMBER(18) not null,
+  ORDEM               NUMBER(4) default 0 not null,
+  CAMPO_EXTERNO       VARCHAR2(30) not null
+)
+tablespace SYSTEM
+  pctfree 10
+  pctused 40
+  initrans 1
+  maxtrans 255
+  storage
+  (
+    initial 66K
+    minextents 1
+    maxextents unlimited
+  );
+comment on table DC_ESQUEMA_ATRIBUTO
+  is 'Registra o mapeamento entre o atributo do arquivo XML e o campo.';
+comment on column DC_ESQUEMA_ATRIBUTO.SQ_ESQUEMA_ATRIBUTO
+  is 'Sequence.';
+comment on column DC_ESQUEMA_ATRIBUTO.SQ_ESQUEMA_TABELA
+  is 'Chave de DC_INTEGRACAO. Indica a que tabela refere-se este mapeamento.';
+comment on column DC_ESQUEMA_ATRIBUTO.SQ_COLUNA
+  is 'Chave de DC_COLUNA. Indica a que coluna da tabela refere-se este mapeamento.';
+comment on column DC_ESQUEMA_ATRIBUTO.ORDEM
+  is 'Número de ordem do campo, utilizado para exportação. Para importação, a seqüência será igual a DC_COLUNA.ORDEM.';
+comment on column DC_ESQUEMA_ATRIBUTO.CAMPO_EXTERNO
+  is 'Nome do campo no arquivo de inclusão ou exclusão.';
+alter table DC_ESQUEMA_ATRIBUTO
+  add constraint PK_DC_ESQUEMA_ATRIBUTO primary key (SQ_ESQUEMA_ATRIBUTO)
+  using index 
+  tablespace SYSTEM
+  pctfree 10
+  initrans 2
+  maxtrans 255
+  storage
+  (
+    initial 66K
+    minextents 1
+    maxextents unlimited
+  );
+alter table DC_ESQUEMA_ATRIBUTO
+  add constraint FK_DCESQATR_DCCOL foreign key (SQ_COLUNA)
+  references DC_COLUNA (SQ_COLUNA);
+alter table DC_ESQUEMA_ATRIBUTO
+  add constraint FK_DCMAP_DCINT foreign key (SQ_ESQUEMA_TABELA)
+  references DC_ESQUEMA_TABELA (SQ_ESQUEMA_TABELA);
+create unique index IN_DCESQATR_COLUNA on DC_ESQUEMA_ATRIBUTO (SQ_COLUNA,SQ_ESQUEMA_TABELA)
+  tablespace SYSTEM
+  pctfree 10
+  initrans 2
+  maxtrans 255
+  storage
+  (
+    initial 66K
+    minextents 1
+    maxextents unlimited
+  );
+create index IN_DCESQATR_TABELA on DC_ESQUEMA_ATRIBUTO (SQ_ESQUEMA_TABELA,SQ_COLUNA,SQ_ESQUEMA_ATRIBUTO)
+  tablespace SYSTEM
+  pctfree 10
+  initrans 2
+  maxtrans 255
+  storage
+  (
+    initial 66K
+    minextents 1
+    maxextents unlimited
+  );
+

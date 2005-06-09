@@ -1,0 +1,165 @@
+create table IS_SIG_PROGRAMA
+(
+  CLIENTE                    NUMBER(18) not null,
+  ANO                        NUMBER(4) not null,
+  CD_PROGRAMA                VARCHAR2(4) not null,
+  CD_ORGAO                   VARCHAR2(5) not null,
+  CD_TIPO_ORGAO              VARCHAR2(1),
+  CD_TIPO_PROGRAMA           NUMBER(2),
+  CD_MACRO                   VARCHAR2(2),
+  CD_ESTAGIO                 VARCHAR2(2),
+  CD_ANDAMENTO               VARCHAR2(2),
+  CD_CRONOGRAMA              VARCHAR2(2),
+  NOME                       VARCHAR2(120) not null,
+  MES_INICIO                 VARCHAR2(2),
+  ANO_INICIO                 VARCHAR2(4),
+  MES_TERMINO                VARCHAR2(2),
+  ANO_TERMINO                VARCHAR2(4),
+  OBJETIVO                   VARCHAR2(4000),
+  PUBLICO_ALVO               VARCHAR2(4000),
+  JUSTIFICATIVA              VARCHAR2(4000),
+  ESTRATEGIA                 VARCHAR2(4000),
+  LN_PROGRAMA                VARCHAR2(120),
+  VALOR_ESTIMADO             NUMBER(18,2),
+  VALOR_PPA                  NUMBER(18,2),
+  TEMPORARIO                 VARCHAR2(1) default 'N' not null,
+  ESTRUTURANTE               VARCHAR2(1) default 'S' not null,
+  CONTEXTO                   VARCHAR2(4000),
+  ATUALIZACAO_CONTEXTO       DATE,
+  PERCENTUAL_EXECUCAO        NUMBER(4),
+  COMENTARIO_SITUACAO        VARCHAR2(4000),
+  ATUALIZACAO_SITUACAO       DATE,
+  SITUACAO_ATUAL             VARCHAR2(4000),
+  RESULTADOS_OBTIDOS         VARCHAR2(4000),
+  ATUALIZACAO_SITUACAO_ATUAL DATE,
+  COMENTARIO_EXECUCAO        VARCHAR2(4000),
+  FLAG_INCLUSAO              DATE default sysdate not null,
+  FLAG_ALTERACAO             DATE,
+  FLAG_ENVIO                 DATE
+)
+tablespace SYSTEM
+  pctfree 10
+  pctused 40
+  initrans 1
+  maxtrans 255
+  storage
+  (
+    initial 66K
+    minextents 1
+    maxextents unlimited
+  );
+comment on table IS_SIG_PROGRAMA
+  is 'Armazena informações sobre o programa.';
+comment on column IS_SIG_PROGRAMA.CLIENTE
+  is 'Sequence';
+comment on column IS_SIG_PROGRAMA.ANO
+  is 'Ano de referência do registro.';
+comment on column IS_SIG_PROGRAMA.CD_PROGRAMA
+  is 'Código do Programa no Sigplan';
+comment on column IS_SIG_PROGRAMA.CD_ORGAO
+  is 'Código do Órgão';
+comment on column IS_SIG_PROGRAMA.CD_TIPO_ORGAO
+  is 'Código do tipo de órgão';
+comment on column IS_SIG_PROGRAMA.CD_TIPO_PROGRAMA
+  is 'Código do Tipo de Programa';
+comment on column IS_SIG_PROGRAMA.CD_MACRO
+  is 'Código do macro objetivo';
+comment on column IS_SIG_PROGRAMA.CD_ESTAGIO
+  is 'Código do estágio da situação';
+comment on column IS_SIG_PROGRAMA.CD_ANDAMENTO
+  is 'Código do andamento da situação';
+comment on column IS_SIG_PROGRAMA.CD_CRONOGRAMA
+  is 'Código do cronograma da situação';
+comment on column IS_SIG_PROGRAMA.NOME
+  is 'Descrição do Programa';
+comment on column IS_SIG_PROGRAMA.MES_INICIO
+  is 'Mês de início do Programa Temporário';
+comment on column IS_SIG_PROGRAMA.ANO_INICIO
+  is 'Ano de início do Programa Temporário';
+comment on column IS_SIG_PROGRAMA.MES_TERMINO
+  is 'Mês de término do Programa Temporário';
+comment on column IS_SIG_PROGRAMA.ANO_TERMINO
+  is 'Ano de término do Programa Temporário';
+comment on column IS_SIG_PROGRAMA.OBJETIVO
+  is 'Descrição do Objetivo do Programa';
+comment on column IS_SIG_PROGRAMA.PUBLICO_ALVO
+  is 'Descrição do Público alvo do Programa';
+comment on column IS_SIG_PROGRAMA.JUSTIFICATIVA
+  is 'Descrição da Justificativa do Programa';
+comment on column IS_SIG_PROGRAMA.ESTRATEGIA
+  is 'Descrição da Estratégia do Programa';
+comment on column IS_SIG_PROGRAMA.LN_PROGRAMA
+  is 'Link';
+comment on column IS_SIG_PROGRAMA.VALOR_ESTIMADO
+  is 'Valor estimado para execução do Programa';
+comment on column IS_SIG_PROGRAMA.VALOR_PPA
+  is 'Valor PPA do programa';
+comment on column IS_SIG_PROGRAMA.TEMPORARIO
+  is 'Define se o Programa é Temporário, ou caso contrário é contínuo';
+comment on column IS_SIG_PROGRAMA.ESTRUTURANTE
+  is 'Indica se é estruturante';
+comment on column IS_SIG_PROGRAMA.CONTEXTO
+  is 'Contexto';
+comment on column IS_SIG_PROGRAMA.ATUALIZACAO_CONTEXTO
+  is 'Data de atualização do contexto';
+comment on column IS_SIG_PROGRAMA.PERCENTUAL_EXECUCAO
+  is 'Percentual de Execução';
+comment on column IS_SIG_PROGRAMA.COMENTARIO_SITUACAO
+  is 'Comentário da situação';
+comment on column IS_SIG_PROGRAMA.ATUALIZACAO_SITUACAO
+  is 'Data de atualização da situação';
+comment on column IS_SIG_PROGRAMA.SITUACAO_ATUAL
+  is 'Situação atual';
+comment on column IS_SIG_PROGRAMA.RESULTADOS_OBTIDOS
+  is 'Resultados obtidos';
+comment on column IS_SIG_PROGRAMA.ATUALIZACAO_SITUACAO_ATUAL
+  is 'Data de atualização da situação';
+comment on column IS_SIG_PROGRAMA.COMENTARIO_EXECUCAO
+  is 'Comentário da execução';
+comment on column IS_SIG_PROGRAMA.FLAG_INCLUSAO
+  is 'Data de inclusão do registro';
+comment on column IS_SIG_PROGRAMA.FLAG_ALTERACAO
+  is 'Data da última alteração do registro, caso ele tenha sido alterado.';
+comment on column IS_SIG_PROGRAMA.FLAG_ENVIO
+  is 'Data do último envio do registro, caso ele já tenha sido enviado.';
+alter table IS_SIG_PROGRAMA
+  add constraint PK_IS_SIG_PROGRAMA primary key (ANO,CD_PROGRAMA,CLIENTE)
+  using index 
+  tablespace SYSTEM
+  pctfree 10
+  initrans 2
+  maxtrans 255
+  storage
+  (
+    initial 66K
+    minextents 1
+    maxextents unlimited
+  );
+alter table IS_SIG_PROGRAMA
+  add constraint FK_ISSIGPRG_COPES foreign key (CLIENTE)
+  references SIW.CO_PESSOA (SQ_PESSOA);
+alter table IS_SIG_PROGRAMA
+  add constraint FK_ISSIGPRG_ISSIGMACOBJ foreign key (CD_MACRO)
+  references IS_SIG_MACRO_OBJETIVO (CD_MACRO);
+alter table IS_SIG_PROGRAMA
+  add constraint FK_ISSIGPRG_ISSIGORG foreign key (ANO,CD_ORGAO,CD_TIPO_ORGAO)
+  references IS_SIG_ORGAO (ANO,CD_ORGAO,CD_TIPO_ORGAO);
+alter table IS_SIG_PROGRAMA
+  add constraint FK_ISSIGPRG_ISSIGTIPPRG foreign key (CD_TIPO_PROGRAMA)
+  references IS_SIG_TIPO_PROGRAMA (CD_TIPO_PROGRAMA);
+alter table IS_SIG_PROGRAMA
+  add constraint FK_ISSIGPRG_ISSIGTIPSIT_AND foreign key (CD_ANDAMENTO)
+  references IS_SIG_TIPO_SITUACAO (CD_TIPO_SITUACAO);
+alter table IS_SIG_PROGRAMA
+  add constraint FK_ISSIGPRG_ISSIGTIPSIT_CRO foreign key (CD_CRONOGRAMA)
+  references IS_SIG_TIPO_SITUACAO (CD_TIPO_SITUACAO);
+alter table IS_SIG_PROGRAMA
+  add constraint FK_ISSIGPRG_ISSIGTIPSIT_EST foreign key (CD_ESTAGIO)
+  references IS_SIG_TIPO_SITUACAO (CD_TIPO_SITUACAO);
+alter table IS_SIG_PROGRAMA
+  add constraint CKC_ESTRUTURANTE_IS_SIG_P
+  check (ESTRUTURANTE in ('S','N'));
+alter table IS_SIG_PROGRAMA
+  add constraint CKC_TEMPORARIO_IS_SIG_P
+  check (TEMPORARIO in ('S','N'));
+

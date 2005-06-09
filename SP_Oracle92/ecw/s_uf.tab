@@ -1,0 +1,29 @@
+create table S_UF
+(
+  SG_UF CHAR(2) not null,
+  DS_UF VARCHAR2(30)
+)
+tablespace SGE
+  pctfree 10
+  initrans 1
+  maxtrans 255
+  storage
+  (
+    initial 66K
+    minextents 1
+    maxextents unlimited
+  );
+alter table S_UF
+  add constraint PKS_UF primary key (SG_UF)
+  using index 
+  tablespace SGE
+  pctfree 10
+  initrans 2
+  maxtrans 255
+  storage
+  (
+    initial 66K
+    minextents 1
+    maxextents unlimited
+  );
+

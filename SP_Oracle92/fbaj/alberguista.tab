@@ -1,0 +1,189 @@
+create table ALBERGUISTA
+(
+  SQ_ALBERGUISTA    NUMBER(18) not null,
+  CARTEIRA          VARCHAR2(20) not null,
+  NOME              VARCHAR2(60) not null,
+  NASCIMENTO        DATE,
+  ENDERECO          VARCHAR2(60),
+  BAIRRO            VARCHAR2(30),
+  CEP               VARCHAR2(9),
+  CIDADE            VARCHAR2(40),
+  UF                VARCHAR2(2),
+  DDD               VARCHAR2(3),
+  FONE              VARCHAR2(50),
+  CPF               VARCHAR2(14),
+  RG_NUMERO         VARCHAR2(20),
+  RG_EMISSOR        VARCHAR2(20),
+  EMAIL             VARCHAR2(60),
+  SEXO              VARCHAR2(1),
+  FORMACAO          VARCHAR2(1),
+  TRABALHA          VARCHAR2(1),
+  EMAIL_TRABALHO    VARCHAR2(60),
+  CONHECE_ALBERGUE  VARCHAR2(1),
+  VISITAS           NUMBER(3),
+  CLASSIFICACAO     VARCHAR2(1),
+  DESTINO           VARCHAR2(1),
+  DESTINO_OUTROS    VARCHAR2(50),
+  MOTIVO_VIAGEM     VARCHAR2(1),
+  MOTIVO_OUTROS     VARCHAR2(50),
+  FORMA_CONHECE     VARCHAR2(1),
+  FORMA_OUTROS      VARCHAR2(50),
+  SQ_CIDADE         NUMBER(18),
+  CARTEIRA_EMISSAO  DATE,
+  CARTEIRA_VALIDADE DATE
+)
+tablespace USERS
+  pctfree 10
+  initrans 1
+  maxtrans 255
+  storage
+  (
+    initial 66K
+    minextents 1
+    maxextents unlimited
+  );
+comment on column ALBERGUISTA.SQ_ALBERGUISTA
+  is 'Sequence.';
+comment on column ALBERGUISTA.CARTEIRA
+  is 'Número da carteira';
+comment on column ALBERGUISTA.NOME
+  is 'Nome do alberguista';
+comment on column ALBERGUISTA.NASCIMENTO
+  is 'Data de nascimento.';
+comment on column ALBERGUISTA.ENDERECO
+  is 'Endereço';
+alter table ALBERGUISTA
+  add constraint PK_ALBERGUISTA primary key (SQ_ALBERGUISTA)
+  using index 
+  tablespace USERS
+  pctfree 10
+  initrans 2
+  maxtrans 255
+  storage
+  (
+    initial 66K
+    minextents 1
+    maxextents unlimited
+  );
+create unique index IN_ALB_CARTEIRA on ALBERGUISTA (CARTEIRA)
+  tablespace USERS
+  pctfree 10
+  initrans 2
+  maxtrans 255
+  storage
+  (
+    initial 66K
+    minextents 1
+    maxextents unlimited
+  );
+create index IN_ALB_CLASSIFICACAO on ALBERGUISTA (CLASSIFICACAO,SQ_ALBERGUISTA)
+  tablespace USERS
+  pctfree 10
+  initrans 2
+  maxtrans 255
+  storage
+  (
+    initial 66K
+    minextents 1
+    maxextents unlimited
+  );
+create index IN_ALB_CONHECE on ALBERGUISTA (FORMA_CONHECE,SQ_ALBERGUISTA)
+  tablespace USERS
+  pctfree 10
+  initrans 2
+  maxtrans 255
+  storage
+  (
+    initial 66K
+    minextents 1
+    maxextents unlimited
+  );
+create index IN_ALB_DESTINO on ALBERGUISTA (DESTINO,SQ_ALBERGUISTA)
+  tablespace USERS
+  pctfree 10
+  initrans 2
+  maxtrans 255
+  storage
+  (
+    initial 66K
+    minextents 1
+    maxextents unlimited
+  );
+create index IN_ALB_EMISSAO on ALBERGUISTA (CARTEIRA_EMISSAO,SQ_ALBERGUISTA)
+  tablespace USERS
+  pctfree 10
+  initrans 2
+  maxtrans 255
+  storage
+  (
+    initial 66K
+    minextents 1
+    maxextents unlimited
+  );
+create index IN_ALB_FORMACAO on ALBERGUISTA (FORMACAO,SQ_ALBERGUISTA)
+  tablespace USERS
+  pctfree 10
+  initrans 2
+  maxtrans 255
+  storage
+  (
+    initial 66K
+    minextents 1
+    maxextents unlimited
+  );
+create index IN_ALB_MOTIVO on ALBERGUISTA (MOTIVO_VIAGEM,SQ_ALBERGUISTA)
+  tablespace USERS
+  pctfree 10
+  initrans 2
+  maxtrans 255
+  storage
+  (
+    initial 66K
+    minextents 1
+    maxextents unlimited
+  );
+create index IN_ALB_NASCIMENTO on ALBERGUISTA (NASCIMENTO,SQ_ALBERGUISTA)
+  tablespace USERS
+  pctfree 10
+  initrans 2
+  maxtrans 255
+  storage
+  (
+    initial 66K
+    minextents 1
+    maxextents unlimited
+  );
+create index IN_ALB_SEXO on ALBERGUISTA (SEXO,SQ_ALBERGUISTA)
+  tablespace USERS
+  pctfree 10
+  initrans 2
+  maxtrans 255
+  storage
+  (
+    initial 66K
+    minextents 1
+    maxextents unlimited
+  );
+create index IN_ALB_TRABALHA on ALBERGUISTA (TRABALHA,SQ_ALBERGUISTA)
+  tablespace USERS
+  pctfree 10
+  initrans 2
+  maxtrans 255
+  storage
+  (
+    initial 66K
+    minextents 1
+    maxextents unlimited
+  );
+create index IN_ALB_VALIDADE on ALBERGUISTA (CARTEIRA_VALIDADE,SQ_ALBERGUISTA)
+  tablespace USERS
+  pctfree 10
+  initrans 2
+  maxtrans 255
+  storage
+  (
+    initial 66K
+    minextents 1
+    maxextents unlimited
+  );
+

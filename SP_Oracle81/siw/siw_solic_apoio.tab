@@ -1,0 +1,67 @@
+create table SIW_SOLIC_APOIO
+(
+  SQ_SOLIC_APOIO        NUMBER(18) not null,
+  SQ_SIW_SOLICITACAO    NUMBER(18) not null,
+  SQ_TIPO_APOIO         NUMBER(18) not null,
+  ENTIDADE              VARCHAR2(50) not null,
+  DESCRICAO             VARCHAR2(200),
+  VALOR                 NUMBER(18,2) not null,
+  SQ_PESSOA_ATUALIZACAO NUMBER(18) not null,
+  ULTIMA_ATUALIZACAO    DATE default sysdate not null
+)
+tablespace SYSTEM
+  pctfree 10
+  pctused 40
+  initrans 1
+  maxtrans 255
+  storage
+  (
+    initial 72K
+    next 64K
+    minextents 1
+    maxextents unlimited
+    pctincrease 50
+  );
+comment on table SIW_SOLIC_APOIO
+  is 'Registra os apoios financeiros a uma solicitação.';
+comment on column SIW_SOLIC_APOIO.SQ_SOLIC_APOIO
+  is 'Sequence.';
+comment on column SIW_SOLIC_APOIO.SQ_SIW_SOLICITACAO
+  is 'Chave de SIW_SOLICITACAO, informando a que solicitação o apoio refere-se.';
+comment on column SIW_SOLIC_APOIO.SQ_TIPO_APOIO
+  is 'Chave de SIW_TIPO_APOIO, informando o tipo de apoio que a entidade está dando à solicitação.';
+comment on column SIW_SOLIC_APOIO.ENTIDADE
+  is 'Nome da entidade que está dando o apoio.';
+comment on column SIW_SOLIC_APOIO.DESCRICAO
+  is 'Descritivo do apoio dado pela entidade.';
+comment on column SIW_SOLIC_APOIO.VALOR
+  is 'Valor do apoio.';
+comment on column SIW_SOLIC_APOIO.SQ_PESSOA_ATUALIZACAO
+  is 'Chave de CO_PESSOA, indicando o usuário responsável pela inclusão ou última atualização do registro.';
+comment on column SIW_SOLIC_APOIO.ULTIMA_ATUALIZACAO
+  is 'Data e hora da inclusão ou última atualização do registro.';
+alter table SIW_SOLIC_APOIO
+  add constraint PK_SIW_SOLIC_APOIO primary key (SQ_SOLIC_APOIO)
+  using index 
+  tablespace SYSTEM
+  pctfree 10
+  initrans 2
+  maxtrans 255
+  storage
+  (
+    initial 72K
+    next 64K
+    minextents 1
+    maxextents unlimited
+    pctincrease 50
+  );
+alter table SIW_SOLIC_APOIO
+  add constraint FK_SIWSOLAPO_COPES foreign key (SQ_PESSOA_ATUALIZACAO)
+  references CO_PESSOA (SQ_PESSOA);
+alter table SIW_SOLIC_APOIO
+  add constraint FK_SIWSOLAPO_SIWSOL foreign key (SQ_SIW_SOLICITACAO)
+  references SIW_SOLICITACAO (SQ_SIW_SOLICITACAO);
+alter table SIW_SOLIC_APOIO
+  add constraint FK_SIWSOLAPO_SIWTIPAPO foreign key (SQ_TIPO_APOIO)
+  references SIW_TIPO_APOIO (SQ_TIPO_APOIO);
+

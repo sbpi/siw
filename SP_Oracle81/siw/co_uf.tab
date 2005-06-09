@@ -1,0 +1,86 @@
+create table CO_UF
+(
+  CO_UF       VARCHAR2(3) not null,
+  SQ_PAIS     NUMBER(18) not null,
+  SQ_REGIAO   NUMBER(18) not null,
+  NOME        VARCHAR2(30) not null,
+  ATIVO       VARCHAR2(1) default 'S' not null,
+  PADRAO      VARCHAR2(1) default 'N' not null,
+  CODIGO_IBGE VARCHAR2(2),
+  ORDEM       NUMBER(5)
+)
+tablespace USERS
+  pctfree 10
+  pctused 40
+  initrans 1
+  maxtrans 255
+  storage
+  (
+    initial 136K
+    next 128K
+    minextents 1
+    maxextents 4096
+    pctincrease 0
+  );
+comment on table CO_UF
+  is 'Armazena a tabela de estados';
+comment on column CO_UF.ATIVO
+  is 'Indica se o registro deve ou não ser exibido.';
+comment on column CO_UF.PADRAO
+  is 'Indica se este registro deve ser apresentado como padrão para o usuário.';
+comment on column CO_UF.CODIGO_IBGE
+  is 'Código IBGE da UF. Este código abrange a região e a UF.';
+alter table CO_UF
+  add constraint PK_CO_UF primary key (CO_UF,SQ_PAIS)
+  using index 
+  tablespace USERS
+  pctfree 10
+  initrans 2
+  maxtrans 255
+  storage
+  (
+    initial 136K
+    next 128K
+    minextents 1
+    maxextents 4096
+    pctincrease 0
+  );
+alter table CO_UF
+  add constraint FK_COPAI_COUF foreign key (SQ_PAIS)
+  references CO_PAIS (SQ_PAIS);
+alter table CO_UF
+  add constraint FK_COREG_COUF foreign key (SQ_REGIAO)
+  references CO_REGIAO (SQ_REGIAO);
+alter table CO_UF
+  add constraint CKC_ATIVO_CO_UF
+  check (ATIVO in ('S','N'));
+alter table CO_UF
+  add constraint CKC_PADRAO_COUF
+  check (PADRAO in ('S','N'));
+create unique index IN_COUF_NOME on CO_UF (NOME,SQ_PAIS)
+  tablespace SYSTEM
+  pctfree 10
+  initrans 2
+  maxtrans 255
+  storage
+  (
+    initial 72K
+    next 64K
+    minextents 1
+    maxextents unlimited
+    pctincrease 50
+  );
+create index IN_COUF_PAISREGIAO on CO_UF (SQ_REGIAO,SQ_PAIS)
+  tablespace SYSTEM
+  pctfree 10
+  initrans 2
+  maxtrans 255
+  storage
+  (
+    initial 72K
+    next 64K
+    minextents 1
+    maxextents unlimited
+    pctincrease 50
+  );
+

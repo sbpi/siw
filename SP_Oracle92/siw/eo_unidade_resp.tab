@@ -1,0 +1,108 @@
+create table EO_UNIDADE_RESP
+(
+  SQ_UNIDADE_RESP NUMBER(18) not null,
+  SQ_UNIDADE      NUMBER(10) not null,
+  SQ_PESSOA       NUMBER(18) not null,
+  TIPO_RESPONS    VARCHAR2(1) default 'T' not null,
+  INICIO          DATE not null,
+  FIM             DATE
+)
+tablespace USERS
+  pctfree 10
+  initrans 1
+  maxtrans 255
+  storage
+  (
+    initial 132K
+    minextents 1
+    maxextents unlimited
+  );
+comment on table EO_UNIDADE_RESP
+  is 'Armazena o histórico de ocupação da chefia titular e substituta de uma unidade.';
+comment on column EO_UNIDADE_RESP.SQ_UNIDADE_RESP
+  is 'Sequence';
+comment on column EO_UNIDADE_RESP.SQ_UNIDADE
+  is 'Chave de EO_UNIDADE';
+comment on column EO_UNIDADE_RESP.SQ_PESSOA
+  is 'Chave de CO_PESSOA.';
+comment on column EO_UNIDADE_RESP.TIPO_RESPONS
+  is 'Indica se a pessoa é titular ou substituto da unidade.';
+comment on column EO_UNIDADE_RESP.INICIO
+  is 'Início da responsabilidade.';
+comment on column EO_UNIDADE_RESP.FIM
+  is 'Fim da responsabilidade.';
+alter table EO_UNIDADE_RESP
+  add constraint PK_EO_UNIDADE_RESPONSAVEL primary key (SQ_UNIDADE_RESP)
+  using index 
+  tablespace USERS
+  pctfree 10
+  initrans 2
+  maxtrans 255
+  storage
+  (
+    initial 132K
+    minextents 1
+    maxextents unlimited
+  );
+alter table EO_UNIDADE_RESP
+  add constraint FK_EOUNIRES_COPES foreign key (SQ_PESSOA)
+  references CO_PESSOA (SQ_PESSOA);
+alter table EO_UNIDADE_RESP
+  add constraint FK_EOUNIRES_EOUNI foreign key (SQ_UNIDADE)
+  references EO_UNIDADE (SQ_UNIDADE);
+create index IN_EOUNIRES_FIM on EO_UNIDADE_RESP (FIM,SQ_UNIDADE)
+  tablespace SYSTEM
+  pctfree 10
+  initrans 2
+  maxtrans 255
+  storage
+  (
+    initial 66K
+    minextents 1
+    maxextents unlimited
+  );
+create index IN_EOUNIRES_INICIO on EO_UNIDADE_RESP (INICIO,SQ_UNIDADE)
+  tablespace SYSTEM
+  pctfree 10
+  initrans 2
+  maxtrans 255
+  storage
+  (
+    initial 66K
+    minextents 1
+    maxextents unlimited
+  );
+create index IN_EOUNIRES_PESSOA on EO_UNIDADE_RESP (SQ_PESSOA,SQ_UNIDADE)
+  tablespace SYSTEM
+  pctfree 10
+  initrans 2
+  maxtrans 255
+  storage
+  (
+    initial 66K
+    minextents 1
+    maxextents unlimited
+  );
+create index IN_EOUNIRES_TIPO on EO_UNIDADE_RESP (TIPO_RESPONS,SQ_UNIDADE,SQ_PESSOA)
+  tablespace SYSTEM
+  pctfree 10
+  initrans 2
+  maxtrans 255
+  storage
+  (
+    initial 66K
+    minextents 1
+    maxextents unlimited
+  );
+create index IN_EOUNIRES_UNID on EO_UNIDADE_RESP (SQ_UNIDADE,SQ_UNIDADE_RESP)
+  tablespace SYSTEM
+  pctfree 10
+  initrans 2
+  maxtrans 255
+  storage
+  (
+    initial 66K
+    minextents 1
+    maxextents unlimited
+  );
+

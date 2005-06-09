@@ -1,0 +1,77 @@
+create table CUSTOMERS_TEMP
+(
+  CSTCUSTOMERID  VARCHAR2(20) not null,
+  CSTSTSCODE     VARCHAR2(50) not null,
+  CSTTITLE       VARCHAR2(50),
+  CSTFIRSTNAME   VARCHAR2(100),
+  CSTLASTNAME    VARCHAR2(100),
+  CSTADDRESS1    VARCHAR2(100),
+  CSTADDRESS2    VARCHAR2(100),
+  CSTZIPCODE     VARCHAR2(50),
+  CSTCITY        VARCHAR2(50),
+  CSTCOUNTRY     VARCHAR2(50),
+  CSTPHONEWORK   VARCHAR2(50),
+  CSTPHONEHOME   VARCHAR2(50),
+  CSTPHONEMOBILE VARCHAR2(50),
+  CSTEMAIL       VARCHAR2(50),
+  CSTDAYOFBIRTH  VARCHAR2(20),
+  CSTGENDER      VARCHAR2(10),
+  CSTCHILDREN    NUMBER,
+  CSTCOMMENT     VARCHAR2(4000),
+  LGNSTSCODE     VARCHAR2(20),
+  LGNPASSWORD    VARCHAR2(50)
+)
+tablespace USERS
+  pctfree 10
+  initrans 1
+  maxtrans 255
+  storage
+  (
+    initial 66K
+    minextents 1
+    maxextents unlimited
+  );
+comment on column CUSTOMERS_TEMP.CSTCUSTOMERID
+  is 'Unique customer identification';
+comment on column CUSTOMERS_TEMP.CSTSTSCODE
+  is 'Status ("Normal", "Deleted", "Disabled", "Pending", "Blocked", "Test", "Expired")';
+comment on column CUSTOMERS_TEMP.CSTTITLE
+  is 'I.e. "Drs.", "Ing.", "Ir."';
+comment on column CUSTOMERS_TEMP.CSTFIRSTNAME
+  is 'First name';
+comment on column CUSTOMERS_TEMP.CSTLASTNAME
+  is 'Last name';
+comment on column CUSTOMERS_TEMP.CSTADDRESS1
+  is 'Address';
+comment on column CUSTOMERS_TEMP.CSTADDRESS2
+  is 'Address';
+comment on column CUSTOMERS_TEMP.CSTZIPCODE
+  is 'Zip Code';
+comment on column CUSTOMERS_TEMP.CSTCITY
+  is 'City';
+comment on column CUSTOMERS_TEMP.CSTCOUNTRY
+  is 'Country';
+comment on column CUSTOMERS_TEMP.CSTPHONEWORK
+  is 'Work phone number';
+comment on column CUSTOMERS_TEMP.CSTPHONEHOME
+  is 'Home phone number';
+comment on column CUSTOMERS_TEMP.CSTPHONEMOBILE
+  is 'Mobile phone number';
+comment on column CUSTOMERS_TEMP.CSTEMAIL
+  is 'Email';
+comment on column CUSTOMERS_TEMP.CSTDAYOFBIRTH
+  is 'Day of birth';
+comment on column CUSTOMERS_TEMP.CSTGENDER
+  is 'Gender (Male or Female)';
+comment on column CUSTOMERS_TEMP.CSTCHILDREN
+  is '# of children';
+comment on column CUSTOMERS_TEMP.CSTCOMMENT
+  is 'General comments';
+comment on column CUSTOMERS_TEMP.LGNSTSCODE
+  is 'Login status ("Normal", "Deleted", "Disabled", "Pending", "Blocked", "Test", "Expired")';
+comment on column CUSTOMERS_TEMP.LGNPASSWORD
+  is 'Internet password';
+alter table CUSTOMERS_TEMP
+  add constraint CKC_STATUSCODE_TEMP
+  check (CstStsCode in ('NORMAL', 'DELETED', 'DISABLED', 'PENDING', 'BLOCKED', 'TEST', 'EXPIRED'));
+

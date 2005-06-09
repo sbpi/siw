@@ -1,0 +1,73 @@
+create table CV_PESSOA_IDIOMA
+(
+  SQ_PESSOA   NUMBER(18) not null,
+  SQ_IDIOMA   NUMBER(18) not null,
+  LEITURA     VARCHAR2(1) default 'N' not null,
+  ESCRITA     VARCHAR2(1) default 'N' not null,
+  COMPREENSAO VARCHAR2(1) default 'N' not null,
+  CONVERSACAO VARCHAR2(1) default 'N' not null
+)
+tablespace SYSTEM
+  pctfree 10
+  pctused 40
+  initrans 1
+  maxtrans 255
+  storage
+  (
+    initial 66K
+    minextents 1
+    maxextents unlimited
+  );
+comment on column CV_PESSOA_IDIOMA.SQ_PESSOA
+  is 'Sequence';
+comment on column CV_PESSOA_IDIOMA.LEITURA
+  is 'Indica se a pessoa lê com facilidade textos escritos no idioma.';
+comment on column CV_PESSOA_IDIOMA.ESCRITA
+  is 'Indica se a pessoa escreve com facilidade textos no idioma.';
+comment on column CV_PESSOA_IDIOMA.COMPREENSAO
+  is 'Indica se a pessoa tem facilidade para ouvir pessoas conversando  no idioma.';
+comment on column CV_PESSOA_IDIOMA.CONVERSACAO
+  is 'Indica se a pessoa tem fluência em pronunciar-se no idioma.';
+alter table CV_PESSOA_IDIOMA
+  add constraint PK_CV_PESSOA_IDIOMA primary key (SQ_PESSOA,SQ_IDIOMA)
+  using index 
+  tablespace SYSTEM
+  pctfree 10
+  initrans 2
+  maxtrans 255
+  storage
+  (
+    initial 66K
+    minextents 1
+    maxextents unlimited
+  );
+alter table CV_PESSOA_IDIOMA
+  add constraint FK_CVPESIDI_COIDI foreign key (SQ_IDIOMA)
+  references CO_IDIOMA (SQ_IDIOMA);
+alter table CV_PESSOA_IDIOMA
+  add constraint FK_CVPESIDI_CVPES foreign key (SQ_PESSOA)
+  references CV_PESSOA (SQ_PESSOA);
+alter table CV_PESSOA_IDIOMA
+  add constraint CKC_COMPREENSAO_CV_PESSO
+  check (COMPREENSAO in ('S','N'));
+alter table CV_PESSOA_IDIOMA
+  add constraint CKC_CONVERSACAO_CV_PESSO
+  check (CONVERSACAO in ('S','N'));
+alter table CV_PESSOA_IDIOMA
+  add constraint CKC_ESCRITA_CV_PESSO
+  check (ESCRITA in ('S','N'));
+alter table CV_PESSOA_IDIOMA
+  add constraint CKC_LEITURA_CV_PESSO
+  check (LEITURA in ('S','N'));
+create index IN_CVPESIDI_INVERSA on CV_PESSOA_IDIOMA (SQ_IDIOMA,SQ_PESSOA)
+  tablespace SYSTEM
+  pctfree 10
+  initrans 2
+  maxtrans 255
+  storage
+  (
+    initial 66K
+    minextents 1
+    maxextents unlimited
+  );
+

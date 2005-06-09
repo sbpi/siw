@@ -1,0 +1,22 @@
+CREATE OR REPLACE FUNCTION 
+          ACENTOS ( Valor IN VARCHAR2, Tipo IN NUMBER DEFAULT NULL) RETURN  VARCHAR2 IS
+/*
+Tipo = 1 => Converte acentos formato Benner (Paradox Intl) para ASCII Ansi
+Tipo diferente de 1 ou nulo => Retira caracteres acentuados e converte para minúsculas
+                               para ordenação no SELECT
+*/
+
+   nome varchar2(8000) := Valor;
+
+BEGIN
+
+   IF Tipo IS NULL OR Tipo <> 1 THEN
+      nome := ltrim(upper(translate(lower((nome)),'ãâáàéêíõôóúüç','aaaaeeiooouuc')));
+   ELSE
+      nome := translate(nome,'¿ Æ¿¿¡ä¢£¿','âáãêéíõóúç');
+   END IF;
+
+   RETURN nome ;
+END;
+/
+

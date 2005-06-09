@@ -1,0 +1,40 @@
+create table SIW_SOLIC_LOG_ARQ
+(
+  SQ_SIW_SOLIC_LOG NUMBER(18),
+  SQ_SIW_ARQUIVO   NUMBER(18)
+)
+tablespace SYSTEM
+  pctfree 10
+  pctused 40
+  initrans 1
+  maxtrans 255
+  storage
+  (
+    initial 72K
+    next 64K
+    minextents 1
+    maxextents unlimited
+    pctincrease 50
+  );
+comment on column SIW_SOLIC_LOG_ARQ.SQ_SIW_ARQUIVO
+  is 'Sequence.';
+alter table SIW_SOLIC_LOG_ARQ
+  add constraint FK_SIWSOLLOGARQ_SIWARQ foreign key (SQ_SIW_ARQUIVO)
+  references SIW_ARQUIVO (SQ_SIW_ARQUIVO);
+alter table SIW_SOLIC_LOG_ARQ
+  add constraint FK_SIWSOLLOGARQ_SIWSOLLOG foreign key (SQ_SIW_SOLIC_LOG)
+  references SIW_SOLIC_LOG (SQ_SIW_SOLIC_LOG);
+create index IN_SIWSOLLOGARQ_INV on SIW_SOLIC_LOG_ARQ (SQ_SIW_ARQUIVO,SQ_SIW_SOLIC_LOG)
+  tablespace SYSTEM
+  pctfree 10
+  initrans 2
+  maxtrans 255
+  storage
+  (
+    initial 72K
+    next 64K
+    minextents 1
+    maxextents unlimited
+    pctincrease 50
+  );
+

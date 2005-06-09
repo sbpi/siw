@@ -1,0 +1,94 @@
+create table SG_PESSOA_MODULO
+(
+  SQ_PESSOA          NUMBER(18) not null,
+  CLIENTE            NUMBER(18) not null,
+  SQ_MODULO          NUMBER(18) not null,
+  SQ_PESSOA_ENDERECO NUMBER(18) not null
+)
+tablespace SYSTEM
+  pctfree 10
+  pctused 40
+  initrans 1
+  maxtrans 255
+  storage
+  (
+    initial 72K
+    next 64K
+    minextents 1
+    maxextents unlimited
+    pctincrease 50
+  );
+comment on table SG_PESSOA_MODULO
+  is 'Registra os gestores de módulo, por endereço da organização.';
+comment on column SG_PESSOA_MODULO.SQ_PESSOA
+  is 'Usuário. Chave de CO_PESSOA.';
+comment on column SG_PESSOA_MODULO.CLIENTE
+  is 'Cliente. Chave de SIW_CLIENTE_MODULO.';
+comment on column SG_PESSOA_MODULO.SQ_MODULO
+  is 'Módulo. Chave de SIW_CLIENTE_MODULO.';
+comment on column SG_PESSOA_MODULO.SQ_PESSOA_ENDERECO
+  is 'Endereço. Chave de CO_PESSOA_MODULO.';
+alter table SG_PESSOA_MODULO
+  add constraint PK_SG_PESSOA_MODULO primary key (SQ_PESSOA,CLIENTE,SQ_MODULO,SQ_PESSOA_ENDERECO)
+  using index 
+  tablespace USERS
+  pctfree 10
+  initrans 2
+  maxtrans 255
+  storage
+  (
+    initial 136K
+    next 128K
+    minextents 1
+    maxextents 4096
+    pctincrease 0
+  );
+alter table SG_PESSOA_MODULO
+  add constraint FK_SGPESMD_COPESEN foreign key (SQ_PESSOA_ENDERECO)
+  references CO_PESSOA_ENDERECO (SQ_PESSOA_ENDERECO);
+alter table SG_PESSOA_MODULO
+  add constraint FK_SGPESMD_SIWCLMD foreign key (CLIENTE,SQ_MODULO)
+  references SIW_CLIENTE_MODULO (SQ_PESSOA,SQ_MODULO);
+alter table SG_PESSOA_MODULO
+  add constraint FK_SGPESMOD_COPES foreign key (SQ_PESSOA)
+  references CO_PESSOA (SQ_PESSOA);
+create index IN_SGPESMOD_CLI on SG_PESSOA_MODULO (CLIENTE,SQ_PESSOA,SQ_MODULO,SQ_PESSOA_ENDERECO)
+  tablespace SYSTEM
+  pctfree 10
+  initrans 2
+  maxtrans 255
+  storage
+  (
+    initial 72K
+    next 64K
+    minextents 1
+    maxextents unlimited
+    pctincrease 50
+  );
+create index IN_SGPESMOD_END on SG_PESSOA_MODULO (CLIENTE,SQ_PESSOA_ENDERECO,SQ_MODULO,SQ_PESSOA)
+  tablespace SYSTEM
+  pctfree 10
+  initrans 2
+  maxtrans 255
+  storage
+  (
+    initial 72K
+    next 64K
+    minextents 1
+    maxextents unlimited
+    pctincrease 50
+  );
+create index IN_SGPESMOD_MODULO on SG_PESSOA_MODULO (CLIENTE,SQ_MODULO,SQ_PESSOA_ENDERECO,SQ_PESSOA)
+  tablespace SYSTEM
+  pctfree 10
+  initrans 2
+  maxtrans 255
+  storage
+  (
+    initial 72K
+    next 64K
+    minextents 1
+    maxextents unlimited
+    pctincrease 50
+  );
+

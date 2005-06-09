@@ -1,0 +1,490 @@
+
+Creating sequence CO_GRADE_CURRIC
+=================================
+
+
+Seqüência criada.
+
+
+Creating sequence CO_ORIGEM_ESCOLA
+==================================
+
+
+Seqüência criada.
+
+
+Creating sequence CO_SEQ_AMBIENTE
+=================================
+
+
+Seqüência criada.
+
+
+Creating sequence CO_TIPO_AVALIACAO
+===================================
+
+
+Seqüência criada.
+
+
+Creating sequence CO_TIPO_CURSO
+===============================
+
+
+Seqüência criada.
+
+
+Creating sequence CO_TIPO_DISCIPLINA
+====================================
+
+
+Seqüência criada.
+
+
+Creating sequence CO_TIPO_SALA
+==============================
+
+
+Seqüência criada.
+
+
+Creating procedure SP_GETAMBIENTDATA
+====================================
+
+
+Procedimento criado.
+
+
+Creating procedure SP_GETAMBIENTLIST
+====================================
+
+
+Procedimento criado.
+
+
+Creating procedure SP_GETANEEREL
+================================
+
+
+Procedimento criado.
+
+
+Creating procedure SP_GETATUAREADATA
+====================================
+
+
+Procedimento criado.
+
+
+Creating procedure SP_GETATUAREALIST
+====================================
+
+
+Procedimento criado.
+
+
+Creating procedure SP_GETAVALDATA
+=================================
+
+
+Procedimento criado.
+
+
+Creating procedure SP_GETAVALLIST
+=================================
+
+
+Procedimento criado.
+
+
+Creating procedure SP_GETCALENDARLIST
+=====================================
+
+
+Procedimento criado.
+
+
+Creating procedure SP_GETCALENDARREL
+====================================
+
+
+Procedimento criado.
+
+
+Creating procedure SP_GETCOMUNICREL
+===================================
+
+
+Procedimento criado.
+
+
+Creating procedure SP_GETCOURSETPDATA
+=====================================
+
+
+Procedimento criado.
+
+
+Creating procedure SP_GETCOURSETPLIST
+=====================================
+
+
+Procedimento criado.
+
+
+Creating procedure SP_GETDISCTPDATA
+===================================
+
+
+Procedimento criado.
+
+
+Creating procedure SP_GETDISCTPLIST
+===================================
+
+
+Procedimento criado.
+
+
+Creating procedure SP_GETDOUBSTUDDATA
+=====================================
+
+
+Procedimento criado.
+
+
+Creating procedure SP_GETDOUBSTUDLIST
+=====================================
+
+
+Procedimento criado.
+
+
+Creating procedure SP_GETFALTASREL
+==================================
+
+
+Procedimento criado.
+
+
+Creating procedure SP_GETFUNCDATA
+=================================
+
+
+Procedimento criado.
+
+
+Creating procedure SP_GETFUNCLIST
+=================================
+
+
+Procedimento criado.
+
+
+Creating procedure SP_GETFUNCREL
+================================
+
+
+Procedimento criado.
+
+
+Creating procedure SP_GETMATDISCDATA
+====================================
+
+
+Procedimento criado.
+
+
+Creating procedure SP_GETMATDISCODATA
+=====================================
+
+
+Procedimento criado.
+
+
+Creating procedure SP_GETMATRIXDATA
+===================================
+
+
+Advertência: Procedimento criado com erros de compilação.
+
+
+Creating procedure SP_GETMATRIXLIST
+===================================
+
+
+Procedimento criado.
+
+
+Creating procedure SP_GETMATSERDATA
+===================================
+
+
+Procedimento criado.
+
+
+Creating procedure SP_GETMATSERLIST
+===================================
+
+
+Procedimento criado.
+
+
+Creating procedure SP_GETMATSERODATA
+====================================
+
+
+Procedimento criado.
+
+
+Creating procedure SP_GETPERIODOLIST
+====================================
+
+
+Procedimento criado.
+
+
+Creating procedure SP_GETPOSITIONDATA
+=====================================
+
+
+Procedimento criado.
+
+
+Creating procedure SP_GETPOSITIONLIST
+=====================================
+
+
+Procedimento criado.
+
+
+Creating procedure SP_GETPROFREL
+================================
+
+
+Procedimento criado.
+
+
+Creating procedure SP_GETRENDREL
+================================
+
+
+Procedimento criado.
+
+
+Creating procedure SP_GETRESPKINDLIST
+=====================================
+
+
+Procedimento criado.
+
+
+Creating procedure SP_GETRESPONSDATA
+====================================
+
+
+Procedimento criado.
+
+
+Creating procedure SP_GETROOMCLLIST
+===================================
+
+
+Procedimento criado.
+
+
+Creating procedure SP_GETROOMTYPEDATA
+=====================================
+
+
+Procedimento criado.
+
+
+Creating procedure SP_GETROOMTYPELIST
+=====================================
+
+
+Procedimento criado.
+
+
+Creating procedure SP_GETSCHOOLLIST
+===================================
+
+
+Procedimento criado.
+
+
+Creating procedure SP_GETSCHORDATA
+==================================
+
+
+Procedimento criado.
+
+
+Creating procedure SP_GETSCHORLIST
+==================================
+
+
+Procedimento criado.
+
+
+Creating procedure SP_GETSERIEDATA
+==================================
+
+
+Procedimento criado.
+
+
+Creating procedure SP_GETSERIELIST
+==================================
+
+
+Advertência: Procedimento criado com erros de compilação.
+
+
+Creating procedure SP_GETSTUDENTDATA
+====================================
+
+
+Procedimento criado.
+
+
+Creating procedure SP_GETSTUDENTLIST
+====================================
+
+
+Procedimento criado.
+
+
+Creating procedure SP_GETSTUDENTREL
+===================================
+
+
+Procedimento criado.
+
+
+Creating procedure SP_GETTURMALIST
+==================================
+
+
+Procedimento criado.
+
+
+Creating procedure SP_GETTURNDATA
+=================================
+
+
+Procedimento criado.
+
+
+Creating procedure SP_GETTURNLIST
+=================================
+
+
+Procedimento criado.
+
+
+Creating procedure SP_GETUNITREL
+================================
+
+
+Procedimento criado.
+
+
+Creating procedure SP_GETVERSIONLIST
+====================================
+
+
+Procedimento criado.
+
+
+Creating procedure SP_PUTSAMBIENTE
+==================================
+
+
+Procedimento criado.
+
+
+Creating procedure SP_PUTSAREAATUACAO
+=====================================
+
+
+Procedimento criado.
+
+
+Creating procedure SP_PUTSCARGO
+===============================
+
+
+Procedimento criado.
+
+
+Creating procedure SP_PUTSDISCPER
+=================================
+
+
+Procedimento criado.
+
+
+Creating procedure SP_PUTSGRADE_CURR
+====================================
+
+
+Procedimento criado.
+
+
+Creating procedure SP_PUTSORESCOLA
+==================================
+
+
+Procedimento criado.
+
+
+Creating procedure SP_PUTSPERIODO
+=================================
+
+
+Procedimento criado.
+
+
+Creating procedure SP_PUTSSERIE
+===============================
+
+
+Procedimento criado.
+
+
+Creating procedure SP_PUTSTIPOCURSO
+===================================
+
+
+Procedimento criado.
+
+
+Creating procedure SP_PUTSTIPODISC
+==================================
+
+
+Procedimento criado.
+
+
+Creating procedure SP_PUTSTIPOSALA
+==================================
+
+
+Procedimento criado.
+
+
+Creating procedure SP_PUTSTPAVALIACAO
+=====================================
+
+
+Procedimento criado.
+
+
+Creating procedure SP_PUTSTURNO
+===============================
+
+
+Procedimento criado.
+

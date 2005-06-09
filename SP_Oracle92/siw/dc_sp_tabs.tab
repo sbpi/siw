@@ -1,0 +1,51 @@
+create table DC_SP_TABS
+(
+  SQ_STORED_PROC NUMBER(18) not null,
+  SQ_TABELA      NUMBER(18) not null
+)
+tablespace SYSTEM
+  pctfree 10
+  pctused 40
+  initrans 1
+  maxtrans 255
+  storage
+  (
+    initial 66K
+    minextents 1
+    maxextents unlimited
+  );
+comment on column DC_SP_TABS.SQ_STORED_PROC
+  is 'Sequence.';
+comment on column DC_SP_TABS.SQ_TABELA
+  is 'Sequence';
+alter table DC_SP_TABS
+  add constraint PK_DC_SP_TABS primary key (SQ_STORED_PROC,SQ_TABELA)
+  using index 
+  tablespace SYSTEM
+  pctfree 10
+  initrans 2
+  maxtrans 255
+  storage
+  (
+    initial 66K
+    minextents 1
+    maxextents unlimited
+  );
+alter table DC_SP_TABS
+  add constraint FK_DCSPTAB_DCTAB foreign key (SQ_TABELA)
+  references DC_TABELA (SQ_TABELA);
+alter table DC_SP_TABS
+  add constraint FK_SPTAB_DCSTOPRO foreign key (SQ_STORED_PROC)
+  references DC_STORED_PROC (SQ_STORED_PROC);
+create index DC_SPTAB_INVERSA on DC_SP_TABS (SQ_TABELA,SQ_STORED_PROC)
+  tablespace SYSTEM
+  pctfree 10
+  initrans 2
+  maxtrans 255
+  storage
+  (
+    initial 66K
+    minextents 1
+    maxextents unlimited
+  );
+

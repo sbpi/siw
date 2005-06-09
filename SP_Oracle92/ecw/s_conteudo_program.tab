@@ -1,0 +1,38 @@
+create table S_CONTEUDO_PROGRAM
+(
+  CO_CONTEUDO        NUMBER(10) not null,
+  CO_CURS_SERIE_DISC NUMBER(10) not null,
+  CO_UNIDADE         CHAR(5) not null,
+  ANO_SEM            CHAR(5) not null,
+  CO_DISCIPLINA      CHAR(4) not null,
+  NU_FRENTE          NUMBER(10),
+  NU_AULA            NUMBER(10),
+  DS_CONTEUDO        CHAR(80)
+)
+tablespace SGE
+  pctfree 10
+  initrans 1
+  maxtrans 255
+  storage
+  (
+    initial 66K
+    minextents 1
+    maxextents unlimited
+  );
+alter table S_CONTEUDO_PROGRAM
+  add constraint U148_59 primary key (CO_CONTEUDO,CO_UNIDADE,CO_CURS_SERIE_DISC,ANO_SEM,CO_DISCIPLINA)
+  using index 
+  tablespace SGE
+  pctfree 10
+  initrans 2
+  maxtrans 255
+  storage
+  (
+    initial 66K
+    minextents 1
+    maxextents unlimited
+  );
+alter table S_CONTEUDO_PROGRAM
+  add constraint FK_CONT_PROGRAM foreign key (CO_CURS_SERIE_DISC,CO_DISCIPLINA,CO_UNIDADE,ANO_SEM)
+  references S_CURSO_SERIE_DISC (CO_CURS_SERIE_DISC,CO_DISCIPLINA,CO_UNIDADE,ANO_SEM) on delete cascade;
+

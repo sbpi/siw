@@ -1,0 +1,75 @@
+create table CO_ETNIA
+(
+  SQ_ETNIA     NUMBER(18) not null,
+  NOME         VARCHAR2(10) not null,
+  CODIGO_SIAPE VARCHAR2(2) not null,
+  ATIVO        VARCHAR2(1) default 'S' not null
+)
+tablespace USERS
+  pctfree 10
+  initrans 1
+  maxtrans 255
+  storage
+  (
+    initial 132K
+    minextents 1
+    maxextents unlimited
+  );
+comment on table CO_ETNIA
+  is 'Armazena a tabela de etnias';
+comment on column CO_ETNIA.SQ_ETNIA
+  is 'Sequence';
+comment on column CO_ETNIA.CODIGO_SIAPE
+  is 'Código SIAPE para a etnia';
+comment on column CO_ETNIA.ATIVO
+  is 'Indica se o registro deve ou não ser exibido.';
+alter table CO_ETNIA
+  add constraint PK_CO_ETNIA primary key (SQ_ETNIA)
+  using index 
+  tablespace USERS
+  pctfree 10
+  initrans 2
+  maxtrans 255
+  storage
+  (
+    initial 132K
+    minextents 1
+    maxextents unlimited
+  );
+alter table CO_ETNIA
+  add constraint CKC_ATIVO_CO_ETNIA
+  check (ATIVO in ('S','N'));
+create unique index IN_RHETNIA_ATIVO on CO_ETNIA (ATIVO,SQ_ETNIA)
+  tablespace SYSTEM
+  pctfree 10
+  initrans 2
+  maxtrans 255
+  storage
+  (
+    initial 66K
+    minextents 1
+    maxextents unlimited
+  );
+create unique index IN_RHETNIA_COR on CO_ETNIA (NOME)
+  tablespace SYSTEM
+  pctfree 10
+  initrans 2
+  maxtrans 255
+  storage
+  (
+    initial 66K
+    minextents 1
+    maxextents unlimited
+  );
+create unique index IN_RHETNIA_SIAPE on CO_ETNIA (CODIGO_SIAPE,SQ_ETNIA)
+  tablespace SYSTEM
+  pctfree 10
+  initrans 2
+  maxtrans 255
+  storage
+  (
+    initial 66K
+    minextents 1
+    maxextents unlimited
+  );
+

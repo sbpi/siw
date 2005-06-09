@@ -1,0 +1,7 @@
+create sequence CO_TIPO_DISCIPLINA
+minvalue 121
+maxvalue 999999999999999999999999999
+start with 143
+increment by 1
+nocache;
+

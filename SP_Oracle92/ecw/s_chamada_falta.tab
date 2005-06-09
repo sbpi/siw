@@ -1,0 +1,44 @@
+create table S_CHAMADA_FALTA
+(
+  CO_UNIDADE       CHAR(5) not null,
+  CO_CHAMADA_TURMA NUMBER(10) not null,
+  ANO_SEM          CHAR(5),
+  CO_SEQ_CHAMADA   NUMBER(10) not null,
+  CO_TURMA         NUMBER(10),
+  CO_DISCIPLINA    CHAR(4),
+  CO_CURSO         NUMBER(10),
+  CO_SEQ_SERIE     NUMBER(10),
+  CO_ALUNO         CHAR(12) not null,
+  CHAMADA          CHAR(1),
+  JUSTIFICATIVA    VARCHAR2(20)
+)
+tablespace SGE
+  pctfree 10
+  initrans 1
+  maxtrans 255
+  storage
+  (
+    initial 66K
+    minextents 1
+    maxextents unlimited
+  );
+alter table S_CHAMADA_FALTA
+  add constraint PKS_CHAMADA_FALTA primary key (CO_UNIDADE,CO_ALUNO,CO_CHAMADA_TURMA,CO_SEQ_CHAMADA)
+  using index 
+  tablespace SGE
+  pctfree 10
+  initrans 2
+  maxtrans 255
+  storage
+  (
+    initial 66K
+    minextents 1
+    maxextents unlimited
+  );
+alter table S_CHAMADA_FALTA
+  add constraint R_125 foreign key (CO_UNIDADE,CO_CHAMADA_TURMA,CO_SEQ_CHAMADA)
+  references S_CHAMADA_TURMA (CO_UNIDADE,CO_CHAMADA_TURMA,CO_SEQ_CHAMADA) on delete cascade;
+alter table S_CHAMADA_FALTA
+  add constraint R131_551 foreign key (CO_UNIDADE,ANO_SEM,CO_TURMA,CO_DISCIPLINA,CO_ALUNO,CO_CURSO,CO_SEQ_SERIE)
+  references S_ALUNO_TURMA_DISC (CO_UNIDADE,ANO_SEM,CO_TURMA,CO_DISCIPLINA,CO_ALUNO,CO_CURSO,CO_SEQ_SERIE) on delete cascade;
+

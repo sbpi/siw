@@ -1,0 +1,72 @@
+create table SIW_ARQUIVO
+(
+  SQ_SIW_ARQUIVO NUMBER(18) not null,
+  CLIENTE        NUMBER(18) not null,
+  NOME           VARCHAR2(255) not null,
+  DESCRICAO      VARCHAR2(1000),
+  INCLUSAO       DATE default sysdate not null,
+  TAMANHO        NUMBER(18) default 0 not null,
+  TIPO           VARCHAR2(60),
+  CAMINHO        VARCHAR2(255)
+)
+tablespace SYSTEM
+  pctfree 10
+  pctused 40
+  initrans 1
+  maxtrans 255
+  storage
+  (
+    initial 72K
+    next 64K
+    minextents 1
+    maxextents unlimited
+    pctincrease 50
+  );
+comment on column SIW_ARQUIVO.SQ_SIW_ARQUIVO
+  is 'Sequence.';
+comment on column SIW_ARQUIVO.CLIENTE
+  is 'Sequence';
+comment on column SIW_ARQUIVO.NOME
+  is 'Nome original do arquivo.';
+comment on column SIW_ARQUIVO.DESCRICAO
+  is 'Descrição do conteúdo do arquivo.';
+comment on column SIW_ARQUIVO.INCLUSAO
+  is 'Data da inclusão do arquivo.';
+comment on column SIW_ARQUIVO.TAMANHO
+  is 'Tamanho do arquivo em bytes.';
+comment on column SIW_ARQUIVO.TIPO
+  is 'Tipo do arquivo, a ser usado na visualização.';
+comment on column SIW_ARQUIVO.CAMINHO
+  is 'Caminho físico do arquivo.';
+alter table SIW_ARQUIVO
+  add constraint PK_SIW_ARQUIVO primary key (SQ_SIW_ARQUIVO)
+  using index 
+  tablespace SYSTEM
+  pctfree 10
+  initrans 2
+  maxtrans 255
+  storage
+  (
+    initial 72K
+    next 64K
+    minextents 1
+    maxextents unlimited
+    pctincrease 50
+  );
+alter table SIW_ARQUIVO
+  add constraint FK_SIWARQ_COPES foreign key (CLIENTE)
+  references CO_PESSOA (SQ_PESSOA);
+create index IN_SIWARQ_CLIENTE on SIW_ARQUIVO (CLIENTE,SQ_SIW_ARQUIVO)
+  tablespace SYSTEM
+  pctfree 10
+  initrans 2
+  maxtrans 255
+  storage
+  (
+    initial 72K
+    next 64K
+    minextents 1
+    maxextents unlimited
+    pctincrease 50
+  );
+

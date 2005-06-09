@@ -1,0 +1,38 @@
+create table S_ALUNO_AVANCOESTU
+(
+  SG_SERIE        VARCHAR2(5) not null,
+  ANO_SEM         CHAR(5) not null,
+  CO_ALUNO        CHAR(12) not null,
+  CO_UNIDADE      CHAR(5) not null,
+  DT_AVANCOESTUDO DATE
+)
+tablespace SGE
+  pctfree 10
+  initrans 1
+  maxtrans 255
+  storage
+  (
+    initial 66K
+    minextents 1
+    maxextents unlimited
+  );
+alter table S_ALUNO_AVANCOESTU
+  add constraint U209_214 primary key (SG_SERIE,ANO_SEM,CO_ALUNO,CO_UNIDADE)
+  using index 
+  tablespace SGE
+  pctfree 10
+  initrans 2
+  maxtrans 255
+  storage
+  (
+    initial 66K
+    minextents 1
+    maxextents unlimited
+  );
+alter table S_ALUNO_AVANCOESTU
+  add constraint R209_219 foreign key (ANO_SEM,CO_ALUNO,CO_UNIDADE)
+  references S_ALUNO_PER_UNID (ANO_SEM,CO_ALUNO,CO_UNIDADE) on delete cascade;
+alter table S_ALUNO_AVANCOESTU
+  add constraint R209_220 foreign key (SG_SERIE)
+  references S_SERIE (SG_SERIE) on delete cascade;
+

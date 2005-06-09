@@ -1,0 +1,62 @@
+create table DC_ESQUEMA_TABELA
+(
+  SQ_ESQUEMA_TABELA NUMBER(18) not null,
+  SQ_ESQUEMA        NUMBER(18) not null,
+  SQ_TABELA         NUMBER(18) not null,
+  ORDEM             NUMBER(4) default 0 not null,
+  ELEMENTO          VARCHAR2(50) not null
+)
+tablespace SYSTEM
+  pctfree 10
+  pctused 40
+  initrans 1
+  maxtrans 255
+  storage
+  (
+    initial 66K
+    minextents 1
+    maxextents unlimited
+  );
+comment on table DC_ESQUEMA_TABELA
+  is 'Registra as tabelas do dicionário que serão integradas a sistemas externos.';
+comment on column DC_ESQUEMA_TABELA.SQ_ESQUEMA_TABELA
+  is 'Sequence.';
+comment on column DC_ESQUEMA_TABELA.SQ_ESQUEMA
+  is 'Sequence.';
+comment on column DC_ESQUEMA_TABELA.SQ_TABELA
+  is 'Chave de DC_TABELA.';
+comment on column DC_ESQUEMA_TABELA.ORDEM
+  is 'Informa posição desta tabela na lista de importação ou exportação.';
+comment on column DC_ESQUEMA_TABELA.ELEMENTO
+  is 'Indica o elemtno do arquivo XML que contém os dados da tabela.';
+alter table DC_ESQUEMA_TABELA
+  add constraint PK_DC_ESQUEMA_TABELA primary key (SQ_ESQUEMA_TABELA)
+  using index 
+  tablespace SYSTEM
+  pctfree 10
+  initrans 2
+  maxtrans 255
+  storage
+  (
+    initial 66K
+    minextents 1
+    maxextents unlimited
+  );
+alter table DC_ESQUEMA_TABELA
+  add constraint FK_DCESQTAB_DCESQ foreign key (SQ_ESQUEMA)
+  references DC_ESQUEMA (SQ_ESQUEMA);
+alter table DC_ESQUEMA_TABELA
+  add constraint FK_DCINT_DCTAB foreign key (SQ_TABELA)
+  references DC_TABELA (SQ_TABELA);
+create unique index IN_DCESQTAB_TABELA on DC_ESQUEMA_TABELA (SQ_TABELA,SQ_ESQUEMA)
+  tablespace SYSTEM
+  pctfree 10
+  initrans 2
+  maxtrans 255
+  storage
+  (
+    initial 66K
+    minextents 1
+    maxextents unlimited
+  );
+

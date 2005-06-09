@@ -1,0 +1,67 @@
+create table PJ_ETAPA_DEMANDA
+(
+  SQ_ETAPA_DEMANDA   NUMBER(18) not null,
+  SQ_PROJETO_ETAPA   NUMBER(18) not null,
+  SQ_SIW_SOLICITACAO NUMBER(18) not null
+)
+tablespace SYSTEM
+  pctfree 10
+  pctused 40
+  initrans 1
+  maxtrans 255
+  storage
+  (
+    initial 66K
+    minextents 1
+    maxextents unlimited
+  );
+comment on table PJ_ETAPA_DEMANDA
+  is 'Relaciona as demandas necessárias ao cumprimento da etapa.';
+comment on column PJ_ETAPA_DEMANDA.SQ_ETAPA_DEMANDA
+  is 'Sequence';
+comment on column PJ_ETAPA_DEMANDA.SQ_PROJETO_ETAPA
+  is 'Chave de PJ_PROJETO_ETAPA';
+comment on column PJ_ETAPA_DEMANDA.SQ_SIW_SOLICITACAO
+  is 'Chave de SIW_SOLICITACAO';
+alter table PJ_ETAPA_DEMANDA
+  add constraint PK_PJ_ETAPA_DEMANDA primary key (SQ_ETAPA_DEMANDA)
+  using index 
+  tablespace SYSTEM
+  pctfree 10
+  initrans 2
+  maxtrans 255
+  storage
+  (
+    initial 66K
+    minextents 1
+    maxextents unlimited
+  );
+alter table PJ_ETAPA_DEMANDA
+  add constraint FK_PJETADEM_PJPROETA foreign key (SQ_PROJETO_ETAPA)
+  references PJ_PROJETO_ETAPA (SQ_PROJETO_ETAPA);
+alter table PJ_ETAPA_DEMANDA
+  add constraint FK_PJETADEM_SIWSOL foreign key (SQ_SIW_SOLICITACAO)
+  references SIW_SOLICITACAO (SQ_SIW_SOLICITACAO);
+create index IN_PJETADEM_ETAPA on PJ_ETAPA_DEMANDA (SQ_PROJETO_ETAPA,SQ_ETAPA_DEMANDA)
+  tablespace SYSTEM
+  pctfree 10
+  initrans 2
+  maxtrans 255
+  storage
+  (
+    initial 66K
+    minextents 1
+    maxextents unlimited
+  );
+create index IN_PJETADEM_SOLIC on PJ_ETAPA_DEMANDA (SQ_SIW_SOLICITACAO,SQ_ETAPA_DEMANDA)
+  tablespace SYSTEM
+  pctfree 10
+  initrans 2
+  maxtrans 255
+  storage
+  (
+    initial 66K
+    minextents 1
+    maxextents unlimited
+  );
+

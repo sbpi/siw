@@ -1,0 +1,42 @@
+create table SIW_MENU_ARQUIVO
+(
+  SQ_MENU        NUMBER(18),
+  SQ_SIW_ARQUIVO NUMBER(18)
+)
+tablespace SYSTEM
+  pctfree 10
+  pctused 40
+  initrans 1
+  maxtrans 255
+  storage
+  (
+    initial 72K
+    next 64K
+    minextents 1
+    maxextents unlimited
+    pctincrease 50
+  );
+comment on column SIW_MENU_ARQUIVO.SQ_MENU
+  is 'Sequence';
+comment on column SIW_MENU_ARQUIVO.SQ_SIW_ARQUIVO
+  is 'Sequence.';
+alter table SIW_MENU_ARQUIVO
+  add constraint FK_SIWMENARQ_SIWARQ foreign key (SQ_SIW_ARQUIVO)
+  references SIW_ARQUIVO (SQ_SIW_ARQUIVO);
+alter table SIW_MENU_ARQUIVO
+  add constraint FK_SIWMENARQ_SIWMEN foreign key (SQ_MENU)
+  references SIW_MENU (SQ_MENU);
+create index IN_SIWMENARQ_INVERSA on SIW_MENU_ARQUIVO (SQ_SIW_ARQUIVO,SQ_MENU)
+  tablespace SYSTEM
+  pctfree 10
+  initrans 2
+  maxtrans 255
+  storage
+  (
+    initial 72K
+    next 64K
+    minextents 1
+    maxextents unlimited
+    pctincrease 50
+  );
+

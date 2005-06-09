@@ -1,0 +1,7 @@
+create sequence SQ_PESSOA_CONTA_BANCARIA
+minvalue 1
+maxvalue 999999999999999999999999999
+start with 844
+increment by 1
+cache 20;
+

@@ -1,0 +1,58 @@
+create table S_CURSO_SERIE_DISC
+(
+  CO_CURS_SERIE_DISC NUMBER(10) not null,
+  CO_UNIDADE         CHAR(5) not null,
+  CO_DISCIPLINA      CHAR(4) not null,
+  ANO_SEM            CHAR(5) not null,
+  CO_CURSO           NUMBER(10),
+  NU_AULAS_SEMANAL   NUMBER(10),
+  CO_SEQ_SERIE       NUMBER(10),
+  NU_MINUTO_AULA     NUMBER(10),
+  NU_CARGA_HOR_ANUAL NUMBER(10),
+  TP_AVALIACAO       CHAR(20),
+  TP_DIGITACAO       CHAR(8),
+  TP_IMPRESSAO       CHAR(8),
+  ST_REPROVA         CHAR(3),
+  TP_DISCIPLINA      CHAR(30)
+)
+tablespace SGE
+  pctfree 10
+  initrans 1
+  maxtrans 255
+  storage
+  (
+    initial 66K
+    minextents 1
+    maxextents unlimited
+  );
+alter table S_CURSO_SERIE_DISC
+  add constraint U147_58 primary key (CO_CURS_SERIE_DISC,CO_DISCIPLINA,CO_UNIDADE,ANO_SEM)
+  using index 
+  tablespace SGE
+  pctfree 10
+  initrans 2
+  maxtrans 255
+  storage
+  (
+    initial 66K
+    minextents 1
+    maxextents unlimited
+  );
+alter table S_CURSO_SERIE_DISC
+  add constraint R_126 foreign key (ANO_SEM,CO_CURSO,CO_SEQ_SERIE,CO_UNIDADE)
+  references S_CURSO_SERIE (ANO_SEM,CO_CURSO,CO_SEQ_SERIE,CO_UNIDADE) on delete cascade;
+alter table S_CURSO_SERIE_DISC
+  add constraint R140_563 foreign key (CO_DISCIPLINA,ANO_SEM,CO_UNIDADE)
+  references S_DISCIPLINA (CO_DISCIPLINA,ANO_SEM,CO_UNIDADE) on delete cascade;
+create index FOREIGN178 on S_CURSO_SERIE_DISC (CO_UNIDADE)
+  tablespace SGE
+  pctfree 10
+  initrans 2
+  maxtrans 255
+  storage
+  (
+    initial 66K
+    minextents 1
+    maxextents unlimited
+  );
+

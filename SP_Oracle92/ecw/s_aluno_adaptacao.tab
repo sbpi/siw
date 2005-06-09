@@ -1,0 +1,44 @@
+create table S_ALUNO_ADAPTACAO
+(
+  CO_UNIDADE     CHAR(5) not null,
+  ANO_SEM        CHAR(5) not null,
+  CO_DISCIPLINA  CHAR(4) not null,
+  NU_NOTA        CHAR(5),
+  NU_AULAS_DADAS CHAR(3),
+  SG_SERIE       VARCHAR2(5) not null,
+  CO_ALUNO       CHAR(12) not null,
+  NU_FALTAS      NUMBER(10)
+)
+tablespace SGE
+  pctfree 10
+  initrans 1
+  maxtrans 255
+  storage
+  (
+    initial 66K
+    minextents 1
+    maxextents unlimited
+  );
+alter table S_ALUNO_ADAPTACAO
+  add constraint U119_20 primary key (CO_UNIDADE,ANO_SEM,CO_DISCIPLINA,CO_ALUNO,SG_SERIE)
+  using index 
+  tablespace SGE
+  pctfree 10
+  initrans 2
+  maxtrans 255
+  storage
+  (
+    initial 66K
+    minextents 1
+    maxextents unlimited
+  );
+alter table S_ALUNO_ADAPTACAO
+  add constraint R111_520 foreign key (ANO_SEM,CO_ALUNO,CO_UNIDADE)
+  references S_ALUNO_PER_UNID (ANO_SEM,CO_ALUNO,CO_UNIDADE) on delete cascade;
+alter table S_ALUNO_ADAPTACAO
+  add constraint R_120 foreign key (SG_SERIE)
+  references S_SERIE (SG_SERIE) on delete cascade;
+alter table S_ALUNO_ADAPTACAO
+  add constraint R_143 foreign key (CO_DISCIPLINA,ANO_SEM,CO_UNIDADE)
+  references S_DISCIPLINA (CO_DISCIPLINA,ANO_SEM,CO_UNIDADE) on delete cascade;
+

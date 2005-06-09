@@ -1,0 +1,7 @@
+create sequence CO_SEQ_AMBIENTE
+minvalue 1
+maxvalue 9999999999999999999999999999
+start with 17
+increment by 1
+nocache;
+

@@ -1,0 +1,55 @@
+create table S_FUNCIONARIO_OCOR
+(
+  CO_UNIDADE         CHAR(5) not null,
+  CO_OCORRENCIA      NUMBER(10) not null,
+  CO_FUNCIONARIO     CHAR(10) not null,
+  ANO_SEM            CHAR(5) not null,
+  CO_TIPO_OCORRENCIA NUMBER(10),
+  DT_OCORRENCIA      DATE,
+  DS_OCORRENCIA      BLOB,
+  HO_OCORRENCIA      CHAR(5),
+  ST_RECADO          CHAR(30),
+  ST_RECADO_DADO     CHAR(30),
+  DS_USUARIO_RECADO  CHAR(20)
+)
+tablespace SGE
+  pctfree 10
+  initrans 1
+  maxtrans 255
+  storage
+  (
+    initial 66K
+    minextents 1
+    maxextents unlimited
+  );
+alter table S_FUNCIONARIO_OCOR
+  add constraint U153_64 primary key (CO_UNIDADE,CO_OCORRENCIA,CO_FUNCIONARIO,ANO_SEM)
+  using index 
+  tablespace SGE
+  pctfree 10
+  initrans 2
+  maxtrans 255
+  storage
+  (
+    initial 66K
+    minextents 1
+    maxextents unlimited
+  );
+alter table S_FUNCIONARIO_OCOR
+  add constraint S_FUNC_OC_STO_FK foreign key (CO_TIPO_OCORRENCIA,CO_UNIDADE)
+  references S_TIPO_OCORRENCIA (CO_TIPO_OCORRENCIA,CO_UNIDADE) on delete cascade;
+alter table S_FUNCIONARIO_OCOR
+  add constraint S_FUNC_OC_SUF_FK foreign key (CO_FUNCIONARIO,ANO_SEM,CO_UNIDADE)
+  references S_UNIDADEFUNC (CO_FUNCIONARIO,ANO_SEM,CO_UNIDADE) on delete cascade;
+create index FOREIGN169 on S_FUNCIONARIO_OCOR (CO_TIPO_OCORRENCIA)
+  tablespace SGE
+  pctfree 10
+  initrans 2
+  maxtrans 255
+  storage
+  (
+    initial 66K
+    minextents 1
+    maxextents unlimited
+  );
+

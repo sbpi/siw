@@ -1,0 +1,32 @@
+create table S_DUPLICIDADE
+(
+  CO_DUPLICIDADE NUMBER(10) not null,
+  CO_UNIDADE     VARCHAR2(5) not null,
+  ANO_SEM        VARCHAR2(5) not null,
+  DS_ARQUIVO     VARCHAR2(60) not null,
+  TP_STATUS      CHAR(1)
+)
+tablespace SGE
+  pctfree 10
+  initrans 1
+  maxtrans 255
+  storage
+  (
+    initial 66K
+    minextents 1
+    maxextents unlimited
+  );
+alter table S_DUPLICIDADE
+  add constraint U241_427 primary key (CO_DUPLICIDADE)
+  using index 
+  tablespace SGE
+  pctfree 10
+  initrans 2
+  maxtrans 255
+  storage
+  (
+    initial 66K
+    minextents 1
+    maxextents unlimited
+  );
+

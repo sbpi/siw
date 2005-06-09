@@ -1,0 +1,127 @@
+create table IS_PPA_LOCALIZADOR
+(
+  CLIENTE                 NUMBER(18) not null,
+  ANO                     NUMBER(4) not null,
+  CD_PROGRAMA             VARCHAR2(4) not null,
+  CD_ACAO_PPA             VARCHAR2(5) not null,
+  CD_LOCALIZADOR_PPA      VARCHAR2(5) not null,
+  CD_REGIAO               VARCHAR2(2),
+  CD_MUNICIPIO            VARCHAR2(7),
+  CD_LOCALIZADOR          VARCHAR2(4) not null,
+  NOME                    VARCHAR2(255),
+  VALOR_TOTAL             NUMBER(18,2),
+  VALOR_ANO_ANTERIOR      NUMBER(18,2),
+  QTD_ANO_ANTERIOR        NUMBER(18,4),
+  VALOR_ANO_CORRENTE      NUMBER(18,2),
+  QTD_ANO_CORRENTE        NUMBER(18,4),
+  REPERC_FINANCEIRA       VARCHAR2(4000),
+  VALOR_REPERC_FINANCEIRA NUMBER(18,2),
+  MES_INICIO              VARCHAR2(2),
+  ANO_INICIO              VARCHAR2(4),
+  MES_TERMINO             VARCHAR2(2),
+  ANO_TERMINO             VARCHAR2(4),
+  NOME_ALTERADO           VARCHAR2(1) default 'N' not null,
+  OBSERVACAO              VARCHAR2(4000),
+  QTD_TOTAL               NUMBER(18,4),
+  CD_SOF_REFERENCIA       NUMBER(18),
+  FLAG_INCLUSAO           DATE default sysdate not null,
+  FLAG_ALTERACAO          DATE,
+  FLAG_ENVIO              DATE
+)
+tablespace SYSTEM
+  pctfree 10
+  pctused 40
+  initrans 1
+  maxtrans 255
+  storage
+  (
+    initial 72K
+    next 64K
+    minextents 1
+    maxextents unlimited
+    pctincrease 50
+  );
+comment on table IS_PPA_LOCALIZADOR
+  is 'Vincula as ações que sofreram algum tipo de modificação.';
+comment on column IS_PPA_LOCALIZADOR.CLIENTE
+  is 'Sequence';
+comment on column IS_PPA_LOCALIZADOR.ANO
+  is 'Ano de referência do registro.';
+comment on column IS_PPA_LOCALIZADOR.CD_PROGRAMA
+  is 'Código do Programa no Sigplan';
+comment on column IS_PPA_LOCALIZADOR.CD_ACAO_PPA
+  is 'Código da Ação no PPA';
+comment on column IS_PPA_LOCALIZADOR.CD_LOCALIZADOR_PPA
+  is 'Código do Localizador do PPA';
+comment on column IS_PPA_LOCALIZADOR.CD_REGIAO
+  is 'Código da Região';
+comment on column IS_PPA_LOCALIZADOR.CD_MUNICIPIO
+  is 'Código do Município';
+comment on column IS_PPA_LOCALIZADOR.CD_LOCALIZADOR
+  is 'Código do Localizador';
+comment on column IS_PPA_LOCALIZADOR.NOME
+  is 'Descrição do Localizador';
+comment on column IS_PPA_LOCALIZADOR.VALOR_TOTAL
+  is 'Custo total estimado do projeto';
+comment on column IS_PPA_LOCALIZADOR.VALOR_ANO_ANTERIOR
+  is 'Custo financeiro até ano anterior';
+comment on column IS_PPA_LOCALIZADOR.QTD_ANO_ANTERIOR
+  is 'Quantidade física até ano anterior';
+comment on column IS_PPA_LOCALIZADOR.VALOR_ANO_CORRENTE
+  is 'Custo financeiro previsto para o ano corrente';
+comment on column IS_PPA_LOCALIZADOR.QTD_ANO_CORRENTE
+  is 'Quantidade física prevista para o ano corrente';
+comment on column IS_PPA_LOCALIZADOR.REPERC_FINANCEIRA
+  is 'Campo para justificativa do valor que foi inserido na repercussão financeira';
+comment on column IS_PPA_LOCALIZADOR.VALOR_REPERC_FINANCEIRA
+  is 'Descreve o valor da Repercussão financeira';
+comment on column IS_PPA_LOCALIZADOR.MES_INICIO
+  is 'Mês de início da Localizador';
+comment on column IS_PPA_LOCALIZADOR.ANO_INICIO
+  is 'Ano de início da Localizador';
+comment on column IS_PPA_LOCALIZADOR.MES_TERMINO
+  is 'Mês de término da Localizador';
+comment on column IS_PPA_LOCALIZADOR.ANO_TERMINO
+  is 'Ano de término da Localizador';
+comment on column IS_PPA_LOCALIZADOR.NOME_ALTERADO
+  is 'Indica se a descrição foi alterada';
+comment on column IS_PPA_LOCALIZADOR.OBSERVACAO
+  is 'Observação referente ao localizador';
+comment on column IS_PPA_LOCALIZADOR.QTD_TOTAL
+  is 'Quantidade Total do Localizador (Meta física do localizador, independente de Ano e PPA)';
+comment on column IS_PPA_LOCALIZADOR.CD_SOF_REFERENCIA
+  is 'Código da célula orçamentária';
+comment on column IS_PPA_LOCALIZADOR.FLAG_INCLUSAO
+  is 'Data de inclusão do registro';
+comment on column IS_PPA_LOCALIZADOR.FLAG_ALTERACAO
+  is 'Data da última alteração do registro, caso ele tenha sido alterado.';
+comment on column IS_PPA_LOCALIZADOR.FLAG_ENVIO
+  is 'Data do último envio do registro, caso ele já tenha sido enviado.';
+alter table IS_PPA_LOCALIZADOR
+  add constraint PK_IS_PPA_LOCALIZADOR primary key (CLIENTE,ANO,CD_PROGRAMA,CD_ACAO_PPA,CD_LOCALIZADOR_PPA)
+  using index 
+  tablespace SYSTEM
+  pctfree 10
+  initrans 2
+  maxtrans 255
+  storage
+  (
+    initial 72K
+    next 64K
+    minextents 1
+    maxextents unlimited
+    pctincrease 50
+  );
+alter table IS_PPA_LOCALIZADOR
+  add constraint FK_ISPPALOC_ISMUN foreign key (CD_MUNICIPIO)
+  references IS_MUNICIPIO (CD_MUNICIPIO);
+alter table IS_PPA_LOCALIZADOR
+  add constraint FK_ISPPALOC_ISPPAACA foreign key (CLIENTE,ANO,CD_PROGRAMA,CD_ACAO_PPA)
+  references IS_PPA_ACAO (CLIENTE,ANO,CD_PROGRAMA,CD_ACAO_PPA);
+alter table IS_PPA_LOCALIZADOR
+  add constraint FK_ISPPALOC_ISREG foreign key (CD_REGIAO)
+  references IS_REGIAO (CD_REGIAO);
+alter table IS_PPA_LOCALIZADOR
+  add constraint CKC_NOME_ALTERADO_IS_PPA_L
+  check (NOME_ALTERADO in ('S','N'));
+

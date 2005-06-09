@@ -1,0 +1,180 @@
+create table S_ALUNO
+(
+  CO_ALUNO           CHAR(12) not null,
+  DS_ALUNO           VARCHAR2(40) not null,
+  CO_SEQ_CIDADE      NUMBER(10),
+  DT_NASCIMENTO      DATE,
+  DS_ALUNO_ORDEM     VARCHAR2(40),
+  TP_SEXO_ALUNO      CHAR(1),
+  DS_NATURALIDADE    VARCHAR2(30),
+  DS_UF_NASCIMENTO   CHAR(2),
+  DS_NACIONALIDADE   VARCHAR2(20),
+  DS_ENDERECO        VARCHAR2(40),
+  DS_BAIRRO          VARCHAR2(20),
+  NU_CEP             CHAR(9),
+  DS_CIDADE          VARCHAR2(20),
+  DS_UF_CIDADE       CHAR(2),
+  DS_E_MAIL          VARCHAR2(100),
+  TP_ESTADO_CIVIL    VARCHAR2(12),
+  DS_CONJUGE         VARCHAR2(40),
+  NU_RG              VARCHAR2(15),
+  DS_ORGAO_EMISSOR   VARCHAR2(30),
+  DT_EMISSAO         DATE,
+  NU_CPF             VARCHAR2(14),
+  DS_FICHA_MEDICA    BLOB,
+  TP_ESCOLA_ORIGEM   VARCHAR2(10),
+  DT_INGRESSO        DATE,
+  NU_TEMPO_ESCOLAR   CHAR(2),
+  DS_CERTIDAO        VARCHAR2(10),
+  NU_CERTIDAO        VARCHAR2(10),
+  NU_LIVRO           VARCHAR2(5),
+  NU_FOLHA           VARCHAR2(5),
+  DS_CARTORIO        VARCHAR2(15),
+  DS_CIDADE_CERTIDAO VARCHAR2(20),
+  DS_FOTO            BLOB,
+  DS_UF_CERTIDAO     CHAR(2),
+  NU_RESERVISTA      VARCHAR2(12),
+  NU_TITULO_ELEITOR  VARCHAR2(12),
+  DS_ZONA            CHAR(3),
+  DS_SECAO           CHAR(3),
+  DS_UF_SECAO        CHAR(2),
+  DS_PAI             VARCHAR2(40),
+  DS_MAE             VARCHAR2(40),
+  CO_ORIGEM_ESCOLA   NUMBER(10),
+  DS_WEB             VARCHAR2(150),
+  ID_ATIVO_PASSIVO   CHAR(1),
+  CO_UNIDADE         CHAR(5),
+  CO_ALUNO_ANTIGO    CHAR(12),
+  DS_CATEGORIA       VARCHAR2(4),
+  TP_ANEE            VARCHAR2(4),
+  DS_ENDERECO_PAI    VARCHAR2(40),
+  DS_ENDERECO_MAE    VARCHAR2(40),
+  DS_TELEFONE_PAI    VARCHAR2(13),
+  DS_TELEFONE_MAE    VARCHAR2(13),
+  DS_PROBSAUDE       VARCHAR2(40),
+  DS_ACOMPANHAMENTO  VARCHAR2(40),
+  TP_VISAO           CHAR(1),
+  DS_ALERGIA_ALIMENT VARCHAR2(60),
+  DS_ALERGIA_MEDICAM VARCHAR2(60),
+  DS_REMEDIOS        VARCHAR2(60),
+  TP_ESCOLA_PARQUE   CHAR(3),
+  TP_EJA             CHAR(1),
+  TP_NEURO           CHAR(1),
+  TP_PSICO           CHAR(1),
+  TP_CARDIO          CHAR(1),
+  TP_AUDICAO         CHAR(1),
+  CO_TIPO_CURSO      NUMBER(10),
+  SG_SERIE           CHAR(5),
+  CO_TURNO           CHAR(2),
+  TP_CIL             CHAR(3)
+)
+tablespace SGE
+  pctfree 10
+  initrans 1
+  maxtrans 255
+  storage
+  (
+    initial 66K
+    minextents 1
+    maxextents unlimited
+  );
+alter table S_ALUNO
+  add constraint U196_155 primary key (CO_ALUNO)
+  using index 
+  tablespace SGE
+  pctfree 10
+  initrans 2
+  maxtrans 255
+  storage
+  (
+    initial 66K
+    minextents 1
+    maxextents unlimited
+  );
+alter table S_ALUNO
+  add constraint R110_519 foreign key (CO_SEQ_CIDADE)
+  references S_CIDADE (CO_SEQ_CIDADE) on delete cascade;
+alter table S_ALUNO
+  add constraint R_112 foreign key (CO_ORIGEM_ESCOLA)
+  references S_ORIGEM_ESCOLA (CO_ORIGEM_ESCOLA) on delete cascade;
+alter table S_ALUNO
+  add constraint R_142 foreign key (CO_UNIDADE)
+  references S_UNIDADE (CO_UNIDADE) on delete cascade;
+create index ALUNO_MAE on S_ALUNO (DS_MAE)
+  tablespace SGE
+  pctfree 10
+  initrans 2
+  maxtrans 255
+  storage
+  (
+    initial 66K
+    minextents 1
+    maxextents unlimited
+  );
+create index ALUNO_NASC on S_ALUNO (DT_NASCIMENTO)
+  tablespace SGE
+  pctfree 10
+  initrans 2
+  maxtrans 255
+  storage
+  (
+    initial 66K
+    minextents 1
+    maxextents unlimited
+  );
+create index ALUNO_NOME on S_ALUNO (DS_ALUNO)
+  tablespace SGE
+  pctfree 10
+  initrans 2
+  maxtrans 255
+  storage
+  (
+    initial 66K
+    minextents 1
+    maxextents unlimited
+  );
+create index ALUNO_ORDEM on S_ALUNO (DS_ALUNO_ORDEM)
+  tablespace SGE
+  pctfree 10
+  initrans 2
+  maxtrans 255
+  storage
+  (
+    initial 66K
+    minextents 1
+    maxextents unlimited
+  );
+create index IDX_DUPLICIDADE on S_ALUNO (DS_ALUNO,DS_MAE,DT_NASCIMENTO)
+  tablespace SGE
+  pctfree 10
+  initrans 2
+  maxtrans 255
+  storage
+  (
+    initial 66K
+    minextents 1
+    maxextents unlimited
+  );
+create index IDX_IDATPASS on S_ALUNO (ID_ATIVO_PASSIVO)
+  tablespace SGE
+  pctfree 10
+  initrans 2
+  maxtrans 255
+  storage
+  (
+    initial 66K
+    minextents 1
+    maxextents unlimited
+  );
+create index IDX_TPANEE on S_ALUNO (TP_ANEE)
+  tablespace SGE
+  pctfree 10
+  initrans 2
+  maxtrans 255
+  storage
+  (
+    initial 66K
+    minextents 1
+    maxextents unlimited
+  );
+

@@ -1,0 +1,44 @@
+create table DC_TRIGGER_EVENTO
+(
+  SQ_TRIGGER NUMBER(18) not null,
+  SQ_EVENTO  NUMBER(18) not null
+)
+tablespace SYSTEM
+  pctfree 10
+  pctused 40
+  initrans 1
+  maxtrans 255
+  storage
+  (
+    initial 72K
+    next 64K
+    minextents 1
+    maxextents unlimited
+    pctincrease 50
+  );
+comment on column DC_TRIGGER_EVENTO.SQ_TRIGGER
+  is 'Sequence.';
+comment on column DC_TRIGGER_EVENTO.SQ_EVENTO
+  is 'Sequence.';
+alter table DC_TRIGGER_EVENTO
+  add constraint PK_DC_TRIGGER_EVENTO primary key (SQ_TRIGGER,SQ_EVENTO)
+  using index 
+  tablespace SYSTEM
+  pctfree 10
+  initrans 2
+  maxtrans 255
+  storage
+  (
+    initial 72K
+    next 64K
+    minextents 1
+    maxextents unlimited
+    pctincrease 50
+  );
+alter table DC_TRIGGER_EVENTO
+  add constraint FK_DCTRIEVE_DCEVE foreign key (SQ_EVENTO)
+  references DC_EVENTO (SQ_EVENTO);
+alter table DC_TRIGGER_EVENTO
+  add constraint FK_DCTRIEVE_DCTRI foreign key (SQ_TRIGGER)
+  references DC_TRIGGER (SQ_TRIGGER);
+

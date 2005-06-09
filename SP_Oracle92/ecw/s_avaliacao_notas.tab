@@ -1,0 +1,49 @@
+create table S_AVALIACAO_NOTAS
+(
+  AV_SEQUENCIAL     NUMBER(10) not null,
+  CO_UNIDADE        CHAR(5) not null,
+  DT_AVALIACAO      DATE not null,
+  CO_AVALIACAO      NUMBER(10) not null,
+  CO_ALUNO          CHAR(12) not null,
+  AVT_NOTA          VARCHAR2(6),
+  CO_TIPO_AVALIACAO NUMBER(10) not null,
+  DS_INFORMACAO     BLOB
+)
+tablespace SGE
+  pctfree 10
+  initrans 1
+  maxtrans 255
+  storage
+  (
+    initial 66K
+    minextents 1
+    maxextents unlimited
+  );
+alter table S_AVALIACAO_NOTAS
+  add constraint U140_51 primary key (CO_UNIDADE,AV_SEQUENCIAL,DT_AVALIACAO,CO_AVALIACAO,CO_ALUNO,CO_TIPO_AVALIACAO)
+  using index 
+  tablespace SGE
+  pctfree 10
+  initrans 2
+  maxtrans 255
+  storage
+  (
+    initial 66K
+    minextents 1
+    maxextents unlimited
+  );
+alter table S_AVALIACAO_NOTAS
+  add constraint FK_AT_AVALIACAO_NO foreign key (CO_UNIDADE,AV_SEQUENCIAL,DT_AVALIACAO,CO_AVALIACAO,CO_TIPO_AVALIACAO)
+  references S_AVALIACAO_TURMA (CO_UNIDADE,AV_SEQUENCIAL,DT_AVALIACAO,CO_AVALIACAO,CO_TIPO_AVALIACAO) on delete cascade;
+create index FOREIGN204 on S_AVALIACAO_NOTAS (AV_SEQUENCIAL,DT_AVALIACAO,CO_AVALIACAO)
+  tablespace SGE
+  pctfree 10
+  initrans 2
+  maxtrans 255
+  storage
+  (
+    initial 66K
+    minextents 1
+    maxextents unlimited
+  );
+

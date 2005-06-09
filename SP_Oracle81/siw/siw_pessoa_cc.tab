@@ -1,0 +1,76 @@
+create table SIW_PESSOA_CC
+(
+  SQ_PESSOA NUMBER(18) not null,
+  SQ_MENU   NUMBER(18) not null,
+  SQ_CC     NUMBER(18) not null
+)
+tablespace SYSTEM
+  pctfree 10
+  pctused 40
+  initrans 1
+  maxtrans 255
+  storage
+  (
+    initial 72K
+    next 64K
+    minextents 1
+    maxextents unlimited
+    pctincrease 50
+  );
+comment on column SIW_PESSOA_CC.SQ_PESSOA
+  is 'Chave de CO_PESSOA';
+comment on column SIW_PESSOA_CC.SQ_MENU
+  is 'Chave de SIW_MENU';
+comment on column SIW_PESSOA_CC.SQ_CC
+  is 'Chave de CT_CC';
+alter table SIW_PESSOA_CC
+  add constraint PK_SIW_PESSOA_CC primary key (SQ_PESSOA,SQ_MENU,SQ_CC)
+  using index 
+  tablespace SYSTEM
+  pctfree 10
+  initrans 2
+  maxtrans 255
+  storage
+  (
+    initial 72K
+    next 64K
+    minextents 1
+    maxextents unlimited
+    pctincrease 50
+  );
+alter table SIW_PESSOA_CC
+  add constraint FK_SIWPESCC_COPES foreign key (SQ_PESSOA)
+  references CO_PESSOA (SQ_PESSOA);
+alter table SIW_PESSOA_CC
+  add constraint FK_SIWPESCC_CTCC foreign key (SQ_CC)
+  references CT_CC (SQ_CC);
+alter table SIW_PESSOA_CC
+  add constraint FK_SIWPESCC_SIWMEN foreign key (SQ_MENU)
+  references SIW_MENU (SQ_MENU);
+create index IN_SIWPESCC_CTCC on SIW_PESSOA_CC (SQ_CC,SQ_PESSOA)
+  tablespace SYSTEM
+  pctfree 10
+  initrans 2
+  maxtrans 255
+  storage
+  (
+    initial 72K
+    next 64K
+    minextents 1
+    maxextents unlimited
+    pctincrease 50
+  );
+create index IN_SIWPESCC_MENU on SIW_PESSOA_CC (SQ_MENU,SQ_PESSOA)
+  tablespace SYSTEM
+  pctfree 10
+  initrans 2
+  maxtrans 255
+  storage
+  (
+    initial 72K
+    next 64K
+    minextents 1
+    maxextents unlimited
+    pctincrease 50
+  );
+

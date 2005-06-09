@@ -1,0 +1,18 @@
+create table HOSTEL_RS
+(
+  CARTEIRA VARCHAR2(100),
+  NOME     VARCHAR2(255),
+  SEXO     VARCHAR2(255),
+  VALIDADE DATE
+)
+tablespace USERS
+  pctfree 10
+  initrans 1
+  maxtrans 255
+  storage
+  (
+    initial 66K
+    minextents 1
+    maxextents unlimited
+  );
+

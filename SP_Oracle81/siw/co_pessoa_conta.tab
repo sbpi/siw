@@ -1,0 +1,86 @@
+create table CO_PESSOA_CONTA
+(
+  SQ_PESSOA_CONTA NUMBER(18) not null,
+  SQ_PESSOA       NUMBER(18) not null,
+  SQ_AGENCIA      NUMBER(18) not null,
+  OPERACAO        VARCHAR2(6),
+  NUMERO          VARCHAR2(30) not null,
+  ATIVO           VARCHAR2(1) default 'S' not null,
+  PADRAO          VARCHAR2(1) default 'N' not null,
+  TIPO_CONTA      VARCHAR2(1) not null,
+  INVALIDA        VARCHAR2(1) default 'N' not null
+)
+tablespace USERS
+  pctfree 10
+  pctused 40
+  initrans 1
+  maxtrans 255
+  storage
+  (
+    initial 136K
+    next 128K
+    minextents 1
+    maxextents 4096
+    pctincrease 0
+  );
+comment on table CO_PESSOA_CONTA
+  is 'Armazena a conta bancária das pessoas';
+comment on column CO_PESSOA_CONTA.OPERACAO
+  is 'Armazena a operação da conta, utilizada por bancos como Caixa Econômica e Bradesco.';
+comment on column CO_PESSOA_CONTA.NUMERO
+  is 'Número da conta bancária.';
+comment on column CO_PESSOA_CONTA.ATIVO
+  is 'Indica se o registro deve ou não ser exibido.';
+comment on column CO_PESSOA_CONTA.PADRAO
+  is 'Indica se este registro deve ser apresentado como padrão para o usuário.';
+comment on column CO_PESSOA_CONTA.TIPO_CONTA
+  is 'Armazena o tipo da conta corrente';
+comment on column CO_PESSOA_CONTA.INVALIDA
+  is 'Indica se a conta é inválida ou não.';
+alter table CO_PESSOA_CONTA
+  add constraint PK_CO_PESSOA_CONTA_BANCARIA primary key (SQ_PESSOA_CONTA)
+  using index 
+  tablespace USERS
+  pctfree 10
+  initrans 2
+  maxtrans 255
+  storage
+  (
+    initial 136K
+    next 128K
+    minextents 1
+    maxextents 4096
+    pctincrease 0
+  );
+alter table CO_PESSOA_CONTA
+  add constraint FK_COAGE_COPESCON foreign key (SQ_AGENCIA)
+  references CO_AGENCIA (SQ_AGENCIA);
+alter table CO_PESSOA_CONTA
+  add constraint FK_COPES_COPESCON foreign key (SQ_PESSOA)
+  references CO_PESSOA (SQ_PESSOA);
+alter table CO_PESSOA_CONTA
+  add constraint CKC_ATIVO_CO_PESSO
+  check (ATIVO in ('S','N'));
+alter table CO_PESSOA_CONTA
+  add constraint CKC_COPESCONBAN_IV
+  check (INVALIDA in ('S','N'));
+alter table CO_PESSOA_CONTA
+  add constraint CKC_COPESCONBAN_PD
+  check (PADRAO in ('S','N'));
+alter table CO_PESSOA_CONTA
+  add constraint CKC_COPESCONBAN_TC
+  check (TIPO_CONTA in ('1','2'));
+create index IN_COPESCONBAN_PES on CO_PESSOA_CONTA (SQ_PESSOA,TIPO_CONTA)
+  tablespace SYSTEM
+  pctfree 10
+  initrans 2
+  maxtrans 255
+  storage
+  (
+    initial 72K
+    next 64K
+    minextents 1
+    maxextents unlimited
+    pctincrease 50
+  );
+

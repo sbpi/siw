@@ -1,0 +1,54 @@
+create table DC_SP_TIPO
+(
+  SQ_SP_TIPO NUMBER(18) not null,
+  NOME       VARCHAR2(30) not null,
+  DESCRICAO  VARCHAR2(4000) not null
+)
+tablespace SYSTEM
+  pctfree 10
+  pctused 40
+  initrans 1
+  maxtrans 255
+  storage
+  (
+    initial 72K
+    next 64K
+    minextents 1
+    maxextents unlimited
+    pctincrease 50
+  );
+comment on column DC_SP_TIPO.SQ_SP_TIPO
+  is 'Sequence.';
+comment on column DC_SP_TIPO.NOME
+  is 'Nome da stored procedure.';
+comment on column DC_SP_TIPO.DESCRICAO
+  is 'Descrição do tipo de stored procedure.';
+alter table DC_SP_TIPO
+  add constraint PK_DC_SP_TIPO primary key (SQ_SP_TIPO)
+  using index 
+  tablespace SYSTEM
+  pctfree 10
+  initrans 2
+  maxtrans 255
+  storage
+  (
+    initial 72K
+    next 64K
+    minextents 1
+    maxextents unlimited
+    pctincrease 50
+  );
+create unique index IN_DCSPTIP_NOME on DC_SP_TIPO (NOME)
+  tablespace SYSTEM
+  pctfree 10
+  initrans 2
+  maxtrans 255
+  storage
+  (
+    initial 72K
+    next 64K
+    minextents 1
+    maxextents unlimited
+    pctincrease 50
+  );
+

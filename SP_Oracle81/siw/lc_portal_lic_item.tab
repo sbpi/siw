@@ -1,0 +1,145 @@
+create table LC_PORTAL_LIC_ITEM
+(
+  SQ_PORTAL_LIC_ITEM NUMBER(18) not null,
+  CLIENTE            NUMBER(18) not null,
+  SQ_PORTAL_LIC      NUMBER(18) not null,
+  ORDEM              NUMBER(4) not null,
+  NOME               VARCHAR2(60) not null,
+  DESCRICAO          VARCHAR2(2000),
+  QUANTIDADE         NUMBER(18,2),
+  VALOR_UNITARIO     NUMBER(18,2),
+  VALOR_TOTAL        NUMBER(18,2),
+  CANCELADO          VARCHAR2(1) default 'N' not null,
+  SITUACAO           VARCHAR2(500),
+  SQ_UNIDADE_FORNEC  NUMBER(18)
+)
+tablespace SYSTEM
+  pctfree 10
+  pctused 40
+  initrans 1
+  maxtrans 255
+  storage
+  (
+    initial 72K
+    next 64K
+    minextents 1
+    maxextents unlimited
+    pctincrease 50
+  );
+comment on column LC_PORTAL_LIC_ITEM.SQ_PORTAL_LIC_ITEM
+  is 'Sequence.';
+comment on column LC_PORTAL_LIC_ITEM.CLIENTE
+  is 'Chave de CO_PESSOA indicando a que cliente o registro pertence.';
+comment on column LC_PORTAL_LIC_ITEM.SQ_PORTAL_LIC
+  is 'Chave de LC_PORTAL_LIC, ligando o item à licitação.';
+comment on column LC_PORTAL_LIC_ITEM.ORDEM
+  is 'Número de ordem do item.';
+comment on column LC_PORTAL_LIC_ITEM.NOME
+  is 'Nome do item.';
+comment on column LC_PORTAL_LIC_ITEM.DESCRICAO
+  is 'Descrição do item.';
+comment on column LC_PORTAL_LIC_ITEM.QUANTIDADE
+  is 'Quantidade adquirida do item.';
+comment on column LC_PORTAL_LIC_ITEM.VALOR_UNITARIO
+  is 'Valor unitário do item.';
+comment on column LC_PORTAL_LIC_ITEM.VALOR_TOTAL
+  is 'Valor total do item, obtido pela multiplicação entre o valor unitário e a quantidade.';
+comment on column LC_PORTAL_LIC_ITEM.CANCELADO
+  is 'Indica se o item foi cancelado.';
+comment on column LC_PORTAL_LIC_ITEM.SITUACAO
+  is 'Situação do item, armazenando também o motivo do cancelamento.';
+comment on column LC_PORTAL_LIC_ITEM.SQ_UNIDADE_FORNEC
+  is 'Unidade de fornecimento  do item.';
+alter table LC_PORTAL_LIC_ITEM
+  add constraint PK_LC_PORTAL_LIC_ITEM primary key (SQ_PORTAL_LIC_ITEM)
+  using index 
+  tablespace SYSTEM
+  pctfree 10
+  initrans 2
+  maxtrans 255
+  storage
+  (
+    initial 72K
+    next 64K
+    minextents 1
+    maxextents unlimited
+    pctincrease 50
+  );
+alter table LC_PORTAL_LIC_ITEM
+  add constraint FK_LCPORLICITE_COPES foreign key (CLIENTE)
+  references CO_PESSOA (SQ_PESSOA);
+alter table LC_PORTAL_LIC_ITEM
+  add constraint FK_LCPORLICITE_LCPORLIC foreign key (SQ_PORTAL_LIC)
+  references LC_PORTAL_LIC (SQ_PORTAL_LIC);
+alter table LC_PORTAL_LIC_ITEM
+  add constraint FK_LCPORLICITE_LCUNIFOR foreign key (SQ_UNIDADE_FORNEC)
+  references LC_UNIDADE_FORNEC (SQ_UNIDADE_FORNEC);
+alter table LC_PORTAL_LIC_ITEM
+  add constraint CKC_CANCELADO_LC_PORTA
+  check (CANCELADO in ('S','N'));
+create index IN_LCPORITE_CANC on LC_PORTAL_LIC_ITEM (CLIENTE,CANCELADO,SQ_PORTAL_LIC_ITEM)
+  tablespace SYSTEM
+  pctfree 10
+  initrans 2
+  maxtrans 255
+  storage
+  (
+    initial 72K
+    next 64K
+    minextents 1
+    maxextents unlimited
+    pctincrease 50
+  );
+create index IN_LCPORITE_CLIENTE on LC_PORTAL_LIC_ITEM (CLIENTE,SQ_PORTAL_LIC_ITEM)
+  tablespace SYSTEM
+  pctfree 10
+  initrans 2
+  maxtrans 255
+  storage
+  (
+    initial 72K
+    next 64K
+    minextents 1
+    maxextents unlimited
+    pctincrease 50
+  );
+create index IN_LCPORITE_LIC on LC_PORTAL_LIC_ITEM (CLIENTE,SQ_PORTAL_LIC,SQ_PORTAL_LIC_ITEM)
+  tablespace SYSTEM
+  pctfree 10
+  initrans 2
+  maxtrans 255
+  storage
+  (
+    initial 72K
+    next 64K
+    minextents 1
+    maxextents unlimited
+    pctincrease 50
+  );
+create index IN_LCPORITE_NOME on LC_PORTAL_LIC_ITEM (CLIENTE,NOME)
+  tablespace SYSTEM
+  pctfree 10
+  initrans 2
+  maxtrans 255
+  storage
+  (
+    initial 72K
+    next 64K
+    minextents 1
+    maxextents unlimited
+    pctincrease 50
+  );
+create index IN_LCPORITE_ORDEM on LC_PORTAL_LIC_ITEM (CLIENTE,SQ_PORTAL_LIC,ORDEM,SQ_PORTAL_LIC_ITEM)
+  tablespace SYSTEM
+  pctfree 10
+  initrans 2
+  maxtrans 255
+  storage
+  (
+    initial 72K
+    next 64K
+    minextents 1
+    maxextents unlimited
+    pctincrease 50
+  );
+

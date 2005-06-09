@@ -1,0 +1,73 @@
+create table PJ_PROJETO_RECURSO
+(
+  SQ_PROJETO_RECURSO NUMBER(18) not null,
+  SQ_SIW_SOLICITACAO NUMBER(18) not null,
+  NOME               VARCHAR2(100) not null,
+  TIPO               NUMBER(2) not null,
+  DESCRICAO          VARCHAR2(2000),
+  FINALIDADE         VARCHAR2(2000)
+)
+tablespace SYSTEM
+  pctfree 10
+  pctused 40
+  initrans 1
+  maxtrans 255
+  storage
+  (
+    initial 66K
+    minextents 1
+    maxextents unlimited
+  );
+comment on table PJ_PROJETO_RECURSO
+  is 'Registra informações sobre os recursos alocados ao projeto.';
+comment on column PJ_PROJETO_RECURSO.SQ_PROJETO_RECURSO
+  is 'Sequence.';
+comment on column PJ_PROJETO_RECURSO.SQ_SIW_SOLICITACAO
+  is 'Chave de SIW_SOLICITACAO';
+comment on column PJ_PROJETO_RECURSO.NOME
+  is 'Nome do recurso.';
+comment on column PJ_PROJETO_RECURSO.TIPO
+  is 'Tipo do recurso (Humano, Material, Financeiro etc)';
+comment on column PJ_PROJETO_RECURSO.DESCRICAO
+  is 'Descrição do recurso';
+comment on column PJ_PROJETO_RECURSO.FINALIDADE
+  is 'Finalidade cumprida pelo recurso.';
+alter table PJ_PROJETO_RECURSO
+  add constraint PK_PJ_PROJETO_RECURSO primary key (SQ_PROJETO_RECURSO)
+  using index 
+  tablespace SYSTEM
+  pctfree 10
+  initrans 2
+  maxtrans 255
+  storage
+  (
+    initial 66K
+    minextents 1
+    maxextents unlimited
+  );
+alter table PJ_PROJETO_RECURSO
+  add constraint FK_PJPROREC_PJPRO foreign key (SQ_SIW_SOLICITACAO)
+  references PJ_PROJETO (SQ_SIW_SOLICITACAO);
+create index IN_PJPROREC_PROJ on PJ_PROJETO_RECURSO (SQ_SIW_SOLICITACAO,SQ_PROJETO_RECURSO)
+  tablespace SYSTEM
+  pctfree 10
+  initrans 2
+  maxtrans 255
+  storage
+  (
+    initial 66K
+    minextents 1
+    maxextents unlimited
+  );
+create index IN_PJPROREC_TIPO on PJ_PROJETO_RECURSO (TIPO,SQ_PROJETO_RECURSO)
+  tablespace SYSTEM
+  pctfree 10
+  initrans 2
+  maxtrans 255
+  storage
+  (
+    initial 66K
+    minextents 1
+    maxextents unlimited
+  );
+

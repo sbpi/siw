@@ -1,0 +1,53 @@
+create table PJ_PROJETO_REPRESENTANTE
+(
+  SQ_PESSOA          NUMBER(18) not null,
+  SQ_SIW_SOLICITACAO NUMBER(18) not null
+)
+tablespace SYSTEM
+  pctfree 10
+  pctused 40
+  initrans 1
+  maxtrans 255
+  storage
+  (
+    initial 66K
+    minextents 1
+    maxextents unlimited
+  );
+comment on table PJ_PROJETO_REPRESENTANTE
+  is 'Registra os representantes da outra parte do projeto, se for pessoa jurídica.';
+comment on column PJ_PROJETO_REPRESENTANTE.SQ_PESSOA
+  is 'Chave de SG_AUTENTICACAO, indicando o usuário do sistema.';
+comment on column PJ_PROJETO_REPRESENTANTE.SQ_SIW_SOLICITACAO
+  is 'Chave de PJ_PROJETO, indicando o projeto ao qual o representante está ligado.';
+alter table PJ_PROJETO_REPRESENTANTE
+  add constraint PK_PJ_PROJETO_REPRESENTANTE primary key (SQ_PESSOA,SQ_SIW_SOLICITACAO)
+  using index 
+  tablespace SYSTEM
+  pctfree 10
+  initrans 2
+  maxtrans 255
+  storage
+  (
+    initial 66K
+    minextents 1
+    maxextents unlimited
+  );
+alter table PJ_PROJETO_REPRESENTANTE
+  add constraint FK_PJPROREP_PJPRO foreign key (SQ_SIW_SOLICITACAO)
+  references PJ_PROJETO (SQ_SIW_SOLICITACAO);
+alter table PJ_PROJETO_REPRESENTANTE
+  add constraint FK_PJPROREP_SGAUT foreign key (SQ_PESSOA)
+  references SG_AUTENTICACAO (SQ_PESSOA);
+create unique index IN_PJPROREP_INV on PJ_PROJETO_REPRESENTANTE (SQ_SIW_SOLICITACAO,SQ_PESSOA)
+  tablespace SYSTEM
+  pctfree 10
+  initrans 2
+  maxtrans 255
+  storage
+  (
+    initial 66K
+    minextents 1
+    maxextents unlimited
+  );
+

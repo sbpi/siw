@@ -1,0 +1,226 @@
+create table FN_LANCAMENTO
+(
+  SQ_SIW_SOLICITACAO NUMBER(18) not null,
+  CLIENTE            NUMBER(18) not null,
+  PESSOA             NUMBER(18),
+  CODIGO_INTERNO     VARCHAR2(30),
+  SQ_ACORDO_PARCELA  NUMBER(18),
+  SQ_FORMA_PAGAMENTO NUMBER(18) not null,
+  SQ_TIPO_LANCAMENTO NUMBER(18) not null,
+  SQ_TIPO_PESSOA     NUMBER(18) not null,
+  EMISSAO            DATE not null,
+  VENCIMENTO         DATE not null,
+  QUITACAO           DATE,
+  CODIGO_EXTERNO     VARCHAR2(30),
+  OBSERVACAO         VARCHAR2(500),
+  VALOR_IMPOSTO      NUMBER(18,2) default 0,
+  VALOR_RETENCAO     NUMBER(18,2) default 0,
+  VALOR_LIQUIDO      NUMBER(18,2) default 0,
+  AVISO_PROX_CONC    VARCHAR2(1) default 'N' not null,
+  DIAS_AVISO         NUMBER(3) default 0 not null,
+  SQ_AGENCIA         NUMBER(18),
+  OPERACAO_CONTA     VARCHAR2(6),
+  NUMERO_CONTA       VARCHAR2(30),
+  SQ_PAIS_ESTRANG    NUMBER(18),
+  ABA_CODE           VARCHAR2(12),
+  SWIFT_CODE         VARCHAR2(30),
+  ENDERECO_ESTRANG   VARCHAR2(100),
+  BANCO_ESTRANG      VARCHAR2(60),
+  AGENCIA_ESTRANG    VARCHAR2(60),
+  CIDADE_ESTRANG     VARCHAR2(60),
+  INFORMACOES        VARCHAR2(200),
+  CODIGO_DEPOSITO    VARCHAR2(50)
+)
+tablespace SYSTEM
+  pctfree 10
+  pctused 40
+  initrans 1
+  maxtrans 255
+  storage
+  (
+    initial 72K
+    next 64K
+    minextents 1
+    maxextents unlimited
+    pctincrease 50
+  );
+comment on table FN_LANCAMENTO
+  is 'Registra lancamentos financeiros de receita e despesa.';
+comment on column FN_LANCAMENTO.SQ_SIW_SOLICITACAO
+  is 'Chave de SIW_SOLICITACAO indicando a que solicitação o pagamento está vinculado.';
+comment on column FN_LANCAMENTO.CLIENTE
+  is 'Chave de CO_PESSOA que indica a qual cliente o registro pertence.';
+comment on column FN_LANCAMENTO.PESSOA
+  is 'Outra parte do lançamento financeiro.';
+comment on column FN_LANCAMENTO.CODIGO_INTERNO
+  is 'Número do documento pelo qual o lancamento é reconhecido dentro da organização.';
+comment on column FN_LANCAMENTO.SQ_ACORDO_PARCELA
+  is 'Chave de AC_ACORDO_PARCELA, indicando a que parcela de acordo o pagamento se refere. Estará informado quando o pagamento for de parcela de acordo.';
+comment on column FN_LANCAMENTO.SQ_FORMA_PAGAMENTO
+  is 'Chave de CO_FORMA_PAGAMENTO indicando a forma de pagamento deste lançamento.';
+comment on column FN_LANCAMENTO.SQ_TIPO_LANCAMENTO
+  is 'Chave de FN_TIPO_DOCUMENTO.';
+comment on column FN_LANCAMENTO.SQ_TIPO_PESSOA
+  is 'Chave de CO_TIPO_PESSOA. Indica se o lançamento refere-se a pessoa física ou jurídica.';
+comment on column FN_LANCAMENTO.EMISSAO
+  is 'Data de emissão do lançamento.';
+comment on column FN_LANCAMENTO.VENCIMENTO
+  is 'Data de vencimento do lançamento.';
+comment on column FN_LANCAMENTO.QUITACAO
+  is 'Data de quitação do lançamento.';
+comment on column FN_LANCAMENTO.CODIGO_EXTERNO
+  is 'Número do documento pelo qual o lancamento é reconhecido fora da organização.';
+comment on column FN_LANCAMENTO.OBSERVACAO
+  is 'Observações gerais sobre o lançamento.';
+comment on column FN_LANCAMENTO.VALOR_IMPOSTO
+  is 'Valor total do imposto incidente sobre o lançamento.';
+comment on column FN_LANCAMENTO.VALOR_RETENCAO
+  is 'Valor do imposto a ser retido para o lançamento.';
+comment on column FN_LANCAMENTO.VALOR_LIQUIDO
+  is 'Valor líquido do lançamento, já deduzidos os impostos.';
+comment on column FN_LANCAMENTO.AVISO_PROX_CONC
+  is 'Indica se é necessário avisar a proximidade da data de vencimento do lançamento.';
+comment on column FN_LANCAMENTO.DIAS_AVISO
+  is 'Se o campo AVISO_PROX_CONC igual a S, indica o número de dias a partir do qual devem ser enviados os avisos por e-mail.';
+comment on column FN_LANCAMENTO.SQ_AGENCIA
+  is 'Chave de CO_AGENCIA, indicando a agência onde o pagamento deve ser feito.';
+comment on column FN_LANCAMENTO.OPERACAO_CONTA
+  is 'Armazena a operação da conta, utilizada por bancos como Caixa Econômica e Bradesco.';
+comment on column FN_LANCAMENTO.NUMERO_CONTA
+  is 'Número da conta bancária.';
+comment on column FN_LANCAMENTO.SQ_PAIS_ESTRANG
+  is 'Chave de CO_PAIS, indicando em que país deve ser feito o pagamento. Usado apenas para pagamentos no exterior.';
+comment on column FN_LANCAMENTO.ABA_CODE
+  is 'Código ABA usado para pagamentos no exterior.';
+comment on column FN_LANCAMENTO.SWIFT_CODE
+  is 'Código SWIFT usado para pagamentos no exterior.';
+comment on column FN_LANCAMENTO.ENDERECO_ESTRANG
+  is 'Endereço da agência, usado para pagamentos no exterior.';
+comment on column FN_LANCAMENTO.BANCO_ESTRANG
+  is 'Nome do banco quando pagamento no exterior.';
+comment on column FN_LANCAMENTO.AGENCIA_ESTRANG
+  is 'Nome da agência quando pagamento no exterior.';
+comment on column FN_LANCAMENTO.CIDADE_ESTRANG
+  is 'Nome da cidade quando pagamento no exterior.';
+comment on column FN_LANCAMENTO.INFORMACOES
+  is 'Informações adicionais, usado para pagamento no exterior.';
+comment on column FN_LANCAMENTO.CODIGO_DEPOSITO
+  is 'Código do depósito identificado, quando o pagamento for nessa modalidade.';
+alter table FN_LANCAMENTO
+  add constraint PK_FN_LANCAMENTO primary key (SQ_SIW_SOLICITACAO)
+  using index 
+  tablespace SYSTEM
+  pctfree 10
+  initrans 2
+  maxtrans 255
+  storage
+  (
+    initial 72K
+    next 64K
+    minextents 1
+    maxextents unlimited
+    pctincrease 50
+  );
+alter table FN_LANCAMENTO
+  add constraint FK_FNLAN_ACACOPAR foreign key (SQ_ACORDO_PARCELA)
+  references AC_ACORDO_PARCELA (SQ_ACORDO_PARCELA);
+alter table FN_LANCAMENTO
+  add constraint FK_FNLAN_COFORPAG foreign key (SQ_FORMA_PAGAMENTO)
+  references CO_FORMA_PAGAMENTO (SQ_FORMA_PAGAMENTO);
+alter table FN_LANCAMENTO
+  add constraint FK_FNLAN_COPES_CLIENTE foreign key (CLIENTE)
+  references CO_PESSOA (SQ_PESSOA);
+alter table FN_LANCAMENTO
+  add constraint FK_FNLAN_COPES_PESSOA foreign key (PESSOA)
+  references CO_PESSOA (SQ_PESSOA);
+alter table FN_LANCAMENTO
+  add constraint FK_FNLAN_COTIPPES foreign key (SQ_TIPO_PESSOA)
+  references CO_TIPO_PESSOA (SQ_TIPO_PESSOA);
+alter table FN_LANCAMENTO
+  add constraint FK_FNLAN_FKTIPLAN foreign key (SQ_TIPO_LANCAMENTO)
+  references FN_TIPO_LANCAMENTO (SQ_TIPO_LANCAMENTO);
+alter table FN_LANCAMENTO
+  add constraint FK_FNLAN_SIWSOL foreign key (SQ_SIW_SOLICITACAO)
+  references SIW_SOLICITACAO (SQ_SIW_SOLICITACAO);
+alter table FN_LANCAMENTO
+  add constraint CKC_FNLAN_AVISO
+  check (AVISO_PROX_CONC in ('S','N'));
+create index IN_FNLAN_CLIENTE on FN_LANCAMENTO (CLIENTE,SQ_SIW_SOLICITACAO)
+  tablespace SYSTEM
+  pctfree 10
+  initrans 2
+  maxtrans 255
+  storage
+  (
+    initial 72K
+    next 64K
+    minextents 1
+    maxextents unlimited
+    pctincrease 50
+  );
+create index IN_FNLAN_CODEXT on FN_LANCAMENTO (CLIENTE,CODIGO_EXTERNO,SQ_SIW_SOLICITACAO)
+  tablespace SYSTEM
+  pctfree 10
+  initrans 2
+  maxtrans 255
+  storage
+  (
+    initial 72K
+    next 64K
+    minextents 1
+    maxextents unlimited
+    pctincrease 50
+  );
+create unique index IN_FNLAN_CODINT on FN_LANCAMENTO (CLIENTE,CODIGO_INTERNO)
+  tablespace SYSTEM
+  pctfree 10
+  initrans 2
+  maxtrans 255
+  storage
+  (
+    initial 72K
+    next 64K
+    minextents 1
+    maxextents unlimited
+    pctincrease 50
+  );
+create index IN_FNLAN_PARCELA on FN_LANCAMENTO (CLIENTE,SQ_ACORDO_PARCELA,SQ_SIW_SOLICITACAO)
+  tablespace SYSTEM
+  pctfree 10
+  initrans 2
+  maxtrans 255
+  storage
+  (
+    initial 72K
+    next 64K
+    minextents 1
+    maxextents unlimited
+    pctincrease 50
+  );
+create index IN_FNLAN_PESSOA on FN_LANCAMENTO (CLIENTE,PESSOA,SQ_SIW_SOLICITACAO)
+  tablespace SYSTEM
+  pctfree 10
+  initrans 2
+  maxtrans 255
+  storage
+  (
+    initial 72K
+    next 64K
+    minextents 1
+    maxextents unlimited
+    pctincrease 50
+  );
+create index IN_FNLAN_VENCIMENTO on FN_LANCAMENTO (CLIENTE,VENCIMENTO,SQ_SIW_SOLICITACAO)
+  tablespace SYSTEM
+  pctfree 10
+  initrans 2
+  maxtrans 255
+  storage
+  (
+    initial 72K
+    next 64K
+    minextents 1
+    maxextents unlimited
+    pctincrease 50
+  );
+

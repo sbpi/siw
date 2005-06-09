@@ -1,0 +1,79 @@
+create table S_UNIDADEFUNC
+(
+  CO_FUNCIONARIO    CHAR(10) not null,
+  ANO_SEM           CHAR(5) not null,
+  CO_UNIDADE        CHAR(5) not null,
+  CO_CARGO          VARCHAR2(17),
+  NU_CARGA_CONTRATO NUMBER(10),
+  NU_HORA_ENTRADA   CHAR(5),
+  NU_HORA_INI_ALMOC CHAR(5),
+  NU_HORA_FIM_ALMOC CHAR(5),
+  NU_HORA_SAIDA     CHAR(5),
+  ST_ALTERA_NOTAS   CHAR(1),
+  DS_FICHA_PESSOAL  BLOB,
+  DS_SENHA          CHAR(6),
+  NIVEL_SALARIAL    CHAR(3),
+  ID_PROFESSOR      CHAR(1),
+  CO_AREA_ATUACAO   NUMBER(10),
+  ST_CANCELADO      CHAR(1),
+  DT_ADMISSAO       DATE,
+  DT_ATUALIZA_FUNC  DATE
+)
+tablespace SGE
+  pctfree 10
+  initrans 1
+  maxtrans 255
+  storage
+  (
+    initial 66K
+    minextents 1
+    maxextents unlimited
+  );
+alter table S_UNIDADEFUNC
+  add constraint U152_63 primary key (CO_FUNCIONARIO,ANO_SEM,CO_UNIDADE)
+  using index 
+  tablespace SGE
+  pctfree 10
+  initrans 2
+  maxtrans 255
+  storage
+  (
+    initial 66K
+    minextents 1
+    maxextents unlimited
+  );
+alter table S_UNIDADEFUNC
+  add constraint R181_607 foreign key (CO_CARGO)
+  references S_CARGO (CO_CARGO) on delete cascade;
+alter table S_UNIDADEFUNC
+  add constraint R181_608 foreign key (CO_FUNCIONARIO)
+  references S_FUNCIONARIO (CO_FUNCIONARIO) on delete cascade;
+alter table S_UNIDADEFUNC
+  add constraint R181_609 foreign key (ANO_SEM,CO_UNIDADE)
+  references S_PERIODOUNIDADE (ANO_SEM,CO_UNIDADE) on delete cascade;
+alter table S_UNIDADEFUNC
+  add constraint R181_610 foreign key (CO_AREA_ATUACAO)
+  references S_AREA_ATUACAO (CO_AREA_ATUACAO) on delete cascade;
+create index FOREIGN162 on S_UNIDADEFUNC (CO_CARGO,CO_UNIDADE)
+  tablespace SGE
+  pctfree 10
+  initrans 2
+  maxtrans 255
+  storage
+  (
+    initial 66K
+    minextents 1
+    maxextents unlimited
+  );
+create index FOREIGN165 on S_UNIDADEFUNC (CO_AREA_ATUACAO,CO_UNIDADE,CO_FUNCIONARIO)
+  tablespace SGE
+  pctfree 10
+  initrans 2
+  maxtrans 255
+  storage
+  (
+    initial 66K
+    minextents 1
+    maxextents unlimited
+  );
+

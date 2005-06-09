@@ -1,0 +1,47 @@
+create table S_ALUNO_EJA
+(
+  CO_ALUNO          CHAR(12) not null,
+  CO_UNIDADE        CHAR(5) not null,
+  SEM_EJA           CHAR(5) not null,
+  DS_SITUACAO_ALUNO VARCHAR2(12),
+  NU_PESO           VARCHAR2(4),
+  NU_ALTURA         VARCHAR2(4),
+  DT_MATRICULA      DATE,
+  TP_APTO_ED_FISICA VARCHAR2(3),
+  ST_ENS_RELIGIOSO  VARCHAR2(3),
+  TP_BOLSA_ESCOLA   VARCHAR2(3),
+  NU_BOLSA_ESCOLA   VARCHAR2(10)
+)
+tablespace SGE
+  pctfree 10
+  initrans 1
+  maxtrans 255
+  storage
+  (
+    initial 66K
+    minextents 1
+    maxextents unlimited
+  );
+alter table S_ALUNO_EJA
+  add constraint PK_S_ALUNO_EJA primary key (CO_ALUNO,CO_UNIDADE,SEM_EJA)
+  using index 
+  tablespace SGE
+  pctfree 10
+  initrans 2
+  maxtrans 255
+  storage
+  (
+    initial 66K
+    minextents 1
+    maxextents unlimited
+  );
+alter table S_ALUNO_EJA
+  add constraint FK_ALUEJA_ALU foreign key (CO_ALUNO)
+  references S_ALUNO (CO_ALUNO) on delete cascade;
+alter table S_ALUNO_EJA
+  add constraint FK_SALUEJA_SPEREJA foreign key (CO_UNIDADE,SEM_EJA)
+  references S_PERIODO_EJA (CO_UNIDADE,SEM_EJA) on delete cascade;
+alter table S_ALUNO_EJA
+  add constraint R200_244 foreign key (CO_UNIDADE)
+  references S_UNIDADE (CO_UNIDADE) on delete cascade;
+

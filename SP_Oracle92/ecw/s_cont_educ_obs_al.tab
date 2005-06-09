@@ -1,0 +1,43 @@
+create table S_CONT_EDUC_OBS_AL
+(
+  CO_UNIDADE         CHAR(5) not null,
+  ANO_SEM            CHAR(5) not null,
+  CO_TURMA           NUMBER(10) not null,
+  CO_DISCIPLINA      CHAR(4) not null,
+  CO_ALUNO           CHAR(12) not null,
+  CO_CURSO           NUMBER(10) not null,
+  CO_SEQ_SERIE       NUMBER(10) not null,
+  TP_CONTEUDO_EDUC   NUMBER(10) not null,
+  DS_CONT_EDU_OBS_AL VARCHAR2(200),
+  DT_CONT_EDUCATIVO  DATE
+)
+tablespace SGE
+  pctfree 10
+  initrans 1
+  maxtrans 255
+  storage
+  (
+    initial 66K
+    minextents 1
+    maxextents unlimited
+  );
+alter table S_CONT_EDUC_OBS_AL
+  add constraint XPKS_CONT_EDUC_OBS primary key (CO_UNIDADE,ANO_SEM,CO_TURMA,CO_DISCIPLINA,CO_ALUNO,CO_CURSO,CO_SEQ_SERIE,TP_CONTEUDO_EDUC)
+  using index 
+  tablespace SGE
+  pctfree 10
+  initrans 2
+  maxtrans 255
+  storage
+  (
+    initial 66K
+    minextents 1
+    maxextents unlimited
+  );
+alter table S_CONT_EDUC_OBS_AL
+  add constraint R_140 foreign key (CO_UNIDADE,ANO_SEM,CO_TURMA,CO_DISCIPLINA,CO_ALUNO,CO_CURSO,CO_SEQ_SERIE)
+  references S_ALUNO_TURMA_DISC (CO_UNIDADE,ANO_SEM,CO_TURMA,CO_DISCIPLINA,CO_ALUNO,CO_CURSO,CO_SEQ_SERIE) on delete cascade;
+alter table S_CONT_EDUC_OBS_AL
+  add constraint R_141 foreign key (TP_CONTEUDO_EDUC,ANO_SEM,CO_CURSO,CO_SEQ_SERIE,CO_UNIDADE)
+  references S_TIPO_CONT_EDUC (TP_CONTEUDO_EDUC,ANO_SEM,CO_CURSO,CO_SEQ_SERIE,CO_UNIDADE) on delete cascade;
+

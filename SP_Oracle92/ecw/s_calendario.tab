@@ -1,0 +1,38 @@
+create table S_CALENDARIO
+(
+  CO_UNIDADE        CHAR(5) not null,
+  DT_CALENDARIO     DATE not null,
+  CO_CALENDARIO     NUMBER(10) not null,
+  CO_DIA_CALENDARIO NUMBER(10) not null,
+  ST_ALTERA         CHAR(1)
+)
+tablespace SGE
+  pctfree 10
+  initrans 1
+  maxtrans 255
+  storage
+  (
+    initial 66K
+    minextents 1
+    maxextents unlimited
+  );
+alter table S_CALENDARIO
+  add constraint PK_S_CALENDARIO primary key (CO_UNIDADE,DT_CALENDARIO,CO_CALENDARIO,CO_DIA_CALENDARIO)
+  using index 
+  tablespace SGE
+  pctfree 10
+  initrans 2
+  maxtrans 255
+  storage
+  (
+    initial 66K
+    minextents 1
+    maxextents unlimited
+  );
+alter table S_CALENDARIO
+  add constraint FK_CALEND_CALTIT foreign key (CO_CALENDARIO,CO_UNIDADE)
+  references S_CALEND_TITULO (CO_CALENDARIO,CO_UNIDADE) on delete cascade;
+alter table S_CALENDARIO
+  add constraint FK_CALEND_DIACAL foreign key (CO_DIA_CALENDARIO,CO_UNIDADE)
+  references S_DIA_CALENDARIO (CO_DIA_CALENDARIO,CO_UNIDADE) on delete cascade;
+

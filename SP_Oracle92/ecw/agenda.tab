@@ -1,0 +1,43 @@
+create table AGENDA
+(
+  DS_USUARIO     CHAR(30),
+  AGE_SEQUENCIAL NUMBER(10) not null,
+  CO_UNIDADE     CHAR(5) not null,
+  AGE_NOME       CHAR(50),
+  AGE_ENDERECO   CHAR(40),
+  AGE_BAIRRO     CHAR(20),
+  AGE_CIDADE     CHAR(20),
+  AGE_ESTADO     CHAR(2),
+  AGE_CEP        CHAR(9),
+  AGE_ENDERECOC  CHAR(40),
+  AGE_BAIRROC    CHAR(20),
+  AGE_CIDADEC    CHAR(20),
+  AGE_ESTADOC    CHAR(2),
+  AGE_CEPC       CHAR(9),
+  AGE_EMAIL      CHAR(50),
+  AGE_OBSERVACAO BLOB
+)
+tablespace SGE
+  pctfree 10
+  initrans 1
+  maxtrans 255
+  storage
+  (
+    initial 66K
+    minextents 1
+    maxextents unlimited
+  );
+alter table AGENDA
+  add constraint U104_5 primary key (AGE_SEQUENCIAL,CO_UNIDADE)
+  using index 
+  tablespace SGE
+  pctfree 10
+  initrans 2
+  maxtrans 255
+  storage
+  (
+    initial 66K
+    minextents 1
+    maxextents unlimited
+  );
+

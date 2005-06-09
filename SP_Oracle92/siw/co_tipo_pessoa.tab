@@ -1,0 +1,67 @@
+create table CO_TIPO_PESSOA
+(
+  SQ_TIPO_PESSOA NUMBER(18) not null,
+  NOME           VARCHAR2(60),
+  ATIVO          VARCHAR2(1) default 'S' not null,
+  PADRAO         VARCHAR2(1) default 'N' not null
+)
+tablespace USERS
+  pctfree 10
+  initrans 1
+  maxtrans 255
+  storage
+  (
+    initial 132K
+    minextents 1
+    maxextents unlimited
+  );
+comment on table CO_TIPO_PESSOA
+  is 'Armazena os tipos de pessoa';
+comment on column CO_TIPO_PESSOA.SQ_TIPO_PESSOA
+  is 'Sequence';
+comment on column CO_TIPO_PESSOA.ATIVO
+  is 'Indica se o registro deve ou não ser exibido.';
+comment on column CO_TIPO_PESSOA.PADRAO
+  is 'Indica se este registro deve ser apresentado como padrão para o usuário.';
+alter table CO_TIPO_PESSOA
+  add constraint PK_CO_TIPO_PESSOA primary key (SQ_TIPO_PESSOA)
+  using index 
+  tablespace USERS
+  pctfree 10
+  initrans 2
+  maxtrans 255
+  storage
+  (
+    initial 132K
+    minextents 1
+    maxextents unlimited
+  );
+alter table CO_TIPO_PESSOA
+  add constraint CKC_ATIVO_COTIPPES
+  check (ATIVO in ('S','N'));
+alter table CO_TIPO_PESSOA
+  add constraint CKC_COTIPPES_PAD
+  check (PADRAO in ('S','N'));
+create index IN_COTIPPES_ATIVO on CO_TIPO_PESSOA (ATIVO)
+  tablespace SYSTEM
+  pctfree 10
+  initrans 2
+  maxtrans 255
+  storage
+  (
+    initial 66K
+    minextents 1
+    maxextents unlimited
+  );
+create index IN_COTIPPES_PADRAO on CO_TIPO_PESSOA (PADRAO)
+  tablespace SYSTEM
+  pctfree 10
+  initrans 2
+  maxtrans 255
+  storage
+  (
+    initial 66K
+    minextents 1
+    maxextents unlimited
+  );
+

@@ -1,0 +1,122 @@
+create table EO_PRODUTO
+(
+  SQ_PRODUTO         NUMBER(18) not null,
+  CLIENTE            NUMBER(18) not null,
+  SQ_UNIDADE         NUMBER(10) not null,
+  NOME               VARCHAR2(60) not null,
+  DESCRICAO          VARCHAR2(1000) not null,
+  SIGLA              VARCHAR2(15) not null,
+  VALOR_BASE         NUMBER(18,2) default 0 not null,
+  PADRAO             VARCHAR2(1) default 'N' not null,
+  DIVULGACAO_EXTERNA VARCHAR2(1) default 'N' not null,
+  DIVULGACAO_INTERNA VARCHAR2(1) default 'S' not null
+)
+tablespace SYSTEM
+  pctfree 10
+  pctused 40
+  initrans 1
+  maxtrans 255
+  storage
+  (
+    initial 72K
+    next 64K
+    minextents 1
+    maxextents unlimited
+    pctincrease 50
+  );
+comment on table EO_PRODUTO
+  is 'Armazena informações sobre os produtos da unidade.';
+comment on column EO_PRODUTO.SQ_PRODUTO
+  is 'Sequence.';
+comment on column EO_PRODUTO.CLIENTE
+  is 'Sequence';
+comment on column EO_PRODUTO.SQ_UNIDADE
+  is 'Unidade fornecedora do produto.';
+comment on column EO_PRODUTO.NOME
+  is 'Nome do produto.';
+comment on column EO_PRODUTO.DESCRICAO
+  is 'Descrição do produto.';
+comment on column EO_PRODUTO.SIGLA
+  is 'Sigla do produto.';
+comment on column EO_PRODUTO.VALOR_BASE
+  is 'Valor base para comercialização do produto.';
+comment on column EO_PRODUTO.PADRAO
+  is 'Indica se é o produto padrão da unidade.';
+comment on column EO_PRODUTO.DIVULGACAO_EXTERNA
+  is 'Indica se o produto deve ser divulgado externamente à organização.';
+comment on column EO_PRODUTO.DIVULGACAO_INTERNA
+  is 'Indica se o produto deve ser divulgado internamente na organização.';
+alter table EO_PRODUTO
+  add constraint PK_EO_PRODUTO primary key (SQ_PRODUTO)
+  using index 
+  tablespace SYSTEM
+  pctfree 10
+  initrans 2
+  maxtrans 255
+  storage
+  (
+    initial 72K
+    next 64K
+    minextents 1
+    maxextents unlimited
+    pctincrease 50
+  );
+alter table EO_PRODUTO
+  add constraint FK_EOPRO_EOUNI foreign key (SQ_UNIDADE)
+  references EO_UNIDADE (SQ_UNIDADE);
+alter table EO_PRODUTO
+  add constraint IN_EOPRO_COPES foreign key (CLIENTE)
+  references CO_PESSOA (SQ_PESSOA);
+create unique index IN_EOPRO_EXTERNO on EO_PRODUTO (CLIENTE,DIVULGACAO_EXTERNA,SQ_PRODUTO)
+  tablespace SYSTEM
+  pctfree 10
+  initrans 2
+  maxtrans 255
+  storage
+  (
+    initial 72K
+    next 64K
+    minextents 1
+    maxextents unlimited
+    pctincrease 50
+  );
+create unique index IN_EOPRO_INTERNO on EO_PRODUTO (CLIENTE,DIVULGACAO_INTERNA,SQ_PRODUTO)
+  tablespace SYSTEM
+  pctfree 10
+  initrans 2
+  maxtrans 255
+  storage
+  (
+    initial 72K
+    next 64K
+    minextents 1
+    maxextents unlimited
+    pctincrease 50
+  );
+create unique index IN_EOPRO_NOME on EO_PRODUTO (CLIENTE,NOME)
+  tablespace SYSTEM
+  pctfree 10
+  initrans 2
+  maxtrans 255
+  storage
+  (
+    initial 72K
+    next 64K
+    minextents 1
+    maxextents unlimited
+    pctincrease 50
+  );
+create unique index IN_EOPRO_UNIDADE on EO_PRODUTO (CLIENTE,SQ_UNIDADE,SQ_PRODUTO)
+  tablespace SYSTEM
+  pctfree 10
+  initrans 2
+  maxtrans 255
+  storage
+  (
+    initial 72K
+    next 64K
+    minextents 1
+    maxextents unlimited
+    pctincrease 50
+  );
+

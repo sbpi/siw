@@ -1,0 +1,7 @@
+create sequence SQ_PROJETO_ETAPA
+minvalue 1
+maxvalue 999999999999999999999999999
+start with 981
+increment by 1
+cache 20;
+

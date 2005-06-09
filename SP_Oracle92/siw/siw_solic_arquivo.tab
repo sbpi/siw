@@ -1,0 +1,36 @@
+create table SIW_SOLIC_ARQUIVO
+(
+  SQ_SIW_SOLICITACAO NUMBER(18),
+  SQ_SIW_ARQUIVO     NUMBER(18)
+)
+tablespace SYSTEM
+  pctfree 10
+  pctused 40
+  initrans 1
+  maxtrans 255
+  storage
+  (
+    initial 66K
+    minextents 1
+    maxextents unlimited
+  );
+comment on column SIW_SOLIC_ARQUIVO.SQ_SIW_ARQUIVO
+  is 'Sequence.';
+alter table SIW_SOLIC_ARQUIVO
+  add constraint FK_SIWSOLARQ_SIWARQ foreign key (SQ_SIW_ARQUIVO)
+  references SIW_ARQUIVO (SQ_SIW_ARQUIVO);
+alter table SIW_SOLIC_ARQUIVO
+  add constraint FK_SIWSOLARQ_SIWSOL foreign key (SQ_SIW_SOLICITACAO)
+  references SIW_SOLICITACAO (SQ_SIW_SOLICITACAO);
+create index IN_SIWSOLARQ_INVERSA on SIW_SOLIC_ARQUIVO (SQ_SIW_ARQUIVO,SQ_SIW_SOLICITACAO)
+  tablespace SYSTEM
+  pctfree 10
+  initrans 2
+  maxtrans 255
+  storage
+  (
+    initial 66K
+    minextents 1
+    maxextents unlimited
+  );
+

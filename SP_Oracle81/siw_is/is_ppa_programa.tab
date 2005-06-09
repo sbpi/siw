@@ -1,0 +1,124 @@
+create table IS_PPA_PROGRAMA
+(
+  CLIENTE          NUMBER(18) not null,
+  ANO              NUMBER(4) not null,
+  CD_PROGRAMA      VARCHAR2(4) not null,
+  CD_ORGAO         VARCHAR2(5) not null,
+  CD_TIPO_ORGAO    VARCHAR2(1) not null,
+  CD_ORGAO_SIORG   NUMBER(18) not null,
+  CD_TIPO_PROGRAMA NUMBER(2) not null,
+  NOME             VARCHAR2(200) not null,
+  MES_INICIO       VARCHAR2(2),
+  ANO_INICIO       VARCHAR2(4),
+  MES_TERMINO      VARCHAR2(2),
+  ANO_TERMINO      VARCHAR2(4),
+  OBJETIVO         VARCHAR2(4000),
+  PUBLICO_ALVO     VARCHAR2(4000),
+  JUSTIFICATIVA    VARCHAR2(4000),
+  ESTRATEGIA       VARCHAR2(4000),
+  VALOR_ESTIMADO   NUMBER(18,2),
+  TEMPORARIO       VARCHAR2(1) default 'N' not null,
+  PADRONIZADO      VARCHAR2(1) default 'S' not null,
+  OBSERVACAO       VARCHAR2(4000),
+  FLAG_INCLUSAO    DATE default sysdate not null,
+  FLAG_ALTERACAO   DATE,
+  FLAG_ENVIO       DATE
+)
+tablespace SYSTEM
+  pctfree 10
+  pctused 40
+  initrans 1
+  maxtrans 255
+  storage
+  (
+    initial 72K
+    next 64K
+    minextents 1
+    maxextents unlimited
+    pctincrease 50
+  );
+comment on table IS_PPA_PROGRAMA
+  is 'Armazena informações sobre o programa.';
+comment on column IS_PPA_PROGRAMA.CLIENTE
+  is 'Sequence';
+comment on column IS_PPA_PROGRAMA.ANO
+  is 'Ano de referência do registro.';
+comment on column IS_PPA_PROGRAMA.CD_PROGRAMA
+  is 'Código do Programa no Sigplan';
+comment on column IS_PPA_PROGRAMA.CD_ORGAO
+  is 'Código do Órgão';
+comment on column IS_PPA_PROGRAMA.CD_TIPO_ORGAO
+  is 'Código do tipo de órgão';
+comment on column IS_PPA_PROGRAMA.CD_ORGAO_SIORG
+  is 'Código da Unidade Orçamentária responsável';
+comment on column IS_PPA_PROGRAMA.CD_TIPO_PROGRAMA
+  is 'Código do Tipo de Programa';
+comment on column IS_PPA_PROGRAMA.NOME
+  is 'Descrição do Programa';
+comment on column IS_PPA_PROGRAMA.MES_INICIO
+  is 'Mês de início do Programa Temporário';
+comment on column IS_PPA_PROGRAMA.ANO_INICIO
+  is 'Ano de início do Programa Temporário';
+comment on column IS_PPA_PROGRAMA.MES_TERMINO
+  is 'Mês de término do Programa Temporário';
+comment on column IS_PPA_PROGRAMA.ANO_TERMINO
+  is 'Ano de término do Programa Temporário';
+comment on column IS_PPA_PROGRAMA.OBJETIVO
+  is 'Descrição do Objetivo do Programa';
+comment on column IS_PPA_PROGRAMA.PUBLICO_ALVO
+  is 'Descrição do Público alvo do Programa';
+comment on column IS_PPA_PROGRAMA.JUSTIFICATIVA
+  is 'Descrição da Justificativa do Programa';
+comment on column IS_PPA_PROGRAMA.ESTRATEGIA
+  is 'Descrição da Estratégia do Programa';
+comment on column IS_PPA_PROGRAMA.VALOR_ESTIMADO
+  is 'Valor estimado para execução do Programa';
+comment on column IS_PPA_PROGRAMA.TEMPORARIO
+  is 'Define se o Programa é Temporário, ou caso contrário é contínuo';
+comment on column IS_PPA_PROGRAMA.PADRONIZADO
+  is 'Define se o Programa é padronizado';
+comment on column IS_PPA_PROGRAMA.OBSERVACAO
+  is 'Observação do Programa';
+comment on column IS_PPA_PROGRAMA.FLAG_INCLUSAO
+  is 'Data de inclusão do registro';
+comment on column IS_PPA_PROGRAMA.FLAG_ALTERACAO
+  is 'Data da última alteração do registro, caso ele tenha sido alterado.';
+comment on column IS_PPA_PROGRAMA.FLAG_ENVIO
+  is 'Data do último envio do registro, caso ele já tenha sido enviado.';
+alter table IS_PPA_PROGRAMA
+  add constraint PK_IS_PPA_PROGRAMA primary key (CLIENTE,ANO,CD_PROGRAMA)
+  using index 
+  tablespace SYSTEM
+  pctfree 10
+  initrans 2
+  maxtrans 255
+  storage
+  (
+    initial 72K
+    next 64K
+    minextents 1
+    maxextents unlimited
+    pctincrease 50
+  );
+alter table IS_PPA_PROGRAMA
+  add constraint FK_ISPPAPRG_COPES foreign key (CLIENTE)
+  references SIW.CO_PESSOA (SQ_PESSOA);
+alter table IS_PPA_PROGRAMA
+  add constraint FK_ISPPAPRG_ISPPAORG foreign key (CD_ORGAO)
+  references IS_PPA_ORGAO (CD_ORGAO);
+alter table IS_PPA_PROGRAMA
+  add constraint FK_ISPPAPRG_ISPPAORGSIO foreign key (CD_ORGAO_SIORG)
+  references IS_PPA_ORGAO_SIORG (CD_ORGAO_SIORG);
+alter table IS_PPA_PROGRAMA
+  add constraint FK_ISPPAPRG_ISPPATIPORG foreign key (CD_TIPO_ORGAO)
+  references IS_PPA_TIPO_ORGAO (CD_TIPO_ORGAO);
+alter table IS_PPA_PROGRAMA
+  add constraint FK_ISPPAPRG_ISPPATIPPRG foreign key (CD_TIPO_PROGRAMA)
+  references IS_PPA_TIPO_PROGRAMA (CD_TIPO_PROGRAMA);
+alter table IS_PPA_PROGRAMA
+  add constraint CKC_PADRONIZADO_IS_PPA_P
+  check (PADRONIZADO in ('S','N'));
+alter table IS_PPA_PROGRAMA
+  add constraint CKC_TEMPORARIO_IS_PPA_P
+  check (TEMPORARIO in ('S','N'));
+

@@ -1,0 +1,74 @@
+create table DC_ARQUIVO
+(
+  SQ_ARQUIVO NUMBER(18) not null,
+  SQ_SISTEMA NUMBER(18) not null,
+  NOME       VARCHAR2(30) not null,
+  DESCRICAO  VARCHAR2(4000) not null,
+  TIPO       VARCHAR2(1) default 'G' not null,
+  DIRETORIO  VARCHAR2(100)
+)
+tablespace SYSTEM
+  pctfree 10
+  pctused 40
+  initrans 1
+  maxtrans 255
+  storage
+  (
+    initial 66K
+    minextents 1
+    maxextents unlimited
+  );
+comment on column DC_ARQUIVO.SQ_ARQUIVO
+  is 'Sequence.';
+comment on column DC_ARQUIVO.SQ_SISTEMA
+  is 'Sequence.';
+comment on column DC_ARQUIVO.NOME
+  is 'Nome do arquivo.';
+comment on column DC_ARQUIVO.DESCRICAO
+  is 'Descrição do arquivo.';
+comment on column DC_ARQUIVO.TIPO
+  is 'Armazena o tipo do arquivo (G - rotinas genéricas; I - inclusão; C - configuração; R - requisitos)';
+comment on column DC_ARQUIVO.DIRETORIO
+  is 'Diretório onde o arquivo encontra-se.';
+alter table DC_ARQUIVO
+  add constraint PK_DC_ARQUIVO primary key (SQ_ARQUIVO)
+  using index 
+  tablespace SYSTEM
+  pctfree 10
+  initrans 2
+  maxtrans 255
+  storage
+  (
+    initial 66K
+    minextents 1
+    maxextents unlimited
+  );
+alter table DC_ARQUIVO
+  add constraint FK_DCARQ_DCSIS foreign key (SQ_SISTEMA)
+  references DC_SISTEMA (SQ_SISTEMA);
+alter table DC_ARQUIVO
+  add constraint CKC_TIPO_DC_ARQUI
+  check (TIPO in ('G','I','C','R'));
+create unique index IN_DCARQ_NOME on DC_ARQUIVO (NOME,SQ_SISTEMA)
+  tablespace SYSTEM
+  pctfree 10
+  initrans 2
+  maxtrans 255
+  storage
+  (
+    initial 66K
+    minextents 1
+    maxextents unlimited
+  );
+create index IN_DCARQ_SISTEMA on DC_ARQUIVO (SQ_SISTEMA,SQ_ARQUIVO)
+  tablespace SYSTEM
+  pctfree 10
+  initrans 2
+  maxtrans 255
+  storage
+  (
+    initial 66K
+    minextents 1
+    maxextents unlimited
+  );
+

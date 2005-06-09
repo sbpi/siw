@@ -1,0 +1,43 @@
+create table S_SUBCONT_EDUC_NOT
+(
+  TP_SUBCONT_EDUC   CHAR(18) not null,
+  TP_CONTEUDO_EDUC  NUMBER(10) not null,
+  ANO_SEM           CHAR(5) not null,
+  CO_CURSO          NUMBER(10) not null,
+  CO_SEQ_SERIE      NUMBER(10) not null,
+  CO_UNIDADE        CHAR(5) not null,
+  CO_TURMA          NUMBER(10) not null,
+  CO_DISCIPLINA     CHAR(4) not null,
+  CO_ALUNO          CHAR(12) not null,
+  NOTA_SUBCONT_EDUC CHAR(1)
+)
+tablespace SGE
+  pctfree 10
+  initrans 1
+  maxtrans 255
+  storage
+  (
+    initial 66K
+    minextents 1
+    maxextents unlimited
+  );
+alter table S_SUBCONT_EDUC_NOT
+  add constraint XPKS_SUBCONT_EDUC_ primary key (TP_SUBCONT_EDUC,TP_CONTEUDO_EDUC,ANO_SEM,CO_CURSO,CO_SEQ_SERIE,CO_UNIDADE,CO_TURMA,CO_DISCIPLINA,CO_ALUNO)
+  using index 
+  tablespace SGE
+  pctfree 10
+  initrans 2
+  maxtrans 255
+  storage
+  (
+    initial 66K
+    minextents 1
+    maxextents unlimited
+  );
+alter table S_SUBCONT_EDUC_NOT
+  add constraint R_137 foreign key (TP_SUBCONT_EDUC,TP_CONTEUDO_EDUC,ANO_SEM,CO_CURSO,CO_SEQ_SERIE,CO_UNIDADE)
+  references S_TIPO_SUBCONT_EDU (TP_SUBCONT_EDUC,TP_CONTEUDO_EDUC,ANO_SEM,CO_CURSO,CO_SEQ_SERIE,CO_UNIDADE) on delete cascade;
+alter table S_SUBCONT_EDUC_NOT
+  add constraint R_138 foreign key (CO_UNIDADE,ANO_SEM,CO_TURMA,CO_DISCIPLINA,CO_ALUNO,CO_CURSO,CO_SEQ_SERIE)
+  references S_ALUNO_TURMA_DISC (CO_UNIDADE,ANO_SEM,CO_TURMA,CO_DISCIPLINA,CO_ALUNO,CO_CURSO,CO_SEQ_SERIE) on delete cascade;
+

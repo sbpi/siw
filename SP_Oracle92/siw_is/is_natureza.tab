@@ -1,0 +1,48 @@
+create table IS_NATUREZA
+(
+  SQ_NATUREZA NUMBER(18) not null,
+  CLIENTE     NUMBER(18) not null,
+  NOME        VARCHAR2(30) not null,
+  ATIVO       VARCHAR2(1) default 'S' not null
+)
+tablespace SYSTEM
+  pctfree 10
+  pctused 40
+  initrans 1
+  maxtrans 255
+  storage
+  (
+    initial 66K
+    minextents 1
+    maxextents unlimited
+  );
+comment on table IS_NATUREZA
+  is 'Domínio de valores para a natureza do programa';
+comment on column IS_NATUREZA.SQ_NATUREZA
+  is 'Sequence';
+comment on column IS_NATUREZA.CLIENTE
+  is 'Sequence';
+comment on column IS_NATUREZA.NOME
+  is 'Nome da natureza do programa.';
+comment on column IS_NATUREZA.ATIVO
+  is 'Indica se o registro pode ser associado a novos registros.';
+alter table IS_NATUREZA
+  add constraint PK_IS_NATUREZA primary key (SQ_NATUREZA)
+  using index 
+  tablespace SYSTEM
+  pctfree 10
+  initrans 2
+  maxtrans 255
+  storage
+  (
+    initial 66K
+    minextents 1
+    maxextents unlimited
+  );
+alter table IS_NATUREZA
+  add constraint FK_ISNAT_COPES foreign key (CLIENTE)
+  references SIW.CO_PESSOA (SQ_PESSOA);
+alter table IS_NATUREZA
+  add constraint CKC_ISNAT_ATIVO
+  check (ATIVO in ('S','N'));
+

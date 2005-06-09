@@ -1,0 +1,56 @@
+create table S_AULA_DADA
+(
+  CO_TURMA           NUMBER(10) not null,
+  CO_CURS_SERIE_DISC NUMBER(10) not null,
+  NU_AULAS_DADAS_B1  CHAR(4),
+  CO_UNIDADE         CHAR(5) not null,
+  NU_AULAS_PREV_B1   CHAR(4),
+  ANO_SEM            CHAR(5) not null,
+  CO_CURSO           NUMBER(10) not null,
+  CO_SEQ_SERIE       NUMBER(10) not null,
+  NU_AULAS_DADAS_B2  CHAR(4),
+  NU_AULAS_DADAS_B3  CHAR(4),
+  NU_AULAS_PREV_B3   CHAR(4),
+  NU_AULAS_DADAS_B4  CHAR(4),
+  NU_AULAS_PREV_B4   CHAR(4),
+  CO_DISCIPLINA      CHAR(4) not null,
+  NU_AULAS_PREV_B2   CHAR(4)
+)
+tablespace SGE
+  pctfree 10
+  initrans 1
+  maxtrans 255
+  storage
+  (
+    initial 66K
+    minextents 1
+    maxextents unlimited
+  );
+alter table S_AULA_DADA
+  add constraint U136_47 primary key (CO_TURMA,CO_CURS_SERIE_DISC,CO_DISCIPLINA,CO_UNIDADE,ANO_SEM,CO_CURSO,CO_SEQ_SERIE)
+  using index 
+  tablespace SGE
+  pctfree 10
+  initrans 2
+  maxtrans 255
+  storage
+  (
+    initial 66K
+    minextents 1
+    maxextents unlimited
+  );
+alter table S_AULA_DADA
+  add constraint R123_539 foreign key (CO_TURMA,CO_UNIDADE,ANO_SEM,CO_CURSO,CO_SEQ_SERIE)
+  references S_TURMA (CO_TURMA,CO_UNIDADE,ANO_SEM,CO_CURSO,CO_SEQ_SERIE) on delete cascade;
+create index FOREIGN121 on S_AULA_DADA (CO_TURMA,CO_UNIDADE)
+  tablespace SGE
+  pctfree 10
+  initrans 2
+  maxtrans 255
+  storage
+  (
+    initial 66K
+    minextents 1
+    maxextents unlimited
+  );
+

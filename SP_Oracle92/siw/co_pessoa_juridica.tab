@@ -1,0 +1,103 @@
+create table CO_PESSOA_JURIDICA
+(
+  SQ_PESSOA          NUMBER(18) not null,
+  INICIO_ATIVIDADE   DATE,
+  CNPJ               VARCHAR2(20) not null,
+  INSCRICAO_ESTADUAL VARCHAR2(20),
+  SEDE               VARCHAR2(1) default 'S' not null,
+  CLIENTE            NUMBER(18) not null
+)
+tablespace USERS
+  pctfree 10
+  initrans 1
+  maxtrans 255
+  storage
+  (
+    initial 132K
+    minextents 1
+    maxextents unlimited
+  );
+comment on table CO_PESSOA_JURIDICA
+  is 'Armazena os dados específicos de pessoa jurídica';
+comment on column CO_PESSOA_JURIDICA.INICIO_ATIVIDADE
+  is 'Inicio das atividades da pessoa jurídica';
+comment on column CO_PESSOA_JURIDICA.SEDE
+  is 'Indica se esta pessoa é a sede da empresa';
+alter table CO_PESSOA_JURIDICA
+  add constraint PK_CO_PESSOA_JURIDICA primary key (SQ_PESSOA)
+  using index 
+  tablespace USERS
+  pctfree 10
+  initrans 2
+  maxtrans 255
+  storage
+  (
+    initial 132K
+    minextents 1
+    maxextents unlimited
+  );
+alter table CO_PESSOA_JURIDICA
+  add constraint FK_COPES_COPESJUR foreign key (SQ_PESSOA)
+  references CO_PESSOA (SQ_PESSOA);
+alter table CO_PESSOA_JURIDICA
+  add constraint FK_COPESJUR_SIWCLI foreign key (CLIENTE)
+  references SIW_CLIENTE (SQ_PESSOA);
+alter table CO_PESSOA_JURIDICA
+  add constraint CKC_SEDE_CO_PESSO
+  check (SEDE in ('S','N'));
+create index IN_COPESJUR_CLI on CO_PESSOA_JURIDICA (CLIENTE,SQ_PESSOA)
+  tablespace SYSTEM
+  pctfree 10
+  initrans 2
+  maxtrans 255
+  storage
+  (
+    initial 66K
+    minextents 1
+    maxextents unlimited
+  );
+create index IN_COPESJUR_CNPJ on CO_PESSOA_JURIDICA (CNPJ,CLIENTE)
+  tablespace SYSTEM
+  pctfree 10
+  initrans 2
+  maxtrans 255
+  storage
+  (
+    initial 66K
+    minextents 1
+    maxextents unlimited
+  );
+create index IN_COPESJUR_IE on CO_PESSOA_JURIDICA (INSCRICAO_ESTADUAL,CNPJ)
+  tablespace SYSTEM
+  pctfree 10
+  initrans 2
+  maxtrans 255
+  storage
+  (
+    initial 66K
+    minextents 1
+    maxextents unlimited
+  );
+create index IN_COPESJUR_INIATI on CO_PESSOA_JURIDICA (INICIO_ATIVIDADE)
+  tablespace SYSTEM
+  pctfree 10
+  initrans 2
+  maxtrans 255
+  storage
+  (
+    initial 66K
+    minextents 1
+    maxextents unlimited
+  );
+create index IN_COPESJUR_SEDE on CO_PESSOA_JURIDICA (SEDE,CNPJ)
+  tablespace SYSTEM
+  pctfree 10
+  initrans 2
+  maxtrans 255
+  storage
+  (
+    initial 66K
+    minextents 1
+    maxextents unlimited
+  );
+

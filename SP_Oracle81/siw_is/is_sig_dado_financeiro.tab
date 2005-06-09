@@ -1,0 +1,199 @@
+create table IS_SIG_DADO_FINANCEIRO
+(
+  CLIENTE             NUMBER(18) not null,
+  ANO                 NUMBER(4) not null,
+  CD_PROGRAMA         VARCHAR2(4) not null,
+  CD_ACAO             VARCHAR2(4) not null,
+  CD_SUBACAO          VARCHAR2(4) not null,
+  CD_FONTE            VARCHAR2(5) not null,
+  CD_REGIAO           VARCHAR2(2) not null,
+  CRON_INI_MES_1      NUMBER(18,2),
+  CRON_INI_MES_2      NUMBER(18,2),
+  CRON_INI_MES_3      NUMBER(18,2),
+  CRON_INI_MES_4      NUMBER(18,2),
+  CRON_INI_MES_5      NUMBER(18,2),
+  CRON_INI_MES_6      NUMBER(18,2),
+  CRON_INI_MES_7      NUMBER(18,2),
+  CRON_INI_MES_8      NUMBER(18,2),
+  CRON_INI_MES_9      NUMBER(18,2),
+  CRON_INI_MES_10     NUMBER(18,2),
+  CRON_INI_MES_11     NUMBER(18,2),
+  CRON_INI_MES_12     NUMBER(18,2),
+  CRON_MES_1          NUMBER(18,2),
+  CRON_MES_2          NUMBER(18,2),
+  CRON_MES_3          NUMBER(18,2),
+  CRON_MES_4          NUMBER(18,2),
+  CRON_MES_5          NUMBER(18,2),
+  CRON_MES_6          NUMBER(18,2),
+  CRON_MES_7          NUMBER(18,2),
+  CRON_MES_8          NUMBER(18,2),
+  CRON_MES_9          NUMBER(18,2),
+  CRON_MES_10         NUMBER(18,2),
+  CRON_MES_11         NUMBER(18,2),
+  CRON_MES_12         NUMBER(18,2),
+  REAL_MES_1          NUMBER(18,2),
+  REAL_MES_2          NUMBER(18,2),
+  REAL_MES_3          NUMBER(18,2),
+  REAL_MES_4          NUMBER(18,2),
+  REAL_MES_5          NUMBER(18,2),
+  REAL_MES_6          NUMBER(18,2),
+  REAL_MES_7          NUMBER(18,2),
+  REAL_MES_8          NUMBER(18,2),
+  REAL_MES_9          NUMBER(18,2),
+  REAL_MES_10         NUMBER(18,2),
+  REAL_MES_11         NUMBER(18,2),
+  REAL_MES_12         NUMBER(18,2),
+  PREVISAO_ANO        NUMBER(18,2),
+  CRON_INI_ANO        NUMBER(18,4),
+  ATUAL_ANO           NUMBER(18,2),
+  CRON_ANO            NUMBER(18,2),
+  REAL_ANO            NUMBER(18,2),
+  COMENTARIO_EXECUCAO VARCHAR2(4000),
+  FLAG_INCLUSAO       DATE default sysdate not null,
+  FLAG_ALTERACAO      DATE,
+  FLAG_ENVIO          DATE
+)
+tablespace SYSTEM
+  pctfree 10
+  pctused 40
+  initrans 1
+  maxtrans 255
+  storage
+  (
+    initial 72K
+    next 328K
+    minextents 1
+    maxextents unlimited
+    pctincrease 50
+  );
+comment on table IS_SIG_DADO_FINANCEIRO
+  is 'Armazena valores cronogramados e realizados para as ações, especializadas por fonte e região, mês a mês.';
+comment on column IS_SIG_DADO_FINANCEIRO.CLIENTE
+  is 'Sequence';
+comment on column IS_SIG_DADO_FINANCEIRO.ANO
+  is 'Ano de referência do registro.';
+comment on column IS_SIG_DADO_FINANCEIRO.CD_PROGRAMA
+  is 'Código do Programa no Sigplan';
+comment on column IS_SIG_DADO_FINANCEIRO.CD_ACAO
+  is 'Código da Ação';
+comment on column IS_SIG_DADO_FINANCEIRO.CD_SUBACAO
+  is 'Código da SubAção';
+comment on column IS_SIG_DADO_FINANCEIRO.CD_FONTE
+  is 'Codigo da Fonte';
+comment on column IS_SIG_DADO_FINANCEIRO.CD_REGIAO
+  is 'Código da Região';
+comment on column IS_SIG_DADO_FINANCEIRO.CRON_INI_MES_1
+  is 'Valor Cronogramado Inicial para Janeiro';
+comment on column IS_SIG_DADO_FINANCEIRO.CRON_INI_MES_2
+  is 'Valor Cronogramado Inicial para fevereiro';
+comment on column IS_SIG_DADO_FINANCEIRO.CRON_INI_MES_3
+  is 'Valor Cronogramado Inicial para março';
+comment on column IS_SIG_DADO_FINANCEIRO.CRON_INI_MES_4
+  is 'Valor Cronogramado Inicial para abril';
+comment on column IS_SIG_DADO_FINANCEIRO.CRON_INI_MES_5
+  is 'Valor Cronogramado Inicial para maio';
+comment on column IS_SIG_DADO_FINANCEIRO.CRON_INI_MES_6
+  is 'Valor Cronogramado Inicial para junho';
+comment on column IS_SIG_DADO_FINANCEIRO.CRON_INI_MES_7
+  is 'Valor Cronogramado Inicial para julho';
+comment on column IS_SIG_DADO_FINANCEIRO.CRON_INI_MES_8
+  is 'Valor Cronogramado Inicial para agosto';
+comment on column IS_SIG_DADO_FINANCEIRO.CRON_INI_MES_9
+  is 'Valor Cronogramado Inicial para setembro';
+comment on column IS_SIG_DADO_FINANCEIRO.CRON_INI_MES_10
+  is 'Valor Cronogramado Inicial para outubro';
+comment on column IS_SIG_DADO_FINANCEIRO.CRON_INI_MES_11
+  is 'Valor Cronogramado Inicial para novembro';
+comment on column IS_SIG_DADO_FINANCEIRO.CRON_INI_MES_12
+  is 'Valor Cronogramado Inicial para dezembro';
+comment on column IS_SIG_DADO_FINANCEIRO.CRON_MES_1
+  is 'Valor Cronogramado para Janeiro';
+comment on column IS_SIG_DADO_FINANCEIRO.CRON_MES_2
+  is 'Valor Cronogramado para fevereiro';
+comment on column IS_SIG_DADO_FINANCEIRO.CRON_MES_3
+  is 'Valor Cronogramado para março';
+comment on column IS_SIG_DADO_FINANCEIRO.CRON_MES_4
+  is 'Valor Cronogramado para abril';
+comment on column IS_SIG_DADO_FINANCEIRO.CRON_MES_5
+  is 'Valor Cronogramado para maio';
+comment on column IS_SIG_DADO_FINANCEIRO.CRON_MES_6
+  is 'Valor Cronogramado para junho';
+comment on column IS_SIG_DADO_FINANCEIRO.CRON_MES_7
+  is 'Valor Cronogramado para julho';
+comment on column IS_SIG_DADO_FINANCEIRO.CRON_MES_8
+  is 'Valor Cronogramado para agosto';
+comment on column IS_SIG_DADO_FINANCEIRO.CRON_MES_9
+  is 'Valor Cronogramado para setembro';
+comment on column IS_SIG_DADO_FINANCEIRO.CRON_MES_10
+  is 'Valor Cronogramado para outubro';
+comment on column IS_SIG_DADO_FINANCEIRO.CRON_MES_11
+  is 'Valor Cronogramado para novembro';
+comment on column IS_SIG_DADO_FINANCEIRO.CRON_MES_12
+  is 'Valor Cronogramado para dezembro';
+comment on column IS_SIG_DADO_FINANCEIRO.REAL_MES_1
+  is 'Valor Realizado em Janeiro';
+comment on column IS_SIG_DADO_FINANCEIRO.REAL_MES_2
+  is 'Valor Realizado em fevereiro';
+comment on column IS_SIG_DADO_FINANCEIRO.REAL_MES_3
+  is 'Valor Realizado em março';
+comment on column IS_SIG_DADO_FINANCEIRO.REAL_MES_4
+  is 'Valor Realizado em abril';
+comment on column IS_SIG_DADO_FINANCEIRO.REAL_MES_5
+  is 'Valor Realizado em maio';
+comment on column IS_SIG_DADO_FINANCEIRO.REAL_MES_6
+  is 'Valor Realizado em junho';
+comment on column IS_SIG_DADO_FINANCEIRO.REAL_MES_7
+  is 'Valor Realizado em julho';
+comment on column IS_SIG_DADO_FINANCEIRO.REAL_MES_8
+  is 'Valor Realizado em agosto';
+comment on column IS_SIG_DADO_FINANCEIRO.REAL_MES_9
+  is 'Valor Realizado em setembro';
+comment on column IS_SIG_DADO_FINANCEIRO.REAL_MES_10
+  is 'Valor Realizado em outubro';
+comment on column IS_SIG_DADO_FINANCEIRO.REAL_MES_11
+  is 'Valor Realizado em novembro';
+comment on column IS_SIG_DADO_FINANCEIRO.REAL_MES_12
+  is 'Valor Realizado em dezembro';
+comment on column IS_SIG_DADO_FINANCEIRO.PREVISAO_ANO
+  is 'Valor previsto para o Ano';
+comment on column IS_SIG_DADO_FINANCEIRO.CRON_INI_ANO
+  is 'Valor do cronograma inicial do Ano';
+comment on column IS_SIG_DADO_FINANCEIRO.ATUAL_ANO
+  is 'Valor Atual do ano';
+comment on column IS_SIG_DADO_FINANCEIRO.CRON_ANO
+  is 'Valor Cronogramado no ano';
+comment on column IS_SIG_DADO_FINANCEIRO.REAL_ANO
+  is 'Valor Realizado no ano';
+comment on column IS_SIG_DADO_FINANCEIRO.COMENTARIO_EXECUCAO
+  is 'Comentário da Execução';
+comment on column IS_SIG_DADO_FINANCEIRO.FLAG_INCLUSAO
+  is 'Data de inclusão do registro';
+comment on column IS_SIG_DADO_FINANCEIRO.FLAG_ALTERACAO
+  is 'Data da última alteração do registro, caso ele tenha sido alterado.';
+comment on column IS_SIG_DADO_FINANCEIRO.FLAG_ENVIO
+  is 'Data do último envio do registro, caso ele já tenha sido enviado.';
+alter table IS_SIG_DADO_FINANCEIRO
+  add constraint PK_IS_SIG_DADO_FINANCEIRO primary key (ANO,CD_PROGRAMA,CLIENTE,CD_ACAO,CD_SUBACAO,CD_FONTE,CD_REGIAO)
+  using index 
+  tablespace SYSTEM
+  pctfree 10
+  initrans 2
+  maxtrans 255
+  storage
+  (
+    initial 72K
+    next 144K
+    minextents 1
+    maxextents unlimited
+    pctincrease 50
+  );
+alter table IS_SIG_DADO_FINANCEIRO
+  add constraint FK_ISSIGDADFIN_ISREG foreign key (CD_REGIAO)
+  references IS_REGIAO (CD_REGIAO);
+alter table IS_SIG_DADO_FINANCEIRO
+  add constraint FK_ISSIGDADFIN_ISSIGACA foreign key (ANO,CD_PROGRAMA,CLIENTE,CD_ACAO,CD_SUBACAO)
+  references IS_SIG_ACAO (ANO,CD_PROGRAMA,CLIENTE,CD_ACAO,CD_SUBACAO);
+alter table IS_SIG_DADO_FINANCEIRO
+  add constraint FK_ISSIGDADFIN_ISSIGFON foreign key (CD_FONTE)
+  references IS_SIG_FONTE (CD_FONTE);
+

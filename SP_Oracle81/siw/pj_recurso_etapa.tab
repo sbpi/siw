@@ -1,0 +1,62 @@
+create table PJ_RECURSO_ETAPA
+(
+  SQ_PROJETO_ETAPA   NUMBER(18) not null,
+  SQ_PROJETO_RECURSO NUMBER(18) not null,
+  OBSERVACAO         VARCHAR2(500)
+)
+tablespace SYSTEM
+  pctfree 10
+  pctused 40
+  initrans 1
+  maxtrans 255
+  storage
+  (
+    initial 72K
+    next 64K
+    minextents 1
+    maxextents unlimited
+    pctincrease 50
+  );
+comment on table PJ_RECURSO_ETAPA
+  is 'Relaciona os recursos do projeto alocados a essa etapa.';
+comment on column PJ_RECURSO_ETAPA.SQ_PROJETO_ETAPA
+  is 'Chave de PJ_PROJETO_ETAPA';
+comment on column PJ_RECURSO_ETAPA.SQ_PROJETO_RECURSO
+  is 'Chave de PJ_PROJETO_RECURSO';
+comment on column PJ_RECURSO_ETAPA.OBSERVACAO
+  is 'Observações sobre a participação do recurso no cumprimento da etapa.';
+alter table PJ_RECURSO_ETAPA
+  add constraint PK_PJ_RECURSO_ETAPA primary key (SQ_PROJETO_ETAPA,SQ_PROJETO_RECURSO)
+  using index 
+  tablespace SYSTEM
+  pctfree 10
+  initrans 2
+  maxtrans 255
+  storage
+  (
+    initial 72K
+    next 64K
+    minextents 1
+    maxextents unlimited
+    pctincrease 50
+  );
+alter table PJ_RECURSO_ETAPA
+  add constraint FK_PJRECETA_PJPROETA foreign key (SQ_PROJETO_ETAPA)
+  references PJ_PROJETO_ETAPA (SQ_PROJETO_ETAPA);
+alter table PJ_RECURSO_ETAPA
+  add constraint FK_PJRECETA_PJPROREC foreign key (SQ_PROJETO_RECURSO)
+  references PJ_PROJETO_RECURSO (SQ_PROJETO_RECURSO);
+create index IN_PJRECETA_INVERSA on PJ_RECURSO_ETAPA (SQ_PROJETO_RECURSO,SQ_PROJETO_ETAPA)
+  tablespace SYSTEM
+  pctfree 10
+  initrans 2
+  maxtrans 255
+  storage
+  (
+    initial 72K
+    next 64K
+    minextents 1
+    maxextents unlimited
+    pctincrease 50
+  );
+

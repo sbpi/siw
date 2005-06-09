@@ -1,0 +1,128 @@
+create table SG_AUTENTICACAO
+(
+  SQ_PESSOA          NUMBER(18) not null,
+  USERNAME           VARCHAR2(30) not null,
+  SENHA              VARCHAR2(255) not null,
+  ASSINATURA         VARCHAR2(255),
+  ATIVO              VARCHAR2(1) default 'S' not null,
+  SQ_UNIDADE         NUMBER(10) not null,
+  SQ_LOCALIZACAO     NUMBER(10) not null,
+  GESTOR_SEGURANCA   VARCHAR2(1) default 'N' not null,
+  GESTOR_SISTEMA     VARCHAR2(1) default 'N' not null,
+  CLIENTE            NUMBER(18) not null,
+  EMAIL              VARCHAR2(60) not null,
+  ULTIMA_TROCA_SENHA DATE default SYSDATE not null,
+  ULTIMA_TROCA_ASSIN DATE default SYSDATE not null,
+  TENTATIVAS_SENHA   NUMBER(2) default 0 not null,
+  TENTATIVAS_ASSIN   NUMBER(2) default 0 not null
+)
+tablespace USERS
+  pctfree 10
+  pctused 40
+  initrans 1
+  maxtrans 255
+  storage
+  (
+    initial 136K
+    next 128K
+    minextents 1
+    maxextents 4096
+    pctincrease 0
+  );
+comment on table SG_AUTENTICACAO
+  is 'Armazena os dados necessários para o usuário autenticar-se na aplicação.';
+comment on column SG_AUTENTICACAO.SQ_PESSOA
+  is 'Sequence';
+comment on column SG_AUTENTICACAO.TENTATIVAS_SENHA
+  is 'Número de vezes que a senha de acesso foi informada incorretamente';
+comment on column SG_AUTENTICACAO.TENTATIVAS_ASSIN
+  is 'Número de vezes que a assinatura eletrônica foi informada incorretamente';
+alter table SG_AUTENTICACAO
+  add constraint PK_SG_AUTENTICACAO primary key (SQ_PESSOA)
+  using index 
+  tablespace USERS
+  pctfree 10
+  initrans 2
+  maxtrans 255
+  storage
+  (
+    initial 136K
+    next 128K
+    minextents 1
+    maxextents 4096
+    pctincrease 0
+  );
+alter table SG_AUTENTICACAO
+  add constraint FK_SGAUT_COPES foreign key (SQ_PESSOA)
+  references CO_PESSOA (SQ_PESSOA);
+alter table SG_AUTENTICACAO
+  add constraint FK_SGAUT_EOLOC foreign key (SQ_LOCALIZACAO)
+  references EO_LOCALIZACAO (SQ_LOCALIZACAO);
+alter table SG_AUTENTICACAO
+  add constraint FK_SGAUT_EOUNI foreign key (SQ_UNIDADE)
+  references EO_UNIDADE (SQ_UNIDADE);
+alter table SG_AUTENTICACAO
+  add constraint FK_SGAUT_SIWCLI foreign key (CLIENTE)
+  references SIW_CLIENTE (SQ_PESSOA);
+alter table SG_AUTENTICACAO
+  add constraint CKC_ATIVO_SG_AUTEN
+  check (ATIVO in ('S','N'));
+alter table SG_AUTENTICACAO
+  add constraint CKC_SGAUT_GESSEG
+  check (GESTOR_SEGURANCA in ('S','N'));
+alter table SG_AUTENTICACAO
+  add constraint CKC_SGAUT_GESSIS
+  check (GESTOR_SISTEMA in ('S','N'));
+create unique index IN_SGAUT_CLIENTE on SG_AUTENTICACAO (CLIENTE,USERNAME)
+  tablespace SYSTEM
+  pctfree 10
+  initrans 2
+  maxtrans 255
+  storage
+  (
+    initial 72K
+    next 64K
+    minextents 1
+    maxextents unlimited
+    pctincrease 50
+  );
+create index IN_SGAUT_LOCAL on SG_AUTENTICACAO (SQ_LOCALIZACAO,SQ_PESSOA)
+  tablespace SYSTEM
+  pctfree 10
+  initrans 2
+  maxtrans 255
+  storage
+  (
+    initial 72K
+    next 64K
+    minextents 1
+    maxextents unlimited
+    pctincrease 50
+  );
+create index IN_SGAUT_UNIDADE on SG_AUTENTICACAO (SQ_UNIDADE,SQ_PESSOA)
+  tablespace SYSTEM
+  pctfree 10
+  initrans 2
+  maxtrans 255
+  storage
+  (
+    initial 72K
+    next 64K
+    minextents 1
+    maxextents unlimited
+    pctincrease 50
+  );
+create index IN_SGAUT_USERNAME on SG_AUTENTICACAO (USERNAME)
+  tablespace SYSTEM
+  pctfree 10
+  initrans 2
+  maxtrans 255
+  storage
+  (
+    initial 72K
+    next 64K
+    minextents 1
+    maxextents unlimited
+    pctincrease 50
+  );
+

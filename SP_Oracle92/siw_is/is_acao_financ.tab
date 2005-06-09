@@ -1,0 +1,55 @@
+create table IS_ACAO_FINANC
+(
+  SQ_SIW_SOLICITACAO NUMBER(18) not null,
+  ANO                NUMBER(4) not null,
+  CD_PROGRAMA        VARCHAR2(4) not null,
+  CLIENTE            NUMBER(18) not null,
+  CD_ACAO            VARCHAR2(4) not null,
+  CD_SUBACAO         VARCHAR2(4) not null,
+  OBSERVACAO         VARCHAR2(2000)
+)
+tablespace SYSTEM
+  pctfree 10
+  pctused 40
+  initrans 1
+  maxtrans 255
+  storage
+  (
+    initial 66K
+    minextents 1
+    maxextents unlimited
+  );
+comment on table IS_ACAO_FINANC
+  is 'Vincula uma ação do PPA a outras que eventualmente contribuam financeiramente para sua execução.';
+comment on column IS_ACAO_FINANC.SQ_SIW_SOLICITACAO
+  is 'Chave de SIW_SOLICITACAO';
+comment on column IS_ACAO_FINANC.ANO
+  is 'Ano de referência do registro.';
+comment on column IS_ACAO_FINANC.CD_PROGRAMA
+  is 'Código do Programa no Sigplan';
+comment on column IS_ACAO_FINANC.CLIENTE
+  is 'Sequence';
+comment on column IS_ACAO_FINANC.CD_ACAO
+  is 'Código da Ação';
+comment on column IS_ACAO_FINANC.CD_SUBACAO
+  is 'Código da SubAção';
+alter table IS_ACAO_FINANC
+  add constraint PK_IS_ACAO_FINANC primary key (SQ_SIW_SOLICITACAO,ANO,CD_PROGRAMA,CLIENTE,CD_ACAO,CD_SUBACAO)
+  using index 
+  tablespace SYSTEM
+  pctfree 10
+  initrans 2
+  maxtrans 255
+  storage
+  (
+    initial 66K
+    minextents 1
+    maxextents unlimited
+  );
+alter table IS_ACAO_FINANC
+  add constraint FK_ISACAFIN_ISACA foreign key (SQ_SIW_SOLICITACAO)
+  references IS_ACAO (SQ_SIW_SOLICITACAO);
+alter table IS_ACAO_FINANC
+  add constraint FK_ISACAFIN_ISSIGACA foreign key (ANO,CD_PROGRAMA,CLIENTE,CD_ACAO,CD_SUBACAO)
+  references IS_SIG_ACAO (ANO,CD_PROGRAMA,CLIENTE,CD_ACAO,CD_SUBACAO);
+

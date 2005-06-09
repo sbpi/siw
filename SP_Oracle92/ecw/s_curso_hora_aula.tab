@@ -1,0 +1,46 @@
+create table S_CURSO_HORA_AULA
+(
+  ANO_SEM      CHAR(5) not null,
+  CO_TURNO     CHAR(2) not null,
+  CO_UNIDADE   CHAR(5) not null,
+  CO_CURSO     NUMBER(10) not null,
+  NU_HORA_AULA NUMBER(10)
+)
+tablespace SGE
+  pctfree 10
+  initrans 1
+  maxtrans 255
+  storage
+  (
+    initial 66K
+    minextents 1
+    maxextents unlimited
+  );
+alter table S_CURSO_HORA_AULA
+  add constraint U150_61 primary key (ANO_SEM,CO_CURSO,CO_TURNO,CO_UNIDADE)
+  using index 
+  tablespace SGE
+  pctfree 10
+  initrans 2
+  maxtrans 255
+  storage
+  (
+    initial 66K
+    minextents 1
+    maxextents unlimited
+  );
+alter table S_CURSO_HORA_AULA
+  add constraint FK_S_CURSO foreign key (CO_CURSO,ANO_SEM,CO_UNIDADE)
+  references S_CURSO (CO_CURSO,ANO_SEM,CO_UNIDADE) on delete cascade;
+create index FOREIGN241 on S_CURSO_HORA_AULA (CO_CURSO)
+  tablespace SGE
+  pctfree 10
+  initrans 2
+  maxtrans 255
+  storage
+  (
+    initial 66K
+    minextents 1
+    maxextents unlimited
+  );
+

@@ -1,0 +1,88 @@
+create table DC_TRIGGER
+(
+  SQ_TRIGGER NUMBER(18) not null,
+  SQ_TABELA  NUMBER(18) not null,
+  SQ_USUARIO NUMBER(18) not null,
+  SQ_SISTEMA NUMBER(18) not null,
+  NOME       VARCHAR2(30) not null,
+  DESCRICAO  VARCHAR2(4000) not null
+)
+tablespace SYSTEM
+  pctfree 10
+  pctused 40
+  initrans 1
+  maxtrans 255
+  storage
+  (
+    initial 66K
+    minextents 1
+    maxextents unlimited
+  );
+comment on column DC_TRIGGER.SQ_TRIGGER
+  is 'Sequence.';
+comment on column DC_TRIGGER.SQ_TABELA
+  is 'Sequence';
+comment on column DC_TRIGGER.SQ_USUARIO
+  is 'Sequence';
+comment on column DC_TRIGGER.SQ_SISTEMA
+  is 'Sequence.';
+comment on column DC_TRIGGER.NOME
+  is 'Nome da trigger.';
+comment on column DC_TRIGGER.DESCRICAO
+  is 'Descrição da trigger: finalidade, objetivos etc.';
+alter table DC_TRIGGER
+  add constraint PK_DC_TRIGGER primary key (SQ_TRIGGER)
+  using index 
+  tablespace SYSTEM
+  pctfree 10
+  initrans 2
+  maxtrans 255
+  storage
+  (
+    initial 66K
+    minextents 1
+    maxextents unlimited
+  );
+alter table DC_TRIGGER
+  add constraint FK_DCTRI_DCSIS foreign key (SQ_SISTEMA)
+  references DC_SISTEMA (SQ_SISTEMA);
+alter table DC_TRIGGER
+  add constraint FK_DCTRI_DCTAB foreign key (SQ_TABELA)
+  references DC_TABELA (SQ_TABELA);
+alter table DC_TRIGGER
+  add constraint FK_DCTRI_DCUSU foreign key (SQ_USUARIO)
+  references DC_USUARIO (SQ_USUARIO);
+create unique index IN_DCTRI_NOME on DC_TRIGGER (NOME,SQ_SISTEMA)
+  tablespace SYSTEM
+  pctfree 10
+  initrans 2
+  maxtrans 255
+  storage
+  (
+    initial 66K
+    minextents 1
+    maxextents unlimited
+  );
+create index IN_DCTRI_SISTEMA on DC_TRIGGER (SQ_SISTEMA,SQ_TRIGGER)
+  tablespace SYSTEM
+  pctfree 10
+  initrans 2
+  maxtrans 255
+  storage
+  (
+    initial 66K
+    minextents 1
+    maxextents unlimited
+  );
+create index IN_DCTRI_TABELA on DC_TRIGGER (SQ_TABELA,SQ_TRIGGER)
+  tablespace SYSTEM
+  pctfree 10
+  initrans 2
+  maxtrans 255
+  storage
+  (
+    initial 66K
+    minextents 1
+    maxextents unlimited
+  );
+

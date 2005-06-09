@@ -1,0 +1,48 @@
+create table IS_TAREFA
+(
+  SQ_SIW_SOLICITACAO NUMBER(18) not null,
+  TITULO             VARCHAR2(100) not null,
+  NM_RESPONSAVEL     VARCHAR2(60),
+  FN_RESPONSAVEL     VARCHAR2(20),
+  EM_RESPONSAVEL     VARCHAR2(60)
+)
+tablespace SYSTEM
+  pctfree 10
+  pctused 40
+  initrans 1
+  maxtrans 255
+  storage
+  (
+    initial 66K
+    minextents 1
+    maxextents unlimited
+  );
+comment on table IS_TAREFA
+  is 'Dados complementares da tarefa.';
+comment on column IS_TAREFA.SQ_SIW_SOLICITACAO
+  is 'Chave de SIW_SOLICITACAO.';
+comment on column IS_TAREFA.TITULO
+  is 'Título da tarefa.';
+comment on column IS_TAREFA.NM_RESPONSAVEL
+  is 'Nome do responsável pela execução da tarefa.';
+comment on column IS_TAREFA.FN_RESPONSAVEL
+  is 'Telefone do responsável pela execução da tarefa.';
+comment on column IS_TAREFA.EM_RESPONSAVEL
+  is 'e-Mail do responsável pela execução da tarefa.';
+alter table IS_TAREFA
+  add constraint PK_IS_TAREFA primary key (SQ_SIW_SOLICITACAO)
+  using index 
+  tablespace SYSTEM
+  pctfree 10
+  initrans 2
+  maxtrans 255
+  storage
+  (
+    initial 66K
+    minextents 1
+    maxextents unlimited
+  );
+alter table IS_TAREFA
+  add constraint FK_ISTAR_GDDEM foreign key (SQ_SIW_SOLICITACAO)
+  references SIW.GD_DEMANDA (SQ_SIW_SOLICITACAO);
+

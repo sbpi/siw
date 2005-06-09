@@ -1,0 +1,59 @@
+create table AC_ACORDO_LOG_ARQ
+(
+  SQ_ACORDO_LOG  NUMBER(18) not null,
+  SQ_SIW_ARQUIVO NUMBER(18) not null
+)
+tablespace SYSTEM
+  pctfree 10
+  pctused 40
+  initrans 1
+  maxtrans 255
+  storage
+  (
+    initial 72K
+    next 64K
+    minextents 1
+    maxextents unlimited
+    pctincrease 50
+  );
+comment on table AC_ACORDO_LOG_ARQ
+  is 'Vincula arquivos a logs de acordo.';
+comment on column AC_ACORDO_LOG_ARQ.SQ_ACORDO_LOG
+  is 'Sequence.';
+comment on column AC_ACORDO_LOG_ARQ.SQ_SIW_ARQUIVO
+  is 'Sequence.';
+alter table AC_ACORDO_LOG_ARQ
+  add constraint PK_AC_ACORDO_LOG_ARQ primary key (SQ_ACORDO_LOG,SQ_SIW_ARQUIVO)
+  using index 
+  tablespace SYSTEM
+  pctfree 10
+  initrans 2
+  maxtrans 255
+  storage
+  (
+    initial 72K
+    next 64K
+    minextents 1
+    maxextents unlimited
+    pctincrease 50
+  );
+alter table AC_ACORDO_LOG_ARQ
+  add constraint FK_ACACOLOGARQ_ACACOLOG foreign key (SQ_ACORDO_LOG)
+  references AC_ACORDO_LOG (SQ_ACORDO_LOG);
+alter table AC_ACORDO_LOG_ARQ
+  add constraint FK_ACACOLOGARQ_SIWARQ foreign key (SQ_SIW_ARQUIVO)
+  references SIW_ARQUIVO (SQ_SIW_ARQUIVO);
+create index IN_ACACOLOGARQ_INV on AC_ACORDO_LOG_ARQ (SQ_SIW_ARQUIVO,SQ_ACORDO_LOG)
+  tablespace SYSTEM
+  pctfree 10
+  initrans 2
+  maxtrans 255
+  storage
+  (
+    initial 72K
+    next 64K
+    minextents 1
+    maxextents unlimited
+    pctincrease 50
+  );
+

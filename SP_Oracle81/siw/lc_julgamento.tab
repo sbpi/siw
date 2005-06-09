@@ -1,0 +1,104 @@
+create table LC_JULGAMENTO
+(
+  SQ_LCJULGAMENTO NUMBER(18) not null,
+  CLIENTE         NUMBER(18) not null,
+  NOME            VARCHAR2(60) not null,
+  DESCRICAO       VARCHAR2(1000),
+  ITEM            VARCHAR2(1) default 'N' not null,
+  ATIVO           VARCHAR2(1) default 'S' not null,
+  PADRAO          VARCHAR2(1) default 'N' not null
+)
+tablespace SYSTEM
+  pctfree 10
+  pctused 40
+  initrans 1
+  maxtrans 255
+  storage
+  (
+    initial 72K
+    next 64K
+    minextents 1
+    maxextents unlimited
+    pctincrease 50
+  );
+comment on column LC_JULGAMENTO.SQ_LCJULGAMENTO
+  is 'Sequence.';
+comment on column LC_JULGAMENTO.CLIENTE
+  is 'Chave de CO_PESSOA indicando a que cliente o registro pertence.';
+comment on column LC_JULGAMENTO.NOME
+  is 'Nome do critério de julgamento.';
+comment on column LC_JULGAMENTO.DESCRICAO
+  is 'Descrição resumida do critério de julgamento.';
+comment on column LC_JULGAMENTO.ITEM
+  is 'Indica se haverá apenas um vencedor da licitação ou se haverá um vencedor por item.';
+comment on column LC_JULGAMENTO.ATIVO
+  is 'Indica se o registro está disponível para seleção.';
+comment on column LC_JULGAMENTO.PADRAO
+  is 'Indica se o registro deve ser exibido como opção inicial.';
+alter table LC_JULGAMENTO
+  add constraint PK_LC_JULGAMENTO primary key (SQ_LCJULGAMENTO)
+  using index 
+  tablespace SYSTEM
+  pctfree 10
+  initrans 2
+  maxtrans 255
+  storage
+  (
+    initial 72K
+    next 64K
+    minextents 1
+    maxextents unlimited
+    pctincrease 50
+  );
+alter table LC_JULGAMENTO
+  add constraint FK_LCJUL_COPES foreign key (CLIENTE)
+  references CO_PESSOA (SQ_PESSOA);
+alter table LC_JULGAMENTO
+  add constraint CKC_ATIVO_LC_JULGA
+  check (ATIVO in ('S','N'));
+alter table LC_JULGAMENTO
+  add constraint CKC_ITEM_LC_JULGA
+  check (ITEM in ('S','N'));
+alter table LC_JULGAMENTO
+  add constraint CKC_PADRAO_LC_JULGA
+  check (PADRAO in ('S','N'));
+create index IN_LCJUL_ATIVO on LC_JULGAMENTO (CLIENTE,ATIVO,SQ_LCJULGAMENTO)
+  tablespace SYSTEM
+  pctfree 10
+  initrans 2
+  maxtrans 255
+  storage
+  (
+    initial 72K
+    next 64K
+    minextents 1
+    maxextents unlimited
+    pctincrease 50
+  );
+create index IN_LCJUL_CLIENTE on LC_JULGAMENTO (CLIENTE,SQ_LCJULGAMENTO)
+  tablespace SYSTEM
+  pctfree 10
+  initrans 2
+  maxtrans 255
+  storage
+  (
+    initial 72K
+    next 64K
+    minextents 1
+    maxextents unlimited
+    pctincrease 50
+  );
+create unique index IN_LCJUL_NOME on LC_JULGAMENTO (CLIENTE,NOME)
+  tablespace SYSTEM
+  pctfree 10
+  initrans 2
+  maxtrans 255
+  storage
+  (
+    initial 72K
+    next 64K
+    minextents 1
+    maxextents unlimited
+    pctincrease 50
+  );
+

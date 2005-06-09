@@ -1,0 +1,132 @@
+create table CO_TIPO_VINCULO
+(
+  SQ_TIPO_VINCULO NUMBER(18) not null,
+  SQ_TIPO_PESSOA  NUMBER(18) not null,
+  CLIENTE         NUMBER(18),
+  NOME            VARCHAR2(20) not null,
+  INTERNO         VARCHAR2(1) default 'N' not null,
+  ATIVO           VARCHAR2(1) default 'S' not null,
+  PADRAO          VARCHAR2(1) default 'N' not null,
+  CONTRATADO      VARCHAR2(1) default 'N' not null,
+  ORDEM           NUMBER(6)
+)
+tablespace USERS
+  pctfree 10
+  pctused 40
+  initrans 1
+  maxtrans 255
+  storage
+  (
+    initial 136K
+    next 128K
+    minextents 1
+    maxextents 4096
+    pctincrease 0
+  );
+comment on table CO_TIPO_VINCULO
+  is 'Armazena os tipos de vinculo entre pessoas físicas e jurídicas';
+comment on column CO_TIPO_VINCULO.ATIVO
+  is 'Indica se o registro deve ou não ser exibido.';
+comment on column CO_TIPO_VINCULO.PADRAO
+  is 'Indica se este registro deve ser apresentado como padrão para o usuário.';
+comment on column CO_TIPO_VINCULO.CONTRATADO
+  is 'Indica se a pessoa é contratada ou não pela organização.';
+alter table CO_TIPO_VINCULO
+  add constraint PK_CO_TIPO_VINCULO primary key (SQ_TIPO_VINCULO)
+  using index 
+  tablespace USERS
+  pctfree 10
+  initrans 2
+  maxtrans 255
+  storage
+  (
+    initial 136K
+    next 128K
+    minextents 1
+    maxextents 4096
+    pctincrease 0
+  );
+alter table CO_TIPO_VINCULO
+  add constraint FK_COTIPVIN_SIWCLI foreign key (CLIENTE)
+  references SIW_CLIENTE (SQ_PESSOA);
+alter table CO_TIPO_VINCULO
+  add constraint FK_COTPPES_COTPVIN foreign key (SQ_TIPO_PESSOA)
+  references CO_TIPO_PESSOA (SQ_TIPO_PESSOA);
+alter table CO_TIPO_VINCULO
+  add constraint CKC_ATIVO_COTIPVIN
+  check (ATIVO in ('S','N'));
+alter table CO_TIPO_VINCULO
+  add constraint CKC_COTIPVIN_CONT
+  check (CONTRATADO in ('S','N'));
+alter table CO_TIPO_VINCULO
+  add constraint CKC_COTIPVIN_INT
+  check (INTERNO in ('S','N'));
+alter table CO_TIPO_VINCULO
+  add constraint CKC_COTIPVIN_PAD
+  check (PADRAO in ('S','N'));
+create index IN_COTIPVIN_ATIVO on CO_TIPO_VINCULO (CLIENTE,ATIVO,SQ_TIPO_VINCULO)
+  tablespace SYSTEM
+  pctfree 10
+  initrans 2
+  maxtrans 255
+  storage
+  (
+    initial 72K
+    next 64K
+    minextents 1
+    maxextents unlimited
+    pctincrease 50
+  );
+create index IN_COTIPVIN_CONTR on CO_TIPO_VINCULO (CLIENTE,CONTRATADO,SQ_TIPO_VINCULO)
+  tablespace SYSTEM
+  pctfree 10
+  initrans 2
+  maxtrans 255
+  storage
+  (
+    initial 72K
+    next 64K
+    minextents 1
+    maxextents unlimited
+    pctincrease 50
+  );
+create index IN_COTIPVIN_INT on CO_TIPO_VINCULO (CLIENTE,INTERNO,SQ_TIPO_VINCULO)
+  tablespace SYSTEM
+  pctfree 10
+  initrans 2
+  maxtrans 255
+  storage
+  (
+    initial 72K
+    next 64K
+    minextents 1
+    maxextents unlimited
+    pctincrease 50
+  );
+create index IN_COTIPVIN_PADRAO on CO_TIPO_VINCULO (CLIENTE,PADRAO,SQ_TIPO_VINCULO)
+  tablespace SYSTEM
+  pctfree 10
+  initrans 2
+  maxtrans 255
+  storage
+  (
+    initial 72K
+    next 64K
+    minextents 1
+    maxextents unlimited
+    pctincrease 50
+  );
+create index IN_COTIPVIN_TPPES on CO_TIPO_VINCULO (CLIENTE,SQ_TIPO_PESSOA,SQ_TIPO_VINCULO)
+  tablespace SYSTEM
+  pctfree 10
+  initrans 2
+  maxtrans 255
+  storage
+  (
+    initial 72K
+    next 64K
+    minextents 1
+    maxextents unlimited
+    pctincrease 50
+  );
+

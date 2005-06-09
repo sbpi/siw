@@ -1,0 +1,57 @@
+#menutexto {
+	PADDING-RIGHT: 10px; PADDING-LEFT: 10px; FONT-SIZE: 10px; PADDING-BOTTOM: 10px; MARGIN: 0px; PADDING-TOP: 10px; FONT-FAMILY: verdana, arial, helv, sans-serif
+}
+#menutexto IMG {
+	PADDING-RIGHT: 4px; FLOAT: right; BORDER-TOP-STYLE: none; BORDER-RIGHT-STYLE: none; BORDER-LEFT-STYLE: none; BORDER-BOTTOM-STYLE: none
+}
+#mainMenu {
+	BORDER-RIGHT: #6b8a31 1px solid; PADDING-RIGHT: 2px; BORDER-TOP: #6b8a31 1px solid; PADDING-LEFT: 2px; PADDING-BOTTOM: 2px; MARGIN: 0px; BORDER-LEFT: #6b8a31 1px solid; COLOR: #6b8a31; PADDING-TOP: 2px; BORDER-BOTTOM: #6b8a31 1px solid; POSITION: static; BACKGROUND-COLOR: #deebbd; TEXT-ALIGN: left
+}
+#menuList {
+	PADDING-RIGHT: 0px; PADDING-LEFT: 0px; PADDING-BOTTOM: 0px; MARGIN: 0px; PADDING-TOP: 0px
+}
+#menuList UL {
+	BORDER-RIGHT: #6b8a31 1px solid; PADDING-RIGHT: 0px; BORDER-TOP: #6b8a31 1px solid; PADDING-LEFT: 0px; PADDING-BOTTOM: 0px; MARGIN: 0px; BORDER-LEFT: #6b8a31 1px solid; PADDING-TOP: 0px; BORDER-BOTTOM: #6b8a31 1px solid
+}
+#menuList LI {
+	DISPLAY: inline; LIST-STYLE-TYPE: none
+}
+A.starter {
+	PADDING-RIGHT: 2px; PADDING-LEFT: 2px; FONT-WEIGHT: bolder; PADDING-BOTTOM: 2px; MARGIN: 0px; COLOR: #6b8a31; PADDING-TOP: 2px; BACKGROUND-COLOR: #deebbd; TEXT-DECORATION: none
+}
+A.starter:hover {
+	COLOR: #deebbd; BACKGROUND-COLOR: #6b8a31
+}
+A.starter:active {
+	COLOR: #deebbd; BACKGROUND-COLOR: #6b8a31
+}
+.menu {
+	VISIBILITY: hidden; WIDTH: 180px; COLOR: #6b8a31; POSITION: absolute; BACKGROUND-COLOR: #deebbd; TEXT-ALIGN: left
+}
+.menu UL {
+	BORDER-RIGHT: #6b8a31 1px solid; BORDER-TOP: #6b8a31 1px solid; BORDER-LEFT: #6b8a31 1px solid; BORDER-BOTTOM: #6b8a31 1px solid
+}
+.menu LI A {
+	PADDING-RIGHT: 2px; DISPLAY: block; PADDING-LEFT: 2px; PADDING-BOTTOM: 2px; MARGIN: 0px; WIDTH: 100%; COLOR: #6b8a31; LINE-HEIGHT: 1.2em; PADDING-TOP: 2px; BACKGROUND-COLOR: transparent; TEXT-DECORATION: none
+}
+.menu LI A:hover {
+	COLOR: #deebbd; BACKGROUND-COLOR: #6b8a31
+}
+.menu LI A:active {
+	COLOR: #deebbd; BACKGROUND-COLOR: #6b8a31
+}
+#menu1 {
+	Z-INDEX: 100; WIDTH: 180px
+}
+#menu2 {
+	Z-INDEX: 100; WIDTH: 180px
+}
+#menu3 {
+	Z-INDEX: 100; WIDTH: 180px
+}
+#menu4 {
+	Z-INDEX: 100; WIDTH: 180px
+}
+#menu5 {
+	Z-INDEX: 100; WIDTH: 180px
+}

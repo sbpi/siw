@@ -1,0 +1,80 @@
+create table CO_FORMACAO
+(
+  SQ_FORMACAO NUMBER(2) not null,
+  TIPO        VARCHAR2(1) not null,
+  NOME        VARCHAR2(50) not null,
+  ORDEM       NUMBER(4) not null,
+  ATIVO       VARCHAR2(1) default 'S' not null
+)
+tablespace USERS
+  pctfree 10
+  pctused 40
+  initrans 1
+  maxtrans 255
+  storage
+  (
+    initial 136K
+    next 128K
+    minextents 1
+    maxextents 4096
+    pctincrease 0
+  );
+comment on table CO_FORMACAO
+  is 'Indica os tipos de formação: Acadêmica (1º grau, 2º grau, 3º Grau, Pós-Graduação) Cursos Técnico (até 40 Horas, Mais que 40 Horas) Produção Cientifica (Palestras, Artigos, Livros, Teste, Produções Artisticas)';
+comment on column CO_FORMACAO.SQ_FORMACAO
+  is 'Sequence';
+comment on column CO_FORMACAO.TIPO
+  is 'Indicador do Tipo de Formação:
+1 - Academica
+2 - Curso Tecnico
+3 - Produção Cientifica';
+comment on column CO_FORMACAO.ATIVO
+  is 'Indica se o registro deve ou não ser exibido.';
+alter table CO_FORMACAO
+  add constraint PK_CO_FORMACAO primary key (SQ_FORMACAO)
+  using index 
+  tablespace USERS
+  pctfree 10
+  initrans 2
+  maxtrans 255
+  storage
+  (
+    initial 136K
+    next 128K
+    minextents 1
+    maxextents 4096
+    pctincrease 0
+  );
+alter table CO_FORMACAO
+  add constraint CKC_ATIVO_CO_FORMA
+  check (ATIVO in ('S','N'));
+alter table CO_FORMACAO
+  add constraint CKC_TIPO_CO_FORMA
+  check (TIPO in ('1','2','3'));
+create unique index IN_RHESCOLAR_ATIVO on CO_FORMACAO (ATIVO,SQ_FORMACAO)
+  tablespace SYSTEM
+  pctfree 10
+  initrans 2
+  maxtrans 255
+  storage
+  (
+    initial 72K
+    next 64K
+    minextents 1
+    maxextents unlimited
+    pctincrease 50
+  );
+create unique index IN_RHESCOLAR_NOME on CO_FORMACAO (NOME)
+  tablespace SYSTEM
+  pctfree 10
+  initrans 2
+  maxtrans 255
+  storage
+  (
+    initial 72K
+    next 64K
+    minextents 1
+    maxextents unlimited
+    pctincrease 50
+  );
+

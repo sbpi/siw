@@ -1,0 +1,53 @@
+create table SIW_MENU_FORMA_PAG
+(
+  SQ_MENU            NUMBER(18) not null,
+  SQ_FORMA_PAGAMENTO NUMBER(18) not null
+)
+tablespace SYSTEM
+  pctfree 10
+  pctused 40
+  initrans 1
+  maxtrans 255
+  storage
+  (
+    initial 66K
+    minextents 1
+    maxextents unlimited
+  );
+comment on table SIW_MENU_FORMA_PAG
+  is 'Registra as formas de pagamento possíveis para um serviço.';
+comment on column SIW_MENU_FORMA_PAG.SQ_MENU
+  is 'Chave de SIW_MENU. Indica o serviço aos quais as formas de pagamento estão ligadas.';
+comment on column SIW_MENU_FORMA_PAG.SQ_FORMA_PAGAMENTO
+  is 'Chave de CO_FORMA_PAGAMENTO. Indica que a forma de pagamento está disponível para o serviço.';
+alter table SIW_MENU_FORMA_PAG
+  add constraint PK_SIW_MENU_FORMA_PAG primary key (SQ_MENU,SQ_FORMA_PAGAMENTO)
+  using index 
+  tablespace SYSTEM
+  pctfree 10
+  initrans 2
+  maxtrans 255
+  storage
+  (
+    initial 66K
+    minextents 1
+    maxextents unlimited
+  );
+alter table SIW_MENU_FORMA_PAG
+  add constraint FK_SIW_MENU_REFERENCE_CO_FORMA foreign key (SQ_FORMA_PAGAMENTO)
+  references CO_FORMA_PAGAMENTO (SQ_FORMA_PAGAMENTO);
+alter table SIW_MENU_FORMA_PAG
+  add constraint FK_SIW_MENU_REFERENCE_SIW_MENU foreign key (SQ_MENU)
+  references SIW_MENU (SQ_MENU);
+create index IN_SIWMENFORPAG_INV on SIW_MENU_FORMA_PAG (SQ_FORMA_PAGAMENTO,SQ_MENU)
+  tablespace SYSTEM
+  pctfree 10
+  initrans 2
+  maxtrans 255
+  storage
+  (
+    initial 66K
+    minextents 1
+    maxextents unlimited
+  );
+

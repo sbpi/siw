@@ -1,0 +1,81 @@
+create table FN_TIPO_DOCUMENTO
+(
+  SQ_TIPO_DOCUMENTO NUMBER(18) not null,
+  CLIENTE           NUMBER(18) not null,
+  NOME              VARCHAR2(30) not null,
+  SIGLA             VARCHAR2(10) not null,
+  ATIVO             VARCHAR2(1) default 'S' not null
+)
+tablespace SYSTEM
+  pctfree 10
+  pctused 40
+  initrans 1
+  maxtrans 255
+  storage
+  (
+    initial 72K
+    next 64K
+    minextents 1
+    maxextents unlimited
+    pctincrease 50
+  );
+comment on table FN_TIPO_DOCUMENTO
+  is 'Registra os tipos possíveis de documentos financeiros.';
+comment on column FN_TIPO_DOCUMENTO.SQ_TIPO_DOCUMENTO
+  is 'Sequence.';
+comment on column FN_TIPO_DOCUMENTO.CLIENTE
+  is 'Chave de CO_PESSOA que indica a qual cliente o registro pertence.';
+comment on column FN_TIPO_DOCUMENTO.NOME
+  is 'Nome do tipo de documento.';
+comment on column FN_TIPO_DOCUMENTO.SIGLA
+  is 'Sigla do tipo de documento.';
+comment on column FN_TIPO_DOCUMENTO.ATIVO
+  is 'Indica se o tipo de documento pode ser associado a novos registros.';
+alter table FN_TIPO_DOCUMENTO
+  add constraint PK_FN_TIPO_DOCUMENTO primary key (SQ_TIPO_DOCUMENTO)
+  using index 
+  tablespace SYSTEM
+  pctfree 10
+  initrans 2
+  maxtrans 255
+  storage
+  (
+    initial 72K
+    next 64K
+    minextents 1
+    maxextents unlimited
+    pctincrease 50
+  );
+alter table FN_TIPO_DOCUMENTO
+  add constraint FK_FNTIPDOC_COPES foreign key (CLIENTE)
+  references CO_PESSOA (SQ_PESSOA);
+alter table FN_TIPO_DOCUMENTO
+  add constraint CKC_FNTIPDOC_ATIVO
+  check (ATIVO in ('S','N'));
+create index IN_FNTIPDOC_CLIENTE on FN_TIPO_DOCUMENTO (CLIENTE,SQ_TIPO_DOCUMENTO)
+  tablespace SYSTEM
+  pctfree 10
+  initrans 2
+  maxtrans 255
+  storage
+  (
+    initial 72K
+    next 64K
+    minextents 1
+    maxextents unlimited
+    pctincrease 50
+  );
+create unique index IN_FNTIPDOC_NOME on FN_TIPO_DOCUMENTO (CLIENTE,NOME)
+  tablespace SYSTEM
+  pctfree 10
+  initrans 2
+  maxtrans 255
+  storage
+  (
+    initial 72K
+    next 64K
+    minextents 1
+    maxextents unlimited
+    pctincrease 50
+  );
+

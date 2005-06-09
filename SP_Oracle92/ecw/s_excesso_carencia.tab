@@ -1,0 +1,45 @@
+create table S_EXCESSO_CARENCIA
+(
+  CO_TIPO_CURSO      NUMBER(10) not null,
+  SG_SERIE           VARCHAR2(5) not null,
+  CO_TURNO           CHAR(1) not null,
+  CO_TIPO_DISCIPLINA NUMBER(10) not null,
+  NR_TURMAS          NUMBER(10) not null,
+  NR_PROFISSIONAIS   NUMBER(10),
+  QTDE_40H           NUMBER(10),
+  QTDE_20H           NUMBER(10),
+  QTDE_RESIDUO       NUMBER(10)
+)
+tablespace SGE
+  pctfree 10
+  initrans 1
+  maxtrans 255
+  storage
+  (
+    initial 66K
+    minextents 1
+    maxextents unlimited
+  );
+alter table S_EXCESSO_CARENCIA
+  add constraint U183_95 primary key (CO_TIPO_CURSO,SG_SERIE,CO_TURNO,CO_TIPO_DISCIPLINA,NR_TURMAS)
+  using index 
+  tablespace SGE
+  pctfree 10
+  initrans 2
+  maxtrans 255
+  storage
+  (
+    initial 66K
+    minextents 1
+    maxextents unlimited
+  );
+alter table S_EXCESSO_CARENCIA
+  add constraint FK_DISC_EXCESSO foreign key (CO_TIPO_DISCIPLINA)
+  references S_TIPO_DISCIPLINA (CO_TIPO_DISCIPLINA) on delete cascade;
+alter table S_EXCESSO_CARENCIA
+  add constraint FK_SERIE_EXCESSO foreign key (SG_SERIE)
+  references S_SERIE (SG_SERIE) on delete cascade;
+alter table S_EXCESSO_CARENCIA
+  add constraint FK_TIPO_CURSO_EXCE foreign key (CO_TIPO_CURSO)
+  references S_TIPO_CURSO (CO_TIPO_CURSO) on delete cascade;
+

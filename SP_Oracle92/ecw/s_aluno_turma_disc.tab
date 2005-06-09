@@ -1,0 +1,62 @@
+create table S_ALUNO_TURMA_DISC
+(
+  CO_UNIDADE    CHAR(5) not null,
+  ANO_SEM       CHAR(5) not null,
+  CO_TURMA      NUMBER(10) not null,
+  CO_DISCIPLINA CHAR(4) not null,
+  CO_ALUNO      CHAR(12) not null,
+  CO_CURSO      NUMBER(10) not null,
+  CO_SEQ_SERIE  NUMBER(10) not null
+)
+tablespace SGE
+  pctfree 10
+  initrans 1
+  maxtrans 255
+  storage
+  (
+    initial 66K
+    minextents 1
+    maxextents unlimited
+  );
+alter table S_ALUNO_TURMA_DISC
+  add constraint U134_45 primary key (CO_UNIDADE,ANO_SEM,CO_TURMA,CO_DISCIPLINA,CO_ALUNO,CO_CURSO,CO_SEQ_SERIE)
+  using index 
+  tablespace SGE
+  pctfree 10
+  initrans 2
+  maxtrans 255
+  storage
+  (
+    initial 66K
+    minextents 1
+    maxextents unlimited
+  );
+alter table S_ALUNO_TURMA_DISC
+  add constraint R120_535 foreign key (CO_UNIDADE,ANO_SEM,CO_TURMA,CO_DISCIPLINA,CO_CURSO,CO_SEQ_SERIE)
+  references S_TURMA_DISCIPLINA (CO_UNIDADE,ANO_SEM,CO_TURMA,CO_DISCIPLINA,CO_CURSO,CO_SEQ_SERIE) on delete cascade;
+alter table S_ALUNO_TURMA_DISC
+  add constraint R120_536 foreign key (ANO_SEM,CO_ALUNO,CO_UNIDADE)
+  references S_ALUNO_PER_UNID (ANO_SEM,CO_ALUNO,CO_UNIDADE) on delete cascade;
+create index FOREIGN118 on S_ALUNO_TURMA_DISC (CO_TURMA,CO_DISCIPLINA,CO_UNIDADE,ANO_SEM)
+  tablespace SGE
+  pctfree 10
+  initrans 2
+  maxtrans 255
+  storage
+  (
+    initial 66K
+    minextents 1
+    maxextents unlimited
+  );
+create index FOREIGN119 on S_ALUNO_TURMA_DISC (CO_ALUNO,CO_UNIDADE,ANO_SEM)
+  tablespace SGE
+  pctfree 10
+  initrans 2
+  maxtrans 255
+  storage
+  (
+    initial 66K
+    minextents 1
+    maxextents unlimited
+  );
+

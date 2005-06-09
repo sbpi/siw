@@ -1,0 +1,43 @@
+create table S_USUARIO
+(
+  DS_USUARIO    CHAR(30) not null,
+  DS_SENHA      CHAR(30),
+  ST_CONSULTA   CHAR(1),
+  TP_SUPERVISOR CHAR(1),
+  DS_LOG        CLOB
+)
+tablespace SGE
+  pctfree 10
+  initrans 1
+  maxtrans 255
+  storage
+  (
+    initial 66K
+    minextents 1
+    maxextents unlimited
+  );
+alter table S_USUARIO
+  add constraint U205_199 primary key (DS_USUARIO)
+  using index 
+  tablespace SGE
+  pctfree 10
+  initrans 2
+  maxtrans 255
+  storage
+  (
+    initial 66K
+    minextents 1
+    maxextents unlimited
+  );
+create index SENHA_USUARIO on S_USUARIO (DS_SENHA)
+  tablespace SGE
+  pctfree 10
+  initrans 2
+  maxtrans 255
+  storage
+  (
+    initial 66K
+    minextents 1
+    maxextents unlimited
+  );
+

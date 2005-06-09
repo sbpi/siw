@@ -1,0 +1,33 @@
+IMG {
+	max-width: 100%
+}
+BODY {
+	BORDER-TOP-WIDTH: 0px; BACKGROUND: #deebbd; PADDING-BOTTOM: 5px; MARGIN: 0px; FONT-FAMILY: sans-serif; TEXT-ALIGN: left
+}
+#container {
+	BORDER-RIGHT: #566 1px solid; BORDER-TOP: #566 solid; MARGIN: 3px auto; BORDER-LEFT: #566 1px solid; WIDTH: auto; BORDER-BOTTOM: #566 1px solid; max-width: 597px
+}
+#cabbase {
+	DISPLAY: none
+}
+#menuesq {
+	DISPLAY: none
+}
+#menudir {
+	DISPLAY: none
+}
+#menubt {
+	DISPLAY: none
+}
+#menurodape {
+	DISPLAY: none
+}
+#cabtopo {
+	COLOR: #ffffff; BACKGROUND-COLOR: #397131
+}
+#menutexto {
+	LIST-STYLE-TYPE: disc
+}
+#menutexto UL LI {
+	FLOAT: none
+}

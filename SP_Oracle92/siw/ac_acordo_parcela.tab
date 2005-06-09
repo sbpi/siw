@@ -1,0 +1,85 @@
+create table AC_ACORDO_PARCELA
+(
+  SQ_ACORDO_PARCELA  NUMBER(18) not null,
+  SQ_SIW_SOLICITACAO NUMBER(18) not null,
+  ORDEM              NUMBER(4) not null,
+  EMISSAO            DATE not null,
+  VENCIMENTO         DATE not null,
+  QUITACAO           DATE,
+  DOCUMENTO_INTERNO  VARCHAR2(30),
+  DOCUMENTO_EXTERNO  VARCHAR2(30),
+  OBSERVACAO         VARCHAR2(200),
+  VALOR              NUMBER(18,4) default 0 not null
+)
+tablespace SYSTEM
+  pctfree 10
+  pctused 40
+  initrans 1
+  maxtrans 255
+  storage
+  (
+    initial 66K
+    minextents 1
+    maxextents unlimited
+  );
+comment on table AC_ACORDO_PARCELA
+  is 'Parcelas do acordo';
+comment on column AC_ACORDO_PARCELA.SQ_ACORDO_PARCELA
+  is 'Sequence.';
+comment on column AC_ACORDO_PARCELA.SQ_SIW_SOLICITACAO
+  is 'Chave de SIW_SOLICITACAO';
+comment on column AC_ACORDO_PARCELA.ORDEM
+  is 'Nº de ordem da parcela';
+comment on column AC_ACORDO_PARCELA.EMISSAO
+  is 'Data de emissão do documento de cobrança/pagamento';
+comment on column AC_ACORDO_PARCELA.VENCIMENTO
+  is 'Data de vencimento da parcela';
+comment on column AC_ACORDO_PARCELA.QUITACAO
+  is 'Data de quitação da parcela';
+comment on column AC_ACORDO_PARCELA.DOCUMENTO_INTERNO
+  is 'Código interno vinculado à parcela';
+comment on column AC_ACORDO_PARCELA.DOCUMENTO_EXTERNO
+  is 'Código externo da parcela, gerado pela outra parte do acordo.';
+comment on column AC_ACORDO_PARCELA.OBSERVACAO
+  is 'Observações gerais sobre a parcela.';
+comment on column AC_ACORDO_PARCELA.VALOR
+  is 'Valor da parcela.';
+alter table AC_ACORDO_PARCELA
+  add constraint PK_AC_ACORDO_PARCELA primary key (SQ_ACORDO_PARCELA)
+  using index 
+  tablespace SYSTEM
+  pctfree 10
+  initrans 2
+  maxtrans 255
+  storage
+  (
+    initial 66K
+    minextents 1
+    maxextents unlimited
+  );
+alter table AC_ACORDO_PARCELA
+  add constraint FK_ACACOPAR_ACACO foreign key (SQ_SIW_SOLICITACAO)
+  references AC_ACORDO (SQ_SIW_SOLICITACAO);
+create unique index IN_ACACOPAR_ACORDO on AC_ACORDO_PARCELA (SQ_ACORDO_PARCELA,SQ_SIW_SOLICITACAO)
+  tablespace SYSTEM
+  pctfree 10
+  initrans 2
+  maxtrans 255
+  storage
+  (
+    initial 66K
+    minextents 1
+    maxextents unlimited
+  );
+create index IN_ACACO_VENC on AC_ACORDO_PARCELA (VENCIMENTO,SQ_ACORDO_PARCELA)
+  tablespace SYSTEM
+  pctfree 10
+  initrans 2
+  maxtrans 255
+  storage
+  (
+    initial 66K
+    minextents 1
+    maxextents unlimited
+  );
+

@@ -1,0 +1,86 @@
+create table FN_LANCAMENTO_DOC
+(
+  SQ_LANCAMENTO_DOC  NUMBER(18) not null,
+  SQ_SIW_SOLICITACAO NUMBER(18) not null,
+  SQ_TIPO_DOCUMENTO  NUMBER(18) not null,
+  NUMERO             VARCHAR2(30) not null,
+  DATA               DATE not null,
+  SERIE              VARCHAR2(10),
+  VALOR              NUMBER(18,2) default 0 not null,
+  PATRIMONIO         VARCHAR2(1) default 'N' not null,
+  CALCULA_TRIBUTO    VARCHAR2(1) default 'S' not null,
+  CALCULA_RETENCAO   VARCHAR2(1) default 'S' not null
+)
+tablespace SYSTEM
+  pctfree 10
+  pctused 40
+  initrans 1
+  maxtrans 255
+  storage
+  (
+    initial 66K
+    minextents 1
+    maxextents unlimited
+  );
+comment on table FN_LANCAMENTO_DOC
+  is 'Registra os documentos associados a um lançamento financeiro.';
+comment on column FN_LANCAMENTO_DOC.SQ_LANCAMENTO_DOC
+  is 'Sequence.';
+comment on column FN_LANCAMENTO_DOC.SQ_SIW_SOLICITACAO
+  is 'Chave de SIW_SOLICITACAO indicando a que solicitação o pagamento está vinculado.';
+comment on column FN_LANCAMENTO_DOC.SQ_TIPO_DOCUMENTO
+  is 'Chave de FN_TIPO_DOCUMENTO.';
+comment on column FN_LANCAMENTO_DOC.NUMERO
+  is 'Número do documento financeiro.';
+comment on column FN_LANCAMENTO_DOC.DATA
+  is 'Data de emissão do documento.';
+comment on column FN_LANCAMENTO_DOC.SERIE
+  is 'Série do documento, quando for nota fiscal.';
+comment on column FN_LANCAMENTO_DOC.VALOR
+  is 'Valor nominal do documento.';
+comment on column FN_LANCAMENTO_DOC.PATRIMONIO
+  is 'Indica se o documento é relativo à aquisição de bens patrimoniais.';
+comment on column FN_LANCAMENTO_DOC.CALCULA_TRIBUTO
+  is 'Indica ao sistema se ele deve calcular os tributos associados ao documento.';
+comment on column FN_LANCAMENTO_DOC.CALCULA_RETENCAO
+  is 'Indica ao sistema se deve ser calculada a retenção da NF. Optantes do SIMPLES não tem retenção.';
+alter table FN_LANCAMENTO_DOC
+  add constraint PK_FN_LANCAMENTO_DOC primary key (SQ_LANCAMENTO_DOC)
+  using index 
+  tablespace SYSTEM
+  pctfree 10
+  initrans 2
+  maxtrans 255
+  storage
+  (
+    initial 66K
+    minextents 1
+    maxextents unlimited
+  );
+alter table FN_LANCAMENTO_DOC
+  add constraint FK_FNLANDOC_FNLAN foreign key (SQ_SIW_SOLICITACAO)
+  references FN_LANCAMENTO (SQ_SIW_SOLICITACAO);
+alter table FN_LANCAMENTO_DOC
+  add constraint FK_FNLANDOC_FNTIPDOC foreign key (SQ_TIPO_DOCUMENTO)
+  references FN_TIPO_DOCUMENTO (SQ_TIPO_DOCUMENTO);
+alter table FN_LANCAMENTO_DOC
+  add constraint CKC_CALCULA_RETENCAO_FN_LANCA
+  check (CALCULA_RETENCAO in ('S','N'));
+alter table FN_LANCAMENTO_DOC
+  add constraint CKC_CALCULA_TRIBUTO_FN_LANCA
+  check (CALCULA_TRIBUTO in ('S','N'));
+alter table FN_LANCAMENTO_DOC
+  add constraint CKC_PATRIMONIO_FN_LANCA
+  check (PATRIMONIO in ('S','N'));
+create index IN_FNLANDOC_LANCAMENTO on FN_LANCAMENTO_DOC (SQ_SIW_SOLICITACAO,SQ_LANCAMENTO_DOC)
+  tablespace SYSTEM
+  pctfree 10
+  initrans 2
+  maxtrans 255
+  storage
+  (
+    initial 66K
+    minextents 1
+    maxextents unlimited
+  );
+

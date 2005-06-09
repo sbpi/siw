@@ -1,0 +1,56 @@
+create table S_SALA
+(
+  CO_BLOCO        CHAR(2) not null,
+  CO_UNIDADE      CHAR(5) not null,
+  CO_SALA         CHAR(3) not null,
+  DS_SALA         CHAR(30),
+  CO_SEQ_AMBIENTE NUMBER(10),
+  NU_ALUNOS_SALA  NUMBER(10),
+  NU_METRAGEM     NUMBER(10),
+  CO_TIPO_SALA    NUMBER(10),
+  CO_SEQ_SALA     NUMBER(10)
+)
+tablespace SGE
+  pctfree 10
+  initrans 1
+  maxtrans 255
+  storage
+  (
+    initial 66K
+    minextents 1
+    maxextents unlimited
+  );
+alter table S_SALA
+  add constraint U129_34 primary key (CO_UNIDADE,CO_BLOCO,CO_SALA)
+  using index 
+  tablespace SGE
+  pctfree 10
+  initrans 2
+  maxtrans 255
+  storage
+  (
+    initial 66K
+    minextents 1
+    maxextents unlimited
+  );
+alter table S_SALA
+  add constraint R_122 foreign key (CO_SEQ_AMBIENTE)
+  references S_AMBIENTE (CO_SEQ_AMBIENTE) on delete cascade;
+alter table S_SALA
+  add constraint R168_595 foreign key (CO_UNIDADE)
+  references S_UNIDADE (CO_UNIDADE) on delete cascade;
+alter table S_SALA
+  add constraint R168_596 foreign key (CO_TIPO_SALA)
+  references S_TIPO_SALA (CO_TIPO_SALA) on delete cascade;
+create index FOREIGN152 on S_SALA (CO_TIPO_SALA,CO_UNIDADE)
+  tablespace SGE
+  pctfree 10
+  initrans 2
+  maxtrans 255
+  storage
+  (
+    initial 66K
+    minextents 1
+    maxextents unlimited
+  );
+

@@ -1,0 +1,7 @@
+create sequence SQ_AGENCIA
+minvalue 1
+maxvalue 999999999999999999999999999
+start with 27061
+increment by 1
+cache 20;
+

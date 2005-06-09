@@ -1,0 +1,110 @@
+create table TT_USUARIO
+(
+  SQ_USUARIO_CENTRAL NUMBER(18) not null,
+  CLIENTE            NUMBER(18) not null,
+  USUARIO            NUMBER(18) not null,
+  SQ_CENTRAL_FONE    NUMBER(18) not null,
+  CODIGO             VARCHAR2(4) not null
+)
+tablespace SYSTEM
+  pctfree 10
+  pctused 40
+  initrans 1
+  maxtrans 255
+  storage
+  (
+    initial 72K
+    next 64K
+    minextents 1
+    maxextents unlimited
+    pctincrease 50
+  );
+comment on table TT_USUARIO
+  is 'Registra os dados dos usuários registrados na central telefônica.';
+comment on column TT_USUARIO.SQ_USUARIO_CENTRAL
+  is 'Sequence.';
+comment on column TT_USUARIO.CLIENTE
+  is 'Chave de CO_PESSOA, indicando o cliente.';
+comment on column TT_USUARIO.USUARIO
+  is 'Chave de CO_PESSOA, indicando o usuário.';
+comment on column TT_USUARIO.SQ_CENTRAL_FONE
+  is 'Chave de TT_CENTRAL_TELEFONICA, indicando de que central a pessoa é usuária.';
+comment on column TT_USUARIO.CODIGO
+  is 'Código do usuário na central telefônica.';
+alter table TT_USUARIO
+  add constraint PK_TT_USUARIO primary key (SQ_USUARIO_CENTRAL)
+  using index 
+  tablespace SYSTEM
+  pctfree 10
+  initrans 2
+  maxtrans 255
+  storage
+  (
+    initial 72K
+    next 64K
+    minextents 1
+    maxextents unlimited
+    pctincrease 50
+  );
+alter table TT_USUARIO
+  add constraint FK_TTUSU_CENTRAL foreign key (SQ_CENTRAL_FONE)
+  references TT_CENTRAL (SQ_CENTRAL_FONE);
+alter table TT_USUARIO
+  add constraint FK_TTUSU_COPES_CLI foreign key (CLIENTE)
+  references CO_PESSOA (SQ_PESSOA);
+alter table TT_USUARIO
+  add constraint FK_TTUSU_COPES_USU foreign key (USUARIO)
+  references CO_PESSOA (SQ_PESSOA);
+create index IN_TTUSU_CENTRAL on TT_USUARIO (CLIENTE,SQ_CENTRAL_FONE,SQ_USUARIO_CENTRAL)
+  tablespace SYSTEM
+  pctfree 10
+  initrans 2
+  maxtrans 255
+  storage
+  (
+    initial 72K
+    next 64K
+    minextents 1
+    maxextents unlimited
+    pctincrease 50
+  );
+create index IN_TTUSU_CLIENTE on TT_USUARIO (CLIENTE,SQ_USUARIO_CENTRAL)
+  tablespace SYSTEM
+  pctfree 10
+  initrans 2
+  maxtrans 255
+  storage
+  (
+    initial 72K
+    next 64K
+    minextents 1
+    maxextents unlimited
+    pctincrease 50
+  );
+create index IN_TTUSU_CODIGO on TT_USUARIO (CLIENTE,CODIGO,SQ_USUARIO_CENTRAL)
+  tablespace SYSTEM
+  pctfree 10
+  initrans 2
+  maxtrans 255
+  storage
+  (
+    initial 72K
+    next 64K
+    minextents 1
+    maxextents unlimited
+    pctincrease 50
+  );
+create index IN_TTUSU_USUARIO on TT_USUARIO (CLIENTE,USUARIO,SQ_USUARIO_CENTRAL)
+  tablespace SYSTEM
+  pctfree 10
+  initrans 2
+  maxtrans 255
+  storage
+  (
+    initial 72K
+    next 64K
+    minextents 1
+    maxextents unlimited
+    pctincrease 50
+  );
+

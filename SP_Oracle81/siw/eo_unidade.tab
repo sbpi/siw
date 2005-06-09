@@ -1,0 +1,253 @@
+create table EO_UNIDADE
+(
+  SQ_UNIDADE         NUMBER(10) not null,
+  SQ_UNIDADE_PAI     NUMBER(10),
+  SQ_UNIDADE_GESTORA NUMBER(10),
+  SQ_UNID_PAGADORA   NUMBER(10),
+  SQ_AREA_ATUACAO    NUMBER(10),
+  SQ_TIPO_UNIDADE    NUMBER(10),
+  SQ_PESSOA_ENDERECO NUMBER(18),
+  NOME               VARCHAR2(50) not null,
+  SIGLA              VARCHAR2(20) not null,
+  ORDEM              NUMBER(2) not null,
+  INFORMAL           VARCHAR2(1) default 'N' not null,
+  VINCULADA          VARCHAR2(1) default 'N' not null,
+  ADM_CENTRAL        VARCHAR2(1) default 'N' not null,
+  UNIDADE_GESTORA    VARCHAR2(1) default 'N' not null,
+  UNIDADE_PAGADORA   VARCHAR2(1) default 'N' not null,
+  CODIGO             VARCHAR2(15),
+  EMAIL              VARCHAR2(60),
+  ATIVO              VARCHAR2(1) default 'S' not null,
+  SQ_PESSOA          NUMBER(18) not null
+)
+tablespace USERS
+  pctfree 10
+  pctused 40
+  initrans 1
+  maxtrans 255
+  storage
+  (
+    initial 136K
+    next 128K
+    minextents 1
+    maxextents 4096
+    pctincrease 0
+  );
+comment on table EO_UNIDADE
+  is 'Unidades organizacionais';
+comment on column EO_UNIDADE.SQ_UNIDADE
+  is 'Sequence.';
+comment on column EO_UNIDADE.SQ_UNIDADE_PAI
+  is 'Unidade à qual está vinculada. Auto-relacionamento.';
+comment on column EO_UNIDADE.SQ_UNIDADE_GESTORA
+  is 'Unidade gestora dos bens patrimoniais da unidade. Auto-relacionamento.';
+comment on column EO_UNIDADE.SQ_UNID_PAGADORA
+  is 'Unidade responsável pelas despesas da unidade. Auto-relacionamento.';
+comment on column EO_UNIDADE.SQ_AREA_ATUACAO
+  is 'Área de atuação da unidade. Chave de EO_AREA_ATUACAO.';
+comment on column EO_UNIDADE.SQ_TIPO_UNIDADE
+  is 'Tipo da unidade. Chave de EO_TIPO_UNIDADE.';
+comment on column EO_UNIDADE.SQ_PESSOA_ENDERECO
+  is 'Endereço da organização à qual a unidade está vinculada. Chave de CO_PESSOA_ENDERECO.';
+comment on column EO_UNIDADE.NOME
+  is 'Nome da unidade.';
+comment on column EO_UNIDADE.SIGLA
+  is 'Sigla da unidade.';
+comment on column EO_UNIDADE.ORDEM
+  is 'Número de ordem da unidade para listagem.';
+comment on column EO_UNIDADE.INFORMAL
+  is 'Indica se a unidade faz parte da estrutura formal da organização.';
+comment on column EO_UNIDADE.VINCULADA
+  is 'Indica se a unidade é, na verdade, um órgão vinculado à organização.';
+comment on column EO_UNIDADE.ADM_CENTRAL
+  is 'Indica se a unidade faz parte da administração central da organização.';
+comment on column EO_UNIDADE.UNIDADE_GESTORA
+  is 'Indica se a unidade é responsável por bens patrimoniais da organização (depósito).';
+comment on column EO_UNIDADE.UNIDADE_PAGADORA
+  is 'Indica se a unidade é um centro de custo da organização.';
+comment on column EO_UNIDADE.CODIGO
+  is 'Código livre utilizado pela organização para identificar a unidade.';
+comment on column EO_UNIDADE.ATIVO
+  is 'Indica se a unidade está ativa.';
+comment on column EO_UNIDADE.SQ_PESSOA
+  is 'Indica o cliente.';
+alter table EO_UNIDADE
+  add constraint PK_EO_UNIDADE primary key (SQ_UNIDADE)
+  using index 
+  tablespace USERS
+  pctfree 10
+  initrans 2
+  maxtrans 255
+  storage
+  (
+    initial 136K
+    next 128K
+    minextents 1
+    maxextents 4096
+    pctincrease 0
+  );
+alter table EO_UNIDADE
+  add constraint FK_EOUNI_COPES foreign key (SQ_PESSOA)
+  references CO_PESSOA (SQ_PESSOA);
+alter table EO_UNIDADE
+  add constraint FK_EOUNI_COPESEND foreign key (SQ_PESSOA_ENDERECO)
+  references CO_PESSOA_ENDERECO (SQ_PESSOA_ENDERECO);
+alter table EO_UNIDADE
+  add constraint FK_EOUNI_EOAREATU foreign key (SQ_AREA_ATUACAO)
+  references EO_AREA_ATUACAO (SQ_AREA_ATUACAO);
+alter table EO_UNIDADE
+  add constraint FK_EOUNI_EOTIPUNI foreign key (SQ_TIPO_UNIDADE)
+  references EO_TIPO_UNIDADE (SQ_TIPO_UNIDADE);
+alter table EO_UNIDADE
+  add constraint FK_EOUNI_EOUNI_GES foreign key (SQ_UNIDADE_GESTORA)
+  references EO_UNIDADE (SQ_UNIDADE);
+alter table EO_UNIDADE
+  add constraint FK_EOUNI_EOUNI_PAG foreign key (SQ_UNID_PAGADORA)
+  references EO_UNIDADE (SQ_UNIDADE);
+alter table EO_UNIDADE
+  add constraint FK_EOUNI_EOUNI_PAI foreign key (SQ_UNIDADE_PAI)
+  references EO_UNIDADE (SQ_UNIDADE);
+create index IN_EOUNI_AREA on EO_UNIDADE (SQ_AREA_ATUACAO,SQ_UNIDADE)
+  tablespace SYSTEM
+  pctfree 10
+  initrans 2
+  maxtrans 255
+  storage
+  (
+    initial 72K
+    next 64K
+    minextents 1
+    maxextents unlimited
+    pctincrease 50
+  );
+create index IN_EOUNI_ATIVO on EO_UNIDADE (ATIVO,SQ_UNIDADE)
+  tablespace SYSTEM
+  pctfree 10
+  initrans 2
+  maxtrans 255
+  storage
+  (
+    initial 72K
+    next 64K
+    minextents 1
+    maxextents unlimited
+    pctincrease 50
+  );
+create index IN_EOUNI_CLIENTE on EO_UNIDADE (SQ_PESSOA,SQ_UNIDADE)
+  tablespace SYSTEM
+  pctfree 10
+  initrans 2
+  maxtrans 255
+  storage
+  (
+    initial 72K
+    next 64K
+    minextents 1
+    maxextents unlimited
+    pctincrease 50
+  );
+create index IN_EOUNI_ENDERECO on EO_UNIDADE (SQ_PESSOA_ENDERECO,SQ_UNIDADE)
+  tablespace SYSTEM
+  pctfree 10
+  initrans 2
+  maxtrans 255
+  storage
+  (
+    initial 72K
+    next 64K
+    minextents 1
+    maxextents unlimited
+    pctincrease 50
+  );
+create index IN_EOUNI_GESTORA on EO_UNIDADE (SQ_UNIDADE_GESTORA,SQ_UNIDADE)
+  tablespace SYSTEM
+  pctfree 10
+  initrans 2
+  maxtrans 255
+  storage
+  (
+    initial 72K
+    next 64K
+    minextents 1
+    maxextents unlimited
+    pctincrease 50
+  );
+create index IN_EOUNI_NOME on EO_UNIDADE (NOME,SQ_UNIDADE)
+  tablespace SYSTEM
+  pctfree 10
+  initrans 2
+  maxtrans 255
+  storage
+  (
+    initial 72K
+    next 64K
+    minextents 1
+    maxextents unlimited
+    pctincrease 50
+  );
+create index IN_EOUNI_ORDEM on EO_UNIDADE (ORDEM,SQ_UNIDADE)
+  tablespace SYSTEM
+  pctfree 10
+  initrans 2
+  maxtrans 255
+  storage
+  (
+    initial 72K
+    next 64K
+    minextents 1
+    maxextents unlimited
+    pctincrease 50
+  );
+create index IN_EOUNI_PAGADORA on EO_UNIDADE (SQ_UNID_PAGADORA,SQ_UNIDADE)
+  tablespace SYSTEM
+  pctfree 10
+  initrans 2
+  maxtrans 255
+  storage
+  (
+    initial 72K
+    next 64K
+    minextents 1
+    maxextents unlimited
+    pctincrease 50
+  );
+create index IN_EOUNI_PAI on EO_UNIDADE (SQ_UNIDADE_PAI,SQ_UNIDADE)
+  tablespace SYSTEM
+  pctfree 10
+  initrans 2
+  maxtrans 255
+  storage
+  (
+    initial 72K
+    next 64K
+    minextents 1
+    maxextents unlimited
+    pctincrease 50
+  );
+create index IN_EOUNI_SIGLA on EO_UNIDADE (SIGLA,SQ_UNIDADE)
+  tablespace SYSTEM
+  pctfree 10
+  initrans 2
+  maxtrans 255
+  storage
+  (
+    initial 72K
+    next 64K
+    minextents 1
+    maxextents unlimited
+    pctincrease 50
+  );
+create index IN_EOUNI_TIPO_UNID on EO_UNIDADE (SQ_TIPO_UNIDADE,SQ_UNIDADE)
+  tablespace SYSTEM
+  pctfree 10
+  initrans 2
+  maxtrans 255
+  storage
+  (
+    initial 72K
+    next 64K
+    minextents 1
+    maxextents unlimited
+    pctincrease 50
+  );
+

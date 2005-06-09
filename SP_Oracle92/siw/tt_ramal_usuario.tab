@@ -1,0 +1,81 @@
+create table TT_RAMAL_USUARIO
+(
+  SQ_RAMAL           NUMBER(18) not null,
+  SQ_USUARIO_CENTRAL NUMBER(18) not null,
+  INICIO             DATE default sysdate not null,
+  FIM                DATE
+)
+tablespace SYSTEM
+  pctfree 10
+  pctused 40
+  initrans 1
+  maxtrans 255
+  storage
+  (
+    initial 66K
+    minextents 1
+    maxextents unlimited
+  );
+comment on table TT_RAMAL_USUARIO
+  is 'Registra os usuários responsáveis pelos ramais.';
+comment on column TT_RAMAL_USUARIO.SQ_RAMAL
+  is 'Chave de TT_RAMAL.';
+comment on column TT_RAMAL_USUARIO.SQ_USUARIO_CENTRAL
+  is 'CHAVE DE TT_USUARIO.';
+comment on column TT_RAMAL_USUARIO.INICIO
+  is 'Data inicial da associação do usuário ao ramal';
+comment on column TT_RAMAL_USUARIO.FIM
+  is 'Data final da associação do usuário ao ramal';
+alter table TT_RAMAL_USUARIO
+  add constraint PK_TT_RAMAL_USUARIO primary key (SQ_RAMAL,SQ_USUARIO_CENTRAL,INICIO)
+  using index 
+  tablespace SYSTEM
+  pctfree 10
+  initrans 2
+  maxtrans 255
+  storage
+  (
+    initial 66K
+    minextents 1
+    maxextents unlimited
+  );
+alter table TT_RAMAL_USUARIO
+  add constraint FK_TTRAMUSU_TTRAM foreign key (SQ_RAMAL)
+  references TT_RAMAL (SQ_RAMAL);
+alter table TT_RAMAL_USUARIO
+  add constraint FK_TTRAMUSU_TTUSU foreign key (SQ_USUARIO_CENTRAL)
+  references TT_USUARIO (SQ_USUARIO_CENTRAL);
+create index IN_RAMUSU_FIM on TT_RAMAL_USUARIO (SQ_USUARIO_CENTRAL,FIM,SQ_RAMAL)
+  tablespace SYSTEM
+  pctfree 10
+  initrans 2
+  maxtrans 255
+  storage
+  (
+    initial 66K
+    minextents 1
+    maxextents unlimited
+  );
+create index IN_RAMUSU_INICIO on TT_RAMAL_USUARIO (SQ_USUARIO_CENTRAL,INICIO,SQ_RAMAL)
+  tablespace SYSTEM
+  pctfree 10
+  initrans 2
+  maxtrans 255
+  storage
+  (
+    initial 66K
+    minextents 1
+    maxextents unlimited
+  );
+create index IN_RAMUSU_INVERSA on TT_RAMAL_USUARIO (SQ_USUARIO_CENTRAL,SQ_RAMAL)
+  tablespace SYSTEM
+  pctfree 10
+  initrans 2
+  maxtrans 255
+  storage
+  (
+    initial 66K
+    minextents 1
+    maxextents unlimited
+  );
+

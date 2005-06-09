@@ -1,0 +1,7 @@
+create sequence SQ_SIW_TRAMITE
+minvalue 1
+maxvalue 999999999999999999999999999
+start with 381
+increment by 1
+cache 20;
+

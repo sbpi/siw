@@ -1,0 +1,112 @@
+create table CV_PESSOA_PROD
+(
+  SQ_CVPESSOA_PROD     NUMBER(18) not null,
+  SQ_PESSOA            NUMBER(18) not null,
+  SQ_AREA_CONHECIMENTO NUMBER(10) not null,
+  SQ_FORMACAO          NUMBER(2) not null,
+  NOME                 VARCHAR2(255) not null,
+  DATA                 DATE not null,
+  MEIO                 VARCHAR2(100) not null
+)
+tablespace SYSTEM
+  pctfree 10
+  pctused 40
+  initrans 1
+  maxtrans 255
+  storage
+  (
+    initial 72K
+    next 64K
+    minextents 1
+    maxextents unlimited
+    pctincrease 50
+  );
+comment on column CV_PESSOA_PROD.SQ_PESSOA
+  is 'Sequence';
+comment on column CV_PESSOA_PROD.SQ_AREA_CONHECIMENTO
+  is 'Código Área Conhecimento.';
+comment on column CV_PESSOA_PROD.SQ_FORMACAO
+  is 'Código do tipo de formação';
+comment on column CV_PESSOA_PROD.NOME
+  is 'Descrição do Título da Publicação';
+comment on column CV_PESSOA_PROD.DATA
+  is 'Data Publicação';
+comment on column CV_PESSOA_PROD.MEIO
+  is 'Meio de publicação (site, editora, jornal etc)';
+alter table CV_PESSOA_PROD
+  add constraint PK_CV_PESSOA_PROD primary key (SQ_CVPESSOA_PROD)
+  using index 
+  tablespace SYSTEM
+  pctfree 10
+  initrans 2
+  maxtrans 255
+  storage
+  (
+    initial 72K
+    next 64K
+    minextents 1
+    maxextents unlimited
+    pctincrease 50
+  );
+alter table CV_PESSOA_PROD
+  add constraint FK_CVPESPROD_COARECON foreign key (SQ_AREA_CONHECIMENTO)
+  references CO_AREA_CONHECIMENTO (SQ_AREA_CONHECIMENTO);
+alter table CV_PESSOA_PROD
+  add constraint FK_CVPESPROD_COFOR foreign key (SQ_FORMACAO)
+  references CO_FORMACAO (SQ_FORMACAO);
+alter table CV_PESSOA_PROD
+  add constraint FK_CVPESPROD_CVPES foreign key (SQ_PESSOA)
+  references CV_PESSOA (SQ_PESSOA);
+create index IN_CVPESPRO_DATA on CV_PESSOA_PROD (SQ_PESSOA,DATA)
+  tablespace SYSTEM
+  pctfree 10
+  initrans 2
+  maxtrans 255
+  storage
+  (
+    initial 72K
+    next 64K
+    minextents 1
+    maxextents unlimited
+    pctincrease 50
+  );
+create index IN_CVPESPRO_SQAREACONHEC on CV_PESSOA_PROD (SQ_PESSOA,SQ_AREA_CONHECIMENTO)
+  tablespace SYSTEM
+  pctfree 10
+  initrans 2
+  maxtrans 255
+  storage
+  (
+    initial 72K
+    next 64K
+    minextents 1
+    maxextents unlimited
+    pctincrease 50
+  );
+create index IN_CVPESPRO_SQFORMACAO on CV_PESSOA_PROD (SQ_PESSOA,SQ_FORMACAO)
+  tablespace SYSTEM
+  pctfree 10
+  initrans 2
+  maxtrans 255
+  storage
+  (
+    initial 72K
+    next 64K
+    minextents 1
+    maxextents unlimited
+    pctincrease 50
+  );
+create index IN_CVPESPRO_SQPESSOA on CV_PESSOA_PROD (SQ_PESSOA,SQ_CVPESSOA_PROD)
+  tablespace SYSTEM
+  pctfree 10
+  initrans 2
+  maxtrans 255
+  storage
+  (
+    initial 72K
+    next 64K
+    minextents 1
+    maxextents unlimited
+    pctincrease 50
+  );
+

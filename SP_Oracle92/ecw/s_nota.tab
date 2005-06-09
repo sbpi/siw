@@ -1,0 +1,103 @@
+create table S_NOTA
+(
+  CO_UNIDADE        CHAR(5) not null,
+  ANO_SEM           CHAR(5) not null,
+  CO_TURMA          NUMBER(10) not null,
+  CO_ALUNO          CHAR(12) not null,
+  NU_AULAS_DADAS_B1 CHAR(4),
+  CO_CURSO          NUMBER(10) not null,
+  CO_SEQ_SERIE      NUMBER(10) not null,
+  NU_NOTA_B1        VARCHAR2(7),
+  CO_DISCIPLINA     CHAR(4) not null,
+  NU_NOTA_RECUP_1   VARCHAR2(7),
+  NU_FALTAS_B1      VARCHAR2(7),
+  NU_AULAS_DADAS_B2 CHAR(4),
+  NU_NOTA_B2        VARCHAR2(7),
+  NU_NOTA_RECUP_2   VARCHAR2(7),
+  NU_FALTAS_B2      VARCHAR2(7),
+  NU_AULAS_DADAS_B3 CHAR(4),
+  NU_NOTA_B3        VARCHAR2(7),
+  NU_NOTA_RECUP_3   VARCHAR2(7),
+  NU_FALTAS_B3      VARCHAR2(7),
+  NU_AULAS_DADAS_B4 CHAR(4),
+  NU_NOTA_B4        VARCHAR2(7),
+  NU_NOTA_RECUP_4   VARCHAR2(7),
+  NU_FALTAS_B4      VARCHAR2(7),
+  NU_MEDIA_ANUAL    CHAR(5),
+  NU_RECUP_ESPECIAL VARCHAR2(7),
+  NU_RECUP_FINAL    VARCHAR2(7),
+  NU_MEDIA_FINAL    VARCHAR2(12),
+  NU_MEDIA_S1       VARCHAR2(12),
+  NU_MEDIA_S2       VARCHAR2(12),
+  NU_MEDIA_APOS_S1  VARCHAR2(12),
+  NU_MEDIA_APOS_S2  VARCHAR2(12),
+  NU_MAXPONTOS_B1   CHAR(5),
+  NU_MAXPONTOS_B2   CHAR(5),
+  NU_MAXPONTOS_B3   CHAR(5),
+  NU_MAXPONTOS_B4   CHAR(5),
+  NU_NOTA_SM1       VARCHAR2(7),
+  NU_NOTA_SM2       VARCHAR2(7),
+  NU_NOTA_SM3       VARCHAR2(7),
+  NU_NOTA_SM4       VARCHAR2(7),
+  NU_NOTA_SM5       VARCHAR2(7),
+  NU_NOTA_SM6       VARCHAR2(7),
+  NU_NOTA_SM7       VARCHAR2(7),
+  NU_NOTA_SM8       VARCHAR2(7),
+  NU_NOTA_SM9       VARCHAR2(7),
+  ST_CONSELHO       CHAR(1),
+  NU_ORDEM_1        FLOAT,
+  NU_ORDEM_2        FLOAT,
+  CO_ALUNO_TURMA    NUMBER(10) not null
+)
+tablespace SGE
+  pctfree 10
+  initrans 1
+  maxtrans 255
+  storage
+  (
+    initial 66K
+    minextents 1
+    maxextents unlimited
+  );
+alter table S_NOTA
+  add constraint PK_S_NOTA primary key (CO_UNIDADE,CO_TURMA,ANO_SEM,CO_ALUNO,CO_CURSO,CO_SEQ_SERIE,CO_ALUNO_TURMA,CO_DISCIPLINA)
+  using index 
+  tablespace SGE
+  pctfree 10
+  initrans 2
+  maxtrans 255
+  storage
+  (
+    initial 66K
+    minextents 1
+    maxextents unlimited
+  );
+alter table S_NOTA
+  add constraint FK_NOTA_ALUTURM foreign key (CO_UNIDADE,CO_TURMA,ANO_SEM,CO_ALUNO,CO_CURSO,CO_SEQ_SERIE,CO_ALUNO_TURMA)
+  references S_ALUNO_TURMA (CO_UNIDADE,CO_TURMA,ANO_SEM,CO_ALUNO,CO_CURSO,CO_SEQ_SERIE,CO_ALUNO_TURMA) on delete cascade;
+alter table S_NOTA
+  add constraint R159_585 foreign key (CO_UNIDADE,ANO_SEM,CO_TURMA,CO_DISCIPLINA,CO_ALUNO,CO_CURSO,CO_SEQ_SERIE)
+  references S_ALUNO_TURMA_DISC (CO_UNIDADE,ANO_SEM,CO_TURMA,CO_DISCIPLINA,CO_ALUNO,CO_CURSO,CO_SEQ_SERIE) on delete cascade;
+create index FOREIGN145 on S_NOTA (CO_UNIDADE,ANO_SEM,CO_TURMA,CO_DISCIPLINA,CO_ALUNO)
+  tablespace SGE
+  pctfree 10
+  initrans 2
+  maxtrans 255
+  storage
+  (
+    initial 66K
+    minextents 1
+    maxextents unlimited
+  );
+create index FOREIGN146 on S_NOTA (CO_UNIDADE,CO_TURMA,ANO_SEM,CO_ALUNO)
+  tablespace SGE
+  pctfree 10
+  initrans 2
+  maxtrans 255
+  storage
+  (
+    initial 66K
+    minextents 1
+    maxextents unlimited
+  );
+

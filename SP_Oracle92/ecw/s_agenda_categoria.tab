@@ -1,0 +1,36 @@
+create table S_AGENDA_CATEGORIA
+(
+  CO_UNIDADE     CHAR(5) not null,
+  AGE_SEQUENCIAL NUMBER(10) not null,
+  CAT_SEQUENCIAL NUMBER(10) not null
+)
+tablespace SGE
+  pctfree 10
+  initrans 1
+  maxtrans 255
+  storage
+  (
+    initial 66K
+    minextents 1
+    maxextents unlimited
+  );
+alter table S_AGENDA_CATEGORIA
+  add constraint U113_14 primary key (CO_UNIDADE,AGE_SEQUENCIAL,CAT_SEQUENCIAL)
+  using index 
+  tablespace SGE
+  pctfree 10
+  initrans 2
+  maxtrans 255
+  storage
+  (
+    initial 66K
+    minextents 1
+    maxextents unlimited
+  );
+alter table S_AGENDA_CATEGORIA
+  add constraint R109_518 foreign key (CAT_SEQUENCIAL,CO_UNIDADE)
+  references AGE_CATEGORIA (CAT_SEQUENCIAL,CO_UNIDADE) on delete cascade;
+alter table S_AGENDA_CATEGORIA
+  add constraint R_196 foreign key (AGE_SEQUENCIAL,CO_UNIDADE)
+  references AGENDA (AGE_SEQUENCIAL,CO_UNIDADE) on delete cascade;
+

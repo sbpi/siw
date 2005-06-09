@@ -1,0 +1,36 @@
+create table FONE
+(
+  FONE_SEQUENCIAL NUMBER(10) not null,
+  AGE_SEQUENCIAL  NUMBER(10) not null,
+  CO_UNIDADE      CHAR(5) not null,
+  CLI_CODIGO      NUMBER(10),
+  FON_DESCR       CHAR(20),
+  FON_TIPO        CHAR(1)
+)
+tablespace SGE
+  pctfree 10
+  initrans 1
+  maxtrans 255
+  storage
+  (
+    initial 66K
+    minextents 1
+    maxextents unlimited
+  );
+alter table FONE
+  add constraint U108_9 primary key (FONE_SEQUENCIAL,CO_UNIDADE,AGE_SEQUENCIAL)
+  using index 
+  tablespace SGE
+  pctfree 10
+  initrans 2
+  maxtrans 255
+  storage
+  (
+    initial 66K
+    minextents 1
+    maxextents unlimited
+  );
+alter table FONE
+  add constraint R_74 foreign key (AGE_SEQUENCIAL,CO_UNIDADE)
+  references AGENDA (AGE_SEQUENCIAL,CO_UNIDADE) on delete cascade;
+

@@ -1,0 +1,80 @@
+create table DC_OCORRENCIA
+(
+  SQ_OCORRENCIA         NUMBER(18) not null,
+  SQ_ESQUEMA            NUMBER(18) not null,
+  SQ_PESSOA             NUMBER(18) not null,
+  DATA_OCORRENCIA       DATE default sysdate not null,
+  DATA_REFERENCIA       DATE default sysdate not null,
+  PROCESSADOS           NUMBER(18) not null,
+  REJEITADOS            NUMBER(18) not null,
+  ARQUIVO_PROCESSAMENTO NUMBER(18) not null,
+  ARQUIVO_REJEICAO      NUMBER(18)
+)
+tablespace SYSTEM
+  pctfree 10
+  pctused 40
+  initrans 1
+  maxtrans 255
+  storage
+  (
+    initial 66K
+    minextents 1
+    maxextents unlimited
+  );
+comment on table DC_OCORRENCIA
+  is 'Registra as ocorrências de importação ou exportação.';
+comment on column DC_OCORRENCIA.SQ_OCORRENCIA
+  is 'Sequence.';
+comment on column DC_OCORRENCIA.SQ_ESQUEMA
+  is 'Chave de DC_ESQUEMA. Indica a que esquema a ocorrência refere-se.';
+comment on column DC_OCORRENCIA.SQ_PESSOA
+  is 'Chave de CO_PESSOA. Indica o usuário responsável pela ocorrência.';
+comment on column DC_OCORRENCIA.DATA_OCORRENCIA
+  is 'Data de processamento da importação ou exportação.';
+comment on column DC_OCORRENCIA.DATA_REFERENCIA
+  is 'Data de referência dos dados importados ou exportados.';
+comment on column DC_OCORRENCIA.PROCESSADOS
+  is 'Quantidade de registros processados.';
+comment on column DC_OCORRENCIA.REJEITADOS
+  is 'Quantidade de registros rejeitados.';
+comment on column DC_OCORRENCIA.ARQUIVO_PROCESSAMENTO
+  is 'Chave de SIW_ARQUIVO, que contém os dados do arquivo processado.';
+comment on column DC_OCORRENCIA.ARQUIVO_REJEICAO
+  is 'Chave de SIW_ARQUIVO, que contém dados do arquivo com os registros rejeitados no processamento.';
+alter table DC_OCORRENCIA
+  add constraint PK_DC_OCORRENCIA primary key (SQ_OCORRENCIA)
+  using index 
+  tablespace SYSTEM
+  pctfree 10
+  initrans 2
+  maxtrans 255
+  storage
+  (
+    initial 66K
+    minextents 1
+    maxextents unlimited
+  );
+alter table DC_OCORRENCIA
+  add constraint FK_DCOCO_DCESQ foreign key (SQ_ESQUEMA)
+  references DC_ESQUEMA (SQ_ESQUEMA);
+alter table DC_OCORRENCIA
+  add constraint FK_DC_OCORR_FK_DCOCO__SIW_ARQU foreign key (ARQUIVO_REJEICAO)
+  references SIW_ARQUIVO (SQ_SIW_ARQUIVO);
+alter table DC_OCORRENCIA
+  add constraint FK_DC_OCORR_REFERENCE_CO_PESSO foreign key (SQ_PESSOA)
+  references CO_PESSOA (SQ_PESSOA);
+alter table DC_OCORRENCIA
+  add constraint FK_DCOCO_SIWARQ_PROCESSADO foreign key (ARQUIVO_PROCESSAMENTO)
+  references SIW_ARQUIVO (SQ_SIW_ARQUIVO);
+create index IN_DCOCO_DATA on DC_OCORRENCIA (DATA_OCORRENCIA,SQ_ESQUEMA,SQ_OCORRENCIA)
+  tablespace SYSTEM
+  pctfree 10
+  initrans 2
+  maxtrans 255
+  storage
+  (
+    initial 66K
+    minextents 1
+    maxextents unlimited
+  );
+

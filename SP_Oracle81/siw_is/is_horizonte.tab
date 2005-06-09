@@ -1,0 +1,52 @@
+create table IS_HORIZONTE
+(
+  SQ_HORIZONTE NUMBER(18) not null,
+  CLIENTE      NUMBER(18) not null,
+  NOME         VARCHAR2(30) not null,
+  ATIVO        VARCHAR2(1) default 'S' not null
+)
+tablespace SYSTEM
+  pctfree 10
+  pctused 40
+  initrans 1
+  maxtrans 255
+  storage
+  (
+    initial 72K
+    next 64K
+    minextents 1
+    maxextents unlimited
+    pctincrease 50
+  );
+comment on table IS_HORIZONTE
+  is 'Domínio de valores para o horizonte temporal de um programa.';
+comment on column IS_HORIZONTE.SQ_HORIZONTE
+  is 'Sequence';
+comment on column IS_HORIZONTE.CLIENTE
+  is 'Sequence';
+comment on column IS_HORIZONTE.NOME
+  is 'Nome da natureza do programa.';
+comment on column IS_HORIZONTE.ATIVO
+  is 'Indica se o registro pode ser associado a novos registros.';
+alter table IS_HORIZONTE
+  add constraint PK_IS_HORIZONTE primary key (SQ_HORIZONTE)
+  using index 
+  tablespace SYSTEM
+  pctfree 10
+  initrans 2
+  maxtrans 255
+  storage
+  (
+    initial 72K
+    next 64K
+    minextents 1
+    maxextents unlimited
+    pctincrease 50
+  );
+alter table IS_HORIZONTE
+  add constraint FK_ISHOR_COPES foreign key (CLIENTE)
+  references SIW.CO_PESSOA (SQ_PESSOA);
+alter table IS_HORIZONTE
+  add constraint CKC_ISHOR_ATIVO
+  check (ATIVO in ('S','N'));
+

@@ -1,0 +1,58 @@
+create table SIW_TIPO_APOIO
+(
+  SQ_TIPO_APOIO NUMBER(18) not null,
+  CLIENTE       NUMBER(18) not null,
+  NOME          VARCHAR2(50) not null,
+  SIGLA         VARCHAR2(10) not null,
+  DESCRICAO     VARCHAR2(400),
+  ATIVO         VARCHAR2(1) default 'S' not null
+)
+tablespace SYSTEM
+  pctfree 10
+  pctused 40
+  initrans 1
+  maxtrans 255
+  storage
+  (
+    initial 72K
+    next 64K
+    minextents 1
+    maxextents unlimited
+    pctincrease 50
+  );
+comment on table SIW_TIPO_APOIO
+  is 'Registra os tipos possíveis de apoio financeiro.';
+comment on column SIW_TIPO_APOIO.SQ_TIPO_APOIO
+  is 'Sequence.';
+comment on column SIW_TIPO_APOIO.CLIENTE
+  is 'Cliente ao qual o tipo de apoio está vinculado.';
+comment on column SIW_TIPO_APOIO.NOME
+  is 'Nome do tipo de apoio.';
+comment on column SIW_TIPO_APOIO.SIGLA
+  is 'Sigla do tipo de apoio.';
+comment on column SIW_TIPO_APOIO.DESCRICAO
+  is 'Descrição do tipo de apoio.';
+comment on column SIW_TIPO_APOIO.ATIVO
+  is 'Indica se este tipo pode ser associado a novos registros.';
+alter table SIW_TIPO_APOIO
+  add constraint PK_SIW_TIPO_APOIO primary key (SQ_TIPO_APOIO)
+  using index 
+  tablespace SYSTEM
+  pctfree 10
+  initrans 2
+  maxtrans 255
+  storage
+  (
+    initial 72K
+    next 64K
+    minextents 1
+    maxextents unlimited
+    pctincrease 50
+  );
+alter table SIW_TIPO_APOIO
+  add constraint FK_SIWTIPAPO_COPES foreign key (CLIENTE)
+  references CO_PESSOA (SQ_PESSOA);
+alter table SIW_TIPO_APOIO
+  add constraint CKC_ATIVO_SIW_TIPO
+  check (ATIVO in ('S','N'));
+

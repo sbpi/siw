@@ -1,0 +1,84 @@
+create table TT_PREFIXOS
+(
+  SQ_PREFIXO NUMBER(18) not null,
+  PREFIXO    VARCHAR2(15) not null,
+  LOCALIDADE VARCHAR2(25) not null,
+  SIGLA      VARCHAR2(4),
+  UF         VARCHAR2(2),
+  DDD        VARCHAR2(4),
+  CONTROLE   VARCHAR2(16),
+  DEGRAU     VARCHAR2(3)
+)
+tablespace SYSTEM
+  pctfree 10
+  pctused 40
+  initrans 1
+  maxtrans 255
+  storage
+  (
+    initial 72K
+    next 1120K
+    minextents 1
+    maxextents unlimited
+    pctincrease 50
+  );
+comment on table TT_PREFIXOS
+  is 'Armazena os prefixos telefônicos das cidades brasileiras e do exterior, importada do software de tarifação telefônica.';
+comment on column TT_PREFIXOS.SQ_PREFIXO
+  is 'Sequence.';
+comment on column TT_PREFIXOS.PREFIXO
+  is 'Prefixo telefônico.';
+comment on column TT_PREFIXOS.LOCALIDADE
+  is 'Localidade associada ao prefixo.';
+comment on column TT_PREFIXOS.SIGLA
+  is 'Sigla associada ao prefixo.';
+comment on column TT_PREFIXOS.UF
+  is 'Sigla da UF.';
+comment on column TT_PREFIXOS.DDD
+  is 'DDD associado ao prefixo.';
+comment on column TT_PREFIXOS.CONTROLE
+  is 'Número de controle associado ao prefixo.';
+comment on column TT_PREFIXOS.DEGRAU
+  is 'Degrau tarifário.';
+alter table TT_PREFIXOS
+  add constraint PK_TT_PREFIXOS primary key (SQ_PREFIXO)
+  using index 
+  tablespace SYSTEM
+  pctfree 10
+  initrans 2
+  maxtrans 255
+  storage
+  (
+    initial 72K
+    next 216K
+    minextents 1
+    maxextents unlimited
+    pctincrease 50
+  );
+create index IN_TTPRE_LOCAL on TT_PREFIXOS (LOCALIDADE,SQ_PREFIXO)
+  tablespace SYSTEM
+  pctfree 10
+  initrans 2
+  maxtrans 255
+  storage
+  (
+    initial 72K
+    next 496K
+    minextents 1
+    maxextents unlimited
+    pctincrease 50
+  );
+create index IN_TTPRE_PREFIXO on TT_PREFIXOS (PREFIXO,SQ_PREFIXO)
+  tablespace SYSTEM
+  pctfree 10
+  initrans 2
+  maxtrans 255
+  storage
+  (
+    initial 72K
+    next 328K
+    minextents 1
+    maxextents unlimited
+    pctincrease 50
+  );
+

@@ -1,0 +1,102 @@
+create table IS_SIG_RESTRICAO_ACAO
+(
+  CLIENTE             NUMBER(18) not null,
+  ANO                 NUMBER(4) not null,
+  CD_PROGRAMA         VARCHAR2(4) not null,
+  CD_ACAO             VARCHAR2(4) not null,
+  CD_SUBACAO          VARCHAR2(4) not null,
+  CD_TIPO_RESTRICAO   NUMBER(18) not null,
+  CD_RESTRICAO_ACAO   NUMBER(18) not null,
+  CD_TIPO_INCLUSAO    VARCHAR2(2),
+  CD_COMPETENCIA      VARCHAR2(2),
+  INCLUSAO            DATE not null,
+  DESCRICAO           VARCHAR2(4000) not null,
+  PROVIDENCIA         VARCHAR2(4000),
+  SUPERACAO           DATE,
+  RELATORIO           VARCHAR2(1) default 'S' not null,
+  TEMPO_HABIL         VARCHAR2(1) default 'N' not null,
+  OBSERVACAO_MONITOR  VARCHAR2(4000),
+  OBSERVACAO_CONTROLE VARCHAR2(4000),
+  FLAG_INCLUSAO       DATE default sysdate not null,
+  FLAG_ALTERACAO      DATE,
+  FLAG_ENVIO          DATE
+)
+tablespace SYSTEM
+  pctfree 10
+  pctused 40
+  initrans 1
+  maxtrans 255
+  storage
+  (
+    initial 66K
+    minextents 1
+    maxextents unlimited
+  );
+comment on table IS_SIG_RESTRICAO_ACAO
+  is 'Armazena dados das restrições de ações.';
+comment on column IS_SIG_RESTRICAO_ACAO.CLIENTE
+  is 'Sequence';
+comment on column IS_SIG_RESTRICAO_ACAO.ANO
+  is 'Ano de referência do registro.';
+comment on column IS_SIG_RESTRICAO_ACAO.CD_PROGRAMA
+  is 'Código do Programa no Sigplan';
+comment on column IS_SIG_RESTRICAO_ACAO.CD_ACAO
+  is 'Código da Ação';
+comment on column IS_SIG_RESTRICAO_ACAO.CD_SUBACAO
+  is 'Código da SubAção';
+comment on column IS_SIG_RESTRICAO_ACAO.CD_TIPO_RESTRICAO
+  is 'Código';
+comment on column IS_SIG_RESTRICAO_ACAO.CD_RESTRICAO_ACAO
+  is 'Sequencial da restrição';
+comment on column IS_SIG_RESTRICAO_ACAO.CD_TIPO_INCLUSAO
+  is 'Código do tipo de inclusão';
+comment on column IS_SIG_RESTRICAO_ACAO.CD_COMPETENCIA
+  is 'Código da competência';
+comment on column IS_SIG_RESTRICAO_ACAO.INCLUSAO
+  is 'Data de inclusão';
+comment on column IS_SIG_RESTRICAO_ACAO.DESCRICAO
+  is 'Descrição da restrição.';
+comment on column IS_SIG_RESTRICAO_ACAO.PROVIDENCIA
+  is 'Descrição da providência';
+comment on column IS_SIG_RESTRICAO_ACAO.SUPERACAO
+  is 'Data de superação';
+comment on column IS_SIG_RESTRICAO_ACAO.RELATORIO
+  is 'Indica se a restrição consta no relatório de situação';
+comment on column IS_SIG_RESTRICAO_ACAO.TEMPO_HABIL
+  is 'Indica se a restrição foi corrigida em tempo hábil';
+comment on column IS_SIG_RESTRICAO_ACAO.OBSERVACAO_MONITOR
+  is 'Observação do monitor';
+comment on column IS_SIG_RESTRICAO_ACAO.OBSERVACAO_CONTROLE
+  is 'Observação do controle';
+comment on column IS_SIG_RESTRICAO_ACAO.FLAG_INCLUSAO
+  is 'Data de inclusão do registro';
+comment on column IS_SIG_RESTRICAO_ACAO.FLAG_ALTERACAO
+  is 'Data da última alteração do registro, caso ele tenha sido alterado.';
+comment on column IS_SIG_RESTRICAO_ACAO.FLAG_ENVIO
+  is 'Data do último envio do registro, caso ele já tenha sido enviado.';
+alter table IS_SIG_RESTRICAO_ACAO
+  add constraint PK_IS_SIG_RESTRICAO_ACAO primary key (ANO,CD_PROGRAMA,CLIENTE,CD_ACAO,CD_SUBACAO,CD_TIPO_RESTRICAO,CD_RESTRICAO_ACAO)
+  using index 
+  tablespace SYSTEM
+  pctfree 10
+  initrans 2
+  maxtrans 255
+  storage
+  (
+    initial 66K
+    minextents 1
+    maxextents unlimited
+  );
+alter table IS_SIG_RESTRICAO_ACAO
+  add constraint FK_ISSIGRESACA_ISSIGACA foreign key (ANO,CD_PROGRAMA,CLIENTE,CD_ACAO,CD_SUBACAO)
+  references IS_SIG_ACAO (ANO,CD_PROGRAMA,CLIENTE,CD_ACAO,CD_SUBACAO);
+alter table IS_SIG_RESTRICAO_ACAO
+  add constraint FK_ISSIGRESACA_ISSIGTIPRES foreign key (CD_TIPO_RESTRICAO)
+  references IS_SIG_TIPO_RESTRICAO (CD_TIPO_RESTRICAO);
+alter table IS_SIG_RESTRICAO_ACAO
+  add constraint CKC_ISSIGRESACA_RELAT
+  check (RELATORIO in ('S','N'));
+alter table IS_SIG_RESTRICAO_ACAO
+  add constraint CKC_ISSIGRESACA_TEMPO
+  check (TEMPO_HABIL in ('S','N'));
+

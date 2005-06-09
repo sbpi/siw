@@ -1,0 +1,189 @@
+create table IS_SIG_DADO_FISICO
+(
+  CLIENTE             NUMBER(18) not null,
+  ANO                 NUMBER(4) not null,
+  CD_PROGRAMA         VARCHAR2(4) not null,
+  CD_ACAO             VARCHAR2(4) not null,
+  CD_SUBACAO          VARCHAR2(4) not null,
+  CD_REGIAO           VARCHAR2(2) not null,
+  CRON_INI_MES_1      NUMBER(18,4),
+  CRON_INI_MES_2      NUMBER(18,4),
+  CRON_INI_MES_3      NUMBER(18,4),
+  CRON_INI_MES_4      NUMBER(18,4),
+  CRON_INI_MES_5      NUMBER(18,4),
+  CRON_INI_MES_6      NUMBER(18,4),
+  CRON_INI_MES_7      NUMBER(18,4),
+  CRON_INI_MES_8      NUMBER(18,4),
+  CRON_INI_MES_9      NUMBER(18,4),
+  CRON_INI_MES_10     NUMBER(18,4),
+  CRON_INI_MES_11     NUMBER(18,4),
+  CRON_INI_MES_12     NUMBER(18,4),
+  CRON_MES_1          NUMBER(18,4),
+  CRON_MES_2          NUMBER(18,4),
+  CRON_MES_3          NUMBER(18,4),
+  CRON_MES_4          NUMBER(18,4),
+  CRON_MES_5          NUMBER(18,4),
+  CRON_MES_6          NUMBER(18,4),
+  CRON_MES_7          NUMBER(18,4),
+  CRON_MES_8          NUMBER(18,4),
+  CRON_MES_9          NUMBER(18,4),
+  CRON_MES_10         NUMBER(18,4),
+  CRON_MES_11         NUMBER(18,4),
+  CRON_MES_12         NUMBER(18,4),
+  REAL_MES_1          NUMBER(18,4),
+  REAL_MES_2          NUMBER(18,4),
+  REAL_MES_3          NUMBER(18,4),
+  REAL_MES_4          NUMBER(18,4),
+  REAL_MES_5          NUMBER(18,4),
+  REAL_MES_6          NUMBER(18,4),
+  REAL_MES_7          NUMBER(18,4),
+  REAL_MES_8          NUMBER(18,4),
+  REAL_MES_9          NUMBER(18,4),
+  REAL_MES_10         NUMBER(18,4),
+  REAL_MES_11         NUMBER(18,4),
+  REAL_MES_12         NUMBER(18,4),
+  PREVISAO_ANO        NUMBER(18,4),
+  CRON_INI_ANO        NUMBER(18,4),
+  ATUAL_ANO           NUMBER(18,4),
+  CRON_ANO            NUMBER(18,4),
+  REAL_ANO            NUMBER(18,4),
+  COMENTARIO_EXECUCAO VARCHAR2(4000),
+  FLAG_INCLUSAO       DATE default sysdate not null,
+  FLAG_ALTERACAO      DATE,
+  FLAG_ENVIO          DATE
+)
+tablespace SYSTEM
+  pctfree 10
+  pctused 40
+  initrans 1
+  maxtrans 255
+  storage
+  (
+    initial 66K
+    minextents 1
+    maxextents unlimited
+  );
+comment on table IS_SIG_DADO_FISICO
+  is 'Armazena quantidades cronogramadas e realizadas para as ações, especializadas por fonte e região, mês a mês.';
+comment on column IS_SIG_DADO_FISICO.CLIENTE
+  is 'Sequence';
+comment on column IS_SIG_DADO_FISICO.ANO
+  is 'Ano de referência do registro.';
+comment on column IS_SIG_DADO_FISICO.CD_PROGRAMA
+  is 'Código do Programa no Sigplan';
+comment on column IS_SIG_DADO_FISICO.CD_ACAO
+  is 'Código da Ação';
+comment on column IS_SIG_DADO_FISICO.CD_SUBACAO
+  is 'Código da SubAção';
+comment on column IS_SIG_DADO_FISICO.CD_REGIAO
+  is 'Código da Região';
+comment on column IS_SIG_DADO_FISICO.CRON_INI_MES_1
+  is 'Quantidade Cronogramada Inicial para Janeiro';
+comment on column IS_SIG_DADO_FISICO.CRON_INI_MES_2
+  is 'Quantidade Cronogramada Inicial para fevereiro';
+comment on column IS_SIG_DADO_FISICO.CRON_INI_MES_3
+  is 'Quantidade Cronogramada Inicial para março';
+comment on column IS_SIG_DADO_FISICO.CRON_INI_MES_4
+  is 'Quantidade Cronogramada Inicial para abril';
+comment on column IS_SIG_DADO_FISICO.CRON_INI_MES_5
+  is 'Quantidade Cronogramada Inicial para maio';
+comment on column IS_SIG_DADO_FISICO.CRON_INI_MES_6
+  is 'Quantidade Cronogramada Inicial para junho';
+comment on column IS_SIG_DADO_FISICO.CRON_INI_MES_7
+  is 'Quantidade Cronogramada Inicial para julho';
+comment on column IS_SIG_DADO_FISICO.CRON_INI_MES_8
+  is 'Quantidade Cronogramada Inicial para agosto';
+comment on column IS_SIG_DADO_FISICO.CRON_INI_MES_9
+  is 'Quantidade Cronogramada Inicial para setembro';
+comment on column IS_SIG_DADO_FISICO.CRON_INI_MES_10
+  is 'Quantidade Cronogramada Inicial para outubro';
+comment on column IS_SIG_DADO_FISICO.CRON_INI_MES_11
+  is 'Quantidade Cronogramada Inicial para novembro';
+comment on column IS_SIG_DADO_FISICO.CRON_INI_MES_12
+  is 'Quantidade Cronogramada Inicial para dezembro';
+comment on column IS_SIG_DADO_FISICO.CRON_MES_1
+  is 'Quantidade Cronogramada para Janeiro';
+comment on column IS_SIG_DADO_FISICO.CRON_MES_2
+  is 'Quantidade Cronogramada para fevereiro';
+comment on column IS_SIG_DADO_FISICO.CRON_MES_3
+  is 'Quantidade Cronogramada para março';
+comment on column IS_SIG_DADO_FISICO.CRON_MES_4
+  is 'Quantidade Cronogramada para abril';
+comment on column IS_SIG_DADO_FISICO.CRON_MES_5
+  is 'Quantidade Cronogramada para maio';
+comment on column IS_SIG_DADO_FISICO.CRON_MES_6
+  is 'Quantidade Cronogramada para junho';
+comment on column IS_SIG_DADO_FISICO.CRON_MES_7
+  is 'Quantidade Cronogramada para julho';
+comment on column IS_SIG_DADO_FISICO.CRON_MES_8
+  is 'Quantidade Cronogramada para agosto';
+comment on column IS_SIG_DADO_FISICO.CRON_MES_9
+  is 'Quantidade Cronogramada para setembro';
+comment on column IS_SIG_DADO_FISICO.CRON_MES_10
+  is 'Quantidade Cronogramada para outubro';
+comment on column IS_SIG_DADO_FISICO.CRON_MES_11
+  is 'Quantidade Cronogramada para novembro';
+comment on column IS_SIG_DADO_FISICO.CRON_MES_12
+  is 'Quantidade Cronogramada para dezembro';
+comment on column IS_SIG_DADO_FISICO.REAL_MES_1
+  is 'Quantidade realizada em Janeiro';
+comment on column IS_SIG_DADO_FISICO.REAL_MES_2
+  is 'Quantidade realizada em fevereiro';
+comment on column IS_SIG_DADO_FISICO.REAL_MES_3
+  is 'Quantidade realizada em março';
+comment on column IS_SIG_DADO_FISICO.REAL_MES_4
+  is 'Quantidade realizada em abril';
+comment on column IS_SIG_DADO_FISICO.REAL_MES_5
+  is 'Quantidade realizada em maio';
+comment on column IS_SIG_DADO_FISICO.REAL_MES_6
+  is 'Quantidade realizada em junho';
+comment on column IS_SIG_DADO_FISICO.REAL_MES_7
+  is 'Quantidade realizada em julho';
+comment on column IS_SIG_DADO_FISICO.REAL_MES_8
+  is 'Quantidade realizada em agosto';
+comment on column IS_SIG_DADO_FISICO.REAL_MES_9
+  is 'Quantidade realizada em setembro';
+comment on column IS_SIG_DADO_FISICO.REAL_MES_10
+  is 'Quantidade realizada em outubro';
+comment on column IS_SIG_DADO_FISICO.REAL_MES_11
+  is 'Quantidade realizada em novembro';
+comment on column IS_SIG_DADO_FISICO.REAL_MES_12
+  is 'Quantidade realizada em dezembro';
+comment on column IS_SIG_DADO_FISICO.PREVISAO_ANO
+  is 'Quantidade prevista para o Ano';
+comment on column IS_SIG_DADO_FISICO.CRON_INI_ANO
+  is 'Quantidade cronogramada inicial do Ano';
+comment on column IS_SIG_DADO_FISICO.ATUAL_ANO
+  is 'Quantidade Atual do ano';
+comment on column IS_SIG_DADO_FISICO.CRON_ANO
+  is 'Quantidade Cronogramado para o ano';
+comment on column IS_SIG_DADO_FISICO.REAL_ANO
+  is 'Quantidade Realizado no ano';
+comment on column IS_SIG_DADO_FISICO.COMENTARIO_EXECUCAO
+  is 'Comentário da Execução';
+comment on column IS_SIG_DADO_FISICO.FLAG_INCLUSAO
+  is 'Data de inclusão do registro';
+comment on column IS_SIG_DADO_FISICO.FLAG_ALTERACAO
+  is 'Data da última alteração do registro, caso ele tenha sido alterado.';
+comment on column IS_SIG_DADO_FISICO.FLAG_ENVIO
+  is 'Data do último envio do registro, caso ele já tenha sido enviado.';
+alter table IS_SIG_DADO_FISICO
+  add constraint PK_IS_SIG_DADO_FISICO primary key (ANO,CD_PROGRAMA,CLIENTE,CD_ACAO,CD_SUBACAO,CD_REGIAO)
+  using index 
+  tablespace SYSTEM
+  pctfree 10
+  initrans 2
+  maxtrans 255
+  storage
+  (
+    initial 66K
+    minextents 1
+    maxextents unlimited
+  );
+alter table IS_SIG_DADO_FISICO
+  add constraint FK_ISSIGDADFIS_ISREG foreign key (CD_REGIAO)
+  references IS_REGIAO (CD_REGIAO);
+alter table IS_SIG_DADO_FISICO
+  add constraint FK_ISSIGDADFIS_ISSIGACA foreign key (ANO,CD_PROGRAMA,CLIENTE,CD_ACAO,CD_SUBACAO)
+  references IS_SIG_ACAO (ANO,CD_PROGRAMA,CLIENTE,CD_ACAO,CD_SUBACAO);
+

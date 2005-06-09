@@ -1,0 +1,80 @@
+create table DC_PROC_PARAM
+(
+  SQ_PARAM     NUMBER(18) not null,
+  SQ_PROCEDURE NUMBER(18) not null,
+  SQ_DADO_TIPO NUMBER(18) not null,
+  NOME         VARCHAR2(30) not null,
+  DESCRICAO    VARCHAR2(4000) not null,
+  TIPO         VARCHAR2(1) default 'E' not null,
+  ORDEM        NUMBER(18) not null
+)
+tablespace SYSTEM
+  pctfree 10
+  pctused 40
+  initrans 1
+  maxtrans 255
+  storage
+  (
+    initial 66K
+    minextents 1
+    maxextents unlimited
+  );
+comment on column DC_PROC_PARAM.SQ_PARAM
+  is 'Sequence.';
+comment on column DC_PROC_PARAM.SQ_PROCEDURE
+  is 'Sequence.';
+comment on column DC_PROC_PARAM.SQ_DADO_TIPO
+  is 'Sequence.';
+comment on column DC_PROC_PARAM.NOME
+  is 'Nome do parâmetro.';
+comment on column DC_PROC_PARAM.DESCRICAO
+  is 'Descrição do parâmetro.';
+comment on column DC_PROC_PARAM.TIPO
+  is 'Tipo do parâmetro (E - entrada; S - saída; A - ambos)';
+comment on column DC_PROC_PARAM.ORDEM
+  is 'Número de ordem do parâmetro.';
+alter table DC_PROC_PARAM
+  add constraint PK_DC_PROC_PARAM primary key (SQ_PARAM)
+  using index 
+  tablespace SYSTEM
+  pctfree 10
+  initrans 2
+  maxtrans 255
+  storage
+  (
+    initial 66K
+    minextents 1
+    maxextents unlimited
+  );
+alter table DC_PROC_PARAM
+  add constraint FK_DCPROPAR_DCDADTIP foreign key (SQ_DADO_TIPO)
+  references DC_DADO_TIPO (SQ_DADO_TIPO);
+alter table DC_PROC_PARAM
+  add constraint FK_DCPROPAR_DCPRO foreign key (SQ_PROCEDURE)
+  references DC_PROCEDURE (SQ_PROCEDURE);
+alter table DC_PROC_PARAM
+  add constraint CKC_TIPO_DC_PROC_
+  check (TIPO in ('E','S','A'));
+create index IN_DCPROPAR_NOME on DC_PROC_PARAM (NOME,SQ_PROCEDURE)
+  tablespace SYSTEM
+  pctfree 10
+  initrans 2
+  maxtrans 255
+  storage
+  (
+    initial 66K
+    minextents 1
+    maxextents unlimited
+  );
+create index IN_DCPROPAR_PROCEDURE on DC_PROC_PARAM (SQ_PROCEDURE,SQ_PARAM)
+  tablespace SYSTEM
+  pctfree 10
+  initrans 2
+  maxtrans 255
+  storage
+  (
+    initial 66K
+    minextents 1
+    maxextents unlimited
+  );
+

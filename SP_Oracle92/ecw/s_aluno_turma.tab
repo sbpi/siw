@@ -1,0 +1,96 @@
+create table S_ALUNO_TURMA
+(
+  CO_UNIDADE        CHAR(5) not null,
+  CO_TURMA          NUMBER(10) not null,
+  ANO_SEM           CHAR(5) not null,
+  CO_ALUNO          CHAR(12) not null,
+  CO_CURSO          NUMBER(10) not null,
+  DT_MOVIMENTACAO   DATE,
+  CO_SEQ_SERIE      NUMBER(10) not null,
+  ST_MOVIMENTACAO   CHAR(25),
+  DS_MOVIMENTACAO   CHAR(245),
+  VL_DESCONTO       NUMBER(10),
+  ST_DESC_APOS_VENC CHAR(3),
+  NU_PRIMEIRA_PARC  CHAR(5),
+  DT_VENCIMENTO_1   DATE,
+  DT_VENCIMENTO_2   DATE,
+  NU_DIA_VENCIMENTO CHAR(2),
+  ST_PRINCIPAL      CHAR(1),
+  CO_PLANO          NUMBER(10),
+  CO_ALUNO_TURMA    NUMBER(10) not null,
+  NU_CHAMADA        CHAR(3)
+)
+tablespace SGE
+  pctfree 10
+  initrans 1
+  maxtrans 255
+  storage
+  (
+    initial 66K
+    minextents 1
+    maxextents unlimited
+  );
+alter table S_ALUNO_TURMA
+  add constraint PK_S_ALUNO_TURMA primary key (CO_UNIDADE,CO_TURMA,ANO_SEM,CO_ALUNO,CO_CURSO,CO_SEQ_SERIE,CO_ALUNO_TURMA)
+  using index 
+  tablespace SGE
+  pctfree 10
+  initrans 2
+  maxtrans 255
+  storage
+  (
+    initial 66K
+    minextents 1
+    maxextents unlimited
+  );
+alter table S_ALUNO_TURMA
+  add constraint R119_533 foreign key (CO_TURMA,CO_UNIDADE,ANO_SEM,CO_CURSO,CO_SEQ_SERIE)
+  references S_TURMA (CO_TURMA,CO_UNIDADE,ANO_SEM,CO_CURSO,CO_SEQ_SERIE) on delete cascade;
+alter table S_ALUNO_TURMA
+  add constraint R119_534 foreign key (ANO_SEM,CO_ALUNO,CO_UNIDADE)
+  references S_ALUNO_PER_UNID (ANO_SEM,CO_ALUNO,CO_UNIDADE) on delete cascade;
+create index FOREIGN116 on S_ALUNO_TURMA (CO_UNIDADE)
+  tablespace SGE
+  pctfree 10
+  initrans 2
+  maxtrans 255
+  storage
+  (
+    initial 66K
+    minextents 1
+    maxextents unlimited
+  );
+create index FOREIGN117 on S_ALUNO_TURMA (CO_TURMA,CO_UNIDADE,ANO_SEM)
+  tablespace SGE
+  pctfree 10
+  initrans 2
+  maxtrans 255
+  storage
+  (
+    initial 66K
+    minextents 1
+    maxextents unlimited
+  );
+create index FOREIGN172 on S_ALUNO_TURMA (CO_ALUNO,CO_UNIDADE,ANO_SEM)
+  tablespace SGE
+  pctfree 10
+  initrans 2
+  maxtrans 255
+  storage
+  (
+    initial 66K
+    minextents 1
+    maxextents unlimited
+  );
+create index IDX_MOVIM on S_ALUNO_TURMA (ST_MOVIMENTACAO)
+  tablespace SGE
+  pctfree 10
+  initrans 2
+  maxtrans 255
+  storage
+  (
+    initial 66K
+    minextents 1
+    maxextents unlimited
+  );
+

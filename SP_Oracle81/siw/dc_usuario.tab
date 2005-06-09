@@ -1,0 +1,73 @@
+create table DC_USUARIO
+(
+  SQ_USUARIO NUMBER(18) not null,
+  SQ_SISTEMA NUMBER(18) not null,
+  NOME       VARCHAR2(30) not null,
+  DESCRICAO  VARCHAR2(4000) not null
+)
+tablespace SYSTEM
+  pctfree 10
+  pctused 40
+  initrans 1
+  maxtrans 255
+  storage
+  (
+    initial 72K
+    next 64K
+    minextents 1
+    maxextents unlimited
+    pctincrease 50
+  );
+comment on column DC_USUARIO.SQ_USUARIO
+  is 'Sequence';
+comment on column DC_USUARIO.SQ_SISTEMA
+  is 'Sequence.';
+comment on column DC_USUARIO.NOME
+  is 'Nome do usuário.';
+comment on column DC_USUARIO.DESCRICAO
+  is 'Descrição do usuário: finalidade, objetos por ele armazenados etc.';
+alter table DC_USUARIO
+  add constraint PK_DC_USUARIO primary key (SQ_USUARIO)
+  using index 
+  tablespace SYSTEM
+  pctfree 10
+  initrans 2
+  maxtrans 255
+  storage
+  (
+    initial 72K
+    next 64K
+    minextents 1
+    maxextents unlimited
+    pctincrease 50
+  );
+alter table DC_USUARIO
+  add constraint FK_DCUSU_DCSIS foreign key (SQ_SISTEMA)
+  references DC_SISTEMA (SQ_SISTEMA);
+create unique index IN_DCUSU_NOME on DC_USUARIO (NOME,SQ_SISTEMA)
+  tablespace SYSTEM
+  pctfree 10
+  initrans 2
+  maxtrans 255
+  storage
+  (
+    initial 72K
+    next 64K
+    minextents 1
+    maxextents unlimited
+    pctincrease 50
+  );
+create index IN_DCUSU_SISTEMA on DC_USUARIO (SQ_SISTEMA,SQ_USUARIO)
+  tablespace SYSTEM
+  pctfree 10
+  initrans 2
+  maxtrans 255
+  storage
+  (
+    initial 72K
+    next 64K
+    minextents 1
+    maxextents unlimited
+    pctincrease 50
+  );
+

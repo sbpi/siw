@@ -1,0 +1,101 @@
+create table CV_PESSOA_CURSO
+(
+  SQ_CVPESCURTEC       NUMBER(10) not null,
+  SQ_PESSOA            NUMBER(18) not null,
+  SQ_AREA_CONHECIMENTO NUMBER(10) not null,
+  SQ_FORMACAO          NUMBER(2) not null,
+  NOME                 VARCHAR2(255) not null,
+  INSTITUICAO          VARCHAR2(100) not null,
+  CARGA_HORARIA        NUMBER(4),
+  CONCLUSAO            DATE
+)
+tablespace SYSTEM
+  pctfree 10
+  pctused 40
+  initrans 1
+  maxtrans 255
+  storage
+  (
+    initial 66K
+    minextents 1
+    maxextents unlimited
+  );
+comment on column CV_PESSOA_CURSO.SQ_PESSOA
+  is 'Sequence';
+comment on column CV_PESSOA_CURSO.SQ_AREA_CONHECIMENTO
+  is 'Código Área Conhecimento.';
+comment on column CV_PESSOA_CURSO.SQ_FORMACAO
+  is 'Sequence';
+comment on column CV_PESSOA_CURSO.NOME
+  is 'Nome do Curso Técnico';
+comment on column CV_PESSOA_CURSO.INSTITUICAO
+  is 'Nome da Instituição';
+comment on column CV_PESSOA_CURSO.CARGA_HORARIA
+  is 'Carga horaria';
+alter table CV_PESSOA_CURSO
+  add constraint PK_CV_PESSOA_CURSO primary key (SQ_CVPESCURTEC)
+  using index 
+  tablespace SYSTEM
+  pctfree 10
+  initrans 2
+  maxtrans 255
+  storage
+  (
+    initial 66K
+    minextents 1
+    maxextents unlimited
+  );
+alter table CV_PESSOA_CURSO
+  add constraint FK_CVPESCUR_COARECON foreign key (SQ_AREA_CONHECIMENTO)
+  references CO_AREA_CONHECIMENTO (SQ_AREA_CONHECIMENTO);
+alter table CV_PESSOA_CURSO
+  add constraint FK_CVPESCUR_COFOR foreign key (SQ_FORMACAO)
+  references CO_FORMACAO (SQ_FORMACAO);
+alter table CV_PESSOA_CURSO
+  add constraint FK_CVPESCUR_CVPES foreign key (SQ_PESSOA)
+  references CV_PESSOA (SQ_PESSOA);
+create index IN_CVPESCURTEC_CONCLUSAO on CV_PESSOA_CURSO (SQ_PESSOA,CONCLUSAO)
+  tablespace SYSTEM
+  pctfree 10
+  initrans 2
+  maxtrans 255
+  storage
+  (
+    initial 66K
+    minextents 1
+    maxextents unlimited
+  );
+create index IN_CVPESCURTEC_SQAREACONHEC on CV_PESSOA_CURSO (SQ_PESSOA,SQ_AREA_CONHECIMENTO)
+  tablespace SYSTEM
+  pctfree 10
+  initrans 2
+  maxtrans 255
+  storage
+  (
+    initial 66K
+    minextents 1
+    maxextents unlimited
+  );
+create index IN_CVPESCURTEC_SQFORMACAO on CV_PESSOA_CURSO (SQ_PESSOA,SQ_FORMACAO)
+  tablespace SYSTEM
+  pctfree 10
+  initrans 2
+  maxtrans 255
+  storage
+  (
+    initial 66K
+    minextents 1
+    maxextents unlimited
+  );
+create index IN_CVPESCURTEC_SQPESSOA on CV_PESSOA_CURSO (SQ_PESSOA,SQ_CVPESCURTEC)
+  tablespace SYSTEM
+  pctfree 10
+  initrans 2
+  maxtrans 255
+  storage
+  (
+    initial 66K
+    minextents 1
+    maxextents unlimited
+  );
+

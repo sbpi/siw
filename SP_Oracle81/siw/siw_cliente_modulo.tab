@@ -1,0 +1,55 @@
+create table SIW_CLIENTE_MODULO
+(
+  SQ_PESSOA NUMBER(18) not null,
+  SQ_MODULO NUMBER(18) not null
+)
+tablespace USERS
+  pctfree 10
+  pctused 40
+  initrans 1
+  maxtrans 255
+  storage
+  (
+    initial 136K
+    next 128K
+    minextents 1
+    maxextents 4096
+    pctincrease 0
+  );
+comment on table SIW_CLIENTE_MODULO
+  is 'Armazena os módulos contratados pelos clientes';
+alter table SIW_CLIENTE_MODULO
+  add constraint PK_SIW_CLIENTE_MODULO primary key (SQ_PESSOA,SQ_MODULO)
+  using index 
+  tablespace USERS
+  pctfree 10
+  initrans 2
+  maxtrans 255
+  storage
+  (
+    initial 136K
+    next 128K
+    minextents 1
+    maxextents 4096
+    pctincrease 0
+  );
+alter table SIW_CLIENTE_MODULO
+  add constraint FK_SIWCLI_SIWCLIMD foreign key (SQ_PESSOA)
+  references SIW_CLIENTE (SQ_PESSOA);
+alter table SIW_CLIENTE_MODULO
+  add constraint FK_SIWMD_SIWCLIMD foreign key (SQ_MODULO)
+  references SIW_MODULO (SQ_MODULO);
+create index IN_SIWCLIMOD_MOD on SIW_CLIENTE_MODULO (SQ_MODULO,SQ_PESSOA)
+  tablespace SYSTEM
+  pctfree 10
+  initrans 2
+  maxtrans 255
+  storage
+  (
+    initial 72K
+    next 64K
+    minextents 1
+    maxextents unlimited
+    pctincrease 50
+  );
+

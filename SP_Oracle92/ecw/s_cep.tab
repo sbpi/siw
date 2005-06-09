@@ -1,0 +1,41 @@
+create table S_CEP
+(
+  BAIRRO   VARCHAR2(40) not null,
+  ENDERECO VARCHAR2(60) not null,
+  CEP      VARCHAR2(8) not null
+)
+tablespace SGE
+  pctfree 10
+  initrans 1
+  maxtrans 255
+  storage
+  (
+    initial 66K
+    minextents 1
+    maxextents unlimited
+  );
+alter table S_CEP
+  add constraint U198_161 primary key (CEP)
+  using index 
+  tablespace SGE
+  pctfree 10
+  initrans 2
+  maxtrans 255
+  storage
+  (
+    initial 66K
+    minextents 1
+    maxextents unlimited
+  );
+create index IX_ENDERECO on S_CEP (ENDERECO)
+  tablespace SGE
+  pctfree 10
+  initrans 2
+  maxtrans 255
+  storage
+  (
+    initial 66K
+    minextents 1
+    maxextents unlimited
+  );
+

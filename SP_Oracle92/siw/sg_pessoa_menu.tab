@@ -1,0 +1,66 @@
+create table SG_PESSOA_MENU
+(
+  SQ_PESSOA          NUMBER(18) not null,
+  SQ_MENU            NUMBER(18) not null,
+  SQ_PESSOA_ENDERECO NUMBER(18) not null
+)
+tablespace USERS
+  pctfree 10
+  initrans 1
+  maxtrans 255
+  storage
+  (
+    initial 132K
+    minextents 1
+    maxextents unlimited
+  );
+comment on table SG_PESSOA_MENU
+  is 'Permissões que a pessoa têm às opções do menu';
+comment on column SG_PESSOA_MENU.SQ_PESSOA
+  is 'Sequence';
+comment on column SG_PESSOA_MENU.SQ_MENU
+  is 'Sequence';
+comment on column SG_PESSOA_MENU.SQ_PESSOA_ENDERECO
+  is 'Sequence';
+alter table SG_PESSOA_MENU
+  add constraint PK_SG_PESSOA_MENU primary key (SQ_PESSOA,SQ_MENU,SQ_PESSOA_ENDERECO)
+  using index 
+  tablespace USERS
+  pctfree 10
+  initrans 2
+  maxtrans 255
+  storage
+  (
+    initial 132K
+    minextents 1
+    maxextents unlimited
+  );
+alter table SG_PESSOA_MENU
+  add constraint FK_SGPESMEN_SGAUT foreign key (SQ_PESSOA)
+  references SG_AUTENTICACAO (SQ_PESSOA);
+alter table SG_PESSOA_MENU
+  add constraint FK_SGPESMN_SIWMNEN foreign key (SQ_MENU,SQ_PESSOA_ENDERECO)
+  references SIW_MENU_ENDERECO (SQ_MENU,SQ_PESSOA_ENDERECO);
+create index IN_SGPESMEN_END on SG_PESSOA_MENU (SQ_PESSOA_ENDERECO,SQ_MENU)
+  tablespace SYSTEM
+  pctfree 10
+  initrans 2
+  maxtrans 255
+  storage
+  (
+    initial 66K
+    minextents 1
+    maxextents unlimited
+  );
+create index IN_SGPESMEN_SQMEN on SG_PESSOA_MENU (SQ_MENU,SQ_PESSOA)
+  tablespace SYSTEM
+  pctfree 10
+  initrans 2
+  maxtrans 255
+  storage
+  (
+    initial 66K
+    minextents 1
+    maxextents unlimited
+  );
+

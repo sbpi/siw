@@ -1,0 +1,47 @@
+create table PJ_ETAPA_MENSAL
+(
+  SQ_PROJETO_ETAPA    NUMBER(18) not null,
+  REFERENCIA          DATE not null,
+  EXECUCAO_FISICA     NUMBER(18,2) not null,
+  EXECUCAO_FINANCEIRA NUMBER(18,2) not null
+)
+tablespace SYSTEM
+  pctfree 10
+  pctused 40
+  initrans 1
+  maxtrans 255
+  storage
+  (
+    initial 72K
+    next 64K
+    minextents 1
+    maxextents unlimited
+    pctincrease 50
+  );
+comment on column PJ_ETAPA_MENSAL.SQ_PROJETO_ETAPA
+  is 'Sequence';
+comment on column PJ_ETAPA_MENSAL.REFERENCIA
+  is 'Mês de referência da informação. Será informado sempre o último dia do mês.';
+comment on column PJ_ETAPA_MENSAL.EXECUCAO_FISICA
+  is 'Quantitativo físico executado no mês de referência.';
+comment on column PJ_ETAPA_MENSAL.EXECUCAO_FINANCEIRA
+  is 'Valor financeiro executado no mês de referência.';
+alter table PJ_ETAPA_MENSAL
+  add constraint PK_PJ_ETAPA_MENSAL primary key (SQ_PROJETO_ETAPA,REFERENCIA)
+  using index 
+  tablespace SYSTEM
+  pctfree 10
+  initrans 2
+  maxtrans 255
+  storage
+  (
+    initial 72K
+    next 64K
+    minextents 1
+    maxextents unlimited
+    pctincrease 50
+  );
+alter table PJ_ETAPA_MENSAL
+  add constraint FK_PJETAMEN_PJPROETA foreign key (SQ_PROJETO_ETAPA)
+  references PJ_PROJETO_ETAPA (SQ_PROJETO_ETAPA);
+

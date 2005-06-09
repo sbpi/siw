@@ -1,0 +1,122 @@
+create table CV_PESSOA_ESCOL
+(
+  SQ_CVPESSOA_ESCOL    NUMBER(18) not null,
+  SQ_PESSOA            NUMBER(18) not null,
+  SQ_AREA_CONHECIMENTO NUMBER(10),
+  SQ_PAIS              NUMBER(18) not null,
+  SQ_FORMACAO          NUMBER(2) not null,
+  NOME                 VARCHAR2(80),
+  INSTITUICAO          VARCHAR2(100) not null,
+  INICIO               VARCHAR2(7) not null,
+  FIM                  VARCHAR2(7)
+)
+tablespace SYSTEM
+  pctfree 10
+  pctused 40
+  initrans 1
+  maxtrans 255
+  storage
+  (
+    initial 66K
+    minextents 1
+    maxextents unlimited
+  );
+comment on column CV_PESSOA_ESCOL.SQ_CVPESSOA_ESCOL
+  is 'Código da Escolaridade';
+comment on column CV_PESSOA_ESCOL.SQ_PESSOA
+  is 'Sequence';
+comment on column CV_PESSOA_ESCOL.SQ_AREA_CONHECIMENTO
+  is 'Código Área Conhecimento.';
+comment on column CV_PESSOA_ESCOL.SQ_PAIS
+  is 'Sequence';
+comment on column CV_PESSOA_ESCOL.SQ_FORMACAO
+  is 'Sequence';
+comment on column CV_PESSOA_ESCOL.NOME
+  is 'Nome do Curso';
+comment on column CV_PESSOA_ESCOL.INSTITUICAO
+  is 'Nome da Instituição';
+comment on column CV_PESSOA_ESCOL.INICIO
+  is 'Semestre/ano de início';
+comment on column CV_PESSOA_ESCOL.FIM
+  is 'Semestre/ano de conclusão';
+alter table CV_PESSOA_ESCOL
+  add constraint PK_CV_PESSOA_ESCOL primary key (SQ_CVPESSOA_ESCOL)
+  using index 
+  tablespace SYSTEM
+  pctfree 10
+  initrans 2
+  maxtrans 255
+  storage
+  (
+    initial 66K
+    minextents 1
+    maxextents unlimited
+  );
+alter table CV_PESSOA_ESCOL
+  add constraint FK_CVPESESC_COARECON foreign key (SQ_AREA_CONHECIMENTO)
+  references CO_AREA_CONHECIMENTO (SQ_AREA_CONHECIMENTO);
+alter table CV_PESSOA_ESCOL
+  add constraint FK_CVPESESC_COFOR foreign key (SQ_FORMACAO)
+  references CO_FORMACAO (SQ_FORMACAO);
+alter table CV_PESSOA_ESCOL
+  add constraint FK_CVPESESC_COPAI foreign key (SQ_PAIS)
+  references CO_PAIS (SQ_PAIS);
+alter table CV_PESSOA_ESCOL
+  add constraint FK_CVPESESC_CVPES foreign key (SQ_PESSOA)
+  references CV_PESSOA (SQ_PESSOA);
+create index IN_CVPESESC_FIM on CV_PESSOA_ESCOL (SQ_PESSOA,FIM)
+  tablespace SYSTEM
+  pctfree 10
+  initrans 2
+  maxtrans 255
+  storage
+  (
+    initial 66K
+    minextents 1
+    maxextents unlimited
+  );
+create index IN_CVPESESC_INICIO on CV_PESSOA_ESCOL (SQ_PESSOA,INICIO)
+  tablespace SYSTEM
+  pctfree 10
+  initrans 2
+  maxtrans 255
+  storage
+  (
+    initial 66K
+    minextents 1
+    maxextents unlimited
+  );
+create index IN_CVPESESC_SQAREACONHEC on CV_PESSOA_ESCOL (SQ_PESSOA,SQ_AREA_CONHECIMENTO)
+  tablespace SYSTEM
+  pctfree 10
+  initrans 2
+  maxtrans 255
+  storage
+  (
+    initial 66K
+    minextents 1
+    maxextents unlimited
+  );
+create index IN_CVPESESC_SQCVPESSOA on CV_PESSOA_ESCOL (SQ_PESSOA,SQ_CVPESSOA_ESCOL)
+  tablespace SYSTEM
+  pctfree 10
+  initrans 2
+  maxtrans 255
+  storage
+  (
+    initial 66K
+    minextents 1
+    maxextents unlimited
+  );
+create index IN_CVPESESC_SQFORMACAO on CV_PESSOA_ESCOL (SQ_PESSOA,SQ_FORMACAO)
+  tablespace SYSTEM
+  pctfree 10
+  initrans 2
+  maxtrans 255
+  storage
+  (
+    initial 66K
+    minextents 1
+    maxextents unlimited
+  );
+

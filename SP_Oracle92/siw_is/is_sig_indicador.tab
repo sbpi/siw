@@ -1,0 +1,129 @@
+create table IS_SIG_INDICADOR
+(
+  CLIENTE            NUMBER(18) not null,
+  ANO                NUMBER(4) not null,
+  CD_PROGRAMA        VARCHAR2(4) not null,
+  CD_INDICADOR       NUMBER(18) not null,
+  CD_UNIDADE_MEDIDA  NUMBER(18) not null,
+  CD_PERIODICIDADE   NUMBER(18) not null,
+  CD_BASE_GEOGRAFICA NUMBER(18) not null,
+  NOME               VARCHAR2(200) not null,
+  FONTE              VARCHAR2(200),
+  FORMULA            VARCHAR2(4000),
+  VALOR_APURADO      NUMBER(18,2),
+  VALOR_PPA          NUMBER(18,2),
+  VALOR_PROGRAMA     NUMBER(18,2),
+  VALOR_MES_1        NUMBER(18,2),
+  VALOR_MES_2        NUMBER(18,2),
+  VALOR_MES_3        NUMBER(18,2),
+  VALOR_MES_4        NUMBER(18,2),
+  VALOR_MES_5        NUMBER(18,2),
+  VALOR_MES_6        NUMBER(18,2),
+  VALOR_MES_7        NUMBER(18,2),
+  VALOR_MES_8        NUMBER(18,2),
+  VALOR_MES_9        NUMBER(18,2),
+  VALOR_MES_10       NUMBER(18,2),
+  VALOR_MES_11       NUMBER(18,2),
+  VALOR_MES_12       NUMBER(18,2),
+  APURACAO           DATE,
+  FLAG_INCLUSAO      DATE default sysdate not null,
+  FLAG_ALTERACAO     DATE,
+  FLAG_ENVIO         DATE
+)
+tablespace SYSTEM
+  pctfree 10
+  pctused 40
+  initrans 1
+  maxtrans 255
+  storage
+  (
+    initial 66K
+    minextents 1
+    maxextents unlimited
+  );
+comment on table IS_SIG_INDICADOR
+  is 'Armazena dados dos indicadores dos programas.';
+comment on column IS_SIG_INDICADOR.CLIENTE
+  is 'Sequence';
+comment on column IS_SIG_INDICADOR.ANO
+  is 'Ano de referência do registro.';
+comment on column IS_SIG_INDICADOR.CD_PROGRAMA
+  is 'Código do Programa no Sigplan';
+comment on column IS_SIG_INDICADOR.CD_INDICADOR
+  is 'Codigo do indicador.';
+comment on column IS_SIG_INDICADOR.CD_UNIDADE_MEDIDA
+  is 'Código da Unidade de Medida';
+comment on column IS_SIG_INDICADOR.CD_PERIODICIDADE
+  is 'Código da Periodicidade';
+comment on column IS_SIG_INDICADOR.CD_BASE_GEOGRAFICA
+  is 'Codigo da base geográfica';
+comment on column IS_SIG_INDICADOR.NOME
+  is 'Descrição do indicador';
+comment on column IS_SIG_INDICADOR.FONTE
+  is 'Órgãos responsáveis pelas informações geradas para os indicadores ';
+comment on column IS_SIG_INDICADOR.FORMULA
+  is 'Demonstra como calcular o valor do indicador';
+comment on column IS_SIG_INDICADOR.VALOR_APURADO
+  is 'Valor apurado';
+comment on column IS_SIG_INDICADOR.VALOR_PPA
+  is 'Valor final do PPA';
+comment on column IS_SIG_INDICADOR.VALOR_PROGRAMA
+  is 'Valor final do Programa';
+comment on column IS_SIG_INDICADOR.VALOR_MES_1
+  is 'Valor de Janeiro';
+comment on column IS_SIG_INDICADOR.VALOR_MES_2
+  is 'Valor de fevereiro';
+comment on column IS_SIG_INDICADOR.VALOR_MES_3
+  is 'Valor de março';
+comment on column IS_SIG_INDICADOR.VALOR_MES_4
+  is 'Valor de abril';
+comment on column IS_SIG_INDICADOR.VALOR_MES_5
+  is 'Valor de maio';
+comment on column IS_SIG_INDICADOR.VALOR_MES_6
+  is 'Valor de junho';
+comment on column IS_SIG_INDICADOR.VALOR_MES_7
+  is 'Valor de julho';
+comment on column IS_SIG_INDICADOR.VALOR_MES_8
+  is 'Valor de agosto';
+comment on column IS_SIG_INDICADOR.VALOR_MES_9
+  is 'Valor de setembro';
+comment on column IS_SIG_INDICADOR.VALOR_MES_10
+  is 'Valor de outubro';
+comment on column IS_SIG_INDICADOR.VALOR_MES_11
+  is 'Valor de novembro';
+comment on column IS_SIG_INDICADOR.VALOR_MES_12
+  is 'Valor de dezembro';
+comment on column IS_SIG_INDICADOR.APURACAO
+  is 'Data de apurador do valor de referência do indicador.';
+comment on column IS_SIG_INDICADOR.FLAG_INCLUSAO
+  is 'Data de inclusão do registro';
+comment on column IS_SIG_INDICADOR.FLAG_ALTERACAO
+  is 'Data da última alteração do registro, caso ele tenha sido alterado.';
+comment on column IS_SIG_INDICADOR.FLAG_ENVIO
+  is 'Data do último envio do registro, caso ele já tenha sido enviado.';
+alter table IS_SIG_INDICADOR
+  add constraint PK_IS_SIG_INDICADOR primary key (ANO,CD_PROGRAMA,CLIENTE,CD_INDICADOR)
+  using index 
+  tablespace SYSTEM
+  pctfree 10
+  initrans 2
+  maxtrans 255
+  storage
+  (
+    initial 66K
+    minextents 1
+    maxextents unlimited
+  );
+alter table IS_SIG_INDICADOR
+  add constraint FK_ISSIGIND_ISSIGBASGEO foreign key (CD_BASE_GEOGRAFICA)
+  references IS_SIG_BASE_GEOGRAFICA (CD_BASE_GEOGRAFICA);
+alter table IS_SIG_INDICADOR
+  add constraint FK_ISSIGIND_ISSIGPER foreign key (CD_PERIODICIDADE)
+  references IS_SIG_PERIODICIDADE (CD_PERIODICIDADE);
+alter table IS_SIG_INDICADOR
+  add constraint FK_ISSIGIND_ISSIGPRG foreign key (ANO,CD_PROGRAMA,CLIENTE)
+  references IS_SIG_PROGRAMA (ANO,CD_PROGRAMA,CLIENTE);
+alter table IS_SIG_INDICADOR
+  add constraint FK_ISSIGIND_ISSIGUNIMED foreign key (CD_UNIDADE_MEDIDA)
+  references IS_SIG_UNIDADE_MEDIDA (CD_UNIDADE_MEDIDA);
+

@@ -1,0 +1,75 @@
+create table SG_PERFIL_MENU
+(
+  SQ_TIPO_VINCULO    NUMBER(18) not null,
+  SQ_MENU            NUMBER(18) not null,
+  SQ_PESSOA_ENDERECO NUMBER(18) not null
+)
+tablespace USERS
+  pctfree 10
+  pctused 40
+  initrans 1
+  maxtrans 255
+  storage
+  (
+    initial 136K
+    next 128K
+    minextents 1
+    maxextents 4096
+    pctincrease 0
+  );
+comment on table SG_PERFIL_MENU
+  is 'Registra as permissões de perfis às opções do menu.';
+comment on column SG_PERFIL_MENU.SQ_TIPO_VINCULO
+  is 'Chave de CO_TIPO_VINCULO.';
+comment on column SG_PERFIL_MENU.SQ_MENU
+  is 'Chave de SIW_MENU_ENDERECO.';
+comment on column SG_PERFIL_MENU.SQ_PESSOA_ENDERECO
+  is 'Chave de SIW_MENU_ENDERECO.';
+alter table SG_PERFIL_MENU
+  add constraint PK_SG_PERFIL_MENU primary key (SQ_TIPO_VINCULO,SQ_MENU,SQ_PESSOA_ENDERECO)
+  using index 
+  tablespace USERS
+  pctfree 10
+  initrans 2
+  maxtrans 255
+  storage
+  (
+    initial 136K
+    next 128K
+    minextents 1
+    maxextents 4096
+    pctincrease 0
+  );
+alter table SG_PERFIL_MENU
+  add constraint FK_SGPERMN_COTPVIN foreign key (SQ_TIPO_VINCULO)
+  references CO_TIPO_VINCULO (SQ_TIPO_VINCULO);
+alter table SG_PERFIL_MENU
+  add constraint FK_SGPERMN_SIWMNEN foreign key (SQ_MENU,SQ_PESSOA_ENDERECO)
+  references SIW_MENU_ENDERECO (SQ_MENU,SQ_PESSOA_ENDERECO);
+create index IN_SGPERMEN_SQMENU on SG_PERFIL_MENU (SQ_MENU,SQ_PESSOA_ENDERECO,SQ_TIPO_VINCULO)
+  tablespace SYSTEM
+  pctfree 10
+  initrans 2
+  maxtrans 255
+  storage
+  (
+    initial 72K
+    next 144K
+    minextents 1
+    maxextents unlimited
+    pctincrease 50
+  );
+create index IN_SGPERMENU_SQEND on SG_PERFIL_MENU (SQ_PESSOA_ENDERECO,SQ_MENU,SQ_TIPO_VINCULO)
+  tablespace SYSTEM
+  pctfree 10
+  initrans 2
+  maxtrans 255
+  storage
+  (
+    initial 72K
+    next 144K
+    minextents 1
+    maxextents unlimited
+    pctincrease 50
+  );
+

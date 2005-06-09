@@ -1,0 +1,61 @@
+create table IS_SIG_ORGAO
+(
+  ANO           NUMBER(4) not null,
+  CD_ORGAO      VARCHAR2(5) not null,
+  CD_TIPO_ORGAO VARCHAR2(1) not null,
+  NOME          VARCHAR2(110) not null,
+  SIGLA         VARCHAR2(10) not null,
+  ATIVO         VARCHAR2(1) default 'S' not null,
+  FLAG_INCLUSAO DATE default sysdate not null
+)
+tablespace SYSTEM
+  pctfree 10
+  pctused 40
+  initrans 1
+  maxtrans 255
+  storage
+  (
+    initial 72K
+    next 64K
+    minextents 1
+    maxextents unlimited
+    pctincrease 50
+  );
+comment on table IS_SIG_ORGAO
+  is 'órgão cadastrados pelo Sigplan';
+comment on column IS_SIG_ORGAO.ANO
+  is 'Ano de referência do registro.';
+comment on column IS_SIG_ORGAO.CD_ORGAO
+  is 'Código do Órgão';
+comment on column IS_SIG_ORGAO.CD_TIPO_ORGAO
+  is 'Código do tipo de órgão';
+comment on column IS_SIG_ORGAO.NOME
+  is 'Descrição do Órgão';
+comment on column IS_SIG_ORGAO.SIGLA
+  is 'Sigla do órgão';
+comment on column IS_SIG_ORGAO.ATIVO
+  is 'Indica se o registro pode ser associado a novos registros.';
+comment on column IS_SIG_ORGAO.FLAG_INCLUSAO
+  is 'Data de inclusão do registro';
+alter table IS_SIG_ORGAO
+  add constraint PK_IS_SIG_ORGAO primary key (ANO,CD_ORGAO,CD_TIPO_ORGAO)
+  using index 
+  tablespace SYSTEM
+  pctfree 10
+  initrans 2
+  maxtrans 255
+  storage
+  (
+    initial 72K
+    next 64K
+    minextents 1
+    maxextents unlimited
+    pctincrease 50
+  );
+alter table IS_SIG_ORGAO
+  add constraint FK_ISSIGORG_ISSIGTIPORG foreign key (CD_TIPO_ORGAO)
+  references IS_SIG_TIPO_ORGAO (CD_TIPO_ORGAO);
+alter table IS_SIG_ORGAO
+  add constraint CKC_ISSIGORG_ATIVO
+  check (ATIVO in ('S','N'));
+

@@ -1,0 +1,62 @@
+create table S_TURMA_EJA
+(
+  CO_TURMA           NUMBER(10) not null,
+  CO_UNIDADE         CHAR(5) not null,
+  SEM_EJA            CHAR(5) not null,
+  CO_TIPO_DISCIPLINA NUMBER(10) not null,
+  CO_TURNO           CHAR(2) not null,
+  CO_SALA            CHAR(3) not null,
+  DS_TURMA           VARCHAR2(40),
+  CO_BLOCO           CHAR(2) not null,
+  CO_LETRA_TURMA     CHAR(3) not null,
+  CO_SEGMENTO        CHAR(1) not null,
+  CO_SEMESTRE        CHAR(1) not null,
+  DS_AULA_1          CHAR(10),
+  DS_AULA_2          CHAR(10),
+  DS_HORARIO_1       CHAR(5),
+  DS_HORARIO_2       CHAR(5),
+  DS_PROJETO         VARCHAR2(50),
+  NU_CHAMADA         CHAR(3),
+  CO_FUNCIONARIO_TMP VARCHAR2(10),
+  CO_FUNCIONARIO     VARCHAR2(10),
+  NU_MAX_ALUNO       NUMBER(10),
+  NU_GRUPO           NUMBER(10),
+  CO_GRADE           CHAR(5),
+  NU_CARGA_HORARIA   CHAR(4)
+)
+tablespace SGE
+  pctfree 10
+  initrans 1
+  maxtrans 255
+  storage
+  (
+    initial 66K
+    minextents 1
+    maxextents unlimited
+  );
+alter table S_TURMA_EJA
+  add constraint PK_S_TURMA_EJA primary key (CO_TURMA,CO_UNIDADE,SEM_EJA)
+  using index 
+  tablespace SGE
+  pctfree 10
+  initrans 2
+  maxtrans 255
+  storage
+  (
+    initial 66K
+    minextents 1
+    maxextents unlimited
+  );
+alter table S_TURMA_EJA
+  add constraint FK_STUREJA_SPEREJA foreign key (CO_UNIDADE,SEM_EJA)
+  references S_PERIODO_EJA (CO_UNIDADE,SEM_EJA) on delete cascade;
+alter table S_TURMA_EJA
+  add constraint R203_247 foreign key (CO_TURNO)
+  references S_TURNO (CO_TURNO) on delete cascade;
+alter table S_TURMA_EJA
+  add constraint R203_248 foreign key (CO_UNIDADE,CO_BLOCO,CO_SALA)
+  references S_SALA (CO_UNIDADE,CO_BLOCO,CO_SALA) on delete cascade;
+alter table S_TURMA_EJA
+  add constraint R203_249 foreign key (CO_UNIDADE)
+  references S_UNIDADE (CO_UNIDADE) on delete cascade;
+

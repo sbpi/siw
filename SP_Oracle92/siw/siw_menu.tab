@@ -1,0 +1,230 @@
+create table SIW_MENU
+(
+  SQ_MENU           NUMBER(18) not null,
+  SQ_MODULO         NUMBER(18) not null,
+  SQ_PESSOA         NUMBER(18) not null,
+  SQ_MENU_PAI       NUMBER(18),
+  NOME              VARCHAR2(40) not null,
+  LINK              VARCHAR2(60),
+  TRAMITE           VARCHAR2(1) default 'N' not null,
+  ORDEM             NUMBER(4) not null,
+  ULTIMO_NIVEL      VARCHAR2(1) default 'N' not null,
+  P1                NUMBER(18),
+  P2                NUMBER(18),
+  P3                NUMBER(18),
+  P4                NUMBER(18),
+  SIGLA             VARCHAR2(10),
+  IMAGEM            VARCHAR2(60),
+  DESCENTRALIZADO   VARCHAR2(1) default 'S' not null,
+  EXTERNO           VARCHAR2(1) default 'N' not null,
+  TARGET            VARCHAR2(15),
+  ATIVO             VARCHAR2(1) default 'S' not null,
+  ACESSO_GERAL      VARCHAR2(1) default 'N' not null,
+  COMO_FUNCIONA     VARCHAR2(1000),
+  ACOMPANHA_FASES   VARCHAR2(1) default 'N' not null,
+  SQ_UNID_EXECUTORA NUMBER(10),
+  FINALIDADE        VARCHAR2(200) default 'A ser inserido.' not null,
+  ARQUIVO_PROCED    VARCHAR2(60),
+  EMITE_OS          VARCHAR2(1),
+  CONSULTA_OPINIAO  VARCHAR2(1),
+  ENVIA_EMAIL       VARCHAR2(1),
+  EXIBE_RELATORIO   VARCHAR2(1),
+  VINCULACAO        VARCHAR2(1),
+  DATA_HORA         VARCHAR2(1),
+  ENVIA_DIA_UTIL    VARCHAR2(1),
+  DESCRICAO         VARCHAR2(1),
+  JUSTIFICATIVA     VARCHAR2(1),
+  DESTINATARIO      VARCHAR2(1) default 'S' not null
+)
+tablespace USERS
+  pctfree 10
+  initrans 1
+  maxtrans 255
+  storage
+  (
+    initial 132K
+    minextents 1
+    maxextents unlimited
+  );
+comment on table SIW_MENU
+  is 'Armazena as opções padrão do menu para um segmento';
+comment on column SIW_MENU.SQ_MENU
+  is 'Sequence';
+comment on column SIW_MENU.SQ_MODULO
+  is 'Informa a qual módulo a opção pertence.';
+comment on column SIW_MENU.SQ_PESSOA
+  is 'Cliente ao qual a opção está vinculada';
+comment on column SIW_MENU.SQ_MENU_PAI
+  is 'Se preenchido, informa a subordinação da opção.';
+comment on column SIW_MENU.NOME
+  is 'Informa o texto a ser apresentado no menu.';
+comment on column SIW_MENU.LINK
+  is 'Informa o link a ser chamado quando a opção for clicada.';
+comment on column SIW_MENU.TRAMITE
+  is 'Indica se a opção deve ter controle de trâmites (work-flow).';
+comment on column SIW_MENU.ORDEM
+  is 'Informa a ordem em que a opção deve ser apresentada, em relação a outras opções de mesma subordinação.';
+comment on column SIW_MENU.ULTIMO_NIVEL
+  is 'Indica se a opção deve ser apresentada num sub-menu (S) ou na montagem do menu principal (N)';
+comment on column SIW_MENU.P1
+  is 'Parâmetro de uso geral pela aplicação.';
+comment on column SIW_MENU.P2
+  is 'Parâmetro de uso geral pela aplicação.';
+comment on column SIW_MENU.P3
+  is 'Parâmetro de uso geral pela aplicação.';
+comment on column SIW_MENU.P4
+  is 'Parâmetro de uso geral pela aplicação.';
+comment on column SIW_MENU.SIGLA
+  is 'Informa a sigla da opção, usada para controle interno da aplicação.';
+comment on column SIW_MENU.IMAGEM
+  is 'Informa qual ícone deve ser colocado ao lado da opção. Se for nulo, a imagem será a padrão.';
+comment on column SIW_MENU.DESCENTRALIZADO
+  is 'Indica se a opção deve ser controlada por endereço.';
+comment on column SIW_MENU.EXTERNO
+  is 'Indica se o link da opção aponta para um endereço externo ao sistema.';
+comment on column SIW_MENU.TARGET
+  is 'Se preenchido, informa o nome da janela a ser aberta quando a opção for clicada.';
+comment on column SIW_MENU.ATIVO
+  is 'Indica se o registro deve ou não ser exibido.';
+comment on column SIW_MENU.COMO_FUNCIONA
+  is 'Texto de apresentação do serviço, inclusive com as regras de negócio a serem respeitadas.';
+comment on column SIW_MENU.ACOMPANHA_FASES
+  is 'Indica se o serviço deverá ter acompanhamento de fases';
+comment on column SIW_MENU.SQ_UNID_EXECUTORA
+  is 'Unidade responsável pela execução do serviço.';
+comment on column SIW_MENU.FINALIDADE
+  is 'Informa a finalidade da opção.';
+comment on column SIW_MENU.ARQUIVO_PROCED
+  is 'Arquivo que contém descrição dos procedimentos relacionados à opção.';
+comment on column SIW_MENU.EMITE_OS
+  is 'Indica se o serviço terá emissão de ordem de serviço';
+comment on column SIW_MENU.CONSULTA_OPINIAO
+  is 'Indica se o serviço deverá consultar a opinião do solicitante quanto ao atendimento';
+comment on column SIW_MENU.ENVIA_EMAIL
+  is 'Indica se deve ser enviado e-mail para o solicitante a cada trâmite';
+comment on column SIW_MENU.EXIBE_RELATORIO
+  is 'Indica se o serviço deve ser exibido no relatório gerencial';
+comment on column SIW_MENU.VINCULACAO
+  is 'Este campo determina se a solicitação do serviço é vinculada ao beneficiário ou à unidade solicitante. Se for ao beneficiário, outras pessoas da unidade, que não sejam titular ou substituto, não poderão vê-la. Além disso, se o beneficiário for para outra unidade, a solicitação deve ser vista pelos novos chefes. Se for à unidade, todos as pessoas da unidade poderão consultar a solicitação, mesmo que não sejam chefes. Mesmo que o solicitante vá para outra unidade, a solicitação é consultada pela unidade que cadastrou a solicitação.';
+comment on column SIW_MENU.DATA_HORA
+  is 'Indica como o sistema deve tratar a questão de horas. (0) Não pede data; (1) Pede apenas uma data; (2) Pede apenas uma data/hora; (3) Pede data início e fim; (4) Pede data/hora início e fim.';
+comment on column SIW_MENU.ENVIA_DIA_UTIL
+  is 'Indica se a solicitação só pode ser atendida em dia útil.';
+comment on column SIW_MENU.DESCRICAO
+  is 'Indica se deve ser informada uma descrição na solicitação';
+comment on column SIW_MENU.JUSTIFICATIVA
+  is 'Indica se deve ser informada uma justificativa na solicitação';
+comment on column SIW_MENU.DESTINATARIO
+  is 'Se igual a S, sempre pedirá destinatário quando um encaminhamento for feito. Caso contrário, aparecerá na mesa de trabalho das pessoas que puderem cumprir o trâmite.';
+alter table SIW_MENU
+  add constraint PK_SIW_MENU primary key (SQ_MENU)
+  using index 
+  tablespace USERS
+  pctfree 10
+  initrans 2
+  maxtrans 255
+  storage
+  (
+    initial 132K
+    minextents 1
+    maxextents unlimited
+  );
+alter table SIW_MENU
+  add constraint FK_SIWCLIMD_SIWMN foreign key (SQ_PESSOA,SQ_MODULO)
+  references SIW_CLIENTE_MODULO (SQ_PESSOA,SQ_MODULO);
+alter table SIW_MENU
+  add constraint FK_SIWMEN_EOUNI foreign key (SQ_UNID_EXECUTORA)
+  references EO_UNIDADE (SQ_UNIDADE);
+alter table SIW_MENU
+  add constraint FK_SIWMN_SIWMN_PAI foreign key (SQ_MENU_PAI)
+  references SIW_MENU (SQ_MENU);
+alter table SIW_MENU
+  add constraint CKC_ATIVO_SIW_MENU
+  check (ATIVO in ('S','N'));
+alter table SIW_MENU
+  add constraint CKC_DESTINATARIO_SIW_MENU
+  check (DESTINATARIO in ('S','N'));
+alter table SIW_MENU
+  add constraint CKC_EXTERNO_SIWMEN
+  check (EXTERNO in ('S','N'));
+alter table SIW_MENU
+  add constraint CKC_SIWMEN_ACGER
+  check (ACESSO_GERAL in ('S','N'));
+alter table SIW_MENU
+  add constraint CKC_SIWMEN_DESC
+  check (DESCENTRALIZADO in ('S','N'));
+alter table SIW_MENU
+  add constraint CKC_SIWMEN_DESCR
+  check (DESCRICAO is null or ( DESCRICAO in ('S','N') ));
+alter table SIW_MENU
+  add constraint CKC_SIWMEN_JUST
+  check (JUSTIFICATIVA is null or ( JUSTIFICATIVA in ('S','N') ));
+alter table SIW_MENU
+  add constraint CKC_SIWMEN_MAIL
+  check (ENVIA_EMAIL is null or ( ENVIA_EMAIL in ('S','N') ));
+alter table SIW_MENU
+  add constraint CKC_SIWMEN_OPI
+  check (CONSULTA_OPINIAO is null or ( CONSULTA_OPINIAO in ('S','N') ));
+alter table SIW_MENU
+  add constraint CKC_SIWMEN_OS
+  check (EMITE_OS is null or ( EMITE_OS in ('S','N') ));
+alter table SIW_MENU
+  add constraint CKC_SIWMEN_REL
+  check (EXIBE_RELATORIO is null or ( EXIBE_RELATORIO in ('S','N') ));
+alter table SIW_MENU
+  add constraint CKC_SIWMEN_TRAM
+  check (TRAMITE in ('S','N'));
+alter table SIW_MENU
+  add constraint CKC_SIWMEN_ULT
+  check (ULTIMO_NIVEL in ('S','N'));
+alter table SIW_MENU
+  add constraint CKC_SIWMEN_UTIL
+  check (ENVIA_DIA_UTIL is null or ( ENVIA_DIA_UTIL in ('S','N') ));
+alter table SIW_MENU
+  add constraint CKC_SIWMEN_VIN
+  check (VINCULACAO is null or ( VINCULACAO in ('P','U') ));
+create unique index IN_SIWMENU_ATIVO on SIW_MENU (ATIVO,SQ_MENU)
+  tablespace SYSTEM
+  pctfree 10
+  initrans 2
+  maxtrans 255
+  storage
+  (
+    initial 66K
+    minextents 1
+    maxextents unlimited
+  );
+create index IN_SIWMENU_PAI on SIW_MENU (SQ_MENU_PAI,SQ_MENU)
+  tablespace SYSTEM
+  pctfree 10
+  initrans 2
+  maxtrans 255
+  storage
+  (
+    initial 66K
+    minextents 1
+    maxextents unlimited
+  );
+create index IN_SIWMENU_SIGLA on SIW_MENU (SIGLA,SQ_PESSOA)
+  tablespace SYSTEM
+  pctfree 10
+  initrans 2
+  maxtrans 255
+  storage
+  (
+    initial 66K
+    minextents 1
+    maxextents unlimited
+  );
+create unique index IN_SIWMENU_ULT on SIW_MENU (ULTIMO_NIVEL,SQ_MENU)
+  tablespace SYSTEM
+  pctfree 10
+  initrans 2
+  maxtrans 255
+  storage
+  (
+    initial 66K
+    minextents 1
+    maxextents unlimited
+  );
+

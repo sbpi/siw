@@ -1,0 +1,45 @@
+create table S_PREREQUISITO
+(
+  TURNO              CHAR(2) not null,
+  ANO                NUMBER(10) not null,
+  CO_GRADE_CURRIC    CHAR(10) not null,
+  CO_DISCIPLINA_REQ  CHAR(4) not null,
+  CO_TIPO_CURSO      NUMBER(10) not null,
+  SG_SERIE           VARCHAR2(5) not null,
+  CO_TIPO_DISCIPLINA NUMBER(10) not null
+)
+tablespace SGE
+  pctfree 10
+  initrans 1
+  maxtrans 255
+  storage
+  (
+    initial 66K
+    minextents 1
+    maxextents unlimited
+  );
+alter table S_PREREQUISITO
+  add constraint PK_PREREQUISITO primary key (TURNO,ANO,CO_GRADE_CURRIC,CO_DISCIPLINA_REQ,CO_TIPO_CURSO,SG_SERIE,CO_TIPO_DISCIPLINA)
+  using index 
+  tablespace SGE
+  pctfree 10
+  initrans 2
+  maxtrans 255
+  storage
+  (
+    initial 66K
+    minextents 1
+    maxextents unlimited
+  );
+create index XIF121S_PREREQUISI on S_PREREQUISITO (CO_GRADE_CURRIC)
+  tablespace SGE
+  pctfree 10
+  initrans 2
+  maxtrans 255
+  storage
+  (
+    initial 66K
+    minextents 1
+    maxextents unlimited
+  );
+

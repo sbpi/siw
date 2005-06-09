@@ -1,0 +1,38 @@
+create table S_GRADE_CURRIC
+(
+  CO_GRADE_CURRIC NUMBER(10) not null,
+  CO_TIPO_CURSO   NUMBER(10) not null,
+  ANO             NUMBER(10) not null,
+  DT_GRADE        DATE,
+  TURNO           CHAR(2) not null,
+  NU_GRADE        CHAR(15),
+  DS_GRADE        CHAR(40),
+  NU_SEMANAS      NUMBER(10)
+)
+tablespace SGE
+  pctfree 10
+  initrans 1
+  maxtrans 255
+  storage
+  (
+    initial 66K
+    minextents 1
+    maxextents unlimited
+  );
+alter table S_GRADE_CURRIC
+  add constraint PK_GRADE_CURRIC primary key (CO_GRADE_CURRIC,CO_TIPO_CURSO,ANO,TURNO)
+  using index 
+  tablespace SGE
+  pctfree 10
+  initrans 2
+  maxtrans 255
+  storage
+  (
+    initial 66K
+    minextents 1
+    maxextents unlimited
+  );
+alter table S_GRADE_CURRIC
+  add constraint R_146 foreign key (CO_TIPO_CURSO)
+  references S_TIPO_CURSO (CO_TIPO_CURSO) on delete cascade;
+

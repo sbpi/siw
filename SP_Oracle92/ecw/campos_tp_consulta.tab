@@ -1,0 +1,34 @@
+create table CAMPOS_TP_CONSULTA
+(
+  TC_CODIGO     NUMBER(10),
+  CC_CODIGO     NUMBER(10) not null,
+  CC_CAMPO      VARCHAR2(40),
+  CC_DESC_CAMPO VARCHAR2(40)
+)
+tablespace SGE
+  pctfree 10
+  initrans 1
+  maxtrans 255
+  storage
+  (
+    initial 66K
+    minextents 1
+    maxextents unlimited
+  );
+alter table CAMPOS_TP_CONSULTA
+  add constraint U106_7 primary key (CC_CODIGO)
+  using index 
+  tablespace SGE
+  pctfree 10
+  initrans 2
+  maxtrans 255
+  storage
+  (
+    initial 66K
+    minextents 1
+    maxextents unlimited
+  );
+alter table CAMPOS_TP_CONSULTA
+  add constraint R102_510 foreign key (TC_CODIGO)
+  references TIPO_CONSULTA (TC_CODIGO) on delete cascade;
+

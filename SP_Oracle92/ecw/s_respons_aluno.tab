@@ -1,0 +1,48 @@
+create table S_RESPONS_ALUNO
+(
+  CO_RESPONSAVEL   VARCHAR2(20),
+  CO_RESPONS_ALUNO NUMBER(10) not null,
+  CO_ALUNO         CHAR(12),
+  CO_UNIDADE       CHAR(5) not null
+)
+tablespace SGE
+  pctfree 10
+  initrans 1
+  maxtrans 255
+  storage
+  (
+    initial 66K
+    minextents 1
+    maxextents unlimited
+  );
+alter table S_RESPONS_ALUNO
+  add constraint PKS_RESPONS_ALUNO primary key (CO_RESPONS_ALUNO,CO_UNIDADE)
+  using index 
+  tablespace SGE
+  pctfree 10
+  initrans 2
+  maxtrans 255
+  storage
+  (
+    initial 66K
+    minextents 1
+    maxextents unlimited
+  );
+alter table S_RESPONS_ALUNO
+  add constraint FK_RESPALU_ALU foreign key (CO_ALUNO)
+  references S_ALUNO (CO_ALUNO) on delete cascade;
+alter table S_RESPONS_ALUNO
+  add constraint R167_593 foreign key (CO_RESPONSAVEL,CO_UNIDADE)
+  references S_RESPONSAVEL (CO_RESPONSAVEL,CO_UNIDADE) on delete cascade;
+create index IN_SRESALU_COALUNO on S_RESPONS_ALUNO (CO_ALUNO,CO_RESPONSAVEL,CO_UNIDADE)
+  tablespace SGE
+  pctfree 10
+  initrans 2
+  maxtrans 255
+  storage
+  (
+    initial 66K
+    minextents 1
+    maxextents unlimited
+  );
+

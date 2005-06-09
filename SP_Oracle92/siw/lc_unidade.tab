@@ -1,0 +1,61 @@
+create table LC_UNIDADE
+(
+  SQ_UNIDADE NUMBER(10) not null,
+  CNPJ       VARCHAR2(20) not null,
+  PADRAO     VARCHAR2(1) default 'N' not null,
+  LICITA     VARCHAR2(1) default 'S' not null,
+  CONTRATA   VARCHAR2(1) default 'S' not null,
+  ATIVO      VARCHAR2(1) default 'S' not null
+)
+tablespace SYSTEM
+  pctfree 10
+  pctused 40
+  initrans 1
+  maxtrans 255
+  storage
+  (
+    initial 66K
+    minextents 1
+    maxextents unlimited
+  );
+comment on column LC_UNIDADE.SQ_UNIDADE
+  is 'Sequence.';
+comment on column LC_UNIDADE.CNPJ
+  is 'CNPJ da unidade organizacional, atendendo ';
+comment on column LC_UNIDADE.PADRAO
+  is 'Indica se o registro deve ser exibido como opção inicial.';
+comment on column LC_UNIDADE.LICITA
+  is 'Indica se a unidade pode ser selecionada em licitações.';
+comment on column LC_UNIDADE.CONTRATA
+  is 'Indica se a unidade pode ser selecionada em contratos.';
+comment on column LC_UNIDADE.ATIVO
+  is 'Indica se o registro está disponível para seleção.';
+alter table LC_UNIDADE
+  add constraint PK_LC_UNIDADE primary key (SQ_UNIDADE)
+  using index 
+  tablespace SYSTEM
+  pctfree 10
+  initrans 2
+  maxtrans 255
+  storage
+  (
+    initial 66K
+    minextents 1
+    maxextents unlimited
+  );
+alter table LC_UNIDADE
+  add constraint FK_LCUNI_EOUNI foreign key (SQ_UNIDADE)
+  references EO_UNIDADE (SQ_UNIDADE);
+alter table LC_UNIDADE
+  add constraint CKC_ATIVO_LC_UNIDA
+  check (ATIVO in ('S','N'));
+alter table LC_UNIDADE
+  add constraint CKC_CONTRATA_LC_UNIDA
+  check (CONTRATA in ('S','N'));
+alter table LC_UNIDADE
+  add constraint CKC_LICITA_LC_UNIDA
+  check (LICITA in ('S','N'));
+alter table LC_UNIDADE
+  add constraint CKC_PADRAO_LC_UNIDA
+  check (PADRAO in ('S','N'));
+

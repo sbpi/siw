@@ -1,0 +1,88 @@
+create table DC_TABELA
+(
+  SQ_TABELA      NUMBER(18) not null,
+  SQ_TABELA_TIPO NUMBER(18) not null,
+  SQ_USUARIO     NUMBER(18) not null,
+  SQ_SISTEMA     NUMBER(18) not null,
+  NOME           VARCHAR2(30) not null,
+  DESCRICAO      VARCHAR2(4000) not null
+)
+tablespace SYSTEM
+  pctfree 10
+  pctused 40
+  initrans 1
+  maxtrans 255
+  storage
+  (
+    initial 66K
+    minextents 1
+    maxextents unlimited
+  );
+comment on column DC_TABELA.SQ_TABELA
+  is 'Sequence';
+comment on column DC_TABELA.SQ_TABELA_TIPO
+  is 'Sequence.';
+comment on column DC_TABELA.SQ_USUARIO
+  is 'Sequence';
+comment on column DC_TABELA.SQ_SISTEMA
+  is 'Sequence.';
+comment on column DC_TABELA.NOME
+  is 'Nome da tabela.';
+comment on column DC_TABELA.DESCRICAO
+  is 'Descrição da tabela: finalidade, objetivos, tipos de dados armazenados etc.';
+alter table DC_TABELA
+  add constraint PK_DC_TABELA primary key (SQ_TABELA)
+  using index 
+  tablespace SYSTEM
+  pctfree 10
+  initrans 2
+  maxtrans 255
+  storage
+  (
+    initial 66K
+    minextents 1
+    maxextents unlimited
+  );
+alter table DC_TABELA
+  add constraint FK_DCTAB_DCSIS foreign key (SQ_SISTEMA)
+  references DC_SISTEMA (SQ_SISTEMA);
+alter table DC_TABELA
+  add constraint FK_DCTAB_DCTABTIP foreign key (SQ_TABELA_TIPO)
+  references DC_TABELA_TIPO (SQ_TABELA_TIPO);
+alter table DC_TABELA
+  add constraint FK_DCTAB_DCUSU foreign key (SQ_USUARIO)
+  references DC_USUARIO (SQ_USUARIO);
+create unique index IN_DCTAB_NOME on DC_TABELA (NOME,SQ_SISTEMA,SQ_USUARIO)
+  tablespace SYSTEM
+  pctfree 10
+  initrans 2
+  maxtrans 255
+  storage
+  (
+    initial 66K
+    minextents 1
+    maxextents unlimited
+  );
+create index IN_DCTAB_SISTEMA on DC_TABELA (SQ_SISTEMA,SQ_TABELA)
+  tablespace SYSTEM
+  pctfree 10
+  initrans 2
+  maxtrans 255
+  storage
+  (
+    initial 66K
+    minextents 1
+    maxextents unlimited
+  );
+create index IN_DCTAB_TIPO on DC_TABELA (SQ_TABELA_TIPO,SQ_TABELA)
+  tablespace SYSTEM
+  pctfree 10
+  initrans 2
+  maxtrans 255
+  storage
+  (
+    initial 66K
+    minextents 1
+    maxextents unlimited
+  );
+

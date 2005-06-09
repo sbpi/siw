@@ -1,0 +1,37 @@
+create table RECADO
+(
+  REC_SEQUENCIAL  NUMBER(10) not null,
+  REC_DATAENVIO   DATE,
+  CO_UNIDADE      CHAR(5) not null,
+  REC_DATALEITURA DATE,
+  REC_MEMO        BLOB,
+  REC_DE          CHAR(30),
+  REC_PARA        CHAR(30)
+)
+tablespace SGE
+  pctfree 10
+  initrans 1
+  maxtrans 255
+  storage
+  (
+    initial 66K
+    minextents 1
+    maxextents unlimited
+  );
+alter table RECADO
+  add constraint U110_11 primary key (REC_SEQUENCIAL,CO_UNIDADE)
+  using index 
+  tablespace SGE
+  pctfree 10
+  initrans 2
+  maxtrans 255
+  storage
+  (
+    initial 66K
+    minextents 1
+    maxextents unlimited
+  );
+alter table RECADO
+  add constraint R_200 foreign key (CO_UNIDADE)
+  references S_UNIDADE (CO_UNIDADE) on delete cascade;
+

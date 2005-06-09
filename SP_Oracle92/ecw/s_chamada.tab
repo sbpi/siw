@@ -1,0 +1,52 @@
+create table S_CHAMADA
+(
+  CO_SEQ_CHAMADA NUMBER(10) not null,
+  CO_UNIDADE     CHAR(5) not null,
+  ANO_SEM        CHAR(5),
+  CO_FUNCIONARIO CHAR(10),
+  CO_CURSO       NUMBER(10),
+  CO_DISCIPLINA  CHAR(4),
+  CO_SEQ_SERIE   NUMBER(10),
+  CO_TURMA       NUMBER(10)
+)
+tablespace SGE
+  pctfree 10
+  initrans 1
+  maxtrans 255
+  storage
+  (
+    initial 66K
+    minextents 1
+    maxextents unlimited
+  );
+alter table S_CHAMADA
+  add constraint PKS_CHAMADA primary key (CO_SEQ_CHAMADA,CO_UNIDADE)
+  using index 
+  tablespace SGE
+  pctfree 10
+  initrans 2
+  maxtrans 255
+  storage
+  (
+    initial 66K
+    minextents 1
+    maxextents unlimited
+  );
+alter table S_CHAMADA
+  add constraint R130_548 foreign key (CO_UNIDADE,ANO_SEM,CO_TURMA,CO_DISCIPLINA,CO_CURSO,CO_SEQ_SERIE)
+  references S_TURMA_DISCIPLINA (CO_UNIDADE,ANO_SEM,CO_TURMA,CO_DISCIPLINA,CO_CURSO,CO_SEQ_SERIE) on delete cascade;
+alter table S_CHAMADA
+  add constraint R130_549 foreign key (CO_FUNCIONARIO,CO_DISCIPLINA,ANO_SEM,CO_UNIDADE)
+  references S_FUNCIONARIO_DISC (CO_FUNCIONARIO,CO_DISCIPLINA,ANO_SEM,CO_UNIDADE) on delete cascade;
+create index XIF158S_CHAMADA on S_CHAMADA (CO_TURMA,CO_DISCIPLINA,CO_UNIDADE,ANO_SEM)
+  tablespace SGE
+  pctfree 10
+  initrans 2
+  maxtrans 255
+  storage
+  (
+    initial 66K
+    minextents 1
+    maxextents unlimited
+  );
+

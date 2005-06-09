@@ -1,0 +1,102 @@
+create table AC_TIPO_ACORDO
+(
+  SQ_TIPO_ACORDO     NUMBER(18) not null,
+  SQ_TIPO_ACORDO_PAI NUMBER(18),
+  CLIENTE            NUMBER(18) not null,
+  NOME               VARCHAR2(60) not null,
+  SIGLA              VARCHAR2(10) not null,
+  MODALIDADE         VARCHAR2(1) default 'F' not null,
+  PRAZO_INDETERM     VARCHAR2(1) default 'S' not null,
+  PESSOA_FISICA      VARCHAR2(1) default 'N' not null,
+  PESSOA_JURIDICA    VARCHAR2(1) default 'N' not null,
+  ATIVO              VARCHAR2(1) default 'S' not null
+)
+tablespace SYSTEM
+  pctfree 10
+  pctused 40
+  initrans 1
+  maxtrans 255
+  storage
+  (
+    initial 66K
+    minextents 1
+    maxextents unlimited
+  );
+comment on table AC_TIPO_ACORDO
+  is 'Tipos possíveis de acordo';
+comment on column AC_TIPO_ACORDO.CLIENTE
+  is 'Sequence';
+comment on column AC_TIPO_ACORDO.MODALIDADE
+  is 'Indica se este tipo de contrato deve ser usado para contratos de emprego, de arrendamento, de permissão etc.';
+comment on column AC_TIPO_ACORDO.PESSOA_FISICA
+  is 'Indica se o tipo do contrato pode ser firmado com pessoa física.';
+comment on column AC_TIPO_ACORDO.PESSOA_JURIDICA
+  is 'Indica se o tipo do contrato pode ser firmado com pessoa jurídica.';
+alter table AC_TIPO_ACORDO
+  add constraint PK_AC_TIPO_ACORDO primary key (SQ_TIPO_ACORDO)
+  using index 
+  tablespace SYSTEM
+  pctfree 10
+  initrans 2
+  maxtrans 255
+  storage
+  (
+    initial 66K
+    minextents 1
+    maxextents unlimited
+  );
+alter table AC_TIPO_ACORDO
+  add constraint FK_ACTIPAC_ACTIPAC foreign key (SQ_TIPO_ACORDO_PAI)
+  references AC_TIPO_ACORDO (SQ_TIPO_ACORDO);
+alter table AC_TIPO_ACORDO
+  add constraint FK_ACTIPACO_COPES foreign key (CLIENTE)
+  references CO_PESSOA (SQ_PESSOA);
+alter table AC_TIPO_ACORDO
+  add constraint CKC_ACTIPACO_FIS
+  check (PESSOA_FISICA in ('S','N'));
+alter table AC_TIPO_ACORDO
+  add constraint CKC_ACTIPACO_IND
+  check ("PRAZO_INDETERM"='S' OR "PRAZO_INDETERM"='N');
+alter table AC_TIPO_ACORDO
+  add constraint CKC_ACTIPACO_JUR
+  check (PESSOA_JURIDICA in ('S','N'));
+alter table AC_TIPO_ACORDO
+  add constraint CKC_ACTIPACO_MOD
+  check (MODALIDADE in ('E','A','P','F','Q','I'));
+alter table AC_TIPO_ACORDO
+  add constraint CKC_ATIVO_AC_TIPO_
+  check (ATIVO in ('S','N'));
+create unique index IN_ACTIPACO_CLI on AC_TIPO_ACORDO (CLIENTE,SQ_TIPO_ACORDO)
+  tablespace SYSTEM
+  pctfree 10
+  initrans 2
+  maxtrans 255
+  storage
+  (
+    initial 66K
+    minextents 1
+    maxextents unlimited
+  );
+create unique index IN_ACTIPACO_NOME on AC_TIPO_ACORDO (CLIENTE,NOME)
+  tablespace SYSTEM
+  pctfree 10
+  initrans 2
+  maxtrans 255
+  storage
+  (
+    initial 66K
+    minextents 1
+    maxextents unlimited
+  );
+create unique index IN_ACTIPACO_SIGLA on AC_TIPO_ACORDO (CLIENTE,SIGLA)
+  tablespace SYSTEM
+  pctfree 10
+  initrans 2
+  maxtrans 255
+  storage
+  (
+    initial 66K
+    minextents 1
+    maxextents unlimited
+  );
+

@@ -1,0 +1,108 @@
+create table IS_ACAO
+(
+  SQ_SIW_SOLICITACAO NUMBER(18) not null,
+  ANO                NUMBER(4),
+  CD_PROGRAMA        VARCHAR2(4),
+  CLIENTE            NUMBER(18),
+  CD_ACAO            VARCHAR2(4),
+  CD_SUBACAO         VARCHAR2(4),
+  SQ_ISPROJETO       NUMBER(18),
+  SELECAO_MP         VARCHAR2(1) default 'N' not null,
+  SELECAO_SE         VARCHAR2(1) default 'N' not null,
+  NM_COORDENADOR     VARCHAR2(60),
+  FN_COORDENADOR     VARCHAR2(20),
+  EM_COORDENADOR     VARCHAR2(60),
+  SQ_UNIDADE         NUMBER(10) not null,
+  PROBLEMA           VARCHAR2(2000),
+  PUBLICO_ALVO       VARCHAR2(2000),
+  ESTRATEGIA         VARCHAR2(2000),
+  OBJETIVO           VARCHAR2(2000),
+  SISTEMATICA        VARCHAR2(2000),
+  METODOLOGIA        VARCHAR2(2000),
+  CD_UNIDADE         VARCHAR2(5)
+)
+tablespace SYSTEM
+  pctfree 10
+  pctused 40
+  initrans 1
+  maxtrans 255
+  storage
+  (
+    initial 66K
+    minextents 1
+    maxextents unlimited
+  );
+comment on table IS_ACAO
+  is 'Registra as ações vinculadas ou não ao PPA';
+comment on column IS_ACAO.SQ_SIW_SOLICITACAO
+  is 'Chave de SIW_SOLICITACAO';
+comment on column IS_ACAO.ANO
+  is 'Ano de referência do registro.';
+comment on column IS_ACAO.CD_PROGRAMA
+  is 'Código do Programa no Sigplan';
+comment on column IS_ACAO.CLIENTE
+  is 'Sequence';
+comment on column IS_ACAO.CD_ACAO
+  is 'Código da Ação';
+comment on column IS_ACAO.CD_SUBACAO
+  is 'Código da SubAção';
+comment on column IS_ACAO.SQ_ISPROJETO
+  is 'Sequence.';
+comment on column IS_ACAO.SELECAO_MP
+  is 'Indica se a ação foi considerada como prioritária pelo Ministério de Planejamento.';
+comment on column IS_ACAO.SELECAO_SE
+  is 'Indica se a ação foi selecionada como sendo estratégica pelo Órgão.';
+comment on column IS_ACAO.NM_COORDENADOR
+  is 'Nome do Coordenador da Ação';
+comment on column IS_ACAO.FN_COORDENADOR
+  is 'e-Mail do Coordenador da Ação.';
+comment on column IS_ACAO.EM_COORDENADOR
+  is 'e-Mail do Coordenador da Ação';
+comment on column IS_ACAO.SQ_UNIDADE
+  is 'Unidade administrativa responsável pela execução da ação.';
+comment on column IS_ACAO.PROBLEMA
+  is 'Texto apresentando a situação problema.';
+comment on column IS_ACAO.PUBLICO_ALVO
+  is 'Público-alvo da ação.';
+comment on column IS_ACAO.ESTRATEGIA
+  is 'Sistemáticas e estratégias a serem adotadas para o monitoramento das ações.';
+comment on column IS_ACAO.OBJETIVO
+  is 'Objetivos específicos da ação.';
+comment on column IS_ACAO.SISTEMATICA
+  is 'Sistemática a ser adotada para a avaliação da ação.';
+comment on column IS_ACAO.METODOLOGIA
+  is 'Metodologias de avaliação a serem utilizadas.';
+comment on column IS_ACAO.CD_UNIDADE
+  is 'Código da unidade orçamentária, a ser usada em conjunto com outros campos para recuperar seu nome em IS_SIG_UNIDADE. O campo CD_TIPO_UNIDADE deve ser sempre igual a U.';
+alter table IS_ACAO
+  add constraint PK_IS_ACAO primary key (SQ_SIW_SOLICITACAO)
+  using index 
+  tablespace SYSTEM
+  pctfree 10
+  initrans 2
+  maxtrans 255
+  storage
+  (
+    initial 66K
+    minextents 1
+    maxextents unlimited
+  );
+alter table IS_ACAO
+  add constraint FK_ISACA_EOUNI foreign key (SQ_UNIDADE)
+  references SIW.EO_UNIDADE (SQ_UNIDADE);
+alter table IS_ACAO
+  add constraint FK_ISACA_ISPRJ foreign key (SQ_ISPROJETO)
+  references IS_PROJETO (SQ_ISPROJETO);
+alter table IS_ACAO
+  add constraint FK_ISACA_ISSIGACA foreign key (ANO,CD_PROGRAMA,CLIENTE,CD_ACAO,CD_SUBACAO)
+  references IS_SIG_ACAO (ANO,CD_PROGRAMA,CLIENTE,CD_ACAO,CD_SUBACAO);
+alter table IS_ACAO
+  add constraint FK_ISACA_PJPRO foreign key (SQ_SIW_SOLICITACAO)
+  references SIW.PJ_PROJETO (SQ_SIW_SOLICITACAO);
+alter table IS_ACAO
+  add constraint CKC_SELECAO_MP_IS_ACAO
+  check (SELECAO_MP in ('S','N'));
+alter table IS_ACAO
+  add constraint CKC_SELECAO_SE_IS_ACAO
+  check (SELECAO_SE in ('S','N'));
+

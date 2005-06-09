@@ -1,0 +1,62 @@
+create table PJ_PROJETO_ENVOLV
+(
+  SQ_UNIDADE         NUMBER(10) not null,
+  SQ_SIW_SOLICITACAO NUMBER(18) not null,
+  PAPEL              VARCHAR2(2000) not null
+)
+tablespace SYSTEM
+  pctfree 10
+  pctused 40
+  initrans 1
+  maxtrans 255
+  storage
+  (
+    initial 72K
+    next 64K
+    minextents 1
+    maxextents unlimited
+    pctincrease 50
+  );
+comment on table PJ_PROJETO_ENVOLV
+  is 'Registra as unidades envolvidas na execução do projeto.';
+comment on column PJ_PROJETO_ENVOLV.SQ_UNIDADE
+  is 'Chave de EO_UNIDADE';
+comment on column PJ_PROJETO_ENVOLV.SQ_SIW_SOLICITACAO
+  is 'Chave de SIW_SOLICITACAO';
+comment on column PJ_PROJETO_ENVOLV.PAPEL
+  is 'Papel cumprido pela área envolvida.';
+alter table PJ_PROJETO_ENVOLV
+  add constraint PK_PJ_PROJETO_ENVOLV primary key (SQ_UNIDADE,SQ_SIW_SOLICITACAO)
+  using index 
+  tablespace SYSTEM
+  pctfree 10
+  initrans 2
+  maxtrans 255
+  storage
+  (
+    initial 72K
+    next 64K
+    minextents 1
+    maxextents unlimited
+    pctincrease 50
+  );
+alter table PJ_PROJETO_ENVOLV
+  add constraint FK_PJPROENV_EOUNI foreign key (SQ_UNIDADE)
+  references EO_UNIDADE (SQ_UNIDADE);
+alter table PJ_PROJETO_ENVOLV
+  add constraint FK_PJPROENV_PJPRO foreign key (SQ_SIW_SOLICITACAO)
+  references PJ_PROJETO (SQ_SIW_SOLICITACAO);
+create index IN_PJPROENV_INVERSA on PJ_PROJETO_ENVOLV (SQ_SIW_SOLICITACAO,SQ_UNIDADE)
+  tablespace SYSTEM
+  pctfree 10
+  initrans 2
+  maxtrans 255
+  storage
+  (
+    initial 72K
+    next 64K
+    minextents 1
+    maxextents unlimited
+    pctincrease 50
+  );
+

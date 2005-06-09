@@ -1,0 +1,34 @@
+create table RELSCPO
+(
+  REL_CODIGO       CHAR(5) not null,
+  REL_COMPTAG      NUMBER(10) not null,
+  REL_COMPCONTEUDO BLOB,
+  CO_UNIDADE       CHAR(5) not null
+)
+tablespace SGE
+  pctfree 10
+  initrans 1
+  maxtrans 255
+  storage
+  (
+    initial 66K
+    minextents 1
+    maxextents unlimited
+  );
+alter table RELSCPO
+  add constraint U112_13 primary key (REL_CODIGO,REL_COMPTAG,CO_UNIDADE)
+  using index 
+  tablespace SGE
+  pctfree 10
+  initrans 2
+  maxtrans 255
+  storage
+  (
+    initial 66K
+    minextents 1
+    maxextents unlimited
+  );
+alter table RELSCPO
+  add constraint R_14 foreign key (REL_CODIGO,CO_UNIDADE)
+  references RELSCFG (REL_CODIGO,CO_UNIDADE) on delete cascade;
+

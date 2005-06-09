@@ -1,0 +1,35 @@
+create table S_MENSAGEM
+(
+  ANO_SEM      CHAR(5) not null,
+  DS_RELATORIO CHAR(20) not null,
+  DS_MENSAGEM  CHAR(255),
+  CO_ALUNO     CHAR(12) not null,
+  CO_UNIDADE   CHAR(5) not null
+)
+tablespace SGE
+  pctfree 10
+  initrans 1
+  maxtrans 255
+  storage
+  (
+    initial 66K
+    minextents 1
+    maxextents unlimited
+  );
+alter table S_MENSAGEM
+  add constraint U162_73 primary key (DS_RELATORIO,ANO_SEM,CO_ALUNO,CO_UNIDADE)
+  using index 
+  tablespace SGE
+  pctfree 10
+  initrans 2
+  maxtrans 255
+  storage
+  (
+    initial 66K
+    minextents 1
+    maxextents unlimited
+  );
+alter table S_MENSAGEM
+  add constraint R157_583 foreign key (ANO_SEM,CO_ALUNO,CO_UNIDADE)
+  references S_ALUNO_PER_UNID (ANO_SEM,CO_ALUNO,CO_UNIDADE) on delete cascade;
+

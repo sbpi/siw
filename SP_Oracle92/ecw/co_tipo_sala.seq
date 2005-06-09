@@ -1,0 +1,7 @@
+create sequence CO_TIPO_SALA
+minvalue 17
+maxvalue 999999999999999999999999999
+start with 37
+increment by 1
+cache 20;
+

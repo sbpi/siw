@@ -1,0 +1,48 @@
+create table S_ALUNO_PER_UNID
+(
+  ANO_SEM           CHAR(5) not null,
+  CO_ALUNO          CHAR(12) not null,
+  CO_UNIDADE        CHAR(5) not null,
+  NU_ALTURA         VARCHAR2(4),
+  NU_PESO           VARCHAR2(4),
+  TP_APTO_ED_FISICA VARCHAR2(3),
+  ST_ENS_RELIGIOSO  VARCHAR2(3),
+  DS_SITUACAO_ALUNO VARCHAR2(12),
+  DT_MATRICULA      DATE,
+  TP_BOLSA_ESCOLA   CHAR(3),
+  NU_BOLSA_ESCOLA   CHAR(10),
+  DS_PROJINTD       VARCHAR2(40),
+  NU_PE             NUMBER(10),
+  NU_UNIFORME       VARCHAR2(3),
+  DT_ATUALIZA_ALUNO DATE
+)
+tablespace SGE
+  pctfree 10
+  initrans 1
+  maxtrans 255
+  storage
+  (
+    initial 66K
+    minextents 1
+    maxextents unlimited
+  );
+alter table S_ALUNO_PER_UNID
+  add constraint U118_19 primary key (ANO_SEM,CO_ALUNO,CO_UNIDADE)
+  using index 
+  tablespace SGE
+  pctfree 10
+  initrans 2
+  maxtrans 255
+  storage
+  (
+    initial 66K
+    minextents 1
+    maxextents unlimited
+  );
+alter table S_ALUNO_PER_UNID
+  add constraint FK_ALUPERUN_ALU foreign key (CO_ALUNO)
+  references S_ALUNO (CO_ALUNO) on delete cascade;
+alter table S_ALUNO_PER_UNID
+  add constraint R121_537 foreign key (ANO_SEM,CO_UNIDADE)
+  references S_PERIODOUNIDADE (ANO_SEM,CO_UNIDADE) on delete cascade;
+

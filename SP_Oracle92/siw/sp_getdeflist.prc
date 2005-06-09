@@ -1,0 +1,13 @@
+create or replace procedure SP_GetDefList
+   (p_result    out sys_refcursor) is
+begin
+   -- Recupera as deficiências existentes
+   open p_result for 
+      select a.sq_deficiencia, a.nome, a.ativo, 
+             case a.ativo when 'S' then 'Sim' else 'Não' end ativodesc,
+             a.codigo, Nvl(a.descricao,'-') descricao, b.nome sq_grupo_deficiencia 
+        from co_deficiencia a, co_grupo_defic b  
+      where a.sq_grupo_defic = b.sq_grupo_defic;
+end SP_GetDefList;
+/
+

@@ -1,0 +1,90 @@
+create table EO_LOCALIZACAO
+(
+  SQ_LOCALIZACAO     NUMBER(10) not null,
+  SQ_UNIDADE         NUMBER(10) not null,
+  SQ_PESSOA_ENDERECO NUMBER(18),
+  NOME               VARCHAR2(30) not null,
+  TELEFONE           VARCHAR2(12),
+  TELEFONE2          VARCHAR2(12),
+  RAMAL              VARCHAR2(6),
+  FAX                VARCHAR2(12),
+  ATIVO              VARCHAR2(1) default 'S' not null
+)
+tablespace USERS
+  pctfree 10
+  pctused 40
+  initrans 1
+  maxtrans 255
+  storage
+  (
+    initial 136K
+    next 128K
+    minextents 1
+    maxextents 4096
+    pctincrease 0
+  );
+comment on table EO_LOCALIZACAO
+  is 'Armazena a tabela de localizações de unidades';
+comment on column EO_LOCALIZACAO.SQ_PESSOA_ENDERECO
+  is 'Sequence';
+alter table EO_LOCALIZACAO
+  add constraint PK_EO_LOCALIZACAO primary key (SQ_LOCALIZACAO)
+  using index 
+  tablespace USERS
+  pctfree 10
+  initrans 2
+  maxtrans 255
+  storage
+  (
+    initial 136K
+    next 128K
+    minextents 1
+    maxextents 4096
+    pctincrease 0
+  );
+alter table EO_LOCALIZACAO
+  add constraint FK_EOLOC_COPESEND foreign key (SQ_PESSOA_ENDERECO)
+  references CO_PESSOA_ENDERECO (SQ_PESSOA_ENDERECO);
+alter table EO_LOCALIZACAO
+  add constraint FK_EOLOC_EOUNI foreign key (SQ_UNIDADE)
+  references EO_UNIDADE (SQ_UNIDADE);
+create index IN_EOLOC_ATIVO on EO_LOCALIZACAO (ATIVO,SQ_LOCALIZACAO)
+  tablespace SYSTEM
+  pctfree 10
+  initrans 2
+  maxtrans 255
+  storage
+  (
+    initial 72K
+    next 64K
+    minextents 1
+    maxextents unlimited
+    pctincrease 50
+  );
+create index IN_EOLOC_ENDERECO on EO_LOCALIZACAO (SQ_PESSOA_ENDERECO,SQ_LOCALIZACAO)
+  tablespace SYSTEM
+  pctfree 10
+  initrans 2
+  maxtrans 255
+  storage
+  (
+    initial 72K
+    next 64K
+    minextents 1
+    maxextents unlimited
+    pctincrease 50
+  );
+create index IN_EOLOC_UNIDADE on EO_LOCALIZACAO (SQ_UNIDADE,SQ_LOCALIZACAO)
+  tablespace SYSTEM
+  pctfree 10
+  initrans 2
+  maxtrans 255
+  storage
+  (
+    initial 72K
+    next 64K
+    minextents 1
+    maxextents unlimited
+    pctincrease 50
+  );
+

@@ -1,0 +1,115 @@
+create table OR_PRIORIDADE
+(
+  SQ_ORPRIORIDADE NUMBER(18) not null,
+  CLIENTE         NUMBER(18) not null,
+  CODIGO          VARCHAR2(50),
+  NOME            VARCHAR2(100) not null,
+  RESPONSAVEL     VARCHAR2(60),
+  TELEFONE        VARCHAR2(20),
+  EMAIL           VARCHAR2(60),
+  ORDEM           NUMBER(4) default 0 not null,
+  ATIVO           VARCHAR2(1) default 'S' not null,
+  PADRAO          VARCHAR2(1) default 'N' not null
+)
+tablespace SYSTEM
+  pctfree 10
+  pctused 40
+  initrans 1
+  maxtrans 255
+  storage
+  (
+    initial 66K
+    minextents 1
+    maxextents unlimited
+  );
+comment on column OR_PRIORIDADE.SQ_ORPRIORIDADE
+  is 'Sequence.';
+comment on column OR_PRIORIDADE.CLIENTE
+  is 'Código do cliente.';
+comment on column OR_PRIORIDADE.CODIGO
+  is 'Código da prioridade  no sistema de origem.';
+comment on column OR_PRIORIDADE.NOME
+  is 'Nome da prioridade.';
+comment on column OR_PRIORIDADE.RESPONSAVEL
+  is 'Nome do responsável pela prioridade.';
+comment on column OR_PRIORIDADE.TELEFONE
+  is 'Telefone do responsável pela prioridade.';
+comment on column OR_PRIORIDADE.EMAIL
+  is 'e-mail do responsável pela prioridade.';
+comment on column OR_PRIORIDADE.ORDEM
+  is 'Número de ordem da ação, a ser utilizada nas listagens.';
+alter table OR_PRIORIDADE
+  add constraint PK_OR_PRIORIDADE primary key (SQ_ORPRIORIDADE)
+  using index 
+  tablespace SYSTEM
+  pctfree 10
+  initrans 2
+  maxtrans 255
+  storage
+  (
+    initial 66K
+    minextents 1
+    maxextents unlimited
+  );
+alter table OR_PRIORIDADE
+  add constraint CKC_ATIVO_ORPRI
+  check (ATIVO in ('S','N'));
+alter table OR_PRIORIDADE
+  add constraint CKC_ORPRI_PADRAO
+  check (PADRAO in ('S','N'));
+create unique index IN_ORPRI_ATIVO on OR_PRIORIDADE (CLIENTE,ATIVO,SQ_ORPRIORIDADE)
+  tablespace SYSTEM
+  pctfree 10
+  initrans 2
+  maxtrans 255
+  storage
+  (
+    initial 66K
+    minextents 1
+    maxextents unlimited
+  );
+create unique index IN_ORPRI_CLI on OR_PRIORIDADE (CLIENTE,SQ_ORPRIORIDADE)
+  tablespace SYSTEM
+  pctfree 10
+  initrans 2
+  maxtrans 255
+  storage
+  (
+    initial 66K
+    minextents 1
+    maxextents unlimited
+  );
+create index IN_ORPRI_CODIGO on OR_PRIORIDADE (CLIENTE,CODIGO,SQ_ORPRIORIDADE)
+  tablespace SYSTEM
+  pctfree 10
+  initrans 2
+  maxtrans 255
+  storage
+  (
+    initial 66K
+    minextents 1
+    maxextents unlimited
+  );
+create unique index IN_ORPRI_NOME on OR_PRIORIDADE (CLIENTE,NOME,SQ_ORPRIORIDADE)
+  tablespace SYSTEM
+  pctfree 10
+  initrans 2
+  maxtrans 255
+  storage
+  (
+    initial 66K
+    minextents 1
+    maxextents unlimited
+  );
+create unique index IN_ORPRI_PADRAO on OR_PRIORIDADE (CLIENTE,PADRAO,SQ_ORPRIORIDADE)
+  tablespace SYSTEM
+  pctfree 10
+  initrans 2
+  maxtrans 255
+  storage
+  (
+    initial 66K
+    minextents 1
+    maxextents unlimited
+  );
+

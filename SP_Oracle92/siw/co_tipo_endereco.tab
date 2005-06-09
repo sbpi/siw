@@ -1,0 +1,116 @@
+create table CO_TIPO_ENDERECO
+(
+  SQ_TIPO_ENDERECO NUMBER(18) not null,
+  SQ_TIPO_PESSOA   NUMBER(18) not null,
+  NOME             VARCHAR2(30) not null,
+  ATIVO            VARCHAR2(1) default 'S' not null,
+  PADRAO           VARCHAR2(1) default 'N' not null,
+  EMAIL            VARCHAR2(1) default 'N' not null,
+  INTERNET         VARCHAR2(1) default 'N' not null
+)
+tablespace USERS
+  pctfree 10
+  initrans 1
+  maxtrans 255
+  storage
+  (
+    initial 132K
+    minextents 1
+    maxextents unlimited
+  );
+comment on table CO_TIPO_ENDERECO
+  is 'Armazena os tipos de endereço';
+comment on column CO_TIPO_ENDERECO.SQ_TIPO_ENDERECO
+  is 'Sequence';
+comment on column CO_TIPO_ENDERECO.ATIVO
+  is 'Indica se o registro deve ou não ser exibido.';
+comment on column CO_TIPO_ENDERECO.PADRAO
+  is 'Indica se este registro deve ser apresentado como padrão para o usuário.';
+comment on column CO_TIPO_ENDERECO.EMAIL
+  is 'Indica se o endereço é de e-mail.';
+comment on column CO_TIPO_ENDERECO.INTERNET
+  is 'Indica se o endereço é de Internet.';
+alter table CO_TIPO_ENDERECO
+  add constraint PK_CO_TIPO_ENDERECO primary key (SQ_TIPO_ENDERECO)
+  using index 
+  tablespace USERS
+  pctfree 10
+  initrans 2
+  maxtrans 255
+  storage
+  (
+    initial 132K
+    minextents 1
+    maxextents unlimited
+  );
+alter table CO_TIPO_ENDERECO
+  add constraint FK_COTPPES_COTIPEN foreign key (SQ_TIPO_PESSOA)
+  references CO_TIPO_PESSOA (SQ_TIPO_PESSOA);
+alter table CO_TIPO_ENDERECO
+  add constraint CKC_ATIVO_COTIPEND
+  check (ATIVO in ('S','N'));
+alter table CO_TIPO_ENDERECO
+  add constraint CKC_COTIPEND_PAD
+  check (PADRAO in ('S','N'));
+alter table CO_TIPO_ENDERECO
+  add constraint CKC_COTIPEND_WEB
+  check (INTERNET in ('S','N'));
+alter table CO_TIPO_ENDERECO
+  add constraint CKC_EMAIL_CO_TIPO_
+  check (EMAIL in ('S','N'));
+create index IN_COTIPEND_ATIVO on CO_TIPO_ENDERECO (ATIVO)
+  tablespace SYSTEM
+  pctfree 10
+  initrans 2
+  maxtrans 255
+  storage
+  (
+    initial 66K
+    minextents 1
+    maxextents unlimited
+  );
+create index IN_COTIPEND_EMAIL on CO_TIPO_ENDERECO (EMAIL)
+  tablespace SYSTEM
+  pctfree 10
+  initrans 2
+  maxtrans 255
+  storage
+  (
+    initial 66K
+    minextents 1
+    maxextents unlimited
+  );
+create index IN_COTIPEND_PADRAO on CO_TIPO_ENDERECO (PADRAO)
+  tablespace SYSTEM
+  pctfree 10
+  initrans 2
+  maxtrans 255
+  storage
+  (
+    initial 66K
+    minextents 1
+    maxextents unlimited
+  );
+create index IN_COTIPEND_TPPES on CO_TIPO_ENDERECO (SQ_TIPO_PESSOA)
+  tablespace SYSTEM
+  pctfree 10
+  initrans 2
+  maxtrans 255
+  storage
+  (
+    initial 66K
+    minextents 1
+    maxextents unlimited
+  );
+create index IN_COTIPEND_WEB on CO_TIPO_ENDERECO (INTERNET)
+  tablespace SYSTEM
+  pctfree 10
+  initrans 2
+  maxtrans 255
+  storage
+  (
+    initial 66K
+    minextents 1
+    maxextents unlimited
+  );
+

@@ -1,0 +1,88 @@
+create table IS_PPA_DADO_FISICO
+(
+  CLIENTE            NUMBER(18) not null,
+  ANO                NUMBER(4) not null,
+  CD_PROGRAMA        VARCHAR2(4) not null,
+  CD_ACAO_PPA        VARCHAR2(5) not null,
+  CD_LOCALIZADOR_PPA VARCHAR2(5) not null,
+  QTD_ANO_1          NUMBER(18,4),
+  QTD_ANO_2          NUMBER(18,4),
+  QTD_ANO_3          NUMBER(18,4),
+  QTD_ANO_4          NUMBER(18,4),
+  QTD_ANO_5          NUMBER(18,4),
+  QTD_ANO_6          NUMBER(18,4),
+  OBSERVACAO         VARCHAR2(4000),
+  CUMULATIVA         VARCHAR2(1) default 'N' not null,
+  FLAG_INCLUSAO      DATE default sysdate not null,
+  FLAG_ALTERACAO     DATE,
+  FLAG_ENVIO         DATE
+)
+tablespace SYSTEM
+  pctfree 10
+  pctused 40
+  initrans 1
+  maxtrans 255
+  storage
+  (
+    initial 72K
+    next 64K
+    minextents 1
+    maxextents unlimited
+    pctincrease 50
+  );
+comment on table IS_PPA_DADO_FISICO
+  is 'Armazena informações sobre os dados físicos.';
+comment on column IS_PPA_DADO_FISICO.CLIENTE
+  is 'Sequence';
+comment on column IS_PPA_DADO_FISICO.ANO
+  is 'Ano de referência do registro.';
+comment on column IS_PPA_DADO_FISICO.CD_PROGRAMA
+  is 'Código do Programa no Sigplan';
+comment on column IS_PPA_DADO_FISICO.CD_ACAO_PPA
+  is 'Código da Ação no PPA';
+comment on column IS_PPA_DADO_FISICO.CD_LOCALIZADOR_PPA
+  is 'Código do Localizador do PPA';
+comment on column IS_PPA_DADO_FISICO.QTD_ANO_1
+  is 'Estimativas de Produtos Previstos para o primeiro Ano';
+comment on column IS_PPA_DADO_FISICO.QTD_ANO_2
+  is 'Estimativas de Produtos Previstos para o segundo Ano';
+comment on column IS_PPA_DADO_FISICO.QTD_ANO_3
+  is 'Estimativas de Produtos Previstos para o terceiro Ano';
+comment on column IS_PPA_DADO_FISICO.QTD_ANO_4
+  is 'Estimativas de Produtos Previstos para o Quarto Ano';
+comment on column IS_PPA_DADO_FISICO.QTD_ANO_5
+  is 'Estimativas de Produtos Previstos para o Quinto Ano';
+comment on column IS_PPA_DADO_FISICO.QTD_ANO_6
+  is 'Estimativas de Produtos Previstos para o Sexto Ano';
+comment on column IS_PPA_DADO_FISICO.OBSERVACAO
+  is 'Observações';
+comment on column IS_PPA_DADO_FISICO.CUMULATIVA
+  is 'Indica se a meta física é ou não cumulativa';
+comment on column IS_PPA_DADO_FISICO.FLAG_INCLUSAO
+  is 'Data de inclusão do registro';
+comment on column IS_PPA_DADO_FISICO.FLAG_ALTERACAO
+  is 'Data da última alteração do registro, caso ele tenha sido alterado.';
+comment on column IS_PPA_DADO_FISICO.FLAG_ENVIO
+  is 'Data do último envio do registro, caso ele já tenha sido enviado.';
+alter table IS_PPA_DADO_FISICO
+  add constraint PK_IS_PPA_DADO_FISICO primary key (CLIENTE,ANO,CD_PROGRAMA,CD_ACAO_PPA,CD_LOCALIZADOR_PPA)
+  using index 
+  tablespace SYSTEM
+  pctfree 10
+  initrans 2
+  maxtrans 255
+  storage
+  (
+    initial 72K
+    next 64K
+    minextents 1
+    maxextents unlimited
+    pctincrease 50
+  );
+alter table IS_PPA_DADO_FISICO
+  add constraint FK_ISPPADADFIS_ISPPALOC foreign key (CLIENTE,ANO,CD_PROGRAMA,CD_ACAO_PPA,CD_LOCALIZADOR_PPA)
+  references IS_PPA_LOCALIZADOR (CLIENTE,ANO,CD_PROGRAMA,CD_ACAO_PPA,CD_LOCALIZADOR_PPA);
+alter table IS_PPA_DADO_FISICO
+  add constraint CKC_CUMULATIVA_IS_PPA_D
+  check (CUMULATIVA in ('S','N'));
+

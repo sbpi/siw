@@ -1,0 +1,121 @@
+create table AC_ACORDO_LOG
+(
+  SQ_ACORDO_LOG      NUMBER(18) not null,
+  SQ_SIW_SOLICITACAO NUMBER(18) not null,
+  SQ_SIW_SOLIC_LOG   NUMBER(18),
+  CADASTRADOR        NUMBER(18) not null,
+  DESTINATARIO       NUMBER(18),
+  DATA_INCLUSAO      DATE default sysdate not null,
+  OBSERVACAO         VARCHAR2(2000),
+  DESPACHO           VARCHAR2(2000)
+)
+tablespace SYSTEM
+  pctfree 10
+  pctused 40
+  initrans 1
+  maxtrans 255
+  storage
+  (
+    initial 66K
+    minextents 1
+    maxextents unlimited
+  );
+comment on table AC_ACORDO_LOG
+  is 'Registra o histórico da tramitação do acordo.';
+comment on column AC_ACORDO_LOG.SQ_ACORDO_LOG
+  is 'Sequence.';
+comment on column AC_ACORDO_LOG.SQ_SIW_SOLICITACAO
+  is 'Chave de SIW_SOLICITACAO';
+comment on column AC_ACORDO_LOG.SQ_SIW_SOLIC_LOG
+  is 'Chave do log do acordo, informada apenas quando for envio entre fases.';
+comment on column AC_ACORDO_LOG.CADASTRADOR
+  is 'Chave de CO_PESSOA. Responsável pela inserção do histórico.';
+comment on column AC_ACORDO_LOG.DESTINATARIO
+  is 'Chave de CO_PESSOA. Pessoa à qual o acordo está sendo encaminhado.';
+comment on column AC_ACORDO_LOG.DATA_INCLUSAO
+  is 'Data de inclusão do registro, gerado pelo sistema.';
+comment on column AC_ACORDO_LOG.OBSERVACAO
+  is 'Observações inseridas pelo usuário.';
+comment on column AC_ACORDO_LOG.DESPACHO
+  is 'Orientação ao destinatário sobre as ações necessárias.';
+alter table AC_ACORDO_LOG
+  add constraint PK_AC_ACORDO_LOG primary key (SQ_ACORDO_LOG)
+  using index 
+  tablespace SYSTEM
+  pctfree 10
+  initrans 2
+  maxtrans 255
+  storage
+  (
+    initial 66K
+    minextents 1
+    maxextents unlimited
+  );
+alter table AC_ACORDO_LOG
+  add constraint FK_ACACOLOG_ACACO foreign key (SQ_SIW_SOLICITACAO)
+  references AC_ACORDO (SQ_SIW_SOLICITACAO);
+alter table AC_ACORDO_LOG
+  add constraint FK_ACACOLOG_COPES_CAD foreign key (CADASTRADOR)
+  references CO_PESSOA (SQ_PESSOA);
+alter table AC_ACORDO_LOG
+  add constraint FK_ACACOLOG_COPES_DEST foreign key (DESTINATARIO)
+  references CO_PESSOA (SQ_PESSOA);
+alter table AC_ACORDO_LOG
+  add constraint FK_ACACOLOG_SIWSOLLOG foreign key (SQ_SIW_SOLIC_LOG)
+  references SIW_SOLIC_LOG (SQ_SIW_SOLIC_LOG);
+create index IN_ACACOLOG_ACORDO on AC_ACORDO_LOG (SQ_SIW_SOLICITACAO,SQ_ACORDO_LOG)
+  tablespace SYSTEM
+  pctfree 10
+  initrans 2
+  maxtrans 255
+  storage
+  (
+    initial 66K
+    minextents 1
+    maxextents unlimited
+  );
+create index IN_ACACOLOG_CADAST on AC_ACORDO_LOG (CADASTRADOR,SQ_ACORDO_LOG)
+  tablespace SYSTEM
+  pctfree 10
+  initrans 2
+  maxtrans 255
+  storage
+  (
+    initial 66K
+    minextents 1
+    maxextents unlimited
+  );
+create index IN_ACACOLOG_DATA on AC_ACORDO_LOG (DATA_INCLUSAO,SQ_ACORDO_LOG)
+  tablespace SYSTEM
+  pctfree 10
+  initrans 2
+  maxtrans 255
+  storage
+  (
+    initial 66K
+    minextents 1
+    maxextents unlimited
+  );
+create index IN_ACACOLOG_DEST on AC_ACORDO_LOG (DESTINATARIO,SQ_ACORDO_LOG)
+  tablespace SYSTEM
+  pctfree 10
+  initrans 2
+  maxtrans 255
+  storage
+  (
+    initial 66K
+    minextents 1
+    maxextents unlimited
+  );
+create index IN_ACACOLOG_SIWLOG on AC_ACORDO_LOG (SQ_SIW_SOLIC_LOG,SQ_ACORDO_LOG)
+  tablespace SYSTEM
+  pctfree 10
+  initrans 2
+  maxtrans 255
+  storage
+  (
+    initial 66K
+    minextents 1
+    maxextents unlimited
+  );
+

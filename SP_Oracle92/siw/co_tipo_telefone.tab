@@ -1,0 +1,60 @@
+create table CO_TIPO_TELEFONE
+(
+  SQ_TIPO_TELEFONE NUMBER(18) not null,
+  SQ_TIPO_PESSOA   NUMBER(18) not null,
+  NOME             VARCHAR2(25) not null,
+  ATIVO            VARCHAR2(1) default 'S' not null,
+  PADRAO           VARCHAR2(1) default 'N' not null
+)
+tablespace USERS
+  pctfree 10
+  initrans 1
+  maxtrans 255
+  storage
+  (
+    initial 132K
+    minextents 1
+    maxextents unlimited
+  );
+comment on table CO_TIPO_TELEFONE
+  is 'Armazena os tipos de telefone';
+comment on column CO_TIPO_TELEFONE.SQ_TIPO_TELEFONE
+  is 'Sequence';
+comment on column CO_TIPO_TELEFONE.ATIVO
+  is 'Indica se o registro deve ou não ser exibido.';
+comment on column CO_TIPO_TELEFONE.PADRAO
+  is 'Indica se este registro deve ser apresentado como padrão para o usuário.';
+alter table CO_TIPO_TELEFONE
+  add constraint PK_CO_TIPO_TELEFONE primary key (SQ_TIPO_TELEFONE)
+  using index 
+  tablespace USERS
+  pctfree 10
+  initrans 2
+  maxtrans 255
+  storage
+  (
+    initial 132K
+    minextents 1
+    maxextents unlimited
+  );
+alter table CO_TIPO_TELEFONE
+  add constraint FK_COTPPES_COTPTL foreign key (SQ_TIPO_PESSOA)
+  references CO_TIPO_PESSOA (SQ_TIPO_PESSOA);
+alter table CO_TIPO_TELEFONE
+  add constraint CKC_ATIVO_COTIPTEL
+  check (ATIVO in ('S','N'));
+alter table CO_TIPO_TELEFONE
+  add constraint CKC_COTIPTEL_PAD
+  check (PADRAO in ('S','N'));
+create index IN_COTIPTEL_TPPES on CO_TIPO_TELEFONE (SQ_TIPO_PESSOA)
+  tablespace SYSTEM
+  pctfree 10
+  initrans 2
+  maxtrans 255
+  storage
+  (
+    initial 66K
+    minextents 1
+    maxextents unlimited
+  );
+

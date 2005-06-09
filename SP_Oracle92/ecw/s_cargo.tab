@@ -1,0 +1,29 @@
+create table S_CARGO
+(
+  CO_CARGO VARCHAR2(17) not null,
+  DS_CARGO CHAR(30)
+)
+tablespace SGE
+  pctfree 10
+  initrans 1
+  maxtrans 255
+  storage
+  (
+    initial 66K
+    minextents 1
+    maxextents unlimited
+  );
+alter table S_CARGO
+  add constraint U141_52 primary key (CO_CARGO)
+  using index 
+  tablespace SGE
+  pctfree 10
+  initrans 2
+  maxtrans 255
+  storage
+  (
+    initial 66K
+    minextents 1
+    maxextents unlimited
+  );
+

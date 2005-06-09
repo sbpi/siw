@@ -1,0 +1,433 @@
+<%
+REM =========================================================================
+REM Montagem da seleção de ações do PPA(tabela SIGPLAN)
+REM -------------------------------------------------------------------------
+Sub SelecaoAcaoPPA (label, accesskey, hint, p_cliente, p_ano, p_programa, p_acao, p_subacao, p_unidade, campo, restricao, atributo, p_chave)
+   Dim l_chave   
+   l_chave = p_programa & p_acao & p_subacao & p_unidade
+   If restricao = "FINANCIAMENTO" Then
+      DB_GetAcaoPPA_IS RS, p_cliente, p_ano, p_programa, p_acao, null , p_unidade, restricao, p_chave
+      RS.Sort   = "descricao_acao"
+   ElseIf restricao = "IDENTIFICACAO" Then
+      DB_GetAcaoPPA_IS RS, p_cliente, p_ano, null, null, null, null, restricao, null
+      RS.Sort   = "descricao_acao"
+   Else
+      DB_GetAcaoPPA_IS RS, p_cliente, p_ano, p_programa, p_acao, null, p_unidade, null, null
+      RS.Sort   = "descricao_acao"
+   End If
+    If IsNull(hint) Then
+       ShowHTML "          <td valign=""top""><font size=""1""><b>" & Label & "</b><br><SELECT ACCESSKEY=""" & accesskey & """ CLASS=""STS"" NAME=""" & campo & """ " & w_Disabled & " " & atributo & ">"
+    Else
+       ShowHTML "          <td valign=""top"" title=""" & hint & """><font size=""1""><b>" & Label & "</b><br><SELECT ACCESSKEY=""" & accesskey & """ CLASS=""STS"" NAME=""" & campo & """ " & w_Disabled & " " & atributo & ">"
+    End If
+    ShowHTML "          <option value="""">---"
+    While Not RS.EOF
+       If nvl(RS("chave"),"-") = nvl(l_chave,"-") Then
+          ShowHTML "          <option value=""" & RS("chave") & """ SELECTED>" &  Mid(RS("descricao_acao"),1,40) & " - " & Mid(RS("ds_unidade"),1,30) & " (" & RS("cd_unidade") & "." & RS("cd_programa") & "." & RS("cd_acao") & ")"
+       Else
+          ShowHTML "          <option value=""" & RS("chave") & """>" &  Mid(RS("descricao_acao"),1,40) & " - " & Mid(RS("ds_unidade"),1,30) & " (" & RS("cd_unidade") & "."  & RS("cd_programa") & "." & RS("cd_acao") & ")"
+       End If
+       RS.MoveNext
+    Wend
+    ShowHTML "          </select>"
+    Set l_chave = Nothing
+End Sub
+REM =========================================================================
+REM Final da rotina
+REM -------------------------------------------------------------------------
+
+REM =========================================================================
+REM Montagem da seleção de ações do PPA(tabela SIGPLAN)
+REM -------------------------------------------------------------------------
+Sub SelecaoProgramaPPA (label, accesskey, hint, cliente, ano, chave, campo, restricao, atributo)
+   
+    If restricao = "IDENTIFICACAO" Then
+      DB_GetProgramaPPA_IS RS, null, w_cliente, w_ano, restricao
+       RS.Sort   = "ds_programa"
+    Else
+       DB_GetProgramaPPA_IS RS, chave, w_cliente, w_ano, restricao
+       RS.Sort   = "ds_programa"
+    End If
+    If IsNull(hint) Then
+       ShowHTML "          <td valign=""top""><font size=""1""><b>" & Label & "</b><br><SELECT ACCESSKEY=""" & accesskey & """ CLASS=""STS"" NAME=""" & campo & """ " & w_Disabled & " " & atributo & ">"
+    Else
+       ShowHTML "          <td valign=""top"" title=""" & hint & """><font size=""1""><b>" & Label & "</b><br><SELECT ACCESSKEY=""" & accesskey & """ CLASS=""STS"" NAME=""" & campo & """ " & w_Disabled & " " & atributo & ">"
+    End If
+    ShowHTML "          <option value="""">---"
+    While Not RS.EOF
+       If nvl(RS("cd_programa"),"-") = nvl(chave,"-") Then
+          ShowHTML "          <option value=""" & RS("cd_programa") & """ SELECTED>" & RS("ds_programa") & " (" & RS("cd_programa") & ")"
+       Else
+          ShowHTML "          <option value=""" & RS("cd_programa") & """>" & RS("ds_programa") & " (" & RS("cd_programa") & ")"
+       End If
+       RS.MoveNext
+    Wend
+    ShowHTML "          </select>"
+End Sub
+REM =========================================================================
+REM Final da rotina
+REM -------------------------------------------------------------------------
+
+REM =========================================================================
+REM Montagem da seleção de ações do PPA(tabela SIGPLAN)
+REM -------------------------------------------------------------------------
+Sub SelecaoFuncao (label, accesskey, hint, chave, chaveAux, campo, restricao, atributo)
+   
+   DB_GetProgramaPPA_IS RS, chave, chaveaux, w_cliente, w_ano
+   RS.Sort   = "nome"
+    If IsNull(hint) Then
+       ShowHTML "          <td valign=""top""><font size=""1""><b>" & Label & "</b><br><SELECT ACCESSKEY=""" & accesskey & """ CLASS=""STS"" NAME=""" & campo & """ " & w_Disabled & " " & atributo & ">"
+    Else
+       ShowHTML "          <td valign=""top"" title=""" & hint & """><font size=""1""><b>" & Label & "</b><br><SELECT ACCESSKEY=""" & accesskey & """ CLASS=""STS"" NAME=""" & campo & """ " & w_Disabled & " " & atributo & ">"
+    End If
+    ShowHTML "          <option value="""">---"
+    While Not RS.EOF
+       If cDbl(nvl(RS("chave"),0)) = cDbl(nvl(chave,0)) Then
+          ShowHTML "          <option value=""" & RS("chave") & """ SELECTED>" & RS("Nome") & " (" & RS("chave") & ")"
+       Else
+          ShowHTML "          <option value=""" & RS("chave") & """>" & RS("Nome") & " (" & RS("chave") & ")"
+       End If
+       RS.MoveNext
+    Wend
+    ShowHTML "          </select>"
+End Sub
+REM =========================================================================
+REM Final da rotina
+REM -------------------------------------------------------------------------
+
+REM =========================================================================
+REM Montagem da seleção de iniciativas prioritarias
+REM -------------------------------------------------------------------------
+Sub SelecaoIsProjeto (label, accesskey, hint, chave, chaveAux, campo, restricao, atributo)
+    DB_GetProjeto_IS RS, null, w_cliente, null, null, null, null, null, null, null, null, null, null, restricao
+    RS.Sort   = "nome"
+    RS.Filter = "ativo = 'S'"
+    Dim w_chave_test
+    If IsNull(hint) Then
+       ShowHTML "          <td valign=""top""><font size=""1""><b>" & Label & "</b><br><SELECT ACCESSKEY=""" & accesskey & """ CLASS=""STS"" NAME=""" & campo & """ " & w_Disabled & " " & atributo & ">"
+    Else
+       ShowHTML "          <td valign=""top"" title=""" & hint & """><font size=""1""><b>" & Label & "</b><br><SELECT ACCESSKEY=""" & accesskey & """ CLASS=""STS"" NAME=""" & campo & """ " & w_Disabled & " " & atributo & ">"
+    End If
+    ShowHTML "          <option value="""">---"
+    While Not RS.EOF
+       If cDbl(nvl(RS("chave"),0)) <> cDbl(w_chave_test) Then
+          If cDbl(nvl(RS("chave"),0)) = cDbl(nvl(chave,0)) Then
+             ShowHTML "          <option value=""" & RS("chave") & """ SELECTED>" & RS("Nome")
+          Else
+             ShowHTML "          <option value=""" & RS("chave") & """>" & RS("Nome")
+          End If
+       End If
+       w_chave_test = nvl(RS("chave"),0)
+       RS.MoveNext
+    Wend
+    ShowHTML "          </select>"
+End Sub
+REM =========================================================================
+REM Final da rotina
+REM -------------------------------------------------------------------------
+
+REM =========================================================================
+REM Montagem da seleção da natureza dos programas do PPA
+REM -------------------------------------------------------------------------
+Sub SelecaoNatureza_IS (label, accesskey, hint, cliente, chave, campo, restricao, atributo)
+   
+   DB_GetNatureza_IS RS, null, cliente, null, null
+   RS.Sort = "nome"
+    If IsNull(hint) Then
+       ShowHTML "          <td valign=""top""><font size=""1""><b>" & Label & "</b><br><SELECT ACCESSKEY=""" & accesskey & """ CLASS=""STS"" NAME=""" & campo & """ " & w_Disabled & " " & atributo & ">"
+    Else
+       ShowHTML "          <td valign=""top"" title=""" & hint & """><font size=""1""><b>" & Label & "</b><br><SELECT ACCESSKEY=""" & accesskey & """ CLASS=""STS"" NAME=""" & campo & """ " & w_Disabled & " " & atributo & ">"
+    End If
+    ShowHTML "          <option value="""">---"
+    While Not RS.EOF
+       If cDbl(nvl(RS("chave"),0)) = cDbl(nvl(chave,0)) Then
+          ShowHTML "          <option value=""" & RS("chave") & """ SELECTED>" & RS("nome") 
+       Else
+          ShowHTML "          <option value=""" & RS("chave") & """>" & RS("nome")
+       End If
+       RS.MoveNext
+    Wend
+    ShowHTML "          </select>"
+End Sub
+REM =========================================================================
+REM Final da rotina
+REM -------------------------------------------------------------------------
+
+REM =========================================================================
+REM Montagem da seleção do horizonte temporal dos programas do PPA
+REM -------------------------------------------------------------------------
+Sub SelecaoHorizonte_IS (label, accesskey, hint, cliente, chave, campo, restricao, atributo)
+   
+   DB_GetHorizonte_IS RS, null, cliente, null, null
+   RS.Sort = "nome"
+    If IsNull(hint) Then
+       ShowHTML "          <td valign=""top""><font size=""1""><b>" & Label & "</b><br><SELECT ACCESSKEY=""" & accesskey & """ CLASS=""STS"" NAME=""" & campo & """ " & w_Disabled & " " & atributo & ">"
+    Else
+       ShowHTML "          <td valign=""top"" title=""" & hint & """><font size=""1""><b>" & Label & "</b><br><SELECT ACCESSKEY=""" & accesskey & """ CLASS=""STS"" NAME=""" & campo & """ " & w_Disabled & " " & atributo & ">"
+    End If
+    ShowHTML "          <option value="""">---"
+    While Not RS.EOF
+       If cDbl(nvl(RS("chave"),0)) = cDbl(nvl(chave,0)) Then
+          ShowHTML "          <option value=""" & RS("chave") & """ SELECTED>" & RS("nome") 
+       Else
+          ShowHTML "          <option value=""" & RS("chave") & """>" & RS("nome")
+       End If
+       RS.MoveNext
+    Wend
+    ShowHTML "          </select>"
+End Sub
+REM =========================================================================
+REM Final da rotina
+REM -------------------------------------------------------------------------
+
+REM =========================================================================
+REM Rotina de selecao das unidades de planejamento e administrativas do modulo infra-sig
+REM -------------------------------------------------------------------------
+Sub SelecaoUnidade_IS (label, accesskey, hint, chave, chaveAux, campo, atributo, tipo)
+    DB_GetIsUnidade_IS RS, null, w_cliente
+    If tipo = "ADMINISTRATIVA" Then
+       RS.Filter = "administrativa = 'S'"
+    ElseIf tipo = "PLANEJAMENTO" Then
+       RS.Filter = "planejamento = 'S'"
+    End If
+    RS.Sort = "nome"
+    If RS.RecordCount > 100 Then
+       Dim w_nm_unidade, w_sigla
+       ShowHTML "<INPUT type=""hidden"" name=""" & campo & """ value=""" & chave &""">"
+       If chave > "" Then
+          DB_GetIsUnidade_IS RS, chave, w_cliente
+          w_nm_unidade = RS("nome")
+          w_sigla      = RS("sigla")
+       End If
+       If IsNull(hint) Then
+          ShowHTML "      <td valign=""top""><font size=""1""><b>" & Label & "</b><br>"
+          ShowHTML "          <input READONLY ACCESSKEY=""" & accesskey & """ CLASS=""STS"" type=""text"" name=""" & campo & "_nm" & """ SIZE=""60"" VALUE=""" & w_nm_unidade & """ " & atributo & ">"
+       Else
+          ShowHTML "      <td valign=""top""title=""" & hint & """><font size=""1""><b>" & Label & "</b><br>"
+          ShowHTML "          <input READONLY ACCESSKEY=""" & accesskey & """ CLASS=""STS"" type=""text"" name=""" & campo & "_nm" & """ SIZE=""60"" VALUE=""" & w_nm_unidade & """ " & atributo & ">"
+       End If
+       ShowHTML "              <a class=""SS"" href=""#"" onClick=""window.open('" & w_dir_volta & "EO.asp?par=BuscaUnidade&TP=" & TP & "&w_cliente=" &w_cliente& "&ChaveAux=" &ChaveAux& "&restricao=" &restricao& "&campo=" &campo& "','Unidade','top=70 left=100 width=600 height=400 toolbar=yes status=yes resizable=yes scrollbars=yes'); return false;"" title=""Clique aqui para selecionar a unidade.""><img src=images/Folder/Explorer.gif border=0></a>"
+       ShowHTML "              <a class=""SS"" href=""#"" onClick=""document.Form." & campo & "_nm" & ".value=''; document.Form." & campo & ".value=''; return false;"" title=""Clique aqui para apagar o valor deste campo.""><img src=images/Folder/Recyfull.gif border=0></a>"
+    Else
+       If IsNull(hint) Then
+          ShowHTML "          <td valign=""top""><font size=""1""><b>" & Label & "</b><br><SELECT ACCESSKEY=""" & accesskey & """ CLASS=""STS"" NAME=""" & campo & """ " & w_Disabled & " " & atributo & ">"
+       Else
+          ShowHTML "          <td valign=""top"" title=""" & hint & """><font size=""1""><b>" & Label & "</b><br><SELECT ACCESSKEY=""" & accesskey & """ CLASS=""STS"" NAME=""" & campo & """ " & w_Disabled & " " & atributo & ">"
+       End If
+       ShowHTML "          <option value="""">---"
+       While Not RS.EOF
+          If cDbl(nvl(RS("chave"),0)) = cDbl(nvl(chave,0)) Then
+             ShowHTML "          <OPTION VALUE=""" & RS("chave") & """ SELECTED>" & RS("Nome") & " (" & RS("Sigla") & ")"
+          Else
+            ShowHTML "          <OPTION VALUE=""" & RS("chave") & """>" & RS("Nome") & " (" & RS("Sigla") & ")"
+          End If
+          RS.MoveNext
+       Wend
+       ShowHTML "          </select>"
+    End If
+End Sub
+REM =========================================================================
+REM Final da rotina
+REM -------------------------------------------------------------------------
+
+REM =========================================================================
+REM Montagem da seleção da periodicidades (esquema SIGPLAN)
+REM -------------------------------------------------------------------------
+Sub SelecaoPeriodicidade_IS (label, accesskey, hint, p_chave, campo, restricao, atributo)
+
+   DB_GetPeriodicidade_IS RS, null, "S"
+   RS.Sort   = "nome"
+    If IsNull(hint) Then
+       ShowHTML "          <td valign=""top""><font size=""1""><b>" & Label & "</b><br><SELECT ACCESSKEY=""" & accesskey & """ CLASS=""STS"" NAME=""" & campo & """ " & w_Disabled & " " & atributo & ">"
+    Else
+       ShowHTML "          <td valign=""top"" title=""" & hint & """><font size=""1""><b>" & Label & "</b><br><SELECT ACCESSKEY=""" & accesskey & """ CLASS=""STS"" NAME=""" & campo & """ " & w_Disabled & " " & atributo & ">"
+    End If
+    ShowHTML "          <option value="""">---"
+    While Not RS.EOF
+       If cDbl(nvl(RS("chave"),0)) = cDbl(nvl(p_chave,0)) Then
+          ShowHTML "          <option value=""" & RS("chave") & """ SELECTED>" & RS("nome")
+       Else
+          ShowHTML "          <option value=""" & RS("chave") & """>" & RS("nome")
+       End If
+       RS.MoveNext
+    Wend
+    ShowHTML "          </select>"
+End Sub
+REM =========================================================================
+REM Final da rotina
+REM -------------------------------------------------------------------------
+
+REM =========================================================================
+REM Montagem da seleção das bases geográficas (esquema SIGPLAN)
+REM -------------------------------------------------------------------------
+Sub SelecaoBaseGeografica_IS (label, accesskey, hint, p_chave, campo, restricao, atributo)
+
+   DB_GetBaseGeografica_IS RS, null, "S"
+   RS.Sort   = "nome"
+    If IsNull(hint) Then
+       ShowHTML "          <td valign=""top""><font size=""1""><b>" & Label & "</b><br><SELECT ACCESSKEY=""" & accesskey & """ CLASS=""STS"" NAME=""" & campo & """ " & w_Disabled & " " & atributo & ">"
+    Else
+       ShowHTML "          <td valign=""top"" title=""" & hint & """><font size=""1""><b>" & Label & "</b><br><SELECT ACCESSKEY=""" & accesskey & """ CLASS=""STS"" NAME=""" & campo & """ " & w_Disabled & " " & atributo & ">"
+    End If
+    ShowHTML "          <option value="""">---"
+    While Not RS.EOF
+       If cDbl(nvl(RS("chave"),0)) = cDbl(nvl(p_chave,0)) Then
+          ShowHTML "          <option value=""" & RS("chave") & """ SELECTED>" & RS("nome")
+       Else
+          ShowHTML "          <option value=""" & RS("chave") & """>" & RS("nome")
+       End If
+       RS.MoveNext
+    Wend
+    ShowHTML "          </select>"
+End Sub
+REM =========================================================================
+REM Final da rotina
+REM -------------------------------------------------------------------------
+
+REM =========================================================================
+REM Montagem da seleção das unidades de medidas (esquema SIGPLAN)
+REM -------------------------------------------------------------------------
+Sub SelecaoUniMedida_IS (label, accesskey, hint, p_chave, campo, restricao, atributo)
+
+   DB_GetUniMedida_IS RS, null, "S"
+   RS.Sort   = "nome"
+    If IsNull(hint) Then
+       ShowHTML "          <td valign=""top""><font size=""1""><b>" & Label & "</b><br><SELECT ACCESSKEY=""" & accesskey & """ CLASS=""STS"" NAME=""" & campo & """ " & w_Disabled & " " & atributo & ">"
+    Else
+       ShowHTML "          <td valign=""top"" title=""" & hint & """><font size=""1""><b>" & Label & "</b><br><SELECT ACCESSKEY=""" & accesskey & """ CLASS=""STS"" NAME=""" & campo & """ " & w_Disabled & " " & atributo & ">"
+    End If
+    ShowHTML "          <option value="""">---"
+    While Not RS.EOF
+       If cDbl(nvl(RS("chave"),0)) = cDbl(nvl(p_chave,0)) Then
+          ShowHTML "          <option value=""" & RS("chave") & """ SELECTED>" & RS("nome")
+       Else
+          ShowHTML "          <option value=""" & RS("chave") & """>" & RS("nome")
+       End If
+       RS.MoveNext
+    Wend
+    ShowHTML "          </select>"
+End Sub
+REM =========================================================================
+REM Final da rotina
+REM -------------------------------------------------------------------------
+
+REM =========================================================================
+REM Montagem de campo do tipo de indicador
+REM -------------------------------------------------------------------------
+Sub MontaTipoIndicador (Label, Chave, Campo)
+    ShowHTML "          <td><font size=""1"">"
+    If Nvl(Label,"") > "" Then
+       ShowHTML Label & "</b><br>"
+    End If
+    If uCase(Chave) = "P" Then
+       ShowHTML "              <input " & w_Disabled & " type=""radio"" name=""" & campo & """ value=""P"" checked> Processo <input " & w_Disabled & " type=""radio"" name=""" & campo & """ value=""R""> Resultado <input " & w_Disabled & " type=""radio"" name=""" & campo & """ value=""""> ND "
+    ElseIf uCase(Chave) = "R" Then
+       ShowHTML "              <input " & w_Disabled & " type=""radio"" name=""" & campo & """ value=""P""> Processo <input " & w_Disabled & " type=""radio"" name=""" & campo & """ value=""R"" checked> Resultado <input " & w_Disabled & " type=""radio"" name=""" & campo & """ value=""""> ND "
+    Else
+       ShowHTML "              <input " & w_Disabled & " type=""radio"" name=""" & campo & """ value=""P""> Processo <input " & w_Disabled & " type=""radio"" name=""" & campo & """ value=""R"" > Resultado <input " & w_Disabled & " type=""radio"" name=""" & campo & """ value="""" checked> ND "
+    End If
+End Sub
+REM =========================================================================
+REM Final da rotina
+REM -------------------------------------------------------------------------
+
+REM =========================================================================
+REM Montagem da seleção dos tipos de restrições (esquema SIGPLAN)
+REM -------------------------------------------------------------------------
+Sub SelecaoTPRestricao_IS (label, accesskey, hint, p_chave, campo, restricao, atributo)
+
+   DB_GetTPRestricao_IS RS, null, "S"
+   RS.Sort   = "nome"
+    If IsNull(hint) Then
+       ShowHTML "          <td valign=""top""><font size=""1""><b>" & Label & "</b><br><SELECT ACCESSKEY=""" & accesskey & """ CLASS=""STS"" NAME=""" & campo & """ " & w_Disabled & " " & atributo & ">"
+    Else
+       ShowHTML "          <td valign=""top"" title=""" & hint & """><font size=""1""><b>" & Label & "</b><br><SELECT ACCESSKEY=""" & accesskey & """ CLASS=""STS"" NAME=""" & campo & """ " & w_Disabled & " " & atributo & ">"
+    End If
+    ShowHTML "          <option value="""">---"
+    While Not RS.EOF
+       If cDbl(nvl(RS("chave"),0)) = cDbl(nvl(p_chave,0)) Then
+          ShowHTML "          <option value=""" & RS("chave") & """ SELECTED>" & RS("nome")
+       Else
+          ShowHTML "          <option value=""" & RS("chave") & """>" & RS("nome")
+       End If
+       RS.MoveNext
+    Wend
+    ShowHTML "          </select>"
+End Sub
+REM =========================================================================
+REM Final da rotina
+REM -------------------------------------------------------------------------
+
+REM =========================================================================
+REM Montagem da seleção de ações do PPA(tabela SIGPLAN)
+REM -------------------------------------------------------------------------
+Sub SelecaoLocalizador_IS (label, accesskey, hint, chave, w_cd_programa, w_cd_acao, w_cd_unidade, campo, restricao, atributo)
+   
+   DB_GetPPALocalizador_IS RS, w_cliente, w_ano, w_cd_programa, w_cd_acao, w_cd_unidade
+   RS.Sort   = "nome"
+    If IsNull(hint) Then
+       ShowHTML "          <td valign=""top""><font size=""1""><b>" & Label & "</b><br><SELECT ACCESSKEY=""" & accesskey & """ CLASS=""STS"" NAME=""" & campo & """ " & w_Disabled & " " & atributo & ">"
+    Else
+       ShowHTML "          <td valign=""top"" title=""" & hint & """><font size=""1""><b>" & Label & "</b><br><SELECT ACCESSKEY=""" & accesskey & """ CLASS=""STS"" NAME=""" & campo & """ " & w_Disabled & " " & atributo & ">"
+    End If
+    ShowHTML "          <option value="""">---"
+    While Not RS.EOF
+       If cDbl(nvl(RS("cd_subacao"),0)) = cDbl(nvl(chave,0)) Then
+          ShowHTML "          <option value=""" & RS("cd_subacao") & """ SELECTED>" & RS("Nome")
+       Else
+          ShowHTML "          <option value=""" & RS("cd_subacao") & """>" & RS("Nome")
+       End If
+       RS.MoveNext
+    Wend
+    ShowHTML "          </select>"
+End Sub
+REM =========================================================================
+REM Final da rotina
+REM -------------------------------------------------------------------------
+
+REM =========================================================================
+REM Montagem da seleção das tarefas
+REM -------------------------------------------------------------------------
+Sub SelecaoTarefa (label, accesskey, hint, cliente, ano, p_chave, campo, restricao, atributo)
+    
+    DB_GetLinkData RS, w_cliente, "ISTCAD"
+    DB_GetSolicList_IS RS, RS("sq_menu"), w_usuario, "ISTCAD   ", 5, _
+       null, null, null, null, null, null, _
+       null, null, null, null, _
+       null, null, null, null, null, null, null, _
+       null, null, null, null, restricao, null, null, null, null, null
+
+    If IsNull(hint) Then
+       ShowHTML "          <td valign=""top""><font size=""1""><b>" & Label & "</b><br><SELECT ACCESSKEY=""" & accesskey & """ CLASS=""STS"" NAME=""" & campo & """ " & w_Disabled & " " & atributo & ">"
+    Else
+       ShowHTML "          <td valign=""top"" title=""" & hint & """><font size=""1""><b>" & Label & "</b><br><SELECT ACCESSKEY=""" & accesskey & """ CLASS=""STS"" NAME=""" & campo & """ " & w_Disabled & " " & atributo & ">"
+    End If
+    ShowHTML "          <option value="""">---"
+    While Not RS.EOF
+       If cDbl(nvl(RS("sq_siw_solicitacao"),0)) = cDbl(nvl(p_chave,0)) Then
+          ShowHTML "          <option value=""" & RS("sq_siw_solicitacao") & """ SELECTED>" & RS("titulo")
+       Else
+          ShowHTML "          <option value=""" & RS("sq_siw_solicitacao") & """>" & RS("titulo")
+       End If
+       RS.MoveNext
+    Wend
+    ShowHTML "          </select>"
+End Sub
+REM =========================================================================
+REM Final da rotina
+REM -------------------------------------------------------------------------
+
+REM =========================================================================
+REM Funçao para retornar sim ou nao
+REM -------------------------------------------------------------------------
+Function RetornaSimNao (p_chave)
+    Select Case p_Chave
+       Case "S" RetornaSimNao = "Sim"
+       Case "N" RetornaSimNao = "Não"
+       Case Else RetornaSimNao = "Não"
+    End Select
+End Function
+REM =========================================================================
+REM Final da rotina
+REM -------------------------------------------------------------------------
+%>

@@ -1,0 +1,7 @@
+create sequence SQ_SIW_SOLICITACAO
+minvalue 1
+maxvalue 999999999999999999999999999
+start with 10189
+increment by 1
+cache 20;
+

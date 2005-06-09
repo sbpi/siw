@@ -1,0 +1,88 @@
+create table LC_FINALIDADE
+(
+  SQ_LCFINALIDADE NUMBER(18) not null,
+  CLIENTE         NUMBER(18) not null,
+  NOME            VARCHAR2(60) not null,
+  DESCRICAO       VARCHAR2(1000),
+  ATIVO           VARCHAR2(1) default 'S' not null,
+  PADRAO          VARCHAR2(1) default 'N' not null
+)
+tablespace SYSTEM
+  pctfree 10
+  pctused 40
+  initrans 1
+  maxtrans 255
+  storage
+  (
+    initial 66K
+    minextents 1
+    maxextents unlimited
+  );
+comment on column LC_FINALIDADE.SQ_LCFINALIDADE
+  is 'Sequence.';
+comment on column LC_FINALIDADE.CLIENTE
+  is 'Chave de CO_PESSOA indicando a que cliente o registro pertence.';
+comment on column LC_FINALIDADE.NOME
+  is 'Nome da finalidade da licitação.';
+comment on column LC_FINALIDADE.DESCRICAO
+  is 'Descrição resumida da finalidade da licitação.';
+comment on column LC_FINALIDADE.ATIVO
+  is 'Indica se o registro está disponível para seleção.';
+comment on column LC_FINALIDADE.PADRAO
+  is 'Indica se o registro deve ser exibido como opção inicial.';
+alter table LC_FINALIDADE
+  add constraint PK_LC_FINALIDADE primary key (SQ_LCFINALIDADE)
+  using index 
+  tablespace SYSTEM
+  pctfree 10
+  initrans 2
+  maxtrans 255
+  storage
+  (
+    initial 66K
+    minextents 1
+    maxextents unlimited
+  );
+alter table LC_FINALIDADE
+  add constraint FK_LCFIN_COPES foreign key (CLIENTE)
+  references CO_PESSOA (SQ_PESSOA);
+alter table LC_FINALIDADE
+  add constraint CKC_ATIVO_LC_FINAL
+  check (ATIVO in ('S','N'));
+alter table LC_FINALIDADE
+  add constraint CKC_PADRAO_LC_FINAL
+  check (PADRAO in ('S','N'));
+create index IN_LCFIN_ATIVO on LC_FINALIDADE (CLIENTE,ATIVO,SQ_LCFINALIDADE)
+  tablespace SYSTEM
+  pctfree 10
+  initrans 2
+  maxtrans 255
+  storage
+  (
+    initial 66K
+    minextents 1
+    maxextents unlimited
+  );
+create index IN_LCFIN_CLIENTE on LC_FINALIDADE (CLIENTE,SQ_LCFINALIDADE)
+  tablespace SYSTEM
+  pctfree 10
+  initrans 2
+  maxtrans 255
+  storage
+  (
+    initial 66K
+    minextents 1
+    maxextents unlimited
+  );
+create unique index IN_LCFIN_NOME on LC_FINALIDADE (CLIENTE,NOME)
+  tablespace SYSTEM
+  pctfree 10
+  initrans 2
+  maxtrans 255
+  storage
+  (
+    initial 66K
+    minextents 1
+    maxextents unlimited
+  );
+

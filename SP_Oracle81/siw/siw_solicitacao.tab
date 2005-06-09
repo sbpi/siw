@@ -1,0 +1,287 @@
+create table SIW_SOLICITACAO
+(
+  SQ_SIW_SOLICITACAO NUMBER(18) not null,
+  SQ_MENU            NUMBER(18) not null,
+  SQ_SIW_TRAMITE     NUMBER(18) not null,
+  SOLICITANTE        NUMBER(18) not null,
+  CADASTRADOR        NUMBER(18) not null,
+  EXECUTOR           NUMBER(18),
+  DESCRICAO          VARCHAR2(2000),
+  JUSTIFICATIVA      VARCHAR2(2000),
+  INICIO             DATE,
+  FIM                DATE,
+  INCLUSAO           DATE not null,
+  ULTIMA_ALTERACAO   DATE not null,
+  CONCLUSAO          DATE,
+  VALOR              NUMBER(18,2),
+  OPINIAO            NUMBER(18),
+  DATA_HORA          VARCHAR2(1) default 'N' not null,
+  SQ_UNIDADE         NUMBER(10) not null,
+  SQ_SOLIC_PAI       NUMBER(18),
+  SQ_CC              NUMBER(18),
+  PALAVRA_CHAVE      VARCHAR2(90),
+  SQ_CIDADE_ORIGEM   NUMBER(18) not null
+)
+tablespace USERS
+  pctfree 10
+  pctused 40
+  initrans 1
+  maxtrans 255
+  storage
+  (
+    initial 136K
+    next 128K
+    minextents 1
+    maxextents 4096
+    pctincrease 0
+  );
+comment on table SIW_SOLICITACAO
+  is 'Solicitação';
+comment on column SIW_SOLICITACAO.SQ_MENU
+  is 'Sequence';
+comment on column SIW_SOLICITACAO.SOLICITANTE
+  is 'Sequence';
+comment on column SIW_SOLICITACAO.CADASTRADOR
+  is 'Sequence';
+comment on column SIW_SOLICITACAO.EXECUTOR
+  is 'Sequence';
+comment on column SIW_SOLICITACAO.DATA_HORA
+  is 'Indica como o sistema deve tratar a questão de horas. (0) Não pede data; (1) Pede apenas uma data; (2) Pede apenas uma data/hora; (3) Pede data início e fim; (4) Pede data/hora início e fim.';
+comment on column SIW_SOLICITACAO.SQ_UNIDADE
+  is 'Chave de EO_UNIDADE. Unidade solicitante.';
+comment on column SIW_SOLICITACAO.SQ_SOLIC_PAI
+  is 'Solicitação originária.';
+comment on column SIW_SOLICITACAO.SQ_CC
+  is 'Chave de CT_CC.';
+comment on column SIW_SOLICITACAO.PALAVRA_CHAVE
+  is 'Contém palavras-chave para consulta';
+comment on column SIW_SOLICITACAO.SQ_CIDADE_ORIGEM
+  is 'Cidade que originou a solicitação';
+alter table SIW_SOLICITACAO
+  add constraint PK_SIW_SOLICITACAO primary key (SQ_SIW_SOLICITACAO)
+  using index 
+  tablespace USERS
+  pctfree 10
+  initrans 2
+  maxtrans 255
+  storage
+  (
+    initial 136K
+    next 128K
+    minextents 1
+    maxextents 4096
+    pctincrease 0
+  );
+alter table SIW_SOLICITACAO
+  add constraint FK_SIWSOL_COCID foreign key (SQ_CIDADE_ORIGEM)
+  references CO_CIDADE (SQ_CIDADE);
+alter table SIW_SOLICITACAO
+  add constraint FK_SIWSOL_COPS_CAD foreign key (CADASTRADOR)
+  references CO_PESSOA (SQ_PESSOA);
+alter table SIW_SOLICITACAO
+  add constraint FK_SIWSOL_COPS_EXE foreign key (EXECUTOR)
+  references CO_PESSOA (SQ_PESSOA);
+alter table SIW_SOLICITACAO
+  add constraint FK_SIWSOL_COPS_SOL foreign key (SOLICITANTE)
+  references CO_PESSOA (SQ_PESSOA);
+alter table SIW_SOLICITACAO
+  add constraint FK_SIWSOL_CTCC foreign key (SQ_CC)
+  references CT_CC (SQ_CC);
+alter table SIW_SOLICITACAO
+  add constraint FK_SIWSOL_EOUNI foreign key (SQ_UNIDADE)
+  references EO_UNIDADE (SQ_UNIDADE);
+alter table SIW_SOLICITACAO
+  add constraint FK_SIWSOL_SIWMEN foreign key (SQ_MENU)
+  references SIW_MENU (SQ_MENU);
+alter table SIW_SOLICITACAO
+  add constraint FK_SIWSOL_SIWOPI foreign key (OPINIAO)
+  references SIW_OPINIAO (SQ_SIW_OPINIAO);
+alter table SIW_SOLICITACAO
+  add constraint FK_SIWSOL_SIWTRA foreign key (SQ_SIW_TRAMITE)
+  references SIW_TRAMITE (SQ_SIW_TRAMITE);
+alter table SIW_SOLICITACAO
+  add constraint CKC_SIWSOL_DTHOR
+  check (DATA_HORA in ('0','1','2','3','4'));
+create index IN_SIWSOL_ALTER on SIW_SOLICITACAO (ULTIMA_ALTERACAO)
+  tablespace SYSTEM
+  pctfree 10
+  initrans 2
+  maxtrans 255
+  storage
+  (
+    initial 72K
+    next 64K
+    minextents 1
+    maxextents unlimited
+    pctincrease 50
+  );
+create index IN_SIWSOL_CADASTR on SIW_SOLICITACAO (CADASTRADOR)
+  tablespace SYSTEM
+  pctfree 10
+  initrans 2
+  maxtrans 255
+  storage
+  (
+    initial 72K
+    next 64K
+    minextents 1
+    maxextents unlimited
+    pctincrease 50
+  );
+create index IN_SIWSOL_CIDADE on SIW_SOLICITACAO (SQ_CIDADE_ORIGEM,SQ_SIW_SOLICITACAO)
+  tablespace SYSTEM
+  pctfree 10
+  initrans 2
+  maxtrans 255
+  storage
+  (
+    initial 72K
+    next 64K
+    minextents 1
+    maxextents unlimited
+    pctincrease 50
+  );
+create index IN_SIWSOL_CONC on SIW_SOLICITACAO (CONCLUSAO)
+  tablespace SYSTEM
+  pctfree 10
+  initrans 2
+  maxtrans 255
+  storage
+  (
+    initial 72K
+    next 64K
+    minextents 1
+    maxextents unlimited
+    pctincrease 50
+  );
+create index IN_SIWSOL_CTCC on SIW_SOLICITACAO (SQ_CC,SQ_SIW_SOLICITACAO)
+  tablespace SYSTEM
+  pctfree 10
+  initrans 2
+  maxtrans 255
+  storage
+  (
+    initial 72K
+    next 64K
+    minextents 1
+    maxextents unlimited
+    pctincrease 50
+  );
+create index IN_SIWSOL_EXECUTOR on SIW_SOLICITACAO (EXECUTOR)
+  tablespace SYSTEM
+  pctfree 10
+  initrans 2
+  maxtrans 255
+  storage
+  (
+    initial 72K
+    next 64K
+    minextents 1
+    maxextents unlimited
+    pctincrease 50
+  );
+create index IN_SIWSOL_FIM on SIW_SOLICITACAO (FIM)
+  tablespace SYSTEM
+  pctfree 10
+  initrans 2
+  maxtrans 255
+  storage
+  (
+    initial 72K
+    next 64K
+    minextents 1
+    maxextents unlimited
+    pctincrease 50
+  );
+create index IN_SIWSOL_INCLUSAO on SIW_SOLICITACAO (INCLUSAO)
+  tablespace SYSTEM
+  pctfree 10
+  initrans 2
+  maxtrans 255
+  storage
+  (
+    initial 72K
+    next 64K
+    minextents 1
+    maxextents unlimited
+    pctincrease 50
+  );
+create index IN_SIWSOL_INICIO on SIW_SOLICITACAO (INICIO)
+  tablespace SYSTEM
+  pctfree 10
+  initrans 2
+  maxtrans 255
+  storage
+  (
+    initial 72K
+    next 64K
+    minextents 1
+    maxextents unlimited
+    pctincrease 50
+  );
+create index IN_SIWSOL_MENU on SIW_SOLICITACAO (SQ_MENU)
+  tablespace SYSTEM
+  pctfree 10
+  initrans 2
+  maxtrans 255
+  storage
+  (
+    initial 72K
+    next 64K
+    minextents 1
+    maxextents unlimited
+    pctincrease 50
+  );
+create index IN_SIWSOL_OPINIAO on SIW_SOLICITACAO (OPINIAO)
+  tablespace SYSTEM
+  pctfree 10
+  initrans 2
+  maxtrans 255
+  storage
+  (
+    initial 72K
+    next 64K
+    minextents 1
+    maxextents unlimited
+    pctincrease 50
+  );
+create index IN_SIWSOL_PAI on SIW_SOLICITACAO (SQ_SOLIC_PAI,SQ_SIW_SOLICITACAO)
+  tablespace SYSTEM
+  pctfree 10
+  initrans 2
+  maxtrans 255
+  storage
+  (
+    initial 72K
+    next 64K
+    minextents 1
+    maxextents unlimited
+    pctincrease 50
+  );
+create index IN_SIWSOL_SOLIC on SIW_SOLICITACAO (SOLICITANTE)
+  tablespace SYSTEM
+  pctfree 10
+  initrans 2
+  maxtrans 255
+  storage
+  (
+    initial 72K
+    next 64K
+    minextents 1
+    maxextents unlimited
+    pctincrease 50
+  );
+create index IN_SIWSOL_UNIDSOL on SIW_SOLICITACAO (SQ_UNIDADE,SQ_SIW_SOLICITACAO)
+  tablespace SYSTEM
+  pctfree 10
+  initrans 2
+  maxtrans 255
+  storage
+  (
+    initial 72K
+    next 64K
+    minextents 1
+    maxextents unlimited
+    pctincrease 50
+  );
+

@@ -1,0 +1,7 @@
+create sequence SQ_TIPO_PESSOA
+minvalue 1
+maxvalue 999999999999999999999999999
+start with 81
+increment by 1
+cache 20;
+

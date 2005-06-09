@@ -1,0 +1,33 @@
+create table AGE_CATEGORIA
+(
+  CAT_SEQUENCIAL NUMBER(10) not null,
+  CAT_DESCRICAO  CHAR(30),
+  CO_UNIDADE     CHAR(5) not null
+)
+tablespace SGE
+  pctfree 10
+  initrans 1
+  maxtrans 255
+  storage
+  (
+    initial 66K
+    minextents 1
+    maxextents unlimited
+  );
+alter table AGE_CATEGORIA
+  add constraint U103_4 primary key (CAT_SEQUENCIAL,CO_UNIDADE)
+  using index 
+  tablespace SGE
+  pctfree 10
+  initrans 2
+  maxtrans 255
+  storage
+  (
+    initial 66K
+    minextents 1
+    maxextents unlimited
+  );
+alter table AGE_CATEGORIA
+  add constraint R_199 foreign key (CO_UNIDADE)
+  references S_UNIDADE (CO_UNIDADE) on delete cascade;
+

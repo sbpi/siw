@@ -1,0 +1,57 @@
+create table IS_SIG_FONTE
+(
+  CD_FONTE      VARCHAR2(5) not null,
+  NOME          VARCHAR2(60) not null,
+  DESCRICAO     VARCHAR2(60) not null,
+  OBSERVACAO    VARCHAR2(2000),
+  TOTALIZACAO   VARCHAR2(1) default 'N' not null,
+  ATIVO         VARCHAR2(1) default 'S' not null,
+  FLAG_INCLUSAO DATE default sysdate not null
+)
+tablespace SYSTEM
+  pctfree 10
+  pctused 40
+  initrans 1
+  maxtrans 255
+  storage
+  (
+    initial 66K
+    minextents 1
+    maxextents unlimited
+  );
+comment on table IS_SIG_FONTE
+  is 'Descreve o desdobramento dos recursos (Recursos dos Orçamentos da União, Recursos Não-Orçamentários)';
+comment on column IS_SIG_FONTE.CD_FONTE
+  is 'Codigo da Fonte';
+comment on column IS_SIG_FONTE.NOME
+  is 'Descrição Resumida da fonte';
+comment on column IS_SIG_FONTE.DESCRICAO
+  is 'Descrição da Fonte';
+comment on column IS_SIG_FONTE.OBSERVACAO
+  is 'Observação';
+comment on column IS_SIG_FONTE.TOTALIZACAO
+  is 'Indicador de fonte totalizadora';
+comment on column IS_SIG_FONTE.ATIVO
+  is 'Indica se o registro pode ser associado a novos registros.';
+comment on column IS_SIG_FONTE.FLAG_INCLUSAO
+  is 'Data de inclusão do registro';
+alter table IS_SIG_FONTE
+  add constraint PK_IS_SIG_FONTE primary key (CD_FONTE)
+  using index 
+  tablespace SYSTEM
+  pctfree 10
+  initrans 2
+  maxtrans 255
+  storage
+  (
+    initial 66K
+    minextents 1
+    maxextents unlimited
+  );
+alter table IS_SIG_FONTE
+  add constraint CKC_ISSIGFON_ATIVO
+  check (ATIVO in ('S','N'));
+alter table IS_SIG_FONTE
+  add constraint CKC_TOTALIZACAO_IS_SIG_F
+  check (TOTALIZACAO in ('S','N'));
+

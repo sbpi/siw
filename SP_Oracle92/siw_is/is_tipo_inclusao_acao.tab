@@ -1,0 +1,45 @@
+create table IS_TIPO_INCLUSAO_ACAO
+(
+  CD_TIPO_INCLUSAO NUMBER(18) not null,
+  NOME             VARCHAR2(250) not null,
+  ATIVO            VARCHAR2(1) default 'S' not null,
+  FLAG_INCLUSAO    DATE default sysdate not null
+)
+tablespace SYSTEM
+  pctfree 10
+  pctused 40
+  initrans 1
+  maxtrans 255
+  storage
+  (
+    initial 66K
+    minextents 1
+    maxextents unlimited
+  );
+comment on table IS_TIPO_INCLUSAO_ACAO
+  is 'Descrição os tipos de ações que podem ser incluídas';
+comment on column IS_TIPO_INCLUSAO_ACAO.CD_TIPO_INCLUSAO
+  is 'Código do tipo de inclusão de Ação';
+comment on column IS_TIPO_INCLUSAO_ACAO.NOME
+  is 'Descrição do  tipo de inclusão de Ação';
+comment on column IS_TIPO_INCLUSAO_ACAO.ATIVO
+  is 'Indica se o registro pode ser associado a novos registros.';
+comment on column IS_TIPO_INCLUSAO_ACAO.FLAG_INCLUSAO
+  is 'Data de inclusão do registro';
+alter table IS_TIPO_INCLUSAO_ACAO
+  add constraint PK_IS_TIPO_INCLUSAO_ACAO primary key (CD_TIPO_INCLUSAO)
+  using index 
+  tablespace SYSTEM
+  pctfree 10
+  initrans 2
+  maxtrans 255
+  storage
+  (
+    initial 66K
+    minextents 1
+    maxextents unlimited
+  );
+alter table IS_TIPO_INCLUSAO_ACAO
+  add constraint CKC_ISTIPINCACA_ATIVO
+  check (ATIVO in ('S','N'));
+

@@ -1,0 +1,53 @@
+create table S_AVALIACAO_TURMA
+(
+  AV_SEQUENCIAL     NUMBER(10) not null,
+  CO_UNIDADE        CHAR(5) not null,
+  DT_AVALIACAO      DATE not null,
+  CO_AVALIACAO      NUMBER(10) not null,
+  OBS_AVALIACAO     BLOB,
+  CO_TIPO_AVALIACAO NUMBER(10) not null,
+  AVT_MAX_PONTOS    CHAR(6),
+  DS_HABILIDADE     BLOB,
+  AVT_BATERIA       NUMBER(10)
+)
+tablespace SGE
+  pctfree 10
+  initrans 1
+  maxtrans 255
+  storage
+  (
+    initial 66K
+    minextents 1
+    maxextents unlimited
+  );
+alter table S_AVALIACAO_TURMA
+  add constraint PKS_AVALIACAO_TURM primary key (CO_UNIDADE,AV_SEQUENCIAL,DT_AVALIACAO,CO_AVALIACAO,CO_TIPO_AVALIACAO)
+  using index 
+  tablespace SGE
+  pctfree 10
+  initrans 2
+  maxtrans 255
+  storage
+  (
+    initial 66K
+    minextents 1
+    maxextents unlimited
+  );
+alter table S_AVALIACAO_TURMA
+  add constraint FK_A_AVALIACAO_TUR foreign key (AV_SEQUENCIAL,CO_UNIDADE)
+  references S_AVALIACAO (AV_SEQUENCIAL,CO_UNIDADE) on delete cascade;
+alter table S_AVALIACAO_TURMA
+  add constraint R126_543 foreign key (CO_TIPO_AVALIACAO)
+  references S_TIPO_AVALIACAO (CO_TIPO_AVALIACAO) on delete cascade;
+create index FOREIGN201 on S_AVALIACAO_TURMA (AV_SEQUENCIAL)
+  tablespace SGE
+  pctfree 10
+  initrans 2
+  maxtrans 255
+  storage
+  (
+    initial 66K
+    minextents 1
+    maxextents unlimited
+  );
+

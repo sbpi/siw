@@ -1,0 +1,165 @@
+create table IS_INDICADOR
+(
+  SQ_INDICADOR              NUMBER(18) not null,
+  SQ_SIW_SOLICITACAO        NUMBER(18) not null,
+  ANO                       NUMBER(4) not null,
+  CD_PROGRAMA               VARCHAR2(4) not null,
+  IS_CLIENTE                NUMBER(18) not null,
+  IS_ANO                    NUMBER(4),
+  IS_CD_PROGRAMA            VARCHAR2(4),
+  CLIENTE                   NUMBER(18),
+  CD_INDICADOR              NUMBER(18),
+  CD_UNIDADE_MEDIDA         NUMBER(18),
+  CD_PERIODICIDADE          NUMBER(18),
+  CD_BASE_GEOGRAFICA        NUMBER(18),
+  ORDEM                     NUMBER(3) not null,
+  TITULO                    VARCHAR2(200) not null,
+  CONCEITUACAO              VARCHAR2(2000) default 'Não informada' not null,
+  INTERPRETACAO             VARCHAR2(2000),
+  USOS                      VARCHAR2(2000),
+  LIMITACOES                VARCHAR2(2000),
+  COMENTARIOS               VARCHAR2(2000),
+  FONTE                     VARCHAR2(200),
+  FORMULA                   VARCHAR2(4000),
+  TIPO                      VARCHAR2(1),
+  VALOR_REFERENCIA          NUMBER(18,4),
+  APURACAO_REFERENCIA       DATE,
+  PREVISAO_ANO_1            NUMBER(18,4),
+  PREVISAO_ANO_2            NUMBER(18,4),
+  PREVISAO_ANO_3            NUMBER(18,4),
+  PREVISAO_ANO_4            NUMBER(18,4),
+  OBSERVACAO                VARCHAR2(4000),
+  SITUACAO_ATUAL            VARCHAR2(4000),
+  QUANTIDADE                NUMBER(18,2) default 0 not null,
+  CUMULATIVA                VARCHAR2(1) default 'N' not null,
+  EXEQUIVEL                 VARCHAR2(1) default 'S' not null,
+  JUSTIFICATIVA_INEXEQUIVEL VARCHAR2(1000),
+  OUTRAS_MEDIDAS            VARCHAR2(1000),
+  CATEGORIA_ANALISE         VARCHAR2(1000),
+  APURACAO_INDICE           DATE,
+  VALOR_APURADO             NUMBER(18,4)
+)
+tablespace SYSTEM
+  pctfree 10
+  pctused 40
+  initrans 1
+  maxtrans 255
+  storage
+  (
+    initial 66K
+    minextents 1
+    maxextents unlimited
+  );
+comment on table IS_INDICADOR
+  is 'Registra dados complementares dos indicadores de programa do SIGPLAN.';
+comment on column IS_INDICADOR.SQ_INDICADOR
+  is 'Sequence';
+comment on column IS_INDICADOR.SQ_SIW_SOLICITACAO
+  is 'Chave de SIW_SOLICITACAO.';
+comment on column IS_INDICADOR.ANO
+  is 'Ano de referência do registro.';
+comment on column IS_INDICADOR.CD_PROGRAMA
+  is 'Código do Programa no Sigplan';
+comment on column IS_INDICADOR.IS_CLIENTE
+  is 'Sequence';
+comment on column IS_INDICADOR.IS_ANO
+  is 'Ano de referência do registro.';
+comment on column IS_INDICADOR.IS_CD_PROGRAMA
+  is 'Código do Programa no Sigplan';
+comment on column IS_INDICADOR.CLIENTE
+  is 'Sequence';
+comment on column IS_INDICADOR.CD_INDICADOR
+  is 'Codigo do indicador.';
+comment on column IS_INDICADOR.CD_UNIDADE_MEDIDA
+  is 'Código da Unidade de Medida';
+comment on column IS_INDICADOR.CD_PERIODICIDADE
+  is 'Código da Periodicidade';
+comment on column IS_INDICADOR.CD_BASE_GEOGRAFICA
+  is 'Codigo da base geográfica';
+comment on column IS_INDICADOR.ORDEM
+  is 'Ordem de execução da meta.';
+comment on column IS_INDICADOR.TITULO
+  is 'Título da meta.';
+comment on column IS_INDICADOR.CONCEITUACAO
+  is 'Descrição da meta.';
+comment on column IS_INDICADOR.INTERPRETACAO
+  is 'Interpretação do indicador.';
+comment on column IS_INDICADOR.USOS
+  is 'Usos para o indicador.';
+comment on column IS_INDICADOR.LIMITACOES
+  is 'Limitações do indicador.';
+comment on column IS_INDICADOR.COMENTARIOS
+  is 'Comentários sobre o indicador.';
+comment on column IS_INDICADOR.FONTE
+  is 'Órgãos responsáveis pelas informações geradas para os indicadores ';
+comment on column IS_INDICADOR.FORMULA
+  is 'Demonstra como calcular o valor do indicador';
+comment on column IS_INDICADOR.TIPO
+  is 'Tipo de indicador: P - processo; R - resultado';
+comment on column IS_INDICADOR.VALOR_REFERENCIA
+  is 'Índice de referência do indicador.';
+comment on column IS_INDICADOR.APURACAO_REFERENCIA
+  is 'Data da apuração do valor de referência.';
+comment on column IS_INDICADOR.PREVISAO_ANO_1
+  is 'Previsão do indicador para o primeiro ano.';
+comment on column IS_INDICADOR.PREVISAO_ANO_2
+  is 'Previsão do indicador para o segundo ano.';
+comment on column IS_INDICADOR.PREVISAO_ANO_3
+  is 'Previsão do indicador para o terceiro ano.';
+comment on column IS_INDICADOR.PREVISAO_ANO_4
+  is 'Previsão do indicador para o quarto ano.';
+comment on column IS_INDICADOR.OBSERVACAO
+  is 'Observação do Indicador';
+comment on column IS_INDICADOR.SITUACAO_ATUAL
+  is 'Texto detalhando a situação atual da meta.';
+comment on column IS_INDICADOR.QUANTIDADE
+  is 'Quantidade prevista para a unidade de medida informada.';
+comment on column IS_INDICADOR.CUMULATIVA
+  is 'Indica se a realização da meta é cumulativa ou não.';
+comment on column IS_INDICADOR.EXEQUIVEL
+  is 'Indica se a meta está avaliada como passível de cumprimento ou não.';
+comment on column IS_INDICADOR.JUSTIFICATIVA_INEXEQUIVEL
+  is 'Motivos que justificam o não cumprimento da meta.';
+comment on column IS_INDICADOR.OUTRAS_MEDIDAS
+  is 'Descrição das medidas necessárias ao cumprimento da meta.';
+comment on column IS_INDICADOR.CATEGORIA_ANALISE
+  is 'Critérios que participam da análise do indicador.';
+comment on column IS_INDICADOR.APURACAO_INDICE
+  is 'Data em que o índice foi apurado.';
+comment on column IS_INDICADOR.VALOR_APURADO
+  is 'Valor de apuração do índice.';
+alter table IS_INDICADOR
+  add constraint PK_IS_INDICADOR primary key (SQ_INDICADOR)
+  using index 
+  tablespace SYSTEM
+  pctfree 10
+  initrans 2
+  maxtrans 255
+  storage
+  (
+    initial 66K
+    minextents 1
+    maxextents unlimited
+  );
+alter table IS_INDICADOR
+  add constraint FK_ISIND_ISSIGBASGEO foreign key (CD_BASE_GEOGRAFICA)
+  references IS_SIG_BASE_GEOGRAFICA (CD_BASE_GEOGRAFICA);
+alter table IS_INDICADOR
+  add constraint FK_ISIND_ISSIGIND foreign key (IS_ANO,IS_CD_PROGRAMA,CLIENTE,CD_INDICADOR)
+  references IS_SIG_INDICADOR (ANO,CD_PROGRAMA,CLIENTE,CD_INDICADOR);
+alter table IS_INDICADOR
+  add constraint FK_ISIND_ISSIGPER foreign key (CD_PERIODICIDADE)
+  references IS_SIG_PERIODICIDADE (CD_PERIODICIDADE);
+alter table IS_INDICADOR
+  add constraint FK_ISIND_ISSIGUNIMED foreign key (CD_UNIDADE_MEDIDA)
+  references IS_SIG_UNIDADE_MEDIDA (CD_UNIDADE_MEDIDA);
+alter table IS_INDICADOR
+  add constraint CKC_CUMULATIVA_IS_INDIC
+  check (CUMULATIVA in ('S','N'));
+alter table IS_INDICADOR
+  add constraint CKC_EXEQUIVEL_IS_INDIC
+  check (EXEQUIVEL in ('S','N'));
+alter table IS_INDICADOR
+  add constraint CKC_TIPO_IS_INDIC
+  check (TIPO is null or ( TIPO in ('P','R') ));
+

@@ -1,0 +1,35 @@
+create table S_PERIODO
+(
+  TURNO           CHAR(2) not null,
+  CO_GRADE_CURRIC NUMBER(10) not null,
+  ANO             NUMBER(10) not null,
+  CO_TIPO_CURSO   NUMBER(10) not null,
+  SG_SERIE        VARCHAR2(5) not null
+)
+tablespace SGE
+  pctfree 10
+  initrans 1
+  maxtrans 255
+  storage
+  (
+    initial 66K
+    minextents 1
+    maxextents unlimited
+  );
+alter table S_PERIODO
+  add constraint PK_PERIODO primary key (TURNO,ANO,CO_GRADE_CURRIC,CO_TIPO_CURSO,SG_SERIE)
+  using index 
+  tablespace SGE
+  pctfree 10
+  initrans 2
+  maxtrans 255
+  storage
+  (
+    initial 66K
+    minextents 1
+    maxextents unlimited
+  );
+alter table S_PERIODO
+  add constraint R_147 foreign key (SG_SERIE)
+  references S_SERIE (SG_SERIE) on delete cascade;
+

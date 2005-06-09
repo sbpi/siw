@@ -1,0 +1,38 @@
+create table CARDS_TEMP
+(
+  CRDCARDID        VARCHAR2(20) not null,
+  CSTCUSTOMERID    VARCHAR2(20) not null,
+  STSCODE          VARCHAR2(20) not null,
+  CRDISSUEDATE     DATE not null,
+  CRDEXPIRYDATE    DATE,
+  CRDBUSINESSRULES NUMBER not null,
+  CRDCOMMENT       VARCHAR2(4000)
+)
+tablespace USERS
+  pctfree 10
+  initrans 1
+  maxtrans 255
+  storage
+  (
+    initial 66K
+    minextents 1
+    maxextents unlimited
+  );
+comment on column CARDS_TEMP.CRDCARDID
+  is 'Unique card Identification (usually, this is the same as CstCustomerId)';
+comment on column CARDS_TEMP.CSTCUSTOMERID
+  is 'ID of customer';
+comment on column CARDS_TEMP.STSCODE
+  is 'Card status ("Normal", "Deleted", "Disabled", "Pending", "Blocked", "Test", "Expired")';
+comment on column CARDS_TEMP.CRDISSUEDATE
+  is 'Date/time when the card is issued';
+comment on column CARDS_TEMP.CRDEXPIRYDATE
+  is 'Date/time when the card expires';
+comment on column CARDS_TEMP.CRDBUSINESSRULES
+  is 'Business rules that apply to this card. Available rules are: "0" - the cardholder is not entitled to receive points, "1" - the cardholder is not entitled to receive initial points, "2" - the cardholder will receive 50 initial points on its first use';
+comment on column CARDS_TEMP.CRDCOMMENT
+  is 'General comments';
+alter table CARDS_TEMP
+  add constraint CKC_STSCODE_TEMP
+  check (STSCODE in ('NORMAL', 'DELETED', 'DISABLED', 'PENDING', 'BLOCKED', 'TEST', 'EXPIRED'));
+

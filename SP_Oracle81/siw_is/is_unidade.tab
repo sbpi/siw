@@ -1,0 +1,52 @@
+create table IS_UNIDADE
+(
+  SQ_UNIDADE     NUMBER(10) not null,
+  ADMINISTRATIVA VARCHAR2(1) default 'N' not null,
+  PLANEJAMENTO   VARCHAR2(1) default 'S' not null
+)
+tablespace SYSTEM
+  pctfree 10
+  pctused 40
+  initrans 1
+  maxtrans 255
+  storage
+  (
+    initial 72K
+    next 64K
+    minextents 1
+    maxextents unlimited
+    pctincrease 50
+  );
+comment on table IS_UNIDADE
+  is 'Registra as unidades organizacionais que participam deste módulo.';
+comment on column IS_UNIDADE.SQ_UNIDADE
+  is 'Sequence.';
+comment on column IS_UNIDADE.ADMINISTRATIVA
+  is 'Indica se a unidade deve aparecer na lista de unidades administrativas.';
+comment on column IS_UNIDADE.PLANEJAMENTO
+  is 'Indica se a unidade deve aparecer na lista de unidades de planejamento.';
+alter table IS_UNIDADE
+  add constraint PK_IS_UNIDADE primary key (SQ_UNIDADE)
+  using index 
+  tablespace SYSTEM
+  pctfree 10
+  initrans 2
+  maxtrans 255
+  storage
+  (
+    initial 72K
+    next 64K
+    minextents 1
+    maxextents unlimited
+    pctincrease 50
+  );
+alter table IS_UNIDADE
+  add constraint FK_ISUNI_EOUNI foreign key (SQ_UNIDADE)
+  references SIW.EO_UNIDADE (SQ_UNIDADE);
+alter table IS_UNIDADE
+  add constraint CKC_ADMINISTRATIVA_IS_UNIDA
+  check (ADMINISTRATIVA in ('S','N'));
+alter table IS_UNIDADE
+  add constraint CKC_PLANEJAMENTO_IS_UNIDA
+  check (PLANEJAMENTO in ('S','N'));
+

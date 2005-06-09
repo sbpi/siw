@@ -1,0 +1,183 @@
+create table GP_COLABORADOR
+(
+  SQ_EMPREGO         NUMBER(18) not null,
+  CLIENTE            NUMBER(18) not null,
+  COLABORADOR        NUMBER(18) not null,
+  SQ_POSTO_TRABALHO  NUMBER(18) not null,
+  SQ_PESSOA_ENDERECO NUMBER(18) not null,
+  SQ_FORMACAO        NUMBER(2) not null,
+  SQ_PESSOA_TELEFONE NUMBER(18) not null,
+  SQ_ETNIA           NUMBER(18) not null,
+  SQ_LOCALIZACAO     NUMBER(10) not null,
+  SQ_PESSOA_CONTA    NUMBER(18),
+  SQ_DEFICIENCIA     NUMBER(18),
+  MATRICULA          VARCHAR2(20),
+  CTPS_NUMERO        VARCHAR2(20),
+  CTPS_SERIE         VARCHAR2(5),
+  CTPS_EMISSOR       VARCHAR2(30),
+  CTPS_EMISSAO_DATA  DATE,
+  PIS_PASEP          VARCHAR2(1) default 'I' not null,
+  PISPASEP_NUMERO    VARCHAR2(20),
+  PISPASEP_CADASTR   DATE,
+  TE_NUMERO          VARCHAR2(20),
+  TE_ZONA            VARCHAR2(3),
+  TE_SECAO           VARCHAR2(4),
+  TIPO_SANGUE        VARCHAR2(5),
+  DOADOR_SANGUE      VARCHAR2(1) default 'N' not null,
+  DOADOR_ORGAOS      VARCHAR2(1) default 'N' not null,
+  RESERVISTA_CSM     VARCHAR2(4),
+  RESERVISTA_NUMERO  VARCHAR2(15),
+  OBSERVACOES        VARCHAR2(2000)
+)
+tablespace SYSTEM
+  pctfree 10
+  pctused 40
+  initrans 1
+  maxtrans 255
+  storage
+  (
+    initial 72K
+    next 64K
+    minextents 1
+    maxextents unlimited
+    pctincrease 50
+  );
+comment on table GP_COLABORADOR
+  is 'Armazena dados sobre emprego de colaboradores.';
+comment on column GP_COLABORADOR.SQ_EMPREGO
+  is 'Sequence';
+comment on column GP_COLABORADOR.CLIENTE
+  is 'Código do cliente.';
+comment on column GP_COLABORADOR.COLABORADOR
+  is 'Código do colaborador contratado.';
+comment on column GP_COLABORADOR.SQ_POSTO_TRABALHO
+  is 'Chave de EO_POSTO_TRABALHO.';
+comment on column GP_COLABORADOR.SQ_PESSOA_ENDERECO
+  is 'Chave de CO_PESSOA_ENDERECO.';
+comment on column GP_COLABORADOR.SQ_FORMACAO
+  is 'Chave de CO_FORMACAO.';
+comment on column GP_COLABORADOR.SQ_PESSOA_TELEFONE
+  is 'Chave de CO_PESSOA_TELEFONE.';
+comment on column GP_COLABORADOR.SQ_ETNIA
+  is 'Chave de CO_ETNIA.';
+comment on column GP_COLABORADOR.SQ_LOCALIZACAO
+  is 'Localização de exercício do colaborador.';
+comment on column GP_COLABORADOR.SQ_PESSOA_CONTA
+  is 'Conta bancária para pagamentos.';
+comment on column GP_COLABORADOR.SQ_DEFICIENCIA
+  is 'Chave de CO_DEFICIENCIA.';
+comment on column GP_COLABORADOR.MATRICULA
+  is 'Matrícula do colaborador na organização.';
+comment on column GP_COLABORADOR.CTPS_NUMERO
+  is 'Número da CTPS';
+comment on column GP_COLABORADOR.CTPS_SERIE
+  is 'Série da CTPS.';
+comment on column GP_COLABORADOR.CTPS_EMISSOR
+  is 'Órgão emissor da CTPS.';
+comment on column GP_COLABORADOR.CTPS_EMISSAO_DATA
+  is 'Data de emissão da CTPS.';
+comment on column GP_COLABORADOR.PIS_PASEP
+  is 'Indica se o colaborador é contribuinte do PIS ou do PASEP.';
+comment on column GP_COLABORADOR.PISPASEP_NUMERO
+  is 'Número do PIS/PASEP.';
+comment on column GP_COLABORADOR.PISPASEP_CADASTR
+  is 'Data de cadastramento no PIS/PASEP.';
+comment on column GP_COLABORADOR.TE_NUMERO
+  is 'Número do título de eleitor.';
+comment on column GP_COLABORADOR.TE_ZONA
+  is 'Zona eleitoral.';
+comment on column GP_COLABORADOR.TE_SECAO
+  is 'Seção eleitoral.';
+comment on column GP_COLABORADOR.TIPO_SANGUE
+  is 'Tipo sanguíneo do colaborador.';
+comment on column GP_COLABORADOR.DOADOR_SANGUE
+  is 'Indica se o colaborador é doador de sangue.';
+comment on column GP_COLABORADOR.DOADOR_ORGAOS
+  is 'Indica se o colaborador é doador de órgãos.';
+comment on column GP_COLABORADOR.RESERVISTA_CSM
+  is 'Circunscrição militar do reservista.';
+comment on column GP_COLABORADOR.RESERVISTA_NUMERO
+  is 'Número do certificado de reservista.';
+comment on column GP_COLABORADOR.OBSERVACOES
+  is 'Observações gerais sobre o colaborador.';
+alter table GP_COLABORADOR
+  add constraint PK_GP_COLABORADOR primary key (SQ_EMPREGO)
+  using index 
+  tablespace SYSTEM
+  pctfree 10
+  initrans 2
+  maxtrans 255
+  storage
+  (
+    initial 72K
+    next 64K
+    minextents 1
+    maxextents unlimited
+    pctincrease 50
+  );
+alter table GP_COLABORADOR
+  add constraint FK_GPCOL_CODEF foreign key (SQ_DEFICIENCIA)
+  references CO_DEFICIENCIA (SQ_DEFICIENCIA);
+alter table GP_COLABORADOR
+  add constraint FK_GPCOL_COETI foreign key (SQ_ETNIA)
+  references CO_ETNIA (SQ_ETNIA);
+alter table GP_COLABORADOR
+  add constraint FK_GPCOL_COFOR foreign key (SQ_FORMACAO)
+  references CO_FORMACAO (SQ_FORMACAO);
+alter table GP_COLABORADOR
+  add constraint FK_GPCOL_COPES_CLI foreign key (CLIENTE)
+  references CO_PESSOA (SQ_PESSOA);
+alter table GP_COLABORADOR
+  add constraint FK_GPCOL_COPES_COL foreign key (COLABORADOR)
+  references CO_PESSOA (SQ_PESSOA);
+alter table GP_COLABORADOR
+  add constraint FK_GPCOL_COPESCON foreign key (SQ_PESSOA_CONTA)
+  references CO_PESSOA_CONTA (SQ_PESSOA_CONTA);
+alter table GP_COLABORADOR
+  add constraint FK_GPCOL_COPESEND foreign key (SQ_PESSOA_ENDERECO)
+  references CO_PESSOA_ENDERECO (SQ_PESSOA_ENDERECO);
+alter table GP_COLABORADOR
+  add constraint FK_GPCOL_COPESTEL foreign key (SQ_PESSOA_TELEFONE)
+  references CO_PESSOA_TELEFONE (SQ_PESSOA_TELEFONE);
+alter table GP_COLABORADOR
+  add constraint FK_GPCOL_EOLOC foreign key (SQ_LOCALIZACAO)
+  references EO_LOCALIZACAO (SQ_LOCALIZACAO);
+alter table GP_COLABORADOR
+  add constraint FK_GPCOL_EOPOSTRA foreign key (SQ_POSTO_TRABALHO)
+  references EO_POSTO_TRABALHO (SQ_POSTO_TRABALHO);
+alter table GP_COLABORADOR
+  add constraint CKC_GPCOL_DOAORGAO
+  check (DOADOR_ORGAOS in ('S','N'));
+alter table GP_COLABORADOR
+  add constraint CKC_GPCOL_DOASANG
+  check (DOADOR_SANGUE in ('S','N'));
+alter table GP_COLABORADOR
+  add constraint CKC_GPCOL_PIS
+  check (PIS_PASEP in ('I','A'));
+create unique index IN_GPCOL_FORMACAO on GP_COLABORADOR (CLIENTE,SQ_FORMACAO,SQ_EMPREGO)
+  tablespace SYSTEM
+  pctfree 10
+  initrans 2
+  maxtrans 255
+  storage
+  (
+    initial 72K
+    next 64K
+    minextents 1
+    maxextents unlimited
+    pctincrease 50
+  );
+create unique index IN_GPCOL_POSTO on GP_COLABORADOR (CLIENTE,SQ_POSTO_TRABALHO,SQ_EMPREGO)
+  tablespace SYSTEM
+  pctfree 10
+  initrans 2
+  maxtrans 255
+  storage
+  (
+    initial 72K
+    next 64K
+    minextents 1
+    maxextents unlimited
+    pctincrease 50
+  );
+

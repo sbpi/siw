@@ -1,0 +1,94 @@
+create table LC_FONTE_RECURSO
+(
+  SQ_LCFONTE_RECURSO NUMBER(18) not null,
+  CLIENTE            NUMBER(18) not null,
+  NOME               VARCHAR2(60) not null,
+  DESCRICAO          VARCHAR2(1000),
+  ATIVO              VARCHAR2(1) default 'S' not null,
+  PADRAO             VARCHAR2(1) default 'N' not null,
+  ORCAMENTARIO       VARCHAR2(1) default 'S' not null
+)
+tablespace SYSTEM
+  pctfree 10
+  pctused 40
+  initrans 1
+  maxtrans 255
+  storage
+  (
+    initial 66K
+    minextents 1
+    maxextents unlimited
+  );
+comment on column LC_FONTE_RECURSO.SQ_LCFONTE_RECURSO
+  is 'Sequence.';
+comment on column LC_FONTE_RECURSO.CLIENTE
+  is 'Sequence';
+comment on column LC_FONTE_RECURSO.NOME
+  is 'Nome da fonte de recurso.';
+comment on column LC_FONTE_RECURSO.DESCRICAO
+  is 'Descrição resumida da fonte de recurso.';
+comment on column LC_FONTE_RECURSO.ATIVO
+  is 'Indica se o registro está disponível para seleção.';
+comment on column LC_FONTE_RECURSO.PADRAO
+  is 'Indica se o registro deve ser exibido como opção inicial.';
+comment on column LC_FONTE_RECURSO.ORCAMENTARIO
+  is 'Indica se o recurso é orçamentário (S) ou extra-orçamentário (N).';
+alter table LC_FONTE_RECURSO
+  add constraint PK_LC_FONTE_RECURSO primary key (SQ_LCFONTE_RECURSO)
+  using index 
+  tablespace SYSTEM
+  pctfree 10
+  initrans 2
+  maxtrans 255
+  storage
+  (
+    initial 66K
+    minextents 1
+    maxextents unlimited
+  );
+alter table LC_FONTE_RECURSO
+  add constraint FK_LCFONREC_COPES foreign key (CLIENTE)
+  references CO_PESSOA (SQ_PESSOA);
+alter table LC_FONTE_RECURSO
+  add constraint CKC_ATIVO_LC_FONTE
+  check (ATIVO in ('S','N'));
+alter table LC_FONTE_RECURSO
+  add constraint CKC_ORCAMENTARIO_LC_FONTE
+  check (ORCAMENTARIO in ('S','N'));
+alter table LC_FONTE_RECURSO
+  add constraint CKC_PADRAO_LC_FONTE
+  check (PADRAO in ('S','N'));
+create index IN_LCFONREC_ATIVO on LC_FONTE_RECURSO (CLIENTE,ATIVO,SQ_LCFONTE_RECURSO)
+  tablespace SYSTEM
+  pctfree 10
+  initrans 2
+  maxtrans 255
+  storage
+  (
+    initial 66K
+    minextents 1
+    maxextents unlimited
+  );
+create index IN_LCFONREC_CLIENTE on LC_FONTE_RECURSO (CLIENTE,SQ_LCFONTE_RECURSO)
+  tablespace SYSTEM
+  pctfree 10
+  initrans 2
+  maxtrans 255
+  storage
+  (
+    initial 66K
+    minextents 1
+    maxextents unlimited
+  );
+create unique index IN_LCFONREC_NOME on LC_FONTE_RECURSO (CLIENTE,NOME)
+  tablespace SYSTEM
+  pctfree 10
+  initrans 2
+  maxtrans 255
+  storage
+  (
+    initial 66K
+    minextents 1
+    maxextents unlimited
+  );
+

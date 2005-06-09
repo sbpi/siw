@@ -1,0 +1,142 @@
+create table CV_PESSOA_EXP
+(
+  SQ_CVPESEXP          NUMBER(18) not null,
+  SQ_PESSOA            NUMBER(18) not null,
+  SQ_AREA_CONHECIMENTO NUMBER(10) not null,
+  SQ_CIDADE            NUMBER(18) not null,
+  SQ_EO_TIPO_POSTO     NUMBER(18),
+  SQ_TIPO_VINCULO      NUMBER(18),
+  EMPREGADOR           VARCHAR2(60) not null,
+  ENTRADA              DATE not null,
+  SAIDA                DATE,
+  DURACAO_MES          NUMBER(4),
+  DURACAO_ANO          NUMBER(2),
+  MOTIVO_SAIDA         VARCHAR2(255),
+  ULTIMO_SALARIO       NUMBER(12,2),
+  ATIVIDADES           VARCHAR2(4000)
+)
+tablespace SYSTEM
+  pctfree 10
+  pctused 40
+  initrans 1
+  maxtrans 255
+  storage
+  (
+    initial 66K
+    minextents 1
+    maxextents unlimited
+  );
+comment on column CV_PESSOA_EXP.SQ_CVPESEXP
+  is 'Sequence.';
+comment on column CV_PESSOA_EXP.SQ_PESSOA
+  is 'Sequence';
+comment on column CV_PESSOA_EXP.SQ_AREA_CONHECIMENTO
+  is 'Código Área Conhecimento.';
+comment on column CV_PESSOA_EXP.SQ_CIDADE
+  is 'Sequence';
+comment on column CV_PESSOA_EXP.SQ_EO_TIPO_POSTO
+  is 'Sequence.';
+comment on column CV_PESSOA_EXP.EMPREGADOR
+  is 'Nome da Empresa';
+comment on column CV_PESSOA_EXP.DURACAO_MES
+  is 'Quantidade Duração Mes';
+comment on column CV_PESSOA_EXP.DURACAO_ANO
+  is 'Quantidade Duração  Ano';
+comment on column CV_PESSOA_EXP.ATIVIDADES
+  is 'Descrição da atividades exercidadas durante uma determinanda expereinecia profissional.
+Com enfase nas áreas e nomes de produtos com o qual trabalhou.';
+alter table CV_PESSOA_EXP
+  add constraint PK_CV_PESSOA_EXP primary key (SQ_CVPESEXP)
+  using index 
+  tablespace SYSTEM
+  pctfree 10
+  initrans 2
+  maxtrans 255
+  storage
+  (
+    initial 66K
+    minextents 1
+    maxextents unlimited
+  );
+alter table CV_PESSOA_EXP
+  add constraint FK_CVPESEXP_COARECON foreign key (SQ_AREA_CONHECIMENTO)
+  references CO_AREA_CONHECIMENTO (SQ_AREA_CONHECIMENTO);
+alter table CV_PESSOA_EXP
+  add constraint FK_CVPESEXP_COCID foreign key (SQ_CIDADE)
+  references CO_CIDADE (SQ_CIDADE);
+alter table CV_PESSOA_EXP
+  add constraint FK_CVPESEXP_COTIPVIN foreign key (SQ_TIPO_VINCULO)
+  references CO_TIPO_VINCULO (SQ_TIPO_VINCULO);
+alter table CV_PESSOA_EXP
+  add constraint FK_CVPESEXP_CVPES foreign key (SQ_PESSOA)
+  references CV_PESSOA (SQ_PESSOA);
+alter table CV_PESSOA_EXP
+  add constraint FK_CVPESEXP_EOTIPPOS foreign key (SQ_EO_TIPO_POSTO)
+  references EO_TIPO_POSTO (SQ_EO_TIPO_POSTO);
+create index IN_CVPESEXP_AREA on CV_PESSOA_EXP (SQ_PESSOA,SQ_AREA_CONHECIMENTO)
+  tablespace SYSTEM
+  pctfree 10
+  initrans 2
+  maxtrans 255
+  storage
+  (
+    initial 66K
+    minextents 1
+    maxextents unlimited
+  );
+create index IN_CVPESEXP_DURACAOANO on CV_PESSOA_EXP (DURACAO_ANO,SQ_PESSOA)
+  tablespace SYSTEM
+  pctfree 10
+  initrans 2
+  maxtrans 255
+  storage
+  (
+    initial 66K
+    minextents 1
+    maxextents unlimited
+  );
+create index IN_CVPESEXP_DURACAOMES on CV_PESSOA_EXP (DURACAO_MES,SQ_PESSOA)
+  tablespace SYSTEM
+  pctfree 10
+  initrans 2
+  maxtrans 255
+  storage
+  (
+    initial 66K
+    minextents 1
+    maxextents unlimited
+  );
+create index IN_CVPESEXP_ENTRADA on CV_PESSOA_EXP (SQ_PESSOA,ENTRADA)
+  tablespace SYSTEM
+  pctfree 10
+  initrans 2
+  maxtrans 255
+  storage
+  (
+    initial 66K
+    minextents 1
+    maxextents unlimited
+  );
+create index IN_CVPESEXP_SAIDA on CV_PESSOA_EXP (SQ_PESSOA,SAIDA)
+  tablespace SYSTEM
+  pctfree 10
+  initrans 2
+  maxtrans 255
+  storage
+  (
+    initial 66K
+    minextents 1
+    maxextents unlimited
+  );
+create index IN_CVPESEXP_SQPESSOA on CV_PESSOA_EXP (SQ_PESSOA,SQ_CVPESEXP)
+  tablespace SYSTEM
+  pctfree 10
+  initrans 2
+  maxtrans 255
+  storage
+  (
+    initial 66K
+    minextents 1
+    maxextents unlimited
+  );
+

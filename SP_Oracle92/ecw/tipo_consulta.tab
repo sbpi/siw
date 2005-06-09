@@ -1,0 +1,29 @@
+create table TIPO_CONSULTA
+(
+  TC_CODIGO    NUMBER(10) not null,
+  TC_DESCRICAO VARCHAR2(40)
+)
+tablespace SGE
+  pctfree 10
+  initrans 1
+  maxtrans 255
+  storage
+  (
+    initial 66K
+    minextents 1
+    maxextents unlimited
+  );
+alter table TIPO_CONSULTA
+  add constraint U105_6 primary key (TC_CODIGO)
+  using index 
+  tablespace SGE
+  pctfree 10
+  initrans 2
+  maxtrans 255
+  storage
+  (
+    initial 66K
+    minextents 1
+    maxextents unlimited
+  );
+

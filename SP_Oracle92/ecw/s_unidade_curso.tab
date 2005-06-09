@@ -1,0 +1,35 @@
+create table S_UNIDADE_CURSO
+(
+  CO_UNIDADE    CHAR(5) not null,
+  CO_TIPO_CURSO NUMBER(10) not null
+)
+tablespace SGE
+  pctfree 10
+  initrans 1
+  maxtrans 255
+  storage
+  (
+    initial 66K
+    minextents 1
+    maxextents unlimited
+  );
+alter table S_UNIDADE_CURSO
+  add constraint PK_UNIDCURSO primary key (CO_UNIDADE,CO_TIPO_CURSO)
+  using index 
+  tablespace SGE
+  pctfree 10
+  initrans 2
+  maxtrans 255
+  storage
+  (
+    initial 66K
+    minextents 1
+    maxextents unlimited
+  );
+alter table S_UNIDADE_CURSO
+  add constraint FK_UNIDCURS_CURS foreign key (CO_TIPO_CURSO)
+  references S_TIPO_CURSO (CO_TIPO_CURSO) on delete cascade;
+alter table S_UNIDADE_CURSO
+  add constraint FK_UNIDCURS_UNID foreign key (CO_UNIDADE)
+  references S_UNIDADE (CO_UNIDADE) on delete cascade;
+

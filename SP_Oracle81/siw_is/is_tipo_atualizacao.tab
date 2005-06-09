@@ -1,0 +1,46 @@
+create table IS_TIPO_ATUALIZACAO
+(
+  CD_TIPO_ATUALIZACAO NUMBER(18) not null,
+  NOME                VARCHAR2(100) not null,
+  ATIVO               VARCHAR2(1) default 'S' not null
+)
+tablespace SYSTEM
+  pctfree 10
+  pctused 40
+  initrans 1
+  maxtrans 255
+  storage
+  (
+    initial 72K
+    next 64K
+    minextents 1
+    maxextents unlimited
+    pctincrease 50
+  );
+comment on table IS_TIPO_ATUALIZACAO
+  is 'Define se houve inclusão, exclusão, recuperação ou alteração de dados em determinado registro.';
+comment on column IS_TIPO_ATUALIZACAO.CD_TIPO_ATUALIZACAO
+  is 'Código do Tipo de Atualização';
+comment on column IS_TIPO_ATUALIZACAO.NOME
+  is 'Descrição do Tipo de Atualização';
+comment on column IS_TIPO_ATUALIZACAO.ATIVO
+  is 'Indica se o registro pode ser associado a novos registros.';
+alter table IS_TIPO_ATUALIZACAO
+  add constraint PK_IS_TIPO_ATUALIZACAO primary key (CD_TIPO_ATUALIZACAO)
+  using index 
+  tablespace SYSTEM
+  pctfree 10
+  initrans 2
+  maxtrans 255
+  storage
+  (
+    initial 72K
+    next 64K
+    minextents 1
+    maxextents unlimited
+    pctincrease 50
+  );
+alter table IS_TIPO_ATUALIZACAO
+  add constraint CKC_ISTIPATU_ATIVO
+  check (ATIVO in ('S','N'));
+

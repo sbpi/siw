@@ -1,0 +1,133 @@
+create table IS_META
+(
+  SQ_META                   NUMBER(18) not null,
+  SQ_SIW_SOLICITACAO        NUMBER(18) not null,
+  TITULO                    VARCHAR2(100) not null,
+  DESCRICAO                 VARCHAR2(2000) not null,
+  ORDEM                     NUMBER(3) not null,
+  INICIO_PREVISTO           DATE not null,
+  FIM_PREVISTO              DATE not null,
+  INICIO_REAL               DATE,
+  FIM_REAL                  DATE,
+  PERC_CONCLUSAO            NUMBER(18,2) default 0 not null,
+  ORCAMENTO                 NUMBER(18,2) default 0 not null,
+  ULTIMA_ATUALIZACAO        DATE default SYSDATE not null,
+  SITUACAO_ATUAL            VARCHAR2(4000),
+  QUANTIDADE                NUMBER(18,2) default 0 not null,
+  CUMULATIVA                VARCHAR2(1) default 'N' not null,
+  PROGRAMADA                VARCHAR2(1) default 'N' not null,
+  LOCALIZADOR               VARCHAR2(1) default 'N' not null,
+  EXEQUIVEL                 VARCHAR2(1) default 'S' not null,
+  JUSTIFICATIVA_INEXEQUIVEL VARCHAR2(1000),
+  OUTRAS_MEDIDAS            VARCHAR2(1000),
+  QTD_ANO_1                 NUMBER(18,4),
+  QTD_ANO_2                 NUMBER(18,4),
+  QTD_ANO_3                 NUMBER(18,4),
+  QTD_ANO_4                 NUMBER(18,4),
+  QTD_ANO_5                 NUMBER(18,4),
+  QTD_ANO_6                 NUMBER(18,4),
+  UNIDADE_MEDIDA            VARCHAR2(100),
+  CD_SUBACAO                VARCHAR2(4)
+)
+tablespace SYSTEM
+  pctfree 10
+  pctused 40
+  initrans 1
+  maxtrans 255
+  storage
+  (
+    initial 72K
+    next 64K
+    minextents 1
+    maxextents unlimited
+    pctincrease 50
+  );
+comment on table IS_META
+  is 'Registra as metas físicas programadas para  a ação, complementares às do PPA.';
+comment on column IS_META.SQ_META
+  is 'Sequence';
+comment on column IS_META.SQ_SIW_SOLICITACAO
+  is 'Chave de SIW_SOLICITACAO';
+comment on column IS_META.TITULO
+  is 'Título da meta.';
+comment on column IS_META.DESCRICAO
+  is 'Descrição da meta.';
+comment on column IS_META.ORDEM
+  is 'Ordem de execução da meta.';
+comment on column IS_META.INICIO_PREVISTO
+  is 'Início previsto da meta.';
+comment on column IS_META.FIM_PREVISTO
+  is 'Fim previsto para a meta.';
+comment on column IS_META.INICIO_REAL
+  is 'Início real da meta.';
+comment on column IS_META.FIM_REAL
+  is 'Fim real da meta.';
+comment on column IS_META.PERC_CONCLUSAO
+  is 'Percentual de conclusão da meta.';
+comment on column IS_META.ORCAMENTO
+  is 'Orçamento disponível para cumprimento da meta.';
+comment on column IS_META.ULTIMA_ATUALIZACAO
+  is 'Registra a data da criação ou última atualização da meta.';
+comment on column IS_META.SITUACAO_ATUAL
+  is 'Texto detalhando a situação atual da meta.';
+comment on column IS_META.QUANTIDADE
+  is 'Quantidade prevista para a unidade de medida informada.';
+comment on column IS_META.CUMULATIVA
+  is 'Indica se a realização da meta é cumulativa ou não.';
+comment on column IS_META.PROGRAMADA
+  is 'Indica se a meta está vinculada ao planejamento estratégico.';
+comment on column IS_META.LOCALIZADOR
+  is 'Indica se a meta deve ser acompanhada por localização ou a nível nacional.';
+comment on column IS_META.EXEQUIVEL
+  is 'Indica se a meta está avaliada como passível de cumprimento ou não.';
+comment on column IS_META.JUSTIFICATIVA_INEXEQUIVEL
+  is 'Motivos que justificam o não cumprimento da meta.';
+comment on column IS_META.OUTRAS_MEDIDAS
+  is 'Descrição das medidas necessárias ao cumprimento da meta.';
+comment on column IS_META.QTD_ANO_1
+  is 'Estimativas de Produtos Previstos para o primeiro Ano';
+comment on column IS_META.QTD_ANO_2
+  is 'Estimativas de Produtos Previstos para o segundo Ano';
+comment on column IS_META.QTD_ANO_3
+  is 'Estimativas de Produtos Previstos para o terceiro Ano';
+comment on column IS_META.QTD_ANO_4
+  is 'Estimativas de Produtos Previstos para o Quarto Ano';
+comment on column IS_META.QTD_ANO_5
+  is 'Estimativas de Produtos Previstos para o Quinto Ano';
+comment on column IS_META.QTD_ANO_6
+  is 'Estimativas de Produtos Previstos para o Sexto Ano';
+comment on column IS_META.UNIDADE_MEDIDA
+  is 'Unidade de medida a ser realizada.';
+comment on column IS_META.CD_SUBACAO
+  is 'Indica o localizador da meta. O resto da chave está em IS_ACAO, recuperada a partir de SQ_SIW_SOLICITACAO.';
+alter table IS_META
+  add constraint PK_IS_META primary key (SQ_META)
+  using index 
+  tablespace SYSTEM
+  pctfree 10
+  initrans 2
+  maxtrans 255
+  storage
+  (
+    initial 72K
+    next 64K
+    minextents 1
+    maxextents unlimited
+    pctincrease 50
+  );
+alter table IS_META
+  add constraint FK_ISMET_ISACA foreign key (SQ_SIW_SOLICITACAO)
+  references IS_ACAO (SQ_SIW_SOLICITACAO);
+alter table IS_META
+  add constraint CKC_CUMULATIVA_IS_META
+  check (CUMULATIVA in ('S','N'));
+alter table IS_META
+  add constraint CKC_EXEQUIVEL_IS_META
+  check (EXEQUIVEL in ('S','N'));
+alter table IS_META
+  add constraint CKC_LOCALIZADOR_IS_META
+  check (LOCALIZADOR in ('S','N'));
+alter table IS_META
+  add constraint CKC_PROGRAMADA_IS_META
+  check (PROGRAMADA in ('S','N'));
+

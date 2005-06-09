@@ -1,0 +1,49 @@
+create table IS_SIG_PRODUTO
+(
+  CD_PRODUTO    NUMBER(18) not null,
+  NOME          VARCHAR2(80) not null,
+  ATIVO         VARCHAR2(1) default 'S' not null,
+  FLAG_INCLUSAO DATE default sysdate not null
+)
+tablespace SYSTEM
+  pctfree 10
+  pctused 40
+  initrans 1
+  maxtrans 255
+  storage
+  (
+    initial 72K
+    next 64K
+    minextents 1
+    maxextents unlimited
+    pctincrease 50
+  );
+comment on table IS_SIG_PRODUTO
+  is 'Bem ou serviço que resulta da ação';
+comment on column IS_SIG_PRODUTO.CD_PRODUTO
+  is 'Código do Produto';
+comment on column IS_SIG_PRODUTO.NOME
+  is 'Descrição do Produto';
+comment on column IS_SIG_PRODUTO.ATIVO
+  is 'Define o status (ativo / desativo)';
+comment on column IS_SIG_PRODUTO.FLAG_INCLUSAO
+  is 'Data de inclusão do registro';
+alter table IS_SIG_PRODUTO
+  add constraint PK_IS_SIG_PRODUTO primary key (CD_PRODUTO)
+  using index 
+  tablespace SYSTEM
+  pctfree 10
+  initrans 2
+  maxtrans 255
+  storage
+  (
+    initial 72K
+    next 64K
+    minextents 1
+    maxextents unlimited
+    pctincrease 50
+  );
+alter table IS_SIG_PRODUTO
+  add constraint CKC_ISSIGPRO_ATIVO
+  check (ATIVO in ('S','N'));
+

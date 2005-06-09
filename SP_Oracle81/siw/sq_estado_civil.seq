@@ -1,0 +1,7 @@
+create sequence SQ_ESTADO_CIVIL
+minvalue 1
+maxvalue 999999999999999999999999999
+start with 6
+increment by 1
+cache 20;
+

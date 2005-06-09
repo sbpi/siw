@@ -1,0 +1,45 @@
+create table IS_REGIAO
+(
+  CD_REGIAO            VARCHAR2(2) not null,
+  NOME                 VARCHAR2(120) not null,
+  UF                   VARCHAR2(20) not null,
+  CD_REGIAO_GEOGRAFICA VARCHAR2(2) not null,
+  FLAG_INCLUSAO        DATE default sysdate not null
+)
+tablespace SYSTEM
+  pctfree 10
+  pctused 40
+  initrans 1
+  maxtrans 255
+  storage
+  (
+    initial 66K
+    minextents 1
+    maxextents unlimited
+  );
+comment on table IS_REGIAO
+  is 'Região geográfica';
+comment on column IS_REGIAO.CD_REGIAO
+  is 'Código da Região';
+comment on column IS_REGIAO.NOME
+  is 'Descrição da Região';
+comment on column IS_REGIAO.UF
+  is 'Unidade Federação';
+comment on column IS_REGIAO.CD_REGIAO_GEOGRAFICA
+  is 'Código da Região geográfica';
+comment on column IS_REGIAO.FLAG_INCLUSAO
+  is 'Data de inclusão do registro';
+alter table IS_REGIAO
+  add constraint PK_IS_REGIAO primary key (CD_REGIAO)
+  using index 
+  tablespace SYSTEM
+  pctfree 10
+  initrans 2
+  maxtrans 255
+  storage
+  (
+    initial 66K
+    minextents 1
+    maxextents unlimited
+  );
+

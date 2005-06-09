@@ -1,0 +1,30 @@
+create table HOSTEL_SP
+(
+  NROCARTEIRA          VARCHAR2(100),
+  DATAVALIDADECARTEIRA DATE,
+  NOME                 VARCHAR2(100),
+  SEXO                 VARCHAR2(2),
+  CATEGORIA            VARCHAR2(4)
+)
+tablespace USERS
+  pctfree 10
+  initrans 1
+  maxtrans 255
+  storage
+  (
+    initial 66K
+    minextents 1
+    maxextents unlimited
+  );
+create index Nome on HOSTEL_SP (NOME)
+  tablespace USERS
+  pctfree 10
+  initrans 2
+  maxtrans 255
+  storage
+  (
+    initial 66K
+    minextents 1
+    maxextents unlimited
+  );
+

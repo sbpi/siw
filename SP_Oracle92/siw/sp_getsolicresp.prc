@@ -1,0 +1,195 @@
+create or replace procedure SP_GetSolicResp
+   (p_chave        in number   default null,
+    p_tramite      in number   default null,
+    p_fase         in varchar2 default null,
+    p_restricao    in varchar2,
+    p_result       out sys_refcursor) is
+    
+    l_item       varchar2(18);
+    l_fase       varchar2(200) := p_fase ||',';
+    x_fase       varchar2(200) := '';
+begin
+   If p_fase is not null Then
+      Loop
+         l_item  := Trim(substr(l_fase,1,Instr(l_fase,',')-1));
+         If Length(l_item) > 0 Then
+            x_fase := x_fase||','''||to_number(l_item)||'''';
+         End If;
+         l_fase := substr(l_fase,Instr(l_fase,',')+1,200);
+         Exit when l_fase is null;
+      End Loop;
+      x_fase := substr(x_fase,2,200);
+   End If;
+
+   If p_restricao = 'GENERICO' Then
+      -- Recupera as demandas que o usuário pode ver
+      open p_result for 
+         select distinct d.sq_pessoa, d.nome, d.nome_resumido,
+                e.email, e.ativo ativo_usuario,
+                f.sigla sg_unidade
+           from siw_solicitacao                       a
+                inner       join siw_solic_log        b on (a.sq_siw_solicitacao = b.sq_siw_solicitacao)
+                  inner     join siw_tramite          c on (b.sq_siw_tramite     = c.sq_siw_tramite)
+                  inner     join co_pessoa            d on (b.sq_pessoa          = d.sq_pessoa)
+                    inner   join sg_autenticacao      e on (d.sq_pessoa          = e.sq_pessoa)
+                      inner join eo_unidade           f on (e.sq_unidade         = f.sq_unidade)
+          where b.sq_siw_solicitacao = p_chave
+            and e.ativo              = 'S'
+            and (p_fase              is null or (p_fase        is not null and InStr(x_fase,''''||b.sq_siw_tramite||'''') > 0))
+         UNION
+         select distinct b.sq_pessoa, b.nome, b.nome_resumido,
+                c.email, c.ativo ativo_usuario,
+                d.sigla sg_unidade
+           from siw_solicitacao                     a
+                inner     join co_pessoa            b on (a.solicitante        = b.sq_pessoa)
+                  inner   join sg_autenticacao      c on (b.sq_pessoa          = c.sq_pessoa)
+                    inner join eo_unidade           d on (c.sq_unidade         = d.sq_unidade)
+          where a.sq_siw_solicitacao = p_chave
+            and c.ativo              = 'S'
+         UNION
+         select distinct c.sq_pessoa, c.nome, c.nome_resumido,
+                d.email, d.ativo ativo_usuario,
+                e.sigla sg_unidade
+           from siw_solicitacao                       a
+                inner       join eo_unidade_resp      b on (a.sq_unidade         = b.sq_unidade)
+                inner       join co_pessoa            c on (b.sq_pessoa          = c.sq_pessoa)
+                  inner     join sg_autenticacao      d on (c.sq_pessoa          = d.sq_pessoa)
+                      inner join eo_unidade           e on (d.sq_unidade         = e.sq_unidade)
+          where a.sq_siw_solicitacao = p_chave
+            and b.tipo_respons       = 'T'
+            and b.fim                is null
+            and d.ativo              = 'S'
+         UNION
+         select distinct c.sq_pessoa, c.nome, c.nome_resumido,
+                d.email, d.ativo ativo_usuario,
+                e.sigla sg_unidade
+           from siw_solicitacao                       a
+                inner       join eo_unidade_resp      b on (a.sq_unidade         = b.sq_unidade)
+                inner       join co_pessoa            c on (b.sq_pessoa          = c.sq_pessoa)
+                  inner     join sg_autenticacao      d on (c.sq_pessoa          = d.sq_pessoa)
+                      inner join eo_unidade           e on (d.sq_unidade         = e.sq_unidade)
+          where a.sq_siw_solicitacao = p_chave
+            and b.tipo_respons       = 'S'
+            and d.ativo              = 'S'
+            and b.fim                is null;
+   ElsIf p_restricao = 'CADASTRAMENTO' Then
+      -- Recupera as demandas que o usuário pode ver
+      open p_result for 
+         select distinct d.sq_pessoa, d.nome, d.nome_resumido,
+                e.email, e.ativo ativo_usuario,
+                f.sigla sg_unidade
+           from siw_solicitacao                       a
+                inner       join siw_solic_log        b on (a.sq_siw_solicitacao = b.sq_siw_solicitacao)
+                  inner     join siw_tramite          c on (b.sq_siw_tramite     = c.sq_siw_tramite)
+                  inner     join co_pessoa            d on (b.sq_pessoa          = d.sq_pessoa)
+                    inner   join sg_autenticacao      e on (d.sq_pessoa          = e.sq_pessoa)
+                      inner join eo_unidade           f on (e.sq_unidade         = f.sq_unidade)
+          where b.sq_siw_solicitacao = p_chave
+            and c.sigla              = 'CI'
+            and e.ativo              = 'S'
+         UNION
+         select distinct b.sq_pessoa, b.nome, b.nome_resumido,
+                c.email, c.ativo ativo_usuario,
+                d.sigla sg_unidade
+           from siw_solicitacao                     a
+                inner     join co_pessoa            b on (a.solicitante        = b.sq_pessoa)
+                  inner   join sg_autenticacao      c on (b.sq_pessoa          = c.sq_pessoa)
+                    inner join eo_unidade           d on (c.sq_unidade         = d.sq_unidade)
+          where a.sq_siw_solicitacao = p_chave
+            and c.ativo              = 'S'
+         UNION
+         select distinct c.sq_pessoa, c.nome, c.nome_resumido,
+                d.email, d.ativo ativo_usuario,
+                e.sigla sg_unidade
+           from siw_solicitacao                       a
+                inner       join eo_unidade_resp      b on (a.sq_unidade         = b.sq_unidade)
+                inner       join co_pessoa            c on (b.sq_pessoa          = c.sq_pessoa)
+                  inner     join sg_autenticacao      d on (c.sq_pessoa          = d.sq_pessoa)
+                      inner join eo_unidade           e on (d.sq_unidade         = e.sq_unidade)
+          where a.sq_siw_solicitacao = p_chave
+            and b.tipo_respons       = 'T'
+            and b.fim                is null
+            and d.ativo              = 'S'
+         UNION
+         select distinct c.sq_pessoa, c.nome, c.nome_resumido,
+                d.email, d.ativo ativo_usuario,
+                e.sigla sg_unidade
+           from siw_solicitacao                       a
+                inner       join eo_unidade_resp      b on (a.sq_unidade         = b.sq_unidade)
+                inner       join co_pessoa            c on (b.sq_pessoa          = c.sq_pessoa)
+                  inner     join sg_autenticacao      d on (c.sq_pessoa          = d.sq_pessoa)
+                      inner join eo_unidade           e on (d.sq_unidade         = e.sq_unidade)
+          where a.sq_siw_solicitacao = p_chave
+            and b.tipo_respons       = 'S'
+            and d.ativo              = 'S'
+            and b.fim                is null;
+   ElsIf p_restricao = 'USUARIOS' Then
+      -- Recupera as demandas que o usuário pode ver
+      open p_result for 
+         select distinct d.sq_pessoa, d.nome, d.nome_resumido,
+                e.email, e.ativo ativo_usuario,
+                f.sigla sg_unidade
+           from siw_tramite                           c
+                inner       join sg_tramite_pessoa    g on (c.sq_siw_tramite     = g.sq_siw_tramite)
+                  inner     join co_pessoa            d on (g.sq_pessoa          = d.sq_pessoa)
+                    inner   join sg_autenticacao      e on (d.sq_pessoa          = e.sq_pessoa and
+                                                            e.ativo              = 'S'
+                                                           )
+                      inner join eo_unidade           f on (e.sq_unidade         = f.sq_unidade and
+                                                            g.sq_pessoa_endereco = f.sq_pessoa_endereco
+                                                           )
+          where c.sq_siw_tramite     = p_tramite
+            and c.chefia_imediata    in ('U','N')
+         UNION
+         select distinct d.sq_pessoa, d.nome, d.nome_resumido,
+                e.email, e.ativo ativo_usuario,
+                f.sigla sg_unidade
+           from siw_tramite                             c
+                inner         join siw_menu             a on (c.sq_menu            = a.sq_menu)
+                  inner       join sg_pessoa_modulo     g on (a.sq_modulo          = g.sq_modulo and
+                                                              a.sq_pessoa          = g.cliente
+                                                             )
+                    inner     join co_pessoa            d on (g.sq_pessoa          = d.sq_pessoa)
+                      inner   join sg_autenticacao      e on (d.sq_pessoa          = e.sq_pessoa and
+                                                              e.ativo              = 'S'
+                                                             )
+                        inner join eo_unidade           f on (e.sq_unidade         = f.sq_unidade and
+                                                              g.sq_pessoa_endereco = f.sq_pessoa_endereco
+                                                             )
+          where c.sq_siw_tramite     = p_tramite
+            and c.sigla              = 'CI'
+         UNION
+         select distinct 
+                case g.chefia_imediata when 'U' then c.sq_pessoa     else i.sq_pessoa     end sq_pessoa, 
+                case g.chefia_imediata when 'U' then c.nome          else i.nome          end nome, 
+                case g.chefia_imediata when 'U' then c.nome_resumido else i.nome_resumido end nome_resumido,
+                case g.chefia_imediata when 'U' then d.email         else j.email         end email, 
+                case g.chefia_imediata when 'U' then d.ativo         else j.ativo         end ativo_usuario,
+                case g.chefia_imediata when 'U' then e.sigla         else k.sigla         end sg_unidade
+           from siw_tramite                           g
+                inner       join siw_menu             f on (g.sq_menu            = f.sq_menu)
+                left outer  join eo_unidade_resp      b on (f.sq_unid_executora  = b.sq_unidade and
+                                                            b.fim                is null
+                                                           )
+                left outer  join co_pessoa            c on (b.sq_pessoa          = c.sq_pessoa)
+                  left outer join sg_autenticacao     d on (c.sq_pessoa          = d.sq_pessoa and
+                                                            d.ativo              = 'S'
+                                                           )
+                    left outer join eo_unidade        e on (d.sq_unidade         = e.sq_unidade),
+                siw_solicitacao                       a
+                left outer  join eo_unidade_resp      h on (a.sq_unidade         = h.sq_unidade and
+                                                            h.fim                is null
+                                                           )
+                left outer  join co_pessoa            i on (h.sq_pessoa          = i.sq_pessoa)
+                  left outer join sg_autenticacao     j on (i.sq_pessoa          = j.sq_pessoa and
+                                                            j.ativo              = 'S'
+                                                           )
+                      left outer join eo_unidade      k on (j.sq_unidade         = k.sq_unidade)
+          where a.sq_siw_solicitacao = p_chave
+            and g.chefia_imediata    in ('S','U')
+            and g.sq_siw_tramite     = p_tramite
+            and b.fim                is null;
+   End If;
+end SP_GetSolicResp;
+/
+

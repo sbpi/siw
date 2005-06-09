@@ -1,0 +1,90 @@
+create table EO_TIPO_POSTO
+(
+  SQ_EO_TIPO_POSTO NUMBER(18) not null,
+  CLIENTE          NUMBER(18) not null,
+  NOME             VARCHAR2(30) not null,
+  ATIVO            VARCHAR2(1) default 'S' not null,
+  PADRAO           VARCHAR2(1) default 'N' not null,
+  SIGLA            VARCHAR2(5) not null,
+  DESCRICAO        VARCHAR2(200) not null
+)
+tablespace SYSTEM
+  pctfree 10
+  pctused 40
+  initrans 1
+  maxtrans 255
+  storage
+  (
+    initial 66K
+    minextents 1
+    maxextents unlimited
+  );
+comment on table EO_TIPO_POSTO
+  is 'Registra os tipos de postos de trabalho, indicando se são operacionais, gerenciais ou diretivos.';
+comment on column EO_TIPO_POSTO.SQ_EO_TIPO_POSTO
+  is 'Sequence.';
+comment on column EO_TIPO_POSTO.CLIENTE
+  is 'Código do cliente.';
+comment on column EO_TIPO_POSTO.NOME
+  is 'Nome do tipo de posto de trabalho.';
+alter table EO_TIPO_POSTO
+  add constraint PK_EO_TIPO_POSTO primary key (SQ_EO_TIPO_POSTO)
+  using index 
+  tablespace SYSTEM
+  pctfree 10
+  initrans 2
+  maxtrans 255
+  storage
+  (
+    initial 66K
+    minextents 1
+    maxextents unlimited
+  );
+alter table EO_TIPO_POSTO
+  add constraint FK_EOTIPPOS_COPES foreign key (CLIENTE)
+  references CO_PESSOA (SQ_PESSOA);
+create unique index IN_EOTIPPOS_ATIVO on EO_TIPO_POSTO (ATIVO,SQ_EO_TIPO_POSTO)
+  tablespace SYSTEM
+  pctfree 10
+  initrans 2
+  maxtrans 255
+  storage
+  (
+    initial 66K
+    minextents 1
+    maxextents unlimited
+  );
+create unique index IN_EOTIPPOS_CLI on EO_TIPO_POSTO (CLIENTE,SQ_EO_TIPO_POSTO)
+  tablespace SYSTEM
+  pctfree 10
+  initrans 2
+  maxtrans 255
+  storage
+  (
+    initial 66K
+    minextents 1
+    maxextents unlimited
+  );
+create unique index IN_EOTIPPOS_NOME on EO_TIPO_POSTO (NOME,CLIENTE)
+  tablespace SYSTEM
+  pctfree 10
+  initrans 2
+  maxtrans 255
+  storage
+  (
+    initial 66K
+    minextents 1
+    maxextents unlimited
+  );
+create index IN_EOTIPPOS_PADRAO on EO_TIPO_POSTO (PADRAO,CLIENTE)
+  tablespace SYSTEM
+  pctfree 10
+  initrans 2
+  maxtrans 255
+  storage
+  (
+    initial 66K
+    minextents 1
+    maxextents unlimited
+  );
+

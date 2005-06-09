@@ -1,0 +1,56 @@
+create table GD_DEMANDA_ENVOLV
+(
+  SQ_UNIDADE         NUMBER(10) not null,
+  SQ_SIW_SOLICITACAO NUMBER(18) not null,
+  PAPEL              VARCHAR2(2000) not null
+)
+tablespace SYSTEM
+  pctfree 10
+  pctused 40
+  initrans 1
+  maxtrans 255
+  storage
+  (
+    initial 66K
+    minextents 1
+    maxextents unlimited
+  );
+comment on table GD_DEMANDA_ENVOLV
+  is 'Registra as unidades envolvidas no atendimento da demanda.';
+comment on column GD_DEMANDA_ENVOLV.SQ_UNIDADE
+  is 'Chave de E0_UNIDADE.';
+comment on column GD_DEMANDA_ENVOLV.SQ_SIW_SOLICITACAO
+  is 'Chave de SIW_SOLICITACAO.';
+comment on column GD_DEMANDA_ENVOLV.PAPEL
+  is 'Papel cumprido pela unidade envolvida.';
+alter table GD_DEMANDA_ENVOLV
+  add constraint PK_GD_DEMANDA_ENVOLV primary key (SQ_UNIDADE,SQ_SIW_SOLICITACAO)
+  using index 
+  tablespace SYSTEM
+  pctfree 10
+  initrans 2
+  maxtrans 255
+  storage
+  (
+    initial 66K
+    minextents 1
+    maxextents unlimited
+  );
+alter table GD_DEMANDA_ENVOLV
+  add constraint FK_GDDEMENV_EOUNI foreign key (SQ_UNIDADE)
+  references EO_UNIDADE (SQ_UNIDADE);
+alter table GD_DEMANDA_ENVOLV
+  add constraint FK_GDDEMENV_GDDEM foreign key (SQ_SIW_SOLICITACAO)
+  references GD_DEMANDA (SQ_SIW_SOLICITACAO);
+create index IN_GDDEMENV_INVERSA on GD_DEMANDA_ENVOLV (SQ_UNIDADE)
+  tablespace SYSTEM
+  pctfree 10
+  initrans 2
+  maxtrans 255
+  storage
+  (
+    initial 66K
+    minextents 1
+    maxextents unlimited
+  );
+

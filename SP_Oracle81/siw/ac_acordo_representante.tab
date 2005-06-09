@@ -1,0 +1,59 @@
+create table AC_ACORDO_REPRESENTANTE
+(
+  SQ_PESSOA          NUMBER(18) not null,
+  SQ_SIW_SOLICITACAO NUMBER(18) not null
+)
+tablespace SYSTEM
+  pctfree 10
+  pctused 40
+  initrans 1
+  maxtrans 255
+  storage
+  (
+    initial 72K
+    next 64K
+    minextents 1
+    maxextents unlimited
+    pctincrease 50
+  );
+comment on table AC_ACORDO_REPRESENTANTE
+  is 'Registra os representantes da outra parte no acordo. Essas pessoas poderão acessar o sistema para consultar o andamento de acordos, projetos, contratos e outros itens ligados ao acordo.';
+comment on column AC_ACORDO_REPRESENTANTE.SQ_PESSOA
+  is 'Chave de SG_AUTENTICACAO, indicando o usuário do sistema.';
+comment on column AC_ACORDO_REPRESENTANTE.SQ_SIW_SOLICITACAO
+  is 'Chave de AC_ACORDO, indicando o acordo.';
+alter table AC_ACORDO_REPRESENTANTE
+  add constraint PK_AC_ACORDO_REPRESENTANTE primary key (SQ_PESSOA,SQ_SIW_SOLICITACAO)
+  using index 
+  tablespace SYSTEM
+  pctfree 10
+  initrans 2
+  maxtrans 255
+  storage
+  (
+    initial 72K
+    next 64K
+    minextents 1
+    maxextents unlimited
+    pctincrease 50
+  );
+alter table AC_ACORDO_REPRESENTANTE
+  add constraint FK_ACACOREP_ACACO foreign key (SQ_SIW_SOLICITACAO)
+  references AC_ACORDO (SQ_SIW_SOLICITACAO);
+alter table AC_ACORDO_REPRESENTANTE
+  add constraint FK_ACACOREP_SGAUT foreign key (SQ_PESSOA)
+  references SG_AUTENTICACAO (SQ_PESSOA);
+create unique index IN_ACACOREP_INV on AC_ACORDO_REPRESENTANTE (SQ_SIW_SOLICITACAO,SQ_PESSOA)
+  tablespace SYSTEM
+  pctfree 10
+  initrans 2
+  maxtrans 255
+  storage
+  (
+    initial 72K
+    next 64K
+    minextents 1
+    maxextents unlimited
+    pctincrease 50
+  );
+

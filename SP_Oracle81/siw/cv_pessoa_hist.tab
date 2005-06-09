@@ -1,0 +1,104 @@
+create table CV_PESSOA_HIST
+(
+  SQ_PESSOA                    NUMBER(18) not null,
+  RESIDENCIA_OUTRO_PAIS        VARCHAR2(1) default 'N' not null,
+  MUDANCA_NACIONALIDADE        VARCHAR2(1) default 'N' not null,
+  MUDANCA_NACIONALIDADE_MEDIDA VARCHAR2(255),
+  EMPREGO_SEIS_MESES           VARCHAR2(1) default 'N' not null,
+  IMPEDIMENTO_VIAGEM_AEREA     VARCHAR2(1) default 'N' not null,
+  OBJECAO_INFORMACOES          VARCHAR2(1) default 'N' not null,
+  PRISAO_ENVOLV_JUSTICA        VARCHAR2(1) default 'N' not null,
+  MOTIVO_PRISAO                VARCHAR2(255),
+  FATO_RELEVANTE_VIDA          VARCHAR2(255),
+  SERVIDOR_PUBLICO             VARCHAR2(1) default 'N' not null,
+  SERVICO_PUBLICO_INICIO       DATE,
+  SERVICO_PUBLICO_FIM          DATE,
+  ATIVIDADES_CIVICAS           VARCHAR2(255),
+  FAMILIAR                     VARCHAR2(1) default 'N' not null
+)
+tablespace SYSTEM
+  pctfree 10
+  pctused 40
+  initrans 1
+  maxtrans 255
+  storage
+  (
+    initial 72K
+    next 64K
+    minextents 1
+    maxextents unlimited
+    pctincrease 50
+  );
+comment on column CV_PESSOA_HIST.SQ_PESSOA
+  is 'Sequence';
+comment on column CV_PESSOA_HIST.RESIDENCIA_OUTRO_PAIS
+  is 'Mantém residencia permanente outro pais';
+comment on column CV_PESSOA_HIST.MUDANCA_NACIONALIDADE
+  is 'Tomou medida para mudança de nacionalidade';
+comment on column CV_PESSOA_HIST.MUDANCA_NACIONALIDADE_MEDIDA
+  is 'Medida para mudança de nacionalidade';
+comment on column CV_PESSOA_HIST.EMPREGO_SEIS_MESES
+  is 'Aceita emprego até 6 meses';
+comment on column CV_PESSOA_HIST.IMPEDIMENTO_VIAGEM_AEREA
+  is 'Tam restrição a viagens aéreas';
+comment on column CV_PESSOA_HIST.OBJECAO_INFORMACOES
+  is 'Tem objeção quanto a solicitacao de informações suas';
+comment on column CV_PESSOA_HIST.PRISAO_ENVOLV_JUSTICA
+  is 'Indicador de prisão ou envolvimento com a justiça';
+comment on column CV_PESSOA_HIST.MOTIVO_PRISAO
+  is 'descrição do motivo da prisão';
+comment on column CV_PESSOA_HIST.FATO_RELEVANTE_VIDA
+  is 'Fato relevante na vida';
+comment on column CV_PESSOA_HIST.SERVIDOR_PUBLICO
+  is 'É servidor público?';
+comment on column CV_PESSOA_HIST.SERVICO_PUBLICO_INICIO
+  is 'Data Início de Serviço Público';
+comment on column CV_PESSOA_HIST.SERVICO_PUBLICO_FIM
+  is 'Data Fim de Serviço Público';
+comment on column CV_PESSOA_HIST.ATIVIDADES_CIVICAS
+  is 'Atividades em Assuntos Cívicos Públicos ou Internacionais';
+comment on column CV_PESSOA_HIST.FAMILIAR
+  is 'Indica se a pessoa tem familiar trabalhando na ONU.';
+alter table CV_PESSOA_HIST
+  add constraint PK_CV_PESSOA_HIST primary key (SQ_PESSOA)
+  using index 
+  tablespace SYSTEM
+  pctfree 10
+  initrans 2
+  maxtrans 255
+  storage
+  (
+    initial 72K
+    next 64K
+    minextents 1
+    maxextents unlimited
+    pctincrease 50
+  );
+alter table CV_PESSOA_HIST
+  add constraint FK_CVPESHIS_CVPES foreign key (SQ_PESSOA)
+  references CV_PESSOA (SQ_PESSOA);
+alter table CV_PESSOA_HIST
+  add constraint CKC_EMPREGO_SEIS_MESE_CV_PESSO
+  check (EMPREGO_SEIS_MESES in ('S','N'));
+alter table CV_PESSOA_HIST
+  add constraint CKC_FAMILIAR_CV_PESSO
+  check (FAMILIAR in ('S','N'));
+alter table CV_PESSOA_HIST
+  add constraint CKC_IMPEDIMENTO_VIAGE_CV_PESSO
+  check (IMPEDIMENTO_VIAGEM_AEREA in ('S','N'));
+alter table CV_PESSOA_HIST
+  add constraint CKC_MUDNAC_CVPES
+  check (MUDANCA_NACIONALIDADE in ('S','N'));
+alter table CV_PESSOA_HIST
+  add constraint CKC_OBJECAO_INFORMACO_CV_PESSO
+  check (OBJECAO_INFORMACOES in ('S','N'));
+alter table CV_PESSOA_HIST
+  add constraint CKC_PRISAO_ENVOLV_JUS_CV_PESSO
+  check (PRISAO_ENVOLV_JUSTICA in ('S','N'));
+alter table CV_PESSOA_HIST
+  add constraint CKC_RESIDENCIA_OUTRO__CV_PESSO
+  check (RESIDENCIA_OUTRO_PAIS in ('S','N'));
+alter table CV_PESSOA_HIST
+  add constraint CKC_SERVIDOR_PUBLICO_CV_PESSO
+  check (SERVIDOR_PUBLICO in ('S','N'));
+

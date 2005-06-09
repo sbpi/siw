@@ -1,0 +1,74 @@
+create table S_UNIDADE
+(
+  CO_UNIDADE        CHAR(5) not null,
+  DS_UNIDADE        CHAR(60),
+  CO_SEQ_CIDADE     NUMBER(10),
+  TP_ESCOLA         CHAR(1),
+  DS_NOME_RELATORIO CHAR(60),
+  DS_VINHETA        CHAR(90),
+  DS_ENDERECO       CHAR(90),
+  DS_BAIRRO         VARCHAR2(20),
+  NU_CEP            CHAR(9),
+  DS_CIDADE         VARCHAR2(30),
+  DS_UF_CIDADE      CHAR(2),
+  NU_TELEFONE_1     VARCHAR2(14),
+  NU_TELEFONE_2     VARCHAR2(14),
+  NU_FAX            VARCHAR2(14),
+  DS_E_MAIL         VARCHAR2(90),
+  DS_PAGINA_WEB     VARCHAR2(90),
+  DS_ATO            VARCHAR2(10),
+  DS_NUMERO         VARCHAR2(6),
+  DT_DATA           DATE,
+  DS_ORGAO          VARCHAR2(30),
+  DS_GRADE_CURRIC   VARCHAR2(10),
+  NU_CGC_ESCOLA     VARCHAR2(18),
+  NU_INSCR_ESCOLA   VARCHAR2(30),
+  DS_DIRETOR        VARCHAR2(40),
+  DS_SECRETARIO     VARCHAR2(40),
+  TP_HISTORICO      VARCHAR2(7),
+  FO_SIMBOLO        BLOB,
+  DS_GRE            VARCHAR2(70),
+  DS_RURAL          CHAR(1),
+  TP_INCLUSIVA      CHAR(1),
+  DT_ATUALIZACAO    DATE,
+  NU_REMESSA        VARCHAR2(6),
+  NU_ALUNOSATIVOS   NUMBER(10),
+  NU_ATIVOS         NUMBER(10),
+  NU_MATRICULADOS   NUMBER(10),
+  NU_ALUNOSEJA1     NUMBER(10),
+  NU_ALUNOSEJA2     NUMBER(10),
+  NU_EJA1_ESCOLA    NUMBER(10),
+  NU_EJA2_ESCOLA    NUMBER(10),
+  NU_MAT_ESCOLA     NUMBER(10),
+  NU_SEMTURMA       NUMBER(10)
+)
+tablespace SGE
+  pctfree 10
+  initrans 1
+  maxtrans 255
+  storage
+  (
+    initial 66K
+    minextents 1
+    maxextents unlimited
+  );
+alter table S_UNIDADE
+  add constraint U179_91 primary key (CO_UNIDADE)
+  using index 
+  tablespace SGE
+  pctfree 10
+  initrans 2
+  maxtrans 255
+  storage
+  (
+    initial 66K
+    minextents 1
+    maxextents unlimited
+  );
+alter table S_UNIDADE
+  add constraint R180_605 foreign key (CO_SEQ_CIDADE)
+  references S_CIDADE (CO_SEQ_CIDADE) on delete cascade;
+alter table S_UNIDADE
+  add constraint R180_606 foreign key (CO_UNIDADE)
+  references S_ESCOLA (CO_UNIDADE) on delete cascade;
+

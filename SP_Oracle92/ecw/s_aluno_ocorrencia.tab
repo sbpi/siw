@@ -1,0 +1,55 @@
+create table S_ALUNO_OCORRENCIA
+(
+  CO_UNIDADE         CHAR(5) not null,
+  CO_OCORRENCIA      NUMBER(10) not null,
+  DS_OCORRENCIA      BLOB,
+  ANO_SEM            CHAR(5) not null,
+  CO_ALUNO           CHAR(12) not null,
+  HO_OCORRENCIA      CHAR(5),
+  CO_TIPO_OCORRENCIA NUMBER(10),
+  ST_RECADO          CHAR(30),
+  ST_RECADO_DADO     CHAR(30),
+  DS_USUARIO_RECADO  CHAR(20),
+  DT_OCORRENCIA      DATE
+)
+tablespace SGE
+  pctfree 10
+  initrans 1
+  maxtrans 255
+  storage
+  (
+    initial 66K
+    minextents 1
+    maxextents unlimited
+  );
+alter table S_ALUNO_OCORRENCIA
+  add constraint U124_25 primary key (CO_UNIDADE,CO_OCORRENCIA,ANO_SEM,CO_ALUNO)
+  using index 
+  tablespace SGE
+  pctfree 10
+  initrans 2
+  maxtrans 255
+  storage
+  (
+    initial 66K
+    minextents 1
+    maxextents unlimited
+  );
+alter table S_ALUNO_OCORRENCIA
+  add constraint R117_530 foreign key (CO_TIPO_OCORRENCIA,CO_UNIDADE)
+  references S_TIPO_OCORRENCIA (CO_TIPO_OCORRENCIA,CO_UNIDADE) on delete cascade;
+alter table S_ALUNO_OCORRENCIA
+  add constraint R117_531 foreign key (ANO_SEM,CO_ALUNO,CO_UNIDADE)
+  references S_ALUNO_PER_UNID (ANO_SEM,CO_ALUNO,CO_UNIDADE) on delete cascade;
+create index FOREIGN112 on S_ALUNO_OCORRENCIA (CO_TIPO_OCORRENCIA)
+  tablespace SGE
+  pctfree 10
+  initrans 2
+  maxtrans 255
+  storage
+  (
+    initial 66K
+    minextents 1
+    maxextents unlimited
+  );
+

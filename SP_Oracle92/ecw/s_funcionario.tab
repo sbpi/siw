@@ -1,0 +1,72 @@
+create table S_FUNCIONARIO
+(
+  CO_FUNCIONARIO   CHAR(10) not null,
+  NU_MATRICULA_MEC CHAR(8),
+  CO_SEQ_CIDADE    NUMBER(10),
+  DS_FUNCIONARIO   CHAR(40),
+  DS_APELIDO       CHAR(20),
+  FO_FUNCIONARIO   BLOB,
+  TP_SEXO          CHAR(1),
+  DS_NATURALIDADE  CHAR(30),
+  DS_UF_NASCIMENTO CHAR(2),
+  DT_NASCIMENTO    DATE,
+  DS_ENDERECO      CHAR(40),
+  NU_CEP           CHAR(9),
+  DS_CIDADE        CHAR(20),
+  DS_UF_CIDADE     CHAR(2),
+  DS_BAIRRO        CHAR(20),
+  NU_TELEFONE      CHAR(14),
+  NU_CELULAR       CHAR(14),
+  DS_E_MAIL        CHAR(100),
+  TP_ESTADO_CIVIL  VARCHAR2(12),
+  DS_CONJUGE       CHAR(50),
+  NU_RG            CHAR(15),
+  DS_ORGAO_EMISSOR CHAR(30),
+  DT_EMISSAO       DATE,
+  NU_CPF           CHAR(14),
+  DS_PAI           CHAR(40),
+  DS_MAE           CHAR(40),
+  NU_REGISTRO      CHAR(15),
+  DS_INSTRUCAO     CHAR(40),
+  CO_UNIDADE       CHAR(5),
+  LOTACAO_PRINC    VARCHAR2(15),
+  LOTACAO_SECUN    VARCHAR2(15)
+)
+tablespace SGE
+  pctfree 10
+  initrans 1
+  maxtrans 255
+  storage
+  (
+    initial 66K
+    minextents 1
+    maxextents unlimited
+  );
+alter table S_FUNCIONARIO
+  add constraint U137_39 primary key (CO_FUNCIONARIO)
+  using index 
+  tablespace SGE
+  pctfree 10
+  initrans 2
+  maxtrans 255
+  storage
+  (
+    initial 66K
+    minextents 1
+    maxextents unlimited
+  );
+alter table S_FUNCIONARIO
+  add constraint R146_568 foreign key (CO_SEQ_CIDADE)
+  references S_CIDADE (CO_SEQ_CIDADE) on delete cascade;
+create index FUNC_NOME on S_FUNCIONARIO (DS_FUNCIONARIO)
+  tablespace SGE
+  pctfree 10
+  initrans 2
+  maxtrans 255
+  storage
+  (
+    initial 66K
+    minextents 1
+    maxextents unlimited
+  );
+

@@ -1,0 +1,98 @@
+create table DC_INDICE
+(
+  SQ_INDICE      NUMBER(18) not null,
+  SQ_INDICE_TIPO NUMBER(18) not null,
+  SQ_USUARIO     NUMBER(18) not null,
+  SQ_SISTEMA     NUMBER(18) not null,
+  NOME           VARCHAR2(30) not null,
+  DESCRICAO      VARCHAR2(4000) not null
+)
+tablespace SYSTEM
+  pctfree 10
+  pctused 40
+  initrans 1
+  maxtrans 255
+  storage
+  (
+    initial 72K
+    next 328K
+    minextents 1
+    maxextents unlimited
+    pctincrease 50
+  );
+comment on column DC_INDICE.SQ_INDICE
+  is 'Sequence.';
+comment on column DC_INDICE.SQ_INDICE_TIPO
+  is 'Sequence.';
+comment on column DC_INDICE.SQ_USUARIO
+  is 'Sequence';
+comment on column DC_INDICE.SQ_SISTEMA
+  is 'Sequence.';
+comment on column DC_INDICE.NOME
+  is 'Nome do índice.';
+comment on column DC_INDICE.DESCRICAO
+  is 'Descrição do índice.';
+alter table DC_INDICE
+  add constraint PK_DC_INDICE primary key (SQ_INDICE)
+  using index 
+  tablespace SYSTEM
+  pctfree 10
+  initrans 2
+  maxtrans 255
+  storage
+  (
+    initial 72K
+    next 144K
+    minextents 1
+    maxextents unlimited
+    pctincrease 50
+  );
+alter table DC_INDICE
+  add constraint FK_DCIND_DCINDTIP foreign key (SQ_INDICE_TIPO)
+  references DC_INDICE_TIPO (SQ_INDICE_TIPO);
+alter table DC_INDICE
+  add constraint FK_DCIND_DCSIS foreign key (SQ_SISTEMA)
+  references DC_SISTEMA (SQ_SISTEMA);
+alter table DC_INDICE
+  add constraint FK_DCIND_DCUSU foreign key (SQ_USUARIO)
+  references DC_USUARIO (SQ_USUARIO);
+create unique index IN_DCIND_NOME on DC_INDICE (NOME,SQ_SISTEMA,SQ_USUARIO)
+  tablespace SYSTEM
+  pctfree 10
+  initrans 2
+  maxtrans 255
+  storage
+  (
+    initial 72K
+    next 216K
+    minextents 1
+    maxextents unlimited
+    pctincrease 50
+  );
+create index IN_DCIND_SISTEMA on DC_INDICE (SQ_SISTEMA,SQ_INDICE)
+  tablespace SYSTEM
+  pctfree 10
+  initrans 2
+  maxtrans 255
+  storage
+  (
+    initial 72K
+    next 144K
+    minextents 1
+    maxextents unlimited
+    pctincrease 50
+  );
+create index IN_DCIND_TIPO on DC_INDICE (SQ_INDICE_TIPO,SQ_INDICE)
+  tablespace SYSTEM
+  pctfree 10
+  initrans 2
+  maxtrans 255
+  storage
+  (
+    initial 72K
+    next 144K
+    minextents 1
+    maxextents unlimited
+    pctincrease 50
+  );
+

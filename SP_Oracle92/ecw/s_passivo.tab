@@ -1,0 +1,35 @@
+create table S_PASSIVO
+(
+  CO_PASSIVO NUMBER(10) not null,
+  CO_ALUNO   CHAR(12),
+  NU_PASSIVO VARCHAR2(12),
+  DS_CAIXA   VARCHAR2(20),
+  DT_PASSIVO DATE default SYSDATE
+)
+tablespace SGE
+  pctfree 10
+  initrans 1
+  maxtrans 255
+  storage
+  (
+    initial 66K
+    minextents 1
+    maxextents unlimited
+  );
+alter table S_PASSIVO
+  add constraint PKS_PASSIVO primary key (CO_PASSIVO)
+  using index 
+  tablespace SGE
+  pctfree 10
+  initrans 2
+  maxtrans 255
+  storage
+  (
+    initial 66K
+    minextents 1
+    maxextents unlimited
+  );
+alter table S_PASSIVO
+  add constraint FK_PASS_ALU foreign key (CO_ALUNO)
+  references S_ALUNO (CO_ALUNO) on delete cascade;
+

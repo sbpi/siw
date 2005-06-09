@@ -1,0 +1,50 @@
+create table SIW_SOLIC_LOG
+(
+  SQ_SIW_SOLIC_LOG   NUMBER(18) not null,
+  SQ_SIW_SOLICITACAO NUMBER(18) not null,
+  SQ_PESSOA          NUMBER(18) not null,
+  SQ_SIW_TRAMITE     NUMBER(18) not null,
+  DATA               DATE default SYSDATE not null,
+  DEVOLUCAO          VARCHAR2(1) default 'S' not null,
+  OBSERVACAO         VARCHAR2(2000)
+)
+tablespace USERS
+  pctfree 10
+  initrans 1
+  maxtrans 255
+  storage
+  (
+    initial 132K
+    minextents 1
+    maxextents unlimited
+  );
+comment on table SIW_SOLIC_LOG
+  is 'Registra os trâmites da solicitação';
+comment on column SIW_SOLIC_LOG.SQ_PESSOA
+  is 'Sequence';
+alter table SIW_SOLIC_LOG
+  add constraint PK_SIW_SOLICITACAO_LOG primary key (SQ_SIW_SOLIC_LOG)
+  using index 
+  tablespace USERS
+  pctfree 10
+  initrans 2
+  maxtrans 255
+  storage
+  (
+    initial 132K
+    minextents 1
+    maxextents unlimited
+  );
+alter table SIW_SOLIC_LOG
+  add constraint FK_SIWSOLLOG_COPES foreign key (SQ_PESSOA)
+  references CO_PESSOA (SQ_PESSOA);
+alter table SIW_SOLIC_LOG
+  add constraint FK_SIWSOLLOG_SIWSL foreign key (SQ_SIW_SOLICITACAO)
+  references SIW_SOLICITACAO (SQ_SIW_SOLICITACAO);
+alter table SIW_SOLIC_LOG
+  add constraint FK_SIWSOLLOG_SIWTR foreign key (SQ_SIW_TRAMITE)
+  references SIW_TRAMITE (SQ_SIW_TRAMITE);
+alter table SIW_SOLIC_LOG
+  add constraint CKC_SIWSOLLOG_DEV
+  check (DEVOLUCAO in ('S','N'));
+

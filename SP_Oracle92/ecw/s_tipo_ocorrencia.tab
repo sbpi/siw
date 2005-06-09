@@ -1,0 +1,33 @@
+create table S_TIPO_OCORRENCIA
+(
+  CO_TIPO_OCORRENCIA NUMBER(10) not null,
+  DS_TIPO_OCORRENCIA CHAR(50),
+  CO_UNIDADE         CHAR(5) not null
+)
+tablespace SGE
+  pctfree 10
+  initrans 1
+  maxtrans 255
+  storage
+  (
+    initial 66K
+    minextents 1
+    maxextents unlimited
+  );
+alter table S_TIPO_OCORRENCIA
+  add constraint U123_24 primary key (CO_TIPO_OCORRENCIA,CO_UNIDADE)
+  using index 
+  tablespace SGE
+  pctfree 10
+  initrans 2
+  maxtrans 255
+  storage
+  (
+    initial 66K
+    minextents 1
+    maxextents unlimited
+  );
+alter table S_TIPO_OCORRENCIA
+  add constraint R173_599 foreign key (CO_UNIDADE)
+  references S_UNIDADE (CO_UNIDADE) on delete cascade;
+

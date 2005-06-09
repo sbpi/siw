@@ -1,0 +1,338 @@
+create table TT_LIGACAO
+(
+  SQ_LIGACAO         NUMBER(18) not null,
+  CLIENTE            NUMBER(18) not null,
+  SQ_CENTRAL_FONE    NUMBER(18) not null,
+  SQ_TRONCO          NUMBER(18) not null,
+  SQ_USUARIO_CENTRAL NUMBER(18),
+  SQ_RAMAL           NUMBER(18) not null,
+  SQ_CC              NUMBER(18),
+  SQ_PREFIXO         NUMBER(18),
+  DATA               DATE not null,
+  OPERADORA          VARCHAR2(4) not null,
+  VALOR              NUMBER(18,2) not null,
+  DURACAO            NUMBER(10) not null,
+  RECEBIDA           VARCHAR2(1) default 'N' not null,
+  ENTRANTE           VARCHAR2(1) default 'N' not null,
+  FAX                VARCHAR2(1) default 'N' not null,
+  NUMERO             VARCHAR2(20),
+  INCLUSAO           DATE default sysdate not null,
+  TRABALHO           VARCHAR2(1),
+  ASSUNTO            VARCHAR2(1000),
+  OUTRA_PARTE_CONT   VARCHAR2(60),
+  IMAGEM             BFILE
+)
+tablespace SYSTEM
+  pctfree 10
+  pctused 40
+  initrans 1
+  maxtrans 255
+  storage
+  (
+    initial 72K
+    next 2520K
+    minextents 1
+    maxextents unlimited
+    pctincrease 50
+  );
+comment on table TT_LIGACAO
+  is 'Armazena as ligações da central telefônica.';
+comment on column TT_LIGACAO.SQ_LIGACAO
+  is 'Sequencial carregado a partir da tabela do software de tarifação.';
+comment on column TT_LIGACAO.CLIENTE
+  is 'Chave de CO_PESSOA.';
+comment on column TT_LIGACAO.SQ_CENTRAL_FONE
+  is 'CHAVE DE TT_CENTRAL.';
+comment on column TT_LIGACAO.SQ_TRONCO
+  is 'CHAVE DE TT_TRONCO.';
+comment on column TT_LIGACAO.SQ_USUARIO_CENTRAL
+  is 'Chave de TT_USUARIO. Quando tem valor, a ligação foi feita mediante senha.';
+comment on column TT_LIGACAO.SQ_RAMAL
+  is 'Ramal que recebeu ou originou a ligação.';
+comment on column TT_LIGACAO.SQ_CC
+  is 'Chave de CT_CC. Relaciona a ligação a um centro de custo.';
+comment on column TT_LIGACAO.SQ_PREFIXO
+  is 'Sequence.';
+comment on column TT_LIGACAO.DATA
+  is 'Data e hora da ligação.';
+comment on column TT_LIGACAO.OPERADORA
+  is 'Operadora utilizada para a ligação.';
+comment on column TT_LIGACAO.VALOR
+  is 'Valor da ligação.';
+comment on column TT_LIGACAO.DURACAO
+  is 'Duração da ligação, em segundos.';
+comment on column TT_LIGACAO.RECEBIDA
+  is 'Indica se a ligação foi recebida ou não.';
+comment on column TT_LIGACAO.ENTRANTE
+  is 'Indica se foi ligação originada ou recebida.';
+comment on column TT_LIGACAO.FAX
+  is 'Indica se a ligação foi para envio de fax.';
+comment on column TT_LIGACAO.NUMERO
+  is 'Número do telefone.';
+comment on column TT_LIGACAO.INCLUSAO
+  is 'Data de inclusão do registro.';
+comment on column TT_LIGACAO.TRABALHO
+  is 'Indica se a ligação foi feita a trabalho.';
+comment on column TT_LIGACAO.ASSUNTO
+  is 'Assunto tratado na ligação.';
+comment on column TT_LIGACAO.OUTRA_PARTE_CONT
+  is 'Pessoa com  quem se conversou.';
+comment on column TT_LIGACAO.IMAGEM
+  is 'Se a ligação foi para envio de fax, armazena o comprovante de recebimento.';
+alter table TT_LIGACAO
+  add constraint PK_TT_LIGACAO primary key (SQ_LIGACAO)
+  using index 
+  tablespace SYSTEM
+  pctfree 10
+  initrans 2
+  maxtrans 255
+  storage
+  (
+    initial 72K
+    next 328K
+    minextents 1
+    maxextents unlimited
+    pctincrease 50
+  );
+alter table TT_LIGACAO
+  add constraint FK_TTLIG_COPES foreign key (CLIENTE)
+  references CO_PESSOA (SQ_PESSOA);
+alter table TT_LIGACAO
+  add constraint FK_TTLIG_CTCC foreign key (SQ_CC)
+  references CT_CC (SQ_CC);
+alter table TT_LIGACAO
+  add constraint FK_TTLIG_TTCEN foreign key (SQ_CENTRAL_FONE)
+  references TT_CENTRAL (SQ_CENTRAL_FONE);
+alter table TT_LIGACAO
+  add constraint FK_TTLIG_TTPRE foreign key (SQ_PREFIXO)
+  references TT_PREFIXOS (SQ_PREFIXO);
+alter table TT_LIGACAO
+  add constraint FK_TTLIG_TTRAM foreign key (SQ_RAMAL)
+  references TT_RAMAL (SQ_RAMAL);
+alter table TT_LIGACAO
+  add constraint FK_TTLIG_TTTRON foreign key (SQ_TRONCO)
+  references TT_TRONCO (SQ_TRONCO);
+alter table TT_LIGACAO
+  add constraint FK_TTLIG_TTUSU foreign key (SQ_USUARIO_CENTRAL)
+  references TT_USUARIO (SQ_USUARIO_CENTRAL);
+alter table TT_LIGACAO
+  add constraint CKC_FAX_TT_LIGAC
+  check (FAX in ('S','N'));
+alter table TT_LIGACAO
+  add constraint CKC_TTLIG_ENTRA
+  check (ENTRANTE in ('S','N'));
+alter table TT_LIGACAO
+  add constraint CKC_TTLIG_RECEB
+  check (RECEBIDA in ('S','N'));
+alter table TT_LIGACAO
+  add constraint CKC_TTLIG_TRAB
+  check (TRABALHO is null or ( TRABALHO in ('S','N') ));
+create index IN_TTLIG_CENTRAL on TT_LIGACAO (CLIENTE,SQ_CENTRAL_FONE,DATA,SQ_LIGACAO)
+  tablespace SYSTEM
+  pctfree 10
+  initrans 2
+  maxtrans 255
+  storage
+  (
+    initial 72K
+    next 496K
+    minextents 1
+    maxextents unlimited
+    pctincrease 50
+  );
+create unique index IN_TTLIG_CHAVE on TT_LIGACAO (CLIENTE,SQ_CENTRAL_FONE,DATA,SQ_RAMAL)
+  tablespace SYSTEM
+  pctfree 10
+  initrans 2
+  maxtrans 255
+  storage
+  (
+    initial 72K
+    next 496K
+    minextents 1
+    maxextents unlimited
+    pctincrease 50
+  );
+create index IN_TTLIG_CLIENTE on TT_LIGACAO (CLIENTE,SQ_LIGACAO)
+  tablespace SYSTEM
+  pctfree 10
+  initrans 2
+  maxtrans 255
+  storage
+  (
+    initial 72K
+    next 328K
+    minextents 1
+    maxextents unlimited
+    pctincrease 50
+  );
+create index IN_TTLIG_CTCC on TT_LIGACAO (CLIENTE,SQ_CC,DATA,SQ_LIGACAO)
+  tablespace SYSTEM
+  pctfree 10
+  initrans 2
+  maxtrans 255
+  storage
+  (
+    initial 72K
+    next 496K
+    minextents 1
+    maxextents unlimited
+    pctincrease 50
+  );
+create index IN_TTLIG_DATA on TT_LIGACAO (CLIENTE,DATA,SQ_LIGACAO)
+  tablespace SYSTEM
+  pctfree 10
+  initrans 2
+  maxtrans 255
+  storage
+  (
+    initial 72K
+    next 496K
+    minextents 1
+    maxextents unlimited
+    pctincrease 50
+  );
+create index IN_TTLIG_DURACAO on TT_LIGACAO (CLIENTE,DURACAO,SQ_LIGACAO)
+  tablespace SYSTEM
+  pctfree 10
+  initrans 2
+  maxtrans 255
+  storage
+  (
+    initial 72K
+    next 328K
+    minextents 1
+    maxextents unlimited
+    pctincrease 50
+  );
+create index IN_TTLIG_ENTRANTE on TT_LIGACAO (CLIENTE,ENTRANTE,DATA,SQ_LIGACAO)
+  tablespace SYSTEM
+  pctfree 10
+  initrans 2
+  maxtrans 255
+  storage
+  (
+    initial 72K
+    next 496K
+    minextents 1
+    maxextents unlimited
+    pctincrease 50
+  );
+create index IN_TTLIG_FAX on TT_LIGACAO (CLIENTE,FAX,DATA,SQ_LIGACAO)
+  tablespace SYSTEM
+  pctfree 10
+  initrans 2
+  maxtrans 255
+  storage
+  (
+    initial 72K
+    next 496K
+    minextents 1
+    maxextents unlimited
+    pctincrease 50
+  );
+create index IN_TTLIG_NUMERO on TT_LIGACAO (CLIENTE,NUMERO,DATA,SQ_LIGACAO)
+  tablespace SYSTEM
+  pctfree 10
+  initrans 2
+  maxtrans 255
+  storage
+  (
+    initial 72K
+    next 744K
+    minextents 1
+    maxextents unlimited
+    pctincrease 50
+  );
+create index IN_TTLIG_OPERADORA on TT_LIGACAO (CLIENTE,OPERADORA,DATA,SQ_LIGACAO)
+  tablespace SYSTEM
+  pctfree 10
+  initrans 2
+  maxtrans 255
+  storage
+  (
+    initial 72K
+    next 496K
+    minextents 1
+    maxextents unlimited
+    pctincrease 50
+  );
+create index IN_TTLIG_PREFIXO on TT_LIGACAO (CLIENTE,SQ_PREFIXO,SQ_LIGACAO)
+  tablespace SYSTEM
+  pctfree 10
+  initrans 2
+  maxtrans 255
+  storage
+  (
+    initial 72K
+    next 496K
+    minextents 1
+    maxextents unlimited
+    pctincrease 50
+  );
+create index IN_TTLIG_RAMAL on TT_LIGACAO (CLIENTE,SQ_RAMAL,DATA,SQ_LIGACAO)
+  tablespace SYSTEM
+  pctfree 10
+  initrans 2
+  maxtrans 255
+  storage
+  (
+    initial 72K
+    next 496K
+    minextents 1
+    maxextents unlimited
+    pctincrease 50
+  );
+create index IN_TTLIG_RECEBIDA on TT_LIGACAO (CLIENTE,RECEBIDA,DATA,SQ_LIGACAO)
+  tablespace SYSTEM
+  pctfree 10
+  initrans 2
+  maxtrans 255
+  storage
+  (
+    initial 72K
+    next 496K
+    minextents 1
+    maxextents unlimited
+    pctincrease 50
+  );
+create index IN_TTLIG_TRONCO on TT_LIGACAO (CLIENTE,SQ_TRONCO,DATA,SQ_LIGACAO)
+  tablespace SYSTEM
+  pctfree 10
+  initrans 2
+  maxtrans 255
+  storage
+  (
+    initial 72K
+    next 496K
+    minextents 1
+    maxextents unlimited
+    pctincrease 50
+  );
+create index IN_TTLIG_USUARIO on TT_LIGACAO (CLIENTE,SQ_USUARIO_CENTRAL,DATA,SQ_LIGACAO)
+  tablespace SYSTEM
+  pctfree 10
+  initrans 2
+  maxtrans 255
+  storage
+  (
+    initial 72K
+    next 496K
+    minextents 1
+    maxextents unlimited
+    pctincrease 50
+  );
+create index IN_TTLIG_VALOR on TT_LIGACAO (CLIENTE,VALOR,SQ_LIGACAO)
+  tablespace SYSTEM
+  pctfree 10
+  initrans 2
+  maxtrans 255
+  storage
+  (
+    initial 72K
+    next 328K
+    minextents 1
+    maxextents unlimited
+    pctincrease 50
+  );
+

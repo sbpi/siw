@@ -1,0 +1,36 @@
+create table S_TIPO_HORARIO
+(
+  CO_TIPO_HORARIO NUMBER(10) not null,
+  DS_TIPO_HORARIO VARCHAR2(30),
+  CO_CURSO        NUMBER(10) not null,
+  ANO_SEM         CHAR(5) not null,
+  CO_UNIDADE      CHAR(5) not null,
+  NU_ORDEM        NUMBER(10)
+)
+tablespace SGE
+  pctfree 10
+  initrans 1
+  maxtrans 255
+  storage
+  (
+    initial 66K
+    minextents 1
+    maxextents unlimited
+  );
+alter table S_TIPO_HORARIO
+  add constraint PK_TIPO_HORARIO primary key (CO_TIPO_HORARIO,CO_CURSO,CO_UNIDADE,ANO_SEM)
+  using index 
+  tablespace SGE
+  pctfree 10
+  initrans 2
+  maxtrans 255
+  storage
+  (
+    initial 66K
+    minextents 1
+    maxextents unlimited
+  );
+alter table S_TIPO_HORARIO
+  add constraint R_131 foreign key (CO_CURSO,ANO_SEM,CO_UNIDADE)
+  references S_CURSO (CO_CURSO,ANO_SEM,CO_UNIDADE) on delete cascade;
+

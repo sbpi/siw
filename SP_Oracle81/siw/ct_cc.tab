@@ -1,0 +1,145 @@
+create table CT_CC
+(
+  SQ_CC     NUMBER(18) not null,
+  CLIENTE   NUMBER(18) not null,
+  SQ_CC_PAI NUMBER(18),
+  NOME      VARCHAR2(60) not null,
+  SIGLA     VARCHAR2(20) not null,
+  DESCRICAO VARCHAR2(500) not null,
+  ATIVO     VARCHAR2(1) default 'N' not null,
+  RECEITA   VARCHAR2(1) default 'S' not null,
+  REGULAR   VARCHAR2(1) default 'S' not null
+)
+tablespace SYSTEM
+  pctfree 10
+  pctused 40
+  initrans 1
+  maxtrans 255
+  storage
+  (
+    initial 72K
+    next 64K
+    minextents 1
+    maxextents unlimited
+    pctincrease 50
+  );
+comment on table CT_CC
+  is 'Armazena os centros de custo da organização.';
+comment on column CT_CC.SQ_CC
+  is 'Sequence';
+comment on column CT_CC.CLIENTE
+  is 'Chave de CO_PESSOA';
+comment on column CT_CC.SQ_CC_PAI
+  is 'Centro de custo superior.';
+comment on column CT_CC.NOME
+  is 'Nome do centro de custo.';
+comment on column CT_CC.SIGLA
+  is 'Sigla do centro de custo.';
+comment on column CT_CC.DESCRICAO
+  is 'Descrição do centro de custo.';
+comment on column CT_CC.ATIVO
+  is 'Indica se o centro de custo pode ser vinculado a novos registros.';
+comment on column CT_CC.RECEITA
+  is 'Indica se o centro de custo é de receita (S) ou despesa (S)';
+comment on column CT_CC.REGULAR
+  is 'Indica se o centro de custo é regular ou extra-orçamentário.';
+alter table CT_CC
+  add constraint PK_CT_CC primary key (SQ_CC)
+  using index 
+  tablespace SYSTEM
+  pctfree 10
+  initrans 2
+  maxtrans 255
+  storage
+  (
+    initial 72K
+    next 64K
+    minextents 1
+    maxextents unlimited
+    pctincrease 50
+  );
+alter table CT_CC
+  add constraint FK_CTCC_COPES_CLI foreign key (CLIENTE)
+  references CO_PESSOA (SQ_PESSOA);
+alter table CT_CC
+  add constraint FK_CTCC_CTCC foreign key (SQ_CC_PAI)
+  references CT_CC (SQ_CC);
+create index IN_CTCC_ATIVO on CT_CC (CLIENTE,ATIVO)
+  tablespace SYSTEM
+  pctfree 10
+  initrans 2
+  maxtrans 255
+  storage
+  (
+    initial 72K
+    next 64K
+    minextents 1
+    maxextents unlimited
+    pctincrease 50
+  );
+create unique index IN_CTCC_NOME on CT_CC (CLIENTE,NOME)
+  tablespace SYSTEM
+  pctfree 10
+  initrans 2
+  maxtrans 255
+  storage
+  (
+    initial 72K
+    next 64K
+    minextents 1
+    maxextents unlimited
+    pctincrease 50
+  );
+create index IN_CTCC_PAI on CT_CC (SQ_CC_PAI,SQ_CC)
+  tablespace SYSTEM
+  pctfree 10
+  initrans 2
+  maxtrans 255
+  storage
+  (
+    initial 72K
+    next 64K
+    minextents 1
+    maxextents unlimited
+    pctincrease 50
+  );
+create index IN_CTCC_RECEITA on CT_CC (CLIENTE,RECEITA)
+  tablespace SYSTEM
+  pctfree 10
+  initrans 2
+  maxtrans 255
+  storage
+  (
+    initial 72K
+    next 64K
+    minextents 1
+    maxextents unlimited
+    pctincrease 50
+  );
+create index IN_CTCC_REGULAR on CT_CC (CLIENTE,REGULAR)
+  tablespace SYSTEM
+  pctfree 10
+  initrans 2
+  maxtrans 255
+  storage
+  (
+    initial 72K
+    next 64K
+    minextents 1
+    maxextents unlimited
+    pctincrease 50
+  );
+create unique index IN_CTCC_SIGLA on CT_CC (CLIENTE,SIGLA)
+  tablespace SYSTEM
+  pctfree 10
+  initrans 2
+  maxtrans 255
+  storage
+  (
+    initial 72K
+    next 64K
+    minextents 1
+    maxextents unlimited
+    pctincrease 50
+  );
+

@@ -1,0 +1,38 @@
+create table S_ALUNO_CLASSIFICA
+(
+  CO_ALUNO      CHAR(12) not null,
+  ANO_SEM       CHAR(5) not null,
+  CO_UNIDADE    CHAR(5) not null,
+  NU_SOMA_NOTA  FLOAT,
+  NU_CLASSIFICA NUMBER(10)
+)
+tablespace SGE
+  pctfree 10
+  initrans 1
+  maxtrans 255
+  storage
+  (
+    initial 66K
+    minextents 1
+    maxextents unlimited
+  );
+alter table S_ALUNO_CLASSIFICA
+  add constraint PKS_ALUNO_CLASSIFI primary key (CO_ALUNO,ANO_SEM,CO_UNIDADE)
+  using index 
+  tablespace SGE
+  pctfree 10
+  initrans 2
+  maxtrans 255
+  storage
+  (
+    initial 66K
+    minextents 1
+    maxextents unlimited
+  );
+alter table S_ALUNO_CLASSIFICA
+  add constraint FK_ALUCLAS_ALU foreign key (CO_ALUNO)
+  references S_ALUNO (CO_ALUNO) on delete cascade;
+alter table S_ALUNO_CLASSIFICA
+  add constraint R113_523 foreign key (ANO_SEM,CO_UNIDADE)
+  references S_PERIODOUNIDADE (ANO_SEM,CO_UNIDADE) on delete cascade;
+

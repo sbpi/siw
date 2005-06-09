@@ -1,0 +1,221 @@
+create table PJ_PROJETO_ETAPA
+(
+  SQ_PROJETO_ETAPA          NUMBER(18) not null,
+  SQ_SIW_SOLICITACAO        NUMBER(18) not null,
+  SQ_ETAPA_PAI              NUMBER(18),
+  ORDEM                     NUMBER(3) not null,
+  TITULO                    VARCHAR2(100) not null,
+  DESCRICAO                 VARCHAR2(2000) not null,
+  INICIO_PREVISTO           DATE not null,
+  FIM_PREVISTO              DATE not null,
+  INICIO_REAL               DATE,
+  FIM_REAL                  DATE,
+  PERC_CONCLUSAO            NUMBER(18,2) default 0 not null,
+  ORCAMENTO                 NUMBER(18,2) default 0 not null,
+  SQ_UNIDADE                NUMBER(10) not null,
+  SQ_PESSOA                 NUMBER(18) not null,
+  VINCULA_ATIVIDADE         VARCHAR2(1) default 'S' not null,
+  SQ_PESSOA_ATUALIZACAO     NUMBER(18) not null,
+  ULTIMA_ATUALIZACAO        DATE default SYSDATE not null,
+  SITUACAO_ATUAL            VARCHAR2(4000),
+  UNIDADE_MEDIDA            VARCHAR2(30),
+  QUANTIDADE                NUMBER(18,2) default 0 not null,
+  CUMULATIVA                VARCHAR2(1) default 'N' not null,
+  PROGRAMADA                VARCHAR2(1) default 'N' not null,
+  EXEQUIVEL                 VARCHAR2(1) default 'S' not null,
+  JUSTIFICATIVA_INEXEQUIVEL VARCHAR2(1000),
+  OUTRAS_MEDIDAS            VARCHAR2(1000)
+)
+tablespace SYSTEM
+  pctfree 10
+  pctused 40
+  initrans 1
+  maxtrans 255
+  storage
+  (
+    initial 72K
+    next 64K
+    minextents 1
+    maxextents unlimited
+    pctincrease 50
+  );
+comment on table PJ_PROJETO_ETAPA
+  is 'Registra as etapas do projeto.';
+comment on column PJ_PROJETO_ETAPA.SQ_PROJETO_ETAPA
+  is 'Sequence';
+comment on column PJ_PROJETO_ETAPA.SQ_SIW_SOLICITACAO
+  is 'Chave de SIW_SOLICITACAO';
+comment on column PJ_PROJETO_ETAPA.SQ_ETAPA_PAI
+  is 'Etapa à qual  esta é subordinada.';
+comment on column PJ_PROJETO_ETAPA.ORDEM
+  is 'Ordem de execução da etapa.';
+comment on column PJ_PROJETO_ETAPA.TITULO
+  is 'Título da etapa.';
+comment on column PJ_PROJETO_ETAPA.DESCRICAO
+  is 'Descrição da etapa.';
+comment on column PJ_PROJETO_ETAPA.INICIO_PREVISTO
+  is 'Início previsto da etapa.';
+comment on column PJ_PROJETO_ETAPA.FIM_PREVISTO
+  is 'Fim previsto para a etapa.';
+comment on column PJ_PROJETO_ETAPA.INICIO_REAL
+  is 'Início real da etapa.';
+comment on column PJ_PROJETO_ETAPA.FIM_REAL
+  is 'Fim real da etapa.';
+comment on column PJ_PROJETO_ETAPA.PERC_CONCLUSAO
+  is 'Percentual de conclusão da etapa.';
+comment on column PJ_PROJETO_ETAPA.ORCAMENTO
+  is 'Orçamento disponível para cumprimento da etapa.';
+comment on column PJ_PROJETO_ETAPA.SQ_PESSOA_ATUALIZACAO
+  is 'Chave de CO_PESSOA. Usuário responsável pela criação ou última atualização da etapa.';
+comment on column PJ_PROJETO_ETAPA.ULTIMA_ATUALIZACAO
+  is 'Registra a data da criação ou última atualização da etapa.';
+comment on column PJ_PROJETO_ETAPA.SITUACAO_ATUAL
+  is 'Texto detalhando a situação atual da etapa.';
+comment on column PJ_PROJETO_ETAPA.UNIDADE_MEDIDA
+  is 'Unidade de medida a ser realizada.';
+comment on column PJ_PROJETO_ETAPA.QUANTIDADE
+  is 'Quantidade prevista para a unidade de medida informada.';
+comment on column PJ_PROJETO_ETAPA.CUMULATIVA
+  is 'Indica se a realização da etapa é cumulativa ou não.';
+comment on column PJ_PROJETO_ETAPA.PROGRAMADA
+  is 'Indica se a etapa está vinculada ao planejamento estratégico.';
+comment on column PJ_PROJETO_ETAPA.EXEQUIVEL
+  is 'Indica se a etapa está avaliada como passível de cumprimento ou não.';
+comment on column PJ_PROJETO_ETAPA.JUSTIFICATIVA_INEXEQUIVEL
+  is 'Motivos que justificam o não cumprimento da etapa.';
+comment on column PJ_PROJETO_ETAPA.OUTRAS_MEDIDAS
+  is 'Descrição das medidas necessárias ao cumprimento da etapa.';
+alter table PJ_PROJETO_ETAPA
+  add constraint PK_PJ_PROJETO_ETAPA primary key (SQ_PROJETO_ETAPA)
+  using index 
+  tablespace SYSTEM
+  pctfree 10
+  initrans 2
+  maxtrans 255
+  storage
+  (
+    initial 72K
+    next 64K
+    minextents 1
+    maxextents unlimited
+    pctincrease 50
+  );
+alter table PJ_PROJETO_ETAPA
+  add constraint FK_PJPROETA_COPES_ATUAL foreign key (SQ_PESSOA_ATUALIZACAO)
+  references CO_PESSOA (SQ_PESSOA);
+alter table PJ_PROJETO_ETAPA
+  add constraint FK_PJPROETA_EOUNI foreign key (SQ_UNIDADE)
+  references EO_UNIDADE (SQ_UNIDADE);
+alter table PJ_PROJETO_ETAPA
+  add constraint FK_PJPROETA_PJPRO foreign key (SQ_SIW_SOLICITACAO)
+  references PJ_PROJETO (SQ_SIW_SOLICITACAO);
+alter table PJ_PROJETO_ETAPA
+  add constraint FK_PJPROETA_PJPROETA foreign key (SQ_ETAPA_PAI)
+  references PJ_PROJETO_ETAPA (SQ_PROJETO_ETAPA);
+alter table PJ_PROJETO_ETAPA
+  add constraint PJ_PROETA_COPES foreign key (SQ_PESSOA)
+  references CO_PESSOA (SQ_PESSOA);
+alter table PJ_PROJETO_ETAPA
+  add constraint CKC_CUMULATIVA_PJ_PROJE
+  check (CUMULATIVA in ('S','N'));
+alter table PJ_PROJETO_ETAPA
+  add constraint CKC_EXEQUIVEL_PJ_PROJE
+  check (EXEQUIVEL in ('S','N'));
+alter table PJ_PROJETO_ETAPA
+  add constraint CKC_PROGRAMADA_PJ_PROJE
+  check (PROGRAMADA in ('S','N'));
+alter table PJ_PROJETO_ETAPA
+  add constraint CKC_VINCULA_ATIVIDADE_PJ_PROJE
+  check (VINCULA_ATIVIDADE in ('S','N'));
+create index IN_PJPROETA_FIM on PJ_PROJETO_ETAPA (FIM_PREVISTO,SQ_PROJETO_ETAPA)
+  tablespace SYSTEM
+  pctfree 10
+  initrans 2
+  maxtrans 255
+  storage
+  (
+    initial 72K
+    next 64K
+    minextents 1
+    maxextents unlimited
+    pctincrease 50
+  );
+create index IN_PJPROETA_FIMRE on PJ_PROJETO_ETAPA (FIM_REAL,SQ_PROJETO_ETAPA)
+  tablespace SYSTEM
+  pctfree 10
+  initrans 2
+  maxtrans 255
+  storage
+  (
+    initial 72K
+    next 64K
+    minextents 1
+    maxextents unlimited
+    pctincrease 50
+  );
+create index IN_PJPROETA_INI on PJ_PROJETO_ETAPA (INICIO_PREVISTO,SQ_PROJETO_ETAPA)
+  tablespace SYSTEM
+  pctfree 10
+  initrans 2
+  maxtrans 255
+  storage
+  (
+    initial 72K
+    next 64K
+    minextents 1
+    maxextents unlimited
+    pctincrease 50
+  );
+create index IN_PJPROETA_INIRE on PJ_PROJETO_ETAPA (INICIO_REAL,SQ_PROJETO_ETAPA)
+  tablespace SYSTEM
+  pctfree 10
+  initrans 2
+  maxtrans 255
+  storage
+  (
+    initial 72K
+    next 64K
+    minextents 1
+    maxextents unlimited
+    pctincrease 50
+  );
+create index IN_PJPROETA_ORDEM on PJ_PROJETO_ETAPA (ORDEM,SQ_PROJETO_ETAPA)
+  tablespace SYSTEM
+  pctfree 10
+  initrans 2
+  maxtrans 255
+  storage
+  (
+    initial 72K
+    next 64K
+    minextents 1
+    maxextents unlimited
+    pctincrease 50
+  );
+create index IN_PJPROETA_PAI on PJ_PROJETO_ETAPA (SQ_ETAPA_PAI,SQ_PROJETO_ETAPA)
+  tablespace SYSTEM
+  pctfree 10
+  initrans 2
+  maxtrans 255
+  storage
+  (
+    initial 72K
+    next 64K
+    minextents 1
+    maxextents unlimited
+    pctincrease 50
+  );
+create index IN_PJPROETA_PROJ on PJ_PROJETO_ETAPA (SQ_SIW_SOLICITACAO,SQ_PROJETO_ETAPA)
+  tablespace SYSTEM
+  pctfree 10
+  initrans 2
+  maxtrans 255
+  storage
+  (
+    initial 72K
+    next 64K
+    minextents 1
+    maxextents unlimited
+    pctincrease 50
+  );
+

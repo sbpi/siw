@@ -1,0 +1,97 @@
+create table SIW_TRAMITE
+(
+  SQ_SIW_TRAMITE  NUMBER(18) not null,
+  SQ_MENU         NUMBER(18) not null,
+  NOME            VARCHAR2(50) not null,
+  ORDEM           NUMBER(2) not null,
+  SIGLA           VARCHAR2(2),
+  DESCRICAO       VARCHAR2(500),
+  CHEFIA_IMEDIATA VARCHAR2(1) default 'N' not null,
+  ATIVO           VARCHAR2(1) default 'S' not null,
+  SOLICITA_CC     VARCHAR2(1) default 'N' not null,
+  ENVIA_MAIL      VARCHAR2(1) default 'N' not null
+)
+tablespace USERS
+  pctfree 10
+  initrans 1
+  maxtrans 255
+  storage
+  (
+    initial 132K
+    minextents 1
+    maxextents unlimited
+  );
+comment on table SIW_TRAMITE
+  is 'Trâmites de um serviço';
+comment on column SIW_TRAMITE.SQ_MENU
+  is 'Sequence';
+comment on column SIW_TRAMITE.CHEFIA_IMEDIATA
+  is 'Indica quem deverá cumprir este trâmite, podendo ser o chefe imediato, a unidade executora ou qualquer pessoa com permissão. Se for a unidade executora, a solicitação aparecerá para o titular/substituto da unidade e para quaisquer outras pessoas com permissão.';
+comment on column SIW_TRAMITE.ATIVO
+  is 'Indica se o registro deve ou não ser exibido.';
+comment on column SIW_TRAMITE.SOLICITA_CC
+  is 'Indica se deve ser solicitado um centro de custo ao usuário no cumprimento deste trâmite.';
+comment on column SIW_TRAMITE.ENVIA_MAIL
+  is 'Indica se deve ser enviado e-mail aos interessados no cumprimento deste trâmite.';
+alter table SIW_TRAMITE
+  add constraint PK_SIW_TRAMITE primary key (SQ_SIW_TRAMITE)
+  using index 
+  tablespace USERS
+  pctfree 10
+  initrans 2
+  maxtrans 255
+  storage
+  (
+    initial 132K
+    minextents 1
+    maxextents unlimited
+  );
+alter table SIW_TRAMITE
+  add constraint FK_SIWTRA_SIWMEN foreign key (SQ_MENU)
+  references SIW_MENU (SQ_MENU);
+alter table SIW_TRAMITE
+  add constraint CKC_ATIVO_SIW_TRAM
+  check (ATIVO in ('S','N'));
+alter table SIW_TRAMITE
+  add constraint CKC_SIWTRA_CHEIME
+  check (CHEFIA_IMEDIATA in ('S','N','U'));
+alter table SIW_TRAMITE
+  add constraint CKC_SIWTRA_MAIL
+  check (ENVIA_MAIL in ('S','N'));
+alter table SIW_TRAMITE
+  add constraint CKC_SIWTRA_SOLCC
+  check (SOLICITA_CC in ('S','N'));
+create index IN_SIWTRA_ATIVO on SIW_TRAMITE (ATIVO)
+  tablespace SYSTEM
+  pctfree 10
+  initrans 2
+  maxtrans 255
+  storage
+  (
+    initial 66K
+    minextents 1
+    maxextents unlimited
+  );
+create index IN_SIWTRA_CHEFIA on SIW_TRAMITE (CHEFIA_IMEDIATA)
+  tablespace SYSTEM
+  pctfree 10
+  initrans 2
+  maxtrans 255
+  storage
+  (
+    initial 66K
+    minextents 1
+    maxextents unlimited
+  );
+create unique index IN_SIWTRA_ORDEM on SIW_TRAMITE (SQ_MENU,ORDEM)
+  tablespace SYSTEM
+  pctfree 10
+  initrans 2
+  maxtrans 255
+  storage
+  (
+    initial 66K
+    minextents 1
+    maxextents unlimited
+  );
+

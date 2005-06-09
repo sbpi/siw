@@ -1,0 +1,98 @@
+create table CO_ESTADO_CIVIL
+(
+  SQ_ESTADO_CIVIL NUMBER(10) not null,
+  NOME            VARCHAR2(50) not null,
+  SIGLA           VARCHAR2(2) not null,
+  ATIVO           VARCHAR2(1) default 'S' not null,
+  CODIGO_EXTERNO  NUMBER(10)
+)
+tablespace SYSTEM
+  pctfree 10
+  pctused 40
+  initrans 1
+  maxtrans 255
+  storage
+  (
+    initial 72K
+    next 64K
+    minextents 1
+    maxextents unlimited
+    pctincrease 50
+  );
+comment on column CO_ESTADO_CIVIL.NOME
+  is 'Descrição do Tipo de Estado Civil';
+comment on column CO_ESTADO_CIVIL.ATIVO
+  is 'Indicador da situação do tipo de estado civil, se estar Ativo ou não para utilização.';
+comment on column CO_ESTADO_CIVIL.CODIGO_EXTERNO
+  is 'Código que permitirá a vinculação com a codificação de um sistema externo.';
+alter table CO_ESTADO_CIVIL
+  add constraint PK_CO_ESTADO_CIVIL primary key (SQ_ESTADO_CIVIL)
+  using index 
+  tablespace SYSTEM
+  pctfree 10
+  initrans 2
+  maxtrans 255
+  storage
+  (
+    initial 72K
+    next 64K
+    minextents 1
+    maxextents unlimited
+    pctincrease 50
+  );
+alter table CO_ESTADO_CIVIL
+  add constraint CKC_ATIVO_COESTCIV
+  check (ATIVO in ('S','N'));
+create index IN_COESTCIV_ATIVO on CO_ESTADO_CIVIL (ATIVO,SQ_ESTADO_CIVIL)
+  tablespace SYSTEM
+  pctfree 10
+  initrans 2
+  maxtrans 255
+  storage
+  (
+    initial 72K
+    next 64K
+    minextents 1
+    maxextents unlimited
+    pctincrease 50
+  );
+create index IN_COESTCIV_EXTERNO on CO_ESTADO_CIVIL (CODIGO_EXTERNO,SQ_ESTADO_CIVIL)
+  tablespace SYSTEM
+  pctfree 10
+  initrans 2
+  maxtrans 255
+  storage
+  (
+    initial 72K
+    next 64K
+    minextents 1
+    maxextents unlimited
+    pctincrease 50
+  );
+create unique index IN_COESTCIV_NOME on CO_ESTADO_CIVIL (NOME,SQ_ESTADO_CIVIL)
+  tablespace SYSTEM
+  pctfree 10
+  initrans 2
+  maxtrans 255
+  storage
+  (
+    initial 72K
+    next 64K
+    minextents 1
+    maxextents unlimited
+    pctincrease 50
+  );
+create unique index IN_COESTCIV_SIGLA on CO_ESTADO_CIVIL (SIGLA,SQ_ESTADO_CIVIL)
+  tablespace SYSTEM
+  pctfree 10
+  initrans 2
+  maxtrans 255
+  storage
+  (
+    initial 72K
+    next 64K
+    minextents 1
+    maxextents unlimited
+    pctincrease 50
+  );
+

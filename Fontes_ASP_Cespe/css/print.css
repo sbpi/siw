@@ -1,0 +1,24 @@
+BODY {
+	PADDING-RIGHT: 0px; PADDING-LEFT: 0px; BACKGROUND: #ffffff; PADDING-BOTTOM: 0px; MARGIN: 0px; FONT: 12px Verdana, Arial, Helvetica, sans-serif; PADDING-TOP: 0px; TEXT-ALIGN: left
+}
+#cabbase {
+	DISPLAY: none
+}
+#menuesq {
+	DISPLAY: none
+}
+#menudir {
+	DISPLAY: none
+}
+#menutexto {
+	DISPLAY: none
+}
+#menubt #menurodape {
+	DISPLAY: none
+}
+#menutexto {
+	MARGIN: 10px 0px
+}
+#rodape {
+	BORDER-TOP: #333333 1px solid
+}

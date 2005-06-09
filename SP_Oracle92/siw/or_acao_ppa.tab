@@ -1,0 +1,178 @@
+create table OR_ACAO_PPA
+(
+  SQ_ACAO_PPA           NUMBER(18) not null,
+  SQ_ACAO_PPA_PAI       NUMBER(18),
+  CLIENTE               NUMBER(18) not null,
+  CODIGO                VARCHAR2(50),
+  NOME                  VARCHAR2(100) not null,
+  RESPONSAVEL           VARCHAR2(60),
+  TELEFONE              VARCHAR2(20),
+  EMAIL                 VARCHAR2(60),
+  ATIVO                 VARCHAR2(1) default 'S' not null,
+  PADRAO                VARCHAR2(1) default 'N' not null,
+  SELECIONADA_MPOG      VARCHAR2(1) default 'N' not null,
+  SELECIONADA_RELEVANTE VARCHAR2(1) default 'N' not null,
+  APROVADO              NUMBER(18,2) default 0 not null,
+  EMPENHADO             NUMBER(18,2) default 0 not null,
+  LIQUIDADO             NUMBER(18,2) default 0 not null,
+  LIQUIDAR              NUMBER(18,2) default 0 not null,
+  SALDO                 NUMBER(18,2) default 0 not null
+)
+tablespace SYSTEM
+  pctfree 10
+  pctused 40
+  initrans 1
+  maxtrans 255
+  storage
+  (
+    initial 66K
+    minextents 1
+    maxextents unlimited
+  );
+comment on column OR_ACAO_PPA.SQ_ACAO_PPA
+  is 'Sequence.';
+comment on column OR_ACAO_PPA.SQ_ACAO_PPA_PAI
+  is 'Auto-relacionamento.';
+comment on column OR_ACAO_PPA.CLIENTE
+  is 'Código do cliente.';
+comment on column OR_ACAO_PPA.CODIGO
+  is 'Código da ação no sistema de origem.';
+comment on column OR_ACAO_PPA.NOME
+  is 'Nome da ação do PPA.';
+comment on column OR_ACAO_PPA.RESPONSAVEL
+  is 'Nome do responsável pela ação do PPA';
+comment on column OR_ACAO_PPA.TELEFONE
+  is 'Telefone do responsável pela ação.';
+comment on column OR_ACAO_PPA.EMAIL
+  is 'e-mail do responsável pela ação.';
+comment on column OR_ACAO_PPA.SELECIONADA_MPOG
+  is 'Indica se a ação foi considerada como prioritária pelo Ministério de Planejamento.';
+comment on column OR_ACAO_PPA.SELECIONADA_RELEVANTE
+  is 'Indica se a ação foi selecionada como sendo estratégica pelo Órgão.';
+comment on column OR_ACAO_PPA.APROVADO
+  is 'Valor aprovado para a ação, conforme Lei Orçamentária Anual';
+comment on column OR_ACAO_PPA.EMPENHADO
+  is 'Valor já empenhado para a ação';
+comment on column OR_ACAO_PPA.LIQUIDADO
+  is 'Valor empenhado e já liquidado para a ação';
+comment on column OR_ACAO_PPA.LIQUIDAR
+  is 'Valor empenhado e ainda não liquidado.';
+comment on column OR_ACAO_PPA.SALDO
+  is 'Saldo orçamentário disponível para a ação.';
+alter table OR_ACAO_PPA
+  add constraint PK_OR_ACAO_PPA primary key (SQ_ACAO_PPA)
+  using index 
+  tablespace SYSTEM
+  pctfree 10
+  initrans 2
+  maxtrans 255
+  storage
+  (
+    initial 66K
+    minextents 1
+    maxextents unlimited
+  );
+alter table OR_ACAO_PPA
+  add constraint FK_ORACAPPA_ORACAPPA foreign key (SQ_ACAO_PPA_PAI)
+  references OR_ACAO_PPA (SQ_ACAO_PPA);
+alter table OR_ACAO_PPA
+  add constraint CKC_ATIVO_EOTIPPOS
+  check (ATIVO in ('S','N'));
+alter table OR_ACAO_PPA
+  add constraint CKC_EOTIPPOS_PAD
+  check (PADRAO in ('S','N'));
+alter table OR_ACAO_PPA
+  add constraint CKC_SELECIONADA_MPOG_OR_ACAO_
+  check (SELECIONADA_MPOG in ('S','N'));
+alter table OR_ACAO_PPA
+  add constraint CKC_SELECIONADA_RELEV_OR_ACAO_
+  check (SELECIONADA_RELEVANTE in ('S','N'));
+create unique index IN_ORACAPPA_ATIVO on OR_ACAO_PPA (CLIENTE,ATIVO,SQ_ACAO_PPA)
+  tablespace SYSTEM
+  pctfree 10
+  initrans 2
+  maxtrans 255
+  storage
+  (
+    initial 66K
+    minextents 1
+    maxextents unlimited
+  );
+create unique index IN_ORACAPPA_CLI on OR_ACAO_PPA (CLIENTE,SQ_ACAO_PPA)
+  tablespace SYSTEM
+  pctfree 10
+  initrans 2
+  maxtrans 255
+  storage
+  (
+    initial 66K
+    minextents 1
+    maxextents unlimited
+  );
+create index IN_ORACAPPA_CODIGO on OR_ACAO_PPA (CLIENTE,CODIGO,SQ_ACAO_PPA)
+  tablespace SYSTEM
+  pctfree 10
+  initrans 2
+  maxtrans 255
+  storage
+  (
+    initial 66K
+    minextents 1
+    maxextents unlimited
+  );
+create index IN_ORACAPPA_MPOG on OR_ACAO_PPA (CLIENTE,SELECIONADA_MPOG,SQ_ACAO_PPA)
+  tablespace SYSTEM
+  pctfree 10
+  initrans 2
+  maxtrans 255
+  storage
+  (
+    initial 66K
+    minextents 1
+    maxextents unlimited
+  );
+create unique index IN_ORACAPPA_NOME on OR_ACAO_PPA (CLIENTE,NOME,SQ_ACAO_PPA)
+  tablespace SYSTEM
+  pctfree 10
+  initrans 2
+  maxtrans 255
+  storage
+  (
+    initial 66K
+    minextents 1
+    maxextents unlimited
+  );
+create unique index IN_ORACAPPA_PADRAO on OR_ACAO_PPA (CLIENTE,PADRAO,SQ_ACAO_PPA)
+  tablespace SYSTEM
+  pctfree 10
+  initrans 2
+  maxtrans 255
+  storage
+  (
+    initial 66K
+    minextents 1
+    maxextents unlimited
+  );
+create index IN_ORACAPPA_PAI on OR_ACAO_PPA (SQ_ACAO_PPA_PAI,SQ_ACAO_PPA)
+  tablespace SYSTEM
+  pctfree 10
+  initrans 2
+  maxtrans 255
+  storage
+  (
+    initial 66K
+    minextents 1
+    maxextents unlimited
+  );
+create index IN_ORACAPPA_RELEV on OR_ACAO_PPA (CLIENTE,SELECIONADA_RELEVANTE,SQ_ACAO_PPA)
+  tablespace SYSTEM
+  pctfree 10
+  initrans 2
+  maxtrans 255
+  storage
+  (
+    initial 66K
+    minextents 1
+    maxextents unlimited
+  );
+

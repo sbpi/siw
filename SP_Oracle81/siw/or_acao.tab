@@ -1,0 +1,82 @@
+create table OR_ACAO
+(
+  SQ_SIW_SOLICITACAO NUMBER(18) not null,
+  SQ_ACAO_PPA        NUMBER(18),
+  SQ_ORPRIORIDADE    NUMBER(18),
+  PROBLEMA           VARCHAR2(2000),
+  DESCRICAO          VARCHAR2(2000),
+  PUBLICO_ALVO       VARCHAR2(2000),
+  ESTRATEGIA         VARCHAR2(2000),
+  INDICADORES        VARCHAR2(2000),
+  OBJETIVO           VARCHAR2(2000)
+)
+tablespace SYSTEM
+  pctfree 10
+  pctused 40
+  initrans 1
+  maxtrans 255
+  storage
+  (
+    initial 72K
+    next 64K
+    minextents 1
+    maxextents unlimited
+    pctincrease 50
+  );
+comment on column OR_ACAO.SQ_SIW_SOLICITACAO
+  is 'Chave de SIW_SOLICITACAO';
+comment on column OR_ACAO.SQ_ACAO_PPA
+  is 'Sequence.';
+comment on column OR_ACAO.SQ_ORPRIORIDADE
+  is 'Sequence.';
+alter table OR_ACAO
+  add constraint PK_OR_ACAO primary key (SQ_SIW_SOLICITACAO)
+  using index 
+  tablespace SYSTEM
+  pctfree 10
+  initrans 2
+  maxtrans 255
+  storage
+  (
+    initial 72K
+    next 64K
+    minextents 1
+    maxextents unlimited
+    pctincrease 50
+  );
+alter table OR_ACAO
+  add constraint FK_ORACA_ORACAPPA foreign key (SQ_ACAO_PPA)
+  references OR_ACAO_PPA (SQ_ACAO_PPA);
+alter table OR_ACAO
+  add constraint FK_ORACA_ORPRI foreign key (SQ_ORPRIORIDADE)
+  references OR_PRIORIDADE (SQ_ORPRIORIDADE);
+alter table OR_ACAO
+  add constraint FK_ORACA_PJPRO foreign key (SQ_SIW_SOLICITACAO)
+  references PJ_PROJETO (SQ_SIW_SOLICITACAO);
+create index IN_ORACA_ACAO on OR_ACAO (SQ_ACAO_PPA,SQ_SIW_SOLICITACAO)
+  tablespace SYSTEM
+  pctfree 10
+  initrans 2
+  maxtrans 255
+  storage
+  (
+    initial 72K
+    next 64K
+    minextents 1
+    maxextents unlimited
+    pctincrease 50
+  );
+create index IN_ORACA_PRIOR on OR_ACAO (SQ_ORPRIORIDADE,SQ_SIW_SOLICITACAO)
+  tablespace SYSTEM
+  pctfree 10
+  initrans 2
+  maxtrans 255
+  storage
+  (
+    initial 72K
+    next 64K
+    minextents 1
+    maxextents unlimited
+    pctincrease 50
+  );
+

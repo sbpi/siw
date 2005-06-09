@@ -1,0 +1,20 @@
+create table S_COMUNICACAO
+(
+  DS_ARQUIVO     VARCHAR2(50) not null,
+  NU_REGIONAL    VARCHAR2(2),
+  DS_USUARIO     VARCHAR2(40),
+  DT_RECEBIMENTO DATE,
+  DT_PROCESS     DATE,
+  CO_ESCOLA      CHAR(5) not null
+)
+tablespace SGE
+  pctfree 10
+  initrans 1
+  maxtrans 255
+  storage
+  (
+    initial 66K
+    minextents 1
+    maxextents unlimited
+  );
+

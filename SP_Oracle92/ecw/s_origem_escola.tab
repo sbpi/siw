@@ -1,0 +1,29 @@
+create table S_ORIGEM_ESCOLA
+(
+  CO_ORIGEM_ESCOLA NUMBER(10) not null,
+  DS_ORIGEM_ESCOLA VARCHAR2(30)
+)
+tablespace SGE
+  pctfree 10
+  initrans 1
+  maxtrans 255
+  storage
+  (
+    initial 66K
+    minextents 1
+    maxextents unlimited
+  );
+alter table S_ORIGEM_ESCOLA
+  add constraint PKS_ORIGEM_ESCOLA primary key (CO_ORIGEM_ESCOLA)
+  using index 
+  tablespace SGE
+  pctfree 10
+  initrans 2
+  maxtrans 255
+  storage
+  (
+    initial 66K
+    minextents 1
+    maxextents unlimited
+  );
+

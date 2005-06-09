@@ -1,0 +1,109 @@
+create table IS_RESTRICAO
+(
+  SQ_RESTRICAO        NUMBER(18) not null,
+  SQ_PROGRAMA         NUMBER(18),
+  SQ_ACAO             NUMBER(18),
+  SQ_PROJETO          NUMBER(18),
+  CD_TIPO_RESTRICAO   NUMBER(18),
+  CD_TIPO_INCLUSAO    VARCHAR2(2),
+  CD_COMPETENCIA      VARCHAR2(2),
+  INCLUSAO            DATE not null,
+  DESCRICAO           VARCHAR2(4000) not null,
+  PROVIDENCIA         VARCHAR2(4000),
+  SUPERACAO           DATE,
+  RELATORIO           VARCHAR2(1) default 'S' not null,
+  TEMPO_HABIL         VARCHAR2(1) default 'N' not null,
+  OBSERVACAO_MONITOR  VARCHAR2(4000),
+  OBSERVACAO_CONTROLE VARCHAR2(4000),
+  FLAG_INCLUSAO       DATE default sysdate not null,
+  FLAG_ALTERACAO      DATE,
+  FLAG_ENVIO          DATE,
+  CD_SUBACAO          VARCHAR2(4)
+)
+tablespace SYSTEM
+  pctfree 10
+  pctused 40
+  initrans 1
+  maxtrans 255
+  storage
+  (
+    initial 72K
+    next 64K
+    minextents 1
+    maxextents unlimited
+    pctincrease 50
+  );
+comment on table IS_RESTRICAO
+  is 'Registra as restrições ligadas a programas e ações do PPA, bem como de planos e projetos específicos.';
+comment on column IS_RESTRICAO.SQ_RESTRICAO
+  is 'Sequence';
+comment on column IS_RESTRICAO.SQ_PROGRAMA
+  is 'Chave de SIW_SOLICITACAO.';
+comment on column IS_RESTRICAO.SQ_ACAO
+  is 'Chave de SIW_SOLICITACAO';
+comment on column IS_RESTRICAO.SQ_PROJETO
+  is 'Sequence.';
+comment on column IS_RESTRICAO.CD_TIPO_RESTRICAO
+  is 'Código';
+comment on column IS_RESTRICAO.CD_TIPO_INCLUSAO
+  is 'Código do tipo de inclusão';
+comment on column IS_RESTRICAO.CD_COMPETENCIA
+  is 'Código da competência';
+comment on column IS_RESTRICAO.INCLUSAO
+  is 'Data de inclusão';
+comment on column IS_RESTRICAO.DESCRICAO
+  is 'Descrição da restrição.';
+comment on column IS_RESTRICAO.PROVIDENCIA
+  is 'Descrição da providência';
+comment on column IS_RESTRICAO.SUPERACAO
+  is 'Data de superação';
+comment on column IS_RESTRICAO.RELATORIO
+  is 'Indica se a restrição consta no relatório de situação';
+comment on column IS_RESTRICAO.TEMPO_HABIL
+  is 'Indica se a restrição foi corrigida em tempo hábil';
+comment on column IS_RESTRICAO.OBSERVACAO_MONITOR
+  is 'Observação do monitor';
+comment on column IS_RESTRICAO.OBSERVACAO_CONTROLE
+  is 'Observação do controle';
+comment on column IS_RESTRICAO.FLAG_INCLUSAO
+  is 'Data de inclusão do registro';
+comment on column IS_RESTRICAO.FLAG_ALTERACAO
+  is 'Data da última alteração do registro, caso ele tenha sido alterado.';
+comment on column IS_RESTRICAO.FLAG_ENVIO
+  is 'Data do último envio do registro, caso ele já tenha sido enviado.';
+comment on column IS_RESTRICAO.CD_SUBACAO
+  is 'Indica o localizador da restrição. O resto da chave está em IS_ACAO, recuperada a partir de SQ_SIW_SOLICITACAO. Este campo só é informado se a restrição for ligada a uma ação.';
+alter table IS_RESTRICAO
+  add constraint PK_IS_RESTRICAO primary key (SQ_RESTRICAO)
+  using index 
+  tablespace SYSTEM
+  pctfree 10
+  initrans 2
+  maxtrans 255
+  storage
+  (
+    initial 72K
+    next 64K
+    minextents 1
+    maxextents unlimited
+    pctincrease 50
+  );
+alter table IS_RESTRICAO
+  add constraint FK_ISRES_ISACA foreign key (SQ_ACAO)
+  references IS_ACAO (SQ_SIW_SOLICITACAO);
+alter table IS_RESTRICAO
+  add constraint FK_ISRES_ISPRJ foreign key (SQ_PROJETO)
+  references IS_PROJETO (SQ_ISPROJETO);
+alter table IS_RESTRICAO
+  add constraint FK_ISRES_ISPRO foreign key (SQ_PROGRAMA)
+  references IS_PROGRAMA (SQ_SIW_SOLICITACAO);
+alter table IS_RESTRICAO
+  add constraint FK_ISRES_ISSIGTIPRES foreign key (CD_TIPO_RESTRICAO)
+  references IS_SIG_TIPO_RESTRICAO (CD_TIPO_RESTRICAO);
+alter table IS_RESTRICAO
+  add constraint CKC_ISRES_RELAT
+  check (RELATORIO in ('S','N'));
+alter table IS_RESTRICAO
+  add constraint CKC_ISRES_TEMPO
+  check (TEMPO_HABIL in ('S','N'));
+

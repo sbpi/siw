@@ -1,0 +1,240 @@
+create table IS_PPA_ACAO
+(
+  CLIENTE                 NUMBER(18) not null,
+  ANO                     NUMBER(4) not null,
+  CD_PROGRAMA             VARCHAR2(4) not null,
+  CD_ACAO_PPA             VARCHAR2(5) not null,
+  CD_UNIDADE              VARCHAR2(5) not null,
+  CD_TIPO_UNIDADE         VARCHAR2(1) not null,
+  CD_FUNCAO               VARCHAR2(2) not null,
+  CD_SUBFUNCAO            VARCHAR2(3) not null,
+  CD_TIPO_ACAO            NUMBER(18) not null,
+  CD_PRODUTO              NUMBER(18),
+  CD_UNIDADE_MEDIDA       NUMBER(18),
+  CD_TIPO_INCLUSAO        NUMBER(18),
+  CD_ESFERA               NUMBER(18),
+  CD_ORGAO_SIORG          NUMBER(18),
+  CD_ACAO                 VARCHAR2(4) not null,
+  PRODUTO                 VARCHAR2(4000),
+  NOME                    VARCHAR2(255),
+  FINALIDADE              VARCHAR2(4000),
+  DESCRICAO               VARCHAR2(4000),
+  BASE_LEGAL              VARCHAR2(4000),
+  REPERC_FINANCEIRA       VARCHAR2(4000),
+  VALOR_REPERC_FINANCEIRA NUMBER(18,2),
+  PADRONIZADA             VARCHAR2(1) default 'S' not null,
+  SET_PADRONIZADA         VARCHAR2(1) default 'S' not null,
+  DIRETA                  VARCHAR2(1) default 'S' not null,
+  DESCENTRALIZADA         VARCHAR2(1) default 'S' not null,
+  LINHA_CREDITO           VARCHAR2(1) default 'S' not null,
+  TRANSF_OBRIGATORIA      VARCHAR2(1) default 'S' not null,
+  TRANSF_VOLUNTARIA       VARCHAR2(1) default 'S' not null,
+  TRANSF_OUTRAS           VARCHAR2(1) default 'S' not null,
+  DESPESA_OBRIGATORIA     VARCHAR2(1) default 'S' not null,
+  BLOQUEIO_PROGRAMACAO    VARCHAR2(1) default 'S' not null,
+  DETALHAMENTO            VARCHAR2(4000),
+  MES_INICIO              VARCHAR2(2),
+  ANO_INICIO              VARCHAR2(4),
+  MES_TERMINO             VARCHAR2(2),
+  ANO_TERMINO             VARCHAR2(4),
+  VALOR_TOTAL             NUMBER(18,2),
+  VALOR_ANO_ANTERIOR      NUMBER(18,2),
+  QTD_ANO_ANTERIOR        NUMBER(18,4),
+  VALOR_ANO_CORRENTE      NUMBER(18,2),
+  QTD_ANO_CORRENTE        NUMBER(18,4),
+  ORDEM_PRIORIDADE        NUMBER(18),
+  OBSERVACAO              VARCHAR2(4000),
+  CD_SOF                  VARCHAR2(8),
+  QTD_TOTAL               NUMBER(18,4),
+  CD_SOF_REFERENCIA       NUMBER(18),
+  FLAG_INCLUSAO           DATE default sysdate not null,
+  FLAG_ALTERACAO          DATE,
+  FLAG_ENVIO              DATE
+)
+tablespace SYSTEM
+  pctfree 10
+  pctused 40
+  initrans 1
+  maxtrans 255
+  storage
+  (
+    initial 66K
+    minextents 1
+    maxextents unlimited
+  );
+comment on table IS_PPA_ACAO
+  is 'Armazena informações sobre as ações.';
+comment on column IS_PPA_ACAO.CLIENTE
+  is 'Sequence';
+comment on column IS_PPA_ACAO.ANO
+  is 'Ano de referência do registro.';
+comment on column IS_PPA_ACAO.CD_PROGRAMA
+  is 'Código do Programa no Sigplan';
+comment on column IS_PPA_ACAO.CD_ACAO_PPA
+  is 'Código da Ação no PPA';
+comment on column IS_PPA_ACAO.CD_UNIDADE
+  is 'Código da Unidade Orçamentária';
+comment on column IS_PPA_ACAO.CD_TIPO_UNIDADE
+  is 'Código do Tipo da Unidade Orçamentária';
+comment on column IS_PPA_ACAO.CD_FUNCAO
+  is 'Código da Função do PPA';
+comment on column IS_PPA_ACAO.CD_SUBFUNCAO
+  is 'Código da Sub Função do PPA';
+comment on column IS_PPA_ACAO.CD_TIPO_ACAO
+  is 'Código do Tipo de Ação';
+comment on column IS_PPA_ACAO.CD_PRODUTO
+  is 'Código do Produto';
+comment on column IS_PPA_ACAO.CD_UNIDADE_MEDIDA
+  is 'Código da Unidade de Medida';
+comment on column IS_PPA_ACAO.CD_TIPO_INCLUSAO
+  is 'Código do tipo de inclusão de Ação';
+comment on column IS_PPA_ACAO.CD_ESFERA
+  is 'Código da esfera';
+comment on column IS_PPA_ACAO.CD_ORGAO_SIORG
+  is 'Código da Unidade Orçamentária responsável';
+comment on column IS_PPA_ACAO.CD_ACAO
+  is 'Código da Ação no SigPlan';
+comment on column IS_PPA_ACAO.PRODUTO
+  is 'Descrição do Produto da ação';
+comment on column IS_PPA_ACAO.NOME
+  is 'Descrição do título Ação';
+comment on column IS_PPA_ACAO.FINALIDADE
+  is 'Descreve finalidade da ação';
+comment on column IS_PPA_ACAO.DESCRICAO
+  is 'Descrição da Ação';
+comment on column IS_PPA_ACAO.BASE_LEGAL
+  is 'Instrumentos normativos que dão respaldo à ação';
+comment on column IS_PPA_ACAO.REPERC_FINANCEIRA
+  is 'Campo para justificativa do valor que foi inserido na repercussão financeira';
+comment on column IS_PPA_ACAO.VALOR_REPERC_FINANCEIRA
+  is 'Descreve o valor da Repercussão financeira';
+comment on column IS_PPA_ACAO.PADRONIZADA
+  is 'Define a marcação de ações padronizadas';
+comment on column IS_PPA_ACAO.SET_PADRONIZADA
+  is 'Define se a ação é padronizada ou não';
+comment on column IS_PPA_ACAO.DIRETA
+  is 'Define se a ação foi implementada de forma direta';
+comment on column IS_PPA_ACAO.DESCENTRALIZADA
+  is 'Define se a ação foi implementada de forma Descentralizada';
+comment on column IS_PPA_ACAO.LINHA_CREDITO
+  is 'Define se a ação foi implementada de forma Linha de crédito';
+comment on column IS_PPA_ACAO.TRANSF_OBRIGATORIA
+  is 'Define se a ação foi implementada de forma Transferência Obrigatória';
+comment on column IS_PPA_ACAO.TRANSF_VOLUNTARIA
+  is 'Define se a ação foi implementada de forma Transferência Voluntária';
+comment on column IS_PPA_ACAO.TRANSF_OUTRAS
+  is 'Define um tipo de transferência que não se encaixa no tipo Voluntária e Obrigatória';
+comment on column IS_PPA_ACAO.DESPESA_OBRIGATORIA
+  is 'Define se ação possui tipo de despesa obrigatória';
+comment on column IS_PPA_ACAO.BLOQUEIO_PROGRAMACAO
+  is 'Define se a ação permite edição de dados físicos e financeiros';
+comment on column IS_PPA_ACAO.DETALHAMENTO
+  is 'Descreve a explicação conforme a implementação escolhida';
+comment on column IS_PPA_ACAO.MES_INICIO
+  is 'Mês de início da Ação';
+comment on column IS_PPA_ACAO.ANO_INICIO
+  is 'Ano de início da Ação';
+comment on column IS_PPA_ACAO.MES_TERMINO
+  is 'Mês de término da Ação';
+comment on column IS_PPA_ACAO.ANO_TERMINO
+  is 'Ano de término da Ação';
+comment on column IS_PPA_ACAO.VALOR_TOTAL
+  is 'Custo total estimado do projeto';
+comment on column IS_PPA_ACAO.VALOR_ANO_ANTERIOR
+  is 'Custo financeiro até Ano Anterior';
+comment on column IS_PPA_ACAO.QTD_ANO_ANTERIOR
+  is 'Quantidade física até o Ano Anterior';
+comment on column IS_PPA_ACAO.VALOR_ANO_CORRENTE
+  is 'Custo financeiro previsto para o Ano Corrente';
+comment on column IS_PPA_ACAO.QTD_ANO_CORRENTE
+  is 'Quantidade física prevista para o Ano Corrente';
+comment on column IS_PPA_ACAO.ORDEM_PRIORIDADE
+  is 'Define a ordem de prioridade da Ação';
+comment on column IS_PPA_ACAO.OBSERVACAO
+  is 'Descreve a observação da Ação';
+comment on column IS_PPA_ACAO.CD_SOF
+  is 'Código da ação atribuído pela SOF';
+comment on column IS_PPA_ACAO.QTD_TOTAL
+  is 'Quantidade Total da Ação (Meta física da ação, independente de Ano e PPA)';
+comment on column IS_PPA_ACAO.CD_SOF_REFERENCIA
+  is 'Código da célula orçamentária';
+comment on column IS_PPA_ACAO.FLAG_INCLUSAO
+  is 'Data de inclusão do registro';
+comment on column IS_PPA_ACAO.FLAG_ALTERACAO
+  is 'Data da última alteração do registro, caso ele tenha sido alterado.';
+comment on column IS_PPA_ACAO.FLAG_ENVIO
+  is 'Data do último envio do registro, caso ele já tenha sido enviado.';
+alter table IS_PPA_ACAO
+  add constraint PK_IS_PPA_ACAO primary key (CLIENTE,ANO,CD_PROGRAMA,CD_ACAO_PPA)
+  using index 
+  tablespace SYSTEM
+  pctfree 10
+  initrans 2
+  maxtrans 255
+  storage
+  (
+    initial 66K
+    minextents 1
+    maxextents unlimited
+  );
+alter table IS_PPA_ACAO
+  add constraint FK_ISPPAACA_ISPPAESF foreign key (CD_ESFERA)
+  references IS_PPA_ESFERA (CD_ESFERA);
+alter table IS_PPA_ACAO
+  add constraint FK_ISPPAACA_ISPPAFUN foreign key (CD_FUNCAO)
+  references IS_PPA_FUNCAO (CD_FUNCAO);
+alter table IS_PPA_ACAO
+  add constraint FK_ISPPAACA_ISPPAORGSIO foreign key (CD_ORGAO_SIORG)
+  references IS_PPA_ORGAO_SIORG (CD_ORGAO_SIORG);
+alter table IS_PPA_ACAO
+  add constraint FK_ISPPAACA_ISPPAPRG foreign key (CLIENTE,ANO,CD_PROGRAMA)
+  references IS_PPA_PROGRAMA (CLIENTE,ANO,CD_PROGRAMA);
+alter table IS_PPA_ACAO
+  add constraint FK_ISPPAACA_ISPPAPRO foreign key (CD_PRODUTO)
+  references IS_PPA_PRODUTO (CD_PRODUTO);
+alter table IS_PPA_ACAO
+  add constraint FK_ISPPAACA_ISPPASUB foreign key (CD_SUBFUNCAO)
+  references IS_PPA_SUBFUNCAO (CD_SUBFUNCAO);
+alter table IS_PPA_ACAO
+  add constraint FK_ISPPAACA_ISPPATIPACA foreign key (CD_TIPO_ACAO)
+  references IS_PPA_TIPO_ACAO (CD_TIPO_ACAO);
+alter table IS_PPA_ACAO
+  add constraint FK_ISPPAACA_ISPPAUNI foreign key (CD_UNIDADE,CD_TIPO_UNIDADE)
+  references IS_PPA_UNIDADE (CD_UNIDADE,CD_TIPO_UNIDADE);
+alter table IS_PPA_ACAO
+  add constraint FK_ISPPAACA_ISPPAUNIMED foreign key (CD_UNIDADE_MEDIDA)
+  references IS_PPA_UNIDADE_MEDIDA (CD_UNIDADE_MEDIDA);
+alter table IS_PPA_ACAO
+  add constraint FK_ISPPAACA_ISTIPINCACA foreign key (CD_TIPO_INCLUSAO)
+  references IS_TIPO_INCLUSAO_ACAO (CD_TIPO_INCLUSAO);
+alter table IS_PPA_ACAO
+  add constraint CKC_BLOQUEIO_PROGRAMA_IS_PPA_A
+  check (BLOQUEIO_PROGRAMACAO in ('S','N'));
+alter table IS_PPA_ACAO
+  add constraint CKC_DESCENTRALIZADA_IS_PPA_A
+  check (DESCENTRALIZADA in ('S','N'));
+alter table IS_PPA_ACAO
+  add constraint CKC_DESPESA_OBRIGATOR_IS_PPA_A
+  check (DESPESA_OBRIGATORIA in ('S','N'));
+alter table IS_PPA_ACAO
+  add constraint CKC_DIRETA_IS_PPA_A
+  check (DIRETA in ('S','N'));
+alter table IS_PPA_ACAO
+  add constraint CKC_LINHA_CREDITO_IS_PPA_A
+  check (LINHA_CREDITO in ('S','N'));
+alter table IS_PPA_ACAO
+  add constraint CKC_PADRONIZADA_IS_PPA_A
+  check (PADRONIZADA in ('S','N'));
+alter table IS_PPA_ACAO
+  add constraint CKC_SET_PADRONIZADA_IS_PPA_A
+  check (SET_PADRONIZADA in ('S','N'));
+alter table IS_PPA_ACAO
+  add constraint CKC_TRANSF_OBRIGATORI_IS_PPA_A
+  check (TRANSF_OBRIGATORIA in ('S','N'));
+alter table IS_PPA_ACAO
+  add constraint CKC_TRANSF_OUTRAS_IS_PPA_A
+  check (TRANSF_OUTRAS in ('S','N'));
+alter table IS_PPA_ACAO
+  add constraint CKC_TRANSF_VOLUNTARIA_IS_PPA_A
+  check (TRANSF_VOLUNTARIA in ('S','N'));
+

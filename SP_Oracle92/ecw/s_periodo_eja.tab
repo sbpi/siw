@@ -1,0 +1,29 @@
+create table S_PERIODO_EJA
+(
+  CO_UNIDADE CHAR(5) not null,
+  SEM_EJA    CHAR(5) not null
+)
+tablespace SGE
+  pctfree 10
+  initrans 1
+  maxtrans 255
+  storage
+  (
+    initial 66K
+    minextents 1
+    maxextents unlimited
+  );
+alter table S_PERIODO_EJA
+  add constraint PK_S_PERIODO_EJA primary key (CO_UNIDADE,SEM_EJA)
+  using index 
+  tablespace SGE
+  pctfree 10
+  initrans 2
+  maxtrans 255
+  storage
+  (
+    initial 66K
+    minextents 1
+    maxextents unlimited
+  );
+

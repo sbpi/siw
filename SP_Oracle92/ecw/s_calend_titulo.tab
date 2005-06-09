@@ -1,0 +1,36 @@
+create table S_CALEND_TITULO
+(
+  CO_CALENDARIO NUMBER(10) not null,
+  CO_UNIDADE    CHAR(5) not null,
+  DS_CALENDARIO VARCHAR2(60) not null,
+  DS_NUMERO     VARCHAR2(10),
+  ST_OFICIAL    CHAR(1) not null,
+  ANO           CHAR(4)
+)
+tablespace SGE
+  pctfree 10
+  initrans 1
+  maxtrans 255
+  storage
+  (
+    initial 66K
+    minextents 1
+    maxextents unlimited
+  );
+alter table S_CALEND_TITULO
+  add constraint PK_S_CALEND_TIT primary key (CO_CALENDARIO,CO_UNIDADE)
+  using index 
+  tablespace SGE
+  pctfree 10
+  initrans 2
+  maxtrans 255
+  storage
+  (
+    initial 66K
+    minextents 1
+    maxextents unlimited
+  );
+alter table S_CALEND_TITULO
+  add constraint FK_CALTIT_UNID foreign key (CO_UNIDADE)
+  references S_UNIDADE (CO_UNIDADE) on delete cascade;
+

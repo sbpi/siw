@@ -1,0 +1,48 @@
+create table DC_EVENTO
+(
+  SQ_EVENTO NUMBER(18) not null,
+  NOME      VARCHAR2(30) not null,
+  DESCRICAO VARCHAR2(4000) not null
+)
+tablespace SYSTEM
+  pctfree 10
+  pctused 40
+  initrans 1
+  maxtrans 255
+  storage
+  (
+    initial 66K
+    minextents 1
+    maxextents unlimited
+  );
+comment on column DC_EVENTO.SQ_EVENTO
+  is 'Sequence.';
+comment on column DC_EVENTO.NOME
+  is 'Nome do evento.';
+comment on column DC_EVENTO.DESCRICAO
+  is 'Descrição do evento.';
+alter table DC_EVENTO
+  add constraint PK_DC_EVENTO primary key (SQ_EVENTO)
+  using index 
+  tablespace SYSTEM
+  pctfree 10
+  initrans 2
+  maxtrans 255
+  storage
+  (
+    initial 66K
+    minextents 1
+    maxextents unlimited
+  );
+create unique index IN_DCEVE_NOME on DC_EVENTO (NOME)
+  tablespace SYSTEM
+  pctfree 10
+  initrans 2
+  maxtrans 255
+  storage
+  (
+    initial 66K
+    minextents 1
+    maxextents unlimited
+  );
+

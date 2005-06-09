@@ -1,0 +1,63 @@
+create table DC_SISTEMA
+(
+  SQ_SISTEMA NUMBER(18) not null,
+  CLIENTE    NUMBER(18) not null,
+  NOME       VARCHAR2(30) not null,
+  SIGLA      VARCHAR2(10) not null,
+  DESCRICAO  VARCHAR2(4000) not null
+)
+tablespace SYSTEM
+  pctfree 10
+  pctused 40
+  initrans 1
+  maxtrans 255
+  storage
+  (
+    initial 72K
+    next 64K
+    minextents 1
+    maxextents unlimited
+    pctincrease 50
+  );
+comment on column DC_SISTEMA.SQ_SISTEMA
+  is 'Sequence.';
+comment on column DC_SISTEMA.CLIENTE
+  is 'Sequence';
+comment on column DC_SISTEMA.NOME
+  is 'Nome do sistema.';
+comment on column DC_SISTEMA.SIGLA
+  is 'Sigla do sistema.';
+comment on column DC_SISTEMA.DESCRICAO
+  is 'Descrição do sistema: finalidade, objetivos, características etc.';
+alter table DC_SISTEMA
+  add constraint PK_DC_SISTEMA primary key (SQ_SISTEMA)
+  using index 
+  tablespace SYSTEM
+  pctfree 10
+  initrans 2
+  maxtrans 255
+  storage
+  (
+    initial 72K
+    next 64K
+    minextents 1
+    maxextents unlimited
+    pctincrease 50
+  );
+alter table DC_SISTEMA
+  add constraint FK_DCSIS_COPES foreign key (CLIENTE)
+  references CO_PESSOA (SQ_PESSOA);
+create index IN_DCSIS_CLIENTE on DC_SISTEMA (CLIENTE,SQ_SISTEMA)
+  tablespace SYSTEM
+  pctfree 10
+  initrans 2
+  maxtrans 255
+  storage
+  (
+    initial 72K
+    next 64K
+    minextents 1
+    maxextents unlimited
+    pctincrease 50
+  );
+

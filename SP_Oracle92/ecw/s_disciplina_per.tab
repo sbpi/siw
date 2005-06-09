@@ -1,0 +1,57 @@
+create table S_DISCIPLINA_PER
+(
+  SG_SERIE           VARCHAR2(5) not null,
+  CO_TIPO_DISCIPLINA NUMBER(10) not null,
+  CO_GRADE_CURRIC    NUMBER(10) not null,
+  CO_TIPO_CURSO      NUMBER(10) not null,
+  ANO                NUMBER(10) not null,
+  TURNO              CHAR(2) not null,
+  CARGA_HORARIA_SEM  VARCHAR2(18),
+  TP_DISCIPLINA      CHAR(30),
+  CO_DISCIPLINA      CHAR(4),
+  DS_DISCIPLINA      CHAR(60),
+  NU_ORDEM_IMP       NUMBER(10),
+  TP_AVALIACAO       VARCHAR2(8),
+  TP_DIGITACAO       VARCHAR2(8),
+  TP_IMPRESSAO       VARCHAR2(8),
+  ST_REPROVA         VARCHAR2(3),
+  CO_HELPID          NUMBER(10)
+)
+tablespace SGE
+  pctfree 10
+  initrans 1
+  maxtrans 255
+  storage
+  (
+    initial 66K
+    minextents 1
+    maxextents unlimited
+  );
+alter table S_DISCIPLINA_PER
+  add constraint PK_DISCIPLINA_PER primary key (TURNO,ANO,CO_GRADE_CURRIC,CO_TIPO_CURSO,SG_SERIE,CO_TIPO_DISCIPLINA)
+  using index 
+  tablespace SGE
+  pctfree 10
+  initrans 2
+  maxtrans 255
+  storage
+  (
+    initial 66K
+    minextents 1
+    maxextents unlimited
+  );
+alter table S_DISCIPLINA_PER
+  add constraint R_148 foreign key (CO_TIPO_DISCIPLINA)
+  references S_TIPO_DISCIPLINA (CO_TIPO_DISCIPLINA) on delete cascade;
+create index XIF120S_DISC_PER on S_DISCIPLINA_PER (CO_GRADE_CURRIC)
+  tablespace SGE
+  pctfree 10
+  initrans 2
+  maxtrans 255
+  storage
+  (
+    initial 66K
+    minextents 1
+    maxextents unlimited
+  );
+

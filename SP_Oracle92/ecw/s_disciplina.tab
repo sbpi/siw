@@ -1,0 +1,39 @@
+create table S_DISCIPLINA
+(
+  CO_DISCIPLINA      CHAR(4) not null,
+  DS_DISCIPLINA      VARCHAR2(60),
+  ANO_SEM            CHAR(5) not null,
+  DS_ORDEM_IMP       NUMBER(10),
+  CO_UNIDADE         CHAR(5) not null,
+  NU_DISC_CREDITO    NUMBER(10),
+  TP_DISCIPLINA      CHAR(30),
+  CO_DISC_FEDF       CHAR(15),
+  CO_TIPO_DISCIPLINA NUMBER(10)
+)
+tablespace SGE
+  pctfree 10
+  initrans 1
+  maxtrans 255
+  storage
+  (
+    initial 66K
+    minextents 1
+    maxextents unlimited
+  );
+alter table S_DISCIPLINA
+  add constraint U116_17 primary key (CO_DISCIPLINA,ANO_SEM,CO_UNIDADE)
+  using index 
+  tablespace SGE
+  pctfree 10
+  initrans 2
+  maxtrans 255
+  storage
+  (
+    initial 66K
+    minextents 1
+    maxextents unlimited
+  );
+alter table S_DISCIPLINA
+  add constraint R142_566 foreign key (ANO_SEM,CO_UNIDADE)
+  references S_PERIODOUNIDADE (ANO_SEM,CO_UNIDADE) on delete cascade;
+

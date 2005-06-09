@@ -1,0 +1,956 @@
+HTML
+{
+    SCROLLBAR-FACE-COLOR: #deebbd;
+    SCROLLBAR-HIGHLIGHT-COLOR: #deebbd;
+    SCROLLBAR-SHADOW-COLOR: #deebbd;
+    SCROLLBAR-3DLIGHT-COLOR: #000099;
+    SCROLLBAR-ARROW-COLOR: #000099;
+    SCROLLBAR-TRACK-COLOR: #ffffff;
+    SCROLLBAR-DARKSHADOW-COLOR: #000099;
+    SCROLLBAR-BASE-COLOR: #000099
+}
+BODY
+{
+    PADDING-RIGHT: 0px;
+    PADDING-LEFT: 0px;
+    BACKGROUND: #ffffff;
+    PADDING-BOTTOM: 0px;
+    MARGIN: 0px;
+    FONT: 12px Verdana, Arial, Helvetica, sans-serif;
+    PADDING-TOP: 0px
+}
+#container
+{
+    BORDER-RIGHT: #505050 1px solid;
+    BORDER-TOP: #505050 1px solid;
+    BACKGROUND-ATTACHMENT: scroll;
+    BACKGROUND-IMAGE: url(/cespe_img/fundo_container.gif);
+    BORDER-LEFT: #505050 1px solid;
+    WIDTH: 770px;
+    BORDER-BOTTOM: #505050 1px solid;
+    BACKGROUND-REPEAT: repeat-y
+}
+#cabtopo H1
+{
+    DISPLAY: none
+}
+#cabtopo H2
+{
+    DISPLAY: none
+}
+#logoesq
+{
+    FLOAT: left;
+    BACKGROUND-IMAGE: url(/cespe_img/logo_cultura.gif);
+    WIDTH: 654px;
+    HEIGHT: 35px;
+    TEXT-ALIGN: right
+}
+#logodir
+{
+    BACKGROUND-POSITION: right 50%;
+    FLOAT: left;
+    BACKGROUND-IMAGE: url(/cespe_img/brasil.gif);
+    WIDTH: 116px;
+    HEIGHT: 35px
+}
+#cabbase
+{
+    CLEAR: both;
+    BORDER-TOP: #ffff00 1px solid;
+    FONT-SIZE: 10px;
+    COLOR: #ffffff;
+    HEIGHT: 18px;
+    BACKGROUND-COLOR: #397131
+}
+#data
+{
+    PADDING-RIGHT: 0px;
+    PADDING-LEFT: 4px;
+    PADDING-BOTTOM: 3px;
+    PADDING-TOP: 3px
+}
+#formbusca
+{
+    PADDING-RIGHT: 0px;
+    PADDING-LEFT: 0px;
+    PADDING-BOTTOM: 0px;
+    MARGIN: 0px;
+    PADDING-TOP: 0px
+}
+#busca
+{
+    FLOAT: right
+}
+#buscainput
+{
+    BORDER-RIGHT: #505050 1px solid;
+    BORDER-TOP: #505050 1px solid;
+    FONT-SIZE: 10px;
+    BORDER-LEFT: #505050 1px solid;
+    BORDER-BOTTOM: #505050 1px solid;
+    HEIGHT: 14px;
+    BACKGROUND-COLOR: #ffffff
+}
+#buscabt
+{
+    BORDER-RIGHT: #505050 2px solid;
+    BORDER-TOP: #505050 2px solid;
+    FONT-WEIGHT: bold;
+    FONT-SIZE: 10px;
+    BORDER-LEFT: #505050 2px solid;
+    COLOR: #ffffff;
+    BORDER-BOTTOM: #505050 2px solid;
+    BACKGROUND-COLOR: #397131
+}
+#corpo
+{
+    CLEAR: both;
+    TEXT-ALIGN: left
+}
+#menuesq
+{
+    BORDER-RIGHT: #6b8a31 1px solid;
+    FLOAT: left;
+    WIDTH: 160px
+}
+#menuesq
+{
+    WIDTH: 168px
+}
+#logomenuesq
+{
+    BORDER-RIGHT: medium none;
+    BACKGROUND-IMAGE: url(/cespe_img/logo_bresil_pequena.jpg);
+    BORDER-LEFT: medium none;
+    WIDTH: 167px;
+    BORDER-BOTTOM: medium none;
+    BACKGROUND-REPEAT: repeat-x;
+    HEIGHT: 45px;
+    BACKGROUND-: medium none
+}
+#logomenuesq H3
+{
+    PADDING-RIGHT: 0px;
+    DISPLAY: none;
+    PADDING-LEFT: 0px;
+    PADDING-BOTTOM: 0px;
+    MARGIN: 0px;
+    PADDING-TOP: 0px
+}
+#menugov
+{
+    PADDING-RIGHT: 0px;
+    PADDING-LEFT: 0px;
+    FONT-SIZE: 10px;
+    PADDING-BOTTOM: 0px;
+    MARGIN: 0px;
+    PADDING-TOP: 0px;
+    LIST-STYLE-TYPE: none;
+    BACKGROUND-COLOR: #e2e2e2
+}
+#menugov LI
+{
+    PADDING-RIGHT: 0px;
+    PADDING-LEFT: 4px;
+    PADDING-BOTTOM: 2px;
+    PADDING-TOP: 2px;
+    BORDER-BOTTOM: #ffffff 1px solid
+}
+#menugov LI A
+{
+    COLOR: #000000;
+    TEXT-DECORATION: none
+}
+#menusep
+{
+    BORDER-RIGHT: #ffffff 12px solid;
+    BORDER-TOP: #6b8a31 12px solid;
+    BACKGROUND-IMAGE: none;
+    PADDING-BOTTOM: 2px;
+    MARGIN: 0px;
+    BORDER-LEFT: #ffffff 0px;
+    WIDTH: 155px;
+    BORDER-BOTTOM: #6b8a31 0px;
+    BACKGROUND-COLOR: #ffffff
+}
+#menusep HR
+{
+    DISPLAY: none
+}
+#menunav
+{
+}
+#menunav H3
+{
+    PADDING-RIGHT: 0px;
+    PADDING-LEFT: 4px;
+    FONT-SIZE: 10px;
+    PADDING-BOTTOM: 4px;
+    PADDING-TOP: 4px;
+    BACKGROUND-COLOR: #94c352
+}
+#menunav UL
+{
+    PADDING-RIGHT: 0px;
+    PADDING-LEFT: 0px;
+    FONT-SIZE: 10px;
+    PADDING-BOTTOM: 0px;
+    MARGIN: 0px;
+    PADDING-TOP: 0px;
+    LIST-STYLE-TYPE: none
+}
+#menunav LI
+{
+    BORDER-TOP: #ffffff 1px solid
+}
+#menunav UL A
+{
+    PADDING-RIGHT: 0px;
+    DISPLAY: block;
+    PADDING-LEFT: 4px;
+    PADDING-BOTTOM: 0px;
+    COLOR: #333333;
+    PADDING-TOP: 0px;
+    HEIGHT: 14px;
+    TEXT-DECORATION: none
+}
+#menunav UL UL A
+{
+    FONT-WEIGHT: normal;
+    COLOR: #333333;
+    TEXT-DECORATION: none
+}
+#menunav A:hover
+{
+    COLOR: #ffffff;
+    BACKGROUND-COLOR: #6b8a31
+}
+#menunav UL LI
+{
+}
+#menunav UL UL LI
+{
+    MARGIN-LEFT: 8px
+}
+#menudir
+{
+    FONT-SIZE: 9px;
+    FLOAT: left;
+    WIDTH: 140px;
+    COLOR: #505050;
+    PADDING-TOP: 5px
+}
+#menudir IMG
+{
+    BORDER-RIGHT: #9cbe8c 1px solid;
+    BORDER-TOP: #9cbe8c 1px solid;
+    MARGIN-TOP: 4px;
+    BORDER-LEFT: #9cbe8c 1px solid;
+    BORDER-BOTTOM: #9cbe8c 1px solid
+}
+#menudir A:hover IMG
+{
+    FILTER: alpha(opacity=50);
+    BACKGROUND-COLOR: #ffffff;
+    moz-opacity: 0.5;
+    opacity: 0.5
+}
+#menudir .botao
+{
+    BORDER-RIGHT: #9cbe8c 1px solid;
+    BORDER-TOP: #9cbe8c 1px solid;
+    FONT-SIZE: 10px;
+    BORDER-LEFT: #9cbe8c 1px solid;
+    COLOR: #6b8a31;
+    BORDER-BOTTOM: #9cbe8c 1px solid;
+    FONT-FAMILY: Verdana, Arial, Helvetica, sans-serif;
+    BACKGROUND-COLOR: #deebbd;
+    TEXT-ALIGN: center;
+    TEXT-DECORATION: none
+}
+#menudir .imagem
+{
+    PADDING-RIGHT: 0px;
+    PADDING-LEFT: 0px;
+    PADDING-BOTTOM: 0px;
+    MARGIN: 0px;
+    VERTICAL-ALIGN: middle;
+    WIDTH: 130px;
+    PADDING-TOP: 0px;
+    HEIGHT: 130px;
+    TEXT-ALIGN: center
+}
+#menudir .imagem IMG
+{
+    BORDER-TOP-WIDTH: 0px;
+    BORDER-LEFT-WIDTH: 0px;
+    BORDER-BOTTOM-WIDTH: 0px;
+    ;
+    WORD-SPACING: expression(((this.height>130)?this.height=130:null)?"normal":"normal");
+    ;
+    LETTER-SPACING: expression(((this.width>130)?this.width=130:null)?"normal":"normal");
+    BORDER-RIGHT-WIDTH: 0px;
+    max-width: 130px;
+    max-height: 130px
+}
+#menudir H2
+{
+    MARGIN-TOP: 10px;
+    FONT-SIZE: 12px
+}
+#menudir .retranca
+{
+    CLEAR: both;
+    PADDING-RIGHT: 0px;
+    PADDING-LEFT: 18px;
+    FONT-WEIGHT: bold;
+    FONT-SIZE: 12px;
+    BACKGROUND-IMAGE: url(/cespe_img/fundo_dir_retranca.gif);
+    MARGIN-BOTTOM: 12px;
+    PADDING-BOTTOM: 0px;
+    WIDTH: 110px;
+    COLOR: #505050;
+    PADDING-TOP: 8px;
+    BACKGROUND-REPEAT: no-repeat;
+    HEIGHT: 28px
+}
+#menudir UL
+{
+    PADDING-LEFT: 8px;
+    LIST-STYLE-IMAGE: url(/imagens/indicacao.gif);
+    MARGIN-LEFT: 8px
+}
+#menudir LI
+{
+    MARGIN: 3px 0px
+}
+#menutxt
+{
+    PADDING-LEFT: 24px
+}
+#menubt
+{
+    FLOAT: right;
+    MARGIN: 4px
+}
+#menutexto
+{
+    PADDING-RIGHT: 0px;
+    PADDING-LEFT: 10px;
+    FONT-SIZE: 10px;
+    PADDING-BOTTOM: 10px;
+    MARGIN: 0px;
+    PADDING-TOP: 5px;
+    FONT-FAMILY: verdana, arial, helv, sans-serif
+}
+#menutexto IMG
+{
+    PADDING-RIGHT: 4px;
+    FLOAT: right;
+    BORDER-TOP-STYLE: none;
+    BORDER-RIGHT-STYLE: none;
+    BORDER-LEFT-STYLE: none;
+    BORDER-BOTTOM-STYLE: none
+}
+#mainMenu
+{
+    BORDER-RIGHT: #505050 1px solid;
+    PADDING-RIGHT: 2px;
+    BORDER-TOP: #505050 1px solid;
+    PADDING-LEFT: 2px;
+    PADDING-BOTTOM: 2px;
+    MARGIN: 0px;
+    BORDER-LEFT: #505050 1px solid;
+    COLOR: #505050;
+    PADDING-TOP: 2px;
+    BORDER-BOTTOM: #505050 1px solid;
+    POSITION: static;
+    BACKGROUND-COLOR: #e2e2e2;
+    TEXT-ALIGN: center
+}
+#menuList
+{
+    PADDING-RIGHT: 0px;
+    PADDING-LEFT: 0px;
+    PADDING-BOTTOM: 0px;
+    MARGIN: 0px;
+    PADDING-TOP: 0px
+}
+#menuList UL
+{
+    BORDER-RIGHT: #505050 1px solid;
+    PADDING-RIGHT: 0px;
+    BORDER-TOP: #505050 1px solid;
+    PADDING-LEFT: 0px;
+    PADDING-BOTTOM: 0px;
+    MARGIN: 0px;
+    BORDER-LEFT: #505050 1px solid;
+    PADDING-TOP: 0px;
+    BORDER-BOTTOM: #505050 1px solid
+}
+#menuList LI
+{
+    DISPLAY: inline;
+    LIST-STYLE-TYPE: none
+}
+A.starter
+{
+    PADDING-RIGHT: 2px;
+    PADDING-LEFT: 2px;
+    FONT-WEIGHT: bolder;
+    PADDING-BOTTOM: 2px;
+    MARGIN: 0px;
+    COLOR: #505050;
+    PADDING-TOP: 2px;
+    BACKGROUND-COLOR: #e2e2e2;
+    TEXT-DECORATION: none
+}
+A.starter:hover
+{
+    COLOR: #e2e2e2;
+    BACKGROUND-COLOR: #808080
+}
+A.starter:active
+{
+    COLOR: #505050;
+    BACKGROUND-COLOR: #e2e2e2
+}
+.menu
+{
+    VISIBILITY: hidden;
+    WIDTH: 180px;
+    COLOR: #505050;
+    POSITION: absolute;
+    BACKGROUND-COLOR: #e2e2e2;
+    TEXT-ALIGN: left
+}
+.menu UL
+{
+    BORDER-RIGHT: #505050 1px solid;
+    BORDER-TOP: #505050 1px solid;
+    BORDER-LEFT: #505050 1px solid;
+    BORDER-BOTTOM: #505050 1px solid
+}
+.menu LI A
+{
+    PADDING-RIGHT: 2px;
+    DISPLAY: block;
+    PADDING-LEFT: 2px;
+    PADDING-BOTTOM: 2px;
+    MARGIN: 0px;
+    WIDTH: 100%;
+    COLOR: #505050;
+    LINE-HEIGHT: 1.2em;
+    PADDING-TOP: 2px;
+    BACKGROUND-COLOR: transparent;
+    TEXT-DECORATION: none
+}
+.menu LI A:hover
+{
+    COLOR: #e2e2e2;
+    BACKGROUND-COLOR: #808080
+}
+.menu LI A:active
+{
+    COLOR: #e2e2e2;
+    BACKGROUND-COLOR: #808080
+}
+#menu1
+{
+    Z-INDEX: 100;
+    WIDTH: 180px
+}
+#menu2
+{
+    Z-INDEX: 100;
+    WIDTH: 180px
+}
+#menu3
+{
+    Z-INDEX: 100;
+    WIDTH: 180px
+}
+#menu4
+{
+    Z-INDEX: 100;
+    WIDTH: 180px
+}
+#menu5
+{
+    Z-INDEX: 100;
+    WIDTH: 180px
+}
+#texto
+{
+    PADDING-RIGHT: 10px;
+    PADDING-LEFT: 10px;
+    FONT-SIZE: 10px;
+    FLOAT: left;
+    PADDING-BOTTOM: 10px;
+    OVERFLOW: auto;
+    WIDTH: 440px;
+    COLOR: #333333;
+    PADDING-TOP: 10px;
+    FONT-FAMILY: Verdana, Arial, Helvetica, sans-serif
+}
+#texto
+{
+    WIDTH: 440px
+}
+#texto TABLE
+{
+    BORDER-TOP-WIDTH: 0px;
+    BORDER-LEFT-WIDTH: 0px;
+    BORDER-BOTTOM-WIDTH: 0px;
+    BORDER-RIGHT-WIDTH: 0px
+}
+#texto TABLE TD
+{
+    BORDER-TOP-WIDTH: 0px;
+    BORDER-LEFT-WIDTH: 0px;
+    BORDER-BOTTOM-WIDTH: 0px;
+    BORDER-RIGHT-WIDTH: 0px
+}
+#texto TABLE TH
+{
+    BORDER-RIGHT: #333333 1px solid;
+    PADDING-RIGHT: 2px;
+    BORDER-TOP: #333333 1px solid;
+    PADDING-LEFT: 2px;
+    PADDING-BOTTOM: 2px;
+    MARGIN: 2px;
+    BORDER-LEFT: #333333 1px solid;
+    PADDING-TOP: 2px;
+    BORDER-BOTTOM: #333333 1px solid;
+    BACKGROUND-COLOR: #deebbd
+}
+#texto A:link
+{
+    COLOR: #333333;
+    TEXT-DECORATION: none
+}
+#rodape A:link
+{
+    COLOR: #333333;
+    TEXT-DECORATION: none
+}
+#menudir A:link
+{
+    COLOR: #505050;
+    TEXT-DECORATION: none
+}
+#texto A:visited
+{
+    COLOR: #999999;
+    TEXT-DECORATION: none
+}
+#rodape A:visited
+{
+    COLOR: #999999;
+    TEXT-DECORATION: none
+}
+#menudir A:visited
+{
+    COLOR: #999999;
+    TEXT-DECORATION: none
+}
+#texto A:hover
+{
+    COLOR: #6b8a31;
+    TEXT-DECORATION: underline
+}
+#rodape A:hover
+{
+    COLOR: #6b8a31;
+    TEXT-DECORATION: underline
+}
+#menudir A:hover
+{
+    COLOR: #505050;
+    TEXT-DECORATION: underline
+}
+#texto A:active
+{
+    COLOR: #333333;
+    TEXT-DECORATION: none
+}
+#rodape A:active
+{
+    COLOR: #333333;
+    TEXT-DECORATION: none
+}
+#menudir A:active
+{
+    COLOR: #333333;
+    TEXT-DECORATION: none
+}
+#texto #navcontainer UL
+{
+    FONT-SIZE: 10px
+}
+#texto UL
+{
+    LIST-STYLE-IMAGE: url(/imagens/indicacao.gif)
+}
+#texto LI
+{
+    MARGIN: 4px 0px
+}
+#texto BLOCKQUOTE
+{
+    BORDER-RIGHT: #6b8a31 1px solid;
+    PADDING-RIGHT: 10px;
+    BORDER-TOP: #6b8a31 1px solid;
+    PADDING-LEFT: 10px;
+    PADDING-BOTTOM: 10px;
+    MARGIN-LEFT: 40px;
+    BORDER-LEFT: #6b8a31 1px solid;
+    COLOR: #0099cc;
+    PADDING-TOP: 10px;
+    BORDER-BOTTOM: #6b8a31 1px solid;
+    BACKGROUND-COLOR: #deebbd
+}
+#texto .botao
+{
+    BORDER-RIGHT: #9cbe8c 1px solid;
+    BORDER-TOP: #9cbe8c 1px solid;
+    FONT-SIZE: 10px;
+    BORDER-LEFT: #9cbe8c 1px solid;
+    COLOR: #6b8a31;
+    BORDER-BOTTOM: #9cbe8c 1px solid;
+    FONT-FAMILY: Verdana, Arial, Helvetica, sans-serif;
+    BACKGROUND-COLOR: #deebbd;
+    TEXT-ALIGN: center;
+    TEXT-DECORATION: none
+}
+#texto .input
+{
+    BORDER-RIGHT: #9cbe8c 1px solid;
+    BORDER-TOP: #9cbe8c 1px solid;
+    FONT-SIZE: 10px;
+    BORDER-LEFT: #9cbe8c 1px solid;
+    COLOR: #6b8a31;
+    BORDER-BOTTOM: #9cbe8c 1px solid;
+    FONT-FAMILY: Verdana, Arial, Helvetica, sans-serif;
+    BACKGROUND-COLOR: #deebbd;
+    TEXT-DECORATION: none
+}
+#texto .texto
+{
+    FONT-SIZE: 10px;
+    COLOR: #333333;
+    TEXT-DECORATION: none
+}
+#texto P
+{
+    FONT-SIZE: 11px;
+    COLOR: #000000;
+    FONT-FAMILY: Arial;
+    TEXT-DECORATION: none
+}
+#texto .texto
+{
+    TEXT-ALIGN: justify
+}
+#texto .titulo
+{
+    FONT-SIZE: 12px;
+    MARGIN-BOTTOM: 11px;
+    COLOR: #505050
+}
+#texto .destaque
+{
+    FONT-WEIGHT: normal;
+    FONT-SIZE: 11px
+}
+.titulo
+{
+    FONT-WEIGHT: bold
+}
+#texto .chamada
+{
+    COLOR: #666666;
+    FONT-STYLE: italic
+}
+#texto .retranca
+{
+    CLEAR: both;
+    PADDING-RIGHT: 0px;
+    PADDING-LEFT: 18px;
+    FONT-WEIGHT: bold;
+    FONT-SIZE: 12px;
+    BACKGROUND-IMAGE: url(/cespe_img/fundo_retranca.gif);
+    MARGIN-BOTTOM: 12px;
+    PADDING-BOTTOM: 0px;
+    COLOR: #505050;
+    PADDING-TOP: 8px;
+    BACKGROUND-REPEAT: no-repeat;
+    HEIGHT: 28px
+}
+.titulo A:link
+{
+    COLOR: #6b8a31;
+    TEXT-DECORATION: none
+}
+H3 A:link
+{
+    COLOR: #6b8a31;
+    TEXT-DECORATION: none
+}
+.titulo A:hover
+{
+    COLOR: #333333;
+    TEXT-DECORATION: underline
+}
+H3 A:hover
+{
+    COLOR: #333333;
+    TEXT-DECORATION: underline
+}
+.titulo A:active
+{
+    COLOR: #333333;
+    TEXT-DECORATION: none
+}
+H3 A:active
+{
+    COLOR: #333333;
+    TEXT-DECORATION: none
+}
+.titulo A:visited
+{
+    COLOR: #333333;
+    TEXT-DECORATION: none
+}
+H3 A:visited
+{
+    COLOR: #333333;
+    TEXT-DECORATION: none
+}
+#texto H1
+{
+    MARGIN: 2px 0px
+}
+#texto H2
+{
+    MARGIN: 2px 0px
+}
+#texto H3
+{
+    MARGIN: 2px 0px
+}
+#texto H4
+{
+    MARGIN: 2px 0px
+}
+#texto H5
+{
+    MARGIN: 2px 0px
+}
+#texto H1
+{
+    FONT-WEIGHT: bold;
+    FONT-SIZE: 18px;
+    MARGIN-BOTTOM: 12px;
+    COLOR: #6b8a31
+}
+#texto H2
+{
+    FONT-WEIGHT: bold;
+    FONT-SIZE: 16px;
+    MARGIN-BOTTOM: 12px;
+    COLOR: #6b8a31
+}
+#texto H3
+{
+    FONT-WEIGHT: bold;
+    FONT-SIZE: 14px;
+    MARGIN-BOTTOM: 12px;
+    COLOR: #6b8a31
+}
+#texto H4
+{
+    FONT-WEIGHT: bold;
+    FONT-SIZE: 12px;
+    MARGIN-BOTTOM: 12px;
+    PADDING-BOTTOM: 0px;
+    COLOR: #596d32
+}
+#texto H5
+{
+    FONT-WEIGHT: bold;
+    FONT-SIZE: 10px;
+    MARGIN-BOTTOM: 12px;
+    PADDING-BOTTOM: 0px;
+    COLOR: #465033
+}
+#texto B
+{
+    FONT-WEIGHT: bold;
+    COLOR: #666666
+}
+#texto STRONG
+{
+    FONT-WEIGHT: bold;
+    COLOR: #666666
+}
+#texto IMG
+{
+    PADDING-RIGHT: 5px;
+    PADDING-LEFT: 5px;
+    PADDING-BOTTOM: 5px;
+    PADDING-TOP: 5px
+}
+#btnVoltar
+{
+    TEXT-ALIGN: center
+}
+#texto .bloco
+{
+    PADDING-RIGHT: 5px;
+    PADDING-LEFT: 5px;
+    FLOAT: left;
+    PADDING-BOTTOM: 5px;
+    WIDTH: 180px;
+    PADDING-TOP: 5px
+}
+#texto #rss
+{
+    FONT-SIZE: 9px
+}
+#texto .manchete
+{
+    FLOAT: left;
+    MARGIN: 0px 4px;
+    WIDTH: 70px;
+    HEIGHT: 70px;
+    TEXT-ALIGN: justify
+}
+#texto .manchete IMG
+{
+    BORDER-TOP-WIDTH: 0px;
+    BORDER-LEFT-WIDTH: 0px;
+    BORDER-BOTTOM-WIDTH: 0px;
+    ;
+    WORD-SPACING: expression(((this.height>70)?this.height=70:null)?"normal":"normal");
+    ;
+    LETTER-SPACING: expression(((this.width>70)?this.width=70:null)?"normal":"normal");
+    BORDER-RIGHT-WIDTH: 0px;
+    max-width: 70px;
+    max-height: 70px
+}
+#texto .foto
+{
+    BORDER-RIGHT: #cccccc 1px solid;
+    PADDING-RIGHT: 4px;
+    BORDER-TOP: #cccccc 1px solid;
+    MARGIN-TOP: 24px;
+    PADDING-LEFT: 4px;
+    FLOAT: left;
+    PADDING-BOTTOM: 4px;
+    BORDER-LEFT: #cccccc 1px solid;
+    PADDING-TOP: 4px;
+    BORDER-BOTTOM: #cccccc 1px solid
+}
+#texto .foto IMG
+{
+    BORDER-TOP-WIDTH: 0px;
+    BORDER-LEFT-WIDTH: 0px;
+    BORDER-BOTTOM-WIDTH: 0px;
+    ;
+    WORD-SPACING: expression(((this.height>200)?this.height=200:null)?"normal":"normal");
+    VERTICAL-ALIGN: middle;
+    ;
+    LETTER-SPACING: expression(((this.width>200)?this.width=200:null)?"normal":"normal");
+    TEXT-ALIGN: center;
+    BORDER-RIGHT-WIDTH: 0px;
+    max-width: 200px;
+    max-height: 200px
+}
+#texto FORM
+{
+    TEXT-ALIGN: left
+}
+#texto .FormText
+{
+    BORDER-RIGHT: #6b8a31 1px solid;
+    BORDER-TOP: #6b8a31 1px solid;
+    BORDER-LEFT: #6b8a31 1px solid;
+    WIDTH: 200px;
+    BORDER-BOTTOM: #6b8a31 1px solid;
+    BACKGROUND-COLOR: #daeabd
+}
+#texto .FormBT
+{
+    BORDER-RIGHT: #daeabd 1px solid;
+    BORDER-TOP: #daeabd 1px solid;
+    BORDER-LEFT: #daeabd 1px solid;
+    BORDER-BOTTOM: #daeabd 1px solid;
+    BACKGROUND-COLOR: #6b8a31
+}
+#rodape
+{
+    CLEAR: both;
+    PADDING-RIGHT: 0px;
+    BACKGROUND-POSITION: left 50%;
+    PADDING-LEFT: 0px;
+    FONT-SIZE: 9px;
+    PADDING-BOTTOM: 0px;
+    WIDTH: 770px;
+    PADDING-TOP: 20px;
+    BACKGROUND-REPEAT: no-repeat;
+    HEIGHT: 70px;
+    TEXT-ALIGN: center
+}
+.pr
+{
+    FONT-SIZE: 8pt;
+    FONT-FAMILY: Arial;
+    BACKGROUND-COLOR: #f8c400
+}
+.menu LI
+{
+}
+.sti
+{
+    BORDER-RIGHT: #505050 1px solid;
+    BORDER-TOP: #505050 1px solid;
+    FONT-SIZE: 8pt;
+    BORDER-LEFT: #505050 1px solid;
+    COLOR: #505050;
+    BORDER-BOTTOM: #505050 1px solid;
+    BACKGROUND-COLOR: #f5f5f5
+}
+.stb
+{
+    BORDER-RIGHT: #505050 1px solid;
+    BORDER-TOP: #505050 1px solid;
+    FONT-SIZE: 8pt;
+    BORDER-LEFT: #505050 1px solid;
+    COLOR: #000000;
+    BORDER-BOTTOM: #505050 1px solid;
+    FONT-FAMILY: Arial;
+    BACKGROUND-COLOR: #9cbe8c
+}
+#logomenuesq2
+{
+    BORDER-RIGHT: medium none;
+    BACKGROUND-POSITION: left 1px;
+    BORDER-TOP: medium none;
+    BACKGROUND-IMAGE: url(/cespe_img/logo_cespe3.jpg);
+    BORDER-LEFT: medium none;
+    WIDTH: 167px;
+    BORDER-BOTTOM: medium none;
+    BACKGROUND-REPEAT: repeat-x;
+    HEIGHT: 45px
+}
+#logomenuesq2 H3
+{
+    PADDING-RIGHT: 0px;
+    DISPLAY: none;
+    PADDING-LEFT: 0px;
+    PADDING-BOTTOM: 0px;
+    MARGIN: 0px;
+    PADDING-TOP: 0px
+}

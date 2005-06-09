@@ -1,0 +1,163 @@
+create table IS_PPA_INDICADOR
+(
+  CLIENTE            NUMBER(18) not null,
+  ANO                NUMBER(4) not null,
+  CD_PROGRAMA        VARCHAR2(4) not null,
+  CD_INDICADOR       NUMBER(18) not null,
+  CD_UNIDADE_MEDIDA  NUMBER(18) not null,
+  CD_PERIODICIDADE   NUMBER(18),
+  CD_BASE_GEOGRAFICA NUMBER(18),
+  NOME               VARCHAR2(200) not null,
+  FONTE              VARCHAR2(200),
+  FORMULA            VARCHAR2(4000),
+  VALOR_ANO_1        NUMBER(18,2),
+  VALOR_ANO_2        NUMBER(18,2),
+  VALOR_ANO_3        NUMBER(18,2),
+  VALOR_ANO_4        NUMBER(18,2),
+  VALOR_ANO_5        NUMBER(18,2),
+  VALOR_ANO_6        NUMBER(18,2),
+  VALOR_REFERENCIA   NUMBER(18,2),
+  VALOR_FINAL        NUMBER(18,2),
+  APURADO_ANO_1      VARCHAR2(1) default 'N' not null,
+  APURADO_ANO_2      VARCHAR2(1) default 'N' not null,
+  APURADO_ANO_3      VARCHAR2(1) default 'N' not null,
+  APURADO_ANO_4      VARCHAR2(1) default 'N' not null,
+  APURADO_ANO_5      VARCHAR2(1) default 'N' not null,
+  APURADO_ANO_6      VARCHAR2(1) default 'N' not null,
+  APURADO_REFERENCIA VARCHAR2(1) default 'N' not null,
+  APURADO_FINAL      VARCHAR2(1) default 'N' not null,
+  APURACAO           DATE,
+  OBSERVACAO         VARCHAR2(4000),
+  FLAG_INCLUSAO      DATE default sysdate not null,
+  FLAG_ALTERACAO     DATE,
+  FLAG_ENVIO         DATE
+)
+tablespace SYSTEM
+  pctfree 10
+  pctused 40
+  initrans 1
+  maxtrans 255
+  storage
+  (
+    initial 72K
+    next 64K
+    minextents 1
+    maxextents unlimited
+    pctincrease 50
+  );
+comment on table IS_PPA_INDICADOR
+  is 'Descreve os indicadores do PPA, que resume em poucas palavras o principal problema a ser resolvido.';
+comment on column IS_PPA_INDICADOR.CLIENTE
+  is 'Sequence';
+comment on column IS_PPA_INDICADOR.ANO
+  is 'Ano de referência do registro.';
+comment on column IS_PPA_INDICADOR.CD_PROGRAMA
+  is 'Código do Programa no Sigplan';
+comment on column IS_PPA_INDICADOR.CD_INDICADOR
+  is 'Código do Indicador';
+comment on column IS_PPA_INDICADOR.CD_UNIDADE_MEDIDA
+  is 'Código da Unidade de Medida';
+comment on column IS_PPA_INDICADOR.CD_PERIODICIDADE
+  is 'Código da Periodicidade';
+comment on column IS_PPA_INDICADOR.CD_BASE_GEOGRAFICA
+  is 'Codigo da base geográfica';
+comment on column IS_PPA_INDICADOR.NOME
+  is 'Descrição do indicador';
+comment on column IS_PPA_INDICADOR.FONTE
+  is 'Órgãos responsáveis pelas informações geradas para os indicadores ';
+comment on column IS_PPA_INDICADOR.FORMULA
+  is 'Demonstra como calcular o valor do indicador';
+comment on column IS_PPA_INDICADOR.VALOR_ANO_1
+  is 'Situação que se deseja atingir ao longo do primeiro ano';
+comment on column IS_PPA_INDICADOR.VALOR_ANO_2
+  is 'Situação que se deseja atingir ao longo do segundo ano';
+comment on column IS_PPA_INDICADOR.VALOR_ANO_3
+  is 'Situação que se deseja atingir ao longo do terceiro ano';
+comment on column IS_PPA_INDICADOR.VALOR_ANO_4
+  is 'Situação que se deseja atingir ao longo do quarto ano';
+comment on column IS_PPA_INDICADOR.VALOR_ANO_5
+  is 'Situação que se deseja atingir ao longo do quinto ano';
+comment on column IS_PPA_INDICADOR.VALOR_ANO_6
+  is 'Situação que se deseja atingir ao longo do sexto ano';
+comment on column IS_PPA_INDICADOR.VALOR_REFERENCIA
+  is 'Expressa a situação mais recente do problema';
+comment on column IS_PPA_INDICADOR.VALOR_FINAL
+  is 'Expressa a situação final do programa';
+comment on column IS_PPA_INDICADOR.APURADO_ANO_1
+  is 'Define o status da apuração no primeiro ano';
+comment on column IS_PPA_INDICADOR.APURADO_ANO_2
+  is 'Define o status da apuração no segundo ano';
+comment on column IS_PPA_INDICADOR.APURADO_ANO_3
+  is 'Define o status da apuração no terceiro ano';
+comment on column IS_PPA_INDICADOR.APURADO_ANO_4
+  is 'Define o status da apuração no quarto ano';
+comment on column IS_PPA_INDICADOR.APURADO_ANO_5
+  is 'Define o status da apuração no quinto ano';
+comment on column IS_PPA_INDICADOR.APURADO_ANO_6
+  is 'Define o status da apuração no sexto ano';
+comment on column IS_PPA_INDICADOR.APURADO_REFERENCIA
+  is 'Define o status da apuração do valor de referência';
+comment on column IS_PPA_INDICADOR.APURADO_FINAL
+  is 'Define o status da apuração no final do Programa';
+comment on column IS_PPA_INDICADOR.APURACAO
+  is 'Data de apuração do índice de referência';
+comment on column IS_PPA_INDICADOR.OBSERVACAO
+  is 'Observação do Indicador';
+comment on column IS_PPA_INDICADOR.FLAG_INCLUSAO
+  is 'Data de inclusão do registro';
+comment on column IS_PPA_INDICADOR.FLAG_ALTERACAO
+  is 'Data da última alteração do registro, caso ele tenha sido alterado.';
+comment on column IS_PPA_INDICADOR.FLAG_ENVIO
+  is 'Data do último envio do registro, caso ele já tenha sido enviado.';
+alter table IS_PPA_INDICADOR
+  add constraint PK_IS_PPA_INDICADOR primary key (CLIENTE,ANO,CD_PROGRAMA,CD_INDICADOR)
+  using index 
+  tablespace SYSTEM
+  pctfree 10
+  initrans 2
+  maxtrans 255
+  storage
+  (
+    initial 72K
+    next 64K
+    minextents 1
+    maxextents unlimited
+    pctincrease 50
+  );
+alter table IS_PPA_INDICADOR
+  add constraint FK_ISPPAIND_ISPPABASGEO foreign key (CD_BASE_GEOGRAFICA)
+  references IS_PPA_BASE_GEOGRAFICA (CD_BASE_GEOGRAFICA);
+alter table IS_PPA_INDICADOR
+  add constraint FK_ISPPAIND_ISPPAPER foreign key (CD_PERIODICIDADE)
+  references IS_PPA_PERIODICIDADE (CD_PERIODICIDADE);
+alter table IS_PPA_INDICADOR
+  add constraint FK_ISPPAIND_ISPPAPRG foreign key (CLIENTE,ANO,CD_PROGRAMA)
+  references IS_PPA_PROGRAMA (CLIENTE,ANO,CD_PROGRAMA);
+alter table IS_PPA_INDICADOR
+  add constraint FK_ISPPAIND_ISPPAUNIMED foreign key (CD_UNIDADE_MEDIDA)
+  references IS_PPA_UNIDADE_MEDIDA (CD_UNIDADE_MEDIDA);
+alter table IS_PPA_INDICADOR
+  add constraint CKC_APURADO_ANO_1_IS_PPA_I
+  check (APURADO_ANO_1 in ('S','N'));
+alter table IS_PPA_INDICADOR
+  add constraint CKC_APURADO_ANO_2_IS_PPA_I
+  check (APURADO_ANO_2 in ('S','N'));
+alter table IS_PPA_INDICADOR
+  add constraint CKC_APURADO_ANO_3_IS_PPA_I
+  check (APURADO_ANO_3 in ('S','N'));
+alter table IS_PPA_INDICADOR
+  add constraint CKC_APURADO_ANO_4_IS_PPA_I
+  check (APURADO_ANO_4 in ('S','N'));
+alter table IS_PPA_INDICADOR
+  add constraint CKC_APURADO_ANO_5_IS_PPA_I
+  check (APURADO_ANO_5 in ('S','N'));
+alter table IS_PPA_INDICADOR
+  add constraint CKC_APURADO_ANO_6_IS_PPA_I
+  check (APURADO_ANO_6 in ('S','N'));
+alter table IS_PPA_INDICADOR
+  add constraint CKC_APURADO_FINAL_IS_PPA_I
+  check (APURADO_FINAL in ('S','N'));
+alter table IS_PPA_INDICADOR
+  add constraint CKC_APURADO_REFERENCI_IS_PPA_I
+  check (APURADO_REFERENCIA in ('S','N'));
+

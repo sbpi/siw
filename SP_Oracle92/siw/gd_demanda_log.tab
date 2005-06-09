@@ -1,0 +1,121 @@
+create table GD_DEMANDA_LOG
+(
+  SQ_DEMANDA_LOG     NUMBER(18) not null,
+  SQ_SIW_SOLICITACAO NUMBER(18) not null,
+  CADASTRADOR        NUMBER(18) not null,
+  DESTINATARIO       NUMBER(18),
+  DATA_INCLUSAO      DATE not null,
+  OBSERVACAO         VARCHAR2(2000),
+  DESPACHO           VARCHAR2(2000),
+  SQ_SIW_SOLIC_LOG   NUMBER(18)
+)
+tablespace SYSTEM
+  pctfree 10
+  pctused 40
+  initrans 1
+  maxtrans 255
+  storage
+  (
+    initial 66K
+    minextents 1
+    maxextents unlimited
+  );
+comment on table GD_DEMANDA_LOG
+  is 'Registra o histórico da demanda';
+comment on column GD_DEMANDA_LOG.SQ_DEMANDA_LOG
+  is 'Sequence.';
+comment on column GD_DEMANDA_LOG.SQ_SIW_SOLICITACAO
+  is 'Chave de SIW_SOLICITACAO.';
+comment on column GD_DEMANDA_LOG.CADASTRADOR
+  is 'Responsável pela inserção do histórico.';
+comment on column GD_DEMANDA_LOG.DESTINATARIO
+  is 'Pessoa à qual a demanda está sendo encaminhada.';
+comment on column GD_DEMANDA_LOG.DATA_INCLUSAO
+  is 'Data de inclusão do registro, gerado pelo sistema.';
+comment on column GD_DEMANDA_LOG.OBSERVACAO
+  is 'Observações inseridas pelo usuário.';
+comment on column GD_DEMANDA_LOG.DESPACHO
+  is 'Orientação ao destinatário sobre as ações necessárias.';
+comment on column GD_DEMANDA_LOG.SQ_SIW_SOLIC_LOG
+  is 'Chave do log da solicitação, informada apenas quando for envio entre fases.';
+alter table GD_DEMANDA_LOG
+  add constraint PK_GD_DEMANDA_LOG primary key (SQ_DEMANDA_LOG)
+  using index 
+  tablespace SYSTEM
+  pctfree 10
+  initrans 2
+  maxtrans 255
+  storage
+  (
+    initial 66K
+    minextents 1
+    maxextents unlimited
+  );
+alter table GD_DEMANDA_LOG
+  add constraint FK_GDDEMLOG_GDDEM foreign key (SQ_SIW_SOLICITACAO)
+  references GD_DEMANDA (SQ_SIW_SOLICITACAO);
+alter table GD_DEMANDA_LOG
+  add constraint FK_GDDMLG_COPS_CAD foreign key (CADASTRADOR)
+  references CO_PESSOA (SQ_PESSOA);
+alter table GD_DEMANDA_LOG
+  add constraint FK_GDDMLG_COPS_DEM foreign key (DESTINATARIO)
+  references CO_PESSOA (SQ_PESSOA);
+alter table GD_DEMANDA_LOG
+  add constraint FK_GDLOG_SIWLOG foreign key (SQ_SIW_SOLIC_LOG)
+  references SIW_SOLIC_LOG (SQ_SIW_SOLIC_LOG);
+create index IN_GDDEMLOG_CADAST on GD_DEMANDA_LOG (CADASTRADOR,SQ_DEMANDA_LOG)
+  tablespace SYSTEM
+  pctfree 10
+  initrans 2
+  maxtrans 255
+  storage
+  (
+    initial 66K
+    minextents 1
+    maxextents unlimited
+  );
+create index IN_GDDEMLOG_DATA on GD_DEMANDA_LOG (DATA_INCLUSAO,SQ_DEMANDA_LOG)
+  tablespace SYSTEM
+  pctfree 10
+  initrans 2
+  maxtrans 255
+  storage
+  (
+    initial 66K
+    minextents 1
+    maxextents unlimited
+  );
+create index IN_GDDEMLOG_DEM on GD_DEMANDA_LOG (SQ_SIW_SOLICITACAO,SQ_DEMANDA_LOG)
+  tablespace SYSTEM
+  pctfree 10
+  initrans 2
+  maxtrans 255
+  storage
+  (
+    initial 66K
+    minextents 1
+    maxextents unlimited
+  );
+create index IN_GDDEMLOG_DEST on GD_DEMANDA_LOG (DESTINATARIO,SQ_DEMANDA_LOG)
+  tablespace SYSTEM
+  pctfree 10
+  initrans 2
+  maxtrans 255
+  storage
+  (
+    initial 66K
+    minextents 1
+    maxextents unlimited
+  );
+create index IN_GDDEMLOG_SIWLOG on GD_DEMANDA_LOG (SQ_SIW_SOLIC_LOG,SQ_DEMANDA_LOG)
+  tablespace SYSTEM
+  pctfree 10
+  initrans 2
+  maxtrans 255
+  storage
+  (
+    initial 66K
+    minextents 1
+    maxextents unlimited
+  );
+

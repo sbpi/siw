@@ -1,0 +1,36 @@
+create table S_HORARIO_EJA
+(
+  CO_HORARIO NUMBER(10) not null,
+  CO_TURMA   NUMBER(10) not null,
+  CO_UNIDADE CHAR(5) not null,
+  SEM_EJA    CHAR(5) not null,
+  CO_DIA     NUMBER(10) not null,
+  CO_AULA    NUMBER(10) not null
+)
+tablespace SGE
+  pctfree 10
+  initrans 1
+  maxtrans 255
+  storage
+  (
+    initial 66K
+    minextents 1
+    maxextents unlimited
+  );
+alter table S_HORARIO_EJA
+  add constraint PK_S_HORARIO_EJA primary key (CO_HORARIO,CO_TURMA,CO_UNIDADE,SEM_EJA)
+  using index 
+  tablespace SGE
+  pctfree 10
+  initrans 2
+  maxtrans 255
+  storage
+  (
+    initial 66K
+    minextents 1
+    maxextents unlimited
+  );
+alter table S_HORARIO_EJA
+  add constraint FK_SHOREJA_STUREJA foreign key (CO_TURMA,CO_UNIDADE,SEM_EJA)
+  references S_TURMA_EJA (CO_TURMA,CO_UNIDADE,SEM_EJA) on delete cascade;
+

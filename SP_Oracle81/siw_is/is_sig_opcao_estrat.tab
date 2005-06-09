@@ -1,0 +1,49 @@
+create table IS_SIG_OPCAO_ESTRAT
+(
+  CD_OPCAO      VARCHAR2(2) not null,
+  NOME          VARCHAR2(255) not null,
+  ATIVO         VARCHAR2(1) default 'S' not null,
+  FLAG_INCLUSAO DATE default sysdate not null
+)
+tablespace SYSTEM
+  pctfree 10
+  pctused 40
+  initrans 1
+  maxtrans 255
+  storage
+  (
+    initial 72K
+    next 64K
+    minextents 1
+    maxextents unlimited
+    pctincrease 50
+  );
+comment on table IS_SIG_OPCAO_ESTRAT
+  is 'Armazena dados dos orgãos.';
+comment on column IS_SIG_OPCAO_ESTRAT.CD_OPCAO
+  is 'Código da Opção Estratégica';
+comment on column IS_SIG_OPCAO_ESTRAT.NOME
+  is 'Descrição da Opção Estratégica';
+comment on column IS_SIG_OPCAO_ESTRAT.ATIVO
+  is 'Indica se a Opção Estratégica esta ativa';
+comment on column IS_SIG_OPCAO_ESTRAT.FLAG_INCLUSAO
+  is 'Data de inclusão do registro';
+alter table IS_SIG_OPCAO_ESTRAT
+  add constraint PK_IS_SIG_OPCAO_ESTRAT primary key (CD_OPCAO)
+  using index 
+  tablespace SYSTEM
+  pctfree 10
+  initrans 2
+  maxtrans 255
+  storage
+  (
+    initial 72K
+    next 64K
+    minextents 1
+    maxextents unlimited
+    pctincrease 50
+  );
+alter table IS_SIG_OPCAO_ESTRAT
+  add constraint CKC_ISSIGOPCEST_ATIVO
+  check (ATIVO in ('S','N'));
+

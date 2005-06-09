@@ -1,0 +1,29 @@
+create table S_AMBIENTE
+(
+  CO_SEQ_AMBIENTE NUMBER(10) not null,
+  DS_AMBIENTE     VARCHAR2(30)
+)
+tablespace SGE
+  pctfree 10
+  initrans 1
+  maxtrans 255
+  storage
+  (
+    initial 66K
+    minextents 1
+    maxextents unlimited
+  );
+alter table S_AMBIENTE
+  add constraint XPKS_AMBIENTE primary key (CO_SEQ_AMBIENTE)
+  using index 
+  tablespace SGE
+  pctfree 10
+  initrans 2
+  maxtrans 255
+  storage
+  (
+    initial 66K
+    minextents 1
+    maxextents unlimited
+  );
+

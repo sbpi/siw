@@ -1,0 +1,45 @@
+create table IS_SIG_TIPO_ORGAO
+(
+  CD_TIPO_ORGAO VARCHAR2(1) not null,
+  NOME          VARCHAR2(10) not null,
+  ATIVO         VARCHAR2(1) default 'S' not null,
+  FLAG_INCLUSAO DATE default sysdate not null
+)
+tablespace SYSTEM
+  pctfree 10
+  pctused 40
+  initrans 1
+  maxtrans 255
+  storage
+  (
+    initial 66K
+    minextents 1
+    maxextents unlimited
+  );
+comment on table IS_SIG_TIPO_ORGAO
+  is 'descreve o tipo de órgão (órgão, secretaria, unidade...)';
+comment on column IS_SIG_TIPO_ORGAO.CD_TIPO_ORGAO
+  is 'Código do tipo de órgão';
+comment on column IS_SIG_TIPO_ORGAO.NOME
+  is 'Descrição do tipo de órgão';
+comment on column IS_SIG_TIPO_ORGAO.ATIVO
+  is 'Indica se o registro pode ser associado a novos registros.';
+comment on column IS_SIG_TIPO_ORGAO.FLAG_INCLUSAO
+  is 'Data de inclusão do registro';
+alter table IS_SIG_TIPO_ORGAO
+  add constraint PK_IS_SIG_TIPO_ORGAO primary key (CD_TIPO_ORGAO)
+  using index 
+  tablespace SYSTEM
+  pctfree 10
+  initrans 2
+  maxtrans 255
+  storage
+  (
+    initial 66K
+    minextents 1
+    maxextents unlimited
+  );
+alter table IS_SIG_TIPO_ORGAO
+  add constraint CKC_ISSIGTIPORG_ATIVO
+  check (ATIVO in ('S','N'));
+

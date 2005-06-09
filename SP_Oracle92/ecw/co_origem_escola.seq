@@ -1,0 +1,7 @@
+create sequence CO_ORIGEM_ESCOLA
+minvalue 1
+maxvalue 999999999999999999999999999
+start with 49
+increment by 1
+cache 20;
+

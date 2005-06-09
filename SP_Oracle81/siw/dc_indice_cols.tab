@@ -1,0 +1,66 @@
+create table DC_INDICE_COLS
+(
+  SQ_INDICE NUMBER(18) not null,
+  SQ_COLUNA NUMBER(18) not null,
+  ORDEM     NUMBER(18) not null,
+  ORDENACAO VARCHAR2(1) default 'D' not null
+)
+tablespace SYSTEM
+  pctfree 10
+  pctused 40
+  initrans 1
+  maxtrans 255
+  storage
+  (
+    initial 72K
+    next 216K
+    minextents 1
+    maxextents unlimited
+    pctincrease 50
+  );
+comment on column DC_INDICE_COLS.SQ_INDICE
+  is 'Sequence.';
+comment on column DC_INDICE_COLS.SQ_COLUNA
+  is 'Sequence.';
+comment on column DC_INDICE_COLS.ORDEM
+  is 'Número de ordem da coluna no índice.';
+comment on column DC_INDICE_COLS.ORDENACAO
+  is 'Modo de ordenação da coluna (A - ascendente; D - descendente).';
+alter table DC_INDICE_COLS
+  add constraint PK_DC_INDICE_COLS primary key (SQ_INDICE,SQ_COLUNA)
+  using index 
+  tablespace SYSTEM
+  pctfree 10
+  initrans 2
+  maxtrans 255
+  storage
+  (
+    initial 72K
+    next 216K
+    minextents 1
+    maxextents unlimited
+    pctincrease 50
+  );
+alter table DC_INDICE_COLS
+  add constraint FK_DCINDCOL_DCCOL foreign key (SQ_COLUNA)
+  references DC_COLUNA (SQ_COLUNA);
+alter table DC_INDICE_COLS
+  add constraint FK_DCINDCOL_DCIND foreign key (SQ_INDICE)
+  references DC_INDICE (SQ_INDICE);
+alter table DC_INDICE_COLS
+  add constraint CKC_ORDENACAO_DC_INDIC
+  check (ORDENACAO in ('A','D'));
+create index IN_DCINDCOL_INVERSA on DC_INDICE_COLS (SQ_COLUNA,SQ_INDICE)
+  tablespace SYSTEM
+  pctfree 10
+  initrans 2
+  maxtrans 255
+  storage
+  (
+    initial 72K
+    next 216K
+    minextents 1
+    maxextents unlimited
+    pctincrease 50
+  );
+

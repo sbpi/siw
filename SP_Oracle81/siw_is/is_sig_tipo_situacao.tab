@@ -1,0 +1,52 @@
+create table IS_SIG_TIPO_SITUACAO
+(
+  CD_TIPO_SITUACAO VARCHAR2(2) not null,
+  NOME             VARCHAR2(50) not null,
+  TIPO             VARCHAR2(2) not null,
+  ATIVO            VARCHAR2(1) default 'S' not null,
+  FLAG_INCLUSAO    DATE default sysdate not null
+)
+tablespace SYSTEM
+  pctfree 10
+  pctused 40
+  initrans 1
+  maxtrans 255
+  storage
+  (
+    initial 72K
+    next 64K
+    minextents 1
+    maxextents unlimited
+    pctincrease 50
+  );
+comment on table IS_SIG_TIPO_SITUACAO
+  is 'Armazena os tipos de situação';
+comment on column IS_SIG_TIPO_SITUACAO.CD_TIPO_SITUACAO
+  is 'Código da situação';
+comment on column IS_SIG_TIPO_SITUACAO.NOME
+  is 'Descrição';
+comment on column IS_SIG_TIPO_SITUACAO.TIPO
+  is 'Tipo da situação';
+comment on column IS_SIG_TIPO_SITUACAO.ATIVO
+  is 'Indica se o registro pode ser associado a novos registros.';
+comment on column IS_SIG_TIPO_SITUACAO.FLAG_INCLUSAO
+  is 'Data de inclusão do registro';
+alter table IS_SIG_TIPO_SITUACAO
+  add constraint PK_IS_SIG_TIPO_SITUACAO primary key (CD_TIPO_SITUACAO)
+  using index 
+  tablespace SYSTEM
+  pctfree 10
+  initrans 2
+  maxtrans 255
+  storage
+  (
+    initial 72K
+    next 64K
+    minextents 1
+    maxextents unlimited
+    pctincrease 50
+  );
+alter table IS_SIG_TIPO_SITUACAO
+  add constraint CKC_ISSIGTIPSIT_ATIVO
+  check (ATIVO in ('S','N'));
+

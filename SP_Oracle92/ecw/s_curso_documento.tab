@@ -1,0 +1,49 @@
+create table S_CURSO_DOCUMENTO
+(
+  CO_CURSO      NUMBER(10) not null,
+  CO_UNIDADE    CHAR(5) not null,
+  CO_TIPO_CURSO NUMBER(10) not null,
+  ANO_SEM       CHAR(5) not null,
+  CO_DOCUMENTO  NUMBER(10) not null
+)
+tablespace SGE
+  pctfree 10
+  initrans 1
+  maxtrans 255
+  storage
+  (
+    initial 66K
+    minextents 1
+    maxextents unlimited
+  );
+alter table S_CURSO_DOCUMENTO
+  add constraint U191_132 primary key (ANO_SEM,CO_UNIDADE,CO_CURSO,CO_DOCUMENTO,CO_TIPO_CURSO)
+  using index 
+  tablespace SGE
+  pctfree 10
+  initrans 2
+  maxtrans 255
+  storage
+  (
+    initial 66K
+    minextents 1
+    maxextents unlimited
+  );
+alter table S_CURSO_DOCUMENTO
+  add constraint R137_558 foreign key (CO_DOCUMENTO,CO_TIPO_CURSO)
+  references S_DOCUMENTO (CO_DOCUMENTO,CO_TIPO_CURSO) on delete cascade;
+alter table S_CURSO_DOCUMENTO
+  add constraint R137_559 foreign key (CO_CURSO,ANO_SEM,CO_UNIDADE)
+  references S_CURSO (CO_CURSO,ANO_SEM,CO_UNIDADE) on delete cascade;
+create index FOREIGN130 on S_CURSO_DOCUMENTO (CO_CURSO,CO_UNIDADE)
+  tablespace SGE
+  pctfree 10
+  initrans 2
+  maxtrans 255
+  storage
+  (
+    initial 66K
+    minextents 1
+    maxextents unlimited
+  );
+

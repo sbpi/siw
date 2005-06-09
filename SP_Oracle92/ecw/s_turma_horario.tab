@@ -1,0 +1,43 @@
+create table S_TURMA_HORARIO
+(
+  CO_TURMA       NUMBER(10) not null,
+  CO_SEQ_SERIE   NUMBER(10) not null,
+  ANO_SEM        CHAR(5) not null,
+  CO_CURSO       NUMBER(10) not null,
+  CO_UNIDADE     CHAR(5) not null,
+  DS_AULA_1      VARCHAR2(10),
+  DS_AULA_2      VARCHAR2(10),
+  DS_HORARIO_1   VARCHAR2(5),
+  DS_HORARIO_2   VARCHAR2(5),
+  DS_EDFISICA_1  VARCHAR2(10),
+  DS_EDFISICA_2  VARCHAR2(10),
+  DS_HORARIOEF_1 VARCHAR2(5),
+  DS_HORARIOEF_2 VARCHAR2(5)
+)
+tablespace SGE
+  pctfree 10
+  initrans 1
+  maxtrans 255
+  storage
+  (
+    initial 66K
+    minextents 1
+    maxextents unlimited
+  );
+alter table S_TURMA_HORARIO
+  add constraint U195_149 primary key (CO_TURMA,CO_SEQ_SERIE,ANO_SEM,CO_CURSO,CO_UNIDADE)
+  using index 
+  tablespace SGE
+  pctfree 10
+  initrans 2
+  maxtrans 255
+  storage
+  (
+    initial 66K
+    minextents 1
+    maxextents unlimited
+  );
+alter table S_TURMA_HORARIO
+  add constraint R195_377 foreign key (CO_TURMA,CO_UNIDADE,ANO_SEM,CO_CURSO,CO_SEQ_SERIE)
+  references S_TURMA (CO_TURMA,CO_UNIDADE,ANO_SEM,CO_CURSO,CO_SEQ_SERIE) on delete cascade;
+

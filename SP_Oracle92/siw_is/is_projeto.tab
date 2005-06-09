@@ -1,0 +1,69 @@
+create table IS_PROJETO
+(
+  SQ_ISPROJETO NUMBER(18) not null,
+  CLIENTE      NUMBER(18) not null,
+  CODIGO       VARCHAR2(50),
+  NOME         VARCHAR2(100) not null,
+  RESPONSAVEL  VARCHAR2(60),
+  TELEFONE     VARCHAR2(20),
+  EMAIL        VARCHAR2(60),
+  ORDEM        NUMBER(4) default 0 not null,
+  ATIVO        VARCHAR2(1) default 'S' not null,
+  PADRAO       VARCHAR2(1) default 'N' not null
+)
+tablespace SYSTEM
+  pctfree 10
+  pctused 40
+  initrans 1
+  maxtrans 255
+  storage
+  (
+    initial 66K
+    minextents 1
+    maxextents unlimited
+  );
+comment on table IS_PROJETO
+  is 'Registra os planos e projetos específicos, não ligados ao PPA.';
+comment on column IS_PROJETO.SQ_ISPROJETO
+  is 'Sequence.';
+comment on column IS_PROJETO.CLIENTE
+  is 'Sequence';
+comment on column IS_PROJETO.CODIGO
+  is 'Código da prioridade  no sistema de origem.';
+comment on column IS_PROJETO.NOME
+  is 'Nome da prioridade.';
+comment on column IS_PROJETO.RESPONSAVEL
+  is 'Nome do responsável pela prioridade.';
+comment on column IS_PROJETO.TELEFONE
+  is 'Telefone do responsável pela prioridade.';
+comment on column IS_PROJETO.EMAIL
+  is 'e-mail do responsável pela prioridade.';
+comment on column IS_PROJETO.ORDEM
+  is 'Número de ordem da ação, a ser utilizada nas listagens.';
+comment on column IS_PROJETO.ATIVO
+  is 'Indica se o registro pode ser associado a novos registros.';
+comment on column IS_PROJETO.PADRAO
+  is 'Indica se o projeto é padrão.';
+alter table IS_PROJETO
+  add constraint PK_IS_PROJETO primary key (SQ_ISPROJETO)
+  using index 
+  tablespace SYSTEM
+  pctfree 10
+  initrans 2
+  maxtrans 255
+  storage
+  (
+    initial 66K
+    minextents 1
+    maxextents unlimited
+  );
+alter table IS_PROJETO
+  add constraint FK_ISPRJ_COPES foreign key (CLIENTE)
+  references SIW.CO_PESSOA (SQ_PESSOA);
+alter table IS_PROJETO
+  add constraint CKC_ATIVO_IS_PROJE
+  check (ATIVO in ('S','N'));
+alter table IS_PROJETO
+  add constraint CKC_PADRAO_IS_PROJE
+  check (PADRAO in ('S','N'));
+

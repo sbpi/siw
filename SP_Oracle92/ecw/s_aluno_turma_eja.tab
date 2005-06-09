@@ -1,0 +1,45 @@
+create table S_ALUNO_TURMA_EJA
+(
+  CO_GRUPO     CHAR(1) not null,
+  CO_TURMA     NUMBER(10) not null,
+  CO_UNIDADE   CHAR(5) not null,
+  CO_ALUNO     CHAR(12) not null,
+  SEM_EJA      CHAR(5) not null,
+  DT_INICIO    DATE,
+  DT_FIM       DATE,
+  DS_SITUACAO  CHAR(15) not null,
+  NU_FALTAS    NUMBER(10),
+  TP_CONCLUIDO CHAR(1),
+  DS_PROJETO   VARCHAR2(60),
+  NU_CHAMADA   VARCHAR2(3)
+)
+tablespace SGE
+  pctfree 10
+  initrans 1
+  maxtrans 255
+  storage
+  (
+    initial 66K
+    minextents 1
+    maxextents unlimited
+  );
+alter table S_ALUNO_TURMA_EJA
+  add constraint PK_S_ALUNO_TURMA_E primary key (CO_UNIDADE,CO_GRUPO,CO_TURMA,CO_ALUNO,SEM_EJA)
+  using index 
+  tablespace SGE
+  pctfree 10
+  initrans 2
+  maxtrans 255
+  storage
+  (
+    initial 66K
+    minextents 1
+    maxextents unlimited
+  );
+alter table S_ALUNO_TURMA_EJA
+  add constraint FK_SALUTUREJA_SALE foreign key (CO_ALUNO,CO_UNIDADE,SEM_EJA)
+  references S_ALUNO_EJA (CO_ALUNO,CO_UNIDADE,SEM_EJA) on delete cascade;
+alter table S_ALUNO_TURMA_EJA
+  add constraint FK_SALUTUREJA_SGRE foreign key (CO_GRUPO,CO_TURMA,CO_UNIDADE,SEM_EJA)
+  references S_GRUPO_EJA (CO_GRUPO,CO_TURMA,CO_UNIDADE,SEM_EJA) on delete cascade;
+

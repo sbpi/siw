@@ -1,0 +1,54 @@
+create table DC_DADO_TIPO
+(
+  SQ_DADO_TIPO NUMBER(18) not null,
+  NOME         VARCHAR2(30) not null,
+  DESCRICAO    VARCHAR2(4000) not null
+)
+tablespace SYSTEM
+  pctfree 10
+  pctused 40
+  initrans 1
+  maxtrans 255
+  storage
+  (
+    initial 72K
+    next 64K
+    minextents 1
+    maxextents unlimited
+    pctincrease 50
+  );
+comment on column DC_DADO_TIPO.SQ_DADO_TIPO
+  is 'Sequence.';
+comment on column DC_DADO_TIPO.NOME
+  is 'Nome do tipo de dado.';
+comment on column DC_DADO_TIPO.DESCRICAO
+  is 'Descrição do tipo de dado.';
+alter table DC_DADO_TIPO
+  add constraint PK_DC_DADO_TIPO primary key (SQ_DADO_TIPO)
+  using index 
+  tablespace SYSTEM
+  pctfree 10
+  initrans 2
+  maxtrans 255
+  storage
+  (
+    initial 72K
+    next 64K
+    minextents 1
+    maxextents unlimited
+    pctincrease 50
+  );
+create unique index IN_DCDADTIP_NOME on DC_DADO_TIPO (NOME)
+  tablespace SYSTEM
+  pctfree 10
+  initrans 2
+  maxtrans 255
+  storage
+  (
+    initial 72K
+    next 64K
+    minextents 1
+    maxextents unlimited
+    pctincrease 50
+  );
+

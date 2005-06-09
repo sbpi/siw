@@ -1,0 +1,51 @@
+create table LC_PORTAL_CONTRATO_ITEM
+(
+  SQ_PORTAL_CONTRATO NUMBER(18) not null,
+  SQ_PORTAL_LIC_ITEM NUMBER(18) not null
+)
+tablespace SYSTEM
+  pctfree 10
+  pctused 40
+  initrans 1
+  maxtrans 255
+  storage
+  (
+    initial 66K
+    minextents 1
+    maxextents unlimited
+  );
+comment on column LC_PORTAL_CONTRATO_ITEM.SQ_PORTAL_CONTRATO
+  is 'Sequence.';
+comment on column LC_PORTAL_CONTRATO_ITEM.SQ_PORTAL_LIC_ITEM
+  is 'Sequence.';
+alter table LC_PORTAL_CONTRATO_ITEM
+  add constraint PK_LC_PORTAL_CONTRATO_ITEM primary key (SQ_PORTAL_CONTRATO,SQ_PORTAL_LIC_ITEM)
+  using index 
+  tablespace SYSTEM
+  pctfree 10
+  initrans 2
+  maxtrans 255
+  storage
+  (
+    initial 66K
+    minextents 1
+    maxextents unlimited
+  );
+alter table LC_PORTAL_CONTRATO_ITEM
+  add constraint FK_LCPORCONITE_LCPORCON foreign key (SQ_PORTAL_CONTRATO)
+  references LC_PORTAL_CONTRATO (SQ_PORTAL_CONTRATO);
+alter table LC_PORTAL_CONTRATO_ITEM
+  add constraint FK_LCPORCONITE_LCPORLICITE foreign key (SQ_PORTAL_LIC_ITEM)
+  references LC_PORTAL_LIC_ITEM (SQ_PORTAL_LIC_ITEM);
+create index IN_LCPORCONITE_INV on LC_PORTAL_CONTRATO_ITEM (SQ_PORTAL_LIC_ITEM,SQ_PORTAL_CONTRATO)
+  tablespace SYSTEM
+  pctfree 10
+  initrans 2
+  maxtrans 255
+  storage
+  (
+    initial 66K
+    minextents 1
+    maxextents unlimited
+  );
+

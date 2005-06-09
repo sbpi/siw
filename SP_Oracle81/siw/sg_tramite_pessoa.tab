@@ -1,0 +1,65 @@
+create table SG_TRAMITE_PESSOA
+(
+  SQ_PESSOA          NUMBER(18) not null,
+  SQ_SIW_TRAMITE     NUMBER(18) not null,
+  SQ_PESSOA_ENDERECO NUMBER(18) not null
+)
+tablespace SYSTEM
+  pctfree 10
+  pctused 40
+  initrans 1
+  maxtrans 255
+  storage
+  (
+    initial 72K
+    next 64K
+    minextents 1
+    maxextents unlimited
+    pctincrease 50
+  );
+comment on table SG_TRAMITE_PESSOA
+  is 'Permissões da pessoa a um trâmite de serviço';
+comment on column SG_TRAMITE_PESSOA.SQ_PESSOA
+  is 'Chave de CO_PESSOA';
+comment on column SG_TRAMITE_PESSOA.SQ_SIW_TRAMITE
+  is 'Chave de SIW_TRAMITE.';
+comment on column SG_TRAMITE_PESSOA.SQ_PESSOA_ENDERECO
+  is 'Chave de CO_PESSOA_ENDERECO';
+alter table SG_TRAMITE_PESSOA
+  add constraint PK_SG_TRAMITE_PESSOA primary key (SQ_PESSOA,SQ_SIW_TRAMITE,SQ_PESSOA_ENDERECO)
+  using index 
+  tablespace SYSTEM
+  pctfree 10
+  initrans 2
+  maxtrans 255
+  storage
+  (
+    initial 72K
+    next 64K
+    minextents 1
+    maxextents unlimited
+    pctincrease 50
+  );
+alter table SG_TRAMITE_PESSOA
+  add constraint FK_SGTRAPES_SGAUT foreign key (SQ_PESSOA)
+  references SG_AUTENTICACAO (SQ_PESSOA);
+alter table SG_TRAMITE_PESSOA
+  add constraint FK_SGTRAPES_SIWTRA foreign key (SQ_SIW_TRAMITE)
+  references SIW_TRAMITE (SQ_SIW_TRAMITE);
+alter table SG_TRAMITE_PESSOA
+  add constraint FK_SGTRAPS_COPSND foreign key (SQ_PESSOA_ENDERECO)
+  references CO_PESSOA_ENDERECO (SQ_PESSOA_ENDERECO);
+create index IN_SGTRAPES_END on SG_TRAMITE_PESSOA (SQ_PESSOA_ENDERECO,SQ_PESSOA,SQ_SIW_TRAMITE)
+  tablespace SYSTEM
+  pctfree 10
+  initrans 2
+  maxtrans 255
+  storage
+  (
+    initial 72K
+    next 64K
+    minextents 1
+    maxextents unlimited
+    pctincrease 50
+  );
+

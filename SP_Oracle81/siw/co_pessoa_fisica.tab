@@ -1,0 +1,175 @@
+create table CO_PESSOA_FISICA
+(
+  SQ_PESSOA          NUMBER(18) not null,
+  NASCIMENTO         DATE,
+  RG_NUMERO          VARCHAR2(30),
+  RG_EMISSOR         VARCHAR2(30),
+  RG_EMISSAO         DATE,
+  CPF                VARCHAR2(20) not null,
+  SQ_CIDADE_NASC     NUMBER(18),
+  PASSAPORTE_NUMERO  VARCHAR2(20),
+  SQ_PAIS_PASSAPORTE NUMBER(18),
+  SQ_ETNIA           NUMBER(18),
+  SQ_DEFICIENCIA     NUMBER(18),
+  SEXO               VARCHAR2(1) not null,
+  CLIENTE            NUMBER(18) not null,
+  SQ_FORMACAO        NUMBER(2)
+)
+tablespace USERS
+  pctfree 10
+  pctused 40
+  initrans 1
+  maxtrans 255
+  storage
+  (
+    initial 136K
+    next 128K
+    minextents 1
+    maxextents 4096
+    pctincrease 0
+  );
+comment on table CO_PESSOA_FISICA
+  is 'Armazena dados das pessoas físicas';
+comment on column CO_PESSOA_FISICA.NASCIMENTO
+  is 'Data de nascimento da pessoa física';
+comment on column CO_PESSOA_FISICA.RG_NUMERO
+  is 'Número do rg';
+comment on column CO_PESSOA_FISICA.RG_EMISSOR
+  is 'Órgão emissor do rg';
+comment on column CO_PESSOA_FISICA.RG_EMISSAO
+  is 'Data de emissão do registro geral (Identidade)';
+comment on column CO_PESSOA_FISICA.PASSAPORTE_NUMERO
+  is 'Número do passaporte.';
+comment on column CO_PESSOA_FISICA.SEXO
+  is 'Indica se esta pessoa jurídica é a sede (matriz).';
+alter table CO_PESSOA_FISICA
+  add constraint PK_CO_PESSOA_FISICA primary key (SQ_PESSOA)
+  using index 
+  tablespace USERS
+  pctfree 10
+  initrans 2
+  maxtrans 255
+  storage
+  (
+    initial 136K
+    next 128K
+    minextents 1
+    maxextents 4096
+    pctincrease 0
+  );
+alter table CO_PESSOA_FISICA
+  add constraint FK_COCID_COPESFIS foreign key (SQ_CIDADE_NASC)
+  references CO_CIDADE (SQ_CIDADE);
+alter table CO_PESSOA_FISICA
+  add constraint FK_CODESF_COPESFIS foreign key (SQ_DEFICIENCIA)
+  references CO_DEFICIENCIA (SQ_DEFICIENCIA);
+alter table CO_PESSOA_FISICA
+  add constraint FK_COETN_COPESFIS foreign key (SQ_ETNIA)
+  references CO_ETNIA (SQ_ETNIA);
+alter table CO_PESSOA_FISICA
+  add constraint FK_COFOR_COPESFIS foreign key (SQ_FORMACAO)
+  references CO_FORMACAO (SQ_FORMACAO);
+alter table CO_PESSOA_FISICA
+  add constraint FK_COPAI_COPESFIS foreign key (SQ_PAIS_PASSAPORTE)
+  references CO_PAIS (SQ_PAIS);
+alter table CO_PESSOA_FISICA
+  add constraint FK_COPES_COPESFIS foreign key (SQ_PESSOA)
+  references CO_PESSOA (SQ_PESSOA);
+alter table CO_PESSOA_FISICA
+  add constraint FK_COPESFIS_SIWCLI foreign key (CLIENTE)
+  references SIW_CLIENTE (SQ_PESSOA);
+alter table CO_PESSOA_FISICA
+  add constraint CKC_SEXO_CO_PESSO
+  check (SEXO in ('M','F'));
+create index IN_COPESFIS_CLI on CO_PESSOA_FISICA (CLIENTE,SQ_PESSOA)
+  tablespace SYSTEM
+  pctfree 10
+  initrans 2
+  maxtrans 255
+  storage
+  (
+    initial 72K
+    next 64K
+    minextents 1
+    maxextents unlimited
+    pctincrease 50
+  );
+create unique index IN_COPESFIS_CPF on CO_PESSOA_FISICA (CPF,CLIENTE)
+  tablespace SYSTEM
+  pctfree 10
+  initrans 2
+  maxtrans 255
+  storage
+  (
+    initial 72K
+    next 96K
+    minextents 1
+    maxextents unlimited
+    pctincrease 50
+  );
+create index IN_COPESFIS_DEFIC on CO_PESSOA_FISICA (SQ_DEFICIENCIA)
+  tablespace SYSTEM
+  pctfree 10
+  initrans 2
+  maxtrans 255
+  storage
+  (
+    initial 72K
+    next 64K
+    minextents 1
+    maxextents unlimited
+    pctincrease 50
+  );
+create index IN_COPESFIS_ESC on CO_PESSOA_FISICA (SQ_FORMACAO)
+  tablespace SYSTEM
+  pctfree 10
+  initrans 2
+  maxtrans 255
+  storage
+  (
+    initial 72K
+    next 64K
+    minextents 1
+    maxextents unlimited
+    pctincrease 50
+  );
+create index IN_COPESFIS_ETNIA on CO_PESSOA_FISICA (SQ_ETNIA)
+  tablespace SYSTEM
+  pctfree 10
+  initrans 2
+  maxtrans 255
+  storage
+  (
+    initial 72K
+    next 64K
+    minextents 1
+    maxextents unlimited
+    pctincrease 50
+  );
+create index IN_COPESFIS_NASC on CO_PESSOA_FISICA (NASCIMENTO)
+  tablespace SYSTEM
+  pctfree 10
+  initrans 2
+  maxtrans 255
+  storage
+  (
+    initial 72K
+    next 64K
+    minextents 1
+    maxextents unlimited
+    pctincrease 50
+  );
+create index IN_COPESFIS_SEXO on CO_PESSOA_FISICA (SEXO)
+  tablespace SYSTEM
+  pctfree 10
+  initrans 2
+  maxtrans 255
+  storage
+  (
+    initial 72K
+    next 64K
+    minextents 1
+    maxextents unlimited
+    pctincrease 50
+  );
+

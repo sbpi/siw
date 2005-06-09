@@ -1,0 +1,45 @@
+create table S_CIDADE
+(
+  CO_SEQ_CIDADE      NUMBER(10) not null,
+  SG_UF              CHAR(2),
+  NO_CIDADE          VARCHAR2(60),
+  CATEGORIA          VARCHAR2(30),
+  FONTE              VARCHAR2(30),
+  LATITUDE           NUMBER,
+  LONGITUDE          NUMBER,
+  ALTITUDE           NUMBER,
+  AREA               NUMBER(8,2),
+  ANO_INSTAURACAO    NUMBER,
+  MUNICIPIO_PERTENCE VARCHAR2(60),
+  CO_UF              NUMBER,
+  CO_CIDADE          NUMBER,
+  DV                 NUMBER,
+  CO_DISTRITO        NUMBER
+)
+tablespace SGE
+  pctfree 10
+  initrans 1
+  maxtrans 255
+  storage
+  (
+    initial 66K
+    minextents 1
+    maxextents unlimited
+  );
+alter table S_CIDADE
+  add constraint PKS_CIDADE primary key (CO_SEQ_CIDADE)
+  using index 
+  tablespace SGE
+  pctfree 10
+  initrans 2
+  maxtrans 255
+  storage
+  (
+    initial 66K
+    minextents 1
+    maxextents unlimited
+  );
+alter table S_CIDADE
+  add constraint R132_552 foreign key (SG_UF)
+  references S_UF (SG_UF) on delete cascade;
+

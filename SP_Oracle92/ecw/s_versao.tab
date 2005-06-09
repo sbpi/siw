@@ -1,0 +1,30 @@
+create table S_VERSAO
+(
+  CO_UNIDADE    CHAR(5) not null,
+  DS_VERSAO     VARCHAR2(15),
+  NU_SEQUENCIAL NUMBER(10) not null
+)
+tablespace SGE
+  pctfree 10
+  initrans 1
+  maxtrans 255
+  storage
+  (
+    initial 66K
+    minextents 1
+    maxextents unlimited
+  );
+alter table S_VERSAO
+  add constraint PK_VERSAO primary key (CO_UNIDADE,NU_SEQUENCIAL)
+  using index 
+  tablespace SGE
+  pctfree 10
+  initrans 2
+  maxtrans 255
+  storage
+  (
+    initial 66K
+    minextents 1
+    maxextents unlimited
+  );
+

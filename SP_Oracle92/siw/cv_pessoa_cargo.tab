@@ -1,0 +1,88 @@
+create table CV_PESSOA_CARGO
+(
+  SQ_CVPESCARGO        NUMBER(18) not null,
+  SQ_CVPESEXP          NUMBER(18) not null,
+  SQ_AREA_CONHECIMENTO NUMBER(10) not null,
+  ESPECIALIDADES       VARCHAR2(255) not null,
+  INICIO               DATE not null,
+  FIM                  DATE
+)
+tablespace SYSTEM
+  pctfree 10
+  pctused 40
+  initrans 1
+  maxtrans 255
+  storage
+  (
+    initial 66K
+    minextents 1
+    maxextents unlimited
+  );
+comment on column CV_PESSOA_CARGO.SQ_CVPESEXP
+  is 'Sequence.';
+comment on column CV_PESSOA_CARGO.SQ_AREA_CONHECIMENTO
+  is 'Código Área Conhecimento.';
+alter table CV_PESSOA_CARGO
+  add constraint PK_CV_PESSOA_CARGO primary key (SQ_CVPESCARGO)
+  using index 
+  tablespace SYSTEM
+  pctfree 10
+  initrans 2
+  maxtrans 255
+  storage
+  (
+    initial 66K
+    minextents 1
+    maxextents unlimited
+  );
+alter table CV_PESSOA_CARGO
+  add constraint FK_CVPESCAR_COARECON foreign key (SQ_AREA_CONHECIMENTO)
+  references CO_AREA_CONHECIMENTO (SQ_AREA_CONHECIMENTO);
+alter table CV_PESSOA_CARGO
+  add constraint FK_CVPESCAR_CVPESEXP foreign key (SQ_CVPESEXP)
+  references CV_PESSOA_EXP (SQ_CVPESEXP);
+create index IN_CVPESCAR_AREA on CV_PESSOA_CARGO (SQ_CVPESEXP,SQ_AREA_CONHECIMENTO)
+  tablespace SYSTEM
+  pctfree 10
+  initrans 2
+  maxtrans 255
+  storage
+  (
+    initial 66K
+    minextents 1
+    maxextents unlimited
+  );
+create index IN_CVPESCAR_EMPREGO on CV_PESSOA_CARGO (SQ_CVPESEXP,SQ_CVPESCARGO)
+  tablespace SYSTEM
+  pctfree 10
+  initrans 2
+  maxtrans 255
+  storage
+  (
+    initial 66K
+    minextents 1
+    maxextents unlimited
+  );
+create index IN_CVPESCAR_FIM on CV_PESSOA_CARGO (SQ_CVPESEXP,FIM)
+  tablespace SYSTEM
+  pctfree 10
+  initrans 2
+  maxtrans 255
+  storage
+  (
+    initial 66K
+    minextents 1
+    maxextents unlimited
+  );
+create index IN_CVPESCAR_INICIO on CV_PESSOA_CARGO (SQ_CVPESEXP,INICIO)
+  tablespace SYSTEM
+  pctfree 10
+  initrans 2
+  maxtrans 255
+  storage
+  (
+    initial 66K
+    minextents 1
+    maxextents unlimited
+  );
+

@@ -1,0 +1,33 @@
+create table S_SERIE
+(
+  SG_SERIE      VARCHAR2(5) not null,
+  CO_TIPO_CURSO NUMBER(10),
+  DESCR_SERIE   VARCHAR2(50)
+)
+tablespace SGE
+  pctfree 10
+  initrans 1
+  maxtrans 255
+  storage
+  (
+    initial 66K
+    minextents 1
+    maxextents unlimited
+  );
+alter table S_SERIE
+  add constraint XPKS_SERIE primary key (SG_SERIE)
+  using index 
+  tablespace SGE
+  pctfree 10
+  initrans 2
+  maxtrans 255
+  storage
+  (
+    initial 66K
+    minextents 1
+    maxextents unlimited
+  );
+alter table S_SERIE
+  add constraint FK_TIP_CURSO_SERIE foreign key (CO_TIPO_CURSO)
+  references S_TIPO_CURSO (CO_TIPO_CURSO) on delete cascade;
+

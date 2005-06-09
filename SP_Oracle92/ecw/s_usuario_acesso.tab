@@ -1,0 +1,32 @@
+create table S_USUARIO_ACESSO
+(
+  DS_USUARIO CHAR(30) not null,
+  DS_ACESSO  CHAR(100) not null
+)
+tablespace SGE
+  pctfree 10
+  initrans 1
+  maxtrans 255
+  storage
+  (
+    initial 66K
+    minextents 1
+    maxextents unlimited
+  );
+alter table S_USUARIO_ACESSO
+  add constraint U170_81 primary key (DS_USUARIO,DS_ACESSO)
+  using index 
+  tablespace SGE
+  pctfree 10
+  initrans 2
+  maxtrans 255
+  storage
+  (
+    initial 66K
+    minextents 1
+    maxextents unlimited
+  );
+alter table S_USUARIO_ACESSO
+  add constraint R183_612 foreign key (DS_USUARIO)
+  references S_USUARIO (DS_USUARIO) on delete cascade;
+

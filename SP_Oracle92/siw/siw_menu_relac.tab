@@ -1,0 +1,59 @@
+create table SIW_MENU_RELAC
+(
+  SERVICO_CLIENTE    NUMBER(18) not null,
+  SERVICO_FORNECEDOR NUMBER(18) not null,
+  SQ_SIW_TRAMITE     NUMBER(18) not null
+)
+tablespace SYSTEM
+  pctfree 10
+  pctused 40
+  initrans 1
+  maxtrans 255
+  storage
+  (
+    initial 66K
+    minextents 1
+    maxextents unlimited
+  );
+comment on table SIW_MENU_RELAC
+  is 'Vincula serviços definindo os trâmites em que a vinculação pode ser feita.';
+comment on column SIW_MENU_RELAC.SERVICO_CLIENTE
+  is 'Chave de SIW_MENU apontando para o serviço que será vinculado a outro, nas fases indicadas.';
+comment on column SIW_MENU_RELAC.SERVICO_FORNECEDOR
+  is 'Chave de SIW_MENU apontando para o serviço ao qual solicitações de outro serviço serão vinculadas.';
+comment on column SIW_MENU_RELAC.SQ_SIW_TRAMITE
+  is 'Chave de SIW_TRAMITE, indicando as fases das solicitações do serviço fornecedor nas quais poderão ser vinculadas solicitações do serviço cliente.';
+alter table SIW_MENU_RELAC
+  add constraint PK_SIW_MENU_RELAC primary key (SERVICO_CLIENTE,SERVICO_FORNECEDOR,SQ_SIW_TRAMITE)
+  using index 
+  tablespace SYSTEM
+  pctfree 10
+  initrans 2
+  maxtrans 255
+  storage
+  (
+    initial 66K
+    minextents 1
+    maxextents unlimited
+  );
+alter table SIW_MENU_RELAC
+  add constraint FK_SIWMENREL_SIWMEN_CLI foreign key (SERVICO_CLIENTE)
+  references SIW_MENU (SQ_MENU);
+alter table SIW_MENU_RELAC
+  add constraint FK_SIWMENREL_SIWMEN_FORN foreign key (SERVICO_FORNECEDOR)
+  references SIW_MENU (SQ_MENU);
+alter table SIW_MENU_RELAC
+  add constraint FK_SIWMENREL_SIWTRA foreign key (SQ_SIW_TRAMITE)
+  references SIW_TRAMITE (SQ_SIW_TRAMITE);
+create index IN_SIWMENREL_INV on SIW_MENU_RELAC (SERVICO_FORNECEDOR,SERVICO_CLIENTE,SQ_SIW_TRAMITE)
+  tablespace SYSTEM
+  pctfree 10
+  initrans 2
+  maxtrans 255
+  storage
+  (
+    initial 66K
+    minextents 1
+    maxextents unlimited
+  );
+

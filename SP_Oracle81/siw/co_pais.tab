@@ -1,0 +1,93 @@
+create table CO_PAIS
+(
+  SQ_PAIS NUMBER(18) not null,
+  NOME    VARCHAR2(60) not null,
+  ATIVO   VARCHAR2(1) default 'S' not null,
+  PADRAO  VARCHAR2(1) default 'N' not null,
+  DDI     VARCHAR2(10),
+  SIGLA   VARCHAR2(3)
+)
+tablespace USERS
+  pctfree 10
+  pctused 40
+  initrans 1
+  maxtrans 255
+  storage
+  (
+    initial 136K
+    next 128K
+    minextents 1
+    maxextents 4096
+    pctincrease 0
+  );
+comment on table CO_PAIS
+  is 'Armazena a tabela de países';
+comment on column CO_PAIS.SQ_PAIS
+  is 'Sequence';
+comment on column CO_PAIS.ATIVO
+  is 'Indica se o registro deve ou não ser exibido.';
+comment on column CO_PAIS.PADRAO
+  is 'Indica se este registro deve ser apresentado como padrão para o usuário.';
+comment on column CO_PAIS.SIGLA
+  is 'Sigla do país, usada em relatórios para facilitar a exibição com largura pequena.';
+alter table CO_PAIS
+  add constraint PK_CO_PAIS primary key (SQ_PAIS)
+  using index 
+  tablespace USERS
+  pctfree 10
+  initrans 2
+  maxtrans 255
+  storage
+  (
+    initial 136K
+    next 128K
+    minextents 1
+    maxextents 4096
+    pctincrease 0
+  );
+alter table CO_PAIS
+  add constraint CKC_ATIVO_CO_PAIS
+  check (ATIVO in ('S','N'));
+alter table CO_PAIS
+  add constraint CKC_PADRAO_COPAI
+  check (PADRAO in ('S','N'));
+create index IN_COPAIS_ATIVO on CO_PAIS (ATIVO)
+  tablespace SYSTEM
+  pctfree 10
+  initrans 2
+  maxtrans 255
+  storage
+  (
+    initial 72K
+    next 64K
+    minextents 1
+    maxextents unlimited
+    pctincrease 50
+  );
+create unique index IN_COPAIS_NOME on CO_PAIS (NOME)
+  tablespace SYSTEM
+  pctfree 10
+  initrans 2
+  maxtrans 255
+  storage
+  (
+    initial 72K
+    next 64K
+    minextents 1
+    maxextents unlimited
+    pctincrease 50
+  );
+create index IN_COPAIS_PADRAO on CO_PAIS (PADRAO)
+  tablespace SYSTEM
+  pctfree 10
+  initrans 2
+  maxtrans 255
+  storage
+  (
+    initial 72K
+    next 64K
+    minextents 1
+    maxextents unlimited
+    pctincrease 50
+  );
+

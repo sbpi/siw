@@ -1,0 +1,61 @@
+create table CO_GRUPO_DEFIC
+(
+  SQ_GRUPO_DEFIC NUMBER(18) not null,
+  NOME           VARCHAR2(50) not null,
+  ATIVO          VARCHAR2(1) default 'S' not null
+)
+tablespace USERS
+  pctfree 10
+  initrans 1
+  maxtrans 255
+  storage
+  (
+    initial 132K
+    minextents 1
+    maxextents unlimited
+  );
+comment on table CO_GRUPO_DEFIC
+  is 'Armazena os grupos de deficiência';
+comment on column CO_GRUPO_DEFIC.SQ_GRUPO_DEFIC
+  is 'Sequence';
+comment on column CO_GRUPO_DEFIC.ATIVO
+  is 'Indica se o registro deve ou não ser exibido.';
+alter table CO_GRUPO_DEFIC
+  add constraint PK_CO_GRUPO_DEFICIENCIA primary key (SQ_GRUPO_DEFIC)
+  using index 
+  tablespace USERS
+  pctfree 10
+  initrans 2
+  maxtrans 255
+  storage
+  (
+    initial 132K
+    minextents 1
+    maxextents unlimited
+  );
+alter table CO_GRUPO_DEFIC
+  add constraint CKC_ATIVO_CO_GRUPO
+  check (ATIVO in ('S','N'));
+create unique index IN_RHGRUPODEF_ATIV on CO_GRUPO_DEFIC (ATIVO,SQ_GRUPO_DEFIC)
+  tablespace SYSTEM
+  pctfree 10
+  initrans 2
+  maxtrans 255
+  storage
+  (
+    initial 66K
+    minextents 1
+    maxextents unlimited
+  );
+create unique index IN_RHGRUPODEF_NOME on CO_GRUPO_DEFIC (NOME)
+  tablespace SYSTEM
+  pctfree 10
+  initrans 2
+  maxtrans 255
+  storage
+  (
+    initial 66K
+    minextents 1
+    maxextents unlimited
+  );
+

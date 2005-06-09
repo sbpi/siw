@@ -1,0 +1,155 @@
+create table PD_VIAGEM
+(
+  SQ_VIAGEM          NUMBER(18) not null,
+  CLIENTE            NUMBER(18) not null,
+  SQ_SIW_SOLICITACAO NUMBER(18) not null,
+  PESSOA             NUMBER(18) not null,
+  ORIGEM             NUMBER(18) not null,
+  DESTINO            NUMBER(18) not null,
+  RESERVA            VARCHAR2(30),
+  SAIDA              DATE not null,
+  RETORNO            DATE not null,
+  VALOR              NUMBER(18,2) default 0 not null,
+  TRECHOS            VARCHAR2(100) not null,
+  BILHETE            VARCHAR2(20),
+  PRESTOU_CONTAS     VARCHAR2(1) default 'N' not null,
+  RELATORIO          VARCHAR2(4000),
+  RESERVA_CONFIRMADA VARCHAR2(1) default 'N' not null,
+  BILHETE_COMPRADO   VARCHAR2(1) default 'N' not null
+)
+tablespace SYSTEM
+  pctfree 10
+  pctused 40
+  initrans 1
+  maxtrans 255
+  storage
+  (
+    initial 66K
+    minextents 1
+    maxextents unlimited
+  );
+comment on table PD_VIAGEM
+  is 'Registra os dados de viagens pagas pela organização.';
+comment on column PD_VIAGEM.SQ_VIAGEM
+  is 'Sequence.';
+comment on column PD_VIAGEM.CLIENTE
+  is 'Chave de CO_PESSOA que indica a que cliente a viagem pertence.';
+comment on column PD_VIAGEM.SQ_SIW_SOLICITACAO
+  is 'Chave de SIW_SOLICITACAO.';
+comment on column PD_VIAGEM.PESSOA
+  is 'Chave de CO_PESSOA que indica quem é o beneficiário da viagem.';
+comment on column PD_VIAGEM.ORIGEM
+  is 'Chave de CO_CIDADE que indica a cidade de origem da viagem.';
+comment on column PD_VIAGEM.DESTINO
+  is 'Chave de CO_CIDADE que indica a cidade de destino da viagem.';
+comment on column PD_VIAGEM.RESERVA
+  is 'Código da reserva do bilhete/passagem.';
+comment on column PD_VIAGEM.SAIDA
+  is 'Data de saída da viagem.';
+comment on column PD_VIAGEM.RETORNO
+  is 'Data de retorno da viagem.';
+comment on column PD_VIAGEM.VALOR
+  is 'Valor total da viagem.';
+comment on column PD_VIAGEM.TRECHOS
+  is 'Trechos da passagem.';
+comment on column PD_VIAGEM.BILHETE
+  is 'Número do bilhete entregue pelo beneficiário no retorno da viagem.';
+comment on column PD_VIAGEM.RELATORIO
+  is 'Texto descritivo dos resultados da viagem.';
+comment on column PD_VIAGEM.RESERVA_CONFIRMADA
+  is 'Indica se a reserva já foi confirmada junto à empresa de aviação.';
+comment on column PD_VIAGEM.BILHETE_COMPRADO
+  is 'Indica se o bilhete ou PTA já foi comprado junto à empresa de aviação.';
+alter table PD_VIAGEM
+  add constraint PK_PD_VIAGEM primary key (SQ_VIAGEM)
+  using index 
+  tablespace SYSTEM
+  pctfree 10
+  initrans 2
+  maxtrans 255
+  storage
+  (
+    initial 66K
+    minextents 1
+    maxextents unlimited
+  );
+alter table PD_VIAGEM
+  add constraint FK_PDVIA_COCID_DESTINO foreign key (DESTINO)
+  references CO_CIDADE (SQ_CIDADE);
+alter table PD_VIAGEM
+  add constraint FK_PDVIA_COCID_ORIGEM foreign key (ORIGEM)
+  references CO_CIDADE (SQ_CIDADE);
+alter table PD_VIAGEM
+  add constraint FK_PDVIA_COPES_CLIENTE foreign key (CLIENTE)
+  references CO_PESSOA (SQ_PESSOA);
+alter table PD_VIAGEM
+  add constraint FK_PDVIA_COPES_PESSOA foreign key (PESSOA)
+  references CO_PESSOA (SQ_PESSOA);
+alter table PD_VIAGEM
+  add constraint FK_PDVIA_SIWSOL foreign key (SQ_SIW_SOLICITACAO)
+  references SIW_SOLICITACAO (SQ_SIW_SOLICITACAO);
+alter table PD_VIAGEM
+  add constraint CKC_BILHETE_COMPRADO_PD_VIAGE
+  check (BILHETE_COMPRADO in ('S','N'));
+alter table PD_VIAGEM
+  add constraint CKC_PRESTOU_CONTAS_PD_VIAGE
+  check (PRESTOU_CONTAS in ('S','N'));
+alter table PD_VIAGEM
+  add constraint CKC_RESERVA_CONFIRMAD_PD_VIAGE
+  check (RESERVA_CONFIRMADA in ('S','N'));
+create index IN_PDVIA_CLIENTE on PD_VIAGEM (CLIENTE,SQ_VIAGEM)
+  tablespace SYSTEM
+  pctfree 10
+  initrans 2
+  maxtrans 255
+  storage
+  (
+    initial 66K
+    minextents 1
+    maxextents unlimited
+  );
+create index IN_PDVIA_DESTINO on PD_VIAGEM (CLIENTE,DESTINO,SQ_VIAGEM)
+  tablespace SYSTEM
+  pctfree 10
+  initrans 2
+  maxtrans 255
+  storage
+  (
+    initial 66K
+    minextents 1
+    maxextents unlimited
+  );
+create index IN_PDVIA_ORIGEM on PD_VIAGEM (CLIENTE,ORIGEM,SQ_VIAGEM)
+  tablespace SYSTEM
+  pctfree 10
+  initrans 2
+  maxtrans 255
+  storage
+  (
+    initial 66K
+    minextents 1
+    maxextents unlimited
+  );
+create index IN_PDVIA_PESSOA on PD_VIAGEM (CLIENTE,PESSOA,SQ_VIAGEM)
+  tablespace SYSTEM
+  pctfree 10
+  initrans 2
+  maxtrans 255
+  storage
+  (
+    initial 66K
+    minextents 1
+    maxextents unlimited
+  );
+create index IN_PDVIA_SOLIC on PD_VIAGEM (SQ_SIW_SOLICITACAO,SQ_VIAGEM)
+  tablespace SYSTEM
+  pctfree 10
+  initrans 2
+  maxtrans 255
+  storage
+  (
+    initial 66K
+    minextents 1
+    maxextents unlimited
+  );
+

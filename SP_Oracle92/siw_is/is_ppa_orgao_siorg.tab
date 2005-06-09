@@ -1,0 +1,64 @@
+create table IS_PPA_ORGAO_SIORG
+(
+  CD_ORGAO_SIORG     NUMBER(18) not null,
+  CD_ORGAO_SIORG_PAI NUMBER(18),
+  CD_ORGAO           VARCHAR2(5),
+  CD_TIPO_ORGAO      VARCHAR2(1),
+  NOME               VARCHAR2(255) not null,
+  ATIVO              VARCHAR2(1) default 'S' not null,
+  FLAG_INCLUSAO      DATE default sysdate not null
+)
+tablespace SYSTEM
+  pctfree 10
+  pctused 40
+  initrans 1
+  maxtrans 255
+  storage
+  (
+    initial 66K
+    minextents 1
+    maxextents unlimited
+  );
+comment on table IS_PPA_ORGAO_SIORG
+  is 'Órgãos cadastrados na SOF';
+comment on column IS_PPA_ORGAO_SIORG.CD_ORGAO_SIORG
+  is 'Código da Unidade Orçamentária responsável';
+comment on column IS_PPA_ORGAO_SIORG.CD_ORGAO_SIORG_PAI
+  is 'Código da Unidade Orçamentária responsável';
+comment on column IS_PPA_ORGAO_SIORG.CD_ORGAO
+  is 'Código do Órgão';
+comment on column IS_PPA_ORGAO_SIORG.CD_TIPO_ORGAO
+  is 'Código do tipo de órgão';
+comment on column IS_PPA_ORGAO_SIORG.NOME
+  is 'Nome do Órgão SIORG';
+comment on column IS_PPA_ORGAO_SIORG.ATIVO
+  is 'Indica se o registro pode ser associado a novos registros.';
+comment on column IS_PPA_ORGAO_SIORG.FLAG_INCLUSAO
+  is 'Data de inclusão do registro';
+alter table IS_PPA_ORGAO_SIORG
+  add constraint PK_IS_PPA_ORGAO_SIORG primary key (CD_ORGAO_SIORG)
+  using index 
+  tablespace SYSTEM
+  pctfree 10
+  initrans 2
+  maxtrans 255
+  storage
+  (
+    initial 66K
+    minextents 1
+    maxextents unlimited
+  );
+alter table IS_PPA_ORGAO_SIORG
+  add constraint FK_ISPPAORGSIO_ISPPAORG foreign key (CD_ORGAO)
+  references IS_PPA_ORGAO (CD_ORGAO);
+alter table IS_PPA_ORGAO_SIORG
+  add constraint FK_ISPPAORGSIO_ISPPAORGSIO foreign key (CD_ORGAO_SIORG_PAI)
+  references IS_PPA_ORGAO_SIORG (CD_ORGAO_SIORG)
+  disable;
+alter table IS_PPA_ORGAO_SIORG
+  add constraint FK_ISPPAORGSIO_ISPPATIPORG foreign key (CD_TIPO_ORGAO)
+  references IS_PPA_TIPO_ORGAO (CD_TIPO_ORGAO);
+alter table IS_PPA_ORGAO_SIORG
+  add constraint CKC_ISPPAORGSIO_ATIVO
+  check (ATIVO in ('S','N'));
+

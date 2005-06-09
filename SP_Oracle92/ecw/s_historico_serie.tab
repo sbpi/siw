@@ -1,0 +1,47 @@
+create table S_HISTORICO_SERIE
+(
+  CO_SERIE           VARCHAR2(60) not null,
+  CO_ALUNO           CHAR(12) not null,
+  CO_ANO_SEM         CHAR(5) not null,
+  CO_UNIDADE         CHAR(5) not null,
+  DS_CURSO           VARCHAR2(50),
+  DS_NOME_COLEGIO    CHAR(60),
+  TP_PERIODO         CHAR(1),
+  DS_CIDADE          CHAR(30),
+  DS_UF_CIDADE       CHAR(2),
+  DS_RESULTADO_FINAL CHAR(15),
+  NU_AULAS_DADAS     VARCHAR2(6),
+  NU_DIAS_LETIVOS    CHAR(3),
+  NU_FALTAS          CHAR(3),
+  DS_SERIE           CHAR(30),
+  CTR_IMPORT         CHAR(1),
+  NU_FALTAS_HA       CHAR(12),
+  NU_FALTAS_DL       CHAR(12)
+)
+tablespace SGE
+  pctfree 10
+  initrans 1
+  maxtrans 255
+  storage
+  (
+    initial 66K
+    minextents 1
+    maxextents unlimited
+  );
+alter table S_HISTORICO_SERIE
+  add constraint U157_68 primary key (CO_SERIE,CO_ANO_SEM,CO_ALUNO,CO_UNIDADE)
+  using index 
+  tablespace SGE
+  pctfree 10
+  initrans 2
+  maxtrans 255
+  storage
+  (
+    initial 66K
+    minextents 1
+    maxextents unlimited
+  );
+alter table S_HISTORICO_SERIE
+  add constraint R_130 foreign key (CO_ALUNO,CO_UNIDADE)
+  references S_HISTORICO (CO_ALUNO,CO_UNIDADE) on delete cascade;
+

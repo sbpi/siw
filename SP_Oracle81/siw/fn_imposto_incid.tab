@@ -1,0 +1,87 @@
+create table FN_IMPOSTO_INCID
+(
+  SQ_IMPOSTO         NUMBER(18) not null,
+  SQ_TIPO_DOCUMENTO  NUMBER(18) not null,
+  SQ_TIPO_LANCAMENTO NUMBER(18) not null,
+  ALIQUOTA_TOTAL     NUMBER(18,2) not null,
+  ALIQUOTA_RETENCAO  NUMBER(18,2) not null,
+  ALIQUOTA_NORMAL    NUMBER(18,2) not null
+)
+tablespace SYSTEM
+  pctfree 10
+  pctused 40
+  initrans 1
+  maxtrans 255
+  storage
+  (
+    initial 72K
+    next 64K
+    minextents 1
+    maxextents unlimited
+    pctincrease 50
+  );
+comment on table FN_IMPOSTO_INCID
+  is 'Registra os impostos incidentes para cada combinação de tipo de lançamento e tipo de documento.';
+comment on column FN_IMPOSTO_INCID.SQ_IMPOSTO
+  is 'Chave de FN_IMPOSTO.';
+comment on column FN_IMPOSTO_INCID.SQ_TIPO_DOCUMENTO
+  is 'Chave de FN_TIPO_DOCUMENTO.';
+comment on column FN_IMPOSTO_INCID.SQ_TIPO_LANCAMENTO
+  is 'Chave de FN_TIPO_DOCUMENTO.';
+comment on column FN_IMPOSTO_INCID.ALIQUOTA_TOTAL
+  is 'Informa a alíquota total do imposto para o documento, no tipo de lançamento.';
+comment on column FN_IMPOSTO_INCID.ALIQUOTA_RETENCAO
+  is 'Informa a alíquota do imposto a ser retida para o documento, no tipo de lançamento.';
+comment on column FN_IMPOSTO_INCID.ALIQUOTA_NORMAL
+  is 'Informa a alíquota do imposto para o documento, no tipo de lançamento, a ser paga após seu recebimento.';
+alter table FN_IMPOSTO_INCID
+  add constraint PK_FN_IMPOSTO_INCID primary key (SQ_IMPOSTO,SQ_TIPO_DOCUMENTO,SQ_TIPO_LANCAMENTO)
+  using index 
+  tablespace SYSTEM
+  pctfree 10
+  initrans 2
+  maxtrans 255
+  storage
+  (
+    initial 72K
+    next 64K
+    minextents 1
+    maxextents unlimited
+    pctincrease 50
+  );
+alter table FN_IMPOSTO_INCID
+  add constraint FK_FNIMPINC_FNIMP foreign key (SQ_IMPOSTO)
+  references FN_IMPOSTO (SQ_IMPOSTO);
+alter table FN_IMPOSTO_INCID
+  add constraint FK_IMPINC_FNTIPDOC foreign key (SQ_TIPO_DOCUMENTO)
+  references FN_TIPO_DOCUMENTO (SQ_TIPO_DOCUMENTO);
+alter table FN_IMPOSTO_INCID
+  add constraint FK_IMPINC_FNTIPLAN foreign key (SQ_TIPO_LANCAMENTO)
+  references FN_TIPO_LANCAMENTO (SQ_TIPO_LANCAMENTO);
+create index IN_FNIMPINC_TIPDOC on FN_IMPOSTO_INCID (SQ_TIPO_DOCUMENTO,SQ_TIPO_LANCAMENTO,SQ_IMPOSTO)
+  tablespace SYSTEM
+  pctfree 10
+  initrans 2
+  maxtrans 255
+  storage
+  (
+    initial 72K
+    next 64K
+    minextents 1
+    maxextents unlimited
+    pctincrease 50
+  );
+create index IN_FNIMPINC_TIPLAN on FN_IMPOSTO_INCID (SQ_TIPO_LANCAMENTO,SQ_TIPO_DOCUMENTO,SQ_IMPOSTO)
+  tablespace SYSTEM
+  pctfree 10
+  initrans 2
+  maxtrans 255
+  storage
+  (
+    initial 72K
+    next 64K
+    minextents 1
+    maxextents unlimited
+    pctincrease 50
+  );
+

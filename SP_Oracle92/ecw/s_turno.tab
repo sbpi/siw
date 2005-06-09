@@ -1,0 +1,29 @@
+create table S_TURNO
+(
+  CO_TURNO CHAR(2) not null,
+  DS_TURNO CHAR(30)
+)
+tablespace SGE
+  pctfree 10
+  initrans 1
+  maxtrans 255
+  storage
+  (
+    initial 66K
+    minextents 1
+    maxextents unlimited
+  );
+alter table S_TURNO
+  add constraint U130_35 primary key (CO_TURNO)
+  using index 
+  tablespace SGE
+  pctfree 10
+  initrans 2
+  maxtrans 255
+  storage
+  (
+    initial 66K
+    minextents 1
+    maxextents unlimited
+  );
+

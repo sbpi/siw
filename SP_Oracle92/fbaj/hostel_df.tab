@@ -1,0 +1,17 @@
+create table HOSTEL_DF
+(
+  NOME     VARCHAR2(255),
+  EMAIL    VARCHAR2(255),
+  CARTEIRA VARCHAR2(255)
+)
+tablespace USERS
+  pctfree 10
+  initrans 1
+  maxtrans 255
+  storage
+  (
+    initial 66K
+    minextents 1
+    maxextents unlimited
+  );
+

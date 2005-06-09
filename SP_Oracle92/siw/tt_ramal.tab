@@ -1,0 +1,64 @@
+create table TT_RAMAL
+(
+  SQ_RAMAL        NUMBER(18) not null,
+  SQ_CENTRAL_FONE NUMBER(18) not null,
+  CODIGO          VARCHAR2(4) not null
+)
+tablespace SYSTEM
+  pctfree 10
+  pctused 40
+  initrans 1
+  maxtrans 255
+  storage
+  (
+    initial 66K
+    minextents 1
+    maxextents unlimited
+  );
+comment on table TT_RAMAL
+  is 'Armazena os ramais da central  telefônica.';
+comment on column TT_RAMAL.SQ_RAMAL
+  is 'Sequence.';
+comment on column TT_RAMAL.SQ_CENTRAL_FONE
+  is 'Chave de TT_CENTRAL.';
+comment on column TT_RAMAL.CODIGO
+  is 'Código do ramal na central telefônica.';
+alter table TT_RAMAL
+  add constraint PK_TT_RAMAL primary key (SQ_RAMAL)
+  using index 
+  tablespace SYSTEM
+  pctfree 10
+  initrans 2
+  maxtrans 255
+  storage
+  (
+    initial 66K
+    minextents 1
+    maxextents unlimited
+  );
+alter table TT_RAMAL
+  add constraint RK_TTRAM_TTCEN foreign key (SQ_CENTRAL_FONE)
+  references TT_CENTRAL (SQ_CENTRAL_FONE);
+create index IN_TTRAM_CENTRAL on TT_RAMAL (SQ_CENTRAL_FONE,CODIGO,SQ_RAMAL)
+  tablespace SYSTEM
+  pctfree 10
+  initrans 2
+  maxtrans 255
+  storage
+  (
+    initial 66K
+    minextents 1
+    maxextents unlimited
+  );
+create index IN_TTRAM_CODIGO on TT_RAMAL (SQ_RAMAL,CODIGO)
+  tablespace SYSTEM
+  pctfree 10
+  initrans 2
+  maxtrans 255
+  storage
+  (
+    initial 66K
+    minextents 1
+    maxextents unlimited
+  );
+

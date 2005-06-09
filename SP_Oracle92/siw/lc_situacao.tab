@@ -1,0 +1,94 @@
+create table LC_SITUACAO
+(
+  SQ_LCSITUACAO NUMBER(18) not null,
+  CLIENTE       NUMBER(18) not null,
+  NOME          VARCHAR2(60) not null,
+  DESCRICAO     VARCHAR2(1000),
+  ATIVO         VARCHAR2(1) default 'S' not null,
+  PADRAO        VARCHAR2(1) default 'N' not null,
+  PUBLICAR      VARCHAR2(1) default 'S' not null
+)
+tablespace SYSTEM
+  pctfree 10
+  pctused 40
+  initrans 1
+  maxtrans 255
+  storage
+  (
+    initial 66K
+    minextents 1
+    maxextents unlimited
+  );
+comment on column LC_SITUACAO.SQ_LCSITUACAO
+  is 'Sequence';
+comment on column LC_SITUACAO.CLIENTE
+  is 'Chave de CO_PESSOA indicando a que cliente o registro pertence.';
+comment on column LC_SITUACAO.NOME
+  is 'Nome do amparo legal.';
+comment on column LC_SITUACAO.DESCRICAO
+  is 'Descrição resumida do amparo legal.';
+comment on column LC_SITUACAO.ATIVO
+  is 'Indica se o registro está disponível para seleção.';
+comment on column LC_SITUACAO.PADRAO
+  is 'Indica se o registro deve ser exibido como opção inicial.';
+comment on column LC_SITUACAO.PUBLICAR
+  is 'Indica se licitações nesta situação devem ou não ser divulgadas na Internet.';
+alter table LC_SITUACAO
+  add constraint PK_LC_SITUACAO primary key (SQ_LCSITUACAO)
+  using index 
+  tablespace SYSTEM
+  pctfree 10
+  initrans 2
+  maxtrans 255
+  storage
+  (
+    initial 66K
+    minextents 1
+    maxextents unlimited
+  );
+alter table LC_SITUACAO
+  add constraint FK_LCSIT_COPES foreign key (CLIENTE)
+  references CO_PESSOA (SQ_PESSOA);
+alter table LC_SITUACAO
+  add constraint CKC_ATIVO_LC_SITUA
+  check (ATIVO in ('S','N'));
+alter table LC_SITUACAO
+  add constraint CKC_PADRAO_LC_SITUA
+  check (PADRAO in ('S','N'));
+alter table LC_SITUACAO
+  add constraint CKC_PUBLICAR_LC_SITUA
+  check (PUBLICAR in ('S','N'));
+create index IN_LCSIT_ATIVO on LC_SITUACAO (CLIENTE,ATIVO,SQ_LCSITUACAO)
+  tablespace SYSTEM
+  pctfree 10
+  initrans 2
+  maxtrans 255
+  storage
+  (
+    initial 66K
+    minextents 1
+    maxextents unlimited
+  );
+create index IN_LCSIT_CLIENTE on LC_SITUACAO (CLIENTE,SQ_LCSITUACAO)
+  tablespace SYSTEM
+  pctfree 10
+  initrans 2
+  maxtrans 255
+  storage
+  (
+    initial 66K
+    minextents 1
+    maxextents unlimited
+  );
+create unique index IN_LCSIT_NOME on LC_SITUACAO (CLIENTE,NOME)
+  tablespace SYSTEM
+  pctfree 10
+  initrans 2
+  maxtrans 255
+  storage
+  (
+    initial 66K
+    minextents 1
+    maxextents unlimited
+  );
+

@@ -1,0 +1,36 @@
+create table LEMBRETE
+(
+  DS_USUARIO      CHAR(30),
+  LEMB_SEQUENCIAL NUMBER(10) not null,
+  CO_UNIDADE      CHAR(5) not null,
+  LEMB_DATA       DATE,
+  LEMB_MEMO       BLOB,
+  INDICADOR_LIDO  CHAR(1)
+)
+tablespace SGE
+  pctfree 10
+  initrans 1
+  maxtrans 255
+  storage
+  (
+    initial 66K
+    minextents 1
+    maxextents unlimited
+  );
+alter table LEMBRETE
+  add constraint U109_10 primary key (LEMB_SEQUENCIAL,CO_UNIDADE)
+  using index 
+  tablespace SGE
+  pctfree 10
+  initrans 2
+  maxtrans 255
+  storage
+  (
+    initial 66K
+    minextents 1
+    maxextents unlimited
+  );
+alter table LEMBRETE
+  add constraint R_201 foreign key (CO_UNIDADE)
+  references S_UNIDADE (CO_UNIDADE) on delete cascade;
+

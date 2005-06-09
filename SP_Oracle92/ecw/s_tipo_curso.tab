@@ -1,0 +1,30 @@
+create table S_TIPO_CURSO
+(
+  CO_TIPO_CURSO NUMBER(10) not null,
+  SG_TIPO_CURSO CHAR(3) not null,
+  DS_TIPO_CURSO VARCHAR2(50) not null
+)
+tablespace SGE
+  pctfree 10
+  initrans 1
+  maxtrans 255
+  storage
+  (
+    initial 66K
+    minextents 1
+    maxextents unlimited
+  );
+alter table S_TIPO_CURSO
+  add constraint PKS_TIPO_CURSO primary key (CO_TIPO_CURSO)
+  using index 
+  tablespace SGE
+  pctfree 10
+  initrans 2
+  maxtrans 255
+  storage
+  (
+    initial 66K
+    minextents 1
+    maxextents unlimited
+  );
+

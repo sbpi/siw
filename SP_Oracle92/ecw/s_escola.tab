@@ -1,0 +1,47 @@
+create table S_ESCOLA
+(
+  CO_UNIDADE   CHAR(5) not null,
+  DS_ESCOLA    CHAR(60),
+  CO_SIGRE     CHAR(15),
+  DS_ENDERECO  CHAR(90),
+  DS_BAIRRO    CHAR(50),
+  NU_CEP       CHAR(9),
+  DS_CIDADE    CHAR(50),
+  DS_UF_CIDADE CHAR(2),
+  DS_GRE       CHAR(70)
+)
+tablespace SGE
+  pctfree 10
+  initrans 1
+  maxtrans 255
+  storage
+  (
+    initial 66K
+    minextents 1
+    maxextents unlimited
+  );
+alter table S_ESCOLA
+  add constraint U102_3 primary key (CO_UNIDADE)
+  using index 
+  tablespace SGE
+  pctfree 10
+  initrans 2
+  maxtrans 255
+  storage
+  (
+    initial 66K
+    minextents 1
+    maxextents unlimited
+  );
+create index IDX_SIGRE_ESCOLA on S_ESCOLA (CO_SIGRE,DS_ESCOLA)
+  tablespace SGE
+  pctfree 10
+  initrans 2
+  maxtrans 255
+  storage
+  (
+    initial 66K
+    minextents 1
+    maxextents unlimited
+  );
+

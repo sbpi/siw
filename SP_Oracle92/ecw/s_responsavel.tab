@@ -1,0 +1,72 @@
+create table S_RESPONSAVEL
+(
+  CO_RESPONSAVEL     VARCHAR2(20) not null,
+  DS_RESPONSAVEL     CHAR(40),
+  CO_UNIDADE         CHAR(5) not null,
+  TP_SEXO            CHAR(1),
+  CO_TIP_RESPONSAVEL NUMBER(10),
+  CO_SEQ_CIDADE      NUMBER(10),
+  DS_RESP_ORDEM      CHAR(40),
+  DS_NATURALIDADE    CHAR(20),
+  DS_UF_NASCIMENTO   CHAR(2),
+  DT_NASCIMENTO      DATE,
+  DS_ENDERECO        CHAR(40),
+  DS_BAIRRO          CHAR(20),
+  NU_CEP             CHAR(9),
+  DS_CIDADE          CHAR(20),
+  DS_UF_CIDADE       CHAR(2),
+  NU_TELEFONE        CHAR(14),
+  NU_CELULAR         CHAR(14),
+  DS_PROFISSAO       CHAR(30),
+  DS_LOCAL_TRAB      CHAR(40),
+  DS_ENDERECO_TRAB   CHAR(40),
+  DS_BAIRRO_TRAB     CHAR(20),
+  NU_CEP_TRAB        CHAR(9),
+  DS_CIDADE_TRAB     CHAR(20),
+  DS_UF_CIDADE_TRAB  CHAR(2),
+  NU_TELEFONE_TRAB   CHAR(14),
+  NU_RAMAL_TRAB      CHAR(6),
+  DS_E_MAIL          CHAR(100),
+  DS_INSTRUCAO       CHAR(40),
+  NU_RG              CHAR(15),
+  DS_ORGAO_EMISSOR   CHAR(30),
+  DT_EMISSAO         DATE,
+  NU_CPF             CHAR(14),
+  VL_RENDA_FAMILIAR  NUMBER(10),
+  NU_DEPENDENTES     CHAR(2),
+  DT_ATUALIZACAO_END DATE,
+  DT_ATUALIZA_END    DATE
+)
+tablespace SGE
+  pctfree 10
+  initrans 1
+  maxtrans 255
+  storage
+  (
+    initial 66K
+    minextents 1
+    maxextents unlimited
+  );
+alter table S_RESPONSAVEL
+  add constraint U168_79 primary key (CO_RESPONSAVEL,CO_UNIDADE)
+  using index 
+  tablespace SGE
+  pctfree 10
+  initrans 2
+  maxtrans 255
+  storage
+  (
+    initial 66K
+    minextents 1
+    maxextents unlimited
+  );
+alter table S_RESPONSAVEL
+  add constraint R166_591 foreign key (CO_TIP_RESPONSAVEL)
+  references S_TIPO_RESPONSAVEL (CO_TIP_RESPONSAVEL) on delete cascade;
+alter table S_RESPONSAVEL
+  add constraint R166_592 foreign key (CO_SEQ_CIDADE)
+  references S_CIDADE (CO_SEQ_CIDADE) on delete cascade;
+alter table S_RESPONSAVEL
+  add constraint R168_336 foreign key (CO_UNIDADE)
+  references S_UNIDADE (CO_UNIDADE) on delete cascade;
+

@@ -1,0 +1,78 @@
+create table CO_SEGMENTO
+(
+  SQ_SEGMENTO NUMBER(18) not null,
+  NOME        VARCHAR2(40) not null,
+  ATIVO       VARCHAR2(1) default 'S' not null,
+  PADRAO      VARCHAR2(1) default 'N' not null
+)
+tablespace USERS
+  pctfree 10
+  initrans 1
+  maxtrans 255
+  storage
+  (
+    initial 132K
+    minextents 1
+    maxextents unlimited
+  );
+comment on table CO_SEGMENTO
+  is 'Armazena a tabela de segmentos onde as pessoas jurídicas se enquadram. Pode ser organismo internacional, órgão público, comércio varejista, franquias, associações etc.';
+comment on column CO_SEGMENTO.SQ_SEGMENTO
+  is 'Sequence';
+comment on column CO_SEGMENTO.ATIVO
+  is 'Indica se o registro deve ou não ser exibido.';
+comment on column CO_SEGMENTO.PADRAO
+  is 'Indica se este registro deve ser apresentado como padrão para o usuário.';
+alter table CO_SEGMENTO
+  add constraint PK_CO_SEGMENTO primary key (SQ_SEGMENTO)
+  using index 
+  tablespace USERS
+  pctfree 10
+  initrans 2
+  maxtrans 255
+  storage
+  (
+    initial 132K
+    minextents 1
+    maxextents unlimited
+  );
+alter table CO_SEGMENTO
+  add constraint CKC_ATIVO_CO_SEGME
+  check (ATIVO in ('S','N'));
+alter table CO_SEGMENTO
+  add constraint CKC_PADRAO_COSEG
+  check (PADRAO in ('S','N'));
+create index IN_COSEG_ATIVO on CO_SEGMENTO (ATIVO)
+  tablespace SYSTEM
+  pctfree 10
+  initrans 2
+  maxtrans 255
+  storage
+  (
+    initial 66K
+    minextents 1
+    maxextents unlimited
+  );
+create unique index IN_COSEG_NOME on CO_SEGMENTO (NOME)
+  tablespace SYSTEM
+  pctfree 10
+  initrans 2
+  maxtrans 255
+  storage
+  (
+    initial 66K
+    minextents 1
+    maxextents unlimited
+  );
+create index IN_COSEG_PADRAO on CO_SEGMENTO (PADRAO)
+  tablespace SYSTEM
+  pctfree 10
+  initrans 2
+  maxtrans 255
+  storage
+  (
+    initial 66K
+    minextents 1
+    maxextents unlimited
+  );
+

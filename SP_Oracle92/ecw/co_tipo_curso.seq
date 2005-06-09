@@ -1,0 +1,7 @@
+create sequence CO_TIPO_CURSO
+minvalue 8
+maxvalue 999999999999999999999999999
+start with 68
+increment by 1
+cache 20;
+

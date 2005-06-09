@@ -1,0 +1,87 @@
+create table S_TURMA
+(
+  CO_UNIDADE         CHAR(5) not null,
+  CO_TURMA           NUMBER(10) not null,
+  ANO_SEM            CHAR(5) not null,
+  CO_CURSO           NUMBER(10) not null,
+  CO_GRAU            CHAR(1),
+  CO_TURNO           CHAR(2),
+  CO_SEQ_SERIE       NUMBER(10) not null,
+  CO_LETRA_TURMA     CHAR(3),
+  CO_BLOCO           CHAR(2),
+  DS_TURMA           CHAR(30),
+  ST_TURMA_DEFINITIV CHAR(3),
+  NU_MAXIMO_ALUNO    CHAR(3),
+  CO_TIPO_HORARIO    NUMBER(10),
+  CO_TURMA_PROCURA   CHAR(6),
+  ST_LABORATORIO     CHAR(1),
+  DISC_ORIGEM        CHAR(4),
+  FO_TURMA           BLOB,
+  CO_SALA            CHAR(3)
+)
+tablespace SGE
+  pctfree 10
+  initrans 1
+  maxtrans 255
+  storage
+  (
+    initial 66K
+    minextents 1
+    maxextents unlimited
+  );
+alter table S_TURMA
+  add constraint U131_36 primary key (CO_TURMA,CO_UNIDADE,ANO_SEM,CO_CURSO,CO_SEQ_SERIE)
+  using index 
+  tablespace SGE
+  pctfree 10
+  initrans 2
+  maxtrans 255
+  storage
+  (
+    initial 66K
+    minextents 1
+    maxextents unlimited
+  );
+alter table S_TURMA
+  add constraint R_123 foreign key (ANO_SEM,CO_CURSO,CO_SEQ_SERIE,CO_UNIDADE)
+  references S_CURSO_SERIE (ANO_SEM,CO_CURSO,CO_SEQ_SERIE,CO_UNIDADE) on delete cascade;
+alter table S_TURMA
+  add constraint R176_601 foreign key (CO_UNIDADE,CO_BLOCO,CO_SALA)
+  references S_SALA (CO_UNIDADE,CO_BLOCO,CO_SALA) on delete cascade;
+alter table S_TURMA
+  add constraint R176_602 foreign key (CO_TURNO)
+  references S_TURNO (CO_TURNO) on delete cascade;
+create index FOREIGN156 on S_TURMA (CO_UNIDADE)
+  tablespace SGE
+  pctfree 10
+  initrans 2
+  maxtrans 255
+  storage
+  (
+    initial 66K
+    minextents 1
+    maxextents unlimited
+  );
+create index FOREIGN157 on S_TURMA (CO_TURNO,CO_UNIDADE)
+  tablespace SGE
+  pctfree 10
+  initrans 2
+  maxtrans 255
+  storage
+  (
+    initial 66K
+    minextents 1
+    maxextents unlimited
+  );
+create index FOREIGN206 on S_TURMA (CO_BLOCO,CO_SALA,CO_UNIDADE)
+  tablespace SGE
+  pctfree 10
+  initrans 2
+  maxtrans 255
+  storage
+  (
+    initial 66K
+    minextents 1
+    maxextents unlimited
+  );
+

@@ -1,0 +1,48 @@
+create table CO_PESSOA_SEGMENTO
+(
+  SQ_PESSOA   NUMBER(18) not null,
+  SQ_SEGMENTO NUMBER(18) not null
+)
+tablespace USERS
+  pctfree 10
+  initrans 1
+  maxtrans 255
+  storage
+  (
+    initial 132K
+    minextents 1
+    maxextents unlimited
+  );
+comment on table CO_PESSOA_SEGMENTO
+  is 'Armazena o segmento em que a pessoa se enquadra. É utilizado para definir as regras de negócio do SIW. Só pode haver um registro para cada pessoa.';
+alter table CO_PESSOA_SEGMENTO
+  add constraint PK_CO_PESSOA_SEGMENTO primary key (SQ_PESSOA,SQ_SEGMENTO)
+  using index 
+  tablespace USERS
+  pctfree 10
+  initrans 2
+  maxtrans 255
+  storage
+  (
+    initial 132K
+    minextents 1
+    maxextents unlimited
+  );
+alter table CO_PESSOA_SEGMENTO
+  add constraint FK_COPES_COPESSEG foreign key (SQ_PESSOA)
+  references CO_PESSOA (SQ_PESSOA);
+alter table CO_PESSOA_SEGMENTO
+  add constraint FK_COSEG_COPESSEG foreign key (SQ_SEGMENTO)
+  references CO_SEGMENTO (SQ_SEGMENTO);
+create index IN_COPESSEG_SQSEG on CO_PESSOA_SEGMENTO (SQ_SEGMENTO)
+  tablespace SYSTEM
+  pctfree 10
+  initrans 2
+  maxtrans 255
+  storage
+  (
+    initial 66K
+    minextents 1
+    maxextents unlimited
+  );
+

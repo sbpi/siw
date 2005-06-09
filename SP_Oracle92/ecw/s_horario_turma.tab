@@ -1,0 +1,57 @@
+create table S_HORARIO_TURMA
+(
+  CO_TIPO_HORARIO NUMBER(10) not null,
+  NU_DIA_SEMANA   NUMBER(10) not null,
+  CO_CURSO        NUMBER(10) not null,
+  NU_TEMPO        NUMBER(10) not null,
+  CO_UNIDADE      CHAR(5) not null,
+  ANO_SEM         CHAR(5) not null,
+  CO_FUNCIONARIO  CHAR(10) not null,
+  CO_TURMA        NUMBER(10) not null,
+  CO_DISCIPLINA   CHAR(4) not null,
+  CO_SEQ_SERIE    NUMBER(10) not null
+)
+tablespace SGE
+  pctfree 10
+  initrans 1
+  maxtrans 255
+  storage
+  (
+    initial 66K
+    minextents 1
+    maxextents unlimited
+  );
+alter table S_HORARIO_TURMA
+  add constraint PK_S_HORARIO_TURMA primary key (NU_DIA_SEMANA,NU_TEMPO,CO_FUNCIONARIO,CO_TIPO_HORARIO,CO_CURSO,CO_UNIDADE,ANO_SEM,CO_TURMA,CO_DISCIPLINA,CO_SEQ_SERIE)
+  using index 
+  tablespace SGE
+  pctfree 10
+  initrans 2
+  maxtrans 255
+  storage
+  (
+    initial 66K
+    minextents 1
+    maxextents unlimited
+  );
+alter table S_HORARIO_TURMA
+  add constraint R_133 foreign key (CO_TIPO_HORARIO,CO_CURSO,CO_UNIDADE,ANO_SEM)
+  references S_TIPO_HORARIO (CO_TIPO_HORARIO,CO_CURSO,CO_UNIDADE,ANO_SEM) on delete cascade;
+alter table S_HORARIO_TURMA
+  add constraint R_144 foreign key (CO_UNIDADE,ANO_SEM,CO_TURMA,CO_DISCIPLINA,CO_FUNCIONARIO,CO_CURSO,CO_SEQ_SERIE)
+  references S_FUNCIONARIO_TURM (CO_UNIDADE,ANO_SEM,CO_TURMA,CO_DISCIPLINA,CO_FUNCIONARIO,CO_CURSO,CO_SEQ_SERIE) on delete cascade;
+alter table S_HORARIO_TURMA
+  add constraint R161_329 foreign key (CO_UNIDADE,ANO_SEM,CO_TURMA,CO_DISCIPLINA,CO_CURSO,CO_SEQ_SERIE)
+  references S_TURMA_DISCIPLINA (CO_UNIDADE,ANO_SEM,CO_TURMA,CO_DISCIPLINA,CO_CURSO,CO_SEQ_SERIE) on delete cascade;
+create index FOREIGN140 on S_HORARIO_TURMA (CO_UNIDADE,ANO_SEM)
+  tablespace SGE
+  pctfree 10
+  initrans 2
+  maxtrans 255
+  storage
+  (
+    initial 66K
+    minextents 1
+    maxextents unlimited
+  );
+

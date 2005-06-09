@@ -1,0 +1,58 @@
+create table OR_ACAO_FINANC
+(
+  SQ_SIW_SOLICITACAO NUMBER(18) not null,
+  SQ_ACAO_PPA        NUMBER(18) not null,
+  OBSERVACAO         VARCHAR2(2000)
+)
+tablespace SYSTEM
+  pctfree 10
+  pctused 40
+  initrans 1
+  maxtrans 255
+  storage
+  (
+    initial 72K
+    next 64K
+    minextents 1
+    maxextents unlimited
+    pctincrease 50
+  );
+comment on column OR_ACAO_FINANC.SQ_SIW_SOLICITACAO
+  is 'Chave de SIW_SOLICITACAO';
+comment on column OR_ACAO_FINANC.SQ_ACAO_PPA
+  is 'Sequence.';
+alter table OR_ACAO_FINANC
+  add constraint PK_OR_ACAO_FINANC primary key (SQ_SIW_SOLICITACAO,SQ_ACAO_PPA)
+  using index 
+  tablespace SYSTEM
+  pctfree 10
+  initrans 2
+  maxtrans 255
+  storage
+  (
+    initial 72K
+    next 64K
+    minextents 1
+    maxextents unlimited
+    pctincrease 50
+  );
+alter table OR_ACAO_FINANC
+  add constraint FK_ORACAFIN_ORACA foreign key (SQ_SIW_SOLICITACAO)
+  references OR_ACAO (SQ_SIW_SOLICITACAO);
+alter table OR_ACAO_FINANC
+  add constraint FK_ORACAFIN_ORACAPPA foreign key (SQ_ACAO_PPA)
+  references OR_ACAO_PPA (SQ_ACAO_PPA);
+create index IN_ORACAFIN_INV on OR_ACAO_FINANC (SQ_ACAO_PPA,SQ_SIW_SOLICITACAO)
+  tablespace SYSTEM
+  pctfree 10
+  initrans 2
+  maxtrans 255
+  storage
+  (
+    initial 72K
+    next 64K
+    minextents 1
+    maxextents unlimited
+    pctincrease 50
+  );
+

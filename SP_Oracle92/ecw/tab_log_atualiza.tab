@@ -1,0 +1,37 @@
+create table TAB_LOG_ATUALIZA
+(
+  SEQUENCIAL         NUMBER(18) not null,
+  USUARIO            VARCHAR2(20),
+  CO_UNIDADE         VARCHAR2(5),
+  TABELA             VARCHAR2(255),
+  OPERACAO           VARCHAR2(10),
+  SQL                VARCHAR2(4000),
+  INDICADOR_EXTRAIDO VARCHAR2(1),
+  DATA_HORA          DATE,
+  BLOB1              BLOB,
+  BLOB2              BLOB
+)
+tablespace SGE
+  pctfree 10
+  initrans 1
+  maxtrans 255
+  storage
+  (
+    initial 66K
+    minextents 1
+    maxextents unlimited
+  );
+alter table TAB_LOG_ATUALIZA
+  add constraint PK_TAB_LOG_ATUALIZA primary key (SEQUENCIAL)
+  using index 
+  tablespace SGE
+  pctfree 10
+  initrans 2
+  maxtrans 255
+  storage
+  (
+    initial 66K
+    minextents 1
+    maxextents unlimited
+  );
+

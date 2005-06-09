@@ -1,0 +1,53 @@
+create table SIW_ATRIBUTO
+(
+  SIGLA VARCHAR2(2) not null,
+  NOME  VARCHAR2(60) not null,
+  ATIVO VARCHAR2(1) default 'S' not null
+)
+tablespace USERS
+  pctfree 10
+  pctused 40
+  initrans 1
+  maxtrans 255
+  storage
+  (
+    initial 136K
+    next 128K
+    minextents 1
+    maxextents 4096
+    pctincrease 0
+  );
+comment on table SIW_ATRIBUTO
+  is 'Atributos possíveis para um trâmite';
+alter table SIW_ATRIBUTO
+  add constraint PK_SIW_ATRIBUTO primary key (SIGLA)
+  using index 
+  tablespace USERS
+  pctfree 10
+  initrans 2
+  maxtrans 255
+  storage
+  (
+    initial 136K
+    next 128K
+    minextents 1
+    maxextents 4096
+    pctincrease 0
+  );
+alter table SIW_ATRIBUTO
+  add constraint CKC_ATIVO_SIW_ATRI
+  check (ATIVO in ('S','N'));
+create index IN_SIWATR_ATIVO on SIW_ATRIBUTO (ATIVO)
+  tablespace SYSTEM
+  pctfree 10
+  initrans 2
+  maxtrans 255
+  storage
+  (
+    initial 72K
+    next 64K
+    minextents 1
+    maxextents unlimited
+    pctincrease 50
+  );
+

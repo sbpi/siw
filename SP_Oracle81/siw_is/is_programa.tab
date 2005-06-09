@@ -1,0 +1,124 @@
+create table IS_PROGRAMA
+(
+  SQ_SIW_SOLICITACAO    NUMBER(18) not null,
+  ANO                   NUMBER(4) not null,
+  CD_PROGRAMA           VARCHAR2(4) not null,
+  CLIENTE               NUMBER(18) not null,
+  SQ_NATUREZA           NUMBER(18) not null,
+  SQ_HORIZONTE          NUMBER(18) not null,
+  SELECAO_MP            VARCHAR2(1) default 'N' not null,
+  SELECAO_SE            VARCHAR2(1) default 'N' not null,
+  NM_GERENTE_PROGRAMA   VARCHAR2(60),
+  NM_GERENTE_EXECUTIVO  VARCHAR2(60),
+  NM_GERENTE_ADJUNTO    VARCHAR2(60),
+  FN_GERENTE_PROGRAMA   VARCHAR2(20),
+  FN_GERENTE_EXECUTIVO  VARCHAR2(20),
+  FN_GERENTE_ADJUNTO    VARCHAR2(20),
+  EM_GERENTE_PROGRAMA   VARCHAR2(60),
+  EM_GERENTE_EXECUTIVO  VARCHAR2(60),
+  EM_GERENTE_ADJUNTO    VARCHAR2(60),
+  SQ_UNIDADE            NUMBER(10) not null,
+  POTENCIALIDADES       VARCHAR2(2000),
+  CONTRIBUICAO_OBJETIVO VARCHAR2(2000),
+  DIRETRIZ              VARCHAR2(2000),
+  ESTRATEGIA_MONIT      VARCHAR2(2000),
+  METODOLOGIA_AVAL      VARCHAR2(2000)
+)
+tablespace SYSTEM
+  pctfree 10
+  pctused 40
+  initrans 1
+  maxtrans 255
+  storage
+  (
+    initial 72K
+    next 64K
+    minextents 1
+    maxextents unlimited
+    pctincrease 50
+  );
+comment on table IS_PROGRAMA
+  is 'Permite a tramitação do programa PPA pelo sistema.';
+comment on column IS_PROGRAMA.SQ_SIW_SOLICITACAO
+  is 'Chave de SIW_SOLICITACAO.';
+comment on column IS_PROGRAMA.ANO
+  is 'Ano de referência do registro.';
+comment on column IS_PROGRAMA.CD_PROGRAMA
+  is 'Código do Programa no Sigplan';
+comment on column IS_PROGRAMA.CLIENTE
+  is 'Sequence';
+comment on column IS_PROGRAMA.SQ_NATUREZA
+  is 'Sequence';
+comment on column IS_PROGRAMA.SQ_HORIZONTE
+  is 'Sequence';
+comment on column IS_PROGRAMA.SELECAO_MP
+  is 'Indica se a ação foi considerada como prioritária pelo Ministério de Planejamento.';
+comment on column IS_PROGRAMA.SELECAO_SE
+  is 'Indica se a ação foi selecionada como sendo estratégica pelo Órgão.';
+comment on column IS_PROGRAMA.NM_GERENTE_PROGRAMA
+  is 'Nome do Gerente do Programa.';
+comment on column IS_PROGRAMA.NM_GERENTE_EXECUTIVO
+  is 'Nome do Gerente Executivo do Programa.';
+comment on column IS_PROGRAMA.NM_GERENTE_ADJUNTO
+  is 'Nome do Gerente Adjunto do Programa.';
+comment on column IS_PROGRAMA.FN_GERENTE_PROGRAMA
+  is 'Telefone do Gerente do Programa.';
+comment on column IS_PROGRAMA.FN_GERENTE_EXECUTIVO
+  is 'Telefone do Gerente Executivo do Programa.';
+comment on column IS_PROGRAMA.FN_GERENTE_ADJUNTO
+  is 'Telefone do Gerente Adjunto do Programa.';
+comment on column IS_PROGRAMA.EM_GERENTE_PROGRAMA
+  is 'e-Mail do Gerente do Programa.';
+comment on column IS_PROGRAMA.EM_GERENTE_EXECUTIVO
+  is 'e-Mail do Gerente Executivo do Programa.';
+comment on column IS_PROGRAMA.EM_GERENTE_ADJUNTO
+  is 'e-Mail do Gerente Adjunto do Programa.';
+comment on column IS_PROGRAMA.SQ_UNIDADE
+  is 'Unidade administrativa responsável pelo programa.';
+comment on column IS_PROGRAMA.POTENCIALIDADES
+  is 'Potencialidades do programa.';
+comment on column IS_PROGRAMA.CONTRIBUICAO_OBJETIVO
+  is 'Informa como o programa contribui para o objetivo setorial.';
+comment on column IS_PROGRAMA.DIRETRIZ
+  is 'Diretrizes de planos nacionais ligados ao programa.';
+comment on column IS_PROGRAMA.ESTRATEGIA_MONIT
+  is 'Sistemática e estratégia a ser adotada para o monitoramento do programa.';
+comment on column IS_PROGRAMA.METODOLOGIA_AVAL
+  is 'Sistemática e metodologia a ser adotada para a avaliação do programa.';
+alter table IS_PROGRAMA
+  add constraint PK_IS_PROGRAMA primary key (SQ_SIW_SOLICITACAO)
+  using index 
+  tablespace SYSTEM
+  pctfree 10
+  initrans 2
+  maxtrans 255
+  storage
+  (
+    initial 72K
+    next 64K
+    minextents 1
+    maxextents unlimited
+    pctincrease 50
+  );
+alter table IS_PROGRAMA
+  add constraint FK_ISPRG_ISHOR foreign key (SQ_HORIZONTE)
+  references IS_HORIZONTE (SQ_HORIZONTE);
+alter table IS_PROGRAMA
+  add constraint FK_ISPRG_ISNAT foreign key (SQ_NATUREZA)
+  references IS_NATUREZA (SQ_NATUREZA);
+alter table IS_PROGRAMA
+  add constraint FK_ISPRG_ISSIGPRG foreign key (ANO,CD_PROGRAMA,CLIENTE)
+  references IS_SIG_PROGRAMA (ANO,CD_PROGRAMA,CLIENTE);
+alter table IS_PROGRAMA
+  add constraint FK_ISPRO_EOUNI foreign key (SQ_UNIDADE)
+  references SIW.EO_UNIDADE (SQ_UNIDADE);
+alter table IS_PROGRAMA
+  add constraint FK_ISPRO_PJPRO foreign key (SQ_SIW_SOLICITACAO)
+  references SIW.PJ_PROJETO (SQ_SIW_SOLICITACAO);
+alter table IS_PROGRAMA
+  add constraint CKC_SELECAO_MP_IS_PROGR
+  check (SELECAO_MP in ('S','N'));
+alter table IS_PROGRAMA
+  add constraint CKC_SELECAO_SE_IS_PROGR
+  check (SELECAO_SE in ('S','N'));
+

@@ -1,0 +1,67 @@
+create table CV_PESSOA_AREA
+(
+  SQ_PESSOA            NUMBER(18) not null,
+  SQ_AREA_CONHECIMENTO NUMBER(10) not null,
+  GRAU_CONHECIMENTO    VARCHAR2(1) default 'S' not null,
+  ESPECIALIDADES       VARCHAR2(4000)
+)
+tablespace SYSTEM
+  pctfree 10
+  pctused 40
+  initrans 1
+  maxtrans 255
+  storage
+  (
+    initial 72K
+    next 64K
+    minextents 1
+    maxextents unlimited
+    pctincrease 50
+  );
+comment on column CV_PESSOA_AREA.SQ_PESSOA
+  is 'Sequence';
+comment on column CV_PESSOA_AREA.SQ_AREA_CONHECIMENTO
+  is 'Código Área Conhecimento.';
+comment on column CV_PESSOA_AREA.GRAU_CONHECIMENTO
+  is 'Indicador do grau de conhecimento sobre determinada  área de atuação';
+comment on column CV_PESSOA_AREA.ESPECIALIDADES
+  is 'Descrição da atividades exercidadas durante uma determinanda área de atuação.
+Com enfase nas áreas e nomes de produtos com o qual atuou.';
+alter table CV_PESSOA_AREA
+  add constraint PK_CV_PESSOA_AREA primary key (SQ_PESSOA,SQ_AREA_CONHECIMENTO)
+  using index 
+  tablespace SYSTEM
+  pctfree 10
+  initrans 2
+  maxtrans 255
+  storage
+  (
+    initial 72K
+    next 64K
+    minextents 1
+    maxextents unlimited
+    pctincrease 50
+  );
+alter table CV_PESSOA_AREA
+  add constraint FK_CVPESARE_COARECON foreign key (SQ_AREA_CONHECIMENTO)
+  references CO_AREA_CONHECIMENTO (SQ_AREA_CONHECIMENTO);
+alter table CV_PESSOA_AREA
+  add constraint FK_CVPESARE_CVPES foreign key (SQ_PESSOA)
+  references CV_PESSOA (SQ_PESSOA);
+alter table CV_PESSOA_AREA
+  add constraint CKC_GRAU_CONHECIMENTO_CV_PESSO
+  check (GRAU_CONHECIMENTO in ('D','C','S'));
+create index IN_CVPESAREATU_SQAREACONHEC on CV_PESSOA_AREA (SQ_AREA_CONHECIMENTO,SQ_PESSOA)
+  tablespace SYSTEM
+  pctfree 10
+  initrans 2
+  maxtrans 255
+  storage
+  (
+    initial 72K
+    next 64K
+    minextents 1
+    maxextents unlimited
+    pctincrease 50
+  );
+

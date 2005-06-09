@@ -1,0 +1,27 @@
+create table HOSTEL_RJ
+(
+  CARTEIRA   VARCHAR2(255),
+  DTCARTEIRA VARCHAR2(255),
+  NOME       VARCHAR2(255),
+  NASCIMENTO VARCHAR2(255),
+  SEXO       VARCHAR2(255),
+  TIPO_LOGRA VARCHAR2(255),
+  LOGRADOURO VARCHAR2(255),
+  NUMERO     VARCHAR2(255),
+  COMPL      VARCHAR2(255),
+  CEP        VARCHAR2(255),
+  BAIRRO     VARCHAR2(255),
+  UF         VARCHAR2(255),
+  CIDADE     VARCHAR2(255)
+)
+tablespace USERS
+  pctfree 10
+  initrans 1
+  maxtrans 255
+  storage
+  (
+    initial 66K
+    minextents 1
+    maxextents unlimited
+  );
+

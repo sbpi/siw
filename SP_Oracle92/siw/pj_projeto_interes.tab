@@ -1,0 +1,76 @@
+create table PJ_PROJETO_INTERES
+(
+  SQ_PESSOA          NUMBER(18) not null,
+  SQ_SIW_SOLICITACAO NUMBER(18) not null,
+  TIPO_VISAO         NUMBER(1) not null,
+  ENVIA_EMAIL        VARCHAR2(1) default 'N' not null
+)
+tablespace SYSTEM
+  pctfree 10
+  pctused 40
+  initrans 1
+  maxtrans 255
+  storage
+  (
+    initial 66K
+    minextents 1
+    maxextents unlimited
+  );
+comment on table PJ_PROJETO_INTERES
+  is 'Registra os interessados pelo projeto e que tipo de informações eles podem receber ou visualizar.';
+comment on column PJ_PROJETO_INTERES.SQ_PESSOA
+  is 'Chave de CO_PESSOA.';
+comment on column PJ_PROJETO_INTERES.SQ_SIW_SOLICITACAO
+  is 'Chave de SIW_SOLICITACAO';
+comment on column PJ_PROJETO_INTERES.TIPO_VISAO
+  is 'Indica a visão que a pessoa pode ter dessa demanda.';
+comment on column PJ_PROJETO_INTERES.ENVIA_EMAIL
+  is 'Indica se deve ser enviado e-mail ao interessado quando houver alguma ocorrência no projeto.';
+alter table PJ_PROJETO_INTERES
+  add constraint PK_PJ_PROJETO_INTERES primary key (SQ_PESSOA,SQ_SIW_SOLICITACAO)
+  using index 
+  tablespace SYSTEM
+  pctfree 10
+  initrans 2
+  maxtrans 255
+  storage
+  (
+    initial 66K
+    minextents 1
+    maxextents unlimited
+  );
+alter table PJ_PROJETO_INTERES
+  add constraint FK_PJPROINT_COPES foreign key (SQ_PESSOA)
+  references CO_PESSOA (SQ_PESSOA);
+alter table PJ_PROJETO_INTERES
+  add constraint FK_PJPROINT_PJPRO foreign key (SQ_SIW_SOLICITACAO)
+  references PJ_PROJETO (SQ_SIW_SOLICITACAO);
+alter table PJ_PROJETO_INTERES
+  add constraint CKC_ENVIA_EMAIL_PJ_PROJE
+  check (ENVIA_EMAIL in ('S','N'));
+alter table PJ_PROJETO_INTERES
+  add constraint CKC_TIPO_VISAO_PJ_PROJE
+  check (TIPO_VISAO in (0,1,2));
+create index IN_PJPROINT_EMAIL on PJ_PROJETO_INTERES (ENVIA_EMAIL,SQ_PESSOA,SQ_SIW_SOLICITACAO)
+  tablespace SYSTEM
+  pctfree 10
+  initrans 2
+  maxtrans 255
+  storage
+  (
+    initial 66K
+    minextents 1
+    maxextents unlimited
+  );
+create index IN_PJPROINT_INVERSA on PJ_PROJETO_INTERES (SQ_SIW_SOLICITACAO,SQ_PESSOA)
+  tablespace SYSTEM
+  pctfree 10
+  initrans 2
+  maxtrans 255
+  storage
+  (
+    initial 66K
+    minextents 1
+    maxextents unlimited
+  );
+

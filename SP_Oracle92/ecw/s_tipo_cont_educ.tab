@@ -1,0 +1,37 @@
+create table S_TIPO_CONT_EDUC
+(
+  TP_CONTEUDO_EDUC  NUMBER(10) not null,
+  ANO_SEM           CHAR(5) not null,
+  CO_CURSO          NUMBER(10) not null,
+  CO_SEQ_SERIE      NUMBER(10) not null,
+  CO_UNIDADE        CHAR(5) not null,
+  DS_CONTEUDO_EDUC  VARCHAR2(70),
+  CO_ORDEM_CONTEUDO NUMBER(10)
+)
+tablespace SGE
+  pctfree 10
+  initrans 1
+  maxtrans 255
+  storage
+  (
+    initial 66K
+    minextents 1
+    maxextents unlimited
+  );
+alter table S_TIPO_CONT_EDUC
+  add constraint XPKS_TIPO_CONT_EDU primary key (TP_CONTEUDO_EDUC,ANO_SEM,CO_CURSO,CO_SEQ_SERIE,CO_UNIDADE)
+  using index 
+  tablespace SGE
+  pctfree 10
+  initrans 2
+  maxtrans 255
+  storage
+  (
+    initial 66K
+    minextents 1
+    maxextents unlimited
+  );
+alter table S_TIPO_CONT_EDUC
+  add constraint R_135 foreign key (ANO_SEM,CO_CURSO,CO_SEQ_SERIE,CO_UNIDADE)
+  references S_CURSO_SERIE (ANO_SEM,CO_CURSO,CO_SEQ_SERIE,CO_UNIDADE) on delete cascade;
+

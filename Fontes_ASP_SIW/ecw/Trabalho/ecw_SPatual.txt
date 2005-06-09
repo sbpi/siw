@@ -1,0 +1,257 @@
+--
+-- Creating procedure SP_GETAMBIENTDATA
+-- ====================================
+--
+--
+-- Creating procedure SP_GETAMBIENTLIST
+-- ====================================
+--
+--
+-- Creating procedure SP_GETANEEREL
+-- ================================
+--
+--
+-- Creating procedure SP_GETATUAREADATA
+-- ====================================
+--
+--
+-- Creating procedure SP_GETATUAREALIST
+-- ====================================
+--
+--
+-- Creating procedure SP_GETAVALDATA
+-- =================================
+--
+--
+-- Creating procedure SP_GETAVALLIST
+-- =================================
+--
+--
+-- Creating procedure SP_GETCALENDARLIST
+-- =====================================
+--
+--
+-- Creating procedure SP_GETCALENDARREL
+-- ====================================
+--
+--
+-- Creating procedure SP_GETCOMUNICREL
+-- ===================================
+--
+--
+-- Creating procedure SP_GETCOURSETPDATA
+-- =====================================
+--
+--
+-- Creating procedure SP_GETCOURSETPLIST
+-- =====================================
+--
+--
+-- Creating procedure SP_GETDISCTPDATA
+-- ===================================
+--
+--
+-- Creating procedure SP_GETDISCTPLIST
+-- ===================================
+--
+--
+-- Creating procedure SP_GETDOUBSTUDDATA
+-- =====================================
+--
+--
+-- Creating procedure SP_GETDOUBSTUDLIST
+-- =====================================
+--
+--
+-- Creating procedure SP_GETFALTASREL
+-- ==================================
+--
+--
+-- Creating procedure SP_GETFUNCDATA
+-- =================================
+--
+--
+-- Creating procedure SP_GETFUNCLIST
+-- =================================
+--
+--
+-- Creating procedure SP_GETFUNCREL
+-- ================================
+--
+--
+-- Creating procedure SP_GETMATDISCDATA
+-- ====================================
+--
+--
+-- Creating procedure SP_GETMATDISCODATA
+-- =====================================
+--
+--
+-- Creating procedure SP_GETMATRIXDATA
+-- ===================================
+--
+--
+-- Creating procedure SP_GETMATRIXLIST
+-- ===================================
+--
+--
+-- Creating procedure SP_GETMATSERDATA
+-- ===================================
+--
+--
+-- Creating procedure SP_GETMATSERLIST
+-- ===================================
+--
+--
+-- Creating procedure SP_GETMATSERODATA
+-- ====================================
+--
+--
+-- Creating procedure SP_GETPERIODOLIST
+-- ====================================
+--
+--
+-- Creating procedure SP_GETPOSITIONDATA
+-- =====================================
+--
+--
+-- Creating procedure SP_GETPOSITIONLIST
+-- =====================================
+--
+--
+-- Creating procedure SP_GETPROFREL
+-- ================================
+--
+--
+-- Creating procedure SP_GETRENDREL
+-- ================================
+--
+--
+-- Creating procedure SP_GETRESPKINDLIST
+-- =====================================
+--
+--
+-- Creating procedure SP_GETRESPONSDATA
+-- ====================================
+--
+--
+-- Creating procedure SP_GETROOMCLLIST
+-- ===================================
+--
+--
+-- Creating procedure SP_GETROOMLIST
+-- =================================
+--
+--
+-- Creating procedure SP_GETROOMTYPEDATA
+-- =====================================
+--
+--
+-- Creating procedure SP_GETROOMTYPELIST
+-- =====================================
+--
+--
+-- Creating procedure SP_GETSCHOOLLIST
+-- ===================================
+--
+--
+-- Creating procedure SP_GETSCHORDATA
+-- ==================================
+--
+--
+-- Creating procedure SP_GETSCHORLIST
+-- ==================================
+--
+--
+-- Creating procedure SP_GETSERIEDATA
+-- ==================================
+--
+--
+-- Creating procedure SP_GETSERIELIST
+-- ==================================
+--
+--
+-- Creating procedure SP_GETSTUDENTDATA
+-- ====================================
+--
+--
+-- Creating procedure SP_GETSTUDENTLIST
+-- ====================================
+--
+--
+-- Creating procedure SP_GETSTUDENTREL
+-- ===================================
+--
+--
+-- Creating procedure SP_GETTURMALIST
+-- ==================================
+--
+--
+-- Creating procedure SP_GETTURNDATA
+-- =================================
+--
+--
+-- Creating procedure SP_GETTURNLIST
+-- =================================
+--
+--
+-- Creating procedure SP_GETUNITREL
+-- ================================
+--
+--
+-- Creating procedure SP_GETVERSIONLIST
+-- ====================================
+--
+--
+-- Creating procedure SP_PUTSAMBIENTE
+-- ==================================
+--
+--
+-- Creating procedure SP_PUTSAREAATUACAO
+-- =====================================
+--
+--
+-- Creating procedure SP_PUTSCARGO
+-- ===============================
+--
+--
+-- Creating procedure SP_PUTSDISCPER
+-- =================================
+--
+--
+-- Creating procedure SP_PUTSGRADE_CURR
+-- ====================================
+--
+--
+-- Creating procedure SP_PUTSORESCOLA
+-- ==================================
+--
+--
+-- Creating procedure SP_PUTSPERIODO
+-- =================================
+--
+--
+-- Creating procedure SP_PUTSSERIE
+-- ===============================
+--
+--
+-- Creating procedure SP_PUTSTIPOCURSO
+-- ===================================
+--
+--
+-- Creating procedure SP_PUTSTIPODISC
+-- ==================================
+--
+--
+-- Creating procedure SP_PUTSTIPOSALA
+-- ==================================
+--
+--
+-- Creating procedure SP_PUTSTPAVALIACAO
+-- =====================================
+--
+--
+-- Creating procedure SP_PUTSTURNO
+-- ===============================
+--
+

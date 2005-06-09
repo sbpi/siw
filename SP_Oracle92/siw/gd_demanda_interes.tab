@@ -1,0 +1,76 @@
+create table GD_DEMANDA_INTERES
+(
+  SQ_PESSOA          NUMBER(18) not null,
+  SQ_SIW_SOLICITACAO NUMBER(18) not null,
+  TIPO_VISAO         NUMBER(1) not null,
+  ENVIA_EMAIL        VARCHAR2(1) default 'N' not null
+)
+tablespace SYSTEM
+  pctfree 10
+  pctused 40
+  initrans 1
+  maxtrans 255
+  storage
+  (
+    initial 66K
+    minextents 1
+    maxextents unlimited
+  );
+comment on table GD_DEMANDA_INTERES
+  is 'Registra os interessados pela demanda e que tipo de informações eles podem receber ou visualizar.';
+comment on column GD_DEMANDA_INTERES.SQ_PESSOA
+  is 'Chave de CO_PESSOA.';
+comment on column GD_DEMANDA_INTERES.SQ_SIW_SOLICITACAO
+  is 'Chave de SIW_SOLICITACAO.';
+comment on column GD_DEMANDA_INTERES.TIPO_VISAO
+  is 'Indica a visão que a pessoa pode ter dessa demanda.';
+comment on column GD_DEMANDA_INTERES.ENVIA_EMAIL
+  is 'Indica se deve ser enviado e-mail ao interessado quando houver alguma ocorrência na demanda.';
+alter table GD_DEMANDA_INTERES
+  add constraint PK_GD_DEMANDA_INTERES primary key (SQ_PESSOA,SQ_SIW_SOLICITACAO)
+  using index 
+  tablespace SYSTEM
+  pctfree 10
+  initrans 2
+  maxtrans 255
+  storage
+  (
+    initial 66K
+    minextents 1
+    maxextents unlimited
+  );
+alter table GD_DEMANDA_INTERES
+  add constraint FK_GDDEMINT_COPES foreign key (SQ_PESSOA)
+  references CO_PESSOA (SQ_PESSOA);
+alter table GD_DEMANDA_INTERES
+  add constraint FK_GDDEMINT_GDDEM foreign key (SQ_SIW_SOLICITACAO)
+  references GD_DEMANDA (SQ_SIW_SOLICITACAO);
+alter table GD_DEMANDA_INTERES
+  add constraint CKC_GDDEMINT_MAIL
+  check (ENVIA_EMAIL in ('S','N'));
+alter table GD_DEMANDA_INTERES
+  add constraint CKC_TIPO_VISAO_GD_DEMAN
+  check (TIPO_VISAO in (0,1,2));
+create index IN_GDDEMINT_INVERSA on GD_DEMANDA_INTERES (SQ_SIW_SOLICITACAO,SQ_PESSOA)
+  tablespace SYSTEM
+  pctfree 10
+  initrans 2
+  maxtrans 255
+  storage
+  (
+    initial 66K
+    minextents 1
+    maxextents unlimited
+  );
+create index IN_GDDEMINT_MAIL on GD_DEMANDA_INTERES (ENVIA_EMAIL,SQ_PESSOA,SQ_SIW_SOLICITACAO)
+  tablespace SYSTEM
+  pctfree 10
+  initrans 2
+  maxtrans 255
+  storage
+  (
+    initial 66K
+    minextents 1
+    maxextents unlimited
+  );
+

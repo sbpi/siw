@@ -1,0 +1,186 @@
+create table LC_PORTAL_LIC
+(
+  SQ_PORTAL_LIC      NUMBER(18) not null,
+  CLIENTE            NUMBER(18) not null,
+  SQ_UNIDADE         NUMBER(10) not null,
+  SQ_LCMODALIDADE    NUMBER(18) not null,
+  SQ_LCFINALIDADE    NUMBER(18) not null,
+  SQ_LCJULGAMENTO    NUMBER(18) not null,
+  SQ_LCSITUACAO      NUMBER(18) not null,
+  SQ_LCFONTE_RECURSO NUMBER(18) not null,
+  ABERTURA           DATE,
+  OBJETO             VARCHAR2(2000),
+  PROCESSO           VARCHAR2(30),
+  EMPENHO            VARCHAR2(30),
+  PUBLICAR           VARCHAR2(1) default 'S' not null,
+  OBSERVACAO         VARCHAR2(1000),
+  EDITAL             VARCHAR2(15) default '---' not null,
+  FUNDAMENTACAO      VARCHAR2(250)
+)
+tablespace SYSTEM
+  pctfree 10
+  pctused 40
+  initrans 1
+  maxtrans 255
+  storage
+  (
+    initial 66K
+    minextents 1
+    maxextents unlimited
+  );
+comment on column LC_PORTAL_LIC.SQ_PORTAL_LIC
+  is 'Sequence.';
+comment on column LC_PORTAL_LIC.CLIENTE
+  is 'Chave de CO_PESSOA indicando a que cliente o registro pertence.';
+comment on column LC_PORTAL_LIC.SQ_UNIDADE
+  is 'Chave de EO_UNIDADE indicando a unidade licitante.';
+comment on column LC_PORTAL_LIC.SQ_LCMODALIDADE
+  is 'Chave de LC_MODALIDADE, indicando a modalidade da licitação.';
+comment on column LC_PORTAL_LIC.SQ_LCFINALIDADE
+  is 'Chave de LC_FINALIDADE, indicando a finalidade da licitação.';
+comment on column LC_PORTAL_LIC.SQ_LCJULGAMENTO
+  is 'Chave de LC_JULGAMENTO, indicando o critério de julgamento da licitação.';
+comment on column LC_PORTAL_LIC.SQ_LCSITUACAO
+  is 'Chave de LC_SITUACAO, indicando a situação atual da licitação.';
+comment on column LC_PORTAL_LIC.SQ_LCFONTE_RECURSO
+  is 'Sequence.';
+comment on column LC_PORTAL_LIC.ABERTURA
+  is 'Data de abertura das propostas da licitação.';
+comment on column LC_PORTAL_LIC.OBJETO
+  is 'Texto com o objeto do edital.';
+comment on column LC_PORTAL_LIC.PROCESSO
+  is 'Número do processo de licitação.';
+comment on column LC_PORTAL_LIC.EMPENHO
+  is 'Número do empenho original.';
+comment on column LC_PORTAL_LIC.PUBLICAR
+  is 'Indica se licitações nesta situação devem ou não ser divulgadas na Internet.';
+comment on column LC_PORTAL_LIC.OBSERVACAO
+  is 'Observações livres sobre a licitação, relevantes para divulgação no portal.';
+comment on column LC_PORTAL_LIC.FUNDAMENTACAO
+  is 'Fundamentação legal da licitação.';
+alter table LC_PORTAL_LIC
+  add constraint PK_LC_PORTAL_LIC primary key (SQ_PORTAL_LIC)
+  using index 
+  tablespace SYSTEM
+  pctfree 10
+  initrans 2
+  maxtrans 255
+  storage
+  (
+    initial 66K
+    minextents 1
+    maxextents unlimited
+  );
+alter table LC_PORTAL_LIC
+  add constraint FK_LCPORLIC_COPES foreign key (CLIENTE)
+  references CO_PESSOA (SQ_PESSOA);
+alter table LC_PORTAL_LIC
+  add constraint FK_LCPORLIC_EOUNI foreign key (SQ_UNIDADE)
+  references EO_UNIDADE (SQ_UNIDADE);
+alter table LC_PORTAL_LIC
+  add constraint FK_LCPORLIC_LCFIN foreign key (SQ_LCFINALIDADE)
+  references LC_FINALIDADE (SQ_LCFINALIDADE);
+alter table LC_PORTAL_LIC
+  add constraint FK_LCPORLIC_LCFONREC foreign key (SQ_LCFONTE_RECURSO)
+  references LC_FONTE_RECURSO (SQ_LCFONTE_RECURSO);
+alter table LC_PORTAL_LIC
+  add constraint FK_LCPORLIC_LCJUL foreign key (SQ_LCJULGAMENTO)
+  references LC_JULGAMENTO (SQ_LCJULGAMENTO);
+alter table LC_PORTAL_LIC
+  add constraint FK_LCPORLIC_LCMOD foreign key (SQ_LCMODALIDADE)
+  references LC_MODALIDADE (SQ_LCMODALIDADE);
+alter table LC_PORTAL_LIC
+  add constraint FK_LCPORLIC_LCSIT foreign key (SQ_LCSITUACAO)
+  references LC_SITUACAO (SQ_LCSITUACAO);
+alter table LC_PORTAL_LIC
+  add constraint CKC_PUBLICAR_LCPORLIC
+  check (PUBLICAR in ('S','N'));
+create index IN_PORLIC_EMPENHO on LC_PORTAL_LIC (CLIENTE,EMPENHO)
+  tablespace SYSTEM
+  pctfree 10
+  initrans 2
+  maxtrans 255
+  storage
+  (
+    initial 66K
+    minextents 1
+    maxextents unlimited
+  );
+create index IN_PORLIC_FONTE on LC_PORTAL_LIC (CLIENTE,SQ_LCFONTE_RECURSO,SQ_PORTAL_LIC)
+  tablespace SYSTEM
+  pctfree 10
+  initrans 2
+  maxtrans 255
+  storage
+  (
+    initial 66K
+    minextents 1
+    maxextents unlimited
+  );
+create index IN_PORLIC_JULGAMENTO on LC_PORTAL_LIC (CLIENTE,SQ_LCJULGAMENTO,SQ_PORTAL_LIC)
+  tablespace SYSTEM
+  pctfree 10
+  initrans 2
+  maxtrans 255
+  storage
+  (
+    initial 66K
+    minextents 1
+    maxextents unlimited
+  );
+create index IN_PORLIC_MODALIDADE on LC_PORTAL_LIC (CLIENTE,SQ_LCMODALIDADE,SQ_PORTAL_LIC)
+  tablespace SYSTEM
+  pctfree 10
+  initrans 2
+  maxtrans 255
+  storage
+  (
+    initial 66K
+    minextents 1
+    maxextents unlimited
+  );
+create index IN_PORLIC_PROCESSO on LC_PORTAL_LIC (CLIENTE,PROCESSO)
+  tablespace SYSTEM
+  pctfree 10
+  initrans 2
+  maxtrans 255
+  storage
+  (
+    initial 66K
+    minextents 1
+    maxextents unlimited
+  );
+create index IN_PORLIC_PUBLICAR on LC_PORTAL_LIC (CLIENTE,PUBLICAR,SQ_PORTAL_LIC)
+  tablespace SYSTEM
+  pctfree 10
+  initrans 2
+  maxtrans 255
+  storage
+  (
+    initial 66K
+    minextents 1
+    maxextents unlimited
+  );
+create index IN_PORLIC_SITUACAO on LC_PORTAL_LIC (CLIENTE,SQ_LCSITUACAO,SQ_PORTAL_LIC)
+  tablespace SYSTEM
+  pctfree 10
+  initrans 2
+  maxtrans 255
+  storage
+  (
+    initial 66K
+    minextents 1
+    maxextents unlimited
+  );
+create index IN_PORLIC_UNIDADE on LC_PORTAL_LIC (CLIENTE,SQ_UNIDADE,SQ_PORTAL_LIC)
+  tablespace SYSTEM
+  pctfree 10
+  initrans 2
+  maxtrans 255
+  storage
+  (
+    initial 66K
+    minextents 1
+    maxextents unlimited
+  );
+

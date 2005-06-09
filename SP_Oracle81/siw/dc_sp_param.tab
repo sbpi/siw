@@ -1,0 +1,104 @@
+create table DC_SP_PARAM
+(
+  SQ_SP_PARAM    NUMBER(18) not null,
+  SQ_STORED_PROC NUMBER(18) not null,
+  SQ_DADO_TIPO   NUMBER(18) not null,
+  NOME           VARCHAR2(30) not null,
+  DESCRICAO      VARCHAR2(4000) not null,
+  TIPO           VARCHAR2(1) default 'E' not null,
+  ORDEM          NUMBER(18) not null,
+  TAMANHO        NUMBER(18) default 0 not null,
+  PRECISAO       NUMBER(18),
+  ESCALA         NUMBER(18),
+  OBRIGATORIO    VARCHAR2(1) default 'N' not null,
+  PADRAO         VARCHAR2(4000)
+)
+tablespace SYSTEM
+  pctfree 10
+  pctused 40
+  initrans 1
+  maxtrans 255
+  storage
+  (
+    initial 72K
+    next 328K
+    minextents 1
+    maxextents unlimited
+    pctincrease 50
+  );
+comment on column DC_SP_PARAM.SQ_SP_PARAM
+  is 'Sequence.';
+comment on column DC_SP_PARAM.SQ_STORED_PROC
+  is 'Sequence.';
+comment on column DC_SP_PARAM.SQ_DADO_TIPO
+  is 'Sequence.';
+comment on column DC_SP_PARAM.NOME
+  is 'Nome do parâmetro.';
+comment on column DC_SP_PARAM.DESCRICAO
+  is 'Descrição do parâmetro.';
+comment on column DC_SP_PARAM.TIPO
+  is 'Tipo do parâmetro (E - entrada; S - saída; A - ambos)';
+comment on column DC_SP_PARAM.ORDEM
+  is 'Número de ordem do parâmetro.';
+comment on column DC_SP_PARAM.TAMANHO
+  is 'Tamanho do parâmetro, em bytes.';
+comment on column DC_SP_PARAM.PRECISAO
+  is 'Número de casas decimais quando for o parâmetro for do tipo numérico';
+comment on column DC_SP_PARAM.ESCALA
+  is 'Número de dígitos à direita da vírgula decimal, quando o parâmetro for do tipo numérico.';
+comment on column DC_SP_PARAM.OBRIGATORIO
+  is 'Indica se o parâmetro é obrigqatório.';
+alter table DC_SP_PARAM
+  add constraint PK_DC_SP_PARAM primary key (SQ_SP_PARAM)
+  using index 
+  tablespace SYSTEM
+  pctfree 10
+  initrans 2
+  maxtrans 255
+  storage
+  (
+    initial 72K
+    next 96K
+    minextents 1
+    maxextents unlimited
+    pctincrease 50
+  );
+alter table DC_SP_PARAM
+  add constraint FK_DCSPPAR_DCDADTIP foreign key (SQ_DADO_TIPO)
+  references DC_DADO_TIPO (SQ_DADO_TIPO);
+alter table DC_SP_PARAM
+  add constraint FK_DCSPPAR_DCSTOPRO foreign key (SQ_STORED_PROC)
+  references DC_STORED_PROC (SQ_STORED_PROC);
+alter table DC_SP_PARAM
+  add constraint CKC_OBRIGATORIO_DC_SP_PA
+  check (OBRIGATORIO in ('S','N'));
+alter table DC_SP_PARAM
+  add constraint CKC_TIPO_DC_SP_PA
+  check (TIPO in ('E','S','A'));
+create unique index IN_DCSPPAR_NOME on DC_SP_PARAM (NOME,SQ_STORED_PROC)
+  tablespace SYSTEM
+  pctfree 10
+  initrans 2
+  maxtrans 255
+  storage
+  (
+    initial 72K
+    next 144K
+    minextents 1
+    maxextents unlimited
+    pctincrease 50
+  );
+create index IN_DCSPPAR_SP on DC_SP_PARAM (SQ_STORED_PROC,SQ_SP_PARAM)
+  tablespace SYSTEM
+  pctfree 10
+  initrans 2
+  maxtrans 255
+  storage
+  (
+    initial 72K
+    next 144K
+    minextents 1
+    maxextents unlimited
+    pctincrease 50
+  );
+

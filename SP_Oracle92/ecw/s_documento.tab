@@ -1,0 +1,33 @@
+create table S_DOCUMENTO
+(
+  CO_DOCUMENTO  NUMBER(10) not null,
+  DS_DOCUMENTO  VARCHAR2(170) not null,
+  CO_TIPO_CURSO NUMBER(10) not null
+)
+tablespace SGE
+  pctfree 10
+  initrans 1
+  maxtrans 255
+  storage
+  (
+    initial 66K
+    minextents 1
+    maxextents unlimited
+  );
+alter table S_DOCUMENTO
+  add constraint U194_145 primary key (CO_DOCUMENTO,CO_TIPO_CURSO)
+  using index 
+  tablespace SGE
+  pctfree 10
+  initrans 2
+  maxtrans 255
+  storage
+  (
+    initial 66K
+    minextents 1
+    maxextents unlimited
+  );
+alter table S_DOCUMENTO
+  add constraint R144_567 foreign key (CO_TIPO_CURSO)
+  references S_TIPO_CURSO (CO_TIPO_CURSO) on delete cascade;
+

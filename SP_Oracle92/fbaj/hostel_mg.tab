@@ -1,0 +1,30 @@
+create table HOSTEL_MG
+(
+  NOME          VARCHAR2(50),
+  DT_NASCIMENTO DATE,
+  ENDERECO      VARCHAR2(255),
+  NUMERO        VARCHAR2(50),
+  APTO          VARCHAR2(50),
+  BAIRRO        VARCHAR2(50),
+  CIDADE        VARCHAR2(50),
+  ESTADO        VARCHAR2(2),
+  CEP           VARCHAR2(20),
+  TELEFONE      VARCHAR2(30),
+  FAX           VARCHAR2(30),
+  IDENTIDADE    VARCHAR2(50),
+  EMAIL         VARCHAR2(50),
+  CARTEIRA      VARCHAR2(50),
+  ADESAO        DATE,
+  SEXO          VARCHAR2(2)
+)
+tablespace USERS
+  pctfree 10
+  initrans 1
+  maxtrans 255
+  storage
+  (
+    initial 66K
+    minextents 1
+    maxextents unlimited
+  );
+

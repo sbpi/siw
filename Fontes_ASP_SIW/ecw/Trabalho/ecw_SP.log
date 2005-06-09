@@ -1,0 +1,483 @@
+
+Creating procedure PR_LEMBRETE010
+=================================
+
+
+Procedimento criado.
+
+
+Creating procedure PR_RECADO012
+===============================
+
+
+Procedimento criado.
+
+
+Creating procedure PR_S_AGENDA_C018
+===================================
+
+
+Procedimento criado.
+
+
+Creating procedure PR_S_ALUNO_AD022
+===================================
+
+
+Procedimento criado.
+
+
+Creating procedure PR_S_ALUNO_AP024
+===================================
+
+
+Procedimento criado.
+
+
+Creating procedure PR_S_ALUNO_CL026
+===================================
+
+
+Procedimento criado.
+
+
+Creating procedure PR_S_ALUNO_DE028
+===================================
+
+
+Procedimento criado.
+
+
+Creating procedure PR_S_ALUNO_DO030
+===================================
+
+
+Procedimento criado.
+
+
+Creating procedure PR_S_ALUNO_OC032
+===================================
+
+
+Procedimento criado.
+
+
+Creating procedure PR_S_ALUNO_PE034
+===================================
+
+
+Procedimento criado.
+
+
+Creating procedure PR_S_ALUNO_TE036
+===================================
+
+
+Procedimento criado.
+
+
+Creating procedure PR_S_ALUNO_TU038
+===================================
+
+
+Procedimento criado.
+
+
+Creating procedure PR_S_ALUNO_TU040
+===================================
+
+
+Advertência: Procedimento criado com erros de compilação.
+
+
+Creating procedure PR_S_ALUNO020
+================================
+
+
+Procedimento criado.
+
+
+Creating procedure PR_S_AULA_DAD046
+===================================
+
+
+Procedimento criado.
+
+
+Creating procedure PR_S_AVALIACA048
+===================================
+
+
+Procedimento criado.
+
+
+Creating procedure PR_S_AVALIACA050
+===================================
+
+
+Procedimento criado.
+
+
+Creating procedure PR_S_AVALIACA052
+===================================
+
+
+Procedimento criado.
+
+
+Creating procedure PR_S_CALENDAR054
+===================================
+
+
+Advertência: Procedimento criado com erros de compilação.
+
+
+Creating procedure PR_S_CHAMADA060
+==================================
+
+
+Procedimento criado.
+
+
+Creating procedure PR_S_CHAMADA_062
+===================================
+
+
+Procedimento criado.
+
+
+Creating procedure PR_S_CHAMADA_064
+===================================
+
+
+Procedimento criado.
+
+
+Creating procedure PR_S_CONCEITO068
+===================================
+
+
+Procedimento criado.
+
+
+Creating procedure PR_S_CONT_EDU070
+===================================
+
+
+Procedimento criado.
+
+
+Creating procedure PR_S_CONTEUDO072
+===================================
+
+
+Procedimento criado.
+
+
+Creating procedure PR_S_CURSO_AR076
+===================================
+
+
+Procedimento criado.
+
+
+Creating procedure PR_S_CURSO_DO078
+===================================
+
+
+Procedimento criado.
+
+
+Creating procedure PR_S_CURSO_HO080
+===================================
+
+
+Procedimento criado.
+
+
+Creating procedure PR_S_CURSO_SE082
+===================================
+
+
+Procedimento criado.
+
+
+Creating procedure PR_S_CURSO_SE084
+===================================
+
+
+Procedimento criado.
+
+
+Creating procedure PR_S_CURSO074
+================================
+
+
+Procedimento criado.
+
+
+Creating procedure PR_S_DIA_CALE086
+===================================
+
+
+Advertência: Procedimento criado com erros de compilação.
+
+
+Creating procedure PR_S_DISCIPLI088
+===================================
+
+
+Procedimento criado.
+
+
+Creating procedure PR_S_ESCOLA094
+=================================
+
+
+Procedimento criado.
+
+
+Creating procedure PR_S_FUNCIONA098
+===================================
+
+
+Procedimento criado.
+
+
+Creating procedure PR_S_FUNCIONA100
+===================================
+
+
+Procedimento criado.
+
+
+Creating procedure PR_S_FUNCIONA102
+===================================
+
+
+Procedimento criado.
+
+
+Creating procedure PR_S_FUNCIONA104
+===================================
+
+
+Procedimento criado.
+
+
+Creating procedure PR_S_GRAU_SER108
+===================================
+
+
+Procedimento criado.
+
+
+Creating procedure PR_S_HISTORIC110
+===================================
+
+
+Procedimento criado.
+
+
+Creating procedure PR_S_HISTORIC112
+===================================
+
+
+Procedimento criado.
+
+
+Creating procedure PR_S_HISTORIC114
+===================================
+
+
+Procedimento criado.
+
+
+Creating procedure PR_S_HISTORIC116
+===================================
+
+
+Procedimento criado.
+
+
+Creating procedure PR_S_HORARIO_118
+===================================
+
+
+Procedimento criado.
+
+
+Creating procedure PR_S_HORARIO_120
+===================================
+
+
+Procedimento criado.
+
+
+Creating procedure PR_S_MENSAGEM122
+===================================
+
+
+Procedimento criado.
+
+
+Creating procedure PR_S_MENSAO124
+=================================
+
+
+Procedimento criado.
+
+
+Creating procedure PR_S_NOTA126
+===============================
+
+
+Procedimento criado.
+
+
+Creating procedure PR_S_OBSERVAC128
+===================================
+
+
+Procedimento criado.
+
+
+Creating procedure PR_S_PERIODOU136
+===================================
+
+
+Procedimento criado.
+
+
+Creating procedure PR_S_RESPONSA142
+===================================
+
+
+Procedimento criado.
+
+
+Creating procedure PR_S_RESPONS_140
+===================================
+
+
+Procedimento criado.
+
+
+Creating procedure PR_S_SALA144
+===============================
+
+
+Procedimento criado.
+
+
+Creating procedure PR_S_SUBCONT_148
+===================================
+
+
+Procedimento criado.
+
+
+Creating procedure PR_S_TIPO_CON152
+===================================
+
+
+Procedimento criado.
+
+
+Creating procedure PR_S_TIPO_HOR158
+===================================
+
+
+Procedimento criado.
+
+
+Creating procedure PR_S_TIPO_NOT160
+===================================
+
+
+Procedimento criado.
+
+
+Creating procedure PR_S_TIPO_OCO162
+===================================
+
+
+Procedimento criado.
+
+
+Creating procedure PR_S_TIPO_RES164
+===================================
+
+
+Advertência: Procedimento criado com erros de compilação.
+
+
+Creating procedure PR_S_TIPO_SUB168
+===================================
+
+
+Procedimento criado.
+
+
+Creating procedure PR_S_TURMA_DI172
+===================================
+
+
+Procedimento criado.
+
+
+Creating procedure PR_S_TURMA170
+================================
+
+
+Procedimento criado.
+
+
+Creating procedure PR_S_UNIDADEF180
+===================================
+
+
+Procedimento criado.
+
+
+Creating procedure PR_S_UNIDADE178
+==================================
+
+
+Procedimento criado.
+
+
+Creating trigger TR_D_S_ESCOLA094
+=================================
+
+
+Gatilho criado.
+
+
+Creating trigger TR_I_AGE_CATEGO000
+===================================
+
+
+Gatilho criado.
+
+
+Creating trigger TR_I_S_ESCOLA094
+=================================
+
+
+Gatilho criado.
+
+
+Creating trigger TR_U_AGE_CATEGO000
+===================================
+
+
+Gatilho criado.
+
+
+Creating trigger TR_U_S_ESCOLA094
+=================================
+
+
+Gatilho criado.
+

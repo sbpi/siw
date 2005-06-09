@@ -1,0 +1,248 @@
+create or replace procedure SP_GetPersonList
+   (p_cliente   in number,
+    p_chave     in number   default null,
+    p_restricao in varchar2 default null,
+    p_result    out siw.sys_refcursor) is
+
+  l_item       varchar2(18);
+  l_tipo       varchar2(200) := p_restricao ||',';
+  x_tipo       varchar2(200) := '';
+begin
+   If p_restricao = 'PESSOA' Then
+      -- Recupera as pessoas da organização
+      open p_result for
+         select a.sq_pessoa, b.cpf, a.nome, a.nome_resumido, a.nome_indice, a.nome_resumido_ind,
+                c.username,
+                d.sigla sg_unidade, d.nome nm_unidade, e.nome nm_local
+           from co_pessoa                             a,
+                 co_pessoa_fisica  b,
+                 sg_autenticacao   c,
+                    eo_unidade        d,
+                    eo_localizacao    e
+          where (a.sq_pessoa      = b.sq_pessoa (+))
+            and (a.sq_pessoa      = c.sq_pessoa (+))
+            and (c.sq_unidade     = d.sq_unidade (+))
+            and (c.sq_localizacao = e.sq_localizacao (+))
+            and a.sq_pessoa_pai = p_cliente
+         order by a.nome_indice;
+   Elsif p_restricao = 'TODOS' Then
+      -- Recupera todas as pessoas do cadastro da organização, físicas e jurídicas
+      open p_result for
+         select a.sq_pessoa, a.nome, a.nome_resumido, a.nome_indice, a.nome_resumido_ind,
+                decode(b.sq_pessoa,null,b.cpf,decode(f.sq_pessoa,null,f.cnpj,null)) codigo,
+                c.username, c.ativo usuario,
+                d.sigla sg_unidade, d.nome nm_unidade, e.nome nm_local
+           from co_pessoa                              a,
+                 co_pessoa_fisica   b,
+                 co_pessoa_juridica f,
+                 sg_autenticacao    c,
+                    eo_unidade         d,
+                    eo_localizacao     e
+          where (a.sq_pessoa      = b.sq_pessoa (+))
+            and (a.sq_pessoa     = f.sq_pessoa (+))
+            and (a.sq_pessoa      = c.sq_pessoa (+))
+            and (c.sq_unidade     = d.sq_unidade (+))
+            and (c.sq_localizacao = e.sq_localizacao (+))
+            and a.sq_pessoa_pai = p_cliente
+         order by a.nome_indice;
+   Elsif p_restricao = 'INTERNOS' Then
+      -- Recupera as pessoas internas à organização
+      open p_result for
+        select a.sq_pessoa, b.cpf, a.nome, a.nome_resumido, a.nome_indice, a.nome_resumido_ind,
+               c.username,
+               f.sigla sg_unidade, f.nome nm_unidade, g.nome nm_local
+          from co_pessoa                               a,
+                co_pessoa_fisica  b,
+                sg_autenticacao   c,
+                    eo_unidade         f,
+                    eo_localizacao     g,
+               co_tipo_vinculo  d,
+               co_tipo_pessoa   e
+         where (a.sq_pessoa      = b.sq_pessoa (+))
+           and (a.sq_pessoa      = c.sq_pessoa (+))
+           and (c.sq_unidade     = f.sq_unidade (+))
+           and (c.sq_localizacao = g.sq_localizacao (+))
+           and a.sq_tipo_vinculo = d.sq_tipo_vinculo
+           and d.interno         = 'S'
+           and a.sq_tipo_pessoa  = e.sq_tipo_pessoa
+           and e.ativo           = 'S'
+           and e.nome            = 'Física'
+           and a.sq_pessoa_pai   = p_cliente
+      order by a.nome_indice;
+   Elsif p_restricao = 'USUARIOS' Then
+      -- Recupera os usuários do sistema
+      open p_result for
+        select a.sq_pessoa, b.cpf, a.nome, a.nome_resumido, a.nome_indice, a.nome_resumido_ind,
+               c.username,
+               f.sigla sg_unidade, f.nome nm_unidade, g.nome nm_local
+          from co_pessoa                           a,
+                co_pessoa_fisica  b,
+                sg_autenticacao   c,
+                  eo_unidade        f,
+                  eo_localizacao    g,
+                co_tipo_vinculo    d,
+                co_tipo_pessoa     e
+         where (a.sq_pessoa       = b.sq_pessoa (+))
+           and (a.sq_pessoa       = c.sq_pessoa)
+           and (c.sq_unidade      = f.sq_unidade)
+           and (c.sq_localizacao  = g.sq_localizacao)
+           and (a.sq_tipo_vinculo = d.sq_tipo_vinculo)
+           and (a.sq_tipo_pessoa  = e.sq_tipo_pessoa)
+           and c.ativo          = 'S'
+           and d.interno        = 'S'
+           and e.ativo          = 'S'
+           and e.nome           = 'Física'
+           and a.sq_pessoa_pai  = p_cliente
+      order by a.nome_indice;
+   Elsif p_restricao = 'TTCENTRAL' Then
+      -- Recupera as pessoas vinculadas a uma central telefônica
+      open p_result for
+         select a.sq_pessoa, a.nome_resumido, a.nome_resumido_ind,
+                d.sigla sg_unidade, d.nome nm_unidade, e.nome nm_local
+           from co_pessoa                             a,
+                 sg_autenticacao   c,
+                    eo_unidade        d,
+                    eo_localizacao    e,
+                 tt_usuario        b,
+                    tt_central        f
+          where (a.sq_pessoa       = c.sq_pessoa (+))
+            and (c.sq_unidade      = d.sq_unidade (+))
+            and (c.sq_localizacao  = e.sq_localizacao (+))
+            and (a.sq_pessoa       = b.usuario)
+            and (b.sq_central_fone = f.sq_central_fone and
+                 f.sq_central_fone = p_chave
+                )
+            and a.sq_pessoa_pai   = p_cliente
+         order by a.nome_resumido;
+   Elsif p_restricao = 'TTTRANSFERE' Then
+      -- Recupera as pessoas vinculadas a uma central telefônica
+      open p_result for
+         select distinct a.sq_pessoa, a.nome_resumido, a.nome,
+                f.sigla sg_unidade, f.nome nm_unidade, g.nome nm_local
+           from co_pessoa                      a,
+                tt_usuario       b,
+                   tt_central       c,
+                   tt_ramal_usuario d,
+                sg_autenticacao  e,
+                   eo_unidade       f,
+                   eo_localizacao   g
+          where (a.sq_pessoa             = b.usuario)
+            and (b.sq_central_fone       = c.sq_central_fone)
+            and (b.sq_usuario_central    = d.sq_usuario_central)
+            and (a.sq_pessoa             = e.sq_pessoa)
+            and (e.sq_unidade            = f.sq_unidade)
+            and (e.sq_localizacao        = g.sq_localizacao)
+            and a.sq_pessoa_pai         = p_cliente
+            and c.sq_central_fone       = p_chave
+            and d.fim                   is null
+         order by a.nome_resumido;
+   Elsif p_restricao = 'TTUSUCENTRAL' Then
+      -- Recupera os usuários do sistema que ainda não estão vinculados à central informada
+      open p_result for
+         select a.sq_pessoa, a.nome_resumido, a.nome_resumido_ind,
+                d.sigla sg_unidade, d.nome nm_unidade, e.nome nm_local
+           from co_pessoa                             a,
+                 sg_autenticacao   c,
+                    eo_unidade        d,
+                    eo_localizacao    e
+          where (a.sq_pessoa       = c.sq_pessoa)
+            and (c.sq_unidade      = d.sq_unidade)
+            and (c.sq_localizacao  = e.sq_localizacao)
+            and a.sq_pessoa_pai   = p_cliente
+         MINUS
+         select a.sq_pessoa, a.nome_resumido, a.nome_resumido_ind,
+                d.sigla sg_unidade, d.nome nm_unidade, e.nome nm_local
+           from co_pessoa                             a,
+                 sg_autenticacao   c,
+                    eo_unidade        d,
+                    eo_localizacao    e,
+                 tt_usuario        b,
+                    tt_central        f
+          where (a.sq_pessoa       = c.sq_pessoa (+))
+            and (c.sq_unidade      = d.sq_unidade (+))
+            and (c.sq_localizacao  = e.sq_localizacao (+))
+            and (a.sq_pessoa       = b.usuario)
+            and (b.sq_central_fone = f.sq_central_fone and
+                 f.sq_central_fone = p_chave
+                )
+            and a.sq_pessoa_pai   = p_cliente
+         order by nome_resumido;
+   Elsif p_restricao = 'TTUSURAMAL' Then
+      -- Recupera os usuários do sistema que ainda não estão vinculados à central informada
+      open p_result for
+         select a.sq_pessoa, a.nome_resumido, a.nome_resumido_ind,
+                c.ativo,
+                d.sigla sg_unidade, d.nome nm_unidade, e.nome nm_local
+           from co_pessoa                             a,
+                 sg_autenticacao   c,
+                    eo_unidade        d,
+                    eo_localizacao    e,
+                tt_usuario        f
+          where (a.sq_pessoa       = c.sq_pessoa)
+            and (c.sq_unidade      = d.sq_unidade)
+            and (c.sq_localizacao  = e.sq_localizacao)
+            and (a.sq_pessoa       = f.usuario)
+            and a.sq_pessoa_pai   = p_cliente
+         MINUS
+         select a.sq_pessoa, a.nome_resumido, a.nome_resumido_ind,
+                c.ativo,
+                d.sigla sg_unidade, d.nome nm_unidade, e.nome nm_local
+           from co_pessoa                             a,
+                 sg_autenticacao   c,
+                    eo_unidade        d,
+                    eo_localizacao    e,
+                 tt_usuario        b,
+                    tt_ramal_usuario  f
+          where (a.sq_pessoa          = c.sq_pessoa (+))
+            and (c.sq_unidade         = d.sq_unidade (+))
+            and (c.sq_localizacao     = e.sq_localizacao (+))
+            and (a.sq_pessoa          = b.usuario)
+            and (b.sq_usuario_central = f.sq_usuario_central and
+                 f.sq_ramal           = p_chave and
+                 f.fim                is null
+                )
+            and a.sq_pessoa_pai   = p_cliente
+         order by nome_resumido;
+   Else
+      Loop
+         l_item  := Trim(substr(l_tipo,1,Instr(l_tipo,',')-1));
+         If Length(l_item) > 0 Then
+            x_tipo := x_tipo||','''||l_item||'''';
+         End If;
+         l_tipo := substr(l_tipo,Instr(l_tipo,',')+1,200);
+         Exit when l_tipo is null;
+      End Loop;
+      x_tipo := upper(substr(x_tipo,2,200));
+
+      -- Recupera os usuários do sistema que estiverem nos vínculos informados
+      open p_result for
+        select a.sq_pessoa, b.cpf, a.nome, a.nome_resumido, a.nome_indice, a.nome_resumido_ind,
+               c.username,
+               f.sigla sg_unidade, f.nome nm_unidade, g.nome nm_local
+          from co_pessoa                           a,
+                co_pessoa_fisica  b,
+                sg_autenticacao   c,
+                  eo_unidade        f,
+                  eo_localizacao    g,
+                co_tipo_vinculo    d,
+                co_tipo_pessoa     e
+         where (a.sq_pessoa       = b.sq_pessoa (+))
+           and (a.sq_pessoa       = c.sq_pessoa and
+                c.ativo           = 'S'
+               )
+           and (c.sq_unidade      = f.sq_unidade)
+           and (c.sq_localizacao  = g.sq_localizacao)
+           and (a.sq_tipo_vinculo = d.sq_tipo_vinculo and
+                d.interno         = 'S' and
+                0                 < InStr(x_tipo,''''||upper(d.nome)||'''')
+               )
+           and (a.sq_tipo_pessoa  = e.sq_tipo_pessoa and
+                e.ativo           = 'S' and
+                e.nome            = 'Física'
+               )
+           and a.sq_pessoa_pai  = p_cliente
+      order by a.nome_indice;
+   End If;
+end SP_GetPersonList;
+/
+

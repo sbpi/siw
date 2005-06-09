@@ -1,0 +1,37 @@
+create table HOSTEL_PR
+(
+  CODIGO        VARCHAR2(15),
+  CARTEIRA      VARCHAR2(255),
+  ADESAO        DATE,
+  NOME          VARCHAR2(255),
+  ENDERECO      VARCHAR2(255),
+  CIDADE        VARCHAR2(255),
+  ESTADO        VARCHAR2(255),
+  PAIS          VARCHAR2(255),
+  CEP           VARCHAR2(255),
+  SEXO          VARCHAR2(255),
+  EMAIL         VARCHAR2(255),
+  CATEGORIA     VARCHAR2(255),
+  RG            VARCHAR2(255),
+  NACIONALIDADE VARCHAR2(255),
+  TELEFONE      VARCHAR2(255),
+  CELULAR       VARCHAR2(255),
+  DTNASCIMENTO  DATE,
+  RENDAFAM      VARCHAR2(255),
+  ESTUDA        VARCHAR2(1) not null,
+  TRABALHA      VARCHAR2(1) not null,
+  VIAJA         VARCHAR2(1) not null,
+  VALOR         FLOAT,
+  VENCIMENTO    VARCHAR2(255)
+)
+tablespace USERS
+  pctfree 10
+  initrans 1
+  maxtrans 255
+  storage
+  (
+    initial 66K
+    minextents 1
+    maxextents unlimited
+  );
+

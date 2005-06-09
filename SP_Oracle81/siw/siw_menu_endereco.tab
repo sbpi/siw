@@ -1,0 +1,59 @@
+create table SIW_MENU_ENDERECO
+(
+  SQ_MENU            NUMBER(18) not null,
+  SQ_PESSOA_ENDERECO NUMBER(18) not null
+)
+tablespace USERS
+  pctfree 10
+  pctused 40
+  initrans 1
+  maxtrans 255
+  storage
+  (
+    initial 136K
+    next 128K
+    minextents 1
+    maxextents 4096
+    pctincrease 0
+  );
+comment on table SIW_MENU_ENDERECO
+  is 'Endereços do cliente onde a opção está disponível';
+comment on column SIW_MENU_ENDERECO.SQ_MENU
+  is 'Sequence';
+comment on column SIW_MENU_ENDERECO.SQ_PESSOA_ENDERECO
+  is 'Sequence';
+alter table SIW_MENU_ENDERECO
+  add constraint PK_SIW_MENU_ENDERECO primary key (SQ_MENU,SQ_PESSOA_ENDERECO)
+  using index 
+  tablespace USERS
+  pctfree 10
+  initrans 2
+  maxtrans 255
+  storage
+  (
+    initial 136K
+    next 128K
+    minextents 1
+    maxextents 4096
+    pctincrease 0
+  );
+alter table SIW_MENU_ENDERECO
+  add constraint FK_SIWMNEN_COPESEN foreign key (SQ_PESSOA_ENDERECO)
+  references CO_PESSOA_ENDERECO (SQ_PESSOA_ENDERECO);
+alter table SIW_MENU_ENDERECO
+  add constraint FK_SIWMNEN_SIWMN foreign key (SQ_MENU)
+  references SIW_MENU (SQ_MENU);
+create index IN_SIWMENEND_INV on SIW_MENU_ENDERECO (SQ_PESSOA_ENDERECO,SQ_MENU)
+  tablespace SYSTEM
+  pctfree 10
+  initrans 2
+  maxtrans 255
+  storage
+  (
+    initial 72K
+    next 328K
+    minextents 1
+    maxextents unlimited
+    pctincrease 50
+  );
+

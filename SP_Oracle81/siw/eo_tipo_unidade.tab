@@ -1,0 +1,69 @@
+create table EO_TIPO_UNIDADE
+(
+  SQ_TIPO_UNIDADE NUMBER(10) not null,
+  SQ_PESSOA       NUMBER(18) not null,
+  NOME            VARCHAR2(25) not null,
+  ATIVO           VARCHAR2(1) default 'S' not null
+)
+tablespace USERS
+  pctfree 10
+  pctused 40
+  initrans 1
+  maxtrans 255
+  storage
+  (
+    initial 136K
+    next 128K
+    minextents 1
+    maxextents 4096
+    pctincrease 0
+  );
+comment on table EO_TIPO_UNIDADE
+  is 'Armazena os tipos de unidades organizacionais';
+comment on column EO_TIPO_UNIDADE.SQ_PESSOA
+  is 'Sequence';
+alter table EO_TIPO_UNIDADE
+  add constraint PK_EO_TIPO_UNIDADE primary key (SQ_TIPO_UNIDADE)
+  using index 
+  tablespace USERS
+  pctfree 10
+  initrans 2
+  maxtrans 255
+  storage
+  (
+    initial 136K
+    next 128K
+    minextents 1
+    maxextents 4096
+    pctincrease 0
+  );
+alter table EO_TIPO_UNIDADE
+  add constraint FK_EOTIPUNI_COPES foreign key (SQ_PESSOA)
+  references CO_PESSOA (SQ_PESSOA);
+create index IN_EOTIPUNI_ATIVO on EO_TIPO_UNIDADE (ATIVO,SQ_TIPO_UNIDADE)
+  tablespace SYSTEM
+  pctfree 10
+  initrans 2
+  maxtrans 255
+  storage
+  (
+    initial 72K
+    next 64K
+    minextents 1
+    maxextents unlimited
+    pctincrease 50
+  );
+create index IN_EOTIPUNI_PESSOA on EO_TIPO_UNIDADE (SQ_TIPO_UNIDADE,SQ_PESSOA)
+  tablespace SYSTEM
+  pctfree 10
+  initrans 2
+  maxtrans 255
+  storage
+  (
+    initial 72K
+    next 64K
+    minextents 1
+    maxextents unlimited
+    pctincrease 50
+  );
+

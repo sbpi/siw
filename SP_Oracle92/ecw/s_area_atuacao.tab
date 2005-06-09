@@ -1,0 +1,29 @@
+create table S_AREA_ATUACAO
+(
+  CO_AREA_ATUACAO NUMBER(10) not null,
+  DS_AREA_ATUACAO VARCHAR2(52)
+)
+tablespace SGE
+  pctfree 10
+  initrans 1
+  maxtrans 255
+  storage
+  (
+    initial 66K
+    minextents 1
+    maxextents unlimited
+  );
+alter table S_AREA_ATUACAO
+  add constraint U135_46 primary key (CO_AREA_ATUACAO)
+  using index 
+  tablespace SGE
+  pctfree 10
+  initrans 2
+  maxtrans 255
+  storage
+  (
+    initial 66K
+    minextents 1
+    maxextents unlimited
+  );
+

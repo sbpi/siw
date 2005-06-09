@@ -1,0 +1,40 @@
+create table COMPROMISSO
+(
+  DS_USUARIO     CHAR(30),
+  COM_SEQUENCIAL NUMBER(10) not null,
+  CO_UNIDADE     CHAR(5) not null,
+  COM_DATA       DATE,
+  COM_DESCRICAO  CHAR(80),
+  COM_HORA       CHAR(5),
+  COM_CONTATO    CHAR(30),
+  COM_AVISO      DATE,
+  COM_OBSERVACAO BLOB,
+  COM_CONFIRMADO CHAR(3)
+)
+tablespace SGE
+  pctfree 10
+  initrans 1
+  maxtrans 255
+  storage
+  (
+    initial 66K
+    minextents 1
+    maxextents unlimited
+  );
+alter table COMPROMISSO
+  add constraint U107_8 primary key (COM_SEQUENCIAL,CO_UNIDADE)
+  using index 
+  tablespace SGE
+  pctfree 10
+  initrans 2
+  maxtrans 255
+  storage
+  (
+    initial 66K
+    minextents 1
+    maxextents unlimited
+  );
+alter table COMPROMISSO
+  add constraint R_202 foreign key (CO_UNIDADE)
+  references S_UNIDADE (CO_UNIDADE) on delete cascade;
+

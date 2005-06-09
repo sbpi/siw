@@ -1,0 +1,38 @@
+create table S_FUNCIONARIO_DISC
+(
+  CO_UNIDADE     CHAR(5) not null,
+  ST_HABILITADO  CHAR(3),
+  CO_FUNCIONARIO CHAR(10) not null,
+  ANO_SEM        CHAR(5) not null,
+  CO_DISCIPLINA  CHAR(4) not null
+)
+tablespace SGE
+  pctfree 10
+  initrans 1
+  maxtrans 255
+  storage
+  (
+    initial 66K
+    minextents 1
+    maxextents unlimited
+  );
+alter table S_FUNCIONARIO_DISC
+  add constraint U143_54 primary key (CO_FUNCIONARIO,CO_DISCIPLINA,ANO_SEM,CO_UNIDADE)
+  using index 
+  tablespace SGE
+  pctfree 10
+  initrans 2
+  maxtrans 255
+  storage
+  (
+    initial 66K
+    minextents 1
+    maxextents unlimited
+  );
+alter table S_FUNCIONARIO_DISC
+  add constraint FK_F_DISCIPLINA foreign key (CO_DISCIPLINA,ANO_SEM,CO_UNIDADE)
+  references S_DISCIPLINA (CO_DISCIPLINA,ANO_SEM,CO_UNIDADE) on delete cascade;
+alter table S_FUNCIONARIO_DISC
+  add constraint R147_570 foreign key (CO_FUNCIONARIO)
+  references S_FUNCIONARIO (CO_FUNCIONARIO) on delete cascade;
+
