@@ -140,7 +140,7 @@ Function fValidate(Tipo, Value, DisplayName, DataType, ValueRequired, MinimumLen
     checkOK = ""
     If AllowLetters > "" Then
       If AllowLetters = "1" Then
-        checkOK = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyzÀÁÂÃÇÈÉÊÌÍÎÒÓÔÕÙÚÛÜàáâãçéêíîóôõúû0123456789-,.()-:;[]{}*&%$#@!/ºª?<>|+=_\""\' "
+        checkOK = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyzÀÁÂÃÇÈÉÊÌÍÎÒÓÔÕÙÚÛÜàáâãçéêíîóôõúû0123456789-,.()-:;[]{}*&%$#@!/ºª?<>|+=_\""\'´ "
       Else
         checkOK = checkOK & AllowLetters
       End If   

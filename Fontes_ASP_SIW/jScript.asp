@@ -535,7 +535,7 @@ Sub Validate(VariableName, DisplayName, DataType, ValueRequired, MinimumLength, 
     checkOK = ""
     If AllowLetters > "" Then
       If AllowLetters = "1" Then
-        checkOK = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyzÀÁÂÃÇÈÉÊÌÍÎÒÓÔÕÙÚÛÜÀÈÌÒÙÂÊÎÔÛàáâãçéêíîóôõúûüàèìòìâêîôû0123456789-,.()-:;[]{}*&%$#@!/ºª?<>|+=_\""\' "
+        checkOK = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyzÀÁÂÃÇÈÉÊÌÍÎÒÓÔÕÙÚÛÜÀÈÌÒÙÂÊÎÔÛàáâãçéêíîóôõúûüàèìòìâêîôû0123456789-,.()-:;[]{}*&%$#@!/ºª?<>|+=_\""\'´ "
       Else
         checkOK = checkOK & AllowLetters
       End If   
