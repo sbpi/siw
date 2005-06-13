@@ -4051,7 +4051,7 @@ Public Sub Grava
           w_assinatura = "" Then
           
           ' Verifica se a meta é cumulativa ou não para o calculo do percentual de conclusão
-          If Request("w_cumulativa") = "S" Then
+          If Request("w_cumulativa") = "N" Then
             If cDbl(Nvl(Request("w_quantidade"),0)) = 0 Then
                w_perc_conclusao = 100
             Else
