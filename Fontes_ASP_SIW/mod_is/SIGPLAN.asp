@@ -14,10 +14,12 @@
 <!-- #INCLUDE FILE="DB_SIGPLAN.asp" -->
 <!-- #INCLUDE FILE="DML_SIGPLAN.asp" -->
 <!-- #INCLUDE FILE="DML_SIAFI.asp" -->
+<!-- #INCLUDE FILE="DML_XML.asp" -->
 <!-- #INCLUDE FILE="Funcoes.asp" -->
 <!-- #INCLUDE FILE="DB_Tabelas.asp" -->
 <!-- #INCLUDE FILE="DML_Tabelas.asp" -->
 <%
+Server.ScriptTimeout = conScriptTimeout
 Response.Expires = -1500
 REM =========================================================================
 REM  /sigplan.asp
@@ -1323,12 +1325,13 @@ Public Sub Grava
   Dim w_registros, w_importados, w_rejeitados, w_situacao, w_erro, w_result
   Dim i, j, w_atual
   Dim w_no, w_texto,w_elemento
+  Dim w_param(500)
   
   Dim w_campo, w_unidade, w_programa, w_ws_acao, w_dotacao, w_empenhado, w_liquidado
 
   Cabecalho
   ShowHTML "</HEAD>"
-  BodyOpen "onLoad=document.focus();"
+  BodyOpenClean "onLoad=document.focus();"
   
   AbreSessao    
   Select Case SG
@@ -1383,10 +1386,12 @@ Public Sub Grava
                       set w_elemento = w_no.selectNodes(RS("no_raiz")&"/"&RS1("elemento"))
                       with w_elemento
                          for i = 0 to .length - 1 
+                            w_cont = 0
                             for j = 0 to .item(i).childNodes.length - 1
                                ' Recupera cada um dos campos referenciados pelo elemento
                                DB_GetEsquemaAtributo RS2, null, RS1("sq_esquema_tabela"), null, null
                                RS2.Filter = "ordem=" & j+1 & " and campo_externo='" & .item(i).childNodes.item(j).nodename & "'"
+                               w_cont     = w_cont + 1
                                If Not RS2.EOF Then
                                   If RS2("campo_externo") = .item(i).childNodes.item(j).nodename Then
                                      ' Valida o campo
@@ -1397,97 +1402,48 @@ Public Sub Grava
                                         w_result = fValidate(1, w_campo, RS2("nm_coluna"), "", "", 1, cStr(RS2("tamanho")), "1", "1")
                                      End If
                                      If w_result > "" Then 
-                                        ShowHTML RS2("nm_coluna") & " E => " & .item(i).childNodes.item(j).nodename & " = '" & .item(i).childNodes.item(j).text & "'<br>"
-                                        w_erro = 1 
+                                        F1.WriteLine RS2("nm_coluna") & " E => " & .item(i).childNodes.item(j).nodename & " = '" & .item(i).childNodes.item(j).text & "' "
+                                        w_erro = 1
                                      Else
-                                        ShowHTML RS2("nm_coluna") & " => " & .item(i).childNodes.item(j).nodename & " = '" & .item(i).childNodes.item(j).text & "'<br>"
+                                        If uCase(.item(i).childNodes.item(j).text) = "TRUE" Then
+                                           w_param(w_cont) = "S"
+                                        ElseIf uCase(.item(i).childNodes.item(j).text) = "FALSE" Then
+                                           w_param(w_cont) = "N"
+                                        Else
+                                           w_param(w_cont) = .item(i).childNodes.item(j).text
+                                        End If
                                      End If
                                   End If
                                End If
                             next
+                            select case RS1("nm_tabela")
+                               case "IS_PPA_ESFERA"         DML_PutXMLEsfera                w_param(1), w_param(2), "S"
+                               case "IS_PPA_UNIDADE_MEDIDA" DML_PutXMLUnidade_Medida_PPA    w_param(1), w_param(2), "S"
+                               case "IS_PPA_ORGAO"          DML_PutXMLOrgao_PPA             w_param(1), w_param(2), w_param(3), w_param(4), "S"
+                               case "IS_PPA_ORGAO_SIORG"    DML_PutXMLOrgao_Siorg_PPA       w_param(1), w_param(2), w_param(3), w_param(4), w_param(5), "S"
+                               case "IS_PPA_UNIDADE"        DML_PutXMLUnidade_PPA           w_param(1), w_param(2), w_param(3), w_param(4), w_param(5)
+                               case "IS_PPA_TIPO_ACAO"      DML_PutXMLTipo_Acao_PPA         w_param(1), w_param(2), "S"
+                               case "IS_PPA_TIPO_DESPESA"   DML_PutXMLTipo_Despesa          w_param(1), w_param(2), "S"
+                               case "IS_TIPO_ATUALIZACAO"   DML_PutXMLTipo_Atualizacao      w_param(1), w_param(2), "S"
+                               case "IS_PPA_TIPO_PROGRAMA"  DML_PutXMLTipo_Programa_PPA     w_param(1), w_param(2), "S"
+                               case "IS_TIPO_INCLUSAO_ACAO" DML_PutXMLTipo_Inclusao_Acao    w_param(1), w_param(2), "S"
+                               case "IS_PPA_NATUREZA"       DML_PutXMLNatureza              w_param(1), w_param(2), w_param(3), "S"
+                               case "IS_PPA_FUNCAO"         DML_PutXMLFuncao                w_param(1), w_param(2), "S"
+                               case "IS_PPA_SUBFUNCAO"      DML_PutXMLSubFuncao             w_param(1), w_param(2), w_param(3) 
+                               case "IS_PPA_FONTE"          DML_PutXMLFonte_PPA             w_param(1), w_param(2), w_param(3), w_param(4)
+                               case "IS_REGIAO"             DML_PutXMLREGIAO                w_param(1), w_param(2), w_param(3), w_param(4)
+                               case "IS_MUNICIPIO"          DML_PutXMLMunicipio             w_param(1), w_param(2), w_param(3)
+                               case "IS_PPA_PRODUTO"        DML_PutXMLProduto_PPA           w_param(1), w_param(2), "S"
+                               'case "IS_SIG_TIPO_ORGAO"     DML_PutXMLTipo_Orgao_SIG        w_param(1), w_param(2), "S"
+                            end select
                          next
                       End With
                    End If
                    w_atual = RS1("nm_tabela")
                    RS1.MoveNext
                 Wend
-                ' Recupera cada uma das tabelas referenciadas pelo esquema
-                DB_GetEsquemaTabela RS1, null, ul.Form("w_sq_esquema"), null
-                RS1.Sort = "ordem, nm_tabela, or_coluna"
-
-                ScriptOpen("JavaScript")
-                ShowHTML "  alert('Pau');"
-                ScriptClose
-                Response.End()
-                ' Varre o arquivo recebido, linha a linha
-                w_registros  = 0
-                w_importados = 0
-                w_rejeitados = 0
-                w_cont       = 0
-                If Not RS1.EOF Then
-             
-                   While Not RS1.EOF
-                      Do While Not F2.AtEndOfStream 
-                         w_linha = F2.ReadLine
-                         w_cont  = w_cont + 1
-                         F1.WriteLine "[Linha " & w_cont & "] " & w_linha
-                         w_unidade  = Nvl(trim(Piece(w_linha,"",";",1)),w_unidade)
-                         w_programa = Nvl(trim(Piece(w_linha,"",";",3)),w_programa)
-                         w_ws_acao     = trim(Piece(w_linha,"",";",5))
-                         w_dotacao  = trim(Piece(w_linha,"",";",8))
-                         w_empenhado= trim(Piece(w_linha,"",";",9))
-                         w_liquidado= trim(Piece(w_linha,"",";",10))
-
-                         w_erro = 0
-                         
-                         ' Valida o campo Unidade
-                         w_result = fValidate(1, w_unidade, "Unidade", "", 1, 5, 5, "", "0123456789")
-                         If w_result > "" Then F1.WriteLine "=== Erro campo Unidade: " & w_result : w_erro = 1 End If
-                          
-                         If w_erro = 0 Then
-                            ' Verifica se o programa/ação existe para o cliente
-                            DB_GetAcaoPPA_IS RS, w_cliente, w_ano, w_programa, Mid(w_ws_acao,1,4), Mid(w_ws_acao,5,4), w_unidade, null, null
-                            If RS.EOF Then 
-                               F1.WriteLine "=== Ação não encontrada"
-                               w_erro = 1
-                            Else
-                               ' Se existir, atualiza os dados financeiros
-                               DML_PutDadosAcaoPPA_IS w_cliente, w_ano, w_unidade, _
-                                   w_programa, Mid(w_ws_acao,1,4), Mid(w_ws_acao,5,4), w_dotacao, _
-                                   w_empenhado, w_liquidado
-                            End If
-                         End If
-                         
-                         w_registros = w_registros + 1
-                         If w_erro = 0 Then
-                            w_importados = w_importados + 1
-                         Else
-                            w_rejeitados = w_rejeitados + 1
-                         End If
-                      Loop
-                      F2.Close
-                      F1.Close
-           
-                      ' Configura o valor dos campos necessários para gravação
-                      If w_rejeitados = 0 Then w_situacao = 0 Else w_situacao = 1 End If
-          
-                      w_tamanho_recebido = ul.Files("w_caminho").Size
-                      w_tipo_recebido    = ul.Files("w_caminho").ContentType
-                      w_arquivo_registro = "Arquivo registro"
-                      Set F1 = FS.GetFile(w_caminho & w_caminho_registro)
-                      w_tamanho_registro = F1.size
-                      w_tipo_registro    = w_tipo_recebido
-           
-                      ' Grava o resultado da importação no banco de dados
-                      DML_PutOrImport O, _
-                          ul.Form("w_chave"), w_cliente,   w_usuario,          ul.Form("w_data_arquivo"), _
-                          ul.Files("w_caminho").OriginalPath, _
-                          w_caminho_recebido, w_tamanho_recebido,  w_tipo_recebido, _
-                          w_arquivo_registro,              w_caminho_registro, w_tamanho_registro, w_tipo_registro, _
-                          w_registros,                     w_importados,       w_rejeitados,       w_situacao
-                      RS1.MoveNext
-                   Wend
-                End If
+                Set F2 = Nothing
+                F1.Close
              End If
           Else
              ScriptOpen("JavaScript")
@@ -1497,9 +1453,8 @@ Public Sub Grava
              Response.End()
              exit sub
           End If
-
           ScriptOpen "JavaScript"
-          ShowHTML "  location.href='" & R & "&w_chave=" & ul.Form("w_Chave") & "&P1=" & P1 & "&P2=" & P2 & "&P3=" & P3 & "&P4=" & P4 & "&TP=" & TP & "&SG=" & SG & MontaFiltro("UL") & "';"
+          ShowHTML "  location.href='" & R & "&w_chave=" & ul.Form("w_Chave") & "&w_menu=" & w_menu & "&P1=" & P1 & "&P2=" & P2 & "&P3=" & P3 & "&P4=" & P4 & "&TP=" & TP & "&SG=" & SG & MontaFiltro("UL") & "';"
           ScriptClose
        Else
           ScriptOpen "JavaScript"
