@@ -1,5 +1,5 @@
 <%
-Const conScriptTimeout = 600
+Const conScriptTimeout = 2100
 
 
 '--------------------------------------------------------------------
