@@ -19,7 +19,7 @@ begin
            and b.sq_pais          = c.sq_pais
            and b.sq_pais          = d.sq_pais
            and a.sq_tipo_endereco = a1.sq_tipo_endereco
-           and a.sq_pessoa_endereco = e.sq_pessoa_endereco
+           and a.sq_pessoa_endereco = e.sq_pessoa_endereco (+)
            and a.sq_pessoa        = p_cliente
          order by acentos(a.logradouro);
    Elsif p_restricao = 'FISICO' Then
@@ -112,4 +112,3 @@ begin
    End If;
 end SP_GetAddressList;
 /
-
