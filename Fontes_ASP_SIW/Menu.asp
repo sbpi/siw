@@ -119,7 +119,7 @@ Sub Frames
    End If
    ShowHTML "    <NOFRAMES> "
    ShowHTML "     <BODY BGCOLOR=""#FFFFFF"" BACKGROUND=""images/bg.jpg"" BGPROPERTIES=""FIXED""> "
-   ShowHTML "      <P>Seu navegador não aceita <I>frames</I>. Atualize-o, preferencialmente, para o Microsoft Internet Explorer 5.5 ou superior.</P> "
+   ShowHTML "      <P>Seu navegador não aceita <I>frames</I>. Atualize-o, preferencialmente, para o Microsoft Internet Explorer 6 SP1 ou superior.</P> "
    ShowHTML "     </BODY> "
    ShowHTML "    </FRAMESET> "
    ShowHTML "</HTML> "
