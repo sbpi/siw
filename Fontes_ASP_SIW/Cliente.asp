@@ -808,7 +808,7 @@ Sub Enderecos
     ShowHTML "          <td><font size=""1""><b>Operações</font></td>"
     ShowHTML "        </tr>"
     If RS.EOF Then ' Se não foram selecionados registros, exibe mensagem
-        ShowHTML "      <tr bgcolor=""" & conTrBgColor & """><td colspan=7 align=""center""><font size=""2""><b>Não foram encontradas despesas adicionais cadastradas.</b></td></tr>"
+        ShowHTML "      <tr bgcolor=""" & conTrBgColor & """><td colspan=7 align=""center""><font size=""2""><b>Não foram encontrados endereços cadastrados.</b></td></tr>"
     Else
       ' Lista os registros selecionados para listagem
       While Not RS.EOF
