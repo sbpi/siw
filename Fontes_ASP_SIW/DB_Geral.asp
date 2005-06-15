@@ -117,6 +117,45 @@ REM Final da função
 REM -------------------------------------------------------------------------
 
 REM =========================================================================
+REM Verifica se a senha está correta e se o usuário está ativo
+REM -------------------------------------------------------------------------
+Function DB_VerificaSenha(p_cliente, p_username, p_senha)
+  Dim l_rs, l_cliente, l_username, l_senha
+  Set l_cliente   = Server.CreateObject("ADODB.Parameter")
+  Set l_username  = Server.CreateObject("ADODB.Parameter")
+  Set l_senha     = Server.CreateObject("ADODB.Parameter")
+  with sp
+     set l_cliente        = .CreateParameter("l_cliente",   adInteger, adParamInput,   , p_cliente)
+     set l_username       = .CreateParameter("l_username",  adVarChar, adParamInput, 30, p_username)
+     set l_senha          = .CreateParameter("l_senha",     adVarChar, adParamInput,255, p_senha)
+     .parameters.Append         l_cliente
+     .parameters.Append         l_username
+     .parameters.Append         l_senha
+     If Session("dbms") = 1 or Session("dbms") = 3 Then .Properties("PLSQLRSet") = TRUE End If
+     .CommandText    = Session("schema") & "SP_VerificaSenha"
+     On Error Resume Next
+     Set l_rs                   = .Execute
+     If Err.Description > "" Then 
+        TrataErro
+     End If     
+     If Session("dbms") = 1 or Session("dbms") = 3 Then .Properties("PLSQLRSet") = FALSE End If
+     .Parameters.Delete         "l_cliente"
+     .Parameters.Delete         "l_username"
+     .Parameters.Delete         "l_senha"
+  end with
+  If l_RS.EOF Then
+     DB_VerificaSenha = 2
+  ElseIf l_RS("ativo") = "N" Then
+     DB_VerificaSenha = 3
+  Else
+     DB_VerificaSenha = 0
+  End If
+End Function
+REM =========================================================================
+REM Final da função
+REM -------------------------------------------------------------------------
+
+REM =========================================================================
 REM Atualiza a senha de acesso ou a assinatura eletrônica de um usuário
 REM -------------------------------------------------------------------------
 Sub DB_UpdatePassword(p_cliente, p_sq_pessoa, p_valor, p_tipo)
@@ -416,45 +455,6 @@ End Sub
 REM =========================================================================
 REM Final da rotina
 REM -------------------------------------------------------------------------.
-
-REM =========================================================================
-REM Verifica se a senha está correta e se o usuário está ativo
-REM -------------------------------------------------------------------------
-Function DB_VerificaSenha(p_cliente, p_username, p_senha)
-  Dim l_rs, l_cliente, l_username, l_senha
-  Set l_cliente   = Server.CreateObject("ADODB.Parameter")
-  Set l_username  = Server.CreateObject("ADODB.Parameter")
-  Set l_senha     = Server.CreateObject("ADODB.Parameter")
-  with sp
-     set l_cliente        = .CreateParameter("l_cliente",   adInteger, adParamInput,   , p_cliente)
-     set l_username       = .CreateParameter("l_username",  adVarChar, adParamInput, 30, p_username)
-     set l_senha          = .CreateParameter("l_senha",     adVarChar, adParamInput,255, p_senha)
-     .parameters.Append         l_cliente
-     .parameters.Append         l_username
-     .parameters.Append         l_senha
-     If Session("dbms") = 1 or Session("dbms") = 3 Then .Properties("PLSQLRSet") = TRUE End If
-     .CommandText               = Session("schema") & "SP_VerificaSenha"
-     On Error Resume Next
-     Set l_rs                   = .Execute
-     If Err.Description > "" Then 
-        TrataErro
-     End If     
-     If Session("dbms") = 1 or Session("dbms") = 3 Then .Properties("PLSQLRSet") = FALSE End If
-     .Parameters.Delete         "l_cliente"
-     .Parameters.Delete         "l_username"
-     .Parameters.Delete         "l_senha"
-  end with
-  If l_RS.EOF Then
-     DB_VerificaSenha = 2
-  ElseIf l_RS("ativo") = "N" Then
-     DB_VerificaSenha = 3
-  Else
-     DB_VerificaSenha = 0
-  End If
-End Function
-REM =========================================================================
-REM Final da função
-REM -------------------------------------------------------------------------
 
 REM =========================================================================
 REM Verifica se a senha está correta e se o usuário está ativo

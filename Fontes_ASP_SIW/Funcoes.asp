@@ -2848,21 +2848,30 @@ REM Abre conexão com o banco de dados
 REM -------------------------------------------------------------------------
 Sub AbreSessao
    Set dbms = Server.CreateObject("ADODB.Connection")
+   Set SP   = Server.CreateObject("ADODB.Command")
    with dbms
-      If Session("dbms") = 3 Then
-         .ConnectionString = strconn3
-      ElseIf Session("dbms") = 2 Then
-         .ConnectionString = strconn2
-      Else
-         .ConnectionString = strconn
-      End If
+      select case Session("dbms")
+         case 4 ' PgSQL
+            .ConnectionString = strconn4
+            sp.CommandType    = adCmdStoredProc
+            Session("schema")    = strschema
+         case 3 ' Oracle 8.1.7
+            .ConnectionString = strconn3
+            sp.CommandType    = adCmdStoredProc
+            Session("schema")    = ""
+         case 2 ' MS SQL Server 2000
+            .ConnectionString = strconn2
+            sp.CommandType    = adCmdStoredProc
+            Session("schema")    = strschema
+         case else ' Oracle 9.2
+            .ConnectionString = strconn
+            sp.CommandType    = adCmdStoredProc
+            Session("schema")    = strschema
+      End Select
       .open
       .CursorLocation = adUseClient
    end with
-   Set SP               = Server.CreateObject("ADODB.Command")
    sp.ActiveConnection  = dbms
-   sp.CommandType       = adCmdStoredProc
-   If Session("dbms") <> 3 Then Session("schema")    = strschema Else Session("schema") = null End If
    Session("schema_is") = strschema_is
 end sub
 REM -------------------------------------------------------------------------
