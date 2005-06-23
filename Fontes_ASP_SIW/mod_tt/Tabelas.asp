@@ -1231,7 +1231,6 @@ Sub prefixo
       w_Disabled = " DISABLED "
     End If
     AbreForm "Form", w_dir & w_Pagina & "Grava", "POST", "return(Validacao(this));", null,P1,P2,P3,P4,TP,SG,w_pagina & Par,O
-    Response.Write w_pagina
     'ShowHTML "<INPUT type=""hidden"" name=""w_chave""   value=""" & w_chave   & """>"
     ShowHTML "<INPUT type=""hidden"" name=""w_cliente"" value=""" & w_cliente & """>"
     ShowHTML "<INPUT type=""hidden"" name=""w_troca""   value="""">"
