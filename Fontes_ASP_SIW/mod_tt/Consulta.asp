@@ -286,7 +286,7 @@ Sub LigacaoParticular
   ShowHTML "<div align=center><center>"
   ShowHTML "<table border=""0"" cellpadding=""0"" cellspacing=""0"" width=""100%"">"
   If Instr("R",O) > 0 Then
-    ShowHTML "<FORM action=""" & w_Pagina & par & """ method=""POST"" name=""Form"" onSubmit=""return(Validacao(this));"">"
+    ShowHTML "<FORM action=""" & w_dir & w_Pagina & par & """ method=""POST"" name=""Form"" onSubmit=""return(Validacao(this));"">"
     ShowHTML "<INPUT type=""hidden"" name=""P1"" value=""" & P1 & """>"
     ShowHTML "<INPUT type=""hidden"" name=""P2"" value=""" & P2 & """>"
     ShowHTML "<INPUT type=""hidden"" name=""P3"" value=""" & P3 & """>"
@@ -478,8 +478,9 @@ Sub ResumoLigacaoParticular
   End If
   
   ShowHTML "<HEAD>"
-  ShowHTML "<TITLE>Resumo de Ligações Particulares</TITLE>"
+  ShowHTML "<TITLE>Lista Telefônica</TITLE>"
   ShowHTML "</HEAD>" 
+  ShowHTML "<BASE HREF=""http://" & Request.ServerVariables("server_name") & "/siw/"">"
   If P2 = 0 Then 
      BodyOpen "onLoad='document.focus()'; "
   End If
