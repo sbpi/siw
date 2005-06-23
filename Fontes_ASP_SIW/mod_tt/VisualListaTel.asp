@@ -13,8 +13,8 @@ Sub VisualListaTel(p_cliente)
     ShowHTML "           <td><font size=""1""><b>Usuário</font></td>"
     ShowHTML "           <td><font size=""1""><b>Ramal</font></td>"
   Else
-    ShowHTML "           <td><font size=""1""><b><a class=""SS"" href=""" & w_pagina & par & "&p_ordena=nm_usuario_completo,codigo&P1=" & P1 & "&P2=" & P2 & "&P3=" & P3 & "&P4=" & P4 & "&TP=" & TP & "&SG=" & SG & """>Usuário</a></font></td>"
-    ShowHTML "           <td><font size=""1""><b><a class=""SS"" href=""" & w_pagina & par & "&p_ordena=codigo,nm_usuario_completo&P1=" & P1 & "&P2=" & P2 & "&P3=" & P3 & "&P4=" & P4 & "&TP=" & TP & "&SG=" & SG & """>Ramal</a></font></td>"
+    ShowHTML "           <td><font size=""1""><b><a class=""SS"" href=""" & w_dir & w_pagina & par & "&p_ordena=nm_usuario_completo,codigo&P1=" & P1 & "&P2=" & P2 & "&P3=" & P3 & "&P4=" & P4 & "&TP=" & TP & "&SG=" & SG & """>Usuário</a></font></td>"
+    ShowHTML "           <td><font size=""1""><b><a class=""SS"" href=""" & w_dir & w_pagina & par & "&p_ordena=codigo,nm_usuario_completo&P1=" & P1 & "&P2=" & P2 & "&P3=" & P3 & "&P4=" & P4 & "&TP=" & TP & "&SG=" & SG & """>Ramal</a></font></td>"
   End If
   ShowHTML "         </tr>"
   If RS.EOF Then ' Se não foram selecionados registros, exibe mensagem
