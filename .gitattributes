@@ -432,6 +432,7 @@ Fontes_ASP_SIW/mod_tt/VisualListaTelWord.asp -text
 Fontes_ASP_SIW/mod_tt/VisualResumoLigacaoParticular.asp -text
 Fontes_ASP_SIW/mod_tt/VisualResumoLigacaoParticularWord.asp -text
 Fontes_ASP_SIW/results.asp -text
+SP_Oracle81/siw/MontaOrdemMenu.fnc -text
 SP_Oracle81/siw/ac_acordo.tab -text
 SP_Oracle81/siw/ac_acordo_log.tab -text
 SP_Oracle81/siw/ac_acordo_log_arq.tab -text
