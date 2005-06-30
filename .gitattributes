@@ -2189,7 +2189,6 @@ SP_Oracle92/siw_is/sp_PutXMLTipo_Despesa.prc -text
 SP_Oracle92/siw_is/sp_PutXMLTipo_Inclusao_Acao.prc -text
 SP_Oracle92/siw_is/sp_PutXMLTipo_Orgao_PPA.prc -text
 SP_Oracle92/siw_is/sp_PutXMLTipo_Orgao_SIG.prc -text
-SP_Oracle92/siw_is/sp_PutXMLTipo_Orgao_SIG.~prc -text
 SP_Oracle92/siw_is/sp_PutXMLTipo_Programa.prc -text
 SP_Oracle92/siw_is/sp_PutXMLTipo_Programa_PPA.prc -text
 SP_Oracle92/siw_is/sp_PutXMLTipo_Restricao.prc -text
