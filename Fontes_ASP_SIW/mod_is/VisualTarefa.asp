@@ -46,7 +46,7 @@ Function VisualTarefa(w_chave, O, w_usuario)
 
      End If
      w_html = w_html & VbCrLf & "      <tr><td><font size=1>Tarefa: <b>" & CRLF2BR(Nvl(RS("titulo"),"---")) & " </b></font></td></tr>"
-     w_html = w_html & VbCrLf & "      <tr><td><font size=1>Descrição: <b>" & CRLF2BR(RS("assunto")) & " (" & w_chave & ")</b></font></td></tr>"
+     w_html = w_html & VbCrLf & "      <tr><td><div align=""justify""><font size=1>Descrição: <b>" & CRLF2BR(RS("assunto")) & " (" & w_chave & ")</b></font></div></td></tr>"
       
       ' Identificação da tarefa
      w_html = w_html & VbCrLf & "      <tr><td valign=""top"" colspan=""2"" align=""center"" bgcolor=""#D0D0D0"" style=""border: 2px solid rgb(0,0,0);""><font size=""1""><b>Identificação</td>"
@@ -72,9 +72,9 @@ Function VisualTarefa(w_chave, O, w_usuario)
         ' Informações adicionais
         If Nvl(RS("descricao"),"") > "" or Nvl(RS("justificativa"),"") > "" Then 
            w_html = w_html & VbCrLf & "      <tr><td valign=""top"" colspan=""2"" align=""center"" bgcolor=""#D0D0D0"" style=""border: 2px solid rgb(0,0,0);""><font size=""1""><b>Informações adicionais</td>"
-           If Nvl(RS("descricao"),"") > "" Then w_html = w_html & VbCrLf & "      <tr><td valign=""top""><font size=""1"">Resultados espearados:<br><b>" & CRLF2BR(RS("descricao")) & " </b></td>" End If
+           If Nvl(RS("descricao"),"") > "" Then w_html = w_html & VbCrLf & "      <tr><td valign=""top""><div align=""justify""><font size=""1"">Resultados esperados:<br><b>" & CRLF2BR(RS("descricao")) & " </b></div></td>" End If
            If w_tipo_visao = 0 and Nvl(RS("justificativa"),"") > "" Then ' Se for visão completa
-              w_html = w_html & VbCrLf & "      <tr><td valign=""top""><font size=""1"">Observações:<br><b>" & CRLF2BR(RS("justificativa")) & " </b></td>"
+              w_html = w_html & VbCrLf & "      <tr><td valign=""top""><div align=""justify""><font size=""1"">Observações:<br><b>" & CRLF2BR(RS("justificativa")) & " </b></div></td>"
            End If
         End If
      End If

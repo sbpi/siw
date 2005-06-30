@@ -54,7 +54,7 @@ Dim w_Assinatura, w_SG
 Dim p_ativo, p_solicitante, p_prioridade, p_unidade, p_proponente, p_ordena
 Dim p_ini_i, p_ini_f, p_fim_i, p_fim_f, p_atraso, p_acao, p_atividade
 Dim p_chave, p_assunto, p_pais, p_regiao, p_uf, p_cidade, p_usu_resp, p_uorg_resp, p_palavra, p_prazo, p_fase, p_sqcc
-Dim p_sq_acao_ppa, p_sq_isprojeto
+Dim p_sq_acao_ppa, p_sq_isprojeto, p_qtd_restricao
 Dim w_troca,w_cor, w_filter, w_cliente, w_usuario, w_menu, w_dir, w_dir_volta
 Dim w_sq_pessoa, w_ano
 Dim ul,File
@@ -117,7 +117,8 @@ If InStr(uCase(Request.ServerVariables("http_content_type")),"MULTIPART/FORM-DAT
    p_fase             = uCase(ul.Form("p_fase"))
    p_sqcc             = uCase(ul.Form("p_sqcc"))
    p_sq_acao_ppa      = uCase(ul.Form("p_sq_acao_ppa"))
-   p_sq_isprojeto  = uCase(ul.Form("p_sq_isprojeto"))
+   p_sq_isprojeto     = uCase(ul.Form("p_sq_isprojeto"))
+   p_qtd_restricao    = uCase(ul.Form("p_qtd_restricao"))
    
    P1                 = Nvl(ul.Form("P1"),0)
    P2                 = Nvl(ul.Form("P2"),0)
@@ -158,7 +159,8 @@ Else
    p_fase             = uCase(Request("p_fase"))
    p_sqcc             = uCase(Request("p_sqcc"))
    p_sq_acao_ppa      = uCase(Request("p_sq_acao_ppa"))
-   p_sq_isprojeto  = uCase(Request("p_sq_isprojeto"))
+   p_sq_isprojeto     = uCase(Request("p_sq_isprojeto"))
+   p_qtd_restricao    = uCase(Request("p_qtd_restricao"))
    
    P1           = Nvl(Request("P1"),0)
    P2           = Nvl(Request("P2"),0)
@@ -198,7 +200,11 @@ Select Case O
   Case "H" 
      w_TP = TP & " - Herança"
   Case Else
-     w_TP = TP & " - Listagem"
+     If par="BUSCAACAO" Then
+        w_TP = TP & " - Busca ação"
+     Else
+        w_TP = TP & " - Listagem"
+     End If
 End Select
 
 DB_GetLinkSubMenu RS, Session("p_cliente"), SG
@@ -261,6 +267,7 @@ Set p_fase        = Nothing
 Set p_sqcc        = Nothing
 Set p_sq_acao_ppa = Nothing
 Set p_sq_isprojeto = Nothing
+Set p_qtd_restricao = Nothing
 
 Set RS            = Nothing
 Set RS1           = Nothing
@@ -293,7 +300,7 @@ Sub Inicial
   If O = "L" Then
      If Instr(uCase(R),"GR_") > 0 Then
         w_filtro = ""
-        If p_acao > ""  Then 
+        If p_acao > "" and  p_sq_acao_ppa = "" Then 
            DB_GetSolicData_IS RS, p_acao, "ISACGERAL"
            w_filtro = w_filtro & "<tr valign=""top""><td align=""right""><font size=1>Ação <td><font size=1>[<b>" & RS("titulo") & "</b>]"
         End If
@@ -302,11 +309,11 @@ Sub Inicial
         '   w_filtro = w_filtro & "<tr valign=""top""><td align=""right""><font size=1>Meta <td><font size=1>[<b>" & RS("titulo") & "</b>]"
         'End If
         If p_sq_acao_ppa > ""  Then 
-           DB_GetAcaoPPA_IS RS, w_cliente, w_ano, Mid(p_sq_acao_ppa,1,4), Mid(p_sq_acao_ppa,5,4), null, Mid(p_sq_acao_ppa,13,17), null, null
-           w_filtro = w_filtro & "<tr valign=""top""><td align=""right""><font size=1>Ação PPA <td><font size=1>[<b>" & RS("descricao_acao") & " (" & RS("cd_programa") & "." & RS("cd_acao") & "." & RS("cd_unidade") & ")" & "</b>]"
+           DB_GetAcaoPPA_IS RS, w_cliente, w_ano, Mid(p_sq_acao_ppa,1,4), Mid(p_sq_acao_ppa,5,4), null, Mid(p_sq_acao_ppa,13,17), null, null, null
+           w_filtro = w_filtro & "<tr valign=""top""><td align=""right""><font size=1>Ação <td><font size=1>[<b>" & RS("cd_unidade") & "." & RS("cd_programa") & "." & RS("cd_acao") & " - " & RS("descricao_acao") & " (" & RS("ds_unidade") & ")</b>]"
         End If
         If p_sq_isprojeto > ""  Then 
-           DB_GetProjeto_IS RS, p_sq_isprojeto, w_cliente, null, null, null, null, null, null, null, null, null, null, null
+           DB_GetProjeto_IS RS, p_sq_isprojeto, w_cliente, null, null, null, null, null, null, null, null, null, null, null, null
            w_filtro = w_filtro & "<tr valign=""top""><td align=""right""><font size=1>Plano/projeto específico<td><font size=1>[<b>" & RS("nome") & "</b>]"
         End If
         If p_chave       > ""  Then w_filtro = w_filtro & "<tr valign=""top""><td align=""right""><font size=1>Demanda nº <td><font size=1>[<b>" & p_chave & "</b>]" End If
@@ -333,6 +340,7 @@ Sub Inicial
         If p_ini_i       > ""  Then w_filtro = w_filtro & "<tr valign=""top""><td align=""right""><font size=1>Data recebimento <td><font size=1>[<b>" & p_ini_i & "-" & p_ini_f & "</b>]"     End If
         If p_fim_i       > ""  Then w_filtro = w_filtro & "<tr valign=""top""><td align=""right""><font size=1>Limite conclusão <td><font size=1>[<b>" & p_fim_i & "-" & p_fim_f & "</b>]"     End If
         If p_atraso      = "S" Then w_filtro = w_filtro & "<tr valign=""top""><td align=""right""><font size=1>Situação <td><font size=1>[<b>Apenas atrasadas</b>]"                            End If
+        If p_qtd_restricao = "S" Then w_filtro = w_filtro & "<tr valign=""top""><td align=""right""><font size=1>Situação <td><font size=1>[<b>Apenas ações com restrição</b>]"                            End If
         If w_filtro > "" Then w_filtro = "<table border=0><tr valign=""top""><td><font size=1><b>Filtro:</b><td nowrap><font size=1><ul>" & w_filtro & "</ul></tr></table>"                    End If
      End If
      
@@ -341,13 +349,13 @@ Sub Inicial
      If w_copia > "" Then ' Se for cópia, aplica o filtro sobre todas as demandas visíveis pelo usuário
         DB_GetSolicList_IS RS, RS("sq_menu"), w_usuario, SG, 3, _
            p_ini_i, p_ini_f, p_fim_i, p_fim_f, p_atraso, p_solicitante, _
-           p_unidade, p_prioridade, p_ativo, p_proponente, _
+           p_unidade, p_prioridade, p_qtd_restricao, p_proponente, _
            p_chave, p_assunto, p_pais, p_regiao, p_uf, p_cidade, p_usu_resp, _
            p_uorg_resp, p_palavra, p_prazo, p_fase, p_projeto, p_atividade, null, p_sq_acao_ppa, p_sq_isprojeto, null
      Else
         DB_GetSolicList_IS RS, RS("sq_menu"), w_usuario, SG, P1, _
            p_ini_i, p_ini_f, p_fim_i, p_fim_f, p_atraso, p_solicitante, _
-           p_unidade, p_prioridade, p_ativo, p_proponente, _
+           p_unidade, p_prioridade, p_qtd_restricao, p_proponente, _
            p_chave, p_assunto, p_pais, p_regiao, p_uf, p_cidade, p_usu_resp, _
            p_uorg_resp, p_palavra, p_prazo, p_fase, p_acao, p_atividade, null, Mid(p_sq_acao_ppa,5,4), p_sq_isprojeto, Mid(p_sq_acao_ppa,9,4)
         
@@ -452,7 +460,7 @@ Sub Inicial
     ShowHTML "        <tr bgcolor=""" & conTrBgColor & """ align=""center"">"
     ShowHTML "          <td rowspan=2><font size=""1""><b>" & LinkOrdena("Ação","cd_acao_completa") & "</font></td>"
     ShowHTML "          <td rowspan=2><font size=""1""><b>" & LinkOrdena("Responsável","nm_solic") & "</font></td>"
-    If P1 <> 2 Then ShowHTML "          <td rowspan=2><font size=""1""><b>" & LinkOrdena("Executor", "nm_exec") & "</font></td>" End If
+    If P1 <> 2 Then ShowHTML "          <td rowspan=2><font size=""1""><b>" & LinkOrdena("Usuário atual", "nm_exec") & "</font></td>" End If
     If P1 = 1 or P1 = 2 Then ' Se for cadastramento ou mesa de trabalho
        ShowHTML "          <td rowspan=2><font size=""1""><b>" & LinkOrdena("Título","titulo") & "</font></td>"
        ShowHTML "          <td colspan=2><font size=""1""><b>Execução</font></td>"
@@ -550,6 +558,7 @@ Sub Inicial
                  ShowHTML "          <A class=""HL"" HREF=""" & w_dir & w_pagina & par & "&R=" & w_Pagina & par & "&O=A&w_chave=" & RS("sq_siw_solicitacao") & "&P1=" & P1 & "&P2=" & P2 & "&P3=" & P3 & "&P4=" & P4 & "&TP=" & TP & "&SG=" & SG & MontaFiltro("GET") & """ title=""Altera as informações cadastrais da ação"">Alterar</A>&nbsp"
               End If
               ShowHTML "          <A class=""HL"" HREF=""" & w_dir & w_pagina & "Excluir&R=" & w_pagina & par & "&O=E&w_chave=" & RS("sq_siw_solicitacao") & "&w_tipo=Volta&P1=" & P1 & "&P2=" & P2 & "&P3=" & P3 & "&P4=" & P4 & "&TP=" & TP & "&SG=" & SG & MontaFiltro("GET") & """ title=""Exclusão da ação."">Excluir</A>&nbsp"
+              ShowHTML "          <A class=""HL"" HREF=""" & w_dir & w_pagina & "Envio&R=" & w_pagina & par & "&O=V&w_chave=" & RS("sq_siw_solicitacao") & "&w_tipo=Volta&P1=" & P1 & "&P2=" & P2 & "&P3=" & P3 & "&P4=" & P4 & "&TP=" & TP & "&SG=" & SG & MontaFiltro("GET") & """ title=""Encaminhamento da ação."">Enviar</A>&nbsp"
            ElseIf P1 = 2 Then ' Se for execução
               If cDbl(w_usuario) = cDbl(RS("executor")) Then
                  If cDbl(Nvl(RS("solicitante"),0)) = cDbl(w_usuario) or _
@@ -664,7 +673,7 @@ Sub Inicial
        DB_GetLinkData RS, w_cliente, "ISACAD"
        ShowHTML "      <tr valign=""top""><td colspan=""2""><table border=0 width=""100%"" cellspacing=0>"
        ShowHTML "      <tr valign=""top"">"
-       SelecaoAcaoPPA "<u>A</u>ção PPA:", "A", null, w_cliente, w_ano, null, null, p_sq_acao_ppa, null, "p_sq_acao_ppa", null, null, null   
+       SelecaoAcaoPPA "<u>A</u>ção PPA:", "A", null, w_cliente, w_ano, null, null, p_sq_acao_ppa, null, "p_sq_acao_ppa", null, null, null, w_menu
        ShowHTML "      </tr>"
        ShowHTML "      <tr valign=""top"">"
        SelecaoIsProjeto "<u>P</u>lano/projeto específico:", "P", null, p_sq_isprojeto, null, "p_sq_isprojeto", null, null
@@ -684,8 +693,8 @@ Sub Inicial
        ShowHTML "          <td valign=""top""><font size=""1""><b>Par<U>c</U>erias externas:<br><INPUT ACCESSKEY=""P"" " & w_Disabled & " class=""STI"" type=""text"" name=""p_proponente"" size=""25"" maxlength=""90"" value=""" & p_proponente & """></td>"
        ShowHTML "          <td valign=""top""><font size=""1""><b>Par<U>c</U>erias internas:<br><INPUT ACCESSKEY=""C"" " & w_Disabled & " class=""STI"" type=""text"" name=""p_palavra"" size=""25"" maxlength=""90"" value=""" & p_palavra & """></td>"
        ShowHTML "      <tr>"
-       ShowHTML "          <td valign=""top""><font size=""1""><b>Data de re<u>c</u>ebimento entre:</b><br><input " & w_Disabled & " accesskey=""C"" type=""text"" name=""p_ini_i"" class=""STI"" SIZE=""10"" MAXLENGTH=""10"" VALUE=""" & p_ini_i & """ onKeyDown=""FormataData(this,event);""> e <input " & w_Disabled & " accesskey=""C"" type=""text"" name=""p_ini_f"" class=""STI"" SIZE=""10"" MAXLENGTH=""10"" VALUE=""" & p_ini_f & """ onKeyDown=""FormataData(this,event);""></td>"
-       ShowHTML "          <td valign=""top""><font size=""1""><b>Limi<u>t</u>e para conclusão entre:</b><br><input " & w_Disabled & " accesskey=""T"" type=""text"" name=""p_fim_i"" class=""STI"" SIZE=""10"" MAXLENGTH=""10"" VALUE=""" & p_fim_i & """ onKeyDown=""FormataData(this,event);""> e <input " & w_Disabled & " accesskey=""T"" type=""text"" name=""p_fim_f"" class=""STI"" SIZE=""10"" MAXLENGTH=""10"" VALUE=""" & p_fim_f & """ onKeyDown=""FormataData(this,event);""></td>"
+       ShowHTML "          <td valign=""top""><font size=""1""><b>Data de re<u>c</u>ebimento entre:</b><br><input " & w_Disabled & " accesskey=""C"" type=""text"" name=""p_ini_i"" class=""STI"" SIZE=""10"" MAXLENGTH=""10"" VALUE=""" & p_ini_i & """ onKeyDown=""FormataData(this,event);"" title=""Usar formato dd/mm/aaaa""> e <input " & w_Disabled & " accesskey=""C"" type=""text"" name=""p_ini_f"" class=""STI"" SIZE=""10"" MAXLENGTH=""10"" VALUE=""" & p_ini_f & """ onKeyDown=""FormataData(this,event);"" title=""Usar formato dd/mm/aaaa""></td>"
+       ShowHTML "          <td valign=""top""><font size=""1""><b>Limi<u>t</u>e para conclusão entre:</b><br><input " & w_Disabled & " accesskey=""T"" type=""text"" name=""p_fim_i"" class=""STI"" SIZE=""10"" MAXLENGTH=""10"" VALUE=""" & p_fim_i & """ onKeyDown=""FormataData(this,event);"" title=""Usar formato dd/mm/aaaa""> e <input " & w_Disabled & " accesskey=""T"" type=""text"" name=""p_fim_f"" class=""STI"" SIZE=""10"" MAXLENGTH=""10"" VALUE=""" & p_fim_f & """ onKeyDown=""FormataData(this,event);"" title=""Usar formato dd/mm/aaaa""></td>"
        If O <> "C" Then ' Se não for cópia
           ShowHTML "      <tr>"
           ShowHTML "          <td valign=""top""><font size=""1""><b>Exibe somente ações em atraso?</b><br>"
@@ -807,10 +816,10 @@ Sub Geral
      w_sq_unidade_adm          = Request("w_sq_unidade_adm")
      
      If w_sq_acao_ppa > "" Then
-        DB_GetAcaoPPA_IS RS, w_cliente, w_ano, Mid(w_sq_acao_ppa,1,4), Mid(w_sq_acao_ppa,5,4), null, Mid(w_sq_acao_ppa,13,17), null, null
+        DB_GetAcaoPPA_IS RS, w_cliente, w_ano, Mid(w_sq_acao_ppa,1,4), Mid(w_sq_acao_ppa,5,4), null, Mid(w_sq_acao_ppa,13,17), null, null, null
         w_titulo                  = Mid(RS("descricao_acao"),1,69) & " - " & Mid(RS("ds_unidade"),1,28)
      ElseIf w_sq_isprojeto > "" Then
-        DB_GetProjeto_IS RS, w_sq_isprojeto, w_cliente, null, null, null, null, null, null, null, null, null, null, null
+        DB_GetProjeto_IS RS, w_sq_isprojeto, w_cliente, null, null, null, null, null, null, null, null, null, null, null, null
         w_titulo                  = RS("nome")
      End If
   Else
@@ -894,7 +903,9 @@ Sub Geral
      Validate "w_fim", "Fim previsto", "DATA", 1, 10, 10, "", "0123456789/"
      CompData "w_inicio", "Data de recebimento", "<=", "w_fim", "Limite para conclusão"
      Validate "w_valor", "Recurso programado", "VALOR", "1", 4, 18, "", "0123456789.,"
-     CompValor "w_valor", "Recurso programado", ">", "0,00", "zero"
+     If w_sq_acao_ppa > "" Then
+        CompValor "w_valor", "Recurso programado", ">", "0,00", "zero"
+     End If
      Validate "w_proponente", "Parcerias externas", "", "", 2, 90, "1", "1"
      Validate "w_palavra_chave", "Parcerias internas", "", "", 2, 90, "1", "1"
   End If
@@ -968,9 +979,9 @@ Sub Geral
     ShowHTML "          </tr>"
     ShowHTML "          <tr>"
     If O = "I" or w_sq_acao_ppa = "" Then
-       SelecaoAcaoPPA "Ação <u>P</u>PA:", "P", null, w_cliente, w_ano, Mid(w_sq_acao_ppa,1,4), Mid(w_sq_acao_ppa,5,4), Mid(w_sq_acao_ppa,9,4),  Mid(w_sq_acao_ppa,13,5), "w_sq_acao_ppa", "IDENTIFICACAO", "onchange=""document.Form.action='" & w_dir & w_pagina & par & "'; document.Form.w_troca.value='w_sq_acao_ppa'; document.Form.submit();""", null
+       SelecaoAcaoPPA "Ação <u>P</u>PA:", "P", null, w_cliente, w_ano, Mid(w_sq_acao_ppa,1,4), Mid(w_sq_acao_ppa,5,4), Mid(w_sq_acao_ppa,9,4),  Mid(w_sq_acao_ppa,13,5), "w_sq_acao_ppa", "IDENTIFICACAO", "onchange=""document.Form.action='" & w_dir & w_pagina & par & "'; document.Form.w_troca.value='w_sq_acao_ppa'; document.Form.submit();""", null, w_menu
     Else
-       SelecaoAcaoPPA "Ação <u>P</u>PA:", "P", null, w_cliente, w_ano, Mid(w_sq_acao_ppa,1,4), Mid(w_sq_acao_ppa,5,4), Mid(w_sq_acao_ppa,9,4),  Mid(w_sq_acao_ppa,13,5), "w_sq_acao_ppa", null, "disabled", null
+       SelecaoAcaoPPA "Ação <u>P</u>PA:", "P", null, w_cliente, w_ano, Mid(w_sq_acao_ppa,1,4), Mid(w_sq_acao_ppa,5,4), Mid(w_sq_acao_ppa,9,4),  Mid(w_sq_acao_ppa,13,5), "w_sq_acao_ppa", null, "disabled", null, w_menu
        ShowHTML "<INPUT type=""hidden"" name=""w_sq_acao_ppa"" value=""" & w_sq_acao_ppa &""">"
     End If
     ShowHTML "          </tr>"
@@ -989,11 +1000,11 @@ Sub Geral
     ShowHTML "      <tr><td valign=""top"" colspan=""2""><table border=0 width=""100%"" cellspacing=0>"
     ShowHTML "          <tr>"
     If w_sq_acao_ppa > "" Then
-       ShowHTML "              <td valign=""top""><font size=""1""><b>Iní<u>c</u>io previsto:</b><br><input readonly " & w_Disabled & " accesskey=""C"" type=""text"" name=""w_inicio"" class=""STI"" SIZE=""10"" MAXLENGTH=""10"" VALUE=""" & Nvl(w_inicio, "01/01/"&Mid(FormataDataEdicao(Date()),7,4))& """ onKeyDown=""FormataData(this,event);""></td>"
-       ShowHTML "              <td valign=""top""><font size=""1""><b><u>F</u>im previsto:</b><br><input readonly " & w_Disabled & " accesskey=""F"" type=""text"" name=""w_fim"" class=""STI"" SIZE=""10"" MAXLENGTH=""10"" VALUE=""" & Nvl(w_fim, "31/12/"&Mid(FormataDataEdicao(Date()),7,4)) & """ onKeyDown=""FormataData(this,event);""></td>"
+       ShowHTML "              <td valign=""top""><font size=""1""><b>Iní<u>c</u>io previsto:</b><br><input readonly " & w_Disabled & " accesskey=""C"" type=""text"" name=""w_inicio"" class=""STI"" SIZE=""10"" MAXLENGTH=""10"" VALUE=""" & Nvl(w_inicio, "01/01/"&Mid(FormataDataEdicao(Date()),7,4))& """ onKeyDown=""FormataData(this,event);"" title=""Usar formato dd/mm/aaaa""></td>"
+       ShowHTML "              <td valign=""top""><font size=""1""><b><u>F</u>im previsto:</b><br><input readonly " & w_Disabled & " accesskey=""F"" type=""text"" name=""w_fim"" class=""STI"" SIZE=""10"" MAXLENGTH=""10"" VALUE=""" & Nvl(w_fim, "31/12/"&Mid(FormataDataEdicao(Date()),7,4)) & """ onKeyDown=""FormataData(this,event);"" title=""Usar formato dd/mm/aaaa""></td>"
     Else
-       ShowHTML "              <td valign=""top""><font size=""1""><b>Iní<u>c</u>io previsto:</b><br><input " & w_Disabled & " accesskey=""C"" type=""text"" name=""w_inicio"" class=""STI"" SIZE=""10"" MAXLENGTH=""10"" VALUE=""" & Nvl(w_inicio, "01/01/"&Mid(FormataDataEdicao(Date()),7,4))& """ onKeyDown=""FormataData(this,event);""></td>"
-       ShowHTML "              <td valign=""top""><font size=""1""><b><u>F</u>im previsto:</b><br><input " & w_Disabled & " accesskey=""F"" type=""text"" name=""w_fim"" class=""STI"" SIZE=""10"" MAXLENGTH=""10"" VALUE=""" & Nvl(w_fim, "31/12/"&Mid(FormataDataEdicao(Date()),7,4)) & """ onKeyDown=""FormataData(this,event);""></td>"    
+       ShowHTML "              <td valign=""top""><font size=""1""><b>Iní<u>c</u>io previsto:</b><br><input " & w_Disabled & " accesskey=""C"" type=""text"" name=""w_inicio"" class=""STI"" SIZE=""10"" MAXLENGTH=""10"" VALUE=""" & Nvl(w_inicio, "01/01/"&Mid(FormataDataEdicao(Date()),7,4))& """ onKeyDown=""FormataData(this,event);"" title=""Usar formato dd/mm/aaaa""></td>"
+       ShowHTML "              <td valign=""top""><font size=""1""><b><u>F</u>im previsto:</b><br><input " & w_Disabled & " accesskey=""F"" type=""text"" name=""w_fim"" class=""STI"" SIZE=""10"" MAXLENGTH=""10"" VALUE=""" & Nvl(w_fim, "31/12/"&Mid(FormataDataEdicao(Date()),7,4)) & """ onKeyDown=""FormataData(this,event);"" title=""Usar formato dd/mm/aaaa""></td>"    
     End If
     ShowHTML "              <td valign=""top""><font size=""1""><b><u>R</u>ecurso programado:</b><br><input " & w_Disabled & " accesskey=""O"" type=""text"" name=""w_valor"" class=""STI"" SIZE=""18"" MAXLENGTH=""18"" VALUE=""" & w_valor & """ onKeyDown=""FormataValor(this,18,2,event);"" title=""Informe o recurso programado para a execução da ação.""></td>"
     ShowHTML "          </table>"
@@ -1100,10 +1111,10 @@ Sub Responsaveis
   ElseIf InStr("A",O) > 0 Then
      If w_programa > "" and w_acao > "" and w_unidade > "" Then
         w_tipo = 1
-        DB_GetAcaoPPA_IS RS, w_cliente, w_ano, w_programa, w_acao, null, w_unidade, null, null
+        DB_GetAcaoPPA_IS RS, w_cliente, w_ano, w_programa, w_acao, null, w_unidade, null, null, null
      ElseIf w_sq_isprojeto > "" Then
         w_tipo = 2
-        DB_GetProjeto_IS RS, w_sq_isprojeto, w_cliente, null, null, null, null, null, null, null, null, null, null, null
+        DB_GetProjeto_IS RS, w_sq_isprojeto, w_cliente, null, null, null, null, null, null, null, null, null, null, null, null
      End If
 
      If Not RS.EOF Then
@@ -1171,7 +1182,7 @@ Sub Responsaveis
           If w_cor = conTrBgColor or w_cor = "" Then w_cor = conTrAlternateBgColor Else w_cor = conTrBgColor End If
           ShowHTML "      <tr bgcolor=""" & w_cor & """ valign=""top"">"
           ShowHTML "        <td><font size=""1"">Ação PPA</td>"
-          ShowHTML "        <td><font size=""1"">" & RS("nm_ppa") & "</td>"
+          ShowHTML "        <td><font size=""1"">" & RS("cd_unidade") & "." & RS("cd_programa") & "." & RS("cd_acao") & " - " & RS("nm_ppa") & "</td>"
           ShowHTML "        <td align=""top"" nowrap><font size=""1"">"
           ShowHTML "          <A class=""HL"" HREF=""" & w_dir & w_pagina & par & "&R=" & w_Pagina & par & "&O=A&w_chave=" &w_chave & "&w_programa=" & RS("sq_acao_ppa_pai") & "&w_acao=" & RS("cd_acao")& "&w_unidade=" & RS("cd_unidade") & "&P1=" & P1 & "&P2=" & P2 & "&P3=" & P3 & "&P4=" & P4 & "&TP=" & TP & "&SG=" & SG & "&w_chave_aux=" &RS("sq_siw_solicitacao")& """>Coordenador</A>&nbsp"
           ShowHTML "        </td>"
@@ -1271,7 +1282,7 @@ Sub ProgramacaoQualitativa
   
   Dim w_problema, w_objetivo, w_publico_alvo, w_estrategia, w_sistematica
   Dim w_finalidade, w_descricao_ppa
-  Dim w_metodologia, w_observacao, w_cd_acao
+  Dim w_metodologia, w_observacao, w_cd_acao, w_ds_acao, w_cd_programa, w_ds_programa, w_cd_unidade
   
   Dim w_troca, w_erro, w_cor, w_readonly
 
@@ -1296,12 +1307,7 @@ Sub ProgramacaoQualitativa
      w_cd_acao                 = Request("w_cd_acao")
   Else
      If InStr("AEV",O) > 0 or w_copia > "" Then
-        ' Recupera os dados da ação
-        If w_copia > "" Then
-           DB_GetSolicData_IS RS, w_copia, SG
-        Else
-           DB_GetSolicData_IS RS, w_chave, SG
-        End If
+        DB_GetSolicData_IS RS, w_chave, SG
         If RS.RecordCount > 0 Then 
            w_sq_menu                = RS("sq_menu")  
            w_problema               = RS("problema")
@@ -1318,11 +1324,13 @@ Sub ProgramacaoQualitativa
               w_observacao          = RS("observacao_ppa")
            End If
            w_cd_acao                = Nvl(RS("cd_acao"),"")
+           w_ds_acao                = Nvl(RS("nm_ppa"),"")
+           w_cd_programa            = Nvl(RS("cd_programa"),"")
+           w_ds_programa            = Nvl(RS("nm_ppa_pai"),"")
+           w_cd_unidade             = Nvl(RS("cd_unidade"),"")
            DesconectaBD
         End If
-
-     End If
-     
+     End If     
   End If  
   Cabecalho
   ShowHTML "<HEAD>"
@@ -1381,20 +1389,22 @@ Sub ProgramacaoQualitativa
     ShowHTML "      <tr><td valign=""top"" align=""center"" bgcolor=""#D0D0D0""><font size=""2""><b>Programação qualitativa</td></td></tr>"
     ShowHTML "      <tr><td align=""center"" height=""1"" bgcolor=""#000000""></td></tr>"
     ShowHTML "      <tr><td><font size=1>Os dados deste bloco visam orientar os executores do programa.</font></td></tr>"
+    ShowHTML "      <tr><td><font size=""1"">Programa Codº " & w_cd_programa & " - " & w_ds_programa & "</td>"
+    ShowHTML "      <tr><td><font size=""1"">Ação Codº " & w_cd_unidade & "." & w_cd_acao & " - " & w_ds_acao & "</td>"
     ShowHTML "      <tr><td align=""center"" height=""1"" bgcolor=""#000000""></td></tr>"
     If w_cd_acao > "" Then
-       ShowHTML "      <tr><td valign=""top""><font size=""1"">Objetivo:<br><b>" & Nvl(w_finalidade,"---")& "</b></td>"    
+       ShowHTML "      <tr><td valign=""top""><div align=""justify""><font size=""1"">Objetivo:<br><b>" & Nvl(w_finalidade,"---")& "</b></div></td>"    
     End If
     ShowHTML "      <tr><td valign=""top""><font size=""1""><b><u>J</u>ustificativa:</b><br><textarea " & w_Disabled & " accesskey=""P"" name=""w_problema"" class=""STI"" ROWS=5 cols=75 title=""Descrição do problema que a ação tem por objetivo enfrentar, abordando o diagnóstico e as causas da situação-problema para a qual a ação foi proposta; alertando quanto às conseqüências da não implementação da ação; e informando a existência de condicionantes favoráveis ou desfavoráveis à ação."">" & w_problema & "</TEXTAREA></td>"
     ShowHTML "      <tr><td valign=""top""><font size=""1""><b><u>O</u>bjetivo específico:</b><br><textarea " & w_Disabled & " accesskey=""O"" name=""w_objetivo"" class=""STI"" ROWS=5 cols=75 title=""Informar, de forma  detalhada e específica, o resultado que se quer alcançar, ou seja, a transformação ou mudança da realidade concreta a qual a ação se propôs modificar."">" & w_objetivo & "</TEXTAREA></td>"
     If w_cd_acao > "" Then
-       ShowHTML "      <tr align=""justify""><td align=""justify""><font size=""1"">Descrição da ação:<br><b>" & Nvl(w_descricao_ppa,"---")& "</b></td>"
+       ShowHTML "      <tr><td><div align=""justify""><font size=""1"">Descrição da ação:<br><b>" & Nvl(w_descricao_ppa,"---")& "</b></div></td>"
     End If
     ShowHTML "      <tr><td valign=""top""><font size=""1""><b>P<u>ú</u>blico alvo:</b><br><textarea " & w_Disabled & " accesskey=""U"" name=""w_publico_alvo"" class=""STI"" ROWS=5 cols=75 title=""Especifique os segmentos da sociedade aos quais a ação se destina e que se beneficiam direta e legitimamente com sua execução. São os grupos de pessoas, comunidades, instituições ou setores que serão atingidos diretamente pelos resultados da ação."">" & w_publico_alvo & "</TEXTAREA></td>"
     If w_cd_acao > "" Then
        DB_GetSolicData_IS RS, w_chave, SG
-       ShowHTML "      <tr><td valign=""top"" colspan=""2""><font size=""1"">Origem da ação:<br><b>" & Nvl(RS("nm_tipo_inclusao_acao"),"---")& "</b></td>"
-       ShowHTML "      <tr><td valign=""top"" colspan=""2""><font size=""1"">Base legal:<br><b>" & Nvl(RS("base_legal"),"---")& "</b></td>"
+       ShowHTML "      <tr><td valign=""top"" colspan=""2""><div align=""justify""><font size=""1"">Origem da ação:<br><b>" & Nvl(RS("nm_tipo_inclusao_acao"),"---")& "</b></div></td>"
+       ShowHTML "      <tr><td valign=""top"" colspan=""2""><div align=""justify""><font size=""1"">Base legal:<br><b>" & Nvl(RS("base_legal"),"---")& "</b></div></td>"
        ShowHTML "      <tr><td valign=""top"" colspan=""2""><font size=""1"">Forma de implementação:<br><b>" 
        If cDbl(RS("cd_tipo_acao")) = 1 or cDbl(RS("cd_tipo_acao")) = 2 Then 
           If RS("direta") = "S" Then
@@ -1418,7 +1428,7 @@ Sub ProgramacaoQualitativa
           End If
        End If
        ShowHTML "            </b></td>"
-       ShowHTML "      <tr><td valign=""top"" colspan=""2""><font size=""1"">Detalhamento da implementação:<br><b>" & Nvl(RS("detalhamento"),"---")& "</b></td>"
+       ShowHTML "      <tr><td valign=""top"" colspan=""2""><div align=""justify""><font size=""1"">Detalhamento da implementação:<br><b>" & Nvl(RS("detalhamento"),"---")& "</b></div></td>"
        DesconectaBD
     End If
     ShowHTML "      <tr><td valign=""top""><font size=""1""><b>Sistemática e <u>e</u>stratégias a serem adotadas para o monitoramento da ação:</b><br><textarea " & w_Disabled & " accesskey=""E"" name=""w_estrategia"" class=""STI"" ROWS=5 cols=75 title=""Descreva a sistemática e as estratégias que serão adotadas para o monitoramento da ação, informando, inclusive as ferramentas que serão utilizadas."">" & w_estrategia & "</TEXTAREA></td>"
@@ -1566,6 +1576,10 @@ Sub Metas
   ShowHTML "<div align=center><center>"
   ShowHTML "<table border=""0"" cellpadding=""0"" cellspacing=""0"" width=""100%"">"
   If O = "L" Then
+    DB_GetSolicData_IS RS1, w_chave, SG
+    ShowHTML "      <tr><td colspan=""2""><font size=""1"">Programa Codº " & RS1("cd_programa") & " - " & RS1("nm_ppa_pai") & "</td>"
+    ShowHTML "      <tr><td colspan=""2""><font size=""1"">Ação Codº " & RS1("cd_unidade") & "." & RS1("cd_acao") & " - " & RS1("nm_ppa") & "</td>"
+    RS1.Close
     ' Exibe a quantidade de registros apresentados na listagem e o cabeçalho da tabela de listagem
     ShowHTML "<tr><td><font size=""2""><a accesskey=""I"" class=""SS"" href=""" & w_dir & w_pagina & par & "&R=" & w_Pagina & par & "&O=I&w_chave=" & w_chave & "&P1=" & P1 & "&P2=" & P2 & "&P3=" & P3 & "&P4=" & P4 & "&TP=" & TP & "&SG=" & SG & """><u>I</u>ncluir</a>&nbsp;"
     ShowHTML "    <td align=""right""><font size=""1""><b>Registros existentes: " & RS.RecordCount
@@ -1573,7 +1587,7 @@ Sub Metas
     ShowHTML "    <TABLE WIDTH=""100%"" bgcolor=""" & conTableBgColor & """ BORDER=""" & conTableBorder & """ CELLSPACING=""" & conTableCellSpacing & """ CELLPADDING=""" & conTableCellPadding & """ BorderColorDark=""" & conTableBorderColorDark & """ BorderColorLight=""" & conTableBorderColorLight & """>"
     ShowHTML "        <tr bgcolor=""" & conTrBgColor & """ align=""center"">"
     ShowHTML "          <td><font size=""1""><b>Metas</font></td>"
-    ShowHTML "          <td><font size=""1""><b>LOA</font></td>"
+    ShowHTML "          <td><font size=""1""><b>PPA</font></td>"
     ShowHTML "          <td><font size=""1""><b>Execução até</font></td>"
     ShowHTML "          <td><font size=""1""><b>Conc.</font></td>"
     ShowHTML "          <td><font size=""1""><b>Operações</font></td>"
@@ -1633,8 +1647,8 @@ Sub Metas
     ShowHTML "      <tr><td><font size=""1""><b><u>E</u>specificação do produto:</b><br><textarea  accesskey=""E"" name=""w_descricao"" class=""STI"" ROWS=5 cols=75 title=""Descrever as características do produto acabado visando sua melhor identificação."">" & w_descricao & "</TEXTAREA></td>"
     ShowHTML "      <tr><td valign=""top"" colspan=""2""><table border=0 width=""100%"" cellspacing=0><tr valign=""top"">"
     ShowHTML "              <td align=""left""><font size=""1""><b><u>O</u>rdem:<br><INPUT ACCESSKEY=""O"" TYPE=""TEXT"" CLASS=""STI"" NAME=""w_ordem"" SIZE=3 MAXLENGTH=3 VALUE=""" & w_ordem & """></td>"
-    ShowHTML "              <td><font size=""1""><b>Previsão iní<u>c</u>io:</b><br><input accesskey=""C"" type=""text"" name=""w_inicio"" class=""STI"" SIZE=""10"" MAXLENGTH=""10"" VALUE=""" & FormataDataEdicao(Nvl(w_inicio,Date())) & """ onKeyDown=""FormataData(this,event);"" title=""Data prevista para início da meta.""></td>"
-    ShowHTML "              <td><font size=""1""><b>Previsão <u>t</u>érmino:</b><br><input accesskey=""T"" type=""text"" name=""w_fim"" class=""STI"" SIZE=""10"" MAXLENGTH=""10"" VALUE=""" & FormataDataEdicao(w_fim) & """ onKeyDown=""FormataData(this,event);"" title=""Data prevista para término da meta.""></td>"
+    ShowHTML "              <td><font size=""1""><b>Previsão iní<u>c</u>io:</b><br><input accesskey=""C"" type=""text"" name=""w_inicio"" class=""STI"" SIZE=""10"" MAXLENGTH=""10"" VALUE=""" & FormataDataEdicao(Nvl(w_inicio,Date())) & """ onKeyDown=""FormataData(this,event);"" title=""Data prevista para início da meta."" title=""Usar formato dd/mm/aaaa""></td>"
+    ShowHTML "              <td><font size=""1""><b>Previsão <u>t</u>érmino:</b><br><input accesskey=""T"" type=""text"" name=""w_fim"" class=""STI"" SIZE=""10"" MAXLENGTH=""10"" VALUE=""" & FormataDataEdicao(w_fim) & """ onKeyDown=""FormataData(this,event);"" title=""Data prevista para término da meta."" title=""Usar formato dd/mm/aaaa""></td>"
     ShowHTML "          </table>"
     ShowHTML "      <tr><td valign=""top"" colspan=""2""><table border=0 width=""100%"" cellspacing=0>"
     ShowHTML "          <tr>"
@@ -1909,7 +1923,7 @@ Sub AtualizaMeta
     ShowHTML "      <TABLE WIDTH=""100%"" bgcolor=""" & conTableBgColor & """ BORDER=""" & conTableBorder & """ CELLSPACING=""" & conTableCellSpacing & """ CELLPADDING=""" & conTableCellPadding & """ BorderColorDark=""" & conTableBorderColorDark & """ BorderColorLight=""" & conTableBorderColorLight & """>"
     ShowHTML "        <tr bgcolor=""" & conTrBgColor & """ align=""center"">"
     ShowHTML "          <td><font size=""1""><b>Metas</font></td>"
-    ShowHTML "          <td><font size=""1""><b>LOA</font></td>"
+    ShowHTML "          <td><font size=""1""><b>PPA</font></td>"
     ShowHTML "          <td><font size=""1""><b>Execução até</font></td>"
     ShowHTML "          <td><font size=""1""><b>Conc.</font></td>"
     ShowHTML "          <td><font size=""1""><b>Operações</font></td>"
@@ -1976,9 +1990,9 @@ Sub AtualizaMeta
     ShowHTML "            <tr><td valign=""top"" colspan=""2"">"
     ShowHTML "              <table border=0 width=""100%"" cellspacing=0><tr valign=""top"">"
     If w_cd_subacao > "" Then
-       ShowHTML "                <td><font size=""1"">Meta LOA?<b><br>Sim</td>"
+       ShowHTML "                <td><font size=""1"">Meta PPA:<b><br>Sim</td>"
     Else
-       ShowHTML "                <td><font size=""1"">Meta LOA?<b><br>Não</td>"
+       ShowHTML "                <td><font size=""1"">Meta PPA?<b><br>Não</td>"
     End If
     ShowHTML "                <td><font size=""1"">Meta cumulativa:<b><br>" & w_nm_cumulativa & "</td></tr>"
     ShowHTML "                <td><font size=""1"">Meta do PNS:<b><br>" & w_nm_programada & "</td></tr>"
@@ -2236,18 +2250,23 @@ Sub Financiamento
   ShowHTML "</HEAD>"
   ShowHTML "<BASE HREF=""http://" & Request.ServerVariables("server_name") & "/siw/"">"
   If w_troca > "" Then
-     BodyOpen "onLoad='document.Form." & w_troca & ".focus()';"
+     BodyOpen"onLoad='document.Form." & w_troca & ".focus()';"
   ElseIf O = "I" Then
      BodyOpen "onLoad='document.Form.w_chave_aux.focus()';"
   Else
-     BodyOpen "onLoad='document.focus()';"
+     BodyOpenClean "onLoad='document.focus()';"
   End If
   ShowHTML "<B><FONT COLOR=""#000000"">" & w_TP & "</FONT></B>"
   ShowHTML "<HR>"
   ShowHTML "<div align=center><center>"
   ShowHTML "<table border=""0"" cellpadding=""0"" cellspacing=""0"" width=""100%"">"
   If O = "L" Then
-    If Not IsNull(RS("cd_acao")) Then
+      DB_GetSolicData_IS RS1, w_chave, SG
+      ShowHTML "      <tr><td colspan=""2""><font size=""1"">Programa Codº " & RS1("cd_programa") & " - " & RS1("nm_ppa_pai") & "</td>"
+      ShowHTML "      <tr><td colspan=""2""><font size=""1"">Ação Codº " & RS1("cd_unidade") & "." & RS1("cd_acao") & " - " & RS1("nm_ppa") & "</td>"
+      ShowHTML "      <tr><td colspan=""2""><font size=""1"">&nbsp</td>"
+      RS1.Close
+      If Not IsNull(RS("cd_acao")) Then
        If cDbl(RS("cd_tipo_acao")) <> 3 Then
           ' Exibe os dados da programação financeira desssa ação
           DB_GetPPADadoFinanc_IS RS1, RS("cd_acao"), RS("cd_unidade"), w_ano, w_cliente, "VALORFONTEACAO"
@@ -2255,22 +2274,23 @@ Sub Financiamento
              ShowHTML "      <tr><td valign=""top""><font size=""1""><DD><b>Nao existe nenhum valor para esta ação</b></DD></td>"
           Else
              w_cor = ""
-             ShowHTML "      <tr><td valign=""top""><font size=""1"">Tipo de orçamento:<br><b>" & RS1("nm_orcamento") & "</b></td>"
+             ShowHTML "      <tr><td valign=""top""><font size=""1"">Fonte: SIGPLAN/MP - PPA 2004-2007</td>"
+             ShowHTML "      <tr><td valign=""top""><font size=""1"">Tipo de orçamento: <b>" & RS1("nm_orcamento") & "</b></td>"
              If cDbl(RS("cd_tipo_acao")) = 1 Then
-                ShowHTML "      <tr><td valign=""top""><font size=""1"">Realizado até 2004:<br><b>" & Nvl(RS("valor_ano_anterior"),0.00) & "</b></td>"
-                ShowHTML "      <tr><td valign=""top""><font size=""1"">Justificativa da repercusão financeira sobre o custeio da União:<br><b>" & Nvl(RS("reperc_financeira"),"---") & "</b></td>"
-                ShowHTML "      <tr><td valign=""top""><font size=""1"">Valor estimado da repercussão financeira por ano (R$ 1,00):<br><b>" & Nvl(RS("valor_reperc_financeira"),0.00) & "</b></td>"
+                ShowHTML "      <tr><td valign=""top""><font size=""1"">Realizado até 2004: <b>" & FormatNumber(Nvl(RS("valor_ano_anterior"),0),2) & "</b></td>"
+                ShowHTML "      <tr><td valign=""top""><font size=""1"">Justificativa da repercusão financeira sobre o custeio da União: <b>" & Nvl(RS("reperc_financeira"),"---") & "</b></td>"
+                ShowHTML "      <tr><td valign=""top""><font size=""1"">Valor estimado da repercussão financeira por ano (R$ 1,00): <b>" & FormatNumber(Nvl(RS("valor_reperc_financeira"),0),2) & "</b></td>"
              End If
              ShowHTML "      <tr><td valign=""top""><font size=""1"">Valor por fonte: </td>"
              ShowHTML "      <tr><td align=""center"" colspan=""2"">"
              ShowHTML "        <TABLE WIDTH=""100%"" bgcolor=""" & conTableBgColor & """ BORDER=""" & conTableBorder & """ CELLSPACING=""" & conTableCellSpacing & """ CELLPADDING=""" & conTableCellPadding & """ BorderColorDark=""" & conTableBorderColorDark & """ BorderColorLight=""" & conTableBorderColorLight & """>"
              ShowHTML "          <tr bgcolor=""" & conTrBgColor & """ align=""center"">"
              ShowHTML "            <td><font size=""1""><b>Fonte</font></td>"
-             ShowHTML "            <td><font size=""1""><b>Ano 1</font></td>"
-             ShowHTML "            <td><font size=""1""><b>Ano 2</font></td>"
-             ShowHTML "            <td><font size=""1""><b>Ano 3</font></td>"
-             ShowHTML "            <td><font size=""1""><b>Ano 4</font></td>"
-             ShowHTML "            <td><font size=""1""><b>Ano 5</font></td>"
+             ShowHTML "            <td><font size=""1""><b>2004*</font></td>"
+             ShowHTML "            <td><font size=""1""><b>2005**</font></td>"
+             ShowHTML "            <td><font size=""1""><b>2006</font></td>"
+             ShowHTML "            <td><font size=""1""><b>2007</font></td>"
+             ShowHTML "            <td><font size=""1""><b>2008</font></td>"
              ShowHTML "            <td><font size=""1""><b>Total</font></td>"
              ShowHTML "          </tr>"
              While Not RS1.EOF 
@@ -2298,11 +2318,11 @@ Sub Financiamento
              ShowHTML "      <tr><td align=""center"" colspan=""2"">"
              ShowHTML "        <TABLE WIDTH=""100%"" bgcolor=""" & conTableBgColor & """ BORDER=""" & conTableBorder & """ CELLSPACING=""" & conTableCellSpacing & """ CELLPADDING=""" & conTableCellPadding & """ BorderColorDark=""" & conTableBorderColorDark & """ BorderColorLight=""" & conTableBorderColorLight & """>"
              ShowHTML "          <tr bgcolor=""" & conTrBgColor & """ align=""center"">"
-             ShowHTML "            <td><font size=""1""><b>Ano 1</font></td>"
-             ShowHTML "            <td><font size=""1""><b>Ano 2</font></td>"
-             ShowHTML "            <td><font size=""1""><b>Ano 3</font></td>"
-             ShowHTML "            <td><font size=""1""><b>Ano 4</font></td>"
-             ShowHTML "            <td><font size=""1""><b>Ano 5</font></td>"
+             ShowHTML "            <td><font size=""1""><b>2004*</font></td>"
+             ShowHTML "            <td><font size=""1""><b>2005**</font></td>"
+             ShowHTML "            <td><font size=""1""><b>2006</font></td>"
+             ShowHTML "            <td><font size=""1""><b>2007</font></td>"
+             ShowHTML "            <td><font size=""1""><b>2008</font></td>"
              ShowHTML "            <td><font size=""1""><b>Total</font></td>"
              ShowHTML "          </tr>"
              If w_cor = conTrBgColor or w_cor = "" Then w_cor = conTrAlternateBgColor Else w_cor = conTrBgColor End If
@@ -2315,6 +2335,9 @@ Sub Financiamento
              ShowHTML "         <td align=""center""><font size=""1"">" & FormatNumber(cDbl(Nvl(RS1("valor_total"),0.00)))& "</td>"
              ShowHTML "       </tr>"
              ShowHTML "       </table>"  
+             ShowHTML "          <tr><td valign=""top"" colspan=""2""><font size=""1"">* Valor Lei Orçamentária Anual - LOA 2004 + Créditos</td>"
+             ShowHTML "          <tr><td valign=""top"" colspan=""2""><font size=""1"">** Valor do Projeto de Lei Orçamentária Anual - PLOA 2005</td>"    
+
           End If
           RS1.Close
           DesconectaBD
@@ -2410,9 +2433,9 @@ Sub Financiamento
     End If
     ShowHTML "      <tr><td valign=""top"" colspan=""2""><table border=0 width=""100%"" cellspacing=0><tr valign=""top"">"
     If O = "I" Then
-       SelecaoAcaoPPA "Ação <u>P</u>PA:", "P", "Selecionar, quando for o caso, outra ação do PPA que contribua para o financiamento da ação que está sendo cadastrada.", w_cliente, w_ano, RS1("cd_programa"), RS1("cd_acao"), null, RS1("cd_unidade"), "w_chave_aux", "FINANCIAMENTO", null, w_chave
+       SelecaoAcaoPPA "Ação <u>P</u>PA:", "P", "Selecionar, quando for o caso, outra ação do PPA que contribua para o financiamento da ação que está sendo cadastrada.", w_cliente, w_ano, RS1("cd_programa"), RS1("cd_acao"), null, RS1("cd_unidade"), "w_chave_aux", "FINANCIAMENTO", null, w_chave, w_menu
     Else
-       SelecaoAcaoPPA "Ação <u>P</u>PA:", "P", "Selecionar, quando for o caso, outra ação do PPA que contribua para o financiamento da ação que está sendo cadastrada.", w_cliente, w_ano, Mid(w_chave_aux,1,4), Mid(w_chave_aux,5,4), Mid(w_chave_aux,9,4),  Mid(w_chave_aux,13,5), "w_chave_aux", null, "disabled", null
+       SelecaoAcaoPPA "Ação <u>P</u>PA:", "P", "Selecionar, quando for o caso, outra ação do PPA que contribua para o financiamento da ação que está sendo cadastrada.", w_cliente, w_ano, Mid(w_chave_aux,1,4), Mid(w_chave_aux,5,4), Mid(w_chave_aux,9,4),  Mid(w_chave_aux,13,5), "w_chave_aux", null, "disabled", null, w_menu
        ShowHTML "<INPUT type=""hidden"" name=""w_chave_aux"" value=""" & w_chave_aux &""">"
     End If
     ShowHTML "      <tr><td valign=""top""><font size=""1""><b>Obse<u>r</u>vações:</b><br><textarea " & w_Disabled & " accesskey=""R"" name=""w_obs_financ"" class=""STI"" ROWS=5 cols=75 title=""Informar fatos ou situações que sejam relevantes para uma melhor compreensão do financiamento da ação."">" & w_obs_financ & "</TEXTAREA></td>"
@@ -2462,7 +2485,7 @@ Sub Restricoes
   Dim w_cd_tipo_inclusao, w_cd_competencia, w_inclusao
   Dim w_descricao, w_providencia, w_superacao, w_relatorio, w_tempo_habil
   Dim w_observacao_monitor, w_observacao_controle, w_cd_subacao, w_nm_tipo_restricao
-  Dim w_acesso, w_cabecalho, w_tipo, w_cd_programa, w_cd_acao, w_cd_unidade
+  Dim w_acesso, w_cabecalho, w_tipo, w_cd_programa, w_cd_acao, w_cd_unidade, w_ds_acao, w_ds_programa
   
   Dim w_troca, i, w_texto
   
@@ -2479,6 +2502,8 @@ Sub Restricoes
   w_cd_subacao   = RS("cd_subacao")
   w_cd_unidade   = RS("cd_unidade")
   w_sq_isprojeto = RS("sq_isprojeto")
+  w_ds_acao      = RS("nm_ppa")
+  w_ds_programa  = RS("nm_ppa_pai")
   
   If cDbl(Nvl(RS("tit_exec"),0))    = cDbl(w_usuario) or _
      cDbl(Nvl(RS("subst_exec"),0))  = cDbl(w_usuario) or _
@@ -2588,6 +2613,8 @@ Sub Restricoes
      ShowHTML "<table border=""0"" cellpadding=""0"" cellspacing=""0"" width=""100%"">"
   End If
   If O = "L" Then
+      ShowHTML "      <tr><td colspan=""2""><font size=""1"">Programa Codº " & w_cd_programa & " - " & w_ds_programa & "</td>"
+      ShowHTML "      <tr><td colspan=""2""><font size=""1"">Ação Codº " & w_cd_unidade & "." & w_cd_acao & " - " & w_ds_acao & "</td>"
     ' Exibe a quantidade de registros apresentados na listagem e o cabeçalho da tabela de listagem
     If cDbl(w_acesso) = 1 Then
        ShowHTML "<tr><td><font size=""2""><a accesskey=""I"" class=""SS"" href=""" & w_dir & w_pagina & par & "&R=" & w_Pagina & par & "&O=I&w_chave=" & w_chave &  "&P1=" & P1 & "&P2=" & P2 & "&P3=" & P3 & "&P4=" & P4 & "&TP=" & TP & "&SG=" & SG & """><u>I</u>ncluir</a>&nbsp;"
@@ -2619,7 +2646,7 @@ Sub Restricoes
           ShowHTML "        <td align=""top"" nowrap><font size=""1"">"
           If cDbl(w_acesso) = 1 Then
              ShowHTML "          <A class=""HL"" HREF=""" & w_dir & w_pagina & par & "&R=" & w_Pagina & par & "&O=A&w_chave=" & w_chave & "&w_chave_aux=" & RS("sq_restricao") & "&P1=" & P1 & "&P2=" & P2 & "&P3=" & P3 & "&P4=" & P4 & "&TP=" & TP & "&SG=" & SG & """>Alterar</A>&nbsp"
-             ShowHTML "          <A class=""HL"" HREF=""" & w_dir & w_pagina & "GRAVA&R=" & w_pagina & par & "&O=E&w_chave=" & w_chave & "&w_chave_aux=" & RS("sq_restricao") & "&P1=" & P1 & "&P2=" & P2 & "&P3=" & P3 & "&P4=" & P4 & "&TP=" & TP & "&SG=" & SG & """ onClick=""return confirm('Confirma a exclusão do registro?');"">Excluir</A>&nbsp"
+             ShowHTML "          <A class=""HL"" HREF=""" & w_dir & w_pagina & "GRAVA&R=" & w_pagina & par & "&O=E&w_chave=" & w_chave & "&w_chave_aux=" & RS("sq_restricao") & "&w_descricao=" & RS("descricao")& "&w_providencia=" & RS("providencia") & "&w_cd_tipo_restricao=" & RS("cd_tipo_restricao") & "&P1=" & P1 & "&P2=" & P2 & "&P3=" & P3 & "&P4=" & P4 & "&TP=" & TP & "&SG=" & SG & """ onClick=""return confirm('Confirma a exclusão do registro?');"">Excluir</A>&nbsp"
           Else
              ShowHTML "          <A class=""HL"" HREF=""" & w_dir & w_pagina & par & "&R=" & w_Pagina & par & "&O=V&w_chave=" & w_chave & "&w_chave_aux=" & RS("sq_restricao") & "&P1=" & P1 & "&P2=" & P2 & "&P3=" & P3 & "&P4=" & P4 & "&TP=" & TP & "&SG=" & SG & """>Exibir</A>&nbsp"
           End If
@@ -2842,6 +2869,10 @@ Sub Interessados
   If O = "L" Then
     ShowHTML "      <tr><td colspan=3><font size=1>Usuários que devem receber emails dos encaminhamentos desta ação.</font></td></tr>"
     ShowHTML "      <tr><td colspan=3 align=""center"" height=""1"" bgcolor=""#000000""></td></tr>"
+    DB_GetSolicData_IS RS1, w_chave, SG
+    ShowHTML "      <tr><td colspan=""2""><font size=""1"">Programa Codº " & RS1("cd_programa") & " - " & RS1("nm_ppa_pai") & "</td>"
+    ShowHTML "      <tr><td colspan=""2""><font size=""1"">Ação Codº " & RS1("cd_unidade") & "." & RS1("cd_acao") & " - " & RS1("nm_ppa") & "</td>"
+    RS1.Close
     ' Exibe a quantidade de registros apresentados na listagem e o cabeçalho da tabela de listagem
     If P1 <> 4 Then 
        ShowHTML "<tr><td><font size=""2""><a accesskey=""I"" class=""SS"" href=""" & w_dir & w_pagina & par & "&R=" & w_Pagina & par & "&O=I&w_chave=" & w_chave & "&P1=" & P1 & "&P2=" & P2 & "&P3=" & P3 & "&P4=" & P4 & "&TP=" & TP & "&SG=" & SG & """><u>I</u>ncluir</a>&nbsp;"
@@ -2851,7 +2882,7 @@ Sub Interessados
        ShowHTML "    <TABLE WIDTH=""100%"" CELLSPACING=""" & conTableCellSpacing & """ CELLPADDING=""" & conTableCellPadding & """ BorderColorDark=""" & conTableBorderColorDark & """ BorderColorLight=""" & conTableBorderColorLight & """>"
        ShowHTML "        <tr valign=""top"">"
        If RS1("cd_acao") > "" Then
-          ShowHTML "          <td><font size=""1""><b>Ação PPA: </b><br>" & RS1("nm_ppa") & " (" & RS1("cd_unidade") & "." & RS1("cd_ppa_pai")& "." & RS1("cd_acao")& ")</b>"      
+          ShowHTML "          <td><font size=""1""><b>Ação PPA: </b><br>" & RS1("cd_unidade") & "." & RS1("cd_ppa_pai")& "." & RS1("cd_acao") & " - "  & RS1("nm_ppa") &  "</b>"      
        End If
        If RS1("sq_isprojeto") > "" Then
           ShowHTML "        <td><font size=""1""><b>Plano/Projeto Específico: </b><br>" & RS1("nm_pri") & " </b>"      
@@ -2866,7 +2897,7 @@ Sub Interessados
     ShowHTML "    <TABLE WIDTH=""100%"" bgcolor=""" & conTableBgColor & """ BORDER=""" & conTableBorder & """ CELLSPACING=""" & conTableCellSpacing & """ CELLPADDING=""" & conTableCellPadding & """ BorderColorDark=""" & conTableBorderColorDark & """ BorderColorLight=""" & conTableBorderColorLight & """>"
     ShowHTML "        <tr bgcolor=""" & conTrBgColor & """ align=""center"">"
     ShowHTML "          <td><font size=""1""><b>Pessoa</font></td>"
-    ShowHTML "          <td><font size=""1""><b>Visao</font></td>"
+    'ShowHTML "          <td><font size=""1""><b>Visao</font></td>"
     ShowHTML "          <td><font size=""1""><b>Envia e-mail</font></td>"
     If P1 <> 4 Then
        ShowHTML "          <td><font size=""1""><b>Operações</font></td>"
@@ -2880,7 +2911,7 @@ Sub Interessados
         If w_cor = conTrBgColor or w_cor = "" Then w_cor = conTrAlternateBgColor Else w_cor = conTrBgColor End If
         ShowHTML "      <tr bgcolor=""" & w_cor & """ valign=""top"">"
         ShowHTML "        <td><font size=""1"">" & ExibePessoa("../", w_cliente, RS("sq_pessoa"), TP, RS("nome") & " (" & RS("lotacao") & ")") & "</td>"
-        ShowHTML "        <td><font size=""1"">" & RetornaTipoVisao(RS("tipo_visao")) & "</td>"
+        'ShowHTML "        <td><font size=""1"">" & RetornaTipoVisao(RS("tipo_visao")) & "</td>"
         ShowHTML "        <td align=""center""><font size=""1"">" & Replace(Replace(RS("envia_email"),"S","Sim"),"N","Não") & "</td>"
         If P1 <> 4 Then
            ShowHTML "        <td align=""top"" nowrap><font size=""1"">"
@@ -3025,6 +3056,10 @@ Sub Anexos
   ShowHTML "<table border=""0"" cellpadding=""0"" cellspacing=""0"" width=""100%"">" 
   If O = "L" Then 
     AbreSessao 
+    DB_GetSolicData_IS RS1, w_chave, SG
+    ShowHTML "      <tr><td colspan=""2""><font size=""1"">Programa Codº " & RS1("cd_programa") & " - " & RS1("nm_ppa_pai") & "</td>"
+    ShowHTML "      <tr><td colspan=""2""><font size=""1"">Ação Codº " & RS1("cd_unidade") & "." & RS1("cd_acao") & " - " & RS1("nm_ppa") & "</td>"
+    RS1.Close
     ' Exibe a quantidade de registros apresentados na listagem e o cabeçalho da tabela de listagem 
     ShowHTML "<tr><td><font size=""1""><a accesskey=""I"" class=""SS"" href=""" & w_dir & w_pagina & par & "&R=" & w_pagina & par & "&O=I&w_chave=" & w_chave & "&P1=" & P1 & "&P2=" & P2 & "&P3=" & P3 & "&P4=" & P4 & "&TP=" & TP & "&SG=" & SG & """><u>I</u>ncluir</a>&nbsp;" 
     ShowHTML "    <td align=""right""><font size=""1""><b>Registros existentes: " & RS.RecordCount 
@@ -3299,13 +3334,14 @@ REM -------------------------------------------------------------------------
 Sub Encaminhamento
   
   Dim w_chave, w_chave_pai, w_chave_aux, w_destinatario, w_despacho, w_tramite
-  Dim w_sg_tramite, w_novo_tramite
+  Dim w_sg_tramite, w_novo_tramite, w_tipo
   
   Dim w_troca, i, w_erro
   
   w_Chave           = Request("w_Chave")
   w_chave_aux       = Request("w_chave_aux")
   w_troca           = Request("w_troca")
+  w_tipo            = Nvl(Request("w_tipo"),"")
   
   If w_troca > "" Then ' Se for recarga da página
      w_tramite      = Request("w_tramite")
@@ -3333,7 +3369,7 @@ Sub Encaminhamento
      Validate "w_destinatario", "Destinatário", "HIDDEN", "1", "1", "10", "", "1"
      Validate "w_despacho", "Despacho", "", "1", "1", "2000", "1", "1"
      Validate "w_assinatura", "Assinatura Eletrônica", "1", "1", "6", "30", "1", "1"
-     If P1 <> 1 Then ' Se não for encaminhamento
+     If P1 <> 1 or (P1 = 1 and w_tipo = "Volta") Then ' Se não for encaminhamento e nem o sub-menu do cadastramento
         ShowHTML "  theForm.Botao[0].disabled=true;"
         ShowHTML "  theForm.Botao[1].disabled=true;"
      Else
@@ -3390,6 +3426,8 @@ Sub Encaminhamento
      DB_GetMenuData RS, w_menu
      ShowHTML "      <input class=""STB"" type=""button"" onClick=""location.href='" & replace(RS("link"),w_dir,"") & "&O=L&w_chave=" & Request("w_chave") & "&P1=" & P1 & "&P2=" & P2 & "&P3=" & P3 & "&P4=" & P4 & "&TP=" & TP & "&SG=" & rs("sigla") & MontaFiltro("GET") & "';"" name=""Botao"" value=""Abandonar"">"
      DesconectaBD
+  ElseIf P1 = 1 and w_tipo = "Volta" Then
+     ShowHTML "      <input class=""STB"" type=""button"" onClick=""location.href='" & R & "&O=L&w_chave=" & Request("w_chave") & "&P1=" & P1 & "&P2=" & P2 & "&P3=" & P3 & "&P4=" & P4 & "&TP=" & TP & "&SG=" & SG & MontaFiltro("GET") & "';"" name=""Botao"" value=""Abandonar"">"  
   End If
   ShowHTML "      </td>"
   ShowHTML "    </tr>"
@@ -3407,6 +3445,7 @@ Sub Encaminhamento
   Set w_chave_aux       = Nothing 
   Set w_destinatario    = Nothing 
   Set w_despacho        = Nothing 
+  Set w_tipo            = Nothing
   
   Set w_troca           = Nothing 
   Set i                 = Nothing 
@@ -3626,11 +3665,11 @@ Sub Concluir
   DB_GetSolicData_IS RS, w_chave, "ISACGERAL"
   ShowHTML "<INPUT type=""hidden"" name=""w_tramite"" value=""" & RS("sq_siw_tramite") & """>"
   If Nvl(RS("cd_acao"),"") > "" Then
-     ShowHTML "              <td valign=""top""><font size=""1""><b>Iní<u>c</u>io da execução:</b><br><input readonly " & w_Disabled & " accesskey=""C"" type=""text"" name=""w_inicio_real"" class=""STI"" SIZE=""10"" MAXLENGTH=""10"" VALUE=""" & Nvl(w_inicio_real, "01/01/"&Mid(FormataDataEdicao(Date()),7,4)) & """ onKeyDown=""FormataData(this,event);"" title=""Informe a data de início da execução da ação.""></td>"
-     ShowHTML "              <td valign=""top""><font size=""1""><b><u>T</u>érmino da execução:</b><br><input readonly " & w_Disabled & " accesskey=""T"" type=""text"" name=""w_fim_real"" class=""STI"" SIZE=""10"" MAXLENGTH=""10"" VALUE=""" & Nvl(w_fim_real, "31/12/"&Mid(FormataDataEdicao(Date()),7,4)) & """ onKeyDown=""FormataData(this,event);"" title=""Informe a data de término da execução da ação.""></td>"
+     ShowHTML "              <td valign=""top""><font size=""1""><b>Iní<u>c</u>io da execução:</b><br><input readonly " & w_Disabled & " accesskey=""C"" type=""text"" name=""w_inicio_real"" class=""STI"" SIZE=""10"" MAXLENGTH=""10"" VALUE=""" & Nvl(w_inicio_real, "01/01/"&Mid(FormataDataEdicao(Date()),7,4)) & """ onKeyDown=""FormataData(this,event);"" title=""Informe a data de início da execução da ação.(Usar formato dd/mm/aaaa)""></td>"
+     ShowHTML "              <td valign=""top""><font size=""1""><b><u>T</u>érmino da execução:</b><br><input readonly " & w_Disabled & " accesskey=""T"" type=""text"" name=""w_fim_real"" class=""STI"" SIZE=""10"" MAXLENGTH=""10"" VALUE=""" & Nvl(w_fim_real, "31/12/"&Mid(FormataDataEdicao(Date()),7,4)) & """ onKeyDown=""FormataData(this,event);"" title=""Informe a data de término da execução da ação.(Usar formato dd/mm/aaaa)""></td>"
   Else
-     ShowHTML "              <td valign=""top""><font size=""1""><b>Iní<u>c</u>io da execução:</b><br><input " & w_Disabled & " accesskey=""C"" type=""text"" name=""w_inicio_real"" class=""STI"" SIZE=""10"" MAXLENGTH=""10"" VALUE=""" & Nvl(w_inicio_real, "01/01/"&Mid(FormataDataEdicao(Date()),7,4)) & """ onKeyDown=""FormataData(this,event);"" title=""Informe a data de início da execução da ação.""></td>"
-     ShowHTML "              <td valign=""top""><font size=""1""><b><u>T</u>érmino da execução:</b><br><input " & w_Disabled & " accesskey=""T"" type=""text"" name=""w_fim_real"" class=""STI"" SIZE=""10"" MAXLENGTH=""10"" VALUE=""" & Nvl(w_fim_real, "31/12/"&Mid(FormataDataEdicao(Date()),7,4)) & """ onKeyDown=""FormataData(this,event);"" title=""Informe a data de término da execução da ação.""></td>"  
+     ShowHTML "              <td valign=""top""><font size=""1""><b>Iní<u>c</u>io da execução:</b><br><input " & w_Disabled & " accesskey=""C"" type=""text"" name=""w_inicio_real"" class=""STI"" SIZE=""10"" MAXLENGTH=""10"" VALUE=""" & Nvl(w_inicio_real, "01/01/"&Mid(FormataDataEdicao(Date()),7,4)) & """ onKeyDown=""FormataData(this,event);"" title=""Informe a data de início da execução da ação.(Usar formato dd/mm/aaaa)""></td>"
+     ShowHTML "              <td valign=""top""><font size=""1""><b><u>T</u>érmino da execução:</b><br><input " & w_Disabled & " accesskey=""T"" type=""text"" name=""w_fim_real"" class=""STI"" SIZE=""10"" MAXLENGTH=""10"" VALUE=""" & Nvl(w_fim_real, "31/12/"&Mid(FormataDataEdicao(Date()),7,4)) & """ onKeyDown=""FormataData(this,event);"" title=""Informe a data de término da execução da ação.(Usar formato dd/mm/aaaa)""></td>"  
   End If
   DesconectaBD  
   ShowHTML "              <td valign=""top""><font size=""1""><b><u>R</u>ecurso executado:</b><br><input " & w_Disabled & " accesskey=""O"" type=""text"" name=""w_custo_real"" class=""STI"" SIZE=""18"" MAXLENGTH=""18"" VALUE=""" & w_custo_real & """ onKeyDown=""FormataValor(this,18,2,event);"" title=""Informe o valor que foi efetivamente gasto com a execução da ação.""></td>"
@@ -3890,6 +3929,278 @@ REM Fim da rotina da preparação para envio de e-mail
 REM -------------------------------------------------------------------------
 
 REM =========================================================================
+REM Rotina de preparação para envio de e-mail relativo restrições
+REM Finalidade: preparar os dados necessários ao envio automático de e-mail
+REM Parâmetro: p_solic: número de identificação da solicitação. 
+REM            p_tipo:  I - Inclusão
+REM                     E - Exclusão
+REM -------------------------------------------------------------------------
+Sub RestricaoMail(p_solic, p_descricao, p_tp_restricao, p_providencia, p_tipo)
+
+  Dim w_cab, w_html, w_texto, w_sq_rest, RSM, w_resultado, w_destinatarios
+  Dim w_assunto, w_assunto1, l_sq_rest, w_nome
+  
+  w_destinatarios = ""
+  w_resultado     = ""
+  
+  w_html = "<HTML>" & VbCrLf
+  w_html = w_html & BodyOpenMail(null) & VbCrLf
+  w_html = w_html & "<table border=""0"" cellpadding=""0"" cellspacing=""0"" width=""100%"">" & VbCrLf
+  w_html = w_html & "<tr bgcolor=""" & conTrBgColor & """><td align=""center"">" & VbCrLf
+  w_html = w_html & "    <table width=""97%"" border=""0"">" & VbCrLf
+  If p_tipo = "I" Then
+     w_html = w_html & "      <tr valign=""top""><td align=""center""><font size=2><b>INCLUSÃO DE RESTRIÇÃO</b></font><br><br><td></tr>" & VbCrLf
+  ElseIf p_tipo = "E" Then
+     w_html = w_html & "      <tr valign=""top""><td align=""center""><font size=2><b>EXCLUSÃO DE RESTRIÇÃO</b></font><br><br><td></tr>" & VbCrLf
+  End If
+  w_html = w_html & "      <tr valign=""top""><td><font size=2><b><font color=""#BC3131"">ATENÇÃO</font>: Esta é uma mensagem de envio automático. Não responda esta mensagem.</b></font><br><br><td></tr>" & VbCrLf
+
+
+  ' Recupera os dados do programa
+  DB_GetSolicData_IS RSM, p_solic, "ISACGERAL"
+
+  w_html = w_html & VbCrLf & "<tr bgcolor=""" & conTrBgColor & """><td align=""center"">"
+  w_html = w_html & VbCrLf & "    <table width=""99%"" border=""0"">"
+  w_html = w_html & VbCrLf & "      <tr><td><font size=2>Ação: <b>" & RSM("cd_unidade") & "." & RSM("cd_programa") & "." &  RSM("cd_acao") & " - " & RSM("nm_ppa") & "</b></font></td>"
+      
+  ' Identificação da ação
+  w_html = w_html & VbCrLf & "      <tr><td valign=""top"" colspan=""2"" align=""center"" bgcolor=""#D0D0D0"" style=""border: 2px solid rgb(0,0,0);""><font size=""1""><b>EXTRATO DA AÇÃO</td>"
+  w_html = w_html & VbCrLf & "      <tr><td valign=""top"" colspan=""2""><table border=0 width=""100%"" cellspacing=0>"
+  w_html = w_html & VbCrLf & "          <tr valign=""top"">"
+  w_html = w_html & VbCrLf & "          <td><font size=""1"">Responsável pelo monitoramento:<br><b>" & RSM("nm_sol") & "</b></td>"
+  w_html = w_html & VbCrLf & "          <td><font size=""1"">Unidade responsável pelo monitoramento:<br><b>" & RSM("nm_unidade_resp") & "</b></td>"
+  w_html = w_html & VbCrLf & "          <tr valign=""top"">"
+  w_html = w_html & VbCrLf & "          <td><font size=""1"">Data de recebimento:<br><b>" & FormataDataEdicao(RSM("inicio")) & " </b></td>"
+  w_html = w_html & VbCrLf & "          <td><font size=""1"">Limite para conclusão:<br><b>" & FormataDataEdicao(RSM("fim")) & " </b></td>"
+  w_html = w_html & VbCrLf & "          </table>"
+  
+  ' Recupera o e-mail do responsável
+  DB_GetPersonData RS, w_cliente, RSM("solicitante"), null, null
+  If Instr(w_destinatarios,RS("email") & "; ") = 0 Then w_destinatarios = w_destinatarios & RS("email") & "; " End If
+  DesconectaBD
+
+
+  RSM.Close
+  
+  ' Identificação da restrição
+  w_html = w_html & VbCrLf & "      <tr><td valign=""top"" colspan=""2"" align=""center"" bgcolor=""#D0D0D0"" style=""border: 2px solid rgb(0,0,0);""><font size=""1""><b>EXTRATO DA RESTRIÇÃO</td>"
+  w_html = w_html & VbCrLf & "      <tr><td valign=""top"" colspan=""2""><table border=0 width=""100%"" cellspacing=0>"
+  w_html = w_html & VbCrLf & "          <tr valign=""top"">"
+  w_html = w_html & VbCrLf & "          <td><font size=""1"">Descrição da restrição:<br><b>" & p_descricao & "</b></td>"
+  DB_GetTPRestricao_IS RSM, p_tp_restricao, null
+  w_html = w_html & VbCrLf & "          <tr valign=""top"">"
+  w_html = w_html & VbCrLf & "          <td><font size=""1"">Tipo da restrição:<br><b>" & RSM("nome") & "</b></td>"
+  RSM.Close
+  w_html = w_html & VbCrLf & "          <tr valign=""top"">"
+  w_html = w_html & VbCrLf & "          <td><font size=""1"">Providência:<br><b>" & Nvl(p_providencia,"---") & "</b></td>"
+  w_html = w_html & VbCrLf & "          </table>"
+  
+  w_html = w_html & VbCrLf & "    </table>"
+  w_html = w_html & VbCrLf & "</tr>"
+  
+    w_html = w_html & VbCrLf & "      <tr><td valign=""top"" colspan=""2"" align=""center"" bgcolor=""#D0D0D0"" style=""border: 2px solid rgb(0,0,0);""><font size=""1""><b>OUTRAS INFORMAÇÕES</td>"
+  DB_GetCustomerSite RS, Session("p_cliente")
+  w_html = w_html & "      <tr valign=""top""><td><font size=2>" & VbCrLf
+  w_html = w_html & "         Para acessar o sistema use o endereço: <b><a class=""SS"" href=""" & RS("logradouro") & """ target=""_blank"">" & RS("Logradouro") & "</a></b></li>" & VbCrLf
+  w_html = w_html & "      </font></td></tr>" & VbCrLf
+  DesconectaBD
+
+  w_html = w_html & "      <tr valign=""top""><td><font size=2>" & VbCrLf
+  w_html = w_html & "         Dados da ocorrência:<br>" & VbCrLf
+  w_html = w_html & "         <ul>" & VbCrLf
+  w_html = w_html & "         <li>Responsável: <b>" & Session("nome") & "</b></li>" & VbCrLf
+  w_html = w_html & "         <li>Data do servidor: <b>" & FormatDateTime(Date(),1) & ", " & Time() & "</b></li>" & VbCrLf
+  w_html = w_html & "         <li>IP de origem: <b>" & Request.ServerVariables("REMOTE_HOST") & "</b></li>" & VbCrLf
+  w_html = w_html & "         </ul>" & VbCrLf
+  w_html = w_html & "      </font></td></tr>" & VbCrLf
+  w_html = w_html & "    </table>" & VbCrLf
+  w_html = w_html & "</td></tr>" & VbCrLf
+  w_html = w_html & "</table>" & VbCrLf
+  w_html = w_html & "</BODY>" & VbCrLf
+  w_html = w_html & "</HTML>" & VbCrLf
+    
+  ' Recupera o e-mail do usuário que está cadastrando a restrição
+  DB_GetPersonData RS, w_cliente, Session("sq_pessoa"), null, null
+  If Instr(w_destinatarios,RS("email") & "; ") = 0 Then w_destinatarios = w_destinatarios & RS("email") & "; " End If
+  DesconectaBD
+  
+  ' Recupera o e-mail dos interessados
+  DB_GetSolicInter RSM, p_solic, null, "LISTA"
+  If Not RSM.EOF Then
+     While Not RSM.EOF 
+        DB_GetPersonData RS, w_cliente, RSM("sq_pessoa"), null, null
+        If Instr(w_destinatarios,RS("email") & "; ") = 0 Then w_destinatarios = w_destinatarios & RS("email") & "; " End If
+        DesconectaBD
+        RSM.MoveNext
+    Wend
+  End If
+  RSM.Close
+  
+  ' Prepara os dados necessários ao envio
+  DB_GetCustomerData RS, Session("p_cliente")
+  If p_tipo = "I" Then ' Inclusão
+     If p_tipo = "I" Then w_assunto = "Inclusão de restrição do programa" End If
+  ElseIf p_tipo = "E" Then ' Exclusão
+     w_assunto = "Exclusão de restrição do programa"
+  End If
+  DesconectaBD
+ 
+  If w_destinatarios > "" Then
+     ' Executa o envio do e-mail
+     w_resultado = EnviaMail(w_assunto, w_html, w_destinatarios)
+  End If
+        
+  ' Se ocorreu algum erro, avisa da impossibilidade de envio
+  If w_resultado > "" Then 
+     ScriptOpen "JavaScript"
+     ShowHTML "  alert('ATENÇÃO: não foi possível proceder o envio do e-mail.\n" & w_resultado & "');" 
+     ScriptClose
+  End If
+
+  Set RSM                      = Nothing
+  Set w_html                   = Nothing
+  Set p_solic                  = Nothing
+  Set w_destinatarios          = Nothing
+  Set w_assunto                = Nothing
+End Sub
+REM =========================================================================
+REM Fim da rotina da preparação para envio de e-mail
+REM -------------------------------------------------------------------------
+
+REM =========================================================================
+REM Rotina de busca das ações do PPA
+REM -------------------------------------------------------------------------
+Sub BuscaAcao
+ 
+  Dim w_nome, w_cliente, w_ano, w_programa, w_acao, w_unidade, w_chave, ChaveAux, restricao, campo
+  
+  w_nome     = UCase(Request("w_nome"))
+  w_cliente  = Request("w_cliente")
+  w_ano      = Request("w_ano")
+  w_programa = Request("w_programa")
+  w_acao     = Request("w_acao")
+  w_unidade  = Request("w_unidade")
+  w_chave    = Request("w_chave")
+  ChaveAux   = Request("ChaveAux")
+  restricao  = Request("restricao")
+  campo      = Request("campo")
+  
+  If restricao = "FINANCIAMENTO" Then
+     DB_GetAcaoPPA_IS RS, w_cliente, w_ano, w_programa, ChaveAux, null , w_unidade, restricao, w_chave, w_nome
+     RS.Sort   = "descricao_acao"
+  ElseIf restricao = "IDENTIFICACAO" Then
+     DB_GetAcaoPPA_IS RS, w_cliente, w_ano, null, ChaveAux, null, null, restricao, null, w_nome
+     RS.Sort   = "descricao_acao"
+  Else
+     DB_GetAcaoPPA_IS RS, w_cliente, w_ano, w_programa, ChaveAux, null, w_unidade, null, null, w_nome
+     RS.Sort   = "descricao_acao"
+  End If
+    
+  Cabecalho
+  ShowHTML "<TITLE>Seleção de ações do PPA</TITLE>"
+  ShowHTML "<HEAD>"
+  Estrutura_CSS w_cliente
+  ScriptOpen "JavaScript"
+  ShowHTML "  function volta(l_chave) {"
+  ShowHTML "     opener.Form." & campo & ".value=l_chave;"
+  ShowHTML "     opener.Form." & campo & ".focus();"
+  ShowHTML "     window.close();"
+  ShowHTML "     opener.focus();"
+  ShowHTML "   }"
+  ValidateOpen "Validacao"
+  Validate "w_nome", "Nome", "1", "", "4", "100", "1", "1"
+  Validate "ChaveAux", "Código", "1", "", "4", "4", "1", "1"
+  ShowHTML "  if (theForm.w_nome.value == '' && theForm.ChaveAux.value == '') {"
+  ShowHTML "     alert ('Informe um valor para o nome ou para o código!');"
+  ShowHTML "     theForm.w_nome.focus();"
+  ShowHTML "     return false;"
+  ShowHTML "  }"
+  ShowHTML "  theForm.Botao[0].disabled=true;"
+  ShowHTML "  theForm.Botao[1].disabled=true;"
+  ValidateClose
+  ScriptClose
+  ShowHTML "</HEAD>"
+  ShowHTML "<BASE HREF=""http://" & Request.ServerVariables("server_name") & "/siw/"">"
+  BodyOpen "onLoad='document.Form.w_nome.focus();'"
+  Estrutura_Texto_Abre
+  ShowHTML "<table border=""0"" cellpadding=""0"" cellspacing=""0"" width=""100%"">"
+  ShowHTML "<tr bgcolor=""" & conTrBgColor & """><td>"
+  ShowHTML "    <table width=""100%"" border=""0"">"
+  AbreForm  "Form", w_dir&w_Pagina&"BuscaAcao", "POST", "return(Validacao(this))", null, P1, P2, P3, P4, TP, SG, null, null
+  ShowHTML "<INPUT type=""hidden"" name=""w_cliente"" value=""" & w_cliente &""">"
+  ShowHTML "<INPUT type=""hidden"" name=""w_ano"" value=""" & w_ano &""">"
+  ShowHTML "<INPUT type=""hidden"" name=""w_programa"" value=""" & w_programa &""">"
+  ShowHTML "<INPUT type=""hidden"" name=""w_unidade"" value=""" & w_unidade &""">"
+  ShowHTML "<INPUT type=""hidden"" name=""w_acao"" value=""" & w_acao &""">"
+  ShowHTML "<INPUT type=""hidden"" name=""w_chave"" value=""" & w_chave &""">"
+  ShowHTML "<INPUT type=""hidden"" name=""restricao"" value=""" & restricao &""">"
+  ShowHTML "<INPUT type=""hidden"" name=""campo"" value=""" & campo &""">"
+  ShowHTML "<INPUT type=""hidden"" name=""w_menu"" value=""" & w_menu &""">"
+  
+  ShowHTML "<tr bgcolor=""" & conTrBgColor & """><td><div align=""justify""><font size=2><b><ul>Instruções</b>:<li>Informe parte do nome da ação ou o código da ação.<li>Quando a relação for exibida, selecione a ação desejada clicando sobre o link <i>Selecionar</i>.<li>Após informar o nome da ação ou o código da ação, clique sobre o botão <i>Aplicar filtro</i>. Clicando sobre o botão <i>Cancelar</i>, a procura é cancelada.</ul></div>"
+  ShowHTML "<tr bgcolor=""" & conTrBgColor & """><td>"
+  ShowHTML "    <table width=""100%"" border=""0"">"
+  ShowHTML "      <tr><td valign=""top""><font size=""1""><b>Parte do <U>n</U>ome da ação:<br><INPUT ACCESSKEY=""N"" " & w_Disabled & " class=""sti"" type=""text"" name=""w_nome"" size=""50"" maxlength=""100"" value=""" & w_nome & """>"
+  ShowHTML "      <tr><td valign=""top""><font size=""1""><b><U>C</U>ódigo da ação:<br><INPUT ACCESSKEY=""S"" " & w_Disabled & " class=""sti"" type=""text"" name=""ChaveAux"" size=""5"" maxlength=""4"" value=""" & ChaveAux & """>"
+  
+  ShowHTML "      <tr><td align=""center"" colspan=""3"" height=""1"" bgcolor=""#000000"">"
+  ShowHTML "      <tr><td align=""center"" colspan=""3"">"
+  ShowHTML "            <input class=""stb"" type=""submit"" name=""Botao"" value=""Aplicar filtro"">"
+  ShowHTML "            <input class=""stb"" type=""button"" name=""Botao"" value=""Cancelar"" onClick=""window.close(); opener.focus();"">"
+  ShowHTML "          </td>"
+  ShowHTML "      </tr>"
+  ShowHTML "    </table>"
+  ShowHTML "    </TD>"
+  ShowHTML "</tr>"
+  ShowHTML "</form>"
+  If w_nome > "" or ChaveAux > "" Then
+     ShowHTML "<tr><td align=""right""><font size=""1""><b>Registros: " & RS.RecordCount
+     ShowHTML "<tr><td>"
+     ShowHTML "    <TABLE WIDTH=""100%"" border=0>"
+     If RS.EOF Then
+        ShowHTML "      <tr bgcolor=""" & conTrBgColor & """><td colspan=5 align=""center""><font size=""1""><b>Não foram encontrados registros.</b></td></tr>"
+     Else
+        ShowHTML "      <tr bgcolor=""" & conTrBgColor & """><td>"
+        ShowHTML "        <TABLE WIDTH=""100%"" bgcolor=""" & conTableBgColor & """ BORDER=""" & conTableBorder & """ CELLSPACING=""" & conTableCellSpacing & """ CELLPADDING=""" & conTableCellPadding & """ BorderColorDark=""" & conTableBorderColorDark & """ BorderColorLight=""" & conTableBorderColorLight & """>"
+        ShowHTML "          <tr bgcolor=""" & conTrBgColor & """ align=""center"">"
+        ShowHTML "            <td><font size=""1""><b>Código</font></td>"
+        ShowHTML "            <td><font size=""1""><b>Nome</font></td>"
+        ShowHTML "            <td><font size=""1""><b>Operações</font></td>"
+        ShowHTML "          </tr>"
+        While Not RS.EOF
+           If w_cor = conTrBgColor or w_cor = "" Then w_cor = conTrAlternateBgColor Else w_cor = conTrBgColor End If
+           ShowHTML "      <tr bgcolor=""" & w_cor & """ valign=""top"">"
+           ShowHTML "            <td align=""center""><font size=""1"">" & RS("cd_unidade") & "." & RS("cd_programa") & "." & RS("cd_acao")& "</td>"
+           ShowHTML "            <td><font size=""1"">" & RS("descricao_acao") & "</td>"
+           ShowHTML "            <td><font size=""1""><a class=""ss"" href=""#"" onClick=""javascript:volta('" & RS("chave") & "');"">Selecionar</a>"
+           RS.MoveNext
+        wend
+        ShowHTML "        </table></tr>"
+        ShowHTML "      </center>"
+        ShowHTML "    </table>"
+        ShowHTML "  </td>"
+        ShowHTML "</tr>"
+     End If
+     DesConectaBD	 
+  End If
+  DesConectaBD	 
+  ShowHTML "    </table>"
+  ShowHTML "    </TD>"
+  ShowHTML "</tr>"
+  ShowHTML "</FORM>"  
+  ShowHTML "</table>"
+  ShowHTML "</center>"
+  Estrutura_Texto_Fecha
+
+  Set w_nome                = Nothing
+  Set ChaveAux              = Nothing
+      
+End Sub
+REM =========================================================================
+REM Fim da rotina de busca de área do conhecimento
+REM -------------------------------------------------------------------------
+
+REM =========================================================================
 REM Procedimento que executa as operações de BD
 REM -------------------------------------------------------------------------
 Public Sub Grava
@@ -3914,7 +4225,7 @@ Public Sub Grava
        If (VerificaAssinaturaEletronica(Session("Username"),w_assinatura) and w_assinatura > "") or _
           w_assinatura = "" Then
           If O = "I" and  Request("w_sq_acao_ppa") > "" Then
-            DB_GetAcao_IS RS, Mid(Request("w_sq_acao_ppa"),1,4), Mid(Request("w_sq_acao_ppa"),5,4), Mid(Request("w_sq_acao_ppa"),13,5), w_ano, w_cliente
+            DB_GetAcao_IS RS, Mid(Request("w_sq_acao_ppa"),1,4), Mid(Request("w_sq_acao_ppa"),5,4), Mid(Request("w_sq_acao_ppa"),13,5), w_ano, w_cliente, null, null
               If cDbl(RS("Existe")) > 0 Then
                  ScriptOpen "JavaScript"
                  ShowHTML "  alert('Ação já cadastrada!');"
@@ -3937,11 +4248,18 @@ Public Sub Grava
               w_ano, w_cliente, Mid(Request("w_sq_acao_ppa"),1,4), Mid(Request("w_sq_acao_ppa"),5,4), Mid(Request("w_sq_acao_ppa"),9,4), Mid(Request("w_sq_acao_ppa"),13,5), Request("w_sq_isprojeto"), Request("w_selecao_mp"), Request("w_selecao_se"), _
               null, null, w_chave_nova, w_copia, Request("w_sq_unidade_adm"), null
           
-          ScriptOpen "JavaScript"
           If O = "I" Then
              ' Envia e-mail comunicando a inclusão
              SolicMail Nvl(Request("w_chave"), w_chave_nova) ,1
-             
+          End If
+          ScriptOpen "JavaScript"
+          If O = "I" Then
+             ' Exibe mensagem de gravação com sucesso
+             If Nvl(Request("w_sq_acao_ppa"),"") = "" Then
+                ShowHTML "  alert('Ação " & w_chave_nova & " cadastrada com sucesso!');"
+             Else
+                ShowHTML "  alert('Ação " & Mid(Request("w_sq_acao_ppa"),13,5)& "." & Mid(Request("w_sq_acao_ppa"),1,4) & "." & Mid(Request("w_sq_acao_ppa"),5,4) & " cadastrada com sucesso!');"
+             End If
              ' Recupera os dados para montagem correta do menu
              DB_GetMenuData RS1, w_menu
              ShowHTML "  parent.menu.location='../Menu.asp?par=ExibeDocs&O=A&w_chave=" & w_chave_nova & "&w_documento=Nr. " & w_chave_nova & "&R=" & R & "&SG=" & RS1("sigla") & "&TP=" & TP & MontaFiltro("GET") & "';"
@@ -4108,6 +4426,10 @@ Public Sub Grava
               Request("w_cd_tipo_inclusao"), Request("w_cd_competencia"), Request("w_superacao"), _
               Request("w_relatorio"), Request("w_tempo_habil"), Request("w_descricao"), _
               Request("w_providencia"), Request("w_observacao_controle"), Request("w_observacao_monitor")    
+          
+          If O = "I" or O = "E" Then
+             RestricaoMail Request("w_chave"), Request("w_descricao"), Request("w_cd_tipo_restricao"), Request("w_providencia"), O              
+          End If
           ScriptOpen "JavaScript"
           ' Recupera a sigla do serviço pai, para fazer a chamada ao menu
           DB_GetLinkData RS, Session("p_cliente"), SG
@@ -4290,44 +4612,26 @@ Sub Main
   End If
 
   Select Case Par
-    Case "INICIAL"
-       Inicial
-    Case "GERAL"
-       Geral
-    Case "RESP"
-       Responsaveis
-    Case "PROGQUAL"
-       ProgramacaoQualitativa
-    Case "META"
-       Metas
-    Case "ATUALIZAMETA"
-       AtualizaMeta
-    Case "PROGFINAN"
-       Financiamento
-    Case "RESTRICAO"
-       Restricoes
-    Case "INTERESS"
-       Interessados
-    Case "VISUAL"
-       Visual
-    Case "VISUALE"
-       VisualE
-    Case "EXCLUIR"
-       Excluir
-    Case "ENVIO"
-       Encaminhamento
-    Case "ANEXO"
-       Anexos
-    Case "ANOTACAO"
-       Anotar
-    Case "CONCLUIR"
-       Concluir
-    Case "OUTRAS"
-       Iniciativas
-    Case "FINANC"
-       Financiamento
-    Case "GRAVA"
-       Grava
+    Case "INICIAL"      Inicial
+    Case "GERAL"        Geral
+    Case "RESP"         Responsaveis
+    Case "PROGQUAL"     ProgramacaoQualitativa
+    Case "META"         Metas
+    Case "ATUALIZAMETA" AtualizaMeta
+    Case "PROGFINAN"    Financiamento
+    Case "RESTRICAO"    Restricoes
+    Case "INTERESS"     Interessados
+    Case "VISUAL"       Visual
+    Case "VISUALE"      VisualE
+    Case "EXCLUIR"      Excluir
+    Case "ENVIO"        Encaminhamento
+    Case "ANEXO"        Anexos
+    Case "ANOTACAO"     Anotar
+    Case "CONCLUIR"     Concluir
+    Case "OUTRAS"       Iniciativas
+    Case "FINANC"       Financiamento
+    Case "BUSCAACAO"    BuscaAcao
+    Case "GRAVA"        Grava
     Case Else
        Cabecalho
        ShowHTML "<BASE HREF=""http://" & Request.ServerVariables("server_name") & "/siw/"">"

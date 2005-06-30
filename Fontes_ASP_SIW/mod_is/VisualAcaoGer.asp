@@ -42,7 +42,7 @@ Function VisualAcaoGer(w_chave, P4)
   End If
   w_html = w_html & VbCrLf & "   <tr valign=""top""><td colspan=""2""><table border=0 width=""100%"" cellspacing=0>"
   If Not IsNull(RS("cd_acao")) Then
-     DB_GetAcaoPPA_IS RS1, w_cliente, w_ano, RS("cd_ppa_pai"), RS("cd_acao"), null, RS("cd_unidade"), null, null
+     DB_GetAcaoPPA_IS RS1, w_cliente, w_ano, RS("cd_ppa_pai"), RS("cd_acao"), null, RS("cd_unidade"), null, null, null
      w_html = w_html & VbCrLf & "     <tr valign=""top"">"
      w_html = w_html & VbCrLf & "       <td><font size=""1"">Tipo de ação:<br><b>" & RS1("nm_tipo_acao") & " </b></td>"       
      RS1.Close
@@ -66,23 +66,45 @@ Function VisualAcaoGer(w_chave, P4)
         
   ' Programação Qualitativa         
   'w_html = w_html & VbCrLf & "      <tr><td valign=""top"" colspan=""2"" align=""center"" bgcolor=""#D0D0D0"" style=""border: 2px solid rgb(0,0,0);""><font size=""1""><b>Programação Qualitativa</td>"
-  w_html = w_html & VbCrLf & "      <tr><td valign=""top"" colspan=""2""><font size=""1"">Justificativa:<br><b>" & Nvl(RS("problema"),"---")& "</b></td>"
+  w_html = w_html & VbCrLf & "      <tr><td valign=""top"" colspan=""2""><div align=""justify""><font size=""1"">Justificativa:<br><b>" & Nvl(RS("problema"),"---")& "</b></div></td>"
   If Not IsNull(RS("cd_acao")) Then
-     w_html = w_html & VbCrLf & "      <tr><td valign=""top"" colspan=""2""><font size=""1"">Objetivo:<br><b>" & Nvl(RS("finalidade"),"---")& "</b></td>"
+     w_html = w_html & VbCrLf & "      <tr><td valign=""top"" colspan=""2""><div align=""justify""><font size=""1"">Objetivo:<br><b>" & Nvl(RS("finalidade"),"---")& "</b></div></td>"
   End if          
-  w_html = w_html & VbCrLf & "      <tr><td valign=""top"" colspan=""2""><font size=""1"">Objetivo específico:<br><b>" & Nvl(RS("objetivo"),"---")& "</b></td>"
+  w_html = w_html & VbCrLf & "      <tr><td valign=""top"" colspan=""2""><div align=""justify""><font size=""1"">Objetivo específico:<br><b>" & Nvl(RS("objetivo"),"---")& "</b></div></td>"
   If Not IsNull(RS("cd_acao")) Then
-     w_html = w_html & VbCrLf & "      <tr><td valign=""top"" colspan=""2""><font size=""1"">Descrição da ação:<br><b>" & Nvl(RS("descricao_ppa"),"---")& "</b></td>"
+     w_html = w_html & VbCrLf & "      <tr><td valign=""top"" colspan=""2""><div align=""justify""><font size=""1"">Descrição da ação:<br><b>" & Nvl(RS("descricao_ppa"),"---")& "</b></div></td>"
   End If
-  w_html = w_html & VbCrLf & "      <tr><td valign=""top"" colspan=""2""><font size=""1"">Público-alvo:<br><b>" & Nvl(RS("publico_alvo"),"---")& "</b></td>"
+  w_html = w_html & VbCrLf & "      <tr><td valign=""top"" colspan=""2""><div align=""justify""><font size=""1"">Público-alvo:<br><b>" & Nvl(RS("publico_alvo"),"---")& "</b></div></td>"
   If Not IsNull(RS("cd_acao")) Then
-     w_html = w_html & VbCrLf & "      <tr><td valign=""top"" colspan=""2""><font size=""1"">Origem da ação:<br><b>" & Nvl(RS("nm_tipo_inclusao_acao"),"---")& "</b></td>"
-     w_html = w_html & VbCrLf & "      <tr><td valign=""top"" colspan=""2""><font size=""1"">Base legal:<br><b>" & Nvl(RS("base_legal"),"---")& "</b></td>"
+     w_html = w_html & VbCrLf & "      <tr><td valign=""top"" colspan=""2""><div align=""justify""><font size=""1"">Origem da ação:<br><b>" & Nvl(RS("nm_tipo_inclusao_acao"),"---")& "</b></div></td>"
+     w_html = w_html & VbCrLf & "      <tr><td valign=""top"" colspan=""2""><div align=""justify""><font size=""1"">Base legal:<br><b>" & Nvl(RS("base_legal"),"---")& "</b></div></td>"
      w_html = w_html & VbCrLf & "      <tr><td valign=""top"" colspan=""2""><font size=""1"">Forma de implementação:<br><b>" 
+     If cDbl(RS("cd_tipo_acao")) = 1 or cDbl(RS("cd_tipo_acao")) = 2 Then 
+        If RS("direta") = "S" Then
+           w_html = w_html & VbCrLf & " direta"
+        End If
+        If RS("descentralizada") = "S" Then
+           w_html = w_html & VbCrLf & " descentralizada"
+        End If
+        If RS("linha_credito") = "S" Then
+           w_html = w_html & VbCrLf & " linha de crédito"
+        End If
+     ElseIf cDbl(RS("cd_tipo_acao")) = 4 Then
+        If RS("transf_obrigatoria") = "S" Then
+           w_html = w_html & VbCrLf & " transferência obrigatória"
+        End If
+        If RS("transf_voluntaria") = "S" Then
+           w_html = w_html & VbCrLf & " transferência voluntária"
+        End If
+        If RS("transf_outras") = "S" Then
+           w_html = w_html & VbCrLf & " outras"
+        End If
+     End If
+     w_html = w_html & VbCrLf & "      </b></td>"
   End If
-  w_html = w_html & VbCrLf & "      <tr><td valign=""top"" colspan=""2""><font size=""1"">Sistemática e estratégias a serem adotadas para o monitoramento da ação:<br><b>" & Nvl(RS("estrategia"),"---")& "</b></td>"
-  w_html = w_html & VbCrLf & "      <tr><td valign=""top"" colspan=""2""><font size=""1"">Sistemática e metodologias a serem adotadas para avaliação da ação:<br><b>" & Nvl(RS("sistematica"),"---")& "</b></td>"
-  w_html = w_html & VbCrLf & "      <tr><td valign=""top"" colspan=""2""><font size=""1"">Valor programado:<br><b>" & FormatNumber(cDbl(Nvl(RS("valor"),0)),2)& "</b></td>"
+  w_html = w_html & VbCrLf & "      <tr><td valign=""top"" colspan=""2""><div align=""justify""><font size=""1"">Sistemática e estratégias a serem adotadas para o monitoramento da ação:<br><b>" & Nvl(RS("estrategia"),"---")& "</b></div></td>"
+  w_html = w_html & VbCrLf & "      <tr><td valign=""top"" colspan=""2""><div align=""justify""><font size=""1"">Sistemática e metodologias a serem adotadas para avaliação da ação:<br><b>" & Nvl(RS("sistematica"),"---")& "</b></div></td>"
+  w_html = w_html & VbCrLf & "      <tr><td valign=""top"" colspan=""2""><div align=""justify""><font size=""1"">Valor programado:<br><b>" & FormatNumber(cDbl(Nvl(RS("valor"),0)),2)& "</b></div></td>"
      
   ' Restricoes da ação
   ' Recupera todos os registros para a listagem
@@ -126,7 +148,7 @@ Function VisualAcaoGer(w_chave, P4)
         w_html = w_html & VbCrLf & "         <tr bgcolor=""" & conTrBgColor & """ align=""center"">"
         w_html = w_html & VbCrLf & "           <td rowspan=""2""><font size=""1""><b>Produto</font></td>"
         w_html = w_html & VbCrLf & "           <td rowspan=""2""><font size=""1""><b>Unidade medida</font></td>"
-        w_html = w_html & VbCrLf & "           <td rowspan=""2""><font size=""1""><b>LOA</font></td>"
+        w_html = w_html & VbCrLf & "           <td rowspan=""2""><font size=""1""><b>PPA</font></td>"
         w_html = w_html & VbCrLf & "           <td rowspan=""2""><font size=""1""><b>PNS</font></td>"
         w_html = w_html & VbCrLf & "           <td rowspan=""2""><font size=""1""><b>Cumulativa</font></td>"
         w_html = w_html & VbCrLf & "           <td rowspan=""1"" colspan=""3""><font size=""1""><b>Quantitativo</font></td>"

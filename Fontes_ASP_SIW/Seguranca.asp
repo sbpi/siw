@@ -1983,7 +1983,7 @@ Sub BuscaUsuario
      w_codigo = w_cnpj
   End If
 
-  DB_GetPersonList RS, w_cliente, ChaveAux, restricao
+  DB_GetPersonList RS, w_cliente, ChaveAux, restricao, null, null, null, null
   If w_cpf > "" or w_cnpj > "" or w_nome > "" Then
      If w_nome > " " Then
         RS.Filter = "nome_indice like '*" & w_nome & "*' or nome_resumido_ind like '*" & w_nome & "*'"

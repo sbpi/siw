@@ -39,7 +39,7 @@ Sub DML_PutCoPesEnd(Operacao, p_chave, p_pessoa, p_tipo_endereco, p_logradouro, 
      .parameters.Append         l_bairro
      .parameters.Append         l_padrao
      .CommandText               = Session("schema") & "SP_PutCoPesEnd"
-     On Error Resume Next
+     'On Error Resume Next
      .Execute
      If Err.Description > "" Then 
         TrataErro

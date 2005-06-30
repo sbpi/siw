@@ -2,17 +2,17 @@
 REM =========================================================================
 REM Montagem da seleção de ações do PPA(tabela SIGPLAN)
 REM -------------------------------------------------------------------------
-Sub SelecaoAcaoPPA (label, accesskey, hint, p_cliente, p_ano, p_programa, p_acao, p_subacao, p_unidade, campo, restricao, atributo, p_chave)
+Sub SelecaoAcaoPPA (label, accesskey, hint, p_cliente, p_ano, p_programa, p_acao, p_subacao, p_unidade, campo, restricao, atributo, p_chave, menu)
    Dim l_chave   
    l_chave = p_programa & p_acao & p_subacao & p_unidade
    If restricao = "FINANCIAMENTO" Then
-      DB_GetAcaoPPA_IS RS, p_cliente, p_ano, p_programa, p_acao, null , p_unidade, restricao, p_chave
+      DB_GetAcaoPPA_IS RS, p_cliente, p_ano, p_programa, p_acao, null , p_unidade, restricao, p_chave, null
       RS.Sort   = "descricao_acao"
-   ElseIf restricao = "IDENTIFICACAO" Then
-      DB_GetAcaoPPA_IS RS, p_cliente, p_ano, null, null, null, null, restricao, null
+   ElseIf restricao = "IDENTIFICACAO" or restricao = "CONSULTA" Then
+      DB_GetAcaoPPA_IS RS, p_cliente, p_ano, null, null, null, null, restricao, null, null
       RS.Sort   = "descricao_acao"
    Else
-      DB_GetAcaoPPA_IS RS, p_cliente, p_ano, p_programa, p_acao, null, p_unidade, null, null
+      DB_GetAcaoPPA_IS RS, p_cliente, p_ano, p_programa, p_acao, null, p_unidade, null, null, null
       RS.Sort   = "descricao_acao"
    End If
     If IsNull(hint) Then
@@ -23,13 +23,17 @@ Sub SelecaoAcaoPPA (label, accesskey, hint, p_cliente, p_ano, p_programa, p_acao
     ShowHTML "          <option value="""">---"
     While Not RS.EOF
        If nvl(RS("chave"),"-") = nvl(l_chave,"-") Then
-          ShowHTML "          <option value=""" & RS("chave") & """ SELECTED>" &  Mid(RS("descricao_acao"),1,40) & " - " & Mid(RS("ds_unidade"),1,30) & " (" & RS("cd_unidade") & "." & RS("cd_programa") & "." & RS("cd_acao") & ")"
+          ShowHTML "          <option value=""" & RS("chave") & """ SELECTED>" & RS("cd_unidade") & "." & RS("cd_programa") & "." & RS("cd_acao") & " - " &  Mid(RS("descricao_acao"),1,40) & " (" & Mid(RS("ds_unidade"),1,30) & ")"
        Else
-          ShowHTML "          <option value=""" & RS("chave") & """>" &  Mid(RS("descricao_acao"),1,40) & " - " & Mid(RS("ds_unidade"),1,30) & " (" & RS("cd_unidade") & "."  & RS("cd_programa") & "." & RS("cd_acao") & ")"
+          ShowHTML "          <option value=""" & RS("chave") & """>" & RS("cd_unidade") & "." & RS("cd_programa") & "." & RS("cd_acao") & " - " &  Mid(RS("descricao_acao"),1,40) & " (" & Mid(RS("ds_unidade"),1,30) & ")"
        End If
        RS.MoveNext
     Wend
     ShowHTML "          </select>"
+    
+    ShowHTML "              <a class=""ss"" href=""#"" onClick=""window.open('Acao.asp?par=BuscaAcao&TP=" & RemoveTP(TP) & "&w_cliente=" &p_cliente& "&w_ano=" &p_ano&  "&w_programa=" &p_programa& "&w_unidade=" &p_unidade& "&w_acao=" &p_acao& "&w_chave=" &p_chave& "&w_menu=" &menu& "&restricao=" &restricao& "&campo=" &campo& "','Acao','top=10,left=10,width=780,height=550,toolbar=yes,status=yes,resizable=yes,scrollbars=yes'); return false;"" title=""Clique aqui para selecionar a ação.""><img src=images/Folder/Explorer.gif border=0 align=top height=15 width=15></a>"
+    'ShowHTML "              <a class=""ss"" href=""#"" onClick=""document.Form." & campo & ".selectedIndex=''; return false;"" title=""Clique aqui para apagar o valor deste campo.""><img src=images/Folder/Recyfull.gif border=0 align=top height=15 width=15></a>"
+
     Set l_chave = Nothing
 End Sub
 REM =========================================================================
@@ -39,13 +43,13 @@ REM -------------------------------------------------------------------------
 REM =========================================================================
 REM Montagem da seleção de ações do PPA(tabela SIGPLAN)
 REM -------------------------------------------------------------------------
-Sub SelecaoProgramaPPA (label, accesskey, hint, cliente, ano, chave, campo, restricao, atributo)
+Sub SelecaoProgramaPPA (label, accesskey, hint, cliente, ano, chave, campo, restricao, atributo, menu)
    
     If restricao = "IDENTIFICACAO" Then
-      DB_GetProgramaPPA_IS RS, null, w_cliente, w_ano, restricao
+      DB_GetProgramaPPA_IS RS, null, w_cliente, w_ano, restricao, null
        RS.Sort   = "ds_programa"
     Else
-       DB_GetProgramaPPA_IS RS, chave, w_cliente, w_ano, restricao
+       DB_GetProgramaPPA_IS RS, chave, w_cliente, w_ano, restricao, null
        RS.Sort   = "ds_programa"
     End If
     If IsNull(hint) Then
@@ -56,13 +60,15 @@ Sub SelecaoProgramaPPA (label, accesskey, hint, cliente, ano, chave, campo, rest
     ShowHTML "          <option value="""">---"
     While Not RS.EOF
        If nvl(RS("cd_programa"),"-") = nvl(chave,"-") Then
-          ShowHTML "          <option value=""" & RS("cd_programa") & """ SELECTED>" & RS("ds_programa") & " (" & RS("cd_programa") & ")"
+          ShowHTML "          <option value=""" & RS("cd_programa") & """ SELECTED>" & RS("cd_programa") & " - " & RS("ds_programa")
        Else
-          ShowHTML "          <option value=""" & RS("cd_programa") & """>" & RS("ds_programa") & " (" & RS("cd_programa") & ")"
+          ShowHTML "          <option value=""" & RS("cd_programa") & """>" & RS("cd_programa") & " - " & RS("ds_programa")
        End If
        RS.MoveNext
     Wend
     ShowHTML "          </select>"
+    ShowHTML "              <a class=""ss"" href=""#"" onClick=""window.open('Programa.asp?par=BuscaPrograma&TP=" & RemoveTP(TP) & "&w_cliente=" &cliente& "&w_ano=" &ano& "&w_menu=" &menu& "&restricao=" &restricao& "&campo=" &campo& "','Programa','top=10,left=10,width=780,height=550,toolbar=yes,status=yes,resizable=yes,scrollbars=yes'); return false;"" title=""Clique aqui para selecionar o programa.""><img src=images/Folder/Explorer.gif border=0 align=top height=15 width=15></a>"
+    'ShowHTML "              <a class=""ss"" href=""#"" onClick=""document.Form." & campo & ".selectedIndex=''; return false;"" title=""Clique aqui para apagar o valor deste campo.""><img src=images/Folder/Recyfull.gif border=0 align=top height=15 width=15></a>"
 End Sub
 REM =========================================================================
 REM Final da rotina
@@ -73,7 +79,7 @@ REM Montagem da seleção de ações do PPA(tabela SIGPLAN)
 REM -------------------------------------------------------------------------
 Sub SelecaoFuncao (label, accesskey, hint, chave, chaveAux, campo, restricao, atributo)
    
-   DB_GetProgramaPPA_IS RS, chave, chaveaux, w_cliente, w_ano
+   DB_GetProgramaPPA_IS RS, chave, chaveaux, w_cliente, w_ano, null
    RS.Sort   = "nome"
     If IsNull(hint) Then
        ShowHTML "          <td valign=""top""><font size=""1""><b>" & Label & "</b><br><SELECT ACCESSKEY=""" & accesskey & """ CLASS=""STS"" NAME=""" & campo & """ " & w_Disabled & " " & atributo & ">"
@@ -99,7 +105,7 @@ REM =========================================================================
 REM Montagem da seleção de iniciativas prioritarias
 REM -------------------------------------------------------------------------
 Sub SelecaoIsProjeto (label, accesskey, hint, chave, chaveAux, campo, restricao, atributo)
-    DB_GetProjeto_IS RS, null, w_cliente, null, null, null, null, null, null, null, null, null, null, restricao
+    DB_GetProjeto_IS RS, null, w_cliente, null, null, null, null, null, null, null, null, null, null, restricao, null
     RS.Sort   = "nome"
     RS.Filter = "ativo = 'S'"
     Dim w_chave_test
@@ -409,6 +415,31 @@ Sub SelecaoTarefa (label, accesskey, hint, cliente, ano, p_chave, campo, restric
        Else
           ShowHTML "          <option value=""" & RS("sq_siw_solicitacao") & """>" & RS("titulo")
        End If
+       RS.MoveNext
+    Wend
+    ShowHTML "          </select>"
+End Sub
+REM =========================================================================
+REM Final da rotina
+REM -------------------------------------------------------------------------
+
+REM =========================================================================
+REM Montagem da seleção de ações não orçamentaria.
+REM -------------------------------------------------------------------------
+Sub SelecaoAcao (label, accesskey, hint, p_cliente, p_ano, p_programa, p_acao, p_subacao, p_unidade, campo, restricao, atributo, p_sq_isprojeto)
+    DB_GetAcao_IS RS, null, null, null, w_ano, w_cliente, restricao, p_sq_isprojeto
+    If IsNull(hint) Then
+       ShowHTML "          <td valign=""top""><font size=""1""><b>" & Label & "</b><br><SELECT ACCESSKEY=""" & accesskey & """ CLASS=""STS"" NAME=""" & campo & """ " & w_Disabled & " " & atributo & ">"
+    Else
+       ShowHTML "          <td valign=""top"" title=""" & hint & """><font size=""1""><b>" & Label & "</b><br><SELECT ACCESSKEY=""" & accesskey & """ CLASS=""STS"" NAME=""" & campo & """ " & w_Disabled & " " & atributo & ">"
+    End If
+    ShowHTML "          <option value="""">---"
+    While Not RS.EOF
+       'If nvl(RS("chave"),"-") = nvl(l_chave,"-") Then
+       '   ShowHTML "          <option value=""" & RS("chave") & """ SELECTED>" & RS("sq_siw_solicitacao") &  " - "  &  RS("titulo")
+       'Else
+          ShowHTML "          <option value=""" & RS("chave") & """>" & RS("chave") &  " - "  &  RS("titulo")
+       'End If
        RS.MoveNext
     Wend
     ShowHTML "          </select>"

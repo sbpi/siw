@@ -612,28 +612,34 @@ REM -------------------------------------------------------------------------
 REM =========================================================================
 REM Verfica se a ação já foi cadastrada
 REM -------------------------------------------------------------------------
-Sub DB_GetAcao_IS(p_rs, p_cd_programa, p_cd_acao, p_cd_unidade, ano, cliente)
+Sub DB_GetAcao_IS(p_rs, p_cd_programa, p_cd_acao, p_cd_unidade, ano, cliente, restricao, p_sq_isprojeto)
   
-  Dim l_cd_programa, l_cd_acao, l_cd_unidade, l_ano, l_cliente
+  Dim l_cd_programa, l_cd_acao, l_cd_unidade, l_ano, l_cliente, l_restricao, l_sq_isprojeto
   
-  Set l_cd_programa = Server.CreateObject("ADODB.Parameter")
-  Set l_cd_acao     = Server.CreateObject("ADODB.Parameter")
-  Set l_cd_unidade  = Server.CreateObject("ADODB.Parameter")
-  Set l_ano         = Server.CreateObject("ADODB.Parameter")
-  Set l_cliente     = Server.CreateObject("ADODB.Parameter")
+  Set l_cd_programa  = Server.CreateObject("ADODB.Parameter")
+  Set l_cd_acao      = Server.CreateObject("ADODB.Parameter")
+  Set l_cd_unidade   = Server.CreateObject("ADODB.Parameter")
+  Set l_ano          = Server.CreateObject("ADODB.Parameter")
+  Set l_cliente      = Server.CreateObject("ADODB.Parameter")
+  Set l_restricao    = Server.CreateObject("ADODB.Parameter")
+  Set l_sq_isprojeto = Server.CreateObject("ADODB.Parameter")
   
   with sp
-     set l_cd_programa           = .CreateParameter("l_cd_programa", adVarChar, adParamInput, 4, p_cd_programa)
-     set l_cd_acao               = .CreateParameter("l_cd_acao",     adVarChar, adParamInput, 4, p_cd_acao)
-     set l_cd_unidade            = .CreateParameter("l_cd_unidade",  adVarChar, adParamInput, 5, p_cd_unidade)
-     set l_ano                  = .CreateParameter("l_ano",         adInteger, adParamInput,  , ano)
-     set l_cliente              = .CreateParameter("l_cliente",     adInteger, adParamInput,  , cliente)
+     set l_cd_programa           = .CreateParameter("l_cd_programa", adVarChar, adParamInput, 4, tvl(p_cd_programa))
+     set l_cd_acao               = .CreateParameter("l_cd_acao",     adVarChar, adParamInput, 4, tvl(p_cd_acao))
+     set l_cd_unidade            = .CreateParameter("l_cd_unidade",  adVarChar, adParamInput, 5, tvl(p_cd_unidade))
+     set l_ano                   = .CreateParameter("l_ano",         adInteger, adParamInput,  , ano)
+     set l_cliente               = .CreateParameter("l_cliente",     adInteger, adParamInput,  , cliente)
+     set l_restricao             = .CreateParameter("l_restricao",   adVarChar, adParamInput,30, tvl(restricao))
+     set l_sq_isprojeto          = .CreateParameter("l_sq_isprojeto",adInteger, adParamInput,  , tvl(p_sq_isprojeto))
      
      .parameters.Append         l_cd_programa
      .parameters.Append         l_cd_acao
      .parameters.Append         l_cd_unidade
      .parameters.Append         l_ano
      .parameters.Append         l_cliente
+     .parameters.Append         l_restricao
+     .parameters.Append         l_sq_isprojeto
      
      If Session("dbms") = 1 or Session("dbms") = 3 Then .Properties("PLSQLRSet") = TRUE End If
      .CommandText               = Session("schema_is") & "SP_GetAcao_IS"
@@ -649,6 +655,8 @@ Sub DB_GetAcao_IS(p_rs, p_cd_programa, p_cd_acao, p_cd_unidade, ano, cliente)
      .Parameters.Delete         "l_cd_unidade"
      .Parameters.Delete         "l_ano"
      .Parameters.Delete         "l_cliente"
+     .Parameters.Delete         "l_restricao"
+     .Parameters.Delete         "l_sq_isprojeto"
 
   end with
 End Sub

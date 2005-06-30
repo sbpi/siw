@@ -125,7 +125,7 @@ REM =========================================================================
 REM Montagem da seleção de pessoas
 REM -------------------------------------------------------------------------
 Sub SelecaoPessoa2 (label, accesskey, hint, chave, chaveAux, campo, O, restricao)
-  DB_GetPersonList RS, w_cliente, ChaveAux, restricao
+  DB_GetPersonList RS, w_cliente, ChaveAux, restricao, null, null, null, null
   RS.Sort = "nome_resumido"
   If IsNull(hint) Then
     ShowHTML "          <td valign=""top""><font size=""1""><b>" & Label & "</b><br><SELECT ACCESSKEY=""" & accesskey & """ CLASS=""STS"" NAME=""" & campo & """ " & w_Disabled & ">"
@@ -142,7 +142,7 @@ Sub SelecaoPessoa2 (label, accesskey, hint, chave, chaveAux, campo, O, restricao
       RS.MoveNext
     Wend   
   
-    DB_GetPersonList RS, w_cliente, ChaveAux, "TTUSUCENTRAL"
+    DB_GetPersonList RS, w_cliente, ChaveAux, "TTUSUCENTRAL", null, null, null, null
     While Not RS.EOF
       If cInt(nvl(RS("sq_pessoa"),0)) <> cInt(nvl(chave,0)) Then
         ShowHTML "          <option value=""" & RS("sq_pessoa") & """>" & RS("NOME_RESUMIDO") & " (" & RS("SG_UNIDADE") & ")"
@@ -151,7 +151,7 @@ Sub SelecaoPessoa2 (label, accesskey, hint, chave, chaveAux, campo, O, restricao
     Wend
     ShowHTML "          </select>"
   Else
-    'DB_GetPersonList RS, w_cliente, ChaveAux, restricao
+    'DB_GetPersonList RS, w_cliente, ChaveAux, restricao, null, null, null, null
     While Not RS.EOF
        If cInt(nvl(RS("sq_pessoa"),0)) = cInt(nvl(chave,0)) Then
           ShowHTML "          <option value=""" & RS("sq_pessoa") & """ SELECTED>" & RS("NOME_RESUMIDO") & " (" & RS("SG_UNIDADE") & ")"

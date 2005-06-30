@@ -46,7 +46,7 @@ Dim w_Assinatura
 Dim p_ativo, p_solicitante, p_unidade, p_proponente, p_ordena, p_agrega, p_tamanho
 Dim p_ini_i, p_ini_f, p_fim_i, p_fim_f, p_atraso, p_tipo
 Dim p_chave, p_assunto, p_usu_resp, p_uorg_resp, p_palavra, p_prazo, p_fase
-Dim p_cd_programa, p_selecao_mp, p_selecao_se
+Dim p_cd_programa, p_selecao_mp, p_selecao_se, p_qtd_restricao
 Dim w_troca,w_cor, w_filter, w_cliente, w_usuario, w_menu
 Dim w_sq_pessoa, w_pag, w_linha, w_nm_quebra, w_qt_quebra, w_filtro
 Dim ul,File
@@ -82,6 +82,7 @@ p_tamanho               = uCase(Request("p_tamanho"))
 p_cd_programa           = uCase(Request("p_cd_programa"))
 p_selecao_mp            = uCase(Request("p_selecao_mp"))
 p_selecao_se            = uCase(Request("p_selecao_se"))
+p_qtd_restricao         = uCase(Request("p_qtd_restricao"))
 
 Private Par
 
@@ -185,6 +186,7 @@ Set p_tamanho           = Nothing
 Set p_cd_programa       = Nothing
 Set p_selecao_mp        = Nothing
 Set p_selecao_se        = Nothing
+Set p_qtd_restricao     = Nothing
 
 Set RS            = Nothing
 Set RS1           = Nothing
@@ -216,10 +218,10 @@ Sub Gerencial
   If O = "L" or O = "V" or O = "W" Then
      w_filtro = ""
      If p_cd_programa > ""  Then 
-        DB_GetProgramaPPA_IS RS, p_cd_programa, w_cliente, w_ano, null
+        DB_GetProgramaPPA_IS RS, p_cd_programa, w_cliente, w_ano, null, null
         w_filtro = w_filtro & "<tr valign=""top""><td align=""right""><font size=1>Programa PPA <td><font size=1>[<b>" & RS("ds_programa") & " (" & RS("cd_programa") & ")" & "</b>]"
      End If
-     If p_chave       > ""  Then w_filtro = w_filtro & "<tr valign=""top""><td align=""right""><font size=1>Ação nº <td><font size=1>[<b>" & p_chave & "</b>]" End If
+     If p_chave       > ""  Then w_filtro = w_filtro & "<tr valign=""top""><td align=""right""><font size=1>Programa nº <td><font size=1>[<b>" & p_chave & "</b>]" End If
      If p_prazo       > ""  Then w_filtro = w_filtro & " <tr valign=""top""><td align=""right""><font size=1>Prazo para conclusão até<td><font size=1>[<b>" & FormatDateTime(DateAdd("d",p_prazo,Date()),1) & "</b>]" End If
      If p_solicitante > ""  Then
         DB_GetPersonData RS, w_cliente, p_solicitante, null, null
@@ -245,13 +247,14 @@ Sub Gerencial
      If p_ini_i       > ""  Then w_filtro = w_filtro & "<tr valign=""top""><td align=""right""><font size=1>Data recebimento <td><font size=1>[<b>" & p_ini_i & "-" & p_ini_f & "</b>]"     End If
      If p_fim_i       > ""  Then w_filtro = w_filtro & "<tr valign=""top""><td align=""right""><font size=1>Limite conclusão <td><font size=1>[<b>" & p_fim_i & "-" & p_fim_f & "</b>]"     End If
      If p_atraso      = "S" Then w_filtro = w_filtro & "<tr valign=""top""><td align=""right""><font size=1>Situação <td><font size=1>[<b>Apenas atrasadas</b>]"                            End If
+     If p_qtd_restricao = "S" Then w_filtro = w_filtro & "<tr valign=""top""><td align=""right""><font size=1>Situação <td><font size=1>[<b>Apenas programas com restrição</b>]"                            End If
      If w_filtro > "" Then w_filtro = "<table border=0><tr valign=""top""><td><font size=1><b>Filtro:</b><td nowrap><font size=1><ul>" & w_filtro & "</ul></tr></table>"                    End If
 
      Select case p_agrega
         Case "GRISPPROGRAMA"
            DB_GetSolicList_IS RS1, P2, w_usuario, p_agrega, 5, _
               p_ini_i, p_ini_f, p_fim_i, p_fim_f, p_atraso, p_solicitante, _
-              p_unidade, null,  p_ativo, p_proponente, p_chave, p_assunto, _
+              p_unidade, null,  p_qtd_restricao, p_proponente, p_chave, p_assunto, _
               null, null, null, null, p_usu_resp, p_uorg_resp, p_palavra, _
               p_prazo, p_fase, null, null, null, p_cd_programa, null, null
            w_TP = TP & " - Por programa"
@@ -259,7 +262,7 @@ Sub Gerencial
         Case "GRISPPROP"
            DB_GetSolicList_IS RS1, P2, w_usuario, p_agrega, 5, _
               p_ini_i, p_ini_f, p_fim_i, p_fim_f, p_atraso, p_solicitante, _
-              p_unidade, null,  p_ativo, p_proponente, p_chave, p_assunto, _
+              p_unidade, null,  p_qtd_restricao, p_proponente, p_chave, p_assunto, _
               null, null, null, null, p_usu_resp, p_uorg_resp, p_palavra, _
               p_prazo, p_fase, null, null, null, p_cd_programa, null, null
            w_TP = TP & " - Por parcerias externas"
@@ -268,7 +271,7 @@ Sub Gerencial
         Case "GRISPRESP"
           DB_GetSolicList_IS RS1, P2, w_usuario, p_agrega, 5, _
               p_ini_i, p_ini_f, p_fim_i, p_fim_f, p_atraso, p_solicitante, _
-              p_unidade, null,  p_ativo, p_proponente, p_chave, p_assunto, _
+              p_unidade, null,  p_qtd_restricao, p_proponente, p_chave, p_assunto, _
               null, null, null, null, p_usu_resp, p_uorg_resp, p_palavra, _
               p_prazo, p_fase, null, null, null, p_cd_programa, null, null
            w_TP = TP & " - Por responsável"
@@ -276,7 +279,7 @@ Sub Gerencial
         Case "GRISPRESPATU"
            DB_GetSolicList_IS RS1, P2, w_usuario, p_agrega, 5, _
               p_ini_i, p_ini_f, p_fim_i, p_fim_f, p_atraso, p_solicitante, _
-              p_unidade, null,  p_ativo, p_proponente, p_chave, p_assunto, _
+              p_unidade, null,  p_qtd_restricao, p_proponente, p_chave, p_assunto, _
               null, null, null, null, p_usu_resp, p_uorg_resp, p_palavra, _
               p_prazo, p_fase, null, null, null, p_cd_programa, null, null
            w_TP = TP & " - Por executor"
@@ -286,7 +289,7 @@ Sub Gerencial
            w_TP = TP & " - Por setor área de planejamento"
            DB_GetSolicList_IS RS1, P2, w_usuario, p_agrega, 5, _
               p_ini_i, p_ini_f, p_fim_i, p_fim_f, p_atraso, p_solicitante, _
-              p_unidade, null,  p_ativo, p_proponente, p_chave, p_assunto, _
+              p_unidade, null,  p_qtd_restricao, p_proponente, p_chave, p_assunto, _
               null, null, null, null, p_usu_resp, p_uorg_resp, p_palavra, _
               p_prazo, p_fase, null, null, null, p_cd_programa, null, null
            RS1.sort = "nm_unidade_resp"
@@ -697,11 +700,11 @@ Sub Gerencial
     ShowHTML "          <td><font size=""1""><b><U>A</U>gregar por:<br><SELECT ACCESSKEY=""A"" " & w_Disabled & " class=""STS"" name=""p_agrega"" size=""1"">"
     Select case p_agrega
        'Case "GRPRINTER"   ShowHTML "          <option value=""GRPRRESPATU"">Executor<option value=""GRPRPROJ"">Ação<option value=""GRPRPROP"">Parcerias externas<option value=""GRPRRESP"">Responsável monitoramento<option value=""GRPRSETOR"">Setor responsável monitoramento"
-       Case "GRISPPROGRAMA" ShowHTML "          <option value=""GRISPRESPATU"">Executor<option value=""GRISPPROGRAMA"" selected>Programa<option value=""GRISPPROP"">Parcerias externas<option value=""GRISPRESP"">Responsável monitoramento<option value=""GRISPSETOR"">Área planejamento"
-       Case "GRISPPROP"     ShowHTML "          <option value=""GRISPRESPATU"">Executor<option value=""GRISPPROGRAMA"">Programa<option value=""GRISPPROP"" selected>Parcerias externas<option value=""GRISPRESP"">Responsável monitoramento<option value=""GRISPSETOR"">Área planejamento"
-       Case "GRISPRESPATU"  ShowHTML "          <option value=""GRISPRESPATU"" selected>Executor<option value=""GRISPPROGRAMA"">Programa<option value=""GRISPPROP"">Parcerias externas<option value=""GRISPRESP"">Responsável monitoramento<option value=""GRISPSETOR"">Área planejamento"
-       Case "GRISPSETOR"    ShowHTML "          <option value=""GRISPRESPATU"">Executor<option value=""GRISPROGRAMA"">Programa<option value=""GRISPPROP"">Parcerias externas<option value=""GRISPRESP"">Responsável monitoramento<option value=""GRISPSETOR"" selected>Área planejamento"
-       Case Else            ShowHTML "          <option value=""GRISPRESPATU"">Executor<option value=""GRISPPROGRAMA"">Programa<option value=""GRISPPROP"">Parcerias externas<option value=""GRISPRESP"" selected>Responsável monitoramento<option value=""GRISPSETOR"">Área planejamento"
+       Case "GRISPPROGRAMA" ShowHTML "          <option value=""GRISPRESPATU"">Usuário atual<option value=""GRISPPROGRAMA"" selected>Programa<option value=""GRISPPROP"">Parcerias externas<option value=""GRISPRESP"">Responsável monitoramento<option value=""GRISPSETOR"">Área planejamento"
+       Case "GRISPPROP"     ShowHTML "          <option value=""GRISPRESPATU"">Usuário atual<option value=""GRISPPROGRAMA"">Programa<option value=""GRISPPROP"" selected>Parcerias externas<option value=""GRISPRESP"">Responsável monitoramento<option value=""GRISPSETOR"">Área planejamento"
+       Case "GRISPRESPATU"  ShowHTML "          <option value=""GRISPRESPATU"" selected>Usuário atual<option value=""GRISPPROGRAMA"">Programa<option value=""GRISPPROP"">Parcerias externas<option value=""GRISPRESP"">Responsável monitoramento<option value=""GRISPSETOR"">Área planejamento"
+       Case "GRISPSETOR"    ShowHTML "          <option value=""GRISPRESPATU"">Usuário atual<option value=""GRISPROGRAMA"">Programa<option value=""GRISPPROP"">Parcerias externas<option value=""GRISPRESP"">Responsável monitoramento<option value=""GRISPSETOR"" selected>Área planejamento"
+       Case Else            ShowHTML "          <option value=""GRISPRESPATU"">Usuário atual<option value=""GRISPPROGRAMA"">Programa<option value=""GRISPPROP"">Parcerias externas<option value=""GRISPRESP"" selected>Responsável monitoramento<option value=""GRISPSETOR"">Área planejamento"
     End Select
     ShowHTML "          </select></td>"
     MontaRadioNS "<b>Inibe exibição do gráfico?</b>", p_tipo, "p_tipo"
@@ -712,18 +715,24 @@ Sub Gerencial
 
     ShowHTML "      <tr><td colspan=2><table border=0 width=""90%"" cellspacing=0><tr valign=""top"">"
     p_cd_programa = ""
-    SelecaoProgramaPPA "Programa <u>P</u>PA:", "P", null, w_cliente, w_ano, p_cd_programa, "p_cd_programa", null, null
+    SelecaoProgramaPPA "Programa <u>P</u>PA:", "P", null, w_cliente, w_ano, p_cd_programa, "p_cd_programa", null, null, w_menu
     ShowHTML "          </table>"   
     ShowHTML "      <tr valign=""top"">"
     'ShowHTML "          <td valign=""top""><font size=""1""><b>Número da <U>a</U>ção:<br><INPUT ACCESSKEY=""A"" " & w_Disabled & " class=""STI"" type=""text"" name=""p_chave"" size=""18"" maxlength=""18"" value=""" & p_chave & """></td>"
     'ShowHTML "          <td valign=""top""><font size=""1"">"
     ShowHTML "          <td valign=""top""><font size=""1""><b>Dias para a data limi<U>t</U>e:<br><INPUT ACCESSKEY=""T"" " & w_Disabled & " class=""STI"" type=""text"" name=""p_prazo"" size=""2"" maxlength=""2"" value=""" & p_prazo & """></td>"
+    ShowHTML "          <td valign=""top""><font size=""1""><b>Exibe somente programas com restrição?</b><br>"
+    If p_qtd_restricao = "S" Then
+       ShowHTML "              <input " & w_Disabled & " class=""STR"" type=""radio"" name=""p_qtd_restricao"" value=""S"" checked> Sim <input " & w_Disabled & " class=""STR"" class=""STR"" type=""radio"" name=""p_qtd_restricao"" value=""N""> Não"
+    Else
+       ShowHTML "              <input " & w_Disabled & " class=""STR"" type=""radio"" name=""p_qtd_restricao"" value=""S""> Sim <input " & w_Disabled & " class=""STR"" class=""STR"" type=""radio"" name=""p_qtd_restricao"" value=""N"" checked> Não"
+    End If
     ShowHTML "      <tr valign=""top"">"
-    SelecaoPessoa "Respo<u>n</u>sável monitoramento:", "N", "Selecione o responsável pelo monitoramento da ação na relação.", p_solicitante, null, "p_solicitante", "USUARIOS"
+    SelecaoPessoa "Respo<u>n</u>sável monitoramento:", "N", "Selecione o responsável pelo monitoramento do programa na relação.", p_solicitante, null, "p_solicitante", "USUARIOS"
     SelecaoUnidade "Área planejamento:", "Y", null, p_unidade, null, "p_unidade", null, null
     ShowHTML "      <tr valign=""top"">"
-    SelecaoPessoa "E<u>x</u>ecutor:", "X", "Selecione o executor da ação na relação.", p_usu_resp, null, "p_usu_resp", "USUARIOS"
-    SelecaoUnidade "Setor atual:", "Y", "Selecione a unidade onde a ação se encontra na relação.", p_uorg_resp, null, "p_uorg_resp", null, null
+    SelecaoPessoa "E<u>x</u>ecutor:", "X", "Selecione o executor do programa na relação.", p_usu_resp, null, "p_usu_resp", "USUARIOS"
+    SelecaoUnidade "Setor atual:", "Y", "Selecione a unidade onde o programa se encontra na relação.", p_uorg_resp, null, "p_uorg_resp", null, null
     'ShowHTML "      <tr><td valign=""top"" colspan=""2""><table border=0 width=""100%"" cellspacing=0>"
     'MontaRadioNS "<b>Selecionada pelo MP?</b>", p_selecao_mp, "w_selecionada_mpog"
     'MontaRadioNS "<b>SE/MS?</b>", p_selecao_se, "w_selecionada_relevante"
@@ -734,8 +743,8 @@ Sub Gerencial
     'ShowHTML "      <tr>"
     'ShowHTML "          <td valign=""top""><font size=""1""><b>Açã<U>o</U>:<br><INPUT ACCESSKEY=""O"" " & w_Disabled & " class=""STI"" type=""text"" name=""p_assunto"" size=""25"" maxlength=""90"" value=""" & p_assunto & """></td>"
     ShowHTML "      <tr>"
-    ShowHTML "          <td valign=""top""><font size=""1""><b>Data de re<u>c</u>ebimento entre:</b><br><input " & w_Disabled & " accesskey=""C"" type=""text"" name=""p_ini_i"" class=""STI"" SIZE=""10"" MAXLENGTH=""10"" VALUE=""" & p_ini_i & """ onKeyDown=""FormataData(this,event);""> e <input " & w_Disabled & " accesskey=""C"" type=""text"" name=""p_ini_f"" class=""STI"" SIZE=""10"" MAXLENGTH=""10"" VALUE=""" & p_ini_f & """ onKeyDown=""FormataData(this,event);""></td>"
-    ShowHTML "          <td valign=""top""><font size=""1""><b>Limi<u>t</u>e para conclusão entre:</b><br><input " & w_Disabled & " accesskey=""T"" type=""text"" name=""p_fim_i"" class=""STI"" SIZE=""10"" MAXLENGTH=""10"" VALUE=""" & p_fim_i & """ onKeyDown=""FormataData(this,event);""> e <input " & w_Disabled & " accesskey=""T"" type=""text"" name=""p_fim_f"" class=""STI"" SIZE=""10"" MAXLENGTH=""10"" VALUE=""" & p_fim_f & """ onKeyDown=""FormataData(this,event);""></td>"
+    ShowHTML "          <td valign=""top""><font size=""1""><b>Data de re<u>c</u>ebimento entre:</b><br><input " & w_Disabled & " accesskey=""C"" type=""text"" name=""p_ini_i"" class=""STI"" SIZE=""10"" MAXLENGTH=""10"" VALUE=""" & p_ini_i & """ onKeyDown=""FormataData(this,event);"" title=""Usar formato dd/mm/aaaa""> e <input " & w_Disabled & " accesskey=""C"" type=""text"" name=""p_ini_f"" class=""STI"" SIZE=""10"" MAXLENGTH=""10"" VALUE=""" & p_ini_f & """ onKeyDown=""FormataData(this,event);"" title=""Usar formato dd/mm/aaaa""></td>"
+    ShowHTML "          <td valign=""top""><font size=""1""><b>Limi<u>t</u>e para conclusão entre:</b><br><input " & w_Disabled & " accesskey=""T"" type=""text"" name=""p_fim_i"" class=""STI"" SIZE=""10"" MAXLENGTH=""10"" VALUE=""" & p_fim_i & """ onKeyDown=""FormataData(this,event);"" title=""Usar formato dd/mm/aaaa""> e <input " & w_Disabled & " accesskey=""T"" type=""text"" name=""p_fim_f"" class=""STI"" SIZE=""10"" MAXLENGTH=""10"" VALUE=""" & p_fim_f & """ onKeyDown=""FormataData(this,event);"" title=""Usar formato dd/mm/aaaa""></td>"
     ShowHTML "      <tr>"
     ShowHTML "          <td valign=""top""><font size=""1""><b>Exibe somente programas em atraso?</b><br>"
     If p_atraso = "S" Then

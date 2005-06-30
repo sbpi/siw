@@ -2,9 +2,9 @@
 REM =========================================================================
 REM Recupera ações do ppa(tabela do SIGPLAN)
 REM -------------------------------------------------------------------------
-Sub DB_GetAcaoPPA_IS(p_rs, p_cliente, p_ano, p_programa, p_acao, p_subacao, p_unidade, p_restricao, p_chave)
+Sub DB_GetAcaoPPA_IS(p_rs, p_cliente, p_ano, p_programa, p_acao, p_subacao, p_unidade, p_restricao, p_chave, p_nome)
   
-  Dim l_programa, l_acao, l_subacao, l_unidade, l_cliente, l_ano, l_restricao, l_chave
+  Dim l_programa, l_acao, l_subacao, l_unidade, l_cliente, l_ano, l_restricao, l_chave, l_nome
   
   Set l_programa         = Server.CreateObject("ADODB.Parameter")
   Set l_acao             = Server.CreateObject("ADODB.Parameter")
@@ -14,6 +14,7 @@ Sub DB_GetAcaoPPA_IS(p_rs, p_cliente, p_ano, p_programa, p_acao, p_subacao, p_un
   Set l_ano              = Server.CreateObject("ADODB.Parameter")
   Set l_restricao        = Server.CreateObject("ADODB.Parameter")
   Set l_chave            = Server.CreateObject("ADODB.Parameter")
+  Set l_nome             = Server.CreateObject("ADODB.Parameter")
 
   with sp
      set l_cliente            = .CreateParameter("l_cliente",       adInteger, adParamInput,    , p_cliente)
@@ -24,6 +25,7 @@ Sub DB_GetAcaoPPA_IS(p_rs, p_cliente, p_ano, p_programa, p_acao, p_subacao, p_un
      set l_unidade            = .CreateParameter("l_unidade",       adVarchar, adParamInput,   5, tvl(p_unidade))
      set l_restricao          = .CreateParameter("l_restricao",     adVarchar, adParamInput,  30, tvl(p_restricao))
      set l_chave              = .CreateParameter("l_chave",         adInteger, adParamInput,    , tvl(p_chave))
+     set l_nome               = .CreateParameter("l_nome",          adVarchar, adParamInput, 100, tvl(p_nome))
      .parameters.Append         l_cliente
      .parameters.Append         l_ano
      .parameters.Append         l_programa
@@ -32,6 +34,7 @@ Sub DB_GetAcaoPPA_IS(p_rs, p_cliente, p_ano, p_programa, p_acao, p_subacao, p_un
      .parameters.Append         l_unidade
      .parameters.Append         l_restricao
      .parameters.Append         l_chave
+     .parameters.Append         l_nome
      If Session("dbms") = 1 or Session("dbms") = 3 Then .Properties("PLSQLRSet") = TRUE End If
      .CommandText               = Session("schema_is") & "SP_GetAcaoPPA_IS"
      Set p_rs = Server.CreateObject("ADODB.RecordSet")
@@ -51,6 +54,7 @@ Sub DB_GetAcaoPPA_IS(p_rs, p_cliente, p_ano, p_programa, p_acao, p_subacao, p_un
      .Parameters.Delete         "l_unidade"
      .Parameters.Delete         "l_restricao"
      .Parameters.Delete         "l_chave"
+     .Parameters.Delete         "l_nome"
   end with
 
 End Sub
@@ -61,23 +65,28 @@ REM -------------------------------------------------------------------------
 REM =========================================================================
 REM Recupera os programas do ppa(tabela do SIGPLAN)
 REM -------------------------------------------------------------------------
-Sub DB_GetProgramaPPA_IS(p_rs, p_chave, p_cliente, p_ano, p_restricao)
-  Dim l_cliente, l_ano, l_chave, l_restricao
+Sub DB_GetProgramaPPA_IS(p_rs, p_chave, p_cliente, p_ano, p_restricao, p_nome)
+  Dim l_cliente, l_ano, l_chave, l_restricao, l_nome
   
   Set l_cliente            = Server.CreateObject("ADODB.Parameter")
   Set l_ano                = Server.CreateObject("ADODB.Parameter")
   Set l_chave              = Server.CreateObject("ADODB.Parameter")
   Set l_restricao          = Server.CreateObject("ADODB.Parameter")
+  Set l_nome               = Server.CreateObject("ADODB.Parameter")
 
   with sp
      set l_cliente            = .CreateParameter("l_cliente",            adInteger, adParamInput,    , p_cliente)
      set l_ano                = .CreateParameter("l_ano",                adInteger, adParamInput,    , p_ano)
      set l_chave              = .CreateParameter("l_chave",              adVarchar, adParamInput,   4, tvl(p_chave))
      set l_restricao          = .CreateParameter("l_restricao",          adVarchar, adParamInput,  30, tvl(p_restricao))
+     set l_nome               = .CreateParameter("l_nome",               adVarchar, adParamInput, 100, tvl(p_nome))
+
      .parameters.Append         l_cliente
      .parameters.Append         l_ano
      .parameters.Append         l_chave
      .parameters.Append         l_restricao
+     .parameters.Append         l_nome
+          
      If Session("dbms") = 1 or Session("dbms") = 3 Then .Properties("PLSQLRSet") = TRUE End If
      .CommandText               = Session("schema_is") & "SP_GetProgramaPPA_IS"
      Set p_rs = Server.CreateObject("ADODB.RecordSet")
@@ -93,6 +102,8 @@ Sub DB_GetProgramaPPA_IS(p_rs, p_chave, p_cliente, p_ano, p_restricao)
      .Parameters.Delete         "l_ano"
      .Parameters.Delete         "l_chave"
      .Parameters.Delete         "l_restricao"
+     .Parameters.Delete         "l_nome"
+     
   end with
 
 End Sub
@@ -334,11 +345,11 @@ REM Final da rotina
 REM -------------------------------------------------------------------------
 
 REM =========================================================================
-REM Recupera ações do ppa
+REM Recupera o projetos/planos
 REM -------------------------------------------------------------------------
-Sub DB_GetProjeto_IS(p_rs, p_chave, p_cliente, p_codigo, p_nome, p_responsavel, p_telefone, p_email, p_ordem, p_ativo, p_padrao, p_selecao_mp, p_selecao_se, p_restricao)
+Sub DB_GetProjeto_IS(p_rs, p_chave, p_cliente, p_codigo, p_nome, p_responsavel, p_telefone, p_email, p_ordem, p_ativo, p_padrao, p_selecao_mp, p_selecao_se, p_restricao, p_siw_solic)
 
-  Dim l_chave, l_cliente, l_codigo, l_nome, l_responsavel, l_telefone, l_email, l_ordem, l_ativo, l_padrao, l_selecao_mp, l_selecao_se, l_restricao
+  Dim l_chave, l_cliente, l_codigo, l_nome, l_responsavel, l_telefone, l_email, l_ordem, l_ativo, l_padrao, l_selecao_mp, l_selecao_se, l_restricao, l_siw_solic
   
   Set l_chave       = Server.CreateObject("ADODB.Parameter")
   Set l_cliente     = Server.CreateObject("ADODB.Parameter")
@@ -352,7 +363,8 @@ Sub DB_GetProjeto_IS(p_rs, p_chave, p_cliente, p_codigo, p_nome, p_responsavel, 
   Set l_padrao      = Server.CreateObject("ADODB.Parameter")
   Set l_selecao_mp  = Server.CreateObject("ADODB.Parameter")  
   Set l_selecao_se  = Server.CreateObject("ADODB.Parameter")
-  Set l_restricao   = Server.CreateObject("ADODB.Parameter")    
+  Set l_restricao   = Server.CreateObject("ADODB.Parameter")
+  Set l_siw_solic   = Server.CreateObject("ADODB.Parameter")
   
   with sp
        
@@ -368,7 +380,8 @@ Sub DB_GetProjeto_IS(p_rs, p_chave, p_cliente, p_codigo, p_nome, p_responsavel, 
      set l_padrao       = .CreateParameter("l_padrao"      , adVarchar, adParamInput,   1, Tvl(p_padrao))
      set l_selecao_mp   = .CreateParameter("l_selecao_mp"  , adVarchar, adParamInput,   1, Tvl(p_selecao_mp))
      set l_selecao_se   = .CreateParameter("l_selecao_se"  , adVarchar, adParamInput,   1, Tvl(p_selecao_se))
-     set l_restricao    = .CreateParameter("l_restricao"   , adVarchar, adParamInput,  30, Tvl(p_restricao))          
+     set l_restricao    = .CreateParameter("l_restricao"   , adVarchar, adParamInput,  30, Tvl(p_restricao))
+     set l_siw_solic    = .CreateParameter("l_siw_solic"   , adInteger, adParamInput,    , Tvl(p_siw_solic))
           
      .parameters.Append l_chave
      .parameters.Append l_cliente
@@ -383,6 +396,7 @@ Sub DB_GetProjeto_IS(p_rs, p_chave, p_cliente, p_codigo, p_nome, p_responsavel, 
      .parameters.Append l_selecao_mp
      .parameters.Append l_selecao_se
      .parameters.Append l_restricao
+     .parameters.Append l_siw_solic
      
      If Session("dbms") = 1 or Session("dbms") = 3 Then .Properties("PLSQLRSet") = TRUE End If
      .CommandText               = Session("schema_is") & "SP_GetProjeto_IS"
@@ -409,6 +423,7 @@ Sub DB_GetProjeto_IS(p_rs, p_chave, p_cliente, p_codigo, p_nome, p_responsavel, 
      .parameters.Delete "l_selecao_mp"
      .parameters.Delete "l_selecao_se"          
      .parameters.Delete "l_restricao"
+     .parameters.Delete "l_siw_solic"
   end with
 
 End Sub

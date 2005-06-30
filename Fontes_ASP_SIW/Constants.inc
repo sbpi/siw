@@ -558,7 +558,7 @@ Const conEndPage                = "<!-- #Fim da Pagina -->"
 Const strconn  = "Provider=OraOLEDB.Oracle.1;Password=siw;Persist Security Info=True;User ID=siw;Data Source=marte.sbpi.com.br"
 Const strconn2 = "Provider=SQLOLEDB.1;Password=siw;Persist Security Info=True;User ID=siw;Initial Catalog=SIW;Data Source=JUPITER"
 Const strconn3 = "Provider=OraOLEDB.Oracle.1;Password=siw;Persist Security Info=True;User ID=siw;Data Source=saturno.sbpi.com.br"
-'Const strconn3 = "Provider=PostgreSQL;Data Source=saturno;Location=siw;User ID=siw;Password=siw;"
+Const strconn4 = "Provider=PostgreSQL;Data Source=saturno;Location=siw;User ID=siw;Password=siw;"
 
 Const strschema = "siw."
 Const strschema_is = "siw_is."

@@ -955,18 +955,35 @@ REM -------------------------------------------------------------------------
 REM =========================================================================
 REM Recupera as pessoas vinculadas a um cliente
 REM -------------------------------------------------------------------------
-Sub DB_GetPersonList(p_rs, p_cliente, p_chave, p_restricao)
-  Dim l_cliente, l_chave, l_restricao
-  Set l_cliente   = Server.CreateObject("ADODB.Parameter")
-  Set l_chave     = Server.CreateObject("ADODB.Parameter")
-  Set l_restricao = Server.CreateObject("ADODB.Parameter")
+Sub DB_GetPersonList(p_rs, p_cliente, p_chave, p_restricao, p_nome, p_sg_unidade, p_codigo, p_filhos)
+  
+  Dim l_cliente, l_chave, l_restricao, l_nome, l_sg_unidade, l_codigo, l_filhos
+  
+  Set l_cliente    = Server.CreateObject("ADODB.Parameter")
+  Set l_chave      = Server.CreateObject("ADODB.Parameter")
+  Set l_restricao  = Server.CreateObject("ADODB.Parameter")
+  Set l_nome       = Server.CreateObject("ADODB.Parameter")
+  Set l_sg_unidade = Server.CreateObject("ADODB.Parameter")
+  Set l_codigo     = Server.CreateObject("ADODB.Parameter")
+  Set l_filhos     = Server.CreateObject("ADODB.Parameter")
+  
   with sp
      set l_cliente              = .CreateParameter("l_cliente",     adInteger, adParamInput, , p_cliente)
      set l_chave                = .CreateParameter("l_chave",       adInteger, adParamInput, , Tvl(p_chave))
      set l_restricao            = .CreateParameter("l_restricao",   adVarChar, adParamInput, 20, p_restricao)
+     set l_nome                 = .CreateParameter("l_nome",        adVarChar, adParamInput, 60, Tvl(p_nome))
+     set l_sg_unidade           = .CreateParameter("l_sg_unidade",  adVarChar, adParamInput, 20, Tvl(p_sg_unidade))
+     set l_codigo               = .CreateParameter("l_codigo",      adInteger, adParamInput,   , Tvl(p_codigo))
+     set l_filhos               = .CreateParameter("l_filhos",      adVarChar, adParamInput,  1, Tvl(p_filhos))
+     
      .parameters.Append         l_cliente
      .parameters.Append         l_chave
      .parameters.Append         l_restricao
+     .parameters.Append         l_nome
+     .parameters.Append         l_sg_unidade
+     .parameters.Append         l_codigo
+     .parameters.Append         l_filhos
+     
      If Session("dbms") = 1 or Session("dbms") = 3 Then .Properties("PLSQLRSet") = TRUE End If
      .CommandText               = Session("schema") & "SP_GetPersonList"
      On Error Resume Next
@@ -975,9 +992,15 @@ Sub DB_GetPersonList(p_rs, p_cliente, p_chave, p_restricao)
         TrataErro
      End If     
      If Session("dbms") = 1 or Session("dbms") = 3 Then .Properties("PLSQLRSet") = FALSE End If
+     
      .Parameters.Delete         "l_cliente"
      .Parameters.Delete         "l_chave"
      .Parameters.Delete         "l_restricao"
+     .Parameters.Delete         "l_nome"
+     .Parameters.Delete         "l_sg_unidade"
+     .Parameters.Delete         "l_codigo"
+     .Parameters.Delete         "l_filhos"
+     
   end with
 End Sub
 REM =========================================================================

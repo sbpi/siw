@@ -1389,52 +1389,74 @@ Public Sub Grava
                             w_cont = 0
                             for j = 0 to .item(i).childNodes.length - 1
                                ' Recupera cada um dos campos referenciados pelo elemento
-                               DB_GetEsquemaAtributo RS2, null, RS1("sq_esquema_tabela"), null, null
-                               RS2.Filter = "ordem=" & j+1 & " and campo_externo='" & .item(i).childNodes.item(j).nodename & "'"
+                               'DB_GetEsquemaAtributo RS2, null, RS1("sq_esquema_tabela"), null, null
+                               'RS2.Filter = "ordem=" & j+1 & " and campo_externo='" & .item(i).childNodes.item(j).nodename & "'"
                                w_cont     = w_cont + 1
-                               If Not RS2.EOF Then
-                                  If RS2("campo_externo") = .item(i).childNodes.item(j).nodename Then
+                               'If Not RS2.EOF Then
+                                  'If RS2("campo_externo") = .item(i).childNodes.item(j).nodename Then
                                      ' Valida o campo
                                      w_campo = .item(i).childNodes.item(j).text
-                                     If RS2("obrigatorio") = "S" Then
-                                        w_result = fValidate(1, w_campo, RS2("nm_coluna"), "", 1, 1, cStr(RS2("tamanho")), "1", "1")
-                                     Else
-                                        w_result = fValidate(1, w_campo, RS2("nm_coluna"), "", "", 1, cStr(RS2("tamanho")), "1", "1")
-                                     End If
-                                     If w_result > "" Then 
-                                        F1.WriteLine RS2("nm_coluna") & " E => " & .item(i).childNodes.item(j).nodename & " = '" & .item(i).childNodes.item(j).text & "' "
-                                        w_erro = 1
-                                     Else
-                                        If uCase(.item(i).childNodes.item(j).text) = "TRUE" Then
+                                     'If RS2("obrigatorio") = "S" Then
+                                     '   w_result = fValidate(1, w_campo, RS2("nm_coluna"), "", 1, 1, cStr(RS2("tamanho")), "1", "1")
+                                     'Else
+                                     '   w_result = fValidate(1, w_campo, RS2("nm_coluna"), "", "", 1, cStr(RS2("tamanho")), "1", "1")
+                                     'End If
+                                     'If w_result > "" Then 
+                                     '   F1.WriteLine RS2("nm_coluna") & " E => " & .item(i).childNodes.item(j).nodename & " = '" & .item(i).childNodes.item(j).text & "' "
+                                     '   w_erro = 1
+                                     'Else
+                                        If uCase(w_campo) = "TRUE" Then
                                            w_param(w_cont) = "S"
-                                        ElseIf uCase(.item(i).childNodes.item(j).text) = "FALSE" Then
+                                        ElseIf uCase(w_campo) = "FALSE" Then
                                            w_param(w_cont) = "N"
                                         Else
-                                           w_param(w_cont) = .item(i).childNodes.item(j).text
+                                           w_param(w_cont) = w_campo
                                         End If
-                                     End If
-                                  End If
-                               End If
+                                     'End If
+                                  'End If
+                               'End If
                             next
+                            'Response.Write RS1("nm_tabela")
+                            'Response.End
                             select case RS1("nm_tabela")
-                               case "IS_PPA_ESFERA"         DML_PutXMLEsfera                w_param(1), w_param(2), "S"
-                               case "IS_PPA_UNIDADE_MEDIDA" DML_PutXMLUnidade_Medida_PPA    w_param(1), w_param(2), "S"
-                               case "IS_PPA_ORGAO"          DML_PutXMLOrgao_PPA             w_param(1), w_param(2), w_param(3), w_param(4), "S"
-                               case "IS_PPA_ORGAO_SIORG"    DML_PutXMLOrgao_Siorg_PPA       w_param(1), w_param(2), w_param(3), w_param(4), w_param(5), "S"
-                               case "IS_PPA_UNIDADE"        DML_PutXMLUnidade_PPA           w_param(1), w_param(2), w_param(3), w_param(4), w_param(5)
-                               case "IS_PPA_TIPO_ACAO"      DML_PutXMLTipo_Acao_PPA         w_param(1), w_param(2), "S"
-                               case "IS_PPA_TIPO_DESPESA"   DML_PutXMLTipo_Despesa          w_param(1), w_param(2), "S"
-                               case "IS_TIPO_ATUALIZACAO"   DML_PutXMLTipo_Atualizacao      w_param(1), w_param(2), "S"
-                               case "IS_PPA_TIPO_PROGRAMA"  DML_PutXMLTipo_Programa_PPA     w_param(1), w_param(2), "S"
-                               case "IS_TIPO_INCLUSAO_ACAO" DML_PutXMLTipo_Inclusao_Acao    w_param(1), w_param(2), "S"
-                               case "IS_PPA_NATUREZA"       DML_PutXMLNatureza              w_param(1), w_param(2), w_param(3), "S"
-                               case "IS_PPA_FUNCAO"         DML_PutXMLFuncao                w_param(1), w_param(2), "S"
-                               case "IS_PPA_SUBFUNCAO"      DML_PutXMLSubFuncao             w_param(1), w_param(2), w_param(3) 
-                               case "IS_PPA_FONTE"          DML_PutXMLFonte_PPA             w_param(1), w_param(2), w_param(3), w_param(4)
-                               case "IS_REGIAO"             DML_PutXMLREGIAO                w_param(1), w_param(2), w_param(3), w_param(4)
-                               case "IS_MUNICIPIO"          DML_PutXMLMunicipio             w_param(1), w_param(2), w_param(3)
-                               case "IS_PPA_PRODUTO"        DML_PutXMLProduto_PPA           w_param(1), w_param(2), "S"
-                               'case "IS_SIG_TIPO_ORGAO"     DML_PutXMLTipo_Orgao_SIG        w_param(1), w_param(2), "S"
+                               case "IS_PPA_ESFERA"          DML_PutXMLEsfera                w_param(1), w_param(2), "S"
+                               case "IS_PPA_UNIDADE_MEDIDA"  DML_PutXMLUnidade_Medida_PPA    w_param(1), w_param(2), "S"
+                               case "IS_PPA_ORGAO"           DML_PutXMLOrgao_PPA             w_param(1), w_param(2), w_param(3), w_param(4), "S"
+                               case "IS_PPA_ORGAO_SIORG"     DML_PutXMLOrgao_Siorg_PPA       w_param(1), w_param(2), w_param(3), w_param(4), w_param(5), "S"
+                               case "IS_PPA_UNIDADE"         DML_PutXMLUnidade_PPA           w_param(1), w_param(2), w_param(3), w_param(4), w_param(5)
+                               case "IS_PPA_TIPO_ACAO"       DML_PutXMLTipo_Acao_PPA         w_param(1), w_param(2), "S"
+                               case "IS_PPA_TIPO_DESPESA"    DML_PutXMLTipo_Despesa          w_param(1), w_param(2), "S"
+                               case "IS_TIPO_ATUALIZACAO"    DML_PutXMLTipo_Atualizacao      w_param(1), w_param(2), "S"
+                               case "IS_PPA_TIPO_PROGRAMA"   DML_PutXMLTipo_Programa_PPA     w_param(1), w_param(2), "S"
+                               case "IS_TIPO_INCLUSAO_ACAO"  DML_PutXMLTipo_Inclusao_Acao    w_param(1), w_param(2), "S"
+                               case "IS_PPA_NATUREZA"        DML_PutXMLNatureza              w_param(1), w_param(2), w_param(3), "S"
+                               case "IS_PPA_FUNCAO"          DML_PutXMLFuncao                w_param(1), w_param(2), "S"
+                               case "IS_PPA_SUBFUNCAO"       DML_PutXMLSubFuncao             w_param(1), w_param(2), w_param(3) 
+                               case "IS_PPA_FONTE"           DML_PutXMLFonte_PPA             w_param(1), w_param(2), w_param(3), w_param(4)
+                               case "IS_REGIAO"              DML_PutXMLREGIAO                w_param(1), w_param(2), w_param(3), w_param(4)
+                               case "IS_MUNICIPIO"           DML_PutXMLMunicipio             w_param(1), w_param(2), w_param(3)
+                               case "IS_PPA_PRODUTO"         DML_PutXMLProduto_PPA           w_param(1), w_param(2), "S"
+                               case "IS_PPA_PROGRAMA"        DML_PutXMLPrograma_PPA          w_cliente,  w_ano,      w_param(1), w_param(2), w_param(3), w_param(4), w_param(5), w_param(6), w_param(7), w_param(8), w_param(9), w_param(10), w_param(11), w_param(12), w_param(13), w_param(14), w_param(15), w_param(16), w_param(17), w_param(18)
+                               case "IS_PPA_INDICADOR"       DML_PutXMLIndicador_PPA         w_cliente,  w_ano,      w_param(1), w_param(2), w_param(3), w_param(4), w_param(5), w_param(6), w_param(7), w_param(8), w_param(9), w_param(10), w_param(11), w_param(12), w_param(13), w_param(14), w_param(15), w_param(16), w_param(17), w_param(18), w_param(19), w_param(20), w_param(21), w_param(22), w_param(23), w_param(24), w_param(25), w_param(26)
+                               case "IS_PPA_ACAO"            DML_PutXMLAcao_PPA              w_cliente,  w_ano,      w_param(1), w_param(2), w_param(3), w_param(4), w_param(5), w_param(6), w_param(7), w_param(8), w_param(9), w_param(10), w_param(11), w_param(12), w_param(13), w_param(14), w_param(15), w_param(16), w_param(17), w_param(18), w_param(19), w_param(20), w_param(21), w_param(22), w_param(23), w_param(24), w_param(25), w_param(26), w_param(27), w_param(28), w_param(29), w_param(30), w_param(31), w_param(32), w_param(33), w_param(34), w_param(35), w_param(36), w_param(37), w_param(38), w_param(39), w_param(40), w_param(41), w_param(42), w_param(43), w_param(44), w_param(45)
+                               case "IS_PPA_LOCALIZADOR"     DML_PutXMLLocalizador_PPA       w_cliente,  w_ano,      w_param(1), w_param(2), w_param(3), w_param(4), w_param(5), w_param(6), w_param(7), w_param(8), w_param(9), w_param(10), w_param(11), w_param(12), w_param(13), w_param(14), w_param(15), w_param(16), w_param(17), w_param(18), w_param(19), w_param(20), w_param(21), w_param(22)
+                               case "IS_PPA_DADO_FISICO"     DML_PutXMLDadoFisico_PPA        w_cliente,  w_ano,      w_param(1), w_param(2), w_param(3), w_param(4), w_param(5), w_param(6), w_param(7), w_param(8), w_param(9), w_param(10), w_param(11)
+                               case "IS_PPA_DADO_FINANCEIRO" DML_PutXMLDadoFinanceiro_PPA    w_cliente,  w_ano,      w_param(1), w_param(2), w_param(3), w_param(4), w_param(5), w_param(6), w_param(7), w_param(8), w_param(9), w_param(10), w_param(11), w_param(12), w_param(13)
+                               case "IS_SIG_BASE_GEOGRAFICA" DML_PutXMLBase_Geografica       w_param(1), w_param(2), "S"
+                               case "IS_SIG_FONTE"           DML_PutXMLFonte_SIG             w_param(1), w_param(2), w_param(3), w_param(4), w_param(5), "S"
+                               case "IS_SIG_OPCAO_ESTRAT"    DML_PutXMLOpcao_Estrat          w_param(1), w_param(2), "S"
+                               case "IS_SIG_PERIODICIDADE"   DML_PutXMLPeriodicidade         w_param(1), w_param(2), "S"
+                               case "IS_SIG_PRODUTO"         DML_PutXMLProduto_SIG           w_param(1), w_param(2), "S"
+                               case "IS_SIG_TIPO_ACAO"       DML_PutXMLTipo_Acao             w_param(1), w_param(2), "S"
+                               case "IS_SIG_TIPO_ORGAO"      DML_PutXMLTipo_Orgao_SIG        w_param(1), w_param(2), "S"
+                               case "IS_SIG_TIPO_PROGRAMA"   DML_PutXMLTipo_Programa         w_param(1), w_param(2), "S"
+                               case "IS_SIG_TIPO_RESTRICAO"  DML_PutXMLTipo_Restricao        w_param(1), w_param(2), "S"
+                               case "IS_SIG_TIPO_SITUACAO"   DML_PutXMLTipo_Situacao         w_param(1), w_param(2), w_param(3), "S"
+                               case "IS_SIG_UNIDADE_MEDIDA"  DML_PutXMLUnidade_Medida_SIG    w_param(1), w_param(2), w_param(3), "S"
+                               case "IS_SIG_MACRO_OBJETIVO"  DML_PutXMLMacro_Objetivo        w_param(1), w_param(2), w_param(3), "S"
+                               case "IS_SIG_ORGAO"           DML_PutXMLOrgao_SIG             w_param(1), w_param(2), w_param(3), w_param(4), "---", "S"
+                               case "IS_SIG_UNIDADE"         DML_PutXMLUnidade_SIG           w_param(1), w_param(2), w_param(3), w_param(4), w_param(5), w_param(6)
+                               case "IS_SIG_PROGRAMA"        DML_PutXMLPrograma_SIG          w_cliente,  w_param(1), w_param(2), w_param(3), w_param(4), w_param(5), w_param(6), w_param(7), w_param(8), w_param(9), w_param(10), w_param(11), w_param(12), w_param(13), w_param(14), w_param(15), w_param(16), w_param(17), w_param(18), w_param(19), w_param(20), w_param(21), w_param(22), w_param(23), w_param(24), w_param(25), w_param(26), w_param(27), w_param(28), w_param(29), w_param(30), w_param(31)
                             end select
                          next
                       End With

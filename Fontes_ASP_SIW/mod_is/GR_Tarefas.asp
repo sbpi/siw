@@ -206,7 +206,12 @@ Sub Gerencial
      w_filtro = ""
      If p_projeto > ""  Then 
         DB_GetSolicData_IS RS, p_projeto, "ISACGERAL"
-        w_filtro = w_filtro & "<tr valign=""top""><td align=""right""><font size=1>Ação <td><font size=1>[<b><A class=""HL"" HREF=""Acao.asp?par=Visual&O=L&w_chave=" & p_projeto & "&w_tipo=Volta&P1=" & P1 & "&P2=" & P2 & "&P3=" & P3 & "&P4=" & P4 & "&TP=" & TP & "&SG=" & SG & """ title=""Exibe as informações da ação."">" & RS("titulo") & "</a></b>]"
+        DB_GetMenuData RS2, P2
+        If Nvl(RS("cd_acao"),"") > "" Then
+           w_filtro = w_filtro & "<tr valign=""top""><td align=""right""><font size=1>Ação <td><font size=1>[<b><A class=""HL"" HREF=""" & w_dir & "Acao.asp?par=Visual&O=L&w_chave=" & p_projeto & "&w_tipo=Volta&P1=" & P1 & "&P2=" & P2 & "&P3=" & P3 & "&P4=" & P4 & "&TP=" & TP & "&SG=" & RS2("sigla") & """ title=""Exibe as informações da ação."">" & RS("cd_unidade") & "." & RS("cd_programa") & "." & RS("cd_acao") & " - " & RS("nm_ppa") & " (" & RS("ds_unidade") & ")</a></b>]"
+        Else
+           w_filtro = w_filtro & "<tr valign=""top""><td align=""right""><font size=1>Ação <td><font size=1>[<b><A class=""HL"" HREF=""" & w_dir & "Acao.asp?par=Visual&O=L&w_chave=" & p_projeto & "&w_tipo=Volta&P1=" & P1 & "&P2=" & P2 & "&P3=" & P3 & "&P4=" & P4 & "&TP=" & TP & "&SG=" & RS2("sigla") & """ title=""Exibe as informações da ação."">" & RS("titulo") & "</a></b>]"
+        End If
      End If
      If p_chave       > ""  Then w_filtro = w_filtro & "<tr valign=""top""><td align=""right""><font size=1>Demanda nº <td><font size=1>[<b>" & p_chave & "</b>]" End If
      If p_prazo       > ""  Then w_filtro = w_filtro & " <tr valign=""top""><td align=""right""><font size=1>Prazo para conclusão até<td><font size=1>[<b>" & FormatDateTime(DateAdd("d",p_prazo,Date()),1) & "</b>]" End If
@@ -727,7 +732,7 @@ Sub Gerencial
     'If p_agrega = "GRISTAREA"        Then                             ShowHTML " <option value=""GRISTAREA"" selected>Área envolvida"                   Else ShowHTML " <option value=""GRISTAREA"">Área envolvida"                    End If
     If p_agrega = "GRISTACAO"        Then                             ShowHTML " <option value=""GRISTACAO"" selected>Ação"                             Else ShowHTML " <option value=""GRISTACAO"">Ação"                              End If
     If p_agrega = "GRISTPRIO"        Then                             ShowHTML " <option value=""GRISTPRIO"" selected>Prioridade"                       Else ShowHTML " <option value=""GRISTPRIO"">Prioridade"                        End If
-    If p_agrega = "GRISTRESPATU"     Then                             ShowHTML " <option value=""GRISTRESPATU"" selected>Executor"                      Else ShowHTML " <option value=""GRISTRESPATU"">Executor"                       End If
+    If p_agrega = "GRISTRESPATU"     Then                             ShowHTML " <option value=""GRISTRESPATU"" selected>Usuário atual"                 Else ShowHTML " <option value=""GRISTRESPATU"">Usuário atual"                       End If
     If p_agrega = "GRISTPROP"        Then                             ShowHTML " <option value=""GRISTPROP"" selected>Parceria externa"                 Else ShowHTML " <option value=""GRISTPROP"">Parceria externa"                  End If
     If Nvl(p_agrega,"GRISTRESP") = "GRISTRESP" Then                   ShowHTML " <option value=""GRISTRESP"" selected>Responsável monitoramento"        Else ShowHTML " <option value=""GRISTRESP"">Responsável pelo monitoramento"    End If
     If p_agrega = "GRISTSETOR"       Then                             ShowHTML " <option value=""GRISTSETOR"" selected>Área de planejamento"            Else ShowHTML " <option value=""GRISTSETOR"">Área de planejamento"             End If
@@ -761,8 +766,8 @@ Sub Gerencial
     ShowHTML "          <td valign=""top""><font size=""1""><b>Detalha<U>m</U>ento:<br><INPUT ACCESSKEY=""M"" " & w_Disabled & " class=""STI"" type=""text"" name=""p_assunto"" size=""25"" maxlength=""90"" value=""" & p_assunto & """></td>"
     ShowHTML "          <td valign=""top"" colspan=2><font size=""1""><b>R<U>e</U>sponsável:<br><INPUT ACCESSKEY=""E"" " & w_Disabled & " class=""STI"" type=""text"" name=""p_palavra"" size=""25"" maxlength=""90"" value=""" & p_palavra & """></td>"
     ShowHTML "      <tr>"
-    ShowHTML "          <td valign=""top""><font size=""1""><b>Data de re<u>c</u>ebimento entre:</b><br><input " & w_Disabled & " accesskey=""C"" type=""text"" name=""p_ini_i"" class=""STI"" SIZE=""10"" MAXLENGTH=""10"" VALUE=""" & p_ini_i & """ onKeyDown=""FormataData(this,event);""> e <input " & w_Disabled & " accesskey=""C"" type=""text"" name=""p_ini_f"" class=""STI"" SIZE=""10"" MAXLENGTH=""10"" VALUE=""" & p_ini_f & """ onKeyDown=""FormataData(this,event);""></td>"
-    ShowHTML "          <td valign=""top""><font size=""1""><b>Lim<u>i</u>te para conclusão entre:</b><br><input " & w_Disabled & " accesskey=""I"" type=""text"" name=""p_fim_i"" class=""STI"" SIZE=""10"" MAXLENGTH=""10"" VALUE=""" & p_fim_i & """ onKeyDown=""FormataData(this,event);""> e <input " & w_Disabled & " accesskey=""I"" type=""text"" name=""p_fim_f"" class=""STI"" SIZE=""10"" MAXLENGTH=""10"" VALUE=""" & p_fim_f & """ onKeyDown=""FormataData(this,event);""></td>"
+    ShowHTML "          <td valign=""top""><font size=""1""><b>Data de re<u>c</u>ebimento entre:</b><br><input " & w_Disabled & " accesskey=""C"" type=""text"" name=""p_ini_i"" class=""STI"" SIZE=""10"" MAXLENGTH=""10"" VALUE=""" & p_ini_i & """ onKeyDown=""FormataData(this,event);"" title=""Usar formato dd/mm/aaaa""> e <input " & w_Disabled & " accesskey=""C"" type=""text"" name=""p_ini_f"" class=""STI"" SIZE=""10"" MAXLENGTH=""10"" VALUE=""" & p_ini_f & """ onKeyDown=""FormataData(this,event);"" title=""Usar formato dd/mm/aaaa""></td>"
+    ShowHTML "          <td valign=""top""><font size=""1""><b>Lim<u>i</u>te para conclusão entre:</b><br><input " & w_Disabled & " accesskey=""I"" type=""text"" name=""p_fim_i"" class=""STI"" SIZE=""10"" MAXLENGTH=""10"" VALUE=""" & p_fim_i & """ onKeyDown=""FormataData(this,event);"" title=""Usar formato dd/mm/aaaa""> e <input " & w_Disabled & " accesskey=""I"" type=""text"" name=""p_fim_f"" class=""STI"" SIZE=""10"" MAXLENGTH=""10"" VALUE=""" & p_fim_f & """ onKeyDown=""FormataData(this,event);"" title=""Usar formato dd/mm/aaaa""></td>"
     ShowHTML "      <tr>"
     ShowHTML "          <td valign=""top""><font size=""1""><b>Exibe somente tarefas em atraso?</b><br>"
     If p_atraso = "S" Then

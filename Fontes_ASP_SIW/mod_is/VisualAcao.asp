@@ -71,7 +71,7 @@ Function VisualAcao(w_chave, O, w_usuario, P1, P4)
               w_html = w_html & VbCrLf & "         <tr bgcolor=""" & conTrBgColor & """ align=""center"">"
               w_html = w_html & VbCrLf & "           <td rowspan=""2""><font size=""1""><b>Produto</font></td>"
               w_html = w_html & VbCrLf & "           <td rowspan=""2""><font size=""1""><b>Unidade medida</font></td>"
-              w_html = w_html & VbCrLf & "           <td rowspan=""2""><font size=""1""><b>LOA</font></td>"
+              w_html = w_html & VbCrLf & "           <td rowspan=""2""><font size=""1""><b>PPA</font></td>"
               w_html = w_html & VbCrLf & "           <td rowspan=""2""><font size=""1""><b>Cumulativa</font></td>"
               w_html = w_html & VbCrLf & "           <td rowspan=""2""><font size=""1""><b>Será cumprida</font></td>"
               w_html = w_html & VbCrLf & "           <td rowspan=""1"" colspan=""3""><font size=""1""><b>Quantitativo</font></td>"
@@ -251,7 +251,7 @@ Function VisualAcao(w_chave, O, w_usuario, P1, P4)
            w_html = w_html & VbCrLf & "    <td><font size=""1"">Área planejamento:<br><b>" & ExibeUnidade("../", w_cliente, RS("nm_unidade_resp"), RS("sq_unidade"), TP) & "</b></td>"
         End If
         If Not IsNull(RS("cd_acao")) Then
-           DB_GetAcaoPPA_IS RS1, w_cliente, w_ano, RS("cd_ppa_pai"), RS("cd_acao"), null, RS("cd_unidade"), null, null
+           DB_GetAcaoPPA_IS RS1, w_cliente, w_ano, RS("cd_ppa_pai"), RS("cd_acao"), null, RS("cd_unidade"), null, null, null
            w_html = w_html & VbCrLf & "     <tr valign=""top"">"
            w_html = w_html & VbCrLf & "       <td><font size=""1"">Função:<br><b>" & RS1("ds_funcao") & " </b></td>"
            w_html = w_html & VbCrLf & "       <td><font size=""1"">Subfunção:<br><b>" & RS1("ds_subfuncao") & " </b></td>"
@@ -317,11 +317,11 @@ Function VisualAcao(w_chave, O, w_usuario, P1, P4)
         End If
         If Not IsNull(RS("resp_pri")) Then
            w_html = w_html & VbCrLf & "      <tr><td valign=""top"" colspan=""2""><table border=0 width=""100%"" cellspacing=0>"
-           w_html = w_html & VbCrLf & "        <tr><td valign=""top""><font size=""1"">Responsável plano/projeto específico:<br><b>" & RS("resp_pri") & " </b></td>"
+           w_html = w_html & VbCrLf & "        <tr><td valign=""top""><font size=""1"">Responsável pela ação:<br><b>" & RS("resp_pri") & " </b></td>"
            If Not IsNull(RS("fone_pri")) Then
               w_html = w_html & VbCrLf & "         <td><font size=""1"">Telefone:<br><b>" & RS("fone_pri") & " </b></td>"
            End If
-           If Not IsNull(RS("mail_ppa_pai")) Then
+           If Not IsNull(RS("mail_pri")) Then
               w_html = w_html & VbCrLf & "            <td><font size=""1"">Email:<br><b>" & RS("mail_pri") & " </b></td>"
            End If
            w_html = w_html & VbCrLf & "           </table>"
@@ -348,17 +348,17 @@ Function VisualAcao(w_chave, O, w_usuario, P1, P4)
            
            w_html = w_html & VbCrLf & "      <tr><td valign=""top"" colspan=""2"" align=""center"" bgcolor=""#D0D0D0"" style=""border: 2px solid rgb(0,0,0);""><font size=""1""><b>Programação Qualitativa</td>"
            If Not IsNull(RS("cd_acao")) Then
-              w_html = w_html & VbCrLf & "      <tr><td valign=""top"" colspan=""2""><font size=""1"">Objetivo:<br><b>" & Nvl(RS("finalidade"),"---")& "</b></td>"
+              w_html = w_html & VbCrLf & "      <tr><td valign=""top"" colspan=""2""><div align=""justify""><font size=""1"">Objetivo:<br><b>" & Nvl(RS("finalidade"),"---")& "</b></div></td>"
            End if
-           w_html = w_html & VbCrLf & "      <tr><td valign=""top"" colspan=""2""><font size=""1"">Justificativa:<br><b>" & Nvl(RS("problema"),"---")& "</b></td>"
-           w_html = w_html & VbCrLf & "      <tr><td valign=""top"" colspan=""2""><font size=""1"">Objetivo específico:<br><b>" & Nvl(RS("objetivo"),"---")& "</b></td>"
+           w_html = w_html & VbCrLf & "      <tr><td valign=""top"" colspan=""2""><div align=""justify""><font size=""1"">Justificativa:<br><b>" & Nvl(RS("problema"),"---")& "</b></div></td>"
+           w_html = w_html & VbCrLf & "      <tr><td valign=""top"" colspan=""2""><div align=""justify""><font size=""1"">Objetivo específico:<br><b>" & Nvl(RS("objetivo"),"---")& "</b></div></td>"
            If Not IsNull(RS("cd_acao")) Then
-              w_html = w_html & VbCrLf & "      <tr><td valign=""top"" colspan=""2""><font size=""1"">Descrição da ação:<br><b>" & Nvl(RS("descricao_ppa"),"---")& "</b></td>"
+              w_html = w_html & VbCrLf & "      <tr><td valign=""top"" colspan=""2""><div align=""justify""><font size=""1"">Descrição da ação:<br><b>" & Nvl(RS("descricao_ppa"),"---")& "</b></div></td>"
            End If
-           w_html = w_html & VbCrLf & "      <tr><td valign=""top"" colspan=""2""><font size=""1"">Público-alvo:<br><b>" & Nvl(RS("publico_alvo"),"---")& "</b></td>"
+           w_html = w_html & VbCrLf & "      <tr><td valign=""top"" colspan=""2""><div align=""justify""><font size=""1"">Público-alvo:<br><b>" & Nvl(RS("publico_alvo"),"---")& "</b></div></td>"
            If Not IsNull(RS("cd_acao")) Then
-              w_html = w_html & VbCrLf & "      <tr><td valign=""top"" colspan=""2""><font size=""1"">Origem da ação:<br><b>" & Nvl(RS("nm_tipo_inclusao_acao"),"---")& "</b></td>"
-              w_html = w_html & VbCrLf & "      <tr><td valign=""top"" colspan=""2""><font size=""1"">Base legal:<br><b>" & Nvl(RS("base_legal"),"---")& "</b></td>"
+              w_html = w_html & VbCrLf & "      <tr><td valign=""top"" colspan=""2""><div align=""justify""><font size=""1"">Origem da ação:<br><b>" & Nvl(RS("nm_tipo_inclusao_acao"),"---")& "</b></div></td>"
+              w_html = w_html & VbCrLf & "      <tr><td valign=""top"" colspan=""2""><div align=""justify""><font size=""1"">Base legal:<br><b>" & Nvl(RS("base_legal"),"---")& "</b></div></td>"
               w_html = w_html & VbCrLf & "      <tr><td valign=""top"" colspan=""2""><font size=""1"">Forma de implementação:<br><b>" 
               If cDbl(RS("cd_tipo_acao")) = 1 or cDbl(RS("cd_tipo_acao")) = 2 Then 
                  If RS("direta") = "S" Then
@@ -382,12 +382,12 @@ Function VisualAcao(w_chave, O, w_usuario, P1, P4)
                  End If
               End If
               w_html = w_html & VbCrLf & "      </b></td>"
-              w_html = w_html & VbCrLf & "      <tr><td valign=""top"" colspan=""2""><font size=""1"">Detalhamento da implementação:<br><b>" & Nvl(RS("detalhamento"),"---")& "</b></td>"
+              w_html = w_html & VbCrLf & "      <tr><td valign=""top"" colspan=""2""><div align=""justify""><font size=""1"">Detalhamento da implementação:<br><b>" & Nvl(RS("detalhamento"),"---")& "</b></div></td>"
            End If
-           w_html = w_html & VbCrLf & "      <tr><td valign=""top"" colspan=""2""><font size=""1"">Sistemática e estratégias a serem adotadas para o monitoramento da ação:<br><b>" & Nvl(RS("estrategia"),"---")& "</b></td>"
-           w_html = w_html & VbCrLf & "      <tr><td valign=""top"" colspan=""2""><font size=""1"">Sistemática e metodologias a serem adotadas para avaliação da ação:<br><b>" & Nvl(RS("sistematica"),"---")& "</b></td>"
+           w_html = w_html & VbCrLf & "      <tr><td valign=""top"" colspan=""2""><div align=""justify""><font size=""1"">Sistemática e estratégias a serem adotadas para o monitoramento da ação:<br><b>" & Nvl(RS("estrategia"),"---")& "</b></div></td>"
+           w_html = w_html & VbCrLf & "      <tr><td valign=""top"" colspan=""2""><div align=""justify""><font size=""1"">Sistemática e metodologias a serem adotadas para avaliação da ação:<br><b>" & Nvl(RS("sistematica"),"---")& "</b></div></td>"
            'w_html = w_html & VbCrLf & "      <tr><td valign=""top"" colspan=""2""><font size=""1"">Metodologias de avaliação a serem utilizadas:<br><b>" & Nvl(RS("metodologia"),"---")& "</b></td>"
-           w_html = w_html & VbCrLf & "      <tr><td valign=""top"" colspan=""2""><font size=""1"">Observações:<br><b>" & Nvl(RS("justificativa"),"---")& "</b></td>"
+           w_html = w_html & VbCrLf & "      <tr><td valign=""top"" colspan=""2""><div align=""justify""><font size=""1"">Observações:<br><b>" & Nvl(RS("justificativa"),"---")& "</b></div></td>"
         End If
      End If
      
@@ -424,32 +424,32 @@ Function VisualAcao(w_chave, O, w_usuario, P1, P4)
      End If
      RS1.Close
      
-     w_html = w_html & VbCrLf & "        <tr><td valign=""top"" colspan=""2"" align=""center"" bgcolor=""#D0D0D0"" style=""border: 2px solid rgb(0,0,0);""><font size=""1""><b>Programação financeira</td>"
      ' Programação financeira
      If Not IsNull(RS("cd_acao")) Then
+        w_html = w_html & VbCrLf & "        <tr><td valign=""top"" colspan=""2"" align=""center"" bgcolor=""#D0D0D0"" style=""border: 2px solid rgb(0,0,0);""><font size=""1""><b>Programação financeira</td>"
         If cDbl(RS("cd_tipo_acao")) <> 3 Then
            DB_GetPPADadoFinanc_IS RS1, RS("cd_acao"), RS("cd_unidade"), w_ano, w_cliente, "VALORFONTEACAO"
            If RS1.EOF Then
               w_html = w_html & VbCrLf & "                      <tr><td valign=""top"" colspan=""2""><font size=""1""><DD><b>Nao existe nenhum valor para esta ação</b></DD></td>"
            Else
               w_cor = ""
-              w_html = w_html & VbCrLf & "                      <tr><td valign=""top"" colspan=""2""><font size=""1"">Tipo de orçamento:<br><b>" & RS1("nm_orcamento") & "</b></td>"
+              w_html = w_html & VbCrLf & "                      <tr><td valign=""top"" colspan=""2""><font size=""1"">Fonte: SIGPLAN/MP - PPA 2004-2007</td>"
               If cDbl(RS("cd_tipo_acao")) = 1 Then
-                 w_html = w_html & VbCrLf & "                   <tr><td valign=""top"" colspan=""2""><font size=""1"">Realizado até 2004:<br><b>" & Nvl(RS("valor_ano_anterior"),0.00) & "</b></td>"
-                 w_html = w_html & VbCrLf & "                   <tr><td valign=""top"" colspan=""2""><font size=""1"">Justificativa da repercusão financeira sobre o custeio da União:<br><b>" & Nvl(RS("reperc_financeira"),"---") & "</b></td>"
-                 w_html = w_html & VbCrLf & "                   <tr><td valign=""top"" colspan=""2""><font size=""1"">Valor estimado da repercussão financeira por ano (R$ 1,00):<br><b>" & Nvl(RS("valor_reperc_financeira"),0.00) & "</b></td>"
+                 w_html = w_html & VbCrLf & "                   <tr><td valign=""top"" colspan=""2""><font size=""1"">Realizado até 2004: <b>" & FormatNumber(Nvl(RS("valor_ano_anterior"),0),2) & "</b></td>"
+                 w_html = w_html & VbCrLf & "                   <tr><td valign=""top"" colspan=""2""><font size=""1"">Justificativa da repercusão financeira sobre o custeio da União: <b>" & Nvl(RS("reperc_financeira"),"---") & "</b></td>"
+                 w_html = w_html & VbCrLf & "                   <tr><td valign=""top"" colspan=""2""><font size=""1"">Valor estimado da repercussão financeira por ano (R$ 1,00): <b>" & FormatNumber(Nvl(RS("valor_reperc_financeira"),0),2) & "</b></td>"
               End If
-              w_html = w_html & VbCrLf & "                      <tr><td valign=""top"" colspan=""2""><font size=""1"">Valor por fonte: </td>"
+              w_html = w_html & VbCrLf & "                      <tr><td valign=""top"" colspan=""2""><font size=""1""><b>Ação: </b>" & RS1("cd_unidade") & "." & RS("cd_programa") & "." & RS1("cd_acao") & " - " & RS1("descricao_acao") & "</td>"
               w_html = w_html & VbCrLf & "                      <tr><td valign=""top"" align=""center"">"
               w_html = w_html & VbCrLf & "                        <TABLE WIDTH=""100%"" bgcolor=""" & conTableBgColor & """ BORDER=""" & conTableBorder & """ CELLSPACING=""" & conTableCellSpacing & """ CELLPADDING=""" & conTableCellPadding & """ BorderColorDark=""" & conTableBorderColorDark & """ BorderColorLight=""" & conTableBorderColorLight & """>"
               w_html = w_html & VbCrLf & "                          <tr bgcolor=""" & conTrBgColor & """ align=""center"">"
               w_html = w_html & VbCrLf & "                            <td><font size=""1""><b>Fonte</font></td>"
-              w_html = w_html & VbCrLf & "                            <td><font size=""1""><b>Ano 1</font></td>"
-              w_html = w_html & VbCrLf & "                            <td><font size=""1""><b>Ano 2</font></td>"
-              w_html = w_html & VbCrLf & "                            <td><font size=""1""><b>Ano 3</font></td>"
-              w_html = w_html & VbCrLf & "                            <td><font size=""1""><b>Ano 4</font></td>"
-              w_html = w_html & VbCrLf & "                            <td><font size=""1""><b>Ano 5</font></td>"
-              w_html = w_html & VbCrLf & "                            <td><font size=""1""><b>Total</font></td>"
+              w_html = w_html & VbCrLf & "                            <td><font size=""1""><b>2004*</font></td>"
+              w_html = w_html & VbCrLf & "                            <td><font size=""1""><b>2005**</font></td>"
+              w_html = w_html & VbCrLf & "                            <td><font size=""1""><b>2006</font></td>"
+              w_html = w_html & VbCrLf & "                            <td><font size=""1""><b>2007</font></td>"
+              w_html = w_html & VbCrLf & "                            <td><font size=""1""><b>2008</font></td>"
+              w_html = w_html & VbCrLf & "                            <td><font size=""1""><b>Total 2004-2008</font></td>"
               w_html = w_html & VbCrLf & "                          </tr>"
               While Not RS1.EOF 
                  If w_cor = conTrBgColor or w_cor = "" Then w_cor = conTrAlternateBgColor Else w_cor = conTrBgColor End If
@@ -476,12 +476,12 @@ Function VisualAcao(w_chave, O, w_usuario, P1, P4)
               w_html = w_html & VbCrLf & "      <tr><td colspan=""2"" align=""center"">"
               w_html = w_html & VbCrLf & "        <TABLE WIDTH=""100%"" bgcolor=""" & conTableBgColor & """ BORDER=""" & conTableBorder & """ CELLSPACING=""" & conTableCellSpacing & """ CELLPADDING=""" & conTableCellPadding & """ BorderColorDark=""" & conTableBorderColorDark & """ BorderColorLight=""" & conTableBorderColorLight & """>"
               w_html = w_html & VbCrLf & "          <tr bgcolor=""" & conTrBgColor & """ align=""center"">"
-              w_html = w_html & VbCrLf & "            <td><font size=""1""><b>Ano 1</font></td>"
-              w_html = w_html & VbCrLf & "            <td><font size=""1""><b>Ano 2</font></td>"
-              w_html = w_html & VbCrLf & "            <td><font size=""1""><b>Ano 3</font></td>"
-              w_html = w_html & VbCrLf & "            <td><font size=""1""><b>Ano 4</font></td>"
-              w_html = w_html & VbCrLf & "            <td><font size=""1""><b>Ano 5</font></td>"
-              w_html = w_html & VbCrLf & "            <td><font size=""1""><b>Total</font></td>"
+              w_html = w_html & VbCrLf & "            <td><font size=""1""><b>2004*</font></td>"
+              w_html = w_html & VbCrLf & "            <td><font size=""1""><b>2005**</font></td>"
+              w_html = w_html & VbCrLf & "            <td><font size=""1""><b>2006</font></td>"
+              w_html = w_html & VbCrLf & "            <td><font size=""1""><b>2007</font></td>"
+              w_html = w_html & VbCrLf & "            <td><font size=""1""><b>2008</font></td>"
+              w_html = w_html & VbCrLf & "            <td><font size=""1""><b>Total 2004-2008</font></td>"
               w_html = w_html & VbCrLf & "          </tr>"
               If w_cor = conTrBgColor or w_cor = "" Then w_cor = conTrAlternateBgColor Else w_cor = conTrBgColor End If
               w_html = w_html & VbCrLf & "       <tr bgcolor=""" & w_cor & """ valign=""top"">"
@@ -495,6 +495,8 @@ Function VisualAcao(w_chave, O, w_usuario, P1, P4)
               w_html = w_html & VbCrLf & "       </table>"  
            End If
            RS1.Close
+           w_html = w_html & VbCrLf & "<tr><td valign=""top"" colspan=""2""><font size=""1"">* Valor Lei Orçamentária Anual - LOA 2004 + Créditos</td>"
+           w_html = w_html & VbCrLf & "<tr><td valign=""top"" colspan=""2""><font size=""1"">** Valor do Projeto de Lei Orçamentária Anual - PLOA 2005</td>"    
         End If
         ' Recupera todos os registros para a listagem
         DB_GetFinancAcaoPPA_IS RS1, w_chave, w_cliente, w_ano, null, null, null
@@ -524,6 +526,7 @@ Function VisualAcao(w_chave, O, w_usuario, P1, P4)
         DB_GetFinancAcaoPPA_IS RS1, w_chave, w_cliente, w_ano, null, null, null
         ' Exibe a quantidade de registros apresentados na listagem e o cabeçalho da tabela de listagem
         If Not RS1.EOF Then ' Se não foram selecionados registros, exibe mensagem
+           w_html = w_html & VbCrLf & "        <tr><td valign=""top"" colspan=""2"" align=""center"" bgcolor=""#D0D0D0"" style=""border: 2px solid rgb(0,0,0);""><font size=""1""><b>Programação financeira</td>"
            w_html = w_html & VbCrLf & "<tr><td colspan=""2"" align=""center"">"
            w_html = w_html & VbCrLf & "    <TABLE WIDTH=""100%"" bgcolor=""" & conTableBgColor & """ BORDER=""" & conTableBorder & """ CELLSPACING=""" & conTableCellSpacing & """ CELLPADDING=""" & conTableCellPadding & """ BorderColorDark=""" & conTableBorderColorDark & """ BorderColorLight=""" & conTableBorderColorLight & """>"
            w_html = w_html & VbCrLf & "        <tr bgcolor=""" & conTrBgColor & """ align=""center"">"
@@ -553,7 +556,7 @@ Function VisualAcao(w_chave, O, w_usuario, P1, P4)
         w_html = w_html & VbCrLf & "        <TABLE WIDTH=""100%"" bgcolor=""" & conTableBgColor & """ BORDER=""" & conTableBorder & """ CELLSPACING=""" & conTableCellSpacing & """ CELLPADDING=""" & conTableCellPadding & """ BorderColorDark=""" & conTableBorderColorDark & """ BorderColorLight=""" & conTableBorderColorLight & """>"
         w_html = w_html & VbCrLf & "          <tr bgcolor=""" & conTrBgColor & """ align=""center"">"
         w_html = w_html & VbCrLf & "          <td><font size=""1""><b>Metas</font></td>"
-        w_html = w_html & VbCrLf & "          <td><font size=""1""><b>LOA</font></td>"
+        w_html = w_html & VbCrLf & "          <td><font size=""1""><b>PPA</font></td>"
         w_html = w_html & VbCrLf & "          <td><font size=""1""><b>Execução até</font></td>"
         w_html = w_html & VbCrLf & "          <td><font size=""1""><b>Conc.</font></td>"
         w_html = w_html & VbCrLf & "          </tr>"

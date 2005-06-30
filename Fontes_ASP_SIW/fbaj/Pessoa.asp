@@ -365,7 +365,7 @@ Sub Benef
        ShowHTML "              <INPUT class=""STB"" TYPE=""submit"" NAME=""Botao"" VALUE=""Procurar"" onClick=""Botao.value=this.value; document.Form.action='" & w_dir & w_Pagina & par &"'"">"
        ShowHTML "      </table>"
        If Request("w_nome") > "" Then
-          DB_GetPersonList RS, w_cliente, null, "PESSOA"
+          DB_GetPersonList RS, w_cliente, null, "PESSOA", null, null, null, null
           RS.Filter = "username = null and nome_indice like '*" & Request("w_nome") & "*'"
           ShowHTML "<tr><td align=""center"" colspan=3>"
           ShowHTML "    <TABLE WIDTH=""100%"" bgcolor=""" & conTableBgColor & """ BORDER=""" & conTableBorder & """ CELLSPACING=""" & conTableCellSpacing & """ CELLPADDING=""" & conTableCellPadding & """ BorderColorDark=""" & conTableBorderColorDark & """ BorderColorLight=""" & conTableBorderColorLight & """>"

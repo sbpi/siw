@@ -224,9 +224,9 @@ Sub Rel_PPA
      DesconectaBD
      ' Recupera todos os registros para a listagem
      If p_cd_programa > "" and p_codigo = "" Then
-        DB_GetAcaoPPA_IS RS, w_cliente, w_ano, p_cd_programa , null, null, null, null, null
+        DB_GetAcaoPPA_IS RS, w_cliente, w_ano, p_cd_programa , null, null, null, null, null, null
      Else
-        DB_GetAcaoPPA_IS RS, w_cliente, w_ano, Mid(p_codigo,1,4), Mid(p_codigo,5,4), null, Mid(p_codigo,13,17), null, null
+        DB_GetAcaoPPA_IS RS, w_cliente, w_ano, Mid(p_codigo,1,4), Mid(p_codigo,5,4), null, Mid(p_codigo,13,17), null, null, null
      End If
      If p_responsavel > "" Then
         RS.Filter = "nm_coordenador like '%" & p_responsavel & "%'"
@@ -239,8 +239,8 @@ Sub Rel_PPA
      w_pag   = 1
      w_linha = 5
      ShowHTML "<BASE HREF=""http://" & Request.ServerVariables("server_name") & "/siw/"">"
-     ShowHTML "<TABLE WIDTH=""100%"" BORDER=0><TR><TD ROWSPAN=2><IMG ALIGN=""LEFT"" SRC=""" & w_logo & """><TD ALIGN=""RIGHT""><B><FONT SIZE=4 COLOR=""#000000"">"
-     ShowHTML "Ações PPA"
+     ShowHTML "<TABLE WIDTH=""100%"" BORDER=0><TR><TD ROWSPAN=2><IMG ALIGN=""LEFT"" SRC=""" & w_logo & """><TD ALIGN=""RIGHT"" NOWRAP><B><FONT SIZE=4 COLOR=""#000000"">"
+     ShowHTML "Relatório Analítico - Ações PPA 2004 - 2007 Exercício " & w_ano
      ShowHTML "</FONT><TR><TD WIDTH=""50%"" ALIGN=""RIGHT""><B><font size=1 COLOR=""#000000"">" & DataHora() & "</B>"
      ShowHTML "<TR><TD COLSPAN=""2"" ALIGN=""RIGHT""><B><FONT SIZE=2 COLOR=""#000000"">Página: " & w_pag & "</B></TD></TR>"
      ShowHTML "</TD></TR>"
@@ -248,7 +248,7 @@ Sub Rel_PPA
   Else
      Cabecalho
      ShowHTML "<HEAD>"
-     ShowHTML "<TITLE>Relatório Ações PPA</TITLE>"
+     ShowHTML "<TITLE>Relatório Analítico - Ações PPA 2004 - 2007 Exercício " & w_ano & "</TITLE>"
      If InStr("P",O) > 0 Then
         ScriptOpen "JavaScript"
         ValidateOpen "Validacao"
@@ -263,14 +263,35 @@ Sub Rel_PPA
         ShowHTML "      return (false);"
         ShowHTML "  }"
         ValidateClose
+        ShowHTML "  function MarcaTodosCampos() {"
+        ShowHTML "    if (document.Form.w_marca_campos.checked==true) "
+        ShowHTML "       for (i=0; i < 8; i++) {"
+        ShowHTML "         document.Form.p_campos[i].checked=true;"
+        ShowHTML "    } else { "
+        ShowHTML "       for (i=0; i < 8; i++) {"
+        ShowHTML "         document.Form.p_campos[i].checked=false;"
+        ShowHTML "       } "
+        ShowHTML "    } "
+        ShowHTML "  }"
+        ShowHTML "  function MarcaTodosBloco() {"
+        ShowHTML "    if (document.Form.w_marca_bloco.checked==true) {"
+        ShowHTML "         document.Form.p_tarefas.checked=true;"
+        ShowHTML "         document.Form.p_metas.checked=true;"
+        ShowHTML "         document.Form.p_sq_unidade_resp.checked=true;"
+        ShowHTML "    } else { "
+        ShowHTML "         document.Form.p_tarefas.checked=false;"
+        ShowHTML "         document.Form.p_metas.checked=false;"
+        ShowHTML "         document.Form.p_sq_unidade_resp.checked=false;"
+        ShowHTML "    } "
+        ShowHTML "  }"
         ScriptClose
      End If
      ShowHTML "</HEAD>"
      ShowHTML "<BASE HREF=""http://" & Request.ServerVariables("server_name") & "/siw/"">"
      If O = "L" Then
         BodyOpenClean "onLoad='document.focus()';"
-        ShowHTML "<TABLE WIDTH=""100%"" BORDER=0><TR><TD ROWSPAN=2><IMG ALIGN=""LEFT"" SRC=""" & w_logo & """><TD ALIGN=""RIGHT""><B><FONT SIZE=4 COLOR=""#000000"">"
-        ShowHTML "Tabela PPA"
+        ShowHTML "<TABLE WIDTH=""100%"" BORDER=0><TR><TD ROWSPAN=2><IMG ALIGN=""LEFT"" SRC=""" & w_logo & """><TD ALIGN=""RIGHT"" NOWRAP><B><FONT SIZE=4 COLOR=""#000000"">"
+        ShowHTML "Relatório Analítico - Ações PPA 2004 - 2007 Exercício " & w_ano
         ShowHTML "</FONT><TR><TD WIDTH=""50%"" ALIGN=""RIGHT""><B><font size=1 COLOR=""#000000"">" & DataHora() & "</B>"
         ShowHTML "&nbsp;&nbsp;<IMG BORDER=0 ALIGN=""CENTER"" TITLE=""Gerar word"" SRC=""images/word.gif"" onClick=""window.open('" & w_pagina & par & "&R=" & w_pagina & par & "&O=L&w_chave=" & w_chave & "&w_tipo_rel=word&P1=" & P1 & "&P2=" & P2 & "&P3=" & P3 & "&P4=" & P4 & "&TP=" & TP & "&SG=" & SG & MontaFiltro("GET") &"','VisualRelPPAWord','menubar=yes resizable=yes scrollbars=yes');"">"
         ShowHTML "&nbsp;&nbsp;<IMG ALIGN=""CENTER"" TITLE=""Imprimir"" SRC=""images/impressora.jpg"" onClick=""window.print();"">"
@@ -462,15 +483,16 @@ Sub Rel_PPA
                  Else
                     ShowHTML "        <tr bgcolor=""" & conTrBgColor & """ align=""center"">"
                     ShowHTML "          <td><font size=""1""><b>Produto</font></td>"
-                    ShowHTML "          <td><font size=""1""><b>Meta LOA</font></td>"
+                    ShowHTML "          <td><font size=""1""><b>Meta PPA</font></td>"
                     ShowHTML "          <td><font size=""1""><b>Fim previsto</font></td>"
                     ShowHTML "          <td><font size=""1""><b>Unidade<br>medida</font></td>"
                     ShowHTML "          <td><font size=""1""><b>Quantitativo<br>programado</font></td>"
                     ShowHTML "          <td><font size=""1""><b>% Realizado</font></td>"
                     ShowHTML "        </tr>"
                     w_linha = w_linha + 1
+                    w_cor = ""
                     While Not RS3.EOF
-                       ShowHtml MetaLinha(RS2("sq_siw_solicitacao"), Rs3("sq_meta"), Rs3("titulo"), w_tipo_rel, Rs3("programada"), RS3("unidade_medida"), Rs3("quantidade"), Rs3("fim_previsto"), Rs3("perc_conclusao"), "S", "PROJETO")
+                       ShowHtml MetaLinha(RS2("sq_siw_solicitacao"), Rs3("sq_meta"), Rs3("titulo"), w_tipo_rel, Rs3("programada"), RS3("unidade_medida"), Rs3("quantidade"), Rs3("fim_previsto"), Rs3("perc_conclusao"), "S", "PROJETO", Nvl(RS3("cd_subacao"),""))
                        RS3.MoveNext
                        w_linha = w_linha + 1
                     Wend
@@ -626,16 +648,16 @@ Sub Rel_PPA
     ShowHTML "</tr>"
     DesconectaBD
   ElseIf O = "P" Then
-    AbreForm "Form", w_dir & w_pagina & par, "POST", "return(Validacao(this));", "Tabela PPA",P1,P2,P3,P4,TP,SG,R,"L"
+    AbreForm "Form", w_dir & w_pagina & par, "POST", "return(Validacao(this));", "Acao",P1,P2,P3,P4,TP,SG,R,"L"
     ShowHTML "<INPUT type=""hidden"" name=""w_chave"" value=""" & w_chave & """>"
     ShowHTML "<INPUT type=""hidden"" name=""w_troca"" value="""">"
 
     ShowHTML "<tr bgcolor=""" & conTrBgColor & """><td align=""center"">"
     ShowHTML "    <table width=""97%"" border=""0"">"
     ShowHTML "      <tr>"
-    SelecaoProgramaPPA "<u>P</u>rograma PPA:", "P", null, w_cliente, w_ano, p_cd_programa, "p_cd_programa", null, null
+    SelecaoProgramaPPA "<u>P</u>rograma PPA:", "P", null, w_cliente, w_ano, p_cd_programa, "p_cd_programa", null, "onchange=""document.Form.action='" & w_dir & w_pagina & par & "'; document.Form.w_troca.value='p_cd_programa'; document.Form.target=''; document.Form.O.value='P'; document.Form.submit();""", w_menu
     ShowHTML "      <tr>"
-    SelecaoAcaoPPA "<u>A</u>ção PPA:", "A", null, w_cliente, w_ano, null, null, null, null, "p_codigo", null, null, null
+    SelecaoAcaoPPA "<u>A</u>ção PPA:", "A", null, w_cliente, w_ano, p_cd_programa, null, null, null, "p_codigo", null, null, null, w_menu
     ShowHTML "      <tr><td><font size=""1""><b><u>R</u>esponsável:</b><br><input " & w_disabled & " accesskey=""R"" type=""text"" name=""p_responsavel"" class=""sti"" SIZE=""40"" MAXLENGTH=""60"" VALUE=""" & p_responsavel & """></td>"
     ShowHTML "      <tr><td colspan=3><table border=0 width=""100%"" cellspacing=0 cellpadding=0><tr valign=""top"">"
     SelecaoPrioridade "<u>P</u>rioridade das tarefas:", "P", "Informe a prioridade da tarefa.", p_prioridade, null, "p_prioridade", null, null
@@ -673,12 +695,15 @@ Sub Rel_PPA
     ShowHTML "      <tr>"
     ShowHTML "          <td><font size=""1""><INPUT " & w_Disabled & " class=""btm"" type=""CHECKBOX"" name=""p_campos"" value=""liquidar""> A liquidar</td>"
     ShowHTML "          <td><font size=""1""><INPUT " & w_Disabled & " class=""btm"" type=""CHECKBOX"" name=""p_campos"" value=""empenhado""> Empenhado</td>"    
+    ShowHTML "      <tr>"
+    ShowHTML "          <td><font size=""1""><INPUT " & w_Disabled & " class=""btm"" type=""CHECKBOX"" name=""w_marca_campos"" value="""" onClick=""javascript:MarcaTodosCampos();"" TITLE=""Marca todos os itens da relação""> Todos</td>"
     ShowHTML "      <tr><td colspan=2><font size=1><b>Blocos adicionais"
     ShowHTML "      <tr>"
     ShowHTML "          <td><font size=""1""><INPUT " & w_Disabled & " class=""btm"" type=""CHECKBOX"" name=""p_metas"" value=""metas""> Metas físicas</td>"
     ShowHTML "          <td><font size=""1""><INPUT " & w_Disabled & " class=""btm"" type=""CHECKBOX"" name=""p_tarefas"" value=""tarefas""> Tarefas</td>"
     ShowHTML "      <tr>"
     ShowHTML "          <td><font size=""1""><INPUT " & w_Disabled & " class=""btm"" type=""CHECKBOX"" name=""p_sq_unidade_resp"" value=""unidade""> Área planejamento</td>"
+    ShowHTML "          <td><font size=""1""><INPUT " & w_Disabled & " class=""btm"" type=""CHECKBOX"" name=""w_marca_bloco"" value="""" onClick=""javascript:MarcaTodosBloco();"" TITLE=""Marca todos os itens da relação""> Todos</td>"
     ShowHTML "     </table>"    
     ShowHTML "    <table width=""90%"" border=""0"">"            
     ShowHTML "      <tr><td align=""center""><hr>"
@@ -734,7 +759,7 @@ REM =========================================================================
 REM Relatório da tabela de planos/projetos especificos
 REM -------------------------------------------------------------------------
 Sub Rel_Projeto
-  Dim p_sq_isprojeto, p_selecao_mp, p_selecao_se
+  Dim p_sq_isprojeto, p_selecao_mp, p_selecao_se, p_siw_solic
   Dim w_acao_aprovado, w_acao_saldo, w_acao_empenhado, w_acao_liquidado, w_acao_liquidar
   Dim w_tot_aprovado, w_tot_saldo, w_tot_empenhado, w_tot_liquidado, w_tot_liquidar
   Dim p_responsavel, p_sq_unidade_resp, p_prioridade, p_tarefas_atraso
@@ -755,6 +780,7 @@ Sub Rel_Projeto
   p_campos                   = Request("p_campos")
   p_tarefas                  = Request("p_tarefas")
   p_metas                    = Request("p_metas")
+  p_siw_solic                = Request("p_siw_solic")
   
   If O = "L" Then
      ' Recupera o logo do cliente a ser usado nas listagens
@@ -764,7 +790,7 @@ Sub Rel_Projeto
      End If
      DesconectaBD
      ' Recupera todos os registros para a listagem     
-     DB_GetProjeto_IS RS, p_sq_isprojeto, w_cliente, null, null, p_responsavel, null, null, null, null, null, p_selecao_mp, p_selecao_se, null
+     DB_GetProjeto_IS RS, p_sq_isprojeto, w_cliente, null, null, p_responsavel, null, null, null, null, null, p_selecao_mp, p_selecao_se, null, p_siw_solic
      RS.Sort = "ordem"
   End If
   
@@ -772,15 +798,22 @@ Sub Rel_Projeto
      HeaderWord null
      w_pag   = 1
      w_linha = 5
-     CabecalhoWordOR "Plano/projeto específico", w_pag, w_logo
+     ShowHTML "<BASE HREF=""http://" & Request.ServerVariables("server_name") & "/siw/"">"
+     ShowHTML "<TABLE WIDTH=""100%"" BORDER=0><TR><TD ROWSPAN=2><IMG ALIGN=""LEFT"" SRC=""" & w_logo & """><TD ALIGN=""RIGHT"" NOWRAP><B><FONT SIZE=4 COLOR=""#000000"">"
+     ShowHTML "Relatório Analítico - Planos/projetos " & w_ano
+     ShowHTML "</FONT><TR><TD WIDTH=""50%"" ALIGN=""RIGHT""><B><font size=1 COLOR=""#000000"">" & DataHora() & "</B>"
+     ShowHTML "<TR><TD COLSPAN=""2"" ALIGN=""RIGHT""><B><FONT SIZE=2 COLOR=""#000000"">Página: " & w_pag & "</B></TD></TR>"
+     ShowHTML "</TD></TR>"
+     ShowHTML "</FONT></B></TD></TR></TABLE>"
   Else
      Cabecalho
      ShowHTML "<HEAD>"
-     ShowHTML "<TITLE>Relatório Plano/projeto específico</TITLE>"
+     ShowHTML "<TITLE>Relatório Analítico Planos/projetos " & w_ano & "</TITLE>"
      If InStr("P",O) > 0 Then
         ScriptOpen "JavaScript"
         ValidateOpen "Validacao"
         Validate "p_sq_isprojeto", "Plano/projeto específico", "SELECT", "", "1", "18", "", "1"
+        Validate "p_siw_solic", "Ações específicas", "SELECT", "", "1", "18", "", "1"
         Validate "p_responsavel", "Responsável", "1", "", "2", "60", "1", "1"
         ShowHTML "  if (theForm.p_tarefas.checked == false) {"
         ShowHTML "     theForm.p_prioridade.value = '';"
@@ -790,14 +823,35 @@ Sub Rel_Projeto
         ShowHTML "      return (false);"
         ShowHTML "  }"
         ValidateClose
+        ShowHTML "  function MarcaTodosCampos() {"
+        ShowHTML "    if (document.Form.w_marca_campos.checked==true) "
+        ShowHTML "       for (i=0; i < 8; i++) {"
+        ShowHTML "         document.Form.p_campos[i].checked=true;"
+        ShowHTML "    } else { "
+        ShowHTML "       for (i=0; i < 8; i++) {"
+        ShowHTML "         document.Form.p_campos[i].checked=false;"
+        ShowHTML "       } "
+        ShowHTML "    } "
+        ShowHTML "  }"
+        ShowHTML "  function MarcaTodosBloco() {"
+        ShowHTML "    if (document.Form.w_marca_bloco.checked==true) {"
+        ShowHTML "         document.Form.p_tarefas.checked=true;"
+        ShowHTML "         document.Form.p_metas.checked=true;"
+        ShowHTML "         document.Form.p_sq_unidade_resp.checked=true;"
+        ShowHTML "    } else { "
+        ShowHTML "         document.Form.p_tarefas.checked=false;"
+        ShowHTML "         document.Form.p_metas.checked=false;"
+        ShowHTML "         document.Form.p_sq_unidade_resp.checked=false;"
+        ShowHTML "    } "
+        ShowHTML "  }"        
         ScriptClose
      End If
      ShowHTML "</HEAD>"
      ShowHTML "<BASE HREF=""http://" & Request.ServerVariables("server_name") & "/siw/"">"
      If O = "L" Then
         BodyOpenClean "onLoad='document.focus()';"
-        ShowHTML "<TABLE WIDTH=""100%"" BORDER=0><TR><TD ROWSPAN=2><IMG ALIGN=""LEFT"" SRC=""" & w_logo & """><TD ALIGN=""RIGHT""><B><FONT SIZE=4 COLOR=""#000000"">"
-        ShowHTML "Plano/projeto específico"
+        ShowHTML "<TABLE WIDTH=""100%"" BORDER=0><TR><TD ROWSPAN=2><IMG ALIGN=""LEFT"" SRC=""" & w_logo & """><TD ALIGN=""RIGHT"" NOWRAP><B><FONT SIZE=4 COLOR=""#000000"">"
+        ShowHTML "Relatório Analítico - Planos/projetos " & w_ano
         ShowHTML "</FONT><TR><TD WIDTH=""50%"" ALIGN=""RIGHT""><B><font size=1 COLOR=""#000000"">" & DataHora() & "</B>"
         ShowHTML "&nbsp;&nbsp;<IMG ALIGN=""CENTER"" TITLE=""Imprimir"" SRC=""images/impressora.jpg"" onClick=""window.print();"">"
         ShowHTML "&nbsp;&nbsp;<IMG BORDER=0 ALIGN=""CENTER"" TITLE=""Gerar word"" SRC=""images/word.gif"" onClick=""window.open('" & w_pagina & par & "&R=" & w_pagina & par & "&O=L&w_chave=" & w_chave & "&w_tipo_rel=word&P1=" & P1 & "&P2=" & P2 & "&P3=" & P3 & "&P4=" & P4 & "&TP=" & TP & "&SG=" & SG & MontaFiltro("GET") &"','VisualRelPPAWord','menubar=yes resizable=yes scrollbars=yes');"">"
@@ -957,7 +1011,7 @@ Sub Rel_Projeto
                  Else
                     ShowHTML "        <tr bgcolor=""" & conTrBgColor & """ align=""center"">"
                     ShowHTML "          <td><font size=""1""><b>Produto</font></td>"
-                    ShowHTML "          <td><font size=""1""><b>Meta LOA</font></td>"
+                    ShowHTML "          <td><font size=""1""><b>Meta PPA</font></td>"
                     ShowHTML "          <td><font size=""1""><b>Fim previsto</font></td>"
                     ShowHTML "          <td><font size=""1""><b>Unidade<br>medida</font></td>"
                     ShowHTML "          <td><font size=""1""><b>Quantitativo<br>programado</font></td>"
@@ -965,7 +1019,7 @@ Sub Rel_Projeto
                     ShowHTML "        </tr>"
                     w_linha = w_linha + 1
                     While Not RS3.EOF
-                       ShowHtml MetaLinha(RS2("sq_siw_solicitacao"), Rs3("sq_meta"), Rs3("titulo"), w_tipo_rel, Rs3("programada"), RS3("unidade_medida"), Rs3("quantidade"), Rs3("fim_previsto"), Rs3("perc_conclusao"), "S", "PROJETO")
+                       ShowHtml MetaLinha(RS2("sq_siw_solicitacao"), Rs3("sq_meta"), Rs3("titulo"), w_tipo_rel, Rs3("programada"), RS3("unidade_medida"), Rs3("quantidade"), Rs3("fim_previsto"), Rs3("perc_conclusao"), "S", "PROJETO", Nvl(RS2("cd_subacao"),""))
                        RS3.MoveNext
                        w_linha = w_linha + 1
                     Wend
@@ -1137,7 +1191,10 @@ Sub Rel_Projeto
     ShowHTML "<tr bgcolor=""" & conTrBgColor & """><td align=""center"">"
     ShowHTML "    <table width=""97%"" border=""0"">"
     ShowHTML "          <tr>"
-    SelecaoIsProjeto "<u>P</u>lano/projeto específico:", "P", null, p_sq_isprojeto, null, "p_sq_isprojeto", null, null
+    SelecaoIsProjeto "<u>P</u>lano/projeto específico:", "P", null, p_sq_isprojeto, null, "p_sq_isprojeto", null, "onchange=""document.Form.action='" & w_dir & w_pagina & par & "'; document.Form.w_troca.value='p_sq_isprojeto'; document.Form.target=''; document.Form.O.value='P'; document.Form.submit();"""
+    ShowHTML "          </tr>"
+    ShowHTML "          <tr>"
+    SelecaoAcao "<u>A</u>ção:", "A", null, w_cliente, w_ano, null, null, null, null, "p_siw_solic", "RELATORIO", null, p_sq_isprojeto
     ShowHTML "          </tr>"
     ShowHTML "      <tr><td><font size=""1""><b><u>R</u>esponsável:</b><br><input " & w_disabled & " accesskey=""R"" type=""text"" name=""p_responsavel"" class=""sti"" SIZE=""40"" MAXLENGTH=""60"" VALUE=""" & p_responsavel & """></td>"
     ShowHTML "      <tr><td colspan=3><table border=0 width=""100%"" cellspacing=0 cellpadding=0><tr valign=""top"">"
@@ -1176,12 +1233,15 @@ Sub Rel_Projeto
     ShowHTML "      <tr>"
     ShowHTML "          <td><font size=""1""><INPUT " & w_Disabled & " class=""btm"" type=""CHECKBOX"" name=""p_campos"" value=""liquidar""> A liquidar</td>"
     ShowHTML "          <td><font size=""1""><INPUT " & w_Disabled & " class=""btm"" type=""CHECKBOX"" name=""p_campos"" value=""empenhado""> Empenhado</td>"    
+    ShowHTML "      <tr>"
+    ShowHTML "          <td><font size=""1""><INPUT " & w_Disabled & " class=""btm"" type=""CHECKBOX"" name=""w_marca_campos"" value="""" onClick=""javascript:MarcaTodosCampos();"" TITLE=""Marca todos os itens da relação""> Todos</td>"    
     ShowHTML "      <tr><td colspan=2><font size=1><b>Blocos adicionais"
     ShowHTML "      <tr>"
     ShowHTML "          <td><font size=""1""><INPUT " & w_Disabled & " class=""btm"" type=""CHECKBOX"" name=""p_metas"" value=""metas""> Metas físicas</td>"
     ShowHTML "          <td><font size=""1""><INPUT " & w_Disabled & " class=""btm"" type=""CHECKBOX"" name=""p_tarefas"" value=""tarefas""> Tarefas</td>"
     ShowHTML "      <tr>"
     ShowHTML "          <td><font size=""1""><INPUT " & w_Disabled & " class=""btm"" type=""CHECKBOX"" name=""p_sq_unidade_resp"" value=""unidade""> Área planejamento</td>"
+    ShowHTML "          <td><font size=""1""><INPUT " & w_Disabled & " class=""btm"" type=""CHECKBOX"" name=""w_marca_bloco"" value="""" onClick=""javascript:MarcaTodosBloco();"" TITLE=""Marca todos os itens da relação""> Todos</td>"    
     ShowHTML "     </table>"    
     ShowHTML "    <table width=""90%"" border=""0"">"            
     ShowHTML "      <tr><td align=""center""><hr>"
@@ -1259,7 +1319,7 @@ Sub Rel_Programa
      End If
      DesconectaBD
      ' Recupera todos os registros para a listagem
-     DB_GetProgramaPPA_IS RS, p_cd_programa, w_cliente, w_ano, null
+     DB_GetProgramaPPA_IS RS, p_cd_programa, w_cliente, w_ano, null, null
      If p_responsavel > "" Then
         RS.Filter = "nm_gerente_programa like '%" &p_responsavel& "%'"
      End If
@@ -1271,8 +1331,8 @@ Sub Rel_Programa
      w_pag   = 1
      w_linha = 5
      ShowHTML "<BASE HREF=""http://" & Request.ServerVariables("server_name") & "/siw/"">"
-     ShowHTML "<TABLE WIDTH=""100%"" BORDER=0><TR><TD ROWSPAN=2><IMG ALIGN=""LEFT"" SRC=""" & w_logo & """><TD ALIGN=""RIGHT""><B><FONT SIZE=4 COLOR=""#000000"">"
-     ShowHTML "Programas PPA"
+     ShowHTML "<TABLE WIDTH=""100%"" BORDER=0><TR><TD ROWSPAN=2><IMG ALIGN=""LEFT"" SRC=""" & w_logo & """><TD ALIGN=""RIGHT"" NOWRAP><B><FONT SIZE=4 COLOR=""#000000"">"
+     ShowHTML "Relatório Analítico - Programas PPA 2004 - 2007 Exercício " & w_ano
      ShowHTML "</FONT><TR><TD WIDTH=""50%"" ALIGN=""RIGHT""><B><font size=1 COLOR=""#000000"">" & DataHora() & "</B>"
      ShowHTML "<TR><TD COLSPAN=""2"" ALIGN=""RIGHT""><B><FONT SIZE=2 COLOR=""#000000"">Página: " & w_pag & "</B></TD></TR>"
      ShowHTML "</TD></TR>"
@@ -1280,28 +1340,47 @@ Sub Rel_Programa
   Else
      Cabecalho
      ShowHTML "<HEAD>"
-     ShowHTML "<TITLE>Relatório Programas PPA</TITLE>"
+     ShowHTML "<TITLE>Relatório Analítico - Programas PPA 2004 - 2007 Exercício " & w_ano & "</TITLE>"
      If InStr("P",O) > 0 Then
         ScriptOpen "JavaScript"
         ValidateOpen "Validacao"
         Validate "p_cd_programa", "Programa", "SELECT", "", "1", "18", "", "1"
         Validate "p_responsavel", "Responsável", "1", "", "2", "60", "1", "1"
         ValidateClose
+        ShowHTML "  function MarcaTodosCampos() {"
+        ShowHTML "    if (document.Form.w_marca_campos.checked==true) "
+        ShowHTML "       for (i=0; i < 3; i++) {"
+        ShowHTML "         document.Form.p_campos[i].checked=true;"
+        ShowHTML "    } else { "
+        ShowHTML "       for (i=0; i < 3; i++) {"
+        ShowHTML "         document.Form.p_campos[i].checked=false;"
+        ShowHTML "       } "
+        ShowHTML "    } "
+        ShowHTML "  }"
+        ShowHTML "  function MarcaTodosBloco() {"
+        ShowHTML "    if (document.Form.w_marca_bloco.checked==true) {"
+        ShowHTML "         document.Form.p_indicador.checked=true;"
+        ShowHTML "         document.Form.p_sq_unidade_resp.checked=true;"
+        ShowHTML "    } else { "
+        ShowHTML "         document.Form.p_indicador.checked=false;"
+        ShowHTML "         document.Form.p_sq_unidade_resp.checked=false;"
+        ShowHTML "    } "
+        ShowHTML "  }"        
         ScriptClose
      End If
      ShowHTML "</HEAD>"
      ShowHTML "<BASE HREF=""http://" & Request.ServerVariables("server_name") & "/siw/"">"
      If O = "L" Then
         BodyOpenClean "onLoad='document.focus()';"
-        ShowHTML "<TABLE WIDTH=""100%"" BORDER=0><TR><TD ROWSPAN=2><IMG ALIGN=""LEFT"" SRC=""" & w_logo & """><TD ALIGN=""RIGHT""><B><FONT SIZE=4 COLOR=""#000000"">"
-        ShowHTML "Programas PPA"
+        ShowHTML "<TABLE WIDTH=""100%"" BORDER=0><TR><TD ROWSPAN=2><IMG ALIGN=""LEFT"" SRC=""" & w_logo & """><TD ALIGN=""RIGHT"" NOWRAP><B><FONT SIZE=4 COLOR=""#000000"">"
+        ShowHTML "Relatório Analítico - Programas PPA 2004 - 2007 Exercício " & w_ano
         ShowHTML "</FONT><TR><TD WIDTH=""50%"" ALIGN=""RIGHT""><B><font size=1 COLOR=""#000000"">" & DataHora() & "</B>"
         ShowHTML "&nbsp;&nbsp;<IMG BORDER=0 ALIGN=""CENTER"" TITLE=""Gerar word"" SRC=""images/word.gif"" onClick=""window.open('" & w_pagina & par & "&R=" & w_pagina & par & "&O=L&w_chave=" & w_chave & "&w_tipo_rel=word&P1=" & P1 & "&P2=" & P2 & "&P3=" & P3 & "&P4=" & P4 & "&TP=" & TP & "&SG=" & SG & MontaFiltro("GET") &"','VisualRelPPAWord','menubar=yes resizable=yes scrollbars=yes');"">"
         ShowHTML "&nbsp;&nbsp;<IMG ALIGN=""CENTER"" TITLE=""Imprimir"" SRC=""images/impressora.jpg"" onClick=""window.print();"">"
         ShowHTML "</TD></TR>"
         ShowHTML "</FONT></B></TD></TR></TABLE>"
      Else
-        BodyOpen "onLoad='document.Form.p_cd_programa.focus()';"
+        BodyOpen "onLoad='document.Form.p_cd_programa.focus();'"
         ShowHTML "<B><FONT COLOR=""#000000"">" & w_TP & "</FONT></B>"
      End If
      ShowHTML "<HR>"
@@ -1469,14 +1548,14 @@ Sub Rel_Programa
     ShowHTML "</tr>"
     DesconectaBD
   ElseIf O = "P" Then
-    AbreForm "Form", w_dir & w_pagina & par, "POST", "return(Validacao(this));", "Tabela PPA",P1,P2,P3,P4,TP,SG,R,"L"
+    AbreForm "Form", w_dir & w_pagina & par, "POST", "return(Validacao(this));", "Programa",P1,P2,P3,P4,TP,SG,R,"L"
     ShowHTML "<INPUT type=""hidden"" name=""w_chave"" value=""" & w_chave & """>"
     ShowHTML "<INPUT type=""hidden"" name=""w_troca"" value="""">"
 
     ShowHTML "<tr bgcolor=""" & conTrBgColor & """><td align=""center"">"
     ShowHTML "    <table width=""97%"" border=""0"">"
     ShowHTML "      <tr>"
-    SelecaoProgramaPPA "<u>P</u>rograma PPA:", "P", null, w_cliente, w_ano, p_cd_programa, "p_cd_programa", null, null
+    SelecaoProgramaPPA "<u>P</u>rograma PPA:", "P", null, w_cliente, w_ano, p_cd_programa, "p_cd_programa", null, null, w_menu
     ShowHTML "      <tr><td><font size=""1""><b><u>R</u>esponsável:</b><br><input " & w_disabled & " accesskey=""R"" type=""text"" name=""p_responsavel"" class=""sti"" SIZE=""40"" MAXLENGTH=""60"" VALUE=""" & p_responsavel & """></td>"
     ShowHTML "      <tr><td colspan=3><table border=0 width=""100%"" cellspacing=0 cellpadding=0><tr valign=""top"">"
     ShowHTML "          <td><font size=""1""><b>Selecionada pela SPI/MP?</b><br>"
@@ -1503,10 +1582,13 @@ Sub Rel_Programa
     ShowHTML "          <td><font size=""1""><INPUT " & w_Disabled & " class=""btm"" type=""CHECKBOX"" name=""p_campos"" value=""email""> e-Mail</td>"
     ShowHTML "      <tr>"
     ShowHTML "          <td><font size=""1""><INPUT " & w_Disabled & " class=""btm"" type=""CHECKBOX"" name=""p_campos"" value=""telefone""> Telefone</td>"
+    ShowHTML "          <td><font size=""1""><INPUT " & w_Disabled & " class=""btm"" type=""CHECKBOX"" name=""w_marca_campos"" value="""" onClick=""javascript:MarcaTodosCampos();"" TITLE=""Marca todos os itens da relação""> Todos</td>"
     ShowHTML "      <tr><td colspan=2><font size=1><b>Blocos adicionais"
     ShowHTML "      <tr>"
     ShowHTML "          <td><font size=""1""><INPUT " & w_Disabled & " class=""btm"" type=""CHECKBOX"" name=""p_indicador"" value=""Indicador""> Indicadores</td>"
     ShowHTML "          <td><font size=""1""><INPUT " & w_Disabled & " class=""btm"" type=""CHECKBOX"" name=""p_sq_unidade_resp"" value=""unidade""> Área planejamento</td>"
+    ShowHTML "      <tr>"
+    ShowHTML "          <td><font size=""1""><INPUT " & w_Disabled & " class=""btm"" type=""CHECKBOX"" name=""w_marca_bloco"" value="""" onClick=""javascript:MarcaTodosBloco();"" TITLE=""Marca todos os itens da relação""> Todos</td>"    
     ShowHTML "     </table>"    
     ShowHTML "    <table width=""90%"" border=""0"">"            
     ShowHTML "      <tr><td align=""center""><hr>"
@@ -1548,7 +1630,7 @@ REM =========================================================================
 REM Relatório Sintético de Plano/projetos especificos
 REM -------------------------------------------------------------------------
 Sub Rel_Sintetico_PR
-  Dim p_sq_isprojeto, p_selecao_mp, p_selecao_se
+  Dim p_sq_isprojeto, p_selecao_mp, p_selecao_se, p_siw_solic
   Dim p_responsavel, p_sq_unidade_resp, p_prioridade
   Dim w_atual, w_logo, w_titulo, w_sq_siw_solicitacao
   Dim w_tipo_rel, w_quantitativo_total
@@ -1560,6 +1642,7 @@ Sub Rel_Sintetico_PR
   w_tipo_rel        = uCase(trim(Request("w_tipo_rel")))
   
   p_sq_isprojeto             = ucase(Trim(Request("p_sq_isprojeto")))
+  p_siw_solic                = ucase(Trim(Request("p_siw_solic")))
   p_responsavel              = ucase(Trim(Request("p_responsavel")))
   p_prioridade               = ucase(Trim(Request("p_prioridade")))
   p_sq_unidade_resp          = ucase(Trim(Request("p_sq_unidade_resp")))
@@ -1581,7 +1664,7 @@ Sub Rel_Sintetico_PR
      End If
      DesconectaBD
      ' Recupera todos os registros para a listagem
-     DB_GetProjeto_IS RS, p_sq_isprojeto, w_cliente, null, null, p_responsavel, null, null, null, null, null, p_selecao_mp, p_selecao_se, null
+     DB_GetProjeto_IS RS, p_sq_isprojeto, w_cliente, null, null, p_responsavel, null, null, null, null, null, p_selecao_mp, p_selecao_se, null, p_siw_solic
      RS.Sort = "ordem"
   End If
   
@@ -1590,8 +1673,8 @@ Sub Rel_Sintetico_PR
      w_pag   = 1
      w_linha = 8
      ShowHTML "<BASE HREF=""http://" & Request.ServerVariables("server_name") & "/siw/"">"
-     ShowHTML "<TABLE WIDTH=""100%"" BORDER=0><TR><TD ROWSPAN=2><IMG ALIGN=""LEFT"" SRC=""" & w_logo & """><TD ALIGN=""RIGHT""><B><FONT SIZE=4 COLOR=""#000000"">"
-     ShowHTML "Plano/projeto específico"
+     ShowHTML "<TABLE WIDTH=""100%"" BORDER=0><TR><TD ROWSPAN=2><IMG ALIGN=""LEFT"" SRC=""" & w_logo & """><TD ALIGN=""RIGHT"" NOWRAP><B><FONT SIZE=4 COLOR=""#000000"">"
+     ShowHTML "Relatório Sintético - Plano/projetos " & w_ano
      ShowHTML "</FONT><TR><TD WIDTH=""50%"" ALIGN=""RIGHT""><B><font size=1 COLOR=""#000000"">" & DataHora() & "</B>"
      ShowHTML "<TR><TD COLSPAN=""2"" ALIGN=""RIGHT""><B><FONT SIZE=2 COLOR=""#000000"">Página: " & w_pag & "</B></TD></TR>"
      ShowHTML "</TD></TR>"
@@ -1599,11 +1682,12 @@ Sub Rel_Sintetico_PR
   Else
      Cabecalho
      ShowHTML "<HEAD>"
-     ShowHTML "<TITLE>Relatório Sintético dos Planos/projetos específicos</TITLE>"
+     ShowHTML "<TITLE>Relatório Sintético - Plano/projetos " & w_ano & "</TITLE>"
      If InStr("P",O) > 0 Then
         ScriptOpen "JavaScript"
         ValidateOpen "Validacao"
         Validate "p_sq_isprojeto", "Plano/projeto específico", "SELECT", "", "1", "18", "", "1"
+        Validate "p_siw_solic", "Ação", "SELECT", "", "1", "18", "", "1"
         Validate "p_responsavel", "Responsável", "1", "", "2", "60", "1", "1"
         ValidateClose
         ScriptClose
@@ -1612,8 +1696,8 @@ Sub Rel_Sintetico_PR
      ShowHTML "<BASE HREF=""http://" & Request.ServerVariables("server_name") & "/siw/"">"
      If O = "L" Then
         BodyOpenClean "onLoad='document.focus()';"
-        ShowHTML "<TABLE WIDTH=""100%"" BORDER=0><TR><TD ROWSPAN=2><IMG ALIGN=""LEFT"" SRC=""" & w_logo & """><TD ALIGN=""RIGHT""><B><FONT SIZE=4 COLOR=""#000000"">"
-        ShowHTML "Plano/projeto específico"
+        ShowHTML "<TABLE WIDTH=""100%"" BORDER=0><TR><TD ROWSPAN=2><IMG ALIGN=""LEFT"" SRC=""" & w_logo & """><TD ALIGN=""RIGHT"" NOWRAP><B><FONT SIZE=4 COLOR=""#000000"">"
+        ShowHTML "Relatório Sintético - Plano/projetos " & w_ano
         ShowHTML "</FONT><TR><TD WIDTH=""50%"" ALIGN=""RIGHT""><B><font size=1 COLOR=""#000000"">" & DataHora() & "</B>"
         ShowHTML "&nbsp;&nbsp;<IMG ALIGN=""CENTER"" TITLE=""Imprimir"" SRC=""images/impressora.jpg"" onClick=""window.print();"">"
         ShowHTML "&nbsp;&nbsp;<IMG BORDER=0 ALIGN=""CENTER"" TITLE=""Gerar word"" SRC=""images/word.gif"" onClick=""window.open('" & w_pagina & par & "&R=" & w_pagina & par & "&O=L&w_chave=" & w_chave & "&w_tipo_rel=word&P1=" & P1 & "&P2=" & P2 & "&P3=" & P3 & "&P4=" & P4 & "&TP=" & TP & "&SG=" & SG & MontaFiltro("GET") &"','VisualRelPPAWord','menubar=yes resizable=yes scrollbars=yes');"">"
@@ -1634,7 +1718,7 @@ Sub Rel_Sintetico_PR
     If p_prioridade            > "" Then w_filtro = w_filtro & "<td><font size=1>Prioridade&nbsp;<font size=1>[<b>" & RetornaPrioridade(p_prioridade) & "</b>]&nbsp;"    End If
     If p_selecao_mp            > "" Then w_filtro = w_filtro & "<td><font size=1>Selecionada MP&nbsp;<font size=1>[<b>" & p_selecao_mp & "</b>]&nbsp;"             End If
     If p_selecao_se            > "" Then w_filtro = w_filtro & "<td><font size=1>Selecionada Relevante&nbsp;<font size=1>[<b>" & p_selecao_se & "</b>]&nbsp;" End If
-    If p_programada            > "" Then w_filtro = w_filtro & "<td><font size=1>Meta LOA&nbsp;<font size=1>[<b>" & p_programada & "</b>]&nbsp;"                         End If
+    If p_programada            > "" Then w_filtro = w_filtro & "<td><font size=1>Meta PPA&nbsp;<font size=1>[<b>" & p_programada & "</b>]&nbsp;"                         End If
     If p_exequivel             > "" Then w_filtro = w_filtro & "<td><font size=1>Meta será cumprida&nbsp;<font size=1>[<b>" & p_exequivel & "</b>]&nbsp;"                End If
     If p_fim_previsto          > "" Then w_filtro = w_filtro & "<td><font size=1>Metas em atraso&nbsp;<font size=1>[<b>" & p_fim_previsto & "</b>]&nbsp;"                End If
     If p_atraso                > "" Then w_filtro = w_filtro & "<td><font size=1>Ações em atraso&nbsp;<font size=1>[<b>" & p_atraso & "</b>]&nbsp;"                      End If
@@ -1685,7 +1769,7 @@ Sub Rel_Sintetico_PR
              If p_prioridade            > "" Then w_filtro = w_filtro & "<td><font size=1>Prioridade&nbsp;<font size=1>[<b>" & RetornaPrioridade(p_prioridade) & "</b>]&nbsp;"    End If
              If p_selecao_mp            > "" Then w_filtro = w_filtro & "<td><font size=1>Selecionada MP&nbsp;<font size=1>[<b>" & p_selecao_mp & "</b>]&nbsp;"             End If
              If p_selecao_se            > "" Then w_filtro = w_filtro & "<td><font size=1>Selecionada Relevante&nbsp;<font size=1>[<b>" & p_selecao_se & "</b>]&nbsp;" End If
-             If p_programada            > "" Then w_filtro = w_filtro & "<td><font size=1>Meta LOA&nbsp;<font size=1>[<b>" & p_programada & "</b>]&nbsp;"                         End If
+             If p_programada            > "" Then w_filtro = w_filtro & "<td><font size=1>Meta PPA&nbsp;<font size=1>[<b>" & p_programada & "</b>]&nbsp;"                         End If
              If p_exequivel             > "" Then w_filtro = w_filtro & "<td><font size=1>Meta será cumprida&nbsp;<font size=1>[<b>" & p_exequivel & "</b>]&nbsp;"                End If
              If p_fim_previsto          > "" Then w_filtro = w_filtro & "<td><font size=1>Metas em atraso&nbsp;<font size=1>[<b>" & p_fim_previsto & "</b>]&nbsp;"                End If
              If p_atraso                > "" Then w_filtro = w_filtro & "<td><font size=1>Ações em atraso&nbsp;<font size=1>[<b>" & p_atraso & "</b>]&nbsp;"                      End If
@@ -1789,19 +1873,19 @@ Sub Rel_Sintetico_PR
                          ShowHTML "      <td><font size=""1""><A class=""HL"" HREF=""#"" onClick=""window.open('Acao.asp?par=AtualizaMeta&O=V&w_chave=" & RS2("sq_siw_solicitacao") & "&w_chave_aux=" &  Rs3("sq_meta")  & "&w_tipo=Volta&P1=10&P2=" & P2 & "&P3=" & P3 & "&P4=" & P4 & "&TP=" & TP & "&SG=" & SG & "','Meta','width=600, height=350, top=50, left=50, toolbar=no, scrollbars=yes, resizable=yes, status=no'); return false;"" title=""Clique para exibir os dados!"">" & RS3("titulo") & "</A></td>"
                       End If
                       ShowHTML "      <td nowrap align=""center""><font size=""1"">" & Nvl(RS3("unidade_medida"),"---") & "</td>"
-                      ShowHTML "      <td nowrap align=""right"" ><font size=""1"">" & FormatNumber(RS3("quantidade"),0) & "</td>"
+                      ShowHTML "      <td nowrap align=""right"" ><font size=""1"">" & FormatNumber(cDbl(Nvl(Rs3("quantidade"),0)),2) & "</td>"
                       DB_GetMetaMensal_IS RS4, RS3("sq_meta")
                       RS4.Sort = "referencia desc"
                       If Not RS4.EOF Then
                          If RS3("cumulativa") = "S" Then
-                            ShowHTML "      <td nowrap align=""right"" ><font size=""1"">" & FormatNumber(Nvl(RS4("execucao_fisica"),0),0) & "</td>"
+                            ShowHTML "      <td nowrap align=""right"" ><font size=""1"">" & FormatNumber(cDbl(Nvl(RS4("execucao_fisica"),0)),2) & "</td>"
                          Else
                             w_quantitativo_total = 0
                             While Not RS4.EOF
                                w_quantitativo_total = w_quantitativo_total + cDbl(Nvl(RS4("execucao_fisica"),0))
                                RS4.MoveNext
                             Wend
-                            ShowHTML "      <td nowrap align=""right"" ><font size=""1"">" & FormatNumber(w_quantitativo_total,0) & "</td>"
+                            ShowHTML "      <td nowrap align=""right"" ><font size=""1"">" & FormatNumber(cDbl(Nvl(w_quantitativo_total,0)),2) & "</td>"
                          End If
                       Else
                          ShowHTML "      <td nowrap align=""right"" ><font size=""1"">---</td>"
@@ -1817,19 +1901,19 @@ Sub Rel_Sintetico_PR
                                ShowHTML "      <td><font size=""1""><A class=""HL"" HREF=""#"" onClick=""window.open('Acao.asp?par=AtualizaMeta&O=V&w_chave=" & RS2("sq_siw_solicitacao") & "&w_chave_aux=" &  Rs3("sq_meta")  & "&w_tipo=Volta&P1=10&P2=" & P2 & "&P3=" & P3 & "&P4=" & P4 & "&TP=" & TP & "&SG=" & SG & "','Meta','width=600, height=350, top=50, left=50, toolbar=no, scrollbars=yes, resizable=yes, status=no'); return false;"" title=""Clique para exibir os dados!"">" & Rs3("titulo") & "</A></td>"
                             End If
                             ShowHTML "      <td nowrap align=""center""><font size=""1"">" & Nvl(Rs3("unidade_medida"),"---") & "</td>"
-                            ShowHTML "      <td nowrap align=""right"" ><font size=""1"">" & FormatNumber(Rs3("quantidade"),0) & "</td>"
+                            ShowHTML "      <td nowrap align=""right"" ><font size=""1"">" & FormatNumber(cDbl(Nvl(Rs3("quantidade"),0)),2) & "</td>"
                             DB_GetMetaMensal_IS RS4, RS3("sq_meta")
                             RS4.Sort = "referencia desc"
                             If Not RS4.EOF Then
                                If RS3("cumulativa") = "S" Then
-                                  ShowHTML "      <td nowrap align=""right"" ><font size=""1"">" & FormatNumber(Nvl(RS4("execucao_fisica"),0),0) & "</td>"
+                                  ShowHTML "      <td nowrap align=""right"" ><font size=""1"">" & FormatNumber(cDbl(Nvl(RS4("execucao_fisica"),0)),2) & "</td>"
                                Else
                                   w_quantitativo_total = 0
                                   While Not RS4.EOF
                                      w_quantitativo_total = w_quantitativo_total + cDbl(Nvl(RS4("execucao_fisica"),0))
                                      RS4.MoveNext
                                   Wend
-                                  ShowHTML "      <td nowrap align=""right"" ><font size=""1"">" & FormatNumber(w_quantitativo_total,0) & "</td>"
+                                  ShowHTML "      <td nowrap align=""right"" ><font size=""1"">" & FormatNumber(cDbl(Nvl(w_quantitativo_total,0)),2) & "</td>"
                                End If
                             Else
                                ShowHTML "      <td nowrap align=""right"" ><font size=""1"">---</td>"
@@ -1877,25 +1961,28 @@ Sub Rel_Sintetico_PR
     ShowHTML "</tr>"
     DesconectaBD
   ElseIf O = "P" Then
-    AbreForm "Form", w_dir & w_pagina & par, "POST", "return(Validacao(this));", "Tabela PPA",P1,P2,P3,P4,TP,SG,R,"L"
+    AbreForm "Form", w_dir & w_pagina & par, "POST", "return(Validacao(this));", "Projeto",P1,P2,P3,P4,TP,SG,R,"L"
     ShowHTML "<INPUT type=""hidden"" name=""w_chave"" value=""" & w_chave & """>"
     ShowHTML "<INPUT type=""hidden"" name=""w_troca"" value="""">"
 
     ShowHTML "<tr bgcolor=""" & conTrBgColor & """><td align=""center"">"
     ShowHTML "    <table width=""97%"" border=""0"">"
     ShowHTML "          <tr>"
-    SelecaoIsProjeto "<u>P</u>lano/projeto específico:", "P", null, p_sq_isprojeto, null, "p_sq_isprojeto", null, null
+    SelecaoIsProjeto "<u>P</u>lano/projeto específico:", "P", null, p_sq_isprojeto, null, "p_sq_isprojeto", null, "onchange=""document.Form.action='" & w_dir & w_pagina & par & "'; document.Form.w_troca.value='p_sq_isprojeto'; document.Form.target=''; document.Form.O.value='P'; document.Form.submit();"""
+    ShowHTML "          </tr>"
+    ShowHTML "          <tr>"
+    SelecaoAcao "<u>A</u>ção:", "A", null, w_cliente, w_ano, null, null, null, null, "p_siw_solic", "RELATORIO", null, p_sq_isprojeto
     ShowHTML "          </tr>"
     ShowHTML "      <tr><td><font size=""1""><b><u>R</u>esponsável:</b><br><input " & w_disabled & " accesskey=""R"" type=""text"" name=""p_responsavel"" class=""sti"" SIZE=""40"" MAXLENGTH=""60"" VALUE=""" & p_responsavel & """></td>"
-    'ShowHTML "      <tr>"
-    'SelecaoPrioridade "<u>P</u>rioridade das tarefas:", "P", "Informe a prioridade da tarefa.", p_prioridade, null, "p_prioridade", null, null
+    ShowHTML "      <tr>"
+    SelecaoPrioridade "<u>P</u>rioridade das tarefas:", "P", "Informe a prioridade da tarefa.", p_prioridade, null, "p_prioridade", null, null
     ShowHTML "      <tr><td colspan=3><table border=0 width=""100%"" cellspacing=0 cellpadding=0><tr valign=""top"">"
     ShowHTML "          <td><font size=""1""><b>Selecionada SPI/MP?</b><br>"
     ShowHTML "              <input " & w_Disabled & " type=""radio"" name=""p_selecao_mp"" value=""S""> Sim <input " & w_Disabled & " type=""radio"" name=""p_selecao_mp"" value=""N""> Não <input " & w_Disabled & " type=""radio"" name=""p_selecao_mp"" value="""" checked> Independe"
     ShowHTML "          <td><font size=""1""><b>Selecionada SE/MS?</b><br>"
     ShowHTML "              <input " & w_Disabled & " type=""radio"" name=""p_selecao_se"" value=""S""> Sim <input " & w_Disabled & " type=""radio"" name=""p_selecao_se"" value=""N""> Não <input " & w_Disabled & " type=""radio"" name=""p_selecao_se"" value="""" checked> Independe"
     ShowHTML "      <tr valign=""top"">"
-    ShowHTML "          <td><font size=""1""><b>Exibir somente metas da LOA?</b><br>"
+    ShowHTML "          <td><font size=""1""><b>Exibir somente metas do PPA?</b><br>"
     ShowHTML "              <input " & w_Disabled & " type=""radio"" name=""p_programada"" value=""S""> Sim <br><input " & w_Disabled & " type=""radio"" name=""p_programada"" value="""" checked> Não"
     ShowHTML "          <td><font size=""1""><b>Exibir somente metas que não serão cumpridas?</b><br>"
     ShowHTML "              <input " & w_Disabled & " type=""radio"" name=""p_exequivel"" value=""N""> Sim <br><input " & w_Disabled & " type=""radio"" name=""p_exequivel"" value="""" checked> Não"
@@ -1933,6 +2020,7 @@ Sub Rel_Sintetico_PR
   Set w_logo                    = Nothing 
   Set w_atual                   = Nothing 
   Set p_sq_isprojeto            = Nothing 
+  Set p_siw_solic               = Nothing
   Set p_selecao_mp              = Nothing 
   Set p_selecao_se              = Nothing 
   Set p_responsavel             = Nothing 
@@ -1985,9 +2073,9 @@ Sub Rel_Sintetico_PPA
      End If
      DesconectaBD
      If p_cd_programa > "" and p_codigo = "" Then
-        DB_GetAcaoPPA_IS RS, w_cliente, w_ano, p_cd_programa , null, null, null, null, null
+        DB_GetAcaoPPA_IS RS, w_cliente, w_ano, p_cd_programa , null, null, null, null, null, null
      Else
-        DB_GetAcaoPPA_IS RS, w_cliente, w_ano, Mid(p_codigo,1,4), Mid(p_codigo,5,4), null, Mid(p_codigo,13,17), null, null
+        DB_GetAcaoPPA_IS RS, w_cliente, w_ano, Mid(p_codigo,1,4), Mid(p_codigo,5,4), null, Mid(p_codigo,13,17), null, null, null
      End If
      If p_responsavel > "" Then
         RS.Filter = "nm_coordenador like '%" & p_responsavel &"%'"
@@ -2000,8 +2088,8 @@ Sub Rel_Sintetico_PPA
      w_pag   = 1
      w_linha = 8
      ShowHTML "<BASE HREF=""http://" & Request.ServerVariables("server_name") & "/siw/"">"
-     ShowHTML "<TABLE WIDTH=""100%"" BORDER=0><TR><TD ROWSPAN=2><IMG ALIGN=""LEFT"" SRC=""" & w_logo & """><TD ALIGN=""RIGHT""><B><FONT SIZE=4 COLOR=""#000000"">"
-     ShowHTML "Ações do PPA"
+     ShowHTML "<TABLE WIDTH=""100%"" BORDER=0><TR><TD ROWSPAN=2><IMG ALIGN=""LEFT"" SRC=""" & w_logo & """><TD ALIGN=""RIGHT"" NOWRAP><B><FONT SIZE=4 COLOR=""#000000"">"
+     ShowHTML "Relatório Sintético - Ações PPA 2004 - 2007 Exercício " & w_ano
      ShowHTML "</FONT><TR><TD WIDTH=""50%"" ALIGN=""RIGHT""><B><font size=1 COLOR=""#000000"">" & DataHora() & "</B>"
      ShowHTML "<TR><TD COLSPAN=""2"" ALIGN=""RIGHT""><B><FONT SIZE=2 COLOR=""#000000"">Página: " & w_pag & "</B></TD></TR>"
      ShowHTML "</TD></TR>"
@@ -2009,7 +2097,7 @@ Sub Rel_Sintetico_PPA
   Else
      Cabecalho
      ShowHTML "<HEAD>"
-     ShowHTML "<TITLE>Relatório Sintético das Ações do PPA</TITLE>"
+     ShowHTML "<TITLE>Relatório Sintético - Ações PPA 2004 - 2007 Exercício " & w_ano & "</TITLE>"
      If InStr("P",O) > 0 Then
         ScriptOpen "JavaScript"
         ValidateOpen "Validacao"
@@ -2023,8 +2111,8 @@ Sub Rel_Sintetico_PPA
      ShowHTML "<BASE HREF=""http://" & Request.ServerVariables("server_name") & "/siw/"">"
      If O = "L" Then
         BodyOpenClean "onLoad='document.focus()';"
-        ShowHTML "<TABLE WIDTH=""100%"" BORDER=0><TR><TD ROWSPAN=2><IMG ALIGN=""LEFT"" SRC=""" & w_logo & """><TD ALIGN=""RIGHT""><B><FONT SIZE=4 COLOR=""#000000"">"
-        ShowHTML "Ações do PPA"
+        ShowHTML "<TABLE WIDTH=""100%"" BORDER=0><TR><TD ROWSPAN=2><IMG ALIGN=""LEFT"" SRC=""" & w_logo & """><TD ALIGN=""RIGHT"" NOWRAP><B><FONT SIZE=4 COLOR=""#000000"">"
+        ShowHTML "Relatório Sintético - Ações PPA 2004 - 2007 Exercício " & w_ano
         ShowHTML "</FONT><TR><TD WIDTH=""50%"" ALIGN=""RIGHT""><B><font size=1 COLOR=""#000000"">" & DataHora() & "</B>"
         ShowHTML "&nbsp;&nbsp;<IMG ALIGN=""CENTER"" TITLE=""Imprimir"" SRC=""images/impressora.jpg"" onClick=""window.print();"">"
         ShowHTML "&nbsp;&nbsp;<IMG BORDER=0 ALIGN=""CENTER"" TITLE=""Gerar word"" SRC=""images/word.gif"" onClick=""window.open('" & w_pagina & par & "&R=" & w_pagina & par & "&O=L&w_chave=" & w_chave & "&w_tipo_rel=word&P1=" & P1 & "&P2=" & P2 & "&P3=" & P3 & "&P4=" & P4 & "&TP=" & TP & "&SG=" & SG & MontaFiltro("GET") &"','VisualRelPPAWord','menubar=yes resizable=yes scrollbars=yes');"">"
@@ -2045,7 +2133,7 @@ Sub Rel_Sintetico_PPA
     If p_prioridade            > "" Then w_filtro = w_filtro & "<td><font size=1>Prioridade&nbsp;<font size=1>[<b>" & RetornaPrioridade(p_prioridade) & "</b>]&nbsp;"    End If
     If p_selecao_mp            > "" Then w_filtro = w_filtro & "<td><font size=1>Selecionada SPI/MP&nbsp;<font size=1>[<b>" & p_selecao_mp & "</b>]&nbsp;"             End If
     If p_selecao_se            > "" Then w_filtro = w_filtro & "<td><font size=1>Selecionada SE/MS&nbsp;<font size=1>[<b>" & p_selecao_se & "</b>]&nbsp;" End If
-    If p_programada            > "" Then w_filtro = w_filtro & "<td><font size=1>Meta LOA&nbsp;<font size=1>[<b>" & p_programada & "</b>]&nbsp;"                         End If
+    If p_programada            > "" Then w_filtro = w_filtro & "<td><font size=1>Meta PPA&nbsp;<font size=1>[<b>" & p_programada & "</b>]&nbsp;"                         End If
     If p_exequivel             > "" Then w_filtro = w_filtro & "<td><font size=1>Meta será cumprida&nbsp;<font size=1>[<b>" & p_exequivel & "</b>]&nbsp;"                End If
     If p_fim_previsto          > "" Then w_filtro = w_filtro & "<td><font size=1>Metas em atraso&nbsp;<font size=1>[<b>" & p_fim_previsto & "</b>]&nbsp;"                End If
     If p_atraso                > "" Then w_filtro = w_filtro & "<td><font size=1>Ações em atraso&nbsp;<font size=1>[<b>" & p_atraso & "</b>]&nbsp;"                      End If
@@ -2059,9 +2147,12 @@ Sub Rel_Sintetico_PPA
     ShowHTML "          <td rowspan=""1"" colspan=""2""><font size=""1""><b>Ações</font></td>"
     DB_GetOrImport RS1, null, w_cliente, null, null, null, null, null
     RS1.Sort ="data_arquivo desc"
-    ShowHTML "          <td rowspan=""1"" colspan=""5""><font size=""1""><b>Dados SIAFI&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Atualização: " & Nvl(FormataDataEdicao(RS1("data_arquivo")),"-") & "</font></td>"
+    If Not RS1.EOF Then
+       ShowHTML "          <td rowspan=""1"" colspan=""5""><font size=""1""><b>Dados SIAFI&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Atualização: " & Nvl(FormataDataEdicao(RS1("data_arquivo")),"-") & "</font></td>"
+    Else
+       ShowHTML "          <td rowspan=""1"" colspan=""5""><font size=""1""><b>Dados SIAFI</font></td>"
+    End If
     RS1.Close
-    'ShowHTML "          <td rowspan=""1"" colspan=""5""><font size=""1""><b>Dados SIAFI</font></td>"
     ShowHTML "          <td rowspan=""1"" colspan=""7""><font size=""1""><b>Metas</font></td>"
     ShowHTML "        </tr>"
     ShowHTML "        <tr bgcolor=""" & conTrBgColor & """ align=""center"">"
@@ -2079,7 +2170,7 @@ Sub Rel_Sintetico_PPA
     ShowHTML "          <td><font size=""1""><b>Quantitativo<br>programado</font></td>"
     ShowHTML "          <td><font size=""1""><b>Quatintativo<br>realizado</font></td>"
     ShowHTML "          <td><font size=""1""><b>% Realizado</font></td>"
-    ShowHTML "          <td><font size=""1""><b>Meta<br>LOA</font></td>"
+    ShowHTML "          <td><font size=""1""><b>Meta<br>PPA</font></td>"
     ShowHTML "          <td><font size=""1""><b>Meta<br>PNS</font></td>"
     ShowHTML "        </tr>"    
     If RS.EOF Then ' Se não foram selecionados registros, exibe mensagem
@@ -2112,7 +2203,7 @@ Sub Rel_Sintetico_PPA
             If p_prioridade            > "" Then w_filtro = w_filtro & "<td><font size=1>Prioridade&nbsp;<font size=1>[<b>" & RetornaPrioridade(p_prioridade) & "</b>]&nbsp;"    End If
             If p_selecao_mp            > "" Then w_filtro = w_filtro & "<td><font size=1>Selecionada SPI/MP&nbsp;<font size=1>[<b>" & p_selecao_mp & "</b>]&nbsp;"             End If
             If p_selecao_se            > "" Then w_filtro = w_filtro & "<td><font size=1>Selecionada SE/MS&nbsp;<font size=1>[<b>" & p_selecao_se & "</b>]&nbsp;" End If
-            If p_programada            > "" Then w_filtro = w_filtro & "<td><font size=1>Meta LOA&nbsp;<font size=1>[<b>" & p_programada & "</b>]&nbsp;"                         End If
+            If p_programada            > "" Then w_filtro = w_filtro & "<td><font size=1>Meta PPA&nbsp;<font size=1>[<b>" & p_programada & "</b>]&nbsp;"                         End If
             If p_exequivel             > "" Then w_filtro = w_filtro & "<td><font size=1>Meta será cumprida&nbsp;<font size=1>[<b>" & p_exequivel & "</b>]&nbsp;"                End If
             If p_fim_previsto          > "" Then w_filtro = w_filtro & "<td><font size=1>Metas em atraso&nbsp;<font size=1>[<b>" & p_fim_previsto & "</b>]&nbsp;"                End If
             If p_atraso                > "" Then w_filtro = w_filtro & "<td><font size=1>Ações em atraso&nbsp;<font size=1>[<b>" & p_atraso & "</b>]&nbsp;"                      End If
@@ -2126,7 +2217,11 @@ Sub Rel_Sintetico_PPA
             ShowHTML "          <td rowspan=""1"" colspan=""2""><font size=""1""><b>Ações</font></td>"
             DB_GetOrImport RS1, null, w_cliente, null, null, null, null, null
             RS1.Sort ="data_arquivo desc"
-            ShowHTML "          <td rowspan=""1"" colspan=""5""><font size=""1""><b>Dados SIAFI&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Atualização: " & Nvl(FormataDataEdicao(RS1("data_arquivo")),"-") & "</font></td>"
+            If Not RS1.EOF Then
+               ShowHTML "          <td rowspan=""1"" colspan=""5""><font size=""1""><b>Dados SIAFI&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Atualização: " & Nvl(FormataDataEdicao(RS1("data_arquivo")),"-") & "</font></td>"
+            Else
+               ShowHTML "          <td rowspan=""1"" colspan=""5""><font size=""1""><b>Dados SIAFI</font></td>"
+            End If
             RS1.Close
             ShowHTML "          <td rowspan=""1"" colspan=""7""><font size=""1""><b>Metas</font></td>"
             ShowHTML "        </tr>"
@@ -2145,7 +2240,7 @@ Sub Rel_Sintetico_PPA
             ShowHTML "          <td><font size=""1""><b>Quantitativo<br>programado</font></td>"
             ShowHTML "          <td><font size=""1""><b>Quatintativo<br>realizado</font></td>"
             ShowHTML "          <td><font size=""1""><b>% Realizado</font></td>"
-            ShowHTML "          <td><font size=""1""><b>Meta<br>LOA</font></td>"
+            ShowHTML "          <td><font size=""1""><b>Meta<br>PPA</font></td>"
             ShowHTML "          <td><font size=""1""><b>Meta<br>PNS</font></td>"
             ShowHTML "        </tr>"    
           End If
@@ -2354,16 +2449,16 @@ Sub Rel_Sintetico_PPA
     ShowHTML "</tr>"
     DesconectaBD
   ElseIf O = "P" Then
-    AbreForm "Form", w_dir & w_pagina & par, "POST", "return(Validacao(this));", "Tabela PPA",P1,P2,P3,P4,TP,SG,R,"L"
+    AbreForm "Form", w_dir & w_pagina & par, "POST", "return(Validacao(this));", "Acao",P1,P2,P3,P4,TP,SG,R,"L"
     ShowHTML "<INPUT type=""hidden"" name=""w_chave"" value=""" & w_chave & """>"
     ShowHTML "<INPUT type=""hidden"" name=""w_troca"" value="""">"
 
     ShowHTML "<tr bgcolor=""" & conTrBgColor & """><td align=""center"">"
     ShowHTML "    <table width=""97%"" border=""0"">"
     ShowHTML "      <tr>"
-    SelecaoProgramaPPA "<u>P</u>rograma PPA:", "P", null, w_cliente, w_ano, p_cd_programa, "p_cd_programa", null, null
+    SelecaoProgramaPPA "<u>P</u>rograma PPA:", "P", null, w_cliente, w_ano, p_cd_programa, "p_cd_programa", null, "onchange=""document.Form.action='" & w_dir & w_pagina & par & "'; document.Form.w_troca.value='p_cd_programa'; document.Form.target=''; document.Form.O.value='P'; document.Form.submit();""", w_menu
     ShowHTML "      <tr>"
-    SelecaoAcaoPPA "<u>A</u>ção PPA:", "A", null, w_cliente, w_ano, null, null, null, null, "p_codigo", null, null, null
+    SelecaoAcaoPPA "<u>A</u>ção PPA:", "A", null, w_cliente, w_ano, p_cd_programa, null, null, null, "p_codigo", null, null, null, w_menu
     ShowHTML "      <tr><td><font size=""1""><b><u>R</u>esponsável:</b><br><input " & w_disabled & " accesskey=""R"" type=""text"" name=""p_responsavel"" class=""sti"" SIZE=""40"" MAXLENGTH=""60"" VALUE=""" & p_responsavel & """></td>"
     ShowHTML "      <tr>"
     SelecaoPrioridade "<u>P</u>rioridade das tarefas:", "P", "Informe a prioridade da tarefa.", p_prioridade, null, "p_prioridade", null, null
@@ -2373,7 +2468,7 @@ Sub Rel_Sintetico_PPA
     ShowHTML "          <td><font size=""1""><b>Selecionada SE/MS?</b><br>"
     ShowHTML "              <input " & w_Disabled & " type=""radio"" name=""p_selecao_se"" value=""S""> Sim <input " & w_Disabled & " type=""radio"" name=""p_selecao_se"" value=""N""> Não <input " & w_Disabled & " type=""radio"" name=""p_selecao_se"" value="""" checked> Independe"
     ShowHTML "      <tr valign=""top"">"
-    ShowHTML "          <td><font size=""1""><b>Exibir somente metas da LOA?</b><br>"
+    ShowHTML "          <td><font size=""1""><b>Exibir somente metas do PPA?</b><br>"
     ShowHTML "              <input " & w_Disabled & " type=""radio"" name=""p_programada"" value=""S""> Sim <br><input " & w_Disabled & " type=""radio"" name=""p_programada"" value="""" checked> Não"
     ShowHTML "          <td><font size=""1""><b>Exibir somente metas que não serão cumpridas?</b><br>"
     ShowHTML "              <input " & w_Disabled & " type=""radio"" name=""p_exequivel"" value=""N""> Sim <br><input " & w_Disabled & " type=""radio"" name=""p_exequivel"" value="""" checked> Não"
@@ -2457,7 +2552,7 @@ Sub Rel_Sintetico_Prog
          w_logo = "files\" & w_cliente & "\img\logo" & Mid(RS("logo"),Instr(RS("logo"),"."),30)
      End If
      DesconectaBD
-     DB_GetProgramaPPA_IS RS, p_cd_programa, w_cliente, w_ano, null
+     DB_GetProgramaPPA_IS RS, p_cd_programa, w_cliente, w_ano, null, null
      If p_responsavel > "" Then
         RS.Filter = "nm_gerente_programa like '%" &p_responsavel& "%'"
      End If
@@ -2469,8 +2564,8 @@ Sub Rel_Sintetico_Prog
      w_pag   = 1
      w_linha = 8
      ShowHTML "<BASE HREF=""http://" & Request.ServerVariables("server_name") & "/siw/"">"
-     ShowHTML "<TABLE WIDTH=""100%"" BORDER=0><TR><TD ROWSPAN=2><IMG ALIGN=""LEFT"" SRC=""" & w_logo & """><TD ALIGN=""RIGHT""><B><FONT SIZE=4 COLOR=""#000000"">"
-     ShowHTML "Ações do PPA"
+     ShowHTML "<TABLE WIDTH=""100%"" BORDER=0><TR><TD ROWSPAN=2><IMG ALIGN=""LEFT"" SRC=""" & w_logo & """><TD ALIGN=""RIGHT"" NOWRAP><B><FONT SIZE=4 COLOR=""#000000"">"
+     ShowHTML "Relatório Sintético - Programas PPA 2004 - 2007 Exercício " & w_ano
      ShowHTML "</FONT><TR><TD WIDTH=""50%"" ALIGN=""RIGHT""><B><font size=1 COLOR=""#000000"">" & DataHora() & "</B>"
      ShowHTML "<TR><TD COLSPAN=""2"" ALIGN=""RIGHT""><B><FONT SIZE=2 COLOR=""#000000"">Página: " & w_pag & "</B></TD></TR>"
      ShowHTML "</TD></TR>"
@@ -2478,7 +2573,7 @@ Sub Rel_Sintetico_Prog
   Else
      Cabecalho
      ShowHTML "<HEAD>"
-     ShowHTML "<TITLE>Programas - Relatório Sintético 2005</TITLE>"
+     ShowHTML "<TITLE>Relatório Sintético - Programas PPA 2004 - 2007 Exercício " & w_ano & "</TITLE>"
      If InStr("P",O) > 0 Then
         ScriptOpen "JavaScript"
         ValidateOpen "Validacao"
@@ -2491,8 +2586,8 @@ Sub Rel_Sintetico_Prog
      ShowHTML "<BASE HREF=""http://" & Request.ServerVariables("server_name") & "/siw/"">"
      If O = "L" Then
         BodyOpenClean "onLoad='document.focus()';"
-        ShowHTML "<TABLE WIDTH=""100%"" BORDER=0><TR><TD ROWSPAN=2><IMG ALIGN=""LEFT"" SRC=""" & w_logo & """><TD ALIGN=""RIGHT""><B><FONT SIZE=4 COLOR=""#000000"">"
-        ShowHTML "Programas do PPA"
+        ShowHTML "<TABLE WIDTH=""100%"" BORDER=0><TR><TD ROWSPAN=2><IMG ALIGN=""LEFT"" SRC=""" & w_logo & """><TD ALIGN=""RIGHT"" NOWRAP><B><FONT SIZE=4 COLOR=""#000000"">"
+        ShowHTML "Relatório Sintético - Programas PPA 2004 - 2007 Exercício " & w_ano
         ShowHTML "</FONT><TR><TD WIDTH=""50%"" ALIGN=""RIGHT""><B><font size=1 COLOR=""#000000"">" & DataHora() & "</B>"
         ShowHTML "&nbsp;&nbsp;<IMG ALIGN=""CENTER"" TITLE=""Imprimir"" SRC=""images/impressora.jpg"" onClick=""window.print();"">"
         ShowHTML "&nbsp;&nbsp;<IMG BORDER=0 ALIGN=""CENTER"" TITLE=""Gerar word"" SRC=""images/word.gif"" onClick=""window.open('" & w_pagina & par & "&R=" & w_pagina & par & "&O=L&w_chave=" & w_chave & "&w_tipo_rel=word&P1=" & P1 & "&P2=" & P2 & "&P3=" & P3 & "&P4=" & P4 & "&TP=" & TP & "&SG=" & SG & MontaFiltro("GET") &"','VisualRelProgWord','menubar=yes resizable=yes scrollbars=yes');"">"
@@ -2742,14 +2837,14 @@ Sub Rel_Sintetico_Prog
     ShowHTML "</tr>"
     DesconectaBD
   ElseIf O = "P" Then
-    AbreForm "Form", w_dir & w_pagina & par, "POST", "return(Validacao(this));", "Tabela PPA",P1,P2,P3,P4,TP,SG,R,"L"
+    AbreForm "Form", w_dir & w_pagina & par, "POST", "return(Validacao(this));", "Programa",P1,P2,P3,P4,TP,SG,R,"L"
     ShowHTML "<INPUT type=""hidden"" name=""w_chave"" value=""" & w_chave & """>"
     ShowHTML "<INPUT type=""hidden"" name=""w_troca"" value="""">"
 
     ShowHTML "<tr bgcolor=""" & conTrBgColor & """><td align=""center"">"
     ShowHTML "    <table width=""97%"" border=""0"">"
     ShowHTML "      <tr>"
-    SelecaoProgramaPPA "<u>P</u>rograma PPA:", "P", null, w_cliente, w_ano, p_cd_programa, "p_cd_programa", null, null
+    SelecaoProgramaPPA "<u>P</u>rograma PPA:", "P", null, w_cliente, w_ano, p_cd_programa, "p_cd_programa", null, null, w_menu
     ShowHTML "      <tr><td><font size=""1""><b><u>R</u>esponsável:</b><br><input " & w_disabled & " accesskey=""R"" type=""text"" name=""p_responsavel"" class=""sti"" SIZE=""40"" MAXLENGTH=""60"" VALUE=""" & p_responsavel & """></td>"
     ShowHTML "      <tr><td colspan=3><table border=0 width=""100%"" cellspacing=0 cellpadding=0><tr valign=""top"">"
     ShowHTML "          <td><font size=""1""><b>Selecionada SPI/MP?</b><br>"
@@ -2825,7 +2920,7 @@ Sub Rel_Gerencial_Acao
      End If
 
      ShowHTML "<HEAD>"
-     ShowHTML "<TITLE>" & conSgSistema & " - Visualização de Ação</TITLE>"
+     ShowHTML "<TITLE>Plano Gerencial - Ações PPA 2004 - 2007 Exercício " & w_ano & "</TITLE>"
      
      ShowHTML "</HEAD>"  
      ShowHTML "<BASE HREF=""http://" & Request.ServerVariables("server_name") & "/siw/"">"
@@ -2838,7 +2933,7 @@ Sub Rel_Gerencial_Acao
      ElseIf P1 = 2 Then
         ShowHTML "Plano Plurianual 2004 - 2007 <BR> Relatório Geral por Ação"
      Else
-        ShowHTML "Visualização do Ação"
+        ShowHTML "Plano Gerencial - Ações PPA 2004 - 2007 Exercício " & w_ano
      End If
      ShowHTML "</FONT><TR><TD ALIGN=""RIGHT""><B><font size=1 COLOR=""#000000"">" & DataHora() & "</B>"
      If w_tipo <> "WORD" Then
@@ -2848,7 +2943,7 @@ Sub Rel_Gerencial_Acao
      ShowHTML "</TD></TR>"
      ShowHTML "</FONT></B></TD></TR></TABLE>"
      'ShowHTML "<HR>"
-     DB_GetAcaoPPA_IS RS, w_cliente, w_ano, Mid(p_codigo,1,4), Mid(p_codigo,5,4), null, Mid(p_codigo,13,17), null, null
+     DB_GetAcaoPPA_IS RS, w_cliente, w_ano, Mid(p_codigo,1,4), Mid(p_codigo,5,4), null, Mid(p_codigo,13,17), null, null, null
 
      If Nvl(RS("sq_siw_solicitacao"),"") = "" Then
         ScriptOpen "JavaScript"
@@ -2886,12 +2981,12 @@ Sub Rel_Gerencial_Acao
      ShowHTML "<div align=center><center>"
      ShowHTML "<table border=""0"" cellpadding=""0"" cellspacing=""0"" width=""100%"">"
 
-     AbreForm "Form", w_dir & w_pagina & par, "POST", "return(Validacao(this));", "Tabela PPA",P1,P2,P3,P4,TP,SG,R,"L"
+     AbreForm "Form", w_dir & w_pagina & par, "POST", "return(Validacao(this));", "Acao",P1,P2,P3,P4,TP,SG,R,"L"
 
      ShowHTML "<tr bgcolor=""" & conTrBgColor & """><td align=""center"">"
      ShowHTML "    <table width=""97%"" border=""0"">"
      ShowHTML "      <tr>"
-     SelecaoAcaoPPA "<u>A</u>ção PPA:", "A", null, w_cliente, w_ano, null, null, null, null, "p_codigo", null, null, null
+     SelecaoAcaoPPA "<u>A</u>ção PPA:", "A", null, w_cliente, w_ano, null, null, null, null, "p_codigo", null, null, null, w_menu
      ShowHTML "          </table>"
      ShowHTML "    <table width=""90%"" border=""0"">"            
      ShowHTML "      <tr><td align=""center""><hr>"
@@ -2950,20 +3045,20 @@ Sub Rel_Gerencial_Prog
      End If
 
      ShowHTML "<HEAD>"
-     ShowHTML "<TITLE>" & conSgSistema & " - Visualização de Programa</TITLE>"
+     ShowHTML "<TITLE>Plano Gerencial - Programas PPA 2004 - 2007 Exercício " & w_ano & "</TITLE>"
      
      ShowHTML "</HEAD>"  
      ShowHTML "<BASE HREF=""http://" & Request.ServerVariables("server_name") & "/siw/"">"
      If w_tipo <> "WORD" Then
         BodyOpenClean "onLoad='document.focus()'; "
      End If
-     ShowHTML "<TABLE WIDTH=""100%"" BORDER=0><TR><TD ROWSPAN=2><IMG ALIGN=""LEFT"" SRC=""" & w_logo & """><TD ALIGN=""RIGHT""><B><FONT SIZE=4 COLOR=""#000000"">"
+     ShowHTML "<TABLE WIDTH=""100%"" BORDER=0><TR><TD ROWSPAN=2><IMG ALIGN=""LEFT"" SRC=""" & w_logo & """><TD ALIGN=""RIGHT"" NOWRAP><B><FONT SIZE=4 COLOR=""#000000"">"
      If P1 = 1 Then
         ShowHTML "Relatório Geral por Programa"
      ElseIf P1 = 2 Then
         ShowHTML "Plano Plurianual 2004 - 2007 <BR> Relatório Geral por Programa"
      Else
-        ShowHTML "Visualização do Programa"
+        ShowHTML "Plano Gerencial - Programas PPA 2004 - 2007 Exercício " & w_ano
      End If
      ShowHTML "</FONT><TR><TD ALIGN=""RIGHT""><B><font size=1 COLOR=""#000000"">" & DataHora() & "</B>"
      If w_tipo <> "WORD" Then
@@ -2973,7 +3068,7 @@ Sub Rel_Gerencial_Prog
      ShowHTML "</TD></TR>"
      ShowHTML "</FONT></B></TD></TR></TABLE>"
      'ShowHTML "<HR>"
-     DB_GetProgramaPPA_IS RS, p_cd_programa, w_cliente, w_ano, null
+     DB_GetProgramaPPA_IS RS, p_cd_programa, w_cliente, w_ano, null, null
 
      If Nvl(RS("sq_siw_solicitacao"),"") = "" Then
         ScriptOpen "JavaScript"
@@ -3011,12 +3106,12 @@ Sub Rel_Gerencial_Prog
      ShowHTML "<div align=center><center>"
      ShowHTML "<table border=""0"" cellpadding=""0"" cellspacing=""0"" width=""100%"">"
 
-     AbreForm "Form", w_dir & w_pagina & par, "POST", "return(Validacao(this));", "Tabela PPA",P1,P2,P3,P4,TP,SG,R,"L"
+     AbreForm "Form", w_dir & w_pagina & par, "POST", "return(Validacao(this));", "Programa",P1,P2,P3,P4,TP,SG,R,"L"
 
      ShowHTML "<tr bgcolor=""" & conTrBgColor & """><td align=""center"">"
      ShowHTML "    <table width=""97%"" border=""0"">"
      ShowHTML "      <tr>"
-     SelecaoProgramaPPA "<u>P</u>rograma PPA:", "P", null, w_cliente, w_ano, p_cd_programa, "p_cd_programa", null, null
+     SelecaoProgramaPPA "<u>P</u>rograma PPA:", "P", null, w_cliente, w_ano, p_cd_programa, "p_cd_programa", null, null, w_menu
      ShowHTML "          </table>"
      ShowHTML "    <table width=""90%"" border=""0"">"            
      ShowHTML "      <tr><td align=""center""><hr>"
@@ -3124,7 +3219,7 @@ Sub Rel_Gerencial_Tarefa
      ShowHTML "<div align=center><center>"
      ShowHTML "<table border=""0"" cellpadding=""0"" cellspacing=""0"" width=""100%"">"
 
-     AbreForm "Form", w_dir & w_pagina & par, "POST", "return(Validacao(this));", "Tabela PPA",P1,P2,P3,P4,TP,SG,R,"L"
+     AbreForm "Form", w_dir & w_pagina & par, "POST", "return(Validacao(this));", "Tarefa",P1,P2,P3,P4,TP,SG,R,"L"
      ShowHTML "<INPUT type=""hidden"" name=""w_troca"" value=""" & w_troca & """>"
 
      ShowHTML "<tr bgcolor=""" & conTrBgColor & """><td align=""center"">"
@@ -3174,7 +3269,7 @@ REM =========================================================================
 REM Gera uma linha de apresentação da tabela de metas
 REM -------------------------------------------------------------------------
 Function MetaLinha (p_chave, p_chave_aux, p_titulo, p_word, p_programada, _
-                     p_unidade_medida, p_quantidade, p_fim, p_perc, p_oper, p_tipo)
+                     p_unidade_medida, p_quantidade, p_fim, p_perc, p_oper, p_tipo, p_loa)
   Dim l_html, l_row
 
   If w_cor = conTrBgColor or w_cor = "" Then w_cor = conTrAlternateBgColor Else w_cor = conTrBgColor End If
@@ -3192,10 +3287,14 @@ Function MetaLinha (p_chave, p_chave_aux, p_titulo, p_word, p_programada, _
   Else
      l_html = l_html & VbCrLf & "        " & p_titulo & "</td>"
   End if
-  l_html = l_html & VbCrLf & "        <td align=""center""><font size=""1"">" & RetornaSimNao(p_programada) & "</b>"
+  If p_loa > "" Then
+     l_html = l_html & VbCrLf & "        <td align=""center""><font size=""1"">Sim</b>"
+  Else
+     l_html = l_html & VbCrLf & "        <td align=""center""><font size=""1"">Não</b>"
+  End If
   l_html = l_html & VbCrLf & "        <td align=""center"" " & l_row & "><font size=""1"">" & FormataDataEdicao(p_fim) & "</td>"
   l_html = l_html & VbCrLf & "        <td nowrap " & l_row & "><font size=""1"">" & Nvl(p_unidade_medida, "---") & " </td>"
-  l_html = l_html & VbCrLf & "        <td nowrap align=""right"" " & l_row & "><font size=""1"">" & p_quantidade & "</td>"
+  l_html = l_html & VbCrLf & "        <td nowrap align=""right"" " & l_row & "><font size=""1"">" & FormatNumber(cDbl(Nvl(p_quantidade,0)),2) & "</td>"
   l_html = l_html & VbCrLf & "        <td nowrap align=""right"" " & l_row & "><font size=""1"">" & p_perc & " %</td>"
   l_html = l_html & VbCrLf &  "      </tr>"
 
@@ -3273,24 +3372,15 @@ REM Rotina principal
 REM -------------------------------------------------------------------------
 Sub Main
   Select Case Par
-    Case "REL_PPA"
-       Rel_PPA
-    Case "REL_PROJETO"
-       Rel_projeto
-    Case "REL_PROGRAMA"
-       Rel_Programa
-    Case "REL_SINTETICO_PR"
-       Rel_Sintetico_PR
-    Case "REL_SINTETICO_PPA"
-       Rel_Sintetico_PPA
-    Case "REL_SINTETICO_PROG"
-       Rel_Sintetico_Prog
-    Case "REL_GERENCIAL_PROG"
-       Rel_Gerencial_Prog
-    Case "REL_GERENCIAL_ACAO"
-       Rel_Gerencial_Acao
-    Case "REL_GERENCIAL_TAREFA"
-       Rel_Gerencial_Tarefa
+    Case "REL_PPA"              Rel_PPA
+    Case "REL_PROJETO"          Rel_projeto
+    Case "REL_PROGRAMA"         Rel_Programa
+    Case "REL_SINTETICO_PR"     Rel_Sintetico_PR
+    Case "REL_SINTETICO_PPA"    Rel_Sintetico_PPA
+    Case "REL_SINTETICO_PROG"   Rel_Sintetico_Prog
+    Case "REL_GERENCIAL_PROG"   Rel_Gerencial_Prog
+    Case "REL_GERENCIAL_ACAO"   Rel_Gerencial_Acao
+    Case "REL_GERENCIAL_TAREFA" Rel_Gerencial_Tarefa
     Case Else
        Cabecalho
        ShowHTML "<BASE HREF=""http://" & Request.ServerVariables("server_name") & "/siw/"">"

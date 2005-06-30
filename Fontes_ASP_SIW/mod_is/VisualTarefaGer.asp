@@ -65,8 +65,8 @@ Function VisualTarefaGer(w_chave, P4)
      
   ' Informações adicionais
   'w_html = w_html & VbCrLf & "      <tr><td valign=""top"" colspan=""2"" align=""center"" bgcolor=""#D0D0D0"" style=""border: 2px solid rgb(0,0,0);""><font size=""1""><b>Informações adicionais</td>"
-  w_html = w_html & VbCrLf & "      <tr><td valign=""top""><font size=""1"">Resultados espearados:<br><b>" & Nvl(CRLF2BR(RS("descricao")),"---") & " </b></td>"
-  w_html = w_html & VbCrLf & "      <tr><td valign=""top""><font size=""1"">Observações:<br><b>" & Nvl(CRLF2BR(RS("justificativa")),"---") & " </b></td>"
+  w_html = w_html & VbCrLf & "      <tr><td valign=""top""><div align=""justify""><font size=""1"">Resultados espearados:<br><b>" & Nvl(CRLF2BR(RS("descricao")),"---") & " </b></div></td>"
+  w_html = w_html & VbCrLf & "      <tr><td valign=""top""><div align=""justify""><font size=""1"">Observações:<br><b>" & Nvl(CRLF2BR(RS("justificativa")),"---") & " </b></div></td>"
   w_html = w_html & VbCrLf & "      </table>"
   w_html = w_html & VbCrLf & "      </table>"
   

@@ -3,7 +3,6 @@ REM =========================================================================
 REM Rotina de visualização do currículo
 REM -------------------------------------------------------------------------
 Sub ResumLigPart (w_sq_usuario, inicio, fim, ativo, O)
-    
   Dim w_cor_fonte, w_negrito, w_soma
   If O = "L" Then
     DB_GetCall RS, null, w_sq_usuario, "1", null, null, null, null, inicio, fim, "N"

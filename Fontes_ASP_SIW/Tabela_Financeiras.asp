@@ -149,7 +149,7 @@ Sub CentroCusto
   Cabecalho
   ShowHTML "<HEAD>"
   Estrutura_CSS w_cliente
-  Response.Write w_heranca
+  'Response.Write w_heranca
   If O <> "L" Then
      ScriptOpen "JavaScript"
      ValidateOpen "Validacao"

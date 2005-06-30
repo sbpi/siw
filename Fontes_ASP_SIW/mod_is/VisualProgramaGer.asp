@@ -62,21 +62,21 @@ Function VisualProgramaGer(w_chave, P4)
   
   ' Programação Qualitativa
   'w_html = w_html & VbCrLf & "      <tr><td valign=""top"" colspan=""2"" align=""center"" bgcolor=""#D0D0D0"" style=""border: 2px solid rgb(0,0,0);""><font size=""1""><b>Programação Qualitativa</td>"
-  w_html = w_html & VbCrLf & "      <tr><td valign=""top""><font size=""1"" color=""red"">Diretrizes e desafios do governo associados ao programa:<br><b>Falta definir qual o campo deve ser visualizado</b></td>"
-  w_html = w_html & VbCrLf & "      <tr><td valign=""top""><font size=""1"" color=""red"">Objetivo setorial associado:<br><b>Falta definir qual o campo deve ser visualizado</b></td>"
-  w_html = w_html & VbCrLf & "      <tr><td valign=""top""><font size=""1"">Explique como o programa contribui para que o objetivo setorial seja alcançado:<br><b>" & Nvl(RS("contribuicao_objetivo"),"---")& "</b></td>"           
-  w_html = w_html & VbCrLf & "      <tr><td valign=""top""><font size=""1"">Diretrizes do Plano Nacional de Saúde:<br><b>" & Nvl(RS("diretriz"),"---")& "</b></td>"
-  w_html = w_html & VbCrLf & "      <tr><td valign=""top""><font size=""1"">Justificativa:<br><b>" & Nvl(RS("justificativa_sigplan"),"---")& "</b></td>"
-  w_html = w_html & VbCrLf & "      <tr><td valign=""top""><font size=""1"">Objetivo:<br><b>" & Nvl(RS("objetivo"),"---")& "</b></td>"           
-  w_html = w_html & VbCrLf & "      <tr><td valign=""top""><font size=""1"">Público-alvo:<br><b>" & Nvl(RS("publico_alvo"),"---")& "</b></td>"
-  w_html = w_html & VbCrLf & "      <tr><td valign=""top""><font size=""1"">Resultados esperados:<br><b>" & Nvl(RS("descricao"),"---")& "</b></td>"
-  w_html = w_html & VbCrLf & "      <tr><td valign=""top""><font size=""1"">Parcerias internas:<br><b>" & Nvl(RS("palavra_chave"),"---")& "</b></td>"
-  w_html = w_html & VbCrLf & "      <tr><td valign=""top""><font size=""1"">Parcerias externas:<br><b>" & Nvl(RS("proponente"),"---")& "</b></td>"
-  w_html = w_html & VbCrLf & "      <tr><td valign=""top""><font size=""1"">Potencialidades:<br><b>" & Nvl(RS("potencialidades"),"---")& "</b></td>"
-  w_html = w_html & VbCrLf & "      <tr><td valign=""top""><font size=""1"">Estratégia implementação:<br><b>" & Nvl(RS("estrategia"),"---")& "</b></td>"
-  w_html = w_html & VbCrLf & "      <tr><td valign=""top""><font size=""1"">Sistemática e estratégias a serem adotadas para o monitoramento programa:<br><b>" & Nvl(RS("estrategia_monit"),"---")& "</b></td>"
-  w_html = w_html & VbCrLf & "      <tr><td valign=""top""><font size=""1"">Sistemática e metodologias a serem adotadas para a avaliação do programa:<br><b>" & Nvl(RS("metodologia_aval"),"---")& "</b></td>"
-  w_html = w_html & VbCrLf & "      <tr><td valign=""top""><font size=""1"">Observações:<br><b>" & Nvl(RS("justificativa"),"---")& "</b></td>"
+  w_html = w_html & VbCrLf & "      <tr><td valign=""top""><div align=""justify""><font size=""1"" color=""red"">Diretrizes e desafios do governo associados ao programa:<br><b>Falta definir qual o campo deve ser visualizado</b></div></td>"
+  w_html = w_html & VbCrLf & "      <tr><td valign=""top""><div align=""justify""><font size=""1"" color=""red"">Objetivo setorial associado:<br><b>Falta definir qual o campo deve ser visualizado</b></div></td>"
+  w_html = w_html & VbCrLf & "      <tr><td valign=""top""><div align=""justify""><font size=""1"">Explique como o programa contribui para que o objetivo setorial seja alcançado:<br><b>" & Nvl(RS("contribuicao_objetivo"),"---")& "</b></div></td>"           
+  w_html = w_html & VbCrLf & "      <tr><td valign=""top""><div align=""justify""><font size=""1"">Diretrizes do Plano Nacional de Saúde:<br><b>" & Nvl(RS("diretriz"),"---")& "</b></div></td>"
+  w_html = w_html & VbCrLf & "      <tr><td valign=""top""><div align=""justify""><font size=""1"">Justificativa:<br><b>" & Nvl(RS("justificativa_sigplan"),"---")& "</b></div></td>"
+  w_html = w_html & VbCrLf & "      <tr><td valign=""top""><div align=""justify""><font size=""1"">Objetivo:<br><b>" & Nvl(RS("objetivo"),"---")& "</b></div></td>"           
+  w_html = w_html & VbCrLf & "      <tr><td valign=""top""><div align=""justify""><font size=""1"">Público-alvo:<br><b>" & Nvl(RS("publico_alvo"),"---")& "</b></div></td>"
+  w_html = w_html & VbCrLf & "      <tr><td valign=""top""><div align=""justify""><font size=""1"">Resultados esperados:<br><b>" & Nvl(RS("descricao"),"---")& "</b></div></td>"
+  w_html = w_html & VbCrLf & "      <tr><td valign=""top""><div align=""justify""><font size=""1"">Parcerias internas:<br><b>" & Nvl(RS("palavra_chave"),"---")& "</b></div></td>"
+  w_html = w_html & VbCrLf & "      <tr><td valign=""top""><div align=""justify""><font size=""1"">Parcerias externas:<br><b>" & Nvl(RS("proponente"),"---")& "</b></div></td>"
+  w_html = w_html & VbCrLf & "      <tr><td valign=""top""><div align=""justify""><font size=""1"">Potencialidades:<br><b>" & Nvl(RS("potencialidades"),"---")& "</b></div></td>"
+  w_html = w_html & VbCrLf & "      <tr><td valign=""top""><div align=""justify""><font size=""1"">Estratégia implementação:<br><b>" & Nvl(RS("estrategia"),"---")& "</b></div></td>"
+  w_html = w_html & VbCrLf & "      <tr><td valign=""top""><div align=""justify""><font size=""1"">Sistemática e estratégias a serem adotadas para o monitoramento programa:<br><b>" & Nvl(RS("estrategia_monit"),"---")& "</b></div></td>"
+  w_html = w_html & VbCrLf & "      <tr><td valign=""top""><div align=""justify""><font size=""1"">Sistemática e metodologias a serem adotadas para a avaliação do programa:<br><b>" & Nvl(RS("metodologia_aval"),"---")& "</b></div></td>"
+  w_html = w_html & VbCrLf & "      <tr><td valign=""top""><div align=""justify""><font size=""1"">Observações:<br><b>" & Nvl(RS("justificativa"),"---")& "</b></div></td>"
   
   ' Restricoes do programa
   ' Recupera todos os registros para a listagem
@@ -149,7 +149,7 @@ Function VisualProgramaGer(w_chave, P4)
   End If
   RS1.Close
         
-  DB_GetAcaoPPA_IS RS1, w_cliente, w_ano, RS("cd_programa"), null, null, null, null, null
+  DB_GetAcaoPPA_IS RS1, w_cliente, w_ano, RS("cd_programa"), null, null, null, null, null, null
   RS1.Sort = "chave"    
      
   If Not RS1.EOF Then ' Se não foram selecionados registros, exibe mensagem   

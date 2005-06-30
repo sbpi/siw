@@ -283,7 +283,11 @@ Sub Inicial
         w_filtro = ""
         If p_projeto > ""  Then 
            DB_GetSolicData_IS RS, p_projeto, "ISACGERAL"
-           w_filtro = w_filtro & "<tr valign=""top""><td align=""right""><font size=1>Ação <td><font size=1>[<b><A class=""HL"" HREF=""" & w_dir & "Projeto.asp?par=Visual&O=L&w_chave=" & p_projeto & "&w_tipo=Volta&P1=2&P2=" & P2 & "&P3=" & P3 & "&P4=" & P4 & "&TP=" & TP & "&SG=" & SG & """ title=""Exibe as informações do projeto."">" & RS("titulo") & "</a></b>]"
+           If Nvl(RS("cd_acao"),"") > "" Then
+              w_filtro = w_filtro & "<tr valign=""top""><td align=""right""><font size=1>Ação <td><font size=1>[<b><A class=""HL"" HREF=""" & w_dir & "Acao.asp?par=Visual&O=L&w_chave=" & p_projeto & "&w_tipo=Volta&P1=" & P1 & "&P2=" & P2 & "&P3=" & P3 & "&P4=" & P4 & "&TP=" & TP & "&SG=" & SG & """ title=""Exibe as informações da ação."">" & RS("cd_unidade") & "." & RS("cd_programa") & "." & RS("cd_acao") & " - " & RS("nm_ppa") & " (" & RS("ds_unidade") & ")</a></b>]"
+           Else
+              w_filtro = w_filtro & "<tr valign=""top""><td align=""right""><font size=1>Ação <td><font size=1>[<b><A class=""HL"" HREF=""" & w_dir & "Acao.asp?par=Visual&O=L&w_chave=" & p_projeto & "&w_tipo=Volta&P1=" & P1 & "&P2=" & P2 & "&P3=" & P3 & "&P4=" & P4 & "&TP=" & TP & "&SG=" & SG & """ title=""Exibe as informações da ação."">" & RS("titulo") & "</a></b>]"
+           End If
         End If
         If p_chave       > ""  Then w_filtro = w_filtro & "<tr valign=""top""><td align=""right""><font size=1>Atividade nº <td><font size=1>[<b>" & p_chave & "</b>]" End If
         If p_prazo       > ""  Then w_filtro = w_filtro & " <tr valign=""top""><td align=""right""><font size=1>Prazo para conclusão até<td><font size=1>[<b>" & FormatDateTime(DateAdd("d",p_prazo,Date()),1) & "</b>]" End If
@@ -440,7 +444,7 @@ Sub Inicial
     ShowHTML "          <td><font size=""1""><b>" & LinkOrdena("Nº","sq_siw_solicitacao") & "</font></td>"
     ShowHTML "          <td><font size=""1""><b>" & LinkOrdena("Ação","nm_projeto") & "</font></td>"
     ShowHTML "          <td><font size=""1""><b>" & LinkOrdena("Responsavel SISPLAM","solicitante") & "</font></td>"
-    If P1 <> 2 Then ShowHTML "          <td><font size=""1""><b>" & LinkOrdena("Executor", "nm_exec") & "</font></td>" End If
+    If P1 <> 2 Then ShowHTML "          <td><font size=""1""><b>" & LinkOrdena("Usuário atual", "nm_exec") & "</font></td>" End If
     If P1 = 1 or P1 = 2 Then ' Se for cadastramento ou mesa de trabalho
        ShowHTML "          <td><font size=""1""><b>" & LinkOrdena("Tarefa","titulo") & "</font></td>"
        ShowHTML "          <td><font size=""1""><b>" & LinkOrdena("Fim previsto","fim") & "</font></td>"
@@ -528,6 +532,7 @@ Sub Inicial
                  ShowHTML "          <A class=""HL"" HREF=""" & w_dir & w_pagina & par & "&R=" & w_pagina & par & "&O=A&w_chave=" & RS("sq_siw_solicitacao") & "&P1=" & P1 & "&P2=" & P2 & "&P3=" & P3 & "&P4=" & P4 & "&TP=" & TP & "&SG=" & SG & MontaFiltro("GET") & """ title=""Altera as informações cadastrais da tarefa"">Alterar</A>&nbsp"
               End If
               ShowHTML "          <A class=""HL"" HREF=""" & w_dir & w_pagina & "Excluir&R=" & w_pagina & par & "&O=E&w_chave=" & RS("sq_siw_solicitacao") & "&w_tipo=Volta&P1=" & P1 & "&P2=" & P2 & "&P3=" & P3 & "&P4=" & P4 & "&TP=" & TP & "&SG=" & SG & MontaFiltro("GET") & """ title=""Exclusão da tarefa."">Excluir</A>&nbsp"
+              ShowHTML "          <A class=""HL"" HREF=""" & w_dir & w_pagina & "Envio&R=" & w_pagina & par & "&O=V&w_chave=" & RS("sq_siw_solicitacao") & "&w_tipo=Volta&P1=" & P1 & "&P2=" & P2 & "&P3=" & P3 & "&P4=" & P4 & "&TP=" & TP & "&SG=" & SG & MontaFiltro("GET") & """ title=""Encaminhamento da tarefa."">Enviar</A>&nbsp"
            ElseIf P1 = 2 Then ' Se for execução
               If cDbl(w_usuario) = cDbl(RS("executor")) Then
                  ShowHTML "          <A class=""HL"" HREF=""" & w_dir & w_pagina & "Anotacao&R=" & w_pagina & par & "&O=V&w_chave=" & RS("sq_siw_solicitacao") & "&w_tipo=Volta&P1=" & P1 & "&P2=" & P2 & "&P3=" & P3 & "&P4=" & P4 & "&TP=" & TP & "&SG=" & SG & MontaFiltro("GET") & """ title=""Registra anotações para a tarefa, sem enviá-la."">Anotar</A>&nbsp"
@@ -644,8 +649,8 @@ Sub Inicial
        ShowHTML "          <td valign=""top""><font size=""1""><b>A<U>s</U>sunto:<br><INPUT ACCESSKEY=""N"" " & w_Disabled & " class=""STI"" type=""text"" name=""p_assunto"" size=""25"" maxlength=""90"" value=""" & p_assunto & """></td>"
        ShowHTML "          <td valign=""top"" colspan=2><font size=""1""><b>Pala<U>v</U>ras-chave:<br><INPUT ACCESSKEY=""N"" " & w_Disabled & " class=""STI"" type=""text"" name=""p_palavra"" size=""25"" maxlength=""90"" value=""" & p_palavra & """></td>"
        ShowHTML "      <tr>"
-       ShowHTML "          <td valign=""top""><font size=""1""><b>Iní<u>c:</b><br><input " & w_Disabled & " accesskey=""C"" type=""text"" name=""p_ini_i"" class=""STI"" SIZE=""10"" MAXLENGTH=""10"" VALUE=""" & p_ini_i & """ onKeyDown=""FormataData(this,event);""> e <input " & w_Disabled & " accesskey=""C"" type=""text"" name=""p_ini_f"" class=""STI"" SIZE=""10"" MAXLENGTH=""10"" VALUE=""" & p_ini_f & """ onKeyDown=""FormataData(this,event);""></td>"
-       ShowHTML "          <td valign=""top""><font size=""1""><b>Limi<u>t</u>e para conclusão entre:</b><br><input " & w_Disabled & " accesskey=""T"" type=""text"" name=""p_fim_i"" class=""STI"" SIZE=""10"" MAXLENGTH=""10"" VALUE=""" & p_fim_i & """ onKeyDown=""FormataData(this,event);""> e <input " & w_Disabled & " accesskey=""T"" type=""text"" name=""p_fim_f"" class=""STI"" SIZE=""10"" MAXLENGTH=""10"" VALUE=""" & p_fim_f & """ onKeyDown=""FormataData(this,event);""></td>"
+       ShowHTML "          <td valign=""top""><font size=""1""><b>Iní<u>c:</b><br><input " & w_Disabled & " accesskey=""C"" type=""text"" name=""p_ini_i"" class=""STI"" SIZE=""10"" MAXLENGTH=""10"" VALUE=""" & p_ini_i & """ onKeyDown=""FormataData(this,event);"" title=""Usar formato dd/mm/aaaa""> e <input " & w_Disabled & " accesskey=""C"" type=""text"" name=""p_ini_f"" class=""STI"" SIZE=""10"" MAXLENGTH=""10"" VALUE=""" & p_ini_f & """ onKeyDown=""FormataData(this,event);"" title=""Usar formato dd/mm/aaaa""></td>"
+       ShowHTML "          <td valign=""top""><font size=""1""><b>Limi<u>t</u>e para conclusão entre:</b><br><input " & w_Disabled & " accesskey=""T"" type=""text"" name=""p_fim_i"" class=""STI"" SIZE=""10"" MAXLENGTH=""10"" VALUE=""" & p_fim_i & """ onKeyDown=""FormataData(this,event);"" title=""Usar formato dd/mm/aaaa""> e <input " & w_Disabled & " accesskey=""T"" type=""text"" name=""p_fim_f"" class=""STI"" SIZE=""10"" MAXLENGTH=""10"" VALUE=""" & p_fim_f & """ onKeyDown=""FormataData(this,event);"" title=""Usar formato dd/mm/aaaa""></td>"
        If O <> "C" Then ' Se não for cópia
           ShowHTML "      <tr>"
           ShowHTML "          <td valign=""top""><font size=""1""><b>Exibe somente atividades em atraso?</b><br>"
@@ -940,8 +945,8 @@ Sub Geral
     ShowHTML "          </table>"
     ShowHTML "      <tr><td valign=""top"" colspan=""2""><table border=0 width=""100%"" cellspacing=0>"
     'ShowHTML "              <td align=""left""><font size=""1""><b><u>O</u>rdem:<br><INPUT ACCESSKEY=""O"" TYPE=""TEXT"" CLASS=""STI"" NAME=""w_ordem"" SIZE=3 MAXLENGTH=3 VALUE=""" & w_ordem & """ " & w_Disabled & "></td>"
-    ShowHTML "              <td valign=""top""><font size=""1""><b>Iní<u>c</u>io previsto:</b><br><input " & w_Disabled & " accesskey=""C"" type=""text"" name=""w_inicio"" class=""STI"" SIZE=""10"" MAXLENGTH=""10"" VALUE=""" & Nvl(w_inicio,FormataDataEdicao(Date())) & """ onKeyDown=""FormataData(this,event);""></td>"
-    ShowHTML "              <td valign=""top""><font size=""1""><b>Fim previs<u>t</u>o:</b><br><input " & w_Disabled & " accesskey=""T"" type=""text"" name=""w_fim"" class=""STI"" SIZE=""10"" MAXLENGTH=""10"" VALUE=""" & w_fim & """ onKeyDown=""FormataData(this,event);""></td>"
+    ShowHTML "              <td valign=""top""><font size=""1""><b>Iní<u>c</u>io previsto:</b><br><input " & w_Disabled & " accesskey=""C"" type=""text"" name=""w_inicio"" class=""STI"" SIZE=""10"" MAXLENGTH=""10"" VALUE=""" & Nvl(w_inicio,FormataDataEdicao(Date())) & """ onKeyDown=""FormataData(this,event);"" title=""Usar formato dd/mm/aaaa""></td>"
+    ShowHTML "              <td valign=""top""><font size=""1""><b>Fim previs<u>t</u>o:</b><br><input " & w_Disabled & " accesskey=""T"" type=""text"" name=""w_fim"" class=""STI"" SIZE=""10"" MAXLENGTH=""10"" VALUE=""" & w_fim & """ onKeyDown=""FormataData(this,event);"" title=""Usar formato dd/mm/aaaa""></td>"
     ShowHTML "              <td valign=""top""><font size=""1""><b><u>R</u>ecurso programado:</b><br><input " & w_Disabled & " accesskey=""O"" type=""text"" name=""w_valor"" class=""STI"" SIZE=""18"" MAXLENGTH=""18"" VALUE=""" & w_valor & """ onKeyDown=""FormataValor(this,18,2,event);"" title=""Informe o recurso programado para a execução da tarefa.""></td>"
     SelecaoPrioridade "<u>P</u>rioridade:", "P", "Informe a prioridade desta tarefa.", w_prioridade, null, "w_prioridade", null, null
     ShowHTML "          </table>"
@@ -1502,13 +1507,14 @@ REM -------------------------------------------------------------------------
 Sub Encaminhamento
 
   Dim w_chave, w_chave_pai, w_chave_aux, w_destinatario, w_despacho
-  Dim w_tramite, w_sg_tramite, w_novo_tramite
+  Dim w_tramite, w_sg_tramite, w_novo_tramite, w_tipo
   
   Dim w_troca, i, w_erro
   
   w_Chave           = Request("w_Chave")
   w_chave_aux       = Request("w_chave_aux")
   w_troca           = Request("w_troca")
+  w_tipo            = Nvl(Request("w_tipo"),"")
   
   If w_troca > "" Then ' Se for recarga da página
      w_tramite      = Request("w_tramite")
@@ -1536,7 +1542,7 @@ Sub Encaminhamento
      Validate "w_destinatario", "Destinatário", "HIDDEN", "1", "1", "10", "", "1"
      Validate "w_despacho", "Despacho", "", "1", "1", "2000", "1", "1"
      Validate "w_assinatura", "Assinatura Eletrônica", "1", "1", "6", "30", "1", "1"
-     If P1 <> 1 Then ' Se não for encaminhamento
+     If P1 <> 1 or (P1 = 1 and w_tipo = "Volta") Then ' Se não for encaminhamento e nem o sub-menu do cadastramento
         ShowHTML "  theForm.Botao[0].disabled=true;"
         ShowHTML "  theForm.Botao[1].disabled=true;"
      Else
@@ -1593,6 +1599,8 @@ Sub Encaminhamento
      DB_GetMenuData RS, w_menu
      ShowHTML "      <input class=""STB"" type=""button"" onClick=""location.href='" & replace(RS("link"),w_dir,"") & "&O=L&w_chave=" & Request("w_chave") & "&P1=" & P1 & "&P2=" & P2 & "&P3=" & P3 & "&P4=" & P4 & "&TP=" & TP & "&SG=" & rs("sigla") & MontaFiltro("GET") & "';"" name=""Botao"" value=""Abandonar"">"
      DesconectaBD
+  ElseIf P1 = 1 and w_tipo = "Volta" Then
+     ShowHTML "      <input class=""STB"" type=""button"" onClick=""location.href='" & R & "&O=L&w_chave=" & Request("w_chave") & "&P1=" & P1 & "&P2=" & P2 & "&P3=" & P3 & "&P4=" & P4 & "&TP=" & TP & "&SG=" & SG & MontaFiltro("GET") & "';"" name=""Botao"" value=""Abandonar"">"
   End If
   ShowHTML "      </td>"
   ShowHTML "    </tr>"
@@ -1610,6 +1618,7 @@ Sub Encaminhamento
   Set w_chave_aux       = Nothing 
   Set w_destinatario    = Nothing 
   Set w_despacho        = Nothing 
+  Set w_tipo            = Nothing
   
   Set w_troca           = Nothing 
   Set i                 = Nothing 
@@ -1810,8 +1819,8 @@ Sub Concluir
 
   ShowHTML "      <tr><td valign=""top"" colspan=""2""><table border=0 width=""100%"" cellspacing=0>"
   ShowHTML "          <tr>"
-  ShowHTML "              <td valign=""top""><font size=""1""><b>Iní<u>c</u>io da execução:</b><br><input " & w_Disabled & " accesskey=""C"" type=""text"" name=""w_inicio_real"" class=""STI"" SIZE=""10"" MAXLENGTH=""10"" VALUE=""" & w_inicio_real & """ onKeyDown=""FormataData(this,event);"" title=""Informe a data/hora de início da execução da tarefa.""></td>"
-  ShowHTML "              <td valign=""top""><font size=""1""><b><u>T</u>érmino da execução:</b><br><input " & w_Disabled & " accesskey=""T"" type=""text"" name=""w_fim_real"" class=""STI"" SIZE=""10"" MAXLENGTH=""10"" VALUE=""" & w_fim_real & """ onKeyDown=""FormataData(this,event);"" title=""Informe a data de término da execução da tarefa.""></td>"
+  ShowHTML "              <td valign=""top""><font size=""1""><b>Iní<u>c</u>io da execução:</b><br><input " & w_Disabled & " accesskey=""C"" type=""text"" name=""w_inicio_real"" class=""STI"" SIZE=""10"" MAXLENGTH=""10"" VALUE=""" & w_inicio_real & """ onKeyDown=""FormataData(this,event);"" title=""Informe a data de início da execução da tarefa.(Usar formato dd/mm/aaaa)""></td>"
+  ShowHTML "              <td valign=""top""><font size=""1""><b><u>T</u>érmino da execução:</b><br><input " & w_Disabled & " accesskey=""T"" type=""text"" name=""w_fim_real"" class=""STI"" SIZE=""10"" MAXLENGTH=""10"" VALUE=""" & w_fim_real & """ onKeyDown=""FormataData(this,event);"" title=""Informe a data de término da execução da tarefa.(Usar formato dd/mm/aaaa)""></td>"
   ShowHTML "              <td valign=""top""><font size=""1""><b><u>R</u>ecurso executado:</b><br><input " & w_Disabled & " accesskey=""O"" type=""text"" name=""w_custo_real"" class=""STI"" SIZE=""18"" MAXLENGTH=""18"" VALUE=""" & w_custo_real & """ onKeyDown=""FormataValor(this,18,2,event);"" title=""Informe o valor que foi efetivamente gasto com a execução da tarefa.""></td>"
   ShowHTML "          </table>"
   ShowHTML "      <tr><td valign=""top""><font size=""1""><b>Nota d<u>e</u> conclusão:</b><br><textarea " & w_Disabled & " accesskey=""E"" name=""w_nota_conclusao"" class=""STI"" ROWS=5 cols=75 title=""Insira informações relevantes sobre a conclusão da tarefa."">" & w_nota_conclusao & "</TEXTAREA></td>"  
@@ -2040,6 +2049,8 @@ Public Sub Grava
           If O = "I" Then
              ' Envia e-mail comunicando a inclusão
              SolicMail Nvl(Request("w_chave"), w_chave_nova) ,1
+             ' Exibe mensagem de gravação com sucesso
+             ShowHTML "  alert('Tarefa " & w_chave_nova & " cadastrada com sucesso!');"
              
              ' Recupera os dados para montagem correta do menu
              DB_GetMenuData RS1, w_menu

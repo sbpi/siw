@@ -134,7 +134,7 @@ Function VisualPrograma(w_chave, O, w_usuario, P1, P4)
      If O = "L" Then
         ' Ações do programa
         ' Recupera todos os registros para a listagem
-       DB_GetAcaoPPA_IS RS1, w_cliente, w_ano, RS("cd_programa"), null, null, null, null, null
+       DB_GetAcaoPPA_IS RS1, w_cliente, w_ano, RS("cd_programa"), null, null, null, null, null, null
        RS1.Sort = "chave"    
         
         If Not RS1.EOF Then ' Se não foram selecionados registros, exibe mensagem   
@@ -282,20 +282,20 @@ Function VisualPrograma(w_chave, O, w_usuario, P1, P4)
         If w_tipo_visao = 0 or w_tipo_visao = 1 Then
            ' Programação Qualitativa
            w_html = w_html & VbCrLf & "      <tr><td valign=""top"" colspan=""2"" align=""center"" bgcolor=""#D0D0D0"" style=""border: 2px solid rgb(0,0,0);""><font size=""1""><b>Programação Qualitativa</td>"
-           w_html = w_html & VbCrLf & "      <tr><td valign=""top""><font size=""1"" color=""red"">Diretrizes e desafios do governo associados ao programa:<br><b>Falta definir qual o campo deve ser visualizado</b></td>"
-           w_html = w_html & VbCrLf & "      <tr><td valign=""top""><font size=""1"" color=""red"">Objetivo setorial:<br><b>Falta definir qual o campo deve ser visualizado</b></td>"
-           w_html = w_html & VbCrLf & "      <tr><td valign=""top""><font size=""1"">Explique como o programa contribui para que o objetivo setorial seja alcançado:<br><b> " & Nvl(RS("contribuicao_objetivo"),"")& "</b></td>"
-           w_html = w_html & VbCrLf & "      <tr><td valign=""top""><font size=""1"">Diretrizes do Plano Nacional de Saúde:<br><b> " & Nvl(RS("diretriz"),"")& "</b></td>"           
+           w_html = w_html & VbCrLf & "      <tr><td valign=""top""><div align=""justify""><font size=""1"" color=""red"">Diretrizes e desafios do governo associados ao programa:<br><b>Falta definir qual o campo deve ser visualizado</b></div></td>"
+           w_html = w_html & VbCrLf & "      <tr><td valign=""top""><div align=""justify""><font size=""1"" color=""red"">Objetivo setorial:<br><b>Falta definir qual o campo deve ser visualizado</b></div></td>"
+           w_html = w_html & VbCrLf & "      <tr><td valign=""top""><div align=""justify""><font size=""1"">Explique como o programa contribui para que o objetivo setorial seja alcançado:<br><b> " & Nvl(RS("contribuicao_objetivo"),"")& "</b></div></td>"
+           w_html = w_html & VbCrLf & "      <tr><td valign=""top""><div align=""justify""><font size=""1"">Diretrizes do Plano Nacional de Saúde:<br><b> " & Nvl(RS("diretriz"),"")& "</b></div></td>"           
            'w_html = w_html & VbCrLf & "      <tr><td valign=""top""><font size=""1"">Problema:<br><b>" & Nvl(RS("contexto"),"---")& "</b></td>"
-           w_html = w_html & VbCrLf & "      <tr><td valign=""top""><font size=""1"">Objetivo:<br><b>" & Nvl(RS("objetivo"),"---")& "</b></td>"           
-           w_html = w_html & VbCrLf & "      <tr><td valign=""top""><font size=""1"">Justificativa:<br><b>" & Nvl(RS("justificativa_sigplan"),"---")& "</b></td>"
-           w_html = w_html & VbCrLf & "      <tr><td valign=""top""><font size=""1"">Público-alvo:<br><b>" & Nvl(RS("publico_alvo"),"---")& "</b></td>"
-           w_html = w_html & VbCrLf & "      <tr><td valign=""top""><font size=""1"">Resultados esperados:<br><b>" & Nvl(RS("descricao"),"---")& "</b></td>"
-           w_html = w_html & VbCrLf & "      <tr><td valign=""top""><font size=""1"">Estratégia implementação:<br><b>" & Nvl(RS("estrategia"),"---")& "</b></td>"
-           w_html = w_html & VbCrLf & "      <tr><td valign=""top""><font size=""1"">Potencialidades:<br><b>" & Nvl(RS("potencialidades"),"---")& "</b></td>"
-           w_html = w_html & VbCrLf & "      <tr><td valign=""top""><font size=""1"">Sistemática e estratégias a serem adotadas para o monitoramento do programa:<br><b>" & Nvl(RS("estrategia_monit"),"---")& "</b></td>"
-           w_html = w_html & VbCrLf & "      <tr><td valign=""top""><font size=""1"">Sistemática e metodologias a serem adotadas para avalição do programa:<br><b>" & Nvl(RS("metodologia_aval"),"---")& "</b></td>"
-           w_html = w_html & VbCrLf & "      <tr><td valign=""top""><font size=""1"">Observações:<br><b>" & Nvl(RS("justificativa"),"---")& "</b></td>"
+           w_html = w_html & VbCrLf & "      <tr><td valign=""top""><div align=""justify""><font size=""1"">Objetivo:<br><b>" & Nvl(RS("objetivo"),"---")& "</b></div></td>"           
+           w_html = w_html & VbCrLf & "      <tr><td valign=""top""><div align=""justify""><font size=""1"">Justificativa:<br><b>" & Nvl(RS("justificativa_sigplan"),"---")& "</b></div></td>"
+           w_html = w_html & VbCrLf & "      <tr><td valign=""top""><div align=""justify""><font size=""1"">Público-alvo:<br><b>" & Nvl(RS("publico_alvo"),"---")& "</b></div></td>"
+           w_html = w_html & VbCrLf & "      <tr><td valign=""top""><div align=""justify""><font size=""1"">Resultados esperados:<br><b>" & Nvl(RS("descricao"),"---")& "</b></div></td>"
+           w_html = w_html & VbCrLf & "      <tr><td valign=""top""><div align=""justify""><font size=""1"">Estratégia implementação:<br><b>" & Nvl(RS("estrategia"),"---")& "</b></div></td>"
+           w_html = w_html & VbCrLf & "      <tr><td valign=""top""><div align=""justify""><font size=""1"">Potencialidades:<br><b>" & Nvl(RS("potencialidades"),"---")& "</b></div></td>"
+           w_html = w_html & VbCrLf & "      <tr><td valign=""top""><div align=""justify""><font size=""1"">Sistemática e estratégias a serem adotadas para o monitoramento do programa:<br><b>" & Nvl(RS("estrategia_monit"),"---")& "</b></div></td>"
+           w_html = w_html & VbCrLf & "      <tr><td valign=""top""><div align=""justify""><font size=""1"">Sistemática e metodologias a serem adotadas para avalição do programa:<br><b>" & Nvl(RS("metodologia_aval"),"---")& "</b></div></td>"
+           w_html = w_html & VbCrLf & "      <tr><td valign=""top""><div align=""justify""><font size=""1"">Observações:<br><b>" & Nvl(RS("justificativa"),"---")& "</b></div></td>"
         End If
         
         ' Indicadores do programa
@@ -386,17 +386,18 @@ Function VisualPrograma(w_chave, O, w_usuario, P1, P4)
                  w_html = w_html & VbCrLf & "      <tr><td valign=""top""><font size=""1""><DD><b>Nao existe nenhum valor para este programa</b></DD></td>"
               Else
                  w_cor = ""
+                 w_html = w_html & VbCrLf & "                      <tr><td valign=""top"" colspan=""2""><font size=""1"">Fonte: SIGPLAN/MP - PPA 2004-2007</td>"
                  w_html = w_html & VbCrLf & "      <tr><td valign=""top""><font size=""1"">Tipo de orçamento:<br><b>" & RS1("nm_orcamento") & "</b></td>"
                  w_html = w_html & VbCrLf & "      <tr><td valign=""top""><font size=""1"">Valor por fonte: </td>"
                  w_html = w_html & VbCrLf & "      <tr><td align=""center"" colspan=""2"">"
                  w_html = w_html & VbCrLf & "        <TABLE WIDTH=""100%"" bgcolor=""" & conTableBgColor & """ BORDER=""" & conTableBorder & """ CELLSPACING=""" & conTableCellSpacing & """ CELLPADDING=""" & conTableCellPadding & """ BorderColorDark=""" & conTableBorderColorDark & """ BorderColorLight=""" & conTableBorderColorLight & """>"
                  w_html = w_html & VbCrLf & "          <tr bgcolor=""" & conTrBgColor & """ align=""center"">"
                  w_html = w_html & VbCrLf & "            <td><font size=""1""><b>Fonte</font></td>"
-                 w_html = w_html & VbCrLf & "            <td><font size=""1""><b>Ano 1</font></td>"
-                 w_html = w_html & VbCrLf & "            <td><font size=""1""><b>Ano 2</font></td>"
-                 w_html = w_html & VbCrLf & "            <td><font size=""1""><b>Ano 3</font></td>"
-                 w_html = w_html & VbCrLf & "            <td><font size=""1""><b>Ano 4</font></td>"
-                 w_html = w_html & VbCrLf & "            <td><font size=""1""><b>Ano 5</font></td>"
+                 w_html = w_html & VbCrLf & "            <td><font size=""1""><b>2004*</font></td>"
+                 w_html = w_html & VbCrLf & "            <td><font size=""1""><b>2005**</font></td>"
+                 w_html = w_html & VbCrLf & "            <td><font size=""1""><b>2006</font></td>"
+                 w_html = w_html & VbCrLf & "            <td><font size=""1""><b>2007</font></td>"
+                 w_html = w_html & VbCrLf & "            <td><font size=""1""><b>2008</font></td>"
                  w_html = w_html & VbCrLf & "            <td><font size=""1""><b>Total</font></td>"
                  w_html = w_html & VbCrLf & "          </tr>"
                  While Not RS1.EOF 
@@ -424,11 +425,11 @@ Function VisualPrograma(w_chave, O, w_usuario, P1, P4)
                  w_html = w_html & VbCrLf & "      <tr><td align=""center"" colspan=""2"">"
                  w_html = w_html & VbCrLf & "        <TABLE WIDTH=""100%"" bgcolor=""" & conTableBgColor & """ BORDER=""" & conTableBorder & """ CELLSPACING=""" & conTableCellSpacing & """ CELLPADDING=""" & conTableCellPadding & """ BorderColorDark=""" & conTableBorderColorDark & """ BorderColorLight=""" & conTableBorderColorLight & """>"
                  w_html = w_html & VbCrLf & "          <tr bgcolor=""" & conTrBgColor & """ align=""center"">"
-                 w_html = w_html & VbCrLf & "            <td><font size=""1""><b>Ano 1</font></td>"
-                 w_html = w_html & VbCrLf & "            <td><font size=""1""><b>Ano 2</font></td>"
-                 w_html = w_html & VbCrLf & "            <td><font size=""1""><b>Ano 3</font></td>"
-                 w_html = w_html & VbCrLf & "            <td><font size=""1""><b>Ano 4</font></td>"
-                 w_html = w_html & VbCrLf & "            <td><font size=""1""><b>Ano 5</font></td>"
+                 w_html = w_html & VbCrLf & "            <td><font size=""1""><b>2004*</font></td>"
+                 w_html = w_html & VbCrLf & "            <td><font size=""1""><b>2005**</font></td>"
+                 w_html = w_html & VbCrLf & "            <td><font size=""1""><b>2006</font></td>"
+                 w_html = w_html & VbCrLf & "            <td><font size=""1""><b>2007</font></td>"
+                 w_html = w_html & VbCrLf & "            <td><font size=""1""><b>2008</font></td>"
                  w_html = w_html & VbCrLf & "            <td><font size=""1""><b>Total</font></td>"
                  w_html = w_html & VbCrLf & "          </tr>"
                  If w_cor = conTrBgColor or w_cor = "" Then w_cor = conTrAlternateBgColor Else w_cor = conTrBgColor End If
@@ -443,6 +444,8 @@ Function VisualPrograma(w_chave, O, w_usuario, P1, P4)
                  w_html = w_html & VbCrLf & "       </table>"  
               End If
               RS1.Close
+              w_html = w_html & VbCrLf & "<tr><td valign=""top"" colspan=""2""><font size=""1"">* Valor Lei Orçamentária Anual - LOA 2004 + Créditos</td>"
+              w_html = w_html & VbCrLf & "<tr><td valign=""top"" colspan=""2""><font size=""1"">** Valor do Projeto de Lei Orçamentária Anual - PLOA 2005</td>"    
            End If
            ' Alerta 
            If RS("aviso_prox_conc") = "S" Then

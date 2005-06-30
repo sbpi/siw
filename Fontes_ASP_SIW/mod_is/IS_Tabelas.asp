@@ -478,11 +478,11 @@ Sub Projetos
      w_padrao      = Request("w_padrao")
   ElseIf O = "L" Then
      ' Recupera todos os registros para a listagem
-     DB_GetProjeto_IS RS, null, w_cliente, null, null, null, null, null, null, null, null, null, null, "CADASTRAMENTO"
+     DB_GetProjeto_IS RS, null, w_cliente, null, null, null, null, null, null, null, null, null, null, "CADASTRAMENTO", null
      RS.Sort = "Nome" 
   ElseIf InStr("AEV",O) > 0 and w_Troca = "" Then
      ' Recupera os dados chave informada
-     DB_GetProjeto_IS RS, w_chave, w_cliente, null, null, null, null, null, null, null, null, null, null, "CADASTRAMENTO"
+     DB_GetProjeto_IS RS, w_chave, w_cliente, null, null, null, null, null, null, null, null, null, null, "CADASTRAMENTO", null
      w_chave       = RS("chave")
      w_codigo      = RS("codigo")
      w_nome        = RS("nome")

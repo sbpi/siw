@@ -692,7 +692,7 @@ Sub SelecaoPessoa1 (label, accesskey, hint, chave, chaveAux, campo, restricao)
     Dim w_nm_usuario
     ShowHTML "<INPUT type=""hidden"" name=""" & campo & """ value=""" & chave &""">"
     If cDbl(nvl(chave,0)) > 0 Then
-       DB_GetPersonList RS, w_cliente, chave, restricao
+       DB_GetPersonList RS, w_cliente, chave, restricao, null, null, null, null
        RS.Filter = "sq_pessoa = " & chave
        RS.Sort = "nome_resumido"
        w_nm_usuario = RS("nome_resumido") & " (" & RS("sg_unidade") & ")"
@@ -716,7 +716,7 @@ REM =========================================================================
 REM Montagem da seleção de pessoas
 REM -------------------------------------------------------------------------
 Sub SelecaoPessoa (label, accesskey, hint, chave, chaveAux, campo, restricao)
-    DB_GetPersonList RS, w_cliente, ChaveAux, restricao
+    DB_GetPersonList RS, w_cliente, ChaveAux, restricao, null, null, null, null
     RS.Sort = "nome_resumido"
     If restricao = "TTUSURAMAL" then
        RS.filter = "ativo='S'"
@@ -737,6 +737,8 @@ Sub SelecaoPessoa (label, accesskey, hint, chave, chaveAux, campo, restricao)
     Wend
     ShowHTML "          </select>"
     RS.Close
+    ShowHTML "              <a class=""ss"" href=""#"" onClick=""window.open('" & w_dir_volta & "Pessoa.asp?par=BuscaUsuario&TP=" & TP & "&restricao=" &restricao& "&campo=" &campo& "','Usuario','top=10,left=10,width=780,height=550,toolbar=yes,status=yes,resizable=yes,scrollbars=yes'); return false;"" title=""Clique aqui para selecionar uma pessoa.""><img src=images/Folder/Explorer.gif border=0 align=top height=15 width=15></a>"
+
 End Sub
 REM =========================================================================
 REM Final da rotina
@@ -1722,12 +1724,16 @@ Sub SelecaoFaseCheck (label, accesskey, hint, chave, chaveAux, campo, restricao,
     Dim l_chave, l_item
     
     DB_GetTramiteList RS, chaveAux, null
-    RS.Filter = "sigla <> 'CA'"
+    'RS.Filter = "sigla <> 'CA'"
     RS.Sort = "Ordem"
     ShowHTML "          <td valign=""top""><font size=""1""><b>" & Label & "</b>"
     While Not RS.EOF
        If Nvl(chave,"") = "" Then
-          ShowHTML "          <BR><input type=""CHECKBOX"" name=""" & campo & """ value=""" & RS("sq_siw_tramite") & """ CHECKED>" & RS("Nome")
+          If  Nvl(RS("sigla"),"-") <> "CA" Then
+             ShowHTML "          <BR><input type=""CHECKBOX"" name=""" & campo & """ value=""" & RS("sq_siw_tramite") & """ CHECKED>" & RS("Nome")
+          Else
+             ShowHTML "          <BR><input type=""CHECKBOX"" name=""" & campo & """ value=""" & RS("sq_siw_tramite") & """>" & RS("Nome")
+          End If
        Else
           l_marcado = "N"
           l_chave = chave & ","
@@ -3021,7 +3027,7 @@ REM Função que formata dias, horas, minutos e segundos a partir dos segundos
 REM -------------------------------------------------------------------------
 Function FormataDataEdicao(w_dt_grade)
   Dim l_dt_grade
-  l_dt_grade = w_dt_grade
+  l_dt_grade = Nvl(w_dt_grade,"")
   If l_dt_grade > "" Then
      If Len(l_dt_grade) < 10 Then
         If Right(Mid(l_dt_grade,1,2),1) = "/" Then

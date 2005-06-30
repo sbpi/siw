@@ -46,7 +46,7 @@ Dim w_Assinatura
 Dim p_ativo, p_solicitante, p_unidade, p_proponente, p_ordena, p_agrega, p_tamanho
 Dim p_ini_i, p_ini_f, p_fim_i, p_fim_f, p_atraso, p_tipo
 Dim p_chave, p_assunto, p_usu_resp, p_uorg_resp, p_palavra, p_prazo, p_fase
-Dim p_sq_acao_ppa, p_sq_isprojeto, p_selecao_mp, p_selecao_se
+Dim p_sq_acao_ppa, p_sq_isprojeto, p_selecao_mp, p_selecao_se, p_qtd_restricao
 Dim w_troca,w_cor, w_filter, w_cliente, w_usuario, w_menu
 Dim w_sq_pessoa, w_pag, w_linha, w_nm_quebra, w_qt_quebra, w_filtro
 Dim ul,File
@@ -84,6 +84,7 @@ p_sq_acao_ppa           = uCase(Request("p_sq_acao_ppa"))
 p_sq_isprojeto          = uCase(Request("p_sq_isprojeto"))
 p_selecao_mp            = uCase(Request("p_selecao_mp"))
 p_selecao_se            = uCase(Request("p_selecao_se"))
+p_qtd_restricao         = uCase(Request("p_qtd_restricao"))
 
 Private Par
 
@@ -188,6 +189,7 @@ Set p_sq_acao_ppa       = Nothing
 Set p_sq_isprojeto      = Nothing
 Set p_selecao_mp        = Nothing
 Set p_selecao_se        = Nothing
+Set p_qtd_restricao     = Nothing
 
 Set RS            = Nothing
 Set RS1           = Nothing
@@ -219,11 +221,11 @@ Sub Gerencial
   If O = "L" or O = "V" or O = "W" Then
      w_filtro = ""
      If p_sq_acao_ppa > ""  Then 
-        DB_GetAcaoPPA_IS RS, w_cliente, w_ano, Mid(p_sq_acao_ppa,1,4), Mid(p_sq_acao_ppa,5,4), null, Mid(p_sq_acao_ppa,13,17), null, null
-        w_filtro = w_filtro & "<tr valign=""top""><td align=""right""><font size=1>Ação PPA <td><font size=1>[<b>" & RS("descricao_acao") & " (" & RS("cd_unidade") & "." & RS("cd_programa") & "." & RS("cd_acao") & ")" & "</b>]"
+        DB_GetAcaoPPA_IS RS, w_cliente, w_ano, Mid(p_sq_acao_ppa,1,4), Mid(p_sq_acao_ppa,5,4), null, Mid(p_sq_acao_ppa,13,17), null, null, null
+        w_filtro = w_filtro & "<tr valign=""top""><td align=""right""><font size=1>Ação <td><font size=1>[<b>" & RS("cd_unidade") & "." & RS("cd_programa") & "." & RS("cd_acao") & " - " & RS("descricao_acao") & " (" & RS("ds_unidade") & ")</b>]"
      End If
      If p_sq_isprojeto > ""  Then 
-        DB_GetProjeto_IS RS, p_sq_isprojeto, w_cliente, null, null, null, null, null, null, null, null, null, null, null
+        DB_GetProjeto_IS RS, p_sq_isprojeto, w_cliente, null, null, null, null, null, null, null, null, null, null, null, null
         w_filtro = w_filtro & "<tr valign=""top""><td align=""right""><font size=1>Plano/projeto específico<td><font size=1>[<b>" & RS("nome") & "</b>]"
      End If
      If p_chave       > ""  Then w_filtro = w_filtro & "<tr valign=""top""><td align=""right""><font size=1>Ação nº <td><font size=1>[<b>" & p_chave & "</b>]" End If
@@ -247,18 +249,19 @@ Sub Gerencial
      If p_selecao_mp  > ""  Then w_filtro = w_filtro & "<tr valign=""top""><td align=""right""><font size=1>Selecionada SPI/MP <td><font size=1>[<b>" & p_selecao_se & "</b>]"              End If
      If p_selecao_se  > ""  Then w_filtro = w_filtro & "<tr valign=""top""><td align=""right""><font size=1>Selecionada SE/MS <td><font size=1>[<b>" & p_selecao_mp & "</b>]"               End If
      If p_proponente  > ""  Then w_filtro = w_filtro & "<tr valign=""top""><td align=""right""><font size=1>Parcerias externas<td><font size=1>[<b>" & p_proponente  & "</b>]"              End If
-     If p_assunto     > ""  Then w_filtro = w_filtro & "<tr valign=""top""><td align=""right""><font size=1>Ação <td><font size=1>[<b>" & p_assunto & "</b>]"                            End If
+     If p_assunto     > ""  Then w_filtro = w_filtro & "<tr valign=""top""><td align=""right""><font size=1>Ação <td><font size=1>[<b>" & p_assunto & "</b>]"                               End If
      If p_palavra     > ""  Then w_filtro = w_filtro & "<tr valign=""top""><td align=""right""><font size=1>Parcerias internas<td><font size=1>[<b>" & p_palavra & "</b>]"                  End If
      If p_ini_i       > ""  Then w_filtro = w_filtro & "<tr valign=""top""><td align=""right""><font size=1>Data recebimento <td><font size=1>[<b>" & p_ini_i & "-" & p_ini_f & "</b>]"     End If
      If p_fim_i       > ""  Then w_filtro = w_filtro & "<tr valign=""top""><td align=""right""><font size=1>Limite conclusão <td><font size=1>[<b>" & p_fim_i & "-" & p_fim_f & "</b>]"     End If
      If p_atraso      = "S" Then w_filtro = w_filtro & "<tr valign=""top""><td align=""right""><font size=1>Situação <td><font size=1>[<b>Apenas atrasadas</b>]"                            End If
+     If p_qtd_restricao   = "S" Then w_filtro = w_filtro & "<tr valign=""top""><td align=""right""><font size=1>Situação <td><font size=1>[<b>Apenas ações com restrição</b>]"                  End If
      If w_filtro > "" Then w_filtro = "<table border=0><tr valign=""top""><td><font size=1><b>Filtro:</b><td nowrap><font size=1><ul>" & w_filtro & "</ul></tr></table>"                    End If
 
      Select case p_agrega
         Case "GRISAACAO"
            DB_GetSolicList_IS RS1, P2, w_usuario, p_agrega, 5, _
               p_ini_i, p_ini_f, p_fim_i, p_fim_f, p_atraso, p_solicitante, _
-              p_unidade, null,  p_ativo, p_proponente, p_chave, p_assunto, _
+              p_unidade, null,  p_qtd_restricao, p_proponente, p_chave, p_assunto, _
               null, null, null, null, p_usu_resp, p_uorg_resp, p_palavra, _
               p_prazo, p_fase, null, null, Mid(p_sq_acao_ppa,1,4), Mid(p_sq_acao_ppa,5,4), p_sq_isprojeto, Mid(p_sq_acao_ppa,9,4)
            w_TP = TP & " - Por ação"
@@ -266,7 +269,7 @@ Sub Gerencial
         Case "GRISAPROP"
            DB_GetSolicList_IS RS1, P2, w_usuario, p_agrega, 5, _
               p_ini_i, p_ini_f, p_fim_i, p_fim_f, p_atraso, p_solicitante, _
-              p_unidade, null,  p_ativo, p_proponente, p_chave, p_assunto, _
+              p_unidade, null,  p_qtd_restricao, p_proponente, p_chave, p_assunto, _
               null, null, null, null, p_usu_resp, p_uorg_resp, p_palavra, _
               p_prazo, p_fase, null, null, Mid(p_sq_acao_ppa,1,4), Mid(p_sq_acao_ppa,5,4), p_sq_isprojeto, Mid(p_sq_acao_ppa,9,4)
            w_TP = TP & " - Por parcerias externas"
@@ -275,7 +278,7 @@ Sub Gerencial
         Case "GRISARESP"
           DB_GetSolicList_IS RS1, P2, w_usuario, p_agrega, 5, _
               p_ini_i, p_ini_f, p_fim_i, p_fim_f, p_atraso, p_solicitante, _
-              p_unidade, null,  p_ativo, p_proponente, p_chave, p_assunto, _
+              p_unidade, null,  p_qtd_restricao, p_proponente, p_chave, p_assunto, _
               null, null, null, null, p_usu_resp, p_uorg_resp, p_palavra, _
               p_prazo, p_fase, null, null, Mid(p_sq_acao_ppa,1,4), Mid(p_sq_acao_ppa,5,4), p_sq_isprojeto, Mid(p_sq_acao_ppa,9,4)
            w_TP = TP & " - Por responsável"
@@ -283,7 +286,7 @@ Sub Gerencial
         Case "GRISARESPATU"
            DB_GetSolicList_IS RS1, P2, w_usuario, p_agrega, 5, _
               p_ini_i, p_ini_f, p_fim_i, p_fim_f, p_atraso, p_solicitante, _
-              p_unidade, null,  p_ativo, p_proponente, p_chave, p_assunto, _
+              p_unidade, null,  p_qtd_restricao, p_proponente, p_chave, p_assunto, _
               null, null, null, null, p_usu_resp, p_uorg_resp, p_palavra, _
               p_prazo, p_fase, null, null,  Mid(p_sq_acao_ppa,1,4), Mid(p_sq_acao_ppa,5,4), p_sq_isprojeto, Mid(p_sq_acao_ppa,9,4)
            w_TP = TP & " - Por executor"
@@ -293,7 +296,7 @@ Sub Gerencial
            w_TP = TP & " - Por setor área de planejamento"
            DB_GetSolicList_IS RS1, P2, w_usuario, p_agrega, 5, _
               p_ini_i, p_ini_f, p_fim_i, p_fim_f, p_atraso, p_solicitante, _
-              p_unidade, null,  p_ativo, p_proponente, p_chave, p_assunto, _
+              p_unidade, null,  p_qtd_restricao, p_proponente, p_chave, p_assunto, _
               null, null, null, null, p_usu_resp, p_uorg_resp, p_palavra, _
               p_prazo, p_fase, null, null, Mid(p_sq_acao_ppa,1,4), Mid(p_sq_acao_ppa,5,4), p_sq_isprojeto, Mid(p_sq_acao_ppa,9,4)
            RS1.sort = "nm_unidade_resp"
@@ -704,11 +707,11 @@ Sub Gerencial
     ShowHTML "          <td><font size=""1""><b><U>A</U>gregar por:<br><SELECT ACCESSKEY=""A"" " & w_Disabled & " class=""STS"" name=""p_agrega"" size=""1"">"
     Select case p_agrega
        'Case "GRPRINTER"   ShowHTML "          <option value=""GRPRRESPATU"">Executor<option value=""GRPRPROJ"">Ação<option value=""GRPRPROP"">Parcerias externas<option value=""GRPRRESP"">Responsável monitoramento<option value=""GRPRSETOR"">Setor responsável monitoramento"
-       Case "GRISAACAO"    ShowHTML "          <option value=""GRISARESPATU"">Executor<option value=""GRISAACAO"" selected>Ação<option value=""GRISAPROP"">Parcerias externas<option value=""GRISARESP"">Responsável monitoramento<option value=""GRISASETOR"">Área planejamento"
-       Case "GRISAPROP"    ShowHTML "          <option value=""GRISARESPATU"">Executor<option value=""GRISAACAO"">Ação<option value=""GRISAPROP"" selected>Parcerias externas<option value=""GRISARESP"">Responsável monitoramento<option value=""GRISASETOR"">Área planejamento"
-       Case "GRISARESPATU" ShowHTML "          <option value=""GRISARESPATU"" selected>Executor<option value=""GRISAACAO"">Ação<option value=""GRISAPROP"">Parcerias externas<option value=""GRISARESP"">Responsável monitoramento<option value=""GRISASETOR"">Área planejamento"
-       Case "GRISASETOR"   ShowHTML "          <option value=""GRISARESPATU"">Executor<option value=""GRISAACAO"">Ação<option value=""GRISAPROP"">Parcerias externas<option value=""GRISARESP"">Responsável monitoramento<option value=""GRISASETOR"" selected>Área planejamento"
-       Case Else          ShowHTML "          <option value=""GRISARESPATU"">Executor<option value=""GRISAACAO"">Ação<option value=""GRISAPROP"">Parcerias externas<option value=""GRISARESP"" selected>Responsável monitoramento<option value=""GRISASETOR"">Área planejamento"
+       Case "GRISAACAO"    ShowHTML "          <option value=""GRISARESPATU"">Usuário atual<option value=""GRISAACAO"" selected>Ação<option value=""GRISAPROP"">Parcerias externas<option value=""GRISARESP"">Responsável monitoramento<option value=""GRISASETOR"">Área planejamento"
+       Case "GRISAPROP"    ShowHTML "          <option value=""GRISARESPATU"">Usuário atual<option value=""GRISAACAO"">Ação<option value=""GRISAPROP"" selected>Parcerias externas<option value=""GRISARESP"">Responsável monitoramento<option value=""GRISASETOR"">Área planejamento"
+       Case "GRISARESPATU" ShowHTML "          <option value=""GRISARESPATU"" selected>Usuário atual<option value=""GRISAACAO"">Ação<option value=""GRISAPROP"">Parcerias externas<option value=""GRISARESP"">Responsável monitoramento<option value=""GRISASETOR"">Área planejamento"
+       Case "GRISASETOR"   ShowHTML "          <option value=""GRISARESPATU"">Usuário atual<option value=""GRISAACAO"">Ação<option value=""GRISAPROP"">Parcerias externas<option value=""GRISARESP"">Responsável monitoramento<option value=""GRISASETOR"" selected>Área planejamento"
+       Case Else           ShowHTML "          <option value=""GRISARESPATU"">Usuário atual<option value=""GRISAACAO"">Ação<option value=""GRISAPROP"">Parcerias externas<option value=""GRISARESP"" selected>Responsável monitoramento<option value=""GRISASETOR"">Área planejamento"
     End Select
     ShowHTML "          </select></td>"
     MontaRadioNS "<b>Inibe exibição do gráfico?</b>", p_tipo, "p_tipo"
@@ -719,10 +722,16 @@ Sub Gerencial
 
     ShowHTML "      <tr><td colspan=2><table border=0 width=""90%"" cellspacing=0><tr valign=""top"">"
     p_sq_acao_ppa = ""
-    SelecaoAcaoPPA "<u>A</u>ção PPA:", "A", null, w_cliente, w_ano, null, null, null, null, "p_sq_acao_ppa", null, null, null
+    SelecaoAcaoPPA "<u>A</u>ção PPA:", "A", null, w_cliente, w_ano, null, null, null, null, "p_sq_acao_ppa", "CONSULTA", null, null, w_menu
     ShowHTML "          </table>"   
     ShowHTML "      <tr><td colspan=2><table border=0 width=""90%"" cellspacing=0><tr valign=""top"">"
     SelecaoIsProjeto "<u>P</u>lano/projeto específico:", "P", null, p_sq_isprojeto, null, "p_sq_isprojeto", null, null
+    ShowHTML "          <td valign=""top""><font size=""1""><b>Exibe somente ações com restrição?</b><br>"
+    If p_qtd_restricao = "S" Then
+       ShowHTML "              <input " & w_Disabled & " class=""STR"" type=""radio"" name=""p_qtd_restricao"" value=""S"" checked> Sim <input " & w_Disabled & " class=""STR"" class=""STR"" type=""radio"" name=""p_qtd_restricao"" value=""N""> Não"
+    Else
+       ShowHTML "              <input " & w_Disabled & " class=""STR"" type=""radio"" name=""p_qtd_restricao"" value=""S""> Sim <input " & w_Disabled & " class=""STR"" class=""STR"" type=""radio"" name=""p_qtd_restricao"" value=""N"" checked> Não"
+    End If
     ShowHTML "          </table>"
     ShowHTML "      <tr valign=""top"">"
     'ShowHTML "          <td valign=""top""><font size=""1""><b>Número da <U>a</U>ção:<br><INPUT ACCESSKEY=""A"" " & w_Disabled & " class=""STI"" type=""text"" name=""p_chave"" size=""18"" maxlength=""18"" value=""" & p_chave & """></td>"
@@ -744,8 +753,8 @@ Sub Gerencial
     'ShowHTML "      <tr>"
     'ShowHTML "          <td valign=""top""><font size=""1""><b>Açã<U>o</U>:<br><INPUT ACCESSKEY=""O"" " & w_Disabled & " class=""STI"" type=""text"" name=""p_assunto"" size=""25"" maxlength=""90"" value=""" & p_assunto & """></td>"
     ShowHTML "      <tr>"
-    ShowHTML "          <td valign=""top""><font size=""1""><b>Data de re<u>c</u>ebimento entre:</b><br><input " & w_Disabled & " accesskey=""C"" type=""text"" name=""p_ini_i"" class=""STI"" SIZE=""10"" MAXLENGTH=""10"" VALUE=""" & p_ini_i & """ onKeyDown=""FormataData(this,event);""> e <input " & w_Disabled & " accesskey=""C"" type=""text"" name=""p_ini_f"" class=""STI"" SIZE=""10"" MAXLENGTH=""10"" VALUE=""" & p_ini_f & """ onKeyDown=""FormataData(this,event);""></td>"
-    ShowHTML "          <td valign=""top""><font size=""1""><b>Limi<u>t</u>e para conclusão entre:</b><br><input " & w_Disabled & " accesskey=""T"" type=""text"" name=""p_fim_i"" class=""STI"" SIZE=""10"" MAXLENGTH=""10"" VALUE=""" & p_fim_i & """ onKeyDown=""FormataData(this,event);""> e <input " & w_Disabled & " accesskey=""T"" type=""text"" name=""p_fim_f"" class=""STI"" SIZE=""10"" MAXLENGTH=""10"" VALUE=""" & p_fim_f & """ onKeyDown=""FormataData(this,event);""></td>"
+    ShowHTML "          <td valign=""top""><font size=""1""><b>Data de re<u>c</u>ebimento entre:</b><br><input " & w_Disabled & " accesskey=""C"" type=""text"" name=""p_ini_i"" class=""STI"" SIZE=""10"" MAXLENGTH=""10"" VALUE=""" & p_ini_i & """ onKeyDown=""FormataData(this,event);"" title=""Usar formato dd/mm/aaaa""> e <input " & w_Disabled & " accesskey=""C"" type=""text"" name=""p_ini_f"" class=""STI"" SIZE=""10"" MAXLENGTH=""10"" VALUE=""" & p_ini_f & """ onKeyDown=""FormataData(this,event);"" title=""Usar formato dd/mm/aaaa""></td>"
+    ShowHTML "          <td valign=""top""><font size=""1""><b>Limi<u>t</u>e para conclusão entre:</b><br><input " & w_Disabled & " accesskey=""T"" type=""text"" name=""p_fim_i"" class=""STI"" SIZE=""10"" MAXLENGTH=""10"" VALUE=""" & p_fim_i & """ onKeyDown=""FormataData(this,event);"" title=""Usar formato dd/mm/aaaa""> e <input " & w_Disabled & " accesskey=""T"" type=""text"" name=""p_fim_f"" class=""STI"" SIZE=""10"" MAXLENGTH=""10"" VALUE=""" & p_fim_f & """ onKeyDown=""FormataData(this,event);"" title=""Usar formato dd/mm/aaaa""></td>"
     ShowHTML "      <tr>"
     ShowHTML "          <td valign=""top""><font size=""1""><b>Exibe somente ações em atraso?</b><br>"
     If p_atraso = "S" Then

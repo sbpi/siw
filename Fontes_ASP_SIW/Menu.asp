@@ -138,6 +138,7 @@ Sub ExibeDocs
    ShowHTML "<HTML>"
    ShowHTML "<HEAD>"
    ShowHTML "<script language=JavaScript>"
+   ShowHTML "var lastLink;"
    ShowHTML "function clickHandler() {"
    ShowHTML "  var targetId, srcElement, targetElement;"
    ShowHTML "  srcElement = window.event.srcElement;"
@@ -149,6 +150,13 @@ Sub ExibeDocs
    ShowHTML "     } else {"
    ShowHTML "        targetElement.style.display = ""none"";"
    ShowHTML "     }"
+   ShowHTML "  } else if (srcElement.className == ""ss"") {"
+   ShowHTML "    if (lastLink != undefined) {"
+   ShowHTML "     targetElement = document.all(lastLink);"
+   ShowHTML "     targetElement.className = ""ss"";"
+   ShowHTML "    }"
+   ShowHTML "    srcElement.className = ""ed""; "
+   ShowHTML "    lastLink = srcElement.id; "
    ShowHTML "  }"
    ShowHTML "}"
    ShowHTML "document.onclick = clickHandler;"
@@ -156,8 +164,9 @@ Sub ExibeDocs
    ShowHTML "<style>"
    ShowHTML "<// a { color: ""#000000""; text-decoration: ""none""; } "
    ShowHTML "    a:hover { color:""#000000""; text-decoration: ""underline""; }"
-   ShowHTML "    .SS{text-decoration:none;} "
-   ShowHTML "    .SS:HOVER{text-decoration: ""underline"";} "
+   ShowHTML "    .ss{text-decoration:none;} "
+   ShowHTML "    .ss:HOVER{text-decoration: ""underline"";} "
+   ShowHTML "    .ed { color: ""#FF0000""; text-decoration:none; font:bold 11px;} "
    ShowHTML "//></style>"
    ShowHTML "</HEAD>"
    ShowHTML "<BASEFONT FACE=""Verdana, Helvetica, Sans-Serif"" SIZE=""2"">"
@@ -185,6 +194,7 @@ Sub ExibeDocs
       Else
          DB_GetLinkDataParent RS, Session("p_cliente"), Request("SG")
          RS.Sort = "ordem"
+         RS.MoveNext
          If Request("w_cgccpf") > "" Then
             ShowHTML "onLoad='javascript:top.content.location=""" & RS("LINK") & "&R=" & Request("R") & "&P1="&RS("P1")&"&P2="&RS("P2")&"&P3="&RS("P3")&"&P4="&RS("P4")&"&TP="&Request("TP")&" - "&RS("nome")&"&SG="&RS("SIGLA")&"&O="&Request("O")&"&w_cgccpf="&Request("w_cgccpf")& MontaFiltro("GET") & """;'>"
          Else
@@ -237,9 +247,9 @@ Sub ExibeDocs
                               w_Imagem = w_ImagemPadrao
                            End If
                            If RS3("externo") = "S" Then
-                              ShowHTML "    <img src=""" & w_Imagem & """ border=0 align=""center""> <A CLASS=""ss"" HREF=""" & replace(RS3("LINK"),"@files",conFileVirtual & Session("p_cliente")) & """ TARGET=""" & RS3("target") & """>" & RS3("NOME") & "</A><BR>"
+                              ShowHTML "    <img src=""" & w_Imagem & """ border=0 align=""center""> <A id=""m" & RS3("sq_menu") & """ CLASS=""ss"" HREF=""" & replace(RS3("LINK"),"@files",conFileVirtual & Session("p_cliente")) & """ TARGET=""" & RS3("target") & """>" & RS3("NOME") & "</A><BR>"
                            Else
-                              ShowHTML "    <img src=""" & w_Imagem & """ border=0 align=""center""> <A CLASS=""ss"" HREF=""" & RS3("LINK") & "&P1="&RS3("P1")&"&P2="&RS3("P2")&"&P3="&RS3("P3")&"&P4="&RS3("P4")&"&TP=<img src="&w_Imagem&" BORDER=0>"&w_Titulo&"&SG="&RS3("SIGLA")&""" TARGET=""" & RS3("target") & """>" & RS3("NOME") & "</A><BR>"
+                              ShowHTML "    <img src=""" & w_Imagem & """ border=0 align=""center""> <A id=""m" & RS3("sq_menu") & """ CLASS=""ss"" HREF=""" & RS3("LINK") & "&P1="&RS3("P1")&"&P2="&RS3("P2")&"&P3="&RS3("P3")&"&P4="&RS3("P4")&"&TP=<img src="&w_Imagem&" BORDER=0>"&w_Titulo&"&SG="&RS3("SIGLA")&""" TARGET=""" & RS3("target") & """>" & RS3("NOME") & "</A><BR>"
                            End If
                            w_Titulo = Replace(w_Titulo, " - "&RS3("NOME"), "")
                            RS3.MoveNext
@@ -252,9 +262,9 @@ Sub ExibeDocs
                            w_Imagem = w_ImagemPadrao
                         End If
                         If RS2("externo") = "S" Then
-                           ShowHTML "    <img src=""" & w_Imagem & """ border=0 align=""center""> <A CLASS=""ss"" HREF=""" & replace(RS2("LINK"),"@files",conFileVirtual & Session("p_cliente")) & """ TARGET=""" & RS2("target") & """>" & RS2("NOME") & "</A><BR>"
+                           ShowHTML "    <img src=""" & w_Imagem & """ border=0 align=""center""> <A id=""m" & RS2("sq_menu") & """ CLASS=""ss"" HREF=""" & replace(RS2("LINK"),"@files",conFileVirtual & Session("p_cliente")) & """ TARGET=""" & RS2("target") & """>" & RS2("NOME") & "</A><BR>"
                         Else
-                           ShowHTML "    <img src=""" & w_Imagem & """ border=0 align=""center""> <A CLASS=""ss"" HREF=""" & RS2("LINK") & "&P1="&RS2("P1")&"&P2="&RS2("P2")&"&P3="&RS2("P3")&"&P4="&RS2("P4")&"&TP=<img src="&w_Imagem&" BORDER=0>"&w_Titulo&"&SG="&RS2("SIGLA")&""" TARGET=""" & RS2("target") & """>" & RS2("NOME") & "</A><BR>"
+                           ShowHTML "    <img src=""" & w_Imagem & """ border=0 align=""center""> <A id=""m" & RS2("sq_menu") & """ CLASS=""ss"" HREF=""" & RS2("LINK") & "&P1="&RS2("P1")&"&P2="&RS2("P2")&"&P3="&RS2("P3")&"&P4="&RS2("P4")&"&TP=<img src="&w_Imagem&" BORDER=0>"&w_Titulo&"&SG="&RS2("SIGLA")&""" TARGET=""" & RS2("target") & """>" & RS2("NOME") & "</A><BR>"
                         End If
                      End If
                      w_Titulo = Replace(w_Titulo, " - "&RS2("NOME"), "")
@@ -269,12 +279,12 @@ Sub ExibeDocs
                   End If
                   If RS1("externo") = "S" Then
                      If RS1("LINK") > "" Then
-                        ShowHTML "    <img src=""" & w_Imagem & """ border=0 align=""center""> <A CLASS=""ss"" HREF=""" & replace(RS1("LINK"),"@files",conFileVirtual & Session("p_cliente")) & """ TARGET=""" & RS1("target") & """>" & RS1("NOME") & "</A><BR>"
+                        ShowHTML "    <img src=""" & w_Imagem & """ border=0 align=""center""> <A id=""m" & RS1("sq_menu") & """ CLASS=""ss"" HREF=""" & replace(RS1("LINK"),"@files",conFileVirtual & Session("p_cliente")) & """ TARGET=""" & RS1("target") & """>" & RS1("NOME") & "</A><BR>"
                      Else
                         ShowHTML "    <img src=""" & w_Imagem & """ border=0 align=""center""> " & RS1("NOME") & "<BR>"
                      End If
                   Else
-                     ShowHTML "    <img src=""" & w_Imagem & """ border=0 align=""center""> <A CLASS=""ss"" HREF=""" & RS1("LINK") & "&P1="&RS1("P1")&"&P2="&RS1("P2")&"&P3="&RS1("P3")&"&P4="&RS1("P4")&"&TP=<img src="&w_Imagem&" BORDER=0>"&w_Titulo&"&SG="&RS1("SIGLA")&""" TARGET=""" & RS1("target") & """>" & RS1("NOME") & "</A><BR>"
+                     ShowHTML "    <img src=""" & w_Imagem & """ border=0 align=""center""> <A id=""m" & RS1("sq_menu") & """ CLASS=""ss"" HREF=""" & RS1("LINK") & "&P1="&RS1("P1")&"&P2="&RS1("P2")&"&P3="&RS1("P3")&"&P4="&RS1("P4")&"&TP=<img src="&w_Imagem&" BORDER=0>"&w_Titulo&"&SG="&RS1("SIGLA")&""" TARGET=""" & RS1("target") & """>" & RS1("NOME") & "</A><BR>"
                   End If
                End If
                w_Titulo = Replace(w_Titulo, " - "&RS1("NOME"), "")
@@ -288,9 +298,9 @@ Sub ExibeDocs
                w_Imagem = w_ImagemPadrao
             End If
             If RS("externo") = "S" Then
-               ShowHTML "    <img src=""" & w_Imagem & """ border=0 align=""center""> <A CLASS=""ss"" HREF=""" & replace(RS("LINK"),"@files",conFileVirtual & Session("p_cliente")) & """ TARGET=""" & RS("target") & """>" & RS("NOME") & "</A><BR>"
+               ShowHTML "    <img src=""" & w_Imagem & """ border=0 align=""center""> <A id=""m" & RS("sq_menu") & """ CLASS=""ss"" HREF=""" & replace(RS("LINK"),"@files",conFileVirtual & Session("p_cliente")) & """ TARGET=""" & RS("target") & """>" & RS("NOME") & "</A><BR>"
             Else
-               ShowHTML "    <img src=""" & w_Imagem & """ border=0 align=""center""> <A CLASS=""ss"" HREF=""" & RS("LINK") & "&P1="&RS("P1")&"&P2="&RS("P2")&"&P3="&RS("P3")&"&P4="&RS("P4")&"&TP=<img src="&w_Imagem&" BORDER=0>"&w_Titulo&"&SG="&RS("SIGLA")&""" TARGET=""" & RS("target") & """>" & RS("NOME") & "</A><BR>"
+               ShowHTML "    <img src=""" & w_Imagem & """ border=0 align=""center""> <A id=""m" & RS("sq_menu") & """ CLASS=""ss"" HREF=""" & RS("LINK") & "&P1="&RS("P1")&"&P2="&RS("P2")&"&P3="&RS("P3")&"&P4="&RS("P4")&"&TP=<img src="&w_Imagem&" BORDER=0>"&w_Titulo&"&SG="&RS("SIGLA")&""" TARGET=""" & RS("target") & """>" & RS("NOME") & "</A><BR>"
             End If
          End If
          RS.MoveNext
@@ -315,14 +325,14 @@ Sub ExibeDocs
             w_Imagem = w_ImagemPadrao
          End If
          If RS("externo") = "S" Then
-            ShowHTML "    <img src=""" & w_Imagem & """ border=0 align=""center""> <A CLASS=""ss"" HREF=""" & replace(RS("LINK"),"@files",conFileVirtual & Session("p_cliente")) & """ TARGET=""" & RS("target") & """>" & RS("NOME") & "</A><BR>"
+            ShowHTML "    <img src=""" & w_Imagem & """ border=0 align=""center""> <A id=""m" & RS("sq_menu") & """ CLASS=""ss"" HREF=""" & replace(RS("LINK"),"@files",conFileVirtual & Session("p_cliente")) & """ TARGET=""" & RS("target") & """>" & RS("NOME") & "</A><BR>"
          Else
             If Request("w_cgccpf") > "" Then
-               ShowHTML "    <img src=""" & w_Imagem & """ border=0 align=""center""> <A CLASS=""ss"" HREF=""" & RS("LINK") & "&R="&Request("R")&"&P1="&RS("P1")&"&P2="&RS("P2")&"&P3="&RS("P3")&"&P4="&RS("P4")&"&TP="&w_Titulo&"&SG="&RS("SIGLA")&"&O=L&w_cgccpf="&Request("w_cgccpf")& MontaFiltro("GET") & """ TARGET=""" & RS("target") & """>" & RS("NOME") & "</A><BR>"
+               ShowHTML "    <img src=""" & w_Imagem & """ border=0 align=""center""> <A id=""m" & RS("sq_menu") & """ CLASS=""ss"" HREF=""" & RS("LINK") & "&R="&Request("R")&"&P1="&RS("P1")&"&P2="&RS("P2")&"&P3="&RS("P3")&"&P4="&RS("P4")&"&TP="&w_Titulo&"&SG="&RS("SIGLA")&"&O=L&w_cgccpf="&Request("w_cgccpf")& MontaFiltro("GET") & """ TARGET=""" & RS("target") & """>" & RS("NOME") & "</A><BR>"
             ElseIf Request("w_sq_acordo") > "" Then
-               ShowHTML "    <img src=""" & w_Imagem & """ border=0 align=""center""> <A CLASS=""ss"" HREF=""" & RS("LINK") & "&R="&Request("R")&"&P1="&RS("P1")&"&P2="&RS("P2")&"&P3="&RS("P3")&"&P4="&RS("P4")&"&TP="&w_Titulo&"&SG="&RS("SIGLA")&"&O=L&w_sq_acordo="&Request("w_sq_acordo")&"&w_menu="&RS("menu_pai")&""" TARGET=""" & RS("target") & """>" & RS("NOME") & "</A><BR>"
+               ShowHTML "    <img src=""" & w_Imagem & """ border=0 align=""center""> <A id=""m" & RS("sq_menu") & """ CLASS=""ss"" HREF=""" & RS("LINK") & "&R="&Request("R")&"&P1="&RS("P1")&"&P2="&RS("P2")&"&P3="&RS("P3")&"&P4="&RS("P4")&"&TP="&w_Titulo&"&SG="&RS("SIGLA")&"&O=L&w_sq_acordo="&Request("w_sq_acordo")&"&w_menu="&RS("menu_pai")&""" TARGET=""" & RS("target") & """>" & RS("NOME") & "</A><BR>"
             Else
-               ShowHTML "    <img src=""" & w_Imagem & """ border=0 align=""center""> <A CLASS=""ss"" HREF=""" & RS("LINK") & "&R="&Request("R")&"&P1="&RS("P1")&"&P2="&RS("P2")&"&P3="&RS("P3")&"&P4="&RS("P4")&"&TP="&w_Titulo&"&SG="&RS("SIGLA")&"&O="&Request("O")&"&w_chave="&Request("w_chave")&"&w_menu="&RS("menu_pai")& MontaFiltro("GET") & """ TARGET=""" & RS("target") & """>" & RS("NOME") & "</A><BR>"
+               ShowHTML "    <img src=""" & w_Imagem & """ border=0 align=""center""> <A id=""m" & RS("sq_menu") & """ CLASS=""ss"" HREF=""" & RS("LINK") & "&R="&Request("R")&"&P1="&RS("P1")&"&P2="&RS("P2")&"&P3="&RS("P3")&"&P4="&RS("P4")&"&TP="&w_Titulo&"&SG="&RS("SIGLA")&"&O="&Request("O")&"&w_chave="&Request("w_chave")&"&w_menu="&RS("menu_pai")& MontaFiltro("GET") & """ TARGET=""" & RS("target") & """>" & RS("NOME") & "</A><BR>"
             End If
          End If
          If Request("O") = "I" Then 
@@ -333,11 +343,11 @@ Sub ExibeDocs
       DesconectaBD
       ShowHTML "   </font></div>"
       DB_GetLinkData RS, Session("p_cliente"), Request("SG")
-      ShowHTML "  <br><font size=1><img src=""" & w_Imagem & """ border=0 align=""center""> <A CLASS=""ss"" HREF=""" & w_pagina & par & "&O=L&R=" & Request("R") & "&SG=" & RS("sigla") & "&TP=" & RemoveTP(Request("TP")) &"&P1="&RS("P1")&"&P2="&RS("P2")&"&P3="&RS("P3")&"&P4="&RS("P4") & MontaFiltro("GET") & """>Nova consulta</A><BR>"
+      ShowHTML "  <br><font size=1><img src=""" & w_Imagem & """ border=0 align=""center""> <A id=""m" & RS("sq_menu") & """ CLASS=""ss"" HREF=""" & w_pagina & par & "&O=L&R=" & Request("R") & "&SG=" & RS("sigla") & "&TP=" & RemoveTP(Request("TP")) &"&P1="&RS("P1")&"&P2="&RS("P2")&"&P3="&RS("P3")&"&P4="&RS("P4") & MontaFiltro("GET") & """>Nova consulta</A><BR>"
       DesconectaBD
-      ShowHTML "  <br><font size=1><img src=""images/folder/SheetLittle.gif"" border=0 align=""center""> <A CLASS=""ss"" HREF=""Menu.asp?par=ExibeDocs"">Menu</A></font><BR>"
+      ShowHTML "  <br><font size=1><img src=""images/folder/SheetLittle.gif"" border=0 align=""center""> <A id=""mm"" CLASS=""ss"" HREF=""Menu.asp?par=ExibeDocs"">Menu</A></font><BR>"
    End If
-   ShowHTML "  <br><br><font size=1><img src=""images/folder/SheetLittle.gif"" border=0 align=""center""> <A CLASS=""ss"" HREF=""Menu.asp?par=Sair"" TARGET=""_top"" onClick=""return(confirm('Confirma saída do sistema?'));"">Sair do sistema</A></font><BR>"
+   ShowHTML "  <br><br><font size=1><img src=""images/folder/SheetLittle.gif"" border=0 align=""center""> <A id=""ms"" CLASS=""ss"" HREF=""Menu.asp?par=Sair"" TARGET=""_top"" onClick=""return(confirm('Confirma saída do sistema?'));"">Sair do sistema</A></font><BR>"
    ShowHTML "      </table>"
    ShowHTML "</body>"
    ShowHTML "</html>"
@@ -516,8 +526,14 @@ Public Sub Grava
     ShowHTML "  history.back(1);"
     ScriptClose
   End Select
+  ' Aqui deve ser usada a variável de sessão para evitar erro na recuperação do link
+  DB_GetLinkData RS1, Session("p_cliente"), "MESA"
   ScriptOpen "JavaScript"
-  ShowHTML "  location.href='" & R & "&O=A&P1=" & P1 & "&P2=" & P2 & "&P3=" & P3 & "&P4=" & P4 & "&TP=" & TP & "&SG=" & SG & "';"
+  If RS1("IMAGEM") > "" Then
+     ShowHTML "  location.href='" & RS1("LINK") & "&P1="&RS1("P1")&"&P2="&RS1("P2")&"&P3="&RS1("P3")&"&P4="&RS1("P4")&"&TP=<img src="&RS1("IMAGEM")&" BORDER=0>"&RS1("nome")&"&SG="&RS1("SIGLA")&"'; "
+  Else
+     ShowHTML "  location.href='" & RS1("LINK") & "&P1="&RS1("P1")&"&P2="&RS1("P2")&"&P3="&RS1("P3")&"&P4="&RS1("P4")&"&TP=<img src="&w_ImagemPadrao&" BORDER=0>"&RS1("nome")&"&SG="&RS1("SIGLA")&"'; "
+  End If
   ScriptClose
 
 End Sub

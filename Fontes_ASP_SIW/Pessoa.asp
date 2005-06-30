@@ -94,7 +94,11 @@ Select Case O
   Case "P"
      w_TP = TP & " - Filtragem"
   Case Else
-     w_TP = TP & " - Listagem"
+     If par="BUSCAUSUARIO" Then
+        w_TP = TP & " - Busca usuário"
+     Else
+        w_TP = TP & " - Listagem"
+     End If
 End Select
 
 w_data_banco = Date()
@@ -405,7 +409,7 @@ Sub Benef
        ShowHTML "              <INPUT class=""stb"" TYPE=""submit"" NAME=""Botao"" VALUE=""Procurar"" onClick=""Botao.value=this.value; document.Form.action='" & w_Pagina & par &"'"">"
        ShowHTML "      </table>"
        If Request("w_nome") > "" Then
-          DB_GetPersonList RS, w_cliente, null, "PESSOA"
+          DB_GetPersonList RS, w_cliente, null, "PESSOA", null, null, null, null
           RS.Filter = "username = null and nome_indice like '*" & Request("w_nome") & "*'"
           ShowHTML "<tr><td align=""center"" colspan=3>"
           ShowHTML "    <TABLE WIDTH=""100%"" bgcolor=""" & conTableBgColor & """ BORDER=""" & conTableBorder & """ CELLSPACING=""" & conTableCellSpacing & """ CELLPADDING=""" & conTableCellPadding & """ BorderColorDark=""" & conTableBorderColorDark & """ BorderColorLight=""" & conTableBorderColorLight & """>"
@@ -648,6 +652,125 @@ REM Fim da tela de beneficiário
 REM -------------------------------------------------------------------------
 
 REM =========================================================================
+REM Rotina de busca dos usuários
+REM -------------------------------------------------------------------------
+Sub BuscaUsuario
+ 
+  Dim w_nome, w_sg_unidade, w_cliente, ChaveAux, restricao, campo, w_cor
+  
+  w_nome       = UCase(Request("w_nome"))
+  w_sg_unidade = UCase(Request("w_sg_unidade"))
+  w_cliente    = Request("w_cliente")
+  ChaveAux     = Request("ChaveAux")
+  restricao    = Request("restricao")
+  campo        = Request("campo")
+  
+  DB_GetPersonList RS, Session("p_cliente"), ChaveAux, restricao, w_nome, w_sg_unidade, null, null
+  RS.Sort = "nome_resumido"
+  If restricao = "TTUSURAMAL" then
+     RS.filter = "ativo='S'"
+  End If
+    
+  Cabecalho
+  ShowHTML "<TITLE>Seleção de pessoa</TITLE>"
+  ShowHTML "<HEAD>"
+  Estrutura_CSS w_cliente
+  ScriptOpen "JavaScript"
+  ShowHTML "  function volta(l_chave) {"
+  ShowHTML "     opener.Form." & campo & ".value=l_chave;"
+  ShowHTML "     opener.Form." & campo & ".focus();"
+  ShowHTML "     window.close();"
+  ShowHTML "     opener.focus();"
+  ShowHTML "   }"
+  ValidateOpen "Validacao"
+  Validate "w_nome", "Nome", "1", "", "4", "100", "1", "1"
+  Validate "w_sg_unidade", "Sigla da unidade de lotação", "1", "", "2", "20", "1", "1"
+  ShowHTML "  if (theForm.w_nome.value == '' && theForm.w_sg_unidade.value == '') {"
+  ShowHTML "     alert ('Informe um valor para o nome ou para a sigla da unidade!');"
+  ShowHTML "     theForm.w_nome.focus();"
+  ShowHTML "     return false;"
+  ShowHTML "  }"
+  ShowHTML "  theForm.Botao[0].disabled=true;"
+  ShowHTML "  theForm.Botao[1].disabled=true;"
+  ValidateClose
+  ScriptClose
+  ShowHTML "</HEAD>"
+  ShowHTML "<BASE HREF=""http://" & Request.ServerVariables("server_name") & "/siw/"">"
+  BodyOpen "onLoad='document.Form.w_nome.focus();'"
+  Estrutura_Texto_Abre
+  ShowHTML "<table border=""0"" cellpadding=""0"" cellspacing=""0"" width=""100%"">"
+  ShowHTML "<tr bgcolor=""" & conTrBgColor & """><td>"
+  ShowHTML "    <table width=""100%"" border=""0"">"
+  AbreForm  "Form", w_dir&w_Pagina&"BuscaUsuario", "POST", "return(Validacao(this))", null, P1, P2, P3, P4, TP, SG, null, null
+  ShowHTML "<INPUT type=""hidden"" name=""restricao"" value=""" & restricao &""">"
+  ShowHTML "<INPUT type=""hidden"" name=""campo"" value=""" & campo &""">"
+  
+  ShowHTML "<tr bgcolor=""" & conTrBgColor & """><td><div align=""justify""><font size=2><b><ul>Instruções</b>:<li>Informe parte do nome da ação ou o código da ação.<li>Quando a relação for exibida, selecione a ação desejada clicando sobre o link <i>Selecionar</i>.<li>Após informar o nome da ação ou o código da ação, clique sobre o botão <i>Aplicar filtro</i>. Clicando sobre o botão <i>Cancelar</i>, a procura é cancelada.</ul></div>"
+  ShowHTML "<tr bgcolor=""" & conTrBgColor & """><td>"
+  ShowHTML "    <table width=""100%"" border=""0"">"
+  ShowHTML "      <tr><td valign=""top""><font size=""1""><b>Parte do <U>n</U>ome da pessoa:<br><INPUT ACCESSKEY=""N"" " & w_Disabled & " class=""sti"" type=""text"" name=""w_nome"" size=""50"" maxlength=""100"" value=""" & w_nome & """>"
+  ShowHTML "      <tr><td valign=""top""><font size=""1""><b><U>S</U>igla da unidade de lotação:<br><INPUT ACCESSKEY=""S"" " & w_Disabled & " class=""sti"" type=""text"" name=""w_sg_unidade"" size=""6"" maxlength=""20"" value=""" & w_sg_unidade & """>"
+  
+  ShowHTML "      <tr><td align=""center"" colspan=""3"" height=""1"" bgcolor=""#000000"">"
+  ShowHTML "      <tr><td align=""center"" colspan=""3"">"
+  ShowHTML "            <input class=""stb"" type=""submit"" name=""Botao"" value=""Aplicar filtro"">"
+  ShowHTML "            <input class=""stb"" type=""button"" name=""Botao"" value=""Cancelar"" onClick=""window.close(); opener.focus();"">"
+  ShowHTML "          </td>"
+  ShowHTML "      </tr>"
+  ShowHTML "    </table>"
+  ShowHTML "    </TD>"
+  ShowHTML "</tr>"
+  ShowHTML "</form>"
+  If w_nome > "" or w_sg_unidade > "" Then
+     ShowHTML "<tr><td align=""right""><font size=""1""><b>Registros: " & RS.RecordCount
+     ShowHTML "<tr><td>"
+     ShowHTML "    <TABLE WIDTH=""100%"" border=0>"
+     If RS.EOF Then
+        ShowHTML "      <tr bgcolor=""" & conTrBgColor & """><td colspan=5 align=""center""><font size=""1""><b>Não foram encontrados registros.</b></td></tr>"
+     Else
+        ShowHTML "      <tr bgcolor=""" & conTrBgColor & """><td>"
+        ShowHTML "        <TABLE WIDTH=""100%"" bgcolor=""" & conTableBgColor & """ BORDER=""" & conTableBorder & """ CELLSPACING=""" & conTableCellSpacing & """ CELLPADDING=""" & conTableCellPadding & """ BorderColorDark=""" & conTableBorderColorDark & """ BorderColorLight=""" & conTableBorderColorLight & """>"
+        ShowHTML "          <tr bgcolor=""" & conTrBgColor & """ align=""center"">"
+        ShowHTML "            <td><font size=""1""><b>Nome resumido</font></td>"
+        ShowHTML "            <td><font size=""1""><b>Nome</font></td>"
+        ShowHTML "            <td><font size=""1""><b>Lotação</font></td>"
+        ShowHTML "            <td><font size=""1""><b>Operações</font></td>"
+        ShowHTML "          </tr>"
+        While Not RS.EOF
+           If w_cor = conTrBgColor or w_cor = "" Then w_cor = conTrAlternateBgColor Else w_cor = conTrBgColor End If
+           ShowHTML "      <tr bgcolor=""" & w_cor & """ valign=""top"">"
+           ShowHTML "            <td><font size=""1"">" & RS("nome_resumido") & "</td>"
+           ShowHTML "            <td><font size=""1"">" & RS("nome") & "</td>"
+           ShowHTML "            <td><font size=""1"">" & RS("sg_unidade") & " (" & RS("nm_local") & ")</td>"
+           ShowHTML "            <td><font size=""1""><a class=""ss"" href=""#"" onClick=""javascript:volta('" & RS("sq_pessoa") & "');"">Selecionar</a>"
+           RS.MoveNext
+        wend
+        ShowHTML "        </table></tr>"
+        ShowHTML "      </center>"
+        ShowHTML "    </table>"
+        ShowHTML "  </td>"
+        ShowHTML "</tr>"
+     End If
+     DesConectaBD	 
+  End If
+  DesConectaBD	 
+  ShowHTML "    </table>"
+  ShowHTML "    </TD>"
+  ShowHTML "</tr>"
+  ShowHTML "</FORM>"  
+  ShowHTML "</table>"
+  ShowHTML "</center>"
+  Estrutura_Texto_Fecha
+
+  Set w_nome                = Nothing
+  Set w_sg_unidade          = Nothing
+      
+End Sub
+REM =========================================================================
+REM Fim da rotina de busca de usuários
+REM -------------------------------------------------------------------------
+
+REM =========================================================================
 REM Procedimento que executa as operações de BD
 REM -------------------------------------------------------------------------
 Public Sub Grava
@@ -834,10 +957,9 @@ Sub Main
   End If
 
   Select Case Par
-    Case "BENEF"
-       Benef
-    Case "GRAVA"
-       Grava
+    Case "BENEF" Benef
+    Case "BUSCAUSUARIO" BuscaUsuario
+    Case "GRAVA" Grava
     Case Else
        Cabecalho
        BodyOpen "onLoad=document.focus();"

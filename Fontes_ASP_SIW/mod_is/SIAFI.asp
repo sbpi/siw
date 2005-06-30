@@ -546,7 +546,7 @@ Public Sub Grava
              
              If w_erro = 0 Then
                 ' Verifica se o programa/ação existe para o cliente
-                DB_GetAcaoPPA_IS RS, w_cliente, w_ano, w_programa, Mid(w_acao,1,4), Mid(w_acao,5,4), w_unidade, null, null
+                DB_GetAcaoPPA_IS RS, w_cliente, w_ano, w_programa, Mid(w_acao,1,4), Mid(w_acao,5,4), w_unidade, null, null, null
                 If RS.EOF Then 
                    F1.WriteLine "=== Ação não encontrada"
                    w_erro = 1
