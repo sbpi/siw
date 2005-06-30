@@ -12,6 +12,7 @@ create or replace procedure sp_GetProjeto_IS
     p_selecao_mp  varchar2 default null,
     p_selecao_se  varchar2 default null,
     p_restricao   varchar2 default null,
+    p_siw_solic   number   default null,
     p_result      out siw.siw.sys_refcursor) is
 begin
    -- Recupera os projetos do modulo Infra-SIG
@@ -42,7 +43,8 @@ begin
             and ((p_ativo       is null) or (p_ativo       is not null and a.ativo        = p_ativo))
             and ((p_padrao      is null) or (p_padrao      is not null and a.padrao       = p_padrao))
             and ((p_selecao_mp  is null) or (p_selecao_mp  is not null and b.selecao_mp   = p_selecao_mp))
-            and ((p_selecao_se  is null) or (p_selecao_se  is not null and b.selecao_se   = p_selecao_se));
+            and ((p_selecao_se  is null) or (p_selecao_se  is not null and b.selecao_se   = p_selecao_se))
+            and ((p_siw_solic   is null) or (p_siw_solic   is not null and b.sq_siw_solicitacao = p_siw_solic));
    Elsif p_restricao = 'CADASTRAMENTO' Then   
       open p_result for      
           select a.sq_isprojeto chave, a.cliente, a.codigo, a.nome, a.responsavel, a.telefone, 
@@ -61,4 +63,3 @@ begin
    End If;
 end sp_GetProjeto_IS;
 /
-

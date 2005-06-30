@@ -3,6 +3,7 @@ create or replace procedure SP_GetProgramaPPA_IS
     p_ano       in  number,
     p_programa  in  varchar2  default null,
     p_restricao in  varchar2  default null,
+    p_nome      in  varchar2  default null,
     p_result    out sys_refcursor) is
 begin
    open p_result for 
@@ -36,7 +37,8 @@ begin
                                                                  a.cliente         = k.cliente)    
        where a.cliente = p_cliente
          and a.ano     = p_ano
-         and (p_programa  is null or (p_programa  is not null   and a.cd_programa = p_programa))
+         and (p_programa  is null or (p_programa  is not null and a.cd_programa = p_programa))
+         and (p_nome      is null or (p_nome      is not null and siw.acentos(a.nome,null) like '%'||siw.acentos(p_nome,null)||'%'))
          and (p_restricao is null or 
               (p_restricao = 'IDENTIFICACAO' and 
                a.cd_programa not in (select l.cd_programa 
@@ -51,4 +53,3 @@ begin
               );
 end SP_GetProgramaPPA_IS;
 /
-

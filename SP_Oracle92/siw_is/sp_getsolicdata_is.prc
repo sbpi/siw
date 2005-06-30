@@ -4,7 +4,8 @@ create or replace procedure SP_GetSolicData_IS
     p_result    out sys_refcursor) is
 begin
    If p_restricao = 'ISACGERAL' or p_restricao = 'ISACRESTR'  or p_restricao = 'ISACPROQUA' 
-   or p_restricao = 'ISACRESP'  or p_restricao = 'ISACVISUAL' or p_restricao = 'ISACPROFIN' Then
+   or p_restricao = 'ISACRESP'  or p_restricao = 'ISACVISUAL' or p_restricao = 'ISACPROFIN'
+   or p_restricao = 'ISMETA'    or p_restricao = 'ISACINTERE' or p_restricao = 'ISACANEXO' Then
       -- Recupera as ações que o usuário pode ver
       open p_result for 
          select a.sq_menu,            a.sq_modulo,                   a.nome,
@@ -127,7 +128,8 @@ begin
                 left outer         join siw.eo_unidade       c  on (a.sq_unid_executora   = c.sq_unidade)
           where b.sq_siw_solicitacao       = p_chave;
    Elsif p_restricao = 'ISPRGERAL'  or p_restricao = 'ISPRRESP'  or  p_restricao = 'ISPRVISUAL' or
-         p_restricao = 'ISPRPROQUA' or p_restricao = 'ISPRINDIC' or  p_restricao = 'ISPRRESTR'Then
+         p_restricao = 'ISPRPROQUA' or p_restricao = 'ISPRINDIC' or  p_restricao = 'ISPRRESTR'  or
+         p_restricao = 'ISPRINTERE' or p_restricao = 'ISPRANEXO' Then
       -- Recupera as ações que o usuário pode ver
       open p_result for 
          select a.sq_menu,            a.sq_modulo,                   a.nome,

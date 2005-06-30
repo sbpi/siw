@@ -23,7 +23,7 @@ create or replace procedure CARGA_IS_SIG_ACAO(p_cliente in number, p_ano in numb
       and (b.cd_regiao = d.cd_regiao)
       and a.cliente  = p_cliente
       and a.ano      = p_ano
-      and c.cd_orgao = 36000
+     and ((p_cliente <> 362) or (p_cliente = 362 and c.cd_orgao = 36000))
     order by a.cliente, a.ano, a.cd_programa, a.cd_acao, b.cd_localizador;
 begin
   for crec in c_ppa_acao loop
@@ -36,12 +36,12 @@ begin
      end if;
      l_cont := replace(lpad(w_cont,4),' ','0');
      insert into is_sig_acao (cliente, ano, cd_programa, cd_acao, cd_subacao, cd_regiao,
-            cd_tipo_acao, cd_localizador, cd_acao_ppa,
+            cd_tipo_acao, cd_localizador, cd_acao_ppa, cd_unidade_medida,
             is_ano, cd_orgao, cd_tipo_orgao, cd_unidade, cd_tipo_unidade, descricao_acao,
             descricao_subacao, direta, descentralizada, linha_credito, mes_inicio, ano_inicio,
             mes_termino, ano_termino, valor_ano_anterior, cd_sof_referencia)
      values (crec.cliente, crec.ano, crec.cd_programa, crec.cd_acao, l_cont, crec.cd_regiao,
-            crec.cd_tipo_acao, crec.cd_localizador, crec.cd_acao_ppa,
+            crec.cd_tipo_acao, crec.cd_localizador, crec.cd_acao_ppa, crec.cd_unidade_medida,
             crec.is_ano, crec.cd_orgao, crec.cd_tipo_orgao, crec.cd_unidade, crec.cd_tipo_unidade, crec.nm_acao,
             crec.nm_subacao, crec.direta, crec.descentralizada, crec.linha_credito, crec.mes_inicio, crec.ano_inicio,
             crec.mes_termino, crec.ano_termino, crec.valor_ano_anterior, crec.cd_sof_referencia);
@@ -49,4 +49,3 @@ begin
   commit;
 end CARGA_IS_SIG_ACAO;
 /
-

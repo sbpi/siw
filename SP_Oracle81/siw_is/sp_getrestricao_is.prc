@@ -11,7 +11,7 @@ begin
                 a.cd_competencia, a.inclusao, a.descricao, a.providencia, a.superacao, a.relatorio,
                 a.tempo_habil, a.observacao_monitor, a.observacao_controle, b.nome nm_tp_restricao
            from is_restricao                     a,
-                is_sig_tipo_restricao b 
+                is_sig_tipo_restricao            b
           where (a.cd_tipo_restricao = b.cd_tipo_restricao)
             and a.sq_programa = p_chave
             and ((p_chave_aux is null) or (p_chave_aux is not null and a.sq_restricao = p_chave_aux));
@@ -38,4 +38,3 @@ begin
    End If;         
 End SP_GetRestricao_IS;
 /
-

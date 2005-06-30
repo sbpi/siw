@@ -286,6 +286,11 @@ begin
                                           )                    j  on (b.sq_siw_solicitacao       = j.sq_siw_solicitacao)
                      left outer      join siw.pj_projeto_log       k  on (j.chave                    = k.sq_siw_solic_log)
                        left outer    join siw.sg_autenticacao      l  on (k.destinatario             = l.sq_pessoa)
+                   left outer        join (select sq_acao, count(*) qtd_restricao 
+                                             from is_restricao
+                                           group by sq_acao
+                                          )                    s on (s.sq_acao                       = b.sq_siw_solicitacao)
+  
           where a.sq_menu        = p_menu
             and (p_chave          is null or (p_chave       is not null and b.sq_siw_solicitacao = p_chave))
             and (p_programa       is null or (p_programa    is not null and r.cd_programa        = p_programa))
@@ -305,6 +310,7 @@ begin
             and (p_ini_i          is null or (p_ini_i       is not null and b.inicio             between p_ini_i and p_ini_f))
             and (p_fim_i          is null or (p_fim_i       is not null and b.fim                between p_fim_i and p_fim_f))
             and (Nvl(p_atraso,'N') = 'N'  or (p_atraso      = 'S'       and d.concluida          = 'N' and b.fim+1-sysdate<0))
+            and (Nvl(p_ativo,'N')  = 'N'  or (p_ativo       = 'S'       and s.qtd_restricao       > 0))
             and (p_proponente     is null or (p_proponente  is not null and siw.acentos(d.proponente,null) like '%'||siw.acentos(p_proponente,null)||'%'))
             and (p_unidade        is null or (p_unidade     is not null and d.sq_unidade_resp    = p_unidade))
             and (p_prioridade     is null or (p_prioridade  is not null and d.prioridade         = p_prioridade))
@@ -411,6 +417,10 @@ begin
                                           )                    j  on (b.sq_siw_solicitacao       = j.sq_siw_solicitacao)
                      left outer      join siw.pj_projeto_log       k  on (j.chave                    = k.sq_siw_solic_log)
                        left outer    join siw.sg_autenticacao      l  on (k.destinatario             = l.sq_pessoa)
+                    left outer        join (select sq_programa, count(*) qtd_restricao 
+                                             from is_restricao
+                                           group by sq_programa
+                                          )                    s on (s.sq_programa               = b.sq_siw_solicitacao)
           where a.sq_menu        = p_menu
             and (p_chave          is null or (p_chave       is not null and b.sq_siw_solicitacao = p_chave))
             and (p_codigo         is null or (p_codigo      is not null and r.cd_programa        = p_codigo))
@@ -428,6 +438,7 @@ begin
             and (p_ini_i          is null or (p_ini_i       is not null and b.inicio             between p_ini_i and p_ini_f))
             and (p_fim_i          is null or (p_fim_i       is not null and b.fim                between p_fim_i and p_fim_f))
             and (Nvl(p_atraso,'N') = 'N'  or (p_atraso      = 'S'       and d.concluida          = 'N' and b.fim+1-sysdate<0))
+            and (Nvl(p_ativo,'N')  = 'N'  or (p_ativo       = 'S'       and s.qtd_restricao       > 0))
             and (p_proponente     is null or (p_proponente  is not null and siw.acentos(d.proponente,null) like '%'||siw.acentos(p_proponente,null)||'%'))
             and (p_unidade        is null or (p_unidade     is not null and d.sq_unidade_resp    = p_unidade))
             and (p_prioridade     is null or (p_prioridade  is not null and d.prioridade         = p_prioridade))
@@ -479,4 +490,3 @@ begin
    End If;
 end SP_GetSolicList_IS;
 /
-

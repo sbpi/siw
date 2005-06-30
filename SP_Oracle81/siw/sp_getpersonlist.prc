@@ -2,6 +2,10 @@ create or replace procedure SP_GetPersonList
    (p_cliente   in number,
     p_chave     in number   default null,
     p_restricao in varchar2 default null,
+    p_nome       in varchar2 default null,
+    p_sg_unidade in varchar2 default null,
+    p_codigo     in number   default null,
+    p_filhos     in varchar2 default null,    
     p_result    out siw.sys_refcursor) is
 
   l_item       varchar2(18);
@@ -24,6 +28,9 @@ begin
             and (c.sq_unidade     = d.sq_unidade (+))
             and (c.sq_localizacao = e.sq_localizacao (+))
             and a.sq_pessoa_pai = p_cliente
+            and (p_nome       is null or (p_nome       is not null and ((acentos(a.nome) like '%'||acentos(p_nome)||'%')
+                                                                   or    acentos(a.nome_resumido) like '%'||acentos(p_nome)||'%')))
+            and (p_sg_unidade is null or (p_sg_unidade is not null and acentos(d.sigla) like '%'||acentos(p_sg_unidade)||'%'))            
          order by a.nome_indice;
    Elsif p_restricao = 'TODOS' Then
       -- Recupera todas as pessoas do cadastro da organização, físicas e jurídicas
@@ -44,6 +51,9 @@ begin
             and (c.sq_unidade     = d.sq_unidade (+))
             and (c.sq_localizacao = e.sq_localizacao (+))
             and a.sq_pessoa_pai = p_cliente
+            and (p_nome       is null or (p_nome       is not null and ((acentos(a.nome) like '%'||acentos(p_nome)||'%')
+                                                                   or    acentos(a.nome_resumido) like '%'||acentos(p_nome)||'%')))
+            and (p_sg_unidade is null or (p_sg_unidade is not null and acentos(d.sigla) like '%'||acentos(p_sg_unidade)||'%'))                      
          order by a.nome_indice;
    Elsif p_restricao = 'INTERNOS' Then
       -- Recupera as pessoas internas à organização
@@ -68,6 +78,9 @@ begin
            and e.ativo           = 'S'
            and e.nome            = 'Física'
            and a.sq_pessoa_pai   = p_cliente
+            and (p_nome       is null or (p_nome       is not null and ((acentos(a.nome) like '%'||acentos(p_nome)||'%')
+                                                                   or    acentos(a.nome_resumido) like '%'||acentos(p_nome)||'%')))
+            and (p_sg_unidade is null or (p_sg_unidade is not null and acentos(f.sigla) like '%'||acentos(p_sg_unidade)||'%'))                     
       order by a.nome_indice;
    Elsif p_restricao = 'USUARIOS' Then
       -- Recupera os usuários do sistema
@@ -93,6 +106,9 @@ begin
            and e.ativo          = 'S'
            and e.nome           = 'Física'
            and a.sq_pessoa_pai  = p_cliente
+            and (p_nome       is null or (p_nome       is not null and ((acentos(a.nome) like '%'||acentos(p_nome)||'%')
+                                                                   or    acentos(a.nome_resumido) like '%'||acentos(p_nome)||'%')))
+            and (p_sg_unidade is null or (p_sg_unidade is not null and acentos(f.sigla) like '%'||acentos(p_sg_unidade)||'%'))                     
       order by a.nome_indice;
    Elsif p_restricao = 'TTCENTRAL' Then
       -- Recupera as pessoas vinculadas a uma central telefônica
@@ -113,6 +129,9 @@ begin
                  f.sq_central_fone = p_chave
                 )
             and a.sq_pessoa_pai   = p_cliente
+            and (p_nome       is null or (p_nome       is not null and ((acentos(a.nome) like '%'||acentos(p_nome)||'%')
+                                                                   or    acentos(a.nome_resumido) like '%'||acentos(p_nome)||'%')))
+            and (p_sg_unidade is null or (p_sg_unidade is not null and acentos(d.sigla) like '%'||acentos(p_sg_unidade)||'%'))                      
          order by a.nome_resumido;
    Elsif p_restricao = 'TTTRANSFERE' Then
       -- Recupera as pessoas vinculadas a uma central telefônica
@@ -135,6 +154,9 @@ begin
             and a.sq_pessoa_pai         = p_cliente
             and c.sq_central_fone       = p_chave
             and d.fim                   is null
+            and (p_nome       is null or (p_nome       is not null and ((acentos(a.nome) like '%'||acentos(p_nome)||'%')
+                                                                   or    acentos(a.nome_resumido) like '%'||acentos(p_nome)||'%')))
+            and (p_sg_unidade is null or (p_sg_unidade is not null and acentos(f.sigla) like '%'||acentos(p_sg_unidade)||'%'))                      
          order by a.nome_resumido;
    Elsif p_restricao = 'TTUSUCENTRAL' Then
       -- Recupera os usuários do sistema que ainda não estão vinculados à central informada
@@ -149,6 +171,9 @@ begin
             and (c.sq_unidade      = d.sq_unidade)
             and (c.sq_localizacao  = e.sq_localizacao)
             and a.sq_pessoa_pai   = p_cliente
+            and (p_nome       is null or (p_nome       is not null and ((acentos(a.nome) like '%'||acentos(p_nome)||'%')
+                                                                   or    acentos(a.nome_resumido) like '%'||acentos(p_nome)||'%')))
+            and (p_sg_unidade is null or (p_sg_unidade is not null and acentos(d.sigla) like '%'||acentos(p_sg_unidade)||'%'))                      
          MINUS
          select a.sq_pessoa, a.nome_resumido, a.nome_resumido_ind,
                 d.sigla sg_unidade, d.nome nm_unidade, e.nome nm_local
@@ -166,6 +191,9 @@ begin
                  f.sq_central_fone = p_chave
                 )
             and a.sq_pessoa_pai   = p_cliente
+            and (p_nome       is null or (p_nome       is not null and ((acentos(a.nome) like '%'||acentos(p_nome)||'%')
+                                                                   or    acentos(a.nome_resumido) like '%'||acentos(p_nome)||'%')))
+            and (p_sg_unidade is null or (p_sg_unidade is not null and acentos(d.sigla) like '%'||acentos(p_sg_unidade)||'%'))                      
          order by nome_resumido;
    Elsif p_restricao = 'TTUSURAMAL' Then
       -- Recupera os usuários do sistema que ainda não estão vinculados à central informada
@@ -183,6 +211,9 @@ begin
             and (c.sq_localizacao  = e.sq_localizacao)
             and (a.sq_pessoa       = f.usuario)
             and a.sq_pessoa_pai   = p_cliente
+            and (p_nome       is null or (p_nome       is not null and ((acentos(a.nome) like '%'||acentos(p_nome)||'%')
+                                                                   or    acentos(a.nome_resumido) like '%'||acentos(p_nome)||'%')))
+            and (p_sg_unidade is null or (p_sg_unidade is not null and acentos(d.sigla) like '%'||acentos(p_sg_unidade)||'%'))                      
          MINUS
          select a.sq_pessoa, a.nome_resumido, a.nome_resumido_ind,
                 c.ativo,
@@ -202,6 +233,9 @@ begin
                  f.fim                is null
                 )
             and a.sq_pessoa_pai   = p_cliente
+            and (p_nome       is null or (p_nome       is not null and ((acentos(a.nome) like '%'||acentos(p_nome)||'%')
+                                                                   or    acentos(a.nome_resumido) like '%'||acentos(p_nome)||'%')))
+            and (p_sg_unidade is null or (p_sg_unidade is not null and acentos(d.sigla) like '%'||acentos(p_sg_unidade)||'%'))                      
          order by nome_resumido;
    Else
       Loop
@@ -241,8 +275,10 @@ begin
                 e.nome            = 'Física'
                )
            and a.sq_pessoa_pai  = p_cliente
+            and (p_nome       is null or (p_nome       is not null and ((acentos(a.nome) like '%'||acentos(p_nome)||'%')
+                                                                   or    acentos(a.nome_resumido) like '%'||acentos(p_nome)||'%')))
+            and (p_sg_unidade is null or (p_sg_unidade is not null and acentos(f.sigla) like '%'||acentos(p_sg_unidade)||'%'))                     
       order by a.nome_indice;
    End If;
 end SP_GetPersonList;
 /
-

@@ -289,7 +289,11 @@ begin
                  group by sq_siw_solicitacao
                 )                    j,
                 siw.pj_projeto_log       k,
-                siw.sg_autenticacao      l
+                siw.sg_autenticacao      l,
+                (select sq_acao, count(*) qtd_restricao 
+                   from is_restricao
+                 group by sq_acao
+                )                        s
           where (a.sq_unid_executora        = a2.sq_unidade)
             and (a2.sq_unidade              = a3.sq_unidade (+) and
                  a3.tipo_respons (+)            = 'T'           and
@@ -324,6 +328,7 @@ begin
             and (b.sq_siw_solicitacao       = j.sq_siw_solicitacao)
             and (j.chave                    = k.sq_siw_solic_log (+))
             and (k.destinatario             = l.sq_pessoa (+))
+            and (b.sq_siw_solicitacao       = s.sq_acao (+))                  
             and a.sq_menu        = p_menu
             and (p_chave          is null or (p_chave       is not null and b.sq_siw_solicitacao = p_chave))
             and (p_programa       is null or (p_programa    is not null and r.cd_programa        = p_programa))
@@ -343,6 +348,7 @@ begin
             and (p_ini_i          is null or (p_ini_i       is not null and b.inicio             between p_ini_i and p_ini_f))
             and (p_fim_i          is null or (p_fim_i       is not null and b.fim                between p_fim_i and p_fim_f))
             and (Nvl(p_atraso,'N') = 'N'  or (p_atraso      = 'S'       and d.concluida          = 'N' and b.fim+1-sysdate<0))
+            and (Nvl(p_ativo,'N')  = 'N'  or (p_ativo       = 'S'       and s.qtd_restricao       > 0))
             and (p_proponente     is null or (p_proponente  is not null and siw.acentos(d.proponente,null) like '%'||siw.acentos(p_proponente,null)||'%'))
             and (p_unidade        is null or (p_unidade     is not null and d.sq_unidade_resp    = p_unidade))
             and (p_prioridade     is null or (p_prioridade  is not null and d.prioridade         = p_prioridade))
@@ -421,14 +427,14 @@ begin
                 siw.co_pessoa            o,
                 siw.co_pessoa            p,
                 (select sq_siw_solicitacao, count(*) existe
-                   from siw.pj_projeto_etapa                a,
-                        siw.eo_unidade_resp b 
-                  where (a.sq_unidade = b.sq_unidade (+) and
-                         b.fim (+)        is null        and
-                         b.sq_pessoa (+)  = p_pessoa)
-                    and (a.sq_pessoa         = p_pessoa or
-                         b.sq_unidade_resp   is not null)
-                 group  by a.sq_siw_solicitacao
+                   from siw.pj_projeto_etapa                x,
+                        siw.eo_unidade_resp y 
+                  where (x.sq_unidade = y.sq_unidade (+) and
+                         y.fim (+)        is null        and
+                         y.sq_pessoa (+)  = p_pessoa)
+                    and (x.sq_pessoa         = p_pessoa or
+                         y.sq_unidade_resp   is not null)
+                 group  by x.sq_siw_solicitacao
                 )                    q,
                 siw.eo_unidade           c,
                 (select sq_siw_solicitacao, max(sq_siw_solic_log) chave 
@@ -436,7 +442,11 @@ begin
                  group by sq_siw_solicitacao
                 )                    j,
                 siw.pj_projeto_log       k,
-                siw.sg_autenticacao      l
+                siw.sg_autenticacao      l,
+                (select sq_programa, count(*) qtd_restricao 
+                   from is_restricao
+                 group by sq_programa
+                )                        s
           where (a.sq_unid_executora        = a2.sq_unidade)
             and (a2.sq_unidade              = a3.sq_unidade (+) and
                  a3.tipo_respons (+)            = 'T'           and
@@ -466,6 +476,7 @@ begin
             and (b.sq_siw_solicitacao       = j.sq_siw_solicitacao)
             and (j.chave                    = k.sq_siw_solic_log (+))
             and (k.destinatario             = l.sq_pessoa (+))
+            and (b.sq_siw_solicitacao       = s.sq_programa (+))
             and a.sq_menu        = p_menu
             and (p_chave          is null or (p_chave       is not null and b.sq_siw_solicitacao = p_chave))
             and (p_codigo         is null or (p_codigo      is not null and r.cd_programa        = p_codigo))
@@ -483,6 +494,7 @@ begin
             and (p_ini_i          is null or (p_ini_i       is not null and b.inicio             between p_ini_i and p_ini_f))
             and (p_fim_i          is null or (p_fim_i       is not null and b.fim                between p_fim_i and p_fim_f))
             and (Nvl(p_atraso,'N') = 'N'  or (p_atraso      = 'S'       and d.concluida          = 'N' and b.fim+1-sysdate<0))
+            and (Nvl(p_ativo,'N')  = 'N'  or (p_ativo       = 'S'       and s.qtd_restricao       > 0))
             and (p_proponente     is null or (p_proponente  is not null and siw.acentos(d.proponente,null) like '%'||siw.acentos(p_proponente,null)||'%'))
             and (p_unidade        is null or (p_unidade     is not null and d.sq_unidade_resp    = p_unidade))
             and (p_prioridade     is null or (p_prioridade  is not null and d.prioridade         = p_prioridade))
@@ -540,4 +552,3 @@ begin
    End If;
 end SP_GetSolicList_IS;
 /
-

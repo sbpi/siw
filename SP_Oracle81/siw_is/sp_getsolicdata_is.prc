@@ -4,7 +4,8 @@ create or replace procedure SP_GetSolicData_IS
     p_result    out siw.siw.sys_refcursor) is
 begin
    If p_restricao = 'ISACGERAL' or p_restricao = 'ISACRESTR'  or p_restricao = 'ISACPROQUA' 
-   or p_restricao = 'ISACRESP'  or p_restricao = 'ISACVISUAL' or p_restricao = 'ISACPROFIN' Then
+   or p_restricao = 'ISACRESP'  or p_restricao = 'ISACVISUAL' or p_restricao = 'ISACPROFIN' 
+   or p_restricao = 'ISMETA'    or p_restricao = 'ISACINTERE' or p_restricao = 'ISACANEXO' Then
       -- Recupera as ações que o usuário pode ver
       open p_result for 
          select a.sq_menu,            a.sq_modulo,                   a.nome,
@@ -121,7 +122,9 @@ begin
                  i.cd_subacao          = j.cd_subacao (+)           and
                  i.ano                 = j.ano (+)                  and
                  i.cliente             = j.cliente (+))
-            and (j.cd_orgao            = j1.cd_orgao (+))
+            and (j.cd_orgao            = j1.cd_orgao (+)            and
+                 j.cd_tipo_orgao       = j1.cd_tipo_orgao           and
+                 j.ano                 = j1.ano)
             and (j.cd_programa         = o.cd_programa (+)          and
                  j.cd_acao             = o.cd_acao (+)              and
                  j.cd_unidade          = o.cd_unidade (+)           and
@@ -144,7 +147,8 @@ begin
             and (a.sq_unid_executora   = c.sq_unidade (+))
             and b.sq_siw_solicitacao       = p_chave;
    Elsif p_restricao = 'ISPRGERAL'  or p_restricao = 'ISPRRESP'  or  p_restricao = 'ISPRVISUAL' or
-         p_restricao = 'ISPRPROQUA' or p_restricao = 'ISPRINDIC' or  p_restricao = 'ISPRRESTR'Then
+         p_restricao = 'ISPRPROQUA' or p_restricao = 'ISPRINDIC' or  p_restricao = 'ISPRRESTR'  or
+         p_restricao = 'ISPRINTERE' or p_restricao = 'ISPRANEXO' Then
       -- Recupera as ações que o usuário pode ver
       open p_result for 
          select a.sq_menu,            a.sq_modulo,                   a.nome,
@@ -247,7 +251,9 @@ begin
             and (i.cd_programa         = j.cd_programa (+)          and
                  i.ano                 = j.ano (+)                  and
                  i.cliente             = j.cliente (+))
-            and (j.cd_orgao            = j1.cd_orgao (+))
+            and (j.cd_orgao            = j1.cd_orgao (+)            and
+                 j.cd_tipo_orgao       = j1.cd_tipo_orgao           and
+                 j.ano                 = j1.ano)
             and (j.cd_tipo_programa    = j2.cd_tipo_programa (+))
             and (i.cd_programa         = k.cd_programa (+)          and
                  i.ano                 = k.ano (+)                  and
@@ -343,4 +349,3 @@ begin
    End If;
 end SP_GetSolicData_IS;
 /
-

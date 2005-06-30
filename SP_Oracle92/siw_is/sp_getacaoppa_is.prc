@@ -7,9 +7,10 @@ create or replace procedure SP_GetAcaoPPA_IS
     p_unidade   in  varchar2  default null,
     p_restricao in  varchar2  default null,
     p_chave     in  number    default null,
+    P_nome      in  varchar2  default null,
     p_result    out sys_refcursor) is
 begin
-   If p_restricao is null or p_restricao = 'IDENTIFICACAO' Then
+   If p_restricao is null or p_restricao in ('CONSULTA','IDENTIFICACAO') Then
       open p_result for      
          select a.cd_acao, a.cd_programa, a.cd_programa||a.cd_acao||min(a.cd_subacao)||a.cd_unidade chave, a.cd_tipo_acao, 
                 a.cd_produto, a.cd_unidade_medida, a.cd_estagio, 
@@ -49,20 +50,24 @@ begin
                                    from is_acao                        l
                                         inner join siw.siw_solicitacao l1 on (l.sq_siw_solicitacao = l1.sq_siw_solicitacao)
                                         inner join siw.siw_tramite     l2 on (l1.sq_siw_tramite    = l2.sq_siw_tramite and
-                                                                           'CA'                <> Nvl(l2.sigla,'---'))
+                                                                              'CA'                <> Nvl(l2.sigla,'---')
+                                                                             )
+                                  where 'CONSULTA'        <> Nvl(p_restricao,'a')
                                 )                        k    on (a.cd_programa     = k.cd_programa and
                                                                   a.cd_acao         = k.cd_acao     and
                                                                   a.cd_subacao      = k.cd_subacao  and
                                                                   a.cd_unidade      = k.cd_unidade  and
                                                                   a.ano             = k.ano         and
-                                                                  a.cliente         = k.cliente)
+                                                                  a.cliente         = k.cliente
+                                                                 )
           where a.cliente = p_cliente
             and a.ano     = p_ano
             and (p_programa  is null or (p_programa  is not null and a.cd_programa     = p_programa))
             and (p_acao      is null or (p_acao      is not null and a.cd_acao         = p_acao))
             and (p_subacao   is null or (p_subacao   is not null and a.cd_localizador  = p_subacao))
             and (p_unidade   is null or (p_unidade   is not null and a.cd_unidade      = p_unidade))
-            and (p_restricao is null or 
+            and (p_nome      is null or (p_nome      is not null and siw.acentos(a.descricao_acao,null) like '%'||siw.acentos(p_nome,null)||'%'))
+            and ('CONSULTA'  = Nvl(p_restricao,'CONSULTA') or
                  (p_restricao = 'IDENTIFICACAO' and 
                   a.cd_programa||a.cd_acao||a.cd_unidade not in (select n.cd_programa||n.cd_acao||n.cd_unidade 
                                                                    from is_acao                          n 
@@ -130,6 +135,7 @@ begin
                                                              a.cliente           = m.cliente)
           where a.cliente = p_cliente
             and a.ano     = p_ano
+            and (p_nome      is null or (p_nome      is not null and siw.acentos(a.descricao_acao,null) like '%'||siw.acentos(p_nome,null)||'%'))
             and (a.cd_programa||a.cd_acao||a.cd_unidade not in (select n.cd_programa||n.cd_acao||n.cd_unidade
                                                                   from is_sig_acao n 
                                                                  where n.cliente = p_cliente 
@@ -154,4 +160,3 @@ begin
    End If;
 end SP_GetAcaoPPA_IS;
 /
-

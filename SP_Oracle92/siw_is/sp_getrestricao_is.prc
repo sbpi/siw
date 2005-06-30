@@ -34,4 +34,3 @@ begin
    End If;         
 End SP_GetRestricao_IS;
 /
-

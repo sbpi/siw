@@ -140,7 +140,7 @@ begin
                 siw.eo_unidade      g
           where (a.sq_siw_solicitacao = i.sq_siw_solicitacao)
             and (i.sq_menu            = j.sq_menu)
-            and (j.sq_unid_executora (+)  = k.sq_unidade and
+            and (j.sq_unid_executora  = k.sq_unidade (+) and
                  k.tipo_respons (+)       = 'T'          and
                  k.fim (+)                is null)
             and (j.sq_unid_executora = l.sq_unidade (+) and
@@ -168,4 +168,3 @@ begin
    End If;
 End SP_GetSolicMeta_IS;
 /
-
