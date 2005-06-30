@@ -22,7 +22,6 @@ create or replace procedure CARGA_IS_SIG_ACAO(p_cliente in number, p_ano in numb
            inner join is_regiao          d on (b.cd_regiao = d.cd_regiao)
     where a.cliente  = p_cliente
       and a.ano      = p_ano
-      and c.cd_orgao = 36000
     order by a.cliente, a.ano, a.cd_programa, a.cd_acao, b.cd_localizador;
 begin
   for crec in c_ppa_acao loop
@@ -48,4 +47,3 @@ begin
   commit;
 end CARGA_IS_SIG_ACAO;
 /
-

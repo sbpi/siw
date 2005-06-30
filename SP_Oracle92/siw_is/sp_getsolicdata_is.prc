@@ -101,7 +101,10 @@ begin
                                                                     i.cd_subacao          = j.cd_subacao           and
                                                                     i.ano                 = j.ano                  and
                                                                     i.cliente             = j.cliente)
-                        left outer join is_sig_orgao         j1 on (j.cd_orgao            = j1.cd_orgao)
+                        left outer join is_sig_orgao         j1 on (j.cd_orgao            = j1.cd_orgao and
+                                                                    j.cd_tipo_orgao       = j1.cd_tipo_orgao and
+                                                                    j.ano                 = j1.ano
+                                                                   )
                         left outer join is_ppa_acao          o  on (j.cd_programa         = o.cd_programa          and
                                                                     j.cd_acao             = o.cd_acao              and
                                                                     j.cd_unidade          = o.cd_unidade           and
@@ -210,10 +213,13 @@ begin
                                                                         i.cliente             = i3.cliente
                                                                        )
                         left outer join is_sig_programa          j  on (i.cd_programa         = j.cd_programa          and
-                                                                        i.ano                 = i.ano                  and
-                                                                        i.cliente             = i.cliente
+                                                                        i.ano                 = j.ano                  and
+                                                                        i.cliente             = j.cliente
                                                                        )
-                           left outer join is_sig_orgao             j1 on (j.cd_orgao            = j1.cd_orgao)
+                           left outer join is_sig_orgao          j1 on (j.cd_orgao            = j1.cd_orgao and
+                                                                        j.cd_tipo_orgao       = j1.cd_tipo_orgao and
+                                                                        j.ano                 = j1.ano
+                                                                       )
                            left outer join is_sig_tipo_programa     j2 on (j.cd_tipo_programa    = j2.cd_tipo_programa)
                         left outer join is_ppa_programa          k  on (i.cd_programa         = k.cd_programa          and
                                                                         i.ano                 = k.ano                  and
@@ -298,4 +304,3 @@ begin
    End If;
 end SP_GetSolicData_IS;
 /
-
