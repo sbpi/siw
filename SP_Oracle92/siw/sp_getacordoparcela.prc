@@ -37,6 +37,7 @@ begin
                b.objeto,
                c.sq_acordo_parcela, c.ordem, c.vencimento, c.valor, c.quitacao,
                g.nome_resumido,
+               f.sq_tipo_lancamento,
                case when h.sq_pessoa is null then i.cnpj else h.cpf end cnpjcpf
           from siw_solicitacao                          a
                inner            join ac_acordo          b on (a.sq_siw_solicitacao = b.sq_siw_solicitacao)
@@ -48,17 +49,33 @@ begin
                                                              )
                  inner          join (select sq_siw_solicitacao, acesso(sq_siw_solicitacao, p_usuario) acesso
                                         from siw_solicitacao
-                                     )                    k on (a.sq_siw_solicitacao = k.sq_siw_solicitacao and
-                                                                0                    < k.acesso
-                                                               )
-                 inner          join ac_acordo_parcela    c on (b.sq_siw_solicitacao = c.sq_siw_solicitacao)
+                                     )                  k on (a.sq_siw_solicitacao = k.sq_siw_solicitacao and
+                                                              0                    < k.acesso
+                                                             )
+                 inner          join ac_acordo_parcela  c on (b.sq_siw_solicitacao = c.sq_siw_solicitacao)
                    left outer   join (select x.sq_acordo_parcela, z.sigla sg_tramite
                                         from fn_lancamento                x
                                              inner   join siw_solicitacao y on (x.sq_siw_solicitacao = y.sq_siw_solicitacao)
                                                inner join siw_tramite     z on (y.sq_siw_tramite     = z.sq_siw_tramite and
                                                                                 'CA'                 <> Nvl(z.sigla,'CA')
                                                                                )
-                                     )               d  on (c.sq_acordo_parcela  = d.sq_acordo_parcela)
+                                     )                  d  on (c.sq_acordo_parcela  = d.sq_acordo_parcela)
+                 left outer     join (select w.sq_siw_solicitacao, max(w.sq_acordo_parcela) sq_acordo_parcela
+                                        from ac_acordo_parcela            w
+                                             inner join fn_lancamento     x on (w.sq_acordo_parcela = x.sq_acordo_parcela)
+                                             inner   join siw_solicitacao y on (x.sq_siw_solicitacao = y.sq_siw_solicitacao)
+                                               inner join siw_tramite     z on (y.sq_siw_tramite     = z.sq_siw_tramite and
+                                                                                'CA'                 <> Nvl(z.sigla,'CA')
+                                                                               )
+                                      group by w.sq_siw_solicitacao
+                                     )                  e on (b.sq_siw_solicitacao = e.sq_siw_solicitacao)
+                   left outer   join (select x.sq_acordo_parcela, x.sq_tipo_lancamento
+                                        from fn_lancamento                x
+                                             inner   join siw_solicitacao y on (x.sq_siw_solicitacao = y.sq_siw_solicitacao)
+                                               inner join siw_tramite     z on (y.sq_siw_tramite     = z.sq_siw_tramite and
+                                                                                'CA'                 <> Nvl(z.sigla,'CA')
+                                                                               )
+                                     )                  f on (e.sq_acordo_parcela  = f.sq_acordo_parcela)
          where d.sq_acordo_parcela is null
            and a.sq_menu         = p_menu
            and (p_chave       is null or (p_chave       is not null and a.sq_siw_solicitacao = p_chave))
@@ -68,4 +85,3 @@ begin
    End If;
 End SP_GetAcordoParcela;
 /
-
