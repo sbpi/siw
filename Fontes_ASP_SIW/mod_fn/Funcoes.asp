@@ -6,7 +6,7 @@ Sub SelecaoTipoLancamento (label, accesskey, hint, chave, cliente, campo, restri
     
     Dim l_RS, l_label
     
-    DB_GetTipoLancamento l_RS, chave, cliente, restricao
+    DB_GetTipoLancamento l_RS, null, cliente, restricao
     l_RS.Sort = "nome"
     If Nvl(label,"") > "" then l_label = label & "<br>" else l_label="" end if
     If IsNull(hint) Then
@@ -151,7 +151,7 @@ Sub SelecaoAcordoParcela (label, accesskey, hint, cliente, chave, chaveAux, camp
     l_menu = RS1("sq_menu")
     RS1.Close
 
-    DB_GetAcordoParcela RS, chaveAux, chave, restricao, null, null, null, w_usuario, "'EE', 'ER'", l_menu
+    DB_GetAcordoParcela RS, chaveAux, null, restricao, null, null, null, w_usuario, "'EE', 'ER'", l_menu
     RS.Sort = "ordem"
     If IsNull(hint) Then
        ShowHTML "          <td valign=""top""><font size=""1""><b>" & Label & "</b><br><SELECT ACCESSKEY=""" & accesskey & """ CLASS=""STS"" NAME=""" & campo & """ " & w_Disabled & " " & atributo & ">"
