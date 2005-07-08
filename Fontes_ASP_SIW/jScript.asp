@@ -704,11 +704,11 @@ Sub Validate(VariableName, DisplayName, DataType, ValueRequired, MinimumLength, 
     "           barra2 = checkStr.substring(5, 6);" & VbCrLf & _
     "            ano = checkStr.substring(6, 10);" & VbCrLf & _
     "            //verificações básicas" & VbCrLf & _
-    "            if (mes<1 || mes>12) err = 1;" & VbCrLf & _
-    "            if (barra1 != '/') err = 1;" & VbCrLf & _
-    "            if (dia<1 || dia>31) err = 1;" & VbCrLf & _
-    "            if (barra2 != '/') err = 1;" & VbCrLf & _
-    "            if (ano<1900 || ano>2900) err = 1;" & VbCrLf & _
+	"    	    if (mes<1 || mes>12 || isNaN(mes)) err = 1;" & VbCrLf & _
+	"    	    if (barra1 != '/') err = 1;" & VbCrLf & _
+	"    	    if (dia<1 || dia>31 || isNaN(dia)) err = 1;" & VbCrLf & _
+	"    	    if (barra2 != '/') err = 1;" & VbCrLf & _
+	"    	    if (ano<1900 || ano>2900 || isNaN(ano)) err = 1;" & VbCrLf & _
     "            //verificações avançadas" & VbCrLf & _
     "            // mês com 30 dias" & VbCrLf & _
     "            if (mes==4 || mes==6 || mes==9 || mes==11){" & VbCrLf & _
