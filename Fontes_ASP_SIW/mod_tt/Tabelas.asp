@@ -43,7 +43,7 @@ Dim dbms, sp, RS, RS1, RS2, RS3, RS4, RS_menu
 Dim P1, P2, P3, P4, TP, SG
 Dim R, O, w_Cont, w_Reg, w_Pagina, w_Disabled, w_TP, w_classe, w_submenu, w_filtro, w_copia
 Dim w_Assinatura
-Dim w_troca,w_cor, w_filter, w_cliente, w_usuario, w_menu, w_dir, w_chave, w_chaveAux
+Dim w_troca,w_cor, w_filter, w_cliente, w_usuario, w_menu, w_dir, w_dir_volta, w_chave, w_chaveAux
 Dim w_sq_pessoa
 Dim ul,File
 
@@ -68,6 +68,7 @@ w_Assinatura = uCase(Request("w_Assinatura"))
 
 w_Pagina     = "Tabelas.asp?par="
 w_Dir        = "mod_tt/"
+w_Dir_volta  = "../"
 w_Disabled   = "ENABLED"
 
 If O = "" Then O = "L" End If
