@@ -516,7 +516,7 @@ begin
                 e.vinculada vinc_resp,e.adm_central adm_resp,        e.sigla sg_unidade_resp,
                 e1.sq_pessoa titular, e2.sq_pessoa substituto,
                 f.sq_pais,            f.sq_regiao,                   f.co_uf,
-                m.codigo_interno cd_acordo,
+                m.codigo_interno cd_acordo, m.objeto obj_acordo,
                 m1.ordem or_parcela,
                 n.sq_cc,              n.nome nm_cc,                  n.sigla sg_cc,
                 o.nome_resumido nm_solic, o.nome_resumido||' ('||o2.sigla||')' nm_resp,
@@ -671,4 +671,3 @@ begin
    End If;
 end SP_GetSolicList;
 /
-
