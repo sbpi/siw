@@ -477,7 +477,7 @@ Sub Inicial
               ShowHTML "           <img src=""" & conImgOkNormal & """ border=0 width=15 height=15 align=""center"">"
            End IF
         End If
-        ShowHTML "        <A class=""hl"" HREF=""" & w_dir & w_pagina & "Visual&R=" & w_pagina & par & "&O=L&w_chave=" & RS("sq_siw_solicitacao") & "&w_tipo=Volta&P1=" & P1 & "&P2=" & P2 & "&P3=" & P3 & "&P4=" & P4 & "&TP=" & TP & "&SG=" & SG & MontaFiltro("GET") & """ title=""" & RS("descricao") & """>" & RS("codigo_interno") & "&nbsp;</a>"
+        ShowHTML "        <A class=""hl"" HREF=""" & w_dir & w_pagina & "Visual&R=" & w_pagina & par & "&O=L&w_chave=" & RS("sq_siw_solicitacao") & "&w_tipo=Volta&P1=" & P1 & "&P2=" & P2 & "&P3=" & P3 & "&P4=" & P4 & "&TP=" & TP & "&SG=" & SG & MontaFiltro("GET") & """ title=""" & RS("obj_acordo") & " ::> " & RS("descricao") & """>" & RS("codigo_interno") & "&nbsp;</a>"
         If Nvl(RS("pessoa"),"nulo") <> "nulo" Then
            ShowHTML "        <td><font size=""1"">" & ExibePessoa(w_dir_volta, w_cliente, RS("pessoa"), TP, RS("nm_pessoa_resumido")) & "</td>"
         Else
