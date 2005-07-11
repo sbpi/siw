@@ -127,9 +127,9 @@ Sub SelecaoAcordo (label, accesskey, hint,  cliente, chave, chaveAux, campo, res
     ShowHTML "          <option value="""">---"
     While Not RS.EOF
        If cDbl(nvl(RS("sq_siw_solicitacao"),0)) = cDbl(nvl(chave,0)) Then
-          ShowHTML "          <option value=""" & RS("sq_siw_solicitacao") & """ SELECTED>" & RS("codigo_interno") & " - " & Nvl(RS("cnpj"),RS("cpf")) & " - " & RS("nm_outra_parte_resumido")
+          ShowHTML "          <option value=""" & RS("sq_siw_solicitacao") & """ SELECTED>" & RS("codigo_interno") & " - " & RS("nm_outra_parte_resumido") & " ("  & Mid(RS("objeto"),1,45) & ")"
        Else
-          ShowHTML "          <option value=""" & RS("sq_siw_solicitacao") & """>" & RS("codigo_interno") & " - " & Nvl(RS("cnpj"),RS("cpf")) & " - " & RS("nm_outra_parte_resumido")
+          ShowHTML "          <option value=""" & RS("sq_siw_solicitacao") & """>" & RS("codigo_interno") & " - " & RS("nm_outra_parte_resumido") & " (" & Mid(RS("objeto"),1,45) & ")"
        End If
        RS.MoveNext
     Wend
