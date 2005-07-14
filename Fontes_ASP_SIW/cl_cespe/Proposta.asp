@@ -56,7 +56,7 @@ Dim p_ativo, p_solicitante, p_prioridade, p_unidade, p_proponente, p_ordena
 Dim p_ini_i, p_ini_f, p_fim_i, p_fim_f, p_atraso, p_projeto, p_atividade
 Dim p_chave, p_assunto, p_pais, p_regiao, p_uf, p_cidade, p_usu_resp, p_uorg_resp, p_palavra, p_prazo, p_fase, p_sqcc
 Dim w_troca,w_cor, w_filter, w_cliente, w_usuario, w_gestor, w_menu
-Dim w_sq_pessoa
+Dim w_sq_pessoa, w_contrato
 Dim ul,File
 Dim w_dir, w_dir_volta
 Set RS  = Server.CreateObject("ADODB.RecordSet")
@@ -191,6 +191,7 @@ Main
 
 FechaSessao
 
+Set w_contrato    = Nothing
 Set w_dir         = Nothing
 Set w_dir_volta   = Nothing
 Set w_copia       = Nothing
@@ -579,6 +580,7 @@ Sub OutraParte
   End If
   If Not RS.EOF Then
      w_sq_tipo_pessoa = RS("sq_tipo_pessoa")
+     w_contrato       = RS("vincula_contrato")
   End If
   DesconectaBD
   If cDbl(Nvl(w_sq_pessoa,0)) = 0 Then O = "I" Else O = "A" End If
@@ -756,10 +758,23 @@ Sub OutraParte
      Else
         Validate "w_email", "E-Mail", "1", "", 4, 60, "1", "1"
      End If
-     Validate "w_sq_banco", "Banco", "SELECT", "1", 1, 10, "1", "1"
-     Validate "w_sq_agencia", "Agencia", "SELECT", "1", 1, 10, "1", "1"
-     Validate "w_operacao", "Operação", "1", "", 1, 6, "", "0123456789"
-     Validate "w_nr_conta", "Número da conta", "1", "1", 2, 30, "ZXAzxa", "0123456789-"
+     If Nvl(w_contrato,"S") = "S" Then ' Se for possível vincular contrato, dados bancários são obrigatórios
+        Validate "w_sq_banco", "Banco", "SELECT", "1", 1, 10, "1", "1"
+        Validate "w_sq_agencia", "Agência", "SELECT", "1", 1, 10, "1", "1"
+        Validate "w_operacao", "Operação", "1", "", 1, 6, "", "0123456789"
+        Validate "w_nr_conta", "Número da conta", "1", "1", 2, 30, "ZXAzxa", "0123456789-"
+     Else ' Caso contrário, são opcionais
+        Validate "w_sq_banco", "Banco", "SELECT", "", "1", 10, "1", "1"
+        Validate "w_sq_agencia", "Agencia", "SELECT", "", 1, 10, "1", "1"
+        Validate "w_operacao", "Operação", "1", "", 1, 6, "", "0123456789"
+        Validate "w_nr_conta", "Número da conta", "1", "", 2, 30, "ZXAzxa", "0123456789-"
+        ShowHTML "  if (theForm.w_sq_banco.selectedIndex != 0 || theForm.w_sq_agencia.selectedIndex != 0 || theForm.w_nr_conta.value !='') {"
+        ShowHTML "     if (theForm.w_sq_banco.selectedIndex == 0 || theForm.w_sq_agencia.selectedIndex == 0 || theForm.w_nr_conta.value =='') {"
+        ShowHTML "        alert('Dados bancários incompletos. Informe banco, agência e conta ou nenhum deles!');"
+        ShowHTML "        return false;"
+        ShowHTML "     }"
+        ShowHTML "  }"
+     End If
      ShowHTML "  theForm.Botao[0].disabled=true;"
      ShowHTML "  theForm.Botao[1].disabled=true;"
   End If
