@@ -2467,7 +2467,7 @@ Sub Rodape
       ShowHTML "<center>"
       ShowHTML "<DIV id=rodape>"
       ShowHTML "  <DIV id=endereco>"
-      ShowHTML "    <P>Setor Comercial Sul, Ed. Denasa - Salas 901/902 - Brasília-DF <BR>Tel : (61) 225 6302 (61) 321 8938 | Fax (61) 225 7599| email: <A href=""mailto:pbf@cespe.unb.br"">bresil2005@minc.gov.br</A>"
+      ShowHTML "    <P>Setor Comercial Sul, Ed. Denasa - Salas 901/902 - Brasília-DF <BR>Tel : (61) 3225-6302 (61) 3321-8938 | Fax (61) 3225-7599| email: <A href=""mailto:pbf@cespe.unb.br"">bresil2005@minc.gov.br</A>"
       ShowHTML "    </P>"
       ShowHTML "  </DIV>"
       ShowHTML "</DIV>"
