@@ -288,7 +288,7 @@ ShowHTML "<BR>"
 ShowHTML "  </DIV>"
 ShowHTML "  -->"
 ShowHTML "  <DIV id=endereco>"
-ShowHTML "<P>Setor Comercial Sul, Ed. Denasa - Salas 901/902 - Brasília-DF <BR>Tel : (61) 225 6302 (61) 321 8938 | Fax (61) 225 7599| email: <A href=""mailto:pbf@cespe.unb.br"">bresil2005@minc.gov.br</A>"
+ShowHTML "<P>Setor Comercial Sul, Ed. Denasa - Salas 901/902 - Brasília-DF <BR>Tel : (61) 3225-6302 (61) 321-8938 | Fax (61) 3225-7599| email: <A href=""mailto:pbf@cespe.unb.br"">bresil2005@minc.gov.br</A>"
 ShowHTML "   <!--<BR><BR>Copyright ® 2000/2005 - CESPE/UnB - Todos os Direitos Reservados-->"
 ShowHTML "</P>"
 ShowHTML "  </DIV>"
@@ -453,7 +453,7 @@ Sub Eventos
     DB_GetLinkData RS2, w_cliente, "PJCAD"
 
     ' Recupera a chave do usuário de suporte
-    DB_GetUserData w_cliente, "000.000.001-91"
+    DB_GetUserData RS, w_cliente, "000.000.001-91"
 
     ' Recupera os projetos
     DB_GetSolicList RS, RS2("sq_menu"), 6782, RS2("sigla"), 3, _
@@ -731,7 +731,7 @@ Sub Proposta
        While not RS.EOF
           DB_GetAcordoRep RS1, RS("sq_siw_solicitacao"), w_cliente, null, null
           If NOT RS1.EOF Then
-             DB_GetBenef RS3, w_cliente, RS1("sq_pessoa"), null, null, null, null
+             DB_GetBenef RS3, w_cliente, RS1("sq_pessoa"), null, null, null, null, null, null
              If Nvl(RS3("email"),"") = "" Then
                 If w_cont = 0 Then
                    ShowHTML "<ul>"
