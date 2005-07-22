@@ -20,7 +20,10 @@ begin
              e.sq_siw_solicitacao sq_projeto, e.titulo nm_projeto,
              f.sq_cc, f.nome nm_cc,
              g.sq_pessoa sq_pessoa, g.nome_resumido nm_pessoa_resumido,
-             (vencimento - trunc(sysdate)) prazo
+             case when b.conclusao is null 
+                  then (a.vencimento - trunc(sysdate))
+                  else (a.vencimento - trunc(a.quitacao))
+             end prazo
         from fn_lancamento                      a 
              inner      join siw_solicitacao    b  on (a.sq_siw_solicitacao = b.sq_siw_solicitacao)
                inner    join siw_menu           b1 on (b.sq_menu            = b1.sq_menu and
@@ -54,7 +57,10 @@ begin
              e.sq_siw_solicitacao sq_projeto, e.titulo nm_projeto,
              f.sq_cc, f.nome nm_cc,
              g.sq_pessoa sq_pessoa, g.nome_resumido nm_pessoa_resumido,
-             (d.vencimento - trunc(sysdate)) prazo
+             case when b.conclusao is null 
+                  then (d.vencimento - trunc(sysdate))
+                  else (d.vencimento - trunc(h.quitacao))
+             end prazo
         from ac_acordo                            a 
              inner        join siw_solicitacao    b  on (a.sq_siw_solicitacao = b.sq_siw_solicitacao)
                inner      join siw_menu           b1 on (b.sq_menu            = b1.sq_menu and
@@ -86,4 +92,3 @@ begin
       order by 2,11;
 End SP_GetLancamento;
 /
-
