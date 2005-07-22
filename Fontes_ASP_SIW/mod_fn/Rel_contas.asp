@@ -288,7 +288,7 @@ Sub Inicial
        Select Case p_ordena
           Case "VENCIMENTO"
               w_filtro = w_filtro & "Vencimento" 
-          Case "SQ_PESSOA"
+          Case "NM_PESSOA_RESUMIDO"
               If Mid(SG, 3, 1) = "R" Then
                  w_filtro = w_filtro & "Cliente"
               ElseIf Mid(SG, 3, 1) = "D" Then
@@ -307,6 +307,7 @@ Sub Inicial
     ShowHTML "        <tr bgcolor=""" & conTrBgColor & """ align=""center"">"
     ShowHTML "          <td><font size=""1""><b>Código</font></td>"
     ShowHTML "          <td><font size=""1""><b>Vencto.</font></td>"
+    ShowHTML "          <td><font size=""1""><b>Quitação</font></td>"
     If Mid(SG, 3, 1) = "R" Then
        ShowHTML "       <td><font size=""1""><b>Cliente</font></td>"
     ElseIf Mid(SG, 3, 1) = "D" Then
@@ -365,6 +366,7 @@ Sub Inicial
            ShowHTML "          <td><font size=""1""><b>Código</font></td>"
            ShowHTML "          <td><font size=""1""><b>Nome</font></td>"
            ShowHTML "          <td><font size=""1""><b>Vencto.</font></td>"
+           ShowHTML "          <td><font size=""1""><b>Quitação</font></td>"
            If Mid(SG, 3, 1) = "R" Then
               ShowHTML "       <td><font size=""1""><b>Cliente</font></td>"
            ElseIf Mid(SG, 3, 1) = "D" Then
@@ -381,18 +383,18 @@ Sub Inicial
               Case "VENCIMENTO"
                  If Nvl(w_atual,"") <> RS("vencimento") Then
                     ShowHTML "      <tr bgcolor=""" & conTrBgColor & """ valign=""top"">"
-                    ShowHTML "        <td colspan=5 align=""right"" height=18><font size=""1""><b>Total do dia </td>"
+                    ShowHTML "        <td colspan=6 align=""right"" height=18><font size=""1""><b>Total do dia </td>"
                     ShowHTML "        <td align=""right""><font size=""1""><b>" & FormatNumber(w_valor,2) & "</b></td>"
                     ShowHTML "      </tr>"
                     w_valor = 0.00
                     w_linha = w_linha + 1
                  End If
-              Case "SQ_PESSOA"
-                 If cDbl(Nvl(w_atual,0)) <> cDbl(Nvl(RS("sq_pessoa"),0)) Then
+              Case "NM_PESSOA_RESUMIDO"
+                 If Nvl(w_atual,"") <> Nvl(RS("NM_PESSOA_RESUMIDO"),"") Then
                     If Mid(SG, 3, 1) = "R" Then
-                       ShowHTML "        <td colspan=5 align=""right"" height=18><font size=""1""><b>Total do cliente </td>"
+                       ShowHTML "        <td colspan=6 align=""right"" height=18><font size=""1""><b>Total do cliente </td>"
                     ElseIf Mid(SG, 3, 1) = "D" Then
-                       ShowHTML "        <td colspan=5 align=""right"" height=18><font size=""1""><b>Total do fornecedor </td>"
+                       ShowHTML "        <td colspan=6 align=""right"" height=18><font size=""1""><b>Total do fornecedor </td>"
                     End If
                     ShowHTML "        <td align=""right""><font size=""1""><b>" & FormatNumber(w_valor,2) & "</b></td>"
                     ShowHTML "      </tr>"
@@ -401,7 +403,7 @@ Sub Inicial
                  End If
               Case "NM_TRAMITE"
                  If Nvl(w_atual,"") <> RS("nm_tramite") Then
-                    ShowHTML "        <td colspan=5 align=""right"" height=18><font size=""1""><b>Total da situação <b>" & w_atual & "</b></td>"
+                    ShowHTML "        <td colspan=6 align=""right"" height=18><font size=""1""><b>Total da situação <b>" & w_atual & "</b></td>"
                     ShowHTML "        <td align=""right""><font size=""1""><b>" & FormatNumber(w_valor,2) & "</b></td>"
                     ShowHTML "      </tr>"
                     w_valor = 0.00
@@ -426,19 +428,16 @@ Sub Inicial
               ShowHTML "           <img src=""" & conImgOkNormal & """ border=0 width=15 height=15 align=""center"">"
            End IF
         End If
-        If Nvl(w_tipo_rel,"") = "WORD" Then
-           ShowHTML "        " & RS("codigo_interno") & "&nbsp;"
-        Else
-           ShowHTML "        <A class=""hl"" HREF=""" & w_dir & "Lancamento.asp?par=Visual&R=" & w_pagina & par & "&O=L&w_chave=" & RS("sq_siw_solicitacao") & "&w_tipo=Volta&P1=" & P1 & "&P2=" & P2 & "&P3=" & P3 & "&P4=" & P4 & "&TP=" & TP & "&SG=" & SG & MontaFiltro("GET") & """ title=""" & RS("descricao") & """>" & RS("codigo_interno") & "&nbsp;</a>"
-        End If
+        ShowHTML "        " & RS("codigo_interno") & "&nbsp;"
         ShowHTML "        <td align=""center""><font size=""1"">" & FormataDataEdicao(RS("vencimento")) & "</td>"
+        ShowHTML "        <td align=""center""><font size=""1"">" & Nvl(FormataDataEdicao(RS("quitacao")),"---") & "</td>"
         ShowHTML "        <td><font size=""1"">" & RS("nm_pessoa_resumido") & "</td>"
         If Nvl(RS("cd_acordo"),"") > "" Then
-           ShowHTML "        <td><font size=""1""><A class=""hl"" HREF=""" & "mod_ac/Contratos.asp?par=Visual&O=L&w_chave=" & RS("sq_acordo") & "&w_tipo=&P1=2&P2=" & P2 & "&P3=" & P3 & "&P4=" & P4 & "&TP=" & TP & "&SG=GC" & Mid(SG,3,1) & "CAD"" title=""" & RS("objeto") & """ target=""_blank"">" & RS("cd_acordo") & "</a> - " & RS("descricao") & "</td>"
+           ShowHTML "        <td><font size=""1"">" & RS("descricao") & " - " & RS("objeto") & "</td>"
         Else
            ShowHTML "        <td><font size=""1"">" & RS("descricao") & "</td>"
         End If
-        ShowHTML "        <td align=""right""><font size=""1"">" & RS("prazo") & "</td>"
+        ShowHTML "        <td align=""right""><font size=""1"">" & Nvl(RS("prazo"),"---") & "</td>"
         ShowHTML "        <td align=""right""><font size=""1"">" & FormatNumber(RS("valor"),2) & "</td>"
         ShowHTML "</tr>"
         w_valor       = w_valor       + cDbl(RS("valor"))        
@@ -448,8 +447,8 @@ Sub Inicial
         Select Case p_ordena
            Case "VENCIMENTO" 
               w_atual = RS("vencimento")
-           Case "SQ_PESSOA"
-              w_atual = RS("sq_pessoa")
+           Case "NM_PESSOA_RESUMIDO"
+              w_atual = RS("NM_PESSOA_RESUMIDO")
            Case "NM_TRAMITE"
               w_atual = RS("nm_tramite")
         End Select
@@ -459,31 +458,31 @@ Sub Inicial
       Select Case p_ordena
          Case "VENCIMENTO"
             ShowHTML "      <tr bgcolor=""" & conTrBgColor & """ valign=""top"">"
-            ShowHTML "        <td colspan=5 align=""right"" height=18><font size=""1""><b>Total do dia </td>"
+            ShowHTML "        <td colspan=6 align=""right"" height=18><font size=""1""><b>Total do dia </td>"
             ShowHTML "        <td align=""right""><font size=""1""><b>" & FormatNumber(w_valor,2) & "</b></td>"
             ShowHTML "      </tr>"
             w_valor = 0.00
             w_linha = w_linha + 1
-        Case "SQ_PESSOA"
+        Case "NM_PESSOA_RESUMIDO"
            If Mid(SG, 3, 1) = "R" Then
-              ShowHTML "        <td colspan=5 align=""right"" height=18><font size=""1""><b>Total do cliente </td>"
+              ShowHTML "        <td colspan=6 align=""right"" height=18><font size=""1""><b>Total do cliente </td>"
            ElseIf Mid(SG, 3, 1) = "D" Then
-              ShowHTML "        <td colspan=5 align=""right"" height=18><font size=""1""><b>Total do fornecedor </td>"
+              ShowHTML "        <td colspan=6 align=""right"" height=18><font size=""1""><b>Total do fornecedor </td>"
            End If
            ShowHTML "        <td align=""right""><font size=""1""><b>" & FormatNumber(w_valor,2) & "</b></td>"
            ShowHTML "      </tr>"
            w_valor = 0.00
            w_linha = w_linha + 1
         Case "NM_TRAMITE"
-           ShowHTML "        <td colspan=5 align=""right"" height=18><font size=""1""><b>Total da situação <b>" & w_atual & "</b></td>"
+           ShowHTML "        <td colspan=6 align=""right"" height=18><font size=""1""><b>Total da situação <b>" & w_atual & "</b></td>"
            ShowHTML "        <td align=""right""><font size=""1""><b>" & FormatNumber(w_valor,2) & "</b></td>"
            ShowHTML "      </tr>"
            w_valor = 0.00
            w_linha = w_linha + 1                                  
         End Select
-      ShowHTML "      <tr bgcolor=""" & conTrBgColor & """ height=5><td colspan=6><font size=1>&nbsp;</td></tr>"
+      ShowHTML "      <tr bgcolor=""" & conTrBgColor & """ height=5><td colspan=7><font size=1>&nbsp;</td></tr>"
       ShowHTML "      <tr bgcolor=""" & conTrBgColor & """ valign=""center"" height=30>"
-      ShowHTML "        <td colspan=5 align=""right""><font size=""2""><b>Totais do relatório</td>"
+      ShowHTML "        <td colspan=6 align=""right""><font size=""2""><b>Totais do relatório</td>"
       ShowHTML "        <td align=""right""><font size=""1""><b>" & FormatNumber(w_valor_total,2) & "</b></td>"
       w_linha = w_linha + 1
     End If
@@ -508,9 +507,9 @@ Sub Inicial
        ShowHTML "          <option value="""">---"
        While Not RS.EOF
           If cDbl(RS("sq_tipo_pessoa")) = 1 Then
-             ShowHTML "          <option value=""" & RS("sq_pessoa") & """>" & RS("nome_resumido") & " (" & Nvl(RS("cpf"),"---") & ")"
+             ShowHTML "          <option value=""" & RS("NM_PESSOA_RESUMIDO") & """>" & RS("nome_resumido") & " (" & Nvl(RS("cpf"),"---") & ")"
           Else
-             ShowHTML "          <option value=""" & RS("sq_pessoa") & """>" & RS("nome_resumido") & " (" & Nvl(RS("cnpj"),"---") & ")"
+             ShowHTML "          <option value=""" & RS("NM_PESSOA_RESUMIDO") & """>" & RS("nome_resumido") & " (" & Nvl(RS("cnpj"),"---") & ")"
           End If
           RS.MoveNext
        Wend

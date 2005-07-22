@@ -187,27 +187,27 @@ Sub SelecaoOrdenaRel (label, accesskey, hint, cliente, chave, campo, restricao, 
     End If
     ShowHTML "          <option value="""">---"
     If Nvl(chave,"") = "VENCIMENTO" or Nvl(chave,"") = "" Then
-       ShowHTML "          <option value=""VENCIMENTO"" SELECTED>Vecimento"
+       ShowHTML "          <option value=""VENCIMENTO"" SELECTED>Vencimento"
        If Mid(restricao,3,1) = "R" Then
-          ShowHTML "          <option value=""SQ_PESSOA"">Cliente"
+          ShowHTML "          <option value=""NM_PESSOA_RESUMIDO"">Cliente"
        ElseIf Mid(restricao,3,1) = "D" Then
-          ShowHTML "          <option value=""SQ_PESSOA"">Fornecedor"
+          ShowHTML "          <option value=""NM_PESSOA_RESUMIDO"">Fornecedor"
        End If
        ShowHTML "          <option value=""NM_TRAMITE"">Situação"
     ElseIf Nvl(chave,"") = "SQ_PESSOA" Then
-       ShowHTML "          <option value=""VENCIMENTO"">Vecimento"
+       ShowHTML "          <option value=""VENCIMENTO"">Vencimento"
        If Mid(restricao,3,1) = "R" Then
-          ShowHTML "          <option value=""SQ_PESSOA"" SELECTED>Cliente"
+          ShowHTML "          <option value=""NM_PESSOA_RESUMIDO"" SELECTED>Cliente"
        ElseIf Mid(restricao,3,1) = "D" Then
-          ShowHTML "          <option value=""SQ_PESSOA"" SELECTED>Fornecedor"
+          ShowHTML "          <option value=""NM_PESSOA_RESUMIDO"" SELECTED>Fornecedor"
        End If
        ShowHTML "          <option value=""NM_TRAMITE"">Situação"
     ElseIf Nvl(chave,"") = "NM_TRAMITE" Then
-       ShowHTML "          <option value=""VENCIMENTO"">Vecimento"
+       ShowHTML "          <option value=""VENCIMENTO"">Vencimento"
        If Mid(restricao,3,1) = "R" Then
-          ShowHTML "          <option value=""SQ_PESSOA"">Cliente"
+          ShowHTML "          <option value=""NM_PESSOA_RESUMIDO"">Cliente"
        ElseIf Mid(restricao,3,1) = "D" Then
-          ShowHTML "          <option value=""SQ_PESSOA"">Fornecedor"
+          ShowHTML "          <option value=""NM_PESSOA_RESUMIDO"">Fornecedor"
        End If
        ShowHTML "          <option value=""NM_TRAMITE"" SELECTED>Situação"
     End If
