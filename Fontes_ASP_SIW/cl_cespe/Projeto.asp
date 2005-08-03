@@ -542,7 +542,6 @@ Sub Inicial
                  'If Instr("CI,EE", Nvl(RS("sg_tramite"),"00")) = 0 Then
                  '   ShowHTML "          <A class=""hl"" HREF=""" & w_dir & w_Pagina & "Anotacao&R=" & w_Pagina & par & "&O=V&w_chave=" & RS("sq_siw_solicitacao") & "&w_tipo=Volta&P1=" & P1 & "&P2=" & P2 & "&P3=" & P3 & "&P4=" & P4 & "&TP=" & TP & " - " & RS("sq_siw_solicitacao") & "&SG=" & SG & MontaFiltro("GET") & """ title=""Registra anotações para o projeto, sem enviá-lo."">Anotar</A>&nbsp"
                  '   ShowHTML "          <A class=""hl"" HREF=""" & w_dir & w_Pagina & "Envio&R=" & w_Pagina & par & "&O=V&w_chave=" & RS("sq_siw_solicitacao") & "&w_tipo=Volta&P1=" & P1 & "&P2=" & P2 & "&P3=" & P3 & "&P4=" & P4 & "&TP=" & TP & " - " & RS("sq_siw_solicitacao") & "&SG=" & SG & MontaFiltro("GET") & """ title=""Envia o projeto para outro gerente."">Enviar</A>&nbsp"
-                 ShowHTML "          <A class=""hl"" HREF=""" & w_dir & w_Pagina & "VarigMail&R=" & w_Pagina & par & "&O=L&w_chave=" & RS("sq_siw_solicitacao") & "&w_tipo=Volta&P1=" & P1 & "&P2=" & P2 & "&P3=" & P3 & "&P4=" & P4 & "&TP=" & TP & " - " & RS("sq_siw_solicitacao") & "&SG=" & SG & MontaFiltro("GET") & """ title=""Envia e-mail para Varig contendo a lista de passageiros."">Varig(E-mail)</A>&nbsp"
                  If RS("sg_tramite") = "EX" Then
                     ShowHTML "          <A class=""hl"" HREF=""" & w_dir & w_Pagina & "VarigMail&R=" & w_Pagina & par & "&O=L&w_chave=" & RS("sq_siw_solicitacao") & "&w_tipo=Volta&P1=" & P1 & "&P2=" & P2 & "&P3=" & P3 & "&P4=" & P4 & "&TP=" & TP & " - " & RS("sq_siw_solicitacao") & "&SG=" & SG & MontaFiltro("GET") & """ title=""Envia e-mail para Varig contendo a lista de passageiros."">Varig(E-mail)</A>&nbsp"
                  ElseIf RS("sg_tramite") = "EE" Then
@@ -3191,8 +3190,7 @@ REM Rotina da página de fale conosco
 REM -------------------------------------------------------------------------
 Sub varigMail
    Dim w_tabela, w_count, RSQuery, w_TrBgColor
-   Dim w_caminho_recebido, w_tamanho_recebido
-   Dim FS, F1, w_linha
+   Dim FS, F1, w_linha, w_caminho, w_assunto, w_mensagem, w_para
    
    Cabecalho
    ShowHTML "<HEAD>"
@@ -3203,6 +3201,7 @@ Sub varigMail
    ValidateOpen "Validacao"
    Validate "w_para",         "Para",  "", "1", 2,   80, "1", "1"
    Validate "w_assunto",   "assunto",  "", "1", 2,   80, "1", "1"
+   Validate "w_caminho",   "Arquivo", "", "", "5", "255", "1", "1"
    Validate "w_mensagem", "Mensagem", "1",   1, 5, 2000, "1", "1"
    ValidateClose
    ScriptClose
@@ -3214,17 +3213,16 @@ Sub varigMail
    
    DB_GetSolicData RS, Request("w_chave"), "PJGERAL"
    ShowHTML "        <A class=""hl"" HREF=""" & w_Pagina & "VisualTabela&R=" & w_Pagina & par & "&O=L&w_chave=" & RS("sq_siw_solicitacao") & "&w_tipo=WORD&P1=" & P1 & "&P2=" & P2 & "&P3=" & P3 & "&P4=" & P4 & "&TP=" & TP & "&SG=" & SG & MontaFiltro("GET") & """ title=""Exibe as informações deste registro."" target=""_blank"">Clique aqui para visualizar os dados dos viajantes&nbsp;</a>"
-   
    ShowHTML "<table border=""0"" cellpadding=""0"" cellspacing=""0"" width=""100%"">"
    ShowHTML "<br>"
    ShowHTML "<p>Preencha o formulário abaixo para enviar o e-mail.</p>"
    ShowHTML "<table border=0 width=""100%"" cellspacing=0><tr bgcolor=""" & conTrBgColor & """><td style=""border: 1px solid rgb(0,0,0);"">"
    ShowHTML "<table border=0 width=""90%"" cellspacing=0>"
-   AbreForm "Form", w_Pagina & "Envia", "POST", "return(Validacao(this));", null,P1,P2,P3,null,TP,SG,w_pagina&"VarigMail","E"
-   ShowHTML " <tr><td colspan=2><b>Para:</b><br><INPUT class=""sti"" type=""text"" name=""w_para"" size=""65"" maxlength=""80""></td>"
-   ShowHTML " <tr><td colspan=2><b>Assunto:</b><br><INPUT class=""sti"" type=""text"" name=""w_assunto"" size=""65"" maxlength=""80""></td>"
+   ShowHTML "<FORM action=""" & w_pagina & "Envia&O="&O&"&w_menu="&w_menu&""" name=""Form"" onSubmit=""return(Validacao(this));"" enctype=""multipart/form-data"" method=""POST"">"
+   ShowHTML " <tr><td colspan=2><b><u>P</u>ara:</b><br><INPUT class=""sti"" type=""text"" name=""w_para"" accesskey=""P"" size=""65"" maxlength=""80""></td>"
+   ShowHTML " <tr><td colspan=2><b><u>A</u>ssunto:</b><br><INPUT class=""sti"" type=""text"" name=""w_assunto"" accesskey=""A"" size=""65"" maxlength=""80""></td>"
    ShowHTML " <tr valign=""top"" >"
-   ShowHTML "      <tr><td><font size=""1""><b>A<u>r</u>quivo:</b><br><input " & w_Disabled & " accesskey=""R"" type=""file"" name=""w_caminho""    class=""sti"" SIZE=""80"" MAXLENGTH=""100"" title=""OPCIONAL. Se desejar anexar um arquivo, clique no botão ao lado para localizá-lo. Ele será transferido automaticamente para o servidor."">"
+   ShowHTML "      <tr><td><font size=""1""><b>A<u>r</u>quivo:</b><br><input " & w_Disabled & " accesskey=""R"" type=""file"" name=""w_caminho"" class=""STI"" SIZE=""80"" MAXLENGTH=""100"" VALUE=""ANEXO"" title=""'OPCIONAL. Se desejar anexar um arquivo, clique no botão ao lado para localizá-lo. Ele será transferido automaticamente para o servidor."">"  
    ShowHTML " <tr><td colspan=2><b>Mensagem:</b><br><textarea name=""w_mensagem"" class=""sti"" ROWS=15 cols=100></TEXTAREA></td>"
    ShowHTML " <tr><td colspan=2 align=center><input class=""stb"" type=""submit"" name=""Botao"" value=""Enviar mensagem"">"
    ShowHTML " </table>"
@@ -3235,7 +3233,7 @@ Sub varigMail
    Estrutura_Fecha
    Estrutura_Fecha
    Rodape
-
+   
    Set w_tabela    = Nothing
    Set w_count     = Nothing
    Set RSQuery     = Nothing
@@ -3244,6 +3242,61 @@ Sub varigMail
 End Sub
 REM =========================================================================
 REM Fim da rotina
+REM -------------------------------------------------------------------------
+
+
+REM =========================================================================
+REM Rotina de preparação para envio de e-mail
+REM -------------------------------------------------------------------------
+Sub Envia
+   Dim w_atua, w_file
+   Dim w_html, w_resultado, w_assunto
+   
+   w_resultado = ""
+    
+   BodyOpenMail(null) & VbCrLf & _
+   w_html & _
+   "</BODY>" & VbCrLf & _
+   "</HTML>" & VbCrLf
+   ' Trata o recebimento de upload ou dados 
+   If InStr(uCase(Request.ServerVariables("http_content_type")),"MULTIPART/FORM-DATA") > 0 Then
+      ' Se foi feito o upload de um arquivo 
+      If ul.Files("w_caminho").OriginalPath > "" Then 
+         ' Verifica se o tamanho das fotos está compatível com  o limite de 100KB. 
+         If ul.Files("w_caminho").Size > 500024 Then
+            ScriptOpen("JavaScript") 
+            ShowHTML "  alert('Atenção: o tamanho máximo do arquivo não pode exceder " & 500024/1024 & " KBytes!');" 
+            ShowHTML "  history.back(1);" 
+            ScriptClose
+            Response.End()
+            exit sub 
+         End If
+         ul.Files("w_caminho").SaveAs(conFilePhysical & w_cliente & "\" & ul.GetFileName(ul.Files("w_caminho").OriginalPath))
+      Else 
+         w_file = "" 
+      End If 
+   End If
+   
+   w_resultado = EnviaMail2
+   ' Se ocorreu algum erro, avisa da impossibilidade de envio
+   If w_resultado > "" Then
+      ScriptOpen "JavaScript"
+      ShowHTML "  alert('ATENÇÃO: não foi possível proceder o envio do e-mail.\n" & w_resultado & "');" 
+      ShowHTML "  history.back(1);"
+      ScriptClose
+   Else
+      ul.FileDelete (conFilePhysical & w_cliente & "\" & ul.GetFileName(ul.Files("w_caminho").OriginalPath))
+      ScriptOpen "JavaScript"
+      ShowHTML "  alert('O e-mail foi enviado com sucesso.\n');"
+      ShowHTML "  history.back(1);"
+      ScriptClose
+   End If
+   Set w_html      = Nothing
+   Set w_resultado = Nothing
+   Set w_assunto   = Nothing
+End Sub
+REM =========================================================================
+REM Fim da rotina da preparação para envio de e-mail
 REM -------------------------------------------------------------------------
 
 REM =========================================================================
@@ -3276,7 +3329,7 @@ Sub VisualTabela
   If w_tipo <> "WORD" Then
      BodyOpenClean "onLoad='document.focus()'; "
   End If
-  ShowHTML "<TABLE WIDTH=""100%"" BORDER=0><TR><TD ROWSPAN=2><IMG ALIGN=""LEFT"" SRC=""" & w_logo & """><TD ALIGN=""RIGHT""><B><FONT SIZE=4 COLOR=""#000000"">"
+  ShowHTML "<TABLE WIDTH=""100%"" BORDER=0><TR><TD ROWSPAN=2><IMG ALIGN=""LEFT"" SRC=""" & w_logo & """><TD ALIGN=""RIGHT""><B><FONT SIZE=0 COLOR=""#000000"">"
   ShowHTML "</FONT><TR><TD ALIGN=""RIGHT""><B><font COLOR=""#000000"">" & DataHora() & "</B>"
   If w_tipo <> "WORD" Then
      ShowHTML "&nbsp;&nbsp;<IMG ALIGN=""CENTER"" TITLE=""Imprimir"" SRC=""images/impressora.jpg"" onClick=""window.print();"">"
@@ -3307,41 +3360,6 @@ End Sub
 REM =========================================================================
 REM Fim da rotina de visualização
 REM -------------------------------------------------------------------------
-
-
-REM =========================================================================
-REM Rotina de preparação para envio de e-mail
-REM -------------------------------------------------------------------------
-Sub Envia
-   
-   Dim w_html, w_resultado, w_assunto
-   
-   w_resultado = ""
-    
-   BodyOpenMail(null) & VbCrLf & _
-   w_html & _
-   "</BODY>" & VbCrLf & _
-   "</HTML>" & VbCrLf
-   w_resultado = EnviaMail2(Request("w_assunto"), Request("w_mensagem"), Request("w_para"), Request("w_anexo"))
-   ' Se ocorreu algum erro, avisa da impossibilidade de envio
-   If w_resultado > "" Then
-      ScriptOpen "JavaScript"
-      ShowHTML "  alert('ATENÇÃO: não foi possível proceder o envio do e-mail.\n" & w_resultado & "');" 
-      ScriptClose
-   Else
-      ScriptOpen "JavaScript"
-      ShowHTML "  alert('O e-mail foi enviado con sucesso.\n');"
-      ScriptClose
-   End If
-  
-   Set w_html      = Nothing
-   Set w_resultado = Nothing
-   Set w_assunto   = Nothing
-End Sub
-REM =========================================================================
-REM Fim da rotina da preparação para envio de e-mail
-REM -------------------------------------------------------------------------
-
 
 REM =========================================================================
 REM Rotina de preparação para envio de e-mail relativo a projetos
