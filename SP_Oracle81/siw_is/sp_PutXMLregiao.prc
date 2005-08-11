@@ -22,8 +22,7 @@ begin
       update is_regiao set
          nome                 = p_nome,
          uf                   = p_uf,
-         cd_regiao_geografica = p_regiao,
-         flag_inclusao        = sysdate
+         cd_regiao_geografica = p_regiao
        where cd_regiao = p_chave;
    End If;
 end sp_PutXMLregiao;

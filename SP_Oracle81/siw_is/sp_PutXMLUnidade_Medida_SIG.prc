@@ -20,14 +20,13 @@ begin
       If w_operacao = 'I' Then
          -- Insere registro
          insert into is_sig_unidade_medida (cd_unidade_medida, nome, tipo, ativo, flag_inclusao)
-         values (p_chave, p_nome, p_tipo, 'S', sysdate);
+         values (p_chave, Nvl(p_nome,'Não foi informado no arquivo XML'), p_tipo, 'S', sysdate);
       Else
          -- Altera registro
          update is_sig_unidade_medida set
-            nome          = p_nome,
+            nome          = Nvl(p_nome,'Não foi informado no arquivo XML'),
             tipo          = p_tipo,
-            ativo         = 'S',
-            flag_inclusao = sysdate
+            ativo         = 'S'
           where cd_unidade_medida = p_chave;
       End If;
    End If;

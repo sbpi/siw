@@ -46,8 +46,7 @@ begin
          -- Altera registro
          update is_sig_tipo_orgao set
             nome          = p_nome,
-            ativo         = 'S',
-            flag_inclusao = sysdate
+            ativo         = 'S'
           where cd_tipo_orgao = p_chave;
       End If;
    End If;

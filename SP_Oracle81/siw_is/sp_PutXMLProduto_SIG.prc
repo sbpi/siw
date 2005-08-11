@@ -19,13 +19,12 @@ begin
       If w_operacao = 'I' Then
          -- Insere registro
          insert into is_sig_produto (cd_produto, nome, ativo, flag_inclusao)
-         values (p_chave, p_nome, 'S', sysdate);
+         values (p_chave, Nvl(p_nome,'Não informado no arquivo XML'), 'S', sysdate);
       Else
          -- Altera registro
          update is_sig_produto set
-            nome          = p_nome,
-            ativo         = 'S',
-            flag_inclusao = sysdate
+            nome          =  Nvl(p_nome,'Não informado no arquivo XML'),
+            ativo         = 'S'
           where cd_produto = p_chave;
       End If;
    End If;

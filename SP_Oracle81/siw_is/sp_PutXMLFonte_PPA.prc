@@ -22,8 +22,7 @@ begin
       update is_ppa_fonte set
          nome          = p_nome,
          descricao     = Nvl(p_desc,descricao),
-         totalizacao   = p_total,
-         flag_inclusao = sysdate
+         totalizacao   = p_total
        where cd_fonte = p_chave;
    End If;
 end sp_PutXMLFonte_PPA;

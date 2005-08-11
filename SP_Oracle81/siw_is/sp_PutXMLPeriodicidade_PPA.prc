@@ -1,4 +1,4 @@
-create or replace procedure sp_PutXMLEsfera
+create or replace procedure sp_PutXMLPeriodicidade_PPA
    (p_chave    in  number   default null,
     p_nome     in  varchar2,
     p_ativo    in  varchar2 default null
@@ -8,9 +8,9 @@ create or replace procedure sp_PutXMLEsfera
 begin
    If p_ativo = 'N' Then
       -- Desativa o registro
-      update is_ppa_esfera set ativo='N' where cd_esfera = p_chave;
+      update is_ppa_periodicidade set ativo='N' where cd_Periodicidade = p_chave;
    Else
-      select count(*) into w_cont from is_ppa_esfera a where a.cd_esfera = p_chave;
+      select count(*) into w_cont from is_ppa_periodicidade a where a.cd_Periodicidade = p_chave;
       If w_cont = 0 
          Then w_operacao := 'I';
          Else w_operacao := 'A';
@@ -18,15 +18,15 @@ begin
     
       If w_operacao = 'I' Then
          -- Insere registro
-         insert into is_ppa_esfera (cd_esfera, nome, ativo, flag_inclusao)
+         insert into is_ppa_periodicidade (cd_Periodicidade, nome, ativo, flag_inclusao)
          values (p_chave, p_nome, 'S', sysdate);
       Else
          -- Altera registro
-         update is_ppa_esfera set
+         update is_ppa_periodicidade set
             nome          = p_nome,
             ativo         = 'S'
-          where cd_esfera = p_chave;
+          where cd_Periodicidade = p_chave;
       End If;
    End If;
-end sp_PutXMLEsfera;
+end sp_PutXMLPeriodicidade_PPA;
 /

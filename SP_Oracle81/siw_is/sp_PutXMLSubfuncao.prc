@@ -1,5 +1,5 @@
 create or replace procedure sp_PutXMLSubfuncao
-   (p_chave    in  number   default null,
+   (p_chave    in  varchar2 default null,
     p_funcao   in  varchar2,
     p_desc     in  varchar2 default null
    ) is
@@ -20,8 +20,7 @@ begin
       -- Altera registro
       update is_ppa_subfuncao set
          cd_funcao     = p_funcao,
-         descricao     = p_desc,
-         flag_inclusao = sysdate
+         descricao     = p_desc
        where cd_subfuncao = p_chave;
    End If;
 end sp_PutXMLSubfuncao;

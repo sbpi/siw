@@ -24,8 +24,7 @@ begin
          cd_tipo_unidade = p_tipo_unid,
          cd_orgao        = p_orgao,
          cd_tipo_orgao   = p_tipo_org,
-         nome            = p_nome,
-         flag_inclusao = sysdate
+         nome            = p_nome
        where cd_unidade      = p_chave
          and cd_tipo_unidade = p_tipo_unid;
    End If;

@@ -126,7 +126,7 @@ begin
          cd_sof                  = p_cd_sof,
          qtd_total               = p_qtd_total,
          cd_sof_referencia       = p_cd_sof_ref,
-         flag_alteracao     = sysdate
+         flag_alteracao          = sysdate
        where cd_acao_ppa      = p_chave
          and cd_programa      = p_cd_programa
          and cliente          = p_cliente

@@ -22,15 +22,14 @@ begin
       If w_operacao = 'I' Then
          -- Insere registro
          insert into is_ppa_orgao (cd_orgao, cd_tipo_orgao, nome, sigla, ativo, flag_inclusao)
-         values (p_chave, p_tipo_org, p_nome, p_sigla, 'S', sysdate);
+         values (p_chave, p_tipo_org, p_nome, Nvl(p_sigla,'---'), 'S', sysdate);
       Else
          -- Altera registro
          update is_ppa_orgao set
             cd_tipo_orgao = p_tipo_org,
             nome          = p_nome,
-            sigla         = p_sigla,
-            ativo         = p_ativo,
-            flag_inclusao = sysdate
+            sigla         = Nvl(p_sigla,'---'),
+            ativo         = p_ativo
           where cd_orgao      = p_chave
             and cd_tipo_orgao = p_tipo_org;
       End If;
