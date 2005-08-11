@@ -1514,6 +1514,17 @@ SP_Oracle92/fbaj/sp_putalbcad.prc -text
 SP_Oracle92/fbaj/sq_alberguista.seq -text
 SP_Oracle92/fbaj/subname.fnc -text
 SP_Oracle92/siw/MontaOrdemMenu.fnc -text
+SP_Oracle92/siw/SP_GetAfastamento.prc -text
+SP_Oracle92/siw/SP_GetDataEspecial.prc -text
+SP_Oracle92/siw/SP_GetGPColaborador.prc -text
+SP_Oracle92/siw/SP_GetGPModalidade.prc -text
+SP_Oracle92/siw/SP_GetGPParametro.prc -text
+SP_Oracle92/siw/SP_GetGPTipoAfast.prc -text
+SP_Oracle92/siw/SP_PutAfastamento.prc -text
+SP_Oracle92/siw/SP_PutDataEspecial.prc -text
+SP_Oracle92/siw/SP_PutGPModalidade.prc -text
+SP_Oracle92/siw/SP_PutGPParametro.prc -text
+SP_Oracle92/siw/SP_PutGPTipoAfast.prc -text
 SP_Oracle92/siw/ac_acordo.tab -text
 SP_Oracle92/siw/ac_acordo_log.tab -text
 SP_Oracle92/siw/ac_acordo_log_arq.tab -text
