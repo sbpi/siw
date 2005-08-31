@@ -1064,6 +1064,7 @@ SP_Oracle81/siw/tt_tronco.tab -text
 SP_Oracle81/siw/tt_usuario.tab -text
 SP_Oracle81/siw/validacnpjcpf.fnc -text
 SP_Oracle81/siw/vw_ttresumo_usu.vw -text
+SP_Oracle81/siw_is/SP_GetDefList.prc -text
 SP_Oracle81/siw_is/acesso_is.fnc -text
 SP_Oracle81/siw_is/carga_is_sig_acao.prc -text
 SP_Oracle81/siw_is/cd_restricao_acao.seq -text
@@ -1517,11 +1518,14 @@ SP_Oracle92/siw/MontaOrdemMenu.fnc -text
 SP_Oracle92/siw/SP_GetAfastamento.prc -text
 SP_Oracle92/siw/SP_GetDataEspecial.prc -text
 SP_Oracle92/siw/SP_GetGPColaborador.prc -text
+SP_Oracle92/siw/SP_GetGPContrato.prc -text
 SP_Oracle92/siw/SP_GetGPModalidade.prc -text
 SP_Oracle92/siw/SP_GetGPParametro.prc -text
 SP_Oracle92/siw/SP_GetGPTipoAfast.prc -text
 SP_Oracle92/siw/SP_PutAfastamento.prc -text
 SP_Oracle92/siw/SP_PutDataEspecial.prc -text
+SP_Oracle92/siw/SP_PutGPColaborador.prc -text
+SP_Oracle92/siw/SP_PutGPContrato.prc -text
 SP_Oracle92/siw/SP_PutGPModalidade.prc -text
 SP_Oracle92/siw/SP_PutGPParametro.prc -text
 SP_Oracle92/siw/SP_PutGPTipoAfast.prc -text

@@ -44,7 +44,7 @@ begin
                   left outer join co_etnia         j on (b.sq_etnia           = j.sq_etnia)
                   left outer join co_deficiencia   k on (b.sq_deficiencia     = k.sq_deficiencia)
                   inner      join co_formacao      l on (b.sq_formacao        = l.sq_formacao)
-                inner        join cv_pessoa        c on (a.sq_pessoa          = c.sq_pessoa)
+                  left outer join cv_pessoa        c on (a.sq_pessoa          = c.sq_pessoa)
                   left outer join cv_pessoa_hist   d on (c.sq_pessoa          = d.sq_pessoa)
                   inner      join co_estado_civil  f on (c.sq_estado_civil    = f.sq_estado_civil)
                   left outer join siw_arquivo      m on (c.sq_siw_arquivo     = m.sq_siw_arquivo)
@@ -53,4 +53,3 @@ begin
    End If;
 end SP_GetCV;
 /
-

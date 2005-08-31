@@ -11,13 +11,16 @@ create or replace procedure SP_PutCVIdent
     p_sexo                in varchar2,
     p_sq_estado_civil     in number,
     p_sq_formacao         in number,
+    p_sq_etnia            in number    default null,
+    p_sq_deficiencia      in number    default null,
     p_cidade              in number,
     p_rg_numero           in varchar2,
     p_rg_emissor          in varchar2,
     p_rg_emissao          in date,
     p_cpf                 in varchar2,
     p_passaporte_numero   in varchar2   default null,
-    p_sq_pais_passaporte  in number     default null
+    p_sq_pais_passaporte  in number     default null,
+    p_chave_nova          out number
    ) is
    w_existe number(18);
    w_chave  number(18);
@@ -48,7 +51,8 @@ begin
             nome_resumido = p_nome_resumido
       where sq_pessoa = w_chave;
    End If;
-
+   
+   
    -- Verifica se existe dado para a pessoa na tabela de pessoas físicas
    select count(*) into w_existe from co_pessoa_fisica where sq_pessoa = w_chave;
    
@@ -57,11 +61,13 @@ begin
       insert into co_pessoa_fisica
         (sq_pessoa,            nascimento,          rg_numero,            rg_emissor, 
          rg_emissao,           cpf,                 sq_cidade_nasc,       passaporte_numero,   
-         sq_pais_passaporte,   sexo,                cliente,              sq_formacao)
+         sq_pais_passaporte,   sexo,                cliente,              sq_formacao,
+         sq_etnia,             sq_deficiencia)
       values
         (w_chave,              p_nascimento,        p_rg_numero,          p_rg_emissor, 
          p_rg_emissao,         p_cpf,               p_cidade,             p_passaporte_numero, 
-         p_sq_pais_passaporte, p_sexo,              p_cliente,            p_sq_formacao);
+         p_sq_pais_passaporte, p_sexo,              p_cliente,            p_sq_formacao,
+         p_sq_etnia,           p_sq_deficiencia);
    Else
       update co_pessoa_fisica
          set nascimento         = p_nascimento,
@@ -73,7 +79,9 @@ begin
              passaporte_numero  = p_passaporte_numero,
              sq_pais_passaporte = p_sq_pais_passaporte,
              sexo               = p_sexo,
-             sq_formacao        = p_sq_formacao
+             sq_formacao        = p_sq_formacao,
+             sq_etnia           = p_sq_etnia,
+             sq_deficiencia     = p_sq_deficiencia
        where sq_pessoa = w_chave;
    End If;
 
@@ -121,6 +129,9 @@ begin
    End If;
    
    commit;
+   
+   -- Devolve a chave
+   p_chave_nova := w_chave;
+   
 end SP_PutCVIdent;
 /
-

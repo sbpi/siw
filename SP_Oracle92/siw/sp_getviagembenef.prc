@@ -5,6 +5,9 @@ create or replace procedure SP_GetViagemBenef
     p_restricao   in varchar2 default null,
     p_cpf         in varchar2 default null,
     p_nome        in varchar2 default null,
+    p_dt_ini      in date     default null,
+    p_dt_fim      in date     default null,
+    p_chave_aux   in number   default null,
     p_result      out sys_refcursor
    ) is
    
@@ -80,8 +83,8 @@ begin
            and (p_nome         is null or (p_nome        is not null and (a.nome_indice   like(upper(acentos('%'||p_nome||'%')))) or (a.nome_resumido_ind like(upper(acentos('%'||p_nome||'%')))) ))
            and (p_cpf          is null or (p_cpf         is not null and (j.cpf           = p_cpf)))
            and (p_sq_pessoa    is null or (p_sq_pessoa   is not null and a.sq_pessoa      = p_sq_pessoa))
-           and (p_chave        is null or (p_chave       is not null and e.sq_siw_solicitacao = p_chave));
+           and (p_chave        is null or (p_chave       is not null and e.sq_siw_solicitacao = p_chave))
+           and (p_dt_ini       is null or (p_dt_ini      is not null and (e.saida between p_dt_ini and p_dt_fim) or (e.retorno between p_dt_ini and p_dt_fim)));
    End If;
 end SP_GetViagemBenef;
 /
-

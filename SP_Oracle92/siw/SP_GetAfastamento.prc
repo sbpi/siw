@@ -24,8 +24,8 @@ begin
       open p_result for 
          select a.sq_afastamento chave, a.sq_tipo_afastamento, a.sq_contrato_colaborador, a.inicio_data,
                 a.inicio_periodo, a.fim_data, a.fim_periodo, a.dias, a.observacao, 
-                b.nome nm_tipo_afastamento,
-                e.sigla, f.nome_resumido
+                b.nome nm_tipo_afastamento, e.sq_unidade,
+                e.sigla||' ('||d.nome||' - R.'||d.ramal||')' local, f.nome_resumido, f.sq_pessoa
            from gp_afastamento                     a
                 inner join gp_tipo_afastamento     b on (a.sq_tipo_afastamento     = b.sq_tipo_afastamento)
                 inner join gp_contrato_colaborador c on (a.sq_contrato_colaborador = c.sq_contrato_colaborador)
@@ -35,6 +35,7 @@ begin
                                                          c.cliente                 = f.sq_pessoa_pai)
           where a.cliente = p_cliente
             and ((p_chave                   is null) or (p_chave                   is not null and a.sq_afastamento          = p_chave))
+            and ((p_chave_aux               is null) or (p_chave_aux               is not null and a.sq_afastamento          <> p_chave_aux))
             and ((p_sq_tipo_afastamento     is null) or (p_sq_tipo_afastamento     is not null and a.sq_tipo_afastamento     = p_sq_tipo_afastamento))
             and ((p_sq_contrato_colaborador is null) or (p_sq_contrato_colaborador is not null and a.sq_contrato_colaborador = p_sq_contrato_colaborador))
             and ((p_inicio_data             is null) or (p_inicio_data             is not null and (to_char(a.inicio_data,'yyyymmdd')||case coalesce(a.inicio_periodo,'M') when 'M' then 0 else 1 end between w_inicio and w_fim or
