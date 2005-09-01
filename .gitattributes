@@ -1529,6 +1529,7 @@ SP_Oracle92/siw/SP_PutGPContrato.prc -text
 SP_Oracle92/siw/SP_PutGPModalidade.prc -text
 SP_Oracle92/siw/SP_PutGPParametro.prc -text
 SP_Oracle92/siw/SP_PutGPTipoAfast.prc -text
+SP_Oracle92/siw/TG_FN_LANCAMENTO_IN_UP.trg -text
 SP_Oracle92/siw/ac_acordo.tab -text
 SP_Oracle92/siw/ac_acordo_log.tab -text
 SP_Oracle92/siw/ac_acordo_log_arq.tab -text

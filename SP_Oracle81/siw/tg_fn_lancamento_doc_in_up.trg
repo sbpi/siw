@@ -1,7 +1,6 @@
 create or replace trigger TG_FN_LANCAMENTO_DOC_IN_UP
   after insert or update on fn_lancamento_doc
   for each row
-
 declare
   w_quitacao_retencao date;
   w_quitacao_imposto  date;
@@ -11,24 +10,22 @@ declare
   cursor c_imposto_total is
     select a.sq_imposto,
            a.aliquota_total, a.aliquota_retencao, a.aliquota_normal,
-           decode(:new.calcula_tributo,'S',
-                                       decode(:new.calcula_retencao,'S',:new.valor*a.aliquota_total/100,:new.valor*a.aliquota_normal/100),
-                                       decode(:new.calcula_retencao,'S',:new.valor*a.aliquota_retencao/100,0)
+           decode(:new.calcula_tributo,
+                 'S',decode(:new.calcula_retencao,'S',:new.valor*a.aliquota_total/100, :new.valor*a.aliquota_normal/100),
+                     decode(:new.calcula_retencao, 'S', :new.valor*a.aliquota_retencao/100, 0)
                  ) vl_total,
-           decode(:new.calcula_retencao,'S',:new.valor*a.aliquota_retencao/100,0) vl_retencao,
-           decode(:new.calcula_tributo, 'S',:new.valor*a.aliquota_normal/100,  0) vl_normal,
+           decode(:new.calcula_retencao, 'S', :new.valor*a.aliquota_retencao/100, 0) vl_retencao,
+           decode(:new.calcula_tributo, 'S', :new.valor*a.aliquota_normal/100, 0) vl_normal,
            b.calculo, b.dia_pagamento,
-           decode(b.sigla,'CPMF','I','ISS','M','T') prazo
+           decode(b.sigla, 'CPMF', 'I', 'ISS', 'M', 'T') prazo
       from fn_imposto_incid   a,
            fn_imposto         b,
            fn_lancamento      c
-     where (a.sq_imposto         = b.sq_imposto and
-            b.calculo            = 0
-           )
-       and (a.sq_tipo_lancamento = c.sq_tipo_lancamento and
-            c.sq_siw_solicitacao = :new.sq_siw_solicitacao
-           )
-       and a.sq_tipo_documento = :new.sq_tipo_documento;
+     where a.sq_tipo_documento  = :new.sq_tipo_documento
+       and a.sq_imposto         = b.sq_imposto 
+       and b.calculo            = 0
+       and a.sq_tipo_lancamento = c.sq_tipo_lancamento 
+       and c.sq_siw_solicitacao = :new.sq_siw_solicitacao;
 
   -- cursor para recuperar os impostos baseados no valor líquido do documento,
   -- deduzidos os impostos
@@ -39,17 +36,15 @@ declare
            l_valor*a.aliquota_retencao/100 vl_retencao,
            l_valor*a.aliquota_normal/100 vl_normal,
            b.calculo, b.dia_pagamento,
-           decode(b.sigla,'CPMF','I','ISS','M','T') prazo
+           decode(b.sigla, 'CPMF', 'I', 'ISS', 'M', 'T') prazo
       from fn_imposto_incid   a,
            fn_imposto         b,
            fn_lancamento      c
-     where (a.sq_imposto         = b.sq_imposto and
-            b.calculo            = 0
-           )
-       and (a.sq_tipo_lancamento = c.sq_tipo_lancamento and
-            c.sq_siw_solicitacao = :new.sq_siw_solicitacao
-           )
-       and a.sq_tipo_documento = :new.sq_tipo_documento;
+     where a.sq_tipo_documento  = :new.sq_tipo_documento
+       and a.sq_imposto         = b.sq_imposto 
+       and b.calculo            = 1
+       and a.sq_tipo_lancamento = c.sq_tipo_lancamento 
+       and c.sq_siw_solicitacao = :new.sq_siw_solicitacao;
 begin
   -- Remove os impostos existentes para o documento
   delete fn_imposto_doc where sq_lancamento_doc = :new.sq_lancamento_doc;
@@ -119,4 +114,3 @@ begin
 
 end TG_FN_LANCAMENTO_DOC_IN_UP;
 /
-
