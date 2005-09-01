@@ -15,7 +15,7 @@ begin
    If p_restricao = 'PESSOA' Then
       -- Recupera as pessoas da organização
       open p_result for 
-         select a.sq_pessoa, b.cpf, a.nome, a.nome_resumido, a.nome_indice, a.nome_resumido_ind,
+         select a.sq_pessoa, coalesce(b.cpf, c.username) as cpf, a.nome, a.nome_resumido, a.nome_indice, a.nome_resumido_ind,
                 c.username,
                 d.sigla sg_unidade, d.nome nm_unidade, e.nome nm_local
            from co_pessoa                             a

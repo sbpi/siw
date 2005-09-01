@@ -9,7 +9,7 @@ begin
       -- Recupera os dados de identificação do currículo
       open p_result for 
          select a.sq_pessoa, a.nome, a.nome_resumido,
-                b.nascimento, b.rg_numero, b.rg_emissor, b.rg_emissao, b.cpf, b.sq_cidade_nasc,
+                b.nascimento, b.rg_numero, b.rg_emissor, b.rg_emissao, coalesce(b.cpf, n.username) as cpf , b.sq_cidade_nasc,
                 b.passaporte_numero, b.sq_pais_passaporte, b.sq_etnia, b.sq_deficiencia, b.sexo, b.sq_formacao,
                 case b.sexo when 'M' then 'Masculino' else 'Feminino' end nm_sexo,
                 c.sq_estado_civil, c.inclusao, c.alteracao,
@@ -36,18 +36,19 @@ begin
                 m.sq_siw_arquivo, m.nome nm_foto, m.descricao ds_foto, m.inclusao dt_foto,
                 m.tamanho tm_foto, m.tipo tp_foto, m.caminho ln_foto
            from co_pessoa                          a
-                inner        join co_pessoa_fisica b on (a.sq_pessoa          = b.sq_pessoa)
-                  inner      join co_cidade        e on (b.sq_cidade_nasc     = e.sq_cidade)
-                    inner    join co_pais          h on (e.sq_pais            = h.sq_pais)
-                    inner    join co_uf            i on (e.co_uf              = i.co_uf)
-                  left outer join co_pais          g on (b.sq_pais_passaporte = g.sq_pais)
-                  left outer join co_etnia         j on (b.sq_etnia           = j.sq_etnia)
-                  left outer join co_deficiencia   k on (b.sq_deficiencia     = k.sq_deficiencia)
-                  inner      join co_formacao      l on (b.sq_formacao        = l.sq_formacao)
-                  left outer join cv_pessoa        c on (a.sq_pessoa          = c.sq_pessoa)
-                  left outer join cv_pessoa_hist   d on (c.sq_pessoa          = d.sq_pessoa)
-                  inner      join co_estado_civil  f on (c.sq_estado_civil    = f.sq_estado_civil)
-                  left outer join siw_arquivo      m on (c.sq_siw_arquivo     = m.sq_siw_arquivo)
+                left     join sg_autenticacao  n on (a.sq_pessoa          = n.sq_pessoa)
+                left     join co_pessoa_fisica b on (a.sq_pessoa          = b.sq_pessoa)
+                  left   join co_cidade        e on (b.sq_cidade_nasc     = e.sq_cidade)
+                    left join co_pais          h on (e.sq_pais            = h.sq_pais)
+                    left join co_uf            i on (e.co_uf              = i.co_uf)
+                  left   join co_pais          g on (b.sq_pais_passaporte = g.sq_pais)
+                  left   join co_etnia         j on (b.sq_etnia           = j.sq_etnia)
+                  left   join co_deficiencia   k on (b.sq_deficiencia     = k.sq_deficiencia)
+                  left   join co_formacao      l on (b.sq_formacao        = l.sq_formacao)
+                left     join cv_pessoa        c on (a.sq_pessoa          = c.sq_pessoa)
+                  left   join cv_pessoa_hist   d on (c.sq_pessoa          = d.sq_pessoa)
+                  left   join co_estado_civil  f on (c.sq_estado_civil    = f.sq_estado_civil)
+                  left   join siw_arquivo      m on (c.sq_siw_arquivo     = m.sq_siw_arquivo)
           where a.sq_pessoa_pai = p_cliente
             and ((p_chave       is null) or (p_chave is not null and a.sq_pessoa     = p_chave));
    End If;
