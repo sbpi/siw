@@ -337,7 +337,7 @@ begin
                 a.data_hora,          a.envia_dia_util,              a.descricao,
                 a.justificativa,
                 a1.nome nm_modulo,    a1.sigla sg_modulo,            a1.objetivo_geral,
-                a2.sq_tipo_unidade tp_exec, a2.nome nm_unidade_exec,       a2.informal informal_exec,
+                a2.sq_tipo_unidade tp_exec, a2.nome nm_unidade_exec, a2.informal informal_exec,
                 a2.vinculada vinc_exec,a2.adm_central adm_exec,
                 a3.sq_pessoa tit_exec,a4.sq_pessoa subst_exec,
                 b.sq_siw_solicitacao, b.sq_siw_tramite,              b.solicitante,
@@ -353,7 +353,7 @@ begin
                 c.vinculada,          c.adm_central,
                 d.sq_tipo_acordo,     d.outra_parte,                 d.preposto,
                 d.inicio inicio_real, d.fim fim_real,                d.duracao,
-                d.valor_inicial,      d.valor_atual,                 d.codigo_interno,
+                d.valor_inicial,      Nvl(d8.valor,d.valor_atual) valor_atual, d.codigo_interno,
                 d.codigo_externo,     d.objeto,                      d.atividades,
                 d.produtos,           d.requisitos,                  d.observacao,
                 d.dia_vencimento,     d.vincula_projeto,             d.vincula_demanda,
@@ -395,6 +395,13 @@ begin
                                           )                    b2 on (b.sq_siw_solicitacao       = b2.sq_siw_solicitacao)
                       inner          join ac_acordo            d  on (b.sq_siw_solicitacao       = d.sq_siw_solicitacao)
                         inner        join co_forma_pagamento   d7 on (d.sq_forma_pagamento       = d7.sq_forma_pagamento)
+                        left outer   join (select x.sq_siw_solicitacao, sum(z.valor) valor
+                                             from ac_acordo_parcela            x
+                                                  inner   join fn_lancamento   y on (x.sq_acordo_parcela = y.sq_acordo_parcela)
+                                                    inner join siw_solicitacao z on (y.sq_siw_solicitacao = z.sq_siw_solicitacao)
+                                            where x.quitacao is not null
+                                           group by x.sq_siw_solicitacao
+                                          )                   d8 on (d.sq_siw_solicitacao        = d8.sq_siw_solicitacao)
                         inner        join ac_tipo_acordo       d1 on (d.sq_tipo_acordo           = d1.sq_tipo_acordo)
                         left outer   join co_pessoa            d2 on (d.outra_parte              = d2.sq_pessoa)
                           left outer join co_pessoa_fisica    d21 on (d2.sq_pessoa               = d21.sq_pessoa)
