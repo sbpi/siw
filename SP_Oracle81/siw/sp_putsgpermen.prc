@@ -6,17 +6,11 @@ create or replace procedure SP_PutSgPerMen
    ) is
    w_existe    number(18);
    cursor c_permissao is
-      select distinct p_Perfil sq_tipo_vinculo, a.sq_menu, p_Endereco sq_pessoa_endereco, b.filhos
-        from siw_menu a,
-             (select sq_menu, count(*) filhos
-                           from siw_menu
-                         connect by prior sq_menu_pai = sq_menu
-                         group by sq_menu
-                        ) b 
-       where (a.sq_menu = b.sq_menu)
+      select distinct p_Perfil sq_tipo_vinculo, a.sq_menu, p_Endereco sq_pessoa_endereco, level
+        from siw_menu a
       connect by prior a.sq_menu_pai = a.sq_menu
       start with a.sq_menu           = p_Menu
-      order by b.filhos;
+      order by level;
 
    cursor c_filhos is
       select distinct p_Perfil sq_tipo_vinculo, a.sq_menu, p_Endereco sq_pessoa_endereco
@@ -53,19 +47,12 @@ begin
          -- Verifica se a opção a ser excluída tem opções subordinadas a ela.
          -- Exclui apenas se não tiver, para evitar erro.
          select count(*) into w_existe
-           from siw_menu                       a,
-                siw_menu_endereco b,
-                sg_perfil_menu    c
-          where (a.sq_menu            = b.sq_menu and
-                 b.sq_pessoa_endereco = crec.sq_pessoa_endereco
-                )
-            and (b.sq_menu            = c.sq_menu and
-                 b.sq_pessoa_endereco = c.sq_pessoa_endereco and
-                 c.sq_tipo_vinculo    = crec.sq_tipo_vinculo
-                )
-            and a.sq_menu           <> crec.sq_menu
-         connect by prior a.sq_menu = a.sq_menu_pai
-         start with a.sq_menu       = crec.sq_menu;
+           from siw_menu a
+          where sq_menu <> crec.sq_menu
+            and sq_menu in (select sq_menu from siw_menu_endereco where sq_pessoa_endereco = crec.sq_pessoa_endereco)
+            and sq_menu in (select sq_menu from sg_perfil_menu    where sq_tipo_vinculo    = crec.sq_tipo_vinculo and sq_pessoa_endereco = crec.sq_pessoa_endereco)
+         connect by prior sq_menu = sq_menu_pai
+         start with sq_menu = crec.sq_menu;
 
          If w_existe = 0 Then
             delete sg_Perfil_menu
@@ -79,4 +66,3 @@ begin
    commit;
 end SP_PutSgPerMen;
 /
-
