@@ -5,7 +5,7 @@ create or replace procedure SP_GetCV
     p_tipo      in varchar2  default null,
     p_result    out siw.sys_refcursor) is
 begin
-   If p_sigla='CVIDENT' or p_sigla='CVHIST' Then
+   If Substr(p_sigla,1,2) = 'CV' Then
       -- Recupera os dados de identificação do currículo
       open p_result for
          select a.sq_pessoa, a.nome, a.nome_resumido,

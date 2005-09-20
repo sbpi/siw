@@ -13,8 +13,9 @@ create or replace procedure SP_PutSiwUsuario
     p_gestor_seguranca    in  varchar2,
     p_gestor_sistema      in  varchar2
    ) is
-   w_existe number(18);
-   w_chave  number(18);
+   w_existe          number(18);
+   w_chave           number(18);
+   w_sq_tipo_vinculo number(18);
 begin
    If InStr('IA',p_operacao) > 0 Then
       -- Verifica se a pessoa já existe e decide se é inclusão ou alteração
@@ -38,9 +39,12 @@ begin
          
       -- Se existir, executa a alteração
       Else
+         
+         select a.sq_tipo_vinculo into w_sq_tipo_vinculo from co_pessoa a where sq_pessoa = p_chave;
+         
          -- Atualiza tabela corporativa de pessoas
          Update co_pessoa set
-             sq_tipo_vinculo  = p_vinculo,
+             sq_tipo_vinculo  = Nvl(p_vinculo,w_sq_tipo_vinculo),
              nome             = trim(p_nome), 
              nome_resumido    = trim(p_nome_resumido)
          where sq_pessoa      = p_chave;
@@ -60,7 +64,7 @@ begin
          Values
             ( Nvl(w_Chave,p_chave), p_unidade,        p_localizacao,
               p_cliente,            p_username,       p_email,
-              p_gestor_seguranca,   p_gestor_sistema, criptografia(p_username),
+              Nvl(p_gestor_seguranca,'N'),   Nvl(p_gestor_sistema,'N'), criptografia(p_username),
               criptografia(p_username)
             );
       -- Se existir, executa a alteração
@@ -69,8 +73,8 @@ begin
          Update sg_autenticacao set
              sq_unidade       = p_unidade,
              sq_localizacao   = p_localizacao,
-             gestor_seguranca = p_gestor_seguranca,
-             gestor_sistema   = p_gestor_sistema,
+             gestor_seguranca = Nvl(p_gestor_seguranca,gestor_seguranca),
+             gestor_sistema   = Nvl(p_gestor_sistema,gestor_sistema),
              email            = p_email
          where sq_pessoa      = p_chave;
        End If;
@@ -96,4 +100,3 @@ begin
    commit;
 end SP_PutSiwUsuario;
 /
-
