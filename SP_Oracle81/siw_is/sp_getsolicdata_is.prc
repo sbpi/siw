@@ -5,7 +5,8 @@ create or replace procedure SP_GetSolicData_IS
 begin
    If p_restricao = 'ISACGERAL' or p_restricao = 'ISACRESTR'  or p_restricao = 'ISACPROQUA' 
    or p_restricao = 'ISACRESP'  or p_restricao = 'ISACVISUAL' or p_restricao = 'ISACPROFIN' 
-   or p_restricao = 'ISMETA'    or p_restricao = 'ISACINTERE' or p_restricao = 'ISACANEXO' Then
+   or p_restricao = 'ISMETA'    or p_restricao = 'ISACINTERE' or p_restricao = 'ISACANEXO' 
+   or p_restricao = 'VLRAGERAL' Then
       -- Recupera as ações que o usuário pode ver
       open p_result for 
          select a.sq_menu,            a.sq_modulo,                   a.nome,
@@ -72,83 +73,83 @@ begin
                 o.linha_credito,      o.transf_obrigatoria,          o.transf_voluntaria, 
                 o.transf_outras,      o.detalhamento,
                 o1.nome nm_tipo_inclusao_acao
-           from siw.siw_menu                                 a,
+           from siw.siw_menu               a,
                 siw.eo_unidade             a2, 
                 siw.eo_unidade_resp        a3,
                 siw.eo_unidade_resp        a4,
-                siw.siw_modulo       a1,
-                siw.siw_solicitacao  b,
-                siw.siw_tramite      b1,
-                siw.pj_projeto       d,
-                siw.eo_unidade       e,
-                siw.eo_unidade_resp    e1,
-                siw.eo_unidade_resp    e2,
-                is_acao              i,
-                siw.eo_unidade       i1,
-                is_sig_acao          j,
-                is_sig_orgao         j1,
-                is_ppa_acao          o,
-                is_tipo_inclusao_acao o1,
-                is_sig_unidade       n,
-                is_programa          k,
-                is_sig_programa      m,
-                is_projeto           l,
-                siw.co_pessoa        f,
-                siw.co_cidade        h,
-                siw.ct_cc            g,
-                siw.eo_unidade       c
-          where (a.sq_unid_executora        = a2.sq_unidade)
-            and (a2.sq_unidade              = a3.sq_unidade (+) and
-                 a3.tipo_respons (+)            = 'T'           and
-                 a3.fim (+)                     is null)
-            and (a2.sq_unidade              = a4.sq_unidade (+) and
-                 a4.tipo_respons (+)            = 'S'           and
-                 a4.fim (+)                     is null)
-            and (a.sq_modulo           = a1.sq_modulo)
-            and (a.sq_menu             = b.sq_menu)
-            and (b.sq_siw_tramite      = b1.sq_siw_tramite)
-            and (b.sq_siw_solicitacao  = d.sq_siw_solicitacao)
-            and (d.sq_unidade_resp     = e.sq_unidade)
-            and (e.sq_unidade               = e1.sq_unidade (+) and
-                 e1.tipo_respons (+)            = 'T'           and
-                 e1.fim (+)                     is null)
-            and (e.sq_unidade               = e2.sq_unidade (+) and
-                 e2.tipo_respons (+)            = 'S'           and
-                 e2.fim (+)                     is null)
-            and (d.sq_siw_solicitacao  = i.sq_siw_solicitacao (+))
-            and (i.sq_unidade          = i1.sq_unidade (+))
-            and (i.cd_acao             = j.cd_acao (+)              and
-                 i.cd_programa         = j.cd_programa (+)          and
-                 i.cd_subacao          = j.cd_subacao (+)           and
-                 i.ano                 = j.ano (+)                  and
-                 i.cliente             = j.cliente (+))
-            and (j.cd_orgao            = j1.cd_orgao (+)            and
-                 j.cd_tipo_orgao       = j1.cd_tipo_orgao           and
-                 j.ano                 = j1.ano)
-            and (j.cd_programa         = o.cd_programa (+)          and
-                 j.cd_acao             = o.cd_acao (+)              and
-                 j.cd_unidade          = o.cd_unidade (+)           and
-                 j.cliente             = o.cliente (+)              and
-                 j.ano                 = o.ano (+))
-            and (o.cd_tipo_inclusao    = o1.cd_tipo_inclusao (+))
-            and (j.cd_unidade          = n.cd_unidade (+)           and
-                 j.ano                 = n.ano (+))
-            and (j.cd_programa         = k.cd_programa (+)          and
-                 j.ano                 = k.ano (+)                  and
-                 j.cliente             = k.cliente (+))
-            and (j.cd_programa         = m.cd_programa (+)          and
-                 j.ano                 = m.ano (+)                  and
-                 j.cliente             = m.cliente (+))
-            and (i.sq_isprojeto        = l.sq_isprojeto (+)         and
-                 i.cliente             = l.cliente (+))
-            and (b.solicitante         = f.sq_pessoa)
-            and (b.sq_cidade_origem    = h.sq_cidade)
-            and (b.sq_cc               = g.sq_cc (+))
-            and (a.sq_unid_executora   = c.sq_unidade (+))
+                siw.siw_modulo             a1,
+                siw.siw_solicitacao        b,
+                siw.siw_tramite            b1,
+                siw.pj_projeto             d,
+                siw.eo_unidade             e,
+                siw.eo_unidade_resp        e1,
+                siw.eo_unidade_resp        e2,
+                is_acao                    i,
+                siw.eo_unidade             i1,
+                is_sig_acao                j,
+                is_sig_orgao               j1,
+                is_ppa_acao                o,
+                is_tipo_inclusao_acao      o1,
+                is_sig_unidade             n,
+                is_programa                k,
+                is_sig_programa            m,
+                is_projeto                 l,
+                siw.co_pessoa              f,
+                siw.co_cidade              h,
+                siw.ct_cc                  g,
+                siw.eo_unidade             c
+          where (a.sq_unid_executora       = a2.sq_unidade)
+            and (a2.sq_unidade             = a3.sq_unidade        (+) and
+                 a3.tipo_respons (+)       = 'T'                      and
+                 a3.fim (+)                is null)
+            and (a2.sq_unidade             = a4.sq_unidade        (+) and
+                 a4.tipo_respons (+)       = 'S'                      and
+                 a4.fim (+)                is null)
+            and (a.sq_modulo               = a1.sq_modulo)
+            and (a.sq_menu                 = b.sq_menu)
+            and (b.sq_siw_tramite          = b1.sq_siw_tramite)
+            and (b.sq_siw_solicitacao      = d.sq_siw_solicitacao (+))
+            and (d.sq_unidade_resp         = e.sq_unidade)
+            and (e.sq_unidade              = e1.sq_unidade        (+) and
+                 e1.tipo_respons (+)       = 'T'                      and
+                 e1.fim (+)                is null)
+            and (e.sq_unidade              = e2.sq_unidade        (+) and
+                 e2.tipo_respons (+)       = 'S'                      and
+                 e2.fim (+)                is null)
+            and (d.sq_siw_solicitacao      = i.sq_siw_solicitacao (+))
+            and (i.sq_unidade              = i1.sq_unidade        (+))
+            and (i.cd_acao                 = j.cd_acao            (+) and
+                 i.cd_programa             = j.cd_programa        (+) and
+                 i.cd_subacao              = j.cd_subacao         (+) and
+                 i.ano                     = j.ano                (+) and
+                 i.cliente                 = j.cliente            (+))
+            and (j.cd_orgao                = j1.cd_orgao          (+) and
+                 j.cd_tipo_orgao           = j1.cd_tipo_orgao     (+) and
+                 j.ano                     = j1.ano               (+))
+            and (j.cd_programa             = o.cd_programa        (+) and
+                 j.cd_acao                 = o.cd_acao            (+) and
+                 j.cd_unidade              = o.cd_unidade         (+) and
+                 j.cliente                 = o.cliente            (+) and
+                 j.ano                     = o.ano                (+))
+            and (o.cd_tipo_inclusao        = o1.cd_tipo_inclusao  (+))
+            and (j.cd_unidade              = n.cd_unidade         (+) and
+                 j.ano                     = n.ano                (+))
+            and (j.cd_programa             = k.cd_programa        (+) and
+                 j.ano                     = k.ano                (+) and
+                 j.cliente                 = k.cliente            (+))
+            and (j.cd_programa             = m.cd_programa        (+) and
+                 j.ano                     = m.ano                (+) and
+                 j.cliente                 = m.cliente            (+))
+            and (i.sq_isprojeto            = l.sq_isprojeto       (+) and
+                 i.cliente                 = l.cliente            (+))
+            and (b.solicitante             = f.sq_pessoa)
+            and (b.sq_cidade_origem        = h.sq_cidade          (+))
+            and (b.sq_cc                   = g.sq_cc              (+))
+            and (a.sq_unid_executora       = c.sq_unidade         (+))
             and b.sq_siw_solicitacao       = p_chave;
    Elsif p_restricao = 'ISPRGERAL'  or p_restricao = 'ISPRRESP'  or  p_restricao = 'ISPRVISUAL' or
          p_restricao = 'ISPRPROQUA' or p_restricao = 'ISPRINDIC' or  p_restricao = 'ISPRRESTR'  or
-         p_restricao = 'ISPRINTERE' or p_restricao = 'ISPRANEXO' Then
+         p_restricao = 'ISPRINTERE' or p_restricao = 'ISPRANEXO' or  p_restricao = 'VLRPGERAL' Then
       -- Recupera as ações que o usuário pode ver
       open p_result for 
          select a.sq_menu,            a.sq_modulo,                   a.nome,

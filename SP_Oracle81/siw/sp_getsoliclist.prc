@@ -384,7 +384,7 @@ begin
                 a.data_hora,          a.envia_dia_util,              a.descricao,
                 a.justificativa,
                 a1.nome nm_modulo,    a1.sigla sg_modulo,            a1.objetivo_geral,
-                a2.sq_tipo_unidade tp_exec, a2.nome nm_unidade_exec,       a2.informal informal_exec,
+                a2.sq_tipo_unidade tp_exec, a2.nome nm_unidade_exec, a2.informal informal_exec,
                 a2.vinculada vinc_exec,a2.adm_central adm_exec,
                 a3.sq_pessoa tit_exec,a4.sq_pessoa subst_exec,
                 b.sq_siw_solicitacao, b.sq_siw_tramite,              b.solicitante,
@@ -400,7 +400,7 @@ begin
                 c.vinculada,          c.adm_central,
                 d.sq_tipo_acordo,     d.outra_parte,                 d.preposto,
                 d.inicio inicio_real, d.fim fim_real,                d.duracao,
-                d.valor_inicial,      d.valor_atual,                 d.codigo_interno,
+                d.valor_inicial,      Nvl(d8.valor,d.valor_atual),   d.codigo_interno,
                 d.codigo_externo,     d.objeto,                      d.atividades,
                 d.produtos,           d.requisitos,                  d.observacao,
                 d.dia_vencimento,     d.vincula_projeto,             d.vincula_demanda,
@@ -436,6 +436,15 @@ begin
                                           )                    b2,
                 ac_acordo            d,
                 co_forma_pagamento   d7,
+                (select x.sq_siw_solicitacao, sum(z.valor) valor
+                   from ac_acordo_parcela x,
+                        fn_lancamento     y,
+                        siw_solicitacao   z
+                  where (x.sq_acordo_parcela  = y.sq_acordo_parcela)
+                    and (y.sq_siw_solicitacao = z.sq_siw_solicitacao)
+                    and x.quitacao            is not null
+                 group by x.sq_siw_solicitacao
+                )                    d8,
                 ac_tipo_acordo       d1,
                 co_pessoa            d2,
                 co_pessoa_fisica     d21,
@@ -476,6 +485,7 @@ begin
             and (b.sq_siw_solicitacao       = b2.sq_siw_solicitacao)
             and (b.sq_siw_solicitacao       = d.sq_siw_solicitacao)
             and (d.sq_forma_pagamento       = d7.sq_forma_pagamento)
+            and (d.sq_siw_solicitacao        = d8.sq_siw_solicitacao (+))
             and (d.sq_tipo_acordo           = d1.sq_tipo_acordo)
             and (d.outra_parte              = d2.sq_pessoa (+))
             and (d2.sq_pessoa               = d21.sq_pessoa (+))
@@ -594,7 +604,7 @@ begin
                 e.vinculada vinc_resp,e.adm_central adm_resp,        e.sigla sg_unidade_resp,
                 e1.sq_pessoa titular, e2.sq_pessoa substituto,
                 f.sq_pais,            f.sq_regiao,                   f.co_uf,
-                m.codigo_interno cd_acordo,
+                m.codigo_interno cd_acordo, m.objeto obj_acordo,
                 m1.ordem or_parcela,
                 n.sq_cc,              n.nome nm_cc,                  n.sigla sg_cc,
                 o.nome_resumido nm_solic, o.nome_resumido||' ('||o2.sigla||')' nm_resp,
@@ -788,4 +798,3 @@ begin
    End If;
 end SP_GetSolicList;
 /
-

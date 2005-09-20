@@ -20,11 +20,11 @@ begin
              e.sq_siw_solicitacao sq_projeto, e.titulo nm_projeto,
              f.sq_cc, f.nome nm_cc,
              g.sq_pessoa sq_pessoa, g.nome_resumido nm_pessoa_resumido,
-             (vencimento - trunc(sysdate)) prazo
-        from fn_lancamento                      a,
+             decode(b.conclusao,null,(vencimento - trunc(sysdate)),(vencimento - trunc(a.quitacao))) prazo
+        from fn_lancamento      a,
              siw_solicitacao    b,
-               siw_menu           b1,
-               siw_tramite        b2,
+             siw_menu           b1,
+             siw_tramite        b2,
              fn_tipo_lancamento c,
              ac_acordo          d,
              pj_projeto         e,
@@ -61,7 +61,7 @@ begin
              e.sq_siw_solicitacao sq_projeto, e.titulo nm_projeto,
              f.sq_cc, f.nome nm_cc,
              g.sq_pessoa sq_pessoa, g.nome_resumido nm_pessoa_resumido,
-             (d.vencimento - trunc(sysdate)) prazo
+             decode(b.conclusao,null,(vencimento - trunc(sysdate)),(vencimento - trunc(h.quitacao))) prazo
         from ac_acordo                            a,
              siw_solicitacao    b,
                siw_menu           b1,
@@ -103,4 +103,3 @@ begin
       order by 2,11;
 End SP_GetLancamento;
 /
-

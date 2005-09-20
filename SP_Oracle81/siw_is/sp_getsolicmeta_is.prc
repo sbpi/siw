@@ -126,8 +126,11 @@ begin
                 decode(a.programada,'S','Sim','Não') nm_programada,
                 decode(a.cumulativa,'S','Sim','Não') nm_cumulativa,                
                 d.nome_resumido||' ('||f.sigla||')' nm_resp, g.sigla sg_setor,
-                i.solicitante sq_pessoa, i.sq_unidade
-            from is_meta                             a,
+                i.solicitante sq_pessoa, i.sq_unidade,
+                m.real_mes_1, m.real_mes_2, m.real_mes_3, m.real_mes_4, m.real_mes_5,
+                m.real_mes_6, m.real_mes_7, m.real_mes_8, m.real_mes_9, m.real_mes_10,
+                m.real_mes_11, m.real_mes_12, m.previsao_ano, m.atual_ano, m.real_ano
+            from is_meta            a,
                 siw.siw_solicitacao i,
                 siw.siw_menu        j,
                 siw.eo_unidade_resp k,
@@ -137,7 +140,9 @@ begin
                 siw.co_pessoa       d,
                 siw.sg_autenticacao e,
                 siw.eo_unidade      f,
-                siw.eo_unidade      g
+                siw.eo_unidade      g,
+                is_acao             h,
+                is_sig_dado_financeiro m
           where (a.sq_siw_solicitacao = i.sq_siw_solicitacao)
             and (i.sq_menu            = j.sq_menu)
             and (j.sq_unid_executora  = k.sq_unidade (+) and
@@ -156,6 +161,12 @@ begin
             and (d.sq_pessoa          = e.sq_pessoa)
             and (e.sq_unidade         = f.sq_unidade)
             and (i.sq_unidade         = g.sq_unidade)
+            and (a.sq_siw_solicitacao = h.sq_siw_solicitacao (+))
+            and (h.cd_programa        = m.cd_programa        (+) and
+                 h.cd_acao            = m.cd_acao            (+) and
+                 h.cd_subacao         = m.cd_subacao         (+) and
+                 h.cliente            = m.cliente            (+) and
+                 h.ano                = m.ano)
             and a.sq_siw_solicitacao = p_chave
             and a.sq_meta = p_chave_aux;
 
