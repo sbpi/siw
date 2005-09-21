@@ -30,8 +30,7 @@ begin
          update is_sig_orgao set
             nome          = p_nome,
             sigla         = p_sigla,
-            ativo         = p_ativo,
-            flag_inclusao = sysdate
+            ativo         = p_ativo
           where ano           = p_ano
             and cd_orgao      = p_chave
             and cd_tipo_orgao = p_tipo_org;

@@ -1,5 +1,5 @@
 create or replace procedure sp_PutXMLTipo_Situacao
-   (p_chave    in  number   default null,
+   (p_chave    in  varchar2 default null,
     p_nome     in  varchar2,
     p_tipo     in  varchar2 default null,
     p_ativo    in  varchar2 default null
@@ -26,8 +26,7 @@ begin
          update is_sig_tipo_situacao set
             nome          = p_nome,
             tipo          = p_tipo,
-            ativo         = 'S',
-            flag_inclusao = sysdate
+            ativo         = 'S'
           where cd_tipo_situacao = p_chave;
       End If;
    End If;

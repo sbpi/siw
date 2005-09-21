@@ -29,8 +29,7 @@ begin
             descricao     = Nvl(p_desc,descricao),
             observacao    = p_observ,
             totalizacao   = p_total,
-            ativo         = 'S',
-            flag_inclusao = sysdate
+            ativo         = 'S'
           where cd_fonte = p_chave;
       End If;
    End If;

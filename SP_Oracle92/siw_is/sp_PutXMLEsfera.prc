@@ -24,8 +24,7 @@ begin
          -- Altera registro
          update is_ppa_esfera set
             nome          = p_nome,
-            ativo         = 'S',
-            flag_inclusao = sysdate
+            ativo         = 'S'
           where cd_esfera = p_chave;
       End If;
    End If;

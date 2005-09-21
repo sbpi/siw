@@ -37,8 +37,7 @@ begin
       update is_municipio set
          cd_regiao     = p_regiao,
          sq_cidade     = w_sq_cidade,
-         nome          = p_nome,
-         flag_inclusao = sysdate
+         nome          = p_nome
        where cd_municipio      = p_chave;
    End If;
 end sp_PutXMLMunicipio;

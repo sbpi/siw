@@ -25,7 +25,9 @@ begin
                 c.qtd_tabela,
                 e.sq_ocorrencia, e.data_ocorrencia, e.data_referencia, e.processados, e.rejeitados,
                 e.arquivo_processamento, e.arquivo_rejeicao,
-                f.sq_pessoa, f.nome nm_pessoa, f.nome_resumido nm_pessoa_resumido
+                f.sq_pessoa, f.nome nm_pessoa, f.nome_resumido nm_pessoa_resumido,
+                g.nome nm_recebido, g.tamanho tm_recebido, g.tipo tp_recebido, g.caminho cm_recebido,
+                h.nome nm_result,   h.tamanho tm_result,   h.tipo tp_result,   h.caminho cm_result                
            from dc_esquema                        a
                 inner          join siw_modulo    b on (a.sq_modulo     = b.sq_modulo)
                 left outer     join (select sq_esquema, count(*) qtd_tabela
@@ -38,15 +40,16 @@ begin
                                     )             d on (a.sq_esquema    = d.sq_esquema)
                   left outer   join dc_ocorrencia e on (d.sq_ocorrencia = e.sq_ocorrencia)
                     left outer join co_pessoa     f on (e.sq_pessoa     = f.sq_pessoa)
+                    left outer join siw_arquivo   g on (e.arquivo_processamento = g.sq_siw_arquivo)
+                    left outer join siw_arquivo   h on (e.arquivo_rejeicao      = h.sq_siw_arquivo)
           where a.cliente = p_cliente
             and ((p_chave    is null) or (p_chave   is not null and a.sq_esquema  = p_chave))
             and ((p_modulo   is null) or (p_modulo  is not null and a.sq_modulo   = p_modulo))
             and ((p_nome     is null) or (p_nome    is not null and upper(a.nome) like '%'||upper(p_nome)||'%'))
-            and ((p_tipo     is null) or (p_tipo    is not null and tipo          = p_tipo))
+            and ((p_tipo     is null) or (p_tipo    is not null and a.tipo        = p_tipo))
             and ((p_formato  is null) or (p_formato is not null and formato       = p_formato))
             and ((p_dt_ini   is null) or (p_dt_ini  is not null and e.data_ocorrencia between p_dt_ini and p_dt_fim+1))
             and ((p_ref_ini  is null) or (p_ref_ini is not null and e.data_referencia between p_ref_ini and p_ref_fim+1));
    End If;
 end SP_GetEsquema;
 /
-

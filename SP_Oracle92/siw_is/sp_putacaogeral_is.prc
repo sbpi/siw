@@ -50,6 +50,7 @@ create or replace procedure SP_PutAcaoGeral_IS
    w_ativ    number(18);
    w_arq     varchar2(4000) := ', ';
    i         number(10) := 0;
+      --w_referencia number(2) := to_number(sysdate,'aaaa') - 2003;
     
    type rec_etapa is record (
        sq_chave_destino       number(10) := null,
@@ -120,7 +121,7 @@ begin
                               qtd_ano_2, qtd_ano_3, qtd_ano_4, qtd_ano_5, qtd_ano_6, unidade_medida,
                               cd_subacao)
          (select sq_meta.nextval, w_chave, b.nome|| ' - ' ||c.nome, ' ', 0, p_inicio, 
-                 p_fim, c.qtd_ano_corrente, Nvl(d.cumulativa,'N'), d.qtd_ano_1,
+                 p_fim, f.previsao_ano, case a.meta_nao_cumulativa when 'S' then 'N' else 'S' end, d.qtd_ano_1,
                  d.qtd_ano_2, d.qtd_ano_3, d.qtd_ano_4, d.qtd_ano_5, d.qtd_ano_6, e.nome,
                  a.cd_subacao
             from is_sig_acao                        a
@@ -136,13 +137,18 @@ begin
                                                           c.cliente            = d.cliente            and
                                                           c.ano                = d.ano)
                 inner      join is_sig_unidade_medida e on (a.cd_unidade_medida = e.cd_unidade_medida)
+                left outer join is_sig_dado_fisico    f on (a.cd_programa       = f.cd_programa       and
+                                                            a.cd_acao           = f.cd_acao           and
+                                                            a.cd_subacao        = f.cd_subacao        and
+                                                            a.cliente           = f.cliente           and
+                                                            a.ano               = f.ano) 
           where a.cd_programa = p_programa
             and a.cd_acao     = p_acao
             and a.cd_unidade  = p_cd_unidade
             and a.cliente     = p_cliente
             and a.ano         = p_ano);
          -- Grava as restrições da ação PPA na tabela de restrições do módulo infra-sig(IS_RESTRICAO) 
-         /*insert into is_restricao (sq_restricao, sq_acao, sq_projeto, cd_tipo_restricao,
+         insert into is_restricao (sq_restricao, sq_acao, sq_projeto, cd_tipo_restricao,
                                    cd_tipo_inclusao, cd_competencia, inclusao, descricao, providencia,
                                    superacao, relatorio, tempo_habil, observacao_monitor, observacao_controle)
          (select sq_restricao.nextval, w_chave, p_sq_isprojeto, a.cd_tipo_restricao,
@@ -152,7 +158,7 @@ begin
            where a.cd_programa = p_programa
              and a.cd_acao     = p_acao
              and a.cliente     = p_cliente
-             and a.ano         = p_ano);*/
+             and a.ano         = p_ano);
       Elsif p_programa is not null and p_acao is null Then
          -- Grava os dados complementares ao projeto, relativos ao programa orçamentário
          insert into is_programa  (sq_siw_solicitacao, ano, cd_programa, cliente, sq_natureza, sq_horizonte, selecao_mp, selecao_se, sq_unidade)
@@ -162,12 +168,12 @@ begin
                                    is_ano, is_cd_programa, cliente, cd_indicador, cd_unidade_medida,
                                    cd_periodicidade, cd_base_geografica, titulo, fonte, formula,
                                    valor_referencia, apuracao_referencia, previsao_ano_1, 
-                                   previsao_ano_2, previsao_ano_3, previsao_ano_4, observacao, ordem)  
+                                   previsao_ano_2, previsao_ano_3, previsao_ano_4, observacao, ordem, quantidade)  
          (select sq_indicador.nextval, w_chave, a.ano, a.cd_programa, a.cliente, a.ano,a.cd_programa, 
                  a.cliente, a.cd_indicador, a.cd_unidade_medida, a.cd_periodicidade,  
-                 a.cd_base_geografica, a.nome, a.fonte, a.formula, b.valor_referencia, 
+                 a.cd_base_geografica, a.nome, a.fonte, a.formula, a.valor_apurado, 
                  b.apuracao, b.valor_ano_1, b.valor_ano_2, b.valor_ano_3, b.valor_ano_4, 
-                 b.observacao, 0
+                 b.observacao, 0, b.valor_ano_2
             from is_sig_indicador a
                  inner join is_ppa_indicador b on (a.cliente      = b.cliente     and
                                                    a.ano          = b.ano         and
@@ -183,7 +189,7 @@ begin
             where cd_programa = p_programa;
          End If;
          -- Grava as restrições do programa PPA na tabela de restrições do módulo infra-sig(IS_RESTRICAO) 
-        /* insert into is_restricao (sq_restricao, sq_programa, cd_tipo_restricao,
+        insert into is_restricao (sq_restricao, sq_programa, cd_tipo_restricao,
                                    cd_tipo_inclusao, cd_competencia, inclusao, descricao, providencia,
                                    superacao, relatorio, tempo_habil, observacao_monitor, observacao_controle)
          (select sq_restricao.nextval, w_chave, a.cd_tipo_restricao, a.cd_tipo_inclusao, 
@@ -192,7 +198,7 @@ begin
             from is_sig_restricao_programa a
            where a.cd_programa = p_programa
              and a.cliente     = p_cliente
-             and a.ano         = p_ano);*/
+             and a.ano         = p_ano);
       End If;
 
       -- Insere log da solicitação
@@ -255,7 +261,7 @@ begin
                                      qtd_ano_2, qtd_ano_3, qtd_ano_4, qtd_ano_5, qtd_ano_6, unidade_medida,
                                      cd_subacao)
                 (select sq_meta.nextval, w_chave, b.nome|| ' - ' ||c.nome, ' ', 0, p_inicio, 
-                        p_fim, c.qtd_ano_corrente, Nvl(d.cumulativa,'N'), d.qtd_ano_1,
+                        p_fim, f.previsao_ano, case a.meta_nao_cumulativa when 'S' then 'N' else 'S' end, d.qtd_ano_1,
                         d.qtd_ano_2, d.qtd_ano_3, d.qtd_ano_4, d.qtd_ano_5, d.qtd_ano_6, e.nome,
                         a.cd_subacao
                    from is_sig_acao                        a
@@ -271,13 +277,18 @@ begin
                                                                  c.cliente            = d.cliente            and
                                                                  c.ano                = d.ano)
                         inner      join is_sig_unidade_medida e on (a.cd_unidade_medida = e.cd_unidade_medida)
+                        left outer join is_sig_dado_fisico    f on (a.cd_programa       = f.cd_programa      and
+                                                                    a.cd_acao           = f.cd_acao          and
+                                                                    a.cd_subacao        = f.cd_subacao       and
+                                                                    a.cliente           = f.cliente          and
+                                                                    a.ano               = f.ano)
                   where a.cd_programa = p_programa
                     and a.cd_acao     = p_acao
                     and a.cd_unidade  = p_cd_unidade
                     and a.cliente     = p_cliente
                     and a.ano         = p_ano);
                 -- Grava as restrições da ação PPA na tabela de restrições do módulo infra-sig(IS_RESTRICAO) 
-               /* insert into is_restricao (sq_restricao, sq_acao, sq_projeto, cd_tipo_restricao,
+               insert into is_restricao (sq_restricao, sq_acao, sq_projeto, cd_tipo_restricao,
                                           cd_tipo_inclusao, cd_competencia, inclusao, descricao, providencia,
                                           superacao, relatorio, tempo_habil, observacao_monitor, observacao_controle)
                 (select sq_restricao.nextval, w_chave, p_sq_isprojeto, a.cd_tipo_restricao,
@@ -287,7 +298,7 @@ begin
                   where a.cd_programa = p_programa
                     and a.cd_acao     = p_acao
                     and a.cliente     = p_cliente
-                    and a.ano         = p_ano);*/
+                    and a.ano         = p_ano);
              Elsif p_programa is not null and p_acao is null Then
                 -- Grava os dados complementares ao projeto, relativos ao programa orçamentário
                 insert into is_programa  (sq_siw_solicitacao, ano, cd_programa, cliente, sq_natureza, sq_horizonte, selecao_mp, selecao_se, sq_unidade)
@@ -297,12 +308,12 @@ begin
                                           is_ano, is_cd_programa, cliente, cd_indicador, cd_unidade_medida,
                                           cd_periodicidade, cd_base_geografica, titulo, fonte, formula,
                                           valor_referencia, apuracao_referencia, previsao_ano_1, 
-                                          previsao_ano_2, previsao_ano_3, previsao_ano_4, observacao, ordem)  
+                                          previsao_ano_2, previsao_ano_3, previsao_ano_4, observacao, ordem, quantidade)  
                 (select sq_indicador.nextval, w_chave, a.ano, a.cd_programa, a.cliente, a.ano,a.cd_programa, 
                         a.cliente, a.cd_indicador, a.cd_unidade_medida, a.cd_periodicidade,  
-                        a.cd_base_geografica, a.nome, a.fonte, a.formula, b.valor_referencia, 
+                        a.cd_base_geografica, a.nome, a.fonte, a.formula, a.valor_apurado, 
                         b.apuracao, b.valor_ano_1, b.valor_ano_2, b.valor_ano_3, b.valor_ano_4, 
-                        b.observacao, 0
+                        b.observacao, 0, b.valor_ano_2
                    from is_sig_indicador a
                         inner join is_ppa_indicador b on (a.cliente      = b.cliente     and
                                                           a.ano          = b.ano         and
@@ -318,16 +329,16 @@ begin
                    where cd_programa = p_programa;
              End If;
              -- Grava as restrições do programa PPA na tabela de restrições do módulo infra-sig(IS_RESTRICAO) 
-/*           insert into is_restricao (sq_restricao, sq_programa, cd_tipo_restricao, , 
+           insert into is_restricao (sq_restricao, sq_programa, cd_tipo_restricao,
                                        cd_tipo_inclusao, cd_competencia, inclusao, descricao, providencia,
                                        superacao, relatorio, tempo_habil, observacao_monitor, observacao_controle)
-             (select sq_restricao.nextval, w_chave, a.cd_tipo_restricao, a.cd_restricao_programa,
-                     a.cd_tipo_inclusao, a.cd_competencia, a.inclusao, a.descricao, a.providencia,
-                     a.superacao, a.relatorio, a.tempo_habil, a.observacao_monitor, a.observacao_controle
+             (select sq_restricao.nextval, w_chave, a.cd_tipo_restricao, a.cd_tipo_inclusao,
+                     a.cd_competencia, a.inclusao, a.descricao, a.providencia, a.superacao, a.relatorio,
+                     a.tempo_habil, a.observacao_monitor, a.observacao_controle
                 from is_sig_restricao_programa a
                where a.cd_programa = p_programa
-                     a.cliente     = p_cliente
-                     a.ano         = p_ano);*/
+                 and a.cliente     = p_cliente
+                 and a.ano         = p_ano);
           End If;
 
           end loop;
@@ -531,4 +542,3 @@ begin
    End If;
 end SP_PutAcaoGeral_IS;
 /
-

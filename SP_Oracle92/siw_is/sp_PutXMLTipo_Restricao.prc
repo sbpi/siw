@@ -24,8 +24,7 @@ begin
          -- Altera registro
          update is_sig_tipo_restricao set
             nome          = p_nome,
-            ativo         = 'S',
-            flag_inclusao = sysdate
+            ativo         = 'S'
           where cd_tipo_restricao = p_chave;
       End If;
    End If;

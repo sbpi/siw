@@ -107,7 +107,10 @@ begin
                 case a.programada when 'S' then 'Sim' else 'Não' end nm_programada,
                 case a.cumulativa when 'S' then 'Sim' else 'Não' end nm_cumulativa,                
                 d.nome_resumido||' ('||f.sigla||')' nm_resp, g.sigla sg_setor,
-                i.solicitante sq_pessoa, i.sq_unidade
+                i.solicitante sq_pessoa, i.sq_unidade,
+                m.real_mes_1, m.real_mes_2, m.real_mes_3, m.real_mes_4, m.real_mes_5,
+                m.real_mes_6, m.real_mes_7, m.real_mes_8, m.real_mes_9, m.real_mes_10,
+                m.real_mes_11, m.real_mes_12, m.previsao_ano, m.atual_ano, m.real_ano
             from is_meta                             a
                 inner          join siw.siw_solicitacao i on (a.sq_siw_solicitacao = i.sq_siw_solicitacao)
                   inner        join siw.siw_menu        j on (i.sq_menu            = j.sq_menu)
@@ -131,6 +134,12 @@ begin
                   inner        join siw.sg_autenticacao e on (d.sq_pessoa          = e.sq_pessoa)
                     inner      join siw.eo_unidade      f on (e.sq_unidade         = f.sq_unidade)
                 inner          join siw.eo_unidade      g on (i.sq_unidade         = g.sq_unidade)
+                left outer     join is_acao             h on (a.sq_siw_solicitacao = h.sq_siw_solicitacao)
+                left outer  join is_sig_dado_financeiro m on (h.cd_programa        = m.cd_programa and
+                                                              h.cd_acao            = m.cd_acao     and
+                                                              h.cd_subacao         = m.cd_subacao  and
+                                                              h.cliente            = m.cliente     and
+                                                              h.ano                = m.ano)
           where a.sq_siw_solicitacao = p_chave
             and a.sq_meta = p_chave_aux;
 
@@ -143,4 +152,3 @@ begin
    End If;
 End SP_GetSolicMeta_IS;
 /
-

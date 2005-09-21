@@ -26,8 +26,7 @@ begin
          update is_ppa_natureza set
             nome          = p_nome,
             descricao     = p_desc,
-            ativo         = 'S',
-            flag_inclusao = sysdate
+            ativo         = 'S'
           where cd_natureza = p_chave;
       End If;
    End If;

@@ -232,7 +232,9 @@ begin
                 Nvl(q.existe,0) resp_etapa,
                 r.cd_programa,        r.cd_acao,                     r.cd_subacao,
                 upper(r.nm_coordenador) nm_coordenador,              r1.cd_unidade,
-                r1.cd_unidade||'.'||r.cd_programa||'.'||r.cd_acao cd_acao_completa
+                r1.cd_unidade||'.'||r.cd_programa||'.'||r.cd_acao cd_acao_completa,
+                r2.previsao_ano,      r2.atual_ano,                  r2.real_ano,
+                r2.flag_alteracao dt_carga_financ
            from siw.siw_menu                                       a 
                    inner        join siw.eo_unidade                a2 on (a.sq_unid_executora        = a2.sq_unidade)
                      left outer join siw.eo_unidade_resp           a3 on (a2.sq_unidade              = a3.sq_unidade and
@@ -265,6 +267,11 @@ begin
                                                                       r.cd_subacao               = r1.cd_subacao   and
                                                                       r.cliente                  = r1.cliente      and
                                                                       r.ano                      = r1.ano)
+                        left outer join is_sig_dado_financeiro r2 on (r1.cd_programa             = r2.cd_programa  and
+                                                                      r1.cd_acao                 = r2.cd_acao      and
+                                                                      r1.cd_subacao              = r2.cd_subacao   and
+                                                                      r1.cliente                 = r2.cliente      and
+                                                                      r1.ano                     = r2.ano)
                       inner          join siw.co_cidade            f  on (b.sq_cidade_origem         = f.sq_cidade)
                       left outer     join siw.ct_cc                n  on (b.sq_cc                    = n.sq_cc)
                       left outer     join siw.co_pessoa            o  on (b.solicitante              = o.sq_pessoa)

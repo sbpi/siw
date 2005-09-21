@@ -28,8 +28,7 @@ begin
    Else
       -- Altera registro
       update is_sig_unidade set
-         nome            = p_nome,
-         flag_inclusao = sysdate
+         nome            = p_nome
        where ano             = p_ano
          and cd_unidade      = p_chave
          and cd_tipo_unidade = p_tipo_unid

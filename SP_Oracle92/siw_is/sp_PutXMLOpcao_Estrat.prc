@@ -1,5 +1,5 @@
 create or replace procedure sp_PutXMLOpcao_Estrat
-   (p_chave    in  number   default null,
+   (p_chave    in  varchar2 default null,
     p_nome     in  varchar2,
     p_ativo    in  varchar2 default null
    ) is
@@ -24,8 +24,7 @@ begin
          -- Altera registro
          update is_sig_opcao_estrat set
             nome          = p_nome,
-            ativo         = 'S',
-            flag_inclusao = sysdate
+            ativo         = 'S'
           where cd_opcao = p_chave;
       End If;
    End If;

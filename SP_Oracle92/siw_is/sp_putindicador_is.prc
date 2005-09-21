@@ -36,6 +36,19 @@ create or replace procedure sp_PutIndicador_IS
     p_prev_ano_4         in number    default null,
     p_restricao          in number    default null                       
    ) is
+   
+   w_cd_indicador number(4);
+   w_sql          varchar2(2000);
+   
+   cursor c_atualiza_indicador is
+      select 'update is_sig_indicador '||
+             '   set valor_mes_1 = '||Nvl(p_indice_apurado,0)||', '||
+             '       flag_alteracao = sysdate'||
+             ' where ano          = '||a.ano||' '||
+             '   and cliente      = '||a.cliente||'  '||
+             '   and cd_indicador = '||a.cd_indicador||' ' w_sql
+        from is_indicador    a
+       where a.sq_indicador = p_chave_aux;
 begin
    If p_operacao = 'I' Then
       -- Insere registro
@@ -106,6 +119,15 @@ begin
                 justificativa_inexequivel = p_justificativa_inex,
                 outras_medidas            = p_outras_medidas
           where sq_indicador = p_chave_aux;
+      
+      select cd_indicador into w_cd_indicador from is_indicador where sq_indicador = p_chave_aux;
+      
+      If Nvl(w_cd_indicador,0) > 0 Then
+         for crec in c_atualiza_indicador loop
+            EXECUTE IMMEDIATE crec.w_sql;
+         End loop;
+      End If;
+                 
    End If;
    Elsif p_operacao = 'E' Then
       -- Exclui registro
@@ -114,4 +136,3 @@ begin
    End If;
 end sp_PutIndicador_IS;
 /
-

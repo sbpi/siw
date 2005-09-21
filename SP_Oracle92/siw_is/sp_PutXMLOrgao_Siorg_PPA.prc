@@ -39,8 +39,7 @@ begin
             cd_orgao           = w_orgao,
             cd_tipo_orgao      = w_tipo_org,
             nome               = p_nome,
-            ativo              = p_ativo,
-            flag_inclusao      = sysdate
+            ativo              = p_ativo
           where cd_orgao_siorg      = p_chave;
       End If;
    End If;
