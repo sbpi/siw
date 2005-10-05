@@ -166,7 +166,7 @@ begin
                  h.cd_acao            = m.cd_acao            (+) and
                  h.cd_subacao         = m.cd_subacao         (+) and
                  h.cliente            = m.cliente            (+) and
-                 h.ano                = m.ano)
+                 h.ano                = m.ano                (+))
             and a.sq_siw_solicitacao = p_chave
             and a.sq_meta = p_chave_aux;
 

@@ -13,6 +13,7 @@ begin
    If p_restricao is null or p_restricao in ('CONSULTA','IDENTIFICACAO') Then
       open p_result for      
          select a.cd_acao, a.cd_programa, a.cd_programa||a.cd_acao||min(a.cd_subacao)||a.cd_unidade chave, a.cd_tipo_acao, 
+                a.cd_unidade||a.cd_programa||a.cd_acao codigo,
                 a.cd_produto, a.cd_unidade_medida, a.cd_estagio, 
                 a.cd_andamento, a.cd_cronograma, a.cd_orgao, a.cd_tipo_orgao, a.cd_unidade, 
                 a.cd_tipo_unidade, a.descricao_acao, b.nome nm_tipo_acao,
