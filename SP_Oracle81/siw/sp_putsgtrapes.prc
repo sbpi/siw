@@ -9,7 +9,7 @@ create or replace procedure SP_PutSgTraPes
    w_tramite   number(18);
    w_menu      number(18);
 
-   cursor c_permissao is
+   /*cursor c_permissao is
       select distinct p_Pessoa sq_pessoa, a.sq_menu, p_Endereco sq_pessoa_endereco, b.filhos
         from siw_menu a,
              (select sq_menu, count(*) filhos
@@ -20,7 +20,14 @@ create or replace procedure SP_PutSgTraPes
        where (a.sq_menu = b.sq_menu)
       connect by prior a.sq_menu_pai = a.sq_menu
       start with a.sq_menu           = w_Menu
-      order by b.filhos;
+      order by b.filhos;*/
+      
+   cursor c_permissao is
+      select distinct p_Pessoa sq_pessoa, a.sq_menu, p_Endereco sq_pessoa_endereco, level
+        from siw_menu a
+      connect by prior a.sq_menu_pai = a.sq_menu
+      start with a.sq_menu           = w_Menu
+      order by level;
 
    cursor c_filhos is
       select distinct p_Pessoa sq_pessoa, a.sq_menu, p_Endereco sq_pessoa_endereco
@@ -84,7 +91,7 @@ begin
       -- Para todas as opções superiores à informada, executa o bloco abaixo
       for crec in c_Permissao loop
          -- Verifica se a opção a ser excluída tem opções subordinadas a ela. Exclui apenas se não tiver, para evitar erro.
-         select count(*) into w_existe
+         /*select count(*) into w_existe
            from siw_menu                       a,
                 siw_menu_endereco b,
                 sg_pessoa_menu    c
@@ -97,7 +104,17 @@ begin
                 )
             and a.sq_menu           <> crec.sq_menu
          connect by prior a.sq_menu = a.sq_menu_pai
-         start with a.sq_menu       = crec.sq_menu;
+         start with a.sq_menu       = crec.sq_menu;*/
+         
+          -- Verifica se a opção a ser excluída tem opções subordinadas a ela.
+         -- Exclui apenas se não tiver, para evitar erro.
+         select count(*) into w_existe
+           from siw_menu a
+          where sq_menu <> crec.sq_menu
+            and sq_menu in (select sq_menu from siw_menu_endereco where sq_pessoa_endereco = crec.sq_pessoa_endereco)
+            and sq_menu in (select sq_menu from sg_pessoa_menu    where sq_menu            = crec.sq_menu and sq_pessoa_endereco = crec.sq_pessoa_endereco)
+         connect by prior sq_menu = sq_menu_pai
+         start with sq_menu = crec.sq_menu;
 
          -- Verifica se a opção a ser excluída tem permissões a trâmites de serviços subordinados a ela.
          select count(*) into w_tramite
@@ -125,4 +142,3 @@ begin
    commit;
 end SP_PutSgTraPes;
 /
-
