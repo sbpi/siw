@@ -435,14 +435,18 @@ Fontes_ASP_SIW/results.asp -text
 SP_Oracle81/siw/MontaOrdemMenu.fnc -text
 SP_Oracle81/siw/SP_GetAfastamento.prc -text
 SP_Oracle81/siw/SP_GetCargo.prc -text
+SP_Oracle81/siw/SP_GetCiaTrans.prc -text
 SP_Oracle81/siw/SP_GetDataEspecial.prc -text
 SP_Oracle81/siw/SP_GetGPColaborador.prc -text
 SP_Oracle81/siw/SP_GetGPContrato.prc -text
 SP_Oracle81/siw/SP_GetGPModalidade.prc -text
 SP_Oracle81/siw/SP_GetGPParametro.prc -text
 SP_Oracle81/siw/SP_GetGPTipoAfast.prc -text
+SP_Oracle81/siw/SP_GetPDParametro.prc -text
+SP_Oracle81/siw/SP_GetPDUnidade.prc -text
 SP_Oracle81/siw/SP_PutAfastamento.prc -text
 SP_Oracle81/siw/SP_PutCargo.prc -text
+SP_Oracle81/siw/SP_PutCiaTrans.prc -text
 SP_Oracle81/siw/SP_PutDataEspecial.prc -text
 SP_Oracle81/siw/SP_PutDcOcorrencia.prc -text
 SP_Oracle81/siw/SP_PutGPColaborador.prc -text
@@ -450,6 +454,8 @@ SP_Oracle81/siw/SP_PutGPContrato.prc -text
 SP_Oracle81/siw/SP_PutGPModalidade.prc -text
 SP_Oracle81/siw/SP_PutGPParametro.prc -text
 SP_Oracle81/siw/SP_PutGPTipoAfast.prc -text
+SP_Oracle81/siw/SP_PutPDParametro.prc -text
+SP_Oracle81/siw/SP_PutPDUnidade.prc -text
 SP_Oracle81/siw/VerificaDataEspecial.fnc -text
 SP_Oracle81/siw/VerificaDataMovel.fnc -text
 SP_Oracle81/siw/ac_acordo.tab -text
