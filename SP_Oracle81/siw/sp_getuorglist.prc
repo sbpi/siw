@@ -52,7 +52,18 @@ begin
                and (p_nome                is null or (p_nome  is not null and a.nome  like '%'||p_nome||'%'))
                and (p_sigla               is null or (p_sigla is not null and a.sigla like '%'||p_sigla||'%'))
             order by a.nome;
-      Else
+      Elsif p_restricao = 'VIAGEM' Then
+         open p_result for 
+            select a.sq_unidade chave, a.limite_passagem, a.limite_diaria, a.ativo, a.ano, 
+                   decode(a.ativo,'S','Sim','Não') nm_ativo,
+                   b.nome, b.sigla
+              from pd_unidade         a,
+                   eo_unidade         b, 
+                   co_pessoa_endereco c 
+             where (a.sq_unidade = b.sq_unidade (+))
+               and (b.sq_pessoa_endereco = c.sq_pessoa_endereco (+))
+               and c.sq_pessoa = p_cliente 
+               and ((p_chave is null) or (p_chave is not null and a.sq_unidade = p_chave));      Else
          open p_result for
             select a.sq_unidade,a.sq_unidade_pai, a.nome, a.sigla, a.informal, a.adm_central, a.vinculada,
                    a.codigo, a.sq_unidade_pai, a.ordem, a.ativo, Nvl(d.nome,'Informar') responsavel
@@ -74,4 +85,3 @@ begin
    End If;
 end SP_GetUorgList;
 /
-
