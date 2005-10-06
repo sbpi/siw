@@ -237,6 +237,25 @@ begin
                                                                    or    acentos(a.nome_resumido) like '%'||acentos(p_nome)||'%')))
             and (p_sg_unidade is null or (p_sg_unidade is not null and acentos(d.sigla) like '%'||acentos(p_sg_unidade)||'%'))                      
          order by nome_resumido;
+         
+   ElsIf p_restricao = 'PDUSUARIO' Then
+      -- Recupera os usuários do sistema que estiverem cadastrados na PD_UNIDADE
+      open p_result for   
+        select a.sq_pessoa chave, a.nome_resumido, a.nome_resumido_ind,
+               d.sq_unidade, d.sigla sg_unidade, d.nome nm_unidade, 
+               d.sigla||'('||e.nome||')' nm_local,
+               e.ramal
+          from co_pessoa               a,
+                 sg_autenticacao       c,
+                   eo_unidade          d,
+                     eo_localizacao    e,
+                 pd_usuario            b
+          where (a.sq_pessoa       = c.sq_pessoa (+))
+            and (c.sq_unidade      = d.sq_unidade (+))
+            and (c.sq_localizacao  = e.sq_localizacao (+))
+            and (a.sq_pessoa       = b.sq_pessoa)
+            and a.sq_pessoa_pai   = p_cliente
+            and (p_chave is null or (p_chave is not null and a.sq_pessoa = p_chave));
    Else
       Loop
          l_item  := Trim(substr(l_tipo,1,Instr(l_tipo,',')-1));

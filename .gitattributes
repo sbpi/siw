@@ -457,6 +457,7 @@ SP_Oracle81/siw/SP_PutGPParametro.prc -text
 SP_Oracle81/siw/SP_PutGPTipoAfast.prc -text
 SP_Oracle81/siw/SP_PutPDParametro.prc -text
 SP_Oracle81/siw/SP_PutPDUnidade.prc -text
+SP_Oracle81/siw/SP_PutPDUsuario.prc -text
 SP_Oracle81/siw/VerificaDataEspecial.fnc -text
 SP_Oracle81/siw/VerificaDataMovel.fnc -text
 SP_Oracle81/siw/ac_acordo.tab -text
