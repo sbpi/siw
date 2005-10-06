@@ -121,8 +121,8 @@ begin
                               qtd_ano_2, qtd_ano_3, qtd_ano_4, qtd_ano_5, qtd_ano_6, unidade_medida,
                               cd_subacao)
          (select sq_meta.nextval, w_chave, b.nome|| ' - ' ||c.nome, ' ', 0, p_inicio, 
-                 p_fim, f.previsao_ano, case a.meta_nao_cumulativa when 'S' then 'N' else 'S' end, d.qtd_ano_1,
-                 d.qtd_ano_2, d.qtd_ano_3, d.qtd_ano_4, d.qtd_ano_5, d.qtd_ano_6, e.nome,
+                 p_fim, Nvl(f.previsao_ano,0), case a.meta_nao_cumulativa when 'N' then 'S' else 'N' end, Nvl(d.qtd_ano_1,0),
+                 Nvl(d.qtd_ano_2,0), Nvl(d.qtd_ano_3,0), Nvl(d.qtd_ano_4,0), Nvl(d.qtd_ano_5,0), Nvl(d.qtd_ano_6,0), e.nome,
                  a.cd_subacao
             from is_sig_acao                        a
                  left outer join is_sig_produto     b on (a.cd_produto         = b.cd_produto)
@@ -171,9 +171,9 @@ begin
                                    previsao_ano_2, previsao_ano_3, previsao_ano_4, observacao, ordem, quantidade)  
          (select sq_indicador.nextval, w_chave, a.ano, a.cd_programa, a.cliente, a.ano,a.cd_programa, 
                  a.cliente, a.cd_indicador, a.cd_unidade_medida, a.cd_periodicidade,  
-                 a.cd_base_geografica, a.nome, a.fonte, a.formula, a.valor_apurado, 
-                 b.apuracao, b.valor_ano_1, b.valor_ano_2, b.valor_ano_3, b.valor_ano_4, 
-                 b.observacao, 0, b.valor_ano_2
+                 a.cd_base_geografica, a.nome, a.fonte, a.formula, Nvl(a.valor_apurado,0), 
+                 b.apuracao, Nvl(b.valor_ano_1,0), Nvl(b.valor_ano_2,0), Nvl(b.valor_ano_3,0), Nvl(b.valor_ano_4,0), 
+                 b.observacao, 0, Nvl(b.valor_ano_2,0)            
             from is_sig_indicador a
                  inner join is_ppa_indicador b on (a.cliente      = b.cliente     and
                                                    a.ano          = b.ano         and
@@ -261,9 +261,8 @@ begin
                                      qtd_ano_2, qtd_ano_3, qtd_ano_4, qtd_ano_5, qtd_ano_6, unidade_medida,
                                      cd_subacao)
                 (select sq_meta.nextval, w_chave, b.nome|| ' - ' ||c.nome, ' ', 0, p_inicio, 
-                        p_fim, f.previsao_ano, case a.meta_nao_cumulativa when 'S' then 'N' else 'S' end, d.qtd_ano_1,
-                        d.qtd_ano_2, d.qtd_ano_3, d.qtd_ano_4, d.qtd_ano_5, d.qtd_ano_6, e.nome,
-                        a.cd_subacao
+                        p_fim, Nvl(f.previsao_ano,0), case a.meta_nao_cumulativa when 'N' then 'S' else 'N'end, Nvl(d.qtd_ano_1,0),
+                        Nvl(d.qtd_ano_2,0), Nvl(d.qtd_ano_3,0), Nvl(d.qtd_ano_4,0), Nvl(d.qtd_ano_5,0), Nvl(d.qtd_ano_6,0), e.nome,                        a.cd_subacao
                    from is_sig_acao                        a
                         left outer join is_sig_produto     b on (a.cd_produto         = b.cd_produto)
                         left outer join is_ppa_localizador c on (a.cd_programa        = c.cd_programa        and
@@ -311,9 +310,9 @@ begin
                                           previsao_ano_2, previsao_ano_3, previsao_ano_4, observacao, ordem, quantidade)  
                 (select sq_indicador.nextval, w_chave, a.ano, a.cd_programa, a.cliente, a.ano,a.cd_programa, 
                         a.cliente, a.cd_indicador, a.cd_unidade_medida, a.cd_periodicidade,  
-                        a.cd_base_geografica, a.nome, a.fonte, a.formula, a.valor_apurado, 
-                        b.apuracao, b.valor_ano_1, b.valor_ano_2, b.valor_ano_3, b.valor_ano_4, 
-                        b.observacao, 0, b.valor_ano_2
+                        a.cd_base_geografica, a.nome, a.fonte, a.formula, Nvl(a.valor_apurado,0), 
+                        b.apuracao, Nvl(b.valor_ano_1,0), Nvl(b.valor_ano_2,0), Nvl(b.valor_ano_3,0), Nvl(b.valor_ano_4,0), 
+                        b.observacao, 0, Nvl(b.valor_ano_2,0)
                    from is_sig_indicador a
                         inner join is_ppa_indicador b on (a.cliente      = b.cliente     and
                                                           a.ano          = b.ano         and
