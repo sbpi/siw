@@ -444,7 +444,6 @@ SP_Oracle81/siw/SP_GetGPModalidade.prc -text
 SP_Oracle81/siw/SP_GetGPParametro.prc -text
 SP_Oracle81/siw/SP_GetGPTipoAfast.prc -text
 SP_Oracle81/siw/SP_GetPDParametro.prc -text
-SP_Oracle81/siw/SP_GetPDUnidade.prc -text
 SP_Oracle81/siw/SP_PutAfastamento.prc -text
 SP_Oracle81/siw/SP_PutCargo.prc -text
 SP_Oracle81/siw/SP_PutCiaTrans.prc -text
