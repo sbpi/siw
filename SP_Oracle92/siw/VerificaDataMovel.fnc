@@ -37,7 +37,7 @@ create or replace function VerificaDataMovel
   l_tipo varchar2(10) := upper(p_tipo);
 begin
   -- Se o tipo não for válido, retorna nulo
-  If l_tipo not in ('S','T','Q','P','D','H') Then Return null; End If;
+  If l_tipo not in ('S','C','Q','P','D','H') Then Return null; End If;
   
   -- Calcula o Domingo de Páscoa, que é a data base para os outros feriados móveis
   a      := Mod(p_ano, 19);
@@ -67,7 +67,7 @@ begin
         Else terca := dia - to_char(dia,'d') - 4;
      End If;
      If    l_tipo = 'S' Then Result := terca - 1;
-     Elsif l_tipo = 'T' Then Result := terca;
+     Elsif l_tipo = 'C' Then Result := terca;
      Elsif l_tipo = 'Q' Then Result := terca + 1;
      End If;
   End If;

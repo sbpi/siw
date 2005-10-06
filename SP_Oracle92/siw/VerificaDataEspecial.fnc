@@ -47,10 +47,10 @@ begin
            (a.tipo      = 'E' and a.data_especial = p_data)
           )
          )
-      or (a.tipo    in ('S','T','Q','P','D','H') and
+      or (a.tipo    in ('S','C','Q','P','D','H') and
           a.sq_pais = p_pais and
           ((a.tipo = 'S' and p_data = VerificaDataMovel(to_char(p_data,'yyyy'),'S')) or
-           (a.tipo = 'T' and p_data = VerificaDataMovel(to_char(p_data,'yyyy'),'T')) or
+           (a.tipo = 'C' and p_data = VerificaDataMovel(to_char(p_data,'yyyy'),'C')) or
            (a.tipo = 'Q' and p_data = VerificaDataMovel(to_char(p_data,'yyyy'),'Q')) or
            (a.tipo = 'P' and p_data = VerificaDataMovel(to_char(p_data,'yyyy'),'P')) or
            (a.tipo = 'D' and p_data = VerificaDataMovel(to_char(p_data,'yyyy'),'D')) or
@@ -66,10 +66,10 @@ begin
               (a.tipo      = 'E' and a.data_especial = p_data)
              )
             )
-         or (a.tipo    in ('S','T','Q','P','D','H') and
+         or (a.tipo    in ('S','C','Q','P','D','H') and
              a.sq_pais = p_pais and
              ((a.tipo = 'S' and p_data = VerificaDataMovel(to_char(p_data,'yyyy'),'S')) or
-              (a.tipo = 'T' and p_data = VerificaDataMovel(to_char(p_data,'yyyy'),'T')) or
+              (a.tipo = 'C' and p_data = VerificaDataMovel(to_char(p_data,'yyyy'),'C')) or
               (a.tipo = 'Q' and p_data = VerificaDataMovel(to_char(p_data,'yyyy'),'Q')) or
               (a.tipo = 'P' and p_data = VerificaDataMovel(to_char(p_data,'yyyy'),'P')) or
               (a.tipo = 'D' and p_data = VerificaDataMovel(to_char(p_data,'yyyy'),'D')) or
