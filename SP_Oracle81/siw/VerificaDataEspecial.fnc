@@ -28,11 +28,12 @@ create or replace function VerificaDataEspecial
 * Observações:
 * 1. sábados e domingos nunca têm expediente.
 * 2. se apenas a data for informada, serão tratados apenas as datas especiais com 
-*    abrangência internacional.
+*    abrangência internacional, nacional ou da organização.
 ***********************************************************************************/
   
   Result varchar2(1) := 'S';
   w_reg  number(18);
+  w_data varchar2(10) := to_char(p_data,'dd/mm/yyyy');
 begin
   -- Se for sábado ou domingo, não há expediente e aborta a execução
   If to_char(p_data,'d') in (1,7) Then return 'N'; End If;
@@ -41,10 +42,10 @@ begin
   -- de abrangência internacional, ou da organização, ou ainda se é data móvel
   select count(*) into w_reg 
     from eo_data_especial a 
-   where (a.abrangencia in ('I','O') and 
+   where (a.abrangencia in ('N','I','O') and 
           a.expediente  <> 'S' and
-          ((a.tipo      = 'I' and a.data_especial = substr(p_data,1,5)) or
-           (a.tipo      = 'E' and a.data_especial = p_data)
+          ((a.tipo      = 'I' and a.data_especial = substr(w_data,1,5)) or
+           (a.tipo      = 'E' and a.data_especial = w_data)
           )
          )
       or (a.tipo    in ('S','C','Q','P','D','H') and
@@ -60,10 +61,10 @@ begin
   If w_reg > 0 Then
      select a.expediente into Result 
        from eo_data_especial a 
-      where (a.abrangencia in ('I','O') and 
+      where (a.abrangencia in ('N','I','O') and 
              a.expediente  <> 'S' and
-             ((a.tipo      = 'I' and a.data_especial = substr(p_data,1,5)) or
-              (a.tipo      = 'E' and a.data_especial = p_data)
+             ((a.tipo      = 'I' and a.data_especial = substr(w_data,1,5)) or
+              (a.tipo      = 'E' and a.data_especial = w_data)
              )
             )
          or (a.tipo    in ('S','C','Q','P','D','H') and

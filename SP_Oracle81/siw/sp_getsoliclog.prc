@@ -226,7 +226,61 @@ begin
                and b.sq_siw_solic_log   is null
                and b.sq_siw_solicitacao = p_chave;
       End If;
+   Elsif w_modulo = 'PD' Then -- Se for o módulo de viagens
+      If p_restricao = 'LISTA' Then
+         -- Recupera os encaminhamentos de uma demanda
+         open p_result for
+            select h.sq_demanda_log, a.sq_siw_solic_log, a.sq_siw_tramite,a.data,
+                   decode(h.sq_demanda_log,null,a.observacao,a.observacao||chr(13)||chr(10)||'DESPACHO: '||chr(13)||chr(10)||h.despacho) despacho,
+                   c.nome_resumido responsavel,
+                   c.sq_pessoa,
+                   i.nome_resumido destinatario,
+                   i.sq_pessoa sq_pessoa_destinatario,
+                   f.nome fase,
+                   e.nome tramite,
+                   k.caminho, k.tipo, k.tamanho
+              from siw_solic_log                     a,
+                   co_pessoa         c,
+                   siw_tramite       e,
+                   siw_solicitacao   g,
+                   siw_tramite       f,
+                   gd_demanda_log    h,
+                   co_pessoa       i,
+                   siw_solic_log_arq j,
+                   siw_arquivo     k
+             where (a.sq_pessoa          = c.sq_pessoa)
+               and (a.sq_siw_tramite     = e.sq_siw_tramite)
+               and (a.sq_siw_solicitacao = g.sq_siw_solicitacao)
+               and (g.sq_siw_tramite     = f.sq_siw_tramite)
+               and (a.sq_siw_solic_log   = h.sq_siw_solic_log (+))
+               and (h.destinatario       = i.sq_pessoa (+))
+               and (a.sq_siw_solic_log   = j.sq_siw_solic_log (+))
+               and (j.sq_siw_arquivo     = k.sq_siw_arquivo (+))
+               and a.sq_siw_solicitacao = p_chave
+            UNION
+            select b.sq_demanda_log, b.sq_siw_solic_log, 0, b.data_inclusao,  Nvl(b.despacho, b.observacao),
+                   c.nome_resumido responsavel,
+                   c.sq_pessoa,
+                   d.nome_resumido destinatario,
+                   d.sq_pessoa sq_pessoa_destinatario,
+                   f.nome fase, f.nome tramite,
+                   k.caminho, k.tipo, k.tamanho
+              from gd_demanda_log                     b,
+                   co_pessoa          d,
+                   co_pessoa          c,
+                   siw_solicitacao    g,
+                   siw_tramite        f,
+                   gd_demanda_log_arq j,
+                   siw_arquivo      k
+             where (b.destinatario       = d.sq_pessoa (+))
+               and (b.cadastrador        = c.sq_pessoa)
+               and (b.sq_siw_solicitacao = g.sq_siw_solicitacao)
+               and (g.sq_siw_tramite     = f.sq_siw_tramite)
+               and (b.sq_demanda_log     = j.sq_demanda_log (+))
+               and (j.sq_siw_arquivo     = k.sq_siw_arquivo (+))
+               and b.sq_siw_solic_log   is null
+               and b.sq_siw_solicitacao = p_chave;
+      End If;
    End If;
 End SP_GetSolicLog;
 /
-
