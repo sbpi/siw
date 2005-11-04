@@ -37,8 +37,8 @@ begin
       open p_result for 
          select e.sq_contrato_colaborador chave, a.sq_pessoa, a.ctps_numero, a.ctps_serie, a.ctps_emissor, a.ctps_emissao_data,
                 a.pis_pasep, a.pispasep_numero, a.pispasep_cadastr, a.te_numero, a.te_zona, a.te_secao,
-                a.tipo_sangue, a.doador_sangue, a.doador_orgaos, a.reservista_csm, a.reservista_numero,
-                a.observacoes, b.nome, b.nome_resumido, c.nascimento, c.rg_numero, c.rg_emissor, c.rg_emissao,
+                a.tipo_sangue, a.doador_sangue, a.doador_orgaos, a.reservista_csm, a.reservista_numero, a.observacoes, 
+                b.sq_tipo_vinculo, b.nome, b.nome_resumido, c.nascimento, c.rg_numero, c.rg_emissor, c.rg_emissao,
                 c.cpf, c.sq_cidade_nasc, c.passaporte_numero, c.sq_pais_passaporte, c.sq_etnia, c.sq_deficiencia,
                 e.matricula, g.nome nm_exercicio, e.inicio, e.fim,
                 e.sq_posto_trabalho, e.sq_unidade_lotacao, e.sq_unidade_exercicio, e.sq_modalidade_contrato,
