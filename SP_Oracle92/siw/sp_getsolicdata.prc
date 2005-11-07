@@ -393,7 +393,111 @@ begin
                   left outer      join gd_demanda_log       k  on (j.chave                    = k.sq_siw_solic_log)
                     left outer    join sg_autenticacao      l  on (k.destinatario             = l.sq_pessoa)
           where b.sq_siw_solicitacao       = p_chave;
+   Elsif substr(p_restricao,1,2) = 'PD' Then
+      -- Recupera as passagens que o usuário pode ver
+      open p_result for 
+         select a.sq_menu,            a.sq_modulo,                   a.nome,
+                a.tramite,            a.ultimo_nivel,                a.p1,
+                a.p2,                 a.p3,                          a.p4,
+                a.sigla,              a.descentralizado,             a.externo,
+                a.acesso_geral,       a.como_funciona,               a.acompanha_fases,
+                a.sq_unid_executora,  a.finalidade,                  a.arquivo_proced,
+                a.emite_os,           a.consulta_opiniao,            a.envia_email,
+                a.exibe_relatorio,    a.vinculacao,                  a.data_hora,
+                a.data_hora,          a.envia_dia_util,              a.descricao,
+                a.justificativa justif_solic,
+                a1.nome nm_modulo,    a1.sigla sg_modulo,            a1.objetivo_geral,
+                a2.sq_tipo_unidade tp_exec, a2.nome nm_unidade_exec, a2.informal informal_exec,
+                a2.vinculada vinc_exec,a2.adm_central adm_exec,
+                a3.sq_pessoa tit_exec,a4.sq_pessoa subst_exec,
+                b.sq_siw_solicitacao, b.sq_siw_tramite,              b.solicitante,
+                b.cadastrador,        b.executor,                    b.descricao,
+                b.justificativa,      b.inicio,                      b.fim,
+                b.inclusao,           b.ultima_alteracao,            b.conclusao,
+                b.valor,              b.data_hora,                   b.opiniao,
+                b.sq_solic_pai,       b.sq_unidade,                  b.sq_cidade_origem,
+                b.palavra_chave,
+                b1.sq_siw_tramite,    b1.nome nm_tramite,            b1.ordem or_tramite,
+                b1.sigla sg_tramite,  b1.ativo,
+                c.sq_tipo_unidade,    c.nome nm_unidade_exec,        c.informal,
+                c.vinculada,          c.adm_central,
+                d.sq_unidade_resp,    d.assunto,                     d.prioridade,
+                d.aviso_prox_conc,    d.dias_aviso,                  d.inicio_real,
+                d.fim_real,           d.concluida,                   d.data_conclusao,
+                d.nota_conclusao,     d.custo_real,                  d.proponente,
+                case d.prioridade when 0 then 'Alta' when 1 then 'Média' else 'Normal' end nm_prioridade,
+                d.ordem,
+                d1.sq_pessoa sq_prop, d1.tipo tp_missao,             d1.codigo_interno,
+                case d1.tipo when 'I' then 'Inicial' when 'P' then 'Prorrogação' when 'C' then 'Complementação' end  nm_tipo_missao,
+                d1.reserva,           d1.pta,                        d1.justificativa_dia_util,
+                d1.emissao_bilhete,   d1.pagamento_diaria,           d1.pagamento_bilhete,
+                d1.boletim_numero,    d1.boletim_data,               d1.valor_alimentacao,
+                d1.valor_transporte,  d1.desconto_alimentacao,       d1.desconto_transporte,
+                d1.valor_adicional,   d1.codigo_externo,
+                d1.sq_pais_estrang,   d1.aba_code,                   d1.swift_code,
+                d1.endereco_estrang,  d1.banco_estrang,              d1.agencia_estrang,
+                d1.cidade_estrang,    d1.informacoes,                d1.codigo_deposito,
+                d2.nome nm_prop,      d2.nome_resumido nm_prop_res,
+                d3.sq_tipo_vinculo,   d3.nome nm_tipo_vinculo,
+                d4.sexo,              d4.cpf,
+                d5.operacao,          d5.numero numero_conta,        d5.tipo_conta,
+                d5.invalida,          d5.operacao operacao_conta,
+                d6.sq_agencia,        d6.codigo cd_agencia,          d6.nome nm_agencia,
+                d7.sq_banco,          d7.codigo cd_banco,            d7.nome nm_banco,
+                d8.sq_posto_trabalho, d8.sq_posto_trabalho,          d8.sq_modalidade_contrato,
+                d8.matricula,
+                b.fim-d.dias_aviso aviso,
+                e.sq_tipo_unidade,    e.nome nm_unidade_resp,        e.informal informal_resp,
+                e.vinculada vinc_resp,e.adm_central adm_resp,        e.sigla sg_unidade_resp,
+                e1.sq_pessoa titular, e2.sq_pessoa substituto,
+                f.sq_pais,            f.sq_regiao,                   f.co_uf,
+                o.nome_resumido nm_solic, o.nome_resumido||' ('||o2.sigla||')' nm_resp,
+                p.nome_resumido nm_exec
+           from siw_menu                                       a
+                  inner                join eo_unidade                 a2 on (a.sq_unid_executora        = a2.sq_unidade)
+                    left outer         join eo_unidade_resp            a3 on (a2.sq_unidade              = a3.sq_unidade   and
+                                                                              a3.tipo_respons            = 'T'             and
+                                                                              a3.fim                     is null)
+                    left outer         join eo_unidade_resp            a4 on (a2.sq_unidade              = a4.sq_unidade   and
+                                                                              a4.tipo_respons            = 'S'             and
+                                                                              a4.fim                     is null)
+                  inner                join siw_modulo                 a1 on (a.sq_modulo                = a1.sq_modulo)
+                  inner                join siw_solicitacao            b  on (a.sq_menu                  = b.sq_menu)
+                    inner              join siw_tramite                b1 on (b.sq_siw_tramite           = b1.sq_siw_tramite)
+                    inner              join gd_demanda                 d  on (b.sq_siw_solicitacao       = d.sq_siw_solicitacao)
+                      inner            join pd_missao                  d1 on (d.sq_siw_solicitacao       = d1.sq_siw_solicitacao)
+                        inner          join co_pessoa                  d2 on (d1.sq_pessoa               = d2.sq_pessoa)
+                          inner        join co_tipo_vinculo            d3 on (d2.sq_tipo_vinculo         = d3.sq_tipo_vinculo)
+                          inner        join co_pessoa_fisica           d4 on (d2.sq_pessoa               = d4.sq_pessoa)
+                          left outer   join co_pessoa_conta            d5 on (d2.sq_pessoa               = d5.sq_pessoa    and
+                                                                              d5.ativo                   = 'S'             and
+                                                                              d5.padrao                  = 'S'             and
+                                                                              d5.tipo_conta              = 1) -- Apenas conta corrente
+                            left outer join co_agencia                 d6 on (d5.sq_agencia              = d6.sq_agencia)
+                              left outer join co_banco                 d7 on (d6.sq_banco                = d7.sq_banco)
+                            left outer join gp_contrato_colaborador    d8 on (d4.cliente                 = d8.cliente      and
+                                                                              d4.sq_pessoa               = d8.sq_pessoa    and
+                                                                              d8.fim                     is null)
+                      inner            join eo_unidade                 e  on (d.sq_unidade_resp          = e.sq_unidade)
+                        left outer     join eo_unidade_resp            e1 on (e.sq_unidade               = e1.sq_unidade   and
+                                                                              e1.tipo_respons            = 'T'             and
+                                                                              e1.fim                     is null)
+                        left outer     join eo_unidade_resp            e2 on (e.sq_unidade               = e2.sq_unidade   and
+                                                                              e2.tipo_respons            = 'S'             and
+                                                                              e2.fim                     is null)
+                    inner              join co_cidade                  f  on (b.sq_cidade_origem         = f.sq_cidade)
+                    left outer         join co_pessoa                  o  on (b.solicitante              = o.sq_pessoa)
+                      left outer       join sg_autenticacao            o1 on (o.sq_pessoa                = o1.sq_pessoa)
+                        left outer     join eo_unidade                 o2 on (o1.sq_unidade              = o2.sq_unidade)
+                    left outer         join co_pessoa                  p  on (b.executor                 = p.sq_pessoa)
+                  left outer           join eo_unidade                 c  on (a.sq_unid_executora        = c.sq_unidade)
+                    inner              join (select sq_siw_solicitacao, max(sq_siw_solic_log) chave 
+                                               from siw_solic_log
+                                             group by sq_siw_solicitacao
+                                            )                          j on (b.sq_siw_solicitacao       = j.sq_siw_solicitacao)
+                      left outer       join gd_demanda_log             k on (j.chave                    = k.sq_siw_solic_log)
+                        left outer     join sg_autenticacao            l on (k.destinatario             = l.sq_pessoa)
+          where b.sq_siw_solicitacao = p_chave;          
    End If;
 end SP_GetSolicData;
 /
-

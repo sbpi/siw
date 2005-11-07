@@ -494,6 +494,24 @@ begin
             and (acesso_is(b.sq_siw_solicitacao,p_pessoa) > 0 or
                  InStr(l_resp_unid,''''||b.sq_unidade||'''') > 0
                 );
+   Elsif p_restricao = 'PDVINC' Then
+      -- Recupera as tarefas ligadas a viagens
+      open p_result for 
+         select b.sq_siw_solicitacao, 
+                b1.nome nm_tramite, b1.sigla sg_tramite,
+                c.inicio_real, c.fim_real, 
+                d.titulo, b.inicio, b.fim,
+                f.concluida, f.aviso_prox_conc,
+                b.fim-f.dias_aviso aviso,
+                e.sq_solic_missao
+           from siw.siw_solicitacao               b
+                  inner join siw.siw_tramite      b1 on (b.sq_siw_tramite           = b1.sq_siw_tramite)
+                  inner join siw.gd_demanda       c  on (b.sq_siw_solicitacao       = c.sq_siw_solicitacao)
+                  inner join is_tarefa            d  on (b.sq_siw_solicitacao       = d.sq_siw_solicitacao)
+                  inner join siw.pd_missao_solic  e  on (b.sq_siw_solicitacao       = e.sq_siw_solicitacao)
+                  inner join siw.gd_demanda       f  on (b.sq_siw_solicitacao       = f.sq_siw_solicitacao)
+          where Nvl(b1.sigla,'-') <> 'CA'
+            and (p_chave is null or (p_chave is not null and e.sq_solic_missao = p_chave));                
    End If;
 end SP_GetSolicList_IS;
 /

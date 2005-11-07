@@ -184,7 +184,47 @@ begin
              where b.sq_siw_solic_log   is null
                and b.sq_siw_solicitacao = p_chave;
       End If;
+   Elsif w_modulo = 'PD' Then -- Se for o módulo de viagens
+      If p_restricao = 'LISTA' Then
+         -- Recupera os encaminhamentos de uma demanda
+         open p_result for
+            select h.sq_demanda_log, a.sq_siw_solic_log, a.sq_siw_tramite,a.data,
+                   case h.sq_demanda_log when null then a.observacao else a.observacao||chr(13)||chr(10)||'DESPACHO: '||chr(13)||chr(10)||h.despacho end despacho,
+                   c.nome_resumido responsavel,
+                   c.sq_pessoa,
+                   i.nome_resumido destinatario,
+                   i.sq_pessoa sq_pessoa_destinatario,
+                   f.nome fase,
+                   e.nome tramite,
+                   k.caminho, k.tipo, k.tamanho
+              from siw_solic_log                        a
+                     inner        join co_pessoa         c on (a.sq_pessoa          = c.sq_pessoa)
+                     inner        join siw_tramite       e on (a.sq_siw_tramite     = e.sq_siw_tramite)
+                     inner        join siw_solicitacao   g on (a.sq_siw_solicitacao = g.sq_siw_solicitacao)
+                       inner      join siw_tramite       f on (g.sq_siw_tramite     = f.sq_siw_tramite)
+                     left outer   join gd_demanda_log    h on (a.sq_siw_solic_log   = h.sq_siw_solic_log)
+                       left outer join co_pessoa         i on (h.destinatario       = i.sq_pessoa)
+                     left outer   join siw_solic_log_arq j on (a.sq_siw_solic_log   = j.sq_siw_solic_log)
+                       left outer join siw_arquivo       k on (j.sq_siw_arquivo     = k.sq_siw_arquivo)
+             where a.sq_siw_solicitacao = p_chave
+            UNION
+            select b.sq_demanda_log, b.sq_siw_solic_log, 0, b.data_inclusao,  Nvl(b.despacho, b.observacao),
+                   c.nome_resumido responsavel,
+                   c.sq_pessoa,
+                   d.nome_resumido destinatario,
+                   d.sq_pessoa sq_pessoa_destinatario,
+                   f.nome fase, f.nome tramite,
+                   k.caminho, k.tipo, k.tamanho
+              from gd_demanda_log                           b
+                     left outer     join co_pessoa          d on (b.destinatario       = d.sq_pessoa)
+                     inner          join co_pessoa          c on (b.cadastrador        = c.sq_pessoa)
+                     inner          join siw_solicitacao    g on (b.sq_siw_solicitacao = g.sq_siw_solicitacao)
+                       inner        join siw_tramite        f on (g.sq_siw_tramite     = f.sq_siw_tramite)
+                     left outer     join gd_demanda_log_arq j on (b.sq_demanda_log     = j.sq_demanda_log)
+                       left outer   join siw_arquivo        k on (j.sq_siw_arquivo     = k.sq_siw_arquivo)
+             where b.sq_siw_solic_log   is null
+               and b.sq_siw_solicitacao = p_chave;
+      End If;      
    End If;
 End SP_GetSolicLog;
 /
-
