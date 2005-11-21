@@ -65,26 +65,26 @@ create or replace function Acesso
   w_sq_pessoa_titular      eo_unidade_resp.sq_pessoa%type;         -- Titular da unidade solicitante
   w_sq_pessoa_substituto   eo_unidade_resp.sq_pessoa%type;         -- Substituto da unidade solicitante
   w_sq_endereco_unidade    eo_unidade.sq_pessoa_endereco%type;
-  w_solicitante            number(10);                             -- Solicitante
-  w_unidade_beneficiario   number(10);
-  w_existe                 number(10);
-  w_unidade_atual          number(10);
-  w_chefe_beneficiario     number(10);
-  w_executor               number(10);
+  w_solicitante            number(18);                             -- Solicitante
+  w_unidade_beneficiario   number(18);
+  w_existe                 number(18);
+  w_unidade_atual          number(18);
+  w_chefe_beneficiario     number(18);
+  w_executor               number(18);
   Result                   number := 0;
 
   cursor c_unidade (p_unidade in number) is
-     select pt.sq_unidade, a.sq_unidade_pai, Nvl(pt.nome, -1) sq_pessoa_titular,
-            Nvl(ps.nome, -1) sq_pessoa_substituto
+     select pt.sq_unidade, a.sq_unidade_pai, Nvl(pt.sq_pessoa, -1) sq_pessoa_titular,
+            Nvl(ps.sq_pessoa, -1) sq_pessoa_substituto
       from eo_unidade a,
-           (select b.sq_unidade, a.nome_resumido nome
+           (select b.sq_unidade, a.sq_pessoa, a.nome_resumido nome
               from co_pessoa              a,
                    eo_unidade_resp        b
              where a.sq_pessoa       = b.sq_pessoa
                and b.tipo_respons    = 'T'
                and b.fim             is null
                and b.sq_unidade      = p_unidade) pt,
-           (select b.sq_unidade, nome_resumido nome
+           (select b.sq_unidade, a.sq_pessoa, nome_resumido nome
               from co_pessoa              a,
                    eo_unidade_resp        b
               where a.sq_pessoa      = b.sq_pessoa
@@ -545,4 +545,3 @@ begin
  return(Result);
 end Acesso;
 /
-
