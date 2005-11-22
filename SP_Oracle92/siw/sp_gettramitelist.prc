@@ -32,6 +32,34 @@ begin
                                        and b.ordem         <= (select ordem from siw_tramite where sq_siw_tramite = p_chave)
                                        and b.ativo = 'S'
                                    );
+   Elsif upper(p_restricao) = 'PROXIMO' Then
+      open p_result for
+         select b.sq_siw_tramite, b.sq_menu, b.nome, b.ordem,
+                b.sigla, b.descricao, b.chefia_imediata, b.ativo, b.solicita_cc, b.envia_mail,
+                case a.chefia_imediata
+                   when 'S' then 'Chefia da unidade solicitante'
+                   when 'U' then 'Chefia e usuários com  permissão'
+                   when 'N' then 'Apenas usuários com permissão'
+                end nm_chefia
+         from siw_tramite            a
+              inner join siw_tramite b on (a.sq_menu        = b.sq_menu and
+                                           b.ordem          = a.ordem + 1
+                                          )
+         where a.sq_siw_tramite = p_chave;
+   Elsif upper(p_restricao) = 'ANTERIOR' Then
+      open p_result for
+         select b.sq_siw_tramite, b.sq_menu, b.nome, b.ordem,
+                b.sigla, b.descricao, b.chefia_imediata, b.ativo, b.solicita_cc, b.envia_mail,
+                case a.chefia_imediata
+                   when 'S' then 'Chefia da unidade solicitante'
+                   when 'U' then 'Chefia e usuários com  permissão'
+                   when 'N' then 'Apenas usuários com permissão'
+                end nm_chefia
+         from siw_tramite            a
+              inner join siw_tramite b on (a.sq_menu        = b.sq_menu and
+                                           b.ordem          = a.ordem - 1
+                                          )
+         where a.sq_siw_tramite = p_chave;
    Else
       open p_result for
          select a.sq_siw_tramite, a.sq_menu, a.nome, a.ordem,  
@@ -57,4 +85,3 @@ begin
    End If;
 end SP_GetTramiteList;
 /
-
