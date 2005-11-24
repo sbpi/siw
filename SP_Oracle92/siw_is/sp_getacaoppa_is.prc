@@ -23,7 +23,7 @@ begin
                 k.em_coordenador email, k.sq_unidade sq_unidade_adm, k.sq_siw_solicitacao, 
                 m.nome ds_programa, m.cd_programa, sum(a.empenhado) empenhado, sum(a.aprovado) aprovado, sum(a.liquidado) liquidado,
                 Nvl(k.sigla,'---') sg_tramite, upper(k.nm_coordenador) nm_coordenador,
-                sum(n.previsao_ano), sum(n.atual_ano), sum(n.real_ano), n.flag_alteracao dt_carga_financ                
+                sum(n.previsao_ano), sum(n.atual_ano), sum(n.real_ano), nvl(n.flag_alteracao,n.flag_inclusao) dt_carga_financ                
            from is_sig_acao                              a
                 left outer   join  is_sig_tipo_acao      b  on (a.cd_tipo_acao      = b.cd_tipo_acao)
                 left outer   join  is_sig_unidade_medida c  on (a.cd_unidade_medida = c.cd_unidade_medida)
@@ -94,7 +94,7 @@ begin
                 g.valor_total, g.valor_ano_anterior, h.nome, 
                 i.descricao, j.nome, k.nm_coordenador, k.fn_coordenador,
                 k.em_coordenador, k.sq_unidade, m.nome, m.cd_programa, k.sq_siw_solicitacao, k.sigla,
-                n.flag_alteracao;
+                n.flag_alteracao, n.flag_inclusao;
    Elsif p_restricao = 'FINANCIAMENTO' Then
       open p_result for 
          select a.cd_acao, a.cd_programa, a.cd_programa||a.cd_acao||min(a.cd_subacao)||a.cd_unidade chave, a.cd_tipo_acao, 
