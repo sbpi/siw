@@ -2,6 +2,7 @@ create or replace procedure SP_GetSolicMeta_IS
    (p_chave     in number   default null,
     p_chave_aux in number   default null,
     p_restricao in varchar2,
+    p_ano       in number   default null,    
     p_result    out sys_refcursor) is
 begin
   If p_restricao = 'LISTA' Then
