@@ -51,7 +51,7 @@ create or replace procedure SP_PUTDICIONARIO
            inner        join all_tab_columns  t2 on (t2.OWNER       = t1.owner and
                                                      t2.TABLE_NAME  = t1.table_name
                                                     )
-             inner      join siw.dc_dado_tipo b  on (b.nome         = replace(replace(replace(replace(replace(replace(replace(replace(t2.data_type,'VARCHAR2','VarChar'), 'NUMBER', 'Numeric'), 'DATE','Date'), 'BLOB','Blob'), 'BFILE', 'Blob'), 'RAW', 'Blob'), 'FLOAT', 'Numeric'), 'LONG', 'VarChar'))
+             inner      join siw.dc_dado_tipo b  on (b.nome         = replace(replace(replace(replace(replace(replace(replace(replace(replace(t2.data_type,'CHAR','Char'),'VARCHAR2','VarChar'), 'NUMBER', 'Numeric'), 'DATE','Date'), 'BLOB','Blob'), 'BFILE', 'Blob'), 'RAW', 'Blob'), 'FLOAT', 'Numeric'), 'LONG', 'VarChar'))
            inner        join all_col_comments t3 on (t3.owner       = t1.owner and
                                                      t3.table_name  = t2.TABLE_NAME and
                                                      t3.column_name = t2.COLUMN_NAME
@@ -191,7 +191,7 @@ create or replace procedure SP_PUTDICIONARIO
            siw.dc_dado_tipo                   b
      where t1.owner       = upper(p_owner)
        and t1.object_type in ('FUNCTION', 'PROCEDURE')
-       and b.nome         = replace(replace(replace(replace(replace(t2.data_type,'VARCHAR2','VarChar'),'CHAR','Char'),'NUMBER','Numeric'), 'DATE', 'Date'),'REF CURSOR', 'Cursor')
+       and b.nome         = replace(replace(replace(replace(replace(replace(t2.data_type,'CHAR','Char'),'VARCHAR2','VarChar'),'CHAR','Char'),'NUMBER','Numeric'), 'DATE', 'Date'),'REF CURSOR', 'Cursor')
     order by t1.object_name, t2.position;
 
 begin
@@ -266,6 +266,8 @@ begin
 
   -- Recria as colunas de relacionamentos não localizados no dicionário,
   -- ligadas a tabelas do cliente, sistema e usuário informado
+  
+  -- Remove colunas de relacionamento onde a tabela filha seja do sistema e usuário indicado
   delete from 
   (select a.*
      from siw.dc_relac_cols                      a
@@ -572,36 +574,6 @@ begin
        or t.referenced_owner = upper(p_owner)
   );
 
-  -- Remove colunas não localizadas no dicionário de dados
-  delete siw.dc_coluna 
-  where sq_coluna in (select x.sq_coluna
-                        from siw.dc_coluna x
-                             inner      join siw.dc_tabela  z on (x.sq_tabela = z.sq_tabela)
-                             inner      join siw.dc_usuario w on (z.sq_usuario   = w.sq_usuario and
-                                                                  w.nome         = upper(p_owner)
-                                                                 )
-                             inner      join siw.dc_sistema v on (w.sq_sistema   = v.sq_sistema and
-                                                                  v.sigla        = upper(p_sistema) and
-                                                                  v.cliente      = p_cliente
-                                                                 )
-                             left outer join (select a.sq_coluna, e.owner, e.TABLE_NAME, e.COLUMN_NAME
-                                                from siw.dc_coluna                   a
-                                                     inner   join siw.dc_tabela   b  on (a.sq_tabela    = b.sq_tabela)
-                                                       inner join siw.dc_usuario  c  on (b.sq_usuario   = c.sq_usuario and
-                                                                                         c.nome         = upper(p_owner)
-                                                                                        )
-                                                       inner join siw.dc_sistema  d  on (c.sq_sistema   = d.sq_sistema and
-                                                                                         d.sigla        = upper(p_sistema) and
-                                                                                         d.cliente      = p_cliente
-                                                                                        )
-                                                     inner   join all_tab_columns e on (e.owner        = c.nome and
-                                                                                        e.table_name   = b.nome and
-                                                                                        e.column_name  = a.nome
-                                                                                       )
-                                             ) y on (x.sq_coluna = y.sq_coluna)
-                       where y.sq_coluna is null
-                     );
-
   -- Remove colunas de relacionamentos não localizados no dicionário de dados
   delete siw.dc_relac_cols
    where sq_relacionamento in 
@@ -644,6 +616,36 @@ begin
                                ) y on (x.sq_relacionamento = y.sq_relacionamento)
          where y.sq_relacionamento is null
        );
+
+  -- Remove colunas não localizadas no dicionário de dados
+  delete siw.dc_coluna 
+  where sq_coluna in (select x.sq_coluna
+                        from siw.dc_coluna x
+                             inner      join siw.dc_tabela  z on (x.sq_tabela = z.sq_tabela)
+                             inner      join siw.dc_usuario w on (z.sq_usuario   = w.sq_usuario and
+                                                                  w.nome         = upper(p_owner)
+                                                                 )
+                             inner      join siw.dc_sistema v on (w.sq_sistema   = v.sq_sistema and
+                                                                  v.sigla        = upper(p_sistema) and
+                                                                  v.cliente      = p_cliente
+                                                                 )
+                             left outer join (select a.sq_coluna, e.owner, e.TABLE_NAME, e.COLUMN_NAME
+                                                from siw.dc_coluna                   a
+                                                     inner   join siw.dc_tabela   b  on (a.sq_tabela    = b.sq_tabela)
+                                                       inner join siw.dc_usuario  c  on (b.sq_usuario   = c.sq_usuario and
+                                                                                         c.nome         = upper(p_owner)
+                                                                                        )
+                                                       inner join siw.dc_sistema  d  on (c.sq_sistema   = d.sq_sistema and
+                                                                                         d.sigla        = upper(p_sistema) and
+                                                                                         d.cliente      = p_cliente
+                                                                                        )
+                                                     inner   join all_tab_columns e on (e.owner        = c.nome and
+                                                                                        e.table_name   = b.nome and
+                                                                                        e.column_name  = a.nome
+                                                                                       )
+                                             ) y on (x.sq_coluna = y.sq_coluna)
+                       where y.sq_coluna is null
+                     );
 
   -- Remove relacionamentos não localizados no dicionário de dados
   delete siw.dc_relacionamento 
@@ -980,4 +982,3 @@ begin
   commit;
 end SP_PUTDICIONARIO;
 /
-
