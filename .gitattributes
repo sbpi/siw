@@ -432,6 +432,12 @@ Fontes_ASP_SIW/mod_tt/VisualListaTelWord.asp -text
 Fontes_ASP_SIW/mod_tt/VisualResumoLigacaoParticular.asp -text
 Fontes_ASP_SIW/mod_tt/VisualResumoLigacaoParticularWord.asp -text
 Fontes_ASP_SIW/results.asp -text
+SP_Oracle81/fbaj/LOADALBERGUISTA.prc -text
+SP_Oracle81/fbaj/LOADALBERGUISTA_DF.prc -text
+SP_Oracle81/fbaj/LOADEXPORTTABLES.prc -text
+SP_Oracle81/fbaj/SP_GetAlberData.prc -text
+SP_Oracle81/fbaj/SP_GetAlberList.prc -text
+SP_Oracle81/fbaj/SP_PutAlbCad.prc -text
 SP_Oracle81/siw/MontaOrdemMenu.fnc -text
 SP_Oracle81/siw/PD_Cadastrador_Geral.fnc -text
 SP_Oracle81/siw/PD_CriaParametro.prc -text
