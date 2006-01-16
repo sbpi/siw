@@ -96,7 +96,7 @@ begin
               left outer join co_pais           o on (o.sq_pais   = j.sq_pais_passaporte)
             left outer join co_pessoa_juridica  k on (a.sq_pessoa = k.sq_pessoa)
             left outer join sg_autenticacao     n on (a.sq_pessoa = n.sq_pessoa)
-      where (a.sq_pessoa_pai      = p_cliente or (a.sq_pessoa = p_cliente and a.sq_pessoa_pai is null))
+      where (a.sq_pessoa_pai      = p_cliente or (a.sq_pessoa = p_cliente and Nvl(a.sq_pessoa_pai,1) = 1))
         and (p_sq_pessoa          is null     or (p_sq_pessoa          is not null and a.sq_pessoa          = p_sq_pessoa))
         and (p_tipo_pessoa        is null     or (p_tipo_pessoa        is not null and a.sq_tipo_pessoa     = p_tipo_pessoa))
         and (p_nome               is null     or (p_nome               is not null and (a.nome_indice       like(upper(acentos('%'||p_nome||'%')))) or (a.nome_resumido_ind like(upper(acentos('%'||p_nome||'%')))) ))
@@ -106,4 +106,3 @@ begin
         and (p_sq_pais_passaporte is null     or (p_sq_pais_passaporte is not null and j.sq_pais_passaporte = p_sq_pais_passaporte));
 end SP_GetBenef;
 /
-
