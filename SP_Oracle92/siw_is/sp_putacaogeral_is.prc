@@ -120,7 +120,7 @@ begin
                               fim_previsto, quantidade, cumulativa, qtd_ano_1,
                               qtd_ano_2, qtd_ano_3, qtd_ano_4, qtd_ano_5, qtd_ano_6, unidade_medida,
                               cd_subacao)
-         (select sq_meta.nextval, w_chave, b.nome|| ' - ' ||c.nome, ' ', 0, p_inicio, 
+         (select sq_meta.nextval, w_chave, b.nome|| ' - ' ||g.nome, ' ', 0, p_inicio, 
                  p_fim, Nvl(f.previsao_ano,0), case a.meta_nao_cumulativa when 'N' then 'S' else 'N' end, Nvl(d.qtd_ano_1,0),
                  Nvl(d.qtd_ano_2,0), Nvl(d.qtd_ano_3,0), Nvl(d.qtd_ano_4,0), Nvl(d.qtd_ano_5,0), Nvl(d.qtd_ano_6,0), e.nome,
                  a.cd_subacao
@@ -142,6 +142,7 @@ begin
                                                             a.cd_subacao        = f.cd_subacao        and
                                                             a.cliente           = f.cliente           and
                                                             a.ano               = f.ano) 
+                inner      join is_regiao             g on (a.cd_regiao         = g.cd_regiao)
           where a.cd_programa = p_programa
             and a.cd_acao     = p_acao
             and a.cd_unidade  = p_cd_unidade
@@ -260,7 +261,7 @@ begin
                                      fim_previsto, quantidade, cumulativa, qtd_ano_1,
                                      qtd_ano_2, qtd_ano_3, qtd_ano_4, qtd_ano_5, qtd_ano_6, unidade_medida,
                                      cd_subacao)
-                (select sq_meta.nextval, w_chave, b.nome|| ' - ' ||c.nome, ' ', 0, p_inicio, 
+                (select sq_meta.nextval, w_chave, b.nome|| ' - ' ||g.nome, ' ', 0, p_inicio, 
                         p_fim, Nvl(f.previsao_ano,0), case a.meta_nao_cumulativa when 'N' then 'S' else 'N'end, Nvl(d.qtd_ano_1,0),
                         Nvl(d.qtd_ano_2,0), Nvl(d.qtd_ano_3,0), Nvl(d.qtd_ano_4,0), Nvl(d.qtd_ano_5,0), Nvl(d.qtd_ano_6,0), e.nome,                        a.cd_subacao
                    from is_sig_acao                        a
@@ -281,6 +282,7 @@ begin
                                                                     a.cd_subacao        = f.cd_subacao       and
                                                                     a.cliente           = f.cliente          and
                                                                     a.ano               = f.ano)
+                        inner      join is_regiao             g on (a.cd_regiao         = g.cd_regiao)
                   where a.cd_programa = p_programa
                     and a.cd_acao     = p_acao
                     and a.cd_unidade  = p_cd_unidade

@@ -97,10 +97,8 @@ begin
       Then w_operacao := 'I';
       Else w_operacao := 'A';
    End If;
-   select count(*) into w_existe
-     from is_ppa_localizador b
-    where b.cd_localizador = p_cd_localizador;
-   If w_operacao = 'I' and w_existe > 0 Then
+
+   If w_operacao = 'I' Then
       -- Insere registro
       insert into is_sig_acao (cliente, ano, cd_programa, cd_acao, cd_subacao, cd_localizador, cd_regiao, cd_acao_ppa,
                                cd_tipo_acao, cd_produto, cd_unidade_medida, cd_unidade, cd_tipo_unidade, cd_estagio,
@@ -131,7 +129,7 @@ begin
          EXECUTE IMMEDIATE crec.w_sql;
       end loop;
 
-   ElsIf w_operacao = 'A' and w_existe > 0 Then
+   ElsIf w_operacao = 'A' Then
       select cd_subacao into w_cd_subacao
         from is_sig_acao a 
        where a.cd_localizador = p_cd_localizador

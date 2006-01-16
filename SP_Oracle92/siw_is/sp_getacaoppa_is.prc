@@ -23,7 +23,7 @@ begin
                 k.em_coordenador email, k.sq_unidade sq_unidade_adm, k.sq_siw_solicitacao, 
                 m.nome ds_programa, m.cd_programa, sum(a.empenhado) empenhado, sum(a.aprovado) aprovado, sum(a.liquidado) liquidado,
                 Nvl(k.sigla,'---') sg_tramite, upper(k.nm_coordenador) nm_coordenador,
-                sum(n.previsao_ano), sum(n.atual_ano), sum(n.real_ano), nvl(n.flag_alteracao,n.flag_inclusao) dt_carga_financ                
+                sum(n.previsao_ano), sum(n.atual_ano), sum(n.real_ano), nvl(max(n.flag_alteracao),max(n.flag_inclusao)) dt_carga_financ                
            from is_sig_acao                              a
                 left outer   join  is_sig_tipo_acao      b  on (a.cd_tipo_acao      = b.cd_tipo_acao)
                 left outer   join  is_sig_unidade_medida c  on (a.cd_unidade_medida = c.cd_unidade_medida)
@@ -56,13 +56,13 @@ begin
                                   where 'CONSULTA'        <> Nvl(p_restricao,'a')
                                 )                        k    on (a.cd_programa     = k.cd_programa and
                                                                   a.cd_acao         = k.cd_acao     and
-                                                                  a.cd_subacao      = k.cd_subacao  and
                                                                   a.cd_unidade      = k.cd_unidade  and
                                                                   a.ano             = k.ano         and
                                                                   a.cliente         = k.cliente
                                                                  )
                 left outer join    is_sig_dado_financeiro n on (a.cd_programa       = n.cd_programa and
                                                                 a.cd_acao           = n.cd_acao     and
+                                                                a.cd_subacao        = n.cd_subacao  and
                                                                 a.cliente           = n.cliente     and
                                                                 a.ano               = n.ano)
           where a.cliente = p_cliente
@@ -93,8 +93,7 @@ begin
                 f.cd_tipo_unidade, g.cd_funcao, g.cd_subfuncao, g.valor_ano_corrente,
                 g.valor_total, g.valor_ano_anterior, h.nome, 
                 i.descricao, j.nome, k.nm_coordenador, k.fn_coordenador,
-                k.em_coordenador, k.sq_unidade, m.nome, m.cd_programa, k.sq_siw_solicitacao, k.sigla,
-                n.flag_alteracao, n.flag_inclusao;
+                k.em_coordenador, k.sq_unidade, m.nome, m.cd_programa, k.sq_siw_solicitacao, k.sigla;
    Elsif p_restricao = 'FINANCIAMENTO' Then
       open p_result for 
          select a.cd_acao, a.cd_programa, a.cd_programa||a.cd_acao||min(a.cd_subacao)||a.cd_unidade chave, a.cd_tipo_acao, 

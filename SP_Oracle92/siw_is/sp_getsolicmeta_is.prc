@@ -136,7 +136,26 @@ begin
                     inner      join siw.eo_unidade      f on (e.sq_unidade         = f.sq_unidade)
                 inner          join siw.eo_unidade      g on (i.sq_unidade         = g.sq_unidade)
                 left outer     join is_acao             h on (a.sq_siw_solicitacao = h.sq_siw_solicitacao)
-                left outer  join is_sig_dado_financeiro m on (h.cd_programa        = m.cd_programa and
+                left outer     join (select x.ano, x.cliente, x.cd_programa, x.cd_acao, y.cd_subacao, z.descricao_subacao,
+                        x.real_mes_1, x.real_mes_2, x.real_mes_3, x.real_mes_4, x.real_mes_5,
+                        x.real_mes_6, x.real_mes_7, x.real_mes_8, x.real_mes_9, x.real_mes_10,
+                        x.real_mes_11, x.real_mes_12, x.previsao_ano, x.atual_ano, x.real_ano
+                   from is_acao                w,
+                        is_sig_dado_financeiro x,
+                        is_meta                y,
+                        is_sig_acao            z
+                  where w.sq_siw_solicitacao = p_chave
+                    and y.sq_meta            = p_chave_aux
+                    and y.sq_siw_solicitacao  = w.sq_siw_solicitacao
+                    and (w.cd_programa        = x.cd_programa     and
+                         w.cd_acao            = x.cd_acao         and
+                         w.cd_subacao         = x.cd_subacao)
+                    and (w.cd_programa        = z.cd_programa     and
+                         w.cd_acao            = z.cd_acao         and
+                         w.cd_subacao         = z.cd_subacao      and
+                         w.ano                = z.ano             and
+                         w.cliente            = z.cliente)
+                                  )                     m on (h.cd_programa        = m.cd_programa and
                                                               h.cd_acao            = m.cd_acao     and
                                                               h.cd_subacao         = m.cd_subacao  and
                                                               h.cliente            = m.cliente     and
