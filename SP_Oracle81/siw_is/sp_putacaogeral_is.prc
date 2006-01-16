@@ -120,7 +120,7 @@ begin
                               fim_previsto, quantidade, cumulativa, qtd_ano_1,
                               qtd_ano_2, qtd_ano_3, qtd_ano_4, qtd_ano_5, qtd_ano_6, unidade_medida,
                               cd_subacao)
-         (select sq_meta.nextval, w_chave, b.nome|| ' - ' ||c.nome, ' ', 0, p_inicio, 
+         (select sq_meta.nextval, w_chave, b.nome|| ' - ' ||g.nome, ' ', 0, p_inicio, 
                  p_fim, Nvl(f.previsao_ano,0), decode(a.meta_nao_cumulativa,'N','S','N'), Nvl(d.qtd_ano_1,0),
                  Nvl(d.qtd_ano_2,0), Nvl(d.qtd_ano_3,0), Nvl(d.qtd_ano_4,0), Nvl(d.qtd_ano_5,0), Nvl(d.qtd_ano_6,0), e.nome,
                  a.cd_subacao
@@ -129,7 +129,8 @@ begin
                  is_ppa_localizador    c,
                  is_ppa_dado_fisico    d,
                  is_sig_unidade_medida e,
-                 is_sig_dado_fisico    f
+                 is_sig_dado_fisico    f,
+                 is_regiao             g
           where (a.cd_produto         = b.cd_produto (+))
             and (a.cd_programa        = c.cd_programa (+)        and
                  a.cd_acao_ppa        = c.cd_acao_ppa (+)        and
@@ -147,6 +148,7 @@ begin
                  a.cd_subacao         = f.cd_subacao         (+) and
                  a.cliente            = f.cliente            (+) and
                  a.ano                = f.ano                (+))
+            and (a.cd_regiao          = g.cd_regiao)
             and a.cd_programa = p_programa
             and a.cd_acao     = p_acao
             and a.cd_unidade  = p_cd_unidade
@@ -266,7 +268,7 @@ begin
                                      fim_previsto, quantidade, cumulativa, qtd_ano_1,
                                      qtd_ano_2, qtd_ano_3, qtd_ano_4, qtd_ano_5, qtd_ano_6, unidade_medida,
                                      cd_subacao)
-                (select sq_meta.nextval, w_chave, b.nome|| ' - ' ||c.nome, ' ', 0, p_inicio, 
+                (select sq_meta.nextval, w_chave, b.nome|| ' - ' ||g.nome, ' ', 0, p_inicio, 
                         p_fim, Nvl(f.previsao_ano,0), decode(a.meta_nao_cumulativa,'N','S','N'), Nvl(d.qtd_ano_1,0),
                         Nvl(d.qtd_ano_2,0), Nvl(d.qtd_ano_3,0), Nvl(d.qtd_ano_4,0), Nvl(d.qtd_ano_5,0), Nvl(d.qtd_ano_6,0), e.nome,
                         a.cd_subacao
@@ -275,7 +277,8 @@ begin
                         is_ppa_localizador    c,
                         is_ppa_dado_fisico    d, 
                         is_sig_unidade_medida e,
-                        is_sig_dado_fisico    f 
+                        is_sig_dado_fisico    f,
+                        is_regiao             g
                   where (a.cd_produto         = b.cd_produto (+))
                     and(a.cd_programa        = c.cd_programa (+)        and
                         a.cd_acao_ppa        = c.cd_acao_ppa (+)        and
@@ -293,6 +296,7 @@ begin
                          a.cd_subacao        = f.cd_subacao          (+) and
                          a.cliente           = f.cliente             (+) and
                          a.ano               = f.ano                 (+))
+                    and (a.cd_regiao         = g.cd_regiao)
                     and a.cd_programa = p_programa
                     and a.cd_acao     = p_acao
                     and a.cd_unidade  = p_cd_unidade

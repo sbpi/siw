@@ -24,7 +24,7 @@ begin
                 k.em_coordenador email, k.sq_unidade sq_unidade_adm, k.sq_siw_solicitacao, 
                 m.nome ds_programa, m.cd_programa, sum(a.empenhado) empenhado, sum(a.aprovado) aprovado, sum(a.liquidado) liquidado,
                 Nvl(k.sigla,'---') sg_tramite, upper(k.nm_coordenador) nm_coordenador,
-                n.previsao_ano, n.atual_ano, n.real_ano, nvl(n.flag_alteracao,n.flag_inclusao) dt_carga_financ
+                sum(n.previsao_ano) previsao_ano, sum(n.atual_ano) atual_ano, sum(n.real_ano) real_ano, nvl(max(n.flag_alteracao),max(n.flag_inclusao)) dt_carga_financ
            from is_sig_acao            a,
                 is_sig_tipo_acao       b,
                 is_sig_unidade_medida  c,
@@ -70,13 +70,12 @@ begin
                  a.cliente           = m.cliente)
             and (a.cd_programa     = k.cd_programa (+)and
                  a.cd_acao         = k.cd_acao (+)    and
-                 a.cd_subacao      = k.cd_subacao (+) and
                  a.cd_unidade      = k.cd_unidade (+) and
                  a.ano             = k.ano (+)        and
                  a.cliente         = k.cliente (+))
             and (a.cd_programa     = n.cd_programa (+)and
                  a.cd_acao         = n.cd_acao (+)    and
-                 a.cd_subacao      = n.cd_subacao (+) and
+                 a.cd_subacao      = n.cd_subacao  (+)and
                  a.ano             = n.ano (+)        and
                  a.cliente         = n.cliente (+))
             and a.cliente = p_cliente
@@ -109,8 +108,7 @@ begin
                 f.cd_tipo_unidade, g.cd_funcao, g.cd_subfuncao, g.valor_ano_corrente,
                 g.valor_total, g.valor_ano_anterior, h.nome, 
                 i.descricao, j.nome, k.nm_coordenador, k.fn_coordenador,
-                k.em_coordenador, k.sq_unidade, m.nome, m.cd_programa, k.sq_siw_solicitacao, k.sigla,
-                n.previsao_ano, n.atual_ano, n.real_ano, n.flag_alteracao, n.flag_inclusao;
+                k.em_coordenador, k.sq_unidade, m.nome, m.cd_programa, k.sq_siw_solicitacao, k.sigla;
    Elsif p_restricao = 'FINANCIAMENTO' Then
       open p_result for 
          select a.cd_acao, a.cd_programa, a.cd_programa||a.cd_acao||min(a.cd_subacao)||a.cd_unidade chave, a.cd_tipo_acao, 
