@@ -110,7 +110,7 @@ create or replace procedure SP_PUTDICIONARIO
   cursor c_trigger is
     select d.sq_trigger chave, a.sq_tabela, b.sq_usuario, c.sq_sistema, t.trigger_name nome, 
            case when d.sq_trigger is null then 'A ser inserido' else d.descricao end descricao
-      from all_triggers                     t
+      from dba_triggers                     t
            inner        join siw.dc_tabela  a on (t.table_name   = a.nome)
              inner      join siw.dc_usuario b on (a.sq_usuario   = b.sq_usuario and
                                                    b.nome        = upper(p_owner)
@@ -281,6 +281,20 @@ begin
                                                        e.sigla             = upper(p_sistema)
                                                       )
   );
+  -- Remove colunas de relacionamento onde a tabela filha seja do sistema e usuário indicado
+  delete from 
+  (select a.*
+     from siw.dc_relac_cols                      a
+          inner       join siw.dc_relacionamento b on (a.sq_relacionamento = b.sq_relacionamento)
+            inner     join siw.dc_tabela         c on (b.tabela_pai        = c.sq_tabela)
+              inner   join siw.dc_usuario        d on (c.sq_usuario        = d.sq_usuario and
+                                                       d.nome              = upper(p_owner)
+                                                      )
+                inner join siw.dc_sistema        e on (d.sq_sistema        = e.sq_sistema and
+                                                       e.cliente           = p_cliente and
+                                                       e.sigla             = upper(p_sistema)
+                                                      )
+  );
   -- Cria as colunas de relacionamento
   insert into siw.dc_relac_cols (sq_relacionamento, coluna_pai, coluna_filha)
   (select e.sq_relacionamento, d.sq_coluna coluna_pai, b.sq_coluna coluna_filha
@@ -317,6 +331,12 @@ begin
       and ((f.nome = upper(p_owner) and g.sigla = upper(p_sistema) and g.cliente = p_cliente) or
            (h.nome = upper(p_owner) and i.sigla = upper(p_sistema) and i.cliente = p_cliente)
           )
+      and 0 = (select count(*) 
+                 from siw.dc_relac_cols 
+                where sq_relacionamento = e.sq_relacionamento
+                  and coluna_pai        = d.sq_coluna
+                  and coluna_filha      = b.sq_coluna
+              )
   );
 
   -- Atualiza as triggers
@@ -355,7 +375,7 @@ begin
   -- Cria os eventos de trigger
   insert into siw.dc_trigger_evento (sq_trigger, sq_evento)
   (select a.sq_trigger, b.sq_evento
-     from all_triggers                    t 
+     from dba_triggers                    t 
           inner      join siw.dc_trigger  a on (t.trigger_name     = a.nome)
             inner    join siw.dc_usuario  c on (a.sq_usuario       = c.sq_usuario and
                                                 t.owner            = c.nome and
@@ -704,7 +724,7 @@ begin
                                                     v.cliente    = p_cliente
                                                    )
                left outer join (select d.sq_trigger
-                                  from all_triggers                  t
+                                  from dba_triggers                  t
                                        inner     join siw.dc_tabela  a on (t.table_name   = a.nome)
                                          inner   join siw.dc_usuario b on (a.sq_usuario   = b.sq_usuario and
                                                                            b.nome         = upper(p_owner)
