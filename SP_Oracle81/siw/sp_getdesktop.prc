@@ -1,6 +1,7 @@
 create or replace procedure SP_GetDeskTop
    (p_cliente   in  number,
     p_usuario   in number,
+    p_ano       in number,
     p_result    out siw.sys_refcursor
    ) is
    w_interno  varchar2(1);
@@ -38,6 +39,7 @@ begin
             and (c.sq_modulo      = b.sq_modulo)
             and e.ativo = 'S'
             and 'CI'    <> Nvl(e.sigla,'nulo')
+            and (c.controla_ano = 'N' or (c.controla_ano = 'S' and d.ano = p_ano))
           group by c.sq_pessoa, b.sq_modulo, b.nome, b.sigla, b.objetivo_geral, c.sq_menu, c.nome,
                    c.link, c.imagem, c.p1, c.p2, c.p3, c.p4, c.sigla
           order by b.nome, c.nome;
@@ -67,10 +69,10 @@ begin
             and (c.sq_modulo      = b.sq_modulo)
             and e.ativo = 'S'
             and 'CI'    <> Nvl(e.sigla,'nulo')
+            and (c.controla_ano = 'N' or (c.controla_ano = 'S' and d.ano = p_ano))
           group by c.sq_pessoa, b.sq_modulo, b.nome, b.sigla, b.objetivo_geral, c.sq_menu, c.nome,
                    c.link, c.imagem, c.p1, c.p2, c.p3, c.p4, c.sigla
           order by b.nome, c.nome;
    End If;
 end SP_GetDeskTop;
 /
-

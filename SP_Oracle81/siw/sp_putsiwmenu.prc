@@ -32,7 +32,8 @@ create or replace procedure SP_PutSIWMenu
     p_pede_descricao      in  varchar2 default null,
     p_pede_justificativa  in  varchar2 default null,
     p_finalidade          in  varchar2 default null,
-    p_envio               in  varchar2 default null
+    p_envio               in  varchar2 default null,
+    p_controla_ano        in  varchar2 default null
    ) is
    w_chave  number(18);
 begin
@@ -45,13 +46,15 @@ begin
          emite_os, consulta_opiniao, envia_email, exibe_relatorio, como_funciona, vinculacao,  
          data_hora, envia_dia_util, descricao, justificativa, finalidade,  
          sq_pessoa, nome, acesso_geral, sq_modulo, sq_unid_executora,
-         tramite, ultimo_nivel, descentralizado, externo, ativo, ordem, destinatario)
+         tramite, ultimo_nivel, descentralizado, externo, ativo, ordem, destinatario,
+         controla_ano)
       values (w_Chave, p_sq_menu_pai, p_link,
          p_p1, p_p2, p_p3, p_p4, upper(trim(p_sigla)), trim(p_imagem), trim(p_target),
          p_emite_os, p_consulta_opiniao, p_envia_email, p_exibe_relatorio, trim(p_como_funciona), p_vinculacao,
          p_data_hora, p_envia_dia_util, p_pede_descricao, p_pede_justificativa, p_finalidade,
          p_cliente, p_nome, p_acesso_geral, p_modulo, p_sq_unidade_exec,
-         p_tramite, p_ultimo_nivel, p_descentralizado, p_externo, p_ativo, p_ordem, Nvl(p_envio,'S'));
+         p_tramite, p_ultimo_nivel, p_descentralizado, p_externo, p_ativo, p_ordem, Nvl(p_envio,'S'),
+         p_controla_ano);
       
       -- Cria a opção do menu para todos os endereços da organização
       insert into siw_menu_endereco (sq_menu, sq_pessoa_endereco) 
@@ -85,7 +88,8 @@ begin
           sq_modulo            = p_modulo,             tramite              = p_tramite, 
           ultimo_nivel         = p_ultimo_nivel,       descentralizado      = p_descentralizado, 
           externo              = p_externo,            ordem                = p_ordem,
-          sq_unid_executora    = p_sq_unidade_exec,    destinatario         = Nvl(p_envio,'S')
+          sq_unid_executora    = p_sq_unidade_exec,    destinatario         = Nvl(p_envio,'S'),
+          controla_ano         = p_controla_ano
       where sq_menu = p_chave;
    Elsif p_operacao = 'E' Then
       -- Remove as permissões de acesso por trâmite que os usuários têm
@@ -119,4 +123,3 @@ begin
    commit;   
 end SP_PutSIWMenu;
 /
-
