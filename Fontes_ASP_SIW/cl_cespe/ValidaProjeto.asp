@@ -71,7 +71,7 @@ Function ValidaProjeto(p_cliente, p_chave, p_sg1, p_sg2, p_sg3, p_sg4, p_tramite
         ' Verificações de integridade de dados da solicitação, feitas sempre que houver
         ' um encaminhamento.
         '-----------------------------------------------------------------------------
-        DB_GetViagemBenef l_rs1, p_chave, p_cliente, null, null, null, null
+        DB_GetViagemBenef l_rs1, p_chave, p_cliente, null, null, null, null, null, null, null
         If cDbl(Nvl(l_rs_solic("limite_passagem"),0)) = 0 Then
            l_erro = l_erro & "<li>O limite de passagens não foi informado"
            l_tipo = 0

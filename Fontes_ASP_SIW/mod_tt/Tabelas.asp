@@ -216,7 +216,7 @@ Sub centralTel
     ScriptClose
   End If
   ShowHTML "</HEAD>"
-  ShowHTML "<BASE HREF=""http://" & Request.ServerVariables("server_name") & "/siw/"">"
+  ShowHTML "<BASE HREF=""" & conRootSIW & """>"
   If w_troca > "" Then
     BodyOpen "onLoad='document.Form." & w_troca & ".focus()';"
   ElseIf O = "E" Then
@@ -406,7 +406,7 @@ Sub Troncos
     ScriptClose
   End If
   ShowHTML "</HEAD>"
-  ShowHTML "<BASE HREF=""http://" & Request.ServerVariables("server_name") & "/siw/"">"
+  ShowHTML "<BASE HREF=""" & conRootSIW & """>"
   If O = "E" Then
     BodyOpen "onLoad='document.Form.w_assinatura.focus()';"
   Else
@@ -592,7 +592,7 @@ Sub Ramais
     ScriptClose
   End If
   ShowHTML "</HEAD>"
-  ShowHTML "<BASE HREF=""http://" & Request.ServerVariables("server_name") & "/siw/"">"
+  ShowHTML "<BASE HREF=""" & conRootSIW & """>"
   If w_troca > "" Then
     BodyOpen "onLoad='document.Form." & w_troca & ".focus()';"
   ElseIf O = "E" Then
@@ -734,7 +734,7 @@ Sub UsuarioCentral
     ScriptClose
   End If
   ShowHTML "</HEAD>"
-  ShowHTML "<BASE HREF=""http://" & Request.ServerVariables("server_name") & "/siw/"">"
+  ShowHTML "<BASE HREF=""" & conRootSIW & """>"
   BodyOpen "onLoad='document.focus()';"
   ShowHTML "<B><FONT COLOR=""#000000"">" & w_TP & "</FONT></B>"
   ShowHTML "<HR>"
@@ -905,7 +905,7 @@ Sub RamalUsr
     ScriptClose
   End If
   ShowHTML "</HEAD>"
-  ShowHTML "<BASE HREF=""http://" & Request.ServerVariables("server_name") & "/siw/"">"
+  ShowHTML "<BASE HREF=""" & conRootSIW & """>"
   If w_troca > "" Then
     BodyOpen "onLoad='document.Form." & w_troca & ".focus()';"
   ElseIf O = "E" Then
@@ -1131,7 +1131,7 @@ Sub prefixo
     ScriptClose
   End If
   ShowHTML "</HEAD>"
-  ShowHTML "<BASE HREF=""http://" & Request.ServerVariables("server_name") & "/siw/"">"
+  ShowHTML "<BASE HREF=""" & conRootSIW & """>"
   If w_troca > "" Then
     BodyOpen "onLoad='document.Form." & w_troca & ".focus()';"
   ElseIf O = "E" Then
@@ -1469,7 +1469,7 @@ Sub Main
     Case "GRAVA"          Grava
     Case Else
       Cabecalho
-      ShowHTML "<BASE HREF=""http://" & Request.ServerVariables("server_name") & "/siw/"">"
+      ShowHTML "<BASE HREF=""" & conRootSIW & """>"
       BodyOpen "onLoad=document.focus();"
       ShowHTML "<B><FONT COLOR=""#000000"">" & w_TP & "</FONT></B>"
       ShowHTML "<HR>"

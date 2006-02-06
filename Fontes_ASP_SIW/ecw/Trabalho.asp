@@ -128,7 +128,7 @@ Sub Selecao
   Cabecalho
   ShowHTML "<HEAD>"
   ShowHTML "</HEAD>"
-  ShowHTML "<BASE HREF=""http://" & Request.ServerVariables("server_name") & "/siw/"">"
+  ShowHTML "<BASE HREF=""" & conRootSIW & """>"
   BodyOpenImage "onLoad=document.focus();", conFileVirtual & Session("p_cliente") & "/img/logo_sge.jpg", "FIXED"
 
   ShowHTML "<B><FONT COLOR=""#000000"">" & TP & "</FONT></B>"

@@ -65,7 +65,7 @@ Function VisualProgramaGer(w_chave, P4)
   w_html = w_html & VbCrLf & "      <tr><td valign=""top""><div align=""justify""><font size=""1"" color=""red"">Diretrizes e desafios do governo associados ao programa:<br><b>Falta definir qual o campo deve ser visualizado</b></div></td>"
   w_html = w_html & VbCrLf & "      <tr><td valign=""top""><div align=""justify""><font size=""1"" color=""red"">Objetivo setorial associado:<br><b>Falta definir qual o campo deve ser visualizado</b></div></td>"
   w_html = w_html & VbCrLf & "      <tr><td valign=""top""><div align=""justify""><font size=""1"">Explique como o programa contribui para que o objetivo setorial seja alcançado:<br><b>" & Nvl(RS("contribuicao_objetivo"),"---")& "</b></div></td>"           
-  w_html = w_html & VbCrLf & "      <tr><td valign=""top""><div align=""justify""><font size=""1"">Diretrizes do Plano Nacional de Saúde:<br><b>" & Nvl(RS("diretriz"),"---")& "</b></div></td>"
+  w_html = w_html & VbCrLf & "      <tr><td valign=""top""><div align=""justify""><font size=""1"">Diretrizes do Plano Nacional de Políticas de Integração Racial:<br><b>" & Nvl(RS("diretriz"),"---")& "</b></div></td>"
   w_html = w_html & VbCrLf & "      <tr><td valign=""top""><div align=""justify""><font size=""1"">Justificativa:<br><b>" & Nvl(RS("justificativa_sigplan"),"---")& "</b></div></td>"
   w_html = w_html & VbCrLf & "      <tr><td valign=""top""><div align=""justify""><font size=""1"">Objetivo:<br><b>" & Nvl(RS("objetivo"),"---")& "</b></div></td>"           
   w_html = w_html & VbCrLf & "      <tr><td valign=""top""><div align=""justify""><font size=""1"">Público-alvo:<br><b>" & Nvl(RS("publico_alvo"),"---")& "</b></div></td>"

@@ -377,7 +377,7 @@ Sub Inicial
   ValidateClose
   ScriptClose
   ShowHTML "</HEAD>"
-  ShowHTML "<BASE HREF=""http://" & Request.ServerVariables("server_name") & "/siw/"">"
+  ShowHTML "<BASE HREF=""" & conRootSIW & """>"
   If w_Troca > "" Then ' Se for recarga da página
      BodyOpen "onLoad='document.Form." & w_Troca & ".focus();'"
   ElseIf O = "I" Then
@@ -1066,7 +1066,7 @@ Sub Geral
   ValidateClose
   ScriptClose
   ShowHTML "</HEAD>"
-  ShowHTML "<BASE HREF=""http://" & Request.ServerVariables("server_name") & "/siw/"">"
+  ShowHTML "<BASE HREF=""" & conRootSIW & """>"
   If w_troca > "" Then
      BodyOpen " onLoad=""javascript:document.Form." & w_troca & ".focus();"""
   ElseIf Instr("EV",O) > 0 Then
@@ -1506,7 +1506,7 @@ Sub OutraParte
   ValidateClose
   ScriptClose
   ShowHTML "</HEAD>"
-  ShowHTML "<BASE HREF=""http://" & Request.ServerVariables("server_name") & "/siw/"">"
+  ShowHTML "<BASE HREF=""" & conRootSIW & """>"
   If (w_cpf = "" and w_cnpj = "") or Instr(Request("botao"),"Alterar") > 0 or Instr(Request("botao"),"Procurar") > 0 Then ' Se o beneficiário ainda não foi selecionado
      If Instr(Request("botao"),"Procurar") > 0 Then ' Se está sendo feita busca por nome
         BodyOpen "onLoad='document.focus()';"
@@ -1894,7 +1894,7 @@ Sub Preposto
   ValidateClose
   ScriptClose
   ShowHTML "</HEAD>"
-  ShowHTML "<BASE HREF=""http://" & Request.ServerVariables("server_name") & "/siw/"">"
+  ShowHTML "<BASE HREF=""" & conRootSIW & """>"
   If w_cpf = "" or Instr(Request("botao"),"Alterar") > 0 or Instr(Request("botao"),"Procurar") > 0 Then ' Se o beneficiário ainda não foi selecionado
      If Instr(Request("botao"),"Procurar") > 0 Then ' Se está sendo feita busca por nome
         BodyOpen "onLoad='document.focus()';"
@@ -2085,7 +2085,7 @@ Sub Representante
 
   ' Se acordo com pessoa física, não permite a inclusão dos dados do preposto
   If cDbl(w_sq_tipo_pessoa) = 1 Then
-     ShowHTML "<BASE HREF=""http://" & Request.ServerVariables("server_name") & "/siw/"">"
+     ShowHTML "<BASE HREF=""" & conRootSIW & """>"
      BodyOpen "onLoad='document.focus()';"
      ShowHTML "<center>"
      Estrutura_Topo_Limpo
@@ -2207,9 +2207,9 @@ Sub Representante
      ValidateClose
      ScriptClose
      ShowHTML "</HEAD>"
-     ShowHTML "<BASE HREF=""http://" & Request.ServerVariables("server_name") & "/siw/"">"
+     ShowHTML "<BASE HREF=""" & conRootSIW & """>"
   End If
-  ShowHTML "<BASE HREF=""http://" & Request.ServerVariables("server_name") & "/siw/"">"
+  ShowHTML "<BASE HREF=""" & conRootSIW & """>"
   If InStr("IA",O) > 0 and (w_cpf = "" or Instr(Request("botao"),"Alterar") > 0 or Instr(Request("botao"),"Procurar") > 0) Then ' Se o beneficiário ainda não foi selecionado
      If Instr(Request("botao"),"Procurar") > 0 Then ' Se está sendo feita busca por nome
         BodyOpen "onLoad='document.focus()';"
@@ -2507,7 +2507,7 @@ Sub Informar
   ValidateClose
   ScriptClose
   ShowHTML "</HEAD>"
-  ShowHTML "<BASE HREF=""http://" & Request.ServerVariables("server_name") & "/siw/"">"
+  ShowHTML "<BASE HREF=""" & conRootSIW & """>"
   If w_troca > "" Then
      BodyOpen "onLoad='document.Form." & w_troca & ".focus()';"
   ElseIf Instr("EV",O) > 0 Then
@@ -2636,7 +2636,7 @@ Sub Visual
   ShowHTML "<HEAD>"
   ShowHTML "<TITLE>" & conSgSistema & " - Visualização de projeto</TITLE>"
   ShowHTML "</HEAD>"  
-  ShowHTML "<BASE HREF=""http://" & Request.ServerVariables("server_name") & "/siw/"">"
+  ShowHTML "<BASE HREF=""" & conRootSIW & """>"
   If w_tipo <> "WORD" Then
      BodyOpenClean "onLoad='document.focus()'; "
   End If
@@ -2712,7 +2712,7 @@ Sub Excluir
      ScriptClose
   End If
   ShowHTML "</HEAD>"
-  ShowHTML "<BASE HREF=""http://" & Request.ServerVariables("server_name") & "/siw/"">"
+  ShowHTML "<BASE HREF=""" & conRootSIW & """>"
   If w_troca > "" Then
      BodyOpen "onLoad='document.Form." & w_troca & ".focus()';"
   Else
@@ -2828,7 +2828,7 @@ Sub Encaminhamento
      ScriptClose
   End If
   ShowHTML "</HEAD>"
-  ShowHTML "<BASE HREF=""http://" & Request.ServerVariables("server_name") & "/siw/"">"
+  ShowHTML "<BASE HREF=""" & conRootSIW & """>"
   If w_troca > "" Then
      BodyOpen "onLoad='document.Form." & w_troca & ".focus()';"
   Else
@@ -2956,7 +2956,7 @@ Sub Anotar
      ScriptClose
   End If
   ShowHTML "</HEAD>"
-  ShowHTML "<BASE HREF=""http://" & Request.ServerVariables("server_name") & "/siw/"">"
+  ShowHTML "<BASE HREF=""" & conRootSIW & """>"
   If w_troca > "" Then
      BodyOpen "onLoad='document.Form." & w_troca & ".focus()';"
   Else
@@ -3104,7 +3104,7 @@ Sub Concluir
      ScriptClose
   End If
   ShowHTML "</HEAD>"
-  ShowHTML "<BASE HREF=""http://" & Request.ServerVariables("server_name") & "/siw/"">"
+  ShowHTML "<BASE HREF=""" & conRootSIW & """>"
   If w_troca > "" Then
      BodyOpen "onLoad='document.Form." & w_troca & ".focus()';"
   Else
@@ -3199,10 +3199,10 @@ Sub varigMail
    Estrutura_CSS w_cliente
    ScriptOpen "JavaScript"
    ValidateOpen "Validacao"
-   Validate "w_para",         "Para",  "", "1", 2,   80, "1", "1"
-   Validate "w_assunto",   "assunto",  "", "1", 2,   80, "1", "1"
-   Validate "w_caminho",   "Arquivo", "", "", "5", "255", "1", "1"
-   Validate "w_mensagem", "Mensagem", "1",   1, 5, 2000, "1", "1"
+   Validate "w_para",         "Para",  "", "1",   2,    80, "1", "1"
+   Validate "w_assunto",   "assunto",  "", "1",   2,    80, "1", "1"
+   Validate "w_caminho",   "Arquivo",  "", "1", "5", "255", "1", "1"
+   Validate "w_mensagem", "Mensagem", "1",  1,   5,  2000, "1", "1"
    ValidateClose
    ScriptClose
    ShowHTML "</HEAD>"
@@ -3222,7 +3222,7 @@ Sub varigMail
    ShowHTML " <tr><td colspan=2><b><u>P</u>ara:</b><br><INPUT class=""sti"" type=""text"" name=""w_para"" accesskey=""P"" size=""65"" maxlength=""80""></td>"
    ShowHTML " <tr><td colspan=2><b><u>A</u>ssunto:</b><br><INPUT class=""sti"" type=""text"" name=""w_assunto"" accesskey=""A"" size=""65"" maxlength=""80""></td>"
    ShowHTML " <tr valign=""top"" >"
-   ShowHTML "      <tr><td><font size=""1""><b>A<u>r</u>quivo:</b><br><input " & w_Disabled & " accesskey=""R"" type=""file"" name=""w_caminho"" class=""STI"" SIZE=""80"" MAXLENGTH=""100"" VALUE=""ANEXO"" title=""'OPCIONAL. Se desejar anexar um arquivo, clique no botão ao lado para localizá-lo. Ele será transferido automaticamente para o servidor."">"  
+   ShowHTML "      <tr><td><font size=""1""><b>A<u>r</u>quivo:</b><br><input " & w_Disabled & " accesskey=""R"" type=""file"" name=""w_caminho"" class=""sti"" SIZE=""80"" MAXLENGTH=""100"" VALUE=""ANEXO"" title=""'OPCIONAL. Se desejar anexar um arquivo, clique no botão ao lado para localizá-lo. Ele será transferido automaticamente para o servidor."">"  
    ShowHTML " <tr><td colspan=2><b>Mensagem:</b><br><textarea name=""w_mensagem"" class=""sti"" ROWS=15 cols=100></TEXTAREA></td>"
    ShowHTML " <tr><td colspan=2 align=center><input class=""stb"" type=""submit"" name=""Botao"" value=""Enviar mensagem"">"
    ShowHTML " </table>"
@@ -3263,9 +3263,9 @@ Sub Envia
       ' Se foi feito o upload de um arquivo 
       If ul.Files("w_caminho").OriginalPath > "" Then 
          ' Verifica se o tamanho das fotos está compatível com  o limite de 100KB. 
-         If ul.Files("w_caminho").Size > 500024 Then
+         If ul.Files("w_caminho").Size > 5000024 Then
             ScriptOpen("JavaScript") 
-            ShowHTML "  alert('Atenção: o tamanho máximo do arquivo não pode exceder " & 500024/1024 & " KBytes!');" 
+            ShowHTML "  alert('Atenção: o tamanho máximo do arquivo não pode exceder " & 5000024/1024 & " KBytes!');" 
             ShowHTML "  history.back(1);" 
             ScriptClose
             Response.End()
@@ -3277,7 +3277,7 @@ Sub Envia
       End If 
    End If
    
-   w_resultado = EnviaMail2
+   w_resultado = EnviaMail2(ul.Form("w_para"))
    ' Se ocorreu algum erro, avisa da impossibilidade de envio
    If w_resultado > "" Then
       ScriptOpen "JavaScript"
@@ -3325,7 +3325,7 @@ Sub VisualTabela
   ShowHTML "<HEAD>"
   ShowHTML "<TITLE>" & conSgSistema & " - Visualização da Lista de Viajantes</TITLE>"
   ShowHTML "</HEAD>"  
-  ShowHTML "<BASE HREF=""http://" & Request.ServerVariables("server_name") & "/siw/"">"
+  ShowHTML "<BASE HREF=""" & conRootSIW & """>"
   If w_tipo <> "WORD" Then
      BodyOpenClean "onLoad='document.focus()'; "
   End If
@@ -3549,7 +3549,7 @@ Public Sub Grava
   Dim FS, F1, w_file
 
   ShowHTML "<HTML>"
-  ShowHTML "<BASE HREF=""http://" & Request.ServerVariables("server_name") & "/siw/"">"
+  ShowHTML "<BASE HREF=""" & conRootSIW & """>"
   BodyOpen "onLoad=document.focus();"
   
   AbreSessao    

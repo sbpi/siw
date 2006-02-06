@@ -66,9 +66,6 @@ Sub DML_PutDadosAcaoPPA_IS(p_cliente, p_ano, p_unidade, p_programa, p_acao, p_su
      .parameters.Delete         "l_liquidado"
   end with
 End Sub
-REM =========================================================================
-REM Final da rotina
-REM -------------------------------------------------------------------------
 
 REM =========================================================================
 REM Mantém a tabela de natureza do programa
@@ -111,9 +108,6 @@ Sub DML_PutNatureza_IS(Operacao, p_chave, p_cliente, p_nome, p_ativo)
      
   end with
 End Sub
-REM =========================================================================
-REM Final da rotina
-REM -------------------------------------------------------------------------
 
 REM =========================================================================
 REM Mantém a tabela de Horizonte do programa
@@ -156,11 +150,9 @@ Sub DML_PutHorizonte_IS(Operacao, p_chave, p_cliente, p_nome, p_ativo)
      
   end with
 End Sub
+
 REM =========================================================================
-REM Final da rotina
-REM -------------------------------------------------------------------------
-REM =========================================================================
-REM Mantém a tabela de plano/projetos específicos
+REM Mantém a tabela de programa interno
 REM -------------------------------------------------------------------------
 Sub DML_PutProjeto_IS(Operacao, p_chave, p_cliente, p_codigo, p_nome, p_responsavel, p_telefone, p_email, p_ordem, p_ativo, p_padrao)
 
@@ -222,12 +214,9 @@ Sub DML_PutProjeto_IS(Operacao, p_chave, p_cliente, p_codigo, p_nome, p_responsa
      
   end with
 End Sub
-REM =========================================================================
-REM Final da rotina
-REM -------------------------------------------------------------------------
 
 REM =========================================================================
-REM Mantém as unidade do módulo infra-sig
+REM Mantém as unidades do módulo infra-sig
 REM -------------------------------------------------------------------------
 Sub DML_PutIsUnidade_IS(Operacao, p_chave, p_administrativa, p_planejamento)
 
@@ -261,8 +250,43 @@ Sub DML_PutIsUnidade_IS(Operacao, p_chave, p_administrativa, p_planejamento)
      .parameters.Delete         "l_planejamento"
   end with
 End Sub
-REM =========================================================================
-REM Final da rotina
-REM -------------------------------------------------------------------------
 
+REM =========================================================================
+REM Mantém os limites orçamentários das unidades do módulo infra-sig
+REM -------------------------------------------------------------------------
+Sub DML_PutIsUnidadeLimite_IS(Operacao, p_chave, p_ano, p_limite)
+
+  Dim l_Operacao, l_Chave, l_ano, l_limite
+  
+  Set l_Operacao    = Server.CreateObject("ADODB.Parameter")
+  Set l_chave       = Server.CreateObject("ADODB.Parameter") 
+  Set l_ano         = Server.CreateObject("ADODB.Parameter") 
+  Set l_limite      = Server.CreateObject("ADODB.Parameter") 
+  
+  with sp
+     set l_Operacao         = .CreateParameter("l_operacao", adVarchar, adParamInput,   1, Operacao)
+     set l_chave            = .CreateParameter("l_chave",    adInteger, adParamInput,    , tvl(p_chave))
+     set l_ano              = .CreateParameter("l_ano",      adInteger, adParamInput,   1, tvl(p_ano))
+     set l_limite           = .CreateParameter("l_limite",   adNumeric ,adParamInput)
+     l_limite.Precision     = 18
+     l_limite.NumericScale  = 2
+     l_limite.Value         = Tvl(p_limite)
+
+     .parameters.Append         l_Operacao
+     .parameters.Append         l_Chave
+     .parameters.Append         l_ano
+     .parameters.Append         l_limite
+
+     .CommandText               = Session("schema_is") & "SP_PutIsUnidadeLimite_IS"
+     On Error Resume Next
+     .Execute
+     If Err.Description > "" Then 
+        TrataErro
+     End If
+     .parameters.Delete         "l_Operacao"
+     .parameters.Delete         "l_Chave"
+     .parameters.Delete         "l_ano"
+     .parameters.Delete         "l_limite"
+  end with
+End Sub
 %>

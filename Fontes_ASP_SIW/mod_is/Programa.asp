@@ -82,7 +82,7 @@ O            = uCase(Request("O"))
 w_cliente    = RetornaCliente()
 w_usuario    = RetornaUsuario()
 w_menu       = RetornaMenu(w_cliente, SG)
-w_ano        = 2005
+w_ano             = Session("ANO")
 
 If InStr(uCase(Request.ServerVariables("http_content_type")),"MULTIPART/FORM-DATA") > 0 Then  
    ' Cria o objeto de upload  
@@ -336,13 +336,13 @@ Sub Inicial
            p_ini_i, p_ini_f, p_fim_i, p_fim_f, p_atraso, p_solicitante, _
            p_unidade, p_prioridade, p_qtd_restricao, p_proponente, _
            p_chave, p_assunto, p_pais, p_regiao, p_uf, p_cidade, p_usu_resp, _
-           p_uorg_resp, p_palavra, p_prazo, p_fase, p_programa, p_atividade, null, p_cd_programa, null, null
+           p_uorg_resp, p_palavra, p_prazo, p_fase, p_programa, p_atividade, null, p_cd_programa, null, null, w_ano
      Else
         DB_GetSolicList_IS RS, RS("sq_menu"), w_usuario, SG, P1, _
            p_ini_i, p_ini_f, p_fim_i, p_fim_f, p_atraso, p_solicitante, _
            p_unidade, p_prioridade, p_qtd_restricao, p_proponente, _
            p_chave, p_assunto, p_pais, p_regiao, p_uf, p_cidade, p_usu_resp, _
-           p_uorg_resp, p_palavra, p_prazo, p_fase, p_programa, p_atividade, null, p_cd_programa, null, null
+           p_uorg_resp, p_palavra, p_prazo, p_fase, p_programa, p_atividade, null, p_cd_programa, null, null, w_ano
         Select case Request("p_agrega")
            Case "GRISPRESPATU"
               RS.Filter = "executor <> null"
@@ -389,7 +389,7 @@ Sub Inicial
   ScriptClose
   ShowHTML "</HEAD>"
   
-  ShowHTML "<BASE HREF=""http://" & Request.ServerVariables("server_name") & "/siw/"">"
+  ShowHTML "<BASE HREF=""" & conRootSIW & """>"
   If w_Troca > "" Then ' Se for recarga da página
      BodyOpen "onLoad='document.Form." & w_Troca & ".focus();'"
   ElseIf O = "I" Then
@@ -878,8 +878,8 @@ Sub Geral
      Validate "w_inicio", "Início previsto", "DATA", 1, 10, 10, "", "0123456789/"
      Validate "w_fim", "Fim previsto", "DATA", 1, 10, 10, "", "0123456789/"
      CompData "w_inicio", "Data de recebimento", "<=", "w_fim", "Limite para conclusão"
-     Validate "w_valor", "Recurso programado", "VALOR", "1", 4, 18, "", "0123456789.,"
-     CompValor "w_valor", "Recurso programado", ">", "0,00", "zero"
+     'Validate "w_valor", "Recurso programado", "VALOR", "1", 4, 18, "", "0123456789.,"
+     'CompValor "w_valor", "Recurso programado", ">", "0,00", "zero"
      Validate "w_proponente", "Parcerias externas", "", "", 2, 90, "1", "1"
      Validate "w_palavra_chave", "Parcerias internas", "", "", 2, 90, "1", "1"
      Validate "w_ln_programa", "Endereço na internet", "", "", 11, 120, "1", "1"
@@ -887,7 +887,7 @@ Sub Geral
   ValidateClose
   ScriptClose
   ShowHTML "</HEAD>"
-  ShowHTML "<BASE HREF=""http://" & Request.ServerVariables("server_name") & "/siw/"">"
+  ShowHTML "<BASE HREF=""" & conRootSIW & """>"
   If w_troca > "" Then
      BodyOpen "onLoad='document.Form." & w_troca & ".focus()';"
   ElseIf Instr("EV",O) > 0 Then
@@ -926,6 +926,7 @@ Sub Geral
     ShowHTML "<INPUT type=""hidden"" name=""w_aviso"" value=""S"">"
     ShowHTML "<INPUT type=""hidden"" name=""w_descricao"" value=""" & w_descricao & """>"
     ShowHTML "<INPUT type=""hidden"" name=""w_justificativa"" value=""" & w_justificativa & """>"
+    ShowHTML "<INPUT type=""hidden"" name=""w_valor"" value=""0,00"">"
 
     'Passagem da cidade padrão como brasília, pelo retidara do impacto geográfico da tela
     DB_GetCustomerData RS, w_cliente
@@ -957,7 +958,7 @@ Sub Geral
     SelecaoUnidade_IS "<U>U</U>nidade administrativa:", "U", "Selecione a unidade administratriva responsável pelo programa.", w_sq_unidade_adm, null, "w_sq_unidade_adm", null, "ADMINISTRATIVA"
     ShowHTML "      <tr><td valign=""top"" colspan=""2""><table border=0 width=""100%"" cellspacing=0><tr valign=""top"">"
     MontaRadioNS "<b>Selecionado pelo SPI/MP?</b>", w_selecao_mp, "w_selecao_mp"
-    MontaRadioNS "<b>Selecionado pelo SE/MS?</b>", w_selecao_se, "w_selecao_se"
+    MontaRadioNS "<b>Selecionado pelo SE/SEPPIR?</b>", w_selecao_se, "w_selecao_se"
     ShowHTML "      </table></td></tr>"
     ShowHTML "      <tr valign=""top"">"
     SelecaoPessoa "Respo<u>n</u>sável monitoramento:", "N", "Selecione o nome da pessoa responsável pelas informações no SISPLAM.", w_solicitante, null, "w_solicitante", "USUARIOS"
@@ -977,12 +978,12 @@ Sub Geral
        ShowHTML "              <td valign=""top""><font size=""1""><b>Iní<u>c</u>io previsto:</b><br><input " & w_Disabled & " accesskey=""C"" type=""text"" name=""w_inicio"" class=""STI"" SIZE=""10"" MAXLENGTH=""10"" VALUE=""" & Nvl(w_inicio, "01/01/"&Mid(FormataDataEdicao(Date()),7,4)) & """ onKeyDown=""FormataData(this,event);"" title=""Usar formato dd/mm/aaaa""></td>"
        ShowHTML "              <td valign=""top""><font size=""1""><b><u>F</u>im previsto:</b><br><input " & w_Disabled & " accesskey=""F"" type=""text"" name=""w_fim"" class=""STI"" SIZE=""10"" MAXLENGTH=""10"" VALUE=""" & Nvl(w_fim, "31/12/"&Mid(FormataDataEdicao(Date()),7,4)) & """ onKeyDown=""FormataData(this,event);"" title=""Usar formato dd/mm/aaaa""></td>"    
     End If
-    If O = "I" and w_cd_programa > "" Then
-       DB_GetProgramaPPA_IS RS, w_cd_programa, w_cliente, w_ano, null, null
-       w_valor = FormatNumber(cDbl(Nvl(RS("valor_estimado"),0.00)))
-       DesconectaBD
-    End If
-    ShowHTML "              <td valign=""top""><font size=""1""><b><u>R</u>ecurso programado:</b><br><input " & w_Disabled & " accesskey=""O"" type=""text"" name=""w_valor"" class=""STI"" SIZE=""18"" MAXLENGTH=""18"" VALUE=""" & w_valor & """ onKeyDown=""FormataValor(this,18,2,event);""></td>"
+    'If O = "I" and w_cd_programa > "" Then
+    '   DB_GetProgramaPPA_IS RS, w_cd_programa, w_cliente, w_ano, null, null
+    '   w_valor = FormatNumber(cDbl(Nvl(RS("valor_estimado"),0.00)))
+    '   DesconectaBD
+    'End If
+    'ShowHTML "              <td valign=""top""><font size=""1""><b><u>R</u>ecurso programado:</b><br><input " & w_Disabled & " accesskey=""O"" type=""text"" name=""w_valor"" class=""STI"" SIZE=""18"" MAXLENGTH=""18"" VALUE=""" & w_valor & """ onKeyDown=""FormataValor(this,18,2,event);""></td>"
     ShowHTML "          </table>"
     ShowHTML "      <tr><td valign=""top""><font size=""1""><b>Parc<u>e</u>rias externas:<br><INPUT ACCESSKEY=""E"" " & w_Disabled & " class=""STI"" type=""text"" name=""w_proponente"" size=""90"" maxlength=""90"" value=""" & w_proponente & """ title=""Informar quais são os parceiros externos na execução do programa (campo opcional).""></td>"
     ShowHTML "      <tr><td valign=""top""><font size=""1""><b><u>P</u>arcerias internas:<br><INPUT ACCESSKEY=""P"" " & w_Disabled & " class=""STI"" type=""text"" name=""w_palavra_chave"" size=""90"" maxlength=""90"" value=""" & w_palavra_chave & """ title=""Informar quais são os parceiros internos na execução do programa (campo opcional).""></td>"
@@ -1064,6 +1065,375 @@ REM Fim da rotina de dados gerais
 REM -------------------------------------------------------------------------
 
 REM =========================================================================
+REM Rotina de cadastramento do recurso programado
+REM -------------------------------------------------------------------------
+Sub RecursoProgramado
+  Dim w_sq_unidade_resp, w_titulo, w_prioridade, w_aviso, w_dias
+  Dim w_inicio_real, w_fim_real, w_concluida, w_proponente
+  Dim w_data_conclusao, w_nota_conclusao, w_custo_real
+  Dim w_cd_programa, w_selecao_mp, w_selecao_se, w_sq_natureza, w_sq_horizonte
+  Dim w_sq_unidade_adm, w_ln_programa
+  
+  Dim w_chave, w_chave_pai, w_chave_aux, w_sq_menu, w_sq_unidade
+  Dim w_sq_tramite, w_solicitante, w_cadastrador, w_executor
+  Dim w_inicio, w_fim, w_inclusao, w_ultima_alteracao
+  Dim w_conclusao, w_valor, w_opiniao, w_data_hora, w_pais, w_uf, w_cidade, w_palavra_chave
+  Dim w_descricao, w_justificativa
+  
+  Dim w_troca, i, w_erro, w_como_funciona, w_cor, w_readonly
+
+  w_chave           = Request("w_chave")
+  w_readonly        = ""
+  w_erro            = ""
+  w_troca           = Request("w_troca")
+  
+  If InStr("A",O) > 0 or w_copia > "" Then
+     ' Recupera os dados da ação
+     DB_GetSolicData_IS RS, w_chave, SG
+     If RS.RecordCount > 0 Then 
+        w_proponente             = RS("proponente") 
+        w_sq_unidade_resp        = RS("sq_unidade_resp") 
+        w_titulo                 = RS("titulo") 
+        w_prioridade             = RS("prioridade") 
+        w_aviso                  = RS("aviso_prox_conc") 
+        w_dias                   = RS("dias_aviso") 
+        w_inicio_real            = RS("inicio_real") 
+        w_fim_real               = RS("fim_real") 
+        w_concluida              = RS("concluida") 
+        w_data_conclusao         = RS("data_conclusao") 
+        w_nota_conclusao         = RS("nota_conclusao") 
+        w_custo_real             = RS("custo_real") 
+        w_chave_pai              = RS("sq_solic_pai") 
+        w_chave_aux              = null
+        w_sq_menu                = RS("sq_menu") 
+        w_sq_unidade             = RS("sq_unidade") 
+        w_sq_tramite             = RS("sq_siw_tramite") 
+        w_solicitante            = RS("solicitante") 
+        w_cadastrador            = RS("cadastrador") 
+        w_executor               = RS("executor") 
+        w_inicio                 = FormataDataEdicao(RS("inicio"))
+        w_fim                    = FormataDataEdicao(RS("fim"))
+        w_inclusao               = RS("inclusao") 
+        w_ultima_alteracao       = RS("ultima_alteracao") 
+        w_conclusao              = RS("conclusao") 
+        w_valor                  = FormatNumber(Nvl(RS("valor"),0),2)
+        w_opiniao                = RS("opiniao") 
+        w_data_hora              = RS("data_hora") 
+        w_cd_programa            = RS("cd_programa")
+        w_selecao_mp             = RS("mpog_ppa")
+        w_selecao_se             = RS("relev_ppa")
+        w_sq_natureza            = RS("sq_natureza")
+        w_sq_horizonte           = RS("sq_horizonte")
+        w_palavra_chave          = RS("palavra_chave") 
+        w_descricao              = RS("descricao")
+        w_justificativa          = RS("justificativa")  
+        w_sq_unidade_adm         = RS("sq_unidade_adm")
+        w_ln_programa            = RS("ln_programa")
+     End If
+  End If  
+  Cabecalho
+  ShowHTML "<HEAD>"
+  ' Monta o código JavaScript necessário para validação de campos e preenchimento automático de máscara,
+  ' tratando as particularidades de cada serviço
+  ScriptOpen "JavaScript"
+  CheckBranco
+  FormataData
+  FormataDataHora
+  FormataValor
+  ValidateOpen "Validacao"
+  If O = "A" Then
+     Validate "w_valor", "Recurso programado", "VALOR", "1", 4, 18, "", "0123456789.,"
+     CompValor "w_valor", "Recurso programado", ">", "0,00", "zero"
+     Validate "w_assinatura", "Assinatura Eletrônica", "1", "1", "6", "30", "1", "1"
+  ElseIf O = "P" Then
+     Validate "w_chave", "Programa PPA", "SELECT", "1", 1, 18, "", "0123456789"
+  End If
+  ValidateClose
+  ScriptClose
+  ShowHTML "</HEAD>"
+  ShowHTML "<BASE HREF=""" & conRootSIW & """>"
+  If Instr("A",O) > 0 Then
+     BodyOpen "onLoad='document.Form.w_valor.focus()';"
+  Else
+     BodyOpen "onLoad='document.Form.w_chave.focus()';"
+  End If
+  ShowHTML "<B><FONT COLOR=""#000000"">" & w_TP & "</FONT></B>"
+  ShowHTML "<HR>"
+  ShowHTML "<table align=""center"" border=""0"" cellpadding=""0"" cellspacing=""0"" width=""100%"">"
+  If Instr("A",O) > 0 Then
+    AbreForm "Form", w_dir & w_pagina & "Grava", "POST", "return(Validacao(this));", null,P1,P2,P3,P4,TP,SG,R,O
+    ShowHTML MontaFiltro("POST")
+    ShowHTML "<INPUT type=""hidden"" name=""w_troca"" value="""">"
+    ShowHTML "<INPUT type=""hidden"" name=""w_copia"" value=""" & w_copia &""">"
+    ShowHTML "<INPUT type=""hidden"" name=""w_chave"" value=""" & w_chave &""">"
+    ShowHTML "<INPUT type=""hidden"" name=""w_menu"" value=""" & RS_menu("sq_menu") &""">"
+    ShowHTML "<INPUT type=""hidden"" name=""w_descricao"" value=""" & w_descricao & """>"
+    ShowHTML "<INPUT type=""hidden"" name=""w_justificativa"" value=""" & w_justificativa & """>"
+    ShowHTML "<INPUT type=""hidden"" name=""w_proponente"" value=""" & w_proponente & """>"
+    ShowHTML "<INPUT type=""hidden"" name=""w_sq_unidade_resp"" value=""" & w_sq_unidade_resp & """>"
+    ShowHTML "<INPUT type=""hidden"" name=""w_titulo"" value=""" & w_titulo & """>"
+    ShowHTML "<INPUT type=""hidden"" name=""w_prioridade"" value=""" & w_prioridade & """>"
+    ShowHTML "<INPUT type=""hidden"" name=""w_aviso"" value=""" & w_aviso & """>"
+    ShowHTML "<INPUT type=""hidden"" name=""w_dias"" value=""" & w_dias & """>"
+    ShowHTML "<INPUT type=""hidden"" name=""w_inicio_real"" value=""" & w_inicio_real & """>"
+    ShowHTML "<INPUT type=""hidden"" name=""w_fim_real"" value=""" & w_fim_real & """>"
+    ShowHTML "<INPUT type=""hidden"" name=""w_concluida"" value=""" & w_concluida & """>"
+    ShowHTML "<INPUT type=""hidden"" name=""w_data_conclusao"" value=""" & w_data_conclusao & """>"
+    ShowHTML "<INPUT type=""hidden"" name=""w_nota_conclusao"" value=""" & w_nota_conclusao & """>"
+    ShowHTML "<INPUT type=""hidden"" name=""w_custo_real"" value=""" & w_custo_real & """>"
+    ShowHTML "<INPUT type=""hidden"" name=""w_chave_pai"" value=""" & w_chave_pai & """>"
+    ShowHTML "<INPUT type=""hidden"" name=""w_sq_menu"" value=""" & w_sq_menu & """>"
+    ShowHTML "<INPUT type=""hidden"" name=""w_sq_unidade"" value=""" & w_sq_unidade & """>"
+    ShowHTML "<INPUT type=""hidden"" name=""w_sq_tramite"" value=""" & w_sq_tramite & """>"
+    ShowHTML "<INPUT type=""hidden"" name=""w_solicitante"" value=""" & w_solicitante & """>"
+    ShowHTML "<INPUT type=""hidden"" name=""w_cadastrador"" value=""" & w_cadastrador & """>"
+    ShowHTML "<INPUT type=""hidden"" name=""w_executor"" value=""" & w_executor & """>"
+    ShowHTML "<INPUT type=""hidden"" name=""w_inicio"" value=""" & w_inicio & """>"
+    ShowHTML "<INPUT type=""hidden"" name=""w_fim"" value=""" & w_fim & """>"
+    ShowHTML "<INPUT type=""hidden"" name=""w_inclusao"" value=""" & w_inclusao & """>"
+    ShowHTML "<INPUT type=""hidden"" name=""w_ultima_alteracao"" value=""" & w_ultima_alteracao & """>"
+    ShowHTML "<INPUT type=""hidden"" name=""w_conclusao"" value=""" & w_conclusao & """>"
+    ShowHTML "<INPUT type=""hidden"" name=""w_opiniao"" value=""" & w_opiniao & """>"
+    ShowHTML "<INPUT type=""hidden"" name=""w_data_hora"" value=""" & w_data_hora & """>"
+    ShowHTML "<INPUT type=""hidden"" name=""w_cd_programa"" value=""" & w_cd_programa & """>"
+    ShowHTML "<INPUT type=""hidden"" name=""w_selecao_mp"" value=""" & w_selecao_mp & """>"
+    ShowHTML "<INPUT type=""hidden"" name=""w_selecao_se"" value=""" & w_selecao_se & """>"
+    ShowHTML "<INPUT type=""hidden"" name=""w_sq_natureza"" value=""" & w_sq_natureza & """>"
+    ShowHTML "<INPUT type=""hidden"" name=""w_sq_horizonte"" value=""" & w_sq_horizonte & """>"
+    ShowHTML "<INPUT type=""hidden"" name=""w_palavra_chave"" value=""" & w_palavra_chave & """>"
+    ShowHTML "<INPUT type=""hidden"" name=""w_sq_unidade_adm"" value=""" & w_sq_unidade_adm & """>"
+    ShowHTML "<INPUT type=""hidden"" name=""w_ln_programa"" value=""" & w_ln_programa & """>"
+    
+    'Passagem da cidade padrão como brasília, pelo retidara do impacto geográfico da tela
+    DB_GetCustomerData RS1, w_cliente
+    ShowHTML "<INPUT type=""hidden"" name=""w_cidade"" value=""" & RS1("sq_cidade_padrao") &""">"
+    RS1.Close
+
+    ShowHTML "<tr bgcolor=""" & conTrBgColor & """><td align=""center"">"
+    ShowHTML "    <table width=""97%"" border=""0"">"
+    ShowHTML "<table border=""0"" cellpadding=""0"" cellspacing=""0"" width=""100%"">"
+    ShowHTML "<tr bgcolor=""" & conTrBgColor & """><td align=""center"">"
+
+    ShowHTML "    <table width=""99%"" border=""0"">"
+    ShowHTML "      <tr><td><font size=2>Programa: <b>" & RS("titulo") & "</b></font></td></tr>"
+     
+    ' Identificação da ação
+    ShowHTML "      <tr><td valign=""top"" colspan=""2"" align=""center"" bgcolor=""#D0D0D0"" style=""border: 2px solid rgb(0,0,0);""><font size=""1""><b>Identificação</td>"  
+      
+    ShowHTML "      <tr><td valign=""top"" colspan=""2""><font size=""1"">Programa PPA:<br><b>" & RS("ds_programa") & " (" & RS("cd_programa") & ")" & " </b></td>"
+    ShowHTML "      <tr><td valign=""top"" colspan=""2""><table border=0 width=""100%"" cellspacing=0>"
+    ShowHTML "      <tr><td><font size=""1"">Unidade Administrativa:<br><b>" & ExibeUnidade("../", w_cliente, RS("nm_unidade_adm"), RS("sq_unidade_adm"), TP) & "</b></td>"
+    ShowHTML "          <td><font size=""1"">Unidade Orçamentária:<br><b>" & RS("nm_orgao") & " </b></td>"
+    ShowHTML "          <tr valign=""top"">"
+    If RS("mpog_ppa") = "S" Then
+       ShowHTML "          <td><font size=""1"">Selecionada SPI/MP:<br><b>Sim</b></td>"
+    Else
+       ShowHTML "          <td><font size=""1"">Selecionada SPI/MP:<br><b>Não</b></td>"
+    End If
+    If RS("relev_ppa") = "S" Then
+       ShowHTML "          <td><font size=""1"">Selecionada SE/SEPPIR:<br><b>Sim</b></td>"
+    Else
+       ShowHTML "          <td><font size=""1"">Selecionada SE/SEPPIR:<br><b>Não</b></td>"
+    End If
+    ShowHTML "        <tr valign=""top"">"
+    ShowHTML "          <td><font size=""1"">Responsável monitoramento:<br><b>" & ExibePessoa("../", w_cliente, RS("solicitante"), TP, RS("nm_sol")) & "</b></td>"
+    ShowHTML "             <td><font size=""1"">Área planejamento:<br><b>" & ExibeUnidade("../", w_cliente, RS("nm_unidade_resp"), RS("sq_unidade"), TP) & "</b></td>"
+    ShowHTML "        <tr valign=""top"">"
+    ShowHTML "          <td><font size=""1"">Natureza:<br><b>" & RS("nm_natureza") & " </b></td>"
+    ShowHTML "          <td><font size=""1"">Horizonte:<br><b>" & RS("nm_horizonte") & " </b></td>"
+    ShowHTML "          <tr valign=""top"">"
+    ShowHTML "          <td><font size=""1"">Tipo do programa:<br><b>" & RS("nm_tipo_programa") & " </b></td>"
+    If Nvl(RS("ln_programa"),"---") = "---" Then
+       ShowHTML "          <td><font size=""1"">Endereço na internet:<br><b>" & Nvl(RS("ln_programa"),"---") & "</b></td>"
+    Else
+       ShowHTML "          <td><font size=""1"">Endereço na internet:<br><a href=""" & Nvl(RS("ln_programa"),"---") & """ target=""blank""><b>" & Nvl(RS("ln_programa"),"---") & "</b></a></td>"
+    End If
+    ShowHTML "          </table>"
+    ShowHTML "        <tr><td valign=""top"" colspan=""2""><table border=0 width=""100%"" cellspacing=0>"
+    ShowHTML "        <tr valign=""top"">"
+    ShowHTML "          <td><font size=""1"">Recurso programado:<br><b>" & FormatNumber(RS("valor"),2) & " </b></td>"
+    ShowHTML "          <td><font size=""1"">Início previsto:<br><b>" & FormataDataEdicao(RS("inicio")) & " </b></td>"
+    ShowHTML "          <td><font size=""1"">Fim previsto:<br><b>" & FormataDataEdicao(RS("fim")) & " </b></td>"
+    ShowHTML "          </table>"
+    ShowHTML "          <tr valign=""top""><td colspan=""2""><font size=""1"">Parcerias externas:<br><b>" & CRLF2BR(Nvl(RS("proponente"),"---")) & " </b></td>"
+    ShowHTML "          <tr valign=""top""><td colspan=""2""><font size=""1"">Parcerias internas:<br><b>" & CRLF2BR(Nvl(RS("palavra_chave"),"---")) & " </b></td>"  
+        
+    ' Responsaveis
+    If RS("nm_gerente_programa") > "" or RS("nm_gerente_executivo") > "" or RS("nm_gerente_adjunto") > "" Then
+       ShowHTML "      <tr><td valign=""top"" colspan=""2"" align=""center"" bgcolor=""#D0D0D0"" style=""border: 2px solid rgb(0,0,0);""><font size=""1""><b>Responsáveis</td>"  
+       ShowHTML "      <tr><td valign=""top"" colspan=""2""><table border=0 width=""100%"" cellspacing=0>"
+       If Not IsNull(RS("nm_gerente_programa")) Then           
+          ShowHTML "      <tr><td valign=""top""><font size=""1"">Gerente do programa:<br><b>" & RS("nm_gerente_programa") & " </b></td>"
+          If Not IsNull(RS("fn_gerente_programa")) Then
+             ShowHTML "          <td><font size=""1"">Telefone:<br><b>" & RS("fn_gerente_programa") & " </b></td>"
+          End If
+          If Not IsNull(RS("em_gerente_programa")) Then
+             ShowHTML "          <td><font size=""1"">Email:<br><b>" & RS("em_gerente_programa") & " </b></td>"
+          End If
+       End If
+       If Not IsNull(RS("nm_gerente_executivo")) Then
+          ShowHTML "      <tr><td valign=""top""><font size=""1"">Gerente executivo do programa:<br><b>" & RS("nm_gerente_executivo") & " </b></td>"
+          If Not IsNull(RS("fn_gerente_executivo")) Then
+             ShowHTML "          <td><font size=""1"">Telefone:<br><b>" & RS("fn_gerente_executivo") & " </b></td>"
+          End If
+          If Not IsNull(RS("em_gerente_executivo")) Then
+             ShowHTML "          <td><font size=""1"">Email:<br><b>" & RS("em_gerente_executivo") & " </b></td>"
+          End If
+       End If
+       If Not IsNull(RS("nm_gerente_adjunto")) Then
+          ShowHTML "      <tr><td valign=""top""><font size=""1"">Gerente executivo adjunto:<br><b>" & RS("nm_gerente_adjunto") & " </b></td>"
+          If Not IsNull(RS("fn_gerente_adjunto")) Then
+             ShowHTML "          <td><font size=""1"">Telefone:<br><b>" & RS("fn_gerente_adjunto") & " </b></td>"
+          End If
+          If Not IsNull(RS("em_gerente_adjunto")) Then
+             ShowHTML "          <td><font size=""1"">Email:<br><b>" & RS("em_gerente_adjunto") & " </b></td>"
+          End If
+       End If
+       ShowHTML "          </table>"
+    End If
+    ShowHTML"      <tr><td valign=""top"" colspan=""2"" align=""center"" bgcolor=""#D0D0D0"" style=""border: 2px solid rgb(0,0,0);""><font size=""1""><b>Programação Financeira</td>"
+    DB_GetPPADadoFinanc_IS RS1, w_cd_programa, null, w_ano, w_cliente, "VALORFONTE"
+    If RS1.EOF Then
+       ShowHTML"      <tr><td valign=""top""><font size=""1""><DD><b>Nao existe nenhum valor para este programa</b></DD></td>"
+    Else
+       w_cor = ""
+       ShowHTML"                      <tr><td valign=""top"" colspan=""2""><font size=""1"">Fonte: SIGPLAN/MP - PPA 2004-2007</td>"
+       ShowHTML"      <tr><td valign=""top""><font size=""1"">Tipo de orçamento:<br><b>" & RS1("nm_orcamento") & "</b></td>"
+       ShowHTML"      <tr><td valign=""top""><font size=""1"">Valor por fonte: </td>"
+       ShowHTML"      <tr><td align=""center"" colspan=""2"">"
+       ShowHTML"        <TABLE WIDTH=""100%"" bgcolor=""" & conTableBgColor & """ BORDER=""" & conTableBorder & """ CELLSPACING=""" & conTableCellSpacing & """ CELLPADDING=""" & conTableCellPadding & """ BorderColorDark=""" & conTableBorderColorDark & """ BorderColorLight=""" & conTableBorderColorLight & """>"
+       ShowHTML"          <tr bgcolor=""" & conTrBgColor & """ align=""center"">"
+       ShowHTML"            <td><font size=""1""><b>Fonte</font></td>"
+       ShowHTML"            <td><font size=""1""><b>2004*</font></td>"
+       ShowHTML"            <td><font size=""1""><b>2005**</font></td>"
+       ShowHTML"            <td><font size=""1""><b>2006</font></td>"
+       ShowHTML"            <td><font size=""1""><b>2007</font></td>"
+       ShowHTML"            <td><font size=""1""><b>2008</font></td>"
+       ShowHTML"            <td><font size=""1""><b>Total</font></td>"
+       ShowHTML"          </tr>"
+       While Not RS1.EOF 
+          If w_cor = conTrBgColor or w_cor = "" Then w_cor = conTrAlternateBgColor Else w_cor = conTrBgColor End If
+          ShowHTML"       <tr bgcolor=""" & w_cor & """ valign=""top"">"
+          ShowHTML"         <td><font size=""1"">" & RS1("nm_fonte")& "</td>"
+          ShowHTML"         <td align=""center""><font size=""1"">" & FormatNumber(cDbl(Nvl(RS1("valor_ano_1"),0.00)))& "</td>"
+          ShowHTML"         <td align=""center""><font size=""1"">" & FormatNumber(cDbl(Nvl(RS1("valor_ano_2"),0.00)))& "</td>"
+          ShowHTML"         <td align=""center""><font size=""1"">" & FormatNumber(cDbl(Nvl(RS1("valor_ano_3"),0.00)))& "</td>"
+          ShowHTML"         <td align=""center""><font size=""1"">" & FormatNumber(cDbl(Nvl(RS1("valor_ano_4"),0.00)))& "</td>"
+          ShowHTML"         <td align=""center""><font size=""1"">" & FormatNumber(cDbl(Nvl(RS1("valor_ano_5"),0.00)))& "</td>"
+          ShowHTML"         <td align=""center""><font size=""1"">" & FormatNumber(cDbl(Nvl(RS1("valor_total"),0.00)))& "</td>"
+          ShowHTML"       </tr>"
+          RS1.MoveNext
+       wend
+       RS1.Close
+       DB_GetPPADadoFinanc_IS RS1, w_cd_programa, null, w_ano, w_cliente, "VALORTOTAL"
+       ShowHTML"      <tr><td valign=""top"" align=""right""><font size=""1""><b>Totais </td>"
+       If RS1.EOF Then
+          ShowHTML"         <td valign=""top"" colspan=6><font size=""1""><DD><b>Nao existe nenhum valor para este programa</b></DD></td>"
+       Else
+           If w_cor = conTrBgColor or w_cor = "" Then w_cor = conTrAlternateBgColor Else w_cor = conTrBgColor End If
+           ShowHTML"         <td align=""center""><font size=""1""><b>" & FormatNumber(cDbl(Nvl(RS1("valor_ano_1"),0.00)))& "</td>"
+           ShowHTML"         <td align=""center""><font size=""1""><b>" & FormatNumber(cDbl(Nvl(RS1("valor_ano_2"),0.00)))& "</td>"
+           ShowHTML"         <td align=""center""><font size=""1""><b>" & FormatNumber(cDbl(Nvl(RS1("valor_ano_3"),0.00)))& "</td>"
+           ShowHTML"         <td align=""center""><font size=""1""><b>" & FormatNumber(cDbl(Nvl(RS1("valor_ano_4"),0.00)))& "</td>"
+           ShowHTML"         <td align=""center""><font size=""1""><b>" & FormatNumber(cDbl(Nvl(RS1("valor_ano_5"),0.00)))& "</td>"
+           ShowHTML"         <td align=""center""><font size=""1""><b>" & FormatNumber(cDbl(Nvl(RS1("valor_total"),0.00)))& "</td>"
+           ShowHTML"       </tr>"
+           ShowHTML"       </table>"  
+       End If
+    End If
+    RS1.Close
+    ShowHTML"<tr><td valign=""top"" colspan=""2""><font size=""1"">* Valor Lei Orçamentária Anual - LOA 2004 + Créditos</td>"
+    ShowHTML"<tr><td valign=""top"" colspan=""2""><font size=""1"">** Valor do Projeto de Lei Orçamentária Anual - PLOA 2005</td>"    
+    ShowHTML "      <tr><td valign=""top""><font size=""1""><b><u>R</u>ecurso programado:</b><br><input " & w_Disabled & " accesskey=""O"" type=""text"" name=""w_valor"" class=""STI"" SIZE=""18"" MAXLENGTH=""18"" VALUE=""" & w_valor & """ onKeyDown=""FormataValor(this,18,2,event);""></td>"
+    ShowHTML "      <tr><td><font size=""1""><b><U>A</U>ssinatura Eletrônica:<BR> <INPUT ACCESSKEY=""A"" class=""sti"" type=""PASSWORD"" name=""w_assinatura"" size=""30"" maxlength=""30"" value=""""></td></tr>"
+    ShowHTML "      <tr><td align=""center""><hr>"
+    ShowHTML "      <tr><td align=""center"">"
+    ShowHTML "            <input class=""STB"" type=""submit"" name=""Botao"" value=""Gravar"">"
+    ShowHTML "            <input class=""STB"" type=""button"" onClick=""location.href='" & w_pagina & par & "&O=P&SG=" & SG & "&P1=" & P1 & "&P2=" & P2 & "&P3=" & P3 & "&P4=" & P4 & "&TP=" & TP & MontaFiltro("GET") & "';"" name=""Botao"" value=""Cancelar"">"
+    ShowHTML "          </td>"
+    ShowHTML "      </tr>"
+    ShowHTML "    </table>"
+    ShowHTML "    </TD>"
+    ShowHTML "</tr>"
+    ShowHTML "</FORM>"
+  ElseIf Instr("P",O) > 0 Then
+    AbreForm "Form", w_dir & w_Pagina & par, "POST", "return(Validacao(this));", null,P1,P2,P3,P4,TP,SG,R,"A"
+    ShowHTML "<INPUT type=""hidden"" name=""w_cliente"" value=""" & w_cliente & """>"
+    ShowHTML "<tr bgcolor=""" & conTrBgColor & """><td align=""center"">"
+    ShowHTML "    <table width=""97%"" border=""0"">"
+    SelecaoProgramaIS "Programa <u>P</u>PA:", "P", null, w_cliente, w_ano, w_chave, "w_chave", "CADASTRADOS", null
+    ShowHTML "      <tr><td align=""center"">"
+    ShowHTML "            <input class=""STB"" type=""submit"" name=""Botao"" value=""Aplicar filtro"">"
+    ShowHTML "          </td>"
+    ShowHTML "      </tr>"    
+    ShowHTML "    </table>"
+    ShowHTML "    </TD>"
+    ShowHTML "</tr>"
+    ShowHTML "</FORM>"
+  Else
+    ScriptOpen "JavaScript"
+    ShowHTML " alert('Opção não disponível');"
+    ShowHTML " history.back(1);"
+    ScriptClose
+  End If
+  ShowHTML "</table>"
+  ShowHTML "</center>"
+  Rodape
+
+  Set w_selecao_mp              = Nothing 
+  Set w_selecao_se              = Nothing 
+  Set w_sq_horizonte            = Nothing 
+  Set w_sq_natureza             = Nothing 
+  Set w_ln_programa             = Nothing
+  Set w_cd_programa             = Nothing 
+  Set w_proponente              = Nothing 
+  Set w_sq_unidade_resp         = Nothing 
+  Set w_titulo                  = Nothing 
+  Set w_prioridade              = Nothing 
+  Set w_aviso                   = Nothing 
+  Set w_dias                    = Nothing 
+  Set w_inicio_real             = Nothing 
+  Set w_fim_real                = Nothing 
+  Set w_concluida               = Nothing 
+  Set w_data_conclusao          = Nothing 
+  Set w_nota_conclusao          = Nothing 
+  Set w_custo_real              = Nothing 
+  
+  Set w_chave                   = Nothing 
+  Set w_chave_pai               = Nothing 
+  Set w_chave_aux               = Nothing 
+  Set w_sq_menu                 = Nothing 
+  Set w_sq_unidade              = Nothing 
+  Set w_sq_tramite              = Nothing 
+  Set w_solicitante             = Nothing 
+  Set w_cadastrador             = Nothing 
+  Set w_executor                = Nothing 
+  Set w_inicio                  = Nothing 
+  Set w_fim                     = Nothing 
+  Set w_inclusao                = Nothing 
+  Set w_ultima_alteracao        = Nothing 
+  Set w_conclusao               = Nothing 
+  Set w_valor                   = Nothing 
+  Set w_opiniao                 = Nothing 
+  Set w_data_hora               = Nothing 
+  Set w_pais                    = Nothing 
+  Set w_uf                      = Nothing 
+  Set w_cidade                  = Nothing 
+  Set w_palavra_chave           = Nothing 
+  Set p_cd_programa             = Nothing 
+  
+  Set w_troca                   = Nothing 
+  Set i                         = Nothing 
+  Set w_erro                    = Nothing 
+  Set w_como_funciona           = Nothing 
+  Set w_cor                     = Nothing 
+
+End Sub
+REM =========================================================================
+REM Fim da rotina de recurso programado
+REM -------------------------------------------------------------------------
+
+REM =========================================================================
 REM Rotina dos responsaveis
 REM -------------------------------------------------------------------------
 Sub Responsaveis
@@ -1138,7 +1508,7 @@ Sub Responsaveis
      ScriptClose
   End If
   ShowHTML "</HEAD>"
-  ShowHTML "<BASE HREF=""http://" & Request.ServerVariables("server_name") & "/siw/"">"
+  ShowHTML "<BASE HREF=""" & conRootSIW & """>"
   If O = "A" Then
      BodyOpen "onLoad='document.Form.w_nm_gerente_programa.focus()';"
   Else
@@ -1193,9 +1563,9 @@ Sub Responsaveis
     ShowHTML "      <tr><td valign=""top""><font size=""1""><b>Te<u>l</u>efone:</b><br><input " & w_Disabled & " accesskey=""L"" type=""text"" name=""w_fn_gerente_executivo"" class=""STI"" SIZE=""15"" MAXLENGTH=""14"" VALUE=""" & w_fn_gerente_executivo & """ title=""Informe o telefone do gerente executivo do programa.""></td>"
     ShowHTML "      <tr><td><font size=""1""><b>Em<u>a</u>il:</b><br><input " & w_Disabled & " accesskey=""A"" type=""text"" name=""w_em_gerente_executivo"" class=""STI"" SIZE=""50"" MAXLENGTH=""60"" VALUE=""" & w_em_gerente_executivo & """ title=""Informe o e-mail do gerente executivo do programa.""></td>"
     ShowHTML "      <tr><td valign=""top""><font size=""1""><b>Gerente Adjunto do programa: </b>" 
-    ShowHTML "      <tr><td><font size=""1""><b>No<u>m</u>e:</b><br><input " & w_Disabled & " accesskey=""M"" type=""text"" name=""w_nm_gerente_adjunto"" class=""STI"" SIZE=""50"" MAXLENGTH=""60"" VALUE=""" & w_nm_gerente_adjunto & """ title=""No caso de programa multisetorial cuja gerência não pertença ao MS, informe o nome do gerente executivo adjunto do programa.""></td>"
-    ShowHTML "      <tr><td valign=""top""><font size=""1""><b>Tele<u>f</u>one:</b><br><input " & w_Disabled & " accesskey=""F"" type=""text"" name=""w_fn_gerente_adjunto"" class=""STI"" SIZE=""15"" MAXLENGTH=""14"" VALUE=""" & w_fn_gerente_adjunto & """ title=""No caso de programa multisetorial cuja gerência não pertença ao MS, informe o telefone do gerente executivo adjunto do programa.""></td>"
-    ShowHTML "      <tr><td><font size=""1""><b>Ema<u>i</u>l:</b><br><input " & w_Disabled & " accesskey=""I"" type=""text"" name=""w_em_gerente_adjunto"" class=""STI"" SIZE=""50"" MAXLENGTH=""60"" VALUE=""" & w_em_gerente_adjunto & """ title=""No caso de programa multisetorial cuja gerência não pertença ao MS, informe o e-mail do gerente executivo adjunto do programa.""></td>"
+    ShowHTML "      <tr><td><font size=""1""><b>No<u>m</u>e:</b><br><input " & w_Disabled & " accesskey=""M"" type=""text"" name=""w_nm_gerente_adjunto"" class=""STI"" SIZE=""50"" MAXLENGTH=""60"" VALUE=""" & w_nm_gerente_adjunto & """ title=""No caso de programa multisetorial cuja gerência não pertença a SEPPIR, informe o nome do gerente executivo adjunto do programa.""></td>"
+    ShowHTML "      <tr><td valign=""top""><font size=""1""><b>Tele<u>f</u>one:</b><br><input " & w_Disabled & " accesskey=""F"" type=""text"" name=""w_fn_gerente_adjunto"" class=""STI"" SIZE=""15"" MAXLENGTH=""14"" VALUE=""" & w_fn_gerente_adjunto & """ title=""No caso de programa multisetorial cuja gerência não pertença a SEPPIR, informe o telefone do gerente executivo adjunto do programa.""></td>"
+    ShowHTML "      <tr><td><font size=""1""><b>Ema<u>i</u>l:</b><br><input " & w_Disabled & " accesskey=""I"" type=""text"" name=""w_em_gerente_adjunto"" class=""STI"" SIZE=""50"" MAXLENGTH=""60"" VALUE=""" & w_em_gerente_adjunto & """ title=""No caso de programa multisetorial cuja gerência não pertença a SEPPIR, informe o e-mail do gerente executivo adjunto do programa.""></td>"
 
     ShowHTML "      <tr><td align=""center"" colspan=4><hr>"
     ShowHTML "            <input class=""STB"" type=""submit"" name=""Botao"" value=""Gravar"">"
@@ -1306,7 +1676,7 @@ Sub ProgramacaoQualitativa
   If O = "I" or O = "A" Then
      ShowHTML "  if (theForm.Botao.value == ""Troca"") { return true; }"
      Validate "w_contribuicao_objetivo", "Explique como o programa contribui para que o objetivo setorial seja alcançado", "1", "", 5, 2000, "1", "1"
-     Validate "w_diretriz", "Diretrizes do Plano Nacional de Saúde", "1", "", 5, 2000, "1", "1"
+     Validate "w_diretriz", "Diretrizes do Plano Nacional de Políticas de Integração Racial", "1", "", 5, 2000, "1", "1"
      Validate "w_resultados", "Resultados esperados", "1", "", 5, 2000, "1", "1"
      Validate "w_potencialidades", "Potencialidades", "1", "", 5, 2000, "1", "1"
      Validate "w_estrategia_monit", "Sistemática e estratégias a serem adotadas para o monitoramento do programa", "1", "", 5, 2000, "1", "1"
@@ -1316,7 +1686,7 @@ Sub ProgramacaoQualitativa
   ValidateClose
   ScriptClose
   ShowHTML "</HEAD>"
-  ShowHTML "<BASE HREF=""http://" & Request.ServerVariables("server_name") & "/siw/"">"
+  ShowHTML "<BASE HREF=""" & conRootSIW & """>"
   If w_troca > "" Then
      BodyOpen "onLoad='document.Form." & w_troca & ".focus()';"
   ElseIf Instr("EV",O) > 0 Then
@@ -1355,7 +1725,7 @@ Sub ProgramacaoQualitativa
     ShowHTML "      <tr><td valign=""top""><div align=""justify""><font size=""1"" color=""red"">Diretrizes e desafios do governo associados ao programa:<br><b>Falta definir qual o campo deve ser visualizado</b></td>"
     ShowHTML "      <tr><td valign=""top""><div align=""justify""><font size=""1"" color=""red"">Objetivo setorial:<br><b>Falta definir qual o campo deve ser visualizado</b></div></td>"
     ShowHTML "      <tr><td valign=""top""><font size=""1""><b><u>E</u>xplique como o programa contribui para que o objetivo setorial seja alcançado:</b><br><textarea " & w_Disabled & " accesskey=""E"" name=""w_contribuicao_objetivo"" class=""STI"" ROWS=5 cols=75 title=""Descreva de que forma a execução do programa vai contribuir para o alcance do objetivo setorial do governo ao qual o programa está relacionado."">" & w_contribuicao_objetivo & "</TEXTAREA></td>"
-    ShowHTML "      <tr><td valign=""top""><font size=""1""><b><u>D</u>iretrizes do Plano Nacional de Saúde:</b><br><textarea " & w_Disabled & " accesskey=""D"" name=""w_diretriz"" class=""STI"" ROWS=5 cols=75 title=""Informe a qual(is) diretrize(s) do Plano Nacional de Saúde - PNS o programa está relacionado."">" & w_diretriz & "</TEXTAREA></td>"
+    ShowHTML "      <tr><td valign=""top""><font size=""1""><b><u>D</u>iretrizes do Plano Nacional da Promoção da Igualdade Racial:</b><br><textarea " & w_Disabled & " accesskey=""D"" name=""w_diretriz"" class=""STI"" ROWS=5 cols=75 title=""Informe a qual(is) diretrize(s) do Programa Naciona de Políticas de Integração Racial - o programa está relacionado."">" & w_diretriz & "</TEXTAREA></td>"
     'ShowHTML "      <tr><td valign=""top""><font size=""1"">Problema:<br><b>" & Nvl(w_contexto,"---")& "</b></td>"
     ShowHTML "      <tr><td valign=""top""><div align=""justify""><font size=""1"">Objetivo:<br><b>" & Nvl(w_objetivo,"---")& "</b></div></td>"
     ShowHTML "      <tr><td valign=""top""><div align=""justify""><font size=""1"">Justificativa:<br><b>" & Nvl(w_justificativa_sigplan,"---")& "</b></div></td>"
@@ -1601,7 +1971,7 @@ Sub Indicadores
      ScriptClose
   End If
   ShowHTML "</HEAD>"
-  ShowHTML "<BASE HREF=""http://" & Request.ServerVariables("server_name") & "/siw/"">"
+  ShowHTML "<BASE HREF=""" & conRootSIW & """>"
   If w_troca > "" Then
      BodyOpen "onLoad='document.Form." & w_troca & ".focus()';"
   ElseIf O = "I" Then
@@ -1730,10 +2100,10 @@ Sub Indicadores
        SelecaoBaseGeografica_IS "<U>B</U>ase geográfica:", "B", "Selecione a base geográfica do indicador", w_cd_base_geografica, "w_cd_base_geografica", null, null
        ShowHTML "         </table></td></tr>"
        ShowHTML "    <tr><td valign=""top""><table border=0 width=""100%"" cellspacing=0><tr valign=""top"">"
-       ShowHTML "    <tr valign=""top""><td><font size=""1""><b>Previsão ano 1:</b><br><input " & w_Disabled & " type=""text"" name=""w_prev_ano_1"" class=""STI"" SIZE=""12"" MAXLENGTH=""18"" VALUE=""" & w_prev_ano_1 & """ onKeyDown=""FormataValor(this,18,2,event);"" title=""Informe o índice previsto para o 1º ano  (campo não obrigatório).""></td>"
-       ShowHTML "        <td><font size=""1""><b>Previsão ano 2:</b><br><input " & w_Disabled & " type=""text"" name=""w_prev_ano_2"" class=""STI"" SIZE=""12"" MAXLENGTH=""18"" VALUE=""" & w_prev_ano_2 & """ onKeyDown=""FormataValor(this,18,2,event);"" title=""Informe o índice previsto para o 2º ano  (campo não obrigatório).""></td>"
-       ShowHTML "        <td><font size=""1""><b>Previsão ano 3:</b><br><input " & w_Disabled & " type=""text"" name=""w_prev_ano_3"" class=""STI"" SIZE=""12"" MAXLENGTH=""18"" VALUE=""" & w_prev_ano_3 & """ onKeyDown=""FormataValor(this,18,2,event);"" title=""Informe o índice previsto para o 3º ano  (campo não obrigatório).""></td>"
-       ShowHTML "        <td><font size=""1""><b>Previsão ano 4:</b><br><input " & w_Disabled & " type=""text"" name=""w_prev_ano_4"" class=""STI"" SIZE=""12"" MAXLENGTH=""18"" VALUE=""" & w_prev_ano_4 & """ onKeyDown=""FormataValor(this,18,2,event);"" title=""Informe o índice previsto para o 4º ano  (campo não obrigatório).""></td>"
+       ShowHTML "    <tr valign=""top""><td><font size=""1""><b>Previsão 2004:</b><br><input " & w_Disabled & " type=""text"" name=""w_prev_ano_1"" class=""STI"" SIZE=""12"" MAXLENGTH=""18"" VALUE=""" & w_prev_ano_1 & """ onKeyDown=""FormataValor(this,18,2,event);"" title=""Informe o índice previsto para o 1º ano  (campo não obrigatório).""></td>"
+       ShowHTML "        <td><font size=""1""><b>Previsão 2005:</b><br><input " & w_Disabled & " type=""text"" name=""w_prev_ano_2"" class=""STI"" SIZE=""12"" MAXLENGTH=""18"" VALUE=""" & w_prev_ano_2 & """ onKeyDown=""FormataValor(this,18,2,event);"" title=""Informe o índice previsto para o 2º ano  (campo não obrigatório).""></td>"
+       ShowHTML "        <td><font size=""1""><b>Previsão 2006:</b><br><input " & w_Disabled & " type=""text"" name=""w_prev_ano_3"" class=""STI"" SIZE=""12"" MAXLENGTH=""18"" VALUE=""" & w_prev_ano_3 & """ onKeyDown=""FormataValor(this,18,2,event);"" title=""Informe o índice previsto para o 3º ano  (campo não obrigatório).""></td>"
+       ShowHTML "        <td><font size=""1""><b>Previsão 2007:</b><br><input " & w_Disabled & " type=""text"" name=""w_prev_ano_4"" class=""STI"" SIZE=""12"" MAXLENGTH=""18"" VALUE=""" & w_prev_ano_4 & """ onKeyDown=""FormataValor(this,18,2,event);"" title=""Informe o índice previsto para o 4º ano  (campo não obrigatório).""></td>"
        ShowHTML "    </table></td></tr>"
        If w_cd_indicador > "" and O <> "E" and O <> "V" Then
           w_Disabled = " "
@@ -1765,7 +2135,7 @@ Sub Indicadores
        Else
           ShowHTML "            <tr><td><font size=""1"">Tipo do indicador:<b><br>Processo</td>"
        End If
-       ShowHTML "                <td><font size=""1"">Quantitativo:<b><br>" & w_quantidade & "</td></tr>"
+       ShowHTML "                <td><font size=""1"">Índice programado:<b><br>" & w_quantidade & "</td></tr>"
        ShowHTML "            <tr><td><font size=""1"">Cumulativa?<b><br>" & w_nm_cumulativa & "</td>"
        ShowHTML "                <td><font size=""1"">Índice referência:<b><br>" & w_indice_ref & "</td></tr>"
        ShowHTML "            <tr><td><font size=""1"">Data apuração:<b><br>" & FormataDataEdicao(w_apuracao_ref) & "</td>"
@@ -1779,10 +2149,10 @@ Sub Indicadores
        ShowHTML "      <table width=""100%"" border=""0"">"
        ShowHTML "         <tr valign=""top""><td><font size=""1""><b>Previsão:</b><br></td>"
        ShowHTML "           <table border=1 width=""100%"" cellspacing=0><tr valign=""top"">"
-       ShowHTML "             <tr><td align=""center""><font size=""1""><b>Ano 1</b></td>"
-       ShowHTML "                 <td align=""center""><font size=""1""><b>Ano 2</b></td>"
-       ShowHTML "                 <td align=""center""><font size=""1""><b>Ano 3</b></td>"
-       ShowHTML "                 <td align=""center""><font size=""1""><b>Ano 4</b></td>"
+       ShowHTML "             <tr><td align=""center""><font size=""1""><b>2004</b></td>"
+       ShowHTML "                 <td align=""center""><font size=""1""><b>2005</b></td>"
+       ShowHTML "                 <td align=""center""><font size=""1""><b>2006</b></td>"
+       ShowHTML "                 <td align=""center""><font size=""1""><b>2007</b></td>"
        ShowHTML "             </tr>"
        ShowHTML "             <tr><td align=""right""><font size=""1"">" & FormatNumber(Nvl(w_prev_ano_1,0),2) & "</td>"
        ShowHTML "                 <td align=""right""><font size=""1"">" & FormatNumber(Nvl(w_prev_ano_2,0),2) & "</td>"
@@ -2066,7 +2436,7 @@ Sub AtualizaIndicador
      ScriptClose
   End If
   ShowHTML "</HEAD>"
-  ShowHTML "<BASE HREF=""http://" & Request.ServerVariables("server_name") & "/siw/"">"
+  ShowHTML "<BASE HREF=""" & conRootSIW & """>"
 
   If w_troca > "" Then
      BodyOpen "onLoad='document.Form." & w_troca & ".focus()';"
@@ -2149,7 +2519,7 @@ Sub AtualizaIndicador
     Else
        ShowHTML "            <tr><td><font size=""1"">Tipo do indicador:<b><br>Processo</td>"
     End If
-    ShowHTML "                <td><font size=""1"">Quantitativo:<b><br>" & w_quantidade & "</td></tr>"
+    ShowHTML "                <td><font size=""1"">Índice programado:<b><br>" & w_quantidade & "</td></tr>"
     ShowHTML "            <tr><td><font size=""1"">Cumulativa?<b><br>" & w_nm_cumulativa & "</td>"
     ShowHTML "                <td><font size=""1"">Índice referência:<b><br>" & w_indice_ref & "</td></tr>"
     ShowHTML "            <tr><td><font size=""1"">Data apuração:<b><br>" & FormataDataEdicao(w_apuracao_ref) & "</td>"
@@ -2163,10 +2533,10 @@ Sub AtualizaIndicador
     ShowHTML "      <table width=""100%"" border=""0"">"
     ShowHTML "         <tr valign=""top""><td><font size=""1""><b>Previsão:</b><br></td>"
     ShowHTML "           <table border=1 width=""100%"" cellspacing=0><tr valign=""top"">"
-    ShowHTML "             <tr><td align=""center""><font size=""1""><b>Ano 1</b></td>"
-    ShowHTML "                 <td align=""center""><font size=""1""><b>Ano 2</b></td>"
-    ShowHTML "                 <td align=""center""><font size=""1""><b>Ano 3</b></td>"
-    ShowHTML "                 <td align=""center""><font size=""1""><b>Ano 4</b></td>"
+    ShowHTML "             <tr><td align=""center""><font size=""1""><b>2004</b></td>"
+    ShowHTML "                 <td align=""center""><font size=""1""><b>2005</b></td>"
+    ShowHTML "                 <td align=""center""><font size=""1""><b>2006</b></td>"
+    ShowHTML "                 <td align=""center""><font size=""1""><b>2007</b></td>"
     ShowHTML "             </tr>"
     ShowHTML "             <tr><td align=""right""><font size=""1"">" & FormatNumber(w_prev_ano_1,2) & "</td>"
     ShowHTML "                 <td align=""right""><font size=""1"">" & FormatNumber(w_prev_ano_2,2) & "</td>"
@@ -2379,7 +2749,7 @@ Sub Restricoes
      ScriptClose
   End If
   ShowHTML "</HEAD>"
-  ShowHTML "<BASE HREF=""http://" & Request.ServerVariables("server_name") & "/siw/"">"
+  ShowHTML "<BASE HREF=""" & conRootSIW & """>"
   If w_troca > "" Then
      BodyOpen "onLoad='document.Form." & w_troca & ".focus()';"
   ElseIf O = "I" Then
@@ -2618,7 +2988,7 @@ Sub Interessados
      ScriptClose
   End If
   ShowHTML "</HEAD>"
-  ShowHTML "<BASE HREF=""http://" & Request.ServerVariables("server_name") & "/siw/"">"
+  ShowHTML "<BASE HREF=""" & conRootSIW & """>"
   If w_troca > "" Then
      BodyOpen "onLoad='document.Form." & w_troca & ".focus()';"
   ElseIf O = "I" Then
@@ -2633,23 +3003,18 @@ Sub Interessados
   If O = "L" Then
     ShowHTML "      <tr><td colspan=3><font size=1>Usuários que devem receber emails dos encaminhamentos deste programa.</font></td></tr>"
     ShowHTML "      <tr><td colspan=3 align=""center"" height=""1"" bgcolor=""#000000""></td></tr>"
-    DB_GetSolicData_IS RS1, w_chave, SG
-    ShowHTML "     <tr><td><font size=""1"">Programa Codº " & RS1("cd_programa") & " - " & RS1("ds_programa") & "</td>"
-    RS1.Close
     ' Exibe a quantidade de registros apresentados na listagem e o cabeçalho da tabela de listagem
     If P1 <> 4 Then 
        ShowHTML "<tr><td><font size=""2""><a accesskey=""I"" class=""SS"" href=""" & w_dir & w_pagina & par & "&R=" & w_Pagina & par & "&O=I&w_chave=" & w_chave & "&P1=" & P1 & "&P2=" & P2 & "&P3=" & P3 & "&P4=" & P4 & "&TP=" & TP & "&SG=" & SG & """><u>I</u>ncluir</a>&nbsp;"
     Else
-       DB_GetSolicData_IS RS1, w_chave, "ISACVISUAL"
+       DB_GetSolicData_IS RS1, w_chave, "ISPRGERAL"
        ShowHTML "<tr><td colspan=3 align=""center"" bgcolor=""#FAEBD7""><table border=1 width=""100%""><tr><td>"
        ShowHTML "    <TABLE WIDTH=""100%"" CELLSPACING=""" & conTableCellSpacing & """ CELLPADDING=""" & conTableCellPadding & """ BorderColorDark=""" & conTableBorderColorDark & """ BorderColorLight=""" & conTableBorderColorLight & """>"
        ShowHTML "        <tr valign=""top"">"
-       If RS1("cd_acao") > "" Then
-          ShowHTML "          <td><font size=""1""><b>Ação PPA: </b><br>" & RS1("nm_ppa") & " (" &RS1("cd_ppa_pai")& "." & RS1("cd_acao")& "." & RS1("cd_subacao")& ")</b>"      
+       If RS1("cd_programa") > "" Then
+          ShowHTML "          <td><font size=""1""><b>Programa Codº " & RS1("cd_programa") & " - " & RS1("ds_programa") &" </b>"      
        End If
-       If RS1("sq_isprojeto") > "" Then
-          ShowHTML "        <td><font size=""1""><b>Plano/Projeto Específico: </b><br>" & RS1("nm_pri") & " </b>"      
-       End If
+       RS1.Close       
        ShowHTML "    </TABLE>"
        ShowHTML "</table>"
        ShowHTML "<tr><td colspan=3>&nbsp;"
@@ -2803,7 +3168,7 @@ Sub Anexos
      ScriptClose 
   End If 
   ShowHTML "</HEAD>" 
-  ShowHTML "<BASE HREF=""http://" & Request.ServerVariables("server_name") & "/siw/"">"
+  ShowHTML "<BASE HREF=""" & conRootSIW & """>"
   If w_troca > "" Then 
      BodyOpen "onLoad='document.Form." & w_troca & ".focus()';" 
   ElseIf O = "I" Then 
@@ -2990,7 +3355,7 @@ Sub Iniciativas
   ValidateClose
   ScriptClose
   ShowHTML "</HEAD>"
-  ShowHTML "<BASE HREF=""http://" & Request.ServerVariables("server_name") & "/siw/"">"
+  ShowHTML "<BASE HREF=""" & conRootSIW & """>"
  
   BodyOpen "onLoad='document.Form.focus()';"
   ShowHTML "<B><FONT COLOR=""#000000"">" & w_TP & "</FONT></B>"
@@ -3106,7 +3471,7 @@ Sub Financiamento
      ScriptClose
   End If
   ShowHTML "</HEAD>"
-  ShowHTML "<BASE HREF=""http://" & Request.ServerVariables("server_name") & "/siw/"">"
+  ShowHTML "<BASE HREF=""" & conRootSIW & """>"
   If w_troca > "" Then
      BodyOpen "onLoad='document.Form." & w_troca & ".focus()';"
   ElseIf O = "I" Then
@@ -3245,7 +3610,7 @@ Sub Visual
   ShowHTML "<HEAD>"
   ShowHTML "<TITLE>" & conSgSistema & " - Visualização de Ação</TITLE>"
   ShowHTML "</HEAD>"  
-  ShowHTML "<BASE HREF=""http://" & Request.ServerVariables("server_name") & "/siw/"">"
+  ShowHTML "<BASE HREF=""" & conRootSIW & """>"
   If w_tipo <> "WORD" Then
      BodyOpenClean "onLoad='document.focus()'; "
   End If
@@ -3325,7 +3690,7 @@ Sub Excluir
      ScriptClose
   End If
   ShowHTML "</HEAD>"
-  ShowHTML "<BASE HREF=""http://" & Request.ServerVariables("server_name") & "/siw/"">"
+  ShowHTML "<BASE HREF=""" & conRootSIW & """>"
   If w_troca > "" Then
      BodyOpen "onLoad='document.Form." & w_troca & ".focus()';"
   Else
@@ -3429,7 +3794,7 @@ Sub Encaminhamento
      ScriptClose
   End If
   ShowHTML "</HEAD>"
-  ShowHTML "<BASE HREF=""http://" & Request.ServerVariables("server_name") & "/siw/"">"
+  ShowHTML "<BASE HREF=""" & conRootSIW & """>"
   If w_troca > "" Then
      BodyOpen "onLoad='document.Form." & w_troca & ".focus()';"
   Else
@@ -3540,7 +3905,7 @@ Sub Anotar
      ScriptClose
   End If
   ShowHTML "</HEAD>"
-  ShowHTML "<BASE HREF=""http://" & Request.ServerVariables("server_name") & "/siw/"">"
+  ShowHTML "<BASE HREF=""" & conRootSIW & """>"
   If w_troca > "" Then
      BodyOpen "onLoad='document.Form." & w_troca & ".focus()';"
   Else
@@ -3646,7 +4011,7 @@ Sub Concluir
      ScriptClose
   End If
   ShowHTML "</HEAD>"
-  ShowHTML "<BASE HREF=""http://" & Request.ServerVariables("server_name") & "/siw/"">"
+  ShowHTML "<BASE HREF=""" & conRootSIW & """>"
   If w_troca > "" Then
      BodyOpen "onLoad='document.Form." & w_troca & ".focus()';"
   Else
@@ -4120,7 +4485,7 @@ Sub BuscaPrograma
   ValidateClose
   ScriptClose
   ShowHTML "</HEAD>"
-  ShowHTML "<BASE HREF=""http://" & Request.ServerVariables("server_name") & "/siw/"">"
+  ShowHTML "<BASE HREF=""" & conRootSIW & """>"
   BodyOpen "onLoad='document.Form.w_nome.focus();'"
   Estrutura_Texto_Abre
   ShowHTML "<table border=""0"" cellpadding=""0"" cellspacing=""0"" width=""100%"">"
@@ -4210,324 +4575,324 @@ Public Sub Grava
 
   Cabecalho
   ShowHTML "</HEAD>"
-  ShowHTML "<BASE HREF=""http://" & Request.ServerVariables("server_name") & "/siw/"">"
+  ShowHTML "<BASE HREF=""" & conRootSIW & """>"
   BodyOpen "onLoad=document.focus();"
   
   AbreSessao    
- 
-  Select Case SG
-    Case "ISPRGERAL"
-       ' Verifica se a Assinatura Eletrônica é válida
-       If (VerificaAssinaturaEletronica(Session("Username"),w_assinatura) and w_assinatura > "") or _
-          w_assinatura = "" Then
-          
-          If O = "E" Then
-             DB_GetSolicAnexo RS, Request("w_chave"), null, w_cliente
-             If Not RS.EOF Then 
-                Set ul = Nothing  
-                Set ul = Server.CreateObject("Dundas.Upload.2")  
-                While Not RS.EOF
-                   ul.FileDelete(conFilePhysical & w_cliente & "\" & RS("caminho"))  
-                   RS.MoveNext
-                wend 
-             End If
-             DesconectaBD
-          Else
-             If O = "I" Then
-                DB_GetPrograma_IS RS, Request("w_cd_programa"), w_ano, w_cliente
-                If cDbl(RS("Existe")) > 0 Then
-                   DesconectaBD
-                   ScriptOpen "JavaScript"
-                   ShowHTML "  alert('Programa já cadastrado!');"
-                   ShowHTML "  history.back(1);"
-                   ScriptClose
-                   Exit Sub
-                End If 
-             End If
-             'Recupera 10% dos dias de prazo da tarefa, para emitir o alerta  
-             Dim w_dias
-             DB_Get10PercentDays_IS RS,Request("w_inicio"), Request("w_fim")
-             w_dias = RS("dias")
-             DesconectaBD
-          End If
 
-          DML_PutAcaoGeral_IS O, _
-              Request("w_chave"), Request("w_menu"), Session("lotacao"), Request("w_solicitante"), Request("w_proponente"), _
-              Session("sq_pessoa"), null, Request("w_descricao"), Request("w_justificativa"), Request("w_inicio"), Request("w_fim"), Request("w_valor"), _
-              Request("w_data_hora"), Request("w_sq_unidade_resp"), Request("w_titulo"), Request("w_prioridade"), Request("w_aviso"), w_dias, _
-              Request("w_cidade"), Request("w_palavra_chave"), _
-              null, null, null, null, null, null, null, _
-              w_ano, w_cliente, Request("w_cd_programa"), null, null, null, null, Request("w_selecao_mp"), Request("w_selecao_se"), _
-              Request("w_sq_natureza"), Request("w_sq_horizonte"), w_chave_nova, w_copia, Request("w_sq_unidade_adm"), Request("w_ln_programa")
-          
+  If SG = "ISPRGERAL" or SG = "VLRPGERAL" Then
+    ' Verifica se a Assinatura Eletrônica é válida
+    If (VerificaAssinaturaEletronica(Session("Username"),w_assinatura) and w_assinatura > "") or _
+       w_assinatura = "" Then
+       
+       If O = "E" Then
+          DB_GetSolicAnexo RS, Request("w_chave"), null, w_cliente
+          If Not RS.EOF Then 
+             Set ul = Nothing  
+             Set ul = Server.CreateObject("Dundas.Upload.2")  
+             While Not RS.EOF
+                ul.FileDelete(conFilePhysical & w_cliente & "\" & RS("caminho"))  
+                RS.MoveNext
+             wend 
+          End If
+          DesconectaBD
+       Else
           If O = "I" Then
-             ' Envia e-mail comunicando a inclusão
-             SolicMail Nvl(Request("w_chave"), w_chave_nova) ,1
+             DB_GetPrograma_IS RS, Request("w_cd_programa"), w_ano, w_cliente, null
+             If cDbl(RS("Existe")) > 0 Then
+                DesconectaBD
+                ScriptOpen "JavaScript"
+                ShowHTML "  alert('Programa já cadastrado!');"
+                ShowHTML "  history.back(1);"
+                ScriptClose
+                Exit Sub
+             End If 
           End If
-          ScriptOpen "JavaScript"
-          If O = "I" Then
-             ' Exibe mensagem de gravação com sucesso
-             ShowHTML "  alert('Programa " & Request("w_cd_programa") & " cadastrado com sucesso!');"
-             ' Recupera os dados para montagem correta do menu
-             DB_GetMenuData RS1, w_menu
-             ShowHTML "  parent.menu.location='../Menu.asp?par=ExibeDocs&O=A&w_chave=" & w_chave_nova & "&w_documento=Nr. " & w_chave_nova & "&R=" & R & "&SG=" & RS1("sigla") & "&TP=" & TP & MontaFiltro("GET") & "';"
-          ElseIf O = "E" Then
-             ShowHTML "  location.href='" & R & "&O=L&R=" & R & "&SG=ISPCAD&w_menu=" & w_menu & "&P1=" & P1 & "&P2=" & P2 & "&P3=" & P3 & "&P4=" & P4 & "&TP=" & TP & MontaFiltro("GET") & "';"
-          Else
-             ' Aqui deve ser usada a variável de sessão para evitar erro na recuperação do link
-             DB_GetLinkData RS1, Session("p_cliente"), SG
-             ShowHTML "  location.href='" & replace(RS1("link"),w_dir,"") & "&O=" & O & "&w_chave=" & Request("w_Chave") & "&P1=" & P1 & "&P2=" & P2 & "&P3=" & P3 & "&P4=" & P4 & "&TP=" & TP & "&SG=" & SG & MontaFiltro("GET") & "';"
+          'Recupera 10% dos dias de prazo da tarefa, para emitir o alerta  
+          Dim w_dias
+          DB_Get10PercentDays_IS RS,Request("w_inicio"), Request("w_fim")
+          w_dias = RS("dias")
+          DesconectaBD
+       End If
+       
+       DML_PutAcaoGeral_IS O, _
+           Request("w_chave"), Request("w_menu"), Session("lotacao"), Request("w_solicitante"), Request("w_proponente"), _
+           Session("sq_pessoa"), Request("w_executor"), Request("w_descricao"), Request("w_justificativa"), Request("w_inicio"), Request("w_fim"), Request("w_valor"), _
+           Request("w_data_hora"), Request("w_sq_unidade_resp"), Request("w_titulo"), Request("w_prioridade"), Request("w_aviso"), w_dias, _
+           Request("w_cidade"), Request("w_palavra_chave"), _
+           null, null, null, null, null, null, null, _
+           w_ano, w_cliente, Request("w_cd_programa"), null, null, null, null, Request("w_selecao_mp"), Request("w_selecao_se"), _
+           Request("w_sq_natureza"), Request("w_sq_horizonte"), w_chave_nova, w_copia, Request("w_sq_unidade_adm"), Request("w_ln_programa")
+
+       If O = "I" Then
+          ' Envia e-mail comunicando a inclusão
+          SolicMail Nvl(Request("w_chave"), w_chave_nova) ,1
+       End If
+       ScriptOpen "JavaScript"
+       If O = "I" Then
+          ' Exibe mensagem de gravação com sucesso
+          ShowHTML "  alert('Programa " & Request("w_cd_programa") & " cadastrado com sucesso!');"
+          ' Recupera os dados para montagem correta do menu
+          DB_GetMenuData RS1, w_menu
+          ShowHTML "  parent.menu.location='../Menu.asp?par=ExibeDocs&O=A&w_chave=" & w_chave_nova & "&w_documento=Nr. " & w_chave_nova & "&R=" & R & "&SG=" & RS1("sigla") & "&TP=" & TP & MontaFiltro("GET") & "';"
+       ElseIf O = "E" Then
+          ShowHTML "  location.href='" & R & "&O=L&R=" & R & "&SG=ISPCAD&w_menu=" & w_menu & "&P1=" & P1 & "&P2=" & P2 & "&P3=" & P3 & "&P4=" & P4 & "&TP=" & TP & MontaFiltro("GET") & "';"
+       Else
+          ' Aqui deve ser usada a variável de sessão para evitar erro na recuperação do link
+          If SG = "VLRPGERAL" Then
+             O = "P"
           End If
-          ScriptClose
-       Else
-          ScriptOpen "JavaScript"
-          ShowHTML "  alert('Assinatura Eletrônica inválida!');"
-          ShowHTML "  history.back(1);"
-          ScriptClose
+          DB_GetLinkData RS1, Session("p_cliente"), SG
+          ShowHTML "  location.href='" & replace(RS1("link"),w_dir,"") & "&O=" & O & "&w_chave=" & Request("w_Chave") & "&P1=" & P1 & "&P2=" & P2 & "&P3=" & P3 & "&P4=" & P4 & "&TP=" & TP & "&SG=" & SG & MontaFiltro("GET") & "';"
        End If
-    Case "ISPRRESP"
-       ' Verifica se a Assinatura Eletrônica é válida
-       If (VerificaAssinaturaEletronica(Session("Username"),w_assinatura) and w_assinatura > "") or _
-          w_assinatura = "" Then
+       ScriptClose
+    Else
+       ScriptOpen "JavaScript"
+       ShowHTML "  alert('Assinatura Eletrônica inválida!');"
+       ShowHTML "  history.back(1);"
+       ScriptClose
+    End If
+  ElseIf SG = "ISPRRESP" Then
+    ' Verifica se a Assinatura Eletrônica é válida
+    If (VerificaAssinaturaEletronica(Session("Username"),w_assinatura) and w_assinatura > "") or _
+       w_assinatura = "" Then
 
-          DML_PutRespPrograma_IS Request("w_chave"), _
-                                 Request("w_nm_gerente_programa"), Request("w_fn_gerente_programa"), Request("w_em_gerente_programa"), _
-                                 Request("w_nm_gerente_executivo"), Request("w_fn_gerente_executivo"), Request("w_em_gerente_executivo"), _
-                                 Request("w_nm_gerente_adjunto"), Request("w_fn_gerente_adjunto"), Request("w_em_gerente_adjunto")
+       DML_PutRespPrograma_IS Request("w_chave"), _
+                              Request("w_nm_gerente_programa"), Request("w_fn_gerente_programa"), Request("w_em_gerente_programa"), _
+                              Request("w_nm_gerente_executivo"), Request("w_fn_gerente_executivo"), Request("w_em_gerente_executivo"), _
+                              Request("w_nm_gerente_adjunto"), Request("w_fn_gerente_adjunto"), Request("w_em_gerente_adjunto")
+       
+       ScriptOpen "JavaScript"
+       ' Recupera a sigla do serviço pai, para fazer a chamada ao menu
+       DB_GetLinkData RS, Session("p_cliente"), SG
+       ShowHTML "  location.href='" & replace(RS("link"),w_dir,"") & "&O=L&w_chave=" & Request("w_chave") & "&P1=" & P1 & "&P2=" & P2 & "&P3=" & P3 & "&P4=" & P4 & "&TP=" & TP & "&SG=" & SG & "';"
+       DesconectaBD
+       ScriptClose
+    Else
+       ScriptOpen "JavaScript"
+       ShowHTML "  alert('Assinatura Eletrônica inválida!');"
+       ShowHTML "  history.back(1);"
+       ScriptClose
+    End If    
+  ElseIf SG = "ISPRPROQUA" Then
+    ' Verifica se a Assinatura Eletrônica é válida
+    If (VerificaAssinaturaEletronica(Session("Username"),w_assinatura) and w_assinatura > "") or _
+        w_assinatura = "" Then
+       DML_PutProgQualitativa_IS _
+           Request("w_chave"), Request("w_resultados"), Request("w_observacoes"),  Request("w_potencialidades"), null, _
+           Request("w_contribuicao_objetivo"), null, Request("w_estrategia_monit"), Request("w_diretriz"), _
+           Request("w_metodologia_aval"), SG
           
-          ScriptOpen "JavaScript"
-          ' Recupera a sigla do serviço pai, para fazer a chamada ao menu
-          DB_GetLinkData RS, Session("p_cliente"), SG
-          ShowHTML "  location.href='" & replace(RS("link"),w_dir,"") & "&O=L&w_chave=" & Request("w_chave") & "&P1=" & P1 & "&P2=" & P2 & "&P3=" & P3 & "&P4=" & P4 & "&TP=" & TP & "&SG=" & SG & "';"
-          DesconectaBD
-          ScriptClose
+       ScriptOpen "JavaScript"
+       If O = "I" Then
+          ' Recupera os dados para montagem correta do menu
+          DB_GetMenuData RS1, w_menu
+          ShowHTML "  parent.menu.location='../Menu.asp?par=ExibeDocs&O=A&w_chave=" & w_chave_nova & "&w_documento=Nr. " & w_chave_nova & "&R=" & R & "&SG=" & RS1("sigla") & "&TP=" & TP & MontaFiltro("GET") & "';"
        Else
-          ScriptOpen "JavaScript"
-          ShowHTML "  alert('Assinatura Eletrônica inválida!');"
-          ShowHTML "  history.back(1);"
-          ScriptClose
-       End If    
-    Case "ISPRPROQUA"
-       ' Verifica se a Assinatura Eletrônica é válida
-       If (VerificaAssinaturaEletronica(Session("Username"),w_assinatura) and w_assinatura > "") or _
-          w_assinatura = "" Then
-          DML_PutProgQualitativa_IS _
-              Request("w_chave"), Request("w_resultados"), Request("w_observacoes"),  Request("w_potencialidades"), null, _
-              Request("w_contribuicao_objetivo"), null, Request("w_estrategia_monit"), Request("w_diretriz"), _
-              Request("w_metodologia_aval"), SG
-          
-          ScriptOpen "JavaScript"
-          If O = "I" Then
-             ' Recupera os dados para montagem correta do menu
-             DB_GetMenuData RS1, w_menu
-             ShowHTML "  parent.menu.location='../Menu.asp?par=ExibeDocs&O=A&w_chave=" & w_chave_nova & "&w_documento=Nr. " & w_chave_nova & "&R=" & R & "&SG=" & RS1("sigla") & "&TP=" & TP & MontaFiltro("GET") & "';"
-          Else
-             ' Aqui deve ser usada a variável de sessão para evitar erro na recuperação do link
-             DB_GetLinkData RS1, Session("p_cliente"), SG
-             ShowHTML "  location.href='" & replace(RS1("link"),w_dir,"") & "&O=" & O & "&w_chave=" & Request("w_Chave") & "&P1=" & P1 & "&P2=" & P2 & "&P3=" & P3 & "&P4=" & P4 & "&TP=" & TP & "&SG=" & SG & MontaFiltro("GET") & "';"
-          End If
-          ScriptClose
-       Else
-          ScriptOpen "JavaScript"
-          ShowHTML "  alert('Assinatura Eletrônica inválida!');"
-          ShowHTML "  history.back(1);"
-          ScriptClose
+          ' Aqui deve ser usada a variável de sessão para evitar erro na recuperação do link
+          DB_GetLinkData RS1, Session("p_cliente"), SG
+          ShowHTML "  location.href='" & replace(RS1("link"),w_dir,"") & "&O=" & O & "&w_chave=" & Request("w_Chave") & "&P1=" & P1 & "&P2=" & P2 & "&P3=" & P3 & "&P4=" & P4 & "&TP=" & TP & "&SG=" & SG & MontaFiltro("GET") & "';"
        End If
-    
-    Case "ISPRINDIC"
-       ' Verifica se a Assinatura Eletrônica é válida
-       If (VerificaAssinaturaEletronica(Session("Username"),w_assinatura) and w_assinatura > "") or _
-          w_assinatura = "" Then
-          DML_PutIndicador_IS O, _
-              Request("w_chave"), Request("w_chave_aux"), w_ano, w_cliente, Request("w_cd_programa"), Request("w_cd_unidade_medida"), _
-              Request("w_cd_periodicidade"), Request("w_cd_base_geografica"), Request("w_categoria_analise"), Request("w_ordem"), Request("w_titulo"),  _
-              Request("w_conceituacao"), Request("w_interpretacao"), Request("w_usos"), Request("w_limitacoes"), Request("w_comentarios"), _
-              Request("w_fonte"), Request("w_formula"), Request("w_tipo_in"), Request("w_indice_ref"), Request("w_indice_apurado"), Request("w_apuracao_ref"), Request("w_apuracao_ind"), _
-              Request("w_observacoes"), Request("w_cumulativa"), Request("w_quantidade"), Nvl(Request("w_exequivel"),"S"), Request("w_situacao_atual"), _
-              Request("w_justificativa_inex"), Request("w_outras_medidas"), Request("w_prev_ano_1"), Request("w_prev_ano_2"), Request("w_prev_ano_3"), Request("w_prev_ano_4"), P1     
+       ScriptClose
+    Else
+       ScriptOpen "JavaScript"
+       ShowHTML "  alert('Assinatura Eletrônica inválida!');"
+       ShowHTML "  history.back(1);"
+       ScriptClose
+    End If
+  ElseIf SG = "ISPRINDIC" Then
+    ' Verifica se a Assinatura Eletrônica é válida
+    If (VerificaAssinaturaEletronica(Session("Username"),w_assinatura) and w_assinatura > "") or _
+        w_assinatura = "" Then
+       DML_PutIndicador_IS O, _
+           Request("w_chave"), Request("w_chave_aux"), w_ano, w_cliente, Request("w_cd_programa"), Request("w_cd_unidade_medida"), _
+           Request("w_cd_periodicidade"), Request("w_cd_base_geografica"), Request("w_categoria_analise"), Request("w_ordem"), Request("w_titulo"),  _
+           Request("w_conceituacao"), Request("w_interpretacao"), Request("w_usos"), Request("w_limitacoes"), Request("w_comentarios"), _
+           Request("w_fonte"), Request("w_formula"), Request("w_tipo_in"), Request("w_indice_ref"), Request("w_indice_apurado"), Request("w_apuracao_ref"), Request("w_apuracao_ind"), _
+           Request("w_observacoes"), Request("w_cumulativa"), Request("w_quantidade"), Nvl(Request("w_exequivel"),"S"), Request("w_situacao_atual"), _
+           Request("w_justificativa_inex"), Request("w_outras_medidas"), Request("w_prev_ano_1"), Request("w_prev_ano_2"), Request("w_prev_ano_3"), Request("w_prev_ano_4"), P1     
+       
+       ScriptOpen "JavaScript"
+       ' Recupera a sigla do serviço pai, para fazer a chamada ao menu
+       DB_GetLinkData RS, Session("p_cliente"), SG
+       ShowHTML "  location.href='" & replace(RS("link"),w_dir,"") & "&O=L&w_chave=" & Request("w_chave") & "&P1=" & P1 & "&P2=" & P2 & "&P3=" & P3 & "&P4=" & P4 & "&TP=" & TP & "&SG=" & SG & "';"
+       DesconectaBD
+       ScriptClose
+    Else
+       ScriptOpen "JavaScript"
+       ShowHTML "  alert('Assinatura Eletrônica inválida!');"
+       ShowHTML "  history.back(1);"
+       ScriptClose
+    End If
+  ElseIf SG = "ISPRRESTR" Then
+    ' Verifica se a Assinatura Eletrônica é válida
+    If (VerificaAssinaturaEletronica(Session("Username"),w_assinatura) and w_assinatura > "") or _
+        w_assinatura = "" Then
           
-          ScriptOpen "JavaScript"
-          ' Recupera a sigla do serviço pai, para fazer a chamada ao menu
-          DB_GetLinkData RS, Session("p_cliente"), SG
-          ShowHTML "  location.href='" & replace(RS("link"),w_dir,"") & "&O=L&w_chave=" & Request("w_chave") & "&P1=" & P1 & "&P2=" & P2 & "&P3=" & P3 & "&P4=" & P4 & "&TP=" & TP & "&SG=" & SG & "';"
-          DesconectaBD
-          ScriptClose
-       Else
-          ScriptOpen "JavaScript"
-          ShowHTML "  alert('Assinatura Eletrônica inválida!');"
-          ShowHTML "  history.back(1);"
-          ScriptClose
+       DML_PutRestricao_IS O, SG, Request("w_chave"), Request("w_chave_aux"), null, null, _
+           Request("w_cd_tipo_restricao"), _
+           Request("w_cd_tipo_inclusao"), Request("w_cd_competencia"), Request("w_superacao"), _
+           Request("w_relatorio"), Request("w_tempo_habil"), Request("w_descricao"), _
+           Request("w_providencia"), Request("w_observacao_controle"), Request("w_observacao_monitor"), w_ano, w_cliente
+          
+       If O = "I" or O = "E" Then
+          RestricaoMail Request("w_chave"), Request("w_descricao"), Request("w_cd_tipo_restricao"), Request("w_providencia"), O              
        End If
-    Case "ISPRRESTR"
-       ' Verifica se a Assinatura Eletrônica é válida
-       If (VerificaAssinaturaEletronica(Session("Username"),w_assinatura) and w_assinatura > "") or _
-          w_assinatura = "" Then
+       ScriptOpen "JavaScript"
+       ' Recupera a sigla do serviço pai, para fazer a chamada ao menu
+       DB_GetLinkData RS, Session("p_cliente"), SG
+       ShowHTML "  location.href='" & replace(RS("link"),w_dir,"") & "&O=L&w_chave=" & Request("w_chave") & "&P1=" & P1 & "&P2=" & P2 & "&P3=" & P3 & "&P4=" & P4 & "&TP=" & TP & "&SG=" & SG & "';"
+       DesconectaBD
+       ScriptClose
+    Else
+       ScriptOpen "JavaScript"
+       ShowHTML "  alert('Assinatura Eletrônica inválida!');"
+       ShowHTML "  history.back(1);"
+       ScriptClose
+    End If 
+  ElseIf SG = "ISPRINTERE" Then
+    ' Verifica se a Assinatura Eletrônica é válida
+    If (VerificaAssinaturaEletronica(Session("Username"),w_assinatura) and w_assinatura > "") or _
+        w_assinatura = "" Then
 
-          DML_PutRestricao_IS O, SG, Request("w_chave"), Request("w_chave_aux"), null, null, _
-              Request("w_cd_tipo_restricao"), _
-              Request("w_cd_tipo_inclusao"), Request("w_cd_competencia"), Request("w_superacao"), _
-              Request("w_relatorio"), Request("w_tempo_habil"), Request("w_descricao"), _
-              Request("w_providencia"), Request("w_observacao_controle"), Request("w_observacao_monitor")
-          
-          If O = "I" or O = "E" Then
-             RestricaoMail Request("w_chave"), Request("w_descricao"), Request("w_cd_tipo_restricao"), Request("w_providencia"), O              
-          End If
-          ScriptOpen "JavaScript"
-          ' Recupera a sigla do serviço pai, para fazer a chamada ao menu
-          DB_GetLinkData RS, Session("p_cliente"), SG
-          ShowHTML "  location.href='" & replace(RS("link"),w_dir,"") & "&O=L&w_chave=" & Request("w_chave") & "&P1=" & P1 & "&P2=" & P2 & "&P3=" & P3 & "&P4=" & P4 & "&TP=" & TP & "&SG=" & SG & "';"
-          DesconectaBD
-          ScriptClose
-       Else
-          ScriptOpen "JavaScript"
-          ShowHTML "  alert('Assinatura Eletrônica inválida!');"
-          ShowHTML "  history.back(1);"
-          ScriptClose
-       End If 
-    Case "ISPRINTERE"
-       ' Verifica se a Assinatura Eletrônica é válida
-       If (VerificaAssinaturaEletronica(Session("Username"),w_assinatura) and w_assinatura > "") or _
-          w_assinatura = "" Then
-
-          DML_PutProjetoInter O, Request("w_chave"), Request("w_chave_aux"), Request("w_tipo_visao"), Request("w_envia_email")
-          
-          ScriptOpen "JavaScript"
-          ' Recupera a sigla do serviço pai, para fazer a chamada ao menu
-          DB_GetLinkData RS, Session("p_cliente"), SG
-          ShowHTML "  location.href='" & replace(RS("link"),w_dir,"") & "&O=L&w_chave=" & Request("w_chave") & "&P1=" & P1 & "&P2=" & P2 & "&P3=" & P3 & "&P4=" & P4 & "&TP=" & TP & "&SG=" & SG & "';"
-          DesconectaBD
-          ScriptClose
-       Else
-          ScriptOpen "JavaScript"
-          ShowHTML "  alert('Assinatura Eletrônica inválida!');"
-          ShowHTML "  history.back(1);"
-          ScriptClose
-       End If
-     Case "ISPRANEXO"
-       ' Verifica se a Assinatura Eletrônica é válida
-       If (VerificaAssinaturaEletronica(Session("Username"),w_assinatura) and w_assinatura > "") or _
-          w_assinatura = "" Then
-
-          ' Se foi feito o upload de um arquivo  
-          If ul.Files("w_caminho").OriginalPath > "" Then  
-             ' Verifica se o tamanho das fotos está compatível com  o limite de 100KB.  
-             If ul.Files("w_caminho").Size > ul.Form("w_upload_maximo") Then  
-                ScriptOpen("JavaScript")  
-                ShowHTML "  alert('Atenção: o tamanho máximo do arquivo não pode exceder " & ul.Form("w_upload_maximo")/1024 & " KBytes!');"  
-                ShowHTML "  history.back(1);"  
-                ScriptClose  
-                Response.End()  
-                exit sub  
-             End If  
-    
-             ' Se já há um nome para o arquivo, mantém  
-             w_file = nvl(ul.Form("w_atual"),ul.GetUniqueName())  
-             ul.Files("w_caminho").SaveAs(conFilePhysical & w_cliente & "\" & w_file)  
-          Else  
-             w_file = ""  
+       DML_PutProjetoInter O, Request("w_chave"), Request("w_chave_aux"), Request("w_tipo_visao"), Request("w_envia_email")
+       
+       ScriptOpen "JavaScript"
+       ' Recupera a sigla do serviço pai, para fazer a chamada ao menu
+       DB_GetLinkData RS, Session("p_cliente"), SG
+       ShowHTML "  location.href='" & replace(RS("link"),w_dir,"") & "&O=L&w_chave=" & Request("w_chave") & "&P1=" & P1 & "&P2=" & P2 & "&P3=" & P3 & "&P4=" & P4 & "&TP=" & TP & "&SG=" & SG & "';"
+       DesconectaBD
+       ScriptClose
+    Else
+       ScriptOpen "JavaScript"
+       ShowHTML "  alert('Assinatura Eletrônica inválida!');"
+       ShowHTML "  history.back(1);"
+       ScriptClose
+    End If
+  ElseIf SG = "ISPRANEXO" Then
+    ' Verifica se a Assinatura Eletrônica é válida
+    If (VerificaAssinaturaEletronica(Session("Username"),w_assinatura) and w_assinatura > "") or _
+        w_assinatura = "" Then
+       ' Se foi feito o upload de um arquivo  
+       If ul.Files("w_caminho").OriginalPath > "" Then  
+          ' Verifica se o tamanho das fotos está compatível com  o limite de 100KB.  
+          If ul.Files("w_caminho").Size > ul.Form("w_upload_maximo") Then  
+             ScriptOpen("JavaScript")  
+             ShowHTML "  alert('Atenção: o tamanho máximo do arquivo não pode exceder " & ul.Form("w_upload_maximo")/1024 & " KBytes!');"  
+             ShowHTML "  history.back(1);"  
+             ScriptClose  
+             Response.End()  
+             exit sub  
           End If  
     
-          ' Se for exclusão e houver um arquivo físico, deve remover o arquivo do disco.  
-          If O = "E" and ul.Form("w_atual") > "" Then  
-             ul.FileDelete(conFilePhysical & w_cliente & "\" & ul.Form("w_atual"))  
-          End If  
-          If O = "A" Then
-             DML_PutSolicArquivo O, _  
-                 w_cliente, ul.Form("w_chave_aux"), ul.Form("w_chave"), ul.Form("w_nome"), ul.Form("w_descricao"), _  
-                 w_file, ul.Files("w_caminho").Size, ul.Files("w_caminho").ContentType  
-          Else
-             DML_PutSolicArquivo O, _  
-                 w_cliente, ul.Form("w_chave"), ul.Form("w_chave_aux"), ul.Form("w_nome"), ul.Form("w_descricao"), _  
-                 w_file, ul.Files("w_caminho").Size, ul.Files("w_caminho").ContentType  
+          ' Se já há um nome para o arquivo, mantém  
+          w_file = nvl(ul.Form("w_atual"),ul.GetUniqueName())  
+          ul.Files("w_caminho").SaveAs(conFilePhysical & w_cliente & "\" & w_file)  
+       Else  
+          w_file = ""  
+       End If  
+    
+       ' Se for exclusão e houver um arquivo físico, deve remover o arquivo do disco.  
+       If O = "E" and ul.Form("w_atual") > "" Then  
+          ul.FileDelete(conFilePhysical & w_cliente & "\" & ul.Form("w_atual"))  
+       End If  
+       If O = "A" Then
+          DML_PutSolicArquivo O, _  
+              w_cliente, ul.Form("w_chave_aux"), ul.Form("w_chave"), ul.Form("w_nome"), ul.Form("w_descricao"), _  
+              w_file, ul.Files("w_caminho").Size, ul.Files("w_caminho").ContentType  
+       Else
+          DML_PutSolicArquivo O, _  
+              w_cliente, ul.Form("w_chave"), ul.Form("w_chave_aux"), ul.Form("w_nome"), ul.Form("w_descricao"), _  
+              w_file, ul.Files("w_caminho").Size, ul.Files("w_caminho").ContentType  
+       End If
+       
+       ScriptOpen "JavaScript"
+       ' Recupera a sigla do serviço pai, para fazer a chamada ao menu 
+       DB_GetLinkData RS, Session("p_cliente"), SG 
+       ShowHTML "  location.href='" & replace(RS("link"),w_dir,"") & "&O=L&w_chave=" & ul.Form("w_chave") & "&P1=" & P1 & "&P2=" & P2 & "&P3=" & P3 & "&P4=" & P4 & "&TP=" & TP & "&SG=" & SG & "';" 
+       DesconectaBD
+       ScriptClose
+    Else
+       ScriptOpen "JavaScript"
+       ShowHTML "  alert('Assinatura Eletrônica inválida!');"
+       ShowHTML "  history.back(1);"
+       ScriptClose
+    End If
+  ElseIf SG = "ISPRENVIO" Then
+    ' Verifica se a Assinatura Eletrônica é válida
+    If (VerificaAssinaturaEletronica(Session("Username"),w_assinatura) and w_assinatura > "") or _
+        w_assinatura = "" Then
+
+       DB_GetSolicData_IS RS, Request("w_chave"), "ISPRGERAL"
+       If cDbl(RS("sq_siw_tramite")) <> cDbl(Request("w_tramite")) Then
+          ScriptOpen "JavaScript"
+          ShowHTML "  alert('ATENÇÃO: Outro usuário já encaminhou esta ação para outra fase de execução!');"
+          ScriptClose
+       Else
+          DML_PutProjetoEnvio Request("w_menu"), Request("w_chave"), w_usuario, Request("w_tramite"), Request("w_novo_tramite"), "N", Request("w_observacao"), Request("w_destinatario"), Request("w_despacho"), null, null, null
+          
+          ' Envia e-mail comunicando a tramitação
+          If Request("w_novo_tramite") > "" Then
+             SolicMail Request("w_chave"),2
           End If
           
-          ScriptOpen "JavaScript"
-          ' Recupera a sigla do serviço pai, para fazer a chamada ao menu 
-          DB_GetLinkData RS, Session("p_cliente"), SG 
-          ShowHTML "  location.href='" & replace(RS("link"),w_dir,"") & "&O=L&w_chave=" & ul.Form("w_chave") & "&P1=" & P1 & "&P2=" & P2 & "&P3=" & P3 & "&P4=" & P4 & "&TP=" & TP & "&SG=" & SG & "';" 
-          DesconectaBD
-          ScriptClose
-       Else
-          ScriptOpen "JavaScript"
-          ShowHTML "  alert('Assinatura Eletrônica inválida!');"
-          ShowHTML "  history.back(1);"
-          ScriptClose
-       End If
-    Case "ISPRENVIO"
-       ' Verifica se a Assinatura Eletrônica é válida
-       If (VerificaAssinaturaEletronica(Session("Username"),w_assinatura) and w_assinatura > "") or _
-          w_assinatura = "" Then
-
-          DB_GetSolicData_IS RS, Request("w_chave"), "ISPRGERAL"
-          If cDbl(RS("sq_siw_tramite")) <> cDbl(Request("w_tramite")) Then
+          If P1 = 1 Then ' Se for envio da fase de cadastramento, remonta o menu principal
+             ' Recupera os dados para montagem correta do menu
+             DB_GetMenuData RS, w_menu
              ScriptOpen "JavaScript"
-             ShowHTML "  alert('ATENÇÃO: Outro usuário já encaminhou esta ação para outra fase de execução!');"
+             ShowHTML "  parent.menu.location='../Menu.asp?par=ExibeDocs&O=L&R=" & R & "&SG=" & RS("sigla") & "&TP=" & RemoveTP(RemoveTP(TP)) & MontaFiltro("GET") & "';"
              ScriptClose
+             DesconectaBD
           Else
-             DML_PutProjetoEnvio Request("w_menu"), Request("w_chave"), w_usuario, Request("w_tramite"), Request("w_novo_tramite"), "N", Request("w_observacao"), Request("w_destinatario"), Request("w_despacho"), null, null, null
-             
-             ' Envia e-mail comunicando a tramitação
-             If Request("w_novo_tramite") > "" Then
-                SolicMail Request("w_chave"),2
-             End If
-             
-             If P1 = 1 Then ' Se for envio da fase de cadastramento, remonta o menu principal
-                ' Recupera os dados para montagem correta do menu
-                DB_GetMenuData RS, w_menu
-                ScriptOpen "JavaScript"
-                ShowHTML "  parent.menu.location='../Menu.asp?par=ExibeDocs&O=L&R=" & R & "&SG=" & RS("sigla") & "&TP=" & RemoveTP(RemoveTP(TP)) & MontaFiltro("GET") & "';"
-                ScriptClose
-                DesconectaBD
-             Else
-                ScriptOpen "JavaScript"
-                ' Volta para a listagem
-                DB_GetMenuData RS, w_menu
-                ShowHTML "  location.href='" & replace(RS("link"),w_dir,"") & "&O=L&w_chave=" & Request("w_chave") & "&P1=" & P1 & "&P2=" & P2 & "&P3=" & P3 & "&P4=" & P4 & "&TP=" & RemoveTP(TP) & "&SG=" & rs("sigla") & MontaFiltro("GET") & "';"
-                DesconectaBD
-                ScriptClose
-             End If
-          End If
-       Else
-          ScriptOpen "JavaScript"
-          ShowHTML "  alert('Assinatura Eletrônica inválida!');"
-          ShowHTML "  history.back(1);"
-          ScriptClose
-       End If
-    Case "ISPRCONC"
-       ' Verifica se a Assinatura Eletrônica é válida
-       If (VerificaAssinaturaEletronica(Session("Username"),w_assinatura) and w_assinatura > "") or _
-          w_assinatura = "" Then
-
-          DB_GetSolicData_IS RS, Request("w_chave"), "ISPRGERAL"
-          If cDbl(RS("sq_siw_tramite")) <> cDbl(Request("w_tramite")) Then
-             ScriptOpen "JavaScript"
-             ShowHTML "  alert('ATENÇÃO: Outro usuário já encaminhou esta ação para outra fase de execução!');"
-             ScriptClose
-          Else
-             DML_PutProjetoConc Request("w_menu"), Request("w_chave"), w_usuario, Request("w_tramite"), Request("w_inicio_real"), Request("w_fim_real"), Request("w_nota_conclusao"), Request("w_custo_real")
-             
-             ' Envia e-mail comunicando a conclusão
-             SolicMail Request("w_chave"),3
-             
              ScriptOpen "JavaScript"
              ' Volta para a listagem
              DB_GetMenuData RS, w_menu
-             ShowHTML "  location.href='" & replace(RS("link"),w_dir,"") & "&O=L&w_chave=" & Request("w_chave") & "&P1=" & P1 & "&P2=" & P2 & "&P3=" & P3 & "&P4=" & P4 & "&TP=" & TP & "&SG=" & rs("sigla") & MontaFiltro("GET") & "';"
+             ShowHTML "  location.href='" & replace(RS("link"),w_dir,"") & "&O=L&w_chave=" & Request("w_chave") & "&P1=" & P1 & "&P2=" & P2 & "&P3=" & P3 & "&P4=" & P4 & "&TP=" & RemoveTP(TP) & "&SG=" & rs("sigla") & MontaFiltro("GET") & "';"
              DesconectaBD
              ScriptClose
           End If
-       Else
-          ScriptOpen "JavaScript"
-          ShowHTML "  alert('Assinatura Eletrônica inválida!');"
-          ShowHTML "  history.back(1);"
-          ScriptClose
        End If
-    Case Else
+    Else
        ScriptOpen "JavaScript"
-       ShowHTML "  alert('Bloco de dados não encontrado: " & SG & "');"
+       ShowHTML "  alert('Assinatura Eletrônica inválida!');"
        ShowHTML "  history.back(1);"
        ScriptClose
-  End Select
+    End If
+  ElseIf SG = "ISPRCONC" Then
+    ' Verifica se a Assinatura Eletrônica é válida
+    If (VerificaAssinaturaEletronica(Session("Username"),w_assinatura) and w_assinatura > "") or _
+        w_assinatura = "" Then
+
+       DB_GetSolicData_IS RS, Request("w_chave"), "ISPRGERAL"
+       If cDbl(RS("sq_siw_tramite")) <> cDbl(Request("w_tramite")) Then
+          ScriptOpen "JavaScript"
+          ShowHTML "  alert('ATENÇÃO: Outro usuário já encaminhou esta ação para outra fase de execução!');"
+          ScriptClose
+       Else
+          DML_PutProjetoConc Request("w_menu"), Request("w_chave"), w_usuario, Request("w_tramite"), Request("w_inicio_real"), Request("w_fim_real"), Request("w_nota_conclusao"), Request("w_custo_real")
+          
+          ' Envia e-mail comunicando a conclusão
+          SolicMail Request("w_chave"),3
+          
+          ScriptOpen "JavaScript"
+          ' Volta para a listagem
+          DB_GetMenuData RS, w_menu
+          ShowHTML "  location.href='" & replace(RS("link"),w_dir,"") & "&O=L&w_chave=" & Request("w_chave") & "&P1=" & P1 & "&P2=" & P2 & "&P3=" & P3 & "&P4=" & P4 & "&TP=" & TP & "&SG=" & rs("sigla") & MontaFiltro("GET") & "';"
+          DesconectaBD
+          ScriptClose
+       End If
+    Else
+       ScriptOpen "JavaScript"
+       ShowHTML "  alert('Assinatura Eletrônica inválida!');"
+       ShowHTML "  history.back(1);"
+       ScriptClose
+    End If
+  Else
+    ScriptOpen "JavaScript"
+    ShowHTML "  alert('Bloco de dados não encontrado: " & SG & "');"
+    ShowHTML "  history.back(1);"
+    ScriptClose
+  End If
 
   Set FS                    = Nothing
   Set w_Mensagem            = Nothing
@@ -4572,10 +4937,11 @@ Sub Main
     Case "ANOTACAO"             Anotar
     Case "CONCLUIR"             Concluir
     Case "BUSCAPROGRAMA"        BuscaPrograma
+    Case "RECURSOPROGRAMADO"    RecursoProgramado
     Case "GRAVA"                Grava
     Case Else
        Cabecalho
-       ShowHTML "<BASE HREF=""http://" & Request.ServerVariables("server_name") & "/siw/"">"
+       ShowHTML "<BASE HREF=""" & conRootSIW & """>"
        BodyOpen "onLoad=document.focus();"
        ShowHTML "<B><FONT COLOR=""#000000"">" & w_TP & "</FONT></B>"
        ShowHTML "<HR>"

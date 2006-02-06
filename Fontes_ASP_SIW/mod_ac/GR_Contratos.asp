@@ -211,7 +211,7 @@ REM =========================================================================
 REM Pesquisa gerencial
 REM -------------------------------------------------------------------------
 Sub Gerencial
-  Dim w_chave, w_fase_cad, w_fase_exec, w_fase_conc
+  Dim w_chave, w_fase_cad, w_fase_exec, w_fase_conc, w_chave_aux
 
   If O = "L" or O = "V" or O = "W" Then
      w_filtro = ""
@@ -223,7 +223,7 @@ Sub Gerencial
         DB_GetCCData RS, p_sqcc
         w_filtro = w_filtro & "<tr valign=""top""><td align=""right""><font size=1>Classificação <td><font size=1>[<b>" & RS("nome") & "</b>]"
      End If
-     If p_chave       > ""  Then w_filtro = w_filtro & "<tr valign=""top""><td align=""right""><font size=1>Demanda nº <td><font size=1>[<b>" & p_chave & "</b>]" End If
+     If p_chave       > ""  Then w_filtro = w_filtro & "<tr valign=""top""><td align=""right""><font size=1>Contrato nº <td><font size=1>[<b>" & p_chave & "</b>]" End If
      If p_prazo       > ""  Then w_filtro = w_filtro & " <tr valign=""top""><td align=""right""><font size=1>Prazo para conclusão até<td><font size=1>[<b>" & FormatDateTime(DateAdd("d",p_prazo,Date()),1) & "</b>]" End If
      If p_solicitante > ""  Then
         DB_GetPersonData RS, w_cliente, p_solicitante, null, null
@@ -319,14 +319,6 @@ Sub Gerencial
                 p_uorg_resp, p_palavra, p_prazo, p_fase, p_sqcc, p_projeto, p_atividade, null, null
            w_TP = TP & " - Por setor responsável"
            RS1.sort = "nm_unidade_resp"
-        Case "GRDMPRIO" 
-           w_TP = TP & " - Por prioridade"
-           DB_GetSolicList RS1, P2, w_usuario, RS_Menu("sigla"), 4, _
-                p_ini_i, p_ini_f, p_fim_i, p_fim_f, p_atraso, p_solicitante, _
-                p_unidade, p_prioridade, p_ativo, p_proponente, _
-                p_chave, p_objeto, p_pais, p_regiao, p_uf, p_cidade, p_usu_resp, _
-                p_uorg_resp, p_palavra, p_prazo, p_fase, p_sqcc, p_projeto, p_atividade, null, null
-           RS1.sort = "nm_prioridade"
         Case "GRDMLOCAL" 
            w_TP = TP & " - Por UF"
            DB_GetSolicList RS1, P2, w_usuario, RS_Menu("sigla"), 4, _
@@ -335,22 +327,6 @@ Sub Gerencial
                 p_chave, p_objeto, p_pais, p_regiao, p_uf, p_cidade, p_usu_resp, _
                 p_uorg_resp, p_palavra, p_prazo, p_fase, p_sqcc, p_projeto, p_atividade, null, null
            RS1.sort = "co_uf"
-        Case "GRDMAREA" 
-           w_TP = TP & " - Por área envolvida"
-           DB_GetSolicGRA RS1, P2, w_usuario, RS_Menu("sigla"), 4, _
-                p_ini_i, p_ini_f, p_fim_i, p_fim_f, p_atraso, p_solicitante, _
-                p_unidade, p_prioridade, p_ativo, p_proponente, _
-                p_chave, p_objeto, p_pais, p_regiao, p_uf, p_cidade, p_usu_resp, _
-                p_uorg_resp, p_palavra, p_prazo, p_fase, p_sqcc, p_projeto, p_atividade
-           RS1.sort = "nm_envolv"
-        Case "GRDMINTER" 
-           w_TP = TP & " - Por interessado"
-           DB_GetSolicGRI RS1, P2, w_usuario, RS_Menu("sigla"), 4, _
-                p_ini_i, p_ini_f, p_fim_i, p_fim_f, p_atraso, p_solicitante, _
-                p_unidade, p_prioridade, p_ativo, p_proponente, _
-                p_chave, p_objeto, p_pais, p_regiao, p_uf, p_cidade, p_usu_resp, _
-                p_uorg_resp, p_palavra, p_prazo, p_fase, p_sqcc, p_projeto, p_atividade
-           RS1.sort = "nm_inter"
      End Select
   End If
   
@@ -395,7 +371,7 @@ Sub Gerencial
      Else
         ShowHTML "<TITLE>" & w_TP & "</TITLE>"
      End If
-     ShowHTML "<BASE HREF=""http://" & Request.ServerVariables("server_name") & "/siw/"">"
+     ShowHTML "<BASE HREF=""" & conRootSIW & """>"
      ShowHTML "</HEAD>"
      If w_Troca > "" Then ' Se for recarga da página
         BodyOpenClean "onLoad='document.Form." & w_Troca & ".focus();'"
@@ -434,7 +410,7 @@ Sub Gerencial
     Else
       If O = "L" Then
          ShowHTML "<SCRIPT LANGUAGE=""JAVASCRIPT"">"
-         ShowHTML "  function lista (filtro, cad, exec, conc, atraso) {"
+         ShowHTML "  function lista (chave_aux, filtro, cad, exec, conc, atraso) {"
          ShowHTML "    if (filtro != -1) {"
          Select case p_agrega
             Case "GRDMETAPA"   ShowHTML "      document.Form.p_atividade.value=filtro;"
@@ -444,10 +420,7 @@ Sub Gerencial
             Case "GRDMRESPATU" ShowHTML "      document.Form.p_usu_resp.value=filtro;"
             Case "GRDMCC"      ShowHTML "      document.Form.p_sqcc.value=filtro;"
             Case "GRDMSETOR"   ShowHTML "      document.Form.p_unidade.value=filtro;"
-            Case "GRDMPRIO"    ShowHTML "      document.Form.p_prioridade.value=filtro;"
-            Case "GRDMLOCAL"   ShowHTML "      document.Form.p_uf.value=filtro;"
-            Case "GRDMAREA"    ShowHTML "      document.Form.p_area.value=filtro;"
-            Case "GRDMINTER"   ShowHTML "      document.Form.p_inter.value=filtro;"
+            Case "GRDMLOCAL"   ShowHTML "      document.Form.p_uf.value=filtro; document.Form.p_pais.value=chave_aux;"
          End Select
          ShowHTML "    }"
          Select case p_agrega
@@ -458,10 +431,7 @@ Sub Gerencial
             Case "GRDMRESPATU" ShowHTML "    else document.Form.p_usu_resp.value='" & Request("p_usu_resp")& "';"
             Case "GRDMCC"      ShowHTML "    else document.Form.p_sqcc.value='" & Request("p_sqcc")& "';"
             Case "GRDMSETOR"   ShowHTML "    else document.Form.p_unidade.value='" & Request("p_unidade")& "';"
-            Case "GRDMPRIO"    ShowHTML "    else document.Form.p_prioridade.value='" & Request("p_prioridade")& "';"
-            Case "GRDMLOCAL"   ShowHTML "    else document.Form.p_uf.value='" & Request("p_uf")& "';"
-            Case "GRDMAREA"    ShowHTML "    else document.Form.p_area.value='" & Request("p_area")& "';"
-            Case "GRDMINTER"   ShowHTML "    else document.Form.p_inter.value='" & Request("p_inter")& "';"
+            Case "GRDMLOCAL"   ShowHTML "    else { document.Form.p_uf.value='" & Request("p_uf")& "'; document.Form.p_pais.value='" & Request("p_uf")& "'; }"
          End Select
          DB_GetTramiteList RS2, P2, null
          RS2.Sort = "ordem"
@@ -495,10 +465,7 @@ Sub Gerencial
             Case "GRDMRESPATU" If Request("p_usu_resp") = ""    Then ShowHTML "<input type=""Hidden"" name=""p_usu_resp"" value="""">"      End If
             Case "GRDMCC"      If Request("p_sqcc") = ""        Then ShowHTML "<input type=""Hidden"" name=""p_sqcc"" value="""">"          End If
             Case "GRDMSETOR"   If Request("p_unidade") = ""     Then ShowHTML "<input type=""Hidden"" name=""p_unidade"" value="""">"       End If
-            Case "GRDMPRIO"    If Request("p_prioridade") = ""  Then ShowHTML "<input type=""Hidden"" name=""p_prioridade"" value="""">"    End If
-            Case "GRDMLOCAL"   If Request("p_uf") = ""          Then ShowHTML "<input type=""Hidden"" name=""p_uf"" value="""">"            End If
-            Case "GRDMAREA"    If Request("p_area") = ""        Then ShowHTML "<input type=""Hidden"" name=""p_area"" value="""">"          End If
-            Case "GRDMINTER"   If Request("p_inter") = ""       Then ShowHTML "<input type=""Hidden"" name=""p_inter"" value="""">"         End If
+            Case "GRDMLOCAL"   If Request("p_uf") = ""          Then ShowHTML "<input type=""Hidden"" name=""p_uf"" value=""""><input type=""Hidden"" name=""p_pais"" value="""">"            End If
          End Select
       End If
   
@@ -529,7 +496,7 @@ Sub Gerencial
            Case "GRDMETAPA"
               If w_nm_quebra <> RS1("nm_etapa") Then
                  If w_qt_quebra > 0 Then
-                    ImprimeLinha t_solic, t_cad, t_tram, t_conc, t_atraso, t_aviso, t_valor, t_custo, t_acima, w_chave
+                    ImprimeLinha t_solic, t_cad, t_tram, t_conc, t_atraso, t_aviso, t_valor, t_custo, t_acima, w_chave, w_chave_aux
                     w_linha = w_linha + 2
                  End If
                  If O <> "W" or (O = "W" and w_linha <= 25) Then
@@ -538,6 +505,7 @@ Sub Gerencial
                  End If
                  w_nm_quebra       = RS1("nm_etapa")
                  w_chave           = RS1("sq_projeto_etapa")
+                 w_chave_aux       = -1
                  w_qt_quebra       = 0
                  t_solic           = 0
                  t_cad             = 0
@@ -553,7 +521,7 @@ Sub Gerencial
            Case "GRDMPROJ"
               If w_nm_quebra <> RS1("nm_projeto") Then
                  If w_qt_quebra > 0 Then
-                    ImprimeLinha t_solic, t_cad, t_tram, t_conc, t_atraso, t_aviso, t_valor, t_custo, t_acima, w_chave
+                    ImprimeLinha t_solic, t_cad, t_tram, t_conc, t_atraso, t_aviso, t_valor, t_custo, t_acima, w_chave, w_chave_aux
                     w_linha = w_linha + 2
                  End If
                  If O <> "W" or (O = "W" and w_linha <= 25) Then
@@ -562,6 +530,7 @@ Sub Gerencial
                  End If
                  w_nm_quebra       = RS1("nm_projeto")
                  w_chave           = RS1("sq_solic_pai")
+                 w_chave_aux       = -1
                  w_qt_quebra       = 0
                  t_solic           = 0
                  t_cad             = 0
@@ -577,7 +546,7 @@ Sub Gerencial
            Case "GRDMPROP"
               If w_nm_quebra <> RS1("nm_outra_parte_resumido") Then
                  If w_qt_quebra > 0 Then
-                    ImprimeLinha t_solic, t_cad, t_tram, t_conc, t_atraso, t_aviso, t_valor, t_custo, t_acima, w_chave
+                    ImprimeLinha t_solic, t_cad, t_tram, t_conc, t_atraso, t_aviso, t_valor, t_custo, t_acima, w_chave, w_chave_aux
                     w_linha = w_linha + 2
                  End If
                  If O <> "W" or (O = "W" and w_linha <= 25) Then
@@ -586,6 +555,7 @@ Sub Gerencial
                  End If
                  w_nm_quebra       = RS1("nm_outra_parte_resumido")
                  w_chave           = RS1("nm_outra_parte_resumido")
+                 w_chave_aux       = -1
                  w_qt_quebra       = 0
                  t_solic           = 0
                  t_cad             = 0
@@ -601,7 +571,7 @@ Sub Gerencial
            Case "GRDMRESP"
               If w_nm_quebra <> RS1("nm_solic") Then
                  If w_qt_quebra > 0 Then
-                    ImprimeLinha t_solic, t_cad, t_tram, t_conc, t_atraso, t_aviso, t_valor, t_custo, t_acima, w_chave
+                    ImprimeLinha t_solic, t_cad, t_tram, t_conc, t_atraso, t_aviso, t_valor, t_custo, t_acima, w_chave, w_chave_aux
                     w_linha = w_linha + 2
                  End If
                  If O <> "W" or (O = "W" and w_linha <= 25) Then
@@ -610,6 +580,7 @@ Sub Gerencial
                  End If
                  w_nm_quebra       = RS1("nm_solic")
                  w_chave           = RS1("solicitante")
+                 w_chave_aux       = -1
                  w_qt_quebra       = 0
                  t_solic           = 0
                  t_cad             = 0
@@ -625,7 +596,7 @@ Sub Gerencial
            Case "GRDMRESPATU"
               If w_nm_quebra <> RS1("nm_exec") Then
                  If w_qt_quebra > 0 Then
-                    ImprimeLinha t_solic, t_cad, t_tram, t_conc, t_atraso, t_aviso, t_valor, t_custo, t_acima, w_chave
+                    ImprimeLinha t_solic, t_cad, t_tram, t_conc, t_atraso, t_aviso, t_valor, t_custo, t_acima, w_chave, w_chave_aux
                     w_linha = w_linha + 2
                  End If
                  If O <> "W" or (O = "W" and w_linha <= 25) Then
@@ -634,6 +605,7 @@ Sub Gerencial
                  End If
                  w_nm_quebra       = RS1("nm_exec")
                  w_chave           = RS1("executor")
+                 w_chave_aux       = -1
                  w_qt_quebra       = 0
                  t_solic           = 0
                  t_cad             = 0
@@ -649,7 +621,7 @@ Sub Gerencial
            Case "GRDMCC"
               If w_nm_quebra <> RS1("sg_cc") Then
                  If w_qt_quebra > 0 Then
-                    ImprimeLinha t_solic, t_cad, t_tram, t_conc, t_atraso, t_aviso, t_valor, t_custo, t_acima, w_chave
+                    ImprimeLinha t_solic, t_cad, t_tram, t_conc, t_atraso, t_aviso, t_valor, t_custo, t_acima, w_chave, w_chave_aux
                     w_linha = w_linha + 2
                  End If
                  If O <> "W" or (O = "W" and w_linha <= 25) Then
@@ -658,6 +630,7 @@ Sub Gerencial
                  End If
                  w_nm_quebra       = RS1("sg_cc")
                  w_chave           = RS1("sq_cc")
+                 w_chave_aux       = -1
                  w_qt_quebra       = 0
                  t_solic           = 0
                  t_cad             = 0
@@ -673,7 +646,7 @@ Sub Gerencial
            Case "GRDMSETOR"
               If w_nm_quebra <> RS1("nm_unidade_resp") Then
                  If w_qt_quebra > 0 Then
-                    ImprimeLinha t_solic, t_cad, t_tram, t_conc, t_atraso, t_aviso, t_valor, t_custo, t_acima, w_chave
+                    ImprimeLinha t_solic, t_cad, t_tram, t_conc, t_atraso, t_aviso, t_valor, t_custo, t_acima, w_chave, w_chave_aux
                     w_linha = w_linha + 2
                  End If
                  If O <> "W" or (O = "W" and w_linha <= 25) Then
@@ -682,30 +655,7 @@ Sub Gerencial
                  End If
                  w_nm_quebra       = RS1("nm_unidade_resp")
                  w_chave           = RS1("sq_unidade_resp")
-                 w_qt_quebra       = 0
-                 t_solic           = 0
-                 t_cad             = 0
-                 t_tram            = 0
-                 t_conc            = 0
-                 t_atraso          = 0
-                 t_aviso           = 0
-                 t_valor           = 0
-                 t_acima           = 0
-                 t_custo           = 0
-                 w_linha           = w_linha + 1
-              End If
-           Case "GRDMPRIO"
-              If w_nm_quebra <> RS1("nm_prioridade") Then
-                 If w_qt_quebra > 0 Then 
-                    ImprimeLinha t_solic, t_cad, t_tram, t_conc, t_atraso, t_aviso, t_valor, t_custo, t_acima, w_chave
-                    w_linha = w_linha + 2
-                 End If
-                 If O <> "W" or (O = "W" and w_linha <= 25) Then
-                    ' Se for geração de MS-Word, coloca a nova quebra somente se não estourou o limite
-                    ShowHTML "      <tr bgcolor=""" & w_cor & """ valign=""top""><td><font size=1><b>" & RS1("nm_prioridade")
-                 End If
-                 w_nm_quebra       = RS1("nm_prioridade")
-                 w_chave           = RS1("prioridade")
+                 w_chave_aux       = -1
                  w_qt_quebra       = 0
                  t_solic           = 0
                  t_cad             = 0
@@ -721,7 +671,7 @@ Sub Gerencial
            Case "GRDMLOCAL"
               If w_nm_quebra <> RS1("co_uf") Then
                  If w_qt_quebra > 0 Then
-                    ImprimeLinha t_solic, t_cad, t_tram, t_conc, t_atraso, t_aviso, t_valor, t_custo, t_acima, w_chave
+                    ImprimeLinha t_solic, t_cad, t_tram, t_conc, t_atraso, t_aviso, t_valor, t_custo, t_acima, w_chave, w_chave_aux
                     w_linha = w_linha + 2
                  End If
                  If O <> "W" or (O = "W" and w_linha <= 25) Then
@@ -730,53 +680,7 @@ Sub Gerencial
                  End If
                  w_nm_quebra       = RS1("co_uf")
                  w_chave           = RS1("co_uf")
-                 w_qt_quebra       = 0
-                 t_solic           = 0
-                 t_cad             = 0
-                 t_tram            = 0
-                 t_conc            = 0
-                 t_atraso          = 0
-                 t_aviso           = 0
-                 t_valor           = 0
-                 t_acima           = 0
-                 t_custo           = 0
-                 w_linha           = w_linha + 1
-              End If
-           Case "GRDMAREA"
-              If w_nm_quebra <> RS1("nm_envolv") Then
-                 If w_qt_quebra > 0 Then
-                    ImprimeLinha t_solic, t_cad, t_tram, t_conc, t_atraso, t_aviso, t_valor, t_custo, t_acima, w_chave
-                    w_linha = w_linha + 2
-                 End If
-                 If O <> "W" or (O = "W" and w_linha <= 25) Then
-                    ShowHTML "      <tr bgcolor=""" & w_cor & """ valign=""top""><td><font size=1><b>" & RS1("nm_envolv")
-                 End If
-                 w_nm_quebra       = RS1("nm_envolv")
-                 w_chave           = RS1("sq_unidade")
-                 w_qt_quebra       = 0
-                 t_solic           = 0
-                 t_cad             = 0
-                 t_tram            = 0
-                 t_conc            = 0
-                 t_atraso          = 0
-                 t_aviso           = 0
-                 t_valor           = 0
-                 t_acima           = 0
-                 t_custo           = 0
-                 w_linha           = w_linha + 1
-              End If
-           Case "GRDMINTER"
-              If w_nm_quebra <> RS1("nm_inter") Then
-                 If w_qt_quebra > 0 Then
-                    ImprimeLinha t_solic, t_cad, t_tram, t_conc, t_atraso, t_aviso, t_valor, t_custo, t_acima, w_chave
-                    w_linha = w_linha + 2
-                 End If
-                 If O <> "W" or (O = "W" and w_linha <= 25) Then
-                    ' Se for geração de MS-Word, coloca a nova quebra somente se não estourou o limite
-                    ShowHTML "      <tr bgcolor=""" & w_cor & """ valign=""top""><td><font size=1><b>" & RS1("nm_inter")
-                 End If
-                 w_nm_quebra       = RS1("nm_inter")
-                 w_chave           = RS1("sq_unidade")
+                 w_chave_aux       = RS1("sq_pais")
                  w_qt_quebra       = 0
                  t_solic           = 0
                  t_cad             = 0
@@ -812,10 +716,7 @@ Sub Gerencial
               Case "GRDMRESPATU" ShowHTML "      <tr bgcolor=""" & w_cor & """ valign=""top""><td><font size=1><b>" & RS1("nm_exec")
               Case "GRDMCC"      ShowHTML "      <tr bgcolor=""" & w_cor & """ valign=""top""><td><font size=1><b>" & RS1("sg_cc")
               Case "GRDMSETOR"   ShowHTML "      <tr bgcolor=""" & w_cor & """ valign=""top""><td><font size=1><b>" & RS1("nm_unidade_resp")
-              Case "GRDMPRIO"    ShowHTML "      <tr bgcolor=""" & w_cor & """ valign=""top""><td><font size=1><b>" & RS1("nm_prioridade")
               Case "GRDMLOCAL"   ShowHTML "      <tr bgcolor=""" & w_cor & """ valign=""top""><td><font size=1><b>" & RS1("co_uf")
-              Case "GRDMAREA"    ShowHTML "      <tr bgcolor=""" & w_cor & """ valign=""top""><td><font size=1><b>" & RS1("nm_envolv")
-              Case "GRDMINTER"   ShowHTML "      <tr bgcolor=""" & w_cor & """ valign=""top""><td><font size=1><b>" & RS1("nm_inter")
            End Select
            w_linha = w_linha + 1
         End If
@@ -853,11 +754,11 @@ Sub Gerencial
         w_qt_quebra = w_qt_quebra + 1
         RS1.MoveNext
       wend
-      ImprimeLinha t_solic, t_cad, t_tram, t_conc, t_atraso, t_aviso, t_valor, t_custo, t_acima, w_chave
+      ImprimeLinha t_solic, t_cad, t_tram, t_conc, t_atraso, t_aviso, t_valor, t_custo, t_acima, w_chave, w_chave_aux
 
       ShowHTML "      <tr bgcolor=""#DCDCDC"" valign=""top"" align=""right"">"
       ShowHTML "          <td><font size=""1""><b>Totais</font></td>"
-      ImprimeLinha t_totsolic, t_totcad, t_tottram, t_totconc, t_totatraso, t_totaviso, t_totvalor, t_totcusto, t_totacima, -1
+      ImprimeLinha t_totsolic, t_totcad, t_tottram, t_totconc, t_totatraso, t_totaviso, t_totvalor, t_totcusto, t_totacima, -1, -1
     End If
     ShowHTML "      </FORM>"
     ShowHTML "      </center>"
@@ -867,10 +768,10 @@ Sub Gerencial
     
     If RS1.RecordCount > 0 and p_tipo = "N" Then ' Coloca o gráfico somente se o usuário desejar
        ShowHTML "<tr><td align=""center"" height=20>"
-       ShowHTML "<tr><td align=""center""><IMG SRC=""" & w_dir & "GeraGrafico.php?p_genero=M&p_objeto=" & RS_Menu("nome") & "&p_tipo="&SG&"&p_grafico=Barra&p_tot="&t_totsolic&"&p_cad="&t_totcad&"&p_tram="&t_tottram&"&p_conc="&t_totconc&"&p_atraso="&t_totatraso&"&p_aviso="&t_totaviso&"&p_acima="&t_totacima&""">"
+       ShowHTML "<tr><td align=""center""><IMG SRC=""" & conPHP4 & w_dir & "geragrafico.php?p_genero=M&p_objeto=" & RS_Menu("nome") & "&p_tipo="&SG&"&p_grafico=Barra&p_tot="&t_totsolic&"&p_cad="&t_totcad&"&p_tram="&t_tottram&"&p_conc="&t_totconc&"&p_atraso="&t_totatraso&"&p_aviso="&t_totaviso&"&p_acima="&t_totacima&""">"
        ShowHTML "<tr><td align=""center"" height=20>"
        If (t_totcad + t_tottram) > 0 Then
-          ShowHTML "<tr><td align=""center""><IMG SRC=""" & w_dir & "GeraGrafico.php?p_genero=M&p_objeto=" & RS_Menu("nome") & "&p_tipo="&SG&"&p_grafico=Pizza&p_tot="&t_totsolic&"&p_cad="&t_totcad&"&p_tram="&t_tottram&"&p_conc="&t_totconc&"&p_atraso="&t_totatraso&"&p_aviso="&t_totaviso&"&p_acima="&t_totacima&""">"
+          ShowHTML "<tr><td align=""center""><IMG SRC=""" & conPHP4 & w_dir & "geragrafico.php?p_genero=M&p_objeto=" & RS_Menu("nome") & "&p_tipo="&SG&"&p_grafico=Pizza&p_tot="&t_totsolic&"&p_cad="&t_totcad&"&p_tram="&t_tottram&"&p_conc="&t_totconc&"&p_atraso="&t_totatraso&"&p_aviso="&t_totaviso&"&p_acima="&t_totacima&""">"
        End If
     End If
     
@@ -884,12 +785,9 @@ Sub Gerencial
     ShowHTML "         <tr><td valign=""top"" colspan=""2"" align=""center"" bgcolor=""#D0D0D0"" style=""border: 2px solid rgb(0,0,0);""><font size=""1""><b>Parâmetros de Apresentação</td>"
     ShowHTML "         <tr valign=""top""><td colspan=2><table border=0 width=""100%"" cellpadding=0 cellspacing=0><tr valign=""top"">"
     ShowHTML "          <td><font size=""1""><b><U>A</U>gregar por:<br><SELECT ACCESSKEY=""O"" " & w_Disabled & " class=""STS"" name=""p_agrega"" size=""1"">"
-    If p_agrega = "GRDMAREA"    Then ShowHTML "          <option value=""GRDMAREA"" selected>Área envolvida"        Else ShowHTML "          <option value=""GRDMAREA"">Área envolvida"     End If
     If RS_menu("solicita_cc") = "S" Then
        If p_agrega = "GRDMCC"   Then ShowHTML "          <option value=""GRDMCC"" selected>Classificação"           Else ShowHTML "          <option value=""GRDMCC"">Classificação"        End If
     End If
-    If p_agrega = "GRDMINTER"   Then ShowHTML "          <option value=""GRDMINTER"" selected>Interessado"          Else ShowHTML "          <option value=""GRDMINTER"">Interessado"       End If
-    If p_agrega = "GRDMPRIO"    Then ShowHTML "          <option value=""GRDMPRIO"" selected>Prioridade"            Else ShowHTML "          <option value=""GRDMPRIO"">Prioridade"         End If
     If p_agrega = "GRDMRESPATU" Then ShowHTML "          <option value=""GRDMRESPATU"" selected>Executor"           Else ShowHTML "          <option value=""GRDMRESPATU"">Executor"        End If
     If Nvl(p_agrega,"GRDMPROP") = "GRDMPROP"    Then ShowHTML "          <option value=""GRDMPROP"" selected>Outra parte"           Else ShowHTML "          <option value=""GRDMPROP"">Outra parte"        End If
     If p_agrega = "GRDMPROJ"    Then ShowHTML "          <option value=""GRDMPROJ"" selected>Projeto"               Else ShowHTML "          <option value=""GRDMPROJ"">Projeto"            End If
@@ -928,13 +826,13 @@ Sub Gerencial
     SelecaoPessoa "Respo<u>n</u>sável:", "N", "Selecione o responsável na relação.", p_solicitante, null, "p_solicitante", "USUARIOS"
     SelecaoUnidade "<U>S</U>etor responsável:", "S", null, p_unidade, null, "p_unidade", null, null
     ShowHTML "      <tr valign=""top"">"
-    SelecaoPessoa "E<u>x</u>ecutor:", "X", "Selecione o executor da demanda na relação.", p_usu_resp, null, "p_usu_resp", "USUARIOS"
-    SelecaoUnidade "<U>S</U>etor atual:", "S", "Selecione a unidade onde a demanda se encontra na relação.", p_uorg_resp, null, "p_uorg_resp", null, null
+    SelecaoPessoa "E<u>x</u>ecutor:", "X", "Selecione o executor do contrato na relação.", p_usu_resp, null, "p_usu_resp", "USUARIOS"
+    SelecaoUnidade "<U>S</U>etor atual:", "S", "Selecione a unidade onde o contrato se encontra na relação.", p_uorg_resp, null, "p_uorg_resp", null, null
     ShowHTML "      <tr>"
-    SelecaoPais "<u>P</u>aís:", "P", null, p_pais, null, "p_pais", null, "onChange=""document.Form.action='" & w_pagina & par & "'; document.Form.O.value='" & O & "'; document.Form.target=''; document.Form.w_troca.value='p_regiao'; document.Form.submit();"""
-    SelecaoRegiao "<u>R</u>egião:", "R", null, p_regiao, p_pais, "p_regiao", null, "onChange=""document.Form.action='" & w_pagina & par & "'; document.Form.O.value='" & O & "'; document.Form.target=''; document.Form.w_troca.value='p_uf'; document.Form.submit();"""
+    SelecaoPais "<u>P</u>aís:", "P", null, p_pais, null, "p_pais", null, "onChange=""document.Form.action='" & w_dir & w_pagina & par & "'; document.Form.O.value='" & O & "'; document.Form.target=''; document.Form.w_troca.value='p_regiao'; document.Form.submit();"""
+    SelecaoRegiao "<u>R</u>egião:", "R", null, p_regiao, p_pais, "p_regiao", null, "onChange=""document.Form.action='" & w_dir & w_pagina & par & "'; document.Form.O.value='" & O & "'; document.Form.target=''; document.Form.w_troca.value='p_uf'; document.Form.submit();"""
     ShowHTML "      <tr>"
-    SelecaoEstado "E<u>s</u>tado:", "S", null, p_uf, p_pais, "N", "p_uf", null, "onChange=""document.Form.action='" & w_pagina & par & "'; document.Form.O.value='" & O & "'; document.Form.target=''; document.Form.w_troca.value='p_cidade'; document.Form.submit();"""
+    SelecaoEstado "E<u>s</u>tado:", "S", null, p_uf, p_pais, "N", "p_uf", null, "onChange=""document.Form.action='" & w_dir & w_pagina & par & "'; document.Form.O.value='" & O & "'; document.Form.target=''; document.Form.w_troca.value='p_cidade'; document.Form.submit();"""
     SelecaoCidade "<u>C</u>idade:", "C", null, p_cidade, p_pais, p_uf, "p_cidade", null, null
     ShowHTML "      <tr valign=""top"">"
     ShowHTML "          <td><font size=""1""><b>O<U>b</U>jeto:<br><INPUT ACCESSKEY=""B"" " & w_Disabled & " class=""sti"" type=""text"" name=""p_objeto"" size=""25"" maxlength=""90"" value=""" & p_objeto & """></td>"
@@ -972,6 +870,7 @@ Sub Gerencial
   Set w_fase_exec   = Nothing
   Set w_fase_conc   = Nothing
   Set w_chave       = Nothing
+  Set w_chave_aux   = Nothing
 End Sub
 REM =========================================================================
 REM Fim da rotina
@@ -992,10 +891,7 @@ Sub ImprimeCabecalho
        Case "GRDMRESPATU" ShowHTML "          <td><font size=""1""><b>Executor</font></td>"
        Case "GRDMCC"      ShowHTML "          <td><font size=""1""><b>Classificação</font></td>"
        Case "GRDMSETOR"   ShowHTML "          <td><font size=""1""><b>Setor responsável</font></td>"
-       Case "GRDMPRIO"    ShowHTML "          <td><font size=""1""><b>Prioridade</font></td>"
        Case "GRDMLOCAL"   ShowHTML "          <td><font size=""1""><b>UF</font></td>"
-       Case "GRDMAREA"    ShowHTML "          <td><font size=""1""><b>Área envolvida</font></td>"
-       Case "GRDMINTER"   ShowHTML "          <td><font size=""1""><b>Interessado</font></td>"
     End Select
     ShowHTML "          <td><font size=""1""><b>Total</font></td>"
     ShowHTML "          <td><font size=""1""><b>Cad.</font></td>"
@@ -1017,12 +913,12 @@ REM -------------------------------------------------------------------------
 REM =========================================================================
 REM Rotina de impressao da linha resumo
 REM -------------------------------------------------------------------------
-Sub ImprimeLinha (p_solic, p_cad, p_tram, p_conc, p_atraso, p_aviso, p_valor, p_custo, p_acima, p_chave)
-    If O = "L"                  Then ShowHTML "          <td align=""right""><font size=""1""><a class=""hl"" href=""javascript:lista('" & p_chave & "', -1, -1, -1, -1);"" onMouseOver=""window.status='Exibe as demandas.'; return true"" onMouseOut=""window.status=''; return true"">" & FormatNumber(p_solic,0) & "</a>&nbsp;</font></td>"                  Else ShowHTML "          <td align=""right""><font size=""1"">" & FormatNumber(p_solic,0) & "&nbsp;</font></td>" End If
-    If p_cad > 0    and O = "L" Then ShowHTML "          <td align=""right""><a class=""hl"" href=""javascript:lista('" & p_chave & "', 0, -1, -1, -1);"" onMouseOver=""window.status='Exibe as demandas.'; return true"" onMouseOut=""window.status=''; return true""><font size=""1"">" & FormatNumber(p_cad,0) & "</a>&nbsp;</font></td>"                     Else ShowHTML "          <td align=""right""><font size=""1"">" & FormatNumber(p_cad,0) & "&nbsp;</font></td>"   End If
-    If p_tram > 0   and O = "L" Then ShowHTML "          <td align=""right""><a class=""hl"" href=""javascript:lista('" & p_chave & "', -1, 0, -1, -1);"" onMouseOver=""window.status='Exibe as demandas.'; return true"" onMouseOut=""window.status=''; return true""><font size=""1"">" & FormatNumber(p_tram,0) & "</a>&nbsp;</font></td>"                    Else ShowHTML "          <td align=""right""><font size=""1"">" & FormatNumber(p_tram,0) & "&nbsp;</font></td>"  End If
-    If p_conc > 0   and O = "L" Then ShowHTML "          <td align=""right""><a class=""hl"" href=""javascript:lista('" & p_chave & "', -1, -1, 0, -1);"" onMouseOver=""window.status='Exibe as demandas.'; return true"" onMouseOut=""window.status=''; return true""><font size=""1"">" & FormatNumber(p_conc,0) & "</a>&nbsp;</font></td>"                    Else ShowHTML "          <td align=""right""><font size=""1"">" & FormatNumber(p_conc,0) & "&nbsp;</font></td>"  End If
-    'If p_atraso > 0 and O = "L" Then ShowHTML "          <td align=""right""><a class=""hl"" href=""javascript:lista('" & p_chave & "', -1, -1, -1, 0);"" onMouseOver=""window.status='Exibe as demandas.'; return true"" onMouseOut=""window.status=''; return true""><font size=""1"" color=""red""><b>" & FormatNumber(p_atraso,0) & "</a>&nbsp;</font></td>" Else ShowHTML "          <td align=""right""><font size=""1""><b>" & p_atraso & "&nbsp;</font></td>"             End If
+Sub ImprimeLinha (p_solic, p_cad, p_tram, p_conc, p_atraso, p_aviso, p_valor, p_custo, p_acima, p_chave, p_chave_aux)
+    If O = "L"                  Then ShowHTML "          <td align=""right""><font size=""1""><a class=""hl"" href=""javascript:lista(" & p_chave_aux & ", '" & p_chave & "', -1, -1, -1, -1);"" onMouseOver=""window.status='Exibe os contratos.'; return true"" onMouseOut=""window.status=''; return true"">" & FormatNumber(p_solic,0) & "</a>&nbsp;</font></td>"                  Else ShowHTML "          <td align=""right""><font size=""1"">" & FormatNumber(p_solic,0) & "&nbsp;</font></td>" End If
+    If p_cad > 0    and O = "L" Then ShowHTML "          <td align=""right""><a class=""hl"" href=""javascript:lista(" & p_chave_aux & ", '" & p_chave & "', 0, -1, -1, -1);"" onMouseOver=""window.status='Exibe os contratos.'; return true"" onMouseOut=""window.status=''; return true""><font size=""1"">" & FormatNumber(p_cad,0) & "</a>&nbsp;</font></td>"                     Else ShowHTML "          <td align=""right""><font size=""1"">" & FormatNumber(p_cad,0) & "&nbsp;</font></td>"   End If
+    If p_tram > 0   and O = "L" Then ShowHTML "          <td align=""right""><a class=""hl"" href=""javascript:lista(" & p_chave_aux & ", '" & p_chave & "', -1, 0, -1, -1);"" onMouseOver=""window.status='Exibe os contratos.'; return true"" onMouseOut=""window.status=''; return true""><font size=""1"">" & FormatNumber(p_tram,0) & "</a>&nbsp;</font></td>"                    Else ShowHTML "          <td align=""right""><font size=""1"">" & FormatNumber(p_tram,0) & "&nbsp;</font></td>"  End If
+    If p_conc > 0   and O = "L" Then ShowHTML "          <td align=""right""><a class=""hl"" href=""javascript:lista(" & p_chave_aux & ", '" & p_chave & "', -1, -1, 0, -1);"" onMouseOver=""window.status='Exibe os contratos.'; return true"" onMouseOut=""window.status=''; return true""><font size=""1"">" & FormatNumber(p_conc,0) & "</a>&nbsp;</font></td>"                    Else ShowHTML "          <td align=""right""><font size=""1"">" & FormatNumber(p_conc,0) & "&nbsp;</font></td>"  End If
+    'If p_atraso > 0 and O = "L" Then ShowHTML "          <td align=""right""><a class=""hl"" href=""javascript:lista('" & p_chave & "', -1, -1, -1, 0);"" onMouseOver=""window.status='Exibe os contratos.'; return true"" onMouseOut=""window.status=''; return true""><font size=""1"" color=""red""><b>" & FormatNumber(p_atraso,0) & "</a>&nbsp;</font></td>" Else ShowHTML "          <td align=""right""><font size=""1""><b>" & p_atraso & "&nbsp;</font></td>"             End If
     If p_aviso > 0  and O = "L" Then ShowHTML "          <td align=""right""><font size=""1"" color=""red""><b>" & FormatNumber(p_aviso,0) & "&nbsp;</font></td>"  Else ShowHTML "          <td align=""right""><font size=""1""><b>" & p_aviso & "&nbsp;</font></td>"  End If
     If Session("interno") = "S" Then
        ShowHTML "          <td align=""right""><font size=""1"">" & FormatNumber(p_valor,2) & "&nbsp;</font></td>"

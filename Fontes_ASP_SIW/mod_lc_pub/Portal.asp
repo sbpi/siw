@@ -314,7 +314,7 @@ Sub Inicial
   ValidateClose
   ScriptClose
   ShowHTML "</HEAD>"
-  ShowHTML "<BASE HREF=""http://" & Request.ServerVariables("server_name") & "/siw/"">"
+  ShowHTML "<BASE HREF=""" & conRootSIW & """>"
   If w_Troca > "" Then ' Se for recarga da página
      BodyOpen "onLoad='document.Form." & w_Troca & ".focus();'"
   ElseIf O = "I" Then
@@ -615,7 +615,7 @@ Sub Geral
   ValidateClose
   ScriptClose
   ShowHTML "</HEAD>"
-  ShowHTML "<BASE HREF=""http://" & Request.ServerVariables("server_name") & "/siw/"">"
+  ShowHTML "<BASE HREF=""" & conRootSIW & """>"
   If w_troca > "" Then
      BodyOpen "onLoad='document.Form." & w_troca & ".focus()';"
   ElseIf Instr("EV",O) > 0 Then
@@ -767,7 +767,7 @@ Sub Anexos
      ScriptClose 
   End If 
   ShowHTML "</HEAD>" 
-  ShowHTML "<BASE HREF=""http://" & Request.ServerVariables("server_name") & "/siw/"">"
+  ShowHTML "<BASE HREF=""" & conRootSIW & """>"
   If w_troca > "" Then 
      BodyOpen "onLoad='document.Form." & w_troca & ".focus()';" 
   ElseIf O = "I" Then 
@@ -950,7 +950,7 @@ Sub ItemLicitacao
      ScriptClose
   End If
   ShowHTML "</HEAD>"
-  ShowHTML "<BASE HREF=""http://" & Request.ServerVariables("server_name") & "/siw/"">"
+  ShowHTML "<BASE HREF=""" & conRootSIW & """>"
   If w_troca > "" Then
      BodyOpen "onLoad='document.Form." & w_troca & ".focus()';"
   ElseIf O = "I" Then
@@ -1210,7 +1210,7 @@ Sub Contrato
      ScriptClose
   End If
   ShowHTML "</HEAD>"
-  ShowHTML "<BASE HREF=""http://" & Request.ServerVariables("server_name") & "/siw/"">"
+  ShowHTML "<BASE HREF=""" & conRootSIW & """>"
   If w_troca > "" Then
      BodyOpen "onLoad='document.Form." & w_troca & ".focus()';"
   ElseIf O = "I" Then
@@ -1523,7 +1523,7 @@ Sub Contrato1
      ScriptClose
   End If
   ShowHTML "</HEAD>"
-  ShowHTML "<BASE HREF=""http://" & Request.ServerVariables("server_name") & "/siw/"">"
+  ShowHTML "<BASE HREF=""" & conRootSIW & """>"
   If w_troca > "" Then
      BodyOpen "onLoad='document.Form." & w_troca & ".focus()';"
   ElseIf O = "I" Then
@@ -1784,7 +1784,7 @@ Sub ItemContrato
   ValidateClose
   ScriptClose
   ShowHTML "</HEAD>"
-  ShowHTML "<BASE HREF=""http://" & Request.ServerVariables("server_name") & "/siw/"">"
+  ShowHTML "<BASE HREF=""" & conRootSIW & """>"
  
   BodyOpen "onLoad='document.Form.focus()';"
   ShowHTML "<B><FONT COLOR=""#000000"">" & w_TP & "</FONT></B>"
@@ -1927,7 +1927,7 @@ Sub VisualLic
   ShowHTML "<HEAD>"
   ShowHTML "<TITLE>" & conSgSistema & " - Visualização de Licitação</TITLE>"
   ShowHTML "</HEAD>"  
-  ShowHTML "<BASE HREF=""http://" & Request.ServerVariables("server_name") & "/siw/"">"
+  ShowHTML "<BASE HREF=""" & conRootSIW & """>"
   BodyOpenClean "onLoad='document.focus()'; "
   ShowHTML "<TABLE WIDTH=""100%"" BORDER=0><TR><TD ROWSPAN=2><IMG ALIGN=""LEFT"" SRC=""" & w_logo & """><TD ALIGN=""RIGHT""><B><FONT SIZE=4 COLOR=""#000000"">"
   ShowHTML "Visualização da Licitação"
@@ -1980,7 +1980,7 @@ Sub VisualCont
   ShowHTML "<HEAD>"
   ShowHTML "<TITLE>" & conSgSistema & " - Visualização do Contrato</TITLE>"
   ShowHTML "</HEAD>"  
-  ShowHTML "<BASE HREF=""http://" & Request.ServerVariables("server_name") & "/siw/"">"
+  ShowHTML "<BASE HREF=""" & conRootSIW & """>"
   BodyOpenClean "onLoad='document.focus()'; "
   ShowHTML "<TABLE WIDTH=""100%"" BORDER=0><TR><TD ROWSPAN=2><IMG ALIGN=""LEFT"" SRC=""" & w_logo & """><TD ALIGN=""RIGHT""><B><FONT SIZE=4 COLOR=""#000000"">"
   ShowHTML "Visualização do Contrato"
@@ -2044,7 +2044,7 @@ Sub Excluir
      ScriptClose
   End If
   ShowHTML "</HEAD>"
-  ShowHTML "<BASE HREF=""http://" & Request.ServerVariables("server_name") & "/siw/"">"
+  ShowHTML "<BASE HREF=""" & conRootSIW & """>"
   If w_troca > "" Then
      BodyOpen "onLoad='document.Form." & w_troca & ".focus()';"
   Else
@@ -2138,7 +2138,7 @@ Public Sub Grava
 
   Cabecalho
   ShowHTML "</HEAD>"
-  ShowHTML "<BASE HREF=""http://" & Request.ServerVariables("server_name") & "/siw/"">"
+  ShowHTML "<BASE HREF=""" & conRootSIW & """>"
   BodyOpen "onLoad=document.focus();"
   
   AbreSessao    
@@ -2334,7 +2334,7 @@ Sub Main
        Grava
     Case Else
        Cabecalho
-       ShowHTML "<BASE HREF=""http://" & Request.ServerVariables("server_name") & "/siw/"">"
+       ShowHTML "<BASE HREF=""" & conRootSIW & """>"
        BodyOpen "onLoad=document.focus();"
        ShowHTML "<B><FONT COLOR=""#000000"">" & w_TP & "</FONT></B>"
        ShowHTML "<HR>"

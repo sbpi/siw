@@ -3,6 +3,7 @@
 <!-- #INCLUDE VIRTUAL="/siw/Constants.inc" -->
 <!-- #INCLUDE VIRTUAL="/siw/jScript.asp" -->
 <!-- #INCLUDE VIRTUAL="/siw/Funcoes.asp" -->
+<!-- #INCLUDE VIRTUAL="/siw/DB_Geral.asp" -->
 <!-- #INCLUDE FILE="Funcoes.asp" -->
 <!-- #INCLUDE FILE="DB_Geral.asp" -->
 <!-- #INCLUDE FILE="DB_Tipo_Curso.asp" -->
@@ -193,7 +194,7 @@ Sub Inicial
   ShowHTML "}"
   ScriptClose
   ShowHTML "</HEAD>"
-  ShowHTML "<BASE HREF=""http://" & Request.ServerVariables("server_name") & "/siw/"">"
+  ShowHTML "<BASE HREF=""" & conRootSIW & """>"
   If InStr("P",O) > 0 Then
      BodyOpen "onLoad='document.Form.p_matricula.focus()';"
   Else
@@ -358,7 +359,7 @@ Sub ExibeBoletim
      ShowHTML "<HEAD>"
      ShowHTML    "<TITLE>Aluno - Boletim</TITLE>"
      ShowHTML "</HEAD>"
-     ShowHTML "<BASE HREF=""http://" & Request.ServerVariables("server_name") & "/siw/"">"
+     ShowHTML "<BASE HREF=""" & conRootSIW & """>"
      BodyOpenClean "onLoad=document.focus();"
      CabecalhoRelatorio w_cliente, "Boletim"
      ExibeParametrosRel w_cliente

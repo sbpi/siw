@@ -36,7 +36,7 @@ Function VisualAcaoGer(w_chave, P4)
      w_html = w_html & VbCrLf & "      <tr bgcolor=""#D0D0D0""><td colspan=""2""><font size=""1"">Código programa:<br><b>" & RS("cd_programa") & " </b></td>"     
      w_html = w_html & VbCrLf & "   </table>"
   End If        
-  w_html = w_html & VbCrLf & "      <tr><td valign=""top"" colspan=""2""><font size=""1"">Plano/Projeto Específico:<br><b>" & Nvl(RS("nm_pri"),"---")
+  w_html = w_html & VbCrLf & "      <tr><td valign=""top"" colspan=""2""><font size=""1"">Programa interno:<br><b>" & Nvl(RS("nm_pri"),"---")
   If Not IsNull(RS("cd_pri")) Then 
      w_html = w_html & VbCrLf & " (" & RS("cd_pri") & ")" 
   End If
@@ -54,7 +54,7 @@ Function VisualAcaoGer(w_chave, P4)
   w_html = w_html & VbCrLf & "          </table>"
   If Not IsNull(RS("resp_pri")) Then
      w_html = w_html & VbCrLf & "      <tr><td valign=""top"" colspan=""2""><table border=0 width=""100%"" cellspacing=0>"
-     w_html = w_html & VbCrLf & "        <tr><td valign=""top""><font size=""1"">Responsável plano/projeto específico:<br><b>" & RS("resp_pri") & " </b></td>"
+     w_html = w_html & VbCrLf & "        <tr><td valign=""top""><font size=""1"">Responsável programa interno:<br><b>" & RS("resp_pri") & " </b></td>"
      If Not IsNull(RS("fone_pri")) Then
         w_html = w_html & VbCrLf & "         <td><font size=""1"">Telefone:<br><b>" & RS("fone_pri") & " </b></td>"
      End If
@@ -138,7 +138,7 @@ Function VisualAcaoGer(w_chave, P4)
 
   ' Metas da ação
   ' Recupera todos os registros para a listagem     
-  DB_GetSolicMeta_IS RS1, w_chave, null, "LSTNULL"
+  DB_GetSolicMeta_IS RS1, w_chave, null, "LSTNULL", null
   RS1.Sort = "ordem"
   If Not RS1.EOF Then ' Se não foram selecionados registros, exibe mensagem
     w_html = w_html & VbCrLf & "      <tr><td colspan=""2"" align=""center"" bgcolor=""#D0D0D0"" style=""border: 2px solid rgb(0,0,0);""><font size=""1""><b>Metas físicas</td></tr>"
@@ -149,7 +149,7 @@ Function VisualAcaoGer(w_chave, P4)
         w_html = w_html & VbCrLf & "           <td rowspan=""2""><font size=""1""><b>Produto</font></td>"
         w_html = w_html & VbCrLf & "           <td rowspan=""2""><font size=""1""><b>Unidade medida</font></td>"
         w_html = w_html & VbCrLf & "           <td rowspan=""2""><font size=""1""><b>PPA</font></td>"
-        w_html = w_html & VbCrLf & "           <td rowspan=""2""><font size=""1""><b>PNS</font></td>"
+        w_html = w_html & VbCrLf & "           <td rowspan=""2""><font size=""1""><b>PNPIR</font></td>"
         w_html = w_html & VbCrLf & "           <td rowspan=""2""><font size=""1""><b>Cumulativa</font></td>"
         w_html = w_html & VbCrLf & "           <td rowspan=""1"" colspan=""3""><font size=""1""><b>Quantitativo</font></td>"
         w_html = w_html & VbCrLf & "         </tr>"
@@ -196,7 +196,7 @@ Function VisualAcaoGer(w_chave, P4)
     null, null, null, null, null, null, _
     null, null, null, null, _
     null, null, null, null, null, null, null, _
-    null, null, null, null, null, w_chave, null, null, null, null
+    null, null, null, null, null, w_chave, null, null, null, null, w_ano
   RS1.sort = "ordem, fim, prioridade"
   If Not RS1.EOF Then
      w_html = w_html & VbCrLf & "      <tr><td valign=""top"" colspan=""2"" align=""center"" bgcolor=""#D0D0D0"" style=""border: 2px solid rgb(0,0,0);""><font size=""1""><b>Tarefas</td>"

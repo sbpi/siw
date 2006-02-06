@@ -1895,7 +1895,7 @@ Sub TelaUnidade
     Else
        ShowHTML "      <tr valign=""top"">"
        ShowHTML "          <td><font size=""1"">Titular: <br><font size=1><b>" & RS("nm_titular") &"</b></td>"
-       ShowHTML "          <td><font size=""1"">Desde: <br><font size=1><b>" & RS("inicio_titular") & "</b></td>"
+       ShowHTML "          <td><font size=""1"">Desde: <br><font size=1><b>" & FormataDataEdicao(RS("inicio_titular")) & "</b></td>"
        ShowHTML "      <tr><td colspan=2><font size=""1"">Localização: <br><font size=1><b>" & RS("tit_sala") &" ( " &  RS("tit_logradouro")& " )</b><td>"
        If Nvl(RS("email_titular"),"") > "" Then
           ShowHTML "      <tr><td colspan=2><font size=""1"">e-Mail:<br><b><A class=""hl"" HREF=""mailto:" & RS("email_titular") & """>" & RS("email_titular") & "</a></b></td>"
@@ -1906,7 +1906,7 @@ Sub TelaUnidade
        If Nvl(RS("nm_substituto"),"") > "" Then
          ShowHTML "      <tr valign=""top"">"
          ShowHTML "          <td><font size=""1"">Substituto: <br><font size=1><b>" & RS("nm_substituto") &"</b></td>"
-         ShowHTML "          <td><font size=""1"">Desde: <br><font size=1><b>" & RS("inicio_substituto") & "</b></td>"
+         ShowHTML "          <td><font size=""1"">Desde: <br><font size=1><b>" & FormataDataEdicao(RS("inicio_substituto")) & "</b></td>"
          If Nvl(RS("sub_sala"),"") > "" Then
             ShowHTML "      <tr><td colspan=2><font size=""1"">Localização: <br><font size=1><b>" & RS("sub_sala") &" ( " &  RS("sub_logradouro")& " )</b><td>"
          Else

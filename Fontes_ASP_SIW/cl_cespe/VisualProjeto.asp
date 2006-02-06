@@ -93,7 +93,7 @@ Function VisualProjeto(w_chave, O, w_usuario, P1, P4)
         w_html = w_html & VbCrLf & "          <tr valign=""top"">"
         If RS("vincula_contrato") = "S" Then w_html = w_html & VbCrLf & "<td><font size=""1"">Permite a vinculação de contratos:<br><b>Sim</b>" Else w_html = w_html & VbCrLf & "<td><font size=""1"">Permite a vinculação de contratos:<br><b>Não</b>" End If
         If RS("vincula_viagem")   = "S" Then w_html = w_html & VbCrLf & "<td><font size=""1"">Permite a vinculação de viagens:<br><b>Sim</b>" Else w_html = w_html & VbCrLf & "<td><font size=""1"">Permite a vinculação de viagens:<br><b>Não</b>" End If
-        DB_GetViagemBenef RSQuery, RS("sq_siw_solicitacao"), w_cliente, null, null, null, null 
+        DB_GetViagemBenef RSQuery, RS("sq_siw_solicitacao"), w_cliente, null, null, null, null, null, null, null
         w_html = w_html & VbCrLf & "              <td><font size=""1"">Passagens(Limite/Cadastradas):<br><b>" & FormatNumber(cDbL(Nvl(RS("limite_passagem"),0)),0) & "/" & RSQuery.RecordCount & " </b></td>"
         RSQuery.Close
      End If
@@ -306,7 +306,7 @@ Function VisualProjeto(w_chave, O, w_usuario, P1, P4)
   
   ' Passagens
   If P1 = 4 Then
-     DB_GetViagemBenef RSQuery, RS("sq_siw_solicitacao"), w_cliente, null, null, null, null 
+     DB_GetViagemBenef RSQuery, RS("sq_siw_solicitacao"), w_cliente, null, null, null, null, null, null, null
      w_html = w_html & VbCrLf & "      <tr><td colspan=""3"" align=""center"" bgcolor=""#D0D0D0"" style=""border: 2px solid rgb(0,0,0);""><font size=""1""><b>Passagens</td>"
         If RSQuery.EOF Then
            w_html = w_html & VbCrLf & "      <tr><td colspan=3><font size=2><b>Nennhuma passagem foi informada"

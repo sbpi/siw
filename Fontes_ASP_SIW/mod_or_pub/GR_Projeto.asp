@@ -330,7 +330,7 @@ Sub Gerencial
      HeaderWord null
      w_pag   = 1
      w_linha = 0
-     ShowHTML "<BASE HREF=""http://" & Request.ServerVariables("server_name") & "/siw/"">"
+     ShowHTML "<BASE HREF=""" & conRootSIW & """>"
      CabecalhoWord w_cliente, w_TP, w_pag
      
      If w_filtro > "" Then ShowHTML w_filtro End If
@@ -369,7 +369,7 @@ Sub Gerencial
         ShowHTML "<TITLE>" & w_TP & "</TITLE>"
      End If
      ShowHTML "</HEAD>"
-     ShowHTML "<BASE HREF=""http://" & Request.ServerVariables("server_name") & "/siw/"">"
+     ShowHTML "<BASE HREF=""" & conRootSIW & """>"
       If w_Troca > "" Then ' Se for recarga da página
         BodyOpen "onLoad='document.Form." & w_Troca & ".focus();'"
      ElseIf InStr("P",O) > 0 Then
@@ -452,7 +452,7 @@ Sub Gerencial
          ShowHTML "    document.Form.submit();"
          ShowHTML "  }"
          ShowHTML "</SCRIPT>"
-         ShowHTML "<BASE HREF=""http://" & Request.ServerVariables("server_name") & "/siw/"">"
+         ShowHTML "<BASE HREF=""" & conRootSIW & """>"
          DB_GetMenuData RS2, P2
          AbreForm "Form", RS2("link"), "POST", "return(Validacao(this));", "Lista",3,P2,RS2("P3"),null,w_TP,RS2("sigla"), w_dir&w_pagina & par,"L"
          ShowHTML MontaFiltro("POST")
@@ -757,10 +757,10 @@ Sub Gerencial
     
     If RS1.RecordCount > 0 and p_tipo = "N" Then ' Coloca o gráfico somente se o usuário desejar
        ShowHTML "<tr><td align=""center"" height=20>"
-       ShowHTML "<tr><td align=""center""><IMG SRC=""GeraGrafico.php?p_genero=M&p_objeto=" & RS_Menu("nome") & "&p_tipo="&SG&"&p_grafico=Barra&p_tot="&t_totsolic&"&p_cad="&t_totcad&"&p_tram="&t_tottram&"&p_conc="&t_totconc&"&p_atraso="&t_totatraso&"&p_aviso="&t_totaviso&"&p_acima="&t_totacima&""">"       
+       ShowHTML "<tr><td align=""center""><IMG SRC=""" & conPHP4 & "geragrafico.php?p_genero=M&p_objeto=" & RS_Menu("nome") & "&p_tipo="&SG&"&p_grafico=Barra&p_tot="&t_totsolic&"&p_cad="&t_totcad&"&p_tram="&t_tottram&"&p_conc="&t_totconc&"&p_atraso="&t_totatraso&"&p_aviso="&t_totaviso&"&p_acima="&t_totacima&""">"       
        ShowHTML "<tr><td align=""center"" height=20>"
        If (t_totcad + t_tottram) > 0 Then
-          ShowHTML "<tr><td align=""center""><IMG SRC=""GeraGrafico.php?p_genero=M&p_objeto=" & RS_Menu("nome") & "&p_tipo="&SG&"&p_grafico=Pizza&p_tot="&t_totsolic&"&p_cad="&t_totcad&"&p_tram="&t_tottram&"&p_conc="&t_totconc&"&p_atraso="&t_totatraso&"&p_aviso="&t_totaviso&"&p_acima="&t_totacima&""">"       
+          ShowHTML "<tr><td align=""center""><IMG SRC=""" & conPHP4 & "geragrafico.php?p_genero=M&p_objeto=" & RS_Menu("nome") & "&p_tipo="&SG&"&p_grafico=Pizza&p_tot="&t_totsolic&"&p_cad="&t_totcad&"&p_tram="&t_tottram&"&p_conc="&t_totconc&"&p_atraso="&t_totatraso&"&p_aviso="&t_totaviso&"&p_acima="&t_totacima&""">"       
        End If
     End If
     

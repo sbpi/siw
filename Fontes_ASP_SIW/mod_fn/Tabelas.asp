@@ -203,7 +203,7 @@ Sub Imposto
      ScriptClose
   End If
   ShowHTML "</HEAD>"
-  ShowHTML "<BASE HREF=""http://" & Request.ServerVariables("server_name") & "/siw/"">"
+  ShowHTML "<BASE HREF=""" & conRootSIW & """>"
   If w_Troca > "" Then
      BodyOpen "onLoad=document.Form." & w_troca & ".focus();"
   ElseIf O = "I" or O = "A" Then
@@ -379,7 +379,7 @@ Sub Documento
      ScriptClose
   End If
   ShowHTML "</HEAD>"
-  ShowHTML "<BASE HREF=""http://" & Request.ServerVariables("server_name") & "/siw/"">"
+  ShowHTML "<BASE HREF=""" & conRootSIW & """>"
   If w_Troca > "" Then
      BodyOpen "onLoad=document.Form." & w_troca & ".focus();"
   ElseIf O = "I" or O = "A" Then
@@ -553,7 +553,7 @@ Sub Lancamento
      ScriptClose
   End If
   ShowHTML "</HEAD>"
-  ShowHTML "<BASE HREF=""http://" & Request.ServerVariables("server_name") & "/siw/"">"
+  ShowHTML "<BASE HREF=""" & conRootSIW & """>"
   If w_Troca > "" Then
      BodyOpen "onLoad=document.Form." & w_troca & ".focus();"
   ElseIf O = "I" or O = "A" Then
@@ -767,7 +767,7 @@ Sub Main
     Case "GRAVA"      Grava
     Case Else
        Cabecalho
-       ShowHTML "<BASE HREF=""http://" & Request.ServerVariables("server_name") & "/siw/"">"
+       ShowHTML "<BASE HREF=""" & conRootSIW & """>"
        BodyOpen "onLoad=document.focus();"
        ShowHTML "<B><FONT COLOR=""#000000"">" & w_TP & "</FONT></B>"
        ShowHTML "<HR>"

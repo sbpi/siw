@@ -81,7 +81,7 @@ REM =========================================================================
 REM Montagem do cabeçalho de documentos Word
 REM -------------------------------------------------------------------------
 Sub CabecalhoWordOR (p_titulo, p_pagina, w_logo)
-    ShowHTML "<BASE HREF=""http://" & Request.ServerVariables("server_name") & "/siw/"">"
+    ShowHTML "<BASE HREF=""" & conRootSIW & """>"
     ShowHTML "<TABLE WIDTH=""100%"" BORDER=0><TR><TD ROWSPAN=2><IMG ALIGN=""LEFT"" SRC=""" & w_logo & """><TD ALIGN=""RIGHT""><B><FONT SIZE=4 COLOR=""#000000"">"
     ShowHTML p_titulo
     ShowHTML "</FONT><TR><TD WIDTH=""50%"" ALIGN=""RIGHT""><B><font size=1 COLOR=""#000000"">" & DataHora() & "</B>"

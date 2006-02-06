@@ -58,7 +58,7 @@ Function VisualFormulario(w_chave, O, w_usuario, w_sq_pessoa, P1, P4)
   DesconectaBD
   ' Se for listagem ou envio, exibe os dados de identificação do projeto
   If O = "L" or O = "V" or O = "T" Then ' Se for listagem dos dados
-     DB_GetViagemBenef RS, w_chave, w_cliente, w_sq_pessoa, null, null, null
+     DB_GetViagemBenef RS, w_chave, w_cliente, w_sq_pessoa, null, null, null, null, null, null
      w_html = w_html & VbCrLf & "<table border=""0"" cellpadding=""0"" cellspacing=""0"" width=""100%"">"
      w_html = w_html & VbCrLf & "<tr bgcolor=""" & w_TrBgColor & """>"
 
@@ -85,7 +85,7 @@ Function VisualFormulario(w_chave, O, w_usuario, w_sq_pessoa, P1, P4)
 
      DesconectaBD
      
-     DB_GetViagemBenef RS, w_chave, w_cliente, w_sq_pessoa, null, null, null
+     DB_GetViagemBenef RS, w_chave, w_cliente, w_sq_pessoa, null, null, null, null, null, null
      w_html = w_html & VbCrLf & "      <tr><td colspan=""1"" align=""left"" style=""border: 1px solid rgb(0,111,150);""><font size=""1""><b>Carteira de identidade</b><br> "& Nvl(RS("rg_numero"),"---")&"</td>"
      w_html = w_html & VbCrLf & "          <td colspan=""1"" align=""left"" style=""border: 1px solid rgb(0,111,150);""><font size=""1""><b>Órgão expedidor</b><br> "& Nvl(RS("rg_emissor"),"---")&"</td>"
      w_html = w_html & VbCrLf & "          <td colspan=""1"" align=""left"" valign=""top"" style=""border: 1px solid rgb(0,111,150);""><font size=""1""><b>CPF <br></b>"& RS("cpf")&"</td>"
@@ -132,7 +132,7 @@ Function VisualFormulario(w_chave, O, w_usuario, w_sq_pessoa, P1, P4)
      DesconectaBD
      
      ' ROTEIRO DE VIAGEM
-     DB_GetViagemBenef RS, w_chave, w_cliente, w_sq_pessoa, null, null, null
+     DB_GetViagemBenef RS, w_chave, w_cliente, w_sq_pessoa, null, null, null, null, null, null
      w_html = w_html & VbCrLf & "      <tr><td valign=""top"" colspan=""4"" align=""left"" style=""border: 1px solid rgb(0,111,150);""><font size=""1""><b>4. ROTEIRO DE VIAGEM</td>"
      w_html = w_html & VbCrLf & "      <tr><td colspan=""2"" align=""left"" style=""border: 1px solid rgb(0,111,150);""><font size=""1""><b>Origem </b><br>"& RS("nm_cidade_origem")&"<br><br><b>Destino </b><br>"& RS("nm_cidade_destino")&"<br><br></td>"
      w_html = w_html & VbCrLf & "          <td colspan=""2"" align=""left"" style=""border: 1px solid rgb(0,111,150);""><font size=""1""><b>Data prevista de saída <br></b>"& FormataDataEdicao(RS("saida"))&"<br><br><b>Data prevista de retorno<br> </b>"& FormataDataEdicao(RS("retorno"))&"<br><br></td>"

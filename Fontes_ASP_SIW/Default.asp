@@ -103,6 +103,7 @@ Sub Valida
      Session("INTERNO")          = RS("INTERNO")
      Session("LogOn")            = "Sim"
      Session("ENDERECO")         = RS("SQ_PESSOA_ENDERECO")
+     Session("ANO")              = Year(Date())
      If par = "Log" Then
         If Request("p_cliente") = 6761 and Request("p_versao") = 2 Then
            If RS("interno") = "S" Then

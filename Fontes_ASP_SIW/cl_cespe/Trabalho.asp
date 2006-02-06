@@ -130,7 +130,7 @@ Sub Mesa
   ShowHTML "<TITLE>Ano do Brasil na França</TITLE>"
   Estrutura_CSS w_cliente
   ShowHTML "</HEAD>"
-  ShowHTML "<BASE HREF=""http://" & Request.ServerVariables("server_name") & "/siw/"">"
+  ShowHTML "<BASE HREF=""" & conRootSIW & """>"
   BodyOpen "onLoad=""document.focus();"""
   Estrutura_Topo_Limpo
   Estrutura_Menu

@@ -2,6 +2,29 @@
 Session.LCID = 1046
 
 REM =========================================================================
+REM Montagem da seleção de anos
+REM -------------------------------------------------------------------------
+Sub SelecaoAno (label, accesskey, hint, chave, chaveAux, campo, restricao, atributo)
+    Dim l_cont
+    l_cont = Year(Date())-1
+    If IsNull(hint) Then
+       ShowHTML "          <td valign=""top""><font size=""1""><b>" & Label & "</b><br><SELECT ACCESSKEY=""" & accesskey & """ class=""sts"" NAME=""" & campo & """ " & w_Disabled & " " & atributo & ">"
+    Else
+       ShowHTML "          <td valign=""top"" TITLE=""" & hint & """><font size=""1""><b>" & Label & "</b><br><SELECT ACCESSKEY=""" & accesskey & """ class=""sts"" NAME=""" & campo & """ " & w_Disabled & " " & atributo & ">"
+    End If
+    ShowHTML "          <option value="""">---"
+    While l_cont < Year(Date())+3
+       If cDbl(nvl(l_cont,0)) = cDbl(nvl(chave,0)) Then
+          ShowHTML "          <option value=""" & l_cont & """ SELECTED>" & l_cont
+       Else
+          ShowHTML "          <option value=""" & l_cont & """>" & l_cont
+       End If
+       l_cont = l_cont + 1
+    Wend
+    ShowHTML "          </select>"
+End Sub
+
+REM =========================================================================
 REM Declaração inicial para páginas OLE com Word
 REM -------------------------------------------------------------------------
 Sub headerWord (p_orientation)
@@ -54,9 +77,6 @@ Sub headerWord (p_orientation)
   BodyOpenClean "onLoad=document.focus();"
   ShowHTML "<div class=Section1> "
 End Sub
-REM =========================================================================
-REM Final da rotina
-REM -------------------------------------------------------------------------
 
 REM =========================================================================
 REM Montagem do cabeçalho de documentos Word
@@ -77,9 +97,6 @@ Sub CabecalhoWord (p_cliente, p_titulo, p_pagina)
   ShowHTML "</TABLE>"
   Set l_rs = Nothing
 End Sub
-REM =========================================================================
-REM Final da rotina
-REM -------------------------------------------------------------------------
 
 REM =========================================================================
 REM Montagem de link para ordenação, usada nos títulos de colunas
@@ -123,9 +140,6 @@ Function LinkOrdena (p_label, p_campo)
   Set l_item   = Nothing
   Set l_img    = Nothing
 End Function
-REM =========================================================================
-REM Final da função
-REM -------------------------------------------------------------------------
 
 REM =========================================================================
 REM Montagem do cabeçalho de relatórios
@@ -141,9 +155,6 @@ Sub CabecalhoRelatorio (p_cliente, p_titulo)
   ShowHTML "<HR>"
   Set l_rs = Nothing
 End Sub
-REM =========================================================================
-REM Final da rotina
-REM -------------------------------------------------------------------------
 
 REM =========================================================================
 REM Montagem da barra de navegação de recordsets
@@ -186,9 +197,6 @@ Sub MontaBarra (p_link, p_PageCount, p_AbsolutePage, p_PageSize, p_RecordCount)
   ShowHtml "</FORM>"
 
 End Sub
-REM =========================================================================
-REM Final da rotina
-REM -------------------------------------------------------------------------
 
 REM =========================================================================
 REM Retorna o nível de acesso que o usuário tem à solicitação informada
@@ -202,9 +210,6 @@ Function SolicAcesso (p_solicitacao, p_usuario)
   
   Set l_acesso = Nothing
 End Function
-REM =========================================================================
-REM Final da função
-REM -------------------------------------------------------------------------
 
 REM =========================================================================
 REM Gera um CNPJ ou um CPF para pessoas físicas ou jurídicas, que não os têm
@@ -218,9 +223,6 @@ Function GeraCpfEspecial (p_tipo)
   
   Set l_valor = Nothing
 End Function
-REM =========================================================================
-REM Final da função
-REM -------------------------------------------------------------------------
 
 REM =========================================================================
 REM Retorna uma parte qualquer de uma linha delimitada
@@ -246,9 +248,6 @@ Function Piece (p_line, p_delimiter, p_separator, p_position)
   
   Piece = l_result
 End Function
-REM =========================================================================
-REM Final da função
-REM -------------------------------------------------------------------------
 
 REM =========================================================================
 REM Montagem da URL com os parâmetros de filtragem
@@ -293,9 +292,6 @@ Function MontaFiltro (p_method)
   
   Set l_string = Nothing
 End Function
-REM =========================================================================
-REM Final da função
-REM -------------------------------------------------------------------------
 
 REM =========================================================================
 REM Exibe o conteúdo da querystring, do formulário e das variáveis de sessão
@@ -327,9 +323,6 @@ Sub ExibeVariaveis
   Set w_item = Nothing
   Response.End()
 End Sub
-REM =========================================================================
-REM Final da rotina
-REM -------------------------------------------------------------------------
 
 REM =========================================================================
 REM Montagem da URL com os dados de uma pessoa
@@ -345,9 +338,6 @@ Function ExibePessoa (p_dir, p_cliente, p_pessoa, p_tp, p_nome)
   
   Set l_string = Nothing
 End Function
-REM =========================================================================
-REM Final da função
-REM -------------------------------------------------------------------------
 
 REM =========================================================================
 REM Montagem da URL com os dados de uma pessoa
@@ -363,9 +353,6 @@ Function ExibeUnidade (p_dir, p_cliente, p_unidade, p_sq_unidade, p_tp)
   
   Set l_string = Nothing
 End Function
-REM =========================================================================
-REM Final da função
-REM -------------------------------------------------------------------------
 
 REM =========================================================================
 REM Montagem da URL com os dados da etapa
@@ -381,9 +368,6 @@ Function ExibeEtapa (O, p_chave, p_chave_aux, p_tipo, p_P1, p_etapa, p_tp, p_sg)
   
   Set l_string = Nothing
 End Function
-REM =========================================================================
-REM Final da função
-REM -------------------------------------------------------------------------
 
 REM =========================================================================
 REM Montagem da URL com os parâmetros de filtragem quando o for UPLOAD
@@ -401,9 +385,6 @@ Function MontaFiltroUpload (p_Form)
   
   Set l_string = Nothing
 End Function
-REM =========================================================================
-REM Final da função
-REM -------------------------------------------------------------------------
 
 REM =========================================================================
 REM Monta uma string para indicar a opção selecionada
@@ -430,9 +411,6 @@ Function OpcaoMenu(p_sq_menu)
    Set l_cont  = Nothing
    Set l_texto = Nothing
 End Function
-REM =========================================================================
-REM Final da função
-REM -------------------------------------------------------------------------
 
 REM =========================================================================
 REM Rotina que monta string da opção selecionada
@@ -454,9 +432,6 @@ Function MontaStringOpcao(p_sq_menu)
   MontaStringOpcao = Mid(w_texto,1,Len(w_texto)-4)
   Set RS1 = Nothing
 End Function
-REM =========================================================================
-REM Final da rotina 
-REM -------------------------------------------------------------------------
 
 REM =========================================================================
 REM Rotina que monta número de ordem da etapa do projeto
@@ -478,9 +453,6 @@ Function MontaOrdemEtapa(p_chave)
   MontaOrdemEtapa = Mid(w_texto,1,Len(w_texto)-1)
   Set RSQuery = Nothing
 End Function
-REM =========================================================================
-REM Final da rotina 
-REM -------------------------------------------------------------------------
 
 REM =========================================================================
 REM Converte CFLF para <BR>
@@ -492,9 +464,6 @@ Function CRLF2BR(expressao)
       CRLF2BR = Replace(expressao, VbCrLf, "<BR>")
    End If
 End Function
-REM =========================================================================
-REM Final da função
-REM -------------------------------------------------------------------------
 
 REM =========================================================================
 REM Trata valores nulos
@@ -506,9 +475,6 @@ Function Nvl(expressao,valor)
       Nvl = expressao
    End If
 End Function
-REM =========================================================================
-REM Final da função
-REM -------------------------------------------------------------------------
 
 REM =========================================================================
 REM Retorna valores nulos se chegar cadeia vazia
@@ -520,9 +486,6 @@ Function Tvl(expressao)
       Tvl = expressao
    End If
 End Function
-REM =========================================================================
-REM Final da função
-REM -------------------------------------------------------------------------.
 
 REM =========================================================================
 REM Retorna valores nulos se chegar cadeia vazia
@@ -534,9 +497,6 @@ Function Cvl(expressao)
       Cvl = expressao
    End If
 End Function
-REM =========================================================================
-REM Final da função
-REM -------------------------------------------------------------------------
 
 REM =========================================================================
 REM Retorna o caminho físico para o diretório  do cliente informado
@@ -544,9 +504,6 @@ REM -------------------------------------------------------------------------
 Function DiretorioCliente(p_Cliente)
    DiretorioCliente = Request.ServerVariables("APPL_PHYSICAL_PATH") & "files\" & p_cliente
 End Function
-REM =========================================================================
-REM Final da função
-REM -------------------------------------------------------------------------.
 
 REM =========================================================================
 REM Montagem de URL a partir da sigla da opção do menu
@@ -568,9 +525,6 @@ Function MontaURL (p_sigla)
   
   Set RS_MontaURL = Nothing
 End Function
-REM =========================================================================
-REM Final da função
-REM -------------------------------------------------------------------------
 
 REM =========================================================================
 REM Montagem de cabeçalho padrão de formulário
@@ -592,9 +546,6 @@ Sub AbreForm (p_Name,p_Action,p_Method,p_onSubmit,p_Target,p_P1,p_P2,p_P3,p_P4,p
     ShowHTML "<INPUT type=""hidden"" name=""R""  value=""" & p_R  & """>"
     ShowHTML "<INPUT type=""hidden"" name=""O""  value=""" & p_O  & """>"
 End Sub
-REM =========================================================================
-REM Final da rotina
-REM -------------------------------------------------------------------------
 
 REM =========================================================================
 REM Montagem da seleção de sexo
@@ -618,9 +569,6 @@ Sub SelecaoSexo (label, accesskey, hint, chave, chaveAux, campo, restricao, atri
     End If
     ShowHTML "          </select>"
 End Sub
-REM =========================================================================
-REM Final da rotina
-REM -------------------------------------------------------------------------
 
 REM =========================================================================
 REM Montagem da seleção de formato
@@ -644,9 +592,6 @@ Sub SelecaoFormato (label, accesskey, hint, chave, chaveAux, campo, restricao, a
     End If
     ShowHTML "          </select>"
 End Sub
-REM =========================================================================
-REM Final da rotina
-REM -------------------------------------------------------------------------
 
 REM =========================================================================
 REM Montagem de campo do tipo radio com padrão Não
@@ -662,9 +607,6 @@ Sub MontaRadioNS (Label, Chave, Campo)
        ShowHTML "              <input " & w_Disabled & " type=""radio"" name=""" & campo & """ value=""S""> Sim <input " & w_Disabled & " type=""radio"" name=""" & campo & """ value=""N"" checked> Não"
     End If
 End Sub
-REM =========================================================================
-REM Final da rotina
-REM -------------------------------------------------------------------------
 
 REM =========================================================================
 REM Montagem de campo do tipo radio com padrão Sim
@@ -680,9 +622,6 @@ Sub MontaRadioSN (Label, Chave, Campo)
        ShowHTML "              <input " & w_Disabled & " type=""radio"" name=""" & campo & """ value=""S"" checked> Sim <input " & w_Disabled & " type=""radio"" name=""" & campo & """ value=""N""> Não"
     End If
 End Sub
-REM =========================================================================
-REM Final da rotina
-REM -------------------------------------------------------------------------
 
 REM =========================================================================
 REM Montagem da seleção de pessoas
@@ -708,9 +647,6 @@ Sub SelecaoPessoa1 (label, accesskey, hint, chave, chaveAux, campo, restricao)
     ShowHTML "              <a class=""ss"" href=""#"" onClick=""document.Form." & campo & "_nm" & ".value=''; document.Form." & campo & ".value=''; return false;"" title=""Clique aqui para apagar o valor deste campo.""><img src=images/Folder/Recyfull.gif border=0 height=15 width=15></a>"
     RS.Close
 End Sub
-REM =========================================================================
-REM Final da rotina
-REM -------------------------------------------------------------------------
 
 REM =========================================================================
 REM Montagem da seleção de pessoas
@@ -740,9 +676,6 @@ Sub SelecaoPessoa (label, accesskey, hint, chave, chaveAux, campo, restricao)
     ShowHTML "              <a class=""ss"" href=""#"" onClick=""window.open('" & w_dir_volta & "Pessoa.asp?par=BuscaUsuario&TP=" & TP & "&restricao=" &restricao& "&campo=" &campo& "','Usuario','top=10,left=10,width=780,height=550,toolbar=yes,status=yes,resizable=yes,scrollbars=yes'); return false;"" title=""Clique aqui para selecionar uma pessoa.""><img src=images/Folder/Explorer.gif border=0 align=top height=15 width=15></a>"
 
 End Sub
-REM =========================================================================
-REM Final da rotina
-REM -------------------------------------------------------------------------
 
 REM =========================================================================
 REM Montagem da seleção de responsáveis por solicitações
@@ -770,9 +703,6 @@ Sub SelecaoSolicResp (label, accesskey, hint, chave, chaveAux, tramite, chaveAux
     ShowHTML "          </select>"
     RS.Close
 End Sub
-REM =========================================================================
-REM Final da rotina
-REM -------------------------------------------------------------------------
 
 REM =========================================================================
 REM Montagem da seleção do centro de custo
@@ -798,9 +728,6 @@ Sub SelecaoUsuUnid (label, accesskey, hint, chave, chaveAux, campo, restricao)
     ShowHTML "          </select>"
     RS.Close
 End Sub
-REM =========================================================================
-REM Final da rotina
-REM -------------------------------------------------------------------------
 
 REM =========================================================================
 REM Montagem da seleção dos tipos de vínculo
@@ -825,15 +752,13 @@ Sub SelecaoVinculo (label, accesskey, hint, chave, chaveAux, campo, restricao)
     ShowHTML "          </select>"
     RS.Close
 End Sub
-REM =========================================================================
-REM Final da rotina
-REM -------------------------------------------------------------------------
 
 REM =========================================================================
 REM Montagem da seleção dos tipos de postos
 REM -------------------------------------------------------------------------
 Sub SelecaoTipoPosto (label, accesskey, hint, chave, chaveAux, campo, restricao)
     DB_GetTipoPostoList RS, w_cliente, null
+    RS.Sort = "descricao"
     If Nvl(restricao,"") > "" Then RS.Filter = restricao End If
     If IsNull(hint) Then
        ShowHTML "          <td valign=""top""><font size=""1""><b>" & Label & "</b><br>"
@@ -851,9 +776,6 @@ Sub SelecaoTipoPosto (label, accesskey, hint, chave, chaveAux, campo, restricao)
     ShowHTML "          </select>"
     RS.Close
 End Sub
-REM =========================================================================
-REM Final da rotina
-REM -------------------------------------------------------------------------
 
 REM =========================================================================
 REM Montagem da seleção do grupo de deficiência
@@ -877,9 +799,6 @@ Sub SelecaoGrupoDef (label, accesskey, hint, chave, chaveAux, campo, restricao)
     ShowHTML "          </select>"
     RS.Close
 End Sub
-REM =========================================================================
-REM Final da rotina
-REM -------------------------------------------------------------------------
 
 REM =========================================================================
 REM Montagem da seleção do tipo da pessoa
@@ -906,9 +825,6 @@ Sub SelecaoTipoPessoa (label, accesskey, hint, chave, chaveAux, campo, restricao
     ShowHTML "          </select>"
     RS.Close
 End Sub
-REM =========================================================================
-REM Final da rotina
-REM -------------------------------------------------------------------------
 
 REM =========================================================================
 REM Montagem da seleção da forma de pagamento
@@ -934,9 +850,6 @@ Sub SelecaoFormaPagamento (label, accesskey, hint, chave, chave_aux, campo, rest
     ShowHTML "          </select>"
     RS.Close
 End Sub
-REM =========================================================================
-REM Final da rotina
-REM -------------------------------------------------------------------------
 
 REM =========================================================================
 REM Montagem da seleção de país
@@ -967,9 +880,6 @@ Sub SelecaoPais (label, accesskey, hint, chave, chaveAux, campo, restricao, atri
     ShowHTML "          </select>"
     RS.Close
 End Sub
-REM =========================================================================
-REM Final da rotina
-REM -------------------------------------------------------------------------
 
 REM =========================================================================
 REM Montagem da seleção da região
@@ -997,9 +907,6 @@ Sub SelecaoRegiao (label, accesskey, hint, chave, chaveAux, campo, restricao, at
     ShowHTML "          </select>"
     RS.Close
 End Sub
-REM =========================================================================
-REM Final da rotina
-REM -------------------------------------------------------------------------
 
 REM =========================================================================
 REM Montagem da seleção de estado
@@ -1030,9 +937,6 @@ Sub SelecaoEstado (label, accesskey, hint, chave, chaveAux, chaveAux2, campo, re
     ShowHTML "          </select>"
     RS.Close
 End Sub
-REM =========================================================================
-REM Final da rotina
-REM -------------------------------------------------------------------------
 
 REM =========================================================================
 REM Montagem da seleção de cidade
@@ -1060,9 +964,6 @@ Sub SelecaoCidade (label, accesskey, hint, chave, chaveAux, chaveAux2, campo, re
     ShowHTML "          </select>"
     RS.Close
 End Sub
-REM =========================================================================
-REM Final da rotina
-REM -------------------------------------------------------------------------
 
 REM =========================================================================
 REM Montagem da seleção dos endereços da organização
@@ -1086,9 +987,6 @@ Sub SelecaoEndereco (label, accesskey, hint, chave, chaveAux, campo, restricao)
     ShowHTML "          </select>"
     RS.Close
 End Sub
-REM =========================================================================
-REM Final da rotina
-REM -------------------------------------------------------------------------
 
 REM =========================================================================
 REM Montagem da seleção dos telefones de uma pessoa
@@ -1117,9 +1015,6 @@ Sub SelecaoTelefone (label, accesskey, hint, chave, chaveAux, campo, restricao)
     ShowHTML "          </select>"
     RS.Close
 End Sub
-REM =========================================================================
-REM Final da rotina
-REM -------------------------------------------------------------------------
 
 REM =========================================================================
 REM Montagem da seleção dos módulos contratados pelo cliente
@@ -1144,9 +1039,6 @@ Sub SelecaoModulo (label, accesskey, hint, chave, chaveAux, campo, restricao, at
     ShowHTML "          </select>"
     RS.Close
 End Sub
-REM =========================================================================
-REM Final da rotina
-REM -------------------------------------------------------------------------
 
 REM =========================================================================
 REM Montagem da seleção de opções do menu que são vinculadas a serviço
@@ -1171,9 +1063,6 @@ Sub SelecaoServico (label, accesskey, hint, chave, chaveAux, campo, restricao, a
     ShowHTML "          </select>"
     RS.Close
 End Sub
-REM =========================================================================
-REM Final da rotina
-REM -------------------------------------------------------------------------
 
 REM =========================================================================
 REM Montagem da seleção de opções existentes no menu
@@ -1236,9 +1125,6 @@ Sub SelecaoMenu (label, accesskey, hint, chave, chaveAux, campo, restricao, atri
     Set RST3           = Nothing
     Set RST4           = Nothing
 End Sub
-REM =========================================================================
-REM Final da rotina
-REM -------------------------------------------------------------------------
 
 REM =========================================================================
 REM Montagem da seleção da localização
@@ -1265,9 +1151,6 @@ Sub SelecaoLocalizacao (label, accesskey, hint, chave, chaveAux, campo, restrica
     ShowHTML "          </select>"
     RS.Close
 End Sub
-REM =========================================================================
-REM Final da rotina
-REM -------------------------------------------------------------------------
 
 REM =========================================================================
 REM Montagem da seleção da localização
@@ -1292,9 +1175,6 @@ Sub SelecaoSegModulo (label, accesskey, hint, chave, chaveAux, campo, restricao)
     ShowHTML "          </select>"
     RS.Close
 End Sub
-REM =========================================================================
-REM Final da rotina
-REM -------------------------------------------------------------------------
 
 REM =========================================================================
 REM Montagem da seleção de segmentos de mercado
@@ -1320,9 +1200,6 @@ Sub SelecaoSegMercado (label, accesskey, hint, chave, chaveAux, campo, restricao
     ShowHTML "          </select>"
     RS.Close
 End Sub
-REM =========================================================================
-REM Final da rotina
-REM -------------------------------------------------------------------------
 
 REM =========================================================================
 REM Montagem da seleção das unidades organizacionais
@@ -1357,9 +1234,30 @@ Sub SelecaoUnidade (label, accesskey, hint, chave, chaveAux, campo, restricao, a
     ShowHTML "              <a class=""ss"" href=""#"" onClick=""document.Form." & campo & "_nm" & ".value=''; document.Form." & campo & ".value=''; return false;"" title=""Clique aqui para apagar o valor deste campo.""><img src=images/Folder/Recyfull.gif border=0 align=top height=15 width=15></a>"
     RS.Close
 End Sub
+
 REM =========================================================================
-REM Final da rotina
+REM Rotina de selecao das unidades do modulo passagens e diárias
 REM -------------------------------------------------------------------------
+Sub SelecaoUnidade1(label, accesskey, hint, chave, chaveAux, campo, restricao, atributo, ano)
+    DB_GetUorgList RS, w_cliente, null, restricao, null, null
+    RS.Filter = "ativo='S' and ano = " & ano
+    RS.Sort = "nome"
+    If IsNull(hint) Then
+       ShowHTML "          <td valign=""top""><font size=""1""><b>" & Label & "</b><br><SELECT ACCESSKEY=""" & accesskey & """ CLASS=""STS"" NAME=""" & campo & """ " & w_Disabled & " " & atributo & ">"
+    Else
+       ShowHTML "          <td valign=""top"" title=""" & hint & """><font size=""1""><b>" & Label & "</b><br><SELECT ACCESSKEY=""" & accesskey & """ CLASS=""STS"" NAME=""" & campo & """ " & w_Disabled & " " & atributo & ">"
+    End If
+    ShowHTML "          <option value="""">---"
+    While Not RS.EOF
+       If cDbl(nvl(RS("chave"),0)) = cDbl(nvl(chave,0)) Then
+          ShowHTML "          <OPTION VALUE=""" & RS("chave") & """ SELECTED>" & RS("Nome") & " (" & RS("Sigla") & ")"
+       Else
+          ShowHTML "          <OPTION VALUE=""" & RS("chave") & """>" & RS("Nome") & " (" & RS("Sigla") & ")"
+       End If
+       RS.MoveNext
+    Wend
+    ShowHTML "          </select>"
+End Sub
 
 REM =========================================================================
 REM Montagem do link para abrir o calendário
@@ -1367,9 +1265,6 @@ REM -------------------------------------------------------------------------
 Function ExibeCalendario (form, campo)
     ExibeCalendario = "   <a class=""ss"" href=""#"" onClick=""window.open('"& w_dir_volta & "cp_calendar/ccalexa2.asp?nmForm=" & form & "&nmCampo=" & campo & "&vData='+document." & Form & "." & campo & ".value,'dp','toolbar=0,location=0,directories=0,status=0,menubar=0,scrollbars=0,resizable=0,width=250,height=250,left=500,top=200'); return false;"" title=""Visualizar calendário""><img src=images/Icone/goToTop.gif border=0 align=top height=13 width=15></a>"
 End Function
-REM =========================================================================
-REM Final da rotina
-REM -------------------------------------------------------------------------
 
 REM =========================================================================
 REM Montagem da seleção da unidade pai
@@ -1394,9 +1289,6 @@ Sub SelecaoUnidadePai (label, accesskey, hint, chave, Operacao, chaveAux, chaveA
     ShowHTML "          </select>"
     RS.Close
 End Sub
-REM =========================================================================
-REM Final da rotina
-REM -------------------------------------------------------------------------
 
 REM =========================================================================
 REM Montagem da seleção das unidades gestoras
@@ -1426,9 +1318,6 @@ Sub SelecaoUnidadeGest (label, accesskey, hint, chave, chaveAux, campo, restrica
     ShowHTML "          </select>"
     RS.Close
 End Sub
-REM =========================================================================
-REM Final da rotina
-REM -------------------------------------------------------------------------
 
 REM =========================================================================
 REM Montagem da seleção das unidades pagadoras
@@ -1458,9 +1347,6 @@ Sub SelecaoUnidadePag (label, accesskey, hint, chave, chaveAux, campo, restricao
     ShowHTML "          </select>"
     RS.Close
 End Sub
-REM =========================================================================
-REM Final da rotina
-REM -------------------------------------------------------------------------
 
 REM =========================================================================
 REM Montagem da seleção do centro de custo
@@ -1481,12 +1367,9 @@ Sub SelecaoCC (label, accesskey, hint, chave, chaveAux, campo, restricao)
        End If
        RS.MoveNext
     Wend
-    DesconectaBD
+    
     ShowHTML "          </SELECT></td>"
 End Sub
-REM =========================================================================
-REM Final da rotina
-REM -------------------------------------------------------------------------
 
 REM =========================================================================
 REM Montagem da seleção do centro de custo
@@ -1507,12 +1390,9 @@ Sub SelecaoCCSubordination (label, accesskey, hint, chave, pai, campo, restricao
        End If
        RS.MoveNext
     Wend
-    DesconectaBD
+    
     ShowHTML "          </SELECT></td>"
 End Sub
-REM =========================================================================
-REM Final da rotina
-REM -------------------------------------------------------------------------
 
 REM =========================================================================
 REM Montagem da seleção do banco
@@ -1534,12 +1414,9 @@ Sub SelecaoBanco (label, accesskey, hint, chave, chaveAux, campo, restricao, atr
       End If
       RS.MoveNext
     Wend
-    DesconectaBD
+    
     ShowHTML "          </SELECT></td>"
 End Sub
-REM =========================================================================
-REM Final da rotina
-REM -------------------------------------------------------------------------
 
 REM =========================================================================
 REM Montagem da seleção de estado
@@ -1566,9 +1443,6 @@ Sub SelecaoAgencia (label, accesskey, hint, chave, chaveAux, campo, restricao, a
     ShowHTML "          </select>"
     RS.Close
 End Sub
-REM =========================================================================
-REM Final da rotina
-REM -------------------------------------------------------------------------
 
 REM =========================================================================
 REM Montagem da seleção do tipo de unidade
@@ -1594,9 +1468,6 @@ Sub SelecaoTipoUnidade (label, accesskey, hint, chave, chaveAux, campo, restrica
     ShowHTML "          </select>"
     RS.Close
 End Sub
-REM =========================================================================
-REM Final da rotina
-REM -------------------------------------------------------------------------
 
 REM =========================================================================
 REM Montagem da seleção do tipo de endereco
@@ -1624,9 +1495,6 @@ Sub SelecaoTipoEndereco (label, accesskey, hint, chave, chaveAux, campo, restric
     ShowHTML "          </select>"
     RS.Close
 End Sub
-REM =========================================================================
-REM Final da rotina
-REM -------------------------------------------------------------------------
 
 REM =========================================================================
 REM Montagem da seleção do tipo de endereco
@@ -1654,9 +1522,6 @@ Sub SelecaoTipoFone (label, accesskey, hint, chave, chaveAux, campo, restricao, 
     ShowHTML "          </select>"
     RS.Close
 End Sub
-REM =========================================================================
-REM Final da rotina
-REM -------------------------------------------------------------------------
 
 REM =========================================================================
 REM Montagem da seleção do tipo de unidade
@@ -1682,9 +1547,6 @@ Sub SelecaoEOAreaAtuacao (label, accesskey, hint, chave, chaveAux, campo, restri
     ShowHTML "          </select>"
     RS.Close
 End Sub
-REM =========================================================================
-REM Final da rotina
-REM -------------------------------------------------------------------------
 
 REM =========================================================================
 REM Montagem da seleção da fase de uma solicitação
@@ -1712,9 +1574,6 @@ Sub SelecaoFase (label, accesskey, hint, chave, chaveAux, campo, restricao, atri
     ShowHTML "          </select>"
     RS.Close
 End Sub
-REM =========================================================================
-REM Final da rotina
-REM -------------------------------------------------------------------------
 
 REM =========================================================================
 REM Montagem da seleção da fase de uma solicitação
@@ -1761,9 +1620,6 @@ Sub SelecaoFaseCheck (label, accesskey, hint, chave, chaveAux, campo, restricao,
     Set l_marcado   = Nothing
     Set l_i         = Nothing
 End Sub
-REM =========================================================================
-REM Final da rotina
-REM -------------------------------------------------------------------------
 
 REM =========================================================================
 REM Montagem da seleção de projetos
@@ -1790,9 +1646,6 @@ Sub SelecaoProjeto (label, accesskey, hint, chave, chaveAux, chaveAux2, campo, r
     ShowHTML "          </select>"
     RS.Close
 End Sub
-REM =========================================================================
-REM Final da rotina
-REM -------------------------------------------------------------------------
 
 REM =========================================================================
 REM Montagem da seleção de tipo de recurso
@@ -1810,9 +1663,6 @@ Sub SelecaoTipoRecurso (label, accesskey, hint, chave, chaveAux, campo, restrica
     If cDbl(nvl(chave,-1)) = 3 Then ShowHTML "          <option value=""3"" SELECTED>Metodológico"  Else ShowHTML "          <option value=""3"">Metodológico"  End If
     ShowHTML "          </select>"
 End Sub
-REM =========================================================================
-REM Final da rotina
-REM -------------------------------------------------------------------------
 
 REM =========================================================================
 REM Montagem da seleção dos tipos de apoio
@@ -1835,12 +1685,9 @@ Sub SelecaoTipoApoio (label, accesskey, hint, chave, chaveAux, campo, restricao,
        End If
        RS.MoveNext
     Wend
-    DesconectaBD
+    
     ShowHTML "          </select>"
 End Sub
-REM =========================================================================
-REM Final da rotina
-REM -------------------------------------------------------------------------
 
 REM =========================================================================
 REM Retorna o tipo de recurso a partir do código
@@ -1854,9 +1701,6 @@ Function RetornaTipoRecurso (p_chave)
        Case Else RetornaTipoRecurso = "Erro"
     End Select
 End Function
-REM =========================================================================
-REM Final da função
-REM -------------------------------------------------------------------------
 
 REM =========================================================================
 REM Montagem da seleção de prioridade
@@ -1873,9 +1717,6 @@ Sub SelecaoPrioridade (label, accesskey, hint, chave, cliente, campo, restricao,
     If cDbl(nvl(chave,-1)) = 2 Then ShowHTML "          <option value=""2"" SELECTED>Normal" Else ShowHTML "          <option value=""2"">Normal" End If
     ShowHTML "          </select>"
 End Sub
-REM =========================================================================
-REM Final da rotina
-REM -------------------------------------------------------------------------
 
 REM =========================================================================
 REM Montagem da seleção de prioridade
@@ -1892,9 +1733,6 @@ Sub SelecaoTipoVisao (label, accesskey, hint, chave, chaveAux, campo, restricao,
     If cDbl(nvl(chave,-1)) = 2 Then ShowHTML "          <option value=""2"" SELECTED>Resumida"  Else ShowHTML "          <option value=""2"">Resumida" End If
     ShowHTML "          </select>"
 End Sub
-REM =========================================================================
-REM Final da rotina
-REM -------------------------------------------------------------------------
 
 REM =========================================================================
 REM Montagem da seleção de etapas do projeto
@@ -1976,9 +1814,6 @@ Sub SelecaoEtapa (label, accesskey, hint, chave, chaveAux, chaveAux2, campo, res
     Set RST4           = Nothing
 
 End Sub
-REM =========================================================================
-REM Final da rotina
-REM -------------------------------------------------------------------------
 
 REM =========================================================================
 REM Retorna a prioridade a partir do código
@@ -1991,9 +1826,6 @@ Function RetornaPrioridade (p_chave)
        Case Else RetornaPrioridade = "---"
     End Select
 End Function
-REM =========================================================================
-REM Final da função
-REM -------------------------------------------------------------------------
 
 REM =========================================================================
 REM Retorna o tipo de visao a partir do código
@@ -2006,9 +1838,47 @@ Function RetornaTipoVisao (p_chave)
        Case Else RetornaTipoVisao = "Erro"
     End Select
 End Function
+
 REM =========================================================================
-REM Final da função
+REM Funçao para retornar sim ou nao
 REM -------------------------------------------------------------------------
+Function RetornaSimNao (p_chave)
+    Select Case p_Chave
+       Case "S" RetornaSimNao = "Sim"
+       Case "N" RetornaSimNao = "Não"
+       Case Else RetornaSimNao = "Não"
+    End Select
+End Function
+
+REM =========================================================================
+REM Funçao para retornar o tipo da data
+REM -------------------------------------------------------------------------
+Function RetornaTipoData (p_chave)
+    Select Case p_Chave
+       Case "I" RetornaTipoData = "Invariável"
+       Case "E" RetornaTipoData = "Específica"
+       Case "S" RetornaTipoData = "Segunda Carnaval"
+       Case "C" RetornaTipoData = "Terça Carnaval"
+       Case "Q" RetornaTipoData = "Quarta Cinzas"
+       Case "P" RetornaTipoData = "Sexta Santa"
+       Case "D" RetornaTipoData = "Domingo Páscoa"
+       Case "H" RetornaTipoData = "Corpus Christi"
+       Case Else RetornaTipoData = "Erro"
+    End Select
+End Function
+
+REM =========================================================================
+REM Funçao para retornar o expediente da data
+REM -------------------------------------------------------------------------
+Function RetornaExpedienteData (p_chave)
+    Select Case p_Chave
+       Case "S" RetornaExpedienteData = "Sim"
+       Case "N" RetornaExpedienteData = "Não"
+       Case "M" RetornaExpedienteData = "Somente manhã"
+       Case "T" RetornaExpedienteData = "Somente tarde"
+       Case Else RetornaExpedienteData = "Sim"
+    End Select
+End Function
 
 REM =========================================================================
 REM Função que formata dias, horas, minutos e segundos a partir dos segundos
@@ -2027,9 +1897,6 @@ Function FormataTempo(p_segundos)
   Set l_minutos     = Nothing
   Set l_segundos    = Nothing
 End Function
-REM =========================================================================
-REM Final da função
-REM -------------------------------------------------------------------------
 
 REM =========================================================================
 REM Função que retorna o código de tarifação telefônica do usuário logado
@@ -2046,13 +1913,10 @@ Function RetornaUsuarioCentral()
      DB_GetPersonData l_RS, w_cliente, w_usuario, null, null
      
      RetornaUsuarioCentral = l_RS("sq_usuario_central")
-     DesconectaBD
+     
   End If
   Set l_RS = Nothing
 End Function
-REM =========================================================================
-REM Final da função
-REM -------------------------------------------------------------------------
 
 REM =========================================================================
 REM Função que retorna o código do usuário logado
@@ -2066,9 +1930,6 @@ Function RetornaUsuario()
      RetornaUsuario = Session("sq_pessoa")
   End If
 End Function
-REM =========================================================================
-REM Final da função
-REM -------------------------------------------------------------------------
 
 REM =========================================================================
 REM Função que retorna o código do menu
@@ -2083,9 +1944,6 @@ Function RetornaMenu(p_cliente, p_sigla)
      RetornaMenu = RS("sq_menu")
   End If
 End Function
-REM =========================================================================
-REM Final da função
-REM -------------------------------------------------------------------------
 
 REM =========================================================================
 REM Função que retorna o código do cliente
@@ -2100,16 +1958,13 @@ Function RetornaCliente()
      Else
         RetornaCliente = Session("p_cliente")
      End If
-     DesconectaBD
+     
   ElseIf Request("w_cliente") > "" Then
      RetornaCliente = Request("w_cliente")
   Else
      RetornaCliente = Session("p_cliente")
   End If
 End Function
-REM =========================================================================
-REM Final da função
-REM -------------------------------------------------------------------------
 
 REM =========================================================================
 REM Função que retorna S/N indicando se o usuário informado é gestor do sistema
@@ -2125,9 +1980,20 @@ Function RetornaGestor(p_solicitacao, p_usuario)
   
   Set l_acesso = Nothing
 End Function
+
 REM =========================================================================
-REM Final da função
+REM Função que retorna S/N indicando se há expediente na data informada
 REM -------------------------------------------------------------------------
+Function RetornaExpediente(p_data, p_cliente, p_pais, p_uf, p_cidade)
+  Dim l_expediente
+
+  l_expediente = ""
+  
+  DB_GetDataEspecial p_data, p_cliente, p_pais, p_uf, p_cidade, l_expediente
+  RetornaExpediente = l_expediente
+  
+  Set l_expediente = Nothing
+End Function
 
 REM =========================================================================
 REM Rotina que encerra a sessão e fecha a janela do SIW
@@ -2139,9 +2005,6 @@ Sub EncerraSessao
   ScriptClose
   Response.End()
 End Sub
-REM =========================================================================
-REM Final da rotina
-REM -------------------------------------------------------------------------
 
 REM =========================================================================
 REM Função que formata um texto para exibição em HTML
@@ -2149,9 +2012,6 @@ REM -------------------------------------------------------------------------
 Function ExibeTexto(p_texto)
     ExibeTexto = Replace(Replace(p_texto,VbCrLf, "<br>"),"  ","&nbsp;&nbsp;")
 End Function
-REM =========================================================================
-REM Final da função
-REM -------------------------------------------------------------------------
 
 REM =========================================================================
 REM Função que retorna a data/hora do banco
@@ -2159,9 +2019,6 @@ REM -------------------------------------------------------------------------
 Function DataHora()
     DataHora = FormatDateTime(Date(),1) & ", " & FormatDateTime(Time(),3)
 End Function
-REM =========================================================================
-REM Final da função
-REM -------------------------------------------------------------------------
 
 REM =========================================================================
 REM Rotina que monta a máscara do beneficiário
@@ -2177,9 +2034,6 @@ Function MascaraBeneficiario(cgccpf)
      MascaraBeneficiario = Mid(cgccpf,1,2) & "." & Mid(cgccpf,3,3) & "." & Mid(cgccpf,6,3) & "/" & Mid(cgccpf,9,4) & "-" & Mid(cgccpf,13,2)
   End If
 End Function
-REM =========================================================================
-REM Final da rotina 
-REM -------------------------------------------------------------------------
 
 REM =========================================================================
 REM Rotina de envio de e-mail
@@ -2220,8 +2074,6 @@ Function EnviaMail(w_subject, w_mensagem, w_recipients)
         JMail.AddRecipientCC Recipients(j)
      End If
   Next
-
-  On Error Resume Next
 
   JMail.Send Session("smtp_server")
 
@@ -2277,8 +2129,6 @@ Function EnviaMailSender(w_subject, w_mensagem, w_recipients, w_from, w_from_nam
      End If
   Next
 
-  On Error Resume Next
-
   JMail.Send Session("smtp_server")
 
   If JMail.ErrorCode > 0 Then
@@ -2303,9 +2153,6 @@ Function RemoveTP(TP)
   Wend
   RemoveTP = replace(TP," -"&w_TP,"")
 End Function
-REM =========================================================================
-REM Final da rotina 
-REM -------------------------------------------------------------------------
 
 REM =========================================================================
 REM Rotina que extrai o nome de um arquivo, removendo o caminho
@@ -2318,9 +2165,6 @@ Function ExtractFileName(arquivo)
   Wend
   ExtractFileName = fsa
 End Function
-REM =========================================================================
-REM Final da rotina 
-REM -------------------------------------------------------------------------
 
 REM =========================================================================
 REM Rotina de deleção de arquivos em disco
@@ -2330,9 +2174,6 @@ Sub DeleteAFile(filespec)
   Set fso = CreateObject("Scripting.FileSystemObject")
   fso.DeleteFile(filespec)
 End Sub
-REM =========================================================================
-REM Final da rotina de deleção de arquivos em disco
-REM -------------------------------------------------------------------------
 
 REM =========================================================================
 REM Rotina de tratamento de erros
@@ -2366,7 +2207,7 @@ Sub TrataErro
       or instr(Err.description,"ORA-12545") > 0 _
     Then
     ScriptOpen "JavaScript"
-    ShowHTML " alert('Banco de dados fora do ar. Aguarde alguns instantes e tente novamente!');"'\n\n" & Mid(Err.Description,1,Instr(Err.Description,Chr(10))-1) & "');"
+    ShowHTML " alert('Banco de dados fora do ar. Aguarde alguns instantes e tente novamente!\nCódigo: " & Err.Number & "');"
     Err.clear
     ShowHTML " history.back(1);"
     ScriptClose
@@ -2455,9 +2296,6 @@ Sub Cabecalho
       ShowHTML "<HTML>"
    End If
 end sub
-REM -------------------------------------------------------------------------
-REM Final da rotina de cabeçalho
-REM =========================================================================
 
 REM =========================================================================
 REM Rotina de rodapé
@@ -2478,9 +2316,6 @@ Sub Rodape
    ShowHTML "</BODY>"
    ShowHTML "</HTML>"
 end sub
-REM -------------------------------------------------------------------------
-REM Final da rotina de rodapé
-REM =========================================================================
 
 REM =========================================================================
 REM Montagem da estrutura do documento
@@ -2491,9 +2326,6 @@ Sub Estrutura_Topo
       ShowHTML "  <DIV id=cab>"
    End If
 end sub
-REM -------------------------------------------------------------------------
-REM Final da rotina
-REM =========================================================================
 
 REM =========================================================================
 REM Definição dos arquivos de CSS
@@ -2506,9 +2338,6 @@ Sub Estrutura_CSS (l_cliente)
       ShowHTML "</SCRIPT>"
    End If
 end sub
-REM -------------------------------------------------------------------------
-REM Final da rotina
-REM =========================================================================
 
 REM =========================================================================
 REM Montagem da estrutura do documento
@@ -2520,9 +2349,6 @@ Sub Estrutura_Topo_Limpo
       ShowHTML "  <DIV id=cab>"
    End If
 end sub
-REM -------------------------------------------------------------------------
-REM Final da rotina
-REM =========================================================================
 
 REM =========================================================================
 REM Montagem do corpo do documento
@@ -2532,9 +2358,6 @@ Sub Estrutura_Fecha
       ShowHTML "  </DIV>"
    End If
 end sub
-REM -------------------------------------------------------------------------
-REM Final da rotina
-REM =========================================================================
 
 REM =========================================================================
 REM Montagem do corpo do documento
@@ -2544,9 +2367,6 @@ Sub Estrutura_Corpo_Abre
       ShowHTML "  <DIV id=corpo>"
    End IF
 end sub
-REM -------------------------------------------------------------------------
-REM Final da rotina
-REM =========================================================================
 
 REM =========================================================================
 REM Montagem do texto do corpo
@@ -2608,9 +2428,6 @@ Sub Estrutura_Texto_Abre
      ShowHTML "<HR>"
    End If
 end sub
-REM -------------------------------------------------------------------------
-REM Final da rotina
-REM =========================================================================
 
 REM =========================================================================
 REM Encerramento do texto do corpo
@@ -2621,9 +2438,6 @@ Sub Estrutura_Texto_Fecha
       ShowHTML "    </DIV>"
    End IF
 end sub
-REM -------------------------------------------------------------------------
-REM Final da rotina
-REM =========================================================================
 
 REM =========================================================================
 REM Montagem da estrutura do menu à esquerda
@@ -2633,9 +2447,6 @@ Sub Estrutura_Menu_Esquerda
       ShowHTML "    <DIV id=menuesq>"
    End IF
 end sub
-REM -------------------------------------------------------------------------
-REM Final da rotina
-REM =========================================================================
 
 REM =========================================================================
 REM Montagem da estrutura do menu à esquerda
@@ -2645,9 +2456,6 @@ Sub Estrutura_Menu_Direita
       ShowHTML "    <DIV id=menudir>"
    End IF
 end sub
-REM -------------------------------------------------------------------------
-REM Final da rotina
-REM =========================================================================
 
 REM =========================================================================
 REM Montagem do menu à esquerda
@@ -2657,9 +2465,6 @@ Sub Estrutura_Menu_Separador
       ShowHTML "      <DIV id=menusep><HR></DIV>"
    End IF
 end sub
-REM -------------------------------------------------------------------------
-REM Final da rotina
-REM =========================================================================
 
 REM =========================================================================
 REM Montagem do menu à esquerda
@@ -2670,9 +2475,6 @@ Sub Estrutura_Menu_Gov_Abre
       ShowHTML "      <UL id=menugov>"
    End IF
 end sub
-REM -------------------------------------------------------------------------
-REM Final da rotina
-REM =========================================================================
 
 REM =========================================================================
 REM Montagem do menu à esquerda
@@ -2684,9 +2486,6 @@ Sub Estrutura_Menu_Nav_Abre
       ShowHTML "        <UL>"
    End IF
 end sub
-REM -------------------------------------------------------------------------
-REM Final da rotina
-REM =========================================================================
 
 REM =========================================================================
 REM Montagem do menu à esquerda
@@ -2696,9 +2495,6 @@ Sub Estrutura_Menu_Fecha
       ShowHTML "      </UL>"
    End IF
 end sub
-REM -------------------------------------------------------------------------
-REM Final da rotina
-REM =========================================================================
 
 REM =========================================================================
 REM Montagem do sub-menu à esquerda alternativo
@@ -2709,9 +2505,6 @@ Sub Estrutura_Corpo_Menu_Esquerda
       ShowHTML "      <DIV id=logomenuesq><H3>BresilBresils</H3></DIV>"
    End IF
 end sub
-REM -------------------------------------------------------------------------
-REM Final da rotina
-REM =========================================================================
 
 REM =========================================================================
 REM Montagem da estrutura do documento
@@ -2845,9 +2638,6 @@ Sub Estrutura_Menu
       Set l_RS3    = Nothing
    End IF
 end sub
-REM -------------------------------------------------------------------------
-REM Final da rotina
-REM =========================================================================
 
 REM =========================================================================
 REM Abre conexão com o banco de dados
@@ -2874,7 +2664,11 @@ Sub AbreSessao
             sp.CommandType    = adCmdStoredProc
             Session("schema")    = strschema
       End Select
+      On Error Resume Next
       .open
+      If Err.number <> 0 Then 
+         TrataErro 
+      End If
       .CursorLocation = adUseClient
    end with
    sp.ActiveConnection  = dbms
@@ -2900,9 +2694,6 @@ REM -------------------------------------------------------------------------
 Sub CriaGrafico
    Set graph = Server.CreateObject("GraphLib.Graph")
 end sub
-REM -------------------------------------------------------------------------
-REM Final da rotina
-REM =========================================================================
 
 REM =========================================================================
 REM Cria parâmetro apenas para OLE/DB da Oracle
@@ -2924,9 +2715,6 @@ Sub ExecutaSQL(p_SQL)
       TrataErro 
    End If
 end sub
-REM -------------------------------------------------------------------------
-REM Final da rotina de execução de queries 
-REM =========================================================================
 
 REM =========================================================================
 REM Rotina de execução de queries sem indicação de erro
@@ -2935,9 +2723,6 @@ Sub ExecutaSQL_Resume(p_SQL)
    On Error Resume Next
    dbms.Execute(p_sql)
 end sub
-REM -------------------------------------------------------------------------
-REM Final da rotina de execução de queries sem indicação de erro
-REM =========================================================================
 
 REM =========================================================================
 REM Rotina de Abertura do BD para execução de queries
@@ -2945,7 +2730,7 @@ REM -------------------------------------------------------------------------
 Sub ConectaBD(p_Query)
    On Error Resume Next
    Set RS = dbms.Execute(p_Query)
-   If Err.number > 0 Then
+   If Err.number <> 0 Then
       TrataErro
       Err.Clear
    End If
@@ -2958,14 +2743,14 @@ REM =========================================================================
 REM Rotina de Abertura do BD para execução de queries
 REM -------------------------------------------------------------------------
 Sub AbreRS(p_rs, p_query)
-   'On Error Resume Next
+   On Error Resume Next
    If p_rs.state <> 0 Then
       p_rs.close
    End If
    p_rs.Filter = ""
    p_rs.Sort   = ""
    p_rs.Open p_query, dbms, adOpenStatic
-   If Err.number > 0 Then
+   If Err.number <> 0 Then
       TrataErro
       Err.Clear
    End If
@@ -2977,7 +2762,7 @@ REM =========================================================================
 REM =========================================================================
 REM Rotina de Fechamento do BD
 REM -------------------------------------------------------------------------
-Sub DesConectaBD
+Sub DesconectaBD
    If rs.state <> 0 Then 
       RS.Close
    End if
@@ -3045,9 +2830,6 @@ Function FormataDataEdicao(w_dt_grade)
 
   Set l_dt_grade       = Nothing
 End Function
-REM =========================================================================
-REM Final da função
-REM -------------------------------------------------------------------------
 
 REM =========================================================================
 REM Função que retorna o último dia da data informada
@@ -3075,9 +2857,70 @@ Function Last_Day(w_valor)
   Set l_cont   = Nothing 
   Set l_result = Nothing
 End Function
+
 REM =========================================================================
-REM Final da função
+REM Função que retorna data indicando o domingo de páscoa de um ano
 REM -------------------------------------------------------------------------
+Function DomingoPascoa(p_ano)
+  Dim a, b, c, d, e, f, g, h, i, k, l, m, p, q
+  a       = Int(p_ano mod 19)
+  b       = Int(p_ano / 100)
+  c       = Int(p_ano mod 100)
+  d       = Int(b / 4)
+  e       = Int(b mod 4)
+  f       = Int((b + 8) / 25)
+  g       = Int((b - f + 1) /3)
+  h       = Int(((19*a) + b - d - g + 15) mod 30)
+  i       = Int(c / 4)
+  k       = Int(c mod 4)
+  l       = Int((32 + (2 * e) + (2 * i) - h - k) mod 7)
+  m       = Int((a + (11 * h) + (22 * l)) / 451)
+  p       = Int((h + l - (7 * m) + 114) / 31)
+  q       = Int((h + l - (7 * m) + 114) mod 31)
+  DomingoPascoa = cDate(FormataDataEdicao(q+1&"/"&p&"/"&p_ano))
+  Set a        = Nothing
+  Set b        = Nothing
+  Set c        = Nothing
+  Set d        = Nothing
+  Set e        = Nothing
+  Set f        = Nothing
+  Set g        = Nothing
+  Set h        = Nothing
+  Set i        = Nothing
+  Set k        = Nothing
+  Set l        = Nothing
+  Set m        = Nothing
+  Set p        = Nothing
+  Set q        = Nothing
+End Function
+
+REM =========================================================================
+REM Função que retorna data indicando a sexta-feira santa de um ano
+REM Sexta-feira Santa é 2 dias antes do Domingo de Páscoa
+REM -------------------------------------------------------------------------
+Function SextaSanta(p_ano) : SextaSanta = DomingoPascoa(p_ano)-2 : End Function
+
+REM =========================================================================
+REM Função que retorna data de Corpus Christi de um ano
+REM Corpus Chirsti é 60 dias depois do Domingo de Páscoa
+REM -------------------------------------------------------------------------
+Function CorpusChristi(p_ano) : CorpusChristi = DomingoPascoa(p_ano)+60 : End Function
+
+REM =========================================================================
+REM Função que retorna data indicando a terça-feira de carnaval de um ano
+REM Terça-feira de carnaval é a primeira terça-feira 42 dias antes do domingo
+REM de páscoa
+REM -------------------------------------------------------------------------
+Function TercaCarnaval(p_ano)
+  Dim l_dia
+  l_dia = DomingoPascoa(p_ano)-42
+  If WeekDay(l_dia) > 3 Then
+     TercaCarnaval = l_dia - WeekDay(l_dia) - 3
+  Else
+     TercaCarnaval = l_dia - WeekDay(l_dia) - 4
+  End If
+  Set l_dia = Nothing
+End Function
 
 REM =========================================================================
 REM Função que retorna o primeiro dia da data informada
@@ -3094,9 +2937,22 @@ Function First_Day(w_valor)
   Set l_mes    = Nothing 
   Set l_ano    = Nothing 
 End Function
+
 REM =========================================================================
-REM Final da função
+REM Função que retorna o primeiro dia da data informada
 REM -------------------------------------------------------------------------
+Function First_Day(w_valor)
+  Dim l_valor, l_mes, l_ano
+  l_valor = FormataDataEdicao(w_valor)
+  l_mes   = Mid(l_valor,4,2)
+  l_ano   = Mid(l_valor,7,4)
+  
+  First_Day = "01" & Mid(l_valor,3,1) & l_mes & Mid(l_valor,3,1) & l_ano
+
+  Set l_valor  = Nothing
+  Set l_mes    = Nothing 
+  Set l_ano    = Nothing 
+End Function
 
 'Limpa Mascara para gravar os dados no banco de dados
 Function LimpaMascara(Campo)

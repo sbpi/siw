@@ -273,7 +273,7 @@ Sub LigacaoParticular
   ValidateClose
   ScriptClose
   ShowHTML "</HEAD>"
-  ShowHTML "<BASE HREF=""http://" & Request.ServerVariables("server_name") & "/siw/"">"
+  ShowHTML "<BASE HREF=""" & conRootSIW & """>"
   If w_troca > "" Then
     BodyOpen "onLoad='document.Form." & w_troca & ".focus()';"
   ElseIf InStr("R",O) > 0 Then
@@ -426,7 +426,7 @@ Sub listaTelefonica
   ShowHTML "<HEAD>"
   ShowHTML "<TITLE>Lista Telefônica</TITLE>"
   ShowHTML "</HEAD>" 
-  ShowHTML "<BASE HREF=""http://" & Request.ServerVariables("server_name") & "/siw/"">"
+  ShowHTML "<BASE HREF=""" & conRootSIW & """>"
   If P2 = 0 Then 
     BodyOpen "onLoad='document.focus()'; "
   End If
@@ -480,7 +480,7 @@ Sub ResumoLigacaoParticular
   ShowHTML "<HEAD>"
   ShowHTML "<TITLE>Lista Telefônica</TITLE>"
   ShowHTML "</HEAD>" 
-  ShowHTML "<BASE HREF=""http://" & Request.ServerVariables("server_name") & "/siw/"">"
+  ShowHTML "<BASE HREF=""" & conRootSIW & """>"
   If P2 = 0 Then 
      BodyOpen "onLoad='document.focus()'; "
   End If
@@ -539,7 +539,7 @@ Sub Main
     Case "RESUMPART"  ResumoLigacaoParticular
     Case Else
     Cabecalho
-    ShowHTML "<BASE HREF=""http://" & Request.ServerVariables("server_name") & "/siw/"">"
+    ShowHTML "<BASE HREF=""" & conRootSIW & """>"
     BodyOpen "onLoad=document.focus();"
     ShowHTML "<B><FONT COLOR=""#000000"">" & w_TP & "</FONT></B>"
     ShowHTML "<HR>"

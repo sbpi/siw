@@ -3,6 +3,7 @@
 <!-- #INCLUDE VIRTUAL="/siw/Constants.inc" -->
 <!-- #INCLUDE VIRTUAL="/siw/jScript.asp" -->
 <!-- #INCLUDE VIRTUAL="/siw/Funcoes.asp" -->
+<!-- #INCLUDE VIRTUAL="/siw/DB_Geral.asp" -->
 <!-- #INCLUDE FILE="Funcoes.asp" -->
 <!-- #INCLUDE FILE="DB_Geral.asp" -->
 <%
@@ -195,7 +196,7 @@ Sub Inicial
   ShowHTML "  }"
   ScriptClose
   ShowHTML "</HEAD>"
-  ShowHTML "<BASE HREF=""http://" & Request.ServerVariables("server_name") & "/siw/"">"
+  ShowHTML "<BASE HREF=""" & conRootSIW & """>"
   If InStr("IAE",O) > 0 Then
      If O = "E" Then
         BodyOpen "onLoad='document.Form.w_assinatura.focus()';"
@@ -385,7 +386,7 @@ Sub ExibeResponsavel
      ShowHTML "}"
      ScriptClose
      ShowHTML "</HEAD>"
-     ShowHTML "<BASE HREF=""http://" & Request.ServerVariables("server_name") & "/siw/"">"
+     ShowHTML "<BASE HREF=""" & conRootSIW & """>"
      BodyOpen "onLoad=document.focus();"
      ShowHTML "<div align=center><center>"
      ShowHTML "<TABLE WIDTH=""100%"" bgcolor=""" & conTableBgColor & """ BORDER=""" & conTableBorder & """ CELLSPACING=""" & conTableCellSpacing & """ CELLPADDING=""" & conTableCellPadding & """ BorderColorDark=""" & conTableBorderColorDark & """ BorderColorLight=""" & conTableBorderColorLight & """>"

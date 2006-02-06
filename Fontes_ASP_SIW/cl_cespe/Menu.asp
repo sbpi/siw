@@ -119,7 +119,7 @@ Sub ExibeDocs
     Estrutura_CSS w_cliente
     ShowHTML "<META content=""MSHTML 6.00.2800.1491"" name=GENERATOR>"
     ShowHTML "</HEAD>"
-    ShowHTML "<BASE HREF=""http://" & Request.ServerVariables("server_name") & "/siw/"">"
+    ShowHTML "<BASE HREF=""" & conRootSIW & """>"
     ' Decide se montará o body do menu principal ou o body do sub-menu de uma opção a partir do valor de w_sq_pagina
     DB_GetCustomerData RS, Session("p_cliente")
     Response.Write "<BODY "
@@ -202,7 +202,7 @@ Sub ExibeDocs1
    ShowHTML "<BASEFONT FACE=""Verdana, Helvetica, Sans-Serif"" SIZE=""2"">"
    ' Decide se montará o body do menu principal ou o body do sub-menu de uma opção a partir do valor de w_sq_pagina
    DB_GetCustomerData RS, Session("p_cliente")
-   ShowHTML "<BASE HREF=""http://" & Request.ServerVariables("server_name") & "/siw/"">"
+   ShowHTML "<BASE HREF=""" & conRootSIW & """>"
    Response.Write "<BODY topmargin=0 bgcolor=""#FFFFFF"" BACKGROUND=""" & conFileVirtual & Session("p_cliente") & "/img/" & RS("fundo") & """ BGPROPERTIES=""FIXED"" text=""#000000"" link=""#000000"" vlink=""#000000"" alink=""#FF0000"" "
    If Request("SG") = "" Then
       DB_GetLinkData RS, Session("p_cliente"), "MESA"
@@ -460,7 +460,7 @@ Sub TrocaSenha
   ValidateClose
   ScriptClose
   ShowHTML "</HEAD>"
-  ShowHTML "<BASE HREF=""http://" & Request.ServerVariables("server_name") & "/siw/"">"
+  ShowHTML "<BASE HREF=""" & conRootSIW & """>"
   BodyOpen "onLoad='document.Form.w_atual.focus();'"
   ShowHTML "<B><FONT COLOR=""#000000"">" & w_TP & "</FONT></B>"
   ShowHTML "<HR>"
@@ -517,7 +517,7 @@ Public Sub Grava
 
   Cabecalho
   ShowHTML "</HEAD>"
-  ShowHTML "<BASE HREF=""http://" & Request.ServerVariables("server_name") & "/siw/"">"
+  ShowHTML "<BASE HREF=""" & conRootSIW & """>"
   BodyOpen "onLoad=document.focus();"
   
   AbreSessao
@@ -604,7 +604,7 @@ Sub Main
        Sair
     Case Else
        Cabecalho
-       ShowHTML "<BASE HREF=""http://" & Request.ServerVariables("server_name") & "/siw/"">"
+       ShowHTML "<BASE HREF=""" & conRootSIW & """>"
        BodyOpen "onLoad=document.focus();"
        ShowHTML "<B><FONT COLOR=""#000000"">" & w_TP & "</FONT></B>"
        ShowHTML "<HR>"

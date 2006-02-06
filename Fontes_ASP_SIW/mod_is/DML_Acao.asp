@@ -153,7 +153,7 @@ Sub DML_PutAcaoGeral_IS(Operacao, p_chave, p_menu, p_unidade, p_solicitante, p_p
      .parameters.Append         l_chave_nova
      If Session("dbms") = 1 or Session("dbms") = 3 Then .Properties("PLSQLRSet") = TRUE End If
      .CommandText               = Session("schema_is") & "SP_PutAcaoGeral_IS"
-     On Error Resume Next
+     'On Error Resume Next
      .Execute
      If Err.Description > "" Then 
         TrataErro
@@ -481,8 +481,8 @@ Sub DML_PutMetaMensal_IS(Operacao, p_chave, p_realizado, p_revisado, p_referenci
   with sp
      set l_Operacao             = .CreateParameter("l_operacao",            adVarchar, adParamInput,   1, Operacao)
      set l_chave                = .CreateParameter("l_chave",               adInteger, adParamInput,    , Tvl(p_chave))
-     set l_realizado            = .CreateParameter("l_realizado",           adInteger, adParamInput,    , Tvl(p_realizado))
-     set l_revisado             = .CreateParameter("l_revisado",            adInteger, adParamInput,    , Tvl(p_revisado))
+     set l_realizado            = .CreateParameter("l_realizado",           adInteger, adParamInput,    , Nvl(p_realizado,0))
+     set l_revisado             = .CreateParameter("l_revisado",            adInteger, adParamInput,    , Nvl(p_revisado,0))
      set l_referencia           = .CreateParameter("l_referencia",          adDate,    adParamInput,    , Tvl(p_referencia))
      set l_cliente              = .CreateParameter("l_cliente",             adInteger, adParamInput,    , Tvl(p_cliente))
      
@@ -667,12 +667,13 @@ REM -------------------------------------------------------------------------
 Sub DML_PutRestricao_IS (Operacao, p_restricao, p_chave, p_chave_aux, p_cd_subacao, p_sq_isprojeto, _
                              p_cd_tipo_restricao, p_cd_tipo_inclusao, p_cd_competencia, _
                              p_superacao, p_relatorio, p_tempo_habil, p_descricao, _
-                             p_providencia, p_observacao_controle, p_observacao_monitor)
+                             p_providencia, p_observacao_controle, p_observacao_monitor, p_ano, p_cliente)
 
   Dim l_Operacao, l_restricao, l_chave, l_chave_aux, l_cd_subacao, l_sq_isprojeto
   Dim l_cd_tipo_restricao, l_cd_tipo_inclusao, l_cd_competencia
   Dim l_superacao, l_relatorio, l_tempo_habil, l_descricao
   Dim l_providencia, l_observacao_controle, l_observacao_monitor
+  Dim l_ano, l_cliente
   
   Set l_Operacao                = Server.CreateObject("ADODB.Parameter")  
   Set l_restricao               = Server.CreateObject("ADODB.Parameter") 
@@ -690,6 +691,8 @@ Sub DML_PutRestricao_IS (Operacao, p_restricao, p_chave, p_chave_aux, p_cd_subac
   Set l_providencia             = Server.CreateObject("ADODB.Parameter") 
   Set l_observacao_controle     = Server.CreateObject("ADODB.Parameter") 
   Set l_observacao_monitor      = Server.CreateObject("ADODB.Parameter")
+  Set l_ano                     = Server.CreateObject("ADODB.Parameter")
+  Set l_cliente                 = Server.CreateObject("ADODB.Parameter")
   
   with sp
      set l_Operacao              = .CreateParameter("l_Operacao",              adVarchar, adParamInput,   1, Operacao)
@@ -708,6 +711,8 @@ Sub DML_PutRestricao_IS (Operacao, p_restricao, p_chave, p_chave_aux, p_cd_subac
      set l_providencia           = .CreateParameter("l_providencia",           adVarchar, adParamInput,4000, Tvl(p_providencia))
      set l_observacao_controle   = .CreateParameter("l_observacao_controle",   adVarchar, adParamInput,4000, Tvl(p_observacao_controle))
      set l_observacao_monitor    = .CreateParameter("l_observacao_monitor",    adVarchar, adParamInput,4000, Tvl(p_observacao_monitor))
+     set l_ano                   = .CreateParameter("l_ano",                   adInteger, adParamInput,    , Tvl(p_ano))
+     set l_cliente               = .CreateParameter("l_cliente",               adInteger, adParamInput,    , Tvl(p_cliente))
      
      .parameters.Append         l_Operacao
      .parameters.Append         l_restricao
@@ -725,6 +730,8 @@ Sub DML_PutRestricao_IS (Operacao, p_restricao, p_chave, p_chave_aux, p_cd_subac
      .parameters.Append         l_providencia
      .parameters.Append         l_observacao_controle
      .parameters.Append         l_observacao_monitor
+     .parameters.Append         l_ano
+     .parameters.Append         l_cliente
 
      .CommandText               = Session("schema_is") & "SP_PutRestricao_IS"
      On Error Resume Next
@@ -748,6 +755,8 @@ Sub DML_PutRestricao_IS (Operacao, p_restricao, p_chave, p_chave_aux, p_cd_subac
      .parameters.Delete         "l_providencia"
      .parameters.Delete         "l_observacao_controle"
      .parameters.Delete         "l_observacao_monitor"
+     .parameters.Delete         "l_ano"
+     .parameters.Delete         "l_cliente"
   end with
 End Sub
 REM =========================================================================

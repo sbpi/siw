@@ -259,7 +259,7 @@ Sub TipoAcordo
      ScriptClose
   End If
   ShowHTML "</HEAD>"
-  ShowHTML "<BASE HREF=""http://" & Request.ServerVariables("server_name") & "/siw/"">"
+  ShowHTML "<BASE HREF=""" & conRootSIW & """>"
   If w_Troca > "" Then
      BodyOpen "onLoad=document.Form." & w_troca & ".focus();"
   ElseIf O = "I" or O = "A" Then
@@ -572,7 +572,7 @@ Sub Rel_PPA
      HeaderWord null
      w_pag   = 1
      w_linha = 5
-     ShowHTML "<BASE HREF=""http://" & Request.ServerVariables("server_name") & "/siw/"">"
+     ShowHTML "<BASE HREF=""" & conRootSIW & """>"
      ShowHTML "<TABLE WIDTH=""100%"" BORDER=0><TR><TD ROWSPAN=2><IMG ALIGN=""LEFT"" SRC=""" & w_logo & """><TD ALIGN=""RIGHT""><B><FONT SIZE=4 COLOR=""#000000"">"
      ShowHTML "Tabela PPA"
      ShowHTML "</FONT><TR><TD WIDTH=""50%"" ALIGN=""RIGHT""><B><font size=1 COLOR=""#000000"">" & DataHora() & "</B>"
@@ -600,7 +600,7 @@ Sub Rel_PPA
         ScriptClose
      End If
      ShowHTML "</HEAD>"
-     ShowHTML "<BASE HREF=""http://" & Request.ServerVariables("server_name") & "/siw/"">"
+     ShowHTML "<BASE HREF=""" & conRootSIW & """>"
      If O = "L" Then
         BodyOpenClean "onLoad='document.focus()';"
         ShowHTML "<TABLE WIDTH=""100%"" BORDER=0><TR><TD ROWSPAN=2><IMG ALIGN=""LEFT"" SRC=""" & w_logo & """><TD ALIGN=""RIGHT""><B><FONT SIZE=4 COLOR=""#000000"">"
@@ -1110,7 +1110,7 @@ Sub Rel_Sintetico_PPA
      HeaderWord null
      w_pag   = 1
      w_linha = 8
-     ShowHTML "<BASE HREF=""http://" & Request.ServerVariables("server_name") & "/siw/"">"
+     ShowHTML "<BASE HREF=""" & conRootSIW & """>"
      ShowHTML "<TABLE WIDTH=""100%"" BORDER=0><TR><TD ROWSPAN=2><IMG ALIGN=""LEFT"" SRC=""" & w_logo & """><TD ALIGN=""RIGHT""><B><FONT SIZE=4 COLOR=""#000000"">"
      ShowHTML "Ações do PPA"
      ShowHTML "</FONT><TR><TD WIDTH=""50%"" ALIGN=""RIGHT""><B><font size=1 COLOR=""#000000"">" & DataHora() & "</B>"
@@ -1131,7 +1131,7 @@ Sub Rel_Sintetico_PPA
         ScriptClose
      End If
      ShowHTML "</HEAD>"
-     ShowHTML "<BASE HREF=""http://" & Request.ServerVariables("server_name") & "/siw/"">"
+     ShowHTML "<BASE HREF=""" & conRootSIW & """>"
      If O = "L" Then
         BodyOpenClean "onLoad='document.focus()';"
         ShowHTML "<TABLE WIDTH=""100%"" BORDER=0><TR><TD ROWSPAN=2><IMG ALIGN=""LEFT"" SRC=""" & w_logo & """><TD ALIGN=""RIGHT""><B><FONT SIZE=4 COLOR=""#000000"">"
@@ -1675,7 +1675,7 @@ Sub Main
     
     
 '       Cabecalho
-'       ShowHTML "<BASE HREF=""http://" & Request.ServerVariables("server_name") & "/siw/"">"
+'       ShowHTML "<BASE HREF=""" & conRootSIW & """>"
 '       BodyOpen "onLoad=document.focus();"
 '       ShowHTML "<B><FONT COLOR=""#000000"">" & w_TP & "</FONT></B>"
 '       ShowHTML "<HR>"

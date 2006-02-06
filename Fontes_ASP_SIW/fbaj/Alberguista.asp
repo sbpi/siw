@@ -6,6 +6,7 @@
 <!-- #INCLUDE FILE="Funcoes.asp" -->
 <!-- #INCLUDE FILE="DB_Alberguista.asp" -->
 <!-- #INCLUDE FILE="DML_Alberguista.asp" -->
+<!-- #INCLUDE FILE="VisualAlberguista.asp" -->
 <!-- #INCLUDE VIRTUAL="/siw/DB_Geral.asp" -->
 <!-- #INCLUDE VIRTUAL="/siw/DML_Seguranca.asp" -->
 <%
@@ -140,9 +141,10 @@ Sub Cadastro
   Dim w_destino_outros, w_motivo_viagem, w_motivo_outros, w_forma_conhece, w_forma_outros
   Dim w_sq_cidade, w_carteira_emissao, w_carteira_validade
   
-  Dim w_troca, i, w_erro, w_como_funciona, w_cor, w_disabled
+  Dim w_troca, i, w_erro, w_como_funciona, w_cor
 
-  Dim p_carteira, p_nome, p_ordena
+  Dim p_carteira, p_nome, p_ordena, p_sexo, p_uf, p_conhece_albergue, p_visitas, p_classificacao
+  Dim p_destino, p_motivo_viagem, p_forma_conhece
 
   If O = "" Then O = "P" End If
 
@@ -152,6 +154,14 @@ Sub Cadastro
   p_ordena          = uCase(Request("p_ordena"))
   p_nome            = uCase(Request("p_nome"))
   p_carteira        = uCase(Request("p_carteira"))
+  p_sexo            = uCase(Request("p_sexo"))
+  p_uf              = uCase(Request("p_uf"))
+  p_conhece_albergue= uCase(Request("p_conhece_albergue"))
+  p_visitas         = uCase(Request("p_visitas"))
+  p_classificacao   = uCase(Request("p_classificacao"))
+  p_destino         = uCase(Request("p_destino"))
+  p_motivo_viagem   = uCase(Request("p_motivo_viagem"))
+  p_forma_conhece   = uCase(Request("p_forma_conhece"))
   
   ' Verifica se há necessidade de recarregar os dados da tela a partir
   ' da própria tela (se for recarga da tela) ou do banco de dados (se não for inclusão)
@@ -188,7 +198,7 @@ Sub Cadastro
      w_carteira_emissao = Request("w_carteira_emissao")
      w_carteira_validade= Request("w_carteira_validade")
   ElseIf O = "L" Then
-     DB_GetAlberList RS, p_carteira, p_nome
+     DB_GetAlberList RS, p_carteira, p_nome, p_sexo, p_uf, p_conhece_albergue, p_visitas, p_classificacao, p_destino, p_motivo_viagem, p_forma_conhece
      If p_ordena > "" Then RS.sort = p_ordena Else RS.sort = "nome" End If
   Else
      
@@ -256,9 +266,17 @@ Sub Cadastro
   If Instr("P",O) > 0 Then
      Validate "p_carteira", "Carteira", "", "", "10", "20", "", "0123456789"
      Validate "p_nome", "Nome", "", "", "4", "50", "1", ""
+     Validate "p_sexo", "Sexo", "SELECT", "", 1, 1, "MF", ""
+     Validate "p_uf", "UF", "SELECT", "", 2, 2, "1", ""
+     Validate "p_conhece_albergue", "Conhece Albergue da Juventude", "SELECT", "", 1, 1, "SN", ""
+     Validate "p_visitas", "Visitas", "SELECT", "", 1, 1, "", "0123456789"
+     Validate "p_classificacao", "Classificação", "SELECT", "", 1, 1, "", "0123456789"
+     Validate "p_destino", "Destino da viagem", "SELECT", "", 1, 1, "", "0123456789"
+     Validate "p_motivo_viagem", "Motivo da viagem", "SELECT", "", 1, 1, "", "0123456789"
+     Validate "p_forma_conhece", "Como conheceu", "SELECT", "", 1, 1, "", "0123456789"
      Validate "P4", "Linhas por página", "1", "1", "1", "4", "", "0123456789"
-     ShowHTML "  if (theForm.p_carteira.value == '' && theForm.p_nome.value == '') {"
-     ShowHTML "     alert('Informe o número da carteira ou o início do nome do associado!');"
+     ShowHTML "  if (theForm.p_carteira.value == '' && theForm.p_nome.value == '' && theForm.p_sexo.value == '' && theForm.p_uf.value == '' && theForm.p_conhece_albergue.value == '' && theForm.p_visitas.value == '' && theForm.p_classificacao.value == '' && theForm.p_destino.value == '' && theForm.p_motivo_viagem.value == '' && theForm.p_forma_conhece.value == '') {"
+     ShowHTML "     alert('Informe pelo menos um critério de filtragem!');"
      ShowHTML "     theForm.p_carteira.focus();"
      ShowHTML "     return false;"
      ShowHTML "  }"
@@ -285,7 +303,6 @@ Sub Cadastro
      Validate "w_conhece_albergue",  "Conhece Albergue da Juventude", "SELECT",  "",    1,    1, "SN", ""
      Validate "w_visitas",           "Visitas",                       "SELECT",  "",    1,    1,   "", "0123456789"
      Validate "w_classificacao",     "Classificação",                 "SELECT",  "",    1,    1,   "", "0123456789"
-     Validate "w_visitas",           "Visitas",                       "SELECT",  "",    1,    1,   "", "0123456789"
      Validate "w_destino",           "Destino da viagem",             "SELECT",  "",    1,    1,   "", "0123456789"
      Validate "w_destino_outros",    "Outro destino",                 "1",       "",    2,   50,  "1", "1"
      Validate "w_motivo_viagem",     "Motivo da viagem",              "SELECT",  "",    1,    1,   "", "0123456789"
@@ -305,7 +322,7 @@ Sub Cadastro
   ElseIf Instr("IA",O) > 0 Then 
      BodyOpen "onLoad='document.Form.w_carteira.focus()';"
   ElseIf Instr("ETDV",O) > 0 Then
-     BodyOpen "onLoad='document.w_assinatura.focus()';"
+     BodyOpen "onLoad='document.Form.w_assinatura.focus()';"
   ElseIf InStr("P",O) > 0 Then
      BodyOpen "onLoad='document.Form.p_carteira.focus()';"
   Else
@@ -317,7 +334,7 @@ Sub Cadastro
   If O = "L" Then
     ShowHTML "<tr><td><font size=""1"">"
     ShowHTML "                         <a accesskey=""I"" class=""SS"" href=""" &  w_dir & w_pagina & par & "&R=" & w_Pagina & par & "&O=I&w_cliente=" & w_cliente & "&P1=" & P1 & "&P2=" & P2 & "&P3=" & P3 & "&P4=" & P4 & "&TP=" & TP & "&SG=" & SG & MontaFiltro("GET") & """><u>I</u>ncluir</a>&nbsp;"
-    If p_nome & p_carteira & p_Ordena > "" Then
+    If p_nome & p_carteira & p_sexo & p_uf & p_conhece_albergue & p_visitas & p_classificacao & p_destino & p_motivo_viagem & p_forma_conhece & p_Ordena > "" Then
        ShowHTML "                         <a accesskey=""F"" class=""SS"" href=""" & w_dir & w_Pagina & par & "&R=" & w_dir & w_Pagina & par & "&O=P&w_cliente=" & w_cliente & "&P1=" & P1 & "&P2=" & P2 & "&P3=" & P3 & "&P4=" & P4 & "&TP=" & TP & "&SG=" & SG & MontaFiltro("GET") & """><u><font color=""#BC5100"">F</u>iltrar (Ativo)</font></a>"
     Else
        ShowHTML "                         <a accesskey=""F"" class=""SS"" href=""" & w_dir & w_Pagina & par & "&R=" & w_dir & w_Pagina & par & "&O=P&w_cliente=" & w_cliente & "&P1=" & P1 & "&P2=" & P2 & "&P3=" & P3 & "&P4=" & P4 & "&TP=" & TP & "&SG=" & SG & MontaFiltro("GET") & """><u>F</u>iltrar (Inativo)</a>"
@@ -341,7 +358,7 @@ Sub Cadastro
       While Not RS.EOF and RS.AbsolutePage = P3
         If w_cor = conTrBgColor or w_cor = "" Then w_cor = conTrAlternateBgColor Else w_cor = conTrBgColor End If
         ShowHTML "      <tr bgcolor=""" & w_cor & """ valign=""top"">"
-        ShowHTML "        <td align=""center"" nowrap><font size=""1"">" & RS("carteira") & "</td>"
+        ShowHTML "        <td align=""center"" nowrap><font size=""1""><A class=""HL"" HREF=""" & w_dir & w_pagina & "Visualizar&R=" & w_pagina & par & "&O=L&w_chave=" & RS("sq_alberguista") & "&w_tipo=Volta&P1=2&P2=" & P2 & "&P3=" & P3 & "&P4=" & P4 & "&TP=" & TP & "&SG=" & SG & MontaFiltro("GET") & """ title=""Exibe as informações deste alberguista."">" & RS("carteira") & "</td>"
         ShowHTML "        <td align=""left""><font size=""1"">" & RS("nome") & "</td>"
         ShowHTML "        <td align=""center""><font size=""1"">" & Nvl(FormataDataEdicao(RS("nascimento")),"---") & "</td>"
         ShowHTML "        <td align=""center""><font size=""1"">" & Nvl(FormataDataEdicao(RS("carteira_emissao")),"---") & "</td>"
@@ -369,17 +386,30 @@ Sub Cadastro
     ShowHTML "<tr bgcolor=""" & conTrBgColor & """><td><div align=""justify""><font size=2>Informe nos campos abaixo os valores que deseja filtrar e clique sobre o botão <i>Aplicar filtro</i>. Clicando sobre o botão <i>Remover filtro</i>, o filtro existente será apagado.</div><hr>"
     ShowHTML "<tr bgcolor=""" & conTrBgColor & """><td align=""center"">"
     ShowHTML "    <table width=""70%"" border=""0"">"
-    
-    ShowHTML "      <tr><td valign=""top""><font size=""1""><b><U>C</U>arteira:<br><INPUT ACCESSKEY=""C"" " & w_Disabled & " class=""STI"" type=""text"" name=""p_carteira"" size=""20"" maxlength=""20"" value=""" & p_carteira & """></td>"
-    ShowHTML "      <tr><td valign=""top""><font size=""1""><b><U>N</U>ome:<br><INPUT ACCESSKEY=""N"" " & w_Disabled & " class=""STI"" type=""text"" name=""p_nome"" size=""50"" maxlength=""50"" value=""" & p_nome & """></td>"
-    ShowHTML "      <tr><td valign=""top""><font size=""1""><b><U>O</U>rdenação por:<br><SELECT ACCESSKEY=""O"" " & w_Disabled & " class=""STS"" name=""p_ordena"" size=""1"">"
+    ShowHTML "      <tr valign=""top""><td valign=""top"">"
+    ShowHTML "        <table width=""100%"" border=""0""><tr valign=""top"">"    
+    ShowHTML "          <tr><td colspan=""3"" valign=""top""><font size=""1""><b><U>C</U>arteira:<br><INPUT ACCESSKEY=""C"" " & w_Disabled & " class=""STI"" type=""text"" name=""p_carteira"" size=""20"" maxlength=""20"" value=""" & p_carteira & """></td>"
+    ShowHTML "          <tr><td colspan=""3"" valign=""top""><font size=""1""><b><U>N</U>ome:<br><INPUT ACCESSKEY=""N"" " & w_Disabled & " class=""STI"" type=""text"" name=""p_nome"" size=""50"" maxlength=""50"" value=""" & p_nome & """></td>"
+    ShowHTML "          <tr valign=""top"">"
+    SelecaoSexo "Se<u>x</u>o:", "X", null, p_sexo, null, "p_sexo", null, null
+    SelecaoUF "<u>U</u>F:", "U", null, p_uf, null, "p_uf", null, null
+    ShowHTML "          <tr valign=""top"">"
+    SelecaoConhece_Albergue "<u>C</u>onhece Albergue da Juventude?", "C", null, p_conhece_albergue, null, "p_conhece_albergue", null, null
+    SelecaoVisitas "<u>V</u>isitas como alberguista:", "V", null, p_visitas, null, "p_visitas", null, null
+    SelecaoClassificacao "Como c<u>l</u>assifica:", "L", null, p_classificacao, null, "p_classificacao", null, null
+    ShowHTML "          <tr valign=""top"">"
+    SelecaoDestino "De<u>s</u>tino da viagem:", "S", null, p_destino, null, "p_destino", null, null
+    SelecaoMotivo_Viagem "<u>M</u>otivo da viagem:", "M", null, p_motivo_viagem, null, "p_motivo_viagem", null, null
+    SelecaoForma_Conhece "Como con<u>h</u>eceu?", "H", null, p_forma_conhece, null, "p_forma_conhece", null, null
+    ShowHTML "          <tr><td colspan=""3"" valign=""top""><font size=""1""><b><U>O</U>rdenação por:<br><SELECT ACCESSKEY=""O"" " & w_Disabled & " class=""STS"" name=""p_ordena"" size=""1"">"
     If p_Ordena="CARTEIRA" Then
        ShowHTML "          <option value=""carteira"" SELECTED>Carteira<option value="""">Nome"
     Else
        ShowHTML "          <option value=""carteira"">Carteira<option value="""" SELECTED>Nome"
     End If
     ShowHTML "          </select></td>"
-    ShowHTML "      <tr><td valign=""top""><font size=""1""><b><U>L</U>inhas por página:<br><INPUT ACCESSKEY=""L"" " & w_Disabled & " class=""STI"" type=""text"" name=""P4"" size=""4"" maxlength=""4"" value=""" & P4 & """></td></tr>"
+    ShowHTML "          <tr><td colspan=""3"" valign=""top""><font size=""1""><b><U>L</U>inhas por página:<br><INPUT ACCESSKEY=""L"" " & w_Disabled & " class=""STI"" type=""text"" name=""P4"" size=""4"" maxlength=""4"" value=""" & P4 & """></td></tr>"
+    ShowHTML "        </table></td></tr>"    
     ShowHTML "      <tr><td align=""center"" colspan=""3"" height=""1"" bgcolor=""#000000"">"
     ShowHTML "      <tr><td align=""center"" colspan=""3"">"
     ShowHTML "            <input class=""STB"" type=""submit"" name=""Botao"" value=""Aplicar filtro"">"
@@ -393,7 +423,7 @@ Sub Cadastro
     ShowHTML "</FORM>"
   ElseIf Instr("IAETDV",O) > 0 Then
 
-    If InStr("ETDV",O) Then w_Disabled = " DISABLED " End If
+    If InStr("ETDV",O) > 0 Then w_Disabled = " DISABLED " End If
 
     AbreForm "Form", w_dir & w_Pagina & "Grava", "POST", "return(Validacao(this));", null,P1,P2,P3,P4,TP,SG,R,O
     ShowHTML MontaFiltro("POST")
@@ -507,10 +537,18 @@ Sub Cadastro
   Set w_erro                = Nothing 
   Set w_como_funciona       = Nothing 
   Set w_cor                 = Nothing 
-  Set w_disabled            = Nothing
+
 
   Set p_carteira            = Nothing 
   Set p_nome                = Nothing 
+  Set p_sexo                = Nothing 
+  Set p_uf                  = Nothing 
+  Set p_conhece_albergue    = Nothing 
+  Set p_visitas             = Nothing 
+  Set p_classificacao       = Nothing 
+  Set p_destino             = Nothing 
+  Set p_motivo_viagem       = Nothing 
+  Set p_forma_conhece       = Nothing 
   Set p_ordena              = Nothing
 End Sub
 REM =========================================================================
@@ -571,7 +609,7 @@ Sub Cargo
      ScriptClose
   End If
   ShowHTML "</HEAD>"
-  ShowHTML "<BASE HREF=""http://" & Request.ServerVariables("server_name") & "/siw/"">"
+  ShowHTML "<BASE HREF=""" & conRootSIW & """>"
   If InStr("IAE",O) > 0 Then
      If O = "E" Then
         BodyOpen "onLoad='document.Form.w_assinatura.focus()';"
@@ -720,6 +758,71 @@ REM Fim da tabela de area de atuação
 REM -------------------------------------------------------------------------
 
 REM =========================================================================
+REM Rotina de visualização
+REM -------------------------------------------------------------------------
+Sub Visualizar
+
+  Dim w_erro, w_logo, w_chave, w_tipo
+  
+  w_chave = Request("w_chave")
+  w_tipo  = Request("w_tipo")
+
+  If cDbl(Nvl(P2,0)) = 1 Then
+     Response.ContentType = "application/msword"
+  Else 
+     cabecalho
+  End If
+  
+  ShowHTML "<HEAD>"
+  ShowHTML "<TITLE>Dados do cadastro</TITLE>"
+  ShowHTML "</HEAD>" 
+  ShowHTML "<BASE HREF=""" & conRootSIW & """>"
+  If cDbl(Nvl(P2,0)) = 0 Then 
+     BodyOpen "onLoad='document.focus()'; "
+  End If
+  ShowHTML "<TABLE WIDTH=""100%"" BORDER=0><TR>"
+  If cDbl(Nvl(P2,0)) = 0 Then
+     DB_GetCustomerData RS, w_cliente
+     ShowHTML "  <TD ROWSPAN=2><IMG ALIGN=""LEFT"" SRC=""" & conFileVirtual & w_cliente & "\img\logo" & Mid(RS("logo"),Instr(RS("logo"),"."),30) & """>"
+     DesconectaBD
+  End If
+  ShowHTML "  <TD ALIGN=""RIGHT""><B><FONT SIZE=5 COLOR=""#000000"">"
+  ShowHTML "Dados do cadastro"
+  ShowHTML "</FONT><TR><TD ALIGN=""RIGHT""><B><FONT SIZE=2 COLOR=""#000000"">" & DataHora() & "</B>"
+  If cDbl(Nvl(P2,0)) = 0 Then
+     ShowHTML "&nbsp;&nbsp;&nbsp;<IMG ALIGN=""CENTER"" TITLE=""Gerar word"" SRC=""images/word.gif"" onClick=""window.open('" & w_pagina & "Visualizar&P2=1&SG=ALVISUAL','VisualAlberguistaWord','menubar=yes resizable=yes scrollbars=yes');"">"
+  End If
+  ShowHTML "</TD></TR>"
+  ShowHTML "</FONT></B></TD></TR></TABLE>"
+  If cDbl(Nvl(P2,0)) = 0 Then
+     ShowHTML "<HR>"
+  End If
+  
+  If w_tipo > "" and w_tipo <> "WORD" Then
+     ShowHTML "<center><B><font size=1>Clique <a class=""HL"" href=""javascript:history.back(1);"">aqui</a> para voltar à tela anterior</font></b></center>"
+  End If
+  ' Chama a função de visualização dos dados do Alberguista, na opção "Listagem"
+  VisualAlberguista w_chave, "L"
+  
+  If w_tipo > "" and w_tipo <> "WORD" Then
+     ShowHTML "<center><B><font size=1>Clique <a class=""HL"" href=""javascript:history.back(1);"">aqui</a> para voltar à tela anterior</font></b></center>"
+  End If
+  
+  If cDbl(Nvl(P2,0)) = 0 Then
+     Rodape
+  End If
+  
+  Set w_erro            = Nothing 
+  Set w_logo            = Nothing 
+  Set w_chave           = Nothing 
+  Set w_tipo            = Nothing
+
+End Sub
+REM =========================================================================
+REM Fim da rotina de visualização
+REM -------------------------------------------------------------------------
+
+REM =========================================================================
 REM Procedimento que executa as operações de BD
 REM -------------------------------------------------------------------------
 Public Sub Grava
@@ -736,7 +839,7 @@ Public Sub Grava
   
   AbreSessao    
   Select Case SG
-    Case "ALBCAD"
+    Case "MESA"
        ' Verifica se a Assinatura Eletrônica é válida
        If (VerificaAssinaturaEletronica(Session("Username"),w_assinatura) and w_assinatura > "") or _
           w_assinatura = "" Then
@@ -801,12 +904,10 @@ REM -------------------------------------------------------------------------
 Sub Main
   ' Verifica se o usuário tem lotação e localização
   Select Case Par
-    Case "CAD"
-       Cadastro
-    Case "CARGO"
-       Cargo
-    Case "GRAVA"
-       Grava
+    Case "CAD"        Cadastro
+    Case "CARGO"      Cargo
+    Case "GRAVA"      Grava
+    Case "VISUALIZAR" Visualizar
     Case Else
        Cabecalho
        ShowHTML "<BASE HREF=""" & Request.ServerVariables("server_name") & "/siw/"">"

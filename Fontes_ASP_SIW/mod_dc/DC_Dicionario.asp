@@ -12,6 +12,7 @@
 <!-- #INCLUDE FILE="Funcoes.asp" -->
 <%
 Response.Expires = -1500
+Server.ScriptTimeout = conScriptTimeout
 REM =========================================================================
 REM  /DC_Dicionario.asp
 REM ------------------------------------------------------------------------
@@ -90,7 +91,7 @@ Select Case O
    Case "C"
       w_TP = TP & " - Cópia"
    Case "V" 
-      w_TP = TP & " - Envio"
+      w_TP = TP & " - Geração automática"
    Case "H" 
       w_TP = TP & " - Herança"
    Case Else
@@ -233,7 +234,7 @@ Sub Arquivos
       ScriptClose
    End If
    ShowHTML "</HEAD>"
-   ShowHTML "<BASE HREF=""http://" & Request.ServerVariables("server_name") & "/siw/"">"
+   ShowHTML "<BASE HREF=""" & conRootSIW & """>"
    If w_troca > "" Then
       BodyOpen "onLoad='document.Form." & w_troca & ".focus()';"
    ElseIf Instr("IA",O) > 0 Then
@@ -451,7 +452,7 @@ Sub Colunas
          Validate "w_precisao"       , "Precisão"              , "1"     , "1", "2", "30"  , "1"   , "1"
          Validate "w_escala"         , "Escala"                , "1"     , "1", "1", "18"  , ""    , "1"
          Validate "w_obrigatorio"    , "Obrigatório"           , "SELECT", "1", "1", "1"   , "1"   , "1"
-         Validate "w_valor_padrao"   , "Valor Padrão"          , "1"     , "1", "5", "255" , "1"   , "1"
+         Validate "w_valor_padrao"   , "Valor Padrão"          , ""      , "1", "1", "255" , "1"   , "1"
          Validate "w_descricao"      , "Descrição"             , "1"     , "1", "5", "4000", "1"   , "1"
          Validate "w_assinatura"     , "Assinatura Eletrônica" , "1"     , "1", "6", "30"  , "1"   , "1"
       ElseIf O = "E" Then
@@ -476,7 +477,7 @@ Sub Colunas
       ScriptClose
    End If
    ShowHTML "</HEAD>"
-   ShowHTML "<BASE HREF=""http://" & Request.ServerVariables("server_name") & "/siw/"">"
+   ShowHTML "<BASE HREF=""" & conRootSIW & """>"
    If w_troca > "" Then
       BodyOpen "onLoad='document.Form." & w_troca & ".focus()';"
    ElseIf Instr("IA",O) > 0 Then
@@ -722,7 +723,7 @@ Sub Procedure
       ScriptClose
    End If
    ShowHTML "</HEAD>"
-   ShowHTML "<BASE HREF=""http://" & Request.ServerVariables("server_name") & "/siw/"">"
+   ShowHTML "<BASE HREF=""" & conRootSIW & """>"
    If w_troca > "" Then
       BodyOpen "onLoad='document.Form." & w_troca & ".focus()';"
    ElseIf Instr("IA",O) > 0 Then
@@ -942,7 +943,7 @@ Sub Relacionamento
       ScriptClose
    End If
    ShowHTML "</HEAD>"
-   ShowHTML "<BASE HREF=""http://" & Request.ServerVariables("server_name") & "/siw/"">"
+   ShowHTML "<BASE HREF=""" & conRootSIW & """>"
    If w_troca > "" Then
       BodyOpen "onLoad='document.Form." & w_troca & ".focus()';"
    ElseIf Instr("IA",O) > 0 Then
@@ -1142,7 +1143,7 @@ Sub Sistema
          ScriptClose
    End If
    ShowHTML "</HEAD>"
-   ShowHTML "<BASE HREF=""http://" & Request.ServerVariables("server_name") & "/siw/"">"
+   ShowHTML "<BASE HREF=""" & conRootSIW & """>"
    If w_troca > "" Then
       BodyOpen "onLoad='document.Form." & w_troca & ".focus()';"
    ElseIf Instr("IA",O) > 0 Then
@@ -1307,7 +1308,7 @@ Sub StoredProcedure
       ScriptClose
    End If
    ShowHTML "</HEAD>"
-   ShowHTML "<BASE HREF=""http://" & Request.ServerVariables("server_name") & "/siw/"">"
+   ShowHTML "<BASE HREF=""" & conRootSIW & """>"
    If w_troca > "" Then
       BodyOpen "onLoad='document.Form." & w_troca & ".focus()';"
    ElseIf Instr("IA",O) > 0 Then
@@ -1524,7 +1525,7 @@ Sub Tabela
       ScriptClose
    End If
    ShowHTML "</HEAD>"
-   ShowHTML "<BASE HREF=""http://" & Request.ServerVariables("server_name") & "/siw/"">"
+   ShowHTML "<BASE HREF=""" & conRootSIW & """>"
    If w_troca > "" Then
       BodyOpen "onLoad='document.Form." & w_troca & ".focus()';"
    ElseIf Instr("IA",O) > 0 Then
@@ -1738,7 +1739,7 @@ Sub Trigger
       ScriptClose
    End If
    ShowHTML "</HEAD>"
-   ShowHTML "<BASE HREF=""http://" & Request.ServerVariables("server_name") & "/siw/"">"
+   ShowHTML "<BASE HREF=""" & conRootSIW & """>"
    If w_troca > "" Then
       BodyOpen "onLoad='document.Form." & w_troca & ".focus()';"
    ElseIf Instr("IA",O) > 0 Then
@@ -1911,7 +1912,7 @@ Sub Usuario
       DB_GetUsuario RS, w_cliente, null, w_sq_sistema
       RS.Sort = "sg_sistema,nome"
    ElseIf InStr("AEV",O) > 0 and w_Troca = "" Then
-      ' Recupera os dados do Endereço informado
+      ' Recupera os dados do usuário informado
       DB_GetUsuario RS, w_cliente, w_chave, w_sq_sistema
       w_nome                 = RS("nome")
       w_descricao            = RS("descricao")
@@ -1940,7 +1941,7 @@ Sub Usuario
       ScriptClose
    End If
    ShowHTML "</HEAD>"
-   ShowHTML "<BASE HREF=""http://" & Request.ServerVariables("server_name") & "/siw/"">"
+   ShowHTML "<BASE HREF=""" & conRootSIW & """>"
    If w_troca > "" Then
       BodyOpen "onLoad='document.Form." & w_troca & ".focus()';"
    ElseIf Instr("IA",O) > 0 Then
@@ -1980,6 +1981,7 @@ Sub Usuario
                ShowHTML "        <td align=""top"" nowrap><font size=""1"">"
                ShowHTML "          <A class=""HL"" HREF=""" & w_dir & w_Pagina & par & "&R=" & w_Pagina & par & "&O=A&w_chave=" & RS("chave") & "&P1=" & P1 & "&P2=" & P2 & "&P3=" & P3 & "&P4=" & P4 & "&TP=" & TP & "&SG=" & SG & """>Alterar</A>&nbsp"
                ShowHTML "          <A class=""HL"" HREF=""" & w_dir & w_Pagina & par & "&R=" & w_Pagina & par & "&O=E&w_chave=" & RS("chave") & "&P1=" & P1 & "&P2=" & P2 & "&P3=" & P3 & "&P4=" & P4 & "&TP=" & TP & "&SG=" & SG & """>Excluir</A>&nbsp"
+               ShowHTML "          <A class=""HL"" HREF=""" & w_dir & w_Pagina & "Grava&R=" & w_Pagina & par & "&O=V&w_chave=" & RS("chave") & "&P1=" & P1 & "&P2=" & P2 & "&P3=" & P3 & "&P4=" & P4 & "&TP=" & TP & "&SG=" & SG & """ onClick=""return(confirm('Confirma a atualização automática do dicionário de dados desse usuário?'));"">Atualizar</A>&nbsp"
                ShowHTML "        </td>"
             End If
             ShowHTML "      </tr>"
@@ -2105,7 +2107,7 @@ Sub Indice
       ScriptClose
    End If
    ShowHTML "</HEAD>"
-   ShowHTML "<BASE HREF=""http://" & Request.ServerVariables("server_name") & "/siw/"">"
+   ShowHTML "<BASE HREF=""" & conRootSIW & """>"
    If w_troca > "" Then
       BodyOpen "onLoad='document.Form." & w_troca & ".focus()';"
    ElseIf Instr("IA",O) > 0 Then
@@ -2287,7 +2289,7 @@ Sub Evento
    ShowHTML "  theForm.Botao[1].disabled=true;"
    ValidateClose
    ScriptClose
-   ShowHTML "<BASE HREF=""http://" & Request.ServerVariables("server_name") & "/siw/"">"
+   ShowHTML "<BASE HREF=""" & conRootSIW & """>"
    ShowHTML "</HEAD>"
    BodyOpen "onLoad=document.focus();"
    ShowHTML "<B><FONT COLOR=""#000000"">" & w_TP & "</FONT></B>"
@@ -2396,7 +2398,7 @@ Sub SPTabs
       ScriptClose
    End If
    ShowHTML "</HEAD>"
-   ShowHTML "<BASE HREF=""http://" & Request.ServerVariables("server_name") & "/siw/"">"
+   ShowHTML "<BASE HREF=""" & conRootSIW & """>"
    If Instr("I",O) > 0 Then
       BodyOpen "onLoad='document.Form.w_chave_aux.focus()';"
    ElseIf O = "E" Then
@@ -2553,7 +2555,7 @@ Sub SPSP
       ScriptClose
    End If
    ShowHTML "</HEAD>"
-   ShowHTML "<BASE HREF=""http://" & Request.ServerVariables("server_name") & "/siw/"">"
+   ShowHTML "<BASE HREF=""" & conRootSIW & """>"
    If Instr("I",O) > 0 Then
       BodyOpen "onLoad='document.Form.w_chave_aux.focus()';"
    ElseIf O = "E" Then
@@ -2739,7 +2741,7 @@ Sub SPParam
       ScriptClose
    End If
    ShowHTML "</HEAD>"
-   ShowHTML "<BASE HREF=""http://" & Request.ServerVariables("server_name") & "/siw/"">"
+   ShowHTML "<BASE HREF=""" & conRootSIW & """>"
    If Instr("I",O) > 0 Then
       BodyOpen "onLoad='document.Form.w_sq_dado_tipo.focus()';"
    ElseIf O = "E" Then
@@ -2915,8 +2917,24 @@ Public Sub Grava
          'VerIfica se a Assinatura Eletrônica é válida
          If (VerIficaAssinaturaEletronica(Session("Username"),w_assinatura) and w_assinatura > "") or _
             w_assinatura = "" Then
-            DML_PutUsuario O, _
-            Request("w_chave"), Request("w_sq_sistema"), Request("w_nome"), Request("w_descricao")
+            
+            If O = "V" Then
+               Cabecalho
+               ShowHTML "<BASE HREF=""" & conRootSIW & """>"
+               BodyOpenClean "onLoad=document.focus();"
+               ShowHTML "<B><FONT COLOR=""#000000"">" & w_TP & "</FONT></B>"
+               ShowHTML "<HR>"
+               Response.Flush
+               ' Recupera os dados do usuário informado
+               DB_GetUsuario RS, w_cliente, Request("w_chave"), null
+               ShowHTML "<div align=center><center><br><br><br><br><br><br><br><br><br><br><img src=""images/relogio.gif"" align=""center""> <b>Aguarde: dicionarização automática do usuário " & RS("nome") & " do sistema " & RS("sg_sistema") & " em andamento...</b><br><br><br><br><br><br><br><br><br><br></center></div>"
+               Rodape
+               Response.Flush
+               DML_PutDicionario w_cliente, RS("sg_sistema"), RS("nome")
+            Else
+               DML_PutUsuario O, _
+                  Request("w_chave"), Request("w_sq_sistema"), Request("w_nome"), Request("w_descricao")
+            End If
             ScriptOpen "JavaScript"
             ShowHTML "  location.href='" & R & "&w_chave=" & Request("w_Chave") & "&P1=" & P1 & "&P2=" & P2 & "&P3=" & P3 & "&P4=" & P4 & "&TP=" & TP & "&SG=" & SG & MontaFiltro("GET") & "';"
             ScriptClose
@@ -3162,8 +3180,8 @@ Sub Main
       Case "GRAVA"           Grava
    Case Else
       Cabecalho
-      ShowHTML "<BASE HREF=""http://" & Request.ServerVariables("server_name") & "/siw/"">"
-      BodyOpen "onLoad=document.focus();"
+      ShowHTML "<BASE HREF=""" & conRootSIW & """>"
+      BodyOpenClean "onLoad=document.focus();"
       ShowHTML "<B><FONT COLOR=""#000000"">" & w_TP & "</FONT></B>"
       ShowHTML "<HR>"
       ShowHTML "<div align=center><center><br><br><br><br><br><br><br><br><br><br><img src=""images/icone/underc.gIf"" align=""center""> <b>Esta opção está sEndo desenvolvida.</b><br><br><br><br><br><br><br><br><br><br></center></div>"

@@ -30,7 +30,7 @@ Function VisualAcao(w_chave, O, w_usuario, P1, P4)
      
      ' Se a projeto especificco for informada, exibe.
      If Not IsNull(RS("sq_isprojeto")) Then
-        w_html = w_html & VbCrLf & " <tr><td valign=""top"" colspan=""3""><font size=""1"">Plano/Projeto específico:<br><b>" & RS("nm_pri") & "</b></td></tr>"
+        w_html = w_html & VbCrLf & " <tr><td valign=""top"" colspan=""3""><font size=""1"">Programa interno:<br><b>" & RS("nm_pri") & "</b></td></tr>"
      End If     
      
      ' Se a ação no PPA for informada, exibe.
@@ -53,7 +53,7 @@ Function VisualAcao(w_chave, O, w_usuario, P1, P4)
         w_html = w_html & VbCrLf & "         <tr><td valign=""top""><font size=""1"">Responsável monitoramento:<br><b>" & ExibePessoa("../", w_cliente, RS("solicitante"), TP, RS("nm_sol")) & "</b></td>"
         w_html = w_html & VbCrLf & "             <td valign=""top""><font size=""1"">E-mail:<br><b><A class=""HL"" HREF=""mailto:" & RS1("email") & """>" & RS1("email") & "</a></b></td>"
      End If 
-     w_html = w_html & VbCrLf & "                <td valign=""top""><font size=""1"">Telefone:<br><b>" & Nvl(RS1("telefone"),"---") & " </b></td>"
+     w_html = w_html & VbCrLf & "                <td valign=""top""><font size=""1"">Telefone:<br><b>" & Nvl(RS("fone_pri"),"---") & " </b></td>"
      w_html = w_html & VbCrLf & "            </tr>"
      RS1.Close
      w_html = w_html & VbCrLf & "         </table></td></tr>"
@@ -61,7 +61,7 @@ Function VisualAcao(w_chave, O, w_usuario, P1, P4)
      If w_tipo_visao = 0 or w_tipo_visao = 1 Then 
         ' Metas da ação
         ' Recupera todos os registros para a listagem     
-        DB_GetSolicMeta_IS RS1, w_chave, null, "LSTNULL"
+        DB_GetSolicMeta_IS RS1, w_chave, null, "LSTNULL", null
         RS1.Sort = "ordem"
         If Not RS1.EOF Then ' Se não foram selecionados registros, exibe mensagem
            w_html = w_html & VbCrLf & "      <tr><td valign=""top"" colspan=""2"" align=""left"" bgcolor=""#D0D0D0"" style=""border: 2px solid rgb(0,0,0);""><font size=""2""><b>&nbsp;Metas Cadastradas</td></tr>"
@@ -125,7 +125,7 @@ Function VisualAcao(w_chave, O, w_usuario, P1, P4)
            null, null, null, null, null, null, _
            null, null, null, null, _
            null, null, null, null, null, null, null, _
-           null, null, null, null, w_chave, null, null, null, null, null
+           null, null, null, null, w_chave, null, null, null, null, null, w_ano
         RS.sort = "ordem, fim, prioridade"
         If Not RS.EOF Then
            w_html = w_html & VbCrLf & "      <tr><td valign=""top"" colspan=""2"" align=""left"" bgcolor=""#D0D0D0"" style=""border: 2px solid rgb(0,0,0);""><font size=""2""><b>&nbsp;Tarefas Cadastradas</td></tr>"
@@ -212,9 +212,9 @@ Function VisualAcao(w_chave, O, w_usuario, P1, P4)
            w_html = w_html & VbCrLf & "        <td valign=""top"" nowrap><font size=""1"">Recurso programado:<br><b>" & FormatNumber(RS("valor"),2) & " </b></td>"
            w_html = w_html & VbCrLf & "   </table>"
         End If        
-        ' Se a plano/projeto especifico for informada, exibe.
+        ' Se a programa interno for informada, exibe.
         If Not IsNull(RS("sq_isprojeto")) Then
-           w_html = w_html & VbCrLf & "      <tr><td valign=""top"" colspan=""1""><font size=""1"">Plano/Projeto Específico:<br><b>" & RS("nm_pri")
+           w_html = w_html & VbCrLf & "      <tr><td valign=""top"" colspan=""1""><font size=""1"">Programa interno:<br><b>" & RS("nm_pri")
            If Not IsNull(RS("cd_pri")) Then 
               w_html = w_html & VbCrLf & " (" & RS("cd_pri") & ")" 
            End If
@@ -235,9 +235,9 @@ Function VisualAcao(w_chave, O, w_usuario, P1, P4)
            w_html = w_html & VbCrLf & "    <td><font size=""1"">Selecionada SPI/MP:<br><b>Não</b></td>"
         End If
         If RS("relev_ppa") = "S" Then
-           w_html = w_html & VbCrLf & "    <td><font size=""1"">Selecionada SE/MS:<br><b>Sim</b></td>"
+           w_html = w_html & VbCrLf & "    <td><font size=""1"">Selecionada SE/SEPPIR:<br><b>Sim</b></td>"
         Else
-           w_html = w_html & VbCrLf & "    <td><font size=""1"">Selecionada SE/MS:<br><b>Não</b></td>"
+           w_html = w_html & VbCrLf & "    <td><font size=""1"">Selecionada SE/SEPPIR:<br><b>Não</b></td>"
         End If
         w_html = w_html & VbCrLf & "     <tr valign=""top"">"
         If P4 = 1 Then
@@ -252,6 +252,7 @@ Function VisualAcao(w_chave, O, w_usuario, P1, P4)
         End If
         If Not IsNull(RS("cd_acao")) Then
            DB_GetAcaoPPA_IS RS1, w_cliente, w_ano, RS("cd_ppa_pai"), RS("cd_acao"), null, RS("cd_unidade"), null, null, null
+           
            w_html = w_html & VbCrLf & "     <tr valign=""top"">"
            w_html = w_html & VbCrLf & "       <td><font size=""1"">Função:<br><b>" & RS1("ds_funcao") & " </b></td>"
            w_html = w_html & VbCrLf & "       <td><font size=""1"">Subfunção:<br><b>" & RS1("ds_subfuncao") & " </b></td>"
@@ -548,7 +549,7 @@ Function VisualAcao(w_chave, O, w_usuario, P1, P4)
      End If
 
      ' Metas da ação
-     DB_GetSolicMeta_IS RS1, w_chave, null, "LSTNULL"
+     DB_GetSolicMeta_IS RS1, w_chave, null, "LSTNULL", null
      RS1.Sort = "ordem"
      If Not RS1.EOF Then ' Se não foram selecionados registros, exibe mensagem        
         w_html = w_html & VbCrLf & "      <tr><td valign=""top"" colspan=""2"" align=""center"" bgcolor=""#D0D0D0"" style=""border: 2px solid rgb(0,0,0);""><font size=""1""><b>Metas físicas</td>"
@@ -557,8 +558,8 @@ Function VisualAcao(w_chave, O, w_usuario, P1, P4)
         w_html = w_html & VbCrLf & "          <tr bgcolor=""" & conTrBgColor & """ align=""center"">"
         w_html = w_html & VbCrLf & "          <td><font size=""1""><b>Metas</font></td>"
         w_html = w_html & VbCrLf & "          <td><font size=""1""><b>PPA</font></td>"
-        w_html = w_html & VbCrLf & "          <td><font size=""1""><b>Execução até</font></td>"
-        w_html = w_html & VbCrLf & "          <td><font size=""1""><b>Conc.</font></td>"
+        w_html = w_html & VbCrLf & "          <td><font size=""1""><b>Data conclusão</font></td>"
+        w_html = w_html & VbCrLf & "          <td><font size=""1""><b>Executado</font></td>"
         w_html = w_html & VbCrLf & "          </tr>"
         While Not RS1.EOF
            w_html = w_html & VbCrLf & MetaLinha(w_chave, RS1("sq_meta"), RS1("titulo"), RS1("nm_resp"), RS1("sg_setor"), RS1("inicio_previsto"), RS1("fim_previsto"), RS1("perc_conclusao"), null, "<b>", null, "PROJETO", RS1("cd_subacao"))
@@ -576,7 +577,7 @@ Function VisualAcao(w_chave, O, w_usuario, P1, P4)
            null, null, null, null, null, null, _
            null, null, null, null, _
            null, null, null, null, null, null, null, _
-           null, null, null, null, null, w_chave, null, null, null, null
+           null, null, null, null, null, w_chave, null, null, null, null, w_ano
      RS1.sort = "ordem, fim, prioridade"
      If Not RS1.EOF Then
         w_html = w_html & VbCrLf & "      <tr><td valign=""top"" colspan=""2"" align=""center"" bgcolor=""#D0D0D0"" style=""border: 2px solid rgb(0,0,0);""><font size=""1""><b>Tarefas</td>"

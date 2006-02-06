@@ -36,9 +36,6 @@ Sub SelecaoAcaoPPA (label, accesskey, hint, p_cliente, p_ano, p_programa, p_acao
 
     Set l_chave = Nothing
 End Sub
-REM =========================================================================
-REM Final da rotina
-REM -------------------------------------------------------------------------
 
 REM =========================================================================
 REM Montagem da seleção de ações do PPA(tabela SIGPLAN)
@@ -70,9 +67,31 @@ Sub SelecaoProgramaPPA (label, accesskey, hint, cliente, ano, chave, campo, rest
     ShowHTML "              <a class=""ss"" href=""#"" onClick=""window.open('Programa.asp?par=BuscaPrograma&TP=" & RemoveTP(TP) & "&w_cliente=" &cliente& "&w_ano=" &ano& "&w_menu=" &menu& "&restricao=" &restricao& "&campo=" &campo& "','Programa','top=10,left=10,width=780,height=550,toolbar=yes,status=yes,resizable=yes,scrollbars=yes'); return false;"" title=""Clique aqui para selecionar o programa.""><img src=images/Folder/Explorer.gif border=0 align=top height=15 width=15></a>"
     'ShowHTML "              <a class=""ss"" href=""#"" onClick=""document.Form." & campo & ".selectedIndex=''; return false;"" title=""Clique aqui para apagar o valor deste campo.""><img src=images/Folder/Recyfull.gif border=0 align=top height=15 width=15></a>"
 End Sub
+
 REM =========================================================================
-REM Final da rotina
+REM Montagem da seleção de programas cadastrados no INFRASIG
 REM -------------------------------------------------------------------------
+Sub SelecaoProgramaIS (label, accesskey, hint, cliente, ano, chave, campo, restricao, atributo)
+    If restricao = "CADASTRADOS" Then
+      DB_GetPrograma_IS RS, Request("w_cd_programa"), w_ano, w_cliente, restricao
+      RS.Sort   = "titulo"
+    End If
+    If IsNull(hint) Then
+       ShowHTML "          <td valign=""top""><font size=""1""><b>" & Label & "</b><br><SELECT ACCESSKEY=""" & accesskey & """ CLASS=""STS"" NAME=""" & campo & """ " & w_Disabled & " " & atributo & ">"
+    Else
+       ShowHTML "          <td valign=""top"" title=""" & hint & """><font size=""1""><b>" & Label & "</b><br><SELECT ACCESSKEY=""" & accesskey & """ CLASS=""STS"" NAME=""" & campo & """ " & w_Disabled & " " & atributo & ">"
+    End If
+    ShowHTML "          <option value="""">---"
+    While Not RS.EOF
+       If cDbl(nvl(RS("chave"),0)) = cDbl(nvl(chave,0)) Then
+          ShowHTML "          <option value=""" & RS("chave") & """ SELECTED>" & RS("titulo")
+       Else
+          ShowHTML "          <option value=""" & RS("chave") & """>" & RS("titulo")
+       End If
+       RS.MoveNext
+    Wend
+    ShowHTML "          </select>"
+End Sub
 
 REM =========================================================================
 REM Montagem da seleção de ações do PPA(tabela SIGPLAN)
@@ -97,9 +116,6 @@ Sub SelecaoFuncao (label, accesskey, hint, chave, chaveAux, campo, restricao, at
     Wend
     ShowHTML "          </select>"
 End Sub
-REM =========================================================================
-REM Final da rotina
-REM -------------------------------------------------------------------------
 
 REM =========================================================================
 REM Montagem da seleção de iniciativas prioritarias
@@ -128,9 +144,6 @@ Sub SelecaoIsProjeto (label, accesskey, hint, chave, chaveAux, campo, restricao,
     Wend
     ShowHTML "          </select>"
 End Sub
-REM =========================================================================
-REM Final da rotina
-REM -------------------------------------------------------------------------
 
 REM =========================================================================
 REM Montagem da seleção da natureza dos programas do PPA
@@ -155,9 +168,6 @@ Sub SelecaoNatureza_IS (label, accesskey, hint, cliente, chave, campo, restricao
     Wend
     ShowHTML "          </select>"
 End Sub
-REM =========================================================================
-REM Final da rotina
-REM -------------------------------------------------------------------------
 
 REM =========================================================================
 REM Montagem da seleção do horizonte temporal dos programas do PPA
@@ -182,9 +192,6 @@ Sub SelecaoHorizonte_IS (label, accesskey, hint, cliente, chave, campo, restrica
     Wend
     ShowHTML "          </select>"
 End Sub
-REM =========================================================================
-REM Final da rotina
-REM -------------------------------------------------------------------------
 
 REM =========================================================================
 REM Rotina de selecao das unidades de planejamento e administrativas do modulo infra-sig
@@ -232,9 +239,6 @@ Sub SelecaoUnidade_IS (label, accesskey, hint, chave, chaveAux, campo, atributo,
        ShowHTML "          </select>"
     End If
 End Sub
-REM =========================================================================
-REM Final da rotina
-REM -------------------------------------------------------------------------
 
 REM =========================================================================
 REM Montagem da seleção da periodicidades (esquema SIGPLAN)
@@ -259,9 +263,6 @@ Sub SelecaoPeriodicidade_IS (label, accesskey, hint, p_chave, campo, restricao, 
     Wend
     ShowHTML "          </select>"
 End Sub
-REM =========================================================================
-REM Final da rotina
-REM -------------------------------------------------------------------------
 
 REM =========================================================================
 REM Montagem da seleção das bases geográficas (esquema SIGPLAN)
@@ -286,9 +287,6 @@ Sub SelecaoBaseGeografica_IS (label, accesskey, hint, p_chave, campo, restricao,
     Wend
     ShowHTML "          </select>"
 End Sub
-REM =========================================================================
-REM Final da rotina
-REM -------------------------------------------------------------------------
 
 REM =========================================================================
 REM Montagem da seleção das unidades de medidas (esquema SIGPLAN)
@@ -313,9 +311,6 @@ Sub SelecaoUniMedida_IS (label, accesskey, hint, p_chave, campo, restricao, atri
     Wend
     ShowHTML "          </select>"
 End Sub
-REM =========================================================================
-REM Final da rotina
-REM -------------------------------------------------------------------------
 
 REM =========================================================================
 REM Montagem de campo do tipo de indicador
@@ -333,9 +328,6 @@ Sub MontaTipoIndicador (Label, Chave, Campo)
        ShowHTML "              <input " & w_Disabled & " type=""radio"" name=""" & campo & """ value=""P""> Processo <input " & w_Disabled & " type=""radio"" name=""" & campo & """ value=""R"" > Resultado <input " & w_Disabled & " type=""radio"" name=""" & campo & """ value="""" checked> ND "
     End If
 End Sub
-REM =========================================================================
-REM Final da rotina
-REM -------------------------------------------------------------------------
 
 REM =========================================================================
 REM Montagem da seleção dos tipos de restrições (esquema SIGPLAN)
@@ -360,9 +352,6 @@ Sub SelecaoTPRestricao_IS (label, accesskey, hint, p_chave, campo, restricao, at
     Wend
     ShowHTML "          </select>"
 End Sub
-REM =========================================================================
-REM Final da rotina
-REM -------------------------------------------------------------------------
 
 REM =========================================================================
 REM Montagem da seleção de ações do PPA(tabela SIGPLAN)
@@ -387,9 +376,6 @@ Sub SelecaoLocalizador_IS (label, accesskey, hint, chave, w_cd_programa, w_cd_ac
     Wend
     ShowHTML "          </select>"
 End Sub
-REM =========================================================================
-REM Final da rotina
-REM -------------------------------------------------------------------------
 
 REM =========================================================================
 REM Montagem da seleção das tarefas
@@ -401,7 +387,7 @@ Sub SelecaoTarefa (label, accesskey, hint, cliente, ano, p_chave, campo, restric
        null, null, null, null, null, null, _
        null, null, null, null, _
        null, null, null, null, null, null, null, _
-       null, null, null, null, restricao, null, null, null, null, null
+       null, null, null, null, restricao, null, null, null, null, null, w_ano
 
     If IsNull(hint) Then
        ShowHTML "          <td valign=""top""><font size=""1""><b>" & Label & "</b><br><SELECT ACCESSKEY=""" & accesskey & """ CLASS=""STS"" NAME=""" & campo & """ " & w_Disabled & " " & atributo & ">"
@@ -411,23 +397,24 @@ Sub SelecaoTarefa (label, accesskey, hint, cliente, ano, p_chave, campo, restric
     ShowHTML "          <option value="""">---"
     While Not RS.EOF
        If cDbl(nvl(RS("sq_siw_solicitacao"),0)) = cDbl(nvl(p_chave,0)) Then
-          ShowHTML "          <option value=""" & RS("sq_siw_solicitacao") & """ SELECTED>" & RS("titulo")
+          ShowHTML "          <option value=""" & RS("sq_siw_solicitacao") & """ SELECTED>" & RS("titulo") & " (" & RS("sq_siw_solicitacao") & ")"
        Else
-          ShowHTML "          <option value=""" & RS("sq_siw_solicitacao") & """>" & RS("titulo")
+          ShowHTML "          <option value=""" & RS("sq_siw_solicitacao") & """>" & RS("titulo") & " (" & RS("sq_siw_solicitacao") & ")"
        End If
        RS.MoveNext
     Wend
     ShowHTML "          </select>"
 End Sub
-REM =========================================================================
-REM Final da rotina
-REM -------------------------------------------------------------------------
 
 REM =========================================================================
-REM Montagem da seleção de ações não orçamentaria.
+REM Montagem da seleção de ações cadastradas
 REM -------------------------------------------------------------------------
-Sub SelecaoAcao (label, accesskey, hint, p_cliente, p_ano, p_programa, p_acao, p_subacao, p_unidade, campo, restricao, atributo, p_sq_isprojeto)
-    DB_GetAcao_IS RS, null, null, null, w_ano, w_cliente, restricao, p_sq_isprojeto
+Sub SelecaoAcao (label, accesskey, hint, p_cliente, p_ano, p_programa, p_acao, p_subacao, p_unidade, campo, restricao, atributo, chave)
+    DB_GetAcao_IS RS, null, null, null, w_ano, w_cliente, restricao, null
+    If restricao = "PROJETO" Then
+       RS.Filter = "sq_isprojeto <> null"
+    End If
+    RS.Sort = "titulo"
     If IsNull(hint) Then
        ShowHTML "          <td valign=""top""><font size=""1""><b>" & Label & "</b><br><SELECT ACCESSKEY=""" & accesskey & """ CLASS=""STS"" NAME=""" & campo & """ " & w_Disabled & " " & atributo & ">"
     Else
@@ -435,30 +422,21 @@ Sub SelecaoAcao (label, accesskey, hint, p_cliente, p_ano, p_programa, p_acao, p
     End If
     ShowHTML "          <option value="""">---"
     While Not RS.EOF
-       'If nvl(RS("chave"),"-") = nvl(l_chave,"-") Then
-       '   ShowHTML "          <option value=""" & RS("chave") & """ SELECTED>" & RS("sq_siw_solicitacao") &  " - "  &  RS("titulo")
-       'Else
-          ShowHTML "          <option value=""" & RS("chave") & """>" & RS("chave") &  " - "  &  RS("titulo")
-       'End If
+       If cDbl(nvl(RS("chave"),0)) = cDbl(nvl(chave,0)) Then
+          If Nvl(RS("sq_isprojeto"),"") > "" Then
+             ShowHTML "          <option value=""" & RS("chave") & """ SELECTED>" & RS("chave") &  " - "  &  RS("titulo")
+          Else
+             ShowHTML "          <option value=""" & RS("chave") & """ SELECTED>" & RS("codigo") &  " - "  &  RS("titulo")
+          End If
+       Else
+          If Nvl(RS("sq_isprojeto"),"") > "" Then
+             ShowHTML "          <option value=""" & RS("chave") & """>" & RS("chave") &  " - "  &  RS("titulo")
+          Else
+             ShowHTML "          <option value=""" & RS("chave") & """>" & RS("codigo") &  " - "  &  RS("titulo")
+          End If
+       End If
        RS.MoveNext
     Wend
     ShowHTML "          </select>"
 End Sub
-REM =========================================================================
-REM Final da rotina
-REM -------------------------------------------------------------------------
-
-REM =========================================================================
-REM Funçao para retornar sim ou nao
-REM -------------------------------------------------------------------------
-Function RetornaSimNao (p_chave)
-    Select Case p_Chave
-       Case "S" RetornaSimNao = "Sim"
-       Case "N" RetornaSimNao = "Não"
-       Case Else RetornaSimNao = "Não"
-    End Select
-End Function
-REM =========================================================================
-REM Final da rotina
-REM -------------------------------------------------------------------------
 %>

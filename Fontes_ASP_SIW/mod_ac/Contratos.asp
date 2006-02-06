@@ -288,7 +288,7 @@ Sub Inicial
            DB_GetCCData RS, p_sqcc
            w_filtro = w_filtro & "<tr valign=""top""><td align=""right""><font size=1>Classificação <td><font size=1>[<b>" & RS("nome") & "</b>]"
         End If
-        If p_chave       > ""  Then w_filtro = w_filtro & "<tr valign=""top""><td align=""right""><font size=1>Atividade nº <td><font size=1>[<b>" & p_chave & "</b>]" End If
+        If p_chave       > ""  Then w_filtro = w_filtro & "<tr valign=""top""><td align=""right""><font size=1>Contrato nº <td><font size=1>[<b>" & p_chave & "</b>]" End If
         If p_prazo       > ""  Then w_filtro = w_filtro & " <tr valign=""top""><td align=""right""><font size=1>Prazo para conclusão até<td><font size=1>[<b>" & FormatDateTime(DateAdd("d",p_prazo,Date()),1) & "</b>]" End If
         If p_solicitante > ""  Then
            DB_GetPersonData RS, w_cliente, p_solicitante, null, null
@@ -393,7 +393,7 @@ Sub Inicial
   ValidateClose
   ScriptClose
   ShowHTML "</HEAD>"
-  ShowHTML "<BASE HREF=""http://" & Request.ServerVariables("server_name") & "/siw/"">"
+  ShowHTML "<BASE HREF=""" & conRootSIW & """>"
   If w_Troca > "" Then ' Se for recarga da página
      BodyOpenClean "onLoad='document.Form." & w_Troca & ".focus();'"
   ElseIf O = "I" Then
@@ -934,7 +934,7 @@ Sub Geral
   ValidateClose
   ScriptClose
   ShowHTML "</HEAD>"
-  ShowHTML "<BASE HREF=""http://" & Request.ServerVariables("server_name") & "/siw/"">"
+  ShowHTML "<BASE HREF=""" & conRootSIW & """>"
   If w_troca > "" Then
      BodyOpenClean "onLoad='document.Form." & w_troca & ".focus()';"
   ElseIf Instr("EV",O) > 0 Then
@@ -1247,7 +1247,7 @@ Sub Termo
   ValidateClose
   ScriptClose
   ShowHTML "</HEAD>"
-  ShowHTML "<BASE HREF=""http://" & Request.ServerVariables("server_name") & "/siw/"">"
+  ShowHTML "<BASE HREF=""" & conRootSIW & """>"
   If w_troca > "" Then
      BodyOpenClean "onLoad='document.Form." & w_troca & ".focus()';"
   ElseIf Instr("EV",O) > 0 Then
@@ -1391,20 +1391,21 @@ Sub OutraParte
   If w_sq_pessoa = "" and Instr(Request("botao"),"Selecionar") = 0 Then
      w_sq_pessoa        = RS("outra_parte")
      w_pessoa_atual     = RS("outra_parte")
+  ElseIf Instr(Request("botao"),"Selecionar") = 0 Then
+     w_sq_banco         = RS("sq_banco")
+     w_sq_agencia       = RS("sq_agencia")
+     w_operacao         = RS("operacao_conta")
+     w_nr_conta         = RS("numero_conta")
+     w_sq_pais_estrang  = RS("sq_pais_estrang")
+     w_aba_code         = RS("aba_code")
+     w_swift_code       = RS("swift_code")
+     w_endereco_estrang = RS("endereco_estrang")
+     w_banco_estrang    = RS("banco_estrang")
+     w_agencia_estrang  = RS("agencia_estrang")
+     w_cidade_estrang   = RS("cidade_estrang")
+     w_informacoes      = RS("informacoes")
+     w_codigo_deposito  = RS("codigo_deposito")
   End If
-  w_sq_banco         = RS("sq_banco")
-  w_sq_agencia       = RS("sq_agencia")
-  w_operacao         = RS("operacao_conta")
-  w_nr_conta         = RS("numero_conta")
-  w_sq_pais_estrang  = RS("sq_pais_estrang")
-  w_aba_code         = RS("aba_code")
-  w_swift_code       = RS("swift_code")
-  w_endereco_estrang = RS("endereco_estrang")
-  w_banco_estrang    = RS("banco_estrang")
-  w_agencia_estrang  = RS("agencia_estrang")
-  w_cidade_estrang   = RS("cidade_estrang")
-  w_informacoes      = RS("informacoes")
-  w_codigo_deposito  = RS("codigo_deposito")
   w_forma_pagamento  = RS("sg_forma_pagamento")
   w_sq_tipo_pessoa = RS("sq_tipo_pessoa")
   DesconectaBD
@@ -1620,7 +1621,7 @@ Sub OutraParte
   ValidateClose
   ScriptClose
   ShowHTML "</HEAD>"
-  ShowHTML "<BASE HREF=""http://" & Request.ServerVariables("server_name") & "/siw/"">"
+  ShowHTML "<BASE HREF=""" & conRootSIW & """>"
   If (w_cpf = "" and w_cnpj = "") or Instr(Request("botao"),"Alterar") > 0 or Instr(Request("botao"),"Procurar") > 0 Then ' Se o beneficiário ainda não foi selecionado
      If Instr(Request("botao"),"Procurar") > 0 Then ' Se está sendo feita busca por nome
         BodyOpenClean "onLoad='document.focus()';"
@@ -1711,9 +1712,9 @@ Sub OutraParte
               End If
               ShowHTML "        <td nowrap><font size=""1"">"
               If cDbl(w_sq_tipo_pessoa) = 1 Then
-                 ShowHTML "          <A class=""hl"" HREF=""" & w_dir & w_pagina & par & "&R=" & R & "&O=A&w_cpf=" & RS("cpf") & "&w_sq_pessoa=" & RS("sq_pessoa") & "&w_chave=" & w_chave & "&P1=" & P1 & "&P2=" & P2 & "&P3=" & P3 & "&P4=" & P4 & "&TP=" & TP & "&SG=" & SG & """>Selecionar</A>&nbsp"
+                 ShowHTML "          <A class=""hl"" HREF=""" & w_dir & w_pagina & par & "&R=" & R & "&O=A&w_cpf=" & RS("cpf") & "&w_sq_pessoa=" & RS("sq_pessoa") & "&w_chave=" & w_chave & "&P1=" & P1 & "&P2=" & P2 & "&P3=" & P3 & "&P4=" & P4 & "&TP=" & TP & "&SG=" & SG & "&Botao=Selecionar"">Selecionar</A>&nbsp"
               Else
-                 ShowHTML "          <A class=""hl"" HREF=""" & w_dir & w_pagina & par & "&R=" & R & "&O=A&w_cnpj=" & RS("cnpj") & "&w_sq_pessoa=" & RS("sq_pessoa") & "&w_chave=" & w_chave & "&P1=" & P1 & "&P2=" & P2 & "&P3=" & P3 & "&P4=" & P4 & "&TP=" & TP & "&SG=" & SG & """>Selecionar</A>&nbsp"
+                 ShowHTML "          <A class=""hl"" HREF=""" & w_dir & w_pagina & par & "&R=" & R & "&O=A&w_cnpj=" & RS("cnpj") & "&w_sq_pessoa=" & RS("sq_pessoa") & "&w_chave=" & w_chave & "&P1=" & P1 & "&P2=" & P2 & "&P3=" & P3 & "&P4=" & P4 & "&TP=" & TP & "&SG=" & SG & "&Botao=Selecionar"">Selecionar</A>&nbsp"
               End If
               ShowHTML "        </td>"
               ShowHTML "      </tr>"
@@ -1956,7 +1957,7 @@ Sub Preposto
   ' Se acordo com pessoa física, não permite a inclusão dos dados do preposto
   If cDbl(w_sq_tipo_pessoa) = 1 Then
      Cabecalho
-     ShowHTML "<BASE HREF=""http://" & Request.ServerVariables("server_name") & "/siw/"">"
+     ShowHTML "<BASE HREF=""" & conRootSIW & """>"
      BodyOpenClean "onLoad='document.focus()';"
        Estrutura_Topo_Limpo
      Estrutura_Menu
@@ -2047,7 +2048,7 @@ Sub Preposto
   ValidateClose
   ScriptClose
   ShowHTML "</HEAD>"
-  ShowHTML "<BASE HREF=""http://" & Request.ServerVariables("server_name") & "/siw/"">"
+  ShowHTML "<BASE HREF=""" & conRootSIW & """>"
   If w_cpf = "" or Instr(Request("botao"),"Alterar") > 0 or Instr(Request("botao"),"Procurar") > 0 Then ' Se o beneficiário ainda não foi selecionado
      If Instr(Request("botao"),"Procurar") > 0 Then ' Se está sendo feita busca por nome
         BodyOpenClean "onLoad='document.focus()';"
@@ -2234,7 +2235,7 @@ Sub Representante
   ' Se acordo com pessoa física, não permite a inclusão dos dados do preposto
   If cDbl(w_sq_tipo_pessoa) = 1 Then
      Cabecalho
-     ShowHTML "<BASE HREF=""http://" & Request.ServerVariables("server_name") & "/siw/"">"
+     ShowHTML "<BASE HREF=""" & conRootSIW & """>"
      BodyOpenClean "onLoad='document.focus()';"
        Estrutura_Topo_Limpo
      Estrutura_Menu
@@ -2350,7 +2351,7 @@ Sub Representante
      ScriptClose
      ShowHTML "</HEAD>"
   End If
-  ShowHTML "<BASE HREF=""http://" & Request.ServerVariables("server_name") & "/siw/"">"
+  ShowHTML "<BASE HREF=""" & conRootSIW & """>"
   If InStr("IA",O) > 0 and (w_cpf = "" or Instr(Request("botao"),"Alterar") > 0 or Instr(Request("botao"),"Procurar") > 0) Then ' Se o beneficiário ainda não foi selecionado
      If Instr(Request("botao"),"Procurar") > 0 Then ' Se está sendo feita busca por nome
         BodyOpenClean "onLoad='document.focus()';"
@@ -2729,7 +2730,7 @@ Sub parcelas
      ScriptClose
   End If
   ShowHTML "</HEAD>"
-  ShowHTML "<BASE HREF=""http://" & Request.ServerVariables("server_name") & "/siw/"">"
+  ShowHTML "<BASE HREF=""" & conRootSIW & """>"
   If w_troca > "" Then
      BodyOpenClean "onLoad='document.Form." & w_troca & ".focus()';"
   ElseIf O = "I" or O = "A" Then
@@ -2798,7 +2799,7 @@ Sub parcelas
        ShowHTML "      <tr bgcolor=""" & w_cor & """ valign=""top"">"
        ShowHTML "        <td align=""center"" colspan=2><font size=""1""><b>Total</b></td>"
        ShowHTML "        <td align=""right""><font size=""1""><b>" & FormatNumber(w_total,2) & "</b>&nbsp;&nbsp;</td>"
-       If cDbl(w_valor_inicial) <> cDbl(w_total) Then
+       If round(cDbl(w_valor_inicial) - cDbl(w_total),2) <> 0 Then
           ShowHTML "        <td colspan=2><font size=1><b>O valor das parcelas difere do valor contratado (" & FormatNumber(w_valor_inicial,2) & ")</b></td>"
        Else
           ShowHTML "        <td colspan=2>&nbsp;</td>"
@@ -2972,7 +2973,7 @@ Sub Anexo
      ScriptClose 
   End If 
   ShowHTML "</HEAD>" 
-  ShowHTML "<BASE HREF=""http://" & Request.ServerVariables("server_name") & "/siw/"">"
+  ShowHTML "<BASE HREF=""" & conRootSIW & """>"
   If w_troca > "" Then 
      BodyOpenClean "onLoad='document.Form." & w_troca & ".focus()';" 
   ElseIf O = "I" Then 
@@ -3134,7 +3135,7 @@ Sub Visual
      ShowHTML "<TITLE>" & conSgSistema & " - Visualização de Contrato de Parceria</TITLE>"
   End IF
   ShowHTML "</HEAD>"  
-  ShowHTML "<BASE HREF=""http://" & Request.ServerVariables("server_name") & "/siw/"">"
+  ShowHTML "<BASE HREF=""" & conRootSIW & """>"
   If w_tipo <> "WORD" Then
      BodyOpenClean "onLoad='document.focus()'; "
   End If
@@ -3214,7 +3215,7 @@ Sub Excluir
      ScriptClose
   End If
   ShowHTML "</HEAD>"
-  ShowHTML "<BASE HREF=""http://" & Request.ServerVariables("server_name") & "/siw/"">"
+  ShowHTML "<BASE HREF=""" & conRootSIW & """>"
   If w_troca > "" Then
      BodyOpenClean "onLoad='document.Form." & w_troca & ".focus()';"
   Else
@@ -3326,7 +3327,7 @@ Sub Encaminhamento
      ScriptClose
   End If
   ShowHTML "</HEAD>"
-  ShowHTML "<BASE HREF=""http://" & Request.ServerVariables("server_name") & "/siw/"">"
+  ShowHTML "<BASE HREF=""" & conRootSIW & """>"
   If w_troca > "" Then
      BodyOpenClean "onLoad='document.Form." & w_troca & ".focus()';"
   Else
@@ -3450,7 +3451,7 @@ Sub Anotar
      ScriptClose
   End If
   ShowHTML "</HEAD>"
-  ShowHTML "<BASE HREF=""http://" & Request.ServerVariables("server_name") & "/siw/"">"
+  ShowHTML "<BASE HREF=""" & conRootSIW & """>"
   If w_troca > "" Then
      BodyOpenClean "onLoad='document.Form." & w_troca & ".focus()';"
   Else
@@ -3592,7 +3593,7 @@ Sub Concluir
      ScriptClose
   End If
   ShowHTML "</HEAD>"
-  ShowHTML "<BASE HREF=""http://" & Request.ServerVariables("server_name") & "/siw/"">"
+  ShowHTML "<BASE HREF=""" & conRootSIW & """>"
   If w_tipo_conc = 2 Then
      BodyOpenClean "onLoad='document.Form.w_fim_real.focus()';"
   ElseIf w_troca > "" Then
@@ -3861,7 +3862,7 @@ Public Sub Grava
 
   Cabecalho
   ShowHTML "</HEAD>"
-  ShowHTML "<BASE HREF=""http://" & Request.ServerVariables("server_name") & "/siw/"">"
+  ShowHTML "<BASE HREF=""" & conRootSIW & """>"
   BodyOpenClean "onLoad=document.focus();"
   
   If Instr(SG, "GERAL") > 0 Then
@@ -4214,7 +4215,7 @@ Sub Main
     Case "GRAVA"         Grava
     Case Else
        Cabecalho
-       ShowHTML "<BASE HREF=""http://" & Request.ServerVariables("server_name") & "/siw/"">"
+       ShowHTML "<BASE HREF=""" & conRootSIW & """>"
        BodyOpenClean "onLoad=document.focus();"
          Estrutura_Topo_Limpo
        Estrutura_Menu

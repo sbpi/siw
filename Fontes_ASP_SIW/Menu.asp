@@ -5,6 +5,7 @@
 <!-- #INCLUDE FILE="Funcoes.asp" -->
 <!-- #INCLUDE FILE="DB_Link.asp" -->
 <!-- #INCLUDE FILE="DB_Geral.asp" -->
+<!-- #INCLUDE FILE="DB_Seguranca.asp" -->
 <%
 Response.Expires = -1500
 REM =========================================================================
@@ -194,9 +195,14 @@ Sub ExibeDocs
       Else
          DB_GetLinkDataParent RS, Session("p_cliente"), Request("SG")
          RS.Sort = "ordem"
-         RS.MoveNext
+         ' Agrega controle para ir à segunda tela quando vier da inclusão de um novo registro
+         If Instr(uCase(R),"INICIAL") = 0 Then
+            RS.MoveNext
+         End If
          If Request("w_cgccpf") > "" Then
             ShowHTML "onLoad='javascript:top.content.location=""" & RS("LINK") & "&R=" & Request("R") & "&P1="&RS("P1")&"&P2="&RS("P2")&"&P3="&RS("P3")&"&P4="&RS("P4")&"&TP="&Request("TP")&" - "&RS("nome")&"&SG="&RS("SIGLA")&"&O="&Request("O")&"&w_cgccpf="&Request("w_cgccpf")& MontaFiltro("GET") & """;'>"
+         ElseIf Request("w_usuario") > "" Then
+            ShowHTML "onLoad='javascript:top.content.location=""" & RS("LINK") & "&R=" & Request("R") & "&P1="&RS("P1")&"&P2="&RS("P2")&"&P3="&RS("P3")&"&P4="&RS("P4")&"&TP="&Request("TP")&" - "&RS("nome")&"&SG="&RS("SIGLA")&"&O=L&w_usuario="&Request("w_usuario")& MontaFiltro("GET") & """;'>"
          Else
             ShowHTML "onLoad='javascript:top.content.location=""" & RS("LINK") & "&R=" & Request("R") & "&P1="&RS("P1")&"&P2="&RS("P2")&"&P3="&RS("P3")&"&P4="&RS("P4")&"&TP="&Request("TP")&" - "&RS("nome")&"&SG="&RS("SIGLA")&"&O="&Request("O")&"&w_chave="&Request("w_chave")&"&w_menu="&RS("menu_pai")& MontaFiltro("GET") & """;'>"
          End If
@@ -208,7 +214,14 @@ Sub ExibeDocs
    ShowHTML "         <img src=""" & conFileVirtual & Session("p_cliente") & "/img/" & RS1("logo1") & """ vspace=""0"" hspace=""0"" border=""1""></td></tr>"
    ShowHTML "      <tr><td height=1><tr><td height=1 bgcolor=""#000000"">"
    ShowHTML "      <tr><td colspan=2 width=""100%""><table border=0 width=""100%"" cellpadding=0 cellspacing=0><tr valign=""top"">"
-   ShowHTML "          <td><font size=1>Usuário:<b>" & Session("Nome_resumido") & "</b></TD>"
+   ShowHTML "          <td><font size=1>Usuário:<b>" & Session("Nome_resumido") & "</b>"
+   ' Se o cliente tiver algum módulo com controle de ano, exibe o ano selecionado
+   DB_GetSiwCliModLis RS, w_cliente, null
+   RS.Filter = "SIGLA = 'IS'"
+   If Not RS.EOF Then
+      ShowHTML "              <br>Ano:<b>" & Session("ANO") & "</b></TD>"
+   End If
+   DesconectaBD
    ShowHTML "          <td align=""right""><a class=""hl"" href=""Help.asp?par=Menu&TP=<img src=images/Folder/hlp.gif border=0> SIW - Visão Geral&SG=MESA&O=L"" target=""content"" title=""Exibe informações sobre os módulos do sistema.""><img src=""images/Folder/hlp.gif"" border=0></a></TD>"
    ShowHTML "          </table>"
    ShowHTML "      <tr><td height=1><tr><td height=2 bgcolor=""#000000"">"
@@ -329,6 +342,8 @@ Sub ExibeDocs
          Else
             If Request("w_cgccpf") > "" Then
                ShowHTML "    <img src=""" & w_Imagem & """ border=0 align=""center""> <A id=""m" & RS("sq_menu") & """ CLASS=""ss"" HREF=""" & RS("LINK") & "&R="&Request("R")&"&P1="&RS("P1")&"&P2="&RS("P2")&"&P3="&RS("P3")&"&P4="&RS("P4")&"&TP="&w_Titulo&"&SG="&RS("SIGLA")&"&O=L&w_cgccpf="&Request("w_cgccpf")& MontaFiltro("GET") & """ TARGET=""" & RS("target") & """>" & RS("NOME") & "</A><BR>"
+            ElseIf Request("w_usuario") > "" Then
+               ShowHTML "    <img src=""" & w_Imagem & """ border=0 align=""center""> <A id=""m" & RS("sq_menu") & """ CLASS=""ss"" HREF=""" & RS("LINK") & "&R="&Request("R")&"&P1="&RS("P1")&"&P2="&RS("P2")&"&P3="&RS("P3")&"&P4="&RS("P4")&"&TP="&w_Titulo&"&SG="&RS("SIGLA")&"&O=L&w_usuario="&Request("w_usuario")&"&w_menu="&RS("menu_pai")&""" TARGET=""" & RS("target") & """>" & RS("NOME") & "</A><BR>"
             ElseIf Request("w_sq_acordo") > "" Then
                ShowHTML "    <img src=""" & w_Imagem & """ border=0 align=""center""> <A id=""m" & RS("sq_menu") & """ CLASS=""ss"" HREF=""" & RS("LINK") & "&R="&Request("R")&"&P1="&RS("P1")&"&P2="&RS("P2")&"&P3="&RS("P3")&"&P4="&RS("P4")&"&TP="&w_Titulo&"&SG="&RS("SIGLA")&"&O=L&w_sq_acordo="&Request("w_sq_acordo")&"&w_menu="&RS("menu_pai")&""" TARGET=""" & RS("target") & """>" & RS("NOME") & "</A><BR>"
             Else

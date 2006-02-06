@@ -225,7 +225,7 @@ Sub Matriz
   ShowHTML "}"
   ScriptClose
   ShowHTML "</HEAD>"
-  ShowHTML "<BASE HREF=""http://" & Request.ServerVariables("server_name") & "/siw/"">"
+  ShowHTML "<BASE HREF=""" & conRootSIW & """>"
   If InStr("IAE",O) > 0 Then
      If O = "E" Then
         BodyOpen "onLoad='document.Form.w_assinatura.focus()';"
@@ -611,7 +611,7 @@ Sub ExibeSeries
   ShowHTML "}"
   ScriptClose
   ShowHTML "</HEAD>"
-  ShowHTML "<BASE HREF=""http://" & Request.ServerVariables("server_name") & "/siw/"">"
+  ShowHTML "<BASE HREF=""" & conRootSIW & """>"
   BodyOpen "onLoad=document.focus();"
   ShowHTML "<div align=center><center>"
   ShowHTML "<table border=1  bgcolor=""#FAEBD7"" width=""100%"">"
@@ -714,7 +714,7 @@ Sub ExibeDisciplinas
   ShowHTML "}"        
   ScriptClose
   ShowHTML "</HEAD>"
-  ShowHTML "<BASE HREF=""http://" & Request.ServerVariables("server_name") & "/siw/"">"
+  ShowHTML "<BASE HREF=""" & conRootSIW & """>"
   BodyOpen "onLoad=document.focus();"
   ShowHTML "<div align=center><center>"
   ShowHTML "<TABLE WIDTH=""100%"" bgcolor=""" & conTableBgColor & """ BORDER=""" & conTableBorder & """ CELLSPACING=""" & conTableCellSpacing & """ CELLPADDING=""" & conTableCellPadding & """ BorderColorDark=""" & conTableBorderColorDark & """ BorderColorLight=""" & conTableBorderColorLight & """>" 
@@ -843,7 +843,7 @@ Sub SelecDisciplina
   ValidateClose
   ScriptClose
   ShowHTML "</HEAD>"
-  ShowHTML "<BASE HREF=""http://" & Request.ServerVariables("server_name") & "/siw/"">"
+  ShowHTML "<BASE HREF=""" & conRootSIW & """>"
   If O = "I" Then
      BodyOpen "onLoad=document.Form.w_co_tipo_disciplina.focus();"
   ElseIf O = "E" Then

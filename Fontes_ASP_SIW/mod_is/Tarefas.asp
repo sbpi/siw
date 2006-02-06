@@ -54,7 +54,7 @@ Dim p_ativo, p_solicitante, p_prioridade, p_unidade, p_proponente, p_ordena
 Dim p_ini_i, p_ini_f, p_fim_i, p_fim_f, p_atraso, p_projeto, p_atividade
 Dim p_chave, p_assunto, p_pais, p_uf, p_cidade, p_regiao, p_usu_resp, p_uorg_resp, p_palavra, p_prazo, p_fase, p_sqcc
 Dim w_troca,w_cor, w_filter, w_cliente, w_usuario, w_menu, w_dir, w_dir_volta
-Dim w_sq_pessoa
+Dim w_sq_pessoa, w_ano
 Dim ul,File
 Set RS  = Server.CreateObject("ADODB.RecordSet")
 Set RS1 = Server.CreateObject("ADODB.RecordSet")
@@ -79,6 +79,7 @@ O            = ucase(Request("O"))
 w_cliente    = RetornaCliente()
 w_usuario    = RetornaUsuario()
 w_menu       = RetornaMenu(w_cliente, SG)
+w_ano        = Session("ANO")
 
 If InStr(uCase(Request.ServerVariables("http_content_type")),"MULTIPART/FORM-DATA") > 0 Then  
    ' Cria o objeto de upload  
@@ -339,13 +340,13 @@ Sub Inicial
            p_ini_i, p_ini_f, p_fim_i, p_fim_f, p_atraso, p_solicitante, _
            p_unidade, p_prioridade, p_ativo, p_proponente, _
            p_chave, p_assunto, p_pais, p_regiao, p_uf, p_cidade, p_usu_resp, _
-           p_uorg_resp, p_palavra, p_prazo, p_fase, p_projeto, p_atividade, null, null, null, null
+           p_uorg_resp, p_palavra, p_prazo, p_fase, p_projeto, p_atividade, null, null, null, null, w_ano
      Else
         DB_GetSolicList_IS RS, RS("sq_menu"), w_usuario, SG, P1, _
            p_ini_i, p_ini_f, p_fim_i, p_fim_f, p_atraso, p_solicitante, _
            p_unidade, p_prioridade, p_ativo, p_proponente, _
            p_chave, p_assunto, p_pais, p_regiao, p_uf, p_cidade, p_usu_resp, _
-           p_uorg_resp, p_palavra, p_prazo, p_fase, p_projeto, p_atividade, null, null, null, null
+           p_uorg_resp, p_palavra, p_prazo, p_fase, p_projeto, p_atividade, null, null, null, null, w_ano
            Select case Request("p_agrega")
               Case "GRTARESPATU"
                  RS.Filter = "executor <> null"
@@ -368,7 +369,7 @@ Sub Inicial
         Validate "p_chave", "Número da tarefa", "", "", "1", "18", "", "0123456789"
         Validate "p_prazo", "Dias para a data limite", "", "", "1", "2", "", "0123456789"
         Validate "p_proponente", "Parcerias externas", "", "", "2", "90", "1", ""
-        Validate "p_assunto", "Assunto", "", "", "2", "90", "1", "1"
+        Validate "p_assunto", "Detalhamento", "", "", "2", "90", "1", "1"
         Validate "p_palavra", "Palavras-chave", "", "", "2", "90", "1", "1"
         Validate "p_ini_i", "Recebimento inicial", "DATA", "", "10", "10", "", "0123456789/"
         Validate "p_ini_f", "Recebimento final", "DATA", "", "10", "10", "", "0123456789/"
@@ -392,15 +393,9 @@ Sub Inicial
   ValidateClose
   ScriptClose
   ShowHTML "</HEAD>"
-  ShowHTML "<BASE HREF=""http://" & Request.ServerVariables("server_name") & "/siw/"">"
+  ShowHTML "<BASE HREF=""" & conRootSIW & """>"
   If w_Troca > "" Then ' Se for recarga da página
      BodyOpen "onLoad='document.Form." & w_Troca & ".focus();'"
-  ElseIf O = "I" Then
-     BodyOpen "onLoad='document.Form.w_smtp_server.focus();'"
-  ElseIf O = "A" Then
-     BodyOpen "onLoad='document.Form.w_nome.focus();'"
-  ElseIf O = "E" Then
-     BodyOpen "onLoad='document.Form.w_assinatura.focus()';"
   ElseIf InStr("CP",O) > 0 Then
      BodyOpen "onLoad='document.Form.p_projeto.focus()';"
   Else
@@ -616,13 +611,14 @@ Sub Inicial
     ' Recupera dados da opção Projetos
     ShowHTML "      <tr><td valign=""top"" colspan=""2""><table border=0 width=""100%"" cellspacing=0>"
     ShowHTML "      <tr>"
-    DB_GetLinkData RS, w_cliente, "ISACAD"
-    SelecaoProjeto "Açã<u>o</u>:", "O", "Selecione a ação da tarefa na relação.", p_projeto, w_usuario, RS("sq_menu"), "p_projeto", "PJLIST", "onChange=""document.Form.action='" & w_dir & w_pagina & par & "'; document.Form.O.value='" & O & "'; document.Form.w_troca.value='p_atividade'; document.Form.submit();"""
-    DesconectaBD
+    'DB_GetLinkData RS, w_cliente, "ISACAD"
+    'SelecaoProjeto "Açã<u>o</u>:", "O", "Selecione a ação da tarefa na relação.", p_projeto, w_usuario, RS("sq_menu"), "p_projeto", "PJLIST", null
+    SelecaoAcao "Açã<u>o</u>:", "O", "Selecione a ação da tarefa na relação.", w_cliente, w_ano, null, null, null, null, "p_projeto", "ACAO", null, p_projeto
+    'DesconectaBD
     ShowHTML "      </tr>"
-    ShowHTML "      <tr>"
-    SelecaoEtapa "Eta<u>p</u>a:", "P", "Se necessário, indique a etapa à qual esta tarefa deve ser vinculada.", p_atividade, p_projeto, null, "p_atividade", null, null
-    ShowHTML "      </tr>"
+    'ShowHTML "      <tr>"
+    'SelecaoEtapa "Eta<u>p</u>a:", "P", "Se necessário, indique a etapa à qual esta tarefa deve ser vinculada.", p_atividade, p_projeto, null, "p_atividade", null, null
+    'ShowHTML "      </tr>"
     ShowHTML "          </table>"
     ShowHTML "      <tr><td valign=""top"" colspan=""2""><table border=0 width=""100%"" cellspacing=0>"
 
@@ -646,7 +642,7 @@ Sub Inicial
        SelecaoPrioridade "<u>P</u>rioridade:", "P", "Informe a prioridade desta tarefa.", p_prioridade, null, "p_prioridade", null, null
        ShowHTML "          <td valign=""top""><font size=""1""><b>Parcerias exter<u>n</u>as:<br><INPUT ACCESSKEY=""N"" " & w_Disabled & " class=""STI"" type=""text"" name=""p_proponente"" size=""25"" maxlength=""90"" value=""" & p_proponente & """></td>"
        ShowHTML "      <tr>"
-       ShowHTML "          <td valign=""top""><font size=""1""><b>A<U>s</U>sunto:<br><INPUT ACCESSKEY=""N"" " & w_Disabled & " class=""STI"" type=""text"" name=""p_assunto"" size=""25"" maxlength=""90"" value=""" & p_assunto & """></td>"
+       ShowHTML "          <td valign=""top""><font size=""1""><b><U>D</U>etalhamento:<br><INPUT ACCESSKEY=""D"" " & w_Disabled & " class=""STI"" type=""text"" name=""p_assunto"" size=""25"" maxlength=""90"" value=""" & p_assunto & """></td>"
        ShowHTML "          <td valign=""top"" colspan=2><font size=""1""><b>Pala<U>v</U>ras-chave:<br><INPUT ACCESSKEY=""N"" " & w_Disabled & " class=""STI"" type=""text"" name=""p_palavra"" size=""25"" maxlength=""90"" value=""" & p_palavra & """></td>"
        ShowHTML "      <tr>"
        ShowHTML "          <td valign=""top""><font size=""1""><b>Iní<u>c:</b><br><input " & w_Disabled & " accesskey=""C"" type=""text"" name=""p_ini_i"" class=""STI"" SIZE=""10"" MAXLENGTH=""10"" VALUE=""" & p_ini_i & """ onKeyDown=""FormataData(this,event);"" title=""Usar formato dd/mm/aaaa""> e <input " & w_Disabled & " accesskey=""C"" type=""text"" name=""p_ini_f"" class=""STI"" SIZE=""10"" MAXLENGTH=""10"" VALUE=""" & p_ini_f & """ onKeyDown=""FormataData(this,event);"" title=""Usar formato dd/mm/aaaa""></td>"
@@ -877,7 +873,7 @@ Sub Geral
   ValidateClose
   ScriptClose
   ShowHTML "</HEAD>"
-  ShowHTML "<BASE HREF=""http://" & Request.ServerVariables("server_name") & "/siw/"">"
+  ShowHTML "<BASE HREF=""" & conRootSIW & """>"
   If w_troca > "" Then
      BodyOpen "onLoad='document.Form.w_projeto.focus()';"
   ElseIf Instr("EV",O) > 0 Then
@@ -933,9 +929,10 @@ Sub Geral
     
     ' Recupera dados da opção Ações
     ShowHTML "      <tr>"
-    DB_GetLinkData RS, w_cliente, "ISACAD"
-    SelecaoProjeto "Açã<u>o</u>:", "O", "Selecione a ação a qual a tarefa está vinculada.", w_projeto, w_usuario, RS("sq_menu"), "w_projeto", "PJLISTCAD", null
-    DesconectaBD
+    'DB_GetLinkData RS, w_cliente, "ISACAD"
+    'SelecaoProjeto "Açã<u>o</u>:", "O", "Selecione a ação a qual a tarefa está vinculada.", w_projeto, w_usuario, RS("sq_menu"), "w_projeto", "PJLISTCAD", null
+    SelecaoAcao "Açã<u>o</u>:", "O", "Selecione a ação a qual a tarefa está vinculada.", w_cliente, w_ano, null, null, null, null, "w_projeto", "ACAO", null, w_projeto
+    'DesconectaBD
     ShowHTML "      </tr>"
     ShowHTML "      <tr><td valign=""top""><font size=""1""><b><u>T</u>arefa:<br><INPUT ACCESSKEY=""T"" " & w_Disabled & " class=""STI"" type=""text"" name=""w_titulo"" size=""90"" maxlength=""100"" value=""" & w_titulo & """ title=""Informe o nome da tarefa.""></td>"
     ShowHTML "      <tr><td valign=""top""><font size=""1""><b>Des<u>c</u>rição:</b><br><textarea " & w_Disabled & " accesskey=""c"" name=""w_assunto"" class=""STI"" ROWS=5 cols=75 title=""Descreva, de forma detalhada, o que é realizado na tarefa."">" & w_assunto & "</TEXTAREA></td>"
@@ -1094,7 +1091,7 @@ Sub Responsaveis
      ScriptClose
   End If
   ShowHTML "</HEAD>"
-  ShowHTML "<BASE HREF=""http://" & Request.ServerVariables("server_name") & "/siw/"">"
+  ShowHTML "<BASE HREF=""" & conRootSIW & """>"
   If O = "A" Then
      BodyOpen "onLoad='document.Form.w_nm_responsavel.focus()';"
   Else
@@ -1225,7 +1222,7 @@ Sub Anexos
      ScriptClose 
   End If 
   ShowHTML "</HEAD>" 
-  ShowHTML "<BASE HREF=""http://" & Request.ServerVariables("server_name") & "/siw/"">"
+  ShowHTML "<BASE HREF=""" & conRootSIW & """>"
   If w_troca > "" Then 
      BodyOpen "onLoad='document.Form." & w_troca & ".focus()';" 
   ElseIf O = "I" Then 
@@ -1376,7 +1373,7 @@ Sub Visual
   ShowHTML "<HEAD>"
   ShowHTML "<TITLE>" & conSgSistema & " - Visualização de Tarefa</TITLE>"
   ShowHTML "</HEAD>"  
-  ShowHTML "<BASE HREF=""http://" & Request.ServerVariables("server_name") & "/siw/"">"
+  ShowHTML "<BASE HREF=""" & conRootSIW & """>"
   If w_tipo <> "WORD" Then
      BodyOpenClean "onLoad='document.focus()'; "
   End If
@@ -1449,7 +1446,7 @@ Sub Excluir
      ScriptClose
   End If
   ShowHTML "</HEAD>"
-  ShowHTML "<BASE HREF=""http://" & Request.ServerVariables("server_name") & "/siw/"">"
+  ShowHTML "<BASE HREF=""" & conRootSIW & """>"
   If w_troca > "" Then
      BodyOpen "onLoad='document.Form." & w_troca & ".focus()';"
   Else
@@ -1552,7 +1549,7 @@ Sub Encaminhamento
      ScriptClose
   End If
   ShowHTML "</HEAD>"
-  ShowHTML "<BASE HREF=""http://" & Request.ServerVariables("server_name") & "/siw/"">"
+  ShowHTML "<BASE HREF=""" & conRootSIW & """>"
   If w_troca > "" Then
      BodyOpen "onLoad='document.Form." & w_troca & ".focus()';"
   Else
@@ -1664,7 +1661,7 @@ Sub Anotar
      ScriptClose
   End If
   ShowHTML "</HEAD>"
-  ShowHTML "<BASE HREF=""http://" & Request.ServerVariables("server_name") & "/siw/"">"
+  ShowHTML "<BASE HREF=""" & conRootSIW & """>"
   If w_troca > "" Then
      BodyOpen "onLoad='document.Form." & w_troca & ".focus()';"
   Else
@@ -1780,7 +1777,7 @@ Sub Concluir
      ScriptClose
   End If
   ShowHTML "</HEAD>"
-  ShowHTML "<BASE HREF=""http://" & Request.ServerVariables("server_name") & "/siw/"">"
+  ShowHTML "<BASE HREF=""" & conRootSIW & """>"
   If w_troca > "" Then
      BodyOpen "onLoad='document.Form." & w_troca & ".focus()';"
   Else
@@ -2023,7 +2020,7 @@ Public Sub Grava
 
   Cabecalho
   ShowHTML "</HEAD>"
-  ShowHTML "<BASE HREF=""http://" & Request.ServerVariables("server_name") & "/siw/"">"
+  ShowHTML "<BASE HREF=""" & conRootSIW & """>"
   BodyOpen "onLoad=document.focus();"
   
   AbreSessao    
@@ -2310,7 +2307,7 @@ Sub Main
        Grava
     Case Else
        Cabecalho
-       ShowHTML "<BASE HREF=""http://" & Request.ServerVariables("server_name") & "/siw/"">"
+       ShowHTML "<BASE HREF=""" & conRootSIW & """>"
        BodyOpen "onLoad=document.focus();"
        ShowHTML "<B><FONT COLOR=""#000000"">" & w_TP & "</FONT></B>"
        ShowHTML "<HR>"

@@ -181,7 +181,7 @@ Sub Cargo
      ScriptClose
   End If
   ShowHTML "</HEAD>"
-  ShowHTML "<BASE HREF=""http://" & Request.ServerVariables("server_name") & "/siw/"">"
+  ShowHTML "<BASE HREF=""" & conRootSIW & """>"
   If InStr("IAE",O) > 0 Then
      If O = "E" Then
         BodyOpen "onLoad='document.Form.w_assinatura.focus()';"

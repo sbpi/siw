@@ -5,12 +5,12 @@ REM -------------------------------------------------------------------------
 Sub DML_PutCVIdent(Operacao, p_cliente, p_chave, p_nome, p_nome_resumido, p_nascimento, p_sexo, _
          p_sq_estado_civil, p_sq_formacao, p_sq_etnia, p_sq_deficiencia, p_cidade, _
          p_rg_numero, p_rg_emissor, p_rg_emissao, p_cpf, p_passaporte_numero, p_sq_pais_passaporte, _
-         p_foto, p_tamanho, p_tipo)
+         p_foto, p_tamanho, p_tipo, p_chave_nova)
 
   Dim l_Operacao, l_cliente, l_Chave, l_nome, l_nome_resumido, l_nascimento, l_sexo
   Dim l_sq_estado_civil, l_sq_formacao, l_sq_etnia, l_sq_deficiencia, l_cidade
   Dim l_rg_numero, l_rg_emissor, l_rg_emissao, l_cpf, l_passaporte_numero, l_sq_pais_passaporte
-  Dim l_foto, l_tamanho, l_tipo
+  Dim l_foto, l_tamanho, l_tipo, l_chave_nova
   
   Set l_Operacao            = Server.CreateObject("ADODB.Parameter")
   Set l_cliente             = Server.CreateObject("ADODB.Parameter") 
@@ -33,6 +33,7 @@ Sub DML_PutCVIdent(Operacao, p_cliente, p_chave, p_nome, p_nome_resumido, p_nasc
   Set l_cpf                 = Server.CreateObject("ADODB.Parameter") 
   Set l_passaporte_numero   = Server.CreateObject("ADODB.Parameter") 
   Set l_sq_pais_passaporte  = Server.CreateObject("ADODB.Parameter")
+  Set l_chave_nova          = Server.CreateObject("ADODB.Parameter")
   
   with sp
      set l_Operacao             = .CreateParameter("l_operacao",            adVarchar, adParamInput,   1, Operacao)
@@ -56,7 +57,8 @@ Sub DML_PutCVIdent(Operacao, p_cliente, p_chave, p_nome, p_nome_resumido, p_nasc
      set l_cpf                  = .CreateParameter("l_cpf",                 adVarchar, adParamInput,  14, p_cpf)
      set l_passaporte_numero    = .CreateParameter("l_passaporte_numero",   adVarchar, adParamInput,  20, tvl(p_passaporte_numero))
      set l_sq_pais_passaporte   = .CreateParameter("l_sq_pais_passaporte",  adInteger, adParamInput,    , tvl(p_sq_pais_passaporte))
-
+     set l_chave_nova           = .CreateParameter("l_chave_nova",          adInteger, adParamOutput,   , null)
+     
      .parameters.Append         l_Operacao
      .parameters.Append         l_Cliente
      .parameters.Append         l_Chave
@@ -78,16 +80,18 @@ Sub DML_PutCVIdent(Operacao, p_cliente, p_chave, p_nome, p_nome_resumido, p_nasc
      .parameters.Append         l_cpf
      .parameters.Append         l_passaporte_numero
      .parameters.Append         l_sq_pais_passaporte
-     
-     'Response.Write "{"&l_Operacao&"}{"&l_Cliente&"}{"&l_Chave&"}{"&l_nome&"}{"&l_nome_resumido&"}{"&l_nascimento&"}{"&l_sexo&"}{"&l_sq_estado_civil&"}{"&l_sq_formacao&"}{"&l_sq_etnia&"}{"&l_sq_deficiencia&"}{"&l_cidade&"}{"&l_rg_numero&"}{"&l_rg_emissor&"}{"&l_rg_emissao&"}{"&l_cpf&"}{"&l_passaporte_numero&"}{"&l_sq_pais_passaporte&"}"
-	 'Response.End()
-	 
+     .parameters.Append         l_chave_nova
+     If Session("dbms") = 1 or Session("dbms") = 3 Then .Properties("PLSQLRSet") = TRUE End If
      .CommandText               = Session("schema") & "SP_PutCVIdent"
-     On Error Resume Next
+     'On Error Resume Next
      .Execute
      If Err.Description > "" Then 
         TrataErro
      End If
+     'Response.Write "!["&l_chave_nova.Value&"]!"
+     'Response.End()
+     p_chave_nova = l_chave_nova.Value
+     If Session("dbms") = 1 or Session("dbms") = 3 Then .Properties("PLSQLRSet") = FALSE End If
      .parameters.Delete         "l_Operacao"
      .parameters.Delete         "l_Cliente"
      .parameters.Delete         "l_Chave"
@@ -109,6 +113,7 @@ Sub DML_PutCVIdent(Operacao, p_cliente, p_chave, p_nome, p_nome_resumido, p_nasc
      .parameters.Delete         "l_cpf"
      .parameters.Delete         "l_passaporte_numero"
      .parameters.Delete         "l_sq_pais_passaporte"
+     .parameters.Delete         "l_chave_nova"
   end with
 End Sub
 REM =========================================================================
@@ -584,6 +589,83 @@ Sub DML_PutCVCargo(Operacao, p_chave, p_sq_cvpesexp, p_sq_area_conhecimento, _
      .parameters.Delete         "l_especialidades"
      .parameters.Delete         "l_inicio"
      .parameters.Delete         "l_fim"
+  end with
+End Sub
+REM =========================================================================
+REM Final da rotina
+REM -------------------------------------------------------------------------
+
+REM =========================================================================
+REM Mantém os dados do contrato de um colaborador
+REM -------------------------------------------------------------------------
+Sub DML_PutGPContrato(Operacao, p_cliente, p_chave, p_sq_pessoa, p_sq_posto_trabalho, p_sq_modalidade_contrato,  _
+                      p_sq_unidade_lotacao, p_sq_unidade_exercicio, p_sq_localizacao, p_matricula, p_inicio, p_fim, p_tipo_vinculo)
+
+  Dim l_Operacao, l_cliente, l_chave, l_sq_pessoa, l_sq_posto_trabalho, l_sq_modalidade_contrato
+  Dim l_sq_unidade_lotacao, l_sq_unidade_exercicio, l_sq_localizacao, l_matricula, l_inicio, l_fim, l_tipo_vinculo
+  
+  Set l_Operacao                = Server.CreateObject("ADODB.Parameter")
+  Set l_cliente                 = Server.CreateObject("ADODB.Parameter") 
+  Set l_chave                   = Server.CreateObject("ADODB.Parameter") 
+  Set l_sq_pessoa               = Server.CreateObject("ADODB.Parameter")
+  Set l_sq_posto_trabalho       = Server.CreateObject("ADODB.Parameter")
+  Set l_sq_modalidade_contrato  = Server.CreateObject("ADODB.Parameter")  
+  Set l_sq_unidade_lotacao      = Server.CreateObject("ADODB.Parameter") 
+  Set l_sq_unidade_exercicio    = Server.CreateObject("ADODB.Parameter") 
+  Set l_sq_localizacao          = Server.CreateObject("ADODB.Parameter") 
+  Set l_matricula               = Server.CreateObject("ADODB.Parameter") 
+  Set l_inicio                  = Server.CreateObject("ADODB.Parameter") 
+  Set l_fim                     = Server.CreateObject("ADODB.Parameter")
+  Set l_tipo_vinculo            = Server.CreateObject("ADODB.Parameter")
+  
+  with sp
+     set l_Operacao               = .CreateParameter("l_operacao",               adVarchar, adParamInput,   1, Operacao)
+     set l_cliente                = .CreateParameter("l_cliente",                adInteger, adParamInput,    , tvl(p_cliente))
+     set l_chave                  = .CreateParameter("l_chave",                  adInteger, adParamInput,    , tvl(p_chave))
+     set l_sq_pessoa              = .CreateParameter("l_sq_pessoa",              adInteger, adParamInput,    , tvl(p_sq_pessoa))
+     set l_sq_posto_trabalho      = .CreateParameter("l_sq_posto_trabalho",      adInteger, adParamInput,    , tvl(p_sq_posto_trabalho))
+     set l_sq_modalidade_contrato = .CreateParameter("l_sq_modalidade_contrato", adInteger, adParamInput,    , tvl(p_sq_modalidade_contrato))
+     set l_sq_unidade_lotacao     = .CreateParameter("l_sq_unidade_lotacao",     adInteger, adParamInput,    , tvl(p_sq_unidade_lotacao))
+     set l_sq_unidade_exercicio   = .CreateParameter("l_sq_unidade_exercicio",   adInteger, adParamInput,    , tvl(p_sq_unidade_exercicio))
+     set l_sq_localizacao         = .CreateParameter("l_sq_localizacao",         adInteger, adParamInput,    , tvl(p_sq_localizacao))
+     set l_matricula              = .CreateParameter("l_matricula",              adVarchar, adParamInput,  20, tvl(p_matricula))
+     set l_inicio                 = .CreateParameter("l_inicio",                 adDate,    adParamInput,    , tvl(p_inicio))
+     set l_fim                    = .CreateParameter("l_fim",                    adDate,    adParamInput,    , tvl(p_fim))
+     set l_tipo_vinculo           = .CreateParameter("l_tipo_vinculo",           adInteger, adParamInput,    , tvl(p_tipo_vinculo))
+
+     .parameters.Append         l_Operacao
+     .parameters.Append         l_cliente
+     .parameters.Append         l_chave
+     .parameters.Append         l_sq_pessoa
+     .parameters.Append         l_sq_posto_trabalho
+     .parameters.Append         l_sq_modalidade_contrato
+     .parameters.Append         l_sq_unidade_lotacao
+     .parameters.Append         l_sq_unidade_exercicio
+     .parameters.Append         l_sq_localizacao
+     .parameters.Append         l_matricula
+     .parameters.Append         l_inicio
+     .parameters.Append         l_fim
+     .parameters.Append         l_tipo_vinculo
+
+     .CommandText               = Session("schema") & "SP_PutGPContrato"
+     'On Error Resume Next
+     .Execute
+     If Err.Description > "" Then 
+        TrataErro
+     End If
+     .parameters.Delete         "l_Operacao"
+     .parameters.Delete         "l_cliente"
+     .parameters.Delete         "l_chave"
+     .parameters.Delete         "l_sq_pessoa"
+     .parameters.Delete         "l_sq_posto_trabalho"
+     .parameters.Delete         "l_sq_modalidade_contrato"
+     .parameters.Delete         "l_sq_unidade_lotacao"
+     .parameters.Delete         "l_sq_unidade_exercicio"
+     .parameters.Delete         "l_sq_localizacao"
+     .parameters.Delete         "l_matricula"
+     .parameters.Delete         "l_inicio"
+     .parameters.Delete         "l_fim"
+     .parameters.Delete         "l_tipo_vinculo"
   end with
 End Sub
 REM =========================================================================

@@ -122,7 +122,7 @@ w_cliente         = RetornaCliente()
 w_usuario         = RetornaUsuario()
 w_menu            = P2
 'w_menu            = RetornaMenu(w_cliente, SG)
-w_ano             = 2005 
+w_ano             = Session("ANO") 
 
 ' Verifica se o documento tem sub-menu. Se tiver, agrega no HREF uma chamada para montagem do mesmo.
 DB_GetLinkSubMenu RS, Session("p_cliente"), SG
@@ -226,7 +226,7 @@ Sub Gerencial
      End If
      If p_sq_isprojeto > ""  Then 
         DB_GetProjeto_IS RS, p_sq_isprojeto, w_cliente, null, null, null, null, null, null, null, null, null, null, null, null
-        w_filtro = w_filtro & "<tr valign=""top""><td align=""right""><font size=1>Plano/projeto específico<td><font size=1>[<b>" & RS("nome") & "</b>]"
+        w_filtro = w_filtro & "<tr valign=""top""><td align=""right""><font size=1>Programa interno<td><font size=1>[<b>" & RS("nome") & "</b>]"
      End If
      If p_chave       > ""  Then w_filtro = w_filtro & "<tr valign=""top""><td align=""right""><font size=1>Ação nº <td><font size=1>[<b>" & p_chave & "</b>]" End If
      If p_prazo       > ""  Then w_filtro = w_filtro & " <tr valign=""top""><td align=""right""><font size=1>Prazo para conclusão até<td><font size=1>[<b>" & FormatDateTime(DateAdd("d",p_prazo,Date()),1) & "</b>]" End If
@@ -259,50 +259,50 @@ Sub Gerencial
 
      Select case p_agrega
         Case "GRISAACAO"
-           DB_GetSolicList_IS RS1, P2, w_usuario, p_agrega, 5, _
+           DB_GetSolicList_IS RS1, P2, w_usuario, p_agrega, 3, _
               p_ini_i, p_ini_f, p_fim_i, p_fim_f, p_atraso, p_solicitante, _
               p_unidade, null,  p_qtd_restricao, p_proponente, p_chave, p_assunto, _
               null, null, null, null, p_usu_resp, p_uorg_resp, p_palavra, _
-              p_prazo, p_fase, null, null, Mid(p_sq_acao_ppa,1,4), Mid(p_sq_acao_ppa,5,4), p_sq_isprojeto, Mid(p_sq_acao_ppa,9,4)
+              p_prazo, p_fase, null, null, Mid(p_sq_acao_ppa,1,4), Mid(p_sq_acao_ppa,5,4), p_sq_isprojeto, Mid(p_sq_acao_ppa,9,4), w_ano
            w_TP = TP & " - Por ação"
            RS1.sort = "titulo"
         Case "GRISAPROP"
-           DB_GetSolicList_IS RS1, P2, w_usuario, p_agrega, 5, _
+           DB_GetSolicList_IS RS1, P2, w_usuario, p_agrega, 3, _
               p_ini_i, p_ini_f, p_fim_i, p_fim_f, p_atraso, p_solicitante, _
               p_unidade, null,  p_qtd_restricao, p_proponente, p_chave, p_assunto, _
               null, null, null, null, p_usu_resp, p_uorg_resp, p_palavra, _
-              p_prazo, p_fase, null, null, Mid(p_sq_acao_ppa,1,4), Mid(p_sq_acao_ppa,5,4), p_sq_isprojeto, Mid(p_sq_acao_ppa,9,4)
+              p_prazo, p_fase, null, null, Mid(p_sq_acao_ppa,1,4), Mid(p_sq_acao_ppa,5,4), p_sq_isprojeto, Mid(p_sq_acao_ppa,9,4), w_ano
            w_TP = TP & " - Por parcerias externas"
            RS1.Filter = "proponente <> null"
            RS1.sort = "proponente"
         Case "GRISARESP"
-          DB_GetSolicList_IS RS1, P2, w_usuario, p_agrega, 5, _
+          DB_GetSolicList_IS RS1, P2, w_usuario, p_agrega, 3, _
               p_ini_i, p_ini_f, p_fim_i, p_fim_f, p_atraso, p_solicitante, _
               p_unidade, null,  p_qtd_restricao, p_proponente, p_chave, p_assunto, _
               null, null, null, null, p_usu_resp, p_uorg_resp, p_palavra, _
-              p_prazo, p_fase, null, null, Mid(p_sq_acao_ppa,1,4), Mid(p_sq_acao_ppa,5,4), p_sq_isprojeto, Mid(p_sq_acao_ppa,9,4)
+              p_prazo, p_fase, null, null, Mid(p_sq_acao_ppa,1,4), Mid(p_sq_acao_ppa,5,4), p_sq_isprojeto, Mid(p_sq_acao_ppa,9,4), w_ano
            w_TP = TP & " - Por responsável"
            RS1.sort = "nm_solic"
         Case "GRISARESPATU"
-           DB_GetSolicList_IS RS1, P2, w_usuario, p_agrega, 5, _
+           DB_GetSolicList_IS RS1, P2, w_usuario, p_agrega, 3, _
               p_ini_i, p_ini_f, p_fim_i, p_fim_f, p_atraso, p_solicitante, _
               p_unidade, null,  p_qtd_restricao, p_proponente, p_chave, p_assunto, _
               null, null, null, null, p_usu_resp, p_uorg_resp, p_palavra, _
-              p_prazo, p_fase, null, null,  Mid(p_sq_acao_ppa,1,4), Mid(p_sq_acao_ppa,5,4), p_sq_isprojeto, Mid(p_sq_acao_ppa,9,4)
+              p_prazo, p_fase, null, null,  Mid(p_sq_acao_ppa,1,4), Mid(p_sq_acao_ppa,5,4), p_sq_isprojeto, Mid(p_sq_acao_ppa,9,4), w_ano
            w_TP = TP & " - Por executor"
            RS1.Filter = "executor <> null"
            RS1.sort = "nm_exec"
         Case "GRISASETOR"
            w_TP = TP & " - Por setor área de planejamento"
-           DB_GetSolicList_IS RS1, P2, w_usuario, p_agrega, 5, _
+           DB_GetSolicList_IS RS1, P2, w_usuario, p_agrega, 3, _
               p_ini_i, p_ini_f, p_fim_i, p_fim_f, p_atraso, p_solicitante, _
               p_unidade, null,  p_qtd_restricao, p_proponente, p_chave, p_assunto, _
               null, null, null, null, p_usu_resp, p_uorg_resp, p_palavra, _
-              p_prazo, p_fase, null, null, Mid(p_sq_acao_ppa,1,4), Mid(p_sq_acao_ppa,5,4), p_sq_isprojeto, Mid(p_sq_acao_ppa,9,4)
+              p_prazo, p_fase, null, null, Mid(p_sq_acao_ppa,1,4), Mid(p_sq_acao_ppa,5,4), p_sq_isprojeto, Mid(p_sq_acao_ppa,9,4), w_ano
            RS1.sort = "nm_unidade_resp"
         'Case "GRPRINTER" 
         '   w_TP = TP & " - Por interessado"
-        '   DB_GetSolicGRI RS1, P2, w_usuario, p_agrega, 5, _
+        '   DB_GetSolicGRI RS1, P2, w_usuario, p_agrega, 3, _
         '        p_ini_i, p_ini_f, p_fim_i, p_fim_f, p_atraso, p_solicitante, _
         '        p_unidade, null, p_ativo, p_proponente, _
         '        p_chave, p_assunto, null, null, null, null, p_usu_resp, _
@@ -315,7 +315,7 @@ Sub Gerencial
      HeaderWord null
      w_pag   = 1
      w_linha = 0
-     ShowHTML "<BASE HREF=""http://" & Request.ServerVariables("server_name") & "/siw/"">"
+     ShowHTML "<BASE HREF=""" & conRootSIW & """>"
      CabecalhoWord w_cliente, w_TP, w_pag
      
      If w_filtro > "" Then ShowHTML w_filtro End If
@@ -354,7 +354,7 @@ Sub Gerencial
         ShowHTML "<TITLE>" & w_TP & "</TITLE>"
      End If
      ShowHTML "</HEAD>"
-     ShowHTML "<BASE HREF=""http://" & Request.ServerVariables("server_name") & "/siw/"">"
+     ShowHTML "<BASE HREF=""" & conRootSIW & """>"
       If w_Troca > "" Then ' Se for recarga da página
         BodyOpen "onLoad='document.Form." & w_Troca & ".focus();'"
      ElseIf InStr("P",O) > 0 Then
@@ -433,9 +433,9 @@ Sub Gerencial
          ShowHTML "    document.Form.submit();"
          ShowHTML "  }"
          ShowHTML "</SCRIPT>"
-         ShowHTML "<BASE HREF=""http://" & Request.ServerVariables("server_name") & "/siw/"">"
+         ShowHTML "<BASE HREF=""" & conRootSIW & """>"
          DB_GetMenuData RS2, P2
-         AbreForm "Form", RS2("link"), "POST", "return(Validacao(this));", "Lista",5,P2,RS2("P3"),null,w_TP,RS2("sigla"), w_dir&w_pagina & par,"L"
+         AbreForm "Form", RS2("link"), "POST", "return(Validacao(this));", "Lista",3,P2,RS2("P3"),null,w_TP,RS2("sigla"), w_dir&w_pagina & par,"L"
          ShowHTML MontaFiltro("POST")
          Select case p_agrega
             Case "GRISAACAO"    If Request("p_acao") = ""        Then ShowHTML "<input type=""Hidden"" name=""p_acao"" value="""">"       End If
@@ -687,10 +687,10 @@ Sub Gerencial
     
     If RS1.RecordCount > 0 and p_tipo = "N" Then ' Coloca o gráfico somente se o usuário desejar
        ShowHTML "<tr><td align=""center"" height=20>"
-       ShowHTML "<tr><td align=""center""><IMG SRC=""" & w_dir & "GeraGrafico.php?p_genero=F&p_objeto=" & RS_Menu("nome") & "&p_tipo="&SG&"&p_grafico=Barra&p_tot="&t_totsolic&"&p_cad="&t_totcad&"&p_tram="&t_tottram&"&p_conc="&t_totconc&"&p_atraso="&t_totatraso&"&p_aviso="&t_totaviso&"&p_acima="&t_totacima&""">"       
+       ShowHTML "<tr><td align=""center""><IMG SRC=""" & conPHP4 & w_dir & "geragrafico.php?p_genero=F&p_objeto=" & RS_Menu("nome") & "&p_tipo="&SG&"&p_grafico=Barra&p_tot="&t_totsolic&"&p_cad="&t_totcad&"&p_tram="&t_tottram&"&p_conc="&t_totconc&"&p_atraso="&t_totatraso&"&p_aviso="&t_totaviso&"&p_acima="&t_totacima&""">"       
        ShowHTML "<tr><td align=""center"" height=20>"
        If (t_totcad + t_tottram) > 0 Then
-          ShowHTML "<tr><td align=""center""><IMG SRC=""" & w_dir & "GeraGrafico.php?p_genero=F&p_objeto=" & RS_Menu("nome") & "&p_tipo="&SG&"&p_grafico=Pizza&p_tot="&t_totsolic&"&p_cad="&t_totcad&"&p_tram="&t_tottram&"&p_conc="&t_totconc&"&p_atraso="&t_totatraso&"&p_aviso="&t_totaviso&"&p_acima="&t_totacima&""">"       
+          ShowHTML "<tr><td align=""center""><IMG SRC=""" & conPHP4 & w_dir & "geragrafico.php?p_genero=F&p_objeto=" & RS_Menu("nome") & "&p_tipo="&SG&"&p_grafico=Pizza&p_tot="&t_totsolic&"&p_cad="&t_totcad&"&p_tram="&t_tottram&"&p_conc="&t_totconc&"&p_atraso="&t_totatraso&"&p_aviso="&t_totaviso&"&p_acima="&t_totacima&""">"       
        End If
     End If
     
@@ -725,7 +725,7 @@ Sub Gerencial
     SelecaoAcaoPPA "<u>A</u>ção PPA:", "A", null, w_cliente, w_ano, null, null, null, null, "p_sq_acao_ppa", "CONSULTA", null, null, w_menu
     ShowHTML "          </table>"   
     ShowHTML "      <tr><td colspan=2><table border=0 width=""90%"" cellspacing=0><tr valign=""top"">"
-    SelecaoIsProjeto "<u>P</u>lano/projeto específico:", "P", null, p_sq_isprojeto, null, "p_sq_isprojeto", null, null
+    SelecaoIsProjeto "<u>P</u>rograma interno:", "P", null, p_sq_isprojeto, null, "p_sq_isprojeto", null, null
     ShowHTML "          <td valign=""top""><font size=""1""><b>Exibe somente ações com restrição?</b><br>"
     If p_qtd_restricao = "S" Then
        ShowHTML "              <input " & w_Disabled & " class=""STR"" type=""radio"" name=""p_qtd_restricao"" value=""S"" checked> Sim <input " & w_Disabled & " class=""STR"" class=""STR"" type=""radio"" name=""p_qtd_restricao"" value=""N""> Não"
@@ -739,7 +739,7 @@ Sub Gerencial
     ShowHTML "          <td valign=""top""><font size=""1""><b>Dias para a data limi<U>t</U>e:<br><INPUT ACCESSKEY=""T"" " & w_Disabled & " class=""STI"" type=""text"" name=""p_prazo"" size=""2"" maxlength=""2"" value=""" & p_prazo & """></td>"
     ShowHTML "      <tr valign=""top"">"
     SelecaoPessoa "Respo<u>n</u>sável monitoramento:", "N", "Selecione o responsável pelo monitoramento da ação na relação.", p_solicitante, null, "p_solicitante", "USUARIOS"
-    SelecaoUnidade "Área planejamento:", "Y", null, p_unidade, null, "p_unidade", null, null
+    SelecaoUnidade_IS "Área planejamento:", null, "Selecione a unidade responsável pela ação.", p_unidade, null, "p_unidade", null, "PLANEJAMENTO"
     ShowHTML "      <tr valign=""top"">"
     SelecaoPessoa "E<u>x</u>ecutor:", "X", "Selecione o executor da ação na relação.", p_usu_resp, null, "p_usu_resp", "USUARIOS"
     SelecaoUnidade "Setor atual:", "Y", "Selecione a unidade onde a ação se encontra na relação.", p_uorg_resp, null, "p_uorg_resp", null, null

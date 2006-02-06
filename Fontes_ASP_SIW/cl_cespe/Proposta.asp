@@ -362,7 +362,7 @@ Sub Inicial
   ValidateClose
   ScriptClose
   ShowHTML "</HEAD>"
-  ShowHTML "<BASE HREF=""http://" & Request.ServerVariables("server_name") & "/siw/"">"
+  ShowHTML "<BASE HREF=""" & conRootSIW & """>"
   If w_Troca > "" Then ' Se for recarga da página
      BodyOpen "onLoad='document.Form." & w_Troca & ".focus();'"
   ElseIf O = "I" Then
@@ -781,7 +781,7 @@ Sub OutraParte
   ValidateClose
   ScriptClose
   ShowHTML "</HEAD>"
-  ShowHTML "<BASE HREF=""http://" & Request.ServerVariables("server_name") & "/siw/"">"
+  ShowHTML "<BASE HREF=""" & conRootSIW & """>"
   If (w_cpf = "" and w_cnpj = "") or Instr(Request("botao"),"Alterar") > 0 or Instr(Request("botao"),"Procurar") > 0 Then ' Se o beneficiário ainda não foi selecionado
      If Instr(Request("botao"),"Procurar") > 0 Then ' Se está sendo feita busca por nome
         BodyOpen "onLoad='document.focus()';"
@@ -1082,7 +1082,7 @@ Sub Preposto
   ' Se acordo com pessoa física, não permite a inclusão dos dados do preposto
   If cDbl(w_sq_tipo_pessoa) = 1 Then
      Cabecalho
-     ShowHTML "<BASE HREF=""http://" & Request.ServerVariables("server_name") & "/siw/"">"
+     ShowHTML "<BASE HREF=""" & conRootSIW & """>"
      BodyOpen "onLoad='document.focus()';"
      ShowHTML "<B><FONT COLOR=""#000000"">" & w_TP & "</FONT></B>"
      ShowHTML "<HR>"
@@ -1174,7 +1174,7 @@ Sub Preposto
   ValidateClose
   ScriptClose
   ShowHTML "</HEAD>"
-  ShowHTML "<BASE HREF=""http://" & Request.ServerVariables("server_name") & "/siw/"">"
+  ShowHTML "<BASE HREF=""" & conRootSIW & """>"
   If w_cpf = "" or Instr(Request("botao"),"Alterar") > 0 or Instr(Request("botao"),"Procurar") > 0 Then ' Se o beneficiário ainda não foi selecionado
      If Instr(Request("botao"),"Procurar") > 0 Then ' Se está sendo feita busca por nome
         BodyOpen "onLoad='document.focus()';"
@@ -1375,7 +1375,7 @@ Sub Representante
   w_sq_pessoa = RS("sq_pessoa")
   ' Se acordo com pessoa física, não permite a inclusão dos dados do preposto
   If cDbl(w_sq_tipo_pessoa) = 1 Then
-     ShowHTML "<BASE HREF=""http://" & Request.ServerVariables("server_name") & "/siw/"">"
+     ShowHTML "<BASE HREF=""" & conRootSIW & """>"
      BodyOpen "onLoad='document.focus()';"
      ShowHTML "<center>"
      Estrutura_Topo_Limpo
@@ -1496,9 +1496,9 @@ Sub Representante
      ValidateClose
      ScriptClose
      ShowHTML "</HEAD>"
-     ShowHTML "<BASE HREF=""http://" & Request.ServerVariables("server_name") & "/siw/"">"
+     ShowHTML "<BASE HREF=""" & conRootSIW & """>"
   End If
-  ShowHTML "<BASE HREF=""http://" & Request.ServerVariables("server_name") & "/siw/"">"
+  ShowHTML "<BASE HREF=""" & conRootSIW & """>"
   If InStr("IA",O) > 0 and (w_cpf = "" or Instr(Request("botao"),"Alterar") > 0 or Instr(Request("botao"),"Procurar") > 0) Then ' Se o beneficiário ainda não foi selecionado
      If Instr(Request("botao"),"Procurar") > 0 Then ' Se está sendo feita busca por nome
         BodyOpen "onLoad='document.focus()';"
@@ -1789,11 +1789,11 @@ Sub Passagens
   Else
      If O = "L" Then
         ' Recupera as passagens e viajantes
-        DB_GetViagemBenef RS, w_chave, w_cliente, null, null, null, null
+        DB_GetViagemBenef RS, w_chave, w_cliente, null, null, null, null, null, null, null
         RS.Sort = "nm_pessoa"
      ElseIf Instr(w_botao,"Alterar") = 0 and Instr(w_botao,"Procurar") = 0 and (O = "A" or w_sq_pessoa > "" or w_cpf > "") Then
         ' Recupera os dados do beneficiário em co_pessoa
-        DB_GetViagemBenef RS, w_chave, w_cliente, w_sq_pessoa, null, w_cpf, null
+        DB_GetViagemBenef RS, w_chave, w_cliente, w_sq_pessoa, null, w_cpf, null, null, null, null
         If Not RS.EOF Then
            w_sq_pessoa            = RS("sq_pessoa")
            w_nome                 = RS("nm_pessoa")
@@ -1932,7 +1932,7 @@ Sub Passagens
      ScriptClose
      ShowHTML "</HEAD>"
   End If
-  ShowHTML "<BASE HREF=""http://" & Request.ServerVariables("server_name") & "/siw/"">"
+  ShowHTML "<BASE HREF=""" & conRootSIW & """>"
   If InStr("IA",O) > 0 and (w_cpf = "" or Instr(w_botao,"Alterar") > 0 or Instr(w_botao,"Procurar") > 0) Then ' Se o beneficiário ainda não foi selecionado
      If Instr(w_botao,"Procurar") > 0 Then ' Se está sendo feita busca por nome
         BodyOpen "onLoad='document.focus()';"
@@ -2052,7 +2052,7 @@ Sub Passagens
        ShowHTML "              <INPUT class=""stb"" TYPE=""submit"" NAME=""Botao"" VALUE=""Procurar"" onClick=""Botao.value=this.value; w_botao.value=Botao.value; document.Form.action='" & w_dir & w_Pagina & par &"'"">"
        ShowHTML "      </table>"
        If w_nome > "" Then
-          DB_GetViagemBenef RS, null, w_cliente, null, null, w_cpf, w_nome
+          DB_GetViagemBenef RS, null, w_cliente, null, null, w_cpf, w_nome, null, null, null
           RS.Sort = "nm_pessoa"
           ShowHTML "<tr><td colspan=3>"
           ShowHTML "    <TABLE WIDTH=""100%"" bgcolor=""" & conTableBgColor & """ BORDER=""" & conTableBorder & """ CELLSPACING=""" & conTableCellSpacing & """ CELLPADDING=""" & conTableCellPadding & """ BorderColorDark=""" & conTableBorderColorDark & """ BorderColorLight=""" & conTableBorderColorLight & """>"
@@ -2268,7 +2268,7 @@ Sub Visual
   ShowHTML "<HEAD>"
   ShowHTML "<TITLE>" & conSgSistema & " - Visualização de projeto</TITLE>"
   ShowHTML "</HEAD>"  
-  ShowHTML "<BASE HREF=""http://" & Request.ServerVariables("server_name") & "/siw/"">"
+  ShowHTML "<BASE HREF=""" & conRootSIW & """>"
   If w_tipo <> "WORD" Then
      BodyOpenClean "onLoad='document.focus()'; "
   End If
@@ -2334,7 +2334,7 @@ Sub VisualForm
   ShowHTML "<HEAD>"
   ShowHTML "<TITLE>" & conSgSistema & " - Formulário de Consessão de Passagens</TITLE>"
   ShowHTML "</HEAD>"  
-  ShowHTML "<BASE HREF=""http://" & Request.ServerVariables("server_name") & "/siw/"">"
+  ShowHTML "<BASE HREF=""" & conRootSIW & """>"
   If w_tipo <> "WORD" Then
      BodyOpenClean "onLoad='document.focus()'; "
   End If
@@ -2429,7 +2429,7 @@ Sub Encaminhamento
      ScriptClose
   End If
   ShowHTML "</HEAD>"
-  ShowHTML "<BASE HREF=""http://" & Request.ServerVariables("server_name") & "/siw/"">"
+  ShowHTML "<BASE HREF=""" & conRootSIW & """>"
   If w_troca > "" Then
      BodyOpen "onLoad='document.Form." & w_troca & ".focus()';"
   Else
@@ -2667,7 +2667,7 @@ Public Sub Grava
   Dim w_cpf, w_sq_pessoa, w_o
 
   ShowHTML "<HTML>"
-  ShowHTML "<BASE HREF=""http://" & Request.ServerVariables("server_name") & "/siw/"">"
+  ShowHTML "<BASE HREF=""" & conRootSIW & """>"
   BodyOpen "onLoad=document.focus();"
   
   AbreSessao    
@@ -2831,8 +2831,8 @@ Public Sub Grava
            End If
            
            DML_PutViagemBenef w_o, null, Request("w_chave"), Request("w_chave_aux"), _
-               w_sq_pessoa, w_cpf, Request("w_nome"), _
-               Request("w_nome_resumido"), Request("w_sexo"),  Request("w_rg_numero"), Request("w_rg_emissao"), Request("w_rg_emissor"), _
+               w_sq_pessoa, w_cpf, replace(Request("w_nome"),"'","´"), _
+               replace(Request("w_nome_resumido"),"'","´"), Request("w_sexo"),  Request("w_rg_numero"), Request("w_rg_emissao"), Request("w_rg_emissor"), _
                Request("w_ddd"), Request("w_nr_telefone"), Request("w_nr_fax"), _
                Request("w_passaporte_numero"), Request("w_sq_pais_passaporte"), Request("w_data_saida"), _
                Request("w_data_volta"), Request("w_valor"), Request("w_sq_cidade_origem"), Request("w_sq_cidade_destino"), _
@@ -2889,7 +2889,7 @@ Sub Main
        ShowHTML "<meta http-equiv=""Refresh"" content=""300; URL=" & replace(MontaURL("MESA"),w_dir,"") & """>"
        Estrutura_CSS w_cliente
        ShowHTML "</HEAD>"
-       ShowHTML "<BASE HREF=""http://" & Request.ServerVariables("server_name") & "/siw/"">"
+       ShowHTML "<BASE HREF=""" & conRootSIW & """>"
 
        BodyOpen "onLoad=document.focus();"
        ShowHTML "<center>"

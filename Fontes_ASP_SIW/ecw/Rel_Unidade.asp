@@ -3,6 +3,7 @@
 <!-- #INCLUDE VIRTUAL="/siw/Constants.inc" -->
 <!-- #INCLUDE VIRTUAL="/siw/jScript.asp" -->
 <!-- #INCLUDE VIRTUAL="/siw/Funcoes.asp" -->
+<!-- #INCLUDE VIRTUAL="/siw/DB_Geral.asp" -->
 <!-- #INCLUDE FILE="Funcoes.asp" -->
 <!-- #INCLUDE FILE="DB_Geral.asp" -->
 <!-- #INCLUDE FILE="DB_Tipo_Curso.asp" -->
@@ -208,7 +209,7 @@ Sub Inicial
         ScriptClose
      End If
      ShowHTML "</HEAD>"
-     ShowHTML "<BASE HREF=""http://" & Request.ServerVariables("server_name") & "/siw/"">"
+     ShowHTML "<BASE HREF=""" & conRootSIW & """>"
      If O = "L" or O = "W" Then
         BodyOpenClean "onLoad=document.focus();"
      Else
@@ -406,7 +407,7 @@ Sub Inicial
        MontaBarra w_dir&w_pagina&par&"&R="&w_Pagina&par&"&O="&O&"&P1="&P1&"&P2="&P2&"&TP="&TP&"&SG="&SG, RS1.PageCount, P3, P4, RS1.RecordCount
        ShowHTML "</tr>"
     End If
-    DesConectaBD     
+         
   ElseIf Instr("P",O) > 0 Then
     AbreForm "Form", w_Dir&w_Pagina&par, "POST", "return(Validacao(this));", "RelDuplic",P1,P2,P3,null,TP,SG,R,"L"
     ShowHTML "<tr bgcolor=""" & conTrBgColor & """><td><div align=""justify""><font size=2>Informe nos campos abaixo os valores que deseja filtrar e clique sobre o botão <i>Visualizar</i> para exibir a relação na tela ou sobre <i>Gerar Word</i> para gerar um arquivo no formato Word. Clicando sobre o botão <i>Remover filtro</i>, o filtro existente será apagado.</div><hr>"

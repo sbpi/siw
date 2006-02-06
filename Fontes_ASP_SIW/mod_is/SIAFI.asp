@@ -76,7 +76,7 @@ O                = uCase(Request("O"))
 w_cliente         = RetornaCliente()
 w_usuario         = RetornaUsuario()
 w_menu            = RetornaMenu(w_cliente, SG)
-w_ano        = 2005
+w_ano             = Session("ANO")
 
 ' Configura o caminho para gravação física de arquivos
 w_caminho = conFilePhysical & w_cliente & "\"
@@ -256,7 +256,7 @@ Sub Inicial
      ScriptClose
   End If
   ShowHTML "</HEAD>"
-  ShowHTML "<BASE HREF=""http://" & Request.ServerVariables("server_name") & "/siw/"">"
+  ShowHTML "<BASE HREF=""" & conRootSIW & """>"
   If w_troca > "" Then
      BodyOpen "onLoad='document.Form." & w_troca & ".focus()';"
   ElseIf Instr("I",O) > 0 Then
@@ -380,7 +380,7 @@ REM Exibe orientações sobre o processo de importação
 REM -------------------------------------------------------------------------
 Sub Help
   Cabecalho
-  ShowHTML "<BASE HREF=""http://" & Request.ServerVariables("server_name") & "/siw/"">"
+  ShowHTML "<BASE HREF=""" & conRootSIW & """>"
   BodyOpen "onLoad='document.focus()';"
   ShowHTML "<B><FONT COLOR=""#000000"">" & w_TP & "</FONT></B>"
   ShowHTML "<HR>"
@@ -640,7 +640,7 @@ Sub Main
        Grava
     Case Else
        Cabecalho
-       ShowHTML "<BASE HREF=""http://" & Request.ServerVariables("server_name") & "/siw/"">"
+       ShowHTML "<BASE HREF=""" & conRootSIW & """>"
        BodyOpen "onLoad=document.focus();"
        ShowHTML "<B><FONT COLOR=""#000000"">" & w_TP & "</FONT></B>"
        ShowHTML "<HR>"

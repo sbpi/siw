@@ -25,9 +25,6 @@ Sub DML_PutTrigEvento(Operacao, p_chave, p_chave_aux)
       .parameters.Delete  "l_chave_aux"
   end with
 End Sub
-REM =========================================================================
-REM Final da rotina
-REM -------------------------------------------------------------------------
 
 REM =========================================================================
 REM Mantém a tabela de recursos de uma etapa
@@ -55,9 +52,6 @@ Sub DML_PutSPTabs(Operacao, p_chave, p_chave_aux)
       .parameters.Delete  "l_chave_aux"
   end with
 End Sub
-REM =========================================================================
-REM Final da rotina
-REM -------------------------------------------------------------------------
 
 REM =========================================================================
 REM Mantém a tabela de recursos de uma etapa
@@ -85,9 +79,6 @@ Sub DML_PutSPSP(Operacao, p_chave, p_chave_aux)
     .parameters.Delete  "l_chave_aux"
   end with
 End Sub
-REM =========================================================================
-REM Final da rotina
-REM -------------------------------------------------------------------------
 
 REM =========================================================================
 REM Mantém a tabela de recursos de uma etapa
@@ -135,9 +126,6 @@ Sub DML_PutSPParametro(Operacao, p_chave, p_chave_aux, p_sq_dado_tipo, p_nome, p
     .parameters.Delete  "l_ordem"
   end with
 End Sub
-REM =========================================================================
-REM Final da rotina
-REM -------------------------------------------------------------------------
 
 
 REM =========================================================================
@@ -178,9 +166,6 @@ Sub DML_PutSistema(Operacao, p_chave, p_chave_aux, p_nome, p_sigla, p_descricao)
     .parameters.Delete  "l_descricao"
   end with
 End Sub
-REM =========================================================================
-REM Final da rotina
-REM -------------------------------------------------------------------------
 
 REM =========================================================================
 REM Mantém a tabela de tipos de dado
@@ -212,9 +197,6 @@ Sub DML_PutEventoTrigger(Operacao, p_chave, p_nome, p_descricao)
     .parameters.Delete  "l_descricao"
   end with
 End Sub
-REM =========================================================================
-REM Final da rotina
-REM -------------------------------------------------------------------------
 
 REM =========================================================================
 REM Mantém a tabela de Usuarios
@@ -250,9 +232,6 @@ Sub DML_PutUsuario(Operacao, p_chave, p_sq_sistema, p_nome, p_descricao)
     .parameters.Delete  "l_descricao"
   end with
 End Sub
-REM =========================================================================
-REM Final da rotina
-REM -------------------------------------------------------------------------
 
 REM =========================================================================
 REM Mantém a tabela de Arquivos
@@ -296,9 +275,6 @@ Sub DML_PutArquivo(Operacao, p_chave, p_sq_sistema, p_nome, p_descricao, p_tipo,
     .parameters.Delete  "l_diretorio"
   end with
 End Sub
-REM =========================================================================
-REM Final da rotina
-REM -------------------------------------------------------------------------]
 
 REM =========================================================================
 REM Mantém a tabela de Tabelas
@@ -342,9 +318,6 @@ Sub DML_PutTabela(Operacao, p_chave, p_sq_tabela_tipo, p_sq_usuario,p_sq_sistema
     .parameters.Delete  "l_descricao"
   end with
 End Sub
-REM =========================================================================
-REM Final da rotina
-REM -------------------------------------------------------------------------
 
 REM =========================================================================
 REM Mantém a tabela de Colunas
@@ -408,9 +381,6 @@ Sub DML_PutColuna(Operacao, p_chave, p_sq_tabela, p_sq_dado_tipo,p_nome, p_descr
     .parameters.Delete  "l_valor_padrao"
   end with
 End Sub
-REM =========================================================================
-REM Final da rotina
-REM -------------------------------------------------------------------------
 
 REM =========================================================================
 REM Mantém a tabela de Triggers
@@ -454,9 +424,6 @@ Sub DML_PutTrigger (Operacao, p_chave, p_sq_tabela, p_sq_usuario, p_sq_sistema, 
     .parameters.Delete  "l_descricao"
   end with
 End Sub
-REM =========================================================================
-REM Final da rotina
-REM -------------------------------------------------------------------------
 
 
 REM =========================================================================
@@ -501,9 +468,6 @@ Sub DML_PutStoredProcedure (Operacao, p_chave, p_sq_sp_tipo, p_sq_usuario, p_sq_
     .parameters.Delete  "l_descricao"
   end with
 End Sub
-REM =========================================================================
-REM Final da rotina de Stored Procedures
-REM -------------------------------------------------------------------------
 
 REM =========================================================================
 REM Mantém a tabela de Procedure
@@ -547,9 +511,6 @@ Sub DML_PutProcedure (Operacao, p_chave, p_sq_arquivo, p_sq_sistema, p_sq_sp_tip
     .parameters.Delete  "l_descricao"
   end with
 End Sub
-REM =========================================================================
-REM Final da rotina de Procedure
-REM -------------------------------------------------------------------------
 
 REM =========================================================================
 REM Mantém a tabela de Procedure
@@ -593,9 +554,6 @@ Sub DML_PutRelacionamento (Operacao, p_chave, p_nome, p_descricao, p_sq_tabela_p
     .parameters.Delete  "l_sq_sistema"
   end with
 End Sub
-REM =========================================================================
-REM Final da rotina de Relacionamento
-REM -------------------------------------------------------------------------
 
 REM =========================================================================
 REM Mantém a tabela de Índice
@@ -639,7 +597,31 @@ Sub DML_PutIndice (Operacao, p_chave, p_sq_indice_tipo, p_sq_usuario, p_sq_siste
     .parameters.Delete  "l_descricao"
   end with
 End Sub
+
 REM =========================================================================
-REM Final da rotina de Índice
+REM Atualiza o dicionário de dados do usuário indicado
 REM -------------------------------------------------------------------------
+Sub DML_PutDicionario(p_cliente, p_sg_sistema, p_sg_usuario)
+  Dim l_cliente, l_sg_sistema, l_sg_usuario
+  Set l_cliente     = Server.CreateObject("ADODB.Parameter")
+  Set l_sg_sistema  = Server.CreateObject("ADODB.Parameter")
+  Set l_sg_usuario  = Server.CreateObject("ADODB.Parameter") 
+  with sp
+    set l_cliente     = .CreateParameter("l_cliente"   ,  adInteger, adParamInput,     , p_cliente)
+    set l_sg_sistema  = .CreateParameter("l_sg_sistema",  adVarchar, adParamInput,   50, p_sg_sistema)
+    set l_sg_usuario  = .CreateParameter("l_sg_usuario",  adVarchar, adParamInput,   50, p_sg_usuario)
+    .parameters.Append  l_cliente
+    .parameters.Append  l_sg_sistema
+    .parameters.Append  l_sg_usuario
+    .CommandText        = "SYS.SP_PutDicionario"
+    On error Resume Next
+    .Execute
+    If Err.Description > "" Then 
+      TrataErro
+    End If
+    .parameters.Delete  "l_cliente"
+    .parameters.Delete  "l_sg_sistema"
+    .parameters.Delete  "l_sg_usuario"
+  end with
+End Sub
 %>

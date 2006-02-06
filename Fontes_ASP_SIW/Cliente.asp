@@ -684,8 +684,8 @@ REM =========================================================================
 REM Rotina de endereços
 REM -------------------------------------------------------------------------
 Sub Enderecos
-  Dim w_sq_pessoa, w_cpf, w_logradouro, w_cep, w_padrao, w_bairro, w_complemento
-  Dim w_cidade, w_uf, w_pais,w_sq_tipo_endereco,w_sq_pessoa_endereco,w_nome
+  Dim w_cpf, w_logradouro, w_cep, w_padrao, w_bairro, w_complemento
+  Dim w_cidade, w_uf, w_pais,w_sq_tipo_endereco,w_sq_pessoa_endereco,w_nome, w_tipo_pessoa
   Dim w_cgccpf
   
   Dim w_troca
@@ -703,6 +703,8 @@ Sub Enderecos
         DB_GetSiwCliData RS, w_cgccpf
         w_sq_pessoa         = Rs("sq_pessoa")
         DesConectaBD
+     ElseIf Request("w_usuario") > "" Then
+        w_sq_pessoa         = Request("w_usuario")
      Else
         w_sq_pessoa = Session("sq_pessoa")
      End If
@@ -831,7 +833,10 @@ Sub Enderecos
     ShowHTML "</tr>"
     DesconectaBD
   ElseIf Instr("IAEV",O) > 0 Then
-
+    ' Recupera o tipo de pessoa
+    DB_GetBenef RS, w_cliente, w_sq_pessoa, null, null, null, null, null, null
+    w_tipo_pessoa = RS("nm_tipo_pessoa")
+     
     If w_pais = "" Then
        ' Carrega os valores padrão para país, estado e cidade
        DB_GetCustomerData RS, w_sq_pessoa
@@ -869,8 +874,8 @@ Sub Enderecos
        ShowHTML "              <input " & w_Disabled & " class=""str"" type=""radio"" name=""w_padrao"" VALUE=""N"" checked>Não <input " & w_Disabled & " class=""str"" type=""radio"" name=""w_padrao"" VALUE=""S"">Sim"
     Else
        ShowHTML "              <input " & w_Disabled & " class=""str"" type=""radio"" name=""w_padrao"" VALUE=""N"">Não <input " & w_Disabled & " class=""str"" type=""radio"" name=""w_padrao"" VALUE=""S"" checked>Sim"
-    End If
-    SelecaoTipoEndereco "<u>T</u>ipo:", "T", "Selecione na lista o tipo deste endereço.", w_sq_tipo_endereco, null, "w_sq_tipo_endereco", "sq_tipo_pessoa='Jurídica'", null
+    End If  
+    SelecaoTipoEndereco "<u>T</u>ipo:", "T", "Selecione na lista o tipo deste endereço.", w_sq_tipo_endereco, null, "w_sq_tipo_endereco", "sq_tipo_pessoa='" & w_tipo_pessoa & "'", null
     ShowHTML "          </table>"
     If Session("p_portal") = "" Then ShowHTML "      <tr><td align=""LEFT"" colspan=4><font size=""1""><b><U>A</U>ssinatura Eletrônica:<BR> <INPUT ACCESSKEY=""A"" class=""sti"" type=""PASSWORD"" name=""w_assinatura"" size=""30"" maxlength=""30"" value=""""></td></tr>" End If
     ShowHTML "      <tr><td align=""center"" colspan=4><hr>"
@@ -905,13 +910,12 @@ Sub Enderecos
   Rodape
 
 
+  Set w_tipo_pessoa         = Nothing
   Set w_cgccpf              = Nothing
   Set i                     = Nothing
   Set w_troca               = Nothing
   Set w_erro                = Nothing
-  Set w_sq_pessoa           = Nothing 
   Set w_cpf                 = Nothing 
-  Set w_sq_pessoa           = Nothing
   Set w_cpf                 = Nothing
   Set w_logradouro          = Nothing    
   Set w_cep                 = Nothing    
@@ -936,7 +940,7 @@ REM Rotina de telefones
 REM -------------------------------------------------------------------------
 Sub Telefones
   Dim w_sq_pessoa, w_cgccpf, w_sq_pessoa_telefone, w_sq_tipo_telefone, w_ddd
-  Dim w_numero,w_padrao,w_nome, w_pais, w_uf, w_cidade
+  Dim w_numero,w_padrao,w_nome, w_pais, w_uf, w_cidade, w_tipo_pessoa
   
   Dim i
 
@@ -949,6 +953,8 @@ Sub Telefones
         DB_GetSiwCliData RS, w_cgccpf
         w_sq_pessoa         = Rs("sq_pessoa")
         DesConectaBD
+     ElseIf Request("w_usuario") > "" Then
+        w_sq_pessoa = Request("w_usuario")
      Else
         w_sq_pessoa = Session("sq_pessoa")
      End If
@@ -1065,6 +1071,9 @@ Sub Telefones
     ShowHTML "</tr>"
     DesConectaBD
   elseIf Instr("IAEV",O) > 0 Then
+    ' Recupera o tipo de pessoa
+    DB_GetBenef RS, w_cliente, w_sq_pessoa, null, null, null, null, null, null
+    w_tipo_pessoa = RS("nm_tipo_pessoa")
 
     If w_pais = "" Then
        ' Carrega os valores padrão para país, estado e cidade
@@ -1090,7 +1099,7 @@ Sub Telefones
     ShowHTML "      <tr><td valign=""top"" colspan=""2""><table border=0 width=""100%"" cellspacing=0>"
     ShowHTML "          <tr><td valign=""top""><font size=""1""><b><u>D</u>DD:</b><br><input " & w_Disabled & " accesskey=""D"" type=""text"" name=""w_ddd"" class=""sti"" SIZE=""4"" MAXLENGTH=""4"" VALUE=""" & w_ddd & """ title=""Informe o DDD deste número.""></td>"
     ShowHTML "              <td valign=""top""><font size=""1""><b><u>N</u>úmero:</b><br><input " & w_Disabled & " accesskey=""N"" type=""text"" name=""w_numero"" class=""sti"" SIZE=""25"" MAXLENGTH=""25"" VALUE=""" & w_numero & """ title=""Informe o número do telefone.""></td>"
-    SelecaoTipoFone "<u>T</u>ipo:", "T", "Selecione na lista o tipo deste telefone.", w_sq_tipo_telefone, null, "w_sq_tipo_telefone", "sq_tipo_pessoa='Jurídica'", null
+    SelecaoTipoFone "<u>T</u>ipo:", "T", "Selecione na lista o tipo deste telefone.", w_sq_tipo_telefone, null, "w_sq_tipo_telefone", "sq_tipo_pessoa='" & w_tipo_pessoa & "'", null
     ShowHTML "          </table>"
     ShowHTML "      <tr><td valign=""top"" colspan=""2""><table border=0 width=""100%"" cellspacing=0>"
     ShowHTML "      <tr>"
@@ -1139,6 +1148,7 @@ Sub Telefones
   Estrutura_Fecha
   Rodape
 
+  Set w_tipo_pessoa         = Nothing
   Set w_cidade              = Nothing
   Set w_uf                  = Nothing
   Set w_pais                = Nothing
@@ -1179,6 +1189,8 @@ Sub ContasBancarias
         DB_GetSiwCliData RS, w_cgccpf
         w_sq_pessoa         = Rs("sq_pessoa")
         DesConectaBD
+     ElseIf Request("w_usuario") > "" Then
+        w_sq_pessoa = Request("w_usuario")
      Else
         w_sq_pessoa = Session("sq_pessoa")
      End If
@@ -1749,6 +1761,16 @@ Sub Configuracao
     End If
     ShowHTML "          </table>"
 
+    ShowHTML "      <tr><td align=""center"" height=""2"" bgcolor=""#000000""></td></tr>"
+    ShowHTML "      <tr><td align=""center"" height=""1"" bgcolor=""#000000""></td></tr>"
+    ShowHTML "      <tr><td valign=""top"" align=""center"" bgcolor=""#D0D0D0""><font size=""2""><b>Caminho físico da aplicação</td></td></tr>"
+    ShowHTML "      <tr><td align=""center"" height=""1"" bgcolor=""#000000""></td></tr>"
+    ShowHTML "      <tr><td><font size=1>Utilize o caminho abaixo na configuração das constantes <b>conDiretorio</b> e <b>conFilePhysical</b> do arquivo <b>constants.inc</b>.</font></td></tr>"
+    ShowHTML "      <tr><td align=""center"" height=""1"" bgcolor=""#000000""></td></tr>"
+    ShowHTML "      <tr><td valign=""top"" colspan=""2""><table border=0 width=""100%"" cellspacing=0>"
+    ShowHTML "          <tr><td valign=""top""><font size=""1"">Caminho físico: <b>" & Request.ServerVariables("APPL_PHYSICAL_PATH") & "</b></td>"
+    ShowHTML "          </table>"
+
     ShowHTML "      <tr><td align=""LEFT"" colspan=4><font size=""1""><b><U>A</U>ssinatura Eletrônica:<BR> <INPUT ACCESSKEY=""A"" class=""sti"" type=""PASSWORD"" name=""w_assinatura"" size=""30"" maxlength=""30"" value=""""></td></tr>"
     ShowHTML "      <tr><td align=""center"" colspan=""3"" height=""1"" bgcolor=""#000000""></TD></TR>"
 
@@ -2089,7 +2111,15 @@ Public Sub Grava
           ' Se for necessária a alteração dos arquivos
           If ul.Files("w_logo").OriginalPath > "" Then
              ' Grava o novo arquivo
+             On Error Resume Next
              ul.Files("w_logo").SaveAs(conFilePhysical & ul.Form("w_sq_pessoa") & "\img\logo" & Mid(ul.Files("w_logo").OriginalPath,Instr(ul.Files("w_logo").OriginalPath,"."),10))
+             If Err.Number <> 0 Then 
+                ScriptOpen "JavaScript"
+                ShowHTML " alert('Problema na gravação do arquivo \n Caminho a ser gravado: " & Replace(conFilePhysical & ul.Form("w_sq_pessoa") & "\img\logo" & Mid(ul.Files("w_logo").OriginalPath,Instr(ul.Files("w_logo").OriginalPath,"."),10),"\","\\") & "');"
+                ShowHTML " history.back(1);"
+                ScriptClose
+                Exit Sub
+             End If
              w_logo = "logo" & Mid(ul.Files("w_logo").OriginalPath,Instr(ul.Files("w_logo").OriginalPath,"."),10)
           Else
              w_logo = null

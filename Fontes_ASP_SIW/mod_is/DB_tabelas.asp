@@ -56,11 +56,7 @@ Sub DB_GetAcaoPPA_IS(p_rs, p_cliente, p_ano, p_programa, p_acao, p_subacao, p_un
      .Parameters.Delete         "l_chave"
      .Parameters.Delete         "l_nome"
   end with
-
 End Sub
-REM =========================================================================
-REM Final da rotina
-REM -------------------------------------------------------------------------
 
 REM =========================================================================
 REM Recupera os programas do ppa(tabela do SIGPLAN)
@@ -105,11 +101,7 @@ Sub DB_GetProgramaPPA_IS(p_rs, p_chave, p_cliente, p_ano, p_restricao, p_nome)
      .Parameters.Delete         "l_nome"
      
   end with
-
 End Sub
-REM =========================================================================
-REM Final da rotina
-REM -------------------------------------------------------------------------
 
 REM =========================================================================
 REM Recupera as funções das ações ppa do PPA
@@ -140,11 +132,7 @@ Sub DB_GetFuncao_IS(p_rs, p_chave, p_ativo)
      .Parameters.Delete         "l_chave"
      .Parameters.Delete         "l_ativo"
   end with
-
 End Sub
-REM =========================================================================
-REM Final da rotina
-REM -------------------------------------------------------------------------
 
 REM =========================================================================
 REM Recupera as subfunções das ações ppa do PPA
@@ -175,11 +163,7 @@ Sub DB_GetSubFuncao_IS(p_rs, p_chave, p_funcao)
      .Parameters.Delete         "l_chave"
      .Parameters.Delete         "l_funcao"
   end with
-
 End Sub
-REM =========================================================================
-REM Final da rotina
-REM -------------------------------------------------------------------------
 
 REM =========================================================================
 REM Recupera as esferas das ações ppa do PPA
@@ -210,11 +194,7 @@ Sub DB_GetEsfera_IS(p_rs, p_chave, p_ativo)
      .Parameters.Delete         "l_chave"
      .Parameters.Delete         "l_ativo"
   end with
-
 End Sub
-REM =========================================================================
-REM Final da rotina
-REM -------------------------------------------------------------------------
 
 REM =========================================================================
 REM Recupera as os tipos de ações ppa do SIGPLAN
@@ -245,11 +225,7 @@ Sub DB_GetTipoAcao_IS(p_rs, p_chave, p_ativo)
      .Parameters.Delete         "l_chave"
      .Parameters.Delete         "l_ativo"
   end with
-
 End Sub
-REM =========================================================================
-REM Final da rotina
-REM -------------------------------------------------------------------------
 
 REM =========================================================================
 REM Recupera ações do ppa
@@ -293,11 +269,7 @@ Sub DB_GetNatureza_IS(p_rs, p_chave, p_cliente, p_nome, p_ativo)
      .Parameters.Delete         "l_ativo"
      
   end with
-
 End Sub
-REM =========================================================================
-REM Final da rotina
-REM -------------------------------------------------------------------------
 
 REM =========================================================================
 REM Recupera ações do ppa
@@ -338,11 +310,7 @@ Sub DB_GetHorizonte_IS(p_rs, p_chave, p_cliente, p_nome, p_ativo)
      .Parameters.Delete         "l_nome"
      .Parameters.Delete         "l_ativo"
   end with
-
 End Sub
-REM =========================================================================
-REM Final da rotina
-REM -------------------------------------------------------------------------
 
 REM =========================================================================
 REM Recupera o projetos/planos
@@ -425,11 +393,7 @@ Sub DB_GetProjeto_IS(p_rs, p_chave, p_cliente, p_codigo, p_nome, p_responsavel, 
      .parameters.Delete "l_restricao"
      .parameters.Delete "l_siw_solic"
   end with
-
 End Sub
-REM =========================================================================
-REM Final da rotina
-REM -------------------------------------------------------------------------
 
 REM =========================================================================
 REM Recupera as unidade do modulo infra-sig
@@ -457,11 +421,39 @@ Sub DB_GetIsUnidade_IS(p_rs, p_chave, p_cliente)
      .Parameters.Delete         "l_chave"
      .Parameters.Delete         "l_cliente"
   end with
-
 End Sub
+
 REM =========================================================================
-REM Final da rotina
+REM Recupera as unidade do modulo infra-sig
 REM -------------------------------------------------------------------------
+Sub DB_GetIsUnidadeLimite_IS(p_rs, p_chave, p_ano, p_cliente)
+  Dim l_chave, l_ano, l_cliente
+  Set l_chave       = Server.CreateObject("ADODB.Parameter")
+  Set l_ano         = Server.CreateObject("ADODB.Parameter")
+  Set l_cliente     = Server.CreateObject("ADODB.Parameter")
+  with sp
+     set l_chave           = .CreateParameter("l_chave",        adInteger, adParamInput,   , tvl(p_chave))
+     set l_ano             = .CreateParameter("l_ano",          adInteger, adParamInput,   , tvl(p_ano))
+     set l_cliente         = .CreateParameter("l_cliente",      adInteger, adParamInput,   , p_cliente)
+     .parameters.Append         l_chave
+     .parameters.Append         l_ano
+     .parameters.Append         l_cliente
+     If Session("dbms") = 1 or Session("dbms") = 3 Then .Properties("PLSQLRSet") = TRUE End If
+     .CommandText               = Session("schema_is") & "SP_GetIsUnidadeLimite_IS"
+     Set p_rs = Server.CreateObject("ADODB.RecordSet")
+     p_rs.cursortype            = adOpenStatic
+     p_rs.cursorlocation        = adUseClient
+     On Error Resume Next
+     Set p_rs                   = .Execute
+     If Err.Description > "" Then 
+        TrataErro
+     End If     
+     If Session("dbms") = 1 or Session("dbms") = 3 Then .Properties("PLSQLRSet") = FALSE End If
+     .Parameters.Delete         "l_chave"
+     .Parameters.Delete         "l_ano"
+     .Parameters.Delete         "l_cliente"
+  end with
+End Sub
 
 REM =========================================================================
 REM Recupera ações de financiamento de uma ação específica
@@ -510,10 +502,6 @@ Sub DB_GetFinancAcaoPPA_IS(p_rs, p_chave, p_cliente, p_ano, p_programa, p_acao, 
      .Parameters.Delete         "l_cd_acao"
      .Parameters.Delete         "l_cd_subacao"
   end with
-
 End Sub
-REM =========================================================================
-REM Final da rotina
-REM -------------------------------------------------------------------------
 %>
 

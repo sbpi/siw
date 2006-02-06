@@ -171,7 +171,7 @@ Sub Usuario
     DB_GetUsuario RS, w_cliente, w_sq_usuario, w_chave
     RS.Sort = "chave"
     Cabecalho
-    ShowHTML "<BASE HREF=""http://" & Request.ServerVariables("server_name") & "/siw/"">"
+    ShowHTML "<BASE HREF=""" & conRootSIW & """>"
     BodyOpen "onLoad='document.focus()';"
     ShowHTML "<B><FONT COLOR=""#000000"">" & w_TP & "</FONT></B>"
     ShowHTML "<HR>"
@@ -359,7 +359,7 @@ Sub Tabela
     DB_GetTabela RS, w_cliente, null, null, w_chave, w_sq_usuario, null, null, null
     RS.Sort = "nm_usuario, nome"
     Cabecalho
-    ShowHTML "<BASE HREF=""http://" & Request.ServerVariables("server_name") & "/siw/"">"
+    ShowHTML "<BASE HREF=""" & conRootSIW & """>"
     BodyOpen "onLoad='document.focus()';"
     ShowHTML "<B><FONT COLOR=""#000000"">" & w_TP & "</FONT></B>"
     ShowHTML "<HR>"
@@ -416,7 +416,7 @@ Sub Tabela
     ShowHTML "<HEAD>"
     ShowHTML "<TITLE>" & conSgSistema & " - Dicionário</TITLE>"
     ShowHTML "</HEAD>"
-    ShowHTML "<BASE HREF=""http://" & Request.ServerVariables("server_name") & "/siw/"">"
+    ShowHTML "<BASE HREF=""" & conRootSIW & """>"
     BodyOpen "onLoad='document.focus()';"
     ShowHTML "<B><FONT COLOR=""#000000"">" & w_TP & "</FONT></B>"
     ShowHTML "<HR>"
@@ -593,7 +593,7 @@ Sub Trigger
     DB_GetTrigger RS, w_cliente, w_sq_trigger, w_sq_tabela, w_sq_usuario, w_chave
     RS.Sort = "nm_usuario, nm_trigger, nm_tabela"
     Cabecalho
-    ShowHTML "<BASE HREF=""http://" & Request.ServerVariables("server_name") & "/siw/"">"
+    ShowHTML "<BASE HREF=""" & conRootSIW & """>"
     BodyOpen "onLoad='document.focus()';"
     ShowHTML "<B><FONT COLOR=""#000000"">" & w_TP & "</FONT></B>"
     ShowHTML "<HR>"
@@ -661,7 +661,7 @@ Sub StoredProcedure
     DB_GetStoredProcedure RS, w_cliente, null, null, null, w_sq_usuario, w_chave, null, null
     RS.Sort = "nm_usuario, nm_sp_tipo, nm_sp"
     Cabecalho
-    ShowHTML "<BASE HREF=""http://" & Request.ServerVariables("server_name") & "/siw/"">"
+    ShowHTML "<BASE HREF=""" & conRootSIW & """>"
     BodyOpen "onLoad='document.focus()';"
     ShowHTML "<B><FONT COLOR=""#000000"">" & w_TP & "</FONT></B>"
     ShowHTML "<HR>"
@@ -711,7 +711,7 @@ Sub StoredProcedure
     ShowHTML "<HEAD>"
     ShowHTML "<TITLE>" & conSgSistema & " - Dicionário</TITLE>"
     ShowHTML "</HEAD>"
-    ShowHTML "<BASE HREF=""http://" & Request.ServerVariables("server_name") & "/siw/"">"
+    ShowHTML "<BASE HREF=""" & conRootSIW & """>"
     BodyOpen "onLoad='document.focus()';"
     ShowHTML "<B><FONT COLOR=""#000000"">" & w_TP & "</FONT></B>"
     ShowHTML "<HR>"
@@ -737,7 +737,7 @@ Sub StoredProcedure
     
     DB_GetSpParametro RS, w_sq_sp, null, null
     RS.Sort = "ord_sp_param"
-    ShowHTML "<BASE HREF=""http://" & Request.ServerVariables("server_name") & "/siw/"">"
+    ShowHTML "<BASE HREF=""" & conRootSIW & """>"
     ShowHTML "<HR>"
     ShowHTML "<tr><td align=""center"" colspan=3>"
     ShowHTML "<div align=center><center>"
@@ -774,7 +774,7 @@ Sub StoredProcedure
     
     DB_GetSpTabs RS, w_sq_sp, null
     RS.Sort = "chave"
-    ShowHTML "<BASE HREF=""http://" & Request.ServerVariables("server_name") & "/siw/"">"
+    ShowHTML "<BASE HREF=""" & conRootSIW & """>"
     ShowHTML "<HR>"
     ShowHTML "<tr><td align=""center"" colspan=3>"
     ShowHTML "<div align=center><center>"
@@ -807,7 +807,7 @@ Sub StoredProcedure
     
     DB_GetSpSP RS, w_sq_sp, w_chave_aux
     RS.Sort = "nm_usuario_pai, nm_pai, nm_usuario_filha, nm_filha"
-    ShowHTML "<BASE HREF=""http://" & Request.ServerVariables("server_name") & "/siw/"">"
+    ShowHTML "<BASE HREF=""" & conRootSIW & """>"
     ShowHTML "<HR>"
     ShowHTML "<tr><td align=""center"" colspan=3>"
     ShowHTML "<div align=center><center>"
@@ -851,7 +851,7 @@ Sub StoredProcedure
     
     DB_GetProcSp RS, null, w_sq_sp
     RS.Sort = "chave"
-    ShowHTML "<BASE HREF=""http://" & Request.ServerVariables("server_name") & "/siw/"">"
+    ShowHTML "<BASE HREF=""" & conRootSIW & """>"
     ShowHTML "<HR>"
     ShowHTML "<tr><td align=""center"" colspan=3>"
     ShowHTML "<div align=center><center>"
@@ -914,7 +914,7 @@ Sub Indice
   If O = "L" Then
     DB_GetIndice RS, w_cliente, w_sq_indice, null, w_sq_usuario, w_chave, null, w_sq_tabela
     RS.Sort = "nm_indice, nm_usuario, nm_tabela"
-    ShowHTML "<BASE HREF=""http://" & Request.ServerVariables("server_name") & "/siw/"">"
+    ShowHTML "<BASE HREF=""" & conRootSIW & """>"
     BodyOpen "onLoad='document.focus()';"
     ShowHTML "<B><FONT COLOR=""#000000"">" & w_TP & "</FONT></B>"
     ShowHTML "<HR>"
@@ -991,7 +991,7 @@ Sub Coluna
     DB_GetColuna RS, w_cliente, null, w_sq_tabela, null, w_chave, w_sq_usuario, null
     RS.Sort = "nm_usuario, nm_coluna, nm_tabela"
     Cabecalho
-    ShowHTML "<BASE HREF=""http://" & Request.ServerVariables("server_name") & "/siw/"">"
+    ShowHTML "<BASE HREF=""" & conRootSIW & """>"
     BodyOpen "onLoad='document.focus()';"
     ShowHTML "<B><FONT COLOR=""#000000"">" & w_TP & "</FONT></B>"
     ShowHTML "<HR>"
@@ -1059,7 +1059,7 @@ Sub Coluna
     ShowHTML "<HEAD>"
     ShowHTML "<TITLE>" & conSgSistema & " - Dicionário</TITLE>"
     ShowHTML "</HEAD>"
-    ShowHTML "<BASE HREF=""http://" & Request.ServerVariables("server_name") & "/siw/"">"
+    ShowHTML "<BASE HREF=""" & conRootSIW & """>"
     BodyOpen "onLoad='document.focus()';"
     ShowHTML "<B><FONT COLOR=""#000000"">" & w_TP & "</FONT></B>"
     ShowHTML "<HR>"
@@ -1080,7 +1080,7 @@ Sub Coluna
     w_cor=""
     
     DB_GetIndiceCols RS, null, w_sq_coluna 
-    ShowHTML "<BASE HREF=""http://" & Request.ServerVariables("server_name") & "/siw/"">"
+    ShowHTML "<BASE HREF=""" & conRootSIW & """>"
     ShowHTML "<HR>"
     ShowHTML "<table border=""0"" cellpadding=""0"" cellspacing=""0"" width=""100%"" align=""center"">"
     ShowHTML "<tr><td><font size=""1""><B>Índices (" & RS.RecordCount & ")</B></td>"
@@ -1137,7 +1137,7 @@ Sub Arquivo
     DB_GetArquivo RS, w_cliente, null, w_chave, null, null
     RS.Sort = "chave"
     Cabecalho
-    ShowHTML "<BASE HREF=""http://" & Request.ServerVariables("server_name") & "/siw/"">"
+    ShowHTML "<BASE HREF=""" & conRootSIW & """>"
     BodyOpen "onLoad='document.focus()';"
     ShowHTML "<B><FONT COLOR=""#000000"">" & w_TP & "</FONT></B>"
     ShowHTML "<HR>"
@@ -1193,7 +1193,7 @@ Sub Arquivo
     ShowHTML "<HEAD>"
     ShowHTML "<TITLE>" & conSgSistema & " - Dicionário</TITLE>"
     ShowHTML "</HEAD>"
-    ShowHTML "<BASE HREF=""http://" & Request.ServerVariables("server_name") & "/siw/"">"
+    ShowHTML "<BASE HREF=""" & conRootSIW & """>"
     BodyOpen "onLoad='document.focus()';"
     ShowHTML "<B><FONT COLOR=""#000000"">" & w_TP & "</FONT></B>"
     ShowHTML "<HR>"
@@ -1216,7 +1216,7 @@ Sub Arquivo
     w_cor=""
     
     DB_GetProcedure RS, w_cliente, null, w_sq_arquivo, w_chave, null, null 
-    ShowHTML "<BASE HREF=""http://" & Request.ServerVariables("server_name") & "/siw/"">"
+    ShowHTML "<BASE HREF=""" & conRootSIW & """>"
     ShowHTML "<HR>"
     ShowHTML "<tr><td align=""center"" colspan=3>"
     ShowHTML "<div align=center><center>"
@@ -1275,7 +1275,7 @@ Sub Procedure
     DB_GetProcedure RS, w_cliente, null, w_sq_arquivo, w_chave, null, null
     RS.Sort = "chave"
     Cabecalho
-    ShowHTML "<BASE HREF=""http://" & Request.ServerVariables("server_name") & "/siw/"">"
+    ShowHTML "<BASE HREF=""" & conRootSIW & """>"
     BodyOpen "onLoad='document.focus()';"
     ShowHTML "<B><FONT COLOR=""#000000"">" & w_TP & "</FONT></B>"
     ShowHTML "<HR>"
@@ -1328,7 +1328,7 @@ Sub Procedure
     ShowHTML "<HEAD>"
     ShowHTML "<TITLE>" & conSgSistema & " - Dicionário</TITLE>"
     ShowHTML "</HEAD>"
-    ShowHTML "<BASE HREF=""http://" & Request.ServerVariables("server_name") & "/siw/"">"
+    ShowHTML "<BASE HREF=""" & conRootSIW & """>"
     BodyOpen "onLoad='document.focus()';"
     ShowHTML "<B><FONT COLOR=""#000000"">" & w_TP & "</FONT></B>"
     ShowHTML "<HR>"
@@ -1353,7 +1353,7 @@ Sub Procedure
     DB_GetProcSP RS, w_sq_procedure, null
     RS.Sort = "chave"
     Cabecalho
-    ShowHTML "<BASE HREF=""http://" & Request.ServerVariables("server_name") & "/siw/"">"
+    ShowHTML "<BASE HREF=""" & conRootSIW & """>"
     ShowHTML "<HR>"
     ShowHTML "<div align=center><center>"
     ShowHTML "<td><font size=""1""><B>Procedures</B></td>"
@@ -1387,7 +1387,7 @@ Sub Procedure
     DB_GetProcTabs RS, w_sq_procedure, null
     RS.Sort = "chave"
     Cabecalho
-    ShowHTML "<BASE HREF=""http://" & Request.ServerVariables("server_name") & "/siw/"">"
+    ShowHTML "<BASE HREF=""" & conRootSIW & """>"
     ShowHTML "<HR>"
     ShowHTML "<div align=center><center>"
     ShowHTML "<td><font size=""1""><B>Tabelas</B></td>"
@@ -1421,7 +1421,7 @@ Sub Procedure
     DB_GetProcedure RS, w_cliente, w_sq_procedure, w_sq_arquivo, w_chave, null, null
     RS.Sort = "chave"
     Cabecalho
-    ShowHTML "<BASE HREF=""http://" & Request.ServerVariables("server_name") & "/siw/"">"
+    ShowHTML "<BASE HREF=""" & conRootSIW & """>"
     ShowHTML "<HR>"
     ShowHTML "<div align=center><center>"
     ShowHTML "<td><font size=""1""><B>Arquivos</B></td>"
@@ -1489,7 +1489,7 @@ Sub Relacionamento
     ShowHTML "<HEAD>"
     ShowHTML "<TITLE>" & conSgSistema & " - Dicionário</TITLE>"
     ShowHTML "</HEAD>"
-    ShowHTML "<BASE HREF=""http://" & Request.ServerVariables("server_name") & "/siw/"">"
+    ShowHTML "<BASE HREF=""" & conRootSIW & """>"
     BodyOpen "onLoad='document.focus()';"
     ShowHTML "<B><FONT COLOR=""#000000"">" & w_TP & "</FONT></B>"
     ShowHTML "<HR>"
@@ -1514,7 +1514,7 @@ Sub Relacionamento
     DB_GetRelacCols RS, w_sq_relacionamento, null
     RS.Sort = "nm_relacionamento"
     Cabecalho
-    ShowHTML "<BASE HREF=""http://" & Request.ServerVariables("server_name") & "/siw/"">"
+    ShowHTML "<BASE HREF=""" & conRootSIW & """>"
     ShowHTML "<HR>"
     ShowHTML "<div align=center><center>"
     ShowHTML "<td><font size=""1""><B>Relacionamentos</B></td>"
@@ -1853,7 +1853,7 @@ Sub Main
      Case "PROCEDURE"       Procedure
      Case Else
      Cabecalho
-     ShowHTML "<BASE HREF=""http://" & Request.ServerVariables("server_name") & "/siw/"">"
+     ShowHTML "<BASE HREF=""" & conRootSIW & """>"
      BodyOpen "onLoad=document.focus();"
      ShowHTML "<B><FONT COLOR=""#000000"">" & w_TP & "</FONT></B>"
      ShowHTML "<HR>"

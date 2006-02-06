@@ -391,7 +391,7 @@ Sub Inicial
   ValidateClose
   ScriptClose
   ShowHTML "</HEAD>"
-  ShowHTML "<BASE HREF=""http://" & Request.ServerVariables("server_name") & "/siw/"">"
+  ShowHTML "<BASE HREF=""" & conRootSIW & """>"
   If w_Troca > "" Then ' Se for recarga da página
      BodyOpen "onLoad='document.Form." & w_Troca & ".focus();'"
   ElseIf O = "I" Then
@@ -502,7 +502,7 @@ Sub Inicial
               If P1 = 1 Then ' Se for cadastramento
                  ShowHTML "          <A class=""hl"" HREF=""" & w_dir & w_pagina & "Geral&R=" & w_pagina & par & "&O=A&w_chave=" & RS("sq_siw_solicitacao") & "&P1=" & P1 & "&P2=" & P2 & "&P3=" & P3 & "&P4=" & P4 & "&TP=" & TP & "&SG=" & SG & MontaFiltro("GET") & """ title=""Altera as informações cadastrais do lançamento"">Alterar</A>&nbsp"
                  ShowHTML "          <A class=""hl"" HREF=""" & w_dir & w_pagina & "Excluir&R=" & w_pagina & par & "&O=E&w_chave=" & RS("sq_siw_solicitacao") & "&w_tipo=Volta&P1=" & P1 & "&P2=" & P2 & "&P3=" & P3 & "&P4=" & P4 & "&TP=" & TP & "&SG=" & SG & MontaFiltro("GET") & """ title=""Exclusão do lançamento."">Excluir</A>&nbsp"
-                 ShowHTML "          <A class=""hl"" HREF=""javascript:location.href=this.location.href;"" onClick=""window.open('" & w_pagina & "OutraParte&R=" & w_Pagina & par & "&O=A&w_menu=" & w_menu & "&w_chave=" & RS("sq_siw_solicitacao") & "&P1=" & P1 & "&P2=" & P2 & "&P3=" & P3 & "&P4=" & P4 & "&TP=" & TP & " - Pessoa" & "&SG=OUTRAPARTE','Pessoa','toolbar=no,width=780,height=530,top=30,left=10,scrollbars=yes');"" title=""Informa dados da pessoa associada ao lançamento."">Pessoa</A>&nbsp" 
+                 ShowHTML "          <A class=""hl"" HREF=""javascript:location.href=this.location.href;"" onClick=""window.open('" & w_pagina & "OutraParte&R=" & w_Pagina & par & "&O=A&w_menu=" & w_menu & "&w_chave=" & RS("sq_siw_solicitacao") & "&P1=" & P1 & "&P2=" & P2 & "&P3=" & P3 & "&P4=" & P4 & "&TP=" & TP & " - Pessoa" & "&SG="&Mid(SG,1,3)&"OUTRAP','Pessoa','toolbar=no,width=780,height=530,top=30,left=10,scrollbars=yes');"" title=""Informa dados da pessoa associada ao lançamento."">Pessoa</A>&nbsp" 
                  ShowHTML "          <A class=""hl"" HREF=""javascript:location.href=this.location.href;"" onClick=""window.open('" & w_pagina & "Documento&R=" & w_Pagina & par & "&O=L&w_menu=" & w_menu & "&w_chave=" & RS("sq_siw_solicitacao") & "&P1=" & P1 & "&P2=" & P2 & "&P3=" & P3 & "&P4=" & P4 & "&TP=" & TP & " - Pessoa" & "&SG=DOCUMENTO','Pessoa','toolbar=no,width=780,height=530,top=30,left=10,scrollbars=yes');"" title=""Informa documentos e comprovantes associados ao lançamento."">Docs</A>&nbsp" 
                  ShowHTML "          <A class=""hl"" HREF=""" & w_dir & w_pagina & "envio&R=" & w_pagina & par & "&O=V&w_chave=" & RS("sq_siw_solicitacao") & "&w_tipo=Volta&P1=" & P1 & "&P2=" & P2 & "&P3=" & P3 & "&P4=" & P4 & "&TP=" & TP & "&SG=" & SG & MontaFiltro("GET") & """ title=""Envia o lançamento para outro responsável."">Enviar</A>&nbsp"
               ElseIf P1 = 2 Then ' Se for execução
@@ -511,7 +511,7 @@ Sub Inicial
                  If cDbl(w_usuario) = cDbl(RS("executor")) Then
                     ShowHTML "          <A class=""hl"" HREF=""" & w_dir & w_pagina & "Anotacao&R=" & w_pagina & par & "&O=V&w_chave=" & RS("sq_siw_solicitacao") & "&w_tipo=Volta&P1=" & P1 & "&P2=" & P2 & "&P3=" & P3 & "&P4=" & P4 & "&TP=" & TP & "&SG=" & SG & MontaFiltro("GET") & """ title=""Registra anotações para o lançamento, sem enviá-la."">Anotar</A>&nbsp"
                     If Nvl(l_rs_tramite("sigla"),"---") = "EE" Then
-                       ShowHTML "          <A class=""hl"" HREF=""javascript:location.href=this.location.href;"" onClick=""window.open('" & w_pagina & "OutraParte&R=" & w_Pagina & par & "&O=A&w_menu=" & w_menu & "&w_chave=" & RS("sq_siw_solicitacao") & "&P1=" & P1 & "&P2=" & P2 & "&P3=" & P3 & "&P4=" & P4 & "&TP=" & TP & " - Pessoa" & "&SG=OUTRAPARTE','Pessoa','toolbar=no,width=780,height=530,top=30,left=10,scrollbars=yes');"" title=""Informa dados da pessoa associada ao lançamento."">Pessoa</A>&nbsp" 
+                       ShowHTML "          <A class=""hl"" HREF=""javascript:location.href=this.location.href;"" onClick=""window.open('" & w_pagina & "OutraParte&R=" & w_Pagina & par & "&O=A&w_menu=" & w_menu & "&w_chave=" & RS("sq_siw_solicitacao") & "&P1=" & P1 & "&P2=" & P2 & "&P3=" & P3 & "&P4=" & P4 & "&TP=" & TP & " - Pessoa" & "&SG="&Mid(SG,1,3)&"OUTRAP','Pessoa','toolbar=no,width=780,height=530,top=30,left=10,scrollbars=yes');"" title=""Informa dados da pessoa associada ao lançamento."">Pessoa</A>&nbsp" 
                        ShowHTML "          <A class=""hl"" HREF=""javascript:location.href=this.location.href;"" onClick=""window.open('" & w_pagina & "Documento&R=" & w_Pagina & par & "&O=L&w_menu=" & w_menu & "&w_chave=" & RS("sq_siw_solicitacao") & "&P1=" & P1 & "&P2=" & P2 & "&P3=" & P3 & "&P4=" & P4 & "&TP=" & TP & " - Pessoa" & "&SG=DOCUMENTO','Pessoa','toolbar=no,width=780,height=530,top=30,left=10,scrollbars=yes');"" title=""Informa documentos e comprovantes associados ao lançamento."">Docs</A>&nbsp"
                     End If
                     ShowHTML "          <A class=""hl"" HREF=""" & w_dir & w_pagina & "envio&R=" & w_pagina & par & "&O=V&w_chave=" & RS("sq_siw_solicitacao") & "&w_tipo=Volta&P1=" & P1 & "&P2=" & P2 & "&P3=" & P3 & "&P4=" & P4 & "&TP=" & TP & "&SG=" & SG & MontaFiltro("GET") & """ title=""Envia o lançamento para outro responsável."">Enviar</A>&nbsp"
@@ -844,7 +844,7 @@ Sub Geral
   ValidateClose
   ScriptClose
   ShowHTML "</HEAD>"
-  ShowHTML "<BASE HREF=""http://" & Request.ServerVariables("server_name") & "/siw/"">"
+  ShowHTML "<BASE HREF=""" & conRootSIW & """>"
   If w_troca > "" Then
      BodyOpen "onLoad='document.Form." & w_troca & ".focus()';"
   ElseIf Instr("EV",O) > 0 Then
@@ -1063,20 +1063,21 @@ Sub OutraParte
   If w_sq_pessoa = "" and Instr(Request("botao"),"Selecionar") = 0 Then
      w_sq_pessoa     = RS1("pessoa")
      w_pessoa_atual  = RS1("pessoa")
+  ElseIf Instr(Request("botao"),"Selecionar") = 0 Then
+     w_sq_banco         = RS1("sq_banco")
+     w_sq_agencia       = RS1("sq_agencia")
+     w_operacao         = RS1("operacao_conta")
+     w_nr_conta         = RS1("numero_conta")
+     w_sq_pais_estrang  = RS1("sq_pais_estrang")
+     w_aba_code         = RS1("aba_code")
+     w_swift_code       = RS1("swift_code")
+     w_endereco_estrang = RS1("endereco_estrang")
+     w_banco_estrang    = RS1("banco_estrang")
+     w_agencia_estrang  = RS1("agencia_estrang")
+     w_cidade_estrang   = RS1("cidade_estrang")
+     w_informacoes      = RS1("informacoes")
+     w_codigo_deposito  = RS1("codigo_deposito")
   End If
-  w_sq_banco         = RS1("sq_banco")
-  w_sq_agencia       = RS1("sq_agencia")
-  w_operacao         = RS1("operacao_conta")
-  w_nr_conta         = RS1("numero_conta")
-  w_sq_pais_estrang  = RS1("sq_pais_estrang")
-  w_aba_code         = RS1("aba_code")
-  w_swift_code       = RS1("swift_code")
-  w_endereco_estrang = RS1("endereco_estrang")
-  w_banco_estrang    = RS1("banco_estrang")
-  w_agencia_estrang  = RS1("agencia_estrang")
-  w_cidade_estrang   = RS1("cidade_estrang")
-  w_informacoes      = RS1("informacoes")
-  w_codigo_deposito  = RS1("codigo_deposito")
   w_forma_pagamento  = RS1("sg_forma_pagamento")
   w_tipo_pessoa      = RS1("sq_tipo_pessoa")
   
@@ -1287,7 +1288,7 @@ Sub OutraParte
   ValidateClose
   ScriptClose
   ShowHTML "</HEAD>"
-  ShowHTML "<BASE HREF=""http://" & Request.ServerVariables("server_name") & "/siw/"">"
+  ShowHTML "<BASE HREF=""" & conRootSIW & """>"
   If (w_cpf = "" and w_cnpj = "") or Instr(Request("botao"),"Alterar") > 0 or Instr(Request("botao"),"Procurar") > 0 Then ' Se o beneficiário ainda não foi selecionado
      If Instr(Request("botao"),"Procurar") > 0 Then ' Se está sendo feita busca por nome
         BodyOpen "onLoad='document.focus()';"
@@ -1401,9 +1402,9 @@ Sub OutraParte
               End If
               ShowHTML "        <td nowrap><font size=""1"">"
               If cDbl(w_tipo_pessoa) = 1 Then
-                 ShowHTML "          <A class=""hl"" HREF=""" & w_dir & w_pagina & par & "&R=" & R & "&O=A&w_cpf=" & RS("cpf") & "&w_menu=" & w_menu & "&w_sq_pessoa=" & RS("sq_pessoa") & "&w_chave=" & w_chave & "&P1=" & P1 & "&P2=" & P2 & "&P3=" & P3 & "&P4=" & P4 & "&TP=" & TP & "&SG=" & SG & """>Selecionar</A>&nbsp"
+                 ShowHTML "          <A class=""hl"" HREF=""" & w_dir & w_pagina & par & "&R=" & R & "&O=A&w_cpf=" & RS("cpf") & "&w_menu=" & w_menu & "&w_sq_pessoa=" & RS("sq_pessoa") & "&w_chave=" & w_chave & "&P1=" & P1 & "&P2=" & P2 & "&P3=" & P3 & "&P4=" & P4 & "&TP=" & TP & "&SG=" & SG & "&Botao=Selecionar"">Selecionar</A>&nbsp"
               Else
-                 ShowHTML "          <A class=""hl"" HREF=""" & w_dir & w_pagina & par & "&R=" & R & "&O=A&w_cnpj=" & RS("cnpj") & "&w_menu=" & w_menu & "&w_sq_pessoa=" & RS("sq_pessoa") & "&w_chave=" & w_chave & "&P1=" & P1 & "&P2=" & P2 & "&P3=" & P3 & "&P4=" & P4 & "&TP=" & TP & "&SG=" & SG & """>Selecionar</A>&nbsp"
+                 ShowHTML "          <A class=""hl"" HREF=""" & w_dir & w_pagina & par & "&R=" & R & "&O=A&w_cnpj=" & RS("cnpj") & "&w_menu=" & w_menu & "&w_sq_pessoa=" & RS("sq_pessoa") & "&w_chave=" & w_chave & "&P1=" & P1 & "&P2=" & P2 & "&P3=" & P3 & "&P4=" & P4 & "&TP=" & TP & "&SG=" & SG & "&Botao=Selecionar"">Selecionar</A>&nbsp"
               End If
               ShowHTML "        </td>"
               ShowHTML "      </tr>"
@@ -1709,7 +1710,7 @@ Sub Documentos
      ScriptClose
   End If
   ShowHTML "</HEAD>"
-  ShowHTML "<BASE HREF=""http://" & Request.ServerVariables("server_name") & "/siw/"">"
+  ShowHTML "<BASE HREF=""" & conRootSIW & """>"
   If w_troca > "" Then
      BodyOpen "onLoad='document.Form." & w_troca & ".focus()';"
   ElseIf O = "I" Then
@@ -2055,7 +2056,7 @@ Sub BuscaParcela
      ScriptClose
   End If
   ShowHTML "</HEAD>"
-  ShowHTML "<BASE HREF=""http://" & Request.ServerVariables("server_name") & "/siw/"">"
+  ShowHTML "<BASE HREF=""" & conRootSIW & """>"
   If w_troca > "" Then
      BodyOpen "onLoad='document.Form." & w_troca & ".focus()';"
   ElseIf Instr("P",O) > 0 Then
@@ -2265,7 +2266,7 @@ Sub Visual
      ShowHTML "<TITLE>" & conSgSistema & " - Visualização de Despesa de Contrato</TITLE>"
   End IF
   ShowHTML "</HEAD>"  
-  ShowHTML "<BASE HREF=""http://" & Request.ServerVariables("server_name") & "/siw/"">"
+  ShowHTML "<BASE HREF=""" & conRootSIW & """>"
   If w_tipo <> "WORD" Then
      BodyOpenClean "onLoad='document.focus()'; "
   End If
@@ -2347,7 +2348,7 @@ Sub Excluir
      ScriptClose
   End If
   ShowHTML "</HEAD>"
-  ShowHTML "<BASE HREF=""http://" & Request.ServerVariables("server_name") & "/siw/"">"
+  ShowHTML "<BASE HREF=""" & conRootSIW & """>"
   If w_troca > "" Then
      BodyOpen "onLoad='document.Form." & w_troca & ".focus()';"
   Else
@@ -2459,7 +2460,7 @@ Sub Encaminhamento
      ScriptClose
   End If
   ShowHTML "</HEAD>"
-  ShowHTML "<BASE HREF=""http://" & Request.ServerVariables("server_name") & "/siw/"">"
+  ShowHTML "<BASE HREF=""" & conRootSIW & """>"
   If w_troca > "" Then
      BodyOpen "onLoad='document.Form." & w_troca & ".focus()';"
   Else
@@ -2583,7 +2584,7 @@ Sub Anotar
      ScriptClose
   End If
   ShowHTML "</HEAD>"
-  ShowHTML "<BASE HREF=""http://" & Request.ServerVariables("server_name") & "/siw/"">"
+  ShowHTML "<BASE HREF=""" & conRootSIW & """>"
   If w_troca > "" Then
      BodyOpen "onLoad='document.Form." & w_troca & ".focus()';"
   Else
@@ -2714,7 +2715,7 @@ Sub Concluir
      ScriptClose
   End If
   ShowHTML "</HEAD>"
-  ShowHTML "<BASE HREF=""http://" & Request.ServerVariables("server_name") & "/siw/"">"
+  ShowHTML "<BASE HREF=""" & conRootSIW & """>"
   If w_troca > "" Then
      BodyOpen "onLoad='document.Form." & w_troca & ".focus()';"
   ElseIf w_erro > "" and Mid(Nvl(w_erro,"-"),1,1) = "0" Then
@@ -2991,7 +2992,7 @@ Public Sub Grava
 
   Cabecalho
   ShowHTML "</HEAD>"
-  ShowHTML "<BASE HREF=""http://" & Request.ServerVariables("server_name") & "/siw/"">"
+  ShowHTML "<BASE HREF=""" & conRootSIW & """>"
   BodyOpen "onLoad=document.focus();"
   
   If Instr(SG, "EVENT") > 0 Then
@@ -3021,7 +3022,7 @@ Public Sub Grava
         ShowHTML "  history.back(1);"
         ScriptClose
      End If
-  ElseIf SG = "OUTRAPARTE" Then
+  ElseIf InStr(SG,"OUTRAP") > 0 Then
      ' Verifica se a Assinatura Eletrônica é válida
      If (VerificaAssinaturaEletronica(Session("Username"),w_assinatura) and w_assinatura > "") or _
         w_assinatura = "" Then
@@ -3119,14 +3120,12 @@ Public Sub Grava
            ' Envia e-mail comunicando de tramitação
            SolicMail Request("w_chave"),2
               
-           If P1 = 1 Then ' Se for envio da fase de cadastramento, remonta o menu principal
-              ScriptOpen "JavaScript" 
-              ' Volta para a listagem 
-              DB_GetMenuData RS, Request("w_menu")
-              ShowHTML "  location.href='" & replace(RS("link"),w_dir,"") & "&O=L&w_chave=" & Request("w_chave") & "&P1=" & P1 & "&P2=" & P2 & "&P3=" & P3 & "&P4=" & P4 & "&TP=" & RemoveTP(TP) & "&SG=" & rs("sigla") & MontaFiltro("GET") & "';" 
-              DesconectaBD 
-              ScriptClose 
-           End If
+           ScriptOpen "JavaScript" 
+           ' Volta para a listagem 
+           DB_GetMenuData RS, Request("w_menu")
+           ShowHTML "  location.href='" & replace(RS("link"),w_dir,"") & "&O=L&w_chave=" & Request("w_chave") & "&P1=" & P1 & "&P2=" & P2 & "&P3=" & P3 & "&P4=" & P4 & "&TP=" & RemoveTP(TP) & "&SG=" & rs("sigla") & MontaFiltro("GET") & "';" 
+           DesconectaBD 
+           ScriptClose 
         End If 
      Else 
         ScriptOpen "JavaScript" 
@@ -3281,7 +3280,7 @@ Sub Main
     Case "GRAVA"        Grava
     Case Else
        Cabecalho
-       ShowHTML "<BASE HREF=""http://" & Request.ServerVariables("server_name") & "/siw/"">"
+       ShowHTML "<BASE HREF=""" & conRootSIW & """>"
        BodyOpen "onLoad=document.focus();"
          Estrutura_Topo_Limpo
        Estrutura_Menu

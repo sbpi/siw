@@ -193,9 +193,9 @@ Function VisualPrograma(w_chave, O, w_usuario, P1, P4)
            w_html = w_html & VbCrLf & "          <td><font size=""1"">Selecionada SPI/MP:<br><b>Não</b></td>"
         End If
         If RS("relev_ppa") = "S" Then
-           w_html = w_html & VbCrLf & "          <td><font size=""1"">Selecionada SE/MS:<br><b>Sim</b></td>"
+           w_html = w_html & VbCrLf & "          <td><font size=""1"">Selecionada SE/SEPPIR:<br><b>Sim</b></td>"
         Else
-           w_html = w_html & VbCrLf & "          <td><font size=""1"">Selecionada SE/MS:<br><b>Não</b></td>"
+           w_html = w_html & VbCrLf & "          <td><font size=""1"">Selecionada SE/SEPPIR:<br><b>Não</b></td>"
         End If
         w_html = w_html & VbCrLf & "        <tr valign=""top"">"
         If P4 = 1 Then
@@ -285,7 +285,7 @@ Function VisualPrograma(w_chave, O, w_usuario, P1, P4)
            w_html = w_html & VbCrLf & "      <tr><td valign=""top""><div align=""justify""><font size=""1"" color=""red"">Diretrizes e desafios do governo associados ao programa:<br><b>Falta definir qual o campo deve ser visualizado</b></div></td>"
            w_html = w_html & VbCrLf & "      <tr><td valign=""top""><div align=""justify""><font size=""1"" color=""red"">Objetivo setorial:<br><b>Falta definir qual o campo deve ser visualizado</b></div></td>"
            w_html = w_html & VbCrLf & "      <tr><td valign=""top""><div align=""justify""><font size=""1"">Explique como o programa contribui para que o objetivo setorial seja alcançado:<br><b> " & Nvl(RS("contribuicao_objetivo"),"")& "</b></div></td>"
-           w_html = w_html & VbCrLf & "      <tr><td valign=""top""><div align=""justify""><font size=""1"">Diretrizes do Plano Nacional de Saúde:<br><b> " & Nvl(RS("diretriz"),"")& "</b></div></td>"           
+           w_html = w_html & VbCrLf & "      <tr><td valign=""top""><div align=""justify""><font size=""1"">Diretrizes do Plano Nacional de Políticas de Integração Racial:<br><b> " & Nvl(RS("diretriz"),"")& "</b></div></td>"           
            'w_html = w_html & VbCrLf & "      <tr><td valign=""top""><font size=""1"">Problema:<br><b>" & Nvl(RS("contexto"),"---")& "</b></td>"
            w_html = w_html & VbCrLf & "      <tr><td valign=""top""><div align=""justify""><font size=""1"">Objetivo:<br><b>" & Nvl(RS("objetivo"),"---")& "</b></div></td>"           
            w_html = w_html & VbCrLf & "      <tr><td valign=""top""><div align=""justify""><font size=""1"">Justificativa:<br><b>" & Nvl(RS("justificativa_sigplan"),"---")& "</b></div></td>"

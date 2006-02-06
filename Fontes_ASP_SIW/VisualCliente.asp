@@ -80,7 +80,7 @@ Sub VisualCliente(w_sq_cliente, O)
           If RS("email") = "S" Then
              ShowHTML "        <td><font size=""2""><a href=""mailto://" & RS("logradouro") & """>" & RS("logradouro") & "</a></td>"
           Else
-             ShowHTML "        <td><font size=""2""><a href=""http://" & replace(RS("logradouro"),"http://","") & """ target=""_blank"">" & RS("logradouro") & "</a></td>"
+             ShowHTML "        <td><font size=""2""><a href=""://" & replace(RS("logradouro"),"://","") & """ target=""_blank"">" & RS("logradouro") & "</a></td>"
           End If
           ShowHTML "        <td align=""center""><font size=""2"">" & Replace(Replace(RS("padrao"),"S","Sim"),"N","Não") & "</td>"
           ShowHTML "      </tr>"

@@ -2,7 +2,7 @@
 REM =========================================================================
 REM Mantém a tabela PPA - Esfera
 REM -------------------------------------------------------------------------
-Sub DML_PutXMLEsfera(p_chave, p_nome, p_ativo)
+Sub DML_PutXMLEsfera(p_resultado, p_chave, p_nome, p_ativo)
 
 
   Dim l_Chave, l_nome, l_ativo
@@ -24,7 +24,7 @@ Sub DML_PutXMLEsfera(p_chave, p_nome, p_ativo)
      On error Resume Next
      .Execute
      If Err.Description > "" Then 
-        TrataErro
+        p_resultado = Err.Description
      End If
      .parameters.Delete         "l_Chave"
      .parameters.Delete         "l_nome"
@@ -35,7 +35,7 @@ End Sub
 REM =========================================================================
 REM Mantém a tabela PPA - Unidade de Medida
 REM -------------------------------------------------------------------------
-Sub DML_PutXMLUnidade_Medida_PPA(p_chave, p_nome, p_ativo)
+Sub DML_PutXMLUnidade_Medida_PPA(p_resultado, p_chave, p_nome, p_ativo)
 
 
   Dim l_Chave, l_nome, l_ativo
@@ -57,7 +57,7 @@ Sub DML_PutXMLUnidade_Medida_PPA(p_chave, p_nome, p_ativo)
      On error Resume Next
      .Execute
      If Err.Description > "" Then 
-        TrataErro
+        p_resultado = Err.Description
      End If
      .parameters.Delete         "l_Chave"
      .parameters.Delete         "l_nome"
@@ -68,7 +68,7 @@ End Sub
 REM =========================================================================
 REM Mantém a tabela PPA - Órgao
 REM -------------------------------------------------------------------------
-Sub DML_PutXMLOrgao_PPA(p_chave, p_tipo_org, p_nome, p_sigla, p_ativo)
+Sub DML_PutXMLOrgao_PPA(p_resultado, p_chave, p_tipo_org, p_nome, p_sigla, p_ativo)
 
 
   Dim l_Chave, l_tipo_org, l_nome, l_sigla, l_ativo
@@ -96,7 +96,7 @@ Sub DML_PutXMLOrgao_PPA(p_chave, p_tipo_org, p_nome, p_sigla, p_ativo)
      On error Resume Next
      .Execute
      If Err.Description > "" Then 
-        TrataErro
+        p_resultado = Err.Description
      End If
      .parameters.Delete         "l_Chave"
      .parameters.Delete         "l_tipo_org"
@@ -109,7 +109,7 @@ End Sub
 REM =========================================================================
 REM Mantém a tabela PPA - Órgao
 REM -------------------------------------------------------------------------
-Sub DML_PutXMLOrgao_Siorg_PPA(p_chave, p_pai, p_nome, p_orgao, p_tipo_org, p_ativo)
+Sub DML_PutXMLOrgao_Siorg_PPA(p_resultado, p_chave, p_pai, p_nome, p_orgao, p_tipo_org, p_ativo)
 
 
   Dim l_Chave, l_pai, l_tipo_org, l_nome, l_orgao, l_ativo
@@ -140,7 +140,7 @@ Sub DML_PutXMLOrgao_Siorg_PPA(p_chave, p_pai, p_nome, p_orgao, p_tipo_org, p_ati
      On error Resume Next
      .Execute
      If Err.Description > "" Then 
-        TrataErro
+        p_resultado = Err.Description
      End If
      .parameters.Delete         "l_Chave"
      .parameters.Delete         "l_pai"
@@ -154,7 +154,7 @@ End Sub
 REM =========================================================================
 REM Mantém a tabela PPA - Unidade
 REM -------------------------------------------------------------------------
-Sub DML_PutXMLUnidade_PPA(p_chave, p_tipo_unid, p_orgao, p_tipo_org, p_nome)
+Sub DML_PutXMLUnidade_PPA(p_resultado, p_chave, p_tipo_unid, p_orgao, p_tipo_org, p_nome)
 
 
   Dim l_Chave, l_tipo_unid, l_orgao, l_tipo_org, l_nome
@@ -182,7 +182,7 @@ Sub DML_PutXMLUnidade_PPA(p_chave, p_tipo_unid, p_orgao, p_tipo_org, p_nome)
      On error Resume Next
      .Execute
      If Err.Description > "" Then 
-        TrataErro
+        p_resultado = Err.Description
      End If
      .parameters.Delete         "l_Chave"
      .parameters.Delete         "l_tipo_unid"
@@ -195,7 +195,7 @@ End Sub
 REM =========================================================================
 REM Mantém a tabela PPA - Tipo de ação
 REM -------------------------------------------------------------------------
-Sub DML_PutXMLTipo_Acao_PPA(p_chave, p_nome, p_ativo)
+Sub DML_PutXMLTipo_Acao_PPA(p_resultado, p_chave, p_nome, p_ativo)
 
 
   Dim l_Chave, l_nome, l_ativo
@@ -217,7 +217,7 @@ Sub DML_PutXMLTipo_Acao_PPA(p_chave, p_nome, p_ativo)
      On error Resume Next
      .Execute
      If Err.Description > "" Then 
-        TrataErro
+        p_resultado = Err.Description
      End If
      .parameters.Delete         "l_Chave"
      .parameters.Delete         "l_nome"
@@ -228,7 +228,7 @@ End Sub
 REM =========================================================================
 REM Mantém a tabela PPA - Tipo de despesa
 REM -------------------------------------------------------------------------
-Sub DML_PutXMLTipo_Despesa(p_chave, p_nome, p_ativo)
+Sub DML_PutXMLTipo_Despesa(p_resultado, p_chave, p_nome, p_ativo)
 
 
   Dim l_Chave, l_nome, l_ativo
@@ -250,7 +250,7 @@ Sub DML_PutXMLTipo_Despesa(p_chave, p_nome, p_ativo)
      On error Resume Next
      .Execute
      If Err.Description > "" Then 
-        TrataErro
+        p_resultado = Err.Description
      End If
      .parameters.Delete         "l_Chave"
      .parameters.Delete         "l_nome"
@@ -261,7 +261,7 @@ End Sub
 REM =========================================================================
 REM Mantém a tabela PPA - Tipo de atualização
 REM -------------------------------------------------------------------------
-Sub DML_PutXMLTipo_Atualizacao(p_chave, p_nome, p_ativo)
+Sub DML_PutXMLTipo_Atualizacao(p_resultado, p_chave, p_nome, p_ativo)
 
 
   Dim l_Chave, l_nome, l_ativo
@@ -283,7 +283,7 @@ Sub DML_PutXMLTipo_Atualizacao(p_chave, p_nome, p_ativo)
      On error Resume Next
      .Execute
      If Err.Description > "" Then 
-        TrataErro
+        p_resultado = Err.Description
      End If
      .parameters.Delete         "l_Chave"
      .parameters.Delete         "l_nome"
@@ -294,7 +294,7 @@ End Sub
 REM =========================================================================
 REM Mantém a tabela PPA - Tipo de programa
 REM -------------------------------------------------------------------------
-Sub DML_PutXMLTipo_Programa_PPA(p_chave, p_nome, p_ativo)
+Sub DML_PutXMLTipo_Programa_PPA(p_resultado, p_chave, p_nome, p_ativo)
 
 
   Dim l_Chave, l_nome, l_ativo
@@ -316,7 +316,7 @@ Sub DML_PutXMLTipo_Programa_PPA(p_chave, p_nome, p_ativo)
      On error Resume Next
      .Execute
      If Err.Description > "" Then 
-        TrataErro
+        p_resultado = Err.Description
      End If
      .parameters.Delete         "l_Chave"
      .parameters.Delete         "l_nome"
@@ -327,7 +327,7 @@ End Sub
 REM =========================================================================
 REM Mantém a tabela PPA - Tipo de inclusão da ação
 REM -------------------------------------------------------------------------
-Sub DML_PutXMLTipo_Inclusao_Acao(p_chave, p_nome, p_ativo)
+Sub DML_PutXMLTipo_Inclusao_Acao(p_resultado, p_chave, p_nome, p_ativo)
 
 
   Dim l_Chave, l_nome, l_ativo
@@ -349,7 +349,7 @@ Sub DML_PutXMLTipo_Inclusao_Acao(p_chave, p_nome, p_ativo)
      On error Resume Next
      .Execute
      If Err.Description > "" Then 
-        TrataErro
+        p_resultado = Err.Description
      End If
      .parameters.Delete         "l_Chave"
      .parameters.Delete         "l_nome"
@@ -360,7 +360,7 @@ End Sub
 REM =========================================================================
 REM Mantém a tabela PPA - Natureza
 REM -------------------------------------------------------------------------
-Sub DML_PutXMLNatureza(p_chave, p_nome, p_desc, p_ativo)
+Sub DML_PutXMLNatureza(p_resultado, p_chave, p_nome, p_desc, p_ativo)
 
 
   Dim l_Chave, l_nome, l_desc, l_ativo
@@ -385,7 +385,7 @@ Sub DML_PutXMLNatureza(p_chave, p_nome, p_desc, p_ativo)
      On error Resume Next
      .Execute
      If Err.Description > "" Then 
-        TrataErro
+        p_resultado = Err.Description
      End If
      .parameters.Delete         "l_Chave"
      .parameters.Delete         "l_nome"
@@ -397,7 +397,7 @@ End Sub
 REM =========================================================================
 REM Mantém a tabela PPA - Função
 REM -------------------------------------------------------------------------
-Sub DML_PutXMLFuncao(p_chave, p_nome, p_ativo)
+Sub DML_PutXMLFuncao(p_resultado, p_chave, p_nome, p_ativo)
 
 
   Dim l_Chave, l_nome, l_ativo
@@ -407,7 +407,7 @@ Sub DML_PutXMLFuncao(p_chave, p_nome, p_ativo)
   Set l_ativo                   = Server.CreateObject("ADODB.Parameter") 
   
   with sp
-     set l_chave                = .CreateParameter("l_chave",               adInteger, adParamInput,   , Tvl(p_chave))
+     set l_chave                = .CreateParameter("l_chave",               adVarchar, adParamInput,  2, Tvl(p_chave))
      set l_nome                 = .CreateParameter("l_nome",                adVarchar, adParamInput,110, Tvl(p_nome))
      set l_ativo                = .CreateParameter("l_ativo",               adVarchar, adParamInput,  1, Tvl(p_ativo))
   
@@ -419,7 +419,7 @@ Sub DML_PutXMLFuncao(p_chave, p_nome, p_ativo)
      On error Resume Next
      .Execute
      If Err.Description > "" Then 
-        TrataErro
+        p_resultado = Err.Description
      End If
      .parameters.Delete         "l_Chave"
      .parameters.Delete         "l_nome"
@@ -430,7 +430,7 @@ End Sub
 REM =========================================================================
 REM Mantém a tabela PPA - Fonte
 REM -------------------------------------------------------------------------
-Sub DML_PutXMLFonte_PPA(p_chave, p_nome, p_desc, p_total)
+Sub DML_PutXMLFonte_PPA(p_resultado, p_chave, p_nome, p_desc, p_total)
 
 
   Dim l_Chave, l_nome, l_desc, l_total
@@ -450,12 +450,11 @@ Sub DML_PutXMLFonte_PPA(p_chave, p_nome, p_desc, p_total)
      .parameters.Append         l_nome
      .parameters.Append         l_desc
      .parameters.Append         l_total
-  
      .CommandText               = Session("schema_is") & "SP_PutXMLFonte_PPA"
      On error Resume Next
      .Execute
      If Err.Description > "" Then 
-        TrataErro
+        p_resultado = Err.Description
      End If
      .parameters.Delete         "l_Chave"
      .parameters.Delete         "l_nome"
@@ -467,7 +466,7 @@ End Sub
 REM =========================================================================
 REM Mantém a tabela SIG - Fonte
 REM -------------------------------------------------------------------------
-Sub DML_PutXMLFonte_SIG(p_chave, p_nome, p_desc, p_observ, p_total, p_ativo)
+Sub DML_PutXMLFonte_SIG(p_resultado, p_chave, p_nome, p_desc, p_observ, p_total, p_ativo)
 
 
   Dim l_Chave, l_nome, l_desc, l_observ, l_total, l_ativo
@@ -498,7 +497,7 @@ Sub DML_PutXMLFonte_SIG(p_chave, p_nome, p_desc, p_observ, p_total, p_ativo)
      On error Resume Next
      .Execute
      If Err.Description > "" Then 
-        TrataErro
+        p_resultado = Err.Description
      End If
      .parameters.Delete         "l_Chave"
      .parameters.Delete         "l_nome"
@@ -512,7 +511,7 @@ End Sub
 REM =========================================================================
 REM Mantém a tabela PPA - Região
 REM -------------------------------------------------------------------------
-Sub DML_PutXMLRegiao(p_chave, p_nome, p_uf, p_regiao)
+Sub DML_PutXMLRegiao(p_resultado, p_chave, p_nome, p_uf, p_regiao)
 
 
   Dim l_Chave, l_nome, l_uf, l_regiao
@@ -536,8 +535,8 @@ Sub DML_PutXMLRegiao(p_chave, p_nome, p_uf, p_regiao)
      .CommandText               = Session("schema_is") & "SP_PutXMLRegiao"
      On error Resume Next
      .Execute
-     If Err.ufription > "" Then 
-        TrataErro
+     If Err.Description > "" Then 
+        p_resultado = Err.Description
      End If
      .parameters.Delete         "l_Chave"
      .parameters.Delete         "l_nome"
@@ -549,7 +548,7 @@ End Sub
 REM =========================================================================
 REM Mantém a tabela PPA - Tipo de Órgão
 REM -------------------------------------------------------------------------
-Sub DML_PutXMLTipo_Orgao_SIG(p_chave, p_nome, p_ativo)
+Sub DML_PutXMLTipo_Orgao_SIG(p_resultado, p_chave, p_nome, p_ativo)
 
 
   Dim l_Chave, l_nome, l_ativo
@@ -571,7 +570,7 @@ Sub DML_PutXMLTipo_Orgao_SIG(p_chave, p_nome, p_ativo)
      On error Resume Next
      .Execute
      If Err.Description > "" Then 
-        TrataErro
+        p_resultado = Err.Description
      End If
      .parameters.Delete         "l_Chave"
      .parameters.Delete         "l_nome"
@@ -583,7 +582,7 @@ End Sub
 REM =========================================================================
 REM Mantém a tabela PPA - Subfunção
 REM -------------------------------------------------------------------------
-Sub DML_PutXMLSubfuncao(p_chave, p_funcao, p_desc)
+Sub DML_PutXMLSubfuncao(p_resultado, p_chave, p_funcao, p_desc)
 
 
   Dim l_Chave, l_funcao, l_desc
@@ -605,7 +604,7 @@ Sub DML_PutXMLSubfuncao(p_chave, p_funcao, p_desc)
      On error Resume Next
      .Execute
      If Err.Description > "" Then 
-        TrataErro
+        p_resultado = Err.Description
      End If
      .parameters.Delete         "l_Chave"
      .parameters.Delete         "l_funcao"
@@ -616,7 +615,7 @@ End Sub
 REM =========================================================================
 REM Mantém a tabela PPA - Produto
 REM -------------------------------------------------------------------------
-Sub DML_PutXMLProduto_PPA(p_chave, p_nome, p_ativo)
+Sub DML_PutXMLProduto_PPA(p_resultado, p_chave, p_nome, p_ativo)
 
 
   Dim l_Chave, l_nome, l_ativo
@@ -638,7 +637,7 @@ Sub DML_PutXMLProduto_PPA(p_chave, p_nome, p_ativo)
      On error Resume Next
      .Execute
      If Err.Description > "" Then 
-        TrataErro
+        p_resultado = Err.Description
      End If
      .parameters.Delete         "l_Chave"
      .parameters.Delete         "l_nome"
@@ -649,7 +648,7 @@ End Sub
 REM =========================================================================
 REM Mantém a tabela de municípios
 REM -------------------------------------------------------------------------
-Sub DML_PutXMLMunicipio(p_chave, p_regiao, p_nome)
+Sub DML_PutXMLMunicipio(p_resultado, p_chave, p_regiao, p_nome)
 
 
   Dim l_Chave, l_regiao, l_nome
@@ -671,7 +670,7 @@ Sub DML_PutXMLMunicipio(p_chave, p_regiao, p_nome)
      On error Resume Next
      .Execute
      If Err.Description > "" Then 
-        TrataErro
+        p_resultado = Err.Description
      End If
      .parameters.Delete         "l_Chave"
      .parameters.Delete         "l_regiao"
@@ -682,7 +681,7 @@ End Sub
 REM =========================================================================
 REM Mantém a tabela PPA - Programa
 REM -------------------------------------------------------------------------
-Sub DML_PutXMLPrograma_PPA(p_cliente, p_ano, p_chave, p_orgao, p_tipo_org, p_orgao_siorg, p_tipo_prog, _
+Sub DML_PutXMLPrograma_PPA(p_resultado, p_cliente, p_ano, p_chave, p_orgao, p_tipo_org, p_orgao_siorg, p_tipo_prog, _
                           p_nome, p_mes_ini, p_ano_ini, p_mes_fim, p_ano_fim, p_objetivo, p_publico_alvo, _
                           p_justificativa, p_estrategia, p_valor_estimado, p_temporario, p_padronizado, p_observacao)
 
@@ -732,7 +731,7 @@ Sub DML_PutXMLPrograma_PPA(p_cliente, p_ano, p_chave, p_orgao, p_tipo_org, p_org
      set l_valor_estimado       = .CreateParameter("l_valor_estimado",      adNumeric)
      l_valor_estimado.Precision    = 18
      l_valor_estimado.NumericScale = 2
-     l_valor_estimado.Value        = Tvl(p_valor_estimado)
+     l_valor_estimado.Value        = Tvl(Replace(p_valor_estimado,".",","))
      set l_temporario           = .CreateParameter("l_temporario",          adVarchar, adParamInput,    1, Tvl(p_temporario))
      set l_padronizado          = .CreateParameter("l_padronizado",         adVarchar, adParamInput,    1, Tvl(p_padronizado))
      set l_observacao           = .CreateParameter("l_observacao",          adVarchar, adParamInput, 4000, Tvl(p_observacao))
@@ -762,7 +761,7 @@ Sub DML_PutXMLPrograma_PPA(p_cliente, p_ano, p_chave, p_orgao, p_tipo_org, p_org
      On error Resume Next
      .Execute
      If Err.Description > "" Then 
-        TrataErro
+        p_resultado = Err.Description
      End If
      .parameters.Delete         "l_cliente"
      .parameters.Delete         "l_ano"
@@ -790,7 +789,7 @@ End Sub
 REM =========================================================================
 REM Mantém a tabela PPA - Indicador
 REM -------------------------------------------------------------------------
-Sub DML_PutXMLIndicador_PPA(p_cliente, p_ano, p_programa, p_chave, p_unidade_med, p_periodicidade, p_base_geo, p_nome, _
+Sub DML_PutXMLIndicador_PPA(p_resultado, p_cliente, p_ano, p_programa, p_chave, p_unidade_med, p_periodicidade, p_base_geo, p_nome, _
                            p_fonte, p_formula, p_valor_ano_1, p_valor_ano_2, p_valor_ano_3, p_valor_ano_4, p_valor_ano_5, _
                            p_valor_ano_6,  p_valor_ref, p_valor_final, p_apurado_ano_1,  p_apurado_ano_2, p_apurado_ano_3, p_apurado_ano_4, _
                            p_apurado_ano_5, p_apurado_ano_6, p_apurado_ref, p_apurado_final, p_apuracao, p_observacao)
@@ -843,35 +842,35 @@ Sub DML_PutXMLIndicador_PPA(p_cliente, p_ano, p_programa, p_chave, p_unidade_med
      set l_valor_ano_1          = .CreateParameter("l_valor_ano_1",         adNumeric)
      l_valor_ano_1.Precision    = 18
      l_valor_ano_1.NumericScale = 2
-     l_valor_ano_1.Value        = Tvl(p_valor_ano_1)
+     l_valor_ano_1.Value        = Tvl(Replace(p_valor_ano_1,".",","))
      set l_valor_ano_2          = .CreateParameter("l_valor_ano_2",         adNumeric)
      l_valor_ano_2.Precision    = 18
      l_valor_ano_2.NumericScale = 2
-     l_valor_ano_2.Value        = Tvl(p_valor_ano_2)
+     l_valor_ano_2.Value        = Tvl(Replace(p_valor_ano_2,".",","))
      set l_valor_ano_3          = .CreateParameter("l_valor_ano_3",         adNumeric)
      l_valor_ano_3.Precision    = 18
      l_valor_ano_3.NumericScale = 2
-     l_valor_ano_3.Value        = Tvl(p_valor_ano_3)
+     l_valor_ano_3.Value        = Tvl(Replace(p_valor_ano_3,".",","))
      set l_valor_ano_4          = .CreateParameter("l_valor_ano_4",         adNumeric)
      l_valor_ano_4.Precision    = 18
      l_valor_ano_4.NumericScale = 2
-     l_valor_ano_4.Value        = Tvl(p_valor_ano_4)
+     l_valor_ano_4.Value        = Tvl(Replace(p_valor_ano_4,".",","))
      set l_valor_ano_5          = .CreateParameter("l_valor_ano_5",         adNumeric)
      l_valor_ano_5.Precision    = 18
      l_valor_ano_5.NumericScale = 2
-     l_valor_ano_5.Value        = Tvl(p_valor_ano_5)
+     l_valor_ano_5.Value        = Tvl(Replace(p_valor_ano_5,".",","))
      set l_valor_ano_6          = .CreateParameter("l_valor_ano_6",         adNumeric)
      l_valor_ano_6.Precision    = 18
      l_valor_ano_6.NumericScale = 2
-     l_valor_ano_6.Value        = Tvl(p_valor_ano_6)
+     l_valor_ano_6.Value        = Tvl(Replace(p_valor_ano_6,".",","))
      set l_valor_ref            = .CreateParameter("l_valor_ref",           adNumeric)
      l_valor_ref.Precision      = 18
      l_valor_ref.NumericScale   = 2
-     l_valor_ref.Value          = Tvl(p_valor_ref)
+     l_valor_ref.Value          = Tvl(Replace(p_valor_ref,".",","))
      set l_valor_final          = .CreateParameter("l_valor_final",         adNumeric)
      l_valor_final.Precision    = 18
      l_valor_final.NumericScale = 2
-     l_valor_final.Value        = Tvl(p_valor_final)
+     l_valor_final.Value        = Tvl(Replace(p_valor_final,".",","))
      set l_apurado_ano_1        = .CreateParameter("l_apurado_ano_1",       adVarchar, adParamInput,    1, Tvl(p_apurado_ano_1))
      set l_apurado_ano_2        = .CreateParameter("l_apurado_ano_2",       adVarchar, adParamInput,    1, Tvl(p_apurado_ano_2))
      set l_apurado_ano_3        = .CreateParameter("l_apurado_ano_3",       adVarchar, adParamInput,    1, Tvl(p_apurado_ano_3))
@@ -916,9 +915,7 @@ Sub DML_PutXMLIndicador_PPA(p_cliente, p_ano, p_programa, p_chave, p_unidade_med
      On error Resume Next
      .Execute
      If Err.Description > "" Then 
-        'TrataErro
-        ShowHTML Err.Description & "<br>" & l_unidade_med.value
-        Response.End()
+        p_resultado = Err.Description
      End If
      .parameters.Delete         "l_cliente"
      .parameters.Delete         "l_ano"
@@ -952,9 +949,9 @@ Sub DML_PutXMLIndicador_PPA(p_cliente, p_ano, p_programa, p_chave, p_unidade_med
 End Sub
 
 REM =========================================================================
-REM Mantém a tabela PPA - Programa
+REM Mantém a tabela PPA - Ação
 REM -------------------------------------------------------------------------
-Sub DML_PutXMLAcao_PPA(p_cliente, p_ano, p_cd_programa, p_chave, p_cd_acao, p_unidade, p_tipo_unid, p_funcao, p_subfuncao, _
+Sub DML_PutXMLAcao_PPA(p_resultado, p_cliente, p_ano, p_cd_programa, p_chave, p_cd_acao, p_unidade, p_tipo_unid, p_funcao, p_subfuncao, _
                        p_tipo_acao, p_cd_produto, p_ds_produto, p_unidade_med, p_tipo_inclusao, p_cd_esfera, p_orgao_siorg, _
                        p_nome, p_finalidade, p_descricao, p_base_legal, p_reperc_financ, p_vr_reperc_financ, p_padronizada, _
                        p_set_padronizada, p_direta, p_descentralizada, p_linha_credito, p_transf_obrig, _
@@ -1044,7 +1041,7 @@ Sub DML_PutXMLAcao_PPA(p_cliente, p_ano, p_cd_programa, p_chave, p_cd_acao, p_un
      set l_vr_reperc_financ     = .CreateParameter("l_vr_reperc_financ",      adNumeric)
      l_vr_reperc_financ.Precision    = 18
      l_vr_reperc_financ.NumericScale = 2
-     l_vr_reperc_financ.Value        = Tvl(p_vr_reperc_financ)
+     l_vr_reperc_financ.Value        = Tvl(Replace(p_vr_reperc_financ,".",","))
      set l_padronizada          = .CreateParameter("l_padronizada",         adVarchar, adParamInput,    1, Tvl(p_padronizada))
      set l_set_padronizada      = .CreateParameter("l_set_padronizada",     adVarchar, adParamInput,    1, Tvl(p_set_padronizada))
      set l_direta               = .CreateParameter("l_direta",              adVarchar, adParamInput,    1, Tvl(p_direta))
@@ -1063,30 +1060,30 @@ Sub DML_PutXMLAcao_PPA(p_cliente, p_ano, p_cd_programa, p_chave, p_cd_acao, p_un
      set l_valor_total          = .CreateParameter("l_valor_total",         adNumeric)
      l_valor_total.Precision    = 18
      l_valor_total.NumericScale = 2
-     l_valor_total.Value        = Tvl(p_valor_total)
+     l_valor_total.Value        = Tvl(Replace(p_valor_total,".",","))
      set l_valor_ano_ant        = .CreateParameter("l_valor_ano_ant",       adNumeric)
      l_valor_ano_ant.Precision    = 18
      l_valor_ano_ant.NumericScale = 2
-     l_valor_ano_ant.Value        = Tvl(p_valor_ano_ant)
+     l_valor_ano_ant.Value        = Tvl(Replace(p_valor_ano_ant,".",","))
      set l_qtd_ano_ant          = .CreateParameter("l_qtd_ano_ant",         adNumeric)
      l_qtd_ano_ant.Precision    = 18
      l_qtd_ano_ant.NumericScale = 4
-     l_qtd_ano_ant.Value        = Tvl(p_qtd_ano_ant)
+     l_qtd_ano_ant.Value        = Tvl(Replace(p_qtd_ano_ant,".",","))
      set l_valor_ano_cor        = .CreateParameter("l_valor_ano_cor",       adNumeric)
      l_valor_ano_cor.Precision    = 18
      l_valor_ano_cor.NumericScale = 2
-     l_valor_ano_cor.Value        = Tvl(p_valor_ano_cor)
+     l_valor_ano_cor.Value        = Tvl(Replace(p_valor_ano_cor,".",","))
      set l_qtd_ano_cor          = .CreateParameter("l_qtd_ano_cor",         adNumeric)
      l_qtd_ano_cor.Precision    = 18
      l_qtd_ano_cor.NumericScale = 4
-     l_qtd_ano_cor.Value        = Tvl(p_qtd_ano_cor)
+     l_qtd_ano_cor.Value        = Tvl(Replace(p_qtd_ano_cor,".",","))
      set l_ordem_pri            = .CreateParameter("l_ordem_pri",           adInteger, adParamInput,     , Tvl(p_ordem_pri))
      set l_observacao           = .CreateParameter("l_observacao",          adVarchar, adParamInput, 4000, Tvl(p_observacao))
      set l_cd_sof               = .CreateParameter("l_cd_sof",              adVarchar, adParamInput,    8, Tvl(p_cd_sof))
      set l_qtd_total            = .CreateParameter("l_qtd_total",           adNumeric)
      l_qtd_total.Precision    = 18
      l_qtd_total.NumericScale = 4
-     l_qtd_total.Value        = Tvl(p_qtd_total)
+     l_qtd_total.Value        = Tvl(Replace(p_qtd_total,".",","))
      set l_cd_sof_ref           = .CreateParameter("l_cd_sof_ref",          adInteger, adParamInput,     , Tvl(p_cd_sof_ref))
 
      .parameters.Append         l_cliente
@@ -1141,7 +1138,7 @@ Sub DML_PutXMLAcao_PPA(p_cliente, p_ano, p_cd_programa, p_chave, p_cd_acao, p_un
      On error Resume Next
      .Execute
      If Err.Description > "" Then 
-        TrataErro
+        p_resultado = Err.Description
      End If
      .parameters.Delete         "l_cliente"
      .parameters.Delete         "l_ano"
@@ -1196,7 +1193,7 @@ End Sub
 REM =========================================================================
 REM Mantém a tabela PPA - Localizador
 REM -------------------------------------------------------------------------
-Sub DML_PutXMLLocalizador_PPA(p_cliente, p_ano, p_cd_programa, p_cd_acao_ppa, p_chave, p_cd_localizador, p_cd_regiao, p_cd_municipio, _
+Sub DML_PutXMLLocalizador_PPA(p_resultado, p_cliente, p_ano, p_cd_programa, p_cd_acao_ppa, p_chave, p_cd_localizador, p_cd_regiao, p_cd_municipio, _
                               p_nome, p_valor_total, p_valor_ano_ant, p_qtd_ano_ant, p_valor_ano_cor, p_qtd_ano_cor, p_reperc_financ, _
                               p_vr_reperc_financ, p_mes_ini, p_ano_ini, p_mes_fim, p_ano_fim, p_nome_alterado, p_observacao, _
                               p_qtd_total, p_cd_sof_ref)
@@ -1245,28 +1242,28 @@ Sub DML_PutXMLLocalizador_PPA(p_cliente, p_ano, p_cd_programa, p_cd_acao_ppa, p_
      set l_valor_total          = .CreateParameter("l_valor_total",         adNumeric)
      l_valor_total.Precision    = 18
      l_valor_total.NumericScale = 2
-     l_valor_total.Value        = Tvl(p_valor_total)
+     l_valor_total.Value        = Tvl(Replace(p_valor_total,".",","))
      set l_valor_ano_ant        = .CreateParameter("l_valor_ano_ant",       adNumeric)
      l_valor_ano_ant.Precision    = 18
      l_valor_ano_ant.NumericScale = 2
-     l_valor_ano_ant.Value        = Tvl(p_valor_ano_ant)
+     l_valor_ano_ant.Value        = Tvl(Replace(p_valor_ano_ant,".",","))
      set l_qtd_ano_ant          = .CreateParameter("l_qtd_ano_ant",         adNumeric)
      l_qtd_ano_ant.Precision    = 18
      l_qtd_ano_ant.NumericScale = 4
-     l_qtd_ano_ant.Value        = Tvl(p_qtd_ano_ant)
+     l_qtd_ano_ant.Value        = Tvl(Replace(p_qtd_ano_ant,".",","))
      set l_valor_ano_cor        = .CreateParameter("l_valor_ano_cor",       adNumeric)
      l_valor_ano_cor.Precision    = 18
      l_valor_ano_cor.NumericScale = 2
-     l_valor_ano_cor.Value        = Tvl(p_valor_ano_cor)
+     l_valor_ano_cor.Value        = Tvl(Replace(p_valor_ano_cor,".",","))
      set l_qtd_ano_cor          = .CreateParameter("l_qtd_ano_cor",         adNumeric)
      l_qtd_ano_cor.Precision    = 18
      l_qtd_ano_cor.NumericScale = 4
-     l_qtd_ano_cor.Value        = Tvl(p_qtd_ano_cor)
+     l_qtd_ano_cor.Value        = Tvl(Replace(p_qtd_ano_cor,".",","))
      set l_reperc_financ        = .CreateParameter("l_reperc_financ",       adVarchar, adParamInput, 4000, Tvl(p_reperc_financ))
      set l_vr_reperc_financ     = .CreateParameter("l_vr_reperc_financ",    adNumeric)
      l_vr_reperc_financ.Precision    = 18
      l_vr_reperc_financ.NumericScale = 2
-     l_vr_reperc_financ.Value        = Tvl(p_vr_reperc_financ)
+     l_vr_reperc_financ.Value        = Tvl(Replace(p_vr_reperc_financ,".",","))
      set l_mes_ini              = .CreateParameter("l_mes_ini",             adVarchar, adParamInput,    2, Tvl(p_mes_ini))
      set l_ano_ini              = .CreateParameter("l_ano_ini",             adVarchar, adParamInput,    4, Tvl(p_ano_ini))
      set l_mes_fim              = .CreateParameter("l_mes_fim",             adVarchar, adParamInput,    2, Tvl(p_mes_fim))
@@ -1276,7 +1273,7 @@ Sub DML_PutXMLLocalizador_PPA(p_cliente, p_ano, p_cd_programa, p_cd_acao_ppa, p_
      set l_qtd_total            = .CreateParameter("l_qtd_total",           adNumeric)
      l_qtd_total.Precision    = 18
      l_qtd_total.NumericScale = 4
-     l_qtd_total.Value        = Tvl(p_qtd_total)
+     l_qtd_total.Value        = Tvl(Replace(p_qtd_total,".",","))
      set l_cd_sof_ref           = .CreateParameter("l_cd_sof_ref",          adInteger, adParamInput,     , Tvl(p_cd_sof_ref))
                
      .parameters.Append         l_cliente
@@ -1308,7 +1305,7 @@ Sub DML_PutXMLLocalizador_PPA(p_cliente, p_ano, p_cd_programa, p_cd_acao_ppa, p_
      On error Resume Next
      .Execute
      If Err.Description > "" Then 
-        TrataErro
+        p_resultado = Err.Description
      End If
      .parameters.Delete         "l_cliente"
      .parameters.Delete         "l_ano"
@@ -1340,7 +1337,7 @@ End Sub
 REM =========================================================================
 REM Mantém a tabela PPA - Dado Físico
 REM -------------------------------------------------------------------------
-Sub DML_PutXMLDadoFisico_PPA(p_cliente, p_ano, p_cd_programa, p_cd_acao_ppa, p_cd_localizador_ppa, _
+Sub DML_PutXMLDadoFisico_PPA(p_resultado, p_cliente, p_ano, p_cd_programa, p_cd_acao_ppa, p_cd_localizador_ppa, _
                              p_qtd_ano_1, p_qtd_ano_2, p_qtd_ano_3, p_qtd_ano_4, p_qtd_ano_5, p_qtd_ano_6, _
                              p_observacao, p_cumulativa)
 
@@ -1372,27 +1369,27 @@ Sub DML_PutXMLDadoFisico_PPA(p_cliente, p_ano, p_cd_programa, p_cd_acao_ppa, p_c
      set l_qtd_ano_1            = .CreateParameter("l_qtd_ano_1",           adNumeric)
      l_qtd_ano_1.Precision      = 18
      l_qtd_ano_1.NumericScale   = 4
-     l_qtd_ano_1.Value          = Tvl(p_qtd_ano_1)
+     l_qtd_ano_1.Value          = Tvl(Replace(p_qtd_ano_1,".",","))
      set l_qtd_ano_2            = .CreateParameter("l_qtd_ano_2",           adNumeric)
      l_qtd_ano_2.Precision      = 18
      l_qtd_ano_2.NumericScale   = 4
-     l_qtd_ano_2.Value          = Tvl(p_qtd_ano_2)
+     l_qtd_ano_2.Value          = Tvl(Replace(p_qtd_ano_2,".",","))
      set l_qtd_ano_3            = .CreateParameter("l_qtd_ano_3",           adNumeric)
      l_qtd_ano_3.Precision      = 18
      l_qtd_ano_3.NumericScale   = 4
-     l_qtd_ano_3.Value          = Tvl(p_qtd_ano_3)
+     l_qtd_ano_3.Value          = Tvl(Replace(p_qtd_ano_3,".",","))
      set l_qtd_ano_4            = .CreateParameter("l_qtd_ano_4",           adNumeric)
      l_qtd_ano_4.Precision      = 18
      l_qtd_ano_4.NumericScale   = 4
-     l_qtd_ano_4.Value          = Tvl(p_qtd_ano_4)
+     l_qtd_ano_4.Value          = Tvl(Replace(p_qtd_ano_4,".",","))
      set l_qtd_ano_5            = .CreateParameter("l_qtd_ano_5",           adNumeric)
      l_qtd_ano_5.Precision      = 18
      l_qtd_ano_5.NumericScale   = 4
-     l_qtd_ano_5.Value          = Tvl(p_qtd_ano_5)
+     l_qtd_ano_5.Value          = Tvl(Replace(p_qtd_ano_5,".",","))
      set l_qtd_ano_6            = .CreateParameter("l_qtd_ano_6",           adNumeric)
      l_qtd_ano_6.Precision      = 18
      l_qtd_ano_6.NumericScale   = 4
-     l_qtd_ano_6.Value          = Tvl(p_qtd_ano_6)
+     l_qtd_ano_6.Value          = Tvl(Replace(p_qtd_ano_6,".",","))
      set l_observacao           = .CreateParameter("l_observacao",          adVarchar, adParamInput, 4000, Tvl(p_observacao))
      set l_cumulativa           = .CreateParameter("l_cumulativa",          adVarchar, adParamInput,    1, Tvl(p_cumulativa))               
      
@@ -1414,7 +1411,7 @@ Sub DML_PutXMLDadoFisico_PPA(p_cliente, p_ano, p_cd_programa, p_cd_acao_ppa, p_c
      On error Resume Next
      .Execute
      If Err.Description > "" Then 
-        TrataErro
+        p_resultado = Err.Description
      End If
      .parameters.Delete         "l_cliente"
      .parameters.Delete         "l_ano"
@@ -1435,7 +1432,7 @@ End Sub
 REM =========================================================================
 REM Mantém a tabela PPA - Dado Financeiro
 REM -------------------------------------------------------------------------
-Sub DML_PutXMLDadoFinanceiro_PPA(p_cliente, p_ano, p_cd_programa, p_cd_acao_ppa, p_cd_localizador_ppa, p_cd_fonte, _ 
+Sub DML_PutXMLDadoFinanceiro_PPA(p_resultado, p_cliente, p_ano, p_cd_programa, p_cd_acao_ppa, p_cd_localizador_ppa, p_cd_fonte, _ 
                                  p_cd_natureza, p_cd_tipo_despesa, p_valor_ano_1, p_valor_ano_2, p_valor_ano_3, _
                                  p_valor_ano_4, p_valor_ano_5, p_valor_ano_6, p_observacao)
 
@@ -1472,27 +1469,27 @@ Sub DML_PutXMLDadoFinanceiro_PPA(p_cliente, p_ano, p_cd_programa, p_cd_acao_ppa,
      set l_valor_ano_1            = .CreateParameter("l_valor_ano_1",       adNumeric)
      l_valor_ano_1.Precision      = 18
      l_valor_ano_1.NumericScale   = 2
-     l_valor_ano_1.Value          = Tvl(p_valor_ano_1)
+     l_valor_ano_1.Value          = Tvl(Replace(p_valor_ano_1,".",","))
      set l_valor_ano_2            = .CreateParameter("l_valor_ano_2",       adNumeric)
      l_valor_ano_2.Precision      = 18
      l_valor_ano_2.NumericScale   = 2
-     l_valor_ano_2.Value          = Tvl(p_valor_ano_2)
+     l_valor_ano_2.Value          = Tvl(Replace(p_valor_ano_2,".",","))
      set l_valor_ano_3            = .CreateParameter("l_valor_ano_3",       adNumeric)
      l_valor_ano_3.Precision      = 18
      l_valor_ano_3.NumericScale   = 2
-     l_valor_ano_3.Value          = Tvl(p_valor_ano_3)
+     l_valor_ano_3.Value          = Tvl(Replace(p_valor_ano_3,".",","))
      set l_valor_ano_4            = .CreateParameter("l_valor_ano_4",       adNumeric)
      l_valor_ano_4.Precision      = 18
      l_valor_ano_4.NumericScale   = 2
-     l_valor_ano_4.Value          = Tvl(p_valor_ano_4)
+     l_valor_ano_4.Value          = Tvl(Replace(p_valor_ano_4,".",","))
      set l_valor_ano_5            = .CreateParameter("l_valor_ano_5",       adNumeric)
      l_valor_ano_5.Precision      = 18
      l_valor_ano_5.NumericScale   = 2
-     l_valor_ano_5.Value          = Tvl(p_valor_ano_5)
+     l_valor_ano_5.Value          = Tvl(Replace(p_valor_ano_5,".",","))
      set l_valor_ano_6            = .CreateParameter("l_valor_ano_6",       adNumeric)
      l_valor_ano_6.Precision      = 18
      l_valor_ano_6.NumericScale   = 2
-     l_valor_ano_6.Value          = Tvl(p_valor_ano_6)
+     l_valor_ano_6.Value          = Tvl(Replace(p_valor_ano_6,".",","))
      set l_observacao           = .CreateParameter("l_observacao",          adVarchar, adParamInput, 4000, Tvl(p_observacao))
      
      .parameters.Append         l_cliente
@@ -1515,7 +1512,7 @@ Sub DML_PutXMLDadoFinanceiro_PPA(p_cliente, p_ano, p_cd_programa, p_cd_acao_ppa,
      On error Resume Next
      .Execute
      If Err.Description > "" Then 
-        TrataErro
+        p_resultado = Err.Description
      End If
      .parameters.Delete         "l_cliente"
      .parameters.Delete         "l_ano"
@@ -1536,9 +1533,42 @@ Sub DML_PutXMLDadoFinanceiro_PPA(p_cliente, p_ano, p_cd_programa, p_cd_acao_ppa,
 End Sub
 
 REM =========================================================================
+REM Mantém a tabela PPA - Periodicidade
+REM -------------------------------------------------------------------------
+Sub DML_PutXMLPeriodicidade_PPA(p_resultado, p_chave, p_nome, p_ativo)
+
+
+  Dim l_Chave, l_nome, l_ativo
+  
+  Set l_chave                   = Server.CreateObject("ADODB.Parameter") 
+  Set l_nome                    = Server.CreateObject("ADODB.Parameter") 
+  Set l_ativo                   = Server.CreateObject("ADODB.Parameter") 
+  
+  with sp
+     set l_chave                = .CreateParameter("l_chave",               adInteger, adParamInput,   , Tvl(p_chave))
+     set l_nome                 = .CreateParameter("l_nome",                adVarchar, adParamInput, 50, Tvl(p_nome))
+     set l_ativo                = .CreateParameter("l_ativo",               adVarchar, adParamInput,  1, Tvl(p_ativo))
+  
+     .parameters.Append         l_Chave
+     .parameters.Append         l_nome
+     .parameters.Append         l_ativo
+  
+     .CommandText               = Session("schema_is") & "SP_PutXMLPeriodicidade_PPA"
+     On error Resume Next
+     .Execute
+     If Err.Description > "" Then 
+        p_resultado = Err.Description
+     End If
+     .parameters.Delete         "l_Chave"
+     .parameters.Delete         "l_nome"
+     .parameters.Delete         "l_ativo"
+  end with
+End Sub
+
+REM =========================================================================
 REM Mantém a tabela SIG - Periodicidade
 REM -------------------------------------------------------------------------
-Sub DML_PutXMLPeriodicidade(p_chave, p_nome, p_ativo)
+Sub DML_PutXMLPeriodicidade(p_resultado, p_chave, p_nome, p_ativo)
 
 
   Dim l_Chave, l_nome, l_ativo
@@ -1560,7 +1590,7 @@ Sub DML_PutXMLPeriodicidade(p_chave, p_nome, p_ativo)
      On error Resume Next
      .Execute
      If Err.Description > "" Then 
-        TrataErro
+        p_resultado = Err.Description
      End If
      .parameters.Delete         "l_Chave"
      .parameters.Delete         "l_nome"
@@ -1571,7 +1601,7 @@ End Sub
 REM =========================================================================
 REM Mantém a tabela SIG - Opção Estratégica
 REM -------------------------------------------------------------------------
-Sub DML_PutXMLOpcao_Estrat(p_chave, p_nome, p_ativo)
+Sub DML_PutXMLOpcao_Estrat(p_resultado, p_chave, p_nome, p_ativo)
 
 
   Dim l_Chave, l_nome, l_ativo
@@ -1593,7 +1623,7 @@ Sub DML_PutXMLOpcao_Estrat(p_chave, p_nome, p_ativo)
      On error Resume Next
      .Execute
      If Err.Description > "" Then 
-        TrataErro
+        p_resultado = Err.Description
      End If
      .parameters.Delete         "l_Chave"
      .parameters.Delete         "l_nome"
@@ -1604,7 +1634,7 @@ End Sub
 REM =========================================================================
 REM Mantém a tabela SIG - Macro objetivo
 REM -------------------------------------------------------------------------
-Sub DML_PutXMLMacro_Objetivo(p_chave, p_nome, p_opcao, p_ativo)
+Sub DML_PutXMLMacro_Objetivo(p_resultado, p_chave, p_nome, p_opcao, p_ativo)
 
 
   Dim l_Chave, l_nome, l_opcao, l_ativo
@@ -1629,7 +1659,7 @@ Sub DML_PutXMLMacro_Objetivo(p_chave, p_nome, p_opcao, p_ativo)
      On error Resume Next
      .Execute
      If Err.Description > "" Then 
-        TrataErro
+        p_resultado = Err.Description
      End If
      .parameters.Delete         "l_Chave"
      .parameters.Delete         "l_nome"
@@ -1641,7 +1671,7 @@ End Sub
 REM =========================================================================
 REM Mantém a tabela SIG - Base geográfica
 REM -------------------------------------------------------------------------
-Sub DML_PutXMLBase_Geografica(p_chave, p_nome, p_ativo)
+Sub DML_PutXMLBase_Geografica(p_resultado, p_chave, p_nome, p_ativo)
 
 
   Dim l_Chave, l_nome, l_ativo
@@ -1663,7 +1693,7 @@ Sub DML_PutXMLBase_Geografica(p_chave, p_nome, p_ativo)
      On error Resume Next
      .Execute
      If Err.Description > "" Then 
-        TrataErro
+        p_resultado = Err.Description
      End If
      .parameters.Delete         "l_Chave"
      .parameters.Delete         "l_nome"
@@ -1674,7 +1704,7 @@ End Sub
 REM =========================================================================
 REM Mantém a tabela SIG - Produto
 REM -------------------------------------------------------------------------
-Sub DML_PutXMLProduto_SIG(p_chave, p_nome, p_ativo)
+Sub DML_PutXMLProduto_SIG(p_resultado, p_chave, p_nome, p_ativo)
   Dim l_Chave, l_nome, l_ativo
   
   Set l_chave                   = Server.CreateObject("ADODB.Parameter") 
@@ -1694,7 +1724,7 @@ Sub DML_PutXMLProduto_SIG(p_chave, p_nome, p_ativo)
      On error Resume Next
      .Execute
      If Err.Description > "" Then 
-        TrataErro
+        p_resultado = Err.Description
      End If
      .parameters.Delete         "l_Chave"
      .parameters.Delete         "l_nome"
@@ -1705,7 +1735,7 @@ End Sub
 REM =========================================================================
 REM Mantém a tabela SIG - Tipo restrição
 REM -------------------------------------------------------------------------
-Sub DML_PutXMLTipo_Restricao(p_chave, p_nome, p_ativo)
+Sub DML_PutXMLTipo_Restricao(p_resultado, p_chave, p_nome, p_ativo)
   Dim l_Chave, l_nome, l_ativo
   
   Set l_chave                   = Server.CreateObject("ADODB.Parameter") 
@@ -1725,7 +1755,7 @@ Sub DML_PutXMLTipo_Restricao(p_chave, p_nome, p_ativo)
      On error Resume Next
      .Execute
      If Err.Description > "" Then 
-        TrataErro
+        p_resultado = Err.Description
      End If
      .parameters.Delete         "l_Chave"
      .parameters.Delete         "l_nome"
@@ -1736,7 +1766,7 @@ End Sub
 REM =========================================================================
 REM Mantém a tabela SIG - Tipo situação
 REM -------------------------------------------------------------------------
-Sub DML_PutXMLTipo_Situacao(p_chave, p_nome, p_tipo, p_ativo)
+Sub DML_PutXMLTipo_Situacao(p_resultado, p_chave, p_nome, p_tipo, p_ativo)
   Dim l_Chave, l_nome, l_tipo, l_ativo
   
   Set l_chave                   = Server.CreateObject("ADODB.Parameter") 
@@ -1759,7 +1789,7 @@ Sub DML_PutXMLTipo_Situacao(p_chave, p_nome, p_tipo, p_ativo)
      On error Resume Next
      .Execute
      If Err.Description > "" Then 
-        TrataErro
+        p_resultado = Err.Description
      End If
      .parameters.Delete         "l_Chave"
      .parameters.Delete         "l_nome"
@@ -1771,7 +1801,7 @@ End Sub
 REM =========================================================================
 REM Mantém a tabela SIG - Tipo ação
 REM -------------------------------------------------------------------------
-Sub DML_PutXMLTipo_Acao(p_chave, p_nome, p_ativo)
+Sub DML_PutXMLTipo_Acao(p_resultado, p_chave, p_nome, p_ativo)
   Dim l_Chave, l_nome, l_ativo
   
   Set l_chave                   = Server.CreateObject("ADODB.Parameter") 
@@ -1791,7 +1821,7 @@ Sub DML_PutXMLTipo_Acao(p_chave, p_nome, p_ativo)
      On error Resume Next
      .Execute
      If Err.Description > "" Then 
-        TrataErro
+        p_resultado = Err.Description
      End If
      .parameters.Delete         "l_Chave"
      .parameters.Delete         "l_nome"
@@ -1802,7 +1832,7 @@ End Sub
 REM =========================================================================
 REM Mantém a tabela SIG - Tipo programa
 REM -------------------------------------------------------------------------
-Sub DML_PutXMLTipo_Programa(p_chave, p_nome, p_ativo)
+Sub DML_PutXMLTipo_Programa(p_resultado, p_chave, p_nome, p_ativo)
   Dim l_Chave, l_nome, l_ativo
   
   Set l_chave                   = Server.CreateObject("ADODB.Parameter") 
@@ -1822,7 +1852,7 @@ Sub DML_PutXMLTipo_Programa(p_chave, p_nome, p_ativo)
      On error Resume Next
      .Execute
      If Err.Description > "" Then 
-        TrataErro
+        p_resultado = Err.Description
      End If
      .parameters.Delete         "l_Chave"
      .parameters.Delete         "l_nome"
@@ -1833,7 +1863,7 @@ End Sub
 REM =========================================================================
 REM Mantém a tabela SIG - Unidade de medida
 REM -------------------------------------------------------------------------
-Sub DML_PutXMLUnidade_Medida_SIG(p_chave, p_nome, p_tipo, p_ativo)
+Sub DML_PutXMLUnidade_Medida_SIG(p_resultado, p_chave, p_nome, p_tipo, p_ativo)
   Dim l_Chave, l_nome, l_tipo, l_ativo
   
   Set l_chave                   = Server.CreateObject("ADODB.Parameter") 
@@ -1841,6 +1871,7 @@ Sub DML_PutXMLUnidade_Medida_SIG(p_chave, p_nome, p_tipo, p_ativo)
   Set l_tipo                    = Server.CreateObject("ADODB.Parameter") 
   Set l_ativo                   = Server.CreateObject("ADODB.Parameter") 
   
+  On error Resume Next
   with sp
      set l_chave                = .CreateParameter("l_chave",               adInteger, adParamInput,   , Tvl(p_chave))
      set l_nome                 = .CreateParameter("l_nome",                adVarchar, adParamInput, 80, Tvl(p_nome))
@@ -1853,10 +1884,9 @@ Sub DML_PutXMLUnidade_Medida_SIG(p_chave, p_nome, p_tipo, p_ativo)
      .parameters.Append         l_ativo
   
      .CommandText               = Session("schema_is") & "SP_PutXMLUnidade_Medida_SIG"
-     On error Resume Next
      .Execute
      If Err.Description > "" Then 
-        TrataErro
+        p_resultado = Err.Description
      End If
      .parameters.Delete         "l_Chave"
      .parameters.Delete         "l_nome"
@@ -1868,7 +1898,7 @@ End Sub
 REM =========================================================================
 REM Mantém a tabela SIGPLAN - Órgao
 REM -------------------------------------------------------------------------
-Sub DML_PutXMLOrgao_SIG(p_ano, p_chave, p_tipo_org, p_nome, p_sigla, p_ativo)
+Sub DML_PutXMLOrgao_SIG(p_resultado, p_ano, p_chave, p_tipo_org, p_nome, p_sigla, p_ativo)
 
 
   Dim l_ano, l_Chave, l_tipo_org, l_nome, l_sigla, l_ativo
@@ -1899,7 +1929,7 @@ Sub DML_PutXMLOrgao_SIG(p_ano, p_chave, p_tipo_org, p_nome, p_sigla, p_ativo)
      On error Resume Next
      .Execute
      If Err.Description > "" Then 
-        TrataErro
+        p_resultado = Err.Description
      End If
      .parameters.Delete         "l_ano"
      .parameters.Delete         "l_Chave"
@@ -1913,7 +1943,7 @@ End Sub
 REM =========================================================================
 REM Mantém a tabela SIGPLAN - Unidade
 REM -------------------------------------------------------------------------
-Sub DML_PutXMLUnidade_SIG(p_ano, p_chave, p_tipo_unid, p_orgao, p_tipo_org, p_nome)
+Sub DML_PutXMLUnidade_SIG(p_resultado, p_ano, p_chave, p_tipo_unid, p_orgao, p_tipo_org, p_nome)
 
 
   Dim l_ano, l_Chave, l_tipo_unid, l_orgao, l_tipo_org, l_nome
@@ -1944,7 +1974,7 @@ Sub DML_PutXMLUnidade_SIG(p_ano, p_chave, p_tipo_unid, p_orgao, p_tipo_org, p_no
      On error Resume Next
      .Execute
      If Err.Description > "" Then 
-        TrataErro
+        p_resultado = Err.Description
      End If
      .parameters.Delete         "l_ano"
      .parameters.Delete         "l_Chave"
@@ -1958,7 +1988,7 @@ End Sub
 REM =========================================================================
 REM Mantém a tabela SIG - Programa
 REM -------------------------------------------------------------------------
-Sub DML_PutXMLPrograma_SIG(p_cliente, p_ano, p_chave, p_tipo_org, p_orgao, p_nome, p_tipo_prog, _
+Sub DML_PutXMLPrograma_SIG(p_resultado, p_cliente, p_ano, p_chave, p_tipo_org, p_orgao, p_nome, p_tipo_prog, _
                           p_macro, p_mes_ini, p_ano_ini, p_mes_fim, p_ano_fim, p_objetivo, p_publico_alvo, _
                           p_justificativa, p_estrategia, p_ln_programa, p_valor_estimado, p_valor_ppa, _
                           p_temporario, p_contexto, p_atual_contexto, p_estagio, p_andamento, p_cronograma, _
@@ -2027,11 +2057,11 @@ Sub DML_PutXMLPrograma_SIG(p_cliente, p_ano, p_chave, p_tipo_org, p_orgao, p_nom
      set l_valor_estimado       = .CreateParameter("l_valor_estimado",      adNumeric)
      l_valor_estimado.Precision    = 18
      l_valor_estimado.NumericScale = 2
-     l_valor_estimado.Value        = Tvl(p_valor_estimado)
+     l_valor_estimado.Value        = Tvl(Replace(p_valor_estimado,".",","))
      set l_valor_ppa            = .CreateParameter("l_valor_ppa",      adNumeric)
      l_valor_ppa.Precision      = 18
      l_valor_ppa.NumericScale   = 2
-     l_valor_ppa.Value          = Tvl(p_valor_ppa)     
+     l_valor_ppa.Value          = Tvl(Replace(p_valor_ppa,".",","))     
      set l_temporario           = .CreateParameter("l_temporario",          adVarchar, adParamInput,    1, Tvl(p_temporario))
      set l_contexto             = .CreateParameter("l_contexto",            adVarchar, adParamInput, 4000, Tvl(Mid(p_contexto,1,4000)))
      set l_atual_contexto       = .CreateParameter("l_atual_contexto",      adDate,    adParamInput,     , Tvl(p_atual_contexto))
@@ -2083,7 +2113,7 @@ Sub DML_PutXMLPrograma_SIG(p_cliente, p_ano, p_chave, p_tipo_org, p_orgao, p_nom
      On error Resume Next
      .Execute
      If Err.Description > "" Then 
-        TrataErro
+        p_resultado = Err.Description
      End If
      .parameters.Delete         "l_cliente"
      .parameters.Delete         "l_ano"
@@ -2117,6 +2147,1101 @@ Sub DML_PutXMLPrograma_SIG(p_cliente, p_ano, p_chave, p_tipo_org, p_orgao, p_nom
      .parameters.Delete         "l_resultados_obt"
      .parameters.Delete         "l_atual_sit_atual"
      .parameters.Delete         "l_coment_execucao"
+  end with
+End Sub
+
+REM =========================================================================
+REM Mantém a tabela SIGPLAN - Indicador
+REM -------------------------------------------------------------------------
+Sub DML_PutXMLIndicador_SIG(p_resultado, p_cliente, p_ano, p_programa, p_chave, p_unidade_med, p_periodicidade, p_base_geo, p_nome, _
+                            p_fonte, p_formula, p_valor_apurado, p_valor_ppa, p_valor_programa, p_valor_mes_1, p_valor_mes_2, _
+                            p_valor_mes_3, p_valor_mes_4, p_valor_mes_5, p_valor_mes_6, p_valor_mes_7, p_valor_mes_8, p_valor_mes_9, _
+                            p_valor_mes_10, p_valor_mes_11, p_valor_mes_12, p_apuracao)
+
+
+  Dim l_cliente, l_ano, l_programa, l_Chave, l_unidade_med, l_periodicidade, l_base_geo, l_nome
+  Dim l_fonte, l_formula, l_valor_apurado, l_valor_ppa, l_valor_programa
+  Dim l_valor_mes_1, l_valor_mes_2, l_valor_mes_3, l_valor_mes_4, l_valor_mes_5, l_valor_mes_6, l_valor_mes_7
+  Dim l_valor_mes_8, l_valor_mes_9, l_valor_mes_10, l_valor_mes_11, l_valor_mes_12, l_apuracao
+  
+  Set l_cliente                 = Server.CreateObject("ADODB.Parameter") 
+  Set l_ano                     = Server.CreateObject("ADODB.Parameter") 
+  Set l_programa                = Server.CreateObject("ADODB.Parameter") 
+  Set l_chave                   = Server.CreateObject("ADODB.Parameter") 
+  Set l_unidade_med             = Server.CreateObject("ADODB.Parameter") 
+  Set l_periodicidade           = Server.CreateObject("ADODB.Parameter") 
+  Set l_base_geo                = Server.CreateObject("ADODB.Parameter") 
+  Set l_nome                    = Server.CreateObject("ADODB.Parameter") 
+  Set l_fonte                   = Server.CreateObject("ADODB.Parameter") 
+  Set l_formula                 = Server.CreateObject("ADODB.Parameter") 
+  Set l_valor_apurado           = Server.CreateObject("ADODB.Parameter")
+  Set l_valor_ppa               = Server.CreateObject("ADODB.Parameter")
+  Set l_valor_programa          = Server.CreateObject("ADODB.Parameter")
+  Set l_valor_mes_1             = Server.CreateObject("ADODB.Parameter")
+  Set l_valor_mes_2             = Server.CreateObject("ADODB.Parameter")
+  Set l_valor_mes_3             = Server.CreateObject("ADODB.Parameter")          
+  Set l_valor_mes_4             = Server.CreateObject("ADODB.Parameter")
+  Set l_valor_mes_5             = Server.CreateObject("ADODB.Parameter")
+  Set l_valor_mes_6             = Server.CreateObject("ADODB.Parameter")
+  Set l_valor_mes_7             = Server.CreateObject("ADODB.Parameter") 
+  Set l_valor_mes_8             = Server.CreateObject("ADODB.Parameter") 
+  Set l_valor_mes_9             = Server.CreateObject("ADODB.Parameter")        
+  Set l_valor_mes_10            = Server.CreateObject("ADODB.Parameter")
+  Set l_valor_mes_11            = Server.CreateObject("ADODB.Parameter")   
+  Set l_valor_mes_12            = Server.CreateObject("ADODB.Parameter") 
+  Set l_apuracao                = Server.CreateObject("ADODB.Parameter") 
+  
+  with sp
+     set l_cliente              = .CreateParameter("l_cliente",             adInteger, adParamInput,     , Tvl(p_cliente))
+     set l_ano                  = .CreateParameter("l_ano",                 adInteger, adParamInput,     , Tvl(p_ano))
+     set l_programa             = .CreateParameter("l_programa",            adVarchar, adParamInput,    4, Tvl(p_programa))
+     set l_chave                = .CreateParameter("l_chave",               adInteger, adParamInput,     , Tvl(p_chave))
+     set l_unidade_med          = .CreateParameter("l_unidade_med",         adInteger, adParamInput,     , Tvl(p_unidade_med))
+     set l_periodicidade        = .CreateParameter("l_periodicidade",       adInteger, adParamInput,     , Tvl(p_periodicidade))     
+     set l_base_geo             = .CreateParameter("l_base_geo",            adInteger, adParamInput,     , Tvl(p_base_geo))
+     set l_nome                 = .CreateParameter("l_nome",                adVarchar, adParamInput,  200, Tvl(p_nome))
+     set l_fonte                = .CreateParameter("l_fonte",               adVarchar, adParamInput,  200, Tvl(p_fonte))
+     set l_formula              = .CreateParameter("l_formula",             adVarchar, adParamInput,  4000, Tvl(p_formula))
+     set l_valor_apurado        = .CreateParameter("l_valor_apurado",       adNumeric)
+     l_valor_apurado.Precision     = 18
+     l_valor_apurado.NumericScale  = 2
+     l_valor_apurado.Value         = Tvl(Replace(p_valor_apurado,".",","))
+     set l_valor_ppa            = .CreateParameter("l_valor_ppa",             adNumeric)
+     l_valor_ppa.Precision         = 18
+     l_valor_ppa.NumericScale      = 2
+     l_valor_ppa.Value             = Tvl(Replace(p_valor_ppa,".",","))
+     set l_valor_programa       = .CreateParameter("l_valor_programa",         adNumeric)
+     l_valor_programa.Precision    = 18
+     l_valor_programa.NumericScale = 2
+     l_valor_programa.Value        = Tvl(Replace(p_valor_programa,".",","))
+     set l_valor_mes_1          = .CreateParameter("l_valor_mes_1",         adNumeric)
+     l_valor_mes_1.Precision    = 18
+     l_valor_mes_1.NumericScale = 2
+     l_valor_mes_1.Value        = Tvl(Replace(p_valor_mes_1,".",","))
+     set l_valor_mes_2          = .CreateParameter("l_valor_mes_2",         adNumeric)
+     l_valor_mes_2.Precision    = 18
+     l_valor_mes_2.NumericScale = 2
+     l_valor_mes_2.Value        = Tvl(Replace(p_valor_mes_2,".",","))
+     set l_valor_mes_3          = .CreateParameter("l_valor_mes_3",         adNumeric)
+     l_valor_mes_3.Precision    = 18
+     l_valor_mes_3.NumericScale = 2
+     l_valor_mes_3.Value        = Tvl(Replace(p_valor_mes_3,".",","))
+     set l_valor_mes_4          = .CreateParameter("l_valor_mes_4",           adNumeric)
+     l_valor_mes_4.Precision    = 18
+     l_valor_mes_4.NumericScale = 2
+     l_valor_mes_4.Value        = Tvl(Replace(p_valor_mes_4,".",","))
+     set l_valor_mes_5          = .CreateParameter("l_valor_mes_5",         adNumeric)
+     l_valor_mes_5.Precision    = 18
+     l_valor_mes_5.NumericScale = 2
+     l_valor_mes_5.Value        = Tvl(Replace(p_valor_mes_5,".",","))
+     set l_valor_mes_6          = .CreateParameter("l_valor_mes_6",         adNumeric)
+     l_valor_mes_6.Precision    = 18
+     l_valor_mes_6.NumericScale = 2
+     l_valor_mes_6.Value        = Tvl(Replace(p_valor_mes_6,".",","))
+     set l_valor_mes_7          = .CreateParameter("l_valor_mes_7",         adNumeric)
+     l_valor_mes_7.Precision    = 18
+     l_valor_mes_7.NumericScale = 2
+     l_valor_mes_7.Value        = Tvl(Replace(p_valor_mes_7,".",","))
+     set l_valor_mes_8          = .CreateParameter("l_valor_mes_8",         adNumeric)
+     l_valor_mes_8.Precision    = 18
+     l_valor_mes_8.NumericScale = 2
+     l_valor_mes_8.Value        = Tvl(Replace(p_valor_mes_8,".",","))
+     set l_valor_mes_9          = .CreateParameter("l_valor_mes_9",         adNumeric)
+     l_valor_mes_9.Precision    = 18
+     l_valor_mes_9.NumericScale = 2
+     l_valor_mes_9.Value        = Tvl(Replace(p_valor_mes_9,".",","))
+     set l_valor_mes_10         = .CreateParameter("l_valor_mes_10",         adNumeric)
+     l_valor_mes_10.Precision    = 18
+     l_valor_mes_10.NumericScale = 2
+     l_valor_mes_10.Value        = Tvl(Replace(p_valor_mes_10,".",","))
+     set l_valor_mes_11         = .CreateParameter("l_valor_mes_11",         adNumeric)
+     l_valor_mes_11.Precision    = 18
+     l_valor_mes_11.NumericScale = 2
+     l_valor_mes_11.Value        = Tvl(Replace(p_valor_mes_11,".",","))
+     set l_valor_mes_12          = .CreateParameter("l_valor_mes_12",         adNumeric)
+     l_valor_mes_12.Precision    = 18
+     l_valor_mes_12.NumericScale = 2
+     l_valor_mes_12.Value        = Tvl(Replace(p_valor_mes_12,".",","))
+     set l_apuracao             = .CreateParameter("l_apuracao",            adDate,    adParamInput,     , Tvl(p_apuracao))
+          
+     .parameters.Append         l_cliente
+     .parameters.Append         l_ano
+     .parameters.Append         l_programa
+     .parameters.Append         l_Chave
+     .parameters.Append         l_unidade_med
+     .parameters.Append         l_periodicidade
+     .parameters.Append         l_base_geo
+     .parameters.Append         l_nome
+     .parameters.Append         l_fonte
+     .parameters.Append         l_formula
+     .parameters.Append         l_valor_apurado
+     .parameters.Append         l_valor_ppa
+     .parameters.Append         l_valor_programa
+     .parameters.Append         l_valor_mes_1   
+     .parameters.Append         l_valor_mes_2
+     .parameters.Append         l_valor_mes_3
+     .parameters.Append         l_valor_mes_4
+     .parameters.Append         l_valor_mes_5
+     .parameters.Append         l_valor_mes_6
+     .parameters.Append         l_valor_mes_7
+     .parameters.Append         l_valor_mes_8
+     .parameters.Append         l_valor_mes_9
+     .parameters.Append         l_valor_mes_10
+     .parameters.Append         l_valor_mes_11
+     .parameters.Append         l_valor_mes_12
+     .parameters.Append         l_apuracao
+     .CommandText               = Session("schema_is") & "SP_PutXMLIndicador_SIG"
+     On error Resume Next
+     .Execute
+     If Err.Description > "" Then 
+        p_resultado = Err.Description
+     End If
+     .parameters.Delete         "l_cliente"
+     .parameters.Delete         "l_ano"
+     .parameters.Delete         "l_programa"
+     .parameters.Delete         "l_Chave"
+     .parameters.Delete         "l_unidade_med"
+     .parameters.Delete         "l_periodicidade"
+     .parameters.Delete         "l_base_geo"
+     .parameters.Delete         "l_nome"
+     .parameters.Delete         "l_fonte"
+     .parameters.Delete         "l_formula"
+     .parameters.Delete         "l_valor_apurado"
+     .parameters.Delete         "l_valor_ppa"
+     .parameters.Delete         "l_valor_programa"
+     .parameters.Delete         "l_valor_mes_1"
+     .parameters.Delete         "l_valor_mes_2"
+     .parameters.Delete         "l_valor_mes_3"                         
+     .parameters.Delete         "l_valor_mes_4"
+     .parameters.Delete         "l_valor_mes_5"
+     .parameters.Delete         "l_valor_mes_6"
+     .parameters.Delete         "l_valor_mes_7"
+     .parameters.Delete         "l_valor_mes_8"
+     .parameters.Delete         "l_valor_mes_9"
+     .parameters.Delete         "l_valor_mes_10"
+     .parameters.Delete         "l_valor_mes_11"
+     .parameters.Delete         "l_valor_mes_12"
+     .parameters.Delete         "l_apuracao"
+  end with
+End Sub
+
+REM =========================================================================
+REM Mantém a tabela SIGPLAN - Ação
+REM -------------------------------------------------------------------------
+Sub DML_PutXMLAcao_SIG(p_resultado, p_cliente, p_ano, p_cd_programa, p_cd_acao, p_cd_subacao, p_cd_localizador, p_cd_regiao, p_cd_acao_ppa, _
+                       p_tipo_acao, p_cd_produto, p_unidade_med, p_unidade, p_tipo_unid, p_estagio, p_andamento, p_cronograma, _
+                       p_perc_execucao, p_desc_acao, p_desc_subacao, p_comentario, p_direta, p_descentralizada, p_linha_credito, _
+                       p_cumulativa, p_mes_ini, p_ano_ini, p_mes_fim, p_ano_fim, p_valor_ano_ant, p_coment_situacao, p_situacao_atual, _
+                       p_result_obtidos, p_mes_conc, p_ano_conc, p_coment_fisica, p_coment_financ, p_coment_fisica_bgu, _
+                       p_coment_financ_bgu, p_restos_pagar, p_coment_execucao, p_coment_restos, p_fiscal_segur, p_estatais, _
+                       p_outras_fontes, p_cd_sof_ref)
+
+
+  Dim l_cliente, l_ano, l_cd_programa, l_cd_acao, l_cd_subacao, l_cd_localizador, l_cd_regiao, l_cd_acao_ppa
+  Dim l_tipo_acao, l_cd_produto, l_unidade_med, l_unidade, l_tipo_unid, l_estagio, l_andamento, l_cronograma
+  Dim l_perc_execucao, l_desc_acao, l_desc_subacao, l_comentario, l_direta, l_descentralizada, l_linha_credito
+  Dim l_cumulativa, l_mes_ini, l_ano_ini, l_mes_fim, l_ano_fim, l_valor_ano_ant, l_coment_situacao, l_situacao_atual
+  Dim l_result_obtidos, l_mes_conc, l_ano_conc, l_coment_fisica, l_coment_financ, l_coment_fisica_bgu
+  Dim l_coment_financ_bgu, l_restos_pagar, l_coment_execucao, l_coment_restos, l_fiscal_segur, l_estatais
+  Dim l_outras_fontes, l_cd_sof_ref
+  
+  Set l_cliente                 = Server.CreateObject("ADODB.Parameter") 
+  Set l_ano                     = Server.CreateObject("ADODB.Parameter")
+  Set l_cd_programa             = Server.CreateObject("ADODB.Parameter")  
+  Set l_cd_acao                 = Server.CreateObject("ADODB.Parameter") 
+  Set l_cd_subacao              = Server.CreateObject("ADODB.Parameter")
+  Set l_cd_localizador          = Server.CreateObject("ADODB.Parameter") 
+  Set l_cd_regiao               = Server.CreateObject("ADODB.Parameter")  
+  Set l_cd_acao_ppa             = Server.CreateObject("ADODB.Parameter") 
+  Set l_tipo_acao               = Server.CreateObject("ADODB.Parameter") 
+  Set l_cd_produto              = Server.CreateObject("ADODB.Parameter") 
+  Set l_unidade_med             = Server.CreateObject("ADODB.Parameter") 
+  Set l_unidade                 = Server.CreateObject("ADODB.Parameter") 
+  Set l_tipo_unid               = Server.CreateObject("ADODB.Parameter") 
+  Set l_estagio                 = Server.CreateObject("ADODB.Parameter") 
+  Set l_andamento               = Server.CreateObject("ADODB.Parameter")
+  Set l_cronograma              = Server.CreateObject("ADODB.Parameter") 
+  Set l_perc_execucao           = Server.CreateObject("ADODB.Parameter") 
+  Set l_desc_acao               = Server.CreateObject("ADODB.Parameter") 
+  Set l_desc_subacao            = Server.CreateObject("ADODB.Parameter") 
+  Set l_comentario              = Server.CreateObject("ADODB.Parameter") 
+  Set l_direta                  = Server.CreateObject("ADODB.Parameter")
+  Set l_descentralizada         = Server.CreateObject("ADODB.Parameter")  
+  Set l_linha_credito           = Server.CreateObject("ADODB.Parameter")  
+  Set l_cumulativa              = Server.CreateObject("ADODB.Parameter")  
+  Set l_mes_ini                 = Server.CreateObject("ADODB.Parameter") 
+  Set l_ano_ini                 = Server.CreateObject("ADODB.Parameter")
+  Set l_mes_fim                 = Server.CreateObject("ADODB.Parameter") 
+  Set l_ano_fim                 = Server.CreateObject("ADODB.Parameter")  
+  Set l_valor_ano_ant           = Server.CreateObject("ADODB.Parameter") 
+  Set l_coment_situacao         = Server.CreateObject("ADODB.Parameter") 
+  Set l_situacao_atual          = Server.CreateObject("ADODB.Parameter") 
+  Set l_result_obtidos          = Server.CreateObject("ADODB.Parameter") 
+  Set l_mes_conc                = Server.CreateObject("ADODB.Parameter") 
+  Set l_ano_conc                = Server.CreateObject("ADODB.Parameter") 
+  Set l_coment_fisica           = Server.CreateObject("ADODB.Parameter")
+  Set l_coment_financ           = Server.CreateObject("ADODB.Parameter") 
+  Set l_coment_fisica_bgu       = Server.CreateObject("ADODB.Parameter")
+  Set l_coment_financ_bgu       = Server.CreateObject("ADODB.Parameter") 
+  Set l_restos_pagar            = Server.CreateObject("ADODB.Parameter")
+  Set l_coment_execucao         = Server.CreateObject("ADODB.Parameter") 
+  Set l_coment_restos           = Server.CreateObject("ADODB.Parameter")
+  Set l_fiscal_segur            = Server.CreateObject("ADODB.Parameter")   
+  Set l_estatais                = Server.CreateObject("ADODB.Parameter")
+  Set l_outras_fontes           = Server.CreateObject("ADODB.Parameter")   
+  Set l_cd_sof_ref              = Server.CreateObject("ADODB.Parameter")  
+  
+  with sp
+     set l_cliente              = .CreateParameter("l_cliente",             adInteger, adParamInput,     , Tvl(p_cliente))
+     set l_ano                  = .CreateParameter("l_ano",                 adInteger, adParamInput,     , Tvl(p_ano))
+     set l_cd_programa          = .CreateParameter("l_cd_programa",         adVarchar, adParamInput,    4, Tvl(p_cd_programa))
+     set l_cd_acao              = .CreateParameter("l_cd_acao",             adVarchar, adParamInput,    4, Tvl(p_cd_acao))
+     set l_cd_subacao           = .CreateParameter("l_cd_subacao",          adVarchar, adParamInput,    4, Tvl(p_cd_subacao))
+     set l_cd_localizador       = .CreateParameter("l_cd_localizador",      adVarchar, adParamInput,    4, Tvl(p_cd_localizador))
+     set l_cd_regiao            = .CreateParameter("l_cd_regiao",           adVarchar, adParamInput,    2, Tvl(p_cd_regiao))
+     set l_cd_acao_ppa          = .CreateParameter("l_cd_acao_ppa",         adVarchar, adParamInput,    5, Tvl(p_cd_acao_ppa))
+     set l_tipo_acao            = .CreateParameter("l_tipo_acao",           adInteger, adParamInput,     , Tvl(p_tipo_acao))
+     set l_cd_produto           = .CreateParameter("l_cd_produto",          adInteger, adParamInput,     , Tvl(p_cd_produto))
+     set l_unidade_med          = .CreateParameter("l_unidade_med",         adInteger, adParamInput,     , Tvl(p_unidade_med))
+     set l_unidade              = .CreateParameter("l_unidade",             adVarchar, adParamInput,    5, Tvl(p_unidade))
+     set l_tipo_unid            = .CreateParameter("l_tipo_unid",           adVarchar, adParamInput,    1, Tvl(p_tipo_unid))
+     set l_estagio              = .CreateParameter("l_estagio",             adVarchar, adParamInput,    2, Tvl(p_estagio))
+     set l_andamento            = .CreateParameter("l_andamento",           adVarchar, adParamInput,    2, Tvl(p_andamento))
+     set l_cronograma           = .CreateParameter("l_cronograma",          adVarchar, adParamInput,    2, Tvl(p_cronograma))
+     set l_perc_execucao        = .CreateParameter("l_perc_execucao",       adInteger, adParamInput,     , Tvl(p_perc_execucao))
+     set l_desc_acao            = .CreateParameter("l_desc_acao",           adVarchar, adParamInput,  255, Tvl(p_desc_acao))
+     set l_desc_subacao         = .CreateParameter("l_desc_subacao",        adVarchar, adParamInput,  300, Tvl(p_desc_subacao))
+     set l_comentario           = .CreateParameter("l_comentario",          adVarchar, adParamInput, 4000, Tvl(p_comentario))
+     set l_direta               = .CreateParameter("l_direta",              adVarchar, adParamInput,    1, Tvl(p_direta))
+     set l_descentralizada      = .CreateParameter("l_descentralizada",     adVarchar, adParamInput,    1, Tvl(p_descentralizada))
+     set l_linha_credito        = .CreateParameter("l_linha_credito",       adVarchar, adParamInput,    1, Tvl(p_linha_credito))
+     set l_cumulativa           = .CreateParameter("l_cumulativa",          adVarchar, adParamInput,    1, Tvl(p_cumulativa))
+     set l_mes_ini              = .CreateParameter("l_mes_ini",             adVarchar, adParamInput,    2, Tvl(p_mes_ini))
+     set l_ano_ini              = .CreateParameter("l_ano_ini",             adVarchar, adParamInput,    4, Tvl(p_ano_ini))
+     set l_mes_fim              = .CreateParameter("l_mes_fim",             adVarchar, adParamInput,    2, Tvl(p_mes_fim))
+     set l_ano_fim              = .CreateParameter("l_ano_fim",             adVarchar, adParamInput,    4, Tvl(p_ano_fim))
+     set l_valor_ano_ant        = .CreateParameter("l_valor_ano_ant",       adNumeric)
+     l_valor_ano_ant.Precision    = 18
+     l_valor_ano_ant.NumericScale = 2
+     l_valor_ano_ant.Value        = Tvl(Replace(p_valor_ano_ant,".",","))
+     set l_coment_situacao      = .CreateParameter("l_coment_situacao",     adVarchar, adParamInput, 4000, Tvl(p_coment_situacao))
+     set l_situacao_atual       = .CreateParameter("l_situacao_atual",      adVarchar, adParamInput, 4000, Tvl(p_situacao_atual))
+     set l_result_obtidos       = .CreateParameter("l_result_obtidos",      adVarchar, adParamInput, 4000, Tvl(p_result_obtidos))
+     set l_mes_conc             = .CreateParameter("l_mes_conc",            adVarchar, adParamInput,    2, Tvl(p_mes_conc))
+     set l_ano_conc             = .CreateParameter("l_ano_conc",            adVarchar, adParamInput,    4, Tvl(p_ano_conc))
+     set l_coment_fisica        = .CreateParameter("l_coment_fisica",       adVarchar, adParamInput, 4000, Tvl(p_coment_fisica))
+     set l_coment_financ        = .CreateParameter("l_coment_financ",       adVarchar, adParamInput, 4000, Tvl(p_coment_financ))     
+     set l_coment_fisica_bgu    = .CreateParameter("l_coment_fisica_bgu",   adVarchar, adParamInput, 4000, Tvl(p_coment_fisica_bgu))
+     set l_coment_financ_bgu    = .CreateParameter("l_coment_financ_bgu",   adVarchar, adParamInput, 4000, Tvl(p_coment_financ_bgu))
+     set l_restos_pagar         = .CreateParameter("l_restos_pagar",        adVarchar, adParamInput,    1, Tvl(p_restos_pagar))                   
+     set l_coment_execucao      = .CreateParameter("l_coment_execucao",     adVarchar, adParamInput, 4000, Tvl(p_coment_execucao))
+     set l_coment_restos        = .CreateParameter("l_coment_restos",       adVarchar, adParamInput, 4000, Tvl(p_coment_restos))     
+     set l_fiscal_segur         = .CreateParameter("l_fiscal_segur",        adVarchar, adParamInput,    1, Tvl(p_fiscal_segur))
+     set l_estatais             = .CreateParameter("l_estatais",            adVarchar, adParamInput,    1, Tvl(p_estatais))
+     set l_outras_fontes        = .CreateParameter("l_outras_fontes",       adVarchar, adParamInput,    1, Tvl(p_outras_fontes))
+     set l_cd_sof_ref           = .CreateParameter("l_cd_sof_ref",          adInteger, adParamInput,     , Tvl(p_cd_sof_ref))
+
+     .parameters.Append         l_cliente
+     .parameters.Append         l_ano
+     .parameters.Append         l_cd_programa
+     .parameters.Append         l_cd_acao
+     .parameters.Append         l_cd_subacao
+     .parameters.Append         l_cd_localizador
+     .parameters.Append         l_cd_regiao
+     .parameters.Append         l_cd_acao_ppa
+     .parameters.Append         l_tipo_acao
+     .parameters.Append         l_cd_produto
+     .parameters.Append         l_unidade_med
+     .parameters.Append         l_unidade
+     .parameters.Append         l_tipo_unid
+     .parameters.Append         l_estagio
+     .parameters.Append         l_andamento
+     .parameters.Append         l_cronograma
+     .parameters.Append         l_perc_execucao
+     .parameters.Append         l_desc_acao
+     .parameters.Append         l_desc_subacao
+     .parameters.Append         l_comentario
+     .parameters.Append         l_direta
+     .parameters.Append         l_descentralizada
+     .parameters.Append         l_linha_credito
+     .parameters.Append         l_cumulativa
+     .parameters.Append         l_mes_ini
+     .parameters.Append         l_ano_ini
+     .parameters.Append         l_mes_fim
+     .parameters.Append         l_ano_fim
+     .parameters.Append         l_valor_ano_ant     
+     .parameters.Append         l_coment_situacao
+     .parameters.Append         l_situacao_atual
+     .parameters.Append         l_result_obtidos
+     .parameters.Append         l_mes_conc
+     .parameters.Append         l_ano_conc
+     .parameters.Append         l_coment_fisica
+     .parameters.Append         l_coment_financ
+     .parameters.Append         l_coment_fisica_bgu
+     .parameters.Append         l_coment_financ_bgu
+     .parameters.Append         l_restos_pagar
+     .parameters.Append         l_coment_execucao
+     .parameters.Append         l_coment_restos
+     .parameters.Append         l_fiscal_segur
+     .parameters.Append         l_estatais     
+     .parameters.Append         l_outras_fontes
+     .parameters.Append         l_cd_sof_ref
+  
+     .CommandText               = Session("schema_is") & "SP_PutXMLAcao_SIG"
+     On error Resume Next
+     .Execute
+     If Err.Description > "" Then 
+        p_resultado = Err.Description
+     End If
+     .parameters.Delete         "l_cliente"
+     .parameters.Delete         "l_ano"
+     .parameters.Delete         "l_cd_programa"
+     .parameters.Delete         "l_cd_acao"
+     .parameters.Delete         "l_cd_subacao"
+     .parameters.Delete         "l_cd_localizador"
+     .parameters.Delete         "l_cd_regiao"
+     .parameters.Delete         "l_cd_acao_ppa"
+     .parameters.Delete         "l_tipo_acao"
+     .parameters.Delete         "l_cd_produto"
+     .parameters.Delete         "l_unidade_med"
+     .parameters.Delete         "l_unidade"
+     .parameters.Delete         "l_tipo_unid"
+     .parameters.Delete         "l_estagio"
+     .parameters.Delete         "l_andamento"
+     .parameters.Delete         "l_cronograma"
+     .parameters.Delete         "l_perc_execucao"
+     .parameters.Delete         "l_desc_acao"
+     .parameters.Delete         "l_desc_subacao"
+     .parameters.Delete         "l_comentario"
+     .parameters.Delete         "l_direta"
+     .parameters.Delete         "l_descentralizada"
+     .parameters.Delete         "l_linha_credito"
+     .parameters.Delete         "l_cumulativa"
+     .parameters.Delete         "l_mes_ini"
+     .parameters.Delete         "l_ano_ini"
+     .parameters.Delete         "l_mes_fim"
+     .parameters.Delete         "l_ano_fim"
+     .parameters.Delete         "l_valor_ano_ant"
+     .parameters.Delete         "l_coment_situacao"
+     .parameters.Delete         "l_situacao_atual"
+     .parameters.Delete         "l_result_obtidos"
+     .parameters.Delete         "l_mes_conc"
+     .parameters.Delete         "l_ano_conc"
+     .parameters.Delete         "l_coment_fisica"
+     .parameters.Delete         "l_coment_financ"
+     .parameters.Delete         "l_coment_fisica_bgu"
+     .parameters.Delete         "l_coment_financ_bgu"
+     .parameters.Delete         "l_restos_pagar"
+     .parameters.Delete         "l_coment_execucao"
+     .parameters.Delete         "l_coment_restos"
+     .parameters.Delete         "l_fiscal_segur"
+     .parameters.Delete         "l_estatais"
+     .parameters.Delete         "l_outras_fontes"
+     .parameters.Delete         "l_cd_sof_ref"
+  end with
+End Sub
+
+REM =========================================================================
+REM Mantém a tabela SIGPLAM - Dado Físico
+REM -------------------------------------------------------------------------
+Sub DML_PutXMLDadoFisico_SIG(p_resultado, p_cliente, p_ano, p_cd_programa, p_cd_acao, p_cd_subacao, p_cd_regiao, _
+                             p_cron_ini_mes_1, p_cron_ini_mes_2, p_cron_ini_mes_3, p_cron_ini_mes_4, p_cron_ini_mes_5, p_cron_ini_mes_6, _
+                             p_cron_ini_mes_7, p_cron_ini_mes_8, p_cron_ini_mes_9, p_cron_ini_mes_10, p_cron_ini_mes_11, p_cron_ini_mes_12, _
+                             p_cron_mes_1, p_cron_mes_2, p_cron_mes_3, p_cron_mes_4, p_cron_mes_5, p_cron_mes_6, _
+                             p_cron_mes_7, p_cron_mes_8, p_cron_mes_9, p_cron_mes_10, p_cron_mes_11, p_cron_mes_12, _
+                             p_real_mes_1, p_real_mes_2, p_real_mes_3, p_real_mes_4, p_real_mes_5, p_real_mes_6, _
+                             p_real_mes_7, p_real_mes_8, p_real_mes_9, p_real_mes_10, p_real_mes_11, p_real_mes_12, _
+                             p_previsao_ano, p_cron_ini_ano, p_atual_ano, p_cron_ano, p_real_ano, p_comentario_execucao)
+
+
+  Dim l_cliente, l_ano, l_cd_programa, l_cd_acao, l_cd_subacao, l_cd_regiao
+  Dim l_cron_ini_mes_1, l_cron_ini_mes_2, l_cron_ini_mes_3, l_cron_ini_mes_4, l_cron_ini_mes_5, l_cron_ini_mes_6
+  Dim l_cron_ini_mes_7, l_cron_ini_mes_8, l_cron_ini_mes_9, l_cron_ini_mes_10, l_cron_ini_mes_11, l_cron_ini_mes_12
+  Dim l_cron_mes_1, l_cron_mes_2, l_cron_mes_3, l_cron_mes_4, l_cron_mes_5, l_cron_mes_6
+  Dim l_cron_mes_7, l_cron_mes_8, l_cron_mes_9, l_cron_mes_10, l_cron_mes_11, l_cron_mes_12
+  Dim l_real_mes_1, l_real_mes_2, l_real_mes_3, l_real_mes_4, l_real_mes_5, l_real_mes_6
+  Dim l_real_mes_7, l_real_mes_8, l_real_mes_9, l_real_mes_10, l_real_mes_11, l_real_mes_12
+  Dim l_previsao_ano, l_cron_ini_ano, l_atual_ano, l_cron_ano, l_real_ano, l_comentario_execucao
+  
+  Set l_cliente                 = Server.CreateObject("ADODB.Parameter") 
+  Set l_ano                     = Server.CreateObject("ADODB.Parameter")
+  Set l_cd_programa             = Server.CreateObject("ADODB.Parameter") 
+  Set l_cd_acao                 = Server.CreateObject("ADODB.Parameter")
+  Set l_cd_subacao              = Server.CreateObject("ADODB.Parameter")    
+  Set l_cd_regiao               = Server.CreateObject("ADODB.Parameter") 
+  Set l_cron_ini_mes_1          = Server.CreateObject("ADODB.Parameter")
+  Set l_cron_ini_mes_2          = Server.CreateObject("ADODB.Parameter") 
+  Set l_cron_ini_mes_3          = Server.CreateObject("ADODB.Parameter") 
+  Set l_cron_ini_mes_4          = Server.CreateObject("ADODB.Parameter") 
+  Set l_cron_ini_mes_5          = Server.CreateObject("ADODB.Parameter") 
+  Set l_cron_ini_mes_6          = Server.CreateObject("ADODB.Parameter") 
+  Set l_cron_ini_mes_7          = Server.CreateObject("ADODB.Parameter") 
+  Set l_cron_ini_mes_8          = Server.CreateObject("ADODB.Parameter") 
+  Set l_cron_ini_mes_9          = Server.CreateObject("ADODB.Parameter") 
+  Set l_cron_ini_mes_10         = Server.CreateObject("ADODB.Parameter") 
+  Set l_cron_ini_mes_11         = Server.CreateObject("ADODB.Parameter") 
+  Set l_cron_ini_mes_12         = Server.CreateObject("ADODB.Parameter") 
+  Set l_cron_mes_1              = Server.CreateObject("ADODB.Parameter")
+  Set l_cron_mes_2              = Server.CreateObject("ADODB.Parameter") 
+  Set l_cron_mes_3              = Server.CreateObject("ADODB.Parameter") 
+  Set l_cron_mes_4              = Server.CreateObject("ADODB.Parameter") 
+  Set l_cron_mes_5              = Server.CreateObject("ADODB.Parameter") 
+  Set l_cron_mes_6              = Server.CreateObject("ADODB.Parameter") 
+  Set l_cron_mes_7              = Server.CreateObject("ADODB.Parameter") 
+  Set l_cron_mes_8              = Server.CreateObject("ADODB.Parameter") 
+  Set l_cron_mes_9              = Server.CreateObject("ADODB.Parameter") 
+  Set l_cron_mes_10             = Server.CreateObject("ADODB.Parameter") 
+  Set l_cron_mes_11             = Server.CreateObject("ADODB.Parameter") 
+  Set l_cron_mes_12             = Server.CreateObject("ADODB.Parameter")  
+  Set l_real_mes_1              = Server.CreateObject("ADODB.Parameter")
+  Set l_real_mes_2              = Server.CreateObject("ADODB.Parameter") 
+  Set l_real_mes_3              = Server.CreateObject("ADODB.Parameter") 
+  Set l_real_mes_4              = Server.CreateObject("ADODB.Parameter") 
+  Set l_real_mes_5              = Server.CreateObject("ADODB.Parameter") 
+  Set l_real_mes_6              = Server.CreateObject("ADODB.Parameter") 
+  Set l_real_mes_7              = Server.CreateObject("ADODB.Parameter") 
+  Set l_real_mes_8              = Server.CreateObject("ADODB.Parameter") 
+  Set l_real_mes_9              = Server.CreateObject("ADODB.Parameter") 
+  Set l_real_mes_10             = Server.CreateObject("ADODB.Parameter") 
+  Set l_real_mes_11             = Server.CreateObject("ADODB.Parameter") 
+  Set l_real_mes_12             = Server.CreateObject("ADODB.Parameter")  
+  Set l_previsao_ano            = Server.CreateObject("ADODB.Parameter")
+  Set l_cron_ini_ano            = Server.CreateObject("ADODB.Parameter")  
+  Set l_atual_ano               = Server.CreateObject("ADODB.Parameter")  
+  Set l_cron_ano                = Server.CreateObject("ADODB.Parameter")    
+  Set l_real_ano                = Server.CreateObject("ADODB.Parameter") 
+  Set l_comentario_execucao     = Server.CreateObject("ADODB.Parameter") 
+  
+  with sp
+     set l_cliente              = .CreateParameter("l_cliente",             adInteger, adParamInput,     , Tvl(p_cliente))
+     set l_ano                  = .CreateParameter("l_ano",                 adInteger, adParamInput,     , Tvl(p_ano))
+     set l_cd_programa          = .CreateParameter("l_cd_programa",         adVarchar, adParamInput,    4, Tvl(p_cd_programa))
+     set l_cd_acao              = .CreateParameter("l_cd_acao",             adVarchar, adParamInput,    4, Tvl(p_cd_acao))
+     set l_cd_subacao           = .CreateParameter("l_cd_subacao",          adVarchar, adParamInput,    4, Tvl(p_cd_subacao))
+     set l_cd_regiao            = .CreateParameter("l_cd_regiao",           adVarchar, adParamInput,    4, Tvl(p_cd_regiao))
+     set l_cron_ini_mes_1       = .CreateParameter("l_cron_ini_mes_1",      adNumeric)
+     l_cron_ini_mes_1.Precision      = 18
+     l_cron_ini_mes_1.NumericScale   = 4
+     l_cron_ini_mes_1.Value          = Tvl(Replace(p_cron_ini_mes_1,".",","))
+     set l_cron_ini_mes_2       = .CreateParameter("l_cron_ini_mes_2",      adNumeric)
+     l_cron_ini_mes_2.Precision      = 18
+     l_cron_ini_mes_2.NumericScale   = 4
+     l_cron_ini_mes_2.Value          = Tvl(Replace(p_cron_ini_mes_2,".",","))
+     set l_cron_ini_mes_3       = .CreateParameter("l_cron_ini_mes_3",      adNumeric)
+     l_cron_ini_mes_3.Precision      = 18
+     l_cron_ini_mes_3.NumericScale   = 4
+     l_cron_ini_mes_3.Value          = Tvl(Replace(p_cron_ini_mes_3,".",","))
+     set l_cron_ini_mes_4       = .CreateParameter("l_cron_ini_mes_4",      adNumeric)
+     l_cron_ini_mes_4.Precision      = 18
+     l_cron_ini_mes_4.NumericScale   = 4
+     l_cron_ini_mes_4.Value          = Tvl(Replace(p_cron_ini_mes_4,".",","))
+     set l_cron_ini_mes_5       = .CreateParameter("l_cron_ini_mes_5",      adNumeric)
+     l_cron_ini_mes_5.Precision      = 18
+     l_cron_ini_mes_5.NumericScale   = 4
+     l_cron_ini_mes_5.Value          = Tvl(Replace(p_cron_ini_mes_5,".",","))
+     set l_cron_ini_mes_6       = .CreateParameter("l_cron_ini_mes_6",      adNumeric)
+     l_cron_ini_mes_6.Precision      = 18
+     l_cron_ini_mes_6.NumericScale   = 4
+     l_cron_ini_mes_6.Value          = Tvl(Replace(p_cron_ini_mes_6,".",","))
+     set l_cron_ini_mes_7       = .CreateParameter("l_cron_ini_mes_7",      adNumeric)
+     l_cron_ini_mes_7.Precision      = 18
+     l_cron_ini_mes_7.NumericScale   = 4
+     l_cron_ini_mes_7.Value          = Tvl(Replace(p_cron_ini_mes_7,".",","))
+     set l_cron_ini_mes_8       = .CreateParameter("l_cron_ini_mes_8",      adNumeric)
+     l_cron_ini_mes_8.Precision      = 18
+     l_cron_ini_mes_8.NumericScale   = 4
+     l_cron_ini_mes_8.Value          = Tvl(Replace(p_cron_ini_mes_8,".",","))
+     set l_cron_ini_mes_9       = .CreateParameter("l_cron_ini_mes_9",      adNumeric)
+     l_cron_ini_mes_9.Precision      = 18
+     l_cron_ini_mes_9.NumericScale   = 4
+     l_cron_ini_mes_9.Value          = Tvl(Replace(p_cron_ini_mes_9,".",","))
+     set l_cron_ini_mes_10      = .CreateParameter("l_cron_ini_mes_10",     adNumeric)
+     l_cron_ini_mes_10.Precision     = 18
+     l_cron_ini_mes_10.NumericScale  = 4
+     l_cron_ini_mes_10.Value         = Tvl(Replace(p_cron_ini_mes_10,".",","))
+     set l_cron_ini_mes_11      = .CreateParameter("l_cron_ini_mes_11",     adNumeric)
+     l_cron_ini_mes_11.Precision     = 18
+     l_cron_ini_mes_11.NumericScale  = 4
+     l_cron_ini_mes_11.Value         = Tvl(Replace(p_cron_ini_mes_11,".",","))
+     set l_cron_ini_mes_12      = .CreateParameter("l_cron_ini_mes_12",     adNumeric)
+     l_cron_ini_mes_12.Precision     = 18
+     l_cron_ini_mes_12.NumericScale  = 4
+     l_cron_ini_mes_12.Value         = Tvl(Replace(p_cron_ini_mes_12,".",","))
+     set l_cron_mes_1           = .CreateParameter("l_cron_mes_1",          adNumeric)
+     l_cron_mes_1.Precision         = 18
+     l_cron_mes_1.NumericScale      = 4
+     l_cron_mes_1.Value             = Tvl(Replace(p_cron_mes_1,".",","))
+     set l_cron_mes_2           = .CreateParameter("l_cron_mes_2",          adNumeric)
+     l_cron_mes_2.Precision         = 18
+     l_cron_mes_2.NumericScale      = 4
+     l_cron_mes_2.Value             = Tvl(Replace(p_cron_mes_2,".",","))
+     set l_cron_mes_3           = .CreateParameter("l_cron_mes_3",          adNumeric)
+     l_cron_mes_3.Precision         = 18
+     l_cron_mes_3.NumericScale      = 4
+     l_cron_mes_3.Value             = Tvl(Replace(p_cron_mes_3,".",","))
+     set l_cron_mes_4           = .CreateParameter("l_cron_mes_4",          adNumeric)
+     l_cron_mes_4.Precision         = 18
+     l_cron_mes_4.NumericScale      = 4
+     l_cron_mes_4.Value             = Tvl(Replace(p_cron_mes_4,".",","))
+     set l_cron_mes_5           = .CreateParameter("l_cron_mes_5",          adNumeric)
+     l_cron_mes_5.Precision         = 18
+     l_cron_mes_5.NumericScale      = 4
+     l_cron_mes_5.Value             = Tvl(Replace(p_cron_mes_5,".",","))
+     set l_cron_mes_6           = .CreateParameter("l_cron_mes_6",          adNumeric)
+     l_cron_mes_6.Precision         = 18
+     l_cron_mes_6.NumericScale      = 4
+     l_cron_mes_6.Value             = Tvl(Replace(p_cron_mes_6,".",","))
+     set l_cron_mes_7           = .CreateParameter("l_cron_mes_7",          adNumeric)
+     l_cron_mes_7.Precision         = 18
+     l_cron_mes_7.NumericScale      = 4
+     l_cron_mes_7.Value             = Tvl(Replace(p_cron_mes_7,".",","))
+     set l_cron_mes_8           = .CreateParameter("l_cron_mes_8",          adNumeric)
+     l_cron_mes_8.Precision         = 18
+     l_cron_mes_8.NumericScale      = 4
+     l_cron_mes_8.Value             = Tvl(Replace(p_cron_mes_8,".",","))
+     set l_cron_mes_9           = .CreateParameter("l_cron_mes_9",          adNumeric)
+     l_cron_mes_9.Precision         = 18
+     l_cron_mes_9.NumericScale      = 4
+     l_cron_mes_9.Value             = Tvl(Replace(p_cron_mes_9,".",","))
+     set l_cron_mes_10          = .CreateParameter("l_cron_mes_10",         adNumeric)
+     l_cron_mes_10.Precision        = 18
+     l_cron_mes_10.NumericScale     = 4
+     l_cron_mes_10.Value            = Tvl(Replace(p_cron_mes_10,".",","))
+     set l_cron_mes_11          = .CreateParameter("l_cron_mes_11",         adNumeric)
+     l_cron_mes_11.Precision        = 18
+     l_cron_mes_11.NumericScale     = 4
+     l_cron_mes_11.Value            = Tvl(Replace(p_cron_mes_11,".",","))
+     set l_cron_mes_12          = .CreateParameter("l_cron_mes_12",         adNumeric)
+     l_cron_mes_12.Precision        = 18
+     l_cron_mes_12.NumericScale     = 4
+     l_cron_mes_12.Value            = Tvl(Replace(p_cron_mes_12,".",","))
+     set l_real_mes_1           = .CreateParameter("l_real_mes_1",          adNumeric)
+     l_real_mes_1.Precision         = 18
+     l_real_mes_1.NumericScale      = 4
+     l_real_mes_1.Value             = Tvl(Replace(p_real_mes_1,".",","))
+     set l_real_mes_2           = .CreateParameter("l_real_mes_2",          adNumeric)
+     l_real_mes_2.Precision         = 18
+     l_real_mes_2.NumericScale      = 4
+     l_real_mes_2.Value             = Tvl(Replace(p_real_mes_2,".",","))
+     set l_real_mes_3           = .CreateParameter("l_real_mes_3",          adNumeric)
+     l_real_mes_3.Precision         = 18
+     l_real_mes_3.NumericScale      = 4
+     l_real_mes_3.Value             = Tvl(Replace(p_real_mes_3,".",","))
+     set l_real_mes_4           = .CreateParameter("l_real_mes_4",          adNumeric)
+     l_real_mes_4.Precision         = 18
+     l_real_mes_4.NumericScale      = 4
+     l_real_mes_4.Value             = Tvl(Replace(p_real_mes_4,".",","))
+     set l_real_mes_5           = .CreateParameter("l_real_mes_5",          adNumeric)
+     l_real_mes_5.Precision         = 18
+     l_real_mes_5.NumericScale      = 4
+     l_real_mes_5.Value             = Tvl(Replace(p_real_mes_5,".",","))
+     set l_real_mes_6           = .CreateParameter("l_real_mes_6",          adNumeric)
+     l_real_mes_6.Precision         = 18
+     l_real_mes_6.NumericScale      = 4
+     l_real_mes_6.Value             = Tvl(Replace(p_real_mes_6,".",","))
+     set l_real_mes_7           = .CreateParameter("l_real_mes_7",          adNumeric)
+     l_real_mes_7.Precision         = 18
+     l_real_mes_7.NumericScale      = 4
+     l_real_mes_7.Value             = Tvl(Replace(p_real_mes_7,".",","))
+     set l_real_mes_8           = .CreateParameter("l_real_mes_8",          adNumeric)
+     l_real_mes_8.Precision         = 18
+     l_real_mes_8.NumericScale      = 4
+     l_real_mes_8.Value             = Tvl(Replace(p_real_mes_8,".",","))
+     set l_real_mes_9           = .CreateParameter("l_real_mes_9",          adNumeric)
+     l_real_mes_9.Precision         = 18
+     l_real_mes_9.NumericScale      = 4
+     l_real_mes_9.Value             = Tvl(Replace(p_real_mes_9,".",","))
+     set l_real_mes_10          = .CreateParameter("l_real_mes_10",         adNumeric)
+     l_real_mes_10.Precision        = 18
+     l_real_mes_10.NumericScale     = 4
+     l_real_mes_10.Value            = Tvl(Replace(p_real_mes_10,".",","))
+     set l_real_mes_11          = .CreateParameter("l_real_mes_11",         adNumeric)
+     l_real_mes_11.Precision        = 18
+     l_real_mes_11.NumericScale     = 4
+     l_real_mes_11.Value            = Tvl(Replace(p_real_mes_11,".",","))
+     set l_real_mes_12          = .CreateParameter("l_real_mes_12",         adNumeric)
+     l_real_mes_12.Precision        = 18
+     l_real_mes_12.NumericScale     = 4
+     l_real_mes_12.Value            = Tvl(Replace(p_real_mes_12,".",","))
+     set l_previsao_ano         = .CreateParameter("l_previsao_ano",        adNumeric)
+     l_previsao_ano.Precision       = 18
+     l_previsao_ano.NumericScale    = 4
+     l_previsao_ano.Value           = Tvl(Replace(p_previsao_ano,".",","))
+     set l_cron_ini_ano         = .CreateParameter("l_cron_ini_ano",        adNumeric)
+     l_cron_ini_ano.Precision       = 18
+     l_cron_ini_ano.NumericScale    = 4
+     l_cron_ini_ano.Value           = Tvl(Replace(p_cron_ini_ano,".",","))
+     set l_atual_ano            = .CreateParameter("l_atual_ano",        adNumeric)
+     l_atual_ano.Precision          = 18
+     l_atual_ano.NumericScale       = 4
+     l_atual_ano.Value              = Tvl(Replace(p_atual_ano,".",","))
+     set l_cron_ano             = .CreateParameter("l_cron_ano",        adNumeric)
+     l_cron_ano.Precision           = 18
+     l_cron_ano.NumericScale        = 4
+     l_cron_ano.Value               = Tvl(Replace(p_cron_ano,".",","))
+     set l_real_ano             = .CreateParameter("l_real_ano",        adNumeric)
+     l_real_ano.Precision           = 18
+     l_real_ano.NumericScale        = 4
+     l_real_ano.Value               = Tvl(Replace(p_real_ano,".",","))
+     set l_comentario_execucao  = .CreateParameter("l_comentario_execucao", adVarchar, adParamInput, 4000, Tvl(p_comentario_execucao))
+     
+     .parameters.Append         l_cliente
+     .parameters.Append         l_ano
+     .parameters.Append         l_cd_programa
+     .parameters.Append         l_cd_acao
+     .parameters.Append         l_cd_subacao
+     .parameters.Append         l_cd_regiao
+     .parameters.Append         l_cron_ini_mes_1
+     .parameters.Append         l_cron_ini_mes_2
+     .parameters.Append         l_cron_ini_mes_3
+     .parameters.Append         l_cron_ini_mes_4
+     .parameters.Append         l_cron_ini_mes_5
+     .parameters.Append         l_cron_ini_mes_6
+     .parameters.Append         l_cron_ini_mes_7
+     .parameters.Append         l_cron_ini_mes_8
+     .parameters.Append         l_cron_ini_mes_9
+     .parameters.Append         l_cron_ini_mes_10
+     .parameters.Append         l_cron_ini_mes_11
+     .parameters.Append         l_cron_ini_mes_12
+     .parameters.Append         l_cron_mes_1
+     .parameters.Append         l_cron_mes_2
+     .parameters.Append         l_cron_mes_3
+     .parameters.Append         l_cron_mes_4
+     .parameters.Append         l_cron_mes_5
+     .parameters.Append         l_cron_mes_6
+     .parameters.Append         l_cron_mes_7
+     .parameters.Append         l_cron_mes_8
+     .parameters.Append         l_cron_mes_9
+     .parameters.Append         l_cron_mes_10
+     .parameters.Append         l_cron_mes_11
+     .parameters.Append         l_cron_mes_12
+     .parameters.Append         l_real_mes_1
+     .parameters.Append         l_real_mes_2
+     .parameters.Append         l_real_mes_3
+     .parameters.Append         l_real_mes_4
+     .parameters.Append         l_real_mes_5
+     .parameters.Append         l_real_mes_6
+     .parameters.Append         l_real_mes_7
+     .parameters.Append         l_real_mes_8
+     .parameters.Append         l_real_mes_9
+     .parameters.Append         l_real_mes_10
+     .parameters.Append         l_real_mes_11
+     .parameters.Append         l_real_mes_12
+     .parameters.Append         l_previsao_ano
+     .parameters.Append         l_cron_ini_ano
+     .parameters.Append         l_atual_ano
+     .parameters.Append         l_cron_ano
+     .parameters.Append         l_real_ano                         
+     .parameters.Append         l_comentario_execucao
+  
+     .CommandText               = Session("schema_is") & "SP_PutXMLDadoFisico_SIG"
+     On error Resume Next
+     .Execute
+     If Err.Description > "" Then 
+        p_resultado = Err.Description
+     End If
+     .parameters.Delete         "l_cliente"
+     .parameters.Delete         "l_ano"
+     .parameters.Delete         "l_cd_programa"
+     .parameters.Delete         "l_cd_acao"
+     .parameters.Delete         "l_cd_subacao"
+     .parameters.Delete         "l_cd_regiao"
+     .parameters.Delete         "l_cron_ini_mes_1"
+     .parameters.Delete         "l_cron_ini_mes_2"
+     .parameters.Delete         "l_cron_ini_mes_3"
+     .parameters.Delete         "l_cron_ini_mes_4"
+     .parameters.Delete         "l_cron_ini_mes_5"
+     .parameters.Delete         "l_cron_ini_mes_6"                         
+     .parameters.Delete         "l_cron_ini_mes_7"
+     .parameters.Delete         "l_cron_ini_mes_8"
+     .parameters.Delete         "l_cron_ini_mes_9"
+     .parameters.Delete         "l_cron_ini_mes_10"
+     .parameters.Delete         "l_cron_ini_mes_11"
+     .parameters.Delete         "l_cron_ini_mes_12"
+     .parameters.Delete         "l_cron_mes_1"
+     .parameters.Delete         "l_cron_mes_2"
+     .parameters.Delete         "l_cron_mes_3"
+     .parameters.Delete         "l_cron_mes_4"
+     .parameters.Delete         "l_cron_mes_5"
+     .parameters.Delete         "l_cron_mes_6"                         
+     .parameters.Delete         "l_cron_mes_7"
+     .parameters.Delete         "l_cron_mes_8"
+     .parameters.Delete         "l_cron_mes_9"
+     .parameters.Delete         "l_cron_mes_10"
+     .parameters.Delete         "l_cron_mes_11"
+     .parameters.Delete         "l_cron_mes_12"
+     .parameters.Delete         "l_real_mes_1"
+     .parameters.Delete         "l_real_mes_2"
+     .parameters.Delete         "l_real_mes_3"
+     .parameters.Delete         "l_real_mes_4"
+     .parameters.Delete         "l_real_mes_5"
+     .parameters.Delete         "l_real_mes_6"                         
+     .parameters.Delete         "l_real_mes_7"
+     .parameters.Delete         "l_real_mes_8"
+     .parameters.Delete         "l_real_mes_9"
+     .parameters.Delete         "l_real_mes_10"
+     .parameters.Delete         "l_real_mes_11"
+     .parameters.Delete         "l_real_mes_12"
+     .parameters.Delete         "l_previsao_ano"
+     .parameters.Delete         "l_cron_ini_ano"
+     .parameters.Delete         "l_atual_ano"
+     .parameters.Delete         "l_cron_ano"
+     .parameters.Delete         "l_real_ano"
+     .parameters.Delete         "l_comentario_execucao"
+  end with
+End Sub
+
+REM =========================================================================
+REM Mantém a tabela SIGPLAM - Dado Financeiro
+REM -------------------------------------------------------------------------
+Sub DML_PutXMLDadoFinanceiro_SIG(p_resultado, p_cliente, p_ano, p_cd_programa, p_cd_acao, p_cd_subacao, p_cd_fonte, p_cd_regiao, _
+                             p_cron_ini_mes_1, p_cron_ini_mes_2, p_cron_ini_mes_3, p_cron_ini_mes_4, p_cron_ini_mes_5, p_cron_ini_mes_6, _
+                             p_cron_ini_mes_7, p_cron_ini_mes_8, p_cron_ini_mes_9, p_cron_ini_mes_10, p_cron_ini_mes_11, p_cron_ini_mes_12, _
+                             p_cron_mes_1, p_cron_mes_2, p_cron_mes_3, p_cron_mes_4, p_cron_mes_5, p_cron_mes_6, _
+                             p_cron_mes_7, p_cron_mes_8, p_cron_mes_9, p_cron_mes_10, p_cron_mes_11, p_cron_mes_12, _
+                             p_real_mes_1, p_real_mes_2, p_real_mes_3, p_real_mes_4, p_real_mes_5, p_real_mes_6, _
+                             p_real_mes_7, p_real_mes_8, p_real_mes_9, p_real_mes_10, p_real_mes_11, p_real_mes_12, _
+                             p_previsao_ano, p_cron_ini_ano, p_atual_ano, p_cron_ano, p_real_ano, p_comentario_execucao)
+
+
+  Dim l_cliente, l_ano, l_cd_programa, l_cd_acao, l_cd_subacao, l_cd_fonte, l_cd_regiao
+  Dim l_cron_ini_mes_1, l_cron_ini_mes_2, l_cron_ini_mes_3, l_cron_ini_mes_4, l_cron_ini_mes_5, l_cron_ini_mes_6
+  Dim l_cron_ini_mes_7, l_cron_ini_mes_8, l_cron_ini_mes_9, l_cron_ini_mes_10, l_cron_ini_mes_11, l_cron_ini_mes_12
+  Dim l_cron_mes_1, l_cron_mes_2, l_cron_mes_3, l_cron_mes_4, l_cron_mes_5, l_cron_mes_6
+  Dim l_cron_mes_7, l_cron_mes_8, l_cron_mes_9, l_cron_mes_10, l_cron_mes_11, l_cron_mes_12
+  Dim l_real_mes_1, l_real_mes_2, l_real_mes_3, l_real_mes_4, l_real_mes_5, l_real_mes_6
+  Dim l_real_mes_7, l_real_mes_8, l_real_mes_9, l_real_mes_10, l_real_mes_11, l_real_mes_12
+  Dim l_previsao_ano, l_cron_ini_ano, l_atual_ano, l_cron_ano, l_real_ano, l_comentario_execucao
+  
+  Set l_cliente                 = Server.CreateObject("ADODB.Parameter") 
+  Set l_ano                     = Server.CreateObject("ADODB.Parameter")
+  Set l_cd_programa             = Server.CreateObject("ADODB.Parameter") 
+  Set l_cd_acao                 = Server.CreateObject("ADODB.Parameter")
+  Set l_cd_subacao              = Server.CreateObject("ADODB.Parameter") 
+  Set l_cd_fonte                = Server.CreateObject("ADODB.Parameter")    
+  Set l_cd_regiao               = Server.CreateObject("ADODB.Parameter") 
+  Set l_cron_ini_mes_1          = Server.CreateObject("ADODB.Parameter")
+  Set l_cron_ini_mes_2          = Server.CreateObject("ADODB.Parameter") 
+  Set l_cron_ini_mes_3          = Server.CreateObject("ADODB.Parameter") 
+  Set l_cron_ini_mes_4          = Server.CreateObject("ADODB.Parameter") 
+  Set l_cron_ini_mes_5          = Server.CreateObject("ADODB.Parameter") 
+  Set l_cron_ini_mes_6          = Server.CreateObject("ADODB.Parameter") 
+  Set l_cron_ini_mes_7          = Server.CreateObject("ADODB.Parameter") 
+  Set l_cron_ini_mes_8          = Server.CreateObject("ADODB.Parameter") 
+  Set l_cron_ini_mes_9          = Server.CreateObject("ADODB.Parameter") 
+  Set l_cron_ini_mes_10         = Server.CreateObject("ADODB.Parameter") 
+  Set l_cron_ini_mes_11         = Server.CreateObject("ADODB.Parameter") 
+  Set l_cron_ini_mes_12         = Server.CreateObject("ADODB.Parameter") 
+  Set l_cron_mes_1              = Server.CreateObject("ADODB.Parameter")
+  Set l_cron_mes_2              = Server.CreateObject("ADODB.Parameter") 
+  Set l_cron_mes_3              = Server.CreateObject("ADODB.Parameter") 
+  Set l_cron_mes_4              = Server.CreateObject("ADODB.Parameter") 
+  Set l_cron_mes_5              = Server.CreateObject("ADODB.Parameter") 
+  Set l_cron_mes_6              = Server.CreateObject("ADODB.Parameter") 
+  Set l_cron_mes_7              = Server.CreateObject("ADODB.Parameter") 
+  Set l_cron_mes_8              = Server.CreateObject("ADODB.Parameter") 
+  Set l_cron_mes_9              = Server.CreateObject("ADODB.Parameter") 
+  Set l_cron_mes_10             = Server.CreateObject("ADODB.Parameter") 
+  Set l_cron_mes_11             = Server.CreateObject("ADODB.Parameter") 
+  Set l_cron_mes_12             = Server.CreateObject("ADODB.Parameter")  
+  Set l_real_mes_1              = Server.CreateObject("ADODB.Parameter")
+  Set l_real_mes_2              = Server.CreateObject("ADODB.Parameter") 
+  Set l_real_mes_3              = Server.CreateObject("ADODB.Parameter") 
+  Set l_real_mes_4              = Server.CreateObject("ADODB.Parameter") 
+  Set l_real_mes_5              = Server.CreateObject("ADODB.Parameter") 
+  Set l_real_mes_6              = Server.CreateObject("ADODB.Parameter") 
+  Set l_real_mes_7              = Server.CreateObject("ADODB.Parameter") 
+  Set l_real_mes_8              = Server.CreateObject("ADODB.Parameter") 
+  Set l_real_mes_9              = Server.CreateObject("ADODB.Parameter") 
+  Set l_real_mes_10             = Server.CreateObject("ADODB.Parameter") 
+  Set l_real_mes_11             = Server.CreateObject("ADODB.Parameter") 
+  Set l_real_mes_12             = Server.CreateObject("ADODB.Parameter")  
+  Set l_previsao_ano            = Server.CreateObject("ADODB.Parameter")
+  Set l_cron_ini_ano            = Server.CreateObject("ADODB.Parameter")  
+  Set l_atual_ano               = Server.CreateObject("ADODB.Parameter")  
+  Set l_cron_ano                = Server.CreateObject("ADODB.Parameter")    
+  Set l_real_ano                = Server.CreateObject("ADODB.Parameter") 
+  Set l_comentario_execucao     = Server.CreateObject("ADODB.Parameter") 
+  
+  with sp
+     set l_cliente              = .CreateParameter("l_cliente",             adInteger, adParamInput,     , Tvl(p_cliente))
+     set l_ano                  = .CreateParameter("l_ano",                 adInteger, adParamInput,     , Tvl(p_ano))
+     set l_cd_programa          = .CreateParameter("l_cd_programa",         adVarchar, adParamInput,    4, Tvl(p_cd_programa))
+     set l_cd_acao              = .CreateParameter("l_cd_acao",             adVarchar, adParamInput,    4, Tvl(p_cd_acao))
+     set l_cd_subacao           = .CreateParameter("l_cd_subacao",          adVarchar, adParamInput,    4, Tvl(p_cd_subacao))
+     set l_cd_fonte              = .CreateParameter("l_cd_fonte",           adVarchar, adParamInput,    5, Tvl(p_cd_fonte))
+     set l_cd_regiao            = .CreateParameter("l_cd_regiao",           adVarchar, adParamInput,    2, Tvl(p_cd_regiao))
+     set l_cron_ini_mes_1       = .CreateParameter("l_cron_ini_mes_1",      adNumeric)
+     l_cron_ini_mes_1.Precision      = 18
+     l_cron_ini_mes_1.NumericScale   = 2
+     l_cron_ini_mes_1.Value          = Tvl(Replace(p_cron_ini_mes_1,".",","))
+     set l_cron_ini_mes_2       = .CreateParameter("l_cron_ini_mes_2",      adNumeric)
+     l_cron_ini_mes_2.Precision      = 18
+     l_cron_ini_mes_2.NumericScale   = 2
+     l_cron_ini_mes_2.Value          = Tvl(Replace(p_cron_ini_mes_2,".",","))
+     set l_cron_ini_mes_3       = .CreateParameter("l_cron_ini_mes_3",      adNumeric)
+     l_cron_ini_mes_3.Precision      = 18
+     l_cron_ini_mes_3.NumericScale   = 2
+     l_cron_ini_mes_3.Value          = Tvl(Replace(p_cron_ini_mes_3,".",","))
+     set l_cron_ini_mes_4       = .CreateParameter("l_cron_ini_mes_4",      adNumeric)
+     l_cron_ini_mes_4.Precision      = 18
+     l_cron_ini_mes_4.NumericScale   = 2
+     l_cron_ini_mes_4.Value          = Tvl(Replace(p_cron_ini_mes_4,".",","))
+     set l_cron_ini_mes_5       = .CreateParameter("l_cron_ini_mes_5",      adNumeric)
+     l_cron_ini_mes_5.Precision      = 18
+     l_cron_ini_mes_5.NumericScale   = 2
+     l_cron_ini_mes_5.Value          = Tvl(Replace(p_cron_ini_mes_5,".",","))
+     set l_cron_ini_mes_6       = .CreateParameter("l_cron_ini_mes_6",      adNumeric)
+     l_cron_ini_mes_6.Precision      = 18
+     l_cron_ini_mes_6.NumericScale   = 2
+     l_cron_ini_mes_6.Value          = Tvl(Replace(p_cron_ini_mes_6,".",","))
+     set l_cron_ini_mes_7       = .CreateParameter("l_cron_ini_mes_7",      adNumeric)
+     l_cron_ini_mes_7.Precision      = 18
+     l_cron_ini_mes_7.NumericScale   = 2
+     l_cron_ini_mes_7.Value          = Tvl(Replace(p_cron_ini_mes_7,".",","))
+     set l_cron_ini_mes_8       = .CreateParameter("l_cron_ini_mes_8",      adNumeric)
+     l_cron_ini_mes_8.Precision      = 18
+     l_cron_ini_mes_8.NumericScale   = 2
+     l_cron_ini_mes_8.Value          = Tvl(Replace(p_cron_ini_mes_8,".",","))
+     set l_cron_ini_mes_9       = .CreateParameter("l_cron_ini_mes_9",      adNumeric)
+     l_cron_ini_mes_9.Precision      = 18
+     l_cron_ini_mes_9.NumericScale   = 2
+     l_cron_ini_mes_9.Value          = Tvl(Replace(p_cron_ini_mes_9,".",","))
+     set l_cron_ini_mes_10      = .CreateParameter("l_cron_ini_mes_10",     adNumeric)
+     l_cron_ini_mes_10.Precision     = 18
+     l_cron_ini_mes_10.NumericScale  = 2
+     l_cron_ini_mes_10.Value         = Tvl(Replace(p_cron_ini_mes_10,".",","))
+     set l_cron_ini_mes_11      = .CreateParameter("l_cron_ini_mes_11",     adNumeric)
+     l_cron_ini_mes_11.Precision     = 18
+     l_cron_ini_mes_11.NumericScale  = 2
+     l_cron_ini_mes_11.Value         = Tvl(Replace(p_cron_ini_mes_11,".",","))
+     set l_cron_ini_mes_12      = .CreateParameter("l_cron_ini_mes_12",     adNumeric)
+     l_cron_ini_mes_12.Precision     = 18
+     l_cron_ini_mes_12.NumericScale  = 2
+     l_cron_ini_mes_12.Value         = Tvl(Replace(p_cron_ini_mes_12,".",","))
+     set l_cron_mes_1           = .CreateParameter("l_cron_mes_1",          adNumeric)
+     l_cron_mes_1.Precision         = 18
+     l_cron_mes_1.NumericScale      = 2
+     l_cron_mes_1.Value             = Tvl(Replace(p_cron_mes_1,".",","))
+     set l_cron_mes_2           = .CreateParameter("l_cron_mes_2",          adNumeric)
+     l_cron_mes_2.Precision         = 18
+     l_cron_mes_2.NumericScale      = 2
+     l_cron_mes_2.Value             = Tvl(Replace(p_cron_mes_2,".",","))
+     set l_cron_mes_3           = .CreateParameter("l_cron_mes_3",          adNumeric)
+     l_cron_mes_3.Precision         = 18
+     l_cron_mes_3.NumericScale      = 2
+     l_cron_mes_3.Value             = Tvl(Replace(p_cron_mes_3,".",","))
+     set l_cron_mes_4           = .CreateParameter("l_cron_mes_4",          adNumeric)
+     l_cron_mes_4.Precision         = 18
+     l_cron_mes_4.NumericScale      = 4
+     l_cron_mes_4.Value             = Tvl(Replace(p_cron_mes_4,".",","))
+     set l_cron_mes_5           = .CreateParameter("l_cron_mes_5",          adNumeric)
+     l_cron_mes_5.Precision         = 18
+     l_cron_mes_5.NumericScale      = 2
+     l_cron_mes_5.Value             = Tvl(Replace(p_cron_mes_5,".",","))
+     set l_cron_mes_6           = .CreateParameter("l_cron_mes_6",          adNumeric)
+     l_cron_mes_6.Precision         = 18
+     l_cron_mes_6.NumericScale      = 2
+     l_cron_mes_6.Value             = Tvl(Replace(p_cron_mes_6,".",","))
+     set l_cron_mes_7           = .CreateParameter("l_cron_mes_7",          adNumeric)
+     l_cron_mes_7.Precision         = 18
+     l_cron_mes_7.NumericScale      = 2
+     l_cron_mes_7.Value             = Tvl(Replace(p_cron_mes_7,".",","))
+     set l_cron_mes_8           = .CreateParameter("l_cron_mes_8",          adNumeric)
+     l_cron_mes_8.Precision         = 18
+     l_cron_mes_8.NumericScale      = 2
+     l_cron_mes_8.Value             = Tvl(Replace(p_cron_mes_8,".",","))
+     set l_cron_mes_9           = .CreateParameter("l_cron_mes_9",          adNumeric)
+     l_cron_mes_9.Precision         = 18
+     l_cron_mes_9.NumericScale      = 2
+     l_cron_mes_9.Value             = Tvl(Replace(p_cron_mes_9,".",","))
+     set l_cron_mes_10          = .CreateParameter("l_cron_mes_10",         adNumeric)
+     l_cron_mes_10.Precision        = 18
+     l_cron_mes_10.NumericScale     = 2
+     l_cron_mes_10.Value            = Tvl(Replace(p_cron_mes_10,".",","))
+     set l_cron_mes_11          = .CreateParameter("l_cron_mes_11",         adNumeric)
+     l_cron_mes_11.Precision        = 18
+     l_cron_mes_11.NumericScale     = 2
+     l_cron_mes_11.Value            = Tvl(Replace(p_cron_mes_11,".",","))
+     set l_cron_mes_12          = .CreateParameter("l_cron_mes_12",         adNumeric)
+     l_cron_mes_12.Precision        = 18
+     l_cron_mes_12.NumericScale     = 2
+     l_cron_mes_12.Value            = Tvl(Replace(p_cron_mes_12,".",","))
+     set l_real_mes_1           = .CreateParameter("l_real_mes_1",          adNumeric)
+     l_real_mes_1.Precision         = 18
+     l_real_mes_1.NumericScale      = 2
+     l_real_mes_1.Value             = Tvl(Replace(p_real_mes_1,".",","))
+     set l_real_mes_2           = .CreateParameter("l_real_mes_2",          adNumeric)
+     l_real_mes_2.Precision         = 18
+     l_real_mes_2.NumericScale      = 2
+     l_real_mes_2.Value             = Tvl(Replace(p_real_mes_2,".",","))
+     set l_real_mes_3           = .CreateParameter("l_real_mes_3",          adNumeric)
+     l_real_mes_3.Precision         = 18
+     l_real_mes_3.NumericScale      = 2
+     l_real_mes_3.Value             = Tvl(Replace(p_real_mes_3,".",","))
+     set l_real_mes_4           = .CreateParameter("l_real_mes_4",          adNumeric)
+     l_real_mes_4.Precision         = 18
+     l_real_mes_4.NumericScale      = 2
+     l_real_mes_4.Value             = Tvl(Replace(p_real_mes_4,".",","))
+     set l_real_mes_5           = .CreateParameter("l_real_mes_5",          adNumeric)
+     l_real_mes_5.Precision         = 18
+     l_real_mes_5.NumericScale      = 2
+     l_real_mes_5.Value             = Tvl(Replace(p_real_mes_5,".",","))
+     set l_real_mes_6           = .CreateParameter("l_real_mes_6",          adNumeric)
+     l_real_mes_6.Precision         = 18
+     l_real_mes_6.NumericScale      = 2
+     l_real_mes_6.Value             = Tvl(Replace(p_real_mes_6,".",","))
+     set l_real_mes_7           = .CreateParameter("l_real_mes_7",          adNumeric)
+     l_real_mes_7.Precision         = 18
+     l_real_mes_7.NumericScale      = 2
+     l_real_mes_7.Value             = Tvl(Replace(p_real_mes_7,".",","))
+     set l_real_mes_8           = .CreateParameter("l_real_mes_8",          adNumeric)
+     l_real_mes_8.Precision         = 18
+     l_real_mes_8.NumericScale      = 2
+     l_real_mes_8.Value             = Tvl(Replace(p_real_mes_8,".",","))
+     set l_real_mes_9           = .CreateParameter("l_real_mes_9",          adNumeric)
+     l_real_mes_9.Precision         = 18
+     l_real_mes_9.NumericScale      = 2
+     l_real_mes_9.Value             = Tvl(Replace(p_real_mes_9,".",","))
+     set l_real_mes_10          = .CreateParameter("l_real_mes_10",         adNumeric)
+     l_real_mes_10.Precision        = 18
+     l_real_mes_10.NumericScale     = 2
+     l_real_mes_10.Value            = Tvl(Replace(p_real_mes_10,".",","))
+     set l_real_mes_11          = .CreateParameter("l_real_mes_11",         adNumeric)
+     l_real_mes_11.Precision        = 18
+     l_real_mes_11.NumericScale     = 2
+     l_real_mes_11.Value            = Tvl(Replace(p_real_mes_11,".",","))
+     set l_real_mes_12          = .CreateParameter("l_real_mes_12",         adNumeric)
+     l_real_mes_12.Precision        = 18
+     l_real_mes_12.NumericScale     = 2
+     l_real_mes_12.Value            = Tvl(Replace(p_real_mes_12,".",","))
+     set l_previsao_ano         = .CreateParameter("l_previsao_ano",        adNumeric)
+     l_previsao_ano.Precision       = 18
+     l_previsao_ano.NumericScale    = 2
+     l_previsao_ano.Value           = Tvl(Replace(p_previsao_ano,".",","))
+     set l_cron_ini_ano         = .CreateParameter("l_cron_ini_ano",        adNumeric)
+     l_cron_ini_ano.Precision       = 18
+     l_cron_ini_ano.NumericScale    = 2
+     l_cron_ini_ano.Value           = Tvl(Replace(p_cron_ini_ano,".",","))
+     set l_atual_ano            = .CreateParameter("l_atual_ano",        adNumeric)
+     l_atual_ano.Precision          = 18
+     l_atual_ano.NumericScale       = 2
+     l_atual_ano.Value              = Tvl(Replace(p_atual_ano,".",","))
+     set l_cron_ano             = .CreateParameter("l_cron_ano",        adNumeric)
+     l_cron_ano.Precision           = 18
+     l_cron_ano.NumericScale        = 2
+     l_cron_ano.Value               = Tvl(Replace(p_cron_ano,".",","))
+     set l_real_ano             = .CreateParameter("l_real_ano",        adNumeric)
+     l_real_ano.Precision           = 18
+     l_real_ano.NumericScale        = 2
+     l_real_ano.Value               = Tvl(Replace(p_real_ano,".",","))
+     set l_comentario_execucao  = .CreateParameter("l_comentario_execucao", adVarchar, adParamInput, 4000, Tvl(p_comentario_execucao))
+     
+     .parameters.Append         l_cliente
+     .parameters.Append         l_ano
+     .parameters.Append         l_cd_programa
+     .parameters.Append         l_cd_acao
+     .parameters.Append         l_cd_subacao
+     .parameters.Append         l_cd_fonte
+     .parameters.Append         l_cd_regiao
+     .parameters.Append         l_cron_ini_mes_1
+     .parameters.Append         l_cron_ini_mes_2
+     .parameters.Append         l_cron_ini_mes_3
+     .parameters.Append         l_cron_ini_mes_4
+     .parameters.Append         l_cron_ini_mes_5
+     .parameters.Append         l_cron_ini_mes_6
+     .parameters.Append         l_cron_ini_mes_7
+     .parameters.Append         l_cron_ini_mes_8
+     .parameters.Append         l_cron_ini_mes_9
+     .parameters.Append         l_cron_ini_mes_10
+     .parameters.Append         l_cron_ini_mes_11
+     .parameters.Append         l_cron_ini_mes_12
+     .parameters.Append         l_cron_mes_1
+     .parameters.Append         l_cron_mes_2
+     .parameters.Append         l_cron_mes_3
+     .parameters.Append         l_cron_mes_4
+     .parameters.Append         l_cron_mes_5
+     .parameters.Append         l_cron_mes_6
+     .parameters.Append         l_cron_mes_7
+     .parameters.Append         l_cron_mes_8
+     .parameters.Append         l_cron_mes_9
+     .parameters.Append         l_cron_mes_10
+     .parameters.Append         l_cron_mes_11
+     .parameters.Append         l_cron_mes_12
+     .parameters.Append         l_real_mes_1
+     .parameters.Append         l_real_mes_2
+     .parameters.Append         l_real_mes_3
+     .parameters.Append         l_real_mes_4
+     .parameters.Append         l_real_mes_5
+     .parameters.Append         l_real_mes_6
+     .parameters.Append         l_real_mes_7
+     .parameters.Append         l_real_mes_8
+     .parameters.Append         l_real_mes_9
+     .parameters.Append         l_real_mes_10
+     .parameters.Append         l_real_mes_11
+     .parameters.Append         l_real_mes_12
+     .parameters.Append         l_previsao_ano
+     .parameters.Append         l_cron_ini_ano
+     .parameters.Append         l_atual_ano
+     .parameters.Append         l_cron_ano
+     .parameters.Append         l_real_ano                         
+     .parameters.Append         l_comentario_execucao
+  
+     .CommandText               = Session("schema_is") & "SP_PutXMLDadoFinanceiro_SIG"
+     'On error Resume Next
+     .Execute
+     If Err.Description > "" Then 
+        p_resultado = Err.Description
+     End If
+     .parameters.Delete         "l_cliente"
+     .parameters.Delete         "l_ano"
+     .parameters.Delete         "l_cd_programa"
+     .parameters.Delete         "l_cd_acao"
+     .parameters.Delete         "l_cd_subacao"
+     .parameters.Delete         "l_cd_fonte"
+     .parameters.Delete         "l_cd_regiao"
+     .parameters.Delete         "l_cron_ini_mes_1"
+     .parameters.Delete         "l_cron_ini_mes_2"
+     .parameters.Delete         "l_cron_ini_mes_3"
+     .parameters.Delete         "l_cron_ini_mes_4"
+     .parameters.Delete         "l_cron_ini_mes_5"
+     .parameters.Delete         "l_cron_ini_mes_6"                         
+     .parameters.Delete         "l_cron_ini_mes_7"
+     .parameters.Delete         "l_cron_ini_mes_8"
+     .parameters.Delete         "l_cron_ini_mes_9"
+     .parameters.Delete         "l_cron_ini_mes_10"
+     .parameters.Delete         "l_cron_ini_mes_11"
+     .parameters.Delete         "l_cron_ini_mes_12"
+     .parameters.Delete         "l_cron_mes_1"
+     .parameters.Delete         "l_cron_mes_2"
+     .parameters.Delete         "l_cron_mes_3"
+     .parameters.Delete         "l_cron_mes_4"
+     .parameters.Delete         "l_cron_mes_5"
+     .parameters.Delete         "l_cron_mes_6"                         
+     .parameters.Delete         "l_cron_mes_7"
+     .parameters.Delete         "l_cron_mes_8"
+     .parameters.Delete         "l_cron_mes_9"
+     .parameters.Delete         "l_cron_mes_10"
+     .parameters.Delete         "l_cron_mes_11"
+     .parameters.Delete         "l_cron_mes_12"
+     .parameters.Delete         "l_real_mes_1"
+     .parameters.Delete         "l_real_mes_2"
+     .parameters.Delete         "l_real_mes_3"
+     .parameters.Delete         "l_real_mes_4"
+     .parameters.Delete         "l_real_mes_5"
+     .parameters.Delete         "l_real_mes_6"                         
+     .parameters.Delete         "l_real_mes_7"
+     .parameters.Delete         "l_real_mes_8"
+     .parameters.Delete         "l_real_mes_9"
+     .parameters.Delete         "l_real_mes_10"
+     .parameters.Delete         "l_real_mes_11"
+     .parameters.Delete         "l_real_mes_12"
+     .parameters.Delete         "l_previsao_ano"
+     .parameters.Delete         "l_cron_ini_ano"
+     .parameters.Delete         "l_atual_ano"
+     .parameters.Delete         "l_cron_ano"
+     .parameters.Delete         "l_real_ano"
+     .parameters.Delete         "l_comentario_execucao"
   end with
 End Sub
 %>

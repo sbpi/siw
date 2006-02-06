@@ -269,7 +269,9 @@ REM Rotina de visualização resumida dos registros
 REM -------------------------------------------------------------------------
 Sub Inicial
 
-  Dim w_titulo, w_total, w_parcial
+  Dim w_titulo, w_total, w_parcial, w_tipo
+  
+  w_tipo = Request("w_tipo")
   
   If O = "L" Then
      If Instr(uCase(R),"GR_") > 0 or Instr(uCase(R),"PROJETO") > 0 Then
@@ -327,7 +329,7 @@ Sub Inicial
         If p_ini_i       > ""  Then w_filtro = w_filtro & "<tr valign=""top""><td align=""right""><font size=1>Recebimento <td><font size=1>[<b>" & p_ini_i & "-" & p_ini_f & "</b>]"          End If
         If p_fim_i       > ""  Then w_filtro = w_filtro & "<tr valign=""top""><td align=""right""><font size=1>Conclusão <td><font size=1>[<b>" & p_fim_i & "-" & p_fim_f & "</b>]"            End If
         If p_atraso      = "S" Then w_filtro = w_filtro & "<tr valign=""top""><td align=""right""><font size=1>Situação <td><font size=1>[<b>Apenas atrasadas</b>]"                            End If
-        If w_filtro > "" Then w_filtro = "<table border=0><tr valign=""top""><td><font size=1><b>Filtro:</b><td nowrap><font size=1><ul>" & w_filtro & "</ul></tr></table>"                    End If
+        If w_filtro > "" Then  w_filtro = "<table border=0><tr valign=""top""><td><font size=1><b>Filtro:</b><td nowrap><font size=1><ul>" & w_filtro & "</ul></table>" End If
      End If
 
      DB_GetLinkData RS, w_cliente, "GDPCAD"
@@ -348,7 +350,11 @@ Sub Inicial
      If p_ordena > "" Then RS.sort = p_ordena & ", fim, prioridade" Else RS.sort = "fim, prioridade" End If
   End If
   
-  Cabecalho
+  If w_tipo = "WORD" Then
+      Response.ContentType = "application/msword"
+  Else
+     Cabecalho
+  End If
   ShowHTML "<HEAD>"
   'If P1 = 2 Then ShowHTML "<meta http-equiv=""Refresh"" content=""300; URL=" & MontaURL("MESA") & """>" End If
   ShowHTML "<TITLE>" & conSgSistema & " - Listagem de atividades</TITLE>"
@@ -386,17 +392,17 @@ Sub Inicial
   ScriptClose
   ShowHTML "</HEAD>"
   If w_Troca > "" Then ' Se for recarga da página
-     BodyOpen "onLoad='document.Form." & w_Troca & ".focus();'"
+     BodyOpenClean "onLoad='document.Form." & w_Troca & ".focus();'"
   ElseIf O = "I" Then
-     BodyOpen "onLoad='document.Form.w_smtp_server.focus();'"
+     BodyOpenClean "onLoad='document.Form.w_smtp_server.focus();'"
   ElseIf O = "A" Then
-     BodyOpen "onLoad='document.Form.w_nome.focus();'"
+     BodyOpenClean "onLoad='document.Form.w_nome.focus();'"
   ElseIf O = "E" Then
-     BodyOpen "onLoad='document.Form.w_assinatura.focus()';"
+     BodyOpenClean "onLoad='document.Form.w_assinatura.focus()';"
   ElseIf InStr("CP",O) > 0 Then
-     BodyOpen "onLoad='document.Form.p_projeto.focus()';"
+     BodyOpenClean "onLoad='document.Form.p_projeto.focus()';"
   Else
-     BodyOpen "onLoad=document.focus();"
+     BodyOpenClean "onLoad=document.focus();"
   End If
     Estrutura_Topo_Limpo
   Estrutura_Menu
@@ -416,7 +422,7 @@ Sub Inicial
           ShowHTML "<tr><td><font size=""1""><a accesskey=""I"" class=""SS"" href=""" & w_Pagina & par & "&R=" & w_Pagina & par & "&O=I&P1=" & P1 & "&P2=" & P2 & "&P3=1&P4=" & P4 & "&TP=" & TP & "&SG=" & SG & MontaFiltro("GET") & """><u>I</u>ncluir</a>&nbsp;"
        End If
     End If
-    If Instr(uCase(R),"GR_") = 0 and Instr(uCase(R),"PROJETO") = 0 and P1 <> 6 Then
+    If Instr(uCase(R),"GR_") = 0 and Instr(uCase(R),"PROJETO") = 0 and P1 <> 6 and w_tipo <> "WORD" Then
        If w_copia > "" Then ' Se for cópia
           If MontaFiltro("GET") > "" Then
              ShowHTML "                         <a accesskey=""F"" class=""SS"" href=""" & w_Pagina & par & "&R=" & w_Pagina & par & "&O=C&P1=" & P1 & "&P2=" & P2 & "&P3=1&P4=" & P4 & "&TP=" & TP & "&SG=" & SG & MontaFiltro("GET") & """><u><font color=""#BC5100"">F</u>iltrar (Ativo)</font></a>"
@@ -431,29 +437,55 @@ Sub Inicial
           End If
        End If
     End If
-    ShowHTML "    <td align=""right""><font size=""1""><b>Registros: " & RS.RecordCount
+    ShowHTML "    <td align=""right""><font size=""1"">"
+    If w_tipo <> "WORD" Then
+       ShowHTML "     <IMG ALIGN=""CENTER"" TITLE=""Imprimir"" SRC=""images/impressora.jpg"" onClick=""window.print();"">"
+       ShowHTML "     &nbsp;&nbsp;<IMG ALIGN=""CENTER"" TITLE=""Gerar word"" SRC=""images/word.gif"" onClick=""window.open('" & w_dir & w_pagina & par & "&O=L&P1=" & P1 & "&P2=" & P2 & "&P3=" & P3 & "&P4=" & RS.RecordCount & "&TP=" & TP & "&SG=" & SG & "&w_tipo=WORD" & MontaFiltro("GET") & "','MetaWord','width=600, height=350, top=65, left=65, menubar=yes, scrollbars=yes, resizable=yes, status=no');"">"
+    End If
+    ShowHTML "    <b>Registros: " & RS.RecordCount
     ShowHTML "<tr><td align=""center"" colspan=3>"
     ShowHTML "    <TABLE WIDTH=""100%"" bgcolor=""" & conTableBgColor & """ BORDER=""" & conTableBorder & """ CELLSPACING=""" & conTableCellSpacing & """ CELLPADDING=""" & conTableCellPadding & """ BorderColorDark=""" & conTableBorderColorDark & """ BorderColorLight=""" & conTableBorderColorLight & """>"
     ShowHTML "        <tr bgcolor=""" & conTrBgColor & """ align=""center"">"
-    ShowHTML "          <td><font size=""1""><b>" & LinkOrdena("Nº","sq_siw_solicitacao") & "</font></td>"
-    If p_Projeto > "" Then
-       ShowHTML "          <td><font size=""1""><b>" & LinkOrdena("Etapa","nm_etapa") & "</font></td>"
+    If w_tipo <> "WORD" Then
+       ShowHTML "          <td><font size=""1""><b>" & LinkOrdena("Nº","sq_siw_solicitacao") & "</font></td>"
+       If p_Projeto > "" Then
+          ShowHTML "          <td><font size=""1""><b>" & LinkOrdena("Etapa","nm_etapa") & "</font></td>"
+       Else
+          ShowHTML "          <td><font size=""1""><b>" & LinkOrdena("Projeto","nm_projeto") & "</font></td>"
+       End If
+       ShowHTML "          <td><font size=""1""><b>" & LinkOrdena("Responsável","nm_solic") & "</font></td>"
+       If Session("interno") = "S" Then ShowHTML "          <td><font size=""1""><b>" & LinkOrdena("Executor","nm_exec") & "</font></td>" End If
+       If P1 = 1 or P1 = 2 Then ' Se for cadastramento ou mesa de trabalho
+          ShowHTML "          <td><font size=""1""><b>" & LinkOrdena("Detalhamento","assunto") & "</font></td>"
+          ShowHTML "          <td><font size=""1""><b>" & LinkOrdena("Fim previsto","fim") & "</font></td>"
+       Else
+          ShowHTML "          <td><font size=""1""><b>" & LinkOrdena("Proponente","proponente") & "</font></td>"
+          ShowHTML "          <td><font size=""1""><b>" & LinkOrdena("Detalhamento","assunto") & "</font></td>"
+          ShowHTML "          <td><font size=""1""><b>" & LinkOrdena("Fim previsto","fim") & "</font></td>"
+          If Session("interno") = "S" Then ShowHTML "          <td><font size=""1""><b>" & LinkOrdena("Valor","valor") & "</font></td>" End If
+          ShowHTML "          <td><font size=""1""><b>" & LinkOrdena("Fase atual","nm_tramite") & "</font></td>"
+       End If
+       If Session("interno") = "S" Then ShowHTML "          <td><font size=""1""><b>Operações</font></td>" End If
     Else
-       ShowHTML "          <td><font size=""1""><b>" & LinkOrdena("Projeto","nm_projeto") & "</font></td>"
+       ShowHTML "          <td><font size=""1""><b>Nº</font></td>"
+       If p_Projeto > "" Then
+          ShowHTML "          <td><font size=""1""><b>Etapa</font></td>"
+       Else
+          ShowHTML "          <td><font size=""1""><b>Projeto</font></td>"
+       End If
+       ShowHTML "          <td><font size=""1""><b>Responsável</font></td>"
+       If Session("interno") = "S" Then ShowHTML "          <td><font size=""1""><b>Executor</font></td>" End If
+       If P1 = 1 or P1 = 2 Then ' Se for cadastramento ou mesa de trabalho
+          ShowHTML "          <td><font size=""1""><b>Detalhamento</font></td>"
+          ShowHTML "          <td><font size=""1""><b>Fim previsto</font></td>"
+       Else
+          ShowHTML "          <td><font size=""1""><b>Proponente</font></td>"
+          ShowHTML "          <td><font size=""1""><b>Detalhamento</font></td>"
+          ShowHTML "          <td><font size=""1""><b>Fim previsto</font></td>"
+          If Session("interno") = "S" Then ShowHTML "          <td><font size=""1""><b>Valor</font></td>" End If
+          ShowHTML "          <td><font size=""1""><b>Fase atual</font></td>"
+       End If
     End If
-    ShowHTML "          <td><font size=""1""><b>" & LinkOrdena("Responsável","nm_solic") & "</font></td>"
-    If Session("interno") = "S" Then ShowHTML "          <td><font size=""1""><b>" & LinkOrdena("Executor","nm_exec") & "</font></td>" End If
-    If P1 = 1 or P1 = 2 Then ' Se for cadastramento ou mesa de trabalho
-       ShowHTML "          <td><font size=""1""><b>" & LinkOrdena("Detalhamento","assunto") & "</font></td>"
-       ShowHTML "          <td><font size=""1""><b>" & LinkOrdena("Fim previsto","fim") & "</font></td>"
-    Else
-       ShowHTML "          <td><font size=""1""><b>" & LinkOrdena("Proponente","proponente") & "</font></td>"
-       ShowHTML "          <td><font size=""1""><b>" & LinkOrdena("Detalhamento","assunto") & "</font></td>"
-       ShowHTML "          <td><font size=""1""><b>" & LinkOrdena("Fim previsto","fim") & "</font></td>"
-       If Session("interno") = "S" Then ShowHTML "          <td><font size=""1""><b>" & LinkOrdena("Valor","valor") & "</font></td>" End If
-       ShowHTML "          <td><font size=""1""><b>" & LinkOrdena("Fase atual","nm_tramite") & "</font></td>"
-    End If
-    If Session("interno") = "S" Then ShowHTML "          <td><font size=""1""><b>Operações</font></td>" End If
     ShowHTML "        </tr>"
     If RS.EOF Then
         ShowHTML "      <tr bgcolor=""" & conTrBgColor & """><td colspan=10 align=""center""><font size=""1""><b>Não foram encontrados registros.</b></td></tr>"
@@ -465,37 +497,58 @@ Sub Inicial
         If w_cor = conTrBgColor or w_cor = "" Then w_cor = conTrAlternateBgColor Else w_cor = conTrBgColor End If
         ShowHTML "      <tr bgcolor=""" & w_cor & """ valign=""top"">"
         ShowHTML "        <td nowrap><font size=""1"">"
-        If RS("concluida") = "N" Then
-           If RS("fim") < Date() Then
-              ShowHTML "           <img src=""" & conImgAtraso & """ border=0 width=15 heigth=15 align=""center"">"
-           ElseIf RS("aviso_prox_conc") = "S" and (RS("aviso") <= Date()) Then
-              ShowHTML "           <img src=""" & conImgAviso & """ border=0 width=15 height=15 align=""center"">"
+        If w_tipo <> "WORD" Then
+           If RS("concluida") = "N" Then
+              If RS("fim") < Date() Then
+                 ShowHTML "           <img src=""" & conImgAtraso & """ border=0 width=15 heigth=15 align=""center"">"
+              ElseIf RS("aviso_prox_conc") = "S" and (RS("aviso") <= Date()) Then
+                 ShowHTML "           <img src=""" & conImgAviso & """ border=0 width=15 height=15 align=""center"">"
+              Else
+                 ShowHTML "           <img src=""" & conImgNormal & """ border=0 width=15 height=15 align=""center"">"
+              End If
            Else
-              ShowHTML "           <img src=""" & conImgNormal & """ border=0 width=15 height=15 align=""center"">"
+              If RS("fim") < Nvl(RS("fim_real"),RS("fim")) Then
+                 ShowHTML "           <img src=""" & conImgOkAtraso & """ border=0 width=15 heigth=15 align=""center"">"
+              Else
+                 ShowHTML "           <img src=""" & conImgOkNormal & """ border=0 width=15 height=15 align=""center"">"
+              End If
+           End If
+           ShowHTML "        <A class=""HL"" HREF=""" & w_Pagina & "Visual&R=" & w_Pagina & par & "&O=L&w_chave=" & RS("sq_siw_solicitacao") & "&w_tipo=Volta&P1=" & P1 & "&P2=" & P2 & "&P3=" & P3 & "&P4=" & P4 & "&TP=" & TP & "&SG=" & SG & MontaFiltro("GET") & """ title=""Exibe as informações deste registro."">" & RS("sq_siw_solicitacao") & "&nbsp;</a>"
+           If p_projeto > "" Then
+              If nvl(RS("sq_projeto_etapa"),"nulo") <> "nulo" Then
+                 ShowHTML "        <td><font size=""1"">" & ExibeEtapa("V", RS("sq_solic_pai"), RS("sq_projeto_etapa"), "Volta", 10, MontaOrdemEtapa(RS("sq_projeto_etapa")) & " - " & RS("nm_etapa"), TP, SG) & "</td>"
+              Else
+                 ShowHTML "        <td><font size=""1"">---</td>"
+              End If
+           Else
+              ShowHTML "        <td><font size=""1""><A class=""HL"" HREF=""Projeto.asp?par=Visual&O=L&w_chave=" & RS("sq_solic_pai") & "&w_tipo=Volta&P1=" & P1 & "&P2=" & P2 & "&P3=" & P3 & "&P4=" & P4 & "&TP=" & TP & "&SG=" & SG & """ title=""Exibe as informações do projeto."">" & RS("nm_projeto") & "</a></td>"
+           End If
+           ShowHTML "        <td><font size=""1"">" & ExibePessoa(null, w_cliente, RS("solicitante"), TP, RS("nm_solic")) & "</td>"
+           If Session("interno") = "S" Then 
+              If Nvl(RS("nm_exec"),"---") <> "---" Then
+                 ShowHTML "        <td><font size=""1"">" & ExibePessoa(null, w_cliente, RS("executor"), TP, RS("nm_exec")) & "</td>"
+              Else   
+                 ShowHTML "        <td><font size=""1"">" & Nvl(RS("nm_exec"),"---") & "</td>"
+              End If
            End If
         Else
-           If RS("fim") < Nvl(RS("fim_real"),RS("fim")) Then
-              ShowHTML "           <img src=""" & conImgOkAtraso & """ border=0 width=15 heigth=15 align=""center"">"
+           ShowHTML "        " & RS("sq_siw_solicitacao")
+           If p_projeto > "" Then
+              If nvl(RS("sq_projeto_etapa"),"nulo") <> "nulo" Then
+                 ShowHTML "        <td><font size=""1"">" & MontaOrdemEtapa(RS("sq_projeto_etapa")) & " - " & RS("nm_etapa") & "</td>"
+              Else
+                 ShowHTML "        <td><font size=""1"">---</td>"
+              End If
            Else
-              ShowHTML "           <img src=""" & conImgOkNormal & """ border=0 width=15 height=15 align=""center"">"
+              ShowHTML "        <td><font size=""1"">" & RS("nm_projeto") & "</td>"
            End If
-        End If
-        ShowHTML "        <A class=""HL"" HREF=""" & w_Pagina & "Visual&R=" & w_Pagina & par & "&O=L&w_chave=" & RS("sq_siw_solicitacao") & "&w_tipo=Volta&P1=" & P1 & "&P2=" & P2 & "&P3=" & P3 & "&P4=" & P4 & "&TP=" & TP & "&SG=" & SG & MontaFiltro("GET") & """ title=""Exibe as informações deste registro."">" & RS("sq_siw_solicitacao") & "&nbsp;</a>"
-        If p_projeto > "" Then
-           If nvl(RS("sq_projeto_etapa"),"nulo") <> "nulo" Then
-              ShowHTML "        <td><font size=""1"">" & ExibeEtapa("V", RS("sq_solic_pai"), RS("sq_projeto_etapa"), "Volta", 10, MontaOrdemEtapa(RS("sq_projeto_etapa")) & " - " & RS("nm_etapa"), TP, SG) & "</td>"
-           Else
-              ShowHTML "        <td><font size=""1"">---</td>"
-           End If
-        Else
-           ShowHTML "        <td><font size=""1""><A class=""HL"" HREF=""Projeto.asp?par=Visual&O=L&w_chave=" & RS("sq_solic_pai") & "&w_tipo=Volta&P1=" & P1 & "&P2=" & P2 & "&P3=" & P3 & "&P4=" & P4 & "&TP=" & TP & "&SG=" & SG & """ title=""Exibe as informações do projeto."">" & RS("nm_projeto") & "</a></td>"
-        End If
-        ShowHTML "        <td><font size=""1"">" & ExibePessoa(null, w_cliente, RS("solicitante"), TP, RS("nm_solic")) & "</td>"
-        If Session("interno") = "S" Then 
-           If Nvl(RS("nm_exec"),"---") <> "---" Then
-              ShowHTML "        <td><font size=""1"">" & ExibePessoa(null, w_cliente, RS("executor"), TP, RS("nm_exec")) & "</td>"
-           Else   
-              ShowHTML "        <td><font size=""1"">" & Nvl(RS("nm_exec"),"---") & "</td>"
+           ShowHTML "        <td><font size=""1"">" & RS("nm_solic") & "</td>"
+           If Session("interno") = "S" Then 
+              If Nvl(RS("nm_exec"),"---") <> "---" Then
+                 ShowHTML "        <td><font size=""1"">" & RS("nm_exec") & "</td>"
+              Else   
+                 ShowHTML "        <td><font size=""1"">" & Nvl(RS("nm_exec"),"---") & "</td>"
+              End If
            End If
         End If
         If P1 <> 1 and P1 <> 2 Then ' Se não for cadastramento nem mesa de trabalho
@@ -508,9 +561,9 @@ Sub Inicial
         Else
            If Len(Nvl(RS("assunto"),"-")) > 50 Then w_titulo = Mid(Nvl(RS("assunto"),"-"),1,50) & "..." Else w_titulo = Nvl(RS("assunto"),"-") End If
            If RS("sg_tramite") = "CA" Then
-              ShowHTML "        <td ONMOUSEOVER=""popup('" & replace(replace(replace(RS("assunto"), "'", "\'"), """", "\'"),VbCrLf,"\n") & "','white')""; ONMOUSEOUT=""kill()""><font size=""1""><strike>" & w_titulo & "</strike></td>"
+              ShowHTML "        <td title=""" & Server.HTMLEncode(RS("assunto")) & """><font size=""1""><strike>" & Server.HTMLEncode(w_titulo) & "</strike></td>"
            Else
-              ShowHTML "        <td ONMOUSEOVER=""popup('" & replace(replace(replace(RS("assunto"), "'", "\'"), """", "\'"),VbCrLf,"\n") & "','white')""; ONMOUSEOUT=""kill()""><font size=""1"">" & w_titulo & "</td>"
+              ShowHTML "        <td title=""" & Server.HTMLEncode(RS("assunto")) & """><font size=""1"">" & Server.HTMLEncode(w_titulo) & "</td>"
            End IF
         End If
         ShowHTML "        <td align=""center""><font size=""1"">&nbsp;" & Nvl(FormatDateTime(RS("fim"),2),"-") & "</td>"
@@ -527,7 +580,7 @@ Sub Inicial
            End If
            ShowHTML "        <td nowrap><font size=""1"">" & RS("nm_tramite") & "</td>"
         End If
-        If Session("interno") = "S" Then 
+        If Session("interno") = "S" and w_tipo <> "WORD" Then 
            ShowHTML "        <td align=""top"" nowrap><font size=""1"">"
            If P1 <> 3 Then ' Se não for acompanhamento
               If w_copia > "" Then ' Se for listagem para cópia
@@ -599,13 +652,15 @@ Sub Inicial
     ShowHTML "    </table>"
     ShowHTML "  </td>"
     ShowHTML "</tr>"
-    ShowHTML "<tr><td align=""center"" colspan=3>"
-    If R > "" Then
-       MontaBarra w_pagina&par&"&R="&R&"&O="&O&"&P1="&P1&"&P2="&P2&"&TP="&TP&"&SG="&SG&"&w_copia="&w_copia, RS.PageCount, P3, P4, RS.RecordCount
-    Else
-       MontaBarra w_pagina&par&"&R="&w_Pagina&par&"&O="&O&"&P1="&P1&"&P2="&P2&"&TP="&TP&"&SG="&SG&"&w_copia="&w_copia, RS.PageCount, P3, P4, RS.RecordCount
+    If w_tipo <> "WORD" Then
+       ShowHTML "<tr><td align=""center"" colspan=3>"
+       If R > "" Then
+          MontaBarra w_pagina&par&"&R="&R&"&O="&O&"&P1="&P1&"&P2="&P2&"&TP="&TP&"&SG="&SG&"&w_copia="&w_copia, RS.PageCount, P3, P4, RS.RecordCount
+       Else
+          MontaBarra w_pagina&par&"&R="&w_Pagina&par&"&O="&O&"&P1="&P1&"&P2="&P2&"&TP="&TP&"&SG="&SG&"&w_copia="&w_copia, RS.PageCount, P3, P4, RS.RecordCount
+       End If
+       ShowHTML "</tr>"
     End If
-    ShowHTML "</tr>"    
     DesConectaBD     
   ElseIf Instr("CP",O) > 0 Then
     If O = "C" Then ' Se for cópia
@@ -722,6 +777,7 @@ Sub Inicial
   Set w_titulo  = Nothing
   Set w_total   = Nothing
   Set w_parcial = Nothing
+  Set w_tipo    = Nothing
 
 End Sub
 REM =========================================================================
@@ -914,11 +970,11 @@ Sub Geral
   ScriptClose
   ShowHTML "</HEAD>"
   If w_troca > "" Then
-     BodyOpen "onLoad='document.Form." & w_troca & ".focus()';"
+     BodyOpenClean "onLoad='document.Form." & w_troca & ".focus()';"
   ElseIf Instr("EV",O) > 0 Then
-     BodyOpen "onLoad='document.focus()';"
+     BodyOpenClean "onLoad='document.focus()';"
   Else
-     BodyOpen "onLoad='document.Form.w_projeto.focus()';"
+     BodyOpenClean "onLoad='document.Form.w_projeto.focus()';"
   End If
   ShowHTML "<B><FONT COLOR=""#000000"">" & w_TP & "</FONT></B>"
   ShowHTML "<HR>"
@@ -970,7 +1026,7 @@ Sub Geral
     SelecaoEtapa "Eta<u>p</u>a:", "P", "Se necessário, indique a etapa à qual esta atividade deve ser vinculada.", w_atividade, w_projeto, null, "w_atividade", "Grupo", null
     ShowHTML "      </tr>"
 
-    ShowHTML "      <tr><td valign=""top""><font size=""1""><b>Detalh<u>a</u>mento:</b><br><textarea " & w_Disabled & " accesskey=""A"" name=""w_assunto"" class=""STI"" ROWS=5 cols=75 ONMOUSEOVER=""popup('Escreva um texto de detalhamento para esta atividade.','white')""; ONMOUSEOUT=""kill()"">" & w_assunto & "</TEXTAREA></td>"
+    ShowHTML "      <tr><td valign=""top""><font size=""1""><b>Detalh<u>a</u>mento:</b><br><textarea " & w_Disabled & " accesskey=""A"" name=""w_assunto"" class=""STI"" ROWS=5 cols=75 title=""'Escreva um texto de detalhamento para esta atividade."">" & w_assunto & "</TEXTAREA></td>"
     If RS_menu("solicita_cc") = "S" Then
        ShowHTML "          <tr>"
        SelecaoCC "C<u>l</u>assificação:", "L", "Selecione um dos itens relacionados.", w_sqcc, null, "w_sqcc", "SIWSOLIC"
@@ -983,26 +1039,26 @@ Sub Geral
     ShowHTML "          <tr>"
     Select Case RS_menu("data_hora")
        Case 1
-          ShowHTML "              <td valign=""top""><font size=""1""><b>Limi<u>t</u>e para conclusão:</b><br><input " & w_Disabled & " accesskey=""T"" type=""text"" name=""w_fim"" class=""STI"" SIZE=""10"" MAXLENGTH=""10"" VALUE=""" & w_fim & """ onKeyDown=""FormataData(this,event);"" ONMOUSEOVER=""popup('Data limite para que a execução da atividade esteja concluída.','white')""; ONMOUSEOUT=""kill()""></td>"
+          ShowHTML "              <td valign=""top""><font size=""1""><b>Limi<u>t</u>e para conclusão:</b><br><input " & w_Disabled & " accesskey=""T"" type=""text"" name=""w_fim"" class=""STI"" SIZE=""10"" MAXLENGTH=""10"" VALUE=""" & w_fim & """ onKeyDown=""FormataData(this,event);"" title=""'Data limite para que a execução da atividade esteja concluída.""></td>"
        Case 2
-          ShowHTML "              <td valign=""top""><font size=""1""><b>Limi<u>t</u>e para conclusão:</b><br><input " & w_Disabled & " accesskey=""T"" type=""text"" name=""w_fim"" class=""STI"" SIZE=""17"" MAXLENGTH=""17"" VALUE=""" & w_fim & """ onKeyDown=""FormataDataHora(this,event);"" ONMOUSEOVER=""popup('Data/hora limite para que a execução da atividade esteja concluída.','white')""; ONMOUSEOUT=""kill()""></td>"
+          ShowHTML "              <td valign=""top""><font size=""1""><b>Limi<u>t</u>e para conclusão:</b><br><input " & w_Disabled & " accesskey=""T"" type=""text"" name=""w_fim"" class=""STI"" SIZE=""17"" MAXLENGTH=""17"" VALUE=""" & w_fim & """ onKeyDown=""FormataDataHora(this,event);"" title=""'Data/hora limite para que a execução da atividade esteja concluída.""></td>"
        Case 3
-          ShowHTML "              <td valign=""top""><font size=""1""><b>Data de re<u>c</u>ebimento:</b><br><input " & w_Disabled & " accesskey=""C"" type=""text"" name=""w_inicio"" class=""STI"" SIZE=""10"" MAXLENGTH=""10"" VALUE=""" & Nvl(w_inicio,FormataDataEdicao(Date())) & """ onKeyDown=""FormataData(this,event);"" ONMOUSEOVER=""popup('Data de recebimento da solicitação.','white')""; ONMOUSEOUT=""kill()""></td>"
-          ShowHTML "              <td valign=""top""><font size=""1""><b>Limi<u>t</u>e para conclusão:</b><br><input " & w_Disabled & " accesskey=""T"" type=""text"" name=""w_fim"" class=""STI"" SIZE=""10"" MAXLENGTH=""10"" VALUE=""" & w_fim & """ onKeyDown=""FormataData(this,event);"" ONMOUSEOVER=""popup('Data limite para que a execução da atividade esteja concluída.','white')""; ONMOUSEOUT=""kill()""></td>"
+          ShowHTML "              <td valign=""top""><font size=""1""><b>Data de re<u>c</u>ebimento:</b><br><input " & w_Disabled & " accesskey=""C"" type=""text"" name=""w_inicio"" class=""STI"" SIZE=""10"" MAXLENGTH=""10"" VALUE=""" & Nvl(w_inicio,FormataDataEdicao(Date())) & """ onKeyDown=""FormataData(this,event);"" title=""'Data de recebimento da solicitação.""></td>"
+          ShowHTML "              <td valign=""top""><font size=""1""><b>Limi<u>t</u>e para conclusão:</b><br><input " & w_Disabled & " accesskey=""T"" type=""text"" name=""w_fim"" class=""STI"" SIZE=""10"" MAXLENGTH=""10"" VALUE=""" & w_fim & """ onKeyDown=""FormataData(this,event);"" title=""'Data limite para que a execução da atividade esteja concluída.""></td>"
        Case 4
-          ShowHTML "              <td valign=""top""><font size=""1""><b>Data de re<u>c</u>ebimento:</b><br><input " & w_Disabled & " accesskey=""C"" type=""text"" name=""w_inicio"" class=""STI"" SIZE=""17"" MAXLENGTH=""17"" VALUE=""" & w_inicio & """ onKeyDown=""FormataDataHora(this,event);"" ONMOUSEOVER=""popup('Data/hora de recebimento da solicitação.','white')""; ONMOUSEOUT=""kill()""></td>"
-          ShowHTML "              <td valign=""top""><font size=""1""><b>Limi<u>t</u>e para conclusão:</b><br><input " & w_Disabled & " accesskey=""T"" type=""text"" name=""w_fim"" class=""STI"" SIZE=""17"" MAXLENGTH=""17"" VALUE=""" & w_fim & """ onKeyDown=""FormataDataHora(this,event);"" ONMOUSEOVER=""popup('Data/hora limite para que a execução da atividade esteja concluída.','white')""; ONMOUSEOUT=""kill()""></td>"
+          ShowHTML "              <td valign=""top""><font size=""1""><b>Data de re<u>c</u>ebimento:</b><br><input " & w_Disabled & " accesskey=""C"" type=""text"" name=""w_inicio"" class=""STI"" SIZE=""17"" MAXLENGTH=""17"" VALUE=""" & w_inicio & """ onKeyDown=""FormataDataHora(this,event);"" title=""'Data/hora de recebimento da solicitação.""></td>"
+          ShowHTML "              <td valign=""top""><font size=""1""><b>Limi<u>t</u>e para conclusão:</b><br><input " & w_Disabled & " accesskey=""T"" type=""text"" name=""w_fim"" class=""STI"" SIZE=""17"" MAXLENGTH=""17"" VALUE=""" & w_fim & """ onKeyDown=""FormataDataHora(this,event);"" title=""'Data/hora limite para que a execução da atividade esteja concluída.""></td>"
     End Select
-    ShowHTML "              <td valign=""top""><font size=""1""><b>O<u>r</u>çamento disponível:</b><br><input " & w_Disabled & " accesskey=""O"" type=""text"" name=""w_valor"" class=""STI"" SIZE=""18"" MAXLENGTH=""18"" VALUE=""" & w_valor & """ onKeyDown=""FormataValor(this,18,2,event);"" ONMOUSEOVER=""popup('Informe o orçamento disponível para execução da atividade, ou zero se não for o caso.','white')""; ONMOUSEOUT=""kill()""></td>"
+    ShowHTML "              <td valign=""top""><font size=""1""><b>O<u>r</u>çamento disponível:</b><br><input " & w_Disabled & " accesskey=""O"" type=""text"" name=""w_valor"" class=""STI"" SIZE=""18"" MAXLENGTH=""18"" VALUE=""" & w_valor & """ onKeyDown=""FormataValor(this,18,2,event);"" title=""'Informe o orçamento disponível para execução da atividade, ou zero se não for o caso.""></td>"
     ShowHTML "          </table>"
-    ShowHTML "      <tr><td valign=""top""><font size=""1""><b>Pa<u>l</u>avras-chave:<br><INPUT ACCESSKEY=""L"" " & w_Disabled & " class=""STI"" type=""text"" name=""w_palavra_chave"" size=""90"" maxlength=""90"" value=""" & w_palavra_chave & """ ONMOUSEOVER=""popup('Se desejar, informe palavras-chave adicionais aos campos informados e que permitam a identificação desta atividade.','white')""; ONMOUSEOUT=""kill()""></td>"
+    ShowHTML "      <tr><td valign=""top""><font size=""1""><b>Pa<u>l</u>avras-chave:<br><INPUT ACCESSKEY=""L"" " & w_Disabled & " class=""STI"" type=""text"" name=""w_palavra_chave"" size=""90"" maxlength=""90"" value=""" & w_palavra_chave & """ title=""'Se desejar, informe palavras-chave adicionais aos campos informados e que permitam a identificação desta atividade.""></td>"
     ShowHTML "      <tr><td align=""center"" height=""2"" bgcolor=""#000000""></td></tr>"
     ShowHTML "      <tr><td align=""center"" height=""1"" bgcolor=""#000000""></td></tr>"
     ShowHTML "      <tr><td valign=""top"" align=""center"" bgcolor=""#D0D0D0""><font size=""1""><b>Identificação do proponente</td></td></tr>"
     ShowHTML "      <tr><td align=""center"" height=""1"" bgcolor=""#000000""></td></tr>"
     ShowHTML "      <tr><td><font size=1>Os dados deste bloco identificam o proponente externo e sua localização, sendo utilizados para consultas gerenciais por distribuição geográfica.</font></td></tr>"
     ShowHTML "      <tr><td align=""center"" height=""1"" bgcolor=""#000000""></td></tr>"
-    ShowHTML "      <tr><td valign=""top""><font size=""1""><b>Nome do proponent<u>e</u> externo:<br><INPUT ACCESSKEY=""E"" " & w_Disabled & " class=""STI"" type=""text"" name=""w_proponente"" size=""90"" maxlength=""90"" value=""" & w_proponente & """ ONMOUSEOVER=""popup('Proponente externo da atividade. Preencha apenas se houver.','white')""; ONMOUSEOUT=""kill()""></td>"
+    ShowHTML "      <tr><td valign=""top""><font size=""1""><b>Nome do proponent<u>e</u> externo:<br><INPUT ACCESSKEY=""E"" " & w_Disabled & " class=""STI"" type=""text"" name=""w_proponente"" size=""90"" maxlength=""90"" value=""" & w_proponente & """ title=""'Proponente externo da atividade. Preencha apenas se houver.""></td>"
     ShowHTML "      <tr><td valign=""top"" colspan=""2""><table border=0 width=""100%"" cellspacing=0>"
     ShowHTML "      <tr>"
     SelecaoPais "<u>P</u>aís:", "P", null, w_pais, null, "w_pais", null, "onChange=""document.Form.action='" & w_pagina & par & "'; document.Form.w_troca.value='w_uf'; document.Form.submit();"""
@@ -1017,10 +1073,10 @@ Sub Geral
        ShowHTML "      <tr><td><font size=1>Os dados deste bloco visam orientar os executores da atividade.</font></td></tr>"
        ShowHTML "      <tr><td align=""center"" height=""1"" bgcolor=""#000000""></td></tr>"
        If RS_menu("descricao") = "S" Then
-          ShowHTML "      <tr><td valign=""top""><font size=""1""><b>Res<u>u</u>ltados da atividade:</b><br><textarea " & w_Disabled & " accesskey=""U"" name=""w_descricao"" class=""STI"" ROWS=5 cols=75 ONMOUSEOVER=""popup('Descreva os resultados esperados após a execução da atividade.','white')""; ONMOUSEOUT=""kill()"">" & w_descricao & "</TEXTAREA></td>"
+          ShowHTML "      <tr><td valign=""top""><font size=""1""><b>Res<u>u</u>ltados da atividade:</b><br><textarea " & w_Disabled & " accesskey=""U"" name=""w_descricao"" class=""STI"" ROWS=5 cols=75 title=""'Descreva os resultados esperados após a execução da atividade."">" & w_descricao & "</TEXTAREA></td>"
        End If
        If RS_menu("justificativa") = "S" Then
-          ShowHTML "      <tr><td valign=""top""><font size=""1""><b><u>R</u>ecomendações superiores:</b><br><textarea " & w_Disabled & " accesskey=""R"" name=""w_justificativa"" class=""STI"" ROWS=5 cols=75 ONMOUSEOVER=""popup('Relacione as recomendações a serem seguidas na execução da atividade.','white')""; ONMOUSEOUT=""kill()"">" & w_justificativa & "</TEXTAREA></td>"
+          ShowHTML "      <tr><td valign=""top""><font size=""1""><b><u>R</u>ecomendações superiores:</b><br><textarea " & w_Disabled & " accesskey=""R"" name=""w_justificativa"" class=""STI"" ROWS=5 cols=75 title=""'Relacione as recomendações a serem seguidas na execução da atividade."">" & w_justificativa & "</TEXTAREA></td>"
        End If
     End If
     ShowHTML "      <tr><td align=""center"" height=""2"" bgcolor=""#000000""></td></tr>"
@@ -1032,7 +1088,7 @@ Sub Geral
     ShowHTML "      <tr><td><table border=""0"" width=""100%"">"
     ShowHTML "          <tr>"
     MontaRadioNS "<b>Emite alerta?</b>", w_aviso, "w_aviso"
-    ShowHTML "              <td valign=""top""><font size=""1""><b>Quantos <U>d</U>ias antes da data limite?<br><INPUT ACCESSKEY=""D"" " & w_Disabled & " class=""STI"" type=""text"" name=""w_dias"" size=""2"" maxlength=""2"" value=""" & w_dias & """ ONMOUSEOVER=""popup('Número de dias para emissão do alerta de proximidade da data limite para conclusão da atividade.','white')""; ONMOUSEOUT=""kill()""></td>"
+    ShowHTML "              <td valign=""top""><font size=""1""><b>Quantos <U>d</U>ias antes da data limite?<br><INPUT ACCESSKEY=""D"" " & w_Disabled & " class=""STI"" type=""text"" name=""w_dias"" size=""2"" maxlength=""2"" value=""" & w_dias & """ title=""'Número de dias para emissão do alerta de proximidade da data limite para conclusão da atividade.""></td>"
     ShowHTML "          </table>"
     ShowHTML "      <tr><td align=""center"" colspan=""3"" height=""1"" bgcolor=""#000000""></TD></TR>"
 
@@ -1160,13 +1216,13 @@ Sub Anexos
   End If 
   ShowHTML "</HEAD>" 
   If w_troca > "" Then 
-     BodyOpen "onLoad='document.Form." & w_troca & ".focus()';" 
+     BodyOpenClean "onLoad='document.Form." & w_troca & ".focus()';" 
   ElseIf O = "I" Then 
-     BodyOpen "onLoad='document.Form.w_nome.focus()';" 
+     BodyOpenClean "onLoad='document.Form.w_nome.focus()';" 
   ElseIf O = "A" Then 
-     BodyOpen "onLoad='document.Form.w_descricao.focus()';" 
+     BodyOpenClean "onLoad='document.Form.w_descricao.focus()';" 
   Else 
-     BodyOpen "onLoad='document.focus()';" 
+     BodyOpenClean "onLoad='document.focus()';" 
   End If 
   ShowHTML "<B><FONT COLOR=""#000000"">" & w_TP & "</FONT></B>" 
   ShowHTML "<HR>" 
@@ -1236,9 +1292,9 @@ Sub Anexos
        ShowHTML "<INPUT type=""hidden"" name=""w_upload_maximo"" value=""" & RS("upload_maximo") & """>" 
     End If 
     
-    ShowHTML "      <tr><td><font size=""1""><b><u>T</u>ítulo:</b><br><input " & w_Disabled & " accesskey=""T"" type=""text"" name=""w_nome"" class=""STI"" SIZE=""75"" MAXLENGTH=""255"" VALUE=""" & w_nome & """ ONMOUSEOVER=""popup('OBRIGATÓRIO. Informe um título para o arquivo.','white')""; ONMOUSEOUT=""kill()""></td>" 
-    ShowHTML "      <tr><td><font size=""1""><b><u>D</u>escrição:</b><br><textarea " & w_Disabled & " accesskey=""D"" name=""w_descricao"" class=""STI"" ROWS=5 cols=65 ONMOUSEOVER=""popup('OBRIGATÓRIO. Descreva a finalidade do arquivo.','white')""; ONMOUSEOUT=""kill()"">" & w_descricao & "</TEXTAREA></td>" 
-    ShowHTML "      <tr><td><font size=""1""><b>A<u>r</u>quivo:</b><br><input " & w_Disabled & " accesskey=""R"" type=""file"" name=""w_caminho"" class=""STI"" SIZE=""80"" MAXLENGTH=""100"" VALUE="""" ONMOUSEOVER=""popup('OBRIGATÓRIO. Clique no botão ao lado para localizar o arquivo. Ele será transferido automaticamente para o servidor.','white')""; ONMOUSEOUT=""kill()"">" 
+    ShowHTML "      <tr><td><font size=""1""><b><u>T</u>ítulo:</b><br><input " & w_Disabled & " accesskey=""T"" type=""text"" name=""w_nome"" class=""STI"" SIZE=""75"" MAXLENGTH=""255"" VALUE=""" & w_nome & """ title=""'OBRIGATÓRIO. Informe um título para o arquivo.""></td>" 
+    ShowHTML "      <tr><td><font size=""1""><b><u>D</u>escrição:</b><br><textarea " & w_Disabled & " accesskey=""D"" name=""w_descricao"" class=""STI"" ROWS=5 cols=65 title=""'OBRIGATÓRIO. Descreva a finalidade do arquivo."">" & w_descricao & "</TEXTAREA></td>" 
+    ShowHTML "      <tr><td><font size=""1""><b>A<u>r</u>quivo:</b><br><input " & w_Disabled & " accesskey=""R"" type=""file"" name=""w_caminho"" class=""STI"" SIZE=""80"" MAXLENGTH=""100"" VALUE="""" title=""'OBRIGATÓRIO. Clique no botão ao lado para localizar o arquivo. Ele será transferido automaticamente para o servidor."">" 
     If w_caminho > "" Then 
        ShowHTML "              <b><a class=""SS"" href=""" & conFileVirtual & w_cliente & "/" & w_caminho & """ target=""_blank"" title=""Clique para exibir o arquivo atual."">Exibir</a></b>" 
     End If 
@@ -1333,11 +1389,11 @@ Sub Interessados
   End If
   ShowHTML "</HEAD>"
   If w_troca > "" Then
-     BodyOpen "onLoad='document.Form." & w_troca & ".focus()';"
+     BodyOpenClean "onLoad='document.Form." & w_troca & ".focus()';"
   ElseIf O = "I" Then
-     BodyOpen "onLoad='document.Form.w_chave_aux.focus()';"
+     BodyOpenClean "onLoad='document.Form.w_chave_aux.focus()';"
   Else
-     BodyOpen "onLoad='document.focus()';"
+     BodyOpenClean "onLoad='document.focus()';"
   End If
   ShowHTML "<B><FONT COLOR=""#000000"">" & w_TP & "</FONT></B>"
   ShowHTML "<HR>"
@@ -1490,9 +1546,9 @@ Sub Areas
   End If
   ShowHTML "</HEAD>"
   If w_troca > "" Then
-     BodyOpen "onLoad='document.Form." & w_troca & ".focus()';"
+     BodyOpenClean "onLoad='document.Form." & w_troca & ".focus()';"
   Else
-     BodyOpen "onLoad='document.focus()';"
+     BodyOpenClean "onLoad='document.focus()';"
   End If
   ShowHTML "<B><FONT COLOR=""#000000"">" & w_TP & "</FONT></B>"
   ShowHTML "<HR>"
@@ -1549,7 +1605,7 @@ Sub Areas
        ShowHTML "<INPUT type=""hidden"" name=""w_chave_aux"" value=""" & w_chave_aux &""">"
        ShowHTML "      <tr><td valign=""top""><font size=""1""><b>Área/Instituição:</b><br>" & w_nome & "</td>"
     End If
-    ShowHTML "      <tr><td valign=""top""><font size=""1""><b><u>P</u>apel desempenhado:</b><br><textarea " & w_Disabled & " accesskey=""P"" name=""w_papel"" class=""STI"" ROWS=5 cols=75 ONMOUSEOVER=""popup('Descreva o papel desempenhado pela área ou instituição na execução da atividade.','white')""; ONMOUSEOUT=""kill()"">" & w_papel & "</TEXTAREA></td>"
+    ShowHTML "      <tr><td valign=""top""><font size=""1""><b><u>P</u>apel desempenhado:</b><br><textarea " & w_Disabled & " accesskey=""P"" name=""w_papel"" class=""STI"" ROWS=5 cols=75 title=""'Descreva o papel desempenhado pela área ou instituição na execução da atividade."">" & w_papel & "</TEXTAREA></td>"
     ShowHTML "          </table>"
     ShowHTML "      <tr><td align=""center"" colspan=4><hr>"
     If O = "E" Then
@@ -1678,9 +1734,9 @@ Sub Excluir
   End If
   ShowHTML "</HEAD>"
   If w_troca > "" Then
-     BodyOpen "onLoad='document.Form." & w_troca & ".focus()';"
+     BodyOpenClean "onLoad='document.Form." & w_troca & ".focus()';"
   Else
-     BodyOpen "onLoad='document.Form.w_assinatura.focus()';"
+     BodyOpenClean "onLoad='document.Form.w_assinatura.focus()';"
   End If
   ShowHTML "<B><FONT COLOR=""#000000"">" & w_TP & "</FONT></B>"
   ShowHTML "<HR>"
@@ -1779,9 +1835,9 @@ Sub Encaminhamento
   End If
   ShowHTML "</HEAD>"
   If w_troca > "" Then
-     BodyOpen "onLoad='document.Form." & w_troca & ".focus()';"
+     BodyOpenClean "onLoad='document.Form." & w_troca & ".focus()';"
   Else
-     BodyOpen "onLoad='document.Form.w_destinatario.focus()';"
+     BodyOpenClean "onLoad='document.Form.w_destinatario.focus()';"
   End If
   ShowHTML "<B><FONT COLOR=""#000000"">" & w_TP & "</FONT></B>"
   ShowHTML "<HR>"
@@ -1814,7 +1870,7 @@ Sub Encaminhamento
      SelecaoFase "<u>F</u>ase da atividade:", "F", "Se deseja alterar a fase atual da atividade, selecione a fase para a qual deseja enviá-la.", w_novo_tramite, w_menu, "w_novo_tramite", null, null
      SelecaoPessoa "<u>D</u>estinatário:", "D", "Selecione um destinatário para a atividade na relação.", w_destinatario, null, "w_destinatario", "USUARIOS"
   End If
-  ShowHTML "    <tr><td valign=""top"" colspan=2><font size=""1""><b>D<u>e</u>spacho:</b><br><textarea " & w_Disabled & " accesskey=""E"" name=""w_despacho"" class=""STI"" ROWS=5 cols=75 ONMOUSEOVER=""popup('Descreva o papel desempenhado pela área ou instituição na execução da atividade.','white')""; ONMOUSEOUT=""kill()"">" & w_despacho & "</TEXTAREA></td>"
+  ShowHTML "    <tr><td valign=""top"" colspan=2><font size=""1""><b>D<u>e</u>spacho:</b><br><textarea " & w_Disabled & " accesskey=""E"" name=""w_despacho"" class=""STI"" ROWS=5 cols=75 title=""'Descreva o papel desempenhado pela área ou instituição na execução da atividade."">" & w_despacho & "</TEXTAREA></td>"
   ShowHTML "      </table>"
   ShowHTML "      <tr><td align=""LEFT"" colspan=4><font size=""1""><b><U>A</U>ssinatura Eletrônica:<BR> <INPUT ACCESSKEY=""A"" class=""STI"" type=""PASSWORD"" name=""w_assinatura"" size=""30"" maxlength=""30"" value=""""></td></tr>"
   ShowHTML "    <tr><td align=""center"" colspan=4><hr>"
@@ -1887,9 +1943,9 @@ Sub Anotar
   End If
   ShowHTML "</HEAD>"
   If w_troca > "" Then
-     BodyOpen "onLoad='document.Form." & w_troca & ".focus()';"
+     BodyOpenClean "onLoad='document.Form." & w_troca & ".focus()';"
   Else
-     BodyOpen "onLoad='document.Form.w_observacao.focus()';"
+     BodyOpenClean "onLoad='document.Form.w_observacao.focus()';"
   End If
   ShowHTML "<B><FONT COLOR=""#000000"">" & w_TP & "</FONT></B>"
   ShowHTML "<HR>"
@@ -1921,8 +1977,8 @@ Sub Anotar
   DB_GetCustomerData RS, w_cliente  
   ShowHTML "      <tr><td align=""center"" bgcolor=""#D0D0D0"" style=""border: 2px solid rgb(0,0,0);""><font size=""2""><b><font color=""#BC3131"">ATENÇÃO</font>: o tamanho máximo aceito para o arquivo é de " & cDbl(RS("upload_maximo"))/1024 & " KBytes</b>.</font></td>"
   ShowHTML "<INPUT type=""hidden"" name=""w_upload_maximo"" value=""" & RS("upload_maximo") & """>"  
-  ShowHTML "      <tr><td valign=""top""><font size=""1""><b>A<u>n</u>otação:</b><br><textarea " & w_Disabled & " accesskey=""N"" name=""w_observacao"" class=""STI"" ROWS=5 cols=75 ONMOUSEOVER=""popup('Redija a anotação desejada.','white')""; ONMOUSEOUT=""kill()"">" & w_observacao & "</TEXTAREA></td>"  
-  ShowHTML "      <tr><td><font size=""1""><b>A<u>r</u>quivo:</b><br><input " & w_Disabled & " accesskey=""R"" type=""file"" name=""w_caminho"" class=""STI"" SIZE=""80"" MAXLENGTH=""100"" VALUE="""" ONMOUSEOVER=""popup('OPCIONAL. Se desejar anexar um arquivo, clique no botão ao lado para localizá-lo. Ele será transferido automaticamente para o servidor.','white')""; ONMOUSEOUT=""kill()"">"  
+  ShowHTML "      <tr><td valign=""top""><font size=""1""><b>A<u>n</u>otação:</b><br><textarea " & w_Disabled & " accesskey=""N"" name=""w_observacao"" class=""STI"" ROWS=5 cols=75 title=""'Redija a anotação desejada."">" & w_observacao & "</TEXTAREA></td>"  
+  ShowHTML "      <tr><td><font size=""1""><b>A<u>r</u>quivo:</b><br><input " & w_Disabled & " accesskey=""R"" type=""file"" name=""w_caminho"" class=""STI"" SIZE=""80"" MAXLENGTH=""100"" VALUE="""" title=""'OPCIONAL. Se desejar anexar um arquivo, clique no botão ao lado para localizá-lo. Ele será transferido automaticamente para o servidor."">"  
   ShowHTML "      </table>"
   ShowHTML "      <tr><td align=""LEFT"" colspan=4><font size=""1""><b><U>A</U>ssinatura Eletrônica:<BR> <INPUT ACCESSKEY=""A"" class=""STI"" type=""PASSWORD"" name=""w_assinatura"" size=""30"" maxlength=""30"" value=""""></td></tr>"
   ShowHTML "    <tr><td align=""center"" colspan=4><hr>"
@@ -2013,9 +2069,9 @@ Sub Concluir
   End If
   ShowHTML "</HEAD>"
   If w_troca > "" Then
-     BodyOpen "onLoad='document.Form." & w_troca & ".focus()';"
+     BodyOpenClean "onLoad='document.Form." & w_troca & ".focus()';"
   Else
-     BodyOpen "onLoad='document.Form.w_inicio_real.focus()';"
+     BodyOpenClean "onLoad='document.Form.w_inicio_real.focus()';"
   End If
   ShowHTML "<B><FONT COLOR=""#000000"">" & w_TP & "</FONT></B>"
   ShowHTML "<HR>"
@@ -2052,20 +2108,20 @@ Sub Concluir
   ShowHTML "          <tr>"
   Select Case RS_menu("data_hora")
      Case 1
-        ShowHTML "              <td valign=""top""><font size=""1""><b><u>T</u>érmino da execução:</b><br><input " & w_Disabled & " accesskey=""T"" type=""text"" name=""w_fim_real"" class=""STI"" SIZE=""10"" MAXLENGTH=""10"" VALUE=""" & w_fim_real & """ onKeyDown=""FormataData(this,event);"" ONMOUSEOVER=""popup('Informe a data de término da execução da atividade.','white')""; ONMOUSEOUT=""kill()""></td>"
+        ShowHTML "              <td valign=""top""><font size=""1""><b><u>T</u>érmino da execução:</b><br><input " & w_Disabled & " accesskey=""T"" type=""text"" name=""w_fim_real"" class=""STI"" SIZE=""10"" MAXLENGTH=""10"" VALUE=""" & w_fim_real & """ onKeyDown=""FormataData(this,event);"" title=""'Informe a data de término da execução da atividade.""></td>"
      Case 2
-        ShowHTML "              <td valign=""top""><font size=""1""><b><u>T</u>érmino da execução:</b><br><input " & w_Disabled & " accesskey=""T"" type=""text"" name=""w_fim_real"" class=""STI"" SIZE=""17"" MAXLENGTH=""17"" VALUE=""" & w_fim_real & """ onKeyDown=""FormataDataHora(this,event);"" ONMOUSEOVER=""popup('Informe a data/hora de término da execução da atividade.','white')""; ONMOUSEOUT=""kill()""></td>"
+        ShowHTML "              <td valign=""top""><font size=""1""><b><u>T</u>érmino da execução:</b><br><input " & w_Disabled & " accesskey=""T"" type=""text"" name=""w_fim_real"" class=""STI"" SIZE=""17"" MAXLENGTH=""17"" VALUE=""" & w_fim_real & """ onKeyDown=""FormataDataHora(this,event);"" title=""'Informe a data/hora de término da execução da atividade.""></td>"
      Case 3
-        ShowHTML "              <td valign=""top""><font size=""1""><b>Iní<u>c</u>io da execução:</b><br><input " & w_Disabled & " accesskey=""C"" type=""text"" name=""w_inicio_real"" class=""STI"" SIZE=""10"" MAXLENGTH=""10"" VALUE=""" & w_inicio_real & """ onKeyDown=""FormataData(this,event);"" ONMOUSEOVER=""popup('Informe a data/hora de início da execução da atividade.','white')""; ONMOUSEOUT=""kill()""></td>"
-        ShowHTML "              <td valign=""top""><font size=""1""><b><u>T</u>érmino da execução:</b><br><input " & w_Disabled & " accesskey=""T"" type=""text"" name=""w_fim_real"" class=""STI"" SIZE=""10"" MAXLENGTH=""10"" VALUE=""" & w_fim_real & """ onKeyDown=""FormataData(this,event);"" ONMOUSEOVER=""popup('Informe a data de término da execução da atividade.','white')""; ONMOUSEOUT=""kill()""></td>"
+        ShowHTML "              <td valign=""top""><font size=""1""><b>Iní<u>c</u>io da execução:</b><br><input " & w_Disabled & " accesskey=""C"" type=""text"" name=""w_inicio_real"" class=""STI"" SIZE=""10"" MAXLENGTH=""10"" VALUE=""" & w_inicio_real & """ onKeyDown=""FormataData(this,event);"" title=""'Informe a data/hora de início da execução da atividade.""></td>"
+        ShowHTML "              <td valign=""top""><font size=""1""><b><u>T</u>érmino da execução:</b><br><input " & w_Disabled & " accesskey=""T"" type=""text"" name=""w_fim_real"" class=""STI"" SIZE=""10"" MAXLENGTH=""10"" VALUE=""" & w_fim_real & """ onKeyDown=""FormataData(this,event);"" title=""'Informe a data de término da execução da atividade.""></td>"
      Case 4
-        ShowHTML "              <td valign=""top""><font size=""1""><b>Iní<u>c</u>io da execução:</b><br><input " & w_Disabled & " accesskey=""C"" type=""text"" name=""w_inicio_real"" class=""STI"" SIZE=""17"" MAXLENGTH=""17"" VALUE=""" & w_inicio_real & """ onKeyDown=""FormataDataHora(this,event);"" ONMOUSEOVER=""popup('Informe a data/hora de início da execução da atividade.','white')""; ONMOUSEOUT=""kill()""></td>"
-        ShowHTML "              <td valign=""top""><font size=""1""><b><u>T</u>érmino da execução:</b><br><input " & w_Disabled & " accesskey=""T"" type=""text"" name=""w_fim_real"" class=""STI"" SIZE=""17"" MAXLENGTH=""17"" VALUE=""" & w_fim_real & """ onKeyDown=""FormataDataHora(this,event);"" ONMOUSEOVER=""popup('Informe a data de término da execução da atividade.','white')""; ONMOUSEOUT=""kill()""></td>"
+        ShowHTML "              <td valign=""top""><font size=""1""><b>Iní<u>c</u>io da execução:</b><br><input " & w_Disabled & " accesskey=""C"" type=""text"" name=""w_inicio_real"" class=""STI"" SIZE=""17"" MAXLENGTH=""17"" VALUE=""" & w_inicio_real & """ onKeyDown=""FormataDataHora(this,event);"" title=""'Informe a data/hora de início da execução da atividade.""></td>"
+        ShowHTML "              <td valign=""top""><font size=""1""><b><u>T</u>érmino da execução:</b><br><input " & w_Disabled & " accesskey=""T"" type=""text"" name=""w_fim_real"" class=""STI"" SIZE=""17"" MAXLENGTH=""17"" VALUE=""" & w_fim_real & """ onKeyDown=""FormataDataHora(this,event);"" title=""'Informe a data de término da execução da atividade.""></td>"
   End Select
-  ShowHTML "              <td valign=""top""><font size=""1""><b>Custo <u>r</u>eal:</b><br><input " & w_Disabled & " accesskey=""O"" type=""text"" name=""w_custo_real"" class=""STI"" SIZE=""18"" MAXLENGTH=""18"" VALUE=""" & w_custo_real & """ onKeyDown=""FormataValor(this,18,2,event);"" ONMOUSEOVER=""popup('Informe o orçamento disponível para execução da atividade, ou zero se não for o caso.','white')""; ONMOUSEOUT=""kill()""></td>"
+  ShowHTML "              <td valign=""top""><font size=""1""><b>Custo <u>r</u>eal:</b><br><input " & w_Disabled & " accesskey=""O"" type=""text"" name=""w_custo_real"" class=""STI"" SIZE=""18"" MAXLENGTH=""18"" VALUE=""" & w_custo_real & """ onKeyDown=""FormataValor(this,18,2,event);"" title=""'Informe o orçamento disponível para execução da atividade, ou zero se não for o caso.""></td>"
   ShowHTML "          </table>"
-  ShowHTML "      <tr><td valign=""top""><font size=""1""><b>Nota d<u>e</u> conclusão:</b><br><textarea " & w_Disabled & " accesskey=""E"" name=""w_nota_conclusao"" class=""STI"" ROWS=5 cols=75 ONMOUSEOVER=""popup('Descreva o quanto a demanda atendeu aos resultados esperados.','white')""; ONMOUSEOUT=""kill()"">" & w_nota_conclusao & "</TEXTAREA></td>"  
-  ShowHTML "      <tr><td><font size=""1""><b>A<u>r</u>quivo:</b><br><input " & w_Disabled & " accesskey=""R"" type=""file"" name=""w_caminho"" class=""STI"" SIZE=""80"" MAXLENGTH=""100"" VALUE="""" ONMOUSEOVER=""popup('OPCIONAL. Se desejar anexar um arquivo, clique no botão ao lado para localizá-lo. Ele será transferido automaticamente para o servidor.','white')""; ONMOUSEOUT=""kill()"">"  
+  ShowHTML "      <tr><td valign=""top""><font size=""1""><b>Nota d<u>e</u> conclusão:</b><br><textarea " & w_Disabled & " accesskey=""E"" name=""w_nota_conclusao"" class=""STI"" ROWS=5 cols=75 title=""'Descreva o quanto a demanda atendeu aos resultados esperados."">" & w_nota_conclusao & "</TEXTAREA></td>"  
+  ShowHTML "      <tr><td><font size=""1""><b>A<u>r</u>quivo:</b><br><input " & w_Disabled & " accesskey=""R"" type=""file"" name=""w_caminho"" class=""STI"" SIZE=""80"" MAXLENGTH=""100"" VALUE="""" title=""'OPCIONAL. Se desejar anexar um arquivo, clique no botão ao lado para localizá-lo. Ele será transferido automaticamente para o servidor."">"  
   ShowHTML "      <tr><td align=""LEFT"" colspan=4><font size=""1""><b><U>A</U>ssinatura Eletrônica:<BR> <INPUT ACCESSKEY=""A"" class=""STI"" type=""PASSWORD"" name=""w_assinatura"" size=""30"" maxlength=""30"" value=""""></td></tr>"
   ShowHTML "    <tr><td align=""center"" colspan=4><hr>"
   ShowHTML "      <input class=""STB"" type=""submit"" name=""Botao"" value=""Concluir"">"
@@ -2271,7 +2327,7 @@ Public Sub Grava
 
   Cabecalho
   ShowHTML "</HEAD>"
-  BodyOpen "onLoad=document.focus();"
+  BodyOpenClean "onLoad=document.focus();"
   
   AbreSessao    
   Select Case SG
@@ -2398,7 +2454,7 @@ Public Sub Grava
        ' Verifica se a Assinatura Eletrônica é válida 
        If (VerificaAssinaturaEletronica(Session("Username"),w_assinatura) and w_assinatura > "") or _ 
           w_assinatura = "" Then 
-    
+
           ' Trata o recebimento de upload ou dados 
           If InStr(uCase(Request.ServerVariables("http_content_type")),"MULTIPART/FORM-DATA") > 0 Then 
              ' Se foi feito o upload de um arquivo 
@@ -2556,7 +2612,7 @@ Sub Main
     Case "GRAVA"    Grava
     Case Else
        Cabecalho
-       BodyOpen "onLoad=document.focus();"
+       BodyOpenClean "onLoad=document.focus();"
        ShowHTML "<B><FONT COLOR=""#000000"">" & w_TP & "</FONT></B>"
        ShowHTML "<HR>"
        ShowHTML "<div align=center><center><br><br><br><br><br><br><br><br><br><br><img src=""images/icone/underc.gif"" align=""center""> <b>Esta opção está sendo desenvolvida.</b><br><br><br><br><br><br><br><br><br><br></center></div>"

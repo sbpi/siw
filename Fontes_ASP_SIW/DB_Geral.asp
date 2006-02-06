@@ -49,9 +49,6 @@ Sub DB_GetLinkData(p_rs, p_cliente, p_sg)
      .Parameters.Delete         "l_sg"
   end with
 End Sub
-REM =========================================================================
-REM Final da rotina
-REM -------------------------------------------------------------------------
 
 REM =========================================================================
 REM Recupera os links permitidos ao usuário informado
@@ -81,9 +78,6 @@ Sub DB_GetLinkDataUser(p_rs, p_cliente, p_chave, p_restricao)
      .Parameters.Delete         "l_restricao"
   end with
 End Sub
-REM =========================================================================
-REM Final da rotina
-REM -------------------------------------------------------------------------
 
 REM =========================================================================
 REM Verifica a existência de um usuário no banco de dados
@@ -112,9 +106,6 @@ Function DB_VerificaUsuario(p_cliente, p_username)
   
   Set l_rs = Nothing
 End Function
-REM =========================================================================
-REM Final da função
-REM -------------------------------------------------------------------------
 
 REM =========================================================================
 REM Verifica se a senha está correta e se o usuário está ativo
@@ -151,9 +142,6 @@ Function DB_VerificaSenha(p_cliente, p_username, p_senha)
      DB_VerificaSenha = 0
   End If
 End Function
-REM =========================================================================
-REM Final da função
-REM -------------------------------------------------------------------------
 
 REM =========================================================================
 REM Atualiza a senha de acesso ou a assinatura eletrônica de um usuário
@@ -206,9 +194,6 @@ Sub DB_GetCustomerData(p_rs, p_cliente)
      .parameters.Delete         "l_cliente"
   end with
 End Sub
-REM =========================================================================
-REM Final da rotina
-REM -------------------------------------------------------------------------
 
 REM =========================================================================
 REM Recupera os dados principais do cliente
@@ -230,9 +215,6 @@ Sub DB_GetCustomerSite(p_rs, p_cliente)
      .parameters.Delete         "l_cliente"
   end with
 End Sub
-REM =========================================================================
-REM Final da rotina
-REM -------------------------------------------------------------------------
 
 REM =========================================================================
 REM Recupera os dados do usuário logado
@@ -258,9 +240,6 @@ Sub DB_GetUserData(p_rs, p_cliente, p_username)
      .Parameters.Delete         "l_username"
   end with
 End Sub
-REM =========================================================================
-REM Final da rotina
-REM -------------------------------------------------------------------------
 
 REM =========================================================================
 REM Recupera os dados de uma pessoa cadastrada no sistema
@@ -319,9 +298,6 @@ Sub DB_GetDeskTop(p_rs, p_cliente, p_usuario)
      .Parameters.Delete         "l_usuario"
   end with
 End Sub
-REM =========================================================================
-REM Final da rotina
-REM -------------------------------------------------------------------------
 
 REM =========================================================================
 REM Recupera a mesa de trabalho de ligações
@@ -343,9 +319,6 @@ Sub DB_GetDeskTop_TT(p_rs, p_usuario)
      .Parameters.Delete         "l_usuario"
   end with
 End Sub
-REM =========================================================================
-REM Final da rotina
-REM -------------------------------------------------------------------------
 
 REM =========================================================================
 REM Recupera o nível de acesso que um usuário tem para uma solicitação
@@ -381,9 +354,6 @@ Sub DB_GetSolicAcesso(p_solicitacao, p_usuario, p_acesso)
      .parameters.Delete         "l_usuario"
   end with
 End Sub
-REM =========================================================================
-REM Final da rotina
-REM -------------------------------------------------------------------------.
 
 REM =========================================================================
 REM Executa a função SP_GeraCPFEspecial
@@ -413,9 +383,6 @@ Sub DB_GetCNPJCPF(p_tipo, p_valor)
      .parameters.Delete         "l_tipo"
   end with
 End Sub
-REM =========================================================================
-REM Final da rotina
-REM -------------------------------------------------------------------------.
 
 REM =========================================================================
 REM Verifica se o usuário informado é gestor do sistema ou do módulo ao qual
@@ -452,9 +419,53 @@ Sub DB_GetGestor(p_solicitacao, p_usuario, p_acesso)
      .parameters.Delete         "l_usuario"
   end with
 End Sub
+
 REM =========================================================================
-REM Final da rotina
-REM -------------------------------------------------------------------------.
+REM Verifica se há expediente na data informada
+REM -------------------------------------------------------------------------
+Sub DB_GetDataEspecial(p_data, p_cliente, p_pais, p_uf, p_cidade, p_expediente)
+  ' Esta procedure faz chamada a uma função do banco de dados
+    
+  Dim l_data, l_cliente, l_expediente, l_pais, l_uf, l_cidade
+  
+  Set l_expediente     = Server.CreateObject("ADODB.Parameter") 
+  Set l_data           = Server.CreateObject("ADODB.Parameter") 
+  Set l_cliente        = Server.CreateObject("ADODB.Parameter") 
+  Set l_pais           = Server.CreateObject("ADODB.Parameter") 
+  Set l_uf             = Server.CreateObject("ADODB.Parameter") 
+  Set l_cidade         = Server.CreateObject("ADODB.Parameter") 
+
+  with sp
+     set l_expediente   = .CreateParameter("l_expediente",  adVarchar,  adParamReturnValue, 1, null)
+     set l_data         = .CreateParameter("l_data",        adDate,     adParamInput,        , p_data)
+     set l_cliente      = .CreateParameter("l_cliente",     adInteger,  adParamInput,        , p_cliente)
+     set l_pais         = .CreateParameter("l_pais",        adInteger,  adParamInput,        , tvl(p_pais))
+     set l_uf           = .CreateParameter("l_uf",          adVarchar,  adParamInput,       2, tvl(p_uf))
+     set l_cidade       = .CreateParameter("l_cidade",      adInteger,  adParamInput,        , tvl(p_cidade))
+     .parameters.Append         l_expediente
+     .parameters.Append         l_data
+     .parameters.Append         l_cliente
+     .parameters.Append         l_pais
+     .parameters.Append         l_uf
+     .parameters.Append         l_cidade
+     If Session("dbms") = 1 or Session("dbms") = 3 Then .Properties("PLSQLRSet") = TRUE End If
+     .CommandText               = Session("schema") & "VerificaDataEspecial"
+     On error Resume Next
+     .Execute
+     p_expediente = l_expediente.Value
+     
+     If Err.Description > "" Then 
+        TrataErro
+     End If
+     If Session("dbms") = 1 or Session("dbms") = 3 Then .Properties("PLSQLRSet") = FALSE End If
+     .parameters.Delete         "l_expediente"
+     .parameters.Delete         "l_data"
+     .parameters.Delete         "l_cliente"
+     .parameters.Delete         "l_pais"
+     .parameters.Delete         "l_uf"
+     .parameters.Delete         "l_cidade"
+  end with
+End Sub
 
 REM =========================================================================
 REM Verifica se a senha está correta e se o usuário está ativo
@@ -492,9 +503,6 @@ Function DB_VerificaAssinatura(p_cliente, p_username, p_senha)
      DB_VerificaAssinatura = 0
   End If
 End Function
-REM =========================================================================
-REM Final da função
-REM -------------------------------------------------------------------------
 
 REM =========================================================================
 REM Recupera os usuários de um cliente
@@ -544,9 +552,6 @@ Sub DB_GetUserList(p_rs, p_cliente, p_localizacao, p_lotacao, p_gestor, p_nome, 
      .Parameters.Delete         "l_ativo"
   end with
 End Sub
-REM =========================================================================
-REM Final da rotina
-REM -------------------------------------------------------------------------
 
 REM =========================================================================
 REM Recupera os telefones de um cliente
@@ -576,9 +581,6 @@ Sub DB_GetFoneList(p_rs, p_cliente, p_chave, p_restricao)
      .Parameters.Delete         "l_restricao"
   end with
 End Sub
-REM =========================================================================
-REM Final da rotina
-REM -------------------------------------------------------------------------
 
 REM =========================================================================
 REM Recupera os dados do telefone informado
@@ -600,9 +602,6 @@ Sub DB_GetFoneData(p_rs, p_chave)
      .Parameters.Delete         "l_chave"
   end with
 End Sub
-REM =========================================================================
-REM Final da rotina
-REM -------------------------------------------------------------------------
 
 REM =========================================================================
 REM Recupera as contas bancárias de um cliente
@@ -632,9 +631,6 @@ Sub DB_GetContaBancoList(p_rs, p_cliente, p_chave, p_restricao)
      .Parameters.Delete         "l_restricao"
   end with
 End Sub
-REM =========================================================================
-REM Final da rotina
-REM -------------------------------------------------------------------------
 
 REM =========================================================================
 REM Recupera os dados do endereco informado
@@ -656,9 +652,6 @@ Sub DB_GetContaBancoData(p_rs, p_chave)
      .Parameters.Delete         "l_chave"
   end with
 End Sub
-REM =========================================================================
-REM Final da rotina
-REM -------------------------------------------------------------------------
 
 REM =========================================================================
 REM Recupera os endereços de um cliente
@@ -688,9 +681,6 @@ Sub DB_GetAddressList(p_rs, p_cliente, p_chave, p_restricao)
      .Parameters.Delete         "l_restricao"
   end with
 End Sub
-REM =========================================================================
-REM Final da rotina
-REM -------------------------------------------------------------------------
 
 REM =========================================================================
 REM Recupera os endereços de uma opção do menu
@@ -720,9 +710,6 @@ Sub DB_GetAddressMenu(p_rs, p_cliente, p_chave, p_restricao)
      .Parameters.Delete         "l_restricao"
   end with
 End Sub
-REM =========================================================================
-REM Final da rotina
-REM -------------------------------------------------------------------------
 
 REM =========================================================================
 REM Recupera os dados do endereco informado
@@ -744,9 +731,6 @@ Sub DB_GetAddressData(p_rs, p_chave)
      .Parameters.Delete         "l_chave"
   end with
 End Sub
-REM =========================================================================
-REM Final da rotina
-REM -------------------------------------------------------------------------
 
 REM =========================================================================
 REM Recupera as localizações de um cliente
@@ -776,9 +760,6 @@ Sub DB_GetLocalList(p_rs, p_cliente, p_chave, p_restricao)
      .Parameters.Delete         "l_restricao"
   end with
 End Sub
-REM =========================================================================
-REM Final da rotina
-REM -------------------------------------------------------------------------
 
 REM =========================================================================
 REM Recupera as unidades organizacionais de um cliente
@@ -816,9 +797,6 @@ Sub DB_GetUorgList(p_rs, p_cliente, p_chave, p_restricao, p_nome, p_sigla)
      .Parameters.Delete         "l_sigla"
   end with
 End Sub
-REM =========================================================================
-REM Final da rotina
-REM -------------------------------------------------------------------------
 
 REM =========================================================================
 REM Recupera os dados do usuário logado
@@ -844,9 +822,6 @@ Sub DB_GetCompanyData(p_RS, p_cliente, p_cnpj)
      .Parameters.Delete         "l_cnpj"
   end with
 End Sub
-REM =========================================================================
-REM Final da rotina
-REM -------------------------------------------------------------------------
 
 REM =========================================================================
 REM Recupera os links permitidos ao usuário informado
@@ -868,9 +843,6 @@ Sub DB_GetCCData(p_rs, p_ctcc)
      .Parameters.Delete         "l_ctcc"
   end with
 End Sub
-REM =========================================================================
-REM Final da rotina
-REM -------------------------------------------------------------------------
 
 REM =========================================================================
 REM Recupera a lista dos tipo de unidades
@@ -892,9 +864,6 @@ Sub DB_GetUnitTypeList(p_rs, p_sq_pessoa)
      .Parameters.Delete         "l_sq_pessoa"
   end with
 End Sub
-REM =========================================================================
-REM Final da rotina
-REM -------------------------------------------------------------------------
 
 REM =========================================================================
 REM Recupera a lista das áreas de atuações
@@ -916,9 +885,6 @@ Sub DB_GetEOAAtuac(p_rs, p_sq_pessoa)
      .Parameters.Delete         "l_sq_pessoa"
   end with
 End Sub
-REM =========================================================================
-REM Final da rotina
-REM -------------------------------------------------------------------------
 
 REM =========================================================================
 REM Recupera a lista unidades pais
@@ -948,9 +914,6 @@ Sub DB_GetEOUnitPaiList(p_rs, Operacao, p_sq_pessoa, p_sq_unidade)
      .Parameters.Delete         "l_sq_unidade" 
   end with
 End Sub
-REM =========================================================================
-REM Final da rotina
-REM -------------------------------------------------------------------------
 
 REM =========================================================================
 REM Recupera as pessoas vinculadas a um cliente
@@ -1003,9 +966,6 @@ Sub DB_GetPersonList(p_rs, p_cliente, p_chave, p_restricao, p_nome, p_sg_unidade
      
   end with
 End Sub
-REM =========================================================================
-REM Final da rotina
-REM -------------------------------------------------------------------------
 
 REM =========================================================================
 REM Recupera os responsáveis pelo cumprimento de um trâmite
@@ -1039,9 +999,6 @@ Sub DB_GetSolicResp(p_rs, p_chave, p_tramite, p_fase, p_restricao)
      .Parameters.Delete         "l_restricao"
   end with
 End Sub
-REM =========================================================================
-REM Final da rotina
-REM -------------------------------------------------------------------------
 
 REM =========================================================================
 REM Recupera os dados de um beneficiário
@@ -1093,9 +1050,6 @@ Sub DB_GetBenef(p_rs, p_cliente, p_sq_pessoa, p_cpf, p_cnpj, p_nome, p_tipo_pess
      .Parameters.Delete         "l_sq_pais_passaporte"
   end with
 End Sub
-REM =========================================================================
-REM Final da rotina
-REM -------------------------------------------------------------------------
 
 REM =========================================================================
 REM Recupera os centros de custo do cliente
@@ -1125,9 +1079,6 @@ Sub DB_GetCCList(p_rs, p_cliente, p_chave, p_restricao)
      .Parameters.Delete         "l_restricao"
   end with
 End Sub
-REM =========================================================================
-REM Final da rotina
-REM -------------------------------------------------------------------------
 
 REM =========================================================================
 REM Recupera os centros de custo do cliente
@@ -1153,9 +1104,6 @@ Sub DB_GetCCTree(p_rs, p_cliente, p_restricao)
      .Parameters.Delete         "l_restricao"
   end with
 End Sub
-REM =========================================================================
-REM Final da rotina
-REM -------------------------------------------------------------------------
 
 REM =========================================================================
 REM Recupera os centros de custo permitidos ao usuário informado
@@ -1189,9 +1137,6 @@ Sub DB_GetCCTreeVision(p_rs, p_cliente, p_pessoa, p_menu, p_restricao)
      .Parameters.Delete         "l_restricao"
   end with
 End Sub
-REM =========================================================================
-REM Final da rotina
-REM -------------------------------------------------------------------------
 
 REM =========================================================================
 REM Recupera as formas de pagamento válidas para o serviço informado
@@ -1225,9 +1170,6 @@ Sub DB_GetFormaPagamento(p_rs, p_cliente, p_chave, p_chave_aux, p_restricao)
      .Parameters.Delete         "l_restricao"
   end with
 End Sub
-REM =========================================================================
-REM Final da rotina
-REM -------------------------------------------------------------------------
 
 REM =========================================================================
 REM Recupera os centros de custo aos quais o atual pode ser subordinado
@@ -1257,9 +1199,6 @@ Sub DB_GetCCSubordination(p_rs, p_cliente, p_sqcc, p_restricao)
      .Parameters.Delete         "l_restricao"
   end with
 End Sub
-REM =========================================================================
-REM Final da rotina
-REM -------------------------------------------------------------------------
 
 REM =========================================================================
 REM Recupera os bancos existentes
@@ -1278,9 +1217,6 @@ Sub DB_GetBankList(p_rs)
   end with
 
 End Sub
-REM =========================================================================
-REM Final da rotina
-REM -------------------------------------------------------------------------
 
 REM =========================================================================
 REM Recupera as etnias existentes
@@ -1299,9 +1235,6 @@ Sub DB_GetEtniaList(p_rs)
   end with
 
 End Sub
-REM =========================================================================
-REM Final da rotina
-REM -------------------------------------------------------------------------
 
 REM =========================================================================
 REM Recupera os idiomas existentes
@@ -1320,9 +1253,6 @@ Sub DB_GetIdiomList(p_rs)
   end with
 
 End Sub
-REM =========================================================================
-REM Final da rotina
-REM -------------------------------------------------------------------------
 
 REM =========================================================================
 REM Recupera as formações existentes
@@ -1341,9 +1271,6 @@ Sub DB_GetFormationList(p_rs)
   end with
 
 End Sub
-REM =========================================================================
-REM Final da rotina
-REM -------------------------------------------------------------------------
 
 REM =========================================================================
 REM Recupera os grupos de deficiência existentes
@@ -1362,9 +1289,6 @@ Sub DB_GetDeficGroupList(p_rs)
   end with
 
 End Sub
-REM =========================================================================
-REM Final da rotina
-REM -------------------------------------------------------------------------
 
 REM =========================================================================
 REM Recupera os grupos de deficiência existentes
@@ -1383,9 +1307,6 @@ Sub DB_GetDeficiencyList(p_rs)
   end with
 
 End Sub
-REM =========================================================================
-REM Final da rotina
-REM -------------------------------------------------------------------------
 
 REM =========================================================================
 REM Recupera a lista de estados civis
@@ -1404,9 +1325,6 @@ Sub DB_GetCivStateList(p_rs)
   end with
 
 End Sub
-REM =========================================================================
-REM Final da rotina
-REM -------------------------------------------------------------------------
 
 REM =========================================================================
 REM Recupera os tipos de endereços existentes
@@ -1425,9 +1343,6 @@ Sub DB_GetAdressTypeList(p_rs)
   end with
 
 End Sub
-REM =========================================================================
-REM Final da rotina
-REM -------------------------------------------------------------------------
 
 REM =========================================================================
 REM Recupera os tipos de pessoas existentes
@@ -1446,9 +1361,6 @@ Sub DB_GetUserTypeList(p_rs)
   end with
 
 End Sub
-REM =========================================================================
-REM Final da rotina
-REM -------------------------------------------------------------------------
 
 REM =========================================================================
 REM Recupera os tipos de telefones existentes
@@ -1467,9 +1379,6 @@ Sub DB_GetFoneTypeList(p_rs)
   end with
 
 End Sub
-REM =========================================================================
-REM Final da rotina
-REM -------------------------------------------------------------------------
 
 
 
@@ -1502,9 +1411,6 @@ Sub DB_GetBankHouseList(p_rs, p_sq_banco, p_nome, p_ordena)
   end with
 
 End Sub
-REM =========================================================================
-REM Final da rotina
-REM -------------------------------------------------------------------------
 
 REM =========================================================================
 REM Recupera os paises existentes
@@ -1523,9 +1429,6 @@ Sub DB_GetCountryList(p_rs)
   end with
 
 End Sub
-REM =========================================================================
-REM Final da rotina
-REM -------------------------------------------------------------------------
 
 REM =========================================================================
 REM Recupera as regiões existentes
@@ -1551,9 +1454,6 @@ Dim l_sq_pais, l_tipo
      .Parameters.Delete         "l_tipo"
   end with
 End Sub
-REM =========================================================================
-REM Final da rotina
-REM -------------------------------------------------------------------------
 
 REM =========================================================================
 REM Recupera as cidades existentes em relação a um país
@@ -1575,9 +1475,6 @@ Sub DB_GetStateList(p_rs, p_sq_pais)
      .Parameters.Delete         "l_sq_pais"
   end with
 End Sub
-REM =========================================================================
-REM Final da rotina
-REM -------------------------------------------------------------------------
 
 REM =========================================================================
 REM Recupera as cidades existentes
@@ -1605,9 +1502,6 @@ Sub DB_GetCityList(p_rs, p_sq_pais, p_estado)
   end with
 
 End Sub
-REM =========================================================================
-REM Final da rotina
-REM -------------------------------------------------------------------------
 
 REM =========================================================================
 REM Recupera os dados do banco
@@ -1629,9 +1523,6 @@ Sub DB_GetBankData(p_rs, p_sq_banco)
      .Parameters.Delete         "l_sq_banco"
   end with
 End Sub
-REM =========================================================================
-REM Final da rotina
-REM -------------------------------------------------------------------------
 
 REM =========================================================================
 REM Recupera os dados da etnia
@@ -1653,9 +1544,6 @@ Sub DB_GetEtniaData(p_rs, p_sq_etnia)
      .Parameters.Delete         "l_sq_etnia"
   end with
 End Sub
-REM =========================================================================
-REM Final da rotina
-REM -------------------------------------------------------------------------
 
 REM =========================================================================
 REM Recupera os dados do idioma
@@ -1677,9 +1565,6 @@ Sub DB_GetIdiomData(p_rs, p_sq_idioma)
      .Parameters.Delete         "l_sq_idioma"
   end with
 End Sub
-REM =========================================================================
-REM Final da rotina
-REM -------------------------------------------------------------------------
 
 REM =========================================================================
 REM Recupera os dados da formação
@@ -1701,9 +1586,6 @@ Sub DB_GetFormationData(p_rs, p_sq_formacao)
      .Parameters.Delete         "l_sq_formacao"
   end with
 End Sub
-REM =========================================================================
-REM Final da rotina
-REM -------------------------------------------------------------------------
 
 REM =========================================================================
 REM Recupera os dados do grupo de dificiência
@@ -1725,9 +1607,6 @@ Sub DB_GetDeficiencyGroupData(p_rs, p_sq_grupo_deficiencia)
      .Parameters.Delete         "l_sq_grupo_deficiencia"
   end with
 End Sub
-REM =========================================================================
-REM Final da rotina
-REM -------------------------------------------------------------------------
 
 REM =========================================================================
 REM Recupera os dados da deficiência
@@ -1749,9 +1628,6 @@ Sub DB_GetDeficiencyData(p_rs, p_sq_deficiencia)
      .Parameters.Delete         "l_sq_deficiencia"
   end with
 End Sub
-REM =========================================================================
-REM Final da rotina
-REM -------------------------------------------------------------------------
 
 REM =========================================================================
 REM Recupera os dados do tipo de endereço
@@ -1773,9 +1649,6 @@ Sub DB_GetAdressTypeData(p_rs, p_sq_tipo_endereco)
      .Parameters.Delete         "l_sq_tipo_endereco"
   end with
 End Sub
-REM =========================================================================
-REM Final da rotina
-REM -------------------------------------------------------------------------
 
 REM =========================================================================
 REM Recupera os dados do tipo de pessoa
@@ -1797,9 +1670,6 @@ Sub DB_GetUserTypeData(p_rs, p_sq_tipo_pessoa)
      .Parameters.Delete         "l_sq_tipo_pessoa"
   end with
 End Sub
-REM =========================================================================
-REM Final da rotina
-REM -------------------------------------------------------------------------
 
 REM =========================================================================
 REM Recupera os dados do tipo de telefone
@@ -1821,9 +1691,6 @@ Sub DB_GetFoneTypeData(p_rs, p_sq_tipo_telefone)
      .Parameters.Delete         "l_sq_tipo_telefone"
   end with
 End Sub
-REM =========================================================================
-REM Final da rotina
-REM -------------------------------------------------------------------------
 
 
 
@@ -1847,9 +1714,6 @@ Sub DB_GetBankHouseData(p_rs, p_sq_agencia)
      .Parameters.Delete         "l_sq_agencia"
   end with
 End Sub
-REM =========================================================================
-REM Final da rotina
-REM -------------------------------------------------------------------------
 
 REM =========================================================================
 REM Recupera os dados do pais
@@ -1871,9 +1735,6 @@ Sub DB_GetCountryData(p_rs, p_sq_pais)
      .Parameters.Delete         "l_sq_pais"
   end with
 End Sub
-REM =========================================================================
-REM Final da rotina
-REM -------------------------------------------------------------------------
 
 REM =========================================================================
 REM Recupera os dados da região
@@ -1895,9 +1756,6 @@ Sub DB_GetRegionData(p_rs, p_sq_regiao)
      .Parameters.Delete         "l_sq_regiao"
   end with
 End Sub
-REM =========================================================================
-REM Final da rotina
-REM -------------------------------------------------------------------------
 
 REM =========================================================================
 REM Recupera os dados do estado
@@ -1923,9 +1781,6 @@ Sub DB_GetStateData(p_rs, p_sq_pais, p_co_uf)
      .Parameters.Delete         "l_co_uf"
   end with
 End Sub
-REM =========================================================================
-REM Final da rotina
-REM -------------------------------------------------------------------------
 
 REM =========================================================================
 REM Recupera os dados da cidade
@@ -1947,9 +1802,6 @@ Sub DB_GetCityData(p_rs, p_sq_cidade)
      .Parameters.Delete         "l_sq_cidade"
   end with
 End Sub
-REM =========================================================================
-REM Final da rotina
-REM -------------------------------------------------------------------------
 
 REM =========================================================================
 REM Recupera os idiomas existentes
@@ -1968,9 +1820,6 @@ Sub DB_GetKindPersonList(p_rs)
   end with
 
 End Sub
-REM =========================================================================
-REM Final da rotina
-REM -------------------------------------------------------------------------
 
 REM =========================================================================
 REM Recupera os tipos de vínculos
@@ -1993,9 +1842,6 @@ Sub DB_GetVincKindList(p_rs, p_cliente)
   end with
 
 End Sub
-REM =========================================================================
-REM Final da rotina
-REM -------------------------------------------------------------------------
 
 REM =========================================================================
 REM Recupera os tipos de postos
@@ -2022,9 +1868,6 @@ Sub DB_GetTipoPostoList(p_rs, p_cliente, p_chave)
   end with
 
 End Sub
-REM =========================================================================
-REM Final da rotina
-REM -------------------------------------------------------------------------
 
 REM =========================================================================
 REM Recupera os tipos de vínculos
@@ -2047,9 +1890,6 @@ Sub DB_GetVincKindData(p_rs, p_sq_tipo_vinculo)
   end with
 
 End Sub
-REM =========================================================================
-REM Final da rotina
-REM -------------------------------------------------------------------------
 
 REM =========================================================================
 REM Recupera as solicitações desejadas
@@ -2203,9 +2043,6 @@ Sub DB_GetSolicList(p_rs, p_menu, p_pessoa, p_restricao, p_tipo, _
   end with
 
 End Sub
-REM =========================================================================
-REM Final da rotina
-REM -------------------------------------------------------------------------
 
 REM =========================================================================
 REM Recupera os dados de uma solicitacao
@@ -2232,9 +2069,6 @@ Sub DB_GetSolicData(p_rs, p_chave, p_restricao)
   end with
 
 End Sub
-REM =========================================================================
-REM Final da rotina
-REM -------------------------------------------------------------------------
 
 REM =========================================================================
 REM Recupera as etapas de um projeto
@@ -2265,9 +2099,6 @@ Sub DB_GetSolicEtapa(p_rs, p_chave, p_chave_aux, p_restricao)
   end with
 
 End Sub
-REM =========================================================================
-REM Final da rotina
-REM -------------------------------------------------------------------------
 
 REM =========================================================================
 REM Recupera as etapas irmãs da etapa informada
@@ -2294,9 +2125,6 @@ Sub DB_GetEtapaOrder(p_rs, p_chave, p_chave_aux)
   end with
 
 End Sub
-REM =========================================================================
-REM Final da rotina
-REM -------------------------------------------------------------------------
 
 REM =========================================================================
 REM Recupera os dados da etapa superior à que foi informada
@@ -2318,9 +2146,6 @@ Sub DB_GetEtapaDataParent(p_rs, p_chave)
      .Parameters.Delete         "l_chave"
   end with
 End Sub
-REM =========================================================================
-REM Final da rotina
-REM -------------------------------------------------------------------------
 
 REM =========================================================================
 REM Recupera os dados das etapas superiores à que foi informada
@@ -2342,9 +2167,6 @@ Sub DB_GetEtapaDataParents(p_rs, p_chave)
      .Parameters.Delete         "l_chave"
   end with
 End Sub
-REM =========================================================================
-REM Final da rotina
-REM -------------------------------------------------------------------------
 
 REM =========================================================================
 REM Recupera os recursos de um projeto
@@ -2375,9 +2197,6 @@ Sub DB_GetSolicRecurso(p_rs, p_chave, p_chave_aux, p_restricao)
   end with
 
 End Sub
-REM =========================================================================
-REM Final da rotina
-REM -------------------------------------------------------------------------
 
 REM =========================================================================
 REM Recupera os recursos de um projeto
@@ -2404,9 +2223,6 @@ Sub DB_GetSolicEtpRec(p_rs, p_chave, p_chave_aux)
   end with
 
 End Sub
-REM =========================================================================
-REM Final da rotina
-REM -------------------------------------------------------------------------
 
 REM =========================================================================
 REM Recupera os anexos de uma solicitação
@@ -2436,9 +2252,6 @@ Sub DB_GetSolicAnexo(p_rs, p_chave, p_chave_aux, p_cliente)
      .Parameters.Delete         "l_cliente"
   end with
 End Sub
-REM =========================================================================
-REM Final da rotina
-REM -------------------------------------------------------------------------
 
 REM =========================================================================
 REM Recupera os interessados em uma solicitação
@@ -2469,9 +2282,6 @@ Sub DB_GetSolicInter(p_rs, p_chave, p_chave_aux, p_restricao)
   end with
 
 End Sub
-REM =========================================================================
-REM Final da rotina
-REM -------------------------------------------------------------------------
 
 REM =========================================================================
 REM Recupera as áreas envolvidas na execução de uma solicitação
@@ -2502,9 +2312,6 @@ Sub DB_GetSolicAreas(p_rs, p_chave, p_chave_aux, p_restricao)
   end with
 
 End Sub
-REM =========================================================================
-REM Final da rotina
-REM -------------------------------------------------------------------------
 
 REM =========================================================================
 REM Recupera os encaminhamentos de uma solicitação
@@ -2535,9 +2342,6 @@ Sub DB_GetSolicLog(p_rs, p_chave, p_chave_aux, p_restricao)
   end with
 
 End Sub
-REM =========================================================================
-REM Final da rotina
-REM -------------------------------------------------------------------------
 
 REM =========================================================================
 REM Recupera o código de uma opção do menu a partir da sigla
@@ -2564,9 +2368,6 @@ Sub DB_GetMenuCode(p_rs, p_cliente, p_sigla)
   end with
 
 End Sub
-REM =========================================================================
-REM Final da rotina
-REM -------------------------------------------------------------------------
 
 REM =========================================================================
 REM Recupera a atualização mensal das metas
@@ -2589,9 +2390,6 @@ Sub DB_GetEtapaMensal(p_rs, p_chave)
   end with
 
 End Sub
-REM =========================================================================
-REM Final da rotina
-REM -------------------------------------------------------------------------
 
 REM =========================================================================
 REM Recupera os tipos de apoios
@@ -2630,9 +2428,6 @@ Sub DB_GetTipoApoioList(p_rs, p_cliente, p_chave, p_nome, p_sigla, p_ativo)
   end with
 
 End Sub
-REM =========================================================================
-REM Final da rotina
-REM -------------------------------------------------------------------------
 
 REM =========================================================================
 REM Recupera a lista de apoios de um projeto
@@ -2662,8 +2457,38 @@ Sub DB_GetSolicApoioList(p_rs, p_chave, p_chave_aux, p_restricao)
      .parameters.Delete         "l_restricao"
   end with
 End Sub
+
 REM =========================================================================
-REM Final da rotina
+REM Recupera os cumpridores de um trâmite
 REM -------------------------------------------------------------------------
+Sub DB_GetTramiteSolic(p_rs, p_chave, p_chave_aux, p_endereco, p_restricao)
+  Dim l_chave, l_chave_aux, l_endereco, l_restricao
+  Set l_chave       = Server.CreateObject("ADODB.Parameter")
+  Set l_chave_aux   = Server.CreateObject("ADODB.Parameter")
+  Set l_endereco    = Server.CreateObject("ADODB.Parameter")
+  Set l_restricao   = Server.CreateObject("ADODB.Parameter")
+  with sp
+     set l_chave            = .CreateParameter("l_chave",       adInteger, adParamInput,   , p_chave)
+     set l_chave_aux        = .CreateParameter("l_chave_aux",   adInteger, adParamInput,   , p_chave_aux)
+     set l_endereco         = .CreateParameter("l_endereco",    adInteger, adParamInput,   , tvl(p_endereco))
+     set l_restricao        = .CreateParameter("l_restricao",   adVarChar, adParamInput, 20, tvl(p_restricao))
+     .parameters.Append     l_chave
+     .parameters.Append     l_chave_aux
+     .parameters.Append     l_endereco
+     .parameters.Append     l_restricao
+     If Session("dbms") = 1 or Session("dbms") = 3 Then .Properties("PLSQLRSet") = TRUE End If
+     .CommandText           = Session("schema") & "SP_GetTramiteSolic"
+     On Error Resume Next
+     Set p_rs               = .Execute
+     If Err.Description > "" Then 
+        TrataErro 
+     End If     
+     If Session("dbms") = 1 or Session("dbms") = 3 Then .Properties("PLSQLRSet") = FALSE End If
+     .Parameters.Delete     "l_chave"
+     .Parameters.Delete     "l_chave_aux"
+     .Parameters.Delete     "l_endereco"
+     .Parameters.Delete     "l_restricao"
+  end with
+End Sub
 %>
 

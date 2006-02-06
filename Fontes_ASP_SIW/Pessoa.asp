@@ -695,7 +695,7 @@ Sub BuscaUsuario
   ValidateClose
   ScriptClose
   ShowHTML "</HEAD>"
-  ShowHTML "<BASE HREF=""http://" & Request.ServerVariables("server_name") & "/siw/"">"
+  ShowHTML "<BASE HREF=""//" & Request.ServerVariables("server_name") & "/siw/"">"
   BodyOpen "onLoad='document.Form.w_nome.focus();'"
   Estrutura_Texto_Abre
   ShowHTML "<table border=""0"" cellpadding=""0"" cellspacing=""0"" width=""100%"">"

@@ -726,7 +726,7 @@ Sub Deficiencia
         If p_ativo > ""  Then w_filter = w_filter & " and ativo  = '" & p_ativo & "'"     End If
         RS.Filter = Mid(w_filter,6,255)
      End If
-     If p_ordena > "" Then RS.sort = p_ordena Else RS.sort = "sq_grupo_defic,codigo" End If     
+     If p_ordena > "" Then RS.sort = p_ordena Else RS.sort = "codigo" End If     
   ElseIf (O = "A" or O = "E") Then               
      DB_GetDeficiencyData RS, w_sq_deficiencia  
      w_nome                 = RS("nome")

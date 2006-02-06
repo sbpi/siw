@@ -3,6 +3,7 @@
 <!-- #INCLUDE VIRTUAL="/siw/Constants.inc" -->
 <!-- #INCLUDE VIRTUAL="/siw/jScript.asp" -->
 <!-- #INCLUDE VIRTUAL="/siw/Funcoes.asp" -->
+<!-- #INCLUDE VIRTUAL="/siw/DB_Geral.asp" -->
 <!-- #INCLUDE FILE="Funcoes.asp" -->
 <!-- #INCLUDE FILE="DB_Geral.asp" -->
 <!-- #INCLUDE FILE="DB_Relatorio.asp" -->
@@ -218,7 +219,7 @@ Sub Inicial
         ScriptClose
      End If
      ShowHTML "</HEAD>"
-     ShowHTML "<BASE HREF=""http://" & Request.ServerVariables("server_name") & "/siw/"">"
+     ShowHTML "<BASE HREF=""" & conRootSIW & """>"
      If O = "L" or O = "W" Then
         BodyOpenClean "onLoad=document.focus();"
      Else

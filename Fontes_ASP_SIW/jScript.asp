@@ -242,6 +242,39 @@ Sub CompData (Date1, DisplayName1, Operator, Date2, DisplayName2)
   Response.Write " } " & VbCrLf
 End Sub
 
+' Rotina de comparação de horas
+Sub CompHora (hour1, DisplayName1, Operator, hour2, DisplayName2)
+  Dim w_Operator
+  Select Case Operator 
+         Case "==" w_Operator = " igual a "
+         Case "!=" w_Operator = " diferente de "
+         Case ">"  w_Operator = " maior que "
+         Case "<"  w_Operator = " menor que "
+         Case ">=" w_Operator = " maior ou igual a "
+         Case "=>" w_Operator = " maior ou igual a "
+         Case "<=" w_Operator = " menor ou igual a "
+         Case "=<" w_Operator = " menor ou igual a "
+  End Select
+  Response.Write "  var D1 = theForm." & hour1 & ".value; " & VbCrLf
+  If InStr("1234567890", Mid(hour2,1,1)) = 0 then
+    Response.Write "   var D2 = theForm." & hour2 & ".value;" & VbCrLf
+  Else
+    Response.Write "   var D2 = '" & hour2 & "';" & VbCrLf
+  end if
+  Response.Write "  if (D1.length != 0 && D2.length != 0) { " & VbCrLf
+  Response.Write "   var h1; " & VbCrLf
+  Response.Write "   var h2; " & VbCrLf
+  Response.Write "   h1 = D1.substr(0,2) + D1.substr(3,2); " & VbCrLf
+  Response.Write "   h2 = D2.substr(0,2) + D2.substr(3,2); " & VbCrLf
+  'Response.Write "alert('Hora1: ' + parseFloat(h1) + '\nHora2: ' + parseFloat(h2)); " & VbCrLf
+  Response.Write "   if (!(parseFloat(h1) " & Operator & " parseFloat(h2))) { " & VbCrLf
+  Response.Write "      alert('" & DisplayName1 & " deve ser " &w_Operator & DisplayName2 & ".'); " & VbCrLf
+  Response.Write "      theForm." & hour1 & ".focus(); " & VbCrLf
+  Response.Write "      return (false); " & VbCrLf
+  Response.Write "   } " & VbCrLf
+  Response.Write " } " & VbCrLf
+End Sub
+
 Sub toMoney
  Response.Write " function toMoney(campo, fmt) { " & VbCrLf
  Response.Write "  num = campo.toString().replace(/\$|\,/g,''); " & VbCrLf
@@ -473,6 +506,22 @@ Sub FormataDataHora
  Response.Write "            campo.value = vr.substr( 0, 2 ) + '/' + vr.substr( 2, 2 ) + '/' + vr.substr( 4, 4 ) + ', ' + vr.substr( 8, tam );  " & VbCrLf
  Response.Write "        if ( tam >=12 ) " & VbCrLf
  Response.Write "            campo.value = vr.substr( 0, 2 ) + '/' + vr.substr( 2, 2 ) + '/' + vr.substr( 4, 4 ) + ', ' + vr.substr( 8, 2 ) + ':' + vr.substr( 10, tam );  " & VbCrLf
+ Response.Write "    } " & VbCrLf
+ Response.Write "  } " & VbCrLf
+ Response.Write "} " & VbCrLf
+End Sub
+
+Sub FormataHora
+ Response.Write "function FormataHora(campo, teclapres) { " & VbCrLf
+ Response.Write "    var tecla = teclapres.keyCode; " & VbCrLf
+ Response.Write "    vr = campo.value; " & VbCrLf
+ Response.Write "    vr = vr.replace( ':', '' ); " & VbCrLf
+ Response.Write "    tam = vr.length + 1; " & VbCrLf
+ Response.Write "    if (tecla == 8 ){    tam = tam - 1 ; } " & VbCrLf
+ Response.Write "    if ( tecla != 9 && tecla != 8 ){ " & VbCrLf
+ Response.Write "    if ( tecla == 8 || tecla >= 48 && tecla <= 57 || tecla >= 96 && tecla <= 105 ){ " & VbCrLf
+ Response.Write "        if ( tam <= 2 ) campo.value = vr ; " & VbCrLf
+ Response.Write "        if ( tam > 2 ) campo.value = vr.substr( 0, 2 ) + ':' + vr.substr( 2, tam ); " & VbCrLf
  Response.Write "    } " & VbCrLf
  Response.Write "  } " & VbCrLf
  Response.Write "} " & VbCrLf
@@ -742,7 +791,7 @@ Sub Validate(VariableName, DisplayName, DataType, ValueRequired, MinimumLength, 
     "    if (checkStr.length != 0) {" & VbCrLf & _
     "       if (!checkbranco(checkStr))" & VbCrLf & _
     "       {" & VbCrLf & _
-    "           if (checkStr.length != 10) err=1" & VbCrLf & _
+    "           if (checkStr.length != 5) err=1" & VbCrLf & _
     "           dia = checkStr.substring(0, 2);" & VbCrLf & _
     "           barra1 = checkStr.substring(2, 3);" & VbCrLf & _
     "           mes = checkStr.substring(3, 5);" & VbCrLf & _
@@ -794,6 +843,25 @@ Sub Validate(VariableName, DisplayName, DataType, ValueRequired, MinimumLength, 
     "   else" & VbCrLf & _
     "   {" & VbCrLf & _
     "       err=1" & VbCrLf & _
+    "   }" & VbCrLf & _
+    "}" & VbCrLf & _
+    "if (err==1){" & VbCrLf & _
+    "   alert('Campo " & DisplayName & " inválido.');" & VbCrLf & _
+    "   theForm." & VariableName & ".focus();" & VbCrLf & _
+    "   return (false);" & VbCrLf & _
+    "}" & VbCrLf 
+  ElseIf uCase(DataType) = "HORA" Then
+    Response.Write _
+    "var Datac = theForm." & VariableName & ".value;" & VbCrLf & _
+    "var err=0;" & VbCrLf & _
+    "if (Datac.length > 0) {" & VbCrLf & _
+    "   var nHora = parseFloat(Datac.substring(0,2));" & VbCrLf & _
+    "   var nMin = parseFloat(Datac.substring(3,5));" & VbCrLf & _
+    "   if (nHora<0 || nHora>23){" & VbCrLf & _
+    "       err=1;" & VbCrLf & _
+    "   }" & VbCrLf & _
+    "   if (nMin<0 || nMin>59){" & VbCrLf & _
+    "       err=1;" & VbCrLf & _
     "   }" & VbCrLf & _
     "}" & VbCrLf & _
     "if (err==1){" & VbCrLf & _

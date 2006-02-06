@@ -32,9 +32,9 @@ Function VisualTarefaGer(w_chave, P4)
       w_html = w_html & VbCrLf & "      <tr bgcolor=""#D0D0D0""><td colspan=""3""><font size=""1"">Ação PPA:<br><b>" & RS1("cd_acao") & " - " & RS1("nm_ppa") & " </b></td>"
       w_html = w_html & VbCrLf & "   </table></td></tr>"
    End If
-   ' Se o plano/projeto específico for informado, exibe.
+   ' Se o programa interno for informado, exibe.
    If Not IsNull(RS1("sq_isprojeto")) Then
-      w_html = w_html & VbCrLf & "      <tr><td valign=""top""><font size=""1"">Plano/Projeto Específico:<b>" & RS1("nm_pri")
+      w_html = w_html & VbCrLf & "      <tr><td valign=""top""><font size=""1"">Programa interno:<b>" & RS1("nm_pri")
       If Not IsNull(RS1("cd_pri")) Then w_html = w_html & VbCrLf & " (" & RS1("cd_pri") & ")" End If
       w_html = w_html & VbCrLf & "          </b></td>"
       w_html = w_html & VbCrLf & "      <tr><td valign=""top""><font size=""1"">Ação: <b>" & RS("nm_projeto") & "</b></td>"

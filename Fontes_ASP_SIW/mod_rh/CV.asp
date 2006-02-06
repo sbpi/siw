@@ -4,9 +4,11 @@
 <!-- #INCLUDE VIRTUAL="/siw/DB_Geral.asp" -->
 <!-- #INCLUDE VIRTUAL="/siw/DB_Cliente.asp" -->
 <!-- #INCLUDE VIRTUAL="/siw/DB_Seguranca.asp" -->
+<!-- #INCLUDE VIRTUAL="/siw/DML_Seguranca.asp" -->
 <!-- #INCLUDE VIRTUAL="/siw/jScript.asp" -->
 <!-- #INCLUDE VIRTUAL="/siw/Funcoes.asp" -->
 <!-- #INCLUDE FILE="DB_CV.asp" -->
+<!-- #INCLUDE FILE="DB_Tabelas.asp" -->
 <!-- #INCLUDE FILE="DML_CV.asp" -->
 <!-- #INCLUDE FILE="VisualCurriculo.asp" -->
 <!-- #INCLUDE FILE="Funcoes.asp" -->
@@ -229,7 +231,7 @@ Sub Inicial
   ValidateClose
   ScriptClose
   ShowHTML "</HEAD>"
-  ShowHTML "<BASE HREF=""http://" & Request.ServerVariables("server_name") & "/siw/"">"
+  ShowHTML "<BASE HREF=""" & conRootSIW & """>"
   If w_Troca > "" Then ' Se for recarga da página
      BodyOpen "onLoad='document.Form." & w_Troca & ".focus();'"
   ElseIf InStr("P",O) > 0 Then
@@ -334,10 +336,37 @@ Sub Identificacao
   Dim w_pais, w_uf, w_cidade, w_passaporte_numero, w_sq_pais_passaporte, w_sq_etnia, w_sq_deficiencia
   Dim w_sexo, w_sq_formacao
   Dim w_foto
+  Dim w_posto_trabalho, w_modalidade_contrato, w_unidade_lotacao, w_unidade_exercicio, w_localizacao, w_matricula, w_dt_ini, w_envio_email
+  Dim w_sq_contrato_colaborador, w_sq_tipo_vinculo, w_username_pessoa
   
   Dim i, w_erro, w_como_funciona, w_cor, w_readonly
   
-  w_chave           = w_usuario
+  If cDbl(Nvl(P1,0)) = 1 and w_troca = "" Then
+     w_chave           = Nvl(Request("w_sq_pessoa"),w_usuario)
+
+     w_cpf             = Request("w_cpf")
+     If w_cpf > "" Then
+        DB_GetPersonData RS, w_cliente, null, w_cpf, null
+        If Not RS.EOF Then
+           w_chave = RS("sq_pessoa")
+        Else
+           w_chave = ""
+        End If
+        DesconectaBD     
+     End If
+     If Nvl(w_chave,"") > "" and O = "I" Then
+        DB_GetGPColaborador RS, w_cliente, w_chave, null, null, null, null, null, null, null, null, null, null, null, null, null, null
+        If cDbl(RS.RecordCount) > 0 Then
+           ScriptOpen "JavaScript"
+           ShowHTML " alert('Colaborador já cadastrado!');"
+           ShowHTML " history.back(1);"
+           ScriptClose
+           Exit Sub
+        End If
+     End If
+  Else
+     w_chave           = w_usuario
+  End If
   w_readonly        = ""
   w_erro            = ""
 
@@ -362,6 +391,18 @@ Sub Identificacao
      w_sq_deficiencia       = ul.Form("w_sq_deficiencia")
      w_sexo                 = ul.Form("w_sexo") 
      w_sq_formacao          = ul.Form("w_sq_formacao")
+     If Nvl(P1,0) = 1 Then
+        w_posto_trabalho      = ul.Form("w_posto_trabalho") 
+        w_modalidade_contrato = ul.Form("w_modalidade_contrato") 
+        w_unidade_lotacao     = ul.Form("w_unidade_lotacao") 
+        w_unidade_exercicio   = ul.Form("w_unidade_exercicio")
+        w_localizacao         = ul.Form("w_localizacao")
+        w_matricula           = ul.Form("w_matricula") 
+        w_dt_ini              = ul.Form("w_dt_ini")     
+        w_envio_email         = ul.Form("w_envio_email") 
+        w_sq_tipo_vinculo      = ul.Form("w_sq_tipo_vinculo")
+        w_username_pessoa      = ul.Form("w_username_pessoa")
+     End If
   Else
      ' Recupera os dados do currículo a partir da chave
      DB_GetCV RS, w_cliente, nvl(w_chave,0), SG, "DADOS"
@@ -389,6 +430,21 @@ Sub Identificacao
      Else
         w_nome                 = null
         O                      = "I"
+     End If
+     If Nvl(P1,0) = 1 and Nvl(w_chave,"") > "" Then
+        DB_GetGPColaborador RS, w_cliente, w_chave, null, null, null, null, null, null, null, null, null, null, null, null, null, null
+        If Not RS.EOF Then
+           w_sq_contrato_colaborador = RS("sq_contrato_colaborador")
+           w_posto_trabalho          = RS("sq_posto_trabalho")
+           w_modalidade_contrato     = RS("sq_modalidade_contrato")
+           w_unidade_lotacao         = RS("sq_unidade_lotacao")
+           w_unidade_exercicio       = RS("sq_unidade_exercicio")
+           w_localizacao             = RS("sq_localizacao")
+           w_matricula               = RS("matricula")
+           w_dt_ini                  = FormataDataEdicao(RS("inicio"))
+           w_sq_tipo_vinculo         = RS("sq_tipo_vinculo")
+        End If
+        RS.Close
      End If
   End If  
   Cabecalho
@@ -437,12 +493,30 @@ Sub Identificacao
      ShowHTML "        theForm.w_sq_pais_passaporte.selectedIndex = 0;"
      ShowHTML "     }"
      ShowHTML "  }"
+     If Nvl(P1,0) = 1 and Nvl(w_sq_contrato_colaborador,"") = "" Then
+        Validate "w_posto_trabalho", "Cargo", "SELECT", 1, 1, 18, "", "0123456789"
+        Validate "w_modalidade_contrato", "Modalidade de contratação", "SELECT", 1, 1, 18, "", "0123456789"
+        Validate "w_unidade_lotacao", "Unidade de lotação", "SELECT", 1, 1, 18, "", "0123456789"
+        Validate "w_unidade_exercicio", "Unidade de exercício", "SELECT", 1, 1, 18, "", "0123456789"
+        Validate "w_localizacao", "Localização", "SELECT", 1, 1, 18, "", "0123456789"
+        Validate "w_sq_tipo_vinculo", "Vínculo com a organização", "SELECT", 1, 1, 10, "", "1"
+        Validate "w_matricula", "Matrícula", "1", "1", "5", "18", "1", "1"
+        Validate "w_dt_ini", "Início da vigência", "DATA", "1", "10", "10", "", "0123456789/"
+     End If
      If Session("p_portal") = "" Then Validate "w_assinatura", "Assinatura eletrônica", "1", "1", "3", "14", "1", "1" End If
+     If Nvl(P1,0) = 1 Then
+        If Nvl(w_sq_contrato_colaborador,"") = "" Then
+           ShowHTML "  theForm.Botao[0].disabled=true;"
+           ShowHTML "  theForm.Botao[1].disabled=true;"
+        Else
+           ShowHTML "  theForm.Botao.disabled=true;"
+        End If
+     End If
   End If
   ValidateClose
   ScriptClose
   ShowHTML "</HEAD>"
-  ShowHTML "<BASE HREF=""http://" & Request.ServerVariables("server_name") & "/siw/"">"
+  ShowHTML "<BASE HREF=""" & conRootSIW & """>"
   If w_troca > "" Then
      BodyOpen "onLoad='document.Form." & w_troca & ".focus()';"
   Else
@@ -468,7 +542,7 @@ Sub Identificacao
     ShowHTML "<INPUT type=""hidden"" name=""P2"" value=""" & P2 & """>"
     ShowHTML "<INPUT type=""hidden"" name=""P3"" value=""" & P3 & """>"
     ShowHTML "<INPUT type=""hidden"" name=""P4"" value=""" & P4 & """>"
-    ShowHTML "<INPUT type=""hidden"" name=""TP"" value=""" & TP & """>"
+    ShowHTML "<INPUT type=""hidden"" name=""TP"" value=""" & TP & """>"    
     If Session("p_portal") > "" and O = "I" Then
        ShowHTML "<INPUT type=""hidden"" name=""R"" value=""" & Request.ServerVariables("HTTP_REFERER") & """>"
     Else
@@ -476,7 +550,7 @@ Sub Identificacao
     End If
     ShowHTML MontaFiltro("UL")
     ShowHTML "<INPUT type=""hidden"" name=""w_troca"" value="""">"
-    ShowHTML "<INPUT type=""hidden"" name=""w_chave"" value=""" & w_usuario &""">"
+    ShowHTML "<INPUT type=""hidden"" name=""w_chave"" value=""" & w_chave &""">"
     ShowHTML "<INPUT type=""hidden"" name=""w_atual"" value=""" & w_foto &""">"
 
     ShowHTML "<tr bgcolor=""" & conTrBgColor & """><td align=""center"">"
@@ -489,9 +563,9 @@ Sub Identificacao
     ShowHTML "        <tr><td colspan=3 align=""center"" height=""1"" bgcolor=""#000000""></td></tr>"
     ShowHTML "        <tr><td colspan=3><font size=1>Este bloco deve ser preenchido com dados de identificação e características pessoais.</font></td></tr>"
     ShowHTML "        <tr><td colspan=3 align=""center"" height=""1"" bgcolor=""#000000""></td></tr>"
-    ShowHTML "        <tr valign=""top"">"
-    ShowHTML "          <td ONMOUSEOVER=""popup('Informe seu nome completo, sem abreviações.','white')""; ONMOUSEOUT=""kill()""><font size=""1""><b><u>N</u>ome:</b><br><input " & w_Disabled & " accesskey=""N"" type=""text"" name=""w_nome"" class=""sti"" SIZE=""40"" MAXLENGTH=""60"" VALUE=""" & Nvl(w_nome,Session("nome")) & """></td>"
-    ShowHTML "          <td ONMOUSEOVER=""popup('Informe o nome pelo qual você prefere ser chamado ou pelo qual é mais conhecido.','white')""; ONMOUSEOUT=""kill()""><font size=""1""><b>Nome <u>r</u>esumido:</b><br><input " & w_Disabled & " accesskey=""R"" type=""text"" name=""w_nome_resumido"" class=""sti"" SIZE=""15"" MAXLENGTH=""15"" VALUE=""" & Nvl(w_nome_resumido,Session("nome_resumido")) & """></td>"
+    ShowHTML "        <tr valign=""top"">"    
+    ShowHTML "          <td ONMOUSEOVER=""popup('Informe seu nome completo, sem abreviações.','white')""; ONMOUSEOUT=""kill()""><font size=""1""><b><u>N</u>ome:</b><br><input " & w_Disabled & " accesskey=""N"" type=""text"" name=""w_nome"" class=""sti"" SIZE=""40"" MAXLENGTH=""60"" VALUE=""" & w_nome & """></td>"
+    ShowHTML "          <td ONMOUSEOVER=""popup('Informe o nome pelo qual você prefere ser chamado ou pelo qual é mais conhecido.','white')""; ONMOUSEOUT=""kill()""><font size=""1""><b>Nome <u>r</u>esumido:</b><br><input " & w_Disabled & " accesskey=""R"" type=""text"" name=""w_nome_resumido"" class=""sti"" SIZE=""15"" MAXLENGTH=""15"" VALUE=""" & w_nome_resumido & """></td>"
     ShowHTML "          <td ONMOUSEOVER=""popup('Informe a data do seu nascimento, conforme consta da carteira de identidade.','white')""; ONMOUSEOUT=""kill()""><font size=""1""><b>Data <u>n</u>ascimento:</b><br><input " & w_Disabled & " accesskey=""N"" type=""text"" name=""w_nascimento"" class=""sti"" SIZE=""10"" MAXLENGTH=""10"" VALUE=""" & w_nascimento & """ onKeyDown=""FormataData(this,event);""></td>"
     ShowHTML "        <tr valign=""top"">"
     SelecaoSexo "<u>S</u>exo:", "S", null, w_sexo, null, "w_sexo", null, null
@@ -535,13 +609,64 @@ Sub Identificacao
     ShowHTML "          <td ONMOUSEOVER=""popup('Se possuir um passaporte, informe o número.','white')""; ONMOUSEOUT=""kill()""><font size=""1""><b>Número passapo<u>r</u>te:</b><br><input " & w_Disabled & " accesskey=""R"" type=""text"" name=""w_passaporte_numero"" class=""sti"" SIZE=""15"" MAXLENGTH=""15"" VALUE=""" & w_passaporte_numero & """></td>"
     SelecaoPais "<u>P</u>aís passaporte:", "P", "Se possuir um passaporte, selecione o país de emissão.", w_sq_pais_passaporte, null, "w_sq_pais_passaporte", null, null
     ShowHTML "      </table>"
-
+    If cDbl(Nvl(P1,0)) = 1 Then
+       ShowHTML "<INPUT type=""hidden"" name=""w_sq_contrato_colaborador"" value=""" & w_sq_contrato_colaborador & """>"
+       ShowHTML "<INPUT type=""hidden"" name=""w_usuario"" value=""" & w_usuario & """>"
+       If Nvl(w_sq_contrato_colaborador,"") = "" Then
+          ShowHTML "        <tr><td colspan=3 align=""center"" height=""2"" bgcolor=""#000000""></td></tr>"
+          ShowHTML "        <tr><td colspan=3 align=""center"" height=""1"" bgcolor=""#000000""></td></tr>"
+          ShowHTML "        <tr><td colspan=3 valign=""top"" align=""center"" bgcolor=""#D0D0D0""><font size=""1""><b>Dados do contrato</td></td></tr>"
+          ShowHTML "        <tr><td colspan=3 align=""center"" height=""1"" bgcolor=""#000000""></td></tr>"
+          ShowHTML "        <tr><td colspan=3><font size=1>Informe, nos campos a seguir, os dados relativos ao contrato do colaborador.</font></td></tr>"
+          ShowHTML "        <tr><td colspan=3 align=""center"" height=""1"" bgcolor=""#000000""></td></tr>"
+          ShowHTML "        <tr valign=""top"">" 
+          ShowHTML "        <td colspan=""3"" valign=""top""><font size=""1""><table border=""0"" width=""100%"" cellpadding=0 cellspacing=0><tr>"       
+          SelecaoCargo "<u>C</u>argo:", "C", "Selecione o cargo.", w_posto_trabalho, null, "w_posto_trabalho", null, null
+          SelecaoModalidade "M<u>o</u>dalidade de contratação:", "O", null, w_modalidade_contrato, null, "w_modalidade_contrato", null,  "onChange=""document.Form.action='" & w_dir&w_pagina&par&"&SG="&SG&"&O="&O & "'; document.Form.w_troca.value='w_modalidade_contrato'; document.Form.submit();"""
+          If Nvl(w_modalidade_contrato,"") > "" Then
+             DB_GetGPModalidade RS, w_cliente, w_modalidade_contrato, null, null, null, null, null
+             If RS("username") = "P" Then
+                w_username_pessoa = "S"
+             End If
+          End If
+          ShowHTML "        </table></td></tr>"
+          ShowHTML "        <tr valign=""top"">" 
+          ShowHTML "        <td colspan=""3"" valign=""top""><font size=""1""><table border=""0"" width=""100%"" cellpadding=0 cellspacing=0><tr>"
+          SelecaoUnidade "Unidade de <U>l</U>otação:", "L", null, w_unidade_lotacao, null, "w_unidade_lotacao", null, null
+          ShowHTML "        </table></td></tr>"
+          ShowHTML "        <tr valign=""top"">" 
+          ShowHTML "        <td colspan=""3"" valign=""top""><font size=""1""><table border=""0"" width=""100%"" cellpadding=0 cellspacing=0><tr>"
+          SelecaoUnidade "Unidade de <U>e</U>xercício:", "E", null, w_unidade_exercicio, null, "w_unidade_exercicio", null, "onBlur=""document.Form.action='" & w_dir&w_pagina&par&"&SG="&SG&"&O="&O&"&w_usuario="&w_chave& "'; document.Form.w_troca.value='w_localizacao'; document.Form.submit();"""
+          ShowHTML "        </table></td></tr>"
+          ShowHTML "        <tr valign=""top"">" 
+          ShowHTML "        <td colspan=""3"" valign=""top""><font size=""1""><table border=""0"" width=""100%"" cellpadding=0 cellspacing=0><tr>"
+          SelecaoLocalizacao "Locali<u>z</u>ação:", "Z", null, w_localizacao, Nvl(w_unidade_exercicio,0), "w_localizacao", null
+          ShowHTML "        </table></td></tr>"
+          ShowHTML "        <td colspan=""3"" valign=""top""><font size=""1""><table border=""0"" width=""100%"" cellpadding=0 cellspacing=0><tr>"
+          SelecaoVinculo "<u>T</u>ipo de vínculo:", "T", null, w_sq_tipo_vinculo, null, "w_sq_tipo_vinculo", "ativo='S' and sq_tipo_pessoa='Física' and interno='S'"
+          ShowHTML "        </table></td></tr>"          
+          ShowHTML "        <tr valign=""top"">" 
+          ShowHTML "        <td colspan=""3"" valign=""top""><font size=""1""><table border=""0"" width=""100%"" cellpadding=0 cellspacing=0>"
+          ShowHTML "          <tr><td valign=""top""><font size=""1""><b><u>M</u>atrícula:</b><br><input " & w_Disabled & " accesskey=""M"" type=""text"" name=""w_matricula"" class=""sti"" SIZE=""20"" MAXLENGTH=""20"" VALUE=""" & w_matricula & """></td>"
+          ShowHTML "              <td><font size=""1""><b><u>I</u>nício da vigência:</b><br><input accesskey=""I"" type=""text"" name=""w_dt_ini"" class=""STI"" SIZE=""10"" MAXLENGTH=""10"" VALUE=""" & w_dt_ini & """ onKeyDown=""FormataData(this,event);"">"
+          ShowHTML "        </table></td></tr>"
+          ShowHTML "        <tr valign=""top"">" 
+          ShowHTML "        <td colspan=""3"" valign=""top""><font size=""1""><font size=""1""><input type=""checkbox"" name=""w_envio_email"" value=""S""><b>Enviar e-mail comunicando a entrada do colaborador.</b>"
+          If w_username_pessoa = "S" Then
+             ShowHTML "        <tr valign=""top"">" 
+             ShowHTML "        <td colspan=""3"" valign=""top""><font size=""1""><font size=""1""><input type=""checkbox"" name=""w_username_pessoa"" value=""S""><b>Criar username para este colaborador?</b>"
+          End If
+       End If
+    End If   
     If Session("p_portal") = "" Then ShowHTML "      <tr><td align=""LEFT"" colspan=3><font size=""1""><b><U>A</U>ssinatura Eletrônica:<BR> <INPUT ACCESSKEY=""A"" class=""sti"" type=""PASSWORD"" name=""w_assinatura"" size=""30"" maxlength=""30"" value=""""></td></tr>" End If
     ShowHTML "      <tr><td align=""center"" colspan=""3"" height=""1"" bgcolor=""#000000""></TD></TR>"
 
     ' Verifica se poderá ser feito o envio da solicitação, a partir do resultado da validação
     ShowHTML "      <tr><td align=""center"" colspan=""3"">"
     ShowHTML "            <input class=""STB"" type=""submit"" name=""Botao"" value=""Gravar"">"
+    If cDbl(Nvl(P1,0)) = 1 and Nvl(w_sq_contrato_colaborador,"") = "" Then
+       ShowHTML "            <INPUT class=""stb"" TYPE=""button"" NAME=""Botao"" VALUE=""Cancelar"" onClick=""location.href='Colaborador.asp?par=Inicial&R=Colaborador.asp?par=Inicial&O=P&w_cliente=" & w_cliente & "&P1=" & P1 & "&P2=" & P2 & "&P3=" & P3 & "&P4=" & P4 & "&TP=" & TP & "&SG=COINICIAL';"">"
+    End If
     ShowHTML "          </td>"
     ShowHTML "      </tr>"
     ShowHTML "    </table>"
@@ -575,6 +700,16 @@ Sub Identificacao
   Set w_sq_deficiencia      = Nothing
   Set w_sexo                = Nothing 
   Set w_sq_formacao         = Nothing
+  Set w_posto_trabalho      = Nothing
+  Set w_modalidade_contrato = Nothing
+  Set w_unidade_lotacao     = Nothing
+  Set w_unidade_exercicio   = Nothing
+  Set w_localizacao         = Nothing
+  Set w_matricula           = Nothing
+  Set w_dt_ini              = Nothing
+  Set w_envio_email         = Nothing
+  Set w_sq_tipo_vinculo     = Nothing
+  Set w_username_pessoa     = Nothing
   
   Set i                     = Nothing 
   Set w_erro                = Nothing 
@@ -604,7 +739,15 @@ Sub Historico
   w_readonly        = ""
   w_erro            = ""
   w_troca           = Request("w_troca")
-
+  
+  DB_GetCV RS, w_cliente, nvl(w_chave,0), SG, "DADOS"
+  If Nvl(RS("inclusao"),"") = "" Then
+     ScriptOpen "JavaScript"
+     ShowHTML "alert('Efetue o cadastro da identificação primeiro!');" 
+     ShowHTML "location.href='CV.asp?par=Identificacao&w_usuario=" & w_chave & "&P1=" & P1 & "&P2=" & P2 & "&P3=" & P3 & "&P4=" & P4 & "&TP=" & TP & "&SG=" & SG & MontaFiltro("GET") & "';"
+     ScriptClose
+     Exit Sub
+  End If
   ' Verifica se há necessidade de recarregar os dados da tela a partir
   ' da própria tela (se for recarga da tela) ou do banco de dados (se não for inclusão)
   If w_troca > "" Then ' Se for recarga da página
@@ -681,7 +824,7 @@ Sub Historico
   ValidateClose
   ScriptClose
   ShowHTML "</HEAD>"
-  ShowHTML "<BASE HREF=""http://" & Request.ServerVariables("server_name") & "/siw/"">"
+  ShowHTML "<BASE HREF=""" & conRootSIW & """>"
   If w_troca > "" Then
      BodyOpen "onLoad='document.Form." & w_troca & ".focus()';"
   Else
@@ -792,6 +935,16 @@ Sub Idiomas
   w_Chave           = Request("w_Chave")
   w_troca           = Request("w_troca")
   
+  If cDbl(Nvl(P1,0)) <> 1 Then
+     DB_GetCV RS, w_cliente, nvl(w_usuario,0), SG, "DADOS"
+     If Nvl(RS("inclusao"),"") = "" Then
+        ScriptOpen "JavaScript"
+        ShowHTML "alert('Efetue o cadastro da identificação primeiro!');" 
+        ShowHTML "location.href='CV.asp?par=Identificacao&w_usuario=" & w_chave & "&P1=" & P1 & "&P2=" & P2 & "&P3=" & P3 & "&P4=" & P4 & "&TP=" & TP & "&SG=" & SG & MontaFiltro("GET") & "';"
+        ScriptClose
+        Exit Sub
+     End If
+  End If
   If w_troca > "" Then ' Se for recarga da página
      w_leitura              = Request("w_leitura")
      w_escrita              = Request("w_escrita")
@@ -832,7 +985,7 @@ Sub Idiomas
      ScriptClose
   End If
   ShowHTML "</HEAD>"
-  ShowHTML "<BASE HREF=""http://" & Request.ServerVariables("server_name") & "/siw/"">"
+  ShowHTML "<BASE HREF=""" & conRootSIW & """>"
   If w_troca > "" Then
      BodyOpen "onLoad='document.Form." & w_troca & ".focus()';"
   ElseIf O = "I" Then
@@ -967,7 +1120,18 @@ Sub Experiencia
   
   w_Chave           = Request("w_Chave")
   w_troca           = Request("w_troca")
-
+  
+    If cDbl(Nvl(P1,0)) <> 1 Then
+     DB_GetCV RS, w_cliente, nvl(w_usuario,0), SG, "DADOS"
+     If Nvl(RS("inclusao"),"") = "" Then
+        ScriptOpen "JavaScript"
+        ShowHTML "alert('Efetue o cadastro da identificação primeiro!');" 
+        ShowHTML "location.href='CV.asp?par=Identificacao&w_usuario=" & w_chave & "&P1=" & P1 & "&P2=" & P2 & "&P3=" & P3 & "&P4=" & P4 & "&TP=" & TP & "&SG=" & SG & MontaFiltro("GET") & "';"
+        ScriptClose
+        Exit Sub
+     End If
+  End If
+  
   If w_troca > "" then
      w_sq_area_conhecimento     = Request("w_sq_area_conhecimento")
      w_nm_area                  = Request("w_nm_area")
@@ -1064,7 +1228,7 @@ Sub Experiencia
      ScriptClose
   End If
   ShowHTML "</HEAD>"
-  ShowHTML "<BASE HREF=""http://" & Request.ServerVariables("server_name") & "/siw/"">"
+  ShowHTML "<BASE HREF=""" & conRootSIW & """>"
   If O = "L" Then
      BodyOpen "onLoad='document.focus();'"
   ElseIf w_troca > "" Then
@@ -1225,6 +1389,17 @@ Sub Cargos
   w_sq_cvpescargo        = Request("w_sq_cvpescargo")
   w_sq_cvpesexp          = Request("w_sq_cvpesexp")  
   
+    If cDbl(Nvl(P1,0)) <> 1 Then
+     DB_GetCV RS, w_cliente, nvl(w_usuario,0), SG, "DADOS"
+     If Nvl(RS("inclusao"),"") = "" Then
+        ScriptOpen "JavaScript"
+        ShowHTML "alert('Efetue o cadastro da identificação primeiro!');" 
+        ShowHTML "location.href='CV.asp?par=Identificacao&w_usuario=" & w_chave & "&P1=" & P1 & "&P2=" & P2 & "&P3=" & P3 & "&P4=" & P4 & "&TP=" & TP & "&SG=" & SG & MontaFiltro("GET") & "';"
+        ScriptClose
+        Exit Sub
+     End If
+  End If
+  
   DB_GetCVAcadForm RS, w_usuario, w_sq_cvpesexp, "EXPERIENCIA"
  
   w_nome_empregador  = RS("empregador")
@@ -1282,7 +1457,7 @@ Sub Cargos
      ScriptClose
   End If
   ShowHTML "</HEAD>"
-  ShowHTML "<BASE HREF=""http://" & Request.ServerVariables("server_name") & "/siw/"">"
+  ShowHTML "<BASE HREF=""" & conRootSIW & """>"
   If InStr("IA",O) > 0 Then
     BodyOpen "onLoad='document.Form.w_especialidades.focus()';"
   Else
@@ -1408,6 +1583,17 @@ Sub Escolaridade
   w_Chave           = Request("w_Chave")
   w_troca           = Request("w_troca")
   
+  If cDbl(Nvl(P1,0)) <> 1 Then
+     DB_GetCV RS, w_cliente, nvl(w_usuario,0), SG, "DADOS"
+     If Nvl(RS("inclusao"),"") = "" Then
+        ScriptOpen "JavaScript"
+        ShowHTML "alert('Efetue o cadastro da identificação primeiro!');" 
+        ShowHTML "location.href='CV.asp?par=Identificacao&w_usuario=" & w_chave & "&P1=" & P1 & "&P2=" & P2 & "&P3=" & P3 & "&P4=" & P4 & "&TP=" & TP & "&SG=" & SG & MontaFiltro("GET") & "';"
+        ScriptClose
+        Exit Sub
+     End If
+  End If
+  
   If w_troca > "" Then ' Se for recarga da página
      w_sq_area_conhecimento = Request("w_sq_area_conhecimento")
      w_sq_pais              = Request("w_sq_pais")
@@ -1466,7 +1652,7 @@ Sub Escolaridade
      ScriptClose
   End If
   ShowHTML "</HEAD>"
-  ShowHTML "<BASE HREF=""http://" & Request.ServerVariables("server_name") & "/siw/"">"
+  ShowHTML "<BASE HREF=""" & conRootSIW & """>"
   If w_troca > "" Then
      BodyOpen "onLoad='document.Form." & w_troca & ".focus()';"
   ElseIf O = "I" Then
@@ -1603,6 +1789,16 @@ Sub Extensao
   
   w_Chave           = Request("w_Chave")
   w_troca           = Request("w_troca")
+  If cDbl(Nvl(P1,0)) <> 1 Then
+     DB_GetCV RS, w_cliente, nvl(w_usuario,0), SG, "DADOS"
+     If Nvl(RS("inclusao"),"") = "" Then
+        ScriptOpen "JavaScript"
+        ShowHTML "alert('Efetue o cadastro da identificação primeiro!');" 
+        ShowHTML "location.href='CV.asp?par=Identificacao&w_usuario=" & w_chave & "&P1=" & P1 & "&P2=" & P2 & "&P3=" & P3 & "&P4=" & P4 & "&TP=" & TP & "&SG=" & SG & MontaFiltro("GET") & "';"
+        ScriptClose
+        Exit Sub
+     End If
+  End If
   
   If w_troca > "" Then ' Se for recarga da página
      w_sq_area_conhecimento = Request("w_sq_area_conhecimento")
@@ -1655,7 +1851,7 @@ Sub Extensao
      ScriptClose
   End If
   ShowHTML "</HEAD>"
-  ShowHTML "<BASE HREF=""http://" & Request.ServerVariables("server_name") & "/siw/"">"
+  ShowHTML "<BASE HREF=""" & conRootSIW & """>"
   If w_troca > "" Then
      BodyOpen "onLoad='document.Form." & w_troca & ".focus()';"
   ElseIf O = "I" Then
@@ -1791,6 +1987,17 @@ Sub Producao
   w_Chave           = Request("w_Chave")
   w_troca           = Request("w_troca")
   
+  If cDbl(Nvl(P1,0)) <> 1 Then
+     DB_GetCV RS, w_cliente, nvl(w_usuario,0), SG, "DADOS"
+     If Nvl(RS("inclusao"),"") = "" Then
+        ScriptOpen "JavaScript"
+        ShowHTML "alert('Efetue o cadastro da identificação primeiro!');" 
+        ShowHTML "location.href='CV.asp?par=Identificacao&w_usuario=" & w_chave & "&P1=" & P1 & "&P2=" & P2 & "&P3=" & P3 & "&P4=" & P4 & "&TP=" & TP & "&SG=" & SG & MontaFiltro("GET") & "';"
+        ScriptClose
+        Exit Sub
+     End If
+  End If
+  
   If w_troca > "" Then ' Se for recarga da página
      w_sq_area_conhecimento = Request("w_sq_area_conhecimento")
      w_sq_formacao          = Request("w_sq_formacao")
@@ -1839,7 +2046,7 @@ Sub Producao
      ScriptClose
   End If
   ShowHTML "</HEAD>"
-  ShowHTML "<BASE HREF=""http://" & Request.ServerVariables("server_name") & "/siw/"">"
+  ShowHTML "<BASE HREF=""" & conRootSIW & """>"
   If w_troca > "" Then
      BodyOpen "onLoad='document.Form." & w_troca & ".focus()';"
   ElseIf O = "I" Then
@@ -1980,7 +2187,7 @@ Sub BuscaAreaConhecimento
   ValidateClose
   ScriptClose
   ShowHTML "</HEAD>"
-  ShowHTML "<BASE HREF=""http://" & Request.ServerVariables("server_name") & "/siw/"">"
+  ShowHTML "<BASE HREF=""" & conRootSIW & """>"
   BodyOpen "onLoad='document.Form.w_nome.focus()';"
   If P1 = 1 Then
      ShowHTML "<B><FONT COLOR=""#000000"">" & RemoveTP(w_TP) & " - Procura Área do Conhecimento</FONT></B>"
@@ -2077,6 +2284,7 @@ Sub Visualizar
   ShowHTML "<HEAD>"
   ShowHTML "<TITLE>Curriculum Vitae</TITLE>"
   ShowHTML "</HEAD>" 
+  ShowHTML "<BASE HREF=""" & conRootSIW & """>"
   If P2 = 0 Then 
      BodyOpen "onLoad='document.focus()'; "
   End If
@@ -2090,7 +2298,7 @@ Sub Visualizar
   ShowHTML "Curriculum Vitae"
   ShowHTML "</FONT><TR><TD ALIGN=""RIGHT""><B><FONT SIZE=2 COLOR=""#000000"">" & DataHora() & "</B>"
   If P2 = 0 Then
-     ShowHTML "&nbsp;&nbsp;&nbsp;<IMG ALIGN=""CENTER"" TITLE=""Gerar word"" SRC=""../images/word.gif"" onClick=""window.open('" & w_pagina & "Visualizar&P2=1&SG=CVVISUAL','VisualCurriculoWord','menubar=yes resizable=yes scrollbars=yes');"">"
+     ShowHTML "&nbsp;&nbsp;&nbsp;<IMG ALIGN=""CENTER"" TITLE=""Gerar word"" SRC=""images/word.gif"" onClick=""window.open('" & w_pagina & "Visualizar&P2=1&SG=CVVISUAL','VisualCurriculoWord','menubar=yes resizable=yes scrollbars=yes');"">"
   End If
   ShowHTML "</TD></TR>"
   ShowHTML "</FONT></B></TD></TR></TABLE>"
@@ -2170,13 +2378,38 @@ Public Sub Grava
               ul.Form("w_sexo"), ul.Form("w_sq_estado_civil"), ul.Form("w_sq_formacao"), ul.Form("w_sq_etnia"), _
               ul.Form("w_sq_deficiencia"), ul.Form("w_cidade"), ul.Form("w_rg_numero"), ul.Form("w_rg_emissor"), _
               ul.Form("w_rg_emissao"), ul.Form("w_cpf"), ul.Form("w_passaporte_numero"), ul.Form("w_sq_pais_passaporte"), _
-              w_file, ul.Files("w_foto").Size, ul.Files("w_foto").ContentType
+              w_file, ul.Files("w_foto").Size, ul.Files("w_foto").ContentType, w_chave_nova
+
+          'Se for inclusão de colaborador, deve incluir o contrato
+          If Nvl(P1,0) = 1 and Nvl(ul.Form("w_sq_contrato_colaborador"),"") = "" Then
+             DML_PutGPContrato O, _
+                 w_cliente, ul.Form("w_sq_contrato_colaborador"), w_chave_nova, ul.Form("w_posto_trabalho"), ul.Form("w_modalidade_contrato"), _
+                 ul.Form("w_unidade_lotacao"), ul.Form("w_unidade_exercicio"), ul.Form("w_localizacao"), ul.Form("w_matricula"), _
+                 ul.Form("w_dt_ini"), null, ul.Form("w_sq_tipo_vinculo")
+             
+             DB_GetGPModalidade RS, w_cliente, ul.Form("w_modalidade_contrato"), null, null, null, null, null
+             If (Nvl(RS("username"),"") = "S") or (Nvl(RS("username"),"") = "P" and ul.Form("w_username_pessoa") = "S")  Then
+                DML_PutSiwUsuario "I", _
+                  ul.Form("w_chave"), ul.Form("w_cliente"), ul.Form("w_nome"), ul.Form("w_nome_resumido"), _
+                  ul.Form("w_sq_tipo_vinculo"), "Física", ul.Form("w_unidade_lotacao"), ul.Form("w_localizacao"), _
+                  ul.Form("w_cpf"), null, null, null
+                DML_PutSiwUsuario "T", _
+                  ul.Form("w_chave"), null, null, null, _
+                  null, null, null, null, _
+                  null, null, null, null
+             End If
+          End If
           
           ScriptOpen "JavaScript"
           If Session("p_portal") > "" and O = "I" Then
              ShowHTML "  top.location.href='" & R & "';"
           Else
-             ShowHTML "  location.href='" & R & "&w_usuario=" & ul.Form("w_chave") & "&w_chave=" & ul.Form("w_Chave") & "&P1=" & P1 & "&P2=" & P2 & "&P3=" & P3 & "&P4=" & P4 & "&TP=" & TP & "&SG=" & SG & MontaFiltro("UL") & "';"
+             If cDbl(Nvl(P1,0)) = 1 Then
+                DB_GetMenuData RS1, w_menu
+                ShowHTML "  parent.menu.location='../Menu.asp?par=ExibeDocs&O=A&w_usuario=" & w_chave_nova & "&w_sq_pessoa=" & w_chave_nova &  "&w_documento=" & ul.Form("w_nome_resumido") & "&R=" & R & "&SG=COINICIAL&TP=" & RemoveTP(TP) & MontaFiltro("UL") & "';"
+             Else
+                ShowHTML "  location.href='" & R & "&w_usuario=" & ul.Form("w_chave") & "&w_chave=" & ul.Form("w_Chave") & "&P1=" & P1 & "&P2=" & P2 & "&P3=" & P3 & "&P4=" & P4 & "&TP=" & TP & "&SG=" & SG & MontaFiltro("UL") & "';"
+             End If
           End If
           ScriptClose
        Else
@@ -2369,7 +2602,7 @@ Sub Main
        Grava
     Case Else
        Cabecalho
-       ShowHTML "<BASE HREF=""http://" & Request.ServerVariables("server_name") & "/siw/"">"
+       ShowHTML "<BASE HREF=""" & conRootSIW & """>"
        BodyOpen "onLoad=document.focus();"
        ShowHTML "<B><FONT COLOR=""#000000"">" & w_TP & "</FONT></B>"
        ShowHTML "<HR>"

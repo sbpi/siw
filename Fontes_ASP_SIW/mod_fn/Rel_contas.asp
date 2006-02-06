@@ -211,7 +211,7 @@ Sub Inicial
      HeaderWord "Portrait"
      w_pag   = 1
      w_linha = 5
-     ShowHTML "<BASE HREF=""http://" & Request.ServerVariables("server_name") & "/siw/"">"
+     ShowHTML "<BASE HREF=""" & conRootSIW & """>"
      ShowHTML "<TABLE WIDTH=""100%"" BORDER=0><TR><TD ROWSPAN=2><IMG ALIGN=""LEFT"" SRC=""" & w_logo & """><TD ALIGN=""RIGHT""><B><FONT SIZE=4 COLOR=""#000000"">"
      If Mid(SG, 3, 1) = "R" Then
         ShowHTML "Contas a receber"     
@@ -250,7 +250,7 @@ Sub Inicial
         ScriptClose
      End If
      ShowHTML "</HEAD>"
-     ShowHTML "<BASE HREF=""http://" & Request.ServerVariables("server_name") & "/siw/"">"
+     ShowHTML "<BASE HREF=""" & conRootSIW & """>"
      If O = "L" Then
         BodyOpenClean "onLoad='document.focus()';"
         ShowHTML "<TABLE WIDTH=""100%"" BORDER=0><TR><TD ROWSPAN=2><IMG ALIGN=""LEFT"" SRC=""" & w_logo & """><TD ALIGN=""RIGHT""><B><FONT SIZE=4 COLOR=""#000000"">"
@@ -260,7 +260,7 @@ Sub Inicial
            ShowHTML "Contas a pagar"
         End If
         ShowHTML "</FONT><TR><TD WIDTH=""50%"" ALIGN=""RIGHT""><B><font size=1 COLOR=""#000000"">" & DataHora() & "</B>"
-        ShowHTML "&nbsp;&nbsp;<IMG BORDER=0 ALIGN=""CENTER"" TITLE=""Gerar word"" SRC=""images/word.gif"" onClick=""window.open('" & w_pagina & par & "&R=" & w_pagina & par & "&O=L&w_chave=" & w_chave & "&w_tipo_rel=word&P1=" & P1 & "&P2=" & P2 & "&P3=" & P3 & "&P4=" & P4 & "&TP=" & TP & "&SG=" & SG & MontaFiltro("GET") &"','VisualRelPPAWord','menubar=yes resizable=yes scrollbars=yes');"">"
+        ShowHTML "&nbsp;&nbsp;<IMG BORDER=0 ALIGN=""CENTER"" TITLE=""Gerar word"" SRC=""images/word.gif"" onClick=""window.open('" & w_pagina & par & "&R=" & w_pagina & par & "&O=L&w_chave=" & w_chave & "&w_tipo_rel=word&P1=" & P1 & "&P2=" & P2 & "&P3=" & P3 & "&P4=" & P4 & "&TP=" & TP & "&SG=" & SG & "&w_sq_pessoa=" & w_sq_pessoa & MontaFiltro("GET") &"','VisualRelPPAWord','menubar=yes resizable=yes scrollbars=yes');"">"
         ShowHTML "&nbsp;&nbsp;<IMG ALIGN=""CENTER"" TITLE=""Imprimir"" SRC=""images/impressora.jpg"" onClick=""window.print();"">"
         ShowHTML "</TD></TR>"
         ShowHTML "</FONT></B></TD></TR></TABLE>"
@@ -278,9 +278,9 @@ Sub Inicial
     If p_dt_ini                > "" Then w_filtro = w_filtro & "<tr valign=""top""><td align=""right""><font size=1>Vencimento de <td><font size=1><b>" & p_dt_ini & "</b> até <b>" & p_dt_fim & "</b>"End If
     If w_sq_pessoa             > "" Then 
        If Mid(SG, 3, 1) = "R" Then
-          w_filtro = w_filtro & "<tr valign=""top""><td align=""right""><font size=1>Cliente<td><font size=1>: <b>" & p_nome  & "</b>"    
+          w_filtro = w_filtro & "<tr valign=""top""><td align=""right""><font size=1>Cliente<td><font size=1>: <b>" & p_nome  & "</b>"
        ElseIf Mid(SG, 3, 1) = "D" Then
-          w_filtro = w_filtro & "<tr valign=""top""><td align=""right""><font size=1>Fornecedor<td><font size=1>: <b>" & p_nome  & "</b>"    
+          w_filtro = w_filtro & "<tr valign=""top""><td align=""right""><font size=1>Fornecedor<td><font size=1>: <b>" & p_nome  & "</b>"
        End If
     End If
     If p_ordena                > "" Then 
@@ -349,11 +349,11 @@ Sub Inicial
            ' Exibe a quantidade de registros apresentados na listagem e o cabeçalho da tabela de listagem
            w_filtro = ""
            If p_dt_ini                > "" Then w_filtro = w_filtro & "<tr valign=""top""><td align=""right""><font size=1>Vencimento de <td><font size=1><b>" & p_dt_ini & "</b> até " & p_dt_fim End If
-           If p_sq_pessoa             > "" Then 
+           If w_sq_pessoa             > "" Then 
               If Mid(SG, 3, 1) = "R" Then
-                 w_filtro = w_filtro & "<tr valign=""top""><td align=""right""><font size=1>Cliente<td><font size=1>: <b>" & RS("nome_resumido")  & "</b>"    
+                 w_filtro = w_filtro & "<tr valign=""top""><td align=""right""><font size=1>Cliente<td><font size=1>: <b>" & RS("nm_pessoa_resumido")  & "</b>"    
               ElseIf Mid(SG, 3, 1) = "D" Then
-                 w_filtro = w_filtro & "<tr valign=""top""><td align=""right""><font size=1>Fornecedor<td><font size=1>: <b>" & RS("nome_resumido")  & "</b>"    
+                 w_filtro = w_filtro & "<tr valign=""top""><td align=""right""><font size=1>Fornecedor<td><font size=1>: <b>" & RS("nm_pessoa_resumido")  & "</b>"
               End If
            End If
            If p_ordena                > "" Then w_filtro = w_filtro & "<tr valign=""top""><td align=""right""><font size=1>Agregado por <td><font size=1>: <b>" & p_ordena & "</b>"                 End If
@@ -507,9 +507,9 @@ Sub Inicial
        ShowHTML "          <option value="""">---"
        While Not RS.EOF
           If cDbl(RS("sq_tipo_pessoa")) = 1 Then
-             ShowHTML "          <option value=""" & RS("NM_PESSOA_RESUMIDO") & """>" & RS("nome_resumido") & " (" & Nvl(RS("cpf"),"---") & ")"
+             ShowHTML "          <option value=""" & RS("sq_pessoa") & """>" & RS("nome_resumido") & " (" & Nvl(RS("cpf"),"---") & ")"
           Else
-             ShowHTML "          <option value=""" & RS("NM_PESSOA_RESUMIDO") & """>" & RS("nome_resumido") & " (" & Nvl(RS("cnpj"),"---") & ")"
+             ShowHTML "          <option value=""" & RS("sq_pessoa") & """>" & RS("nome_resumido") & " (" & Nvl(RS("cnpj"),"---") & ")"
           End If
           RS.MoveNext
        Wend
@@ -566,7 +566,7 @@ Sub Main
        Inicial
     Case Else
        Cabecalho
-       ShowHTML "<BASE HREF=""http://" & Request.ServerVariables("server_name") & "/siw/"">"
+       ShowHTML "<BASE HREF=""" & conRootSIW & """>"
        BodyOpen "onLoad=document.focus();"
        ShowHTML "<B><FONT COLOR=""#000000"">" & w_TP & "</FONT></B>"
        ShowHTML "<HR>"

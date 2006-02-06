@@ -184,7 +184,7 @@ Sub Inicial
         ScriptClose
      End If
      ShowHTML "</HEAD>"
-     ShowHTML "<BASE HREF=""http://" & Request.ServerVariables("server_name") & "/siw/"">"
+     ShowHTML "<BASE HREF=""" & conRootSIW & """>"
      If O = "L" or O = "W" Then
         BodyOpenClean "onLoad=document.focus();"
      Else

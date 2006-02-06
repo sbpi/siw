@@ -39,14 +39,14 @@ Sub DB_GetSolicList_IS(p_rs, p_menu, p_pessoa, p_restricao, p_tipo, _
     p_unidade, p_prioridade, p_ativo, p_proponente, _
     p_chave, p_assunto, p_pais, p_regiao, p_uf, p_cidade, p_usu_resp, _
     p_uorg_resp, p_palavra, p_prazo, p_fase, p_projeto, p_atividade, p_programa, _
-    p_codigo, p_orprior, p_cd_subacao)
+    p_codigo, p_orprior, p_cd_subacao, p_ano)
 
   Dim l_menu, l_pessoa, l_restricao
   Dim l_ini_i, l_ini_f, l_fim_i, l_fim_f, l_atraso, l_solicitante
   Dim l_unidade, l_prioridade, l_ativo, l_proponente, l_tipo
   Dim l_chave, l_assunto, l_pais, l_regiao, l_uf, l_cidade, l_usu_resp
   Dim l_uorg_resp, l_palavra, l_prazo, l_fase, l_sqcc, l_projeto, l_atividade
-  Dim l_programa, l_codigo, l_orprior, l_cd_subacao
+  Dim l_programa, l_codigo, l_orprior, l_cd_subacao, l_ano
 
   Set l_menu        = Server.CreateObject("ADODB.Parameter")
   Set l_pessoa      = Server.CreateObject("ADODB.Parameter")
@@ -79,6 +79,7 @@ Sub DB_GetSolicList_IS(p_rs, p_menu, p_pessoa, p_restricao, p_tipo, _
   Set l_codigo      = Server.CreateObject("ADODB.Parameter")
   Set l_orprior     = Server.CreateObject("ADODB.Parameter")
   Set l_cd_subacao  = Server.CreateObject("ADODB.Parameter")
+  Set l_ano         = Server.CreateObject("ADODB.Parameter")
   
   with sp
      set l_menu                 = .CreateParameter("l_menu",        adInteger,  adParamInput,   , p_menu)
@@ -112,6 +113,7 @@ Sub DB_GetSolicList_IS(p_rs, p_menu, p_pessoa, p_restricao, p_tipo, _
      set l_codigo               = .CreateParameter("l_codigo",      adVarchar,  adParamInput,  4, Tvl(p_codigo))
      set l_orprior              = .CreateParameter("l_orprior",     adInteger,  adParamInput,   , Tvl(p_orprior))
      set l_cd_subacao           = .CreateParameter("l_cd_subacao",  adVarchar,  adParamInput,  4, Tvl(p_cd_subacao))
+     set l_ano                  = .CreateParameter("l_ano",         adInteger,  adParamInput,   , Tvl(p_ano))
      .parameters.Append         l_menu
      .parameters.Append         l_pessoa
      .parameters.Append         l_restricao
@@ -143,6 +145,7 @@ Sub DB_GetSolicList_IS(p_rs, p_menu, p_pessoa, p_restricao, p_tipo, _
      .parameters.Append         l_codigo
      .parameters.Append         l_orprior
      .parameters.Append         l_cd_subacao
+     .parameters.Append         l_ano
      If Session("dbms") = 1 or Session("dbms") = 3 Then .Properties("PLSQLRSet") = TRUE End If
      .CommandText               = Session("schema_is") & "SP_GetSolicList_IS"
      On Error Resume Next
@@ -183,6 +186,7 @@ Sub DB_GetSolicList_IS(p_rs, p_menu, p_pessoa, p_restricao, p_tipo, _
      .Parameters.Delete         "l_codigo"
      .Parameters.Delete         "l_orprior"
      .Parameters.Delete         "l_cd_subacao"
+     .Parameters.Delete         "l_ano"
   end with
 
 End Sub
@@ -279,18 +283,21 @@ REM -------------------------------------------------------------------------
 REM =========================================================================
 REM Recupera as metas de uma açao
 REM -------------------------------------------------------------------------
-Sub DB_GetSolicMeta_IS(p_rs, p_chave, p_chave_aux, p_restricao)
-  Dim l_chave, l_chave_aux, l_restricao
+Sub DB_GetSolicMeta_IS(p_rs, p_chave, p_chave_aux, p_restricao, p_ano)
+  Dim l_chave, l_chave_aux, l_restricao, l_ano
   Set l_chave     = Server.CreateObject("ADODB.Parameter")
   Set l_chave_aux = Server.CreateObject("ADODB.Parameter")
   Set l_restricao = Server.CreateObject("ADODB.Parameter")
+  Set l_ano       = Server.CreateObject("ADODB.Parameter")
   with sp
      set l_chave                = .CreateParameter("l_chave",         adInteger, adParamInput,   , Tvl(p_chave))
      set l_chave_aux            = .CreateParameter("l_chave_aux",     adInteger, adParamInput,   , Tvl(p_chave_aux))
      set l_restricao            = .CreateParameter("l_restricao",     adVarchar, adParamInput, 20, p_restricao)
+     set l_ano                  = .CreateParameter("l_ano",           adInteger, adParamInput,   , Tvl(p_ano))
      .parameters.Append         l_chave
      .parameters.Append         l_chave_aux
      .parameters.Append         l_restricao
+     .parameters.Append         l_ano
      If Session("dbms") = 1 or Session("dbms") = 3 Then .Properties("PLSQLRSet") = TRUE End If
      .CommandText               = Session("schema_is") & "SP_GetSolicMeta_IS"
      On Error Resume Next
@@ -302,6 +309,7 @@ Sub DB_GetSolicMeta_IS(p_rs, p_chave, p_chave_aux, p_restricao)
      .Parameters.Delete         "l_chave"
      .Parameters.Delete         "l_chave_aux"
      .Parameters.Delete         "l_restricao"
+     .Parameters.Delete         "l_ano"
   end with
 
 End Sub
@@ -575,22 +583,25 @@ REM -------------------------------------------------------------------------
 REM =========================================================================
 REM Verifica se o programa já foi cadastrado
 REM -------------------------------------------------------------------------
-Sub DB_GetPrograma_IS(p_rs, p_cd_programa, ano, cliente)
+Sub DB_GetPrograma_IS(p_rs, p_cd_programa, ano, cliente, restricao)
   
-  Dim l_cd_programa, l_ano, l_cliente
+  Dim l_cd_programa, l_ano, l_cliente, l_restricao
   
   Set l_cd_programa = Server.CreateObject("ADODB.Parameter")
   Set l_ano         = Server.CreateObject("ADODB.Parameter")
   Set l_cliente     = Server.CreateObject("ADODB.Parameter")
+  Set l_restricao   = Server.CreateObject("ADODB.Parameter")
   
   with sp
      set l_cd_programa          = .CreateParameter("l_cd_programa", adVarChar, adParamInput, 4, p_cd_programa)
      set l_ano                  = .CreateParameter("l_ano",         adInteger, adParamInput,  , ano)
      set l_cliente              = .CreateParameter("l_cliente",     adInteger, adParamInput,  , cliente)
+     set l_restricao            = .CreateParameter("l_restricao",   adVarChar, adParamInput,30, tvl(restricao))
 
      .parameters.Append         l_cd_programa
      .parameters.Append         l_ano
      .parameters.Append         l_cliente
+     .parameters.Append         l_restricao
      
      If Session("dbms") = 1 or Session("dbms") = 3 Then .Properties("PLSQLRSet") = TRUE End If
      .CommandText               = Session("schema_is") & "SP_GetPrograma_IS"
@@ -603,6 +614,7 @@ Sub DB_GetPrograma_IS(p_rs, p_cd_programa, ano, cliente)
      .Parameters.Delete         "l_cd_programa"
      .Parameters.Delete         "l_ano"
      .Parameters.Delete         "l_cliente"
+     .Parameters.Delete         "l_restricao"
   end with
 End Sub
 REM =========================================================================

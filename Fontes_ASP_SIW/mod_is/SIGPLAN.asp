@@ -57,6 +57,7 @@ Dim w_troca,w_cor, w_filter, w_cliente, w_usuario, w_menu, w_dir, w_chave, w_dir
 Dim w_sq_pessoa, w_ano, w_sq_modulo
 Dim ul,File
 Dim p_sq_modulo, p_nome, p_tipo, p_formato, p_dt_ini, p_dt_fim, p_ref_ini, p_ref_fim
+Dim F1, w_erro, w_name(500), w_param(500), w_resultado
 Set RS  = Server.CreateObject("ADODB.RecordSet")
 Set RS1 = Server.CreateObject("ADODB.RecordSet")
 Set RS2 = Server.CreateObject("ADODB.RecordSet")
@@ -83,7 +84,7 @@ O               = uCase(Request("O"))
 w_cliente       = RetornaCliente()
 w_usuario       = RetornaUsuario()
 w_menu          = RetornaMenu(w_cliente, SG)
-w_ano           = 2005
+w_ano           = Session("ANO")
 DB_GetModList RS
 RS.Filter = "sigla='IS'"
 w_sq_modulo = RS("sq_modulo")
@@ -187,6 +188,7 @@ Main
 
 FechaSessao
 
+Set F1            = Nothing
 Set p_sq_modulo   = Nothing
 Set p_nome        = Nothing
 Set p_tipo        = Nothing
@@ -308,7 +310,7 @@ Sub Inicial
      ScriptClose
   End If
   ShowHTML "</HEAD>"
-  ShowHTML "<BASE HREF=""http://" & Request.ServerVariables("server_name") & "/siw/"">"
+  ShowHTML "<BASE HREF=""" & conRootSIW & """>"
   If w_troca > "" Then
      BodyOpen "onLoad='document.Form." & w_troca & ".focus()';"
   ElseIf Instr("IA",O) > 0 Then
@@ -332,12 +334,21 @@ Sub Inicial
     ShowHTML "<tr><td align=""center"" colspan=3>"
     ShowHTML "    <TABLE WIDTH=""100%"" bgcolor=""" & conTableBgColor & """ BORDER=""" & conTableBorder & """ CELLSPACING=""" & conTableCellSpacing & """ CELLPADDING=""" & conTableCellPadding & """ BorderColorDark=""" & conTableBorderColorDark & """ BorderColorLight=""" & conTableBorderColorLight & """>"
     ShowHTML "        <tr bgcolor=""" & conTrBgColor & """ align=""center"">"
-    ShowHTML "          <td><font size=""1""><b>" & LinkOrdena("Nome", "nome") & "</font></td>"
-    ShowHTML "          <td><font size=""1""><b>" & LinkOrdena("Formato", "nm_formato") & "</font></td>"
-    ShowHTML "          <td><font size=""1""><b>" & LinkOrdena("Raiz", "no_raiz") & "</font></td>"
-    ShowHTML "          <td><font size=""1""><b>" & LinkOrdena("Ativo", "nm_ativo") & "</font></td>"
-    ShowHTML "          <td><font size=""1""><b>" & LinkOrdena("Tabelas", "qtd_tabela") & "</font></td>"
-    ShowHTML "          <td><font size=""1""><b>Operações</font></td>"
+    ShowHTML "          <td rowspan=2><font size=""1""><b>" & LinkOrdena("Nome", "nome") & "</font></td>"
+    'ShowHTML "          <td><font size=""1""><b>" & LinkOrdena("Formato", "nm_formato") & "</font></td>"
+    'ShowHTML "          <td rowspan=2><font size=""1""><b>" & LinkOrdena("Raiz", "no_raiz") & "</font></td>"
+    'ShowHTML "          <td><font size=""1""><b>" & LinkOrdena("Ativo", "nm_ativo") & "</font></td>"
+    'ShowHTML "          <td><font size=""1""><b>" & LinkOrdena("Tabelas", "qtd_tabela") & "</font></td>"
+    ShowHTML "          <td colspan=2><font size=""1""><b>Data</font></td>"
+    ShowHTML "          <td colspan=3><font size=""1""><b>Registros</font></td>"
+    ShowHTML "          <td rowspan=2><font size=""1""><b>Operações</font></td>"
+    ShowHTML "        </tr>"
+    ShowHTML "        <tr bgcolor=""" & conTrBgColor & """ align=""center"">"
+    ShowHTML "          <td><font size=""1""><b>" & LinkOrdena("Ocorrência", "data_ocorrencia") & "</font></td>"
+    ShowHTML "          <td><font size=""1""><b>" & LinkOrdena("Referência", "data_referencia") & "</font></td>"
+    ShowHTML "          <td><font size=""1""><b>Total</font></td>"
+    ShowHTML "          <td><font size=""1""><b>Aceitos</font></td>"
+    ShowHTML "          <td><font size=""1""><b>Rejeitados</font></td>"
     ShowHTML "        </tr>"
     If RS.EOF Then ' Se não foram selecionados ws_url, exibe mensagem
         ShowHTML "      <tr bgcolor=""" & conTrBgColor & """><td colspan=7 align=""center""><font size=""1""><b>Não foram encontrados registros.</b></td></tr>"
@@ -346,11 +357,36 @@ Sub Inicial
       While Not RS.EOF
         If w_cor = conTrBgColor or w_cor = "" Then w_cor = conTrAlternateBgColor Else w_cor = conTrBgColor End If
         ShowHTML "      <tr bgcolor=""" & w_cor & """ valign=""top"">"
-        ShowHTML "        <td><font size=""1"">" & RS("nome") & "</td>"
-        ShowHTML "        <td><font size=""1"">" & RS("nm_formato") & "</td>"
-        ShowHTML "        <td><font size=""1"">" & RS("no_raiz") & "</td>"
-        ShowHTML "        <td align=""center""><font size=""1"">" & RS("nm_ativo") & "</td>"
-        ShowHTML "        <td align=""center""><font size=""1"">" & Nvl(RS("qtd_tabela"),0) & "</td>"
+        If P1 = 1 Then
+           ShowHTML "        <td><font size=""1"">" & RS("nome") & "</td>"
+        Else
+           ShowHTML "        <td><font size=""1""><A class=""HL"" HREF=""" & conFileVirtual & w_cliente & "/" & RS("nome") & ".xml"" title=""Exibe os dados do arquivo importado."" target=""_blank"">" & RS("nome") & "</A>&nbsp;</td>"
+        End If
+        'ShowHTML "        <td><font size=""1"">" & RS("nm_formato") & "</td>"
+        'ShowHTML "        <td><font size=""1"">" & RS("no_raiz") & "</td>"
+        'ShowHTML "        <td align=""center""><font size=""1"">" & RS("nm_ativo") & "</td>"
+        'ShowHTML "        <td align=""center""><font size=""1"">" & Nvl(RS("qtd_tabela"),0) & "</td>"
+        If Nvl(RS("data_ocorrencia"),"") > "" Then
+           ShowHTML "        <td align=""center""><font size=""1"">" & FormataDataEdicao(RS("data_ocorrencia")) & "</td>"
+        Else
+           ShowHTML "        <td align=""center""><font size=""1"">---</td>"
+        End If
+        If Nvl(RS("data_referencia"),"") > "" Then
+           ShowHTML "        <td align=""center""><font size=""1"">" & Mid(FormataDataEdicao(RS("data_referencia")),1,len(FormataDataEdicao(RS("data_referencia")))-3) & "</td>"
+        Else
+           ShowHTML "        <td align=""center""><font size=""1"">---</td>"
+        End If
+        If cDbl(Nvl(RS("processados"),0)) > 0 Then
+           ShowHTML "        <td align=""right""><font size=""1""><A class=""HL"" HREF=""" & conFileVirtual & w_cliente & "/" & RS("cm_recebido") & """ title=""Exibe os dados do arquivo importado."" target=""_blank"">" & Nvl(RS("processados"),0) & "</A>&nbsp;</td>"
+        Else
+           ShowHTML "        <td align=""right""><font size=""1"">" & Nvl(RS("processados"),0) & "&nbsp;</td>"
+        End If
+        ShowHTML "        <td align=""right""><font size=""1"">" & (cDbl(Nvl(RS("processados"),0)) - cDbl(Nvl(RS("rejeitados"),0))) & "&nbsp;</td>"
+        If cDbl(Nvl(RS("rejeitados"),0)) > 0 Then
+           ShowHTML "        <td align=""right""><font size=""1""><A class=""HL"" HREF=""" & conFileVirtual & w_cliente & "/" & RS("cm_result") & """ title=""Exibe o registro da importação."" target=""_blank"">" & Nvl(RS("rejeitados"),0) & "</A>&nbsp;</td>"
+        Else
+           ShowHTML "        <td align=""right""><font size=""1"">" & Nvl(RS("rejeitados"),0) & "&nbsp;</td>"
+        End If
         ShowHTML "        <td align=""top"" nowrap><font size=""1"">"
         ShowHTML "          <A class=""hl"" HREF=""" & w_dir & w_pagina & par & "&R=" & w_Pagina & par & "&O=A&w_sq_esquema=" & RS("sq_esquema") & "&P1=" & P1 & "&P2=" & P2 & "&P3=" & P3 & "&P4=" & P4 & "&TP=" & TP & "&SG=" & SG & MontaFiltro("GET") & """ title=""Altera as informações do esquema"">Alterar</A>&nbsp"
         If Nvl(RS("sq_ocorrencia"),"") > "" Then
@@ -364,7 +400,7 @@ Sub Inicial
            If P1 = 1 Then
               ShowHTML "          <A class=""hl"" HREF=""" & w_dir & w_pagina & "IMPORTACAO&R=" & w_Pagina & par & "&O=I&w_sq_esquema=" & RS("sq_esquema") & "&P1=" & P1 & "&P2=" & P2 & "&P3=" & P3 & "&P4=" & P4 & "&TP=" & TP & "&SG=" & SG & "&w_menu=" & w_menu & MontaFiltro("GET") & """ title=""Importa a partir da definição do esquema"">Importar</A>&nbsp"
            Else
-              ShowHTML "          <A class=""hl"" HREF=""" & w_dir & w_pagina & "EXPORTACAO&R=" & w_Pagina & par & "&O=I&w_sq_esquema=" & RS("sq_esquema") & "&P1=" & P1 & "&P2=" & P2 & "&P3=" & P3 & "&P4=" & P4 & "&TP=" & TP & "&SG=" & SG & MontaFiltro("GET") & """ title=""Exporta a partir da definição do esquema"">Exportar</A>&nbsp"
+              ShowHTML "          <A class=""hl"" HREF=""" & w_dir & w_pagina & "EXPORTACAO&R=" & w_Pagina & par & "&O=I&w_sq_esquema=" & RS("sq_esquema") & "&P1=" & P1 & "&P2=" & P2 & "&P3=" & P3 & "&P4=" & P4 & "&TP=" & TP & "&SG=" & SG & "&w_menu=" & w_menu & MontaFiltro("GET") & """ title=""Exporta a partir da definição do esquema"" onClick=""return(confirm('Confirma geração do arquivo de exportação?'))"">Exportar</A>&nbsp"
            End If
         End If
         ShowHTML "        </td>"
@@ -380,7 +416,7 @@ Sub Inicial
   ElseIf Instr("IAE",O) > 0 Then
     If InStr("E",O) Then w_Disabled = " DISABLED " End If
     AbreForm "Form", w_dir & w_Pagina & "Grava", "POST", "return(Validacao(this));", null,P1,P2,1,P4,TP,SG,R,O
-
+    
     ShowHTML "<INPUT type=""hidden"" name=""w_sq_esquema"" value=""" & w_sq_esquema & """>"
     ShowHTML "<INPUT type=""hidden"" name=""w_tipo"" value=""" & p_tipo & """>"
     If P1 = 2 Then
@@ -416,7 +452,7 @@ Sub Inicial
     If O = "E" Then
        ShowHTML "          <input class=""STB"" type=""submit"" name=""Botao"" value=""Excluir"">"
     Else
-       ShowHTML "          <input class=""STB"" type=""submit"" name=""Botao"" value=""Incluir"">"
+       ShowHTML "          <input class=""STB"" type=""submit"" name=""Botao"" value=""Gravar"">"
     End If
     ShowHTML "          <input class=""stb"" type=""button"" onClick=""location.href='" & w_Pagina & par & "&P1=" & P1 & "&P2=" & P2 & "&P3=" & P3 & "&P4=" & P4 & "&TP=" & TP & "&SG=" & SG & "&O=L';"" name=""Botao"" value=""Cancelar"">"
     ShowHTML "          </td>"
@@ -576,7 +612,7 @@ Sub Tabela
      ScriptClose
   End If
   ShowHTML "</HEAD>"
-  ShowHTML "<BASE HREF=""http://" & Request.ServerVariables("server_name") & "/siw/"">"
+  ShowHTML "<BASE HREF=""" & conRootSIW & """>"
   If w_troca > "" Then
      BodyOpen "onLoad='document.Form." & w_troca & ".focus()';"
   ElseIf Instr("P",O) > 0 Then
@@ -681,8 +717,8 @@ Sub Tabela
      ShowHTML "      <tr><td align=""center"" colspan=""3"" height=""1"" bgcolor=""#000000"">"
      ShowHTML "      <tr><td align=""center"" colspan=""3"">"
      ShowHTML "            <input class=""STB"" type=""submit"" name=""Botao"" value=""Aplicar filtro"">"
-     ShowHTML "            <input class=""STB"" type=""button"" onClick=""location.href='" & w_Pagina & par & "&R=" & R &  "&P1=" & P1 & "&P2=" & P2 & "&P3=" & P3 & "&P4=" & P4 & "&TP=" & TP & "&O=P&SG=" & SG & "';"" name=""Botao"" value=""Limpar campos"">"
-     ShowHTML "            <input class=""stb"" type=""button"" onClick=""location.href='" & w_Pagina & par & "&w_sq_esquema=" & w_sq_esquema & "&R=" & R &  "&P1=" & P1 & "&P2=" & P2 & "&P3=" & P3 & "&P4=" & P4 & "&TP=" & TP & "&SG=" & SG & "&O=L';"" name=""Botao"" value=""Cancelar"">"
+     ShowHTML "            <input class=""STB"" type=""button"" onClick=""location.href='" & w_Pagina & par & "&w_sq_esquema=" & w_sq_esquema & "&R=" & R &  "&P1=" & P1 & "&P2=" & P2 & "&P3=" & P3 & "&P4=" & P4 & "&TP=" & TP & "&O=P&SG=" & SG & "&w_menu=" & w_menu & "';"" name=""Botao"" value=""Limpar campos"">"
+     ShowHTML "            <input class=""stb"" type=""button"" onClick=""location.href='" & w_Pagina & par & "&w_sq_esquema=" & w_sq_esquema & "&R=" & R &  "&P1=" & P1 & "&P2=" & P2 & "&P3=" & P3 & "&P4=" & P4 & "&TP=" & TP & "&SG=" & SG & "&w_menu=" & w_menu & "&O=L';"" name=""Botao"" value=""Cancelar"">"
      ShowHTML "          </td>"
      ShowHTML "      </tr>"    
      ShowHTML "    </table>"
@@ -896,7 +932,7 @@ Sub Mapeamento
      ScriptClose
   End If
   ShowHTML "</HEAD>"
-  ShowHTML "<BASE HREF=""http://" & Request.ServerVariables("server_name") & "/siw/"">"
+  ShowHTML "<BASE HREF=""" & conRootSIW & """>"
   If w_troca > "" Then
      BodyOpen "onLoad='document.Form." & w_troca & ".focus()';"
   Else
@@ -1017,10 +1053,10 @@ REM Fim da rotina
 REM -------------------------------------------------------------------------
 
 REM =========================================================================
-REM Rotina de importação de arquivos físicos para atualização de dados financeiros
+REM Rotina de importação de arquivos físicos para atualização a partir do SIGPLAN
 REM -------------------------------------------------------------------------
 Sub Importacao
-  Dim w_sq_esquema, w_caminho, w_upload_maximo
+  Dim w_sq_esquema, w_caminho, w_upload_maximo, w_data_arquivo
   
   w_sq_esquema      = Request("w_sq_esquema")
   w_troca           = Request("w_troca")
@@ -1041,9 +1077,12 @@ Sub Importacao
   If InStr("IAEP",O) > 0 Then
      ScriptOpen "JavaScript"
      CheckBranco
+     FormataDataHora
      FormataData
      ValidateOpen "Validacao"
      If InStr("I",O) > 0 Then
+        Validate "w_data_arquivo", "Data e hora", "DATAHORA", "1", "17", "17", "", "0123456789 /:,"
+        Validate "w_caminho", "Arquivo de dados", "1", "1", "1", "255", "1", "1"
         Validate "w_assinatura", "Assinatura Eletrônica", "1", "1", "6", "30", "1", "1"
      End If
      ShowHTML "  theForm.Botao[0].disabled=true;"
@@ -1052,12 +1091,12 @@ Sub Importacao
      ScriptClose
   End If
   ShowHTML "</HEAD>"
-  ShowHTML "<BASE HREF=""http://" & Request.ServerVariables("server_name") & "/siw/"">"
+  ShowHTML "<BASE HREF=""" & conRootSIW & """>"
   If w_troca > "" Then
      BodyOpen "onLoad='document.Form." & w_troca & ".focus()';"
   ElseIf Instr("I",O) > 0 Then
      If RS("formato") = "A" Then
-        BodyOpen "onLoad='document.Form.w_caminho.focus()';"
+        BodyOpen "onLoad='document.Form.w_data_arquivo.focus()';"
      ElseIf RS("formato") = "W" Then
         BodyOpen "onLoad='document.Form.w_assinatura.focus()';"
      End If
@@ -1117,13 +1156,14 @@ Sub Importacao
     If RS("formato") = "A" Then
        ShowHTML "      <tr><td align=""center"" bgcolor=""#D0D0D0"" style=""border: 2px solid rgb(0,0,0);""><font size=""2""><b><font color=""#BC3131"">ATENÇÃO</font>: o tamanho máximo aceito para o arquivo é de " & cDbl(w_upload_maximo)/1024 & " KBytes</b>.</font></td>"
        ShowHTML "<INPUT type=""hidden"" name=""w_upload_maximo"" value=""" & w_upload_maximo & """>"
+       ShowHTML "      <tr><td><font size=""1""><b><u>D</u>ata/hora extração:</b><br><input " & w_Disabled & " accesskey=""D"" type=""text"" name=""w_data_arquivo"" class=""sti"" SIZE=""17"" MAXLENGTH=""17"" VALUE=""" & w_data_arquivo & """  onKeyDown=""FormataDataHora(this, event);"" title=""OBRIGATÓRIO. Informe a data e hora da extração do aquivo. Digite apenas números. O sistema colocará os separadores automaticamente.""></td>"
        ShowHTML "      <tr><td><font size=""1""><b>A<u>r</u>quivo:</b><br><input accesskey=""R"" type=""file"" name=""w_caminho"" class=""STI"" SIZE=""80"" MAXLENGTH=""100"" VALUE="""" title=""OBRIGATÓRIO. Clique no botão ao lado para localizar o arquivo. Ele será transferido automaticamente para o servidor."">" 
     End If
     ShowHTML "      <tr><td align=""LEFT""><font size=""1""><b><U>A</U>ssinatura Eletrônica:<BR> <INPUT ACCESSKEY=""A"" class=""sti"" type=""PASSWORD"" name=""w_assinatura"" size=""30"" maxlength=""30"" value=""""></td></tr>"
     
     ShowHTML "      <tr><td align=""center""><hr>"
     ShowHTML "          <input class=""STB"" type=""submit"" name=""Botao"" value=""Importar"">"
-    ShowHTML "          <input class=""stb"" type=""button"" onClick=""location.href='" & R & "&P1=" & P1 & "&P2=" & P2 & "&P3=" & P3 & "&P4=" & P4 & "&TP=" & TP & "&SG=" & SG & "&O=L';"" name=""Botao"" value=""Cancelar"">"
+    ShowHTML "          <input class=""stb"" type=""button"" onClick=""location.href='" & R & "&P1=" & P1 & "&P2=" & P2 & "&P3=" & P3 & "&P4=" & P4 & "&TP=" & TP & "&SG=" & "ISSIGIMP" & "&O=L';"" name=""Botao"" value=""Cancelar"">"
     ShowHTML "          </td>"
     ShowHTML "      </tr>"
     ShowHTML "    </table>"
@@ -1148,6 +1188,161 @@ REM Fim da rotina
 REM -------------------------------------------------------------------------
 
 REM =========================================================================
+REM Rotina de exportação de arquivos físicos para atualização do SIGPLAN
+REM -------------------------------------------------------------------------
+Sub Exportacao
+  Dim w_sq_esquema, w_no_raiz, w_atual, w_campos, w_from, w_where, j, k, l, w_valor
+  Dim FS, F1, w_arquivo_processamento
+  Dim w_sql(20)
+  Dim w_elemento(20)
+  Dim w_atributo(20, 100)
+  Dim w_campo(20, 100)
+  Dim i(100)
+ 
+  w_sq_esquema      = Request("w_sq_esquema")
+  
+  ' Recupera os dados do esquema selecionado
+  DB_GetEsquema RS, w_cliente, null, w_sq_esquema, null, null, null, null, null, null, null, null
+
+  ' Recupera cada uma das tabelas referenciadas pelo esquema
+  DB_GetEsquemaTabela RS1, null, w_sq_esquema, null
+  RS1.Sort = "ordem, nm_tabela, or_coluna"
+
+  If RS1.EOF Then
+     Cabecalho
+     ShowHTML "<Body>"
+     ScriptOpen "JavaScript"
+     ShowHTML "  alert('Não foram informadas tabelas para o esquema informado');"
+     ShowHTML "  window.close();"
+     ScriptClose
+     ShowHTML "</Body>"
+     ShowHTML "</html>"
+  Else
+     w_where  = " where cliente = " & w_cliente & VbCrLf & _
+                "   and ano     = " & Session("ANO")
+
+     w_atual  = ""
+     w_cont   = 0
+     j        = 0
+     while not RS1.EOF
+        If RS1("elemento") <> w_atual Then
+           If w_cont > 0 Then 
+              i(w_cont) = j 
+              w_campos = Mid(w_campos, 3, len(w_campos))
+              w_sql(w_cont) = "select " & w_campos & VbCrLf & _
+                              w_from & VbCrLf & _
+                              w_where & VbCrLf & _
+                              " order by " & w_campos
+           End If
+           w_cont = w_cont + 1
+           w_elemento(w_cont) = RS1("elemento")
+           w_atual = RS1("elemento")
+           j = 0
+
+           w_campos = ""
+           w_from   = "  from " & strschema_is & RS1("nm_tabela")
+        End If
+        j = j + 1
+        w_atributo(w_cont, j) = RS1("campo_externo")
+        w_campo(w_cont, j)    = RS1("cl_nome")
+        w_campos              = w_campos & ", " & RS1("cl_nome")
+        RS1.MoveNext
+     wend
+     i(w_cont) = j
+     
+     w_campos = Mid(w_campos, 3, len(w_campos))
+     w_sql(w_cont) = "select " & w_campos & VbCrLf & _
+                     w_from & VbCrLf & _
+                     w_where & VbCrLf & _
+                     " order by " & w_campos
+     
+     ' Gera o arquivo de exportação
+     Set FS = CreateObject("Scripting.FileSystemObject")
+
+     ' Configura o nome dos arquivo recebido e do arquivo registro
+     w_arquivo_processamento = RS("nome") & ".xml"
+
+     Set F1 = FS.CreateTextFile(w_caminho & w_arquivo_processamento, true, true)
+
+              
+              
+     F1.WriteLine "<?xml version=""1.0"" encoding=""Unicode""?>"
+     F1.WriteLine "<" & RS("no_raiz") & " xmlns:xsd=""http://www.w3.org/2001/XMLSchema"" xmlns:xsi=""http://www.w3.org/2001/XMLSchema-instance"" xmlns=""http://www.sigplan.gov.br/xml/"">"
+
+     ' Processa cada um dos esquemas recuperados
+     for j = 1 to w_cont
+        RS2.Open w_sql(j), dbms
+        While Not RS2.EOF
+           F1.WriteLine "  <" & w_elemento(j) & ">"
+           ' Processa cada um dos atributos recuperados
+           for k = 1 to i(j)
+              ' Se o valor do banco for nulo, exporta tag fechada; 
+              ' caso contrário, exporta tag abre/fecha contendo o valor
+              If Nvl(RS2(w_campo(j, k)).Value,"") > "" Then
+                 ' O bloco de IFs abaixo executa transformações nos dados para o formato esperado pelo SIGPLAN
+                 If RS2(w_campo(j, k)).Type = adVarchar and RS2(w_campo(j, k)).DefinedSize = 1 Then
+                    If RS2(w_campo(j, k)).Value = "S" Then w_valor = "true" Else w_valor = "false" End If
+                 Elseif RS2(w_campo(j, k)).Type = adNumeric Then
+                    ' Se o valor for igual a zero, exporta 0;
+                    ' caso contrário, verifica o número de decimais e exporta o valor 
+                    ' com nenhuma ou com 4 decimais, usando o ponto como separador de decimais
+                    If cDbl(RS2(w_campo(j, k)).Value) <> cDbl(0) Then
+                       If RS2(w_campo(j, k)).NumericScale > 0 Then
+                          w_valor = Replace(cStr(FormatNumber(RS2(w_campo(j, k)).Value, 4, true, false, false)),",",".")
+                       Else
+                          w_valor = Replace(cStr(FormatNumber(RS2(w_campo(j, k)).Value, 0, true, false, false)),",",".")
+                       End If
+                    Else
+                       w_valor = "0"
+                    End If
+                 Elseif RS2(w_campo(j, k)).Type = adDate Then
+                    w_valor = FormataDataEdicao(FormatDateTime(RS2(w_campo(j, k)).Value, 2))
+                 Else
+                    w_valor = RS2(w_campo(j, k)).Value
+                 End If
+                 F1.WriteLine "    <" & w_atributo(j, k) & ">" & w_valor & "</" & w_atributo(j, k) & ">"
+              Else
+                 F1.WriteLine "    <" & w_atributo(j, k) & " />"
+              End If
+           next
+           F1.WriteLine "  </" & w_elemento(j) & ">"
+           RS2.MoveNext
+        Wend
+        RS2.Close
+     next
+     F1.WriteLine "</" & RS("no_raiz") & ">"
+     F1.Close
+
+     ' Grava o resultado da importação no banco de dados
+     'DML_PutDcOcorrencia O, _
+     '    w_sq_esquema, w_cliente,   w_usuario,     ul.Form("w_data_arquivo"), _
+     '    ul.Files("w_caminho").OriginalPath, _
+     '    w_arquivo_processamento, w_tamanho_recebido,  w_tipo_recebido, _
+     '    w_arquivo_registro,      w_arquivo_rejeicao, w_tamanho_registro, w_tipo_registro, _
+     '    w_reg,       w_erro
+     
+     Cabecalho
+     ShowHTML "<Body>"
+     ScriptOpen "JavaScript"
+     ShowHTML "  alert('Exportação concluída com sucesso!');"
+     ShowHTML "  history.back(1);"
+     ScriptClose
+     ShowHTML "</Body>"
+     ShowHTML "</html>"
+
+  End If
+  DesconectaBd
+  RS1.Close
+  
+  Set w_sq_esquema  = Nothing
+  Set w_no_raiz     = Nothing
+  Set w_atual       = Nothing
+End Sub
+REM =========================================================================
+REM Fim da rotina
+REM -------------------------------------------------------------------------
+
+REM =========================================================================
 REM Rotina de teste de acesso ao Web Service do SIGPLAN
 REM -------------------------------------------------------------------------
 Sub Teste
@@ -1161,15 +1356,15 @@ Sub Teste
 
   w_ws_servidor = "www.sigplan.gov.br"
   w_ws_url      = "/xml/acompanhamento.asmx"
-  w_ws_acao     = "http://www.sigplan.gov.br/retornaDadosPrograma"
+  w_ws_acao     = "//www.sigplan.gov.br/retornaDadosPrograma"
   w_ws_mensagem.async = false
   
   w_ws_mensagem.loadXML  "<?xml version=""1.0"" encoding=""utf-8""?>" & VbCrLf & _
-                       "<soap:Envelope xmlns:xsi=""http://www.w3.org/2001/XMLSchema-instance"" " & VbCrLf & _
-                       "xmlns:xsd=""http://www.w3.org/2001/XMLSchema"" " & VbCrLf & _
-                       "xmlns:soap=""http://schemas.xmlsoap.org/soap/envelope/"">" & VbCrLf & _
+                       "<soap:Envelope xmlns:xsi=""//www.w3.org/2001/XMLSchema-instance"" " & VbCrLf & _
+                       "xmlns:xsd=""//www.w3.org/2001/XMLSchema"" " & VbCrLf & _
+                       "xmlns:soap=""//schemas.xmlsoap.org/soap/envelope/"">" & VbCrLf & _
                        "  <soap:Body>" & VbCrLf & _
-                       "    <retornaDadosPrograma xmlns=""http://www.sigplan.gov.br/"">" & VbCrLf & _
+                       "    <retornaDadosPrograma xmlns=""//www.sigplan.gov.br/"">" & VbCrLf & _
                        "      <usuario>alex</usuario>" & VbCrLf & _
                        "      <senha>senha_alex</senha>" & VbCrLf & _
                        "      <ORGCod>36000</ORGCod>" & VbCrLf & _
@@ -1206,7 +1401,7 @@ Sub Teste
   ShowHTML "<BODY>"
   ShowHTML "  <P><H2>Test if the connection can be made to the server and a valid response is returned</H2></P> "
 
-  xmlHTTP.open "POST" , "http://" & w_ws_servidor & w_ws_url, false
+  xmlHTTP.open "POST" , "//" & w_ws_servidor & w_ws_url, false
   xmlHTTP.setRequestHeader "Content-Type", "text/xml; charset=utf-8"
   xmlHTTP.setRequestHeader "SOAPAction", w_ws_acao
   xmlHTTP.send w_ws_mensagem
@@ -1238,7 +1433,7 @@ REM Exibe orientações sobre o processo de importação
 REM -------------------------------------------------------------------------
 Sub Help
   Cabecalho
-  ShowHTML "<BASE HREF=""http://" & Request.ServerVariables("server_name") & "/siw/"">"
+  ShowHTML "<BASE HREF=""" & conRootSIW & """>"
   BodyOpen "onLoad='document.focus()';"
   ShowHTML "<B><FONT COLOR=""#000000"">" & w_TP & "</FONT></B>"
   ShowHTML "<HR>"
@@ -1319,13 +1514,12 @@ Public Sub Grava
   CONST TristateTrue = -1 'Abre o arquivo como Unicode
   CONST TristateFalse = 0 'Abre o arquivo como ASCII
 
-  Dim w_Null, w_ws_mensagem, FS, F1, F2, w_linha, w_chave_nova
-  Dim w_caminho_recebido, w_tamanho_recebido, w_tipo_recebido
-  Dim w_arquivo_registro, w_caminho_registro, w_tamanho_registro, w_tipo_registro
-  Dim w_registros, w_importados, w_rejeitados, w_situacao, w_erro, w_result
+  Dim w_Null, w_ws_mensagem, FS, F2, w_linha, w_chave_nova
+  Dim w_arquivo_processamento, w_tamanho_recebido, w_tipo_recebido
+  Dim w_arquivo_registro, w_arquivo_rejeicao, w_tamanho_registro, w_tipo_registro
+  Dim w_registros, w_importados, w_rejeitados, w_situacao, w_result
   Dim i, j, w_atual
   Dim w_no, w_texto,w_elemento
-  Dim w_param(500)
   
   Dim w_campo, w_unidade, w_programa, w_ws_acao, w_dotacao, w_empenhado, w_liquidado
 
@@ -1351,19 +1545,19 @@ Public Sub Grava
           End If
           
           ' Configura o nome dos arquivo recebido e do arquivo registro
-          w_caminho_recebido = ul.GetUniqueName()
-          w_caminho_registro = ul.GetUniqueName()
+          w_arquivo_processamento = ul.GetUniqueName()
+          w_arquivo_rejeicao      = ul.GetUniqueName()
           
-          ul.Files("w_caminho").SaveAs(conFilePhysical & w_cliente & "\" & w_caminho_recebido)
+          ul.Files("w_caminho").SaveAs(conFilePhysical & w_cliente & "\" & w_arquivo_processamento)
           
           ' Gera o arquivo registro da importação
           Set FS = CreateObject("Scripting.FileSystemObject")
-          Set F1 = FS.CreateTextFile(w_caminho & w_caminho_registro)
+          Set F1 = FS.CreateTextFile(w_caminho & w_arquivo_rejeicao)
           
           'Abre o arquivo recebido para gerar o arquivo registro
           Set F2 = Server.CreateObject("Msxml2.DOMDocument.3.0")
           F2.async = False
-          If F2.load (conFilePhysical & w_cliente & "\" & w_caminho_recebido) Then
+          If F2.load (conFilePhysical & w_cliente & "\" & w_arquivo_processamento) Then
 
              ' Recupera os dados do esquema a ser importado
              DB_GetEsquema RS, w_cliente, null, ul.Form("w_sq_esquema"), w_sq_modulo, null, null, null, null, null, null, null
@@ -1381,12 +1575,15 @@ Public Sub Grava
                 ' Recupera cada uma das tabelas referenciadas pelo esquema
                 DB_GetEsquemaTabela RS1, null, ul.Form("w_sq_esquema"), null
                 RS1.Sort = "ordem, nm_tabela, or_coluna"
+                w_reg  = 0
+                w_erro = 0
                 While Not RS1.EOF
                    If w_atual <> RS1("nm_tabela") Then
                       set w_elemento = w_no.selectNodes(RS("no_raiz")&"/"&RS1("elemento"))
                       with w_elemento
                          for i = 0 to .length - 1 
                             w_cont = 0
+                            w_reg  = w_reg + 1
                             for j = 0 to .item(i).childNodes.length - 1
                                ' Recupera cada um dos campos referenciados pelo elemento
                                'DB_GetEsquemaAtributo RS2, null, RS1("sq_esquema_tabela"), null, null
@@ -1405,6 +1602,7 @@ Public Sub Grava
                                      '   F1.WriteLine RS2("nm_coluna") & " E => " & .item(i).childNodes.item(j).nodename & " = '" & .item(i).childNodes.item(j).text & "' "
                                      '   w_erro = 1
                                      'Else
+                                        w_name(w_cont) = .item(i).childNodes.item(j).nodename
                                         If uCase(w_campo) = "TRUE" Then
                                            w_param(w_cont) = "S"
                                         ElseIf uCase(w_campo) = "FALSE" Then
@@ -1418,45 +1616,54 @@ Public Sub Grava
                             next
                             'Response.Write RS1("nm_tabela")
                             'Response.End
+                            w_resultado = ""
                             select case RS1("nm_tabela")
-                               case "IS_PPA_ESFERA"          DML_PutXMLEsfera                w_param(1), w_param(2), "S"
-                               case "IS_PPA_UNIDADE_MEDIDA"  DML_PutXMLUnidade_Medida_PPA    w_param(1), w_param(2), "S"
-                               case "IS_PPA_ORGAO"           DML_PutXMLOrgao_PPA             w_param(1), w_param(2), w_param(3), w_param(4), "S"
-                               case "IS_PPA_ORGAO_SIORG"     DML_PutXMLOrgao_Siorg_PPA       w_param(1), w_param(2), w_param(3), w_param(4), w_param(5), "S"
-                               case "IS_PPA_UNIDADE"         DML_PutXMLUnidade_PPA           w_param(1), w_param(2), w_param(3), w_param(4), w_param(5)
-                               case "IS_PPA_TIPO_ACAO"       DML_PutXMLTipo_Acao_PPA         w_param(1), w_param(2), "S"
-                               case "IS_PPA_TIPO_DESPESA"    DML_PutXMLTipo_Despesa          w_param(1), w_param(2), "S"
-                               case "IS_TIPO_ATUALIZACAO"    DML_PutXMLTipo_Atualizacao      w_param(1), w_param(2), "S"
-                               case "IS_PPA_TIPO_PROGRAMA"   DML_PutXMLTipo_Programa_PPA     w_param(1), w_param(2), "S"
-                               case "IS_TIPO_INCLUSAO_ACAO"  DML_PutXMLTipo_Inclusao_Acao    w_param(1), w_param(2), "S"
-                               case "IS_PPA_NATUREZA"        DML_PutXMLNatureza              w_param(1), w_param(2), w_param(3), "S"
-                               case "IS_PPA_FUNCAO"          DML_PutXMLFuncao                w_param(1), w_param(2), "S"
-                               case "IS_PPA_SUBFUNCAO"       DML_PutXMLSubFuncao             w_param(1), w_param(2), w_param(3) 
-                               case "IS_PPA_FONTE"           DML_PutXMLFonte_PPA             w_param(1), w_param(2), w_param(3), w_param(4)
-                               case "IS_REGIAO"              DML_PutXMLREGIAO                w_param(1), w_param(2), w_param(3), w_param(4)
-                               case "IS_MUNICIPIO"           DML_PutXMLMunicipio             w_param(1), w_param(2), w_param(3)
-                               case "IS_PPA_PRODUTO"         DML_PutXMLProduto_PPA           w_param(1), w_param(2), "S"
-                               case "IS_PPA_PROGRAMA"        DML_PutXMLPrograma_PPA          w_cliente,  w_ano,      w_param(1), w_param(2), w_param(3), w_param(4), w_param(5), w_param(6), w_param(7), w_param(8), w_param(9), w_param(10), w_param(11), w_param(12), w_param(13), w_param(14), w_param(15), w_param(16), w_param(17), w_param(18)
-                               case "IS_PPA_INDICADOR"       DML_PutXMLIndicador_PPA         w_cliente,  w_ano,      w_param(1), w_param(2), w_param(3), w_param(4), w_param(5), w_param(6), w_param(7), w_param(8), w_param(9), w_param(10), w_param(11), w_param(12), w_param(13), w_param(14), w_param(15), w_param(16), w_param(17), w_param(18), w_param(19), w_param(20), w_param(21), w_param(22), w_param(23), w_param(24), w_param(25), w_param(26)
-                               case "IS_PPA_ACAO"            DML_PutXMLAcao_PPA              w_cliente,  w_ano,      w_param(1), w_param(2), w_param(3), w_param(4), w_param(5), w_param(6), w_param(7), w_param(8), w_param(9), w_param(10), w_param(11), w_param(12), w_param(13), w_param(14), w_param(15), w_param(16), w_param(17), w_param(18), w_param(19), w_param(20), w_param(21), w_param(22), w_param(23), w_param(24), w_param(25), w_param(26), w_param(27), w_param(28), w_param(29), w_param(30), w_param(31), w_param(32), w_param(33), w_param(34), w_param(35), w_param(36), w_param(37), w_param(38), w_param(39), w_param(40), w_param(41), w_param(42), w_param(43), w_param(44), w_param(45)
-                               case "IS_PPA_LOCALIZADOR"     DML_PutXMLLocalizador_PPA       w_cliente,  w_ano,      w_param(1), w_param(2), w_param(3), w_param(4), w_param(5), w_param(6), w_param(7), w_param(8), w_param(9), w_param(10), w_param(11), w_param(12), w_param(13), w_param(14), w_param(15), w_param(16), w_param(17), w_param(18), w_param(19), w_param(20), w_param(21), w_param(22)
-                               case "IS_PPA_DADO_FISICO"     DML_PutXMLDadoFisico_PPA        w_cliente,  w_ano,      w_param(1), w_param(2), w_param(3), w_param(4), w_param(5), w_param(6), w_param(7), w_param(8), w_param(9), w_param(10), w_param(11)
-                               case "IS_PPA_DADO_FINANCEIRO" DML_PutXMLDadoFinanceiro_PPA    w_cliente,  w_ano,      w_param(1), w_param(2), w_param(3), w_param(4), w_param(5), w_param(6), w_param(7), w_param(8), w_param(9), w_param(10), w_param(11), w_param(12), w_param(13)
-                               case "IS_SIG_BASE_GEOGRAFICA" DML_PutXMLBase_Geografica       w_param(1), w_param(2), "S"
-                               case "IS_SIG_FONTE"           DML_PutXMLFonte_SIG             w_param(1), w_param(2), w_param(3), w_param(4), w_param(5), "S"
-                               case "IS_SIG_OPCAO_ESTRAT"    DML_PutXMLOpcao_Estrat          w_param(1), w_param(2), "S"
-                               case "IS_SIG_PERIODICIDADE"   DML_PutXMLPeriodicidade         w_param(1), w_param(2), "S"
-                               case "IS_SIG_PRODUTO"         DML_PutXMLProduto_SIG           w_param(1), w_param(2), "S"
-                               case "IS_SIG_TIPO_ACAO"       DML_PutXMLTipo_Acao             w_param(1), w_param(2), "S"
-                               case "IS_SIG_TIPO_ORGAO"      DML_PutXMLTipo_Orgao_SIG        w_param(1), w_param(2), "S"
-                               case "IS_SIG_TIPO_PROGRAMA"   DML_PutXMLTipo_Programa         w_param(1), w_param(2), "S"
-                               case "IS_SIG_TIPO_RESTRICAO"  DML_PutXMLTipo_Restricao        w_param(1), w_param(2), "S"
-                               case "IS_SIG_TIPO_SITUACAO"   DML_PutXMLTipo_Situacao         w_param(1), w_param(2), w_param(3), "S"
-                               case "IS_SIG_UNIDADE_MEDIDA"  DML_PutXMLUnidade_Medida_SIG    w_param(1), w_param(2), w_param(3), "S"
-                               case "IS_SIG_MACRO_OBJETIVO"  DML_PutXMLMacro_Objetivo        w_param(1), w_param(2), w_param(3), "S"
-                               case "IS_SIG_ORGAO"           DML_PutXMLOrgao_SIG             w_param(1), w_param(2), w_param(3), w_param(4), "---", "S"
-                               case "IS_SIG_UNIDADE"         DML_PutXMLUnidade_SIG           w_param(1), w_param(2), w_param(3), w_param(4), w_param(5), w_param(6)
-                               case "IS_SIG_PROGRAMA"        DML_PutXMLPrograma_SIG          w_cliente,  w_param(1), w_param(2), w_param(3), w_param(4), w_param(5), w_param(6), w_param(7), w_param(8), w_param(9), w_param(10), w_param(11), w_param(12), w_param(13), w_param(14), w_param(15), w_param(16), w_param(17), w_param(18), w_param(19), w_param(20), w_param(21), w_param(22), w_param(23), w_param(24), w_param(25), w_param(26), w_param(27), w_param(28), w_param(29), w_param(30), w_param(31)
+                               case "IS_PPA_ESFERA"          DML_PutXMLEsfera                w_resultado, w_param(1), w_param(2), "S" : If w_resultado > "" Then RegistraErro : End If
+                               case "IS_PPA_PERIODICIDADE"   DML_PutXMLPeriodicidade_PPA     w_resultado, w_param(1), w_param(2), "S" : If w_resultado > "" Then RegistraErro : End If
+                               case "IS_PPA_UNIDADE_MEDIDA"  DML_PutXMLUnidade_Medida_PPA    w_resultado, w_param(1), w_param(2), "S" : If w_resultado > "" Then RegistraErro : End If
+                               case "IS_PPA_ORGAO"           DML_PutXMLOrgao_PPA             w_resultado, w_param(1), w_param(2), w_param(3), w_param(4), "S" : If w_resultado > "" Then RegistraErro : End If
+                               case "IS_PPA_ORGAO_SIORG"     DML_PutXMLOrgao_Siorg_PPA       w_resultado, w_param(1), w_param(2), w_param(3), w_param(4), w_param(5), "S" : If w_resultado > "" Then RegistraErro : End If
+                               case "IS_PPA_UNIDADE"         DML_PutXMLUnidade_PPA           w_resultado, w_param(1), w_param(2), w_param(3), w_param(4), w_param(5) : If w_resultado > "" Then RegistraErro : End If
+                               case "IS_PPA_TIPO_ACAO"       DML_PutXMLTipo_Acao_PPA         w_resultado, w_param(1), w_param(2), "S" : If w_resultado > "" Then RegistraErro : End If
+                               case "IS_PPA_TIPO_DESPESA"    DML_PutXMLTipo_Despesa          w_resultado, w_param(1), w_param(2), "S" : If w_resultado > "" Then RegistraErro : End If
+                               case "IS_TIPO_ATUALIZACAO"    DML_PutXMLTipo_Atualizacao      w_resultado, w_param(1), w_param(2), "S" : If w_resultado > "" Then RegistraErro : End If
+                               case "IS_PPA_TIPO_PROGRAMA"   DML_PutXMLTipo_Programa_PPA     w_resultado, w_param(1), w_param(2), "S" : If w_resultado > "" Then RegistraErro : End If
+                               case "IS_TIPO_INCLUSAO_ACAO"  DML_PutXMLTipo_Inclusao_Acao    w_resultado, w_param(1), w_param(2), "S" : If w_resultado > "" Then RegistraErro : End If
+                               case "IS_PPA_NATUREZA"        DML_PutXMLNatureza              w_resultado, w_param(1), w_param(2), w_param(3), "S" : If w_resultado > "" Then RegistraErro : End If
+                               case "IS_PPA_FUNCAO"          DML_PutXMLFuncao                w_resultado, w_param(1), w_param(2), "S" : If w_resultado > "" Then RegistraErro : End If
+                               case "IS_PPA_SUBFUNCAO"       DML_PutXMLSubFuncao             w_resultado, w_param(1), w_param(2), w_param(3)  : If w_resultado > "" Then RegistraErro : End If
+                               case "IS_PPA_FONTE"           DML_PutXMLFonte_PPA             w_resultado, w_param(1), w_param(2), w_param(3), w_param(4) : If w_resultado > "" Then RegistraErro : End If
+                               case "IS_REGIAO"              DML_PutXMLREGIAO                w_resultado, w_param(1), w_param(2), w_param(3), w_param(4) : If w_resultado > "" Then RegistraErro : End If
+                               case "IS_MUNICIPIO"           DML_PutXMLMunicipio             w_resultado, w_param(1), w_param(2), w_param(3) : If w_resultado > "" Then RegistraErro : End If
+                               case "IS_PPA_PRODUTO"         DML_PutXMLProduto_PPA           w_resultado, w_param(1), w_param(2), "S" : If w_resultado > "" Then RegistraErro : End If
+                               case "IS_PPA_PROGRAMA"        DML_PutXMLPrograma_PPA          w_resultado, w_cliente,  w_ano,      w_param(1), w_param(2), w_param(3), w_param(4), w_param(5), w_param(6), w_param(7), w_param(8), w_param(9), w_param(10), w_param(11), w_param(12), w_param(13), w_param(14), w_param(15), w_param(16), w_param(17), w_param(18) : If w_resultado > "" Then RegistraErro : End If
+                               case "IS_PPA_INDICADOR"       DML_PutXMLIndicador_PPA         w_resultado, w_cliente,  w_ano,      w_param(1), w_param(2), w_param(3), w_param(4), w_param(5), w_param(6), w_param(7), w_param(8), w_param(9), w_param(10), w_param(11), w_param(12), w_param(13), w_param(14), w_param(15), w_param(16), w_param(17), w_param(18), w_param(19), w_param(20), w_param(21), w_param(22), w_param(23), w_param(24), w_param(25), w_param(26) : If w_resultado > "" Then RegistraErro : End If
+                               case "IS_PPA_ACAO"            DML_PutXMLAcao_PPA              w_resultado, w_cliente,  w_ano,      w_param(1), w_param(2), w_param(3), w_param(4), w_param(5), w_param(6), w_param(7), w_param(8), w_param(9), w_param(10), w_param(11), w_param(12), w_param(13), w_param(14), w_param(15), w_param(16), w_param(17), w_param(18), w_param(19), w_param(20), w_param(21), w_param(22), w_param(23), w_param(24), w_param(25), w_param(26), w_param(27), w_param(28), w_param(29), w_param(30), w_param(31), w_param(32), w_param(33), w_param(34), w_param(35), w_param(36), w_param(37), w_param(38), w_param(39), w_param(40), w_param(41), w_param(42), w_param(43), w_param(44), w_param(45) : If w_resultado > "" Then RegistraErro : End If
+                               case "IS_PPA_LOCALIZADOR"     DML_PutXMLLocalizador_PPA       w_resultado, w_cliente,  w_ano,      w_param(1), w_param(2), w_param(3), w_param(4), w_param(5), w_param(6), w_param(7), w_param(8), w_param(9), w_param(10), w_param(11), w_param(12), w_param(13), w_param(14), w_param(15), w_param(16), w_param(17), w_param(18), w_param(19), w_param(20), w_param(21), w_param(22) : If w_resultado > "" Then RegistraErro : End If
+                               case "IS_PPA_DADO_FISICO"     DML_PutXMLDadoFisico_PPA        w_resultado,  w_cliente,  w_ano,      w_param(1), w_param(2), w_param(3), w_param(4), w_param(5), w_param(6), w_param(7), w_param(8), w_param(9), w_param(10), w_param(11) : If w_resultado > "" Then RegistraErro : End If
+                               case "IS_PPA_DADO_FINANCEIRO" DML_PutXMLDadoFinanceiro_PPA    w_resultado, w_cliente,  w_ano,      w_param(1), w_param(2), w_param(3), w_param(4), w_param(5), w_param(6), w_param(7), w_param(8), w_param(9), w_param(10), w_param(11), w_param(12), w_param(13) : If w_resultado > "" Then RegistraErro : End If
+                               case "IS_SIG_BASE_GEOGRAFICA" DML_PutXMLBase_Geografica       w_resultado, w_param(1), w_param(2), "S" : If w_resultado > "" Then RegistraErro : End If
+                               case "IS_SIG_FONTE"           DML_PutXMLFonte_SIG             w_resultado, w_param(1), w_param(2), w_param(3), w_param(4), w_param(5), "S" : If w_resultado > "" Then RegistraErro : End If
+                               case "IS_SIG_OPCAO_ESTRAT"    DML_PutXMLOpcao_Estrat          w_resultado, w_param(1), w_param(2), "S" : If w_resultado > "" Then RegistraErro : End If
+                               case "IS_SIG_PERIODICIDADE"   DML_PutXMLPeriodicidade         w_resultado, w_param(1), w_param(2), "S" : If w_resultado > "" Then RegistraErro : End If
+                               case "IS_SIG_PRODUTO"         DML_PutXMLProduto_SIG           w_resultado, w_param(1), w_param(2), "S" : If w_resultado > "" Then RegistraErro : End If
+                               case "IS_SIG_TIPO_ACAO"       DML_PutXMLTipo_Acao             w_resultado, w_param(1), w_param(2), "S" : If w_resultado > "" Then RegistraErro : End If
+                               case "IS_SIG_TIPO_ORGAO"      DML_PutXMLTipo_Orgao_SIG        w_resultado, w_param(1), w_param(2), "S" : If w_resultado > "" Then RegistraErro : End If
+                               case "IS_SIG_TIPO_PROGRAMA"   DML_PutXMLTipo_Programa         w_resultado, w_param(1), w_param(2), "S" : If w_resultado > "" Then RegistraErro : End If
+                               case "IS_SIG_TIPO_RESTRICAO"  DML_PutXMLTipo_Restricao        w_resultado, w_param(1), w_param(2), "S" : If w_resultado > "" Then RegistraErro : End If
+                               case "IS_SIG_TIPO_SITUACAO"   DML_PutXMLTipo_Situacao         w_resultado, w_param(1), w_param(2), w_param(3), "S" : If w_resultado > "" Then RegistraErro : End If
+                               case "IS_SIG_UNIDADE_MEDIDA"  DML_PutXMLUnidade_Medida_SIG    w_resultado, w_param(1), w_param(2), w_param(3), "S" : If w_resultado > "" Then RegistraErro : End If
+                               case "IS_SIG_MACRO_OBJETIVO"  DML_PutXMLMacro_Objetivo        w_resultado, w_param(1), w_param(2), w_param(3), "S" : If w_resultado > "" Then RegistraErro : End If
+                               case "IS_SIG_ORGAO"           DML_PutXMLOrgao_SIG             w_resultado, w_param(1), w_param(2), w_param(3), w_param(4), "---", "S" : If w_resultado > "" Then RegistraErro : End If
+                               case "IS_SIG_UNIDADE"         DML_PutXMLUnidade_SIG           w_resultado, w_param(1), w_param(2), w_param(3), w_param(4), w_param(5), w_param(6) : If w_resultado > "" Then RegistraErro : End If
+                               case "IS_SIG_PROGRAMA"        DML_PutXMLPrograma_SIG          w_resultado, w_cliente,  w_param(1), w_param(2), w_param(3), w_param(4), w_param(5), w_param(6), w_param(7), w_param(8), w_param(9), w_param(10), w_param(11), w_param(12), w_param(13), w_param(14), w_param(15), w_param(16), w_param(17), w_param(18), w_param(19), w_param(20), w_param(21), w_param(22), w_param(23), w_param(24), w_param(25), w_param(26), w_param(27), w_param(28), w_param(29), w_param(30), w_param(31) : If w_resultado > "" Then RegistraErro : End If
+                               case "IS_SIG_INDICADOR"       DML_PutXMLIndicador_SIG         w_resultado, w_cliente,  w_param(1), w_param(2), w_param(3), w_param(4), w_param(5), w_param(6), w_param(7), w_param(8), w_param(9), w_param(10), w_param(11), w_param(12), w_param(13), w_param(14), w_param(15), w_param(16), w_param(17), w_param(18), w_param(19), w_param(20), w_param(21), w_param(22), w_param(23), w_param(24), w_param(25) : If w_resultado > "" Then RegistraErro : End If
+                               case "IS_SIG_ACAO"            
+                                  If w_param(38) = "N" Then 'Despreza se for restos a pagar
+                                     DML_PutXMLAcao_SIG              w_resultado, w_cliente,  w_param(1), w_param(2), w_param(3), w_param(4), w_param(5), w_param(6), w_param(7), w_param(8), w_param(9), w_param(10), w_param(11), w_param(12), w_param(13), w_param(14), w_param(15), w_param(16), w_param(17), w_param(18), w_param(19), w_param(20), w_param(21), w_param(22), w_param(23), w_param(24), w_param(25), w_param(26), w_param(27), w_param(28), w_param(29), w_param(30), w_param(31), w_param(32), w_param(33), w_param(34), w_param(35), w_param(36), w_param(37), w_param(38), w_param(39), w_param(40), w_param(41), w_param(42), w_param(43), w_param(44) : If w_resultado > "" Then RegistraErro : End If
+                                  End If
+                               case "IS_SIG_DADO_FISICO"     DML_PutXMLDadoFisico_SIG        w_resultado, w_cliente,  w_param(1), w_param(2), w_param(3), w_param(4), w_param(5), w_param(6), w_param(7), w_param(8), w_param(9), w_param(10), w_param(11), w_param(12), w_param(13), w_param(14), w_param(15), w_param(16), w_param(17), w_param(18), w_param(19), w_param(20), w_param(21), w_param(22), w_param(23), w_param(24), w_param(25), w_param(26), w_param(27), w_param(28), w_param(29), w_param(30), w_param(31), w_param(32), w_param(33), w_param(34), w_param(35), w_param(36), w_param(37), w_param(38), w_param(39), w_param(40), w_param(41), w_param(42), w_param(43), w_param(44), w_param(45), w_param(46), w_param(47) : If w_resultado > "" Then RegistraErro : End If
+                               case "IS_SIG_DADO_FINANCEIRO" DML_PutXMLDadoFinanceiro_SIG    w_resultado, w_cliente,  w_param(1), w_param(2), w_param(3), w_param(4), w_param(5), w_param(6), w_param(7), w_param(8), w_param(9), w_param(10), w_param(11), w_param(12), w_param(13), w_param(14), w_param(15), w_param(16), w_param(17), w_param(18), w_param(19), w_param(20), w_param(21), w_param(22), w_param(23), w_param(24), w_param(25), w_param(26), w_param(27), w_param(28), w_param(29), w_param(30), w_param(31), w_param(32), w_param(33), w_param(34), w_param(35), w_param(36), w_param(37), w_param(38), w_param(39), w_param(40), w_param(41), w_param(42), w_param(43), w_param(44), w_param(45), w_param(46), w_param(47), w_param(48) : If w_resultado > "" Then RegistraErro : End If
                             end select
                          next
                       End With
@@ -1465,7 +1672,25 @@ Public Sub Grava
                    RS1.MoveNext
                 Wend
                 Set F2 = Nothing
+                F1.WriteLine "     Registros lidos: " & w_reg
+                F1.WriteLine "   Registros aceitos: " & w_reg - w_erro
+                F1.WriteLine "Registros rejeitados: " & w_erro
                 F1.Close
+                
+                w_tamanho_recebido = ul.Files("w_caminho").Size
+                w_tipo_recebido    = ul.Files("w_caminho").ContentType
+                w_arquivo_registro = "Arquivo registro"
+                Set F1 = FS.GetFile(w_caminho & w_arquivo_rejeicao)
+                w_tamanho_registro = F1.size
+                w_tipo_registro    = ul.Files("w_caminho & w_arquivo_rejeicao").ContentType
+                    
+                ' Grava o resultado da importação no banco de dados
+                DML_PutDcOcorrencia O, _
+                    ul.Form("w_sq_esquema"), w_cliente,   w_usuario,     ul.Form("w_data_arquivo"), _
+                    ul.Files("w_caminho").OriginalPath, _
+                    w_arquivo_processamento, w_tamanho_recebido,  w_tipo_recebido, _
+                    w_arquivo_registro,      w_arquivo_rejeicao, w_tamanho_registro, w_tipo_registro, _
+                    w_reg,       w_erro
              End If
           Else
              ScriptOpen("JavaScript")
@@ -1485,6 +1710,24 @@ Public Sub Grava
           ScriptClose
        End If
     Case "ISSIGIMP"
+       ' Verifica se a Assinatura Eletrônica é válida
+       If (VerificaAssinaturaEletronica(Session("Username"),w_assinatura) and w_assinatura > "") or _
+          w_assinatura = "" Then
+          
+          'ExibeVariaveis
+          DML_PutEsquema O, w_cliente, Request("w_sq_esquema"), w_sq_modulo, Request("w_nome"), Request("w_descricao"), Request("w_tipo"), _
+                            Request("w_ativo"), Request("w_formato"), Request("w_ws_servidor"), Request("w_ws_url"), _
+                            Request("w_ws_acao"), Request("w_ws_mensagem"), Request("w_no_raiz")
+          ScriptOpen "JavaScript"
+          ShowHTML "  location.href='" & R & "&O=L&w_sq_esquema=" & Request("w_sq_esquema") & "&P1=" & P1 & "&P2=" & P2 & "&P3=" & P3 & "&P4=" & P4 & "&TP=" & TP & "&SG=" & SG & MontaFiltro("GET") & "';"
+          ScriptClose
+      Else
+          ScriptOpen "JavaScript"
+          ShowHTML "  alert('Assinatura Eletrônica inválida!');"
+          ShowHTML "  history.back(1);"
+          ScriptClose
+       End If
+    Case "ISSIGEXP"
        ' Verifica se a Assinatura Eletrônica é válida
        If (VerificaAssinaturaEletronica(Session("Username"),w_assinatura) and w_assinatura > "") or _
           w_assinatura = "" Then
@@ -1558,56 +1801,64 @@ Public Sub Grava
        ScriptClose
   End Select
 
-  Set w_no                  = Nothing 
-  Set w_texto               = Nothing 
-  Set w_elemento            = Nothing 
-  Set w_result              = Nothing 
-  Set w_erro                = Nothing 
-  Set w_caminho_recebido    = Nothing 
-  Set w_tamanho_recebido    = Nothing 
-  Set w_tipo_recebido       = Nothing
-  Set w_arquivo_registro    = Nothing 
-  Set w_caminho_registro    = Nothing 
-  Set w_tamanho_registro    = Nothing 
-  Set w_tipo_registro       = Nothing
-  Set w_registros           = Nothing
-  Set w_importados          = Nothing
-  Set w_rejeitados          = Nothing
-  Set w_situacao            = Nothing
-  Set w_chave_nova          = Nothing
-  Set F1                    = Nothing
-  Set F2                    = Nothing
-  Set w_linha               = Nothing
-  Set FS                    = Nothing
-  Set w_ws_mensagem         = Nothing
-  Set w_Null                = Nothing
+  Set w_no                    = Nothing 
+  Set w_texto                 = Nothing 
+  Set w_elemento              = Nothing 
+  Set w_result                = Nothing 
+  Set w_arquivo_processamento = Nothing 
+  Set w_tamanho_recebido      = Nothing 
+  Set w_tipo_recebido         = Nothing
+  Set w_arquivo_registro      = Nothing 
+  Set w_arquivo_rejeicao      = Nothing 
+  Set w_tamanho_registro      = Nothing 
+  Set w_tipo_registro         = Nothing
+  Set w_registros             = Nothing
+  Set w_importados            = Nothing
+  Set w_rejeitados            = Nothing
+  Set w_situacao              = Nothing
+  Set w_chave_nova            = Nothing
+  Set F2                      = Nothing
+  Set w_linha                 = Nothing
+  Set FS                      = Nothing
+  Set w_ws_mensagem           = Nothing
+  Set w_Null                  = Nothing
 End Sub
 REM -------------------------------------------------------------------------
 REM Fim do procedimento que executa as operações de BD
 REM =========================================================================
 
 REM =========================================================================
+REM Rotina de registro dos erros
+REM -------------------------------------------------------------------------
+Sub RegistraErro
+  Dim i, j
+  j = 0
+  For Each i IN w_name
+     If i > "" Then F1.WriteLine i & ": [" & w_param(j) & "]" End If
+     j = j + 1
+  Next
+  w_erro = w_erro + 1
+  F1.WriteLine w_resultado
+  F1.WriteLine "------------------------------------------------------------------------"
+  Set i  = Nothing
+End Sub
+
+REM =========================================================================
 REM Rotina principal
 REM -------------------------------------------------------------------------
 Sub Main
   Select Case Par
-    Case "INICIAL"
-       Inicial
-    Case "TESTE"
-       Teste
-    Case "HELP"
-       Help
-    Case "GRAVA"
-       Grava
-    Case "TABELA"
-       Tabela
-    Case "MAPEAMENTO"
-       Mapeamento
-     Case "IMPORTACAO"
-       Importacao
+    Case "INICIAL"      Inicial
+    Case "TESTE"        Teste
+    Case "HELP"         Help
+    Case "GRAVA"        Grava
+    Case "TABELA"       Tabela
+    Case "MAPEAMENTO"   Mapeamento
+    Case "IMPORTACAO"   Importacao
+    Case "EXPORTACAO"   Exportacao
     Case Else
        Cabecalho
-       ShowHTML "<BASE HREF=""http://" & Request.ServerVariables("server_name") & "/siw/"">"
+       ShowHTML "<BASE HREF=""" & conRootSIW & """>"
        BodyOpen "onLoad=document.focus();"
        ShowHTML "<B><FONT COLOR=""#000000"">" & w_TP & "</FONT></B>"
        ShowHTML "<HR>"

@@ -3,7 +3,7 @@ REM =========================================================================
 REM Montagem da seleção de tipos de acordo
 REM -------------------------------------------------------------------------
 Sub SelecaoTipoAcordo (label, accesskey, hint, chave, chaveAux, chaveAux2, campo, restricao, atributo)
-    DB_GetAgreeType RS, chave, chaveAux, chaveAux2, restricao
+    DB_GetAgreeType RS, null, chaveAux, chaveAux2, restricao
     RS.Sort = "nm_tipo"
     If IsNull(hint) Then
        ShowHTML "          <td valign=""top""><font size=""1""><b>" & Label & "</b><br><SELECT ACCESSKEY=""" & accesskey & """ class=""sts"" NAME=""" & campo & """ " & w_Disabled & " " & atributo & ">"

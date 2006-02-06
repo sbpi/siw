@@ -99,23 +99,7 @@ End Select
 w_cliente         = RetornaCliente()
 w_usuario         = RetornaUsuario()
 w_menu            = RetornaMenu(w_cliente, SG)
-w_ano             = 2005
-
-' Verifica se o documento tem sub-menu. Se tiver, agrega no HREF uma chamada para montagem do mesmo.
-DB_GetLinkSubMenu RS, Session("p_cliente"), SG
-If RS.RecordCount > 0 Then
-   w_submenu = "Existe"
-Else
-   w_submenu = ""
-End If
-DesconectaBD
-
-' Recupera a configuração do serviço
-If P2 > 0 Then DB_GetMenuData RS_menu, P2 Else DB_GetMenuData RS_menu, w_menu End If
-If RS_menu("ultimo_nivel") = "S" Then
-   ' Se for sub-menu, pega a configuração do pai
-   DB_GetMenuData RS_menu, RS_menu("sq_menu_pai")
-End If
+w_ano             = Session("ANO")
 
 Main
 
@@ -208,7 +192,7 @@ Sub Natureza
      ScriptClose
   End If
   ShowHTML "</HEAD>"
-  ShowHTML "<BASE HREF=""http://" & Request.ServerVariables("server_name") & "/siw/"">"
+  ShowHTML "<BASE HREF=""" & conRootSIW & """>"
   If w_troca > "" Then
      BodyOpen "onLoad='document.Form." & w_troca & ".focus()';"
   ElseIf Instr("IA",O) > 0 Then
@@ -304,9 +288,6 @@ Sub Natureza
   Set w_ativo   = Nothing 
   Set w_troca   = Nothing 
 End Sub
-REM =========================================================================
-REM Fim da rotina
-REM -------------------------------------------------------------------------
 
 REM =========================================================================
 REM Manter Tabela básica "Horizonte"
@@ -357,7 +338,7 @@ Sub Horizonte
      ScriptClose
   End If
   ShowHTML "</HEAD>"
-  ShowHTML "<BASE HREF=""http://" & Request.ServerVariables("server_name") & "/siw/"">"
+  ShowHTML "<BASE HREF=""" & conRootSIW & """>"
   If w_troca > "" Then
      BodyOpen "onLoad='document.Form." & w_troca & ".focus()';"
   ElseIf Instr("IA",O) > 0 Then
@@ -452,9 +433,6 @@ Sub Horizonte
   Set w_ativo   = Nothing 
   Set w_troca   = Nothing 
 End Sub
-REM =========================================================================
-REM Fim da rotina
-REM -------------------------------------------------------------------------
 
 REM =========================================================================
 REM Manter Tabela básica "Projetos"
@@ -520,7 +498,7 @@ Sub Projetos
      ScriptClose
   End If
   ShowHTML "</HEAD>"
-  ShowHTML "<BASE HREF=""http://" & Request.ServerVariables("server_name") & "/siw/"">"
+  ShowHTML "<BASE HREF=""" & conRootSIW & """>"
   If w_troca > "" Then
      BodyOpen "onLoad='document.Form." & w_troca & ".focus()';"
   ElseIf Instr("IA",O) > 0 Then
@@ -651,9 +629,6 @@ Sub Projetos
   Set w_padrao      = Nothing
   Set w_troca       = Nothing
 End Sub
-REM =========================================================================
-REM Fim da rotina
-REM -------------------------------------------------------------------------
 
 REM =========================================================================
 REM Rotina de unidade
@@ -705,7 +680,7 @@ Sub Unidade
      ScriptClose
   End If
   ShowHTML "</HEAD>"
-  ShowHTML "<BASE HREF=""http://" & Request.ServerVariables("server_name") & "/siw/"">"
+  ShowHTML "<BASE HREF=""" & conRootSIW & """>"
   If w_troca > "" Then
      BodyOpen "onLoad='document.Form." & w_troca & ".focus()';"
   ElseIf Instr("A",O) > 0 Then
@@ -745,6 +720,9 @@ Sub Unidade
         ShowHTML "        <td align=""top"" nowrap><font size=""1"">"
         ShowHTML "          <A class=""HL"" HREF=""" & w_dir & w_Pagina & par & "&R=" & w_Pagina & par & "&O=A&w_chave=" & RS("chave") & "&P1=" & P1 & "&P2=" & P2 & "&P3=" & P3 & "&P4=" & P4 & "&TP=" & TP & "&SG=" & SG & """>Alterar</A>&nbsp"
         ShowHTML "          <A class=""HL"" HREF=""" & w_dir & w_Pagina & par & "&R=" & w_Pagina & par & "&O=E&w_chave=" & RS("chave") & "&P1=" & P1 & "&P2=" & P2 & "&P3=" & P3 & "&P4=" & P4 & "&TP=" & TP & "&SG=" & SG & """>Excluir</A>&nbsp"
+        If RS("planejamento") = "S" Then
+           ShowHTML "          <A class=""hl"" HREF=""javascript:document.focus();"" onClick=""window.open('" & w_Pagina & "Limites&R=" & w_Pagina & par & "&O=L&w_chave=" & RS("chave") & "&P1=" & P1 & "&P2=" & P2 & "&P3=" & P3 & "&P4=" & P4 & "&TP=" & TP & "&SG=ISUNILIMITE','Gestao','width=630,height=500,top=30,left=30,status=yes,resizable=yes,scrollbars=yes,toolbar=yes');"" title=""Configura limites orçamentários anuais para a unidade."">Limites</A>&nbsp"
+        End If
         ShowHTML "        </td>"
         ShowHTML "      </tr>"
         RS.MoveNext
@@ -810,9 +788,194 @@ Sub Unidade
   Set w_sigla               = Nothing 
   Set w_chave               = Nothing
 End Sub
+
 REM =========================================================================
-REM Fim da rotina
+REM Rotina de limites orçamentários
 REM -------------------------------------------------------------------------
+Sub Limites
+
+  Dim w_limite, w_ano
+  
+  w_troca           = Request("w_troca")
+  w_chave           = Request("w_chave")
+  
+  ' Recupera os dados da unidade selecionada
+  DB_GetIsUnidade_IS RS1, w_chave, w_cliente
+  
+  If w_troca > "" Then ' Se for recarga da página
+     w_ano                  = Request("w_ano")
+     w_limite               = Request("w_limite")
+  ElseIf O = "L" Then
+     ' Recupera todos os registros para a listagem
+     DB_GetIsUnidadeLimite_IS RS, w_chave, null, w_cliente
+     RS.Sort = "ano, nome"
+  ElseIf InStr("AEV",O) > 0 and w_Troca = "" Then
+     ' Recupera os dados do endereço informado
+     DB_GetIsUnidadeLimite_IS RS, w_chave, w_ano, w_cliente
+     w_ano                  = RS("ano")
+     w_limite               = FormatNumber(RS("limite_orcamento"),2)
+     DesconectaBD
+  End If
+  
+  Cabecalho
+  ShowHTML "<HEAD>"
+  If InStr("IAEP",O) > 0 Then
+     ScriptOpen "JavaScript"
+     FormataValor
+     ValidateOpen "Validacao"
+     If InStr("IA",O) > 0 Then
+        Validate "w_ano", "Ano", "SELECT", "1", "4", "4", "", "0123456789"
+        Validate "w_limite", "Limite financeiro para passagens", "VALOR", "1", 4, 18, "", "0123456789.,"
+        Validate "w_assinatura", "Assinatura Eletrônica", "1", "1", "6", "30", "1", "1"
+     ElseIf O = "E" Then
+        Validate "w_assinatura", "Assinatura Eletrônica", "1", "1", "6", "30", "1", "1"
+        ShowHTML "  if (confirm('Confirma a exclusão deste registro?')) "
+        ShowHTML "     { return (true); }; "
+        ShowHTML "     { return (false); }; "
+     End If
+     ShowHTML "  theForm.Botao[0].disabled=true;"
+     ShowHTML "  theForm.Botao[1].disabled=true;"
+     ValidateClose
+     ScriptClose
+  End If
+  ShowHTML "</HEAD>"
+  ShowHTML "<BASE HREF=""" & conRootSIW & """>"
+  If w_troca > "" Then
+     BodyOpen "onLoad='document.Form." & w_troca & ".focus()';"
+  ElseIf Instr("A",O) > 0 Then
+     BodyOpen "onLoad='document.focus()';"
+  ElseIf O = "E" Then
+     BodyOpen "onLoad='document.Form.w_assinatura.focus()';"
+  Else
+     BodyOpen "onLoad='document.focus()';"
+  End If
+  ShowHTML "<B><FONT COLOR=""#000000"">" & w_TP & "</FONT></B>"
+  ShowHTML "<HR>"
+  ShowHTML "<div align=center><center>"
+  ShowHTML "<table border=""0"" cellpadding=""0"" cellspacing=""0"" width=""100%"">"
+  ShowHTML "<tr><td align=""center"" height=""1"" bgcolor=""#000000"" colspan=""2""></td></tr>"
+  ShowHTML "<tr><td valign=""top"" align=""center"" bgcolor=""#D0D0D0"" colspan=""2""><font size=""2""><b>" & RS1("nome") & " - Limites orçamentários</td></td></tr>"
+  ShowHTML "<tr><td align=""center"" height=""1"" bgcolor=""#000000"" colspan=""2""></td></tr>"
+  If O = "L" Then
+    ' Exibe a quantidade de registros apresentados na listagem e o cabeçalho da tabela de listagem
+    ShowHTML "<tr><td><font size=""1""><a accesskey=""I"" class=""SS"" href=""" & w_dir & w_Pagina & par & "&R=" & w_Pagina & par & "&O=I&w_chave=" & w_chave & "&P1=" & P1 & "&P2=" & P2 & "&P3=" & P3 & "&P4=" & P4 & "&TP=" & TP & "&SG=" & SG & """><u>I</u>ncluir</a>&nbsp;"
+    ShowHTML "            <a accesskey=""F"" class=""SS"" href=""javascript:window.close(); opener.focus();""><u>F</u>echar</a>"
+    ShowHTML "    <td align=""right""><font size=""1""><b>Registros existentes: " & RS.RecordCount
+    ShowHTML "<tr><td align=""center"" colspan=3>"
+    ShowHTML "    <TABLE WIDTH=""100%"" bgcolor=""" & conTableBgColor & """ BORDER=""" & conTableBorder & """ CELLSPACING=""" & conTableCellSpacing & """ CELLPADDING=""" & conTableCellPadding & """ BorderColorDark=""" & conTableBorderColorDark & """ BorderColorLight=""" & conTableBorderColorLight & """>"
+    ShowHTML "        <tr bgcolor=""" & conTrBgColor & """ align=""center"">"
+    ShowHTML "          <td><font size=""1""><b>" & LinkOrdena("Ano","ano") & "</font></td>"    
+    ShowHTML "          <td><font size=""1""><b>" & LinkOrdena("Limite","limite") & "</font></td>"
+    ShowHTML "          <td><font size=""1""><b>Operações</font></td>"
+    ShowHTML "        </tr>"
+    If RS.EOF Then ' Se não foram selecionados registros, exibe mensagem
+        ShowHTML "      <tr bgcolor=""" & conTrBgColor & """><td colspan=3 align=""center""><font size=""1""><b>Não foram encontrados registros.</b></td></tr>"
+    Else
+      ' Lista os registros selecionados para listagem
+      While Not RS.EOF
+        If w_cor = conTrBgColor or w_cor = "" Then w_cor = conTrAlternateBgColor Else w_cor = conTrBgColor End If
+        ShowHTML "      <tr bgcolor=""" & w_cor & """ valign=""top"">"
+        ShowHTML "        <td align=""center""><font size=""1"">" & RS("ano") & "</td>"
+        ShowHTML "        <td align=""right""><font size=""1"">" & FormatNumber(RS("limite_orcamento"),2) &"</td>"
+        ShowHTML "        <td align=""top"" nowrap><font size=""1"">"
+        ShowHTML "          <A class=""HL"" HREF=""" & w_dir & w_Pagina & par & "&R=" & w_Pagina & par & "&O=A&w_chave=" & RS("chave") & "&w_ano=" & RS("ano") & "&P1=" & P1 & "&P2=" & P2 & "&P3=" & P3 & "&P4=" & P4 & "&TP=" & TP & "&SG=" & SG & """>Alterar</A>&nbsp"
+        ShowHTML "          <A class=""HL"" HREF=""" & w_dir & w_Pagina & par & "&R=" & w_Pagina & par & "&O=E&w_chave=" & RS("chave") & "&w_ano=" & RS("ano") & "&P1=" & P1 & "&P2=" & P2 & "&P3=" & P3 & "&P4=" & P4 & "&TP=" & TP & "&SG=" & SG & """>Excluir</A>&nbsp"
+        ShowHTML "        </td>"
+        ShowHTML "      </tr>"
+        RS.MoveNext
+      wend
+    End If
+    ShowHTML "      </center>"
+    ShowHTML "    </table>"
+    ShowHTML "  </td>"
+    ShowHTML "</tr>"
+    DesconectaBD
+  ElseIf Instr("IAEV",O) > 0 Then
+    If InStr("EV",O) Then
+       w_Disabled = " DISABLED "
+    End If
+    AbreForm "Form", w_dir & w_Pagina & "Grava", "POST", "return(Validacao(this));", null,P1,P2,P3,P4,TP,SG,R,O
+    ShowHTML "<INPUT type=""hidden"" name=""w_troca"" value="""">"
+    ShowHTML "<INPUT type=""hidden"" name=""w_chave"" value=""" & w_chave & """>"
+
+    ShowHTML "<tr bgcolor=""" & conTrBgColor & """><td align=""center"">"
+    ShowHTML "    <table width=""97%"" border=""0"">"
+    ShowHTML "      <tr valign=""top"">"
+    If O = "I" Then
+       SelecaoAno "<U>A</U>no:", "A", null, w_ano, null, "w_ano", null, null
+    Else
+       ShowHTML "          <td><font size=""1""><b>Ano:<br>" & w_ano & "</b></td>"
+       ShowHTML "<INPUT type=""hidden"" name=""w_ano"" value=""" & w_ano & """>"
+    End If
+    ShowHTML "          <td><font size=""1""><b><u>L</u>imite:</b><br><input " & w_Disabled & " accesskey=""L"" type=""text"" name=""w_limite"" class=""STI"" SIZE=""18"" MAXLENGTH=""18"" VALUE=""" & w_limite & """ onKeyDown=""FormataValor(this,18,2,event);"" title=""Informe o limite orçamentário para a unidade selecionada.""></td>"
+    ShowHTML "      <tr><td align=""LEFT""><font size=""1""><b><U>A</U>ssinatura Eletrônica:<BR> <INPUT ACCESSKEY=""A"" class=""sti"" type=""PASSWORD"" name=""w_assinatura"" size=""30"" maxlength=""30"" value=""""></td></tr>"
+    ShowHTML "      <tr><td align=""center"" colspan=""2""><hr>"
+    If O = "E" Then
+       ShowHTML "   <input class=""STB"" type=""submit"" name=""Botao"" value=""Excluir"">"
+    Else
+       ShowHTML "            <input class=""STB"" type=""submit"" name=""Botao"" value=""Incluir"">"
+    End If
+    ShowHTML "            <input class=""STB"" type=""button"" onClick=""history.back(1);"" name=""Botao"" value=""Cancelar"">"
+    ShowHTML "          </td>"
+    ShowHTML "      </tr>"
+    ShowHTML "    </table>"
+    ShowHTML "    </TD>"
+    ShowHTML "</tr>"
+    ShowHTML "</FORM>"
+  Else
+    ScriptOpen "JavaScript"
+    ShowHTML " alert('Opção não disponível');"
+    ShowHTML " history.back(1);"
+    ScriptClose
+  End If
+  ShowHTML "</table>"
+  ShowHTML "</center>"
+  Rodape
+
+  Set w_limite      = Nothing
+  Set w_ano         = Nothing
+End Sub
+
+REM =========================================================================
+REM Rotina de seleção do ano
+REM -------------------------------------------------------------------------
+Sub SelecionarAno
+  
+  Dim w_ano_escolhido
+    
+  Cabecalho
+  ShowHTML "<HEAD>"
+  ScriptOpen "JavaScript"
+  ValidateOpen "Validacao"
+  Validate "w_ano_escolhido", "Ano", "SELECT", "1", "4", "4", "", "1"
+  ShowHTML "  theForm.Botao.disabled=true;"
+  ValidateClose
+  ScriptClose
+  ShowHTML "</HEAD>"
+  ShowHTML "<BASE HREF=""" & conRootSIW & """>"
+  BodyOpen "onLoad='document.Form.w_ano_escolhido.focus()';"
+  ShowHTML "<B><FONT COLOR=""#000000"">" & w_TP & "</FONT></B>"
+  ShowHTML "<HR>"
+  ShowHTML "<div align=center><center>"
+  ShowHTML "<table border=""0"" cellpadding=""0"" cellspacing=""0"" width=""100%"">"
+  AbreForm "Form", w_dir & w_Pagina & "Grava", "POST", "return(Validacao(this));", null,P1,P2,P3,P4,TP,SG,w_pagina&par,O
+  ShowHTML "<tr bgcolor=""" & conTrBgColor & """><td align=""center"">"
+  ShowHTML "    <table width=""97%"" border=""0"">"
+  ShowHTML "      <tr><td><table border=0 width=""100%"" cellspacing=0 cellpadding=0><tr valign=""top"">"
+  SelecaoAno "<U>A</U>no:", "A", null, w_ano, null, "w_ano_escolhido", null, null
+  ShowHTML "          <input class=""STB"" type=""submit"" name=""Botao"" value=""Gravar"">"
+  ShowHTML "          </td>"
+  ShowHTML "      </tr>"
+  ShowHTML "    </table>"
+  ShowHTML "    </TD>"
+  ShowHTML "</tr>"
+  ShowHTML "</FORM>"
+  ShowHTML "</table>"
+  ShowHTML "</center>"
+  Rodape
+
+  Set w_ano_escolhido   = Nothing
+End Sub
 
 REM =========================================================================
 REM Procedimento que executa as operações de BD
@@ -912,6 +1075,44 @@ Public Sub Grava
           ShowHTML "  history.back(1);"
           ScriptClose
        End If
+    Case "ISUNILIMITE"
+       ' Verifica se a Assinatura Eletrônica é válida
+       If (VerificaAssinaturaEletronica(Session("Username"),w_assinatura) and w_assinatura > "") or _
+          w_assinatura = "" Then
+          'ExibeVariaveis
+          If O = "I" Then
+             DB_GetIsUnidadeLimite_IS RS, Request("w_Chave"), Request("w_ano"), w_cliente
+             If RS.RecordCount = 0 Then
+                DML_PutIsUnidadeLimite_IS O, Request("w_chave"), Request("w_ano"), Request("w_limite")
+                ScriptOpen "JavaScript"
+                ShowHTML "  location.href='" & R & "&w_chave=" & Request("w_chave") & "&P1=" & P1 & "&P2=" & P2 & "&P3=" & P3 & "&P4=" & P4 & "&TP=" & TP & "&SG=" & SG & MontaFiltro("GET") & "';"
+                ScriptClose
+             Else
+                ScriptOpen "JavaScript"
+                ShowHTML "  alert('Exercício já cadastrado para a unidade informada!');"
+                ShowHTML "  history.back(1);"
+                ScriptClose
+            End If
+         Else
+            DML_PutIsUnidadeLimite_IS O, Request("w_chave"), Request("w_ano"), Request("w_limite")
+            ScriptOpen "JavaScript"
+            ShowHTML "  location.href='" & R & "&w_chave=" & Request("w_chave") & "&P1=" & P1 & "&P2=" & P2 & "&P3=" & P3 & "&P4=" & P4 & "&TP=" & TP & "&SG=" & SG & MontaFiltro("GET") & "';"
+            ScriptClose
+         End If
+         
+       Else
+          ScriptOpen "JavaScript"
+          ShowHTML "  alert('Assinatura Eletrônica inválida!');"
+          ShowHTML "  history.back(1);"
+          ScriptClose
+       End If
+    Case "ISANO"
+
+       Session("ANO") = Request("w_ano_escolhido")
+       DB_GetMenuData RS1, w_menu
+       ScriptOpen "JavaScript"
+       ShowHTML "  parent.menu.location='../Menu.asp?par=ExibeDocs&O=L&R=" & R & "&SG=" & RS1("sigla") & "&TP=" & TP & MontaFiltro("GET") & "';"
+       ScriptClose
     Case Else
        ScriptOpen "JavaScript"
        ShowHTML "  alert('Bloco de dados não encontrado: " & SG & "');"
@@ -935,19 +1136,16 @@ REM Rotina principal
 REM -------------------------------------------------------------------------
 Sub Main
   Select Case Par
-    Case "NATUREZA"          
-       Natureza
-    Case "HORIZONTE"         
-       Horizonte
-    Case "PROJETOS"          
-       Projetos
-    Case "UNIDADE"          
-       Unidade
-    Case "GRAVA"             
-       Grava
+    Case "NATUREZA"     Natureza
+    Case "HORIZONTE"    Horizonte
+    Case "PROJETOS"     Projetos
+    Case "UNIDADE"      Unidade
+    Case "LIMITES"      Limites
+    Case "SELECIONARANO" SelecionarAno
+    Case "GRAVA"        Grava
     Case Else
        Cabecalho
-       ShowHTML "<BASE HREF=""http://" & Request.ServerVariables("server_name") & "/siw/"">"
+       ShowHTML "<BASE HREF=""" & conRootSIW & """>"
        BodyOpen "onLoad=document.focus();"
        ShowHTML "<B><FONT COLOR=""#000000"">" & w_TP & "</FONT></B>"
        ShowHTML "<HR>"
@@ -955,7 +1153,4 @@ Sub Main
        Rodape
   End Select
 End Sub
-REM =========================================================================
-REM Fim da rotina principal
-REM -------------------------------------------------------------------------
 %>

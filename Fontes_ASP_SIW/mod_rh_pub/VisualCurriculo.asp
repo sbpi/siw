@@ -114,7 +114,7 @@ Sub VisualCurriculo(p_cliente, p_usuario, O)
           If RS("email") = "S" Then
              HTML = VbCrLf & HTML &"        <td><font size=""1""><a href=""mailto:" & RS("logradouro") & """>" & RS("logradouro") & "</a></td>"
           Else
-             HTML = VbCrLf & HTML &"        <td><font size=""1""><a href=""http://" & replace(RS("logradouro"),"http://","") & """ target=""_blank"">" & RS("logradouro") & "</a></td>"
+             HTML = VbCrLf & HTML &"        <td><font size=""1""><a href=""://" & replace(RS("logradouro"),"://","") & """ target=""_blank"">" & RS("logradouro") & "</a></td>"
           End If
           HTML = VbCrLf & HTML &"        <td align=""center""><font size=""1"">" & RS("padrao") & "</td>"
           HTML = VbCrLf & HTML &"      </tr>"
