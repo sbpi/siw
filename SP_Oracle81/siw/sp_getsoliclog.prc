@@ -28,7 +28,7 @@ begin
                    i.sq_pessoa sq_pessoa_destinatario,
                    f.nome fase,
                    e.nome tramite,
-                   k.caminho, k.tipo, k.tamanho
+                   k.sq_siw_arquivo, k.caminho, k.tipo, k.tamanho
               from siw_solic_log                     a,
                    co_pessoa         c,
                    siw_tramite       e,
@@ -54,7 +54,7 @@ begin
                    d.nome_resumido destinatario,
                    d.sq_pessoa sq_pessoa_destinatario,
                    f.nome fase, f.nome tramite,
-                   k.caminho, k.tipo, k.tamanho
+                   k.sq_siw_arquivo, k.caminho, k.tipo, k.tamanho
               from gd_demanda_log                     b,
                    co_pessoa          d,
                    co_pessoa          c,
@@ -128,7 +128,7 @@ begin
                    i.sq_pessoa sq_pessoa_destinatario,
                    f.nome fase,
                    e.nome tramite,
-                   k.caminho, k.tipo, k.tamanho
+                   k.sq_siw_arquivo, k.caminho, k.tipo, k.tamanho
               from siw_solic_log                       a,
                    co_pessoa         c,
                    siw_tramite       e,
@@ -154,7 +154,7 @@ begin
                    d.nome_resumido destinatario,
                    d.sq_pessoa sq_pessoa_destinatario,
                    f.nome fase, f.nome tramite,
-                   k.caminho, k.tipo, k.tamanho
+                   k.sq_siw_arquivo, k.caminho, k.tipo, k.tamanho
               from ac_acordo_log                       b,
                    co_pessoa         d,
                    co_pessoa         c,
@@ -183,7 +183,7 @@ begin
                    i.sq_pessoa sq_pessoa_destinatario,
                    f.nome fase,
                    e.nome tramite,
-                   k.caminho, k.tipo, k.tamanho
+                   k.sq_siw_arquivo, k.caminho, k.tipo, k.tamanho
               from siw_solic_log                       a,
                    co_pessoa         c,
                    siw_tramite       e,
@@ -209,7 +209,7 @@ begin
                    d.nome_resumido destinatario,
                    d.sq_pessoa sq_pessoa_destinatario,
                    f.nome fase, f.nome tramite,
-                   k.caminho, k.tipo, k.tamanho
+                   k.sq_siw_arquivo, k.caminho, k.tipo, k.tamanho
               from fn_lancamento_log                       b,
                    co_pessoa             d,
                    co_pessoa             c,
@@ -238,7 +238,7 @@ begin
                    i.sq_pessoa sq_pessoa_destinatario,
                    f.nome fase,
                    e.nome tramite,
-                   k.caminho, k.tipo, k.tamanho
+                   k.sq_siw_arquivo, k.caminho, k.tipo, k.tamanho
               from siw_solic_log                     a,
                    co_pessoa         c,
                    siw_tramite       e,
@@ -264,7 +264,7 @@ begin
                    d.nome_resumido destinatario,
                    d.sq_pessoa sq_pessoa_destinatario,
                    f.nome fase, f.nome tramite,
-                   k.caminho, k.tipo, k.tamanho
+                   k.sq_siw_arquivo, k.caminho, k.tipo, k.tamanho
               from gd_demanda_log                     b,
                    co_pessoa          d,
                    co_pessoa          c,
