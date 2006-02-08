@@ -40,11 +40,14 @@ create or replace procedure SP_PutTarefaGeral_IS
    w_log_sol number(18);
    w_log_esp number(18);
    w_arq     varchar2(4000) := ', ';
+   w_ano     number(4);
    
    cursor c_arquivos is
     select t.sq_siw_arquivo from siw.siw_solic_arquivo t where t.sq_siw_solicitacao = p_chave;
 begin
    If p_operacao = 'I' Then -- Inclusão
+      -- Recupera o ano da ação
+      select ano into w_ano from siw.siw_solicitacao where sq_siw_solicitacao = p_projeto;
       -- Recupera a próxima chave
       select siw.sq_siw_solicitacao.nextval into w_Chave from dual;
        
@@ -55,14 +58,14 @@ begin
          inicio,             fim,           inclusao,            ultima_alteracao, 
          conclusao,          valor,         opiniao,             data_hora, 
          sq_unidade,         sq_cidade_origem,                   palavra_chave,
-         sq_solic_pai)
+         sq_solic_pai,       ano)
       (select 
          w_Chave,            p_menu,        a.sq_siw_tramite,    p_solicitante,
          p_cadastrador,      p_executor,    p_descricao,         p_justificativa,
          p_inicio,           p_fim,         sysdate,             sysdate,
          null,               p_valor,       null,                p_data_hora,
          p_unidade,          p_cidade,                           p_palavra_chave,
-         p_projeto
+         p_projeto,          w_ano
          from siw.siw_tramite a
         where a.sq_menu = p_menu
           and a.sigla   = 'CI'
@@ -241,4 +244,3 @@ begin
    End If;
 end SP_PutTarefaGeral_IS;
 /
-

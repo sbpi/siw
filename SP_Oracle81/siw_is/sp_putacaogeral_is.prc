@@ -83,13 +83,13 @@ begin
          cadastrador,        executor,      descricao,           justificativa,      
          inicio,             fim,           inclusao,            ultima_alteracao, 
          conclusao,          valor,         opiniao,             data_hora, 
-         sq_unidade,         sq_cidade_origem,    palavra_chave)
+         sq_unidade,         sq_cidade_origem,    palavra_chave, ano)
       (select 
          w_Chave,            p_menu,        a.sq_siw_tramite,    p_solicitante,
          p_cadastrador,      p_executor,    p_descricao,         p_justificativa,
          p_inicio,           p_fim,         sysdate,             sysdate,
          null,               p_valor,       null,                p_data_hora,
-         p_unidade,          p_cidade,            p_palavra_chave
+         p_unidade,          p_cidade,      p_palavra_chave,     p_ano
          from siw.siw_tramite a
         where a.sq_menu = p_menu
           and a.sigla   = 'CI'

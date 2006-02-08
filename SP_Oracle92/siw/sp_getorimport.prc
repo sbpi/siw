@@ -12,8 +12,8 @@ begin
    open p_result for 
        select a.sq_orimporta chave, a.data, a.data_arquivo, a.registros, a.importados, a.rejeitados, a.situacao,
               a.sq_pessoa, a.arquivo_recebido, a.arquivo_registro,
-              b.nome nm_recebido, b.tamanho tm_recebido, b.tipo tp_recebido, b.caminho cm_recebido,
-              c.nome nm_result,   c.tamanho tm_result,   c.tipo tp_result,   c.caminho cm_result,
+              b.nome nm_recebido, b.tamanho tm_recebido, b.tipo tp_recebido, b.caminho cm_recebido, b.sq_siw_arquivo chave_recebido,
+              c.nome nm_result,   c.tamanho tm_result,   c.tipo tp_result,   c.caminho cm_result,   c.sq_siw_arquivo chave_result,
               d.nome nm_resp,     d.nome_resumido nm_resumido_resp,
               case situacao
                 when 0 then 'Completa'
@@ -30,4 +30,3 @@ begin
          and ((p_imp_ini     is null) or (p_imp_ini     is not null and a.data          between p_imp_ini and p_imp_fim+1));
 end SP_GetOrImport;
 /
-

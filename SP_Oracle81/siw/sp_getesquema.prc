@@ -26,8 +26,8 @@ begin
                 e.sq_ocorrencia, e.data_ocorrencia, e.data_referencia, e.processados, e.rejeitados,
                 e.arquivo_processamento, e.arquivo_rejeicao,
                 f.sq_pessoa, f.nome nm_pessoa, f.nome_resumido nm_pessoa_resumido,
-                g.nome nm_recebido, g.tamanho tm_recebido, g.tipo tp_recebido, g.caminho cm_recebido,
-                h.nome nm_result,   h.tamanho tm_result,   h.tipo tp_result,   h.caminho cm_result
+                g.nome nm_recebido, g.tamanho tm_recebido, g.tipo tp_recebido, g.caminho cm_recebido, g.sq_siw_arquivo chave_recebido,
+                h.nome nm_result,   h.tamanho tm_result,   h.tipo tp_result,   h.caminho cm_result  , h.sq_siw_arquivo chave_result
            from dc_esquema                        a,
                 siw_modulo    b,
                 (select sq_esquema, count(*) qtd_tabela

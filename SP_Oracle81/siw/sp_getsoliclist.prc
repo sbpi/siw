@@ -789,11 +789,11 @@ begin
                 (select sq_siw_solicitacao, acesso(sq_siw_solicitacao, p_pessoa) acesso
                    from siw_solicitacao
                 )                    b2,
-                siw.gd_demanda           d,
-                siw.pd_missao            d1,
-                siw.co_pessoa            d2,
-                siw.co_tipo_vinculo      d3,
-                siw.co_pessoa_fisica     d4,
+                gd_demanda           d,
+                pd_missao            d1,
+                co_pessoa            d2,
+                co_tipo_vinculo      d3,
+                co_pessoa_fisica     d4,
                 eo_unidade           e,
                 eo_unidade_resp      e1,
                 eo_unidade_resp      e2,
