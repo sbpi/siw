@@ -54,7 +54,7 @@ begin
          p_data_hora, p_envia_dia_util, p_pede_descricao, p_pede_justificativa, p_finalidade,
          p_cliente, p_nome, p_acesso_geral, p_modulo, p_sq_unidade_exec,
          p_tramite, p_ultimo_nivel, p_descentralizado, p_externo, p_ativo, p_ordem, Nvl(p_envio,'S'),
-         p_controla_ano);
+         Nvl(p_controla_ano,'N'));
       
       -- Cria a opção do menu para todos os endereços da organização
       insert into siw_menu_endereco (sq_menu, sq_pessoa_endereco) 
@@ -89,7 +89,7 @@ begin
           ultimo_nivel         = p_ultimo_nivel,       descentralizado      = p_descentralizado, 
           externo              = p_externo,            ordem                = p_ordem,
           sq_unid_executora    = p_sq_unidade_exec,    destinatario         = Nvl(p_envio,'S'),
-          controla_ano         = p_controla_ano
+          controla_ano         = Nvl(p_controla_ano,'N')
       where sq_menu = p_chave;
    Elsif p_operacao = 'E' Then
       -- Remove as permissões de acesso por trâmite que os usuários têm
