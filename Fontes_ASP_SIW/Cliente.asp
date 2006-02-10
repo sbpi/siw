@@ -1736,14 +1736,14 @@ Sub Configuracao
     ShowHTML "          <tr><td valign=""top""><font size=""1""><b>L<u>o</u>gomarca telas e relatórios:</b><br><input " & w_Disabled & " accesskey=""O"" type=""FILE"" name=""w_logo"" class=""sti"" SIZE=""45"" MAXLENGTH=""100"" VALUE="""" title=""Localize o arquivo da logomarca a ser utilizada nas telas e relatórios da aplicação. Uma cópia dele será transferida para o servidor da aplicação por \'upload\'.""></td>"
     If w_logo > "" Then
        ShowHTML "              <td valign=""top""><font size=""1""><b>Imagem atual:</b><br>"
-       ShowHTML "              <img src=""" & conFileVirtual & w_sq_pessoa & "/img/logo" & Mid(w_logo,Instr(w_logo,"."),30) & """ border=1>"
+       ShowHTML "              <img src=""" & LinkArquivo(null, w_sq_pessoa, "img/logo" & Mid(w_logo,Instr(w_logo,"."),30), null, null, null, "EMBED") & """ border=1>"
     End If
     ShowHTML "          </table>"
     ShowHTML "      <tr><td valign=""top"" colspan=""2""><table border=0 width=""100%"" cellspacing=0>"
     ShowHTML "          <tr><td valign=""top""><font size=""1""><b>Lo<u>g</u>omarca menu:</b><br><input " & w_Disabled & " accesskey=""G"" type=""FILE"" name=""w_logo1"" class=""sti"" SIZE=""45"" MAXLENGTH=""100"" VALUE="""" title=""Localize o arquivo da logomarca a ser utilizada no menu da aplicação. Uma cópia dele será transferida para o servidor da aplicação por \'upload\'.""></td>"
     If w_logo1 > "" Then
        ShowHTML "              <td valign=""top""><font size=""1""><b>Imagem atual:</b><br>"
-       ShowHTML "              <img src=""" & conFileVirtual & w_sq_pessoa & "/img/logo1" & Mid(w_logo1,Instr(w_logo1,"."),30) & """ border=1>"
+       ShowHTML "              <img src=""" & LinkArquivo(null, w_sq_pessoa, "img/logo1" & Mid(w_logo1,Instr(w_logo1,"."),30), null, null, null, "EMBED") & """ border=1>"
     End If
     ShowHTML "          </table>"
 
@@ -1757,7 +1757,7 @@ Sub Configuracao
     ShowHTML "          <tr><td valign=""top""><font size=""1""><b>Imagem de <u>f</u>undo do menu:</b><br><input " & w_Disabled & " accesskey=""F"" type=""FILE"" name=""w_fundo"" class=""sti"" SIZE=""45"" MAXLENGTH=""100"" VALUE="""" title=""Localize o arquivo a ser usado como fundo do menu. Uma cópia dele será transferida para o servidor da aplicação por \'upload\'.""></td>"
     If w_fundo > "" Then
        ShowHTML "              <td valign=""top""><font size=""1""><b>Imagem atual:</b><br>"
-       ShowHTML "              <img src=""" & conFileVirtual & w_sq_pessoa & "/img/fundo" & Mid(w_fundo,Instr(w_fundo,"."),30) & """ border=1>"
+       ShowHTML "              <img src=""" & LinkArquivo(null, w_sq_pessoa, "img/fundo" & Mid(w_fundo,Instr(w_fundo,"."),30), null, null, null, "EMBED") & """ border=1>"
     End If
     ShowHTML "          </table>"
 
@@ -1845,7 +1845,7 @@ Sub Visual
   ' Recupera o logo do cliente a ser usado nas listagens
   DB_GetCustomerData RS, w_sq_pessoa
   If RS("logo") > "" Then
-     w_logo = "files\" & w_sq_pessoa & "\img\logo" & Mid(RS("logo"),Instr(RS("logo"),"."),30)
+     w_logo = "\img\logo" & Mid(RS("logo"),Instr(RS("logo"),"."),30)
   End If
   DesconectaBD
   
@@ -1856,7 +1856,7 @@ Sub Visual
   ShowHTML "<TITLE>Cliente</TITLE>"
   ShowHTML "</HEAD>"  
   BodyOpen "onLoad='document.focus()'; "
-  ShowHTML "<TABLE WIDTH=""100%"" BORDER=0><TR><TD ROWSPAN=2><IMG ALIGN=""LEFT"" SRC=""" & w_logo & """><TD ALIGN=""RIGHT""><B><FONT SIZE=5 COLOR=""#000000"">"
+  ShowHTML "<TABLE WIDTH=""100%"" BORDER=0><TR><TD ROWSPAN=2><IMG ALIGN=""LEFT"" src=""" & LinkArquivo(null, w_sq_pessoa, w_logo, null, null, null, "EMBED") & """><TD ALIGN=""RIGHT""><B><FONT SIZE=5 COLOR=""#000000"">"
   ShowHTML "CLIENTE"
   ShowHTML "</FONT><TR><TD ALIGN=""RIGHT""><B><FONT SIZE=2 COLOR=""#000000"">" & DataHora() & "</B></TD></TR>"
   ShowHTML "</FONT></B></TD></TR></TABLE>"

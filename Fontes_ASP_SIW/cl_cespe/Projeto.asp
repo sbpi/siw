@@ -724,9 +724,6 @@ Sub Inicial
 
   Set w_titulo = Nothing
 End Sub
-REM =========================================================================
-REM Fim da tabela de projetos
-REM -------------------------------------------------------------------------
 
 REM =========================================================================
 REM Rotina dos dados gerais
@@ -1286,9 +1283,6 @@ Sub Geral
   Set w_cor                 = Nothing 
 
 End Sub
-REM =========================================================================
-REM Fim da rotina de dados gerais
-REM -------------------------------------------------------------------------
 
 REM =========================================================================
 REM Rotina de cadastramento do proponente
@@ -1765,9 +1759,6 @@ Sub OutraParte
   Set w_cor                 = Nothing 
   Set w_disabled            = Nothing
 End Sub
-REM =========================================================================
-REM Fim da tela de proponente
-REM -------------------------------------------------------------------------
 
 REM =========================================================================
 REM Rotina de cadastramento da preposto
@@ -2050,9 +2041,6 @@ Sub Preposto
   Set w_cor                 = Nothing 
   Set w_disabled            = Nothing
 End Sub
-REM =========================================================================
-REM Fim da tela de preposto
-REM -------------------------------------------------------------------------
 
 REM =========================================================================
 REM Rotina de cadastramento de representantes
@@ -2423,9 +2411,6 @@ Sub Representante
   Set w_cor                 = Nothing 
   Set w_disabled            = Nothing
 End Sub
-REM =========================================================================
-REM Fim da tela de representantes
-REM -------------------------------------------------------------------------
 
 REM =========================================================================
 REM Rotina das informações adicionais
@@ -2606,9 +2591,7 @@ Sub Informar
   Set w_cor                     = Nothing 
 
 End Sub
-REM =========================================================================
-REM Fim da rotina de informações adicionais
-REM -------------------------------------------------------------------------
+
 
 REM =========================================================================
 REM Rotina de visualização
@@ -2623,7 +2606,7 @@ Sub Visual
   ' Recupera o logo do cliente a ser usado nas listagens
   DB_GetCustomerData RS, w_cliente
   If RS("logo") > "" Then
-     w_logo = "files\" & w_cliente & "\img\logo" & Mid(RS("logo"),Instr(RS("logo"),"."),30)
+     w_logo = "\img\logo" & Mid(RS("logo"),Instr(RS("logo"),"."),30)
   End If
   DesconectaBD
   
@@ -2640,7 +2623,7 @@ Sub Visual
   If w_tipo <> "WORD" Then
      BodyOpenClean "onLoad='document.focus()'; "
   End If
-  ShowHTML "<TABLE WIDTH=""100%"" BORDER=0><TR><TD ROWSPAN=2><IMG ALIGN=""LEFT"" SRC=""" & w_logo & """><TD ALIGN=""RIGHT""><B><FONT SIZE=4 COLOR=""#000000"">"
+  ShowHTML "<TABLE WIDTH=""100%"" BORDER=0><TR><TD ROWSPAN=2><IMG ALIGN=""LEFT"" src=""" & LinkArquivo(null, w_cliente, w_logo, null, null, null, "EMBED") & """><TD ALIGN=""RIGHT""><B><FONT SIZE=4 COLOR=""#000000"">"
   ShowHTML "Visualização de Projeto"
   ShowHTML "</FONT><TR><TD ALIGN=""RIGHT""><B><font COLOR=""#000000"">" & DataHora() & "</B>"
   If w_tipo <> "WORD" Then
@@ -3312,7 +3295,7 @@ Sub VisualTabela
   ' Recupera o logo do cliente a ser usado nas listagens
   DB_GetCustomerData RS, w_cliente
   If RS("logo") > "" Then
-     w_logo = "files\" & w_cliente & "\img\logo" & Mid(RS("logo"),Instr(RS("logo"),"."),30)
+     w_logo = "\img\logo" & Mid(RS("logo"),Instr(RS("logo"),"."),30)
   End If
   DesconectaBD
   
@@ -3329,7 +3312,7 @@ Sub VisualTabela
   If w_tipo <> "WORD" Then
      BodyOpenClean "onLoad='document.focus()'; "
   End If
-  ShowHTML "<TABLE WIDTH=""100%"" BORDER=0><TR><TD ROWSPAN=2><IMG ALIGN=""LEFT"" SRC=""" & w_logo & """><TD ALIGN=""RIGHT""><B><FONT SIZE=0 COLOR=""#000000"">"
+  ShowHTML "<TABLE WIDTH=""100%"" BORDER=0><TR><TD ROWSPAN=2><IMG ALIGN=""LEFT"" src=""" & LinkArquivo(null, w_cliente, w_logo, null, null, null, "EMBED") & """><TD ALIGN=""RIGHT""><B><FONT SIZE=0 COLOR=""#000000"">"
   ShowHTML "</FONT><TR><TD ALIGN=""RIGHT""><B><font COLOR=""#000000"">" & DataHora() & "</B>"
   If w_tipo <> "WORD" Then
      ShowHTML "&nbsp;&nbsp;<IMG ALIGN=""CENTER"" TITLE=""Imprimir"" SRC=""images/impressora.jpg"" onClick=""window.print();"">"

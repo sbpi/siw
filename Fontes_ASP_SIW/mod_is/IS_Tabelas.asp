@@ -99,7 +99,7 @@ End Select
 w_cliente         = RetornaCliente()
 w_usuario         = RetornaUsuario()
 w_menu            = RetornaMenu(w_cliente, SG)
-w_ano             = Session("ANO")
+w_ano             = RetornaAno()
 
 Main
 
@@ -1109,9 +1109,8 @@ Public Sub Grava
     Case "ISANO"
 
        Session("ANO") = Request("w_ano_escolhido")
-       DB_GetMenuData RS1, w_menu
        ScriptOpen "JavaScript"
-       ShowHTML "  parent.menu.location='../Menu.asp?par=ExibeDocs&O=L&R=" & R & "&SG=" & RS1("sigla") & "&TP=" & TP & MontaFiltro("GET") & "';"
+       ShowHTML "  parent.menu.location='../Menu.asp?par=ExibeDocs';"
        ScriptClose
     Case Else
        ScriptOpen "JavaScript"

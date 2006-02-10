@@ -200,7 +200,7 @@ Sub Inicial
      ' Recupera o logo do cliente a ser usado nas listagens
      DB_GetCustomerData RS, w_cliente
      If RS("logo") > "" Then
-         w_logo = "files\" & w_cliente & "\img\logo" & Mid(RS("logo"),Instr(RS("logo"),"."),30)
+         w_logo = "\img\logo" & Mid(RS("logo"),Instr(RS("logo"),"."),30)
      End If
      DesconectaBD
      ' Recupera todos os registros para a listagem
@@ -213,7 +213,7 @@ Sub Inicial
      w_pag   = 1
      w_linha = 5
      ShowHTML "<BASE HREF=""" & conRootSIW & """>"
-     ShowHTML "<TABLE WIDTH=""100%"" BORDER=0><TR><TD ROWSPAN=2><IMG ALIGN=""LEFT"" SRC=""" & w_logo & """><TD ALIGN=""RIGHT""><B><FONT SIZE=4 COLOR=""#000000"">"
+     ShowHTML "<TABLE WIDTH=""100%"" BORDER=0><TR><TD ROWSPAN=2><IMG ALIGN=""LEFT"" src=""" & LinkArquivo(null, w_cliente, w_logo, null, null, null, "EMBED") & """><TD ALIGN=""RIGHT""><B><FONT SIZE=4 COLOR=""#000000"">"
      If Instr(SG,"FLUXOPR") > 0 Then
         ShowHTML "Fluxo de Caixa Previsto"     
      ElseIf Instr(SG,"FLUXORE") > 0 Then
@@ -239,7 +239,7 @@ Sub Inicial
      ShowHTML "<BASE HREF=""" & conRootSIW & """>"
      If O = "L" Then
         BodyOpenClean "onLoad='document.focus()';"
-        ShowHTML "<TABLE WIDTH=""100%"" BORDER=0><TR><TD ROWSPAN=2><IMG ALIGN=""LEFT"" SRC=""" & w_logo & """><TD ALIGN=""RIGHT""><B><FONT SIZE=4 COLOR=""#000000"">"
+        ShowHTML "<TABLE WIDTH=""100%"" BORDER=0><TR><TD ROWSPAN=2><IMG ALIGN=""LEFT"" src=""" & LinkArquivo(null, w_cliente, w_logo, null, null, null, "EMBED") & """><TD ALIGN=""RIGHT""><B><FONT SIZE=4 COLOR=""#000000"">"
         If Instr(SG,"FLUXOPR") > 0 Then
            ShowHTML "Fluxo de Caixa Previsto"     
         ElseIf Instr(SG,"FLUXORE") > 0 Then

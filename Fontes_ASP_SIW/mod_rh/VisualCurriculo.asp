@@ -32,7 +32,7 @@ Sub VisualCurriculo(p_cliente, p_usuario, O)
         HTML = VbCrLf & HTML &"          <td><font size=""1"">Sexo:<br><b>" & RS("nm_sexo") & " </b></td>"
         HTML = VbCrLf & HTML &"          <td><font size=""1"">Estado civil:<br><b>" & RS("nm_estado_civil") & " </b></td>"
         If nvl(RS("sq_siw_arquivo"),"nulo") <> "nulo" and P2 = 0 Then
-           HTML = VbCrLf & HTML &"          <td rowspan=3><font size=""1""><a href=""" & conFileVirtual & w_cliente & "/" & RS("ln_foto") & """ target=""_blank""><img title=""clique para ver em tamanho original."" border=1 width=100 length=80 src=""" & conFileVirtual & w_cliente & "/" & RS("ln_foto") & """></a></td>"
+           HTML = VbCrLf & HTML &"          <td rowspan=3><font size=""1"">" & LinkArquivo("HL", w_cliente, RS("sq_siw_arquivo"), "_blank", null, "<img title=""clique para ver em tamanho original."" border=1 width=100 length=80 src=""" & LinkArquivo(null, w_cliente, RS("sq_siw_arquivo"), null, null, null, "EMBED")& """>", null)& "</td>"
         Else
            HTML = VbCrLf & HTML &"          <td rowspan=3><font size=""1""></td>"
         End If

@@ -122,7 +122,7 @@ w_cliente         = RetornaCliente()
 w_usuario         = RetornaUsuario()
 w_menu            = P2
 'w_menu            = RetornaMenu(w_cliente, SG)
-w_ano             = Session("ANO") 
+w_ano             = RetornaAno()
 
 ' Verifica se o documento tem sub-menu. Se tiver, agrega no HREF uma chamada para montagem do mesmo.
 DB_GetLinkSubMenu RS, Session("p_cliente"), SG

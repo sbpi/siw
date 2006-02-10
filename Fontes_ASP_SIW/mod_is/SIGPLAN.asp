@@ -84,7 +84,7 @@ O               = uCase(Request("O"))
 w_cliente       = RetornaCliente()
 w_usuario       = RetornaUsuario()
 w_menu          = RetornaMenu(w_cliente, SG)
-w_ano           = Session("ANO")
+w_ano           = RetornaAno()
 DB_GetModList RS
 RS.Filter = "sigla='IS'"
 w_sq_modulo = RS("sq_modulo")
@@ -360,7 +360,7 @@ Sub Inicial
         If P1 = 1 Then
            ShowHTML "        <td><font size=""1"">" & RS("nome") & "</td>"
         Else
-           ShowHTML "        <td><font size=""1""><A class=""HL"" HREF=""" & conFileVirtual & w_cliente & "/" & RS("nome") & ".xml"" title=""Exibe os dados do arquivo importado."" target=""_blank"">" & RS("nome") & "</A>&nbsp;</td>"
+           ShowHTML "        <td><font size=""1"">" & LinkArquivo("HL", w_cliente, RS("nome") & ".xml", "_blank", "Exibe os dados do arquivo importado.", RS("nome"), null) & "&nbsp;</td>"
         End If
         'ShowHTML "        <td><font size=""1"">" & RS("nm_formato") & "</td>"
         'ShowHTML "        <td><font size=""1"">" & RS("no_raiz") & "</td>"
@@ -377,13 +377,13 @@ Sub Inicial
            ShowHTML "        <td align=""center""><font size=""1"">---</td>"
         End If
         If cDbl(Nvl(RS("processados"),0)) > 0 Then
-           ShowHTML "        <td align=""right""><font size=""1""><A class=""HL"" HREF=""" & conFileVirtual & w_cliente & "/" & RS("cm_recebido") & """ title=""Exibe os dados do arquivo importado."" target=""_blank"">" & Nvl(RS("processados"),0) & "</A>&nbsp;</td>"
+           ShowHTML "        <td align=""right""><font size=""1"">" & LinkArquivo("HL", w_cliente, RS("chave_recebido") , "_blank", "Exibe os dados do arquivo importado.", Nvl(RS("processados"),0), null) & "&nbsp;</td>"
         Else
            ShowHTML "        <td align=""right""><font size=""1"">" & Nvl(RS("processados"),0) & "&nbsp;</td>"
         End If
         ShowHTML "        <td align=""right""><font size=""1"">" & (cDbl(Nvl(RS("processados"),0)) - cDbl(Nvl(RS("rejeitados"),0))) & "&nbsp;</td>"
         If cDbl(Nvl(RS("rejeitados"),0)) > 0 Then
-           ShowHTML "        <td align=""right""><font size=""1""><A class=""HL"" HREF=""" & conFileVirtual & w_cliente & "/" & RS("cm_result") & """ title=""Exibe o registro da importação."" target=""_blank"">" & Nvl(RS("rejeitados"),0) & "</A>&nbsp;</td>"
+           ShowHTML "        <td align=""right""><font size=""1"">" & LinkArquivo("HL", w_cliente, RS("chave_result") , "_blank", "Exibe o registro da importação.", Nvl(RS("rejeitados"),0), null) & "&nbsp;</td>"
         Else
            ShowHTML "        <td align=""right""><font size=""1"">" & Nvl(RS("rejeitados"),0) & "&nbsp;</td>"
         End If
@@ -1219,7 +1219,7 @@ Sub Exportacao
      ShowHTML "</html>"
   Else
      w_where  = " where cliente = " & w_cliente & VbCrLf & _
-                "   and ano     = " & Session("ANO")
+                "   and ano     = " & RetornaAno()
 
      w_atual  = ""
      w_cont   = 0
@@ -1448,12 +1448,12 @@ Sub Help
   ShowHTML "    <ol>"
   ShowHTML "    <p align=""justify""><b>FASE 1 - Preparação do arquivo a ser importado:</b><br></p>"
   ShowHTML "      <li>Use o módulo extrator do SIAFI para obter uma planilha Excel (extensão XLS), <u>exatamente igual</u> à exibida neste"
-  ShowHTML "          <a class=""HL"" href=""" & conFileVirtual & w_cliente & "/SIAFI_exemplo.xls"" target=""ExemploSIAFI"">exemplo</a>;"
+  ShowHTML "          " & LinkArquivo("HL", w_cliente, "SIAFI_exemplo.xls" , "ExemploSIAFI", null, "exemplo", null) & ";"
   ShowHTML "      <li>Abra a planilha gerada no passo anterior com o Excel e use a opção ""Arquivo -> Salvar como"". Escolha o nome que desejar"
   ShowHTML "          para o arquivo e, na lista ""Salvar como tipo"", escolha a opção ""<b>CSV (Separado por vírgulas) (*.csv)</b>""; "
   ShowHTML "      <li> Feche o "
   ShowHTML "          Excel e renomeie a extensão do arquivo, de CSV para TXT. Após cumprir este passo, você deverá ter um arquivo com extensão TXT, como o deste "
-  ShowHTML "          <a class=""HL"" href=""" & conFileVirtual & w_cliente & "/SIAFI_exemplo.TXT"" target=""ExemploSIAFI"">exemplo</a>;"
+  ShowHTML "          " & LinkArquivo("HL", w_cliente, "SIAFI_exemplo.TXT" , "ExemploSIAFI", null, "exemplo", null) & ";"
   ShowHTML "    <p align=""justify""><b>FASE 2 - Importação do arquivo e atualização dos dados:</b><br></p>"
   ShowHTML "      <li>Na tela anterior, clique sobre a operação ""Incluir"";"
   ShowHTML "      <li>Quando a tela de inclusão for apresentada, preencha o formulário seguindo as instruções disponíveis em cada campo "
@@ -1468,7 +1468,7 @@ Sub Help
   ShowHTML "          e que geraram atualização nos dados existentes, ""Rejeitados"" indica o número de linhas que foram descartadas pela validação; "
   ShowHTML "      <li>Verifique cada linha descartada pela rotina de importação. Clique sobre a operação ""Registro"" na coluna ""Operações"" e verifique "
   ShowHTML "          os erros detectados em cada uma das linhas descartadas. O conteúdo do arquivo é similar ao deste "
-  ShowHTML "          <a class=""HL"" href=""" & conFileVirtual & w_cliente & "/SIAFI_registro.TXT"" target=""ExemploSIAFI"">exemplo</a>;"
+  ShowHTML "          " & LinkArquivo("HL", w_cliente, "SIAFI_registro.TXT" , "ExemploSIAFI", null, "exemplo", null) & ";"
   ShowHTML "      <li>Se desejar, gere um novo arquivo somente com as linhas descartadas, corrija os erros e faça uma nova importação."
   ShowHTML "    </ol>"
   ShowHTML "    <p align=""justify""><b>Observações:</b><br></p>"

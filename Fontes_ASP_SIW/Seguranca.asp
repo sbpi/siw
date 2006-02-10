@@ -370,7 +370,7 @@ Sub Menu
   Dim w_sq_menu, w_sq_menu_pai, w_descricao, w_link, w_sq_servico
   Dim w_tramite, w_ordem, w_ultimo_nivel, w_p1, w_p2, w_p3, w_p4
   Dim w_sigla, w_ativo, w_acesso_geral, w_modulo, w_descentralizado, w_externo, w_target
-  Dim w_sq_unidade_executora, w_como_funciona
+  Dim w_sq_unidade_executora, w_como_funciona, w_controla_ano
   Dim w_emite_os, w_consulta_opiniao, w_acompanha_fases, w_envia_email, w_exibe_relatorio
   Dim w_vinculacao, w_finalidade, w_workflow, w_arquivo_procedimentos, w_data_hora, w_envia_dia_util
   Dim w_pede_descricao, w_pede_justificativa, w_envio
@@ -426,6 +426,7 @@ Sub Menu
            w_envia_email              = RS("envia_email")
            w_exibe_relatorio          = RS("exibe_relatorio")
            w_como_funciona            = RS("como_funciona")
+           w_controla_ano             = RS("controla_ano")
            w_arquivo_procedimentos    = RS("arquivo_proced")
            w_sq_unidade_executora     = RS("sq_unid_executora")
            w_vinculacao               = RS("vinculacao")
@@ -465,6 +466,7 @@ Sub Menu
            w_envia_email              = Request("w_envia_email")
            w_exibe_relatorio          = Request("w_exibe_relatorio")
            w_como_funciona            = Request("w_como_funciona")
+           w_controla_ano             = Request("w_controla_ano")
            w_arquivo_procedimentos    = Request("w_arquivo_procedimentos")
            w_sq_unidade_executora     = Request("w_sq_unidade_executora")
            w_vinculacao               = Request("w_vinculacao")
@@ -540,6 +542,8 @@ Sub Menu
      ShowHTML "     document.Form.w_pede_justificativa[0].checked=false;"
      ShowHTML "     document.Form.w_pede_justificativa[1].checked=false;"
      ShowHTML "     document.Form.w_como_funciona.value='';"
+     ShowHTML "     document.Form.w_controla_ano[0].checked=false;"
+     ShowHTML "     document.Form.w_controla_ano[1].checked=false;"
      ShowHTML "     document.Form.w_sq_unidade_executora.disabled=true;"
      ShowHTML "     document.Form.w_emite_os[0].disabled=true;"
      ShowHTML "     document.Form.w_emite_os[1].disabled=true;"
@@ -564,6 +568,8 @@ Sub Menu
      ShowHTML "     document.Form.w_pede_descricao[1].disabled=true;"
      ShowHTML "     document.Form.w_pede_justificativa[0].disabled=true;"
      ShowHTML "     document.Form.w_pede_justificativa[1].disabled=true;"
+     ShowHTML "     document.Form.w_controla_ano[0].disabled=true;"
+     ShowHTML "     document.Form.w_controla_ano[1].disabled=true;"     
      ShowHTML "     document.Form.w_como_funciona.disabled=true;"
      ShowHTML "  }"
      ShowHTML "  else if (document.Form.w_tramite[0].checked && document.Form.w_emite_os[0].disabled) {"
@@ -592,6 +598,8 @@ Sub Menu
      ShowHTML "     document.Form.w_pede_justificativa[0].disabled=false;"
      ShowHTML "     document.Form.w_pede_justificativa[1].disabled=false;"
      ShowHTML "     document.Form.w_como_funciona.disabled=false;"
+     ShowHTML "     document.Form.w_controla_ano[0].disabled=false;"
+     ShowHTML "     document.Form.w_controla_ano[1].disabled=false;"
      ShowHTML "     document.Form.w_sq_unidade_executora.selectedIndex=0;"
      ShowHTML "     document.Form.w_emite_os[1].checked=true;"
      ShowHTML "     document.Form.w_envio[0].checked=true;"
@@ -604,6 +612,7 @@ Sub Menu
      ShowHTML "     document.Form.w_pede_descricao[0].checked=true;"
      ShowHTML "     document.Form.w_pede_justificativa[0].checked=true;"
      ShowHTML "     document.Form.w_como_funciona.value='';"
+     ShowHTML "     document.Form.w_controla_ano[1].checked=true;"
      ShowHTML "  }"
      ShowHTML "}"
      ScriptClose
@@ -1004,6 +1013,14 @@ Sub Menu
      Else
         ShowHTML "                 <input " & w_Disabled & " class=""str"" type=""radio"" name=""w_envio"" value=""S""> Sim <input " & w_Disabled & " class=""str"" type=""radio"" name=""w_envio"" value=""N"" > Não"
      End If
+     ShowHTML "          <tr><td colspan=3 title=""Existem serviços que exigem um controle de solicitações por ano. Informe \'Sim\' se for o caso desta opção.""><font size=""1""><b>Controla solicitações por ano?</b><br>"
+     If w_controla_ano = "S" Then
+        ShowHTML "                 <input " & w_Disabled & " class=""str"" type=""radio"" name=""w_controla_ano"" value=""S"" checked> Sim <input " & w_Disabled & " class=""str"" type=""radio"" name=""w_controla_ano"" value=""N""> Não"
+     ElseIf w_controla_ano = "N" Then
+        ShowHTML "                 <input " & w_Disabled & " class=""str"" type=""radio"" name=""w_controla_ano"" value=""S""> Sim <input " & w_Disabled & " class=""str"" type=""radio"" name=""w_controla_ano"" value=""N"" checked> Não"    
+     Else
+        ShowHTML "                 <input " & w_Disabled & " class=""str"" type=""radio"" name=""w_controla_ano"" value=""S""> Sim <input " & w_Disabled & " class=""str"" type=""radio"" name=""w_controla_ano"" value=""N"" > Não"    
+     End If
      ShowHTML "          <tr align=""left"">"
      ShowHTML "              <td colspan=3 title=""Informe se esta opção pede data limite de atendimento e, se pedir, como a data deve ser informada.""><font size=""1""><b>Pede data limite?</b><br>"
      If w_data_hora = "0" Then
@@ -1159,6 +1176,7 @@ Sub Menu
   Set w_sq_unidade_executora    = Nothing 
   Set w_sigla                   = Nothing 
   Set w_como_funciona           = Nothing 
+  Set w_controla_ano            = Nothing 
   Set w_emite_os                = Nothing 
   Set w_consulta_opiniao        = Nothing 
   Set w_acompanha_fases         = Nothing 
@@ -2193,7 +2211,7 @@ Public Sub Grava
                 Request("w_pede_descricao"), Request("w_pede_justificativa"), Request("w_finalidade"), _
                 w_cliente, Request("w_descricao"), Request("w_acesso_geral"), Request("w_modulo"), Request("w_sq_unidade_executora"),_
                 Request("w_tramite"), Request("w_ultimo_nivel"), Request("w_descentralizado"), _
-                Request("w_externo"), Request("w_ativo"), Request("w_ordem"), Request("w_envio")
+                Request("w_externo"), Request("w_ativo"), Request("w_ordem"), Request("w_envio"), Request("w_controla_ano")
 
 
           ScriptOpen "JavaScript"

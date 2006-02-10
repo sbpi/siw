@@ -383,7 +383,7 @@ REM -------------------------------------------------------------------------
 Sub SelecaoTarefa (label, accesskey, hint, cliente, ano, p_chave, campo, restricao, atributo)
     
     DB_GetLinkData RS, w_cliente, "ISTCAD"
-    DB_GetSolicList_IS RS, RS("sq_menu"), w_usuario, "ISTCAD   ", 5, _
+    DB_GetSolicList_IS RS, RS("sq_menu"), w_usuario, "ISTCAD   ", 3, _
        null, null, null, null, null, null, _
        null, null, null, null, _
        null, null, null, null, null, null, null, _

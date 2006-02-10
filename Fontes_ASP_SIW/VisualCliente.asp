@@ -255,12 +255,13 @@ Sub VisualCliente(w_sq_cliente, O)
      ShowHTML "        <TABLE WIDTH=""100%"">"
      ShowHTML "          <tr bgcolor=""" & conTrBgColor & """ valign=""top"">"
      If RS("logo") > "" Then
-        ShowHTML "             <td colspan=3><font size=""2"">Logomarca telas e relatórios:<br><b><img src=""" & conFileVirtual & w_sq_cliente & "/img/logo" & Mid(RS("logo"),Instr(RS("logo"),"."),30) & """ border=1></b></font></td>"
+        ShowHTML "             <td colspan=3><font size=""2"">Logomarca telas e relatórios:<br><b><img src=""" & LinkArquivo(null, w_sq_cliente, "img/logo" & Mid(RS("logo"),Instr(RS("logo"),"."),30), null, null, null, "EMBED") & """ border=1></b></font></td>"
+                                                                                                            
      Else
         ShowHTML "             <td colspan=3><font size=""2"">Não informado</font></td>"
      End If
      If RS("logo") > "" Then
-        ShowHTML "             <td colspan=3><font size=""2"">Logomarca menu:<br><b><img src=""" & conFileVirtual & w_sq_cliente & "/img/logo1" & Mid(RS("logo1"),Instr(RS("logo1"),"."),30) & """ border=1></b></font></td>"
+        ShowHTML "             <td colspan=3><font size=""2"">Logomarca menu:<br><b><img src=""" & LinkArquivo(null, w_sq_cliente, "img/logo1" & Mid(RS("logo1"),Instr(RS("logo1"),"."),30), null, null, null, "EMBED") & """ border=1></b></font></td>"
      Else
         ShowHTML "             <td colspan=3><font size=""2"">Não informado</font></td>"
      End If

@@ -347,13 +347,13 @@ Sub DML_SiwMenu(Operacao, Chave, sq_menu_pai, link, p1, p2, p3, p4, sigla, image
          emite_os, consulta_opiniao, envia_email, exibe_relatorio, como_funciona, vinculacao, _
          data_hora, envia_dia_util, descricao, justificativa, finalidade, _
          cliente, nome, acesso_geral, sq_modulo, sq_unidade_exec, _
-         tramite, ultimo_nivel, descentralizado, externo, ativo, ordem, envio)
+         tramite, ultimo_nivel, descentralizado, externo, ativo, ordem, envio, controla_ano)
   Dim l_Operacao, l_Chave, l_sq_menu_pai, l_link
   Dim l_p1, l_p2, l_p3, l_p4, l_sigla, l_imagem, l_target 
   Dim l_emite_os, l_consulta_opiniao, l_envia_email, l_exibe_relatorio, l_como_funciona, l_vinculacao
   Dim l_data_hora, l_envia_dia_util, l_descricao, l_justificativa, l_finalidade
   Dim l_cliente, l_nome, l_acesso_geral, l_sq_modulo, l_sq_unidade_exec
-  Dim l_tramite, l_ultimo_nivel, l_descentralizado, l_externo, l_ativo, l_ordem, l_envio
+  Dim l_tramite, l_ultimo_nivel, l_descentralizado, l_externo, l_ativo, l_ordem, l_envio, l_controla_ano
   
   Set l_Operacao         = Server.CreateObject("ADODB.Parameter")
   Set l_Chave            = Server.CreateObject("ADODB.Parameter")
@@ -389,6 +389,7 @@ Sub DML_SiwMenu(Operacao, Chave, sq_menu_pai, link, p1, p2, p3, p4, sigla, image
   Set l_ativo            = Server.CreateObject("ADODB.Parameter") 
   Set l_ordem            = Server.CreateObject("ADODB.Parameter")
   Set l_envio            = Server.CreateObject("ADODB.Parameter")
+  Set l_controla_ano     = Server.CreateObject("ADODB.Parameter") 
   with sp
      set l_Operacao             = .CreateParameter("l_operacao",        adVarchar, adParamInput,   1, Operacao)
      set l_chave                = .CreateParameter("l_chave",           adInteger, adParamInput,    , Tvl(chave))
@@ -425,6 +426,7 @@ Sub DML_SiwMenu(Operacao, Chave, sq_menu_pai, link, p1, p2, p3, p4, sigla, image
      set l_ativo                = .CreateParameter("l_ativo",           adVarchar, adParamInput,   1, ativo)
      set l_ordem                = .CreateParameter("l_ordem",           adInteger, adParamInput,    , ordem)
      set l_envio                = .CreateParameter("l_envio",           adVarchar, adParamInput,   1, envio)
+     set l_controla_ano         = .CreateParameter("l_controla_ano",    adVarchar, adParamInput,   1, Tvl(controla_ano))
      .parameters.Append         l_Operacao
      .parameters.Append         l_Chave
      .parameters.Append         l_cliente
@@ -459,6 +461,7 @@ Sub DML_SiwMenu(Operacao, Chave, sq_menu_pai, link, p1, p2, p3, p4, sigla, image
      .parameters.Append         l_justificativa
      .parameters.Append         l_finalidade
      .parameters.Append         l_envio
+     .parameters.Append         l_controla_ano
 
      .CommandText               = Session("schema") & "SP_PutSiwMenu"
      On Error Resume Next
@@ -500,6 +503,7 @@ Sub DML_SiwMenu(Operacao, Chave, sq_menu_pai, link, p1, p2, p3, p4, sigla, image
      .parameters.Delete         "l_ativo"
      .parameters.Delete         "l_ordem"
      .parameters.Delete         "l_envio"
+     .parameters.Delete         "l_controla_ano"
   end with
 End Sub
 REM =========================================================================

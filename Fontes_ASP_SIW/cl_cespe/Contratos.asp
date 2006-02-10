@@ -2925,7 +2925,7 @@ Sub Anexo
      DB_GetSolicAnexo RS, w_chave, w_chave_aux, w_cliente 
      w_nome                 = RS("nome") 
      w_descricao            = RS("descricao") 
-     w_caminho              = RS("caminho") 
+     w_caminho              = RS("chave_aux") 
      DesconectaBD 
   End If 
     
@@ -2983,7 +2983,7 @@ Sub Anexo
       While Not RS.EOF 
         If w_cor = conTrBgColor or w_cor = "" Then w_cor = conTrAlternateBgColor Else w_cor = conTrBgColor End If 
         ShowHTML "      <tr bgcolor=""" & w_cor & """ valign=""top"">" 
-        ShowHTML "        <td><font size=""1""><a class=""hl"" href=""" & conFileVirtual & w_cliente & "/" & RS("caminho") & """ target=""_blank"" title=""Clique para exibir o arquivo em outra janela."">" & RS("nome") & "</a></td>" 
+        ShowHTML "        <td><font size=""1"">" & LinkArquivo("HL", w_cliente, RS("chave_aux"), "_blank", "Clique para exibir o arquivo em outra janela.", RS("nome"), null) & "</td>" 
         ShowHTML "        <td><font size=""1"">" & Nvl(RS("descricao"),"---") & "</td>" 
         ShowHTML "        <td><font size=""1"">" & RS("tipo") & "</td>" 
         ShowHTML "        <td align=""right""><font size=""1"">" & Round(cDbl(RS("tamanho"))/1024,1) & "&nbsp;</td>" 
@@ -3030,7 +3030,7 @@ Sub Anexo
     ShowHTML "      <tr><td><font size=""1""><b><u>D</u>escrição:</b><br><textarea " & w_Disabled & " accesskey=""D"" name=""w_descricao"" class=""sti"" ROWS=5 cols=65 title=""OBRIGATÓRIO. Descreva a finalidade do arquivo."">" & w_descricao & "</TEXTAREA></td>" 
     ShowHTML "      <tr><td><font size=""1""><b>A<u>r</u>quivo:</b><br><input " & w_Disabled & " accesskey=""R"" type=""file"" name=""w_caminho"" class=""sti"" SIZE=""80"" MAXLENGTH=""100"" VALUE="""" title=""OBRIGATÓRIO. Clique no botão ao lado para localizar o arquivo. Ele será transferido automaticamente para o servidor."">" 
     If w_caminho > "" Then 
-       ShowHTML "              <b><a class=""ss"" href=""" & conFileVirtual & w_cliente & "/" & w_caminho & """ target=""_blank"" title=""Clique para exibir o arquivo atual."">Exibir</a></b>" 
+       ShowHTML "              <b>" & LinkArquivo("SS", w_cliente, w_arquivo, "_blank", "Clique para exibir o arquivo atual.", "Exibir", null) & "</b>" 
     End If 
     ShowHTML "      <tr><td align=""center""><hr>" 
     If O = "E" Then 
@@ -3091,7 +3091,7 @@ Sub Visual
   ' Recupera o logo do cliente a ser usado nas listagens
   DB_GetCustomerData RS, w_cliente
   If RS("logo") > "" Then
-     w_logo = conFileVirtual & w_cliente & "\img\logo" & Mid(RS("logo"),Instr(RS("logo"),"."),30)
+     w_logo = "\img\logo" & Mid(RS("logo"),Instr(RS("logo"),"."),30)
   End If
   DesconectaBD
   
@@ -3114,7 +3114,7 @@ Sub Visual
   If w_tipo <> "WORD" Then
      BodyOpenClean "onLoad='document.focus()'; "
   End If
-  ShowHTML "<TABLE WIDTH=""100%"" BORDER=0><TR><TD ROWSPAN=2><IMG ALIGN=""LEFT"" SRC=""" & w_logo & """><TD ALIGN=""RIGHT""><B><FONT SIZE=4 COLOR=""#000000"">"
+  ShowHTML "<TABLE WIDTH=""100%"" BORDER=0><TR><TD ROWSPAN=2><IMG ALIGN=""LEFT"" src=""" & LinkArquivo(null, w_cliente, w_logo, null, null, null, "EMBED") & """><TD ALIGN=""RIGHT""><B><FONT SIZE=4 COLOR=""#000000"">"
   If Mid(SG,1,3) = "GCR" Then
      ShowHTML "Visualização de Contrato de Receita"
   ElseIf Mid(SG,1,3) = "GCD" Then

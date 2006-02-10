@@ -2328,8 +2328,8 @@ Sub Visual
   ' Recupera o logo do cliente a ser usado nas listagens
   DB_GetCustomerData RS, w_cliente
   If RS("logo") > "" Then
-     w_logo = "files\" & w_cliente & "\img\logo" & Mid(RS("logo"),Instr(RS("logo"),"."),30)
-  End If
+     w_logo = "\img\logo" & Mid(RS("logo"),Instr(RS("logo"),"."),30)
+    End If
   DesconectaBD
   
   Cabecalho
@@ -2338,7 +2338,7 @@ Sub Visual
   ShowHTML "<TITLE>" & conSgSistema & " - Visualização de projeto</TITLE>"
   ShowHTML "</HEAD>"  
   BodyOpenClean "onLoad='document.focus()'; "
-  ShowHTML "<TABLE WIDTH=""100%"" BORDER=0><TR><TD ROWSPAN=2><IMG ALIGN=""LEFT"" SRC=""" & w_logo & """><TD ALIGN=""RIGHT""><B><FONT SIZE=4 COLOR=""#000000"">"
+  ShowHTML "<TABLE WIDTH=""100%"" BORDER=0><TR><TD ROWSPAN=2><IMG ALIGN=""LEFT"" SRC=""" & LinkArquivo(null, w_cliente, w_logo, null, null, null, "EMBED") & """><TD ALIGN=""RIGHT""><B><FONT SIZE=4 COLOR=""#000000"">"
   ShowHTML "Visualização de Projeto"
   ShowHTML "</FONT><TR><TD ALIGN=""RIGHT""><B><font size=1 COLOR=""#000000"">" & DataHora() & "</B></TD></TR>"
   ShowHTML "</FONT></B></TD></TR></TABLE>"

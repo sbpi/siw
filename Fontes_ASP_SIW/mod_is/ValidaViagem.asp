@@ -64,7 +64,7 @@ Function ValidaViagem(p_cliente, p_chave, p_sg1, p_sg2, p_sg3, p_sg4, p_tramite)
         If l_rs2.eof Then l_existe_rs2 = 0 Else l_existe_rs2 = l_rs2.recordCount End If
 
         ' Recupera os deslocamentos da viagem
-        DB_GetPD_Deslocamento l_rs3, p_chave, null, p_sg1
+        DB_GetPD_Deslocamento l_rs3, p_chave, null, p_sg2
         If l_rs3.eof Then l_existe_rs3 = 0 Else l_existe_rs3 = l_rs3.recordCount End If
 
         ' Recupera as vinculações da viagem

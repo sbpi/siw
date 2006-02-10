@@ -148,7 +148,7 @@ Sub CabecalhoRelatorio (p_cliente, p_titulo)
   Dim l_rs
   Set l_rs = Server.CreateObject("ADODB.RecordSet")
   DB_GetCustomerData l_RS, p_cliente
-  ShowHTML "<TABLE WIDTH=""100%"" BORDER=0><TR><TD ROWSPAN=2><IMG ALIGN=""LEFT"" SRC=""" & "files\" & w_cliente & "\img\" & l_RS("logo") & """><TD ALIGN=""RIGHT""><B><FONT SIZE=4 COLOR=""#000000"">"
+  ShowHTML "<TABLE WIDTH=""100%"" BORDER=0><TR><TD ROWSPAN=2><IMG ALIGN=""LEFT"" SRC=""" & LinkArquivo(null, w_cliente, "img\" & l_RS("logo"), null, null, null, "EMBED") & """><TD ALIGN=""RIGHT""><B><FONT SIZE=4 COLOR=""#000000"">"
   ShowHTML p_titulo
   ShowHTML "</FONT><TR><TD ALIGN=""RIGHT""><B><FONT SIZE=2 COLOR=""#000000"">" & DataHora() & "</B></TD></TR>"
   ShowHTML "</FONT></B></TD></TR></TABLE>"
@@ -222,6 +222,36 @@ Function GeraCpfEspecial (p_tipo)
   GeraCpfEspecial = l_valor
   
   Set l_valor = Nothing
+End Function
+
+REM =========================================================================
+REM Gera um link chamando o arquivo desejado
+REM -------------------------------------------------------------------------
+Function LinkArquivo (p_classe, p_cliente, p_arquivo, p_target, p_hint, p_descricao, p_retorno)
+
+  Dim l_link, l_classe, l_target, l_hint
+
+  ' Monta a chamada para a página que retorna o arquivo
+  l_link = "file.asp?cliente=" & p_cliente & "&id=" & p_arquivo
+
+  ' Se não for objeto incorporado, monta tag anchor
+  If uCase(Nvl(p_retorno,"")) <> "EMBED" Then
+     ' Trata a possibilidade da chamada ter passado classe, target e hint
+     If Nvl(p_classe,"") > "" Then l_classe = " class=""" & p_classe & """ "  Else l_classe = "" End If
+     If Nvl(p_target,"") > "" Then l_target = " target=""" & p_target & """ " Else l_target = "" End If
+     If Nvl(p_hint,"")   > "" Then l_hint   = " title=""" & p_hint & """ "    Else l_hint   = "" End If
+
+     ' Montagem da tag anchor
+     l_link = "<A" & l_classe & "href=""" & l_link & """" & l_target & l_hint & ">" & p_descricao & "</a>"
+  End If
+  
+  ' Retorno ao chamador
+  LinkArquivo = l_link
+  
+  Set l_link    = Nothing
+  Set l_classe  = Nothing
+  Set l_target  = Nothing
+  Set l_hint    = Nothing
 End Function
 
 REM =========================================================================
@@ -502,7 +532,7 @@ REM =========================================================================
 REM Retorna o caminho físico para o diretório  do cliente informado
 REM -------------------------------------------------------------------------
 Function DiretorioCliente(p_Cliente)
-   DiretorioCliente = Request.ServerVariables("APPL_PHYSICAL_PATH") & "files\" & p_cliente
+   DiretorioCliente = conFilePhysical & p_cliente
 End Function
 
 REM =========================================================================
@@ -1932,6 +1962,19 @@ Function RetornaUsuario()
 End Function
 
 REM =========================================================================
+REM Função que retorna o ano a ser utilizado para recuperação de dados
+REM -------------------------------------------------------------------------
+Function RetornaAno()
+  If Request("w_ano") > "" Then
+     RetornaAno = Request("w_ano")
+  ElseIf Session("ano") > "" Then
+     RetornaAno = Session("ano")
+  Else
+     RetornaAno = Year(Date())
+  End If
+End Function
+
+REM =========================================================================
 REM Função que retorna o código do menu
 REM -------------------------------------------------------------------------
 Function RetornaMenu(p_cliente, p_sigla)
@@ -2332,10 +2375,9 @@ REM Definição dos arquivos de CSS
 REM -------------------------------------------------------------------------
 Sub Estrutura_CSS (l_cliente)
    If cDbl(l_cliente) = 6761 Then
-      ShowHTML "<LINK  media=screen href=""/siw/files/" & l_cliente & "/css/estilo.css"" type=text/css rel=stylesheet>"
-      ShowHTML "<LINK media=print href=""/siw/files/" & l_cliente & "/css/print.css"" type=text/css rel=stylesheet>"
-      ShowHTML "<SCRIPT language=javascript src=""/siw/files/" & l_cliente & "/js/scripts.js"" type=text/javascript> "
-      ShowHTML "</SCRIPT>"
+      ShowHTML "<LINK  media=screen href=""" & conRootSIW & LinkArquivo(null, l_cliente, "css\estilo.css", null, null, null, "EMBED") & """ type=text/css rel=stylesheet>"
+      ShowHTML "<LINK media=print href=""" & conRootSIW & LinkArquivo(null, l_cliente, "css\print.css", null, null, null, "EMBED") & """ type=text/css rel=stylesheet>"
+      ShowHTML "<SCRIPT language=""JavaScript"" src=""" & conRootSIW & LinkArquivo(null, Session("p_cliente"), "js\scripts.js", null, null, null, "EMBED") & """></SCRIPT> "
    End If
 end sub
 
@@ -2536,7 +2578,7 @@ Sub Estrutura_Menu
       ShowHTML "    </DIV>"
       ShowHTML ""
       ShowHTML "    <DIV id=menutxt>"
-      ShowHTML "      <SCRIPT src=""/siw/files/" & w_cliente & "/js/newcssmenu.js"" type=text/javascript></SCRIPT>"
+      ShowHTML "      <SCRIPT language=""JavaScript"" src=""" & conRootSIW & LinkArquivo(null, Session("p_cliente"), "js\newcssmenu.js", null, null, null, "EMBED") & """></SCRIPT> "
       ShowHTML "      "
       ShowHTML "      <DIV id=menutexto>"
       ShowHTML "        <DIV id=mainMenu>"
@@ -2557,7 +2599,7 @@ Sub Estrutura_Menu
                   l_titulo = l_titulo & " - " & l_RS1("NOME")
                   If cDbl(l_RS1("Filho")) > 0 Then
                      l_cont1 = l_cont1 + 1
-                     ShowHTML "              <LI><A href=""javascript:location.href=this.location.href;""><IMG height=12 alt="">"" src=""/siw/files/" & w_cliente & "/img/arrows.gif"" width=8> " & l_RS1("nome") & "</A> "
+                     ShowHTML "              <LI><A href=""javascript:location.href=this.location.href;""><IMG height=12 alt="">"" src=""" & conRootSIW & LinkArquivo(null, Session("p_cliente"), "img\arrows.gif", null, null, null, "EMBED") & """ width=8> " & l_RS1("nome") & "</A> "
                      ShowHTML "              <UL class=menu id=menu" & l_cont & "_" & l_cont1 & ">"
                      l_cont2 = 0
                      DB_GetLinkDataUser l_RS2, Session("p_cliente"), Session("sq_pessoa"), l_RS1("sq_menu")
@@ -2565,7 +2607,7 @@ Sub Estrutura_Menu
                         l_titulo = l_titulo & " - " & l_RS2("NOME")
                         If cDbl(l_RS2("Filho")) > 0 Then
                            l_cont2 = l_cont2 + 1
-                           ShowHTML "                <LI><A href=""javascript:location.href=this.location.href;""><IMG height=12 alt="">"" src=""/siw/files/" & w_cliente & "/img/arrows.gif"" width=8> " & l_RS2("nome") & "</A> "
+                           ShowHTML "                <LI><A href=""javascript:location.href=this.location.href;""><IMG height=12 alt="">"" src=""" & conRootSIW & LinkArquivo(null, Session("p_cliente"), "img\arrows.gif", null, null, null, "EMBED") & """ width=8> " & l_RS2("nome") & "</A> "
                            ShowHTML "                <UL class=menu id=menu" & l_cont & "_" & l_cont1 & "_" & l_cont2 & ">"
                            DB_GetLinkDataUser l_RS3, Session("p_cliente"), Session("sq_pessoa"), l_RS2("sq_menu")
                            While Not l_RS3.EOF

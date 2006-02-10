@@ -117,7 +117,7 @@ End Select
 w_cliente         = RetornaCliente()
 w_usuario         = RetornaUsuario()
 w_menu            = P2
-w_ano             = Session("ANO")
+w_ano             = RetornaAno()
 
 ' Recupera a configuração do serviço
 DB_GetMenuData RS_menu, w_menu

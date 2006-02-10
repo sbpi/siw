@@ -207,7 +207,7 @@ Sub Inicial
   ShowHTML "<table border=""0"" cellpadding=""0"" cellspacing=""0"" width=""100%"">"
   If O = "L" or O = "W" Then
     ShowHTML "<tr><td align=""center"" colspan=3>"
-    ShowHTML "<tr><td width=""50%"" valign=""top"" colspan=1><img src=""" & conFileVirtual & w_cliente & "/img/ano2003.jpg"" BORDER=0></td>"
+    ShowHTML "<tr><td width=""50%"" valign=""top"" colspan=1><img src=""" & LinkArquivo(null, w_cliente, "/img/ano2003.jpg", null, null, null, "EMBED") & """ BORDER=0></td>"
     ShowHTML "    <td valign=""top"" colspan=1><TABLE WIDTH=""100%"" bgcolor=""" & conTableBgColor & """ BORDER=""" & conTableBorder & """ CELLSPACING=""" & conTableCellSpacing & """ CELLPADDING=""" & conTableCellPadding & """ BorderColorDark=""" & conTableBorderColorDark & """ BorderColorLight=""" & conTableBorderColorLight & """>"
     If RS1.EOF Then
         ShowHTML "      <tr bgcolor=""" & conTrBgColor & """><td colspan=2 align=""center""><font size=""2""><b>Não foram encontrados registros.</b></td></tr>"
@@ -236,7 +236,7 @@ Sub Inicial
             CabecalhoWord w_cliente, "Calendário Escolar", w_pag
             ExibeParametrosRel w_cliente
             ShowHTML "  <TR><TD align=""center"" colspan=3><FONT SIZE=2 COLOR=""#000000""><b>" & RS1("ds_calendario") & "</b></TD></TR>"
-            ShowHTML "<tr><td width=""50%"" valign=""top"" colspan=1><img SRC=""" & ConFileVirtual & w_cliente & "/img/ano2003.jpg"" BORDER=0></td>"
+            ShowHTML "<tr><td width=""50%"" valign=""top"" colspan=1><img src=""" & LinkArquivo(null, w_cliente, "/img/ano2003.jpg", null, null, null, "EMBED") & """ BORDER=0></td>"
             ShowHTML "    <td align=""center"" colspan=2 valign=""top"">"
             ShowHTML "    <TABLE WIDTH=""100%"" bgcolor=""" & conTableBgColor & """ BORDER=""" & conTableBorder & """ CELLSPACING=""" & conTableCellSpacing & """ CELLPADDING=""" & conTableCellPadding & """ BorderColorDark=""" & conTableBorderColorDark & """ BorderColorLight=""" & conTableBorderColorLight & """>"
             ShowHTML "        <tr bgcolor=""" & conTrBgColor & """ align=""center"">"

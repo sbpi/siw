@@ -121,7 +121,7 @@ End Select
 w_cliente         = RetornaCliente()
 w_usuario         = RetornaUsuario()
 w_menu            = RetornaMenu(w_cliente, SG)
-w_ano             = Session("ANO")
+w_ano             = RetornaAno()
 
 ' Verifica se o documento tem sub-menu. Se tiver, agrega no HREF uma chamada para montagem do mesmo.
 DB_GetLinkSubMenu RS, Session("p_cliente"), SG
@@ -220,7 +220,7 @@ Sub Rel_PPA
      ' Recupera o logo do cliente a ser usado nas listagens
      DB_GetCustomerData RS, w_cliente
      If RS("logo") > "" Then
-         w_logo = "files\" & w_cliente & "\img\logo" & Mid(RS("logo"),Instr(RS("logo"),"."),30)
+         w_logo = "\img\logo" & Mid(RS("logo"),Instr(RS("logo"),"."),30)
      End If
      DesconectaBD
      ' Recupera todos os registros para a listagem
@@ -244,7 +244,7 @@ Sub Rel_PPA
      w_pag   = 1
      w_linha = 5
      ShowHTML "<BASE HREF=""" & conRootSIW & """>"
-     ShowHTML "<TABLE WIDTH=""100%"" BORDER=0><TR><TD ROWSPAN=2><IMG ALIGN=""LEFT"" SRC=""" & w_logo & """><TD ALIGN=""RIGHT"" NOWRAP><B><FONT SIZE=4 COLOR=""#000000"">"
+     ShowHTML "<TABLE WIDTH=""100%"" BORDER=0><TR><TD ROWSPAN=2><IMG ALIGN=""LEFT"" src=""" & LinkArquivo(null, w_cliente, w_logo, null, null, null, "EMBED") & """><TD ALIGN=""RIGHT"" NOWRAP><B><FONT SIZE=4 COLOR=""#000000"">"
      ShowHTML "Relatório Analítico - Ações PPA 2004 - 2007 Exercício " & w_ano
      ShowHTML "</FONT><TR><TD WIDTH=""50%"" ALIGN=""RIGHT""><B><font size=1 COLOR=""#000000"">" & DataHora() & "</B>"
      ShowHTML "<TR><TD COLSPAN=""2"" ALIGN=""RIGHT""><B><FONT SIZE=2 COLOR=""#000000"">Página: " & w_pag & "</B></TD></TR>"
@@ -295,7 +295,7 @@ Sub Rel_PPA
      ShowHTML "<BASE HREF=""" & conRootSIW & """>"
      If O = "L" Then
         BodyOpenClean "onLoad='document.focus()';"
-        ShowHTML "<TABLE WIDTH=""100%"" BORDER=0><TR><TD ROWSPAN=2><IMG ALIGN=""LEFT"" SRC=""" & w_logo & """><TD ALIGN=""RIGHT"" NOWRAP><B><FONT SIZE=4 COLOR=""#000000"">"
+        ShowHTML "<TABLE WIDTH=""100%"" BORDER=0><TR><TD ROWSPAN=2><IMG ALIGN=""LEFT"" src=""" & LinkArquivo(null, w_cliente, w_logo, null, null, null, "EMBED") & """><TD ALIGN=""RIGHT"" NOWRAP><B><FONT SIZE=4 COLOR=""#000000"">"
         ShowHTML "Relatório Analítico - Ações PPA 2004 - 2007 Exercício " & w_ano
         ShowHTML "</FONT><TR><TD WIDTH=""50%"" ALIGN=""RIGHT""><B><font size=1 COLOR=""#000000"">" & DataHora() & "</B>"
         ShowHTML "&nbsp;&nbsp;<IMG BORDER=0 ALIGN=""CENTER"" TITLE=""Gerar word"" SRC=""images/word.gif"" onClick=""window.open('" & w_pagina & par & "&R=" & w_pagina & par & "&O=L&w_chave=" & w_chave & "&w_tipo_rel=word&P1=" & P1 & "&P2=" & P2 & "&P3=" & P3 & "&P4=" & P4 & "&TP=" & TP & "&SG=" & SG & MontaFiltro("GET") &"','VisualRelPPAWord','menubar=yes resizable=yes scrollbars=yes');"">"
@@ -431,7 +431,7 @@ Sub Rel_PPA
            ShowHTML "    <br style=""page-break-after:always"">"
            w_linha = 5
            w_pag   = w_pag + 1
-           ShowHTML "<TABLE WIDTH=""100%"" BORDER=0><TR><TD ROWSPAN=2><IMG ALIGN=""LEFT"" SRC=""" & w_logo & """><TD ALIGN=""RIGHT""><B><FONT SIZE=4 COLOR=""#000000"">"
+           ShowHTML "<TABLE WIDTH=""100%"" BORDER=0><TR><TD ROWSPAN=2><IMG ALIGN=""LEFT"" src=""" & LinkArquivo(null, w_cliente, w_logo, null, null, null, "EMBED") & """><TD ALIGN=""RIGHT""><B><FONT SIZE=4 COLOR=""#000000"">"
            ShowHTML "Ações PPA"
            ShowHTML "</FONT><TR><TD WIDTH=""50%"" ALIGN=""RIGHT""><B><font size=1 COLOR=""#000000"">" & DataHora() & "</B>"
            ShowHTML "<TR><TD COLSPAN=""2"" ALIGN=""RIGHT""><B><FONT SIZE=2 COLOR=""#000000"">Página: " & w_pag & "</B></TD></TR>"
@@ -838,7 +838,7 @@ Sub Rel_Projeto
      ' Recupera o logo do cliente a ser usado nas listagens
      DB_GetCustomerData RS, w_cliente
      If RS("logo") > "" Then
-         w_logo = "files\" & w_cliente & "\img\logo" & Mid(RS("logo"),Instr(RS("logo"),"."),30)
+         w_logo = "\img\logo" & Mid(RS("logo"),Instr(RS("logo"),"."),30)
      End If
      DesconectaBD
      ' Recupera todos os registros para a listagem     
@@ -851,7 +851,7 @@ Sub Rel_Projeto
      w_pag   = 1
      w_linha = 5
      ShowHTML "<BASE HREF=""" & conRootSIW & """>"
-     ShowHTML "<TABLE WIDTH=""100%"" BORDER=0><TR><TD ROWSPAN=2><IMG ALIGN=""LEFT"" SRC=""" & w_logo & """><TD ALIGN=""RIGHT"" NOWRAP><B><FONT SIZE=4 COLOR=""#000000"">"
+     ShowHTML "<TABLE WIDTH=""100%"" BORDER=0><TR><TD ROWSPAN=2><IMG ALIGN=""LEFT"" src=""" & LinkArquivo(null, w_cliente, w_logo, null, null, null, "EMBED") & """><TD ALIGN=""RIGHT"" NOWRAP><B><FONT SIZE=4 COLOR=""#000000"">"
      ShowHTML "Relatório Analítico - Planos interno " & w_ano
      ShowHTML "</FONT><TR><TD WIDTH=""50%"" ALIGN=""RIGHT""><B><font size=1 COLOR=""#000000"">" & DataHora() & "</B>"
      ShowHTML "<TR><TD COLSPAN=""2"" ALIGN=""RIGHT""><B><FONT SIZE=2 COLOR=""#000000"">Página: " & w_pag & "</B></TD></TR>"
@@ -902,7 +902,7 @@ Sub Rel_Projeto
      ShowHTML "<BASE HREF=""" & conRootSIW & """>"
      If O = "L" Then
         BodyOpenClean "onLoad='document.focus()';"
-        ShowHTML "<TABLE WIDTH=""100%"" BORDER=0><TR><TD ROWSPAN=2><IMG ALIGN=""LEFT"" SRC=""" & w_logo & """><TD ALIGN=""RIGHT"" NOWRAP><B><FONT SIZE=4 COLOR=""#000000"">"
+        ShowHTML "<TABLE WIDTH=""100%"" BORDER=0><TR><TD ROWSPAN=2><IMG ALIGN=""LEFT"" src=""" & LinkArquivo(null, w_cliente, w_logo, null, null, null, "EMBED") & """><TD ALIGN=""RIGHT"" NOWRAP><B><FONT SIZE=4 COLOR=""#000000"">"
         ShowHTML "Relatório Analítico - Planos internos " & w_ano
         ShowHTML "</FONT><TR><TD WIDTH=""50%"" ALIGN=""RIGHT""><B><font size=1 COLOR=""#000000"">" & DataHora() & "</B>"
         ShowHTML "&nbsp;&nbsp;<IMG ALIGN=""CENTER"" TITLE=""Imprimir"" SRC=""images/impressora.jpg"" onClick=""window.print();"">"
@@ -1385,7 +1385,7 @@ Sub Rel_Programa
      ' Recupera o logo do cliente a ser usado nas listagens
      DB_GetCustomerData RS, w_cliente
      If RS("logo") > "" Then
-         w_logo = "files\" & w_cliente & "\img\logo" & Mid(RS("logo"),Instr(RS("logo"),"."),30)
+         w_logo = "\img\logo" & Mid(RS("logo"),Instr(RS("logo"),"."),30)
      End If
      DesconectaBD
      ' Recupera todos os registros para a listagem
@@ -1401,7 +1401,7 @@ Sub Rel_Programa
      w_pag   = 1
      w_linha = 5
      ShowHTML "<BASE HREF=""" & conRootSIW & """>"
-     ShowHTML "<TABLE WIDTH=""100%"" BORDER=0><TR><TD ROWSPAN=2><IMG ALIGN=""LEFT"" SRC=""" & w_logo & """><TD ALIGN=""RIGHT"" NOWRAP><B><FONT SIZE=4 COLOR=""#000000"">"
+     ShowHTML "<TABLE WIDTH=""100%"" BORDER=0><TR><TD ROWSPAN=2><IMG ALIGN=""LEFT"" src=""" & LinkArquivo(null, w_cliente, w_logo, null, null, null, "EMBED") & """><TD ALIGN=""RIGHT"" NOWRAP><B><FONT SIZE=4 COLOR=""#000000"">"
      ShowHTML "Relatório Analítico - Programas PPA 2004 - 2007 Exercício " & w_ano
      ShowHTML "</FONT><TR><TD WIDTH=""50%"" ALIGN=""RIGHT""><B><font size=1 COLOR=""#000000"">" & DataHora() & "</B>"
      ShowHTML "<TR><TD COLSPAN=""2"" ALIGN=""RIGHT""><B><FONT SIZE=2 COLOR=""#000000"">Página: " & w_pag & "</B></TD></TR>"
@@ -1442,7 +1442,7 @@ Sub Rel_Programa
      ShowHTML "<BASE HREF=""" & conRootSIW & """>"
      If O = "L" Then
         BodyOpenClean "onLoad='document.focus()';"
-        ShowHTML "<TABLE WIDTH=""100%"" BORDER=0><TR><TD ROWSPAN=2><IMG ALIGN=""LEFT"" SRC=""" & w_logo & """><TD ALIGN=""RIGHT"" NOWRAP><B><FONT SIZE=4 COLOR=""#000000"">"
+        ShowHTML "<TABLE WIDTH=""100%"" BORDER=0><TR><TD ROWSPAN=2><IMG ALIGN=""LEFT"" src=""" & LinkArquivo(null, w_cliente, w_logo, null, null, null, "EMBED") & """><TD ALIGN=""RIGHT"" NOWRAP><B><FONT SIZE=4 COLOR=""#000000"">"
         ShowHTML "Relatório Analítico - Programas PPA 2004 - 2007 Exercício " & w_ano
         ShowHTML "</FONT><TR><TD WIDTH=""50%"" ALIGN=""RIGHT""><B><font size=1 COLOR=""#000000"">" & DataHora() & "</B>"
         ShowHTML "&nbsp;&nbsp;<IMG BORDER=0 ALIGN=""CENTER"" TITLE=""Gerar word"" SRC=""images/word.gif"" onClick=""window.open('" & w_pagina & par & "&R=" & w_pagina & par & "&O=L&w_chave=" & w_chave & "&w_tipo_rel=word&P1=" & P1 & "&P2=" & P2 & "&P3=" & P3 & "&P4=" & P4 & "&TP=" & TP & "&SG=" & SG & MontaFiltro("GET") &"','VisualRelPPAWord','menubar=yes resizable=yes scrollbars=yes');"">"
@@ -1532,7 +1532,7 @@ Sub Rel_Programa
            ShowHTML "    <br style=""page-break-after:always"">"
            w_linha = 5
            w_pag   = w_pag + 1
-           ShowHTML "<TABLE WIDTH=""100%"" BORDER=0><TR><TD ROWSPAN=2><IMG ALIGN=""LEFT"" SRC=""" & w_logo & """><TD ALIGN=""RIGHT""><B><FONT SIZE=4 COLOR=""#000000"">"
+           ShowHTML "<TABLE WIDTH=""100%"" BORDER=0><TR><TD ROWSPAN=2><IMG ALIGN=""LEFT"" src=""" & LinkArquivo(null, w_cliente, w_logo, null, null, null, "EMBED") & """><TD ALIGN=""RIGHT""><B><FONT SIZE=4 COLOR=""#000000"">"
            ShowHTML "Ações PPA"
            ShowHTML "</FONT><TR><TD WIDTH=""50%"" ALIGN=""RIGHT""><B><font size=1 COLOR=""#000000"">" & DataHora() & "</B>"
            ShowHTML "<TR><TD COLSPAN=""2"" ALIGN=""RIGHT""><B><FONT SIZE=2 COLOR=""#000000"">Página: " & w_pag & "</B></TD></TR>"
@@ -1763,7 +1763,7 @@ Sub Rel_Sintetico_PR
      ' Recupera o logo do cliente a ser usado nas listagens
      DB_GetCustomerData RS, w_cliente
      If RS("logo") > "" Then
-         w_logo = "files\" & w_cliente & "\img\logo" & Mid(RS("logo"),Instr(RS("logo"),"."),30)
+         w_logo = "\img\logo" & Mid(RS("logo"),Instr(RS("logo"),"."),30)
      End If
      DesconectaBD
      ' Recupera todos os registros para a listagem
@@ -1776,7 +1776,7 @@ Sub Rel_Sintetico_PR
      w_pag   = 1
      w_linha = 8
      ShowHTML "<BASE HREF=""" & conRootSIW & """>"
-     ShowHTML "<TABLE WIDTH=""100%"" BORDER=0><TR><TD ROWSPAN=2><IMG ALIGN=""LEFT"" SRC=""" & w_logo & """><TD ALIGN=""RIGHT"" NOWRAP><B><FONT SIZE=4 COLOR=""#000000"">"
+     ShowHTML "<TABLE WIDTH=""100%"" BORDER=0><TR><TD ROWSPAN=2><IMG ALIGN=""LEFT"" src=""" & LinkArquivo(null, w_cliente, w_logo, null, null, null, "EMBED") & """><TD ALIGN=""RIGHT"" NOWRAP><B><FONT SIZE=4 COLOR=""#000000"">"
      ShowHTML "Relatório Sintético - Planos " & w_ano
      ShowHTML "</FONT><TR><TD WIDTH=""50%"" ALIGN=""RIGHT""><B><font size=1 COLOR=""#000000"">" & DataHora() & "</B>"
      ShowHTML "<TR><TD COLSPAN=""2"" ALIGN=""RIGHT""><B><FONT SIZE=2 COLOR=""#000000"">Página: " & w_pag & "</B></TD></TR>"
@@ -1799,7 +1799,7 @@ Sub Rel_Sintetico_PR
      ShowHTML "<BASE HREF=""" & conRootSIW & """>"
      If O = "L" Then
         BodyOpenClean "onLoad='document.focus()';"
-        ShowHTML "<TABLE WIDTH=""100%"" BORDER=0><TR><TD ROWSPAN=2><IMG ALIGN=""LEFT"" SRC=""" & w_logo & """><TD ALIGN=""RIGHT"" NOWRAP><B><FONT SIZE=4 COLOR=""#000000"">"
+        ShowHTML "<TABLE WIDTH=""100%"" BORDER=0><TR><TD ROWSPAN=2><IMG ALIGN=""LEFT"" src=""" & LinkArquivo(null, w_cliente, w_logo, null, null, null, "EMBED") & """><TD ALIGN=""RIGHT"" NOWRAP><B><FONT SIZE=4 COLOR=""#000000"">"
         ShowHTML "Relatório Sintético - Planos " & w_ano
         ShowHTML "</FONT><TR><TD WIDTH=""50%"" ALIGN=""RIGHT""><B><font size=1 COLOR=""#000000"">" & DataHora() & "</B>"
         ShowHTML "&nbsp;&nbsp;<IMG ALIGN=""CENTER"" TITLE=""Imprimir"" SRC=""images/impressora.jpg"" onClick=""window.print();"">"
@@ -1859,7 +1859,7 @@ Sub Rel_Sintetico_PR
              ShowHTML "    <br style=""page-break-after:always"">"
              w_linha = 6
              w_pag   = w_pag + 1
-             ShowHTML "<TABLE WIDTH=""100%"" BORDER=0><TR><TD ROWSPAN=2><IMG ALIGN=""LEFT"" SRC=""" & w_logo & """><TD ALIGN=""RIGHT""><B><FONT SIZE=4 COLOR=""#000000"">"
+             ShowHTML "<TABLE WIDTH=""100%"" BORDER=0><TR><TD ROWSPAN=2><IMG ALIGN=""LEFT"" src=""" & LinkArquivo(null, w_cliente, w_logo, null, null, null, "EMBED") & """><TD ALIGN=""RIGHT""><B><FONT SIZE=4 COLOR=""#000000"">"
              ShowHTML "Programa interno"
              ShowHTML "</FONT><TR><TD WIDTH=""50%"" ALIGN=""RIGHT""><B><font size=1 COLOR=""#000000"">" & DataHora() & "</B>"
              ShowHTML "<TR><TD COLSPAN=""2"" ALIGN=""RIGHT""><B><FONT SIZE=2 COLOR=""#000000"">Página: " & w_pag & "</B></TD></TR>"
@@ -2172,7 +2172,7 @@ Sub Rel_Sintetico_PPA
      ' Recupera o logo do cliente a ser usado nas listagens
      DB_GetCustomerData RS, w_cliente
      If RS("logo") > "" Then
-         w_logo = "files\" & w_cliente & "\img\logo" & Mid(RS("logo"),Instr(RS("logo"),"."),30)
+         w_logo = "\img\logo" & Mid(RS("logo"),Instr(RS("logo"),"."),30)
      End If
      DesconectaBD
      If p_cd_programa > "" and p_codigo = "" Then
@@ -2191,7 +2191,7 @@ Sub Rel_Sintetico_PPA
      w_pag   = 1
      w_linha = 8
      ShowHTML "<BASE HREF=""" & conRootSIW & """>"
-     ShowHTML "<TABLE WIDTH=""100%"" BORDER=0><TR><TD ROWSPAN=2><IMG ALIGN=""LEFT"" SRC=""" & w_logo & """><TD ALIGN=""RIGHT"" NOWRAP><B><FONT SIZE=4 COLOR=""#000000"">"
+     ShowHTML "<TABLE WIDTH=""100%"" BORDER=0><TR><TD ROWSPAN=2><IMG ALIGN=""LEFT"" src=""" & LinkArquivo(null, w_cliente, w_logo, null, null, null, "EMBED") & """><TD ALIGN=""RIGHT"" NOWRAP><B><FONT SIZE=4 COLOR=""#000000"">"
      ShowHTML "Relatório Sintético - Ações PPA 2004 - 2007 Exercício " & w_ano
      ShowHTML "</FONT><TR><TD WIDTH=""50%"" ALIGN=""RIGHT""><B><font size=1 COLOR=""#000000"">" & DataHora() & "</B>"
      ShowHTML "<TR><TD COLSPAN=""2"" ALIGN=""RIGHT""><B><FONT SIZE=2 COLOR=""#000000"">Página: " & w_pag & "</B></TD></TR>"
@@ -2214,7 +2214,7 @@ Sub Rel_Sintetico_PPA
      ShowHTML "<BASE HREF=""" & conRootSIW & """>"
      If O = "L" Then
         BodyOpenClean "onLoad='document.focus()';"
-        ShowHTML "<TABLE WIDTH=""100%"" BORDER=0><TR><TD ROWSPAN=2><IMG ALIGN=""LEFT"" SRC=""" & w_logo & """><TD ALIGN=""RIGHT"" NOWRAP><B><FONT SIZE=4 COLOR=""#000000"">"
+        ShowHTML "<TABLE WIDTH=""100%"" BORDER=0><TR><TD ROWSPAN=2><IMG ALIGN=""LEFT"" src=""" & LinkArquivo(null, w_cliente, w_logo, null, null, null, "EMBED") & """><TD ALIGN=""RIGHT"" NOWRAP><B><FONT SIZE=4 COLOR=""#000000"">"
         ShowHTML "Relatório Sintético - Ações PPA 2004 - 2007 Exercício " & w_ano
         ShowHTML "</FONT><TR><TD WIDTH=""50%"" ALIGN=""RIGHT""><B><font size=1 COLOR=""#000000"">" & DataHora() & "</B>"
         ShowHTML "&nbsp;&nbsp;<IMG ALIGN=""CENTER"" TITLE=""Imprimir"" SRC=""images/impressora.jpg"" onClick=""window.print();"">"
@@ -2292,7 +2292,7 @@ Sub Rel_Sintetico_PPA
             ShowHTML "    <br style=""page-break-after:always"">"
             w_linha = 6
             w_pag   = w_pag + 1
-            ShowHTML "<TABLE WIDTH=""100%"" BORDER=0><TR><TD ROWSPAN=2><IMG ALIGN=""LEFT"" SRC=""" & w_logo & """><TD ALIGN=""RIGHT""><B><FONT SIZE=4 COLOR=""#000000"">"
+            ShowHTML "<TABLE WIDTH=""100%"" BORDER=0><TR><TD ROWSPAN=2><IMG ALIGN=""LEFT"" src=""" & LinkArquivo(null, w_cliente, w_logo, null, null, null, "EMBED") & """><TD ALIGN=""RIGHT""><B><FONT SIZE=4 COLOR=""#000000"">"
             ShowHTML "Ações do PPA"
             ShowHTML "</FONT><TR><TD WIDTH=""50%"" ALIGN=""RIGHT""><B><font size=1 COLOR=""#000000"">" & DataHora() & "</B>"
             ShowHTML "<TR><TD COLSPAN=""2"" ALIGN=""RIGHT""><B><FONT SIZE=2 COLOR=""#000000"">Página: " & w_pag & "</B></TD></TR>"
@@ -2655,7 +2655,7 @@ Sub Rel_Sintetico_Prog
      ' Recupera o logo do cliente a ser usado nas listagens
      DB_GetCustomerData RS, w_cliente
      If RS("logo") > "" Then
-         w_logo = "files\" & w_cliente & "\img\logo" & Mid(RS("logo"),Instr(RS("logo"),"."),30)
+         w_logo = "\img\logo" & Mid(RS("logo"),Instr(RS("logo"),"."),30)
      End If
      DesconectaBD
      DB_GetProgramaPPA_IS RS, p_cd_programa, w_cliente, w_ano, null, null
@@ -2670,7 +2670,7 @@ Sub Rel_Sintetico_Prog
      w_pag   = 1
      w_linha = 8
      ShowHTML "<BASE HREF=""" & conRootSIW & """>"
-     ShowHTML "<TABLE WIDTH=""100%"" BORDER=0><TR><TD ROWSPAN=2><IMG ALIGN=""LEFT"" SRC=""" & w_logo & """><TD ALIGN=""RIGHT"" NOWRAP><B><FONT SIZE=4 COLOR=""#000000"">"
+     ShowHTML "<TABLE WIDTH=""100%"" BORDER=0><TR><TD ROWSPAN=2><IMG ALIGN=""LEFT"" src=""" & LinkArquivo(null, w_cliente, w_logo, null, null, null, "EMBED") & """><TD ALIGN=""RIGHT"" NOWRAP><B><FONT SIZE=4 COLOR=""#000000"">"
      ShowHTML "Relatório Sintético - Programas PPA 2004 - 2007 Exercício " & w_ano
      ShowHTML "</FONT><TR><TD WIDTH=""50%"" ALIGN=""RIGHT""><B><font size=1 COLOR=""#000000"">" & DataHora() & "</B>"
      ShowHTML "<TR><TD COLSPAN=""2"" ALIGN=""RIGHT""><B><FONT SIZE=2 COLOR=""#000000"">Página: " & w_pag & "</B></TD></TR>"
@@ -2692,7 +2692,7 @@ Sub Rel_Sintetico_Prog
      ShowHTML "<BASE HREF=""" & conRootSIW & """>"
      If O = "L" Then
         BodyOpenClean "onLoad='document.focus()';"
-        ShowHTML "<TABLE WIDTH=""100%"" BORDER=0><TR><TD ROWSPAN=2><IMG ALIGN=""LEFT"" SRC=""" & w_logo & """><TD ALIGN=""RIGHT"" NOWRAP><B><FONT SIZE=4 COLOR=""#000000"">"
+        ShowHTML "<TABLE WIDTH=""100%"" BORDER=0><TR><TD ROWSPAN=2><IMG ALIGN=""LEFT"" src=""" & LinkArquivo(null, w_cliente, w_logo, null, null, null, "EMBED") & """><TD ALIGN=""RIGHT"" NOWRAP><B><FONT SIZE=4 COLOR=""#000000"">"
         ShowHTML "Relatório Sintético - Programas PPA 2004 - 2007 Exercício " & w_ano
         ShowHTML "</FONT><TR><TD WIDTH=""50%"" ALIGN=""RIGHT""><B><font size=1 COLOR=""#000000"">" & DataHora() & "</B>"
         ShowHTML "&nbsp;&nbsp;<IMG ALIGN=""CENTER"" TITLE=""Imprimir"" SRC=""images/impressora.jpg"" onClick=""window.print();"">"
@@ -2752,7 +2752,7 @@ Sub Rel_Sintetico_Prog
             ShowHTML "    <br style=""page-break-after:always"">"
             w_linha = 6
             w_pag   = w_pag + 1
-            ShowHTML "<TABLE WIDTH=""100%"" BORDER=0><TR><TD ROWSPAN=2><IMG ALIGN=""LEFT"" SRC=""" & w_logo & """><TD ALIGN=""RIGHT""><B><FONT SIZE=4 COLOR=""#000000"">"
+            ShowHTML "<TABLE WIDTH=""100%"" BORDER=0><TR><TD ROWSPAN=2><IMG ALIGN=""LEFT"" src=""" & LinkArquivo(null, w_cliente, w_logo, null, null, null, "EMBED") & """><TD ALIGN=""RIGHT""><B><FONT SIZE=4 COLOR=""#000000"">"
             ShowHTML "Programas do PPA"
             ShowHTML "</FONT><TR><TD WIDTH=""50%"" ALIGN=""RIGHT""><B><font size=1 COLOR=""#000000"">" & DataHora() & "</B>"
             ShowHTML "<TR><TD COLSPAN=""2"" ALIGN=""RIGHT""><B><FONT SIZE=2 COLOR=""#000000"">Página: " & w_pag & "</B></TD></TR>"
@@ -3015,7 +3015,7 @@ Sub Rel_Gerencial_Acao
      ' Recupera o logo do cliente a ser usado nas listagens
      DB_GetCustomerData RS, w_cliente
      If RS("logo") > "" Then
-        w_logo = conFileVirtual & w_cliente & "\img\logo" & Mid(RS("logo"),Instr(RS("logo"),"."),30)
+        w_logo = "\img\logo" & Mid(RS("logo"),Instr(RS("logo"),"."),30)
      End If
      DesconectaBD
   
@@ -3033,7 +3033,7 @@ Sub Rel_Gerencial_Acao
      If w_tipo <> "WORD" Then
         BodyOpenClean "onLoad='document.focus()'; "
      End If
-     ShowHTML "<TABLE WIDTH=""100%"" BORDER=0><TR><TD ROWSPAN=2><IMG ALIGN=""LEFT"" SRC=""" & w_logo & """><TD ALIGN=""RIGHT""><B><FONT SIZE=4 COLOR=""#000000"">"
+     ShowHTML "<TABLE WIDTH=""100%"" BORDER=0><TR><TD ROWSPAN=2><IMG ALIGN=""LEFT"" src=""" & LinkArquivo(null, w_cliente, w_logo, null, null, null, "EMBED") & """><TD ALIGN=""RIGHT""><B><FONT SIZE=4 COLOR=""#000000"">"
      If P1 = 1 Then
         ShowHTML "Relatório Geral por Ação"
      ElseIf P1 = 2 Then
@@ -3140,7 +3140,7 @@ Sub Rel_Gerencial_Prog
      ' Recupera o logo do cliente a ser usado nas listagens
      DB_GetCustomerData RS, w_cliente
      If RS("logo") > "" Then
-        w_logo = conFileVirtual & w_cliente & "\img\logo" & Mid(RS("logo"),Instr(RS("logo"),"."),30)
+        w_logo = "\img\logo" & Mid(RS("logo"),Instr(RS("logo"),"."),30)
      End If
      DesconectaBD
   
@@ -3158,7 +3158,7 @@ Sub Rel_Gerencial_Prog
      If w_tipo <> "WORD" Then
         BodyOpenClean "onLoad='document.focus()'; "
      End If
-     ShowHTML "<TABLE WIDTH=""100%"" BORDER=0><TR><TD ROWSPAN=2><IMG ALIGN=""LEFT"" SRC=""" & w_logo & """><TD ALIGN=""RIGHT"" NOWRAP><B><FONT SIZE=4 COLOR=""#000000"">"
+     ShowHTML "<TABLE WIDTH=""100%"" BORDER=0><TR><TD ROWSPAN=2><IMG ALIGN=""LEFT"" src=""" & LinkArquivo(null, w_cliente, w_logo, null, null, null, "EMBED") & """><TD ALIGN=""RIGHT"" NOWRAP><B><FONT SIZE=4 COLOR=""#000000"">"
      If P1 = 1 Then
         ShowHTML "Relatório Geral por Programa"
      ElseIf P1 = 2 Then
@@ -3266,7 +3266,7 @@ Sub Rel_Gerencial_Tarefa
      ' Recupera o logo do cliente a ser usado nas listagens
      DB_GetCustomerData RS, w_cliente
      If RS("logo") > "" Then
-        w_logo = conFileVirtual & w_cliente & "\img\logo" & Mid(RS("logo"),Instr(RS("logo"),"."),30)
+        w_logo = "\img\logo" & Mid(RS("logo"),Instr(RS("logo"),"."),30)
      End If
      DesconectaBD
   
@@ -3284,7 +3284,7 @@ Sub Rel_Gerencial_Tarefa
      If w_tipo <> "WORD" Then
         BodyOpenClean "onLoad='document.focus()'; "
      End If
-     ShowHTML "<TABLE WIDTH=""100%"" BORDER=0><TR><TD ROWSPAN=2><IMG ALIGN=""LEFT"" SRC=""" & w_logo & """><TD ALIGN=""RIGHT""><B><FONT SIZE=4 COLOR=""#000000"">"
+     ShowHTML "<TABLE WIDTH=""100%"" BORDER=0><TR><TD ROWSPAN=2><IMG ALIGN=""LEFT"" src=""" & LinkArquivo(null, w_cliente, w_logo, null, null, null, "EMBED") & """><TD ALIGN=""RIGHT""><B><FONT SIZE=4 COLOR=""#000000"">"
      ShowHTML "Visualização de Tarefa"
      ShowHTML "</FONT><TR><TD ALIGN=""RIGHT""><B><font size=1 COLOR=""#000000"">" & DataHora() & "</B>"
      If w_tipo <> "WORD" Then

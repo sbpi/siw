@@ -162,7 +162,7 @@ Function VisualViagem(w_chave, O, w_usuario, P1, P4)
   End If
 
   ' Deslocamentos
-  DB_GetPD_Deslocamento RS, w_chave, null, SG
+  DB_GetPD_Deslocamento RS, w_chave, null, "PDGERAL"
   RS.Sort = "saida, chegada"
   If Not Rs.EOF Then
      w_html = w_html & VbCrLf & "      <tr><td valign=""top"" colspan=""2"" align=""center"" bgcolor=""#D0D0D0"" style=""border: 2px solid rgb(0,0,0);""><font size=""1""><b>Deslocamentos</td>"

@@ -1,6 +1,43 @@
 <%
 Dim l_result
 REM =========================================================================
+REM Recupera Arquivos
+REM -------------------------------------------------------------------------
+Sub DB_GetSIWArquivo (p_rs, p_cliente, p_chave, p_restricao)
+  Dim l_cliente, l_chave, l_restricao
+  
+  Set l_cliente      = Server.CreateObject("ADODB.Parameter")
+  Set l_chave        = Server.CreateObject("ADODB.Parameter")
+  Set l_restricao    = Server.CreateObject("ADODB.Parameter")
+    
+  with sp
+    
+     set l_cliente      = .CreateParameter("l_cliente"      , adInteger, adParamInput,   , p_cliente)
+     set l_chave        = .CreateParameter("l_chave"        , adInteger, adParamInput,   , tvl(p_chave))
+     set l_restricao    = .CreateParameter("l_restricao", adVarChar, adParamInput, 20, tvl(p_restricao))
+     
+     .parameters.Append l_cliente
+     .parameters.Append l_chave
+     .parameters.Append l_restricao
+   
+     If Session("dbms") = 1 or Session("dbms") = 3 Then .Properties("PLSQLRSet") = TRUE End If
+     .CommandText               = Session("schema") & "SP_GetSIWArquivo"
+     Set p_rs = Server.CreateObject("ADODB.RecordSet")
+     p_rs.cursortype            = adOpenStatic
+     p_rs.cursorlocation        = adUseClient
+     On error Resume Next
+     Set p_rs                   = .Execute
+     If Err.Description > "" Then 
+        TrataErro
+     End If     
+     If Session("dbms") = 1 or Session("dbms") = 3 Then .Properties("PLSQLRSet") = FALSE End If
+     .Parameters.Delete         "l_cliente"
+     .Parameters.Delete         "l_chave"
+     .Parameters.Delete         "l_restricao"
+  end with
+End Sub
+
+REM =========================================================================
 REM Recupera os links do sub-menu
 REM -------------------------------------------------------------------------
 Sub DB_GetLinkSubMenu(p_rs, p_cliente, p_sg)
@@ -277,15 +314,18 @@ End Sub
 REM =========================================================================
 REM Recupera a mesa de trabalho do usuário
 REM -------------------------------------------------------------------------
-Sub DB_GetDeskTop(p_rs, p_cliente, p_usuario)
-  Dim l_cliente, l_usuario
+Sub DB_GetDeskTop(p_rs, p_cliente, p_usuario, p_ano)
+  Dim l_cliente, l_usuario, l_ano
   Set l_cliente   = Server.CreateObject("ADODB.Parameter")
   Set l_usuario   = Server.CreateObject("ADODB.Parameter")
+  Set l_ano       = Server.CreateObject("ADODB.Parameter")
   with sp
      set l_cliente              = .CreateParameter("l_cliente",   adInteger, adParamInput,   , p_cliente)
      set l_usuario              = .CreateParameter("l_usuario",   adInteger, adParamInput,   , p_usuario)
+     set l_ano                  = .CreateParameter("l_ano",       adInteger, adParamInput,   , p_ano)
      .parameters.Append         l_cliente
      .parameters.Append         l_usuario
+     .parameters.Append         l_ano
      If Session("dbms") = 1 or Session("dbms") = 3 Then .Properties("PLSQLRSet") = TRUE End If
      .CommandText               = Session("schema") & "SP_GetDeskTop"
      On Error Resume Next
@@ -296,6 +336,7 @@ Sub DB_GetDeskTop(p_rs, p_cliente, p_usuario)
      If Session("dbms") = 1 or Session("dbms") = 3 Then .Properties("PLSQLRSet") = FALSE End If
      .Parameters.Delete         "l_cliente"
      .Parameters.Delete         "l_usuario"
+     .Parameters.Delete         "l_ano"
   end with
 End Sub
 

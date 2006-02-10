@@ -745,7 +745,7 @@ Sub Anexos
      DB_GetLcAnexo RS, w_chave, w_chave_aux, w_cliente 
      w_nome                 = RS("nome") 
      w_descricao            = RS("descricao") 
-     w_caminho              = RS("caminho") 
+     w_caminho              = RS("chave_aux") 
      DesconectaBD 
   End If 
     
@@ -802,7 +802,7 @@ Sub Anexos
       While Not RS.EOF 
         If w_cor = conTrBgColor or w_cor = "" Then w_cor = conTrAlternateBgColor Else w_cor = conTrBgColor End If 
         ShowHTML "      <tr bgcolor=""" & w_cor & """ valign=""top"">" 
-        ShowHTML "        <td><font size=""1""><a class=""HL"" href=""" & conFileVirtual & w_cliente & "/" & RS("caminho") & """ target=""_blank"" title=""Clique para exibir o arquivo em outra janela."">" & RS("nome") & "</a></td>" 
+        ShowHTML "        <td><font size=""1"">" & LinkArquivo("HL", w_cliente, RS("chave_aux"), "_blank", "Clique para exibir o arquivo em outra janela.", RS("nome"), null) & "</td>" 
         ShowHTML "        <td><font size=""1"">" & Nvl(RS("descricao"),"---") & "</td>" 
         ShowHTML "        <td><font size=""1"">" & RS("tipo") & "</td>" 
         ShowHTML "        <td align=""right""><font size=""1"">" & Round(cDbl(RS("tamanho"))/1024,1) & "&nbsp;</td>" 
@@ -849,7 +849,7 @@ Sub Anexos
     ShowHTML "      <tr><td><font size=""1""><b><u>D</u>escrição:</b><br><textarea " & w_Disabled & " accesskey=""D"" name=""w_descricao"" class=""STI"" ROWS=5 cols=65 ONMOUSEOVER=""popup('OBRIGATÓRIO. Descreva a finalidade do arquivo.','white')""; ONMOUSEOUT=""kill()"">" & w_descricao & "</TEXTAREA></td>" 
     ShowHTML "      <tr><td><font size=""1""><b>A<u>r</u>quivo:</b><br><input " & w_Disabled & " accesskey=""R"" type=""file"" name=""w_caminho"" class=""STI"" SIZE=""80"" MAXLENGTH=""100"" VALUE="""" ONMOUSEOVER=""popup('OBRIGATÓRIO. Clique no botão ao lado para localizar o arquivo. Ele será transferido automaticamente para o servidor.','white')""; ONMOUSEOUT=""kill()"">" 
     If w_caminho > "" Then 
-       ShowHTML "              <b><a class=""SS"" href=""" & conFileVirtual & w_cliente & "/" & w_caminho & """ target=""_blank"" title=""Clique para exibir o arquivo atual."">Exibir</a></b>" 
+       ShowHTML "              <b>" & LinkArquivo("SS", w_cliente, w_caminho, "_blank", "Clique para exibir o arquivo atual.", "Exibir", null) & "</b>" 
     End If 
     ShowHTML "      <tr><td align=""center""><hr>" 
     If O = "E" Then 
@@ -1918,7 +1918,7 @@ Sub VisualLic
   ' Recupera o logo do cliente a ser usado nas listagens
   DB_GetCustomerData RS, w_cliente
   If RS("logo") > "" Then
-     w_logo = conFileVirtual & w_cliente & "\img\logo" & Mid(RS("logo"),Instr(RS("logo"),"."),30)
+     w_logo = "\img\logo" & Mid(RS("logo"),Instr(RS("logo"),"."),30)
   End If
   DesconectaBD
   
@@ -1929,7 +1929,7 @@ Sub VisualLic
   ShowHTML "</HEAD>"  
   ShowHTML "<BASE HREF=""" & conRootSIW & """>"
   BodyOpenClean "onLoad='document.focus()'; "
-  ShowHTML "<TABLE WIDTH=""100%"" BORDER=0><TR><TD ROWSPAN=2><IMG ALIGN=""LEFT"" SRC=""" & w_logo & """><TD ALIGN=""RIGHT""><B><FONT SIZE=4 COLOR=""#000000"">"
+  ShowHTML "<TABLE WIDTH=""100%"" BORDER=0><TR><TD ROWSPAN=2><IMG ALIGN=""LEFT"" src=""" & LinkArquivo(null, w_cliente, w_logo, null, null, null, "EMBED") & """><TD ALIGN=""RIGHT""><B><FONT SIZE=4 COLOR=""#000000"">"
   ShowHTML "Visualização da Licitação"
   ShowHTML "</FONT><TR><TD ALIGN=""RIGHT""><B><font size=1 COLOR=""#000000"">" & DataHora() & "</B></TD></TR>"
   ShowHTML "</FONT></B></TD></TR></TABLE>"
@@ -1971,7 +1971,7 @@ Sub VisualCont
   ' Recupera o logo do cliente a ser usado nas listagens
   DB_GetCustomerData RS, w_cliente
   If RS("logo") > "" Then
-     w_logo = conFileVirtual & w_cliente & "\img\logo" & Mid(RS("logo"),Instr(RS("logo"),"."),30)
+     w_logo = "\img\logo" & Mid(RS("logo"),Instr(RS("logo"),"."),30)
   End If
   DesconectaBD
   
@@ -1982,7 +1982,7 @@ Sub VisualCont
   ShowHTML "</HEAD>"  
   ShowHTML "<BASE HREF=""" & conRootSIW & """>"
   BodyOpenClean "onLoad='document.focus()'; "
-  ShowHTML "<TABLE WIDTH=""100%"" BORDER=0><TR><TD ROWSPAN=2><IMG ALIGN=""LEFT"" SRC=""" & w_logo & """><TD ALIGN=""RIGHT""><B><FONT SIZE=4 COLOR=""#000000"">"
+  ShowHTML "<TABLE WIDTH=""100%"" BORDER=0><TR><TD ROWSPAN=2><IMG ALIGN=""LEFT"" src=""" & LinkArquivo(null, w_cliente, w_logo, null, null, null, "EMBED") & """><TD ALIGN=""RIGHT""><B><FONT SIZE=4 COLOR=""#000000"">"
   ShowHTML "Visualização do Contrato"
   ShowHTML "</FONT><TR><TD ALIGN=""RIGHT""><B><font size=1 COLOR=""#000000"">" & DataHora() & "</B></TD></TR>"
   ShowHTML "</FONT></B></TD></TR></TABLE>"

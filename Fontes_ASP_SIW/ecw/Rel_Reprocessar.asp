@@ -275,11 +275,11 @@ Sub Gerar
    f.WriteLine "[REPROCESSAR]"
    f.WriteLine "REMESSA="&p_remessa
    Set f = fso.OpenTextFile(""&p_arquivo&"", ForReading)
-   URL = conFileVirtual&w_cliente&"/reprocessar.ini"
+   URL = "/reprocessar.ini"
    ScriptOpen "JavaScript"
    ShowHTML " function sair(){"
    ShowHTML " location.href='" & w_Pagina & "Inicial" & "&P1=" & P1 & "&P2=" & P2 & "&P3=" & P3 & "&P4=" & P4 & "&TP=" & TP & "&SG=" & SG & "';"
-   ShowHTML " window.open('"& URL & "')"
+   ShowHTML " window.open('"& LinkArquivo(null, w_cliente, URL, null, null, null, "EMBED") & "')"
    ShowHTML " }"
    ShowHTML "sair()"
    ScriptClose

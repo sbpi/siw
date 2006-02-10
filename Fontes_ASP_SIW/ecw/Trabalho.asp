@@ -129,7 +129,8 @@ Sub Selecao
   ShowHTML "<HEAD>"
   ShowHTML "</HEAD>"
   ShowHTML "<BASE HREF=""" & conRootSIW & """>"
-  BodyOpenImage "onLoad=document.focus();", conFileVirtual & Session("p_cliente") & "/img/logo_sge.jpg", "FIXED"
+  BodyOpenImage "onLoad=document.focus();", LinkArquivo(null, Session("p_cliente"), "/img/logo_sge.jpg", null, null, null, "EMBED"), "FIXED"
+  
 
   ShowHTML "<B><FONT COLOR=""#000000"">" & TP & "</FONT></B>"
   ShowHTML "<HR>"

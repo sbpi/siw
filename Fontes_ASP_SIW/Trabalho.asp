@@ -38,7 +38,7 @@ End If
 Dim dbms, sp, RS
 Dim P1, P2, P3, P4, TP, SG
 Dim R, O, w_Cont, w_Pagina, w_Disabled, w_TP
-Dim w_Assinatura, w_cliente, w_usuario, w_cor
+Dim w_Assinatura, w_cliente, w_usuario, w_cor, w_ano
 Dim w_dir_volta
 Private Par
 
@@ -60,6 +60,7 @@ w_Pagina     = "Trabalho.asp?par="
 w_Disabled   = "ENABLED"
 w_cliente    = RetornaCliente()
 w_usuario    = RetornaUsuario()
+w_ano        = RetornaAno()
 
 If O = "" Then O = "L" End If
 
@@ -79,6 +80,7 @@ Main
 
 FechaSessao
 
+Set w_ano       = Nothing
 Set w_cor       = Nothing
 Set w_cliente   = Nothing
 Set w_usuario   = Nothing
@@ -162,7 +164,7 @@ Sub Mesa
     End If
     
     ' Monta a mesa de trabalho para os outros serviços do SIW
-    DB_GetDeskTop RS, w_cliente, w_usuario
+    DB_GetDeskTop RS, w_cliente, w_usuario, w_ano
     If Not RS.EOF Then
        w_nm_modulo = ""
        While Not RS.Eof

@@ -83,7 +83,7 @@ O            = ucase(Request("O"))
 w_cliente    = RetornaCliente()
 w_usuario    = RetornaUsuario()
 w_menu       = RetornaMenu(w_cliente, SG)
-w_ano        = Session("ANO")
+w_ano        = RetornaAno()
 w_cadgeral   = RetornaCadastrador_PD(w_menu, w_usuario)
 
 If InStr(uCase(Request.ServerVariables("http_content_type")),"MULTIPART/FORM-DATA") > 0 Then  
@@ -2351,7 +2351,7 @@ Sub Visual
   ' Recupera o logo do cliente a ser usado nas listagens
   DB_GetCustomerData RS, w_cliente
   If RS("logo") > "" Then
-     w_logo = conFileVirtual & w_cliente & "\img\logo" & Mid(RS("logo"),Instr(RS("logo"),"."),30)
+     w_logo = "\img\logo" & Mid(RS("logo"),Instr(RS("logo"),"."),30)
   End If
   DesconectaBD
   
@@ -2367,7 +2367,7 @@ Sub Visual
   If w_tipo <> "WORD" Then
      BodyOpenClean "onLoad='document.focus()'; "
   End If
-  ShowHTML "<TABLE WIDTH=""100%"" BORDER=0><TR><TD ROWSPAN=2><IMG ALIGN=""LEFT"" SRC=""" & w_logo & """><TD ALIGN=""RIGHT""><B><FONT SIZE=4 COLOR=""#000000"">"
+  ShowHTML "<TABLE WIDTH=""100%"" BORDER=0><TR><TD ROWSPAN=2><IMG ALIGN=""LEFT"" src=""" & LinkArquivo(null, w_cliente, w_logo, null, null, null, "EMBED") & """><TD ALIGN=""RIGHT""><B><FONT SIZE=4 COLOR=""#000000"">"
   ShowHTML "Visualização de PCD"
   ShowHTML "</FONT><TR><TD ALIGN=""RIGHT""><B><FONT SIZE=2 COLOR=""#000000"">" & DataHora() & "</B>"
   If w_tipo <> "WORD" Then
@@ -2524,7 +2524,7 @@ Sub Encaminhamento
   DesconectaBD
 
   ' Se for envio, executa verificações nos dados da solicitação
-  If O = "V" Then w_erro = ValidaViagem(w_cliente, w_chave, SG, null, null, null, w_tramite) End If
+  If O = "V" Then w_erro = ValidaViagem(w_cliente, w_chave, SG, "PDGERAL", null, null, w_tramite) End If
 
   Cabecalho
   ShowHTML "<HEAD>"

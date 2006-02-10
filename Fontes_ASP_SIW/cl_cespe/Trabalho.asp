@@ -40,7 +40,7 @@ End If
 Dim dbms, sp, RS
 Dim P1, P2, P3, P4, TP, SG
 Dim R, O, w_Cont, w_Pagina, w_Disabled, w_TP
-Dim w_Assinatura, w_cliente, w_usuario, w_cor
+Dim w_Assinatura, w_cliente, w_usuario, w_cor, w_ano
 Dim w_dir, w_dir_volta, w_submenu
 Private Par
 Set RS = Server.CreateObject("ADODB.RecordSet")
@@ -64,6 +64,7 @@ w_dir_volta  = "../"
 w_Disabled   = "ENABLED"
 w_cliente    = RetornaCliente()
 w_usuario    = RetornaUsuario()
+w_ano        = RetornaAno()
 
 If O = "" Then O = "L" End If
 
@@ -83,6 +84,7 @@ Main
 
 FechaSessao
 
+Set w_ano       = Nothing
 Set w_dir       = Nothing
 Set w_dir_volta = Nothing
 Set w_cor       = Nothing
@@ -166,7 +168,7 @@ Sub Mesa
     End If
     
     ' Monta a mesa de trabalho para os outros serviços do SIW
-    DB_GetDeskTop RS, w_cliente, w_usuario
+    DB_GetDeskTop RS, w_cliente, w_usuario, w_ano
     If Not RS.EOF Then
        w_nm_modulo = ""
        While Not RS.Eof

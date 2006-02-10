@@ -410,7 +410,7 @@ Sub Identificacao
         w_sq_estado_civil      = RS("sq_estado_civil") 
         w_nome                 = RS("nome") 
         w_nome_resumido        = RS("nome_resumido") 
-        w_foto                 = RS("ln_foto") 
+        w_foto                 = RS("sq_siw_arquivo") 
         w_nascimento           = FormataDataEdicao(RS("nascimento"))
         w_rg_numero            = RS("rg_numero") 
         w_rg_emissor           = RS("rg_emissor") 
@@ -578,7 +578,8 @@ Sub Identificacao
     ShowHTML "        <tr valign=""top"">"
     SelecaoDeficiencia "Portador de de<u>f</u>iciência:", "F", "Se você for portador de algum tipo de deficiência, selecione a mais adequada.", w_sq_deficiencia, null, "w_sq_deficiencia", null, null
     ShowHTML "          <td colspan=2 ONMOUSEOVER=""popup('Selecione o arquivo que contém sua foto. Deve ser um arquivo com a extensão JPG ou GIF, com até 50KB.','white')""; ONMOUSEOUT=""kill()""><font size=""1""><b><u>F</u>oto:</b><br><input " & w_Disabled & " accesskey=""N"" type=""file"" name=""w_foto"" class=""sti"" SIZE=""40"" MAXLENGTH=""200"" VALUE="""">&nbsp;"
-    If w_foto > "" Then ShowHTML "             <a class=""SS"" target=""_blank"" href=""" & conFileVirtual & w_cliente & "/" & w_foto & """>Exibir</a>" End If
+    If w_foto > "" Then ShowHTML LinkArquivo("SS", w_cliente, w_foto, "_blank", null, "Exibir", null) End If
+    
     ShowHTML "        <tr><td colspan=3 align=""center"" height=""2"" bgcolor=""#000000""></td></tr>"
     ShowHTML "        <tr><td colspan=3 align=""center"" height=""1"" bgcolor=""#000000""></td></tr>"
     ShowHTML "        <tr><td colspan=3 valign=""top"" align=""center"" bgcolor=""#D0D0D0""><font size=""1""><b>Local nascimento</td></td></tr>"
@@ -2291,7 +2292,7 @@ Sub Visualizar
   ShowHTML "<TABLE WIDTH=""100%"" BORDER=0><TR>"
   If P2 = 0 Then
      DB_GetCustomerData RS, w_cliente
-     ShowHTML "  <TD ROWSPAN=2><IMG ALIGN=""LEFT"" SRC=""" & conFileVirtual & w_cliente & "\img\logo" & Mid(RS("logo"),Instr(RS("logo"),"."),30) & """>"
+     ShowHTML "  <TD ROWSPAN=2><IMG ALIGN=""LEFT"" src=""" & LinkArquivo(null, w_cliente, "img/logo" & Mid(RS("logo"),Instr(RS("logo"),"."),30), null, null, null, "EMBED") & """>"                                  
      DesconectaBD
   End If
   ShowHTML "  <TD ALIGN=""RIGHT""><B><FONT SIZE=5 COLOR=""#000000"">"
