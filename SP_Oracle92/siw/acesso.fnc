@@ -131,11 +131,11 @@ begin
            inner      join eo_unidade             h on (d.sq_unidade             = h.sq_unidade)
            left outer join eo_unidade_resp        f on (d.sq_unidade             = f.sq_unidade and
                                                         f.tipo_respons           = 'T'          and
-                                                        f.fim                    is not null
+                                                        f.fim                    is null
                                                        )
            left outer join eo_unidade_resp        g on (d.sq_unidade             = g.sq_unidade and
                                                         g.tipo_respons           = 'S'          and
-                                                        g.fim                    is not null
+                                                        g.fim                    is null
                                                        )
   where d.sq_siw_solicitacao     = p_solicitacao
     and b.sq_pessoa              = p_usuario;

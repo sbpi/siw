@@ -136,11 +136,11 @@ begin
     and (d.sq_unidade             = h.sq_unidade)
     and (d.sq_unidade             = f.sq_unidade (+) and
          f.tipo_respons  (+)      = 'T'          and
-         f.fim  (+)               is not null
+         f.fim  (+)               is null
         )
     and (d.sq_unidade             = g.sq_unidade (+) and
          g.tipo_respons (+)       = 'S'          and
-         g.fim (+)                is not null
+         g.fim (+)                is null
         )
     and d.sq_siw_solicitacao     = p_solicitacao
     and b.sq_pessoa              = p_usuario;
