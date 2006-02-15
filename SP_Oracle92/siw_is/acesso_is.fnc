@@ -115,11 +115,11 @@ begin
            inner      join siw.eo_unidade         h on (d.sq_unidade             = h.sq_unidade)
            left outer join siw.eo_unidade_resp    f on (d.sq_unidade             = f.sq_unidade and
                                                         f.tipo_respons           = 'T'          and
-                                                        f.fim                    is not null
+                                                        f.fim                    is null
                                                        )
            left outer join siw.eo_unidade_resp    g on (d.sq_unidade             = g.sq_unidade and
                                                         g.tipo_respons           = 'S'          and
-                                                        g.fim                    is not null
+                                                        g.fim                    is null
                                                        )
   where d.sq_siw_solicitacao     = p_solicitacao
     and b.sq_pessoa              = p_usuario;
@@ -247,13 +247,13 @@ begin
     End If;
  End If;
  
- -- Verifica se o usuário é gestor do módulo à qual a solicitação pertence
+ -- Verifica se o usuário é gestor do sistema ou do módulo à qual a solicitação pertence
  select count(*)
    into w_existe
    from siw.sg_pessoa_modulo a
   where a.sq_pessoa = p_usuario
     and a.sq_modulo = w_modulo;
- If w_existe > 0 Then
+ If w_existe > 0 or w_gestor_sistema = 'S' Then
     Result := Result + 8;
  End If;
 
@@ -411,4 +411,3 @@ begin
  return(Result);
 end Acesso_IS;
 /
-
