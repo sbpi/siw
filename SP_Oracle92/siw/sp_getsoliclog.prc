@@ -72,7 +72,8 @@ begin
                    i.nome_resumido destinatario,
                    i.sq_pessoa sq_pessoa_destinatario,
                    f.nome fase, 
-                   e.nome tramite, null caminho
+                   e.nome tramite,
+                   k.sq_siw_arquivo, k.caminho, k.tipo, k.tamanho
               from siw_solic_log   a
                       inner      join co_pessoa       c on (a.sq_pessoa          = c.sq_pessoa)
                       inner      join siw_tramite     e on (a.sq_siw_tramite     = e.sq_siw_tramite)
@@ -80,6 +81,8 @@ begin
                         inner    join siw_tramite     f on (g.sq_siw_tramite     = f.sq_siw_tramite)
                       left outer join pj_projeto_log  h on (a.sq_siw_solic_log   = h.sq_siw_solic_log)
                         left outer join co_pessoa     i on (h.destinatario       = i.sq_pessoa)
+                        left outer join pj_projeto_log_arq j on (h.sq_projeto_log  = j.sq_projeto_log)
+                          left outer join siw_arquivo      k on (j.sq_siw_arquivo  = k.sq_siw_arquivo)
              where a.sq_siw_solicitacao = p_chave
             UNION
             select b.sq_projeto_log, b.sq_siw_solic_log, null, b.data_inclusao,  Nvl(b.despacho, b.observacao),
@@ -87,12 +90,15 @@ begin
                    c.sq_pessoa,
                    d.nome_resumido destinatario,
                    d.sq_pessoa sq_pessoa_destinatario,
-                   f.nome fase, f.nome tramite, null caminho
+                   f.nome fase, f.nome tramite,
+                   k.sq_siw_arquivo, k.caminho, k.tipo, k.tamanho
               from pj_projeto_log  b 
                       left outer join co_pessoa       d on (b.destinatario       = d.sq_pessoa)
                       inner      join co_pessoa       c on (b.cadastrador        = c.sq_pessoa)
                       inner      join siw_solicitacao g on (b.sq_siw_solicitacao = g.sq_siw_solicitacao)
                         inner    join siw_tramite     f on (g.sq_siw_tramite     = f.sq_siw_tramite)
+                      left outer join pj_projeto_log_arq j on (b.sq_projeto_log  = j.sq_projeto_log)
+                         left outer join siw_arquivo     k on (j.sq_siw_arquivo  = k.sq_siw_arquivo)
              where b.sq_siw_solic_log   is null
                and b.sq_siw_solicitacao = p_chave;
       End If;
