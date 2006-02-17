@@ -424,8 +424,37 @@ Function VisualProjeto(w_chave, O, w_usuario)
      w_html = w_html & VbCrLf & "         </table></td></tr>"
 
   End If
-
+  
   If O = "L" or O = "V" or O = "T" Then ' Se for listagem dos dados
+     
+     ' Arquivos vinculados
+     DB_GetSolicAnexo RS, w_chave, null, w_cliente
+     RS.Sort = "nome"
+     If Not Rs.EOF Then
+        w_html = w_html & VbCrLf & "      <tr><td valign=""top"" colspan=""2"" align=""center"" bgcolor=""#D0D0D0"" style=""border: 2px solid rgb(0,0,0);""><font size=""1""><b>Arquivos anexos</td>"
+        w_html = w_html & VbCrLf & "      <tr><td align=""center"" colspan=""2"">"
+        w_html = w_html & VbCrLf & "        <TABLE WIDTH=""100%"" bgcolor=""" & conTableBgColor & """ BORDER=""" & conTableBorder & """ CELLSPACING=""" & conTableCellSpacing & """ CELLPADDING=""" & conTableCellPadding & """ BorderColorDark=""" & conTableBorderColorDark & """ BorderColorLight=""" & conTableBorderColorLight & """>"
+        w_html = w_html & VbCrLf & "          <tr bgcolor=""" & conTrBgColor & """ align=""center"">"
+        w_html = w_html & VbCrLf & "          <td><font size=""1""><b>Título</font></td>"
+        w_html = w_html & VbCrLf & "          <td><font size=""1""><b>Descrição</font></td>"
+        w_html = w_html & VbCrLf & "          <td><font size=""1""><b>Tipo</font></td>"
+        w_html = w_html & VbCrLf & "          <td><font size=""1""><b>KB</font></td>"
+        w_html = w_html & VbCrLf & "          </tr>"
+        w_cor = conTrBgColor
+        While Not Rs.EOF
+          If w_cor = conTrBgColor or w_cor = "" Then w_cor = conTrAlternateBgColor Else w_cor = conTrBgColor End If
+          w_html = w_html & VbCrLf & "      <tr valign=""top"" bgcolor=""" & w_cor & """>"
+          w_html = w_html & VbCrLf & "        <td><font size=""1"">" & LinkArquivo("HL", w_cliente, RS("chave_aux"), "_blank", "Clique para exibir o arquivo em outra janela.", RS("nome"), null) & "</td>"
+          w_html = w_html & VbCrLf & "        <td><font size=""1"">" & Nvl(RS("descricao"),"---") & "</td>"
+          w_html = w_html & VbCrLf & "        <td><font size=""1"">" & RS("tipo") & "</td>"
+          w_html = w_html & VbCrLf & "        <td align=""right""><font size=""1"">" & Round(cDbl(RS("tamanho"))/1024,1) & "&nbsp;</td>"
+          w_html = w_html & VbCrLf & "      </tr>"
+          Rs.MoveNext
+        wend
+        w_html = w_html & VbCrLf & "         </table></td></tr>"
+     End If
+     DesconectaBD
+     
      ' Encaminhamentos
      DB_GetSolicLog RS, w_chave, null, "LISTA"
      RS.Sort = "data desc"
@@ -438,17 +467,21 @@ Function VisualProjeto(w_chave, O, w_usuario)
      w_html = w_html & VbCrLf & "            <td><font size=""1""><b>Responsável</font></td>"
      w_html = w_html & VbCrLf & "            <td><font size=""1""><b>Fase / Destinatário</font></td>"
      w_html = w_html & VbCrLf & "          </tr>"    
-     If Rs.EOF Then
+     If RS.EOF Then
         w_html = w_html & VbCrLf & "      <tr bgcolor=""" & conTrBgColor & """><td colspan=6 align=""center""><font size=""1""><b>Não foram encontrados encaminhamentos.</b></td></tr>"
      Else
         w_html = w_html & VbCrLf & "      <tr bgcolor=""" & conTrBgColor & """ valign=""top"">"
         w_html = w_html & VbCrLf & "        <td colspan=6><font size=""1"">Fase atual: <b>" & RS("fase") & "</b></td>"
         w_cor = conTrBgColor
-        While Not Rs.EOF
+        While Not RS.EOF
           If w_cor = conTrBgColor or w_cor = "" Then w_cor = conTrAlternateBgColor Else w_cor = conTrBgColor End If
           w_html = w_html & VbCrLf & "      <tr valign=""top"" bgcolor=""" & w_cor & """>"
           w_html = w_html & VbCrLf & "        <td nowrap><font size=""1"">" & FormatDateTime(RS("data"),2) & ", " & FormatDateTime(RS("data"),4)& "</td>"
-          w_html = w_html & VbCrLf & "        <td><font size=""1"">" & CRLF2BR(Nvl(RS("despacho"),"---")) & "</td>"
+          If Nvl(RS("caminho"),"") > "" Then
+             w_html = w_html & VbCrLf & "        <td><font size=""1"">" & CRLF2BR(Nvl(RS("despacho"),"---") & "<br>" & LinkArquivo("HL", w_cliente, RS("sq_siw_arquivo"), "_blank", "Clique para exibir o anexo em outra janela.", "Anexo - " & RS("tipo") & " - " & Round(cDbl(RS("tamanho"))/1024,1) & " KB", null)) & "</td>"
+          Else
+             w_html = w_html & VbCrLf & "        <td><font size=""1"">" & CRLF2BR(Nvl(RS("despacho"),"---")) & "</td>"
+          End If
           w_html = w_html & VbCrLf & "        <td nowrap><font size=""1"">" & ExibePessoa(null, w_cliente, RS("sq_pessoa"), TP, RS("responsavel")) & "</td>"
           If (Not IsNull(Tvl(RS("sq_projeto_log")))) and (Not IsNull(Tvl(RS("destinatario")))) Then
              w_html = w_html & VbCrLf & "        <td nowrap><font size=""1"">" & ExibePessoa(null, w_cliente, RS("sq_pessoa_destinatario"), TP, RS("destinatario")) & "</td>"

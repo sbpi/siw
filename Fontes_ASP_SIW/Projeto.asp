@@ -6,6 +6,7 @@
 <!-- #INCLUDE FILE="DB_Seguranca.asp" -->
 <!-- #INCLUDE FILE="DB_Link.asp" -->
 <!-- #INCLUDE FILE="DB_EO.asp" -->
+<!-- #INCLUDE FILE="DML_Solic.asp" -->
 <!-- #INCLUDE FILE="DML_Projeto.asp" -->
 <!-- #INCLUDE FILE="jScript.asp" -->
 <!-- #INCLUDE FILE="Funcoes.asp" -->
@@ -105,7 +106,7 @@ w_Assinatura = uCase(Request("w_Assinatura"))
 w_Pagina     = "Projeto.asp?par="
 w_Disabled   = "ENABLED"
 
-If SG="PJRECURSO" or SG="PJETAPA" or SG = "PJINTERESS" or SG = "PJAREAS" Then
+If SG="PJRECURSO" or SG="PJETAPA" or SG = "PJINTERESS" or SG = "PJAREAS" or SG = "PJANEXO" Then
    If O <> "I" and Request("w_chave_aux") = "" Then O = "L" End If
 ElseIf SG = "PJENVIO" Then 
    O = "V" 
@@ -1084,9 +1085,175 @@ Sub Geral
   Set w_cor                 = Nothing 
 
 End Sub
-REM =========================================================================
-REM Fim da rotina de dados gerais
-REM -------------------------------------------------------------------------
+
+REM ------------------------------------------------------------------------- 
+REM Rotina de anexos 
+REM ------------------------------------------------------------------------- 
+Sub Anexos 
+  Dim w_chave, w_chave_pai, w_chave_aux, w_nome, w_descricao, w_caminho 
+    
+  Dim w_troca, i, w_erro 
+    
+  w_Chave           = Request("w_Chave") 
+  w_chave_aux       = Request("w_chave_aux") 
+  w_troca           = Request("w_troca") 
+    
+  If w_troca > "" Then ' Se for recarga da página 
+     w_nome                = Request("w_nome") 
+     w_descricao           = Request("w_descricao") 
+     w_caminho             = Request("w_caminho") 
+  ElseIf O = "L" Then 
+     ' Recupera todos os registros para a listagem 
+     DB_GetSolicAnexo RS, w_chave, null, w_cliente 
+     RS.Sort = "nome" 
+  ElseIf InStr("AEV",O) > 0 and w_Troca = "" Then 
+     ' Recupera os dados do endereço informado 
+     DB_GetSolicAnexo RS, w_chave, w_chave_aux, w_cliente 
+     w_nome                 = RS("nome") 
+     w_descricao            = RS("descricao") 
+     w_caminho              = RS("chave_aux") 
+     DesconectaBD 
+  End If 
+    
+  Cabecalho 
+  ShowHTML "<HEAD>" 
+  If InStr("IAEP",O) > 0 Then 
+     ScriptOpen "JavaScript" 
+     ValidateOpen "Validacao" 
+     If InStr("IA",O) > 0 Then 
+        Validate "w_nome", "Título", "1", "1", "1", "255", "1", "1" 
+        Validate "w_descricao", "Descrição", "1", "1", "1", "1000", "1", "1" 
+        If O = "I" Then 
+           Validate "w_caminho", "Arquivo", "", "1", "5", "255", "1", "1" 
+        End If 
+     End If 
+     ShowHTML "  theForm.Botao[0].disabled=true;" 
+     ShowHTML "  theForm.Botao[1].disabled=true;" 
+     ValidateClose 
+     ScriptClose 
+  End If 
+  ShowHTML "</HEAD>" 
+  If w_troca > "" Then 
+     BodyOpenClean "onLoad='document.Form." & w_troca & ".focus()';" 
+  ElseIf O = "I" Then 
+     BodyOpenClean "onLoad='document.Form.w_nome.focus()';" 
+  ElseIf O = "A" Then 
+     BodyOpenClean "onLoad='document.Form.w_descricao.focus()';" 
+  Else 
+     BodyOpenClean "onLoad='document.focus()';" 
+  End If 
+  ShowHTML "<B><FONT COLOR=""#000000"">" & w_TP & "</FONT></B>" 
+  ShowHTML "<HR>" 
+  ShowHTML "<div align=center><center>" 
+  ShowHTML "<table border=""0"" cellpadding=""0"" cellspacing=""0"" width=""100%"">" 
+  If O = "L" Then 
+    AbreSessao 
+    ' Exibe a quantidade de registros apresentados na listagem e o cabeçalho da tabela de listagem 
+    ShowHTML "<tr><td><font size=""1""><a accesskey=""I"" class=""SS"" href=""" & w_Pagina & par & "&R=" & w_Pagina & par & "&O=I&w_chave=" & w_chave & "&P1=" & P1 & "&P2=" & P2 & "&P3=" & P3 & "&P4=" & P4 & "&TP=" & TP & "&SG=" & SG & """><u>I</u>ncluir</a>&nbsp;" 
+    ShowHTML "    <td align=""right""><font size=""1""><b>Registros existentes: " & RS.RecordCount 
+    ShowHTML "<tr><td align=""center"" colspan=3>" 
+    ShowHTML "    <TABLE WIDTH=""100%"" bgcolor=""" & conTableBgColor & """ BORDER=""" & conTableBorder & """ CELLSPACING=""" & conTableCellSpacing & """ CELLPADDING=""" & conTableCellPadding & """ BorderColorDark=""" & conTableBorderColorDark & """ BorderColorLight=""" & conTableBorderColorLight & """>" 
+    ShowHTML "        <tr bgcolor=""" & conTrBgColor & """ align=""center"">" 
+    ShowHTML "          <td><font size=""1""><b>Projeto</font></td>" 
+    ShowHTML "          <td><font size=""1""><b>Descrição</font></td>" 
+    ShowHTML "          <td><font size=""1""><b>Tipo</font></td>" 
+    ShowHTML "          <td><font size=""1""><b>KB</font></td>" 
+    ShowHTML "          <td><font size=""1""><b>Operações</font></td>" 
+    ShowHTML "        </tr>" 
+    If RS.EOF Then ' Se não foram selecionados registros, exibe mensagem 
+        ShowHTML "      <tr bgcolor=""" & conTrBgColor & """><td colspan=7 align=""center""><font size=""1""><b>Não foram encontrados registros.</b></td></tr>" 
+    Else 
+      ' Lista os registros selecionados para listagem 
+      While Not RS.EOF 
+        If w_cor = conTrBgColor or w_cor = "" Then w_cor = conTrAlternateBgColor Else w_cor = conTrBgColor End If 
+        ShowHTML "      <tr bgcolor=""" & w_cor & """ valign=""top"">" 
+        ShowHTML "        <td><font size=""1"">" & LinkArquivo("HL", w_cliente, RS("chave_aux"), "_blank", "Clique para exibir o arquivo em outra janela.", RS("nome"), null) & "</td>" 
+        ShowHTML "        <td><font size=""1"">" & Nvl(RS("descricao"),"---") & "</td>" 
+        ShowHTML "        <td><font size=""1"">" & RS("tipo") & "</td>" 
+        ShowHTML "        <td align=""right""><font size=""1"">" & Round(cDbl(RS("tamanho"))/1024,1) & "&nbsp;</td>" 
+        ShowHTML "        <td align=""top"" nowrap><font size=""1"">" 
+        ShowHTML "          <A class=""HL"" HREF=""" & w_Pagina & par & "&R=" & w_Pagina & par & "&O=A&w_chave=" & w_chave & "&w_chave_aux=" & Rs("chave_aux") & "&P1=" & P1 & "&P2=" & P2 & "&P3=" & P3 & "&P4=" & P4 & "&TP=" & TP & "&SG=" & SG & """>Alterar</A>&nbsp" 
+        ShowHTML "          <A class=""HL"" HREF=""" & w_Pagina & par & "&R=" & w_Pagina & par & "&O=E&w_chave=" & w_chave & "&w_chave_aux=" & Rs("chave_aux") & "&P1=" & P1 & "&P2=" & P2 & "&P3=" & P3 & "&P4=" & P4 & "&TP=" & TP & "&SG=" & SG & """>Excluir</A>&nbsp" 
+        ShowHTML "        </td>" 
+        ShowHTML "      </tr>" 
+        RS.MoveNext 
+      wend 
+    End If 
+    ShowHTML "      </center>" 
+    ShowHTML "    </table>" 
+    ShowHTML "  </td>" 
+    ShowHTML "</tr>" 
+    DesconectaBD 
+  ElseIf Instr("IAEV",O) > 0 Then 
+    If InStr("EV",O) Then 
+       w_Disabled = " DISABLED " 
+    End If 
+    ShowHTML "<FORM action=""" & w_pagina & "Grava&SG="&SG&"&O="&O&""" name=""Form"" onSubmit=""return(Validacao(this));"" enctype=""multipart/form-data"" method=""POST"">" 
+    ShowHTML "<INPUT type=""hidden"" name=""P1"" value=""" & P1 & """>" 
+    ShowHTML "<INPUT type=""hidden"" name=""P2"" value=""" & P2 & """>" 
+    ShowHTML "<INPUT type=""hidden"" name=""P3"" value=""" & P3 & """>" 
+    ShowHTML "<INPUT type=""hidden"" name=""P4"" value=""" & P4 & """>" 
+    ShowHTML "<INPUT type=""hidden"" name=""TP"" value=""" & TP & """>" 
+    ShowHTML "<INPUT type=""hidden"" name=""R"" value=""" & R & """>" 
+    
+    ShowHTML "<INPUT type=""hidden"" name=""w_chave"" value=""" & w_chave & """>" 
+    ShowHTML "<INPUT type=""hidden"" name=""w_chave_aux"" value=""" & w_chave_aux & """>" 
+    ShowHTML "<INPUT type=""hidden"" name=""w_atual"" value=""" & w_caminho & """>" 
+    ShowHTML "<INPUT type=""hidden"" name=""w_troca"" value="""">" 
+    
+    ShowHTML "<tr bgcolor=""" & conTrBgColor & """><td align=""center"">" 
+    ShowHTML "    <table width=""97%"" border=""0"">" 
+    
+    If O = "I" or O = "A" Then 
+       DB_GetCustomerData RS, w_cliente 
+       ShowHTML "      <tr><td align=""center"" bgcolor=""#D0D0D0"" style=""border: 2px solid rgb(0,0,0);""><font size=""2""><b><font color=""#BC3131"">ATENÇÃO</font>: o tamanho máximo aceito para o arquivo é de " & cDbl(RS("upload_maximo"))/1024 & " KBytes</b>.</font></td>" 
+       ShowHTML "<INPUT type=""hidden"" name=""w_upload_maximo"" value=""" & RS("upload_maximo") & """>" 
+    End If 
+    
+    ShowHTML "      <tr><td><font size=""1""><b><u>T</u>ítulo:</b><br><input " & w_Disabled & " accesskey=""T"" type=""text"" name=""w_nome"" class=""STI"" SIZE=""75"" MAXLENGTH=""255"" VALUE=""" & w_nome & """ title=""'OBRIGATÓRIO. Informe um título para o arquivo.""></td>" 
+    ShowHTML "      <tr><td><font size=""1""><b><u>D</u>escrição:</b><br><textarea " & w_Disabled & " accesskey=""D"" name=""w_descricao"" class=""STI"" ROWS=5 cols=65 title=""'OBRIGATÓRIO. Descreva a finalidade do arquivo."">" & w_descricao & "</TEXTAREA></td>" 
+    ShowHTML "      <tr><td><font size=""1""><b>A<u>r</u>quivo:</b><br><input " & w_Disabled & " accesskey=""R"" type=""file"" name=""w_caminho"" class=""STI"" SIZE=""80"" MAXLENGTH=""100"" VALUE="""" title=""'OBRIGATÓRIO. Clique no botão ao lado para localizar o arquivo. Ele será transferido automaticamente para o servidor."">" 
+    If w_caminho > "" Then 
+       ShowHTML "              <b>" & LinkArquivo("SS", w_cliente, w_caminho, "_blank", "Clique para exibir o arquivo atual.", "Exibir", null) & "</b>" 
+    End If 
+    ShowHTML "      <tr><td align=""center""><hr>" 
+    If O = "E" Then 
+       ShowHTML "   <input class=""STB"" type=""submit"" name=""Botao"" value=""Excluir"" onClick=""return confirm('Confirma a exclusão do registro?');"">" 
+    Else 
+       If O = "I" Then 
+          ShowHTML "            <input class=""STB"" type=""submit"" name=""Botao"" value=""Incluir"">" 
+       Else 
+          ShowHTML "            <input class=""STB"" type=""submit"" name=""Botao"" value=""Atualizar"">" 
+       End If 
+    End If 
+    ShowHTML "            <input class=""STB"" type=""button"" onClick=""location.href='" & w_Pagina & par & "&w_chave=" & w_chave & "&P1=" & P1 & "&P2=" & P2 & "&P3=" & P3 & "&P4=" & P4 & "&TP=" & TP & "&SG=" & SG & "&O=L';"" name=""Botao"" value=""Cancelar"">" 
+    ShowHTML "          </td>" 
+    ShowHTML "      </tr>" 
+    ShowHTML "    </table>" 
+    ShowHTML "    </TD>" 
+    ShowHTML "</tr>" 
+    ShowHTML "</FORM>" 
+  Else 
+    ScriptOpen "JavaScript" 
+    ShowHTML " alert('Opção não disponível');" 
+    'ShowHTML " history.back(1);" 
+    ScriptClose 
+  End If 
+  ShowHTML "</table>" 
+  ShowHTML "</center>" 
+  Rodape 
+    
+  Set w_chave           = Nothing 
+  Set w_chave_pai       = Nothing 
+  Set w_chave_aux       = Nothing 
+  Set w_nome            = Nothing 
+  Set w_descricao       = Nothing 
+  Set w_caminho         = Nothing 
+    
+  Set w_troca           = Nothing 
+  Set i                 = Nothing 
+  Set w_erro            = Nothing 
+End Sub 
 
 REM =========================================================================
 REM Rotina de etapas do projeto
@@ -2597,6 +2764,105 @@ Sub Anotar
      ScriptOpen "JavaScript"
      ValidateOpen "Validacao"
      Validate "w_observacao", "Anotação", "", "1", "1", "2000", "1", "1"
+     Validate "w_caminho", "Arquivo", "", "", "5", "255", "1", "1"
+     Validate "w_assinatura", "Assinatura Eletrônica", "1", "1", "6", "30", "1", "1"
+     If P1 <> 1 Then ' Se não for encaminhamento
+        ShowHTML "  theForm.Botao[0].disabled=true;"
+        ShowHTML "  theForm.Botao[1].disabled=true;"
+     Else
+        ShowHTML "  theForm.Botao.disabled=true;"
+     End If
+     ValidateClose
+     ScriptClose
+  End If
+  ShowHTML "</HEAD>"
+  If w_troca > "" Then
+     BodyOpenClean "onLoad='document.Form." & w_troca & ".focus()';"
+  Else
+     BodyOpenClean "onLoad='document.Form.w_observacao.focus()';"
+  End If
+  ShowHTML "<B><FONT COLOR=""#000000"">" & w_TP & "</FONT></B>"
+  ShowHTML "<HR>"
+  ShowHTML "<div align=center><center>"
+  ShowHTML "<table border=""0"" cellpadding=""0"" cellspacing=""0"" width=""100%"">"
+
+  ' Chama a rotina de visualização dos dados do projeto, na opção "Listagem"
+  ShowHTML VisualProjeto(w_chave, "V", w_usuario)
+
+  ShowHTML "<HR>"
+  ShowHTML "<FORM action=""" & w_pagina & "Grava&SG=PJENVIO&O="&O&"&w_menu="&w_menu&""" name=""Form"" onSubmit=""return(Validacao(this));"" enctype=""multipart/form-data"" method=""POST"">"
+  ShowHTML "<INPUT type=""hidden"" name=""P1"" value=""" & P1 & """>"
+  ShowHTML "<INPUT type=""hidden"" name=""P2"" value=""" & P2 & """>"
+  ShowHTML "<INPUT type=""hidden"" name=""P3"" value=""" & P3 & """>"
+  ShowHTML "<INPUT type=""hidden"" name=""P4"" value=""" & P4 & """>"
+  ShowHTML "<INPUT type=""hidden"" name=""TP"" value=""" & TP & """>"
+  ShowHTML "<INPUT type=""hidden"" name=""R"" value=""" & R & """>"
+
+  ShowHTML MontaFiltro("POST")
+  ShowHTML "<INPUT type=""hidden"" name=""w_chave"" value=""" & w_chave & """>"
+  ShowHTML "<INPUT type=""hidden"" name=""w_troca"" value="""">"
+  ShowHTML "<INPUT type=""hidden"" name=""w_menu"" value=""" & w_menu & """>"  
+  DB_GetSolicData RS, w_chave, "PJGERAL"
+  ShowHTML "<INPUT type=""hidden"" name=""w_tramite"" value=""" & RS("sq_siw_tramite") & """>"
+  DesconectaBD
+
+  ShowHTML "<tr bgcolor=""" & conTrBgColor & """><td align=""center"">"
+  ShowHTML "  <table width=""97%"" border=""0"">"
+  ShowHTML "    <tr><td valign=""top"" colspan=""2""><table border=0 width=""100%"" cellspacing=0><tr valign=""top"">"
+  DB_GetCustomerData RS, w_cliente  
+  ShowHTML "      <tr><td align=""center"" bgcolor=""#D0D0D0"" style=""border: 2px solid rgb(0,0,0);""><font size=""2""><b><font color=""#BC3131"">ATENÇÃO</font>: o tamanho máximo aceito para o arquivo é de " & cDbl(RS("upload_maximo"))/1024 & " KBytes</b>.</font></td>"
+  ShowHTML "<INPUT type=""hidden"" name=""w_upload_maximo"" value=""" & RS("upload_maximo") & """>"  
+  ShowHTML "      <tr><td valign=""top""><font size=""1""><b>A<u>n</u>otação:</b><br><textarea " & w_Disabled & " accesskey=""N"" name=""w_observacao"" class=""STI"" ROWS=5 cols=75 title=""'Redija a anotação desejada."">" & w_observacao & "</TEXTAREA></td>"  
+  ShowHTML "      <tr><td><font size=""1""><b>A<u>r</u>quivo:</b><br><input " & w_Disabled & " accesskey=""R"" type=""file"" name=""w_caminho"" class=""STI"" SIZE=""80"" MAXLENGTH=""100"" VALUE="""" title=""'OPCIONAL. Se desejar anexar um arquivo, clique no botão ao lado para localizá-lo. Ele será transferido automaticamente para o servidor."">"  
+  ShowHTML "      </table>"
+  ShowHTML "      <tr><td align=""LEFT"" colspan=4><font size=""1""><b><U>A</U>ssinatura Eletrônica:<BR> <INPUT ACCESSKEY=""A"" class=""STI"" type=""PASSWORD"" name=""w_assinatura"" size=""30"" maxlength=""30"" value=""""></td></tr>"
+  ShowHTML "    <tr><td align=""center"" colspan=4><hr>"
+  ShowHTML "      <input class=""STB"" type=""submit"" name=""Botao"" value=""Gravar"">"
+  ShowHTML "      <input class=""STB"" type=""button"" onClick=""history.back(1);"" name=""Botao"" value=""Abandonar"">"
+  ShowHTML "      </td>"
+  ShowHTML "    </tr>"
+  ShowHTML "  </table>"
+  ShowHTML "  </TD>"
+  ShowHTML "</tr>"
+  ShowHTML "</FORM>"
+  ShowHTML "</table>"
+  ShowHTML "</center>"
+  Rodape
+
+  Set w_chave           = Nothing 
+  Set w_chave_pai       = Nothing 
+  Set w_chave_aux       = Nothing 
+  Set w_observacao      = Nothing 
+  
+  Set w_troca           = Nothing 
+  Set i                 = Nothing 
+  Set w_erro            = Nothing
+End Sub
+
+REM =========================================================================
+REM Rotina de anotação
+REM -------------------------------------------------------------------------
+Sub Anotar12
+
+  Dim w_chave, w_chave_pai, w_chave_aux, w_observacao
+  
+  Dim w_troca, i, w_erro
+  
+  w_Chave           = Request("w_Chave")
+  w_chave_aux       = Request("w_chave_aux")
+  w_troca           = Request("w_troca")
+  
+  If w_troca > "" Then ' Se for recarga da página
+     w_observacao     = Request("w_observacao")
+  End If
+
+  Cabecalho
+  ShowHTML "<HEAD>"
+  ShowHTML "<meta http-equiv=""Refresh"" content=""300; URL=" & MontaURL("MESA") & """>"
+  If InStr("V",O) > 0 Then
+     ScriptOpen "JavaScript"
+     ValidateOpen "Validacao"
+     Validate "w_observacao", "Anotação", "", "1", "1", "2000", "1", "1"
      Validate "w_assinatura", "Assinatura Eletrônica", "1", "1", "6", "30", "1", "1"
      If P1 <> 1 Then ' Se não for encaminhamento
         ShowHTML "  theForm.Botao[0].disabled=true;"
@@ -3190,7 +3456,7 @@ Public Sub Grava
   Dim w_Null
   Dim w_chave_nova
   Dim w_mensagem
-  Dim FS, F1
+  Dim FS, F1, w_file
 
   Cabecalho
   ShowHTML "</HEAD>"
@@ -3343,6 +3609,51 @@ Public Sub Grava
           ShowHTML "  history.back(1);"
           ScriptClose
        End If
+    Case "PJANEXO"
+       ' Verifica se a Assinatura Eletrônica é válida
+       If (VerificaAssinaturaEletronica(Session("Username"),w_assinatura) and w_assinatura > "") or _
+          w_assinatura = "" Then
+
+          ' Se foi feito o upload de um arquivo  
+          If ul.Files("w_caminho").OriginalPath > "" Then  
+             ' Verifica se o tamanho das fotos está compatível com  o limite de 100KB.  
+             If ul.Files("w_caminho").Size > ul.Form("w_upload_maximo") Then  
+                ScriptOpen("JavaScript")  
+                ShowHTML "  alert('Atenção: o tamanho máximo do arquivo não pode exceder " & ul.Form("w_upload_maximo")/1024 & " KBytes!');"  
+                ShowHTML "  history.back(1);"  
+                ScriptClose  
+                Response.End()  
+                exit sub  
+             End If  
+    
+             ' Se já há um nome para o arquivo, mantém  
+             w_file = nvl(ul.Form("w_atual"),ul.GetUniqueName())  
+             ul.Files("w_caminho").SaveAs(conFilePhysical & w_cliente & "\" & w_file)  
+          Else  
+             w_file = ""  
+          End If  
+    
+          ' Se for exclusão e houver um arquivo físico, deve remover o arquivo do disco.  
+          If O = "E" and ul.Form("w_atual") > "" Then  
+             ul.FileDelete(conFilePhysical & w_cliente & "\" & ul.Form("w_atual"))  
+          End If  
+    
+          DML_PutSolicArquivo O, _  
+              w_cliente, ul.Form("w_chave"), ul.Form("w_chave_aux"), ul.Form("w_nome"), ul.Form("w_descricao"), _  
+              w_file, ul.Files("w_caminho").Size, ul.Files("w_caminho").ContentType  
+          
+          ScriptOpen "JavaScript"
+          ' Recupera a sigla do serviço pai, para fazer a chamada ao menu 
+          DB_GetLinkData RS, Session("p_cliente"), SG 
+          ShowHTML "  location.href='" & RS("link") & "&O=L&w_chave=" & ul.Form("w_chave") & "&P1=" & P1 & "&P2=" & P2 & "&P3=" & P3 & "&P4=" & P4 & "&TP=" & TP & "&SG=" & SG & "';" 
+          DesconectaBD
+          ScriptClose
+       Else
+          ScriptOpen "JavaScript"
+          ShowHTML "  alert('Assinatura Eletrônica inválida!');"
+          ShowHTML "  history.back(1);"
+          ScriptClose
+       End If       
     Case "PJAREAS"
        ' Verifica se a Assinatura Eletrônica é válida
        If (VerificaAssinaturaEletronica(Session("Username"),w_assinatura) and w_assinatura > "") or _
@@ -3366,34 +3677,65 @@ Public Sub Grava
        ' Verifica se a Assinatura Eletrônica é válida
        If (VerificaAssinaturaEletronica(Session("Username"),w_assinatura) and w_assinatura > "") or _
           w_assinatura = "" Then
-
-          DB_GetSolicData RS, Request("w_chave"), "PJGERAL"
-          If cDbl(RS("sq_siw_tramite")) <> cDbl(Request("w_tramite")) Then
-             ScriptOpen "JavaScript"
-             ShowHTML "  alert('ATENÇÃO: Outro usuário já encaminhou este projeto para outra fase de execução!');"
-             ScriptClose
+          If InStr(uCase(Request.ServerVariables("http_content_type")),"MULTIPART/FORM-DATA") > 0 Then 
+             ' Se foi feito o upload de um arquivo 
+             If ul.Files("w_caminho").OriginalPath > "" Then 
+                ' Verifica se o tamanho das fotos está compatível com  o limite de 100KB. 
+                If ul.Files("w_caminho").Size > ul.Form("w_upload_maximo") Then 
+                   ScriptOpen("JavaScript") 
+                   ShowHTML "  alert('Atenção: o tamanho máximo do arquivo não pode exceder " & ul.Form("w_upload_maximo")/1024 & " KBytes!');" 
+                   ShowHTML "  history.back(1);" 
+                   ScriptClose 
+                   Response.End() 
+                   exit sub 
+                End If 
+    
+                ' Se já há um nome para o arquivo, mantém 
+                w_file = nvl(ul.Form("w_atual"),ul.GetUniqueName()) 
+                ul.Files("w_caminho").SaveAs(conFilePhysical & w_cliente & "\" & w_file) 
+             Else 
+                w_file = "" 
+             End If 
+    
+             DML_PutProjetoEnvio w_menu, ul.Form("w_chave"), w_usuario, ul.Form("w_tramite"), _ 
+                 ul.Form("w_novo_tramite"), "N", ul.Form("w_observacao"), ul.Form("w_destinatario"), ul.Form("w_despacho"), _ 
+                 w_file, ul.Files("w_caminho").Size, ul.Files("w_caminho").ContentType 
+    
+             ScriptOpen "JavaScript" 
+             ' Volta para a listagem 
+             DB_GetMenuData RS, w_menu 
+             ShowHTML "  location.href='" & RS("link") & "&O=L&w_chave=" & ul.Form("w_chave") & "&P1=" & P1 & "&P2=" & P2 & "&P3=" & P3 & "&P4=" & P4 & "&TP=" & RemoveTP(TP) & "&SG=" & rs("sigla") & MontaFiltroUpload(ul.Form) & "';" 
+             DesconectaBD 
+             ScriptClose 
           Else
-             DML_PutProjetoEnvio Request("w_menu"), Request("w_chave"), w_usuario, Request("w_tramite"), Request("w_novo_tramite"), "N", Request("w_observacao"), Request("w_destinatario"), Request("w_despacho"), null, null, null
-             
-             ' Envia e-mail comunicando a tramitação
-             If Request("w_novo_tramite") > "" Then
-                SolicMail Request("w_chave"),2
-             End If
-          
-             If P1 = 1 Then ' Se for envio da fase de cadastramento, remonta o menu principal
-                ' Recupera os dados para montagem correta do menu
-                DB_GetMenuData RS, w_menu
+             DB_GetSolicData RS, Request("w_chave"), "PJGERAL"
+             If cDbl(RS("sq_siw_tramite")) <> cDbl(Request("w_tramite")) Then
                 ScriptOpen "JavaScript"
-                ShowHTML "  parent.menu.location='Menu.asp?par=ExibeDocs&O=L&R=" & R & "&SG=" & RS("sigla") & "&TP=" & RemoveTP(RemoveTP(TP)) & MontaFiltro("GET") & "';"
+                ShowHTML "  alert('ATENÇÃO: Outro usuário já encaminhou este projeto para outra fase de execução!');"
                 ScriptClose
-                DesconectaBD
              Else
-                ' Volta para a listagem
-                DB_GetMenuData RS, w_menu
-                ScriptOpen "JavaScript"
-                ShowHTML "  location.href='" & RS("link") & "&O=L&w_chave=" & Request("w_chave") & "&P1=" & P1 & "&P2=" & P2 & "&P3=" & P3 & "&P4=" & P4 & "&TP=" & RemoveTP(TP) & "&SG=" & rs("sigla") & MontaFiltro("GET") & "';"
-                ScriptClose
-                DesconectaBD
+                DML_PutProjetoEnvio Request("w_menu"), Request("w_chave"), w_usuario, Request("w_tramite"), Request("w_novo_tramite"), "N", Request("w_observacao"), Request("w_destinatario"), Request("w_despacho"), null, null, null
+                
+                ' Envia e-mail comunicando a tramitação
+                If Request("w_novo_tramite") > "" Then
+                   SolicMail Request("w_chave"),2
+                End If
+           
+                If P1 = 1 Then ' Se for envio da fase de cadastramento, remonta o menu principal
+                   ' Recupera os dados para montagem correta do menu
+                   DB_GetMenuData RS, w_menu
+                   ScriptOpen "JavaScript"
+                   ShowHTML "  parent.menu.location='Menu.asp?par=ExibeDocs&O=L&R=" & R & "&SG=" & RS("sigla") & "&TP=" & RemoveTP(RemoveTP(TP)) & MontaFiltro("GET") & "';"
+                   ScriptClose
+                   DesconectaBD
+                Else
+                   ' Volta para a listagem
+                   DB_GetMenuData RS, w_menu
+                   ScriptOpen "JavaScript"
+                   ShowHTML "  location.href='" & RS("link") & "&O=L&w_chave=" & Request("w_chave") & "&P1=" & P1 & "&P2=" & P2 & "&P3=" & P3 & "&P4=" & P4 & "&TP=" & RemoveTP(TP) & "&SG=" & rs("sigla") & MontaFiltro("GET") & "';"
+                   ScriptClose
+                   DesconectaBD
+                End If
              End If
           End If
        Else
@@ -3438,6 +3780,7 @@ Public Sub Grava
        ScriptClose
   End Select
 
+  Set w_file                = Nothing
   Set FS                    = Nothing
   Set w_Mensagem            = Nothing
   Set w_chave_nova          = Nothing
@@ -3445,9 +3788,6 @@ Public Sub Grava
   Set p_modulo              = Nothing
   Set w_Null                = Nothing
 End Sub
-REM -------------------------------------------------------------------------
-REM Fim do procedimento que executa as operações de BD
-REM =========================================================================
 
 REM =========================================================================
 REM Rotina principal
@@ -3463,34 +3803,21 @@ Sub Main
   End If
 
   Select Case Par
-    Case "INICIAL"
-       Inicial
-    Case "GERAL"
-       Geral 
-    Case "ETAPA"
-       Etapas
-    Case "RECURSO"
-       Recursos
-    Case "ETAPARECURSO"
-       EtapaRecursos
-    Case "INTERESS"
-       Interessados
-    Case "AREAS"
-       Areas
-    Case "VISUAL"
-       Visual
-    Case "EXCLUIR"
-       Excluir
-    Case "ENVIO"
-       Encaminhamento
-    Case "ANOTACAO"
-       Anotar
-    Case "CONCLUIR"
-       Concluir
-    Case "ATUALIZAETAPA"
-       AtualizaEtapa
-    Case "GRAVA"
-       Grava
+    Case "INICIAL"         Inicial
+    Case "GERAL"           Geral
+    Case "ANEXO"           Anexos  
+    Case "ETAPA"           Etapas
+    Case "RECURSO"         Recursos
+    Case "ETAPARECURSO"    EtapaRecursos
+    Case "INTERESS"        Interessados
+    Case "AREAS"           Areas
+    Case "VISUAL"          Visual
+    Case "EXCLUIR"         Excluir
+    Case "ENVIO"           Encaminhamento
+    Case "ANOTACAO"        Anotar
+    Case "CONCLUIR"        Concluir
+    Case "ATUALIZAETAPA"   AtualizaEtapa
+    Case "GRAVA"           Grava
     Case Else
        Cabecalho
        BodyOpenClean "onLoad=document.focus();"
@@ -3500,8 +3827,6 @@ Sub Main
        Rodape
   End Select
 End Sub
-REM =========================================================================
-REM Fim da rotina principal
-REM -------------------------------------------------------------------------
+
 %>
 
