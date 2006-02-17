@@ -170,6 +170,7 @@ Fontes_ASP_SEPPIR/sisplam_modelo2.jpg -text
 Fontes_ASP_SEPPIR/sisplam_ms_logo.jpg -text
 Fontes_ASP_SEPPIR/sisplam_seppir_logo.JPG -text
 Fontes_ASP_SEPPIR/sisplam_seppir_logo1.JPG -text
+Fontes_ASP_SIW/Calendario.asp -text
 Fontes_ASP_SIW/Cliente.asp -text
 Fontes_ASP_SIW/Constants.inc -text
 Fontes_ASP_SIW/DB_Cliente.asp -text
@@ -245,7 +246,10 @@ Fontes_ASP_SIW/cl_cespe/VisualDemanda.asp -text
 Fontes_ASP_SIW/cl_cespe/VisualFormulario.asp -text
 Fontes_ASP_SIW/cl_cespe/VisualProjeto.asp -text
 Fontes_ASP_SIW/cl_cespe/VisualTabela.asp -text
-Fontes_ASP_SIW/cp_calendar/ccalexa2.asp -text
+Fontes_ASP_SIW/cp_calendar/CSetAvail.class -text
+Fontes_ASP_SIW/cp_calendar/FlecheButton.class -text
+Fontes_ASP_SIW/cp_calendar/ccalendar.class -text
+Fontes_ASP_SIW/cp_calendar/ccalendar.jar -text
 Fontes_ASP_SIW/ecw.asp -text
 Fontes_ASP_SIW/ecw/Aluno.asp -text
 Fontes_ASP_SIW/ecw/Ambiente.asp -text

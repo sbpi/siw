@@ -1293,7 +1293,7 @@ REM =========================================================================
 REM Montagem do link para abrir o calendário
 REM -------------------------------------------------------------------------
 Function ExibeCalendario (form, campo)
-    ExibeCalendario = "   <a class=""ss"" href=""#"" onClick=""window.open('"& w_dir_volta & "cp_calendar/ccalexa2.asp?nmForm=" & form & "&nmCampo=" & campo & "&vData='+document." & Form & "." & campo & ".value,'dp','toolbar=0,location=0,directories=0,status=0,menubar=0,scrollbars=0,resizable=0,width=250,height=250,left=500,top=200'); return false;"" title=""Visualizar calendário""><img src=images/Icone/goToTop.gif border=0 align=top height=13 width=15></a>"
+    ExibeCalendario = "   <a class=""ss"" href=""#"" onClick=""window.open('"& w_dir_volta & "calendario.asp?nmForm=" & form & "&nmCampo=" & campo & "&vData='+document." & Form & "." & campo & ".value,'dp','toolbar=0,location=0,directories=0,status=0,menubar=0,scrollbars=0,resizable=0,width=250,height=250,left=500,top=200'); return false;"" title=""Visualizar calendário""><img src=images/Icone/goToTop.gif border=0 align=top height=13 width=15></a>"
 End Function
 
 REM =========================================================================

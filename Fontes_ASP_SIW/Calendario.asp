@@ -1,12 +1,48 @@
-<!-- #include virtual="/siw/constants.inc" -->
-<!-- #include virtual="/siw/Funcoes.asp" -->
+<!-- #INCLUDE FILE="constants.inc" -->
 <%
-Dim w_data
+Function Nvl(expressao,valor)
+   If IsNull(expressao) or expressao = "" Then
+      Nvl = valor
+   Else
+      Nvl = expressao
+   End If
+End Function
 
-If Nvl(Request.QueryString("vData"),"") > "" Then
+Function FormataDataEdicao(w_dt_grade)
+  Dim l_dt_grade
+  l_dt_grade = Nvl(w_dt_grade,"")
+  If l_dt_grade > "" Then
+     If Len(l_dt_grade) < 10 Then
+        If Right(Mid(l_dt_grade,1,2),1) = "/" Then
+           l_dt_grade = "0"&l_dt_grade
+        End If
+        If Len(l_dt_grade) < 10 and Right(Mid(l_dt_grade,4,2),1) = "/" Then
+           l_dt_grade = Left(l_dt_grade,3)&"0"&Right(l_dt_grade,6)
+        End If 
+     End If
+  Else
+     l_dt_grade = ""
+  End If
+
+  FormataDataEdicao = l_dt_grade
+
+  Set l_dt_grade       = Nothing
+End Function
+
+Dim w_data, w_url, w_caminho
+
+If Request.QueryString("vData") > "" Then
    w_data = Request.QueryString("vData")
 Else
    w_data = FormataDataEdicao(Date())
+End If
+
+If Session("p_cliente") = 6601 Then
+   w_url     = replace(conRootSIW,"/sgpa/","") & conFileVirtual & Session("p_cliente")
+   w_caminho = "sgpa"
+Else
+   w_url     = replace(conRootSIW,"/siw/","") & conFileVirtual & Session("p_cliente")
+   w_caminho = "siw"
 End If
 %>
 <html>
@@ -26,11 +62,11 @@ End If
 </script>
 
 </head>
-<BASE HREF="<%=replace(conRootSIW & conFileVirtual,"/siw/","")%><%=Session("p_cliente")%>/">
+<BASE HREF="<%=w_url%>/">
 <body onLoad="document.focus()">
 
 <FORM NAME="frmCalendario">
-<applet code=ccalendar.class name=ccalendar MAYSCRIPT archive="/siw/cp_calendar/ccalendar.jar" width=235 height=190 id="cal" VIEWASTEXT>
+<applet code=ccalendar.class name=ccalendar MAYSCRIPT archive="/<%=w_caminho%>/cp_calendar/ccalendar.jar" width=235 height=190 id="cal" VIEWASTEXT>
 <param name="color_fond" value="F7F7F7">
 <param name="color_full" value = "F7F7F7">
 <param name="color_case" value="FFFFFF">
