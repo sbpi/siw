@@ -263,7 +263,7 @@ Sub LogOn
   ShowHTML "</table>"
   ShowHTML "</form> "
   ScriptOpen "Javascript"
-  ShowHTML "  if (navigator.appVersion.search('MSIE 6.0') == -1) {"
+  ShowHTML "  if (navigator.appVersion.search('MSIE 6.0') == -1 && navigator.appName.search('Netscape') == -1) {"
   ShowHTML "    alert('Este sistema exige a utilização do MS-Internet Explorer 6, Service Pack 1, ou superior.\nAtualize a versão antes de iniciar sua utilização.'); "
   ShowHTML "    document.Form.Login1.readonly=true; "
   ShowHTML "    document.Form.Password1.disabled=true; "
