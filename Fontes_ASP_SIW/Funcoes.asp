@@ -2206,6 +2206,9 @@ Function ExtractFileName(arquivo)
   While InStr(fsa,"\") > 0
      fsa = Mid(fsa,InStr(fsa,"\")+1,Len(fsa))
   Wend
+  While InStr(fsa,"/") > 0
+     fsa = Mid(fsa,InStr(fsa,"/")+1,Len(fsa))
+  Wend
   ExtractFileName = fsa
 End Function
 

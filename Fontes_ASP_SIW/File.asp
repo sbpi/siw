@@ -16,7 +16,7 @@ REM -------------------------------------------------------------------------
 Response.Buffer = True
    
 Dim dbms, sp, RS, w_cliente, w_id, w_erro
-Dim w_nome, w_descricao, w_inclusao, w_tamanho, w_tipo, w_caminho, w_force
+Dim w_nome, w_descricao, w_inclusao, w_tamanho, w_tipo, w_caminho, w_force, w_filename
 w_cliente = Request("cliente")
 w_id      = Request("id")
 w_force   = Nvl(Request("force"), "false")
@@ -31,6 +31,7 @@ ElseIf Instr(w_id,".") > 0 Then
    w_tamanho     = ""
    w_tipo        = Mid(w_id,Instr(w_id,"."),30)
    w_caminho     = w_id
+   w_filename    = w_id
 Else
    ' Configura objetos de BD
    Set RS  = Server.CreateObject("ADODB.RecordSet")
@@ -47,6 +48,7 @@ Else
       w_tamanho     = RS("tamanho")
       w_tipo        = RS("tipo")
       w_caminho     = RS("caminho")
+      w_filename    = RS("nome_original")
    End If
    DesconectaBD
    FechaSessao
@@ -85,6 +87,7 @@ Set w_tamanho   = Nothing
 Set w_tipo      = Nothing 
 Set w_caminho   = Nothing 
 Set w_force     = Nothing
+Set w_filename  = Nothing
 
 Sub DownloadFile(strFileName, blnForceDownload)
     Dim fso, objFile, strFilePath
@@ -123,6 +126,9 @@ Sub DownloadFile(strFileName, blnForceDownload)
     '----------------------
     blnBinary=GetContentType(w_tipo, strExtension)
     strAllFile=""
+    If InStr(w_filename, ".") = 0 Then
+       w_filename = w_filename & strExtension
+    End If
     
     '----------------------
     'forth step: read the file contents.
@@ -148,9 +154,9 @@ Sub DownloadFile(strFileName, blnForceDownload)
     'final step: apply content type and send file contents to the browser
     '----------------------
     If blnForceDownload="true" Then
-        Response.AddHeader "Content-Disposition", "attachment; filename="&w_id&strExtension
+        Response.AddHeader "Content-Disposition", "attachment; filename="&w_filename
     Else
-        Response.AddHeader "Content-Disposition", "filename="&w_id&strExtension
+        Response.AddHeader "Content-Disposition", "filename="&w_filename
     End If
     Response.AddHeader "Content-Length", fileSize
     If Instr(w_tipo,".") = 0 Then Response.ContentType = w_tipo End If

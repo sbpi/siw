@@ -3699,7 +3699,7 @@ Public Sub Grava
     
              DML_PutProjetoEnvio w_menu, ul.Form("w_chave"), w_usuario, ul.Form("w_tramite"), _ 
                  ul.Form("w_novo_tramite"), "N", ul.Form("w_observacao"), ul.Form("w_destinatario"), ul.Form("w_despacho"), _ 
-                 w_file, ul.Files("w_caminho").Size, ul.Files("w_caminho").ContentType 
+                 w_file, ul.Files("w_caminho").Size, ul.Files("w_caminho").ContentType, ExtractFileName(ul.Files("w_caminho").OriginalPath) 
     
              ScriptOpen "JavaScript" 
              ' Volta para a listagem 
