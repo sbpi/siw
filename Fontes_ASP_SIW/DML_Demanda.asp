@@ -261,7 +261,7 @@ REM -------------------------------------------------------------------------
 Sub DML_PutDemandaEnvio(p_menu, p_chave, p_pessoa, p_tramite, p_novo_tramite, p_devolucao, p_observacao, p_destinatario, p_despacho, _
         p_caminho, p_tamanho, P_tipo, p_nome_original)
   Dim l_Operacao, l_menu, l_chave, l_pessoa, l_tramite, l_novo_tramite, l_devolucao, l_observacao, l_destinatario, l_despacho
-  Dim l_caminho, l_tamanho, l_tipo, p_nome_original
+  Dim l_caminho, l_tamanho, l_tipo, l_nome_original
   
   Set l_menu                = Server.CreateObject("ADODB.Parameter") 
   Set l_chave               = Server.CreateObject("ADODB.Parameter") 
