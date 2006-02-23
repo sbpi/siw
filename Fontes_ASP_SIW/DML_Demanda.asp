@@ -259,9 +259,9 @@ REM =========================================================================
 REM Encaminha a demanda
 REM -------------------------------------------------------------------------
 Sub DML_PutDemandaEnvio(p_menu, p_chave, p_pessoa, p_tramite, p_novo_tramite, p_devolucao, p_observacao, p_destinatario, p_despacho, _
-        p_caminho, p_tamanho, P_tipo)
+        p_caminho, p_tamanho, P_tipo, p_nome_original)
   Dim l_Operacao, l_menu, l_chave, l_pessoa, l_tramite, l_novo_tramite, l_devolucao, l_observacao, l_destinatario, l_despacho
-  Dim l_caminho, l_tamanho, l_tipo
+  Dim l_caminho, l_tamanho, l_tipo, p_nome_original
   
   Set l_menu                = Server.CreateObject("ADODB.Parameter") 
   Set l_chave               = Server.CreateObject("ADODB.Parameter") 
@@ -274,7 +274,8 @@ Sub DML_PutDemandaEnvio(p_menu, p_chave, p_pessoa, p_tramite, p_novo_tramite, p_
   Set l_despacho            = Server.CreateObject("ADODB.Parameter") 
   Set l_caminho             = Server.CreateObject("ADODB.Parameter") 
   Set l_tamanho             = Server.CreateObject("ADODB.Parameter") 
-  Set l_tipo                = Server.CreateObject("ADODB.Parameter") 
+  Set l_tipo                = Server.CreateObject("ADODB.Parameter")
+  Set l_nome_original       = Server.CreateObject("ADODB.Parameter")  
   with sp
      set l_menu                 = .CreateParameter("l_menu",            adInteger, adParamInput,    , p_menu)
      set l_chave                = .CreateParameter("l_chave",           adInteger, adParamInput,    , p_chave)
@@ -288,6 +289,7 @@ Sub DML_PutDemandaEnvio(p_menu, p_chave, p_pessoa, p_tramite, p_novo_tramite, p_
      set l_caminho              = .CreateParameter("l_caminho",         adVarchar, adParamInput, 255, Tvl(p_caminho))
      set l_tamanho              = .CreateParameter("l_tamanho",         adInteger, adParamInput,    , Tvl(p_tamanho))
      set l_tipo                 = .CreateParameter("l_tipo",            adVarchar, adParamInput,  60, Tvl(p_tipo))
+     set l_nome_original        = .CreateParameter("l_nome_original",   adVarchar, adParamInput, 255, Tvl(p_nome_original))
      .parameters.Append         l_menu
      .parameters.Append         l_chave
      .parameters.Append         l_pessoa
@@ -300,6 +302,7 @@ Sub DML_PutDemandaEnvio(p_menu, p_chave, p_pessoa, p_tramite, p_novo_tramite, p_
      .parameters.Append         l_caminho
      .parameters.Append         l_tamanho
      .parameters.Append         l_tipo
+     .parameters.Append         l_nome_original
      .CommandText               = Session("schema") & "SP_PutDemandaEnvio"
      On error Resume Next
      .Execute
@@ -318,20 +321,18 @@ Sub DML_PutDemandaEnvio(p_menu, p_chave, p_pessoa, p_tramite, p_novo_tramite, p_
      .parameters.Delete         "l_caminho"
      .parameters.Delete         "l_tamanho"
      .parameters.Delete         "l_tipo"
+     .parameters.Delete         "l_nome_original"
   end with
 End Sub
-REM =========================================================================
-REM Final da rotina
-REM -------------------------------------------------------------------------
 
 REM =========================================================================
 REM Conclui a demanda
 REM -------------------------------------------------------------------------
 Sub DML_PutDemandaConc(p_menu, p_chave, p_pessoa, p_tramite, p_inicio_real, p_fim_real, p_nota_conclusao, p_custo_real, _
-        p_caminho, p_tamanho, P_tipo)
+        p_caminho, p_tamanho, P_tipo, p_nome_original)
   Dim l_menu, l_chave, l_pessoa, l_tramite
   Dim l_inicio_real, l_fim_real, l_nota_conclusao, l_custo_real
-  Dim l_caminho, l_tamanho, l_tipo
+  Dim l_caminho, l_tamanho, l_tipo, l_nome_original
   
   Set l_menu                = Server.CreateObject("ADODB.Parameter") 
   Set l_chave               = Server.CreateObject("ADODB.Parameter") 
@@ -343,7 +344,8 @@ Sub DML_PutDemandaConc(p_menu, p_chave, p_pessoa, p_tramite, p_inicio_real, p_fi
   Set l_custo_real          = Server.CreateObject("ADODB.Parameter") 
   Set l_caminho             = Server.CreateObject("ADODB.Parameter") 
   Set l_tamanho             = Server.CreateObject("ADODB.Parameter") 
-  Set l_tipo                = Server.CreateObject("ADODB.Parameter") 
+  Set l_tipo                = Server.CreateObject("ADODB.Parameter")
+  Set l_nome_original       = Server.CreateObject("ADODB.Parameter")  
   with sp
      set l_menu                 = .CreateParameter("l_menu",            adInteger, adParamInput,    , p_menu)
      set l_chave                = .CreateParameter("l_chave",           adInteger, adParamInput,    , p_chave)
@@ -359,6 +361,7 @@ Sub DML_PutDemandaConc(p_menu, p_chave, p_pessoa, p_tramite, p_inicio_real, p_fi
      set l_caminho              = .CreateParameter("l_caminho",         adVarchar, adParamInput, 255, Tvl(p_caminho))
      set l_tamanho              = .CreateParameter("l_tamanho",         adInteger, adParamInput,    , Tvl(p_tamanho))
      set l_tipo                 = .CreateParameter("l_tipo",            adVarchar, adParamInput,  60, Tvl(p_tipo))
+     set l_nome_original        = .CreateParameter("l_nome_original",   adVarchar, adParamInput, 255, Tvl(p_nome_original))
      .parameters.Append         l_menu
      .parameters.Append         l_chave
      .parameters.Append         l_pessoa
@@ -370,6 +373,7 @@ Sub DML_PutDemandaConc(p_menu, p_chave, p_pessoa, p_tramite, p_inicio_real, p_fi
      .parameters.Append         l_caminho
      .parameters.Append         l_tamanho
      .parameters.Append         l_tipo
+     .parameters.Append         l_nome_original
      .CommandText               = Session("schema") & "SP_PutDemandaConc"
      On error Resume Next
      .Execute
@@ -387,6 +391,7 @@ Sub DML_PutDemandaConc(p_menu, p_chave, p_pessoa, p_tramite, p_inicio_real, p_fi
      .parameters.Delete         "l_caminho"
      .parameters.Delete         "l_tamanho"
      .parameters.Delete         "l_tipo"
+     .parameters.Delete         "l_nome_original"
   end with
 End Sub
 REM =========================================================================

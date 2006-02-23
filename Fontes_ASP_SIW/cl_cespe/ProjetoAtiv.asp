@@ -2498,7 +2498,7 @@ Public Sub Grava
     
           DML_PutSolicArquivo O, _  
               w_cliente, ul.Form("w_chave"), ul.Form("w_chave_aux"), ul.Form("w_nome"), ul.Form("w_descricao"), _  
-              w_file, ul.Files("w_caminho").Size, ul.Files("w_caminho").ContentType  
+              w_file, ul.Files("w_caminho").Size, ul.Files("w_caminho").ContentType, ExtractFileName(ul.Files("w_caminho").OriginalPath)
           
           ScriptOpen "JavaScript"
           ' Recupera a sigla do serviço pai, para fazer a chamada ao menu 
@@ -2540,7 +2540,7 @@ Public Sub Grava
     
              DML_PutDemandaEnvio w_menu, ul.Form("w_chave"), w_usuario, ul.Form("w_tramite"), _ 
                  ul.Form("w_novo_tramite"), "N", ul.Form("w_observacao"), ul.Form("w_destinatario"), ul.Form("w_despacho"), _ 
-                 w_file, ul.Files("w_caminho").Size, ul.Files("w_caminho").ContentType 
+                 w_file, ul.Files("w_caminho").Size, ul.Files("w_caminho").ContentType, ExtractFileName(ul.Files("w_caminho").OriginalPath)
     
              ScriptOpen "JavaScript" 
              ' Volta para a listagem 
@@ -2551,7 +2551,7 @@ Public Sub Grava
           Else 
              DML_PutDemandaEnvio Request("w_menu"), Request("w_chave"), w_usuario, Request("w_tramite"), _ 
                  Request("w_novo_tramite"), "N", Request("w_observacao"), Request("w_destinatario"), Request("w_despacho"), _ 
-                 null, null, null 
+                 null, null, null , null
     
              ' Envia e-mail comunicando a inclusão
              SolicMail Request("w_chave"),2
@@ -2609,7 +2609,7 @@ Public Sub Grava
              End If  
     
              DML_PutDemandaConc w_menu, ul.Form("w_chave"), w_usuario, ul.Form("w_tramite"), ul.Form("w_inicio_real"), ul.Form("w_fim_real"), ul.Form("w_nota_conclusao"), ul.Form("w_custo_real"), _  
-                 w_file, ul.Files("w_caminho").Size, ul.Files("w_caminho").ContentType  
+                 w_file, ul.Files("w_caminho").Size, ul.Files("w_caminho").ContentType, ExtractFileName(ul.Files("w_caminho").OriginalPath)
 
              ' Envia e-mail comunicando a conclusão
              SolicMail ul.Form("w_chave") ,3

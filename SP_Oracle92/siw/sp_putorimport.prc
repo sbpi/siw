@@ -15,7 +15,9 @@ create or replace procedure SP_PutOrImport
     p_registros                in  number    default null,
     p_importados               in  number    default null,
     p_rejeitados               in  number    default null,
-    p_situacao                 in  number    default null
+    p_situacao                 in  number    default null,
+    p_nome_recebido            in  varchar2  default null,
+    p_nome_registro            in  varchar2  default null
    ) is
    
    w_chave  number(18);
@@ -29,14 +31,15 @@ begin
        
       -- Insere o arquivo recebido em SIW_ARQUIVO
       insert into siw_arquivo
-        (sq_siw_arquivo, cliente, nome, descricao, inclusao, tamanho, tipo, caminho)
+        (sq_siw_arquivo, cliente, nome, descricao, inclusao, tamanho, tipo, caminho, nome_original)
       values
         (w_chave1, p_cliente, p_arquivo_recebido, 
          'Arquivo SIAFI extraído em '||to_date(p_data_arquivo,'dd/mm/yyyy, hh24:mi')||'.', 
          w_data, 
          p_tamanho_recebido, 
          p_tipo_recebido, 
-         p_caminho_recebido
+         p_caminho_recebido,
+         p_nome_recebido         
         );
 
       -- Recupera a próxima chave da tabela de arquivos
@@ -44,14 +47,15 @@ begin
        
       -- Insere o arquivo registro em SIW_ARQUIVO
       insert into siw_arquivo
-        (sq_siw_arquivo, cliente, nome, descricao, inclusao, tamanho, tipo, caminho)
+        (sq_siw_arquivo, cliente, nome, descricao, inclusao, tamanho, tipo, caminho, nome_original)
       values
         (w_chave2, p_cliente, p_arquivo_registro, 
          'Registro da importação do arquivo SIAFI extraído em '||to_date(p_data_arquivo,'dd/mm/yyyy, hh24:mi')||'.', 
          w_data, 
          p_tamanho_registro, 
          p_tipo_registro, 
-         p_caminho_registro
+         p_caminho_registro,
+         p_nome_registro
         );
 
       -- Recupera o valor da próxima chave
@@ -72,4 +76,3 @@ begin
    End If;
 end SP_PutOrImport;
 /
-

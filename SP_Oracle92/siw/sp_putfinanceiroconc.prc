@@ -9,7 +9,8 @@ create or replace procedure SP_PutFinanceiroConc
     p_observacao          in varchar2  default null,
     p_caminho             in varchar2  default null,
     p_tamanho             in number    default null,
-    p_tipo                in varchar2  default null
+    p_tipo                in varchar2  default null,
+    p_nome_original       in varchar2  default null
    ) is
    w_chave         number(18) := null;
    w_chave_dem     number(18) := null;
@@ -62,9 +63,9 @@ begin
       select sq_siw_arquivo.nextval into w_chave_arq from dual;
        
       -- Insere registro em SIW_ARQUIVO
-      insert into siw_arquivo (sq_siw_arquivo, cliente, nome, descricao, inclusao, tamanho, tipo, caminho)
+      insert into siw_arquivo (sq_siw_arquivo, cliente, nome, descricao, inclusao, tamanho, tipo, caminho, nome_original)
       (select w_chave_arq, sq_pessoa_pai, p_chave||' - Anexo', null, sysdate, 
-              p_tamanho,   p_tipo,        p_caminho
+              p_tamanho,   p_tipo,        p_caminho, p_nome_original
          from co_pessoa a
         where a.sq_pessoa = p_pessoa
       );
@@ -75,4 +76,3 @@ begin
    End If;
 end SP_PutFinanceiroConc;
 /
-

@@ -3,10 +3,10 @@ REM =========================================================================
 REM Mantém a tabela de arquivos
 REM -------------------------------------------------------------------------
 Sub DML_PutSolicArquivo(Operacao, p_cliente, p_chave, p_chave_aux, p_nome, p_descricao, _
-    p_caminho, p_tamanho, p_tipo)
+    p_caminho, p_tamanho, p_tipo, p_nome_original)
     
   Dim l_Operacao, l_Chave, l_cliente, l_chave_aux, l_nome, l_descricao
-  Dim l_caminho, l_tamanho, l_tipo
+  Dim l_caminho, l_tamanho, l_tipo, l_nome_original
   
   Set l_Operacao            = Server.CreateObject("ADODB.Parameter")
   Set l_cliente             = Server.CreateObject("ADODB.Parameter") 
@@ -16,7 +16,8 @@ Sub DML_PutSolicArquivo(Operacao, p_cliente, p_chave, p_chave_aux, p_nome, p_des
   Set l_descricao           = Server.CreateObject("ADODB.Parameter") 
   Set l_caminho             = Server.CreateObject("ADODB.Parameter") 
   Set l_tamanho             = Server.CreateObject("ADODB.Parameter") 
-  Set l_tipo                = Server.CreateObject("ADODB.Parameter") 
+  Set l_tipo                = Server.CreateObject("ADODB.Parameter")
+  Set l_nome_original       = Server.CreateObject("ADODB.Parameter")  
 
   with sp
      set l_Operacao             = .CreateParameter("l_operacao",        adVarchar, adParamInput,   1, Operacao)
@@ -28,6 +29,7 @@ Sub DML_PutSolicArquivo(Operacao, p_cliente, p_chave, p_chave_aux, p_nome, p_des
      set l_caminho              = .CreateParameter("l_caminho",         adVarchar, adParamInput, 255, Tvl(p_caminho))
      set l_tamanho              = .CreateParameter("l_tamanho",         adInteger, adParamInput,    , Tvl(p_tamanho))
      set l_tipo                 = .CreateParameter("l_tipo",            adVarchar, adParamInput,  60, Tvl(p_tipo))
+     set l_nome_original        = .CreateParameter("l_nome_original",   adVarchar, adParamInput, 255, Tvl(p_nome_original))
      .parameters.Append         l_Operacao
      .parameters.Append         l_cliente
      .parameters.Append         l_chave
@@ -37,6 +39,7 @@ Sub DML_PutSolicArquivo(Operacao, p_cliente, p_chave, p_chave_aux, p_nome, p_des
      .parameters.Append         l_caminho
      .parameters.Append         l_tamanho
      .parameters.Append         l_tipo
+     .parameters.Append         l_nome_original
      If Session("dbms") = 1 or Session("dbms") = 3 Then .Properties("PLSQLRSet") = TRUE End If
      .CommandText               = Session("schema") & "SP_PutSolicArquivo"
      On Error Resume Next
@@ -54,10 +57,8 @@ Sub DML_PutSolicArquivo(Operacao, p_cliente, p_chave, p_chave_aux, p_nome, p_des
      .parameters.Delete         "l_caminho"
      .parameters.Delete         "l_tamanho"
      .parameters.Delete         "l_tipo"
+     .parameters.Delete         "l_nome_original"
   end with
 End Sub
-REM =========================================================================
-REM Final da rotina
-REM -------------------------------------------------------------------------
 
 %>

@@ -3640,7 +3640,7 @@ Public Sub Grava
     
           DML_PutSolicArquivo O, _  
               w_cliente, ul.Form("w_chave"), ul.Form("w_chave_aux"), ul.Form("w_nome"), ul.Form("w_descricao"), _  
-              w_file, ul.Files("w_caminho").Size, ul.Files("w_caminho").ContentType  
+              w_file, ul.Files("w_caminho").Size, ul.Files("w_caminho").ContentType, ExtractFileName(ul.Files("w_caminho").OriginalPath)
           
           ScriptOpen "JavaScript"
           ' Recupera a sigla do serviço pai, para fazer a chamada ao menu 
@@ -3714,7 +3714,7 @@ Public Sub Grava
                 ShowHTML "  alert('ATENÇÃO: Outro usuário já encaminhou este projeto para outra fase de execução!');"
                 ScriptClose
              Else
-                DML_PutProjetoEnvio Request("w_menu"), Request("w_chave"), w_usuario, Request("w_tramite"), Request("w_novo_tramite"), "N", Request("w_observacao"), Request("w_destinatario"), Request("w_despacho"), null, null, null
+                DML_PutProjetoEnvio Request("w_menu"), Request("w_chave"), w_usuario, Request("w_tramite"), Request("w_novo_tramite"), "N", Request("w_observacao"), Request("w_destinatario"), Request("w_despacho"), null, null, null, null
                 
                 ' Envia e-mail comunicando a tramitação
                 If Request("w_novo_tramite") > "" Then

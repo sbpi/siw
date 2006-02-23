@@ -2379,7 +2379,7 @@ Public Sub Grava
               ul.Form("w_sexo"), ul.Form("w_sq_estado_civil"), ul.Form("w_sq_formacao"), ul.Form("w_sq_etnia"), _
               ul.Form("w_sq_deficiencia"), ul.Form("w_cidade"), ul.Form("w_rg_numero"), ul.Form("w_rg_emissor"), _
               ul.Form("w_rg_emissao"), ul.Form("w_cpf"), ul.Form("w_passaporte_numero"), ul.Form("w_sq_pais_passaporte"), _
-              w_file, ul.Files("w_foto").Size, ul.Files("w_foto").ContentType, w_chave_nova
+              w_file, ul.Files("w_foto").Size, ul.Files("w_foto").ContentType, ExtractFileName(ul.Files("w_caminho").OriginalPath), w_chave_nova
 
           'Se for inclusão de colaborador, deve incluir o contrato
           If Nvl(P1,0) = 1 and Nvl(ul.Form("w_sq_contrato_colaborador"),"") = "" Then

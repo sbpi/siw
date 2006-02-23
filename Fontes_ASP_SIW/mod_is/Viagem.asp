@@ -3290,7 +3290,7 @@ Public Sub Grava
              End If  
     
              DML_PutDemandaConc w_menu, ul.Form("w_chave"), w_usuario, ul.Form("w_tramite"), ul.Form("w_inicio_real"), ul.Form("w_fim_real"), ul.Form("w_nota_conclusao"), ul.Form("w_custo_real"), _  
-                 w_file, ul.Files("w_caminho").Size, ul.Files("w_caminho").ContentType               
+                 w_file, ul.Files("w_caminho").Size, ul.Files("w_caminho").ContentType, ExtractFileName(ul.Files("w_caminho").OriginalPath)
              ' Envia e-mail comunicando a conclusão
              SolicMail ul.form("w_chave") ,3
              

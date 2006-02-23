@@ -5,12 +5,12 @@ REM -------------------------------------------------------------------------
 Sub DML_PutCVIdent(Operacao, p_cliente, p_chave, p_nome, p_nome_resumido, p_nascimento, p_sexo, _
          p_sq_estado_civil, p_sq_formacao, p_sq_etnia, p_sq_deficiencia, p_cidade, _
          p_rg_numero, p_rg_emissor, p_rg_emissao, p_cpf, p_passaporte_numero, p_sq_pais_passaporte, _
-         p_foto, p_tamanho, p_tipo, p_chave_nova)
+         p_foto, p_tamanho, p_tipo, , p_nome_original, p_chave_nova)
 
   Dim l_Operacao, l_cliente, l_Chave, l_nome, l_nome_resumido, l_nascimento, l_sexo
   Dim l_sq_estado_civil, l_sq_formacao, l_sq_etnia, l_sq_deficiencia, l_cidade
   Dim l_rg_numero, l_rg_emissor, l_rg_emissao, l_cpf, l_passaporte_numero, l_sq_pais_passaporte
-  Dim l_foto, l_tamanho, l_tipo, l_chave_nova
+  Dim l_foto, l_tamanho, l_tipo, l_nome_original, l_chave_nova
   
   Set l_Operacao            = Server.CreateObject("ADODB.Parameter")
   Set l_cliente             = Server.CreateObject("ADODB.Parameter") 
@@ -20,7 +20,8 @@ Sub DML_PutCVIdent(Operacao, p_cliente, p_chave, p_nome, p_nome_resumido, p_nasc
   Set l_foto                = Server.CreateObject("ADODB.Parameter")
   Set l_tamanho             = Server.CreateObject("ADODB.Parameter")
   Set l_tipo                = Server.CreateObject("ADODB.Parameter")
-  Set l_nascimento          = Server.CreateObject("ADODB.Parameter") 
+  Set l_chave_nova          = Server.CreateObject("ADODB.Parameter")
+  Set l_nome_original       = Server.CreateObject("ADODB.Parameter") 
   Set l_sexo                = Server.CreateObject("ADODB.Parameter")
   Set l_sq_estado_civil     = Server.CreateObject("ADODB.Parameter") 
   Set l_sq_formacao         = Server.CreateObject("ADODB.Parameter") 
@@ -44,6 +45,7 @@ Sub DML_PutCVIdent(Operacao, p_cliente, p_chave, p_nome, p_nome_resumido, p_nasc
      set l_foto                 = .CreateParameter("l_foto",                adVarchar, adParamInput, 255, Tvl(p_foto))
      set l_tamanho              = .CreateParameter("l_tamanho",             adInteger, adParamInput,    , Tvl(p_tamanho))
      set l_tipo                 = .CreateParameter("l_tipo",                adVarchar, adParamInput,  60, Tvl(p_tipo))
+     set l_nome_original        = .CreateParameter("l_nome_original",       adVarchar, adParamInput, 255, Tvl(p_nome_original))
      set l_nascimento           = .CreateParameter("l_nascimento",          adDate,    adParamInput,    , p_nascimento)
      set l_sexo                 = .CreateParameter("l_sexo",                adVarchar, adParamInput,   1, p_sexo)
      set l_sq_estado_civil      = .CreateParameter("l_sq_estado_civil",     adInteger, adParamInput,    , p_sq_estado_civil)
@@ -67,6 +69,7 @@ Sub DML_PutCVIdent(Operacao, p_cliente, p_chave, p_nome, p_nome_resumido, p_nasc
      .parameters.Append         l_foto
      .parameters.Append         l_tamanho
      .parameters.Append         l_tipo
+     .parameters.Append         l_nome_original
      .parameters.Append         l_nascimento
      .parameters.Append         l_sexo
      .parameters.Append         l_sq_estado_civil
@@ -100,6 +103,7 @@ Sub DML_PutCVIdent(Operacao, p_cliente, p_chave, p_nome, p_nome_resumido, p_nasc
      .parameters.Delete         "l_foto"
      .parameters.Delete         "l_tamanho"
      .parameters.Delete         "l_tipo"
+     .parameters.Delete         "l_nome_original"
      .parameters.Delete         "l_nascimento"
      .parameters.Delete         "l_sexo"
      .parameters.Delete         "l_sq_estado_civil"

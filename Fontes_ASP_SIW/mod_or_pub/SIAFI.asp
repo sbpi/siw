@@ -599,7 +599,8 @@ Public Sub Grava
               ul.Files("w_arquivo_recebido").OriginalPath, _
               w_caminho_recebido, w_tamanho_recebido,  w_tipo_recebido, _
               w_arquivo_registro,              w_caminho_registro, w_tamanho_registro, w_tipo_registro, _
-              w_registros,                     w_importados,       w_rejeitados,       w_situacao
+              w_registros,                     w_importados,       w_rejeitados,       w_situacao, _
+              ExtractFileName(ul.Files("w_arquivo_recebido").OriginalPath), w_arquivo_registro
           
           ScriptOpen "JavaScript"
           ShowHTML "  location.href='" & R & "&w_chave=" & ul.Form("w_Chave") & "&P1=" & P1 & "&P2=" & P2 & "&P3=" & P3 & "&P4=" & P4 & "&TP=" & TP & "&SG=" & SG & MontaFiltro("UL") & "';"

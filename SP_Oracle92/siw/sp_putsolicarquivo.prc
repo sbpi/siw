@@ -7,7 +7,8 @@ create or replace procedure SP_PutSolicArquivo
     p_descricao           in varchar2  default null,
     p_caminho             in varchar2  default null,
     p_tamanho             in number    default null,
-    p_tipo                in varchar2  default null
+    p_tipo                in varchar2  default null,
+    p_nome_original       in varchar   default null
    ) is
    w_chave number(18);
 begin
@@ -17,9 +18,9 @@ begin
        
       -- Insere registro em SIW_ARQUIVO
       insert into siw_arquivo
-        (sq_siw_arquivo, cliente, nome, descricao, inclusao, tamanho, tipo, caminho)
+        (sq_siw_arquivo, cliente, nome, descricao, inclusao, tamanho, tipo, caminho, nome_original)
       values
-        (w_chave, p_cliente, p_nome, p_descricao, sysdate, p_tamanho, p_tipo, p_caminho);
+        (w_chave, p_cliente, p_nome, p_descricao, sysdate, p_tamanho, p_tipo, p_caminho, p_nome_original);
         
       -- Insere registro em SIW_SOLIC_ARQUIVO
       insert into siw_solic_arquivo
@@ -39,7 +40,8 @@ begin
             set inclusao  = sysdate,
                 tamanho   = p_tamanho,
                 tipo      = p_tipo,
-                caminho   = p_caminho
+                caminho   = p_caminho,
+                nome_original = p_nome_original
           where sq_siw_arquivo = p_chave_aux;
       End If;
    Elsif p_operacao = 'E' Then -- Exclusão
@@ -51,4 +53,3 @@ begin
    End If;
    end SP_PutSolicArquivo;
 /
-

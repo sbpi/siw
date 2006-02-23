@@ -430,6 +430,7 @@ Fontes_ASP_SIW/mod_or_pub/VisualProjeto.asp -text
 Fontes_ASP_SIW/mod_pd/DB_Tabelas.asp -text
 Fontes_ASP_SIW/mod_pd/DB_Viagem.asp -text
 Fontes_ASP_SIW/mod_pd/DML_Tabelas.asp -text
+Fontes_ASP_SIW/mod_pd/DML_Viagem.asp -text
 Fontes_ASP_SIW/mod_pd/Funcoes.asp -text
 Fontes_ASP_SIW/mod_pd/Tabelas.asp -text
 Fontes_ASP_SIW/mod_pd/ValidaViagem.asp -text
@@ -1614,6 +1615,7 @@ SP_Oracle92/siw/SP_GetTramiteSolic.prc -text
 SP_Oracle92/siw/SP_PutAfastamento.prc -text
 SP_Oracle92/siw/SP_PutCiaTrans.prc -text
 SP_Oracle92/siw/SP_PutDataEspecial.prc -text
+SP_Oracle92/siw/SP_PutDcOcorrencia.prc -text
 SP_Oracle92/siw/SP_PutGPColaborador.prc -text
 SP_Oracle92/siw/SP_PutGPContrato.prc -text
 SP_Oracle92/siw/SP_PutGPModalidade.prc -text

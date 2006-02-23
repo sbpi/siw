@@ -5,13 +5,13 @@ REM -------------------------------------------------------------------------
 Sub DML_PutOrImport(Operacao, p_chave, p_cliente, p_sq_pessoa, p_data_arquivo, _
        p_arquivo_recebido, p_caminho_recebido, p_tamanho_recebido, p_tipo_recebido, _
        p_arquivo_registro, p_caminho_registro, p_tamanho_registro, p_tipo_registro, _
-       p_registros, p_importados, p_rejeitados, p_situacao)
+       p_registros, p_importados, p_rejeitados, p_situacao, p_nome_recebido, p_nome_registro)
 
 
   Dim l_Operacao, l_Chave, l_cliente, l_sq_pessoa, l_data_arquivo
   Dim l_arquivo_recebido, l_caminho_recebido, l_tamanho_recebido, l_tipo_recebido
   Dim l_arquivo_registro, l_caminho_registro, l_tamanho_registro, l_tipo_registro
-  Dim l_registros, l_importados, l_rejeitados, l_situacao
+  Dim l_registros, l_importados, l_rejeitados, l_situacao, l_nome_recebido, l_nome_registro
   
   Set l_Operacao                = Server.CreateObject("ADODB.Parameter")
   Set l_chave                   = Server.CreateObject("ADODB.Parameter") 
@@ -29,7 +29,9 @@ Sub DML_PutOrImport(Operacao, p_chave, p_cliente, p_sq_pessoa, p_data_arquivo, _
   Set l_registros               = Server.CreateObject("ADODB.Parameter") 
   Set l_importados              = Server.CreateObject("ADODB.Parameter") 
   Set l_rejeitados              = Server.CreateObject("ADODB.Parameter") 
-  Set l_situacao                = Server.CreateObject("ADODB.Parameter") 
+  Set l_situacao                = Server.CreateObject("ADODB.Parameter")
+  Set l_nome_recebido           = Server.CreateObject("ADODB.Parameter")
+  Set l_nome_registro           = Server.CreateObject("ADODB.Parameter")    
   
   with sp
      set l_Operacao             = .CreateParameter("l_operacao",        adVarchar, adParamInput,   1, Operacao)
@@ -50,6 +52,8 @@ Sub DML_PutOrImport(Operacao, p_chave, p_cliente, p_sq_pessoa, p_data_arquivo, _
      set l_importados           = .CreateParameter("l_importados",      adInteger, adParamInput,    , Tvl(p_importados))
      set l_rejeitados           = .CreateParameter("l_rejeitados",      adInteger, adParamInput,    , Tvl(p_rejeitados))
      set l_situacao             = .CreateParameter("l_situacao",        adInteger, adParamInput,    , Tvl(p_situacao))
+     set l_nome_recebido        = .CreateParameter("l_nome_recebido",   adVarchar, adParamInput, 255, Tvl(p_nome_recebido))
+     set l_nome_registro        = .CreateParameter("l_nome_registro",   adVarchar, adParamInput, 255, Tvl(p_nome_registro))
   
      .parameters.Append         l_Operacao
      .parameters.Append         l_Chave
@@ -68,6 +72,8 @@ Sub DML_PutOrImport(Operacao, p_chave, p_cliente, p_sq_pessoa, p_data_arquivo, _
      .parameters.Append         l_importados
      .parameters.Append         l_rejeitados
      .parameters.Append         l_situacao
+     .parameters.Append         l_nome_recebido
+     .parameters.Append         l_nome_registro
 
      .CommandText               = Session("schema") & "SP_PutOrImport"
      On Error Resume Next
@@ -92,9 +98,9 @@ Sub DML_PutOrImport(Operacao, p_chave, p_cliente, p_sq_pessoa, p_data_arquivo, _
      .parameters.Delete         "l_importados"
      .parameters.Delete         "l_rejeitados"
      .parameters.Delete         "l_situacao"
+     .parameters.Delete         "l_nome_recebido"
+     .parameters.Delete         "l_nome_registro"
   end with
 End Sub
-REM =========================================================================
-REM Final da rotina
-REM -------------------------------------------------------------------------
+
 %>

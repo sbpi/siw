@@ -1690,7 +1690,7 @@ Public Sub Grava
                     ul.Files("w_caminho").OriginalPath, _
                     w_arquivo_processamento, w_tamanho_recebido,  w_tipo_recebido, _
                     w_arquivo_registro,      w_arquivo_rejeicao, w_tamanho_registro, w_tipo_registro, _
-                    w_reg,       w_erro
+                    w_reg,       w_erro,     ExtractFileName(ul.Files("w_caminh,0o").OriginalPath), w_arquivo_registro
              End If
           Else
              ScriptOpen("JavaScript")

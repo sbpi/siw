@@ -20,6 +20,7 @@ create or replace procedure SP_PutCVIdent
     p_cpf                 in varchar2,
     p_passaporte_numero   in varchar2   default null,
     p_sq_pais_passaporte  in number     default null,
+    p_nome_original       in varchar2   default null,    
     p_chave_nova          out number
    ) is
    w_existe number(18);
@@ -111,9 +112,9 @@ begin
          
          -- Insere registro em SIW_ARQUIVO
          insert into siw_arquivo
-           (sq_siw_arquivo, cliente, nome, descricao, inclusao, tamanho, tipo, caminho)
+           (sq_siw_arquivo, cliente, nome, descricao, inclusao, tamanho, tipo, caminho, nome_original)
          values
-           (w_foto, p_cliente, 'Fotografia', 'Fotografia associada ao CV.', sysdate, p_tamanho, p_tipo, p_foto);
+           (w_foto, p_cliente, 'Fotografia', 'Fotografia associada ao CV.', sysdate, p_tamanho, p_tipo, p_foto, p_nome_original);
            
          -- Associa a fotografia ao CV
          update cv_pessoa set sq_siw_arquivo = w_foto where sq_pessoa = w_chave;
@@ -122,7 +123,8 @@ begin
             inclusao = sysdate,
             caminho  = p_foto,
             tamanho  = p_tamanho,
-            tipo     = p_tipo
+            tipo     = p_tipo,
+            nome_original = p_nome_original
          where sq_siw_arquivo = w_foto;
       End If;
    End If;
