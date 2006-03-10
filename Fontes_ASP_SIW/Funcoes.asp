@@ -88,7 +88,7 @@ Sub CabecalhoWord (p_cliente, p_titulo, p_pagina)
   DB_GetCustomerData l_RS, p_cliente
   ShowHTML "<TABLE WIDTH=""100%"" BORDER=0>"
   ShowHTML "  <TR>"
-  ShowHTML "    <TD ROWSPAN=3><IMG ALIGN=""LEFT"" SRC=""" & conFileVirtual & w_cliente & "/img/" & l_RS("logo") & """ width=56 height=67>"
+  ShowHTML "    <TD ROWSPAN=3><IMG ALIGN=""LEFT"" SRC=""" & conFileVirtual & w_cliente & "img\" & l_RS("logo") & """ width=56 height=67>"
   ShowHTML "    <TD ALIGN=""RIGHT""><B><FONT SIZE=5 COLOR=""#000000"">" & p_titulo &  "</FONT>"
   ShowHTML "  </TR>"
   ShowHTML "  <TR><TD ALIGN=""RIGHT""><B><FONT SIZE=2 COLOR=""#000000"">" & DataHora() & "</B></TD></TR>"
@@ -232,7 +232,7 @@ Function LinkArquivo (p_classe, p_cliente, p_arquivo, p_target, p_hint, p_descri
   Dim l_link, l_classe, l_target, l_hint
 
   ' Monta a chamada para a página que retorna o arquivo
-  l_link = "file.asp?cliente=" & p_cliente & "&id=" & p_arquivo
+  l_link = "file.asp?force=true&cliente=" & p_cliente & "&id=" & p_arquivo
 
   ' Se não for objeto incorporado, monta tag anchor
   If uCase(Nvl(p_retorno,"")) <> "EMBED" Then
@@ -305,14 +305,16 @@ Function MontaFiltro (p_method)
               End If
            End If
         Next
+     ElseIf uCase(p_method) = "UPLOAD" Then
+        For Each l_Item IN ul.Texts
+           If Mid(l_item,1,2) = "p_" and ul.Texts.Item(l_Item) > "" Then
+              l_string = l_string & "&" & l_Item.name & "=" & l_Item
+           End If
+        Next
      Else
         For Each l_Item IN ul.Form
            If Mid(l_item,1,2) = "p_" and ul.Form(l_Item) > "" Then
-              If uCase(p_method) = "GET" Then
-                  l_string = l_string & "&" & l_Item & "=" & ul.Form(l_Item)
-              ElseIf uCase(p_method) = "POST" Then
-                  l_string = l_string & "<INPUT TYPE=""HIDDEN"" NAME=""" & l_Item & """ VALUE=""" & ul.Form(l_Item) & """>" & VbCrLf
-              End If
+              l_string = l_string & "&" & l_Item & "=" & ul.Form(l_Item)
            End If
         Next
      End If
@@ -1984,7 +1986,11 @@ Function RetornaMenu(p_cliente, p_sigla)
      RetornaMenu = Request("w_menu")
   Else
      DB_GetMenuCode RS, p_cliente, p_sigla
-     RetornaMenu = RS("sq_menu")
+     If Not RS.EOF Then
+        RetornaMenu = RS("sq_menu")
+     Else
+        RetornaMenu = ""
+     End If
   End If
 End Function
 

@@ -541,6 +541,13 @@ Sub FormataDataMA
  Response.Write "} " & VbCrLf
 End Sub
 
+Sub ProgressBar(p_dir, p_UploadID)
+ ShowHTML "function ProgressBar(){"
+ ShowHTML "  var v = window.open('" & p_dir & "cp_upload/barra.asp?UploadID=" & p_UploadID & "','_blank','toolbar=no,location=no,directories=no,status=no,menubar=no,scrollbars=no,resizable=yes,width=350,height=200')"
+ ShowHTML "  return true;"
+ ShowHTML "}"
+End Sub
+
 ' Abre a tag SCRIPT
 Sub Validate(VariableName, DisplayName, DataType, ValueRequired, MinimumLength, MaximumLength, AllowLetters, AllowDigits)
   Dim checkOK
