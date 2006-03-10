@@ -32,7 +32,7 @@ begin
       update siw_arquivo
          set nome      = p_nome,
              descricao = p_descricao
-       where sq_siw_arquivo = p_chave;
+       where sq_siw_arquivo = p_chave_aux;
        
       -- Se foi informado um novo arquivo, atualiza os dados
       If p_caminho is not null Then
