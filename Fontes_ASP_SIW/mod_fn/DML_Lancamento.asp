@@ -478,7 +478,7 @@ REM =========================================================================
 REM Conclui o lançamento financeiro
 REM -------------------------------------------------------------------------
 Sub DML_PutFinanceiroConc(p_menu, p_chave, p_pessoa, p_tramite, p_quitacao, p_valor_real, p_codigo_deposito, p_observacao,  _
-        p_caminho, p_tamanho, P_tipo, p_nome_orginal)
+        p_caminho, p_tamanho, P_tipo, p_nome_original)
   Dim l_menu, l_chave, l_pessoa, l_tramite
   Dim l_quitacao, l_codigo_deposito, l_observacao, l_valor_real
   Dim l_caminho, l_tamanho, l_tipo, l_nome_original

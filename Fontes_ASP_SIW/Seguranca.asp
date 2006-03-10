@@ -1,4 +1,4 @@
- <%@ Language=VBScript %>
+<%@ Language=VBScript %>
 <%Option Explicit%>
 <!-- #INCLUDE FILE="Constants.inc" -->
 <!-- #INCLUDE FILE="jScript.asp" -->
@@ -39,7 +39,7 @@ End If
 ' Declaração de variáveis
 Dim dbms, sp, RS, RS1, RS2, RS3, RS4
 Dim P1, P2, P3, P4, TP, SG
-Dim R, O, w_Cont, w_Pagina, w_Disabled, w_TP, w_classe, w_cliente
+Dim R, O, w_Cont, w_Pagina, w_Disabled, w_TP, w_classe, w_cliente, w_menu
 Dim w_Assinatura, w_cor, w_filter
 Dim p_gestor, p_lotacao, p_localizacao, p_nome, p_ordena
 Dim w_dir, w_dir_volta, w_submenu
@@ -102,6 +102,7 @@ End Select
 ' Se receber o código do cliente do SIW, o cliente será determinado por parâmetro;
 ' caso contrário, o cliente será a empresa ao qual o usuário logado está vinculado.
 w_cliente = RetornaCliente()
+w_menu    = RetornaMenu(w_cliente, SG) 
   
 Main
 
@@ -111,6 +112,7 @@ Set w_dir         = Nothing
 Set w_filter      = Nothing
 Set w_cor         = Nothing
 Set w_cliente     = Nothing
+Set w_menu        = Nothing
 Set p_localizacao = Nothing
 Set p_lotacao     = Nothing
 Set p_gestor      = Nothing
@@ -149,6 +151,7 @@ Sub Usuarios
   Dim w_sq_pessoa
   Dim w_nome
   Dim w_email
+  Dim w_libera_edicao
   
   w_troca = Request("w_troca")
 
@@ -160,6 +163,9 @@ Sub Usuarios
   p_uf               = uCase(Request("p_uf"))
   p_modulo           = uCase(Request("p_modulo"))
   p_ativo            = uCase(Request("p_ativo"))
+  
+  DB_GetMenuData RS, w_menu
+  w_libera_edicao = RS("libera_edicao")
   
   If O = "L" Then
      DB_GetUserList RS, w_cliente, p_localizacao, p_lotacao, p_gestor, p_nome, p_modulo, p_uf, p_ativo
@@ -194,7 +200,9 @@ Sub Usuarios
   ShowHTML "<table border=""0"" cellpadding=""0"" cellspacing=""0"" width=""100%"">"
   If O = "L" Then
     ShowHTML "<tr><td><font size=""2"">"
-    ShowHTML "                         <a accesskey=""N"" class=""ss"" href=""pessoa.asp?par=BENEF&R=" & w_Pagina & par & "&O=I&w_cliente=" & w_cliente & "&P1=" & P1 & "&P2=" & P2 & "&P3=" & P3 & "&P4=" & P4 & "&TP=" & TP & "&SG=" & SG & "&p_nome=" & p_nome & "&p_localizacao=" & p_localizacao & "&p_lotacao=" & p_lotacao & "&p_gestor=" & p_gestor & "&p_ordena=" & p_ordena & """><u>N</u>ovo acesso</a>&nbsp;"
+    If w_libera_edicao = "S" Then
+       ShowHTML "                         <a accesskey=""N"" class=""ss"" href=""pessoa.asp?par=BENEF&R=" & w_Pagina & par & "&O=I&w_cliente=" & w_cliente & "&P1=" & P1 & "&P2=" & P2 & "&P3=" & P3 & "&P4=" & P4 & "&TP=" & TP & "&SG=" & SG & "&p_nome=" & p_nome & "&p_localizacao=" & p_localizacao & "&p_lotacao=" & p_lotacao & "&p_gestor=" & p_gestor & "&p_ordena=" & p_ordena & """><u>N</u>ovo acesso</a>&nbsp;"
+    End If
     If p_localizacao & p_lotacao & p_nome & p_gestor & p_ativo > "" Then
        ShowHTML "                         <a accesskey=""F"" class=""ss"" href=""" & w_Pagina & par & "&R=" & w_Pagina & par & "&O=P&w_cliente=" & w_cliente & "&P1=" & P1 & "&P2=" & P2 & "&P3=" & P3 & "&P4=" & P4 & "&TP=" & TP & "&SG=" & SG & "&p_nome=" & p_nome & "&p_localizacao=" & p_localizacao & "&p_lotacao=" & p_lotacao & "&p_gestor=" & p_gestor & "&p_ordena=" & p_ordena & """><u><font color=""#BC5100"">F</u>iltrar (Ativo)</font></a>"
     Else
@@ -229,15 +237,19 @@ Sub Usuarios
         ShowHTML "        <td align=""center""><font size=""1"">&nbsp;" & Nvl(RS("ramal"),"---") & "</td>"
         ShowHTML "        <td align=""left"" title=""" & RS("vinculo") & """><font size=""1"">" & Nvl(RS("vinculo"),"---") & "</td>"
         ShowHTML "        <td align=""top"" nowrap><font size=""1"">"
-        ShowHTML "          <A class=""hl"" HREF=""pessoa.asp?par=BENEF&R=" & w_Pagina & par & "&O=A&w_cliente=" & w_cliente & "&w_sq_pessoa=" & RS("sq_pessoa") & "&w_username=" & RS("username") & "&P1=" & P1 & "&P2=" & P2 & "&P3=" & P3 & "&P4=" & P4 & "&TP=" & TP & "&SG=" & SG & MontaFiltro("GET") & """ title=""Altera as informações cadastrais do usuário"">Alterar</A>&nbsp"
-        ShowHTML "          <A class=""hl"" HREF=""pessoa.asp?par=BENEF&R=" & w_Pagina & par & "&O=E&w_cliente=" & w_cliente & "&w_sq_pessoa=" & RS("sq_pessoa") & "&w_username=" & RS("username") & "&P1=" & P1 & "&P2=" & P2 & "&P3=" & P3 & "&P4=" & P4 & "&TP=" & TP & "&SG=" & SG & MontaFiltro("GET") & """ title=""Exclui o usuário do banco de dados"">Excluir</A>&nbsp"
-        If RS("ativo") = "S" Then
-           ShowHTML "          <A class=""hl"" HREF=""pessoa.asp?par=BENEF&R=" & w_Pagina & par & "&O=D&w_cliente=" & w_cliente & "&w_sq_pessoa=" & RS("sq_pessoa") & "&w_username=" & RS("username") & "&P1=" & P1 & "&P2=" & P2 & "&P3=" & P3 & "&P4=" & P4 & "&TP=" & TP & "&SG=" & SG & MontaFiltro("GET") & """ title=""Bloqueia o acesso do usuário ao sistema"">Bloquear</A>&nbsp"
-        Else
-           ShowHTML "          <A class=""hl"" HREF=""pessoa.asp?par=BENEF&R=" & w_Pagina & par & "&O=T&w_cliente=" & w_cliente & "&w_sq_pessoa=" & RS("sq_pessoa") & "&w_username=" & RS("username") & "&P1=" & P1 & "&P2=" & P2 & "&P3=" & P3 & "&P4=" & P4 & "&TP=" & TP & "&SG=" & SG & MontaFiltro("GET") & """ title=""Ativa o acesso do usuário ao sistema"">Ativar</A>&nbsp"
+        If w_libera_edicao = "S" Then
+           ShowHTML "          <A class=""hl"" HREF=""pessoa.asp?par=BENEF&R=" & w_Pagina & par & "&O=A&w_cliente=" & w_cliente & "&w_sq_pessoa=" & RS("sq_pessoa") & "&w_username=" & RS("username") & "&P1=" & P1 & "&P2=" & P2 & "&P3=" & P3 & "&P4=" & P4 & "&TP=" & TP & "&SG=" & SG & MontaFiltro("GET") & """ title=""Altera as informações cadastrais do usuário"">Alterar</A>&nbsp"
+           ShowHTML "          <A class=""hl"" HREF=""pessoa.asp?par=BENEF&R=" & w_Pagina & par & "&O=E&w_cliente=" & w_cliente & "&w_sq_pessoa=" & RS("sq_pessoa") & "&w_username=" & RS("username") & "&P1=" & P1 & "&P2=" & P2 & "&P3=" & P3 & "&P4=" & P4 & "&TP=" & TP & "&SG=" & SG & MontaFiltro("GET") & """ title=""Exclui o usuário do banco de dados"">Excluir</A>&nbsp"
+           If RS("ativo") = "S" Then
+              ShowHTML "          <A class=""hl"" HREF=""pessoa.asp?par=BENEF&R=" & w_Pagina & par & "&O=D&w_cliente=" & w_cliente & "&w_sq_pessoa=" & RS("sq_pessoa") & "&w_username=" & RS("username") & "&P1=" & P1 & "&P2=" & P2 & "&P3=" & P3 & "&P4=" & P4 & "&TP=" & TP & "&SG=" & SG & MontaFiltro("GET") & """ title=""Bloqueia o acesso do usuário ao sistema"">Bloquear</A>&nbsp"
+           Else
+              ShowHTML "          <A class=""hl"" HREF=""pessoa.asp?par=BENEF&R=" & w_Pagina & par & "&O=T&w_cliente=" & w_cliente & "&w_sq_pessoa=" & RS("sq_pessoa") & "&w_username=" & RS("username") & "&P1=" & P1 & "&P2=" & P2 & "&P3=" & P3 & "&P4=" & P4 & "&TP=" & TP & "&SG=" & SG & MontaFiltro("GET") & """ title=""Ativa o acesso do usuário ao sistema"">Ativar</A>&nbsp"
+           End If
         End If
         ShowHTML "          <A class=""hl"" HREF=""#"" onClick=""window.open('Seguranca.asp?par=ACESSOS&R=" & w_Pagina & par & "&O=L&w_cliente=" & w_cliente & "&w_sq_pessoa=" & RS("sq_pessoa") & "&w_username=" & RS("username") & "&P1=" & P1 & "&P2=" & P2 & "&P3=" & P3 & "&P4=" & P4 & "&TP=" & TP & "&SG=ACESSOS" & MontaFiltro("GET") & "','Gestao','width=630,height=500,top=30,left=30,status=yes,resizable=yes,scrollbars=yes,toolbar=yes');"" title=""Gestão de módulos"">Gestão</A>&nbsp"
-        ShowHTML "          <A class=""hl"" HREF=""#"" onClick="" if (confirm('Este procedimento irá reinicializar a senha de acesso e sua assinatura eletrônica do usuário.\nConfirma?')) window.open('" & w_pagina & "NovaSenha&R=" & w_Pagina & par & "&O=L&w_cliente=" & w_cliente & "&w_sq_pessoa=" & RS("sq_pessoa") & "&w_username=" & RS("username") & "&P1=" & P1 & "&P2=" & P2 & "&P3=" & P3 & "&P4=" & P4 & "&TP=" & TP & "&SG=ACESSOS" & MontaFiltro("GET") & "','NovaSenha','width=630,height=500,top=30,left=30,status=yes,resizable=yes,toolbar=yes');"" title=""Reinicializa a senha do usuário"">Senha</A>&nbsp"
+        If w_libera_edicao = "S" Then
+           ShowHTML "          <A class=""hl"" HREF=""#"" onClick="" if (confirm('Este procedimento irá reinicializar a senha de acesso e sua assinatura eletrônica do usuário.\nConfirma?')) window.open('" & w_pagina & "NovaSenha&R=" & w_Pagina & par & "&O=L&w_cliente=" & w_cliente & "&w_sq_pessoa=" & RS("sq_pessoa") & "&w_username=" & RS("username") & "&P1=" & P1 & "&P2=" & P2 & "&P3=" & P3 & "&P4=" & P4 & "&TP=" & TP & "&SG=ACESSOS" & MontaFiltro("GET") & "','NovaSenha','width=630,height=500,top=30,left=30,status=yes,resizable=yes,toolbar=yes');"" title=""Reinicializa a senha do usuário"">Senha</A>&nbsp"
+        End If
         ShowHTML "          <A class=""hl"" HREF=""#"" onClick=""window.open('Seguranca.asp?par=VISAO&R=" & w_Pagina & par & "&O=L&w_cliente=" & w_cliente & "&w_sq_pessoa=" & RS("sq_pessoa") & "&w_username=" & RS("username") & "&P1=" & P1 & "&P2=" & P2 & "&P3=" & P3 & "&P4=" & P4 & "&TP=" & TP & "&SG=VISAO" & MontaFiltro("GET") & "','Gestao','width=630,height=500,top=30,left=30,status=yes,resizable=yes,toolbar=yes,scrollbars=yes');"" title=""Gestão de módulos"">Visão</A>&nbsp"
         ShowHTML "        </td>"
         ShowHTML "      </tr>"
@@ -309,7 +321,9 @@ Sub Usuarios
     ShowHTML "      <tr><td align=""center"" colspan=""3"" height=""1"" bgcolor=""#000000"">"
     ShowHTML "      <tr><td align=""center"" colspan=""3"">"
     ShowHTML "            <input class=""stb"" type=""submit"" name=""Botao"" value=""Aplicar filtro"">"
-    ShowHTML "            <input class=""stb"" type=""button"" onClick=""location.href='pessoa.asp?par=BENEF&R=" & w_Pagina & par & "&O=I&w_cliente=" & w_cliente & "&P1=" & P1 & "&P2=" & P2 & "&P3=" & P3 & "&P4=" & P4 & "&TP=" & TP & "&SG=" & SG & "';"" name=""Botao"" value=""Novo acesso"">"
+    If w_libera_edicao = "S" Then
+       ShowHTML "            <input class=""stb"" type=""button"" onClick=""location.href='pessoa.asp?par=BENEF&R=" & w_Pagina & par & "&O=I&w_cliente=" & w_cliente & "&P1=" & P1 & "&P2=" & P2 & "&P3=" & P3 & "&P4=" & P4 & "&TP=" & TP & "&SG=" & SG & "';"" name=""Botao"" value=""Novo acesso"">"
+    End If
     ShowHTML "            <input class=""stb"" type=""button"" onClick=""location.href='" & w_Pagina & par & "&w_cliente=" & w_cliente & "&P1=" & P1 & "&P2=" & P2 & "&P3=" & P3 & "&P4=" & P4 & "&TP=" & TP & "&SG=" & SG & "';"" name=""Botao"" value=""Remover filtro"">"
     ShowHTML "          </td>"
     ShowHTML "      </tr>"
@@ -370,7 +384,7 @@ Sub Menu
   Dim w_sq_menu, w_sq_menu_pai, w_descricao, w_link, w_sq_servico
   Dim w_tramite, w_ordem, w_ultimo_nivel, w_p1, w_p2, w_p3, w_p4
   Dim w_sigla, w_ativo, w_acesso_geral, w_modulo, w_descentralizado, w_externo, w_target
-  Dim w_sq_unidade_executora, w_como_funciona, w_controla_ano
+  Dim w_sq_unidade_executora, w_como_funciona, w_controla_ano, w_libera_edicao
   Dim w_emite_os, w_consulta_opiniao, w_acompanha_fases, w_envia_email, w_exibe_relatorio
   Dim w_vinculacao, w_finalidade, w_workflow, w_arquivo_procedimentos, w_data_hora, w_envia_dia_util
   Dim w_pede_descricao, w_pede_justificativa, w_envio
@@ -427,6 +441,7 @@ Sub Menu
            w_exibe_relatorio          = RS("exibe_relatorio")
            w_como_funciona            = RS("como_funciona")
            w_controla_ano             = RS("controla_ano")
+           w_libera_edicao            = RS("libera_edicao")
            w_arquivo_procedimentos    = RS("arquivo_proced")
            w_sq_unidade_executora     = RS("sq_unid_executora")
            w_vinculacao               = RS("vinculacao")
@@ -467,6 +482,7 @@ Sub Menu
            w_exibe_relatorio          = Request("w_exibe_relatorio")
            w_como_funciona            = Request("w_como_funciona")
            w_controla_ano             = Request("w_controla_ano")
+           w_libera_edicao             = Request("w_libera_edicao")
            w_arquivo_procedimentos    = Request("w_arquivo_procedimentos")
            w_sq_unidade_executora     = Request("w_sq_unidade_executora")
            w_vinculacao               = Request("w_vinculacao")
@@ -939,6 +955,12 @@ Sub Menu
      Else
         ShowHTML "                 <input " & w_Disabled & " class=""str"" type=""radio"" name=""w_descentralizado"" value=""S""> Sim <input " & w_Disabled & " class=""str"" type=""radio"" name=""w_descentralizado"" value=""N"" checked> Não"    
      End If
+     ShowHTML "              <td title=""Existem opções que não permitirão a inclusão, alteração e exclusão de registros. Neste caso informe \'Não\'.""><font size=""1""><b>Libera edição?</b><br>"
+     If w_libera_edicao = "S" Then
+        ShowHTML "                 <input " & w_Disabled & " class=""str"" type=""radio"" name=""w_libera_edicao"" value=""S"" checked> Sim <input " & w_Disabled & " class=""str"" type=""radio"" name=""w_libera_edicao"" value=""N""> Não"
+     Else
+        ShowHTML "                 <input " & w_Disabled & " class=""str"" type=""radio"" name=""w_libera_edicao"" value=""S""> Sim <input " & w_Disabled & " class=""str"" type=""radio"" name=""w_libera_edicao"" value=""N"" checked> Não"    
+     End If
      ShowHTML "          </table>"
 
      ShowHTML "          <tr><td colspan=4 height=""30""><font size=""2""><b>Parâmetros de programação</td>"
@@ -1177,6 +1199,7 @@ Sub Menu
   Set w_sigla                   = Nothing 
   Set w_como_funciona           = Nothing 
   Set w_controla_ano            = Nothing 
+  Set w_libera_edicao           = Nothing 
   Set w_emite_os                = Nothing 
   Set w_consulta_opiniao        = Nothing 
   Set w_acompanha_fases         = Nothing 
@@ -2211,7 +2234,8 @@ Public Sub Grava
                 Request("w_pede_descricao"), Request("w_pede_justificativa"), Request("w_finalidade"), _
                 w_cliente, Request("w_descricao"), Request("w_acesso_geral"), Request("w_modulo"), Request("w_sq_unidade_executora"),_
                 Request("w_tramite"), Request("w_ultimo_nivel"), Request("w_descentralizado"), _
-                Request("w_externo"), Request("w_ativo"), Request("w_ordem"), Request("w_envio"), Request("w_controla_ano")
+                Request("w_externo"), Request("w_ativo"), Request("w_ordem"), Request("w_envio"), Request("w_controla_ano"), _
+                Request("w_libera_edicao")
 
 
           ScriptOpen "JavaScript"

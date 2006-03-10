@@ -5,6 +5,7 @@
 <!-- #INCLUDE FILE="Funcoes.asp" -->
 <!-- #INCLUDE FILE="DB_Geral.asp" -->
 <!-- #INCLUDE FILE="DB_EO.asp" -->
+<!-- #INCLUDE FILE="DB_Seguranca.asp" -->
 <!-- #INCLUDE FILE="DML_EO.asp" -->
 <%
 Response.Expires = 0
@@ -40,7 +41,7 @@ Dim dbms, sp, RS
 Dim P1, P2, P3, P4, TP, SG
 Dim R, O, w_Cont, w_Pagina, w_Disabled, w_TP
 Dim w_Assinatura, w_cliente, w_filter, w_cor
-Dim w_dir, w_dir_volta, w_submenu
+Dim w_dir, w_dir_volta, w_submenu, w_menu
 Private Par
 
 AbreSessao
@@ -77,12 +78,14 @@ End Select
 ' Se receber o código do cliente do SIW, o cliente será determinado por parâmetro;
 ' caso contrário, o cliente será a empresa ao qual o usuário logado está vinculado.
 w_cliente = RetornaCliente()
+w_menu    = RetornaMenu(w_cliente, SG) 
 
 Main
 
 FechaSessao
 
 Set w_cliente   = Nothing
+Set w_menu      = Nothing
 
 Set w_dir       = Nothing
 Set w_dir_volta = Nothing
@@ -119,7 +122,12 @@ Sub Unidade
    Dim w_sq_Unidade_Gestora,w_sq_area_atuacao,w_sq_unidade_pai
    Dim w_sq_pessoa_endereco,w_sq_tipo_unidade,w_Unidade_Gestora, w_unidade_pagadora
    Dim w_email
+   Dim w_libera_edicao
    
+   DB_GetMenuData RS, w_menu
+   w_libera_edicao = RS("libera_edicao")
+
+
    cabecalho
      
    ShowHTML "<HEAD>"
@@ -182,7 +190,10 @@ Sub Unidade
    ShowHTML "<table border=""0"" cellpadding=""0"" cellspacing=""0"" width=""100%"">"
    If InStr("L",O) > 0 Then   
       w_ImagemPadrao = "images/folder/SheetLittle.gif"
-      ShowHTML "<tr><td><font size=""2""><a accesskey=""I"" class=""ss"" href=""" & w_Pagina & par & "&TP=" & TP & "&R=" & w_Pagina & par & "&O=I&P1=" & P1 & "&P2=" & P2 & "&P3=" & P3 & "&P4=" & P4 & "&SG=" & SG & """><u>I</u>ncluir</a>&nbsp;"
+      ShowHTML "<tr><td><font size=""2"">"
+      If w_libera_edicao = "S" Then
+         ShowHTML "<a accesskey=""I"" class=""ss"" href=""" & w_Pagina & par & "&TP=" & TP & "&R=" & w_Pagina & par & "&O=I&P1=" & P1 & "&P2=" & P2 & "&P3=" & P3 & "&P4=" & P4 & "&SG=" & SG & """><u>I</u>ncluir</a>&nbsp;"
+      End If
       ShowHTML "<tr><td colspan=3>"
       ShowHTML "    <TABLE WIDTH=""100%"" bgcolor=""" & conTableBgColor & """ BORDER=""0"" CELLSPACING=""" & conTableCellSpacing & """ CELLPADDING=""" & conTableCellPadding & """ BorderColorDark=""" & conTableBorderColorDark & """ BorderColorLight=""" & conTableBorderColorLight & """>"
       DB_GetUorgList RS, Session("p_cliente"), null, "IS NULL", null, null
@@ -196,8 +207,10 @@ Sub Unidade
       While Not RS.EOF
          w_ContOut = w_ContOut + 1
          ShowHTML "<font size=1><span id=Out" & w_ContOut & " class=Outline style=""cursor: hand; ""><div align=""left"" id=Out" & w_ContOut & " class=Outline style=""cursor: hand; ""><img src=""images/ballw.gif"" border=0 align=""center""> " & RS("NOME") 
-         ShowHTML " <A class=""hl"" HREF=""" & w_Pagina & par & "&R=" & w_Pagina & par & "&O=A&w_sq_unidade=" & RS("sq_unidade") & "&P1=" & P1 & "&P2=" & P2 & "&P3=" & P3 & "&P4=" & P4 & "&TP=" & TP & "&SG=" & SG & """>Alterar</A>&nbsp"
-         ShowHTML " <A class=""hl"" HREF=""" & w_Pagina & par & "&R=" & w_Pagina & par & "&O=E&w_sq_unidade=" & RS("sq_unidade") & "&P1=" & P1 & "&P2=" & P2 & "&P3=" & P3 & "&P4=" & P4 & "&TP=" & TP & "&SG=" & SG & """>Excluir</A>&nbsp"           
+         If w_libera_edicao = "S" Then
+            ShowHTML " <A class=""hl"" HREF=""" & w_Pagina & par & "&R=" & w_Pagina & par & "&O=A&w_sq_unidade=" & RS("sq_unidade") & "&P1=" & P1 & "&P2=" & P2 & "&P3=" & P3 & "&P4=" & P4 & "&TP=" & TP & "&SG=" & SG & """>Alterar</A>&nbsp"
+            ShowHTML " <A class=""hl"" HREF=""" & w_Pagina & par & "&R=" & w_Pagina & par & "&O=E&w_sq_unidade=" & RS("sq_unidade") & "&P1=" & P1 & "&P2=" & P2 & "&P3=" & P3 & "&P4=" & P4 & "&TP=" & TP & "&SG=" & SG & """>Excluir</A>&nbsp"           
+         End If
          ShowHTML " <u class=""hl"" style=""curso:hand"" onclick=""javascript:window.open('" & w_pagina & "Localizacao&P1=" & P1 &"&P2=" & P2 &"&P3=" & P3 &"&P4=" & P4 &"&TP=" & TP & " - Localização&O=L&SG=LUORG&w_sq_unidade=" & RS("sq_unidade") & "','Local','toolbar=no,width=780,height=350,top=30,left=10,scrollbars=yes,resizable=yes');"">Locais</u>&nbsp"
          ShowHTML " <u class=""hl"" style=""curso:hand"" onclick=""javascript:window.open('" & w_pagina & "Responsavel&P1=" & P1 &"&P2=" & P2 &"&P3=" & P3 &"&P4=" & P4 &"&TP=" & TP &" - Responsáveis&O=L&SG=RESPONSAVEL&w_sq_unidade=" & RS("sq_unidade") & "','Responsaveis','toolbar=no,width=780,height=350,top=30,left=10,scrollbars=yes,resizable=yes');"">Responsáveis</u>&nbsp"
          ShowHTML "</div></span></font>"
@@ -207,8 +220,10 @@ Sub Unidade
          While Not RS1.EOF
             w_ContOut = w_ContOut + 1
             ShowHTML "<span id=Out" & w_ContOut & " class=Outline style=""cursor: hand; ""><div align=""left"" id=Out" & w_ContOut & " class=Outline style=""cursor: hand; ""><img src=""images/ballw.gif"" border=0 align=""center""> " & RS1("NOME") 
-            ShowHTML " <A class=""hl"" HREF=""" & w_Pagina & par & "&R=" & w_Pagina & par & "&O=A&w_sq_unidade=" & RS1("sq_unidade") & "&P1=" & P1 & "&P2=" & P2 & "&P3=" & P3 & "&P4=" & P4 & "&TP=" & TP & " - Localização&SG=" & SG & """>Alterar</A>&nbsp"
-            ShowHTML " <A class=""hl"" HREF=""" & w_Pagina & par & "&R=" & w_Pagina & par & "&O=E&w_sq_unidade=" & RS1("sq_unidade") & "&P1=" & P1 & "&P2=" & P2 & "&P3=" & P3 & "&P4=" & P4 & "&TP=" & TP & "&SG=" & SG & """>Excluir</A>&nbsp"
+            If w_libera_edicao = "S" Then
+               ShowHTML " <A class=""hl"" HREF=""" & w_Pagina & par & "&R=" & w_Pagina & par & "&O=A&w_sq_unidade=" & RS1("sq_unidade") & "&P1=" & P1 & "&P2=" & P2 & "&P3=" & P3 & "&P4=" & P4 & "&TP=" & TP & " - Localização&SG=" & SG & """>Alterar</A>&nbsp"
+               ShowHTML " <A class=""hl"" HREF=""" & w_Pagina & par & "&R=" & w_Pagina & par & "&O=E&w_sq_unidade=" & RS1("sq_unidade") & "&P1=" & P1 & "&P2=" & P2 & "&P3=" & P3 & "&P4=" & P4 & "&TP=" & TP & "&SG=" & SG & """>Excluir</A>&nbsp"
+            End If
             ShowHTML " <u class=""hl"" style=""cursor:hand;"" onclick=""javascript:window.open('" & w_pagina & "Localizacao&P1=" & P1 &"&P2=" & P2 &"&P3=" & P3 &"&P4=" & P4 &"&TP=" & TP &" - Localização&O=L&SG=LUORG&w_sq_unidade=" & RS1("sq_unidade") & "','Local','toolbar=no,width=780,height=350,top=30,left=10,scrollbars=yes,resizable=yes')"">Locais</u>&nbsp"
             ShowHTML " <u class=""hl"" style=""curso:hand"" onclick=""javascript:window.open('" & w_pagina & "Responsavel&P1=" & P1 &"&P2=" & P2 &"&P3=" & P3 &"&P4=" & P4 &"&TP=" & TP &" - Responsáveis&O=L&SG=RESPONSAVEL&w_sq_unidade=" & RS1("sq_unidade") & "','Responsaveis','toolbar=no,width=780,height=350,top=30,left=10,scrollbars=yes,resizable=yes');"">Responsáveis</u>&nbsp"
             ShowHTML " </div></span>"
@@ -218,8 +233,10 @@ Sub Unidade
             While Not RS2.EOF         
                w_ContOut = w_ContOut + 1
                ShowHTML "<span id=Out" & w_ContOut & " class=Outline style=""cursor: hand; ""><div align=""left"" id=Out" & w_ContOut & " class=Outline style=""cursor: hand; ""> <img src=""images/ballw.gif"" border=0 align=""center""> " & RS2("NOME") 
-               ShowHTML " <A class=""hl"" HREF=""" & w_Pagina & par & "&R=" & w_Pagina & par & "&O=A&w_sq_unidade=" & RS2("sq_unidade") & "&P1=" & P1 & "&P2=" & P2 & "&P3=" & P3 & "&P4=" & P4 & "&TP=" & TP & "&SG=" & SG & """>Alterar</A>&nbsp"
-               ShowHTML " <A class=""hl"" HREF=""" & w_Pagina & par & "&R=" & w_Pagina & par & "&O=E&w_sq_unidade=" & RS2("sq_unidade") & "&P1=" & P1 & "&P2=" & P2 & "&P3=" & P3 & "&P4=" & P4 & "&TP=" & TP & "&SG=" & SG & """>Excluir</A>&nbsp"
+               If w_libera_edicao = "S" Then
+                  ShowHTML " <A class=""hl"" HREF=""" & w_Pagina & par & "&R=" & w_Pagina & par & "&O=A&w_sq_unidade=" & RS2("sq_unidade") & "&P1=" & P1 & "&P2=" & P2 & "&P3=" & P3 & "&P4=" & P4 & "&TP=" & TP & "&SG=" & SG & """>Alterar</A>&nbsp"
+                  ShowHTML " <A class=""hl"" HREF=""" & w_Pagina & par & "&R=" & w_Pagina & par & "&O=E&w_sq_unidade=" & RS2("sq_unidade") & "&P1=" & P1 & "&P2=" & P2 & "&P3=" & P3 & "&P4=" & P4 & "&TP=" & TP & "&SG=" & SG & """>Excluir</A>&nbsp"
+               End If
                ShowHTML " <u class=""hl"" style=""cursor:hand;"" onclick=""javascript:window.open('" & w_pagina & "Localizacao&P1=" & P1 &"&P2=" & P2 &"&P3=" & P3 &"&P4=" & P4 &"&TP=" & TP & " - Localização&O=L&SG=LUORG&w_sq_unidade=" & RS2("sq_unidade") & "','Local','toolbar=no,width=780,height=350,top=30,left=10,scrollbars=yes,resizable=yes')"">Locais</u>&nbsp"
                ShowHTML " <u class=""hl"" style=""curso:hand"" onclick=""javascript:window.open('" & w_pagina & "Responsavel&P1=" & P1 &"&P2=" & P2 &"&P3=" & P3 &"&P4=" & P4 &"&TP=" & TP &" - Responsáveis&O=L&SG=RESPONSAVEL&w_sq_unidade=" & RS2("sq_unidade") & "','Responsaveis','toolbar=no,width=780,height=350,top=30,left=10,scrollbars=yes,resizable=yes');"">Responsáveis</u>&nbsp"
                ShowHTML "</div></span></font>"
@@ -229,8 +246,10 @@ Sub Unidade
                While Not RS3.EOF
                   w_ContOut = w_ContOut + 1
                   ShowHTML "<span id=Out" & w_ContOut & " class=Outline style=""cursor: hand; ""><div align=""left"" id=Out" & w_ContOut & " class=Outline style=""cursor: hand; ""> <img src=""images/ballw.gif"" border=0 align=""center""> " & RS3("NOME") 
-                  ShowHTML " <A class=""hl"" HREF=""" & w_Pagina & par & "&R=" & w_Pagina & par & "&O=A&w_sq_unidade=" & RS3("sq_unidade") & "&P1=" & P1 & "&P2=" & P2 & "&P3=" & P3 & "&P4=" & P4 & "&TP=" & TP & "&SG=" & SG & """>Alterar</A>&nbsp"
-                  ShowHTML " <A class=""hl"" HREF=""" & w_Pagina & par & "&R=" & w_Pagina & par & "&O=E&w_sq_unidade=" & RS3("sq_unidade") & "&P1=" & P1 & "&P2=" & P2 & "&P3=" & P3 & "&P4=" & P4 & "&TP=" & TP & "&SG=" & SG & """>Excluir</A>&nbsp"
+                  If w_libera_edicao = "S" Then
+                     ShowHTML " <A class=""hl"" HREF=""" & w_Pagina & par & "&R=" & w_Pagina & par & "&O=A&w_sq_unidade=" & RS3("sq_unidade") & "&P1=" & P1 & "&P2=" & P2 & "&P3=" & P3 & "&P4=" & P4 & "&TP=" & TP & "&SG=" & SG & """>Alterar</A>&nbsp"
+                     ShowHTML " <A class=""hl"" HREF=""" & w_Pagina & par & "&R=" & w_Pagina & par & "&O=E&w_sq_unidade=" & RS3("sq_unidade") & "&P1=" & P1 & "&P2=" & P2 & "&P3=" & P3 & "&P4=" & P4 & "&TP=" & TP & "&SG=" & SG & """>Excluir</A>&nbsp"
+                  End If
                   ShowHTML " <u class=""hl"" style=""cursor:hand;"" onclick=""javascript:window.open('" & w_pagina & "Localizacao&P1=" & P1 &"&P2=" & P2 &"&P3=" & P3 &"&P4=" & P4 &"&TP=" & TP &" - Localização&O=L&SG=LUORG&w_sq_unidade=" & RS3("sq_unidade") & "','Local','toolbar=no,width=780,height=350,top=30,left=10,scrollbars=yes,resizable=yes')"">Locais</u>&nbsp"
                   ShowHTML " <u class=""hl"" style=""curso:hand"" onclick=""javascript:window.open('" & w_pagina & "Responsavel&P1=" & P1 &"&P2=" & P2 &"&P3=" & P3 &"&P4=" & P4 &"&TP=" & TP &" - Responsáveis&O=L&SG=RESPONSAVEL&w_sq_unidade=" & RS3("sq_unidade") & "','Responsaveis','toolbar=no,width=780,height=350,top=30,left=10,scrollbars=yes,resizable=yes');"">Responsáveis</u>&nbsp"
                   ShowHTML "</div></span></font>"
@@ -240,8 +259,10 @@ Sub Unidade
                   While Not RS4.EOF
                      w_ContOut = w_ContOut + 1
                      ShowHTML "<span id=Out" & w_ContOut & " class=Outline style=""cursor: hand; ""><div align=""left"" id=Out" & w_ContOut & " class=Outline style=""cursor: hand; ""> <img src=""images/ballw.gif"" border=0 align=""center""> " & RS4("NOME") 
-                     ShowHTML " <A class=""hl"" HREF=""" & w_Pagina & par & "&R=" & w_Pagina & par & "&O=A&w_sq_unidade=" & RS4("sq_unidade") & "&P1=" & P1 & "&P2=" & P2 & "&P3=" & P3 & "&P4=" & P4 & "&TP=" & TP & "&SG=" & SG & """>Alterar</A>&nbsp"
-                     ShowHTML " <A class=""hl"" HREF=""" & w_Pagina & par & "&R=" & w_Pagina & par & "&O=E&w_sq_unidade=" & RS4("sq_unidade") & "&P1=" & P1 & "&P2=" & P2 & "&P3=" & P3 & "&P4=" & P4 & "&TP=" & TP & "&SG=" & SG & """>Excluir</A>&nbsp"
+                     If w_libera_edicao = "S" Then
+                        ShowHTML " <A class=""hl"" HREF=""" & w_Pagina & par & "&R=" & w_Pagina & par & "&O=A&w_sq_unidade=" & RS4("sq_unidade") & "&P1=" & P1 & "&P2=" & P2 & "&P3=" & P3 & "&P4=" & P4 & "&TP=" & TP & "&SG=" & SG & """>Alterar</A>&nbsp"
+                        ShowHTML " <A class=""hl"" HREF=""" & w_Pagina & par & "&R=" & w_Pagina & par & "&O=E&w_sq_unidade=" & RS4("sq_unidade") & "&P1=" & P1 & "&P2=" & P2 & "&P3=" & P3 & "&P4=" & P4 & "&TP=" & TP & "&SG=" & SG & """>Excluir</A>&nbsp"
+                     End If
                      ShowHTML " <u class=""hl"" style=""cursor:hand;"" onclick=""javascript:window.open('" & w_pagina & "Localizacao&P1=" & P1 &"&P2=" & P2 &"&P3=" & P3 &"&P4=" & P4 &"&TP=" & TP &" - Localização&O=L&SG=LUORG&w_sq_unidade=" & RS4("sq_unidade") & "','Local','toolbar=no,width=780,height=350,top=30,left=10,scrollbars=yes,resizable=yes')"">Locais</u>&nbsp"
                      ShowHTML " <u class=""hl"" style=""curso:hand"" onclick=""javascript:window.open('" & w_pagina & "Responsavel&P1=" & P1 &"&P2=" & P2 &"&P3=" & P3 &"&P4=" & P4 &"&TP=" & TP &" - Responsáveis&O=L&SG=RESPONSAVEL&w_sq_unidade=" & RS4("sq_unidade") & "','Responsaveis','toolbar=no,width=780,height=350,top=30,left=10,scrollbars=yes,resizable=yes');"">Responsáveis</u>&nbsp"
                      ShowHTML "</div></span></font>"
@@ -251,8 +272,10 @@ Sub Unidade
                      While Not RS5.EOF
                         w_ContOut = w_ContOut + 1
                         ShowHTML "<span id=Out" & w_ContOut & " class=Outline style=""cursor: hand; ""><div align=""left"" id=Out" & w_ContOut & " class=Outline style=""cursor: hand; ""> <img src=""images/ballw.gif"" border=0 align=""center""> " & RS5("NOME") 
-                        ShowHTML " <A class=""hl"" HREF=""" & w_Pagina & par & "&R=" & w_Pagina & par & "&O=A&w_sq_unidade=" & RS5("sq_unidade") & "&P1=" & P1 & "&P2=" & P2 & "&P3=" & P3 & "&P4=" & P4 & "&TP=" & TP & "&SG=" & SG & """>Alterar</A>&nbsp"
-                        ShowHTML " <A class=""hl"" HREF=""" & w_Pagina & par & "&R=" & w_Pagina & par & "&O=E&w_sq_unidade=" & RS5("sq_unidade") & "&P1=" & P1 & "&P2=" & P2 & "&P3=" & P3 & "&P4=" & P4 & "&TP=" & TP & "&SG=" & SG & """>Excluir</A>&nbsp"
+                        If w_libera_edicao = "S" Then
+                           ShowHTML " <A class=""hl"" HREF=""" & w_Pagina & par & "&R=" & w_Pagina & par & "&O=A&w_sq_unidade=" & RS5("sq_unidade") & "&P1=" & P1 & "&P2=" & P2 & "&P3=" & P3 & "&P4=" & P4 & "&TP=" & TP & "&SG=" & SG & """>Alterar</A>&nbsp"
+                           ShowHTML " <A class=""hl"" HREF=""" & w_Pagina & par & "&R=" & w_Pagina & par & "&O=E&w_sq_unidade=" & RS5("sq_unidade") & "&P1=" & P1 & "&P2=" & P2 & "&P3=" & P3 & "&P4=" & P4 & "&TP=" & TP & "&SG=" & SG & """>Excluir</A>&nbsp"
+                        End If
                         ShowHTML " <u class=""hl"" style=""cursor:hand;"" onclick=""javascript:window.open('" & w_pagina & "Localizacao&P1=" & P1 &"&P2=" & P2 &"&P3=" & P3 &"&P4=" & P4 &"&TP=" & TP &" - Localização&O=L&SG=LUORG&w_sq_unidade=" & RS5("sq_unidade") & "','Local','toolbar=no,width=780,height=350,top=30,left=10,scrollbars=yes,resizable=yes')"">Locais</u>&nbsp"
                         ShowHTML " <u class=""hl"" style=""curso:hand"" onclick=""javascript:window.open('" & w_pagina & "Responsavel&P1=" & P1 &"&P2=" & P2 &"&P3=" & P3 &"&P4=" & P4 &"&TP=" & TP &" - Responsáveis&O=L&SG=RESPONSAVEL&w_sq_unidade=" & RS5("sq_unidade") & "','Responsaveis','toolbar=no,width=780,height=350,top=30,left=10,scrollbars=yes,resizable=yes');"">Responsáveis</u>&nbsp"
                         ShowHTML "</div></span></font>"
@@ -262,8 +285,10 @@ Sub Unidade
                         While Not RS6.EOF
                            w_ContOut = w_ContOut + 1
                            ShowHTML "<span id=Out" & w_ContOut & " class=Outline style=""cursor: hand; ""><div align=""left"" id=Out" & w_ContOut & " class=Outline style=""cursor: hand; ""> <img src=""images/ballw.gif"" border=0 align=""center""> " & RS6("NOME") 
-                           ShowHTML " <A class=""hl"" HREF=""" & w_Pagina & par & "&R=" & w_Pagina & par & "&O=A&w_sq_unidade=" & RS6("sq_unidade") & "&P1=" & P1 & "&P2=" & P2 & "&P3=" & P3 & "&P4=" & P4 & "&TP=" & TP & "&SG=" & SG & """>Alterar</A>&nbsp"
-                           ShowHTML " <A class=""hl"" HREF=""" & w_Pagina & par & "&R=" & w_Pagina & par & "&O=E&w_sq_unidade=" & RS6("sq_unidade") & "&P1=" & P1 & "&P2=" & P2 & "&P3=" & P3 & "&P4=" & P4 & "&TP=" & TP & "&SG=" & SG & """>Excluir</A>&nbsp"
+                           If w_libera_edicao = "S" Then
+                              ShowHTML " <A class=""hl"" HREF=""" & w_Pagina & par & "&R=" & w_Pagina & par & "&O=A&w_sq_unidade=" & RS6("sq_unidade") & "&P1=" & P1 & "&P2=" & P2 & "&P3=" & P3 & "&P4=" & P4 & "&TP=" & TP & "&SG=" & SG & """>Alterar</A>&nbsp"
+                              ShowHTML " <A class=""hl"" HREF=""" & w_Pagina & par & "&R=" & w_Pagina & par & "&O=E&w_sq_unidade=" & RS6("sq_unidade") & "&P1=" & P1 & "&P2=" & P2 & "&P3=" & P3 & "&P4=" & P4 & "&TP=" & TP & "&SG=" & SG & """>Excluir</A>&nbsp"
+                           End If
                            ShowHTML " <u class=""hl"" style=""cursor:hand;"" onclick=""javascript:window.open('" & w_pagina & "Localizacao&P1=" & P1 &"&P2=" & P2 &"&P3=" & P3 &"&P4=" & P4 &"&TP=" & TP &" - Localização&O=L&SG=LUORG&w_sq_unidade=" & RS6("sq_unidade") & "','Local','toolbar=no,width=780,height=350,top=30,left=10,scrollbars=yes,resizable=yes')"">Locais</u>&nbsp"
                            ShowHTML " <u class=""hl"" style=""curso:hand"" onclick=""javascript:window.open('" & w_pagina & "Responsavel&P1=" & P1 &"&P2=" & P2 &"&P3=" & P3 &"&P4=" & P4 &"&TP=" & TP &" - Responsáveis&O=L&SG=RESPONSAVEL&w_sq_unidade=" & RS6("sq_unidade") & "','Responsaveis','toolbar=no,width=780,height=350,top=30,left=10,scrollbars=yes,resizable=yes');"">Responsáveis</u>&nbsp"
                            ShowHTML "</div></span></font>"
@@ -273,8 +298,10 @@ Sub Unidade
                            While Not RS7.EOF
                               w_ContOut = w_ContOut + 1
                               ShowHTML "<span id=Out" & w_ContOut & " class=Outline style=""cursor: hand; ""><div align=""left"" id=Out" & w_ContOut & " class=Outline style=""cursor: hand; ""> <img src=""images/ballw.gif"" border=0 align=""center""> " & RS7("NOME") 
-                              ShowHTML " <A class=""hl"" HREF=""" & w_Pagina & par & "&R=" & w_Pagina & par & "&O=A&w_sq_unidade=" & RS7("sq_unidade") & "&P1=" & P1 & "&P2=" & P2 & "&P3=" & P3 & "&P4=" & P4 & "&TP=" & TP & "&SG=" & SG & """>Alterar</A>&nbsp"
-                              ShowHTML " <A class=""hl"" HREF=""" & w_Pagina & par & "&R=" & w_Pagina & par & "&O=E&w_sq_unidade=" & RS7("sq_unidade") & "&P1=" & P1 & "&P2=" & P2 & "&P3=" & P3 & "&P4=" & P4 & "&TP=" & TP & "&SG=" & SG & """>Excluir</A>&nbsp"
+                              If w_libera_edicao = "S" Then
+                                 ShowHTML " <A class=""hl"" HREF=""" & w_Pagina & par & "&R=" & w_Pagina & par & "&O=A&w_sq_unidade=" & RS7("sq_unidade") & "&P1=" & P1 & "&P2=" & P2 & "&P3=" & P3 & "&P4=" & P4 & "&TP=" & TP & "&SG=" & SG & """>Alterar</A>&nbsp"
+                                 ShowHTML " <A class=""hl"" HREF=""" & w_Pagina & par & "&R=" & w_Pagina & par & "&O=E&w_sq_unidade=" & RS7("sq_unidade") & "&P1=" & P1 & "&P2=" & P2 & "&P3=" & P3 & "&P4=" & P4 & "&TP=" & TP & "&SG=" & SG & """>Excluir</A>&nbsp"
+                              End If
                               ShowHTML " <u class=""hl"" style=""cursor:hand;"" onclick=""javascript:window.open('" & w_pagina & "Localizacao&P1=" & P1 &"&P2=" & P2 &"&P3=" & P3 &"&P4=" & P4 &"&TP=" & TP &" - Localização&O=L&SG=LUORG&w_sq_unidade=" & RS7("sq_unidade") & "','Local','toolbar=no,width=780,height=350,top=30,left=10,scrollbars=yes,resizable=yes')"">Locais</u>&nbsp"
                               ShowHTML " <u class=""hl"" style=""curso:hand"" onclick=""javascript:window.open('" & w_pagina & "Responsavel&P1=" & P1 &"&P2=" & P2 &"&P3=" & P3 &"&P4=" & P4 &"&TP=" & TP &" - Responsáveis&O=L&SG=RESPONSAVEL&w_sq_unidade=" & RS7("sq_unidade") & "','Responsaveis','toolbar=no,width=780,height=350,top=30,left=10,scrollbars=yes,resizable=yes');"">Responsáveis</u>&nbsp"
                               ShowHTML "</div></span></font>"
@@ -284,8 +311,10 @@ Sub Unidade
                               While Not RS8.EOF
                                  w_ContOut = w_ContOut + 1
                                  ShowHTML "<span id=Out" & w_ContOut & " class=Outline style=""cursor: hand; ""><div align=""left"" id=Out" & w_ContOut & " class=Outline style=""cursor: hand; ""> <img src=""images/ballw.gif"" border=0 align=""center""> " & RS8("NOME") 
-                                 ShowHTML " <A class=""hl"" HREF=""" & w_Pagina & par & "&R=" & w_Pagina & par & "&O=A&w_sq_unidade=" & RS8("sq_unidade") & "&P1=" & P1 & "&P2=" & P2 & "&P3=" & P3 & "&P4=" & P4 & "&TP=" & TP & "&SG=" & SG & """>Alterar</A>&nbsp"
-                                 ShowHTML " <A class=""hl"" HREF=""" & w_Pagina & par & "&R=" & w_Pagina & par & "&O=E&w_sq_unidade=" & RS8("sq_unidade") & "&P1=" & P1 & "&P2=" & P2 & "&P3=" & P3 & "&P4=" & P4 & "&TP=" & TP & "&SG=" & SG & """>Excluir</A>&nbsp"
+                                 If w_libera_edicao = "S" Then
+                                    ShowHTML " <A class=""hl"" HREF=""" & w_Pagina & par & "&R=" & w_Pagina & par & "&O=A&w_sq_unidade=" & RS8("sq_unidade") & "&P1=" & P1 & "&P2=" & P2 & "&P3=" & P3 & "&P4=" & P4 & "&TP=" & TP & "&SG=" & SG & """>Alterar</A>&nbsp"
+                                    ShowHTML " <A class=""hl"" HREF=""" & w_Pagina & par & "&R=" & w_Pagina & par & "&O=E&w_sq_unidade=" & RS8("sq_unidade") & "&P1=" & P1 & "&P2=" & P2 & "&P3=" & P3 & "&P4=" & P4 & "&TP=" & TP & "&SG=" & SG & """>Excluir</A>&nbsp"
+                                 End If
                                  ShowHTML " <u class=""hl"" style=""cursor:hand;"" onclick=""javascript:window.open('" & w_pagina & "Localizacao&P1=" & P1 &"&P2=" & P2 &"&P3=" & P3 &"&P4=" & P4 &"&TP=" & TP &" - Localização&O=L&SG=LUORG&w_sq_unidade=" & RS8("sq_unidade") & "','Local','toolbar=no,width=780,height=350,top=30,left=10,scrollbars=yes,resizable=yes')"">Locais</u>&nbsp"
                                  ShowHTML " <u class=""hl"" style=""curso:hand"" onclick=""javascript:window.open('" & w_pagina & "Responsavel&P1=" & P1 &"&P2=" & P2 &"&P3=" & P3 &"&P4=" & P4 &"&TP=" & TP &" - Responsáveis&O=L&SG=RESPONSAVEL&w_sq_unidade=" & RS8("sq_unidade") & "','Responsaveis','toolbar=no,width=780,height=350,top=30,left=10,scrollbars=yes,resizable=yes');"">Responsáveis</u>&nbsp"
                                  ShowHTML "</div></span></font>"
@@ -295,8 +324,10 @@ Sub Unidade
                                  While Not RS9.EOF
                                     w_ContOut = w_ContOut + 1
                                     ShowHTML "<span id=Out" & w_ContOut & " class=Outline style=""cursor: hand; ""><div align=""left"" id=Out" & w_ContOut & " class=Outline style=""cursor: hand; ""> <img src=""images/ballw.gif"" border=0 align=""center""> " & RS9("NOME") 
-                                    ShowHTML " <A class=""hl"" HREF=""" & w_Pagina & par & "&R=" & w_Pagina & par & "&O=A&w_sq_unidade=" & RS9("sq_unidade") & "&P1=" & P1 & "&P2=" & P2 & "&P3=" & P3 & "&P4=" & P4 & "&TP=" & TP & "&SG=" & SG & """>Alterar</A>&nbsp"
-                                    ShowHTML " <A class=""hl"" HREF=""" & w_Pagina & par & "&R=" & w_Pagina & par & "&O=E&w_sq_unidade=" & RS9("sq_unidade") & "&P1=" & P1 & "&P2=" & P2 & "&P3=" & P3 & "&P4=" & P4 & "&TP=" & TP & "&SG=" & SG & """>Excluir</A>&nbsp"
+                                    If w_libera_edicao = "S" Then
+                                       ShowHTML " <A class=""hl"" HREF=""" & w_Pagina & par & "&R=" & w_Pagina & par & "&O=A&w_sq_unidade=" & RS9("sq_unidade") & "&P1=" & P1 & "&P2=" & P2 & "&P3=" & P3 & "&P4=" & P4 & "&TP=" & TP & "&SG=" & SG & """>Alterar</A>&nbsp"
+                                       ShowHTML " <A class=""hl"" HREF=""" & w_Pagina & par & "&R=" & w_Pagina & par & "&O=E&w_sq_unidade=" & RS9("sq_unidade") & "&P1=" & P1 & "&P2=" & P2 & "&P3=" & P3 & "&P4=" & P4 & "&TP=" & TP & "&SG=" & SG & """>Excluir</A>&nbsp"
+                                    End If
                                     ShowHTML " <u class=""hl"" style=""cursor:hand;"" onclick=""javascript:window.open('" & w_pagina & "Localizacao&P1=" & P1 &"&P2=" & P2 &"&P3=" & P3 &"&P4=" & P4 &"&TP=" & TP &" - Localização&O=L&SG=LUORG&w_sq_unidade=" & RS9("sq_unidade") & "','Local','toolbar=no,width=780,height=350,top=30,left=10,scrollbars=yes,resizable=yes')"">Locais</u>&nbsp"
                                     ShowHTML " <u class=""hl"" style=""curso:hand"" onclick=""javascript:window.open('" & w_pagina & "Responsavel&P1=" & P1 &"&P2=" & P2 &"&P3=" & P3 &"&P4=" & P4 &"&TP=" & TP &" - Responsáveis&O=L&SG=RESPONSAVEL&w_sq_unidade=" & RS9("sq_unidade") & "','Responsaveis','toolbar=no,width=780,height=350,top=30,left=10,scrollbars=yes,resizable=yes');"">Responsáveis</u>&nbsp"
                                     ShowHTML "</div></span></font>"
@@ -430,6 +461,7 @@ Sub Unidade
    Estrutura_Fecha
    Rodape
    
+   Set w_libera_edicao       = Nothing
    Set w_ImagemPadrao        = Nothing
    Set w_Imagem              = Nothing
    Set w_Titulo              = Nothing
@@ -462,9 +494,6 @@ Sub Unidade
    Set w_unidade_pagadora    = Nothing
    Set w_email               = Nothing
 End Sub
-REM =========================================================================
-REM Fim da rotina de montagem das unidades
-REM -------------------------------------------------------------------------
 
 REM =========================================================================
 REM Rotina da tabela de localização

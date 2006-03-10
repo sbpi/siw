@@ -4,6 +4,7 @@
 <!-- #INCLUDE FILE="jScript.asp" -->
 <!-- #INCLUDE FILE="Funcoes.asp" -->
 <!-- #INCLUDE FILE="DB_Geral.asp" -->
+<!-- #INCLUDE FILE="DB_Seguranca.asp" -->
 <!-- #INCLUDE FILE="DML_Tabela_Localizacao.asp" -->
 <%
 Response.Expires = -1500
@@ -38,7 +39,7 @@ End If
 Dim dbms, sp, RS
 Dim P1, P2, P3, P4, TP, SG
 Dim R, O, w_Cont, w_Pagina, w_Disabled, w_TP, w_troca,  w_cor
-Dim w_Assinatura, w_filter
+Dim w_Assinatura, w_filter, w_menu, w_cliente
 Dim w_dir_volta
 Private Par
 
@@ -76,11 +77,17 @@ Select Case O
   Case Else
      w_TP = TP & " - Listagem"
 End Select
+
+w_cliente = RetornaCliente()
+w_menu    = RetornaMenu(w_cliente, SG) 
+
 Main
 
 FechaSessao
 
 Set w_cor       = Nothing
+Set w_menu      = Nothing
+Set w_cliente   = Nothing
 
 Set RS          = Nothing
 Set Par         = Nothing
@@ -113,7 +120,11 @@ Sub Cidade
   Dim w_ativo, p_ativo
   Dim w_capital
   Dim p_Ordena
-
+  Dim w_libera_edicao
+  
+  DB_GetMenuData RS, w_menu
+  w_libera_edicao = RS("libera_edicao")
+  
   p_sq_pais     = uCase(Request("p_sq_pais"))
   p_co_uf       = uCase(Request("p_co_uf"))
   p_nome        = uCase(Request("p_nome"))
@@ -197,7 +208,10 @@ Sub Cidade
   ShowHTML "<div align=center><center>"
   ShowHTML "<table border=""0"" cellpadding=""0"" cellspacing=""0"" width=""100%"">"
   If O = "L" Then
-    ShowHTML "<tr><td><font size=""2""><a accesskey=""I"" class=""SS"" href=""" & w_Pagina & par & "&R=" & w_Pagina & par & "&O=I&P1=" & P1 & "&P2=" & P2 & "&P3=" & P3 & "&P4=" & P4 & "&TP=" & TP & "&SG=" & SG & "&p_nome=" & p_nome & "&p_sq_pais=" & p_sq_pais & "&p_co_uf=" & p_co_uf & "&p_ativo=" & p_ativo & "&p_ordena=" & p_ordena & """><u>I</u>ncluir</a>&nbsp;"
+    ShowHTML "<tr><td><font size=""2"">"
+    If w_libera_edicao = "S" Then
+       ShowHTML "<a accesskey=""I"" class=""SS"" href=""" & w_Pagina & par & "&R=" & w_Pagina & par & "&O=I&P1=" & P1 & "&P2=" & P2 & "&P3=" & P3 & "&P4=" & P4 & "&TP=" & TP & "&SG=" & SG & "&p_nome=" & p_nome & "&p_sq_pais=" & p_sq_pais & "&p_co_uf=" & p_co_uf & "&p_ativo=" & p_ativo & "&p_ordena=" & p_ordena & """><u>I</u>ncluir</a>&nbsp;"
+    End If
     If p_sq_pais & p_co_uf & p_nome & p_ativo & p_Ordena > "" Then
        ShowHTML "                         <a accesskey=""F"" class=""SS"" href=""" & w_Pagina & par & "&R=" & w_Pagina & par & "&O=P&P1=" & P1 & "&P2=" & P2 & "&P4=" & P4 & "&TP=" & TP & "&SG=" & SG & "&p_nome=" & p_nome & "&p_sq_pais=" & p_sq_pais & "&p_co_uf=" & p_co_uf & "&p_ativo=" & p_ativo & "&p_ordena=" & p_ordena & """><u><font color=""#BC5100"">F</u>iltrar (Ativo)</font></a></font>"
     Else
@@ -214,7 +228,9 @@ Sub Cidade
     ShowHTML "          <td><font size=""2""><b>DDD</font></td>"
     ShowHTML "          <td><font size=""2""><b>IBGE</font></td>"
     ShowHTML "          <td><font size=""2""><b>Capital</font></td>"
-    ShowHTML "          <td><font size=""2""><b>Operações</font></td>"
+    If w_libera_edicao = "S" Then
+       ShowHTML "          <td><font size=""2""><b>Operações</font></td>"
+    End If
     ShowHTML "        </tr>"
     If RS.EOF Then
         ShowHTML "      <tr bgcolor=""" & conTrBgColor & """><td colspan=8 align=""center""><font  size=""2""><b>Não foram encontrados registros.</b></td></tr>"
@@ -231,10 +247,12 @@ Sub Cidade
         ShowHTML "        <td align=""center""><font size=""1"">" & RS("ddd") & "</td>"
         ShowHTML "        <td align=""center""><font size=""1"">" & RS("codigo_ibge") & "</td>"
         ShowHTML "        <td align=""center""><font size=""1"">" & RS("capital") & "</td>"
-        ShowHTML "        <td align=""top"" nowrap><font size=""1"">"
-        ShowHTML "          <A class=""HL"" HREF=""" & w_Pagina & par & "&R=" & w_Pagina & par & "&O=A&w_sq_cidade=" & RS("sq_cidade") & "&P1=" & P1 & "&P2=" & P2 & "&P3=" & P3 & "&P4=" & P4 & "&TP=" & TP & "&SG=" & SG & "&p_nome=" & p_nome & "&p_sq_pais=" & p_sq_pais & "&p_co_uf=" & p_co_uf & "&p_ativo=" & p_ativo & "&p_ordena=" & p_ordena & """>Alterar</A>&nbsp"
-        ShowHTML "          <A class=""HL"" HREF=""" & w_Pagina & par & "&R=" & w_Pagina & par & "&O=E&w_sq_cidade=" & RS("sq_cidade") & "&P1=" & P1 & "&P2=" & P2 & "&P3=" & P3 & "&P4=" & P4 & "&TP=" & TP & "&SG=" & SG & "&p_nome=" & p_nome & "&p_sq_pais=" & p_sq_pais & "&p_co_uf=" & p_co_uf & "&p_ativo=" & p_ativo & "&p_ordena=" & p_ordena & """>Excluir</A>&nbsp"
-        ShowHTML "        </td>"
+        If w_libera_edicao = "S" Then
+           ShowHTML "        <td align=""top"" nowrap><font size=""1"">"
+           ShowHTML "          <A class=""HL"" HREF=""" & w_Pagina & par & "&R=" & w_Pagina & par & "&O=A&w_sq_cidade=" & RS("sq_cidade") & "&P1=" & P1 & "&P2=" & P2 & "&P3=" & P3 & "&P4=" & P4 & "&TP=" & TP & "&SG=" & SG & "&p_nome=" & p_nome & "&p_sq_pais=" & p_sq_pais & "&p_co_uf=" & p_co_uf & "&p_ativo=" & p_ativo & "&p_ordena=" & p_ordena & """>Alterar</A>&nbsp"
+           ShowHTML "          <A class=""HL"" HREF=""" & w_Pagina & par & "&R=" & w_Pagina & par & "&O=E&w_sq_cidade=" & RS("sq_cidade") & "&P1=" & P1 & "&P2=" & P2 & "&P3=" & P3 & "&P4=" & P4 & "&TP=" & TP & "&SG=" & SG & "&p_nome=" & p_nome & "&p_sq_pais=" & p_sq_pais & "&p_co_uf=" & p_co_uf & "&p_ativo=" & p_ativo & "&p_ordena=" & p_ordena & """>Excluir</A>&nbsp"
+           ShowHTML "        </td>"
+        End If
         ShowHTML "      </tr>"
         RS.MoveNext
       wend
@@ -344,6 +362,7 @@ Sub Cidade
   Set w_codigo_ibge = Nothing
   Set w_ativo       = Nothing
   Set w_capital     = Nothing
+  Set w_libera_edicao = Nothing
 
   Set p_nome        = Nothing
   Set p_sq_pais     = Nothing
@@ -352,9 +371,6 @@ Sub Cidade
   Set p_Ordena      = Nothing
 
 End Sub
-REM =========================================================================
-REM Fim da tabela de cidade
-REM -------------------------------------------------------------------------
 
 REM =========================================================================
 REM Rotina da tabela de estados
@@ -370,11 +386,15 @@ Sub Estado
   Dim w_codigo_ibge
   Dim w_ordem
   Dim p_Ordena
+  Dim w_libera_edicao
 
   p_sq_pais          = uCase(Request("p_sq_pais"))
   p_sq_regiao        = uCase(Request("p_sq_regiao"))
   p_ativo            = uCase(Request("p_ativo"))
   p_ordena           = uCase(Request("p_ordena"))
+  
+  DB_GetMenuData RS, w_menu
+  w_libera_edicao = RS("libera_edicao")
   
   If p_sq_pais = "" Then O = "P" End If
   
@@ -460,7 +480,10 @@ Sub Estado
   ShowHTML "<div align=center><center>"
   ShowHTML "<table border=""0"" cellpadding=""0"" cellspacing=""0"" width=""100%"">"
   If O = "L" Then
-    ShowHTML "<tr><td><font size=""2""><a accesskey=""I"" class=""SS"" href=""" & w_Pagina & par & "&R=" & w_Pagina & par & "&O=I&P1=" & P1 & "&P2=" & P2 & "&P3=" & P3 & "&P4=" & P4 & "&TP=" & TP & "&SG=" & SG & "&p_sq_pais=" & p_sq_pais & "&p_sq_regiao=" & p_sq_regiao & "&p_ativo=" & p_ativo & "&p_ordena=" & p_ordena & """><u>I</u>ncluir</a>&nbsp;"
+    ShowHTML "<tr><td>"
+    If w_libera_edicao = "S" Then
+       ShowHTML "<font size=""2""><a accesskey=""I"" class=""SS"" href=""" & w_Pagina & par & "&R=" & w_Pagina & par & "&O=I&P1=" & P1 & "&P2=" & P2 & "&P3=" & P3 & "&P4=" & P4 & "&TP=" & TP & "&SG=" & SG & "&p_sq_pais=" & p_sq_pais & "&p_sq_regiao=" & p_sq_regiao & "&p_ativo=" & p_ativo & "&p_ordena=" & p_ordena & """><u>I</u>ncluir</a>&nbsp;"
+    End If
     If p_sq_pais & p_sq_regiao & p_ativo & p_Ordena > "" Then
        ShowHTML "                         <a accesskey=""F"" class=""SS"" href=""" & w_Pagina & par & "&R=" & w_Pagina & par & "&O=P&P1=" & P1 & "&P2=" & P2 & "&P4=" & P4 & "&TP=" & TP & "&SG=" & SG & "&p_sq_pais=" & p_sq_pais & "&p_sq_regiao=" & p_sq_regiao & "&p_ativo=" & p_ativo & "&p_ordena=" & p_ordena & """><u><font color=""#BC5100"">F</u>iltrar (Ativo)</font></a></font>"
     Else
@@ -477,7 +500,9 @@ Sub Estado
     ShowHTML "          <td><font size=""2""><b>IBGE</font></td>"
     ShowHTML "          <td><font size=""2""><b>Ativo</font></td>"
     ShowHTML "          <td><font size=""2""><b>Padrão</font></td>"
-    ShowHTML "          <td><font size=""2""><b>Operações</font></td>"
+    If w_libera_edicao = "S" Then    
+       ShowHTML "          <td><font size=""2""><b>Operações</font></td>"
+    End If
     ShowHTML "        </tr>"
     If RS.EOF Then
         ShowHTML "      <tr bgcolor=""" & conTrBgColor & """><td colspan=8 align=""center""><font  size=""2""><b>Não foram encontrados registros.</b></td></tr>"
@@ -495,9 +520,11 @@ Sub Estado
         ShowHTML "        <td align=""center""><font size=""1"">" & RS("ativodesc") & "</td>"
         ShowHTML "        <td align=""center""><font size=""1"">" & RS("padraodesc") & "</td>"
         ShowHTML "        <td align=""top"" nowrap><font size=""1"">"
-        ShowHTML "          <A class=""HL"" HREF=""" & w_Pagina & par & "&R=" & w_Pagina & par & "&O=A&w_sq_pais=" & RS("sq_pais") & "&w_co_uf=" & RS("co_uf") & "&P1=" & P1 & "&P2=" & P2 & "&P3=" & P3 & "&P4=" & P4 & "&TP=" & TP & "&SG=" & SG & "&p_sq_pais=" & p_sq_pais & "&p_sq_regiao=" & p_sq_regiao & "&p_ativo=" & p_ativo & "&p_ordena=" & p_ordena & """>Alterar</A>&nbsp"
-        ShowHTML "          <A class=""HL"" HREF=""" & w_Pagina & par & "&R=" & w_Pagina & par & "&O=E&w_sq_pais=" & RS("sq_pais") & "&w_co_uf=" & RS("co_uf") & "&P1=" & P1 & "&P2=" & P2 & "&P3=" & P3 & "&P4=" & P4 & "&TP=" & TP & "&SG=" & SG & "&p_sq_pais=" & p_sq_pais & "&p_sq_regiao=" & p_sq_regiao & "&p_ativo=" & p_ativo & "&p_ordena=" & p_ordena & """>Excluir</A>&nbsp"
-        ShowHTML "        </td>"
+        If w_libera_edicao = "S" Then
+           ShowHTML "          <A class=""HL"" HREF=""" & w_Pagina & par & "&R=" & w_Pagina & par & "&O=A&w_sq_pais=" & RS("sq_pais") & "&w_co_uf=" & RS("co_uf") & "&P1=" & P1 & "&P2=" & P2 & "&P3=" & P3 & "&P4=" & P4 & "&TP=" & TP & "&SG=" & SG & "&p_sq_pais=" & p_sq_pais & "&p_sq_regiao=" & p_sq_regiao & "&p_ativo=" & p_ativo & "&p_ordena=" & p_ordena & """>Alterar</A>&nbsp"
+           ShowHTML "          <A class=""HL"" HREF=""" & w_Pagina & par & "&R=" & w_Pagina & par & "&O=E&w_sq_pais=" & RS("sq_pais") & "&w_co_uf=" & RS("co_uf") & "&P1=" & P1 & "&P2=" & P2 & "&P3=" & P3 & "&P4=" & P4 & "&TP=" & TP & "&SG=" & SG & "&p_sq_pais=" & p_sq_pais & "&p_sq_regiao=" & p_sq_regiao & "&p_ativo=" & p_ativo & "&p_ordena=" & p_ordena & """>Excluir</A>&nbsp"
+           ShowHTML "        </td>"
+        End If
         ShowHTML "      </tr>"
         RS.MoveNext
       wend
@@ -621,11 +648,9 @@ Sub Estado
   Set w_codigo_ibge     = Nothing
   Set w_ordem           = Nothing
   Set p_Ordena          = Nothing
+  Set w_libera_edicao   = Nothing
 
 End Sub
-REM =========================================================================
-REM Fim da tabela de estados
-REM -------------------------------------------------------------------------
 
 REM =========================================================================
 REM Rotina da tabela de regiões
@@ -638,10 +663,14 @@ Sub Regiao
   Dim w_sigla, p_sigla
   Dim w_ordem
   Dim p_Ordena
+  Dim w_libera_edicao
 
   p_nome             = uCase(Request("p_nome"))
   p_sq_pais          = uCase(Request("p_sq_pais"))
   p_ordena           = uCase(Request("p_ordena"))
+  
+  DB_GetMenuData RS, w_menu
+  w_libera_edicao = RS("libera_edicao")
   
   If O = "L" Then
      DB_GetRegionList RS, null, "N" 
@@ -704,7 +733,10 @@ Sub Regiao
   ShowHTML "<div align=center><center>"
   ShowHTML "<table border=""0"" cellpadding=""0"" cellspacing=""0"" width=""100%"">"
   If O = "L" Then
-    ShowHTML "<tr><td><font size=""2""><a accesskey=""I"" class=""SS"" href=""" & w_Pagina & par & "&R=" & w_Pagina & par & "&O=I&P1=" & P1 & "&P2=" & P2 & "&P3=" & P3 & "&P4=" & P4 & "&TP=" & TP & "&SG=" & SG & "&p_nome=" & p_nome & "&p_sq_pais=" & p_sq_pais & "&p_ordena=" & p_ordena & """><u>I</u>ncluir</a>&nbsp;"
+    ShowHTML "<tr><td><font size=""2"">"
+    If w_libera_edicao = "S" Then
+       ShowHTML "<a accesskey=""I"" class=""SS"" href=""" & w_Pagina & par & "&R=" & w_Pagina & par & "&O=I&P1=" & P1 & "&P2=" & P2 & "&P3=" & P3 & "&P4=" & P4 & "&TP=" & TP & "&SG=" & SG & "&p_nome=" & p_nome & "&p_sq_pais=" & p_sq_pais & "&p_ordena=" & p_ordena & """><u>I</u>ncluir</a>&nbsp;"
+    End If
     If p_nome & p_sq_pais & p_Ordena > "" Then
        ShowHTML "                         <a accesskey=""F"" class=""SS"" href=""" & w_Pagina & par & "&R=" & w_Pagina & par & "&O=P&P1=" & P1 & "&P2=" & P2 & "&P4=" & P4 & "&TP=" & TP & "&SG=" & SG & "&p_nome=" & p_nome & "&p_sq_pais=" & p_sq_pais & "&p_ordena=" & p_ordena & """><u><font color=""#BC5100"">F</u>iltrar (Ativo)</font></a></font>"
     Else
@@ -719,7 +751,9 @@ Sub Regiao
     ShowHTML "          <td><font size=""2""><b>Nome</font></td>"
     ShowHTML "          <td><font size=""2""><b>Sigla</font></td>"
     ShowHTML "          <td><font size=""2""><b>Ordem</font></td>"
-    ShowHTML "          <td><font size=""2""><b>Operações</font></td>"
+    If w_libera_edicao = "S" Then
+       ShowHTML "          <td><font size=""2""><b>Operações</font></td>"
+    End If
     ShowHTML "        </tr>"
     If RS.EOF Then
         ShowHTML "      <tr bgcolor=""" & conTrBgColor & """><td colspan=6 align=""center""><font  size=""2""><b>Não foram encontrados registros.</b></td></tr>"
@@ -734,10 +768,12 @@ Sub Regiao
         ShowHTML "        <td><font size=""1"">" & RS("nome") & "</td>"
         ShowHTML "        <td align=""center""><font size=""1"">" & RS("sigla") & "</td>"
         ShowHTML "        <td align=""center""><font size=""1"">" & RS("ordem") & "</td>"
-        ShowHTML "        <td align=""top"" nowrap><font size=""1"">"
-        ShowHTML "          <A class=""HL"" HREF=""" & w_Pagina & par & "&R=" & w_Pagina & par & "&O=A&w_sq_regiao=" & RS("sq_regiao") & "&P1=" & P1 & "&P2=" & P2 & "&P3=" & P3 & "&P4=" & P4 & "&TP=" & TP & "&SG=" & SG & "&p_nome=" & p_nome & "&p_sq_pais=" & p_sq_pais & "&p_ordena=" & p_ordena & """>Alterar</A>&nbsp"
-        ShowHTML "          <A class=""HL"" HREF=""" & w_Pagina & par & "&R=" & w_Pagina & par & "&O=E&w_sq_regiao=" & RS("sq_regiao") & "&P1=" & P1 & "&P2=" & P2 & "&P3=" & P3 & "&P4=" & P4 & "&TP=" & TP & "&SG=" & SG & "&p_nome=" & p_nome & "&p_sq_pais=" & p_sq_pais & "&p_ordena=" & p_ordena & """>Excluir</A>&nbsp"
-        ShowHTML "        </td>"
+        If w_libera_edicao = "S" Then
+           ShowHTML "        <td align=""top"" nowrap><font size=""1"">"
+           ShowHTML "          <A class=""HL"" HREF=""" & w_Pagina & par & "&R=" & w_Pagina & par & "&O=A&w_sq_regiao=" & RS("sq_regiao") & "&P1=" & P1 & "&P2=" & P2 & "&P3=" & P3 & "&P4=" & P4 & "&TP=" & TP & "&SG=" & SG & "&p_nome=" & p_nome & "&p_sq_pais=" & p_sq_pais & "&p_ordena=" & p_ordena & """>Alterar</A>&nbsp"
+           ShowHTML "          <A class=""HL"" HREF=""" & w_Pagina & par & "&R=" & w_Pagina & par & "&O=E&w_sq_regiao=" & RS("sq_regiao") & "&P1=" & P1 & "&P2=" & P2 & "&P3=" & P3 & "&P4=" & P4 & "&TP=" & TP & "&SG=" & SG & "&p_nome=" & p_nome & "&p_sq_pais=" & p_sq_pais & "&p_ordena=" & p_ordena & """>Excluir</A>&nbsp"
+           ShowHTML "        </td>"
+        End If
         ShowHTML "      </tr>"
         RS.MoveNext
       wend
@@ -829,11 +865,9 @@ Sub Regiao
   Set p_nome      = Nothing
   Set p_sq_pais     = Nothing
   Set p_ordena    = Nothing
+  Set w_libera_edicao = Nothing
 
 End Sub
-REM =========================================================================
-REM Fim da tabela de regiões do Brasil
-REM -------------------------------------------------------------------------
 
 REM =========================================================================
 REM Rotina da tabela de países
@@ -846,11 +880,15 @@ Sub Pais
   Dim w_sigla, p_sigla
   Dim w_ddi
   Dim p_Ordena
+  Dim w_libera_edicao
 
   p_nome            = uCase(Request("p_nome"))
   p_ativo           = uCase(Request("p_ativo"))
   p_ordena          = uCase(Request("p_ordena"))
   p_sigla           = uCase(Request("p_sigla"))
+  
+  DB_GetMenuData RS, w_menu
+  w_libera_edicao = RS("libera_edicao")
   
   If O = "L" Then
      DB_GetCountryList RS
@@ -915,7 +953,10 @@ Sub Pais
   ShowHTML "<div align=center><center>"
   ShowHTML "<table border=""0"" cellpadding=""0"" cellspacing=""0"" width=""100%"">"
   If O = "L" Then
-    ShowHTML "<tr><td><font size=""2""><a accesskey=""I"" class=""SS"" href=""" & w_Pagina & par & "&R=" & w_Pagina & par & "&O=I&P1=" & P1 & "&P2=" & P2 & "&P3=" & P3 & "&P4=" & P4 & "&TP=" & TP & "&SG=" & SG & "&p_nome=" & p_nome & "&p_sigla=" & p_sigla & "&p_ativo=" & p_ativo & "&p_ordena=" & p_ordena & """><u>I</u>ncluir</a>&nbsp;"
+    ShowHTML "<tr><td>"
+    If w_libera_edicao = "S" Then
+       ShowHTML "<font size=""2""><a accesskey=""I"" class=""SS"" href=""" & w_Pagina & par & "&R=" & w_Pagina & par & "&O=I&P1=" & P1 & "&P2=" & P2 & "&P3=" & P3 & "&P4=" & P4 & "&TP=" & TP & "&SG=" & SG & "&p_nome=" & p_nome & "&p_sigla=" & p_sigla & "&p_ativo=" & p_ativo & "&p_ordena=" & p_ordena & """><u>I</u>ncluir</a>&nbsp;"
+    End If
     If p_nome & p_sigla & p_ativo & p_Ordena > "" Then
        ShowHTML "                         <a accesskey=""F"" class=""SS"" href=""" & w_Pagina & par & "&R=" & w_Pagina & par & "&O=P&P1=" & P1 & "&P2=" & P2 & "&P4=" & P4 & "&TP=" & TP & "&SG=" & SG & "&p_nome=" & p_nome & "&p_sigla=" & p_sigla & "&p_ativo=" & p_ativo & "&p_ordena=" & p_ordena & """><u><font color=""#BC5100"">F</u>iltrar (Ativo)</font></a></font>"
     Else
@@ -931,7 +972,9 @@ Sub Pais
     ShowHTML "          <td><font size=""2""><b>DDI</font></td>"
     ShowHTML "          <td><font size=""2""><b>Ativo</font></td>"
     ShowHTML "          <td><font size=""2""><b>Padrao</font></td>"
-    ShowHTML "          <td><font size=""2""><b>Operações</font></td>"
+    If w_libera_edicao = "S" Then
+       ShowHTML "          <td><font size=""2""><b>Operações</font></td>"
+    End If
     ShowHTML "        </tr>"
     If RS.EOF Then
         ShowHTML "      <tr bgcolor=""" & conTrBgColor & """><td colspan=7 align=""center""><font  size=""2""><b>Não foram encontrados registros.</b></td></tr>"
@@ -947,10 +990,12 @@ Sub Pais
         ShowHTML "        <td align=""center""><font size=""1"">" & RS("ddi") & "</td>"
         ShowHTML "        <td align=""center""><font size=""1"">" & RS("ativodesc") & "</td>"
         ShowHTML "        <td align=""center""><font size=""1"">" & RS("padraodesc") & "</td>"
-        ShowHTML "        <td align=""top"" nowrap><font size=""1"">"
-        ShowHTML "          <A class=""HL"" HREF=""" & w_Pagina & par & "&R=" & w_Pagina & par & "&O=A&w_sq_pais=" & RS("sq_pais") & "&P1=" & P1 & "&P2=" & P2 & "&P3=" & P3 & "&P4=" & P4 & "&TP=" & TP & "&SG=" & SG & "&p_nome=" & p_nome & "&p_sigla=" & p_sigla & "&p_ativo=" & p_ativo & "&p_ordena=" & p_ordena & """>Alterar</A>&nbsp"
-        ShowHTML "          <A class=""HL"" HREF=""" & w_Pagina & par & "&R=" & w_Pagina & par & "&O=E&w_sq_pais=" & RS("sq_pais") & "&P1=" & P1 & "&P2=" & P2 & "&P3=" & P3 & "&P4=" & P4 & "&TP=" & TP & "&SG=" & SG & "&p_nome=" & p_nome & "&p_sigla=" & p_sigla & "&p_ativo=" & p_ativo & "&p_ordena=" & p_ordena & """>Excluir</A>&nbsp"
-        ShowHTML "        </td>"
+        If w_libera_edicao = "S" Then
+           ShowHTML "        <td align=""top"" nowrap><font size=""1"">"
+           ShowHTML "          <A class=""HL"" HREF=""" & w_Pagina & par & "&R=" & w_Pagina & par & "&O=A&w_sq_pais=" & RS("sq_pais") & "&P1=" & P1 & "&P2=" & P2 & "&P3=" & P3 & "&P4=" & P4 & "&TP=" & TP & "&SG=" & SG & "&p_nome=" & p_nome & "&p_sigla=" & p_sigla & "&p_ativo=" & p_ativo & "&p_ordena=" & p_ordena & """>Alterar</A>&nbsp"
+           ShowHTML "          <A class=""HL"" HREF=""" & w_Pagina & par & "&R=" & w_Pagina & par & "&O=E&w_sq_pais=" & RS("sq_pais") & "&P1=" & P1 & "&P2=" & P2 & "&P3=" & P3 & "&P4=" & P4 & "&TP=" & TP & "&SG=" & SG & "&p_nome=" & p_nome & "&p_sigla=" & p_sigla & "&p_ativo=" & p_ativo & "&p_ordena=" & p_ordena & """>Excluir</A>&nbsp"
+           ShowHTML "        </td>"
+        End If
         ShowHTML "      </tr>"
         RS.MoveNext
       wend
@@ -1053,11 +1098,9 @@ Sub Pais
   Set p_sigla           = Nothing
   Set p_ativo           = Nothing
   Set p_ordena          = Nothing
+  Set w_libera_edicao   = Nothing
 
 End Sub
-REM =========================================================================
-REM Fim da tabela de países
-REM -------------------------------------------------------------------------
 
 REM =========================================================================
 REM Procedimento que executa as operações de BD
@@ -1175,9 +1218,6 @@ Public Sub Grava
   Set p_ordena          = Nothing
   Set w_Null            = Nothing
 End Sub
-REM -------------------------------------------------------------------------
-REM Fim do procedimento que executa as operações de BD
-REM =========================================================================
 
 REM =========================================================================
 REM Rotina principal
@@ -1204,8 +1244,5 @@ Sub Main
        Rodape
   End Select
 End Sub
-REM =========================================================================
-REM Fim da rotina principal
-REM -------------------------------------------------------------------------
 %>
 

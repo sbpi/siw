@@ -129,7 +129,6 @@ Sub DownloadFile(strFileName, blnForceDownload)
     If InStr(w_filename, ".") = 0 Then
        w_filename = w_filename & strExtension
     End If
-    
     '----------------------
     'forth step: read the file contents.
     '----------------------
@@ -189,6 +188,9 @@ Function GetContentType(ByVal strName, ByRef Extension)
             GetContentType=True
         Case "application/vnd.ms-excel"
             Extension = ".xls"
+            GetContentType=True
+        Case "application/vnd.ms-powerpoint"
+            Extension = ".ppt"
             GetContentType=True
         Case "image/gif"
             Extension = ".gif"

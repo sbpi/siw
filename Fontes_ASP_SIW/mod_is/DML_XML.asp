@@ -2153,13 +2153,13 @@ End Sub
 REM =========================================================================
 REM Mantém a tabela SIGPLAN - Indicador
 REM -------------------------------------------------------------------------
-Sub DML_PutXMLIndicador_SIG(p_resultado, p_cliente, p_ano, p_programa, p_chave, p_unidade_med, p_periodicidade, p_base_geo, p_nome, _
+Sub DML_PutXMLIndicador_SIG(p_resultado, p_cliente, p_ano, p_programa, p_chave, p_unidade_medida, p_periodicidade, p_base_geo, p_nome, _
                             p_fonte, p_formula, p_valor_apurado, p_valor_ppa, p_valor_programa, p_valor_mes_1, p_valor_mes_2, _
                             p_valor_mes_3, p_valor_mes_4, p_valor_mes_5, p_valor_mes_6, p_valor_mes_7, p_valor_mes_8, p_valor_mes_9, _
                             p_valor_mes_10, p_valor_mes_11, p_valor_mes_12, p_apuracao)
 
 
-  Dim l_cliente, l_ano, l_programa, l_Chave, l_unidade_med, l_periodicidade, l_base_geo, l_nome
+  Dim l_cliente, l_ano, l_programa, l_Chave, l_unidade_medida, l_periodicidade, l_base_geo, l_nome
   Dim l_fonte, l_formula, l_valor_apurado, l_valor_ppa, l_valor_programa
   Dim l_valor_mes_1, l_valor_mes_2, l_valor_mes_3, l_valor_mes_4, l_valor_mes_5, l_valor_mes_6, l_valor_mes_7
   Dim l_valor_mes_8, l_valor_mes_9, l_valor_mes_10, l_valor_mes_11, l_valor_mes_12, l_apuracao
@@ -2168,7 +2168,7 @@ Sub DML_PutXMLIndicador_SIG(p_resultado, p_cliente, p_ano, p_programa, p_chave, 
   Set l_ano                     = Server.CreateObject("ADODB.Parameter") 
   Set l_programa                = Server.CreateObject("ADODB.Parameter") 
   Set l_chave                   = Server.CreateObject("ADODB.Parameter") 
-  Set l_unidade_med             = Server.CreateObject("ADODB.Parameter") 
+  Set l_unidade_medida          = Server.CreateObject("ADODB.Parameter") 
   Set l_periodicidade           = Server.CreateObject("ADODB.Parameter") 
   Set l_base_geo                = Server.CreateObject("ADODB.Parameter") 
   Set l_nome                    = Server.CreateObject("ADODB.Parameter") 
@@ -2196,7 +2196,7 @@ Sub DML_PutXMLIndicador_SIG(p_resultado, p_cliente, p_ano, p_programa, p_chave, 
      set l_ano                  = .CreateParameter("l_ano",                 adInteger, adParamInput,     , Tvl(p_ano))
      set l_programa             = .CreateParameter("l_programa",            adVarchar, adParamInput,    4, Tvl(p_programa))
      set l_chave                = .CreateParameter("l_chave",               adInteger, adParamInput,     , Tvl(p_chave))
-     set l_unidade_med          = .CreateParameter("l_unidade_med",         adInteger, adParamInput,     , Tvl(p_unidade_med))
+     set l_unidade_medida       = .CreateParameter("l_unidade_medida",      adInteger, adParamInput,     , Tvl(p_unidade_medida))
      set l_periodicidade        = .CreateParameter("l_periodicidade",       adInteger, adParamInput,     , Tvl(p_periodicidade))     
      set l_base_geo             = .CreateParameter("l_base_geo",            adInteger, adParamInput,     , Tvl(p_base_geo))
      set l_nome                 = .CreateParameter("l_nome",                adVarchar, adParamInput,  200, Tvl(p_nome))
@@ -2268,7 +2268,7 @@ Sub DML_PutXMLIndicador_SIG(p_resultado, p_cliente, p_ano, p_programa, p_chave, 
      .parameters.Append         l_ano
      .parameters.Append         l_programa
      .parameters.Append         l_Chave
-     .parameters.Append         l_unidade_med
+     .parameters.Append         l_unidade_medida
      .parameters.Append         l_periodicidade
      .parameters.Append         l_base_geo
      .parameters.Append         l_nome
@@ -2300,7 +2300,7 @@ Sub DML_PutXMLIndicador_SIG(p_resultado, p_cliente, p_ano, p_programa, p_chave, 
      .parameters.Delete         "l_ano"
      .parameters.Delete         "l_programa"
      .parameters.Delete         "l_Chave"
-     .parameters.Delete         "l_unidade_med"
+     .parameters.Delete         "l_unidade_medida"
      .parameters.Delete         "l_periodicidade"
      .parameters.Delete         "l_base_geo"
      .parameters.Delete         "l_nome"

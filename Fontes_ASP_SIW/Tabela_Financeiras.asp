@@ -4,6 +4,7 @@
 <!-- #INCLUDE FILE="jScript.asp" -->
 <!-- #INCLUDE FILE="Funcoes.asp" -->
 <!-- #INCLUDE FILE="DB_Geral.asp" -->
+<!-- #INCLUDE FILE="DB_Seguranca.asp" -->
 <!-- #INCLUDE FILE="DML_Tabelas_Financeiras.asp" -->
 <%
 Response.Expires = -1500
@@ -42,7 +43,7 @@ Dim w_ContOut
 Dim w_Titulo
 Dim w_Imagem
 Dim w_ImagemPadrao
-Dim w_Assinatura, w_Cliente, w_Classe, w_filter
+Dim w_Assinatura, w_Cliente, w_Classe, w_filter, w_menu
 Dim w_dir, w_dir_volta, w_submenu
 Private Par
 
@@ -87,7 +88,8 @@ Select Case O
      w_TP = TP & " - Listagem"
 End Select
 
-w_cliente         = RetornaCliente()
+w_cliente = RetornaCliente()
+w_menu    = RetornaMenu(w_cliente, SG) 
   
 Main
 
@@ -99,6 +101,7 @@ Set w_dir_volta     = Nothing
 Set w_cor           = Nothing
 Set w_classe        = Nothing
 Set w_cliente       = Nothing
+Set w_menu          = Nothing
 
 Set RS              = Nothing
 Set RS1             = Nothing
@@ -474,11 +477,15 @@ Sub Agencia
   Dim w_padrao
   Dim w_nome, p_nome
   Dim p_Ordena
+  Dim w_libera_edicao
 
   p_sq_banco    = uCase(Request("p_sq_banco"))
   p_nome        = uCase(Request("p_nome"))
   p_ativo       = uCase(Request("p_ativo"))
   p_ordena      = uCase(Request("p_ordena"))
+  
+  DB_GetMenuData RS, w_menu
+  w_libera_edicao = RS("libera_edicao")
   
   If p_sq_banco = "" Then O = "P" End If
   
@@ -553,7 +560,10 @@ Sub Agencia
   Estrutura_Texto_Abre
   ShowHTML "<table border=""0"" cellpadding=""0"" cellspacing=""0"" width=""100%"">"
   If O = "L" Then
-    ShowHTML "<tr><td><font size=""2""><a accesskey=""I"" class=""ss"" href=""" & w_Pagina & par & "&R=" & w_Pagina & par & "&O=I&P1=" & P1 & "&P2=" & P2 & "&P3=" & P3 & "&P4=" & P4 & "&TP=" & TP & "&SG=" & SG & "&p_nome=" & p_nome & "&p_sq_banco=" & p_sq_banco & "&p_ativo=" & p_ativo & "&p_ordena=" & p_ordena & """><u>I</u>ncluir</a>&nbsp;"
+    ShowHTML "<tr><td>"
+    If w_libera_edicao = "S" Then
+       ShowHTML "<font size=""2""><a accesskey=""I"" class=""ss"" href=""" & w_Pagina & par & "&R=" & w_Pagina & par & "&O=I&P1=" & P1 & "&P2=" & P2 & "&P3=" & P3 & "&P4=" & P4 & "&TP=" & TP & "&SG=" & SG & "&p_nome=" & p_nome & "&p_sq_banco=" & p_sq_banco & "&p_ativo=" & p_ativo & "&p_ordena=" & p_ordena & """><u>I</u>ncluir</a>&nbsp;"
+    End If
     If p_sq_banco & p_nome & p_ativo & p_Ordena > "" Then
        ShowHTML "                         <a accesskey=""F"" class=""ss"" href=""" & w_Pagina & par & "&R=" & w_Pagina & par & "&O=P&P1=" & P1 & "&P2=" & P2 & "&P4=" & P4 & "&TP=" & TP & "&SG=" & SG & "&p_nome=" & p_nome & "&p_sq_banco=" & p_sq_banco & "&p_ativo=" & p_ativo & "&p_ordena=" & p_ordena & """><u><font color=""#BC5100"">F</u>iltrar (Ativo)</font></a></font>"
     Else
@@ -563,13 +573,15 @@ Sub Agencia
     ShowHTML "<tr><td align=""center"" colspan=3>"
     ShowHTML "    <TABLE WIDTH=""100%"" bgcolor=""" & conTableBgColor & """ BORDER=""" & conTableBorder & """ CELLSPACING=""" & conTableCellSpacing & """ CELLPADDING=""" & conTableCellPadding & """ BorderColorDark=""" & conTableBorderColorDark & """ BorderColorLight=""" & conTableBorderColorLight & """>"
     ShowHTML "        <tr bgcolor=""" & conTrBgColor & """>"
-    ShowHTML "          <td><font size=""1""><b>Chave</font></td>"
-    ShowHTML "          <td><font size=""1""><b>Banco</font></td>"
-    ShowHTML "          <td><font size=""1""><b>Código</font></td>"
-    ShowHTML "          <td><font size=""1""><b>Nome</font></td>"
-    ShowHTML "          <td><font size=""1""><b>Ativo</font></td>"
-    ShowHTML "          <td><font size=""1""><b>Padrão</font></td>"
-    ShowHTML "          <td><font size=""1""><b>Operações</font></td>"
+    ShowHTML "          <td align=""center""><font size=""1""><b>Chave</font></td>"
+    ShowHTML "          <td align=""center""><font size=""1""><b>Banco</font></td>"
+    ShowHTML "          <td align=""center""><font size=""1""><b>Código</font></td>"
+    ShowHTML "          <td align=""center""><font size=""1""><b>Nome</font></td>"
+    ShowHTML "          <td align=""center""><font size=""1""><b>Ativo</font></td>"
+    ShowHTML "          <td align=""center""><font size=""1""><b>Padrão</font></td>"
+    If w_libera_edicao = "S" Then
+       ShowHTML "          <td><font size=""1""><b>Operações</font></td>"
+    End If
     ShowHTML "        </tr>"
     If RS.EOF Then
         ShowHTML "      <tr bgcolor=""" & conTrBgColor & """><td colspan=7 align=""center""><font size=""2""><b>Não foram encontrados registros.</b></td></tr>"
@@ -585,10 +597,12 @@ Sub Agencia
         ShowHTML "        <td><font size=""1"">" & RS("nome") & "</td>"
         ShowHTML "        <td align=""center""><font size=""1"">" & RS("ativo") & "</td>"
         ShowHTML "        <td align=""center""><font size=""1"">" & RS("padrao") & "</td>"
-        ShowHTML "        <td align=""top"" nowrap><font size=""1"">"
-        ShowHTML "          <A class=""hl"" HREF=""" & w_Pagina & par & "&R=" & w_Pagina & par & "&O=A&w_sq_agencia=" & RS("sq_agencia") & "&P1=" & P1 & "&P2=" & P2 & "&P3=" & P3 & "&P4=" & P4 & "&TP=" & TP & "&SG=" & SG & "&p_nome=" & p_nome & "&p_sq_banco=" & p_sq_banco & "&p_ativo=" & p_ativo & "&p_ordena=" & p_ordena & """>Alterar</A>&nbsp"
-        ShowHTML "          <A class=""hl"" HREF=""" & w_Pagina & par & "&R=" & w_Pagina & par & "&O=E&w_sq_agencia=" & RS("sq_agencia") & "&P1=" & P1 & "&P2=" & P2 & "&P3=" & P3 & "&P4=" & P4 & "&TP=" & TP & "&SG=" & SG & "&p_nome=" & p_nome & "&p_sq_banco=" & p_sq_banco & "&p_ativo=" & p_ativo & "&p_ordena=" & p_ordena & """>Excluir</A>&nbsp"
-        ShowHTML "        </td>"
+        If w_libera_edicao = "S" Then
+           ShowHTML "        <td align=""top"" nowrap><font size=""1"">"
+           ShowHTML "          <A class=""hl"" HREF=""" & w_Pagina & par & "&R=" & w_Pagina & par & "&O=A&w_sq_agencia=" & RS("sq_agencia") & "&P1=" & P1 & "&P2=" & P2 & "&P3=" & P3 & "&P4=" & P4 & "&TP=" & TP & "&SG=" & SG & "&p_nome=" & p_nome & "&p_sq_banco=" & p_sq_banco & "&p_ativo=" & p_ativo & "&p_ordena=" & p_ordena & """>Alterar</A>&nbsp"
+           ShowHTML "          <A class=""hl"" HREF=""" & w_Pagina & par & "&R=" & w_Pagina & par & "&O=E&w_sq_agencia=" & RS("sq_agencia") & "&P1=" & P1 & "&P2=" & P2 & "&P3=" & P3 & "&P4=" & P4 & "&TP=" & TP & "&SG=" & SG & "&p_nome=" & p_nome & "&p_sq_banco=" & p_sq_banco & "&p_ativo=" & p_ativo & "&p_ordena=" & p_ordena & """>Excluir</A>&nbsp"
+           ShowHTML "        </td>"
+        End If
         ShowHTML "      </tr>"
         RS.MoveNext
       wend
@@ -717,11 +731,16 @@ Sub Banco
   Dim w_codigo, p_codigo
   Dim w_padrao
   Dim p_Ordena
+  Dim w_libera_edicao
 
   p_nome             = uCase(Request("p_nome"))
   p_ativo            = uCase(Request("p_ativo"))
   p_ordena           = uCase(Request("p_ordena"))
   p_codigo           = uCase(Request("p_codigo"))
+  
+  DB_GetMenuData RS, w_menu
+  w_libera_edicao = RS("libera_edicao")
+
   
   If O = "L" Then
      DB_GetBankList RS
@@ -786,7 +805,10 @@ Sub Banco
   Estrutura_Texto_Abre
   ShowHTML "<table border=""0"" cellpadding=""0"" cellspacing=""0"" width=""100%"">"
   If O = "L" Then
-    ShowHTML "<tr><td><font size=""2""><a accesskey=""I"" class=""ss"" href=""" & w_Pagina & par & "&R=" & w_Pagina & par & "&O=I&P1=" & P1 & "&P2=" & P2 & "&P3=" & P3 & "&P4=" & P4 & "&TP=" & TP & "&SG=" & SG & "&p_nome=" & p_nome & "&p_codigo=" & p_codigo & "&p_ativo=" & p_ativo & "&p_ordena=" & p_ordena & """><u>I</u>ncluir</a>&nbsp;"
+    ShowHTML "<tr><td>"
+    If w_libera_edicao = "S" Then
+       ShowHTML "<font size=""2""><a accesskey=""I"" class=""ss"" href=""" & w_Pagina & par & "&R=" & w_Pagina & par & "&O=I&P1=" & P1 & "&P2=" & P2 & "&P3=" & P3 & "&P4=" & P4 & "&TP=" & TP & "&SG=" & SG & "&p_nome=" & p_nome & "&p_codigo=" & p_codigo & "&p_ativo=" & p_ativo & "&p_ordena=" & p_ordena & """><u>I</u>ncluir</a>&nbsp;"
+    End If
     If p_nome & p_codigo & p_ativo & p_Ordena > "" Then
        ShowHTML "                         <a accesskey=""F"" class=""ss"" href=""" & w_Pagina & par & "&R=" & w_Pagina & par & "&O=P&P1=" & P1 & "&P2=" & P2 & "&P4=" & P4 & "&TP=" & TP & "&SG=" & SG & "&p_nome=" & p_nome & "&p_codigo=" & p_codigo & "&p_ativo=" & p_ativo & "&p_ordena=" & p_ordena & """><u><font color=""#BC5100"">F</u>iltrar (Ativo)</font></a></font>"
     Else
@@ -801,7 +823,9 @@ Sub Banco
     ShowHTML "          <td><font size=""2""><b>Nome</font></td>"
     ShowHTML "          <td><font size=""2""><b>Ativo</font></td>"
     ShowHTML "          <td><font size=""2""><b>Padrão</font></td>"
-    ShowHTML "          <td><font size=""2""><b>Operações</font></td>"
+    If w_libera_edicao = "S" Then
+       ShowHTML "          <td><font size=""2""><b>Operações</font></td>"
+    End If
     ShowHTML "        </tr>"
     If RS.EOF Then
         ShowHTML "      <tr bgcolor=""" & conTrBgColor & """><td colspan=6 align=""center""><font size=""2""><b>Não foram encontrados registros.</b></td></tr>"
@@ -816,10 +840,12 @@ Sub Banco
         ShowHTML "        <td><font size=""1"">" & RS("nome") & "</td>"
         ShowHTML "        <td align=""center""><font size=""1"">" & RS("ativo") & "</td>"
         ShowHTML "        <td align=""center""><font size=""1"">" & RS("padrao") & "</td>"
-        ShowHTML "        <td align=""top"" nowrap><font size=""1"">"
-        ShowHTML "          <A class=""hl"" HREF=""" & w_Pagina & par & "&R=" & w_Pagina & par & "&O=A&w_sq_banco=" & RS("sq_banco") & "&P1=" & P1 & "&P2=" & P2 & "&P3=" & P3 & "&P4=" & P4 & "&TP=" & TP & "&SG=" & SG & "&p_nome=" & p_nome & "&p_codigo=" & p_codigo & "&p_ativo=" & p_ativo & "&p_ordena=" & p_ordena & """>Alterar</A>&nbsp"
-        ShowHTML "          <A class=""hl"" HREF=""" & w_Pagina & par & "&R=" & w_Pagina & par & "&O=E&w_sq_banco=" & RS("sq_banco") & "&P1=" & P1 & "&P2=" & P2 & "&P3=" & P3 & "&P4=" & P4 & "&TP=" & TP & "&SG=" & SG & "&p_nome=" & p_nome & "&p_codigo=" & p_codigo & "&p_ativo=" & p_ativo & "&p_ordena=" & p_ordena & """>Excluir</A>&nbsp"
-        ShowHTML "        </td>"
+        If w_libera_edicao = "S" Then
+           ShowHTML "        <td align=""top"" nowrap><font size=""1"">"
+           ShowHTML "          <A class=""hl"" HREF=""" & w_Pagina & par & "&R=" & w_Pagina & par & "&O=A&w_sq_banco=" & RS("sq_banco") & "&P1=" & P1 & "&P2=" & P2 & "&P3=" & P3 & "&P4=" & P4 & "&TP=" & TP & "&SG=" & SG & "&p_nome=" & p_nome & "&p_codigo=" & p_codigo & "&p_ativo=" & p_ativo & "&p_ordena=" & p_ordena & """>Alterar</A>&nbsp"
+           ShowHTML "          <A class=""hl"" HREF=""" & w_Pagina & par & "&R=" & w_Pagina & par & "&O=E&w_sq_banco=" & RS("sq_banco") & "&P1=" & P1 & "&P2=" & P2 & "&P3=" & P3 & "&P4=" & P4 & "&TP=" & TP & "&SG=" & SG & "&p_nome=" & p_nome & "&p_codigo=" & p_codigo & "&p_ativo=" & p_ativo & "&p_ordena=" & p_ordena & """>Excluir</A>&nbsp"
+           ShowHTML "        </td>"
+        End If
         ShowHTML "      </tr>"
         RS.MoveNext
       wend

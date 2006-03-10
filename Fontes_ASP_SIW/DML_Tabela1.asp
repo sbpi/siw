@@ -49,10 +49,6 @@ Sub DML_COTipoVinc(Operacao, Chave, sq_tipo_pessoa, cliente, nome, interno, cont
      .parameters.Delete         "l_ativo"
   end with
 End Sub
-REM =========================================================================
-REM Final da rotina
-REM -------------------------------------------------------------------------
-
 
 REM =========================================================================
 REM Manipula registros de siw_cliente
@@ -133,7 +129,39 @@ Sub DML_SIWCliConf(Chave, tamanho_minimo_senha, tamanho_maximo_senha, maximo_ten
      .parameters.Delete         "l_upload_maximo"
   end with
 End Sub
+
 REM =========================================================================
-REM Final da rotina
+REM Manipula registros para integração
 REM -------------------------------------------------------------------------
+Sub DML_PutCodigoExterno(p_cliente, p_restricao, p_chave, p_chave_externa, p_chave_aux)
+  Dim l_cliente, l_restricao, l_chave, l_chave_externa, l_chave_aux
+  Set l_cliente       = Server.CreateObject("ADODB.Parameter")
+  Set l_restricao     = Server.CreateObject("ADODB.Parameter")
+  Set l_chave         = Server.CreateObject("ADODB.Parameter")
+  Set l_chave_externa = Server.CreateObject("ADODB.Parameter")
+  Set l_chave_aux     = Server.CreateObject("ADODB.Parameter")
+  with sp
+     set l_cliente              = .CreateParameter("l_cliente",       adInteger, adParamInput,    , Tvl(p_cliente))
+     set l_restricao            = .CreateParameter("l_restricao",     adVarchar, adParamInput,  20, p_restricao)
+     set l_chave                = .CreateParameter("l_chave",         adVarChar, adParamInput, 255, p_chave)
+     set l_chave_externa        = .CreateParameter("l_chave_externa", adVarchar, adParamInput, 255, p_chave_externa)
+     set l_chave_aux            = .CreateParameter("l_chave_aux",     adVarchar, adParamInput, 255, p_chave_aux)     
+     .parameters.Append         l_cliente
+     .parameters.Append         l_restricao
+     .parameters.Append         l_chave
+     .parameters.Append         l_chave_externa
+     .parameters.Append         l_chave_aux
+     .CommandText               = Session("schema") & "SP_PutCodigoExterno"
+     On Error Resume Next
+     .Execute
+     If Err.Description > "" Then 
+        TrataErro
+     End If     
+     .parameters.Delete         "l_cliente"
+     .parameters.Delete         "l_restricao"
+     .parameters.Delete         "l_chave"
+     .parameters.Delete         "l_chave_externa"
+     .parameters.Delete         "l_chave_aux"
+  end with
+End Sub
 %>

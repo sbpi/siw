@@ -19,7 +19,7 @@
 <!-- #INCLUDE FILE="DB_Tabelas.asp" -->
 <!-- #INCLUDE FILE="DML_Tabelas.asp" -->
 <%
-Server.ScriptTimeout = conScriptTimeout
+Server.ScriptTimeout = 3600
 Response.Expires = -1500
 REM =========================================================================
 REM  /sigplan.asp
@@ -57,7 +57,7 @@ Dim w_troca,w_cor, w_filter, w_cliente, w_usuario, w_menu, w_dir, w_chave, w_dir
 Dim w_sq_pessoa, w_ano, w_sq_modulo
 Dim ul,File
 Dim p_sq_modulo, p_nome, p_tipo, p_formato, p_dt_ini, p_dt_fim, p_ref_ini, p_ref_fim
-Dim F1, w_erro, w_name(500), w_param(500), w_resultado
+Dim F1, w_erro, w_name(500), w_param(500), w_resultado, w_atributo(500)
 Set RS  = Server.CreateObject("ADODB.RecordSet")
 Set RS1 = Server.CreateObject("ADODB.RecordSet")
 Set RS2 = Server.CreateObject("ADODB.RecordSet")
@@ -419,6 +419,7 @@ Sub Inicial
     
     ShowHTML "<INPUT type=""hidden"" name=""w_sq_esquema"" value=""" & w_sq_esquema & """>"
     ShowHTML "<INPUT type=""hidden"" name=""w_tipo"" value=""" & p_tipo & """>"
+    ShowHTML "<INPUT type=""hidden"" name=""w_menu"" value=""" & w_menu & """>"
     If P1 = 2 Then
        ShowHTML "<INPUT type=""hidden"" name=""w_formato"" value=""A"">"
     End If
@@ -1296,13 +1297,11 @@ Sub Exportacao
                        w_valor = "0"
                     End If
                  Elseif RS2(w_campo(j, k)).Type = adDate Then
-                    w_valor = FormataDataEdicao(FormatDateTime(RS2(w_campo(j, k)).Value, 2))
+                    w_valor = FormataDataXML(RS2(w_campo(j, k)).Value)
                  Else
                     w_valor = RS2(w_campo(j, k)).Value
                  End If
                  F1.WriteLine "    <" & w_atributo(j, k) & ">" & w_valor & "</" & w_atributo(j, k) & ">"
-              Else
-                 F1.WriteLine "    <" & w_atributo(j, k) & " />"
               End If
            next
            F1.WriteLine "  </" & w_elemento(j) & ">"
@@ -1572,12 +1571,21 @@ Public Sub Grava
                 exit sub
              Else
                 set w_no = F2.documentElement.selectSingleNode(RS("no_raiz"))
+
                 ' Recupera cada uma das tabelas referenciadas pelo esquema
                 DB_GetEsquemaTabela RS1, null, ul.Form("w_sq_esquema"), null
                 RS1.Sort = "ordem, nm_tabela, or_coluna"
                 w_reg  = 0
                 w_erro = 0
                 While Not RS1.EOF
+                   ' Recupera cada um dos campos referenciados pelo elemento
+                   DB_GetEsquemaAtributo RS2, null, RS1("sq_esquema_tabela"), null, null
+                   While Not RS2.EOF                     
+                     w_cont = cDbl(RS2("ordem"))- 1
+                     w_atributo(w_cont) = RS2("campo_externo")
+                     RS2.MoveNext
+                   Wend
+                   RS2.Close
                    If w_atual <> RS1("nm_tabela") Then
                       set w_elemento = w_no.selectNodes(RS("no_raiz")&"/"&RS1("elemento"))
                       with w_elemento
@@ -1603,20 +1611,22 @@ Public Sub Grava
                                      '   w_erro = 1
                                      'Else
                                         w_name(w_cont) = .item(i).childNodes.item(j).nodename
-                                        If uCase(w_campo) = "TRUE" Then
-                                           w_param(w_cont) = "S"
-                                        ElseIf uCase(w_campo) = "FALSE" Then
-                                           w_param(w_cont) = "N"
-                                        Else
-                                           w_param(w_cont) = w_campo
-                                        End If
+                                        If w_atributo(w_cont - 1) = w_name(w_cont) Then
+                                           If uCase(w_campo) = "TRUE" Then
+                                              w_param(w_cont) = "S"
+                                           ElseIf uCase(w_campo) = "FALSE" Then
+                                              w_param(w_cont) = "N"
+                                           Else
+                                              w_param(w_cont) = w_campo
+                                           End If
+                                        End If 
                                      'End If
                                   'End If
                                'End If
                             next
                             'Response.Write RS1("nm_tabela")
                             'Response.End
-                            w_resultado = ""
+                            w_resultado = ""                        
                             select case RS1("nm_tabela")
                                case "IS_PPA_ESFERA"          DML_PutXMLEsfera                w_resultado, w_param(1), w_param(2), "S" : If w_resultado > "" Then RegistraErro : End If
                                case "IS_PPA_PERIODICIDADE"   DML_PutXMLPeriodicidade_PPA     w_resultado, w_param(1), w_param(2), "S" : If w_resultado > "" Then RegistraErro : End If
@@ -1657,7 +1667,7 @@ Public Sub Grava
                                case "IS_SIG_ORGAO"           DML_PutXMLOrgao_SIG             w_resultado, w_param(1), w_param(2), w_param(3), w_param(4), "---", "S" : If w_resultado > "" Then RegistraErro : End If
                                case "IS_SIG_UNIDADE"         DML_PutXMLUnidade_SIG           w_resultado, w_param(1), w_param(2), w_param(3), w_param(4), w_param(5), w_param(6) : If w_resultado > "" Then RegistraErro : End If
                                case "IS_SIG_PROGRAMA"        DML_PutXMLPrograma_SIG          w_resultado, w_cliente,  w_param(1), w_param(2), w_param(3), w_param(4), w_param(5), w_param(6), w_param(7), w_param(8), w_param(9), w_param(10), w_param(11), w_param(12), w_param(13), w_param(14), w_param(15), w_param(16), w_param(17), w_param(18), w_param(19), w_param(20), w_param(21), w_param(22), w_param(23), w_param(24), w_param(25), w_param(26), w_param(27), w_param(28), w_param(29), w_param(30), w_param(31) : If w_resultado > "" Then RegistraErro : End If
-                               case "IS_SIG_INDICADOR"       DML_PutXMLIndicador_SIG         w_resultado, w_cliente,  w_param(1), w_param(2), w_param(3), w_param(4), w_param(5), w_param(6), w_param(7), w_param(8), w_param(9), w_param(10), w_param(11), w_param(12), w_param(13), w_param(14), w_param(15), w_param(16), w_param(17), w_param(18), w_param(19), w_param(20), w_param(21), w_param(22), w_param(23), w_param(24), w_param(25) : If w_resultado > "" Then RegistraErro : End If
+                               case "IS_SIG_INDICADOR"       DML_PutXMLIndicador_SIG         w_resultado, w_cliente,  w_param(1), w_param(2), w_param(3), w_param(4), w_param(5), w_param(6), w_param(7), w_param(8), w_param(9), w_param(10), w_param(11), w_param(12), w_param(13), w_param(14), w_param(15), w_param(16), w_param(17), w_param(18), w_param(19), w_param(20), w_param(21), w_param(22), w_param(23), w_param(24), w_param(25) : If w_resultado > "" Then RegistraErro : End If                               
                                case "IS_SIG_ACAO"            
                                   If w_param(38) = "N" Then 'Despreza se for restos a pagar
                                      DML_PutXMLAcao_SIG              w_resultado, w_cliente,  w_param(1), w_param(2), w_param(3), w_param(4), w_param(5), w_param(6), w_param(7), w_param(8), w_param(9), w_param(10), w_param(11), w_param(12), w_param(13), w_param(14), w_param(15), w_param(16), w_param(17), w_param(18), w_param(19), w_param(20), w_param(21), w_param(22), w_param(23), w_param(24), w_param(25), w_param(26), w_param(27), w_param(28), w_param(29), w_param(30), w_param(31), w_param(32), w_param(33), w_param(34), w_param(35), w_param(36), w_param(37), w_param(38), w_param(39), w_param(40), w_param(41), w_param(42), w_param(43), w_param(44) : If w_resultado > "" Then RegistraErro : End If
@@ -1683,14 +1693,13 @@ Public Sub Grava
                 Set F1 = FS.GetFile(w_caminho & w_arquivo_rejeicao)
                 w_tamanho_registro = F1.size
                 w_tipo_registro    = ul.Files("w_caminho & w_arquivo_rejeicao").ContentType
-                    
                 ' Grava o resultado da importação no banco de dados
                 DML_PutDcOcorrencia O, _
                     ul.Form("w_sq_esquema"), w_cliente,   w_usuario,     ul.Form("w_data_arquivo"), _
                     ul.Files("w_caminho").OriginalPath, _
                     w_arquivo_processamento, w_tamanho_recebido,  w_tipo_recebido, _
                     w_arquivo_registro,      w_arquivo_rejeicao, w_tamanho_registro, w_tipo_registro, _
-                    w_reg,       w_erro,     ExtractFileName(ul.Files("w_caminh,0o").OriginalPath), w_arquivo_registro
+                    w_reg,       w_erro,     ExtractFileName(ul.Files("w_caminho").OriginalPath), w_arquivo_registro
              End If
           Else
              ScriptOpen("JavaScript")
@@ -1701,7 +1710,7 @@ Public Sub Grava
              exit sub
           End If
           ScriptOpen "JavaScript"
-          ShowHTML "  location.href='" & R & "&w_chave=" & ul.Form("w_Chave") & "&w_menu=" & w_menu & "&P1=" & P1 & "&P2=" & P2 & "&P3=" & P3 & "&P4=" & P4 & "&TP=" & TP & "&SG=" & SG & MontaFiltro("UL") & "';"
+          ShowHTML "  location.href='" & R & "&w_chave=" & ul.Form("w_Chave") & "&P1=" & P1 & "&P2=" & P2 & "&P3=" & P3 & "&P4=" & P4 & "&TP=" & TP & "&SG=" & "ISSIGIMP" & MontaFiltro("UL") & "';"
           ScriptClose
        Else
           ScriptOpen "JavaScript"

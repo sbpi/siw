@@ -439,4 +439,47 @@ Sub SelecaoAcao (label, accesskey, hint, p_cliente, p_ano, p_programa, p_acao, p
     Wend
     ShowHTML "          </select>"
 End Sub
+
+REM =========================================================================
+REM Função que formata dias, horas, minutos e segundos a partir dos segundos
+REM -------------------------------------------------------------------------
+Function FormataDataXML(w_dt_grade)
+  Dim l_dt_grade, l_dt_final
+  l_dt_grade = Nvl(cDate(w_dt_grade),"")
+  If l_dt_grade > "" Then
+     l_dt_final = Year(l_dt_grade)&"-"
+     If Len(Month(l_dt_grade)) = 2 Then
+        l_dt_final = l_dt_final & Month(l_dt_grade)&"-"
+     Else
+        l_dt_final = l_dt_final & "0" & Month(l_dt_grade)&"-"
+     End If
+     If Len(Day(l_dt_grade)) = 2 Then 
+        l_dt_final = l_dt_final & Day(l_dt_grade)&"-"
+     Else
+        l_dt_final = l_dt_final & "0" & Day(l_dt_grade)&"-"
+     End If
+     If Len(Hour(l_dt_grade)) = 2 Then 
+        l_dt_final = l_dt_final & "T"&Hour(l_dt_grade)&":"
+     Else
+        l_dt_final = l_dt_final & "T0"&Hour(l_dt_grade)&":"
+     End If
+     If Len(Minute(l_dt_grade)) = 2 Then 
+        l_dt_final = l_dt_final & Minute(l_dt_grade)&":"
+     Else
+        l_dt_final = l_dt_final & "0" & Minute(l_dt_grade)&":"
+     End If
+     If Len(Second(l_dt_grade)) = 2 Then 
+        l_dt_final = l_dt_final & Second(l_dt_grade)
+     Else
+        l_dt_final = l_dt_final & "0" & Second(l_dt_grade)
+     End If
+  Else
+     l_dt_final = ""
+  End If
+
+  FormataDataXML = l_dt_final
+
+  Set l_dt_grade       = Nothing
+  Set l_dt_final       = Nothing
+End Function
 %>

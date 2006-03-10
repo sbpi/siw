@@ -5,6 +5,7 @@
 <!-- #INCLUDE FILE="Funcoes.asp" -->
 <!-- #INCLUDE FILE="DB_Geral.asp" -->
 <!-- #INCLUDE FILE="DB_EO_Tabelas.asp" -->
+<!-- #INCLUDE FILE="DB_Seguranca.asp" -->
 <!-- #INCLUDE FILE="DML_EO_Tabelas.asp" -->
 <%
 Response.Expires = -1500
@@ -40,7 +41,7 @@ Dim dbms, sp, RS
 Dim P1, P2, P3, P4, TP, SG
 Dim R, O, w_Cont, w_Pagina, w_Disabled, w_TP
 Dim w_Assinatura,  w_cor, w_cliente, w_filter
-Dim w_dir, w_dir_volta, w_submenu
+Dim w_dir, w_dir_volta, w_submenu, w_menu
 Private Par
 
 AbreSessao
@@ -77,6 +78,7 @@ End Select
 ' Se receber o código do cliente do SIW, o cliente será determinado por parâmetro;
 ' caso contrário, o cliente será a empresa ao qual o usuário logado está vinculado.
 w_cliente = RetornaCliente()
+w_menu    = RetornaMenu(w_cliente, SG) 
 
 Main
 
@@ -84,6 +86,7 @@ FechaSessao
 
 Set w_cor       = Nothing
 
+Set w_menu      = Nothing
 Set w_cliente   = Nothing
 Set w_dir       = Nothing
 Set w_dir_volta = Nothing
@@ -214,6 +217,15 @@ Sub Feriado
         RS.MoveNext
       wend
     End If
+    for w_cont = 1990 to 2010
+        ShowHTML "      <tr bgcolor=""" & w_cor & """>"
+        ShowHTML "        <td align=""center""><font size=""1"">" & w_cont & "</td>"
+        ShowHTML "        <td align=""center""><font size=""1"">"
+        ShowHTML "           " & DomingoPascoa(w_cont) & " - "
+        ShowHTML "           " & SextaSanta(w_cont) & " - "
+        ShowHTML "           " & TercaCarnaval(w_cont) & " - "
+        ShowHTML "           " & CorpusChristi(w_cont)
+    next
     ShowHTML "      </center>"
     ShowHTML "    </table>"
     ShowHTML "  </td>"
@@ -314,9 +326,6 @@ Sub Feriado
   Set p_ordena     = Nothing
 
 End Sub
-REM =========================================================================
-REM Fim da rotina
-REM -------------------------------------------------------------------------
 
 REM =========================================================================
 REM Rotina da tabela de áreas de atuação
@@ -327,10 +336,14 @@ Sub AreaAtuacao
   Dim w_nome, p_nome
   Dim w_ativo, p_ativo
   Dim p_Ordena
+  Dim w_libera_edicao
 
   p_nome            = uCase(Request("p_nome"))
   p_ativo           = uCase(Request("p_ativo"))
   p_ordena          = uCase(Request("p_ordena"))
+  
+  DB_GetMenuData RS, w_menu
+  w_libera_edicao = RS("libera_edicao")
   
   If O = "L" Then
      DB_GetEOAAtuac RS, w_cliente
@@ -393,7 +406,10 @@ Sub AreaAtuacao
   Estrutura_Texto_Abre
   ShowHTML "<table border=""0"" cellpadding=""0"" cellspacing=""0"" width=""100%"">"
   If O = "L" Then
-    ShowHTML "<tr><td><font size=""2""><a accesskey=""I"" class=""ss"" href=""" & w_Pagina & par & "&R=" & w_Pagina & par & "&O=I&P1=" & P1 & "&P2=" & P2 & "&P3=" & P3 & "&P4=" & P4 & "&TP=" & TP & "&SG=" & SG & "&p_nome=" & p_nome & "&p_ativo=" & p_ativo & "&p_ordena=" & p_ordena & """><u>I</u>ncluir</a>&nbsp;"
+    ShowHTML "<tr><td>"
+    If w_libera_edicao = "S" Then
+       ShowHTML "<font size=""2""><a accesskey=""I"" class=""ss"" href=""" & w_Pagina & par & "&R=" & w_Pagina & par & "&O=I&P1=" & P1 & "&P2=" & P2 & "&P3=" & P3 & "&P4=" & P4 & "&TP=" & TP & "&SG=" & SG & "&p_nome=" & p_nome & "&p_ativo=" & p_ativo & "&p_ordena=" & p_ordena & """><u>I</u>ncluir</a>&nbsp;"
+    End If
     If p_nome & p_ativo & p_Ordena > "" Then
        ShowHTML "                         <a accesskey=""F"" class=""ss"" href=""" & w_Pagina & par & "&R=" & w_Pagina & par & "&O=P&P1=" & P1 & "&P2=" & P2 & "&P3=" & P3 & "&P4=" & P4 & "&TP=" & TP & "&SG=" & SG & "&p_nome=" & p_nome & "&p_ativo=" & p_ativo & "&p_ordena=" & p_ordena & """><u><font color=""#BC5100"">F</u>iltrar (Ativo)</font></a></font>"
     Else
@@ -406,7 +422,9 @@ Sub AreaAtuacao
     ShowHTML "          <td><font size=""1""><b>Chave</font></td>"
     ShowHTML "          <td><font size=""1""><b>Nome</font></td>"
     ShowHTML "          <td><font size=""1""><b>Ativo</font></td>"
-    ShowHTML "          <td><font size=""1""><b>Operações</font></td>"
+    If w_libera_edicao = "S" Then    
+       ShowHTML "          <td><font size=""1""><b>Operações</font></td>"
+    End If
     ShowHTML "        </tr>"
     If RS.EOF Then
         ShowHTML "      <tr bgcolor=""" & conTrBgColor & """><td colspan=5 align=""center""><font  size=""2""><b>Não foram encontrados registros.</b></td></tr>"
@@ -421,10 +439,12 @@ Sub AreaAtuacao
         Else
            ShowHTML "        <td align=""center""><font size=""1"">Não</td>"
         End If
-        ShowHTML "        <td align=""top"" nowrap><font size=""1"">"
-        ShowHTML "          <A class=""hl"" HREF=""" & w_Pagina & par & "&R=" & w_Pagina & par & "&O=A&w_sq_area_atuacao=" & RS("sq_area_atuacao") & "&P1=" & P1 & "&P2=" & P2 & "&P3=" & P3 & "&P4=" & P4 & "&TP=" & TP & "&SG=" & SG & "&p_nome=" & p_nome & "&p_ativo=" & p_ativo & "&p_ordena=" & p_ordena & """>Alterar</A>&nbsp"
-        ShowHTML "          <A class=""hl"" HREF=""" & w_Pagina & par & "&R=" & w_Pagina & par & "&O=E&w_sq_area_atuacao=" & RS("sq_area_atuacao") & "&P1=" & P1 & "&P2=" & P2 & "&P3=" & P3 & "&P4=" & P4 & "&TP=" & TP & "&SG=" & SG & "&p_nome=" & p_nome & "&p_ativo=" & p_ativo & "&p_ordena=" & p_ordena & """>Excluir</A>&nbsp"
-        ShowHTML "        </td>"
+        If w_libera_edicao = "S" Then
+           ShowHTML "        <td align=""top"" nowrap><font size=""1"">"
+           ShowHTML "          <A class=""hl"" HREF=""" & w_Pagina & par & "&R=" & w_Pagina & par & "&O=A&w_sq_area_atuacao=" & RS("sq_area_atuacao") & "&P1=" & P1 & "&P2=" & P2 & "&P3=" & P3 & "&P4=" & P4 & "&TP=" & TP & "&SG=" & SG & "&p_nome=" & p_nome & "&p_ativo=" & p_ativo & "&p_ordena=" & p_ordena & """>Alterar</A>&nbsp"
+           ShowHTML "          <A class=""hl"" HREF=""" & w_Pagina & par & "&R=" & w_Pagina & par & "&O=E&w_sq_area_atuacao=" & RS("sq_area_atuacao") & "&P1=" & P1 & "&P2=" & P2 & "&P3=" & P3 & "&P4=" & P4 & "&TP=" & TP & "&SG=" & SG & "&p_nome=" & p_nome & "&p_ativo=" & p_ativo & "&p_ordena=" & p_ordena & """>Excluir</A>&nbsp"
+           ShowHTML "        </td>"
+        End If
         ShowHTML "      </tr>"
         RS.MoveNext
       wend
@@ -519,11 +539,9 @@ Sub AreaAtuacao
   Set p_nome            = Nothing
   Set p_ativo           = Nothing
   Set p_ordena          = Nothing
+  Set w_libera_edicao   = Nothing
 
 End Sub
-REM =========================================================================
-REM Fim da tabela de áreas de atuação
-REM -------------------------------------------------------------------------
 
 REM =========================================================================
 REM Rotina da tabela de tipos de unidade organizacional
@@ -534,10 +552,14 @@ Sub TipoUnidade
   Dim w_nome, p_nome
   Dim w_ativo, p_ativo
   Dim p_Ordena
-
+  Dim w_libera_edicao
+  
   p_nome            = uCase(Request("p_nome"))
   p_ativo           = uCase(Request("p_ativo"))
   p_ordena          = uCase(Request("p_ordena"))
+  
+  DB_GetMenuData RS, w_menu
+  w_libera_edicao = RS("libera_edicao")
   
   If O = "L" Then
      DB_GetUnitTypeList RS,w_cliente
@@ -600,7 +622,10 @@ Sub TipoUnidade
   Estrutura_Texto_Abre
   ShowHTML "<table border=""0"" cellpadding=""0"" cellspacing=""0"" width=""100%"">"
   If O = "L" Then
-    ShowHTML "<tr><td><font size=""2""><a accesskey=""I"" class=""ss"" href=""" & w_Pagina & par & "&R=" & w_Pagina & par & "&O=I&P1=" & P1 & "&P2=" & P2 & "&P3=" & P3 & "&P4=" & P4 & "&TP=" & TP & "&SG=" & SG & "&p_nome=" & p_nome & "&p_ativo=" & p_ativo & "&p_ordena=" & p_ordena & """><u>I</u>ncluir</a>&nbsp;"
+    ShowHTML "<tr><td>"
+    If w_libera_edicao = "S" Then
+       ShowHTML "<font size=""2""><a accesskey=""I"" class=""ss"" href=""" & w_Pagina & par & "&R=" & w_Pagina & par & "&O=I&P1=" & P1 & "&P2=" & P2 & "&P3=" & P3 & "&P4=" & P4 & "&TP=" & TP & "&SG=" & SG & "&p_nome=" & p_nome & "&p_ativo=" & p_ativo & "&p_ordena=" & p_ordena & """><u>I</u>ncluir</a>&nbsp;"
+    End If
     If p_nome & p_ativo & p_Ordena > "" Then
        ShowHTML "                         <a accesskey=""F"" class=""ss"" href=""" & w_Pagina & par & "&R=" & w_Pagina & par & "&O=P&P1=" & P1 & "&P2=" & P2 & "&P3=" & P3 & "&P4=" & P4 & "&TP=" & TP & "&SG=" & SG & "&p_nome=" & p_nome & "&p_ativo=" & p_ativo & "&p_ordena=" & p_ordena & """><u><font color=""#BC5100"">F</u>iltrar (Ativo)</font></a></font>"
     Else
@@ -613,7 +638,9 @@ Sub TipoUnidade
     ShowHTML "          <td><font size=""1""><b>Chave</font></td>"
     ShowHTML "          <td><font size=""1""><b>Nome</font></td>"
     ShowHTML "          <td><font size=""1""><b>Ativo</font></td>"
-    ShowHTML "          <td><font size=""1""><b>Operações</font></td>"
+    If w_libera_edicao = "S" Then    
+       ShowHTML "          <td><font size=""1""><b>Operações</font></td>"
+    End If
     ShowHTML "        </tr>"
     If RS.EOF Then
         ShowHTML "      <tr bgcolor=""" & conTrBgColor & """><td colspan=5 align=""center""><font  size=""2""><b>Não foram encontrados registros.</b></td></tr>"
@@ -628,10 +655,12 @@ Sub TipoUnidade
         Else
            ShowHTML "        <td align=""center""><font size=""1"">Não</td>"
         End If
-        ShowHTML "        <td align=""top"" nowrap><font size=""1"">"
-        ShowHTML "          <A class=""hl"" HREF=""" & w_Pagina & par & "&R=" & w_Pagina & par & "&O=A&w_sq_tipo_unidade=" & RS("sq_tipo_unidade") & "&P1=" & P1 & "&P2=" & P2 & "&P3=" & P3 & "&P4=" & P4 & "&TP=" & TP & "&SG=" & SG & "&p_nome=" & p_nome & "&p_ativo=" & p_ativo & "&p_ordena=" & p_ordena & """>Alterar</A>&nbsp"
-        ShowHTML "          <A class=""hl"" HREF=""" & w_Pagina & par & "&R=" & w_Pagina & par & "&O=E&w_sq_tipo_unidade=" & RS("sq_tipo_unidade") & "&P1=" & P1 & "&P2=" & P2 & "&P3=" & P3 & "&P4=" & P4 & "&TP=" & TP & "&SG=" & SG & "&p_nome=" & p_nome & "&p_ativo=" & p_ativo & "&p_ordena=" & p_ordena & """>Excluir</A>&nbsp"
-        ShowHTML "        </td>"
+        If w_libera_edicao = "S" Then
+           ShowHTML "        <td align=""top"" nowrap><font size=""1"">"
+           ShowHTML "          <A class=""hl"" HREF=""" & w_Pagina & par & "&R=" & w_Pagina & par & "&O=A&w_sq_tipo_unidade=" & RS("sq_tipo_unidade") & "&P1=" & P1 & "&P2=" & P2 & "&P3=" & P3 & "&P4=" & P4 & "&TP=" & TP & "&SG=" & SG & "&p_nome=" & p_nome & "&p_ativo=" & p_ativo & "&p_ordena=" & p_ordena & """>Alterar</A>&nbsp"
+           ShowHTML "          <A class=""hl"" HREF=""" & w_Pagina & par & "&R=" & w_Pagina & par & "&O=E&w_sq_tipo_unidade=" & RS("sq_tipo_unidade") & "&P1=" & P1 & "&P2=" & P2 & "&P3=" & P3 & "&P4=" & P4 & "&TP=" & TP & "&SG=" & SG & "&p_nome=" & p_nome & "&p_ativo=" & p_ativo & "&p_ordena=" & p_ordena & """>Excluir</A>&nbsp"
+           ShowHTML "        </td>"
+        End If
         ShowHTML "      </tr>"
         RS.MoveNext
       wend
@@ -726,11 +755,9 @@ Sub TipoUnidade
   Set p_nome            = Nothing
   Set p_ativo           = Nothing
   Set p_ordena          = Nothing
+  Set w_libera_edicao   = Nothing
 
 End Sub
-REM =========================================================================
-REM Fim da tabela de tipos de unidade organizacional
-REM -------------------------------------------------------------------------
 
 REM =========================================================================
 REM Rotina da tabela de tipos de posto
@@ -893,9 +920,6 @@ Sub TipoPosto
   Set w_padrao          = Nothing
   
 End Sub
-REM =========================================================================
-REM Fim da tabela de tipos de unidade organizacional
-REM -------------------------------------------------------------------------
 
 REM =========================================================================
 REM Procedimento que executa as operações de BD
@@ -903,6 +927,7 @@ REM -------------------------------------------------------------------------
 Public Sub Grava
 
   Dim FS, F1, F2, w_caminho, w_arq_evento, w_arq_texto, w_mes, w_dia, w_ano
+  Dim w_segcarnaval, w_carnaval, w_cinzas, w_paixao, w_pascoa, w_christi
   Dim w_data, w_linha
   Dim p_co_escolaridade
   Dim p_co_cidadania
@@ -925,57 +950,68 @@ Public Sub Grava
           w_assinatura = "" Then
 
           If O = "G" Then
-            ' Configura o ano atual
-            w_ano = Mid(FormataDataEdicao(Date()),7,4)
+             For w_cont = 1990 to 2010
+                ' Configura o ano atual
+                w_ano = w_cont
+                w_segcarnaval = Mid(FormataDataEdicao(TercaCarnaval(w_ano)-1),1,5)
+                w_carnaval = Mid(FormataDataEdicao(TercaCarnaval(w_ano)),1,5)
+                w_cinzas = Mid(FormataDataEdicao(TercaCarnaval(w_ano)+1),1,5)
+                w_paixao = Mid(FormataDataEdicao(SextaSanta(w_ano)),1,5)
+                w_pascoa = Mid(FormataDataEdicao(DomingoPascoa(w_ano)),1,5)
+                w_christi = Mid(FormataDataEdicao(CorpusChristi(w_ano)),1,5)
 
-             ' Configura o caminho para gravação física de arquivos
-             w_caminho = conFilePhysical & w_cliente & "\"
-             w_arq_evento = w_ano & ".evt"
-             w_arq_texto  = w_ano & ".txt"
+                 ' Configura o caminho para gravação física de arquivos
+                 w_caminho = conFilePhysical & w_cliente & "\"
+                 w_arq_evento = w_ano & ".evt"
+                 w_arq_texto  = w_ano & ".txt"
 
-            ' Gera o arquivo registro da importação
-            Set FS = CreateObject("Scripting.FileSystemObject")
-            Set F1 = FS.CreateTextFile(w_caminho & w_arq_texto)
+                ' Gera o arquivo registro da importação
+                Set FS = CreateObject("Scripting.FileSystemObject")
+                Set F1 = FS.CreateTextFile(w_caminho & w_arq_texto)
             
-            ' Atualiza o arquivo de dias livres
-            For w_mes = 1 to 12
-              w_linha = ""
-              For w_dia = 1 to 31
-                 w_data = Mid(100+w_dia,2,2) & "/" & Mid(100+w_mes,2,2) & "/" & w_ano
-                 If IsDate(w_data) Then
-                    If WeekDay(cDate(w_data)) = 1 or WeekDay(cDate(w_data)) = 7 or _
-                       InStr("01/01,07/02,08/02,09/02,25/03,21/04,01/05,26/05,07/09,12/10,02/11,15/11,25/12",Mid(w_data,1,5)) > 0 _
-                    Then
-                       w_linha = w_linha &  "1"
-                    Else
-                       w_linha = w_linha &  "0"
-                    End If
-                 Else
-                    w_dia = 32
-                 End If
-              Next
-              F1.WriteLine w_linha
-            Next
+                ' Atualiza o arquivo de dias livres
+                For w_mes = 1 to 12
+                  w_linha = ""
+                  For w_dia = 1 to 31
+                     w_data = Mid(100+w_dia,2,2) & "/" & Mid(100+w_mes,2,2) & "/" & w_ano
+                     If IsDate(w_data) Then
+                        If WeekDay(cDate(w_data)) = 1 or WeekDay(cDate(w_data)) = 7 or _
+                           InStr("01/01,21/04,01/05,07/09,12/10,02/11,15/11,25/12," & _
+                                 w_segcarnaval &","& w_carnaval &","& w_cinzas &","& w_paixao &","& w_pascoa &","& w_christi, _
+                                 Mid(w_data,1,5)) > 0 _
+                        Then
+                           w_linha = w_linha &  "1"
+                        Else
+                           w_linha = w_linha &  "0"
+                        End If
+                     Else
+                        w_dia = 32
+                     End If
+                  Next
+                  F1.WriteLine w_linha
+                Next
             
-            ' Atualiza o arquivo de eventos
-            Set F2 = FS.CreateTextFile(w_caminho & w_arq_evento)
-            F2.WriteLine "01 1 ""Confraterização universal"""
-            F2.WriteLine "02 7 ""Facultativo sem expediente""" ' Banco
-            F2.WriteLine "02 8 ""Carnaval""" ' Banco
-            F2.WriteLine "02 9 ""Horário reduzido""" ' Banco
-            F2.WriteLine "03 25 ""Paixão de Cristo""" ' Banco
-            F2.WriteLine "04 21 ""Tiradentes"""
-            F2.WriteLine "05 1 ""Dia do Trabalho"""
-            F2.WriteLine "05 26 ""Corpus Christi""" ' Banco
-            F2.WriteLine "09 7 ""Independência do Brasil"""
-            F2.WriteLine "10 12 ""Nossa Senhora Aparecida"""
-            F2.WriteLine "11 2 ""Finados"""
-            F2.WriteLine "11 15 ""Proclamação da República"""
-            F2.WriteLine "12 25 ""Natal"""
+                ' Atualiza o arquivo de eventos
+                Set F2 = FS.CreateTextFile(w_caminho & w_arq_evento)
+                F2.WriteLine "01 1 ""Confraterização universal"""
+                F2.WriteLine "04 21 ""Tiradentes"""
+                F2.WriteLine "05 1 ""Dia do Trabalho"""
+                F2.WriteLine "09 7 ""Independência do Brasil"""
+                F2.WriteLine "10 12 ""Nossa Senhora Aparecida"""
+                F2.WriteLine "11 2 ""Finados"""
+                F2.WriteLine "11 15 ""Proclamação da República"""
+                F2.WriteLine "12 25 ""Natal"""
+                F2.WriteLine Mid(w_segcarnaval,4,2) & " " & Mid(w_segcarnaval,1,2) & " ""Ponto facultativo"""
+                F2.WriteLine Mid(w_carnaval,4,2) & " " & Mid(w_carnaval,1,2) & " ""Carnaval"""
+                F2.WriteLine Mid(w_cinzas,4,2) & " " & Mid(w_cinzas,1,2) & " ""Cinzas - Meio expediente"""
+                F2.WriteLine Mid(w_paixao,4,2) & " " & Mid(w_paixao,1,2) & " ""Paixão de Cristo"""
+                F2.WriteLine Mid(w_pascoa,4,2) & " " & Mid(w_pascoa,1,2) & " ""Páscoa"""
+                F2.WriteLine Mid(w_christi,4,2) & " " & Mid(w_christi,1,2) & " ""Corpus Christi"""
 
-            F1.Close
-            f2.Close
+                F1.Close
+                f2.Close
           
+             Next
           End If
           ScriptOpen "JavaScript"
           ShowHTML "  location.href='" & R & "&O=L&P1=" & P1 & "&P2=" & P2 & "&P3=" & P3 & "&P4=" & P4 & "&TP=" & TP & "&SG=" & SG & MontaFiltro("GET") & "';"
@@ -1059,9 +1095,6 @@ Public Sub Grava
   Set p_ordena          = Nothing
   Set w_Null            = Nothing
 End Sub
-REM -------------------------------------------------------------------------
-REM Fim do procedimento que executa as operações de BD
-REM =========================================================================
 
 REM =========================================================================
 REM Rotina principal
@@ -1097,8 +1130,5 @@ Sub Main
        Rodape
   End Select
 End Sub
-REM =========================================================================
-REM Fim da rotina principal
-REM -------------------------------------------------------------------------
 %>
 

@@ -4,6 +4,7 @@
 <!-- #INCLUDE FILE="jScript.asp" -->
 <!-- #INCLUDE FILE="Funcoes.asp" -->
 <!-- #INCLUDE FILE="DB_Geral.asp" -->
+<!-- #INCLUDE FILE="DB_Seguranca.asp" -->
 <!-- #INCLUDE FILE="DML_Tabela1.asp" -->
 <%
 Response.Expires = 0
@@ -40,7 +41,7 @@ Dim P1, P2, P3, P4, TP, SG, w_cliente, w_usuario
 Dim R, O, w_Cont, w_Pagina, w_Disabled, w_TP
 Dim w_filter, w_cor
 Dim w_Assinatura
-Dim w_dir, w_dir_volta, w_submenu
+Dim w_dir, w_dir_volta, w_submenu, w_menu
 Private Par
 Set RS  = Server.CreateObject("ADODB.RecordSet")
 
@@ -79,6 +80,7 @@ End Select
 ' caso contrário, o cliente será a empresa ao qual o usuário logado está vinculado.
 w_cliente         = RetornaCliente()
 w_usuario         = RetornaUsuario()
+w_menu            = RetornaMenu(w_cliente, SG) 
 
 Main
 
@@ -88,6 +90,7 @@ Set w_dir       = Nothing
 Set w_dir_volta = Nothing
 Set w_usuario   = Nothing
 Set w_cliente   = Nothing
+Set w_menu      = Nothing
 
 Set RS          = Nothing
 Set Par         = Nothing
@@ -115,11 +118,15 @@ Sub TipoVinculo
   Dim w_sq_tipo_pessoa
   Dim w_interno, w_contratado
   Dim p_nome,p_ativo
+  Dim w_libera_edicao
   
   p_nome                        = Trim(uCase(Request("p_nome")))
   p_ativo                       = Trim(Request("p_ativo"))
   w_sq_tipo_vinculo             = Request("w_sq_tipo_vinculo")
-
+  
+  DB_GetMenuData RS, w_menu
+  w_libera_edicao = RS("libera_edicao")
+  
   If O = "" Then O="L" end if
   
   If InStr("LP",O) Then 
@@ -184,7 +191,10 @@ Sub TipoVinculo
   Estrutura_Texto_Abre
   ShowHTML "<table border=""0"" cellpadding=""0"" cellspacing=""0"" width=""100%"">"
   If O = "L" Then
-    ShowHTML "<tr><td><font size=""2""><a accesskey=""I"" class=""ss"" href=""" & w_Pagina & par & "&R=" & w_Pagina & par & "&O=I&P1=" & P1 & "&P2=" & P2 & "&P3=" & P3 & "&P4=" & P4 & "&TP=" & TP & "&SG=" & SG & "&p_nome=" &  p_nome & "&p_ativo=" & p_ativo & """><u>I</u>ncluir</a>&nbsp;"
+    ShowHTML "<tr><td>"
+    If w_libera_edicao = "S" Then
+       ShowHTML "<font size=""2""><a accesskey=""I"" class=""ss"" href=""" & w_Pagina & par & "&R=" & w_Pagina & par & "&O=I&P1=" & P1 & "&P2=" & P2 & "&P3=" & P3 & "&P4=" & P4 & "&TP=" & TP & "&SG=" & SG & "&p_nome=" &  p_nome & "&p_ativo=" & p_ativo & """><u>I</u>ncluir</a>&nbsp;"
+    End If
     If p_nome  & p_ativo > "" Then
        ShowHTML "                         <a accesskey=""F"" class=""ss"" href=""" & w_Pagina & par & "&R=" & w_Pagina & par & "&O=P&P1=" & P1 & "&P2=" & P2 & "&P3=" & P3 & "&P4=" & P4 & "&TP=" & TP & "&SG=" & SG & "&p_nome=" &  p_nome & "&p_ativo=" & p_ativo & """><u><font color=""#BC5100"">F</u>iltrar (Ativo)</font></a></font>"
     Else
@@ -201,7 +211,9 @@ Sub TipoVinculo
     ShowHTML "          <td><font size=""1""><b>Contratado</font></td>"
     ShowHTML "          <td><font size=""1""><b>Ativo</font></td>"
     ShowHTML "          <td><font size=""1""><b>Padrão</font></td>"
-    ShowHTML "          <td><font size=""1""><b>Operações</font></td>"
+    If w_libera_edicao = "S" Then
+       ShowHTML "          <td><font size=""1""><b>Operações</font></td>"
+    End If
     ShowHTML "        </tr>"
     If RS.EOF Then
         ShowHTML "      <tr bgcolor=""" & conTrBgColor & """><td colspan=8 align=""center""><font size=""2""><b>Não foram encontrados registros.</b></td></tr>"
@@ -232,10 +244,12 @@ Sub TipoVinculo
         Else
            ShowHTML "        <td align=""center""><font size=""1"">Não</td>"
         End If
-        ShowHTML "        <td align=""top"" nowrap><font size=""1"">"
-        ShowHTML "          <A class=""HL"" HREF=""" & w_Pagina & par & "&R=" & w_Pagina & par & "&O=A&w_sq_tipo_vinculo=" & RS("sq_tipo_vinculo") & "&p_nome=" &  p_nome & "&p_ativo=" & p_ativo & "&P1=" & P1 & "&P2=" & P2 & "&P3=" & P3 & "&P4=" & P4 & "&TP=" & TP & "&SG=" & SG & """>Alterar</A>&nbsp"
-        ShowHTML "          <A class=""HL"" HREF=""" & w_Pagina & par & "&R=" & w_Pagina & par & "&O=E&w_sq_tipo_vinculo=" & RS("sq_tipo_vinculo") & "&p_nome=" &  p_nome & "&p_ativo=" & p_ativo & "&P1=" & P1 & "&P2=" & P2 & "&P3=" & P3 & "&P4=" & P4 & "&TP=" & TP & "&SG=" & SG & """>Excluir</A>&nbsp"
-        ShowHTML "        </td>"
+        If w_libera_edicao = "S" Then
+           ShowHTML "        <td align=""top"" nowrap><font size=""1"">"
+           ShowHTML "          <A class=""HL"" HREF=""" & w_Pagina & par & "&R=" & w_Pagina & par & "&O=A&w_sq_tipo_vinculo=" & RS("sq_tipo_vinculo") & "&p_nome=" &  p_nome & "&p_ativo=" & p_ativo & "&P1=" & P1 & "&P2=" & P2 & "&P3=" & P3 & "&P4=" & P4 & "&TP=" & TP & "&SG=" & SG & """>Alterar</A>&nbsp"
+           ShowHTML "          <A class=""HL"" HREF=""" & w_Pagina & par & "&R=" & w_Pagina & par & "&O=E&w_sq_tipo_vinculo=" & RS("sq_tipo_vinculo") & "&p_nome=" &  p_nome & "&p_ativo=" & p_ativo & "&P1=" & P1 & "&P2=" & P2 & "&P3=" & P3 & "&P4=" & P4 & "&TP=" & TP & "&SG=" & SG & """>Excluir</A>&nbsp"
+           ShowHTML "        </td>"
+        End If
         ShowHTML "      </tr>"
         RS.MoveNext
       wend
@@ -325,10 +339,8 @@ Sub TipoVinculo
   Set p_nome                    = Nothing
   Set p_ativo                   = Nothing
   Set w_padrao                  = Nothing
+  Set w_libera_edicao           = Nothing 
 End Sub
-REM =========================================================================
-REM Fim da tabela de tipo de vínculo
-REM -------------------------------------------------------------------------
 
 REM =========================================================================
 REM Rotina da tabela de parâmetros de segurança
@@ -396,9 +408,205 @@ Sub ParSeguranca
   Set w_dias_aviso_expiracao = Nothing
 
 End Sub
+
 REM =========================================================================
-REM Fim da tabela de parâmetros de seguranca
+REM Rotina de integração
 REM -------------------------------------------------------------------------
+Sub Integracao
+
+  Dim w_tabela, w_codigo_interno, w_codigo_externo
+  Dim w_troca
+  
+  w_troca         = Request("w_troca")
+  If w_troca > "" Then
+     w_tabela         = Request("w_tabela")
+     w_codigo_interno = Request("w_codigo_interno")
+  End If
+  
+  If w_codigo_interno > "" Then
+     DB_GetCodigo RS, w_cliente, w_tabela, w_codigo_interno, null
+     If Not RS.EOF Then
+        w_codigo_externo = Nvl(RS("codigo_externo"),"")
+     Else
+        ScriptOpen "JavaScript"
+        ShowHTML "alert('Código interno inexistente!');"
+        ShowHTML "history.back(1);"
+        ScriptClose
+     End If
+     DesconectaBD
+  End If 
+  
+  Cabecalho
+  ShowHTML "<HEAD>"
+  ScriptOpen "JavaScript"
+  ValidateOpen "Validacao"
+  Validate "w_tabela", "Tabela", "SELECT", "1", "1", "20", "1", "1"
+  Validate "w_codigo_interno", "Código interno", "1", "1", "1", "255", "1", "1"
+  Validate "w_codigo_externo", "Código externo", "1", "1", "1", "255", "1", "1"
+  Validate "w_assinatura", "Assinatura eletrônica", "1", "1", "6", "15", "1", "1"
+  ShowHTML "  theForm.Botao.disabled=true;"
+  ValidateClose
+  ScriptClose
+  ShowHTML "</HEAD>"
+  If w_troca > "" Then
+     BodyOpen "onLoad='document.Form.w_codigo_externo.focus()';"
+  Else
+     BodyOpen "onLoad='document.Form.w_tabela.focus()';"
+  End If
+  ShowHTML "<B><FONT COLOR=""#000000"">" & Replace(w_TP,"Listagem","Inclusão") & "</FONT></B>"
+  ShowHTML "<HR>"
+  ShowHTML "<div align=center><center>"
+  ShowHTML "<table border=""0"" cellpadding=""0"" cellspacing=""0"" width=""100%"">"
+  
+  AbreForm "Form", w_Pagina&"Grava", "POST", "return(Validacao(this));", null, P1,P2,P3,P4,TP,SG,w_Pagina & par,O   
+  ShowHTML "<INPUT type=""hidden"" name=""w_troca"" value=""" & w_troca & """>"
+  
+  ShowHTML "<tr bgcolor=""" & conTrBgColor & """><td align=""center"">"
+  ShowHTML "    <table width=""70%"" border=""0"">"
+  ShowHTML "      <tr><td valign=""top"" nowrap title=""Selecione a tabela desejada""><font size=""1""><b><U>T</U>abela</b><br><SELECT ACCESSKEY=""T"" CLASS=""sts"" NAME=""w_tabela"" " & w_Disabled & ">"
+  ShowHTML "          <option value="""">---"
+  If w_tabela = "UNIDADE" Then
+     ShowHTML "          <option value=""UNIDADE"" SELECTED>Unidade"
+     ShowHTML "          <option value=""PAIS"">País"
+     ShowHTML "          <option value=""CIDADE"">Cidade"
+     ShowHTML "          <option value=""TIPO_UNIDADE"">Tipo de unidade"
+     ShowHTML "          <option value=""AREA_ATUACAO"">Área de atuação"
+     ShowHTML "          <option value=""LOCALIZACAO"">Localização"
+     ShowHTML "          <option value=""PESSOA"">Usuários"
+     ShowHTML "          <option value=""TIPO_VINCULO"">Tipo de vínculo"
+     ShowHTML "          <option value=""TIPO_ENDERECO"">Tipo de endereço"
+     ShowHTML "          <option value=""ENDERECO"">Endereço"
+  ElseIf w_tabela = "PAIS" Then
+     ShowHTML "          <option value=""UNIDADE"">Unidade"
+     ShowHTML "          <option value=""PAIS"" SELECTED>País"
+     ShowHTML "          <option value=""CIDADE"">Cidade"
+     ShowHTML "          <option value=""TIPO_UNIDADE"">Tipo de unidade"
+     ShowHTML "          <option value=""AREA_ATUACAO"">Área de atuação"
+     ShowHTML "          <option value=""LOCALIZACAO"">Localização"
+     ShowHTML "          <option value=""PESSOA"">Usuários"
+     ShowHTML "          <option value=""TIPO_VINCULO"">Tipo de vínculo"
+     ShowHTML "          <option value=""TIPO_ENDERECO"">Tipo de endereço"
+     ShowHTML "          <option value=""ENDERECO"">Endereço"
+  ElseIf w_tabela = "CIDADE" Then
+     ShowHTML "          <option value=""UNIDADE"">Unidade"
+     ShowHTML "          <option value=""PAIS"">País"
+     ShowHTML "          <option value=""CIDADE"" SELECTED>Cidade"
+     ShowHTML "          <option value=""TIPO_UNIDADE"">Tipo de unidade"
+     ShowHTML "          <option value=""AREA_ATUACAO"">Área de atuação"
+     ShowHTML "          <option value=""LOCALIZACAO"">Localização"
+     ShowHTML "          <option value=""PESSOA"">Usuários"
+     ShowHTML "          <option value=""TIPO_VINCULO"">Tipo de vínculo"
+     ShowHTML "          <option value=""TIPO_ENDERECO"">Tipo de endereço"
+     ShowHTML "          <option value=""ENDERECO"">Endereço"
+  ElseIf w_tabela = "TIPO_UNIDADE" Then
+     ShowHTML "          <option value=""UNIDADE"">Unidade"
+     ShowHTML "          <option value=""PAIS"">País"
+     ShowHTML "          <option value=""CIDADE"">Cidade"
+     ShowHTML "          <option value=""TIPO_UNIDADE"" SELECTED>Tipo de unidade"
+     ShowHTML "          <option value=""AREA_ATUACAO"">Área de atuação"
+     ShowHTML "          <option value=""LOCALIZACAO"">Localização"
+     ShowHTML "          <option value=""PESSOA"">Usuários"
+     ShowHTML "          <option value=""TIPO_VINCULO"">Tipo de vínculo"
+     ShowHTML "          <option value=""TIPO_ENDERECO"">Tipo de endereço"
+     ShowHTML "          <option value=""ENDERECO"">Endereço"
+  ElseIf w_tabela = "AREA_ATUACAO" Then
+     ShowHTML "          <option value=""UNIDADE"">Unidade"
+     ShowHTML "          <option value=""PAIS"">País"
+     ShowHTML "          <option value=""CIDADE"">Cidade"
+     ShowHTML "          <option value=""TIPO_UNIDADE"">Tipo de unidade"
+     ShowHTML "          <option value=""AREA_ATUACAO"" SELECTED>Área de atuação"
+     ShowHTML "          <option value=""LOCALIZACAO"">Localização"
+     ShowHTML "          <option value=""PESSOA"">Usuários"
+     ShowHTML "          <option value=""TIPO_VINCULO"">Tipo de vínculo"
+     ShowHTML "          <option value=""TIPO_ENDERECO"">Tipo de endereço"
+     ShowHTML "          <option value=""ENDERECO"">Endereço"
+  ElseIf w_tabela = "LOCALIZACAO" Then
+     ShowHTML "          <option value=""UNIDADE"">Unidade"
+     ShowHTML "          <option value=""PAIS"">País"
+     ShowHTML "          <option value=""CIDADE"">Cidade"
+     ShowHTML "          <option value=""TIPO_UNIDADE"">Tipo de unidade"
+     ShowHTML "          <option value=""AREA_ATUACAO"">Área de atuação"
+     ShowHTML "          <option value=""LOCALIZACAO"" SELECTED>Localização"
+     ShowHTML "          <option value=""PESSOA"">Usuários"
+     ShowHTML "          <option value=""TIPO_VINCULO"">Tipo de vínculo"
+     ShowHTML "          <option value=""TIPO_ENDERECO"">Tipo de endereço"
+     ShowHTML "          <option value=""ENDERECO"">Endereço"
+  ElseIf w_tabela = "PESSOA" Then
+     ShowHTML "          <option value=""UNIDADE"">Unidade"
+     ShowHTML "          <option value=""PAIS"">País"
+     ShowHTML "          <option value=""CIDADE"">Cidade"
+     ShowHTML "          <option value=""TIPO_UNIDADE"">Tipo de unidade"
+     ShowHTML "          <option value=""AREA_ATUACAO"">Área de atuação"
+     ShowHTML "          <option value=""LOCALIZACAO"">Localização"
+     ShowHTML "          <option value=""PESSOA"" SELECTED>Usuários"
+     ShowHTML "          <option value=""TIPO_VINCULO"">Tipo de vínculo"
+     ShowHTML "          <option value=""TIPO_ENDERECO"">Tipo de endereço"
+     ShowHTML "          <option value=""ENDERECO"">Endereço"
+  ElseIf w_tabela = "TIPO_VINCULO" Then
+     ShowHTML "          <option value=""UNIDADE"">Unidade"
+     ShowHTML "          <option value=""PAIS"">País"
+     ShowHTML "          <option value=""CIDADE"">Cidade"
+     ShowHTML "          <option value=""TIPO_UNIDADE"">Tipo de unidade"
+     ShowHTML "          <option value=""AREA_ATUACAO"">Área de atuação"
+     ShowHTML "          <option value=""LOCALIZACAO"">Localização"
+     ShowHTML "          <option value=""PESSOA"">Usuários"
+     ShowHTML "          <option value=""TIPO_VINCULO"" SELECTED>Tipo de vínculo"
+     ShowHTML "          <option value=""TIPO_ENDERECO"">Tipo de endereço"
+     ShowHTML "          <option value=""ENDERECO"">Endereço"
+  ElseIf w_tabela = "TIPO_ENDERECO" Then
+     ShowHTML "          <option value=""UNIDADE"">Unidade"
+     ShowHTML "          <option value=""PAIS"">País"
+     ShowHTML "          <option value=""CIDADE"">Cidade"
+     ShowHTML "          <option value=""TIPO_UNIDADE"">Tipo de unidade"
+     ShowHTML "          <option value=""AREA_ATUACAO"">Área de atuação"
+     ShowHTML "          <option value=""LOCALIZACAO"">Localização"
+     ShowHTML "          <option value=""PESSOA"">Usuários"
+     ShowHTML "          <option value=""TIPO_VINCULO"">Tipo de vínculo"
+     ShowHTML "          <option value=""TIPO_ENDERECO"" SELECTED>Tipo de endereço"
+     ShowHTML "          <option value=""ENDERECO"">Endereço"
+  ElseIf w_tabela = "ENDERECO" Then
+     ShowHTML "          <option value=""UNIDADE"">Unidade"
+     ShowHTML "          <option value=""PAIS"">País"
+     ShowHTML "          <option value=""CIDADE"">Cidade"
+     ShowHTML "          <option value=""TIPO_UNIDADE"">Tipo de unidade"
+     ShowHTML "          <option value=""AREA_ATUACAO"">Área de atuação"
+     ShowHTML "          <option value=""LOCALIZACAO"">Localização"
+     ShowHTML "          <option value=""PESSOA"">Usuários"
+     ShowHTML "          <option value=""TIPO_VINCULO"">Tipo de vínculo"
+     ShowHTML "          <option value=""TIPO_ENDERECO"">Tipo de endereço"
+     ShowHTML "          <option value=""ENDERECO"" SELECTED>Endereço"
+  Else
+     ShowHTML "          <option value=""UNIDADE"">Unidade"
+     ShowHTML "          <option value=""PAIS"">País"
+     ShowHTML "          <option value=""CIDADE"">Cidade"
+     ShowHTML "          <option value=""TIPO_UNIDADE"">Tipo de unidade"
+     ShowHTML "          <option value=""AREA_ATUACAO"">Área de atuação"
+     ShowHTML "          <option value=""LOCALIZACAO"">Localização"
+     ShowHTML "          <option value=""PESSOA"">Usuários"
+     ShowHTML "          <option value=""TIPO_VINCULO"">Tipo de vínculo"
+     ShowHTML "          <option value=""TIPO_ENDERECO"">Tipo de endereço"
+     ShowHTML "          <option value=""ENDERECO"">Endereço"
+  End If
+  ShowHTML "          </select>"
+  ShowHTML "          <td valign=""top""><font  size=""1""><b><U>C</U>ódigo interno:<br><INPUT ACCESSKEY=""C"" " & w_Disabled & " class=""sti"" type=""text"" name=""w_codigo_interno"" size=""10"" maxlength=""255"" value=""" & w_codigo_interno & """ title=""Código interno do registro no sistema"" ONBLUR=""document.Form.action='" & w_pagina & par & "'; document.Form.w_troca.value='w_codigo_interno'; document.Form.submit();""></td>"
+  ShowHTML "          <td valign=""top""><font  size=""1""><b>C<U>ó</U>digo externo:<br><INPUT ACCESSKEY=""O"" " & w_Disabled & " class=""sti"" type=""text"" name=""w_codigo_externo"" size=""10"" maxlength=""255"" value=""" & w_codigo_externo & """ title=""Código externo do registro no sistema""></td>"
+  ShowHTML "      <tr><td valign=""top""><font  size=""1""><b><U>A</U>ssinatura Eletrônica:<br><INPUT ACCESSKEY=""A"" class=""sti"" type=""PASSWORD"" name=""w_assinatura"" size=""30"" maxlength=""30"" value=""""></td>"
+  ShowHTML "      <tr><td align=""center"" colspan=""3"" height=""1"" bgcolor=""#000000"">"
+  ShowHTML "      <tr><td align=""center"" colspan=""3""><input class=""stb"" type=""submit"" name=""Botao"" value=""Gravar""></td></tr>"
+  ShowHTML "    </table>"
+  ShowHTML "    </TD>"
+  ShowHTML "</tr>"
+  ShowHTML "</FORM>"
+  ShowHTML "</table>"
+  ShowHTML "</center>"
+  Rodape
+
+  Set w_tabela          = Nothing
+  Set w_codigo_interno  = Nothing
+  Set w_codigo_externo  = Nothing 
+  Set w_troca           = Nothing 
+
+End Sub
 
 REM =========================================================================
 REM Procedimento que executa as operações de BD
@@ -453,6 +661,23 @@ Public Sub Grava
           ShowHTML "  history.back(1);"
           ScriptClose
        End If
+    Case "INTEGR"
+       ' Verifica se a Assinatura Eletrônica é válida
+       If (VerificaAssinaturaEletronica(Session("Username"),w_assinatura) and w_assinatura > "") or _
+          w_assinatura = "" Then
+          
+          DML_PutCodigoExterno _
+                   w_cliente, Request("w_tabela"), Request("w_codigo_interno"), _
+                   Request("w_codigo_externo"), null
+          ScriptOpen "JavaScript"
+          ShowHTML "  location.href='" & R & "&O=L&P1=" & P1 & "&P2=" & P2 & "&P3=" & P3 & "&P4=" & P4 & "&TP=" & TP & "&SG=" & SG & "';"
+          ScriptClose
+       Else
+          ScriptOpen "JavaScript"
+          ShowHTML "  alert('Assinatura Eletrônica inválida!');"
+          ShowHTML "  history.back(1);"
+          ScriptClose
+       End If       
   End Select
 
   Set p_codigo          = Nothing
@@ -462,9 +687,6 @@ Public Sub Grava
   Set p_ordena          = Nothing
   Set w_Null            = Nothing
 End Sub
-REM -------------------------------------------------------------------------
-REM Fim do procedimento que executa as operações de BD
-REM =========================================================================
 
 REM =========================================================================
 REM Rotina principal
@@ -480,12 +702,10 @@ Sub Main
   End If
 
   Select Case Par
-    Case "VINCULO"
-       TipoVinculo
-    Case "PARSEGURANCA"
-       ParSeguranca
-    Case "GRAVA"
-       Grava
+    Case "VINCULO"       TipoVinculo
+    Case "PARSEGURANCA"  ParSeguranca
+    Case "INTEGRACAO"    Integracao
+    Case "GRAVA"         Grava
     Case Else
        Cabecalho
        BodyOpen "onLoad=document.focus();"
@@ -495,8 +715,5 @@ Sub Main
        Rodape
   End Select
 End Sub
-REM =========================================================================
-REM Fim da rotina principal
-REM -------------------------------------------------------------------------
 %>
 

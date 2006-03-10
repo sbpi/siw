@@ -4,6 +4,7 @@
 <!-- #INCLUDE FILE="jScript.asp" -->
 <!-- #INCLUDE FILE="Funcoes.asp" -->
 <!-- #INCLUDE FILE="DB_Geral.asp" -->
+<!-- #INCLUDE FILE="DB_Seguranca.asp" -->
 <!-- #INCLUDE FILE="DML_Tabela_Basica.asp" -->
 <%
 Response.Expires = -1500
@@ -38,7 +39,7 @@ End If
 Dim dbms, sp, RS
 Dim P1, P2, P3, P4, TP, SG
 Dim R, O, w_Cont, w_Pagina, w_Disabled, w_TP, w_troca, w_cor
-Dim w_Assinatura, w_filter
+Dim w_Assinatura, w_filter, w_cliente, w_menu
 Dim w_dir_volta
 Private Par
 
@@ -76,12 +77,18 @@ Select Case O
   Case Else
      w_TP = TP & " - Listagem"
 End Select
+
+w_cliente = RetornaCliente()
+w_menu    = RetornaMenu(w_cliente, SG) 
+
 Main
 
 FechaSessao
 
 Set w_filter    = Nothing
 Set w_cor       = Nothing
+Set w_cliente   = Nothing
+Set w_menu      = Nothing
 
 Set RS          = Nothing
 Set Par         = Nothing
@@ -111,11 +118,15 @@ Sub TipoEndereco
   Dim w_email, w_internet
   Dim p_nome,p_ativo
   Dim p_ordena
+  Dim w_libera_edicao
   
   p_nome                        = Trim(uCase(Request("p_nome")))
   p_ativo                       = Trim(Request("p_ativo"))
   w_sq_tipo_endereco            = Request("w_sq_tipo_endereco")
-      
+  
+  DB_GetMenuData RS, w_menu
+  w_libera_edicao = RS("libera_edicao")
+  
   If O = "" Then O="L" end if
   
   If InStr("LP",O) Then
@@ -179,7 +190,10 @@ Sub TipoEndereco
   ShowHTML "<div align=center><center>"
   ShowHTML "<table border=""0"" cellpadding=""0"" cellspacing=""0"" width=""100%"">"
   If O = "L" Then
-    ShowHTML "<tr><td><font size=""2""><a accesskey=""I"" class=""SS"" href=""" & w_Pagina & par & "&R=" & w_Pagina & par & "&O=I&P1=" & P1 & "&P2=" & P2 & "&P3=" & P3 & "&P4=" & P4 & "&TP=" & TP & "&SG=" & SG & "&p_nome=" &  p_nome & "&p_ativo=" & p_ativo & """><u>I</u>ncluir</a>&nbsp;"
+    ShowHTML "<tr><td>"
+    If w_libera_edicao = "S" Then
+       ShowHTML "<font size=""2""><a accesskey=""I"" class=""SS"" href=""" & w_Pagina & par & "&R=" & w_Pagina & par & "&O=I&P1=" & P1 & "&P2=" & P2 & "&P3=" & P3 & "&P4=" & P4 & "&TP=" & TP & "&SG=" & SG & "&p_nome=" &  p_nome & "&p_ativo=" & p_ativo & """><u>I</u>ncluir</a>&nbsp;"
+    End If
     If p_nome  & p_ativo > "" Then
        ShowHTML "                         <a accesskey=""F"" class=""SS"" href=""" & w_Pagina & par & "&R=" & w_Pagina & par & "&O=P&P1=" & P1 & "&P2=" & P2 & "&P4=" & P4 & "&TP=" & TP & "&SG=" & SG & "&p_nome=" &  p_nome & "&p_ativo=" & p_ativo & """><u><font color=""#BC5100"">F</u>iltrar (Ativo)</font></a></font>"
     Else
@@ -196,7 +210,9 @@ Sub TipoEndereco
     ShowHTML "          <td><font size=""2""><b>Internet</font></td>"
     ShowHTML "          <td><font size=""2""><b>Ativo</font></td>"
     ShowHTML "          <td><font size=""2""><b>Padrão</font></td>"
-    ShowHTML "          <td><font size=""2""><b>Operações</font></td>"
+    If w_libera_edicao = "S" Then
+       ShowHTML "          <td><font size=""2""><b>Operações</font></td>"
+    End If
     ShowHTML "        </tr>"
     If RS.EOF Then
         ShowHTML "      <tr bgcolor=""" & conTrBgColor & """><td colspan=5 align=""center""><font size=""2""><b>Não foram encontrados registros.</b></td></tr>"
@@ -213,10 +229,12 @@ Sub TipoEndereco
         ShowHTML "        <td align=""center""><font size=""1"">" & RS("internet") & "</td>"
         ShowHTML "        <td align=""center""><font size=""1"">" & RS("ativodesc") & "</td>"
         ShowHTML "        <td align=""center""><font size=""1"">" & RS("padraodesc") & "</td>"
-        ShowHTML "        <td align=""top"" nowrap><font size=""1"">"
-        ShowHTML "          <A class=""HL"" HREF=""" & w_Pagina & par & "&R=" & w_Pagina & par & "&O=A&w_sq_tipo_endereco=" & RS("sq_tipo_endereco") & "&p_nome=" &  p_nome & "&p_ativo=" & p_ativo & "&P1=" & P1 & "&P2=" & P2 & "&P3=" & P3 & "&P4=" & P4 & "&TP=" & TP & "&SG=" & SG & """>Alterar</A>&nbsp"
-        ShowHTML "          <A class=""HL"" HREF=""" & w_Pagina & par & "&R=" & w_Pagina & par & "&O=E&w_sq_tipo_endereco=" & RS("sq_tipo_endereco") & "&p_nome=" &  p_nome & "&p_ativo=" & p_ativo & "&P1=" & P1 & "&P2=" & P2 & "&P3=" & P3 & "&P4=" & P4 & "&TP=" & TP & "&SG=" & SG & """>Excluir</A>&nbsp"
-        ShowHTML "        </td>"
+        If w_libera_edicao = "S" Then
+           ShowHTML "        <td align=""top"" nowrap><font size=""1"">"
+           ShowHTML "          <A class=""HL"" HREF=""" & w_Pagina & par & "&R=" & w_Pagina & par & "&O=A&w_sq_tipo_endereco=" & RS("sq_tipo_endereco") & "&p_nome=" &  p_nome & "&p_ativo=" & p_ativo & "&P1=" & P1 & "&P2=" & P2 & "&P3=" & P3 & "&P4=" & P4 & "&TP=" & TP & "&SG=" & SG & """>Alterar</A>&nbsp"
+           ShowHTML "          <A class=""HL"" HREF=""" & w_Pagina & par & "&R=" & w_Pagina & par & "&O=E&w_sq_tipo_endereco=" & RS("sq_tipo_endereco") & "&p_nome=" &  p_nome & "&p_ativo=" & p_ativo & "&P1=" & P1 & "&P2=" & P2 & "&P3=" & P3 & "&P4=" & P4 & "&TP=" & TP & "&SG=" & SG & """>Excluir</A>&nbsp"
+           ShowHTML "        </td>"
+        End If
         ShowHTML "      </tr>"
         RS.MoveNext
       wend
@@ -297,7 +315,8 @@ Sub TipoEndereco
   ShowHTML "</table>"
   ShowHTML "</center>"
   Rodape
-
+  
+  Set w_libera_edicao           = Nothing
   Set w_sq_tipo_endereco        = Nothing
   Set w_sq_tipo_pessoa          = Nothing
   Set w_nome                    = Nothing
@@ -307,9 +326,6 @@ Sub TipoEndereco
   Set w_padrao                  = Nothing
   Set p_ordena                  = Nothing
 End Sub
-REM =========================================================================
-REM Fim da tabela de tipo de endereco
-REM -------------------------------------------------------------------------
 
 REM =========================================================================
 REM Rotina da tabela de tipo de telefone
@@ -507,9 +523,6 @@ Sub TipoTelefone
   Set w_padrao                  = Nothing
   Set p_ordena                  = Nothing
 End Sub
-REM =========================================================================
-REM Fim da tabela de tipo de telefone
-REM -------------------------------------------------------------------------
 
 REM =========================================================================
 REM Rotina da tabela de tipo de pessoa
@@ -520,11 +533,15 @@ Sub TipoPessoa
   Dim w_padrao
   Dim p_nome,p_ativo
   Dim p_ordena
+  Dim w_libera_edicao 
   
   p_nome                        = Trim(uCase(Request("p_nome")))
   p_ativo                       = Trim(Request("p_ativo"))
   w_sq_tipo_pessoa              = Request("w_sq_tipo_pessoa")
-      
+  
+  DB_GetMenuData RS, w_menu
+  w_libera_edicao = RS("libera_edicao")
+  
   If O = "" Then O="L" end if
   
   If InStr("LP",O) Then 
@@ -584,7 +601,10 @@ Sub TipoPessoa
   ShowHTML "<div align=center><center>"
   ShowHTML "<table border=""0"" cellpadding=""0"" cellspacing=""0"" width=""100%"">"
   If O = "L" Then
-    ShowHTML "<tr><td><font size=""2""><a accesskey=""I"" class=""SS"" href=""" & w_Pagina & par & "&R=" & w_Pagina & par & "&O=I&P1=" & P1 & "&P2=" & P2 & "&P3=" & P3 & "&P4=" & P4 & "&TP=" & TP & "&SG=" & SG & "&p_nome=" &  p_nome & "&p_ativo=" & p_ativo & """><u>I</u>ncluir</a>&nbsp;"
+    ShowHTML "<tr><td>"
+    If w_libera_edicao = "S" Then
+       ShowHTML "<font size=""2""><a accesskey=""I"" class=""SS"" href=""" & w_Pagina & par & "&R=" & w_Pagina & par & "&O=I&P1=" & P1 & "&P2=" & P2 & "&P3=" & P3 & "&P4=" & P4 & "&TP=" & TP & "&SG=" & SG & "&p_nome=" &  p_nome & "&p_ativo=" & p_ativo & """><u>I</u>ncluir</a>&nbsp;"
+    End If
     If p_nome  & p_ativo > "" Then
        ShowHTML "                         <a accesskey=""F"" class=""SS"" href=""" & w_Pagina & par & "&R=" & w_Pagina & par & "&O=P&P1=" & P1 & "&P2=" & P2 & "&P4=" & P4 & "&TP=" & TP & "&SG=" & SG & "&p_nome=" &  p_nome & "&p_ativo=" & p_ativo & """><u><font color=""#BC5100"">F</u>iltrar (Ativo)</font></a></font>"
     Else
@@ -598,7 +618,9 @@ Sub TipoPessoa
     ShowHTML "          <td><font size=""2""><b>Nome</font></td>"
     ShowHTML "          <td><font size=""2""><b>Ativo</font></td>"
     ShowHTML "          <td><font size=""2""><b>Padrão</font></td>"
-    ShowHTML "          <td><font size=""2""><b>Operações</font></td>"
+    If w_libera_edicao = "S" Then    
+       ShowHTML "          <td><font size=""2""><b>Operações</font></td>"
+    End If
     ShowHTML "        </tr>"
     If RS.EOF Then
         ShowHTML "      <tr bgcolor=""" & conTrBgColor & """><td colspan=5 align=""center""><font size=""2""><b>Não foram encontrados registros.</b></td></tr>"
@@ -612,10 +634,12 @@ Sub TipoPessoa
         ShowHTML "        <td><font size=""1"">" & RS("nome") & "</td>"
         ShowHTML "        <td align=""center""><font size=""1"">" & RS("ativodesc") & "</td>"
         ShowHTML "        <td align=""center""><font size=""1"">" & RS("padraodesc") & "</td>"
-        ShowHTML "        <td align=""top"" nowrap><font size=""1"">"
-        ShowHTML "          <A class=""HL"" HREF=""" & w_Pagina & par & "&R=" & w_Pagina & par & "&O=A&w_sq_tipo_pessoa=" & RS("sq_tipo_pessoa") & "&p_nome=" &  p_nome & "&p_ativo=" & p_ativo & "&P1=" & P1 & "&P2=" & P2 & "&P3=" & P3 & "&P4=" & P4 & "&TP=" & TP & "&SG=" & SG & """>Alterar</A>&nbsp"
-        ShowHTML "          <A class=""HL"" HREF=""" & w_Pagina & par & "&R=" & w_Pagina & par & "&O=E&w_sq_tipo_pessoa=" & RS("sq_tipo_pessoa") & "&p_nome=" &  p_nome & "&p_ativo=" & p_ativo & "&P1=" & P1 & "&P2=" & P2 & "&P3=" & P3 & "&P4=" & P4 & "&TP=" & TP & "&SG=" & SG & """>Excluir</A>&nbsp"
-        ShowHTML "        </td>"
+        If w_libera_edicao = "S" Then
+           ShowHTML "        <td align=""top"" nowrap><font size=""1"">"
+           ShowHTML "          <A class=""HL"" HREF=""" & w_Pagina & par & "&R=" & w_Pagina & par & "&O=A&w_sq_tipo_pessoa=" & RS("sq_tipo_pessoa") & "&p_nome=" &  p_nome & "&p_ativo=" & p_ativo & "&P1=" & P1 & "&P2=" & P2 & "&P3=" & P3 & "&P4=" & P4 & "&TP=" & TP & "&SG=" & SG & """>Alterar</A>&nbsp"
+           ShowHTML "          <A class=""HL"" HREF=""" & w_Pagina & par & "&R=" & w_Pagina & par & "&O=E&w_sq_tipo_pessoa=" & RS("sq_tipo_pessoa") & "&p_nome=" &  p_nome & "&p_ativo=" & p_ativo & "&P1=" & P1 & "&P2=" & P2 & "&P3=" & P3 & "&P4=" & P4 & "&TP=" & TP & "&SG=" & SG & """>Excluir</A>&nbsp"
+           ShowHTML "        </td>"
+        End If
         ShowHTML "      </tr>"
         RS.MoveNext
       wend
@@ -697,10 +721,8 @@ Sub TipoPessoa
   Set p_ativo                   = Nothing
   Set w_padrao                  = Nothing
   Set p_ordena                  = Nothing
+  Set w_libera_edicao           = Nothing
 End Sub
-REM =========================================================================
-REM Fim da tabela de tipo de pessoa
-REM -------------------------------------------------------------------------
 
 REM =========================================================================
 REM Rotina da tabela de deficiências
@@ -904,9 +926,6 @@ Sub Deficiencia
   Set p_ativo                   = Nothing
   Set p_ordena                  = Nothing
 End Sub
-REM =========================================================================
-REM Fim da tabela de deficiências
-REM -------------------------------------------------------------------------
 
 REM =========================================================================
 REM Rotina da tabela de grupos de deficiência
@@ -1090,9 +1109,6 @@ Sub GrupoDeficiencia
   Set p_ativo                   = Nothing
   Set p_ordena                  = Nothing 
 End Sub
-REM =========================================================================
-REM Fim da tabela de grupos de deficiencia
-REM -------------------------------------------------------------------------
 
 REM =========================================================================
 REM Rotina da tabela de idioma
@@ -1283,9 +1299,6 @@ Sub Idioma
   Set w_padrao                  = Nothing
   Set p_ordena                  = Nothing
 End Sub
-REM =========================================================================
-REM Fim da tabela de idioma
-REM -------------------------------------------------------------------------
 
 REM =========================================================================
 REM Rotina da tabela de etnia
@@ -1478,9 +1491,6 @@ Sub Etnia
   Set w_codigo_siape            = Nothing
   Set p_ordena                  = Nothing 
 End Sub
-REM =========================================================================
-REM Fim da tabela de etnia
-REM -------------------------------------------------------------------------
 
 REM =========================================================================
 REM Rotina da tabela de formação
@@ -1680,9 +1690,6 @@ Sub Formacao
   Set w_ordem                   = Nothing
   Set p_ordena                  = Nothing
 End Sub
-REM =========================================================================
-REM Fim da tabela de formação
-REM -------------------------------------------------------------------------
 
 REM =========================================================================
 REM Procedimento que executa as operações de BD
@@ -1841,9 +1848,6 @@ Public Sub Grava
   Set p_ordena          = Nothing
   Set w_Null            = Nothing
 End Sub
-REM -------------------------------------------------------------------------
-REM Fim do procedimento que executa as operações de BD
-REM =========================================================================
 
 REM =========================================================================
 REM Rotina principal
@@ -1878,8 +1882,5 @@ Sub Main
        Rodape
   End Select
 End Sub
-REM =========================================================================
-REM Fim da rotina principal
-REM -------------------------------------------------------------------------
 %>
 

@@ -2240,6 +2240,47 @@ Sub DB_GetSolicRecurso(p_rs, p_chave, p_chave_aux, p_restricao)
 End Sub
 
 REM =========================================================================
+REM Recupera os o códigos internos e externos
+REM -------------------------------------------------------------------------
+Sub DB_GetCodigo(p_rs, p_cliente, p_restricao, p_chave_interna, p_chave_aux)
+  
+  Dim l_cliente, l_restricao, l_chave_interna, l_chave_aux
+  
+  Set l_cliente       = Server.CreateObject("ADODB.Parameter")
+  Set l_restricao     = Server.CreateObject("ADODB.Parameter")
+  Set l_chave_interna = Server.CreateObject("ADODB.Parameter")
+  Set l_chave_aux     = Server.CreateObject("ADODB.Parameter")
+  
+  with sp
+     set l_cliente              = .CreateParameter("l_cliente",       adInteger, adParamInput,   , p_cliente)
+     set l_restricao            = .CreateParameter("l_restricao",     adVarchar, adParamInput, 20, p_restricao)
+     set l_chave_interna        = .CreateParameter("l_chave_interna", adVarchar, adParamInput, 255,p_chave_interna)
+     set l_chave_aux            = .CreateParameter("l_chave_aux",     adVarchar, adParamInput, 255, Tvl(p_chave_aux))
+
+     .parameters.Append         l_cliente
+     .parameters.Append         l_restricao
+     .parameters.Append         l_chave_interna
+     .parameters.Append         l_chave_aux
+     
+     If Session("dbms") = 1 or Session("dbms") = 3 Then .Properties("PLSQLRSet") = TRUE End If
+     .CommandText               = Session("schema") & "SP_GetCodigo"
+     
+     On Error Resume Next
+     Set p_rs                   = .Execute
+     If Err.Description > "" Then 
+        TrataErro
+     End If     
+     If Session("dbms") = 1 or Session("dbms") = 3 Then .Properties("PLSQLRSet") = FALSE End If
+     
+     .Parameters.Delete         "l_cliente"
+     .Parameters.Delete         "l_restricao"
+     .Parameters.Delete         "l_chave_interna"
+     .Parameters.Delete         "l_chave_aux"
+  end with
+
+End Sub
+
+REM =========================================================================
 REM Recupera os recursos de um projeto
 REM -------------------------------------------------------------------------
 Sub DB_GetSolicEtpRec(p_rs, p_chave, p_chave_aux)
