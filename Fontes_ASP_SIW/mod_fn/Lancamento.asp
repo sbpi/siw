@@ -2895,10 +2895,12 @@ Sub SolicMail(p_solic, p_tipo)
         DB_GetSolicLog RS, p_solic, null, "LISTA"
         RS.Sort = "data desc"
         While Not RS.EOF
-           ' Configura os destinatários da mensagem
-           DB_GetPersonData RS1, w_cliente, RS("sq_pessoa_destinatario"), null, null
-           If Instr(w_destinatarios,RS1("email") & "; ")    = 0 and Nvl(RS1("email"),"nulo") <> "nulo" Then w_destinatarios = w_destinatarios & RS1("email") & "; " End If
-           RS1.Close
+           If RS("sq_pessoa_destinatario") > "" Then
+              ' Configura os destinatários da mensagem
+              DB_GetPersonData RS1, w_cliente, RS("sq_pessoa_destinatario"), null, null
+              If Instr(w_destinatarios,RS1("email") & "; ")    = 0 and Nvl(RS1("email"),"nulo") <> "nulo" Then w_destinatarios = w_destinatarios & RS1("email") & "; " End If
+              RS1.Close
+           End If
            RS.MoveNext
         Wend
         DesconectaBD
