@@ -427,8 +427,8 @@ Function VisualAcao(w_chave, O, w_usuario, P1, P4)
      
      ' Programação financeira
      If Not IsNull(RS("cd_acao")) Then
-        w_html = w_html & VbCrLf & "        <tr><td valign=""top"" colspan=""2"" align=""center"" bgcolor=""#D0D0D0"" style=""border: 2px solid rgb(0,0,0);""><font size=""1""><b>Programação financeira</td>"
         If cDbl(RS("cd_tipo_acao")) <> 3 Then
+           w_html = w_html & VbCrLf & "        <tr><td valign=""top"" colspan=""2"" align=""center"" bgcolor=""#D0D0D0"" style=""border: 2px solid rgb(0,0,0);""><font size=""1""><b>Programação financeira</td>"        
            DB_GetPPADadoFinanc_IS RS1, RS("cd_acao"), RS("cd_unidade"), w_ano, w_cliente, "VALORFONTEACAO"
            If RS1.EOF Then
               w_html = w_html & VbCrLf & "                      <tr><td valign=""top"" colspan=""2""><font size=""1""><DD><b>Nao existe nenhum valor para esta ação</b></DD></td>"
@@ -445,8 +445,8 @@ Function VisualAcao(w_chave, O, w_usuario, P1, P4)
               w_html = w_html & VbCrLf & "                        <TABLE WIDTH=""100%"" bgcolor=""" & conTableBgColor & """ BORDER=""" & conTableBorder & """ CELLSPACING=""" & conTableCellSpacing & """ CELLPADDING=""" & conTableCellPadding & """ BorderColorDark=""" & conTableBorderColorDark & """ BorderColorLight=""" & conTableBorderColorLight & """>"
               w_html = w_html & VbCrLf & "                          <tr bgcolor=""" & conTrBgColor & """ align=""center"">"
               w_html = w_html & VbCrLf & "                            <td><font size=""1""><b>Fonte</font></td>"
-              w_html = w_html & VbCrLf & "                            <td><font size=""1""><b>2004*</font></td>"
-              w_html = w_html & VbCrLf & "                            <td><font size=""1""><b>2005**</font></td>"
+              w_html = w_html & VbCrLf & "                            <td><font size=""1""><b>2004</font></td>"
+              w_html = w_html & VbCrLf & "                            <td><font size=""1""><b>2005</font></td>"
               w_html = w_html & VbCrLf & "                            <td><font size=""1""><b>2006</font></td>"
               w_html = w_html & VbCrLf & "                            <td><font size=""1""><b>2007</font></td>"
               w_html = w_html & VbCrLf & "                            <td><font size=""1""><b>2008</font></td>"
@@ -477,8 +477,8 @@ Function VisualAcao(w_chave, O, w_usuario, P1, P4)
               w_html = w_html & VbCrLf & "      <tr><td colspan=""2"" align=""center"">"
               w_html = w_html & VbCrLf & "        <TABLE WIDTH=""100%"" bgcolor=""" & conTableBgColor & """ BORDER=""" & conTableBorder & """ CELLSPACING=""" & conTableCellSpacing & """ CELLPADDING=""" & conTableCellPadding & """ BorderColorDark=""" & conTableBorderColorDark & """ BorderColorLight=""" & conTableBorderColorLight & """>"
               w_html = w_html & VbCrLf & "          <tr bgcolor=""" & conTrBgColor & """ align=""center"">"
-              w_html = w_html & VbCrLf & "            <td><font size=""1""><b>2004*</font></td>"
-              w_html = w_html & VbCrLf & "            <td><font size=""1""><b>2005**</font></td>"
+              w_html = w_html & VbCrLf & "            <td><font size=""1""><b>2004</font></td>"
+              w_html = w_html & VbCrLf & "            <td><font size=""1""><b>2005</font></td>"
               w_html = w_html & VbCrLf & "            <td><font size=""1""><b>2006</font></td>"
               w_html = w_html & VbCrLf & "            <td><font size=""1""><b>2007</font></td>"
               w_html = w_html & VbCrLf & "            <td><font size=""1""><b>2008</font></td>"
@@ -496,8 +496,6 @@ Function VisualAcao(w_chave, O, w_usuario, P1, P4)
               w_html = w_html & VbCrLf & "       </table>"  
            End If
            RS1.Close
-           w_html = w_html & VbCrLf & "<tr><td valign=""top"" colspan=""2""><font size=""1"">* Valor Lei Orçamentária Anual - LOA 2004 + Créditos</td>"
-           w_html = w_html & VbCrLf & "<tr><td valign=""top"" colspan=""2""><font size=""1"">** Valor do Projeto de Lei Orçamentária Anual - PLOA 2005</td>"    
         End If
         ' Recupera todos os registros para a listagem
         DB_GetFinancAcaoPPA_IS RS1, w_chave, w_cliente, w_ano, null, null, null

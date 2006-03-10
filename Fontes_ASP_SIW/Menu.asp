@@ -173,7 +173,7 @@ Sub ExibeDocs
    ShowHTML "<BASEFONT FACE=""Verdana, Helvetica, Sans-Serif"" SIZE=""2"">"
    ' Decide se montará o body do menu principal ou o body do sub-menu de uma opção a partir do valor de w_sq_pagina
    DB_GetCustomerData RS1, Session("p_cliente")
-   Response.Write "<BODY topmargin=0 bgcolor=""#FFFFFF"" BACKGROUND=""" & LinkArquivo(null, Session("p_cliente"), "img/" & RS1("fundo"), null, null, null, "EMBED") & """ BGPROPERTIES=""FIXED"" text=""#000000"" link=""#000000"" vlink=""#000000"" alink=""#FF0000"" "
+   Response.Write "<BODY topmargin=0 bgcolor=""#FFFFFF"" BACKGROUND=""" & LinkArquivo(null, Session("p_cliente"), "img\" & RS1("fundo"), null, null, null, "EMBED") & """ BGPROPERTIES=""FIXED"" text=""#000000"" link=""#000000"" vlink=""#000000"" alink=""#FF0000"" "
    If Request("SG") = "" Then
       DB_GetLinkData RS, Session("p_cliente"), "MESA"
       If Not RS.EOF Then
@@ -211,7 +211,7 @@ Sub ExibeDocs
    End If
    ShowHTML "  <b><CENTER><table border=0 cellpadding=0 height=""80"" width=""100%"">"
    ShowHTML "      <tr><td width=""100%"" valign=""center"" align=""center"">"
-   ShowHTML "         <img src=""" & LinkArquivo(null, Session("p_cliente"), "img/" & RS1("logo1"), null, null, null, "EMBED") & """ vspace=""0"" hspace=""0"" border=""1""></td></tr>"
+   ShowHTML "         <img src=""" & LinkArquivo(null, Session("p_cliente"), "img\" & RS1("logo1"), null, null, null, "EMBED") & """ vspace=""0"" hspace=""0"" border=""1""></td></tr>"
    ShowHTML "      <tr><td height=1><tr><td height=1 bgcolor=""#000000"">"
    ShowHTML "      <tr><td colspan=2 width=""100%""><table border=0 width=""100%"" cellpadding=0 cellspacing=0><tr valign=""top"">"
    ShowHTML "          <td><font size=1>Usuário:<b>" & Session("Nome_resumido") & "</b>"

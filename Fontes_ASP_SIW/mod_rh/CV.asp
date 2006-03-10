@@ -2292,7 +2292,7 @@ Sub Visualizar
   ShowHTML "<TABLE WIDTH=""100%"" BORDER=0><TR>"
   If P2 = 0 Then
      DB_GetCustomerData RS, w_cliente
-     ShowHTML "  <TD ROWSPAN=2><IMG ALIGN=""LEFT"" src=""" & LinkArquivo(null, w_cliente, "img/logo" & Mid(RS("logo"),Instr(RS("logo"),"."),30), null, null, null, "EMBED") & """>"                                  
+     ShowHTML "  <TD ROWSPAN=2><IMG ALIGN=""LEFT"" src=""" & LinkArquivo(null, w_cliente, "img\logo" & Mid(RS("logo"),Instr(RS("logo"),"."),30), null, null, null, "EMBED") & """>"                                  
      DesconectaBD
   End If
   ShowHTML "  <TD ALIGN=""RIGHT""><B><FONT SIZE=5 COLOR=""#000000"">"

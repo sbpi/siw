@@ -203,7 +203,7 @@ Sub ExibeDocs1
    ' Decide se montará o body do menu principal ou o body do sub-menu de uma opção a partir do valor de w_sq_pagina
    DB_GetCustomerData RS, Session("p_cliente")
    ShowHTML "<BASE HREF=""" & conRootSIW & """>"
-   Response.Write "<BODY topmargin=0 bgcolor=""#FFFFFF"" BACKGROUND=""" & conFileVirtual & Session("p_cliente") & "/img/" & RS("fundo") & """ BGPROPERTIES=""FIXED"" text=""#000000"" link=""#000000"" vlink=""#000000"" alink=""#FF0000"" "
+   Response.Write "<BODY topmargin=0 bgcolor=""#FFFFFF"" BACKGROUND=""" & conFileVirtual & Session("p_cliente") & "img\" & RS("fundo") & """ BGPROPERTIES=""FIXED"" text=""#000000"" link=""#000000"" vlink=""#000000"" alink=""#FF0000"" "
    If Request("SG") = "" Then
       DB_GetLinkData RS, Session("p_cliente"), "MESA"
       If Not RS.EOF Then
@@ -236,7 +236,7 @@ Sub ExibeDocs1
    ShowHTML "  <b><CENTER><table border=0 cellpadding=0 height=""80"" width=""100%"">"
    ShowHTML "      <tr><td width=""100%"" valign=""center"" align=""center"">"
    DB_GetCustomerData RS, Session("p_cliente")
-   ShowHTML "         <img src=""" & conFileVirtual & Session("p_cliente") & "/img/" & RS("logo1") & """ vspace=""0"" hspace=""0"" border=""1""></td></tr>"
+   ShowHTML "         <img src=""" & conFileVirtual & Session("p_cliente") & "img\" & RS("logo1") & """ vspace=""0"" hspace=""0"" border=""1""></td></tr>"
    DesconectaBD
    ShowHTML "      <tr><td height=1><tr><td height=1 bgcolor=""#000000"">"
    ShowHTML "      <tr><td colspan=2 width=""100%""><table border=0 width=""100%"" cellpadding=0 cellspacing=0><tr valign=""top"">"
