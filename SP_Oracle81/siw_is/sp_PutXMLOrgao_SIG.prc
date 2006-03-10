@@ -15,7 +15,11 @@ begin
           and cd_orgao      = p_chave
           and cd_tipo_orgao = p_tipo_org;
    Else
-      select count(*) into w_cont from is_sig_orgao a where a.cd_orgao = p_chave and a.cd_tipo_orgao = p_tipo_org;
+      select count(*) into w_cont 
+        from is_sig_orgao a 
+       where a.cd_orgao      = p_chave 
+         and a.cd_tipo_orgao = p_tipo_org
+         and a.ano           = p_ano;
       If w_cont = 0 
          Then w_operacao := 'I';
          Else w_operacao := 'A';
