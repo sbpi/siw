@@ -498,6 +498,7 @@ SP_Oracle81/siw/SP_GetTramiteSolic.prc -text
 SP_Oracle81/siw/SP_PutAfastamento.prc -text
 SP_Oracle81/siw/SP_PutCargo.prc -text
 SP_Oracle81/siw/SP_PutCiaTrans.prc -text
+SP_Oracle81/siw/SP_PutCodigoExterno.prc -text
 SP_Oracle81/siw/SP_PutDataEspecial.prc -text
 SP_Oracle81/siw/SP_PutDcOcorrencia.prc -text
 SP_Oracle81/siw/SP_PutGPColaborador.prc -text
@@ -1616,6 +1617,7 @@ SP_Oracle92/siw/SP_GetSIWArquivo.prc -text
 SP_Oracle92/siw/SP_GetTramiteSolic.prc -text
 SP_Oracle92/siw/SP_PutAfastamento.prc -text
 SP_Oracle92/siw/SP_PutCiaTrans.prc -text
+SP_Oracle92/siw/SP_PutCodigoExterno.prc -text
 SP_Oracle92/siw/SP_PutDataEspecial.prc -text
 SP_Oracle92/siw/SP_PutDcOcorrencia.prc -text
 SP_Oracle92/siw/SP_PutGPColaborador.prc -text
