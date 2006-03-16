@@ -7,11 +7,12 @@ create or replace procedure SP_GetDeskTop
    w_interno  varchar2(1);
 begin
    -- Verifica se o vínculo do usuário com a organização é interno ou externo
-   select interno into w_interno
-     from co_pessoa                  a,
+   select decode(count(*),0,'N','S') into w_interno
+     from co_pessoa       a,
           co_tipo_vinculo b
-         where (a.sq_tipo_vinculo = b.sq_tipo_vinculo)
-           and a.sq_pessoa = p_usuario;
+         where a.sq_tipo_vinculo = b.sq_tipo_vinculo
+           and b.interno         = 'S'
+           and a.sq_pessoa       = p_usuario;
 
    If w_interno = 'S' Then
       -- Recupera a lista de solicitações da mesa de trabalho do usuário

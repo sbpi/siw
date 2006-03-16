@@ -7,9 +7,11 @@ create or replace procedure SP_GetDeskTop
    w_interno  varchar2(1);
 begin
    -- Verifica se o vínculo do usuário com a organização é interno ou externo
-   select interno into w_interno
+   select case when count(*) > 0 then 'S' else 'N' end into w_interno
      from co_pessoa                  a 
-          inner join co_tipo_vinculo b on (a.sq_tipo_vinculo = b.sq_tipo_vinculo) 
+          inner join co_tipo_vinculo b on (a.sq_tipo_vinculo = b.sq_tipo_vinculo and
+                                           b.interno         = 'S'
+                                          ) 
          where a.sq_pessoa = p_usuario;
    
    If w_interno = 'S' Then
