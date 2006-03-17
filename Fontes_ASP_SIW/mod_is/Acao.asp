@@ -1952,7 +1952,11 @@ Sub Metas
   Dim w_inicio, w_fim, w_inicio_real, w_fim_real, w_perc_conclusao, w_orcamento
   Dim w_sq_pessoa, w_sq_unidade, w_quantidade, w_cumulativa
   Dim w_unidade_medida, w_programada, w_cd_subacao
-  
+  Dim w_cron_ini_1, w_cron_ini_2, w_cron_ini_3, w_cron_ini_4, w_cron_ini_5, w_cron_ini_6
+  Dim w_cron_ini_7, w_cron_ini_8, w_cron_ini_9, w_cron_ini_10, w_cron_ini_11, w_cron_ini_12
+  Dim w_previsto_acao_1, w_previsto_acao_2, w_previsto_acao_3, w_previsto_acao_4, w_previsto_acao_5, w_previsto_acao_6
+  Dim w_previsto_acao_7, w_previsto_acao_8, w_previsto_acao_9, w_previsto_acao_10, w_previsto_acao_11, w_previsto_acao_12
+
   Dim w_troca, i, w_texto
   
   w_Chave           = Request("w_Chave")
@@ -1974,6 +1978,30 @@ Sub Metas
      w_cumulativa           = Request("w_cumulativa")
      w_programada           = Request("w_programada")
      w_cd_subacao           = Request("w_cd_subacao")
+     w_cron_ini_1           = Request("w_cron_ini_1")
+     w_cron_ini_2           = Request("w_cron_ini_2")
+     w_cron_ini_3           = Request("w_cron_ini_3")
+     w_cron_ini_4           = Request("w_cron_ini_4")
+     w_cron_ini_5           = Request("w_cron_ini_5")
+     w_cron_ini_6           = Request("w_cron_ini_6")
+     w_cron_ini_7           = Request("w_cron_ini_7")
+     w_cron_ini_8           = Request("w_cron_ini_8")
+     w_cron_ini_9           = Request("w_cron_ini_9")
+     w_cron_ini_10          = Request("w_cron_ini_10")
+     w_cron_ini_11          = Request("w_cron_ini_11")
+     w_cron_ini_12          = Request("w_cron_ini_12")      
+     w_previsto_acao_1      = Request("w_previsto_acao_1")
+     w_previsto_acao_2      = Request("w_previsto_acao_2")
+     w_previsto_acao_3      = Request("w_previsto_acao_3")
+     w_previsto_acao_4      = Request("w_previsto_acao_4")
+     w_previsto_acao_5      = Request("w_previsto_acao_5")
+     w_previsto_acao_6      = Request("w_previsto_acao_6")
+     w_previsto_acao_7      = Request("w_previsto_acao_7")
+     w_previsto_acao_8      = Request("w_previsto_acao_8")
+     w_previsto_acao_9      = Request("w_previsto_acao_9")
+     w_previsto_acao_10     = Request("w_previsto_acao_10")
+     w_previsto_acao_11     = Request("w_previsto_acao_11")
+     w_previsto_acao_12     = Request("w_previsto_acao_12")         
   ElseIf O = "L" Then
      ' Recupera todos os registros para a listagem
      DB_GetSolicMeta_IS RS, w_chave, null, "LISTA", null
@@ -1997,6 +2025,30 @@ Sub Metas
      w_cumulativa           = RS("cumulativa")
      w_programada           = RS("programada")
      w_cd_subacao           = RS("cd_subacao")
+     w_cron_ini_1           = Nvl(RS("cron_ini_mes_1"),"")
+     w_cron_ini_2           = Nvl(RS("cron_ini_mes_2"),"")
+     w_cron_ini_3           = Nvl(RS("cron_ini_mes_3"),"")
+     w_cron_ini_4           = Nvl(RS("cron_ini_mes_4"),"")
+     w_cron_ini_5           = Nvl(RS("cron_ini_mes_5"),"")
+     w_cron_ini_6           = Nvl(RS("cron_ini_mes_6"),"")
+     w_cron_ini_7           = Nvl(RS("cron_ini_mes_7"),"")
+     w_cron_ini_8           = Nvl(RS("cron_ini_mes_8"),"")
+     w_cron_ini_9           = Nvl(RS("cron_ini_mes_9"),"")
+     w_cron_ini_10          = Nvl(RS("cron_ini_mes_10"),"")
+     w_cron_ini_11          = Nvl(RS("cron_ini_mes_11"),"")
+     w_cron_ini_12          = Nvl(RS("cron_ini_mes_12"),"")   
+     w_previsto_acao_1      = FormatNumber(cDbl(Nvl(RS("valor_ini_1"),0)),2)
+     w_previsto_acao_2      = FormatNumber(cDbl(Nvl(RS("valor_ini_2"),0)),2)
+     w_previsto_acao_3      = FormatNumber(cDbl(Nvl(RS("valor_ini_3"),0)),2)
+     w_previsto_acao_4      = FormatNumber(cDbl(Nvl(RS("valor_ini_4"),0)),2)
+     w_previsto_acao_5      = FormatNumber(cDbl(Nvl(RS("valor_ini_5"),0)),2)
+     w_previsto_acao_6      = FormatNumber(cDbl(Nvl(RS("valor_ini_6"),0)),2)
+     w_previsto_acao_7      = FormatNumber(cDbl(Nvl(RS("valor_ini_7"),0)),2)
+     w_previsto_acao_8      = FormatNumber(cDbl(Nvl(RS("valor_ini_8"),0)),2)
+     w_previsto_acao_9      = FormatNumber(cDbl(Nvl(RS("valor_ini_9"),0)),2)
+     w_previsto_acao_10     = FormatNumber(cDbl(Nvl(RS("valor_ini_10"),0)),2)
+     w_previsto_acao_11     = FormatNumber(cDbl(Nvl(RS("valor_ini_11"),0)),2)
+     w_previsto_acao_12     = FormatNumber(cDbl(Nvl(RS("valor_ini_12"),0)),2)
      DesconectaBD
   End If
   
@@ -2014,14 +2066,28 @@ Sub Metas
         If Nvl(w_cd_subacao,"") = "" Then
            Validate "w_titulo", "Produto", "", "1", "2", "100", "1", "1"
            Validate "w_unidade_medida", "Unidade de medida", "", "1", "2", "100", "1", "1"
+           Validate "w_quantidade", "Quantitativo programado", "VALOR", "1", "1", "18", "", "0123456789,."
+           CompValor "w_quantidade", "Quantitativo programado", ">", "0,00", "zero"
         End If
-        Validate "w_quantidade", "Quantitativo programado", "VALOR", "1", "1", "18", "", "0123456789,."
-        CompValor "w_quantidade", "Quantitativo programado", ">", "0,00", "zero"
-        Validate "w_descricao", "Especificação do produto", "", "", "2", "2000", "1", "1"
+        Validate "w_descricao", "Especificação do produto", "1", "1", "2", "2000", "1", "1"
         Validate "w_ordem", "Ordem", "1", "1", "1", "3", "", "0123456789"
         Validate "w_inicio", "Início previsto", "DATA", "1", "10", "10", "", "0123456789/"
         Validate "w_fim", "Fim previsto", "DATA", "1", "10", "10", "", "0123456789/"
         CompData "w_inicio", "Início previsto", "<=", "w_fim", "Fim previsto"
+        If Nvl(w_cd_subacao,"") = "" Then
+           Validate "w_cron_ini_1", "Quantitativo previsto de Janeiro", "", "", "1", "10", "", "0123456789"
+           Validate "w_cron_ini_2", "Quantitativo previsto de Fevereiro", "", "", "1", "10", "", "0123456789"
+           Validate "w_cron_ini_3", "Quantitativo previsto de Março", "", "", "1", "10", "", "0123456789"
+           Validate "w_cron_ini_4", "Quantitativo previsto de Abril", "", "", "1", "10", "", "0123456789"
+           Validate "w_cron_ini_5", "Quantitativo previsto de Maio", "", "", "1", "10", "", "0123456789"
+           Validate "w_cron_ini_6", "Quantitativo previsto de Junho", "", "", "1", "10", "", "0123456789"
+           Validate "w_cron_ini_7", "Quantitativo previsto de Julho", "", "", "1", "10", "", "0123456789"
+           Validate "w_cron_ini_8", "Quantitativo previsto de Agosto", "", "", "1", "10", "", "0123456789"
+           Validate "w_cron_ini_9", "Quantitativo previsto de Setembro", "", "", "1", "10", "", "0123456789"
+           Validate "w_cron_ini_10", "Quantitativo previsto de Outubro", "", "", "1", "10", "", "0123456789"
+           Validate "w_cron_ini_11", "Quantitativo previsto de Novembro", "", "", "1", "10", "", "0123456789"
+           Validate "w_cron_ini_12", "Quantitativo previsto de Dezembro", "", "", "1", "10", "", "0123456789"
+        End If
      End If
      ShowHTML "  theForm.Botao[0].disabled=true;"
      ShowHTML "  theForm.Botao[1].disabled=true;"
@@ -2088,9 +2154,20 @@ Sub Metas
     ShowHTML "<INPUT type=""hidden"" name=""w_perc_conclusao"" value=""0"">"
     If w_cd_subacao > "" Then
        ShowHTML "<INPUT type=""hidden"" name=""w_titulo"" value=""" & w_titulo & """>"
-       ShowHTML "<INPUT type=""hidden"" name=""w_cumulativa"" value=""" & w_cumulativa & """>"
        ShowHTML "<INPUT type=""hidden"" name=""w_unidade_medida"" value=""" & w_unidade_medida & """>"
        ShowHTML "<INPUT type=""hidden"" name=""w_quantidade"" value=""" & w_quantidade & """>"
+       ShowHTML "<INPUT type=""hidden"" name=""w_referencia_1"" value=""01/01/2004"">"
+       ShowHTML "<INPUT type=""hidden"" name=""w_referencia_2"" value=""01/02/2004"">"
+       ShowHTML "<INPUT type=""hidden"" name=""w_referencia_3"" value=""01/03/2004"">"
+       ShowHTML "<INPUT type=""hidden"" name=""w_referencia_4"" value=""01/04/2004"">"
+       ShowHTML "<INPUT type=""hidden"" name=""w_referencia_5"" value=""01/05/2004"">"
+       ShowHTML "<INPUT type=""hidden"" name=""w_referencia_6"" value=""01/06/2004"">"
+       ShowHTML "<INPUT type=""hidden"" name=""w_referencia_7"" value=""01/07/2004"">"
+       ShowHTML "<INPUT type=""hidden"" name=""w_referencia_8"" value=""01/08/2004"">"
+       ShowHTML "<INPUT type=""hidden"" name=""w_referencia_9"" value=""01/09/2004"">"
+       ShowHTML "<INPUT type=""hidden"" name=""w_referencia_10"" value=""01/10/2004"">"
+       ShowHTML "<INPUT type=""hidden"" name=""w_referencia_11"" value=""01/11/2004"">"
+       ShowHTML "<INPUT type=""hidden"" name=""w_referencia_12"" value=""01/12/2004"">"
     End If
     ShowHTML "<tr bgcolor=""" & conTrBgColor & """><td align=""center"">"
     ShowHTML "    <table width=""97%"" border=""0"">"
@@ -2098,16 +2175,16 @@ Sub Metas
        w_Disabled = "DISABLED"
     End If
     ShowHTML "      <tr><td><font size=""1""><b>Prod<u>u</u>to:</b><br><input " & w_Disabled & " accesskey=""U"" type=""text"" name=""w_titulo"" class=""STI"" SIZE=""90"" MAXLENGTH=""90"" VALUE=""" & w_titulo & """ title=""Informe o bem ou serviço que resulta da ação, destinado ao público-alvo ou o investimento para a produção deste bem ou serviço. Em situações especiais, expressa a quantidade de beneficiários atendidos pela ação.""></td>"
-    ShowHTML "     <tr><td valign=""top"" colspan=""2""><table border=0 width=""100%"" cellspacing=0><tr valign=""top"">"
-    MontaRadioNS "<b>Meta cumulativa?</b>", w_cumulativa, "w_cumulativa"
     If w_cd_subacao > "" Then
        w_Disabled = ""
-    End If
+    End If    
+    ShowHTML "     <tr><td valign=""top"" colspan=""2""><table border=0 width=""100%"" cellspacing=0><tr valign=""top"">"
+    MontaRadioNS "<b>Meta cumulativa?</b>", w_cumulativa, "w_cumulativa"
     MontaRadioNS "<b>Meta do PNPIR?</b>", w_programada, "w_programada"
+    ShowHTML "         </table></td></tr>"
     If w_cd_subacao > "" Then
        w_Disabled = "DISABLED"
     End If
-    ShowHTML "         </table></td></tr>"
     ShowHTML "     <tr><td valign=""top"" colspan=""2""><table border=0 width=""100%"" cellspacing=0><tr valign=""top"">"
     ShowHTML "         <tr><td align=""left""><font size=""1""><b><u>Q</u>uantitativo:<br><input accesskey=""Q"" type=""text"" name=""w_quantidade"" class=""STI"" SIZE=""18"" MAXLENGTH=""18"" VALUE=""" & w_quantidade & """ " & w_Disabled & " onKeyDown=""FormataValor(this,18,2,event);"" title=""Indicar a quantidade da meta da ação programada para determinado período de tempo.""></td>"    
     ShowHTML "             <td align=""left""><font size=""1""><b><u>U</u>nidade de medida:<br><INPUT ACCESSKEY=""U"" TYPE=""TEXT"" CLASS=""STI"" NAME=""w_unidade_medida"" SIZE=15 MAXLENGTH=30 VALUE=""" & w_unidade_medida & """ " & w_Disabled & " title=""Informar o padrão escolhido para mensuração da relação adotada como meta.""></td>"
@@ -2119,6 +2196,50 @@ Sub Metas
     ShowHTML "              <td><font size=""1""><b>Previsão iní<u>c</u>io:</b><br><input accesskey=""C"" type=""text"" name=""w_inicio"" class=""STI"" SIZE=""10"" MAXLENGTH=""10"" VALUE=""" & FormataDataEdicao(Nvl(w_inicio,Date())) & """ onKeyDown=""FormataData(this,event);"" title=""Data prevista para início da meta."" title=""Usar formato dd/mm/aaaa""></td>"
     ShowHTML "              <td><font size=""1""><b>Previsão <u>t</u>érmino:</b><br><input accesskey=""T"" type=""text"" name=""w_fim"" class=""STI"" SIZE=""10"" MAXLENGTH=""10"" VALUE=""" & FormataDataEdicao(w_fim) & """ onKeyDown=""FormataData(this,event);"" title=""Data prevista para término da meta."" title=""Usar formato dd/mm/aaaa""></td>"
     ShowHTML "          </table>"
+    If w_cd_subacao > "" Then
+       w_Disabled = ""
+       ShowHTML "     <tr><td valign=""top"" colspan=""1"">"
+       ShowHTML "       <table border=0 width=""40%"" cellspacing=0>"
+       ShowHTML "         <tr><td>&nbsp<td title=""Informe o meta programada mês a mês, nos campos abaixo.""><font size=""1""><br><b>Quantitativo programado</b></td>"
+       ShowHTML "             <td><font size=""1""><br><b>Financeiro programado</b></td>"
+       ShowHTML "         <tr><td width=""4%"" align=""right""><font size=""1""><b>Janeiro:"
+       ShowHTML "             <td width=""8%""><font size=""1""><INPUT TYPE=""TEXT"" CLASS=""STI"" NAME=""w_cron_ini_1"" SIZE=10 MAXLENGTH=18 VALUE=""" & w_cron_ini_1 & """ " & w_Disabled & "></td>"
+       ShowHTML "             <td width=""5%"" align=""right""><font size=""1"">"& Nvl(w_previsto_acao_1,"---") & "</td>"
+       ShowHTML "         <tr><td align=""right""><font size=""1""><b>Fevereiro:"
+       ShowHTML "             <td><font size=""1""><INPUT TYPE=""TEXT"" CLASS=""STI"" NAME=""w_cron_ini_2"" SIZE=10 MAXLENGTH=18 VALUE=""" & w_cron_ini_2 & """ " & w_Disabled & "></td>"
+       ShowHTML "             <td align=""right""><font size=""1"">"& Nvl(w_previsto_acao_2,"---") & "</td>"
+       ShowHTML "         <tr><td align=""right""><font size=""1""><b>Março:"
+       ShowHTML "             <td><font size=""1""><INPUT TYPE=""TEXT"" CLASS=""STI"" NAME=""w_cron_ini_3"" SIZE=10 MAXLENGTH=18 VALUE=""" & w_cron_ini_3 & """ " & w_Disabled & "></td>"
+       ShowHTML "             <td align=""right""><font size=""1"">"& Nvl(w_previsto_acao_3,"---") & "</td>"
+       ShowHTML "         <tr><td align=""right""><font size=""1""><b>Abril:"
+       ShowHTML "             <td><font size=""1""><INPUT TYPE=""TEXT"" CLASS=""STI"" NAME=""w_cron_ini_4"" SIZE=10 MAXLENGTH=18 VALUE=""" & w_cron_ini_4 & """ " & w_Disabled & "></td>"
+       ShowHTML "             <td align=""right""><font size=""1"">"& Nvl(w_previsto_acao_4,"---") & "</td>"
+       ShowHTML "         <tr><td align=""right""><font size=""1""><b>Maio:"
+       ShowHTML "             <td><font size=""1""><INPUT TYPE=""TEXT"" CLASS=""STI"" NAME=""w_cron_ini_5"" SIZE=10 MAXLENGTH=18 VALUE=""" & w_cron_ini_5 & """ " & w_Disabled & "></td>"
+       ShowHTML "             <td align=""right""><font size=""1"">"& Nvl(w_previsto_acao_5,"---") & "</td>"
+       ShowHTML "         <tr><td align=""right""><font size=""1""><b>Junho:"
+       ShowHTML "             <td><font size=""1""><INPUT TYPE=""TEXT"" CLASS=""STI"" NAME=""w_cron_ini_6"" SIZE=10 MAXLENGTH=18 VALUE=""" & w_cron_ini_6 & """ " & w_Disabled & " ></td>"
+       ShowHTML "             <td align=""right""><font size=""1"">"& Nvl(w_previsto_acao_6,"---") & "</td>"
+       ShowHTML "         <tr><td align=""right""><font size=""1""><b>Julho:"
+       ShowHTML "             <td><font size=""1""><INPUT TYPE=""TEXT"" CLASS=""STI"" NAME=""w_cron_ini_7"" SIZE=10 MAXLENGTH=18 VALUE=""" & w_cron_ini_7 & """ " & w_Disabled & "></td>"
+       ShowHTML "             <td align=""right""><font size=""1"">"& Nvl(w_previsto_acao_7,"---") & "</td>"
+       ShowHTML "         <tr><td align=""right""><font size=""1""><b>Agosto:"
+       ShowHTML "             <td><font size=""1""><INPUT TYPE=""TEXT"" CLASS=""STI"" NAME=""w_cron_ini_8"" SIZE=10 MAXLENGTH=18 VALUE=""" & w_cron_ini_8 & """ " & w_Disabled & "></td>"
+       ShowHTML "             <td align=""right""><font size=""1"">"& Nvl(w_previsto_acao_8,"---") & "</td>"
+       ShowHTML "         <tr><td align=""right""><font size=""1""><b>Setembro:"
+       ShowHTML "             <td><font size=""1""><INPUT TYPE=""TEXT"" CLASS=""STI"" NAME=""w_cron_ini_9"" SIZE=10 MAXLENGTH=18 VALUE=""" & w_cron_ini_9 & """ " & w_Disabled & "></td>"
+       ShowHTML "             <td align=""right""><font size=""1"">"& Nvl(w_previsto_acao_9,"---") & "</td>"
+       ShowHTML "         <tr><td align=""right""><font size=""1""><b>Outubro:"
+       ShowHTML "             <td><font size=""1""><INPUT TYPE=""TEXT"" CLASS=""STI"" NAME=""w_cron_ini_10"" SIZE=10 MAXLENGTH=18 VALUE=""" & w_cron_ini_10 & """ " & w_Disabled & "></td>"
+       ShowHTML "             <td align=""right""><font size=""1"">"& Nvl(w_previsto_acao_10,"---") & "</td>"
+       ShowHTML "         <tr><td align=""right""><font size=""1""><b>Novembro:"
+       ShowHTML "             <td><font size=""1""><INPUT TYPE=""TEXT"" CLASS=""STI"" NAME=""w_cron_ini_11"" SIZE=10 MAXLENGTH=18 VALUE=""" & w_cron_ini_11 & """ " & w_Disabled & "></td>"
+       ShowHTML "             <td align=""right""><font size=""1"">"& Nvl(w_previsto_acao_11,"---") & "</td>"
+       ShowHTML "         <tr><td align=""right""><font size=""1""><b>Dezembro:"
+       ShowHTML "             <td><font size=""1""><INPUT TYPE=""TEXT"" CLASS=""STI"" NAME=""w_cron_ini_12"" SIZE=10 MAXLENGTH=18 VALUE=""" & w_cron_ini_12 & """ " & w_Disabled & " ></td>"
+       ShowHTML "             <td align=""right""><font size=""1"">"& Nvl(w_previsto_acao_12,"---") & "</td>"
+       ShowHTML "       </table>"    
+    End If
     ShowHTML "      <tr><td valign=""top"" colspan=""2""><table border=0 width=""100%"" cellspacing=0>"
     ShowHTML "          <tr>"
     ShowHTML "      <tr>"
@@ -4845,11 +4966,19 @@ Public Sub Grava
      ' Verifica se a Assinatura Eletrônica é válida
      If (VerificaAssinaturaEletronica(Session("Username"),w_assinatura) and w_assinatura > "") or _
         w_assinatura = "" Then
+        dbms.BeginTrans()
         DML_PutAcaoMeta_IS O, Request("w_chave"), Request("w_chave_aux"), _
            Request("w_titulo"), Request("w_descricao"), Request("w_ordem"), Request("w_inicio"), _
            Request("w_fim"), Request("w_perc_conclusao"), Request("w_orcamento"), _
            Request("w_programada"),Request("w_cumulativa"),Request("w_quantidade"),Request("w_unidade_medida")
-          
+        'For i = 1 to 12
+        '   DML_PutMetaMensalIni_IS "W", Request("w_chave_aux"), Trim(Request("w_cron_ini_"&i&"")), Request("w_referencia_"&i&""), w_cliente
+        'Next 
+        DML_PutMetaMensalIni_IS "W", Request("w_chave_aux"), w_cliente, _
+           Trim(Request("w_cron_ini_1")), Trim(Request("w_cron_ini_2")), Trim(Request("w_cron_ini_3")), Trim(Request("w_cron_ini_4")), _
+           Trim(Request("w_cron_ini_5")), Trim(Request("w_cron_ini_6")), Trim(Request("w_cron_ini_7")), Trim(Request("w_cron_ini_8")), _
+           Trim(Request("w_cron_ini_9")), Trim(Request("w_cron_ini_10")), Trim(Request("w_cron_ini_11")), Trim(Request("w_cron_ini_12"))
+        dbms.CommitTrans()
         ScriptOpen "JavaScript"
         ' Recupera a sigla do serviço pai, para fazer a chamada ao menu
         DB_GetLinkData RS, Session("p_cliente"), SG
@@ -5048,7 +5177,7 @@ Public Sub Grava
            ShowHTML "  alert('ATENÇÃO: Outro usuário já encaminhou esta ação para outra fase de execução!');"
            ScriptClose
         Else
-           DML_PutProjetoEnvio Request("w_menu"), Request("w_chave"), w_usuario, Request("w_tramite"), Request("w_novo_tramite"), "N", Request("w_observacao"), Request("w_destinatario"), Request("w_despacho"), null, null, null
+           DML_PutProjetoEnvio Request("w_menu"), Request("w_chave"), w_usuario, Request("w_tramite"), Request("w_novo_tramite"), "N", Request("w_observacao"), Request("w_destinatario"), Request("w_despacho"), null, null, null, null
            
            ' Envia e-mail comunicando a tramitação
            If Request("w_novo_tramite") > "" Then

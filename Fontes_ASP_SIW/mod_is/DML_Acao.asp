@@ -390,11 +390,11 @@ Sub DML_PutAcaoMeta_IS(Operacao, p_chave, p_chave_aux, p_titulo, _
      
      If Session("dbms") = 1 or Session("dbms") = 3 Then .Properties("PLSQLRSet") = TRUE End If
      .CommandText               = Session("schema_is") & "SP_PutAcaoMeta_IS"
-     On Error Resume Next
+     'On Error Resume Next
      .Execute
-     If Err.Description > "" Then 
-        TrataErro
-     End If
+     'If Err.Description > "" Then 
+     '   TrataErro
+     'End If
      If Session("dbms") = 1 or Session("dbms") = 3 Then .Properties("PLSQLRSet") = FALSE End If
      .parameters.Delete         "l_Operacao"
      .parameters.Delete         "l_chave"
@@ -481,8 +481,14 @@ Sub DML_PutMetaMensal_IS(Operacao, p_chave, p_realizado, p_revisado, p_referenci
   with sp
      set l_Operacao             = .CreateParameter("l_operacao",            adVarchar, adParamInput,   1, Operacao)
      set l_chave                = .CreateParameter("l_chave",               adInteger, adParamInput,    , Tvl(p_chave))
-     set l_realizado            = .CreateParameter("l_realizado",           adInteger, adParamInput,    , Nvl(p_realizado,0))
-     set l_revisado             = .CreateParameter("l_revisado",            adInteger, adParamInput,    , Nvl(p_revisado,0))
+     set l_realizado            = .CreateParameter("l_realizado",           adNumeric ,adParamInput)
+     l_realizado.Precision      = 18
+     l_realizado.NumericScale   = 4
+     l_realizado.Value          = Tvl(p_realizado)
+     set l_revisado             = .CreateParameter("l_revisado",           adNumeric ,adParamInput)
+     l_revisado.Precision       = 18
+     l_revisado.NumericScale    = 4
+     l_revisado.Value           = Tvl(p_revisado)
      set l_referencia           = .CreateParameter("l_referencia",          adDate,    adParamInput,    , Tvl(p_referencia))
      set l_cliente              = .CreateParameter("l_cliente",             adInteger, adParamInput,    , Tvl(p_cliente))
      
@@ -492,14 +498,14 @@ Sub DML_PutMetaMensal_IS(Operacao, p_chave, p_realizado, p_revisado, p_referenci
      .parameters.Append         l_revisado
      .parameters.Append         l_referencia
      .parameters.Append         l_cliente
-     If Session("dbms") = 1 or Session("dbms") = 3 Then .Properties("PLSQLRSet") = TRUE End If
+
      .CommandText               = Session("schema_is") & "SP_PutMetaMensal_IS"
      On Error Resume Next
      .Execute
      If Err.Description > "" Then 
         TrataErro
      End If
-     If Session("dbms") = 1 or Session("dbms") = 3 Then .Properties("PLSQLRSet") = FALSE End If
+
      .parameters.Delete         "l_Operacao"
      .parameters.Delete         "l_chave"
      .parameters.Delete         "l_realizado"
@@ -508,9 +514,93 @@ Sub DML_PutMetaMensal_IS(Operacao, p_chave, p_realizado, p_revisado, p_referenci
      .parameters.Delete         "l_cliente"
   end with
 End Sub
+
 REM =========================================================================
-REM Final da rotina
+REM Mantém a tabela de atualzação mensal das metas de uma ação
 REM -------------------------------------------------------------------------
+Sub DML_PutMetaMensalIni_IS(Operacao, p_chave, p_cliente, _
+        p_cronogramado_1, p_cronogramado_2,  p_cronogramado_3,  p_cronogramado_4, _
+        p_cronogramado_5, p_cronogramado_6,  p_cronogramado_7,  p_cronogramado_8, _
+        p_cronogramado_9, p_cronogramado_10, p_cronogramado_11, p_cronogramado_12)
+
+  Dim l_Operacao, l_chave, l_cliente
+  Dim l_cronogramado_1, l_cronogramado_2,  l_cronogramado_3,  l_cronogramado_4 
+  Dim l_cronogramado_5, l_cronogramado_6,  l_cronogramado_7,  l_cronogramado_8 
+  Dim l_cronogramado_9, l_cronogramado_10, l_cronogramado_11, l_cronogramado_12 
+    
+  Set l_Operacao            = Server.CreateObject("ADODB.Parameter") 
+  Set l_chave               = Server.CreateObject("ADODB.Parameter") 
+  Set l_cliente             = Server.CreateObject("ADODB.Parameter")
+  Set l_cronogramado_1      = Server.CreateObject("ADODB.Parameter")
+  Set l_cronogramado_2      = Server.CreateObject("ADODB.Parameter")
+  Set l_cronogramado_3      = Server.CreateObject("ADODB.Parameter")
+  Set l_cronogramado_4      = Server.CreateObject("ADODB.Parameter")
+  Set l_cronogramado_5      = Server.CreateObject("ADODB.Parameter")
+  Set l_cronogramado_6      = Server.CreateObject("ADODB.Parameter")
+  Set l_cronogramado_7      = Server.CreateObject("ADODB.Parameter")
+  Set l_cronogramado_8      = Server.CreateObject("ADODB.Parameter")
+  Set l_cronogramado_9      = Server.CreateObject("ADODB.Parameter")
+  Set l_cronogramado_10     = Server.CreateObject("ADODB.Parameter")
+  Set l_cronogramado_11     = Server.CreateObject("ADODB.Parameter")
+  Set l_cronogramado_12     = Server.CreateObject("ADODB.Parameter")
+  
+  with sp
+     set l_Operacao             = .CreateParameter("l_operacao",            adVarchar, adParamInput,   1, Operacao)
+     set l_chave                = .CreateParameter("l_chave",               adInteger, adParamInput,    , Tvl(p_chave))
+     set l_cliente              = .CreateParameter("l_cliente",             adInteger, adParamInput,    , Tvl(p_cliente))
+     set l_cronogramado_1       = .CreateParameter("l_cronogramado_1",      adDouble,  adParamInput,    , Nvl(p_cronogramado_1,0))
+     set l_cronogramado_2       = .CreateParameter("l_cronogramado_2",      adDouble,  adParamInput,    , Nvl(p_cronogramado_2,0))
+     set l_cronogramado_3       = .CreateParameter("l_cronogramado_3",      adDouble,  adParamInput,    , Nvl(p_cronogramado_3,0))
+     set l_cronogramado_4       = .CreateParameter("l_cronogramado_4",      adDouble,  adParamInput,    , Nvl(p_cronogramado_4,0))
+     set l_cronogramado_5       = .CreateParameter("l_cronogramado_5",      adDouble,  adParamInput,    , Nvl(p_cronogramado_5,0))
+     set l_cronogramado_6       = .CreateParameter("l_cronogramado_6",      adDouble,  adParamInput,    , Nvl(p_cronogramado_6,0))
+     set l_cronogramado_7       = .CreateParameter("l_cronogramado_7",      adDouble,  adParamInput,    , Nvl(p_cronogramado_7,0))
+     set l_cronogramado_8       = .CreateParameter("l_cronogramado_8",      adDouble,  adParamInput,    , Nvl(p_cronogramado_8,0))
+     set l_cronogramado_9       = .CreateParameter("l_cronogramado_9",      adDouble,  adParamInput,    , Nvl(p_cronogramado_9,0))
+     set l_cronogramado_10      = .CreateParameter("l_cronogramado_10",     adDouble,  adParamInput,    , Nvl(p_cronogramado_10,0))
+     set l_cronogramado_11      = .CreateParameter("l_cronogramado_11",     adDouble,  adParamInput,    , Nvl(p_cronogramado_11,0))
+     set l_cronogramado_12      = .CreateParameter("l_cronogramado_12",     adDouble,  adParamInput,    , Nvl(p_cronogramado_12,0))
+     
+     .parameters.Append         l_Operacao
+     .parameters.Append         l_chave
+     .parameters.Append         l_cliente
+     .parameters.Append         l_cronogramado_1
+     .parameters.Append         l_cronogramado_2
+     .parameters.Append         l_cronogramado_3
+     .parameters.Append         l_cronogramado_4
+     .parameters.Append         l_cronogramado_5
+     .parameters.Append         l_cronogramado_6
+     .parameters.Append         l_cronogramado_7
+     .parameters.Append         l_cronogramado_8
+     .parameters.Append         l_cronogramado_9
+     .parameters.Append         l_cronogramado_10
+     .parameters.Append         l_cronogramado_11
+     .parameters.Append         l_cronogramado_12
+
+     .CommandText               = Session("schema_is") & "SP_PutMetaMensalIni_IS"
+     On Error Resume Next
+     .Execute
+     If Err.Description > "" Then 
+        TrataErro
+     End If
+
+     .parameters.Delete         "l_Operacao"
+     .parameters.Delete         "l_chave"
+     .parameters.Delete         "l_cliente"
+     .parameters.Delete         "l_cronogramado_1"
+     .parameters.Delete         "l_cronogramado_2"
+     .parameters.Delete         "l_cronogramado_3"
+     .parameters.Delete         "l_cronogramado_4"
+     .parameters.Delete         "l_cronogramado_5"
+     .parameters.Delete         "l_cronogramado_6"
+     .parameters.Delete         "l_cronogramado_7"
+     .parameters.Delete         "l_cronogramado_8"
+     .parameters.Delete         "l_cronogramado_9"
+     .parameters.Delete         "l_cronogramado_10"
+     .parameters.Delete         "l_cronogramado_11"
+     .parameters.Delete         "l_cronogramado_12"
+  end with
+End Sub
 
 REM =========================================================================
 REM Mantém a tabela de financiamento da ação
@@ -759,7 +849,4 @@ Sub DML_PutRestricao_IS (Operacao, p_restricao, p_chave, p_chave_aux, p_cd_subac
      .parameters.Delete         "l_cliente"
   end with
 End Sub
-REM =========================================================================
-REM Final da rotina
-REM -------------------------------------------------------------------------
 %>
