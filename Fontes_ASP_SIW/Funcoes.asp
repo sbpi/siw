@@ -234,7 +234,7 @@ Function LinkArquivo (p_classe, p_cliente, p_arquivo, p_target, p_hint, p_descri
   Dim l_link, l_classe, l_target, l_hint
 
   ' Monta a chamada para a página que retorna o arquivo
-  l_link = "file.asp?force=true&cliente=" & p_cliente & "&id=" & p_arquivo
+  l_link = "file.asp?force=false&cliente=" & p_cliente & "&id=" & p_arquivo
 
   If uCase(Nvl(p_retorno,"")) = "WORD" Then ' Se for geraçao de Word, dispensa sessão ativa
      ' Altera a chamada padrão, dispensando a sessão
@@ -246,7 +246,7 @@ Function LinkArquivo (p_classe, p_cliente, p_arquivo, p_target, p_hint, p_descri
      If Nvl(p_hint,"")   > "" Then l_hint   = " title=""" & p_hint & """ "    Else l_hint   = "" End If
 
      ' Montagem da tag anchor
-     l_link = "<A " & l_classe & "href=""" & l_link & """" & l_target & l_hint & ">" & p_descricao & "</a>"
+     l_link = "<A " & l_classe & "href=""" & replace(l_link,"force=false","force=true") & """" & l_target & l_hint & ">" & p_descricao & "</a>"
   End If
   
   ' Retorno ao chamador
