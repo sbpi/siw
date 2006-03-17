@@ -62,7 +62,8 @@ for crec in c_Segmento loop
             imagem,             descentralizado,            externo,           target,
             emite_os,           consulta_opiniao,           envia_email,       exibe_relatorio,
             como_funciona,      arquivo_proced,             vinculacao,        data_hora,
-            envia_dia_util,     descricao,                  justificativa
+            envia_dia_util,     descricao,                  justificativa,     controla_ano,
+            libera_edicao
            )
     values (
             w_chave,            drec.sq_modulo,             crec.sq_segmento,  drec.ativo,
@@ -72,7 +73,8 @@ for crec in c_Segmento loop
             drec.imagem,        drec.descentralizado,       drec.externo,      drec.target,
             drec.emite_os,      drec.consulta_opiniao,      drec.envia_email,  drec.exibe_relatorio,
             drec.como_funciona, drec.arquivo_proced,        drec.vinculacao,   drec.data_hora,
-            drec.envia_dia_util,drec.descricao,             drec.justificativa
+            drec.envia_dia_util,drec.descricao,             drec.justificativa,drec.controla_ano,
+            drec.libera_edicao
            );
 
   end loop;
@@ -92,4 +94,3 @@ commit;
 
 end SG_GeraMenuSeg;
 /
-
