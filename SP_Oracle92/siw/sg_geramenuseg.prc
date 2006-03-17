@@ -1,4 +1,4 @@
-create or replace procedure SG_GeraMenuSeg(p_chave in number, p_modulo in varchar2) is
+create or replace procedure SG_GeraMenuSeg(p_cliente_base in number, p_modulo in varchar2) is
 -- Gera a template de menu para ser usada na contratação de módulos por clientes
 -- Deve ser informada a chave do cliente que fornecerá o modelo e o módulo a ser gerado
   w_chave number(10);
@@ -32,7 +32,7 @@ create or replace procedure SG_GeraMenuSeg(p_chave in number, p_modulo in varcha
             inner join siw_modulo b on (a.sq_modulo = b.sq_modulo)
       where b.sigla in p_modulo
         and a.ativo       = 'S'
-        and a.sq_pessoa   = p_chave
+        and a.sq_pessoa   = p_cliente_base
      order by Nvl(a.sq_menu_pai,0),a.ordem;
      
 begin
