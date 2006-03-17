@@ -4829,7 +4829,7 @@ Public Sub Grava
           ShowHTML "  alert('ATENÇÃO: Outro usuário já encaminhou esta ação para outra fase de execução!');"
           ScriptClose
        Else
-          DML_PutProjetoEnvio Request("w_menu"), Request("w_chave"), w_usuario, Request("w_tramite"), Request("w_novo_tramite"), "N", Request("w_observacao"), Request("w_destinatario"), Request("w_despacho"), null, null, null
+          DML_PutProjetoEnvio Request("w_menu"), Request("w_chave"), w_usuario, Request("w_tramite"), Request("w_novo_tramite"), "N", Request("w_observacao"), Request("w_destinatario"), Request("w_despacho"), null, null, null, null
           
           ' Envia e-mail comunicando a tramitação
           If Request("w_novo_tramite") > "" Then
