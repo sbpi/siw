@@ -7,6 +7,7 @@ create or replace procedure SP_PutCVIdent
     p_foto                in varchar2,
     p_tamanho             in number    default null,
     p_tipo                in varchar2  default null,
+    p_nome_original       in varchar2   default null,    
     p_nascimento          in date,
     p_sexo                in varchar2,
     p_sq_estado_civil     in number,
@@ -20,7 +21,6 @@ create or replace procedure SP_PutCVIdent
     p_cpf                 in varchar2,
     p_passaporte_numero   in varchar2   default null,
     p_sq_pais_passaporte  in number     default null,
-    p_nome_original       in varchar2   default null,
     p_chave_nova          out number
    ) is
    w_existe number(18);

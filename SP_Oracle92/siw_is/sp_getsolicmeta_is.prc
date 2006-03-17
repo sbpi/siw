@@ -109,9 +109,16 @@ begin
                 case a.cumulativa when 'S' then 'Sim' else 'Não' end nm_cumulativa,                
                 d.nome_resumido||' ('||f.sigla||')' nm_resp, g.sigla sg_setor,
                 i.solicitante sq_pessoa, i.sq_unidade,
+                m.cd_acao, m.descricao_subacao,                
                 m.real_mes_1, m.real_mes_2, m.real_mes_3, m.real_mes_4, m.real_mes_5,
                 m.real_mes_6, m.real_mes_7, m.real_mes_8, m.real_mes_9, m.real_mes_10,
-                m.real_mes_11, m.real_mes_12, m.previsao_ano, m.atual_ano, m.real_ano
+                m.real_mes_11, m.real_mes_12, m.previsao_ano, m.atual_ano, m.real_ano,
+                m.cron_ini_mes_1, m.cron_ini_mes_2, m.cron_ini_mes_3, m.cron_ini_mes_4,
+                m.cron_ini_mes_5, m.cron_ini_mes_6, m.cron_ini_mes_7, m.cron_ini_mes_8,
+                m.cron_ini_mes_9, m.cron_ini_mes_10, m.cron_ini_mes_11, m.cron_ini_mes_12,
+                m.valor_ini_1, m.valor_ini_2, m.valor_ini_3, m.valor_ini_4, m.valor_ini_5, 
+                m.valor_ini_6, m.valor_ini_7, m.valor_ini_8, m.valor_ini_9, m.valor_ini_10, 
+                m.valor_ini_11, m.valor_ini_12
             from is_meta                             a
                 inner          join siw.siw_solicitacao i on (a.sq_siw_solicitacao = i.sq_siw_solicitacao)
                   inner        join siw.siw_menu        j on (i.sq_menu            = j.sq_menu)
@@ -139,9 +146,16 @@ begin
                 left outer     join (select x.ano, x.cliente, x.cd_programa, x.cd_acao, y.cd_subacao, z.descricao_subacao,
                         x.real_mes_1, x.real_mes_2, x.real_mes_3, x.real_mes_4, x.real_mes_5,
                         x.real_mes_6, x.real_mes_7, x.real_mes_8, x.real_mes_9, x.real_mes_10,
-                        x.real_mes_11, x.real_mes_12, x.previsao_ano, x.atual_ano, x.real_ano
+                        x.real_mes_11, x.real_mes_12, x.previsao_ano, x.atual_ano, x.real_ano,
+                        x.cron_ini_mes_1 valor_ini_1, x.cron_ini_mes_2 valor_ini_2, x.cron_ini_mes_3 valor_ini_3, x.cron_ini_mes_4 valor_ini_4, 
+                        x.cron_ini_mes_5 valor_ini_5, x.cron_ini_mes_6 valor_ini_6, x.cron_ini_mes_7 valor_ini_7, x.cron_ini_mes_8 valor_ini_8, 
+                        x.cron_ini_mes_9 valor_ini_9, x.cron_ini_mes_10 valor_ini_10, x.cron_ini_mes_11 valor_ini_11, x.cron_ini_mes_12 valor_ini_12, 
+                        v.cron_ini_mes_1, v.cron_ini_mes_2, v.cron_ini_mes_3, v.cron_ini_mes_4,
+                        v.cron_ini_mes_5, v.cron_ini_mes_6, v.cron_ini_mes_7, v.cron_ini_mes_8,
+                        v.cron_ini_mes_9, v.cron_ini_mes_10, v.cron_ini_mes_11, v.cron_ini_mes_12
                    from is_acao                w,
                         is_sig_dado_financeiro x,
+                        is_sig_dado_fisico     v,                        
                         is_meta                y,
                         is_sig_acao            z
                   where w.sq_siw_solicitacao = p_chave
@@ -150,6 +164,9 @@ begin
                     and (w.cd_programa        = x.cd_programa     and
                          w.cd_acao            = x.cd_acao         and
                          w.cd_subacao         = x.cd_subacao)
+                    and (w.cd_programa        = v.cd_programa (+) and
+                         w.cd_acao            = v.cd_acao     (+) and
+                         w.cd_subacao         = v.cd_subacao  (+))                         
                     and (w.cd_programa        = z.cd_programa     and
                          w.cd_acao            = z.cd_acao         and
                          w.cd_subacao         = z.cd_subacao      and

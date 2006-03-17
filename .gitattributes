@@ -1154,6 +1154,7 @@ SP_Oracle81/siw/vw_ttresumo_usu.vw -text
 SP_Oracle81/siw_is/SP_GetDefList.prc -text
 SP_Oracle81/siw_is/SP_GetIsUnidadeLimite_IS.prc -text
 SP_Oracle81/siw_is/SP_PutIsUnidadeLimite_IS.prc -text
+SP_Oracle81/siw_is/SP_PutMetaMensalIni_IS.prc -text
 SP_Oracle81/siw_is/acesso_is.fnc -text
 SP_Oracle81/siw_is/carga_is_sig_acao.prc -text
 SP_Oracle81/siw_is/cd_restricao_acao.seq -text
@@ -2274,6 +2275,7 @@ SP_Oracle92/siw/validacnpjcpf.fnc -text
 SP_Oracle92/siw/vw_ttresumo_usu.vw -text
 SP_Oracle92/siw_is/SP_GetIsUnidadeLimite_IS.prc -text
 SP_Oracle92/siw_is/SP_PutIsUnidadeLimite_IS.prc -text
+SP_Oracle92/siw_is/SP_PutMetaMensalIni_IS.prc -text
 SP_Oracle92/siw_is/acesso_is.fnc -text
 SP_Oracle92/siw_is/carga_is_sig_acao.prc -text
 SP_Oracle92/siw_is/cd_restricao_acao.seq -text

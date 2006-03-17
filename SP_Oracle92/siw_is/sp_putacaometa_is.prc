@@ -15,8 +15,25 @@ create or replace procedure SP_PutAcaoMeta_IS
     p_unidade_medida      in varchar2  default null,
     p_pns                 in varchar2  default null
    ) is
-   w_chave    number(18);
-   w_total    float;
+   w_chave      number(18);
+   w_cd_subacao number(4);   
+   w_total      float;
+   w_sql        varchar2(2000);
+   
+   cursor c_atualiza_acao_sig is
+      select 'update is_sig_acao '||
+             '   set meta_nao_cumulativa = '''|| decode(p_cumulativa,'S','N','N','S') ||''','||
+             '       flag_alteracao = sysdate'||
+             ' where ano         = '||b.ano||' '||
+             '   and cliente     = '||b.cliente||'  '||
+             '   and cd_programa = '''||b.cd_programa||''' '||
+             '   and cd_acao     = '''||b.cd_acao||''' '||
+             '   and cd_subacao  = '''||b.cd_subacao ||''' ' w_sql
+        from is_meta    a,
+             is_acao    b
+       where a.sq_siw_solicitacao = b.sq_siw_solicitacao
+         and a.sq_meta = p_chave_aux;
+
 begin
    If p_operacao = 'I' Then -- Inclusão
       -- Recupera a próxima chave
@@ -34,6 +51,12 @@ begin
            p_perc_conclusao,  p_orcamento,        sysdate,            
            p_programada,      p_cumulativa,       p_quantidade,       p_unidade_medida);
    Elsif p_operacao = 'A' Then -- Alteração
+      select cd_subacao into w_cd_subacao from is_meta where sq_meta = p_chave_aux;
+      If Nvl(w_cd_subacao,0) > 0 Then
+         for crec in c_atualiza_acao_sig loop
+            EXECUTE IMMEDIATE crec.w_sql;
+         End loop;
+      End If;
       If p_cumulativa = 'S' Then
          select count(*) into w_total from is_meta_execucao where sq_meta = p_chave_aux;
          If w_total > 0 Then
@@ -86,4 +109,3 @@ begin
    End If;
 end SP_PutAcaoMeta_IS;
 /
-

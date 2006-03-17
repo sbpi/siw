@@ -15,9 +15,15 @@ create or replace procedure SP_PutAcaoMeta_IS
     p_unidade_medida      in varchar2  default null,
     p_pns                 in varchar2  default null
    ) is
-   w_chave    number(18);
-   w_total    float;
-begin
+   w_chave       number(18);
+   w_cd_programa varchar2(4);
+   w_cd_acao     varchar2(4);
+   w_ano         number(4);
+   w_cliente     number(4);
+   w_cd_subacao  number(4);
+   w_total       float;
+   
+begin 
    If p_operacao = 'I' Then -- Inclusão
       -- Recupera a próxima chave
       select sq_meta.nextval into w_chave from dual;
@@ -34,6 +40,25 @@ begin
            p_perc_conclusao,  p_orcamento,        sysdate,            
            p_programada,      p_cumulativa,       p_quantidade,       p_unidade_medida);
    Elsif p_operacao = 'A' Then -- Alteração
+      
+      select cd_subacao into w_cd_subacao from is_meta where sq_meta = p_chave_aux;
+      If Nvl(w_cd_subacao,0) > 0 Then
+         -- Recupera a chave para atualização do campo meta_nao_cumulativa na tabela is_sig_acao
+         select a.cd_programa, a.cd_acao, a.ano, a.cliente into w_cd_programa, w_cd_acao, w_ano, w_cliente
+           from is_acao     a,
+                is_meta     b
+          where a.sq_siw_solicitacao = b.sq_siw_solicitacao
+            and b.sq_meta            = p_chave_aux;
+   
+         update is_sig_acao 
+            set meta_nao_cumulativa = decode(p_cumulativa,'S','N','N','S'),
+                flag_alteracao      = sysdate
+          where cd_programa = w_cd_programa
+            and cd_acao     = w_cd_acao 
+            and cd_subacao  = w_cd_subacao
+            and ano         = w_ano
+            and cliente     = w_cliente;     
+      End If;
       If p_cumulativa = 'S' Then
          select count(*) into w_total from is_meta_execucao where sq_meta = p_chave_aux;
          If w_total > 0 Then
@@ -86,4 +111,3 @@ begin
    End If;
 end SP_PutAcaoMeta_IS;
 /
-
