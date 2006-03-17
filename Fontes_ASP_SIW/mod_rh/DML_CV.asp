@@ -5,7 +5,7 @@ REM -------------------------------------------------------------------------
 Sub DML_PutCVIdent(Operacao, p_cliente, p_chave, p_nome, p_nome_resumido, p_nascimento, p_sexo, _
          p_sq_estado_civil, p_sq_formacao, p_sq_etnia, p_sq_deficiencia, p_cidade, _
          p_rg_numero, p_rg_emissor, p_rg_emissao, p_cpf, p_passaporte_numero, p_sq_pais_passaporte, _
-         p_foto, p_tamanho, p_tipo, , p_nome_original, p_chave_nova)
+         p_foto, p_tamanho, p_tipo, p_nome_original, p_chave_nova)
 
   Dim l_Operacao, l_cliente, l_Chave, l_nome, l_nome_resumido, l_nascimento, l_sexo
   Dim l_sq_estado_civil, l_sq_formacao, l_sq_etnia, l_sq_deficiencia, l_cidade

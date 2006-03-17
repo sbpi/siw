@@ -1,12 +1,13 @@
 <%@ Language=VBScript %>
 <%Option Explicit%>
-<!-- #INCLUDE FILE="../Constants.inc" -->
-<!-- #INCLUDE FILE="../DB_Geral.asp" -->
-<!-- #INCLUDE FILE="../DB_Cliente.asp" -->
-<!-- #INCLUDE FILE="../DB_Seguranca.asp" -->
-<!-- #INCLUDE FILE="../jScript.asp" -->
-<!-- #INCLUDE FILE="../Funcoes.asp" -->
-<!-- #INCLUDE FILE="../Funcoes_Valida.asp" -->
+<!-- #INCLUDE VIRTUAL="/siw/Constants.inc" -->
+<!-- #INCLUDE VIRTUAL="/siw/DB_Geral.asp" -->
+<!-- #INCLUDE VIRTUAL="/siw/DB_Cliente.asp" -->
+<!-- #INCLUDE VIRTUAL="/siw/DB_Seguranca.asp" -->
+<!-- #INCLUDE VIRTUAL="/siw/jScript.asp" -->
+<!-- #INCLUDE VIRTUAL="/siw/Funcoes.asp" -->
+<!-- #INCLUDE VIRTUAL="/siw/Funcoes_Valida.asp" -->
+<!-- #INCLUDE VIRTUAL="/siw/cp_upload/_upload.asp" -->
 <!-- #INCLUDE FILE="DB_SIAFI.asp" -->
 <!-- #INCLUDE FILE="DML_SIAFI.asp" -->
 <!-- #INCLUDE FILE="Funcoes.asp" -->
@@ -46,7 +47,7 @@ Dim dbms, sp, RS, RS1, RS2, RS3, RS4, RS_menu
 Dim P1, P2, P3, P4, TP, SG
 Dim R, O, w_Cont, w_Reg, w_Pagina, w_Disabled, w_TP, w_classe, w_submenu, w_filtro, w_copia
 Dim w_Assinatura, w_caminho
-Dim w_troca,w_cor, w_filter, w_cliente, w_usuario, w_menu, w_dir, w_chave, w_dir_volta
+Dim w_troca,w_cor, w_filter, w_cliente, w_usuario, w_menu, w_dir, w_chave, w_dir_volta, UploadID
 Dim w_sq_pessoa
 Dim ul,File
 Dim p_responsavel, p_dt_ini, p_dt_fim, p_imp_ini, p_imp_fim
@@ -57,8 +58,6 @@ Set RS3 = Server.CreateObject("ADODB.RecordSet")
 Set RS4 = Server.CreateObject("ADODB.RecordSet")
 Set RS_Menu = Server.CreateObject("ADODB.RecordSet")
 
-w_troca            = Request("w_troca")
-w_copia            = Request("w_copia")
   
 Private Par
 
@@ -77,31 +76,41 @@ w_cliente        = RetornaCliente()
 w_usuario        = RetornaUsuario()
 w_menu           = RetornaMenu(w_cliente, SG)
 
+Set ul            = New ASPForm
+
+If Request("UploadID") > "" Then
+   UploadID = Request("UploadID")
+Else
+   UploadID = ul.NewUploadID
+End If
+
 ' Configura o caminho para gravação física de arquivos
 w_caminho = conFilePhysical & w_cliente & "\"
 
 If InStr(uCase(Request.ServerVariables("http_content_type")),"MULTIPART/FORM-DATA") > 0 Then
-   ' Cria o objeto de upload
-   Set ul       = Nothing
-   Set ul       = Server.CreateObject("Dundas.Upload.2")
-   ul.SaveToMemory
+   Server.ScriptTimeout = 2000
+   ul.SizeLimit = &HA00000
+   If UploadID > 0 then
+      ul.UploadID = UploadID
+   End If
+   w_troca          = ul.Texts.Item("w_troca")
+   w_copia          = ul.Texts.Item("w_copia")
+   p_responsavel    = uCase(ul.Texts.Item("p_responsavel"))
+   p_dt_ini         = ul.Texts.Item("p_dt_ini")
+   p_dt_fim         = ul.Texts.Item("p_dt_fim")
+   p_imp_ini        = ul.Texts.Item("p_imp_ini")
+   p_imp_fim        = ul.Texts.Item("p_imp_fim")
 
-   w_troca          = ul.Form("w_troca")
-   p_responsavel    = uCase(ul.Form("p_responsavel"))
-   p_dt_ini         = ul.Form("p_dt_ini")
-   p_dt_fim         = ul.Form("p_dt_fim")
-   p_imp_ini        = ul.Form("p_imp_ini")
-   p_imp_fim        = ul.Form("p_imp_fim")
-
-   P1               = ul.Form("P1")
-   P2               = ul.Form("P2")
-   P3               = ul.Form("P3")
-   P4               = ul.Form("P4")
-   TP               = ul.Form("TP")
-   R                = uCase(ul.Form("R"))
-   w_Assinatura     = uCase(ul.Form("w_Assinatura"))
+   P1               = ul.Texts.Item("P1")
+   P2               = ul.Texts.Item("P2")
+   P3               = ul.Texts.Item("P3")
+   P4               = ul.Texts.Item("P4")
+   TP               = ul.Texts.Item("TP")
+   R                = uCase(ul.Texts.Item("R"))
+   w_Assinatura     = uCase(ul.Texts.Item("w_Assinatura"))
 Else
    w_troca          = Request("w_troca")
+   w_copia          = Request("w_copia")
    p_responsavel    = uCase(Request("p_responsavel"))
    p_dt_ini         = Request("p_dt_ini")
    p_dt_fim         = Request("p_dt_fim")
@@ -210,6 +219,7 @@ Set w_TP          = Nothing
 Set w_Assinatura  = Nothing
 Set w_dir         = Nothing
 Set w_dir_volta   = Nothing
+Set UploadID      = Nothing
 
 REM =========================================================================
 REM Rotina de importação de arquivos físicos para atualização de dados financeiros

@@ -112,7 +112,7 @@ Sub DML_PutProjetoGeral(Operacao, p_chave, p_menu, p_unidade, p_solicitante, p_p
      .parameters.Append         l_selecionada_relev
      .parameters.Append         l_sq_tipo_pessoa
      .parameters.Append         l_chave_nova
-     If Session("dbms") = 1 or Session("dbms") = 3 Then .Properties("PLSQLRSet") = TRUE End If
+
      .CommandText               = Session("schema") & "SP_PutProjetoGeral"
      On Error Resume Next
      .Execute
@@ -120,7 +120,7 @@ Sub DML_PutProjetoGeral(Operacao, p_chave, p_menu, p_unidade, p_solicitante, p_p
         TrataErro
      End If
      p_chave_nova = l_chave_nova.Value
-     If Session("dbms") = 1 or Session("dbms") = 3 Then .Properties("PLSQLRSet") = FALSE End If
+
      .parameters.Delete         "l_Operacao"
      .parameters.Delete         "l_chave"
      .parameters.Delete         "l_copia"
@@ -154,9 +154,6 @@ Sub DML_PutProjetoGeral(Operacao, p_chave, p_menu, p_unidade, p_solicitante, p_p
      .parameters.Delete         "l_chave_nova"
   end with
 End Sub
-REM =========================================================================
-REM Final da rotina
-REM -------------------------------------------------------------------------.
 
 REM =========================================================================
 REM Mantém a tabela OR_ACAO do projeto

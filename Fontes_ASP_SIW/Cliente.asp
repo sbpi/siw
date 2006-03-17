@@ -12,6 +12,7 @@
 <!-- #INCLUDE FILE="jScript.asp" -->
 <!-- #INCLUDE FILE="Funcoes.asp" -->
 <!-- #INCLUDE FILE="VisualCliente.asp" -->
+<!-- #INCLUDE FILE="cp_upload/_upload.asp" -->
 <%
 Response.Expires = -1500
 REM =========================================================================
@@ -53,7 +54,7 @@ Dim P1, P2, P3, P4, TP, SG
 Dim R, O, w_Cont, w_Reg, w_Pagina, w_Disabled, w_TP, w_classe, w_submenu
 Dim w_Assinatura
 Dim p_ativo, p_pais, p_cidade, p_uf, p_nome, p_ordena
-Dim w_troca,w_cor, w_filter, w_dir_volta
+Dim w_troca,w_cor, w_filter, w_dir_volta, UploadID
 Dim w_sq_pessoa
 Dim ul,File, w_cliente, w_dir
 Set RS  = Server.CreateObject("ADODB.RecordSet")
@@ -72,31 +73,53 @@ AbreSessao
 
 ' Carrega variáveis locais com os dados dos parâmetros recebidos
 Par          = ucase(Request("Par"))
-
-P1           = Nvl(Request("P1"),0)
-P2           = Nvl(Request("P2"),0)
-P3           = Request("P3")
-P4           = Request("P4")
-TP           = Request("TP")
-SG           = ucase(Request("SG"))
-R            = uCase(Request("R"))
-O            = uCase(Request("O"))
-w_Assinatura = uCase(Request("w_Assinatura"))
-
-p_uf        = uCase(Request("p_uf"))
-p_cidade    = uCase(Request("p_cidade"))
-p_nome      = uCase(Request("p_nome"))
-p_ativo     = uCase(Request("p_ativo"))
-p_ordena    = uCase(Request("p_ordena"))
-
+w_dir        = ""
 w_Pagina     = "cliente.asp?par="
 w_Disabled   = "ENABLED"
-If O = "L" and (ucase(Request("par")) = "GERAL" or ucase(Request("par")) = "CONFIGURACAO") Then
-   O = "A"
-ElseIf O = "" and ucase(Request("par")) = "CONFIGURACAO" Then
-   O = "A"
-ElseIf O = "" Then
-   O = "L"
+SG           = ucase(Request("SG"))
+O            = uCase(Request("O"))
+' Se receber o código do cliente do SIW, o cliente será determinado por parâmetro;
+' caso contrário, o cliente será a empresa ao qual o usuário logado está vinculado.
+w_cliente         = RetornaCliente()
+
+Set ul            = New ASPForm
+
+If Request("UploadID") > "" Then
+   UploadID = Request("UploadID")
+Else
+   UploadID = ul.NewUploadID
+End If
+      
+If InStr(uCase(Request.ServerVariables("http_content_type")),"MULTIPART/FORM-DATA") > 0 Then  
+   Server.ScriptTimeout = 2000
+   ul.SizeLimit = &HA00000
+   If UploadID > 0 then
+      ul.UploadID = UploadID
+   End If
+
+   P1           = ul.Texts.Item("P1")
+   P2           = ul.Texts.Item("P2")
+   P3           = ul.Texts.Item("P3")
+   P4           = ul.Texts.Item("P4")
+   TP           = ul.Texts.Item("TP")
+   R            = uCase(ul.Texts.Item("R"))
+   w_Assinatura = uCase(ul.Texts.Item("w_Assinatura"))
+Else
+   P1           = Nvl(Request("P1"),0)
+   P2           = Nvl(Request("P2"),0)
+   P3           = Request("P3")
+   P4           = Request("P4")
+   TP           = Request("TP")
+   R            = uCase(Request("R"))
+   w_Assinatura = uCase(Request("w_Assinatura"))
+   
+   If O = "L" and (ucase(Request("par")) = "GERAL" or ucase(Request("par")) = "CONFIGURACAO") Then
+      O = "A"
+   ElseIf O = "" and ucase(Request("par")) = "CONFIGURACAO" Then
+      O = "A"
+   ElseIf O = "" Then
+      O = "L"
+   End If
 End If
 
 Select Case O
@@ -121,25 +144,6 @@ Select Case O
 
 End Select
 
-' Se receber o código do cliente do SIW, o cliente será determinado por parâmetro;
-' caso contrário, o cliente será a empresa ao qual o usuário logado está vinculado.
-w_cliente         = RetornaCliente()
-
-If InStr(uCase(Request.ServerVariables("http_content_type")),"MULTIPART/FORM-DATA") > 0 Then  
-   ' Cria o objeto de upload
-   Set ul       = Nothing
-   Set ul       = Server.CreateObject("Dundas.Upload.2")
-   ul.SaveToMemory  
-
-   P1           = ul.Form("P1")
-   P2           = ul.Form("P2")
-   P3           = ul.Form("P3")
-   P4           = ul.Form("P4")
-   TP           = ul.Form("TP")
-   R            = uCase(ul.Form("R"))
-   w_Assinatura = uCase(ul.Form("w_Assinatura"))
-End If
-
 ' Verifica se o documento tem sub-menu. Se tiver, agrega no HREF uma chamada para montagem do mesmo.
 DB_GetLinkSubMenu RS, Session("p_cliente"), SG
 If RS.RecordCount > 0 Then
@@ -153,6 +157,7 @@ Main
 
 FechaSessao
 
+Set UploadID      = Nothing
 Set w_cliente     = Nothing
 Set w_dir         = Nothing
 Set w_dir_volta   = Nothing
@@ -348,9 +353,6 @@ Sub Inicial
   Rodape
 
 End Sub
-REM =========================================================================
-REM Fim da tabela de clientes
-REM -------------------------------------------------------------------------
 
 REM =========================================================================
 REM Rotina dos dados gerais
@@ -676,9 +678,6 @@ Sub Geral
   Set p_solicitante           = Nothing
 
 End Sub
-REM =========================================================================
-REM Fim da rotina de dados gerais
-REM -------------------------------------------------------------------------
 
 REM =========================================================================
 REM Rotina de endereços
@@ -931,9 +930,6 @@ Sub Enderecos
   
 
 End Sub
-REM =========================================================================
-REM Fim da tela de endereços
-REM -------------------------------------------------------------------------
 
 REM =========================================================================
 REM Rotina de telefones
@@ -1164,9 +1160,6 @@ Sub Telefones
   Set w_cgccpf              = Nothing 
   
 End Sub
-REM =========================================================================
-REM Fim da tela de telefones
-REM -------------------------------------------------------------------------
 
 REM =========================================================================
 REM Rotina de Contas Bancárias
@@ -1407,9 +1400,6 @@ Sub ContasBancarias
   Set w_padrao              = Nothing 
 
 End Sub
-REM =========================================================================
-REM Fim da tela de contas bancárias
-REM -------------------------------------------------------------------------
 
 REM =========================================================================
 REM Rotina de módulos contratados
@@ -1582,9 +1572,6 @@ Sub Modulos
   Set w_cgccpf              = Nothing 
   
 End Sub
-REM =========================================================================
-REM Fim da tela de módulos contratados
-REM -------------------------------------------------------------------------
 
 REM =========================================================================
 REM Rotina de configuração
@@ -1661,6 +1648,7 @@ Sub Configuracao
   FormataCNPJ
   CheckBranco
   FormataData
+  ProgressBar w_dir, UploadID
   ValidateOpen "Validacao"
   Validate "w_smtp_server", "Servidor SMTP", "1", 1, 3, 60, "1", "1"
   Validate "w_siw_email_nome", "Nome", "1", 1, 3, 60, "1", "1"
@@ -1679,6 +1667,8 @@ Sub Configuracao
   Validate "w_logo1", "Logo menu", "1", "", 3, 100, "1", "1"
   Validate "w_fundo", "Fundo menu", "1", "", 3, 100, "1", "1"
   Validate "w_assinatura", "Assinatura Eletrônica", "1", "1", "6", "30", "1", "1"
+  ShowHTML "if (theForm.w_logo.value != '') {return ProgressBar();}"
+  ShowHTML "if (theForm.w_logo1.value != '') {return ProgressBar();}"
   ValidateClose
   ScriptClose
   ShowHTML "</HEAD>"
@@ -1698,7 +1688,7 @@ Sub Configuracao
     If InStr("EV",O) Then
        w_Disabled = " DISABLED "
     End If
-    ShowHTML "<FORM action=""" & w_Pagina & "Grava&O=" & O & "&SG=" & SG & """ method=""POST"" name=""Form"" onSubmit=""return(Validacao(this));"" ENCTYPE=""multipart/form-data"">"
+    ShowHTML "<FORM action=""" & w_Pagina & "Grava&O=" & O & "&UploadID=" & UploadID & "&SG=" & SG & """ method=""POST"" name=""Form"" onSubmit=""return(Validacao(this));"" ENCTYPE=""multipart/form-data"">"
     ShowHTML "<INPUT type=""hidden"" name=""P1"" value=""" & P1 & """>"
     ShowHTML "<INPUT type=""hidden"" name=""P2"" value=""" & P2 & """>"
     ShowHTML "<INPUT type=""hidden"" name=""P3"" value=""" & P3 & """>"
@@ -1820,9 +1810,6 @@ Sub Configuracao
   Set w_sq_pessoa             = Nothing
 
 End Sub
-REM =========================================================================
-REM Fim da tela de configuração
-REM -------------------------------------------------------------------------
 
 REM =========================================================================
 REM Rotina de visualização
@@ -1873,9 +1860,6 @@ Sub Visual
   Set w_sq_pessoa           = Nothing
 
 End Sub
-REM =========================================================================
-REM Fim da rotina de visualização
-REM -------------------------------------------------------------------------
 
 REM =========================================================================
 REM Procedimento que executa as operações de BD
@@ -1886,8 +1870,13 @@ Public Sub Grava
   Dim w_Null
   Dim w_Chave, w_chave1, w_chave2, w_chave3
   Dim w_mensagem
-  Dim FS, F1
-
+  Dim FS, F1, w_file, w_tamanho, w_tipo, w_nome, field, w_maximo
+  
+  w_file    = ""
+  w_tamanho = ""
+  w_tipo    = ""
+  w_nome    = ""
+  
   Cabecalho
   ShowHTML "</HEAD>"
   BodyOpen "onLoad=document.focus();"
@@ -2093,69 +2082,78 @@ Public Sub Grava
        ' Verifica se a Assinatura Eletrônica é válida
        If (VerificaAssinaturaEletronica(Session("Username"),w_assinatura) and w_assinatura > "") or _
           w_assinatura = "" Then
-
           ' O tratamento deste tipo de gravação é diferenciado, em função do uso do objeto upload
-             
-          ' Verifica a necessidade de criação dos diretórios do cliente
-          If ul.Files("w_logo").OriginalPath > "" or ul.Files("w_logo1").OriginalPath > ""  or ul.Files("w_fundo").OriginalPath > "" Then
-             Set FS = CreateObject("Scripting.FileSystemObject")
-             If Not (FS.FolderExists (DiretorioCliente(ul.Form("w_sq_pessoa")))) then
-                Set F1 = FS.CreateFolder(DiretorioCliente(ul.Form("w_sq_pessoa")))
-                Set F1 = FS.CreateFolder(DiretorioCliente(ul.Form("w_sq_pessoa")) & "\img")
-                Set F1 = Nothing
-             End If
-             Set FS = Nothing
-          End If
-
           Dim w_logo, w_logo1, w_fundo
-          ' Se for necessária a alteração dos arquivos
-          If ul.Files("w_logo").OriginalPath > "" Then
-             ' Grava o novo arquivo
-             On Error Resume Next
-             ul.Files("w_logo").SaveAs(conFilePhysical & ul.Form("w_sq_pessoa") & "\img\logo" & Mid(ul.Files("w_logo").OriginalPath,Instr(ul.Files("w_logo").OriginalPath,"."),10))
-             If Err.Number <> 0 Then 
-                ScriptOpen "JavaScript"
-                ShowHTML " alert('Problema na gravação do arquivo \n Caminho a ser gravado: " & Replace(conFilePhysical & ul.Form("w_sq_pessoa") & "\img\logo" & Mid(ul.Files("w_logo").OriginalPath,Instr(ul.Files("w_logo").OriginalPath,"."),10),"\","\\") & "');"
-                ShowHTML " history.back(1);"
-                ScriptClose
-                Exit Sub
-             End If
-             w_logo = "logo" & Mid(ul.Files("w_logo").OriginalPath,Instr(ul.Files("w_logo").OriginalPath,"."),10)
+          Set FS = CreateObject("Scripting.FileSystemObject")
+          If ul.State = 0 Then
+             w_maximo     = ul.Texts.Item("w_upload_maximo")
+             For Each Field in ul.Files.Items
+                If Field.Length > 0 Then
+                   ' Verifica a necessidade de criação dos diretórios do cliente
+                   Set FS = CreateObject("Scripting.FileSystemObject")
+                   If Not (FS.FolderExists (DiretorioCliente(ul.Texts.Item("w_sq_pessoa")))) Then
+                      Set F1 = FS.CreateFolder(DiretorioCliente(ul.Texts.Item("w_sq_pessoa")))
+                      Set F1 = FS.CreateFolder(DiretorioCliente(ul.Texts.Item("w_sq_pessoa")) & "\img")
+                      Set F1 = Nothing
+                   End If
+                   Set FS = Nothing
+                   ' Verifica se o tamanho das fotos está compatível com  o limite de 100KB. 
+                   If cDbl(Field.Length) > cDbl(w_maximo) Then 
+                      ScriptOpen("JavaScript") 
+                      ShowHTML "  alert('Atenção: o tamanho máximo do arquivo não pode exceder " & cDbl(w_maximo)/1024 & " KBytes!');" 
+                      ShowHTML "  history.back(1);" 
+                      ScriptClose 
+                      Response.End() 
+                      exit sub 
+                    End If 
+     
+                   Set FS = CreateObject("Scripting.FileSystemObject")
+                   If Field.Name = "w_logo" Then
+                      w_file = "logo" & Mid(Field.FileName,Instr(Field.FileName,"."),10)
+                      w_logo = "logo" & Mid(Field.FileName,Instr(Field.FileName,"."),10)
+                   Else
+                      w_logo = null
+                   End If
+                   If Field.Name = "w_logo1" Then
+                      w_file  = "logo1" & Mid(Field.FileName,Instr(Field.FileName,"."),10)
+                      w_logo1 = "logo1" & Mid(Field.FileName,Instr(Field.FileName,"."),10)
+                   Else
+                      w_logo1 = null
+                   End If
+                   If Field.Name = "w_fundo" Then
+                      w_file  = "fundo" & Mid(Field.FileName,Instr(Field.FileName,"."),10)
+                      w_fundo = "fundo" & Mid(Field.FileName,Instr(Field.FileName,"."),10)                   
+                   Else
+                      w_fundo = null
+                   End If
+                   If w_file > "" Then
+                      Field.SaveAs conFilePhysical & w_cliente & "\img\" & w_file
+                   End If
+                End If
+             Next
           Else
-             w_logo = null
+             ScriptOpen "JavaScript" 
+             ShowHTML "  alert('ATENÇÃO: ocorreu um erro na transferência do arquivo. Tente novamente!');" 
+             ScriptClose 
+             Response.End()
+             Exit Sub
           End If
-
-          If ul.Files("w_logo1").OriginalPath > "" Then
-             ' Grava o novo arquivo
-             ul.Files("w_logo1").SaveAs(conFilePhysical & ul.Form("w_sq_pessoa") & "\img\logo1" & Mid(ul.Files("w_logo1").OriginalPath,Instr(ul.Files("w_logo1").OriginalPath,"."),10))
-             w_logo1 = "logo1" & Mid(ul.Files("w_logo1").OriginalPath,Instr(ul.Files("w_logo1").OriginalPath,"."),10)
-          Else
-             w_logo1 = null
-          End If
-
-          If ul.Files("w_fundo").OriginalPath > "" Then
-             ' Grava o novo arquivo
-             ul.Files("w_fundo").SaveAs(conFilePhysical & ul.Form("w_sq_pessoa") & "\img\fundo" & Mid(ul.Files("w_fundo").OriginalPath,Instr(ul.Files("w_fundo").OriginalPath,"."),10))
-             w_fundo = "fundo" & Mid(ul.Files("w_fundo").OriginalPath,Instr(ul.Files("w_fundo").OriginalPath,"."),10)
-          Else
-             w_fundo = null
-          End If
-
+          
           DML_SIWCliConf _
-                   ul.Form("w_sq_pessoa"), null, null, null, null, null, ul.Form("w_smtp_server"), _
-                   ul.Form("w_siw_email_nome"), ul.Form("w_siw_email_conta"), _
-                   ul.Form("w_siw_email_senha"), w_logo, w_logo1, w_fundo, "SERVIDOR", _
-                   ul.Form("w_upload_maximo")
+                   ul.Texts.Item("w_sq_pessoa"), null, null, null, null, null, ul.Texts.Item("w_smtp_server"), _
+                   ul.Texts.Item("w_siw_email_nome"), ul.Texts.Item("w_siw_email_conta"), _
+                   ul.Texts.Item("w_siw_email_senha"), w_logo, w_logo1, w_fundo, "SERVIDOR", _
+                   ul.Texts.Item("w_upload_maximo")
 
-          Session("smtp_server")     = ul.Form("w_smtp_server")
-          Session("siw_email_nome")  = ul.Form("w_siw_email_nome")
-          Session("siw_email_conta") = ul.Form("w_siw_email_conta")
-          If ul.Form("w_siw_email_senha") > "" Then Session("siw_email_senha") = ul.Form("w_siw_email_senha")End If
+          Session("smtp_server")     = ul.Texts.Item("w_smtp_server")
+          Session("siw_email_nome")  = ul.Texts.Item("w_siw_email_nome")
+          Session("siw_email_conta") = ul.Texts.Item("w_siw_email_conta")
+          If ul.Texts.Item("w_siw_email_senha") > "" Then Session("siw_email_senha") = ul.Texts.Item("w_siw_email_senha")End If
           Set w_logo   = Nothing
           Set w_logo1  = Nothing
           Set w_fundo  = Nothing
           ScriptOpen "JavaScript"
-          ShowHTML "  location.href='" & R & "&O=A&w_sq_pessoa=" & ul.Form("w_sq_pessoa") & "&P1=" & P1 & "&P2=" & P2 & "&P3=" & P3 & "&P4=" & P4 & "&TP=" & TP & "&SG=" & SG & "';"
+          ShowHTML "  location.href='" & R & "&O=A&w_sq_pessoa=" & ul.Texts.Item("w_sq_pessoa") & "&P1=" & P1 & "&P2=" & P2 & "&P3=" & P3 & "&P4=" & P4 & "&TP=" & TP & "&SG=" & SG & "';"
           ScriptClose
        Else
           ScriptOpen "JavaScript"
@@ -2180,9 +2178,6 @@ Public Sub Grava
   Set p_modulo              = Nothing
   Set w_Null                = Nothing
 End Sub
-REM -------------------------------------------------------------------------
-REM Fim do procedimento que executa as operações de BD
-REM =========================================================================
 
 REM =========================================================================
 REM Rotina principal
@@ -2233,8 +2228,5 @@ Sub Main
        Rodape
   End Select
 End Sub
-REM =========================================================================
-REM Fim da rotina principal
-REM -------------------------------------------------------------------------
 %>
 

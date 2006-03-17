@@ -10,6 +10,7 @@
 <!-- #INCLUDE FILE="DML_CV.asp" -->
 <!-- #INCLUDE FILE="VisualCurriculo.asp" -->
 <!-- #INCLUDE FILE="Funcoes.asp" -->
+<!-- #INCLUDE VIRTUAL="/siw/cp_upload/_upload.asp" -->
 <%
 Response.Expires = -1500
 REM =========================================================================
@@ -49,7 +50,7 @@ Dim dbms, sp, RS, RS1, RS2, RS3, RS4, RS_menu
 Dim P1, P2, P3, P4, TP, SG
 Dim R, O, w_Cont, w_Reg, w_Pagina, w_Disabled, w_TP, w_classe, w_submenu, w_filtro, w_copia
 Dim w_Assinatura
-Dim w_troca,w_cor, w_filter, w_cliente, w_usuario, w_menu, w_dir, w_chave, w_dir_volta
+Dim w_troca,w_cor, w_filter, w_cliente, w_usuario, w_menu, w_dir, w_chave, w_dir_volta, UploadID
 Dim w_sq_pessoa
 Dim ul,File
 Set RS  = Server.CreateObject("ADODB.RecordSet")
@@ -68,29 +69,13 @@ AbreSessao
 
 ' Carrega variáveis locais com os dados dos parâmetros recebidos
 Par          = ucase(Request("Par"))
-P1           = Nvl(Request("P1"),0)
-P2           = Nvl(Request("P2"),0)
-P3           = cDbl(Nvl(Request("P3"),1))
-P4           = cDbl(Nvl(Request("P4"),conPagesize))
-TP           = Request("TP")
-SG           = ucase(Request("SG"))
-R            = uCase(Request("R"))
-O            = uCase(Request("O"))
-w_Assinatura = uCase(Request("w_Assinatura"))
-
 w_Pagina     = "cv.asp?par="
 w_Dir        = "mod_rh_pub/"
 w_dir_volta  = "../"  
 w_Disabled   = "ENABLED"
 
-If SG = "GDPINTERES" or SG = "GDPAREAS" Then
-   If O <> "I" and Request("w_chave_aux") = "" Then O = "L" End If
-ElseIf SG = "GDPENVIO" Then 
-   O = "V" 
-ElseIf O = "" Then 
-   ' Se for acompanhamento, entra na filtragem
-   If P1 = 3 Then O = "P" Else O = "L" End If
-End If
+SG           = ucase(Request("SG"))
+O            = uCase(Request("O"))
 
 w_cliente = RetornaCliente()
 w_usuario = RetornaUsuario()
@@ -98,23 +83,51 @@ If Session("p_portal") > "" Then
    Session("sq_pessoa") = w_usuario
 End If
 
+If nvl(SG,"nulo") <> "nulo" and nvl(SG,"nulo") <> "CVCARGOS"  Then 
+   w_menu = RetornaMenu(w_cliente, SG) 
+End If
 
-If nvl(SG,"nulo") <> "nulo" and nvl(SG,"nulo") <> "CVCARGOS"  Then w_menu    = RetornaMenu(w_cliente, SG) End If
+Set ul            = New ASPForm
 
+If Request("UploadID") > "" Then
+   UploadID = Request("UploadID")
+Else
+   UploadID = ul.NewUploadID
+End If
+   
 If InStr(uCase(Request.ServerVariables("http_content_type")),"MULTIPART/FORM-DATA") > 0 Then  
-   ' Cria o objeto de upload
-   Set ul       = Nothing
-   Set ul       = Server.CreateObject("Dundas.Upload.2")
-   ul.SaveToMemory  
-
-   P1           = ul.Form("P1")
-   P2           = ul.Form("P2")
-   P3           = ul.Form("P3")
-   P4           = ul.Form("P4")
-   TP           = ul.Form("TP")
-   R            = uCase(ul.Form("R"))
-   w_Assinatura = uCase(ul.Form("w_Assinatura"))
-   w_troca      = ul.Form("w_troca")
+   Server.ScriptTimeout = 2000
+   ul.SizeLimit = &HA00000
+   If UploadID > 0 then
+      ul.UploadID = UploadID
+   End If
+   P1           = ul.Texts.Item("P1")
+   P2           = ul.Texts.Item("P2")
+   P3           = ul.Texts.Item("P3")
+   P4           = ul.Texts.Item("P4")
+   TP           = ul.Texts.Item("TP")
+   R            = uCase(ul.Texts.Item("R"))
+   w_Assinatura = uCase(ul.Texts.Item("w_Assinatura"))
+   w_troca      = ul.Texts.Item("w_troca")
+Else
+   P1           = Nvl(Request("P1"),0)
+   P2           = Nvl(Request("P2"),0)
+   P3           = cDbl(Nvl(Request("P3"),1))
+   P4           = cDbl(Nvl(Request("P4"),conPagesize))
+   TP           = Request("TP")
+   R            = uCase(Request("R"))
+   w_Assinatura = uCase(Request("w_Assinatura"))
+   
+   If SG = "GDPINTERES" or SG = "GDPAREAS" Then
+      If O <> "I" and Request("w_chave_aux") = "" Then 
+         O = "L" 
+      End If
+   ElseIf SG = "GDPENVIO" Then 
+      O = "V" 
+   ElseIf O = "" Then 
+      ' Se for acompanhamento, entra na filtragem
+      If P1 = 3 Then O = "P" Else O = "L" End If
+   End If
 End If
 
 Select Case O
@@ -157,6 +170,7 @@ Main
 
 FechaSessao
 
+Set UploadID      = Nothing
 Set w_chave       = Nothing
 Set w_copia       = Nothing
 Set w_filtro      = Nothing
@@ -321,9 +335,6 @@ Sub Inicial
   Rodape
 
 End Sub
-REM =========================================================================
-REM Fim da rotina
-REM -------------------------------------------------------------------------
 
 REM =========================================================================
 REM Rotina dos dados de identificação
@@ -344,22 +355,22 @@ Sub Identificacao
   ' Verifica se há necessidade de recarregar os dados da tela a partir
   ' da própria tela (se for recarga da tela) ou do banco de dados (se não for inclusão)
   If w_troca > "" Then ' Se for recarga da página
-     w_sq_estado_civil      = ul.Form("w_sq_estado_civil") 
-     w_nome                 = ul.Form("w_nome") 
-     w_nome_resumido        = ul.Form("w_nome_resumido") 
-     w_foto                 = ul.Form("w_foto") 
-     w_nascimento           = ul.Form("w_nascimento") 
-     w_rg_numero            = ul.Form("w_rg_numero") 
-     w_rg_emissor           = ul.Form("w_rg_emissor") 
-     w_rg_emissao           = ul.Form("w_rg_emissao") 
-     w_cpf                  = ul.Form("w_cpf")
-     w_pais                 = ul.Form("w_pais") 
-     w_uf                   = ul.Form("w_uf") 
-     w_cidade               = ul.Form("w_cidade") 
-     w_passaporte_numero    = ul.Form("w_passaporte_numero") 
-     w_sq_pais_passaporte   = ul.Form("w_passaporte_numero") 
-     w_sexo                 = ul.Form("w_sexo") 
-     w_sq_formacao          = ul.Form("w_sq_formacao")
+     w_sq_estado_civil      = ul.Texts.Item("w_sq_estado_civil") 
+     w_nome                 = ul.Texts.Item("w_nome") 
+     w_nome_resumido        = ul.Texts.Item("w_nome_resumido") 
+     w_foto                 = ul.Texts.Item("w_foto") 
+     w_nascimento           = ul.Texts.Item("w_nascimento") 
+     w_rg_numero            = ul.Texts.Item("w_rg_numero") 
+     w_rg_emissor           = ul.Texts.Item("w_rg_emissor") 
+     w_rg_emissao           = ul.Texts.Item("w_rg_emissao") 
+     w_cpf                  = ul.Texts.Item("w_cpf")
+     w_pais                 = ul.Texts.Item("w_pais") 
+     w_uf                   = ul.Texts.Item("w_uf") 
+     w_cidade               = ul.Texts.Item("w_cidade") 
+     w_passaporte_numero    = ul.Texts.Item("w_passaporte_numero") 
+     w_sq_pais_passaporte   = ul.Texts.Item("w_passaporte_numero") 
+     w_sexo                 = ul.Texts.Item("w_sexo") 
+     w_sq_formacao          = ul.Texts.Item("w_sq_formacao")
   Else
      ' Recupera os dados do currículo a partir da chave
      DB_GetCV RS, w_cliente, nvl(w_chave,0), SG, "DADOS"
@@ -395,6 +406,7 @@ Sub Identificacao
   Modulo
   FormataData
   FormataCPF
+  ProgressBar w_dir, UploadID  
   ValidateOpen "Validacao"
   If O = "I" or O = "A" Then
      ShowHTML "  if (theForm.Botao.value == ""Troca"") { return true; }"
@@ -434,6 +446,7 @@ Sub Identificacao
      ShowHTML "  }"
      If Session("p_portal") = "" Then Validate "w_assinatura", "Assinatura eletrônica", "1", "1", "3", "14", "1", "1" End If
   End If
+  ShowHTML "if (theForm.w_foto.value != '') {return ProgressBar();}"  
   ValidateClose
   ScriptClose
   ShowHTML "</HEAD>"
@@ -458,7 +471,7 @@ Sub Identificacao
        DesconectaBD
     End If
   
-    ShowHTML "<FORM action=""" & w_dir & w_pagina & "Grava&SG="&SG&"&O="&O&""" name=""Form"" onSubmit=""return(Validacao(this));"" enctype=""multipart/form-data"" method=""POST"">"
+    ShowHTML "<FORM action=""" & w_dir & w_pagina & "Grava&SG="&SG&"&O="&O&"&UploadID="&UploadID&""" name=""Form"" onSubmit=""return(Validacao(this));"" enctype=""multipart/form-data"" method=""POST"">"
     ShowHTML "<INPUT type=""hidden"" name=""P1"" value=""" & P1 & """>"
     ShowHTML "<INPUT type=""hidden"" name=""P2"" value=""" & P2 & """>"
     ShowHTML "<INPUT type=""hidden"" name=""P3"" value=""" & P3 & """>"
@@ -1914,9 +1927,14 @@ Public Sub Grava
   Dim p_modulo
   Dim w_Null
   Dim w_mensagem
-  Dim FS, F1, w_file
+  Dim FS, F1, w_file, w_tamanho, w_tipo, w_nome, field, w_maximo
   Dim w_chave_nova
-
+  
+  w_file    = ""
+  w_tamanho = ""
+  w_tipo    = ""
+  w_nome    = ""
+  
   Cabecalho
   ShowHTML "</HEAD>"
   BodyOpen "onLoad=document.focus();"
@@ -1929,7 +1947,7 @@ Public Sub Grava
           w_assinatura = "" Then
           
           ' Recupera os dados do currículo a partir da chave
-          DB_GetCV_Pessoa RS, w_cliente, ul.Form("w_cpf")
+          DB_GetCV_Pessoa RS, w_cliente, ul.Texts.Item("w_cpf")
           If O = "I" and RS.RecordCount > 0 Then
              ScriptOpen "JavaScript"
              ShowHTML "alert('CPF já cadastrado. Acesse seu currículo usando a opção ""Seu currículo"" no menu principal.');"
@@ -1939,35 +1957,45 @@ Public Sub Grava
           End If
           
           ' Se foi feito o upload de um arquivo
-          If ul.Files("w_foto").OriginalPath > "" Then
-             ' Verifica se o tamanho das fotos está compatível com  o limite de 100KB.
-             If ul.Files("w_foto").Size > 51200 Then
-                ScriptOpen("JavaScript")
-                ShowHTML "  alert('Atenção: o tamanho máximo do arquivo não pode exceder 40 KBytes!');"
-                ShowHTML "  history.back(1);"
-                ScriptClose
-                Response.End()
-                exit sub
-             End If
+          If ul.State = 0 Then
+             w_maximo     = 51200
+             For Each Field in ul.Files.Items
+                If Field.Length > 0 Then
+                   ' Verifica se o tamanho das fotos está compatível com  o limite de 100KB. 
+                   If cDbl(Field.Length) > cDbl(w_maximo) Then 
+                      ScriptOpen("JavaScript") 
+                      ShowHTML "  alert('Atenção: o tamanho máximo do arquivo não pode exceder " & cDbl(w_maximo)/1024 & " KBytes!');" 
+                      ShowHTML "  history.back(1);" 
+                      ScriptClose 
+                      Response.End() 
+                      exit sub 
+                    End If 
+                    ' Se já há um nome para o arquivo, mantém 
+                    Set FS = CreateObject("Scripting.FileSystemObject")
+                    w_file    = nvl(ul.Texts.Item("w_atual"),replace(FS.GetTempName(),".tmp",Mid(Field.FileName,Instr(Field.FileName,"."),30)))
+                    w_tamanho = Field.Length
+                    w_tipo    = Field.ContentType
+                    w_nome    = Field.FileName
+                    Field.SaveAs conFilePhysical & w_cliente & "\" & w_file
+                End If
+             Next
+             DML_PutCVIdent O, _
+                 w_cliente, ul.Texts.Item("w_chave"), ul.Texts.Item("w_nome"), ul.Texts.Item("w_nome_resumido"), ul.Texts.Item("w_nascimento"), _
+                 ul.Texts.Item("w_sexo"), ul.Texts.Item("w_sq_estado_civil"), ul.Texts.Item("w_sq_formacao"), ul.Texts.Item("w_cidade"), ul.Texts.Item("w_rg_numero"),_
+                 ul.Texts.Item("w_rg_emissor"), ul.Texts.Item("w_rg_emissao"), ul.Texts.Item("w_cpf"), ul.Texts.Item("w_passaporte_numero"),_
+                 ul.Texts.Item("w_sq_pais_passaporte"), w_file, w_tamanho, w_tipo, w_nome, w_chave_nova
 
-             ' Se já há um nome para o arquivo, mantém
-             w_file = nvl(ul.Form("w_atual"),ul.GetUniqueName())
-             ul.Files("w_foto").SaveAs(conFilePhysical & w_cliente & "\" & w_file)
           Else
-             w_file = ""
+             ScriptOpen "JavaScript" 
+             ShowHTML "  alert('ATENÇÃO: ocorreu um erro na transferência do arquivo. Tente novamente!');" 
+             ScriptClose 
           End If
-
-          DML_PutCVIdent O, _
-              w_cliente, ul.Form("w_chave"), ul.Form("w_nome"), ul.Form("w_nome_resumido"), ul.Form("w_nascimento"), _
-              ul.Form("w_sexo"), ul.Form("w_sq_estado_civil"), ul.Form("w_sq_formacao"), ul.Form("w_cidade"), ul.Form("w_rg_numero"),_
-              ul.Form("w_rg_emissor"), ul.Form("w_rg_emissao"), ul.Form("w_cpf"), ul.Form("w_passaporte_numero"),_
-              ul.Form("w_sq_pais_passaporte"), w_file, ul.Files("w_foto").Size, ul.Files("w_foto").ContentType
           
           ScriptOpen "JavaScript"
           If Session("p_portal") > "" and O = "I" Then
              ShowHTML "  top.location.href='" & R & "';"
           Else
-             ShowHTML "  location.href='" & R & "&w_usuario=" & ul.Form("w_chave") & "&w_chave=" & ul.Form("w_Chave") & "&P1=" & P1 & "&P2=" & P2 & "&P3=" & P3 & "&P4=" & P4 & "&TP=" & TP & "&SG=" & SG & MontaFiltro("UL") & "';"
+             ShowHTML "  location.href='" & R & "&w_usuario=" & ul.Texts.Item("w_chave") & "&w_chave=" & ul.Texts.Item("w_Chave") & "&P1=" & P1 & "&P2=" & P2 & "&P3=" & P3 & "&P4=" & P4 & "&TP=" & TP & "&SG=" & SG & MontaFiltro("UL") & "';"
           End If
           ScriptClose
        Else

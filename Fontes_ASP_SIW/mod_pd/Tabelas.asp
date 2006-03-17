@@ -9,6 +9,7 @@
 <!-- #INCLUDE VIRTUAL="/siw/DB_EO.asp" -->
 <!-- #INCLUDE VIRTUAL="/siw/jScript.asp" -->
 <!-- #INCLUDE VIRTUAL="/siw/Funcoes.asp" -->
+<!-- #INCLUDE VIRTUAL="/siw/cp_upload/_upload.asp" -->
 <!-- #INCLUDE FILE="DB_Viagem.asp" -->
 <!-- #INCLUDE FILE="DB_Tabelas.asp" -->
 <!-- #INCLUDE FILE="DML_Tabelas.asp" -->
@@ -45,7 +46,7 @@ Dim dbms, sp, RS, RS1, RS2, RS3, RS4, RS_menu
 Dim P1, P2, P3, P4, TP, SG
 Dim R, O, w_Cont, w_Reg, w_pagina, w_Disabled, w_TP, w_classe, w_submenu, w_filtro, w_copia
 Dim w_Assinatura
-Dim w_troca,w_cor, w_filter, w_cliente, w_usuario, w_menu, w_dir, w_dir_volta
+Dim w_troca,w_cor, w_filter, w_cliente, w_usuario, w_menu, w_dir, w_dir_volta, UploadID
 Dim ul,File
 Set RS  = Server.CreateObject("ADODB.RecordSet")
 Set RS1 = Server.CreateObject("ADODB.RecordSet")
@@ -71,22 +72,30 @@ w_cliente    = RetornaCliente()
 w_usuario    = RetornaUsuario()
 w_menu       = RetornaMenu(w_cliente, SG)
 
+Set ul            = New ASPForm
+
+If Request("UploadID") > "" Then
+   UploadID = Request("UploadID")
+Else
+   UploadID = ul.NewUploadID
+End If
+
 If InStr(uCase(Request.ServerVariables("http_content_type")),"MULTIPART/FORM-DATA") > 0 Then  
-   ' Cria o objeto de upload  
-   Set ul       = Nothing  
-   Set ul       = Server.CreateObject("Dundas.Upload.2")  
-   ul.SaveToMemory  
+   Server.ScriptTimeout = 2000
+   ul.SizeLimit = &HA00000
+   If UploadID > 0 then
+      ul.UploadID = UploadID
+   End If    
+   w_troca          = ul.Texts.Item("w_troca")  
+   w_copia          = ul.Texts.Item("w_copia")  
     
-   w_troca          = ul.Form("w_troca")  
-   w_copia          = ul.Form("w_copia")  
-    
-   P1               = ul.Form("P1")  
-   P2               = ul.Form("P2")  
-   P3               = ul.Form("P3")  
-   P4               = ul.Form("P4")  
-   TP               = ul.Form("TP")  
-   R                = uCase(ul.Form("R"))  
-   w_Assinatura     = uCase(ul.Form("w_Assinatura"))  
+   P1               = ul.Texts.Item("P1")  
+   P2               = ul.Texts.Item("P2")  
+   P3               = ul.Texts.Item("P3")  
+   P4               = ul.Texts.Item("P4")  
+   TP               = ul.Texts.Item("TP")  
+   R                = uCase(ul.Texts.Item("R"))  
+   w_Assinatura     = uCase(ul.Texts.Item("w_Assinatura"))  
 Else  
    w_troca          = Request("w_troca")  
    w_copia          = Request("w_copia")  

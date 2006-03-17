@@ -2251,8 +2251,7 @@ Sub TrataErro
     Err.clear
     ShowHTML " history.back(1);"
     ScriptClose
-  Elseif instr(Err.description,"ORA-03113") > 0 _
-      or instr(Err.description,"ORA-03114") > 0 _
+  Elseif instr(Err.description,"ORA-03114") > 0 _
       or instr(Err.description,"ORA-12224") > 0 _
       or instr(Err.description,"ORA-12514") > 0 _
       or instr(Err.description,"ORA-12541") > 0 _
