@@ -88,7 +88,9 @@ Sub CabecalhoWord (p_cliente, p_titulo, p_pagina)
   DB_GetCustomerData l_RS, p_cliente
   ShowHTML "<TABLE WIDTH=""100%"" BORDER=0>"
   ShowHTML "  <TR>"
-  ShowHTML "    <TD ROWSPAN=3><IMG ALIGN=""LEFT"" SRC=""" & conFileVirtual & w_cliente & "img\" & l_RS("logo") & """ width=56 height=67>"
+  'ShowHTML "    <TD ROWSPAN=3><IMG ALIGN=""LEFT"" SRC=""" & conFileVirtual & w_cliente & "img\" & l_RS("logo") & """ width=56 height=67>"
+  ShowHTML "    <TD ROWSPAN=3><img src=""" & LinkArquivo(null, w_cliente, "img\" & l_RS("logo"), null, null, null, "WORD") & """ vspace=""0"" hspace=""0"" border=""0"">"
+
   ShowHTML "    <TD ALIGN=""RIGHT""><B><FONT SIZE=5 COLOR=""#000000"">" & p_titulo &  "</FONT>"
   ShowHTML "  </TR>"
   ShowHTML "  <TR><TD ALIGN=""RIGHT""><B><FONT SIZE=2 COLOR=""#000000"">" & DataHora() & "</B></TD></TR>"
@@ -234,15 +236,17 @@ Function LinkArquivo (p_classe, p_cliente, p_arquivo, p_target, p_hint, p_descri
   ' Monta a chamada para a página que retorna o arquivo
   l_link = "file.asp?force=true&cliente=" & p_cliente & "&id=" & p_arquivo
 
-  ' Se não for objeto incorporado, monta tag anchor
-  If uCase(Nvl(p_retorno,"")) <> "EMBED" Then
+  If uCase(Nvl(p_retorno,"")) = "WORD" Then ' Se for geraçao de Word, dispensa sessão ativa
+     ' Altera a chamada padrão, dispensando a sessão
+     l_link = "file.asp?force=false&sessao=false&cliente=" & p_cliente & "&id=" & p_arquivo
+  ElseIf uCase(Nvl(p_retorno,"")) <> "EMBED" Then ' Se não for objeto incorporado, monta tag anchor
      ' Trata a possibilidade da chamada ter passado classe, target e hint
      If Nvl(p_classe,"") > "" Then l_classe = " class=""" & p_classe & """ "  Else l_classe = "" End If
      If Nvl(p_target,"") > "" Then l_target = " target=""" & p_target & """ " Else l_target = "" End If
      If Nvl(p_hint,"")   > "" Then l_hint   = " title=""" & p_hint & """ "    Else l_hint   = "" End If
 
      ' Montagem da tag anchor
-     l_link = "<A" & l_classe & "href=""" & l_link & """" & l_target & l_hint & ">" & p_descricao & "</a>"
+     l_link = "<A " & l_classe & "href=""" & l_link & """" & l_target & l_hint & ">" & p_descricao & "</a>"
   End If
   
   ' Retorno ao chamador

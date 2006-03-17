@@ -15,14 +15,15 @@ REM -------------------------------------------------------------------------
    
 Response.Buffer = True
    
-Dim dbms, sp, RS, w_cliente, w_id, w_erro
+Dim dbms, sp, RS, w_cliente, w_id, w_erro, w_sessao
 Dim w_nome, w_descricao, w_inclusao, w_tamanho, w_tipo, w_caminho, w_force, w_filename
 w_cliente = Request("cliente")
 w_id      = Request("id")
 w_force   = Nvl(Request("force"), "false")
+w_sessao  = Request("sessao")
 w_erro    = 0 ' Se tiver valor diferente de 0, exibe mensagem de erro
       
-If Nvl(w_cliente, "") = "" or Nvl(w_id, "") = "" or Session("dbms") = "" Then 
+If Nvl(w_cliente, "") = "" or Nvl(w_id, "") = "" or (Nvl(w_sessao,"") = "" and Session("dbms") = "") Then 
    w_erro = 1 ' Parâmetros incorretos
 ElseIf Instr(w_id,".") > 0 Then
    w_nome        = ""
@@ -88,6 +89,7 @@ Set w_tipo      = Nothing
 Set w_caminho   = Nothing 
 Set w_force     = Nothing
 Set w_filename  = Nothing
+Set w_sessao    = Nothing
 
 Sub DownloadFile(strFileName, blnForceDownload)
     Dim fso, objFile, strFilePath
