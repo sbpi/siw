@@ -2575,6 +2575,7 @@ Sub Anotar
   ShowHTML "<meta http-equiv=""Refresh"" content=""300; URL=../" & MontaURL("MESA") & """>"
   If InStr("V",O) > 0 Then
      ScriptOpen "JavaScript"
+     ProgressBar w_dir_volta, UploadID         
      ValidateOpen "Validacao"
      Validate "w_observacao", "Anotação", "", "1", "1", "2000", "1", "1"
      Validate "w_caminho", "Arquivo", "", "", "5", "255", "1", "1"
@@ -2585,6 +2586,7 @@ Sub Anotar
      Else
         ShowHTML "  theForm.Botao.disabled=true;"
      End If
+     ShowHTML "if (theForm.w_caminho.value != '') {return ProgressBar();}"          
      ValidateClose
      ScriptClose
   End If
@@ -2605,7 +2607,7 @@ Sub Anotar
   ShowHTML VisualFerias(w_chave, "V", w_usuario, P1, P4)
 
   ShowHTML "<HR>"
-  ShowHTML "<FORM action=""" & w_dir & w_pagina & "Grava&SG="&Mid(SG,1,3)&"ENVIO&O="&O&"&w_menu="&w_menu&""" name=""Form"" onSubmit=""return(Validacao(this));"" enctype=""multipart/form-data"" method=""POST"">"
+  ShowHTML "<FORM action=""" & w_dir & w_pagina & "Grava&SG="&Mid(SG,1,3)&"ENVIO&O="&O&"&w_menu="&w_menu&"&UploadID="&UploadID&""" name=""Form"" onSubmit=""return(Validacao(this));"" enctype=""multipart/form-data"" method=""POST"">"
   ShowHTML "<INPUT type=""hidden"" name=""P1"" value=""" & P1 & """>"
   ShowHTML "<INPUT type=""hidden"" name=""P2"" value=""" & P2 & """>"
   ShowHTML "<INPUT type=""hidden"" name=""P3"" value=""" & P3 & """>"
@@ -2702,6 +2704,7 @@ Sub Concluir
      FormataDataHora
      FormataValor
      ValidateOpen "Validacao"
+     ProgressBar w_dir, UploadID         
      Validate "w_quitacao", "Data da liquidação", "DATA", 1, 10, 10, "", "0123456789/"
      CompData "w_quitacao", "Data da liquidação", "<=", FormataDataEdicao(FormatDateTime(Date(),2)), "data atual"
      Validate "w_valor_real", "Valor real", "VALOR", "1", 4, 18, "", "0123456789.,"
@@ -2716,6 +2719,7 @@ Sub Concluir
      Else
         ShowHTML "  theForm.Botao.disabled=true;"
      End If
+     ShowHTML "if (theForm.w_caminho.value != '') {return ProgressBar();}"     
      ValidateClose
      ScriptClose
   End If
@@ -2738,7 +2742,7 @@ Sub Concluir
   ShowHTML VisualFerias(w_chave, "V", w_usuario, P1, P4)
 
   ShowHTML "<HR>"
-  ShowHTML "<FORM action=""" & w_dir & w_pagina & "Grava&SG=" & Mid(SG,1,3) & "CONC&O="&O&"&w_menu="&w_menu&""" name=""Form"" onSubmit=""return(Validacao(this));"" enctype=""multipart/form-data"" method=""POST"">"  
+  ShowHTML "<FORM action=""" & w_dir & w_pagina & "Grava&SG=" & Mid(SG,1,3) & "CONC&O="&O&"&w_menu="&w_menu&"&UploadID="&UploadID&""" name=""Form"" onSubmit=""return(Validacao(this));"" enctype=""multipart/form-data"" method=""POST"">"  
   ShowHTML "<INPUT type=""hidden"" name=""P1"" value=""" & P1 & """>"  
   ShowHTML "<INPUT type=""hidden"" name=""P2"" value=""" & P2 & """>"  
   ShowHTML "<INPUT type=""hidden"" name=""P3"" value=""" & P3 & """>"  
@@ -2991,10 +2995,15 @@ Public Sub Grava
   Dim p_modulo, w_codigo
   Dim w_Null
   Dim w_mensagem
-  Dim FS, F1, w_file
+  Dim FS, F1, w_file, w_tamanho, w_tipo, w_nome, field, w_maximo
   Dim w_chave_nova, w_item
   Dim i
-
+  
+  w_file    = ""
+  w_tamanho = ""
+  w_tipo    = ""
+  w_nome    = ""
+  
   Cabecalho
   ShowHTML "</HEAD>"
   ShowHTML "<BASE HREF=""" & conRootSIW & """>"
@@ -3089,32 +3098,42 @@ Public Sub Grava
         ' Trata o recebimento de upload ou dados 
         If InStr(uCase(Request.ServerVariables("http_content_type")),"MULTIPART/FORM-DATA") > 0 Then 
            ' Se foi feito o upload de um arquivo 
-           If ul.Files("w_caminho").OriginalPath > "" Then 
-              ' Verifica se o tamanho das fotos está compatível com  o limite de 100KB. 
-              If ul.Files("w_caminho").Size > ul.Form("w_upload_maximo") Then 
-                 ScriptOpen("JavaScript") 
-                 ShowHTML "  alert('Atenção: o tamanho máximo do arquivo não pode exceder " & ul.Form("w_upload_maximo")/1024 & " KBytes!');" 
-                 ShowHTML "  history.back(1);" 
-                 ScriptClose 
-                 Response.End() 
-                 exit sub 
-              End If 
-    
-              ' Se já há um nome para o arquivo, mantém 
-              w_file = nvl(ul.Form("w_atual"),ul.GetUniqueName()) 
-              ul.Files("w_caminho").SaveAs(conFilePhysical & w_cliente & "\" & w_file) 
-           Else 
-              w_file = "" 
-           End If 
-    
-           DML_PutLancamentoEnvio w_menu, ul.Form("w_chave"), w_usuario, ul.Form("w_tramite"), _
-               ul.Form("w_novo_tramite"), "N", ul.Form("w_observacao"), ul.Form("w_destinatario"), ul.Form("w_despacho"), _
-               w_file, ul.Files("w_caminho").Size, ul.Files("w_caminho").ContentType, ExtractFileName(ul.Files("w_caminho").OriginalPath)
+             If ul.State = 0 Then
+                w_maximo     = ul.Texts.Item("w_upload_maximo")
+                For Each Field in ul.Files.Items
+                   If Field.Length > 0 Then
+                      ' Verifica se o tamanho das fotos está compatível com  o limite de 100KB. 
+                      If cDbl(Field.Length) > cDbl(w_maximo) Then 
+                         ScriptOpen("JavaScript") 
+                         ShowHTML "  alert('Atenção: o tamanho máximo do arquivo não pode exceder " & cDbl(w_maximo)/1024 & " KBytes!');" 
+                         ShowHTML "  history.back(1);" 
+                         ScriptClose 
+                         Response.End() 
+                         exit sub 
+                       End If 
      
+                      ' Se já há um nome para o arquivo, mantém 
+                      Set FS = CreateObject("Scripting.FileSystemObject")
+                      w_file    = nvl(ul.Texts.Item("w_atual"),replace(FS.GetTempName(),".tmp",Mid(Field.FileName,Instr(Field.FileName,"."),30)))
+                      w_tamanho = Field.Length
+                      w_tipo    = Field.ContentType
+                      w_nome    = Field.FileName
+                      Field.SaveAs conFilePhysical & w_cliente & "\" & w_file
+                   End If
+                Next                 
+                DML_PutLancamentoEnvio w_menu, ul.Texts.Item("w_chave"), w_usuario, ul.Texts.Item("w_tramite"), _
+                   ul.Texts.Item("w_novo_tramite"), "N", ul.Texts.Item("w_observacao"), ul.Texts.Item("w_destinatario"), ul.Texts.Item("w_despacho"), _
+                   w_file, w_tamanho, w_tipo, w_nome
+             Else
+                ScriptOpen "JavaScript" 
+                ShowHTML "  alert('ATENÇÃO: ocorreu um erro na transferência do arquivo. Tente novamente!');" 
+                ScriptClose 
+             End If
+                                  
            ScriptOpen "JavaScript"
            ' Volta para a listagem
            DB_GetMenuData RS, w_menu
-           ShowHTML "  location.href='" & replace(RS("link"),w_dir,"") & "&O=L&w_chave=" & ul.Form("w_chave") & "&P1=" & P1 & "&P2=" & P2 & "&P3=" & P3 & "&P4=" & P4 & "&TP=" & RemoveTP(TP) & "&SG=" & rs("sigla") & MontaFiltroUpload(ul.Form) & "';"
+           ShowHTML "  location.href='" & replace(RS("link"),w_dir,"") & "&O=L&w_chave=" & ul.Texts.Item("w_chave") & "&P1=" & P1 & "&P2=" & P2 & "&P3=" & P3 & "&P4=" & P4 & "&TP=" & RemoveTP(TP) & "&SG=" & rs("sigla") & MontaFiltro("UPLOAD") & "';"
            DesconectaBD
            ScriptClose
         Else
@@ -3180,7 +3199,7 @@ Public Sub Grava
                  w_tipo, w_nome
                  
               'Envia e-mail comunicando a conclusão
-              SolicMail ul.form("w_chave") ,3
+              SolicMail ul.Texts.Item("w_chave") ,3
            Else
               ScriptOpen "JavaScript" 
               ShowHTML "  alert('ATENÇÃO: ocorreu um erro na transferência do arquivo. Tente novamente!');" 
@@ -3190,7 +3209,7 @@ Public Sub Grava
         ' Volta para a listagem
         ScriptOpen "JavaScript"
         DB_GetMenuData RS, w_menu
-        ShowHTML "  location.href='" & replace(RS("link"),w_dir,"") & "&O=L&w_chave=" & ul.Texts.Item("w_chave") & "&P1=" & P1 & "&P2=" & P2 & "&P3=" & P3 & "&P4=" & P4 & "&TP=" & TP & "&SG=" & rs("sigla") & MontaFiltroUpload(ul.Texts.Item) & "';" 
+        ShowHTML "  location.href='" & replace(RS("link"),w_dir,"") & "&O=L&w_chave=" & ul.Texts.Item("w_chave") & "&P1=" & P1 & "&P2=" & P2 & "&P3=" & P3 & "&P4=" & P4 & "&TP=" & TP & "&SG=" & rs("sigla") & MontaFiltro("UPLOAD") & "';" 
         DesconectaBD
         ScriptClose
      Else

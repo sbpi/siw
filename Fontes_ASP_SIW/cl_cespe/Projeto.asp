@@ -18,6 +18,7 @@
 <!-- #INCLUDE FILE="DML_Projeto.asp" -->
 <!-- #INCLUDE FILE="Funcoes.asp" -->
 <!-- #INCLUDE VIRTUAL="/siw/mod_pd/DB_Viagem.asp" -->
+<!-- #INCLUDE VIRTUAL="/siw/cp_upload/_upload.asp" -->
 <%
 Response.Expires = -1500
 REM =========================================================================
@@ -66,38 +67,10 @@ Dim p_chave, p_assunto, p_pais, p_regiao, p_uf, p_cidade, p_usu_resp, p_uorg_res
 Dim w_troca,w_cor, w_filter, w_cliente, w_usuario, w_gestor, w_menu
 Dim w_sq_pessoa
 Dim ul,File
-Dim w_dir, w_dir_volta
+Dim w_dir, w_dir_volta, UploadID
 Set RS  = Server.CreateObject("ADODB.RecordSet")
 Set RS1 = Server.CreateObject("ADODB.RecordSet")
 Set RS_Menu = Server.CreateObject("ADODB.RecordSet")
-
-w_troca            = Request("w_troca")
-w_copia            = Request("w_copia")
-p_projeto          = uCase(Request("p_projeto"))
-p_atividade        = uCase(Request("p_atividade"))
-p_ativo            = uCase(Request("p_ativo"))
-p_solicitante      = uCase(Request("p_solicitante"))
-p_prioridade       = uCase(Request("p_prioridade"))
-p_unidade          = uCase(Request("p_unidade"))
-p_proponente       = uCase(Request("p_proponente"))
-p_ordena           = uCase(Request("p_ordena"))
-p_ini_i            = uCase(Request("p_ini_i"))
-p_ini_f            = uCase(Request("p_ini_f"))
-p_fim_i            = uCase(Request("p_fim_i"))
-p_fim_f            = uCase(Request("p_fim_f"))
-p_atraso           = uCase(Request("p_atraso"))
-p_chave            = uCase(Request("p_chave"))
-p_assunto          = uCase(Request("p_assunto"))
-p_pais             = uCase(Request("p_pais"))
-p_regiao           = uCase(Request("p_regiao"))
-p_uf               = uCase(Request("p_uf"))
-p_cidade           = uCase(Request("p_cidade"))
-p_usu_resp         = uCase(Request("p_usu_resp"))
-p_uorg_resp        = uCase(Request("p_uorg_resp"))
-p_palavra          = uCase(Request("p_palavra"))
-p_prazo            = uCase(Request("p_prazo"))
-p_fase             = uCase(Request("p_fase"))
-p_sqcc             = uCase(Request("p_sqcc"))
   
 Private Par
 
@@ -105,30 +78,124 @@ AbreSessao
 
 ' Carrega variáveis locais com os dados dos parâmetros recebidos
 Par          = ucase(Request("Par"))
-P1           = Nvl(Request("P1"),0)
-P2           = Nvl(Request("P2"),0)
-P3           = cDbl(Nvl(Request("P3"),1))
-P4           = cDbl(Nvl(Request("P4"),conPagesize))
-TP           = Request("TP")
-SG           = ucase(Request("SG"))
-R            = uCase(Request("R"))
-O            = uCase(Request("O"))
-w_Assinatura = uCase(Request("w_Assinatura"))
 
 w_Pagina     = "Projeto.asp?par="
 w_Dir        = "cl_cespe/"
 w_dir_volta  = "../"  
 w_Disabled   = "ENABLED"
 
-If SG = "PJREPRES" Then
-   If O <> "I" and Request("w_chave_aux") = "" Then O = "L" End If
-ElseIf SG = "PJENVIO" Then
-   O = "V"
-ElseIf SG="PJVISUAL" and O = "A" Then
-   O = "L"
-ElseIf O = "" Then 
-   ' Se for acompanhamento, entra na filtragem
-   If P1 = 3 Then O = "P" Else O = "L" End If
+SG           = ucase(Request("SG"))
+O            = uCase(Request("O"))
+
+w_cliente  = RetornaCliente() ' Retorna o código do cliente para o usuário logado
+w_usuario  = RetornaUsuario() ' Retorna o código do usuário logado
+w_menu     = RetornaMenu(w_cliente, SG) ' Retorna o código do menu
+
+Set ul            = New ASPForm
+
+If Request("UploadID") > "" Then
+   UploadID = Request("UploadID")
+Else
+   UploadID = ul.NewUploadID
+End If
+
+If InStr(uCase(Request.ServerVariables("http_content_type")),"MULTIPART/FORM-DATA") > 0 Then
+   Server.ScriptTimeout = 2000
+   ul.SizeLimit = &HA00000
+   If UploadID > 0 then
+      ul.UploadID = UploadID
+   End If
+   w_troca            = ul.Texts.Item("w_troca")
+   w_copia            = ul.Texts.Item("w_copia")
+   p_projeto          = uCase(ul.Texts.Item("p_projeto"))
+   p_atividade        = uCase(ul.Texts.Item("p_atividade"))
+   p_ativo            = uCase(ul.Texts.Item("p_ativo"))
+   p_solicitante      = uCase(ul.Texts.Item("p_solicitante"))
+   p_prioridade       = uCase(ul.Texts.Item("p_prioridade"))
+   p_unidade          = uCase(ul.Texts.Item("p_unidade"))
+   p_proponente       = uCase(ul.Texts.Item("p_proponente"))
+   p_ordena           = uCase(ul.Texts.Item("p_ordena"))
+   p_ini_i            = uCase(ul.Texts.Item("p_ini_i"))
+   p_ini_f            = uCase(ul.Texts.Item("p_ini_f"))
+   p_fim_i            = uCase(ul.Texts.Item("p_fim_i"))
+   p_fim_f            = uCase(ul.Texts.Item("p_fim_f"))
+   p_atraso           = uCase(ul.Texts.Item("p_atraso"))
+   p_chave            = uCase(ul.Texts.Item("p_chave"))
+   p_assunto          = uCase(ul.Texts.Item("p_assunto"))
+   p_pais             = uCase(ul.Texts.Item("p_pais"))
+   p_regiao           = uCase(ul.Texts.Item("p_regiao"))
+   p_uf               = uCase(ul.Texts.Item("p_uf"))
+   p_cidade           = uCase(ul.Texts.Item("p_cidade"))
+   p_usu_resp         = uCase(ul.Texts.Item("p_usu_resp"))
+   p_uorg_resp        = uCase(ul.Texts.Item("p_uorg_resp"))
+   p_palavra          = uCase(ul.Texts.Item("p_palavra"))
+   p_prazo            = uCase(ul.Texts.Item("p_prazo"))
+   p_fase             = uCase(ul.Texts.Item("p_fase"))
+   p_sqcc             = uCase(ul.Texts.Item("p_sqcc"))
+   
+   P1           = Nvl(ul.Texts.Item("P1"),0)
+   P2           = Nvl(ul.Texts.Item("P2"),0)
+   P3           = cDbl(Nvl(ul.Texts.Item("P3"),1))
+   P4           = cDbl(Nvl(ul.Texts.Item("P4"),conPagesize))
+   TP           = ul.Texts.Item("TP")
+   R            = uCase(ul.Texts.Item("R"))
+   w_Assinatura = uCase(ul.Texts.Item("w_Assinatura"))
+   
+   If InStr(SG, "ANEXO") > 0 or InStr(SG, "PARC") > 0 or InStr(SG, "REPR") > 0 Then
+      If InStr("IG",O) = 0 and Request("w_chave_aux") = "" Then O = "L" End If  
+   ElseIf InStr(SG, "ENVIO") > 0 Then
+      O = "V"  
+   ElseIf O = "" Then  
+      ' Se for acompanhamento, entra na filtragem  
+      If P1 = 3 Then O = "P" Else O = "L" End If  
+   End If     
+Else
+   w_troca            = Request("w_troca")
+   w_copia            = Request("w_copia")
+   p_projeto          = uCase(Request("p_projeto"))
+   p_atividade        = uCase(Request("p_atividade"))
+   p_ativo            = uCase(Request("p_ativo"))
+   p_solicitante      = uCase(Request("p_solicitante"))
+   p_prioridade       = uCase(Request("p_prioridade"))
+   p_unidade          = uCase(Request("p_unidade"))
+   p_proponente       = uCase(Request("p_proponente"))
+   p_ordena           = uCase(Request("p_ordena"))
+   p_ini_i            = uCase(Request("p_ini_i"))
+   p_ini_f            = uCase(Request("p_ini_f"))
+   p_fim_i            = uCase(Request("p_fim_i"))
+   p_fim_f            = uCase(Request("p_fim_f"))
+   p_atraso           = uCase(Request("p_atraso"))
+   p_chave            = uCase(Request("p_chave"))
+   p_assunto          = uCase(Request("p_assunto"))
+   p_pais             = uCase(Request("p_pais"))
+   p_regiao           = uCase(Request("p_regiao"))
+   p_uf               = uCase(Request("p_uf"))
+   p_cidade           = uCase(Request("p_cidade"))
+   p_usu_resp         = uCase(Request("p_usu_resp"))
+   p_uorg_resp        = uCase(Request("p_uorg_resp"))
+   p_palavra          = uCase(Request("p_palavra"))
+   p_prazo            = uCase(Request("p_prazo"))
+   p_fase             = uCase(Request("p_fase"))
+   p_sqcc             = uCase(Request("p_sqcc"))
+   
+   P1           = Nvl(Request("P1"),0)
+   P2           = Nvl(Request("P2"),0)
+   P3           = cDbl(Nvl(Request("P3"),1))
+   P4           = cDbl(Nvl(Request("P4"),conPagesize))
+   TP           = Request("TP")
+   R            = uCase(Request("R"))
+   w_Assinatura = uCase(Request("w_Assinatura"))   
+
+   If SG = "PJREPRES" Then
+      If O <> "I" and Request("w_chave_aux") = "" Then O = "L" End If
+   ElseIf SG = "PJENVIO" Then
+      O = "V"
+   ElseIf SG="PJVISUAL" and O = "A" Then
+      O = "L"
+   ElseIf O = "" Then 
+      ' Se for acompanhamento, entra na filtragem
+      If P1 = 3 Then O = "P" Else O = "L" End If
+   End If
 End If
 
 Select Case O
@@ -150,34 +217,6 @@ Select Case O
      w_TP = TP & " - Listagem"
 End Select
 
-w_cliente  = RetornaCliente() ' Retorna o código do cliente para o usuário logado
-w_usuario  = RetornaUsuario() ' Retorna o código do usuário logado
-w_menu     = RetornaMenu(w_cliente, SG) ' Retorna o código do menu
-
-If InStr(uCase(Request.ServerVariables("http_content_type")),"MULTIPART/FORM-DATA") > 0 Then
-   ' Cria o objeto de upload
-   Set ul       = Nothing
-   Set ul       = Server.CreateObject("Dundas.Upload.2")
-   ul.SaveToMemory
-
-   P1           = ul.Form("P1")
-   P2           = ul.Form("P2")
-   P3           = ul.Form("P3")
-   P4           = ul.Form("P4")
-   TP           = ul.Form("TP")
-   R            = uCase(ul.Form("R"))
-   w_Assinatura = uCase(ul.Form("w_Assinatura"))
-
-   If InStr(SG, "ANEXO") > 0 or InStr(SG, "PARC") > 0 or InStr(SG, "REPR") > 0 Then
-      If InStr("IG",O) = 0 and Request("w_chave_aux") = "" Then O = "L" End If  
-   ElseIf InStr(SG, "ENVIO") > 0 Then
-      O = "V"  
-   ElseIf O = "" Then  
-      ' Se for acompanhamento, entra na filtragem  
-      If P1 = 3 Then O = "P" Else O = "L" End If  
-   End If  
-End If
-
 ' Verifica se o documento tem sub-menu. Se tiver, agrega no HREF uma chamada para montagem do mesmo.
 DB_GetLinkSubMenu RS, Session("p_cliente"), SG
 If RS.RecordCount > 0 Then
@@ -198,6 +237,7 @@ Main
 
 FechaSessao
 
+Set UploadID      = Nothing
 Set w_dir         = Nothing
 Set w_dir_volta   = Nothing
 Set w_copia       = Nothing
@@ -2925,6 +2965,7 @@ Sub Anotar
 
   If InStr("V",O) > 0 Then
      ScriptOpen "JavaScript"
+     ProgressBar w_dir_volta, UploadID         
      ValidateOpen "Validacao"
      Validate "w_observacao", "Anotação", "", "1", "1", "2000", "1", "1"
      Validate "w_caminho", "Arquivo", "", "", "5", "255", "1", "1"
@@ -2935,6 +2976,7 @@ Sub Anotar
      Else
         ShowHTML "  theForm.Botao.disabled=true;"
      End If
+     ShowHTML "if (theForm.w_caminho.value != '') {return ProgressBar();}"          
      ValidateClose
      ScriptClose
   End If
@@ -2958,7 +3000,7 @@ Sub Anotar
   ShowHTML VisualProjeto(w_chave, "V", w_usuario, P1, P4)
 
   ShowHTML "<HR>"
-  ShowHTML "<FORM action=""" & w_dir & w_pagina & "Grava&SG=PJENVIO&O="&O&""" name=""Form"" onSubmit=""return(Validacao(this));"" enctype=""multipart/form-data"" method=""POST"">" 
+  ShowHTML "<FORM action=""" & w_dir & w_pagina & "Grava&SG=PJENVIO&O="&O&"&UploadID="&UploadID&""" name=""Form"" onSubmit=""return(Validacao(this));"" enctype=""multipart/form-data"" method=""POST"">" 
   ShowHTML "<INPUT type=""hidden"" name=""P1"" value=""" & P1 & """>" 
   ShowHTML "<INPUT type=""hidden"" name=""P2"" value=""" & P2 & """>" 
   ShowHTML "<INPUT type=""hidden"" name=""P3"" value=""" & P3 & """>" 
@@ -3181,11 +3223,13 @@ Sub varigMail
    If P1 = 2 Then ShowHTML "<meta http-equiv=""Refresh"" content=""300; URL=" & replace(MontaURL("MESA"),w_dir,"") & """>" End If
    Estrutura_CSS w_cliente
    ScriptOpen "JavaScript"
+   ProgressBar w_dir_volta, UploadID       
    ValidateOpen "Validacao"
    Validate "w_para",         "Para",  "", "1",   2,    80, "1", "1"
    Validate "w_assunto",   "assunto",  "", "1",   2,    80, "1", "1"
    Validate "w_caminho",   "Arquivo",  "", "1", "5", "255", "1", "1"
    Validate "w_mensagem", "Mensagem", "1",  1,   5,  2000, "1", "1"
+   ShowHTML "if (theForm.w_caminho.value != '') {return ProgressBar();}"        
    ValidateClose
    ScriptClose
    ShowHTML "</HEAD>"
@@ -3201,7 +3245,7 @@ Sub varigMail
    ShowHTML "<p>Preencha o formulário abaixo para enviar o e-mail.</p>"
    ShowHTML "<table border=0 width=""100%"" cellspacing=0><tr bgcolor=""" & conTrBgColor & """><td style=""border: 1px solid rgb(0,0,0);"">"
    ShowHTML "<table border=0 width=""90%"" cellspacing=0>"
-   ShowHTML "<FORM action=""" & w_pagina & "Envia&O="&O&"&w_menu="&w_menu&""" name=""Form"" onSubmit=""return(Validacao(this));"" enctype=""multipart/form-data"" method=""POST"">"
+   ShowHTML "<FORM action=""" & w_pagina & "Envia&O="&O&"&w_menu="&w_menu&"&UploadID="&UploadID&""" name=""Form"" onSubmit=""return(Validacao(this));"" enctype=""multipart/form-data"" method=""POST"">"
    ShowHTML " <tr><td colspan=2><b><u>P</u>ara:</b><br><INPUT class=""sti"" type=""text"" name=""w_para"" accesskey=""P"" size=""65"" maxlength=""80""></td>"
    ShowHTML " <tr><td colspan=2><b><u>A</u>ssunto:</b><br><INPUT class=""sti"" type=""text"" name=""w_assunto"" accesskey=""A"" size=""65"" maxlength=""80""></td>"
    ShowHTML " <tr valign=""top"" >"
@@ -3243,37 +3287,47 @@ Sub Envia
    "</HTML>" & VbCrLf
    ' Trata o recebimento de upload ou dados 
    If InStr(uCase(Request.ServerVariables("http_content_type")),"MULTIPART/FORM-DATA") > 0 Then
-      ' Se foi feito o upload de um arquivo 
-      If ul.Files("w_caminho").OriginalPath > "" Then 
-         ' Verifica se o tamanho das fotos está compatível com  o limite de 100KB. 
-         If ul.Files("w_caminho").Size > 5000024 Then
-            ScriptOpen("JavaScript") 
-            ShowHTML "  alert('Atenção: o tamanho máximo do arquivo não pode exceder " & 5000024/1024 & " KBytes!');" 
-            ShowHTML "  history.back(1);" 
+      ' Se foi feito o upload de um arquivo
+      If ul.State = 0 Then
+         w_maximo     = 5000024
+         For Each Field in ul.Files.Items
+            If Field.Length > 0 Then
+               ' Verifica se o tamanho das fotos está compatível com  o limite de 100KB. 
+               If cDbl(Field.Length) > cDbl(w_maximo) Then 
+                  ScriptOpen("JavaScript") 
+                  ShowHTML "  alert('Atenção: o tamanho máximo do arquivo não pode exceder " & cDbl(w_maximo)/1024 & " KBytes!');" 
+                  ShowHTML "  history.back(1);" 
+                  ScriptClose 
+                  Response.End() 
+                  exit sub 
+               End If 
+               w_file = Field.FileName
+               Set FS = CreateObject("Scripting.FileSystemObject")
+               Field.SaveAs conFilePhysical & w_cliente & "\" & w_file
+            End If
+         Next                 
+         w_resultado = EnviaMail2(ul.Texts.Item("w_para"))
+         ' Se ocorreu algum erro, avisa da impossibilidade de envio
+         If w_resultado > "" Then
+            ScriptOpen "JavaScript"
+            ShowHTML "  alert('ATENÇÃO: não foi possível proceder o envio do e-mail.\n" & w_resultado & "');" 
+            ShowHTML "  history.back(1);"
             ScriptClose
-            Response.End()
-            exit sub 
-         End If
-         ul.Files("w_caminho").SaveAs(conFilePhysical & w_cliente & "\" & ul.GetFileName(ul.Files("w_caminho").OriginalPath))
-      Else 
-         w_file = "" 
-      End If 
+         Else
+            FS.DeleteFile conFilePhysical & w_cliente & "\" & w_file
+            ScriptOpen "JavaScript"
+            ShowHTML "  alert('O e-mail foi enviado com sucesso.\n');"
+            ShowHTML "  history.back(1);"
+            ScriptClose
+         End If      
+      Else
+         ScriptOpen "JavaScript" 
+         ShowHTML "  alert('ATENÇÃO: ocorreu um erro na transferência do arquivo. Tente novamente!');" 
+         ScriptClose 
+      End If       
    End If
    
-   w_resultado = EnviaMail2(ul.Form("w_para"))
-   ' Se ocorreu algum erro, avisa da impossibilidade de envio
-   If w_resultado > "" Then
-      ScriptOpen "JavaScript"
-      ShowHTML "  alert('ATENÇÃO: não foi possível proceder o envio do e-mail.\n" & w_resultado & "');" 
-      ShowHTML "  history.back(1);"
-      ScriptClose
-   Else
-      ul.FileDelete (conFilePhysical & w_cliente & "\" & ul.GetFileName(ul.Files("w_caminho").OriginalPath))
-      ScriptOpen "JavaScript"
-      ShowHTML "  alert('O e-mail foi enviado com sucesso.\n');"
-      ShowHTML "  history.back(1);"
-      ScriptClose
-   End If
+
    Set w_html      = Nothing
    Set w_resultado = Nothing
    Set w_assunto   = Nothing
@@ -3529,8 +3583,13 @@ Public Sub Grava
   Dim w_Null
   Dim w_chave_nova
   Dim w_mensagem
-  Dim FS, F1, w_file
-
+  Dim FS, F1, w_file, w_tamanho, w_tipo, w_nome, field, w_maximo
+  
+  w_file    = ""
+  w_tamanho = ""
+  w_tipo    = ""
+  w_nome    = ""
+  
   ShowHTML "<HTML>"
   ShowHTML "<BASE HREF=""" & conRootSIW & """>"
   BodyOpen "onLoad=document.focus();"
@@ -3657,32 +3716,43 @@ Public Sub Grava
           
           ' Trata o recebimento de upload ou dados 
           If InStr(uCase(Request.ServerVariables("http_content_type")),"MULTIPART/FORM-DATA") > 0 Then
-             ' Se foi feito o upload de um arquivo 
-             If ul.Files("w_caminho").OriginalPath > "" Then 
-                ' Verifica se o tamanho das fotos está compatível com  o limite de 100KB. 
-                If ul.Files("w_caminho").Size > ul.Form("w_upload_maximo") Then 
-                   ScriptOpen("JavaScript") 
-                   ShowHTML "  alert('Atenção: o tamanho máximo do arquivo não pode exceder " & ul.Form("w_upload_maximo")/1024 & " KBytes!');" 
-                   ShowHTML "  history.back(1);" 
-                   ScriptClose 
-                   Response.End() 
-                   exit sub 
-                End If 
-    
-                ' Se já há um nome para o arquivo, mantém 
-                w_file = nvl(ul.Form("w_atual"),ul.GetUniqueName()) 
-                ul.Files("w_caminho").SaveAs(conFilePhysical & w_cliente & "\" & w_file) 
-             Else 
-                w_file = "" 
-             End If 
-             DML_PutProjetoEnvio w_menu, ul.Form("w_chave"), w_usuario, ul.Form("w_tramite"), _ 
-                 ul.Form("w_novo_tramite"), "N", ul.Form("w_observacao"), ul.Form("w_destinatario"), ul.Form("w_despacho"), _ 
-                 w_file, ul.Files("w_caminho").Size, ul.Files("w_caminho").ContentType 
-    
+             ' Se foi feito o upload de um arquivo
+             If ul.State = 0 Then
+                w_maximo     = ul.Texts.Item("w_upload_maximo")
+                For Each Field in ul.Files.Items
+                   If Field.Length > 0 Then
+                      ' Verifica se o tamanho das fotos está compatível com  o limite de 100KB. 
+                      If cDbl(Field.Length) > cDbl(w_maximo) Then 
+                         ScriptOpen("JavaScript") 
+                         ShowHTML "  alert('Atenção: o tamanho máximo do arquivo não pode exceder " & cDbl(w_maximo)/1024 & " KBytes!');" 
+                         ShowHTML "  history.back(1);" 
+                         ScriptClose 
+                         Response.End() 
+                         exit sub 
+                       End If 
+     
+                      ' Se já há um nome para o arquivo, mantém 
+                      Set FS = CreateObject("Scripting.FileSystemObject")
+                      w_file    = nvl(ul.Texts.Item("w_atual"),replace(FS.GetTempName(),".tmp",Mid(Field.FileName,Instr(Field.FileName,"."),30)))
+                      w_tamanho = Field.Length
+                      w_tipo    = Field.ContentType
+                      w_nome    = Field.FileName
+                      Field.SaveAs conFilePhysical & w_cliente & "\" & w_file
+                   End If
+                Next                 
+                DML_PutProjetoEnvio w_menu, ul.Texts.Item("w_chave"), w_usuario, ul.Texts.Item("w_tramite"), _ 
+                    ul.Texts.Item("w_novo_tramite"), "N", ul.Texts.Item("w_observacao"), ul.Texts.Item("w_destinatario"), ul.Texts.Item("w_despacho"), _ 
+                    w_file, w_tamanho, w_tipo 
+             Else
+                ScriptOpen "JavaScript" 
+                ShowHTML "  alert('ATENÇÃO: ocorreu um erro na transferência do arquivo. Tente novamente!');" 
+                ScriptClose 
+             End If
+                                         
              ScriptOpen "JavaScript" 
              ' Volta para a listagem 
              DB_GetMenuData RS, w_menu
-             ShowHTML "  location.href='" & replace(RS("link"),w_dir,"") & "&O=L&w_chave=" & ul.Form("w_chave") & "&P1=" & P1 & "&P2=" & P2 & "&P3=" & P3 & "&P4=" & P4 & "&TP=" & RemoveTP(TP) & "&SG=" & rs("sigla") & MontaFiltroUpload(ul.Form) & "';" 
+             ShowHTML "  location.href='" & replace(RS("link"),w_dir,"") & "&O=L&w_chave=" & ul.Texts.Item("w_chave") & "&P1=" & P1 & "&P2=" & P2 & "&P3=" & P3 & "&P4=" & P4 & "&TP=" & RemoveTP(TP) & "&SG=" & rs("sigla") & MontaFiltro("UPLOAD") & "';" 
              'ShowHTML "  location.href='" & replace(RS("link"),w_dir,"") & "&O=L&w_menu=" & Request("w_menu") &"&w_chave=" & Request("w_chave") & "&P1=" & P1 & "&P2=" & P2 & "&P3=" & P3 & "&P4=" & P4 & "&TP=" & RemoveTP(TP) & "&SG=" & rs("sigla") & MontaFiltro("GET") & "';"
              DesconectaBD 
              ScriptClose 
@@ -3825,37 +3895,63 @@ Public Sub Grava
           w_assinatura = "" Then
 
           ' Se foi feito o upload de um arquivo  
-          If ul.Files("w_caminho").OriginalPath > "" Then  
-             ' Verifica se o tamanho das fotos está compatível com  o limite de 100KB.  
-             If ul.Files("w_caminho").Size > ul.Form("w_upload_maximo") Then  
-                ScriptOpen("JavaScript")  
-                ShowHTML "  alert('Atenção: o tamanho máximo do arquivo não pode exceder " & ul.Form("w_upload_maximo")/1024 & " KBytes!');"  
-                ShowHTML "  history.back(1);"  
-                ScriptClose  
-                Response.End()  
-                exit sub  
+          Set FS = CreateObject("Scripting.FileSystemObject")
+          If ul.State = 0 Then
+             w_maximo     = ul.Texts.Item("w_upload_maximo")
+             For Each Field in ul.Files.Items
+                If Field.Length > 0 Then
+                   ' Verifica se o tamanho das fotos está compatível com  o limite de 100KB. 
+                   If cDbl(Field.Length) > cDbl(w_maximo) Then 
+                      ScriptOpen("JavaScript") 
+                      ShowHTML "  alert('Atenção: o tamanho máximo do arquivo não pode exceder " & cDbl(w_maximo)/1024 & " KBytes!');" 
+                      ShowHTML "  history.back(1);" 
+                      ScriptClose 
+                      Response.End() 
+                      exit sub 
+                   End If 
+                   ' Se já há um nome para o arquivo, mantém 
+                   Set FS = CreateObject("Scripting.FileSystemObject")
+                   If ul.Texts.Item("w_atual") > "" Then
+                      DB_GetSolicAnexo RS, ul.Texts.Item("w_chave"), ul.Texts.Item("w_atual"), w_cliente 
+                      FS.DeleteFile conFilePhysical & w_cliente & "\" & RS("caminho")
+                      w_file = Mid(RS("caminho"),1,Instr(RS("caminho"),".")-1) & Mid(Field.FileName,Instr(Field.FileName,"."),30)
+                   Else
+                      w_file = replace(FS.GetTempName(),".tmp",Mid(Field.FileName,Instr(Field.FileName,"."),30))
+                   End If
+                   w_tamanho = Field.Length
+                   w_tipo    = Field.ContentType
+                   w_nome    = Field.FileName
+                   Field.SaveAs conFilePhysical & w_cliente & "\" & w_file
+                End If
+             Next
+    
+             'Response.Write UploadID & "w_file: " & w_file & "<br> " & "w_tamanho: " & w_tamanho & "<br> " & "w_tipo: " & w_tipo & "<br> " & "w_nome: " & w_nome
+             'Response.End()
+
+             ' Se for exclusão e houver um arquivo físico, deve remover o arquivo do disco.  
+             If O = "E" and ul.Texts.Item("w_atual") > "" Then  
+                DB_GetSolicAnexo RS, ul.Texts.Item("w_chave"), ul.Texts.Item("w_atual"), w_cliente 
+                FS.DeleteFile conFilePhysical & w_cliente & "\" & RS("caminho")
+                DesconectaBD
              End If  
     
-             ' Se já há um nome para o arquivo, mantém  
-             w_file = nvl(ul.Form("w_atual"),ul.GetUniqueName())  
-             ul.Files("w_caminho").SaveAs(conFilePhysical & w_cliente & "\" & w_file)  
-          Else  
-             w_file = ""  
-          End If  
-    
-          ' Se for exclusão e houver um arquivo físico, deve remover o arquivo do disco.  
-          If O = "E" and ul.Form("w_atual") > "" Then  
-             ul.FileDelete(conFilePhysical & w_cliente & "\" & ul.Form("w_atual"))  
-          End If  
-    
-          DML_PutSolicArquivo O, _  
-              w_cliente, ul.Form("w_chave"), ul.Form("w_chave_aux"), ul.Form("w_nome"), ul.Form("w_descricao"), _  
-              w_file, ul.Files("w_caminho").Size, ul.Files("w_caminho").ContentType, ExtractFileName(ul.Files("w_caminho").OriginalPath)
+             'Response.Write O& ", " &w_cliente& ", " &ul.Texts.Item("w_chave")& ", " &ul.Texts.Item("w_chave_aux")& ", " &ul.Texts.Item("w_nome")& ", " &ul.Texts.Item("w_descricao")
+             'Response.End()
+             DML_PutSolicArquivo O, _  
+                 w_cliente, ul.Texts.Item("w_chave"), ul.Texts.Item("w_chave_aux"), ul.Texts.Item("w_nome"), ul.Texts.Item("w_descricao"), _  
+                 w_file, w_tamanho, w_tipo, w_nome
+          Else
+             ScriptOpen "JavaScript" 
+             ShowHTML "  alert('ATENÇÃO: ocorreu um erro na transferência do arquivo. Tente novamente!');" 
+             ScriptClose 
+             Response.End()
+             Exit Sub
+          End If
           
           ScriptOpen "JavaScript"
           ' Recupera a sigla do serviço pai, para fazer a chamada ao menu 
           DB_GetLinkData RS, Session("p_cliente"), SG 
-          ShowHTML "  location.href='" & RS("link") & "&O=L&w_chave=" & ul.Form("w_chave") & "&P1=" & P1 & "&P2=" & P2 & "&P3=" & P3 & "&P4=" & P4 & "&TP=" & TP & "&SG=" & SG & "';" 
+          ShowHTML "  location.href='" & RS("link") & "&O=L&w_chave=" & ul.Texts.Item("w_chave") & "&P1=" & P1 & "&P2=" & P2 & "&P3=" & P3 & "&P4=" & P4 & "&TP=" & TP & "&SG=" & SG & "';" 
           DesconectaBD
           ScriptClose
        Else

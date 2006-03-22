@@ -18,6 +18,7 @@
 <!-- #INCLUDE FILE="DML_Projeto.asp" -->
 <!-- #INCLUDE FILE="Funcoes.asp" -->
 <!-- #INCLUDE VIRTUAL="/siw/mod_pd/DB_Viagem.asp" -->
+<!-- #INCLUDE VIRTUAL="/siw/cp_upload/_upload.asp" -->
 <%
 Response.Expires = -1500
 REM =========================================================================
@@ -58,7 +59,7 @@ Dim p_chave, p_assunto, p_pais, p_regiao, p_uf, p_cidade, p_usu_resp, p_uorg_res
 Dim w_troca,w_cor, w_filter, w_cliente, w_usuario, w_gestor, w_menu
 Dim w_sq_pessoa
 Dim ul,File
-Dim w_dir, w_dir_volta
+Dim w_dir, w_dir_volta, UploadId
 Set RS  = Server.CreateObject("ADODB.RecordSet")
 Set RS1 = Server.CreateObject("ADODB.RecordSet")
 Set RS2 = Server.CreateObject("ADODB.RecordSet")
@@ -144,19 +145,27 @@ w_cliente  = RetornaCliente() ' Retorna o código do cliente para o usuário logad
 w_usuario  = RetornaUsuario() ' Retorna o código do usuário logado
 w_menu     = RetornaMenu(w_cliente, "PJCADP") ' Retorna o código do menu
 
-If InStr(uCase(Request.ServerVariables("http_content_type")),"MULTIPART/FORM-DATA") > 0 Then  
-   ' Cria o objeto de upload
-   Set ul       = Nothing
-   Set ul       = Server.CreateObject("Dundas.Upload.2")
-   ul.SaveToMemory  
+Set ul            = New ASPForm
 
-   P1           = ul.Form("P1")
-   P2           = ul.Form("P2")
-   P3           = ul.Form("P3")
-   P4           = ul.Form("P4")
-   TP           = ul.Form("TP")
-   R            = uCase(ul.Form("R"))
-   w_Assinatura = uCase(ul.Form("w_Assinatura"))
+If Request("UploadID") > "" Then
+   UploadID = Request("UploadID")
+Else
+   UploadID = ul.NewUploadID
+End If
+
+If InStr(uCase(Request.ServerVariables("http_content_type")),"MULTIPART/FORM-DATA") > 0 Then  
+   Server.ScriptTimeout = 2000
+   ul.SizeLimit = &HA00000
+   If UploadID > 0 then
+      ul.UploadID = UploadID
+   End If
+   P1           = ul.Texts.Item("P1")
+   P2           = ul.Texts.Item("P2")
+   P3           = ul.Texts.Item("P3")
+   P4           = ul.Texts.Item("P4")
+   TP           = ul.Texts.Item("TP")
+   R            = uCase(ul.Texts.Item("R"))
+   w_Assinatura = uCase(ul.Texts.Item("w_Assinatura"))
    
    
    If InStr(SG, "ANEXO") > 0 or InStr(SG, "PARC") > 0 or InStr(SG, "REPR") > 0 Then
@@ -190,6 +199,7 @@ Main
 
 FechaSessao
 
+Set UploadID      = Nothing
 Set w_dir         = Nothing
 Set w_dir_volta   = Nothing
 Set w_copia       = Nothing

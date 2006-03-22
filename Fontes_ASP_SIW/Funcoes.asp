@@ -316,9 +316,9 @@ Function MontaFiltro (p_method)
            End If
         Next
      Else
-        For Each l_Item IN ul.Form
-           If Mid(l_item,1,2) = "p_" and ul.Form(l_Item) > "" Then
-              l_string = l_string & "&" & l_Item & "=" & ul.Form(l_Item)
+        For Each l_Item IN ul.Texts.Item
+           If Mid(l_item,1,2) = "p_" and ul.Texts.Item(l_Item) > "" Then
+              l_string = l_string & "&" & l_Item & "=" & ul.Texts.Item(l_Item)
            End If
         Next
      End If
@@ -408,19 +408,19 @@ End Function
 REM =========================================================================
 REM Montagem da URL com os parâmetros de filtragem quando o for UPLOAD
 REM -------------------------------------------------------------------------
-Function MontaFiltroUpload (p_Form)
-  Dim l_string, l_item
-  l_string = ""
-  For Each l_Item IN p_Form
-     If Mid(l_item,1,2) = "p_" and l_item.value > "" Then
-        l_string = l_string & "&" & l_Item & "=" & l_item.value
-     End If
-  Next
-  
-  MontaFiltroUpload = l_string
-  
-  Set l_string = Nothing
-End Function
+'Function MontaFiltroUpload (p_Form)
+'  Dim l_string, l_item
+'  l_string = ""
+'  For Each l_Item IN p_Form
+'     If Mid(l_item,1,2) = "p_" and l_item.value > "" Then
+'        l_string = l_string & "&" & l_Item & "=" & l_item.value
+'     End If
+'  Next
+'  
+'  MontaFiltroUpload = l_string
+'  
+'  Set l_string = Nothing
+'End Function
 
 REM =========================================================================
 REM Monta uma string para indicar a opção selecionada

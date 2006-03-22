@@ -7,6 +7,7 @@
 <!-- #INCLUDE VIRTUAL="/siw/jScript.asp" -->
 <!-- #INCLUDE VIRTUAL="/siw/Funcoes.asp" -->
 <!-- #INCLUDE VIRTUAL="/siw/Funcoes_Valida.asp" -->
+<!-- #INCLUDE VIRTUAL="/siw/cp_upload/_upload.asp" -->
 <!-- #INCLUDE FILE="DB_SIAFI.asp" -->
 <!-- #INCLUDE FILE="DML_SIAFI.asp" -->
 <!-- #INCLUDE FILE="Funcoes.asp" -->
@@ -46,7 +47,7 @@ Dim dbms, sp, RS, RS1, RS2, RS3, RS4, RS_menu
 Dim P1, P2, P3, P4, TP, SG
 Dim R, O, w_Cont, w_Reg, w_Pagina, w_Disabled, w_TP, w_classe, w_submenu, w_filtro, w_copia
 Dim w_Assinatura, w_caminho
-Dim w_troca,w_cor, w_filter, w_cliente, w_usuario, w_menu, w_dir, w_chave, w_dir_volta
+Dim w_troca,w_cor, w_filter, w_cliente, w_usuario, w_menu, w_dir, w_chave, w_dir_volta, UploadID
 Dim w_sq_pessoa, w_ano
 Dim ul,File
 Dim p_responsavel, p_dt_ini, p_dt_fim, p_imp_ini, p_imp_fim
@@ -78,29 +79,37 @@ w_usuario         = RetornaUsuario()
 w_menu            = RetornaMenu(w_cliente, SG)
 w_ano             = RetornaAno()
 
+Set ul            = New ASPForm
+
+If Request("UploadID") > "" Then
+   UploadID = Request("UploadID")
+Else
+   UploadID = ul.NewUploadID
+End If
+
 ' Configura o caminho para gravação física de arquivos
 w_caminho = conFilePhysical & w_cliente & "\"
 
 If InStr(uCase(Request.ServerVariables("http_content_type")),"MULTIPART/FORM-DATA") > 0 Then
-   ' Cria o objeto de upload
-   Set ul       = Nothing
-   Set ul       = Server.CreateObject("Dundas.Upload.2")
-   ul.SaveToMemory
+   Server.ScriptTimeout = 2000
+   ul.SizeLimit = &HA00000
+   If UploadID > 0 then
+      ul.UploadID = UploadID
+   End If
+   w_troca          = ul.Texts.Item("w_troca")
+   p_responsavel    = uCase(ul.Texts.Item("p_responsavel"))
+   p_dt_ini         = ul.Texts.Item("p_dt_ini")
+   p_dt_fim         = ul.Texts.Item("p_dt_fim")
+   p_imp_ini        = ul.Texts.Item("p_imp_ini")
+   p_imp_fim        = ul.Texts.Item("p_imp_fim")
 
-   w_troca          = ul.Form("w_troca")
-   p_responsavel    = uCase(ul.Form("p_responsavel"))
-   p_dt_ini         = ul.Form("p_dt_ini")
-   p_dt_fim         = ul.Form("p_dt_fim")
-   p_imp_ini        = ul.Form("p_imp_ini")
-   p_imp_fim        = ul.Form("p_imp_fim")
-
-   P1               = ul.Form("P1")
-   P2               = ul.Form("P2")
-   P3               = ul.Form("P3")
-   P4               = ul.Form("P4")
-   TP               = ul.Form("TP")
-   R                = uCase(ul.Form("R"))
-   w_Assinatura     = uCase(ul.Form("w_Assinatura"))
+   P1               = ul.Texts.Item("P1")
+   P2               = ul.Texts.Item("P2")
+   P3               = ul.Texts.Item("P3")
+   P4               = ul.Texts.Item("P4")
+   TP               = ul.Texts.Item("TP")
+   R                = uCase(ul.Texts.Item("R"))
+   w_Assinatura     = uCase(ul.Texts.Item("w_Assinatura"))
 Else
    w_troca          = Request("w_troca")
    p_responsavel    = uCase(Request("p_responsavel"))
@@ -167,6 +176,7 @@ Main
 
 FechaSessao
 
+Set UploadID      = Nothing
 Set p_responsavel = Nothing
 Set p_dt_ini      = Nothing
 Set p_dt_fim      = Nothing
@@ -244,6 +254,7 @@ Sub Inicial
      ScriptOpen "JavaScript"
      CheckBranco
      FormataDataHora
+     ProgressBar w_dir_volta, UploadID       
      ValidateOpen "Validacao"
      If InStr("I",O) > 0 Then
         Validate "w_data_arquivo", "Data e hora", "DATAHORA", "1", "17", "17", "", "0123456789 /:,"
@@ -252,6 +263,7 @@ Sub Inicial
      End If
      ShowHTML "  theForm.Botao[0].disabled=true;"
      ShowHTML "  theForm.Botao[1].disabled=true;"
+     ShowHTML "if (theForm.w_arquivo_recebido.value != '') {return ProgressBar();}"      
      ValidateClose
      ScriptClose
   End If
@@ -317,7 +329,7 @@ Sub Inicial
     DesconectaBD
   ElseIf Instr("IV",O) > 0 Then
     If InStr("EV",O) Then w_Disabled = " DISABLED " End If
-    ShowHTML "<FORM action=""" & w_dir & w_pagina & "Grava&SG="&SG&"&O="&O&""" name=""Form"" onSubmit=""return(Validacao(this));"" enctype=""multipart/form-data"" method=""POST"">"
+    ShowHTML "<FORM action=""" & w_dir & w_pagina & "Grava&SG="&SG&"&O="&O&"&UploadID="&UploadID&""" name=""Form"" onSubmit=""return(Validacao(this));"" enctype=""multipart/form-data"" method=""POST"">"
     ShowHTML "<INPUT type=""hidden"" name=""P1"" value=""" & P1 & """>"
     ShowHTML "<INPUT type=""hidden"" name=""P2"" value=""" & P2 & """>"
     ShowHTML "<INPUT type=""hidden"" name=""P3"" value=""" & P3 & """>"
@@ -462,9 +474,9 @@ Public Sub Grava
   CONST TristateFalse = 0 'Abre o arquivo como ASCII
 
   Dim w_Null, w_mensagem, FS, F1, F2, w_linha, w_chave_nova
-  Dim w_caminho_recebido, w_tamanho_recebido, w_tipo_recebido
+  Dim w_caminho_recebido, w_tamanho_recebido, w_tipo_recebido, w_nome_recebido
   Dim w_arquivo_registro, w_caminho_registro, w_tamanho_registro, w_tipo_registro
-  Dim w_registros, w_importados, w_rejeitados, w_situacao, w_erro, w_result
+  Dim w_registros, w_importados, w_rejeitados, w_situacao, w_erro, w_result, w_maximo, field
   
   Dim w_unidade, w_programa, w_acao, w_dotacao, w_empenhado, w_liquidado
 
@@ -478,118 +490,124 @@ Public Sub Grava
        ' Verifica se a Assinatura Eletrônica é válida
        If (VerificaAssinaturaEletronica(Session("Username"),w_assinatura) and w_assinatura > "") or _
           w_assinatura = "" Then
+          Set FS = CreateObject("Scripting.FileSystemObject")          
+          ' Verifica se o tamanho das fotos está compatível com  o limite de 100KB
+             If ul.State = 0 Then
+                w_maximo     = ul.Texts.Item("w_upload_maximo")
+                For Each Field in ul.Files.Items
+                   If Field.Length > 0 Then
+                      ' Verifica se o tamanho das fotos está compatível com  o limite de 100KB. 
+                      If cDbl(Field.Length) > cDbl(w_maximo) Then 
+                         ScriptOpen("JavaScript") 
+                         ShowHTML "  alert('Atenção: o tamanho máximo do arquivo não pode exceder " & cDbl(w_maximo)/1024 & " KBytes!');" 
+                         ShowHTML "  history.back(1);" 
+                         ScriptClose 
+                         Response.End() 
+                         exit sub 
+                       End If 
+     
+                      ' Se já há um nome para o arquivo, mantém 
+                      w_caminho_recebido = replace(FS.GetTempName(),".tmp",Mid(Field.FileName,Instr(Field.FileName,"."),30))
+                      w_tamanho_recebido = Field.Length
+                      w_tipo_recebido    = Field.ContentType
+                      w_nome_recebido    = Field.FileName
+                      Field.SaveAs conFilePhysical & w_cliente & "\" & w_caminho_recebido
+                      w_caminho_registro = replace(w_caminho_recebido,Mid(w_caminho_recebido,Instr(w_caminho_recebido,"."),30),"") & "r" & Mid(w_caminho_recebido,Instr(w_caminho_recebido,"."),30)
+                   End If
+                Next                 
+                ' Gera o arquivo registro da importação
+                Set FS = CreateObject("Scripting.FileSystemObject")
+                Set F1 = FS.CreateTextFile(w_caminho & w_caminho_registro)
           
-          ' Verifica se o tamanho das fotos está compatível com  o limite de 100KB.
-          If ul.Files("w_arquivo_recebido").Size > ul.Form("w_upload_maximo") Then
-             ScriptOpen("JavaScript")
-             ShowHTML "  alert('Atenção: o tamanho máximo do arquivo não pode exceder " & ul.Form("w_upload_maximo")/1024 & " KBytes!');"
-             ShowHTML "  history.back(1);"
-             ScriptClose
-             Response.End()
-             exit sub
-          End If
+                'Abre o arquivo recebido para gerar o arquivo registro
+                Set F2 = FS.OpenTextFile(w_caminho & w_caminho_recebido)
           
-          ' Configura o nome dos arquivo recebido e do arquivo registro
-          w_caminho_recebido = ul.GetUniqueName()
-          w_caminho_registro = ul.GetUniqueName()
-          
-          ul.Files("w_arquivo_recebido").SaveAs(w_caminho & w_caminho_recebido)
-          
-          ' Gera o arquivo registro da importação
-          Set FS = CreateObject("Scripting.FileSystemObject")
-          Set F1 = FS.CreateTextFile(w_caminho & w_caminho_registro)
-          
-          'Abre o arquivo recebido para gerar o arquivo registro
-          Set F2 = FS.OpenTextFile(w_caminho & w_caminho_recebido)
-          
-          ' Varre o arquivo recebido, linha a linha
-          w_registros  = 0
-          w_importados = 0
-          w_rejeitados = 0
-          w_cont       = 0
-          Do While Not F2.AtEndOfStream 
-             w_linha = F2.ReadLine
-             w_cont  = w_cont + 1
-             F1.WriteLine "[Linha " & w_cont & "] " & w_linha
-             w_unidade  = Nvl(trim(Piece(w_linha,"",";",1)),w_unidade)
-             w_programa = Nvl(trim(Piece(w_linha,"",";",3)),w_programa)
-             w_acao     = trim(Piece(w_linha,"",";",5))
-             w_dotacao  = trim(Piece(w_linha,"",";",8))
-             w_empenhado= trim(Piece(w_linha,"",";",9))
-             w_liquidado= trim(Piece(w_linha,"",";",10))
+                ' Varre o arquivo recebido, linha a linha
+                w_registros  = 0
+                w_importados = 0
+                w_rejeitados = 0
+                w_cont       = 0
+                Do While Not F2.AtEndOfStream
+                   w_linha = F2.ReadLine
+                   w_cont  = w_cont + 1
+                   F1.WriteLine "[Linha " & w_cont & "] " & w_linha
+                   w_programa = Nvl(trim(Piece(w_linha,"",";",2)),w_programa)
+                   w_acao     = trim(Piece(w_linha,"",";",4))
+                   w_dotacao  = trim(Piece(w_linha,"",";",6))
+                   w_empenhado= trim(Piece(w_linha,"",";",7))
+                   w_liquidado= trim(Piece(w_linha,"",";",8))
 
-             w_erro = 0
-             
-             ' Valida o campo Unidade
-             w_result = fValidate(1, w_unidade, "Unidade", "", 1, 5, 5, "", "0123456789")
-             If w_result > "" Then F1.WriteLine "=== Erro campo Unidade: " & w_result : w_erro = 1 End If
-             
-             ' Valida o campo Programa
-             w_result = fValidate(1, w_programa, "Programa", "", 1, 4, 4, "", "0123456789")
-             If w_result > "" Then F1.WriteLine "=== Erro campo Programa: " & w_result : w_erro = 1 End If
+                   w_erro = 0
+                               
+                   ' Valida o campo Programa
+                   w_result = fValidate(1, w_programa, "Programa", "", 1, 4, 4, "", "0123456789")
+                   If w_result > "" Then F1.WriteLine "=== Erro campo Programa: " & w_result : w_erro = 1 End If 
 
-             ' Valida o campo Ação
-             w_result = fValidate(1, w_acao, "Ação", "", 1, 4, 8, "", "0123456789ABCDEFGHIJKLMNOPQRSTUWVXYZ")
-             If w_result > "" Then F1.WriteLine "=== Erro campo Ação: " & w_result : w_erro = 1 End If
+                   ' Valida o campo Ação
+                   w_result = fValidate(1, w_acao, "Ação", "", 1, 4, 5, "", "0123456789ABCDEFGHIJKLMNOPQRSTUWVXYZ")
+                   If w_result > "" Then F1.WriteLine "=== Erro campo Ação: " & w_result : w_erro = 1 End If
 
-             ' Valida o campo Dotação
-             w_result = fValidate(1, w_dotacao, "Dotação Autorizada", "VALOR", 1, 3, 18, "", "0123456789,.")
-             If w_result > "" Then F1.WriteLine "=== Erro campo Dotação Autorizada: " & w_result : w_erro = 1 End If
+                   ' Valida o campo Dotação
+                   w_result = fValidate(1, w_dotacao, "Dotação Autorizada", "VALOR", 1, 3, 18, "", "0123456789,.")
+                   If w_result > "" Then F1.WriteLine "=== Erro campo Dotação Autorizada: " & w_result : w_erro = 1 End If
 
-             ' Valida o campo Empenhado
-             w_result = fValidate(1, w_empenhado, "Total Empenhado", "VALOR", 1, 3, 18, "", "0123456789,.")
-             If w_result > "" Then F1.WriteLine "=== Erro campo Total Empenhado: " & w_result : w_erro = 1 End If
+                   ' Valida o campo Empenhado
+                   w_result = fValidate(1, w_empenhado, "Total Empenhado", "VALOR", 1, 3, 18, "", "0123456789,.")
+                   If w_result > "" Then F1.WriteLine "=== Erro campo Total Empenhado: " & w_result : w_erro = 1 End If
 
-             ' Valida o campo Liquidado
-             w_result = fValidate(1, w_liquidado, "Total Liquidado", "VALOR", 1, 3, 18, "", "0123456789,.")
-             If w_result > "" Then F1.WriteLine "=== Erro campo Total Liquidado: " & w_result : w_erro = 1 End If
-             
-             If w_erro = 0 Then
-                ' Verifica se o programa/ação existe para o cliente
-                DB_GetAcaoPPA_IS RS, w_cliente, w_ano, w_programa, Mid(w_acao,1,4), Mid(w_acao,5,4), w_unidade, null, null, null
-                If RS.EOF Then 
-                   F1.WriteLine "=== Ação não encontrada"
-                   w_erro = 1
-                Else
-                   ' Se existir, atualiza os dados financeiros
-                   DML_PutDadosAcaoPPA_IS w_cliente, w_ano, w_unidade, _
-                       w_programa, Mid(w_acao,1,4), Mid(w_acao,5,4), w_dotacao, _
-                       w_empenhado, w_liquidado
-                End If
-             End If
-             
-             w_registros = w_registros + 1
-             If w_erro = 0 Then
-                w_importados = w_importados + 1
+                   ' Valida o campo Liquidado
+                   w_result = fValidate(1, w_liquidado, "Total Liquidado", "VALOR", 1, 3, 18, "", "0123456789,.")
+                   If w_result > "" Then F1.WriteLine "=== Erro campo Total Liquidado: " & w_result : w_erro = 1 End If
+                  
+                   If w_erro = 0 Then
+                      ' Verifica se o programa/ação existe para o cliente
+                      DB_GetAcaoPPA RS, null, w_cliente, null, null, null, null, null, null, w_programa, w_acao
+                      If RS.EOF Then 
+                         F1.WriteLine "=== Programa/ação não encontrado"
+                        w_erro = 1
+                      Else
+                         ' Se existir, atualiza os dados financeiros
+                         DML_PutAcaoPPA "U", _
+                             null, w_cliente, null, null, null, null, null, null, null, null, w_dotacao, null, _
+                             w_empenhado, w_liquidado, null, null, null, w_programa, w_acao
+                      End If
+                   End If
+                   
+                   w_registros = w_registros + 1
+                   If w_erro = 0 Then
+                      w_importados = w_importados + 1
+                   Else
+                      w_rejeitados = w_rejeitados + 1
+                   End If
+                Loop
+                F2.Close
+                F1.Close
+           
+                ' Configura o valor dos campos necessários para gravação
+                If w_rejeitados = 0 Then w_situacao = 0 Else w_situacao = 1 End If
+           
+                w_arquivo_registro = "Arquivo registro"
+                Set F1 = FS.GetFile(w_caminho & w_caminho_registro)
+                w_tamanho_registro = F1.size
+                w_tipo_registro    = w_tipo_recebido
+                
+                ' Grava o resultado da importação no banco de dados
+                DML_PutOrImport O, _
+                    ul.Texts.Item("w_chave"), w_cliente,   w_usuario,          ul.Texts.Item("w_data_arquivo"), _
+                    w_nome_recebido, _
+                    w_caminho_recebido, w_tamanho_recebido,  w_tipo_recebido, _
+                    w_arquivo_registro,              w_caminho_registro, w_tamanho_registro, w_tipo_registro, _
+                    w_registros,                     w_importados,       w_rejeitados,       w_situacao, _
+                    w_nome_recebido,                 w_arquivo_registro
+           
+                ScriptOpen "JavaScript"
+                ShowHTML "  location.href='" & R & "&w_chave=" & ul.Texts.Item("w_Chave") & "&P1=" & P1 & "&P2=" & P2 & "&P3=" & P3 & "&P4=" & P4 & "&TP=" & TP & "&SG=" & SG & MontaFiltro("UL") & "';"
+                ScriptClose
              Else
-                w_rejeitados = w_rejeitados + 1
+                ScriptOpen "JavaScript" 
+                ShowHTML "  alert('ATENÇÃO: ocorreu um erro na transferência do arquivo. Tente novamente!');" 
+                ScriptClose 
              End If
-          Loop
-          F2.Close
-          F1.Close
-          
-          ' Configura o valor dos campos necessários para gravação
-          If w_rejeitados = 0 Then w_situacao = 0 Else w_situacao = 1 End If
-          
-          w_tamanho_recebido = ul.Files("w_arquivo_recebido").Size
-          w_tipo_recebido    = ul.Files("w_arquivo_recebido").ContentType
-          w_arquivo_registro = "Arquivo registro"
-          Set F1 = FS.GetFile(w_caminho & w_caminho_registro)
-          w_tamanho_registro = F1.size
-          w_tipo_registro    = w_tipo_recebido
-          
-          ' Grava o resultado da importação no banco de dados
-          DML_PutOrImport O, _
-              ul.Form("w_chave"), w_cliente,   w_usuario,          ul.Form("w_data_arquivo"), _
-              ul.Files("w_arquivo_recebido").OriginalPath, _
-              w_caminho_recebido, w_tamanho_recebido,  w_tipo_recebido, _
-              w_arquivo_registro,              w_caminho_registro, w_tamanho_registro, w_tipo_registro, _
-              w_registros,                     w_importados,       w_rejeitados,       w_situacao, _
-              ExtractFileName(ul.Files("w_arquivo_recebido").OriginalPath), w_arquivo_registro
-          
-          ScriptOpen "JavaScript"
-          ShowHTML "  location.href='" & R & "&w_chave=" & ul.Form("w_Chave") & "&P1=" & P1 & "&P2=" & P2 & "&P3=" & P3 & "&P4=" & P4 & "&TP=" & TP & "&SG=" & SG & MontaFiltro("UL") & "';"
-          ScriptClose
        Else
           ScriptOpen "JavaScript"
           ShowHTML "  alert('Assinatura Eletrônica inválida!');"

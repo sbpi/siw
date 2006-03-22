@@ -145,31 +145,6 @@ End Select
 w_cliente  = RetornaCliente() ' Retorna o código do cliente para o usuário logado
 w_usuario  = RetornaUsuario() ' Retorna o código do usuário logado
 w_menu     = RetornaMenu(w_cliente, "PJCADA") ' Retorna o código do menu
-If InStr(uCase(Request.ServerVariables("http_content_type")),"MULTIPART/FORM-DATA") > 0 Then  
-   ' Cria o objeto de upload
-   Set ul       = Nothing
-   Set ul       = Server.CreateObject("Dundas.Upload.2")
-   ul.SaveToMemory  
-
-   P1           = ul.Form("P1")
-   P2           = ul.Form("P2")
-   P3           = ul.Form("P3")
-   P4           = ul.Form("P4")
-   TP           = ul.Form("TP")
-   R            = uCase(ul.Form("R"))
-   w_Assinatura = uCase(ul.Form("w_Assinatura"))
-   
-   
-   If InStr(SG, "ANEXO") > 0 or InStr(SG, "PARC") > 0 or InStr(SG, "REPR") > 0 Then
-      If InStr("IG",O) = 0 and Request("w_chave_aux") = "" Then O = "L" End If  
-   ElseIf InStr(SG, "ENVIO") > 0 Then
-      O = "V"  
-   ElseIf O = "" Then  
-      ' Se for acompanhamento, entra na filtragem  
-      If P1 = 3 Then O = "P" Else O = "L" End If  
-   End If  
-   
-End If
 
 ' Verifica se o documento tem sub-menu. Se tiver, agrega no HREF uma chamada para montagem do mesmo.
 DB_GetLinkSubMenu RS, Session("p_cliente"), SG

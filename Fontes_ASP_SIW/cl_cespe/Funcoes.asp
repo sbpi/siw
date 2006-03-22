@@ -23,10 +23,10 @@ Function EnviaMail2(w_para)
       JMail.MailServerUserName = Session("siw_email_conta")
    End If
 
-   JMail.Subject             = ul.Form("w_assunto")
-   JMail.HtmlBody            = ul.Form("w_mensagem")
+   JMail.Subject             = ul.Texts.Item("w_assunto")
+   JMail.HtmlBody            = ul.Texts.Item("w_mensagem")
    
-   JMail.AddAttachment (conFilePhysical & w_cliente & "\" & ul.GetFileName(ul.Files("w_caminho").OriginalPath))
+   JMail.AddAttachment (conFilePhysical & w_cliente & "\" & Field.FileName)
    JMail.ClearRecipients()
    i = 0
    If Instr(w_para,";") > 0 and Mid(w_para,Len(w_para),Len(w_para)) <> ";" Then
