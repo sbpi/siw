@@ -109,7 +109,7 @@ begin
                 case a.cumulativa when 'S' then 'Sim' else 'Não' end nm_cumulativa,                
                 d.nome_resumido||' ('||f.sigla||')' nm_resp, g.sigla sg_setor,
                 i.solicitante sq_pessoa, i.sq_unidade,
-                m.cd_acao, m.descricao_subacao,                
+                 m.cd_programa, m.cd_acao, m.descricao_subacao, m.cd_subacao, m.cd_unidade,            
                 m.real_mes_1, m.real_mes_2, m.real_mes_3, m.real_mes_4, m.real_mes_5,
                 m.real_mes_6, m.real_mes_7, m.real_mes_8, m.real_mes_9, m.real_mes_10,
                 m.real_mes_11, m.real_mes_12, m.previsao_ano, m.atual_ano, m.real_ano,
@@ -144,6 +144,7 @@ begin
                 inner          join siw.eo_unidade      g on (i.sq_unidade         = g.sq_unidade)
                 left outer     join is_acao             h on (a.sq_siw_solicitacao = h.sq_siw_solicitacao)
                 left outer     join (select x.ano, x.cliente, x.cd_programa, x.cd_acao, y.cd_subacao, z.descricao_subacao,
+                        w.cd_unidade, 
                         x.real_mes_1, x.real_mes_2, x.real_mes_3, x.real_mes_4, x.real_mes_5,
                         x.real_mes_6, x.real_mes_7, x.real_mes_8, x.real_mes_9, x.real_mes_10,
                         x.real_mes_11, x.real_mes_12, x.previsao_ano, x.atual_ano, x.real_ano,
