@@ -467,7 +467,15 @@ begin
              update siw.siw_solicitacao set sq_siw_tramite = w_chave where sq_siw_solicitacao = crec.sq_siw_solicitacao;
          end loop;
       Else
+        -- Monta string com a chave dos arquivos ligados à solicitação informada
+         for crec in c_arquivos loop
+            w_arq := w_arq || crec.sq_siw_arquivo;
+         end loop;
+         w_arq := substr(w_arq, 3, length(w_arq));
          
+         -- Remove os registros vinculados a ação
+         delete siw.siw_solic_arquivo where sq_siw_solicitacao = p_chave;
+         delete siw.siw_arquivo       where sq_siw_arquivo     in (w_arq);         
          delete siw.pj_projeto_interes where sq_siw_solicitacao = p_chave;
          
          -- Remove os resgistros ligados à ação
