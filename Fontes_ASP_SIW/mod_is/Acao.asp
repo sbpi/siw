@@ -2320,7 +2320,9 @@ Sub AtualizaMeta
   Dim w_realizado_1, w_realizado_2, w_realizado_3, w_realizado_4, w_realizado_5, w_realizado_6
   Dim w_realizado_7, w_realizado_8, w_realizado_9, w_realizado_10, w_realizado_11, w_realizado_12
   Dim w_revisado_1, w_revisado_2, w_revisado_3, w_revisado_4, w_revisado_5, w_revisado_6
-  Dim w_revisado_7, w_revisado_8, w_revisado_9, w_revisado_10, w_revisado_11, w_revisado_12  
+  Dim w_cron_ini_7, w_cron_ini_8, w_cron_ini_9, w_cron_ini_10, w_cron_ini_11, w_cron_ini_12  
+  Dim w_cron_ini_1, w_cron_ini_2, w_cron_ini_3, w_cron_ini_4, w_cron_ini_5, w_cron_ini_6
+  Dim w_revisado_7, w_revisado_8, w_revisado_9, w_revisado_10, w_revisado_11, w_revisado_12    
   Dim w_referencia_1, w_referencia_2, w_referencia_3, w_referencia_4, w_referencia_5, w_referencia_6
   Dim w_referencia_7, w_referencia_8, w_referencia_9, w_referencia_10, w_referencia_11, w_referencia_12
   Dim w_sq_pessoa, w_sq_unidade, w_vincula_atividade, w_cabecalho, w_fase, w_p2, w_fases
@@ -2417,6 +2419,18 @@ Sub AtualizaMeta
      w_real_acao_10         = FormatNumber(cDbl(Nvl(RS("real_mes_10"),0)),2)
      w_real_acao_11         = FormatNumber(cDbl(Nvl(RS("real_mes_11"),0)),2)
      w_real_acao_12         = FormatNumber(cDbl(Nvl(RS("real_mes_12"),0)),2)
+     w_cron_ini_1           = RS("valor_ini_1")
+     w_cron_ini_2           = RS("valor_ini_2")
+     w_cron_ini_3           = RS("valor_ini_3")
+     w_cron_ini_4           = RS("valor_ini_4")
+     w_cron_ini_5           = RS("valor_ini_5")
+     w_cron_ini_6           = RS("valor_ini_6")
+     w_cron_ini_7           = RS("valor_ini_7")
+     w_cron_ini_8           = RS("valor_ini_8")
+     w_cron_ini_9           = RS("valor_ini_9")
+     w_cron_ini_10          = RS("valor_ini_10")
+     w_cron_ini_11          = RS("valor_ini_11")
+     w_cron_ini_12          = RS("valor_ini_12")
      w_aprovado_acao        = FormatNumber(cDbl(Nvl(RS("previsao_ano"),0)),2)
      w_autorizado_acao      = FormatNumber(cDbl(Nvl(RS("atual_ano"),0)),2)
      w_realizado_acao       = FormatNumber(cDbl(Nvl(RS("real_ano"),0)),2)
@@ -2662,58 +2676,72 @@ Sub AtualizaMeta
     If O = "V" Then
        ShowHTML "     <tr><td valign=""top"">"
        ShowHTML "       <table border=1 width=""100%"" cellspacing=0><tr valign=""top"">"
-       ShowHTML "         <tr><td>&nbsp<td><font size=""1""><br><b>Quantitativo revisado</b></td>"
+       ShowHTML "         <tr><td>&nbsp<td><font size=""1""><br><b>Quantitativo inicial</b></td>"
+       ShowHTML "             <td><font size=""1""><br><b>Quantitativo revisado</b></td>"
        ShowHTML "             <td><font size=""1""><br><b>Quantitativo realizado</b></td>"
        ShowHTML "             <td><font size=""1""><br><b>Financeiro realizado</b></td>"
        ShowHTML "         <tr><td width=""10%"" align=""right""><font size=""1""><b>Janeiro:"
-       ShowHTML "             <td align=""right"" width=""30%""><font size=""1"">" & Nvl(w_revisado_1,"---") & "</td>"
+       ShowHTML "             <td align=""right"" width=""30%""><font size=""1"">" & Nvl(w_cron_ini_1,"---") & "</td>"
+       ShowHTML "             <td align=""right""><font size=""1"">"& Nvl(w_revisado_1,"---") & "</td>"
        ShowHTML "             <td align=""right""><font size=""1"">"& Nvl(w_realizado_1,"---") & "</td>"
        ShowHTML "             <td align=""right""><font size=""1"">"& Nvl(w_real_acao_1,"---") & "</td>"
        ShowHTML "         <tr><td align=""right""><font size=""1""><b>Fevereiro:"
+       ShowHTML "             <td align=""right""><font size=""1"">" & Nvl(w_cron_ini_2,"---") & "</td>"
        ShowHTML "             <td align=""right""><font size=""1"">" & Nvl(w_revisado_2,"---") & "</td>"
        ShowHTML "             <td align=""right""><font size=""1"">" & Nvl(w_realizado_2,"---") & "</td>"
        ShowHTML "             <td align=""right""><font size=""1"">" & Nvl(w_real_acao_2,"---") & "</td>"
        ShowHTML "         <tr><td align=""right""><font size=""1""><b>Março:"
+       ShowHTML "             <td align=""right""><font size=""1"">" & Nvl(w_cron_ini_3,"---") & "</td>"
        ShowHTML "             <td align=""right""><font size=""1"">" & Nvl(w_revisado_3,"---") & "</td>"
        ShowHTML "             <td align=""right""><font size=""1"">" & Nvl(w_realizado_3,"---") & "</td>"
        ShowHTML "             <td align=""right""><font size=""1"">" & Nvl(w_real_acao_3,"---") & "</td>"
        ShowHTML "         <tr><td align=""right""><font size=""1""><b>Abril:"
+       ShowHTML "             <td align=""right""><font size=""1"">" & Nvl(w_cron_ini_4,"---") & "</td>"
        ShowHTML "             <td align=""right""><font size=""1"">" & Nvl(w_revisado_4,"---") & "</td>"
        ShowHTML "             <td align=""right""><font size=""1"">" & Nvl(w_realizado_4,"---") & "</td>"
        ShowHTML "             <td align=""right""><font size=""1"">" & Nvl(w_real_acao_4,"---") & "</td>"
        ShowHTML "         <tr><td align=""right""><font size=""1""><b>Maio:"
+       ShowHTML "             <td align=""right""><font size=""1"">" & Nvl(w_cron_ini_5,"---") & "</td>"
        ShowHTML "             <td align=""right""><font size=""1"">" & Nvl(w_revisado_5,"---") & "</td>"
        ShowHTML "             <td align=""right""><font size=""1"">" & Nvl(w_realizado_5,"---") & "</td>"
        ShowHTML "             <td align=""right""><font size=""1"">" & Nvl(w_real_acao_5,"---") & "</td>"
        ShowHTML "         <tr><td align=""right""><font size=""1""><b>Junho:"
+       ShowHTML "             <td align=""right""><font size=""1"">" & Nvl(w_cron_ini_6,"---") & "</td>"
        ShowHTML "             <td align=""right""><font size=""1"">" & Nvl(w_revisado_6,"---") & "</td>"
        ShowHTML "             <td align=""right""><font size=""1"">" & Nvl(w_realizado_6,"---") & "</td>"
        ShowHTML "             <td align=""right""><font size=""1"">" & Nvl(w_real_acao_6,"---") & "</td>"
        ShowHTML "         <tr><td align=""right""><font size=""1""><b>Julho:"
+       ShowHTML "             <td align=""right""><font size=""1"">" & Nvl(w_cron_ini_7,"---") & "</td>"
        ShowHTML "             <td align=""right""><font size=""1"">" & Nvl(w_revisado_7,"---") & "</td>"
        ShowHTML "             <td align=""right""><font size=""1"">" & Nvl(w_realizado_7,"---") & "</td>"
        ShowHTML "             <td align=""right""><font size=""1"">" & Nvl(w_real_acao_7,"---") & "</td>"
        ShowHTML "         <tr><td align=""right""><font size=""1""><b>Agosto:"
+       ShowHTML "             <td align=""right""><font size=""1"">" & Nvl(w_cron_ini_8,"---") & "</td>"
        ShowHTML "             <td align=""right""><font size=""1"">" & Nvl(w_revisado_8,"---") & "</td>"
        ShowHTML "             <td align=""right""><font size=""1"">" & Nvl(w_realizado_8,"---") & "</td>"
        ShowHTML "             <td align=""right""><font size=""1"">" & Nvl(w_real_acao_8,"---") & "</td>"
        ShowHTML "         <tr><td align=""right""><font size=""1""><b>Setembro:"
+       ShowHTML "             <td align=""right""><font size=""1"">" & Nvl(w_cron_ini_9,"---") & "</td>"
        ShowHTML "             <td align=""right""><font size=""1"">" & Nvl(w_revisado_9,"---") & "</td>"
        ShowHTML "             <td align=""right""><font size=""1"">" & Nvl(w_realizado_9,"---") & "</td>"
        ShowHTML "             <td align=""right""><font size=""1"">" & Nvl(w_real_acao_9,"---") & "</td>"
        ShowHTML "         <tr><td align=""right""><font size=""1""><b>Outubro:"
+       ShowHTML "             <td align=""right""><font size=""1"">" & Nvl(w_cron_ini_10,"---") & "</td>"
        ShowHTML "             <td align=""right""><font size=""1"">" & Nvl(w_revisado_10,"---") & "</td>"
        ShowHTML "             <td align=""right""><font size=""1"">" & Nvl(w_realizado_10,"---") & "</td>"
        ShowHTML "             <td align=""right""><font size=""1"">" & Nvl(w_real_acao_10,"---") & "</td>"
        ShowHTML "         <tr><td align=""right""><font size=""1""><b>Novembro:"
+       ShowHTML "             <td align=""right""><font size=""1"">" & Nvl(w_cron_ini_11,"---") & "</td>"
        ShowHTML "             <td align=""right""><font size=""1"">" & Nvl(w_revisado_11,"---") & "</td>"
        ShowHTML "             <td align=""right""><font size=""1"">" & Nvl(w_realizado_11,"---") & "</td>"
        ShowHTML "             <td align=""right""><font size=""1"">" & Nvl(w_real_acao_11,"---") & "</td>"
        ShowHTML "         <tr><td align=""right""><font size=""1""><b>Dezembro:"
+       ShowHTML "             <td align=""right""><font size=""1"">" & Nvl(w_cron_ini_12,"---") & "</td>"
        ShowHTML "             <td align=""right""><font size=""1"">" & Nvl(w_revisado_12,"---") & "</td>"
        ShowHTML "             <td align=""right""><font size=""1"">" & Nvl(w_realizado_12,"---") & "</td>"
        ShowHTML "             <td align=""right""><font size=""1"">" & Nvl(w_real_acao_12,"---") & "</td>"
        ShowHTML "         <tr><td align=""right""><font size=""1""><b>Total:"
+       ShowHTML "             <td align=""right""><font size=""1""><b>" & cDbl(Nvl(w_cron_ini_1,0))+cDbl(Nvl(w_cron_ini_2,0))+cDbl(Nvl(w_cron_ini_3,0))+cDbl(Nvl(w_cron_ini_4,0))+cDbl(Nvl(w_cron_ini_5,0))+cDbl(Nvl(w_cron_ini_6,0))+cDbl(Nvl(w_cron_ini_7,0))+cDbl(Nvl(w_cron_ini_8,0))+cDbl(Nvl(w_cron_ini_9,0))+cDbl(Nvl(w_cron_ini_10,0))+cDbl(Nvl(w_cron_ini_11,0))+cDbl(Nvl(w_cron_ini_12,0)) & "</td>"       
        ShowHTML "             <td align=""right""><font size=""1""><b>" & cDbl(Nvl(w_revisado_1,0))+cDbl(Nvl(w_revisado_2,0))+cDbl(Nvl(w_revisado_3,0))+cDbl(Nvl(w_revisado_4,0))+cDbl(Nvl(w_revisado_5,0))+cDbl(Nvl(w_revisado_6,0))+cDbl(Nvl(w_revisado_7,0))+cDbl(Nvl(w_revisado_8,0))+cDbl(Nvl(w_revisado_9,0))+cDbl(Nvl(w_revisado_10,0))+cDbl(Nvl(w_revisado_11,0))+cDbl(Nvl(w_revisado_12,0)) & "</td>"
        ShowHTML "             <td align=""right""><font size=""1""><b>" & cDbl(Nvl(w_realizado_1,0))+cDbl(Nvl(w_realizado_2,0))+cDbl(Nvl(w_realizado_3,0))+cDbl(Nvl(w_realizado_4,0))+cDbl(Nvl(w_realizado_5,0))+cDbl(Nvl(w_realizado_6,0))+cDbl(Nvl(w_realizado_7,0))+cDbl(Nvl(w_realizado_8,0))+cDbl(Nvl(w_realizado_9,0))+cDbl(Nvl(w_realizado_10,0))+cDbl(Nvl(w_realizado_11,0))+cDbl(Nvl(w_realizado_12,0)) & "</td>"
        ShowHTML "             <td align=""right""><font size=""1""><b>" & FormatNumber(cDbl(Nvl(w_real_acao_1,0))+cDbl(Nvl(w_real_acao_2,0))+cDbl(Nvl(w_real_acao_3,0))+cDbl(Nvl(w_real_acao_4,0))+cDbl(Nvl(w_real_acao_5,0))+cDbl(Nvl(w_real_acao_6,0))+cDbl(Nvl(w_real_acao_7,0))+cDbl(Nvl(w_real_acao_8,0))+cDbl(Nvl(w_real_acao_9,0))+cDbl(Nvl(w_real_acao_10,0))+cDbl(Nvl(w_real_acao_11,0))+cDbl(Nvl(w_real_acao_12,0)),2) & "</td>"
@@ -2726,54 +2754,67 @@ Sub AtualizaMeta
        ShowHTML "     <tr><td><font size=""1"">Percentual de conlusão:<br><b>" & nvl(w_perc_conclusao,0) & "%</b></td>"
        ShowHTML "     <tr><td valign=""top"" colspan=""1"">"
        ShowHTML "       <table border=0 width=""40%"" cellspacing=0>"
-       ShowHTML "         <tr><td>&nbsp<td title=""Em caso de revisão da meta programada, os novos valores devem ser informados, mês a mês, nestes campos.""><font size=""1""><br><b>Quantitativo revisado</b></td>"
+       ShowHTML "         <tr><td>&nbsp<td><font size=""1""><br><b>Quantitativo inicial</b></td>"
+       ShowHTML "             <td title=""Em caso de revisão da meta programada, os novos valores devem ser informados, mês a mês, nestes campos.""><font size=""1""><br><b>Quantitativo revisado</b></td>"
        ShowHTML "             <td title=""Em caso de revisão da meta programada, os novos valores devem ser informados, mês a mês, nestes campos.""><font size=""1""><br><b>Quantitativo realizado</b></td>"
        ShowHTML "             <td><font size=""1""><br><b>Financeiro realizado</b></td>"
        ShowHTML "         <tr><td width=""4%"" align=""right""><font size=""1""><b>Janeiro:"
+       ShowHTML "             <td width=""5%"" align=""right""><font size=""1"">"& Nvl(w_cron_ini_1,"---") & "</td>"
        ShowHTML "             <td width=""8%""><font size=""1""><INPUT TYPE=""TEXT"" CLASS=""STI"" NAME=""w_revisado_1"" SIZE=10 MAXLENGTH=18 VALUE=""" &w_revisado_1 & """ " & w_Disabled & "></td>"
        ShowHTML "             <td width=""8%""><font size=""1""><INPUT TYPE=""TEXT"" CLASS=""STI"" NAME=""w_realizado_1"" SIZE=10 MAXLENGTH=18 VALUE=""" & w_realizado_1 & """ " & w_Disabled & "></td>"
        ShowHTML "             <td width=""5%"" align=""right""><font size=""1"">"& Nvl(w_real_acao_1,"---") & "</td>"
        ShowHTML "         <tr><td align=""right""><font size=""1""><b>Fevereiro:"
+       ShowHTML "             <td align=""right""><font size=""1"">"& Nvl(w_cron_ini_2,"---") & "</td>"
        ShowHTML "             <td><font size=""1""><INPUT TYPE=""TEXT"" CLASS=""STI"" NAME=""w_revisado_2"" SIZE=10 MAXLENGTH=18 VALUE=""" & w_revisado_2 & """ " & w_Disabled & "></td>"
        ShowHTML "             <td><font size=""1""><INPUT TYPE=""TEXT"" CLASS=""STI"" NAME=""w_realizado_2"" SIZE=10 MAXLENGTH=18 VALUE=""" & w_realizado_2 & """ " & w_Disabled & "></td>"
        ShowHTML "             <td align=""right""><font size=""1"">"& Nvl(w_real_acao_2,"---") & "</td>"
        ShowHTML "         <tr><td align=""right""><font size=""1""><b>Março:"
+       ShowHTML "             <td align=""right""><font size=""1"">"& Nvl(w_cron_ini_3,"---") & "</td>"
        ShowHTML "             <td><font size=""1""><INPUT TYPE=""TEXT"" CLASS=""STI"" NAME=""w_revisado_3"" SIZE=10 MAXLENGTH=18 VALUE=""" & w_revisado_3 & """ " & w_Disabled & "></td>"
        ShowHTML "             <td><font size=""1""><INPUT TYPE=""TEXT"" CLASS=""STI"" NAME=""w_realizado_3"" SIZE=10 MAXLENGTH=18 VALUE=""" & w_realizado_3 & """ " & w_Disabled & "></td>"
        ShowHTML "             <td align=""right""><font size=""1"">"& Nvl(w_real_acao_3,"---") & "</td>"
        ShowHTML "         <tr><td align=""right""><font size=""1""><b>Abril:"
+       ShowHTML "             <td align=""right""><font size=""1"">"& Nvl(w_cron_ini_4,"---") & "</td>"
        ShowHTML "             <td><font size=""1""><INPUT TYPE=""TEXT"" CLASS=""STI"" NAME=""w_revisado_4"" SIZE=10 MAXLENGTH=18 VALUE=""" & w_revisado_4 & """ " & w_Disabled & "></td>"
        ShowHTML "             <td><font size=""1""><INPUT TYPE=""TEXT"" CLASS=""STI"" NAME=""w_realizado_4"" SIZE=10 MAXLENGTH=18 VALUE=""" & w_realizado_4 & """ " & w_Disabled & "></td>"
        ShowHTML "             <td align=""right""><font size=""1"">"& Nvl(w_real_acao_4,"---") & "</td>"
        ShowHTML "         <tr><td align=""right""><font size=""1""><b>Maio:"
+       ShowHTML "             <td align=""right""><font size=""1"">"& Nvl(w_cron_ini_5,"---") & "</td>"
        ShowHTML "             <td><font size=""1""><INPUT TYPE=""TEXT"" CLASS=""STI"" NAME=""w_revisado_5"" SIZE=10 MAXLENGTH=18 VALUE=""" & w_revisado_5 & """ " & w_Disabled & "></td>"
        ShowHTML "             <td><font size=""1""><INPUT TYPE=""TEXT"" CLASS=""STI"" NAME=""w_realizado_5"" SIZE=10 MAXLENGTH=18 VALUE=""" & w_realizado_5 & """ " & w_Disabled & "></td>"
        ShowHTML "             <td align=""right""><font size=""1"">"& Nvl(w_real_acao_5,"---") & "</td>"
        ShowHTML "         <tr><td align=""right""><font size=""1""><b>Junho:"
+       ShowHTML "             <td align=""right""><font size=""1"">"& Nvl(w_cron_ini_6,"---") & "</td>"
        ShowHTML "             <td><font size=""1""><INPUT TYPE=""TEXT"" CLASS=""STI"" NAME=""w_revisado_6"" SIZE=10 MAXLENGTH=18 VALUE=""" & w_revisado_6 & """ " & w_Disabled & "></td>"
        ShowHTML "             <td><font size=""1""><INPUT TYPE=""TEXT"" CLASS=""STI"" NAME=""w_realizado_6"" SIZE=10 MAXLENGTH=18 VALUE=""" & w_realizado_6 & """ " & w_Disabled & " ></td>"
        ShowHTML "             <td align=""right""><font size=""1"">"& Nvl(w_real_acao_6,"---") & "</td>"
        ShowHTML "         <tr><td align=""right""><font size=""1""><b>Julho:"
+       ShowHTML "             <td align=""right""><font size=""1"">"& Nvl(w_cron_ini_7,"---") & "</td>"
        ShowHTML "             <td><font size=""1""><INPUT TYPE=""TEXT"" CLASS=""STI"" NAME=""w_revisado_7"" SIZE=10 MAXLENGTH=18 VALUE=""" &w_revisado_7 & """ " & w_Disabled & "></td>"
        ShowHTML "             <td><font size=""1""><INPUT TYPE=""TEXT"" CLASS=""STI"" NAME=""w_realizado_7"" SIZE=10 MAXLENGTH=18 VALUE=""" & w_realizado_7 & """ " & w_Disabled & "></td>"
        ShowHTML "             <td align=""right""><font size=""1"">"& Nvl(w_real_acao_7,"---") & "</td>"
        ShowHTML "         <tr><td align=""right""><font size=""1""><b>Agosto:"
+       ShowHTML "             <td align=""right""><font size=""1"">"& Nvl(w_cron_ini_8,"---") & "</td>"
        ShowHTML "             <td><font size=""1""><INPUT TYPE=""TEXT"" CLASS=""STI"" NAME=""w_revisado_8"" SIZE=10 MAXLENGTH=18 VALUE=""" & w_revisado_8 & """ " & w_Disabled & "></td>"
        ShowHTML "             <td><font size=""1""><INPUT TYPE=""TEXT"" CLASS=""STI"" NAME=""w_realizado_8"" SIZE=10 MAXLENGTH=18 VALUE=""" & w_realizado_8 & """ " & w_Disabled & "></td>"
        ShowHTML "             <td align=""right""><font size=""1"">"& Nvl(w_real_acao_8,"---") & "</td>"
        ShowHTML "         <tr><td align=""right""><font size=""1""><b>Setembro:"
+       ShowHTML "             <td align=""right""><font size=""1"">"& Nvl(w_cron_ini_9,"---") & "</td>"
        ShowHTML "             <td><font size=""1""><INPUT TYPE=""TEXT"" CLASS=""STI"" NAME=""w_revisado_9"" SIZE=10 MAXLENGTH=18 VALUE=""" & w_revisado_9 & """ " & w_Disabled & "></td>"
        ShowHTML "             <td><font size=""1""><INPUT TYPE=""TEXT"" CLASS=""STI"" NAME=""w_realizado_9"" SIZE=10 MAXLENGTH=18 VALUE=""" & w_realizado_9 & """ " & w_Disabled & "></td>"
        ShowHTML "             <td align=""right""><font size=""1"">"& Nvl(w_real_acao_9,"---") & "</td>"
        ShowHTML "         <tr><td align=""right""><font size=""1""><b>Outubro:"
+       ShowHTML "             <td align=""right""><font size=""1"">"& Nvl(w_cron_ini_10,"---") & "</td>"
        ShowHTML "             <td><font size=""1""><INPUT TYPE=""TEXT"" CLASS=""STI"" NAME=""w_revisado_10"" SIZE=10 MAXLENGTH=18 VALUE=""" & w_revisado_10 & """ " & w_Disabled & "></td>"
        ShowHTML "             <td><font size=""1""><INPUT TYPE=""TEXT"" CLASS=""STI"" NAME=""w_realizado_10"" SIZE=10 MAXLENGTH=18 VALUE=""" & w_realizado_10 & """ " & w_Disabled & "></td>"
        ShowHTML "             <td align=""right""><font size=""1"">"& Nvl(w_real_acao_10,"---") & "</td>"
        ShowHTML "         <tr><td align=""right""><font size=""1""><b>Novembro:"
+       ShowHTML "             <td align=""right""><font size=""1"">"& Nvl(w_cron_ini_11,"---") & "</td>"
        ShowHTML "             <td><font size=""1""><INPUT TYPE=""TEXT"" CLASS=""STI"" NAME=""w_revisado_11"" SIZE=10 MAXLENGTH=18 VALUE=""" & w_revisado_11 & """ " & w_Disabled & "></td>"
        ShowHTML "             <td><font size=""1""><INPUT TYPE=""TEXT"" CLASS=""STI"" NAME=""w_realizado_11"" SIZE=10 MAXLENGTH=18 VALUE=""" & w_realizado_11 & """ " & w_Disabled & "></td>"
        ShowHTML "             <td align=""right""><font size=""1"">"& Nvl(w_real_acao_11,"---") & "</td>"
        ShowHTML "         <tr><td align=""right""><font size=""1""><b>Dezembro:"
+       ShowHTML "             <td align=""right""><font size=""1"">"& Nvl(w_cron_ini_12,"---") & "</td>"
        ShowHTML "             <td><font size=""1""><INPUT TYPE=""TEXT"" CLASS=""STI"" NAME=""w_revisado_12"" SIZE=10 MAXLENGTH=18 VALUE=""" & w_revisado_12 & """ " & w_Disabled & "></td>"
        ShowHTML "             <td><font size=""1""><INPUT TYPE=""TEXT"" CLASS=""STI"" NAME=""w_realizado_12"" SIZE=10 MAXLENGTH=18 VALUE=""" & w_realizado_12 & """ " & w_Disabled & " ></td>"
        ShowHTML "             <td align=""right""><font size=""1"">"& Nvl(w_real_acao_12,"---") & "</td>"
@@ -4886,6 +4927,21 @@ Public Sub Grava
               ScriptClose
               Exit Sub
            End If 
+        ElseIf O = "E" Then
+           ' Se for operação de exclusão, verifica se é necessário excluir os arquivos físicos
+           DB_GetSolicLog RS, Request("w_chave"), null, "LISTA"
+           ' Mais de um registro de log significa que deve ser cancelada, e não excluída.
+           ' Nessa situação, não é necessário excluir os arquivos.
+           If RS.RecordCount <= 1 Then
+              DB_GetSolicAnexo RS, Request("w_chave"), null, w_cliente
+              While Not RS.EOF
+                Set FS = CreateObject("Scripting.FileSystemObject")
+                If FS.FileExists(conFilePhysical & w_cliente & "\" & RS("caminho")) Then
+                   FS.DeleteFile conFilePhysical & w_cliente & "\" & RS("caminho")
+                End If
+                RS.MoveNext
+              Wend 
+           End If
         End If
         'Recupera 10% dos dias de prazo da tarefa, para emitir o alerta 
         Dim w_dias

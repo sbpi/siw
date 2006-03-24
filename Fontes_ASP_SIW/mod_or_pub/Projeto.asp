@@ -4099,7 +4099,7 @@ Public Sub Grava
   Dim p_modulo
   Dim w_Null
   Dim w_chave_nova
-  Dim w_mensagem
+  Dim w_mensagem, w_dias
   Dim FS, F1, w_file, w_tamanho, w_tipo, w_nome, field, w_maximo
 
   w_file    = ""
@@ -4118,12 +4118,27 @@ Public Sub Grava
        ' Verifica se a Assinatura Eletrônica é válida
        If (VerificaAssinaturaEletronica(Session("Username"),w_assinatura) and w_assinatura > "") or _
           w_assinatura = "" Then
-          
-          'Recupera 10% dos dias de prazo da tarefa, para emitir o alerta  
-          Dim w_dias
-          DB_Get10PercentDays RS,Request("w_inicio"), Request("w_fim")
-          w_dias = RS("dias")
-          DesconectaBD
+          ' Se for operação de exclusão, verifica se é necessário excluir os arquivos físicos
+          If O = "E" Then
+             DB_GetSolicLog RS, Request("w_chave"), null, "LISTA"
+             ' Mais de um registro de log significa que deve ser cancelada, e não excluída.
+             ' Nessa situação, não é necessário excluir os arquivos.
+             If RS.RecordCount <= 1 Then
+                DB_GetSolicAnexo RS, Request("w_chave"), null, w_cliente
+                While Not RS.EOF
+                  Set FS = CreateObject("Scripting.FileSystemObject")
+                  If FS.FileExists(conFilePhysical & w_cliente & "\" & RS("caminho")) Then
+                     FS.DeleteFile conFilePhysical & w_cliente & "\" & RS("caminho")
+                  End If
+                  RS.MoveNext
+                Wend 
+             End If
+          Else
+             'Recupera 10% dos dias de prazo da tarefa, para emitir o alerta  
+             DB_Get10PercentDays RS,Request("w_inicio"), Request("w_fim")
+             w_dias = RS("dias")
+             DesconectaBD
+          End If          
           'No caso de mudança da ação PPA, os regitros de outras iniciativas devem se apagadas. Caso a ação PPA seja
           'nula, deve-se apagar todas os registros e caso seja outra ação deve-se apagar aquela ação das outras iniciativas, caso exista.
           If Request("w_sq_orprioridade") = "" Then

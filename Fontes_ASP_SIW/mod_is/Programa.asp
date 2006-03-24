@@ -4603,16 +4603,19 @@ Public Sub Grava
        w_assinatura = "" Then
        
        If O = "E" Then
-          DB_GetSolicAnexo RS, Request("w_chave"), null, w_cliente
-          If Not RS.EOF Then 
-             Set ul = Nothing  
-             Set ul = Server.CreateObject("Dundas.Upload.2")  
+          DB_GetSolicLog RS, Request("w_chave"), null, "LISTA"
+          ' Mais de um registro de log significa que deve ser cancelada, e não excluída.
+          ' Nessa situação, não é necessário excluir os arquivos.
+          If RS.RecordCount <= 1 Then
+             DB_GetSolicAnexo RS, Request("w_chave"), null, w_cliente
              While Not RS.EOF
-                ul.FileDelete(conFilePhysical & w_cliente & "\" & RS("caminho"))  
-                RS.MoveNext
-             wend 
+               Set FS = CreateObject("Scripting.FileSystemObject")
+               If FS.FileExists(conFilePhysical & w_cliente & "\" & RS("caminho")) Then
+                  FS.DeleteFile conFilePhysical & w_cliente & "\" & RS("caminho")
+              End If
+              RS.MoveNext
+             Wend 
           End If
-          DesconectaBD
        Else
           If O = "I" Then
              DB_GetPrograma_IS RS, Request("w_cd_programa"), w_ano, w_cliente, null

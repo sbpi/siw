@@ -1224,7 +1224,7 @@ Sub Anexos
   ShowHTML "<HEAD>" 
   If InStr("IAEP",O) > 0 Then 
      ScriptOpen "JavaScript" 
-     ProgressBar w_dir_volta, UploadID         
+     ProgressBar w_dir_volta, UploadID
      ValidateOpen "Validacao" 
      If InStr("IA",O) > 0 Then 
         Validate "w_nome", "Título", "1", "1", "1", "255", "1", "1" 
@@ -2056,12 +2056,30 @@ Public Sub Grava
        ' Verifica se a Assinatura Eletrônica é válida
        If (VerificaAssinaturaEletronica(Session("Username"),w_assinatura) and w_assinatura > "") or _
           w_assinatura = "" Then
-          Dim w_dias
           
+          ' Se for operação de exclusão, verifica se é necessário excluir os arquivos físicos
+          If O = "E" Then
+             DB_GetSolicLog RS, Request("w_chave"), null, "LISTA"
+             ' Mais de um registro de log significa que deve ser cancelada, e não excluída.
+             ' Nessa situação, não é necessário excluir os arquivos.
+             If RS.RecordCount <= 1 Then
+                DB_GetSolicAnexo RS, Request("w_chave"), null, w_cliente
+                While Not RS.EOF
+                  Set FS = CreateObject("Scripting.FileSystemObject")
+                  If FS.FileExists(conFilePhysical & w_cliente & "\" & RS("caminho")) Then
+                     FS.DeleteFile conFilePhysical & w_cliente & "\" & RS("caminho")
+                  End If
+                  RS.MoveNext
+                Wend 
+             End If
+          End If          
+          
+          Dim w_dias
           'Recupera 10% dos dias de prazo da tarefa, para emitir o alerta  
           DB_Get10PercentDays_IS RS,Request("w_inicio"), Request("w_fim")
           w_dias = RS("dias")
           DesconectaBD
+          
           DML_PutTarefaGeral O, _
               Request("w_chave"), Request("w_menu"), Session("lotacao"), Request("w_solicitante"), Request("w_proponente"), _
               Session("sq_pessoa"), null, Request("w_descricao"), Request("w_justificativa"), Request("w_ordem"), Request("w_inicio"), Request("w_fim"), Request("w_valor"), _
