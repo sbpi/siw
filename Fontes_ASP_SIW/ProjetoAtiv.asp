@@ -1244,7 +1244,7 @@ Sub Anexos
     ShowHTML "<tr><td align=""center"" colspan=3>" 
     ShowHTML "    <TABLE WIDTH=""100%"" bgcolor=""" & conTableBgColor & """ BORDER=""" & conTableBorder & """ CELLSPACING=""" & conTableCellSpacing & """ CELLPADDING=""" & conTableCellPadding & """ BorderColorDark=""" & conTableBorderColorDark & """ BorderColorLight=""" & conTableBorderColorLight & """>" 
     ShowHTML "        <tr bgcolor=""" & conTrBgColor & """ align=""center"">" 
-    ShowHTML "          <td><font size=""1""><b>Projeto</font></td>" 
+    ShowHTML "          <td><font size=""1""><b>Título</font></td>" 
     ShowHTML "          <td><font size=""1""><b>Descrição</font></td>" 
     ShowHTML "          <td><font size=""1""><b>Tipo</font></td>" 
     ShowHTML "          <td><font size=""1""><b>KB</font></td>" 
@@ -2024,6 +2024,7 @@ Sub Concluir
   ShowHTML "<meta http-equiv=""Refresh"" content=""300; URL=" & MontaURL("MESA") & """>"
   If InStr("V",O) > 0 Then
      ScriptOpen "JavaScript"
+     ProgressBar w_dir, UploadID     
      CheckBranco
      FormataData
      FormataDataHora
@@ -2053,6 +2054,7 @@ Sub Concluir
      Else
         ShowHTML "  theForm.Botao.disabled=true;"
      End If
+     ShowHTML "if (theForm.w_caminho.value != '') {return ProgressBar();}"     
      ValidateClose
      ScriptClose
   End If
@@ -2071,7 +2073,7 @@ Sub Concluir
   ShowHTML VisualDemanda(w_chave, "V", w_usuario)
 
   ShowHTML "<HR>"
-  ShowHTML "<FORM action=""" & w_pagina & "Grava&SG=GDCONC&O="&O&"&w_menu="&w_menu&""" name=""Form"" onSubmit=""return(Validacao(this));"" enctype=""multipart/form-data"" method=""POST"">"  
+  ShowHTML "<FORM name=""Form"" method=""POST"" enctype=""multipart/form-data"" onSubmit=""return(Validacao(this));"" action=""" & w_pagina & "Grava&SG=GDCONC&O="&O&"&w_menu="&w_menu&"&UploadID="&UploadID&""">"
   ShowHTML "<INPUT type=""hidden"" name=""P1"" value=""" & P1 & """>"  
   ShowHTML "<INPUT type=""hidden"" name=""P2"" value=""" & P2 & """>"  
   ShowHTML "<INPUT type=""hidden"" name=""P3"" value=""" & P3 & """>"  
@@ -2324,6 +2326,23 @@ Public Sub Grava
        If (VerificaAssinaturaEletronica(Session("Username"),w_assinatura) and w_assinatura > "") or _
           w_assinatura = "" Then
           
+          ' Se for operação de exclusão, verifica se é necessário excluir os arquivos físicos
+          If O = "E" Then
+             DB_GetSolicLog RS, Request("w_chave"), null, "LISTA"
+             ' Mais de um registro de log significa que deve ser cancelada, e não excluída.
+             ' Nessa situação, não é necessário excluir os arquivos.
+             If RS.RecordCount <= 1 Then
+                DB_GetSolicAnexo RS, Request("w_chave"), null, w_cliente
+                While Not RS.EOF
+                  Set FS = CreateObject("Scripting.FileSystemObject")
+                  If FS.FileExists(conFilePhysical & w_cliente & "\" & RS("caminho")) Then
+                     FS.DeleteFile conFilePhysical & w_cliente & "\" & RS("caminho")
+                  End If
+                  RS.MoveNext
+                Wend 
+             End If
+          End If
+        
           DML_PutDemandaGeral O, _
               Request("w_chave"), Request("w_menu"), Session("lotacao"), Request("w_solicitante"), Request("w_proponente"), _
               Session("sq_pessoa"), null, Request("w_sqcc"), Request("w_descricao"), Request("w_justificativa"), "0", Request("w_inicio"), Request("w_fim"), Request("w_valor"), _
@@ -2495,7 +2514,7 @@ Public Sub Grava
                 Next                 
                 DML_PutDemandaEnvio w_menu, ul.Texts.Item("w_chave"), w_usuario, ul.Texts.Item("w_tramite"), _ 
                     ul.Texts.Item("w_novo_tramite"), "N", ul.Texts.Item("w_observacao"), ul.Texts.Item("w_destinatario"), ul.Texts.Item("w_despacho"), _ 
-                    w_file, w_tamnho, w_tipo, w_nome
+                    w_file, w_tamanho, w_tipo, w_nome
              Else
                 ScriptOpen "JavaScript" 
                 ShowHTML "  alert('ATENÇÃO: ocorreu um erro na transferência do arquivo. Tente novamente!');" 

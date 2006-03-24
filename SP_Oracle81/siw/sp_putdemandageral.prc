@@ -36,9 +36,13 @@ create or replace procedure SP_PutDemandaGeral
     p_atividade_ant       in number    default null,
     p_chave_nova          out number
    ) is
+   w_arq     varchar2(4000) := ', ';
    w_chave   number(18);
    w_log_sol number(18);
    w_log_esp number(18);
+
+   cursor c_arquivos is
+      select sq_siw_arquivo from siw_solic_arquivo where sq_siw_solicitacao = p_chave;
 begin
    If p_operacao = 'I' Then -- Inclusão
       -- Recupera a próxima chave
@@ -192,6 +196,15 @@ begin
          -- Atualiza a situação da solicitação
          update siw_solicitacao set sq_siw_tramite = w_chave where sq_siw_solicitacao = p_chave;
       Else
+         -- Monta string com a chave dos arquivos ligados à solicitação informada
+         for crec in c_arquivos loop
+            w_arq := w_arq || crec.sq_siw_arquivo;
+         end loop;
+         w_arq := substr(w_arq, 3, length(w_arq));
+         
+         delete siw_solic_arquivo where sq_siw_solicitacao = p_chave;
+         delete siw_arquivo       where sq_siw_arquivo     in (w_arq);
+         
          -- Remove os registros vinculados à demanda
          delete gd_demanda_envolv  where sq_siw_solicitacao = p_chave;
          delete gd_demanda_interes where sq_siw_solicitacao = p_chave;
@@ -239,4 +252,3 @@ begin
    End If;
 end SP_PutDemandaGeral;
 /
-

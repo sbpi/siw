@@ -31,6 +31,7 @@ create or replace procedure SP_PutProjetoGeral
     p_sq_tipo_pessoa      in varchar2  default null,
     p_chave_nova          out number
    ) is
+   w_arq     varchar2(4000) := ', ';
    w_chave   number(18);
    w_chave1  number(18);
    w_log_sol number(18);
@@ -68,6 +69,8 @@ create or replace procedure SP_PutProjetoGeral
    cursor c_atividades is
       select * from siw_solicitacao t where t.sq_solic_pai = p_chave;
 
+   cursor c_arquivos is
+      select sq_siw_arquivo from siw_solic_arquivo where sq_siw_solicitacao = p_chave;
 begin
    If p_operacao = 'I' Then -- Inclusão
       -- Recupera a próxima chave
@@ -341,6 +344,15 @@ begin
              update siw_solicitacao set sq_siw_tramite = w_chave where sq_siw_solicitacao = crec.sq_siw_solicitacao;
          end loop;
       Else
+         -- Monta string com a chave dos arquivos ligados à solicitação informada
+         for crec in c_arquivos loop
+            w_arq := w_arq || crec.sq_siw_arquivo;
+         end loop;
+         w_arq := substr(w_arq, 3, length(w_arq));
+         
+         delete siw_solic_arquivo where sq_siw_solicitacao = p_chave;
+         delete siw_arquivo       where sq_siw_arquivo     in (w_arq);
+         
          -- Remove os registros vinculados ao projeto
          delete or_acao_prioridade where sq_siw_solicitacao = p_chave;
          delete or_acao_financ     where sq_siw_solicitacao = p_chave;
@@ -370,4 +382,3 @@ begin
    End If;
 end SP_PutProjetoGeral;
 /
-

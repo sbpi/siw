@@ -3889,6 +3889,23 @@ Public Sub Grava
      If (VerificaAssinaturaEletronica(Session("Username"),w_assinatura) and w_assinatura > "") or _
         w_assinatura = "" Then
           
+        ' Se for operação de exclusão, verifica se é necessário excluir os arquivos físicos
+        If O = "E" Then
+           DB_GetSolicLog RS, Request("w_chave"), null, "LISTA"
+           ' Mais de um registro de log significa que deve ser cancelada, e não excluída.
+           ' Nessa situação, não é necessário excluir os arquivos.
+           If RS.RecordCount <= 1 Then
+              DB_GetSolicAnexo RS, Request("w_chave"), null, w_cliente
+              While Not RS.EOF
+                Set FS = CreateObject("Scripting.FileSystemObject")
+                If FS.FileExists(conFilePhysical & w_cliente & "\" & RS("caminho")) Then
+                   FS.DeleteFile conFilePhysical & w_cliente & "\" & RS("caminho")
+                End If
+                RS.MoveNext
+              Wend 
+           End If
+        End If
+        
         DML_PutAcordoGeral O, w_cliente, _
             Request("w_chave"), Request("w_menu"), Request("w_sq_unidade_resp"), Request("w_solicitante"), _
             Session("sq_pessoa"), Request("w_sqcc"), Request("w_descricao"), Request("w_justificativa"), _
@@ -4066,9 +4083,6 @@ Public Sub Grava
               End If
            Next
     
-           'Response.Write UploadID & "w_file: " & w_file & "<br> " & "w_tamanho: " & w_tamanho & "<br> " & "w_tipo: " & w_tipo & "<br> " & "w_nome: " & w_nome
-           'Response.End()
-
            ' Se for exclusão e houver um arquivo físico, deve remover o arquivo do disco.  
            If O = "E" and ul.Texts.Item("w_atual") > "" Then  
               DB_GetSolicAnexo RS, ul.Texts.Item("w_chave"), ul.Texts.Item("w_atual"), w_cliente 
@@ -4076,11 +4090,10 @@ Public Sub Grava
               DesconectaBD
            End If  
   
-           'Response.Write O& ", " &w_cliente& ", " &ul.Texts.Item("w_chave")& ", " &ul.Texts.Item("w_chave_aux")& ", " &ul.Texts.Item("w_nome")& ", " &ul.Texts.Item("w_descricao")
-           'Response.End()
            DML_PutSolicArquivo O, _  
                w_cliente, ul.Texts.Item("w_chave"), ul.Texts.Item("w_chave_aux"), ul.Texts.Item("w_nome"), ul.Texts.Item("w_descricao"), _  
                w_file, w_tamanho, w_tipo, w_nome
+
         Else
            ScriptOpen "JavaScript" 
            ShowHTML "  alert('ATENÇÃO: ocorreu um erro na transferência do arquivo. Tente novamente!');" 
@@ -4088,6 +4101,10 @@ Public Sub Grava
            Response.End()
            Exit Sub
         End If        
+
+        ScriptOpen "JavaScript"
+        ShowHTML "  location.href='" & R & "&O=L&w_chave=" & ul.Texts.Item("w_chave") & "&P1=" & P1 & "&P2=" & P2 & "&P3=" & P3 & "&P4=" & P4 & "&TP=" & TP & "&SG=" & SG & MontaFiltro("UPLOAD") & "';"
+        ScriptClose
      Else
         ScriptOpen "JavaScript"
         ShowHTML "  alert('Assinatura Eletrônica inválida!');"

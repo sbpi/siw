@@ -2,7 +2,8 @@ create or replace procedure SP_GetSolicAnexo
    (p_chave     in number,
     p_chave_aux in number   default null,
     p_cliente   in number,
-    p_result    out sys_refcursor) is
+    p_result    out sys_refcursor
+   ) is
 begin
    -- Recupera as demandas que o usuário pode ver
    open p_result for 
@@ -16,4 +17,3 @@ begin
          and ((p_chave_aux        is null) or (p_chave_aux is not null and b.sq_siw_arquivo = p_chave_aux));
 End SP_GetSolicAnexo;
 /
-

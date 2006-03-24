@@ -2243,6 +2243,23 @@ Public Sub Grava
        If (VerificaAssinaturaEletronica(Session("Username"),w_assinatura) and w_assinatura > "") or _
           w_assinatura = "" Then
           
+          ' Se for operação de exclusão, verifica se é necessário excluir os arquivos físicos
+          If O = "E" Then
+             DB_GetSolicLog RS, Request("w_chave"), null, "LISTA"
+             ' Mais de um registro de log significa que deve ser cancelada, e não excluída.
+             ' Nessa situação, não é necessário excluir os arquivos.
+             If RS.RecordCount <= 1 Then
+                DB_GetSolicAnexo RS, Request("w_chave"), null, w_cliente
+                While Not RS.EOF
+                  Set FS = CreateObject("Scripting.FileSystemObject")
+                  If FS.FileExists(conFilePhysical & w_cliente & "\" & RS("caminho")) Then
+                     FS.DeleteFile conFilePhysical & w_cliente & "\" & RS("caminho")
+                  End If
+                  RS.MoveNext
+                Wend 
+             End If
+          End If
+        
           DML_PutDemandaGeral O, _
               Request("w_chave"), Request("w_menu"), Session("lotacao"), Request("w_solicitante"), Request("w_proponente"), _
               Session("sq_pessoa"), null, Request("w_sqcc"), Request("w_descricao"), Request("w_justificativa"), "0", Request("w_inicio"), Request("w_fim"), Request("w_valor"), _

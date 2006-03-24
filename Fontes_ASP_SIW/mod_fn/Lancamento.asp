@@ -2708,7 +2708,7 @@ Sub Concluir
      FormataData
      FormataDataHora
      FormataValor
-     ProgressBar w_dir, UploadID     
+     ProgressBar w_dir_volta, UploadID     
      ValidateOpen "Validacao"
      Validate "w_quitacao", "Data da liquidação", "DATA", 1, 10, 10, "", "0123456789/"
      CompData "w_quitacao", "Data da liquidação", "<=", FormataDataEdicao(FormatDateTime(Date(),2)), "data atual"
