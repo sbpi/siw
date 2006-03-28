@@ -862,7 +862,8 @@ Sub Mapeamento
      w_campo_externo     = Request("w_campo_externo") 
   ElseIf O = "I" Then
      ' Recupera todos os ws_url para a listagem
-     DB_GetColuna RS, w_cliente, null, w_sq_tabela, null, null, null, null
+     Response.Write w_cliente & ", " & w_sq_tabela
+     DB_GetColuna RS, w_cliente, null, w_sq_tabela, null, null, null, null, w_sq_esquema_tabela
      RS.Sort = "ordem, nm_coluna"
   End If
   Cabecalho
@@ -1530,7 +1531,7 @@ Public Sub Grava
   Dim w_arquivo_registro, w_arquivo_rejeicao, w_tamanho_registro, w_tipo_registro, w_nome_registro
   Dim w_registros, w_importados, w_rejeitados, w_situacao, w_result, w_maximo, field
   Dim i, j, w_atual
-  Dim w_no, w_texto,w_elemento
+  Dim w_no, w_texto,w_elemento, w_limite
   
   Dim w_campo, w_unidade, w_programa, w_ws_acao, w_dotacao, w_empenhado, w_liquidado
 
@@ -1601,23 +1602,25 @@ Public Sub Grava
                    While Not RS1.EOF
                       ' Recupera cada um dos campos referenciados pelo elemento
                       DB_GetEsquemaAtributo RS2, null, RS1("sq_esquema_tabela"), null, null
+                      RS2.Sort = "ordem"
+                      w_cont = 0
                       While Not RS2.EOF                     
-                         w_cont = cDbl(RS2("ordem"))- 1
+                         w_cont = w_cont + 1
                          w_atributo(w_cont) = RS2("campo_externo")
                          RS2.MoveNext
                       Wend
+                      w_limite = w_cont
                       RS2.Close
                       If w_atual <> RS1("nm_tabela") Then
                          set w_elemento = w_no.selectNodes(RS("no_raiz")&"/"&RS1("elemento"))
                          with w_elemento
                             for i = 0 to .length - 1 
-                               w_cont = 0
-                               w_reg  = w_reg + 1
+                               w_cont  = 1
+                               w_reg   = w_reg + 1
                                for j = 0 to .item(i).childNodes.length - 1
                                   ' Recupera cada um dos campos referenciados pelo elemento
                                   'DB_GetEsquemaAtributo RS2, null, RS1("sq_esquema_tabela"), null, null
                                   'RS2.Filter = "ordem=" & j+1 & " and campo_externo='" & .item(i).childNodes.item(j).nodename & "'"
-                                  w_cont     = w_cont + 1
                                   'If Not RS2.EOF Then
                                      'If RS2("campo_externo") = .item(i).childNodes.item(j).nodename Then
                                          ' Valida o campo
@@ -1632,7 +1635,7 @@ Public Sub Grava
                                          '   w_erro = 1
                                          'Else
                                             w_name(w_cont) = .item(i).childNodes.item(j).nodename
-                                            If w_atributo(w_cont - 1) = w_name(w_cont) Then
+                                            If w_atributo(w_cont) = w_name(w_cont) Then
                                                If uCase(w_campo) = "TRUE" Then
                                                   w_param(w_cont) = "S"
                                                ElseIf uCase(w_campo) = "FALSE" Then
@@ -1640,10 +1643,17 @@ Public Sub Grava
                                                Else
                                                   w_param(w_cont) = w_campo
                                                End If
+                                            Else
+                                               w_param(w_cont) = ""
+                                               j = j - 1
                                             End If 
+                                            w_cont     = w_cont + 1
                                          'End If
                                      'End If
                                   'End If
+                                  If w_cont > w_limite Then
+                                     Exit For
+                                  End If
                                next
                                'Response.Write RS1("nm_tabela")
                                'Response.End
