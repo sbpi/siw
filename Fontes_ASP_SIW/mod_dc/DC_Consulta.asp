@@ -988,7 +988,7 @@ Sub Coluna
   w_sq_usuario = Request("w_sq_usuario")
      
   If O = "L" Then
-    DB_GetColuna RS, w_cliente, null, w_sq_tabela, null, w_chave, w_sq_usuario, null
+    DB_GetColuna RS, w_cliente, null, w_sq_tabela, null, w_chave, w_sq_usuario, null, null
     RS.Sort = "nm_usuario, nm_coluna, nm_tabela"
     Cabecalho
     ShowHTML "<BASE HREF=""" & conRootSIW & """>"
@@ -1053,7 +1053,7 @@ Sub Coluna
     DesconectaBD
     
   ElseIf O = "NIVEL2" Then
-    DB_GetColuna RS, w_cliente, w_sq_coluna, w_sq_tabela, null, w_chave, w_sq_usuario, null
+    DB_GetColuna RS, w_cliente, w_sq_coluna, w_sq_tabela, null, w_chave, w_sq_usuario, null, null
     RS.Sort = "chave"
     Cabecalho
     ShowHTML "<HEAD>"
@@ -1614,7 +1614,7 @@ REM -------------------------------------------------------------------------
 Function ExibeColuna (p_sq_usuario, p_sq_tabela, p_ordena)
   Dim w_html
   
-  DB_GetColuna RS, w_cliente, null, p_sq_tabela, null, null, p_sq_usuario, null
+  DB_GetColuna RS, w_cliente, null, p_sq_tabela, null, null, p_sq_usuario, null, null
   RS.Sort = p_ordena
   w_html = "<table border=""0"" cellpadding=""0"" cellspacing=""0"" width=""100%"" align=""center"">"
   w_html = w_html & "<tr><td><font size=""1""><B>Colunas (" & RS.RecordCount & ")</B></td>"

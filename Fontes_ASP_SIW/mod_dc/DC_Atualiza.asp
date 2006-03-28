@@ -719,11 +719,11 @@ Sub Colunas
      
   ElseIf O = "L" Then
      ' Recupera todos os registros para a listagem
-     DB_GetColuna RS, w_cliente, null, p_sq_tabela, p_sq_dado_tipo, p_sq_sistema, p_sq_usuario, p_nome
+     DB_GetColuna RS, w_cliente, null, p_sq_tabela, p_sq_dado_tipo, p_sq_sistema, p_sq_usuario, p_nome, null
      RS.Sort = "nm_tabela, ordem, nm_coluna"
   ElseIf InStr("AEV",O) > 0 and w_Troca = "" Then
      ' Recupera os dados do endereço informado
-     DB_GetColuna RS, w_cliente, w_chave, w_sq_tabela, w_sq_dado_tipo, null, null, null ' O parametro de aev não deu certo
+     DB_GetColuna RS, w_cliente, w_chave, w_sq_tabela, w_sq_dado_tipo, null, null, null, null ' O parametro de aev não deu certo
      w_sq_tabela        = RS("sq_tabela")
      w_sq_dado_tipo     = RS("sq_dado_tipo")
      w_nome             = RS("nm_coluna")

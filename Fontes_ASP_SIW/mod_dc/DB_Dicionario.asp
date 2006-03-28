@@ -51,8 +51,8 @@ REM =========================================================================
 REM Recupera Colunas
 REM -------------------------------------------------------------------------
 
-Sub DB_GetColuna(p_rs, p_cliente, p_chave, w_sq_tabela, w_sq_dado_tipo, p_sq_sistema, p_sq_usuario, p_nome)
-  Dim l_cliente, l_chave,l_tabela, l_dado_tipo, l_sq_sistema, l_sq_usuario, l_nome
+Sub DB_GetColuna(p_rs, p_cliente, p_chave, p_sq_tabela, p_sq_dado_tipo, p_sq_sistema, p_sq_usuario, p_nome, p_esq_tab)
+  Dim l_cliente, l_chave,l_tabela, l_dado_tipo, l_sq_sistema, l_sq_usuario, l_nome, l_esq_tab
   
   Set l_cliente         = Server.CreateObject("ADODB.Parameter")
   Set l_chave           = Server.CreateObject("ADODB.Parameter")
@@ -61,15 +61,17 @@ Sub DB_GetColuna(p_rs, p_cliente, p_chave, w_sq_tabela, w_sq_dado_tipo, p_sq_sis
   Set l_sq_sistema      = Server.CreateObject("ADODB.Parameter")
   Set l_sq_usuario      = Server.CreateObject("ADODB.Parameter")
   Set l_nome            = Server.CreateObject("ADODB.Parameter")
+  Set l_esq_tab         = Server.CreateObject("ADODB.Parameter")
   
   with sp
      set l_cliente         = .CreateParameter("l_cliente"        ,   adInteger, adParamInput,   , p_cliente)
      set l_chave           = .CreateParameter("l_chave"          ,   adInteger, adParamInput,   , tvl(p_chave))
-     set l_tabela          = .CreateParameter("l_tabela"         ,   adInteger, adParamInput,   , tvl(w_sq_tabela))
-     set l_dado_tipo       = .CreateParameter("l_dado_tipo"      ,   adInteger, adParamInput,   , tvl(w_sq_dado_tipo))
+     set l_tabela          = .CreateParameter("l_tabela"         ,   adInteger, adParamInput,   , tvl(p_sq_tabela))
+     set l_dado_tipo       = .CreateParameter("l_dado_tipo"      ,   adInteger, adParamInput,   , tvl(p_sq_dado_tipo))
      set l_sq_sistema      = .CreateParameter("l_sq_sistema"     ,   adInteger, adParamInput,   , tvl(p_sq_sistema))
      set l_sq_usuario      = .CreateParameter("l_sq_usuario"     ,   adInteger, adParamInput,   , tvl(p_sq_usuario))
      set l_nome            = .CreateParameter("l_nome"           ,   adVarchar, adParamInput,  30,tvl(p_nome))
+     set l_esq_tab         = .CreateParameter("l_esq_tab"        ,   adInteger, adParamInput,   , tvl(p_esq_tab))
      
      
      .parameters.Append         l_cliente
@@ -79,6 +81,7 @@ Sub DB_GetColuna(p_rs, p_cliente, p_chave, w_sq_tabela, w_sq_dado_tipo, p_sq_sis
      .parameters.Append         l_sq_sistema
      .parameters.Append         l_sq_usuario
      .parameters.Append         l_nome
+     .parameters.Append         l_esq_tab
      If Session("dbms") = 1 or Session("dbms") = 3 Then .Properties("PLSQLRSet") = TRUE End If
      .CommandText               = Session("schema") & "SP_GetColuna"
      Set p_rs = Server.CreateObject("ADODB.RecordSet")
@@ -97,6 +100,7 @@ Sub DB_GetColuna(p_rs, p_cliente, p_chave, w_sq_tabela, w_sq_dado_tipo, p_sq_sis
      .parameters.Delete         "l_sq_sistema"
      .parameters.Delete         "l_sq_usuario"
      .parameters.Delete         "l_nome"
+     .parameters.Delete         "l_esq_tab"
   end with
 
 End Sub
