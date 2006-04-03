@@ -1,0 +1,78 @@
+#container
+{
+}
+.Xtree
+{
+    PADDING-LEFT: 0px;
+    MARGIN: 0px;
+    LIST-STYLE-TYPE: none;
+    BACKGROUND-COLOR: transparent
+}
+.XtreeRoot
+{
+    PADDING-LEFT: 0px;
+    MARGIN: 0px;
+    LIST-STYLE-TYPE: none;
+    BACKGROUND-COLOR: transparent
+}
+.Xtree
+{
+    PADDING-LEFT: 25px;
+    MARGIN-LEFT: 3px;
+    BORDER-LEFT: #aaa 1px dotted
+}
+.Xnode
+{
+    MARGIN-TOP: 3px;
+    FONT-WEIGHT: bold;
+    FONT-SIZE: 11px;
+    BACKGROUND-IMAGE: none;
+    MARGIN-BOTTOM: 3px;
+    CURSOR: pointer;
+    COLOR: black;
+    BACKGROUND-REPEAT: repeat;
+    FONT-FAMILY: verdana;
+    HEIGHT: 20px;
+    BACKGROUND-COLOR: transparent
+}
+.Xleaf
+{
+    MARGIN-TOP: 2px;
+    FONT-WEIGHT: bold;
+    FONT-SIZE: 10px;
+    BACKGROUND-IMAGE: none;
+    MARGIN-BOTTOM: 2px;
+    COLOR: black;
+    BACKGROUND-REPEAT: repeat;
+    FONT-FAMILY: verdana;
+    HEIGHT: 20px;
+    BACKGROUND-COLOR: transparent
+}
+.Xnode A
+{
+    COLOR: black;
+    BACKGROUND-COLOR: transparent;
+    TEXT-DECORATION: none
+}
+.Xnode A:hover
+{
+    FONT-WEIGHT: bolder;
+    COLOR: red;
+    BACKGROUND-COLOR: transparent;
+    TEXT-DECORATION: underline
+}
+.Xleaf A
+{
+    COLOR: black;
+    BACKGROUND-COLOR: transparent;
+    TEXT-DECORATION: none
+}
+.Xleaf A:hover
+{
+    FONT-WEIGHT: bolder;
+    BACKGROUND-IMAGE: none;
+    COLOR: red;
+    BACKGROUND-REPEAT: repeat;
+    BACKGROUND-COLOR: transparent;
+    TEXT-DECORATION: none
+}
