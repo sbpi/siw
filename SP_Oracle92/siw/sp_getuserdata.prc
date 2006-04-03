@@ -8,7 +8,9 @@ begin
      select a.sq_pessoa, a.username, a.senha, a.assinatura, a.ativo, a.sq_unidade, a.sq_localizacao,
             a.gestor_seguranca, a.gestor_sistema, a.cliente, a.email,
             a.ultima_troca_senha, a.ultima_troca_assin, a.tentativas_senha, a.tentativas_assin,
-            b.nome, b.nome_resumido, c.interno, d.sq_pessoa_endereco, e.codigo 
+            b.nome, b.nome_resumido, c.interno, d.sq_pessoa_endereco, e.codigo,
+            to_char(a.ultima_troca_senha, 'DD/MM/YYYY, HH24:MI:SS') dt_ultima_troca_senha, 
+            to_char(a.ultima_troca_assin, 'DD/MM/YYYY, HH24:MI:SS') dt_ultima_troca_assin 
        from sg_autenticacao a
             inner        join co_pessoa       b on (a.sq_pessoa       = b.sq_pessoa)
               left outer join co_tipo_vinculo c on (b.sq_tipo_vinculo = c.sq_tipo_vinculo)
@@ -18,4 +20,3 @@ begin
         and upper(a.username) = upper(p_username);
 end SP_GetUserData;
 /
-
