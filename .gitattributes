@@ -2472,10 +2472,15 @@ SP_Oracle92/siw_is/sq_meta.seq -text
 SP_Oracle92/siw_is/sq_natureza.seq -text
 SP_Oracle92/siw_is/sq_restricao.seq -text
 SP_Oracle92/sys/SP_PUTDICIONARIO.prc -text
+SP_PostgreSQL_8-0/siw/Acesso.sql -text
 SP_PostgreSQL_8-0/siw/Marcado.sql -text
 SP_PostgreSQL_8-0/siw/SP_GetCustomerData.sql -text
 SP_PostgreSQL_8-0/siw/SP_GetCustomerSite.sql -text
+SP_PostgreSQL_8-0/siw/SP_GetDeskTop.sql -text
+SP_PostgreSQL_8-0/siw/SP_GetDeskTop_TT.sql -text
 SP_PostgreSQL_8-0/siw/SP_GetLinkData.sql -text
 SP_PostgreSQL_8-0/siw/SP_GetLinkDataUser.sql -text
+SP_PostgreSQL_8-0/siw/SP_GetPersonData.sql -text
+SP_PostgreSQL_8-0/siw/SP_GetSiwCliModLis.sql -text
 SP_PostgreSQL_8-0/siw/SP_GetUserData.sql -text
 SP_PostgreSQL_8-0/siw/sp_verificausuario.sql -text
