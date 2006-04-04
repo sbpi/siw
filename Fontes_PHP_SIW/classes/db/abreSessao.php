@@ -1,5 +1,5 @@
 <?
-include_once("classes/db/ConnectionManagerFactory.php");
+include_once("ConnectionManagerFactory.php");
 /**
 * class abreSessao
 *

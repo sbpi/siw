@@ -1971,6 +1971,13 @@ function FormataTempo($p_segundos) {
 }
 
 // =========================================================================
+// Função que formata valores com separadores de milhar e decimais
+// -------------------------------------------------------------------------
+function FormatNumber($p_valor, $p_decimais) {
+  return number_format($p_valor,$p_decimais,',','.');
+}
+
+// =========================================================================
 // Função que retorna o código de tarifação telefônica do usuário logado
 // -------------------------------------------------------------------------
 function RetornaUsuarioCentral() {

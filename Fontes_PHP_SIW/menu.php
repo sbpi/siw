@@ -26,6 +26,8 @@ include_once("classes/sp/db_updatePassword.php");
 // -------------------------------------------------------------------------
 //
 // Verifica se o usuário está autenticado
+if ($L_SESSION["LOGON"] !="Sim") EncerraSessao();
+
 // Declaração de variáveis
 $dbms = abreSessao::getInstanceOf($_SESSION["DBMS"]);
 
@@ -57,7 +59,6 @@ switch ($O) {
 }
 
 $w_cliente=RetornaCliente();
-
 
 Main();
 
