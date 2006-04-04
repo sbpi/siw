@@ -432,11 +432,11 @@ REM Mantém os dados da experiência profissional do colaborador
 REM -------------------------------------------------------------------------
 Sub DML_PutCVExperiencia(Operacao, p_pessoa, p_chave, p_sq_area_conhecimento, p_sq_cidade, _
          p_sq_eo_tipo_posto, p_sq_tipo_vinculo, p_empregador, p_entrada, p_saida, _
-         p_duracao_mes, p_duracao_ano, p_motivo_saida, p_atividades)
+         p_duracao_mes, p_duracao_ano, p_motivo_saida, p_ultimo_salario, p_atividades)
 
   Dim l_Operacao, l_pessoa, l_Chave, l_sq_area_conhecimento, l_sq_cidade, l_sq_eo_tipo_posto
   Dim l_sq_tipo_vinculo, l_empregador, l_entrada, l_saida, l_duracao_mes, l_duracao_ano
-  Dim l_motivo_saida, l_atividades
+  Dim l_motivo_saida, l_ultimo_salario, l_atividades
   
   Set l_Operacao                = Server.CreateObject("ADODB.Parameter")
   Set l_pessoa                  = Server.CreateObject("ADODB.Parameter") 
@@ -467,6 +467,10 @@ Sub DML_PutCVExperiencia(Operacao, p_pessoa, p_chave, p_sq_area_conhecimento, p_
      set l_duracao_mes          = .CreateParameter("l_duracao_mes",          adInteger, adParamInput,    , tvl(p_duracao_mes))
      set l_duracao_ano          = .CreateParameter("l_duracao_ano",          adInteger, adParamInput,    , tvl(p_duracao_ano))
      set l_motivo_saida         = .CreateParameter("l_motivo_saida",         adVarchar, adParamInput, 255, tvl(p_motivo_saida))
+     set l_ultimo_salario       = .CreateParameter("l_ultimo_salario",       adNumeric, adParamInput)
+     l_ultimo_salario.Precision     = 12
+     l_ultimo_salario.NumericScale  = 2
+     l_ultimo_salario.Value         = 0
      set l_atividades           = .CreateParameter("l_atividades",           adVarchar, adParamInput,4000, tvl(p_atividades))
 
      .parameters.Append         l_Operacao
@@ -482,6 +486,7 @@ Sub DML_PutCVExperiencia(Operacao, p_pessoa, p_chave, p_sq_area_conhecimento, p_
      .parameters.Append         l_duracao_mes
      .parameters.Append         l_duracao_ano
      .parameters.Append         l_motivo_saida
+     .parameters.Append         l_ultimo_salario
      .parameters.Append         l_atividades
 
      .CommandText               = Session("schema") & "SP_PutCVExp"
@@ -504,6 +509,7 @@ Sub DML_PutCVExperiencia(Operacao, p_pessoa, p_chave, p_sq_area_conhecimento, p_
      .parameters.Delete         "l_duracao_mes"
      .parameters.Delete         "l_duracao_ano"
      .parameters.Delete         "l_motivo_saida"
+     .parameters.Delete         "l_ultimo_salario"
      .parameters.Delete         "l_atividades"
   end with
 End Sub

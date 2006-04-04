@@ -498,9 +498,9 @@ Sub Identificacao
     ShowHTML "        <tr><td colspan=3><font size=1>Este bloco deve ser preenchido com dados de identificação e características pessoais.</font></td></tr>"
     ShowHTML "        <tr><td colspan=3 align=""center"" height=""1"" bgcolor=""#000000""></td></tr>"
     ShowHTML "        <tr valign=""top"">"
-    ShowHTML "          <td ONMOUSEOVER=""popup('Informe seu nome completo, sem abreviações.','white')""; ONMOUSEOUT=""kill()""><font size=""1""><b><u>N</u>ome:</b><br><input " & w_Disabled & " accesskey=""N"" type=""text"" name=""w_nome"" class=""sti"" SIZE=""40"" MAXLENGTH=""60"" VALUE=""" & Nvl(w_nome,Session("nome")) & """></td>"
-    ShowHTML "          <td ONMOUSEOVER=""popup('Informe o nome pelo qual você prefere ser chamado ou pelo qual é mais conhecido.','white')""; ONMOUSEOUT=""kill()""><font size=""1""><b>Nome <u>r</u>esumido:</b><br><input " & w_Disabled & " accesskey=""R"" type=""text"" name=""w_nome_resumido"" class=""sti"" SIZE=""15"" MAXLENGTH=""15"" VALUE=""" & Nvl(w_nome_resumido,Session("nome_resumido")) & """></td>"
-    ShowHTML "          <td ONMOUSEOVER=""popup('Informe a data do seu nascimento, conforme consta da carteira de identidade.','white')""; ONMOUSEOUT=""kill()""><font size=""1""><b>Data <u>n</u>ascimento:</b><br><input " & w_Disabled & " accesskey=""N"" type=""text"" name=""w_nascimento"" class=""sti"" SIZE=""10"" MAXLENGTH=""10"" VALUE=""" & w_nascimento & """ onKeyDown=""FormataData(this,event);""></td>"
+    ShowHTML "          <td title=""Informe seu nome completo, sem abreviações.""><font size=""1""><b><u>N</u>ome:</b><br><input " & w_Disabled & " accesskey=""N"" type=""text"" name=""w_nome"" class=""sti"" SIZE=""40"" MAXLENGTH=""60"" VALUE=""" & Nvl(w_nome,Session("nome")) & """></td>"
+    ShowHTML "          <td title=""Informe o nome pelo qual você prefere ser chamado ou pelo qual é mais conhecido.""><font size=""1""><b>Nome <u>r</u>esumido:</b><br><input " & w_Disabled & " accesskey=""R"" type=""text"" name=""w_nome_resumido"" class=""sti"" SIZE=""15"" MAXLENGTH=""15"" VALUE=""" & Nvl(w_nome_resumido,Session("nome_resumido")) & """></td>"
+    ShowHTML "          <td title=""Informe a data do seu nascimento, conforme consta da carteira de identidade.""><font size=""1""><b>Data <u>n</u>ascimento:</b><br><input " & w_Disabled & " accesskey=""N"" type=""text"" name=""w_nascimento"" class=""sti"" SIZE=""10"" MAXLENGTH=""10"" VALUE=""" & w_nascimento & """ onKeyDown=""FormataData(this,event);""></td>"
     ShowHTML "        <tr valign=""top"">"
     SelecaoSexo "<u>S</u>exo:", "S", null, w_sexo, null, "w_sexo", null, null
     ShowHTML "          <td colspan=2><table border=""0"" width=""100%"" cellpadding=0 cellspacing=0><tr>"
@@ -508,7 +508,7 @@ Sub Identificacao
     ShowHTML "          </table>"
     ShowHTML "        <tr valign=""top"">"
     SelecaoFormacao "F<u>o</u>rmação acadêmica:", "O", "Selecione a formação acadêmica mais alta que você tem como comprovar a conclusão.", w_sq_formacao, null, "w_sq_formacao", "tipo='Acadêmica'", null
-    ShowHTML "          <td colspan=2 ONMOUSEOVER=""popup('Selecione o arquivo que contém sua foto. Deve ser um arquivo com a extensão JPG ou GIF, com até 50KB.','white')""; ONMOUSEOUT=""kill()""><font size=""1""><b><u>F</u>oto:</b><br><input " & w_Disabled & " accesskey=""N"" type=""file"" name=""w_foto"" class=""sti"" SIZE=""40"" MAXLENGTH=""200"" VALUE="""">&nbsp;"
+    ShowHTML "          <td colspan=2 title=""Selecione o arquivo que contém sua foto. Deve ser um arquivo com a extensão JPG ou GIF, com até 50KB.""><font size=""1""><b><u>F</u>oto:</b><br><input " & w_Disabled & " accesskey=""N"" type=""file"" name=""w_foto"" class=""sti"" SIZE=""40"" MAXLENGTH=""200"" VALUE="""">&nbsp;"
     If w_foto > "" Then ShowHTML LinkArquivo("SS", w_cliente, w_foto, "_blank", null, "Exibir", null) End If
                         
     ShowHTML "        <tr><td colspan=3 align=""center"" height=""2"" bgcolor=""#000000""></td></tr>"
@@ -529,16 +529,16 @@ Sub Identificacao
     ShowHTML "        <tr><td colspan=3><font size=1>Informe, nos campos a seguir, os dados relativos à sua documentação.</font></td></tr>"
     ShowHTML "        <tr><td colspan=3 align=""center"" height=""1"" bgcolor=""#000000""></td></tr>"
     ShowHTML "        <tr valign=""top"">"
-    ShowHTML "          <td ONMOUSEOVER=""popup('Informe o número da sua carteira de identidade (registro geral).','white')""; ONMOUSEOUT=""kill()""><font size=""1""><b><u>I</u>dentidade:</b><br><input " & w_Disabled & " accesskey=""I"" type=""text"" name=""w_rg_numero"" class=""sti"" SIZE=""15"" MAXLENGTH=""30"" VALUE=""" & w_rg_numero & """></td>"
-    ShowHTML "          <td ONMOUSEOVER=""popup('Informe o nome do órgão expedidor de sua carteira de identidade.','white')""; ONMOUSEOUT=""kill()""><font size=""1""><b><u>E</u>missor:</b><br><input " & w_Disabled & " accesskey=""E"" type=""text"" name=""w_rg_emissor"" class=""sti"" SIZE=""10"" MAXLENGTH=""15"" VALUE=""" & w_rg_emissor & """></td>"
-    ShowHTML "          <td ONMOUSEOVER=""popup('Informe a data de emissão de sua carteira de identidade.','white')""; ONMOUSEOUT=""kill()""><font size=""1""><b><u>D</u>ata emissão:</b><br><input " & w_Disabled & " accesskey=""D"" type=""text"" name=""w_rg_emissao"" class=""sti"" SIZE=""10"" MAXLENGTH=""10"" VALUE=""" & w_rg_emissao & """ onKeyDown=""FormataData(this,event);""></td>"
+    ShowHTML "          <td title=""Informe o número da sua carteira de identidade (registro geral).""><font size=""1""><b><u>I</u>dentidade:</b><br><input " & w_Disabled & " accesskey=""I"" type=""text"" name=""w_rg_numero"" class=""sti"" SIZE=""15"" MAXLENGTH=""30"" VALUE=""" & w_rg_numero & """></td>"
+    ShowHTML "          <td title=""Informe o nome do órgão expedidor de sua carteira de identidade.""><font size=""1""><b><u>E</u>missor:</b><br><input " & w_Disabled & " accesskey=""E"" type=""text"" name=""w_rg_emissor"" class=""sti"" SIZE=""10"" MAXLENGTH=""15"" VALUE=""" & w_rg_emissor & """></td>"
+    ShowHTML "          <td title=""Informe a data de emissão de sua carteira de identidade.""><font size=""1""><b><u>D</u>ata emissão:</b><br><input " & w_Disabled & " accesskey=""D"" type=""text"" name=""w_rg_emissao"" class=""sti"" SIZE=""10"" MAXLENGTH=""10"" VALUE=""" & w_rg_emissao & """ onKeyDown=""FormataData(this,event);""></td>"
     ShowHTML "        <tr valign=""top"">"
     If O = "I" Then
-       ShowHTML "          <td ONMOUSEOVER=""popup('Informe seu número no Cadastro de Pessoas Físicas - CPF.','white')""; ONMOUSEOUT=""kill()""><font size=""1""><b>CP<u>F</u>:</b><br><input " & w_Disabled & " accesskey=""F"" type=""text"" name=""w_cpf"" class=""sti"" SIZE=""14"" MAXLENGTH=""14"" VALUE=""" & w_cpf & """ onKeyDown=""FormataCPF(this,event);""></td>"
+       ShowHTML "          <td title=""Informe seu número no Cadastro de Pessoas Físicas - CPF.""><font size=""1""><b>CP<u>F</u>:</b><br><input " & w_Disabled & " accesskey=""F"" type=""text"" name=""w_cpf"" class=""sti"" SIZE=""14"" MAXLENGTH=""14"" VALUE=""" & w_cpf & """ onKeyDown=""FormataCPF(this,event);""></td>"
     Else
-       ShowHTML "          <td ONMOUSEOVER=""popup('Seu CPF não pode ser alterado.','white')""; ONMOUSEOUT=""kill()""><font size=""1""><b>CP<u>F</u>:</b><br><input " & w_Disabled & " readonly accesskey=""F"" type=""text"" name=""w_cpf"" class=""sti"" SIZE=""14"" MAXLENGTH=""14"" VALUE=""" & w_cpf & """ onKeyDown=""FormataCPF(this,event);""></td>"
+       ShowHTML "          <td title=""Seu CPF não pode ser alterado.""><font size=""1""><b>CP<u>F</u>:</b><br><input " & w_Disabled & " readonly accesskey=""F"" type=""text"" name=""w_cpf"" class=""sti"" SIZE=""14"" MAXLENGTH=""14"" VALUE=""" & w_cpf & """ onKeyDown=""FormataCPF(this,event);""></td>"
     End If
-    ShowHTML "          <td ONMOUSEOVER=""popup('Se possuir um passaporte, informe o número.','white')""; ONMOUSEOUT=""kill()""><font size=""1""><b>Número passapo<u>r</u>te:</b><br><input " & w_Disabled & " accesskey=""R"" type=""text"" name=""w_passaporte_numero"" class=""sti"" SIZE=""15"" MAXLENGTH=""15"" VALUE=""" & w_passaporte_numero & """></td>"
+    ShowHTML "          <td title=""Se possuir um passaporte, informe o número.""><font size=""1""><b>Número passapo<u>r</u>te:</b><br><input " & w_Disabled & " accesskey=""R"" type=""text"" name=""w_passaporte_numero"" class=""sti"" SIZE=""15"" MAXLENGTH=""15"" VALUE=""" & w_passaporte_numero & """></td>"
     SelecaoPais "<u>P</u>aís passaporte:", "P", "Se possuir um passaporte, selecione o país de emissão.", w_sq_pais_passaporte, null, "w_sq_pais_passaporte", null, null
     ShowHTML "      </table>"
 
@@ -909,7 +909,7 @@ Sub Experiencia
         ShowHTML "        <td align=""top"" nowrap><font size=""1"">"
         ShowHTML "          <A class=""HL"" HREF=""" & w_dir & w_Pagina & par & "&R=" & w_Pagina & par & "&O=A&w_sq_cvpessoa=" & w_sq_cvpessoa & "&w_chave="& RS("sq_cvpesexp") & "&P1=" & P1 & "&P2=" & P2 & "&P3=" & P3 & "&P4=" & P4 & "&TP=" & TP & "&SG=" & SG & MontaFiltro("GET") & """>Alterar</A>&nbsp"
         ShowHTML "          <A class=""HL"" HREF=""" & w_dir & w_Pagina & "GRAVA&R=" & w_Pagina & par & "&O=E&w_sq_cvpessoa=" & w_sq_cvpessoa & "&w_chave="& RS("sq_cvpesexp") & "&P1=" & P1 & "&P2=" & P2 & "&P3=" & P3 & "&P4=" & P4 & "&TP=" & TP & "&SG=" & SG & MontaFiltro("GET") & """ onClick=""return confirm('Confirma a exclusão do emprego?');"">Excluir</A>&nbsp"
-        ShowHTML "          <u class=""HL"" style=""cursor:hand;"" onclick=""javascript:window.open('" & w_Pagina &"CARGOS&R=" & w_Pagina &"CARGOS&O=L&w_sq_cvpessoa=" & w_sq_cvpessoa & "&w_sq_cvpesexp="& RS("sq_cvpesexp") & "&P1=2&P2=" & P2 & "&P3=" & P3 & "&P4=" & P4 & "&TP=" & TP & " - Cargos&SG=CVCARGOS" & MontaFiltro("GET") & "','Cargos','toolbar=no,width=620,height=420,top=30,left=50,scrollbars=yes')"">Cargos</u>&nbsp"
+        ShowHTML "          <u class=""HL"" style=""cursor:hand;"" onclick=""javascript:window.open('" & w_Pagina &"CARGOS&R=" & w_Pagina &"CARGOS&O=L&w_sq_cvpessoa=" & w_sq_cvpessoa & "&w_sq_cvpesexp="& RS("sq_cvpesexp") & "&P1=2&P2=" & P2 & "&P3=" & P3 & "&P4=" & P4 & "&TP=" & TP & " - Cargos&SG=CVCARGOS" & MontaFiltro("GET") & "','Cargos','toolbar=no,width=780,height=350,top=30,left=10,scrollbars=yes,resizable=yes')"">Cargos</u>&nbsp"
         ShowHTML "        </td>"
         ShowHTML "      </tr>"
         RS.MoveNext
@@ -944,7 +944,7 @@ Sub Experiencia
     ShowHTML "      <tr><td valign=""top""><font size=""1""><b>Área do conhecimento relacionada:</b><br>"
     ShowHTML "              <input READONLY type=""text"" name=""w_nm_area"" class=""sti"" SIZE=""50"" VALUE=""" & w_nm_area & """>"
     If O <> "E" Then
-       ShowHTML "              [<u onMouseOver=""this.style.cursor='Hand'"" onMouseOut=""this.style.cursor='Pointer'"" onClick=""window.open('" & w_pagina & "BuscaAreaConhecimento&TP=" & TP & "&SG=" & SG & "&P1=1','AreaConhecimento','top=70 left=100 width=600 height=400 toolbar=yes status=yes resizable=yes scrollbars=yes');""><b><font color=""#0000FF"">Procurar</font></b></u>]"
+       ShowHTML "              [<u onMouseOver=""this.style.cursor='Hand'"" onMouseOut=""this.style.cursor='Pointer'"" onClick=""window.open('" & w_pagina & "BuscaAreaConhecimento&TP=" & TP & "&SG=" & SG & "&P1=1','AreaConhecimento','top=70,left=100,width=600,height=400,toolbar=yes,status=yes,resizable=yes,scrollbars=yes');""><b><font color=""#0000FF"">Procurar</font></b></u>]"
     End If
     ShowHTML "      <tr><td valign=""top"" colspan=""2""><table border=0 width=""100%"" cellspacing=0>"
     ShowHTML "          <tr><td valign=""top""><font size=""1""><b>E<U>n</U>trada:</b></br><INPUT ACCESSKEY=""n"" " & w_Disabled & " class=""sti"" type=""text"" name=""w_entrada"" size=""10"" maxlength=""10"" value=""" & w_entrada & """ onKeyDown=""FormataData(this, event)"">"
@@ -1155,7 +1155,7 @@ Sub Cargos
     ShowHTML "          </table>"
     ShowHTML "      <tr><td valign=""top""><font size=""1""><b>Cargo desempenhado:</b><br>"
     ShowHTML "          <input READONLY type=""text"" name=""w_nm_area"" class=""sti"" SIZE=""50"" VALUE=""" & w_nm_area & """>"
-    ShowHTML "          [<u onMouseOver=""this.style.cursor='Hand'"" onMouseOut=""this.style.cursor='Pointer'"" onClick=""window.open('" & w_pagina & "BuscaAreaConhecimento&TP=" & TP & "&P1=2','SelecaoCargo','top=70 left=100 width=600 height=400 toolbar=yes status=yes resizable=yes scrollbars=yes');""><b><font color=""#0000FF"">Procurar</font></b></u>]"
+    ShowHTML "          [<u onMouseOver=""this.style.cursor='Hand'"" onMouseOut=""this.style.cursor='Pointer'"" onClick=""window.open('" & w_pagina & "BuscaAreaConhecimento&TP=" & TP & "&P1=2','SelecaoCargo','top=70,left=100,width=600,height=400,toolbar=yes,status=yes,resizable=yes,scrollbars=yes');""><b><font color=""#0000FF"">Procurar</font></b></u>]"
     ' Verifica se poderá ser feito o envio da solicitação, a partir do resultado da validação
     If Session("p_portal") = "" Then ShowHTML "      <tr><td align=""LEFT"" colspan=4><font size=""1""><b><U>A</U>ssinatura Eletrônica:<BR> <INPUT ACCESSKEY=""A"" class=""sti"" type=""PASSWORD"" name=""w_assinatura"" size=""30"" maxlength=""30"" value=""""></td></tr>" End If
 	ShowHTML "      <tr><td align=""center"" colspan=4><hr>"
@@ -1343,7 +1343,7 @@ Sub Escolaridade
     ShowHTML "      <tr><td valign=""top""><font size=""1""><b>Se formação for graduação ou maior, indique a área do conhecimento:</b><br>"
     ShowHTML "              <input READONLY type=""text"" name=""w_nm_area"" class=""sti"" SIZE=""50"" VALUE=""" & w_nm_area & """>"
     If O <> "E" Then
-       ShowHTML "              [<u onMouseOver=""this.style.cursor='Hand'"" onMouseOut=""this.style.cursor='Pointer'"" onClick=""window.open('" & w_pagina & "BuscaAreaConhecimento&TP=" & TP & "&SG=" & SG & "&P1=1','AreaConhecimento','top=70 left=100 width=600 height=400 toolbar=yes status=yes resizable=yes scrollbars=yes');""><b><font color=""#0000FF"">Procurar</font></b></u>]"
+       ShowHTML "              [<u onMouseOver=""this.style.cursor='Hand'"" onMouseOut=""this.style.cursor='Pointer'"" onClick=""window.open('" & w_pagina & "BuscaAreaConhecimento&TP=" & TP & "&SG=" & SG & "&P1=1','AreaConhecimento','top=70,left=100,width=600,height=400,toolbar=yes,status=yes,resizable=yes,scrollbars=yes');""><b><font color=""#0000FF"">Procurar</font></b></u>]"
     End If
     ShowHTML "      <tr><td valign=""top""><font size=""1""><b><u>N</u>ome curso:</b><br><input " & w_Disabled & " accesskey=""N"" type=""text"" name=""w_nome"" class=""sti"" SIZE=""80"" MAXLENGTH=""80"" VALUE=""" & w_nome & """></td>"
     ShowHTML "      <tr><td valign=""top""><font size=""1""><b><u>I</u>nstituição:</b><br><input " & w_Disabled & " accesskey=""I"" type=""text"" name=""w_instituicao"" class=""sti"" SIZE=""80"" MAXLENGTH=""100"" VALUE=""" & w_instituicao & """></td>"
@@ -1532,7 +1532,7 @@ Sub Extensao
     ShowHTML "      <tr><td valign=""top""><font size=""1""><b>Área do conhecimento relacionada:</b><br>"
     ShowHTML "              <input READONLY type=""text"" name=""w_nm_area"" class=""sti"" SIZE=""50"" VALUE=""" & w_nm_area & """>"
     If O <> "E" Then
-       ShowHTML "              [<u onMouseOver=""this.style.cursor='Hand'"" onMouseOut=""this.style.cursor='Pointer'"" onClick=""window.open('" & w_pagina & "BuscaAreaConhecimento&TP=" & TP & "&SG=" & SG & "&P1=1','AreaConhecimento','top=70 left=100 width=600 height=400 toolbar=yes status=yes resizable=yes scrollbars=yes');""><b><font color=""#0000FF"">Procurar</font></b></u>]"
+       ShowHTML "              [<u onMouseOver=""this.style.cursor='Hand'"" onMouseOut=""this.style.cursor='Pointer'"" onClick=""window.open('" & w_pagina & "BuscaAreaConhecimento&TP=" & TP & "&SG=" & SG & "&P1=1','AreaConhecimento','top=70,left=100,width=600,height=400,toolbar=yes,status=yes,resizable=yes,scrollbars=yes');""><b><font color=""#0000FF"">Procurar</font></b></u>]"
     End If
     ShowHTML "      <tr><td valign=""top""><font size=""1""><b><u>N</u>ome curso:</b><br><input " & w_Disabled & " accesskey=""N"" type=""text"" name=""w_nome"" class=""sti"" SIZE=""80"" MAXLENGTH=""80"" VALUE=""" & w_nome & """></td>"
     ShowHTML "      <tr><td valign=""top""><font size=""1""><b><u>I</u>nstituição:</b><br><input " & w_Disabled & " accesskey=""I"" type=""text"" name=""w_instituicao"" class=""sti"" SIZE=""80"" MAXLENGTH=""100"" VALUE=""" & w_instituicao & """></td>"
@@ -1716,7 +1716,7 @@ Sub Producao
     ShowHTML "      <tr><td valign=""top""><font size=""1""><b>Área do conhecimento relacionada:</b><br>"
     ShowHTML "              <input READONLY type=""text"" name=""w_nm_area"" class=""sti"" SIZE=""50"" VALUE=""" & w_nm_area & """>"
     If O <> "E" Then
-       ShowHTML "              [<u onMouseOver=""this.style.cursor='Hand'"" onMouseOut=""this.style.cursor='Pointer'"" onClick=""window.open('" & w_pagina & "BuscaAreaConhecimento&TP=" & TP & "&SG=" & SG & "&P1=1','AreaConhecimento','top=70 left=100 width=600 height=400 toolbar=yes status=yes resizable=yes scrollbars=yes');""><b><font color=""#0000FF"">Procurar</font></b></u>]"
+       ShowHTML "              [<u onMouseOver=""this.style.cursor='Hand'"" onMouseOut=""this.style.cursor='Pointer'"" onClick=""window.open('" & w_pagina & "BuscaAreaConhecimento&TP=" & TP & "&SG=" & SG & "&P1=1','AreaConhecimento','top=70,left=100,width=600,height=400,toolbar=yes,status=yes,resizable=yes,scrollbars=yes');""><b><font color=""#0000FF"">Procurar</font></b></u>]"
     End If
     ShowHTML "      <tr><td valign=""top""><font size=""1""><b><u>N</u>ome:</b><br><input " & w_Disabled & " accesskey=""N"" type=""text"" name=""w_nome"" class=""sti"" SIZE=""80"" MAXLENGTH=""80"" VALUE=""" & w_nome & """></td>"
     ShowHTML "      <tr><td valign=""top"" colspan=""2""><table border=0 width=""100%"" cellspacing=0>"
@@ -2030,7 +2030,7 @@ Public Sub Grava
           DML_PutCVExperiencia O, w_usuario, _
               Request("w_chave"), Request("w_sq_area_conhecimento"), Request("w_sq_cidade"), Request("w_sq_eo_tipo_posto"), _
               Request("w_sq_tipo_vinculo"), Request("w_empregador"), Request("w_entrada"), Request("w_saida"), _
-              Request("w_duracao_mes"), Request("w_duracao_ano"), Request("w_motivo_saida"), Request("w_atividades")
+              Request("w_duracao_mes"), Request("w_duracao_ano"), Request("w_motivo_saida"), null, Request("w_atividades")
           
           ScriptOpen "JavaScript"
           ShowHTML "  location.href='" & R & "&w_chave=" & Request("w_Chave") & "&P1=" & P1 & "&P2=" & P2 & "&P3=" & P3 & "&P4=" & P4 & "&TP=" & TP & "&SG=" & SG & MontaFiltro("GET") & "';"

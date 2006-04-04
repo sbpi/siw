@@ -149,7 +149,7 @@ Sub DB_GetKnowArea(p_rs, p_chave, p_nome, p_tipo)
   Set l_tipo        = Server.CreateObject("ADODB.Parameter")
   with sp
      set l_chave           = .CreateParameter("l_chave",        adInteger, adParamInput,   , tvl(p_chave))
-     set l_nome            = .CreateParameter("l_nome",         adVarchar, adParamInput, 20, tvl(p_nome))
+     set l_nome            = .CreateParameter("l_nome",         adVarchar, adParamInput, 30, tvl(p_nome))
      set l_tipo            = .CreateParameter("l_tipo",         adVarchar, adParamInput,  1, p_tipo)
      .parameters.Append         l_chave
      .parameters.Append         l_nome
