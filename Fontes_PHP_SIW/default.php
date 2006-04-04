@@ -2,6 +2,7 @@
 session_start();
 session_register("P_CLIENTE");
 session_register("DBMS");
+session_register("ANO");
 session_register("SCHEMA");
 session_register("SCHEMA_IS");
 session_register("LOGON");
@@ -119,6 +120,7 @@ function Valida() {
     $_SESSION['INTERNO']         = f($RS,'INTERNO');
     $_SESSION['LOGON']           = "Sim";
     $_SESSION['ENDERECO']        = f($RS,'SQ_PESSOA_ENDERECO');
+    $_SESSION['ANO']             = Date('Y');
 
     if ($par=="Log") {
       ScriptOpen("JavaScript");
@@ -268,7 +270,7 @@ function LogOn()
   ShowHTML('<INPUT TYPE="HIDDEN" NAME="Login" VALUE=""> ');
   ShowHTML('<INPUT TYPE="HIDDEN" NAME="Password" VALUE=""> ');
   ShowHTML('<INPUT TYPE="HIDDEN" NAME="par" VALUE="Log"> ');
-  ShowHTML('<INPUT TYPE="HIDDEN" NAME="p_dbms" VALUE="3"> ');
+  ShowHTML('<INPUT TYPE="HIDDEN" NAME="p_dbms" VALUE="4"> ');
   ShowHTML('<INPUT TYPE="HIDDEN" NAME="p_cliente" VALUE="1"> ');
   ShowHTML('<table width="770" height="31" border="0" cellpadding=0 cellspacing=0>');
   ShowHTML('  <tr><td valign="middle" width="100%" height="100%">');

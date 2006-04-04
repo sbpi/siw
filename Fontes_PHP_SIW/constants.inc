@@ -1,11 +1,11 @@
 <?
 //---------------------------Definições do BODY
 
-$conBodyText="#000000";
+$conBodyText	="#000000";
 $conBodyLink="#0000FF";
 $conBodyALink="#0000FF";
 $conBodyVLink="#0000FF";
-$conBodyBgcolor="#F8F8FF";
+$conBodyBgColor="#F8F8FF";
 $conBodyBackground="";
 $conBodyBgproperties="fixed";
 $conBodyTopmargin="5";
@@ -14,18 +14,18 @@ $conBodyLeftmargin="5";
 //---------------------------Definições de Tabela
 
 $conTableHeader="#CCCCCC";
-$conTableBgcolor="#F7F7F7";
-$conTableAlternateBgcolor="#E1F2FF";
+$conTableBgColor="#F7F7F7";
+$conTableAlternateBgColor="#E1F2FF";
 $conTableBorder="1";
-$conTableBordercolordark="#000000";
-$conTableBordercolor="#000000";
-$conTableBordercolorlight="#FFFFFF";
-$conTableCellpadding="1";
-$conTableCellspacing="0";
-$conTrBgcolor="#EFEFEF";
-$conTrTotalBgcolor="#55BBFF";
-$conTrAlternateBgcolor="#C0C0C0";
-$conTrRelatorioBgcolor="#E1F2FF";
+$conTableBorderColorDark="#000000";
+$conTableBorderColor="#000000";
+$conTableBorderColorlight="#FFFFFF";
+$conTableCellPadding="1";
+$conTableCellSpacing="0";
+$conTrBgColor="#EFEFEF";
+$conTrTotalBgColor="#55BBFF";
+$conTrAlternateBgColor="#C0C0C0";
+$conTrRelatorioBgColor="#E1F2FF";
 
 //---------------------------Definições de fontes
 

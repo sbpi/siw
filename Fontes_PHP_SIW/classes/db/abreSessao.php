@@ -13,7 +13,8 @@ class abreSessao {
      $dbms = ConnectionManagerFactory::getInstanceOf($DB_TYPE);
      $dbms->doConnection();
      $dbms->selectDatabase();
+     if ($DB_TYPE==PGSQL) { pg_query($dbms->getConnectionHandle(), "set client_encoding to 'LATIN1'"); }
      return $dbms->getConnectionHandle();
    }
 }    
-?>
+?>

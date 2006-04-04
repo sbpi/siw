@@ -2001,6 +2001,20 @@ function RetornaUsuario() {
 }
 
 // =========================================================================
+// Função que retorna o ano a ser utilizado para recuperação de dados
+// -------------------------------------------------------------------------
+function RetornaAno() {
+  extract($GLOBALS);
+  if ($_REQUEST['w_ano']>'') {
+     return $_REQUEST['w_ano'];
+  } elseif ($_SESSION['ANO'] > '') {
+     return $_SESSION['ANO'];
+  } else {
+     return Date('Y');
+  }
+}
+
+// =========================================================================
 // Função que retorna o código do menu
 // -------------------------------------------------------------------------
 function RetornaMenu($p_cliente,$p_sigla) {
@@ -2702,6 +2716,7 @@ function LimpaMascara($Campo) {
 
 // Cria a tag Body
 function BodyOpen($cProperties) {
+   extract($GLOBALS);
    if ($_SESSION['P_CLIENTE']=='6761') { ShowHTML('<body Text="'.$conBodyText.'" '.$cProperties.'> '); }
    else {
       ShowHTML('<BASEFONT FACE="Verdana" SIZE="2">');
@@ -2720,13 +2735,14 @@ function BodyOpen($cProperties) {
       ShowHTML(' .STC {font-size: 8pt; border-top: 0px}');
       ShowHTML('</style> ');
       ShowHTML('<body Text="'.$conBodyText.'" Link="'.$conBodyLink.'" Alink="'.$conBodyALink.'" '.
-            'Vlink="'.$conBodyVLink.'" Bgcolor="'.$conBodyBgcolor.'" Background="'.$conBodyBackground.'" ' .
+            'Vlink="'.$conBodyVLink.'" Bgcolor="'.$conBodyBgColor.'" Background="'.$conBodyBackground.'" ' .
             'Bgproperties="'.$conBodyBgproperties.'" Topmargin="'.$conBodyTopmargin .'" ' .
             'Leftmargin="'.$conBodyLeftmargin.'" '.$cProperties.'> ');
    }
 }
 
 function BodyOpenImage($cProperties, $cImage, $cFixed) {
+   extract($GLOBALS);
    if ($_SESSION['P_CLIENTE']=='6761') { ShowHTML('<body Text="'.$conBodyText.'" '.$cProperties.'> '); }
    else {
       ShowHTML('<BASEFONT FACE="Verdana" SIZE="2">');
@@ -2744,53 +2760,10 @@ function BodyOpenImage($cProperties, $cImage, $cFixed) {
       ShowHTML(' .STR {font-size: 8pt; border-top: 0px}');
       ShowHTML(' .STC {font-size: 8pt; border-top: 0px}');
       ShowHTML('</style> ');
-      ShowHTML('<STYLE TYPE="text/css">');
-      ShowHTML('<!--');
-      ShowHTML('BODY {OVERFLOW:scroll;OVERFLOW-X:hidden}');
-      ShowHTML('.DEK {POSITION:absolute;VISIBILITY:hidden;Z-INDEX:200;}');
-      ShowHTML('//-->');
-      ShowHTML('</STYLE>');
       ShowHTML('<body Text="'.$conBodyText.'" Link="'.$conBodyLink.'" Alink="'.$conBodyALink.'" '.
             'Vlink="'.$conBodyVLink.'" Bgcolor="'.$conBodyBgcolor.'" Background="'.$cImage.'" ' .
             'Bgproperties="'.$cFixed.'" Topmargin="'.$conBodyTopmargin .'" ' .
             'Leftmargin="'.$conBodyLeftmargin.'" '.$cProperties.'> ');
-      ShowHTML('<DIV ID="dek" CLASS="dek"></DIV>');
-      ShowHTML('<SCRIPT TYPE="text/javascript">');
-      ShowHTML('<!--');
-      ShowHTML('Xoffset=-100;    // modify these values to ...');
-      ShowHTML('Yoffset= 20;    // change the popup position.');
-      ShowHTML('var nav,old,iex=(document.all),yyy=-1000;');
-      ShowHTML('if(navigator.appName=="Netscape"){(document.layers)?nav=true:old=true;}');
-      ShowHTML('if(!old){');
-      ShowHTML('var skn=(nav)?document.dek:dek.style;');
-      ShowHTML('if(nav)document.captureEvents(Event.MOUSEMOVE);');
-      ShowHTML('document.onmousemove=get_mouse;');
-      ShowHTML('}');
-      ShowHTML('function popup(msg,bak){');
-      ShowHTML('var content="<TABLE  WIDTH=200 BORDER=1 BORDERCOLOR=black CELLPADDING=2 CELLSPACING=0 BGCOLOR="+bak+"><TD><DIV ALIGN="JUSTIFY"><FONT COLOR=black SIZE=1>"+msg+"</FONT></DIV></TD></TABLE>";');
-      ShowHTML('if(old){alert(msg);return;} ');
-      ShowHTML('else{yyy=Yoffset;');
-      ShowHTML(' if(nav){skn.document.write(content);skn.document.close();skn.visibility="visible"}');
-      ShowHTML(' if(iex){document.all("dek").innerHTML=content;skn.visibility="visible"}');
-      ShowHTML(' }');
-      ShowHTML('}');
-      ShowHTML('function popup1(msg,bak){');
-      ShowHTML('var content="<TABLE  WIDTH=450 BORDER=1 BORDERCOLOR=black CELLPADDING=2 CELLSPACING=0 BGCOLOR="+bak+"><TD><DIV ALIGN="JUSTIFY"><FONT COLOR=black SIZE=1>"+msg+"</FONT></DIV></TD></TABLE>";');
-      ShowHTML('if(old){alert(msg);return;} ');
-      ShowHTML('else{yyy=Yoffset;');
-      ShowHTML(' if(nav){skn.document.write(content);skn.document.close();skn.visibility="visible"}');
-      ShowHTML(' if(iex){document.all("dek").innerHTML=content;skn.visibility="visible"}');
-      ShowHTML(' }');
-      ShowHTML('}');
-      ShowHTML('function get_mouse(e){');
-      ShowHTML('var x=(nav)?e.pageX:event.x+document.body.scrollLeft;skn.left=x+Xoffset;');
-      ShowHTML('var y=(nav)?e.pageY:event.y+document.body.scrollTop;skn.top=y+yyy;');
-      ShowHTML('}');
-      ShowHTML('function kill(){');
-      ShowHTML('if(!old){yyy=-1000;skn.visibility="hidden");}');
-      ShowHTML('}');
-      ShowHTML('//-->');
-      ShowHTML('</SCRIPT>');
    }
 }
 
@@ -2799,6 +2772,7 @@ function ShowHtml($Line) { print $Line.chr(13).chr(10); }
 
 // Cria a tag Body
 function BodyOpenClean($cProperties) {
+  extract($GLOBALS);
   ShowHTML('<BASEFONT FACE="Verdana" SIZE="2"> ');
   ShowHTML('<style> ');
   ShowHTML(' .SS{text-decoration:none;font:bold 8pt} ');
@@ -2810,7 +2784,7 @@ function BodyOpenClean($cProperties) {
   ShowHTML(' .XTM{font: 12pt Verdana}');
   ShowHTML('</style> ');
   ShowHTML('<body Text="'.$conBodyText.'" Link="'.$conBodyLink.'" Alink="'.$conBodyALink.'" '.
-  'Vlink="'.$conBodyVLink.'" Bgcolor="'.$conBodyBgcolor.'" Background="'.$conBodyBackground.'" '.
+  'Vlink="'.$conBodyVLink.'" Bgcolor="'.$conBodyBgColor.'" Background="'.$conBodyBackground.'" '.
   'Bgproperties="'.$conBodyBgproperties.'" Topmargin="'.$conBodyTopmargin.'" '.
   'Leftmargin="'.$conBodyLeftmargin.'" '.$cProperties.'> ');
 }

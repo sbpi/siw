@@ -74,12 +74,12 @@ function Frames() {
   ShowHTML('  <TITLE>'.$conSgSistema.' - '.$conNmSistema.'</TITLE> ');
   ShowHTML('  <link href="images/sbpi.ico" rel="shortcut icon">');
   ShowHTML('  </HEAD> ');
-  ShowHTML('    <FRAMESET COLS="25%,*"> ');
-  ShowHTML('     <FRAME SRC="Menu.php?par=ExibeDocs" SCROLLING=YES FRAMEBORDER="0" FRAMESPACING=0 NAME="menu"> ');
+  ShowHTML('    <FRAMESET COLS="20%,80%"> ');
+  ShowHTML('     <FRAME SRC="Menu.php?par=ExibeDocs" SCROLLING="AUTO" FRAMEBORDER="0" FRAMESPACING=0 NAME="menu"> ');
   if ($cliente=='' || $cliente==1) {
     ShowHTML('     <FRAME SRC="branco.htm" FRAMEBORDER="0" NAME="content"> ');
   } else {
-    ShowHTML('     <FRAME SRC="" FRAMEBORDER="0" NAME="content"> ');
+    ShowHTML('     <FRAME SRC="" SCROLLING="AUTO" FRAMEBORDER="0" NAME="content"> ');
   }
   ShowHTML('    <NOFRAMES> ');
   ShowHTML('     <BODY BGCOLOR="#FFFFFF" BACKGROUND="images/bg.jpg" BGPROPERTIES="FIXED"> ');

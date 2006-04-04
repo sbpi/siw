@@ -483,6 +483,10 @@ Fontes_PHP_SIW/classes/db/DatabaseQueries.php -text
 Fontes_PHP_SIW/classes/db/DatabaseQueriesFactory.php -text
 Fontes_PHP_SIW/classes/db/abreSessao.php -text
 Fontes_PHP_SIW/classes/db/db_constants.php -text
+Fontes_PHP_SIW/classes/db/db_getDeskTop.php -text
+Fontes_PHP_SIW/classes/db/db_getDeskTop_TT.php -text
+Fontes_PHP_SIW/classes/db/db_getPersonData.php -text
+Fontes_PHP_SIW/classes/db/db_getSiwCliModLis.php -text
 Fontes_PHP_SIW/classes/file/File.php -text
 Fontes_PHP_SIW/classes/mail/class_email.php -text
 Fontes_PHP_SIW/classes/menu/readme.txt -text
@@ -508,6 +512,7 @@ Fontes_PHP_SIW/funcoes.php -text
 Fontes_PHP_SIW/geragrafico.php -text
 Fontes_PHP_SIW/jscript.php -text
 Fontes_PHP_SIW/menu.php -text
+Fontes_PHP_SIW/trabalho.php -text
 SP_Oracle81/fbaj/LOADALBERGUISTA.prc -text
 SP_Oracle81/fbaj/LOADALBERGUISTA_DF.prc -text
 SP_Oracle81/fbaj/LOADEXPORTTABLES.prc -text
