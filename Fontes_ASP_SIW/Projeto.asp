@@ -1474,12 +1474,12 @@ Sub Etapas
     Else
        w_texto = "Não há outros números de ordem subordinados a esta etapa."
     End If
-    ShowHTML "              <td align=""left""><font size=""1""><b><u>O</u>rdem:<br><INPUT ACCESSKEY=""O"" TYPE=""TEXT"" CLASS=""STI"" NAME=""w_ordem"" SIZE=3 MAXLENGTH=3 VALUE=""" & w_ordem & """ " & w_Disabled & " ONMOUSEOVER=""popup1('" & Replace(w_texto,CHR(13)&CHR(10),"<BR>") & "','white')""; ONBLUR=""kill()""></td>"
+    ShowHTML "              <td align=""left""><font size=""1""><b><u>O</u>rdem:<br><INPUT ACCESSKEY=""O"" TYPE=""TEXT"" CLASS=""STI"" NAME=""w_ordem"" SIZE=3 MAXLENGTH=3 VALUE=""" & w_ordem & """ " & w_Disabled & " title=""" & Replace(w_texto,CHR(13)&CHR(10),"<BR>") & """></td>"
     ShowHTML "              <td><font size=""1""><b>Previsão iní<u>c</u>io:</b><br><input " & w_Disabled & " accesskey=""C"" type=""text"" name=""w_inicio"" class=""STI"" SIZE=""10"" MAXLENGTH=""10"" VALUE=""" & FormataDataEdicao(Nvl(w_inicio,Date())) & """ onKeyDown=""FormataData(this,event);"" title=""Data prevista para início da etapa.""></td>"
     ShowHTML "              <td><font size=""1""><b>Previsão <u>t</u>érmino:</b><br><input " & w_Disabled & " accesskey=""T"" type=""text"" name=""w_fim"" class=""STI"" SIZE=""10"" MAXLENGTH=""10"" VALUE=""" & FormataDataEdicao(w_fim) & """ onKeyDown=""FormataData(this,event);"" title=""Data prevista para término da etapa.""></td>"
     ShowHTML "          <tr valign=""top"">"
     ShowHTML "              <td><font size=""1""><b>Orça<u>m</u>ento previsto:</b><br><input " & w_Disabled & " accesskey=""M"" type=""text"" name=""w_orcamento"" class=""STI"" SIZE=""18"" MAXLENGTH=""18"" VALUE=""" & FormatNumber(w_orcamento,2) & """ onKeyDown=""FormataValor(this,18,2,event);"" title=""Orçamento previsto para execução desta etapa.""></td>"
-    ShowHTML "              <td align=""left""><font size=""1""><b>Percentual de co<u>n</u>clusão:<br><INPUT ACCESSKEY=""N"" TYPE=""TEXT"" CLASS=""STI"" NAME=""w_perc_conclusao"" SIZE=3 MAXLENGTH=3 VALUE=""" & nvl(w_perc_conclusao,0) & """ " & w_Disabled & " ONMOUSEOVER=""popup1('Indique o percentual de conclusão já atingido por essa etapa.','white')""; ONBLUR=""kill()""></td>"
+    ShowHTML "              <td align=""left""><font size=""1""><b>Percentual de co<u>n</u>clusão:<br><INPUT ACCESSKEY=""N"" TYPE=""TEXT"" CLASS=""STI"" NAME=""w_perc_conclusao"" SIZE=3 MAXLENGTH=3 VALUE=""" & nvl(w_perc_conclusao,0) & """ " & w_Disabled & " title=""Indique o percentual de conclusão já atingido por essa etapa.""></td>"
     MontaRadioSN "<b>Permite vinculação de atividades?</b>", w_vincula_atividade, "w_vincula_atividade"
     ShowHTML "          </table>"
     ShowHTML "      <tr><td valign=""top"" colspan=""2""><table border=0 width=""100%"" cellspacing=0>"
@@ -2509,7 +2509,7 @@ Sub Visual
   ' Recupera o logo do cliente a ser usado nas listagens
   DB_GetCustomerData RS, w_cliente
   If RS("logo") > "" Then
-     w_logo = "\img\logo" & Mid(RS("logo"),Instr(RS("logo"),"."),30)
+     w_logo = "img\logo" & Mid(RS("logo"),Instr(RS("logo"),"."),30)
     End If
   DesconectaBD
   

@@ -397,7 +397,7 @@ Sub Inicial
            ShowHTML "        <td><font size=""1"">" & Nvl(RS("objeto"),"-") & "</td>"
         Else
            If Len(Nvl(RS("objeto"),"-")) > 50 Then w_titulo = Mid(Nvl(RS("objeto"),"-"),1,50) & "..." Else w_titulo = Nvl(RS("objeto"),"-") End If
-           ShowHTML "        <td ONMOUSEOVER=""popup('" & replace(replace(replace(RS("objeto"), "'", "\'"), """", "\'"),VbCrLf,"\n") & "','white')""; ONMOUSEOUT=""kill()""><font size=""1"">" & w_titulo & "</td>"
+           ShowHTML "        <td title=""" & replace(replace(replace(RS("objeto"), "'", "\'"), """", "\'"),VbCrLf,"\n") & """><font size=""1"">" & w_titulo & "</td>"
         End If
         ShowHTML "        <td nowrap><font size=""1"">" & RS("nm_situacao") & "</td>"
         ShowHTML "        <td align=""top"" nowrap><font size=""1"">"
@@ -646,14 +646,14 @@ Sub Geral
 
     ShowHTML "<tr bgcolor=""" & conTrBgColor & """><td align=""center"">"
     ShowHTML "    <table width=""97%"" border=""0"">"
-    ShowHTML "      <tr><td><font size=""1""><b>E<u>d</u>ital:</b><br><INPUT ACCESSKEY=""D"" " & w_Disabled & " class=""STI"" type=""text"" name=""w_edital"" size=""15"" maxlength=""15"" value=""" & w_edital & """ ONMOUSEOVER=""popup('Informe o número do edital no formato 999/AAAA. NÃO COLOQUE A SIGLA DA MODALIDADE DA LICITAÇÃO. O sistema fará isto automaticamente. Exemplos: 1/2004, 302/2003 etc.','white')""; ONMOUSEOUT=""kill()""></td></tr>"
-    ShowHTML "      <tr><td><font size=""1""><b><u>O</u>bjeto:</b><br><textarea ACCESSKEY=""O"" " & w_Disabled & " class=""STI"" type=""text"" name=""w_objeto"" ROWS=""5"" COLS=""75"" ONMOUSEOVER=""popup('Informe o objeto desta licitação, conforme o edital.','white')""; ONMOUSEOUT=""kill()"">" & w_objeto & "</textarea></td></tr>"
+    ShowHTML "      <tr><td><font size=""1""><b>E<u>d</u>ital:</b><br><INPUT ACCESSKEY=""D"" " & w_Disabled & " class=""STI"" type=""text"" name=""w_edital"" size=""15"" maxlength=""15"" value=""" & w_edital & """ title=""Informe o número do edital no formato 999/AAAA. NÃO COLOQUE A SIGLA DA MODALIDADE DA LICITAÇÃO. O sistema fará isto automaticamente. Exemplos: 1/2004, 302/2003 etc.""></td></tr>"
+    ShowHTML "      <tr><td><font size=""1""><b><u>O</u>bjeto:</b><br><textarea ACCESSKEY=""O"" " & w_Disabled & " class=""STI"" type=""text"" name=""w_objeto"" ROWS=""5"" COLS=""75"" title=""Informe o objeto desta licitação, conforme o edital."">" & w_objeto & "</textarea></td></tr>"
     ShowHTML "      <tr><td valign=""top"" colspan=""2""><table border=0 width=""100%"" cellspacing=0>"
     ShowHTML "        <tr valign=""top"">"
-    ShowHTML "          <td><font size=""1""><b><u>P</u>rocesso de licitação:<br><INPUT ACCESSKEY=""P"" " & w_Disabled & " class=""STI"" type=""text"" name=""w_processo"" size=""30"" maxlength=""30"" value=""" & w_processo & """ ONMOUSEOVER=""popup('Informe o número do processo ao qual a licitação está vinculada.','white')""; ONMOUSEOUT=""kill()""></td>"
-    ShowHTML "          <td><font size=""1""><b><u>E</u>mpenho:<br><INPUT ACCESSKEY=""E"" " & w_Disabled & " class=""STI"" type=""text"" name=""w_empenho"" size=""30"" maxlength=""30"" value=""" & w_empenho & """ ONMOUSEOVER=""popup('Informe o número do empenho que dá suporte financeiro à licitação.','white')""; ONMOUSEOUT=""kill()""></td>"
-    ShowHTML "          <td valign=""top""><font size=""1""><b><u>A</u>bertura:</b><br><input " & w_Disabled & " accesskey=""A"" type=""text"" name=""w_abertura"" class=""STI"" SIZE=""10"" MAXLENGTH=""10"" VALUE=""" & w_abertura & """ onKeyDown=""FormataData(this,event);"" ONMOUSEOVER=""popup('Informe a data prevista para abertura das propostas desta licitação.','white')""; ONMOUSEOUT=""kill()""></td>"
-    ShowHTML "        <tr><td colspan=3><font size=""1""><b>O<u>b</u>servações:</b><br><textarea ACCESSKEY=""O"" " & w_Disabled & " class=""STI"" type=""text"" name=""w_observacao"" ROWS=""5"" COLS=""75"" ONMOUSEOVER=""popup('Insira, se necessário, observações relevantes sobre esta licitação, para publicação no portal.','white')""; ONMOUSEOUT=""kill()"">" & w_observacao & "</textarea></td></tr>"
+    ShowHTML "          <td><font size=""1""><b><u>P</u>rocesso de licitação:<br><INPUT ACCESSKEY=""P"" " & w_Disabled & " class=""STI"" type=""text"" name=""w_processo"" size=""30"" maxlength=""30"" value=""" & w_processo & """ title=""Informe o número do processo ao qual a licitação está vinculada.""></td>"
+    ShowHTML "          <td><font size=""1""><b><u>E</u>mpenho:<br><INPUT ACCESSKEY=""E"" " & w_Disabled & " class=""STI"" type=""text"" name=""w_empenho"" size=""30"" maxlength=""30"" value=""" & w_empenho & """ title=""Informe o número do empenho que dá suporte financeiro à licitação.""></td>"
+    ShowHTML "          <td valign=""top""><font size=""1""><b><u>A</u>bertura:</b><br><input " & w_Disabled & " accesskey=""A"" type=""text"" name=""w_abertura"" class=""STI"" SIZE=""10"" MAXLENGTH=""10"" VALUE=""" & w_abertura & """ onKeyDown=""FormataData(this,event);"" title=""Informe a data prevista para abertura das propostas desta licitação.""></td>"
+    ShowHTML "        <tr><td colspan=3><font size=""1""><b>O<u>b</u>servações:</b><br><textarea ACCESSKEY=""O"" " & w_Disabled & " class=""STI"" type=""text"" name=""w_observacao"" ROWS=""5"" COLS=""75"" title=""Insira, se necessário, observações relevantes sobre esta licitação, para publicação no portal."">" & w_observacao & "</textarea></td></tr>"
     ShowHTML "        <tr valign=""top"">"
     SelecaoLcModalidade "<u>M</u>odalidade da licitação:", "M", null, w_sq_lcmodalidade, null, "w_sq_lcmodalidade", null, "onChange=""document.Form.action='" & w_dir & w_pagina & par & "'; document.Form.w_troca.value='w_fundamentacao'; document.Form.submit();"""
     ShowHTML "        <tr><td colspan=3><font size=""1""><b><u>F</u>undamentação:</b><br><textarea  " & w_Disabled & " accesskey=""F"" name=""w_fundamentacao"" class=""STI"" ROWS=""3"" COLS=""75"">" & w_fundamentacao & "</textarea></td>"
@@ -857,9 +857,9 @@ Sub Anexos
        ShowHTML "<INPUT type=""hidden"" name=""w_upload_maximo"" value=""" & RS("upload_maximo") & """>" 
     End If 
     
-    ShowHTML "      <tr><td><font size=""1""><b><u>T</u>ítulo:</b><br><input " & w_Disabled & " accesskey=""T"" type=""text"" name=""w_nome"" class=""STI"" SIZE=""75"" MAXLENGTH=""255"" VALUE=""" & w_nome & """ ONMOUSEOVER=""popup('OBRIGATÓRIO. Informe um título para o arquivo.','white')""; ONMOUSEOUT=""kill()""></td>" 
-    ShowHTML "      <tr><td><font size=""1""><b><u>D</u>escrição:</b><br><textarea " & w_Disabled & " accesskey=""D"" name=""w_descricao"" class=""STI"" ROWS=5 cols=65 ONMOUSEOVER=""popup('OBRIGATÓRIO. Descreva a finalidade do arquivo.','white')""; ONMOUSEOUT=""kill()"">" & w_descricao & "</TEXTAREA></td>" 
-    ShowHTML "      <tr><td><font size=""1""><b>A<u>r</u>quivo:</b><br><input " & w_Disabled & " accesskey=""R"" type=""file"" name=""w_caminho"" class=""STI"" SIZE=""80"" MAXLENGTH=""100"" VALUE="""" ONMOUSEOVER=""popup('OBRIGATÓRIO. Clique no botão ao lado para localizar o arquivo. Ele será transferido automaticamente para o servidor.','white')""; ONMOUSEOUT=""kill()"">" 
+    ShowHTML "      <tr><td><font size=""1""><b><u>T</u>ítulo:</b><br><input " & w_Disabled & " accesskey=""T"" type=""text"" name=""w_nome"" class=""STI"" SIZE=""75"" MAXLENGTH=""255"" VALUE=""" & w_nome & """ title=""OBRIGATÓRIO. Informe um título para o arquivo.""></td>" 
+    ShowHTML "      <tr><td><font size=""1""><b><u>D</u>escrição:</b><br><textarea " & w_Disabled & " accesskey=""D"" name=""w_descricao"" class=""STI"" ROWS=5 cols=65 title=""OBRIGATÓRIO. Descreva a finalidade do arquivo."">" & w_descricao & "</TEXTAREA></td>" 
+    ShowHTML "      <tr><td><font size=""1""><b>A<u>r</u>quivo:</b><br><input " & w_Disabled & " accesskey=""R"" type=""file"" name=""w_caminho"" class=""STI"" SIZE=""80"" MAXLENGTH=""100"" VALUE="""" title=""OBRIGATÓRIO. Clique no botão ao lado para localizar o arquivo. Ele será transferido automaticamente para o servidor."">" 
     If w_caminho > "" Then 
        ShowHTML "              <b>" & LinkArquivo("SS", w_cliente, w_caminho, "_blank", "Clique para exibir o arquivo atual.", "Exibir", null) & "</b>" 
     End If 
@@ -1029,18 +1029,18 @@ Sub ItemLicitacao
     ShowHTML "      <tr><td valign=""top"" colspan=""2""><table border=0 width=""100%"" cellspacing=0><tr valign=""top"">"
     ShowHTML "      <tr><td valign=""top"" colspan=""2""><table border=0 width=""100%"" cellspacing=0>"
     ShowHTML "        <tr valign=""top"">"
-    ShowHTML "          <td><font size=""1""><b><u>O</u>rdem:<br><INPUT ACCESSKEY=""O"" " & w_Disabled & " class=""STI"" type=""text"" name=""w_ordem"" size=""4"" maxlength=""4"" value=""" & w_ordem & """ ONMOUSEOVER=""popup('Informe o número de ordem deste item, conforme edital.','white')""; ONMOUSEOUT=""kill()""></td>"
-    ShowHTML "          <td><font size=""1""><b><u>N</u>ome:<br><INPUT ACCESSKEY=""N"" " & w_Disabled & " class=""STI"" type=""text"" name=""w_nome"" size=""40"" maxlength=""60"" value=""" & w_nome & """ ONMOUSEOVER=""popup('Informe o nome do material ou serviço, conforme edital.','white')""; ONMOUSEOUT=""kill()""></td>"
+    ShowHTML "          <td><font size=""1""><b><u>O</u>rdem:<br><INPUT ACCESSKEY=""O"" " & w_Disabled & " class=""STI"" type=""text"" name=""w_ordem"" size=""4"" maxlength=""4"" value=""" & w_ordem & """ title=""Informe o número de ordem deste item, conforme edital.""></td>"
+    ShowHTML "          <td><font size=""1""><b><u>N</u>ome:<br><INPUT ACCESSKEY=""N"" " & w_Disabled & " class=""STI"" type=""text"" name=""w_nome"" size=""40"" maxlength=""60"" value=""" & w_nome & """ title=""Informe o nome do material ou serviço, conforme edital.""></td>"
     ShowHTML "        </table>"
-    ShowHTML "      <tr><td valign=""top""><font size=""1""><b><u>D</u>escrição:</b><br><textarea " & w_Disabled & " accesskey=""D"" name=""w_descricao"" class=""STI"" ROWS=5 cols=75 ONMOUSEOVER=""popup('Descreva o item, se desejar.','white')""; ONMOUSEOUT=""kill()"">" & w_descricao & "</TEXTAREA></td>"
+    ShowHTML "      <tr><td valign=""top""><font size=""1""><b><u>D</u>escrição:</b><br><textarea " & w_Disabled & " accesskey=""D"" name=""w_descricao"" class=""STI"" ROWS=5 cols=75 title=""Descreva o item, se desejar."">" & w_descricao & "</TEXTAREA></td>"
     ShowHTML "        <tr valign=""top""><td valign=""top"" colspan=""2"">"
     ShowHTML "      <tr><td valign=""top""><table border=0 width=""100%"" cellspacing=0>"
-    ShowHTML "          <td valign=""top""><font size=""1""><b><u>Q</u>uantidade:</b><br><input " & w_Disabled & " accesskey=""Q"" type=""text"" name=""w_quantidade"" class=""STI"" SIZE=""18"" MAXLENGTH=""18"" VALUE=""" & w_quantidade & """ onKeyDown=""FormataValor(this,17,1,event);"" ONMOUSEOVER=""popup('Informe a quantidade a ser licitada, com uma casa decimal. Se necessário, informe 0,0.','white')""; ONMOUSEOUT=""kill()""></td>"
+    ShowHTML "          <td valign=""top""><font size=""1""><b><u>Q</u>uantidade:</b><br><input " & w_Disabled & " accesskey=""Q"" type=""text"" name=""w_quantidade"" class=""STI"" SIZE=""18"" MAXLENGTH=""18"" VALUE=""" & w_quantidade & """ onKeyDown=""FormataValor(this,17,1,event);"" title=""Informe a quantidade a ser licitada, com uma casa decimal. Se necessário, informe 0,0.""></td>"
     SelecaoUnidadeFornec "<u>U</u>nidade de fornecimento:", "U", "Selecione a unidade de fornecimento do item", w_sq_unidade_fornec, null, "w_sq_unidade_fornec", null, null
     ShowHTML "          </table>"
     ShowHTML "        <tr valign=""top"">"
     MontaRadioNS "<b>Item cancelado?</b>", w_cancelado, "w_cancelado"
-    ShowHTML "      <tr><td valign=""top""><font size=""1""><b>O<u>b</u>servações:</b><br><textarea " & w_Disabled & " accesskey=""B"" name=""w_situacao"" class=""STI"" ROWS=5 cols=75 ONMOUSEOVER=""popup('Informe observações sobre este item, que julgar relevante para publicação na Internet.','white')""; ONMOUSEOUT=""kill()"">" & w_situacao & "</TEXTAREA></td>"
+    ShowHTML "      <tr><td valign=""top""><font size=""1""><b>O<u>b</u>servações:</b><br><textarea " & w_Disabled & " accesskey=""B"" name=""w_situacao"" class=""STI"" ROWS=5 cols=75 title=""Informe observações sobre este item, que julgar relevante para publicação na Internet."">" & w_situacao & "</TEXTAREA></td>"
     If O = "E" Then
        ShowHTML "      <tr><td align=""LEFT"" colspan=4><font size=""1""><b><U>A</U>ssinatura Eletrônica:<BR> <INPUT ACCESSKEY=""A"" class=""STI"" type=""PASSWORD"" name=""w_assinatura"" size=""30"" maxlength=""30"" value=""""></td></tr>"
     End If
@@ -1267,7 +1267,7 @@ Sub Contrato
            ShowHTML "        <td><font size=""1"">" & Nvl(RS("objeto"),"-") & "</td>"
         Else
            If Len(Nvl(RS("objeto"),"-")) > 50 Then w_titulo = Mid(Nvl(RS("objeto"),"-"),1,50) & "..." Else w_titulo = Nvl(RS("objeto"),"-") End If
-           ShowHTML "        <td ONMOUSEOVER=""popup('" & replace(replace(replace(RS("objeto"), "'", "\'"), """", "\'"),VbCrLf,"\n") & "','white')""; ONMOUSEOUT=""kill()""><font size=""1"">" & w_titulo & "</td>"
+           ShowHTML "        <td title=""" & replace(replace(replace(RS("objeto"), "'", "\'"), """", "\'"),VbCrLf,"\n") & """><font size=""1"">" & w_titulo & "</td>"
         End If
         ShowHTML "        <td nowrap align=""center""><font size=""1"">" & FormatDateTime(RS("vigencia_inicio"),2)&"-"&FormatDateTime(RS("vigencia_fim"),2) & "</td>"
         ShowHTML "        <td nowrap align=""right""><font size=""1"">" & FormatNumber(RS("valor"),2) & "&nbsp;</td>"
@@ -1297,18 +1297,18 @@ Sub Contrato
 
     ShowHTML "<tr bgcolor=""" & conTrBgColor & """><td align=""center"">"
     ShowHTML "    <table width=""97%"" border=""0"">"
-    ShowHTML "      <tr><td><font size=""1""><b>N<u>ú</u>mero do contrato/empenho:</b><br><INPUT ACCESSKEY=""D"" " & w_Disabled & " class=""STI"" type=""text"" name=""w_numero"" size=""15"" maxlength=""15"" value=""" & w_numero & """ ONMOUSEOVER=""popup('Informe o número do contrato, preferencialmente. Se a modalidade dispensar o contrato, informe o número do empenho, iniciando por NE-','white')""; ONMOUSEOUT=""kill()""></td></tr>"
-    ShowHTML "      <tr><td><font size=""1""><b><u>O</u>bjeto:</b><br><textarea ACCESSKEY=""O"" " & w_Disabled & " class=""STI"" type=""text"" name=""w_objeto"" ROWS=""5"" COLS=""75"" ONMOUSEOVER=""popup('Informe o objeto deste contrato.','white')""; ONMOUSEOUT=""kill()"">" & w_objeto & "</textarea></td></tr>"
+    ShowHTML "      <tr><td><font size=""1""><b>N<u>ú</u>mero do contrato/empenho:</b><br><INPUT ACCESSKEY=""D"" " & w_Disabled & " class=""STI"" type=""text"" name=""w_numero"" size=""15"" maxlength=""15"" value=""" & w_numero & """ title=""Informe o número do contrato, preferencialmente. Se a modalidade dispensar o contrato, informe o número do empenho, iniciando por NE-""></td></tr>"
+    ShowHTML "      <tr><td><font size=""1""><b><u>O</u>bjeto:</b><br><textarea ACCESSKEY=""O"" " & w_Disabled & " class=""STI"" type=""text"" name=""w_objeto"" ROWS=""5"" COLS=""75"" title=""Informe o objeto deste contrato."">" & w_objeto & "</textarea></td></tr>"
     ShowHTML "      <tr><td valign=""top"" colspan=""2""><table border=0 width=""100%"" cellspacing=0>"
     ShowHTML "        <tr valign=""top"">"
-    ShowHTML "          <td><font size=""1""><b><u>P</u>rocesso de contratação:<br><INPUT ACCESSKEY=""P"" " & w_Disabled & " class=""STI"" type=""text"" name=""w_processo"" size=""30"" maxlength=""30"" value=""" & w_processo & """ ONMOUSEOVER=""popup('Informe o número do processo ao qual o contrato está vinculado.','white')""; ONMOUSEOUT=""kill()""></td>"
-    ShowHTML "          <td><font size=""1""><b><u>E</u>mpenho:<br><INPUT ACCESSKEY=""E"" " & w_Disabled & " class=""STI"" type=""text"" name=""w_empenho"" size=""30"" maxlength=""30"" value=""" & w_empenho & """ ONMOUSEOVER=""popup('Informe o número do empenho que dá suporte financeiro ao contrato.','white')""; ONMOUSEOUT=""kill()""></td>"
-    ShowHTML "          <td valign=""top""><font size=""1""><b>Data de <u>a</u>ssinatura:</b><br><input " & w_Disabled & " accesskey=""A"" type=""text"" name=""w_assinatura_form"" class=""STI"" SIZE=""10"" MAXLENGTH=""10"" VALUE=""" & w_assinatura_form & """ onKeyDown=""FormataData(this,event);"" ONMOUSEOVER=""popup('Informe a data de assinatura deste contrato.','white')""; ONMOUSEOUT=""kill()""></td>"
+    ShowHTML "          <td><font size=""1""><b><u>P</u>rocesso de contratação:<br><INPUT ACCESSKEY=""P"" " & w_Disabled & " class=""STI"" type=""text"" name=""w_processo"" size=""30"" maxlength=""30"" value=""" & w_processo & """ title=""Informe o número do processo ao qual o contrato está vinculado.""></td>"
+    ShowHTML "          <td><font size=""1""><b><u>E</u>mpenho:<br><INPUT ACCESSKEY=""E"" " & w_Disabled & " class=""STI"" type=""text"" name=""w_empenho"" size=""30"" maxlength=""30"" value=""" & w_empenho & """ title=""Informe o número do empenho que dá suporte financeiro ao contrato.""></td>"
+    ShowHTML "          <td valign=""top""><font size=""1""><b>Data de <u>a</u>ssinatura:</b><br><input " & w_Disabled & " accesskey=""A"" type=""text"" name=""w_assinatura_form"" class=""STI"" SIZE=""10"" MAXLENGTH=""10"" VALUE=""" & w_assinatura_form & """ onKeyDown=""FormataData(this,event);"" title=""Informe a data de assinatura deste contrato.""></td>"
     ShowHTML "        <tr valign=""top"">"
-    ShowHTML "          <td valign=""top""><font size=""1""><b><u>I</u>nício vigência:</b><br><input " & w_Disabled & " accesskey=""I"" type=""text"" name=""w_vigencia_inicio"" class=""STI"" SIZE=""10"" MAXLENGTH=""10"" VALUE=""" & w_vigencia_inicio & """ onKeyDown=""FormataData(this,event);"" ONMOUSEOVER=""popup('Informe a data de início da vigência deste contrato.','white')""; ONMOUSEOUT=""kill()""></td>"
-    ShowHTML "          <td valign=""top""><font size=""1""><b><u>F</u>im vigência:</b><br><input " & w_Disabled & " accesskey=""F"" type=""text"" name=""w_vigencia_fim"" class=""STI"" SIZE=""10"" MAXLENGTH=""10"" VALUE=""" & w_vigencia_fim & """ onKeyDown=""FormataData(this,event);"" ONMOUSEOVER=""popup('Informe a data de término da vigência deste contrato.','white')""; ONMOUSEOUT=""kill()""></td>"
-    ShowHTML "          <td valign=""top""><font size=""1""><b><u>P</u>ublicação D.O.U.:</b><br><input " & w_Disabled & " accesskey=""P"" type=""text"" name=""w_publicacao"" class=""STI"" SIZE=""10"" MAXLENGTH=""10"" VALUE=""" & w_publicacao & """ onKeyDown=""FormataData(this,event);"" ONMOUSEOVER=""popup('Informe a data de publicação deste contrato no Diário Oficial.','white')""; ONMOUSEOUT=""kill()""></td>"
-    ShowHTML "        <tr valign=""top""><td><font size=""1""><b><u>V</u>alor do contrato:</b><br><input " & w_Disabled & " accesskey=""V"" type=""text"" name=""w_valor"" class=""STI"" SIZE=""18"" MAXLENGTH=""18"" VALUE=""" & w_valor & """ onKeyDown=""FormataValor(this,18,2,event);"" ONMOUSEOVER=""popup('Informe o valor deste contrato, ou 0,00 se não houver.','white')""; ONMOUSEOUT=""kill()""></td>"
+    ShowHTML "          <td valign=""top""><font size=""1""><b><u>I</u>nício vigência:</b><br><input " & w_Disabled & " accesskey=""I"" type=""text"" name=""w_vigencia_inicio"" class=""STI"" SIZE=""10"" MAXLENGTH=""10"" VALUE=""" & w_vigencia_inicio & """ onKeyDown=""FormataData(this,event);"" title=""Informe a data de início da vigência deste contrato.""></td>"
+    ShowHTML "          <td valign=""top""><font size=""1""><b><u>F</u>im vigência:</b><br><input " & w_Disabled & " accesskey=""F"" type=""text"" name=""w_vigencia_fim"" class=""STI"" SIZE=""10"" MAXLENGTH=""10"" VALUE=""" & w_vigencia_fim & """ onKeyDown=""FormataData(this,event);"" title=""Informe a data de término da vigência deste contrato.""></td>"
+    ShowHTML "          <td valign=""top""><font size=""1""><b><u>P</u>ublicação D.O.U.:</b><br><input " & w_Disabled & " accesskey=""P"" type=""text"" name=""w_publicacao"" class=""STI"" SIZE=""10"" MAXLENGTH=""10"" VALUE=""" & w_publicacao & """ onKeyDown=""FormataData(this,event);"" title=""Informe a data de publicação deste contrato no Diário Oficial.""></td>"
+    ShowHTML "        <tr valign=""top""><td><font size=""1""><b><u>V</u>alor do contrato:</b><br><input " & w_Disabled & " accesskey=""V"" type=""text"" name=""w_valor"" class=""STI"" SIZE=""18"" MAXLENGTH=""18"" VALUE=""" & w_valor & """ onKeyDown=""FormataValor(this,18,2,event);"" title=""Informe o valor deste contrato, ou 0,00 se não houver.""></td>"
     ShowHTML "        </table>"
     ShowHTML "      <tr><td valign=""top"" colspan=""2""><table border=0 width=""100%"" cellspacing=0>"
     ShowHTML "        <tr valign=""top"">"
@@ -1330,7 +1330,7 @@ Sub Contrato
     Else
        SelecaoUnidade "<u>U</u>nidade contratante:", "U", "Selecione a unidade responsável pela contratação", w_sq_unidade, null, "w_sq_unidade", "lc_ativo=\'S\' and lc_contrata=\'S\' and sq_pessoa_endereco = " & p_endereco, null
     End If
-    ShowHTML "      <tr><td><font size=""1""><b>O<u>b</u>servações:</b><br><textarea ACCESSKEY=""O"" " & w_Disabled & " class=""STI"" type=""text"" name=""w_observacao"" ROWS=""5"" COLS=""75"" ONMOUSEOVER=""popup('Insira, se necessário, observações relevantes sobre este contrato, para publicação no portal.','white')""; ONMOUSEOUT=""kill()"">" & w_observacao & "</textarea></td></tr>"
+    ShowHTML "      <tr><td><font size=""1""><b>O<u>b</u>servações:</b><br><textarea ACCESSKEY=""O"" " & w_Disabled & " class=""STI"" type=""text"" name=""w_observacao"" ROWS=""5"" COLS=""75"" title=""Insira, se necessário, observações relevantes sobre este contrato, para publicação no portal."">" & w_observacao & "</textarea></td></tr>"
     ShowHTML "        <tr>"
     MontaRadioSN "<b>Publica este contrato no portal?</b>", w_publicar, "w_publicar"
     If O = "E" Then
@@ -1585,7 +1585,7 @@ Sub Contrato1
            ShowHTML "        <td><font size=""1"">" & Nvl(RS("objeto"),"-") & "</td>"
         Else
            If Len(Nvl(RS("objeto"),"-")) > 50 Then w_titulo = Mid(Nvl(RS("objeto"),"-"),1,50) & "..." Else w_titulo = Nvl(RS("objeto"),"-") End If
-           ShowHTML "        <td ONMOUSEOVER=""popup('" & replace(replace(replace(RS("objeto"), "'", "\'"), """", "\'"),VbCrLf,"\n") & "','white')""; ONMOUSEOUT=""kill()""><font size=""1"">" & w_titulo & "</td>"
+           ShowHTML "        <td title=""" & replace(replace(replace(RS("objeto"), "'", "\'"), """", "\'"),VbCrLf,"\n") & """><font size=""1"">" & w_titulo & "</td>"
         End If
         ShowHTML "        <td nowrap><font size=""1"">" & FormatDateTime(RS("vigencia_inicio"),2)&"-"&FormatDateTime(RS("vigencia_fim"),2) & "</td>"
         ShowHTML "        <td nowrap><font size=""1"">" & FormatNumber(RS("valor"),2) & "</td>"
@@ -1672,14 +1672,14 @@ Sub Contrato1
        ShowHTML "      <tr><td valign=""top"" colspan=""2""><table border=0 width=""100%"" cellspacing=0><tr valign=""top"">"
        ShowHTML "      <tr><td valign=""top"" colspan=""2""><table border=0 width=""100%"" cellspacing=0>"
        ShowHTML "        <tr valign=""top"">"
-       ShowHTML "          <td><font size=""1""><b><u>O</u>rdem:<br><INPUT ACCESSKEY=""O"" " & w_Disabled & " class=""STI"" type=""text"" name=""w_ordem"" size=""4"" maxlength=""4"" value=""" & w_ordem & """ ONMOUSEOVER=""popup('Informe o número de ordem deste item, conforme edital.','white')""; ONMOUSEOUT=""kill()""></td>"
-       ShowHTML "          <td><font size=""1""><b><u>N</u>ome:<br><INPUT ACCESSKEY=""N"" " & w_Disabled & " class=""STI"" type=""text"" name=""w_nome"" size=""40"" maxlength=""60"" value=""" & w_nome & """ ONMOUSEOVER=""popup('Informe o nome do material ou serviço, conforme edital.','white')""; ONMOUSEOUT=""kill()""></td>"
-       ShowHTML "          <td valign=""top""><font size=""1""><b><u>Q</u>uantidade:</b><br><input " & w_Disabled & " accesskey=""Q"" type=""text"" name=""w_quantidade"" class=""STI"" SIZE=""18"" MAXLENGTH=""18"" VALUE=""" & w_quantidade & """ onKeyDown=""FormataValor(this,17,1,event);"" ONMOUSEOVER=""popup('Informe a quantidade a ser licitada, com uma casa decimal. Se necessário, informe 0,0.','white')""; ONMOUSEOUT=""kill()""></td>"
+       ShowHTML "          <td><font size=""1""><b><u>O</u>rdem:<br><INPUT ACCESSKEY=""O"" " & w_Disabled & " class=""STI"" type=""text"" name=""w_ordem"" size=""4"" maxlength=""4"" value=""" & w_ordem & """ title=""Informe o número de ordem deste item, conforme edital.""></td>"
+       ShowHTML "          <td><font size=""1""><b><u>N</u>ome:<br><INPUT ACCESSKEY=""N"" " & w_Disabled & " class=""STI"" type=""text"" name=""w_nome"" size=""40"" maxlength=""60"" value=""" & w_nome & """ title=""Informe o nome do material ou serviço, conforme edital.""></td>"
+       ShowHTML "          <td valign=""top""><font size=""1""><b><u>Q</u>uantidade:</b><br><input " & w_Disabled & " accesskey=""Q"" type=""text"" name=""w_quantidade"" class=""STI"" SIZE=""18"" MAXLENGTH=""18"" VALUE=""" & w_quantidade & """ onKeyDown=""FormataValor(this,17,1,event);"" title=""Informe a quantidade a ser licitada, com uma casa decimal. Se necessário, informe 0,0.""></td>"
        ShowHTML "        </table>"
-       ShowHTML "      <tr><td valign=""top""><font size=""1""><b><u>D</u>escrição:</b><br><textarea " & w_Disabled & " accesskey=""D"" name=""w_descricao"" class=""STI"" ROWS=5 cols=75 ONMOUSEOVER=""popup('Descreva o item, se desejar.','white')""; ONMOUSEOUT=""kill()"">" & w_descricao & "</TEXTAREA></td>"
+       ShowHTML "      <tr><td valign=""top""><font size=""1""><b><u>D</u>escrição:</b><br><textarea " & w_Disabled & " accesskey=""D"" name=""w_descricao"" class=""STI"" ROWS=5 cols=75 title=""Descreva o item, se desejar."">" & w_descricao & "</TEXTAREA></td>"
        ShowHTML "        <tr valign=""top"">"
        MontaRadioNS "<b>Item cancelado?</b>", w_cancelado, "w_cancelado"
-       ShowHTML "      <tr><td valign=""top""><font size=""1""><b>O<u>b</u>servações:</b><br><textarea " & w_Disabled & " accesskey=""B"" name=""w_situacao"" class=""STI"" ROWS=5 cols=75 ONMOUSEOVER=""popup('Informe observações sobre este item, que julgar relevante para publicação na Internet.','white')""; ONMOUSEOUT=""kill()"">" & w_situacao & "</TEXTAREA></td>"
+       ShowHTML "      <tr><td valign=""top""><font size=""1""><b>O<u>b</u>servações:</b><br><textarea " & w_Disabled & " accesskey=""B"" name=""w_situacao"" class=""STI"" ROWS=5 cols=75 title=""Informe observações sobre este item, que julgar relevante para publicação na Internet."">" & w_situacao & "</TEXTAREA></td>"
        If O = "E" Then
           ShowHTML "      <tr><td align=""LEFT"" colspan=4><font size=""1""><b><U>A</U>ssinatura Eletrônica:<BR> <INPUT ACCESSKEY=""A"" class=""STI"" type=""PASSWORD"" name=""w_assinatura"" size=""30"" maxlength=""30"" value=""""></td></tr>"
        End If
@@ -1877,14 +1877,14 @@ Sub ItemContrato
            ShowHTML "      <tr><td valign=""center""><font size=""1""><input type=""checkbox"" name=""w_sq_portal_lic_item"" value="""&RS("sq_portal_lic_item")&"""></td>"
            ShowHTML "          <td valign=""top""><font size=""1"">" &RS("ordem") & " - " & RS("Nome")& "</font></td>"
            ShowHTML "          <td align=""right""><font size=""1"">" &FormatNumber(RS("Quantidade"),1)& "</font></tr>"
-           ShowHTML "          <td valign=""top""><font size=""1""><input " & w_Disabled & " accesskey=""V"" type=""text"" name=""w_valor_" & RS("sq_portal_lic_item") & """ class=""STI"" SIZE=""12"" MAXLENGTH=""18"" VALUE=""" & w_valor & """ onKeyDown=""FormataValor(this,18,2,event);"" ONMOUSEOVER=""popup('Informe o valor unitário do item, ou 0,00 se não houver.','white')""; ONMOUSEOUT=""kill()""></td>"
+           ShowHTML "          <td valign=""top""><font size=""1""><input " & w_Disabled & " accesskey=""V"" type=""text"" name=""w_valor_" & RS("sq_portal_lic_item") & """ class=""STI"" SIZE=""12"" MAXLENGTH=""18"" VALUE=""" & w_valor & """ onKeyDown=""FormataValor(this,18,2,event);"" title=""Informe o valor unitário do item, ou 0,00 se não houver.""></td>"
         Else
            If cDbl(Nvl(RS("existe"),0)) = cDbl(Nvl(w_chave_aux,0)) Then
               ShowHTML "<INPUT type=""hidden"" name=""w_quantidade_" & RS("sq_portal_lic_item") & """ value=""" & RS("quantidade") &""">"
               ShowHTML "      <tr><td valign=""center""><font size=""1""><input type=""checkbox"" name=""w_sq_portal_lic_item"" value="""&RS("sq_portal_lic_item")&""" checked></td>" 
               ShowHTML "          <td valign=""top""><font size=""1"">" & RS("ordem") & " - " & RS("Nome")& "</font></td>"
               ShowHTML "          <td align=""right""><font size=""1"">" &FormatNumber(RS("Quantidade"),1)& "</font></td>"
-              ShowHTML "          <td valign=""top""><font size=""1""><input " & w_Disabled & " accesskey=""V"" type=""text"" name=""w_valor_" & RS("sq_portal_lic_item") & """ class=""STI"" SIZE=""12"" MAXLENGTH=""18"" VALUE=""" & w_valor & """ onKeyDown=""FormataValor(this,18,2,event);"" ONMOUSEOVER=""popup('Informe o valor unitário do item, ou 0,00 se não houver.','white')""; ONMOUSEOUT=""kill()""></td>"
+              ShowHTML "          <td valign=""top""><font size=""1""><input " & w_Disabled & " accesskey=""V"" type=""text"" name=""w_valor_" & RS("sq_portal_lic_item") & """ class=""STI"" SIZE=""12"" MAXLENGTH=""18"" VALUE=""" & w_valor & """ onKeyDown=""FormataValor(this,18,2,event);"" title=""Informe o valor unitário do item, ou 0,00 se não houver.""></td>"
               ShowHTML "      </tr>"
            End If
         End If

@@ -555,9 +555,9 @@ Sub Inicial
         Else
            If Len(Nvl(RS("titulo"),"-")) > 50 Then w_titulo = Mid(Nvl(RS("titulo"),"-"),1,50) & "..." Else w_titulo = Nvl(RS("titulo"),"-") End If
            If RS("sg_tramite") = "CA" Then
-              ShowHTML "        <td ONMOUSEOVER=""popup('" & replace(replace(replace(RS("titulo"), "'", "\'"), """", "\'"),VbCrLf,"\n") & "','white')""; ONMOUSEOUT=""kill()""><font size=""1""><strike>" & w_titulo & "</strike></td>"
+              ShowHTML "        <td title=""" & replace(replace(replace(RS("titulo"), "'", "\'"), """", "\'"),VbCrLf,"\n") & """><font size=""1""><strike>" & w_titulo & "</strike></td>"
            Else
-              ShowHTML "        <td ONMOUSEOVER=""popup('" & replace(replace(replace(RS("titulo"), "'", "\'"), """", "\'"),VbCrLf,"\n") & "','white')""; ONMOUSEOUT=""kill()""><font size=""1"">" & w_titulo & "</td>"
+              ShowHTML "        <td title=""" & replace(replace(replace(RS("titulo"), "'", "\'"), """", "\'"),VbCrLf,"\n") & """><font size=""1"">" & w_titulo & "</td>"
            End IF
         End If
         ShowHTML "        <td align=""center""><font size=""1"">&nbsp;" & FormataDataEdicao(RS("inicio")) & "</td>"
@@ -1071,8 +1071,8 @@ Sub Geral
     End Select
     ShowHTML "              <td valign=""top""><font size=""1""><b><u>R</u>ecurso programado:</b><br><input " & w_Disabled & " accesskey=""O"" type=""text"" name=""w_valor"" class=""STI"" SIZE=""18"" MAXLENGTH=""18"" VALUE=""" & w_valor & """ onKeyDown=""FormataValor(this,18,2,event);""></td>"
     ShowHTML "          </table>"
-    ShowHTML "      <tr><td valign=""top""><font size=""1""><b>Parc<u>e</u>rias externas:<br><INPUT ACCESSKEY=""E"" " & w_Disabled & " class=""STI"" type=""text"" name=""w_proponente"" size=""90"" maxlength=""90"" value=""" & w_proponente & """ ONMOUSEOVER=""popup('Parceria externa da ação. Preencha apenas se houver.','white')""; ONMOUSEOUT=""kill()""></td>"
-    ShowHTML "      <tr><td valign=""top""><font size=""1""><b><u>P</u>arcerias internas:<br><INPUT ACCESSKEY=""P"" " & w_Disabled & " class=""STI"" type=""text"" name=""w_palavra_chave"" size=""90"" maxlength=""90"" value=""" & w_palavra_chave & """ ONMOUSEOVER=""popup('Se desejar, informe palavras-chave adicionais aos campos informados e que permitam a identificação desta ação.','white')""; ONMOUSEOUT=""kill()""></td>"
+    ShowHTML "      <tr><td valign=""top""><font size=""1""><b>Parc<u>e</u>rias externas:<br><INPUT ACCESSKEY=""E"" " & w_Disabled & " class=""STI"" type=""text"" name=""w_proponente"" size=""90"" maxlength=""90"" value=""" & w_proponente & """ title=""Parceria externa da ação. Preencha apenas se houver.""></td>"
+    ShowHTML "      <tr><td valign=""top""><font size=""1""><b><u>P</u>arcerias internas:<br><INPUT ACCESSKEY=""P"" " & w_Disabled & " class=""STI"" type=""text"" name=""w_palavra_chave"" size=""90"" maxlength=""90"" value=""" & w_palavra_chave & """ title=""Se desejar, informe palavras-chave adicionais aos campos informados e que permitam a identificação desta ação.""></td>"
     'ShowHTML "      <tr><td align=""center"" height=""2"" bgcolor=""#000000""></td></tr>"
     'ShowHTML "      <tr><td align=""center"" height=""1"" bgcolor=""#000000""></td></tr>"
     'ShowHTML "      <tr><td valign=""top"" align=""center"" bgcolor=""#D0D0D0""><font size=""1""><b>Impacto geográfico</td></td></tr>"
@@ -1094,7 +1094,7 @@ Sub Geral
     'ShowHTML "      <tr><td><table border=""0"" width=""100%"">"
     'ShowHTML "          <tr>"
     'MontaRadioNS "<b>Emite alerta?</b>", w_aviso, "w_aviso"
-    'ShowHTML "              <td valign=""top""><font size=""1""><b>Quantos <U>d</U>ias antes da data limite?<br><INPUT ACCESSKEY=""D"" " & w_Disabled & " class=""STI"" type=""text"" name=""w_dias"" size=""2"" maxlength=""2"" value=""" & w_dias & """ ONMOUSEOVER=""popup('Número de dias para emissão do alerta de proximidade da data limite para conclusão da ação.','white')""; ONMOUSEOUT=""kill()""></td>"
+    'ShowHTML "              <td valign=""top""><font size=""1""><b>Quantos <U>d</U>ias antes da data limite?<br><INPUT ACCESSKEY=""D"" " & w_Disabled & " class=""STI"" type=""text"" name=""w_dias"" size=""2"" maxlength=""2"" value=""" & w_dias & """ title=""Número de dias para emissão do alerta de proximidade da data limite para conclusão da ação.""></td>"
     'ShowHTML "          </table>"
     'ShowHTML "      <tr><td align=""center"" colspan=""3"" height=""1"" bgcolor=""#000000""></TD></TR>"
 
@@ -1293,17 +1293,17 @@ Sub InfoAdic
     ShowHTML "      <tr><td align=""center"" height=""1"" bgcolor=""#000000""></td></tr>"
     ShowHTML "      <tr><td><font size=1>Os dados deste bloco visam orientar os executores da ação.</font></td></tr>"
     ShowHTML "      <tr><td align=""center"" height=""1"" bgcolor=""#000000""></td></tr>"
-    ShowHTML "      <tr><td valign=""top""><font size=""1""><b>Situação <u>p</u>roblema:</b><br><textarea " & w_Disabled & " accesskey=""P"" name=""w_problema"" class=""STI"" ROWS=5 cols=75 ONMOUSEOVER=""popup('Destacar os elementos essenciais que explicam a situação-problema (determinantes/causas).','white')""; ONMOUSEOUT=""kill()"">" & w_problema & "</TEXTAREA></td>"
-    ShowHTML "      <tr><td valign=""top""><font size=""1""><b><u>O</u>bjetivo da ação:</b><br><textarea " & w_Disabled & " accesskey=""O"" name=""w_objetivo"" class=""STI"" ROWS=5 cols=75 ONMOUSEOVER=""popup('Descreva o objetivo a ser alcançado com a execução desta ação.','white')""; ONMOUSEOUT=""kill()"">" & w_objetivo & "</TEXTAREA></td>"
-    ShowHTML "      <tr><td valign=""top""><font size=""1""><b><u>D</u>escrição da ação:</b><br><textarea " & w_Disabled & " accesskey=""D"" name=""w_ds_acao"" class=""STI"" ROWS=5 cols=75 ONMOUSEOVER=""popup('Destacar os elementos essenciais que compõem e explicam a ação (tarefas).','white')""; ONMOUSEOUT=""kill()"">" & w_ds_acao & "</TEXTAREA></td>"
-    ShowHTML "      <tr><td valign=""top""><font size=""1""><b>Pú<u>b</u>lico alvo :</b><br><textarea " & w_Disabled & " accesskey=""B"" name=""w_publico_alvo"" class=""STI"" ROWS=5 cols=75 ONMOUSEOVER=""popup('Especifique os segmentos da sociedade aos quais o programa se destina e que se beneficiam direta e legitimamente com sua execução. Exemplos: crianças desnutridas de 6 a 23 meses de idade; gestantes de risco nutricional; grupos vulnerávei e os obesos.','white')""; ONMOUSEOUT=""kill()"">" & w_publico_alvo & "</TEXTAREA></td>"
+    ShowHTML "      <tr><td valign=""top""><font size=""1""><b>Situação <u>p</u>roblema:</b><br><textarea " & w_Disabled & " accesskey=""P"" name=""w_problema"" class=""STI"" ROWS=5 cols=75 title=""Destacar os elementos essenciais que explicam a situação-problema (determinantes/causas)."">" & w_problema & "</TEXTAREA></td>"
+    ShowHTML "      <tr><td valign=""top""><font size=""1""><b><u>O</u>bjetivo da ação:</b><br><textarea " & w_Disabled & " accesskey=""O"" name=""w_objetivo"" class=""STI"" ROWS=5 cols=75 title=""Descreva o objetivo a ser alcançado com a execução desta ação."">" & w_objetivo & "</TEXTAREA></td>"
+    ShowHTML "      <tr><td valign=""top""><font size=""1""><b><u>D</u>escrição da ação:</b><br><textarea " & w_Disabled & " accesskey=""D"" name=""w_ds_acao"" class=""STI"" ROWS=5 cols=75 title=""Destacar os elementos essenciais que compõem e explicam a ação (tarefas)."">" & w_ds_acao & "</TEXTAREA></td>"
+    ShowHTML "      <tr><td valign=""top""><font size=""1""><b>Pú<u>b</u>lico alvo :</b><br><textarea " & w_Disabled & " accesskey=""B"" name=""w_publico_alvo"" class=""STI"" ROWS=5 cols=75 title=""Especifique os segmentos da sociedade aos quais o programa se destina e que se beneficiam direta e legitimamente com sua execução. Exemplos: crianças desnutridas de 6 a 23 meses de idade; gestantes de risco nutricional; grupos vulnerávei e os obesos."">" & w_publico_alvo & "</TEXTAREA></td>"
     If RS_menu("descricao") = "S" Then
-       ShowHTML "      <tr><td valign=""top""><font size=""1""><b>Res<u>u</u>ltados da ação:</b><br><textarea " & w_Disabled & " accesskey=""U"" name=""w_descricao"" class=""STI"" ROWS=5 cols=75 ONMOUSEOVER=""popup('Indicar os principais resultados qeu se pretende alcançar nos sistemas de gestão e na saúde da população em consequência da execução da ação.','white')""; ONMOUSEOUT=""kill()"">" & w_descricao & "</TEXTAREA></td>"
+       ShowHTML "      <tr><td valign=""top""><font size=""1""><b>Res<u>u</u>ltados da ação:</b><br><textarea " & w_Disabled & " accesskey=""U"" name=""w_descricao"" class=""STI"" ROWS=5 cols=75 title=""Indicar os principais resultados qeu se pretende alcançar nos sistemas de gestão e na saúde da população em consequência da execução da ação."">" & w_descricao & "</TEXTAREA></td>"
     End If
-    ShowHTML "      <tr><td valign=""top""><font size=""1""><b><u>E</u>estrategia de implantação:</b><br><textarea " & w_Disabled & " accesskey=""E"" name=""w_estrategia"" class=""STI"" ROWS=5 cols=75 ONMOUSEOVER=""popup('Indicar os meios a empregar ou métodos a seguir com a finalidade de implementar a ação. Relacionar mecanismos e instrumentos disponíveis ou a serem constituídos e a forma de execução. Relacionar as parcerias e responsabilidades e os mecanismos utilizados no monitoramento.','white')""; ONMOUSEOUT=""kill()"">" & w_estrategia & "</TEXTAREA></td>"
-    ShowHTML "      <tr><td valign=""top""><font size=""1""><b><u>I</u>ndicadores de desempenho:</b><br><textarea " & w_Disabled & " accesskey=""I"" name=""w_indicadores"" class=""STI"" ROWS=5 cols=75 ONMOUSEOVER=""popup('Indicar os parâmetros que medem a diferença entre a situação atual e a situação desejada. É geralmente apresentado como uma relação ou taxa entre variáveis relevantes para quantificar o processo ou os resultados alcançados com a execução da ação. Mede o trabalho realizado.','white')""; ONMOUSEOUT=""kill()"">" & w_indicadores & "</TEXTAREA></td>"
+    ShowHTML "      <tr><td valign=""top""><font size=""1""><b><u>E</u>estrategia de implantação:</b><br><textarea " & w_Disabled & " accesskey=""E"" name=""w_estrategia"" class=""STI"" ROWS=5 cols=75 title=""Indicar os meios a empregar ou métodos a seguir com a finalidade de implementar a ação. Relacionar mecanismos e instrumentos disponíveis ou a serem constituídos e a forma de execução. Relacionar as parcerias e responsabilidades e os mecanismos utilizados no monitoramento."">" & w_estrategia & "</TEXTAREA></td>"
+    ShowHTML "      <tr><td valign=""top""><font size=""1""><b><u>I</u>ndicadores de desempenho:</b><br><textarea " & w_Disabled & " accesskey=""I"" name=""w_indicadores"" class=""STI"" ROWS=5 cols=75 title=""Indicar os parâmetros que medem a diferença entre a situação atual e a situação desejada. É geralmente apresentado como uma relação ou taxa entre variáveis relevantes para quantificar o processo ou os resultados alcançados com a execução da ação. Mede o trabalho realizado."">" & w_indicadores & "</TEXTAREA></td>"
     If RS_menu("justificativa") = "S" Then
-       ShowHTML "      <tr><td valign=""top""><font size=""1""><b>Obse<u>r</u>vações:</b><br><textarea " & w_Disabled & " accesskey=""R"" name=""w_justificativa"" class=""STI"" ROWS=5 cols=75 ONMOUSEOVER=""popup('Informar fatos ou situações que sejam relevantes para uma melhor compreensão da ação e/ou descrever situações que não tenham sido descritas em outros campos do formulário e que devam ser consideradas para a viabilidade da mesma. Indicar as fragilidades já identificadas.','white')""; ONMOUSEOUT=""kill()"">" & w_justificativa & "</TEXTAREA></td>"
+       ShowHTML "      <tr><td valign=""top""><font size=""1""><b>Obse<u>r</u>vações:</b><br><textarea " & w_Disabled & " accesskey=""R"" name=""w_justificativa"" class=""STI"" ROWS=5 cols=75 title=""Informar fatos ou situações que sejam relevantes para uma melhor compreensão da ação e/ou descrever situações que não tenham sido descritas em outros campos do formulário e que devam ser consideradas para a viabilidade da mesma. Indicar as fragilidades já identificadas."">" & w_justificativa & "</TEXTAREA></td>"
     End If
     
     ' Verifica se poderá ser feito o envio da solicitação, a partir do resultado da validação
@@ -1594,7 +1594,7 @@ Sub Financiamento
        ShowHTML "<INPUT type=""hidden"" name=""w_sq_acao_ppa"" value=""" & w_sq_acao_ppa &""">"
        SelecaoAcaoPPA "Ação <u>P</u>PA:", "P", null, w_sq_acao_ppa, w_chave, "w_sq_acao_ppa", null, "disabled"
     End If
-    ShowHTML "      <tr><td valign=""top""><font size=""1""><b>Obse<u>r</u>vações:</b><br><textarea " & w_Disabled & " accesskey=""R"" name=""w_obs_financ"" class=""STI"" ROWS=5 cols=75 ONMOUSEOVER=""popup('Informar fatos ou situações que sejam relevantes para uma melhor compreensão do financiamento da ação.','white')""; ONMOUSEOUT=""kill()"">" & w_obs_financ & "</TEXTAREA></td>"
+    ShowHTML "      <tr><td valign=""top""><font size=""1""><b>Obse<u>r</u>vações:</b><br><textarea " & w_Disabled & " accesskey=""R"" name=""w_obs_financ"" class=""STI"" ROWS=5 cols=75 title=""Informar fatos ou situações que sejam relevantes para uma melhor compreensão do financiamento da ação."">" & w_obs_financ & "</TEXTAREA></td>"
     ShowHTML "      <tr><td align=""center"" colspan=4><hr>"
     If O = "E" Then
        ShowHTML "   <input class=""STB"" type=""submit"" name=""Botao"" value=""Excluir"">"
@@ -1779,14 +1779,14 @@ Sub Responsaveis
     End If 
     ShowHTML "" & w_nome & "</td>"
     If w_tipo = 1 Then
-       ShowHTML "      <tr><td><font size=""1""><b><u>G</u>erente executivo:</b><br><input " & w_Disabled & " accesskey=""G"" type=""text"" name=""w_responsavel"" class=""STI"" SIZE=""50"" MAXLENGTH=""60"" VALUE=""" & w_responsavel & """ ONMOUSEOVER=""popup('Informe um gerente executivo.','white')""; ONMOUSEOUT=""kill()""></td>"
+       ShowHTML "      <tr><td><font size=""1""><b><u>G</u>erente executivo:</b><br><input " & w_Disabled & " accesskey=""G"" type=""text"" name=""w_responsavel"" class=""STI"" SIZE=""50"" MAXLENGTH=""60"" VALUE=""" & w_responsavel & """ title=""Informe um gerente executivo.""></td>"
     ElseIf w_tipo = 2 Then
-       ShowHTML "      <tr><td><font size=""1""><b><u>C</u>oordenador:</b><br><input " & w_Disabled & " accesskey=""C"" type=""text"" name=""w_responsavel"" class=""STI"" SIZE=""50"" MAXLENGTH=""60"" VALUE=""" & w_responsavel & """ ONMOUSEOVER=""popup('Informe um coordenador.','white')""; ONMOUSEOUT=""kill()""></td>"
+       ShowHTML "      <tr><td><font size=""1""><b><u>C</u>oordenador:</b><br><input " & w_Disabled & " accesskey=""C"" type=""text"" name=""w_responsavel"" class=""STI"" SIZE=""50"" MAXLENGTH=""60"" VALUE=""" & w_responsavel & """ title=""Informe um coordenador.""></td>"
     ElseIf w_tipo = 3 Then
-       ShowHTML "      <tr><td><font size=""1""><b>Res<u>p</u>onsável:</b><br><input " & w_Disabled & " accesskey=""P"" type=""text"" name=""w_responsavel"" class=""STI"" SIZE=""50"" MAXLENGTH=""60"" VALUE=""" & w_responsavel & """ ONMOUSEOVER=""popup('Informe um responsável.','white')""; ONMOUSEOUT=""kill()""></td>"
+       ShowHTML "      <tr><td><font size=""1""><b>Res<u>p</u>onsável:</b><br><input " & w_Disabled & " accesskey=""P"" type=""text"" name=""w_responsavel"" class=""STI"" SIZE=""50"" MAXLENGTH=""60"" VALUE=""" & w_responsavel & """ title=""Informe um responsável.""></td>"
     End If
     ShowHTML "      <tr><td valign=""top""><font size=""1""><b><u>T</u>elefone:</b><br><input " & w_Disabled & " accesskey=""T"" type=""text"" name=""w_telefone"" class=""STI"" SIZE=""15"" MAXLENGTH=""14"" VALUE=""" & w_telefone & """></td>"
-    ShowHTML "      <tr><td><font size=""1""><b>E<u>m</u>ail:</b><br><input " & w_Disabled & " accesskey=""M"" type=""text"" name=""w_email"" class=""STI"" SIZE=""50"" MAXLENGTH=""60"" VALUE=""" & w_email & """ ONMOUSEOVER=""popup('Informe o email do responsável.','white')""; ONMOUSEOUT=""kill()""></td>"
+    ShowHTML "      <tr><td><font size=""1""><b>E<u>m</u>ail:</b><br><input " & w_Disabled & " accesskey=""M"" type=""text"" name=""w_email"" class=""STI"" SIZE=""50"" MAXLENGTH=""60"" VALUE=""" & w_email & """ title=""Informe o email do responsável.""></td>"
     ShowHTML "      <tr><td align=""center"" colspan=4><hr>"
     ShowHTML "            <input class=""STB"" type=""submit"" name=""Botao"" value=""Gravar"">"
     ShowHTML "            <input class=""STB"" type=""button"" onClick=""location.href='" & w_Pagina & par & "&w_chave=" & w_chave & "&P1=" & P1 & "&P2=" & P2 & "&P3=" & P3 & "&P4=" & P4 & "&TP=" & TP & "&SG=" & SG & "&O=L';"" name=""Botao"" value=""Cancelar"">"
@@ -2018,7 +2018,7 @@ Sub Etapas
 
     ShowHTML "<tr bgcolor=""" & conTrBgColor & """><td align=""center"">"
     ShowHTML "    <table width=""97%"" border=""0"">"
-    ShowHTML "      <tr><td><font size=""1""><b>Prod<u>u</u>to:</b><br><input " & w_Disabled & " accesskey=""U"" type=""text"" name=""w_titulo"" class=""STI"" SIZE=""90"" MAXLENGTH=""90"" VALUE=""" & w_titulo & """ ONMOUSEOVER=""popup('Bem ou serviço que resulta da ação, destinado ao público-alvo ou o investimento para a produção deste bem ou serviço. Para cada ação deve haver um só produto. Em situações especiais, expressa a quantidade de beneficiários atendidos pela ação.','white')""; ONMOUSEOUT=""kill()""></td>"
+    ShowHTML "      <tr><td><font size=""1""><b>Prod<u>u</u>to:</b><br><input " & w_Disabled & " accesskey=""U"" type=""text"" name=""w_titulo"" class=""STI"" SIZE=""90"" MAXLENGTH=""90"" VALUE=""" & w_titulo & """ title=""Bem ou serviço que resulta da ação, destinado ao público-alvo ou o investimento para a produção deste bem ou serviço. Para cada ação deve haver um só produto. Em situações especiais, expressa a quantidade de beneficiários atendidos pela ação.""></td>"
     ShowHTML "     <tr><td valign=""top"" colspan=""2""><table border=0 width=""100%"" cellspacing=0><tr valign=""top"">"
     MontaRadioNS "<b>Meta LOA?</b>", w_programada, "w_programada"
     MontaRadioNS "<b>Meta cumulativa?</b>", w_cumulativa, "w_cumulativa"
@@ -2028,7 +2028,7 @@ Sub Etapas
     ShowHTML "             <td align=""left""><font size=""1""><b><u>U</u>nidade de medida:<br><INPUT ACCESSKEY=""U"" TYPE=""TEXT"" CLASS=""STI"" NAME=""w_unidade_medida"" SIZE=15 MAXLENGTH=30 VALUE=""" & w_unidade_medida & """ " & w_Disabled & "></td>"
     ShowHTML "         </table></td></tr>"
 
-    ShowHTML "      <tr><td><font size=""1""><b><u>E</u>specificação do produto:</b><br><textarea " & w_Disabled & " accesskey=""E"" name=""w_descricao"" class=""STI"" ROWS=5 cols=75 ONMOUSEOVER=""popup('Expresse as características do produto acabado visando sua melhor identificação.','white')""; ONMOUSEOUT=""kill()"">" & w_descricao & "</TEXTAREA></td>"
+    ShowHTML "      <tr><td><font size=""1""><b><u>E</u>specificação do produto:</b><br><textarea " & w_Disabled & " accesskey=""E"" name=""w_descricao"" class=""STI"" ROWS=5 cols=75 title=""Expresse as características do produto acabado visando sua melhor identificação."">" & w_descricao & "</TEXTAREA></td>"
     'ShowHTML "      <tr>"
     'SelecaoEtapa "Me<u>t</u>a superior:", "T", "Se necessário, indique a meta superior a esta.", w_chave_pai, w_chave, w_chave_aux, "w_chave_pai", "Pesquisa", null
     'ShowHTML "      </tr>"
@@ -2048,12 +2048,12 @@ Sub Etapas
     Else
        w_texto = "Não há outros números de ordem subordinados a esta etapa."
     End If
-    ShowHTML "              <td align=""left""><font size=""1""><b><u>O</u>rdem:<br><INPUT ACCESSKEY=""O"" TYPE=""TEXT"" CLASS=""STI"" NAME=""w_ordem"" SIZE=3 MAXLENGTH=3 VALUE=""" & w_ordem & """ " & w_Disabled & " ONMOUSEOVER=""popup1('" & Replace(w_texto,CHR(13)&CHR(10),"<BR>") & "','white')""; ONBLUR=""kill()""></td>"
-    ShowHTML "              <td><font size=""1""><b>Previsão iní<u>c</u>io:</b><br><input " & w_Disabled & " accesskey=""C"" type=""text"" name=""w_inicio"" class=""STI"" SIZE=""10"" MAXLENGTH=""10"" VALUE=""" & FormataDataEdicao(Nvl(w_inicio,Date())) & """ onKeyDown=""FormataData(this,event);"" ONMOUSEOVER=""popup('Data prevista para início da meta.','white')""; ONMOUSEOUT=""kill()""></td>"
-    ShowHTML "              <td><font size=""1""><b>Previsão <u>t</u>érmino:</b><br><input " & w_Disabled & " accesskey=""T"" type=""text"" name=""w_fim"" class=""STI"" SIZE=""10"" MAXLENGTH=""10"" VALUE=""" & FormataDataEdicao(w_fim) & """ onKeyDown=""FormataData(this,event);"" ONMOUSEOVER=""popup('Data prevista para término da meta.','white')""; ONMOUSEOUT=""kill()""></td>"
+    ShowHTML "              <td align=""left""><font size=""1""><b><u>O</u>rdem:<br><INPUT ACCESSKEY=""O"" TYPE=""TEXT"" CLASS=""STI"" NAME=""w_ordem"" SIZE=3 MAXLENGTH=3 VALUE=""" & w_ordem & """ " & w_Disabled & " title=""" & Replace(w_texto,CHR(13)&CHR(10),"<BR>") & """></td>"
+    ShowHTML "              <td><font size=""1""><b>Previsão iní<u>c</u>io:</b><br><input " & w_Disabled & " accesskey=""C"" type=""text"" name=""w_inicio"" class=""STI"" SIZE=""10"" MAXLENGTH=""10"" VALUE=""" & FormataDataEdicao(Nvl(w_inicio,Date())) & """ onKeyDown=""FormataData(this,event);"" title=""Data prevista para início da meta.""></td>"
+    ShowHTML "              <td><font size=""1""><b>Previsão <u>t</u>érmino:</b><br><input " & w_Disabled & " accesskey=""T"" type=""text"" name=""w_fim"" class=""STI"" SIZE=""10"" MAXLENGTH=""10"" VALUE=""" & FormataDataEdicao(w_fim) & """ onKeyDown=""FormataData(this,event);"" title=""Data prevista para término da meta.""></td>"
     'ShowHTML "          <tr valign=""top"">"
-    'ShowHTML "              <td><font size=""1""><b>Orça<u>m</u>ento previsto:</b><br><input " & w_Disabled & " accesskey=""M"" type=""text"" name=""w_orcamento"" class=""STI"" SIZE=""18"" MAXLENGTH=""18"" VALUE=""" & FormatNumber(w_orcamento,2) & """ onKeyDown=""FormataValor(this,18,2,event);"" ONMOUSEOVER=""popup('Recurso programado para execução desta etapa.','white')""; ONMOUSEOUT=""kill()""></td>"
-    'ShowHTML "              <td align=""left""><font size=""1""><b>Percentual de co<u>n</u>clusão:<br><INPUT ACCESSKEY=""N"" TYPE=""TEXT"" CLASS=""STI"" NAME=""w_perc_conclusao"" SIZE=3 MAXLENGTH=3 VALUE=""" & nvl(w_perc_conclusao,0) & """ " & w_Disabled & " ONMOUSEOVER=""popup('Informe o percentual de conclusão atual da meta.','white')""; ONMOUSEOUT=""kill()""></td>"
+    'ShowHTML "              <td><font size=""1""><b>Orça<u>m</u>ento previsto:</b><br><input " & w_Disabled & " accesskey=""M"" type=""text"" name=""w_orcamento"" class=""STI"" SIZE=""18"" MAXLENGTH=""18"" VALUE=""" & FormatNumber(w_orcamento,2) & """ onKeyDown=""FormataValor(this,18,2,event);"" title=""Recurso programado para execução desta etapa.""></td>"
+    'ShowHTML "              <td align=""left""><font size=""1""><b>Percentual de co<u>n</u>clusão:<br><INPUT ACCESSKEY=""N"" TYPE=""TEXT"" CLASS=""STI"" NAME=""w_perc_conclusao"" SIZE=3 MAXLENGTH=3 VALUE=""" & nvl(w_perc_conclusao,0) & """ " & w_Disabled & " title=""Informe o percentual de conclusão atual da meta.""></td>"
     'MontaRadioSN "<b>Permite vinculação de atividades?</b>", w_vincula_atividade, "w_vincula_atividade"
     ShowHTML "          </table>"
     ShowHTML "      <tr><td valign=""top"" colspan=""2""><table border=0 width=""100%"" cellspacing=0>"
@@ -2528,7 +2528,7 @@ Sub AtualizaEtapa
        ShowHTML "             <td align=""right""><font size=""1""><b>Dezembro:"
        ShowHTML "             <td><font size=""1""><INPUT TYPE=""TEXT"" CLASS=""STI"" NAME=""w_quantitativo_12"" SIZE=10 MAXLENGTH=18 VALUE=""" & w_quantitativo_12 & """ " & w_Disabled & " ></td>"
        ShowHTML "       </table>"
-       ShowHTML "     <tr><td valign=""top""><font size=""1""><b><u>S</u>ituação atual da meta:</b><br><textarea " & w_Disabled & " accesskey=""S"" name=""w_situacao_atual"" class=""STI"" ROWS=5 cols=75 ONMOUSEOVER=""popup('Descreva a situação em a etapa encontra-se.','white')""; ONMOUSEOUT=""kill()"">" & w_situacao_atual & "</TEXTAREA></td>"
+       ShowHTML "     <tr><td valign=""top""><font size=""1""><b><u>S</u>ituação atual da meta:</b><br><textarea " & w_Disabled & " accesskey=""S"" name=""w_situacao_atual"" class=""STI"" ROWS=5 cols=75 title=""Descreva a situação em a etapa encontra-se."">" & w_situacao_atual & "</TEXTAREA></td>"
        ShowHTML "     <tr valign=""top"">"
        MontaRadioSN "<b>A meta será cumprida?</b>", w_exequivel, "w_exequivel"
        ShowHTML "     </tr>"
@@ -2703,14 +2703,14 @@ Sub Recursos
 
     ShowHTML "<tr bgcolor=""" & conTrBgColor & """><td align=""center"">"
     ShowHTML "    <table width=""97%"" border=""0"">"
-    ShowHTML "      <tr><td valign=""top""><font size=""1""><b><u>N</u>ome:</b><br><input " & w_Disabled & " accesskey=""N"" type=""text"" name=""w_nome"" class=""STI"" SIZE=""90"" MAXLENGTH=""100"" VALUE=""" & w_nome & """ ONMOUSEOVER=""popup('Informe o nome do recurso.','white')""; ONMOUSEOUT=""kill()""></td>"
+    ShowHTML "      <tr><td valign=""top""><font size=""1""><b><u>N</u>ome:</b><br><input " & w_Disabled & " accesskey=""N"" type=""text"" name=""w_nome"" class=""STI"" SIZE=""90"" MAXLENGTH=""100"" VALUE=""" & w_nome & """ title=""Informe o nome do recurso.""></td>"
     ShowHTML "      <tr>"
     SelecaoTipoRecurso "<u>T</u>ipo:", "T", "Selecione o tipo deste recurso.", w_tipo, null, "w_tipo", null, null
     ShowHTML "      </tr>"
-    ShowHTML "      <tr><td valign=""top""><font size=""1""><b><u>D</u>escrição:</b><br><textarea " & w_Disabled & " accesskey=""D"" name=""w_descricao"" class=""STI"" ROWS=5 cols=75 ONMOUSEOVER=""popup('Descreva, se necessário, características deste recurso (conhecimentos, habilidades, perfil, capacidade etc).','white')""; ONMOUSEOUT=""kill()"">" & w_descricao & "</TEXTAREA></td>"
+    ShowHTML "      <tr><td valign=""top""><font size=""1""><b><u>D</u>escrição:</b><br><textarea " & w_Disabled & " accesskey=""D"" name=""w_descricao"" class=""STI"" ROWS=5 cols=75 title=""Descreva, se necessário, características deste recurso (conhecimentos, habilidades, perfil, capacidade etc)."">" & w_descricao & "</TEXTAREA></td>"
     ShowHTML "      <tr>"
     ShowHTML "      </tr>"
-    ShowHTML "      <tr><td valign=""top""><font size=""1""><b><u>F</u>inalidade:</b><br><textarea " & w_Disabled & " accesskey=""F"" name=""w_finalidade"" class=""STI"" ROWS=5 cols=75 ONMOUSEOVER=""popup('Descreva, se necessário, a finalidade deste recurso para a ação (funções desempenhadas, papel, objetivos etc).','white')""; ONMOUSEOUT=""kill()"">" & w_finalidade & "</TEXTAREA></td>"
+    ShowHTML "      <tr><td valign=""top""><font size=""1""><b><u>F</u>inalidade:</b><br><textarea " & w_Disabled & " accesskey=""F"" name=""w_finalidade"" class=""STI"" ROWS=5 cols=75 title=""Descreva, se necessário, a finalidade deste recurso para a ação (funções desempenhadas, papel, objetivos etc)."">" & w_finalidade & "</TEXTAREA></td>"
     ShowHTML "      <tr>"
     ShowHTML "      <tr><td align=""center"" colspan=4><hr>"
     If O = "E" Then
@@ -3148,7 +3148,7 @@ Sub Areas
        ShowHTML "<INPUT type=""hidden"" name=""w_chave_aux"" value=""" & w_chave_aux &""">"
        ShowHTML "      <tr><td valign=""top""><font size=""1""><b>Área/Instituição:</b><br>" & w_nome & "</td>"
     End If
-    ShowHTML "      <tr><td valign=""top""><font size=""1""><b><u>P</u>apel desempenhado:</b><br><textarea " & w_Disabled & " accesskey=""P"" name=""w_papel"" class=""STI"" ROWS=5 cols=75 ONMOUSEOVER=""popup('Descreva o papel desempenhado pela área ou instituição na execução da ação.','white')""; ONMOUSEOUT=""kill()"">" & w_papel & "</TEXTAREA></td>"
+    ShowHTML "      <tr><td valign=""top""><font size=""1""><b><u>P</u>apel desempenhado:</b><br><textarea " & w_Disabled & " accesskey=""P"" name=""w_papel"" class=""STI"" ROWS=5 cols=75 title=""Descreva o papel desempenhado pela área ou instituição na execução da ação."">" & w_papel & "</TEXTAREA></td>"
     ShowHTML "          </table>"
     ShowHTML "      <tr><td align=""center"" colspan=4><hr>"
     If O = "E" Then
@@ -3467,9 +3467,9 @@ Sub Anexos
        ShowHTML "<INPUT type=""hidden"" name=""w_upload_maximo"" value=""" & RS("upload_maximo") & """>" 
     End If 
     
-    ShowHTML "      <tr><td><font size=""1""><b><u>T</u>ítulo:</b><br><input " & w_Disabled & " accesskey=""T"" type=""text"" name=""w_nome"" class=""STI"" SIZE=""75"" MAXLENGTH=""255"" VALUE=""" & w_nome & """ ONMOUSEOVER=""popup('OBRIGATÓRIO. Informe um título para o arquivo.','white')""; ONMOUSEOUT=""kill()""></td>" 
-    ShowHTML "      <tr><td><font size=""1""><b><u>D</u>escrição:</b><br><textarea " & w_Disabled & " accesskey=""D"" name=""w_descricao"" class=""STI"" ROWS=5 cols=65 ONMOUSEOVER=""popup('OBRIGATÓRIO. Descreva a finalidade do arquivo.','white')""; ONMOUSEOUT=""kill()"">" & w_descricao & "</TEXTAREA></td>" 
-    ShowHTML "      <tr><td><font size=""1""><b>A<u>r</u>quivo:</b><br><input " & w_Disabled & " accesskey=""R"" type=""file"" name=""w_caminho"" class=""STI"" SIZE=""80"" MAXLENGTH=""100"" VALUE="""" ONMOUSEOVER=""popup('OBRIGATÓRIO. Clique no botão ao lado para localizar o arquivo. Ele será transferido automaticamente para o servidor.','white')""; ONMOUSEOUT=""kill()"">" 
+    ShowHTML "      <tr><td><font size=""1""><b><u>T</u>ítulo:</b><br><input " & w_Disabled & " accesskey=""T"" type=""text"" name=""w_nome"" class=""STI"" SIZE=""75"" MAXLENGTH=""255"" VALUE=""" & w_nome & """ title=""OBRIGATÓRIO. Informe um título para o arquivo.""></td>" 
+    ShowHTML "      <tr><td><font size=""1""><b><u>D</u>escrição:</b><br><textarea " & w_Disabled & " accesskey=""D"" name=""w_descricao"" class=""STI"" ROWS=5 cols=65 title=""OBRIGATÓRIO. Descreva a finalidade do arquivo."">" & w_descricao & "</TEXTAREA></td>" 
+    ShowHTML "      <tr><td><font size=""1""><b>A<u>r</u>quivo:</b><br><input " & w_Disabled & " accesskey=""R"" type=""file"" name=""w_caminho"" class=""STI"" SIZE=""80"" MAXLENGTH=""100"" VALUE="""" title=""OBRIGATÓRIO. Clique no botão ao lado para localizar o arquivo. Ele será transferido automaticamente para o servidor."">" 
     If w_caminho > "" Then 
        ShowHTML "              <b>" & LinkArquivo("SS", w_cliente, w_caminho, "_blank", "Clique para exibir o arquivo atual.", "Exibir", null) & "</b>" 
     End If 
@@ -3599,7 +3599,7 @@ Sub Encaminhamento
      SelecaoFase "<u>F</u>ase da ação:", "F", "Se deseja alterar a fase atual da ação, selecione a fase para a qual deseja enviá-la.", w_novo_tramite, w_menu, "w_novo_tramite", null, null
      SelecaoPessoa "<u>D</u>estinatário:", "D", "Selecione, na relação, um destinatário para a ação.", w_destinatario, null, "w_destinatario", "USUARIOS"
   End If
-  ShowHTML "    <tr><td valign=""top"" colspan=2><font size=""1""><b>D<u>e</u>spacho:</b><br><textarea " & w_Disabled & " accesskey=""E"" name=""w_despacho"" class=""STI"" ROWS=5 cols=75 ONMOUSEOVER=""popup('Descreva o papel desempenhado pela área ou instituição na execução da ação.','white')""; ONMOUSEOUT=""kill()"">" & w_despacho & "</TEXTAREA></td>"
+  ShowHTML "    <tr><td valign=""top"" colspan=2><font size=""1""><b>D<u>e</u>spacho:</b><br><textarea " & w_Disabled & " accesskey=""E"" name=""w_despacho"" class=""STI"" ROWS=5 cols=75 title=""Descreva o papel desempenhado pela área ou instituição na execução da ação."">" & w_despacho & "</TEXTAREA></td>"
   ShowHTML "      </table>"
   ShowHTML "      <tr><td align=""LEFT"" colspan=4><font size=""1""><b><U>A</U>ssinatura Eletrônica:<BR> <INPUT ACCESSKEY=""A"" class=""STI"" type=""PASSWORD"" name=""w_assinatura"" size=""30"" maxlength=""30"" value=""""></td></tr>"
   ShowHTML "    <tr><td align=""center"" colspan=4><hr>"
@@ -3694,7 +3694,7 @@ Sub Anotar
   ShowHTML "<tr bgcolor=""" & conTrBgColor & """><td align=""center"">"
   ShowHTML "  <table width=""97%"" border=""0"">"
   ShowHTML "    <tr><td valign=""top"" colspan=""2""><table border=0 width=""100%"" cellspacing=0><tr valign=""top"">"
-  ShowHTML "    <tr><td valign=""top""><font size=""1""><b>A<u>n</u>otação:</b><br><textarea " & w_Disabled & " accesskey=""N"" name=""w_observacao"" class=""STI"" ROWS=5 cols=75 ONMOUSEOVER=""popup('Redija a anotação desejada.','white')""; ONMOUSEOUT=""kill()"">" & w_observacao & "</TEXTAREA></td>"
+  ShowHTML "    <tr><td valign=""top""><font size=""1""><b>A<u>n</u>otação:</b><br><textarea " & w_Disabled & " accesskey=""N"" name=""w_observacao"" class=""STI"" ROWS=5 cols=75 title=""Redija a anotação desejada."">" & w_observacao & "</TEXTAREA></td>"
   ShowHTML "      </table>"
   ShowHTML "      <tr><td align=""LEFT"" colspan=4><font size=""1""><b><U>A</U>ssinatura Eletrônica:<BR> <INPUT ACCESSKEY=""A"" class=""STI"" type=""PASSWORD"" name=""w_assinatura"" size=""30"" maxlength=""30"" value=""""></td></tr>"
   ShowHTML "    <tr><td align=""center"" colspan=4><hr>"
@@ -3828,19 +3828,19 @@ Sub Concluir
   DesconectaBD
   Select Case RS_menu("data_hora")
      Case 1
-        ShowHTML "              <td valign=""top""><font size=""1""><b><u>T</u>érmino da execução:</b><br><input " & w_Disabled & " accesskey=""T"" type=""text"" name=""w_fim_real"" class=""STI"" SIZE=""10"" MAXLENGTH=""10"" VALUE=""" & w_fim_real & """ onKeyDown=""FormataData(this,event);"" ONMOUSEOVER=""popup('Informe a data de término da execução da ação.','white')""; ONMOUSEOUT=""kill()""></td>"
+        ShowHTML "              <td valign=""top""><font size=""1""><b><u>T</u>érmino da execução:</b><br><input " & w_Disabled & " accesskey=""T"" type=""text"" name=""w_fim_real"" class=""STI"" SIZE=""10"" MAXLENGTH=""10"" VALUE=""" & w_fim_real & """ onKeyDown=""FormataData(this,event);"" title=""Informe a data de término da execução da ação.""></td>"
      Case 2
-        ShowHTML "              <td valign=""top""><font size=""1""><b><u>T</u>érmino da execução:</b><br><input " & w_Disabled & " accesskey=""T"" type=""text"" name=""w_fim_real"" class=""STI"" SIZE=""17"" MAXLENGTH=""17"" VALUE=""" & w_fim_real & """ onKeyDown=""FormataDataHora(this,event);"" ONMOUSEOVER=""popup('Informe a data/hora de término da execução da ação.','white')""; ONMOUSEOUT=""kill()""></td>"
+        ShowHTML "              <td valign=""top""><font size=""1""><b><u>T</u>érmino da execução:</b><br><input " & w_Disabled & " accesskey=""T"" type=""text"" name=""w_fim_real"" class=""STI"" SIZE=""17"" MAXLENGTH=""17"" VALUE=""" & w_fim_real & """ onKeyDown=""FormataDataHora(this,event);"" title=""Informe a data/hora de término da execução da ação.""></td>"
      Case 3
-        ShowHTML "              <td valign=""top""><font size=""1""><b>Iní<u>c</u>io da execução:</b><br><input " & w_Disabled & " accesskey=""C"" type=""text"" name=""w_inicio_real"" class=""STI"" SIZE=""10"" MAXLENGTH=""10"" VALUE=""" & w_inicio_real & """ onKeyDown=""FormataData(this,event);"" ONMOUSEOVER=""popup('Informe a data/hora de início da execução da ação.','white')""; ONMOUSEOUT=""kill()""></td>"
-        ShowHTML "              <td valign=""top""><font size=""1""><b><u>T</u>érmino da execução:</b><br><input " & w_Disabled & " accesskey=""T"" type=""text"" name=""w_fim_real"" class=""STI"" SIZE=""10"" MAXLENGTH=""10"" VALUE=""" & w_fim_real & """ onKeyDown=""FormataData(this,event);"" ONMOUSEOVER=""popup('Informe a data de término da execução da ação.','white')""; ONMOUSEOUT=""kill()""></td>"
+        ShowHTML "              <td valign=""top""><font size=""1""><b>Iní<u>c</u>io da execução:</b><br><input " & w_Disabled & " accesskey=""C"" type=""text"" name=""w_inicio_real"" class=""STI"" SIZE=""10"" MAXLENGTH=""10"" VALUE=""" & w_inicio_real & """ onKeyDown=""FormataData(this,event);"" title=""Informe a data/hora de início da execução da ação.""></td>"
+        ShowHTML "              <td valign=""top""><font size=""1""><b><u>T</u>érmino da execução:</b><br><input " & w_Disabled & " accesskey=""T"" type=""text"" name=""w_fim_real"" class=""STI"" SIZE=""10"" MAXLENGTH=""10"" VALUE=""" & w_fim_real & """ onKeyDown=""FormataData(this,event);"" title=""Informe a data de término da execução da ação.""></td>"
      Case 4
-        ShowHTML "              <td valign=""top""><font size=""1""><b>Iní<u>c</u>io da execução:</b><br><input " & w_Disabled & " accesskey=""C"" type=""text"" name=""w_inicio_real"" class=""STI"" SIZE=""17"" MAXLENGTH=""17"" VALUE=""" & w_inicio_real & """ onKeyDown=""FormataDataHora(this,event);"" ONMOUSEOVER=""popup('Informe a data/hora de início da execução da ação.','white')""; ONMOUSEOUT=""kill()""></td>"
-        ShowHTML "              <td valign=""top""><font size=""1""><b><u>T</u>érmino da execução:</b><br><input " & w_Disabled & " accesskey=""T"" type=""text"" name=""w_fim_real"" class=""STI"" SIZE=""17"" MAXLENGTH=""17"" VALUE=""" & w_fim_real & """ onKeyDown=""FormataDataHora(this,event);"" ONMOUSEOVER=""popup('Informe a data de término da execução da ação.','white')""; ONMOUSEOUT=""kill()""></td>"
+        ShowHTML "              <td valign=""top""><font size=""1""><b>Iní<u>c</u>io da execução:</b><br><input " & w_Disabled & " accesskey=""C"" type=""text"" name=""w_inicio_real"" class=""STI"" SIZE=""17"" MAXLENGTH=""17"" VALUE=""" & w_inicio_real & """ onKeyDown=""FormataDataHora(this,event);"" title=""Informe a data/hora de início da execução da ação.""></td>"
+        ShowHTML "              <td valign=""top""><font size=""1""><b><u>T</u>érmino da execução:</b><br><input " & w_Disabled & " accesskey=""T"" type=""text"" name=""w_fim_real"" class=""STI"" SIZE=""17"" MAXLENGTH=""17"" VALUE=""" & w_fim_real & """ onKeyDown=""FormataDataHora(this,event);"" title=""Informe a data de término da execução da ação.""></td>"
   End Select
-  ShowHTML "              <td valign=""top""><font size=""1""><b><u>R</u>ecurso executado:</b><br><input " & w_Disabled & " accesskey=""O"" type=""text"" name=""w_custo_real"" class=""STI"" SIZE=""18"" MAXLENGTH=""18"" VALUE=""" & w_custo_real & """ onKeyDown=""FormataValor(this,18,2,event);"" ONMOUSEOVER=""popup('Informe o recurso utilizado para execução da ação, ou zero se não for o caso.','white')""; ONMOUSEOUT=""kill()""></td>"
+  ShowHTML "              <td valign=""top""><font size=""1""><b><u>R</u>ecurso executado:</b><br><input " & w_Disabled & " accesskey=""O"" type=""text"" name=""w_custo_real"" class=""STI"" SIZE=""18"" MAXLENGTH=""18"" VALUE=""" & w_custo_real & """ onKeyDown=""FormataValor(this,18,2,event);"" title=""Informe o recurso utilizado para execução da ação, ou zero se não for o caso.""></td>"
   ShowHTML "          </table>"
-  ShowHTML "    <tr><td valign=""top""><font size=""1""><b>Nota d<u>e</u> conclusão:</b><br><textarea " & w_Disabled & " accesskey=""E"" name=""w_nota_conclusao"" class=""STI"" ROWS=5 cols=75 ONMOUSEOVER=""popup('Descreva o quanto a ação atendeu aos resultados esperados.','white')""; ONMOUSEOUT=""kill()"">" & w_nota_conclusao & "</TEXTAREA></td>"
+  ShowHTML "    <tr><td valign=""top""><font size=""1""><b>Nota d<u>e</u> conclusão:</b><br><textarea " & w_Disabled & " accesskey=""E"" name=""w_nota_conclusao"" class=""STI"" ROWS=5 cols=75 title=""Descreva o quanto a ação atendeu aos resultados esperados."">" & w_nota_conclusao & "</TEXTAREA></td>"
   ShowHTML "      <tr><td align=""LEFT"" colspan=4><font size=""1""><b><U>A</U>ssinatura Eletrônica:<BR> <INPUT ACCESSKEY=""A"" class=""STI"" type=""PASSWORD"" name=""w_assinatura"" size=""30"" maxlength=""30"" value=""""></td></tr>"
   ShowHTML "    <tr><td align=""center"" colspan=4><hr>"
   ShowHTML "      <input class=""STB"" type=""submit"" name=""Botao"" value=""Concluir"">"

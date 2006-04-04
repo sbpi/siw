@@ -2321,7 +2321,7 @@ Sub TrataErro
     w_html = w_html & "   <br><br></font>"
     w_html = w_html & "</FONT></TD></TR></TABLE><BLOCKQUOTE>"
     If Session("dbms") = 1 Then
-       w_resultado = EnviaMail("ERRO SIW", w_html, "alex@sbpi.com.br; celso@sbpi.com.br; beto@sbpi.com.br")
+       w_resultado = EnviaMail("ERRO SIW", w_html, "alex@sbpi.com.br; celso@sbpi.com.br")
        If w_resultado > "" Then
           w_html = w_html & "<SCRIPTOPEN ""JAVASCRIPT"">"
           w_html = w_html & "   alert('Não foi possível enviar o e-mail comunicando sobre o erro. Favor copiar esta página e enviá-la por e-mail aos gestores do sistema.');"
@@ -3033,53 +3033,10 @@ Sub BodyOpen(cProperties)
       ShowHTML " .str {font-size: 8pt; border-top: 0px}"
       ShowHTML " .stc {font-size: 8pt; border-top: 0px}"
       ShowHTML "</style> "
-      ShowHTML "<STYLE TYPE=""text/css"">"
-      ShowHTML "<!--"
-      ShowHTML "BODY {OVERFLOW:scroll;OVERFLOW-X:hidden}"
-      ShowHTML ".DEK {POSITION:absolute;VISIBILITY:hidden;Z-INDEX:200;}"
-      ShowHTML "//-->"
-      ShowHTML "</STYLE>"
       ShowHTML "<body Text=""" & conBodyText & """ Link=""" & conBodyLink & """ Alink=""" & conBodyALink & """ " & _
             "Vlink=""" & conBodyVLink & """ Bgcolor=""" & conBodyBgcolor & """ Background=""" & conBodyBackground & """ " & _
             "Bgproperties=""" & conBodyBgproperties & """ Topmargin=""" & conBodyTopmargin & """ " & _
             "Leftmargin=""" & conBodyLeftmargin & """ " & cProperties & "> " 
-      ShowHTML "<DIV ID=""dek"" CLASS=""dek""></DIV>"
-      ShowHTML "<SCRIPT TYPE=""text/javascript"">"
-      ShowHTML "<!--"
-      ShowHTML "Xoffset=-100;    // modify these values to ..."
-      ShowHTML "Yoffset= 20;    // change the popup position."
-      ShowHTML "var nav,old,iex=(document.all),yyy=-1000;"
-      ShowHTML "if(navigator.appName==""Netscape""){(document.layers)?nav=true:old=true;}"
-      ShowHTML "if(!old){"
-      ShowHTML "var skn=(nav)?document.dek:dek.style;"
-      ShowHTML "if(nav)document.captureEvents(Event.MOUSEMOVE);"
-      ShowHTML "document.onmousemove=get_mouse;"
-      ShowHTML "}"
-      ShowHTML "function popup(msg,bak){"
-      ShowHTML "var content='<TABLE  WIDTH=200 BORDER=1 BORDERCOLOR=black CELLPADDING=2 CELLSPACING=0 BGCOLOR='+bak+'><TD><DIV ALIGN=""JUSTIFY""><FONT COLOR=black SIZE=1>'+msg+'</FONT></DIV></TD></TABLE>';"
-      ShowHTML "if(old){alert(msg);return;} "
-      ShowHTML "else{yyy=Yoffset;"
-      ShowHTML " if(nav){skn.document.write(content);skn.document.close();skn.visibility=""visible""}"
-      ShowHTML " if(iex){document.all(""dek"").innerHTML=content;skn.visibility=""visible""}"
-      ShowHTML " }"
-      ShowHTML "}"
-      ShowHTML "function popup1(msg,bak){"
-      ShowHTML "var content='<TABLE  WIDTH=450 BORDER=1 BORDERCOLOR=black CELLPADDING=2 CELLSPACING=0 BGCOLOR='+bak+'><TD><DIV ALIGN=""JUSTIFY""><FONT COLOR=black SIZE=1>'+msg+'</FONT></DIV></TD></TABLE>';"
-      ShowHTML "if(old){alert(msg);return;} "
-      ShowHTML "else{yyy=Yoffset;"
-      ShowHTML " if(nav){skn.document.write(content);skn.document.close();skn.visibility=""visible""}"
-      ShowHTML " if(iex){document.all(""dek"").innerHTML=content;skn.visibility=""visible""}"
-      ShowHTML " }"
-      ShowHTML "}"
-      ShowHTML "function get_mouse(e){"
-      ShowHTML "var x=(nav)?e.pageX:event.x+document.body.scrollLeft;skn.left=x+Xoffset;"
-      ShowHTML "var y=(nav)?e.pageY:event.y+document.body.scrollTop;skn.top=y+yyy;"
-      ShowHTML "}"
-      ShowHTML "function kill(){"
-      ShowHTML "if(!old){yyy=-1000;skn.visibility=""hidden"";}"
-      ShowHTML "}"
-      ShowHTML "//-->"
-      ShowHTML "</SCRIPT>"
    End IF
 End Sub
 
@@ -3101,7 +3058,7 @@ ShowHTML " .str {font-size: 8pt; border-top: 0px}"
 ShowHTML " .stc {font-size: 8pt; border-top: 0px}"
 ShowHTML "</style> "
 ShowHTML "<body Text=""" & conBodyText & """ Link=""" & conBodyLink & """ Alink=""" & conBodyALink & """ " & _
-    "Vlink=""" & conBodyVLink & """ Bgcolor=""" & conBodyBgcolor & """ Background=""" & conBodyBackground & """ " & _
+    "Vlink=""" & conBodyVLink & """  Background=""" & conBodyBackground & """ " & _
     "Bgproperties=""" & conBodyBgproperties & """ Topmargin=""" & conBodyTopmargin & """ " & _
     "Leftmargin=""" & conBodyLeftmargin & """ " & cProperties & "> " 
 End Sub
@@ -3148,54 +3105,10 @@ ShowHtml " .sts {font-size: 8pt; border-top: 1px solid #000000; background-color
 ShowHtml " .str {font-size: 8pt; border-top: 0px}"  & VbCrLf
 ShowHtml " .stc {font-size: 8pt; border-top: 0px}"  & VbCrLf
 ShowHTML "</style> "
-ShowHTML "<STYLE TYPE=""text/css"">"
-ShowHTML "<!--"
-ShowHTML "BODY {OVERFLOW:scroll;OVERFLOW-X:hidden}"
-ShowHTML ".DEK {POSITION:absolute;VISIBILITY:hidden;Z-INDEX:200;}"
-ShowHTML "//-->"
-ShowHTML "</STYLE>"
 ShowHTML "<body Text=""" & conBodyText & """ Link=""" & conBodyLink & """ Alink=""" & conBodyALink & """ " & _
     "Vlink=""" & conBodyVLink & """ Bgcolor=""" & conBodyBgcolor & """ Background=""" & cImage & """ " & _
     "Bgproperties=""" & cFixed & """ Topmargin=""" & conBodyTopmargin & """ " & _
     "Leftmargin=""" & conBodyLeftmargin & """ " & cProperties & "> " 
-ShowHTML "<DIV ID=""dek"" CLASS=""dek""></DIV>"
-ShowHTML "<SCRIPT TYPE=""text/javascript"">"
-ShowHTML "<!--"
-ShowHTML "Xoffset=-100;    // modify these values to ..."
-ShowHTML "Yoffset= 20;    // change the popup position."
-ShowHTML "var nav,old,iex=(document.all),yyy=-1000;"
-ShowHTML "if(navigator.appName==""Netscape""){(document.layers)?nav=true:old=true;}"
-ShowHTML "if(!old){"
-ShowHTML "var skn=(nav)?document.dek:dek.style;"
-ShowHTML "if(nav)document.captureEvents(Event.MOUSEMOVE);"
-ShowHTML "document.onmousemove=get_mouse;"
-ShowHTML "}"
-ShowHTML "function popup(msg,bak){"
-ShowHTML "var content='<TABLE  WIDTH=200 BORDER=1 BORDERCOLOR=black CELLPADDING=2 CELLSPACING=0 BGCOLOR='+bak+'><TD><DIV ALIGN=""JUSTIFY""><FONT COLOR=black SIZE=1>'+msg+'</FONT></DIV></TD></TABLE>';"
-ShowHTML "if(old){alert(msg);return;} "
-ShowHTML "else{yyy=Yoffset;"
-ShowHTML " if(nav){skn.document.write(content);skn.document.close();skn.visibility=""visible""}"
-ShowHTML " if(iex){document.all(""dek"").innerHTML=content;skn.visibility=""visible""}"
-ShowHTML " }"
-ShowHTML "}"
-ShowHTML "function popup1(msg,bak){"
-ShowHTML "var content='<TABLE  WIDTH=450 BORDER=1 BORDERCOLOR=black CELLPADDING=2 CELLSPACING=0 BGCOLOR='+bak+'><TD><DIV ALIGN=""JUSTIFY""><FONT COLOR=black SIZE=1>'+msg+'</FONT></DIV></TD></TABLE>';"
-ShowHTML "if(old){alert(msg);return;} "
-ShowHTML "else{yyy=Yoffset;"
-ShowHTML " if(nav){skn.document.write(content);skn.document.close();skn.visibility=""visible""}"
-ShowHTML " if(iex){document.all(""dek"").innerHTML=content;skn.visibility=""visible""}"
-ShowHTML " }"
-ShowHTML "}"
-ShowHTML "function get_mouse(e){"
-ShowHTML "var x=(nav)?e.pageX:event.x+document.body.scrollLeft;skn.left=x+Xoffset;"
-ShowHTML "var y=(nav)?e.pageY:event.y+document.body.scrollTop;skn.top=y+yyy;"
-ShowHTML "}"
-ShowHTML "function kill(){"
-ShowHTML "if(!old){yyy=-1000;skn.visibility=""hidden"";}"
-ShowHTML "}"
-ShowHTML "//-->"
-ShowHTML "</SCRIPT>"
-
 End Sub
 
 ' Imprime uma linha HTML

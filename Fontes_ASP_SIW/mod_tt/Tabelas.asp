@@ -994,28 +994,28 @@ Sub RamalUsr
     ShowHTML "    <table width=""97%"" border=""0"">"
     If O = "I" then
       SelecaoPessoa "Usua<u>r</u>io:", "R", null, null, w_chave, "w_chaveaux", "TTUSURAMAL"
-      ShowHTML "      <td ONMOUSEOVER=""popup('Informe a data de início de uso deste ramal.','white')""; ONMOUSEOUT=""kill()""><font size=""1""><b><u>I</u>nício:</b><br><input " & w_Disabled & " accesskey=""I"" type=""text"" name=""w_inicio"" class=""sti"" SIZE=""10"" MAXLENGTH=""10"" VALUE=""" & w_inicio & """ onKeyDown=""FormataData(this,event);""></td>"
+      ShowHTML "      <td title=""Informe a data de início de uso deste ramal.""><font size=""1""><b><u>I</u>nício:</b><br><input " & w_Disabled & " accesskey=""I"" type=""text"" name=""w_inicio"" class=""sti"" SIZE=""10"" MAXLENGTH=""10"" VALUE=""" & w_inicio & """ onKeyDown=""FormataData(this,event);""></td>"
     ElseIf O = "A" then
       DB_GetPersonData RS, w_cliente, w_chaveAux, null, null
       ShowHTML "      <td><font size=""1"">Usuário:<br><b>" & RS("nome")
       ShowHTML "<INPUT type=""hidden"" name=""w_chaveaux"" value=""" & w_chaveaux & """>"
-      ShowHTML "      <td ONMOUSEOVER=""popup('Informe a data de início de uso deste ramal.','white')""; ONMOUSEOUT=""kill()""><font size=""1""><b><u>I</u>nício:</b><br><input " & w_Disabled & " accesskey=""I"" type=""text"" name=""w_inicio"" class=""sti"" SIZE=""10"" MAXLENGTH=""10"" VALUE=""" & w_inicio & """ onKeyDown=""FormataData(this,event);""></td>"
+      ShowHTML "      <td title=""Informe a data de início de uso deste ramal.""><font size=""1""><b><u>I</u>nício:</b><br><input " & w_Disabled & " accesskey=""I"" type=""text"" name=""w_inicio"" class=""sti"" SIZE=""10"" MAXLENGTH=""10"" VALUE=""" & w_inicio & """ onKeyDown=""FormataData(this,event);""></td>"
       If w_fim <> "" then 
-        ShowHTML "      <td ONMOUSEOVER=""popup('Informe a data de fim de uso deste ramal.','white')"";    ONMOUSEOUT=""kill()""><font size=""1""><b><u>F</u>im:   </b><br><input " & w_Disabled  & " accesskey=""F"" type=""text"" name=""w_fim"" class=""sti"" SIZE=""10"" MAXLENGTH=""10"" VALUE=""" & w_fim & """ onKeyDown=""FormataData(this,event);""></td>"
+        ShowHTML "      <td title=""Informe a data de fim de uso deste ramal.""><font size=""1""><b><u>F</u>im:   </b><br><input " & w_Disabled  & " accesskey=""F"" type=""text"" name=""w_fim"" class=""sti"" SIZE=""10"" MAXLENGTH=""10"" VALUE=""" & w_fim & """ onKeyDown=""FormataData(this,event);""></td>"
       End If
     ElseIf O = "F" then
       DB_GetPersonData RS, w_cliente, w_chaveAux, null, null
       ShowHTML "      <td><font size=""1"">Usuário:<br><b>" & RS("nome")
       ShowHTML "<INPUT type=""hidden"" name=""w_chaveaux"" value=""" & w_chaveaux & """>"
-      ShowHTML "      <td ONMOUSEOVER=""popup('Informe a data de início de uso deste ramal.','white')""; ONMOUSEOUT=""kill()""><font size=""1""><b><u>I</u>nício:</b><br><input " & w_Disabled & " accesskey=""I"" type=""text"" name=""w_inicio"" class=""sti"" SIZE=""10"" MAXLENGTH=""10"" VALUE=""" & w_inicio & """ onKeyDown=""FormataData(this,event);""></td>"
-      ShowHTML "      <td ONMOUSEOVER=""popup('Informe a data de fim de uso deste ramal.','white')"";    ONMOUSEOUT=""kill()""><font size=""1""><b><u>F</u>im:   </b><br><input accesskey=""F"" type=""text"" name=""w_fim"" class=""sti"" SIZE=""10"" MAXLENGTH=""10"" VALUE=""" & w_fim & """ onKeyDown=""FormataData(this,event);""></td>"
+      ShowHTML "      <td title=""Informe a data de início de uso deste ramal.""><font size=""1""><b><u>I</u>nício:</b><br><input " & w_Disabled & " accesskey=""I"" type=""text"" name=""w_inicio"" class=""sti"" SIZE=""10"" MAXLENGTH=""10"" VALUE=""" & w_inicio & """ onKeyDown=""FormataData(this,event);""></td>"
+      ShowHTML "      <td title=""Informe a data de fim de uso deste ramal.""><font size=""1""><b><u>F</u>im:   </b><br><input accesskey=""F"" type=""text"" name=""w_fim"" class=""sti"" SIZE=""10"" MAXLENGTH=""10"" VALUE=""" & w_fim & """ onKeyDown=""FormataData(this,event);""></td>"
     Else
       DB_GetPersonData RS, w_cliente, w_chaveAux, null, null
       ShowHTML "      <td><font size=""1"">Usuário:<br><b>" & RS("nome")
       ShowHTML "<INPUT type=""hidden"" name=""w_chaveaux"" value=""" & w_chaveaux & """>"
-      ShowHTML "      <td ONMOUSEOVER=""popup('Informe a data de início de uso deste ramal.','white')""; ONMOUSEOUT=""kill()""><font size=""1""><b><u>I</u>nício:</b><br><input " & w_Disabled & " accesskey=""I"" type=""text"" name=""w_inicio"" class=""sti"" SIZE=""10"" MAXLENGTH=""10"" VALUE=""" & w_inicio & """ onKeyDown=""FormataData(this,event);""></td>"
+      ShowHTML "      <td title=""Informe a data de início de uso deste ramal.""><font size=""1""><b><u>I</u>nício:</b><br><input " & w_Disabled & " accesskey=""I"" type=""text"" name=""w_inicio"" class=""sti"" SIZE=""10"" MAXLENGTH=""10"" VALUE=""" & w_inicio & """ onKeyDown=""FormataData(this,event);""></td>"
       If Nvl(w_fim,"") <> "" then
-        ShowHTML "      <td ONMOUSEOVER=""popup('Informe a data de fim de uso deste ramal.','white')"";    ONMOUSEOUT=""kill()""><font size=""1""><b><u>F</u>im:   </b><br><input " & w_Disabled  & " accesskey=""F"" type=""text"" name=""w_fim"" class=""sti"" SIZE=""10"" MAXLENGTH=""10"" VALUE=""" & w_fim & """ onKeyDown=""FormataData(this,event);""></td>"
+        ShowHTML "      <td title=""Informe a data de fim de uso deste ramal.""><font size=""1""><b><u>F</u>im:   </b><br><input " & w_Disabled  & " accesskey=""F"" type=""text"" name=""w_fim"" class=""sti"" SIZE=""10"" MAXLENGTH=""10"" VALUE=""" & w_fim & """ onKeyDown=""FormataData(this,event);""></td>"
       End If
     End If
     ShowHTML "      <tr><td align=""LEFT"" colspan=2><font size=""1""><b><U>A</U>ssinatura Eletrônica:<BR> <INPUT ACCESSKEY=""A"" class=""sti"" type=""PASSWORD"" name=""w_assinatura"" size=""30"" maxlength=""30"" value=""""></td></tr>"    

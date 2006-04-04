@@ -368,8 +368,8 @@ Sub Inicial
        ShowHTML "<INPUT type=""hidden"" name=""w_upload_maximo"" value=""" & RS("upload_maximo") & """>"
     End If
     
-    ShowHTML "      <tr><td><font size=""1""><b><u>D</u>ata/hora extração:</b><br><input " & w_Disabled & " accesskey=""D"" type=""text"" name=""w_data_arquivo"" class=""sti"" SIZE=""17"" MAXLENGTH=""17"" VALUE=""" & w_data_arquivo & """  onKeyDown=""FormataDataHora(this, event);"" ONMOUSEOVER=""popup('OBRIGATÓRIO. Informe a data e hora da extração do aquivo. Digite apenas números. O sistema colocará os separadores automaticamente.','white')""; ONMOUSEOUT=""kill()""></td>"
-    ShowHTML "      <tr><td><font size=""1""><b>A<u>r</u>quivo:</b><br><input " & w_Disabled & " accesskey=""R"" type=""file"" name=""w_arquivo_recebido"" class=""STI"" SIZE=""80"" MAXLENGTH=""100"" VALUE="""" ONMOUSEOVER=""popup('OBRIGATÓRIO. Clique no botão ao lado para localizar o arquivo (sua extensão deve ser .TXT). Ele será transferido automaticamente para o servidor.','white')""; ONMOUSEOUT=""kill()"">"
+    ShowHTML "      <tr><td><font size=""1""><b><u>D</u>ata/hora extração:</b><br><input " & w_Disabled & " accesskey=""D"" type=""text"" name=""w_data_arquivo"" class=""sti"" SIZE=""17"" MAXLENGTH=""17"" VALUE=""" & w_data_arquivo & """  onKeyDown=""FormataDataHora(this, event);"" title=""OBRIGATÓRIO. Informe a data e hora da extração do aquivo. Digite apenas números. O sistema colocará os separadores automaticamente.""></td>"
+    ShowHTML "      <tr><td><font size=""1""><b>A<u>r</u>quivo:</b><br><input " & w_Disabled & " accesskey=""R"" type=""file"" name=""w_arquivo_recebido"" class=""STI"" SIZE=""80"" MAXLENGTH=""100"" VALUE="""" title=""OBRIGATÓRIO. Clique no botão ao lado para localizar o arquivo (sua extensão deve ser .TXT). Ele será transferido automaticamente para o servidor."">"
     ShowHTML "      <tr><td align=""LEFT""><font size=""1""><b><U>A</U>ssinatura Eletrônica:<BR> <INPUT ACCESSKEY=""A"" class=""sti"" type=""PASSWORD"" name=""w_assinatura"" size=""30"" maxlength=""30"" value=""""></td></tr>"
     ShowHTML "      <tr><td align=""center""><hr>"
     If O = "E" Then

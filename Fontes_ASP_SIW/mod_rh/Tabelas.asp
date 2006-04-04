@@ -1189,7 +1189,7 @@ Sub Cargo
        While Not RS.EOF and RS.AbsolutePage = P3
          If w_cor = conTrBgColor or w_cor = "" Then w_cor = conTrAlternateBgColor Else w_cor = conTrBgColor End If
          ShowHTML "      <tr bgcolor=""" & w_cor & """ valign=""top"">"
-         ShowHTML "        <td align=""left"" ONMOUSEOVER=""popup('"&RS("ds_tipo_posto")&"','white')""; ONMOUSEOUT=""kill()""><font size=""1"">" & RS("nm_tipo_posto")   & "</td>"
+         ShowHTML "        <td align=""left"" title="""&RS("ds_tipo_posto")&"""><font size=""1"">" & RS("nm_tipo_posto")   & "</td>"
          ShowHTML "        <td align=""left""><font size=""1"">" & RS("nome")   & "</td>"
          ShowHTML "        <td align=""left""><font size=""1"">" & RS("nm_formacao")   & "</td>"
          If RS("ativo") = "N" Then

@@ -110,13 +110,13 @@ Sub Frames
    ShowHTML "  <TITLE>" & conSgSistema & " - " & conNmSistema & "</TITLE> "
    ShowHTML "  <link href=""images/sbpi.ico"" rel=""shortcut icon"">"
    ShowHTML "  </HEAD> "
-   ShowHTML "    <FRAMESET COLS=""25%,*""> "
-   ShowHTML "     <FRAME SRC=""Menu.asp?par=ExibeDocs"" SCROLLING=YES FRAMEBORDER=""0"" FRAMESPACING=0 NAME=""menu""> "
+   ShowHTML "    <FRAMESET COLS=""20%,80%""> "
+   ShowHTML "     <FRAME SRC=""Menu.asp?par=ExibeDocs"" SCROLLING=""AUTO"" FRAMEBORDER=""0"" FRAMESPACING=0 NAME=""menu""> "
    If Session("cliente") = "" or Session("cliente") = 1 Then
-      ShowHTML "     <FRAME SRC=""branco.htm"" FRAMEBORDER=""0"" NAME=""content""> "
+      ShowHTML "     <FRAME SRC=""branco.htm"" FRAMEBORDER=""0"" SCROLLING=""AUTO""  FRAMEBORDER=""0"" FRAMESPACING=0 NAME=""content""> "
       'ShowHTML "     <FRAME SRC=""ecw/Trabalho.asp?par=ExibeFigura"" FRAMEBORDER=""0"" NAME=""content""> "
    Else
-      ShowHTML "     <FRAME SRC="""" FRAMEBORDER=""0"" NAME=""content""> "
+      ShowHTML "     <FRAME FRAMEBORDER=""0"" SCROLLING=""AUTO""  FRAMEBORDER=""0"" FRAMESPACING=0 NAME=""content""> "
    End If
    ShowHTML "    <NOFRAMES> "
    ShowHTML "     <BODY BGCOLOR=""#FFFFFF"" BACKGROUND=""images/bg.jpg"" BGPROPERTIES=""FIXED""> "

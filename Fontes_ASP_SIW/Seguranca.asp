@@ -935,7 +935,7 @@ Sub Menu
      Else
         w_texto = "Não há outros números de ordem vinculados à subordinação desta opção"
      End If
-     ShowHTML "              <td align=""left""><font size=""1""><b><u>O</u>rdem:<br><INPUT ACCESSKEY=""O"" TYPE=""TEXT"" CLASS=""sti"" NAME=""w_ordem"" SIZE=4 MAXLENGTH=4 VALUE=""" & w_ordem & """ " & w_Disabled & " ONFOCUS=""popup1('" & Replace(w_texto,CHR(13)&CHR(10),"<BR>") & "','white')""; ONBLUR=""kill()""></td>"
+     ShowHTML "              <td align=""left""><font size=""1""><b><u>O</u>rdem:<br><INPUT ACCESSKEY=""O"" TYPE=""TEXT"" CLASS=""sti"" NAME=""w_ordem"" SIZE=4 MAXLENGTH=4 VALUE=""" & w_ordem & """ " & w_Disabled & " TITLE=""" & Replace(w_texto,CHR(13)&CHR(10),"<BR>") & """></td>"
      ShowHTML "          <tr><td width=""5%"">"
      ShowHTML "              <td colspan=3><font size=""1""><b><U>F</U>inalidade:<br><TEXTAREA ACCESSKEY=""F"" class=""sti"" name=""w_finalidade"" rows=3 cols=80 title=""Descreva sucintamente a finalidade desta opção. Esta informação será apresentada quando o usuário passar o mouse em cima da opção, no menu."">" & w_finalidade & "</textarea></td>"
      

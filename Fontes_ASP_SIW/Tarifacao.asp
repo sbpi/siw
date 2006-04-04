@@ -509,7 +509,7 @@ Sub Informar
        If w_responsavel > "" Then
           ShowHTML "      <tr><td><font size=""1""><b>Responsável pela ligação:<br><font size=2>" & w_responsavel & "</td>"
        End If
-       ShowHTML "      <tr><td><font size=""1""><b><U>P</U>essoa de contato:<br><INPUT ACCESSKEY=""P"" " & w_Disabled & " class=""STI"" type=""text"" name=""w_outra_parte_contato"" size=""60"" maxlength=""60"" value=""" & w_outra_parte_contato & """ " & w_Disabled & " ONFOCUS=""popup1('" & Replace(w_texto,CHR(13)&CHR(10),"<BR>") & "','white')""; ONBLUR=""kill()""></td>"
+       ShowHTML "      <tr><td><font size=""1""><b><U>P</U>essoa de contato:<br><INPUT ACCESSKEY=""P"" " & w_Disabled & " class=""STI"" type=""text"" name=""w_outra_parte_contato"" size=""60"" maxlength=""60"" value=""" & w_outra_parte_contato & """ " & w_Disabled & " TITLE=""" & Replace(w_texto,CHR(13)&CHR(10),"<BR>") & """></td>"
        'ShowHTML "      <tr><td><font size=""1""><b><U>P</U>essoa de contato:<br><INPUT ACCESSKEY=""P"" " & w_Disabled & " class=""STI"" type=""text"" name=""w_outra_parte_contato"" size=""60"" maxlength=""60"" value=""" & w_outra_parte_contato & """></td>"
        ShowHTML "      <tr><td><font size=""1""><b>Assu<U>n</U>to:<br><TEXTAREA ACCESSKEY=""N"" " & w_Disabled & " class=""STI"" name=""w_assunto"" rows=""5"" cols=75>" & w_assunto & "</textarea></td>"
     End If
