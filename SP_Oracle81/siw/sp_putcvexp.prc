@@ -12,6 +12,7 @@ create or replace procedure SP_PutCVExp
     p_duracao_mes          in number    default null, 
     p_duracao_ano          in number    default null,    
     p_motivo_saida         in varchar2  default null,
+    p_ultimo_salario       in number    default null,
     p_atividades           in varchar2  default null
    ) is
 begin
@@ -21,12 +22,12 @@ begin
         (sq_cvpesexp,         sq_pessoa,         sq_area_conhecimento,   sq_cidade,
          sq_eo_tipo_posto,    sq_tipo_vinculo,   empregador,             entrada,
          saida,               duracao_mes,       duracao_ano,            motivo_saida,
-         atividades)
+         ultimo_salario,      atividades)
       (select 
          sq_cvpesexp.nextval, p_pessoa,          p_sq_area_conhecimento, p_sq_cidade,
          p_sq_eo_tipo_posto,  p_sq_tipo_vinculo, p_empregador,           p_entrada,
          p_saida,             p_duracao_mes,     p_duracao_ano,          p_motivo_saida,
-         p_atividades
+         p_ultimo_salario,    p_atividades
        from dual);
    Elsif p_operacao = 'A' Then -- Alteração
       -- Atualiza a tabela de experiência profissional
@@ -40,7 +41,8 @@ begin
              saida                = p_saida,
              duracao_mes          = p_duracao_mes,
              duracao_ano          = p_duracao_ano,
-             motivo_saida         = p_motivo_saida,                                                    
+             motivo_saida         = p_motivo_saida,
+             ultimo_salario       = p_ultimo_salario,
              atividades           = p_atividades
        where sq_cvpesexp = p_chave;
    Elsif p_operacao = 'E' Then -- Exclusão
@@ -50,4 +52,3 @@ begin
    End If;
 end SP_PutCVExp;
 /
-
