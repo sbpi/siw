@@ -23,7 +23,16 @@ begin
                                      where t2.sq_pessoa = p_cliente
                                    )
          order by 3;
+   Elsif p_restricao = 'TELEFONIA' Then
+      -- Recupera a lista de módulos contratados pelo cliente
+      open p_result for
+         select a.sq_pessoa, b.sq_modulo, b.nome, b.sigla, b.objetivo_geral
+           from siw_cliente_modulo    a
+                inner join siw_modulo b on (a.sq_modulo = b.sq_modulo and
+                                            b.sigla     = 'TT'
+                                           )
+          where a.sq_pessoa = p_cliente
+         order by nome;
    End If;
 end SP_GetSiwCliModLis;
 /
-
