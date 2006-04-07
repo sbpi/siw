@@ -119,8 +119,6 @@ Sub Mesa
      DB_GetPersonData RS, w_cliente, w_usuario, null, null
      If IsNull(Tvl(RS("sq_usuario_central"))) Then w_telefonia = "" End If
      DesconectaBD
-     
-
   End If
   
   Cabecalho
