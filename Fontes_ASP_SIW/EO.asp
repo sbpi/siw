@@ -173,7 +173,7 @@ Sub Unidade
    ShowHTML "<table border=""0"" cellpadding=""0"" cellspacing=""0"" width=""100%"">"
    If InStr("L",O) > 0 Then   
       w_Imagem = conRootSIW & "images/ballw.gif"
-      ShowHTML "<tr><td><font size=""2"">"
+      ShowHTML "<tr><td>"
       If w_libera_edicao = "S" Then
          ShowHTML "<a accesskey=""I"" class=""ss"" href=""" & w_Pagina & par & "&TP=" & TP & "&R=" & w_Pagina & par & "&O=I&P1=" & P1 & "&P2=" & P2 & "&P3=" & P3 & "&P4=" & P4 & "&SG=" & SG & """><u>I</u>ncluir</a>&nbsp;"
       End If
@@ -193,140 +193,140 @@ Sub Unidade
          While Not RS.EOF
             w_ContImg = w_ContImg + 1
             w_ContOut = w_ContOut + 1
-            ShowHTML "<li id=""Xnode"" class=""Xnode""><div onClick=""xSwapImg(document.getElementById('Ximg" & w_contImg & "'),'" & w_imagem & "','" & w_imagem & "');xMenuShowHide(document.getElementById('Xtree" & w_contOut & "'));""><img id=""Ximg" & w_contImg & """ src=""" & w_imagem & """ border=""0"">&nbsp;" & RS("NOME") & " "
+            ShowHTML "<li id=""Xnode"" class=""Xnode"" nowrap><span onClick=""xSwapImg(document.getElementById('Ximg" & w_contImg & "'),'" & w_imagem & "','" & w_imagem & "');xMenuShowHide(document.getElementById('Xtree" & w_contOut & "'));""><img id=""Ximg" & w_contImg & """ src=""" & w_imagem & """ border=""0"">&nbsp;" & RS("NOME") & "</span> "
             If w_libera_edicao = "S" Then
                ShowHTML "<A class=""Xlink"" HREF=""" & w_Pagina & par & "&R=" & w_Pagina & par & "&O=A&w_sq_unidade=" & RS("sq_unidade") & "&P1=" & P1 & "&P2=" & P2 & "&P3=" & P3 & "&P4=" & P4 & "&TP=" & TP & "&SG=" & SG & """>Alterar</A>&nbsp"
                ShowHTML "<A class=""Xlink"" HREF=""" & w_Pagina & par & "&R=" & w_Pagina & par & "&O=E&w_sq_unidade=" & RS("sq_unidade") & "&P1=" & P1 & "&P2=" & P2 & "&P3=" & P3 & "&P4=" & P4 & "&TP=" & TP & "&SG=" & SG & """>Excluir</A>&nbsp"           
             End If
             ShowHTML "<a class=""Xlink"" href=""#"" onclick=""window.open('" & w_pagina & "Localizacao&P1=" & P1 &"&P2=" & P2 &"&P3=" & P3 &"&P4=" & P4 &"&TP=" & TP & " - Localização&O=L&SG=LUORG&w_sq_unidade=" & RS("sq_unidade") & "','Local','toolbar=no,width=780,height=350,top=30,left=10,scrollbars=yes,resizable=yes');"">Locais</a>&nbsp"
             ShowHTML "<a class=""Xlink"" href=""#"" onclick=""window.open('" & w_pagina & "Responsavel&P1=" & P1 &"&P2=" & P2 &"&P3=" & P3 &"&P4=" & P4 &"&TP=" & TP &" - Responsáveis&O=L&SG=RESPONSAVEL&w_sq_unidade=" & RS("sq_unidade") & "','Responsaveis','toolbar=no,width=780,height=350,top=30,left=10,scrollbars=yes,resizable=yes');"">Responsáveis</a>"
-            ShowHTML "</div></li>"
+            ShowHTML "</li>"
             ShowHTML "   <ul id=""Xtree" & w_contOut & """ class=""Xtree"" style=""display:true;"">"
             DB_GetUorgList RS1, Session("p_cliente"), RS("sq_unidade"), "FILHO", null, null
             RS1.Sort = "Ordem"
             While Not RS1.EOF
                w_ContImg = w_ContImg + 1
                w_ContOut = w_ContOut + 1
-               ShowHTML "   <li id=""Xnode"" class=""Xnode""><div onClick=""xSwapImg(document.getElementById('Ximg" & w_contImg & "'),'" & w_imagem & "','" & w_imagem & "');xMenuShowHide(document.getElementById('Xtree" & w_contOut & "'));""><img id=""Ximg" & w_contImg & """ src=""" & w_imagem & """ border=""0"">&nbsp;" & RS1("NOME")
+               ShowHTML "   <li id=""Xnode"" class=""Xnode""><span onClick=""xSwapImg(document.getElementById('Ximg" & w_contImg & "'),'" & w_imagem & "','" & w_imagem & "');xMenuShowHide(document.getElementById('Xtree" & w_contOut & "'));""><img id=""Ximg" & w_contImg & """ src=""" & w_imagem & """ border=""0"">&nbsp;" & RS1("NOME") & "</span> "
                If w_libera_edicao = "S" Then
                   ShowHTML " <A class=""Xlink"" HREF=""" & w_Pagina & par & "&R=" & w_Pagina & par & "&O=A&w_sq_unidade=" & RS1("sq_unidade") & "&P1=" & P1 & "&P2=" & P2 & "&P3=" & P3 & "&P4=" & P4 & "&TP=" & TP & " - Localização&SG=" & SG & """>Alterar</A>&nbsp"
                   ShowHTML " <A class=""Xlink"" HREF=""" & w_Pagina & par & "&R=" & w_Pagina & par & "&O=E&w_sq_unidade=" & RS1("sq_unidade") & "&P1=" & P1 & "&P2=" & P2 & "&P3=" & P3 & "&P4=" & P4 & "&TP=" & TP & "&SG=" & SG & """>Excluir</A>&nbsp"
                End If
                ShowHTML "<a class=""Xlink"" href=""#"" onclick=""window.open('" & w_pagina & "Localizacao&P1=" & P1 &"&P2=" & P2 &"&P3=" & P3 &"&P4=" & P4 &"&TP=" & TP &" - Localização&O=L&SG=LUORG&w_sq_unidade=" & RS1("sq_unidade") & "','Local','toolbar=no,width=780,height=350,top=30,left=10,scrollbars=yes,resizable=yes')"">Locais</a>&nbsp"
                ShowHTML "<a class=""Xlink"" href=""#"" onclick=""window.open('" & w_pagina & "Responsavel&P1=" & P1 &"&P2=" & P2 &"&P3=" & P3 &"&P4=" & P4 &"&TP=" & TP &" - Responsáveis&O=L&SG=RESPONSAVEL&w_sq_unidade=" & RS1("sq_unidade") & "','Responsaveis','toolbar=no,width=780,height=350,top=30,left=10,scrollbars=yes,resizable=yes');"">Responsáveis</a>&nbsp"
-               ShowHTML "   </div></li>"
+               ShowHTML "   </li>"
                ShowHTML "      <ul id=""Xtree" & w_contOut & """ class=""Xtree"" style=""display:none;"">"
                DB_GetUorgList RS2, Session("p_cliente"), RS1("sq_unidade"), "FILHO", null, null
                RS2.Sort = "Ordem"
                While Not RS2.EOF         
                  w_ContImg = w_ContImg + 1
                  w_ContOut = w_ContOut + 1
-                 ShowHTML "         <li id=""Xnode"" class=""Xnode""><div onClick=""xSwapImg(document.getElementById('Ximg" & w_contImg & "'),'" & w_imagem & "','" & w_imagem & "');xMenuShowHide(document.getElementById('Xtree" & w_contOut & "'));""><img id=""Ximg" & w_contImg & """ src=""" & w_imagem & """ border=""0"">&nbsp;" & RS2("NOME")
+                 ShowHTML "         <li id=""Xnode"" class=""Xnode""><span onClick=""xSwapImg(document.getElementById('Ximg" & w_contImg & "'),'" & w_imagem & "','" & w_imagem & "');xMenuShowHide(document.getElementById('Xtree" & w_contOut & "'));""><img id=""Ximg" & w_contImg & """ src=""" & w_imagem & """ border=""0"">&nbsp;" & RS2("NOME") & "</span> "
                  If w_libera_edicao = "S" Then
                     ShowHTML " <A class=""Xlink"" HREF=""" & w_Pagina & par & "&R=" & w_Pagina & par & "&O=A&w_sq_unidade=" & RS2("sq_unidade") & "&P1=" & P1 & "&P2=" & P2 & "&P3=" & P3 & "&P4=" & P4 & "&TP=" & TP & "&SG=" & SG & """>Alterar</A>&nbsp"
                     ShowHTML " <A class=""Xlink"" HREF=""" & w_Pagina & par & "&R=" & w_Pagina & par & "&O=E&w_sq_unidade=" & RS2("sq_unidade") & "&P1=" & P1 & "&P2=" & P2 & "&P3=" & P3 & "&P4=" & P4 & "&TP=" & TP & "&SG=" & SG & """>Excluir</A>&nbsp"
                  End If
                  ShowHTML "<a class=""Xlink"" href=""#"" onclick=""window.open('" & w_pagina & "Localizacao&P1=" & P1 &"&P2=" & P2 &"&P3=" & P3 &"&P4=" & P4 &"&TP=" & TP & " - Localização&O=L&SG=LUORG&w_sq_unidade=" & RS2("sq_unidade") & "','Local','toolbar=no,width=780,height=350,top=30,left=10,scrollbars=yes,resizable=yes')"">Locais</a>&nbsp"
                  ShowHTML "<a class=""Xlink"" href=""#"" onclick=""window.open('" & w_pagina & "Responsavel&P1=" & P1 &"&P2=" & P2 &"&P3=" & P3 &"&P4=" & P4 &"&TP=" & TP &" - Responsáveis&O=L&SG=RESPONSAVEL&w_sq_unidade=" & RS2("sq_unidade") & "','Responsaveis','toolbar=no,width=780,height=350,top=30,left=10,scrollbars=yes,resizable=yes');"">Responsáveis</a>&nbsp"
-                 ShowHTML "         </div></li>"
+                 ShowHTML "         </li>"
                  ShowHTML "            <ul id=""Xtree" & w_contOut & """ class=""Xtree"" style=""display:none;"">"
                  DB_GetUorgList RS3, Session("p_cliente"), RS2("sq_unidade"), "FILHO", null, null
                  RS3.Sort = "Ordem"
                  While Not RS3.EOF
                     w_ContImg = w_ContImg + 1
                     w_ContOut = w_ContOut + 1
-                    ShowHTML "            <li id=""Xnode"" class=""Xnode""><div onClick=""xSwapImg(document.getElementById('Ximg" & w_contImg & "'),'" & w_imagem & "','" & w_imagem & "');xMenuShowHide(document.getElementById('Xtree" & w_contOut & "'));""><img id=""Ximg" & w_contImg & """ src=""" & w_imagem & """ border=""0"">&nbsp;" & RS3("NOME")
+                    ShowHTML "            <li id=""Xnode"" class=""Xnode""><span onClick=""xSwapImg(document.getElementById('Ximg" & w_contImg & "'),'" & w_imagem & "','" & w_imagem & "');xMenuShowHide(document.getElementById('Xtree" & w_contOut & "'));""><img id=""Ximg" & w_contImg & """ src=""" & w_imagem & """ border=""0"">&nbsp;" & RS3("NOME") & "</span> "
                     If w_libera_edicao = "S" Then
                        ShowHTML " <A class=""Xlink"" HREF=""" & w_Pagina & par & "&R=" & w_Pagina & par & "&O=A&w_sq_unidade=" & RS3("sq_unidade") & "&P1=" & P1 & "&P2=" & P2 & "&P3=" & P3 & "&P4=" & P4 & "&TP=" & TP & "&SG=" & SG & """>Alterar</A>&nbsp"
                        ShowHTML " <A class=""Xlink"" HREF=""" & w_Pagina & par & "&R=" & w_Pagina & par & "&O=E&w_sq_unidade=" & RS3("sq_unidade") & "&P1=" & P1 & "&P2=" & P2 & "&P3=" & P3 & "&P4=" & P4 & "&TP=" & TP & "&SG=" & SG & """>Excluir</A>&nbsp"
                     End If
                     ShowHTML "<a class=""Xlink"" href=""#"" onclick=""window.open('" & w_pagina & "Localizacao&P1=" & P1 &"&P2=" & P2 &"&P3=" & P3 &"&P4=" & P4 &"&TP=" & TP &" - Localização&O=L&SG=LUORG&w_sq_unidade=" & RS3("sq_unidade") & "','Local','toolbar=no,width=780,height=350,top=30,left=10,scrollbars=yes,resizable=yes')"">Locais</a>&nbsp"
                     ShowHTML "<a class=""Xlink"" href=""#"" onclick=""window.open('" & w_pagina & "Responsavel&P1=" & P1 &"&P2=" & P2 &"&P3=" & P3 &"&P4=" & P4 &"&TP=" & TP &" - Responsáveis&O=L&SG=RESPONSAVEL&w_sq_unidade=" & RS3("sq_unidade") & "','Responsaveis','toolbar=no,width=780,height=350,top=30,left=10,scrollbars=yes,resizable=yes');"">Responsáveis</a>&nbsp"
-                    ShowHTML "            </div></li>"
+                    ShowHTML "            </li>"
                     ShowHTML "               <ul id=""Xtree" & w_contOut & """ class=""Xtree"" style=""display:none;"">"
                     DB_GetUorgList RS4, Session("p_cliente"), RS3("sq_unidade"), "FILHO", null, null
                     RS4.Sort = "Ordem"
                     While Not RS4.EOF
                        w_ContImg = w_ContImg + 1
                        w_ContOut = w_ContOut + 1
-                       ShowHTML "               <li id=""Xnode"" class=""Xnode""><div onClick=""xSwapImg(document.getElementById('Ximg" & w_contImg & "'),'" & w_imagem & "','" & w_imagem & "');xMenuShowHide(document.getElementById('Xtree" & w_contOut & "'));""><img id=""Ximg" & w_contImg & """ src=""" & w_imagem & """ border=""0"">&nbsp;" & RS4("NOME")
+                       ShowHTML "               <li id=""Xnode"" class=""Xnode""><span onClick=""xSwapImg(document.getElementById('Ximg" & w_contImg & "'),'" & w_imagem & "','" & w_imagem & "');xMenuShowHide(document.getElementById('Xtree" & w_contOut & "'));""><img id=""Ximg" & w_contImg & """ src=""" & w_imagem & """ border=""0"">&nbsp;" & RS4("NOME") & "</span> "
                        If w_libera_edicao = "S" Then
                           ShowHTML " <A class=""Xlink"" HREF=""" & w_Pagina & par & "&R=" & w_Pagina & par & "&O=A&w_sq_unidade=" & RS4("sq_unidade") & "&P1=" & P1 & "&P2=" & P2 & "&P3=" & P3 & "&P4=" & P4 & "&TP=" & TP & "&SG=" & SG & """>Alterar</A>&nbsp"
                           ShowHTML " <A class=""Xlink"" HREF=""" & w_Pagina & par & "&R=" & w_Pagina & par & "&O=E&w_sq_unidade=" & RS4("sq_unidade") & "&P1=" & P1 & "&P2=" & P2 & "&P3=" & P3 & "&P4=" & P4 & "&TP=" & TP & "&SG=" & SG & """>Excluir</A>&nbsp"
                        End If
                        ShowHTML "<a class=""Xlink"" href=""#"" onclick=""window.open('" & w_pagina & "Localizacao&P1=" & P1 &"&P2=" & P2 &"&P3=" & P3 &"&P4=" & P4 &"&TP=" & TP &" - Localização&O=L&SG=LUORG&w_sq_unidade=" & RS4("sq_unidade") & "','Local','toolbar=no,width=780,height=350,top=30,left=10,scrollbars=yes,resizable=yes')"">Locais</a>&nbsp"
                        ShowHTML "<a class=""Xlink"" href=""#"" onclick=""window.open('" & w_pagina & "Responsavel&P1=" & P1 &"&P2=" & P2 &"&P3=" & P3 &"&P4=" & P4 &"&TP=" & TP &" - Responsáveis&O=L&SG=RESPONSAVEL&w_sq_unidade=" & RS4("sq_unidade") & "','Responsaveis','toolbar=no,width=780,height=350,top=30,left=10,scrollbars=yes,resizable=yes');"">Responsáveis</a>&nbsp"
-                       ShowHTML "               </div></li>"
+                       ShowHTML "               </li>"
                        ShowHTML "                  <ul id=""Xtree" & w_contOut & """ class=""Xtree"" style=""display:none;"">"
                        DB_GetUorgList RS5, Session("p_cliente"), RS4("sq_unidade"), "FILHO", null, null
                        RS5.Sort = "Ordem"
                        While Not RS5.EOF
                           w_ContImg = w_ContImg + 1
                           w_ContOut = w_ContOut + 1
-                          ShowHTML "                  <li id=""Xnode"" class=""Xnode""><div onClick=""xSwapImg(document.getElementById('Ximg" & w_contImg & "'),'" & w_imagem & "','" & w_imagem & "');xMenuShowHide(document.getElementById('Xtree" & w_contOut & "'));""><img id=""Ximg" & w_contImg & """ src=""" & w_imagem & """ border=""0"">&nbsp;" & RS5("NOME")
+                          ShowHTML "                  <li id=""Xnode"" class=""Xnode""><span onClick=""xSwapImg(document.getElementById('Ximg" & w_contImg & "'),'" & w_imagem & "','" & w_imagem & "');xMenuShowHide(document.getElementById('Xtree" & w_contOut & "'));""><img id=""Ximg" & w_contImg & """ src=""" & w_imagem & """ border=""0"">&nbsp;" & RS5("NOME") & "</span> "
                           If w_libera_edicao = "S" Then
                              ShowHTML " <A class=""Xlink"" HREF=""" & w_Pagina & par & "&R=" & w_Pagina & par & "&O=A&w_sq_unidade=" & RS5("sq_unidade") & "&P1=" & P1 & "&P2=" & P2 & "&P3=" & P3 & "&P4=" & P4 & "&TP=" & TP & "&SG=" & SG & """>Alterar</A>&nbsp"
                              ShowHTML " <A class=""Xlink"" HREF=""" & w_Pagina & par & "&R=" & w_Pagina & par & "&O=E&w_sq_unidade=" & RS5("sq_unidade") & "&P1=" & P1 & "&P2=" & P2 & "&P3=" & P3 & "&P4=" & P4 & "&TP=" & TP & "&SG=" & SG & """>Excluir</A>&nbsp"
                           End If
                           ShowHTML "<a class=""Xlink"" href=""#"" onclick=""window.open('" & w_pagina & "Localizacao&P1=" & P1 &"&P2=" & P2 &"&P3=" & P3 &"&P4=" & P4 &"&TP=" & TP &" - Localização&O=L&SG=LUORG&w_sq_unidade=" & RS5("sq_unidade") & "','Local','toolbar=no,width=780,height=350,top=30,left=10,scrollbars=yes,resizable=yes')"">Locais</a>&nbsp"
                           ShowHTML "<a class=""Xlink"" href=""#"" onclick=""window.open('" & w_pagina & "Responsavel&P1=" & P1 &"&P2=" & P2 &"&P3=" & P3 &"&P4=" & P4 &"&TP=" & TP &" - Responsáveis&O=L&SG=RESPONSAVEL&w_sq_unidade=" & RS5("sq_unidade") & "','Responsaveis','toolbar=no,width=780,height=350,top=30,left=10,scrollbars=yes,resizable=yes');"">Responsáveis</a>&nbsp"
-                          ShowHTML "                  </div></li>"
+                          ShowHTML "                  </li>"
                           ShowHTML "                     <ul id=""Xtree" & w_contOut & """ class=""Xtree"" style=""display:none;"">"
                           DB_GetUorgList RS6, Session("p_cliente"), RS5("sq_unidade"), "FILHO", null, null
                           RS6.Sort = "Ordem"
                           While Not RS6.EOF
                              w_ContImg = w_ContImg + 1
                              w_ContOut = w_ContOut + 1
-                             ShowHTML "                     <li id=""Xnode"" class=""Xnode""><div onClick=""xSwapImg(document.getElementById('Ximg" & w_contImg & "'),'" & w_imagem & "','" & w_imagem & "');xMenuShowHide(document.getElementById('Xtree" & w_contOut & "'));""><img id=""Ximg" & w_contImg & """ src=""" & w_imagem & """ border=""0"">&nbsp;" & RS6("NOME")
+                             ShowHTML "                     <li id=""Xnode"" class=""Xnode""><span onClick=""xSwapImg(document.getElementById('Ximg" & w_contImg & "'),'" & w_imagem & "','" & w_imagem & "');xMenuShowHide(document.getElementById('Xtree" & w_contOut & "'));""><img id=""Ximg" & w_contImg & """ src=""" & w_imagem & """ border=""0"">&nbsp;" & RS6("NOME") & "</span> "
                              If w_libera_edicao = "S" Then
                                 ShowHTML " <A class=""Xlink"" HREF=""" & w_Pagina & par & "&R=" & w_Pagina & par & "&O=A&w_sq_unidade=" & RS6("sq_unidade") & "&P1=" & P1 & "&P2=" & P2 & "&P3=" & P3 & "&P4=" & P4 & "&TP=" & TP & "&SG=" & SG & """>Alterar</A>&nbsp"
                                 ShowHTML " <A class=""Xlink"" HREF=""" & w_Pagina & par & "&R=" & w_Pagina & par & "&O=E&w_sq_unidade=" & RS6("sq_unidade") & "&P1=" & P1 & "&P2=" & P2 & "&P3=" & P3 & "&P4=" & P4 & "&TP=" & TP & "&SG=" & SG & """>Excluir</A>&nbsp"
                              End If
                              ShowHTML "<a class=""Xlink"" href=""#"" onclick=""window.open('" & w_pagina & "Localizacao&P1=" & P1 &"&P2=" & P2 &"&P3=" & P3 &"&P4=" & P4 &"&TP=" & TP &" - Localização&O=L&SG=LUORG&w_sq_unidade=" & RS6("sq_unidade") & "','Local','toolbar=no,width=780,height=350,top=30,left=10,scrollbars=yes,resizable=yes')"">Locais</a>&nbsp"
                              ShowHTML "<a class=""Xlink"" href=""#"" onclick=""window.open('" & w_pagina & "Responsavel&P1=" & P1 &"&P2=" & P2 &"&P3=" & P3 &"&P4=" & P4 &"&TP=" & TP &" - Responsáveis&O=L&SG=RESPONSAVEL&w_sq_unidade=" & RS6("sq_unidade") & "','Responsaveis','toolbar=no,width=780,height=350,top=30,left=10,scrollbars=yes,resizable=yes');"">Responsáveis</a>&nbsp"
-                             ShowHTML "                     </div></li>"
+                             ShowHTML "                     </li>"
                              ShowHTML "                        <ul id=""Xtree" & w_contOut & """ class=""Xtree"" style=""display:none;"">"
                              DB_GetUorgList RS7, Session("p_cliente"), RS6("sq_unidade"), "FILHO", null, null
                              RS7.Sort = "Ordem"
                              While Not RS7.EOF
                                 w_ContImg = w_ContImg + 1
                                 w_ContOut = w_ContOut + 1
-                                ShowHTML "                        <li id=""Xnode"" class=""Xnode""><div onClick=""xSwapImg(document.getElementById('Ximg" & w_contImg & "'),'" & w_imagem & "','" & w_imagem & "');xMenuShowHide(document.getElementById('Xtree" & w_contOut & "'));""><img id=""Ximg" & w_contImg & """ src=""" & w_imagem & """ border=""0"">&nbsp;" & RS7("NOME")
+                                ShowHTML "                        <li id=""Xnode"" class=""Xnode""><span onClick=""xSwapImg(document.getElementById('Ximg" & w_contImg & "'),'" & w_imagem & "','" & w_imagem & "');xMenuShowHide(document.getElementById('Xtree" & w_contOut & "'));""><img id=""Ximg" & w_contImg & """ src=""" & w_imagem & """ border=""0"">&nbsp;" & RS7("NOME") & "</span> "
                                 If w_libera_edicao = "S" Then
                                    ShowHTML " <A class=""Xlink"" HREF=""" & w_Pagina & par & "&R=" & w_Pagina & par & "&O=A&w_sq_unidade=" & RS7("sq_unidade") & "&P1=" & P1 & "&P2=" & P2 & "&P3=" & P3 & "&P4=" & P4 & "&TP=" & TP & "&SG=" & SG & """>Alterar</A>&nbsp"
                                    ShowHTML " <A class=""Xlink"" HREF=""" & w_Pagina & par & "&R=" & w_Pagina & par & "&O=E&w_sq_unidade=" & RS7("sq_unidade") & "&P1=" & P1 & "&P2=" & P2 & "&P3=" & P3 & "&P4=" & P4 & "&TP=" & TP & "&SG=" & SG & """>Excluir</A>&nbsp"
                                 End If
                                 ShowHTML "<a class=""Xlink"" href=""#"" onclick=""window.open('" & w_pagina & "Localizacao&P1=" & P1 &"&P2=" & P2 &"&P3=" & P3 &"&P4=" & P4 &"&TP=" & TP &" - Localização&O=L&SG=LUORG&w_sq_unidade=" & RS7("sq_unidade") & "','Local','toolbar=no,width=780,height=350,top=30,left=10,scrollbars=yes,resizable=yes')"">Locais</a>&nbsp"
                                 ShowHTML "<a class=""Xlink"" href=""#"" onclick=""window.open('" & w_pagina & "Responsavel&P1=" & P1 &"&P2=" & P2 &"&P3=" & P3 &"&P4=" & P4 &"&TP=" & TP &" - Responsáveis&O=L&SG=RESPONSAVEL&w_sq_unidade=" & RS7("sq_unidade") & "','Responsaveis','toolbar=no,width=780,height=350,top=30,left=10,scrollbars=yes,resizable=yes');"">Responsáveis</a>&nbsp"
-                                ShowHTML "                        </div></li>"
+                                ShowHTML "                        </li>"
                                 ShowHTML "                           <ul id=""Xtree" & w_contOut & """ class=""Xtree"" style=""display:none;"">"
                                 DB_GetUorgList RS8, Session("p_cliente"), RS7("sq_unidade"), "FILHO", null, null
                                 RS8.Sort = "Ordem"
                                 While Not RS8.EOF
                                    w_ContImg = w_ContImg + 1
                                    w_ContOut = w_ContOut + 1
-                                   ShowHTML "                           <li id=""Xnode"" class=""Xnode""><div onClick=""xSwapImg(document.getElementById('Ximg" & w_contImg & "'),'" & w_imagem & "','" & w_imagem & "');xMenuShowHide(document.getElementById('Xtree" & w_contOut & "'));""><img id=""Ximg" & w_contImg & """ src=""" & w_imagem & """ border=""0"">&nbsp;" & RS8("NOME")
+                                   ShowHTML "                           <li id=""Xnode"" class=""Xnode""><span onClick=""xSwapImg(document.getElementById('Ximg" & w_contImg & "'),'" & w_imagem & "','" & w_imagem & "');xMenuShowHide(document.getElementById('Xtree" & w_contOut & "'));""><img id=""Ximg" & w_contImg & """ src=""" & w_imagem & """ border=""0"">&nbsp;" & RS8("NOME") & "</span> "
                                    If w_libera_edicao = "S" Then
                                       ShowHTML " <A class=""Xlink"" HREF=""" & w_Pagina & par & "&R=" & w_Pagina & par & "&O=A&w_sq_unidade=" & RS8("sq_unidade") & "&P1=" & P1 & "&P2=" & P2 & "&P3=" & P3 & "&P4=" & P4 & "&TP=" & TP & "&SG=" & SG & """>Alterar</A>&nbsp"
                                       ShowHTML " <A class=""Xlink"" HREF=""" & w_Pagina & par & "&R=" & w_Pagina & par & "&O=E&w_sq_unidade=" & RS8("sq_unidade") & "&P1=" & P1 & "&P2=" & P2 & "&P3=" & P3 & "&P4=" & P4 & "&TP=" & TP & "&SG=" & SG & """>Excluir</A>&nbsp"
                                    End If
                                    ShowHTML "<a class=""Xlink"" href=""#"" onclick=""window.open('" & w_pagina & "Localizacao&P1=" & P1 &"&P2=" & P2 &"&P3=" & P3 &"&P4=" & P4 &"&TP=" & TP &" - Localização&O=L&SG=LUORG&w_sq_unidade=" & RS8("sq_unidade") & "','Local','toolbar=no,width=780,height=350,top=30,left=10,scrollbars=yes,resizable=yes')"">Locais</a>&nbsp"
                                    ShowHTML "<a class=""Xlink"" href=""#"" onclick=""window.open('" & w_pagina & "Responsavel&P1=" & P1 &"&P2=" & P2 &"&P3=" & P3 &"&P4=" & P4 &"&TP=" & TP &" - Responsáveis&O=L&SG=RESPONSAVEL&w_sq_unidade=" & RS8("sq_unidade") & "','Responsaveis','toolbar=no,width=780,height=350,top=30,left=10,scrollbars=yes,resizable=yes');"">Responsáveis</a>&nbsp"
-                                   ShowHTML "                           </div></li>"
+                                   ShowHTML "                           </li>"
                                    ShowHTML "                              <ul id=""Xtree" & w_contOut & """ class=""Xtree"" style=""display:none;"">"
                                    DB_GetUorgList RS9, Session("p_cliente"), RS8("sq_unidade"), "FILHO", null, null
                                    RS9.Sort = "Ordem"
                                    While Not RS9.EOF
                                       w_ContImg = w_ContImg + 1
                                       w_ContOut = w_ContOut + 1
-                                      ShowHTML "                              <li id=""Xnode"" class=""Xnode""><div onClick=""xSwapImg(document.getElementById('Ximg" & w_contImg & "'),'" & w_imagem & "','" & w_imagem & "');xMenuShowHide(document.getElementById('Xtree" & w_contOut & "'));""><img id=""Ximg" & w_contImg & """ src=""" & w_imagem & """ border=""0"">&nbsp;" & RS9("NOME")
+                                      ShowHTML "                              <li id=""Xnode"" class=""Xnode""><span onClick=""xSwapImg(document.getElementById('Ximg" & w_contImg & "'),'" & w_imagem & "','" & w_imagem & "');xMenuShowHide(document.getElementById('Xtree" & w_contOut & "'));""><img id=""Ximg" & w_contImg & """ src=""" & w_imagem & """ border=""0"">&nbsp;" & RS9("NOME") & "</span> "
                                       If w_libera_edicao = "S" Then
                                          ShowHTML " <A class=""Xlink"" HREF=""" & w_Pagina & par & "&R=" & w_Pagina & par & "&O=A&w_sq_unidade=" & RS9("sq_unidade") & "&P1=" & P1 & "&P2=" & P2 & "&P3=" & P3 & "&P4=" & P4 & "&TP=" & TP & "&SG=" & SG & """>Alterar</A>&nbsp"
                                          ShowHTML " <A class=""Xlink"" HREF=""" & w_Pagina & par & "&R=" & w_Pagina & par & "&O=E&w_sq_unidade=" & RS9("sq_unidade") & "&P1=" & P1 & "&P2=" & P2 & "&P3=" & P3 & "&P4=" & P4 & "&TP=" & TP & "&SG=" & SG & """>Excluir</A>&nbsp"
                                       End If
                                       ShowHTML "<a class=""Xlink"" href=""#"" onclick=""window.open('" & w_pagina & "Localizacao&P1=" & P1 &"&P2=" & P2 &"&P3=" & P3 &"&P4=" & P4 &"&TP=" & TP &" - Localização&O=L&SG=LUORG&w_sq_unidade=" & RS9("sq_unidade") & "','Local','toolbar=no,width=780,height=350,top=30,left=10,scrollbars=yes,resizable=yes')"">Locais</a>&nbsp"
                                       ShowHTML "<a class=""Xlink"" href=""#"" onclick=""window.open('" & w_pagina & "Responsavel&P1=" & P1 &"&P2=" & P2 &"&P3=" & P3 &"&P4=" & P4 &"&TP=" & TP &" - Responsáveis&O=L&SG=RESPONSAVEL&w_sq_unidade=" & RS9("sq_unidade") & "','Responsaveis','toolbar=no,width=780,height=350,top=30,left=10,scrollbars=yes,resizable=yes');"">Responsáveis</a>&nbsp"
-                                      ShowHTML "                              </div></li>"
+                                      ShowHTML "                              </li>"
                                       RS9.MoveNext
                                    wend
                                    RS9.close
@@ -365,7 +365,7 @@ Sub Unidade
            RS.MoveNext
         Wend
         ShowHTML "</ul>"
-        ShowHTML "</div>"
+        ShowHTML "</span>"
       end if
       ShowHTML "    </table>"
       DesconectaBD
@@ -400,13 +400,13 @@ Sub Unidade
 
       ShowHTML "<tr bgcolor=""" & conTrBgColor & """><td>"
       ShowHTML "    <table width=""90%"" border=""0"">"
-      ShowHTML "      <tr><td valign=""top""><font size=""1""><b><U>N</U>ome:<br><INPUT ACCESSKEY=""N"" " & w_Disabled & " class=""sti"" type=""text"" name=""w_nome"" size=""50"" maxlength=""50"" value=""" & w_nome & """></td>"
+      ShowHTML "      <tr><td valign=""top""><b><U>N</U>ome:<br><INPUT ACCESSKEY=""N"" " & w_Disabled & " class=""sti"" type=""text"" name=""w_nome"" size=""50"" maxlength=""50"" value=""" & w_nome & """></td>"
       ShowHTML "      <tr align=""left""><td valign=""top""><table width=""100%"" cellpadding=0 cellspacing=0><tr>"
-      ShowHTML "        <td valign=""top""><font size=""1""><b><U>S</U>igla:<br><INPUT ACCESSKEY=""S"" " & w_Disabled & " class=""sti"" type=""text"" name=""w_sigla"" size=""20"" maxlength=""20"" value=""" & w_sigla & """></td>"
-      ShowHTML "        <td valign=""top""><font size=""1""><b><U>O</U>rdem:<br><INPUT ACCESSKEY=""O"" " & w_Disabled & " class=""sti"" type=""text"" name=""w_ordem"" size=""2"" maxlength=""2"" value=""" & w_ordem & """></td>"
-      ShowHTML "        <td valign=""top""><font size=""1""><b><U>C</U>ódigo:<br><INPUT ACCESSKEY=""C"" " & w_Disabled & " class=""sti"" type=""text"" name=""w_codigo"" size=""15"" maxlength=""15"" value=""" & w_codigo & """></td>"
+      ShowHTML "        <td valign=""top""><b><U>S</U>igla:<br><INPUT ACCESSKEY=""S"" " & w_Disabled & " class=""sti"" type=""text"" name=""w_sigla"" size=""20"" maxlength=""20"" value=""" & w_sigla & """></td>"
+      ShowHTML "        <td valign=""top""><b><U>O</U>rdem:<br><INPUT ACCESSKEY=""O"" " & w_Disabled & " class=""sti"" type=""text"" name=""w_ordem"" size=""2"" maxlength=""2"" value=""" & w_ordem & """></td>"
+      ShowHTML "        <td valign=""top""><b><U>C</U>ódigo:<br><INPUT ACCESSKEY=""C"" " & w_Disabled & " class=""sti"" type=""text"" name=""w_codigo"" size=""15"" maxlength=""15"" value=""" & w_codigo & """></td>"
       ShowHTML "      </tr></table></td></tr>"
-      ShowHTML "      <tr><td valign=""top""><font size=""1""><b><U>e</U>-Mail:<br><INPUT ACCESSKEY=""E"" " & w_Disabled & " class=""sti"" type=""text"" name=""w_email"" size=""60"" maxlength=""60"" value=""" & w_email & """></td></tr>"
+      ShowHTML "      <tr><td valign=""top""><b><U>e</U>-Mail:<br><INPUT ACCESSKEY=""E"" " & w_Disabled & " class=""sti"" type=""text"" name=""w_email"" size=""60"" maxlength=""60"" value=""" & w_email & """></td></tr>"
       ShowHTML "      <tr>"
       SelecaoTipoUnidade "<u>T</u>ipo Unidade:", "T", null, w_sq_tipo_unidade, Session("p_cliente"), "w_sq_tipo_unidade", null
       SelecaoEOAreaAtuacao "Á<u>r</u>ea Atuação:", "R", null, w_sq_area_atuacao, Session("p_cliente"), "w_sq_area_atuacao", null
@@ -433,7 +433,7 @@ Sub Unidade
       MontaRadioNS "<b>Unidade Pagadora:</b>", w_unidade_pagadora, "w_unidade_pagadora"
       ShowHTML "      </tr></table></td></tr>"
       MontaRadioSN "<b>Ativo:</b>", w_Ativo, "w_Ativo"
-      ShowHTML "      <tr><td valign=""top""><font size=""1""><b><U>A</U>ssinatura Eletrônica:<br><INPUT ACCESSKEY=""A"" class=""sti"" type=""PASSWORD"" name=""w_assinatura"" size=""30"" maxlength=""30"" value=""""></td>"
+      ShowHTML "      <tr><td valign=""top""><b><U>A</U>ssinatura Eletrônica:<br><INPUT ACCESSKEY=""A"" class=""sti"" type=""PASSWORD"" name=""w_assinatura"" size=""30"" maxlength=""30"" value=""""></td>"
       ShowHTML "      <tr><td align=""center"" colspan=""3"" height=""1"" bgcolor=""#000000"">"
       ShowHTML "      <tr><td align=""center"" colspan=""3"">"
       If O = "E" Then
@@ -563,30 +563,30 @@ Sub Localizacao
   ShowHTML "<table border=""0"" cellpadding=""0"" cellspacing=""0"" width=""100%"">"
   ShowHTML "<tr><td colspan=4 align=""center""><font size=""2""><b>" & w_nome_unidade & "&nbsp;"
   If O = "L" Then
-    ShowHTML "<tr><td><font size=""2""><a accesskey=""I"" class=""ss"" href=""" & w_Pagina & par & "&R=" & w_Pagina & par & "&O=I&P1=" & P1 & "&P2=" & P2 & "&P3=" & P3 & "&P4=" & P4 & "&TP=" & TP & "&SG=" & SG & "&w_sq_unidade=" & w_sq_unidade & """><u>I</u>ncluir</a>&nbsp;"
-    ShowHTML "    <font size=""2""><a accesskey=""F"" class=""ss"" href=""#"" onClick=""opener.focus(); window.close();""><u>F</u>echar</a>&nbsp;"
-    ShowHTML "    <td align=""right""><font size=""1""><b>Registros: " & RS.RecordCount    
+    ShowHTML "<tr><td><a accesskey=""I"" class=""ss"" href=""" & w_Pagina & par & "&R=" & w_Pagina & par & "&O=I&P1=" & P1 & "&P2=" & P2 & "&P3=" & P3 & "&P4=" & P4 & "&TP=" & TP & "&SG=" & SG & "&w_sq_unidade=" & w_sq_unidade & """><u>I</u>ncluir</a>&nbsp;"
+    ShowHTML "    <a accesskey=""F"" class=""ss"" href=""#"" onClick=""opener.focus(); window.close();""><u>F</u>echar</a>&nbsp;"
+    ShowHTML "    <td align=""right""><b>Registros: " & RS.RecordCount    
     ShowHTML "<tr><td align=""center"" colspan=3>"
     ShowHTML "    <TABLE WIDTH=""100%"" bgcolor=""" & conTableBgColor & """ BORDER=""" & conTableBorder & """ CELLSPACING=""" & conTableCellSpacing & """ CELLPADDING=""" & conTableCellPadding & """ BorderColorDark=""" & conTableBorderColorDark & """ BorderColorLight=""" & conTableBorderColorLight & """>"
     ShowHTML "        <tr bgcolor=""" & conTrBgColor & """ align=""center"">"
-    ShowHTML "          <td><font size=""1""><b>Localização</font></td>"
-    ShowHTML "          <td><font size=""1""><b>Cidade</font></td>"
-    ShowHTML "          <td><font size=""1""><b>Telefone</font></td>"
-    ShowHTML "          <td><font size=""1""><b>Ramal</font></td>"
-    ShowHTML "          <td><font size=""1""><b>Ativo</font></td>"
-    ShowHTML "          <td><font size=""1""><b>Operações</font></td>"
+    ShowHTML "          <td><b>Localização</font></td>"
+    ShowHTML "          <td><b>Cidade</font></td>"
+    ShowHTML "          <td><b>Telefone</font></td>"
+    ShowHTML "          <td><b>Ramal</font></td>"
+    ShowHTML "          <td><b>Ativo</font></td>"
+    ShowHTML "          <td><b>Operações</font></td>"
     ShowHTML "        </tr>"
     If RS.EOF Then
         ShowHTML "      <tr bgcolor=""" & conTrBgColor & """><td colspan=6 align=""center""><font  size=""2""><b>Não foram encontrados registros.</b></td></tr>"
     Else
       While Not RS.EOF
         ShowHTML "      <tr bgcolor=""" & conTrBgColor & """>"
-        ShowHTML "        <td align=""left""><font size=""1"">" & RS("nome") & "</td>"
-        ShowHTML "        <td align=""left""><font size=""1"">" & RS("cidade") & "</td>"
-        ShowHTML "        <td align=""center""><font size=""1"">" & RS("telefone") & "&nbsp;</td>"
-        ShowHTML "        <td align=""center""><font size=""1"">" & RS("ramal") & "&nbsp;</td>"
-        ShowHTML "        <td align=""center""><font size=""1"">" & RS("ativo") & "</td>"
-        ShowHTML "        <td align=""top"" nowrap><font size=""1"">"
+        ShowHTML "        <td align=""left"">" & RS("nome") & "</td>"
+        ShowHTML "        <td align=""left"">" & RS("cidade") & "</td>"
+        ShowHTML "        <td align=""center"">" & RS("telefone") & "&nbsp;</td>"
+        ShowHTML "        <td align=""center"">" & RS("ramal") & "&nbsp;</td>"
+        ShowHTML "        <td align=""center"">" & RS("ativo") & "</td>"
+        ShowHTML "        <td align=""top"" nowrap>"
         ShowHTML "          <A class=""hl"" HREF=""" & w_Pagina & par & "&R=" & w_Pagina & par & "&O=A&w_sq_localizacao=" & RS("sq_localizacao") & "&P1=" & P1 & "&P2=" & P2 & "&P3=" & P3 & "&P4=" & P4 & "&TP=" & TP & "&SG=" & SG & "&w_sq_unidade=" & w_sq_unidade & """>Alterar</A>&nbsp"
         ShowHTML "          <A class=""hl"" HREF=""" & w_Pagina & par & "&R=" & w_Pagina & par & "&O=E&w_sq_localizacao=" & RS("sq_localizacao") & "&P1=" & P1 & "&P2=" & P2 & "&P3=" & P3 & "&P4=" & P4 & "&TP=" & TP & "&SG=" & SG & "&w_sq_unidade=" & w_sq_unidade & """>Excluir</A>&nbsp"
         ShowHTML "        </td>"
@@ -611,17 +611,17 @@ Sub Localizacao
     ShowHTML "      <tr>"
     SelecaoEndereco "En<u>d</u>ereço:", "D", null, w_sq_pessoa_endereco, w_cliente, "w_sq_pessoa_endereco", "FISICO"
     ShowHTML "      </tr>"
-    ShowHTML "      <tr><td valign=""top""><font size=""1""><b><U>L</U>ocalização:<br><INPUT ACCESSKEY=""L"" " & w_Disabled & " class=""sti"" type=""text"" name=""w_nome"" size=""30"" maxlength=""30"" value=""" & w_nome & """></td>"
+    ShowHTML "      <tr><td valign=""top""><b><U>L</U>ocalização:<br><INPUT ACCESSKEY=""L"" " & w_Disabled & " class=""sti"" type=""text"" name=""w_nome"" size=""30"" maxlength=""30"" value=""" & w_nome & """></td>"
     ShowHTML "      <tr><td valign=""top""><table width=""100%"" cellpadding=0 cellspacing=0><tr valign=""top"">"
-    ShowHTML "          <td><font size=""1""><b><U>T</U>elefone:<br><INPUT ACCESSKEY=""T"" " & w_Disabled & " class=""sti"" name=""w_telefone"" size=""12"" maxlength=""12"" value=""" & w_telefone & """></INPUT></td>"
-    ShowHTML "          <td><font size=""1""><b><U>R</U>amal:<br><INPUT ACCESSKEY=""R"" " & w_Disabled & " class=""sti"" name=""w_ramal"" size=""6"" maxlength=""6"" value=""" & w_ramal & """></INPUT></td>"
-    ShowHTML "          <td><font size=""1""><b><U>F</U>ax:<br><INPUT ACCESSKEY=""F"" " & w_Disabled & " class=""sti"" type=""text"" name=""w_fax"" size=""12"" maxlength=""12"" value=""" & w_fax & """></td>"
-    ShowHTML "          <td><font size=""1""><b>T<U>e</U>lefone 2:<br><INPUT ACCESSKEY=""E"" " & w_Disabled & " class=""sti"" name=""w_telefone2"" size=""12"" maxlength=""12"" value=""" & w_telefone2 & """></INPUT></td>"
+    ShowHTML "          <td><b><U>T</U>elefone:<br><INPUT ACCESSKEY=""T"" " & w_Disabled & " class=""sti"" name=""w_telefone"" size=""12"" maxlength=""12"" value=""" & w_telefone & """></INPUT></td>"
+    ShowHTML "          <td><b><U>R</U>amal:<br><INPUT ACCESSKEY=""R"" " & w_Disabled & " class=""sti"" name=""w_ramal"" size=""6"" maxlength=""6"" value=""" & w_ramal & """></INPUT></td>"
+    ShowHTML "          <td><b><U>F</U>ax:<br><INPUT ACCESSKEY=""F"" " & w_Disabled & " class=""sti"" type=""text"" name=""w_fax"" size=""12"" maxlength=""12"" value=""" & w_fax & """></td>"
+    ShowHTML "          <td><b>T<U>e</U>lefone 2:<br><INPUT ACCESSKEY=""E"" " & w_Disabled & " class=""sti"" name=""w_telefone2"" size=""12"" maxlength=""12"" value=""" & w_telefone2 & """></INPUT></td>"
     ShowHTML "          </table>"
     ShowHTML "      <tr>"
     MontaRadioSN "<b>Ativo:</b>", w_Ativo, "w_Ativo"
     ShowHTML "      </tr>"
-    ShowHTML "      <tr><td valign=""top""><font size=""1""><b><U>A</U>ssinatura Eletrônica:<br><INPUT ACCESSKEY=""A"" class=""sti"" type=""PASSWORD"" name=""w_assinatura"" size=""30"" maxlength=""30"" value=""""></td>"
+    ShowHTML "      <tr><td valign=""top""><b><U>A</U>ssinatura Eletrônica:<br><INPUT ACCESSKEY=""A"" class=""sti"" type=""PASSWORD"" name=""w_assinatura"" size=""30"" maxlength=""30"" value=""""></td>"
     ShowHTML "      <tr><td align=""center"" colspan=""3"" height=""1"" bgcolor=""#000000"">"
     ShowHTML "      <tr><td align=""center"" colspan=""3"">"
     If O = "E" Then
@@ -755,15 +755,15 @@ Sub Responsavel
   ShowHTML "<table border=""0"" cellpadding=""0"" cellspacing=""0"" width=""100%"">"
   ShowHTML "<tr><td colspan=4 align=center><font size=""2""><b>" & w_nome_unidade & "&nbsp;"
   If O = "L" Then
-    ShowHTML "<tr><td><font size=""2""><a accesskey=""I"" class=""ss"" href=""" & w_Pagina & par & "&R=" & w_Pagina & par & "&O=I&P1=" & P1 & "&P2=" & P2 & "&P3=" & P3 & "&P4=" & P4 & "&TP=" & TP & "&SG=" & SG & "&w_sq_unidade=" & w_sq_unidade & """><u>I</u>ncluir</a>&nbsp;"
-    ShowHTML "    <font size=""2""><a accesskey=""F"" class=""ss"" href=""#"" onClick=""opener.focus(); window.close();""><u>F</u>echar</a>&nbsp;"
-    ShowHTML "    <td align=""right""><font size=""1""><b>Registros: " & RS.RecordCount    
+    ShowHTML "<tr><td><a accesskey=""I"" class=""ss"" href=""" & w_Pagina & par & "&R=" & w_Pagina & par & "&O=I&P1=" & P1 & "&P2=" & P2 & "&P3=" & P3 & "&P4=" & P4 & "&TP=" & TP & "&SG=" & SG & "&w_sq_unidade=" & w_sq_unidade & """><u>I</u>ncluir</a>&nbsp;"
+    ShowHTML "    <a accesskey=""F"" class=""ss"" href=""#"" onClick=""opener.focus(); window.close();""><u>F</u>echar</a>&nbsp;"
+    ShowHTML "    <td align=""right""><b>Registros: " & RS.RecordCount    
     ShowHTML "<tr><td colspan=3>"
     ShowHTML "    <TABLE WIDTH=""100%"" bgcolor=""" & conTableBgColor & """ BORDER=""" & conTableBorder & """ CELLSPACING=""" & conTableCellSpacing & """ CELLPADDING=""" & conTableCellPadding & """ BorderColorDark=""" & conTableBorderColorDark & """ BorderColorLight=""" & conTableBorderColorLight & """>"
     ShowHTML "        <tr bgcolor=""" & conTrBgColor & """ align=""center"">"
-    ShowHTML "          <td><font size=""1""><b>Titular</font></td>"
-    ShowHTML "          <td><font size=""1""><b>Substituto</font></td>"    
-    ShowHTML "          <td><font size=""1""><b>Operações</font></td>"
+    ShowHTML "          <td><b>Titular</font></td>"
+    ShowHTML "          <td><b>Substituto</font></td>"    
+    ShowHTML "          <td><b>Operações</font></td>"
     ShowHTML "        </tr>"
     If RS.EOF Then
         ShowHTML "      <tr bgcolor=""" & conTrBgColor & """><td colspan=3 align=""center""><font  size=""2""><b>Não foram encontrados registros.</b></td></tr>"
@@ -773,9 +773,9 @@ Sub Responsavel
       Else
         While Not RS.EOF
           ShowHTML "      <tr bgcolor=""" & conTrBgColor & """>"
-          ShowHTML "        <td align=""left""><font size=""1"">" & RS("titular1") & "</td>"
-          ShowHTML "        <td align=""left""><font size=""1"">" & RS("substituto1") & "</td>"        
-          ShowHTML "        <td align=""top"" nowrap><font size=""1"">"
+          ShowHTML "        <td align=""left"">" & RS("titular1") & "</td>"
+          ShowHTML "        <td align=""left"">" & RS("substituto1") & "</td>"        
+          ShowHTML "        <td align=""top"" nowrap>"
           ShowHTML "          <A class=""hl"" HREF=""" & w_Pagina & par & "&R=" & w_Pagina & par & "&O=A&w_sq_unidade=" & w_sq_unidade & "&P1=" & P1 & "&P2=" & P2 & "&P3=" & P3 & "&P4=" & P4 & "&TP=" & TP & "&SG=" & SG & "&p_sq_pessoa= " & p_sq_pessoa & """>Alterar</A>&nbsp"
           ShowHTML "          <A class=""hl"" HREF=""" & w_Pagina & par & "&R=" & w_Pagina & par & "&O=E&w_sq_unidade=" & w_sq_unidade & "&P1=" & P1 & "&P2=" & P2 & "&P3=" & P3 & "&P4=" & P4 & "&TP=" & TP & "&SG=" & SG & "&p_sq_pessoa= " & p_sq_pessoa & """>Excluir</A>&nbsp"
           ShowHTML "        </td>"
@@ -801,17 +801,17 @@ Sub Responsavel
     
     ShowHTML "<tr bgcolor=""" & conTrBgColor & """><td>"
     ShowHTML "    <table width=""100%"" border=""0"">"
-    ShowHTML "      <tr><td valign=""top"" colspan=3><font size=""1"" color=""#FF0000""><b>ATENÇÃO: antes de alterar o titular ou o substituto da unidade, informe a data de término da responsabilidade do ocupante atual, grave e entre novamente na opção de alteração.</b></font></td></tr>"
+    ShowHTML "      <tr><td valign=""top"" colspan=3><font color=""#FF0000""><b>ATENÇÃO: antes de alterar o titular ou o substituto da unidade, informe a data de término da responsabilidade do ocupante atual, grave e entre novamente na opção de alteração.</b></font></td></tr>"
     ShowHTML "      <tr>"
     SelecaoUsuUnid "<u>T</u>itular:", "T", null, w_sq_pessoa, null, "w_sq_pessoa", O
-    ShowHTML "          <td valign=""top""><font size=""1""><b>A partir <U>d</U>e:<br><INPUT TYPE=""TEXT"" ACCESSKEY=""D"" " & w_Disabled & " class=""sti"" name=""w_inicio_titular"" size=""10"" maxlength=""10"" value=""" & FormataDataEdicao(w_inicio_titular) & """ onKeyDown=""FormataData(this,event);"">"
-    ShowHTML "          <td valign=""top""><font size=""1""><b>A<U>t</U>é:<br><INPUT TYPE=""TEXT"" ACCESSKEY=""T"" " & w_Disabled & " class=""sti"" name=""w_fim_titular"" size=""10"" maxlength=""10"" value=""" & w_fim_titular & """ onKeyDown=""FormataData(this,event);"">"
+    ShowHTML "          <td valign=""top""><b>A partir <U>d</U>e:<br><INPUT TYPE=""TEXT"" ACCESSKEY=""D"" " & w_Disabled & " class=""sti"" name=""w_inicio_titular"" size=""10"" maxlength=""10"" value=""" & FormataDataEdicao(w_inicio_titular) & """ onKeyDown=""FormataData(this,event);"">"
+    ShowHTML "          <td valign=""top""><b>A<U>t</U>é:<br><INPUT TYPE=""TEXT"" ACCESSKEY=""T"" " & w_Disabled & " class=""sti"" name=""w_fim_titular"" size=""10"" maxlength=""10"" value=""" & w_fim_titular & """ onKeyDown=""FormataData(this,event);"">"
     ShowHTML "      </tr>"
     ShowHTML "      <tr>"
     SelecaoUsuUnid "<u>S</u>ubstituto:", "S", null, w_sq_pessoa_substituto, null, "w_sq_pessoa_substituto", O
-    ShowHTML "          <td valign=""top""><font size=""1""><b>A partir <U>d</U>e:<br><INPUT TYPE=""TEXT"" ACCESSKEY=""D"" " & w_Disabled & " class=""sti"" name=""w_inicio_substituto"" size=""10"" maxlength=""10"" value=""" & FormataDataEdicao(w_inicio_substituto) & """ onKeyDown=""FormataData(this,event);"">"
-    ShowHTML "          <td valign=""top""><font size=""1""><b>A<U>t</U>é:<br><INPUT TYPE=""TEXT"" ACCESSKEY=""T"" " & w_Disabled & " class=""sti"" name=""w_fim_substituto"" size=""10"" maxlength=""10"" value=""" & w_fim_substituto & """ onKeyDown=""FormataData(this,event);"">"
-    ShowHTML "      <tr><td valign=""top"" colspan=3><font size=""1""><b><U>A</U>ssinatura Eletrônica:<br><INPUT ACCESSKEY=""A"" class=""sti"" type=""PASSWORD"" name=""w_assinatura"" size=""30"" maxlength=""30"" value=""""></td>"
+    ShowHTML "          <td valign=""top""><b>A partir <U>d</U>e:<br><INPUT TYPE=""TEXT"" ACCESSKEY=""D"" " & w_Disabled & " class=""sti"" name=""w_inicio_substituto"" size=""10"" maxlength=""10"" value=""" & FormataDataEdicao(w_inicio_substituto) & """ onKeyDown=""FormataData(this,event);"">"
+    ShowHTML "          <td valign=""top""><b>A<U>t</U>é:<br><INPUT TYPE=""TEXT"" ACCESSKEY=""T"" " & w_Disabled & " class=""sti"" name=""w_fim_substituto"" size=""10"" maxlength=""10"" value=""" & w_fim_substituto & """ onKeyDown=""FormataData(this,event);"">"
+    ShowHTML "      <tr><td valign=""top"" colspan=3><b><U>A</U>ssinatura Eletrônica:<br><INPUT ACCESSKEY=""A"" class=""sti"" type=""PASSWORD"" name=""w_assinatura"" size=""30"" maxlength=""30"" value=""""></td>"
     ShowHTML "      <tr><td align=""center"" colspan=""3"" height=""1"" bgcolor=""#000000"">"
     ShowHTML "      <tr><td align=""center"" colspan=""3"">"
     If O = "E" Then
@@ -921,8 +921,8 @@ Sub BuscaUnidade
      ShowHTML "<tr bgcolor=""" & conTrBgColor & """><td><div align=""justify""><font size=2><b><ul>Instruções</b>:<li>Informe parte do nome da unidade.<li>Quando a relação for exibida, selecione a unidade desejada clicando sobre a caixa ao seu lado.<li>Após informar o nome da unidade, clique sobre o botão <i>Aplicar filtro</i>. Clicando sobre o botão <i>Cancelar</i>, a procura é cancelada.</ul></div>"
      ShowHTML "<tr bgcolor=""" & conTrBgColor & """><td>"
      ShowHTML "    <table width=""100%"" border=""0"">"
-     ShowHTML "      <tr><td valign=""top""><font size=""1""><b>Parte do <U>n</U>ome da unidade:<br><INPUT ACCESSKEY=""N"" " & w_Disabled & " class=""sti"" type=""text"" name=""w_nome"" size=""50"" maxlength=""50"" value=""" & w_nome & """>"
-     ShowHTML "      <tr><td valign=""top""><font size=""1""><b><U>S</U>igla  da unidade:<br><INPUT ACCESSKEY=""S"" " & w_Disabled & " class=""sti"" type=""text"" name=""w_sigla"" size=""20"" maxlength=""20"" value=""" & w_sigla & """>"
+     ShowHTML "      <tr><td valign=""top""><b>Parte do <U>n</U>ome da unidade:<br><INPUT ACCESSKEY=""N"" " & w_Disabled & " class=""sti"" type=""text"" name=""w_nome"" size=""50"" maxlength=""50"" value=""" & w_nome & """>"
+     ShowHTML "      <tr><td valign=""top""><b><U>S</U>igla  da unidade:<br><INPUT ACCESSKEY=""S"" " & w_Disabled & " class=""sti"" type=""text"" name=""w_sigla"" size=""20"" maxlength=""20"" value=""" & w_sigla & """>"
   
      ShowHTML "      <tr><td align=""center"" colspan=""3"" height=""1"" bgcolor=""#000000"">"
      ShowHTML "      <tr><td align=""center"" colspan=""3"">"
@@ -935,29 +935,29 @@ Sub BuscaUnidade
      ShowHTML "</tr>"
      ShowHTML "</form>"
      If w_nome > "" or w_sigla > "" Then
-        ShowHTML "<tr><td align=""right""><font size=""1""><b>Registros: " & RS.RecordCount
+        ShowHTML "<tr><td align=""right""><b>Registros: " & RS.RecordCount
         ShowHTML "<tr><td>"
         ShowHTML "    <TABLE WIDTH=""100%"" border=0>"
         If RS.EOF Then
-           ShowHTML "      <tr bgcolor=""" & conTrBgColor & """><td colspan=5 align=""center""><font size=""1""><b>Não foram encontrados registros.</b></td></tr>"
+           ShowHTML "      <tr bgcolor=""" & conTrBgColor & """><td colspan=5 align=""center""><b>Não foram encontrados registros.</b></td></tr>"
         Else
            ShowHTML "      <tr bgcolor=""" & conTrBgColor & """><td>"
            ShowHTML "        <TABLE WIDTH=""100%"" bgcolor=""" & conTableBgColor & """ BORDER=""" & conTableBorder & """ CELLSPACING=""" & conTableCellSpacing & """ CELLPADDING=""" & conTableCellPadding & """ BorderColorDark=""" & conTableBorderColorDark & """ BorderColorLight=""" & conTableBorderColorLight & """>"
            ShowHTML "          <tr bgcolor=""" & conTrBgColor & """ align=""center"">"
-           ShowHTML "            <td><font size=""1""><b>Sigla</font></td>"
-           ShowHTML "            <td><font size=""1""><b>Nome</font></td>"
-           ShowHTML "            <td><font size=""1""><b>Endereço</font></td>"
-           ShowHTML "            <td><font size=""1""><b>Cidade</font></td>"
-           ShowHTML "            <td><font size=""1""><b>Operações</font></td>"
+           ShowHTML "            <td><b>Sigla</font></td>"
+           ShowHTML "            <td><b>Nome</font></td>"
+           ShowHTML "            <td><b>Endereço</font></td>"
+           ShowHTML "            <td><b>Cidade</font></td>"
+           ShowHTML "            <td><b>Operações</font></td>"
            ShowHTML "          </tr>"
            While Not RS.EOF
               If w_cor = conTrBgColor or w_cor = "" Then w_cor = conTrAlternateBgColor Else w_cor = conTrBgColor End If
               ShowHTML "      <tr bgcolor=""" & w_cor & """ valign=""top"">"
-              ShowHTML "            <td align=""center""><font size=""1"">" & RS("sigla") & "</td>"
-              ShowHTML "            <td><font size=""1"">" & RS("nome") & "</td>"
-              ShowHTML "            <td><font size=""1"">" & RS("logradouro") & "</td>"
-              ShowHTML "            <td><font size=""1"">" & RS("nm_cidade") & "-" & RS("co_uf") & "</td>"
-              ShowHTML "            <td><font size=""1""><a class=""ss"" href=""#"" onClick=""javascript:volta('" & RS("nome") & "', '" & RS("sigla") & "', " & RS("sq_unidade") & ");"">Selecionar</a>"
+              ShowHTML "            <td align=""center"">" & RS("sigla") & "</td>"
+              ShowHTML "            <td>" & RS("nome") & "</td>"
+              ShowHTML "            <td>" & RS("logradouro") & "</td>"
+              ShowHTML "            <td>" & RS("nm_cidade") & "-" & RS("co_uf") & "</td>"
+              ShowHTML "            <td><a class=""ss"" href=""#"" onClick=""javascript:volta('" & RS("nome") & "', '" & RS("sigla") & "', " & RS("sq_unidade") & ");"">Selecionar</a>"
               RS.MoveNext
            wend
            ShowHTML "        </table></tr>"
@@ -969,29 +969,29 @@ Sub BuscaUnidade
         DesConectaBD	 
      End If
   Else
-     ShowHTML "<tr><td align=""right""><font size=""1""><b>Registros: " & RS.RecordCount
+     ShowHTML "<tr><td align=""right""><b>Registros: " & RS.RecordCount
      ShowHTML "<tr><td colspan=6>"
      ShowHTML "    <TABLE WIDTH=""100%"" border=0>"
      If RS.EOF Then
-        ShowHTML "      <tr bgcolor=""" & conTrBgColor & """><td colspan=5 align=""center""><font size=""1""><b>Não foram encontrados registros.</b></td></tr>"
+        ShowHTML "      <tr bgcolor=""" & conTrBgColor & """><td colspan=5 align=""center""><b>Não foram encontrados registros.</b></td></tr>"
      Else
         ShowHTML "      <tr bgcolor=""" & conTrBgColor & """><td>"
         ShowHTML "        <TABLE WIDTH=""100%"" bgcolor=""" & conTableBgColor & """ BORDER=""" & conTableBorder & """ CELLSPACING=""" & conTableCellSpacing & """ CELLPADDING=""" & conTableCellPadding & """ BorderColorDark=""" & conTableBorderColorDark & """ BorderColorLight=""" & conTableBorderColorLight & """>"
         ShowHTML "          <tr bgcolor=""" & conTrBgColor & """ align=""center"">"
-        ShowHTML "            <td><font size=""1""><b>Sigla</font></td>"
-        ShowHTML "            <td><font size=""1""><b>Nome</font></td>"
-        ShowHTML "            <td><font size=""1""><b>Endereço</font></td>"
-        ShowHTML "            <td><font size=""1""><b>Cidade</font></td>"
-        ShowHTML "            <td><font size=""1""><b>Operações</font></td>"
+        ShowHTML "            <td><b>Sigla</font></td>"
+        ShowHTML "            <td><b>Nome</font></td>"
+        ShowHTML "            <td><b>Endereço</font></td>"
+        ShowHTML "            <td><b>Cidade</font></td>"
+        ShowHTML "            <td><b>Operações</font></td>"
         ShowHTML "          </tr>"
         While Not RS.EOF
            If w_cor = conTrBgColor or w_cor = "" Then w_cor = conTrAlternateBgColor Else w_cor = conTrBgColor End If
            ShowHTML "      <tr bgcolor=""" & w_cor & """ valign=""top"">"
-           ShowHTML "            <td align=""center""><font size=""1"">" & RS("sigla") & "</td>"
-           ShowHTML "            <td><font size=""1"">" & RS("nome") & "</td>"
-           ShowHTML "            <td><font size=""1"">" & RS("logradouro") & "</td>"
-           ShowHTML "            <td><font size=""1"">" & RS("nm_cidade") & "-" & RS("co_uf") & "</td>"
-           ShowHTML "            <td><font size=""1""><a class=""ss"" href=""#"" onClick=""javascript:volta('" & RS("nome") & "', '" & RS("sigla") & "', " & RS("sq_unidade") & ");"">Selecionar</a>"
+           ShowHTML "            <td align=""center"">" & RS("sigla") & "</td>"
+           ShowHTML "            <td>" & RS("nome") & "</td>"
+           ShowHTML "            <td>" & RS("logradouro") & "</td>"
+           ShowHTML "            <td>" & RS("nm_cidade") & "-" & RS("co_uf") & "</td>"
+           ShowHTML "            <td><a class=""ss"" href=""#"" onClick=""javascript:volta('" & RS("nome") & "', '" & RS("sigla") & "', " & RS("sq_unidade") & ");"">Selecionar</a>"
            RS.MoveNext
         wend
         ShowHTML "        </table></tr>"
