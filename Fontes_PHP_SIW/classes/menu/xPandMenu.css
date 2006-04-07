@@ -25,7 +25,7 @@
 {
     MARGIN-TOP: 3px;
     FONT-WEIGHT: bold;
-    FONT-SIZE: 11px;
+    FONT-SIZE: 10px;
     BACKGROUND-IMAGE: none;
     MARGIN-BOTTOM: 3px;
     CURSOR: pointer;
@@ -56,10 +56,10 @@
 }
 .Xnode A:hover
 {
-    FONT-WEIGHT: bolder;
+    FONT-WEIGHT: lighter;
     COLOR: red;
     BACKGROUND-COLOR: transparent;
-    TEXT-DECORATION: underline
+    TEXT-DECORATION: none
 }
 .Xleaf A
 {
@@ -75,4 +75,103 @@
     BACKGROUND-REPEAT: repeat;
     BACKGROUND-COLOR: transparent;
     TEXT-DECORATION: none
+}
+.Xlink
+{
+    FONT-WEIGHT: lighter;
+    FONT-SIZE: 8pt;
+    COLOR: blue;
+    FONT-STYLE: italic;
+    FONT-FAMILY: Verdana;
+    BACKGROUND-COLOR: transparent
+}
+.Xlink A
+{
+    TEXT-DECORATION: none
+}
+.Xlink A:hover
+{
+    COLOR: red;
+    TEXT-DECORATION: none
+}
+BODY
+{
+    FONT-SIZE: 12px;
+    FONT-FAMILY: Verdana
+}
+.HL
+{
+    FONT-FAMILY: Verdana;
+    TEXT-DECORATION: none
+}
+.HL A
+{
+    TEXT-DECORATION: none
+}
+.HL A:hover
+{
+    COLOR: red;
+    TEXT-DECORATION: none
+}
+.SS
+{
+    FONT-WEIGHT: bolder;
+    FONT-SIZE: 8pt;
+    TEXT-DECORATION: none
+}
+.SS A
+{
+    TEXT-DECORATION: none
+}
+.SS A:hover
+{
+    TEXT-DECORATION: none
+}
+.STB
+{
+    BORDER-RIGHT: 1px solid;
+    BORDER-TOP: 1px solid;
+    FONT-WEIGHT: lighter;
+    FONT-SIZE: 8pt;
+    BORDER-LEFT: 1px solid;
+    COLOR: black;
+    BORDER-BOTTOM: 1px solid;
+    FONT-FAMILY: Verdana;
+    BACKGROUND-COLOR: #c0c0c0
+}
+.STI
+{
+    BORDER-RIGHT: black 1px solid;
+    BORDER-TOP: black 1px solid;
+    FONT-SIZE: 8pt;
+    BORDER-LEFT: black 1px solid;
+    BORDER-BOTTOM: black 1px solid;
+    BACKGROUND-COLOR: #f5f5f5
+}
+.STS
+{
+    BORDER-RIGHT: medium none;
+    BORDER-TOP: medium none;
+    MARGIN-TOP: 1px;
+    FONT-SIZE: 8pt;
+    BORDER-LEFT: medium none;
+    BORDER-BOTTOM: medium none
+}
+.STR
+{
+    BORDER-RIGHT: medium none;
+    BORDER-TOP: medium none;
+    FONT-SIZE: 8pt;
+    BORDER-LEFT: medium none;
+    BORDER-BOTTOM: medium none;
+    BACKGROUND-COLOR: #f5f5f5
+}
+.STC
+{
+    FONT-SIZE: 8pt
+}
+TD
+{
+    FONT-SIZE: xx-small;
+    FONT-FAMILY: Verdana
 }
