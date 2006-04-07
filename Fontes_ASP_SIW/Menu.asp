@@ -27,7 +27,7 @@ End If
 ' Declaração de variáveis
 Dim dbms, sp, RS, Par
 Dim P1, P2, P3, P4, TP, SG, R, O, w_TP, w_Pagina
-Dim w_ContOut
+Dim w_ContOut, w_ContImg
 Dim RS1, RS2, RS3
 Dim w_Titulo
 Dim w_Imagem
@@ -125,9 +125,6 @@ Sub Frames
    ShowHTML "    </FRAMESET> "
    ShowHTML "</HTML> "
 End Sub
-REM =========================================================================
-REM Fim da rotina de montagem da estrutura de frames
-REM -------------------------------------------------------------------------
 
 REM =========================================================================
 REM Rotina de montagem do menu
@@ -138,37 +135,8 @@ Sub ExibeDocs
    
    ShowHTML "<HTML>"
    ShowHTML "<HEAD>"
-   ShowHTML "<script language=JavaScript>"
-   ShowHTML "var lastLink;"
-   ShowHTML "function clickHandler() {"
-   ShowHTML "  var targetId, srcElement, targetElement;"
-   ShowHTML "  srcElement = window.event.srcElement;"
-   ShowHTML "  if (srcElement.className == ""Outline"") {"
-   ShowHTML "     targetId = srcElement.id + ""details"";"
-   ShowHTML "     targetElement = document.all(targetId);"
-   ShowHTML "     if (targetElement.style.display == ""none"") {"
-   ShowHTML "        targetElement.style.display = """";"
-   ShowHTML "     } else {"
-   ShowHTML "        targetElement.style.display = ""none"";"
-   ShowHTML "     }"
-   ShowHTML "  } else if (srcElement.className == ""ss"") {"
-   ShowHTML "    if (lastLink != undefined) {"
-   ShowHTML "     targetElement = document.all(lastLink);"
-   ShowHTML "     targetElement.className = ""ss"";"
-   ShowHTML "    }"
-   ShowHTML "    srcElement.className = ""ed""; "
-   ShowHTML "    lastLink = srcElement.id; "
-   ShowHTML "  }"
-   ShowHTML "}"
-   ShowHTML "document.onclick = clickHandler;"
-   ShowHTML "</script>"
-   ShowHTML "<style>"
-   ShowHTML "<// a { color: ""#000000""; text-decoration: ""none""; } "
-   ShowHTML "    a:hover { color:""#000000""; text-decoration: ""underline""; }"
-   ShowHTML "    .ss{text-decoration:none;} "
-   ShowHTML "    .ss:HOVER{text-decoration: ""underline"";} "
-   ShowHTML "    .ed { color: ""#FF0000""; text-decoration:none; font:bold 11px;} "
-   ShowHTML "//></style>"
+   ShowHTML "  <link rel=""stylesheet"" type=""text/css"" href=""cp_menu/xPandMenu.css"">"
+   ShowHTML "  <script src=""cp_menu/xPandMenu.js""></script>"
    ShowHTML "</HEAD>"
    ShowHTML "<BASEFONT FACE=""Verdana, Helvetica, Sans-Serif"" SIZE=""2"">"
    ' Decide se montará o body do menu principal ou o body do sub-menu de uma opção a partir do valor de w_sq_pagina
@@ -227,121 +195,134 @@ Sub ExibeDocs
    ShowHTML "      <tr><td height=1><tr><td height=2 bgcolor=""#000000"">"
    ShowHTML "      </table></CENTER>"
    ShowHTML "  <table border=0 cellpadding=0 height=""80"" width=""100%""><tr><td nowrap><font size=1><b>"
+   w_ContOut = 0
+   w_ContImg = 0
+   ShowHTML "<div id=""container"">"
+   ShowHTML "<ul id=""XRoot"" class=""XtreeRoot"">"
    
    If Request("SG") = "" or (Request("SG") > "" and O = "L") Then
       DB_GetLinkDataUser RS, Session("p_cliente"), Session("sq_pessoa"), "IS NULL"
-      w_ContOut = 0
       While Not RS.EOF
-         w_Titulo = RS("nome")
+         w_Titulo  = RS("nome")
+         w_ContImg = w_ContImg + 1
          If cDbl(RS("Filho")) > 0 Then
+
             w_ContOut = w_ContOut + 1
-            ShowHTML "<font size=1><span id=Out" & w_ContOut & " class=Outline style=""cursor: hand; ""><div align=""left"" id=Out" & w_ContOut & " class=Outline style=""cursor: hand; ""><img src=""images/folder/FolderClose.gif"" border=0 align=""center"" id=Out" & w_ContOut & " class=Outline> " & RS("NOME") & "</div></span>"
-            ShowHTML "   <div id=Out" & w_ContOut & "details style=""display:None; position:relative; left:12;""><font size=1>"
+            ShowHTML "<li id=""Xnode"" class=""Xnode""><div onClick=""xSwapImg(document.getElementById('Ximg" & w_contImg & "'),'" & conRootSIW & "images/folder/folder_win.gif','" & conRootSIW & "images/folder/folder_win_o.gif');xMenuShowHide(document.getElementById('Xtree" & w_contOut & "'));""><img id=""Ximg" & w_contImg & """ src=""" & conRootSIW & "images/folder/folder_win.gif"" border=""0"">&nbsp;" & RS("NOME") & "</div></li>"
+            ShowHTML "    <ul id=""Xtree" & w_contOut & """ class=""Xtree"" style=""display:none;"">"
+
             DB_GetLinkDataUser RS1, Session("p_cliente"), Session("sq_pessoa"), RS("sq_menu")
             While Not RS1.EOF
                w_Titulo = w_Titulo & " - " & RS1("NOME")
+               w_ContImg = w_ContImg + 1
                If cDbl(RS1("Filho")) > 0 Then
                   w_ContOut = w_ContOut + 1
-                  ShowHTML "<span id=Out" & w_ContOut & " class=Outline style=""cursor: hand; ""><div align=""left"" id=Out" & w_ContOut & " class=Outline style=""cursor: hand; ""><img src=""images/folder/FolderClose.gif"" border=0 align=""center"" id=Out" & w_ContOut & " class=Outline> " & RS1("NOME") & "</div></span>"
-                  ShowHTML "   <div id=Out" & w_ContOut & "details style=""display:None; position:relative; left:12;""><font size=1>"
+
+                  ShowHTML "    <li id=""Xnode"" class=""Xnode""><div onClick=""xSwapImg(document.getElementById('Ximg" & w_contImg & "'),'" & conRootSIW & "images/folder/folder_win.gif','" & conRootSIW & "images/folder/folder_win_o.gif');xMenuShowHide(document.getElementById('Xtree" & w_contOut & "'));""><img id=""Ximg" & w_contImg & """ src=""" & conRootSIW & "images/folder/folder_win.gif"" border=""0"">&nbsp;" & RS1("NOME") & "</div></li>"
+                  ShowHTML "        <ul id=""Xtree" & w_contOut & """ class=""Xtree"" style=""display:none;"">"
+
                   DB_GetLinkDataUser RS2, Session("p_cliente"), Session("sq_pessoa"), RS1("sq_menu")
                   While Not RS2.EOF
                      w_Titulo = w_Titulo & " - " & RS2("NOME")
+                     w_ContImg = w_ContImg + 1
                      If cDbl(RS2("Filho")) > 0 Then
                         w_ContOut = w_ContOut + 1
-                        ShowHTML "<span id=Out" & w_ContOut & " class=Outline style=""cursor: hand; ""><div align=""left"" id=Out" & w_ContOut & " class=Outline style=""cursor: hand; ""> <img src=""images/folder/FolderClose.gif"" border=0 align=""center"" id=Out" & w_ContOut & " class=Outline> " & RS2("NOME") & "</div></span>"
-                        ShowHTML "   <div id=Out" & w_ContOut & "details style=""display:None; position:relative; left:12;""><font size=1>"
+
+                        ShowHTML "        <li id=""Xnode"" class=""Xnode""><div onClick=""xSwapImg(document.getElementById('Ximg" & w_contImg & "'),'" & conRootSIW & "images/folder/folder_win.gif','" & conRootSIW & "images/folder/folder_win_o.gif');xMenuShowHide(document.getElementById('Xtree" & w_contOut & "'));""><img id=""Ximg" & w_contImg & """ src=""" & conRootSIW & "images/folder/folder_win.gif"" border=""0"">&nbsp;" & RS2("NOME") & "</div></li>"
+                        ShowHTML "            <ul id=""Xtree" & w_contOut & """ class=""Xtree"" style=""display:none;"">"
+
                         DB_GetLinkDataUser RS3, Session("p_cliente"), Session("sq_pessoa"), RS2("sq_menu")
                         While Not RS3.EOF
                            w_Titulo = w_Titulo & " - " & RS3("NOME")
+                           w_ContImg = w_ContImg + 1
                            If RS3("IMAGEM") > "" Then
-                              w_Imagem = RS3("IMAGEM")
+                              w_Imagem = conRootSIW & RS3("IMAGEM")
                            Else
                               w_Imagem = w_ImagemPadrao
                            End If
                            If RS3("LINK") > "" Then
                               If RS3("externo") = "S" Then
                                  If Instr(RS3("link"),"@files") > 0 Then
-                                    ShowHTML "    <img src=""" & w_Imagem & """ border=0 align=""center""> " & replace(LinkArquivo("ss", Session("p_cliente"), replace(RS3("LINK"),"@files/",""), RS3("target"), null, RS3("NOME"), null), "<A ", "<A id=""m" & RS3("sq_menu") & """") & "<BR>"
+                                    ShowHTML "            <li id=""Xleaf"" class=""Xleaf""><div onClick=""xSwapImg(document.getElementById('Ximg" & w_contImg & "'),'" & w_Imagem & "','" & w_Imagem & "');"">" & replace(LinkArquivo("ss", Session("p_cliente"), replace(RS3("LINK"),"@files/",""), RS3("target"), null, "<img id=""Ximg" & w_contImg & """ src=""" & w_Imagem & """ border=""0"">&nbsp;" & RS3("NOME"), null), "<A ", "<A id=""m" & RS3("sq_menu") & """") & "</div></li>"
                                  Else
-                                    ShowHTML "    <img src=""" & w_Imagem & """ border=0 align=""center""> <A id=""m" & RS3("sq_menu") & """ CLASS=""ss"" HREF=""" & RS3("LINK") & """ TARGET=""" & RS3("target") & """>" & RS3("NOME") & "</A><BR>"
+                                    ShowHTML "            <li id=""Xleaf"" class=""Xleaf""><div onClick=""xSwapImg(document.getElementById('Ximg" & w_contImg & "'),'" & w_Imagem & "','" & w_Imagem & "');""><a href=""" & RS3("LINK") & """ target=""" & RS3("target") & """><img id=""Ximg" & w_contImg & """ src=""" & w_Imagem & """ border=""0"">&nbsp;" & RS3("NOME") & "</a></div></li>"
                                  End If
                               Else
-                                 ShowHTML "    <img src=""" & w_Imagem & """ border=0 align=""center""> <A id=""m" & RS3("sq_menu") & """ CLASS=""ss"" HREF=""" & RS3("LINK") & "&P1="&RS3("P1")&"&P2="&RS3("P2")&"&P3="&RS3("P3")&"&P4="&RS3("P4")&"&TP=<img src="&w_Imagem&" BORDER=0>"&w_Titulo&"&SG="&RS3("SIGLA")&""" TARGET=""" & RS3("target") & """>" & RS3("NOME") & "</A><BR>"
+                                 ShowHTML "            <li id=""Xleaf"" class=""Xleaf""><div onClick=""xSwapImg(document.getElementById('Ximg" & w_contImg & "'),'" & w_Imagem & "','" & w_Imagem & "');""><a href=""" & RS3("LINK") & "&P1="&RS3("P1")&"&P2="&RS3("P2")&"&P3="&RS3("P3")&"&P4="&RS3("P4")&"&TP=<img src="&w_Imagem&" BORDER=0>"&w_Titulo&"&SG="&RS3("SIGLA") & """ target=""" & RS3("target") & """><img id=""Ximg" & w_contImg & """ src=""" & w_Imagem & """ border=""0"">&nbsp;" & RS3("NOME") & "</a></div></li>"
                               End If
                            Else
-                              ShowHTML "    <img src=""" & w_Imagem & """ border=0 align=""center""> " & RS3("NOME") & "<BR>"
+                              ShowHTML "            <li id=""Xleaf"" class=""Xleaf""><div onClick=""xSwapImg(document.getElementById('Ximg" & w_contImg & "'),'" & w_Imagem & "','" & w_Imagem & "');"">&nbsp;" & RS3("NOME") & "</div></li>"
                            End If
                            w_Titulo = Replace(w_Titulo, " - "&RS3("NOME"), "")
                            RS3.MoveNext
                         Wend
-                        ShowHTML "   </font></div>"
+                        ShowHTML "            </ul>"
                      Else
                         If RS2("IMAGEM") > "" Then
-                           w_Imagem = RS2("IMAGEM")
+                           w_Imagem = conRootSIW & RS2("IMAGEM")
                         Else
                            w_Imagem = w_ImagemPadrao
                         End If
                         If RS2("LINK") > "" Then
                            If RS2("externo") = "S" Then
                               If Instr(RS2("link"),"@files") > 0 Then
-                                 ShowHTML "    <img src=""" & w_Imagem & """ border=0 align=""center""> " & replace(LinkArquivo("ss", Session("p_cliente"), replace(RS2("LINK"),"@files/",""), RS2("target"), null, RS2("NOME"), null), "<A ", "<A id=""m" & RS2("sq_menu") & """") & "<BR>"
+                                 ShowHTML "        <li id=""Xleaf"" class=""Xleaf""><div onClick=""xSwapImg(document.getElementById('Ximg" & w_contImg & "'),'" & w_Imagem & "','" & w_Imagem & "');"">" & replace(LinkArquivo("ss", Session("p_cliente"), replace(RS2("LINK"),"@files/",""), RS2("target"), null, "<img id=""Ximg" & w_contImg & """ src=""" & w_Imagem & """ border=""0"">&nbsp;" & RS2("NOME"), null), "<A ", "<A id=""m" & RS2("sq_menu") & """") & "</div></li>"
                               Else
-                                 ShowHTML "    <img src=""" & w_Imagem & """ border=0 align=""center""> <A id=""m" & RS2("sq_menu") & """ CLASS=""ss"" HREF=""" & RS2("LINK") & """ TARGET=""" & RS2("target") & """>" & RS2("NOME") & "</A><BR>"
+                                 ShowHTML "        <li id=""Xleaf"" class=""Xleaf""><div onClick=""xSwapImg(document.getElementById('Ximg" & w_contImg & "'),'" & w_Imagem & "','" & w_Imagem & "');""><a href=""" & RS2("LINK") & """ target=""" & RS2("target") & """><img id=""Ximg" & w_contImg & """ src=""" & w_Imagem & """ border=""0"">&nbsp;" & RS2("NOME") & "</a></div></li>"
                               End If
                            Else
-                              ShowHTML "    <img src=""" & w_Imagem & """ border=0 align=""center""> <A id=""m" & RS2("sq_menu") & """ CLASS=""ss"" HREF=""" & RS2("LINK") & "&P1="&RS2("P1")&"&P2="&RS2("P2")&"&P3="&RS2("P3")&"&P4="&RS2("P4")&"&TP=<img src="&w_Imagem&" BORDER=0>"&w_Titulo&"&SG="&RS2("SIGLA")&""" TARGET=""" & RS2("target") & """>" & RS2("NOME") & "</A><BR>"
+                              ShowHTML "        <li id=""Xleaf"" class=""Xleaf""><div onClick=""xSwapImg(document.getElementById('Ximg" & w_contImg & "'),'" & w_Imagem & "','" & w_Imagem & "');""><a href=""" & RS2("LINK") & "&P1="&RS2("P1")&"&P2="&RS2("P2")&"&P3="&RS2("P3")&"&P4="&RS2("P4")&"&TP=<img src="&w_Imagem&" BORDER=0>"&w_Titulo&"&SG="&RS2("SIGLA") & """ target=""" & RS2("target") & """><img id=""Ximg" & w_contImg & """ src=""" & w_Imagem & """ border=""0"">&nbsp;" & RS2("NOME") & "</a></div></li>"
                            End If
                         Else
-                           ShowHTML "    <img src=""" & w_Imagem & """ border=0 align=""center""> " & RS2("NOME") & "<BR>"
+                           ShowHTML "        <li id=""Xleaf"" class=""Xleaf""><div onClick=""xSwapImg(document.getElementById('Ximg" & w_contImg & "'),'" & w_Imagem & "','" & w_Imagem & "');"">&nbsp;" & RS2("NOME") & "</div></li>"
                         End If
                      End If
                      w_Titulo = Replace(w_Titulo, " - "&RS2("NOME"), "")
                      RS2.MoveNext
                   Wend
-                  ShowHTML "   </font></div>"
+                  ShowHTML "        </ul>"
                Else
                   If RS1("IMAGEM") > "" Then
-                     w_Imagem = RS1("IMAGEM")
+                     w_Imagem = conRootSIW & RS1("IMAGEM")
                   Else
                      w_Imagem = w_ImagemPadrao
                   End If
                   If RS1("LINK") > "" Then
                      If RS1("externo") = "S" Then
                         If Instr(RS1("link"),"@files") > 0 Then
-                           ShowHTML "    <img src=""" & w_Imagem & """ border=0 align=""center""> " & replace(LinkArquivo("ss", Session("p_cliente"), replace(RS1("LINK"),"@files/",""), RS1("target"), null, RS1("NOME"), null), "<A ", "<A id=""m" & RS1("sq_menu") & """") & "<BR>"
+                           ShowHTML "    <li id=""Xleaf"" class=""Xleaf""><div onClick=""xSwapImg(document.getElementById('Ximg" & w_contImg & "'),'" & w_Imagem & "','" & w_Imagem & "');"">" & replace(LinkArquivo("ss", Session("p_cliente"), replace(RS1("LINK"),"@files/",""), RS1("target"), null, "<img id=""Ximg" & w_contImg & """ src=""" & w_Imagem & """ border=""0"">&nbsp;" & RS1("NOME"), null), "<A ", "<A id=""m" & RS1("sq_menu") & """") & "</div></li>"
                         Else
-                           ShowHTML "    <img src=""" & w_Imagem & """ border=0 align=""center""> <A id=""m" & RS1("sq_menu") & """ CLASS=""ss"" HREF=""" & RS1("LINK") & """ TARGET=""" & RS1("target") & """>" & RS1("NOME") & "</A><BR>"
+                           ShowHTML "    <li id=""Xleaf"" class=""Xleaf""><div onClick=""xSwapImg(document.getElementById('Ximg" & w_contImg & "'),'" & w_Imagem & "','" & w_Imagem & "');""><a href=""" & RS1("LINK") & """ target=""" & RS1("target") & """><img id=""Ximg" & w_contImg & """ src=""" & w_Imagem & """ border=""0"">&nbsp;" & RS1("NOME") & "</a></div></li>"
                         End If
                      Else
-                        ShowHTML "    <img src=""" & w_Imagem & """ border=0 align=""center""> <A id=""m" & RS1("sq_menu") & """ CLASS=""ss"" HREF=""" & RS1("LINK") & "&P1="&RS1("P1")&"&P2="&RS1("P2")&"&P3="&RS1("P3")&"&P4="&RS1("P4")&"&TP=<img src="&w_Imagem&" BORDER=0>"&w_Titulo&"&SG="&RS1("SIGLA")&""" TARGET=""" & RS1("target") & """>" & RS1("NOME") & "</A><BR>"
+                        ShowHTML "    <li id=""Xleaf"" class=""Xleaf""><div onClick=""xSwapImg(document.getElementById('Ximg" & w_contImg & "'),'" & w_Imagem & "','" & w_Imagem & "');""><a href=""" & RS1("LINK") & "&P1="&RS1("P1")&"&P2="&RS1("P2")&"&P3="&RS1("P3")&"&P4="&RS1("P4")&"&TP=<img src="&w_Imagem&" BORDER=0>"&w_Titulo&"&SG="&RS1("SIGLA") & """ target=""" & RS1("target") & """><img id=""Ximg" & w_contImg & """ src=""" & w_Imagem & """ border=""0"">&nbsp;" & RS1("NOME") & "</a></div></li>"
                      End If
                   Else
-                     ShowHTML "    <img src=""" & w_Imagem & """ border=0 align=""center""> " & RS1("NOME") & "<BR>"
+                     ShowHTML "    <li id=""Xleaf"" class=""Xleaf""><div onClick=""xSwapImg(document.getElementById('Ximg" & w_contImg & "'),'" & w_Imagem & "','" & w_Imagem & "');"">&nbsp;" & RS1("NOME") & "</div></li>"
                   End If
                End If
                w_Titulo = Replace(w_Titulo, " - "&RS1("NOME"), "")
                RS1.MoveNext
             Wend
-            ShowHTML "   </font></div>"
+            ShowHTML "    </ul>"
          Else
             If RS("IMAGEM") > "" Then
-               w_Imagem = RS("IMAGEM")
+               w_Imagem = conRootSIW & RS("IMAGEM")
             Else
                w_Imagem = w_ImagemPadrao
             End If
             If RS("LINK") > "" Then
                If RS("externo") = "S" Then
                   If Instr(RS("link"),"@files") > 0 Then
-                     ShowHTML "    <img src=""" & w_Imagem & """ border=0 align=""center""> " & replace(LinkArquivo("ss", Session("p_cliente"), replace(RS("LINK"),"@files/",""), RS("target"), null, RS("NOME"), null), "<A ", "<A id=""m" & RS("sq_menu") & """") & "<BR>"
+                     ShowHTML "<li id=""Xleaf"" class=""Xleaf""><div onClick=""xSwapImg(document.getElementById('Ximg" & w_contImg & "'),'" & w_Imagem & "','" & w_Imagem & "');"">" & replace(LinkArquivo("ss", Session("p_cliente"), replace(RS("LINK"),"@files/",""), RS("target"), null, "<img id=""Ximg" & w_contImg & """ src=""" & w_Imagem & """ border=""0"">&nbsp;" & RS("NOME"), null), "<A ", "<A id=""m" & RS("sq_menu") & """") & "</div></li>"
                   Else
-                     ShowHTML "    <img src=""" & w_Imagem & """ border=0 align=""center""> <A id=""m" & RS("sq_menu") & """ CLASS=""ss"" HREF=""" & RS("LINK") & """ TARGET=""" & RS("target") & """>" & RS("NOME") & "</A><BR>"
+                     ShowHTML "<li id=""Xleaf"" class=""Xleaf""><div onClick=""xSwapImg(document.getElementById('Ximg" & w_contImg & "'),'" & w_Imagem & "','" & w_Imagem & "');""><a href=""" & RS("LINK") & """ target=""" & RS("target") & """><img id=""Ximg" & w_contImg & """ src=""" & w_Imagem & """ border=""0"">&nbsp;" & RS("NOME") & "</a></div></li>"
                   End If
                Else
-                  ShowHTML "    <img src=""" & w_Imagem & """ border=0 align=""center""> <A id=""m" & RS("sq_menu") & """ CLASS=""ss"" HREF=""" & RS("LINK") & "&P1="&RS("P1")&"&P2="&RS("P2")&"&P3="&RS("P3")&"&P4="&RS("P4")&"&TP=<img src="&w_Imagem&" BORDER=0>"&w_Titulo&"&SG="&RS("SIGLA")&""" TARGET=""" & RS("target") & """>" & RS("NOME") & "</A><BR>"
+                  ShowHTML "<li id=""Xleaf"" class=""Xleaf""><div onClick=""xSwapImg(document.getElementById('Ximg" & w_contImg & "'),'" & w_Imagem & "','" & w_Imagem & "');""><a href=""" & RS("LINK") & "&P1="&RS("P1")&"&P2="&RS("P2")&"&P3="&RS("P3")&"&P4="&RS("P4")&"&TP=<img src="&w_Imagem&" BORDER=0>"&w_Titulo&"&SG="&RS("SIGLA") & """ target=""" & RS("target") & """><img id=""Ximg" & w_contImg & """ src=""" & w_Imagem & """ border=""0"">&nbsp;" & RS("NOME") & "</a></div></li>"
                End If
             Else
-               ShowHTML "    <img src=""" & w_Imagem & """ border=0 align=""center""> " & RS("NOME") & "<BR>"
+               ShowHTML "<li id=""Xleaf"" class=""Xleaf""><div onClick=""xSwapImg(document.getElementById('Ximg" & w_contImg & "'),'" & w_Imagem & "','" & w_Imagem & "');"">&nbsp;" & RS("NOME") & "</div></li>"
             End If
          End If
          RS.MoveNext
@@ -355,36 +336,41 @@ Sub ExibeDocs
          w_descricao = RS("NOME")
          DesconectaBD
       End If
-      ShowHTML "<font size=2><span id=Out" & w_ContOut & " class=Outline style=""cursor: hand; ""><div align=""left"" id=Out" & w_ContOut & " class=Outline style=""cursor: hand; ""><img src=""images/folder/FolderClose.gif"" border=0 align=""center""> " & w_descricao & "</div></span></font>"
-      ShowHTML "   <div id=Out" & w_ContOut & "details style=""position:relative; left:12;""><font size=1>"
+
+      w_contImg = w_contImg + 1
+      w_ContOut = w_ContOut + 1
+      ShowHTML "<li id=""Xnode"" class=""Xnode""><div onClick=""xSwapImg(document.getElementById('Ximg" & w_contImg & "'),'" & conRootSIW & "images/folder/folder_win_o.gif','" & conRootSIW & "images/folder/folder_win.gif');xMenuShowHide(document.getElementById('Xtree" & w_contOut & "'));""><img id=""Ximg" & w_contImg & """ src=""" & conRootSIW & "images/folder/folder_win_o.gif"" border=""0"">&nbsp;" & w_descricao & "</div></li>"
+      ShowHTML "    <ul id=""Xtree" & w_contOut & """ class=""Xtree"" style=""display:true;"">"
+
       DB_GetLinkSubMenu RS, Session("p_cliente"), Request("SG")
       While Not RS.EOF
          w_Titulo = Request("TP") & " - " & RS("NOME")
+         w_contImg = w_contImg + 1
          If RS("IMAGEM") > "" Then
-            w_Imagem = RS("IMAGEM")
+            w_Imagem = conRootSIW & RS("IMAGEM")
          Else
             w_Imagem = w_ImagemPadrao
          End If
          If RS("LINK") > "" Then
             If RS("externo") = "S" Then
                If Instr(RS("link"),"@files") > 0 Then
-                  ShowHTML "    <img src=""" & w_Imagem & """ border=0 align=""center""> " & replace(LinkArquivo("ss", Session("p_cliente"), replace(RS("LINK"),"@files/",""), RS("target"), null, RS("NOME"), null), "<A ", "<A id=""m" & RS("sq_menu") & """") & "<BR>"
+                  ShowHTML "<li id=""Xleaf"" class=""Xleaf""><div onClick=""xSwapImg(document.getElementById('Ximg" & w_contImg & "'),'" & w_Imagem & "','" & w_Imagem & "');"">" & replace(LinkArquivo("ss", Session("p_cliente"), replace(RS("LINK"),"@files/",""), RS("target"), null, "<img id=""Ximg" & w_contImg & """ src=""" & w_Imagem & """ border=""0"">&nbsp;" & RS("NOME"), null), "<A ", "<A id=""m" & RS("sq_menu") & """") & "</div></li>"
                Else
-                  ShowHTML "    <img src=""" & w_Imagem & """ border=0 align=""center""> <A id=""m" & RS("sq_menu") & """ CLASS=""ss"" HREF=""" & RS("LINK") & """ TARGET=""" & RS("target") & """>" & RS("NOME") & "</A><BR>"
+                  ShowHTML "<li id=""Xleaf"" class=""Xleaf""><div onClick=""xSwapImg(document.getElementById('Ximg" & w_contImg & "'),'" & w_Imagem & "','" & w_Imagem & "');""><a href=""" & RS("LINK") & """ target=""" & RS("target") & """><img id=""Ximg" & w_contImg & """ src=""" & w_Imagem & """ border=""0"">&nbsp;" & RS("NOME") & "</a></div></li>"
                End If
             Else
                If Request("w_cgccpf") > "" Then
-                  ShowHTML "    <img src=""" & w_Imagem & """ border=0 align=""center""> <A id=""m" & RS("sq_menu") & """ CLASS=""ss"" HREF=""" & RS("LINK") & "&R="&Request("R")&"&P1="&RS("P1")&"&P2="&RS("P2")&"&P3="&RS("P3")&"&P4="&RS("P4")&"&TP="&w_Titulo&"&SG="&RS("SIGLA")&"&O=L&w_cgccpf="&Request("w_cgccpf")& MontaFiltro("GET") & """ TARGET=""" & RS("target") & """>" & RS("NOME") & "</A><BR>"
+                  ShowHTML "<li id=""Xleaf"" class=""Xleaf""><div onClick=""xSwapImg(document.getElementById('Ximg" & w_contImg & "'),'" & w_Imagem & "','" & w_Imagem & "');""><a href=""" & RS("LINK") & "&P1="&RS("P1")&"&P2="&RS("P2")&"&P3="&RS("P3")&"&P4="&RS("P4")&"&TP="&w_Titulo&"&SG="&RS("SIGLA")&"&O=L&w_cgccpf="&Request("w_cgccpf")& MontaFiltro("GET") & """ target=""" & RS("target") & """><img id=""Ximg" & w_contImg & """ src=""" & w_Imagem & """ border=""0"">&nbsp;" & RS("NOME") & "</a></div></li>"
                ElseIf Request("w_usuario") > "" Then
-                  ShowHTML "    <img src=""" & w_Imagem & """ border=0 align=""center""> <A id=""m" & RS("sq_menu") & """ CLASS=""ss"" HREF=""" & RS("LINK") & "&R="&Request("R")&"&P1="&RS("P1")&"&P2="&RS("P2")&"&P3="&RS("P3")&"&P4="&RS("P4")&"&TP="&w_Titulo&"&SG="&RS("SIGLA")&"&O=L&w_usuario="&Request("w_usuario")&"&w_menu="&RS("menu_pai")&""" TARGET=""" & RS("target") & """>" & RS("NOME") & "</A><BR>"
+                  ShowHTML "<li id=""Xleaf"" class=""Xleaf""><div onClick=""xSwapImg(document.getElementById('Ximg" & w_contImg & "'),'" & w_Imagem & "','" & w_Imagem & "');""><a href=""" & RS("LINK") & "&P1="&RS("P1")&"&P2="&RS("P2")&"&P3="&RS("P3")&"&P4="&RS("P4")&"&TP="&w_Titulo&"&SG="&RS("SIGLA")&"&O=L&w_usuario="&Request("w_usuario")&"&w_menu="&RS("menu_pai") & """ target=""" & RS("target") & """><img id=""Ximg" & w_contImg & """ src=""" & w_Imagem & """ border=""0"">&nbsp;" & RS("NOME") & "</a></div></li>"
                ElseIf Request("w_sq_acordo") > "" Then
-                  ShowHTML "    <img src=""" & w_Imagem & """ border=0 align=""center""> <A id=""m" & RS("sq_menu") & """ CLASS=""ss"" HREF=""" & RS("LINK") & "&R="&Request("R")&"&P1="&RS("P1")&"&P2="&RS("P2")&"&P3="&RS("P3")&"&P4="&RS("P4")&"&TP="&w_Titulo&"&SG="&RS("SIGLA")&"&O=L&w_sq_acordo="&Request("w_sq_acordo")&"&w_menu="&RS("menu_pai")&""" TARGET=""" & RS("target") & """>" & RS("NOME") & "</A><BR>"
+                  ShowHTML "<li id=""Xleaf"" class=""Xleaf""><div onClick=""xSwapImg(document.getElementById('Ximg" & w_contImg & "'),'" & w_Imagem & "','" & w_Imagem & "');""><a href=""" & RS("LINK") & "&P1="&RS("P1")&"&P2="&RS("P2")&"&P3="&RS("P3")&"&P4="&RS("P4")&"&TP="&w_Titulo&"&SG="&RS("SIGLA")&"&O=L&w_sq_acordo="&Request("w_sq_acordo")&"&w_menu="&RS("menu_pai") & """ target=""" & RS("target") & """><img id=""Ximg" & w_contImg & """ src=""" & w_Imagem & """ border=""0"">&nbsp;" & RS("NOME") & "</a></div></li>"
                Else
-                  ShowHTML "    <img src=""" & w_Imagem & """ border=0 align=""center""> <A id=""m" & RS("sq_menu") & """ CLASS=""ss"" HREF=""" & RS("LINK") & "&R="&Request("R")&"&P1="&RS("P1")&"&P2="&RS("P2")&"&P3="&RS("P3")&"&P4="&RS("P4")&"&TP="&w_Titulo&"&SG="&RS("SIGLA")&"&O="&Request("O")&"&w_chave="&Request("w_chave")&"&w_menu="&RS("menu_pai")& MontaFiltro("GET") & """ TARGET=""" & RS("target") & """>" & RS("NOME") & "</A><BR>"
+                  ShowHTML "<li id=""Xleaf"" class=""Xleaf""><div onClick=""xSwapImg(document.getElementById('Ximg" & w_contImg & "'),'" & w_Imagem & "','" & w_Imagem & "');""><a href=""" & RS("LINK") & "&P1="&RS("P1")&"&P2="&RS("P2")&"&P3="&RS("P3")&"&P4="&RS("P4")&"&TP="&w_Titulo&"&SG="&RS("SIGLA")&"&O="&Request("O")&"&w_chave="&Request("w_chave")&"&w_menu="&RS("menu_pai")& MontaFiltro("GET") & """ target=""" & RS("target") & """><img id=""Ximg" & w_contImg & """ src=""" & w_Imagem & """ border=""0"">&nbsp;" & RS("NOME") & "</a></div></li>"
                End If
             End If
          Else
-            ShowHTML "    <img src=""" & w_Imagem & """ border=0 align=""center""> " & RS("NOME") & "<BR>"
+            ShowHTML "<li id=""Xleaf"" class=""Xleaf""><div onClick=""xSwapImg(document.getElementById('Ximg" & w_contImg & "'),'" & w_Imagem & "','" & w_Imagem & "');"">&nbsp;" & RS("NOME") & "</div></li>"
          End If
          If Request("O") = "I" Then 
             RS.MoveLast
@@ -392,22 +378,24 @@ Sub ExibeDocs
          RS.MoveNext 
       Wend
       DesconectaBD
-      ShowHTML "   </font></div>"
+      ShowHTML "    </ul>"
       DB_GetLinkData RS, Session("p_cliente"), Request("SG")
-      ShowHTML "  <br><font size=1><img src=""" & w_Imagem & """ border=0 align=""center""> <A id=""m" & RS("sq_menu") & """ CLASS=""ss"" HREF=""" & w_pagina & par & "&O=L&R=" & Request("R") & "&SG=" & RS("sigla") & "&TP=" & RemoveTP(Request("TP")) &"&P1="&RS("P1")&"&P2="&RS("P2")&"&P3="&RS("P3")&"&P4="&RS("P4") & MontaFiltro("GET") & """>Nova consulta</A><BR>"
+      w_contImg = w_contImg + 1
+      ShowHTML "<li id=""Xleaf"" class=""Xleaf""><div onClick=""xSwapImg(document.getElementById('Ximg" & w_contImg & "'),'" & w_Imagem & "','" & w_Imagem & "');""><a href=""" & w_pagina & par & "&O=L&R=" & Request("R") & "&SG=" & RS("sigla") & "&TP=" & RemoveTP(Request("TP")) &"&P1="&RS("P1")&"&P2="&RS("P2")&"&P3="&RS("P3")&"&P4="&RS("P4") & MontaFiltro("GET") & """><img id=""Ximg" & w_contImg & """ src=""" & conRootSIW & "images/folder/SheetLittle.gif"" border=""0"">&nbsp;Nova consulta</a></div></li>"
       DesconectaBD
-      ShowHTML "  <br><font size=1><img src=""images/folder/SheetLittle.gif"" border=0 align=""center""> <A id=""mm"" CLASS=""ss"" HREF=""Menu.asp?par=ExibeDocs"">Menu</A></font><BR>"
+      w_contImg = w_contImg + 1
+      ShowHTML "<li id=""Xleaf"" class=""Xleaf""><div onClick=""xSwapImg(document.getElementById('Ximg" & w_contImg & "'),'" & w_Imagem & "','" & w_Imagem & "');""><a href=""Menu.asp?par=ExibeDocs""><img id=""Ximg" & w_contImg & """ src=""" & conRootSIW & "images/folder/SheetLittle.gif"" border=""0"">&nbsp;Menu</a></div></li>"
    End If
-   ShowHTML "  <br><br><font size=1><img src=""images/folder/SheetLittle.gif"" border=0 align=""center""> <A id=""ms"" CLASS=""ss"" HREF=""Menu.asp?par=Sair"" TARGET=""_top"" onClick=""return(confirm('Confirma saída do sistema?'));"">Sair do sistema</A></font><BR>"
+   w_contImg = w_contImg + 1
+   ShowHTML "<li id=""Xleaf"" class=""Xleaf""><div onClick=""xSwapImg(document.getElementById('Ximg" & w_contImg & "'),'" & w_Imagem & "','" & w_Imagem & "');""><a href=""Menu.asp?par=Sair"" target=""_top"" onClick=""return(confirm('Confirma saída do sistema?'));""><img id=""Ximg" & w_contImg & """ src=""" & conRootSIW & "images/folder/SheetLittle.gif"" border=""0"">&nbsp;Sair do sistema</a></div></li>"
+   ShowHTML "</ul>"
+   ShowHTML "</div>"
    ShowHTML "      </table>"
    ShowHTML "</body>"
    ShowHTML "</html>"
    
    Set w_descricao = Nothing
 End Sub
-REM =========================================================================
-REM Fim da rotina de montagem do menu
-REM -------------------------------------------------------------------------
 
 REM =========================================================================
 REM Rotina de troca de senha ou assinatura eletrônica
