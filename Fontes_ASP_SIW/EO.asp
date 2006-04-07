@@ -183,7 +183,7 @@ Sub Unidade
       RS.Sort = "Ordem"
       
       if RS.EOF then           
-         ShowHTML "      <tr bgcolor=""" & conTrBgColor & """><td align=""center""><font  size=""2""><b>Estrutura organizacional inexistente.</b></td></tr>"
+         ShowHTML "      <tr bgcolor=""" & conTrBgColor & """><td align=""center""><font size=""2""><b>Estrutura organizacional inexistente.</b></td></tr>"
       else
          ShowHTML "      <tr bgcolor=""" & conTrBgColor & """><td valign=""center"">"
          w_ContOut = 0
@@ -569,15 +569,15 @@ Sub Localizacao
     ShowHTML "<tr><td align=""center"" colspan=3>"
     ShowHTML "    <TABLE WIDTH=""100%"" bgcolor=""" & conTableBgColor & """ BORDER=""" & conTableBorder & """ CELLSPACING=""" & conTableCellSpacing & """ CELLPADDING=""" & conTableCellPadding & """ BorderColorDark=""" & conTableBorderColorDark & """ BorderColorLight=""" & conTableBorderColorLight & """>"
     ShowHTML "        <tr bgcolor=""" & conTrBgColor & """ align=""center"">"
-    ShowHTML "          <td><b>Localização</font></td>"
-    ShowHTML "          <td><b>Cidade</font></td>"
-    ShowHTML "          <td><b>Telefone</font></td>"
-    ShowHTML "          <td><b>Ramal</font></td>"
-    ShowHTML "          <td><b>Ativo</font></td>"
-    ShowHTML "          <td><b>Operações</font></td>"
+    ShowHTML "          <td><b>Localização</td>"
+    ShowHTML "          <td><b>Cidade</td>"
+    ShowHTML "          <td><b>Telefone</td>"
+    ShowHTML "          <td><b>Ramal</td>"
+    ShowHTML "          <td><b>Ativo</td>"
+    ShowHTML "          <td><b>Operações</td>"
     ShowHTML "        </tr>"
     If RS.EOF Then
-        ShowHTML "      <tr bgcolor=""" & conTrBgColor & """><td colspan=6 align=""center""><font  size=""2""><b>Não foram encontrados registros.</b></td></tr>"
+        ShowHTML "      <tr bgcolor=""" & conTrBgColor & """><td colspan=6 align=""center""><font size=""2""><b>Não foram encontrados registros.</b></td></tr>"
     Else
       While Not RS.EOF
         ShowHTML "      <tr bgcolor=""" & conTrBgColor & """>"
@@ -761,15 +761,15 @@ Sub Responsavel
     ShowHTML "<tr><td colspan=3>"
     ShowHTML "    <TABLE WIDTH=""100%"" bgcolor=""" & conTableBgColor & """ BORDER=""" & conTableBorder & """ CELLSPACING=""" & conTableCellSpacing & """ CELLPADDING=""" & conTableCellPadding & """ BorderColorDark=""" & conTableBorderColorDark & """ BorderColorLight=""" & conTableBorderColorLight & """>"
     ShowHTML "        <tr bgcolor=""" & conTrBgColor & """ align=""center"">"
-    ShowHTML "          <td><b>Titular</font></td>"
-    ShowHTML "          <td><b>Substituto</font></td>"    
-    ShowHTML "          <td><b>Operações</font></td>"
+    ShowHTML "          <td><b>Titular</td>"
+    ShowHTML "          <td><b>Substituto</td>"    
+    ShowHTML "          <td><b>Operações</td>"
     ShowHTML "        </tr>"
     If RS.EOF Then
-        ShowHTML "      <tr bgcolor=""" & conTrBgColor & """><td colspan=3 align=""center""><font  size=""2""><b>Não foram encontrados registros.</b></td></tr>"
+        ShowHTML "      <tr bgcolor=""" & conTrBgColor & """><td colspan=3 align=""center""><font size=""2""><b>Não foram encontrados registros.</b></td></tr>"
     Else
       If cDbl(Nvl(RS("titular2"),0)) = 0 and cDbl(Nvl(RS("substituto2"),0)) = 0 Then
-        ShowHTML "      <tr bgcolor=""" & conTrBgColor & """><td colspan=3 align=""center""><font  size=""2""><b>Não foram encontrados registros.</b></td></tr>"
+        ShowHTML "      <tr bgcolor=""" & conTrBgColor & """><td colspan=3 align=""center""><font size=""2""><b>Não foram encontrados registros.</b></td></tr>"
       Else
         While Not RS.EOF
           ShowHTML "      <tr bgcolor=""" & conTrBgColor & """>"
@@ -801,7 +801,7 @@ Sub Responsavel
     
     ShowHTML "<tr bgcolor=""" & conTrBgColor & """><td>"
     ShowHTML "    <table width=""100%"" border=""0"">"
-    ShowHTML "      <tr><td valign=""top"" colspan=3><font color=""#FF0000""><b>ATENÇÃO: antes de alterar o titular ou o substituto da unidade, informe a data de término da responsabilidade do ocupante atual, grave e entre novamente na opção de alteração.</b></font></td></tr>"
+    ShowHTML "      <tr><td valign=""top"" colspan=3><font color=""#FF0000""><b>ATENÇÃO: antes de alterar o titular ou o substituto da unidade, informe a data de término da responsabilidade do ocupante atual, grave e entre novamente na opção de alteração.</b></td></tr>"
     ShowHTML "      <tr>"
     SelecaoUsuUnid "<u>T</u>itular:", "T", null, w_sq_pessoa, null, "w_sq_pessoa", O
     ShowHTML "          <td valign=""top""><b>A partir <U>d</U>e:<br><INPUT TYPE=""TEXT"" ACCESSKEY=""D"" " & w_Disabled & " class=""sti"" name=""w_inicio_titular"" size=""10"" maxlength=""10"" value=""" & FormataDataEdicao(w_inicio_titular) & """ onKeyDown=""FormataData(this,event);"">"
@@ -944,11 +944,11 @@ Sub BuscaUnidade
            ShowHTML "      <tr bgcolor=""" & conTrBgColor & """><td>"
            ShowHTML "        <TABLE WIDTH=""100%"" bgcolor=""" & conTableBgColor & """ BORDER=""" & conTableBorder & """ CELLSPACING=""" & conTableCellSpacing & """ CELLPADDING=""" & conTableCellPadding & """ BorderColorDark=""" & conTableBorderColorDark & """ BorderColorLight=""" & conTableBorderColorLight & """>"
            ShowHTML "          <tr bgcolor=""" & conTrBgColor & """ align=""center"">"
-           ShowHTML "            <td><b>Sigla</font></td>"
-           ShowHTML "            <td><b>Nome</font></td>"
-           ShowHTML "            <td><b>Endereço</font></td>"
-           ShowHTML "            <td><b>Cidade</font></td>"
-           ShowHTML "            <td><b>Operações</font></td>"
+           ShowHTML "            <td><b>Sigla</td>"
+           ShowHTML "            <td><b>Nome</td>"
+           ShowHTML "            <td><b>Endereço</td>"
+           ShowHTML "            <td><b>Cidade</td>"
+           ShowHTML "            <td><b>Operações</td>"
            ShowHTML "          </tr>"
            While Not RS.EOF
               If w_cor = conTrBgColor or w_cor = "" Then w_cor = conTrAlternateBgColor Else w_cor = conTrBgColor End If
@@ -978,11 +978,11 @@ Sub BuscaUnidade
         ShowHTML "      <tr bgcolor=""" & conTrBgColor & """><td>"
         ShowHTML "        <TABLE WIDTH=""100%"" bgcolor=""" & conTableBgColor & """ BORDER=""" & conTableBorder & """ CELLSPACING=""" & conTableCellSpacing & """ CELLPADDING=""" & conTableCellPadding & """ BorderColorDark=""" & conTableBorderColorDark & """ BorderColorLight=""" & conTableBorderColorLight & """>"
         ShowHTML "          <tr bgcolor=""" & conTrBgColor & """ align=""center"">"
-        ShowHTML "            <td><b>Sigla</font></td>"
-        ShowHTML "            <td><b>Nome</font></td>"
-        ShowHTML "            <td><b>Endereço</font></td>"
-        ShowHTML "            <td><b>Cidade</font></td>"
-        ShowHTML "            <td><b>Operações</font></td>"
+        ShowHTML "            <td><b>Sigla</td>"
+        ShowHTML "            <td><b>Nome</td>"
+        ShowHTML "            <td><b>Endereço</td>"
+        ShowHTML "            <td><b>Cidade</td>"
+        ShowHTML "            <td><b>Operações</td>"
         ShowHTML "          </tr>"
         While Not RS.EOF
            If w_cor = conTrBgColor or w_cor = "" Then w_cor = conTrAlternateBgColor Else w_cor = conTrBgColor End If
