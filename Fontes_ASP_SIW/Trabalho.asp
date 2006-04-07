@@ -128,7 +128,7 @@ Sub Mesa
   ScriptClose
   ShowHTML "</HEAD>"
   BodyOpen "onLoad=document.focus();"
-  ShowHTML "<B><FONT COLOR=""#000000"">" & w_TP & "</FONT></B>"
+  ShowHTML "<B><FONT COLOR=""#000000"">" & w_TP & "</font></B>"
   ShowHTML "<HR>"
   ShowHTML "<div align=center><center>"
   ShowHTML "<table border=""0"" width=""100%"">"
@@ -136,10 +136,10 @@ Sub Mesa
      ShowHTML "<tr><td align=""center"" colspan=3>"
      ShowHTML "    <TABLE WIDTH=""100%"" bgcolor=""" & conTableBgColor & """ BORDER=""" & conTableBorder & """ CELLSPACING=""" & conTableCellSpacing & """ CELLPADDING=""" & conTableCellPadding & """ BorderColorDark=""" & conTableBorderColorDark & """ BorderColorLight=""" & conTableBorderColorLight & """>"
      ShowHTML "        <tr bgcolor=""" & conTrBgColor & """ align=""center"">"
-     ShowHTML "          <td><font size=""1""><b>Módulo</font></td>"
-     ShowHTML "          <td><font size=""1""><b>Serviço</font></td>"
-     ShowHTML "          <td><font size=""1""><b>Em aberto</font></td>"
-     ShowHTML "          <td><font size=""1""><b>Operações</font></td>"
+     ShowHTML "          <td><b>Módulo</td>"
+     ShowHTML "          <td><b>Serviço</td>"
+     ShowHTML "          <td><b>Em aberto</td>"
+     ShowHTML "          <td><b>Operações</td>"
      ShowHTML "        </tr>"
      If w_workflow & w_telefonia & w_demandas & w_agenda = "" Then
      Else
@@ -149,16 +149,15 @@ Sub Mesa
            If w_cor = conTrBgColor or w_cor = "" Then w_cor = conTrAlternateBgColor Else w_cor = conTrBgColor End If
            If cDbl(RS("existe")) > 0 Then w_negrito = "<b>" Else w_negrito = "" End If
            ShowHTML "      <tr bgcolor=""" & w_cor & """>"
-           ShowHTML "        <td><font size=""1"">" & w_telefonia & "</td>"
-           ShowHTML "        <td><font size=""1"">" & "Ligações</td>"
-           ShowHTML "        <td align=""right""><font size=""1"">" & w_negrito & RS("existe") & "&nbsp;</td>"
-           ShowHTML "        <td align=""top"" nowrap><font size=""1"">"
+           ShowHTML "        <td>" & w_telefonia & "</td>"
+           ShowHTML "        <td>" & "Ligações</td>"
+           ShowHTML "        <td align=""right"">" & w_negrito & RS("existe") & "&nbsp;</td>"
+           ShowHTML "        <td align=""top"" nowrap>"
            ShowHTML "          <A class=""HL"" HREF=""Tarifacao.asp?par=Informar&R=" & w_Pagina & par & "&O=L&P1=1&P2=" & P2 & "&P3=" & P3 & "&P4=" & P4 & "&TP=" & TP & "- Ligações&SG=LIGACAO"">Exibir</A> "
            ShowHTML "        </td>"
            ShowHTML "      </tr>"
            DesconectaBD
         End If
-
     End If
     
     ' Monta a mesa de trabalho para os outros serviços do SIW
@@ -172,14 +171,14 @@ Sub Mesa
           ShowHTML "    <tr bgcolor=""" & w_cor & """>"
           ' Evita que o nome do  módulo seja repetido
           If w_nm_modulo = RS("nm_modulo") Then
-             ShowHTML "      <td><font size=""1"">&nbsp;</td>"
+             ShowHTML "      <td>&nbsp;</td>"
           Else
-             ShowHTML "      <td><font size=""1"">" & RS("nm_modulo") & "</td>"
+             ShowHTML "      <td>" & RS("nm_modulo") & "</td>"
              w_nm_modulo = RS("nm_modulo")
           End If
-          ShowHTML "      <td><font size=""1"">" & RS("nm_servico") & "</td>"
-          ShowHTML "      <td align=""right""><font size=""1"">" & w_negrito & RS("qtd") & "&nbsp;</td>"
-          ShowHTML "      <td align=""top"" nowrap><font size=""1"">"
+          ShowHTML "      <td>" & RS("nm_servico") & "</td>"
+          ShowHTML "      <td align=""right"">" & w_negrito & RS("qtd") & "&nbsp;</td>"
+          ShowHTML "      <td align=""top"" nowrap>"
           If Session("interno") = "S" Then
              ' Se for interno, usa P1=2 para indicar mesa de trabalho
              ShowHTML "        <A CLASS=""HL"" HREF=""" & RS("link") & "&P1=2&P2="&RS("P2")&"&P3="&RS("P3")&"&P4="&RS("P4")&"&TP="&TP&" - "&RS("nm_servico")&"&SG="&RS("sg_servico")&""">Exibir</A>"
@@ -235,7 +234,7 @@ Sub Main
     Case Else
        Cabecalho
        BodyOpen "onLoad=document.focus();"
-       ShowHTML "<B><FONT COLOR=""#000000"">" & w_TP & "</FONT></B>"
+       ShowHTML "<B><FONT COLOR=""#000000"">" & w_TP & "</font></B>"
        ShowHTML "<HR>"
        ShowHTML "<div align=center><center><br><br><br><br><br><br><br><br><br><br><img src=""images/icone/underc.gif"" align=""center""> <b>Esta opção está sendo desenvolvida.</b><br><br><br><br><br><br><br><br><br><br></center></div>"
        Rodape

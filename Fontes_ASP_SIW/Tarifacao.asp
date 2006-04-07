@@ -64,6 +64,7 @@ w_troca      = Request("w_troca")
 w_Assinatura = uCase(Request("w_Assinatura"))
 w_Pagina     = "Tarifacao.asp?par="
 w_Disabled   = "ENABLED"
+w_cor_fonte  = "color=""#000000"""
 
 If O = "" Then 
    If P1 = 3 Then O = "P" Else O = "L" End If
@@ -93,6 +94,7 @@ End Select
 w_cliente            = RetornaCliente()
 w_usuario            = RetornaUsuario()
 w_sq_usuario_central = RetornaUsuarioCentral()
+
 Main
 
 FechaSessao
@@ -299,43 +301,43 @@ Sub Informar
   Else
      BodyOpen "onLoad=document.focus();"
   End If
-  ShowHTML "<B><FONT COLOR=""#000000"">" & w_TP & "</FONT></B>"
+  ShowHTML "<B><FONT COLOR=""#000000"">" & w_TP & "</font></B>"
   ShowHTML "<HR>"
   ShowHTML "<div align=center><center>"
   ShowHTML "<table border=""0"" cellpadding=""0"" cellspacing=""0"" width=""100%"">"
   If O = "L" Then
-    ShowHTML "<tr><td><font size=""2"">"
+    ShowHTML "<tr><td>"
     If P1 <> 3 Then ' Se não for inclusão
        ShowHTML "  <a accesskey=""I"" class=""SS"" href=""" & w_Pagina & par & "&R=" & w_Pagina & par & "&O=I&P1=" & P1 & "&P2=" & P2 & "&P3=" & P3 & "&P4=" & P4 & "&TP=" & TP & "&SG=" & SG & "&p_outra_parte_contato=" & p_outra_parte_contato & "&p_sq_cc=" & p_sq_cc & "&p_numero=" & p_numero & "&p_inicio=" & p_inicio & "&p_fim=" & p_fim & "&p_ativo=" & p_ativo & "&p_ordena=" & p_ordena & """><u>I</u>ncluir</a>&nbsp;"
     End If
     If p_sq_cc & p_outra_parte_contato & p_ativo & p_numero & p_inicio & p_fim & p_Ordena > "" Then
-       ShowHTML "                         <a accesskey=""F"" class=""SS"" href=""" & w_Pagina & par & "&R=" & w_Pagina & par & "&O=P&P1=" & P1 & "&P2=" & P2 & "&P3=" & P3 & "&P4=" & P4 & "&TP=" & TP & "&SG=" & SG & MontaFiltro("GET") & """><u><font color=""#BC5100"">F</u>iltrar (Ativo)</font></a></font>"
+       ShowHTML "                         <a accesskey=""F"" class=""SS"" href=""" & w_Pagina & par & "&R=" & w_Pagina & par & "&O=P&P1=" & P1 & "&P2=" & P2 & "&P3=" & P3 & "&P4=" & P4 & "&TP=" & TP & "&SG=" & SG & MontaFiltro("GET") & """><u><font color=""#BC5100"">F</u>iltrar (Ativo)</font></a>"
     Else
-       ShowHTML "                         <a accesskey=""F"" class=""SS"" href=""" & w_Pagina & par & "&R=" & w_Pagina & par & "&O=P&P1=" & P1 & "&P2=" & P2 & "&P3=" & P3 & "&P4=" & P4 & "&TP=" & TP & "&SG=" & SG & MontaFiltro("GET") & """><u>F</u>iltrar (Inativo)</a>"
+       ShowHTML "                         <a accesskey=""F"" class=""SS"" href=""" & w_Pagina & par & "&R=" & w_Pagina & par & "&O=P&P1=" & P1 & "&P2=" & P2 & "&P3=" & P3 & "&P4=" & P4 & "&TP=" & TP & "&SG=" & SG & MontaFiltro("GET") & """><u>F</u>iltrar (Inativo)</font></a>"
     End If
     If P1 <> 3 Then ' Se não for inclusão
        ShowHTML "                         <a accesskey=""R"" class=""SS"" href=""" & w_Pagina & par & "&R=" & w_Pagina & par & "&O=R&P1=" & P1 & "&P2=" & P2 & "&P3=" & P3 & "&P4=" & P4 & "&TP=" & TP & "&SG=" & SG & MontaFiltro("GET") & """><u>R</u>esumo</a>&nbsp;"
     End If
-    ShowHTML "    <td align=""right""><font size=""1""><b>Registros: " & RS.RecordCount
+    ShowHTML "    <td align=""right""><b>Registros: " & RS.RecordCount
     ShowHTML "<tr><td align=""center"" colspan=3>"
     ShowHTML "    <TABLE WIDTH=""100%"" bgcolor=""" & conTableBgColor & """ BORDER=""" & conTableBorder & """ CELLSPACING=""" & conTableCellSpacing & """ CELLPADDING=""" & conTableCellPadding & """ BorderColorDark=""" & conTableBorderColorDark & """ BorderColorLight=""" & conTableBorderColorLight & """>"
     ShowHTML "        <tr bgcolor=""" & conTrBgColor & """ align=""center"">"
-    ShowHTML "          <td><font size=""1""><b>" & LinkOrdena("Tipo","tipo") & "</font></td>"
-    ShowHTML "          <td><font size=""1""><b>" & LinkOrdena("Data","data") & "</font></td>"
-    ShowHTML "          <td><font size=""1""><b>" & LinkOrdena("Número","numero") & "</font></td>"
-    ShowHTML "          <td><font size=""1""><b>" & LinkOrdena("Duração","duracao") & "</font></td>"
-    ShowHTML "          <td><font size=""1""><b>" & LinkOrdena("RM","sq_ramal") & "</font></td>"
-    ShowHTML "          <td><font size=""1""><b>" & LinkOrdena("Local","localidade") & "</font></td>"
-    ShowHTML "          <td><font size=""1""><b>" & LinkOrdena("Trab","d_trabalho") & "</font></td>"
+    ShowHTML "          <td><b>" & LinkOrdena("Tipo","tipo") & "</td>"
+    ShowHTML "          <td><b>" & LinkOrdena("Data","data") & "</td>"
+    ShowHTML "          <td><b>" & LinkOrdena("Número","numero") & "</td>"
+    ShowHTML "          <td><b>" & LinkOrdena("Duração","duracao") & "</td>"
+    ShowHTML "          <td><b>" & LinkOrdena("RM","sq_ramal") & "</td>"
+    ShowHTML "          <td><b>" & LinkOrdena("Local","localidade") & "</td>"
+    ShowHTML "          <td><b>" & LinkOrdena("Trab","d_trabalho") & "</td>"
     If P1 = 3 Then ' Se for arquivo
-       ShowHTML "          <td><font size=""1""><b>" & LinkOrdena("Resp.","responsavel") & "</font></td>"
+       ShowHTML "          <td><b>" & LinkOrdena("Resp.","responsavel") & "</td>"
     End If
-    ShowHTML "          <td><font size=""1""><b>" & LinkOrdena("De","d_nome") & "</font></td>"
-    ShowHTML "          <td><font size=""1""><b>" & LinkOrdena("Classificação","d_cc") & "</font></td>"
+    ShowHTML "          <td><b>" & LinkOrdena("De","d_nome") & "</td>"
+    ShowHTML "          <td><b>" & LinkOrdena("Classificação","d_cc") & "</td>"
     If Nvl(p_assunto,"N") = "S" Then ' Se for selecionada a visualização do assunto
-       ShowHTML "          <td><font size=""1""><b>" & LinkOrdena("Assunto","assunto") & "</font></td>"
+       ShowHTML "          <td><b>" & LinkOrdena("Assunto","assunto") & "</td>"
     End If
-    ShowHTML "          <td><font size=""1""><b>Operações</font></td>"
+    ShowHTML "          <td><b>Operações</td>"
     ShowHTML "        </tr>"
     If RS.EOF Then
         ShowHTML "      <tr bgcolor=""" & conTrBgColor & """><td colspan=12 align=""center""><font size=""2""><b>Não foram encontrados registros.</b></td></tr>"
@@ -344,7 +346,7 @@ Sub Informar
       rs.AbsolutePage = P3
       While Not RS.EOF and RS.AbsolutePage = P3
         If w_cor = conTrBgColor or w_cor = "" Then w_cor = conTrAlternateBgColor Else w_cor = conTrBgColor End If
-        w_cor_fonte = ""
+        w_cor_fonte = "color=""#000000"""
         If IsNull(RS("trabalho")) and RS("sq_usuario_central") > "" Then 
            w_negrito = "<b>"
            If cDbl(Nvl(RS("sq_usuario_central"),0)) <> cDbl(Nvl(w_sq_usuario_central,0)) Then w_cor_fonte = "color=""#0011FF""" End If
@@ -352,26 +354,26 @@ Sub Informar
            w_negrito = "" 
         End If
         ShowHTML "      <tr bgcolor=""" & w_cor & """ valign=""top"">"
-        ShowHTML "        <td align=""center""><font size=""1"" " & w_cor_fonte & ">" & RS("tipo") & "</td>"
-        ShowHTML "        <td nowrap align=""center""><font size=""1"" " & w_cor_fonte & ">" & w_negrito & RS("data") & "</td>"
-        ShowHTML "        <td><font size=""1"" " & w_cor_fonte & ">" & RS("numero") & "</td>"
-        ShowHTML "        <td align=""center""><font size=""1"" " & w_cor_fonte & ">" & FormataTempo(cDbl(RS("duracao"))) & "&nbsp;</td>"
-        ShowHTML "        <td align=""center""><font size=""1"" " & w_cor_fonte & ">" & RS("sq_ramal") & "</td>"
-        ShowHTML "        <td><font size=""1"" " & w_cor_fonte & ">" & RS("localidade") & "</td>"
-        ShowHTML "        <td align=""center""><font size=""1"" " & w_cor_fonte & ">" & RS("d_trabalho") & "</td>"
+        ShowHTML "        <td align=""center""><font " & w_cor_fonte & ">" & RS("tipo") & "</td>"
+        ShowHTML "        <td nowrap align=""center""><font " & w_cor_fonte & ">" & w_negrito & RS("data") & "</td>"
+        ShowHTML "        <td><font " & w_cor_fonte & ">" & RS("numero") & "</td>"
+        ShowHTML "        <td align=""center""><font " & w_cor_fonte & ">" & FormataTempo(cDbl(RS("duracao"))) & "&nbsp;</td>"
+        ShowHTML "        <td align=""center""><font " & w_cor_fonte & ">" & RS("sq_ramal") & "</td>"
+        ShowHTML "        <td><font " & w_cor_fonte & ">" & RS("localidade") & "</td>"
+        ShowHTML "        <td align=""center""><font " & w_cor_fonte & ">" & RS("d_trabalho") & "</td>"
         If P1 = 3 Then ' Se for arquivo
-           ShowHTML "        <td><font size=""1"" " & w_cor_fonte & ">" & nvl(RS("responsavel"),"---") & "</td>"
+           ShowHTML "        <td><font " & w_cor_fonte & ">" & nvl(RS("responsavel"),"---") & "</td>"
         End If
-        ShowHTML "        <td><font size=""1"" " & w_cor_fonte & ">" & RS("d_nome") & "</td>"
-        ShowHTML "        <td><font size=""1"" " & w_cor_fonte & ">" & RS("d_cc") & "</td>"
+        ShowHTML "        <td><font " & w_cor_fonte & ">" & RS("d_nome") & "</td>"
+        ShowHTML "        <td><font " & w_cor_fonte & ">" & RS("d_cc") & "</td>"
         If Nvl(p_assunto,"N") = "S" Then
            If Nvl(RS("trabalho"),"N") = "S" Then
-              ShowHTML "        <td><font size=""1"" " & w_cor_fonte & ">" & nvl(RS("assunto"),"---") & "</td>"
+              ShowHTML "        <td><font " & w_cor_fonte & ">" & nvl(RS("assunto"),"---") & "</td>"
            Else
-              ShowHTML "        <td><font size=""1"" " & w_cor_fonte & ">*** Privativo</td>"
+              ShowHTML "        <td><font " & w_cor_fonte & ">*** Privativo</td>"
            End If
         End If
-        ShowHTML "        <td align=""top"" nowrap><font size=""1"">"
+        ShowHTML "        <td align=""top"" nowrap>"
         If P1 = 3 and Nvl(RS("trabalho"),"N") = "N" Then
            ShowHTML "          ---&nbsp"
         ElseIf RS("trabalho") > "" Then
@@ -387,12 +389,12 @@ Sub Informar
       wend
       If w_cor = conTrBgColor or w_cor = "" Then w_cor = conTrAlternateBgColor Else w_cor = conTrBgColor End If
       ShowHTML "      <tr bgcolor=""" & w_cor & """>"
-      ShowHTML "        <td align=""right"" colspan=3><font size=""1""><b>Duração total:</td>"
-      ShowHTML "        <td align=""center""><font size=""1""><b>" & FormataTempo(w_soma) & "&nbsp;</td>"
+      ShowHTML "        <td align=""right"" colspan=3><b>Duração total:</td>"
+      ShowHTML "        <td align=""center""><b>" & FormataTempo(w_soma) & "&nbsp;</td>"
       If Nvl(p_assunto,"N") = "N" Then
-         ShowHTML "        <td colspan=7><font size=""1"">&nbsp;</td>"
+         ShowHTML "        <td colspan=7>&nbsp;</td>"
       Else
-         ShowHTML "        <td colspan=8><font size=""1"">&nbsp;</td>"
+         ShowHTML "        <td colspan=8>&nbsp;</td>"
       End If
       ShowHTML "      </tr>"
     End If
@@ -413,32 +415,32 @@ Sub Informar
     DB_GetCall RS, w_sq_ligacao, w_usuario, P1, "DADOS", p_sq_cc, p_outra_parte_contato, p_numero, p_inicio, p_fim, p_ativo
     ShowHTML "<tr><td align=""center"" bgcolor=""#FAEBD7""><table border=1 width=""100%""><tr><td>"
     ShowHTML "    <TABLE WIDTH=""100%"" CELLSPACING=""" & conTableCellSpacing & """ CELLPADDING=""" & conTableCellPadding & """ BorderColorDark=""" & conTableBorderColorDark & """ BorderColorLight=""" & conTableBorderColorLight & """>"
-    ShowHTML "        <tr valign=""top""><td colspan=3><font size=""1"">Tipo da ligação: <b>" & RS("tipo") & "</font></td></tr>"
+    ShowHTML "        <tr valign=""top""><td colspan=3>Tipo da ligação: <b>" & RS("tipo") & "</td></tr>"
     ShowHTML "        <tr valign=""top"">"
-    ShowHTML "          <td><font size=""1"">Nº:<br><b>" & RS("numero") & "</font></td>"
-    ShowHTML "          <td><font size=""1"">Data:<br> <b>" & FormatDateTime(RS("data"),1) & ", " & FormatDateTime(RS("data"),3) & "</font></td>"
-    ShowHTML "          <td align=""right""><font size=""1"">Duração:<br><b>" & FormataTempo(cDbl(RS("duracao"))) & "</font></td>"
+    ShowHTML "          <td>Nº:<br><b>" & RS("numero") & "</td>"
+    ShowHTML "          <td>Data:<br> <b>" & FormatDateTime(RS("data"),1) & ", " & FormatDateTime(RS("data"),3) & "</td>"
+    ShowHTML "          <td align=""right"">Duração:<br><b>" & FormataTempo(cDbl(RS("duracao"))) & "</td>"
     ShowHTML "        <tr valign=""top"">"
-    ShowHTML "          <td><font size=""1"">Ramal:<br><b>" & RS("sq_ramal") & "</font></td>"
-    ShowHTML "          <td><font size=""1"">Tronco:<br> <b>" & RS("sq_tronco") & "</font></td>"
-    ShowHTML "          <td align=""right""><font size=""1"">Valor:<br><b>" & FormatNumber(RS("valor"),2) & "</font></td>"
+    ShowHTML "          <td>Ramal:<br><b>" & RS("sq_ramal") & "</td>"
+    ShowHTML "          <td>Tronco:<br> <b>" & RS("sq_tronco") & "</td>"
+    ShowHTML "          <td align=""right"">Valor:<br><b>" & FormatNumber(RS("valor"),2) & "</td>"
     ShowHTML "    </TABLE>"
     ' Verifica se houve transferências da ligação, exibindo-as se existirem
     DB_GetCall RS2, w_sq_ligacao, w_usuario, P1, "LOG", p_sq_cc, p_outra_parte_contato, p_numero, p_inicio, p_fim, p_ativo
     If Not RS2.EOF Then
        ShowHTML "    <TABLE WIDTH=""90%"" align=""center"" BORDER=1 CELLSPACING=""" & conTableCellSpacing & """ CELLPADDING=""" & conTableCellPadding & """ BorderColorDark=""" & conTableBorderColorDark & """ BorderColorLight=""" & conTableBorderColorLight & """>"
-       ShowHTML "        <tr align=""center""><td colspan=4><font size=""1""><b>Transferências da ligação</font></td>"
+       ShowHTML "        <tr align=""center""><td colspan=4><b>Transferências da ligação</td>"
        ShowHTML "        <tr align=""center"">"
-       ShowHTML "          <td><font size=""1""><b>Data</font></td>"
-       ShowHTML "          <td><font size=""1""><b>Origem</font></td>"
-       ShowHTML "          <td><font size=""1""><b>Destino</font></td>"
-       ShowHTML "          <td><font size=""1""><b>Observação</font></td>"
+       ShowHTML "          <td><b>Data</td>"
+       ShowHTML "          <td><b>Origem</td>"
+       ShowHTML "          <td><b>Destino</td>"
+       ShowHTML "          <td><b>Observação</td>"
        While Not RS2.EOF
           ShowHTML "        <tr valign=""top"">"
-          ShowHTML "          <td  align=""center"" nowrap><font size=""1""> " & FormatDateTime(RS("data"),2) & "</font></td>"
-          ShowHTML "          <td><font size=""1"">" & RS2("origem") & "</font></td>"
-          ShowHTML "          <td><font size=""1"">" & RS2("destino") & "</font></td>"
-          ShowHTML "          <td><font size=""1"">" & RS2("observacao") & "</font></td>"
+          ShowHTML "          <td  align=""center"" nowrap> " & FormatDateTime(RS("data"),2) & "</td>"
+          ShowHTML "          <td>" & RS2("origem") & "</td>"
+          ShowHTML "          <td>" & RS2("destino") & "</td>"
+          ShowHTML "          <td>" & RS2("observacao") & "</td>"
           RS2.MoveNext
        Wend
        RS2.Close
@@ -467,12 +469,12 @@ Sub Informar
 
     ShowHTML "<tr bgcolor=""" & conTrBgColor & """><td align=""center"">"
     ShowHTML "    <table width=""95%"" border=""0"">"
-    ShowHTML "      <tr><td align=""center""><font size=""1"" color=""#FF0000""><b>" & w_titulo & "</b></font></td></tr>"
+    ShowHTML "      <tr><td align=""center""><font color=""#FF0000""><b>" & w_titulo & "</b></td></tr>"
     If O = "A" Then ' Se for transferência de ligação
        ShowHTML "      <tr>"
        SelecaoPessoa "Pe<u>s</u>soa:", "S", "Selecione a pessoa na relação.", w_destino, w_sq_central_telefonica, "w_destino", "TTTRANSFERE"
        ShowHTML "      </tr>"
-       ShowHTML "      <tr><td><font size=""1""><b><U>O</U>bservação:<br><TEXTAREA ACCESSKEY=""O"" " & w_Disabled & " class=""STI"" name=""w_assunto"" rows=""5"" cols=75>" & w_assunto & "</textarea></td>"
+       ShowHTML "      <tr><td><b><U>O</U>bservação:<br><TEXTAREA ACCESSKEY=""O"" " & w_Disabled & " class=""STI"" name=""w_assunto"" rows=""5"" cols=75>" & w_assunto & "</textarea></td>"
     Else ' Outras operações
        ShowHTML "      <tr align=""left""><td><table width=""100%"" cellpadding=0 cellspacing=0><tr valign=""top"">"
        MontaRadioNS "<b>Ligação a trabalho?</b>", w_trabalho, "w_trabalho"
@@ -481,12 +483,12 @@ Sub Informar
        w_texto = ""
        w_texto = "<b>Relação de nomes para este número no mês passado</b>:<br>" & _
                     "<table border=1 width=100% cellpadding=0 cellspacing=0>" & _
-                    "<tr><td align=left><b><font size=1>Nome" & _
-                    "    <td><b><font size=1>Responsável"
+                    "<tr><td align=left><b>Nome" & _
+                    "    <td><b>Responsável"
        DB_GetCall RS2, null, w_usuario, P1, "HINT", null, null, RS("numero"), "01/" & Mid(100+DatePart("m",Date()),2,2) & "/" & DatePart("yyyy",Date()) & "", FormataDataEdicao(Date()) , "N"
        If Not RS2.EOF Then
           While Not RS2.EOF
-             If Instr(w_texto,RS2("d_nome")) = 0 and Nvl(RS2("d_nome"),"nulo") <> "nulo" Then w_texto = w_texto & "<tr><td valign=top align=left><font size=1>" & RS2("d_nome") & "<td valign=top><font size=1>" & RS2("responsavel") End If
+             If Instr(w_texto,RS2("d_nome")) = 0 and Nvl(RS2("d_nome"),"nulo") <> "nulo" Then w_texto = w_texto & "<tr><td valign=top align=left>" & RS2("d_nome") & "<td valign=top>" & RS2("responsavel") End If
              RS2.MoveNext
           Wend
           RS2.Close
@@ -494,27 +496,27 @@ Sub Informar
        DB_GetCall RS2, null, w_usuario, P1, "HINT", null, null, RS("numero"), "01/" & Mid(100+DatePart("m",Date()),2,2) & "/" & DatePart("yyyy",Date()) & "", FormataDataEdicao(Date()) , "S"
        If Not RS2.EOF Then
           While Not RS2.EOF
-              If Instr(w_texto,RS2("d_nome")) = 0 and Nvl(RS2("d_nome"),"nulo") <> "nulo" Then w_texto = w_texto & "<tr><td valign=top align=left><font size=1>" & RS2("d_nome") & "<td valign=top><font size=1>" & RS2("responsavel") End If
+              If Instr(w_texto,RS2("d_nome")) = 0 and Nvl(RS2("d_nome"),"nulo") <> "nulo" Then w_texto = w_texto & "<tr><td valign=top align=left>" & RS2("d_nome") & "<td valign=top>" & RS2("responsavel") End If
              RS2.MoveNext
           Wend
           RS2.Close
        End If
        w_texto = w_texto & "</table>"
        MontaRadioNS "<b>Fax?</b>", w_fax, "w_fax"
-       ShowHTML "          <td><font size=""1""><b>A<U>r</U>quivo:<br><INPUT ACCESSKEY=""R"" " & w_Disabled & " class=""STI"" type=""file"" name=""w_imagem"" size=""30"" maxlength=""80""></td>"
+       ShowHTML "          <td><b>A<U>r</U>quivo:<br><INPUT ACCESSKEY=""R"" " & w_Disabled & " class=""STI"" type=""file"" name=""w_imagem"" size=""30"" maxlength=""80""></td>"
        ShowHTML "      </tr></table></td></tr>"
        ShowHTML "      <tr>"
        SelecaoCC "<u>C</u>entro de custo:", "C", "Selecione na lista a classificação à qual a ligação está vinculada.", w_sq_cc, w_sq_central_telefonica, "w_sq_cc", "TTCENTRAL"
        ShowHTML "      </tr>"
        If w_responsavel > "" Then
-          ShowHTML "      <tr><td><font size=""1""><b>Responsável pela ligação:<br><font size=2>" & w_responsavel & "</td>"
+          ShowHTML "      <tr><td><b>Responsável pela ligação:<br><font size=2>" & w_responsavel & "</td>"
        End If
-       ShowHTML "      <tr><td><font size=""1""><b><U>P</U>essoa de contato:<br><INPUT ACCESSKEY=""P"" " & w_Disabled & " class=""STI"" type=""text"" name=""w_outra_parte_contato"" size=""60"" maxlength=""60"" value=""" & w_outra_parte_contato & """ " & w_Disabled & " TITLE=""" & Replace(w_texto,CHR(13)&CHR(10),"<BR>") & """></td>"
-       'ShowHTML "      <tr><td><font size=""1""><b><U>P</U>essoa de contato:<br><INPUT ACCESSKEY=""P"" " & w_Disabled & " class=""STI"" type=""text"" name=""w_outra_parte_contato"" size=""60"" maxlength=""60"" value=""" & w_outra_parte_contato & """></td>"
-       ShowHTML "      <tr><td><font size=""1""><b>Assu<U>n</U>to:<br><TEXTAREA ACCESSKEY=""N"" " & w_Disabled & " class=""STI"" name=""w_assunto"" rows=""5"" cols=75>" & w_assunto & "</textarea></td>"
+       ShowHTML "      <tr><td><b><U>P</U>essoa de contato:<br><INPUT ACCESSKEY=""P"" " & w_Disabled & " class=""STI"" type=""text"" name=""w_outra_parte_contato"" size=""60"" maxlength=""60"" value=""" & w_outra_parte_contato & """ " & w_Disabled & " TITLE=""" & Replace(w_texto,CHR(13)&CHR(10),"<BR>") & """></td>"
+       'ShowHTML "      <tr><td><b><U>P</U>essoa de contato:<br><INPUT ACCESSKEY=""P"" " & w_Disabled & " class=""STI"" type=""text"" name=""w_outra_parte_contato"" size=""60"" maxlength=""60"" value=""" & w_outra_parte_contato & """></td>"
+       ShowHTML "      <tr><td><b>Assu<U>n</U>to:<br><TEXTAREA ACCESSKEY=""N"" " & w_Disabled & " class=""STI"" name=""w_assunto"" rows=""5"" cols=75>" & w_assunto & "</textarea></td>"
     End If
     If O <> "E" Then
-       ShowHTML "      <tr><td valign=""top""><font size=""1""><b><U>A</U>ssinatura Eletrônica:<br><INPUT ACCESSKEY=""A"" class=""STI"" type=""PASSWORD"" name=""w_assinatura"" size=""30"" maxlength=""30"" value=""""></td>"
+       ShowHTML "      <tr><td valign=""top""><b><U>A</U>ssinatura Eletrônica:<br><INPUT ACCESSKEY=""A"" class=""STI"" type=""PASSWORD"" name=""w_assinatura"" size=""30"" maxlength=""30"" value=""""></td>"
     End If
     ShowHTML "      <tr><td align=""center"" colspan=""3"" height=""1"" bgcolor=""#000000"">"
     ShowHTML "      <tr><td align=""center"" colspan=""3"">"
@@ -545,15 +547,15 @@ Sub Informar
     ShowHTML "    <table width=""90%"" border=""0"">"
     ShowHTML "      <tr align=""left""><td><table width=""100%"" cellpadding=0 cellspacing=0><tr valign=""top"">"
     SelecaoCC "<u>C</u>entro de custo:", "C", "Selecione na lista a classificação desejada.", p_sq_cc, w_sq_usuario_central, "p_sq_cc", "TTUSUARIO"
-    ShowHTML "          <td valign=""top""><font size=""1""><b><U>N</U>ome:<br><INPUT ACCESSKEY=""N"" " & w_Disabled & " class=""STI"" type=""text"" name=""p_outra_parte_contato"" size=""40"" maxlength=""40"" value=""" & p_outra_parte_contato & """></td>"
-    ShowHTML "          <td valign=""top""><font size=""1""><b>N<U>ú</U>mero:<br><INPUT ACCESSKEY=""U"" " & w_Disabled & " class=""STI"" type=""text"" name=""p_numero"" size=""20"" maxlength=""20"" value=""" & p_numero & """></td>"
+    ShowHTML "          <td valign=""top""><b><U>N</U>ome:<br><INPUT ACCESSKEY=""N"" " & w_Disabled & " class=""STI"" type=""text"" name=""p_outra_parte_contato"" size=""40"" maxlength=""40"" value=""" & p_outra_parte_contato & """></td>"
+    ShowHTML "          <td valign=""top""><b>N<U>ú</U>mero:<br><INPUT ACCESSKEY=""U"" " & w_Disabled & " class=""STI"" type=""text"" name=""p_numero"" size=""20"" maxlength=""20"" value=""" & p_numero & """></td>"
     ShowHTML "      </tr></table></td></tr>"
     ShowHTML "      <tr align=""left""><td><table cellpadding=0 cellspacing=0><tr valign=""center"">"
-    ShowHTML "          <td><font size=""1""><b>Período</b>(formato DD/MM/AAAA):&nbsp;&nbsp;</td>"
-    ShowHTML "          <td><font size=""1""><b><U>D</U>e: <INPUT ACCESSKEY=""D"" " & w_Disabled & " class=""STI"" type=""text"" name=""p_inicio"" size=""10"" maxlength=""10"" value=""" & p_inicio & """ onKeyDown=""FormataData(this,event)"">" & ExibeCalendario("Form", "p_inicio") & "&nbsp;</td>"
-    ShowHTML "          <td><font size=""1""><b>A<U>t</U>é: <INPUT ACCESSKEY=""T"" " & w_Disabled & " class=""STI"" type=""text"" name=""p_fim"" size=""10"" maxlength=""10"" value=""" & p_fim & """ onKeyDown=""FormataData(this,event)"">" & ExibeCalendario("Form", "p_fim") & "</td>"
+    ShowHTML "          <td><b>Período</b>(formato DD/MM/AAAA):&nbsp;&nbsp;</td>"
+    ShowHTML "          <td><b><U>D</U>e: <INPUT ACCESSKEY=""D"" " & w_Disabled & " class=""STI"" type=""text"" name=""p_inicio"" size=""10"" maxlength=""10"" value=""" & p_inicio & """ onKeyDown=""FormataData(this,event)"">" & ExibeCalendario("Form", "p_inicio") & "&nbsp;</td>"
+    ShowHTML "          <td><b>A<U>t</U>é: <INPUT ACCESSKEY=""T"" " & w_Disabled & " class=""STI"" type=""text"" name=""p_fim"" size=""10"" maxlength=""10"" value=""" & p_fim & """ onKeyDown=""FormataData(this,event)"">" & ExibeCalendario("Form", "p_fim") & "</td>"
     ShowHTML "      </table>"
-    ShowHTML "      <tr><td valign=""top""><font size=""1""><b>Ligações:</b><br>"
+    ShowHTML "      <tr><td valign=""top""><b>Ligações:</b><br>"
     If p_Ativo = "S" Then
        ShowHTML "              <input " & w_Disabled & " type=""radio"" name=""p_ativo"" value=""S"" checked> A trabalho <input " & w_Disabled & " type=""radio"" name=""p_ativo"" value=""N""> Particulares <input " & w_Disabled & " type=""radio"" name=""p_ativo"" value=""A""> Ambas <input " & w_Disabled & " type=""radio"" name=""p_ativo"" value=""""> Não informadas"
     ElseIf p_Ativo = "N" Then
@@ -564,12 +566,12 @@ Sub Informar
        ShowHTML "              <input " & w_Disabled & " type=""radio"" name=""p_ativo"" value=""S""> A trabalho <input " & w_Disabled & " type=""radio"" name=""p_ativo"" value=""N""> Particulares <input " & w_Disabled & " type=""radio"" name=""p_ativo"" value=""A""> Ambas <input " & w_Disabled & " type=""radio"" name=""p_ativo"" value="""" checked> Não informadas"
     End If
     If Nvl(p_assunto,"N") = "N" and Nvl(P1,3) <> 3 Then
-       ShowHTML "      <tr><td><font size=""1""><input " & w_Disabled & " type=""checkbox"" name=""p_assunto"" value=""S""> Exibir o assunto das ligações a trabalho</font></td></tr>"
+       ShowHTML "      <tr><td><input " & w_Disabled & " type=""checkbox"" name=""p_assunto"" value=""S""> Exibir o assunto das ligações a trabalho</td></tr>"
     Else
-       ShowHTML "      <tr><td><font size=""1""><input " & w_Disabled & " type=""checkbox"" name=""p_assunto"" value=""S"" checked> Exibir o assunto das ligações a trabalho</font></td></tr>"
+       ShowHTML "      <tr><td><input " & w_Disabled & " type=""checkbox"" name=""p_assunto"" value=""S"" checked> Exibir o assunto das ligações a trabalho</td></tr>"
     End If
     ShowHTML "      <tr><td><table cellpadding=0 cellspacing=0 width=""100%""><tr valign=""top"">"
-    ShowHTML "          <td><font size=""1""><b><U>O</U>rdenação por:<br><SELECT ACCESSKEY=""O"" " & w_Disabled & " class=""STS"" name=""p_ordena"" size=""1"">"
+    ShowHTML "          <td><b><U>O</U>rdenação por:<br><SELECT ACCESSKEY=""O"" " & w_Disabled & " class=""STS"" name=""p_ordena"" size=""1"">"
     If p_Ordena="D_CC" Then
        ShowHTML "          <option value=""D_CC"" SELECTED>Classificação<option value="""">Data<option value=""LOCALIDADE"">Local<option value=""d_nome"">Nome<option value=""numero"">Número<option value=""SQ_RAMAL"">Ramal"
     ElseIf p_Ordena="LOCALIDADE" Then
@@ -584,7 +586,7 @@ Sub Informar
        ShowHTML "          <option value=""D_CC"">Classificação<option value="""" SELECTED>Data<option value=""LOCALIDADE"">Local<option value=""d_nome"">Nome<option value=""numero"">Número<option value=""SQ_RAMAL"">Ramal"
     End If
     ShowHTML "          </select></td>"
-    ShowHTML "          <td><font size=""1""><b><U>L</U>inhas por página:<br><INPUT ACCESSKEY=""L"" " & w_Disabled & " class=""STI"" type=""text"" name=""P4"" size=""4"" maxlength=""4"" value=""" & P4 & """></td>"
+    ShowHTML "          <td><b><U>L</U>inhas por página:<br><INPUT ACCESSKEY=""L"" " & w_Disabled & " class=""STI"" type=""text"" name=""P4"" size=""4"" maxlength=""4"" value=""" & P4 & """></td>"
     ShowHTML "      </tr></table></td></tr>"
     ShowHTML "      <tr><td align=""center"" colspan=""3"" height=""1"" bgcolor=""#000000"">"
     ShowHTML "      <tr><td align=""center"" colspan=""3"">"
@@ -612,24 +614,24 @@ Sub Informar
     ShowHTML "    <table width=""90%"" border=""0"">"
     ShowHTML "      <tr align=""left""><td><table width=""100%"" cellpadding=0 cellspacing=0><tr valign=""top"">"
     SelecaoCC "<u>C</u>entro de custo:", "C", "Selecione na lista a classificação desejada.", p_sq_cc, w_sq_usuario_central, "p_sq_cc", "TTUSUARIO"
-    ShowHTML "          <td valign=""top""><font size=""1""><b><U>N</U>ome:<br><INPUT ACCESSKEY=""N"" " & w_Disabled & " class=""STI"" type=""text"" name=""p_outra_parte_contato"" size=""40"" maxlength=""40"" value=""" & p_outra_parte_contato & """></td>"
-    ShowHTML "          <td valign=""top""><font size=""1""><b>N<U>ú</U>mero:<br><INPUT ACCESSKEY=""U"" " & w_Disabled & " class=""STI"" type=""text"" name=""p_numero"" size=""20"" maxlength=""20"" value=""" & p_numero & """></td>"
+    ShowHTML "          <td valign=""top""><b><U>N</U>ome:<br><INPUT ACCESSKEY=""N"" " & w_Disabled & " class=""STI"" type=""text"" name=""p_outra_parte_contato"" size=""40"" maxlength=""40"" value=""" & p_outra_parte_contato & """></td>"
+    ShowHTML "          <td valign=""top""><b>N<U>ú</U>mero:<br><INPUT ACCESSKEY=""U"" " & w_Disabled & " class=""STI"" type=""text"" name=""p_numero"" size=""20"" maxlength=""20"" value=""" & p_numero & """></td>"
     ShowHTML "      </tr></table></td></tr>"
     ShowHTML "      <tr align=""left""><td><table cellpadding=0 cellspacing=0><tr valign=""center"">"
-    ShowHTML "          <td><font size=""1""><b>Período</b>(formato DD/MM/AAAA):&nbsp;&nbsp;</td>"
+    ShowHTML "          <td><b>Período</b>(formato DD/MM/AAAA):&nbsp;&nbsp;</td>"
     If p_inicio = "" Then
-       ShowHTML "          <td><font size=""1""><b><U>D</U>e: <INPUT ACCESSKEY=""D"" " & w_Disabled & " class=""STI"" type=""text"" name=""p_inicio"" size=""10"" maxlength=""10"" value=""01/" & Mid(100+DatePart("m",Date()),2,2) & "/" & DatePart("yyyy",Date()) & """ onKeyDown=""FormataData(this,event)"">" & ExibeCalendario("Form", "p_inicio") & "&nbsp;</td>"
-       ShowHTML "          <td><font size=""1""><b>A<U>t</U>é: <INPUT ACCESSKEY=""T"" " & w_Disabled & " class=""STI"" type=""text"" name=""p_fim"" size=""10"" maxlength=""10"" value=""" & FormataDataEdicao(Date()) & """ onKeyDown=""FormataData(this,event)"">" & ExibeCalendario("Form", "p_fim") & "</td>"
+       ShowHTML "          <td><b><U>D</U>e: <INPUT ACCESSKEY=""D"" " & w_Disabled & " class=""STI"" type=""text"" name=""p_inicio"" size=""10"" maxlength=""10"" value=""01/" & Mid(100+DatePart("m",Date()),2,2) & "/" & DatePart("yyyy",Date()) & """ onKeyDown=""FormataData(this,event)"">" & ExibeCalendario("Form", "p_inicio") & "&nbsp;</td>"
+       ShowHTML "          <td><b>A<U>t</U>é: <INPUT ACCESSKEY=""T"" " & w_Disabled & " class=""STI"" type=""text"" name=""p_fim"" size=""10"" maxlength=""10"" value=""" & FormataDataEdicao(Date()) & """ onKeyDown=""FormataData(this,event)"">" & ExibeCalendario("Form", "p_fim") & "</td>"
     Else
-       ShowHTML "          <td><font size=""1""><b><U>D</U>e: <INPUT ACCESSKEY=""D"" " & w_Disabled & " class=""STI"" type=""text"" name=""p_inicio"" size=""10"" maxlength=""10"" value=""" & p_inicio & """ onKeyDown=""FormataData(this,event)"">" & ExibeCalendario("Form", "p_inicio") & "&nbsp;</td>"
-       ShowHTML "          <td><font size=""1""><b>A<U>t</U>é: <INPUT ACCESSKEY=""T"" " & w_Disabled & " class=""STI"" type=""text"" name=""p_fim"" size=""10"" maxlength=""10"" value=""" & p_fim & """ onKeyDown=""FormataData(this,event)"">" & ExibeCalendario("Form", "p_fim") & "</td>"
+       ShowHTML "          <td><b><U>D</U>e: <INPUT ACCESSKEY=""D"" " & w_Disabled & " class=""STI"" type=""text"" name=""p_inicio"" size=""10"" maxlength=""10"" value=""" & p_inicio & """ onKeyDown=""FormataData(this,event)"">" & ExibeCalendario("Form", "p_inicio") & "&nbsp;</td>"
+       ShowHTML "          <td><b>A<U>t</U>é: <INPUT ACCESSKEY=""T"" " & w_Disabled & " class=""STI"" type=""text"" name=""p_fim"" size=""10"" maxlength=""10"" value=""" & p_fim & """ onKeyDown=""FormataData(this,event)"">" & ExibeCalendario("Form", "p_fim") & "</td>"
     End If
     ShowHTML "      </table>"
     If P1 = 3 Then ' Se for arquivo
-       ShowHTML "      <tr><td valign=""top""><font size=""1""><b>Ligações: apenas a trabalho"
+       ShowHTML "      <tr><td valign=""top""><b>Ligações: apenas a trabalho"
        ShowHTML "<INPUT type=""hidden"" name=""p_ativo"" value=""S"">"
     Else
-       ShowHTML "      <tr><td valign=""top""><font size=""1""><b>Ligações:</b><br>"
+       ShowHTML "      <tr><td valign=""top""><b>Ligações:</b><br>"
        If p_Ativo = "S" Then
           ShowHTML "              <input " & w_Disabled & " type=""radio"" name=""p_ativo"" value=""S"" checked> A trabalho <input " & w_Disabled & " type=""radio"" name=""p_ativo"" value=""N""> Particulares <input " & w_Disabled & " type=""radio"" name=""p_ativo"" value=""A""> Ambas"
        ElseIf p_Ativo = "N" Then
@@ -659,18 +661,18 @@ Sub Informar
             ShowHTML "<tr bgcolor=""" & conTrBgColor & """><td align=""center"">"
             ShowHTML "    <TABLE WIDTH=""90%"" align=""center"" BORDER=1 CELLSPACING=""" & conTableCellSpacing & """ CELLPADDING=""" & conTableCellPadding & """ BorderColorDark=""" & conTableBorderColorDark & """ BorderColorLight=""" & conTableBorderColorLight & """>"
             ShowHTML "        <tr align=""center"">"
-            ShowHTML "          <td rowspan=2><font size=""1""><b>Pessoa</font></td>"
-            ShowHTML "          <td colspan=4><font size=""1""><b>Quantidade</font></td>"
-            ShowHTML "          <td colspan=4><font size=""1""><b>Duração</font></td>"
+            ShowHTML "          <td rowspan=2><b>Pessoa</td>"
+            ShowHTML "          <td colspan=4><b>Quantidade</td>"
+            ShowHTML "          <td colspan=4><b>Duração</td>"
             ShowHTML "        <tr align=""center"">"
-            ShowHTML "          <td><font size=""1""><b>ORI</font></td>"
-            ShowHTML "          <td><font size=""1""><b>REC</font></td>"
-            ShowHTML "          <td><font size=""1""><b>NAT</font></td>"
-            ShowHTML "          <td><font size=""1""><b>TOT</font></td>"
-            ShowHTML "          <td><font size=""1""><b>ORI</font></td>"
-            ShowHTML "          <td><font size=""1""><b>REC</font></td>"
-            ShowHTML "          <td><font size=""1""><b>NAT</font></td>"
-            ShowHTML "          <td><font size=""1""><b>TOT</font></td>"
+            ShowHTML "          <td><b>ORI</td>"
+            ShowHTML "          <td><b>REC</td>"
+            ShowHTML "          <td><b>NAT</td>"
+            ShowHTML "          <td><b>TOT</td>"
+            ShowHTML "          <td><b>ORI</td>"
+            ShowHTML "          <td><b>REC</td>"
+            ShowHTML "          <td><b>NAT</td>"
+            ShowHTML "          <td><b>TOT</td>"
             If RS.EOF Then
                ShowHTML "      <tr bgcolor=""" & conTrBgColor & """><td colspan=10 align=""center""><font size=""2""><b>Não foram encontrados registros.</b></td></tr>"
             Else
@@ -679,15 +681,15 @@ Sub Informar
                   If RS("trabalho") = "Particular" Then
                      If w_cor = conTrBgColor or w_cor = "" Then w_cor = conTrAlternateBgColor Else w_cor = conTrBgColor End If
                      ShowHTML "      <tr bgcolor=""" & w_cor & """>"
-                     ShowHTML "        <td><font size=""1"">" & RS("nome_resumido") & "</td>"
-                     ShowHTML "        <td align=""right""><font size=""1"">" & RS("ori_qtd") & "&nbsp;</td>"
-                     ShowHTML "        <td align=""right""><font size=""1"">" & RS("rec_qtd") & "&nbsp;</td>"
-                     ShowHTML "        <td align=""right""><font size=""1"">" & RS("nat_qtd") & "&nbsp;</td>"
-                     ShowHTML "        <td align=""right""><font size=""1"">" & RS("qtd_tot") & "&nbsp;</td>"
-                     ShowHTML "        <td align=""right""><font size=""1"">" & FormataTempo(cDbl(RS("ori_dura"))) & "&nbsp;</td>"
-                     ShowHTML "        <td align=""right""><font size=""1"">" & FormataTempo(cDbl(RS("rec_dura"))) & "&nbsp;</td>"
-                     ShowHTML "        <td align=""right""><font size=""1"">" & FormataTempo(cDbl(RS("nat_dura"))) & "&nbsp;</td>"
-                     ShowHTML "        <td align=""right""><font size=""1"">" & FormataTempo(cDbl(RS("dura_tot"))) & "&nbsp;</td>"
+                     ShowHTML "        <td>" & RS("nome_resumido") & "</td>"
+                     ShowHTML "        <td align=""right"">" & RS("ori_qtd") & "&nbsp;</td>"
+                     ShowHTML "        <td align=""right"">" & RS("rec_qtd") & "&nbsp;</td>"
+                     ShowHTML "        <td align=""right"">" & RS("nat_qtd") & "&nbsp;</td>"
+                     ShowHTML "        <td align=""right"">" & RS("qtd_tot") & "&nbsp;</td>"
+                     ShowHTML "        <td align=""right"">" & FormataTempo(cDbl(RS("ori_dura"))) & "&nbsp;</td>"
+                     ShowHTML "        <td align=""right"">" & FormataTempo(cDbl(RS("rec_dura"))) & "&nbsp;</td>"
+                     ShowHTML "        <td align=""right"">" & FormataTempo(cDbl(RS("nat_dura"))) & "&nbsp;</td>"
+                     ShowHTML "        <td align=""right"">" & FormataTempo(cDbl(RS("dura_tot"))) & "&nbsp;</td>"
                      ShowHTML "        </td>"
                      ShowHTML "      </tr>"
                   End If
@@ -706,18 +708,18 @@ Sub Informar
        ShowHTML "<tr bgcolor=""" & conTrBgColor & """><td align=""center"">"
        ShowHTML "    <TABLE WIDTH=""90%"" align=""center"" BORDER=1 CELLSPACING=""" & conTableCellSpacing & """ CELLPADDING=""" & conTableCellPadding & """ BorderColorDark=""" & conTableBorderColorDark & """ BorderColorLight=""" & conTableBorderColorLight & """>"
        ShowHTML "        <tr align=""center"">"
-       ShowHTML "          <td rowspan=2><font size=""1""><b>Tipo</font></td>"
-       ShowHTML "          <td colspan=4><font size=""1""><b>Quantidade</font></td>"
-       ShowHTML "          <td colspan=4><font size=""1""><b>Duração</font></td>"
+       ShowHTML "          <td rowspan=2><b>Tipo</td>"
+       ShowHTML "          <td colspan=4><b>Quantidade</td>"
+       ShowHTML "          <td colspan=4><b>Duração</td>"
        ShowHTML "        <tr align=""center"">"
-       ShowHTML "          <td><font size=""1""><b>ORI</font></td>"
-       ShowHTML "          <td><font size=""1""><b>REC</font></td>"
-       ShowHTML "          <td><font size=""1""><b>NAT</font></td>"
-       ShowHTML "          <td><font size=""1""><b>TOT</font></td>"
-       ShowHTML "          <td><font size=""1""><b>ORI</font></td>"
-       ShowHTML "          <td><font size=""1""><b>REC</font></td>"
-       ShowHTML "          <td><font size=""1""><b>NAT</font></td>"
-       ShowHTML "          <td><font size=""1""><b>TOT</font></td>"
+       ShowHTML "          <td><b>ORI</td>"
+       ShowHTML "          <td><b>REC</td>"
+       ShowHTML "          <td><b>NAT</td>"
+       ShowHTML "          <td><b>TOT</td>"
+       ShowHTML "          <td><b>ORI</td>"
+       ShowHTML "          <td><b>REC</td>"
+       ShowHTML "          <td><b>NAT</td>"
+       ShowHTML "          <td><b>TOT</td>"
        If RS.EOF Then
           ShowHTML "      <tr bgcolor=""" & conTrBgColor & """><td colspan=10 align=""center""><font size=""2""><b>Não foram encontrados registros.</b></td></tr>"
        Else
@@ -725,15 +727,15 @@ Sub Informar
           While Not RS.EOF
              If w_cor = conTrBgColor or w_cor = "" Then w_cor = conTrAlternateBgColor Else w_cor = conTrBgColor End If
              ShowHTML "      <tr bgcolor=""" & w_cor & """>"
-             ShowHTML "        <td><font size=""1"" " & w_cor_fonte & ">" & RS("trabalho") & "</td>"
-             ShowHTML "        <td align=""right""><font size=""1"">" & RS("ori_qtd") & "&nbsp;</td>"
-             ShowHTML "        <td align=""right""><font size=""1"">" & RS("rec_qtd") & "&nbsp;</td>"
-             ShowHTML "        <td align=""right""><font size=""1"">" & RS("nat_qtd") & "&nbsp;</td>"
-             ShowHTML "        <td align=""right""><font size=""1"">" & RS("qtd_tot") & "&nbsp;</td>"
-             ShowHTML "        <td align=""right""><font size=""1"">" & FormataTempo(cDbl(RS("ori_dura"))) & "&nbsp;</td>"
-             ShowHTML "        <td align=""right""><font size=""1"">" & FormataTempo(cDbl(RS("rec_dura"))) & "&nbsp;</td>"
-             ShowHTML "        <td align=""right""><font size=""1"">" & FormataTempo(cDbl(RS("nat_dura"))) & "&nbsp;</td>"
-             ShowHTML "        <td align=""right""><font size=""1"">" & FormataTempo(cDBl(Nvl(RS("dura_tot"),0))) & "&nbsp;</td>"
+             ShowHTML "        <td><font " & w_cor_fonte & ">" & RS("trabalho") & "</td>"
+             ShowHTML "        <td align=""right"">" & RS("ori_qtd") & "&nbsp;</td>"
+             ShowHTML "        <td align=""right"">" & RS("rec_qtd") & "&nbsp;</td>"
+             ShowHTML "        <td align=""right"">" & RS("nat_qtd") & "&nbsp;</td>"
+             ShowHTML "        <td align=""right"">" & RS("qtd_tot") & "&nbsp;</td>"
+             ShowHTML "        <td align=""right"">" & FormataTempo(cDbl(RS("ori_dura"))) & "&nbsp;</td>"
+             ShowHTML "        <td align=""right"">" & FormataTempo(cDbl(RS("rec_dura"))) & "&nbsp;</td>"
+             ShowHTML "        <td align=""right"">" & FormataTempo(cDbl(RS("nat_dura"))) & "&nbsp;</td>"
+             ShowHTML "        <td align=""right"">" & FormataTempo(cDBl(Nvl(RS("dura_tot"),0))) & "&nbsp;</td>"
              ShowHTML "        </td>"
              ShowHTML "      </tr>"
              RS.MoveNext
@@ -749,18 +751,18 @@ Sub Informar
        ShowHTML "<tr bgcolor=""" & conTrBgColor & """><td align=""center"">"
        ShowHTML "    <TABLE WIDTH=""90%"" align=""center"" BORDER=1 CELLSPACING=""" & conTableCellSpacing & """ CELLPADDING=""" & conTableCellPadding & """ BorderColorDark=""" & conTableBorderColorDark & """ BorderColorLight=""" & conTableBorderColorLight & """>"
        ShowHTML "        <tr align=""center"">"
-       ShowHTML "          <td rowspan=2><font size=""1""><b>Classificação</font></td>"
-       ShowHTML "          <td colspan=4><font size=""1""><b>Quantidade</font></td>"
-       ShowHTML "          <td colspan=4><font size=""1""><b>Duração</font></td>"
+       ShowHTML "          <td rowspan=2><b>Classificação</td>"
+       ShowHTML "          <td colspan=4><b>Quantidade</td>"
+       ShowHTML "          <td colspan=4><b>Duração</td>"
        ShowHTML "        <tr align=""center"">"
-       ShowHTML "          <td><font size=""1""><b>ORI</font></td>"
-       ShowHTML "          <td><font size=""1""><b>REC</font></td>"
-       ShowHTML "          <td><font size=""1""><b>NAT</font></td>"
-       ShowHTML "          <td><font size=""1""><b>TOT</font></td>"
-       ShowHTML "          <td><font size=""1""><b>ORI</font></td>"
-       ShowHTML "          <td><font size=""1""><b>REC</font></td>"
-       ShowHTML "          <td><font size=""1""><b>NAT</font></td>"
-       ShowHTML "          <td><font size=""1""><b>TOT</font></td>"
+       ShowHTML "          <td><b>ORI</td>"
+       ShowHTML "          <td><b>REC</td>"
+       ShowHTML "          <td><b>NAT</td>"
+       ShowHTML "          <td><b>TOT</td>"
+       ShowHTML "          <td><b>ORI</td>"
+       ShowHTML "          <td><b>REC</td>"
+       ShowHTML "          <td><b>NAT</td>"
+       ShowHTML "          <td><b>TOT</td>"
        If RS.EOF Then
           ShowHTML "      <tr bgcolor=""" & conTrBgColor & """><td colspan=10 align=""center""><font size=""2""><b>Não foram encontrados registros.</b></td></tr>"
        Else
@@ -769,15 +771,15 @@ Sub Informar
              If RS("trabalho") = "Total" Then
                 If w_cor = conTrBgColor or w_cor = "" Then w_cor = conTrAlternateBgColor Else w_cor = conTrBgColor End If
                 ShowHTML "      <tr bgcolor=""" & w_cor & """>"
-                ShowHTML "        <td><font size=""1"">" & RS("sigla") & "</td>"
-                ShowHTML "        <td align=""right""><font size=""1"">" & RS("ori_qtd") & "&nbsp;</td>"
-                ShowHTML "        <td align=""right""><font size=""1"">" & RS("rec_qtd") & "&nbsp;</td>"
-                ShowHTML "        <td align=""right""><font size=""1"">" & RS("nat_qtd") & "&nbsp;</td>"
-                ShowHTML "        <td align=""right""><font size=""1"">" & RS("qtd_tot") & "&nbsp;</td>"
-                ShowHTML "        <td align=""right""><font size=""1"">" & FormataTempo(cDbl(RS("ori_dura"))) & "&nbsp;</td>"
-                ShowHTML "        <td align=""right""><font size=""1"">" & FormataTempo(cDbl(RS("rec_dura"))) & "&nbsp;</td>"
-                ShowHTML "        <td align=""right""><font size=""1"">" & FormataTempo(cDbl(RS("nat_dura"))) & "&nbsp;</td>"
-                ShowHTML "        <td align=""right""><font size=""1"">" & FormataTempo(cDbl(RS("dura_tot"))) & "&nbsp;</td>"
+                ShowHTML "        <td>" & RS("sigla") & "</td>"
+                ShowHTML "        <td align=""right"">" & RS("ori_qtd") & "&nbsp;</td>"
+                ShowHTML "        <td align=""right"">" & RS("rec_qtd") & "&nbsp;</td>"
+                ShowHTML "        <td align=""right"">" & RS("nat_qtd") & "&nbsp;</td>"
+                ShowHTML "        <td align=""right"">" & RS("qtd_tot") & "&nbsp;</td>"
+                ShowHTML "        <td align=""right"">" & FormataTempo(cDbl(RS("ori_dura"))) & "&nbsp;</td>"
+                ShowHTML "        <td align=""right"">" & FormataTempo(cDbl(RS("rec_dura"))) & "&nbsp;</td>"
+                ShowHTML "        <td align=""right"">" & FormataTempo(cDbl(RS("nat_dura"))) & "&nbsp;</td>"
+                ShowHTML "        <td align=""right"">" & FormataTempo(cDbl(RS("dura_tot"))) & "&nbsp;</td>"
                 ShowHTML "        </td>"
                 ShowHTML "      </tr>"
              End If
@@ -794,18 +796,18 @@ Sub Informar
        ShowHTML "<tr bgcolor=""" & conTrBgColor & """><td align=""center"">"
        ShowHTML "    <TABLE WIDTH=""90%"" align=""center"" BORDER=1 CELLSPACING=""" & conTableCellSpacing & """ CELLPADDING=""" & conTableCellPadding & """ BorderColorDark=""" & conTableBorderColorDark & """ BorderColorLight=""" & conTableBorderColorLight & """>"
        ShowHTML "        <tr align=""center"">"
-       ShowHTML "          <td rowspan=2><font size=""1""><b>Mês/Ano</font></td>"
-       ShowHTML "          <td colspan=4><font size=""1""><b>Quantidade</font></td>"
-       ShowHTML "          <td colspan=4><font size=""1""><b>Duração</font></td>"
+       ShowHTML "          <td rowspan=2><b>Mês/Ano</td>"
+       ShowHTML "          <td colspan=4><b>Quantidade</td>"
+       ShowHTML "          <td colspan=4><b>Duração</td>"
        ShowHTML "        <tr align=""center"">"
-       ShowHTML "          <td><font size=""1""><b>ORI</font></td>"
-       ShowHTML "          <td><font size=""1""><b>REC</font></td>"
-       ShowHTML "          <td><font size=""1""><b>NAT</font></td>"
-       ShowHTML "          <td><font size=""1""><b>TOT</font></td>"
-       ShowHTML "          <td><font size=""1""><b>ORI</font></td>"
-       ShowHTML "          <td><font size=""1""><b>REC</font></td>"
-       ShowHTML "          <td><font size=""1""><b>NAT</font></td>"
-       ShowHTML "          <td><font size=""1""><b>TOT</font></td>"
+       ShowHTML "          <td><b>ORI</td>"
+       ShowHTML "          <td><b>REC</td>"
+       ShowHTML "          <td><b>NAT</td>"
+       ShowHTML "          <td><b>TOT</td>"
+       ShowHTML "          <td><b>ORI</td>"
+       ShowHTML "          <td><b>REC</td>"
+       ShowHTML "          <td><b>NAT</td>"
+       ShowHTML "          <td><b>TOT</td>"
        If RS.EOF Then
           ShowHTML "      <tr bgcolor=""" & conTrBgColor & """><td colspan=10 align=""center""><font size=""2""><b>Não foram encontrados registros.</b></td></tr>"
        Else
@@ -814,15 +816,15 @@ Sub Informar
              If RS("trabalho") = "Total" Then
                 If w_cor = conTrBgColor or w_cor = "" Then w_cor = conTrAlternateBgColor Else w_cor = conTrBgColor End If
                 ShowHTML "      <tr bgcolor=""" & w_cor & """>"
-                ShowHTML "        <td align=""center""><font size=""1"">" & Mid(RS("mes"),5,2) & "/" & Mid(RS("mes"),1,4) & "</td>"
-                ShowHTML "        <td align=""right""><font size=""1"">" & RS("ori_qtd") & "&nbsp;</td>"
-                ShowHTML "        <td align=""right""><font size=""1"">" & RS("rec_qtd") & "&nbsp;</td>"
-                ShowHTML "        <td align=""right""><font size=""1"">" & RS("nat_qtd") & "&nbsp;</td>"
-                ShowHTML "        <td align=""right""><font size=""1"">" & RS("qtd_tot") & "&nbsp;</td>"
-                ShowHTML "        <td align=""right""><font size=""1"">" & FormataTempo(cDbl(RS("ori_dura"))) & "&nbsp;</td>"
-                ShowHTML "        <td align=""right""><font size=""1"">" & FormataTempo(cDbl(RS("rec_dura"))) & "&nbsp;</td>"
-                ShowHTML "        <td align=""right""><font size=""1"">" & FormataTempo(cDbl(RS("nat_dura"))) & "&nbsp;</td>"
-                ShowHTML "        <td align=""right""><font size=""1"">" & FormataTempo(cDbl(RS("dura_tot"))) & "&nbsp;</td>"
+                ShowHTML "        <td align=""center"">" & Mid(RS("mes"),5,2) & "/" & Mid(RS("mes"),1,4) & "</td>"
+                ShowHTML "        <td align=""right"">" & RS("ori_qtd") & "&nbsp;</td>"
+                ShowHTML "        <td align=""right"">" & RS("rec_qtd") & "&nbsp;</td>"
+                ShowHTML "        <td align=""right"">" & RS("nat_qtd") & "&nbsp;</td>"
+                ShowHTML "        <td align=""right"">" & RS("qtd_tot") & "&nbsp;</td>"
+                ShowHTML "        <td align=""right"">" & FormataTempo(cDbl(RS("ori_dura"))) & "&nbsp;</td>"
+                ShowHTML "        <td align=""right"">" & FormataTempo(cDbl(RS("rec_dura"))) & "&nbsp;</td>"
+                ShowHTML "        <td align=""right"">" & FormataTempo(cDbl(RS("nat_dura"))) & "&nbsp;</td>"
+                ShowHTML "        <td align=""right"">" & FormataTempo(cDbl(RS("dura_tot"))) & "&nbsp;</td>"
                 ShowHTML "        </td>"
                 ShowHTML "      </tr>"
              End If
@@ -839,18 +841,18 @@ Sub Informar
        ShowHTML "<tr bgcolor=""" & conTrBgColor & """><td align=""center"">"
        ShowHTML "    <TABLE WIDTH=""90%"" align=""center"" BORDER=1 CELLSPACING=""" & conTableCellSpacing & """ CELLPADDING=""" & conTableCellPadding & """ BorderColorDark=""" & conTableBorderColorDark & """ BorderColorLight=""" & conTableBorderColorLight & """>"
        ShowHTML "        <tr align=""center"">"
-       ShowHTML "          <td rowspan=2><font size=""1""><b>Dia</font></td>"
-       ShowHTML "          <td colspan=4><font size=""1""><b>Quantidade</font></td>"
-       ShowHTML "          <td colspan=4><font size=""1""><b>Duração</font></td>"
+       ShowHTML "          <td rowspan=2><b>Dia</td>"
+       ShowHTML "          <td colspan=4><b>Quantidade</td>"
+       ShowHTML "          <td colspan=4><b>Duração</td>"
        ShowHTML "        <tr align=""center"">"
-       ShowHTML "          <td><font size=""1""><b>ORI</font></td>"
-       ShowHTML "          <td><font size=""1""><b>REC</font></td>"
-       ShowHTML "          <td><font size=""1""><b>NAT</font></td>"
-       ShowHTML "          <td><font size=""1""><b>TOT</font></td>"
-       ShowHTML "          <td><font size=""1""><b>ORI</font></td>"
-       ShowHTML "          <td><font size=""1""><b>REC</font></td>"
-       ShowHTML "          <td><font size=""1""><b>NAT</font></td>"
-       ShowHTML "          <td><font size=""1""><b>TOT</font></td>"
+       ShowHTML "          <td><b>ORI</td>"
+       ShowHTML "          <td><b>REC</td>"
+       ShowHTML "          <td><b>NAT</td>"
+       ShowHTML "          <td><b>TOT</td>"
+       ShowHTML "          <td><b>ORI</td>"
+       ShowHTML "          <td><b>REC</td>"
+       ShowHTML "          <td><b>NAT</td>"
+       ShowHTML "          <td><b>TOT</td>"
        If RS.EOF Then
           ShowHTML "      <tr bgcolor=""" & conTrBgColor & """><td colspan=10 align=""center""><font size=""2""><b>Não foram encontrados registros.</b></td></tr>"
        Else
@@ -859,15 +861,15 @@ Sub Informar
              If RS("trabalho") = "Total" Then
                 If w_cor = conTrBgColor or w_cor = "" Then w_cor = conTrAlternateBgColor Else w_cor = conTrBgColor End If
                 ShowHTML "      <tr bgcolor=""" & w_cor & """>"
-                ShowHTML "        <td align=""center""><font size=""1"">" & RS("dia") & "</td>"
-                ShowHTML "        <td align=""right""><font size=""1"">" & RS("ori_qtd") & "&nbsp;</td>"
-                ShowHTML "        <td align=""right""><font size=""1"">" & RS("rec_qtd") & "&nbsp;</td>"
-                ShowHTML "        <td align=""right""><font size=""1"">" & RS("nat_qtd") & "&nbsp;</td>"
-                ShowHTML "        <td align=""right""><font size=""1"">" & RS("qtd_tot") & "&nbsp;</td>"
-                ShowHTML "        <td align=""right""><font size=""1"">" & FormataTempo(cDbl(RS("ori_dura"))) & "&nbsp;</td>"
-                ShowHTML "        <td align=""right""><font size=""1"">" & FormataTempo(cDbl(RS("rec_dura"))) & "&nbsp;</td>"
-                ShowHTML "        <td align=""right""><font size=""1"">" & FormataTempo(cDbl(RS("nat_dura"))) & "&nbsp;</td>"
-                ShowHTML "        <td align=""right""><font size=""1"">" & FormataTempo(cDbl(RS("dura_tot"))) & "&nbsp;</td>"
+                ShowHTML "        <td align=""center"">" & RS("dia") & "</td>"
+                ShowHTML "        <td align=""right"">" & RS("ori_qtd") & "&nbsp;</td>"
+                ShowHTML "        <td align=""right"">" & RS("rec_qtd") & "&nbsp;</td>"
+                ShowHTML "        <td align=""right"">" & RS("nat_qtd") & "&nbsp;</td>"
+                ShowHTML "        <td align=""right"">" & RS("qtd_tot") & "&nbsp;</td>"
+                ShowHTML "        <td align=""right"">" & FormataTempo(cDbl(RS("ori_dura"))) & "&nbsp;</td>"
+                ShowHTML "        <td align=""right"">" & FormataTempo(cDbl(RS("rec_dura"))) & "&nbsp;</td>"
+                ShowHTML "        <td align=""right"">" & FormataTempo(cDbl(RS("nat_dura"))) & "&nbsp;</td>"
+                ShowHTML "        <td align=""right"">" & FormataTempo(cDbl(RS("dura_tot"))) & "&nbsp;</td>"
                 ShowHTML "        </td>"
                 ShowHTML "      </tr>"
              End If
@@ -884,18 +886,18 @@ Sub Informar
        ShowHTML "<tr bgcolor=""" & conTrBgColor & """><td align=""center"">"
        ShowHTML "    <TABLE WIDTH=""90%"" align=""center"" BORDER=1 CELLSPACING=""" & conTableCellSpacing & """ CELLPADDING=""" & conTableCellPadding & """ BorderColorDark=""" & conTableBorderColorDark & """ BorderColorLight=""" & conTableBorderColorLight & """>"
        ShowHTML "        <tr align=""center"">"
-       ShowHTML "          <td rowspan=2><font size=""1""><b>Dia</font></td>"
-       ShowHTML "          <td colspan=4><font size=""1""><b>Quantidade</font></td>"
-       ShowHTML "          <td colspan=4><font size=""1""><b>Duração</font></td>"
+       ShowHTML "          <td rowspan=2><b>Dia</td>"
+       ShowHTML "          <td colspan=4><b>Quantidade</td>"
+       ShowHTML "          <td colspan=4><b>Duração</td>"
        ShowHTML "        <tr align=""center"">"
-       ShowHTML "          <td><font size=""1""><b>ORI</font></td>"
-       ShowHTML "          <td><font size=""1""><b>REC</font></td>"
-       ShowHTML "          <td><font size=""1""><b>NAT</font></td>"
-       ShowHTML "          <td><font size=""1""><b>TOT</font></td>"
-       ShowHTML "          <td><font size=""1""><b>ORI</font></td>"
-       ShowHTML "          <td><font size=""1""><b>REC</font></td>"
-       ShowHTML "          <td><font size=""1""><b>NAT</font></td>"
-       ShowHTML "          <td><font size=""1""><b>TOT</font></td>"
+       ShowHTML "          <td><b>ORI</td>"
+       ShowHTML "          <td><b>REC</td>"
+       ShowHTML "          <td><b>NAT</td>"
+       ShowHTML "          <td><b>TOT</td>"
+       ShowHTML "          <td><b>ORI</td>"
+       ShowHTML "          <td><b>REC</td>"
+       ShowHTML "          <td><b>NAT</td>"
+       ShowHTML "          <td><b>TOT</td>"
        If RS.EOF Then
           ShowHTML "      <tr bgcolor=""" & conTrBgColor & """><td colspan=10 align=""center""><font size=""2""><b>Não foram encontrados registros.</b></td></tr>"
        Else
@@ -904,15 +906,15 @@ Sub Informar
              If RS("trabalho") = "Total" Then
                 If w_cor = conTrBgColor or w_cor = "" Then w_cor = conTrAlternateBgColor Else w_cor = conTrBgColor End If
                 ShowHTML "      <tr bgcolor=""" & w_cor & """>"
-                ShowHTML "        <td align=""center""><font size=""1"">" & RS("mes") & "</td>"
-                ShowHTML "        <td align=""right""><font size=""1"">" & RS("ori_qtd") & "&nbsp;</td>"
-                ShowHTML "        <td align=""right""><font size=""1"">" & RS("rec_qtd") & "&nbsp;</td>"
-                ShowHTML "        <td align=""right""><font size=""1"">" & RS("nat_qtd") & "&nbsp;</td>"
-                ShowHTML "        <td align=""right""><font size=""1"">" & RS("qtd_tot") & "&nbsp;</td>"
-                ShowHTML "        <td align=""right""><font size=""1"">" & FormataTempo(cDbl(RS("ori_dura"))) & "&nbsp;</td>"
-                ShowHTML "        <td align=""right""><font size=""1"">" & FormataTempo(cDbl(RS("rec_dura"))) & "&nbsp;</td>"
-                ShowHTML "        <td align=""right""><font size=""1"">" & FormataTempo(cDbl(RS("nat_dura"))) & "&nbsp;</td>"
-                ShowHTML "        <td align=""right""><font size=""1"">" & FormataTempo(cDbl(RS("dura_tot"))) & "&nbsp;</td>"
+                ShowHTML "        <td align=""center"">" & RS("mes") & "</td>"
+                ShowHTML "        <td align=""right"">" & RS("ori_qtd") & "&nbsp;</td>"
+                ShowHTML "        <td align=""right"">" & RS("rec_qtd") & "&nbsp;</td>"
+                ShowHTML "        <td align=""right"">" & RS("nat_qtd") & "&nbsp;</td>"
+                ShowHTML "        <td align=""right"">" & RS("qtd_tot") & "&nbsp;</td>"
+                ShowHTML "        <td align=""right"">" & FormataTempo(cDbl(RS("ori_dura"))) & "&nbsp;</td>"
+                ShowHTML "        <td align=""right"">" & FormataTempo(cDbl(RS("rec_dura"))) & "&nbsp;</td>"
+                ShowHTML "        <td align=""right"">" & FormataTempo(cDbl(RS("nat_dura"))) & "&nbsp;</td>"
+                ShowHTML "        <td align=""right"">" & FormataTempo(cDbl(RS("dura_tot"))) & "&nbsp;</td>"
                 ShowHTML "        </td>"
                 ShowHTML "      </tr>"
              End If
@@ -1012,7 +1014,7 @@ Sub Main
     Case Else
        Cabecalho
        BodyOpen "onLoad=document.focus();"
-       ShowHTML "<B><FONT COLOR=""#000000"">" & w_TP & "</FONT></B>"
+       ShowHTML "<B><FONT COLOR=""#000000"">" & w_TP & "</font></B>"
        ShowHTML "<HR>"
        ShowHTML "<div align=center><center><br><br><br><br><br><br><br><br><br><br><img src=""images/icone/underc.gif"" align=""center""> <b>Esta opção está sendo desenvolvida.</b><br><br><br><br><br><br><br><br><br><br></center></div>"
        Rodape
