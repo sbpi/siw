@@ -25,6 +25,21 @@ Fontes_ASP_FBAJ/default_files/barrasuperior.jpg -text
 Fontes_ASP_FBAJ/default_files/fundo.jpg -text
 Fontes_ASP_FBAJ/default_files/linha.jpg -text
 Fontes_ASP_FBAJ/default_files/logo.jpg -text
+Fontes_ASP_IBICT/default.htm -text
+Fontes_ASP_IBICT/default_files/Thumbs.db -text
+Fontes_ASP_IBICT/default_files/ajuda.jpg -text
+Fontes_ASP_IBICT/default_files/barrasuperior.jpg -text
+Fontes_ASP_IBICT/default_files/brasil2.gif -text
+Fontes_ASP_IBICT/default_files/fundo.jpg -text
+Fontes_ASP_IBICT/default_files/ibict.css -text
+Fontes_ASP_IBICT/default_files/linha.jpg -text
+Fontes_ASP_IBICT/default_files/logo.gif -text
+Fontes_ASP_IBICT/default_files/logo.jpg -text
+Fontes_ASP_IBICT/default_files/logo_ct2.gif -text
+Fontes_ASP_IBICT/default_files/logo_sgpa.gif -text
+Fontes_ASP_IBICT/default_files/logo_sistema.gif -text
+Fontes_ASP_IBICT/default_files/sgpa_logo.jpg -text
+Fontes_ASP_IBICT/default_files/topbg.jpg -text
 Fontes_ASP_MCT/default.htm -text
 Fontes_ASP_MCT/default_files/ajuda.jpg -text
 Fontes_ASP_MCT/default_files/barrasuperior.jpg -text
@@ -113,6 +128,7 @@ Fontes_ASP_SAA/cv/images/topo_foto.jpg -text
 Fontes_ASP_SAA/cv/javas/hoje.js -text
 Fontes_ASP_SAA/cv/oque.htm -text
 Fontes_ASP_SAA/default.htm -text
+Fontes_ASP_SAA/default_files/Thumbs.db -text
 Fontes_ASP_SAA/default_files/ajuda.jpg -text
 Fontes_ASP_SAA/default_files/barrasuperior.jpg -text
 Fontes_ASP_SAA/default_files/fundo.jpg -text
@@ -155,6 +171,7 @@ Fontes_ASP_SEPPIR/cv/images/topo_foto.jpg -text
 Fontes_ASP_SEPPIR/cv/javas/hoje.js -text
 Fontes_ASP_SEPPIR/cv/oque.htm -text
 Fontes_ASP_SEPPIR/default.htm -text
+Fontes_ASP_SEPPIR/default_files/Thumbs.db -text
 Fontes_ASP_SEPPIR/default_files/ajuda.jpg -text
 Fontes_ASP_SEPPIR/default_files/barrasuperior.jpg -text
 Fontes_ASP_SEPPIR/default_files/brasil.gif -text
@@ -250,6 +267,7 @@ Fontes_ASP_SIW/cp_calendar/CSetAvail.class -text
 Fontes_ASP_SIW/cp_calendar/FlecheButton.class -text
 Fontes_ASP_SIW/cp_calendar/ccalendar.class -text
 Fontes_ASP_SIW/cp_calendar/ccalendar.jar -text
+Fontes_ASP_SIW/cp_menu/xPandMenu.css -text
 Fontes_ASP_SIW/cp_upload/_upload.asp -text
 Fontes_ASP_SIW/cp_upload/barra.asp -text
 Fontes_ASP_SIW/ecw.asp -text

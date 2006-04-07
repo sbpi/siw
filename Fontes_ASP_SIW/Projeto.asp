@@ -3047,7 +3047,7 @@ Function EtapaLinha (p_chave,  p_chave_aux, p_titulo, p_resp,  p_setor, _
   l_html = l_html & VbCrLf & "        <td align=""center"" " & l_row & "><font size=""1"">" & FormataDataEdicao(p_fim) & "</td>"
   l_html = l_html & VbCrLf & "        <td nowrap align=""right"" " & l_row & "><font size=""1"">" & p_perc & " %</td>"
   If cDbl(p_ativ) > cDbl(0) Then
-     l_html = l_html & VbCrLf & "        <td align=""center"" " & l_row & " title=""Número de atividades ligadas a esta estapa. Clique sobre o número para exibir APENAS as atividades que você tem acesso.""><font size=""1""><a class=""hl"" href=""javascript:lista('" & p_chave & "','" & p_chave_aux & "');"" onMouseOver=""window.status='Exibe APENAS as atividades que você tem acesso.'; return true"" onMouseOut=""window.status=''; return true"">" & p_ativ & "</a></td>"
+     l_html = l_html & VbCrLf & "        <td align=""center"" " & l_row & " title=""Número de atividades ligadas a esta estapa. Clique sobre o número para exibir APENAS as atividades que você tem acesso.""><font size=""1""><a class=""HL"" href=""javascript:lista('" & p_chave & "','" & p_chave_aux & "');"" onMouseOver=""window.status='Exibe APENAS as atividades que você tem acesso.'; return true"" onMouseOut=""window.status=''; return true"">" & p_ativ & "</a></td>"
   Else
      l_html = l_html & VbCrLf & "        <td align=""center"" " & l_row & "><font size=""1"">" & p_ativ & "</td>"
   End If

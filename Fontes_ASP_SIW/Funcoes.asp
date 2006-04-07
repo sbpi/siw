@@ -8,9 +8,9 @@ Sub SelecaoAno (label, accesskey, hint, chave, chaveAux, campo, restricao, atrib
     Dim l_cont
     l_cont = Year(Date())-1
     If IsNull(hint) Then
-       ShowHTML "          <td valign=""top""><font size=""1""><b>" & Label & "</b><br><SELECT ACCESSKEY=""" & accesskey & """ class=""sts"" NAME=""" & campo & """ " & w_Disabled & " " & atributo & ">"
+       ShowHTML "          <td valign=""top""><font size=""1""><b>" & Label & "</b><br><SELECT ACCESSKEY=""" & accesskey & """ class=""STS"" NAME=""" & campo & """ " & w_Disabled & " " & atributo & ">"
     Else
-       ShowHTML "          <td valign=""top"" TITLE=""" & hint & """><font size=""1""><b>" & Label & "</b><br><SELECT ACCESSKEY=""" & accesskey & """ class=""sts"" NAME=""" & campo & """ " & w_Disabled & " " & atributo & ">"
+       ShowHTML "          <td valign=""top"" TITLE=""" & hint & """><font size=""1""><b>" & Label & "</b><br><SELECT ACCESSKEY=""" & accesskey & """ class=""STS"" NAME=""" & campo & """ " & w_Disabled & " " & atributo & ">"
     End If
     ShowHTML "          <option value="""">---"
     While l_cont < Year(Date())+3
@@ -175,9 +175,9 @@ Sub MontaBarra (p_link, p_PageCount, p_AbsolutePage, p_PageSize, p_RecordCount)
   ShowHTML MontaFiltro("POST")
   If p_PageSize < p_RecordCount Then
      If p_PageCount = p_AbsolutePage Then
-        ShowHTML "<span class=""btm""><br>" & (p_RecordCount-((p_PageCount-1)*p_PageSize)) & " linhas apresentadas de " & p_RecordCount & " linhas"
+        ShowHTML "<span class=""STC""><br>" & (p_RecordCount-((p_PageCount-1)*p_PageSize)) & " linhas apresentadas de " & p_RecordCount & " linhas"
      Else
-        ShowHTML "<span class=""btm""><br>" & p_PageSize & " linhas apresentadas de " & p_RecordCount & " linhas"
+        ShowHTML "<span class=""STC""><br>" & p_PageSize & " linhas apresentadas de " & p_RecordCount & " linhas"
      End If
      ShowHTML "<br>na página " & p_AbsolutePage & " de " & p_PageCount & " páginas"
      If p_AbsolutePage > 1 Then
@@ -368,7 +368,7 @@ Function ExibePessoa (p_dir, p_cliente, p_pessoa, p_tp, p_nome)
   If Nvl(p_nome,"") = "" Then
      l_string="---"
   Else
-     l_string = l_string & "<A class=""hl"" HREF=""#"" onClick=""window.open('" & p_dir & "Seguranca.asp?par=TELAUSUARIO&w_cliente=" & p_cliente & "&w_sq_pessoa=" & p_pessoa & "&P1=" & P1 & "&P2=" & P2 & "&P3=" & P3 & "&P4=" & P4 & "&TP=" & p_TP & "&SG=" & "','Pessoa','width=780,height=300,top=10,left=10,toolbar=no,scrollbars=yes,resizable=yes,status=no'); return false;"" title=""Clique para exibir os dados desta pessoa!"">" & p_nome & "</A>"
+     l_string = l_string & "<A class=""HL"" HREF=""#"" onClick=""window.open('" & p_dir & "Seguranca.asp?par=TELAUSUARIO&w_cliente=" & p_cliente & "&w_sq_pessoa=" & p_pessoa & "&P1=" & P1 & "&P2=" & P2 & "&P3=" & P3 & "&P4=" & P4 & "&TP=" & p_TP & "&SG=" & "','Pessoa','width=780,height=300,top=10,left=10,toolbar=no,scrollbars=yes,resizable=yes,status=no'); return false;"" title=""Clique para exibir os dados desta pessoa!"">" & p_nome & "</A>"
   End If
   ExibePessoa = l_string
   
@@ -383,7 +383,7 @@ Function ExibeUnidade (p_dir, p_cliente, p_unidade, p_sq_unidade, p_tp)
   If Nvl(p_unidade,"") = "" Then
      l_string="---"
   Else
-     l_string = l_string & "<A class=""hl"" HREF=""#"" onClick=""window.open('" & p_dir & "Seguranca.asp?par=TELAUNIDADE&w_cliente=" & p_cliente & "&w_sq_unidade=" & p_sq_unidade & "&P1=" & P1 & "&P2=" & P2 & "&P3=" & P3 & "&P4=" & P4 & "&TP=" & p_TP & "&SG=" & "','Unidade','width=780,height=300,top=10,left=10,toolbar=no,scrollbars=yes,resizable=yes,status=no'); return false;"" title=""Clique para exibir os dados desta unidade!"">" & p_unidade & "</A>"
+     l_string = l_string & "<A class=""HL"" HREF=""#"" onClick=""window.open('" & p_dir & "Seguranca.asp?par=TELAUNIDADE&w_cliente=" & p_cliente & "&w_sq_unidade=" & p_sq_unidade & "&P1=" & P1 & "&P2=" & P2 & "&P3=" & P3 & "&P4=" & P4 & "&TP=" & p_TP & "&SG=" & "','Unidade','width=780,height=300,top=10,left=10,toolbar=no,scrollbars=yes,resizable=yes,status=no'); return false;"" title=""Clique para exibir os dados desta unidade!"">" & p_unidade & "</A>"
   End If
   ExibeUnidade = l_string
   
@@ -398,7 +398,7 @@ Function ExibeEtapa (O, p_chave, p_chave_aux, p_tipo, p_P1, p_etapa, p_tp, p_sg)
   If Nvl(p_etapa,"") = "" Then
      l_string="---"
   Else 
-     l_string = l_string & "<A class=""hl"" HREF=""#"" onClick=""window.open('Projeto.asp?par=AtualizaEtapa&w_chave=" & p_chave & "&O=" & O & "&w_chave_aux=" & p_chave_aux & "&w_tipo=" &p_tipo& "&P1=" & p_P1 & "&P2=" & P2 & "&P3=" & P3 & "&P4=" & P4 & "&TP=" & p_TP & "&SG=" & p_sg & "','Etapa','width=780,height=350,top=50,left=10,toolbar=no,scrollbars=yes,resizable=yes,status=no'); return false;"" title=""Clique para exibir os dados!"">" & p_etapa & "</A>"
+     l_string = l_string & "<A class=""HL"" HREF=""#"" onClick=""window.open('Projeto.asp?par=AtualizaEtapa&w_chave=" & p_chave & "&O=" & O & "&w_chave_aux=" & p_chave_aux & "&w_tipo=" &p_tipo& "&P1=" & p_P1 & "&P2=" & P2 & "&P3=" & P3 & "&P4=" & P4 & "&TP=" & p_TP & "&SG=" & p_sg & "','Etapa','width=780,height=350,top=50,left=10,toolbar=no,scrollbars=yes,resizable=yes,status=no'); return false;"" title=""Clique para exibir os dados!"">" & p_etapa & "</A>"
   End If
   ExibeEtapa = l_string
   
@@ -588,9 +588,9 @@ REM Montagem da seleção de sexo
 REM -------------------------------------------------------------------------
 Sub SelecaoSexo (label, accesskey, hint, chave, chaveAux, campo, restricao, atributo)
     If IsNull(hint) Then
-       ShowHTML "          <td valign=""top""><font size=""1""><b>" & Label & "</b><br><SELECT ACCESSKEY=""" & accesskey & """ CLASS=""sts"" NAME=""" & campo & """ " & w_Disabled & " " & atributo & ">"
+       ShowHTML "          <td valign=""top""><font size=""1""><b>" & Label & "</b><br><SELECT ACCESSKEY=""" & accesskey & """ CLASS=""STS"" NAME=""" & campo & """ " & w_Disabled & " " & atributo & ">"
     Else
-       ShowHTML "          <td valign=""top"" title=""" & hint & """><font size=""1""><b>" & Label & "</b><br><SELECT ACCESSKEY=""" & accesskey & """ CLASS=""sts"" NAME=""" & campo & """ " & w_Disabled & " " & atributo & ">"
+       ShowHTML "          <td valign=""top"" title=""" & hint & """><font size=""1""><b>" & Label & "</b><br><SELECT ACCESSKEY=""" & accesskey & """ CLASS=""STS"" NAME=""" & campo & """ " & w_Disabled & " " & atributo & ">"
     End If
     ShowHTML "          <option value="""">---"
     If Nvl(chave,"") = "M" Then
@@ -611,9 +611,9 @@ REM Montagem da seleção de formato
 REM -------------------------------------------------------------------------
 Sub SelecaoFormato (label, accesskey, hint, chave, chaveAux, campo, restricao, atributo)
     If IsNull(hint) Then
-       ShowHTML "          <td valign=""top""><font size=""1""><b>" & Label & "</b><br><SELECT ACCESSKEY=""" & accesskey & """ CLASS=""sts"" NAME=""" & campo & """ " & w_Disabled & " " & atributo & ">"
+       ShowHTML "          <td valign=""top""><font size=""1""><b>" & Label & "</b><br><SELECT ACCESSKEY=""" & accesskey & """ CLASS=""STS"" NAME=""" & campo & """ " & w_Disabled & " " & atributo & ">"
     Else
-       ShowHTML "          <td valign=""top"" title=""" & hint & """><font size=""1""><b>" & Label & "</b><br><SELECT ACCESSKEY=""" & accesskey & """ CLASS=""sts"" NAME=""" & campo & """ " & w_Disabled & " " & atributo & ">"
+       ShowHTML "          <td valign=""top"" title=""" & hint & """><font size=""1""><b>" & Label & "</b><br><SELECT ACCESSKEY=""" & accesskey & """ CLASS=""STS"" NAME=""" & campo & """ " & w_Disabled & " " & atributo & ">"
     End If
     ShowHTML "          <option value="""">---"
     If Nvl(chave,"") = "W" Then
@@ -694,9 +694,9 @@ Sub SelecaoPessoa (label, accesskey, hint, chave, chaveAux, campo, restricao)
        RS.filter = "ativo='S'"
     End If
     If IsNull(hint) Then
-       ShowHTML "          <td valign=""top""><font size=""1""><b>" & Label & "</b><br><SELECT ACCESSKEY=""" & accesskey & """ CLASS=""sts"" NAME=""" & campo & """ " & w_Disabled & ">"
+       ShowHTML "          <td valign=""top""><font size=""1""><b>" & Label & "</b><br><SELECT ACCESSKEY=""" & accesskey & """ CLASS=""STS"" NAME=""" & campo & """ " & w_Disabled & ">"
     Else
-       ShowHTML "          <td valign=""top"" title=""" & hint & """><font size=""1""><b>" & Label & "</b><br><SELECT ACCESSKEY=""" & accesskey & """ CLASS=""sts"" NAME=""" & campo & """ " & w_Disabled & ">"
+       ShowHTML "          <td valign=""top"" title=""" & hint & """><font size=""1""><b>" & Label & "</b><br><SELECT ACCESSKEY=""" & accesskey & """ CLASS=""STS"" NAME=""" & campo & """ " & w_Disabled & ">"
     End If
     ShowHTML "          <option value="""">---"
     While Not RS.EOF
@@ -720,9 +720,9 @@ Sub SelecaoSolicResp (label, accesskey, hint, chave, chaveAux, tramite, chaveAux
     DB_GetSolicResp RS, chaveAux, tramite, chaveAux2, restricao
     RS.Sort = "nome_resumido"
     If IsNull(hint) Then
-       ShowHTML "          <td valign=""top""><font size=""1""><b>" & Label & "</b><br><SELECT ACCESSKEY=""" & accesskey & """ CLASS=""sts"" NAME=""" & campo & """ " & w_Disabled & ">"
+       ShowHTML "          <td valign=""top""><font size=""1""><b>" & Label & "</b><br><SELECT ACCESSKEY=""" & accesskey & """ CLASS=""STS"" NAME=""" & campo & """ " & w_Disabled & ">"
     Else
-       ShowHTML "          <td valign=""top"" title=""" & hint & """><font size=""1""><b>" & Label & "</b><br><SELECT ACCESSKEY=""" & accesskey & """ CLASS=""sts"" NAME=""" & campo & """ " & w_Disabled & ">"
+       ShowHTML "          <td valign=""top"" title=""" & hint & """><font size=""1""><b>" & Label & "</b><br><SELECT ACCESSKEY=""" & accesskey & """ CLASS=""STS"" NAME=""" & campo & """ " & w_Disabled & ">"
     End If
     ShowHTML "          <option value="""">---"
     While Not RS.EOF
@@ -748,9 +748,9 @@ Sub SelecaoUsuUnid (label, accesskey, hint, chave, chaveAux, campo, restricao)
     RS.Filter = "contratado = 'S'"
     RS.Sort = "nome_indice"
     If IsNull(hint) Then
-       ShowHTML "          <td valign=""top""><font size=""1""><b>" & Label & "</b><br><SELECT ACCESSKEY=""" & accesskey & """ CLASS=""sts"" NAME=""" & campo & """ " & w_Disabled & ">"
+       ShowHTML "          <td valign=""top""><font size=""1""><b>" & Label & "</b><br><SELECT ACCESSKEY=""" & accesskey & """ CLASS=""STS"" NAME=""" & campo & """ " & w_Disabled & ">"
     Else
-       ShowHTML "          <td valign=""top"" title=""" & hint & """><font size=""1""><b>" & Label & "</b><br><SELECT ACCESSKEY=""" & accesskey & """ CLASS=""sts"" NAME=""" & campo & """ " & w_Disabled & ">"
+       ShowHTML "          <td valign=""top"" title=""" & hint & """><font size=""1""><b>" & Label & "</b><br><SELECT ACCESSKEY=""" & accesskey & """ CLASS=""STS"" NAME=""" & campo & """ " & w_Disabled & ">"
     End If
     ShowHTML "          <option value="""">---"
     While Not RS.EOF
@@ -772,9 +772,9 @@ Sub SelecaoVinculo (label, accesskey, hint, chave, chaveAux, campo, restricao)
     DB_GetVincKindList RS, w_cliente
     If Nvl(restricao,"") > "" Then RS.Filter = restricao End If
     If IsNull(hint) Then
-       ShowHTML "          <td valign=""top""><font size=""1""><b>" & Label & "</b><br><SELECT ACCESSKEY=""" & accesskey & """ CLASS=""sts"" NAME=""" & campo & """ " & w_Disabled & ">"
+       ShowHTML "          <td valign=""top""><font size=""1""><b>" & Label & "</b><br><SELECT ACCESSKEY=""" & accesskey & """ CLASS=""STS"" NAME=""" & campo & """ " & w_Disabled & ">"
     Else
-       ShowHTML "          <td valign=""top"" title=""" & hint & """><font size=""1""><b>" & Label & "</b><br><SELECT ACCESSKEY=""" & accesskey & """ CLASS=""sts"" NAME=""" & campo & """ " & w_Disabled & ">"
+       ShowHTML "          <td valign=""top"" title=""" & hint & """><font size=""1""><b>" & Label & "</b><br><SELECT ACCESSKEY=""" & accesskey & """ CLASS=""STS"" NAME=""" & campo & """ " & w_Disabled & ">"
     End If
     ShowHTML "          <option value="""">---"
     While Not RS.EOF
@@ -819,9 +819,9 @@ REM -------------------------------------------------------------------------
 Sub SelecaoGrupoDef (label, accesskey, hint, chave, chaveAux, campo, restricao)
     DB_GetDeficGroupList RS
     If IsNull(hint) Then
-       ShowHTML "          <td valign=""top""><font size=""1""><b>" & Label & "</b><br><SELECT ACCESSKEY=""" & accesskey & """ CLASS=""sts"" NAME=""" & campo & """ " & w_Disabled & ">"
+       ShowHTML "          <td valign=""top""><font size=""1""><b>" & Label & "</b><br><SELECT ACCESSKEY=""" & accesskey & """ CLASS=""STS"" NAME=""" & campo & """ " & w_Disabled & ">"
     Else
-       ShowHTML "          <td valign=""top"" title=""" & hint & """><font size=""1""><b>" & Label & "</b><br><SELECT ACCESSKEY=""" & accesskey & """ CLASS=""sts"" NAME=""" & campo & """ " & w_Disabled & ">"
+       ShowHTML "          <td valign=""top"" title=""" & hint & """><font size=""1""><b>" & Label & "</b><br><SELECT ACCESSKEY=""" & accesskey & """ CLASS=""STS"" NAME=""" & campo & """ " & w_Disabled & ">"
     End If
     ShowHTML "          <option value="""">---"
     While Not RS.EOF
@@ -845,9 +845,9 @@ Sub SelecaoTipoPessoa (label, accesskey, hint, chave, chaveAux, campo, restricao
        RS.Filter = restricao
     End If
     If IsNull(hint) Then
-       ShowHTML "          <td valign=""top""><font size=""1""><b>" & Label & "</b><br><SELECT ACCESSKEY=""" & accesskey & """ CLASS=""sts"" NAME=""" & campo & """ " & w_Disabled & " " & atributo & ">"
+       ShowHTML "          <td valign=""top""><font size=""1""><b>" & Label & "</b><br><SELECT ACCESSKEY=""" & accesskey & """ CLASS=""STS"" NAME=""" & campo & """ " & w_Disabled & " " & atributo & ">"
     Else
-       ShowHTML "          <td valign=""top"" title=""" & hint & """><font size=""1""><b>" & Label & "</b><br><SELECT ACCESSKEY=""" & accesskey & """ CLASS=""sts"" NAME=""" & campo & """ " & w_Disabled & " " & atributo & ">"
+       ShowHTML "          <td valign=""top"" title=""" & hint & """><font size=""1""><b>" & Label & "</b><br><SELECT ACCESSKEY=""" & accesskey & """ CLASS=""STS"" NAME=""" & campo & """ " & w_Disabled & " " & atributo & ">"
     End If
     ShowHTML "          <option value="""">---"
     While Not RS.EOF
@@ -870,9 +870,9 @@ Sub SelecaoFormaPagamento (label, accesskey, hint, chave, chave_aux, campo, rest
     RS.Filter = "ativo = 'S'"
     RS.Sort = "nome"
     If IsNull(hint) Then
-       ShowHTML "          <td valign=""top""><font size=""1""><b>" & Label & "</b><br><SELECT ACCESSKEY=""" & accesskey & """ CLASS=""sts"" NAME=""" & campo & """ " & w_Disabled & ">"
+       ShowHTML "          <td valign=""top""><font size=""1""><b>" & Label & "</b><br><SELECT ACCESSKEY=""" & accesskey & """ CLASS=""STS"" NAME=""" & campo & """ " & w_Disabled & ">"
     Else
-       ShowHTML "          <td valign=""top"" title=""" & hint & """><font size=""1""><b>" & Label & "</b><br><SELECT ACCESSKEY=""" & accesskey & """ CLASS=""sts"" NAME=""" & campo & """ " & w_Disabled & ">"
+       ShowHTML "          <td valign=""top"" title=""" & hint & """><font size=""1""><b>" & Label & "</b><br><SELECT ACCESSKEY=""" & accesskey & """ CLASS=""STS"" NAME=""" & campo & """ " & w_Disabled & ">"
     End If
     ShowHTML "          <option value="""">---"
     While Not RS.EOF
@@ -897,9 +897,9 @@ Sub SelecaoPais (label, accesskey, hint, chave, chaveAux, campo, restricao, atri
     End If
     RS.Sort = "padrao desc, Nome"
     If IsNull(hint) Then
-       ShowHTML "          <td valign=""top""><font size=""1""><b>" & Label & "</b><br><SELECT ACCESSKEY=""" & accesskey & """ CLASS=""sts"" NAME=""" & campo & """ " & w_Disabled & " " & atributo & ">"
+       ShowHTML "          <td valign=""top""><font size=""1""><b>" & Label & "</b><br><SELECT ACCESSKEY=""" & accesskey & """ CLASS=""STS"" NAME=""" & campo & """ " & w_Disabled & " " & atributo & ">"
     Else
-       ShowHTML "          <td valign=""top"" title=""" & hint & """><font size=""1""><b>" & Label & "</b><br><SELECT ACCESSKEY=""" & accesskey & """ CLASS=""sts"" NAME=""" & campo & """ " & w_Disabled & " " & atributo & ">"
+       ShowHTML "          <td valign=""top"" title=""" & hint & """><font size=""1""><b>" & Label & "</b><br><SELECT ACCESSKEY=""" & accesskey & """ CLASS=""STS"" NAME=""" & campo & """ " & w_Disabled & " " & atributo & ">"
     End If
     ShowHTML "          <option value="""">---"
     While Not RS.EOF
@@ -927,9 +927,9 @@ Sub SelecaoRegiao (label, accesskey, hint, chave, chaveAux, campo, restricao, at
     End If
     RS.Sort = "Ordem"
     If IsNull(hint) Then
-       ShowHTML "          <td valign=""top""><font size=""1""><b>" & Label & "</b><br><SELECT ACCESSKEY=""" & accesskey & """ CLASS=""sts"" NAME=""" & campo & """ " & w_Disabled & " " & atributo & ">"
+       ShowHTML "          <td valign=""top""><font size=""1""><b>" & Label & "</b><br><SELECT ACCESSKEY=""" & accesskey & """ CLASS=""STS"" NAME=""" & campo & """ " & w_Disabled & " " & atributo & ">"
     Else
-       ShowHTML "          <td valign=""top"" title=""" & hint & """><font size=""1""><b>" & Label & "</b><br><SELECT ACCESSKEY=""" & accesskey & """ CLASS=""sts"" NAME=""" & campo & """ " & w_Disabled & " " & atributo & ">"
+       ShowHTML "          <td valign=""top"" title=""" & hint & """><font size=""1""><b>" & Label & "</b><br><SELECT ACCESSKEY=""" & accesskey & """ CLASS=""STS"" NAME=""" & campo & """ " & w_Disabled & " " & atributo & ">"
     End If
     ShowHTML "          <option value="""">---"
     While Not RS.EOF
@@ -954,9 +954,9 @@ Sub SelecaoEstado (label, accesskey, hint, chave, chaveAux, chaveAux2, campo, re
     End If
     RS.Sort = "padrao desc, nome"
     If IsNull(hint) Then
-       ShowHTML "          <td valign=""top""><font size=""1""><b>" & Label & "</b><br><SELECT ACCESSKEY=""" & accesskey & """ CLASS=""sts"" NAME=""" & campo & """ " & w_Disabled & " " & atributo & ">"
+       ShowHTML "          <td valign=""top""><font size=""1""><b>" & Label & "</b><br><SELECT ACCESSKEY=""" & accesskey & """ CLASS=""STS"" NAME=""" & campo & """ " & w_Disabled & " " & atributo & ">"
     Else
-       ShowHTML "          <td valign=""top"" title=""" & hint & """><font size=""1""><b>" & Label & "</b><br><SELECT ACCESSKEY=""" & accesskey & """ CLASS=""sts"" NAME=""" & campo & """ " & w_Disabled & " " & atributo & ">"
+       ShowHTML "          <td valign=""top"" title=""" & hint & """><font size=""1""><b>" & Label & "</b><br><SELECT ACCESSKEY=""" & accesskey & """ CLASS=""STS"" NAME=""" & campo & """ " & w_Disabled & " " & atributo & ">"
     End If
     ShowHTML "          <option value="""">---"
     While Not RS.EOF
@@ -984,9 +984,9 @@ Sub SelecaoCidade (label, accesskey, hint, chave, chaveAux, chaveAux2, campo, re
     End If
     RS.Sort = "capital desc, nome"
     If IsNull(hint) Then
-       ShowHTML "          <td valign=""top""><font size=""1""><b>" & Label & "</b><br><SELECT ACCESSKEY=""" & accesskey & """ CLASS=""sts"" NAME=""" & campo & """ " & w_Disabled & " " & atributo & ">"
+       ShowHTML "          <td valign=""top""><font size=""1""><b>" & Label & "</b><br><SELECT ACCESSKEY=""" & accesskey & """ CLASS=""STS"" NAME=""" & campo & """ " & w_Disabled & " " & atributo & ">"
     Else
-       ShowHTML "          <td valign=""top"" title=""" & hint & """><font size=""1""><b>" & Label & "</b><br><SELECT ACCESSKEY=""" & accesskey & """ CLASS=""sts"" NAME=""" & campo & """ " & w_Disabled & " " & atributo & ">"
+       ShowHTML "          <td valign=""top"" title=""" & hint & """><font size=""1""><b>" & Label & "</b><br><SELECT ACCESSKEY=""" & accesskey & """ CLASS=""STS"" NAME=""" & campo & """ " & w_Disabled & " " & atributo & ">"
     End If
     ShowHTML "          <option value="""">---"
     While Not RS.EOF
@@ -1007,9 +1007,9 @@ REM -------------------------------------------------------------------------
 Sub SelecaoEndereco (label, accesskey, hint, chave, chaveAux, campo, restricao)
     DB_GetaddressList RS, w_cliente, ChaveAux, restricao
     If IsNull(hint) Then
-       ShowHTML "          <td valign=""top""><font size=""1""><b>" & Label & "</b><br><SELECT ACCESSKEY=""" & accesskey & """ CLASS=""sts"" NAME=""" & campo & """ " & w_Disabled & ">"
+       ShowHTML "          <td valign=""top""><font size=""1""><b>" & Label & "</b><br><SELECT ACCESSKEY=""" & accesskey & """ CLASS=""STS"" NAME=""" & campo & """ " & w_Disabled & ">"
     Else
-       ShowHTML "          <td valign=""top"" title=""" & hint & """><font size=""1""><b>" & Label & "</b><br><SELECT ACCESSKEY=""" & accesskey & """ CLASS=""sts"" NAME=""" & campo & """ " & w_Disabled & ">"
+       ShowHTML "          <td valign=""top"" title=""" & hint & """><font size=""1""><b>" & Label & "</b><br><SELECT ACCESSKEY=""" & accesskey & """ CLASS=""STS"" NAME=""" & campo & """ " & w_Disabled & ">"
     End If
     ShowHTML "          <option value="""">---"
     While Not RS.EOF
@@ -1032,9 +1032,9 @@ Sub SelecaoTelefone (label, accesskey, hint, chave, chaveAux, campo, restricao)
     
     
     If IsNull(hint) Then
-       ShowHTML "          <td valign=""top""><font size=""1""><b>" & Label & "</b><br><SELECT ACCESSKEY=""" & accesskey & """ CLASS=""sts"" NAME=""" & campo & """ " & w_Disabled & ">"
+       ShowHTML "          <td valign=""top""><font size=""1""><b>" & Label & "</b><br><SELECT ACCESSKEY=""" & accesskey & """ CLASS=""STS"" NAME=""" & campo & """ " & w_Disabled & ">"
     Else
-       ShowHTML "          <td valign=""top"" title=""" & hint & """><font size=""1""><b>" & Label & "</b><br><SELECT ACCESSKEY=""" & accesskey & """ CLASS=""sts"" NAME=""" & campo & """ " & w_Disabled & ">"
+       ShowHTML "          <td valign=""top"" title=""" & hint & """><font size=""1""><b>" & Label & "</b><br><SELECT ACCESSKEY=""" & accesskey & """ CLASS=""STS"" NAME=""" & campo & """ " & w_Disabled & ">"
     End If
     
     ShowHTML "          <option value="""">---"
@@ -1059,9 +1059,9 @@ Sub SelecaoModulo (label, accesskey, hint, chave, chaveAux, campo, restricao, at
     DB_GetSiwCliModLis RS, chaveAux, restricao
     RS.Sort = "nome"
     If IsNull(hint) Then
-       ShowHTML "          <td valign=""top""><font size=""1""><b>" & Label & "</b><br><SELECT ACCESSKEY=""" & accesskey & """ CLASS=""sts"" NAME=""" & campo & """ " & w_Disabled & " " & atributo & ">"
+       ShowHTML "          <td valign=""top""><font size=""1""><b>" & Label & "</b><br><SELECT ACCESSKEY=""" & accesskey & """ CLASS=""STS"" NAME=""" & campo & """ " & w_Disabled & " " & atributo & ">"
     Else
-       ShowHTML "          <td valign=""top"" title=""" & hint & """><font size=""1""><b>" & Label & "</b><br><SELECT ACCESSKEY=""" & accesskey & """ CLASS=""sts"" NAME=""" & campo & """ " & w_Disabled & " " & atributo & ">"
+       ShowHTML "          <td valign=""top"" title=""" & hint & """><font size=""1""><b>" & Label & "</b><br><SELECT ACCESSKEY=""" & accesskey & """ CLASS=""STS"" NAME=""" & campo & """ " & w_Disabled & " " & atributo & ">"
     End If
     ShowHTML "          <option value="""">---"
     While Not RS.EOF
@@ -1083,9 +1083,9 @@ Sub SelecaoServico (label, accesskey, hint, chave, chaveAux, campo, restricao, a
     DB_GetMenuList RS, w_cliente, "I", null
     RS.Filter = "tramite='S'"
     If IsNull(hint) Then
-       ShowHTML "          <td valign=""top""><font size=""1""><b>" & Label & "</b><br><SELECT ACCESSKEY=""" & accesskey & """ CLASS=""sts"" NAME=""" & campo & """ " & w_Disabled & " " & atributo & ">"
+       ShowHTML "          <td valign=""top""><font size=""1""><b>" & Label & "</b><br><SELECT ACCESSKEY=""" & accesskey & """ CLASS=""STS"" NAME=""" & campo & """ " & w_Disabled & " " & atributo & ">"
     Else
-       ShowHTML "          <td valign=""top"" title=""" & hint & """><font size=""1""><b>" & Label & "</b><br><SELECT ACCESSKEY=""" & accesskey & """ CLASS=""sts"" NAME=""" & campo & """ " & w_Disabled & " " & atributo & ">"
+       ShowHTML "          <td valign=""top"" title=""" & hint & """><font size=""1""><b>" & Label & "</b><br><SELECT ACCESSKEY=""" & accesskey & """ CLASS=""STS"" NAME=""" & campo & """ " & w_Disabled & " " & atributo & ">"
     End If
     ShowHTML "          <option value="""">---"
     While Not RS.EOF
@@ -1107,9 +1107,9 @@ Sub SelecaoMenu (label, accesskey, hint, chave, chaveAux, campo, restricao, atri
     Dim RST, RST1, RST2, RST3, RST4
     
     If IsNull(hint) Then
-       ShowHTML "          <td valign=""top""><font size=""1""><b>" & Label & "</b><br><SELECT ACCESSKEY=""" & accesskey & """ CLASS=""sts"" NAME=""" & campo & """ " & w_Disabled & " " & atributo & ">"
+       ShowHTML "          <td valign=""top""><font size=""1""><b>" & Label & "</b><br><SELECT ACCESSKEY=""" & accesskey & """ CLASS=""STS"" NAME=""" & campo & """ " & w_Disabled & " " & atributo & ">"
     Else
-       ShowHTML "          <td valign=""top"" title=""" & hint & """><font size=""1""><b>" & Label & "</b><br><SELECT ACCESSKEY=""" & accesskey & """ CLASS=""sts"" NAME=""" & campo & """ " & w_Disabled & " " & atributo & ">"
+       ShowHTML "          <td valign=""top"" title=""" & hint & """><font size=""1""><b>" & Label & "</b><br><SELECT ACCESSKEY=""" & accesskey & """ CLASS=""STS"" NAME=""" & campo & """ " & w_Disabled & " " & atributo & ">"
     End If
     ShowHTML "          <option value="""">---"
 
@@ -1171,9 +1171,9 @@ Sub SelecaoLocalizacao (label, accesskey, hint, chave, chaveAux, campo, restrica
        RS.Filter = "sq_unidade = " & chaveAux 
     End If
     If IsNull(hint) Then
-       ShowHTML "          <td valign=""top""><font size=""1""><b>" & Label & "</b><br><SELECT ACCESSKEY=""" & accesskey & """ CLASS=""sts"" NAME=""" & campo & """ " & w_Disabled & ">"
+       ShowHTML "          <td valign=""top""><font size=""1""><b>" & Label & "</b><br><SELECT ACCESSKEY=""" & accesskey & """ CLASS=""STS"" NAME=""" & campo & """ " & w_Disabled & ">"
     Else
-       ShowHTML "          <td valign=""top"" title=""" & hint & """><font size=""1""><b>" & Label & "</b><br><SELECT ACCESSKEY=""" & accesskey & """ CLASS=""sts"" NAME=""" & campo & """ " & w_Disabled & ">"
+       ShowHTML "          <td valign=""top"" title=""" & hint & """><font size=""1""><b>" & Label & "</b><br><SELECT ACCESSKEY=""" & accesskey & """ CLASS=""STS"" NAME=""" & campo & """ " & w_Disabled & ">"
     End If
     ShowHTML "          <option value="""">---"
     While Not RS.EOF
@@ -1195,9 +1195,9 @@ Sub SelecaoSegModulo (label, accesskey, hint, chave, chaveAux, campo, restricao)
     DB_GetSegModList RS, ChaveAux
     RS.Sort = "Nome"
     If IsNull(hint) Then
-       ShowHTML "          <td valign=""top""><font size=""1""><b>" & Label & "</b><br><SELECT ACCESSKEY=""" & accesskey & """ CLASS=""sts"" NAME=""" & campo & """ " & w_Disabled & ">"
+       ShowHTML "          <td valign=""top""><font size=""1""><b>" & Label & "</b><br><SELECT ACCESSKEY=""" & accesskey & """ CLASS=""STS"" NAME=""" & campo & """ " & w_Disabled & ">"
     Else
-       ShowHTML "          <td valign=""top"" title=""" & hint & """><font size=""1""><b>" & Label & "</b><br><SELECT ACCESSKEY=""" & accesskey & """ CLASS=""sts"" NAME=""" & campo & """ " & w_Disabled & ">"
+       ShowHTML "          <td valign=""top"" title=""" & hint & """><font size=""1""><b>" & Label & "</b><br><SELECT ACCESSKEY=""" & accesskey & """ CLASS=""STS"" NAME=""" & campo & """ " & w_Disabled & ">"
     End If
     ShowHTML "          <option value="""">---"
     While Not RS.EOF
@@ -1220,9 +1220,9 @@ Sub SelecaoSegMercado (label, accesskey, hint, chave, chaveAux, campo, restricao
     RS.Filter = "ativo = 'S'"
     RS.Sort = "Nome"
     If IsNull(hint) Then
-       ShowHTML "          <td valign=""top""><font size=""1""><b>" & Label & "</b><br><SELECT ACCESSKEY=""" & accesskey & """ CLASS=""sts"" NAME=""" & campo & """ " & w_Disabled & " " & atributo & ">"
+       ShowHTML "          <td valign=""top""><font size=""1""><b>" & Label & "</b><br><SELECT ACCESSKEY=""" & accesskey & """ CLASS=""STS"" NAME=""" & campo & """ " & w_Disabled & " " & atributo & ">"
     Else
-       ShowHTML "          <td valign=""top"" title=""" & hint & """><font size=""1""><b>" & Label & "</b><br><SELECT ACCESSKEY=""" & accesskey & """ CLASS=""sts"" NAME=""" & campo & """ " & w_Disabled & " " & atributo & ">"
+       ShowHTML "          <td valign=""top"" title=""" & hint & """><font size=""1""><b>" & Label & "</b><br><SELECT ACCESSKEY=""" & accesskey & """ CLASS=""STS"" NAME=""" & campo & """ " & w_Disabled & " " & atributo & ">"
     End If
     ShowHTML "          <option value="""">---"
     While Not RS.EOF
@@ -1309,9 +1309,9 @@ Sub SelecaoUnidadePai (label, accesskey, hint, chave, Operacao, chaveAux, chaveA
     DB_GetEOUnitPaiList RS,Operacao, chaveAux, chaveAux2
     RS.Sort = "Nome"
     If IsNull(hint) Then
-       ShowHTML "          <td valign=""top""><font size=""1""><b>" & Label & "</b><br><SELECT ACCESSKEY=""" & accesskey & """ CLASS=""sts"" NAME=""" & campo & """ " & w_Disabled & ">"
+       ShowHTML "          <td valign=""top""><font size=""1""><b>" & Label & "</b><br><SELECT ACCESSKEY=""" & accesskey & """ CLASS=""STS"" NAME=""" & campo & """ " & w_Disabled & ">"
     Else
-       ShowHTML "          <td valign=""top"" title=""" & hint & """><font size=""1""><b>" & Label & "</b><br><SELECT ACCESSKEY=""" & accesskey & """ CLASS=""sts"" NAME=""" & campo & """ " & w_Disabled & ">"
+       ShowHTML "          <td valign=""top"" title=""" & hint & """><font size=""1""><b>" & Label & "</b><br><SELECT ACCESSKEY=""" & accesskey & """ CLASS=""STS"" NAME=""" & campo & """ " & w_Disabled & ">"
     End If
     ShowHTML "          <option value="""">---"
     While Not RS.EOF
@@ -1338,9 +1338,9 @@ Sub SelecaoUnidadeGest (label, accesskey, hint, chave, chaveAux, campo, restrica
     RS.Filter = w_filter
     RS.Sort = "Nome"
     If IsNull(hint) Then
-       ShowHTML "          <td valign=""top""><font size=""1""><b>" & Label & "</b><br><SELECT ACCESSKEY=""" & accesskey & """ CLASS=""sts"" NAME=""" & campo & """ " & w_Disabled & ">"
+       ShowHTML "          <td valign=""top""><font size=""1""><b>" & Label & "</b><br><SELECT ACCESSKEY=""" & accesskey & """ CLASS=""STS"" NAME=""" & campo & """ " & w_Disabled & ">"
     Else
-       ShowHTML "          <td valign=""top"" title=""" & hint & """><font size=""1""><b>" & Label & "</b><br><SELECT ACCESSKEY=""" & accesskey & """ CLASS=""sts"" NAME=""" & campo & """ " & w_Disabled & ">"
+       ShowHTML "          <td valign=""top"" title=""" & hint & """><font size=""1""><b>" & Label & "</b><br><SELECT ACCESSKEY=""" & accesskey & """ CLASS=""STS"" NAME=""" & campo & """ " & w_Disabled & ">"
     End If
     ShowHTML "          <option value="""">---"
     While Not RS.EOF
@@ -1367,9 +1367,9 @@ Sub SelecaoUnidadePag (label, accesskey, hint, chave, chaveAux, campo, restricao
     RS.Filter = w_filter
     RS.Sort = "Nome"
     If IsNull(hint) Then
-       ShowHTML "          <td valign=""top""><font size=""1""><b>" & Label & "</b><br><SELECT ACCESSKEY=""" & accesskey & """ CLASS=""sts"" NAME=""" & campo & """ " & w_Disabled & ">"
+       ShowHTML "          <td valign=""top""><font size=""1""><b>" & Label & "</b><br><SELECT ACCESSKEY=""" & accesskey & """ CLASS=""STS"" NAME=""" & campo & """ " & w_Disabled & ">"
     Else
-       ShowHTML "          <td valign=""top"" title=""" & hint & """><font size=""1""><b>" & Label & "</b><br><SELECT ACCESSKEY=""" & accesskey & """ CLASS=""sts"" NAME=""" & campo & """ " & w_Disabled & ">"
+       ShowHTML "          <td valign=""top"" title=""" & hint & """><font size=""1""><b>" & Label & "</b><br><SELECT ACCESSKEY=""" & accesskey & """ CLASS=""STS"" NAME=""" & campo & """ " & w_Disabled & ">"
     End If
     ShowHTML "          <option value="""">---"
     While Not RS.EOF
@@ -1390,9 +1390,9 @@ REM -------------------------------------------------------------------------
 Sub SelecaoCC (label, accesskey, hint, chave, chaveAux, campo, restricao)
     DB_GetCCList RS, w_cliente, ChaveAux, restricao
     If IsNull(hint) Then
-       ShowHTML "          <td valign=""top""><font size=""1""><b>" & Label & "</b><br><SELECT ACCESSKEY=""" & accesskey & """ CLASS=""sts"" NAME=""" & campo & """ " & w_Disabled & ">"
+       ShowHTML "          <td valign=""top""><font size=""1""><b>" & Label & "</b><br><SELECT ACCESSKEY=""" & accesskey & """ CLASS=""STS"" NAME=""" & campo & """ " & w_Disabled & ">"
     Else
-       ShowHTML "          <td valign=""top"" title=""" & hint & """><font size=""1""><b>" & Label & "</b><br><SELECT ACCESSKEY=""" & accesskey & """ CLASS=""sts"" NAME=""" & campo & """ " & w_Disabled & ">"
+       ShowHTML "          <td valign=""top"" title=""" & hint & """><font size=""1""><b>" & Label & "</b><br><SELECT ACCESSKEY=""" & accesskey & """ CLASS=""STS"" NAME=""" & campo & """ " & w_Disabled & ">"
     End If
     ShowHTML "          <OPTION VALUE="""">---"
     While Not RS.EOF
@@ -1413,9 +1413,9 @@ REM -------------------------------------------------------------------------
 Sub SelecaoCCSubordination (label, accesskey, hint, chave, pai, campo, restricao, condicao)
     DB_GetCCSubordination RS, w_cliente, chave, restricao
     If IsNull(hint) Then
-       ShowHTML "          <td valign=""top""><font size=""1""><b>" & Label & "</b><br><SELECT ACCESSKEY=""" & accesskey & """ CLASS=""sts"" NAME=""" & campo & """ " & w_Disabled & ">"
+       ShowHTML "          <td valign=""top""><font size=""1""><b>" & Label & "</b><br><SELECT ACCESSKEY=""" & accesskey & """ CLASS=""STS"" NAME=""" & campo & """ " & w_Disabled & ">"
     Else
-       ShowHTML "          <td valign=""top"" title=""" & hint & """><font size=""1""><b>" & Label & "</b><br><SELECT ACCESSKEY=""" & accesskey & """ CLASS=""sts"" NAME=""" & campo & """ " & w_Disabled & ">"
+       ShowHTML "          <td valign=""top"" title=""" & hint & """><font size=""1""><b>" & Label & "</b><br><SELECT ACCESSKEY=""" & accesskey & """ CLASS=""STS"" NAME=""" & campo & """ " & w_Disabled & ">"
     End If
     ShowHTML "          <OPTION VALUE="""">---"
     While Not RS.EOF
@@ -1437,9 +1437,9 @@ Sub SelecaoBanco (label, accesskey, hint, chave, chaveAux, campo, restricao, atr
     DB_GetBankList RS
     RS.Filter = "ativo='S'"
     If IsNull(hint) Then
-       ShowHTML "          <td valign=""top""><font size=""1""><b>" & Label & "</b><br><SELECT ACCESSKEY=""" & accesskey & """ CLASS=""sts"" NAME=""" & campo & """ " & w_Disabled & " " & atributo & ">"
+       ShowHTML "          <td valign=""top""><font size=""1""><b>" & Label & "</b><br><SELECT ACCESSKEY=""" & accesskey & """ CLASS=""STS"" NAME=""" & campo & """ " & w_Disabled & " " & atributo & ">"
     Else
-       ShowHTML "          <td valign=""top"" title=""" & hint & """><font size=""1""><b>" & Label & "</b><br><SELECT ACCESSKEY=""" & accesskey & """ CLASS=""sts"" NAME=""" & campo & """ " & w_Disabled & " " & atributo & ">"
+       ShowHTML "          <td valign=""top"" title=""" & hint & """><font size=""1""><b>" & Label & "</b><br><SELECT ACCESSKEY=""" & accesskey & """ CLASS=""STS"" NAME=""" & campo & """ " & w_Disabled & " " & atributo & ">"
     End If
     ShowHTML "          <option value="""">---"
     While Not RS.EOF
@@ -1463,9 +1463,9 @@ Sub SelecaoAgencia (label, accesskey, hint, chave, chaveAux, campo, restricao, a
        RS.Filter = restricao
     End If
     If IsNull(hint) Then
-       ShowHTML "          <td valign=""top""><font size=""1""><b>" & Label & "</b><br><SELECT ACCESSKEY=""" & accesskey & """ CLASS=""sts"" NAME=""" & campo & """ " & w_Disabled & " " & atributo & ">"
+       ShowHTML "          <td valign=""top""><font size=""1""><b>" & Label & "</b><br><SELECT ACCESSKEY=""" & accesskey & """ CLASS=""STS"" NAME=""" & campo & """ " & w_Disabled & " " & atributo & ">"
     Else
-       ShowHTML "          <td valign=""top"" title=""" & hint & """><font size=""1""><b>" & Label & "</b><br><SELECT ACCESSKEY=""" & accesskey & """ CLASS=""sts"" NAME=""" & campo & """ " & w_Disabled & " " & atributo & ">"
+       ShowHTML "          <td valign=""top"" title=""" & hint & """><font size=""1""><b>" & Label & "</b><br><SELECT ACCESSKEY=""" & accesskey & """ CLASS=""STS"" NAME=""" & campo & """ " & w_Disabled & " " & atributo & ">"
     End If
     ShowHTML "          <option value="""">---"
     While Not RS.EOF
@@ -1488,9 +1488,9 @@ Sub SelecaoTipoUnidade (label, accesskey, hint, chave, chaveAux, campo, restrica
     RS.Filter = "ativo = 'S'"
     RS.Sort = "Nome"
     If IsNull(hint) Then
-       ShowHTML "          <td valign=""top""><font size=""1""><b>" & Label & "</b><br><SELECT ACCESSKEY=""" & accesskey & """ CLASS=""sts"" NAME=""" & campo & """ " & w_Disabled & ">"
+       ShowHTML "          <td valign=""top""><font size=""1""><b>" & Label & "</b><br><SELECT ACCESSKEY=""" & accesskey & """ CLASS=""STS"" NAME=""" & campo & """ " & w_Disabled & ">"
     Else
-       ShowHTML "          <td valign=""top"" title=""" & hint & """><font size=""1""><b>" & Label & "</b><br><SELECT ACCESSKEY=""" & accesskey & """ CLASS=""sts"" NAME=""" & campo & """ " & w_Disabled & ">"
+       ShowHTML "          <td valign=""top"" title=""" & hint & """><font size=""1""><b>" & Label & "</b><br><SELECT ACCESSKEY=""" & accesskey & """ CLASS=""STS"" NAME=""" & campo & """ " & w_Disabled & ">"
     End If
     ShowHTML "          <option value="""">---"
     While Not RS.EOF
@@ -1515,9 +1515,9 @@ Sub SelecaoTipoEndereco (label, accesskey, hint, chave, chaveAux, campo, restric
     End If
     RS.Sort = "Nome"
     If IsNull(hint) Then
-       ShowHTML "          <td valign=""top""><font size=""1""><b>" & Label & "</b><br><SELECT ACCESSKEY=""" & accesskey & """ CLASS=""sts"" NAME=""" & campo & """ " & w_Disabled & " " & atributo & ">"
+       ShowHTML "          <td valign=""top""><font size=""1""><b>" & Label & "</b><br><SELECT ACCESSKEY=""" & accesskey & """ CLASS=""STS"" NAME=""" & campo & """ " & w_Disabled & " " & atributo & ">"
     Else
-       ShowHTML "          <td valign=""top"" title=""" & hint & """><font size=""1""><b>" & Label & "</b><br><SELECT ACCESSKEY=""" & accesskey & """ CLASS=""sts"" NAME=""" & campo & """ " & w_Disabled & " " & atributo & ">"
+       ShowHTML "          <td valign=""top"" title=""" & hint & """><font size=""1""><b>" & Label & "</b><br><SELECT ACCESSKEY=""" & accesskey & """ CLASS=""STS"" NAME=""" & campo & """ " & w_Disabled & " " & atributo & ">"
     End If
     ShowHTML "          <option value="""">---"
     While Not RS.EOF
@@ -1542,9 +1542,9 @@ Sub SelecaoTipoFone (label, accesskey, hint, chave, chaveAux, campo, restricao, 
     End If
     RS.Sort = "Nome"
     If IsNull(hint) Then
-       ShowHTML "          <td valign=""top""><font size=""1""><b>" & Label & "</b><br><SELECT ACCESSKEY=""" & accesskey & """ CLASS=""sts"" NAME=""" & campo & """ " & w_Disabled & " " & atributo & ">"
+       ShowHTML "          <td valign=""top""><font size=""1""><b>" & Label & "</b><br><SELECT ACCESSKEY=""" & accesskey & """ CLASS=""STS"" NAME=""" & campo & """ " & w_Disabled & " " & atributo & ">"
     Else
-       ShowHTML "          <td valign=""top"" title=""" & hint & """><font size=""1""><b>" & Label & "</b><br><SELECT ACCESSKEY=""" & accesskey & """ CLASS=""sts"" NAME=""" & campo & """ " & w_Disabled & " " & atributo & ">"
+       ShowHTML "          <td valign=""top"" title=""" & hint & """><font size=""1""><b>" & Label & "</b><br><SELECT ACCESSKEY=""" & accesskey & """ CLASS=""STS"" NAME=""" & campo & """ " & w_Disabled & " " & atributo & ">"
     End If
     ShowHTML "          <option value="""">---"
     While Not RS.EOF
@@ -1567,9 +1567,9 @@ Sub SelecaoEOAreaAtuacao (label, accesskey, hint, chave, chaveAux, campo, restri
     RS.Filter = "ativo = 'S'"
     RS.Sort = "Nome"
     If IsNull(hint) Then
-       ShowHTML "          <td valign=""top""><font size=""1""><b>" & Label & "</b><br><SELECT ACCESSKEY=""" & accesskey & """ CLASS=""sts"" NAME=""" & campo & """ " & w_Disabled & ">"
+       ShowHTML "          <td valign=""top""><font size=""1""><b>" & Label & "</b><br><SELECT ACCESSKEY=""" & accesskey & """ CLASS=""STS"" NAME=""" & campo & """ " & w_Disabled & ">"
     Else
-       ShowHTML "          <td valign=""top"" title=""" & hint & """><font size=""1""><b>" & Label & "</b><br><SELECT ACCESSKEY=""" & accesskey & """ CLASS=""sts"" NAME=""" & campo & """ " & w_Disabled & ">"
+       ShowHTML "          <td valign=""top"" title=""" & hint & """><font size=""1""><b>" & Label & "</b><br><SELECT ACCESSKEY=""" & accesskey & """ CLASS=""STS"" NAME=""" & campo & """ " & w_Disabled & ">"
     End If
     ShowHTML "          <option value="""">---"
     While Not RS.EOF
@@ -1592,9 +1592,9 @@ Sub SelecaoFase (label, accesskey, hint, chave, chaveAux, campo, restricao, atri
     RS.Filter = "ativo = 'S'"
     RS.Sort = "Ordem"
     If IsNull(hint) Then
-       ShowHTML "          <td valign=""top""><font size=""1""><b>" & Label & "</b><br><SELECT ACCESSKEY=""" & accesskey & """ CLASS=""sts"" NAME=""" & campo & """ " & w_Disabled & " " & atributo & ">"
+       ShowHTML "          <td valign=""top""><font size=""1""><b>" & Label & "</b><br><SELECT ACCESSKEY=""" & accesskey & """ CLASS=""STS"" NAME=""" & campo & """ " & w_Disabled & " " & atributo & ">"
     Else
-       ShowHTML "          <td valign=""top"" title=""" & hint & """><font size=""1""><b>" & Label & "</b><br><SELECT ACCESSKEY=""" & accesskey & """ CLASS=""sts"" NAME=""" & campo & """ " & w_Disabled & " " & atributo & ">"
+       ShowHTML "          <td valign=""top"" title=""" & hint & """><font size=""1""><b>" & Label & "</b><br><SELECT ACCESSKEY=""" & accesskey & """ CLASS=""STS"" NAME=""" & campo & """ " & w_Disabled & " " & atributo & ">"
     End If
     While Not RS.EOF
        If cDbl(RS("sq_siw_tramite")) = cDbl(chave) or (RS.RecordCount = 1) Then
@@ -1666,9 +1666,9 @@ Sub SelecaoProjeto (label, accesskey, hint, chave, chaveAux, chaveAux2, campo, r
     RS.Sort = "titulo"
 
     If IsNull(hint) Then
-       ShowHTML "          <td valign=""top""><font size=""1""><b>" & Label & "</b><br><SELECT ACCESSKEY=""" & accesskey & """ CLASS=""sts"" NAME=""" & campo & """ " & w_Disabled & " " & atributo & ">"
+       ShowHTML "          <td valign=""top""><font size=""1""><b>" & Label & "</b><br><SELECT ACCESSKEY=""" & accesskey & """ CLASS=""STS"" NAME=""" & campo & """ " & w_Disabled & " " & atributo & ">"
     Else
-       ShowHTML "          <td valign=""top"" title=""" & hint & """><font size=""1""><b>" & Label & "</b><br><SELECT ACCESSKEY=""" & accesskey & """ CLASS=""sts"" NAME=""" & campo & """ " & w_Disabled & " " & atributo & ">"
+       ShowHTML "          <td valign=""top"" title=""" & hint & """><font size=""1""><b>" & Label & "</b><br><SELECT ACCESSKEY=""" & accesskey & """ CLASS=""STS"" NAME=""" & campo & """ " & w_Disabled & " " & atributo & ">"
     End If
     ShowHTML "          <option value="""">---"
     While Not RS.EOF
@@ -1688,9 +1688,9 @@ REM Montagem da seleção de tipo de recurso
 REM -------------------------------------------------------------------------
 Sub SelecaoTipoRecurso (label, accesskey, hint, chave, chaveAux, campo, restricao, atributo)
     If IsNull(hint) Then
-       ShowHTML "          <td valign=""top""><font size=""1""><b>" & Label & "</b><br><SELECT ACCESSKEY=""" & accesskey & """ CLASS=""sts"" NAME=""" & campo & """ " & w_Disabled & " " & atributo & ">"
+       ShowHTML "          <td valign=""top""><font size=""1""><b>" & Label & "</b><br><SELECT ACCESSKEY=""" & accesskey & """ CLASS=""STS"" NAME=""" & campo & """ " & w_Disabled & " " & atributo & ">"
     Else
-       ShowHTML "          <td valign=""top"" title=""" & hint & """><font size=""1""><b>" & Label & "</b><br><SELECT ACCESSKEY=""" & accesskey & """ CLASS=""sts"" NAME=""" & campo & """ " & w_Disabled & " " & atributo & ">"
+       ShowHTML "          <td valign=""top"" title=""" & hint & """><font size=""1""><b>" & Label & "</b><br><SELECT ACCESSKEY=""" & accesskey & """ CLASS=""STS"" NAME=""" & campo & """ " & w_Disabled & " " & atributo & ">"
     End If
     ShowHTML "          <option value="""">---"
     If cDbl(nvl(chave,-1)) = 0 Then ShowHTML "          <option value=""0"" SELECTED>Financeiro"    Else ShowHTML "          <option value=""0"">Financeiro"    End If
@@ -1708,9 +1708,9 @@ Sub SelecaoTipoApoio (label, accesskey, hint, chave, chaveAux, campo, restricao,
     If Nvl(restricao,"") > "" Then RS.Filter = restricao End If
     RS.Sort = "nome"
     If IsNull(hint) Then
-       ShowHTML "          <td valign=""top""><font size=""1""><b>" & Label & "</b><br><SELECT ACCESSKEY=""" & accesskey & """ CLASS=""sts"" NAME=""" & campo & """ " & w_Disabled & " " & atributo & ">"
+       ShowHTML "          <td valign=""top""><font size=""1""><b>" & Label & "</b><br><SELECT ACCESSKEY=""" & accesskey & """ CLASS=""STS"" NAME=""" & campo & """ " & w_Disabled & " " & atributo & ">"
     Else
-       ShowHTML "          <td valign=""top"" title=""" & hint & """><font size=""1""><b>" & Label & "</b><br><SELECT ACCESSKEY=""" & accesskey & """ CLASS=""sts"" NAME=""" & campo & """ " & w_Disabled & " " & atributo & ">"
+       ShowHTML "          <td valign=""top"" title=""" & hint & """><font size=""1""><b>" & Label & "</b><br><SELECT ACCESSKEY=""" & accesskey & """ CLASS=""STS"" NAME=""" & campo & """ " & w_Disabled & " " & atributo & ">"
     End If
     ShowHTML "          <option value="""">---"
     While Not RS.EOF
@@ -1743,9 +1743,9 @@ REM Montagem da seleção de prioridade
 REM -------------------------------------------------------------------------
 Sub SelecaoPrioridade (label, accesskey, hint, chave, cliente, campo, restricao, atributo)
     If IsNull(hint) Then
-       ShowHTML "          <td valign=""top""><font size=""1""><b>" & Label & "</b><br><SELECT ACCESSKEY=""" & accesskey & """ CLASS=""sts"" NAME=""" & campo & """ " & w_Disabled & " " & atributo & ">"
+       ShowHTML "          <td valign=""top""><font size=""1""><b>" & Label & "</b><br><SELECT ACCESSKEY=""" & accesskey & """ CLASS=""STS"" NAME=""" & campo & """ " & w_Disabled & " " & atributo & ">"
     Else
-       ShowHTML "          <td valign=""top"" title=""" & hint & """><font size=""1""><b>" & Label & "</b><br><SELECT ACCESSKEY=""" & accesskey & """ CLASS=""sts"" NAME=""" & campo & """ " & w_Disabled & " " & atributo & ">"
+       ShowHTML "          <td valign=""top"" title=""" & hint & """><font size=""1""><b>" & Label & "</b><br><SELECT ACCESSKEY=""" & accesskey & """ CLASS=""STS"" NAME=""" & campo & """ " & w_Disabled & " " & atributo & ">"
     End If
     ShowHTML "          <option value="""">---"
     If cDbl(nvl(chave,-1)) = 0 Then ShowHTML "          <option value=""0"" SELECTED>Alta"   Else ShowHTML "          <option value=""0"">Alta"   End If
@@ -1759,9 +1759,9 @@ REM Montagem da seleção de prioridade
 REM -------------------------------------------------------------------------
 Sub SelecaoTipoVisao (label, accesskey, hint, chave, chaveAux, campo, restricao, atributo)
     If IsNull(hint) Then
-       ShowHTML "          <td valign=""top""><font size=""1""><b>" & Label & "</b><br><SELECT ACCESSKEY=""" & accesskey & """ CLASS=""sts"" NAME=""" & campo & """ " & w_Disabled & " " & atributo & ">"
+       ShowHTML "          <td valign=""top""><font size=""1""><b>" & Label & "</b><br><SELECT ACCESSKEY=""" & accesskey & """ CLASS=""STS"" NAME=""" & campo & """ " & w_Disabled & " " & atributo & ">"
     Else
-       ShowHTML "          <td valign=""top"" title=""" & hint & """><font size=""1""><b>" & Label & "</b><br><SELECT ACCESSKEY=""" & accesskey & """ CLASS=""sts"" NAME=""" & campo & """ " & w_Disabled & " " & atributo & ">"
+       ShowHTML "          <td valign=""top"" title=""" & hint & """><font size=""1""><b>" & Label & "</b><br><SELECT ACCESSKEY=""" & accesskey & """ CLASS=""STS"" NAME=""" & campo & """ " & w_Disabled & " " & atributo & ">"
     End If
     ShowHTML "          <option value="""">---"
     If cDbl(nvl(chave,-1)) = 0 Then ShowHTML "          <option value=""0"" SELECTED>Completa"  Else ShowHTML "          <option value=""0"">Completa" End If
@@ -1778,9 +1778,9 @@ Sub SelecaoEtapa (label, accesskey, hint, chave, chaveAux, chaveAux2, campo, res
     DIM RST, RST1, RST2, RST3, RST4
     
     If IsNull(hint) Then
-       ShowHTML "          <td valign=""top""><font size=""1""><b>" & Label & "</b><br><SELECT ACCESSKEY=""" & accesskey & """ CLASS=""sts"" NAME=""" & campo & """ " & w_Disabled & " " & atributo & ">"
+       ShowHTML "          <td valign=""top""><font size=""1""><b>" & Label & "</b><br><SELECT ACCESSKEY=""" & accesskey & """ CLASS=""STS"" NAME=""" & campo & """ " & w_Disabled & " " & atributo & ">"
     Else
-       ShowHTML "          <td valign=""top"" title=""" & hint & """><font size=""1""><b>" & Label & "</b><br><SELECT ACCESSKEY=""" & accesskey & """ CLASS=""sts"" NAME=""" & campo & """ " & w_Disabled & " " & atributo & ">"
+       ShowHTML "          <td valign=""top"" title=""" & hint & """><font size=""1""><b>" & Label & "</b><br><SELECT ACCESSKEY=""" & accesskey & """ CLASS=""STS"" NAME=""" & campo & """ " & w_Disabled & " " & atributo & ">"
     End If
     ShowHTML "          <option value="""">---"
 
@@ -3015,26 +3015,12 @@ End Function
 
 ' Cria a tag Body
 Sub BodyOpen(cProperties)
+   ShowHTML "  <link rel=""stylesheet"" type=""text/css"" href=""" & conRootSIW & "cp_menu/xPandMenu.css"">"
    If Session("p_cliente") = 6761 Then
       ShowHTML "<body Text=""" & conBodyText & """ " & cProperties & "> " 
    Else
-      ShowHTML "<BASEFONT FACE=""Verdana"" SIZE=""2""> "
-      ShowHTML "<style> "
-      ShowHTML " .ss{text-decoration:none;font:bold 8pt} "
-      ShowHTML " .ss:HOVER{text-decoration: underline;} "
-      ShowHTML " .hl{text-decoration:none;font:Arial;color=""#0000FF""} "
-      ShowHTML " .hl:HOVER{text-decoration: underline;} "
-      ShowHTML " .ttm{font: 10pt Arial}"
-      ShowHTML " .btm{font: 8pt Verdana}"
-      ShowHTML " .xtm{font: 12pt Verdana}"
-      ShowHTML " .sti {font-size: 8pt; border: 1px solid #000000; background-color: #F5F5F5}"
-      ShowHTML " .stb {font-size: 8pt; color: #000000; border: 1pt solid #000000; background-color: #C0C0C0; }"
-      ShowHTML " .sts {font-size: 8pt; border-top: 1px solid #000000; background-color: #F5F5F5}"
-      ShowHTML " .str {font-size: 8pt; border-top: 0px}"
-      ShowHTML " .stc {font-size: 8pt; border-top: 0px}"
-      ShowHTML "</style> "
       ShowHTML "<body Text=""" & conBodyText & """ Link=""" & conBodyLink & """ Alink=""" & conBodyALink & """ " & _
-            "Vlink=""" & conBodyVLink & """ Bgcolor=""" & conBodyBgcolor & """ Background=""" & conBodyBackground & """ " & _
+             "Vlink=""" & conBodyVLink & """ Bgcolor=""" & conBodyBgcolor & """ Background=""" & conBodyBackground & """ " & _
             "Bgproperties=""" & conBodyBgproperties & """ Topmargin=""" & conBodyTopmargin & """ " & _
             "Leftmargin=""" & conBodyLeftmargin & """ " & cProperties & "> " 
    End IF
@@ -3042,21 +3028,7 @@ End Sub
 
 ' Cria a tag Body
 Sub BodyOpenClean(cProperties)
-ShowHTML "<BASEFONT FACE=""Verdana"" SIZE=""2""> "
-ShowHTML "<style> "
-ShowHTML " .ss{text-decoration:none;font:bold 8pt} "
-ShowHTML " .ss:HOVER{text-decoration: underline;} "
-ShowHTML " .hl{text-decoration:none;font:Arial;color=""#0000FF""} "
-ShowHTML " .hl:HOVER{text-decoration: underline;} "
-ShowHTML " .ttm{font: 10pt Arial}"
-ShowHTML " .btm{font: 8pt Verdana}"
-ShowHTML " .xtm{font: 12pt Verdana}"
-ShowHTML " .sti {font-size: 8pt; border: 1px solid #000000; background-color: #F5F5F5}"
-ShowHTML " .stb {font-size: 8pt; color: #000000; border: 1pt solid #000000; background-color: #C0C0C0; }"
-ShowHTML " .sts {font-size: 8pt; border-top: 1px solid #000000; background-color: #F5F5F5}"
-ShowHTML " .str {font-size: 8pt; border-top: 0px}"
-ShowHTML " .stc {font-size: 8pt; border-top: 0px}"
-ShowHTML "</style> "
+ShowHTML "  <link rel=""stylesheet"" type=""text/css"" href=""" & conRootSIW & "cp_menu/xPandMenu.css"">"
 ShowHTML "<body Text=""" & conBodyText & """ Link=""" & conBodyLink & """ Alink=""" & conBodyALink & """ " & _
     "Vlink=""" & conBodyVLink & """  Background=""" & conBodyBackground & """ " & _
     "Bgproperties=""" & conBodyBgproperties & """ Topmargin=""" & conBodyTopmargin & """ " & _
@@ -3066,21 +3038,7 @@ End Sub
 ' Cria a tag Body
 Function BodyOpenMail(cProperties)
 Dim l_html
-l_html = "<BASEFONT FACE=""Verdana"" SIZE=""2""> " & VbCrLf
-l_html = l_html & "<style> " & VbCrLf
-l_html = l_html & " .ss{text-decoration:none;font:bold 8pt} " & VbCrLf
-l_html = l_html & " .ss:HOVER{text-decoration: underline;} " & VbCrLf
-l_html = l_html & " .hl{text-decoration:none;font:Arial;color=""#0000FF""} " & VbCrLf
-l_html = l_html & " .hl:HOVER{text-decoration: underline;} " & VbCrLf
-l_html = l_html & " .ttm{font: 10pt Arial}" & VbCrLf
-l_html = l_html & " .btm{font: 8pt Verdana}" & VbCrLf
-l_html = l_html & " .xtm{font: 12pt Verdana}" & VbCrLf
-l_html = l_html & " .sti {font-size: 8pt; border: 1px solid #000000; background-color: #F5F5F5}"  & VbCrLf
-l_html = l_html & " .stb {font-size: 8pt; color: #000000; border: 1pt solid #000000; background-color: #C0C0C0; }"  & VbCrLf
-l_html = l_html & " .sts {font-size: 8pt; border-top: 1px solid #000000; background-color: #F5F5F5}"  & VbCrLf
-l_html = l_html & " .str {font-size: 8pt; border-top: 0px}"  & VbCrLf
-l_html = l_html & " .stc {font-size: 8pt; border-top: 0px}"  & VbCrLf
-l_html = l_html &  "</style> " & VbCrLf
+l_html = l_html &  "  <link rel=""stylesheet"" type=""text/css"" href=""" & conRootSIW & "cp_menu/xPandMenu.css"">"
 l_html = l_html &  "<body Text=""" & conBodyText & """ Link=""" & conBodyLink & """ Alink=""" & conBodyALink & """ " & _
     "Vlink=""" & conBodyVLink & """ Bgcolor=""" & conBodyBgcolor & """ Background=""" & conBodyBackground & """ " & _
     "Bgproperties=""" & conBodyBgproperties & """ Topmargin=""" & conBodyTopmargin & """ " & _
@@ -3090,21 +3048,7 @@ Set l_html = Nothing
 End Function
 
 Sub BodyOpenImage(cProperties, cImage, cFixed)
-ShowHTML "<BASEFONT FACE=""Verdana"" SIZE=""2""> "
-ShowHTML "<style> "
-ShowHTML " .ss{text-decoration:none;font:bold 8pt} "
-ShowHTML " .ss:HOVER{text-decoration: underline;} "
-ShowHTML " .hl{text-decoration:none;font:Arial;color=""#0000FF""} "
-ShowHTML " .hl:HOVER{text-decoration: underline;} "
-ShowHTML " .ttm{font: 10pt Arial}"
-ShowHTML " .btm{font: 8pt Verdana}"
-ShowHTML " .xtm{font: 12pt Verdana}"
-ShowHtml " .sti {font-size: 8pt; border: 1px solid #000000; background-color: #F5F5F5}"  & VbCrLf
-ShowHtml " .stb {font-size: 8pt; color: #000000; border: 1pt solid #000000; background-color: #C0C0C0; }"  & VbCrLf
-ShowHtml " .sts {font-size: 8pt; border-top: 1px solid #000000; background-color: #F5F5F5}"  & VbCrLf
-ShowHtml " .str {font-size: 8pt; border-top: 0px}"  & VbCrLf
-ShowHtml " .stc {font-size: 8pt; border-top: 0px}"  & VbCrLf
-ShowHTML "</style> "
+ShowHTML "  <link rel=""stylesheet"" type=""text/css"" href=""" & conRootSIW & "cp_menu/xPandMenu.css"">"
 ShowHTML "<body Text=""" & conBodyText & """ Link=""" & conBodyLink & """ Alink=""" & conBodyALink & """ " & _
     "Vlink=""" & conBodyVLink & """ Bgcolor=""" & conBodyBgcolor & """ Background=""" & cImage & """ " & _
     "Bgproperties=""" & cFixed & """ Topmargin=""" & conBodyTopmargin & """ " & _

@@ -552,15 +552,15 @@ Sub Consulta
     ShowHTML "<tr bgcolor=""" & conTrBgColor & """><td align=""center"">"
     ShowHTML "    <table width=""70%"" border=""0"">"
     ShowHTML "      <tr valign=""top""><td valign=""top""><font  size=""1"">"
-    ShowHTML "            <b>Pr<U>o</U>curar nome:<br> <INPUT TYPE=""TEXT"" ACCESSKEY=""O"" class=""BTM"" name=""p_beneficiario"" size=40 maxlength=40>"
-    ShowHTML "            <input class=""BTM"" type=""button"" name=""Procura"" value=""Procura"" onClick=""procura()"">"
+    ShowHTML "            <b>Pr<U>o</U>curar nome:<br> <INPUT TYPE=""TEXT"" ACCESSKEY=""O"" class=""STI"" name=""p_beneficiario"" size=40 maxlength=40>"
+    ShowHTML "            <input class=""STI"" type=""button"" name=""Procura"" value=""Procura"" onClick=""procura()"">"
     If Request("p_beneficiario") > "" Then 
        SQL = "select b.handle, b.nome from corporativo.gn_pessoas@sicof b where upper(b.nome) like '%" & uCase(Replace(Request("p_beneficiario"),"'","''")) & "%' order by seguranca.acentos@sicof(nome)"
     Else
        SQL = "select * from corporativo.gn_pessoas@sicof where handle < 0"
     End If
     ConectaBD SQL
-    ShowHTML "      <tr valign=""top""><td valign=""top""><font  size=""1""><b><U>B</U>eneficiário:<br> <SELECT ACCESSKEY=""B"" class=""BTM"" name=""p_sq_pessoa"" size=""1"">"
+    ShowHTML "      <tr valign=""top""><td valign=""top""><font  size=""1""><b><U>B</U>eneficiário:<br> <SELECT ACCESSKEY=""B"" class=""STS"" name=""p_sq_pessoa"" size=""1"">"
     ShowHTML "          <OPTION VALUE="""">---"
     If Not RS.EOF Then
        While Not RS.EOF
@@ -578,7 +578,7 @@ Sub Consulta
 
     SQL = "select a.HANDLE, a.NOME, a.CODIGOUNESCO, a.INICIO, a.TERMINO from CORPORATIVO.CT_CC@sicof a where a.ultimonivel='S' order by a.nome"
     ConectaBD SQL
-    ShowHTML "      <tr valign=""top""><td valign=""top""><font  size=""1""><b>Pro<U>j</U>eto:<br> <SELECT ACCESSKEY=""J"" class=""BTM"" name=""p_ctcc"" size=""1"">"
+    ShowHTML "      <tr valign=""top""><td valign=""top""><font  size=""1""><b>Pro<U>j</U>eto:<br> <SELECT ACCESSKEY=""J"" class=""STS"" name=""p_ctcc"" size=""1"">"
     ShowHTML "          <OPTION VALUE="""">---"
     While Not RS.EOF
       If cDbl(RS("handle")) = cDbl(Nvl(Request("p_ctcc"),0)) Then
@@ -592,22 +592,22 @@ Sub Consulta
     ShowHTML "          </SELECT></td>"
     ShowHTML "      </tr>"    
     ShowHTML "      <tr valign=""top""><td valign=""top""><table border=0 width=""100%"" cellpadding=0 cellspacing=0><tr valign=""top"">"
-    ShowHTML "          <td><font  size=""1""><b><U>C</U>NPJ:<br> <INPUT TYPE=""TEXT"" ACCESSKEY=""C"" class=""BTM"" name=""p_cnpj"" size=18 maxlength=18 onKeyPress=""FormataCNPJ(this,event);""  value=""" & Request("p_cnpj") & """></td>"
-    ShowHTML "          <td><font  size=""1""><b>C<U>P</U>F:<br> <INPUT TYPE=""TEXT"" ACCESSKEY=""C"" class=""BTM"" name=""p_cpf"" size=14 maxlength=14 onKeyPress=""FormataCPF(this,event);"" value=""" & Request("p_cpf") & """></td>"
+    ShowHTML "          <td><font  size=""1""><b><U>C</U>NPJ:<br> <INPUT TYPE=""TEXT"" ACCESSKEY=""C"" class=""STI"" name=""p_cnpj"" size=18 maxlength=18 onKeyPress=""FormataCNPJ(this,event);""  value=""" & Request("p_cnpj") & """></td>"
+    ShowHTML "          <td><font  size=""1""><b>C<U>P</U>F:<br> <INPUT TYPE=""TEXT"" ACCESSKEY=""C"" class=""STI"" name=""p_cpf"" size=14 maxlength=14 onKeyPress=""FormataCPF(this,event);"" value=""" & Request("p_cpf") & """></td>"
     ShowHTML "          </table>"
     ShowHTML "      <tr valign=""top""><td valign=""top""><table border=0 width=""100%"" cellpadding=0 cellspacing=0><tr valign=""top"">"
-    ShowHTML "          <td valign=""top""><font  size=""1""><b>SA/SP/SP<U>D</U>:</b> (identificação completa)<br> <INPUT TYPE=""TEXT"" ACCESSKEY=""D"" class=""BTM"" name=""p_documento"" size=15 maxlength=15 value=""" & Request("p_documento") & """></td>"
-    ShowHTML "          <td><font  size=""1"">Período: <b>D<U>e</U>: <INPUT TYPE=""TEXT"" ACCESSKEY=""E"" class=""BTM"" name=""p_inicio"" size=10 maxlength=10 onKeyPress=""FormataData(this,event);""  value=""" & Request("p_inicio") & """>"
-    ShowHTML "                                <U>a</U>té: <INPUT TYPE=""TEXT"" ACCESSKEY=""A"" class=""BTM"" name=""p_fim"" size=10 maxlength=10 onKeyPress=""FormataData(this,event);"" value=""" & Request("p_fim") & """></td>"
+    ShowHTML "          <td valign=""top""><font  size=""1""><b>SA/SP/SP<U>D</U>:</b> (identificação completa)<br> <INPUT TYPE=""TEXT"" ACCESSKEY=""D"" class=""STI"" name=""p_documento"" size=15 maxlength=15 value=""" & Request("p_documento") & """></td>"
+    ShowHTML "          <td><font  size=""1"">Período: <b>D<U>e</U>: <INPUT TYPE=""TEXT"" ACCESSKEY=""E"" class=""STI"" name=""p_inicio"" size=10 maxlength=10 onKeyPress=""FormataData(this,event);""  value=""" & Request("p_inicio") & """>"
+    ShowHTML "                                <U>a</U>té: <INPUT TYPE=""TEXT"" ACCESSKEY=""A"" class=""STI"" name=""p_fim"" size=10 maxlength=10 onKeyPress=""FormataData(this,event);"" value=""" & Request("p_fim") & """></td>"
     ShowHTML "          </table>"
     ShowHTML "      <tr valign=""top""><td valign=""top""><table border=0 width=""100%"" cellpadding=0 cellspacing=0><tr valign=""top"">"
-    ShowHTML "          <td><font  size=""1""><b>Co<U>m</U>provante (NF/Fatura/Recibo):<br><INPUT TYPE=""TEXT"" ACCESSKEY=""M"" class=""BTM"" name=""p_comprovante"" size=10 maxlength=10 value=""" & Request("p_comprovante") & """>"
-    ShowHTML "          <td><font  size=""1"">Período: <b>D<U>e</U>: <INPUT TYPE=""TEXT"" ACCESSKEY=""E"" class=""BTM"" name=""p_inicio_nf"" size=10 maxlength=10 onKeyPress=""FormataData(this,event);""  value=""" & Request("p_inicio_nf") & """>"
-    ShowHTML "                                <b><U>a</U>té: <INPUT TYPE=""TEXT"" ACCESSKEY=""A"" class=""BTM"" name=""p_fim_nf"" size=10 maxlength=10 onKeyPress=""FormataData(this,event);"" value=""" & Request("p_fim_nf") & """></td>"
+    ShowHTML "          <td><font  size=""1""><b>Co<U>m</U>provante (NF/Fatura/Recibo):<br><INPUT TYPE=""TEXT"" ACCESSKEY=""M"" class=""STI"" name=""p_comprovante"" size=10 maxlength=10 value=""" & Request("p_comprovante") & """>"
+    ShowHTML "          <td><font  size=""1"">Período: <b>D<U>e</U>: <INPUT TYPE=""TEXT"" ACCESSKEY=""E"" class=""STI"" name=""p_inicio_nf"" size=10 maxlength=10 onKeyPress=""FormataData(this,event);""  value=""" & Request("p_inicio_nf") & """>"
+    ShowHTML "                                <b><U>a</U>té: <INPUT TYPE=""TEXT"" ACCESSKEY=""A"" class=""STI"" name=""p_fim_nf"" size=10 maxlength=10 onKeyPress=""FormataData(this,event);"" value=""" & Request("p_fim_nf") & """></td>"
     ShowHTML "          </table>"
     ShowHTML "      <tr><td align=""center"" colspan=""3"" height=""1"" bgcolor=""#000000"">"
     ShowHTML "      <tr><td align=""center"" colspan=""3"">"
-    ShowHTML "            <input class=""BTM"" type=""submit"" name=""Botao"" value=""Aplicar filtro"">"
+    ShowHTML "            <input class=""STB"" type=""submit"" name=""Botao"" value=""Aplicar filtro"">"
     ShowHTML "          </td>"
     ShowHTML "      </tr>"
     ShowHTML "    </table>"

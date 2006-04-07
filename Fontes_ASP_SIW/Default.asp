@@ -229,18 +229,7 @@ Sub LogOn
   ShowHTML "  theForm.Password1.value = """"; "
   ValidateClose
   ScriptClose
-  ShowHTML "<BASEFONT FACE=""Verdana"" SIZE=""2""> "
-  ShowHTML "<style> "
-  ShowHTML " .SS{text-decoration:none;font:bold 8pt} "
-  ShowHTML " .SS:HOVER{text-decoration: underline;} "
-  ShowHTML " .HL{text-decoration:none;font:Arial;color=""#0000FF""} "
-  ShowHTML " .HL:HOVER{text-decoration: underline;} "
-  ShowHTML " .TTM{font: 10pt Arial}"
-  ShowHTML " .BTM{font: 8pt Verdana}"
-  ShowHTML " .XTM{font: 12pt Verdana}"
-  ShowHtml " .STI {font-size: 8pt; border: 1px solid #000000; background-color: #F5F5F5}"  & VbCrLf
-  ShowHtml " .STB {font-size: 8pt; color: #FFFFFF; border: 1px solid #000000; background-color: #669966; }"  & VbCrLf
-  ShowHTML "</style> "
+  ShowHTML "  <link rel=""stylesheet"" type=""text/css"" href=""" & conRootSIW & "cp_menu/xPandMenu.css"">"
   ShowHTML "</HEAD>"
   ShowHTML "<body topmargin=0 leftmargin=10 onLoad=""document.Form.Login1.focus();"">"
   ShowHTML "<form method=""post"" action=""Default.asp"" onsubmit=""return(Validacao(this));"" name=""Form""> "

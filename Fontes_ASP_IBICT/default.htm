@@ -1,4 +1,5 @@
 <!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0 Transitional//EN">
+<!-- saved from url=(0027)http://www.mct.gov.br/sbpi/ -->
 <HTML><HEAD>
 <META content="MSHTML 6.00.2800.1226" name=GENERATOR>
 <META http-equiv=Content-Type content="text/html; charset=iso-8859-1">
@@ -8,24 +9,24 @@ function Ajuda()
   document.Form.Botao.value = "Ajuda"; 
 } 
 function FormataCPF (campo,teclapres) { 
-	var tecla = teclapres.keyCode; 
-	vr = campo.value; 
-	vr = vr.replace( '-', '' ); 
-	vr = vr.replace( '.', '' ); 
-	vr = vr.replace( '.', '' ); 
-	tam = vr.length; 
-	if (tam < 11 && tecla != 8){ tam = vr.length + 1 ; } 
-	if (tecla == 8 ){	tam = tam - 1 ; } 
-	if ( tecla == 8 || tecla >= 48 && tecla <= 57 || tecla >= 96 && tecla <= 105 ){ 
-		if ( tam <= 2 ){ 
-	 		campo.value = vr ; } 
-	 	if ( (tam > 2) && (tam <= 5) ){ 
-	 		campo.value = vr.substr( 0, tam - 2 ) + '-' + vr.substr( tam - 2, tam ) ; } 
-	 	if ( (tam >= 6) && (tam <= 8) ){ 
-	 		campo.value = vr.substr( 0, tam - 5 ) + '.' + vr.substr( tam - 5, 3 ) + '-' + vr.substr( tam - 2, tam ) ; } 
-	 	if ( (tam >= 9) && (tam <= 11) ){ 
-	 		campo.value = vr.substr( 0, tam - 8 ) + '.' + vr.substr( tam - 8, 3 ) + '.' + vr.substr( tam - 5, 3 ) + '-' + vr.substr( tam - 2, tam ) ; } 
-	} 
+    var tecla = teclapres.keyCode; 
+    vr = campo.value; 
+    vr = vr.replace( '-', '' ); 
+    vr = vr.replace( '.', '' ); 
+    vr = vr.replace( '.', '' ); 
+    tam = vr.length; 
+    if (tam < 11 && tecla != 8){ tam = vr.length + 1 ; } 
+    if (tecla == 8 ){    tam = tam - 1 ; } 
+    if ( tecla == 8 || tecla >= 48 && tecla <= 57 || tecla >= 96 && tecla <= 105 ){ 
+        if ( tam <= 2 ){ 
+             campo.value = vr ; } 
+         if ( (tam > 2) && (tam <= 5) ){ 
+             campo.value = vr.substr( 0, tam - 2 ) + '-' + vr.substr( tam - 2, tam ) ; } 
+         if ( (tam >= 6) && (tam <= 8) ){ 
+             campo.value = vr.substr( 0, tam - 5 ) + '.' + vr.substr( tam - 5, 3 ) + '-' + vr.substr( tam - 2, tam ) ; } 
+         if ( (tam >= 9) && (tam <= 11) ){ 
+             campo.value = vr.substr( 0, tam - 8 ) + '.' + vr.substr( tam - 8, 3 ) + '.' + vr.substr( tam - 5, 3 ) + '-' + vr.substr( tam - 2, tam ) ; } 
+    } 
 } 
   function modulo (dividendo,divisor) { 
     var quociente = 0; 
@@ -36,9 +37,6 @@ function FormataCPF (campo,teclapres) {
   } 
 function Validacao (theForm)
 {
-  while (theForm.Login1.value.substring(0,1) == ' ') {
-     theForm.Login1.value = theForm.Login1.value.substring(1,theForm.Login1.value.length);
-  }
   if (theForm.Login1.value == '')
   {
     alert('Favor informar um valor para o campo CPF');
@@ -131,9 +129,6 @@ function Validacao (theForm)
        return false;
      }
   } else {
-  while (theForm.Password1.value.substring(0,1) == ' ') {
-     theForm.Password1.value = theForm.Password1.value.substring(1,theForm.Password1.value.length);
-  }
   if (theForm.Password1.value == '')
   {
     alert('Favor informar um valor para o campo Senha');
@@ -190,73 +185,88 @@ function Validacao (theForm)
 } 
 --></SCRIPT>
 <link rel="stylesheet" type="text/css" href="/siw/cp_menu/xPandMenu.css">
+<style type="text/css">
+<!--
+@import "default_files/ibict.css";
+-->
+</style>
 </HEAD>
 <BODY leftMargin=0 topMargin=0 marginheight="0" marginwidth="0" onLoad="document.Form.Login1.focus()">
+<font size=1><br></font>
 <CENTER>
-<TABLE borderColor=#000000 cellSpacing=0 cellPadding=0 width=763 border=1>
+<TABLE borderColor=#000000 cellSpacing=0 cellPadding=0 width=763 border=1 bgcolor="white">
   <TBODY>
-  <TR>
-    <TD width=759><IMG src="default_files/barrasuperior.jpg" 
-      width=759></TD></TR>
+  <TR><td>
+      <table width="100%" height="100%" border="0" align="center" cellpadding="0" cellspacing="0">
+        <tr><td colspan="2"><table width="100%" cellpadding="0" cellspacing="0">
+            <tr><td><table width="100%" cellspacing="0" cellpadding="0" height="21">
+                <tr height="21">
+                   <td class="tdLine" align="left"><IMG height=21 src="default_files/logo_ct2.gif" width=229 border=0></td>
+                   <td class="tdLine"></td>
+                   <td class="tdLine" align="right"><IMG height=21 hspace=10 src="default_files/brasil2.gif" width=74 align=top border=0></td></tr>
+                </table></td></tr>
+                <tr><td><table width="100%" border="0" cellpadding="0" cellspacing="0" class="ibictBar" background="default_files/topbg.jpg">
+                    <tr><td height="21" align="left" valign="center"><IMG hspace=2 src="default_files/logo.gif" align=absMiddle vspace=4 border=0></td>
+                        <td><a class="ibictTitulo">Instituto Brasileiro de Informação<br>em Ciência e Tecnologia</a></td>
+                        <td height="21" align="right" valign="center"><font size=1>
+                           <table cellpadding=0 cellspacing=0 border=0 width="100%"><tr><td align="right">
+                           <table cellpadding=0 cellspacing=0 border=1 width="182"><tr><td align="right">
+                           <table width="182" cellpadding=0 cellspacing=0 bgcolor="white">
+                           <tr><td>&nbsp;<img src="default_files/logo_sgpa.gif" border=0>&nbsp;
+                           <tr><td>&nbsp;<img src="default_files/logo_sistema.gif" border=0>&nbsp;
+                           </table></table>
+                           <td width=5></td>
+                           </table>
+                        </td>
+                    </tr>
+                </table></td></tr>
+            </table></td></tr>
+      </table></td>
   <TR>
     <TD height=21>
       <DIV align=center>
       <TABLE cellSpacing=0 cellPadding=0 width="40%" border=0>
         <TBODY>
         <TR>
+          <TD height=19>
+            <DIV align=center>
+<form method="post" action="/siw/default.asp" onsubmit="return(Validacao(this));" name="Form"> 
+<INPUT TYPE="hidden" NAME="Login" > 
+<INPUT TYPE="hidden" NAME="Password" > 
+<INPUT TYPE="hidden" NAME="par" VALUE="Log"> 
+<INPUT TYPE="hidden" NAME="p_dbms" VALUE="1">
+<INPUT TYPE="hidden" NAME="p_cliente" VALUE="9234"> 
+            <TABLE cellSpacing=0 cellPadding=0 width="100%" border=0>
+              <TBODY>
+              <TR>
+                <TD align="middle">
+        <table width="100%" height="100%" border="0">
+          <tr><td><font size="2"><p>&nbsp;</p>
+          <tr><td align="right" width="43%"><font size="2"><b>CPF:</b></font><td width="57%"><input class="sti" name="Login1" size="14" maxlength="14" onkeyDown="FormataCPF(this,event)">
+          <tr><td align="right"><font size="2"><b>Senha:</b></font><td><input class="sti" type="password" name="Password1" size="19">
+          <tr><td align="right"><td><font size="2"><b><input class="stb" type="submit" value="OK" name="Botao" onClick="document.Form.par.value='Log';"> 
+              <input class="stb" type="submit" value="Lembrar senha" name="Botao" onClick="document.Form.par.value='Senha';" title="Informe seu CPF e clique aqui para receber por e-mail sua senha e assinatura eletrônica!"> 
+          </font></B></td> </tr> 
+          <tr><td><font size="2"><p>&nbsp;</p>
+        </table>
+        <TR>
           <TD>
-            <P><FONT face="Verdana, Arial, Helvetica, sans-serif" size=1><IMG 
-            height=37 src="default_files/ajuda.jpg" width=629> 
+            <P><FONT face="Verdana, Arial, Helvetica, sans-serif" size=1><IMG height=37 src="default_files/ajuda.jpg" width=629> 
             </FONT></P>
             <P><FONT face="Verdana, Arial, Helvetica, sans-serif" size=1>
             . CPF - Informe apenas os números do seu CPF.<BR>
             . Não deixe sua senha em branco. A senha deva ser a do login e no máximo com 19 caracteres.<br>
             . Informe seu CPF  e clique no botão "Lembrar senha" para receber a senha em sua caixa de e-mail.
             </FONT></P></TD></TR>
-        <TR>
-          <TD height=19>
-            <DIV align=center><IMG height=2 src="default_files/linha.jpg" 
-            width=551></DIV></TD></TR>
-        <TR>
-          <TD height=19>
-            <DIV align=center>
-<form method="post" action="/siw/default.asp" onsubmit="return(Validacao(this));" name="Form"> 
-<INPUT TYPE="HIDDEN" NAME="Login" VALUE=""> 
-<INPUT TYPE="HIDDEN" NAME="Password" VALUE=""> 
-<INPUT TYPE="HIDDEN" NAME="par" VALUE="Log"> 
-<INPUT TYPE="HIDDEN" NAME="p_dbms" VALUE="3">
-<INPUT TYPE="HIDDEN" NAME="p_cliente" VALUE="6462"> 
-            <TABLE cellSpacing=0 cellPadding=0 width="100%" border=0>
-              <TBODY>
-              <TR>
-                <TD align="center">
-        <table width="100%" height="100%" border="0">
-          <tr><td align="right" width="43%"><font size="2"><b>CPF:<td width="57%"><input class="sti" name="Login1" size="14" maxlength="14" onkeyDown="FormataCPF(this,event)">
-          <tr><td align="right"><font size="2"><b>Senha:<td><input class="sti" type="Password" name="Password1" size="19">
-          <tr><td align="right"><td><font size="2"><b><input class="stb" type="submit" value="OK" name="Botao" onClick="document.Form.par.value='Log';"> 
-              <input class="stb" type="submit" value="Lembrar senha" name="Botao" onClick="document.Form.par.value='Senha';" title="Informe seu CPF e clique aqui para receber por e-mail sua senha e assinatura eletrônica!"> 
-          </font></td> </tr> 
-        </table> 
+                  <DIV></DIV></TD></TR></TBODY></TABLE></form> 
 
-                </DIV></TD></TR></TBODY></TABLE></FORM></DIV></TD></TR>
-<SCRIPT LANGUAGE='Javascript'><!--
-  if (navigator.appVersion.search('MSIE 6.0') == -1) {
-    alert('Este sistema exige a utilização do MS-Internet Explorer 6, Service Pack 1, ou superior.\nAtualize a versão antes de iniciar sua utilização.'); 
-    document.Form.Login1.readonly=true; 
-    document.Form.Password1.disabled=true; 
-    document.Form.Botao[0].disabled=true; 
-    document.Form.Botao[1].disabled=true; 
-  } else if (navigator.appMinorVersion.search('SP') == -1) {
-    alert('Este sistema exige a utilização do MS-Internet Explorer 6, Service Pack 1, ou superior.\nAtualize a versão antes de iniciar sua utilização.'); 
-    document.Form.Login1.readonly=true; 
-    document.Form.Password1.disabled=true; 
-    document.Form.Botao[0].disabled=true; 
-    document.Form.Botao[1].disabled=true; 
-  }
+                </DIV></TD></TR>
         <TR>
           <TD height=19>
             <DIV align=center><IMG height=2 src="default_files/linha.jpg" 
             width=551></DIV></TD></TR>
-        </TBODY></TABLE></DIV></TD></TR></TBODY></TABLE>
+          <tr><td><font size="2"><p>&nbsp;</p><p>&nbsp;</p>
+     </TBODY>
+  </TABLE></DIV></TD></TR></TBODY></TABLE>
   </CENTER>
-  </BODY></HTML>
+  </BODY></HTML></TBODY></DIV></TR></TBODY></TABLE></CENTER></BODY></BASEFONT></HTML>
