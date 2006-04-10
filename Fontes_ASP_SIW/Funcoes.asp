@@ -3015,7 +3015,7 @@ End Function
 
 ' Cria a tag Body
 Sub BodyOpen(cProperties)
-   ShowHTML "  <link rel=""stylesheet"" type=""text/css"" href=""" & conRootSIW & "cp_menu/xPandMenu.css"">"
+   ShowHTML "<link rel=""stylesheet"" type=""text/css"" href=""" & conRootSIW & "cp_menu/xPandMenu.css"">"
    If Session("p_cliente") = 6761 Then
       ShowHTML "<body Text=""" & conBodyText & """ " & cProperties & "> " 
    Else

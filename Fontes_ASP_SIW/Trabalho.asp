@@ -124,8 +124,6 @@ Sub Mesa
   Cabecalho
   ShowHTML "<HEAD>"
   ShowHTML "<meta http-equiv=""Refresh"" content=""300;"">"
-  ScriptOpen "JavaScript"
-  ScriptClose
   ShowHTML "</HEAD>"
   BodyOpen "onLoad=document.focus();"
   ShowHTML "<B><FONT COLOR=""#000000"">" & w_TP & "</font></B>"
