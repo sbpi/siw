@@ -151,19 +151,19 @@ Sub Help
   ShowHTML "</HEAD>"
   BodyOpenClean "onLoad=document.focus();"
   If O = "L" Then
-     ShowHTML "<B><FONT COLOR=""#000000"">" & w_TP & "</FONT></B>"
+     ShowHTML "<B><FONT COLOR=""#000000"">" & w_TP & "</font></B>"
      ShowHTML "<HR>"
   End If
   ShowHTML "<div align=center><center>"
   If w_sq_modulo > "" Then
-     ShowHTML "<center><B><FONT SIZE=2>Clique <a class=""HL"" href=""javascript:history.back(1);"">aqui</a> para voltar à tela anterior</font></b></center>"
+     ShowHTML "<center><B>Clique <a class=""HL"" href=""javascript:history.back(1);"">aqui</a> para voltar à tela anterior</b></center>"
   End If
 
   ShowHTML "<table border=""0"" cellpadding=""0"" cellspacing=""0"" width=""100%"">"
 
   If O = "L" Then
      ShowHTML "      <tr valign=""top""><td colspan=2>"
-     ShowHTML "         <font face=""Arial"" size=""3""><b>Módulo: " & w_nome_modulo & "</b></font>"
+     ShowHTML "         <font face=""Arial"" size=""3""><b>Módulo: " & w_nome_modulo & "</font></b>"
      ShowHTML "         <font size=""2""><DL>"
      ShowHTML "         <DT><b>Objetivo geral:</b>"
      ShowHTML "         <DD>" & w_objetivo_geral
@@ -211,17 +211,17 @@ Sub Help
                         ShowHTML "    <DD><BR>Fases:"
                         ShowHTML "    <DD><TABLE bgcolor=""" & conTableBgColor & """ BORDER=""" & conTableBorder & """ CELLSPACING=""" & conTableCellSpacing & """ CELLPADDING=""" & conTableCellPadding & """ BorderColorDark=""" & conTableBorderColorDark & """ BorderColorLight=""" & conTableBorderColorLight & """>"
                         ShowHTML "        <tr align=""center"" valign=""top"">"
-                        ShowHTML "          <td><font size=""1""><b>Ordem</font></td>"    
-                        ShowHTML "          <td><font size=""1""><b>Nome</font></td>"    
-                        ShowHTML "          <td><font size=""1""><b>Descricao</font></td>"
-                        ShowHTML "          <td><font size=""1""><b>Quem cumpre</font></td>"
+                        ShowHTML "          <td><b>Ordem</td>"    
+                        ShowHTML "          <td><b>Nome</td>"    
+                        ShowHTML "          <td><b>Descricao</td>"
+                        ShowHTML "          <td><b>Quem cumpre</td>"
                         ShowHTML "        </tr>"
                         While Not RS_Tramite.EOF
                           ShowHTML "      <tr valign=""top"">"
-                          ShowHTML "        <td align=""center""><font size=""1"">" & RS_Tramite("ordem") & "</td>"
-                          ShowHTML "        <td><font size=""1"">" & RS_Tramite("nome") & "</td>"
-                          ShowHTML "        <td><font size=""1"">" & Nvl(RS_Tramite("descricao"),"---") & "</td>"
-                          ShowHTML "        <td><font size=""1"">" & Nvl(RS_Tramite("nm_chefia"),"---") & "</td>"
+                          ShowHTML "        <td align=""center"">" & RS_Tramite("ordem") & "</td>"
+                          ShowHTML "        <td>" & RS_Tramite("nome") & "</td>"
+                          ShowHTML "        <td>" & Nvl(RS_Tramite("descricao"),"---") & "</td>"
+                          ShowHTML "        <td>" & Nvl(RS_Tramite("nm_chefia"),"---") & "</td>"
                           ShowHTML "        </td>"
                           ShowHTML "      </tr>"
                           RS_Tramite.MoveNext
@@ -258,17 +258,17 @@ Sub Help
                                  ShowHTML "    <DD><BR>Fases:"
                                  ShowHTML "    <DD><TABLE WIDTH=""70%"" bgcolor=""" & conTableBgColor & """ BORDER=""" & conTableBorder & """ CELLSPACING=""" & conTableCellSpacing & """ CELLPADDING=""" & conTableCellPadding & """ BorderColorDark=""" & conTableBorderColorDark & """ BorderColorLight=""" & conTableBorderColorLight & """>"
                                  ShowHTML "        <tr align=""center"" valign=""top"">"
-                                 ShowHTML "          <td><font size=""1""><b>Ordem</font></td>"    
-                                 ShowHTML "          <td><font size=""1""><b>Nome</font></td>"    
-                                 ShowHTML "          <td><font size=""1""><b>Descricao</font></td>"
-                                 ShowHTML "          <td><font size=""1""><b>Quem cumpre</font></td>"
+                                 ShowHTML "          <td><b>Ordem</td>"    
+                                 ShowHTML "          <td><b>Nome</td>"    
+                                 ShowHTML "          <td><b>Descricao</td>"
+                                 ShowHTML "          <td><b>Quem cumpre</td>"
                                  ShowHTML "        </tr>"
                                  While Not RS_Tramite.EOF
                                    ShowHTML "      <tr valign=""top"">"
-                                   ShowHTML "        <td align=""center""><font size=""1"">" & RS_Tramite("ordem") & "</td>"
-                                   ShowHTML "        <td><font size=""1"">" & RS_Tramite("nome") & "</td>"
-                                   ShowHTML "        <td><font size=""1"">" & Nvl(RS_Tramite("descricao"),"---") & "</td>"
-                                   ShowHTML "        <td><font size=""1"">" & Nvl(RS_Tramite("nm_chefia"),"---") & "</td>"
+                                   ShowHTML "        <td align=""center"">" & RS_Tramite("ordem") & "</td>"
+                                   ShowHTML "        <td>" & RS_Tramite("nome") & "</td>"
+                                   ShowHTML "        <td>" & Nvl(RS_Tramite("descricao"),"---") & "</td>"
+                                   ShowHTML "        <td>" & Nvl(RS_Tramite("nm_chefia"),"---") & "</td>"
                                    ShowHTML "        </td>"
                                    ShowHTML "      </tr>"
                                    RS_Tramite.MoveNext
@@ -301,17 +301,17 @@ Sub Help
                                     ShowHTML "    <DD><BR>Fases:"
                                     ShowHTML "    <DD><TABLE WIDTH=""70%"" bgcolor=""" & conTableBgColor & """ BORDER=""" & conTableBorder & """ CELLSPACING=""" & conTableCellSpacing & """ CELLPADDING=""" & conTableCellPadding & """ BorderColorDark=""" & conTableBorderColorDark & """ BorderColorLight=""" & conTableBorderColorLight & """>"
                                     ShowHTML "        <tr align=""center"" valign=""top"">"
-                                    ShowHTML "          <td><font size=""1""><b>Ordem</font></td>"    
-                                    ShowHTML "          <td><font size=""1""><b>Nome</font></td>"    
-                                    ShowHTML "          <td><font size=""1""><b>Descricao</font></td>"
-                                    ShowHTML "          <td><font size=""1""><b>Quem cumpre</font></td>"
+                                    ShowHTML "          <td><b>Ordem</td>"    
+                                    ShowHTML "          <td><b>Nome</td>"    
+                                    ShowHTML "          <td><b>Descricao</td>"
+                                    ShowHTML "          <td><b>Quem cumpre</td>"
                                     ShowHTML "        </tr>"
                                     While Not RS_Tramite.EOF
                                       ShowHTML "      <tr valign=""top"">"
-                                      ShowHTML "        <td align=""center""><font size=""1"">" & RS_Tramite("ordem") & "</td>"
-                                      ShowHTML "        <td><font size=""1"">" & RS_Tramite("nome") & "</td>"
-                                      ShowHTML "        <td><font size=""1"">" & Nvl(RS_Tramite("descricao"),"---") & "</td>"
-                                      ShowHTML "        <td><font size=""1"">" & Nvl(RS_Tramite("nm_chefia"),"---") & "</td>"
+                                      ShowHTML "        <td align=""center"">" & RS_Tramite("ordem") & "</td>"
+                                      ShowHTML "        <td>" & RS_Tramite("nome") & "</td>"
+                                      ShowHTML "        <td>" & Nvl(RS_Tramite("descricao"),"---") & "</td>"
+                                      ShowHTML "        <td>" & Nvl(RS_Tramite("nm_chefia"),"---") & "</td>"
                                       ShowHTML "        </td>"
                                       ShowHTML "      </tr>"
                                       RS_Tramite.MoveNext
@@ -363,7 +363,7 @@ Sub Help
   ShowHTML "</table>"
 
   If w_sq_modulo > "" Then
-     ShowHTML "<center><B><FONT SIZE=2>Clique <a class=""HL"" href=""javascript:history.back(1);"">aqui</a> para voltar à tela anterior</font></b></center>"
+     ShowHTML "<center><B>Clique <a class=""HL"" href=""javascript:history.back(1);"">aqui</a> para voltar à tela anterior</b></center>"
   End If
 
   ShowHTML "</center>"
@@ -388,31 +388,31 @@ Sub Menu
   ShowHTML "<HEAD>"
   ShowHTML "</HEAD>"
   BodyOpen "onLoad='document.focus()';"
-  ShowHTML "<B><FONT COLOR=""#000000"">" & w_TP & "</FONT></B>"
+  ShowHTML "<B><FONT COLOR=""#000000"">" & w_TP & "</font></B>"
   ShowHTML "<HR>"
   ShowHTML "<div align=center><center>"
   ShowHTML "<table border=""0"" cellpadding=""0"" cellspacing=""0"" width=""100%"">"
   If O = "L" Then
     AbreSessao
     ' Exibe a quantidade de registros apresentados na listagem e o cabeçalho da tabela de listagem
-    ShowHTML "<tr><td align=""right""><font size=""1""><b>Registros existentes: " & RS.RecordCount
+    ShowHTML "<tr><td align=""right""><b>Registros existentes: " & RS.RecordCount
     ShowHTML "<tr><td align=""center"" colspan=3>"
     ShowHTML "    <TABLE WIDTH=""100%"" bgcolor=""" & conTableBgColor & """ BORDER=""" & conTableBorder & """ CELLSPACING=""" & conTableCellSpacing & """ CELLPADDING=""" & conTableCellPadding & """ BorderColorDark=""" & conTableBorderColorDark & """ BorderColorLight=""" & conTableBorderColorLight & """>"
     ShowHTML "        <tr bgcolor=""" & conTrBgColor & """ align=""center"">"
-    ShowHTML "          <td><font size=""1""><b>Módulo</font></td>"
-    ShowHTML "          <td><font size=""1""><b>Objetivo geral</font></td>"
-    ShowHTML "          <td><font size=""1""><b>Operações</font></td>"
+    ShowHTML "          <td><b>Módulo</td>"
+    ShowHTML "          <td><b>Objetivo geral</td>"
+    ShowHTML "          <td><b>Operações</td>"
     ShowHTML "        </tr>"
     If RS.EOF Then ' Se não foram selecionados registros, exibe mensagem
-        ShowHTML "      <tr bgcolor=""" & conTrBgColor & """><td colspan=6 align=""center""><font size=""2""><b>Não foram encontradas despesas adicionais cadastradas.</b></td></tr>"
+        ShowHTML "      <tr bgcolor=""" & conTrBgColor & """><td colspan=6 align=""center""><b>Não foram encontradas despesas adicionais cadastradas.</b></td></tr>"
     Else
       ' Lista os registros selecionados para listagem
       While Not RS.EOF
         If w_cor = conTrBgColor or w_cor = "" Then w_cor = conTrAlternateBgColor Else w_cor = conTrBgColor End If
         ShowHTML "      <tr bgcolor=""" & w_cor & """ valign=""top"">"
-        ShowHTML "        <td nowrap><font size=""1"">" & RS("nome") & "</td>"
-        ShowHTML "        <td><font size=""1"">" & RS("objetivo_geral") & "</td>"
-        ShowHTML "        <td align=""top"" nowrap><font size=""1"">"
+        ShowHTML "        <td nowrap>" & RS("nome") & "</td>"
+        ShowHTML "        <td>" & RS("objetivo_geral") & "</td>"
+        ShowHTML "        <td align=""top"" nowrap>"
         ShowHTML "          <A class=""HL"" HREF=""" & w_Pagina & "Inicial&R=" & w_Pagina & par & "&O=L&w_sq_modulo=" & Rs("sq_modulo") & "&P1=" & P1 & "&P2=" & P2 & "&P3=" & P3 & "&P4=" & P4 & "&TP=" & TP & "&SG=" & SG & """>Detalhar</A>&nbsp"
         ShowHTML "        </td>"
         ShowHTML "      </tr>"
@@ -451,7 +451,7 @@ Sub Main
     Case Else
        Cabecalho
        BodyOpen "onLoad=document.focus();"
-       ShowHTML "<B><FONT COLOR=""#000000"">" & w_TP & "</FONT></B>"
+       ShowHTML "<B><FONT COLOR=""#000000"">" & w_TP & "</font></B>"
        ShowHTML "<HR>"
        ShowHTML "<div align=center><center><br><br><br><br><br><br><br><br><br><br><img src=""images/icone/underc.gif"" align=""center""> <b>Esta opção está sendo desenvolvida.</b><br><br><br><br><br><br><br><br><br><br></center></div>"
        Rodape
