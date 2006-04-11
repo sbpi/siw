@@ -36,4 +36,3 @@ begin
          and (p_cd_subacao  is null or (p_cd_subacao  is not null and a.cd_subacao  = p_cd_subacao));
 end SP_GetFinacAcaoPPA_IS;
 /
-

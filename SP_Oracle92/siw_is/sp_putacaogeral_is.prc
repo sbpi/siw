@@ -120,7 +120,7 @@ begin
                               fim_previsto, quantidade, cumulativa, qtd_ano_1,
                               qtd_ano_2, qtd_ano_3, qtd_ano_4, qtd_ano_5, qtd_ano_6, unidade_medida,
                               cd_subacao)
-         (select sq_meta.nextval, w_chave, b.nome|| ' - ' ||g.nome, ' ', 0, p_inicio, 
+         (select sq_meta.nextval, w_chave, b.nome|| ' - ' ||g.nome, 'Não informada', 0, p_inicio, 
                  p_fim, Nvl(f.previsao_ano,0), case a.meta_nao_cumulativa when 'N' then 'S' else 'N' end, Nvl(d.qtd_ano_1,0),
                  Nvl(d.qtd_ano_2,0), Nvl(d.qtd_ano_3,0), Nvl(d.qtd_ano_4,0), Nvl(d.qtd_ano_5,0), Nvl(d.qtd_ano_6,0), e.nome,
                  a.cd_subacao
@@ -261,7 +261,7 @@ begin
                                      fim_previsto, quantidade, cumulativa, qtd_ano_1,
                                      qtd_ano_2, qtd_ano_3, qtd_ano_4, qtd_ano_5, qtd_ano_6, unidade_medida,
                                      cd_subacao)
-                (select sq_meta.nextval, w_chave, b.nome|| ' - ' ||g.nome, ' ', 0, p_inicio, 
+                (select sq_meta.nextval, w_chave, b.nome|| ' - ' ||g.nome, 'Não informada', 0, p_inicio, 
                         p_fim, Nvl(f.previsao_ano,0), case a.meta_nao_cumulativa when 'N' then 'S' else 'N'end, Nvl(d.qtd_ano_1,0),
                         Nvl(d.qtd_ano_2,0), Nvl(d.qtd_ano_3,0), Nvl(d.qtd_ano_4,0), Nvl(d.qtd_ano_5,0), Nvl(d.qtd_ano_6,0), e.nome,                        a.cd_subacao
                    from is_sig_acao                        a

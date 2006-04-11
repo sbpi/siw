@@ -203,7 +203,9 @@ begin
             and (p_unidade        is null or (p_unidade     is not null and d.sq_unidade_resp    = p_unidade))
             and (p_prioridade     is null or (p_prioridade  is not null and d.prioridade         = p_prioridade))
             and (p_solicitante    is null or (p_solicitante is not null and b.solicitante        = p_solicitante))
-            and (p_ano            is null or (p_ano         is not null and r.ano = p_ano))
+            and (p_ano            is null or (p_ano         is not null and r.ano                = p_ano))
+            and (p_programa       is null or (p_programa    is not null and r.cd_programa        = p_programa))
+            and (p_codigo         is null or (p_codigo      is not null and r.cd_acao            = p_codigo))
             and ((p_tipo         = 1     and Nvl(b1.sigla,'-') = 'CI'   and b.cadastrador        = p_pessoa) or
                  (p_tipo         = 2     and Nvl(b1.sigla,'-') <> 'CI'  and b.executor           = p_pessoa and d.concluida = 'N') or
                  (p_tipo         = 2     and Instr('CI,AT,CA', Nvl(b1.sigla,'-')) = 0 and b2.acesso > 15) or
@@ -414,76 +416,76 @@ begin
                 p.nome_resumido nm_exec,
                 Nvl(q.existe,0) resp_etapa,
                 r.cd_programa,        r.nm_gerente_programa
-           from siw.siw_menu                                       a,
-                siw.eo_unidade                a2,
-                siw.eo_unidade_resp           a3,
-                siw.eo_unidade_resp           a4,
+           from siw.siw_menu             a,
+                siw.eo_unidade           a2,
+                siw.eo_unidade_resp      a3,
+                siw.eo_unidade_resp      a4,
                 siw.siw_modulo           a1,
                 siw.siw_solicitacao      b,
                 siw.siw_tramite          b1,
                 (select sq_siw_solicitacao, acesso_is(sq_siw_solicitacao, p_pessoa) acesso
                    from siw.siw_solicitacao
-                )                    b2,
+                )                        b2,
                 siw.pj_projeto           d,
                 siw.eo_unidade           e,
-                siw.eo_unidade_resp e1,
-                siw.eo_unidade_resp e2,
+                siw.eo_unidade_resp      e1,
+                siw.eo_unidade_resp      e2,
                 is_programa              r,
                 siw.co_cidade            f,
                 siw.ct_cc                n,
                 siw.co_pessoa            o,
                 siw.co_pessoa            p,
                 (select sq_siw_solicitacao, count(*) existe
-                   from siw.pj_projeto_etapa                x,
-                        siw.eo_unidade_resp y 
-                  where (x.sq_unidade = y.sq_unidade (+) and
-                         y.fim (+)        is null        and
-                         y.sq_pessoa (+)  = p_pessoa)
-                    and (x.sq_pessoa         = p_pessoa or
-                         y.sq_unidade_resp   is not null)
+                   from siw.pj_projeto_etapa x,
+                        siw.eo_unidade_resp  y 
+                  where (x.sq_unidade      = y.sq_unidade (+)  and
+                         y.fim (+)         is null             and
+                         y.sq_pessoa (+)   = p_pessoa)
+                    and (x.sq_pessoa       = p_pessoa          or
+                         y.sq_unidade_resp is not null)
                  group  by x.sq_siw_solicitacao
-                )                    q,
+                )                        q,
                 siw.eo_unidade           c,
                 (select sq_siw_solicitacao, max(sq_siw_solic_log) chave 
                    from siw.siw_solic_log
                  group by sq_siw_solicitacao
-                )                    j,
+                )                        j,
                 siw.pj_projeto_log       k,
                 siw.sg_autenticacao      l,
                 (select sq_programa, count(*) qtd_restricao 
                    from is_restricao
                  group by sq_programa
                 )                        s
-          where (a.sq_unid_executora        = a2.sq_unidade)
-            and (a2.sq_unidade              = a3.sq_unidade (+) and
-                 a3.tipo_respons (+)            = 'T'           and
-                 a3.fim (+)                     is null)
-            and (a2.sq_unidade              = a4.sq_unidade (+) and
-                 a4.tipo_respons (+)            = 'S'           and
-                 a4.fim (+)                     is null)
-            and (a.sq_modulo                = a1.sq_modulo)
-            and (a.sq_menu                  = b.sq_menu)
-            and (b.sq_siw_tramite           = b1.sq_siw_tramite)
-            and (b.sq_siw_solicitacao       = b2.sq_siw_solicitacao)
-            and (b.sq_siw_solicitacao       = d.sq_siw_solicitacao)
-            and (d.sq_unidade_resp          = e.sq_unidade)
-            and (e.sq_unidade             = e1.sq_unidade (+) and
-                 e1.tipo_respons (+)          = 'T'           and
-                 e1.fim (+)                   is null)
-            and (e.sq_unidade             = e2.sq_unidade (+) and
-                 e2.tipo_respons (+)          = 'S'           and
-                 e2.fim (+)                   is null)
-            and (d.sq_siw_solicitacao       = r.sq_siw_solicitacao (+))
-            and (b.sq_cidade_origem         = f.sq_cidade)
-            and (b.sq_cc                    = n.sq_cc (+))
-            and (b.solicitante              = o.sq_pessoa (+))
-            and (b.executor                 = p.sq_pessoa (+))
-            and (b.sq_siw_solicitacao = q.sq_siw_solicitacao (+))
-            and (a.sq_unid_executora        = c.sq_unidade (+))
-            and (b.sq_siw_solicitacao       = j.sq_siw_solicitacao)
-            and (j.chave                    = k.sq_siw_solic_log (+))
-            and (k.destinatario             = l.sq_pessoa (+))
-            and (b.sq_siw_solicitacao       = s.sq_programa (+))
+          where (a.sq_unid_executora       = a2.sq_unidade)
+            and (a2.sq_unidade             = a3.sq_unidade (+) and
+                 a3.tipo_respons (+)       = 'T'               and
+                 a3.fim (+)                is null)
+            and (a2.sq_unidade             = a4.sq_unidade (+) and
+                 a4.tipo_respons (+)       = 'S'               and
+                 a4.fim (+)                is null)
+            and (a.sq_modulo               = a1.sq_modulo)
+            and (a.sq_menu                 = b.sq_menu)
+            and (b.sq_siw_tramite          = b1.sq_siw_tramite)
+            and (b.sq_siw_solicitacao      = b2.sq_siw_solicitacao)
+            and (b.sq_siw_solicitacao      = d.sq_siw_solicitacao)
+            and (d.sq_unidade_resp         = e.sq_unidade)
+            and (e.sq_unidade              = e1.sq_unidade (+) and
+                 e1.tipo_respons (+)       = 'T'               and
+                 e1.fim (+)                is null)
+            and (e.sq_unidade              = e2.sq_unidade (+) and
+                 e2.tipo_respons (+)       = 'S'               and
+                 e2.fim (+)                is null)
+            and (d.sq_siw_solicitacao      = r.sq_siw_solicitacao (+))
+            and (b.sq_cidade_origem        = f.sq_cidade)
+            and (b.sq_cc                   = n.sq_cc (+))
+            and (b.solicitante             = o.sq_pessoa (+))
+            and (b.executor                = p.sq_pessoa (+))
+            and (b.sq_siw_solicitacao      = q.sq_siw_solicitacao (+))
+            and (a.sq_unid_executora       = c.sq_unidade (+))
+            and (b.sq_siw_solicitacao      = j.sq_siw_solicitacao)
+            and (j.chave                   = k.sq_siw_solic_log (+))
+            and (k.destinatario            = l.sq_pessoa (+))
+            and (b.sq_siw_solicitacao      = s.sq_programa (+))
             and a.sq_menu        = p_menu
             and (p_chave          is null or (p_chave       is not null and b.sq_siw_solicitacao = p_chave))
             and (p_codigo         is null or (p_codigo      is not null and r.cd_programa        = p_codigo))

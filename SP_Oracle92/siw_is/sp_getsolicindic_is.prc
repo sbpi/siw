@@ -47,11 +47,12 @@ begin
                 i.solicitante sq_pessoa, i.sq_unidade,
                 case a.cumulativa when 'S' then 'Sim' else 'Não' end nm_cumulativa,  
                 case a.exequivel  when 'S' then 'Sim' else 'Não' end nm_exequivel,
+                case a.tipo       when 'P' then 'Processo' when 'R' then 'Resultado' else 'Não informado' end nm_exequivel,
                 h.nome nm_unidade_medida, i.nome nm_periodicidade, m.nome nm_base_geografica,
                 n.valor_apurado valor_apurado_ppa, n.valor_ppa, n.valor_programa, n.valor_mes_1, n.valor_mes_2,
                 n.valor_mes_3, n.valor_mes_4, n.valor_mes_5, n.valor_mes_6, n.valor_mes_7, 
                 n.valor_mes_8, n.valor_mes_9, n.valor_mes_10, n.valor_mes_11, n.valor_mes_12
-            from is_indicador                       a
+            from is_indicador                           a
                 inner          join siw.siw_solicitacao i on (a.sq_siw_solicitacao = i.sq_siw_solicitacao)
                   inner        join siw.siw_menu        j on (i.sq_menu            = j.sq_menu)
                     left outer join siw.eo_unidade_resp k on (j.sq_unid_executora  = k.sq_unidade and
@@ -86,4 +87,3 @@ begin
    End If;
 End SP_GetSolicIndic_IS;
 /
-

@@ -20,7 +20,7 @@ begin
                 f.cd_tipo_unidade tp_unidade, g.cd_funcao, g.cd_subfuncao, g.valor_ano_corrente,
                 g.valor_total, g.valor_ano_anterior, h.nome ds_funcao, 
                 i.descricao ds_subfuncao, j.nome ds_esfera, k.nm_coordenador responsavel, k.fn_coordenador telefone,
-                k.em_coordenador email, k.sq_unidade sq_unidade_adm, k.sq_siw_solicitacao, 
+                k.em_coordenador email, k.sq_unidade sq_unidade_adm, k.sq_siw_solicitacao, k.nome nm_tramite,
                 m.nome ds_programa, m.cd_programa, sum(a.empenhado) empenhado, sum(a.aprovado) aprovado, sum(a.liquidado) liquidado,
                 Nvl(k.sigla,'---') sg_tramite, upper(k.nm_coordenador) nm_coordenador,
                 sum(n.previsao_ano), sum(n.atual_ano), sum(n.real_ano), nvl(max(n.flag_alteracao),max(n.flag_inclusao)) dt_carga_financ                
@@ -47,7 +47,7 @@ begin
                 left outer join (select l.cd_programa, l.cd_acao, l.cd_subacao, l.cd_unidade,
                                         l.ano, l.cliente, l.nm_coordenador, l.fn_coordenador,
                                         l.em_coordenador, l.sq_unidade, l.sq_siw_solicitacao,
-                                        l2.sigla
+                                        l2.sigla, l2.nome
                                    from is_acao                        l
                                         inner join siw.siw_solicitacao l1 on (l.sq_siw_solicitacao = l1.sq_siw_solicitacao)
                                         inner join siw.siw_tramite     l2 on (l1.sq_siw_tramite    = l2.sq_siw_tramite and
@@ -93,7 +93,7 @@ begin
                 f.cd_tipo_unidade, g.cd_funcao, g.cd_subfuncao, g.valor_ano_corrente,
                 g.valor_total, g.valor_ano_anterior, h.nome, 
                 i.descricao, j.nome, k.nm_coordenador, k.fn_coordenador,
-                k.em_coordenador, k.sq_unidade, m.nome, m.cd_programa, k.sq_siw_solicitacao, k.sigla;
+                k.em_coordenador, k.sq_unidade, m.nome, m.cd_programa, k.sq_siw_solicitacao, k.sigla, k.nome;
    Elsif p_restricao = 'FINANCIAMENTO' Then
       open p_result for 
          select a.cd_acao, a.cd_programa, a.cd_programa||a.cd_acao||min(a.cd_subacao)||a.cd_unidade chave, a.cd_tipo_acao, 

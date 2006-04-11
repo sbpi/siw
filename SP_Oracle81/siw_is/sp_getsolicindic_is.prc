@@ -55,11 +55,12 @@ begin
                 i.solicitante sq_pessoa, i.sq_unidade,
                 decode(a.cumulativa,'S','Sim','Não') nm_cumulativa,  
                 decode(a.exequivel,'S','Sim','Não') nm_exequivel,
+                decode(a.tipo,'P','Processo','R','Resultado','Não informado') nm_tipo,
                 h.nome nm_unidade_medida, i.nome nm_periodicidade, m.nome nm_base_geografica,
                 n.valor_apurado valor_apurado_ppa, n.valor_ppa, n.valor_programa, n.valor_mes_1, n.valor_mes_2,
                 n.valor_mes_3, n.valor_mes_4, n.valor_mes_5, n.valor_mes_6, n.valor_mes_7, 
                 n.valor_mes_8, n.valor_mes_9, n.valor_mes_10, n.valor_mes_11, n.valor_mes_12
-            from is_indicador                       a,
+            from is_indicador        a,
                  siw.siw_solicitacao i,
                  siw.siw_menu        j,
                  siw.eo_unidade_resp k,
@@ -104,4 +105,3 @@ begin
    End If;
 End SP_GetSolicIndic_IS;
 /
-

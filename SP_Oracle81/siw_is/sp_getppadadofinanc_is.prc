@@ -97,6 +97,38 @@ begin
             and a.ano         = p_ano
             and a.cliente     = p_cliente
        group by a.cd_acao, a.descricao_acao, a.cd_unidade;
+   Elsif p_restricao = 'VALORTOTALMENSAL' Then
+      -- Recupera os dados financeiros da acao da tabela do SIGPLAN
+      open p_result for       
+         select distinct a.cd_acao, a.descricao_acao, a.cd_unidade,
+                Nvl(sum(b.cron_ini_mes_1),0)  cron_ini_mes_1,  Nvl(sum(b.cron_ini_mes_2),0)  cron_ini_mes_2,  Nvl(sum(b.cron_ini_mes_3),0)  cron_ini_mes_3,
+                Nvl(sum(b.cron_ini_mes_4),0)  cron_ini_mes_4,  Nvl(sum(b.cron_ini_mes_5),0)  cron_ini_mes_5,  Nvl(sum(b.cron_ini_mes_6),0)  cron_ini_mes_6,
+                Nvl(sum(b.cron_ini_mes_7),0)  cron_ini_mes_7,  Nvl(sum(b.cron_ini_mes_8),0)  cron_ini_mes_8,  Nvl(sum(b.cron_ini_mes_9),0)  cron_ini_mes_9,
+                Nvl(sum(b.cron_ini_mes_10),0) cron_ini_mes_10, Nvl(sum(b.cron_ini_mes_11),0) cron_ini_mes_11, Nvl(sum(b.cron_ini_mes_12),0) cron_ini_mes_12,
+                Nvl(sum(b.cron_mes_1),0)  cron_mes_1,  Nvl(sum(b.cron_mes_2),0)  cron_mes_2,  Nvl(sum(b.cron_mes_3),0)  cron_mes_3,
+                Nvl(sum(b.cron_mes_4),0)  cron_mes_4,  Nvl(sum(b.cron_mes_5),0)  cron_mes_5,  Nvl(sum(b.cron_mes_6),0)  cron_mes_6,
+                Nvl(sum(b.cron_mes_7),0)  cron_mes_7,  Nvl(sum(b.cron_mes_8),0)  cron_mes_8,  Nvl(sum(b.cron_mes_9),0)  cron_mes_9,
+                Nvl(sum(b.cron_mes_10),0) cron_mes_10, Nvl(sum(b.cron_mes_11),0) cron_mes_11, Nvl(sum(b.cron_mes_12),0) cron_mes_12,
+                Nvl(sum(b.real_mes_1),0)  real_mes_1,  Nvl(sum(b.real_mes_2),0)  real_mes_2,  Nvl(sum(b.real_mes_3),0)  real_mes_3,
+                Nvl(sum(b.real_mes_4),0)  real_mes_4,  Nvl(sum(b.real_mes_5),0)  real_mes_5,  Nvl(sum(b.real_mes_6),0)  real_mes_6,
+                Nvl(sum(b.real_mes_7),0)  real_mes_7,  Nvl(sum(b.real_mes_8),0)  real_mes_8,  Nvl(sum(b.real_mes_9),0)  real_mes_9,
+                Nvl(sum(b.real_mes_10),0) real_mes_10, Nvl(sum(b.real_mes_11),0) real_mes_11, Nvl(sum(b.real_mes_12),0) real_mes_12,                
+                Nvl(sum(b.cron_ini_mes_1),0)+Nvl(sum(b.cron_ini_mes_2),0)+Nvl(sum(b.cron_ini_mes_3),0)+Nvl(sum(b.cron_ini_mes_4),0)+Nvl(sum(b.cron_ini_mes_5),0)+Nvl(sum(b.cron_ini_mes_6),0)+Nvl(sum(b.cron_ini_mes_7),0)+Nvl(sum(b.cron_ini_mes_8),0)+Nvl(sum(b.cron_ini_mes_9),0)+Nvl(sum(b.cron_ini_mes_10),0)+Nvl(sum(b.cron_ini_mes_11),0)+Nvl(sum(b.cron_ini_mes_12),0) cron_ini_total,
+                Nvl(sum(b.cron_mes_1),0)+Nvl(sum(b.cron_mes_2),0)+Nvl(sum(b.cron_mes_3),0)+Nvl(sum(b.cron_mes_4),0)+Nvl(sum(b.cron_mes_5),0)+Nvl(sum(b.cron_mes_6),0)+Nvl(sum(b.cron_mes_7),0)+Nvl(sum(b.cron_mes_8),0)+Nvl(sum(b.cron_mes_9),0)+Nvl(sum(b.cron_mes_10),0)+Nvl(sum(b.cron_mes_11),0)+Nvl(sum(b.cron_mes_12),0) cron_mes_total,
+                Nvl(sum(b.real_mes_1),0)+Nvl(sum(b.real_mes_2),0)+Nvl(sum(b.real_mes_3),0)+Nvl(sum(b.real_mes_4),0)+Nvl(sum(b.real_mes_5),0)+Nvl(sum(b.real_mes_6),0)+Nvl(sum(b.real_mes_7),0)+Nvl(sum(b.real_mes_8),0)+Nvl(sum(b.real_mes_9),0)+Nvl(sum(b.real_mes_10),0)+Nvl(sum(b.real_mes_11),0)+Nvl(sum(b.real_mes_12),0) real_mes_total,
+                Nvl(sum(b.previsao_ano),0) previsao_ano, Nvl(sum(b.real_ano),0) real_ano, Nvl(sum(b.cron_ini_ano),0) cron_ini_ano, Nvl(sum(b.atual_ano),0) atual_ano, Nvl(sum(b.cron_ano),0) cron_ano
+           from is_sig_acao            a,
+                is_sig_dado_financeiro b 
+          where (a.cd_programa = b.cd_programa  and
+                 a.cd_acao     = b.cd_acao      and
+                 a.cd_subacao  = b.cd_subacao   and
+                 a.cliente     = b.cliente      and
+                 a.ano         = b.ano)
+            and a.cd_acao     = p_chave
+            and a.cd_unidade  = p_unidade
+            and a.ano         = p_ano
+            and a.cliente     = p_cliente
+       group by a.cd_acao, a.descricao_acao, a.cd_unidade;      
    End If;
 end SP_GetPPADadoFinanc_IS;
 /

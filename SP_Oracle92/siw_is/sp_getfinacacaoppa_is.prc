@@ -11,7 +11,7 @@ begin
       select distinct a.cd_acao, a.cd_programa, a.cd_subacao, c.descricao_acao, 
                       e.nome nm_programa, a.observacao, c.cd_unidade,
                       a.cd_programa||a.cd_acao||a.cd_subacao||c.cd_unidade sq_acao_ppa
-        from is_acao_financ a
+        from is_acao_financ                     a
                 inner      join is_sig_acao     c on (a.cd_programa        = c.cd_programa        and
                                                       a.cd_acao            = c.cd_acao            and
                                                       a.cd_subacao         = c.cd_subacao         and
@@ -33,4 +33,3 @@ begin
          and (p_cd_subacao  is null or (p_cd_subacao  is not null and a.cd_subacao  = p_cd_subacao));
 end SP_GetFinacAcaoPPA_IS;
 /
-

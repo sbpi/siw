@@ -181,7 +181,9 @@ begin
             and (p_unidade        is null or (p_unidade     is not null and d.sq_unidade_resp    = p_unidade))
             and (p_prioridade     is null or (p_prioridade  is not null and d.prioridade         = p_prioridade))
             and (p_solicitante    is null or (p_solicitante is not null and b.solicitante        = p_solicitante))
-            and (p_ano            is null or (p_ano         is not null and r.ano = p_ano))            
+            and (p_ano            is null or (p_ano         is not null and r.ano                = p_ano))
+            and (p_programa       is null or (p_programa    is not null and r.cd_programa        = p_programa))
+            and (p_codigo         is null or (p_codigo      is not null and r.cd_acao            = p_codigo))           
             and ((p_tipo         = 1     and Nvl(b1.sigla,'-') = 'CI'   and b.cadastrador        = p_pessoa) or
                  (p_tipo         = 2     and Nvl(b1.sigla,'-') <> 'CI'  and b.executor           = p_pessoa and d.concluida = 'N') or
                  (p_tipo         = 2     and Instr('CI,AT,CA', Nvl(b1.sigla,'-')) = 0 and b2.acesso > 15) or
