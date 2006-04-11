@@ -1386,8 +1386,9 @@ Sub Visual
   If w_tipo = "WORD" Then
      Response.ContentType = "application/msword"
   Else
-     cabecalho
+     Cabecalho
   End if
+  
   ShowHTML "<HEAD>"
   ShowHTML "<TITLE>" & conSgSistema & " - Visualização de Tarefa</TITLE>"
   ShowHTML "</HEAD>"  
@@ -1395,30 +1396,31 @@ Sub Visual
   If w_tipo <> "WORD" Then
      BodyOpenClean "onLoad='document.focus()'; "
   End If
-  ShowHTML "<TABLE WIDTH=""100%"" BORDER=0><TR><TD ROWSPAN=2><IMG ALIGN=""LEFT"" src=""" & LinkArquivo(null, w_cliente, w_logo, null, null, null, "EMBED") & """><TD ALIGN=""RIGHT""><B><FONT SIZE=4 COLOR=""#000000"">"
+  
+  ShowHTML "<div align=""center"">"
+  ShowHTML "<table width=""95%"" border=""0"" cellspacing=""3"">"
+  ShowHTML "<tr><td colspan=""2"">"
+  ShowHTML "<TABLE WIDTH=""100%"" BORDER=0><TR><TD ROWSPAN=2><DIV ALIGN=""LEFT""><IMG src=""" & LinkArquivo(null, w_cliente, w_logo, null, null, null, "EMBED") & """></DIV></TD>"
+  ShowHTML "<TD><DIV ALIGN=""RIGHT""><FONT SIZE=4 COLOR=""#000000""><B>"
   ShowHTML "Visualização de Tarefa"
-  ShowHTML "</FONT><TR><TD ALIGN=""RIGHT""><B><FONT SIZE=2 COLOR=""#000000"">" & DataHora() & "</B>"
-  If w_tipo <> "WORD" Then
-     ShowHTML "&nbsp;&nbsp;<IMG ALIGN=""CENTER"" TITLE=""Imprimir"" SRC=""images/impressora.jpg"" onClick=""window.print();"">"
-     ShowHTML "&nbsp;&nbsp;<IMG ALIGN=""CENTER"" TITLE=""Gerar word"" SRC=""images/word.gif"" onClick=""window.open('" & w_pagina & "Visual&R=" & w_pagina & par & "&O=L&w_chave=" & w_chave & "&w_tipo=word&P1=" & P1 & "&P2=" & P2 & "&P3=" & P3 & "&P4=" & P4 & "&TP=" & TP & "&SG=" & SG & MontaFiltro("GET") &"','VisualAcaoWord','menubar=yes resizable=yes scrollbars=yes');"">"
-  End If
-  ShowHTML "</TD></TR>"
-  ShowHTML "</FONT></B></TD></TR></TABLE>"
-  ShowHTML "<HR>"
+  ShowHTML "</B></FONT></DIV></TD></TR>"
+  ShowHTML "</TABLE></TD></TR>"
   If w_tipo > "" and w_tipo <> "WORD" Then
-     ShowHTML "<center><B><FONT SIZE=2>Clique <a class=""HL"" href=""javascript:history.back(1);"">aqui</a> para voltar à tela anterior</font></b></center>"
+     ShowHTML "<div align=""center""><b><font size=""1"">Clique <a class=""HL"" href=""javascript:history.back(1);"">aqui</a> para voltar à tela anterior</b></font></div>"
+  Else
+     P4 = 1
   End If
 
   ' Chama a rotina de visualização dos dados da tarefa, na opção "Listagem"
-  ShowHTML VisualTarefa(w_chave, "L", w_usuario)
+  ShowHTML VisualTarefa(w_chave, "L", w_usuario, P4, "sim", "sim", "sim", "sim", "sim", "sim")
 
   If w_tipo > "" and w_tipo <> "WORD" Then
-     ShowHTML "<center><B><FONT SIZE=2>Clique <a class=""HL"" href=""javascript:history.back(1);"">aqui</a> para voltar à tela anterior</font></b></center>"
+     ShowHTML "<div align=""center""><b><font size=""1"">Clique <a class=""HL"" href=""javascript:history.back(1);"">aqui</a> para voltar à tela anterior</b></font></div>"
   End If
 
-  If w_tipo <> "WORD" Then
-     Rodape
-  End If
+  ShowHTML "</DIV>"
+  ShowHTML "</BODY>"
+  ShowHTML "</HTML>"
 
   Set w_tipo                = Nothing 
   Set w_erro                = Nothing 
@@ -1575,11 +1577,10 @@ Sub Encaminhamento
   End If
   ShowHTML "<B><FONT COLOR=""#000000"">" & w_TP & "</FONT></B>"
   ShowHTML "<HR>"
-  ShowHTML "<div align=center><center>"
-  ShowHTML "<table border=""0"" cellpadding=""0"" cellspacing=""0"" width=""100%"">"
-
+  ShowHTML "<div align=""center"">"
+  ShowHTML "<table width=""95%"" border=""0"" cellspacing=""3"">"
   ' Chama a rotina de visualização dos dados da tarefa, na opção "Listagem"
-  ShowHTML VisualTarefa(w_chave, "V", w_usuario)
+  ShowHTML VisualTarefa(w_chave, "V", w_usuario, P4, "sim", "sim", "sim", "nao", "sim", "nao")
 
   ShowHTML "<HR>"
   AbreForm "Form", w_dir & w_pagina & "Grava", "POST", "return(Validacao(this));", null,P1,P2,P3,P4,TP,"ISTAENVIO",R,O
@@ -1639,9 +1640,6 @@ Sub Encaminhamento
   Set i                 = Nothing 
   Set w_erro            = Nothing
 End Sub
-REM =========================================================================
-REM Fim da rotina de tramitacao
-REM -------------------------------------------------------------------------
 
 REM =========================================================================
 REM Rotina de anotação
@@ -1689,11 +1687,11 @@ Sub Anotar
   End If
   ShowHTML "<B><FONT COLOR=""#000000"">" & w_TP & "</FONT></B>"
   ShowHTML "<HR>"
-  ShowHTML "<div align=center><center>"
-  ShowHTML "<table border=""0"" cellpadding=""0"" cellspacing=""0"" width=""100%"">"
+  ShowHTML "<div align=""center"">"
+  ShowHTML "<table width=""95%"" border=""0"" cellspacing=""3"">"
 
   ' Chama a rotina de visualização dos dados da tarefa, na opção "Listagem"
-  ShowHTML VisualTarefa(w_chave, "V", w_usuario)
+  ShowHTML VisualTarefa(w_chave, "V", w_usuario, P4, "sim", "sim", "sim", "sim", "sim", "nao")
 
   ShowHTML "<HR>"
   ShowHTML "<FORM action=""" & w_dir & w_pagina & "Grava&SG=ISTAENVIO&O="&O&"&w_menu="&w_menu&"&UploadID="&UploadID&""" name=""Form"" onSubmit=""return(Validacao(this));"" enctype=""multipart/form-data"" method=""POST"">"
@@ -1807,11 +1805,11 @@ Sub Concluir
   End If
   ShowHTML "<B><FONT COLOR=""#000000"">" & w_TP & "</FONT></B>"
   ShowHTML "<HR>"
-  ShowHTML "<div align=center><center>"
-  ShowHTML "<table border=""0"" cellpadding=""0"" cellspacing=""0"" width=""100%"">"
+  ShowHTML "<div align=""center"">"
+  ShowHTML "<table width=""95%"" border=""0"" cellspacing=""3"">"
 
   ' Chama a rotina de visualização dos dados da tarefa, na opção "Listagem"
-  ShowHTML VisualTarefa(w_chave, "V", w_usuario)
+  ShowHTML VisualTarefa(w_chave, "V", w_usuario, P4)
 
   ShowHTML "<HR>"
   ShowHTML "<FORM action=""" & w_dir & w_pagina & "Grava&SG=GDCONC&O="&O&"&w_menu="&w_menu&"&UploadID="&UploadID&""" name=""Form"" onSubmit=""return(Validacao(this));"" enctype=""multipart/form-data"" method=""POST"">"  

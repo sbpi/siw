@@ -3599,7 +3599,7 @@ REM -------------------------------------------------------------------------
 REM =========================================================================
 REM Rotina de visualização
 REM -------------------------------------------------------------------------
-Sub Visual
+Sub Visual1
 
   Dim w_chave, w_Erro, w_logo, w_tipo
 
@@ -3664,9 +3664,72 @@ Sub Visual
   Set w_chave               = Nothing
 
 End Sub
+
 REM =========================================================================
-REM Fim da rotina de visualização
+REM Rotina de visualização do novo layout de relatórios
 REM -------------------------------------------------------------------------
+Sub Visual
+
+  Dim w_chave, w_Erro, w_logo, w_tipo
+
+  w_chave           = Request("w_chave")
+  w_tipo            = uCase(Trim(Request("w_tipo")))            
+
+  ' Recupera o logo do cliente a ser usado nas listagens
+  DB_GetCustomerData RS, w_cliente
+  If RS("logo") > "" Then
+     w_logo = "\img\logo" & Mid(RS("logo"),Instr(RS("logo"),"."),30)
+  End If
+  DesconectaBD
+  
+  If w_tipo = "WORD" Then
+     Response.ContentType = "application/msword"
+  Else 
+     Cabecalho
+  End If
+
+  ShowHTML "<HEAD>"
+  ShowHTML "<TITLE>" & conSgSistema & " - Visualização do Programa</TITLE>"
+  ShowHTML "</HEAD>"  
+  ShowHTML "<BASE HREF=""" & conRootSIW & """>"
+  If w_tipo <> "WORD" Then
+     BodyOpenClean "onLoad='document.focus()'; "
+  End If
+  
+  ShowHTML "<div align=""center"">"
+  ShowHTML "<table width=""95%"" border=""0"" cellspacing=""3"">"
+  ShowHTML "<tr><td colspan=""2"">"
+  ShowHTML "<TABLE WIDTH=""100%"" BORDER=0><TR><TD ROWSPAN=2><DIV ALIGN=""LEFT""><IMG src=""" & LinkArquivo(null, w_cliente, w_logo, null, null, null, "EMBED") & """></DIV></TD>"
+  ShowHTML "<TD><DIV ALIGN=""RIGHT""><FONT SIZE=4 COLOR=""#000000""><B>"
+  If P1 = 1 or P1 = 2 Then
+     ShowHTML "Ficha Resumida do Programa <br> Exercício " & w_ano
+  Else
+     ShowHTML "Programas <br> Exercício " & w_ano
+  End If 
+  ShowHTML "</B></FONT></DIV></TD></TR>"
+  ShowHTML "</TABLE></TD></TR>"
+  If w_tipo > "" and w_tipo <> "WORD" Then
+     ShowHTML "<tr><td colspan=""2""><div align=""center""><b><font size=""1"">Clique <a class=""HL"" href=""javascript:history.back(1);"">aqui</a> para voltar à tela anterior</b></font></div></td></tr>"
+  End If
+  
+  ' Chama a rotina de visualização dos dados da ação, na opção "Listagem"
+  ShowHTML VisualPrograma(w_chave, "L", w_usuario, P1, P4, "sim", "sim", "sim", "sim", "sim", "sim", "sim", "sim", "sim", "sim", "sim")
+
+  
+  If w_tipo > "" and w_tipo <> "WORD" Then
+     ShowHTML "<tr><td colspan=""2""><div align=""center""><b><font size=""1"">Clique <a class=""HL"" href=""javascript:history.back(1);"">aqui</a> para voltar à tela anterior</b></font></div></td></tr>"
+  End If
+
+  ShowHTML "</DIV>"
+  ShowHTML "</BODY>"
+  ShowHTML "</HTML>"
+  
+  Set w_tipo                = Nothing 
+  Set w_erro                = Nothing 
+  Set w_logo                = Nothing 
+  Set w_chave               = Nothing
+
+End Sub
 
 REM =========================================================================
 REM Rotina de exclusão
@@ -3714,7 +3777,7 @@ Sub Excluir
   ShowHTML "<table border=""0"" cellpadding=""0"" cellspacing=""0"" width=""100%"">"
 
   ' Chama a rotina de visualização dos dados da ação, na opção "Listagem"
-  ShowHTML VisualPrograma(w_chave, "V", w_usuario, P1, P4)
+  ShowHTML VisualPrograma(w_chave, "V", w_usuario, P1, P4, "", "", "", "", "", "", "", "", "", "", "")
 
   ShowHTML "<HR>"
   AbreForm "Form", w_dir & w_pagina & "Grava", "POST", "return(Validacao(this));", null,P1,P2,P3,P4,TP,"ISPRGERAL",R,O
@@ -3814,11 +3877,11 @@ Sub Encaminhamento
   End If
   ShowHTML "<B><FONT COLOR=""#000000"">" & w_TP & "</FONT></B>"
   ShowHTML "<HR>"
-  ShowHTML "<div align=center><center>"
-  ShowHTML "<table border=""0"" cellpadding=""0"" cellspacing=""0"" width=""100%"">"
+  ShowHTML "<div align=""center"">"
+  ShowHTML "<table width=""95%"" border=""0"" cellspacing=""3"">"
 
   ' Chama a rotina de visualização dos dados da ação, na opção "Listagem"
-  ShowHTML VisualPrograma(w_chave, "V", w_usuario, P1, P4)
+  ShowHTML VisualPrograma(w_chave, "V", w_usuario, P1, P4, "", "", "", "", "", "", "", "", "", "", "")
 
   ShowHTML "<HR>"
   AbreForm "Form", w_dir & w_pagina & "Grava", "POST", "return(Validacao(this));", null,P1,P2,P3,P4,TP,"ISPRENVIO",R,O
@@ -3925,11 +3988,11 @@ Sub Anotar
   End If
   ShowHTML "<B><FONT COLOR=""#000000"">" & w_TP & "</FONT></B>"
   ShowHTML "<HR>"
-  ShowHTML "<div align=center><center>"
-  ShowHTML "<table border=""0"" cellpadding=""0"" cellspacing=""0"" width=""100%"">"
+  ShowHTML "<div align=""center"">"
+  ShowHTML "<table width=""95%"" border=""0"" cellspacing=""3"">"
 
   ' Chama a rotina de visualização dos dados da ação, na opção "Listagem"
-  ShowHTML VisualPrograma(w_chave, "V", w_usuario, P1, P4)
+  ShowHTML VisualPrograma(w_chave, "V", w_usuario, P1, P4, "", "", "", "", "", "", "", "", "", "", "")
 
   ShowHTML "<HR>"
   AbreForm "Form", w_dir & w_pagina & "Grava", "POST", "return(Validacao(this));", null,P1,P2,P3,P4,TP,"ISPRENVIO",R,O
@@ -4031,11 +4094,11 @@ Sub Concluir
   End If
   ShowHTML "<B><FONT COLOR=""#000000"">" & w_TP & "</FONT></B>"
   ShowHTML "<HR>"
-  ShowHTML "<div align=center><center>"
-  ShowHTML "<table border=""0"" cellpadding=""0"" cellspacing=""0"" width=""100%"">"
+  ShowHTML "<div align=""center"">"
+  ShowHTML "<table width=""95%"" border=""0"" cellspacing=""3"">"
 
   ' Chama a rotina de visualização dos dados da ação, na opção "Listagem"
-  ShowHTML VisualPrograma(w_chave, "V", w_usuario, P1, P4)
+  ShowHTML VisualPrograma(w_chave, "V", w_usuario, P1, P4, "", "", "", "", "", "", "", "", "", "", "")
 
   ShowHTML "<HR>"
   ShowHTML "<tr bgcolor=""" & conTrBgColor & """><td align=""center"">"

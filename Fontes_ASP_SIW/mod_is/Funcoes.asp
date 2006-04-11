@@ -45,6 +45,9 @@ Sub SelecaoProgramaPPA (label, accesskey, hint, cliente, ano, chave, campo, rest
     If restricao = "IDENTIFICACAO" Then
       DB_GetProgramaPPA_IS RS, null, w_cliente, w_ano, restricao, null
        RS.Sort   = "ds_programa"
+    ElseIf restricao = "RELATORIO" Then
+      DB_GetProgramaPPA_IS RS, null, w_cliente, w_ano, null, null
+       RS.Sort   = "ds_programa"    
     Else
        DB_GetProgramaPPA_IS RS, chave, w_cliente, w_ano, restricao, null
        RS.Sort   = "ds_programa"

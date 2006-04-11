@@ -283,21 +283,39 @@ REM -------------------------------------------------------------------------
 REM =========================================================================
 REM Recupera as metas de uma açao
 REM -------------------------------------------------------------------------
-Sub DB_GetSolicMeta_IS(p_rs, p_chave, p_chave_aux, p_restricao, p_ano)
-  Dim l_chave, l_chave_aux, l_restricao, l_ano
+Sub DB_GetSolicMeta_IS(p_rs, p_chave, p_chave_aux, p_restricao, p_ano, p_unidade, p_cd_programa, p_cd_acao, p_preenchida, p_meta_ppa, p_exequivel)
+  Dim l_chave, l_chave_aux, l_restricao, l_ano, l_unidade, l_cd_programa, l_cd_acao, l_preenchida, l_meta_ppa, l_exequivel
   Set l_chave     = Server.CreateObject("ADODB.Parameter")
   Set l_chave_aux = Server.CreateObject("ADODB.Parameter")
   Set l_restricao = Server.CreateObject("ADODB.Parameter")
   Set l_ano       = Server.CreateObject("ADODB.Parameter")
+  Set l_unidade   = Server.CreateObject("ADODB.Parameter")
+  Set l_cd_programa = Server.CreateObject("ADODB.Parameter")
+  Set l_cd_acao     = Server.CreateObject("ADODB.Parameter")
+  Set l_preenchida  = Server.CreateObject("ADODB.Parameter")
+  Set l_meta_ppa    = Server.CreateObject("ADODB.Parameter")
+  Set l_exequivel   = Server.CreateObject("ADODB.Parameter")
   with sp
      set l_chave                = .CreateParameter("l_chave",         adInteger, adParamInput,   , Tvl(p_chave))
      set l_chave_aux            = .CreateParameter("l_chave_aux",     adInteger, adParamInput,   , Tvl(p_chave_aux))
      set l_restricao            = .CreateParameter("l_restricao",     adVarchar, adParamInput, 20, p_restricao)
      set l_ano                  = .CreateParameter("l_ano",           adInteger, adParamInput,   , Tvl(p_ano))
+     set l_unidade              = .CreateParameter("l_unidade",       adInteger, adParamInput,   , Tvl(p_unidade))
+     set l_cd_programa          = .CreateParameter("l_cd_programa",   adVarchar, adParamInput,  4, Tvl(p_cd_programa))
+     set l_cd_acao              = .CreateParameter("l_cd_acao",       adVarchar, adParamInput,  4, Tvl(p_cd_acao))
+     set l_preenchida           = .CreateParameter("l_preenchida",    adVarchar, adParamInput,  1, Tvl(p_preenchida))
+     set l_meta_ppa             = .CreateParameter("l_meta_ppa",      adVarchar, adParamInput,  1, Tvl(p_meta_ppa))
+     set l_exequivel            = .CreateParameter("l_exequivel",     adVarchar, adParamInput,  1, Tvl(p_exequivel))
      .parameters.Append         l_chave
      .parameters.Append         l_chave_aux
      .parameters.Append         l_restricao
      .parameters.Append         l_ano
+     .parameters.Append         l_unidade
+     .parameters.Append         l_cd_programa
+     .parameters.Append         l_cd_acao
+     .parameters.Append         l_preenchida
+     .parameters.Append         l_meta_ppa
+     .parameters.Append         l_exequivel
      If Session("dbms") = 1 or Session("dbms") = 3 Then .Properties("PLSQLRSet") = TRUE End If
      .CommandText               = Session("schema_is") & "SP_GetSolicMeta_IS"
      On Error Resume Next
@@ -310,6 +328,12 @@ Sub DB_GetSolicMeta_IS(p_rs, p_chave, p_chave_aux, p_restricao, p_ano)
      .Parameters.Delete         "l_chave_aux"
      .Parameters.Delete         "l_restricao"
      .Parameters.Delete         "l_ano"
+     .Parameters.Delete         "l_unidade"
+     .Parameters.Delete         "l_cd_programa"
+     .Parameters.Delete         "l_cd_acao"
+     .Parameters.Delete         "l_preenchida"
+     .Parameters.Delete         "l_meta_ppa"
+     .Parameters.Delete         "l_exequivel"
   end with
 
 End Sub

@@ -315,7 +315,7 @@ Sub Inicial
            w_filtro = w_filtro & "<tr valign=""top""><td align=""right""><font size=1>Ação <td><font size=1>[<b>" & RS("titulo") & "</b>]"
         End If
         'If p_atividade > ""  Then 
-        '   DB_GetSolicMeta_IS RS, p_projeto, p_atividade, "REGISTRO", null
+        '   DB_GetSolicMeta_IS RS, p_projeto, p_atividade, "REGISTRO", null, null, null, null, null, null, null
         '   w_filtro = w_filtro & "<tr valign=""top""><td align=""right""><font size=1>Meta <td><font size=1>[<b>" & RS("titulo") & "</b>]"
         'End If
         If p_sq_acao_ppa > ""  Then 
@@ -2014,11 +2014,11 @@ Sub Metas
      w_previsto_acao_12     = Request("w_previsto_acao_12")         
   ElseIf O = "L" Then
      ' Recupera todos os registros para a listagem
-     DB_GetSolicMeta_IS RS, w_chave, null, "LISTA", null
+     DB_GetSolicMeta_IS RS, w_chave, null, "LISTA", null, null, null, null, null, null, null
      RS.Sort = "ordem"
   ElseIf InStr("AEV",O) > 0 and w_Troca = "" Then
      ' Recupera os dados do endereço informado
-     DB_GetSolicMeta_IS RS, w_chave, w_chave_aux, "REGISTRO", null
+     DB_GetSolicMeta_IS RS, w_chave, w_chave_aux, "REGISTRO", null, null, null, null, null, null, null
      w_titulo               = RS("titulo")
      w_ordem                = RS("ordem")
      w_descricao            = RS("descricao")    
@@ -2137,7 +2137,7 @@ Sub Metas
     ShowHTML "          <td><font size=""1""><b>Operações</font></td>"
     ShowHTML "        </tr>"
     ' Recupera as etapas principais
-    DB_GetSolicMeta_IS RS, w_chave, null, "LSTNULL", null
+    DB_GetSolicMeta_IS RS, w_chave, null, "LSTNULL", null, null, null, null, null, null, null
     RS.Sort = "ordem"
     If RS.EOF Then ' Se não foram selecionados registros, exibe mensagem
         ShowHTML "      <tr bgcolor=""" & conTrBgColor & """><td colspan=9 align=""center""><font size=""2""><b>Não foram encontrados registros.</b></td></tr>"
@@ -2377,12 +2377,12 @@ Sub AtualizaMeta
      next
   ElseIf O = "L" Then
      ' Recupera todos os registros para a listagem
-     DB_GetSolicMeta_IS RS, w_chave, null, "LISTA", null
+     DB_GetSolicMeta_IS RS, w_chave, null, "LISTA", null, null, null, null, null, null, null
      RS.Sort = "ordem"
 
   ElseIf InStr("AEV",O) > 0 and w_Troca = "" Then
      ' Recupera os dados do endereço informado
-     DB_GetSolicMeta_IS RS, w_chave, w_chave_aux, "REGISTRO", null
+     DB_GetSolicMeta_IS RS, w_chave, w_chave_aux, "REGISTRO", null, null, null, null, null, null, null
      w_titulo               = RS("titulo")
      w_ordem                = RS("ordem")
      w_descricao            = RS("descricao")
@@ -2571,7 +2571,7 @@ Sub AtualizaMeta
     ShowHTML "          <td><font size=""1""><b>Operações</font></td>"
     ShowHTML "        </tr>"
     ' Recupera as metas
-    DB_GetSolicMeta_IS RS, w_chave, null, "LSTNULL", null
+    DB_GetSolicMeta_IS RS, w_chave, null, "LSTNULL", null, null, null, null, null, null, null
     RS.Sort = "ordem"
     If RS.EOF Then ' Se não foram selecionados registros, exibe mensagem
         ShowHTML "    <tr bgcolor=""" & conTrBgColor & """><td colspan=5 align=""center""><font size=""2""><b>Não foi encontrado nenhum registro.</b></td></tr>"
@@ -3864,7 +3864,7 @@ REM -------------------------------------------------------------------------
 REM =========================================================================
 REM Rotina de visualização
 REM -------------------------------------------------------------------------
-Sub Visual
+Sub VisualNovo
 
   Dim w_chave, w_Erro, w_logo, w_tipo
 
@@ -3929,9 +3929,79 @@ Sub Visual
   Set w_chave               = Nothing
 
 End Sub
+
 REM =========================================================================
-REM Fim da rotina de visualização
+REM Rotina de visualização do novo layout de relatórios
 REM -------------------------------------------------------------------------
+Sub Visual
+
+  Dim w_chave, w_Erro, w_logo, w_tipo
+
+  w_chave           = Request("w_chave")
+  w_tipo            = uCase(Trim(Request("w_tipo")))            
+
+  ' Recupera o logo do cliente a ser usado nas listagens
+  DB_GetCustomerData RS, w_cliente
+  If RS("logo") > "" Then
+     w_logo = "\img\logo" & Mid(RS("logo"),Instr(RS("logo"),"."),30)
+  End If
+  DesconectaBD
+  
+  If w_tipo = "WORD" Then
+     Response.ContentType = "application/msword"
+  Else 
+     Cabecalho
+  End If
+
+  ShowHTML "<HEAD>"
+  ShowHTML "<TITLE>" & conSgSistema & " - Ações - Exercício " & w_ano & "</TITLE>"
+  ShowHTML "</HEAD>"  
+  ShowHTML "<BASE HREF=""" & conRootSIW & """>"
+  If w_tipo <> "WORD" Then
+     BodyOpenClean "onLoad='document.focus()'; "
+  End If
+  ShowHTML "<div align=""center"">"
+  ShowHTML "<table width=""95%"" border=""0"" cellspacing=""3"">"
+  ShowHTML "<tr><td colspan=""2"">"
+  ShowHTML "<TABLE WIDTH=""100%"" BORDER=0><TR><TD ROWSPAN=2><DIV ALIGN=""LEFT""><IMG src=""" & LinkArquivo(null, w_cliente, w_logo, null, null, null, "EMBED") & """></DIV></TD>"
+  ShowHTML "<TD><DIV ALIGN=""RIGHT""><FONT SIZE=4 COLOR=""#000000""><B>"
+  If P1 = 1 Then
+     ShowHTML "Ficha Resumida da Ação <br> Exercício " & w_ano
+  ElseIf P1 = 2 Then
+     ShowHTML "Ficha Resumida da Ação <br> Exercício " & w_ano
+  Else
+     ShowHTML "Ações PPA <br> Exercício " & w_ano
+  End If
+  ShowHTML "</B></FONT></DIV></TD></TR>"
+  'ShowHTML "</FONT><TR><TD ALIGN=""RIGHT""><B><font size=1 COLOR=""#000000"">" & DataHora() & "</B>"
+  'If w_tipo <> "WORD" Then
+  '   ShowHTML "&nbsp;&nbsp;<IMG ALIGN=""CENTER"" TITLE=""Imprimir"" SRC=""images/impressora.jpg"" onClick=""window.print();"">"
+  '   ShowHTML "&nbsp;&nbsp;<IMG ALIGN=""CENTER"" TITLE=""Gerar word"" SRC=""images/word.gif"" onClick=""window.open('" & w_pagina & "Visual&R=" & w_pagina & par & "&O=L&w_chave=" & w_chave & "&w_tipo=word&P1=" & P1 & "&P2=" & P2 & "&P3=" & P3 & "&P4=1&TP=" & TP & "&SG=" & SG & MontaFiltro("GET") &"','VisualAcaoWord','menubar=yes resizable=yes scrollbars=yes');"">"
+  'End If
+  ShowHTML "</TABLE></TD></TR>"
+  'ShowHTML "<HR>"
+  If w_tipo > "" and w_tipo <> "WORD" Then
+     ShowHTML "<div align=""center""><b><font size=""1"">Clique <a class=""HL"" href=""javascript:history.back(1);"">aqui</a> para voltar à tela anterior</b></font></div>"
+  End If
+  
+  ' Chama a rotina de visualização dos dados da ação, na opção "Listagem"
+  ShowHTML VisualAcao(w_chave, "L", w_usuario, P1, P4, "sim", "sim", "sim", "sim", "sim", "sim", "sim", "sim", "sim", "sim", "sim", "sim")
+
+  
+  If w_tipo > "" and w_tipo <> "WORD" Then
+     ShowHTML "<div align=""center""><b><font size=""1"">Clique <a class=""HL"" href=""javascript:history.back(1);"">aqui</a> para voltar à tela anterior</b></font></div>"
+  End If
+
+  ShowHTML "</DIV>"
+  ShowHTML "</BODY>"
+  ShowHTML "</HTML>"
+  
+  Set w_tipo                = Nothing 
+  Set w_erro                = Nothing 
+  Set w_logo                = Nothing 
+  Set w_chave               = Nothing
+
+End Sub
 
 REM =========================================================================
 REM Rotina de exclusão
@@ -3979,7 +4049,7 @@ Sub Excluir
   ShowHTML "<table border=""0"" cellpadding=""0"" cellspacing=""0"" width=""100%"">"
 
   ' Chama a rotina de visualização dos dados da ação, na opção "Listagem"
-  ShowHTML VisualAcao(w_chave, "V", w_usuario, P1, P4)
+  ShowHTML VisualAcao(w_chave, "V", w_usuario, P1, P4, "sim", "sim", "sim", "sim", "sim", "sim", "sim", "sim", "sim", "sim", "sim", "sim")
 
   ShowHTML "<HR>"
   AbreForm "Form", w_dir & w_pagina & "Grava", "POST", "return(Validacao(this));", null,P1,P2,P3,P4,TP,"ISACGERAL",R,O
@@ -4078,11 +4148,11 @@ Sub Encaminhamento
   End If
   ShowHTML "<B><FONT COLOR=""#000000"">" & w_TP & "</FONT></B>"
   ShowHTML "<HR>"
-  ShowHTML "<div align=center><center>"
-  ShowHTML "<table border=""0"" cellpadding=""0"" cellspacing=""0"" width=""100%"">"
+  ShowHTML "<div align=""center"">"
+  ShowHTML "<table width=""95%"" border=""0"" cellspacing=""3"">"
 
   ' Chama a rotina de visualização dos dados da ação, na opção "Listagem"
-  ShowHTML VisualAcao(w_chave, "V", w_usuario, P1, P4)
+  ShowHTML VisualAcao(w_chave, "V", w_usuario, P1, P4, "", "", "", "", "", "", "", "", "", "", "", "")
 
   ShowHTML "<HR>"
   AbreForm "Form", w_dir & w_pagina & "Grava", "POST", "return(Validacao(this));", null,P1,P2,P3,P4,TP,"ISACENVIO",R,O
@@ -4189,11 +4259,11 @@ Sub Anotar
   End If
   ShowHTML "<B><FONT COLOR=""#000000"">" & w_TP & "</FONT></B>"
   ShowHTML "<HR>"
-  ShowHTML "<div align=center><center>"
-  ShowHTML "<table border=""0"" cellpadding=""0"" cellspacing=""0"" width=""100%"">"
+  ShowHTML "<div align=""center"">"
+  ShowHTML "<table width=""95%"" border=""0"" cellspacing=""3"">"
 
   ' Chama a rotina de visualização dos dados da ação, na opção "Listagem"
-  ShowHTML VisualAcao(w_chave, "V", w_usuario, P1, P4)
+  ShowHTML VisualAcao(w_chave, "V", w_usuario, P1, P4, "", "", "", "", "", "", "", "", "", "", "", "")
 
   ShowHTML "<HR>"
   AbreForm "Form", w_dir & w_pagina & "Grava", "POST", "return(Validacao(this));", null,P1,P2,P3,P4,TP,"ISACENVIO",R,O
@@ -4296,11 +4366,11 @@ Sub Concluir
   End If
   ShowHTML "<B><FONT COLOR=""#000000"">" & w_TP & "</FONT></B>"
   ShowHTML "<HR>"
-  ShowHTML "<div align=center><center>"
-  ShowHTML "<table border=""0"" cellpadding=""0"" cellspacing=""0"" width=""100%"">"
+  ShowHTML "<div align=""center"">"
+  ShowHTML "<table width=""95%"" border=""0"" cellspacing=""3"">"
 
   ' Chama a rotina de visualização dos dados da ação, na opção "Listagem"
-  ShowHTML VisualAcao(w_chave, "V", w_usuario, P1, P4)
+  ShowHTML VisualAcao(w_chave, "V", w_usuario, P1, P4, "", "", "", "", "", "", "", "", "", "", "", "")
 
   ShowHTML "<HR>"
   ShowHTML "<tr bgcolor=""" & conTrBgColor & """><td align=""center"">"
@@ -4309,7 +4379,7 @@ Sub Concluir
   ShowHTML "          <tr>"
   
   ' Verifica se a ação tem etapas em aberto e avisa o usuário caso isso ocorra.
-  DB_GetSolicMeta_IS RS, w_chave, null, "LISTA", null
+  DB_GetSolicMeta_IS RS, w_chave, null, "LISTA", null, null, null, null, null, null, null
   w_cont_m = 0
   While NOT RS.EOF
      If cDbl(RS("perc_conclusao")) <> 100 Then
@@ -5363,6 +5433,7 @@ Sub Main
     Case "RESTRICAO"    Restricoes
     Case "INTERESS"     Interessados
     Case "VISUAL"       Visual
+    Case "VISUALNOVO"   VisualNovo
     Case "VISUALE"      VisualE
     Case "EXCLUIR"      Excluir
     Case "ENVIO"        Encaminhamento
