@@ -131,13 +131,12 @@ function Help() {
     ShowHTML('      <tr><td><BR>');
     ShowHTML('      <tr align="center" valign="top"><td><td bgcolor="#D0D0D0" style="border: 2px solid rgb(0,0,0);"><font size="2"><b>Funcionalidades</td>');
     $RS = db_getLinkdataHelp::getInstanceOf($dbms, $w_cliente,$w_modulo,0,'IS NULL');
-    if(!$RS->executeQuery()) { die("Cannot query"); }
     ShowHTML('      <tr valign="top"><td colspan=2><font size=2><br>');
-    if ($RS->num_rows <= 0) {
+    if (count($RS) <= 0) {
        ShowHTML('      <b>Não há funcionalidades disponíveis.</b>');
     } else {
       $w_cont1 = 0;
-      while($row = $RS->getResultArray()) {
+      foreach ($RS as $row) {
         $w_nivel = 1;
         $w_cont1 = $w_cont1+1;
         $w_cont2 = 0;
@@ -149,11 +148,9 @@ function Help() {
         if (f($row,'tramite')=='S') ShowHTML('        <DD><BR>Como funciona: '.ExibeTexto(f($row,'como_funciona')));
         if (f($row,'Filho')>0) {
           $RS1 = db_getLinkdataHelp::getInstanceOf($dbms, $w_cliente,$w_modulo,0,f($row,'sq_menu'));
-          if(!($RS1->executeQuery())) { die("Cannot query"); }
-  
-          while($row1 = $RS1->getResultArray()) {
+          foreach ($RS1 as $row1) {
             if ($w_cont2==0 && f($row1,'ultimo_nivel') == 'S') {
-              $w_submenu="S";
+              $w_submenu='S';
               ShowHTML('             <DD><BR>Telas contidas: ');
               ShowHTML('             <blockquote>');
             } 
@@ -167,8 +164,7 @@ function Help() {
 
               // Verifica se têm trâmites e exibe
               $RS_Tramite = db_getTramiteList::getInstanceOf($dbms, f($row1,'sq_menu'), null);
-              if(!$RS_Tramite->executeQuery()) { die("Cannot query"); }
-              if ($RS_Tramite->num_rows > 0) {
+              if (count($RS_Tramite) > 0) {
                 ShowHTML('    <DD><BR>Fases:');
                 ShowHTML('    <DD><TABLE bgcolor="'.$conTableBgColor.'" BORDER="'.$conTableBorder.'" CELLSPACING="'.$conTableCellSpacing.'" CELLPADDING="'.$conTableCellPadding.'" BorderColorDark="'.$conTableBorderColorDark.'" BorderColorLight="'.$conTableBorderColorLight.'">');
                 ShowHTML('        <tr align="center" valign="top">');
@@ -177,7 +173,7 @@ function Help() {
                 ShowHTML('          <td><b>Descricao</td>');
                 ShowHTML('          <td><b>Quem cumpre</td>');
                 ShowHTML('        </tr>');
-                while($row_tramite = $RS_Tramite->getResultArray()) {
+                foreach ($RS_Tramite as $row_tramite) {
                   ShowHTML('      <tr valign="top">');
                   ShowHTML('        <td align="center">'.f($row_tramite,'ordem').'</td>');
                   ShowHTML('        <td>'.f($row_tramite,'nome').'</td>');
@@ -185,7 +181,6 @@ function Help() {
                   ShowHTML('        <td>'.Nvl(f($row_tramite,'nm_chefia'),"---").'</td>');
                   ShowHTML('        </td>');
                   ShowHTML('      </tr>');
-                  next($RS_Tramite);
                 } 
                 ShowHTML('    </table>');
               } 
@@ -193,9 +188,7 @@ function Help() {
   
             if (f($row1,'Filho')>0) {
               $RS2 = db_getLinkdataHelp::getInstanceOf($dbms, $w_cliente,$w_modulo,0,f($row1,'sq_menu'));
-              if(!($RS2->executeQuery())) { die("Cannot query"); }
-    
-              while($row2 = $RS2->getResultArray()) {
+              foreach ($RS2 as $row2) {
                 if ($w_cont3==0 && f($row2,'ultimo_nivel') == 'S') {
                   $w_submenu = 'S';
                   ShowHTML('             <DD><BR>Telas contidas: ');
@@ -211,15 +204,13 @@ function Help() {
   
                 ShowHTML('             <DD>Finalidade: '.ExibeTexto(f($row2,'finalidade')));
                 if (f($row2,'tramite') == 'S') {
-                  $w_submenu="S";
+                  $w_submenu='S';
                   ShowHTML('        <DD><BR>Como funciona: '.ExibeTexto(f($row2,'como_funciona')));
-                  if (f($row2,'ultimo_nivel')=='S' && $w_submenu=="N") {
+                  if (f($row2,'ultimo_nivel')=='S' && $w_submenu=='N') {
   
                     // Verifica se têm trâmites e exibe
                     $RS_Tramite = db_getTramiteList::getInstanceOf($dbms, f($row2,'sq_menu'), null);
-                    if(!$RS_Tramite->executeQuery()) { die("Cannot query"); }
-
-                    if ($RS_Tramite->num_rows > 0) {
+                    if (count($RS_Tramite) > 0) {
                       ShowHTML('    <DD><BR>Fases:');
                       ShowHTML('    <DD><TABLE WIDTH="70%" bgcolor="'.$conTableBgColor.'" BORDER="'.$conTableBorder.'" CELLSPACING="'.$conTableCellSpacing.'" CELLPADDING="'.$conTableCellPadding.'" BorderColorDark="'.$conTableBorderColorDark.'" BorderColorLight="'.$conTableBorderColorLight.'">');
                       ShowHTML('        <tr align="center" valign="top">');
@@ -228,7 +219,7 @@ function Help() {
                       ShowHTML('          <td><b>Descricao</td>');
                       ShowHTML('          <td><b>Quem cumpre</td>');
                       ShowHTML('        </tr>');
-                      while($row_tramite = $RS_Tramite->getResultArray()) {
+                      foreach ($RS_Tramite as $row_tramite) {
                         ShowHTML('      <tr valign="top">');
                         ShowHTML('        <td align="center">'.f($row_tramite,'ordem').'</td>');
                         ShowHTML('        <td>'.f($row_tramite,'nome').'</td>');
@@ -236,7 +227,6 @@ function Help() {
                         ShowHTML('        <td>'.Nvl(f($row_tramite,'nm_chefia'),"---").'</td>');
                         ShowHTML('        </td>');
                         ShowHTML('      </tr>');
-                        next($RS_Tramite);
                       } 
                       ShowHTML('    </table><br>');
                     } 
@@ -245,11 +235,9 @@ function Help() {
   
                 if (f($row2,'Filho')>0) {
                   $RS3 = db_getLinkdataHelp::getInstanceOf($dbms, $w_cliente,$w_modulo,0,f($row2,'sq_menu'));
-                  if(!($RS3->executeQuery())) { die("Cannot query"); }
-  
-                  while($row3 = $RS3->getResultArray()) {
+                  foreach ($RS3 as $row3) {
                     if ($w_cont4==0 && f($row3,'ultimo_nivel') == 'S') {
-                      $w_submenu="S";
+                      $w_submenu='S';
                       ShowHTML('             <DD><BR>Telas contidas: ');
                       ShowHTML('             <blockquote>');
                     } 
@@ -261,8 +249,7 @@ function Help() {
                     if (f($row3,'ultimo_nivel')=='S' && $w_submenu=='N') {
                       // Verifica se têm trâmites e exibe
                       $RS_Tramite = db_getTramiteList::getInstanceOf($dbms, f($row3,'sq_menu'), null);
-                      if(!$RS_Tramite->executeQuery()) { die("Cannot query"); }
-                      if ($RS_Tramite->num_rows > 0) {
+                      if (count($RS_Tramite) > 0) {
                         ShowHTML('    <DD><BR>Fases:');
                         ShowHTML('    <DD><TABLE WIDTH="70%" bgcolor="'.$conTableBgColor.'" BORDER="'.$conTableBorder.'" CELLSPACING="'.$conTableCellSpacing.'" CELLPADDING="'.$conTableCellPadding.'" BorderColorDark="'.$conTableBorderColorDark.'" BorderColorLight="'.$conTableBorderColorLight.'">');
                         ShowHTML('        <tr align="center" valign="top">');
@@ -271,7 +258,7 @@ function Help() {
                         ShowHTML('          <td><b>Descricao</td>');
                         ShowHTML('          <td><b>Quem cumpre</td>');
                         ShowHTML('        </tr>');
-                        while($row_tramite = $RS_Tramite->getResultArray()) {
+                        foreach ($RS_Tramite as $row_tramite) {
                           ShowHTML('      <tr valign="top">');
                           ShowHTML('        <td align="center">'.f($row_tramite,'ordem').'</td>');
                           ShowHTML('        <td>'.f($row_tramite,'nome').'</td>');
@@ -279,38 +266,33 @@ function Help() {
                           ShowHTML('        <td>'.Nvl(f($row_tramite,'nm_chefia'),"---").'</td>');
                           ShowHTML('        </td>');
                           ShowHTML('      </tr>');
-                          next($RS_Tramite);
                         } 
                         ShowHTML('    </table><br>');
                       }
                     } 
-                    next($RS3);
                   } 
-                  if ($w_submenu=="S") {
+                  if ($w_submenu=='S') {
                     ShowHTML('       </blockquote>');
-                    $w_submenu="N";
+                    $w_submenu='N';
                   } 
                 }
-                next($RS2);
               }
-              if ($w_submenu=="S") {
+              if ($w_submenu=='S') {
                 ShowHTML('       </blockquote>');
-                $w_submenu="N";
+                $w_submenu = 'N';
               } 
             }
-            next($RS1);
           }
-          if ($w_submenu=="S") {
+          if ($w_submenu == 'S') {
             ShowHTML('       </blockquote>');
-            $w_submenu="N";
+            $w_submenu = 'N';
           }
         } 
-        next($RS);
         ShowHTML('         </DL>');
       } 
-      if ($w_submenu=="S") {
+      if ($w_submenu == 'S') {
         ShowHTML('       </blockquote>');
-        $w_submenu="N";
+        $w_submenu = 'N';
       } 
     } 
     DesconectaBD();

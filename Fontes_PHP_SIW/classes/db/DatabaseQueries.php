@@ -242,6 +242,7 @@ class OraDatabaseQueries extends DatabaseQueries {
         if(is_resource($this->result)) { return oci_fetch_array($this->result, OCI_BOTH+OCI_RETURN_NULLS); }
         else { return null; }
     }
+
 }
 
 /**
@@ -327,7 +328,7 @@ class OraDatabaseQueryProc extends OraDatabaseQueries {
            else {
               oci_execute($this->result);
               if(is_resource($this->result)) { 
-                 $this->num_rows = oci_fetch_all($this->result, $this->resultData, 0, -1);
+                 $this->num_rows = oci_fetch_all($this->result, $this->resultData, 0, -1,OCI_ASSOC+OCI_FETCHSTATEMENT_BY_ROW);
               }
               else { $this->num_rows = -1; }
               oci_execute($this->stmt);

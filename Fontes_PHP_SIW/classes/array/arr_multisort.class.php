@@ -1,20 +1,22 @@
 <?
 /*
-arr_multisort 1.0
+arr_multisort 1.1
 Copyright: Left
 ---------------------------------------------------------------------------------
-Version:        1.0
-Date:           22 April 2004
+Version:        1.1
+Date:           11 January 2005
 ---------------------------------------------------------------------------------
-Authors:        Alexander Minkovsky (a_minkovsky@hotmail.com)
-                Peter Panteleev (peter_pantaleev@mailbg.com)
+Author:        Alexander Minkovsky (a_minkovsky@hotmail.com)
 ---------------------------------------------------------------------------------
 License:        Choose the more appropriated for You - I don't care.
 ---------------------------------------------------------------------------------
 Description:
 Class makes multicolumn sorting of associative arrays in format provided for example by mysql_fetch_assoc.
-Column names and sort order to be used can be specified as well the sorting direction for each column.
-Dates are sorted correctly if they comply with GNU date syntax
+Column names to be used when sorting can be specified as well the sorting direction for each column.
+Optional external to the class compare functions can be specified for each column.
+Look below for requirements concerning external compare functions.
+If external compare functions are not supplied, the internal _compare method is used.
+Dates are sorted correctly using the internal compare if they comply with GNU date syntax
 (http://www.gnu.org/software/tar/manual/html_chapter/tar_7.html)
 ---------------------------------------------------------------------------------
 Example usage: see example.php
@@ -28,19 +30,61 @@ Class arr_multisort{
 
   //The array to be sorted
   var $arr = NULL;
-  //Single dimensioned array with column names. Ex. array("UserName","Sex","Country")
-  var $colNames = NULL;
+
   /*
-  Single dimensioned array with sort directions. Ex. array(SRT_ASC,SRT_ASC,SRT_DESC)
-  Must have the same length as $colNames array
+  Sorting definition
+  Format: array (
+                    array(
+                            "colName"   =>   "some column name",
+                            "colDir"    =>   SRT_ASC,
+                            "compareFunc" => "myCompareFunction"
+                         ),
+                    ..........................
+                )
+  "compareFunc" element is optional - NULL by default and by default the class internal compare is used.
+  If External compare function is supplied it must conform to the following requirements:
+    ~ Accept two T_STRING parameters and return:
+        0  - if parameters are equal
+        1  - if first parameter is greater than second
+        -1 - if second parameter is greater than first
   */
-  var $colDirs = NULL;
+  var $sortDef = NULL;
 
   //Constructor
-  function arr_multisort(&$arr,$colNames=array(),$colDirs=array()){
+  function arr_multisort(){
+    $this->arr = array();
+    $this->sortDef = array();
+  }
+
+  //setArray method - sets the array to be sorted
+  function setArray(&$arr){
     $this->arr = $arr;
-    $this->colNames = $colNames;
-    $this->colDirs = $colDirs;
+  }
+
+  /*
+  addColumn method - ads entry to sorting definition
+  If column exists, values are overwriten.
+  */
+  function addColumn($colName="",$colDir=SRT_ASC,$compareFunc=NULL){
+    $idx = $this->_getColIdx($colName);
+    if($idx < 0){
+      $this->sortDef[] = array();
+      $idx = count($this->sortDef)-1;
+    }
+    $this->sortDef[$idx]["colName"] = $colName;
+    $this->sortDef[$idx]["colDir"] = $colDir;
+    $this->sortDef[$idx]["compareFunc"] = $compareFunc;
+  }
+
+  //removeColumn method - removes entry from sorting definition
+  function removeColumn($colName=""){
+    $idx = $this->_getColIdx($colName);
+    if($idx >= 0) array_splice($this->sortDef,$idx,1);
+  }
+
+  //resetColumns - removes any columns from sorting definition. Array to sort is not affected.
+  function resetColumns(){
+    $this->sortDef = array();
   }
 
   //sort() method
@@ -49,20 +93,38 @@ Class arr_multisort{
     return $this->arr;
   }
 
+  //_getColIdx method [PRIVATE]
+  function _getColIdx($colName){
+    $idx = -1;
+    for($i=0;$i<count($this->sortDef);$i++){
+      $colDef = $this->sortDef[$i];
+      if($colDef["colName"] == $colName) $idx = $i;
+    }
+    return $idx;
+  }
+
   //Comparison function [PRIVATE]
   function _compare($a,$b,$idx = 0){
-    if(count($this->colNames) == 0 || count($this->colNames) != count($this->colDirs)) return 0;
-    $a_cmp = $a[$this->colNames[$idx]];
-    $b_cmp = $b[$this->colNames[$idx]];
-    $a_dt = strtotime($a_cmp);
-    $b_dt = strtotime($b_cmp);
-    if(($a_dt == -1) || ($b_dt == -1))
-      $ret = $this->colDirs[$idx]*strnatcasecmp($a_cmp,$b_cmp);
+    if(count($this->sortDef) == 0) return 0;
+    $colDef = $this->sortDef[$idx];
+    $a_cmp = $a[$colDef["colName"]];
+    $b_cmp = $b[$colDef["colName"]];
+    if(is_null($colDef["compareFunc"])){
+      $a_dt = strtotime($a_cmp);
+      $b_dt = strtotime($b_cmp);
+      if(($a_dt == -1) || ($b_dt == -1))
+        $ret = $colDef["colDir"]*strnatcasecmp($a_cmp,$b_cmp);
+      else{
+        $ret = $colDef["colDir"]*(($a_dt > $b_dt)?1:(($a_dt < $b_dt)?-1:0));
+      }
+    }
     else{
-      $ret = $this->colDirs[$idx]*(($a_dt > $b_dt)?1:(($a_dt < $b_dt)?-1:0));
+      $code = '$ret = ' . $colDef["compareFunc"] . '("' . $a_cmp . '","' . $b_cmp . '");';
+      eval($code);
+      $ret = $colDef["colDir"]*$ret;
     }
     if($ret == 0){
-      if($idx < (count($this->colNames)-1))
+      if($idx < (count($this->sortDef)-1))
         return $this->_compare($a,$b,$idx+1);
       else
         return $ret;
@@ -72,5 +134,4 @@ Class arr_multisort{
   }
 
 }
-
 ?>
