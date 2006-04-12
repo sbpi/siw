@@ -253,6 +253,10 @@ function LogOn()
   ValidateClose();
   ScriptClose();
   ShowHTML('<link rel="stylesheet" type="text/css" href="'.$conRootSIW.'classes/menu/xPandMenu.css">');
+  ShowHTML('<style>');
+  ShowHTML(' .cText {font-size: 8pt; border: 1px solid #000000; background-color: #F5F5F5}');
+  ShowHTML(' .cButton {font-size: 8pt; color: #FFFFFF; border: 1px solid #000000; background-color: #669966; }');
+  ShowHTML('</style>');
   ShowHTML('</HEAD>');
   ShowHTML('<body topmargin=0 leftmargin=10 onLoad="document.Form.Login1.focus();">');
   ShowHTML('<form method="post" action="Default.php" onsubmit="return(Validacao(this));" name="Form"> ');
@@ -265,10 +269,10 @@ function LogOn()
   ShowHTML('  <tr><td valign="middle" width="100%" height="100%">');
   ShowHTML('      <table width="100%" height="100%" border="0" cellpadding=0 cellspacing=0> ');
   ShowHTML('        <tr><td bgcolor="#003300" width="100%" height="100%" valign="middle"><font size="2" color="#FFFFFF">&nbsp;');
-  ShowHTML('            Usuário: <input class="sti" name="Login1" size="14" maxlength="14" onkeyDown="FormataCPF(this,event)">');
-  ShowHTML('            Senha: <input class="sti" type="Password" name="Password1" size="19">');
-  ShowHTML('            <input class="stb" type="submit" value="OK" name="Botao" onClick="document.Form.par.value=\'Log\';"> ');
-  ShowHTML('            <input class="stb" type="submit" value="Lembrar senha" name="Botao" onClick="document.Form.par.value=\'Senha\';" title="Informe seu CPF e clique aqui para receber por e-mail sua senha e assinatura eletrônica!"> ');
+  ShowHTML('            Usuário: <input class="cText" name="Login1" size="14" maxlength="14" onkeyDown="FormataCPF(this,event)">');
+  ShowHTML('            Senha: <input class="cText" type="Password" name="Password1" size="19">');
+  ShowHTML('            <input class="cButton" type="submit" value="OK" name="Botao" onClick="document.Form.par.value=\'Log\';"> ');
+  ShowHTML('            <input class="cButton" type="submit" value="Lembrar senha" name="Botao" onClick="document.Form.par.value=\'Senha\';" title="Informe seu CPF e clique aqui para receber por e-mail sua senha e assinatura eletrônica!"> ');
   ShowHTML('        </font></td> </tr> ');
   ShowHTML('      </table> ');
   ShowHTML('  </tr> ');
