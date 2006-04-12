@@ -11,7 +11,8 @@ begin
                 a.sigla, a.descricao, a.chefia_imediata, a.ativo, a.solicita_cc, a.envia_mail,
                 decode(a.chefia_imediata,'S','Chefia da unidade solicitante','U','Chefia e usuários com  permissão','N','Apenas usuários com permissão') nm_chefia
          from siw_tramite a
-         where a.sq_menu = p_chave;
+         where a.sq_menu = p_chave
+        order by a.ordem;
    Elsif upper(p_restricao) = 'ERRO' Then
       open p_result for
          select a.sq_siw_tramite, a.sq_menu, a.nome, a.ordem,
@@ -23,7 +24,8 @@ begin
                                      where b.sq_menu       = (select sq_menu from siw_tramite where sq_siw_tramite = p_chave)
                                        and b.ordem         <= (select ordem from siw_tramite where sq_siw_tramite = p_chave)
                                        and b.ativo = 'S'
-                                   );
+                                   )
+        order by a.ordem;
    Elsif upper(p_restricao) = 'PROXIMO' Then
       open p_result for
          select b.sq_siw_tramite, b.sq_menu, b.nome, b.ordem,
@@ -61,7 +63,8 @@ begin
                                             b.ordem         = (select ordem+1 from siw_tramite where sq_siw_tramite = (select sq_siw_tramite from siw_solicitacao where sq_siw_solicitacao = p_restricao)) and
                                             b.ativo = 'S'
                                            )
-                                   );
+                                   )
+        order by a.ordem;
    End If;
 end SP_GetTramiteList;
 /

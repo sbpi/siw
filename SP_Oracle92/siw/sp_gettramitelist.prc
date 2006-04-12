@@ -15,7 +15,8 @@ begin
                    when 'N' then 'Apenas usuários com permissão'
                 end nm_chefia
          from siw_tramite a 
-         where a.sq_menu = p_chave;
+         where a.sq_menu = p_chave
+        order by a.ordem;
    Elsif upper(p_restricao) = 'ERRO' Then
       open p_result for
          select a.sq_siw_tramite, a.sq_menu, a.nome, a.ordem,  
@@ -31,7 +32,8 @@ begin
                                      where b.sq_menu       = (select sq_menu from siw_tramite where sq_siw_tramite = p_chave)
                                        and b.ordem         <= (select ordem from siw_tramite where sq_siw_tramite = p_chave)
                                        and b.ativo = 'S'
-                                   );
+                                   )
+        order by a.ordem;
    Elsif upper(p_restricao) = 'PROXIMO' Then
       open p_result for
          select b.sq_siw_tramite, b.sq_menu, b.nome, b.ordem,
@@ -81,7 +83,8 @@ begin
                                             b.ordem         = (select ordem+1 from siw_tramite where sq_siw_tramite = (select sq_siw_tramite from siw_solicitacao where sq_siw_solicitacao = p_restricao)) and
                                             b.ativo = 'S'
                                            )
-                                   );
+                                   )
+        order by a.ordem;
    End If;
 end SP_GetTramiteList;
 /
