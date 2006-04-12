@@ -44,7 +44,7 @@ $O          = strtoupper($_REQUEST["O"]);
 
 $p_cliente  = $_SESSION['P_CLIENTE'];
 $sq_pessoa  = $_SESSION['SQ_PESSOA'];
-$w_pagina   = 'Menu.php?par=';
+$w_pagina   = 'menu.php?par=';
 $w_ImagemPadrao='images/folder/SheetLittle.gif';
 
 if ($O=='' && $par=='TROCASENHA') { $O='A'; }
@@ -76,7 +76,7 @@ function Frames() {
   ShowHTML('  <link href="images/sbpi.ico" rel="shortcut icon">');
   ShowHTML('  </HEAD> ');
   ShowHTML('    <FRAMESET COLS="20%,80%"> ');
-  ShowHTML('     <FRAME SRC="Menu.php?par=ExibeDocs" SCROLLING="AUTO" FRAMEBORDER="0" FRAMESPACING=0 NAME="menu"> ');
+  ShowHTML('     <FRAME SRC="menu.php?par=ExibeDocs" SCROLLING="AUTO" FRAMEBORDER="0" FRAMESPACING=0 NAME="menu"> ');
   if ($cliente=='' || $cliente==1) {
     ShowHTML('     <FRAME SRC="branco.htm" FRAMEBORDER="0" NAME="content"> ');
   } else {
@@ -206,8 +206,6 @@ function ExibeDocs() {
     }
 
     $node1 = &$root->addItem(new XNode($w_descricao,false));
-    //ShowHTML('<font size=2><span id=Out'.$w_ContOut.' class=Outline style="cursor: hand; "><div align="left" id=Out'.$w_ContOut.' class=Outline style="cursor: hand; "><img src="images/folder/FolderClose.gif" border=0 align="center"> '.$w_descricao.'</div></span></font>');
-    ShowHTML('   <div id=Out'.$w_ContOut.'details style="position:relative; left:12;"><font size=1>');
 
     $RS = db_getLinkSubMenu::getInstanceOf($dbms, $p_cliente, $SG);
     if(!$RS->executeQuery()) { die("Cannot query"); }
@@ -237,11 +235,11 @@ function ExibeDocs() {
     $RS = db_getLinkData::getInstanceOf($dbms, $p_cliente, $SG);
     $node2 = &$root->addItem(new XNode('Nova consulta',$w_pagina.$par.'&O=L&R='.$R.'&SG='.f($row,'sigla').'&TP='.RemoveTP($TP).'&P1='.f($row,'P1').'&P2='.f($row,'P2').'&P3='.f($row,'P3').'&P4='.f($row,'P4').MontaFiltro('GET'),$w_Imagem,$w_Imagem));
     DesconectaBD();
-    $node3 = &$root->addItem(new XNode('Menu','Menu.php?par=ExibeDocs',$w_Imagem,$w_Imagem));
+    $node3 = &$root->addItem(new XNode('Menu','menu.php?par=ExibeDocs',$w_Imagem,$w_Imagem));
     $i = 4;
   }  
 
-  eval('$node'.i.' = &$root->addItem(new XNode(\'Sair do sistema\',\'Menu.php?par=Sair\',$w_Imagem,$w_Imagem,\'_top\', \'onClick="return(confirm(\\\'Confirma saída do sistema?\\\'));"\' ));');
+  eval('$node'.i.' = &$root->addItem(new XNode(\'Sair do sistema\',\'menu.php?par=Sair\',$w_Imagem,$w_Imagem,\'_top\', \'onClick="return(confirm(\\\'Confirma saída do sistema?\\\'));"\' ));');
 
   // Quando for concluída a montagem dos nós, chame a função generateTree(), usando o objeto raiz, para gerar o código HTML.
   // Essa função não possui argumentos.
@@ -310,8 +308,8 @@ function ExibeDocs() {
   DesconectaBD();
   ShowHTML('      <tr><td height=1><tr><td height=1 bgcolor="#000000">');
   ShowHTML('      <tr><td colspan=2 width="100%"><table border=0 width="100%" cellpadding=0 cellspacing=0><tr valign="top">');
-  ShowHTML('          <td><font size=1>Usuário:<b>'.$_SESSION['NOME_RESUMIDO'].'</b></TD>');
-  ShowHTML('          <td align="right"><a class="hl" href="Help.php?par=Menu&TP=<img src=images/Folder/hlp.gif border=0> SIW - Visão Geral&SG=MESA&O=L" target="content" title="Exibe informações sobre os módulos do sistema."><img src="images/Folder/hlp.gif" border=0></a></TD>');
+  ShowHTML('          <td>Usuário:<b>'.$_SESSION['NOME_RESUMIDO'].'</b></TD>');
+  ShowHTML('          <td align="right"><a class="hl" href="help.php?par=Menu&TP=<img src=images/Folder/hlp.gif border=0> SIW - Visão Geral&SG=MESA&O=L" target="content" title="Exibe informações sobre os módulos do sistema."><img src="images/Folder/hlp.gif" border=0></a></TD>');
   ShowHTML('          </table>');
   ShowHTML('      <tr><td height=1><tr><td height=2 bgcolor="#000000">');
   ShowHTML('  </table></CENTER>');
@@ -400,25 +398,25 @@ function TrocaSenha() {
   AbreForm('Form',$w_pagina.'Grava','POST','return(Validacao(this));',null,$P1,$P2,$P3,$P4,$TP,$SG,$w_pagina.$par,$O);
   ShowHTML('<tr bgcolor="'.$conTrBgColor.'"><td>');
   ShowHTML('    <table width="100%" border="0">');
-  ShowHTML('      <tr><td valign="top"><font size="1">Usuário:<br><b>'.$_SESSION["NOME"].' ('.$_SESSION["USERNAME"].')</b></td>');
+  ShowHTML('      <tr><td valign="top">Usuário:<br><b>'.$_SESSION["NOME"].' ('.$_SESSION["USERNAME"].')</b></td>');
   $RS = db_getUserData::getInstanceOf($dbms, $p_cliente, $_SESSION["USERNAME"]);
 
   if ($P1==1) {
     // Se for troca de senha de acesso
-    ShowHTML('      <tr><td valign="top"><font size="1">Ultima troca de '.$w_texto.':<br><b>'.date('d/m/Y, H:i:s',toDate(f($RS,'dt_ultima_troca_senha'))).'</b></td>');
-    ShowHTML('      <tr><td valign="top"><font size="1">Expiração da '.$w_texto.' atual ocorrerá em:<br><b>'.date('d/m/Y, H:i:s',addDays(toDate(f($RS,'dt_ultima_troca_senha')),$w_vigencia)).'</b></td>');
-    ShowHTML('      <tr><td valign="top"><font size="1">Você será convidado a trocar sua '.$w_texto.' a partir de:<br><b>'.date('d/m/Y, H:i:s',addDays(toDate(f($RS,'dt_ultima_troca_senha')),$w_vigencia-$w_aviso)).'</b></td>');
+    ShowHTML('      <tr><td valign="top">Ultima troca de '.$w_texto.':<br><b>'.date('d/m/Y, H:i:s',toDate(f($RS,'dt_ultima_troca_senha'))).'</b></td>');
+    ShowHTML('      <tr><td valign="top">Expiração da '.$w_texto.' atual ocorrerá em:<br><b>'.date('d/m/Y, H:i:s',addDays(toDate(f($RS,'dt_ultima_troca_senha')),$w_vigencia)).'</b></td>');
+    ShowHTML('      <tr><td valign="top">Você será convidado a trocar sua '.$w_texto.' a partir de:<br><b>'.date('d/m/Y, H:i:s',addDays(toDate(f($RS,'dt_ultima_troca_senha')),$w_vigencia-$w_aviso)).'</b></td>');
   } else if ($P1==2) {
     // Se for troca de assinatura eletrônica
-    ShowHTML('      <tr><td valign="top"><font size="1">Ultima troca de '.$w_texto.':<br><b>'.date('d/m/Y, H:i:s',toDate(f($RS,'dt_ultima_troca_assin'))).'</b></td>');
-    ShowHTML('      <tr><td valign="top"><font size="1">Expiração da '.$w_texto.' atual ocorrerá em:<br><b>'.date('d/m/Y, H:i:s',addDays(toDate(f($RS,'dt_ultima_troca_assin')),$w_vigencia)).'</b></td>');
-    ShowHTML('      <tr><td valign="top"><font size="1">Você será convidado a trocar sua '.$w_texto.' a partir de:<br><b>'.date('d/m/Y, H:i:s',addDays(toDate(f($RS,'dt_ultima_troca_assin')),$w_vigencia-$w_aviso)).'</b></td>');
+    ShowHTML('      <tr><td valign="top">Ultima troca de '.$w_texto.':<br><b>'.date('d/m/Y, H:i:s',toDate(f($RS,'dt_ultima_troca_assin'))).'</b></td>');
+    ShowHTML('      <tr><td valign="top">Expiração da '.$w_texto.' atual ocorrerá em:<br><b>'.date('d/m/Y, H:i:s',addDays(toDate(f($RS,'dt_ultima_troca_assin')),$w_vigencia)).'</b></td>');
+    ShowHTML('      <tr><td valign="top">Você será convidado a trocar sua '.$w_texto.' a partir de:<br><b>'.date('d/m/Y, H:i:s',addDays(toDate(f($RS,'dt_ultima_troca_assin')),$w_vigencia-$w_aviso)).'</b></td>');
   }
   DesconectaBD();
   ShowHTML('      <tr><td align="center" colspan="3" height="1" bgcolor="#000000"></TD></TR>');
-  ShowHTML('      <tr><td valign="top"><font size="1"><b>'.$w_texto.' <U>a</U>tual:<br><INPUT ACCESSKEY="A" class="sti" type="password" name="w_atual" size="'.$w_maximo.'" maxlength="'.$w_maximo.'"></td>');
-  ShowHTML('      <tr><td valign="top"><font size="1"><b><U>N</U>ova '.$w_texto.':<br><INPUT ACCESSKEY="N" class="sti" type="password" name="w_nova" size="'.$w_maximo.'" maxlength="'.$w_maximo.'"></td>');
-  ShowHTML('      <tr><td valign="top"><font size="1"><b><U>R</U>edigite nova '.$w_texto.':<br><INPUT ACCESSKEY="R" class="sti" type="password" name="w_conf" size="'.$w_maximo.'" maxlength="'.$w_maximo.'"></td>');
+  ShowHTML('      <tr><td valign="top"><b>'.$w_texto.' <U>a</U>tual:<br><INPUT ACCESSKEY="A" class="sti" type="password" name="w_atual" size="'.$w_maximo.'" maxlength="'.$w_maximo.'"></td>');
+  ShowHTML('      <tr><td valign="top"><b><U>N</U>ova '.$w_texto.':<br><INPUT ACCESSKEY="N" class="sti" type="password" name="w_nova" size="'.$w_maximo.'" maxlength="'.$w_maximo.'"></td>');
+  ShowHTML('      <tr><td valign="top"><b><U>R</U>edigite nova '.$w_texto.':<br><INPUT ACCESSKEY="R" class="sti" type="password" name="w_conf" size="'.$w_maximo.'" maxlength="'.$w_maximo.'"></td>');
   ShowHTML('      <tr><td align="center" colspan="3" height="1" bgcolor="#000000"></TD></TR>');
 
   ShowHTML('      <tr><td align="center" colspan="3">');
@@ -513,7 +511,7 @@ function Main() {
   if ((strlen($LOTACAO.'')==0 || strlen($LOCALIZACAO.'')==0) && $LogOn=='Sim') {
      ScriptOpen('JavaScript');
      ShowHTML(' alert(\'Você não tem lotação ou localização definida. Entre em contato com o RH!\'); ');
-     ShowHTML(' top.location.href=\'Default.php\'; ');
+     ShowHTML(' top.location.href=\'default.php\'; ');
      ScriptClose();
      exit();
   }

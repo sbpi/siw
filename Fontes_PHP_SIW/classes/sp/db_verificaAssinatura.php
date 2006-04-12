@@ -1,7 +1,7 @@
 <?
 include_once("classes/db/DatabaseQueriesFactory.php");
 /**
-* class sp_verificaAssinatura
+* class db_verificaAssinatura
 *
 * { Description :- 
 *    This class verifies the existence of a user, his password, and if his account is blocked

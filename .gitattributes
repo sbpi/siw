@@ -515,9 +515,14 @@ Fontes_PHP_SIW/classes/menu/xPandMenu.php -text
 Fontes_PHP_SIW/classes/sp/db_getCustomerData.php -text
 Fontes_PHP_SIW/classes/sp/db_getCustomerSite.php -text
 Fontes_PHP_SIW/classes/sp/db_getLinkData.php -text
+Fontes_PHP_SIW/classes/sp/db_getLinkDataHelp.php -text
 Fontes_PHP_SIW/classes/sp/db_getLinkDataParent.php -text
 Fontes_PHP_SIW/classes/sp/db_getLinkDataUser.php -text
 Fontes_PHP_SIW/classes/sp/db_getLinkSubMenu.php -text
+Fontes_PHP_SIW/classes/sp/db_getMenuCode.php -text
+Fontes_PHP_SIW/classes/sp/db_getModData.php -text
+Fontes_PHP_SIW/classes/sp/db_getSegModData.php -text
+Fontes_PHP_SIW/classes/sp/db_getTramiteList.php -text
 Fontes_PHP_SIW/classes/sp/db_getUserData.php -text
 Fontes_PHP_SIW/classes/sp/db_getcitylist.php -text
 Fontes_PHP_SIW/classes/sp/db_updatePassword.php -text
@@ -529,6 +534,7 @@ Fontes_PHP_SIW/default.php -text
 Fontes_PHP_SIW/favicon.ico -text
 Fontes_PHP_SIW/funcoes.php -text
 Fontes_PHP_SIW/geragrafico.php -text
+Fontes_PHP_SIW/help.php -text
 Fontes_PHP_SIW/jscript.php -text
 Fontes_PHP_SIW/menu.php -text
 Fontes_PHP_SIW/mod_sf/sicof.php -text

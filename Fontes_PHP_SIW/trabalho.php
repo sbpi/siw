@@ -30,11 +30,11 @@ include_once("classes/sp/db_getDesktop.php");
 //                   = D   : Detalhes
 //                   = N   : Nova solicitação de envio
 // Verifica se o usuário está autenticado
-if ($_SESSION["LOGON"]!='Sim') { EncerraSessao(); }
+if ($_SESSION['LOGON']!='Sim') { EncerraSessao(); }
 
 
 // Declaração de variáveis
-$dbms = abreSessao::getInstanceOf($_SESSION["DBMS"]);
+$dbms = abreSessao::getInstanceOf($_SESSION['DBMS']);
 
 // Carrega variáveis locais com os dados dos parâmetros recebidos
 $par        = strtoupper($_REQUEST["par"]);
@@ -48,14 +48,14 @@ $R          = strtoupper($_REQUEST["R"]);
 $O          = strtoupper($_REQUEST["O"]);
 
 $w_Assinatura   = strtoupper(${"w_Assinatura"});
-$w_Pagina       = "Trabalho.php?par=";
+$w_Pagina       = "trabalho.php?par=";
 $w_Disabled     = "ENABLED";
 
 $w_cliente  = RetornaCliente();
 $w_usuario  = RetornaUsuario();
 $w_ano      = RetornaAno();
 
-if ($O=="") $O="L";
+if ($O=='') $O='L';
 
 switch ($O) {
   case 'I': $w_TP=$TP.' - Inclusão'; break;
@@ -63,12 +63,14 @@ switch ($O) {
   case 'E': $w_TP=$TP.' - Exclusão'; break;
   case 'V': $w_TP=$TP.' - Envio'; break;
   case 'P': $w_TP=$TP.' - Filtragem'; break;
-  default : $w_TP=$TP." - Listagem";; 
+  default : $w_TP=$TP.' - Listagem'; 
 }
 
 Main();
 
 FechaSessao($dbms);
+
+exit;
 
 // =========================================================================
 // Controle da mesa de trabalho
@@ -87,32 +89,30 @@ function Mesa() {
 
      // Verifica se o usuário tem acesso ao módulo de telefonia
      //$RS = db_getPersonData::getInstanceOf($dbms, $w_cliente, $w_usuario, null, null);
-     //if (f($RS,'sq_usuario_central')=='') $w_telefonia="";
+     //if (f($RS,'sq_usuario_central')=='') $w_telefonia='';
   }
 
   Cabecalho();
-  ShowHTML("<HEAD>");
-  ShowHTML("<meta http-equiv=\"Refresh\" content=\"300;\">");
-  ScriptOpen("JavaScript");
-  ScriptClose();
-  ShowHTML("</HEAD>");
-  BodyOpen("onLoad=document.focus();");
-  ShowHTML("<B><FONT COLOR=\"#000000\">".$w_TP."</FONT></B>");
-  ShowHTML("<HR>");
-  ShowHTML("<div align=center><center>");
-  ShowHTML("<table border=\"0\" width=\"100%\">");
+  ShowHTML('<HEAD>');
+  ShowHTML('<meta http-equiv="Refresh" content="300;">');
+  ShowHTML('</HEAD>');
+  BodyOpen('onLoad=document.focus();');
+  ShowHTML('<B><FONT COLOR="#000000">'.$w_TP.'</font></B>');
+  ShowHTML('<HR>');
+  ShowHTML('<div align=center><center>');
+  ShowHTML('<table border="0" width="100%">');
   if ($O=="L") {
 
-    ShowHTML("<tr><td align=\"center\" colspan=3>");
-    ShowHTML("    <TABLE WIDTH=\"100%\" bgcolor=\"".$conTableBgColor."\" BORDER=\"".$conTableBorder."\" CELLSPACING=\"".$conTableCellSpacing."\" CELLPADDING=\"".$conTableCellPadding."\" BorderColorDark=\"".$conTableBorderColorDark."\" BorderColorLight=\"".$conTableBorderColorLight."\">");
-    ShowHTML("        <tr bgcolor=\"".$conTrBgColor."\" align=\"center\">");
-    ShowHTML("          <td><font size=\"1\"><b>Módulo</font></td>");
-    ShowHTML("          <td><font size=\"1\"><b>Serviço</font></td>");
-    ShowHTML("          <td><font size=\"1\"><b>Em aberto</font></td>");
-    ShowHTML("          <td><font size=\"1\"><b>Operações</font></td>");
-    ShowHTML("        </tr>");
-    if (!($w_workflow.$w_telefonia.$w_demandas.$w_agenda=="")) {
-      if ($w_telefonia>"") {
+    ShowHTML('<tr><td align="center" colspan=3>');
+    ShowHTML('    <TABLE WIDTH="100%" bgcolor='.$conTableBgColor.' BORDER='.$conTableBorder.' CELLSPACING='.$conTableCellSpacing.' CELLPADDING='.$conTableCellPadding.' BorderColorDark='.$conTableBorderColorDark.' BorderColorLight='.$conTableBorderColorLight.'>');
+    ShowHTML('        <tr bgcolor='.$conTrBgColor.' align="center">');
+    ShowHTML('          <td><b>Módulo</td>');
+    ShowHTML('          <td><b>Serviço</td>');
+    ShowHTML('          <td><b>Em aberto</td>');
+    ShowHTML('          <td><b>Operações</td>');
+    ShowHTML('        </tr>');
+    if (!($w_workflow.$w_telefonia.$w_demandas.$w_agenda=='')) {
+      if ($w_telefonia>'') {
         $RS = db_getDeskTop_TT::getInstanceOf($dbms, $w_usuario);
         if(!$RS->executeQuery()) { die("Cannot query"); }
         while($row = $RS->getResultArray()) {
@@ -120,17 +120,17 @@ function Mesa() {
           next($RS);
         }
         DesconectaBD();
-        if ($w_cor==$conTrBgColor || $w_cor=="") $w_cor=$conTrAlternateBgColor; else $w_cor=$conTrBgColor;
-        if ($w_telefonia_qtd>0) $w_negrito="<b>"; else $w_negrito="";
+        if ($w_cor==$conTrBgColor || $w_cor=='') $w_cor=$conTrAlternateBgColor; else $w_cor=$conTrBgColor;
+        if ($w_telefonia_qtd>0) $w_negrito='<b>'; else $w_negrito='';
 
-        ShowHTML("      <tr bgcolor=\"".$w_cor."\">");
-        ShowHTML("        <td><font size=\"1\">".$w_telefonia."</td>");
-        ShowHTML("        <td><font size=\"1\">"."Ligações</td>");
-        ShowHTML("        <td align=\"right\"><font size=\"1\">".$w_negrito.$w_telefonia_qtd."&nbsp;</td>");
-        ShowHTML("        <td align=\"top\" nowrap><font size=\"1\">");
-        ShowHTML("          <A class=\"HL\" HREF=\"Tarifacao.php?par=Informar&R=".$w_Pagina.$par."&O=L&P1=1&P2=".$P2."&P3=".$P3."&P4=".$P4."&TP=".$TP."- Ligações&SG=LIGACAO\">Exibir</A> ");
-        ShowHTML("        </td>");
-        ShowHTML("      </tr>");
+        ShowHTML('      <tr bgcolor="'.$w_cor.'">');
+        ShowHTML('        <td>'.$w_telefonia.'</td>');
+        ShowHTML('        <td>Ligações</td>');
+        ShowHTML('        <td align="right">'.$w_negrito.$w_telefonia_qtd.'&nbsp;</td>');
+        ShowHTML('        <td align="top" nowrap>');
+        ShowHTML('          <A class="HL" HREF="Tarifacao.php?par=Informar&R='.$w_Pagina.$par.'&O=L&P1=1&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP='.$TP.'- Ligações&SG=LIGACAO">Exibir</A> ');
+        ShowHTML('        </td>');
+        ShowHTML('      </tr>');
       }
     }
 
@@ -140,46 +140,46 @@ function Mesa() {
     if(!$RS->executeQuery()) { die("Cannot query"); }
     $w_nm_modulo='-';
     while($row = $RS->getResultArray()) {
-      if ($w_cor==$conTrBgColor || $w_cor=="") {
+      if ($w_cor==$conTrBgColor || $w_cor=='') {
          $w_cor=$conTrAlternateBgColor; 
       } else {
          $w_cor=$conTrBgColor;
       }
       
-      if (f($row,'qtd')>0) $w_negrito="<b>"; else $w_negrito=""; 
+      if (f($row,'qtd')>0) $w_negrito="<b>"; else $w_negrito=''; 
     
-      ShowHTML("    <tr bgcolor=\"".$w_cor."\">");
+      ShowHTML('    <tr bgcolor='.$w_cor.'>');
       // Evita que o nome do  módulo seja repetido
       if ($w_nm_modulo!=f($row,'nm_modulo')) {
-        ShowHTML("      <td><font size=\"1\">".f($row,'nm_modulo')."</td>");
+        ShowHTML('      <td>'.f($row,'nm_modulo').'</td>');
         $w_nm_modulo=f($row,'nm_modulo');
       } else {
-        ShowHTML("      <td><font size=\"1\">&nbsp;</td>");
+        ShowHTML('      <td>&nbsp;</td>');
       }
 
-      ShowHTML("      <td><font size=\"1\">".f($row,'nm_servico')."</td>");
-      ShowHTML("      <td align=\"right\"><font size=\"1\">".$w_negrito.f($row,'qtd')."&nbsp;</td>");
-      ShowHTML("      <td align=\"top\" nowrap><font size=\"1\">");
-      ShowHTML("        <A CLASS=\"HL\" HREF=\"".f($row,'link')."&P1=2&P2=".f($row,'p2')."&P3=".f($row,'p3')."&P4=".f($row,'p4')."&TP=".$TP." - ".f($row,'nm_servico')."&SG=".f($row,'sg_servico')."\">Exibir</A>");
-      ShowHTML("      </td>");
-      ShowHTML("    </tr>");
+      ShowHTML('      <td>'.f($row,'nm_servico').'</td>');
+      ShowHTML('      <td align="right">'.$w_negrito.f($row,'qtd').'&nbsp;</td>');
+      ShowHTML('      <td align="top" nowrap>');
+      ShowHTML('        <A CLASS="HL" HREF="'.f($row,'link').'&P1=2&P2='.f($row,'p2').'&P3='.f($row,'p3').'&P4='.f($row,'p4').'&TP='.$TP.' - '.f($row,'nm_servico').'&SG='.f($row,'sg_servico').'">Exibir</A>');
+      ShowHTML('      </td>');
+      ShowHTML('    </tr>');
       next($RS);
     }
 
-    ShowHTML("      </center>");
-    ShowHTML("    </table>");
-    ShowHTML("  </td>");
-    ShowHTML("</tr>");
+    ShowHTML('      </center>');
+    ShowHTML('    </table>');
+    ShowHTML('  </td>');
+    ShowHTML('</tr>');
     DesConectaBD();
   } else {
     ScriptOpen("JavaScript");
-    ShowHTML(" alert('Opção não disponível');");
-    ShowHTML(" history.back(1);");
+    ShowHTML(' alert(\'Opção não disponível\');');
+    ShowHTML(' history.back(1);');
     ScriptClose();
   }
 
-  ShowHTML("</table>");
-  ShowHTML("</center>");
+  ShowHTML('</table>');
+  ShowHTML('</center>');
   Rodape();
 }
 

@@ -252,18 +252,7 @@ function LogOn()
   ShowHTML('  theForm.Password1.value = ""; ');
   ValidateClose();
   ScriptClose();
-  ShowHTML('<BASEFONT FACE="Verdana" SIZE="2"> ');
-  ShowHTML('<style> ');
-  ShowHTML(' .ss{text-decoration:none;font:bold 8pt} ');
-  ShowHTML(' .ss:HOVER{text-decoration: underline;} ');
-  ShowHTML(' .hl{text-decoration:none;font:Arial;color="#0000FF"} ');
-  ShowHTML(' .hl:HOVER{text-decoration: underline;} ');
-  ShowHTML(' .ttm{font: 10pt Arial}');
-  ShowHTML(' .btm{font: 8pt Verdana}');
-  ShowHTML(' .xtm{font: 12pt Verdana}');
-  ShowHtml(' .sti {font-size: 8pt; border: 1px solid #000000; background-color: #F5F5F5}');
-  ShowHtml(' .stb {font-size: 8pt; color: #FFFFFF; border: 1px solid #000000; background-color: #669966; }');
-  ShowHTML('</style> ');
+  ShowHTML('<link rel="stylesheet" type="text/css" href="'.$conRootSIW.'classes/menu/xPandMenu.css">');
   ShowHTML('</HEAD>');
   ShowHTML('<body topmargin=0 leftmargin=10 onLoad="document.Form.Login1.focus();">');
   ShowHTML('<form method="post" action="Default.php" onsubmit="return(Validacao(this));" name="Form"> ');
@@ -285,17 +274,6 @@ function LogOn()
   ShowHTML('  </tr> ');
   ShowHTML('</table>');
   ShowHTML('</form> ');
-  /*
-  ScriptOpen('Javascript');
-  ShowHTML('  if (navigator.appVersion.search(\'MSIE 6.0\') == -1) {');
-  ShowHTML('    alert(\'Este sistema exige a utilização do MS-Internet Explorer 6, Service Pack 1, ou superior.\\nAtualize a versão antes de iniciar sua utilização.\'); ');
-  ShowHTML('    document.Form.Login1.readonly=true; ');
-  ShowHTML('    document.Form.Password1.disabled=true; ');
-  ShowHTML('    document.Form.Botao[0].disabled=true; ');
-  ShowHTML('    document.Form.Botao[1].disabled=true; ');
-  ShowHTML('  }');
-  ScriptClose();
-  */
   ShowHTML('</body>');
   ShowHTML('</html>');
 }

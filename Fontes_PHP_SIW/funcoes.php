@@ -131,9 +131,9 @@ function MontaBarra($p_link,$p_PageCount,$p_AbsolutePage,$p_PageSize,$p_RecordCo
   ShowHTML(MontaFiltro("POST"));
   if ($p_PageSize<$p_RecordCount) {
     if ($p_PageCount==$p_AbsolutePage) {
-      ShowHTML('<span class="btm"><br>'.($p_RecordCount-(($p_PageCount-1)*$p_PageSize)).' linhas apresentadas de '.$p_RecordCount.' linhas');
+      ShowHTML('<span class="STC"><br>'.($p_RecordCount-(($p_PageCount-1)*$p_PageSize)).' linhas apresentadas de '.$p_RecordCount.' linhas');
     } else {
-      ShowHTML('<span class="btm"><br>'.$p_PageSize.' linhas apresentadas de '.$p_RecordCount.' linhas');
+      ShowHTML('<span class="STC"><br>'.$p_PageSize.' linhas apresentadas de '.$p_RecordCount.' linhas');
     }
     ShowHTML('<br>na página '.$p_AbsolutePage.' de '.$p_PageCount.' páginas');
     if ($p_AbsolutePage>1) {
@@ -2031,8 +2031,8 @@ function RetornaMenu($p_cliente,$p_sigla) {
   if ($_REQUEST['w_menu']>'') {
     $RetornaMenu=$_REQUEST['w_menu'];
   } else {
-     $RS = DB_GetMenuCode($p_cliente, $p_sigla);
-     return $RS['SQ_MENU'];
+     $RS = db_getMenuCode::getInstanceOf($dbms, $p_cliente, $p_sigla);
+     return f($RS,'SQ_MENU');
   }
 }
 
@@ -2724,23 +2724,9 @@ function LimpaMascara($Campo) {
 // Cria a tag Body
 function BodyOpen($cProperties) {
    extract($GLOBALS);
+   ShowHTML('<link rel="stylesheet" type="text/css" href="'.$conRootSIW.'classes/menu/xPandMenu.css">');
    if ($_SESSION['P_CLIENTE']=='6761') { ShowHTML('<body Text="'.$conBodyText.'" '.$cProperties.'> '); }
    else {
-      ShowHTML('<BASEFONT FACE="Verdana" SIZE="2">');
-      ShowHTML('<style> ');
-      ShowHTML(' .SS{text-decoration:none;font:bold 8pt} ');
-      ShowHTML(' .SS:HOVER{text-decoration: underline;} ');
-      ShowHTML(' .HL{text-decoration:none;font:Arial;color="#0000FF"} ');
-      ShowHTML(' .HL:HOVER{text-decoration: underline;} ');
-      ShowHTML(' .TTM{font: 10pt Arial}');
-      ShowHTML(' .BTM{font: 8pt Verdana}');
-      ShowHTML(' .XTM{font: 12pt Verdana}');
-      ShowHTML(' .STI {font-size: 8pt; border: 1px solid #000000; background-color: #F5F5F5}');
-      ShowHTML(' .STB {font-size: 8pt; color: #000000; border: 1pt solid #000000; background-color: #C0C0C0; }');
-      ShowHTML(' .STS {font-size: 8pt; border-top: 1px solid #000000; background-color: #F5F5F5}');
-      ShowHTML(' .STR {font-size: 8pt; border-top: 0px}');
-      ShowHTML(' .STC {font-size: 8pt; border-top: 0px}');
-      ShowHTML('</style> ');
       ShowHTML('<body Text="'.$conBodyText.'" Link="'.$conBodyLink.'" Alink="'.$conBodyALink.'" '.
             'Vlink="'.$conBodyVLink.'" Bgcolor="'.$conBodyBgColor.'" Background="'.$conBodyBackground.'" ' .
             'Bgproperties="'.$conBodyBgproperties.'" Topmargin="'.$conBodyTopmargin .'" ' .
@@ -2750,23 +2736,9 @@ function BodyOpen($cProperties) {
 
 function BodyOpenImage($cProperties, $cImage, $cFixed) {
    extract($GLOBALS);
+   ShowHTML('<link rel="stylesheet" type="text/css" href="'.$conRootSIW.'classes/menu/xPandMenu.css">');
    if ($_SESSION['P_CLIENTE']=='6761') { ShowHTML('<body Text="'.$conBodyText.'" '.$cProperties.'> '); }
    else {
-      ShowHTML('<BASEFONT FACE="Verdana" SIZE="2">');
-      ShowHTML('<style> ');
-      ShowHTML(' .SS{text-decoration:none;font:bold 8pt} ');
-      ShowHTML(' .SS:HOVER{text-decoration: underline;} ');
-      ShowHTML(' .HL{text-decoration:none;font:Arial;color="#0000FF"} ');
-      ShowHTML(' .HL:HOVER{text-decoration: underline;} ');
-      ShowHTML(' .TTM{font: 10pt Arial}');
-      ShowHTML(' .BTM{font: 8pt Verdana}');
-      ShowHTML(' .XTM{font: 12pt Verdana}');
-      ShowHTML(' .STI {font-size: 8pt; border: 1px solid #000000; background-color: #F5F5F5}');
-      ShowHTML(' .STB {font-size: 8pt; color: #000000; border: 1pt solid #000000; background-color: #C0C0C0; }');
-      ShowHTML(' .STS {font-size: 8pt; border-top: 1px solid #000000; background-color: #F5F5F5}');
-      ShowHTML(' .STR {font-size: 8pt; border-top: 0px}');
-      ShowHTML(' .STC {font-size: 8pt; border-top: 0px}');
-      ShowHTML('</style> ');
       ShowHTML('<body Text="'.$conBodyText.'" Link="'.$conBodyLink.'" Alink="'.$conBodyALink.'" '.
             'Vlink="'.$conBodyVLink.'" Bgcolor="'.$conBodyBgcolor.'" Background="'.$cImage.'" ' .
             'Bgproperties="'.$cFixed.'" Topmargin="'.$conBodyTopmargin .'" ' .
@@ -2780,16 +2752,7 @@ function ShowHtml($Line) { print $Line.chr(13).chr(10); }
 // Cria a tag Body
 function BodyOpenClean($cProperties) {
   extract($GLOBALS);
-  ShowHTML('<BASEFONT FACE="Verdana" SIZE="2"> ');
-  ShowHTML('<style> ');
-  ShowHTML(' .SS{text-decoration:none;font:bold 8pt} ');
-  ShowHTML(' .SS:HOVER{text-decoration: underline;} ');
-  ShowHTML(' .HL{text-decoration:none;font:Arial;color="#0000FF"} ');
-  ShowHTML(' .HL:HOVER{text-decoration: underline;} ');
-  ShowHTML(' .TTM{font: 10pt Arial}');
-  ShowHTML(' .BTM{font: 8pt Verdana}');
-  ShowHTML(' .XTM{font: 12pt Verdana}');
-  ShowHTML('</style> ');
+  ShowHTML('<link rel="stylesheet" type="text/css" href="'.$conRootSIW.'classes/menu/xPandMenu.css">');
   ShowHTML('<body Text="'.$conBodyText.'" Link="'.$conBodyLink.'" Alink="'.$conBodyALink.'" '.
   'Vlink="'.$conBodyVLink.'" Bgcolor="'.$conBodyBgColor.'" Background="'.$conBodyBackground.'" '.
   'Bgproperties="'.$conBodyBgproperties.'" Topmargin="'.$conBodyTopmargin.'" '.
@@ -2799,16 +2762,7 @@ function BodyOpenClean($cProperties) {
 // Cria a tag Body
 function BodyOpenMail($cProperties) {
   extract($GLOBALS);
-  $l_html='<BASEFONT FACE="Verdana" SIZE="2"> '.'\r\n';
-  $l_html=$l_html.'<style> '.'\r\n';
-  $l_html=$l_html.' .SS{text-decoration:none;font:bold 8pt} '.'\r\n';
-  $l_html=$l_html.' .SS:HOVER{text-decoration: underline;} '.'\r\n';
-  $l_html=$l_html.' .HL{text-decoration:none;font:Arial;color="#0000FF"} '.'\r\n';
-  $l_html=$l_html.' .HL:HOVER{text-decoration: underline;} '.'\r\n';
-  $l_html=$l_html.' .TTM{font: 10pt Arial}'.'\r\n';
-  $l_html=$l_html.' .BTM{font: 8pt Verdana}'.'\r\n';
-  $l_html=$l_html.' .XTM{font: 12pt Verdana}'.'\r\n';
-  $l_html=$l_html.'</style> '.'\r\n';
+  $l_html=$l_html.'<link rel="stylesheet" type="text/css" href="'.$conRootSIW.'classes/menu/xPandMenu.css">';
   $l_html=$l_html.'<body Text="'.$conBodyText.'" Link="'.$conBodyLink.'" Alink="'.$conBodyALink.'" '.
     'Vlink="'.$conBodyVLink.'" Bgcolor="'.$conBodyBgcolor.'" Background="'.$conBodyBackground.'" '.
     'Bgproperties="'.$conBodyBgproperties.'" Topmargin="'.$conBodyTopmargin.'" '.
