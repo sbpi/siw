@@ -495,7 +495,6 @@ Fontes_ASP_SIW/results.asp -text
 Fontes_PHP_SIW/branco.htm -text
 Fontes_PHP_SIW/classes/array/arr_multisort.class.php -text
 Fontes_PHP_SIW/classes/db/ConnectionManager.php -text
-Fontes_PHP_SIW/classes/db/ConnectionManagerExample.php -text
 Fontes_PHP_SIW/classes/db/ConnectionManagerFactory.php -text
 Fontes_PHP_SIW/classes/db/DBTypes.php -text
 Fontes_PHP_SIW/classes/db/DatabaseQueries.php -text
