@@ -78,7 +78,7 @@ function Frames() {
   ShowHTML('    <FRAMESET COLS="20%,80%"> ');
   ShowHTML('     <FRAME SRC="menu.php?par=ExibeDocs" SCROLLING="AUTO" FRAMEBORDER="0" FRAMESPACING=0 NAME="menu"> ');
   if ($cliente=='' || $cliente==1) {
-    ShowHTML('     <FRAME SRC="branco.htm" FRAMEBORDER="0" NAME="content"> ');
+    ShowHTML('     <FRAME SRC="branco.htm" FRAMEBORDER="0" SCROLLING="AUTO"  FRAMEBORDER="0" FRAMESPACING=0 NAME="content"> ');
   } else {
     ShowHTML('     <FRAME SRC="" SCROLLING="AUTO" FRAMEBORDER="0" NAME="content"> ');
   }
@@ -109,8 +109,7 @@ function ExibeDocs() {
   if ($SG=='' || ($SG > '' && $O == 'L')) {
 
     $RS = db_getLinkDataUser::getInstanceOf($dbms, $p_cliente, $sq_pessoa, 'IS NULL');
-    if(!$RS->executeQuery()) { die("Cannot query"); }
-    while($row = $RS->getResultArray()) {
+    foreach ($RS as $row) {
       
       $w_Titulo = f($row,'nome');
 
@@ -119,16 +118,14 @@ function ExibeDocs() {
         eval('$node'.i.' = &$root->addItem(new XNode(f($row,\'nome\'),false));');
 
         $RS1 = DB_GetLinkDataUser::getInstanceOf($dbms, $p_cliente, $sq_pessoa, f($row,'sq_menu'));
-        if(!$RS1->executeQuery()) { die("Cannot query"); }
-        while($row1 = $RS1->getResultArray()) {
+        foreach ($RS1 as $row1) {
           $w_Titulo=$w_Titulo.' - '.f($row1,'NOME');
           if (f($row1,'Filho') >0) {
 
             eval('$node'.i.'_'.j.' = &$node'.i.'->addItem(new XNode(f($row1,\'nome\'),false));');
 
             $RS2 = DB_GetLinkDataUser::getInstanceOf($dbms, $p_cliente, $sq_pessoa, f($row1,'sq_menu'));
-            if(!$RS2->executeQuery()) { die("Cannot query"); }
-            while($row2 = $RS2->getResultArray()) {
+            foreach ($RS2 as $row2) {
 
               $w_Titulo=$w_Titulo.' - '.f($row2,'NOME');
               if (f($row2,'Filho') > 0) {
@@ -136,8 +133,7 @@ function ExibeDocs() {
                 eval('$node'.i.'_'.j.'_'.k.' = &$node'.i.'_'.j.'->addItem(new XNode(f($row2,\'nome\'),false));');
 
                 $RS3 = DB_GetLinkDataUser::getInstanceOf($dbms, $p_cliente, $sq_pessoa, f($row2,'sq_menu'));
-                if(!$RS3->executeQuery()) { die("Cannot query"); }
-                while($row3 = $RS3->getResultArray()) {
+                foreach ($RS3 as $row3) {
 
                   $w_Titulo=$w_Titulo.' - '.f($row3,'NOME');
                   if (f($row3,'IMAGEM') > '') $w_Imagem=f($row3,'IMAGEM'); else $w_Imagem=$w_ImagemPadrao;
@@ -148,7 +144,6 @@ function ExibeDocs() {
  
                   $w_Titulo=str_replace(' - '.f($row3,'NOME'),'',$w_Titulo);
                   $l = $l + 1;
-                  next($RS3);
                 }
               } else {
                 if (f($row2,'IMAGEM')>'') $w_Imagem=f($row2,'IMAGEM'); else $w_Imagem=$w_ImagemPadrao;
@@ -162,7 +157,6 @@ function ExibeDocs() {
 
               $w_Titulo=str_replace(' - '.f($row2,'NOME'),'',$w_Titulo);
               $k = $k + 1;
-              next($RS2);
             }
           } else {
 
@@ -181,7 +175,6 @@ function ExibeDocs() {
           }
           $w_Titulo=str_replace(' - '.f($row1,'NOME'),'',$w_Titulo);
           $j = $j + 1;
-          next($RS1);
         }
       } else {
         if (f($row,'IMAGEM')>'') $w_Imagem=f($row,'IMAGEM'); else $w_Imagem=$w_ImagemPadrao;
@@ -192,7 +185,6 @@ function ExibeDocs() {
            eval('$node'.i.' = &$root->addItem(new XNode(f($row,\'nome\'),f($row,\'LINK\').\'&P1=\'.f($row,\'P1\').\'&P2=\'.f($row,\'P2\').\'&P3=\'.f($row,\'P3\').\'&P4=\'.f($row,\'P4\').\'&TP=<img src=\'.$w_Imagem.\' BORDER=0>\'.$w_Titulo.\'&SG=\'.f($row,\'SIGLA\'),$w_Imagem,$w_Imagem,f($row,\'target\')));');
       }
       $i = $i +1;
-      next($RS);
     }
   } else {
     // Se for montagem de sub-menu para uma opção do menu principal
@@ -209,7 +201,7 @@ function ExibeDocs() {
 
     $RS = db_getLinkSubMenu::getInstanceOf($dbms, $p_cliente, $SG);
     if(!$RS->executeQuery()) { die("Cannot query"); }
-    while($row = $RS->getResultArray()) {
+    foreach ($RS as $row) {
       $w_Titulo = $TP.' - '.f($row,'NOME');
       if (f($row,'IMAGEM') > '') $w_Imagem=f($row,'IMAGEM'); else $w_Imagem=$w_ImagemPadrao; 
       if (f($row,'externo')=='S')
@@ -229,7 +221,6 @@ function ExibeDocs() {
       if (${'O'}=='I') last($RS);
 
       $i = $i +1;
-      next($RS);
     }
     DesconectaBD();
     $RS = db_getLinkData::getInstanceOf($dbms, $p_cliente, $SG);
@@ -313,10 +304,11 @@ function ExibeDocs() {
   ShowHTML('          </table>');
   ShowHTML('      <tr><td height=1><tr><td height=2 bgcolor="#000000">');
   ShowHTML('  </table></CENTER>');
-
+  ShowHTML('  <table border=0 cellpadding=0 height="80" width="100%"><tr><td nowrap><b>');
   ShowHTML('  <div id="container">');
   echo $menu_html_code;
   ShowHTML('  </div>');
+  ShowHTML('  </table>');
   ShowHTML('</body>');
   ShowHTML('</html>');
 }

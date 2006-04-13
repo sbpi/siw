@@ -53,7 +53,7 @@ $O          = strtoupper($_REQUEST["O"]);
 $w_troca    = strtoupper($_REQUEST["w_troca"]);
 
 $w_Assinatura   = strtoupper(${"w_Assinatura"});
-$w_Pagina       = "help.php?par=";
+$w_pagina       = "help.php?par=";
 $w_Disabled     = "ENABLED";
 
 $w_cliente  = RetornaCliente();
@@ -96,10 +96,8 @@ function Help() {
 
   $w_objetivo_espec = 'Não informado';
   $RS = db_getSegModData::getInstanceOf($dbms, $w_segmento, $w_modulo);
-  if(!($row = $RS->executeQuery())) { die("Cannot query"); }
-  while($row = $RS->getResultArray()) {
+  foreach ($RS as $row) {
     $w_objetivo_espec = f($row,'objetivo_especif');
-    next($RS);
   }
 
   Cabecalho();
@@ -326,7 +324,6 @@ function Menu() {
   if ($O=='L') {
      // Recupera os módulos contratados pelo cliente
      $RS = db_getSiwCliModLis::getInstanceOf($dbms, $w_cliente, null);
-     if(!$RS->executeQuery()) { die('Cannot query'); }
   }
   
   Cabecalho();
@@ -340,7 +337,7 @@ function Menu() {
   ShowHTML('<table border="0" width="100%" cellpadding="0" cellspacing="0" >');
   if ($O=="L") {
     // Exibe a quantidade de registros apresentados na listagem e o cabeçalho da tabela de listagem
-    ShowHTML('<tr><td align="right"><b>Registros existentes: '.$RS->num_rows);
+    ShowHTML('<tr><td align="right"><b>Registros existentes: '.count($RS));
     ShowHTML('<tr><td align="center" colspan=3>');
     ShowHTML('    <TABLE WIDTH="100%" bgcolor='.$conTableBgColor.' BORDER='.$conTableBorder.' CELLSPACING='.$conTableCellSpacing.' CELLPADDING='.$conTableCellPadding.' BorderColorDark='.$conTableBorderColorDark.' BorderColorLight='.$conTableBorderColorLight.'>');
     ShowHTML('        <tr bgcolor='.$conTrBgColor.' align="center">');
@@ -348,20 +345,19 @@ function Menu() {
     ShowHTML('          <td><b>Objetivo geral</td>');
     ShowHTML('          <td><b>Operações</td>');
     ShowHTML('        </tr>');
-    if ($RS->num_rows <= 0) {
+    if (count($RS) <= 0) {
         ShowHTML('      <tr bgcolor="'.$conTrBgColor.'"><td colspan=6 align="center"><font  size="2"><b>Nenhum registro encontrado.</b></td></tr>');
     } else {
       // Lista os registros selecionados para listagem
-      while($row = $RS->getResultArray()) {
+      foreach ($RS as $row) {
         if ($w_cor==$conTrBgColor || $w_cor=='') $w_cor=$conTrAlternateBgColor; else $w_cor=$conTrBgColor;
         ShowHTML('      <tr bgcolor="'.$w_cor.'" valign="top">');
         ShowHTML('        <td nowrap>'.f($row,'nome').'</td>');
         ShowHTML('        <td>'.f($row,'objetivo_geral').'</td>');
         ShowHTML('        <td nowrap>');
-        ShowHTML('          <A class="HL" HREF="'.$w_Pagina.'Inicial&R='.$w_Pagina.$par.'&O=L&w_sq_modulo='.f($row,'sq_modulo').'&P1=1&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP='.$TP.'&SG='.$SG.'">Detalhar</A> ');
+        ShowHTML('          <A class="HL" HREF="'.$w_pagina.'Inicial&R='.$w_pagina.$par.'&O=L&w_sq_modulo='.f($row,'sq_modulo').'&P1=1&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP='.$TP.'&SG='.$SG.'">Detalhar</A> ');
         ShowHTML('        </td>');
         ShowHTML('      </tr>');
-        next($RS);
       } 
     }
     ShowHTML('      </center>');

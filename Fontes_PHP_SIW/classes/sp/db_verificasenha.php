@@ -4,7 +4,7 @@ include_once("classes/db/DatabaseQueriesFactory.php");
 * class sp_verificaSenha
 *
 * { Description :- 
-*    This class verifies the existence of a user, his password, and if his account is blocked
+*    Verifica se o usuário e senha informados estão corretos, e se o usuário está ativo.
 * }
 */
 
@@ -26,4 +26,4 @@ class db_verificaSenha {
      }
    }
 }    
-?>
+?>

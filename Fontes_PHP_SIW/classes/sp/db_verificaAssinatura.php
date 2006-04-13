@@ -4,7 +4,7 @@ include_once("classes/db/DatabaseQueriesFactory.php");
 * class db_verificaAssinatura
 *
 * { Description :- 
-*    This class verifies the existence of a user, his password, and if his account is blocked
+*    Verifica se o usuário existe, se está ativo e se a assinatura eletrônica está correta.
 * }
 */
 

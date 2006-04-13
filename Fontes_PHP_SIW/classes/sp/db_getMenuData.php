@@ -1,17 +1,17 @@
 <?
 include_once("classes/db/DatabaseQueriesFactory.php");
 /**
-* class db_getCustomerSite
+* class db_getMenuData
 *
 * { Description :- 
-*    Retorna os dados do cliente indicado.
+*    Retorna os dados de uma opção do menu a partir da sigla.
 * }
 */
 
-class db_getCustomerSite {
-   function getInstanceOf($dbms, $p_cliente) {
-     $sql='sp_getCustomerSite';
-     $params=array("p_cliente"  =>array($p_cliente,     B_NUMERIC,   null),
+class db_getMenuData {
+   function getInstanceOf($dbms, $p_chave) {
+     $sql='sp_getMenuData';
+     $params=array("p_chave"    =>array($p_chave,       B_NUMERIC,     32),
                    "p_result"   =>array(null,           B_CURSOR,      -1)
                   );
      $l_rs = DatabaseQueriesFactory::getInstanceOf($sql, $dbms, $params, DB_TYPE);

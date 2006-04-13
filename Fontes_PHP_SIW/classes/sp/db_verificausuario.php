@@ -4,7 +4,7 @@ include_once("classes/db/DatabaseQueriesFactory.php");
 * class db_verificaUsuario
 *
 * { Description :- 
-*    This class verifies the existence of a user, and if his account is blocked
+*    Verifica se o usuário existe e se está ativo.
 * }
 */
 
@@ -23,4 +23,4 @@ class db_verificaUsuario {
      }
    }
 }    
-?>
+?>

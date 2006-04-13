@@ -18,7 +18,7 @@ class db_getSegModData {
      $l_rs = DatabaseQueriesFactory::getInstanceOf($sql, $dbms, $params, DB_TYPE);
      if(!$l_rs->executeQuery()) { die("Cannot query"); }
      else {
-        return DatabaseQueriesFactory::getInstanceOf($sql, $dbms, $params, $DB_TYPE);
+        return $l_rs->getResultData();
      }
    }
 }    

@@ -94,8 +94,7 @@ function Consulta() {
     if ($_POST['p_cnpj']>"")     $SQL="select cgccpf, nome from corporativo.gn_pessoas@sicof where cgccpf = '".$_POST['p_cnpj']."'";
     if ($_POST['p_cpf']>"")      $SQL="select cgccpf, nome from corporativo.gn_pessoas@sicof where cgccpf = '".$_POST['p_cpf']."'";
     $RS = DatabaseQueriesFactory::getInstanceOf($SQL, $dbms, null, DB_TYPE);
-    if(!$RS->executeQuery()) { die("Cannot query"); }
-    else { $row = $RS->getResultArray();}
+    $row = $RS->getResultArray();
   } 
 
 
@@ -198,7 +197,7 @@ function Consulta() {
     if ($_POST['p_ctcc']>"") {
       $SQL="select nome from corporativo.ct_cc@sicof where handle = ".$_POST['p_ctcc'];
       $RS = DatabaseQueriesFactory::getInstanceOf($SQL, $dbms, null, DB_TYPE);
-      if(!$RS->executeQuery()) { die("Cannot query"); }
+      $RS->getResultArray();
       ShowHTML('<li>Projeto: <b>'.f($RS,'nome').'</b>');
       DesconectaBD();
     } 
@@ -293,11 +292,11 @@ function Consulta() {
       ShowHTML('      <tr><td align="center" colspan="2" height="1" bgcolor="#000000">');
       ShowHTML('      <tr><td align="center" colspan="2" height="2" bgcolor="#000000">');
       $RS = DatabaseQueriesFactory::getInstanceOf($SQL, $dbms, null, DB_TYPE);
-      if(!$RS->executeQuery()) { die("Cannot query"); }
-      if ($RS->num_rows <= 0) {
+      if(!$RS->executeQuery()) die("Cannot query"); else $RS = $RS->getResultData();
+      if (count($RS) <= 0) {
         ShowHTML('      <tr bgcolor="'.$conTrBgColor.'"><td colspan=7 align="center"><font  size="2"><b>Nenhum registro encontrado.</b></td></tr>');
       } else {
-        ShowHTML('      <tr><td align="right" colspan="2"><font size="1"><b>Registros: '.$RS->num_rows);
+        ShowHTML('      <tr><td align="right" colspan="2"><font size="1"><b>Registros: '.count($RS));
         ShowHTML('      <tr><td align="center" colspan="2">');
         ShowHTML('        <TABLE WIDTH="100%" bgcolor="'.$conTableBgColor.'" BORDER="'.$conTableBorder.'" CELLSPACING="'.$conTableCellSpacing.'" CELLPADDING="'.$conTableCellPadding.'" BorderColorDark="'.$conTableBorderColorDark.'" BorderColorLight="'.$conTableBorderColorLight.'">');
         ShowHTML('          <tr bgcolor="'.$conTrBgColor.'" align="center">');
@@ -315,7 +314,7 @@ function Consulta() {
         ShowHTML('          </tr>');
 
         $w_total=0;
-        while($row = $RS->getResultArray()) {
+        foreach ($RS as $row) {
           ShowHTML('      <tr bgcolor="'.$conTrBgColor.'" valign="top">');
           ShowHTML('        <td nowrap><font size="1"><a class="HL" href="https://honda.unesco.org.br/pls/seguranca/Frm_SA.Visualizar?p_usuario=167&p_Documento=111800&p_Acesso=C&p_Nro_Doc='.f($row,'documento').'&P1=0&P2=0&P3=0&TP=Consultar&p_ValidaTempo=Nao">'.f($row,'documento').'</a>');
           ShowHTML('        <td><font size="1">'.f($row,'nome').'</td>');
@@ -327,7 +326,6 @@ function Consulta() {
           ShowHTML('        <td><font size="1">'.f($row,'fase_atual').'</td>');
           ShowHTML('      </tr>');
           $w_total = $w_total + f($row,'totcontratacao');
-          next($RS);
         } 
       } 
 
@@ -379,11 +377,11 @@ function Consulta() {
       ShowHTML('      <tr><td align="center" colspan="2" height="1" bgcolor="#000000">');
       ShowHTML('      <tr><td align="center" colspan="2" height="2" bgcolor="#000000">');
       $RS = DatabaseQueriesFactory::getInstanceOf($SQL, $dbms, null, DB_TYPE);
-      if(!$RS->executeQuery()) { die("Cannot query"); }
-      if ($RS->num_rows <= 0) {
+      if(!$RS->executeQuery()) die("Cannot query"); else $RS = $RS->getResultData();
+      if (count($RS) <= 0) {
         ShowHTML('      <tr bgcolor="'.$conTrBgColor.'"><td colspan=7 align="center"><font  size="2"><b>Nenhum registro encontrado.</b></td></tr>');
       } else {
-        ShowHTML('      <tr><td align="right" colspan="2"><font size="1"><b>Registros: '.$RS->num_rows);
+        ShowHTML('      <tr><td align="right" colspan="2"><font size="1"><b>Registros: '.count($RS));
         ShowHTML('      <tr><td align="center" colspan="2">');
         ShowHTML('        <TABLE WIDTH="100%" bgcolor="'.$conTableBgColor.'" BORDER="'.$conTableBorder.'" CELLSPACING="'.$conTableCellSpacing.'" CELLPADDING="'.$conTableCellPadding.'" BorderColorDark="'.$conTableBorderColorDark.'" BorderColorLight="'.$conTableBorderColorLight.'">');
         ShowHTML('          <tr bgcolor="'.$conTrBgColor.'" align="center">');
@@ -398,19 +396,18 @@ function Consulta() {
         ShowHTML('          </tr>');
 
         $w_total=0;
-        while($row = $RS->getResultArray()) {
+        foreach ($RS as $row) {
           ShowHTML('      <tr bgcolor="'.$conTrBgColor.'" valign="top">');
           ShowHTML('        <td nowrap><font size="1"><a class="HL" href="https://honda.unesco.org.br/pls/seguranca/Frm_SP.Visualizar?p_usuario=167&p_Documento=111800&p_Acesso=C&p_Nro_Doc='.f($row,'documento').'&P1=0&P2=0&P3=0&TP=Consultar&p_ValidaTempo=Nao">'.f($row,'documento').'</a>');
           ShowHTML('        <td nowrap><font size="1">');
           $SQL="select numerodoc from corporativo.un_sol_pgto_doc_anexos@sicof a where a.automatico_sp = '".f($row,'handle')."' order by a.numerodoc ";
           $RS1 = DatabaseQueriesFactory::getInstanceOf($SQL, $dbms, null, DB_TYPE);
-          if(!$RS1->executeQuery()) { die("Cannot query"); }
-          if ($RS1->num_rows <= 0) {
+          if(!$RS1->executeQuery()) die("Cannot query"); else $RS1 = $RS1->getResultData();
+          if (count($RS1) <= 0) {
             print '---';
           } else {
-            while($row1 = $RS1->getResultArray()) {
+            foreach ($RS1 as $row1) {
               print f($row1,'numerodoc').'&nbsp;<br>';
-              next($RS1);
             } 
           } 
           ShowHTML('            </td>');
@@ -422,7 +419,6 @@ function Consulta() {
           ShowHTML('        <td><font size="1">'.f($row,'fase_atual').'</td>');
           ShowHTML('      </tr>');
           $w_total = $w_total + f($row,'valor');
-          next($RS);
         } 
         ShowHTML('      <tr bgcolor="'.$conTrBgColor.'" valign="top">');
         ShowHTML('        <td colspan=5 align="right"><font size="1"><b>Total</b></font></td>');
@@ -468,11 +464,11 @@ function Consulta() {
       ShowHTML('      <tr><td align="center" colspan="2" height="1" bgcolor="#000000">');
       ShowHTML('      <tr><td align="center" colspan="2" height="2" bgcolor="#000000">');
       $RS = DatabaseQueriesFactory::getInstanceOf($SQL, $dbms, null, DB_TYPE);
-      if(!$RS->executeQuery()) { die("Cannot query"); }
-      if ($RS->num_rows <= 0) {
+      if(!$RS->executeQuery()) die("Cannot query"); else $RS = $RS->getResultData();
+      if (count($RS) <= 0) {
         ShowHTML('      <tr bgcolor="'.$conTrBgColor.'"><td colspan=7 align="center"><font  size="2"><b>Nenhum registro encontrado.</b></td></tr>');
       } else {
-        ShowHTML('      <tr><td align="right" colspan="2"><font size="1"><b>Registros: '.$RS->num_rows);
+        ShowHTML('      <tr><td align="right" colspan="2"><font size="1"><b>Registros: '.count($RS));
         ShowHTML('      <tr><td align="center" colspan="2">');
         ShowHTML('        <TABLE WIDTH="100%" bgcolor="'.$conTableBgColor.'" BORDER="'.$conTableBorder.'" CELLSPACING="'.$conTableCellSpacing.'" CELLPADDING="'.$conTableCellPadding.'" BorderColorDark="'.$conTableBorderColorDark.'" BorderColorLight="'.$conTableBorderColorLight.'">');
         ShowHTML('          <tr bgcolor="'.$conTrBgColor.'" align="center">');
@@ -488,7 +484,7 @@ function Consulta() {
         ShowHTML('            <td><font size="2"><b>Término</font></td>');
         ShowHTML('          </tr>');
 
-        while($row = $RS->getResultArray()) {
+        foreach ($RS as $row) {
           ShowHTML('      <tr bgcolor="'.$conTrBgColor.'" valign="top">');
           ShowHTML('        <td nowrap><font size="1"><a class="HL" href="https://honda.unesco.org.br/pls/seguranca/Frm_SPD.Visualizar?p_usuario=167&p_Documento=111800&p_Acesso=C&p_Nro_Doc='.f($row,'documento').'&P1=0&P2=0&P3=0&TP=Consultar&p_ValidaTempo=Nao">'.f($row,'documento').'</a>');
           ShowHTML('        <td><font size="1">'.f($row,'nome').'</td>');
@@ -498,7 +494,6 @@ function Consulta() {
           if ($_POST['p_documento']=="") ShowHTML('        <td><font size="1">'.f($row,'historico').'</td>');
           ShowHTML('        <td><font size="1">'.f($row,'fase_atual').'</td>');
           ShowHTML('      </tr>');
-          next($RS);
         } 
       } 
       ShowHTML('         </table></td></tr>');
@@ -521,10 +516,10 @@ function Consulta() {
     ShowHTML('<tr bgcolor="'.$conTrBgColor.'"><td align="center">');
     ShowHTML('    <table width="70%" border="0">');
     ShowHTML('      <tr valign="top"><td valign="top"><font  size="1">');
-    ShowHTML('            <b>Pr<U>o</U>curar nome:<br> <INPUT TYPE="TEXT" ACCESSKEY="O" class="BTM" name="p_beneficiario" size=40 maxlength=40>');
-    ShowHTML('            <input class="BTM" type="button" name="Procura" value="Procura" onClick="procura()">');
+    ShowHTML('            <b>Pr<U>o</U>curar nome:<br> <INPUT TYPE="TEXT" ACCESSKEY="O" class="STI" name="p_beneficiario" size=40 maxlength=40>');
+    ShowHTML('            <input class="STB" type="button" name="Procura" value="Procura" onClick="procura()">');
 
-    ShowHTML('      <tr valign="top"><td valign="top"><font  size="1"><b><U>B</U>eneficiário:<br> <SELECT ACCESSKEY="B" class="BTM" name="p_sq_pessoa" size="1">');
+    ShowHTML('      <tr valign="top"><td valign="top"><font  size="1"><b><U>B</U>eneficiário:<br> <SELECT ACCESSKEY="B" class="STS" name="p_sq_pessoa" size="1">');
     ShowHTML('          <OPTION VALUE="">---');
 
     if ($_POST['p_beneficiario']>"") {
@@ -533,51 +528,49 @@ function Consulta() {
       $SQL="select * from corporativo.gn_pessoas@sicof where handle < 0";
     } 
     $RS = DatabaseQueriesFactory::getInstanceOf($SQL, $dbms, null, DB_TYPE);
-    if(!$RS->executeQuery()) { die("Cannot query"); }
-    while($row = $RS->getResultArray()) {
+    if(!$RS->executeQuery()) die("Cannot query"); else $RS = $RS->getResultData();
+    foreach ($RS as $row) {
       if (f($row,'handle')==$_POST['p_sq_pessoa']) {
         ShowHTML('          <OPTION VALUE='.f($row,'handle').' selected>'.f($row,'nome'));
       } else {
         ShowHTML('          <OPTION VALUE='.f($row,'handle').'>'.f($row,'nome'));
       } 
-      Next($RS);
     } 
     ShowHTML('          </SELECT></td>');
     ShowHTML('      </tr>');
 
-    ShowHTML('      <tr valign="top"><td valign="top"><font  size="1"><b>Pro<U>j</U>eto:<br> <SELECT ACCESSKEY="J" class="BTM" name="p_ctcc" size="1">');
+    ShowHTML('      <tr valign="top"><td valign="top"><font  size="1"><b>Pro<U>j</U>eto:<br> <SELECT ACCESSKEY="J" class="STS" name="p_ctcc" size="1">');
     ShowHTML('          <OPTION VALUE="">---');
 
     $SQL="select a.HANDLE, a.NOME, a.CODIGOUNESCO, a.INICIO, a.TERMINO from CORPORATIVO.CT_CC@sicof a where a.ultimonivel='S' order by a.nome";
     $RS = DatabaseQueriesFactory::getInstanceOf($SQL, $dbms, null, DB_TYPE);
-    if(!$RS->executeQuery()) { die("Cannot query"); }
-    while($row = $RS->getResultArray()) {
+    if(!$RS->executeQuery()) die("Cannot query"); else $RS = $RS->getResultData();
+    foreach ($RS as $row) {
       if (f($row,'handle')==$_POST['p_ctcc']) {
         ShowHTML('          <OPTION VALUE='.f($row,'handle').' selected>'.f($row,'nome'));
       } else {
         ShowHTML('          <OPTION VALUE='.f($row,'handle').'>'.f($row,'nome'));
       } 
-      Next($RS);
     } 
     ShowHTML('          </SELECT></td>');
     ShowHTML('      </tr>');
     ShowHTML('      <tr valign="top"><td valign="top"><table border=0 width="100%" cellpadding=0 cellspacing=0><tr valign="top">');
-    ShowHTML('          <td><font  size="1"><b><U>C</U>NPJ:<br> <INPUT TYPE="TEXT" ACCESSKEY="C" class="BTM" name="p_cnpj" size=18 maxlength=18 onKeyPress="FormataCNPJ(this,event);"  value="'.$_POST['p_cnpj'].'"></td>');
-    ShowHTML('          <td><font  size="1"><b>C<U>P</U>F:<br> <INPUT TYPE="TEXT" ACCESSKEY="C" class="BTM" name="p_cpf" size=14 maxlength=14 onKeyPress="FormataCPF(this,event);" value="'.$_POST['p_cpf'].'"></td>');
+    ShowHTML('          <td><font  size="1"><b><U>C</U>NPJ:<br> <INPUT TYPE="TEXT" ACCESSKEY="C" class="STI" name="p_cnpj" size=18 maxlength=18 onKeyPress="FormataCNPJ(this,event);"  value="'.$_POST['p_cnpj'].'"></td>');
+    ShowHTML('          <td><font  size="1"><b>C<U>P</U>F:<br> <INPUT TYPE="TEXT" ACCESSKEY="C" class="STI" name="p_cpf" size=14 maxlength=14 onKeyPress="FormataCPF(this,event);" value="'.$_POST['p_cpf'].'"></td>');
     ShowHTML('          </table>');
     ShowHTML('      <tr valign="top"><td valign="top"><table border=0 width="100%" cellpadding=0 cellspacing=0><tr valign="top">');
-    ShowHTML('          <td valign="top"><font  size="1"><b>SA/SP/SP<U>D</U>:</b> (identificação completa)<br> <INPUT TYPE="TEXT" ACCESSKEY="D" class="BTM" name="p_documento" size=15 maxlength=15 value="'.$_POST['p_documento'].'"></td>');
-    ShowHTML('          <td><font  size="1">Período: <b>D<U>e</U>: <INPUT TYPE="TEXT" ACCESSKEY="E" class="BTM" name="p_inicio" size=10 maxlength=10 onKeyPress="FormataData(this,event);"  value="'.$_POST['p_inicio'].'">');
-    ShowHTML('                                <U>a</U>té: <INPUT TYPE="TEXT" ACCESSKEY="A" class="BTM" name="p_fim" size=10 maxlength=10 onKeyPress="FormataData(this,event);" value="'.$_POST['p_fim'].'"></td>');
+    ShowHTML('          <td valign="top"><font  size="1"><b>SA/SP/SP<U>D</U>:</b> (identificação completa)<br> <INPUT TYPE="TEXT" ACCESSKEY="D" class="STI" name="p_documento" size=15 maxlength=15 value="'.$_POST['p_documento'].'"></td>');
+    ShowHTML('          <td><font  size="1">Período: <b>D<U>e</U>: <INPUT TYPE="TEXT" ACCESSKEY="E" class="STI" name="p_inicio" size=10 maxlength=10 onKeyPress="FormataData(this,event);"  value="'.$_POST['p_inicio'].'">');
+    ShowHTML('                                <U>a</U>té: <INPUT TYPE="TEXT" ACCESSKEY="A" class="STI" name="p_fim" size=10 maxlength=10 onKeyPress="FormataData(this,event);" value="'.$_POST['p_fim'].'"></td>');
     ShowHTML('          </table>');
     ShowHTML('      <tr valign="top"><td valign="top"><table border=0 width="100%" cellpadding=0 cellspacing=0><tr valign="top">');
-    ShowHTML('          <td><font  size="1"><b>Co<U>m</U>provante (NF/Fatura/Recibo):<br><INPUT TYPE="TEXT" ACCESSKEY="M" class="BTM" name="p_comprovante" size=10 maxlength=10 value="'.$_POST['p_comprovante'].'">');
-    ShowHTML('          <td><font  size="1">Período: <b>D<U>e</U>: <INPUT TYPE="TEXT" ACCESSKEY="E" class="BTM" name="p_inicio_nf" size=10 maxlength=10 onKeyPress="FormataData(this,event);"  value="'.$_POST['p_inicio_nf'].'">');
-    ShowHTML('                                <b><U>a</U>té: <INPUT TYPE="TEXT" ACCESSKEY="A" class="BTM" name="p_fim_nf" size=10 maxlength=10 onKeyPress="FormataData(this,event);" value="'.$_POST['p_fim_nf'].'"></td>');
+    ShowHTML('          <td><font  size="1"><b>Co<U>m</U>provante (NF/Fatura/Recibo):<br><INPUT TYPE="TEXT" ACCESSKEY="M" class="STI" name="p_comprovante" size=10 maxlength=10 value="'.$_POST['p_comprovante'].'">');
+    ShowHTML('          <td><font  size="1">Período: <b>D<U>e</U>: <INPUT TYPE="TEXT" ACCESSKEY="E" class="STI" name="p_inicio_nf" size=10 maxlength=10 onKeyPress="FormataData(this,event);"  value="'.$_POST['p_inicio_nf'].'">');
+    ShowHTML('                                <b><U>a</U>té: <INPUT TYPE="TEXT" ACCESSKEY="A" class="STI" name="p_fim_nf" size=10 maxlength=10 onKeyPress="FormataData(this,event);" value="'.$_POST['p_fim_nf'].'"></td>');
     ShowHTML('          </table>');
     ShowHTML('      <tr><td align="center" colspan="3" height="1" bgcolor="#000000">');
     ShowHTML('      <tr><td align="center" colspan="3">');
-    ShowHTML('            <input class="BTM" type="submit" name="Botao" value="Aplicar filtro">');
+    ShowHTML('            <input class="STB" type="submit" name="Botao" value="Aplicar filtro">');
     ShowHTML('          </td>');
     ShowHTML('      </tr>');
     ShowHTML('    </table>');

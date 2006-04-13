@@ -1,18 +1,21 @@
 <?
 include_once("classes/db/DatabaseQueriesFactory.php");
 /**
-* class sp_getLinkSubMenu
+* class sp_getUorgList
 *
 * { Description :- 
-*    Retorna as opções de um sub-menu concedidas ao usuário indicado.
+*    Retorna as opções do menu concedidas ao usuário indicado.
 * }
 */
 
-class db_getLinkSubMenu {
-   function getInstanceOf($dbms, $p_cliente, $p_restricao) {
-     $sql='sp_getLinkSubMenu';
+class db_getUorgList {
+   function getInstanceOf($dbms, $p_cliente, $p_chave, $p_restricao, $nome, $sigla) {
+     $sql='sp_getUorgList';
      $params=array("p_cliente"  =>array($p_cliente,     B_NUMERIC,     32),
+                   "p_chave"    =>array($p_chave,       B_NUMERIC,     32),
                    "p_restricao"=>array($p_restricao,   B_VARCHAR,     20),
+                   "p_nome"     =>array($p_nome,        B_VARCHAR,     50),
+                   "p_sigla"    =>array($p_sigla,       B_VARCHAR,     20),
                    "p_result"   =>array(null,           B_CURSOR,      -1)
                   );
      $l_rs = DatabaseQueriesFactory::getInstanceOf($sql, $dbms, $params, DB_TYPE);

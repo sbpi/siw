@@ -4,7 +4,7 @@ include_once("classes/db/DatabaseQueriesFactory.php");
 * class db_getCustomerData
 *
 * { Description :- 
-*    This class retrieves the data of the selected client
+*    Recupera os dados do cliente indicado.
 * }
 */
 
@@ -17,9 +17,8 @@ class db_getCustomerData {
      $l_rs = DatabaseQueriesFactory::getInstanceOf($sql, $dbms, $params, DB_TYPE);
      if(!$l_rs->executeQuery()) { die("Cannot query"); }
      else {
-        $l_data = $l_rs->getResultArray();
-        return $l_data;
+        return $l_rs->getResultArray();
      }
    }
 }    
-?>
+?>

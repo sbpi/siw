@@ -4,7 +4,7 @@ include_once("classes/db/DatabaseQueriesFactory.php");
 * class db_getUserData
 *
 * { Description :- 
-*    This class retrieves the data of the selected user
+*    Retorna os dados do usuário indicado.
 * }
 */
 
@@ -23,4 +23,4 @@ class db_getUserData {
      }
    }
 }    
-?>
+?>

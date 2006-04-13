@@ -1,23 +1,23 @@
 <?
 include_once("classes/db/DatabaseQueriesFactory.php");
 /**
-* class db_getCustomerSite
+* class sp_getDesktop_TT
 *
 * { Description :- 
-*    Retorna os dados do cliente indicado.
+*    Recupera a mesa de trabalho de um usuário, relativa a telefonemas.
 * }
 */
 
-class db_getCustomerSite {
-   function getInstanceOf($dbms, $p_cliente) {
-     $sql='sp_getCustomerSite';
-     $params=array("p_cliente"  =>array($p_cliente,     B_NUMERIC,   null),
+class db_getDesktop_TT {
+   function getInstanceOf($dbms, $p_usuario) {
+     $sql='sp_getDesktop_TT';
+     $params=array("p_usuario"  =>array($p_usuario,     B_NUMERIC,     32),
                    "p_result"   =>array(null,           B_CURSOR,      -1)
                   );
      $l_rs = DatabaseQueriesFactory::getInstanceOf($sql, $dbms, $params, DB_TYPE);
      if(!$l_rs->executeQuery()) { die("Cannot query"); }
      else {
-        return $l_rs->getResultArray();
+        return $l_rs->getResultData();
      }
    }
 }    

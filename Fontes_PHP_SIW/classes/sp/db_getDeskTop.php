@@ -1,18 +1,19 @@
 <?
 include_once("classes/db/DatabaseQueriesFactory.php");
 /**
-* class sp_getLinkSubMenu
+* class sp_getDesktop
 *
 * { Description :- 
-*    Retorna as opções de um sub-menu concedidas ao usuário indicado.
+*    Recupera a mesa de trabalho de um usuário
 * }
 */
 
-class db_getLinkSubMenu {
-   function getInstanceOf($dbms, $p_cliente, $p_restricao) {
-     $sql='sp_getLinkSubMenu';
+class db_getDesktop {
+   function getInstanceOf($dbms, $p_cliente, $p_usuario, $p_ano) {
+     $sql='sp_getDesktop';
      $params=array("p_cliente"  =>array($p_cliente,     B_NUMERIC,     32),
-                   "p_restricao"=>array($p_restricao,   B_VARCHAR,     20),
+                   "p_usuario"  =>array($p_usuario,     B_NUMERIC,     32),
+                   "p_ano"      =>array($p_ano,         B_NUMERIC,     32),
                    "p_result"   =>array(null,           B_CURSOR,      -1)
                   );
      $l_rs = DatabaseQueriesFactory::getInstanceOf($sql, $dbms, $params, DB_TYPE);

@@ -4,7 +4,7 @@ include_once("classes/db/DatabaseQueriesFactory.php");
 * class sp_getcitylist
 *
 * { Description :- 
-*    This class returns an object with all selected cities
+*    Retorna array com as cidades do país e estado indicado.
 * }
 */
 
@@ -16,7 +16,11 @@ class db_getCityList {
                    "p_result"   =>array(null,      B_CURSOR,      -1)
                   );
      
-     return DatabaseQueriesFactory::getInstanceOf($sql, $dbms, $params, $DB_TYPE);
+     $l_rs = DatabaseQueriesFactory::getInstanceOf($sql, $dbms, $params, DB_TYPE);
+     if(!$l_rs->executeQuery()) { die("Cannot query"); }
+     else {
+        return $l_rs->getResultData();
+     }
    }
 }    
-?>
+?>

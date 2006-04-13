@@ -4,7 +4,7 @@ include_once("classes/db/DatabaseQueriesFactory.php");
 * class sp_getTramiteList
 *
 * { Description :- 
-*    Recupera os links permitidos ao usuário informado
+*    Recupera os trâmites da opção de menu indicada.
 * }
 */
 

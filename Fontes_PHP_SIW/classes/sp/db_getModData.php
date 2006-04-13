@@ -17,8 +17,7 @@ class db_getModData {
      $l_rs = DatabaseQueriesFactory::getInstanceOf($sql, $dbms, $params, DB_TYPE);
      if(!$l_rs->executeQuery()) { die("Cannot query"); }
      else {
-        $l_data = $l_rs->getResultArray();
-        return $l_data;
+        return $l_rs->getResultArray();
      }
    }
 }    

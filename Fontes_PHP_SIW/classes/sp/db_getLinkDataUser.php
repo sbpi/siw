@@ -4,7 +4,7 @@ include_once("classes/db/DatabaseQueriesFactory.php");
 * class sp_getLinkDataUser
 *
 * { Description :- 
-*    This class retrieves menu items granted to selected user
+*    Retorna as opções do menu concedidas ao usuário indicado.
 * }
 */
 
@@ -19,7 +19,7 @@ class db_getLinkDataUser {
      $l_rs = DatabaseQueriesFactory::getInstanceOf($sql, $dbms, $params, DB_TYPE);
      if(!$l_rs->executeQuery()) { die("Cannot query"); }
      else {
-        return DatabaseQueriesFactory::getInstanceOf($sql, $dbms, $params, $DB_TYPE);
+        return $l_rs->getResultData();
      }
    }
 }    

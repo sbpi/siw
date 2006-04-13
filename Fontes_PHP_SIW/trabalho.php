@@ -48,7 +48,7 @@ $R          = strtoupper($_REQUEST["R"]);
 $O          = strtoupper($_REQUEST["O"]);
 
 $w_Assinatura   = strtoupper(${"w_Assinatura"});
-$w_Pagina       = "trabalho.php?par=";
+$w_pagina       = "trabalho.php?par=";
 $w_Disabled     = "ENABLED";
 
 $w_cliente  = RetornaCliente();
@@ -80,10 +80,8 @@ function Mesa() {
   if ($O=="L") {
      // Verifica se o cliente tem o módulo de telefonia contratado
      $RS = db_getSiwCliModLis::getInstanceOf($dbms, $w_cliente, 'TELEFONIA');
-     if(!$RS->executeQuery()) { die("Cannot query"); }
-     while($row = $RS->getResultArray()) {
+     foreach ($RS as $row) {
        $w_telefonia = f($row,'nome');
-       next($RS);
      }
      DesconectaBD();
 
@@ -114,13 +112,11 @@ function Mesa() {
     if (!($w_workflow.$w_telefonia.$w_demandas.$w_agenda=='')) {
       if ($w_telefonia>'') {
         $RS = db_getDeskTop_TT::getInstanceOf($dbms, $w_usuario);
-        if(!$RS->executeQuery()) { die("Cannot query"); }
-        while($row = $RS->getResultArray()) {
+        foreach ($RS as $row) {
           $w_telefonia_qtd=f($row,'existe');
-          next($RS);
         }
         DesconectaBD();
-        if ($w_cor==$conTrBgColor || $w_cor=='') $w_cor=$conTrAlternateBgColor; else $w_cor=$conTrBgColor;
+        $w_cor = ($w_cor==$conTrBgColor || $w_cor=='') ? $w_cor=$conTrAlternateBgColor : $w_cor=$conTrBgColor;
         if ($w_telefonia_qtd>0) $w_negrito='<b>'; else $w_negrito='';
 
         ShowHTML('      <tr bgcolor="'.$w_cor.'">');
@@ -128,7 +124,7 @@ function Mesa() {
         ShowHTML('        <td>Ligações</td>');
         ShowHTML('        <td align="right">'.$w_negrito.$w_telefonia_qtd.'&nbsp;</td>');
         ShowHTML('        <td align="top" nowrap>');
-        ShowHTML('          <A class="HL" HREF="Tarifacao.php?par=Informar&R='.$w_Pagina.$par.'&O=L&P1=1&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP='.$TP.'- Ligações&SG=LIGACAO">Exibir</A> ');
+        ShowHTML('          <A class="HL" HREF="Tarifacao.php?par=Informar&R='.$w_pagina.$par.'&O=L&P1=1&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP='.$TP.'- Ligações&SG=LIGACAO">Exibir</A> ');
         ShowHTML('        </td>');
         ShowHTML('      </tr>');
       }
@@ -137,14 +133,9 @@ function Mesa() {
     // Monta a mesa de trabalho para os outros serviços do SIW
   
     $RS = db_getDeskTop::getInstanceOf($dbms, $w_cliente, $w_usuario, $w_ano);
-    if(!$RS->executeQuery()) { die("Cannot query"); }
     $w_nm_modulo='-';
-    while($row = $RS->getResultArray()) {
-      if ($w_cor==$conTrBgColor || $w_cor=='') {
-         $w_cor=$conTrAlternateBgColor; 
-      } else {
-         $w_cor=$conTrBgColor;
-      }
+    foreach ($RS as $row) {
+      $w_cor = ($w_cor==$conTrBgColor || $w_cor=='') ? $w_cor=$conTrAlternateBgColor : $w_cor=$conTrBgColor;
       
       if (f($row,'qtd')>0) $w_negrito="<b>"; else $w_negrito=''; 
     
@@ -163,7 +154,6 @@ function Mesa() {
       ShowHTML('        <A CLASS="HL" HREF="'.f($row,'link').'&P1=2&P2='.f($row,'p2').'&P3='.f($row,'p3').'&P4='.f($row,'p4').'&TP='.$TP.' - '.f($row,'nm_servico').'&SG='.f($row,'sg_servico').'">Exibir</A>');
       ShowHTML('      </td>');
       ShowHTML('    </tr>');
-      next($RS);
     }
 
     ShowHTML('      </center>');

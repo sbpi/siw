@@ -71,7 +71,6 @@ function LinkOrdena($p_label,$p_campo) {
   foreach($_POST as $chv => $vlr) {
     if (nvl($vlr,'')>'' && (strtoupper(substr($chv,0,2))=="W_" || strtoupper(substr($chv,0,2))=="P_")) {
       if (strtoupper($chv)=="P_ORDENA") {
-       ShowHTML('<DD><FONT FACE="courier" size=1>'.$chv.' => ['.$vlr.']</font><br>');
         $l_ordena=strtoupper($vlr);
       } else {
         $l_string=$l_string.'&'.$chv."=".$vlr;
@@ -81,7 +80,6 @@ function LinkOrdena($p_label,$p_campo) {
   foreach($_GET as $chv => $vlr) {
     if (nvl($vlr,'')>'' && (strtoupper(substr($chv,0,2))=="W_" || strtoupper(substr($chv,0,2))=="P_")) {
       if (strtoupper($chv)=="P_ORDENA") {
-       ShowHTML('<DD><FONT FACE="courier" size=1>'.$chv.' => ['.$vlr.']</font><br>');
         $l_ordena=strtoupper($vlr);
       } else {
         $l_string=$l_string.'&'.$chv."=".$vlr;
@@ -453,9 +451,9 @@ function AbreForm($p_Name,$p_Action,$p_Method,$p_onSubmit,$p_Target,$p_P1,$p_P2,
 // -------------------------------------------------------------------------
 function SelecaoSexo($label,$accesskey,$hint,$chave,$chaveAux,$campo,$restricao,$atributo) {
    if (!isset($hint)) {
-      ShowHTML('          <td valign="top"><font size="1"><b>'.$Label.'</b><br><SELECT ACCESSKEY="'.$accesskey.'" CLASS="sts" NAME="'.$campo.'" '.$w_Disabled.' '.$atributo.'>');
+      ShowHTML('          <td valign="top"><font size="1"><b>'.$label.'</b><br><SELECT ACCESSKEY="'.$accesskey.'" CLASS="sts" NAME="'.$campo.'" '.$w_Disabled.' '.$atributo.'>');
    } else {
-      ShowHTML('          <td valign="top" title="'.$hint.'"><font size="1"><b>'.$Label.'</b><br><SELECT ACCESSKEY="'.$accesskey.'" CLASS="sts" NAME="'.$campo.'" '.$w_Disabled.' '.$atributo.'>');
+      ShowHTML('          <td valign="top" title="'.$hint.'"><font size="1"><b>'.$label.'</b><br><SELECT ACCESSKEY="'.$accesskey.'" CLASS="sts" NAME="'.$campo.'" '.$w_Disabled.' '.$atributo.'>');
    }
    ShowHTML('          <option value="">---');
    if (Nvl($chave,'')=='M') {
@@ -476,10 +474,10 @@ function SelecaoSexo($label,$accesskey,$hint,$chave,$chaveAux,$campo,$restricao,
 // =========================================================================
 // Montagem de campo do tipo radio com padrão Não
 // -------------------------------------------------------------------------
-function MontaRadioNS($Label,$Chave,$Campo)
+function MontaRadioNS($label,$Chave,$Campo)
 {
   ShowHTML('          <td><font size="1">');
-  if (Nvl($Label,'')>'') { ShowHTML($Label.'</b><br>'); }
+  if (Nvl($label,'')>'') { ShowHTML($label.'</b><br>'); }
   if ($chave=='S') {
      ShowHTML('              <input '.$w_Disabled.' type="radio" name="'.$campo.'" value="S" checked> Sim <input '.$w_Disabled.' type="radio" name="'.$campo.'" value="N"> Não');
   } else {
@@ -490,10 +488,10 @@ function MontaRadioNS($Label,$Chave,$Campo)
 // =========================================================================
 // Montagem de campo do tipo radio com padrão Sim
 // -------------------------------------------------------------------------
-function MontaRadioSN($Label,$Chave,$Campo)
+function MontaRadioSN($label,$Chave,$Campo)
 {
   ShowHTML('          <td><font size="1">');
-  if (Nvl($Label,'')>'') { ShowHTML($Label.'</b><br>'); }
+  if (Nvl($label,'')>'') { ShowHTML($label.'</b><br>'); }
   if ($chave=='N') {
      ShowHTML('              <input '.$w_Disabled.' type="radio" name="'.$campo.'" value="S"> Sim <input '.$w_Disabled.' type="radio" name="'.$campo.'" value="N" checked> Não');
   } else {
@@ -516,10 +514,10 @@ function SelecaoPessoa1($label,$accesskey,$hint,$chave,$chaveAux,$campo,$restric
   }
 
   if (!isset($hint)) {
-     ShowHTML('      <td valign="top"><font size="1"><b>'.$Label.'</b><br>');
+     ShowHTML('      <td valign="top"><font size="1"><b>'.$label.'</b><br>');
      ShowHTML('          <input READONLY ACCESSKEY="'.$accesskey.'" CLASS="sti" type="text" name="'.$campo.'_nm'.'" SIZE="20" VALUE="'.$w_nm_usuario.'">');
   } else {
-     ShowHTML('      <td valign="top"title="'.$hint.'"><font size="1"><b>'.$Label.'</b><br>');
+     ShowHTML('      <td valign="top"title="'.$hint.'"><font size="1"><b>'.$label.'</b><br>');
      ShowHTML('          <input READONLY ACCESSKEY="'.$accesskey.'" CLASS="sti" type="text" name="'.$campo.'_nm'.'" SIZE="20" VALUE="'.$w_nm_usuario.'">');
   }
 
@@ -536,9 +534,9 @@ function SelecaoPessoa($label,$accesskey,$hint,$chave,$chaveAux,$campo,$restrica
   $RS->Sort='nome_resumido';
   if ($restricao=='TTUSURAMAL') { $RS->filter='ativo=\'S\''; }
   if (!isset($hint)) {
-     ShowHTML('          <td valign="top"><font size="1"><b>'.$Label.'</b><br><SELECT ACCESSKEY="'.$accesskey.'" CLASS="sts" NAME="'.$campo.'" '.$w_Disabled.'>');
+     ShowHTML('          <td valign="top"><font size="1"><b>'.$label.'</b><br><SELECT ACCESSKEY="'.$accesskey.'" CLASS="sts" NAME="'.$campo.'" '.$w_Disabled.'>');
   } else {
-     ShowHTML('          <td valign="top" title="'.$hint.'"><font size="1"><b>'.$Label.'</b><br><SELECT ACCESSKEY="'.$accesskey.'" CLASS="sts" NAME="'.$campo.'" '.$w_Disabled.'>');
+     ShowHTML('          <td valign="top" title="'.$hint.'"><font size="1"><b>'.$label.'</b><br><SELECT ACCESSKEY="'.$accesskey.'" CLASS="sts" NAME="'.$campo.'" '.$w_Disabled.'>');
   }
   ShowHTML('          <option value="">---');
   while(!$RS->EOF) {
@@ -560,9 +558,9 @@ function SelecaoSolicResp($label,$accesskey,$hint,$chave,$chaveAux,$chaveAux2,$c
   DB_GetSolicResp($RS, $chaveAux, $chaveAux2, $restricao);
   $RS->Sort='nome_resumido';
   if (!isset($hint)) {
-     ShowHTML('          <td valign="top"><font size="1"><b>'.$Label.'</b><br><SELECT ACCESSKEY="'.$accesskey.'" CLASS="sts" NAME="'.$campo.'" '.$w_Disabled.'>');
+     ShowHTML('          <td valign="top"><font size="1"><b>'.$label.'</b><br><SELECT ACCESSKEY="'.$accesskey.'" CLASS="sts" NAME="'.$campo.'" '.$w_Disabled.'>');
   } else {
-     ShowHTML('          <td valign="top" title="'.$hint.'"><font size="1"><b>'.$Label.'</b><br><SELECT ACCESSKEY="'.$accesskey.'" CLASS="sts" NAME="'.$campo.'" '.$w_Disabled.'>');
+     ShowHTML('          <td valign="top" title="'.$hint.'"><font size="1"><b>'.$label.'</b><br><SELECT ACCESSKEY="'.$accesskey.'" CLASS="sts" NAME="'.$campo.'" '.$w_Disabled.'>');
   }
   ShowHTML('          <option value="">---');
   while(!$RS->EOF) {
@@ -585,9 +583,9 @@ function SelecaoUsuUnid($label,$accesskey,$hint,$chave,$chaveAux,$campo,$restric
   $RS->Filter='contratado = \'S\'';
   $RS->Sort='nome_indice';
   if (!isset($hint)) {
-     ShowHTML('          <td valign="top"><font size="1"><b>'.$Label.'</b><br><SELECT ACCESSKEY="'.$accesskey.'" CLASS="sts" NAME="'.$campo.'" '.$w_Disabled.'>');
+     ShowHTML('          <td valign="top"><font size="1"><b>'.$label.'</b><br><SELECT ACCESSKEY="'.$accesskey.'" CLASS="sts" NAME="'.$campo.'" '.$w_Disabled.'>');
   } else {
-     ShowHTML('          <td valign="top" title="'.$hint.'"><font size="1"><b>'.$Label.'</b><br><SELECT ACCESSKEY="'.$accesskey.'" CLASS="sts" NAME="'.$campo.'" '.$w_Disabled.'>');
+     ShowHTML('          <td valign="top" title="'.$hint.'"><font size="1"><b>'.$label.'</b><br><SELECT ACCESSKEY="'.$accesskey.'" CLASS="sts" NAME="'.$campo.'" '.$w_Disabled.'>');
   }
   ShowHTML('          <option value="">---');
   while(!$RS->EOF) {
@@ -609,9 +607,9 @@ function SelecaoVinculo($label,$accesskey,$hint,$chave,$chaveAux,$campo,$restric
   DB_GetVincKindList($RS, $w_cliente);
   if (Nvl($restricao,'')>'') { $RS->Filter=$restricao; }
   if (!isset($hint)) {
-     ShowHTML('          <td valign="top"><font size="1"><b>'.$Label.'</b><br><SELECT ACCESSKEY="'.$accesskey.'" CLASS="sts" NAME="'.$campo.'" '.$w_Disabled.'>');
+     ShowHTML('          <td valign="top"><font size="1"><b>'.$label.'</b><br><SELECT ACCESSKEY="'.$accesskey.'" CLASS="sts" NAME="'.$campo.'" '.$w_Disabled.'>');
   } else {
-     ShowHTML('          <td valign="top" title="'.$hint.'"><font size="1"><b>'.$Label.'</b><br><SELECT ACCESSKEY="'.$accesskey.'" CLASS="sts" NAME="'.$campo.'" '.$w_Disabled.'>');
+     ShowHTML('          <td valign="top" title="'.$hint.'"><font size="1"><b>'.$label.'</b><br><SELECT ACCESSKEY="'.$accesskey.'" CLASS="sts" NAME="'.$campo.'" '.$w_Disabled.'>');
   }
   ShowHTML('          <option value="">---');
   while(!$RS->EOF) {
@@ -633,9 +631,9 @@ function SelecaoTipoPosto($label,$accesskey,$hint,$chave,$chaveAux,$campo,$restr
   DB_GetTipoPostoList($RS, $w_cliente, $null);
   if (Nvl($restricao,'')>'') { $RS->Filter=$restricao; }
   if (!isset($hint)) {
-     ShowHTML('          <td valign="top"><font size="1"><b>'.$Label.'</b><br>');
+     ShowHTML('          <td valign="top"><font size="1"><b>'.$label.'</b><br>');
   } else {
-     ShowHTML('          <td valign="top" title="'.$hint.'"><font size="1"><b>'.$Label.'</b><br>');
+     ShowHTML('          <td valign="top" title="'.$hint.'"><font size="1"><b>'.$label.'</b><br>');
   }
   while(!$RS->EOF) {
      if ($cDbl[nvl($RS['SQ_EO_TIPO_POSTO'],0)]==$cDbl[nvl($chave,0)]) {
@@ -655,9 +653,9 @@ function SelecaoGrupoDef($label,$accesskey,$hint,$chave,$chaveAux,$campo,$restri
   extract($GLOBALS);
   DB_GetDeficGroupList($RS);
   if (!isset($hint)) {
-     ShowHTML('          <td valign="top"><font size="1"><b>'.$Label.'</b><br><SELECT ACCESSKEY="'.$accesskey.'" CLASS="sts" NAME="'.$campo.'" '.$w_Disabled.'>');
+     ShowHTML('          <td valign="top"><font size="1"><b>'.$label.'</b><br><SELECT ACCESSKEY="'.$accesskey.'" CLASS="sts" NAME="'.$campo.'" '.$w_Disabled.'>');
   } else {
-     ShowHTML('          <td valign="top" title="'.$hint.'"><font size="1"><b>'.$Label.'</b><br><SELECT ACCESSKEY="'.$accesskey.'" CLASS="sts" NAME="'.$campo.'" '.$w_Disabled.'>');
+     ShowHTML('          <td valign="top" title="'.$hint.'"><font size="1"><b>'.$label.'</b><br><SELECT ACCESSKEY="'.$accesskey.'" CLASS="sts" NAME="'.$campo.'" '.$w_Disabled.'>');
   }
   ShowHTML('          <option value="">---');
   while(!$RS->EOF) {
@@ -679,9 +677,9 @@ function SelecaoTipoPessoa($label,$accesskey,$hint,$chave,$chaveAux,$campo,$rest
   DB_GetKindPersonList($RS);
   if ($restricao>'') { $RS->Filter=$restricao; }
   if (!isset($hint)) {
-     ShowHTML('          <td valign="top"><font size="1"><b>'.$Label.'</b><br><SELECT ACCESSKEY="'.$accesskey.'" CLASS="sts" NAME="'.$campo.'" '.$w_Disabled.' '.$atributo.'>');
+     ShowHTML('          <td valign="top"><font size="1"><b>'.$label.'</b><br><SELECT ACCESSKEY="'.$accesskey.'" CLASS="sts" NAME="'.$campo.'" '.$w_Disabled.' '.$atributo.'>');
   } else {
-     ShowHTML('          <td valign="top" title="'.$hint.'"><font size="1"><b>'.$Label.'</b><br><SELECT ACCESSKEY="'.$accesskey.'" CLASS="sts" NAME="'.$campo.'" '.$w_Disabled.' '.$atributo.'>');
+     ShowHTML('          <td valign="top" title="'.$hint.'"><font size="1"><b>'.$label.'</b><br><SELECT ACCESSKEY="'.$accesskey.'" CLASS="sts" NAME="'.$campo.'" '.$w_Disabled.' '.$atributo.'>');
   }
   ShowHTML('          <option value="">---');
   while(!$RS->EOF) {
@@ -704,9 +702,9 @@ function SelecaoFormaPagamento($label,$accesskey,$hint,$chave,$chave_aux,$campo,
   $RS->Filter='ativo = \'S\'';
   $RS->Sort='nome';
   if (!isset($hint)) {
-     ShowHTML('          <td valign="top"><font size="1"><b>'.$Label.'</b><br><SELECT ACCESSKEY="'.$accesskey.'" CLASS="sts" NAME="'.$campo.'" '.$w_Disabled.'>');
+     ShowHTML('          <td valign="top"><font size="1"><b>'.$label.'</b><br><SELECT ACCESSKEY="'.$accesskey.'" CLASS="sts" NAME="'.$campo.'" '.$w_Disabled.'>');
   } else {
-     ShowHTML('          <td valign="top" title="'.$hint.'"><font size="1"><b>'.$Label.'</b><br><SELECT ACCESSKEY="'.$accesskey.'" CLASS="sts" NAME="'.$campo.'" '.$w_Disabled.'>');
+     ShowHTML('          <td valign="top" title="'.$hint.'"><font size="1"><b>'.$label.'</b><br><SELECT ACCESSKEY="'.$accesskey.'" CLASS="sts" NAME="'.$campo.'" '.$w_Disabled.'>');
   }
 
   ShowHTML('          <option value="">---');
@@ -730,9 +728,9 @@ function SelecaoPais($label,$accesskey,$hint,$chave,$chaveAux,$campo,$restricao,
   if ($restricao>'') { $RS->Filter=$restricao; }
   $RS->Sort='padrao desc, Nome';
   if (!isset($hint)) {
-     ShowHTML('          <td valign="top"><font size="1"><b>'.$Label.'</b><br><SELECT ACCESSKEY="'.$accesskey.'" CLASS="sts" NAME="'.$campo.'" '.$w_Disabled.' '.$atributo.'>');
+     ShowHTML('          <td valign="top"><font size="1"><b>'.$label.'</b><br><SELECT ACCESSKEY="'.$accesskey.'" CLASS="sts" NAME="'.$campo.'" '.$w_Disabled.' '.$atributo.'>');
   } else {
-     ShowHTML('          <td valign="top" title="'.$hint.'"><font size="1"><b>'.$Label.'</b><br><SELECT ACCESSKEY="'.$accesskey.'" CLASS="sts" NAME="'.$campo.'" '.$w_Disabled.' '.$atributo.'>');
+     ShowHTML('          <td valign="top" title="'.$hint.'"><font size="1"><b>'.$label.'</b><br><SELECT ACCESSKEY="'.$accesskey.'" CLASS="sts" NAME="'.$campo.'" '.$w_Disabled.' '.$atributo.'>');
   }
 
   ShowHTML('          <option value="">---');
@@ -756,9 +754,9 @@ function SelecaoRegiao($label,$accesskey,$hint,$chave,$chaveAux,$campo,$restrica
   if ($restricao>'') { $RS->Filter=$restricao; }
   $RS->Sort='Ordem';
   if (!isset($hint)) {
-     ShowHTML('          <td valign="top"><font size="1"><b>'.$Label.'</b><br><SELECT ACCESSKEY="'.$accesskey.'" CLASS="sts" NAME="'.$campo.'" '.$w_Disabled.' '.$atributo.'>');
+     ShowHTML('          <td valign="top"><font size="1"><b>'.$label.'</b><br><SELECT ACCESSKEY="'.$accesskey.'" CLASS="sts" NAME="'.$campo.'" '.$w_Disabled.' '.$atributo.'>');
   } else {
-     ShowHTML('          <td valign="top" title="'.$hint.'"><font size="1"><b>'.$Label.'</b><br><SELECT ACCESSKEY="'.$accesskey.'" CLASS="sts" NAME="'.$campo.'" '.$w_Disabled.' '.$atributo.'>');
+     ShowHTML('          <td valign="top" title="'.$hint.'"><font size="1"><b>'.$label.'</b><br><SELECT ACCESSKEY="'.$accesskey.'" CLASS="sts" NAME="'.$campo.'" '.$w_Disabled.' '.$atributo.'>');
   }
 
   ShowHTML('          <option value="">---');
@@ -778,23 +776,22 @@ function SelecaoRegiao($label,$accesskey,$hint,$chave,$chaveAux,$campo,$restrica
 // -------------------------------------------------------------------------
 function SelecaoEstado($label,$accesskey,$hint,$chave,$chaveAux,$chaveAux2,$campo,$restricao,$atributo) {
   extract($GLOBALS);
-  DB_GetStateList($RS, Nvl($chaveAux,0));
+  $RS = db_getStateList::getInstanceOf($dbms, nvl($chaveAux,0));
   if ($restricao>'') { $RS->Filter=$restricao; }
-  $RS->Sort='padrao desc, nome';
+  //$RS->Sort='padrao desc, nome';
   if (!isset($hint)) {
-     ShowHTML('          <td valign="top"><font size="1"><b>'.$Label.'</b><br><SELECT ACCESSKEY="'.$accesskey.'" CLASS="sts" NAME="'.$campo.'" '.$w_Disabled.' '.$atributo.'>');
+     ShowHTML('          <td valign="top"><font size="1"><b>'.$label.'</b><br><SELECT ACCESSKEY="'.$accesskey.'" CLASS="sts" NAME="'.$campo.'" '.$w_Disabled.' '.$atributo.'>');
   } else {
-     ShowHTML('          <td valign="top" title="'.$hint.'"><font size="1"><b>'.$Label.'</b><br><SELECT ACCESSKEY="'.$accesskey.'" CLASS="sts" NAME="'.$campo.'" '.$w_Disabled.' '.$atributo.'>');
+     ShowHTML('          <td valign="top" title="'.$hint.'"><font size="1"><b>'.$label.'</b><br><SELECT ACCESSKEY="'.$accesskey.'" CLASS="sts" NAME="'.$campo.'" '.$w_Disabled.' '.$atributo.'>');
   }
 
   ShowHTML('          <option value="">---');
-  while(!$RS->EOF) {
-    if (nvl($RS['CO_UF'],0)==nvl($chave,0)) {
-       ShowHTML('          <option value="'.$RS['CO_UF'].'" SELECTED>'.$RS['NOME']);
+  foreach($RS as $row) {
+    if (nvl(f($row,'co_uf'),'')==nvl($chave,'')) {
+       ShowHTML('          <option value="'.f($row,'CO_UF').'" SELECTED>'.f($row,'nome'));
     } else {
-       ShowHTML('          <option value="'.$RS['CO_UF'].'">'.$RS['NOME']);
+       ShowHTML('          <option value="'.f($row,'CO_UF').'">'.f($row,'nome'));
     }
-    $RS->MoveNext;
   }
   ShowHTML('          </select>');
 }
@@ -808,9 +805,9 @@ function SelecaoCidade($label,$accesskey,$hint,$chave,$chaveAux,$chaveAux2,$camp
   if ($restricao>'') { $RS->Filter=$restricao; }
   $RS->Sort='capital desc, nome';
   if (!isset($hint)) {
-     ShowHTML('          <td valign="top"><font size="1"><b>'.$Label.'</b><br><SELECT ACCESSKEY="'.$accesskey.'" CLASS="sts" NAME="'.$campo.'" '.$w_Disabled.' '.$atributo.'>');
+     ShowHTML('          <td valign="top"><font size="1"><b>'.$label.'</b><br><SELECT ACCESSKEY="'.$accesskey.'" CLASS="sts" NAME="'.$campo.'" '.$w_Disabled.' '.$atributo.'>');
   } else {
-     ShowHTML('          <td valign="top" title="'.$hint.'"><font size="1"><b>'.$Label.'</b><br><SELECT ACCESSKEY="'.$accesskey.'" CLASS="sts" NAME="'.$campo.'" '.$w_Disabled.' '.$atributo.'>');
+     ShowHTML('          <td valign="top" title="'.$hint.'"><font size="1"><b>'.$label.'</b><br><SELECT ACCESSKEY="'.$accesskey.'" CLASS="sts" NAME="'.$campo.'" '.$w_Disabled.' '.$atributo.'>');
   }
 
   ShowHTML('          <option value="">---');
@@ -832,9 +829,9 @@ function SelecaoEndereco($label,$accesskey,$hint,$chave,$chaveAux,$campo,$restri
   extract($GLOBALS);
   DB_GetaddressList($RS, $w_cliente, $ChaveAux, $restricao);
   if (!isset($hint)) {
-     ShowHTML('          <td valign="top"><font size="1"><b>'.$Label.'</b><br><SELECT ACCESSKEY="'.$accesskey.'" CLASS="sts" NAME="'.$campo.'" '.$w_Disabled.'>');
+     ShowHTML('          <td valign="top"><font size="1"><b>'.$label.'</b><br><SELECT ACCESSKEY="'.$accesskey.'" CLASS="sts" NAME="'.$campo.'" '.$w_Disabled.'>');
   } else {
-     ShowHTML('          <td valign="top" title="'.$hint.'"><font size="1"><b>'.$Label.'</b><br><SELECT ACCESSKEY="'.$accesskey.'" CLASS="sts" NAME="'.$campo.'" '.$w_Disabled.'>');
+     ShowHTML('          <td valign="top" title="'.$hint.'"><font size="1"><b>'.$label.'</b><br><SELECT ACCESSKEY="'.$accesskey.'" CLASS="sts" NAME="'.$campo.'" '.$w_Disabled.'>');
   }
 
   ShowHTML('          <option value="">---');
@@ -856,9 +853,9 @@ function SelecaoTelefone($label,$accesskey,$hint,$chave,$chaveAux,$campo,$restri
   extract($GLOBALS);
   DB_GetFoneList($RS, $w_cliente, $ChaveAux, $restricao);
   if (!isset($hint)) {
-     ShowHTML('          <td valign="top"><font size="1"><b>'.$Label.'</b><br><SELECT ACCESSKEY="'.$accesskey.'" CLASS="sts" NAME="'.$campo.'" '.$w_Disabled.'>');
+     ShowHTML('          <td valign="top"><font size="1"><b>'.$label.'</b><br><SELECT ACCESSKEY="'.$accesskey.'" CLASS="sts" NAME="'.$campo.'" '.$w_Disabled.'>');
   } else {
-     ShowHTML('          <td valign="top" title="'.$hint.'"><font size="1"><b>'.$Label.'</b><br><SELECT ACCESSKEY="'.$accesskey.'" CLASS="sts" NAME="'.$campo.'" '.$w_Disabled.'>');
+     ShowHTML('          <td valign="top" title="'.$hint.'"><font size="1"><b>'.$label.'</b><br><SELECT ACCESSKEY="'.$accesskey.'" CLASS="sts" NAME="'.$campo.'" '.$w_Disabled.'>');
   }
 
   ShowHTML('          <option value="">---');
@@ -881,9 +878,9 @@ function SelecaoModulo($label,$accesskey,$hint,$chave,$chaveAux,$campo,$restrica
   DB_GetSiwCliModLis($RS, $chaveAux, $restricao);
   $RS->Sort='nome';
   if (!isset($hint)) {
-     ShowHTML('          <td valign="top"><font size="1"><b>'.$Label.'</b><br><SELECT ACCESSKEY="'.$accesskey.'" CLASS="sts" NAME="'.$campo.'" '.$w_Disabled.' '.$atributo.'>');
+     ShowHTML('          <td valign="top"><font size="1"><b>'.$label.'</b><br><SELECT ACCESSKEY="'.$accesskey.'" CLASS="sts" NAME="'.$campo.'" '.$w_Disabled.' '.$atributo.'>');
   } else {
-     ShowHTML('          <td valign="top" title="'.$hint.'"><font size="1"><b>'.$Label.'</b><br><SELECT ACCESSKEY="'.$accesskey.'" CLASS="sts" NAME="'.$campo.'" '.$w_Disabled.' '.$atributo.'>');
+     ShowHTML('          <td valign="top" title="'.$hint.'"><font size="1"><b>'.$label.'</b><br><SELECT ACCESSKEY="'.$accesskey.'" CLASS="sts" NAME="'.$campo.'" '.$w_Disabled.' '.$atributo.'>');
   }
   ShowHTML('          <option value="">---');
   while(!$RS->EOF) {
@@ -905,9 +902,9 @@ function SelecaoServico($label,$accesskey,$hint,$chave,$chaveAux,$campo,$restric
   DB_GetMenuList($RS, $w_cliente, 'I', $null);
   $RS->Filter='tramite=\'S\'';
   if (!isset($hint)) {
-     ShowHTML('          <td valign="top"><font size="1"><b>'.$Label.'</b><br><SELECT ACCESSKEY="'.$accesskey.'" CLASS="sts" NAME="'.$campo.'" '.$w_Disabled.' '.$atributo.'>');
+     ShowHTML('          <td valign="top"><font size="1"><b>'.$label.'</b><br><SELECT ACCESSKEY="'.$accesskey.'" CLASS="sts" NAME="'.$campo.'" '.$w_Disabled.' '.$atributo.'>');
   } else {
-     ShowHTML('          <td valign="top" title="'.$hint.'"><font size="1"><b>'.$Label.'</b><br><SELECT ACCESSKEY="'.$accesskey.'" CLASS="sts" NAME="'.$campo.'" '.$w_Disabled.' '.$atributo.'>');
+     ShowHTML('          <td valign="top" title="'.$hint.'"><font size="1"><b>'.$label.'</b><br><SELECT ACCESSKEY="'.$accesskey.'" CLASS="sts" NAME="'.$campo.'" '.$w_Disabled.' '.$atributo.'>');
   }
   ShowHTML('          <option value="">---');
   while(!$RS->EOF) {
@@ -927,9 +924,9 @@ function SelecaoServico($label,$accesskey,$hint,$chave,$chaveAux,$campo,$restric
 function SelecaoMenu($label,$accesskey,$hint,$chave,$chaveAux,$campo,$restricao,$atributo) {
   extract($GLOBALS);
   if (!isset($hint))
-     { ShowHTML('          <td valign="top"><font size="1"><b>'.$Label.'</b><br><SELECT ACCESSKEY="'.$accesskey.'" CLASS="sts" NAME="'.$campo.'" '.$w_Disabled.' '.$atributo.'>'); }
+     { ShowHTML('          <td valign="top"><font size="1"><b>'.$label.'</b><br><SELECT ACCESSKEY="'.$accesskey.'" CLASS="sts" NAME="'.$campo.'" '.$w_Disabled.' '.$atributo.'>'); }
   else
-     { ShowHTML('          <td valign="top" title="'.$hint.'"><font size="1"><b>'.$Label.'</b><br><SELECT ACCESSKEY="'.$accesskey.'" CLASS="sts" NAME="'.$campo.'" '.$w_Disabled.' '.$atributo.'>'); }
+     { ShowHTML('          <td valign="top" title="'.$hint.'"><font size="1"><b>'.$label.'</b><br><SELECT ACCESSKEY="'.$accesskey.'" CLASS="sts" NAME="'.$campo.'" '.$w_Disabled.' '.$atributo.'>'); }
   ShowHTML('          <option value="">---');
   DB_GetMenuOrder($RST, $w_cliente, $null);
   if ($restricao=='Pesquisa') { $RST->Filter='ultimo_nivel = \'N\' and sq_menu  <> '.Nvl($chaveAux,0); }
@@ -980,45 +977,26 @@ function SelecaoMenu($label,$accesskey,$hint,$chave,$chaveAux,$campo,$restricao,
 // -------------------------------------------------------------------------
 function SelecaoLocalizacao($label,$accesskey,$hint,$chave,$chaveAux,$campo,$restricao) {
   extract($GLOBALS);
+  $RS = DB_GetLocalList::getInstanceOf($dbms, $w_cliente, $ChaveAux, $restricao);
+  //if (!!isset($chaveAux)) $RS->Filter='sq_unidade = '.$chaveAux;
 
-
-DB_GetLocalList($RS, $w_cliente, $ChaveAux, $restricao);
-if (!!isset($chaveAux))
-{
-
-$RS->Filter='sq_unidade = '.$chaveAux;
-}
-
-if (!isset($hint))
-{
-
-  ShowHTML('          <td valign="top"><font size="1"><b>'.$Label.'</b><br><SELECT ACCESSKEY="'.$accesskey.'" CLASS="sts" NAME="'.$campo.'" '.$w_Disabled.'>');
-}
-  else
-{
-
-  ShowHTML('          <td valign="top" title="'.$hint.'"><font size="1"><b>'.$Label.'</b><br><SELECT ACCESSKEY="'.$accesskey.'" CLASS="sts" NAME="'.$campo.'" '.$w_Disabled.'>');
-}
-
-ShowHTML('          <option value="">---');
-while(!$RS->EOF)
-{
-
-  if ($cDbl[nvl($RS['SQ_LOCALIZACAO'],0)]==$cDbl[nvl($chave,0)])
-  {
-
-    ShowHTML('          <option value="'.$RS['SQ_LOCALIZACAO'].'" SELECTED>'.$RS['LOCALIZACAO']);
-  }
-    else
-  {
-
-    ShowHTML('          <option value="'.$RS['SQ_LOCALIZACAO'].'">'.$RS['LOCALIZACAO']);
+  if (!isset($hint)) {
+    ShowHTML('          <td valign="top"><font size="1"><b>'.$label.'</b><br><SELECT ACCESSKEY="'.$accesskey.'" CLASS="sts" NAME="'.$campo.'" '.$w_Disabled.'>');
+  } else {
+    ShowHTML('          <td valign="top" title="'.$hint.'"><font size="1"><b>'.$label.'</b><br><SELECT ACCESSKEY="'.$accesskey.'" CLASS="sts" NAME="'.$campo.'" '.$w_Disabled.'>');
   }
 
-$RS->MoveNext;
-}
-ShowHTML('          </select>');
-return $function_ret;
+  ShowHTML('          <option value="">---');
+
+  foreach ($RS as $row)  {
+    if (nvl(f($row,'SQ_LOCALIZACAO'),0) == nvl($chave,0)) {
+      ShowHTML('          <option value="'.f($row,'SQ_LOCALIZACAO').'" SELECTED>'.f($row,'LOCALIZACAO'));
+    } else {
+      ShowHTML('          <option value="'.f($row,'SQ_LOCALIZACAO').'">'.f($row,'LOCALIZACAO'));
+    }
+  }
+  ShowHTML('          </select>');
+  return $function_ret;
 }
 
 // =========================================================================
@@ -1033,12 +1011,12 @@ $RS->Sort='Nome';
 if (!isset($hint))
 {
 
-  ShowHTML('          <td valign="top"><font size="1"><b>'.$Label.'</b><br><SELECT ACCESSKEY="'.$accesskey.'" CLASS="sts" NAME="'.$campo.'" '.$w_Disabled.'>');
+  ShowHTML('          <td valign="top"><font size="1"><b>'.$label.'</b><br><SELECT ACCESSKEY="'.$accesskey.'" CLASS="sts" NAME="'.$campo.'" '.$w_Disabled.'>');
 }
   else
 {
 
-  ShowHTML('          <td valign="top" title="'.$hint.'"><font size="1"><b>'.$Label.'</b><br><SELECT ACCESSKEY="'.$accesskey.'" CLASS="sts" NAME="'.$campo.'" '.$w_Disabled.'>');
+  ShowHTML('          <td valign="top" title="'.$hint.'"><font size="1"><b>'.$label.'</b><br><SELECT ACCESSKEY="'.$accesskey.'" CLASS="sts" NAME="'.$campo.'" '.$w_Disabled.'>');
 }
 
 ShowHTML('          <option value="">---');
@@ -1075,12 +1053,12 @@ $RS->Sort='Nome';
 if (!isset($hint))
 {
 
-  ShowHTML('          <td valign="top"><font size="1"><b>'.$Label.'</b><br><SELECT ACCESSKEY="'.$accesskey.'" CLASS="sts" NAME="'.$campo.'" '.$w_Disabled.' '.$atributo.'>');
+  ShowHTML('          <td valign="top"><font size="1"><b>'.$label.'</b><br><SELECT ACCESSKEY="'.$accesskey.'" CLASS="sts" NAME="'.$campo.'" '.$w_Disabled.' '.$atributo.'>');
 }
   else
 {
 
-  ShowHTML('          <td valign="top" title="'.$hint.'"><font size="1"><b>'.$Label.'</b><br><SELECT ACCESSKEY="'.$accesskey.'" CLASS="sts" NAME="'.$campo.'" '.$w_Disabled.' '.$atributo.'>');
+  ShowHTML('          <td valign="top" title="'.$hint.'"><font size="1"><b>'.$label.'</b><br><SELECT ACCESSKEY="'.$accesskey.'" CLASS="sts" NAME="'.$campo.'" '.$w_Disabled.' '.$atributo.'>');
 }
 
 ShowHTML('          <option value="">---');
@@ -1110,52 +1088,39 @@ return $function_ret;
 function SelecaoUnidade($label,$accesskey,$hint,$chave,$chaveAux,$campo,$restricao,$atributo) {
   extract($GLOBALS);
 
+  if (!isset($restricao) || (strpos($restricao,"=") ? strpos($restricao,"=")+1 : 0)==0) {
 
-if (!isset($restricao) || (strpos($restricao,"=") ? strpos($restricao,"=")+1 : 0)==0)
-{
+    $RS = DB_GetUorgList::getInstanceOf($dbms, $w_cliente, $ChaveAux, $restricao, null, null);
+    //$RS->Filter="ativo='S'";
+  } else {
 
-  DB_GetUorgList($RS, $w_cliente, $ChaveAux, $restricao, $null, $null);
-$RS->Filter="ativo='S'";
-}
-  else
-{
-
-  DB_GetUorgList($RS, $w_cliente, $ChaveAux, $null, $null, $null);
-$RS->Filter="ativo='S' and ".$restricao;
-}
-
-
-ShowHTML("<INPUT type=\"hidden\" name=\"".$campo."\" value=\"".$chave."\">");
-if ($chave>'')
-{
-
-  DB_GetUorgList($RS, $w_cliente, $chave, $null, $null, $null);
-$RS->Filter="sq_unidade = ".$chave;
-  if (!$RS->EOF)
-  {
-
-    $w_nm_unidade=$RS['NOME'];
-    $w_sigla=$RS['SIGLA'];
+    $RS = DB_GetUorgList::getInstanceOf($dbms, $w_cliente, $ChaveAux, null, null, null);
+    //$RS->Filter="ativo='S' and ".$restricao;
   }
 
-}
+  ShowHTML("<INPUT type=\"hidden\" name=\"".$campo."\" value=\"".$chave."\">");
+  if ($chave>'') {
 
-if (!isset($hint))
-{
+    $RS = DB_GetUorgList::getInstanceOf($dbms, $w_cliente, $chave, null, null, null);
+    //$RS->Filter="sq_unidade = ".$chave;
+    foreach ($RS as $row) {
+      $w_nm_unidade=f($row,'nome');
+      $w_sigla=f($row,'sigla');
+    }
 
-  ShowHTML("      <td valign=\"top\"><font size=\"1\"><b>".$Label."</b><br>");
-  ShowHTML("          <input READONLY ACCESSKEY=\"".$accesskey."\" CLASS=\"sti\" type=\"text\" name=\"".$campo."_nm"."\" SIZE=\"60\" VALUE=\"".$w_nm_unidade."\" ".$atributo.">");
-}
-  else
-{
+  }
 
-  ShowHTML("      <td valign=\"top\" title=\"".$hint."\"><font size=\"1\"><b>".$Label."</b><br>");
-  ShowHTML("          <input READONLY ACCESSKEY=\"".$accesskey."\" CLASS=\"sti\" type=\"text\" name=\"".$campo."_nm"."\" SIZE=\"60\" VALUE=\"".$w_nm_unidade."\" ".$atributo.">");
-}
+  if (!isset($hint)) {
+    ShowHTML("      <td valign=\"top\"><font size=\"1\"><b>".$label."</b><br>");
+    ShowHTML("          <input READONLY ACCESSKEY=\"".$accesskey."\" CLASS=\"sti\" type=\"text\" name=\"".$campo."_nm"."\" SIZE=\"60\" VALUE=\"".$w_nm_unidade."\" ".$atributo.">");
+  } else {
+    ShowHTML("      <td valign=\"top\" title=\"".$hint."\"><font size=\"1\"><b>".$label."</b><br>");
+    ShowHTML("          <input READONLY ACCESSKEY=\"".$accesskey."\" CLASS=\"sti\" type=\"text\" name=\"".$campo."_nm"."\" SIZE=\"60\" VALUE=\"".$w_nm_unidade."\" ".$atributo.">");
+  }
 
-ShowHTML("              <a class=\"ss\" href=\"#\" onClick=\"window.open('".str_replace("/files","",$conFileVirtual)."EO.php?par=BuscaUnidade&TP=".$TP."&w_cliente=".$w_cliente."&ChaveAux=".$ChaveAux."&restricao=".$restricao."&campo=".$campo."','Unidade','top=10,left=10,width=780,height=550,toolbar=yes,status=yes,resizable=yes,scrollbars=yes'); return false;\" title=\"Clique aqui para selecionar a unidade.\"><img src=images/Folder/Explorer.gif border=0 align=top height=15 width=15></a>");
-ShowHTML("              <a class=\"ss\" href=\"#\" onClick=\"document.Form.".$campo."_nm".".value=''; document.Form.".$campo.".value=''; return false;\" title=\"Clique aqui para apagar o valor deste campo.\"><img src=images/Folder/Recyfull.gif border=0 align=top height=15 width=15></a>");
-return $function_ret;
+  ShowHTML("              <a class=\"ss\" href=\"#\" onClick=\"window.open('".str_replace("/files","",$conFileVirtual)."eo.php?par=BuscaUnidade&TP=".$TP."&w_cliente=".$w_cliente."&ChaveAux=".$ChaveAux."&restricao=".$restricao."&campo=".$campo."','Unidade','top=10,left=10,width=780,height=550,toolbar=yes,status=yes,resizable=yes,scrollbars=yes'); return false;\" title=\"Clique aqui para selecionar a unidade.\"><img src=images/Folder/Explorer.gif border=0 align=top height=15 width=15></a>");
+  ShowHTML("              <a class=\"ss\" href=\"#\" onClick=\"document.Form.".$campo."_nm".".value=''; document.Form.".$campo.".value=''; return false;\" title=\"Clique aqui para apagar o valor deste campo.\"><img src=images/Folder/Recyfull.gif border=0 align=top height=15 width=15></a>");
+  return $function_ret;
 }
 
 // =========================================================================
@@ -1170,12 +1135,12 @@ $RS->Sort="Nome";
 if (!isset($hint))
 {
 
-  ShowHTML("          <td valign=\"top\"><font size=\"1\"><b>".$Label."</b><br><SELECT ACCESSKEY=\"".$accesskey."\" CLASS=\"sts\" NAME=\"".$campo."\" ".$w_Disabled.">");
+  ShowHTML("          <td valign=\"top\"><font size=\"1\"><b>".$label."</b><br><SELECT ACCESSKEY=\"".$accesskey."\" CLASS=\"sts\" NAME=\"".$campo."\" ".$w_Disabled.">");
 }
   else
 {
 
-  ShowHTML("          <td valign=\"top\" title=\"".$hint."\"><font size=\"1\"><b>".$Label."</b><br><SELECT ACCESSKEY=\"".$accesskey."\" CLASS=\"sts\" NAME=\"".$campo."\" ".$w_Disabled.">");
+  ShowHTML("          <td valign=\"top\" title=\"".$hint."\"><font size=\"1\"><b>".$label."</b><br><SELECT ACCESSKEY=\"".$accesskey."\" CLASS=\"sts\" NAME=\"".$campo."\" ".$w_Disabled.">");
 }
 
 ShowHTML("          <option value=\"\">---");
@@ -1219,12 +1184,12 @@ $RS->Sort="Nome";
 if (!isset($hint))
 {
 
-  ShowHTML("          <td valign=\"top\"><font size=\"1\"><b>".$Label."</b><br><SELECT ACCESSKEY=\"".$accesskey."\" CLASS=\"sts\" NAME=\"".$campo."\" ".$w_Disabled.">");
+  ShowHTML("          <td valign=\"top\"><font size=\"1\"><b>".$label."</b><br><SELECT ACCESSKEY=\"".$accesskey."\" CLASS=\"sts\" NAME=\"".$campo."\" ".$w_Disabled.">");
 }
   else
 {
 
-  ShowHTML("          <td valign=\"top\" title=\"".$hint."\"><font size=\"1\"><b>".$Label."</b><br><SELECT ACCESSKEY=\"".$accesskey."\" CLASS=\"sts\" NAME=\"".$campo."\" ".$w_Disabled.">");
+  ShowHTML("          <td valign=\"top\" title=\"".$hint."\"><font size=\"1\"><b>".$label."</b><br><SELECT ACCESSKEY=\"".$accesskey."\" CLASS=\"sts\" NAME=\"".$campo."\" ".$w_Disabled.">");
 }
 
 ShowHTML("          <option value=\"\">---");
@@ -1268,12 +1233,12 @@ $RS->Sort="Nome";
 if (!isset($hint))
 {
 
-  ShowHTML("          <td valign=\"top\"><font size=\"1\"><b>".$Label."</b><br><SELECT ACCESSKEY=\"".$accesskey."\" CLASS=\"sts\" NAME=\"".$campo."\" ".$w_Disabled.">");
+  ShowHTML("          <td valign=\"top\"><font size=\"1\"><b>".$label."</b><br><SELECT ACCESSKEY=\"".$accesskey."\" CLASS=\"sts\" NAME=\"".$campo."\" ".$w_Disabled.">");
 }
   else
 {
 
-  ShowHTML("          <td valign=\"top\" title=\"".$hint."\"><font size=\"1\"><b>".$Label."</b><br><SELECT ACCESSKEY=\"".$accesskey."\" CLASS=\"sts\" NAME=\"".$campo."\" ".$w_Disabled.">");
+  ShowHTML("          <td valign=\"top\" title=\"".$hint."\"><font size=\"1\"><b>".$label."</b><br><SELECT ACCESSKEY=\"".$accesskey."\" CLASS=\"sts\" NAME=\"".$campo."\" ".$w_Disabled.">");
 }
 
 ShowHTML("          <option value=\"\">---");
@@ -1308,12 +1273,12 @@ DB_GetCCList($RS, $w_cliente, $ChaveAux, $restricao);
 if (!isset($hint))
 {
 
-  ShowHTML("          <td valign=\"top\"><font size=\"1\"><b>".$Label."</b><br><SELECT ACCESSKEY=\"".$accesskey."\" CLASS=\"sts\" NAME=\"".$campo."\" ".$w_Disabled.">");
+  ShowHTML("          <td valign=\"top\"><font size=\"1\"><b>".$label."</b><br><SELECT ACCESSKEY=\"".$accesskey."\" CLASS=\"sts\" NAME=\"".$campo."\" ".$w_Disabled.">");
 }
   else
 {
 
-  ShowHTML("          <td valign=\"top\" title=\"".$hint."\"><font size=\"1\"><b>".$Label."</b><br><SELECT ACCESSKEY=\"".$accesskey."\" CLASS=\"sts\" NAME=\"".$campo."\" ".$w_Disabled.">");
+  ShowHTML("          <td valign=\"top\" title=\"".$hint."\"><font size=\"1\"><b>".$label."</b><br><SELECT ACCESSKEY=\"".$accesskey."\" CLASS=\"sts\" NAME=\"".$campo."\" ".$w_Disabled.">");
 }
 
 ShowHTML("          <OPTION VALUE=\"\">---");
@@ -1349,12 +1314,12 @@ DB_GetCCSubordination($RS, $w_cliente, $chave, $restricao);
 if (!isset($hint))
 {
 
-  ShowHTML("          <td valign=\"top\"><font size=\"1\"><b>".$Label."</b><br><SELECT ACCESSKEY=\"".$accesskey."\" CLASS=\"sts\" NAME=\"".$campo."\" ".$w_Disabled.">");
+  ShowHTML("          <td valign=\"top\"><font size=\"1\"><b>".$label."</b><br><SELECT ACCESSKEY=\"".$accesskey."\" CLASS=\"sts\" NAME=\"".$campo."\" ".$w_Disabled.">");
 }
   else
 {
 
-  ShowHTML("          <td valign=\"top\" title=\"".$hint."\"><font size=\"1\"><b>".$Label."</b><br><SELECT ACCESSKEY=\"".$accesskey."\" CLASS=\"sts\" NAME=\"".$campo."\" ".$w_Disabled.">");
+  ShowHTML("          <td valign=\"top\" title=\"".$hint."\"><font size=\"1\"><b>".$label."</b><br><SELECT ACCESSKEY=\"".$accesskey."\" CLASS=\"sts\" NAME=\"".$campo."\" ".$w_Disabled.">");
 }
 
 ShowHTML("          <OPTION VALUE=\"\">---");
@@ -1391,12 +1356,12 @@ $RS->Filter="ativo='S'";
 if (!isset($hint))
 {
 
-  ShowHTML("          <td valign=\"top\"><font size=\"1\"><b>".$Label."</b><br><SELECT ACCESSKEY=\"".$accesskey."\" CLASS=\"sts\" NAME=\"".$campo."\" ".$w_Disabled." ".$atributo.">");
+  ShowHTML("          <td valign=\"top\"><font size=\"1\"><b>".$label."</b><br><SELECT ACCESSKEY=\"".$accesskey."\" CLASS=\"sts\" NAME=\"".$campo."\" ".$w_Disabled." ".$atributo.">");
 }
   else
 {
 
-  ShowHTML("          <td valign=\"top\" title=\"".$hint."\"><font size=\"1\"><b>".$Label."</b><br><SELECT ACCESSKEY=\"".$accesskey."\" CLASS=\"sts\" NAME=\"".$campo."\" ".$w_Disabled." ".$atributo.">");
+  ShowHTML("          <td valign=\"top\" title=\"".$hint."\"><font size=\"1\"><b>".$label."</b><br><SELECT ACCESSKEY=\"".$accesskey."\" CLASS=\"sts\" NAME=\"".$campo."\" ".$w_Disabled." ".$atributo.">");
 }
 
 ShowHTML("          <option value=\"\">---");
@@ -1438,12 +1403,12 @@ $RS->Filter=$restricao;
 if (!isset($hint))
 {
 
-  ShowHTML("          <td valign=\"top\"><font size=\"1\"><b>".$Label."</b><br><SELECT ACCESSKEY=\"".$accesskey."\" CLASS=\"sts\" NAME=\"".$campo."\" ".$w_Disabled." ".$atributo.">");
+  ShowHTML("          <td valign=\"top\"><font size=\"1\"><b>".$label."</b><br><SELECT ACCESSKEY=\"".$accesskey."\" CLASS=\"sts\" NAME=\"".$campo."\" ".$w_Disabled." ".$atributo.">");
 }
   else
 {
 
-  ShowHTML("          <td valign=\"top\" title=\"".$hint."\"><font size=\"1\"><b>".$Label."</b><br><SELECT ACCESSKEY=\"".$accesskey."\" CLASS=\"sts\" NAME=\"".$campo."\" ".$w_Disabled." ".$atributo.">");
+  ShowHTML("          <td valign=\"top\" title=\"".$hint."\"><font size=\"1\"><b>".$label."</b><br><SELECT ACCESSKEY=\"".$accesskey."\" CLASS=\"sts\" NAME=\"".$campo."\" ".$w_Disabled." ".$atributo.">");
 }
 
 ShowHTML("          <option value=\"\">---");
@@ -1480,12 +1445,12 @@ $RS->Sort="Nome";
 if (!isset($hint))
 {
 
-  ShowHTML("          <td valign=\"top\"><font size=\"1\"><b>".$Label."</b><br><SELECT ACCESSKEY=\"".$accesskey."\" CLASS=\"sts\" NAME=\"".$campo."\" ".$w_Disabled.">");
+  ShowHTML("          <td valign=\"top\"><font size=\"1\"><b>".$label."</b><br><SELECT ACCESSKEY=\"".$accesskey."\" CLASS=\"sts\" NAME=\"".$campo."\" ".$w_Disabled.">");
 }
   else
 {
 
-  ShowHTML("          <td valign=\"top\" title=\"".$hint."\"><font size=\"1\"><b>".$Label."</b><br><SELECT ACCESSKEY=\"".$accesskey."\" CLASS=\"sts\" NAME=\"".$campo."\" ".$w_Disabled.">");
+  ShowHTML("          <td valign=\"top\" title=\"".$hint."\"><font size=\"1\"><b>".$label."</b><br><SELECT ACCESSKEY=\"".$accesskey."\" CLASS=\"sts\" NAME=\"".$campo."\" ".$w_Disabled.">");
 }
 
 ShowHTML("          <option value=\"\">---");
@@ -1527,12 +1492,12 @@ $RS->Sort="Nome";
 if (!isset($hint))
 {
 
-  ShowHTML("          <td valign=\"top\"><font size=\"1\"><b>".$Label."</b><br><SELECT ACCESSKEY=\"".$accesskey."\" CLASS=\"sts\" NAME=\"".$campo."\" ".$w_Disabled." ".$atributo.">");
+  ShowHTML("          <td valign=\"top\"><font size=\"1\"><b>".$label."</b><br><SELECT ACCESSKEY=\"".$accesskey."\" CLASS=\"sts\" NAME=\"".$campo."\" ".$w_Disabled." ".$atributo.">");
 }
   else
 {
 
-  ShowHTML("          <td valign=\"top\" title=\"".$hint."\"><font size=\"1\"><b>".$Label."</b><br><SELECT ACCESSKEY=\"".$accesskey."\" CLASS=\"sts\" NAME=\"".$campo."\" ".$w_Disabled." ".$atributo.">");
+  ShowHTML("          <td valign=\"top\" title=\"".$hint."\"><font size=\"1\"><b>".$label."</b><br><SELECT ACCESSKEY=\"".$accesskey."\" CLASS=\"sts\" NAME=\"".$campo."\" ".$w_Disabled." ".$atributo.">");
 }
 
 ShowHTML("          <option value=\"\">---");
@@ -1572,12 +1537,12 @@ $RS->Sort="Nome";
 if (!isset($hint))
 {
 
-  ShowHTML("          <td valign=\"top\"><font size=\"1\"><b>".$Label."</b><br><SELECT ACCESSKEY=\"".$accesskey."\" CLASS=\"sts\" NAME=\"".$campo."\" ".$w_Disabled." ".$atributo.">");
+  ShowHTML("          <td valign=\"top\"><font size=\"1\"><b>".$label."</b><br><SELECT ACCESSKEY=\"".$accesskey."\" CLASS=\"sts\" NAME=\"".$campo."\" ".$w_Disabled." ".$atributo.">");
 }
   else
 {
 
-  ShowHTML("          <td valign=\"top\" title=\"".$hint."\"><font size=\"1\"><b>".$Label."</b><br><SELECT ACCESSKEY=\"".$accesskey."\" CLASS=\"sts\" NAME=\"".$campo."\" ".$w_Disabled." ".$atributo.">");
+  ShowHTML("          <td valign=\"top\" title=\"".$hint."\"><font size=\"1\"><b>".$label."</b><br><SELECT ACCESSKEY=\"".$accesskey."\" CLASS=\"sts\" NAME=\"".$campo."\" ".$w_Disabled." ".$atributo.">");
 }
 
 ShowHTML("          <option value=\"\">---");
@@ -1614,12 +1579,12 @@ $RS->Sort="Nome";
 if (!isset($hint))
 {
 
-  ShowHTML("          <td valign=\"top\"><font size=\"1\"><b>".$Label."</b><br><SELECT ACCESSKEY=\"".$accesskey."\" CLASS=\"sts\" NAME=\"".$campo."\" ".$w_Disabled.">");
+  ShowHTML("          <td valign=\"top\"><font size=\"1\"><b>".$label."</b><br><SELECT ACCESSKEY=\"".$accesskey."\" CLASS=\"sts\" NAME=\"".$campo."\" ".$w_Disabled.">");
 }
   else
 {
 
-  ShowHTML("          <td valign=\"top\" title=\"".$hint."\"><font size=\"1\"><b>".$Label."</b><br><SELECT ACCESSKEY=\"".$accesskey."\" CLASS=\"sts\" NAME=\"".$campo."\" ".$w_Disabled.">");
+  ShowHTML("          <td valign=\"top\" title=\"".$hint."\"><font size=\"1\"><b>".$label."</b><br><SELECT ACCESSKEY=\"".$accesskey."\" CLASS=\"sts\" NAME=\"".$campo."\" ".$w_Disabled.">");
 }
 
 ShowHTML("          <option value=\"\">---");
@@ -1654,12 +1619,12 @@ $RS->Sort="Ordem";
 if (!isset($hint))
 {
 
-  ShowHTML("          <td valign=\"top\"><font size=\"1\"><b>".$Label."</b><br><SELECT ACCESSKEY=\"".$accesskey."\" CLASS=\"sts\" NAME=\"".$campo."\" ".$w_Disabled." ".$atributo.">");
+  ShowHTML("          <td valign=\"top\"><font size=\"1\"><b>".$label."</b><br><SELECT ACCESSKEY=\"".$accesskey."\" CLASS=\"sts\" NAME=\"".$campo."\" ".$w_Disabled." ".$atributo.">");
 }
   else
 {
 
-  ShowHTML("          <td valign=\"top\" title=\"".$hint."\"><font size=\"1\"><b>".$Label."</b><br><SELECT ACCESSKEY=\"".$accesskey."\" CLASS=\"sts\" NAME=\"".$campo."\" ".$w_Disabled." ".$atributo.">");
+  ShowHTML("          <td valign=\"top\" title=\"".$hint."\"><font size=\"1\"><b>".$label."</b><br><SELECT ACCESSKEY=\"".$accesskey."\" CLASS=\"sts\" NAME=\"".$campo."\" ".$w_Disabled." ".$atributo.">");
 }
 
 while(!$RS->EOF)
@@ -1690,7 +1655,7 @@ function SelecaoFaseCheck($label,$accesskey,$hint,$chave,$chaveAux,$campo,$restr
 DB_GetTramiteList($RS, $chaveAux, $null);
 $RS->Filter="ativo = 'S' or sigla = 'AT'";
 $RS->Sort="Ordem";
-ShowHTML("          <td valign=\"top\"><font size=\"1\"><b>".$Label."</b>");
+ShowHTML("          <td valign=\"top\"><font size=\"1\"><b>".$label."</b>");
 while(!$RS->EOF)
 {
   if (Nvl($chave,"")=="") { ShowHTML("          <BR><input type=\"CHECKBOX\" name=\"".$campo."\" value=\"".$RS['SQ_SIW_TRAMITE']."\" CHECKED>".$RS['NOME']); }
@@ -1736,12 +1701,12 @@ $RS->Sort="titulo";
 if (!isset($hint))
 {
 
-  ShowHTML("          <td valign=\"top\"><font size=\"1\"><b>".$Label."</b><br><SELECT ACCESSKEY=\"".$accesskey."\" CLASS=\"sts\" NAME=\"".$campo."\" ".$w_Disabled." ".$atributo.">");
+  ShowHTML("          <td valign=\"top\"><font size=\"1\"><b>".$label."</b><br><SELECT ACCESSKEY=\"".$accesskey."\" CLASS=\"sts\" NAME=\"".$campo."\" ".$w_Disabled." ".$atributo.">");
 }
   else
 {
 
-  ShowHTML("          <td valign=\"top\" title=\"".$hint."\"><font size=\"1\"><b>".$Label."</b><br><SELECT ACCESSKEY=\"".$accesskey."\" CLASS=\"sts\" NAME=\"".$campo."\" ".$w_Disabled." ".$atributo.">");
+  ShowHTML("          <td valign=\"top\" title=\"".$hint."\"><font size=\"1\"><b>".$label."</b><br><SELECT ACCESSKEY=\"".$accesskey."\" CLASS=\"sts\" NAME=\"".$campo."\" ".$w_Disabled." ".$atributo.">");
 }
 
 ShowHTML("          <option value=\"\">---");
@@ -1771,9 +1736,9 @@ return $function_ret;
 function SelecaoTipoRecurso($label,$accesskey,$hint,$chave,$chaveAux,$campo,$restricao,$atributo) {
   extract($GLOBALS);
 if (!isset($hint))
-   { ShowHTML("          <td valign=\"top\"><font size=\"1\"><b>".$Label."</b><br><SELECT ACCESSKEY=\"".$accesskey."\" CLASS=\"sts\" NAME=\"".$campo."\" ".$w_Disabled." ".$atributo.">"); }
+   { ShowHTML("          <td valign=\"top\"><font size=\"1\"><b>".$label."</b><br><SELECT ACCESSKEY=\"".$accesskey."\" CLASS=\"sts\" NAME=\"".$campo."\" ".$w_Disabled." ".$atributo.">"); }
 else
-   { ShowHTML("          <td valign=\"top\" title=\"".$hint."\"><font size=\"1\"><b>".$Label."</b><br><SELECT ACCESSKEY=\"".$accesskey."\" CLASS=\"sts\" NAME=\"".$campo."\" ".$w_Disabled." ".$atributo.">"); }
+   { ShowHTML("          <td valign=\"top\" title=\"".$hint."\"><font size=\"1\"><b>".$label."</b><br><SELECT ACCESSKEY=\"".$accesskey."\" CLASS=\"sts\" NAME=\"".$campo."\" ".$w_Disabled." ".$atributo.">"); }
 
 ShowHTML("          <option value=\"\">---");
 if ($cDbl[nvl($chave,-1)]==0) { ShowHTML("          <option value=\"0\" SELECTED>Financeiro"); } else { ShowHTML("          <option value=\"0\">Financeiro"); }
@@ -1816,12 +1781,12 @@ function SelecaoPrioridade($label,$accesskey,$hint,$chave,$chaveAux,$campo,$rest
 if (!isset($hint))
 {
 
-  ShowHTML("          <td valign=\"top\"><font size=\"1\"><b>".$Label."</b><br><SELECT ACCESSKEY=\"".$accesskey."\" CLASS=\"sts\" NAME=\"".$campo."\" ".$w_Disabled." ".$atributo.">");
+  ShowHTML("          <td valign=\"top\"><font size=\"1\"><b>".$label."</b><br><SELECT ACCESSKEY=\"".$accesskey."\" CLASS=\"sts\" NAME=\"".$campo."\" ".$w_Disabled." ".$atributo.">");
 }
   else
 {
 
-  ShowHTML("          <td valign=\"top\" title=\"".$hint."\"><font size=\"1\"><b>".$Label."</b><br><SELECT ACCESSKEY=\"".$accesskey."\" CLASS=\"sts\" NAME=\"".$campo."\" ".$w_Disabled." ".$atributo.">");
+  ShowHTML("          <td valign=\"top\" title=\"".$hint."\"><font size=\"1\"><b>".$label."</b><br><SELECT ACCESSKEY=\"".$accesskey."\" CLASS=\"sts\" NAME=\"".$campo."\" ".$w_Disabled." ".$atributo.">");
 }
 
 ShowHTML("          <option value=\"\">---");
@@ -1840,12 +1805,12 @@ function SelecaoTipoVisao($label,$accesskey,$hint,$chave,$chaveAux,$campo,$restr
 if (!isset($hint))
 {
 
-  ShowHTML("          <td valign=\"top\"><font size=\"1\"><b>".$Label."</b><br><SELECT ACCESSKEY=\"".$accesskey."\" CLASS=\"sts\" NAME=\"".$campo."\" ".$w_Disabled." ".$atributo.">");
+  ShowHTML("          <td valign=\"top\"><font size=\"1\"><b>".$label."</b><br><SELECT ACCESSKEY=\"".$accesskey."\" CLASS=\"sts\" NAME=\"".$campo."\" ".$w_Disabled." ".$atributo.">");
 }
   else
 {
 
-  ShowHTML("          <td valign=\"top\" title=\"".$hint."\"><font size=\"1\"><b>".$Label."</b><br><SELECT ACCESSKEY=\"".$accesskey."\" CLASS=\"sts\" NAME=\"".$campo."\" ".$w_Disabled." ".$atributo.">");
+  ShowHTML("          <td valign=\"top\" title=\"".$hint."\"><font size=\"1\"><b>".$label."</b><br><SELECT ACCESSKEY=\"".$accesskey."\" CLASS=\"sts\" NAME=\"".$campo."\" ".$w_Disabled." ".$atributo.">");
 }
 
 ShowHTML("          <option value=\"\">---");
@@ -1862,9 +1827,9 @@ return $function_ret;
 function SelecaoEtapa($label,$accesskey,$hint,$chave,$chaveAux,$chaveAux2,$campo,$restricao,$atributo) {
   extract($GLOBALS);
 if (!isset($hint))
-   { ShowHTML("          <td valign=\"top\"><font size=\"1\"><b>".$Label."</b><br><SELECT ACCESSKEY=\"".$accesskey."\" CLASS=\"sts\" NAME=\"".$campo."\" ".$w_Disabled." ".$atributo.">"); }
+   { ShowHTML("          <td valign=\"top\"><font size=\"1\"><b>".$label."</b><br><SELECT ACCESSKEY=\"".$accesskey."\" CLASS=\"sts\" NAME=\"".$campo."\" ".$w_Disabled." ".$atributo.">"); }
 else
-   { ShowHTML("          <td valign=\"top\" title=\"".$hint."\"><font size=\"1\"><b>".$Label."</b><br><SELECT ACCESSKEY=\"".$accesskey."\" CLASS=\"sts\" NAME=\"".$campo."\" ".$w_Disabled." ".$atributo.">"); }
+   { ShowHTML("          <td valign=\"top\" title=\"".$hint."\"><font size=\"1\"><b>".$label."</b><br><SELECT ACCESSKEY=\"".$accesskey."\" CLASS=\"sts\" NAME=\"".$campo."\" ".$w_Disabled." ".$atributo.">"); }
 ShowHTML("          <option value=\"\">---");
 
 DB_GetSolicEtapa($RST, $chaveAux, $chaveAux2, 'LSTNULL');

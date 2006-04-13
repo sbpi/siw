@@ -4,7 +4,7 @@ include_once("classes/db/DatabaseQueriesFactory.php");
 * class db_getLinkData
 *
 * { Description :- 
-*    This class retrieves the data of the selected Link
+*    Retorna os dados de uma opção do menu.
 * }
 */
 
@@ -18,9 +18,8 @@ class db_getLinkData {
      $l_rs = DatabaseQueriesFactory::getInstanceOf($sql, $dbms, $params, DB_TYPE);
      if(!$l_rs->executeQuery()) { die("Cannot query"); }
      else {
-        $l_data = $l_rs->getResultArray();
-        return $l_data;
+        return $l_rs->getResultArray();
      }
    }
 }    
-?>
+?>
