@@ -1,6 +1,7 @@
 create or replace procedure SP_GetMenuLink
    (p_cliente   in  number,
     p_endereco  in number    default null,
+    p_modulo    in number    default null,
     p_restricao in  varchar2 default null,
     p_result    out sys_refcursor
    ) is
@@ -24,6 +25,7 @@ begin
                      )
                     )
                    )
+               and (p_modulo          is null or (p_modulo is not null and a.sq_modulo = p_modulo))
                and a.sq_pessoa        = p_cliente
             order by 5,3;
       Else
@@ -43,10 +45,10 @@ begin
                     )
                    )
                and a.sq_pessoa        = p_cliente
+               and (p_modulo          is null or (p_modulo is not null and a.sq_modulo = p_modulo))
                and a.sq_menu_pai      = p_restricao
             order by 5,3;
       End If;
     End If;
 end SP_GetMenuLink;
 /
-
