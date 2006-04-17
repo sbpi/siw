@@ -50,7 +50,8 @@ begin
           where a.sq_pessoa_pai = p_cliente
             and (p_nome       is null or (p_nome       is not null and ((acentos(a.nome) like '%'||acentos(p_nome)||'%')
                                                                    or    acentos(a.nome_resumido) like '%'||acentos(p_nome)||'%')))
-            and (p_sg_unidade is null or (p_sg_unidade is not null and acentos(d.sigla) like '%'||acentos(p_sg_unidade)||'%'))          
+            and (p_sg_unidade is null or (p_sg_unidade is not null and acentos(d.sigla) like '%'||acentos(p_sg_unidade)||'%'))
+            and (p_codigo     is null or (p_codigo     is not null and codigo = p_codigo))
          order by a.nome_indice;
    Elsif p_restricao = 'INTERNOS' Then
       -- Recupera as pessoas internas à organização
@@ -113,7 +114,7 @@ begin
             and (p_nome       is null or (p_nome       is not null and ((acentos(a.nome) like '%'||acentos(p_nome)||'%')
                                                                    or    acentos(a.nome_resumido) like '%'||acentos(p_nome)||'%')))
             and (p_sg_unidade is null or (p_sg_unidade is not null and acentos(d.sigla) like '%'||acentos(p_sg_unidade)||'%'))          
-         order by a.nome_resumido;
+         order by a.nome_resumido_ind;
    Elsif p_restricao = 'TTTRANSFERE' Then
       -- Recupera as pessoas vinculadas a uma central telefônica
       open p_result for 
@@ -132,7 +133,7 @@ begin
             and (p_nome       is null or (p_nome       is not null and ((acentos(a.nome) like '%'||acentos(p_nome)||'%')
                                                                    or    acentos(a.nome_resumido) like '%'||acentos(p_nome)||'%')))
             and (p_sg_unidade is null or (p_sg_unidade is not null and acentos(f.sigla) like '%'||acentos(p_sg_unidade)||'%'))            
-         order by a.nome_resumido;
+         order by a.nome_resumido_ind;
    Elsif p_restricao = 'TTUSUCENTRAL' Then
       -- Recupera os usuários do sistema que ainda não estão vinculados à central informada
       open p_result for 
@@ -160,7 +161,7 @@ begin
             and (p_nome       is null or (p_nome       is not null and ((acentos(a.nome) like '%'||acentos(p_nome)||'%')
                                                                    or    acentos(a.nome_resumido) like '%'||acentos(p_nome)||'%')))
             and (p_sg_unidade is null or (p_sg_unidade is not null and acentos(d.sigla) like '%'||acentos(p_sg_unidade)||'%'))          
-         order by nome_resumido;
+         order by nome_resumido_ind;
    Elsif p_restricao = 'TTUSURAMAL' Then
       -- Recupera os usuários do sistema que ainda não estão vinculados à central informada
       open p_result for 
@@ -173,6 +174,7 @@ begin
                     inner      join eo_localizacao    e on (c.sq_localizacao  = e.sq_localizacao)
                 inner          join tt_usuario        f on (a.sq_pessoa       = f.usuario)
           where a.sq_pessoa_pai   = p_cliente
+            and c.ativo           = 'S'
             and (p_nome       is null or (p_nome       is not null and ((acentos(a.nome) like '%'||acentos(p_nome)||'%')
                                                                    or    acentos(a.nome_resumido) like '%'||acentos(p_nome)||'%')))
             and (p_sg_unidade is null or (p_sg_unidade is not null and acentos(d.sigla) like '%'||acentos(p_sg_unidade)||'%'))          
@@ -192,7 +194,7 @@ begin
             and (p_nome       is null or (p_nome       is not null and ((acentos(a.nome) like '%'||acentos(p_nome)||'%')
                                                                    or    acentos(a.nome_resumido) like '%'||acentos(p_nome)||'%')))
             and (p_sg_unidade is null or (p_sg_unidade is not null and acentos(d.sigla) like '%'||acentos(p_sg_unidade)||'%'))          
-         order by nome_resumido;
+         order by nome_resumido_ind;
    Else
       Loop
          l_item  := Trim(substr(l_tipo,1,Instr(l_tipo,',')-1));
