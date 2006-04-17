@@ -670,21 +670,8 @@ Sub Menu
      End If
      ShowHTML "      <tr><td height=""1"" bgcolor=""#000000"">"
      ShowHTML "      <tr><td><font size=2><b>"
-     If p_menu > "" Then
-        DB_GetMenuLink RS, w_cliente, p_sq_endereco_unidade, p_menu
-     Else
-        DB_GetMenuLink RS, w_cliente, p_sq_endereco_unidade, "IS NULL"
-     End If
-     w_filter = ""
-     If p_modulo > "" Then
-        w_filter = "(sq_modulo='" & p_modulo & "') "
-     End If
-     If p_menu > "" Then
-        If w_filter > "" Then w_filter = w_filter & " and "
-        w_filter = w_filter & "(sq_menu_pai=" & p_menu & " or sq_menu=" & p_menu & ")"
-     End If
-     If w_filter > "" Then RS.Filter = w_filter End If
 
+     DB_GetMenuLink RS, w_cliente, p_sq_endereco_unidade, p_modulo, nvl(p_menu,"IS NULL")
      w_ContOut = 0
      While Not RS.EOF
         w_Titulo = RS("nome")
@@ -711,7 +698,7 @@ Sub Menu
            ShowHTML "       <A class=""" & w_classe & """ HREF=""" & w_pagina & par & "&R=" & w_Pagina & par & "&O=E&w_sq_menu=" & RS("sq_menu") & "&w_cliente=" & w_cliente & "&P1=" & P1 & "&P2=" & P2 & "&P3=" & P3 & "&P4=" & P4 & "&TP=" & TP & "&SG=MENU" & MontaFiltro("GET") & """ title=""Exclui o link do menu"">Excluir</A>&nbsp"
            ShowHTML "       </div></span></font></font>"
            ShowHTML "   <div style=""position:relative; left:12;""><font size=1>"
-           DB_GetMenuLink RS1, w_cliente, p_sq_endereco_unidade, RS("sq_menu")
+           DB_GetMenuLink RS1, w_cliente, p_sq_endereco_unidade, null, RS("sq_menu")
            While Not RS1.EOF
               w_Titulo = w_Titulo & " - " & RS1("nome")
               If cDbl(RS1("Filho")) > 0 Then
@@ -737,7 +724,7 @@ Sub Menu
                  ShowHTML "       <A class=""" & w_classe & """ HREF=""" & w_pagina & par & "&R=" & w_Pagina & par & "&O=E&w_sq_menu=" & RS1("sq_menu") & "&w_cliente=" & w_cliente & "&P1=" & P1 & "&P2=" & P2 & "&P3=" & P3 & "&P4=" & P4 & "&TP=" & TP & "&SG=MENU" & MontaFiltro("GET") & """ title=""Exclui o link do menu"">Excluir</A>&nbsp"
                  ShowHTML "       </div></span></font></font>"
                  ShowHTML "   <div style=""position:relative; left:12;""><font size=1>"
-                 DB_GetMenuLink RS2, w_cliente, p_sq_endereco_unidade, RS1("sq_menu")
+                 DB_GetMenuLink RS2, w_cliente, p_sq_endereco_unidade, null, RS1("sq_menu")
                  While Not RS2.EOF
                     w_Titulo = w_Titulo & " - " & RS2("nome")
                     If cDbl(RS2("Filho")) > 0 Then
@@ -763,7 +750,7 @@ Sub Menu
                        ShowHTML "       <A class=""" & w_classe & """ HREF=""" & w_pagina & par & "&R=" & w_Pagina & par & "&O=E&w_sq_menu=" & RS2("sq_menu") & "&w_cliente=" & w_cliente & "&P1=" & P1 & "&P2=" & P2 & "&P3=" & P3 & "&P4=" & P4 & "&TP=" & TP & "&SG=MENU" & MontaFiltro("GET") & """ title=""Exclui o link do menu"">Excluir</A>&nbsp"
                        ShowHTML "       </div></span></font></font>"
                        ShowHTML "   <div style=""position:relative; left:12;""><font size=1>"
-                       DB_GetMenuLink RS3, w_cliente, p_sq_endereco_unidade, RS2("sq_menu")
+                       DB_GetMenuLink RS3, w_cliente, p_sq_endereco_unidade, null, RS2("sq_menu")
                        While Not RS3.EOF
                           w_Titulo = w_Titulo & " - " & RS3("nome")
                           If RS3("IMAGEM") > "" Then
@@ -921,7 +908,7 @@ Sub Menu
      ShowHTML "          <tr><td width=""5%"">"
      ShowHTML "              <td align=""left"" colspan=""2""><font size=""1""><b><u>I</u>magem:<br><INPUT ACCESSKEY=""I"" TYPE=""TEXT"" CLASS=""sti"" NAME=""w_imagem"" SIZE=60 MAXLENGTH=60 VALUE=""" & w_imagem & """ " & w_Disabled & " title=""O SIW apresenta ícones padrão na montagem do menu. Se desejar outro ícone, informe o caminho onde está localizado.""></td>"
      ' Recupera o número de ordem das outras opções irmãs à selecionada
-     DB_GetMenuOrder RS, w_cliente, w_sq_menu_pai
+     DB_GetMenuOrder RS, w_cliente, w_sq_menu_pai, null, null
      If Not RS.EOF Then
         w_texto = "<b>Nºs de ordem em uso para esta subordinação:</b>:<br>" & _
                   "<table border=1 width=100% cellpadding=0 cellspacing=0>" & _
@@ -1999,207 +1986,6 @@ Sub TelaUnidade
   Set w_sq_unidade           = Nothing
   
 End Sub
-REM =========================================================================
-REM Fim da rotina de visão de usuário a centros de custo
-REM -------------------------------------------------------------------------
-
-REM =========================================================================
-REM Rotina de busca das unidades da organização
-REM -------------------------------------------------------------------------
-Sub BuscaUsuario
- 
-  Dim w_nome, w_cliente, ChaveAux, restricao, campo, w_cpf, w_cnpj, w_codigo
-  
-  w_nome     = UCase(Request("w_nome"))
-  w_cpf      = Request("w_cpf")
-  w_cnpj     = Request("w_cnpj")
-  w_cliente  = Request("w_cliente")
-  ChaveAux   = Request("ChaveAux")
-  restricao  = Request("restricao")
-  campo      = Request("campo")
-  
-  If w_cpf > " " Then
-     w_codigo = w_cpf
-  ElseIf w_cnpj > " " Then
-     w_codigo = w_cnpj
-  End If
-
-  DB_GetPersonList RS, w_cliente, ChaveAux, restricao, null, null, null, null
-  If w_cpf > "" or w_cnpj > "" or w_nome > "" Then
-     If w_nome > " " Then
-        RS.Filter = "nome_indice like '*" & w_nome & "*' or nome_resumido_ind like '*" & w_nome & "*'"
-     Else
-        RS.Filter = "codigo = '" & w_codigo & "'"
-     End If
-  End If
-  
-  Cabecalho
-  ShowHTML "<HEAD>"
-  If RS.RecordCount > 100 or (w_cpf > "" or w_cnpj > "" or w_nome > "") Then
-     ScriptOpen "JavaScript"
-     Modulo
-     FormataValor
-     FormataCPF
-     FormataCNPJ
-     ValidateOpen "Validacao"
-     Validate "w_cpf", "CPF", "CPF", "", "14", "14", "", "0123456789-."
-     Validate "w_cnpj", "CNPJ", "CNPJ", "", "18", "18", "", "0123456789/-."
-     Validate "w_nome", "Nome", "", "", "4", "20", "1", ""
-     ShowHTML "  if (theForm.w_cpf.value=='' && theForm.w_cnpj.value=='' && theForm.w_nome.value=='') {"
-     ShowHTML "     alert('Você deve informar o CPF ou o CNPJ ou o nome!');"
-     ShowHTML "     theForm.w_cnpj.focus();"
-     ShowHTML "     return false;"
-     ShowHTML "  }"
-     ShowHTML "  if (theForm.w_cpf.value!='' && theForm.w_cnpj.value!='') {"
-     ShowHTML "     alert('Não é permitido informar o CPF e o CNPJ. Informe um ou outro!');"
-     ShowHTML "     theForm.w_cnpj.focus();"
-     ShowHTML "     return false;"
-     ShowHTML "  }"
-     ShowHTML "  theForm.Botao[0].disabled=true;"
-     ShowHTML "  theForm.Botao[1].disabled=true;"
-     ValidateClose
-     ScriptClose
-  End If
-  ShowHTML "</HEAD>"
-  If RS.RecordCount > 100 or (w_cpf > "" or w_cnpj > "" or w_nome > "")  Then
-     BodyOpen "onLoad='document.Form.w_cpf.focus()';"
-  Else
-     BodyOpen "onLoad='document.focus()';"
-  End If
-  ShowHTML "<B><FONT COLOR=""#000000"">" & RemoveTP(w_TP) & " - Procura Usuário</FONT></B>"
-  ShowHTML "<HR>"
-  ShowHTML "<div align=center><center>"
-  ShowHTML "<table border=""0"" cellpadding=""0"" cellspacing=""0"" width=""100%"">"
-  ShowHTML "<tr bgcolor=""" & conTrBgColor & """><td align=""center"">"
-  ShowHTML "    <table width=""90%"" border=""0"">"
-  If RS.RecordCount > 100 or (w_cpf > "" or w_cnpj > "" or w_nome > "") Then
-     AbreForm  "Form", w_Pagina & "BuscaUsuario", "POST", "return(Validacao(this))", null, P1, P2, P3, P4, TP, SG, null, null
-     ShowHTML "<INPUT type=""hidden"" name=""w_cliente"" value=""" & w_cliente &""">"
-     ShowHTML "<INPUT type=""hidden"" name=""ChaveAux"" value=""" & ChaveAux &""">"
-     ShowHTML "<INPUT type=""hidden"" name=""restricao"" value=""" & restricao &""">"
-     ShowHTML "<INPUT type=""hidden"" name=""campo"" value=""" & campo &""">"
-  
-     ShowHTML "<tr bgcolor=""" & conTrBgColor & """><td><div align=""justify""><font size=2><b><ul>Instruções</b>:<li>Informe o cpf, ou cnpj, ou parte do nome do usuário<li>Quando a relação for exibida, selecione o usuário desejado clicando em selecionar.<li>Após informar o cpf, ou cnpj, ou o nome do usuário, clique sobre o botão <i>Aplicar filtro</i>. Clicando sobre o botão <i>Cancelar</i>, a procura é cancelada.</ul></div>"
-     ShowHTML "<tr bgcolor=""" & conTrBgColor & """><td align=""center"">"
-     ShowHTML "    <table width=""97%"" border=""0"">"
-     ShowHTML "        <tr><td><font size=1><b><u>C</u>NPJ:<br><INPUT ACCESSKEY=""C"" TYPE=""text"" Class=""sti"" NAME=""w_cnpj"" VALUE=""" & w_cnpj & """ SIZE=""18"" MaxLength=""18"" onKeyDown=""FormataCNPJ(this, event);"">"
-     ShowHTML "            <td><font size=1><b>C<u>P</u>F:<br><INPUT ACCESSKEY=""P"" TYPE=""text"" Class=""sti"" NAME=""w_cpf"" VALUE=""" & w_cpf & """ SIZE=""14"" MaxLength=""14"" onKeyDown=""FormataCPF(this, event);"">"
-     ShowHTML "        <tr><td colspan=2>"
-     ShowHTML "             <font size=1><b><u>P</u>rocurar pelo nome:</b> (Informe qualquer parte do nome SEM ACENTOS)<br><INPUT ACCESSKEY=""P"" TYPE=""text"" Class=""sti"" NAME=""w_nome"" VALUE=""" & w_nome & """ SIZE=""40"" MaxLength=""40"">"
-     ShowHTML "      </table>"
-     ShowHTML "      <tr><td align=""center"" colspan=""3"" height=""1"" bgcolor=""#000000"">"
-     ShowHTML "      <tr><td align=""center"" colspan=""3"">"
-     ShowHTML "            <input class=""stb"" type=""submit"" name=""Botao"" value=""Aplicar filtro"">"
-     ShowHTML "            <input class=""stb"" type=""button"" name=""Botao"" value=""Cancelar"" onClick=""window.close(); opener.focus();"">"
-
-     If w_nome > "" or w_cpf > "" or w_cnpj > ""  Then
-        ShowHTML "<tr><td align=""right""><font size=""1""><b>Registros: " & RS.RecordCount
-        ShowHTML "<tr><td align=""center"">"
-        ShowHTML "    <TABLE WIDTH=""100%"" border=0>"
-        If RS.EOF Then
-           ShowHTML "      <tr bgcolor=""" & conTrBgColor & """ border=1><td colspan=5 align=""center""><font size=""2""><b>Não foram encontrados registros.</b></td></tr>"
-        Else
-           ShowHTML "<tr><td align=""center"" colspan=3>"
-           ShowHTML "    <TABLE WIDTH=""100%"" bgcolor=""" & conTableBgColor & """ BORDER=""" & conTableBorder & """ CELLSPACING=""" & conTableCellSpacing & """ CELLPADDING=""" & conTableCellPadding & """ BorderColorDark=""" & conTableBorderColorDark & """ BorderColorLight=""" & conTableBorderColorLight & """>"
-           ShowHTML "        <tr bgcolor=""" & conTrBgColor & """ align=""center"">"
-           ShowHTML "          <td><font size=""1""><b>Nome</font></td>"
-           ShowHTML "          <td><font size=""1""><b>Nome resumido</font></td>"
-           If restricao = "TODOS" Then
-              ShowHTML "          <td><font size=""1""><b>CNPJ/CPF</font></td>"
-           End If
-           ShowHTML "          <td><font size=""1""><b>Operações</font></td>"
-           ShowHTML "        </tr>"
-           If RS.EOF Then
-              ShowHTML "      <tr bgcolor=""" & conTrBgColor & """><td colspan=4 align=""center""><font size=""2""><b>Não há pessoas que contenham o texto informado.</b></td></tr>"
-           Else
-              While Not RS.EOF
-                 If w_cor = conTrBgColor or w_cor = "" Then w_cor = conTrAlternateBgColor Else w_cor = conTrBgColor End If
-                 ShowHTML "      <tr bgcolor=""" & w_cor & """ valign=""top"">"
-                 ShowHTML "        <td><font  size=""1"">" & RS("nome") & "</td>"
-                 ShowHTML "        <td><font  size=""1"">" & RS("nome_resumido") & "</td>"
-                 If restricao = "TODOS" Then
-                    ShowHTML "        <td align=""center""><font  size=""1"">" & Nvl(RS("codigo"),"---") & "</td>"
-                 End If
-                 ShowHTML "        <td nowrap><font size=""1"">"
-                 ShowHTML "            <font size=""1""><a class=""ss"" href=""#"" onClick=""opener.Form." & campo & "_nm" & ".value='" &RS("nome_resumido") & " (" & RS("sg_unidade") & ")" & "'; opener.Form." & campo & ".value='" & RS("sq_pessoa") & "'; opener.Form." & campo & "_nm.focus(); window.close(); opener.focus();"">Selecionar</a>"
-                 ShowHTML "        </td>"
-                 ShowHTML "      </tr>"
-                 RS.MoveNext
-              wend
-           End If
-           ShowHTML "      </center>"
-           ShowHTML "    </table>"
-           ShowHTML "  </td>"
-           ShowHTML "</tr>"
-           DesConectaBD	 
-        End If
-     End If
-     ShowHTML "      </center>"
-     ShowHTML "    </table>"
-     ShowHTML "  </td>"
-     ShowHTML "</tr>"
-  Else
-     ShowHTML "<tr><td align=""right""><font size=""1""><b>Registros: " & RS.RecordCount
-     ShowHTML "<tr><td align=""center"">"
-     ShowHTML "    <TABLE WIDTH=""100%"" border=0>"
-     If RS.EOF Then
-        ShowHTML "      <tr bgcolor=""" & conTrBgColor & """><td colspan=5 align=""center""><font size=""1""><b>Não foram encontrados registros.</b></td></tr>"
-     Else
-        ShowHTML "<tr><td align=""center"" colspan=3>"
-        ShowHTML "    <TABLE WIDTH=""100%"" bgcolor=""" & conTableBgColor & """ BORDER=""" & conTableBorder & """ CELLSPACING=""" & conTableCellSpacing & """ CELLPADDING=""" & conTableCellPadding & """ BorderColorDark=""" & conTableBorderColorDark & """ BorderColorLight=""" & conTableBorderColorLight & """>"
-        ShowHTML "        <tr bgcolor=""" & conTrBgColor & """ align=""center"">"
-        ShowHTML "          <td><font size=""1""><b>Nome</font></td>"
-        ShowHTML "          <td><font size=""1""><b>Nome resumido</font></td>"
-        If restricao = "TODOS" Then
-           ShowHTML "          <td><font size=""1""><b>CNPJ/CPF</font></td>"
-        End If
-        ShowHTML "          <td><font size=""1""><b>Operações</font></td>"
-        ShowHTML "        </tr>"
-        If RS.EOF Then
-           ShowHTML "      <tr bgcolor=""" & conTrBgColor & """><td colspan=4 align=""center""><font size=""2""><b>Não há pessoas que contenham o texto informado.</b></td></tr>"
-        Else
-           While Not RS.EOF
-              If w_cor = conTrBgColor or w_cor = "" Then w_cor = conTrAlternateBgColor Else w_cor = conTrBgColor End If
-              ShowHTML "      <tr bgcolor=""" & w_cor & """ valign=""top"">"
-              ShowHTML "        <td><font  size=""1"">" & RS("nome") & "</td>"
-              ShowHTML "        <td><font  size=""1"">" & RS("nome_resumido") & "</td>"
-              If restricao = "TODOS" Then
-                 ShowHTML "        <td align=""center""><font  size=""1"">" & Nvl(RS("codigo"),"---") & "</td>"
-              End If
-              ShowHTML "        <td nowrap><font size=""1"">"
-              ShowHTML "            <font size=""1""><a class=""ss"" href=""#"" onClick=""opener.Form." & campo & "_nm" & ".value='" & RS("nome") & "'; opener.Form." & campo & ".value='" & RS("sq_pessoa") & "'; opener.Form." & campo & "_nm.focus(); window.close(); opener.focus();"">Selecionar</a>"
-              ShowHTML "        </td>"
-              ShowHTML "      </tr>"
-              RS.MoveNext
-           wend
-        End If
-        ShowHTML "      </center>"
-        ShowHTML "    </table>"
-        ShowHTML "  </td>"
-        ShowHTML "</tr>"
-        DesConectaBD	 
-     End If
-     ShowHTML "      </center>"
-     ShowHTML "    </table>"
-     ShowHTML "  </td>"
-     ShowHTML "</tr>"
-  End If
-  ShowHTML "    </table>"
-  ShowHTML "    </TD>"
-  ShowHTML "</tr>"
-  ShowHTML "</FORM>"  
-  ShowHTML "</table>"
-  ShowHTML "</center>"
-  Rodape
-
-  Set w_nome                = Nothing
-  Set w_cnpj                = Nothing
-  Set w_cpf                 = Nothing
-      
-End Sub
-REM =========================================================================
-REM Fim da rotina de busca de área do conhecimento
-REM -------------------------------------------------------------------------
 
 REM =========================================================================
 REM Procedimento que executa as operações de BD
@@ -2316,7 +2102,6 @@ Sub Main
     Case "VISAO"        Visao
     Case "TELAUSUARIO"  TelaUsuario
     Case "TELAUNIDADE"  TelaUnidade       
-    Case "BUSCAUSUARIO" BuscaUsuario
     Case "NOVASENHA"    NovaSenha
     Case "GRAVA"        Grava
     Case Else

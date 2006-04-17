@@ -662,37 +662,8 @@ End Sub
 REM =========================================================================
 REM Montagem da seleção de pessoas
 REM -------------------------------------------------------------------------
-Sub SelecaoPessoa1 (label, accesskey, hint, chave, chaveAux, campo, restricao)
-
-    Dim w_nm_usuario
-    ShowHTML "<INPUT type=""hidden"" name=""" & campo & """ value=""" & chave &""">"
-    If cDbl(nvl(chave,0)) > 0 Then
-       DB_GetPersonList RS, w_cliente, chave, restricao, null, null, null, null
-       RS.Filter = "sq_pessoa = " & chave
-       RS.Sort = "nome_resumido"
-       w_nm_usuario = RS("nome_resumido") & " (" & RS("sg_unidade") & ")"
-    End If
-    If IsNull(hint) Then
-       ShowHTML "      <td valign=""top""><font size=""1""><b>" & Label & "</b><br>"
-       ShowHTML "          <input READONLY ACCESSKEY=""" & accesskey & """ CLASS=""sti"" type=""text"" name=""" & campo & "_nm" & """ SIZE=""20"" VALUE=""" & w_nm_usuario & """>"
-    Else
-       ShowHTML "      <td valign=""top""title=""" & hint & """><font size=""1""><b>" & Label & "</b><br>"
-       ShowHTML "          <input READONLY ACCESSKEY=""" & accesskey & """ CLASS=""sti"" type=""text"" name=""" & campo & "_nm" & """ SIZE=""20"" VALUE=""" & w_nm_usuario & """>"
-    End If
-    ShowHTML "              <a class=""ss"" href=""#"" onClick=""window.open('" & w_dir_volta & "Seguranca.asp?par=BuscaUsuario&TP=" & TP & "&w_cliente=" &w_cliente& "&ChaveAux=" &ChaveAux& "&restricao=" &restricao& "&campo=" &campo& "','Usuário','top=10,left=10,width=780,height=400,toolbar=yes,status=yes,resizable=yes,scrollbars=yes'); return false;"" title=""Clique aqui para selecionar o usuário.""><img src=images/Folder/Explorer.gif border=0 height=15 width=15></a>"
-    ShowHTML "              <a class=""ss"" href=""#"" onClick=""document.Form." & campo & "_nm" & ".value=''; document.Form." & campo & ".value=''; return false;"" title=""Clique aqui para apagar o valor deste campo.""><img src=images/Folder/Recyfull.gif border=0 height=15 width=15></a>"
-    RS.Close
-End Sub
-
-REM =========================================================================
-REM Montagem da seleção de pessoas
-REM -------------------------------------------------------------------------
 Sub SelecaoPessoa (label, accesskey, hint, chave, chaveAux, campo, restricao)
     DB_GetPersonList RS, w_cliente, ChaveAux, restricao, null, null, null, null
-    RS.Sort = "nome_resumido"
-    If restricao = "TTUSURAMAL" then
-       RS.filter = "ativo='S'"
-    End If
     If IsNull(hint) Then
        ShowHTML "          <td valign=""top""><font size=""1""><b>" & Label & "</b><br><SELECT ACCESSKEY=""" & accesskey & """ CLASS=""STS"" NAME=""" & campo & """ " & w_Disabled & ">"
     Else
@@ -1104,7 +1075,7 @@ REM =========================================================================
 REM Montagem da seleção de opções existentes no menu
 REM -------------------------------------------------------------------------
 Sub SelecaoMenu (label, accesskey, hint, chave, chaveAux, campo, restricao, atributo)
-    Dim RST, RST1, RST2, RST3, RST4
+    Dim RST, RST1, RST2, RST3, RST4, w_ultimo_nivel
     
     If IsNull(hint) Then
        ShowHTML "          <td valign=""top""><font size=""1""><b>" & Label & "</b><br><SELECT ACCESSKEY=""" & accesskey & """ CLASS=""STS"" NAME=""" & campo & """ " & w_Disabled & " " & atributo & ">"
@@ -1113,29 +1084,20 @@ Sub SelecaoMenu (label, accesskey, hint, chave, chaveAux, campo, restricao, atri
     End If
     ShowHTML "          <option value="""">---"
 
-    DB_GetMenuOrder RST, w_cliente, null
-    If restricao = "Pesquisa" Then RST.Filter = "ultimo_nivel = 'N' and sq_menu  <> " & Nvl(chaveAux,0) End If
-    RST.Sort = "ordem"
+    If restricao = "Pesquisa" Then w_ultimo_nivel = "N" Else w_ultimo_nivel = null End If
+    DB_GetMenuOrder RST, w_cliente, null, Nvl(chaveAux,0), w_ultimo_nivel
     While Not RST.EOF
       If cDbl(nvl(RST("sq_menu"),0)) = cDbl(nvl(chave,0)) Then ShowHTML "          <option value=""" & RST("sq_menu") & """ SELECTED>" & RST("nome") Else ShowHTML "          <option value=""" & RST("sq_menu") & """>" & RST("nome") End If
-      DB_GetMenuOrder RST1, w_cliente, RST("sq_menu")
-      If restricao = "Pesquisa" Then RST1.Filter = "ultimo_nivel = 'N' and sq_menu  <> " & Nvl(chaveAux,0) End If
-      RST1.Sort = "ordem"
+      DB_GetMenuOrder RST1, w_cliente, RST("sq_menu"), Nvl(chaveAux,0), w_ultimo_nivel
       While Not RST1.EOF
         If cDbl(nvl(RST1("sq_menu"),0)) = cDbl(nvl(chave,0)) Then ShowHTML "          <option value=""" & RST1("sq_menu") & """ SELECTED>&nbsp;&nbsp;&nbsp;" & RST1("nome") Else ShowHTML "          <option value=""" & RST1("sq_menu") & """>&nbsp;&nbsp;&nbsp;" & RST1("nome") End If
-        DB_GetMenuOrder RST2, w_cliente, RST1("sq_menu")
-        If restricao = "Pesquisa" Then RST2.Filter = "ultimo_nivel = 'N' and sq_menu  <> " & Nvl(chaveAux,0) End If
-        RST2.Sort = "ordem"
+        DB_GetMenuOrder RST2, w_cliente, RST1("sq_menu"), Nvl(chaveAux,0), w_ultimo_nivel
         While Not RST2.EOF
           If cDbl(nvl(RST2("sq_menu"),0)) = cDbl(nvl(chave,0)) Then ShowHTML "          <option value=""" & RST2("sq_menu") & """ SELECTED>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;" & RST2("nome") Else ShowHTML "          <option value=""" & RST2("sq_menu") & """>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;" & RST2("nome") End If
-          DB_GetMenuOrder RST3, w_cliente, RST2("sq_menu")
-          If restricao = "Pesquisa" Then RST3.Filter = "ultimo_nivel = 'N' and sq_menu  <> " & Nvl(chaveAux,0) End If
-          RST3.Sort = "ordem"
+          DB_GetMenuOrder RST3, w_cliente, RST2("sq_menu"), Nvl(chaveAux,0), w_ultimo_nivel
           While Not RST3.EOF
             If cDbl(nvl(RST3("sq_menu"),0)) = cDbl(nvl(chave,0)) Then ShowHTML "          <option value=""" & RST3("sq_menu") & """ SELECTED>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;" & RST3("nome") Else ShowHTML "          <option value=""" & RST3("sq_menu") & """>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;" & RST3("nome") End If
-            DB_GetMenuOrder RST4, w_cliente, RST3("sq_menu")
-            If restricao = "Pesquisa" Then RST4.Filter = "ultimo_nivel = 'N' and sq_menu  <> " & Nvl(chaveAux,0) End If
-            RST4.Sort = "ordem"
+            DB_GetMenuOrder RST4, w_cliente, RST3("sq_menu"), Nvl(chaveAux,0), w_ultimo_nivel
             While Not RST4.EOF
               If cDbl(nvl(RST4("sq_menu"),0)) = cDbl(nvl(chave,0)) Then ShowHTML "          <option value=""" & RST4("sq_menu") & """ SELECTED>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;" & RST4("nome") Else ShowHTML "          <option value=""" & RST4("sq_menu") & """>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;" & RST4("nome") End If
               RST4.MoveNext

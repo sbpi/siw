@@ -666,10 +666,6 @@ Sub BuscaUsuario
   campo        = Request("campo")
   
   DB_GetPersonList RS, Session("p_cliente"), ChaveAux, restricao, w_nome, w_sg_unidade, null, null
-  RS.Sort = "nome_resumido"
-  If restricao = "TTUSURAMAL" then
-     RS.filter = "ativo='S'"
-  End If
     
   Cabecalho
   ShowHTML "<TITLE>Seleção de pessoa</TITLE>"
