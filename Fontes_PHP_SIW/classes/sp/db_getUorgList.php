@@ -21,7 +21,11 @@ class db_getUorgList {
      $l_rs = DatabaseQueriesFactory::getInstanceOf($sql, $dbms, $params, DB_TYPE);
      if(!$l_rs->executeQuery()) { die("Cannot query"); }
      else {
-        return $l_rs->getResultData();
+        if ($l_rs = $l_rs->getResultData()) {
+          return $l_rs;
+        } else {
+          return array();
+        }
      }
    }
 }    

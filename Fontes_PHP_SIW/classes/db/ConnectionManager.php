@@ -46,7 +46,7 @@ class PgSqlConnectionManager extends ConnectionManager {
    }
 
    function doConnection() {
-      if(!($this->conHandle = Pg_Connect("host=$this->hostName user=$this->userName password=$this->passWord dbname=".DATABASE_NAME))) {
+      if(!($this->conHandle = Pg_Connect("host=$this->hostName user=$this->userName password=$this->passWord dbname=".PGSQL_DATABASE_NAME))) {
          die("Cannot Connect to Host");
       }
    }

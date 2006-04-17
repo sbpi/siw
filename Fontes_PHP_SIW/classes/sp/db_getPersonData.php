@@ -20,7 +20,11 @@ class db_getPersonData {
      $l_rs = DatabaseQueriesFactory::getInstanceOf($sql, $dbms, $params, DB_TYPE);
      if(!$l_rs->executeQuery()) { die("Cannot query"); }
      else {
-        return $l_rs->getResultArray();
+        if ($l_rs = $l_rs->getResultArray()) {
+          return $l_rs;
+        } else {
+          return array();
+        }
      }
    }
 }    

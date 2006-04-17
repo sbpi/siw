@@ -19,10 +19,13 @@ class db_verificaSenha {
      $l_rs = DatabaseQueriesFactory::getInstanceOf($sql, $dbms, $params, DB_TYPE);
      if(!$l_rs->executeQuery()) { die("Cannot query"); }
      else {
-        $l_data = $l_rs->getResultArray();
-        if     ($l_rs->getNumRows()==0) { return 2; }
-        elseif (f($l_data,"ativo") == 'N') { return 3; }
-        else   { return 0; }
+        if ($l_data = $l_rs->getResultArray()) {
+          if     ($l_rs->getNumRows()==0) { return 2; }
+          elseif (f($l_data,"ativo") == 'N') { return 3; }
+          else   { return 0; }
+        } else {
+          return 0;
+        }
      }
    }
 }    

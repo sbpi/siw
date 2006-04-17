@@ -2,6 +2,53 @@
 setlocale(LC_ALL, 'pt_BR');
 
 // =========================================================================
+// Função garante que as chaves de um array estarão no caso indicado
+// -------------------------------------------------------------------------
+function array_key_case_change(&$array, $mode = 'CASE_LOWER') { 
+  // Make sure $array is really an array 
+   if (!is_array($array)) return false; 
+   
+   $temp = $array; 
+   while (list($key, $value) = each($temp)) { 
+       // First we unset the original so it's not lingering about 
+       
+       unset($array[$key]); 
+       // Then modify the $key 
+       switch($mode) { 
+           case 'CASE_UPPER': $value = array_change_key_case($value,CASE_UPPER); break; 
+           case 'CASE_LOWER': $value = array_change_key_case($value,CASE_LOWER); break; 
+       } 
+
+       // Lastly read to the array using the new $key 
+       $array[$key] = $value; 
+   } 
+   return true; 
+}
+
+// =========================================================================
+// Função para classificação de arrays
+// -------------------------------------------------------------------------
+function SortArray() {
+  $arguments = func_get_args();
+  $array = $arguments[0];
+  $code = '';
+  for ($c = 1; $c < count($arguments); $c += 2) {
+    if (in_array($arguments[$c + 1], array("asc", "desc"))) {
+      $code .= 'if ($a["'.$arguments[$c].'"] != $b["'.$arguments[$c].'"]) {';
+      if ($arguments[$c + 1] == "asc") {
+        $code .= 'return ($a["'.$arguments[$c].'"] < $b["'.$arguments[$c].'"] ? -1 : 1); }';
+      } else {
+        $code .= 'return ($a["'.$arguments[$c].'"] < $b["'.$arguments[$c].'"] ? 1 : -1); }';
+      }
+    }
+  }
+  $code .= 'return 0;';
+  $compare = create_function('$a,$b', $code);
+  usort($array, $compare);
+  return $array;
+}
+
+// =========================================================================
 // Declaração inicial para páginas OLE com Word
 // -------------------------------------------------------------------------
 function headerWord() {
@@ -95,7 +142,7 @@ function LinkOrdena($p_label,$p_campo) {
       $l_img='&nbsp;<img src=images/up.gif width=8 height=8 border=0 align="absmiddle">';
     }
   } else {
-    $l_string=$l_string.'&p_ordena='.$p_campo;
+    $l_string=$l_string.'&p_ordena='.$p_campo.' asc&';
   }
   return '<a class="ss" href="'.$w_dir.$w_pagina.$par.'&R='.$R.'&O='.$O.'&P1='.$P1.'&P2='.$P2.'&P3=1'.'&P4='.$P4.'&TP='.$TP.'&SG='.$SG.$l_string.'" title="Ordena a listagem por esta coluna.">'.$p_label.'</a>'.$l_img;
 }
@@ -117,6 +164,7 @@ function CabecalhoRelatorio($p_cliente,$p_titulo) {
 // Montagem da barra de navegação de recordsets
 // -------------------------------------------------------------------------
 function MontaBarra($p_link,$p_PageCount,$p_AbsolutePage,$p_PageSize,$p_RecordCount) {
+  extract($GLOBALS);
   ShowHTML('<SCRIPT LANGUAGE="JAVASCRIPT">');
   ShowHTML('  function pagina (pag) {');
   ShowHTML('    document.Barra.P3.value = pag;');
@@ -124,9 +172,9 @@ function MontaBarra($p_link,$p_PageCount,$p_AbsolutePage,$p_PageSize,$p_RecordCo
   ShowHTML('  }');
   ShowHTML('</SCRIPT>');
   ShowHTML('<FORM ACTION="'.$p_link.'" METHOD="POST" name="Barra">');
-  ShowHTML('<input type="Hidden" name="P4" value="'.$p_pagesize.'">');
+  ShowHTML('<input type="Hidden" name="P4" value="'.$p_PageSize.'">');
   ShowHTML('<input type="Hidden" name="P3" value="">');
-  ShowHTML(MontaFiltro("POST"));
+  ShowHTML(MontaFiltro('POST'));
   if ($p_PageSize<$p_RecordCount) {
     if ($p_PageCount==$p_AbsolutePage) {
       ShowHTML('<span class="STC"><br>'.($p_RecordCount-(($p_PageCount-1)*$p_PageSize)).' linhas apresentadas de '.$p_RecordCount.' linhas');
@@ -189,37 +237,38 @@ function Piece($p_line,$p_delimiter,$p_separator,$p_position) {
 // Montagem da URL com os parâmetros de filtragem
 // -------------------------------------------------------------------------
 function MontaFiltro($p_method) {
-  if ((strpos("GET,POST",strtoupper($p_method)) ? strpos("GET,POST",strtoupper($p_method))+1 : 0)>0) {
+  extract($GLOBALS);
+  if (strtoupper($p_method)=="GET" || strtoupper($p_method)=="POST") {
     $l_string="";
     if (strtoupper($p_method)!="UL") {
-      foreach ($_POST as $l_Item) {
-        if (substr($l_item,0,2)=="p_" && ${$l_Item}>'') {
+      foreach ($_POST as $l_Item => $l_valor) {
+        if (substr($l_Item,0,2)=="p_" && $l_valor>'') {
           if (strtoupper($p_method)=="GET") {
-            $l_string=$l_string."&".$l_Item."=".${$l_Item};
+            $l_string=$l_string."&".$l_Item."=".$l_valor;
           }
           elseif (strtoupper($p_method)=="POST") {
-            $l_string=$l_string."<INPUT TYPE=\"HIDDEN\" NAME=\"".$l_Item."\" VALUE=\"".${$l_Item}."\">"."\\r\\n";
+            $l_string=$l_string.'<INPUT TYPE="HIDDEN" NAME="'.$l_Item.'" VALUE="'.$l_valor.'">';
           }
         }
       }
-      foreach ($_GET as $l_Item) {
-        if (substr($l_item,0,2)=="p_" && ${$l_Item}>'') {
+      foreach ($_GET as $l_Item => $l_valor) {
+        if (substr($l_Item,0,2)=="p_" && $l_valor>'') {
           if (strtoupper($p_method)=="GET") {
-            $l_string=$l_string."&".$l_Item."=".${$l_Item};
+            $l_string=$l_string."&".$l_Item."=".$l_valor;
           }
           elseif (strtoupper($p_method)=="POST") {
-            $l_string=$l_string."<INPUT TYPE=\"HIDDEN\" NAME=\"".$l_Item."\" VALUE=\"".${$l_Item}."\">"."\\r\\n";
+            $l_string=$l_string.'<INPUT TYPE="HIDDEN" NAME="'.$l_Item.'" VALUE="'.$l_valor.'">';
           }
         }
       }
     } else {
       foreach ($ul->Form as $l_Item) {
-        if (substr($l_item,0,2)=="p_" && $ul->Form($l_Item)>'') {
+        if (substr($l_Item,0,2)=="p_" && $ul->Form($l_Item)>'') {
           if (strtoupper($p_method)=="GET") {
             $l_string=$l_string."&".$l_Item."=".$ul->Form($l_Item);
           }
           elseif (strtoupper($p_method)=="POST") {
-            $l_string=$l_string."<INPUT TYPE=\"HIDDEN\" NAME=\"".$l_Item."\" VALUE=\"".$ul->Form($l_Item)."\">"."\\r\\n";
+            $l_string=$l_string.'<INPUT TYPE="HIDDEN" NAME="'.$l_Item.'" VALUE="'.$ul->Form($l_Item).'">';
           }
         }
       }
@@ -827,7 +876,7 @@ function SelecaoCidade($label,$accesskey,$hint,$chave,$chaveAux,$chaveAux2,$camp
 // -------------------------------------------------------------------------
 function SelecaoEndereco($label,$accesskey,$hint,$chave,$chaveAux,$campo,$restricao) {
   extract($GLOBALS);
-  DB_GetaddressList($RS, $w_cliente, $ChaveAux, $restricao);
+  $RS = db_getAddressList::getInstanceOf($dbms, $w_cliente, $ChaveAux, $restricao);
   if (!isset($hint)) {
      ShowHTML('          <td valign="top"><font size="1"><b>'.$label.'</b><br><SELECT ACCESSKEY="'.$accesskey.'" CLASS="sts" NAME="'.$campo.'" '.$w_Disabled.'>');
   } else {
@@ -835,13 +884,12 @@ function SelecaoEndereco($label,$accesskey,$hint,$chave,$chaveAux,$campo,$restri
   }
 
   ShowHTML('          <option value="">---');
-  while(!$RS->EOF) {
-    if ($cDbl[nvl($RS['SQ_PESSOA_ENDERECO'],0)]==$cDbl[nvl($chave,0)]) {
-       ShowHTML('          <option value="'.$RS['SQ_PESSOA_ENDERECO'].'" SELECTED>'.$RS['ENDERECO']);
+  foreach($RS as $row) {
+    if (nvl(f($row,'sq_pessoa_endereco'),0)==nvl($chave,0)) {
+       ShowHTML('          <option value="'.f($row,'sq_pessoa_endereco').'" SELECTED>'.f($row,'endereco'));
     } else {
-       ShowHTML('          <option value="'.$RS['SQ_PESSOA_ENDERECO'].'">'.$RS['ENDERECO']);
+       ShowHTML('          <option value="'.f($row,'sq_pessoa_endereco').'">'.f($row,'endereco'));
     }
-    $RS->MoveNext;
   }
   ShowHTML('          </select>');
 }
@@ -875,21 +923,21 @@ function SelecaoTelefone($label,$accesskey,$hint,$chave,$chaveAux,$campo,$restri
 // -------------------------------------------------------------------------
 function SelecaoModulo($label,$accesskey,$hint,$chave,$chaveAux,$campo,$restricao,$atributo) {
   extract($GLOBALS);
-  DB_GetSiwCliModLis($RS, $chaveAux, $restricao);
-  $RS->Sort='nome';
+  $RS = db_getSiwCliModLis::getInstanceOf($dbms, $chaveAux, $restricao);
+  array_key_case_change(&$RS);
+  $RS = SortArray($RS,'nome','asc');
   if (!isset($hint)) {
      ShowHTML('          <td valign="top"><font size="1"><b>'.$label.'</b><br><SELECT ACCESSKEY="'.$accesskey.'" CLASS="sts" NAME="'.$campo.'" '.$w_Disabled.' '.$atributo.'>');
   } else {
      ShowHTML('          <td valign="top" title="'.$hint.'"><font size="1"><b>'.$label.'</b><br><SELECT ACCESSKEY="'.$accesskey.'" CLASS="sts" NAME="'.$campo.'" '.$w_Disabled.' '.$atributo.'>');
   }
   ShowHTML('          <option value="">---');
-  while(!$RS->EOF) {
-    if ($cDbl[nvl($RS['SQ_MODULO'],0)]==$cDbl[nvl($chave,0)]) {
-       ShowHTML('          <option value="'.$RS['SQ_MODULO'].'" SELECTED>'.$RS['NOME']);
+  foreach($RS as $row) {
+    if (nvl(f($row,'sq_modulo'),0)==nvl($chave,0)) {
+       ShowHTML('          <option value="'.f($row,'sq_modulo').'" SELECTED>'.f($row,'nome'));
     } else {
-       ShowHTML('          <option value="'.$RS['SQ_MODULO'].'">'.$RS['NOME']);
+       ShowHTML('          <option value="'.f($row,'sq_modulo').'">'.f($row,'nome'));
     }
-    $RS->MoveNext;
   }
   ShowHTML('          </select>');
 }
@@ -928,47 +976,28 @@ function SelecaoMenu($label,$accesskey,$hint,$chave,$chaveAux,$campo,$restricao,
   else
      { ShowHTML('          <td valign="top" title="'.$hint.'"><font size="1"><b>'.$label.'</b><br><SELECT ACCESSKEY="'.$accesskey.'" CLASS="sts" NAME="'.$campo.'" '.$w_Disabled.' '.$atributo.'>'); }
   ShowHTML('          <option value="">---');
-  DB_GetMenuOrder($RST, $w_cliente, $null);
-  if ($restricao=='Pesquisa') { $RST->Filter='ultimo_nivel = \'N\' and sq_menu  <> '.Nvl($chaveAux,0); }
-  $RST->Sort='ordem';
-  while(!$RST->EOF) {
-    if ($cDbl[nvl($RST['SQ_MENU'],0)]==$cDbl[nvl($chave,0)]) { ShowHTML('          <option value="'.$RST['SQ_MENU'].'" SELECTED>'.$RST['NOME']); } else { ShowHTML('          <option value="'.$RST['SQ_MENU'].'">'.$RST['NOME']); }
-    DB_GetMenuOrder($RST1, $w_cliente, $RST['SQ_MENU']);
-    if ($restricao=='Pesquisa') { $RST1->Filter='ultimo_nivel = \'N\' and sq_menu  <> '.Nvl($chaveAux,0); }
-    $RST1->Sort='ordem';
-    while(!$RST1->EOF) {
-      if ($cDbl[nvl($RST1['SQ_MENU'],0)]==$cDbl[nvl($chave,0)]) { ShowHTML('          <option value="'.$RST1['SQ_MENU'].'" SELECTED>&nbsp;&nbsp;&nbsp;'.$RST1['NOME']); } else { ShowHTML ('          <option value="'.$RST1['SQ_MENU'].'">&nbsp;&nbsp;&nbsp;'.$RST1['NOME']); }
-      DB_GetMenuOrder($RST2, $w_cliente, $RST1['SQ_MENU']);
-      if ($restricao=='Pesquisa') { $RST2->Filter='ultimo_nivel = \'N\' and sq_menu  <> '.Nvl($chaveAux,0); }
-	  $RST2->Sort='ordem';
-	  while(!$RST2->EOF) {
-        if ($cDbl[nvl($RST2['SQ_MENU'],0)]==$cDbl[nvl($chave,0)]) { ShowHTML('          <option value="'.$RST2['SQ_MENU'].'" SELECTED>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;'.$RST2['NOME']); } else { ShowHTML('          <option value="'.$RST2['SQ_MENU'].'">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;'.$RST2['NOME']); }
-        DB_GetMenuOrder($RST3, $w_cliente, $RST2['SQ_MENU']);
-        if ($restricao=='Pesquisa') { $RST3->Filter='ultimo_nivel = \'N\' and sq_menu  <> '.Nvl($chaveAux,0); }
-        $RST3->Sort='ordem';
-        while(!$RST3->EOF) {
-          if ($cDbl[nvl($RST3['SQ_MENU'],0)]==$cDbl[nvl($chave,0)]) { ShowHTML('          <option value="'.$RST3['SQ_MENU'].'" SELECTED>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;'.$RST3['NOME']); } else { ShowHTML ('          <option value="'.$RST3['SQ_MENU'].'">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;'.$RST3['NOME']); }
-          DB_GetMenuOrder($RST4, $w_cliente, $RST3['SQ_MENU']);
-          if ($restricao=='Pesquisa') { $RST4->Filter='ultimo_nivel = \'N\' and sq_menu  <> '.Nvl($chaveAux,0); }
-          $RST4->Sort='ordem';
-          while(!$RST4->EOF) {
-            if ($cDbl[nvl($RST4['SQ_MENU'],0)]==$cDbl[nvl($chave,0)]) { ShowHTML('          <option value="'.$RST4['SQ_MENU'].'" SELECTED>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;'.$RST4['NOME']); } else { ShowHTML('          <option value="'.$RST4['SQ_MENU'].'">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;'.$RST4['NOME']); }
-            $RST4->MoveNext;
+  if ($restricao=='Pesquisa') $l_ultimo_nivel = 'N'; else $l_ultimo_nivel = null;
+  $RST = db_getMenuOrder::getInstanceOf($dbms, $w_cliente, null, nvl($chaveAux,0), $l_ultimo_nivel);
+  foreach ($RST as $row) {
+    if (nvl(f($row,'sq_menu'),0)==nvl($chave,0)) { ShowHTML('          <option value="'.f($row,'sq_menu').'" SELECTED>'.f($row,'nome')); } else { ShowHTML('          <option value="'.f($row,'sq_menu').'">'.f($row,'nome')); }
+    $RST1 = db_getMenuOrder::getInstanceOf($dbms, $w_cliente, f($row,'sq_menu'), nvl($chaveAux,0), $l_ultimo_nivel);
+    foreach($RST1 as $row1) {
+      if (nvl(f($row1,'sq_menu'),0)==nvl($chave,0)) { ShowHTML('          <option value="'.f($row1,'sq_menu').'" SELECTED>&nbsp;&nbsp;&nbsp;'.f($row1,'nome')); } else { ShowHTML ('          <option value="'.f($row1,'sq_menu').'">&nbsp;&nbsp;&nbsp;'.f($row1,'nome')); }
+      $RST2 = db_getMenuOrder::getInstanceOf($dbms, $w_cliente, f($row1,'sq_menu'), nvl($chaveAux,0), $l_ultimo_nivel);
+      foreach($RST2 as $row2) {
+        if (nvl(f($row2,'sq_menu'),0)==nvl($chave,0)) { ShowHTML('          <option value="'.f($row2,'sq_menu').'" SELECTED>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;'.f($row2,'nome')); } else { ShowHTML('          <option value="'.f($row2,'sq_menu').'">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;'.f($row2,'nome')); }
+        $RST3 = db_getMenuOrder::getInstanceOf($dbms, $w_cliente, f($row2,'sq_menu'), nvl($chaveAux,0), $l_ultimo_nivel);
+          foreach($RST3 as $row3) {
+          if (nvl(f($row3,'sq_menu'),0)==nvl($chave,0)) { ShowHTML('          <option value="'.f($row3,'sq_menu').'" SELECTED>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;'.f($row3,'nome')); } else { ShowHTML ('          <option value="'.f($row3,'sq_menu').'">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;'.f($row3,'nome')); }
+          $RST4 = db_getMenuOrder::getInstanceOf($dbms, $w_cliente, f($row3,'sq_menu'), nvl($chaveAux,0), $l_ultimo_nivel);
+          foreach($RST4 as $row4) {
+            if (nvl(f($row4,'sq_menu'),0)==nvl($chave,0)) { ShowHTML('          <option value="'.f($row4,'sq_menu').'" SELECTED>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;'.f($row4,'nome')); } else { ShowHTML('          <option value="'.f($row4,'sq_menu').'">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;'.f($row4,'nome')); }
           }
-          $RST3->MoveNext;
         }
-        $RST2->MoveNext;
       }
-      $RST1->MoveNext;
     }
-    $RST->MoveNext;
   }
   ShowHTML('          </select>');
-  $RST=null;
-  $RST1=null;
-  $RST2=null;
-  $RST3=null;
-  $RST4=null;
   return $function_ret;
 }
 
@@ -1759,7 +1788,7 @@ function RetornaTipoRecurso($p_chave) {
 switch ($cDbl[$p_Chave])
 {
   case 0: $RetornaTipoRecurso="Financeiro";
-     	  break;
+           break;
   case 1: $RetornaTipoRecurso="Humano";
           break;
   case 2: $RetornaTipoRecurso="Material";
@@ -1871,7 +1900,7 @@ while(!$RST->EOF) {
              { if ($cDbl[nvl($RST4['sq_projeto_etapa'],0)]==$cDbl[nvl($chave,0)]) { ShowHTML("          <option value=\"".$RST4['sq_projeto_etapa']."\" SELECTED>".$RST4['ORDEM'].". ".$RST4['TITULO']); } else { ShowHTML("          <option value=\"".$RST4['sq_projeto_etapa']."\">".$RST['ORDEM'].".".$RST1['ORDEM'].".".$RST2['ORDEM'].".".$RST3['ORDEM'].".".$RST4['TITULO']); } }
           $RST4->MoveNext;
         }
-      	$RST3->MoveNext;
+          $RST3->MoveNext;
       }
       $RST2->MoveNext;
     }
@@ -1901,9 +1930,9 @@ switch ($cDbl[Nvl($p_Chave,999)])
   case 1: $RetornaPrioridade='Média';
           break;
   case 2: $RetornaPrioridade='Normal';
-  		  break;
+            break;
   default:$RetornaPrioridade='---';
-	      break;
+          break;
 }
 return $function_ret;
 }
@@ -2205,18 +2234,18 @@ function TrataErro($sp, $Err, $file, $line, $object) {
   extract($GLOBALS);
 
   if (strpos($Err,'ORA-02292')!==false || strpos($Err,'ORA-02292')!==false ) {
-	 // REGISTRO TEM FILHOS
-	 ScriptOpen('JavaScript');
-	 ShowHTML(' alert("Existem registros vinculados ao que você está excluindo. Exclua-os primeiro.\\n\\n'.substr($Err,0,(strpos($Err,chr(10)) ? strpos($Err,chr(10))+1 : 0)-1).'");');
-	 ShowHTML(' history.back(1);');
-	 ScriptClose;
+     // REGISTRO TEM FILHOS
+     ScriptOpen('JavaScript');
+     ShowHTML(' alert("Existem registros vinculados ao que você está excluindo. Exclua-os primeiro.\\n\\n'.substr($Err,0,(strpos($Err,chr(10)) ? strpos($Err,chr(10))+1 : 0)-1).'");');
+     ShowHTML(' history.back(1);');
+     ScriptClose;
   }
   elseif (strpos($Err,'ORA-02291')!==false || strpos($Err,'ORA-02291')!==false) {
      // REGISTRO NÃO ENCONTRADO
-	 ScriptOpen('JavaScript');
-	 ShowHTML(' alert("Registro não encontrado.");');
-	 ShowHTML(' history.back(1);');
-	 ScriptClose;
+     ScriptOpen('JavaScript');
+     ShowHTML(' alert("Registro não encontrado.");');
+     ShowHTML(' history.back(1);');
+     ScriptClose;
   }
   elseif (strpos($Err,'ORA-00001')!==false) {
      // REGISTRO JÁ EXISTENTE
@@ -2719,7 +2748,7 @@ function BodyOpenClean($cProperties) {
   extract($GLOBALS);
   ShowHTML('<link rel="stylesheet" type="text/css" href="'.$conRootSIW.'classes/menu/xPandMenu.css">');
   ShowHTML('<body Text="'.$conBodyText.'" Link="'.$conBodyLink.'" Alink="'.$conBodyALink.'" '.
-  'Vlink="'.$conBodyVLink.'" Bgcolor="'.$conBodyBgColor.'" Background="'.$conBodyBackground.'" '.
+  'Vlink="'.$conBodyVLink.'" Background="'.$conBodyBackground.'" '.
   'Bgproperties="'.$conBodyBgproperties.'" Topmargin="'.$conBodyTopmargin.'" '.
   'Leftmargin="'.$conBodyLeftmargin.'" '.$cProperties.'> ');
 }

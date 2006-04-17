@@ -18,8 +18,11 @@ class db_verificaUsuario {
      $l_rs = DatabaseQueriesFactory::getInstanceOf($sql, $dbms, $params, DB_TYPE);
      if(!$l_rs->executeQuery()) { die("Cannot query"); }
      else {
-        $l_data = $l_rs->getResultArray();
-        return f($l_data,"existe");
+        if ($l_rs = $l_rs->getResultArray()) {
+          return f($l_rs,"existe");
+        } else {
+          return 'N';
+        }
      }
    }
 }    

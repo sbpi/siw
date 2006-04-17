@@ -18,8 +18,11 @@ class db_getUserData {
      $l_rs = DatabaseQueriesFactory::getInstanceOf($sql, $dbms, $params, DB_TYPE);
      if(!$l_rs->executeQuery()) { die("Cannot query"); }
      else {
-        $l_data = $l_rs->getResultArray();
-        return $l_data;
+        if ($l_rs = $l_rs->getResultArray()) {
+          return $l_rs;
+        } else {
+          return array();
+        }
      }
    }
 }    

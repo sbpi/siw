@@ -103,7 +103,7 @@ class MSSqlDatabaseQueries extends DatabaseQueries {
     }
 
     function getResultData() {
-        if(is_resource($this->result)) { $this->resultData = mssql_fetch_all($this->result); }
+        if(is_resource($this->result)) { return $this->resultData = mssql_fetch_all($this->result); }
         else { return null; }
     }
 }
@@ -183,6 +183,10 @@ class MSSqlDatabaseQueryProc extends MSSqlDatabaseQueries {
         }
     }
     
+    function getResultData() {
+        if(is_resource($this->result)) { return $this->resultData = mssql_fetch_all($this->result); }
+        else { return null; }
+    }
 } 
 
 /**
@@ -221,7 +225,7 @@ class OraDatabaseQueries extends DatabaseQueries {
         else { 
            if(is_resource($this->result)) { 
               oci_execute($this->result);
-              $this-> num_rows = oci_fetch_all($this->result, $this->resultData, 0, -1);
+              $this->num_rows = oci_fetch_all($this->result, $this->resultData, 0, -1,OCI_ASSOC+OCI_FETCHSTATEMENT_BY_ROW);
               oci_execute($this->result);
            }
            else { $this->num_rows = -1; }
@@ -462,7 +466,8 @@ class PgSqlDatabaseQueryProc extends PgSqlDatabaseQueries {
         foreach($this->params as $paramName=>$value) {
             foreach($value as $paramValue=>$paramType) {
                 if (!($value[1]==B_CURSOR)) { 
-                   if ($value[1]==B_VARCHAR) { $par .= ", '$value[0]'"; }
+                   if (!isset($value[0]) || $value[0]=='') { $par .= ", null"; }
+                   elseif ($value[1]==B_VARCHAR) { $par .= ", '$value[0]'"; }
                    else { $par .= ", $value[0]"; }
                 }
                  break;
@@ -473,6 +478,7 @@ class PgSqlDatabaseQueryProc extends PgSqlDatabaseQueries {
         } else {
               $par = "rollback; begin; select $this->query (".substr($par, 1).", 'p_result'); fetch all in p_result;";
         }
+        //echo $par;
         $this->result = pg_query($this->conHandle, $par);
         if(is_resource($this->result)) { 
            $this->num_rows = pg_num_rows($this->result); 
@@ -482,6 +488,12 @@ class PgSqlDatabaseQueryProc extends PgSqlDatabaseQueries {
            $this->num_rows = -1; 
            return false;
         }
+    }
+
+    function getResultData() {
+
+        if(is_resource($this->result)) { return $this->resultData = pg_fetch_all($this->result); }
+        else { return null; }
     }
 } 
 ?>

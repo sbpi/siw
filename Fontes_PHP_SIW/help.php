@@ -96,9 +96,7 @@ function Help() {
 
   $w_objetivo_espec = 'Não informado';
   $RS = db_getSegModData::getInstanceOf($dbms, $w_segmento, $w_modulo);
-  foreach ($RS as $row) {
-    $w_objetivo_espec = f($row,'objetivo_especif');
-  }
+  $w_objetivo_espec = f($RS,'objetivo_especif');
 
   Cabecalho();
   ShowHTML('<HEAD>');
@@ -120,12 +118,14 @@ function Help() {
 
   if ($O=="L") {
     ShowHTML('      <tr valign="top"><td colspan=2>');
-    ShowHTML('         <font face="Arial" size="3"><b>Módulo: '.$w_nome_modulo.'</font></b>');
+    ShowHTML('         <P><font face="Arial" size="3"><b>Módulo: '.$w_nome_modulo.'</font></b></P>');
     ShowHTML('         <font size="2"><DL>');
     ShowHTML('         <DT><b>Objetivo geral:</b>');
-    ShowHTML('         <DD>'.$w_objetivo_geral);
+    ShowHTML('           <DD>'.$w_objetivo_geral.'</DD>');
+    ShowHTML('         </DT>');
     ShowHTML('         <DT><br><b>Objetivo(s) específico(s):</b>');
     ShowHTML('         <DD><UL><LI>'.str_replace("\r\n","<LI>",$w_objetivo_espec).'</UL>');
+    ShowHTML('         </DT></DL>');
     ShowHTML('      <tr><td><BR>');
     ShowHTML('      <tr align="center" valign="top"><td><td bgcolor="#D0D0D0" style="border: 2px solid rgb(0,0,0);"><font size="2"><b>Funcionalidades</td>');
     $RS = db_getLinkdataHelp::getInstanceOf($dbms, $w_cliente,$w_modulo,0,'IS NULL');
@@ -155,6 +155,7 @@ function Help() {
             $w_cont2 = $w_cont2+1;
             $w_cont3 = 0;
             $w_cont4 = 0;
+            ShowHTML('             </DT>');
             ShowHTML('             <DT><BR><b>'.$w_cont1.'.'.$w_cont2.'. '.f($row1,'nome').'</b>');
             ShowHTML('             <DD>Finalidade: '.ExibeTexto(f($row1,'finalidade')));
             if (f($row1,'tramite')=='S') {
@@ -286,7 +287,7 @@ function Help() {
             $w_submenu = 'N';
           }
         } 
-        ShowHTML('         </DL>');
+        ShowHTML('         </DT></DL>');
       } 
       if ($w_submenu == 'S') {
         ShowHTML('       </blockquote>');

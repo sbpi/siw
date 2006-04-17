@@ -1,17 +1,19 @@
 <?
 include_once("classes/db/DatabaseQueriesFactory.php");
 /**
-* class db_getSiwCliModLis
+* class db_getMenuLink
 *
 * { Description :- 
-*    Recupera a lista de módulos contratados por um cliente da SIW.
+*    Recupera os links para manipulação
 * }
 */
 
-class db_getSiwCliModLis {
-   function getInstanceOf($dbms, $p_cliente, $p_restricao) {
-     $sql='sp_getSiwCliModLis';
+class db_getMenuLink {
+   function getInstanceOf($dbms, $p_cliente, $p_chave, $p_modulo, $p_restricao) {
+     $sql='sp_getMenuLink';
      $params=array("p_cliente"  =>array($p_cliente,          B_NUMERIC,   32),
+                   "p_chave"    =>array($p_chave,            B_NUMERIC,   32),
+                   "p_modulo"   =>array($p_modulo,           B_NUMERIC,   32),
                    "p_restricao" =>array($p_restricao,       B_VARCHAR,     20),
                    "p_result"   =>array(null,                B_CURSOR,      -1)
                   );
