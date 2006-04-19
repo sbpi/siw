@@ -4,9 +4,11 @@ create or replace procedure SP_GetUorgList
     p_restricao in varchar2 default null,
     p_nome      in varchar2 default null,
     p_sigla     in varchar2 default null,
+    p_ano       in number   default null,
     p_result    out siw.sys_refcursor) is
 begin
-   If p_restricao is null Then
+   If p_restricao is null or p_restricao = 'LICITACAO' or p_restricao = 'ATIVO' or p_restricao = 'CODIGO' or
+      p_restricao = 'CODIGONULL' Then
       -- Recupera as unidades organizacionais do cliente
       open p_result for
          select a.sq_unidade sq_unidade,a.sq_unidade_pai, a.nome, a.sigla, a.informal, a.adm_central, a.vinculada,
@@ -30,8 +32,13 @@ begin
             and (c.sq_pessoa          = d.sq_pessoa (+))
             and (a.sq_unidade         = e.sq_unidade (+))
             and b.sq_pessoa           = p_cliente
+            and (p_chave              is null or (p_chave is not null and a.sq_unidade = p_chave))            
             and (p_nome               is null or (p_nome  is not null and a.nome  like '%'||p_nome||'%'))
             and (p_sigla              is null or (p_sigla is not null and a.sigla like '%'||p_sigla||'%'))
+            and (p_restricao          is null or (p_restricao = 'LICITACAO'  and (a.ativo    = 'S' and e.ativo = 'S' and e.contrata = 'S'))
+                                              or (p_restricao = 'ATIVO'      and (a.ativo    = 'S'))
+                                              or (p_restricao = 'CODIGO'     and (a.informal = 'N' and a.sq_unidade_pai is null))
+                                              or (p_restricao = 'CODIGONULL' and (a.informal = 'N' and a.codigo <> '00')))                                                         
          order by a.nome;
    Else
       If upper(p_restricao) = 'IS NULL' Then
@@ -63,7 +70,133 @@ begin
              where (a.sq_unidade = b.sq_unidade (+))
                and (b.sq_pessoa_endereco = c.sq_pessoa_endereco (+))
                and c.sq_pessoa = p_cliente 
-               and ((p_chave is null) or (p_chave is not null and a.sq_unidade = p_chave));      
+               and ((p_chave is null) or (p_chave is not null and a.sq_unidade = p_chave))
+               and ((p_ano   is null) or (p_ano   is not null and a.ano        = p_ano));
+      Elsif p_restricao = 'VIAGEMANO' Then
+         open p_result for 
+            select a.sq_unidade chave, a.limite_passagem, a.limite_diaria, a.ativo, a.ano, 
+                   decode(a.ativo,'S','Sim','Não') nm_ativo,
+                   b.nome, b.sigla
+              from pd_unidade         a,
+                   eo_unidade         b, 
+                   co_pessoa_endereco c 
+             where (a.sq_unidade = b.sq_unidade (+))
+               and (b.sq_pessoa_endereco = c.sq_pessoa_endereco (+))
+               and c.sq_pessoa = p_cliente 
+               and a.ano = p_ano
+               and a.ativo = 'S';
+      ElsIf p_restricao = 'LICITACAOEND' Then
+         open p_result for          
+            select a.sq_unidade sq_unidade,a.sq_unidade_pai, a.nome, a.sigla, a.informal, a.adm_central, a.vinculada,
+                   a.codigo, a.sq_unidade_pai, a.ordem, Nvl(d.nome,'Informar') responsavel, a.ativo,
+                   a.sq_unidade_gestora, a.sq_unid_pagadora, a.unidade_gestora, a.unidade_pagadora,
+                   b.sq_pessoa_endereco, b.logradouro,
+                   e.sq_unidade lc_chave, e.cnpj lc_cnpj, e.padrao lc_padrao,
+                   e.licita lc_licita, e.contrata lc_contrata, e.ativo lc_ativo,
+                   f.nome nm_cidade, f.co_uf
+              from eo_unidade         a,
+                   co_pessoa_endereco b,
+                   co_cidade          f,
+                   eo_unidade_resp    c,
+                   co_pessoa          d,
+                   lc_unidade         e
+             where (a.sq_pessoa_endereco = b.sq_pessoa_endereco)
+               and (b.sq_cidade          = f.sq_cidade)
+               and (a.sq_unidade         = c.sq_unidade (+) and
+                    c.tipo_respons (+)   = 'T' and 
+                    c.fim (+)            is null)
+               and (c.sq_pessoa          = d.sq_pessoa (+))
+               and (a.sq_unidade         = e.sq_unidade (+))
+               and b.sq_pessoa           = p_cliente
+               and (p_nome               is null or (p_nome  is not null and a.nome  like '%'||p_nome||'%'))
+               and (p_sigla              is null or (p_sigla is not null and a.sigla like '%'||p_sigla||'%'))
+               and a.ativo                = 'S' 
+               and e.ativo                = 'S' 
+               and e.contrata             = 'S' 
+               and b.sq_pessoa_endereco = p_chave;
+      Elsif p_restricao = 'GESTORA' Then
+         open p_result for          
+            select a.sq_unidade sq_unidade,a.sq_unidade_pai, a.nome, a.sigla, a.informal, a.adm_central, a.vinculada,
+                   a.codigo, a.sq_unidade_pai, a.ordem, Nvl(d.nome,'Informar') responsavel, a.ativo,
+                   a.sq_unidade_gestora, a.sq_unid_pagadora, a.unidade_gestora, a.unidade_pagadora,
+                   b.sq_pessoa_endereco, b.logradouro,
+                   e.sq_unidade lc_chave, e.cnpj lc_cnpj, e.padrao lc_padrao,
+                   e.licita lc_licita, e.contrata lc_contrata, e.ativo lc_ativo,
+                   f.nome nm_cidade, f.co_uf
+              from eo_unidade         a,
+                   co_pessoa_endereco b,
+                   co_cidade          f,
+                   eo_unidade_resp    c,
+                   co_pessoa          d,
+                   lc_unidade         e
+             where (a.sq_pessoa_endereco = b.sq_pessoa_endereco)
+               and (b.sq_cidade          = f.sq_cidade)
+               and (a.sq_unidade         = c.sq_unidade (+) and
+                    c.tipo_respons (+)   = 'T' and 
+                    c.fim (+)            is null)
+               and (c.sq_pessoa          = d.sq_pessoa (+))
+               and (a.sq_unidade         = e.sq_unidade (+))
+               and b.sq_pessoa           = p_cliente
+               and (p_nome               is null or (p_nome  is not null and a.nome  like '%'||p_nome||'%'))
+               and (p_sigla              is null or (p_sigla is not null and a.sigla like '%'||p_sigla||'%'))
+               and a.unidade_gestora      = 'S' 
+               and a.ativo                = 'S' 
+               and (p_chave is null or (p_chave is not null and a.sq_unidade <> p_chave));
+      Elsif p_restricao = 'PAGADORA' Then
+         open p_result for          
+            select a.sq_unidade sq_unidade,a.sq_unidade_pai, a.nome, a.sigla, a.informal, a.adm_central, a.vinculada,
+                   a.codigo, a.sq_unidade_pai, a.ordem, Nvl(d.nome,'Informar') responsavel, a.ativo,
+                   a.sq_unidade_gestora, a.sq_unid_pagadora, a.unidade_gestora, a.unidade_pagadora,
+                   b.sq_pessoa_endereco, b.logradouro,
+                   e.sq_unidade lc_chave, e.cnpj lc_cnpj, e.padrao lc_padrao,
+                   e.licita lc_licita, e.contrata lc_contrata, e.ativo lc_ativo,
+                   f.nome nm_cidade, f.co_uf
+              from eo_unidade         a,
+                   co_pessoa_endereco b,
+                   co_cidade          f,
+                   eo_unidade_resp    c,
+                   co_pessoa          d,
+                   lc_unidade         e
+             where (a.sq_pessoa_endereco = b.sq_pessoa_endereco)
+               and (b.sq_cidade          = f.sq_cidade)
+               and (a.sq_unidade         = c.sq_unidade (+) and
+                    c.tipo_respons (+)   = 'T' and 
+                    c.fim (+)            is null)
+               and (c.sq_pessoa          = d.sq_pessoa (+))
+               and (a.sq_unidade         = e.sq_unidade (+))
+               and b.sq_pessoa           = p_cliente
+               and (p_nome               is null or (p_nome  is not null and a.nome  like '%'||p_nome||'%'))
+               and (p_sigla              is null or (p_sigla is not null and a.sigla like '%'||p_sigla||'%'))
+               and a.unidade_pagadora    = 'S' 
+               and a.ativo               = 'S' 
+               and (p_chave is null or (p_chave is not null and a.sq_unidade <> p_chave));
+      Elsif p_restricao = 'VALORCODIGO' Then
+         open p_result for          
+            select a.sq_unidade sq_unidade,a.sq_unidade_pai, a.nome, a.sigla, a.informal, a.adm_central, a.vinculada,
+                   a.codigo, a.sq_unidade_pai, a.ordem, Nvl(d.nome,'Informar') responsavel, a.ativo,
+                   a.sq_unidade_gestora, a.sq_unid_pagadora, a.unidade_gestora, a.unidade_pagadora,
+                   b.sq_pessoa_endereco, b.logradouro,
+                   e.sq_unidade lc_chave, e.cnpj lc_cnpj, e.padrao lc_padrao,
+                   e.licita lc_licita, e.contrata lc_contrata, e.ativo lc_ativo,
+                   f.nome nm_cidade, f.co_uf
+              from eo_unidade         a,
+                   co_pessoa_endereco b,
+                   co_cidade          f,
+                   eo_unidade_resp    c,
+                   co_pessoa          d,
+                   lc_unidade         e
+             where (a.sq_pessoa_endereco = b.sq_pessoa_endereco)
+               and (b.sq_cidade          = f.sq_cidade)
+               and (a.sq_unidade         = c.sq_unidade (+) and
+                    c.tipo_respons (+)   = 'T' and 
+                    c.fim (+)            is null)
+               and (c.sq_pessoa          = d.sq_pessoa (+))
+               and (a.sq_unidade         = e.sq_unidade (+))
+               and b.sq_pessoa           = p_cliente
+               and (p_nome               is null or (p_nome  is not null and a.nome  like '%'||p_nome||'%'))
+               and (p_sigla              is null or (p_sigla is not null and a.sigla like '%'||p_sigla||'%'))
+               and a.informal             = 'N' 
+               and a.codigo               = p_chave;
       Else
          open p_result for
             select a.sq_unidade,a.sq_unidade_pai, a.nome, a.sigla, a.informal, a.adm_central, a.vinculada,

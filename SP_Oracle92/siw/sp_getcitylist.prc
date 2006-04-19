@@ -1,6 +1,8 @@
 create or replace procedure SP_GetCityList
    (p_pais      in  number,
     p_estado    in  varchar2,
+    p_nome      in  varchar2  default null,
+    p_restricao in  varchar2  default null,
     p_result    out sys_refcursor) is
 begin
    -- Recupera as cidades existentes
@@ -14,7 +16,7 @@ begin
                                        )
                inner join co_pais c on (b.sq_pais = c.sq_pais)
        where b.co_uf   = p_estado
-         and c.sq_pais = p_pais;
+         and c.sq_pais = p_pais
+         and (p_nome is null or (p_nome is not null and acentos(a.nome) like acentos(p_nome)));
 end SP_GetCityList;
 /
-

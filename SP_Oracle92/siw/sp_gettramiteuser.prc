@@ -1,9 +1,12 @@
 create or replace procedure SP_GetTramiteUser
-   (p_cliente   in  number,
-    p_sq_menu   in  number,
-    p_ChaveAux  in  number default null,
-    p_retorno   in  varchar2,
-    p_result    out sys_refcursor
+   (p_cliente     in  number,
+    p_sq_menu     in  number,
+    p_ChaveAux    in  number    default null,
+    p_retorno     in  varchar2,
+    p_nome        in  varchar2  default null,
+    p_sq_unidade  in  number    default null,
+    p_acesso      in  number    default null,
+    p_result      out sys_refcursor
    ) is
 begin
    If p_retorno = 'USUARIO' Then
@@ -40,9 +43,11 @@ begin
            and b.ativo                         = 'S' 
            and b1.sq_pessoa_pai                = p_cliente
            and c.sq_menu                       = p_sq_menu
-           and marcado(c.sq_menu, b.sq_pessoa,null,p_ChaveAux) = 0 
+           and marcado(c.sq_menu, b.sq_pessoa,null,p_ChaveAux) = 0
+           and ((p_nome       is null) or (p_nome       is not null and b1.nome_indice like '%'||acentos(p_nome)||'%'))
+           and ((p_sq_unidade is null) or (p_sq_unidade is not null and a.sq_unidade   = p_sq_unidade))
+           and ((p_acesso     is null) or (p_acesso     is not null and(marcado(Nvl(p_ChaveAux,-1), b.sq_pessoa)) > 0))
          ORDER BY 3;
    End If;  
 end SP_GetTramiteUser;
 /
-

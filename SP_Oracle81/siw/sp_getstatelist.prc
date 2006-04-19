@@ -1,5 +1,8 @@
 create or replace procedure SP_GetStateList
    (p_pais      in number   default null,
+    p_regiao    in number   default null,
+    p_ativo     in varchar2 default null,
+    p_restricao in varchar2 default null,
     p_result    out siw.sys_refcursor) is
 begin
    -- Recupera os estados existentes
@@ -14,7 +17,8 @@ begin
         from co_uf a, co_pais b, co_regiao c
        where a.sq_pais     = b.sq_pais
          and a.sq_regiao   = c.sq_regiao
-         and b.sq_pais     = p_pais;
+         and b.sq_pais     = p_pais
+         and (p_regiao is null or (p_regiao is not null and a.sq_regiao = p_regiao))
+         and (p_ativo  is null or (p_ativo  is not null and a.ativo     = p_ativo));         
 end SP_GetStateList;
 /
-
