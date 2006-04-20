@@ -1,5 +1,5 @@
 <?php
-include_once("constants.inc");
+include_once('constants.inc');
 /********************************
 * xPandMenu MULTI-LEVEL class
 *********************************
@@ -109,11 +109,11 @@ class XMenu
 				$href_close = "";
 			}
 			if(count($myChild->items) != 0){
-				$this->output .= $this->codeIndent()."<li id=\"Xnode\" class=\"Xnode\"><div onClick=\"".$img_js."xMenuShowHide(document.getElementById('Xtree".$this->treeCount."'));\">".$href_open.$img.$myChild->name.$href_close."</div></li>\n";
+				$this->output .= $this->codeIndent()."<li id=\"Xnode\" class=\"Xnode\"><span onClick=\"".$img_js."xMenuShowHide(document.getElementById('Xtree".$this->treeCount."'));\">".$href_open.$img.$myChild->name.$href_close."</span></li>\n";
 				$this->indent ++;
 				$this->generateTree($myChild);
 			}else{
-				$this->output .= $this->codeIndent()."<li id=\"Xleaf\" class=\"Xleaf\"><div onClick=\"".$img_js."\">".$href_open.$img.$myChild->name.$href_close."</div></li>\n";
+				$this->output .= $this->codeIndent()."<li id=\"Xleaf\" class=\"Xleaf\"><span onClick=\"".$img_js."\">".$href_open.$img.$myChild->name.$href_close."</span></li>\n";
 			}
 		}
 		$this->output .= $this->codeIndent()."</ul>\n";

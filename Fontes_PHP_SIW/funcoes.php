@@ -98,7 +98,7 @@ function headerWord() {
 // Montagem do cabeçalho de documentos Word
 // -------------------------------------------------------------------------
 function CabecalhoWord($p_cliente,$p_titulo,$p_pagina) {
-  DB_GetCustomerData($p_cliente);
+  db_getCustomerData($p_cliente);
   ShowHTML("<TABLE WIDTH=\"100%\" BORDER=0>");
   ShowHTML("  <TR>");
   ShowHTML("    <TD ROWSPAN=3><IMG ALIGN=\"LEFT\" SRC=\"".$conFileVirtual.$w_cliente."/img/".$RS['LOGO']."\" width=56 height=67>");
@@ -152,7 +152,7 @@ function LinkOrdena($p_label,$p_campo) {
 // -------------------------------------------------------------------------
 function CabecalhoRelatorio($p_cliente,$p_titulo) {
   extract($GLOBALS);
-  $RS = DB_GetCustomerData($p_cliente);
+  $RS = db_getCustomerData($p_cliente);
   ShowHTML('<TABLE WIDTH="100%" BORDER=0><TR><TD ROWSPAN=2><IMG ALIGN="LEFT" SRC="files\\'.$w_cliente.'\\img\\'.$RS['LOGO'].'><TD ALIGN="RIGHT"><B><FONT SIZE=4 COLOR="#000000">');
   ShowHTML($p_titulo);
   ShowHTML('</FONT><TR><TD ALIGN="RIGHT"><B><FONT SIZE=2 COLOR="#000000">'.DataHora().'</B></TD></TR>');
@@ -206,8 +206,25 @@ function MontaBarra($p_link,$p_PageCount,$p_AbsolutePage,$p_PageSize,$p_RecordCo
 // -------------------------------------------------------------------------
 function SolicAcesso($p_solicitacao,$p_usuario) {
   extract($GLOBALS);
-  DB_GetSolicAcesso($p_solicitacao, $p_usuario, $l_acesso);
+  db_getSolicAcesso($p_solicitacao, $p_usuario, $l_acesso);
   return $l_acesso;
+}
+
+// =========================================================================
+// Retorna o tipo de recurso a partir do código
+// -------------------------------------------------------------------------
+function RetornaTipoRecurso($p_chave) {
+  extract($GLOBALS);
+
+  switch ($p_Chave) {
+  case 0: return 'Financeiro';   break;
+  case 1: return 'Humano';       break;
+  case 2: return 'Material';     break;
+  case 3: return 'Metodológico'; break;
+  default:return 'Erro';        break;
+}
+
+return $function_ret;
 }
 
 // =========================================================================
@@ -362,7 +379,7 @@ function MontaFiltroUpload($p_Form) {
 // -------------------------------------------------------------------------
 function OpcaoMenu($p_sq_menu) {
   extract($GLOBALS);
-  $RS = DB_GetMenuUpper($p_sq_menu);
+  $RS = db_getMenuUpper($p_sq_menu);
   $l_texto="";
   $l_cont=0;
   while(!$RS->EOF) {
@@ -382,7 +399,7 @@ function OpcaoMenu($p_sq_menu) {
 // -------------------------------------------------------------------------
 function MontaStringOpcao($p_sq_menu) {
   extract($GLOBALS);
-  DB_GetLinkDataParents($RS1, $p_sq_menu);
+  db_getLinkDataParents($RS1, $p_sq_menu);
   $w_texto="";
   $w_Cont=$RS1->RecordCount;
   while(!$RS1->EOF) {
@@ -402,7 +419,7 @@ function MontaStringOpcao($p_sq_menu) {
 // -------------------------------------------------------------------------
 function MontaOrdemEtapa($p_chave) {
   extract($GLOBALS);
-  DB_GetEtapaDataParents($RSQuery, $p_chave);
+  db_getEtapaDataParents($RSQuery, $p_chave);
   $w_texto="";
   $w_Cont=$RSQuery->RecordCount;
   while(!$RSQuery->EOF) {
@@ -440,8 +457,7 @@ function Cvl($expressao) { if (!isset($expressao) || $expressao=='') { return 0;
 // =========================================================================
 // Retorna o caminho físico para o diretório  do cliente informado
 // -------------------------------------------------------------------------
-function DiretorioCliente($p_Cliente)
-{
+function DiretorioCliente($p_Cliente) {
   extract($GLOBALS);
   $DiretorioCliente=ini_get('APPL_PHYSICAL_PATH').'files\\'.$p_cliente;
   return $function_ret;
@@ -450,24 +466,18 @@ function DiretorioCliente($p_Cliente)
 // =========================================================================
 // Montagem de URL a partir da sigla da opção do menu
 // -------------------------------------------------------------------------
-function MontaURL($p_sigla)
-{
+function MontaURL($p_sigla) {
   extract($GLOBALS);
-  DB_GetLinkData($RS_montaUrl, $_SESSION['P_CLIENTE'], $p_sigla);
+  $RS_montaurl = db_getLinkData::getInstanceOf($dmbs, $_SESSION['P_CLIENTE'], $p_sigla);
   $l_ImagemPadrao='images/folder/SheetLittle.gif';
-  if ($RS_montaUrl->EOF)
-  { $MontaURL=''; }
-    else
-  {
-    if (Nvl($RS_montaUrl['IMAGEM'],'-')!='-')
-    {
-      $l_Imagem=$RS_montaUrl['IMAGEM'];
-    }
-      else
-    {
+  if (count($RS_montaUrl)<=0) return '';
+  else {
+    if (nvl(f($RS_montaUrl,'imagem'),'-')!='-') {
+      $l_Imagem=f($RS_montaUrl,'imagem');
+    } else {
       $l_Imagem=$l_ImagemPadrao;
     }
-    $MontaURL=$RS_montaUrl['LINK']."&P1=".$RS_montaUrl['P1']."&P2=".$RS_montaUrl['P2']."&P3=".$RS_montaUrl['P3']."&P4=".$RS_montaUrl['P4']."&TP=<img src=".$l_imagem." BORDER=0>".$RS_montaUrl['NOME']."&SG=".$RS_montaUrl['SIGLA'];
+    return f($RS_montaUrl,'link')."&P1=".f($RS_montaUrl,'p1')."&P2=".f($RS_montaUrl,'p2')."&P3=".f($RS_montaUrl,'p3')."&P4=".f($RS_montaUrl,'p4')."&TP=<img src=".$l_imagem." BORDER=0>".f($RS_montaUrl,'nome')."&SG=".f($RS_montaUrl,'sigla');
   }
   return $function_ret;
 }
@@ -496,35 +506,9 @@ function AbreForm($p_Name,$p_Action,$p_Method,$p_onSubmit,$p_Target,$p_P1,$p_P2,
 }
 
 // =========================================================================
-// Montagem da seleção de sexo
-// -------------------------------------------------------------------------
-function SelecaoSexo($label,$accesskey,$hint,$chave,$chaveAux,$campo,$restricao,$atributo) {
-   if (!isset($hint)) {
-      ShowHTML('          <td valign="top"><font size="1"><b>'.$label.'</b><br><SELECT ACCESSKEY="'.$accesskey.'" CLASS="sts" NAME="'.$campo.'" '.$w_Disabled.' '.$atributo.'>');
-   } else {
-      ShowHTML('          <td valign="top" title="'.$hint.'"><font size="1"><b>'.$label.'</b><br><SELECT ACCESSKEY="'.$accesskey.'" CLASS="sts" NAME="'.$campo.'" '.$w_Disabled.' '.$atributo.'>');
-   }
-   ShowHTML('          <option value="">---');
-   if (Nvl($chave,'')=='M') {
-      ShowHTML('          <option value="F">Feminino');
-      ShowHTML('          <option value="M" SELECTED>Masculino');
-   }
-   elseif (Nvl($chave,'')=='F') {
-     ShowHTML('          <option value="F" SELECTED>Feminino');
-     ShowHTML('          <option value="M">Masculino');
-   }
-   else {
-     ShowHTML('          <option value="F">Feminino');
-     ShowHTML('          <option value="M">Masculino');
-   }
-   ShowHTML('          </select>');
-}
-
-// =========================================================================
 // Montagem de campo do tipo radio com padrão Não
 // -------------------------------------------------------------------------
-function MontaRadioNS($label,$Chave,$Campo)
-{
+function MontaRadioNS($label,$Chave,$Campo) {
   ShowHTML('          <td><font size="1">');
   if (Nvl($label,'')>'') { ShowHTML($label.'</b><br>'); }
   if ($chave=='S') {
@@ -537,8 +521,7 @@ function MontaRadioNS($label,$Chave,$Campo)
 // =========================================================================
 // Montagem de campo do tipo radio com padrão Sim
 // -------------------------------------------------------------------------
-function MontaRadioSN($label,$Chave,$Campo)
-{
+function MontaRadioSN($label,$Chave,$Campo) {
   ShowHTML('          <td><font size="1">');
   if (Nvl($label,'')>'') { ShowHTML($label.'</b><br>'); }
   if ($chave=='N') {
@@ -549,1392 +532,17 @@ function MontaRadioSN($label,$Chave,$Campo)
 }
 
 // =========================================================================
-// Montagem da seleção de pessoas
-// -------------------------------------------------------------------------
-function SelecaoPessoa1($label,$accesskey,$hint,$chave,$chaveAux,$campo,$restricao)
-{
-  extract($GLOBALS);
-  ShowHTML('<INPUT type="hidden" name="'.$campo.'" value="'.$chave.'">');
-  if ($cDbl[nvl($chave,0)]>0) {
-     DB_GetPersonList($RS, $w_cliente, $chave, $restricao);
-     $RS->Filter='sq_pessoa = '.$chave;
-     $RS->Sort='nome_resumido';
-     $w_nm_usuario=$RS['NOME_RESUMIDO'].' ('.$RS['SG_UNIDADE'].')';
-  }
-
-  if (!isset($hint)) {
-     ShowHTML('      <td valign="top"><font size="1"><b>'.$label.'</b><br>');
-     ShowHTML('          <input READONLY ACCESSKEY="'.$accesskey.'" CLASS="sti" type="text" name="'.$campo.'_nm'.'" SIZE="20" VALUE="'.$w_nm_usuario.'">');
-  } else {
-     ShowHTML('      <td valign="top"title="'.$hint.'"><font size="1"><b>'.$label.'</b><br>');
-     ShowHTML('          <input READONLY ACCESSKEY="'.$accesskey.'" CLASS="sti" type="text" name="'.$campo.'_nm'.'" SIZE="20" VALUE="'.$w_nm_usuario.'">');
-  }
-
-  ShowHTML('              <a class="ss" href="#" onClick="window.open(\''.$w_dir_volta.'Seguranca.php?par=BuscaUsuario&TP='.$TP.'&w_cliente='.$w_cliente.'&ChaveAux='.$ChaveAux.'&restricao='.$restricao.'&campo='.$campo.'\',\'Usuário\',\'top=10,left=10,width=780,height=400,toolbar=yes,status=yes,resizable=yes,scrollbars=yes\'); return false;" title="Clique aqui para selecionar o usuário."><img src=images/Folder/Explorer.gif border=0 height=15 width=15></a>');
-  ShowHTML('              <a class="ss" href="#" onClick="document.Form.'.$campo.'_nm'.'.value=\'\'; document.Form.'.$campo.'.value=\'\'; return false;" title="Clique aqui para apagar o valor deste campo."><img src=images/Folder/Recyfull.gif border=0 height=15 width=15></a>');
-}
-
-// =========================================================================
-// Montagem da seleção de pessoas
-// -------------------------------------------------------------------------
-function SelecaoPessoa($label,$accesskey,$hint,$chave,$chaveAux,$campo,$restricao) {
-  extract($GLOBALS);
-  DB_GetPersonList($RS, $w_cliente, $ChaveAux, $restricao);
-  $RS->Sort='nome_resumido';
-  if ($restricao=='TTUSURAMAL') { $RS->filter='ativo=\'S\''; }
-  if (!isset($hint)) {
-     ShowHTML('          <td valign="top"><font size="1"><b>'.$label.'</b><br><SELECT ACCESSKEY="'.$accesskey.'" CLASS="sts" NAME="'.$campo.'" '.$w_Disabled.'>');
-  } else {
-     ShowHTML('          <td valign="top" title="'.$hint.'"><font size="1"><b>'.$label.'</b><br><SELECT ACCESSKEY="'.$accesskey.'" CLASS="sts" NAME="'.$campo.'" '.$w_Disabled.'>');
-  }
-  ShowHTML('          <option value="">---');
-  while(!$RS->EOF) {
-    if ($cDbl[nvl($RS['SQ_PESSOA'],0)]==$cDbl[nvl($chave,0)]) {
-       ShowHTML('          <option value="'.$RS['SQ_PESSOA'].'" SELECTED>'.$RS['NOME_RESUMIDO'].' ('.$RS['SG_UNIDADE'].')');
-    } else {
-       ShowHTML('          <option value="'.$RS['SQ_PESSOA'].'">'.$RS['NOME_RESUMIDO'].' ('.$RS['SG_UNIDADE'].')');
-    }
-    $RS->MoveNext;
-  }
-  ShowHTML('          </select>');
-}
-
-// =========================================================================
-// Montagem da seleção de responsáveis por solicitações
-// -------------------------------------------------------------------------
-function SelecaoSolicResp($label,$accesskey,$hint,$chave,$chaveAux,$chaveAux2,$campo,$restricao) {
-  extract($GLOBALS);
-  DB_GetSolicResp($RS, $chaveAux, $chaveAux2, $restricao);
-  $RS->Sort='nome_resumido';
-  if (!isset($hint)) {
-     ShowHTML('          <td valign="top"><font size="1"><b>'.$label.'</b><br><SELECT ACCESSKEY="'.$accesskey.'" CLASS="sts" NAME="'.$campo.'" '.$w_Disabled.'>');
-  } else {
-     ShowHTML('          <td valign="top" title="'.$hint.'"><font size="1"><b>'.$label.'</b><br><SELECT ACCESSKEY="'.$accesskey.'" CLASS="sts" NAME="'.$campo.'" '.$w_Disabled.'>');
-  }
-  ShowHTML('          <option value="">---');
-  while(!$RS->EOF) {
-    if ($cDbl[nvl($RS['SQ_PESSOA'],0)]==$cDbl[nvl($chave,0)]) {
-       ShowHTML('          <option value="'.$RS['SQ_PESSOA'].'" SELECTED>'.$RS['NOME_RESUMIDO'].' ('.$RS['SG_UNIDADE'].')');
-    } else {
-       ShowHTML('          <option value="'.$RS['SQ_PESSOA'].'">'.$RS['NOME_RESUMIDO'].' ('.$RS['SG_UNIDADE'].')');
-    }
-    $RS->MoveNext;
-  }
-  ShowHTML('          </select>');
-}
-
-// =========================================================================
-// Montagem da seleção do centro de custo
-// -------------------------------------------------------------------------
-function SelecaoUsuUnid($label,$accesskey,$hint,$chave,$chaveAux,$campo,$restricao) {
-  extract($GLOBALS);
-  DB_GetUserList($RS, $w_cliente, $null, $null, $null, $null, $null, $null, 'S');
-  $RS->Filter='contratado = \'S\'';
-  $RS->Sort='nome_indice';
-  if (!isset($hint)) {
-     ShowHTML('          <td valign="top"><font size="1"><b>'.$label.'</b><br><SELECT ACCESSKEY="'.$accesskey.'" CLASS="sts" NAME="'.$campo.'" '.$w_Disabled.'>');
-  } else {
-     ShowHTML('          <td valign="top" title="'.$hint.'"><font size="1"><b>'.$label.'</b><br><SELECT ACCESSKEY="'.$accesskey.'" CLASS="sts" NAME="'.$campo.'" '.$w_Disabled.'>');
-  }
-  ShowHTML('          <option value="">---');
-  while(!$RS->EOF) {
-    if ($cDbl[nvl($RS['SQ_PESSOA'],0)]==$cDbl[nvl($chave,0)]) {
-       ShowHTML('          <option value="'.$RS['SQ_PESSOA'].'" SELECTED>'.$RS['NOME']);
-    } else {
-       ShowHTML('          <option value="'.$RS['SQ_PESSOA'].'">'.$RS['NOME']);
-    }
-    $RS->MoveNext;
-  }
-  ShowHTML('          </select>');
-}
-
-// =========================================================================
-// Montagem da seleção dos tipos de vínculo
-// -------------------------------------------------------------------------
-function SelecaoVinculo($label,$accesskey,$hint,$chave,$chaveAux,$campo,$restricao) {
-  extract($GLOBALS);
-  DB_GetVincKindList($RS, $w_cliente);
-  if (Nvl($restricao,'')>'') { $RS->Filter=$restricao; }
-  if (!isset($hint)) {
-     ShowHTML('          <td valign="top"><font size="1"><b>'.$label.'</b><br><SELECT ACCESSKEY="'.$accesskey.'" CLASS="sts" NAME="'.$campo.'" '.$w_Disabled.'>');
-  } else {
-     ShowHTML('          <td valign="top" title="'.$hint.'"><font size="1"><b>'.$label.'</b><br><SELECT ACCESSKEY="'.$accesskey.'" CLASS="sts" NAME="'.$campo.'" '.$w_Disabled.'>');
-  }
-  ShowHTML('          <option value="">---');
-  while(!$RS->EOF) {
-    if ($cDbl[nvl($RS['SQ_TIPO_VINCULO'],0)]==$cDbl[nvl($chave,0)]) {
-       ShowHTML('          <option value="'.$RS['SQ_TIPO_VINCULO'].'" SELECTED>'.$RS['NOME']);
-    } else {
-       ShowHTML('          <option value="'.$RS['SQ_TIPO_VINCULO'].'">'.$RS['NOME']);
-    }
-    $RS->MoveNext;
-  }
-  ShowHTML('          </select>');
-}
-
-// =========================================================================
-// Montagem da seleção dos tipos de postos
-// -------------------------------------------------------------------------
-function SelecaoTipoPosto($label,$accesskey,$hint,$chave,$chaveAux,$campo,$restricao) {
-  extract($GLOBALS);
-  DB_GetTipoPostoList($RS, $w_cliente, $null);
-  if (Nvl($restricao,'')>'') { $RS->Filter=$restricao; }
-  if (!isset($hint)) {
-     ShowHTML('          <td valign="top"><font size="1"><b>'.$label.'</b><br>');
-  } else {
-     ShowHTML('          <td valign="top" title="'.$hint.'"><font size="1"><b>'.$label.'</b><br>');
-  }
-  while(!$RS->EOF) {
-     if ($cDbl[nvl($RS['SQ_EO_TIPO_POSTO'],0)]==$cDbl[nvl($chave,0)]) {
-        ShowHTML('              <input '.$w_Disabled.' type="radio" name="'.$campo.'" value="'.$RS['SQ_EO_TIPO_POSTO'].'" checked>'.$RS['DESCRICAO'].'<br>');
-     } else {
-        ShowHTML('              <input '.$w_Disabled.' type="radio" name="'.$campo.'" value="'.$RS['SQ_EO_TIPO_POSTO'].'">'.$RS['DESCRICAO'].'<br>');
-     }
-     $RS->MoveNext;
-  }
-  ShowHTML('          </select>');
-}
-
-// =========================================================================
-// Montagem da seleção do grupo de deficiência
-// -------------------------------------------------------------------------
-function SelecaoGrupoDef($label,$accesskey,$hint,$chave,$chaveAux,$campo,$restricao) {
-  extract($GLOBALS);
-  DB_GetDeficGroupList($RS);
-  if (!isset($hint)) {
-     ShowHTML('          <td valign="top"><font size="1"><b>'.$label.'</b><br><SELECT ACCESSKEY="'.$accesskey.'" CLASS="sts" NAME="'.$campo.'" '.$w_Disabled.'>');
-  } else {
-     ShowHTML('          <td valign="top" title="'.$hint.'"><font size="1"><b>'.$label.'</b><br><SELECT ACCESSKEY="'.$accesskey.'" CLASS="sts" NAME="'.$campo.'" '.$w_Disabled.'>');
-  }
-  ShowHTML('          <option value="">---');
-  while(!$RS->EOF) {
-    if ($cDbl[nvl($RS['SQ_GRUPO_DEFIC'],0)]==$cDbl[nvl($chave,0)]) {
-       ShowHTML('          <option value="'.$RS['SQ_GRUPO_DEFIC'].'" SELECTED>'.$RS['NOME']);
-    } else {
-       ShowHTML('          <option value="'.$RS['SQ_GRUPO_DEFIC'].'">'.$RS['NOME']);
-    }
-    $RS->MoveNext;
-  }
-  ShowHTML('          </select>');
-}
-
-// =========================================================================
-// Montagem da seleção do tipo da pessoa
-// -------------------------------------------------------------------------
-function SelecaoTipoPessoa($label,$accesskey,$hint,$chave,$chaveAux,$campo,$restricao,$atributo) {
-  extract($GLOBALS);
-  DB_GetKindPersonList($RS);
-  if ($restricao>'') { $RS->Filter=$restricao; }
-  if (!isset($hint)) {
-     ShowHTML('          <td valign="top"><font size="1"><b>'.$label.'</b><br><SELECT ACCESSKEY="'.$accesskey.'" CLASS="sts" NAME="'.$campo.'" '.$w_Disabled.' '.$atributo.'>');
-  } else {
-     ShowHTML('          <td valign="top" title="'.$hint.'"><font size="1"><b>'.$label.'</b><br><SELECT ACCESSKEY="'.$accesskey.'" CLASS="sts" NAME="'.$campo.'" '.$w_Disabled.' '.$atributo.'>');
-  }
-  ShowHTML('          <option value="">---');
-  while(!$RS->EOF) {
-    if ($cDbl[nvl($RS['SQ_TIPO_PESSOA'],0)]==$cDbl[nvl($chave,0)]) {
-       ShowHTML('          <option value="'.$RS['SQ_TIPO_PESSOA'].'" SELECTED>'.$RS['NOME']);
-    } else {
-       ShowHTML('          <option value="'.$RS['SQ_TIPO_PESSOA'].'">'.$RS['NOME']);
-    }
-    $RS->MoveNext;
-  }
-  ShowHTML('          </select>');
-}
-
-// =========================================================================
-// Montagem da seleção da forma de pagamento
-// -------------------------------------------------------------------------
-function SelecaoFormaPagamento($label,$accesskey,$hint,$chave,$chave_aux,$campo,$restricao) {
-  extract($GLOBALS);
-  DB_GetFormaPagamento($RS, $w_cliente, $null, $chave_aux, $restricao);
-  $RS->Filter='ativo = \'S\'';
-  $RS->Sort='nome';
-  if (!isset($hint)) {
-     ShowHTML('          <td valign="top"><font size="1"><b>'.$label.'</b><br><SELECT ACCESSKEY="'.$accesskey.'" CLASS="sts" NAME="'.$campo.'" '.$w_Disabled.'>');
-  } else {
-     ShowHTML('          <td valign="top" title="'.$hint.'"><font size="1"><b>'.$label.'</b><br><SELECT ACCESSKEY="'.$accesskey.'" CLASS="sts" NAME="'.$campo.'" '.$w_Disabled.'>');
-  }
-
-  ShowHTML('          <option value="">---');
-  while(!$RS->EOF) {
-    if ($cDbl[nvl($RS['SQ_FORMA_PAGAMENTO'],0)]==$cDbl[nvl($chave,0)]) {
-       ShowHTML('          <option value="'.$RS['SQ_FORMA_PAGAMENTO'].'" SELECTED>'.$RS['NOME']);
-    } else {
-       ShowHTML('          <option value="'.$RS['SQ_FORMA_PAGAMENTO'].'">'.$RS['NOME']);
-    }
-    $RS->MoveNext;
-  }
-  ShowHTML('          </select>');
-}
-
-// =========================================================================
-// Montagem da seleção de país
-// -------------------------------------------------------------------------
-function SelecaoPais($label,$accesskey,$hint,$chave,$chaveAux,$campo,$restricao,$atributo) {
-  extract($GLOBALS);
-  DB_GetCountryList($RS);
-  if ($restricao>'') { $RS->Filter=$restricao; }
-  $RS->Sort='padrao desc, Nome';
-  if (!isset($hint)) {
-     ShowHTML('          <td valign="top"><font size="1"><b>'.$label.'</b><br><SELECT ACCESSKEY="'.$accesskey.'" CLASS="sts" NAME="'.$campo.'" '.$w_Disabled.' '.$atributo.'>');
-  } else {
-     ShowHTML('          <td valign="top" title="'.$hint.'"><font size="1"><b>'.$label.'</b><br><SELECT ACCESSKEY="'.$accesskey.'" CLASS="sts" NAME="'.$campo.'" '.$w_Disabled.' '.$atributo.'>');
-  }
-
-  ShowHTML('          <option value="">---');
-  while(!$RS->EOF) {
-    if ($cDbl[nvl($RS['SQ_PAIS'],0)]==$cDbl[nvl($chave,0)]) {
-       ShowHTML('          <option value="'.$RS['SQ_PAIS'].'" SELECTED>'.$RS['NOME']);
-    } else {
-       ShowHTML('          <option value="'.$RS['SQ_PAIS'].'">'.$RS['NOME']);
-    }
-    $RS->MoveNext;
-  }
-  ShowHTML('          </select>');
-}
-
-// =========================================================================
-// Montagem da seleção da região
-// -------------------------------------------------------------------------
-function SelecaoRegiao($label,$accesskey,$hint,$chave,$chaveAux,$campo,$restricao,$atributo) {
-  extract($GLOBALS);
-  DB_GetRegionList($RS, $chaveAux, $null);
-  if ($restricao>'') { $RS->Filter=$restricao; }
-  $RS->Sort='Ordem';
-  if (!isset($hint)) {
-     ShowHTML('          <td valign="top"><font size="1"><b>'.$label.'</b><br><SELECT ACCESSKEY="'.$accesskey.'" CLASS="sts" NAME="'.$campo.'" '.$w_Disabled.' '.$atributo.'>');
-  } else {
-     ShowHTML('          <td valign="top" title="'.$hint.'"><font size="1"><b>'.$label.'</b><br><SELECT ACCESSKEY="'.$accesskey.'" CLASS="sts" NAME="'.$campo.'" '.$w_Disabled.' '.$atributo.'>');
-  }
-
-  ShowHTML('          <option value="">---');
-  while(!$RS->EOF) {
-    if ($cDbl[nvl($RS['SQ_REGIAO'],0)]==$cDbl[nvl($chave,0)]) {
-       ShowHTML('          <option value="'.$RS['SQ_REGIAO'].'" SELECTED>'.$RS['NOME']);
-    } else {
-       ShowHTML('          <option value="'.$RS['SQ_REGIAO'].'">'.$RS['NOME']);
-    }
-    $RS->MoveNext;
-  }
-  ShowHTML('          </select>');
-}
-
-// =========================================================================
-// Montagem da seleção de estado
-// -------------------------------------------------------------------------
-function SelecaoEstado($label,$accesskey,$hint,$chave,$chaveAux,$chaveAux2,$campo,$restricao,$atributo) {
-  extract($GLOBALS);
-  $RS = db_getStateList::getInstanceOf($dbms, nvl($chaveAux,0));
-  if ($restricao>'') { $RS->Filter=$restricao; }
-  //$RS->Sort='padrao desc, nome';
-  if (!isset($hint)) {
-     ShowHTML('          <td valign="top"><font size="1"><b>'.$label.'</b><br><SELECT ACCESSKEY="'.$accesskey.'" CLASS="sts" NAME="'.$campo.'" '.$w_Disabled.' '.$atributo.'>');
-  } else {
-     ShowHTML('          <td valign="top" title="'.$hint.'"><font size="1"><b>'.$label.'</b><br><SELECT ACCESSKEY="'.$accesskey.'" CLASS="sts" NAME="'.$campo.'" '.$w_Disabled.' '.$atributo.'>');
-  }
-
-  ShowHTML('          <option value="">---');
-  foreach($RS as $row) {
-    if (nvl(f($row,'co_uf'),'')==nvl($chave,'')) {
-       ShowHTML('          <option value="'.f($row,'CO_UF').'" SELECTED>'.f($row,'nome'));
-    } else {
-       ShowHTML('          <option value="'.f($row,'CO_UF').'">'.f($row,'nome'));
-    }
-  }
-  ShowHTML('          </select>');
-}
-
-// =========================================================================
-// Montagem da seleção de cidade
-// -------------------------------------------------------------------------
-function SelecaoCidade($label,$accesskey,$hint,$chave,$chaveAux,$chaveAux2,$campo,$restricao,$atributo) {
-  extract($GLOBALS);
-  DB_GetCityList($RS, Nvl($chaveAux,0), $chaveAux2);
-  if ($restricao>'') { $RS->Filter=$restricao; }
-  $RS->Sort='capital desc, nome';
-  if (!isset($hint)) {
-     ShowHTML('          <td valign="top"><font size="1"><b>'.$label.'</b><br><SELECT ACCESSKEY="'.$accesskey.'" CLASS="sts" NAME="'.$campo.'" '.$w_Disabled.' '.$atributo.'>');
-  } else {
-     ShowHTML('          <td valign="top" title="'.$hint.'"><font size="1"><b>'.$label.'</b><br><SELECT ACCESSKEY="'.$accesskey.'" CLASS="sts" NAME="'.$campo.'" '.$w_Disabled.' '.$atributo.'>');
-  }
-
-  ShowHTML('          <option value="">---');
-  while(!$RS->EOF) {
-    if ($cDbl[nvl($RS['SQ_CIDADE'],0)]==$cDbl[nvl($chave,0)]) {
-       ShowHTML('          <option value="'.$RS['SQ_CIDADE'].'" SELECTED>'.$RS['NOME']);
-    } else {
-       ShowHTML('          <option value="'.$RS['SQ_CIDADE'].'">'.$RS['NOME']);
-    }
-    $RS->MoveNext;
-  }
-  ShowHTML('          </select>');
-}
-
-// =========================================================================
-// Montagem da seleção dos endereços da organização
-// -------------------------------------------------------------------------
-function SelecaoEndereco($label,$accesskey,$hint,$chave,$chaveAux,$campo,$restricao) {
-  extract($GLOBALS);
-  $RS = db_getAddressList::getInstanceOf($dbms, $w_cliente, $ChaveAux, $restricao);
-  if (!isset($hint)) {
-     ShowHTML('          <td valign="top"><font size="1"><b>'.$label.'</b><br><SELECT ACCESSKEY="'.$accesskey.'" CLASS="sts" NAME="'.$campo.'" '.$w_Disabled.'>');
-  } else {
-     ShowHTML('          <td valign="top" title="'.$hint.'"><font size="1"><b>'.$label.'</b><br><SELECT ACCESSKEY="'.$accesskey.'" CLASS="sts" NAME="'.$campo.'" '.$w_Disabled.'>');
-  }
-
-  ShowHTML('          <option value="">---');
-  foreach($RS as $row) {
-    if (nvl(f($row,'sq_pessoa_endereco'),0)==nvl($chave,0)) {
-       ShowHTML('          <option value="'.f($row,'sq_pessoa_endereco').'" SELECTED>'.f($row,'endereco'));
-    } else {
-       ShowHTML('          <option value="'.f($row,'sq_pessoa_endereco').'">'.f($row,'endereco'));
-    }
-  }
-  ShowHTML('          </select>');
-}
-
-// =========================================================================
-// Montagem da seleção dos telefones de uma pessoa
-// -------------------------------------------------------------------------
-function SelecaoTelefone($label,$accesskey,$hint,$chave,$chaveAux,$campo,$restricao) {
-  extract($GLOBALS);
-  DB_GetFoneList($RS, $w_cliente, $ChaveAux, $restricao);
-  if (!isset($hint)) {
-     ShowHTML('          <td valign="top"><font size="1"><b>'.$label.'</b><br><SELECT ACCESSKEY="'.$accesskey.'" CLASS="sts" NAME="'.$campo.'" '.$w_Disabled.'>');
-  } else {
-     ShowHTML('          <td valign="top" title="'.$hint.'"><font size="1"><b>'.$label.'</b><br><SELECT ACCESSKEY="'.$accesskey.'" CLASS="sts" NAME="'.$campo.'" '.$w_Disabled.'>');
-  }
-
-  ShowHTML('          <option value="">---');
-  while(!$RS->EOF) {
-    if ($cDbl[nvl($RS['SQ_PESSOA_TELEFONE'],0)]==$cDbl[nvl($chave,0)]) {
-       ShowHTML('          <option value="'.$RS['SQ_PESSOA_TELEFONE'].'" SELECTED>'.$RS['NUMERO']);
-    } else {
-       ShowHTML('          <option value="'.$RS['SQ_PESSOA_TELEFONE'].'">'.$RS['NUMERO']);
-    }
-    $RS->MoveNext;
-  }
-  ShowHTML('          </select>');
-}
-
-// =========================================================================
-// Montagem da seleção dos módulos contratados pelo cliente
-// -------------------------------------------------------------------------
-function SelecaoModulo($label,$accesskey,$hint,$chave,$chaveAux,$campo,$restricao,$atributo) {
-  extract($GLOBALS);
-  $RS = db_getSiwCliModLis::getInstanceOf($dbms, $chaveAux, $restricao);
-  array_key_case_change(&$RS);
-  $RS = SortArray($RS,'nome','asc');
-  if (!isset($hint)) {
-     ShowHTML('          <td valign="top"><font size="1"><b>'.$label.'</b><br><SELECT ACCESSKEY="'.$accesskey.'" CLASS="sts" NAME="'.$campo.'" '.$w_Disabled.' '.$atributo.'>');
-  } else {
-     ShowHTML('          <td valign="top" title="'.$hint.'"><font size="1"><b>'.$label.'</b><br><SELECT ACCESSKEY="'.$accesskey.'" CLASS="sts" NAME="'.$campo.'" '.$w_Disabled.' '.$atributo.'>');
-  }
-  ShowHTML('          <option value="">---');
-  foreach($RS as $row) {
-    if (nvl(f($row,'sq_modulo'),0)==nvl($chave,0)) {
-       ShowHTML('          <option value="'.f($row,'sq_modulo').'" SELECTED>'.f($row,'nome'));
-    } else {
-       ShowHTML('          <option value="'.f($row,'sq_modulo').'">'.f($row,'nome'));
-    }
-  }
-  ShowHTML('          </select>');
-}
-
-// =========================================================================
-// Montagem da seleção de opções do menu que são vinculadas a serviço
-// -------------------------------------------------------------------------
-function SelecaoServico($label,$accesskey,$hint,$chave,$chaveAux,$campo,$restricao,$atributo) {
-  extract($GLOBALS);
-  DB_GetMenuList($RS, $w_cliente, 'I', $null);
-  $RS->Filter='tramite=\'S\'';
-  if (!isset($hint)) {
-     ShowHTML('          <td valign="top"><font size="1"><b>'.$label.'</b><br><SELECT ACCESSKEY="'.$accesskey.'" CLASS="sts" NAME="'.$campo.'" '.$w_Disabled.' '.$atributo.'>');
-  } else {
-     ShowHTML('          <td valign="top" title="'.$hint.'"><font size="1"><b>'.$label.'</b><br><SELECT ACCESSKEY="'.$accesskey.'" CLASS="sts" NAME="'.$campo.'" '.$w_Disabled.' '.$atributo.'>');
-  }
-  ShowHTML('          <option value="">---');
-  while(!$RS->EOF) {
-    if ($cDbl[nvl($RS['SQ_MENU'],0)]==$cDbl[nvl($chave,0)]) {
-       ShowHTML('          <option value="'.$RS['SQ_MENU'].'" SELECTED>'.$RS['NOME']);
-    } else {
-       ShowHTML('          <option value="'.$RS['SQ_MENU'].'">'.$RS['NOME']);
-    }
-    $RS->MoveNext;
-  }
-  ShowHTML('          </select>');
-}
-
-// =========================================================================
-// Montagem da seleção de opções existentes no menu
-// -------------------------------------------------------------------------
-function SelecaoMenu($label,$accesskey,$hint,$chave,$chaveAux,$campo,$restricao,$atributo) {
-  extract($GLOBALS);
-  if (!isset($hint))
-     { ShowHTML('          <td valign="top"><font size="1"><b>'.$label.'</b><br><SELECT ACCESSKEY="'.$accesskey.'" CLASS="sts" NAME="'.$campo.'" '.$w_Disabled.' '.$atributo.'>'); }
-  else
-     { ShowHTML('          <td valign="top" title="'.$hint.'"><font size="1"><b>'.$label.'</b><br><SELECT ACCESSKEY="'.$accesskey.'" CLASS="sts" NAME="'.$campo.'" '.$w_Disabled.' '.$atributo.'>'); }
-  ShowHTML('          <option value="">---');
-  if ($restricao=='Pesquisa') $l_ultimo_nivel = 'N'; else $l_ultimo_nivel = null;
-  $RST = db_getMenuOrder::getInstanceOf($dbms, $w_cliente, null, nvl($chaveAux,0), $l_ultimo_nivel);
-  foreach ($RST as $row) {
-    if (nvl(f($row,'sq_menu'),0)==nvl($chave,0)) { ShowHTML('          <option value="'.f($row,'sq_menu').'" SELECTED>'.f($row,'nome')); } else { ShowHTML('          <option value="'.f($row,'sq_menu').'">'.f($row,'nome')); }
-    $RST1 = db_getMenuOrder::getInstanceOf($dbms, $w_cliente, f($row,'sq_menu'), nvl($chaveAux,0), $l_ultimo_nivel);
-    foreach($RST1 as $row1) {
-      if (nvl(f($row1,'sq_menu'),0)==nvl($chave,0)) { ShowHTML('          <option value="'.f($row1,'sq_menu').'" SELECTED>&nbsp;&nbsp;&nbsp;'.f($row1,'nome')); } else { ShowHTML ('          <option value="'.f($row1,'sq_menu').'">&nbsp;&nbsp;&nbsp;'.f($row1,'nome')); }
-      $RST2 = db_getMenuOrder::getInstanceOf($dbms, $w_cliente, f($row1,'sq_menu'), nvl($chaveAux,0), $l_ultimo_nivel);
-      foreach($RST2 as $row2) {
-        if (nvl(f($row2,'sq_menu'),0)==nvl($chave,0)) { ShowHTML('          <option value="'.f($row2,'sq_menu').'" SELECTED>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;'.f($row2,'nome')); } else { ShowHTML('          <option value="'.f($row2,'sq_menu').'">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;'.f($row2,'nome')); }
-        $RST3 = db_getMenuOrder::getInstanceOf($dbms, $w_cliente, f($row2,'sq_menu'), nvl($chaveAux,0), $l_ultimo_nivel);
-          foreach($RST3 as $row3) {
-          if (nvl(f($row3,'sq_menu'),0)==nvl($chave,0)) { ShowHTML('          <option value="'.f($row3,'sq_menu').'" SELECTED>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;'.f($row3,'nome')); } else { ShowHTML ('          <option value="'.f($row3,'sq_menu').'">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;'.f($row3,'nome')); }
-          $RST4 = db_getMenuOrder::getInstanceOf($dbms, $w_cliente, f($row3,'sq_menu'), nvl($chaveAux,0), $l_ultimo_nivel);
-          foreach($RST4 as $row4) {
-            if (nvl(f($row4,'sq_menu'),0)==nvl($chave,0)) { ShowHTML('          <option value="'.f($row4,'sq_menu').'" SELECTED>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;'.f($row4,'nome')); } else { ShowHTML('          <option value="'.f($row4,'sq_menu').'">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;'.f($row4,'nome')); }
-          }
-        }
-      }
-    }
-  }
-  ShowHTML('          </select>');
-  return $function_ret;
-}
-
-// =========================================================================
-// Montagem da seleção da localização
-// -------------------------------------------------------------------------
-function SelecaoLocalizacao($label,$accesskey,$hint,$chave,$chaveAux,$campo,$restricao) {
-  extract($GLOBALS);
-  $RS = DB_GetLocalList::getInstanceOf($dbms, $w_cliente, $ChaveAux, $restricao);
-  //if (!!isset($chaveAux)) $RS->Filter='sq_unidade = '.$chaveAux;
-
-  if (!isset($hint)) {
-    ShowHTML('          <td valign="top"><font size="1"><b>'.$label.'</b><br><SELECT ACCESSKEY="'.$accesskey.'" CLASS="sts" NAME="'.$campo.'" '.$w_Disabled.'>');
-  } else {
-    ShowHTML('          <td valign="top" title="'.$hint.'"><font size="1"><b>'.$label.'</b><br><SELECT ACCESSKEY="'.$accesskey.'" CLASS="sts" NAME="'.$campo.'" '.$w_Disabled.'>');
-  }
-
-  ShowHTML('          <option value="">---');
-
-  foreach ($RS as $row)  {
-    if (nvl(f($row,'SQ_LOCALIZACAO'),0) == nvl($chave,0)) {
-      ShowHTML('          <option value="'.f($row,'SQ_LOCALIZACAO').'" SELECTED>'.f($row,'LOCALIZACAO'));
-    } else {
-      ShowHTML('          <option value="'.f($row,'SQ_LOCALIZACAO').'">'.f($row,'LOCALIZACAO'));
-    }
-  }
-  ShowHTML('          </select>');
-  return $function_ret;
-}
-
-// =========================================================================
-// Montagem da seleção da localização
-// -------------------------------------------------------------------------
-function SelecaoSegModulo($label,$accesskey,$hint,$chave,$chaveAux,$campo,$restricao) {
-  extract($GLOBALS);
-
-
-DB_GetSegModList($RS, $ChaveAux);
-$RS->Sort='Nome';
-if (!isset($hint))
-{
-
-  ShowHTML('          <td valign="top"><font size="1"><b>'.$label.'</b><br><SELECT ACCESSKEY="'.$accesskey.'" CLASS="sts" NAME="'.$campo.'" '.$w_Disabled.'>');
-}
-  else
-{
-
-  ShowHTML('          <td valign="top" title="'.$hint.'"><font size="1"><b>'.$label.'</b><br><SELECT ACCESSKEY="'.$accesskey.'" CLASS="sts" NAME="'.$campo.'" '.$w_Disabled.'>');
-}
-
-ShowHTML('          <option value="">---');
-while(!$RS->EOF)
-{
-
-  if ($cDbl[nvl($RS['SQ_MODULO'],0)]==$cDbl[nvl($chave,0)])
-  {
-
-    ShowHTML('          <option value="'.$RS['SQ_MODULO'].'" SELECTED>'.$RS['NOME']);
-  }
-    else
-  {
-
-    ShowHTML('          <option value="'.$RS['SQ_MODULO'].'">'.$RS['NOME']);
-  }
-
-$RS->MoveNext;
-}
-ShowHTML('          </select>');
-return $function_ret;
-}
-
-// =========================================================================
-// Montagem da seleção de segmentos de mercado
-// -------------------------------------------------------------------------
-function SelecaoSegMercado($label,$accesskey,$hint,$chave,$chaveAux,$campo,$restricao,$atributo) {
-  extract($GLOBALS);
-
-
-DB_GetSegList($RS);
-$RS->Filter='ativo = \'S\'';
-$RS->Sort='Nome';
-if (!isset($hint))
-{
-
-  ShowHTML('          <td valign="top"><font size="1"><b>'.$label.'</b><br><SELECT ACCESSKEY="'.$accesskey.'" CLASS="sts" NAME="'.$campo.'" '.$w_Disabled.' '.$atributo.'>');
-}
-  else
-{
-
-  ShowHTML('          <td valign="top" title="'.$hint.'"><font size="1"><b>'.$label.'</b><br><SELECT ACCESSKEY="'.$accesskey.'" CLASS="sts" NAME="'.$campo.'" '.$w_Disabled.' '.$atributo.'>');
-}
-
-ShowHTML('          <option value="">---');
-while(!$RS->EOF)
-{
-
-  if ($cDbl[nvl($RS['SQ_SEGMENTO'],0)]==$cDbl[nvl($chave,0)])
-  {
-
-    ShowHTML('          <option value="'.$RS['SQ_SEGMENTO'].'" SELECTED>'.$RS['NOME']);
-  }
-    else
-  {
-
-    ShowHTML('          <option value="'.$RS['SQ_SEGMENTO'].'">'.$RS['NOME']);
-  }
-
-$RS->MoveNext;
-}
-ShowHTML('          </select>');
-return $function_ret;
-}
-
-// =========================================================================
-// Montagem da seleção das unidades organizacionais
-// -------------------------------------------------------------------------
-function SelecaoUnidade($label,$accesskey,$hint,$chave,$chaveAux,$campo,$restricao,$atributo) {
-  extract($GLOBALS);
-
-  if (!isset($restricao) || (strpos($restricao,"=") ? strpos($restricao,"=")+1 : 0)==0) {
-
-    $RS = DB_GetUorgList::getInstanceOf($dbms, $w_cliente, $ChaveAux, $restricao, null, null);
-    //$RS->Filter="ativo='S'";
-  } else {
-
-    $RS = DB_GetUorgList::getInstanceOf($dbms, $w_cliente, $ChaveAux, null, null, null);
-    //$RS->Filter="ativo='S' and ".$restricao;
-  }
-
-  ShowHTML("<INPUT type=\"hidden\" name=\"".$campo."\" value=\"".$chave."\">");
-  if ($chave>'') {
-
-    $RS = DB_GetUorgList::getInstanceOf($dbms, $w_cliente, $chave, null, null, null);
-    //$RS->Filter="sq_unidade = ".$chave;
-    foreach ($RS as $row) {
-      $w_nm_unidade=f($row,'nome');
-      $w_sigla=f($row,'sigla');
-    }
-
-  }
-
-  if (!isset($hint)) {
-    ShowHTML("      <td valign=\"top\"><font size=\"1\"><b>".$label."</b><br>");
-    ShowHTML("          <input READONLY ACCESSKEY=\"".$accesskey."\" CLASS=\"sti\" type=\"text\" name=\"".$campo."_nm"."\" SIZE=\"60\" VALUE=\"".$w_nm_unidade."\" ".$atributo.">");
-  } else {
-    ShowHTML("      <td valign=\"top\" title=\"".$hint."\"><font size=\"1\"><b>".$label."</b><br>");
-    ShowHTML("          <input READONLY ACCESSKEY=\"".$accesskey."\" CLASS=\"sti\" type=\"text\" name=\"".$campo."_nm"."\" SIZE=\"60\" VALUE=\"".$w_nm_unidade."\" ".$atributo.">");
-  }
-
-  ShowHTML("              <a class=\"ss\" href=\"#\" onClick=\"window.open('".str_replace("/files","",$conFileVirtual)."eo.php?par=BuscaUnidade&TP=".$TP."&w_cliente=".$w_cliente."&ChaveAux=".$ChaveAux."&restricao=".$restricao."&campo=".$campo."','Unidade','top=10,left=10,width=780,height=550,toolbar=yes,status=yes,resizable=yes,scrollbars=yes'); return false;\" title=\"Clique aqui para selecionar a unidade.\"><img src=images/Folder/Explorer.gif border=0 align=top height=15 width=15></a>");
-  ShowHTML("              <a class=\"ss\" href=\"#\" onClick=\"document.Form.".$campo."_nm".".value=''; document.Form.".$campo.".value=''; return false;\" title=\"Clique aqui para apagar o valor deste campo.\"><img src=images/Folder/Recyfull.gif border=0 align=top height=15 width=15></a>");
-  return $function_ret;
-}
-
-// =========================================================================
-// Montagem da seleção da unidade pai
-// -------------------------------------------------------------------------
-function SelecaoUnidadePai($label,$accesskey,$hint,$chave,$Operacao,$chaveAux,$chaveAux2,$campo,$restricao) {
-  extract($GLOBALS);
-
-
-DB_GetEOUnitPaiList($RS, $Operacao, $chaveAux, $chaveAux2);
-$RS->Sort="Nome";
-if (!isset($hint))
-{
-
-  ShowHTML("          <td valign=\"top\"><font size=\"1\"><b>".$label."</b><br><SELECT ACCESSKEY=\"".$accesskey."\" CLASS=\"sts\" NAME=\"".$campo."\" ".$w_Disabled.">");
-}
-  else
-{
-
-  ShowHTML("          <td valign=\"top\" title=\"".$hint."\"><font size=\"1\"><b>".$label."</b><br><SELECT ACCESSKEY=\"".$accesskey."\" CLASS=\"sts\" NAME=\"".$campo."\" ".$w_Disabled.">");
-}
-
-ShowHTML("          <option value=\"\">---");
-while(!$RS->EOF)
-{
-
-  if ($cDbl[nvl($RS['SQ_UNIDADE'],0)]==$cDbl[nvl($chave,0)])
-  {
-
-    ShowHTML("          <option value=\"".$RS['SQ_UNIDADE']."\" SELECTED>".$RS['NOME']);
-  }
-    else
-  {
-
-    ShowHTML("          <option value=\"".$RS['SQ_UNIDADE']."\">".$RS['NOME']);
-  }
-
-$RS->MoveNext;
-}
-ShowHTML("          </select>");
-return $function_ret;
-}
-
-// =========================================================================
-// Montagem da seleção das unidades gestoras
-// -------------------------------------------------------------------------
-function SelecaoUnidadeGest($label,$accesskey,$hint,$chave,$chaveAux,$campo,$restricao) {
-  extract($GLOBALS);
-
-
-DB_GetUorgList($RS, $w_cliente, $chaveAux, $null, $null, $null);
-$w_filter=" unidade_gestora = 'S' and ativo = 'S'";
-if ($chaveAux>'')
-{
-
-  $w_filter=$w_filter." and sq_unidade <> ".$chaveAux;
-}
-
-$RS->Filter=$w_filter;
-$RS->Sort="Nome";
-if (!isset($hint))
-{
-
-  ShowHTML("          <td valign=\"top\"><font size=\"1\"><b>".$label."</b><br><SELECT ACCESSKEY=\"".$accesskey."\" CLASS=\"sts\" NAME=\"".$campo."\" ".$w_Disabled.">");
-}
-  else
-{
-
-  ShowHTML("          <td valign=\"top\" title=\"".$hint."\"><font size=\"1\"><b>".$label."</b><br><SELECT ACCESSKEY=\"".$accesskey."\" CLASS=\"sts\" NAME=\"".$campo."\" ".$w_Disabled.">");
-}
-
-ShowHTML("          <option value=\"\">---");
-while(!$RS->EOF)
-{
-
-  if ($cDbl[nvl($RS['SQ_UNIDADE'],0)]==$cDbl[nvl($chave,0)] && $cDbl[nvl($RS['SQ_UNIDADE'],0)]>0)
-  {
-
-    ShowHTML("          <option value=\"".$RS['SQ_UNIDADE']."\" SELECTED>".$RS['NOME']);
-  }
-    else
-  {
-
-    ShowHTML("          <option value=\"".$RS['SQ_UNIDADE']."\">".$RS['NOME']);
-  }
-
-$RS->MoveNext;
-}
-ShowHTML("          </select>");
-return $function_ret;
-}
-
-// =========================================================================
-// Montagem da seleção das unidades pagadoras
-// -------------------------------------------------------------------------
-function SelecaoUnidadePag($label,$accesskey,$hint,$chave,$chaveAux,$campo,$restricao) {
-  extract($GLOBALS);
-
-
-DB_GetUorgList($RS, $w_cliente, $chaveAux, $null, $null, $null);
-$w_filter=" unidade_pagadora = 'S' and ativo = 'S'";
-if ($chaveAux>'')
-{
-
-  $w_filter=$w_filter." and sq_unidade <> ".$chaveAux;
-}
-
-$RS->Filter=$w_filter;
-$RS->Sort="Nome";
-if (!isset($hint))
-{
-
-  ShowHTML("          <td valign=\"top\"><font size=\"1\"><b>".$label."</b><br><SELECT ACCESSKEY=\"".$accesskey."\" CLASS=\"sts\" NAME=\"".$campo."\" ".$w_Disabled.">");
-}
-  else
-{
-
-  ShowHTML("          <td valign=\"top\" title=\"".$hint."\"><font size=\"1\"><b>".$label."</b><br><SELECT ACCESSKEY=\"".$accesskey."\" CLASS=\"sts\" NAME=\"".$campo."\" ".$w_Disabled.">");
-}
-
-ShowHTML("          <option value=\"\">---");
-while(!$RS->EOF)
-{
-
-  if ($cDbl[nvl($RS['SQ_UNIDADE'],0)]==$cDbl[nvl($chave,0)] && $cDbl[nvl($RS['SQ_UNIDADE'],0)]>0)
-  {
-
-    ShowHTML("          <option value=\"".$RS['SQ_UNIDADE']."\" SELECTED>".$RS['NOME']);
-  }
-    else
-  {
-
-    ShowHTML("          <option value=\"".$RS['SQ_UNIDADE']."\">".$RS['NOME']);
-  }
-
-$RS->MoveNext;
-}
-ShowHTML("          </select>");
-return $function_ret;
-}
-
-// =========================================================================
-// Montagem da seleção do centro de custo
-// -------------------------------------------------------------------------
-function SelecaoCC($label,$accesskey,$hint,$chave,$chaveAux,$campo,$restricao) {
-  extract($GLOBALS);
-
-
-DB_GetCCList($RS, $w_cliente, $ChaveAux, $restricao);
-if (!isset($hint))
-{
-
-  ShowHTML("          <td valign=\"top\"><font size=\"1\"><b>".$label."</b><br><SELECT ACCESSKEY=\"".$accesskey."\" CLASS=\"sts\" NAME=\"".$campo."\" ".$w_Disabled.">");
-}
-  else
-{
-
-  ShowHTML("          <td valign=\"top\" title=\"".$hint."\"><font size=\"1\"><b>".$label."</b><br><SELECT ACCESSKEY=\"".$accesskey."\" CLASS=\"sts\" NAME=\"".$campo."\" ".$w_Disabled.">");
-}
-
-ShowHTML("          <OPTION VALUE=\"\">---");
-while(!$RS->EOF)
-{
-
-  if ($cDbl[nvl($RS['SQ_CC'],0)]==$cDbl[nvl($chave,0)])
-  {
-
-    ShowHTML("          <option value=\"".$RS['SQ_CC']."\" SELECTED>".$RS['NOME']);
-  }
-    else
-  {
-
-    ShowHTML("          <option value=\"".$RS['SQ_CC']."\">".$RS['NOME']);
-  }
-
-$RS->MoveNext;
-}
-DesconectaBD();
-ShowHTML("          </SELECT></td>");
-return $function_ret;
-}
-
-// =========================================================================
-// Montagem da seleção do centro de custo
-// -------------------------------------------------------------------------
-function SelecaoCCSubordination($label,$accesskey,$hint,$chave,$pai,$campo,$restricao,$condicao) {
-  extract($GLOBALS);
-
-
-DB_GetCCSubordination($RS, $w_cliente, $chave, $restricao);
-if (!isset($hint))
-{
-
-  ShowHTML("          <td valign=\"top\"><font size=\"1\"><b>".$label."</b><br><SELECT ACCESSKEY=\"".$accesskey."\" CLASS=\"sts\" NAME=\"".$campo."\" ".$w_Disabled.">");
-}
-  else
-{
-
-  ShowHTML("          <td valign=\"top\" title=\"".$hint."\"><font size=\"1\"><b>".$label."</b><br><SELECT ACCESSKEY=\"".$accesskey."\" CLASS=\"sts\" NAME=\"".$campo."\" ".$w_Disabled.">");
-}
-
-ShowHTML("          <OPTION VALUE=\"\">---");
-while(!$RS->EOF)
-{
-
-  if ($cDbl[$RS['SQ_CC']]==$cDbl[nvl($pai,0)])
-  {
-
-    ShowHTML("          <option value=\"".$RS['SQ_CC']."\" SELECTED>".$RS['NOME']);
-  }
-    else
-  {
-
-    ShowHTML("          <option value=\"".$RS['SQ_CC']."\">".$RS['NOME']);
-  }
-
-$RS->MoveNext;
-}
-DesconectaBD();
-ShowHTML("          </SELECT></td>");
-return $function_ret;
-}
-
-// =========================================================================
-// Montagem da seleção do banco
-// -------------------------------------------------------------------------
-function SelecaoBanco($label,$accesskey,$hint,$chave,$chaveAux,$campo,$restricao,$atributo) {
-  extract($GLOBALS);
-
-
-DB_GetBankList($RS);
-$RS->Filter="ativo='S'";
-if (!isset($hint))
-{
-
-  ShowHTML("          <td valign=\"top\"><font size=\"1\"><b>".$label."</b><br><SELECT ACCESSKEY=\"".$accesskey."\" CLASS=\"sts\" NAME=\"".$campo."\" ".$w_Disabled." ".$atributo.">");
-}
-  else
-{
-
-  ShowHTML("          <td valign=\"top\" title=\"".$hint."\"><font size=\"1\"><b>".$label."</b><br><SELECT ACCESSKEY=\"".$accesskey."\" CLASS=\"sts\" NAME=\"".$campo."\" ".$w_Disabled." ".$atributo.">");
-}
-
-ShowHTML("          <option value=\"\">---");
-while(!$RS->EOF)
-{
-
-  if ($cDbl[Nvl($chave,-1)]==$cDbl[Nvl($RS['SQ_BANCO'],-1)])
-  {
-
-    ShowHTML("          <OPTION VALUE=\"".$RS['SQ_BANCO']."\" SELECTED>".$RS['DESCRICAO']);
-  }
-    else
-  {
-
-    ShowHTML("          <OPTION VALUE=\"".$RS['SQ_BANCO']."\">".$RS['DESCRICAO']);
-  }
-
-$RS->MoveNext;
-}
-DesconectaBD();
-ShowHTML("          </SELECT></td>");
-return $function_ret;
-}
-
-// =========================================================================
-// Montagem da seleção de estado
-// -------------------------------------------------------------------------
-function SelecaoAgencia($label,$accesskey,$hint,$chave,$chaveAux,$campo,$restricao,$atributo) {
-  extract($GLOBALS);
-
-
-DB_GetBankHouseList($RS, $chaveAux, $null, 'padrao desc, codigo');
-if ($restricao>'')
-{
-
-$RS->Filter=$restricao;
-}
-
-if (!isset($hint))
-{
-
-  ShowHTML("          <td valign=\"top\"><font size=\"1\"><b>".$label."</b><br><SELECT ACCESSKEY=\"".$accesskey."\" CLASS=\"sts\" NAME=\"".$campo."\" ".$w_Disabled." ".$atributo.">");
-}
-  else
-{
-
-  ShowHTML("          <td valign=\"top\" title=\"".$hint."\"><font size=\"1\"><b>".$label."</b><br><SELECT ACCESSKEY=\"".$accesskey."\" CLASS=\"sts\" NAME=\"".$campo."\" ".$w_Disabled." ".$atributo.">");
-}
-
-ShowHTML("          <option value=\"\">---");
-while(!$RS->EOF)
-{
-
-  if ($cDbl[nvl($RS['SQ_AGENCIA'],-1)]==$cDbl[nvl($chave,-1)])
-  {
-
-    ShowHTML("          <option value=\"".$RS['SQ_AGENCIA']."\" SELECTED>".$RS['CODIGO']." - ".$RS['NOME']);
-  }
-    else
-  {
-
-    ShowHTML("          <option value=\"".$RS['SQ_AGENCIA']."\">".$RS['CODIGO']." - ".$RS['NOME']);
-  }
-
-$RS->MoveNext;
-}
-ShowHTML("          </select>");
-return $function_ret;
-}
-
-// =========================================================================
-// Montagem da seleção do tipo de unidade
-// -------------------------------------------------------------------------
-function SelecaoTipoUnidade($label,$accesskey,$hint,$chave,$chaveAux,$campo,$restricao) {
-  extract($GLOBALS);
-
-
-DB_GetUnitTypeList($RS, $chaveAux);
-$RS->Filter="ativo = 'S'";
-$RS->Sort="Nome";
-if (!isset($hint))
-{
-
-  ShowHTML("          <td valign=\"top\"><font size=\"1\"><b>".$label."</b><br><SELECT ACCESSKEY=\"".$accesskey."\" CLASS=\"sts\" NAME=\"".$campo."\" ".$w_Disabled.">");
-}
-  else
-{
-
-  ShowHTML("          <td valign=\"top\" title=\"".$hint."\"><font size=\"1\"><b>".$label."</b><br><SELECT ACCESSKEY=\"".$accesskey."\" CLASS=\"sts\" NAME=\"".$campo."\" ".$w_Disabled.">");
-}
-
-ShowHTML("          <option value=\"\">---");
-while(!$RS->EOF)
-{
-
-  if ($cDbl[nvl($RS['SQ_TIPO_UNIDADE'],0)]==$cDbl[nvl($chave,0)])
-  {
-
-    ShowHTML("          <option value=\"".$RS['SQ_TIPO_UNIDADE']."\" SELECTED>".$RS['NOME']);
-  }
-    else
-  {
-
-    ShowHTML("          <option value=\"".$RS['SQ_TIPO_UNIDADE']."\">".$RS['NOME']);
-  }
-
-$RS->MoveNext;
-}
-ShowHTML("          </select>");
-return $function_ret;
-}
-
-// =========================================================================
-// Montagem da seleção do tipo de endereco
-// -------------------------------------------------------------------------
-function SelecaoTipoEndereco($label,$accesskey,$hint,$chave,$chaveAux,$campo,$restricao,$atributo) {
-  extract($GLOBALS);
-
-
-DB_GetAdressTypeList($RS);
-if ($restricao>'')
-{
-
-$RS->Filter=$restricao;
-}
-
-$RS->Sort="Nome";
-if (!isset($hint))
-{
-
-  ShowHTML("          <td valign=\"top\"><font size=\"1\"><b>".$label."</b><br><SELECT ACCESSKEY=\"".$accesskey."\" CLASS=\"sts\" NAME=\"".$campo."\" ".$w_Disabled." ".$atributo.">");
-}
-  else
-{
-
-  ShowHTML("          <td valign=\"top\" title=\"".$hint."\"><font size=\"1\"><b>".$label."</b><br><SELECT ACCESSKEY=\"".$accesskey."\" CLASS=\"sts\" NAME=\"".$campo."\" ".$w_Disabled." ".$atributo.">");
-}
-
-ShowHTML("          <option value=\"\">---");
-while(!$RS->EOF)
-{
-
-  if ($cDbl[nvl($RS['SQ_TIPO_ENDERECO'],0)]==$cDbl[nvl($chave,0)])
-  {
-
-    ShowHTML("          <option value=\"".$RS['SQ_TIPO_ENDERECO']."\" SELECTED>".$RS['NOME']);
-  }
-    else
-  {
-
-    ShowHTML("          <option value=\"".$RS['SQ_TIPO_ENDERECO']."\">".$RS['NOME']);
-  }
-
-$RS->MoveNext;
-}
-ShowHTML("          </select>");
-return $function_ret;
-}
-
-// =========================================================================
-// Montagem da seleção do tipo de endereco
-// -------------------------------------------------------------------------
-function SelecaoTipoFone($label,$accesskey,$hint,$chave,$chaveAux,$campo,$restricao,$atributo) {
-  extract($GLOBALS);
-DB_GetFoneTypeList($RS);
-if ($restricao>'')
-{
-
-$RS->Filter=$restricao;
-}
-
-$RS->Sort="Nome";
-if (!isset($hint))
-{
-
-  ShowHTML("          <td valign=\"top\"><font size=\"1\"><b>".$label."</b><br><SELECT ACCESSKEY=\"".$accesskey."\" CLASS=\"sts\" NAME=\"".$campo."\" ".$w_Disabled." ".$atributo.">");
-}
-  else
-{
-
-  ShowHTML("          <td valign=\"top\" title=\"".$hint."\"><font size=\"1\"><b>".$label."</b><br><SELECT ACCESSKEY=\"".$accesskey."\" CLASS=\"sts\" NAME=\"".$campo."\" ".$w_Disabled." ".$atributo.">");
-}
-
-ShowHTML("          <option value=\"\">---");
-while(!$RS->EOF)
-{
-
-  if ($cDbl[nvl($RS['SQ_TIPO_TELEFONE'],0)]==$cDbl[nvl($chave,0)])
-  {
-
-    ShowHTML("          <option value=\"".$RS['SQ_TIPO_TELEFONE']."\" SELECTED>".$RS['NOME']);
-  }
-    else
-  {
-
-    ShowHTML("          <option value=\"".$RS['SQ_TIPO_TELEFONE']."\">".$RS['NOME']);
-  }
-
-$RS->MoveNext;
-}
-ShowHTML("          </select>");
-return $function_ret;
-}
-
-// =========================================================================
-// Montagem da seleção do tipo de unidade
-// -------------------------------------------------------------------------
-function SelecaoEOAreaAtuacao($label,$accesskey,$hint,$chave,$chaveAux,$campo,$restricao) {
-  extract($GLOBALS);
-
-
-DB_GetEOAAtuac($RS, $chaveAux);
-$RS->Filter="ativo = 'S'";
-$RS->Sort="Nome";
-if (!isset($hint))
-{
-
-  ShowHTML("          <td valign=\"top\"><font size=\"1\"><b>".$label."</b><br><SELECT ACCESSKEY=\"".$accesskey."\" CLASS=\"sts\" NAME=\"".$campo."\" ".$w_Disabled.">");
-}
-  else
-{
-
-  ShowHTML("          <td valign=\"top\" title=\"".$hint."\"><font size=\"1\"><b>".$label."</b><br><SELECT ACCESSKEY=\"".$accesskey."\" CLASS=\"sts\" NAME=\"".$campo."\" ".$w_Disabled.">");
-}
-
-ShowHTML("          <option value=\"\">---");
-while(!$RS->EOF)
-{
-
-  if ($cDbl[nvl($RS['SQ_AREA_ATUACAO'],0)]==$cDbl[nvl($chave,0)])
-  {
-
-    ShowHTML("          <option value=\"".$RS['SQ_AREA_ATUACAO']."\" SELECTED>".$RS['NOME']);
-  }
-    else
-  {
-
-    ShowHTML("          <option value=\"".$RS['SQ_AREA_ATUACAO']."\">".$RS['NOME']);
-  }
-
-$RS->MoveNext;
-}
-ShowHTML("          </select>");
-return $function_ret;
-}
-
-// =========================================================================
-// Montagem da seleção da fase de uma solicitação
-// -------------------------------------------------------------------------
-function SelecaoFase($label,$accesskey,$hint,$chave,$chaveAux,$campo,$restricao,$atributo) {
-  extract($GLOBALS);
-DB_GetTramiteList($RS, $chaveAux, $restricao);
-$RS->Filter="ativo = 'S'";
-$RS->Sort="Ordem";
-if (!isset($hint))
-{
-
-  ShowHTML("          <td valign=\"top\"><font size=\"1\"><b>".$label."</b><br><SELECT ACCESSKEY=\"".$accesskey."\" CLASS=\"sts\" NAME=\"".$campo."\" ".$w_Disabled." ".$atributo.">");
-}
-  else
-{
-
-  ShowHTML("          <td valign=\"top\" title=\"".$hint."\"><font size=\"1\"><b>".$label."</b><br><SELECT ACCESSKEY=\"".$accesskey."\" CLASS=\"sts\" NAME=\"".$campo."\" ".$w_Disabled." ".$atributo.">");
-}
-
-while(!$RS->EOF)
-{
-
-  if ($cDbl[$RS['SQ_SIW_TRAMITE']]==$cDbl[$chave])
-  {
-
-    ShowHTML("          <option value=\"".$RS['SQ_SIW_TRAMITE']."\" SELECTED>".$RS['ORDEM']." - ".$RS['NOME']);
-  }
-    else
-  {
-
-    ShowHTML("          <option value=\"".$RS['SQ_SIW_TRAMITE']."\">".$RS['ORDEM']." - ".$RS['NOME']);
-  }
-
-$RS->MoveNext;
-}
-ShowHTML("          </select>");
-return $function_ret;
-}
-
-// =========================================================================
-// Montagem da seleção da fase de uma solicitação
-// -------------------------------------------------------------------------
-function SelecaoFaseCheck($label,$accesskey,$hint,$chave,$chaveAux,$campo,$restricao,$atributo) {
-  extract($GLOBALS);
-DB_GetTramiteList($RS, $chaveAux, $null);
-$RS->Filter="ativo = 'S' or sigla = 'AT'";
-$RS->Sort="Ordem";
-ShowHTML("          <td valign=\"top\"><font size=\"1\"><b>".$label."</b>");
-while(!$RS->EOF)
-{
-  if (Nvl($chave,"")=="") { ShowHTML("          <BR><input type=\"CHECKBOX\" name=\"".$campo."\" value=\"".$RS['SQ_SIW_TRAMITE']."\" CHECKED>".$RS['NOME']); }
-  else {
-    $l_marcado="N";
-    $l_chave=$chave.",";
-    while((strpos($l_chave,",") ? strpos($l_chave,",")+1 : 0)>0)
-    {
-      $l_item=trim(substr($l_chave,0,(strpos($l_chave,",") ? strpos($l_chave,",")+1 : 0)-1));
-      $l_chave=substr($l_chave,(strpos($l_chave,",") ? strpos($l_chave,",")+1 : 0)+1-1,100);
-      if ($l_item>'')
-      {
-        if ($cDbl[$RS['SQ_SIW_TRAMITE']]==$cDbl[$l_item]) { $l_marcado="S"; };
-      }
-    }
-
-    if ($l_marcado=="S")
-       { ShowHTML("          <BR><input type=\"CHECKBOX\" name=\"".$campo."\" value=\"".$RS['SQ_SIW_TRAMITE']."\" CHECKED>".$RS['NOME']); }
-    else
-       { ShowHTML("          <BR><input type=\"CHECKBOX\" name=\"".$campo."\" value=\"".$RS['SQ_SIW_TRAMITE']."\" >".$RS['NOME']); }
-
-  }
-
-  $RS->MoveNext;
-}
-ShowHTML("          </select>");
-
-$l_item=null;
-$l_chave=null;
-$l_marcado=null;
-$l_i=null;
-return $function_ret;
-}
-
-// =========================================================================
-// Montagem da seleção de projetos
-// -------------------------------------------------------------------------
-function SelecaoProjeto($label,$accesskey,$hint,$chave,$chaveAux,$chaveAux2,$campo,$restricao,$atributo) {
-  extract($GLOBALS);
-DB_GetSolicList($RS, $chaveAux2, $chaveAux, $restricao, $null, $null, $null, $null, $null, $null, $null, $null, $null, $null, $null, $null, $null, $null, $null, $null, $null, $null, $null, $null, $null, $null, $null, $null, $null, $null, $null);
-$RS->Sort="titulo";
-
-if (!isset($hint))
-{
-
-  ShowHTML("          <td valign=\"top\"><font size=\"1\"><b>".$label."</b><br><SELECT ACCESSKEY=\"".$accesskey."\" CLASS=\"sts\" NAME=\"".$campo."\" ".$w_Disabled." ".$atributo.">");
-}
-  else
-{
-
-  ShowHTML("          <td valign=\"top\" title=\"".$hint."\"><font size=\"1\"><b>".$label."</b><br><SELECT ACCESSKEY=\"".$accesskey."\" CLASS=\"sts\" NAME=\"".$campo."\" ".$w_Disabled." ".$atributo.">");
-}
-
-ShowHTML("          <option value=\"\">---");
-while(!$RS->EOF)
-{
-
-  if ($cDbl[nvl($RS['SQ_SIW_SOLICITACAO'],0)]==$cDbl[nvl($chave,0)])
-  {
-
-    ShowHTML("          <option value=\"".$RS['SQ_SIW_SOLICITACAO']."\" SELECTED>".$RS['TITULO']);
-  }
-    else
-  {
-
-    ShowHTML("          <option value=\"".$RS['SQ_SIW_SOLICITACAO']."\">".$RS['TITULO']);
-  }
-
-$RS->MoveNext;
-}
-ShowHTML("          </select>");
-return $function_ret;
-}
-
-// =========================================================================
-// Montagem da seleção de tipo de recurso
-// -------------------------------------------------------------------------
-function SelecaoTipoRecurso($label,$accesskey,$hint,$chave,$chaveAux,$campo,$restricao,$atributo) {
-  extract($GLOBALS);
-if (!isset($hint))
-   { ShowHTML("          <td valign=\"top\"><font size=\"1\"><b>".$label."</b><br><SELECT ACCESSKEY=\"".$accesskey."\" CLASS=\"sts\" NAME=\"".$campo."\" ".$w_Disabled." ".$atributo.">"); }
-else
-   { ShowHTML("          <td valign=\"top\" title=\"".$hint."\"><font size=\"1\"><b>".$label."</b><br><SELECT ACCESSKEY=\"".$accesskey."\" CLASS=\"sts\" NAME=\"".$campo."\" ".$w_Disabled." ".$atributo.">"); }
-
-ShowHTML("          <option value=\"\">---");
-if ($cDbl[nvl($chave,-1)]==0) { ShowHTML("          <option value=\"0\" SELECTED>Financeiro"); } else { ShowHTML("          <option value=\"0\">Financeiro"); }
-if ($cDbl[nvl($chave,-1)]==1) { ShowHTML("          <option value=\"1\" SELECTED>Humano"); } else { ShowHTML("          <option value=\"1\">Humano"); }
-if ($cDbl[nvl($chave,-1)]==2) { ShowHTML("          <option value=\"2\" SELECTED>Material"); } else { ShowHTML("          <option value=\"2\">Material"); }
-if ($cDbl[nvl($chave,-1)]==3) { ShowHTML("          <option value=\"3\" SELECTED>Metodológico"); } else { ShowHTML("          <option value=\"3\">Metodológico"); }
-ShowHTML("          </select>");
-return $function_ret;
-}
-
-// =========================================================================
-// Retorna o tipo de recurso a partir do código
-// -------------------------------------------------------------------------
-function RetornaTipoRecurso($p_chave) {
-  extract($GLOBALS);
-
-
-switch ($cDbl[$p_Chave])
-{
-  case 0: $RetornaTipoRecurso="Financeiro";
-           break;
-  case 1: $RetornaTipoRecurso="Humano";
-          break;
-  case 2: $RetornaTipoRecurso="Material";
-          break;
-  case 3: $RetornaTipoRecurso="Metodológico";
-          break;
-  default:$RetornaTipoRecurso="Erro";
-          break;
-}
-
-return $function_ret;
-}
-
-// =========================================================================
-// Montagem da seleção de prioridade
-// -------------------------------------------------------------------------
-function SelecaoPrioridade($label,$accesskey,$hint,$chave,$chaveAux,$campo,$restricao,$atributo) {
-  extract($GLOBALS);
-if (!isset($hint))
-{
-
-  ShowHTML("          <td valign=\"top\"><font size=\"1\"><b>".$label."</b><br><SELECT ACCESSKEY=\"".$accesskey."\" CLASS=\"sts\" NAME=\"".$campo."\" ".$w_Disabled." ".$atributo.">");
-}
-  else
-{
-
-  ShowHTML("          <td valign=\"top\" title=\"".$hint."\"><font size=\"1\"><b>".$label."</b><br><SELECT ACCESSKEY=\"".$accesskey."\" CLASS=\"sts\" NAME=\"".$campo."\" ".$w_Disabled." ".$atributo.">");
-}
-
-ShowHTML("          <option value=\"\">---");
-if ($cDbl[nvl($chave,-1)]==0) { ShowHTML("          <option value=\"0\" SELECTED>Alta"); } else { ShowHTML("          <option value=\"0\">Alta"); }
-if ($cDbl[nvl($chave,-1)]==1) { ShowHTML("          <option value=\"1\" SELECTED>Média"); } else { ShowHTML("          <option value=\"1\">Média" ); }
-if ($cDbl[nvl($chave,-1)]==2) { ShowHTML("          <option value=\"2\" SELECTED>Normal"); } else { ShowHTML("          <option value=\"2\">Normal" ); }
-ShowHTML("          </select>");
-return $function_ret;
-}
-
-// =========================================================================
-// Montagem da seleção de prioridade
-// -------------------------------------------------------------------------
-function SelecaoTipoVisao($label,$accesskey,$hint,$chave,$chaveAux,$campo,$restricao,$atributo) {
-  extract($GLOBALS);
-if (!isset($hint))
-{
-
-  ShowHTML("          <td valign=\"top\"><font size=\"1\"><b>".$label."</b><br><SELECT ACCESSKEY=\"".$accesskey."\" CLASS=\"sts\" NAME=\"".$campo."\" ".$w_Disabled." ".$atributo.">");
-}
-  else
-{
-
-  ShowHTML("          <td valign=\"top\" title=\"".$hint."\"><font size=\"1\"><b>".$label."</b><br><SELECT ACCESSKEY=\"".$accesskey."\" CLASS=\"sts\" NAME=\"".$campo."\" ".$w_Disabled." ".$atributo.">");
-}
-
-ShowHTML("          <option value=\"\">---");
-if ($cDbl[nvl($chave,-1)]==0) { ShowHTML("          <option value=\"0\" SELECTED>Completa"); } else { ShowHTML("          <option value=\"0\">Completa"); }
-if ($cDbl[nvl($chave,-1)]==1) { ShowHTML("          <option value=\"1\" SELECTED>Parcial"); } else { ShowHTML("          <option value=\"1\">Parcial"); }
-if ($cDbl[nvl($chave,-1)]==2) { ShowHTML("          <option value=\"2\" SELECTED>Resumida"); } else { ShowHTML("          <option value=\"2\">Resumida"); }
-ShowHTML("          </select>");
-return $function_ret;
-}
-
-// =========================================================================
-// Montagem da seleção de etapas do projeto
-// -------------------------------------------------------------------------
-function SelecaoEtapa($label,$accesskey,$hint,$chave,$chaveAux,$chaveAux2,$campo,$restricao,$atributo) {
-  extract($GLOBALS);
-if (!isset($hint))
-   { ShowHTML("          <td valign=\"top\"><font size=\"1\"><b>".$label."</b><br><SELECT ACCESSKEY=\"".$accesskey."\" CLASS=\"sts\" NAME=\"".$campo."\" ".$w_Disabled." ".$atributo.">"); }
-else
-   { ShowHTML("          <td valign=\"top\" title=\"".$hint."\"><font size=\"1\"><b>".$label."</b><br><SELECT ACCESSKEY=\"".$accesskey."\" CLASS=\"sts\" NAME=\"".$campo."\" ".$w_Disabled." ".$atributo.">"); }
-ShowHTML("          <option value=\"\">---");
-
-DB_GetSolicEtapa($RST, $chaveAux, $chaveAux2, 'LSTNULL');
-if ($restricao=="Pesquisa") { $RST->Filter="sq_projeto_etapa <> ".Nvl($chaveAux2,0); };
-$RST->Sort="ordem";
-while(!$RST->EOF) {
-  if ($restricao=="Grupo" && ($RST['VINCULA_ATIVIDADE']=="N" || $cDbl[$RST['PERC_CONCLUSAO']]>=100))
-     { ShowHTML("          <option value=\"\">".$RST['ORDEM'].". ".$RST['TITULO']); }
-  else
-     { if ($cDbl[nvl($RST['sq_projeto_etapa'],0)]==$cDbl[nvl($chave,0)]) { ShowHTML("          <option value=\"".$RST['sq_projeto_etapa']."\" SELECTED>".$RST['ORDEM'].". ".$RST['TITULO']); } else { ShowHTML("          <option value=\"".$RST['sq_projeto_etapa']."\">".$RST['ORDEM'].". ".$RST['TITULO']); } }
-  DB_GetSolicEtapa($RST1, $chaveAux, $RST['sq_projeto_etapa'], 'LSTNIVEL');
-  if ($restricao=="Pesquisa") { $RST1->Filter="sq_projeto_etapa <> ".Nvl($chaveAux2,0); }
-  $RST1->Sort="ordem";
-  while(!$RST1->EOF) {
-    if ($restricao=="Grupo" && ($RST1['VINCULA_ATIVIDADE']=="N" || $cDbl[$RST1['PERC_CONCLUSAO']]>=100))
-       { ShowHTML("          <option value=\"\">".$RST['ORDEM'].".".$RST1['ORDEM'].". ".$RST1['TITULO']); }
-    else
-       { if ($cDbl[nvl($RST1['sq_projeto_etapa'],0)]==$cDbl[nvl($chave,0)]) { ShowHTML("          <option value=\"".$RST1['sq_projeto_etapa']."\" SELECTED>".$RST1['ORDEM'].". ".$RST1['TITULO']); } else { ShowHTML("          <option value=\"".$RST1['sq_projeto_etapa']."\">".$RST['ORDEM'].".".$RST1['ORDEM'].". ".$RST1['TITULO']); } }
-    DB_GetSolicEtapa($RST2, $chaveAux, $RST1['sq_projeto_etapa'], 'LSTNIVEL');
-    $RST2->Sort="ordem";
-    while(!$RST2->EOF) {
-      if ($restricao=="Grupo" && ($RST2['VINCULA_ATIVIDADE']=="N" || $cDbl[$RST2['PERC_CONCLUSAO']]>=100))
-         { ShowHTML("          <option value=\"\">".$RST['ORDEM'].".".$RST1['ORDEM'].".".$RST2['ORDEM'].". ".$RST2['TITULO']); }
-      else
-         { if ($cDbl[nvl($RST2['sq_projeto_etapa'],0)]==$cDbl[nvl($chave,0)]) { ShowHTML("          <option value=\"".$RST2['sq_projeto_etapa']."\" SELECTED>".$RST2['ORDEM'].". ".$RST2['TITULO']); } else { ShowHTML("          <option value=\"".$RST2['sq_projeto_etapa']."\">".$RST['ORDEM'].".".$RST1['ORDEM'].".".$RST2['ORDEM'].". ".$RST2['TITULO']); } }
-      DB_GetSolicEtapa($RST3, $chaveAux, $RST2['sq_projeto_etapa'], 'LSTNIVEL');
-      $RST3->Sort="ordem";
-      while(!$RST3->EOF) {
-        if ($restricao=="Grupo" && ($RST3['VINCULA_ATIVIDADE']=="N" || $cDbl[$RST3['PERC_CONCLUSAO']]>=100))
-           { ShowHTML("          <option value=\"\">".$RST['ORDEM'].".".$RST1['ORDEM'].".".$RST2['ORDEM'].".".$RST3['ORDEM'].". ".$RST3['TITULO']); }
-        else
-           { if ($cDbl[nvl($RST3['sq_projeto_etapa'],0)]==$cDbl[nvl($chave,0)]) { ShowHTML("          <option value=\"".$RST3['sq_projeto_etapa']."\" SELECTED>".$RST3['ORDEM'].". ".$RST3['TITULO']); } else { ShowHTML("          <option value=\"".$RST3['sq_projeto_etapa']."\">".$RST['ORDEM'].".".$RST1['ORDEM'].".".$RST2['ORDEM'].".".$RST3['ORDEM'].". ".$RST3['TITULO']); } }
-        DB_GetSolicEtapa($RST4, $chaveAux, $RST3['sq_projeto_etapa'], 'LSTNIVEL');
-        $RST4->Sort="ordem";
-        while(!$RST4->EOF) {
-          if ($restricao=="Grupo" && ($RST4['VINCULA_ATIVIDADE']=="N" || $cDbl[$RST4['PERC_CONCLUSAO']]>=100))
-             { ShowHTML("          <option value=\"\">".$RST['ORDEM'].".".$RST1['ORDEM'].".".$RST2['ORDEM'].".".$RST3['ORDEM'].".".$RST4['ORDEM'].". ".$RST4['TITULO']); }
-          else
-             { if ($cDbl[nvl($RST4['sq_projeto_etapa'],0)]==$cDbl[nvl($chave,0)]) { ShowHTML("          <option value=\"".$RST4['sq_projeto_etapa']."\" SELECTED>".$RST4['ORDEM'].". ".$RST4['TITULO']); } else { ShowHTML("          <option value=\"".$RST4['sq_projeto_etapa']."\">".$RST['ORDEM'].".".$RST1['ORDEM'].".".$RST2['ORDEM'].".".$RST3['ORDEM'].".".$RST4['TITULO']); } }
-          $RST4->MoveNext;
-        }
-          $RST3->MoveNext;
-      }
-      $RST2->MoveNext;
-    }
-    $RST1->MoveNext;
-  }
-  $RST->MoveNext;
-}
-ShowHTML("          </select>");
-
-$RST=null;
-$RST1=null;
-$RST2=null;
-$RST3=null;
-$RST4=null;
-return $function_ret;
-}
-
-// =========================================================================
 // Retorna a prioridade a partir do código
 // -------------------------------------------------------------------------
 function RetornaPrioridade($p_chave) {
   extract($GLOBALS);
-switch ($cDbl[Nvl($p_Chave,999)])
-{
-  case 0: $RetornaPrioridade='Alta';
-          break;
-  case 1: $RetornaPrioridade='Média';
-          break;
-  case 2: $RetornaPrioridade='Normal';
-            break;
-  default:$RetornaPrioridade='---';
-          break;
-}
-return $function_ret;
+  switch (Nvl($p_Chave,999)) {
+  case 0: $RetornaPrioridade='Alta'; break;
+  case 1: $RetornaPrioridade='Média'; break;
+  case 2: $RetornaPrioridade='Normal'; break;
+  default:$RetornaPrioridade='---'; break;
+  }
+  return $function_ret;
 }
 
 // =========================================================================
@@ -1943,14 +551,10 @@ return $function_ret;
 function RetornaTipoVisao($p_chave) {
   extract($GLOBALS);
   switch ($cDbl[$p_Chave]) {
-    case 0: $RetornaTipoVisao='Completa';
-            break;
-    case 1: $RetornaTipoVisao='Parcial';
-            break;
-    case 2: $RetornaTipoVisao='Resumida';
-            break;
-    default:$RetornaTipoVisao='Erro';
-            break;
+    case 0: $RetornaTipoVisao='Completa'; break;
+    case 1: $RetornaTipoVisao='Parcial'; break;
+    case 2: $RetornaTipoVisao='Resumida'; break;
+    default:$RetornaTipoVisao='Erro'; break;
   }
 }
 
@@ -1981,9 +585,8 @@ function RetornaUsuarioCentral() {
   if ($_REQUEST['w_sq_usuario_central']>'') {
      return $_REQUEST['w_sq_usuario_central'];
   } else {
-     DB_GetPersonData($RS, $w_cliente, $w_usuario, $null, $null);
-     return $RS['SQ_USUARIO_CENTRAL'];
-     DesconectaBD();
+     $RS = db_getPersonData::getInstanceOf($dbms, $w_cliente, $w_usuario, null, null);
+     return f($RS,'sq_usuario_central');
   }
 }
 
@@ -2006,13 +609,9 @@ function RetornaUsuario() {
 // -------------------------------------------------------------------------
 function RetornaAno() {
   extract($GLOBALS);
-  if ($_REQUEST['w_ano']>'') {
-     return $_REQUEST['w_ano'];
-  } elseif ($_SESSION['ANO'] > '') {
-     return $_SESSION['ANO'];
-  } else {
-     return Date('Y');
-  }
+  if ($_REQUEST['w_ano']>'')     return $_REQUEST['w_ano'];
+  elseif ($_SESSION['ANO'] > '') return $_SESSION['ANO'];
+  else                           return Date('Y');
 }
 
 // =========================================================================
@@ -2038,13 +637,12 @@ function RetornaCliente() {
   // Se receber o código do cliente do SIW, o cliente será determinado por parâmetro;
   // caso contrário, o cliente será a empresa ao qual o usuário logado está vinculado.
   if ($_REQUEST['w_cgccpf']>'' && strlen($_REQUEST['w_cgccpf'])>11) {
-     $RS = DB_GetCompanyData($_SESSION['P_CLIENTE'], $_REQUEST('w_cgccpf'));
+     $RS = db_getCompanyData($_SESSION['P_CLIENTE'], $_REQUEST('w_cgccpf'));
      if (!$RS->EOF) {
         return $RS['SQ_PESSOA'];
      } else {
         return $_SESSION['P_CLIENTE'];
      }
-     DesconectaBD();
   }
   elseif ($_REQUEST['w_cliente']>'') {
      return $_REQUEST['w_cliente'];
@@ -2060,7 +658,7 @@ function RetornaCliente() {
 // -------------------------------------------------------------------------
 function RetornaGestor($p_solicitacao,$p_usuario) {
   extract($GLOBALS);
-  return DB_GetGestor($p_solicitacao, $p_usuario);
+  return db_getGestor($p_solicitacao, $p_usuario);
 }
 
 // =========================================================================
@@ -2550,7 +1148,7 @@ function Estrutura_Menu() {
      ShowHTML('        <DIV id=mainMenu>');
      ShowHTML('          <UL id=menuList>');
      $l_cont=0;
-     DB_GetLinkDataUser($l_RS, $_SESSION['P_CLIENTE'], $_SESSION['SQ_PESSOA'], $null);
+     db_getLinkDataUser($l_RS, $_SESSION['P_CLIENTE'], $_SESSION['SQ_PESSOA'], null);
      $l_cont=0;
      while(!$l_RS->EOF) {
        $l_titulo=$l_RS['NOME'];
@@ -2560,7 +1158,7 @@ function Estrutura_Menu() {
          ShowHTML('            <LI class=menubar>::<A class=starter href="#"> '.$l_RS['NOME'].'</A>');
          ShowHTML('            <UL class=menu id=menu'.$l_cont.'>');
          $l_cont1=0;
-         DB_GetLinkDataUser($l_RS1, $_SESSION['P_CLIENTE'], $_SESSION['SQ_PESSOA']);
+         db_getLinkDataUser($l_RS1, $_SESSION['P_CLIENTE'], $_SESSION['SQ_PESSOA']);
          $l_RS['SQ_MENU'];
          while(!$l_RS1->EOF) {
            $l_titulo=$l_titulo.' - '.$l_RS1['NOME'];
@@ -2569,7 +1167,7 @@ function Estrutura_Menu() {
               ShowHTML('              <LI><A href="#"><IMG height=12 alt=">" src="/siw/files/'.$w_cliente.'/img/arrows.gif" width=8> '.$l_RS1['NOME'].'</A> ');
               ShowHTML('              <UL class=menu id=menu'.$l_cont.'_'.$l_cont1.'>');
               $l_cont2=0;
-              DB_GetLinkDataUser($l_RS2, $_SESSION['P_CLIENTE'], $_SESSION['SQ_PESSOA']);
+              db_getLinkDataUser($l_RS2, $_SESSION['P_CLIENTE'], $_SESSION['SQ_PESSOA']);
               $l_RS1['SQ_MENU'];
               while(!$l_RS2->EOF) {
                 $l_titulo=$l_titulo.' - '.$l_RS2['NOME'];
@@ -2577,7 +1175,7 @@ function Estrutura_Menu() {
                    $l_cont2=$l_cont2+1;
                    ShowHTML('                <LI><A href="#"><IMG height=12 alt=">" src="/siw/files/'.$w_cliente.'/img/arrows.gif" width=8> '.$l_RS2['NOME'].'</A> ');
                    ShowHTML('                <UL class=menu id=menu'.$l_cont.'_'.$l_cont1.'_'.$l_cont2.'>');
-                   DB_GetLinkDataUser($l_RS3, $_SESSION['P_CLIENTE'], $_SESSION['SQ_PESSOA']);
+                   db_getLinkDataUser($l_RS3, $_SESSION['P_CLIENTE'], $_SESSION['SQ_PESSOA']);
                    $l_RS2['SQ_MENU'];
                    while(!$l_RS3->EOF) {
                      $l_titulo=$l_titulo.' - '.$l_RS3['NOME'];
@@ -2707,7 +1305,7 @@ function FormataDataEdicao($w_dt_grade) {
   }
   else { $l_dt_grade = ''; }
   return $l_dt_grade;
-  $l_dt_grade = $null;
+  $l_dt_grade = null;
 }
 
 //Limpa Mascara para gravar os dados no banco de dados
@@ -2754,14 +1352,14 @@ function BodyOpenClean($cProperties) {
 }
 
 // Cria a tag Body
-function BodyOpenMail($cProperties) {
+function BodyOpenMail($cProperties=null) {
   extract($GLOBALS);
-  $l_html=$l_html.'<link rel="stylesheet" type="text/css" href="'.$conRootSIW.'classes/menu/xPandMenu.css">';
+  $l_html='';
+  $l_html=$l_html.'<link rel="stylesheet" type="text/css" href="'.$conRootSIW.'classes/menu/xPandMenu.css">'.chr(13);
   $l_html=$l_html.'<body Text="'.$conBodyText.'" Link="'.$conBodyLink.'" Alink="'.$conBodyALink.'" '.
     'Vlink="'.$conBodyVLink.'" Bgcolor="'.$conBodyBgcolor.'" Background="'.$conBodyBackground.'" '.
     'Bgproperties="'.$conBodyBgproperties.'" Topmargin="'.$conBodyTopmargin.'" '.
-    'Leftmargin="'.$conBodyLeftmargin.'" '.$cProperties.'> '.'\r\n';
-  $BodyOpenMail=$l_html;
-  $l_html=null;
+    'Leftmargin="'.$conBodyLeftmargin.'" '.$cProperties.'> '.chr(13);
+  return $l_html;
 }
 ?>

@@ -7,15 +7,31 @@ include_once('funcoes.php');
 include_once('classes/db/abreSessao.php');
 include_once('classes/sp/db_getMenuCode.php');
 include_once('classes/sp/db_getMenuData.php');
-include_once('classes/sp/db_getLocalList.php');
-include_once('classes/sp/db_getUorgList.php');
-include_once("classes/sp/db_getCustomerData.php");
-include_once("classes/sp/db_getStateList.php");
-include_once("classes/sp/db_getUserList.php");
-include_once("classes/sp/db_getAddressList.php");
-include_once("classes/sp/db_getSiwCliModLis.php");
-include_once("classes/sp/db_getMenuOrder.php");
-include_once("classes/sp/db_getMenuLink.php");
+include_once('classes/sp/db_getCustomerData.php');
+include_once('classes/sp/db_getUserList.php');
+include_once('classes/sp/db_getAddressList.php');
+include_once('classes/sp/db_getSiwCliModLis.php');
+include_once('classes/sp/db_getMenuOrder.php');
+include_once('classes/sp/db_getMenuLink.php');
+include_once('classes/sp/db_getPersonData.php');
+include_once('classes/sp/db_getUserModule.php');
+include_once('classes/sp/db_getUserVision.php');
+include_once('classes/sp/db_getMenuList.php');
+include_once('classes/sp/db_getCCTreeVision.php');
+include_once('classes/sp/db_updatePassword.php');
+include_once('classes/sp/db_getCustomerSite.php');
+include_once('classes/sp/db_getUserData.php');
+include_once('classes/sp/db_VerificaAssinatura.php');
+include_once('classes/sp/dml_SiwMenu.php');
+include_once('classes/sp/dml_SgPesMod.php');
+include_once('classes/sp/dml_PutSiwPesCC.php');
+include_once('funcoes/selecaoLocalizacao.php');
+include_once('funcoes/selecaoUnidade.php');
+include_once('funcoes/selecaoEstado.php');
+include_once('funcoes/selecaoModulo.php');
+include_once('funcoes/selecaoEndereco.php');
+include_once('funcoes/selecaoServico.php');
+include_once('funcoes/selecaoMenu.php');
 
 // =========================================================================
 //  /seguranca.php
@@ -57,18 +73,19 @@ $SG         = strtoupper($_REQUEST['SG']);
 $R          = $_REQUEST['R'];
 $O          = strtoupper($_REQUEST['O']);
 
-$w_Assinatura   = strtoupper($_REQUEST['w_Assinatura']);
+$w_assinatura   = strtoupper($_REQUEST['w_assinatura']);
 $p_localizacao  = strtoupper($_REQUEST['p_localizacao']);
 $p_lotacao      = strtoupper($_REQUEST['p_lotacao']);
 $p_nome         = strtoupper($_REQUEST['p_nome']);
 $p_gestor       = strtoupper($_REQUEST['p_gestor']);
 $p_ordena       = strtoupper($_REQUEST['p_ordena']);
 
-$w_pagina       = "seguranca.php?par=";
-$w_Disabled     = "ENABLED";
+$w_pagina       = 'seguranca.php?par=';
+$w_Disabled     = 'ENABLED';
+$w_dir_volta    = '';
 
 if ($O=='') { 
-  if ($par=='USUARIOS') $O="P"; else $O="L";
+  if ($par=='USUARIOS') $O='P'; else $O='L';
 }
 
 switch ($O) {
@@ -122,7 +139,7 @@ function Usuarios() {
   $w_libera_edicao = f($RS,'libera_edicao');
 
   if ($O=='L') {
-    $RS = db_getUserList::getInstanceOf($dbms,$w_cliente,$p_localizacao,$p_lotacao,$p_gestor,$p_nome,$p_modulo,$p_uf,$p_ativo);
+    $RS = db_getUserList::getInstanceOf($dbms,$w_cliente,$p_localizacao,$p_lotacao,$p_gestor,$p_nome,$p_modulo,$p_uf,$p_ativo, null);
     array_key_case_change(&$RS);
     if ($p_ordena>'') { 
       $RS = SortArray($RS,substr($p_ordena,0,strpos($p_ordena,' ')),substr($p_ordena,strpos($p_ordena,' ')+1),'nome_resumido_ind','asc');
@@ -139,20 +156,13 @@ function Usuarios() {
   ValidateClose();
   ScriptClose();
   ShowHTML('</HEAD>');
-  if ($w_troca>'') {
-    // Se for recarga da página
-    BodyOpen('onLoad=\'document.Form.'.$w_troca.'.focus();\'');
-  } elseif ($O=='I') {
-    BodyOpen('onLoad=\'document.Form.w_username.focus();\'');
-  } elseif ($O=='A') {
-    BodyOpen('onLoad=\'document.Form.w_nome.focus();\'');
-  } elseif ($O=='E') {
-    BodyOpen('onLoad=\'document.Form.w_assinatura.focus()\';');
-  } elseif ((strpos('P',$O) ? strpos('P',$O)+1 : 0)>0) {
-    BodyOpen('onLoad=\'document.Form.p_localizacao.focus()\';');
-  } else {
-    BodyOpen('onLoad=document.focus();');
-  } 
+
+  if ($w_troca>'') BodyOpen('onLoad=\'document.Form.'.$w_troca.'.focus();\'');
+  elseif ($O=='I') BodyOpen('onLoad=\'document.Form.w_username.focus();\'');
+  elseif ($O=='A') BodyOpen('onLoad=\'document.Form.w_nome.focus();\'');
+  elseif ($O=='E') BodyOpen('onLoad=\'document.Form.w_assinatura.focus()\';');
+  elseif ($O=='P') BodyOpen('onLoad=\'document.Form.p_localizacao.focus()\';');
+  else    BodyOpen('onLoad=document.focus();');
 
   Estrutura_Topo_Limpo();
   Estrutura_Menu();
@@ -160,7 +170,7 @@ function Usuarios() {
   Estrutura_Texto_Abre();
   ShowHTML('<table border="0" cellpadding="0" cellspacing="0" width="100%">');
   if ($O=='L') {
-    ShowHTML('<tr><td><font size="2">');
+    ShowHTML('<tr><td>');
     if ($w_libera_edicao=='S') {
       ShowHTML('                         <a accesskey="N" class="ss" href="pessoa.php?par=BENEF&R='.$w_pagina.$par.'&O=I&w_cliente='.$w_cliente.'&P1='.$P1.'&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP='.$TP.'&SG='.$SG.'&p_nome='.$p_nome.'&p_localizacao='.$p_localizacao.'&p_lotacao='.$p_lotacao.'&p_gestor='.$p_gestor.'&p_ordena='.$p_ordena.'"><u>N</u>ovo acesso</a>&nbsp;');
     } 
@@ -171,16 +181,16 @@ function Usuarios() {
       ShowHTML('                         <a accesskey="F" class="ss" href="'.$w_pagina.$par.'&R='.$w_pagina.$par.'&O=P&w_cliente='.$w_cliente.'&P1='.$P1.'&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP='.$TP.'&SG='.$SG.'&p_nome='.$p_nome.'&p_localizacao='.$p_localizacao.'&p_lotacao='.$p_lotacao.'&p_gestor='.$p_gestor.'&p_ordena='.$p_ordena.'"><u>F</u>iltrar (Inativo)</a>');
     } 
 
-    ShowHTML('    <td align="right"><font size="1"><b>Registros: '.count($RS));
+    ShowHTML('    <td align="right"><b>Registros: '.count($RS));
     ShowHTML('<tr><td colspan=3>');
     ShowHTML('    <TABLE WIDTH="100%" bgcolor="'.$conTableBgColor.'" BORDER="'.$conTableBorder.'" CELLSPACING="'.$conTableCellSpacing.'" CELLPADDING="'.$conTableCellPadding.'" BorderColorDark="'.$conTableBorderColorDark.'" BorderColorLight="'.$conTableBorderColorLight.'">');
     ShowHTML('        <tr bgcolor="'.$conTrBgColor.'" align="center">');
-    ShowHTML('          <td><font size="1"><b>'.LinkOrdena('Username','username').'</font></td>');
-    ShowHTML('          <td><font size="1"><b>'.LinkOrdena('Nome','nome_resumido').'</font></td>');
-    ShowHTML('          <td><font size="1"><b>'.LinkOrdena('Lotação','lotacao').'</font></td>');
-    ShowHTML('          <td><font size="1"><b>'.LinkOrdena('Ramal','ramal').'</font></td>');
-    ShowHTML('          <td><font size="1"><b>'.LinkOrdena('Vínculo','vinculo').'</font></td>');
-    ShowHTML('          <td><font size="1"><b>Operações</font></td>');
+    ShowHTML('          <td><b>'.LinkOrdena('Username','username').'</td>');
+    ShowHTML('          <td><b>'.LinkOrdena('Nome','nome_resumido').'</td>');
+    ShowHTML('          <td><b>'.LinkOrdena('Lotação','lotacao').'</td>');
+    ShowHTML('          <td><b>'.LinkOrdena('Ramal','ramal').'</td>');
+    ShowHTML('          <td><b>'.LinkOrdena('Vínculo','vinculo').'</td>');
+    ShowHTML('          <td><b>Operações</td>');
     ShowHTML('        </tr>');
     if (count($RS) <= 0) {
       ShowHTML('      <tr bgcolor="'.$conTrBgColor.'"><td colspan=6 align="center"><font size="2"><b>Não foram encontrados registros.</b></td></tr>');
@@ -190,16 +200,16 @@ function Usuarios() {
         $w_cor = ($w_cor==$conTrBgColor || $w_cor=='') ? $w_cor=$conTrAlternateBgColor : $w_cor=$conTrBgColor;
         ShowHTML('      <tr bgcolor="'.$w_cor.'" valign="top">');
         if (f($row,'ativo')=='S') {
-          ShowHTML('        <td align="center" nowrap><font size="1">'.f($row,'username').'');
+          ShowHTML('        <td align="center" nowrap>'.f($row,'username').'');
         } else { 
           ShowHTML('        <td align="center" nowrap><font color="#BC3131" size="1"><b>'.f($row,'username').'</b>');
         } 
 
-        ShowHTML('        <td align="left" title="'.f($row,'nome').'"><font size="1">'.f($row,'nome_resumido').'</td>');
-        ShowHTML('        <td align="center"><font size="1">'.f($row,'lotacao').'&nbsp;('.f($row,'localizacao').')</td>');
-        ShowHTML('        <td align="center"><font size="1">&nbsp;'.nvl(f($row,'ramal'),'---').'</td>');
-        ShowHTML('        <td align="left" title="'.f($row,'vinculo').'"><font size="1">'.Nvl(f($row,'vinculo'),'---').'</td>');
-        ShowHTML('        <td align="top" nowrap><font size="1">');
+        ShowHTML('        <td align="left" title="'.f($row,'nome').'">'.f($row,'nome_resumido').'</td>');
+        ShowHTML('        <td align="center">'.f($row,'lotacao').'&nbsp;('.f($row,'localizacao').')</td>');
+        ShowHTML('        <td align="center">&nbsp;'.nvl(f($row,'ramal'),'---').'</td>');
+        ShowHTML('        <td align="left" title="'.f($row,'vinculo').'">'.Nvl(f($row,'vinculo'),'---').'</td>');
+        ShowHTML('        <td align="top" nowrap>');
         if ($w_libera_edicao=='S') {
           ShowHTML('          <A class="hl" HREF="pessoa.php?par=BENEF&R='.$w_pagina.$par.'&O=A&w_cliente='.$w_cliente.'&w_sq_pessoa='.f($row,'sq_pessoa').'&w_username='.f($row,'username').'&P1='.$P1.'&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP='.$TP.'&SG='.$SG.MontaFiltro('GET').'" title="Altera as informações cadastrais do usuário">Alterar</A>&nbsp');
           ShowHTML('          <A class="hl" HREF="pessoa.php?par=BENEF&R='.$w_pagina.$par.'&O=E&w_cliente='.$w_cliente.'&w_sq_pessoa='.f($row,'sq_pessoa').'&w_username='.f($row,'username').'&P1='.$P1.'&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP='.$TP.'&SG='.$SG.MontaFiltro('GET').'" title="Exclui o usuário do banco de dados">Excluir</A>&nbsp');
@@ -212,7 +222,7 @@ function Usuarios() {
         } 
         ShowHTML('          <A class="hl" HREF="#" onClick="window.open(\'seguranca.php?par=ACESSOS&R='.$w_pagina.$par.'&O=L&w_cliente='.$w_cliente.'&w_sq_pessoa='.f($row,'sq_pessoa').'&w_username='.f($row,'username').'&P1='.$P1.'&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP='.$TP.'&SG=ACESSOS'.MontaFiltro('GET').'\',\'Gestao\',\'width=630,height=500,top=30,left=30,status=yes,resizable=yes,scrollbars=yes,toolbar=yes\');" title="Gestão de módulos">Gestão</A>&nbsp');
         if ($w_libera_edicao=='S') {
-          ShowHTML('          <A class="hl" HREF="#" onClick=" if (confirm(\'Este procedimento irá reinicializar a senha de acesso e sua assinatura eletrônica do usuário.\nConfirma?\')) window.open(\''.$w_pagina.'NovaSenha&R='.$w_pagina.$par.'&O=L&w_cliente='.$w_cliente.'&w_sq_pessoa='.f($row,'sq_pessoa').'&w_username='.f($row,'username').'&P1='.$P1.'&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP='.$TP.'&SG=ACESSOS'.MontaFiltro('GET').'\',\'NovaSenha\',\'width=630,height=500,top=30,left=30,status=yes,resizable=yes,toolbar=yes\');" title="Reinicializa a senha do usuário">Senha</A>&nbsp');
+          ShowHTML('          <A class="hl" HREF="#" onClick="if (confirm(\'Este procedimento irá reinicializar a senha de acesso e sua assinatura eletrônica do usuário.\nConfirma?\')) window.open(\''.$w_pagina.'NovaSenha&R='.$w_pagina.$par.'&O=L&w_cliente='.$w_cliente.'&w_sq_pessoa='.f($row,'sq_pessoa').'&w_username='.f($row,'username').'&P1='.$P1.'&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP='.$TP.'&SG=ACESSOS'.MontaFiltro('GET').'\',\'NovaSenha\',\'width=630,height=500,top=30,left=30,status=no,scrollbars=yes,resizable=yes,toolbar=yes\');" title="Reinicializa a senha do usuário">Senha</A>&nbsp');
         } 
 
         ShowHTML('          <A class="hl" HREF="#" onClick="window.open(\'seguranca.php?par=VISAO&R='.$w_pagina.$par.'&O=L&w_cliente='.$w_cliente.'&w_sq_pessoa='.f($row,'sq_pessoa').'&w_username='.f($row,'username').'&P1='.$P1.'&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP='.$TP.'&SG=VISAO'.MontaFiltro('GET').'\',\'Gestao\',\'width=630,height=500,top=30,left=30,status=yes,resizable=yes,toolbar=yes,scrollbars=yes\');" title="Gestão de módulos">Visão</A>&nbsp');
@@ -234,7 +244,6 @@ function Usuarios() {
     } 
 
     ShowHTML('</tr>');
-    DesConectaBD();
   } elseif ($O=='P') {
     AbreForm('Form',$w_pagina.$par,'POST',"return(Validacao(this));",null,$P1,$P2,1,$P4,$TP,$SG,$R,'L');
     ShowHTML('<INPUT type="hidden" name="w_cliente" value="'.$w_cliente.'">');
@@ -244,20 +253,20 @@ function Usuarios() {
     ShowHTML('    <table width="100%" border="0">');
 
     ShowHTML('      <tr>');
-    SelecaoLocalizacao('Lo<U>c</U>alização:','C',null,$p_localizacao,null,'p_localizacao',null);
+    selecaoLocalizacao('Lo<U>c</U>alização:','C',null,$p_localizacao,null,'p_localizacao',null);
     ShowHTML('      </tr>');
 
     ShowHTML('      <tr>');
-    SelecaoUnidade('<U>L</U>otação:','L',null,$p_lotacao,null,'p_lotacao',null,null);
+    selecaoUnidade('<U>L</U>otação:','L',null,$p_lotacao,null,'p_lotacao',null,null);
     ShowHTML('      </tr>');
 
-    ShowHTML('      <tr><td><font size="1"><b><U>N</U>ome:<br><INPUT ACCESSKEY="N" '.$w_Disabled.' class="sti" type="text" name="p_nome" size="50" maxlength="50" value="'.$p_nome.'"></td>');
+    ShowHTML('      <tr><td><b><U>N</U>ome:<br><INPUT ACCESSKEY="N" '.$w_Disabled.' class="sti" type="text" name="p_nome" size="50" maxlength="50" value="'.$p_nome.'"></td>');
     ShowHTML('      <tr>');
     $RS1 = db_getCustomerData::getInstanceOf($dbms, $w_cliente);
-    SelecaoEstado('E<u>s</u>tado:','S',null,$p_uf,f($RS1,'sq_pais'),'N','p_uf',null,null);
+    selecaoEstado('E<u>s</u>tado:','S',null,$p_uf,f($RS1,'sq_pais'),'N','p_uf',null,null);
     $RS1->Close;
     ShowHTML('      <tr><td><table border=0 width="100%" cellpadding=0 cellspacing=0><tr valign="top">');
-    ShowHTML('          <td><font size="1"><b>Usuários:</b><br>');
+    ShowHTML('          <td><b>Usuários:</b><br>');
     if (Nvl($p_ativo,'S')=='S') {
       ShowHTML('              <input '.$w_Disabled.' class="str" type="radio" name="p_ativo" value="S" checked> Apenas ativos<br><input '.$w_Disabled.' class="str" type="radio" name="p_ativo" value="N"> Apenas inativos<br><input '.$w_Disabled.' class="str" type="radio" name="p_ativo" value=""> Tanto faz');
     } elseif ($p_ativo=='N') {
@@ -266,7 +275,7 @@ function Usuarios() {
       ShowHTML('              <input '.$w_Disabled.' class="str" type="radio" name="p_ativo" value="S"> Apenas ativos<br><input '.$w_Disabled.' class="str" type="radio" name="p_ativo" value="N"> Apenas inativos<br><input '.$w_Disabled.' class="str" type="radio" name="p_ativo" value="" checked> Tanto faz');
     } 
 
-    ShowHTML('          <td><font size="1"><b>Gestores:</b><br>');
+    ShowHTML('          <td><b>Gestores:</b><br>');
     if ($p_gestor=='') {
       ShowHTML('              <input '.$w_Disabled.' class="str" type="radio" name="p_gestor" value="S"> Apenas gestores<br><input '.$w_Disabled.' class="str" type="radio" name="p_gestor" value="N"> Apenas não gestores<br><input '.$w_Disabled.' class="str" type="radio" name="p_gestor" value="" checked> Tanto faz');
     } elseif ($p_gestor=='S') {
@@ -276,7 +285,7 @@ function Usuarios() {
     } 
 
     ShowHTML('          </table>');
-    ShowHTML('      <tr><td><font size="1"><b><U>O</U>rdenação por:<br><SELECT ACCESSKEY="O" '.$w_Disabled.' class="sts" name="p_ordena" size="1">');
+    ShowHTML('      <tr><td><b><U>O</U>rdenação por:<br><SELECT ACCESSKEY="O" '.$w_Disabled.' class="sts" name="p_ordena" size="1">');
 
     if ($p_Ordena=='LOCALIZACAO') {
       ShowHTML('          <option value="localizacao" SELECTED>Localização<option value="lotacao">Lotação<option value="">Nome<option value="username">Username');
@@ -607,7 +616,7 @@ function Menu() {
     } 
 
     ShowHTML('      <tr><td height="1" bgcolor="#000000">');
-    ShowHTML('      <tr><td><font size=2><b>');
+    ShowHTML('      <tr><td><b>');
 
     $RS = db_getMenuLink::getInstanceof($dbms, $w_cliente, $p_sq_endereco_unidade, $p_modulo, nvl($p_menu,'IS NULL'));
     $w_ContOut=0;
@@ -618,7 +627,7 @@ function Menu() {
       if (f($row,'Filho')>0) {
 
         ShowHTML('<A HREF="#'.f($row,'sq_menu').'"></A>');
-        ShowHTML('<font size=2><span><div align="left"><img src="images/folder/FolderClose.gif" border=0 align="center"> '.f($row,'nome').'<font size=1>');
+        ShowHTML('<span><div align="left"><img src="images/folder/FolderClose.gif" border=0 align="center"> '.f($row,'nome').'');
         if (f($row,'ativo')=='S') $w_classe='hl'; else $w_classe='lh';
         ShowHTML('       <A class="'.$w_classe.'" HREF="'.$w_pagina.$par.'&R='.$w_pagina.$par.'&O=A&w_sq_menu='.f($row,'sq_menu').'&w_cliente='.$w_cliente.'&P1='.$P1.'&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP='.$TP.'&SG=MENU'.MontaFiltro('GET').'" title="Altera as informações desta opção do menu">Alterar</A>&nbsp');
         // A configuração de endereços e serviço/acessos não estão disponíveis para sub-menus
@@ -639,15 +648,15 @@ function Menu() {
         } 
 
         ShowHTML('       <A class="'.$w_classe.'" HREF="'.$w_pagina.$par.'&R='.$w_pagina.$par.'&O=E&w_sq_menu='.f($row,'sq_menu').'&w_cliente='.$w_cliente.'&P1='.$P1.'&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP='.$TP.'&SG=MENU'.MontaFiltro('GET').'" title="Exclui o link do menu">Excluir</A>&nbsp');
-        ShowHTML('       </div></span></font></font>');
-        ShowHTML('   <div style="position:relative; left:12;"><font size=1>');
+        ShowHTML('       </div></span>');
+        ShowHTML('   <div style="position:relative; left:12;">');
         $RS1 = db_getMenuLink::getInstanceOf($dbms, $w_cliente, $p_sq_endereco_unidade, null, f($row,'sq_menu'));
         foreach($RS1 as $row1) {
           $w_Titulo=$w_Titulo.' - '.f($row1,'nome');
           if (f($row1,'Filho')>0) {
             $w_ContOut=$w_ContOut+1;
             ShowHTML('<A HREF=#"'.f($row1,'sq_menu').'"></A>');
-            ShowHTML('<font size=1><span><div align="left"><img src="images/folder/FolderClose.gif" border=0 align="center"> '.f($row1,'nome').'<font size=1>');
+            ShowHTML('<span><div align="left"><img src="images/folder/FolderClose.gif" border=0 align="center"> '.f($row1,'nome'));
             if (f($row1,'ativo')=='S') $w_classe='hl'; else $w_classe='lh';
             ShowHTML('       <A class="'.$w_classe.'" HREF="'.$w_pagina.$par.'&R='.$w_pagina.$par.'&O=A&w_sq_menu='.f($row1,'sq_menu').'&w_cliente='.$w_cliente.'&P1='.$P1.'&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP='.$TP.'&SG=MENU'.MontaFiltro('GET').'" title="Altera as informações desta opção do menu">Alterar</A>&nbsp');
             // A configuração de endereços e serviço/acessos não estão disponíveis para sub-menus
@@ -668,8 +677,8 @@ function Menu() {
             } 
 
             ShowHTML('       <A class="'.$w_classe.'" HREF="'.$w_pagina.$par.'&R='.$w_pagina.$par.'&O=E&w_sq_menu='.f($row1,'sq_menu').'&w_cliente='.$w_cliente.'&P1='.$P1.'&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP='.$TP.'&SG=MENU'.MontaFiltro('GET').'" title="Exclui o link do menu">Excluir</A>&nbsp');
-            ShowHTML('       </div></span></font></font>');
-            ShowHTML('   <div style="position:relative; left:12;"><font size=1>');
+            ShowHTML('       </div></span>');
+            ShowHTML('   <div style="position:relative; left:12;">');
             $RS2 = db_getMenuLink::getInstanceOf($dbms, $w_cliente, $p_sq_endereco_unidade, null, f($row1,'sq_menu'));
             foreach($RS2 as $row2) {
 
@@ -678,7 +687,7 @@ function Menu() {
  
                 $w_ContOut=$w_ContOut+1;
                 ShowHTML('<A HREF=#"'.f($row2,'sq_menu').'"></A>');
-                ShowHTML('<font size=1><span><div align="left"><img src="images/folder/FolderClose.gif" border=0 align="center"> '.f($row2,'nome').'<font size=1>');
+                ShowHTML('<span><div align="left"><img src="images/folder/FolderClose.gif" border=0 align="center"> '.f($row2,'nome'));
                 if (f($row2,'ativo')=='S') $w_classe='hl'; else $w_classe='lh';
                 ShowHTML('       <A class="'.$w_classe.'" HREF="'.$w_pagina.$par.'&R='.$w_pagina.$par.'&O=A&w_sq_menu='.f($row2,'sq_menu').'&w_cliente='.$w_cliente.'&P1='.$P1.'&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP='.$TP.'&SG=MENU'.MontaFiltro('GET').'" title="Altera as informações desta opção do menu">Alterar</A>&nbsp');
                 // A configuração de endereços e serviço/acessos não estão disponíveis para sub-menus
@@ -699,8 +708,8 @@ function Menu() {
                 } 
 
                 ShowHTML('       <A class="'.$w_classe.'" HREF="'.$w_pagina.$par.'&R='.$w_pagina.$par.'&O=E&w_sq_menu='.f($row2,'sq_menu').'&w_cliente='.$w_cliente.'&P1='.$P1.'&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP='.$TP.'&SG=MENU'.MontaFiltro('GET').'" title="Exclui o link do menu">Excluir</A>&nbsp');
-                ShowHTML('       </div></span></font></font>');
-                ShowHTML('   <div style="position:relative; left:12;"><font size=1>');
+                ShowHTML('       </div></span>');
+                ShowHTML('   <div style="position:relative; left:12;">');
                 $RS3 = db_getMenuLink::getInstanceOf($dbms, $w_cliente, $p_sq_endereco_unidade, null, f($row2,'sq_menu'));
                 foreach($RS3 as $row3) {
                   $w_Titulo=$w_Titulo.' - '.f($row3,'nome');
@@ -733,7 +742,7 @@ function Menu() {
                   ShowHTML('    <BR>');
                   $w_Titulo=str_replace(' - '.f($row3,'nome'),'',$w_Titulo);
                 } 
-                ShowHTML('   </font></div>');
+                ShowHTML('   </div>');
               } else {
                 if (f($row2,'IMAGEM')>'') $w_Imagem=f($row2,'IMAGEM'); else $w_Imagem=$w_ImagemPadrao;
                 ShowHTML('    <img src="'.$w_Imagem.'" border=0 align="center"> '.f($row2,'nome'));
@@ -759,7 +768,7 @@ function Menu() {
 
               $w_Titulo=str_replace(' - '.f($row2,'nome'),'',$w_Titulo);
             } 
-            ShowHTML('   </font></div>');
+            ShowHTML('   </div>');
           } else {
             if (f($row1,'IMAGEM')>'') $w_Imagem=f($row1,'IMAGEM'); else $w_Imagem=$w_ImagemPadrao;
             ShowHTML('    <img src="'.$w_Imagem.'" border=0 align="center"> '.f($row1,'nome'));
@@ -784,10 +793,10 @@ function Menu() {
           } 
           $w_Titulo=str_replace(' - '.f($row1,'nome'),'',$w_Titulo);
         } 
-        ShowHTML('   </font></div>');
+        ShowHTML('   </div>');
       } else {
         if (f($row,'IMAGEM')>'') $w_Imagem=f($row,'IMAGEM'); else $w_Imagem=$w_ImagemPadrao;
-        ShowHTML('    <img src="'.$w_Imagem.'" border=0 align="center"><font size=2> '.f($row,'nome').'<font size=1>');
+        ShowHTML('    <img src="'.$w_Imagem.'" border=0 align="center"> '.f($row,'nome').'');
         if (f($row,'ativo')=='S') $w_classe='hl'; else $w_classe='lh';
         ShowHTML('       <A class="'.$w_classe.'" HREF="'.$w_pagina.$par.'&R='.$w_pagina.$par.'&O=A&w_sq_menu='.f($row,'sq_menu').'&w_cliente='.$w_cliente.'&P1='.$P1.'&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP='.$TP.'&SG=MENU'.MontaFiltro('GET').'" title="Altera as informações desta opção do menu">Alterar</A>&nbsp');
         // A configuração de endereços e serviço/acessos não estão disponíveis para sub-menus
@@ -829,9 +838,9 @@ function Menu() {
     ShowHTML('      <tr><td><table width="100%" border=0>');
     ShowHTML('          <tr><td colspan=4 height="30"><font size="2"><b>Identificação</td>');
     ShowHTML('          <tr><td width="5%">');
-    ShowHTML('              <td align="left"><font size="1"><b><u>D</u>escrição:<br><INPUT ACCESSKEY="D" TYPE="TEXT" CLASS="sti" NAME="w_descricao" SIZE=40 MAXLENGTH=40 VALUE="'.$w_descricao.'" '.$w_Disabled.' title="Nome a ser apresentado no menu."></td>');
-    SelecaoMenu('<u>S</u>ubordinação:', 'S', 'Se esta opção estiver subordinada a outra já existente, informe qual.', $w_sq_menu_pai, $w_sq_menu, 'w_sq_menu_pai', 'Pesquisa', 'onChange="document.Form.action=\''.$w_pagina.$par.'\'; document.Form.w_troca.value=\'w_link\'; document.Form.submit();"');
-    ShowHTML('              <td title="Existem formulários com várias telas. Neste caso você pode criar sub-menus. Informe \'Sim\' se for o caso desta opção."><font size="1"><b>Sub-menu?</b><br>');
+    ShowHTML('              <td align="left"><b><u>D</u>escrição:<br><INPUT ACCESSKEY="D" TYPE="TEXT" CLASS="sti" NAME="w_descricao" SIZE=40 MAXLENGTH=40 VALUE="'.$w_descricao.'" '.$w_Disabled.' title="Nome a ser apresentado no menu."></td>');
+    selecaoMenu('<u>S</u>ubordinação:', 'S', 'Se esta opção estiver subordinada a outra já existente, informe qual.', $w_sq_menu_pai, $w_sq_menu, 'w_sq_menu_pai', 'Pesquisa', 'onChange="document.Form.action=\''.$w_pagina.$par.'\'; document.Form.w_troca.value=\'w_link\'; document.Form.submit();"');
+    ShowHTML('              <td title="Existem formulários com várias telas. Neste caso você pode criar sub-menus. Informe \'Sim\' se for o caso desta opção."><b>Sub-menu?</b><br>');
     if ($w_ultimo_nivel=='S') {
       ShowHTML('                 <input '.$w_Disabled.' class="str" type="radio" name="w_ultimo_nivel" value="S" checked> Sim <input '.$w_Disabled.' class="str" type="radio" name="w_ultimo_nivel" value="N"> Não');
     } else {
@@ -839,9 +848,9 @@ function Menu() {
     } 
 
     ShowHTML('          <tr><td width="5%">');
-    ShowHTML('              <td><font size="1"><b><u>L</u>ink:<br><INPUT ACCESSKEY="L" TYPE="TEXT" CLASS="sti" NAME="w_link" SIZE=40 MAXLENGTH=60 VALUE="'.$w_link.'" '.$w_Disabled.' title="Informe o link a ser chamado quando esta opção for clicada. Se esta opção tiver opções subordinadas, não informe este campo."></td>');
-    ShowHTML('              <td><font size="1"><b><u>T</u>arget:<br><INPUT ACCESSKEY="T" TYPE="TEXT" CLASS="sti" NAME="w_target" SIZE=15 MAXLENGTH=15 VALUE="'.$w_target.'" '.$w_Disabled.' title="Se desejar que a opção seja aberta em outra janela, diferente do padrão, informe \'_blank\' ou o nome da janela desejada."></td>');
-    ShowHTML('              <td title="Informe \'Sim\' para opções que chamarão links externos ao SIW. Links para sites de busca, de bancos etc são exemplos onde este campo deve ter valor \'Sim\'."><font size="1"><b>Link externo?</b><br>');
+    ShowHTML('              <td><b><u>L</u>ink:<br><INPUT ACCESSKEY="L" TYPE="TEXT" CLASS="sti" NAME="w_link" SIZE=40 MAXLENGTH=60 VALUE="'.$w_link.'" '.$w_Disabled.' title="Informe o link a ser chamado quando esta opção for clicada. Se esta opção tiver opções subordinadas, não informe este campo."></td>');
+    ShowHTML('              <td><b><u>T</u>arget:<br><INPUT ACCESSKEY="T" TYPE="TEXT" CLASS="sti" NAME="w_target" SIZE=15 MAXLENGTH=15 VALUE="'.$w_target.'" '.$w_Disabled.' title="Se desejar que a opção seja aberta em outra janela, diferente do padrão, informe \'_blank\' ou o nome da janela desejada."></td>');
+    ShowHTML('              <td title="Informe \'Sim\' para opções que chamarão links externos ao SIW. Links para sites de busca, de bancos etc são exemplos onde este campo deve ter valor \'Sim\'."><b>Link externo?</b><br>');
     if ($w_externo=='S') {
       ShowHTML('                 <input '.$w_Disabled.' class="str" type="radio" name="w_externo" value="S" checked> Sim <input '.$w_Disabled.' class="str" type="radio" name="w_externo" value="N"> Não');
     } else {
@@ -849,7 +858,7 @@ function Menu() {
     } 
 
     ShowHTML('          <tr><td width="5%">');
-    ShowHTML('              <td align="left" colspan="2"><font size="1"><b><u>I</u>magem:<br><INPUT ACCESSKEY="I" TYPE="TEXT" CLASS="sti" NAME="w_imagem" SIZE=60 MAXLENGTH=60 VALUE="'.$w_imagem.'" '.$w_Disabled.' title="O SIW apresenta ícones padrão na montagem do menu. Se desejar outro ícone, informe o caminho onde está localizado."></td>');
+    ShowHTML('              <td align="left" colspan="2"><b><u>I</u>magem:<br><INPUT ACCESSKEY="I" TYPE="TEXT" CLASS="sti" NAME="w_imagem" SIZE=60 MAXLENGTH=60 VALUE="'.$w_imagem.'" '.$w_Disabled.' title="O SIW apresenta ícones padrão na montagem do menu. Se desejar outro ícone, informe o caminho onde está localizado."></td>');
     // Recupera o número de ordem das outras opções irmãs à selecionada
 
     $RS = db_getMenuOrder::getInstanceOf($dbms, $w_cliente, $w_sq_menu_pai, null, null);
@@ -857,39 +866,39 @@ function Menu() {
 
       $w_texto='<b>Nºs de ordem em uso para esta subordinação:</b>:<br>'.
                '<table border=1 width=100% cellpadding=0 cellspacing=0>'.
-               '<tr><td align=center><b><font size=1>Ordem'.
+               '<tr><td align=center><b>Ordem'.
                '    <td><b><font size=1>Descrição';
       foreach($RS as $row) {
-        $w_texto=$w_texto.'<tr><td valign=top align=center><font size=1>'.f($row,'ordem').'<td valign=top><font size=1>'.f($row,'ordem');
+        $w_texto=$w_texto.'<tr><td valign=top align=center>'.f($row,'ordem').'<td valign=top>'.f($row,'ordem');
       } 
       $w_texto=$w_texto.'</table>';
     } else {
       $w_texto = 'Não há outros números de ordem vinculados à subordinação desta opção';
     } 
 
-    ShowHTML('              <td align="left"><font size="1"><b><u>O</u>rdem:<br><INPUT ACCESSKEY="O" TYPE="TEXT" CLASS="sti" NAME="w_ordem" SIZE=4 MAXLENGTH=4 VALUE="'.$w_ordem.'" '.$w_Disabled.' TITLE="'.str_replace(chr(13).chr(10),"<BR>",$w_texto).'"></td>');
+    ShowHTML('              <td align="left"><b><u>O</u>rdem:<br><INPUT ACCESSKEY="O" TYPE="TEXT" CLASS="sti" NAME="w_ordem" SIZE=4 MAXLENGTH=4 VALUE="'.$w_ordem.'" '.$w_Disabled.' TITLE="'.str_replace(chr(13).chr(10),"<BR>",$w_texto).'"></td>');
     ShowHTML('          <tr><td width="5%">');
-    ShowHTML('              <td colspan=3><font size="1"><b><U>F</U>inalidade:<br><TEXTAREA ACCESSKEY="F" class="sti" name="w_finalidade" rows=3 cols=80 title="Descreva sucintamente a finalidade desta opção. Esta informação será apresentada quando o usuário passar o mouse em cima da opção, no menu.">'.$w_finalidade.'</textarea></td>');
+    ShowHTML('              <td colspan=3><b><U>F</U>inalidade:<br><TEXTAREA ACCESSKEY="F" class="sti" name="w_finalidade" rows=3 cols=80 title="Descreva sucintamente a finalidade desta opção. Esta informação será apresentada quando o usuário passar o mouse em cima da opção, no menu.">'.$w_finalidade.'</textarea></td>');
 
     ShowHTML('          <tr><td colspan=4 height="30"><font size="2"><b>Parâmetros de acesso</td>');
     ShowHTML('          <tr><td width="5%"><td colspan="3" valign="top"><table border="0" cellpadding="0" cellspacing="0" width="100%"><tr>');
-    SelecaoModulo('<u>M</u>ódulo:', 'M', 'Informe a que módulo do SIW esta opção está vinculada. Caso não esteja vinculado a nenhum, selecione "Opções gerais".', $w_modulo, $w_cliente, 'w_modulo', null, null);
+    selecaoModulo('<u>M</u>ódulo:', 'M', 'Informe a que módulo do SIW esta opção está vinculada. Caso não esteja vinculado a nenhum, selecione "Opções gerais".', $w_modulo, $w_cliente, 'w_modulo', null, null);
 
-    ShowHTML('              <td title="Opções de acesso geral aparecem para qualquer usuário, sem nenhuma restrição. \'Troca senha\' e \'Troca assinatura\' são exemplos onde este campo tem valor \'Sim\'."><font size="1"><b>Acesso geral?</b><br>');
+    ShowHTML('              <td title="Opções de acesso geral aparecem para qualquer usuário, sem nenhuma restrição. \'Troca senha\' e \'Troca assinatura\' são exemplos onde este campo tem valor \'Sim\'."><b>Acesso geral?</b><br>');
     if ($w_acesso_geral=='S') {
       ShowHTML('                 <input '.$w_Disabled.' class="str" type="radio" name="w_acesso_geral" value="S" checked> Sim <input '.$w_Disabled.' class="str" type="radio" name="w_acesso_geral" value="N"> Não');
     } else {
       ShowHTML('                 <input '.$w_Disabled.' class="str" type="radio" name="w_acesso_geral" value="S"> Sim <input '.$w_Disabled.' class="str" type="radio" name="w_acesso_geral" value="N" checked> Não');
     } 
 
-    ShowHTML('              <td title="Existem opções que estarão disponíveis para apenas alguns endereços da organização. Neste caso informe \'Sim\'."><font size="1"><b>Acesso descentralizado?</b><br>');
+    ShowHTML('              <td title="Existem opções que estarão disponíveis para apenas alguns endereços da organização. Neste caso informe \'Sim\'."><b>Acesso descentralizado?</b><br>');
     if ($w_descentralizado=='S') {
       ShowHTML('                 <input '.$w_Disabled.' class="str" type="radio" name="w_descentralizado" value="S" checked> Sim <input '.$w_Disabled.' class="str" type="radio" name="w_descentralizado" value="N"> Não');
     } else {
       ShowHTML('                 <input '.$w_Disabled.' class="str" type="radio" name="w_descentralizado" value="S"> Sim <input '.$w_Disabled.' class="str" type="radio" name="w_descentralizado" value="N" checked> Não');
     } 
 
-    ShowHTML('              <td title="Existem opções que não permitirão a inclusão, alteração e exclusão de registros. Neste caso informe \'Não\'."><font size="1"><b>Libera edição?</b><br>');
+    ShowHTML('              <td title="Existem opções que não permitirão a inclusão, alteração e exclusão de registros. Neste caso informe \'Não\'."><b>Libera edição?</b><br>');
     if ($w_libera_edicao=='S') {
       ShowHTML('                 <input '.$w_Disabled.' class="str" type="radio" name="w_libera_edicao" value="S" checked> Sim <input '.$w_Disabled.' class="str" type="radio" name="w_libera_edicao" value="N"> Não');
     } else {
@@ -900,12 +909,12 @@ function Menu() {
 
     ShowHTML('          <tr><td colspan=4 height="30"><font size="2"><b>Parâmetros de programação</td>');
     ShowHTML('          <tr><td width="5%"><td colspan="3" valign="top"><table border="0" cellpadding="0" cellspacing="0"><tr>');
-    ShowHTML('              <td width="10%"><font size="1"><b>Si<u>g</u>la:<br><INPUT ACCESSKEY="G" TYPE="TEXT" CLASS="sti" NAME="w_sigla" SIZE=10 MAXLENGTH=10 VALUE="'.$w_sigla.'" '.$w_Disabled.' title="Este campo é usado para implementar particularidades da opção no código-fonte. Não é possível informar a mesma sigla para duas opcões.">&nbsp;</td>');
-    ShowHTML('              <td width="5%"><font size="1"><b>P<u>1</u>:<br><INPUT ACCESSKEY="1" TYPE="TEXT" CLASS="sti" NAME="w_p1" SIZE=6 MAXLENGTH=18 VALUE="'.$w_p1.'" '.$w_Disabled.' title="Parâmetro de uso geral, usado para implementar particularidades da opção no código-fonte. Pode ser repetido em outras opções.">&nbsp;</td>');
-    ShowHTML('              <td width="5%"><font size="1"><b>P<u>2</u>:<br><INPUT ACCESSKEY="2" TYPE="TEXT" CLASS="sti" NAME="w_p2" SIZE=6 MAXLENGTH=18 VALUE="'.$w_p2.'" '.$w_Disabled.' title="Parâmetro de uso geral, usado para implementar particularidades da opção no código-fonte. Pode ser repetido em outras opções.">&nbsp;</td>');
-    ShowHTML('              <td width="5%"><font size="1"><b>P<u>3</u>:<br><INPUT ACCESSKEY="3" TYPE="TEXT" CLASS="sti" NAME="w_p3" SIZE=6 MAXLENGTH=18 VALUE="'.$w_p3.'" '.$w_Disabled.' title="Parâmetro de uso geral, usado para implementar particularidades da opção no código-fonte. Pode ser repetido em outras opções.">&nbsp;</td>');
-    ShowHTML('              <td width="5%"><font size="1"><b>P<u>4</u>:<br><INPUT ACCESSKEY="4" TYPE="TEXT" CLASS="sti" NAME="w_p4" SIZE=6 MAXLENGTH=18 VALUE="'.$w_p4.'" '.$w_Disabled.' title="Parâmetro de uso geral, usado para implementar particularidades da opção no código-fonte. Pode ser repetido em outras opções.">&nbsp;</td>');
-    ShowHTML('              <td width="20%" title="Se uma opção tem controle de tramitação (work-flow), informe \'Sim\' e preencha os dados referentes à \'Configuração do serviço\'. Caso contrário, informe \'Não\'."><font size="1"><b>Vinculada a serviço?</b><br>');
+    ShowHTML('              <td width="10%"><b>Si<u>g</u>la:<br><INPUT ACCESSKEY="G" TYPE="TEXT" CLASS="sti" NAME="w_sigla" SIZE=10 MAXLENGTH=10 VALUE="'.$w_sigla.'" '.$w_Disabled.' title="Este campo é usado para implementar particularidades da opção no código-fonte. Não é possível informar a mesma sigla para duas opcões.">&nbsp;</td>');
+    ShowHTML('              <td width="5%"><b>P<u>1</u>:<br><INPUT ACCESSKEY="1" TYPE="TEXT" CLASS="sti" NAME="w_p1" SIZE=6 MAXLENGTH=18 VALUE="'.$w_p1.'" '.$w_Disabled.' title="Parâmetro de uso geral, usado para implementar particularidades da opção no código-fonte. Pode ser repetido em outras opções.">&nbsp;</td>');
+    ShowHTML('              <td width="5%"><b>P<u>2</u>:<br><INPUT ACCESSKEY="2" TYPE="TEXT" CLASS="sti" NAME="w_p2" SIZE=6 MAXLENGTH=18 VALUE="'.$w_p2.'" '.$w_Disabled.' title="Parâmetro de uso geral, usado para implementar particularidades da opção no código-fonte. Pode ser repetido em outras opções.">&nbsp;</td>');
+    ShowHTML('              <td width="5%"><b>P<u>3</u>:<br><INPUT ACCESSKEY="3" TYPE="TEXT" CLASS="sti" NAME="w_p3" SIZE=6 MAXLENGTH=18 VALUE="'.$w_p3.'" '.$w_Disabled.' title="Parâmetro de uso geral, usado para implementar particularidades da opção no código-fonte. Pode ser repetido em outras opções.">&nbsp;</td>');
+    ShowHTML('              <td width="5%"><b>P<u>4</u>:<br><INPUT ACCESSKEY="4" TYPE="TEXT" CLASS="sti" NAME="w_p4" SIZE=6 MAXLENGTH=18 VALUE="'.$w_p4.'" '.$w_Disabled.' title="Parâmetro de uso geral, usado para implementar particularidades da opção no código-fonte. Pode ser repetido em outras opções.">&nbsp;</td>');
+    ShowHTML('              <td width="20%" title="Se uma opção tem controle de tramitação (work-flow), informe \'Sim\' e preencha os dados referentes à \'Configuração do serviço\'. Caso contrário, informe \'Não\'."><b>Vinculada a serviço?</b><br>');
     if ($w_tramite=='S') {
       ShowHTML('                 <input '.$w_Disabled.' class="str" type="radio" name="w_tramite" value="S" checked onClick="servico();"> Sim <input '.$w_Disabled.' class="str" type="radio" name="w_tramite" value="N" onClick="servico();"> Não');
     }  else {
@@ -913,14 +922,14 @@ function Menu() {
     } 
 
     ShowHTML('          </table>');
-    ShowHTML('          <tr><td colspan=4 height="30"><font size="2"><b>Configuração do serviço<br></font><font size=1 color="#FF0000">(informe os campos abaixo apenas se o campo "Vinculada a serviço" for igual a "Sim")</font></td>');
+    ShowHTML('          <tr><td colspan=4 height="30"><font size="2"><b>Configuração do serviço<br></font><font color="#FF0000">(informe os campos abaixo apenas se o campo "Vinculada a serviço" for igual a "Sim")</font></td>');
     ShowHTML('          <tr><td width="5%"><td colspan="3" valign="top"><table border="0" cellpadding="0" cellspacing="0" width="100%"><tr>');
     // Recupera a lista de unidades ativas
 
-    SelecaoUnidade('<u>U</u>nidade responsável pela execução do serviço:', 'U', 'Informe a unidade organizacional responsável pela execução deste serviço. Se a organização tiver mais de um endereço e o serviço for descentralizado, informe a unidade responsável pela execução na sede.', $w_sq_unidade_executora, null, 'w_sq_unidade_executora', null, null);
+    selecaoUnidade('<u>U</u>nidade responsável pela execução do serviço:', 'U', 'Informe a unidade organizacional responsável pela execução deste serviço. Se a organização tiver mais de um endereço e o serviço for descentralizado, informe a unidade responsável pela execução na sede.', $w_sq_unidade_executora, null, 'w_sq_unidade_executora', null, null);
     ShowHTML('          </table>');
     ShowHTML('          <tr><td width="5%"><td colspan="3" valign="top"><table width="100%" border="0" cellpadding="0" cellspacing="0"><tr align="left">');
-    ShowHTML('              <td title="Existem serviços que necessitam de uma Ordem de Serviço. Informe \'Sim\' se for o caso desta opção."><font size="1"><b>Emite OS?</b><br>');
+    ShowHTML('              <td title="Existem serviços que necessitam de uma Ordem de Serviço. Informe \'Sim\' se for o caso desta opção."><b>Emite OS?</b><br>');
     if ($w_emite_os=='S') {
       ShowHTML('                 <input '.$w_Disabled.' class="str" type="radio" name="w_emite_os" value="S" checked> Sim <input '.$w_Disabled.' class="str" type="radio" name="w_emite_os" value="N"> Não');
     } elseif ($w_emite_os=='N') {
@@ -929,7 +938,7 @@ function Menu() {
       ShowHTML('                 <input '.$w_Disabled.' class="str" type="radio" name="w_emite_os" value="S"> Sim <input '.$w_Disabled.' class="str" type="radio" name="w_emite_os" value="N" > Não');
     } 
 
-    ShowHTML('              <td title="Existem serviços que deseja-se a opinião do solicitante com relação ao atendimento. Informe \'Sim\' se for o caso desta opção."><font size="1"><b>Consulta opinião?</b><br>');
+    ShowHTML('              <td title="Existem serviços que deseja-se a opinião do solicitante com relação ao atendimento. Informe \'Sim\' se for o caso desta opção."><b>Consulta opinião?</b><br>');
     if ($w_consulta_opiniao=='S') {
       ShowHTML('                 <input '.$w_Disabled.' class="str" type="radio" name="w_consulta_opiniao" value="S" checked> Sim <input '.$w_Disabled.' class="str" type="radio" name="w_consulta_opiniao" value="N"> Não');
     } elseif ($w_consulta_opiniao=='N') {
@@ -938,7 +947,7 @@ function Menu() {
       ShowHTML('                 <input '.$w_Disabled.' class="str" type="radio" name="w_consulta_opiniao" value="S"> Sim <input '.$w_Disabled.' class="str" type="radio" name="w_consulta_opiniao" value="N" > Não');
     } 
 
-    ShowHTML('              <td title="Existem serviços que deseja-se o envio de e-mail a cada tramitação do atendimento. Informe \'Sim\' se for o caso desta opção."><font size="1"><b>Envia e-mail?</b><br>');
+    ShowHTML('              <td title="Existem serviços que deseja-se o envio de e-mail a cada tramitação do atendimento. Informe \'Sim\' se for o caso desta opção."><b>Envia e-mail?</b><br>');
     if ($w_envia_email=='S') {
       ShowHTML('                 <input '.$w_Disabled.' class="str" type="radio" name="w_envia_email" value="S" checked> Sim <input '.$w_Disabled.' class="str" type="radio" name="w_envia_email" value="N"> Não');
     } elseif ($w_envia_email=='N') {
@@ -948,7 +957,7 @@ function Menu() {
     } 
 
     ShowHTML('          <tr align="left">');
-    ShowHTML('              <td title="Existem serviços que deseja-se um resumo quantitativo periódico (atendimentos, opiniões, custos etc). Informe \'Sim\' se for o caso desta opção."><font size="1"><b>Consta do relatório gerencial?</b><br>');
+    ShowHTML('              <td title="Existem serviços que deseja-se um resumo quantitativo periódico (atendimentos, opiniões, custos etc). Informe \'Sim\' se for o caso desta opção."><b>Consta do relatório gerencial?</b><br>');
     if ($w_exibe_relatorio=='S') {
       ShowHTML('                 <input '.$w_Disabled.' class="str" type="radio" name="w_exibe_relatorio" value="S" checked> Sim <input '.$w_Disabled.' class="str" type="radio" name="w_exibe_relatorio" value="N"> Não');
     } elseif ($w_exibe_relatorio=='N') {
@@ -957,7 +966,7 @@ function Menu() {
       ShowHTML('                 <input '.$w_Disabled.' class="str" type="radio" name="w_exibe_relatorio" value="S"> Sim <input '.$w_Disabled.' class="str" type="radio" name="w_exibe_relatorio" value="N" > Não');
     } 
 
-    ShowHTML('              <td title="Existem serviços que são vinculados à unidade (eletricista, transporte etc) e outros que são vinculados ao solicitante (adiantamentos salariais, férias etc). Se a vinculação for à unidade, usuários lotados na unidade do solicitante podem ver as solicitações; caso contrário, apenas o solicitante. Indique o tipo de vinculação deste serviço."><font size="1"><b>Tipo de vinculação:</b><br>');
+    ShowHTML('              <td title="Existem serviços que são vinculados à unidade (eletricista, transporte etc) e outros que são vinculados ao solicitante (adiantamentos salariais, férias etc). Se a vinculação for à unidade, usuários lotados na unidade do solicitante podem ver as solicitações; caso contrário, apenas o solicitante. Indique o tipo de vinculação deste serviço."><b>Tipo de vinculação:</b><br>');
     if ($w_vinculacao=='P') {
       ShowHTML('                 <input '.$w_Disabled.' class="str" type="radio" name="w_vinculacao" value="P" checked> Solicitante <input '.$w_Disabled.' class="str" type="radio" name="w_vinculacao" value="U"> Unidade');
     } elseif ($w_vinculacao=='U') {
@@ -966,7 +975,7 @@ function Menu() {
       ShowHTML('                 <input '.$w_Disabled.' class="str" type="radio" name="w_vinculacao" value="P"> Solicitante <input '.$w_Disabled.' class="str" type="radio" name="w_vinculacao" value="U" > Unidade');
     } 
 
-    ShowHTML('              <td title="Alguns serviços necessitam da indicação do destinatário e outros não. Se a indicação do destinatário for necessária, uma caixa com o nome das pessoas que podem receber a solicitação será apresentada sempre que for feito um encaminhamento."><font size="1"><b>Indica destinatário?</b><br>');
+    ShowHTML('              <td title="Alguns serviços necessitam da indicação do destinatário e outros não. Se a indicação do destinatário for necessária, uma caixa com o nome das pessoas que podem receber a solicitação será apresentada sempre que for feito um encaminhamento."><b>Indica destinatário?</b><br>');
     if ($w_envio=='S') {
       ShowHTML('                 <input '.$w_Disabled.' class="str" type="radio" name="w_envio" value="S" checked> Sim <input '.$w_Disabled.' class="str" type="radio" name="w_envio" value="N"> Não');
     } elseif ($w_envio=='N') {
@@ -975,7 +984,7 @@ function Menu() {
       ShowHTML('                 <input '.$w_Disabled.' class="str" type="radio" name="w_envio" value="S"> Sim <input '.$w_Disabled.' class="str" type="radio" name="w_envio" value="N" > Não');
     } 
 
-    ShowHTML('          <tr><td colspan=3 title="Existem serviços que exigem um controle de solicitações por ano. Informe \'Sim\' se for o caso desta opção."><font size="1"><b>Controla solicitações por ano?</b><br>');
+    ShowHTML('          <tr><td colspan=3 title="Existem serviços que exigem um controle de solicitações por ano. Informe \'Sim\' se for o caso desta opção."><b>Controla solicitações por ano?</b><br>');
     if ($w_controla_ano=='S') {
       ShowHTML('                 <input '.$w_Disabled.' class="str" type="radio" name="w_controla_ano" value="S" checked> Sim <input '.$w_Disabled.' class="str" type="radio" name="w_controla_ano" value="N"> Não');
     } elseif ($w_controla_ano=='N') {
@@ -985,7 +994,7 @@ function Menu() {
     } 
 
     ShowHTML('          <tr align="left">');
-    ShowHTML('              <td colspan=3 title="Informe se esta opção pede data limite de atendimento e, se pedir, como a data deve ser informada."><font size="1"><b>Pede data limite?</b><br>');
+    ShowHTML('              <td colspan=3 title="Informe se esta opção pede data limite de atendimento e, se pedir, como a data deve ser informada."><b>Pede data limite?</b><br>');
     if ($w_data_hora=="0") {
       ShowHTML('                 <input '.$w_Disabled.' class="str" type="radio" name="w_data_hora" value="0" checked> Não<br><input '.$w_Disabled.' class="str" type="radio" name="w_data_hora" value="1"> Sim, apenas uma data (dd/mm/aaaa)<br><input '.$w_Disabled.' class="str" type="radio" name="w_data_hora" value="2"> Sim, apenas uma data/hora (dd/mm/aaaa, hh:mi)<br><input '.$w_Disabled.' class="str" type="radio" name="w_data_hora" value="3"> Sim, período de datas (dd/mm/aaaa a dd/mm/aaaa)<br><input '.$w_Disabled.' class="str" type="radio" name="w_data_hora" value="4"> Sim, período de datas/horas (dd/mm/aaaa, hh:mi a dd/mm/aaaa, hh:mi)');
     } elseif ($w_data_hora=="1") {
@@ -1001,7 +1010,7 @@ function Menu() {
     } 
 
     ShowHTML('          <tr align="left">');
-    ShowHTML('              <td title="Existem serviços que não podem ser atendidos aos sábados, domingos e feriados. Informe \'Sim\' se for o caso desta opção."><font size="1"><b>Apenas dias úteis?</b><br>');
+    ShowHTML('              <td title="Existem serviços que não podem ser atendidos aos sábados, domingos e feriados. Informe \'Sim\' se for o caso desta opção."><b>Apenas dias úteis?</b><br>');
     if ($w_envia_dia_util=='S') {
       ShowHTML('                 <input '.$w_Disabled.' class="str" type="radio" name="w_envia_dia_util" value="S" checked> Sim <input '.$w_Disabled.' class="str" type="radio" name="w_envia_dia_util" value="N"> Não');
     } elseif ($w_envia_dia_util=='N') {
@@ -1010,7 +1019,7 @@ function Menu() {
       ShowHTML('                 <input '.$w_Disabled.' class="str" type="radio" name="w_envia_dia_util" value="S"> Sim <input '.$w_Disabled.' class="str" type="radio" name="w_envia_dia_util" value="N" > Não');
     } 
 
-    ShowHTML('              <td title="Existem serviços em que deseja-se uma descrição da solicitação. Informe \'Sim\' se for o caso desta opção."><font size="1"><b>Pede descrição da solicitação?</b><br>');
+    ShowHTML('              <td title="Existem serviços em que deseja-se uma descrição da solicitação. Informe \'Sim\' se for o caso desta opção."><b>Pede descrição da solicitação?</b><br>');
     if ($w_pede_descricao=='S') {
       ShowHTML('                 <input '.$w_Disabled.' class="str" type="radio" name="w_pede_descricao" value="S" checked> Sim <input '.$w_Disabled.' class="str" type="radio" name="w_pede_descricao" value="N"> Não');
     } elseif ($w_pede_descricao=='N') {
@@ -1019,7 +1028,7 @@ function Menu() {
       ShowHTML('                 <input '.$w_Disabled.' class="str" type="radio" name="w_pede_descricao" value="S"> Sim <input '.$w_Disabled.' class="str" type="radio" name="w_pede_descricao" value="N" > Não');
     } 
 
-    ShowHTML('              <td title="Existem serviços que exigem uma justificativa da solicitação. Informe \'Sim\' se for o caso desta opção."><font size="1"><b>Pede justificativa da solicitação?</b><br>');
+    ShowHTML('              <td title="Existem serviços que exigem uma justificativa da solicitação. Informe \'Sim\' se for o caso desta opção."><b>Pede justificativa da solicitação?</b><br>');
     if ($w_pede_justificativa=='S') {
       ShowHTML('                 <input '.$w_Disabled.' class="str" type="radio" name="w_pede_justificativa" value="S" checked> Sim <input '.$w_Disabled.' class="str" type="radio" name="w_pede_justificativa" value="N"> Não');
     } elseif ($w_pede_justificativa=='N') {
@@ -1028,14 +1037,14 @@ function Menu() {
       ShowHTML('                 <input '.$w_Disabled.' class="str" type="radio" name="w_pede_justificativa" value="S"> Sim <input '.$w_Disabled.' class="str" type="radio" name="w_pede_justificativa" value="N" > Não');
     } 
 
-    ShowHTML('          <tr><td colspan=3><font size="1"><b><U>C</U>omo funciona:<br><TEXTAREA ACCESSKEY="C" class="sti" name="w_como_funciona" rows=5 cols=80 title="Descreva sucintamente o funcionamento do serviço. Você pode entrar com as regras mais evidentes. Esta informação será apresentada em todas as solicitações deste serviço.">'.$w_como_funciona.'</textarea></td>');
+    ShowHTML('          <tr><td colspan=3><b><U>C</U>omo funciona:<br><TEXTAREA ACCESSKEY="C" class="sti" name="w_como_funciona" rows=5 cols=80 title="Descreva sucintamente o funcionamento do serviço. Você pode entrar com as regras mais evidentes. Esta informação será apresentada em todas as solicitações deste serviço.">'.$w_como_funciona.'</textarea></td>');
     ScriptOpen('JavaScript');
     ShowHTML('  servico();');
     ScriptClose();
     ShowHTML('          </table>');
 
     if ($O=='I') {
-      ShowHTML('          <tr><td colspan=4 height="30"><font size="1"><b>Ativo?</b><br>');
+      ShowHTML('          <tr><td colspan=4 height="30"><b>Ativo?</b><br>');
       if ($w_ativo=='S') {
         ShowHTML('              <input '.$w_Disabled.' class="str" type="radio" name="w_ativo" value="S" checked> Sim <input '.$w_Disabled.' class="str" type="radio" name="w_ativo" value="N"> Não');
       } else {
@@ -1045,7 +1054,7 @@ function Menu() {
 
     ShowHTML('      </table>');
     ShowHTML('      </td></tr>');
-    ShowHTML('      <tr><td><font size="1"><b><U>A</U>ssinatura Eletrônica:<br><INPUT ACCESSKEY="A" class="sti" type="PASSWORD" name="w_assinatura" size="30" maxlength="30" value=""></td>');
+    ShowHTML('      <tr><td><b><U>A</U>ssinatura Eletrônica:<br><INPUT ACCESSKEY="A" class="sti" type="PASSWORD" name="w_assinatura" size="30" maxlength="30" value=""></td>');
     ShowHTML('      <tr><td align="center" colspan="3" height="1" bgcolor="#000000">');
     ShowHTML('      <tr><td align="center" colspan="3"><input class="stb" type="submit" name="Botao" value="Gravar">&nbsp;');
     ShowHTML('            <input class="stb" type="button" onClick="location.href=\''.$R.'&O=L&w_cliente='.$w_cliente.'&P1='.$P1.'&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP='.$TP.'&SG='.$SG.MontaFiltro('GET').'\';" name="Botao" value="Cancelar">');
@@ -1063,18 +1072,16 @@ function Menu() {
     ShowHTML('<tr bgcolor="'.$conTrBgColor.'"><td width="100%" align="left">');
     ShowHTML('    <table align="center" border="0">');
     ShowHTML('      <tr><td><table border=0 cellspacing=0 cellpadding=0>');
-    ShowHTML('      <tr valign="top"><td><font size="1"><b><U>O</U>rigem:<br> <SELECT READONLY ACCESSKEY="O" class="sts" name="w_heranca" size="1">');
+    ShowHTML('      <tr valign="top"><td><b><U>O</U>rigem:<br> <SELECT READONLY ACCESSKEY="O" class="sts" name="w_heranca" size="1">');
     ShowHTML('          <OPTION VALUE="">---');
     // Recupera as opções existentes
 
     $RS = db_getMenuList::getInstanceOf($dbms, $w_cliente, $O, $null);
-    while(!$RS->EOF) {
-      ShowHTML('          <OPTION VALUE='.$RS['sq_menu'].'>'.$RS['nome']);
-      $RS->MoveNext;
+    foreach($RS as $row) {
+      ShowHTML('          <OPTION VALUE='.f($row,'sq_menu').'>'.f($row,'nome'));
     } 
-    $DesconectaBD;
     ShowHTML('          </SELECT></td>');
-    ShowHTML('      <tr><td align="center"><font size=1>&nbsp;');
+    ShowHTML('      <tr><td align="center">&nbsp;');
     ShowHTML('      <tr><td align="center" height="1" bgcolor="#000000">');
     ShowHTML('      <tr><td align="center">');
     ShowHTML('            <input class="stb" type="submit" name="Botao" value="Herdar">');
@@ -1095,16 +1102,16 @@ function Menu() {
     ShowHTML('    <table width="70%">');
     ShowHTML('      <tr><td align="left"><table width="100%" border=0 cellspacing=0 cellpadding=0>');
     ShowHTML('      <tr valign="top">');
-    SelecaoEndereco('<U>E</U>ndereço:', 'E', null, $p_sq_endereco_unidade, null, 'p_sq_endereco_unidade', 'FISICO');
+    selecaoEndereco('<U>E</U>ndereço:', 'E', null, $p_sq_endereco_unidade, null, 'p_sq_endereco_unidade', 'FISICO');
     ShowHTML('      </tr>');
     ShowHTML('      <tr valign="top">');
-    SelecaoModulo('<u>M</u>ódulo:', 'M', null, $p_modulo, $w_cliente, 'p_modulo', null, null);
+    selecaoModulo('<u>M</u>ódulo:', 'M', null, $p_modulo, $w_cliente, 'p_modulo', null, null);
     ShowHTML('      </tr>');
     ShowHTML('      <tr valign="top">');
-    SelecaoMenu('<u>O</u>pção do menu principal:', 'O', null, $p_menu, null, 'p_menu', 'Pesquisa', null);
+    selecaoMenu('<u>O</u>pção do menu principal:', 'O', null, $p_menu, null, 'p_menu', 'Pesquisa', null);
     ShowHTML('      </tr>');
     ShowHTML('      </tr>');
-    ShowHTML('      <tr><td align="center" colspan="3"><font size=1>&nbsp;');
+    ShowHTML('      <tr><td align="center" colspan="3">&nbsp;');
     ShowHTML('      <tr><td align="center" colspan="3" height="1" bgcolor="#000000">');
     ShowHTML('      <tr><td align="center" colspan="3">');
     ShowHTML('            <input class="stb" type="submit" name="Botao" value="Aplicar filtro">');
@@ -1141,6 +1148,809 @@ function Menu() {
 } 
 
 // =========================================================================
+// Rotina de controle de acessos
+// -------------------------------------------------------------------------
+function Acessos() {
+  extract($GLOBALS);
+
+  $w_troca              = $_REQUEST['w_troca'];
+
+  $w_sq_pessoa          = $_REQUEST['w_sq_pessoa'];
+  $w_sq_modulo          = $_REQUEST['w_sq_modulo'];
+  $w_sq_pessoa_endereco = $_REQUEST['w_sq_pessoa_endereco'];
+
+  $RS = db_getPersonData::getInstanceOf($dbms, $w_cliente, $w_sq_pessoa, null, null);
+  $w_username = f($RS,'username');
+  $w_nome     = f($RS,'nome');
+
+  Cabecalho();
+  ShowHTML('<HEAD>');
+  Estrutura_CSS($w_cliente);
+  ShowHTML('<TITLE>'.$conSgSistema.' - Usuários</TITLE>');
+  ScriptOpen('JavaScript');
+  ValidateOpen('Validacao');
+
+  if (strpos("IAE",$O) >0) {
+
+    if ($O=='I') {
+      Validate('w_sq_modulo', 'Módulo', 'SELECT', 1, 1, 18, '', 1);
+      Validate('w_sq_pessoa_endereco', 'Endereço', 'SELECT', 1, 1, 18, '', 1);
+    } 
+
+    Validate('w_assinatura', 'Assinatura Eletrônica', '1', '1', '6', '30', '1', '1');
+    ShowHTML('  theForm.Botao[0].disabled=true;');
+    ShowHTML('  theForm.Botao[1].disabled=true;');
+  } 
+
+  ValidateClose();
+  ScriptClose();
+  ShowHTML('</HEAD>');
+  if ($O=='I')      BodyOpen('onLoad=document.Form.w_sq_modulo.focus();');
+  elseif ($O=='E')  BodyOpen('onLoad=document.Form.w_assinatura.focus();');
+  else              BodyOpen('onLoad=document.focus();');
+
+  Estrutura_Topo_Limpo();
+  Estrutura_Menu();
+  Estrutura_Corpo_Abre();
+  Estrutura_Texto_Abre();
+  ShowHTML('<table border="0" width="100%">');
+  ShowHTML('<tr bgcolor="'.$conTrBgColor.'"><td align="center">');
+  ShowHTML('    <table width="99%" border="0">');
+  ShowHTML('      <tr><td>Nome:<br><font size=2><b>'.f($RS,'nome').' </b></td>');
+  ShowHTML('          <td>Username:<br><font size=2><b>'.f($RS,'username').'</b></td>');
+  ShowHTML('          </b></td>');
+  ShowHTML('      <tr><td align="center" colspan="2" height="2" bgcolor="#000000">');
+  ShowHTML('      <tr><td align="center" colspan="2" height="1" bgcolor="#000000">');
+  ShowHTML('      <tr><td colspan="2" align="center" bgcolor="#D0D0D0"><b>Lotação</td>');
+  ShowHTML('      <tr><td align="center" colspan="2" height="1" bgcolor="#000000">');
+  ShowHTML('      <tr><td align="center" colspan="2" height="2" bgcolor="#000000">');
+  ShowHTML('      <tr><td>Unidade:<br><b>'.f($RS,'unidade').' ('.f($RS,'sigla').')</b></td>');
+  ShowHTML('          <td>e-Mail da unidade:<br><b>'.nvl(f($RS,'email_unidade'),'---').'</b></td>');
+  ShowHTML('      <tr><td colspan="2">Localização:<br><b>'.f($RS,'localizacao').' </b></td>');
+  ShowHTML('      <tr><td>Endereço:<br><b>'.f($RS,'endereco').'</b></td>');
+  ShowHTML('          <td>Cidade:<br><b>'.f($RS,'cidade').'</b></td>');
+  ShowHTML('      <tr><td colspan="2"><table border=0 width="100%" cellspacing=0>');
+  ShowHTML('          <tr><td>Telefone:<br><b>'.f($RS,'telefone').' </b></td>');
+  ShowHTML('              <td>Ramal:<br><b>'.f($RS,'ramal').'</b></td>');
+  ShowHTML('              <td>Telefone 2:<br><b>'.f($RS,'telefone2').'</b></td>');
+  ShowHTML('              <td>Fax:<br><b>'.f($RS,'fax').'</b></td>');
+  ShowHTML('          </table>');
+  if ($O=='L') {
+    ShowHTML('      <tr><td align="center" colspan="2" height="2" bgcolor="#000000">');
+    ShowHTML('      <tr><td align="center" colspan="2" height="1" bgcolor="#000000">');
+    ShowHTML('      <tr><td colspan="2" align="center" bgcolor="#D0D0D0"><b>Módulos que gere</td>');
+    ShowHTML('      <tr><td align="center" colspan="2" height="1" bgcolor="#000000">');
+    ShowHTML('      <tr><td align="center" colspan="2" height="2" bgcolor="#000000">');
+    ShowHTML('      <tr><td colspan="2"><font size=2><b>');
+    $RS = DB_GetUserModule::getInstanceOf($dbms, $w_cliente, $w_sq_pessoa);
+    ShowHTML('<tr><td>');
+    ShowHTML('    <a accesskey="I" class="ss" href="'.$w_pagina.$par.'&R='.$w_pagina.$par.'&O=I&P1='.$P1.'&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP='.$TP.'&SG='.$SG.'&w_sq_pessoa='.$w_sq_pessoa.'"><u>I</u>ncluir</a>&nbsp;');
+    ShowHTML('    <a class="ss" href="#" onClick="opener.focus(); window.close();">Fechar</a>&nbsp;');
+    ShowHTML('    <td align="right"><b>Registros: '.count($RS));
+    ShowHTML('<tr><td align="center" colspan=2>');
+    ShowHTML('    <TABLE WIDTH="100%" bgcolor="'.$conTableBgColor.'" BORDER="'.$conTableBorder.'" CELLSPACING="'.$conTableCellSpacing.'" CELLPADDING="'.$conTableCellPadding.'" BorderColorDark="'.$conTableBorderColorDark.'" BorderColorLight="'.$conTableBorderColorLight.'">');
+    ShowHTML('        <tr bgcolor="'.$conTrBgColor.'" align="center" valign="top">');
+    ShowHTML('          <td><b>Módulo</td>');
+    ShowHTML('          <td><b>Endereço</td>');
+    ShowHTML('          <td><b>Operações</td>');
+    ShowHTML('        </tr>');
+    $w_cont = '';
+    if (count($RS) <= 0) {
+      ShowHTML('      <tr bgcolor="'.$conTrBgColor.'"><td colspan=6 align="center"><font size="2"><b>Não foram encontrados registros.</b></td></tr>');
+    } else {
+      foreach($RS as $row) {
+        // Se for quebra de endereço, exibe uma linha com o endereço
+        if ($w_cont!=f($row,'Modulo')) {
+          ShowHTML('      <tr bgcolor="'.$conTrBgColor.'" valign="top">');
+          ShowHTML('        <td>'.f($row,'modulo').'</td>');
+          $w_cont=f($row,'modulo');
+        } else {
+          ShowHTML('      <tr bgcolor="'.$conTrBgColor.'" valign="top">');
+          ShowHTML('        <td align="center"></td>');
+        } 
+
+        ShowHTML('        <td>'.f($row,'endereco').'</td>');
+        ShowHTML('        <td>');
+        ShowHTML('          <A class="hl" HREF="'.$w_pagina.$par.'&R='.$w_pagina.$par.'&O=E&P1='.$P1.'&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP='.$TP.'&SG='.$SG.'&w_sq_pessoa='.$w_sq_pessoa.'&w_sq_modulo='.f($row,'sq_modulo').'&w_sq_pessoa_endereco='.f($row,'sq_pessoa_endereco').'">Excluir</A>&nbsp');
+        ShowHTML('&nbsp');
+        ShowHTML('        </td>');
+        ShowHTML('      </tr>');
+      } 
+    } 
+
+    ShowHTML('      </center>');
+    ShowHTML('    </table>');
+    ShowHTML('  </table>');
+  } else {
+    if ($O=='E') $w_Disabled='DISABLED';
+
+    ShowHTML('      <tr><td align="center" colspan="2" height="2" bgcolor="#000000">');
+    ShowHTML('      <tr><td align="center" colspan="2" height="1" bgcolor="#000000">');
+    ShowHTML('      <tr><td colspan="2" align="center" bgcolor="#D0D0D0"><font size="2"><b>Gestão de Módulo</td>');
+    ShowHTML('      <tr><td align="center" colspan="2" height="1" bgcolor="#000000">');
+    ShowHTML('      <tr><td align="justify" colspan="2"><font size=2>Informe o módulo e o endereço que deseja indicar o usuário acima como gestor.</font></td></tr>');
+    ShowHTML('      <tr><td align="center" colspan="2" height="2" bgcolor="#000000">');
+    ShowHTML('      <tr><td colspan="2"><font size=2><b>');
+    AbreForm('Form',$w_pagina.'Grava', 'POST', 'return(Validacao(this));', null,$P1,$P2,$P3,$P4,$TP,$SG,$R,$O);
+    ShowHTML('<INPUT type="hidden" name="w_troca" value="">');
+    ShowHTML('<INPUT type="hidden" name="w_sq_pessoa" value="'.$w_sq_pessoa.'">');
+    if ($O=='E') {
+      ShowHTML('<INPUT type="hidden" name="w_sq_modulo" value="'.$w_sq_modulo.'">');
+      ShowHTML('<INPUT type="hidden" name="w_sq_pessoa_endereco" value="'.$w_sq_pessoa_endereco.'">');
+    } 
+
+
+    ShowHTML('<tr bgcolor="'.$conTrBgColor.'"><td align="center">');
+    ShowHTML('    <table width="90%" border="0">');
+    ShowHTML('      <tr>');
+    selecaoModulo('<u>M</u>ódulo:', 'M', null, $w_sq_modulo, $w_cliente, 'w_sq_modulo', null, null);
+    selecaoEndereco('<U>E</U>ndereço:', 'E', null, $w_sq_pessoa_endereco, null, 'w_sq_pessoa_endereco', 'FISICO');
+    ShowHTML('      </tr>');
+    ShowHTML('      <tr><td><b><U>A</U>ssinatura Eletrônica:<br><INPUT ACCESSKEY="A" class="sti" type="PASSWORD" name="w_assinatura" size="30" maxlength="30" value=""></td>');
+    ShowHTML('      </table>');
+    ShowHTML('      <tr><td align="center" colspan="3" height="1" bgcolor="#000000">');
+    ShowHTML('      <tr><td align="center" colspan="3">');
+    if ($O=='E') {
+      ShowHTML('            <input class="stb" type="submit" name="Botao" value="Excluir">');
+    } else {
+      ShowHTML('            <input class="stb" type="submit" name="Botao" value="Gravar">');
+    } 
+
+    ShowHTML('            <input class="stb" type="button" onClick="location.href=\''.$w_pagina.$par.'&P1='.$P1.'&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP='.$TP.'&SG='.$SG.'&w_sq_pessoa='.$w_sq_pessoa.'&O=L\';" name="Botao" value="Cancelar">');
+    ShowHTML('          </td>');
+    ShowHTML('      </tr>');
+    ShowHTML('    </table>');
+    ShowHTML('    </TD>');
+    ShowHTML('</tr>');
+    ShowHTML('</FORM>');
+  } 
+
+  ShowHTML('  </td>');
+  ShowHTML('</tr>');
+  ShowHTML('</table>');
+  Estrutura_Texto_Fecha();
+  Estrutura_Fecha();
+  Estrutura_Fecha();
+  Estrutura_Fecha();
+  Rodape();
+
+  return $function_ret;
+} 
+
+// =========================================================================
+// Rotina de controle da visão de usuário a centros de custo
+// -------------------------------------------------------------------------
+function Visao() {
+  extract($GLOBALS);
+
+  $w_troca      = $_REQUEST['w_troca'];
+
+  $w_sq_pessoa  = $_REQUEST['w_sq_pessoa'];
+  $w_sq_cc      = $_REQUEST['w_sq_cc'];
+  $w_sq_menu    = $_REQUEST['w_sq_menu'];
+
+  $RS = db_getPersonData::getInstanceOf($dbms, $w_cliente, $w_sq_pessoa, null, null);
+  $w_username   = f($RS,'username');
+  $w_nome       = f($RS,'nome');
+  Cabecalho();
+  ShowHTML('<HEAD>');
+  Estrutura_CSS($w_cliente);
+  ShowHTML('<TITLE>'.$conSgSistema.' - Usuários</TITLE>');
+  ScriptOpen('JavaScript');
+  ValidateOpen('Validacao');
+  if (strpos('IAE',$O) >=0) {
+    if ($O=='I') {
+      Validate('w_sq_menu', 'Serviço', 'SELECT', '1', '1', '18', null, '1');
+      ShowHTML('  var i, j; ');
+      ShowHTML('  var w_erro=true; ');
+      ShowHTML('  for (i=0; i < theForm["w_sq_cc[]"].length; i++) {');
+      ShowHTML('    if (theForm["w_sq_cc[]"][i].checked) w_erro=false;');
+      ShowHTML('  }');
+      ShowHTML('  if (w_erro) {');
+      ShowHTML('    alert(\'Você deve informar pelo menos uma classificação!\'); ');
+      ShowHTML('    return false;');
+      ShowHTML('  }');
+    } 
+    Validate('w_assinatura', 'Assinatura Eletrônica', '1', '1', '6', '30', '1', '1');
+    ShowHTML('  theForm.Botao[0].disabled=true;');
+    ShowHTML('  theForm.Botao[1].disabled=true;');
+  } 
+
+  ValidateClose();
+  ScriptClose();
+  ShowHTML('</HEAD>');
+  if ($O=='I')      BodyOpen('onLoad=document.Form.w_sq_menu.focus();');
+  elseif ($O=='E')  BodyOpen('onLoad=document.Form.w_assinatura.focus();');
+  else              BodyOpen('onLoad=document.focus();');
+
+  Estrutura_Topo_Limpo();
+  Estrutura_Menu();
+  Estrutura_Corpo_Abre();
+  Estrutura_Texto_Abre();
+  ShowHTML('<table border="0" width="100%">');
+  ShowHTML('<tr bgcolor="'.$conTrBgColor.'"><td align="center">');
+  ShowHTML('    <table width="99%" border="0">');
+  ShowHTML('      <tr><td>Nome:<br><font size=2><b>'.f($RS,'nome').' </b></td>');
+  ShowHTML('          <td>Username:<br><font size=2><b>'.f($RS,'username').'</b></td>');
+  ShowHTML('          </b></td>');
+  ShowHTML('      <tr><td align="center" colspan="2" height="2" bgcolor="#000000">');
+  ShowHTML('      <tr><td align="center" colspan="2" height="1" bgcolor="#000000">');
+  ShowHTML('      <tr><td colspan="2" align="center" bgcolor="#D0D0D0"><b>Lotação</td>');
+  ShowHTML('      <tr><td align="center" colspan="2" height="1" bgcolor="#000000">');
+  ShowHTML('      <tr><td align="center" colspan="2" height="2" bgcolor="#000000">');
+  ShowHTML('      <tr><td>Unidade:<br><b>'.f($RS,'unidade').' ('.f($RS,'sigla').')</b></td>');
+  ShowHTML('          <td>e-Mail da unidade:<br><b>'.nvl(f($RS,'email_unidade'),'---').'</b></td>');
+  ShowHTML('      <tr><td colspan="2">Localização:<br><b>'.f($RS,'localizacao').' </b></td>');
+  ShowHTML('      <tr><td>Endereço:<br><b>'.f($RS,'endereco').'</b></td>');
+  ShowHTML('          <td>Cidade:<br><b>'.f($RS,'cidade').'</b></td>');
+  ShowHTML('      <tr><td colspan="2"><table border=0 width="100%" cellspacing=0>');
+  ShowHTML('          <tr><td>Telefone:<br><b>'.f($RS,'telefone').' </b></td>');
+  ShowHTML('              <td>Ramal:<br><b>'.f($RS,'ramal').'</b></td>');
+  ShowHTML('              <td>Telefone 2:<br><b>'.f($RS,'telefone2').'</b></td>');
+  ShowHTML('              <td>Fax:<br><b>'.f($RS,'fax').'</b></td>');
+  ShowHTML('          </table>');
+  if ($O=="L") {
+
+    ShowHTML('      <tr><td align="center" colspan="2" height="2" bgcolor="#000000">');
+    ShowHTML('      <tr><td align="center" colspan="2" height="1" bgcolor="#000000">');
+    ShowHTML('      <tr><td colspan="2" align="center" bgcolor="#D0D0D0"><b>Visão por serviço</td>');
+    ShowHTML('      <tr><td align="center" colspan="2" height="1" bgcolor="#000000">');
+    ShowHTML('      <tr><td align="center" colspan="2" height="2" bgcolor="#000000">');
+    ShowHTML('      <tr><td colspan="2"><font size=2><b>');
+    $RS = DB_GetUserVision::getInstanceOf($dbms, null, $w_sq_pessoa);
+    ShowHTML('<tr><td>');
+    ShowHTML('    <a accesskey="I" class="ss" href="'.$w_pagina.$par.'&R='.$w_pagina.$par.'&O=I&P1='.$P1.'&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP='.$TP.'&SG='.$SG.'&w_sq_pessoa='.$w_sq_pessoa.'"><u>I</u>ncluir</a>&nbsp;');
+    ShowHTML('    <a class="ss" href="#" onClick="opener.focus(); window.close();">Fechar</a>&nbsp;');
+    ShowHTML('    <td align="right"><b>Registros: '.count($RS));
+    ShowHTML('<tr><td align="center" colspan=2>');
+    ShowHTML('    <TABLE WIDTH="100%" bgcolor="'.$conTableBgColor.'" BORDER="'.$conTableBorder.'" CELLSPACING="'.$conTableCellSpacing.'" CELLPADDING="'.$conTableCellPadding.'" BorderColorDark="'.$conTableBorderColorDark.'" BorderColorLight="'.$conTableBorderColorLight.'">');
+    ShowHTML('        <tr bgcolor="'.$conTrBgColor.'" align="center" valign="top">');
+    ShowHTML('          <td><b>Serviço</td>');
+    ShowHTML('          <td><b>Operações</td>');
+    ShowHTML('          <td><b>Configuração atual</td>');
+    ShowHTML('        </tr>');
+    $w_cont='';
+    if (count($RS)<=0) {
+      ShowHTML('      <tr bgcolor="'.$conTrBgColor.'"><td colspan=6 align="center"><font size="2"><b>Não foram encontrados registros.</b></td></tr>');
+    } else {
+      foreach($RS as $row) {
+        // Se for quebra de endereço, exibe uma linha com o endereço
+        if ($w_cont!=f($row,'nm_servico')) {
+          ShowHTML('      <tr bgcolor="'.$conTrBgColor.'" valign="top">');
+          ShowHTML('        <td>'.f($row,'nm_servico').'('.f($row,'nm_modulo').')</td>');
+          $w_cont=f($row,'nm_servico');
+          ShowHTML('        <td>');
+          ShowHTML('          <A class="hl" HREF="'.$w_pagina.$par.'&R='.$w_pagina.$par.'&O=A&P1='.$P1.'&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP='.$TP.'&SG='.$SG.'&w_sq_pessoa='.$w_sq_pessoa.'&w_sq_cc='.f($row,'sq_cc').'&w_sq_menu='.f($row,'sq_menu').'">Alterar</A>&nbsp');
+          ShowHTML('&nbsp');
+          ShowHTML('        </td>');
+        } else {
+          ShowHTML('      <tr bgcolor="'.$conTrBgColor.'" valign="top">');
+          ShowHTML('        <td align="center"></td>');
+          ShowHTML('        <td align="center"></td>');
+        } 
+        ShowHTML('        <td>'.f($row,'nm_cc').'</td>');
+        ShowHTML('      </tr>');
+      } 
+    } 
+
+    ShowHTML('      </center>');
+    ShowHTML('    </table>');
+    ShowHTML('  </table>');
+  } else {
+    if ($O=='A') $w_Disabled='DISABLED';
+    ShowHTML('      <tr><td align="center" colspan="2" height="2" bgcolor="#000000">');
+    ShowHTML('      <tr><td align="center" colspan="2" height="1" bgcolor="#000000">');
+    ShowHTML('      <tr><td colspan="2" align="center" bgcolor="#D0D0D0"><b>Visão por serviço</td>');
+    ShowHTML('      <tr><td align="center" colspan="2" height="1" bgcolor="#000000">');
+    ShowHTML('      <tr><td align="justify" colspan="2"><font size=2>Informe o serviço e as classificações nas quais o usuário deve ter visão geral.</font></td></tr>');
+    ShowHTML('      <tr><td align="center" colspan="2" height="2" bgcolor="#000000">');
+    ShowHTML('      <tr><td colspan="2"><font size=2><b>');
+    AbreForm('Form',$w_pagina.'Grava', 'POST', 'return(Validacao(this));', null,$P1,$P2,$P3,$P4,$TP,$SG,$R,$O);
+    ShowHTML('<INPUT type="hidden" name="w_troca" value="">');
+    ShowHTML('<INPUT type="hidden" name="w_sq_pessoa" value="'.$w_sq_pessoa.'">');
+    if ($O=='A') {
+      ShowHTML('<INPUT type="hidden" name="w_sq_menu" value="'.$w_sq_menu.'">');
+    } 
+
+    ShowHTML('<tr bgcolor="'.$conTrBgColor.'"><td align="center">');
+    ShowHTML('    <table width="90%" border="0">');
+    ShowHTML('      <tr valign="top">');
+    selecaoServico('<U>S</U>erviço:', 'S', null, $w_sq_menu, null, 'w_sq_menu', null, 'onChange="document.Form.action=\''.$w_pagina.$par.'\'; document.Form.O.value=\''.$O.'\'; document.Form.w_troca.value=\'w_sq_menu\'; document.Form.submit();"');
+    ShowHTML('         <td><b>Classificações</b>:<br>');
+    // Apresenta a seleção de centros de custo apenas se tiver sido escolhido o serviço
+    $w_ContOut=0;
+    if ($w_sq_menu>'') {
+      $RS = DB_GetCCTreeVision::getInstanceOf($dbms, $w_cliente, $w_sq_pessoa, $w_sq_menu, 'IS NULL');
+      foreach($RS as $row) {
+        $w_ContOut=$w_ContOut+1;
+        if (f($row,'Filho')>0) {
+          ShowHTML('<img src="images/folder/FolderClose.gif" border=0 align="center"> '.f($row,'sigla').'</font>');
+          ShowHTML('   <div style="position:relative; left:12;">');
+          $RS1 = DB_GetCCTreeVision::getInstanceOf($dbms, $w_cliente, $w_sq_pessoa, $w_sq_menu, f($row,'sq_cc'));
+          foreach($RS1 as $row1) {
+
+            if (f($row1,'Filho')>0) {
+
+              $w_ContOut=$w_ContOut+1;
+              ShowHTML('<img src="images/folder/FolderClose.gif" border=0 align="center"> '.f($row1,'sigla'));
+              ShowHTML('   <div style="position:relative; left:12;">');
+              $RS2 = DB_GetCCTreeVision::getInstanceOf($dbms, $w_cliente, $w_sq_pessoa, $w_sq_menu, f($row1,'sq_cc'));
+              foreach($RS2 as $row2) {
+                if (f($row2,'Filho')>0) {
+                  $w_ContOut=$w_ContOut+1;
+                  ShowHTML('<img src="images/folder/FolderClose.gif" border=0 align="center"> '.f($row2,'sigla'));
+                  ShowHTML('   <div style="position:relative; left:12;">');
+                  $RS3 = DB_GetCCTreeVision::getInstanceOf($dbms, $w_cliente, $w_sq_pessoa, $w_sq_menu, f($row2,'sq_cc'));
+                  foreach($RS3 as $row3) {
+                    if (f($row3,'existe')>0) {
+                      ShowHTML('    <input checked type="checkbox" name="w_sq_cc[]" value="'.f($row3,'sq_cc').'"> '.f($row3,'sigla').'<br>');
+                    } else {
+                      ShowHTML('    <input type="checkbox" name="w_sq_cc[]" value="'.f($row3,'sq_cc').'"> '.f($row3,'sigla').'<br>');
+                    } 
+                  } 
+                  ShowHTML('   </div>');
+                } else {
+                  if (f($row2,'existe')>0) {
+                    ShowHTML('    <input checked type="checkbox" name="w_sq_cc[]" value="'.f($row2,'sq_cc').'"> '.f($row2,'sigla').'<br>');
+                  } else {
+                    ShowHTML('    <input type="checkbox" name="w_sq_cc[]" value="'.f($row2,'sq_cc').'"> '.f($row2,'sigla').'<br>');
+                  } 
+                } 
+              } 
+              ShowHTML('   </div>');
+            } else {
+              if (f($row1,'existe')>0) {
+                ShowHTML('    <input checked type="checkbox" name="w_sq_cc[]" value="'.f($row1,'sq_cc').'"> '.f($row1,'sigla').'<br>');
+              } else {
+                ShowHTML('    <input type="checkbox" name="w_sq_cc[]" value="'.f($row1,'sq_cc').'"> '.f($row1,'sigla').'<br>');
+              } 
+            } 
+          } 
+          ShowHTML('   </div>');
+        } else {
+          if (f($row,'existe')>0) {
+            ShowHTML('    <input checked type="checkbox" name="w_sq_cc[]" value="'.f($row,'sq_cc').'"> '.f($row,'sigla').'<br>');
+          } else {
+            ShowHTML('    <input type="checkbox" name="w_sq_cc[]" value="'.f($row,'sq_cc').'"> '.f($row,'sigla').'<br>');
+          } 
+        } 
+      } 
+    } 
+
+    if ($w_ContOut==0) {
+      // Se não achou registros
+      ShowHTML('Não foram encontrados registros.');
+    } 
+
+    ShowHTML('      </tr>');
+    ShowHTML('      <tr><td colspan=2><b><U>A</U>ssinatura Eletrônica:<br><INPUT ACCESSKEY="A" class="sti" type="PASSWORD" name="w_assinatura" size="30" maxlength="30" value=""></td>');
+    ShowHTML('      </table>');
+    ShowHTML('      <tr><td align="center" colspan="2" height="1" bgcolor="#000000">');
+    ShowHTML('      <tr><td align="center" colspan="2">');
+    if ($O=='E') {
+      ShowHTML('            <input class="stb" type="submit" name="Botao" value="Excluir">');
+    } else {
+      ShowHTML('            <input class="stb" type="submit" name="Botao" value="Gravar">');
+    } 
+
+    ShowHTML('            <input class="stb" type="button" onClick="location.href=\''.$w_pagina.$par.'&P1='.$P1.'&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP='.$TP.'&SG='.$SG.'&w_sq_pessoa='.$w_sq_pessoa.'&O=L\';" name="Botao" value="Cancelar">');
+    ShowHTML('          </td>');
+    ShowHTML('      </tr>');
+    ShowHTML('    </table>');
+    ShowHTML('    </TD>');
+    ShowHTML('</tr>');
+    ShowHTML('</FORM>');
+  } 
+
+  ShowHTML('  </td>');
+  ShowHTML('</tr>');
+  ShowHTML('</table>');
+  Estrutura_Texto_Fecha();
+  Estrutura_Fecha();
+  Estrutura_Fecha();
+  Estrutura_Fecha();
+  Rodape();
+  return $function_ret;
+} 
+
+// =========================================================================
+// Rotina de reinicialização da senha de usuários
+// -------------------------------------------------------------------------
+function NovaSenha() {
+  extract($GLOBALS);
+
+  // Cria a nova senha, pegando a hora e o minuto correntes
+  $w_senha = 'nova'.substr(str_replace(':','',strftime("%H:%M:%S %p")),2,4);
+
+  // Atualiza a senha de acesso e a assinatura eletrônica, igualando as duas
+  db_updatePassword::getInstanceOf($dbms,$w_cliente,$_REQUEST['w_sq_pessoa'], $w_senha, 'PASSWORD');
+  db_updatePassword::getInstanceOf($dbms,$w_cliente,$_REQUEST['w_sq_pessoa'], $w_senha, 'SIGNATURE');
+
+  // Configura a mensagem automática comunicando ao usuário sua nova senha de acesso e assinatura eletrônica
+  $w_html = '<HTML><HEAD><TITLE>Reinicialização de senha</TITLE></HEAD>'.chr(13);
+  $w_html = $w_html.BodyOpenMail().chr(13);
+  $w_html = $w_html.'<table border="0" cellpadding="0" cellspacing="0" width="100%">'.chr(13);
+  $w_html = $w_html.'<tr bgcolor="'.$conTrBgColor.'"><td align="center">'.chr(13);
+  $w_html = $w_html.'    <table width="97%" border="0">'.chr(13);
+  $w_html = $w_html.'      <tr valign="top"><td align="center"><font size=2><b>REINICIALIZAÇÃO DE SENHA</b></font><br><br><td></tr>'.chr(13);
+  $w_html = $w_html.'      <tr valign="top"><td><font size=2><b><font color="#BC3131">ATENÇÃO</font>: Esta é uma mensagem de envio automático. Não responda esta mensagem.</b></font><br><br><td></tr>'.chr(13);
+  $w_html = $w_html.'      <tr valign="top"><td><font size=2>'.chr(13);
+  $w_html = $w_html.'         Sua senha e assinatura eletrônica foram reinicializadas. A partir de agora, utilize os dados informados abaixo:<br>'.chr(13);
+  $w_html = $w_html.'         <ul>'.chr(13);
+  $RS = DB_GetCustomerSite::getInstanceOf($dbms, $w_cliente);
+  $w_html = $w_html.'         <li>Endereço de acesso ao sistema: <b><a class="ss" href="'.f($RS,'logradouro').'" target="_blank">'.f($RS,'Logradouro').'</a></b></li>'.chr(13);
+  $RS = DB_GetUserData::getInstanceOf($dbms,  $w_cliente, $_REQUEST['w_username']);
+  $w_html = $w_html.'         <li>CPF: <b>'.f($RS,'username').'</b></li>'.chr(13);
+  $w_html = $w_html.'         <li>Nome: <b>'.f($RS,'nome').'</b></li>'.chr(13);
+  $w_html = $w_html.'         <li>e-Mail: <b>'.f($RS,'email').'</b></li>'.chr(13);
+  $w_html = $w_html.'         <li>Senha de acesso: <b>'.$w_senha.'</b></li>'.chr(13);
+  $w_html = $w_html.'         <li>Assinatura eletrônica: <b>'.$w_senha.'</b></li>'.chr(13);
+  $w_html = $w_html.'         </ul>'.chr(13);
+  $w_html = $w_html.'      </font></td></tr>'.chr(13);
+  $w_html = $w_html.'      <tr valign="top"><td><font size=2>'.chr(13);
+  $w_html = $w_html.'         Orientações e observações:<br>'.chr(13);
+  $w_html = $w_html.'         <ol>'.chr(13);
+  $w_html = $w_html.'         <li>Troque sua senha de acesso e assinatura no primeiro acesso que fizer ao sistema.</li>'.chr(13);
+  $w_html = $w_html.'         <li>Para trocar sua senha de acesso, localize no menu a opção <b>Troca senha</b> e clique sobre ela, seguindo as orientações apresentadas.</li>'.chr(13);
+  $w_html = $w_html.'         <li>Para trocar sua assinatura eletrônica, localize no menu a opção <b>Assinatura eletrônica</b> e clique sobre ela, seguindo as orientações apresentadas.</li>'.chr(13);
+  $w_html = $w_html.'         <li>Você pode fazer com que a senha de acesso e a assinatura eletrônica tenham o mesmo valor ou valores diferentes. A decisão é sua.</li>'.chr(13);
+  $RS = DB_GetCustomerData::getInstanceOf($dbms, $w_cliente);
+  $w_html = $w_html.'         <li>Tanto a senha quanto a assinatura eletrônica têm tempo de vida máximo de <b>'.f($RS,'dias_vig_senha').'</b> dias. O sistema irá recomendar a troca <b>'.f($RS,'dias_aviso_expir').'</b> dias antes da expiração do tempo de vida.</li>'.chr(13);
+  $w_html = $w_html.'         <li>O sistema irá bloquear seu acesso se você errar sua senha de acesso ou sua senha de acesso <b>'.f($RS,'maximo_tentativas').'</b> vezes consecutivas. Se você tiver dúvidas ou não lembrar sua senha de acesso ou assinatura de acesso, utilize a opção "Lembrar senha" na tela de autenticação do sistema.</li>'.chr(13);
+  $w_html = $w_html.'         <li>Acessos bloqueados por expiração do tempo de vida da senha de acesso ou assinaturas eletrônicas, ou por exceder o máximo de erros consecutivos, só podem ser desbloqueados pelo gestor de segurança do sistema.</li>'.chr(13);
+  $w_html = $w_html.'         </ol>'.chr(13);
+  $w_html = $w_html.'      </font></td></tr>'.chr(13);
+  $w_html = $w_html.'      <tr valign="top"><td><font size=2>'.chr(13);
+  $w_html = $w_html.'         Dados da ocorrência:<br>'.chr(13);
+  $w_html = $w_html.'         <ul>'.chr(13);
+  $w_html = $w_html.'         <li>Data do servidor: <b>'.date('d/m/Y, H:i:s').'</b></li>'.chr(13);
+  $w_html = $w_html.'         <li>IP de origem: <b>'.$_SERVER['REMOTE_HOST'].'</b></li>'.chr(13);
+  $w_html = $w_html.'         <li>Usuário responsável: <b>'.$_SESSION['NOME'].' ('.$_SESSION['EMAIL'].')</b></li>'.chr(13);
+  $w_html = $w_html.'         </ul>'.chr(13);
+  $w_html = $w_html.'      </font></td></tr>'.chr(13);
+  $w_html = $w_html.'    </table>'.chr(13);
+  $w_html = $w_html.'</td></tr>'.chr(13);
+  $w_html = $w_html.'</table>'.chr(13);
+  $w_html = $w_html.'</BODY>'.chr(13);
+  $w_html = $w_html.'</HTML>'.chr(13);
+  print $w_html;
+
+  return $function_ret;
+} 
+
+// =========================================================================
+// Rotina de tela de exibição do usuário
+// -------------------------------------------------------------------------
+
+function TelaUsuario() {
+  extract($GLOBALS);
+
+  $w_sq_pessoa = $_REQUEST['w_sq_pessoa'];
+
+  $RS = db_getPersonData::getInstanceOf($dbms, $w_cliente, $w_sq_pessoa, null, null);
+
+  Cabecalho();
+  ShowHTML('<HEAD>');
+  Estrutura_CSS($w_cliente);
+  if (f($RS,'interno')=='S') {
+    ShowHTML('<TITLE>Usuário</TITLE>');
+    ShowHTML('</HEAD>');
+    BodyOpen('onLoad=document.focus();');
+    $TP = 'Dados usuário';
+    Estrutura_Texto_Abre();
+    ShowHTML('<table border="0" width="100%">');
+    ShowHTML('<tr bgcolor="'.$conTrBgColor.'"><td>');
+    ShowHTML('    <table width="99%" border="0">');
+    ShowHTML('      <tr valign="top">');
+    ShowHTML('          <td>Nome:<br><font size=2><b>'.f($RS,'nome').' </b></td>');
+    ShowHTML('          <td>Nome resumido:<br><font size=2><b>'.f($RS,'nome_resumido').'</b></td>');
+    if (nvl(f($RS,'email'),'')>'') {
+      ShowHTML('      <tr><td colspan=2>e-Mail:<br><b><A class="hl" HREF="mailto:'.f($RS,'email').'">'.f($RS,'email').'</a></b></td>');
+    } else {
+      ShowHTML('      <tr><td colspan=2>e-Mail:<br><b>---</b></td>');
+    } 
+
+    ShowHTML('      <tr><td align="center" colspan="2" height="2" bgcolor="#000000">');
+    ShowHTML('      <tr><td align="center" colspan="2" height="1" bgcolor="#000000">');
+    ShowHTML('      <tr><td colspan="2" align="center" bgcolor="#D0D0D0"><b>Lotação</td>');
+    ShowHTML('      <tr><td align="center" colspan="2" height="1" bgcolor="#000000">');
+    ShowHTML('      <tr><td align="center" colspan="2" height="2" bgcolor="#000000">');
+    ShowHTML('      <tr><td>Unidade:<br><b>'.f($RS,'unidade').' ('.f($RS,'sigla').')</b></td>');
+    if (nvl(f($RS,'email_unidade'),'')>'') {
+      ShowHTML('          <td>e-Mail da unidade:<br><b><A class="hl" HREF="mailto:'.f($RS,'email_unidade').'">'.f($RS,'email_unidade').'</a></b></td>');
+    } else {
+      ShowHTML('          <td>e-Mail da unidade:<br><b>---</b></td>');
+    } 
+
+    ShowHTML('      <tr><td colspan="2">Localização:<br><b>'.f($RS,'localizacao').' </b></td>');
+    ShowHTML('      <tr valign="top">');
+    ShowHTML('          <td>Endereço:<br><b>'.f($RS,'endereco').'</b></td>');
+    ShowHTML('          <td>Cidade:<br><b>'.f($RS,'cidade').'</b></td>');
+    ShowHTML('      <tr><td colspan="2"><table border=0 width="100%" cellspacing=0><tr valign="top">');
+    ShowHTML('          <td>Telefone:<br><b>'.nvl(f($RS,'telefone'), '---').' </b></td>');
+    ShowHTML('          <td>Ramal:<br><b>'.nvl(f($RS,'ramal'), '---').'</b></td>');
+    ShowHTML('          <td>Telefone 2:<br><b>'.nvl(f($RS,'telefone2'), '---').'</b></td>');
+    ShowHTML('          <td>Fax:<br><b>'.nvl(f($RS,'fax'), '---').'</b></td>');
+    ShowHTML('          </table>');
+    ShowHTML('  </td>');
+    ShowHTML('</tr>');
+    ShowHTML('</table>');
+  } elseif (strpos("Cliente,Fornecedor",f($RS,'nome_vinculo')) >0) {
+    ShowHTML('<TITLE>Pessoa externa</TITLE>');
+    ShowHTML('</HEAD>');
+    BodyOpen('onLoad=document.focus();');
+    $TP='Dados pessoa externa';
+    Estrutura_Texto_Abre();
+    ShowHTML('<table border="0" width="100%">');
+    ShowHTML('<tr bgcolor="'.$conTrBgColor.'"><td>');
+    ShowHTML('    <table width="99%" border="0">');
+    // Outra parte
+    $RS1 = DB_GetBenef::getInstanceOf($dbms, $w_cliente, $w_sq_pessoa, null, null, null, null, null, null);
+    if (count($RS1)<=0) {
+      ShowHTML('      <tr><td colspan=2><font size=2><b>Outra parte não informada');
+    } else {
+      ShowHTML('      <tr><td>Nome:<br><font size=2><b>'.f($RS1,'nm_pessoa'));
+      ShowHTML('          <td>Nome resumido:<br><font size=2><b>'.f($RS1,'nome_resumido'));
+      if (nvl(f($RS1,'email'),'nulo')!='nulo') {
+        ShowHTML('      <tr><td>e-Mail:<b><br><a class="hl" href="mailto:'.f($RS1,'email').'">'.f($RS1,'email').'</a></td>');
+      } else {
+        ShowHTML('      <tr><td>e-Mail:<b><br>---</td>');
+      } 
+
+      if (f($RS1,'sq_tipo_pessoa')==1) {
+        ShowHTML('          <td colspan="2">Sexo:<b><br>'.f($RS1,'nm_sexo').'</td>');
+        ShowHTML('      <tr><td align="center" colspan="2" height="2" bgcolor="#000000">');
+        ShowHTML('      <tr><td align="center" colspan="2" height="1" bgcolor="#000000">');
+        ShowHTML('      <tr><td colspan="2" align="center" bgcolor="#D0D0D0"><b>Endereço comercial, Telefones e e-Mail</td>');
+        ShowHTML('      <tr><td align="center" colspan="2" height="1" bgcolor="#000000">');
+        ShowHTML('      <tr><td align="center" colspan="2" height="2" bgcolor="#000000">');
+      } else {
+        ShowHTML('      <tr><td align="center" colspan="2" height="2" bgcolor="#000000">');
+        ShowHTML('      <tr><td align="center" colspan="2" height="1" bgcolor="#000000">');
+        ShowHTML('      <tr><td colspan="2" align="center" bgcolor="#D0D0D0"><b>Endereço principal, Telefones e e-Mail</td>');
+        ShowHTML('      <tr><td align="center" colspan="2" height="1" bgcolor="#000000">');
+        ShowHTML('      <tr><td align="center" colspan="2" height="2" bgcolor="#000000">');
+      } 
+
+      ShowHTML('      <tr><td colspan="2"><table border=0 width="100%" cellspacing=0>');
+      ShowHTML('          <tr valign="top">');
+      if (nvl(f($RS1,'ddd'),'')>'') {
+        ShowHTML('          <td>Telefone:<b><br>('.f($RS1,'ddd').') '.f($RS1,'nr_telefone').'</td>');
+      } else {
+        ShowHTML('          <td>Telefone:<b><br>---</td>');
+      } 
+
+      ShowHTML('          <td>Fax:<b><br>'.nvl(f($RS1,'nr_fax'),'---').'</td>');
+      ShowHTML('          <td>Celular:<b><br>'.nvl(f($RS1,'nr_celular'),'---').'</td>');
+      ShowHTML('          <tr valign="top">');
+      ShowHTML('          <td>Endereço:<b><br>'.nvl(f($RS1,'logradouro'),'---').'</td>');
+      ShowHTML('          <td>Complemento:<b><br>'.nvl(f($RS1,'complemento'),'---').'</td>');
+      ShowHTML('          <td>Bairro:<b><br>'.nvl(f($RS1,'bairro'),'---').'</td>');
+      ShowHTML('          <tr valign="top">');
+      if (nvl(f,$RS1('pd_pais'),'')>'') {
+        if (f($RS1,'pd_pais')=='S') {
+          ShowHTML('          <td>Cidade:<b><br>'.f($RS1,'nm_cidade').'-'.f($RS1,'co_uf').'</td>');
+        } else {
+          ShowHTML('          <td>Cidade:<b><br>'.f($RS1,'nm_cidade').'-'.f($RS1,'nm_pais').'</td>');
+        } 
+      } else {
+        ShowHTML('          <td>Cidade:<b><br>---</td>');
+      } 
+
+      ShowHTML('          <td>CEP:<b><br>'.nvl(f,$RS1('cep'),'---').'</td>');
+      ShowHTML('          </table>');
+    } 
+
+    ShowHTML('  </td>');
+    ShowHTML('</tr>');
+    ShowHTML('</table>');
+  } 
+
+  Estrutura_Texto_Fecha();
+
+  return $function_ret;
+} 
+
+// =========================================================================
+// Rotina de tela de exibição do usuário
+// -------------------------------------------------------------------------
+
+function TelaUnidade() {
+  extract($GLOBALS);
+
+  $w_sq_unidade=$_REQUEST['w_sq_unidade'];
+
+  $RS = DB_GetUorgData::getInstanceOf($dbms, $w_sq_unidade);
+  Cabecalho();
+  ShowHTML('<HEAD>');
+  Estrutura_CSS($w_cliente);
+  ShowHTML('<TITLE>Unidade</TITLE>');
+  ScriptOpen('JavaScript');
+  ValidateOpen('Validacao');
+  ValidateClose();
+  ScriptClose();
+  ShowHTML('</HEAD>');
+  BodyOpen('onLoad=document.focus();');
+  $TP = 'Dados de unidade';
+  Estrutura_Texto_Abre();
+  ShowHTML('<table border="0" width="100%">');
+  ShowHTML('<tr bgcolor="'.$conTrBgColor.'"><td>');
+  ShowHTML('    <table width="99%" border="0">');
+  ShowHTML('      <tr><td>Unidade: <br><font size=2><b>'.f($RS,'nome').'('.f($RS,'sigla').')</b></td>');
+  ShowHTML('          <td>Tipo: <br><b>'.f($RS,'nm_tipo_unidade').'</b></td>');
+  if (nvl(f($RS,'email'),'')>'') {
+    ShowHTML('      <tr><td>e-Mail:<br><b><A class="hl" HREF="mailto:'.f($RS,'email').'">'.f($RS,'email').'</a></b></td>');
+  } else {
+    ShowHTML('      <tr><td>e-Mail:<br><b>---</b></td>');
+  } 
+
+  ShowHTML('          </b></td>');
+  if (nvl(f($RS,'codigo'),'')>'') {
+    ShowHTML('      <tr><td>Código:<br><b>'.f($RS,'codigo').' </b></td>');
+  } else {
+    ShowHTML('          <td>Código:<br><b>---</b></td>');
+  } 
+
+  ShowHTML('          </b></td>');
+
+  ShowHTML('      <tr><td align="center" colspan="2" height="2"     bgcolor="#000000">');
+  ShowHTML('      <tr><td align="center" colspan="2" height="1"     bgcolor="#000000">');
+  ShowHTML('      <tr><td   colspan="2" align="center" bgcolor="#D0D0D0"><b>Responsáveis</td>');
+  ShowHTML('      <tr><td align="center" colspan="2" height="1"     bgcolor="#000000">');
+  ShowHTML('      <tr><td align="center" colspan="2" height="2" bgcolor="#000000">');
+  $RS = DB_GetUorgResp::getInstanceOf($dbms, $w_sq_unidade);
+  if (count($RS)<=0) {
+    ShowHTML('      <tr><td align="center" colspan=2><font size="2"><b>Não informados</b></b></td>');
+  } else {
+    if (nvl(f($RS,'titular2'),0)==0 && nvl(f($RS,'substituto2'),0)==0) {
+      ShowHTML('      <tr><td align="center" colspan=2><font size="2"><b>Não informados</b></b></td>');
+    } else {
+      ShowHTML('      <tr valign="top">');
+      ShowHTML('          <td>Titular: <br><b>'.f($RS,'nm_titular').'</b></td>');
+      ShowHTML('          <td>Desde: <br><b>'.FormataDataEdicao(f($RS,'inicio_titular')).'</b></td>');
+      ShowHTML('      <tr><td colspan=2>Localização: <br><b>'.f($RS,'tit_sala').' ( '.f($RS,'tit_logradouro').' )</b><td>');
+      if (nvl(f($RS,'email_titular'),'')>'') {
+        ShowHTML('      <tr><td colspan=2>e-Mail:<br><b><A class="hl" HREF="mailto:'.f($RS,'email_titular').'">'.f($RS,'email_titular').'</a></b></td>');
+      } else {
+        ShowHTML('      <tr><td colspan=2>e-Mail:<br><b>---</b></td>');
+      } 
+
+      ShowHTML('      <tr><td align="center" colspan="2" height="1" bgcolor="#000000">');
+      if (nvl(f($RS,'nm_substituto'),'')>'') {
+
+        ShowHTML('      <tr valign="top">');
+        ShowHTML('          <td>Substituto: <br><b>'.f($RS,'nm_substituto').'</b></td>');
+        ShowHTML('          <td>Desde: <br><b>'.FormataDataEdicao(f($RS,'inicio_substituto')).'</b></td>');
+        if (nvl(f($RS,'sub_sala'),'')>'') {
+          ShowHTML('      <tr><td colspan=2>Localização: <br><b>'.f($RS,'sub_sala').' ( '.f($RS,'sub_logradouro').' )</b><td>');
+        } else {
+          ShowHTML('      <tr><td colspan=2>Localização:<br><b>---</b></td>');
+        } 
+
+        if (nvl(f($RS,'email_substituto'),'')>'') {
+          ShowHTML('      <tr><td colspan=2>e-Mail:<br><b><A class="hl" HREF="mailto:'.f($RS,'email_substituto').'">'.f($RS,'email_substituto').'</a></b></td>');
+        } else {
+          ShowHTML('      <tr><td colspan=2>e-Mail:<br><b>---</b></td>');
+        } 
+
+      } else {
+        ShowHTML('      <tr><td colspan=2>Substituto:<br><b>Não indicado</b></td>');
+      } 
+
+    } 
+
+  } 
+  ShowHTML('          </b></td>');
+  ShowHTML('      <tr><td align="center" colspan="2" height="2" bgcolor="#000000">');
+  ShowHTML('      <tr><td align="center" colspan="2" height="1" bgcolor="#000000">');
+  ShowHTML('      <tr><td colspan="2" align="center" bgcolor="#D0D0D0"><b>Localizações da Unidade</td>');
+  ShowHTML('      <tr><td align="center" colspan="2" height="1" bgcolor="#000000">');
+  ShowHTML('      <tr><td align="center" colspan="2" height="2" bgcolor="#000000">');
+  ShowHTML('      <tr><td align="center" colspan=2>');
+  ShowHTML('          <TABLE WIDTH="100%" bgcolor="'.$conTableBgColor.'" BORDER="'.$conTableBorder.'" CELLSPACING="'.$conTableCellSpacing.'" CELLPADDING="'.$conTableCellPadding.'" BorderColorDark="'.$conTableBorderColorDark.'" BorderColorLight="'.$conTableBorderColorLight.'">');
+  ShowHTML('            <tr bgcolor="'.$conTrBgColor.'" align="center">');
+  ShowHTML('              <td><b>Localização</td>');
+  ShowHTML('              <td><b>Telefone</td>');
+  ShowHTML('              <td><b>Ramal</td>');
+  ShowHTML('              <td><b>Fax</td>');
+  ShowHTML('              <td><b>Endereço</td>');
+  ShowHTML('            </tr>');
+  $RS = DB_GetaddressList::getInstanceOf($dbms, $w_cliente, $w_sq_unidade, 'LISTALOCALIZACAO');
+  foreach($RS as $row) {
+    ShowHTML('            <tr bgcolor="'.$conTrBgColor.'" valign="top">');
+    ShowHTML('              <td>'.f($row,'nome').'</td>');
+    ShowHTML('              <td>'.nvl(f($row,'telefone'),'---'));
+    if (nvl(f($row,'telefone2'),'')>'') {
+      ShowHTML('/ '.f($row,'telefone2').'');
+    }
+    ShowHTML('              <td align="center">'.nvl(f($row,'ramal'),'---').'</td>');
+    ShowHTML('              <td align="center">'.nvl(f($row,'fax'),'---').'</td>');
+    ShowHTML('              <td>'.f($row,'logradouro').' ('.f($row,'cidade').')</td>');
+    ShowHTML('      </tr>');
+  } 
+  ShowHTML('    </table>');
+  ShowHTML('</table>');
+  Estrutura_Texto_Fecha();
+
+  return $function_ret;
+} 
+
+// =========================================================================
+// Procedimento que executa as operações de BD
+// -------------------------------------------------------------------------
+
+function Grava() {
+  extract($GLOBALS);
+  Cabecalho();
+  ShowHTML('</HEAD>');
+  BodyOpen('onLoad=document.focus();');
+  switch ($SG) {
+    case "MENU":
+      $p_sq_endereco_unidade = strtoupper($_REQUEST['p_sq_endereco_unidade']);
+      $p_modulo              = strtoupper($_REQUEST['p_modulo']);
+
+      // Verifica se a Assinatura Eletrônica é válida
+      if (VerificaAssinaturaEletronica($_SESSION['USERNAME'],strtoupper($_REQUEST['w_assinatura'])) || $w_assinatura=='') {
+        dml_SiwMenu::getInstanceOf($dbms, $O, 
+            $_REQUEST['w_sq_menu'], $_REQUEST['w_sq_menu_pai'], $_REQUEST['w_link'], $_REQUEST['w_p1'], 
+            $_REQUEST['w_p2'], $_REQUEST['w_p3'], $_REQUEST['w_p4'], $_REQUEST['w_sigla'], $_REQUEST['w_imagem'], $_REQUEST['w_target'], 
+            $_REQUEST['w_emite_os'], $_REQUEST['w_consulta_opiniao'], $_REQUEST['w_envia_email'], $_REQUEST['w_exibe_relatorio'], 
+            $_REQUEST['w_como_funciona'], $_REQUEST['w_vinculacao'], $_REQUEST['w_data_hora'], $_REQUEST['w_envia_dia_util'], 
+            $_REQUEST['w_pede_descricao'], $_REQUEST['w_pede_justificativa'], $_REQUEST['w_finalidade'], $w_cliente, 
+            $_REQUEST['w_descricao'], $_REQUEST['w_acesso_geral'], $_REQUEST['w_modulo'], $_REQUEST['w_sq_unidade_executora'], 
+            $_REQUEST['w_tramite'], $_REQUEST['w_ultimo_nivel'], $_REQUEST['w_descentralizado'], $_REQUEST['w_externo'], 
+            $_REQUEST['w_ativo'], $_REQUEST['w_ordem'], $_REQUEST['w_envio'], $_REQUEST['w_controla_ano'], $_REQUEST['w_libera_edicao']);
+        ScriptOpen('JavaScript');
+        ShowHTML('  location.href=\''.$R.'&w_cliente='.$w_cliente.'&O=L&P1='.$P1.'&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP='.$TP.'&SG='.$SG.$MontaFiltro['GET'].'\';');
+        ScriptClose();
+      } else {
+        ScriptOpen('JavaScript');
+        ShowHTML('  alert(\'Assinatura Eletrônica inválida!\');');
+        ShowHTML('  history.back(1);');
+        ScriptClose();
+      } 
+      break;
+    case "ACESSOS":
+      // Verifica se a Assinatura Eletrônica é válida
+      if (VerificaAssinaturaEletronica($_SESSION['USERNAME'],strtoupper($_REQUEST['w_assinatura'])) || $w_assinatura=='') {
+        dml_SgPesMod::getInstanceOf($dbms, $O, 
+            $_REQUEST['w_sq_pessoa'], $w_cliente, $_REQUEST['w_sq_modulo'], $_REQUEST['w_sq_pessoa_endereco']);
+        ScriptOpen('JavaScript');
+        ShowHTML('  location.href=\''.$R.'&O=L&P1='.$P1.'&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP='.$TP.'&SG='.$SG.'&w_sq_pessoa='.$_REQUEST['w_sq_pessoa'].'\';');
+        ScriptClose();
+      } else {
+        ScriptOpen('JavaScript');
+        ShowHTML('  alert(\'Assinatura Eletrônica inválida!\');');
+        ShowHTML('  history.back(1);');
+        ScriptClose();
+      } 
+      break;
+    case "VISAO":
+      // Verifica se a Assinatura Eletrônica é válida
+      if (VerificaAssinaturaEletronica($_SESSION['USERNAME'],strtoupper($_REQUEST['w_assinatura'])) || $w_assinatura=='') {
+        if ($O=='A') {
+          // Se for alteração, elimina todas as permissões existentes para depois incluir
+          dml_PutSiwPesCC::getInstanceOf($dbms, 'E', $_REQUEST['w_sq_pessoa'], $_REQUEST['w_sq_menu'], null);
+        } 
+        for ($i=0; $i<=count($_POST['w_sq_cc'])-1; $i=$i+1)   {
+          dml_PutSiwPesCC::getInstanceOf($dbms, 'I', $_REQUEST['w_sq_pessoa'], $_REQUEST['w_sq_menu'], $_POST['w_sq_cc'][$i]);
+        } 
+        ScriptOpen('JavaScript');
+        ShowHTML('  location.href=\''.$R.'&O=L&P1='.$P1.'&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP='.$TP.'&SG='.$SG.'&w_sq_pessoa='.$_REQUEST['w_sq_pessoa'].'\';');
+        ScriptClose();
+      } else {
+        ScriptOpen('JavaScript');
+        ShowHTML('  alert(\'Assinatura Eletrônica inválida!\');');
+        ShowHTML('  history.back(1);');
+        ScriptClose();
+      } 
+      break;
+  } 
+
+  return $function_ret;
+} 
+
+// =========================================================================
 // Rotina principal
 // -------------------------------------------------------------------------
 
@@ -1148,8 +1958,14 @@ function Main() {
   extract($GLOBALS);
 
   switch ($par) {
-  case 'USUARIOS':  Usuarios(); break;
-  case 'MENU':      Menu(); break;
+  case 'USUARIOS':      Usuarios();     break;
+  case 'MENU':          Menu();         break;
+  case 'ACESSOS':       Acessos();      break;
+  case 'VISAO':         Visao();        break;
+  case 'TELAUSUARIO':   TelaUsuario();  break;
+  case 'TELAUNIDADE':   TelaUnidade();  break;
+  case 'NOVASENHA':     NovaSenha();    break;
+  case 'GRAVA':         Grava();        break;
   default:
     Cabecalho();
     BodyOpen('onLoad=document.focus();');

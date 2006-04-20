@@ -1,13 +1,14 @@
 <?
+header('Expires: '.-1500);
 session_start();
-include_once("constants.inc");
-include_once("jscript.php");
-include_once("funcoes.php");
-include_once("classes/db/abreSessao.php");
-include_once("classes/sp/db_getSiwCliModLis.php");
-include_once("classes/sp/db_getPersonData.php");
-include_once("classes/sp/db_getDesktop_TT.php");
-include_once("classes/sp/db_getDesktop.php");
+include_once('constants.inc');
+include_once('jscript.php');
+include_once('funcoes.php');
+include_once('classes/db/abreSessao.php');
+include_once('classes/sp/db_getSiwCliModLis.php');
+include_once('classes/sp/db_getPersonData.php');
+include_once('classes/sp/db_getDesktop_TT.php');
+include_once('classes/sp/db_getDesktop.php');
 // =========================================================================
 //  /Trabalho.php
 // ------------------------------------------------------------------------

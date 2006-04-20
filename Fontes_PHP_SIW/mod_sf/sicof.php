@@ -1,10 +1,11 @@
 <?
+header('Expires: '.-1500);
 session_start();
-include_once("../constants.inc");
-include_once("../jscript.php");
-include_once("../funcoes.php");
-include_once("../classes/db/abreSessao.php");
-include_once("../classes/db/DatabaseQueriesFactory.php");
+include_once('../constants.inc');
+include_once('../jscript.php');
+include_once('../funcoes.php');
+include_once('../classes/db/abreSessao.php');
+include_once('../classes/db/DatabaseQueriesFactory.php');
 // =========================================================================
 //  sicof.php
 // ------------------------------------------------------------------------
@@ -151,10 +152,7 @@ function Consulta() {
       ShowHTML('     eval(\'theForm.p_beneficiario.focus()\');');
       ShowHTML('     return false;');
       ShowHTML('  }');
-    }
-      else
-    {
-
+    } else {
       Validate('p_documento', 'Nº do documento', '', '1', '9', '15', '1', '1');
     } 
 

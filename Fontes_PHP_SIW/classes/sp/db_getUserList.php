@@ -9,7 +9,7 @@ include_once("classes/db/DatabaseQueriesFactory.php");
 */
 
 class db_getUserList {
-   function getInstanceOf($dbms, $p_cliente, $p_localizacao, $p_lotacao, $p_gestor, $p_nome, $p_modulo, $p_uf, $p_ativo) {
+   function getInstanceOf($dbms, $p_cliente, $p_localizacao, $p_lotacao, $p_gestor, $p_nome, $p_modulo, $p_uf, $p_ativo, $p_contratado) {
      $sql='sp_getUserList';
      $params=array("p_cliente"      =>array($p_cliente,     B_NUMERIC,     32),
                    "p_localizacao"  =>array($p_localizacao, B_NUMERIC,     32),
@@ -19,6 +19,7 @@ class db_getUserList {
                    "p_modulo"       =>array($p_modulo,      B_NUMERIC,     32),
                    "p_uf"           =>array($p_uf,          B_VARCHAR,     2),
                    "p_ativo"        =>array($p_ativo,       B_VARCHAR,     1),
+                   "p_contratado"   =>array($p_contratado,  B_VARCHAR,     1),
                    "p_result"       =>array(null,           B_CURSOR,      -1)
                   );
      $l_rs = DatabaseQueriesFactory::getInstanceOf($sql, $dbms, $params, DB_TYPE);

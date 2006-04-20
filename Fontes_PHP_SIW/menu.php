@@ -1,19 +1,20 @@
 <?
+header('Expires: '.-1500);
 session_start();
-include_once("constants.inc");
-include_once("jscript.php");
-include_once("funcoes.php");
-include_once("classes/db/abreSessao.php");
-include_once("classes/sp/db_getCustomerData.php");
-include_once("classes/sp/db_getLinkData.php");
-include_once("classes/sp/db_getLinkDataUser.php");
-include_once("classes/sp/db_getCustomerSite.php");
-include_once("classes/sp/db_getLinkSubMenu.php");
-include_once("classes/sp/db_getLinkDataParent.php");
-include_once("classes/sp/db_getUserData.php");
-include_once("classes/sp/db_verificaSenha.php");
-include_once("classes/sp/db_verificaAssinatura.php");
-include_once("classes/sp/db_updatePassword.php");
+include_once('constants.inc');
+include_once('jscript.php');
+include_once('funcoes.php');
+include_once('classes/db/abreSessao.php');
+include_once('classes/sp/db_getCustomerData.php');
+include_once('classes/sp/db_getLinkData.php');
+include_once('classes/sp/db_getLinkDataUser.php');
+include_once('classes/sp/db_getCustomerSite.php');
+include_once('classes/sp/db_getLinkSubMenu.php');
+include_once('classes/sp/db_getLinkDataParent.php');
+include_once('classes/sp/db_getUserData.php');
+include_once('classes/sp/db_verificaSenha.php');
+include_once('classes/sp/db_verificaAssinatura.php');
+include_once('classes/sp/db_updatePassword.php');
 // =========================================================================
 //  /menu.php
 // ------------------------------------------------------------------------
@@ -194,7 +195,6 @@ function ExibeDocs() {
     else {
       $RS = db_getLinkData::getInstanceOf($dbms, $p_cliente, $SG);
       $w_descricao=f($RS,'NOME');
-      DesconectaBD();
     }
 
     $node1 = &$root->addItem(new XNode($w_descricao,false));
@@ -222,10 +222,8 @@ function ExibeDocs() {
 
       $i = $i +1;
     }
-    DesconectaBD();
     $RS = db_getLinkData::getInstanceOf($dbms, $p_cliente, $SG);
     $node2 = &$root->addItem(new XNode('Nova consulta',$w_pagina.$par.'&O=L&R='.$R.'&SG='.f($row,'sigla').'&TP='.RemoveTP($TP).'&P1='.f($row,'P1').'&P2='.f($row,'P2').'&P3='.f($row,'P3').'&P4='.f($row,'P4').MontaFiltro('GET'),$w_Imagem,$w_Imagem));
-    DesconectaBD();
     $node3 = &$root->addItem(new XNode('Menu','menu.php?par=ExibeDocs',$w_Imagem,$w_Imagem));
     $i = 4;
   }  
@@ -271,13 +269,11 @@ function ExibeDocs() {
     } else {
       ShowHTML('>');
     }
-    DesconectaBD();
   } else {
     if ($O=='L') {
       $RS = db_getLinkData::getInstanceOf($dbms, $p_cliente, $SG);
       //$RS->Sort='ordem';
       ShowHTML('onLoad=\'javascript:top.content.location="'.f($RS,'LINK').'&R='.${'R'}.'&P1='.f($RS,'P1').'&P2='.f($RS,'P2').'&P3='.f($RS,'P3').'&P4='.f($RS,'P4').'&TP='.${'TP'}.' - '.f($RS,'nome').'&SG='.f($RS,'SIGLA').'&O='.${'O'}.MontaFiltro('GET').'";\'>');
-      DesconectaBD();
     } else {
       $RS = db_getLinkDataParent::getInstanceOf($dbms, $p_cliente, $SG);
       if(!$RS->executeQuery()) { die("Cannot query"); }
@@ -288,7 +284,6 @@ function ExibeDocs() {
       } else {
         ShowHTML('onLoad=\'javascript:top.content.location="'.f($row,'LINK').'&R='.${'R'}.'&P1='.f($row,'P1').'&P2='.f($row,'P2').'&P3='.f($row,'P3').'&P4='.f($row,'P4').'&TP='.${'TP'}.' - '.f($row,'nome').'&SG='.f($row,'SIGLA').'&O='.${'O'}.'&w_chave='.${'w_chave'}.'&w_menu='.f($row,'menu_pai').MontaFiltro('GET').'";\'>');
       }
-      DesconectaBD();
     }
   }
 
@@ -296,7 +291,6 @@ function ExibeDocs() {
   ShowHTML('      <tr><td width="100%" valign="center" align="center">');
   $RS = db_getCustomerData::getInstanceOf($dbms, $p_cliente);
   ShowHTML('         <img src="'.$conFileVirtual.$p_cliente.'/img/'.f($RS,'logo1').'" vspace="0" hspace="0" border="1"></td></tr>');
-  DesconectaBD();
   ShowHTML('      <tr><td height=1><tr><td height=1 bgcolor="#000000">');
   ShowHTML('      <tr><td colspan=2 width="100%"><table border=0 width="100%" cellpadding=0 cellspacing=0><tr valign="top">');
   ShowHTML('          <td>Usuário:<b>'.$_SESSION['NOME_RESUMIDO'].'</b></TD>');
@@ -324,7 +318,6 @@ function TrocaSenha() {
   $w_maximo     = f($RS,'TAMANHO_MAX_SENHA');
   $w_vigencia   = f($RS,'DIAS_VIG_SENHA');
   $w_aviso      = f($RS,'DIAS_AVISO_EXPIR');
-  DesconectaBD();
 
   if ($P1==1) { $w_texto='Senha de Acesso'; } else { $w_texto='Assinatura Eletrônica'; }
   Cabecalho();
@@ -404,7 +397,6 @@ function TrocaSenha() {
     ShowHTML('      <tr><td valign="top">Expiração da '.$w_texto.' atual ocorrerá em:<br><b>'.date('d/m/Y, H:i:s',addDays(toDate(f($RS,'dt_ultima_troca_assin')),$w_vigencia)).'</b></td>');
     ShowHTML('      <tr><td valign="top">Você será convidado a trocar sua '.$w_texto.' a partir de:<br><b>'.date('d/m/Y, H:i:s',addDays(toDate(f($RS,'dt_ultima_troca_assin')),$w_vigencia-$w_aviso)).'</b></td>');
   }
-  DesconectaBD();
   ShowHTML('      <tr><td align="center" colspan="3" height="1" bgcolor="#000000"></TD></TR>');
   ShowHTML('      <tr><td valign="top"><b>'.$w_texto.' <U>a</U>tual:<br><INPUT ACCESSKEY="A" class="sti" type="password" name="w_atual" size="'.$w_maximo.'" maxlength="'.$w_maximo.'"></td>');
   ShowHTML('      <tr><td valign="top"><b><U>N</U>ova '.$w_texto.':<br><INPUT ACCESSKEY="N" class="sti" type="password" name="w_nova" size="'.$w_maximo.'" maxlength="'.$w_maximo.'"></td>');
@@ -491,7 +483,6 @@ function Sair() {
   ScriptOpen('JavaScript');
   ShowHTML('  top.location.href=\''.f($RS,'logradouro').'\';');
   ScriptClose();
-  DesconectaBD();
 }
 
 // =========================================================================
