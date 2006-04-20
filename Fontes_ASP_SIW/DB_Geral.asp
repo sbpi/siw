@@ -782,9 +782,9 @@ Sub DB_GetLocalList(p_rs, p_cliente, p_chave, p_restricao)
   Set l_chave     = Server.CreateObject("ADODB.Parameter")
   Set l_restricao = Server.CreateObject("ADODB.Parameter")
   with sp
-     set l_cliente              = .CreateParameter("l_cliente", adInteger, adParamInput, , p_cliente)
-     set l_chave                = .CreateParameter("l_chave",   adInteger, adParamInput, , p_chave)
-     set l_restricao            = .CreateParameter("l_restricao", adVarChar, adParamInput, 20, p_restricao)
+     set l_cliente              = .CreateParameter("l_cliente",   adInteger, adParamInput, ,   p_cliente)
+     set l_chave                = .CreateParameter("l_chave",     adInteger, adParamInput, ,   Tvl(p_chave))
+     set l_restricao            = .CreateParameter("l_restricao", adVarChar, adParamInput, 20, Tvl(p_restricao))
      .parameters.Append         l_cliente
      .parameters.Append         l_chave
      .parameters.Append         l_restricao
@@ -805,24 +805,27 @@ End Sub
 REM =========================================================================
 REM Recupera as unidades organizacionais de um cliente
 REM -------------------------------------------------------------------------
-Sub DB_GetUorgList(p_rs, p_cliente, p_chave, p_restricao, p_nome, p_sigla)
-  Dim l_cliente, l_chave, l_restricao, l_nome, l_sigla
+Sub DB_GetUorgList(p_rs, p_cliente, p_chave, p_restricao, p_nome, p_sigla, p_ano)
+  Dim l_cliente, l_chave, l_restricao, l_nome, l_sigla, l_ano
   Set l_cliente   = Server.CreateObject("ADODB.Parameter")
   Set l_chave     = Server.CreateObject("ADODB.Parameter")
   Set l_restricao = Server.CreateObject("ADODB.Parameter")
   Set l_nome      = Server.CreateObject("ADODB.Parameter")
   Set l_sigla     = Server.CreateObject("ADODB.Parameter")
+  Set l_ano       = Server.CreateObject("ADODB.Parameter")
   with sp
      set l_cliente              = .CreateParameter("l_cliente",   adInteger, adParamInput,   , p_cliente)
      set l_chave                = .CreateParameter("l_chave",     adInteger, adParamInput,   , tvl(p_chave))
      set l_restricao            = .CreateParameter("l_restricao", adVarChar, adParamInput, 20, p_restricao)
      set l_nome                 = .CreateParameter("l_nome",      adVarChar, adParamInput, 50, p_nome)
      set l_sigla                = .CreateParameter("l_sigla",     adVarChar, adParamInput, 20, p_sigla)
+     set l_ano                  = .CreateParameter("l_ano",       adInteger, adParamInput,   , tvl(p_ano))
      .parameters.Append         l_cliente
      .parameters.Append         l_chave
      .parameters.Append         l_restricao
      .parameters.Append         l_nome
      .parameters.Append         l_sigla
+     .parameters.Append         l_ano
      If Session("dbms") = 1 or Session("dbms") = 3 Then .Properties("PLSQLRSet") = TRUE End If
      .CommandText               = Session("schema") & "SP_GetUorgList"
      On Error Resume Next
@@ -836,6 +839,7 @@ Sub DB_GetUorgList(p_rs, p_cliente, p_chave, p_restricao, p_nome, p_sigla)
      .Parameters.Delete         "l_restricao"
      .Parameters.Delete         "l_nome"
      .Parameters.Delete         "l_sigla"
+     .Parameters.Delete         "l_ano"
   end with
 End Sub
 
@@ -1262,9 +1266,15 @@ End Sub
 REM =========================================================================
 REM Recupera as etnias existentes
 REM -------------------------------------------------------------------------
-Sub DB_GetEtniaList(p_rs)
-
+Sub DB_GetEtniaList(p_rs, p_nome, p_ativo)
+  Dim l_nome, l_ativo
+  Set l_nome             = Server.CreateObject("ADODB.Parameter")
+  Set l_ativo            = Server.CreateObject("ADODB.Parameter")
   with sp
+     set l_nome         = .CreateParameter("l_nome",        adVarChar, adParamInput, 20, Tvl(p_nome))
+     set l_ativo        = .CreateParameter("l_ativo",       adVarChar, adParamInput,  1, Tvl(p_ativo))
+     .parameters.Append         l_nome
+     .parameters.Append         l_ativo     
      If Session("dbms") = 1 or Session("dbms") = 3 Then .Properties("PLSQLRSet") = TRUE End If
      .CommandText               = Session("schema") & "SP_GetEtniaList"
      On Error Resume Next     
@@ -1273,6 +1283,8 @@ Sub DB_GetEtniaList(p_rs)
         TrataErro
      End If     
      If Session("dbms") = 1 or Session("dbms") = 3 Then .Properties("PLSQLRSet") = FALSE End If
+     .Parameters.Delete         "l_nome"
+     .Parameters.Delete         "l_ativo"     
   end with
 
 End Sub
@@ -1280,9 +1292,15 @@ End Sub
 REM =========================================================================
 REM Recupera os idiomas existentes
 REM -------------------------------------------------------------------------
-Sub DB_GetIdiomList(p_rs)
-
+Sub DB_GetIdiomList(p_rs, p_nome, p_ativo)
+  Dim l_nome, l_ativo
+  Set l_nome             = Server.CreateObject("ADODB.Parameter")
+  Set l_ativo            = Server.CreateObject("ADODB.Parameter")
   with sp
+     set l_nome         = .CreateParameter("l_nome",        adVarChar, adParamInput, 20, Tvl(p_nome))
+     set l_ativo        = .CreateParameter("l_ativo",       adVarChar, adParamInput,  1, Tvl(p_ativo))
+     .parameters.Append         l_nome
+     .parameters.Append         l_ativo     
      If Session("dbms") = 1 or Session("dbms") = 3 Then .Properties("PLSQLRSet") = TRUE End If
      .CommandText               = Session("schema") & "SP_GetIdiomList"
      On Error Resume Next
@@ -1291,6 +1309,8 @@ Sub DB_GetIdiomList(p_rs)
         TrataErro
      End If     
      If Session("dbms") = 1 or Session("dbms") = 3 Then .Properties("PLSQLRSet") = FALSE End If
+     .Parameters.Delete         "l_nome"
+     .Parameters.Delete         "l_ativo"
   end with
 
 End Sub
@@ -1298,9 +1318,18 @@ End Sub
 REM =========================================================================
 REM Recupera as formações existentes
 REM -------------------------------------------------------------------------
-Sub DB_GetFormationList(p_rs)
-
+Sub DB_GetFormationList(p_rs, p_tipo, p_nome, p_ativo)
+  Dim l_tipo, l_nome, l_ativo
+  Set l_tipo             = Server.CreateObject("ADODB.Parameter")
+  Set l_nome             = Server.CreateObject("ADODB.Parameter")
+  Set l_ativo            = Server.CreateObject("ADODB.Parameter")
   with sp
+     set l_tipo         = .CreateParameter("l_tipo",        adVarChar, adParamInput, 20, Tvl(p_tipo))
+     set l_nome         = .CreateParameter("l_nome",        adVarChar, adParamInput, 50, Tvl(p_nome))
+     set l_ativo        = .CreateParameter("l_ativo",       adVarChar, adParamInput,  1, Tvl(p_ativo))
+     .parameters.Append         l_tipo
+     .parameters.Append         l_nome
+     .parameters.Append         l_ativo     
      If Session("dbms") = 1 or Session("dbms") = 3 Then .Properties("PLSQLRSet") = TRUE End If
      .CommandText               = Session("schema") & "SP_GetFormatList"
      On Error Resume Next
@@ -1309,6 +1338,9 @@ Sub DB_GetFormationList(p_rs)
         TrataErro
      End If     
      If Session("dbms") = 1 or Session("dbms") = 3 Then .Properties("PLSQLRSet") = FALSE End If
+     .Parameters.Delete         "l_tipo"
+     .Parameters.Delete         "l_nome"
+     .Parameters.Delete         "l_ativo"
   end with
 
 End Sub
@@ -1316,9 +1348,15 @@ End Sub
 REM =========================================================================
 REM Recupera os grupos de deficiência existentes
 REM -------------------------------------------------------------------------
-Sub DB_GetDeficGroupList(p_rs)
-
+Sub DB_GetDeficGroupList(p_rs, p_nome, p_ativo)
+  Dim l_nome, l_ativo
+  Set l_nome             = Server.CreateObject("ADODB.Parameter")
+  Set l_ativo            = Server.CreateObject("ADODB.Parameter")  
   with sp
+     set l_nome         = .CreateParameter("l_nome",        adVarChar, adParamInput, 50, Tvl(p_nome))
+     set l_ativo        = .CreateParameter("l_ativo",       adVarChar, adParamInput,  1, Tvl(p_ativo))
+     .parameters.Append         l_nome
+     .parameters.Append         l_ativo    
      If Session("dbms") = 1 or Session("dbms") = 3 Then .Properties("PLSQLRSet") = TRUE End If
      .CommandText               = Session("schema") & "SP_GetDeficGrpList"
      On Error Resume Next
@@ -1327,6 +1365,8 @@ Sub DB_GetDeficGroupList(p_rs)
         TrataErro
      End If     
      If Session("dbms") = 1 or Session("dbms") = 3 Then .Properties("PLSQLRSet") = FALSE End If
+     .Parameters.Delete         "l_nome"
+     .Parameters.Delete         "l_ativo"     
   end with
 
 End Sub
@@ -1334,9 +1374,15 @@ End Sub
 REM =========================================================================
 REM Recupera os grupos de deficiência existentes
 REM -------------------------------------------------------------------------
-Sub DB_GetDeficiencyList(p_rs)
-
+Sub DB_GetDeficiencyList(p_rs, p_nome, p_ativo)
+  Dim l_nome, l_ativo
+  Set l_nome             = Server.CreateObject("ADODB.Parameter")
+  Set l_ativo            = Server.CreateObject("ADODB.Parameter")  
   with sp
+     set l_nome         = .CreateParameter("l_nome",        adVarChar, adParamInput, 50, Tvl(p_nome))
+     set l_ativo        = .CreateParameter("l_ativo",       adVarChar, adParamInput,  1, Tvl(p_ativo))
+     .parameters.Append         l_nome
+     .parameters.Append         l_ativo  
      If Session("dbms") = 1 or Session("dbms") = 3 Then .Properties("PLSQLRSet") = TRUE End If
      .CommandText               = Session("schema") & "SP_GetDefList"
      On Error Resume Next
@@ -1345,6 +1391,8 @@ Sub DB_GetDeficiencyList(p_rs)
         TrataErro
      End If     
      If Session("dbms") = 1 or Session("dbms") = 3 Then .Properties("PLSQLRSet") = FALSE End If
+     .Parameters.Delete         "l_nome"
+     .Parameters.Delete         "l_ativo"     
   end with
 
 End Sub
@@ -1370,9 +1418,18 @@ End Sub
 REM =========================================================================
 REM Recupera os tipos de endereços existentes
 REM -------------------------------------------------------------------------
-Sub DB_GetAdressTypeList(p_rs)
-
+Sub DB_GetAdressTypeList(p_rs, p_tipo_pessoa, p_nome, p_ativo)
+  Dim l_tipo_pessoa, l_nome, l_ativo
+  Set l_tipo_pessoa      = Server.CreateObject("ADODB.Parameter")
+  Set l_nome             = Server.CreateObject("ADODB.Parameter")
+  Set l_ativo            = Server.CreateObject("ADODB.Parameter")
   with sp
+     set l_tipo_pessoa  = .CreateParameter("l_tipo_pessoa", adVarChar, adParamInput, 60, Tvl(p_tipo_pessoa))
+     set l_nome         = .CreateParameter("l_nome",        adVarChar, adParamInput, 30, Tvl(p_nome))
+     set l_ativo        = .CreateParameter("l_ativo",       adVarChar, adParamInput,  1, Tvl(p_ativo))
+     .parameters.Append         l_tipo_pessoa
+     .parameters.Append         l_nome
+     .parameters.Append         l_ativo
      If Session("dbms") = 1 or Session("dbms") = 3 Then .Properties("PLSQLRSet") = TRUE End If
      .CommandText               = Session("schema") & "SP_GetAdressTPList"
      On Error Resume Next
@@ -1381,6 +1438,9 @@ Sub DB_GetAdressTypeList(p_rs)
         TrataErro
      End If     
      If Session("dbms") = 1 or Session("dbms") = 3 Then .Properties("PLSQLRSet") = FALSE End If
+     .Parameters.Delete         "l_tipo_pessoa"
+     .Parameters.Delete         "l_nome"
+     .Parameters.Delete         "l_ativo"
   end with
 
 End Sub
@@ -1388,9 +1448,15 @@ End Sub
 REM =========================================================================
 REM Recupera os tipos de pessoas existentes
 REM -------------------------------------------------------------------------
-Sub DB_GetUserTypeList(p_rs)
-
+Sub DB_GetUserTypeList(p_rs, p_nome, p_ativo)
+  Dim l_nome, l_ativo
+  Set l_nome             = Server.CreateObject("ADODB.Parameter")
+  Set l_ativo            = Server.CreateObject("ADODB.Parameter")  
   with sp
+     set l_nome         = .CreateParameter("l_nome",        adVarChar, adParamInput, 30, Tvl(p_nome))
+     set l_ativo        = .CreateParameter("l_ativo",       adVarChar, adParamInput,  1, Tvl(p_ativo))
+     .parameters.Append         l_nome
+     .parameters.Append         l_ativo    
      If Session("dbms") = 1 or Session("dbms") = 3 Then .Properties("PLSQLRSet") = TRUE End If
      .CommandText               = Session("schema") & "SP_GetUserTypeList"
      On Error Resume Next
@@ -1399,6 +1465,8 @@ Sub DB_GetUserTypeList(p_rs)
         TrataErro
      End If     
      If Session("dbms") = 1 or Session("dbms") = 3 Then .Properties("PLSQLRSet") = FALSE End If
+     .Parameters.Delete         "l_nome"
+     .Parameters.Delete         "l_ativo"          
   end with
 
 End Sub
@@ -1406,9 +1474,18 @@ End Sub
 REM =========================================================================
 REM Recupera os tipos de telefones existentes
 REM -------------------------------------------------------------------------
-Sub DB_GetFoneTypeList(p_rs)
-
+Sub DB_GetFoneTypeList(p_rs, p_tipo_pessoa, p_nome, p_ativo)
+  Dim l_tipo_pessoa, l_nome, l_ativo
+  Set l_tipo_pessoa      = Server.CreateObject("ADODB.Parameter")
+  Set l_nome             = Server.CreateObject("ADODB.Parameter")
+  Set l_ativo            = Server.CreateObject("ADODB.Parameter")
   with sp
+     set l_tipo_pessoa  = .CreateParameter("l_tipo_pessoa", adVarChar, adParamInput, 60, Tvl(p_tipo_pessoa))
+     set l_nome         = .CreateParameter("l_nome",        adVarChar, adParamInput, 30, Tvl(p_nome))
+     set l_ativo        = .CreateParameter("l_ativo",       adVarChar, adParamInput,  1, Tvl(p_ativo))
+     .parameters.Append         l_tipo_pessoa
+     .parameters.Append         l_nome
+     .parameters.Append         l_ativo  
      If Session("dbms") = 1 or Session("dbms") = 3 Then .Properties("PLSQLRSet") = TRUE End If
      .CommandText               = Session("schema") & "SP_GetFoneTypeList"
      On Error Resume Next
@@ -1417,6 +1494,9 @@ Sub DB_GetFoneTypeList(p_rs)
         TrataErro
      End If     
      If Session("dbms") = 1 or Session("dbms") = 3 Then .Properties("PLSQLRSet") = FALSE End If
+     .Parameters.Delete         "l_tipo_pessoa"
+     .Parameters.Delete         "l_nome"
+     .Parameters.Delete         "l_ativo"     
   end with
 
 End Sub
@@ -1456,9 +1536,23 @@ End Sub
 REM =========================================================================
 REM Recupera os paises existentes
 REM -------------------------------------------------------------------------
-Sub DB_GetCountryList(p_rs)
-
+Sub DB_GetCountryList(p_rs, p_restricao, p_nome, p_ativo, p_sigla)
+  Dim l_restricao, l_nome, l_ativo, l_sigla
+  Set l_restricao = Server.CreateObject("ADODB.Parameter")
+  Set l_nome      = Server.CreateObject("ADODB.Parameter")
+  Set l_ativo     = Server.CreateObject("ADODB.Parameter")
+  Set l_sigla     = Server.CreateObject("ADODB.Parameter")
+   
   with sp
+     set l_restricao       = .CreateParameter("l_restricao", adVarchar, adParamInput, 30, p_restricao)
+     set l_nome            = .CreateParameter("l_nome",      adVarchar, adParamInput, 60, p_nome)
+     set l_ativo           = .CreateParameter("l_ativo",     adVarchar, adParamInput,  1, p_ativo)
+     set l_sigla           = .CreateParameter("l_sigla",     adVarchar, adParamInput,  3, p_sigla)
+     .parameters.Append         l_restricao
+     .parameters.Append         l_nome
+     .parameters.Append         l_ativo
+     .parameters.Append         l_sigla
+  
      If Session("dbms") = 1 or Session("dbms") = 3 Then .Properties("PLSQLRSet") = TRUE End If
      .CommandText               = Session("schema") & "SP_GetCountryList"
      On Error Resume Next
@@ -1467,6 +1561,10 @@ Sub DB_GetCountryList(p_rs)
         TrataErro
      End If     
      If Session("dbms") = 1 or Session("dbms") = 3 Then .Properties("PLSQLRSet") = FALSE End If
+     .Parameters.Delete         "l_restricao"
+     .Parameters.Delete         "l_nome"
+     .Parameters.Delete         "l_ativo"
+     .Parameters.Delete         "l_sigla"
   end with
 
 End Sub
@@ -1474,15 +1572,18 @@ End Sub
 REM =========================================================================
 REM Recupera as regiões existentes
 REM -------------------------------------------------------------------------
-Sub DB_GetRegionList(p_rs, p_sq_pais, p_tipo)
-Dim l_sq_pais, l_tipo
+Sub DB_GetRegionList(p_rs, p_sq_pais, p_tipo, p_nome)
+Dim l_sq_pais, l_tipo, l_nome
   Set l_sq_pais = Server.CreateObject("ADODB.Parameter")
   Set l_tipo    = Server.CreateObject("ADODB.Parameter")
+  Set l_nome    = Server.CreateObject("ADODB.Parameter")
   with sp
-     set l_sq_pais           = .CreateParameter("l_sq_pais", adInteger, adParamInput,  , tvl(p_sq_pais))
-     set l_tipo              = .CreateParameter("l_tipo",    adVarchar, adParamInput, 1, p_tipo)
+     set l_sq_pais           = .CreateParameter("l_sq_pais", adInteger, adParamInput,   , tvl(p_sq_pais))
+     set l_tipo              = .CreateParameter("l_tipo",    adVarchar, adParamInput,  1, p_tipo)
+     set l_nome              = .CreateParameter("l_nome",    adVarchar, adParamInput, 20, Tvl(p_nome))
      .parameters.Append         l_sq_pais
      .parameters.Append         l_tipo
+     .parameters.Append         l_nome
      If Session("dbms") = 1 or Session("dbms") = 3 Then .Properties("PLSQLRSet") = TRUE End If
      .CommandText               = Session("schema") & "SP_GetRegionList"
      On Error Resume Next     
@@ -1493,18 +1594,28 @@ Dim l_sq_pais, l_tipo
      If Session("dbms") = 1 or Session("dbms") = 3 Then .Properties("PLSQLRSet") = FALSE End If
      .Parameters.Delete         "l_sq_pais"
      .Parameters.Delete         "l_tipo"
+     .Parameters.Delete         "l_nome"
   end with
 End Sub
 
 REM =========================================================================
 REM Recupera as cidades existentes em relação a um país
 REM -------------------------------------------------------------------------
-Sub DB_GetStateList(p_rs, p_sq_pais)
-  Dim l_sq_pais
-  Set l_sq_pais = Server.CreateObject("ADODB.Parameter")
+Sub DB_GetStateList(p_rs, p_sq_pais, p_sq_regiao, p_ativo, p_restricao)
+  Dim l_sq_pais, l_sq_regiao, l_ativo, l_restricao
+  Set l_sq_pais   = Server.CreateObject("ADODB.Parameter")
+  Set l_sq_regiao = Server.CreateObject("ADODB.Parameter")
+  Set l_ativo     = Server.CreateObject("ADODB.Parameter")
+  Set l_restricao = Server.CreateObject("ADODB.Parameter")
   with sp
-     set l_sq_pais           = .CreateParameter("l_sq_pais", adInteger, adParamInput,  , p_sq_pais)
+     set l_sq_pais         = .CreateParameter("l_sq_pais",   adInteger, adParamInput,  , p_sq_pais)
+     set l_sq_regiao       = .CreateParameter("l_sq_regiao", adInteger, adParamInput,  , Tvl(p_sq_regiao))
+     set l_ativo           = .CreateParameter("l_ativo",     adVarchar, adParamInput, 1, Tvl(p_ativo))
+     set l_restricao       = .CreateParameter("l_restricao", adVarchar, adParamInput,30, Tvl(p_restricao))
      .parameters.Append         l_sq_pais
+     .parameters.Append         l_sq_regiao
+     .parameters.Append         l_ativo
+     .parameters.Append         l_restricao
      If Session("dbms") = 1 or Session("dbms") = 3 Then .Properties("PLSQLRSet") = TRUE End If
      .CommandText               = Session("schema") & "SP_GetStateList"
      On Error Resume Next     
@@ -1514,22 +1625,31 @@ Sub DB_GetStateList(p_rs, p_sq_pais)
      End If     
      If Session("dbms") = 1 or Session("dbms") = 3 Then .Properties("PLSQLRSet") = FALSE End If
      .Parameters.Delete         "l_sq_pais"
+     .Parameters.Delete         "l_sq_regiao"
+     .Parameters.Delete         "l_ativo"
+     .Parameters.Delete         "l_restricao"
   end with
 End Sub
 
 REM =========================================================================
 REM Recupera as cidades existentes
 REM -------------------------------------------------------------------------
-Sub DB_GetCityList(p_rs, p_sq_pais, p_estado)
-  Dim l_sq_pais, l_estado
-  Set l_sq_pais = Server.CreateObject("ADODB.Parameter")
-  Set l_estado  = Server.CreateObject("ADODB.Parameter")
+Sub DB_GetCityList(p_rs, p_sq_pais, p_estado, p_nome, p_restricao)
+  Dim l_sq_pais, l_estado, l_nome, l_restricao
+  Set l_sq_pais   = Server.CreateObject("ADODB.Parameter")
+  Set l_estado    = Server.CreateObject("ADODB.Parameter")
+  Set l_nome      = Server.CreateObject("ADODB.Parameter")
+  Set l_restricao = Server.CreateObject("ADODB.Parameter")
   
   with sp
-     set l_sq_pais              = .CreateParameter("l_sq_pais", adInteger, adParamInput,  , Tvl(p_sq_pais))
-     set l_estado               = .CreateParameter("l_estado",  adVarchar, adParamInput, 2, p_estado)
+     set l_sq_pais              = .CreateParameter("l_sq_pais",   adInteger, adParamInput,   , Tvl(p_sq_pais))
+     set l_estado               = .CreateParameter("l_estado",    adVarchar, adParamInput,  2, p_estado)
+     set l_nome                 = .CreateParameter("l_nome",      adVarchar, adParamInput, 60, Tvl(p_nome))
+     set l_restricao            = .CreateParameter("l_restricao", adVarchar, adParamInput, 30, Tvl(p_restricao))
      .parameters.Append         l_sq_pais
      .parameters.Append         l_estado
+     .parameters.Append         l_nome
+     .parameters.Append         l_restricao
      If Session("dbms") = 1 or Session("dbms") = 3 Then .Properties("PLSQLRSet") = TRUE End If
      .CommandText               = Session("schema") & "SP_GetCityList"
      On Error Resume Next
@@ -1540,6 +1660,8 @@ Sub DB_GetCityList(p_rs, p_sq_pais, p_estado)
      If Session("dbms") = 1 or Session("dbms") = 3 Then .Properties("PLSQLRSet") = FALSE End If
      .parameters.Delete         "l_sq_pais"
      .parameters.Delete         "l_estado"
+     .parameters.Delete         "l_nome"
+     .parameters.Delete         "l_restricao"
   end with
 
 End Sub
@@ -1845,11 +1967,14 @@ Sub DB_GetCityData(p_rs, p_sq_cidade)
 End Sub
 
 REM =========================================================================
-REM Recupera os idiomas existentes
+REM Recupera os tipo de pessoas existentes
 REM -------------------------------------------------------------------------
-Sub DB_GetKindPersonList(p_rs)
-
+Sub DB_GetKindPersonList(p_rs, p_nome)
+  Dim l_nome
+  Set l_nome = Server.CreateObject("ADODB.Parameter")
   with sp
+     set l_nome                = .CreateParameter("l_nome", adVarchar, adParamInput, 60, Tvl(p_nome))
+     .parameters.Append         l_sq_cidade
      If Session("dbms") = 1 or Session("dbms") = 3 Then .Properties("PLSQLRSet") = TRUE End If
      .CommandText               = Session("schema") & "SP_GetKindPersList"
      On Error Resume Next
@@ -1858,6 +1983,7 @@ Sub DB_GetKindPersonList(p_rs)
         TrataErro
      End If     
      If Session("dbms") = 1 or Session("dbms") = 3 Then .Properties("PLSQLRSet") = FALSE End If
+     .Parameters.Delete         "l_nome"
   end with
 
 End Sub
@@ -1865,12 +1991,24 @@ End Sub
 REM =========================================================================
 REM Recupera os tipos de vínculos
 REM -------------------------------------------------------------------------
-Sub DB_GetVincKindList(p_rs, p_cliente)
-  Dim l_cliente
+Sub DB_GetVincKindList(p_rs, p_cliente, p_ativo, p_tipo_pessoa, p_nome, p_interno)
+  Dim l_cliente, l_ativo, l_tipo_pessoa, l_nome, l_interno
   Set l_cliente = Server.CreateObject("ADODB.Parameter")
+  Set l_ativo       = Server.CreateObject("ADODB.Parameter")
+  Set l_tipo_pessoa = Server.CreateObject("ADODB.Parameter")
+  Set l_nome        = Server.CreateObject("ADODB.Parameter")
+  Set l_interno     = Server.CreateObject("ADODB.Parameter")
   with sp
-     set l_cliente             = .CreateParameter("l_cliente", adInteger, adParamInput, , p_cliente)
+     set l_cliente             = .CreateParameter("l_cliente",     adInteger, adParamInput,   , p_cliente)
+     set l_ativo               = .CreateParameter("l_ativo",       adVarchar, adParamInput,  1, Tvl(p_ativo))
+     set l_tipo_pessoa         = .CreateParameter("l_tipo_pessoa", adVarchar, adParamInput, 60, Tvl(p_tipo_pessoa))
+     set l_nome                = .CreateParameter("l_nome",        adVarchar, adParamInput, 20, Tvl(p_nome))
+     set l_interno             = .CreateParameter("l_interno",     adVarchar, adParamInput,  1, Tvl(p_interno))
      .parameters.Append         l_cliente
+     .parameters.Append         l_ativo
+     .parameters.Append         l_tipo_pessoa
+     .parameters.Append         l_nome
+     .parameters.Append         l_interno
      If Session("dbms") = 1 or Session("dbms") = 3 Then .Properties("PLSQLRSet") = TRUE End If
      .CommandText               = Session("schema") & "SP_GetVincKindList"
      On Error Resume Next
@@ -1880,6 +2018,10 @@ Sub DB_GetVincKindList(p_rs, p_cliente)
      End If     
      If Session("dbms") = 1 or Session("dbms") = 3 Then .Properties("PLSQLRSet") = FALSE End If
      .Parameters.Delete         "l_cliente"
+     .Parameters.Delete         "l_ativo"
+     .Parameters.Delete         "l_tipo_pessoa"
+     .Parameters.Delete         "l_nome"
+     .Parameters.Delete         "l_interno"
   end with
 
 End Sub

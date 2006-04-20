@@ -130,13 +130,7 @@ Sub TipoEndereco
   If O = "" Then O="L" end if
   
   If InStr("LP",O) Then
-     DB_GetAdressTypeList RS 
-     If p_nome & p_ativo > "" Then
-        w_filter = ""
-        If p_nome > ""   Then w_filter = w_filter & " and nome   like '*" & p_nome & "*'" End If
-        If p_ativo > ""  Then w_filter = w_filter & " and ativo  = '" & p_ativo & "'"     End If
-        RS.Filter = Mid(w_filter,6,255)
-     End If
+     DB_GetAdressTypeList RS, null, p_nome, p_ativo
      If p_ordena > "" Then RS.sort = p_ordena Else RS.sort = "sq_tipo_pessoa, padrao desc, nome" End If     
   ElseIf (O = "A" or O = "E") Then               
      DB_GetAdressTypeData RS, w_sq_tipo_endereco  
@@ -345,13 +339,7 @@ Sub TipoTelefone
   If O = "" Then O="L" end if
   
   If InStr("LP",O) Then 
-     DB_GetFoneTypeList RS
-     If p_nome & p_ativo > "" Then
-        w_filter = ""
-        If p_nome > ""   Then w_filter = w_filter & " and nome   like '*" & p_nome & "*'" End If
-        If p_ativo > ""  Then w_filter = w_filter & " and ativo  = '" & p_ativo & "'"     End If
-        RS.Filter = Mid(w_filter,6,255)
-     End If
+     DB_GetFoneTypeList RS, null, p_nome, p_ativo
      If p_ordena > "" Then RS.sort = p_ordena Else RS.sort = "sq_tipo_pessoa, padrao desc, nome" End If
   ElseIf (O = "A" or O = "E") Then               
      DB_GetFoneTypeData RS, w_sq_tipo_telefone
@@ -545,13 +533,7 @@ Sub TipoPessoa
   If O = "" Then O="L" end if
   
   If InStr("LP",O) Then 
-     DB_GetUserTypeList RS
-     If p_nome & p_ativo > "" Then
-        w_filter = ""
-        If p_nome > ""   Then w_filter = w_filter & " and nome   like '*" & p_nome & "*'" End If
-        If p_ativo > ""  Then w_filter = w_filter & " and ativo  = '" & p_ativo & "'"     End If
-        RS.Filter = Mid(w_filter,6,255)
-     End If
+     DB_GetUserTypeList RS, p_nome, p_ativo
      If p_ordena > "" Then RS.sort = p_ordena Else RS.sort = "padrao desc, nome" End If
   ElseIf (O = "A" or O = "E") Then               
      DB_GetUserTypeData RS, w_sq_tipo_pessoa
@@ -741,13 +723,7 @@ Sub Deficiencia
   If O = "" Then O="L" end if
   
   If InStr("LP",O) Then 
-     DB_GetDeficiencyList RS
-     If p_nome & p_ativo > "" Then
-        w_filter = ""
-        If p_nome > ""   Then w_filter = w_filter & " and nome   like '*" & p_nome & "*'" End If
-        If p_ativo > ""  Then w_filter = w_filter & " and ativo  = '" & p_ativo & "'"     End If
-        RS.Filter = Mid(w_filter,6,255)
-     End If
+     DB_GetDeficiencyList RS, p_nome, p_ativo
      If p_ordena > "" Then RS.sort = p_ordena Else RS.sort = "codigo" End If     
   ElseIf (O = "A" or O = "E") Then               
      DB_GetDeficiencyData RS, w_sq_deficiencia  
@@ -943,13 +919,7 @@ Sub GrupoDeficiencia
   If O = "" Then O="L" end if
   
   If InStr("LP",O) Then 
-     DB_GetDeficGroupList RS
-     If p_nome & p_ativo > "" Then
-        w_filter = ""
-        If p_nome > ""   Then w_filter = w_filter & " and nome   like '*" & p_nome & "*'" End If
-        If p_ativo > ""  Then w_filter = w_filter & " and ativo  = '" & p_ativo & "'"     End If
-        RS.Filter = Mid(w_filter,6,255)
-     End If
+     DB_GetDeficGroupList RS, p_nome, p_ativo
      If p_ordena > "" Then RS.sort = p_ordena Else RS.sort = "nome" End If
   ElseIf (O = "A" or O = "E") Then               
      DB_GetDeficiencyGroupData RS, w_sq_grupo_deficiencia
@@ -1127,13 +1097,7 @@ Sub Idioma
   If O = "" Then O="L" end if
   
   If InStr("LP",O) Then 
-     DB_GetIdiomList RS
-     If p_nome & p_ativo > "" Then
-        w_filter = ""
-        If p_nome > ""   Then w_filter = w_filter & " and nome   like '*" & p_nome & "*'" End If
-        If p_ativo > ""  Then w_filter = w_filter & " and ativo  = '" & p_ativo & "'"     End If
-        RS.Filter = Mid(w_filter,6,255)
-     End If
+     DB_GetIdiomList RS, p_nome, p_ativo
      If p_ordena > "" Then RS.sort = p_ordena Else RS.sort = "padrao desc, nome" End If
   ElseIf (O = "A" or O = "E") Then
      DB_GetIdiomData RS, w_sq_idioma               
@@ -1317,13 +1281,7 @@ Sub Etnia
   If O = "" Then O="L" end if
   
   If InStr("LP",O) Then      
-     DB_GetEtniaList RS
-     If p_nome & p_ativo > "" Then
-        w_filter = ""
-        If p_nome > ""   Then w_filter = w_filter & " and nome   like '*" & p_nome & "*'" End If
-        If p_ativo > ""  Then w_filter = w_filter & " and ativo  = '" & p_ativo & "'"     End If
-        RS.Filter = Mid(w_filter,6,255)
-     End If
+     DB_GetEtniaList RS, p_nome, p_ativo
      If p_ordena > "" Then RS.sort = p_ordena Else RS.sort = "codigo_siape, nome" End If
      
   ElseIf (O = "A" or O = "E") Then               
@@ -1509,13 +1467,7 @@ Sub Formacao
   If O = "" Then O="L" end if
   
   If InStr("LP",O) Then 
-     DB_GetFormationList RS
-     If p_nome & p_ativo > "" Then
-        w_filter = ""
-        If p_nome > ""   Then w_filter = w_filter & " and nome   like '*" & p_nome & "*'" End If
-        If p_ativo > ""  Then w_filter = w_filter & " and ativo  = '" & p_ativo & "'"     End If
-        RS.Filter = Mid(w_filter,6,255)
-     End If
+     DB_GetFormationList RS, null, p_nome, p_ativo
      If p_ordena > "" Then RS.sort = p_ordena Else RS.sort = "tipo, ordem, nome" End If
   ElseIf (O = "A" or O = "E") Then               
      DB_GetFormationData RS, w_sq_formacao

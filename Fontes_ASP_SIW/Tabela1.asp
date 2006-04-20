@@ -130,13 +130,7 @@ Sub TipoVinculo
   If O = "" Then O="L" end if
   
   If InStr("LP",O) Then 
-    DB_GetVincKindList RS, w_cliente
-     If p_nome & p_ativo > "" Then
-        w_filter = ""
-        If p_nome > ""   Then w_filter = w_filter & " and nome   like '*" & p_nome & "*'" End If
-        If p_ativo > ""  Then w_filter = w_filter & " and ativo  = '" & p_ativo & "'"     End If
-        RS.Filter = Mid(w_filter,6,255)
-     End If
+    DB_GetVincKindList RS, w_cliente, p_ativo, null, p_nome, null
      RS.sort = "sq_tipo_pessoa, padrao desc, nome"      
   ElseIf (O = "A" or O = "E") Then               
      DB_GetVincKindData RS, w_sq_tipo_vinculo  

@@ -37,25 +37,31 @@ begin
       -- Recupera todas as pessoas do cadastro da organização, físicas e jurídicas
       open p_result for
          select a.sq_pessoa, a.nome, a.nome_resumido, a.nome_indice, a.nome_resumido_ind,
-                decode(b.sq_pessoa,null,b.cpf,decode(f.sq_pessoa,null,f.cnpj,null)) codigo,
+                b.codigo,
                 c.username, c.ativo usuario,
                 d.sigla sg_unidade, d.nome nm_unidade, e.nome nm_local
-           from co_pessoa                              a,
-                 co_pessoa_fisica   b,
-                 co_pessoa_juridica f,
-                 sg_autenticacao    c,
-                    eo_unidade         d,
-                    eo_localizacao     e
+           from co_pessoa          a,
+                (select x.sq_pessoa, 
+                        decode(y.sq_pessoa,null,decode(z.sq_pessoa,null,null,z.cnpj),y.cpf) codigo
+                   from co_pessoa          x,
+                        co_pessoa_fisica   y,
+                        co_pessoa_juridica z
+                  where (x.sq_pessoa = y.sq_pessoa (+))
+                    and (x.sq_pessoa = z.sq_pessoa (+))
+                )                  b,
+
+                sg_autenticacao    c,
+                eo_unidade         d,
+                eo_localizacao     e
           where (a.sq_pessoa      = b.sq_pessoa (+))
-            and (a.sq_pessoa     = f.sq_pessoa (+))
             and (a.sq_pessoa      = c.sq_pessoa (+))
             and (c.sq_unidade     = d.sq_unidade (+))
             and (c.sq_localizacao = e.sq_localizacao (+))
-            and a.sq_pessoa_pai = p_cliente
+            and (a.sq_pessoa = p_cliente or a.sq_pessoa_pai = p_cliente)
             and (p_nome       is null or (p_nome       is not null and ((a.nome_indice like '%'||upper(acentos(p_nome))||'%')
                                                                    or    a.nome_resumido_ind like '%'||upper(acentos(p_nome))||'%')))
             and (p_sg_unidade is null or (p_sg_unidade is not null and acentos(d.sigla) like '%'||acentos(p_sg_unidade)||'%'))                      
-            and (p_codigo     is null or (p_codigo     is not null and codigo = p_codigo))
+            and (p_codigo     is null or (p_codigo     is not null and b.codigo = p_codigo))
          order by a.nome_indice;
    Elsif p_restricao = 'INTERNOS' Then
       -- Recupera as pessoas internas à organização

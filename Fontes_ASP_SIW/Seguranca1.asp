@@ -163,7 +163,7 @@ Sub AcessoTramite
   DesconectaBD
 
   If InStr("L",O) Then
-     DB_GetTramiteUser RS, w_cliente, w_sq_menu, w_sq_siw_tramite, "USUARIO"
+     DB_GetTramiteUser RS, w_cliente, w_sq_menu, w_sq_siw_tramite, "USUARIO", null, null, null
   End If
   
   Cabecalho
@@ -310,16 +310,8 @@ Sub AcessoTramite
     ShowHTML "</tr>"
     ShowHTML "</form>"
     If (p_nome & p_sq_menu & p_sq_unidade) > "" Then
-       If p_sq_menu > "" Then
-          DB_GetTramiteUser RS, w_cliente, w_sq_menu, p_sq_menu, "PESQUISA"
-       Else
-          DB_GetTramiteUser RS, w_cliente, w_sq_menu, w_sq_siw_tramite, "PESQUISA"
-       End If
-       w_filter = ""
-       If p_nome        > ""  Then w_filter = w_filter & "  and nome        like '*" & p_nome & "*'"  End If
-       If p_sq_unidade  > ""  Then w_filter = w_filter & "  and sq_unidade  = " & p_sq_unidade & " "  End If
-       If p_sq_menu     > ""  Then w_filter = w_filter & "  and acesso      > 0 "                     End If
-       RS.Filter = Mid(w_filter,6,255)
+       
+       DB_GetTramiteUser RS, w_cliente, w_sq_menu, Nvl(p_sq_menu,w_sq_siw_tramite), "PESQUISA", p_nome, p_sq_unidade, Nvl(p_sq_menu,"")
 
        ShowHTML "<tr bgcolor=""" & conTrBgColor & """><td colspan=2><font size=2><hr>"
        AbreForm "Form1", w_Pagina & "Grava", "POST", "return(Validacao1(this));", null,P1,P2,P3,P4,TP,SG,R,O
@@ -632,8 +624,8 @@ Sub AcessoMenu
   w_texto = OpcaoMenu(w_sq_menu)
 
   If InStr("L",O) Then
-     DB_GetMenuUser RS, w_cliente, w_sq_menu, null, "USUARIO"
-     DB_GetMenuUser RS1, w_cliente, w_sq_menu, null, "VINCULO"
+     DB_GetMenuUser RS, w_cliente, w_sq_menu, null, "USUARIO", null, null, null
+     DB_GetMenuUser RS1, w_cliente, w_sq_menu, null, "VINCULO", null, null, null
   End If
   
   Cabecalho
@@ -819,16 +811,8 @@ Sub AcessoMenu
     ShowHTML "</tr>"
     ShowHTML "</form>"
     If (p_nome & p_sq_menu & p_sq_unidade) > "" Then
-       If p_sq_menu > "" Then
-          DB_GetMenuUser RS, w_cliente, w_sq_menu, p_sq_menu, "PESQUISA"
-       Else
-          DB_GetMenuUser RS, w_cliente, w_sq_menu, null, "PESQUISA"
-       End If
-       w_filter = ""
-       If p_nome        > ""  Then w_filter = w_filter & "  and nome        like '*" & p_nome & "*'"  End If
-       If p_sq_unidade  > ""  Then w_filter = w_filter & "  and sq_unidade  = " & p_sq_unidade & " "  End If
-       If p_sq_menu     > ""  Then w_filter = w_filter & "  and acesso      > 0 "                     End If
-       RS.Filter = Mid(w_filter,6,255)
+
+       DB_GetMenuUser RS, w_cliente, w_sq_menu, p_sq_menu, "PESQUISA", p_nome, p_sq_unidade, p_sq_menu
 
        ShowHTML "<tr bgcolor=""" & conTrBgColor & """><td colspan=2><font size=2><hr>"
        AbreForm "Form1", w_Pagina & "Grava", "POST", "return(Validacao1(this));", null,P1,P2,P3,P4,TP,SG,R,O
@@ -981,8 +965,7 @@ Sub AcessoMenuPerfil
     ShowHTML "  <tr bgcolor=""" & conTrBgColor & """><td colspan=2>"
     ShowHTML "    <table width=""100%"" border=""0"">"
 
-    DB_GetVincKindList RS, w_cliente
-    RS.Filter = "ativo = 'S' and sq_tipo_pessoa = 'Física'"
+    DB_GetVincKindList RS, w_cliente, "S", "Física", null, null
     ShowHTML "      <tr valign=""top""><td><font  size=""1""><b>Tipos de vínculo</b>:"
     While NOT RS.EOF
        ShowHTML "          <br><INPUT TYPE=""CHECKBOX"" CLASS=""STC"" NAME=""w_sq_tipo_vinculo"" VALUE=""" & RS("sq_tipo_vinculo") & """>" & RS("nome")

@@ -142,12 +142,7 @@ Sub Cidade
      w_codigo_ibge      = Request("w_codigo_ibge")
      w_capital          = Request("w_capital")
   ElseIf O = "L" Then
-     DB_GetCityList RS, p_sq_pais, p_co_uf
-     If p_nome > "" Then
-        w_filter = ""
-        If p_nome  > ""   Then w_filter = w_filter & " and nome   like '*" & p_nome & "*'" End If
-        RS.Filter = Mid(w_filter,6,255)
-     End If
+     DB_GetCityList RS, p_sq_pais, p_co_uf, p_nome, null
      If p_ordena > "" Then RS.sort = p_ordena Else RS.sort = "NOME" End If
   ElseIf O = "A" or O = "E" Then
      w_sq_cidade = Request("w_sq_cidade")
@@ -408,13 +403,7 @@ Sub Estado
      w_codigo_ibge  = Request("w_codigo_ibge")
      w_ordem        = Request("w_ordem")
   ElseIf O = "L" Then
-     DB_GetStateList RS, Nvl(p_sq_pais,0)
-     If p_sq_regiao & p_ativo > "" Then
-        w_filter = ""
-        If p_sq_regiao > ""  Then w_filter = w_filter & " and sq_regiao  = '" & p_sq_regiao & "'"     End If
-        If p_ativo     > ""  Then w_filter = w_filter & " and ativo      = '" & p_ativo     & "'"     End If
-        RS.Filter = Mid(w_filter,6,255)
-     End If
+     DB_GetStateList RS, Nvl(p_sq_pais,0), p_sq_regiao, p_ativo, null
      If p_ordena > "" Then RS.sort = p_ordena Else RS.sort = "padrao desc, co_uf" End If
   ElseIf O = "A" or O = "E" Then
      w_sq_pais      = Request("w_sq_pais")
@@ -555,7 +544,7 @@ Sub Estado
     If O = "I" Then
        SelecaoPais "<u>P</u>aís:", "P", null, w_sq_pais, null, "w_sq_pais", null, "onChange=""document.Form.action='" & w_pagina & par & "'; document.Form.O.value='" & O & "'; document.Form.w_troca.value='w_sq_regiao'; document.Form.submit();"""
     Else
-       SelecaoPais "<u>P</u>aís:", "P", null, w_sq_pais, null, "w_sq_pais1", "ativo='S'", "disabled"
+       SelecaoPais "<u>P</u>aís:", "P", null, w_sq_pais, null, "w_sq_pais1", "ATIVO", "disabled"
        ShowHTML "<INPUT type=""hidden"" name=""w_sq_pais"" value=""" & w_sq_pais &""">"
     End If
     SelecaoRegiao "<u>R</u>egião:", "R", null, w_sq_regiao, w_sq_pais, "w_sq_regiao", null, null
@@ -673,13 +662,7 @@ Sub Regiao
   w_libera_edicao = RS("libera_edicao")
   
   If O = "L" Then
-     DB_GetRegionList RS, null, "N" 
-     If p_nome & p_sq_pais > "" Then
-        w_filter = ""
-        If p_nome    > ""  Then w_filter = w_filter & " and nome   like '*" & p_nome & "*'"  End If
-        If p_sq_pais > ""  Then w_filter = w_filter & " and sq_pais  = " & p_sq_pais & " "   End If
-        RS.Filter = Mid(w_filter,6,255)
-     End If
+     DB_GetRegionList RS, p_sq_pais, "N", p_nome
      If p_ordena > "" Then RS.sort = p_ordena Else RS.sort = "padrao desc,sq_pais,sq_regiao" End If
   ElseIf O = "A" or O = "E" Then
      w_sq_regiao = Request("w_sq_regiao")
@@ -799,7 +782,7 @@ Sub Regiao
     ShowHTML "<tr bgcolor=""" & conTrBgColor & """><td align=""center"">"
     ShowHTML "    <table width=""70%"" border=""0"">"
     ShowHTML "      <tr>"
-    SelecaoPais "<u>P</u>aís:", "P", null, w_sq_pais, null, "w_sq_pais", "ativo='S'", null
+    SelecaoPais "<u>P</u>aís:", "P", null, w_sq_pais, null, "w_sq_pais", "ATIVO", null
     ShowHTML "      <tr><td valign=""top""><font size=""1""><b><U>N</U>ome:<br><INPUT ACCESSKEY=""N"" " & w_Disabled & " class=""STI"" type=""text"" name=""w_nome"" size=""50"" maxlength=""50"" value=""" & w_nome & """></td>"
     ShowHTML "      <tr><td valign=""top""><font size=""1""><b><U>S</U>igla:<br><INPUT ACCESSKEY=""S"" " & w_Disabled & " class=""STI"" type=""text"" name=""w_sigla"" size=""2"" maxlength=""2"" value=""" & w_sigla & """></td>"
     ShowHTML "      <tr><td valign=""top""><font size=""1""><b>O<U>r</U>dem:<br><INPUT ACCESSKEY=""R"" " & w_Disabled & " class=""STI"" type=""text"" name=""w_ordem"" size=""4"" maxlength=""4"" value=""" & w_ordem & """></td>"
@@ -825,7 +808,7 @@ Sub Regiao
     ShowHTML "<tr bgcolor=""" & conTrBgColor & """><td align=""center"">"
     ShowHTML "    <table width=""70%"" border=""0"">"
     ShowHTML "      <tr>"
-    SelecaoPais "<u>P</u>aís:", "P", null, p_sq_pais, null, "p_sq_pais", "ativo='S'", null
+    SelecaoPais "<u>P</u>aís:", "P", null, p_sq_pais, null, "p_sq_pais", "ATIVO", null
     ShowHTML "      <tr><td valign=""top""><font size=""1""><b><U>N</U>ome:<br><INPUT ACCESSKEY=""N"" " & w_Disabled & " class=""STI"" type=""text"" name=""p_nome"" size=""50"" maxlength=""50"" value=""" & p_nome & """></td>"
     ShowHTML "      <tr><td valign=""top""><font size=""1""><b><U>O</U>rdenação por:<br><SELECT ACCESSKEY=""O"" " & w_Disabled & " class=""STS"" name=""p_ordena"" size=""1"">"
     If p_Ordena="NOME" Then
@@ -891,14 +874,7 @@ Sub Pais
   w_libera_edicao = RS("libera_edicao")
   
   If O = "L" Then
-     DB_GetCountryList RS
-     If p_nome & p_ativo > "" Then
-        w_filter = ""
-        If p_nome >  ""   Then w_filter = w_filter & " and nome   like '*" & p_nome & "*'" End If
-        If p_ativo > ""   Then w_filter = w_filter & " and ativo  = '" & p_ativo & "'"    End If
-        If p_sigla > ""   Then w_filter = w_filter & " and sigla  = '" & p_sigla & "'"     End If
-        RS.Filter = Mid(w_filter,6,255)
-     End If
+     DB_GetCountryList RS, null, p_nome, p_ativo, p_sigla
      If p_ordena > "" Then RS.sort = p_ordena Else RS.sort = "padrao desc, sq_pais" End If
   ElseIf O = "A" or O = "E" Then
      w_sq_pais = Request("w_sq_pais")

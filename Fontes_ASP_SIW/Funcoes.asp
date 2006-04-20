@@ -739,9 +739,8 @@ End Sub
 REM =========================================================================
 REM Montagem da seleção dos tipos de vínculo
 REM -------------------------------------------------------------------------
-Sub SelecaoVinculo (label, accesskey, hint, chave, chaveAux, campo, restricao)
-    DB_GetVincKindList RS, w_cliente
-    If Nvl(restricao,"") > "" Then RS.Filter = restricao End If
+Sub SelecaoVinculo (label, accesskey, hint, chave, chaveAux, campo, ativo, tipo_pessoa, interno)
+    DB_GetVincKindList RS, w_cliente, ativo, tipo_pessoa, null, interno
     If IsNull(hint) Then
        ShowHTML "          <td valign=""top""><font size=""1""><b>" & Label & "</b><br><SELECT ACCESSKEY=""" & accesskey & """ CLASS=""STS"" NAME=""" & campo & """ " & w_Disabled & ">"
     Else
@@ -788,7 +787,7 @@ REM =========================================================================
 REM Montagem da seleção do grupo de deficiência
 REM -------------------------------------------------------------------------
 Sub SelecaoGrupoDef (label, accesskey, hint, chave, chaveAux, campo, restricao)
-    DB_GetDeficGroupList RS
+    DB_GetDeficGroupList RS, null, null
     If IsNull(hint) Then
        ShowHTML "          <td valign=""top""><font size=""1""><b>" & Label & "</b><br><SELECT ACCESSKEY=""" & accesskey & """ CLASS=""STS"" NAME=""" & campo & """ " & w_Disabled & ">"
     Else
@@ -812,9 +811,6 @@ REM Montagem da seleção do tipo da pessoa
 REM -------------------------------------------------------------------------
 Sub SelecaoTipoPessoa (label, accesskey, hint, chave, chaveAux, campo, restricao, atributo)
     DB_GetKindPersonList RS
-    If restricao > "" Then
-       RS.Filter = restricao
-    End If
     If IsNull(hint) Then
        ShowHTML "          <td valign=""top""><font size=""1""><b>" & Label & "</b><br><SELECT ACCESSKEY=""" & accesskey & """ CLASS=""STS"" NAME=""" & campo & """ " & w_Disabled & " " & atributo & ">"
     Else
@@ -862,10 +858,10 @@ REM =========================================================================
 REM Montagem da seleção de país
 REM -------------------------------------------------------------------------
 Sub SelecaoPais (label, accesskey, hint, chave, chaveAux, campo, restricao, atributo)
-    DB_GetCountryList RS
-    If restricao > "" Then
-       RS.Filter = restricao
-    End If
+    DB_GetCountryList RS, restricao, null, null, null
+    'If restricao > "" Then
+    '   RS.Filter = restricao
+    'End If
     RS.Sort = "padrao desc, Nome"
     If IsNull(hint) Then
        ShowHTML "          <td valign=""top""><font size=""1""><b>" & Label & "</b><br><SELECT ACCESSKEY=""" & accesskey & """ CLASS=""STS"" NAME=""" & campo & """ " & w_Disabled & " " & atributo & ">"
@@ -892,10 +888,7 @@ REM =========================================================================
 REM Montagem da seleção da região
 REM -------------------------------------------------------------------------
 Sub SelecaoRegiao (label, accesskey, hint, chave, chaveAux, campo, restricao, atributo)
-    DB_GetRegionList RS, chaveAux, null
-    If restricao > "" Then
-       RS.Filter = restricao
-    End If
+    DB_GetRegionList RS, chaveAux, null, null
     RS.Sort = "Ordem"
     If IsNull(hint) Then
        ShowHTML "          <td valign=""top""><font size=""1""><b>" & Label & "</b><br><SELECT ACCESSKEY=""" & accesskey & """ CLASS=""STS"" NAME=""" & campo & """ " & w_Disabled & " " & atributo & ">"
@@ -919,10 +912,7 @@ REM =========================================================================
 REM Montagem da seleção de estado
 REM -------------------------------------------------------------------------
 Sub SelecaoEstado (label, accesskey, hint, chave, chaveAux, chaveAux2, campo, restricao, atributo)
-    DB_GetStateList RS, cDbl(Nvl(chaveAux,0))
-    If restricao > "" Then
-       RS.Filter = restricao
-    End If
+    DB_GetStateList RS, cDbl(Nvl(chaveAux,0)), null, null, restricao
     RS.Sort = "padrao desc, nome"
     If IsNull(hint) Then
        ShowHTML "          <td valign=""top""><font size=""1""><b>" & Label & "</b><br><SELECT ACCESSKEY=""" & accesskey & """ CLASS=""STS"" NAME=""" & campo & """ " & w_Disabled & " " & atributo & ">"
@@ -949,10 +939,7 @@ REM =========================================================================
 REM Montagem da seleção de cidade
 REM -------------------------------------------------------------------------
 Sub SelecaoCidade (label, accesskey, hint, chave, chaveAux, chaveAux2, campo, restricao, atributo)
-    DB_GetCityList RS, cDbl(Nvl(chaveAux,0)), chaveAux2
-    If restricao > "" Then
-       RS.Filter = restricao
-    End If
+    DB_GetCityList RS, cDbl(Nvl(chaveAux,0)), chaveAux2, null, restricao
     RS.Sort = "capital desc, nome"
     If IsNull(hint) Then
        ShowHTML "          <td valign=""top""><font size=""1""><b>" & Label & "</b><br><SELECT ACCESSKEY=""" & accesskey & """ CLASS=""STS"" NAME=""" & campo & """ " & w_Disabled & " " & atributo & ">"
@@ -1051,8 +1038,7 @@ REM =========================================================================
 REM Montagem da seleção de opções do menu que são vinculadas a serviço
 REM -------------------------------------------------------------------------
 Sub SelecaoServico (label, accesskey, hint, chave, chaveAux, campo, restricao, atributo)
-    DB_GetMenuList RS, w_cliente, "I", null
-    RS.Filter = "tramite='S'"
+    DB_GetMenuList RS, w_cliente, "X", null
     If IsNull(hint) Then
        ShowHTML "          <td valign=""top""><font size=""1""><b>" & Label & "</b><br><SELECT ACCESSKEY=""" & accesskey & """ CLASS=""STS"" NAME=""" & campo & """ " & w_Disabled & " " & atributo & ">"
     Else
@@ -1129,9 +1115,6 @@ REM Montagem da seleção da localização
 REM -------------------------------------------------------------------------
 Sub SelecaoLocalizacao (label, accesskey, hint, chave, chaveAux, campo, restricao)
     DB_GetLocalList RS, w_cliente, ChaveAux, restricao
-    If Not IsNull(chaveAux) Then
-       RS.Filter = "sq_unidade = " & chaveAux 
-    End If
     If IsNull(hint) Then
        ShowHTML "          <td valign=""top""><font size=""1""><b>" & Label & "</b><br><SELECT ACCESSKEY=""" & accesskey & """ CLASS=""STS"" NAME=""" & campo & """ " & w_Disabled & ">"
     Else
@@ -1203,19 +1186,15 @@ REM =========================================================================
 REM Montagem da seleção das unidades organizacionais
 REM -------------------------------------------------------------------------
 Sub SelecaoUnidade (label, accesskey, hint, chave, chaveAux, campo, restricao, atributo)
-    If isNull(restricao) or Instr(restricao,"=") = 0 Then
-       DB_GetUorgList RS, w_cliente, ChaveAux, restricao, null, null
-       RS.Filter = "ativo='S'"
+    If restricao > "" Then
+       DB_GetUorgList RS, w_cliente, ChaveAux, restricao, null, null, null
     Else
-       DB_GetUorgList RS, w_cliente, ChaveAux, null, null, null
-       RS.Filter = "ativo='S' and " & restricao
+       DB_GetUorgList RS, w_cliente, ChaveAux, "ATIVO", null, null, null
     End If
-    
     Dim w_nm_unidade, w_sigla
     ShowHTML "<INPUT type=""hidden"" name=""" & campo & """ value=""" & chave &""">"
     If chave > "" Then
-       DB_GetUorgList RS, w_cliente, chave, null, null, null
-       RS.Filter = "sq_unidade = " & chave
+       DB_GetUorgList RS, w_cliente, chave, null, null, null, null
        If not RS.EOF Then
           w_nm_unidade = RS("nome")
           w_sigla      = RS("sigla")
@@ -1237,8 +1216,7 @@ REM =========================================================================
 REM Rotina de selecao das unidades do modulo passagens e diárias
 REM -------------------------------------------------------------------------
 Sub SelecaoUnidade1(label, accesskey, hint, chave, chaveAux, campo, restricao, atributo, ano)
-    DB_GetUorgList RS, w_cliente, null, restricao, null, null
-    RS.Filter = "ativo='S' and ano = " & ano
+    DB_GetUorgList RS, w_cliente, null, restricao, null, null, ano
     RS.Sort = "nome"
     If IsNull(hint) Then
        ShowHTML "          <td valign=""top""><font size=""1""><b>" & Label & "</b><br><SELECT ACCESSKEY=""" & accesskey & """ CLASS=""STS"" NAME=""" & campo & """ " & w_Disabled & " " & atributo & ">"
@@ -1292,12 +1270,7 @@ REM =========================================================================
 REM Montagem da seleção das unidades gestoras
 REM -------------------------------------------------------------------------
 Sub SelecaoUnidadeGest (label, accesskey, hint, chave, chaveAux, campo, restricao)
-    DB_GetUorgList RS, w_cliente, chaveAux, null, null, null
-    w_filter = " unidade_gestora = 'S' and ativo = 'S'"
-    If chaveAux > "" Then
-       w_filter = w_filter & " and sq_unidade <> " & chaveAux 
-    end If
-    RS.Filter = w_filter
+    DB_GetUorgList RS, w_cliente, chaveAux, "GESTORA", null, null, null
     RS.Sort = "Nome"
     If IsNull(hint) Then
        ShowHTML "          <td valign=""top""><font size=""1""><b>" & Label & "</b><br><SELECT ACCESSKEY=""" & accesskey & """ CLASS=""STS"" NAME=""" & campo & """ " & w_Disabled & ">"
@@ -1321,12 +1294,7 @@ REM =========================================================================
 REM Montagem da seleção das unidades pagadoras
 REM -------------------------------------------------------------------------
 Sub SelecaoUnidadePag (label, accesskey, hint, chave, chaveAux, campo, restricao)
-    DB_GetUorgList RS, w_cliente, chaveAux, null, null, null
-    w_filter = " unidade_pagadora = 'S' and ativo = 'S'"
-    If chaveAux > "" Then
-       w_filter = w_filter & " and sq_unidade <> " & chaveAux 
-    end If
-    RS.Filter = w_filter
+    DB_GetUorgList RS, w_cliente, chaveAux, "PAGADORA", null, null, null
     RS.Sort = "Nome"
     If IsNull(hint) Then
        ShowHTML "          <td valign=""top""><font size=""1""><b>" & Label & "</b><br><SELECT ACCESSKEY=""" & accesskey & """ CLASS=""STS"" NAME=""" & campo & """ " & w_Disabled & ">"
@@ -1471,10 +1439,7 @@ REM =========================================================================
 REM Montagem da seleção do tipo de endereco
 REM -------------------------------------------------------------------------
 Sub SelecaoTipoEndereco (label, accesskey, hint, chave, chaveAux, campo, restricao, atributo)
-    DB_GetAdressTypeList RS
-    If restricao > "" Then
-       RS.Filter = restricao
-    End If
+    DB_GetAdressTypeList RS, chaveAux, null, null
     RS.Sort = "Nome"
     If IsNull(hint) Then
        ShowHTML "          <td valign=""top""><font size=""1""><b>" & Label & "</b><br><SELECT ACCESSKEY=""" & accesskey & """ CLASS=""STS"" NAME=""" & campo & """ " & w_Disabled & " " & atributo & ">"
@@ -1498,10 +1463,7 @@ REM =========================================================================
 REM Montagem da seleção do tipo de endereco
 REM -------------------------------------------------------------------------
 Sub SelecaoTipoFone (label, accesskey, hint, chave, chaveAux, campo, restricao, atributo)
-    DB_GetFoneTypeList RS
-    If restricao > "" Then
-       RS.Filter = restricao
-    End If
+    DB_GetFoneTypeList RS, chaveAux, null, null
     RS.Sort = "Nome"
     If IsNull(hint) Then
        ShowHTML "          <td valign=""top""><font size=""1""><b>" & Label & "</b><br><SELECT ACCESSKEY=""" & accesskey & """ CLASS=""STS"" NAME=""" & campo & """ " & w_Disabled & " " & atributo & ">"

@@ -26,15 +26,21 @@ REM -------------------------------------------------------------------------
 REM =========================================================================
 REM Recupera os dados do segmento
 REM -------------------------------------------------------------------------
-Sub DB_GetSegVincData(p_rs, p_sigla, p_sq_segmento)
-  Dim l_sigla, l_sq_segmento
-  Set l_sigla       = Server.CreateObject("ADODB.Parameter")
-  Set l_sq_segmento = Server.CreateObject("ADODB.Parameter")
+Sub DB_GetSegVincData(p_rs, p_sigla, p_sq_segmento, p_nome, p_sq_segmento_vinculo)
+  Dim l_sigla, l_sq_segmento, l_nome, l_sq_segmento_vinculo
+  Set l_sigla                 = Server.CreateObject("ADODB.Parameter")
+  Set l_sq_segmento           = Server.CreateObject("ADODB.Parameter")
+  Set l_nome                  = Server.CreateObject("ADODB.Parameter")
+  Set l_sq_segmento_vinculo   = Server.CreateObject("ADODB.Parameter")
   with sp
-     set l_sigla                = .CreateParameter("l_sigla",       adVarchar, adParamInput, 30, p_sigla)
-     set l_sq_segmento          = .CreateParameter("l_sq_segmento", adInteger, adParamInput, , p_sq_segmento)
+     set l_sigla                = .CreateParameter("l_sigla",               adVarchar, adParamInput, 30, p_sigla)
+     set l_sq_segmento          = .CreateParameter("l_sq_segmento",         adInteger, adParamInput,   , p_sq_segmento)
+     set l_nome                 = .CreateParameter("l_nome",                adVarchar, adParamInput, 60, Tvl(p_nome))
+     set l_sq_segmento_vinculo  = .CreateParameter("l_sq_segmento_vinculo", adInteger, adParamInput,   , Tvl(p_sq_segmento_vinculo))
      .parameters.Append         l_sigla
      .parameters.Append         l_sq_segmento
+     .parameters.Append         l_nome
+     .parameters.Append         l_sq_segmento_vinculo
      If Session("dbms") = 1 or Session("dbms") = 3 Then .Properties("PLSQLRSet") = TRUE End If
      .CommandText               = Session("schema") & "SP_GetSegVincData"
      On Error Resume Next     
@@ -45,6 +51,8 @@ Sub DB_GetSegVincData(p_rs, p_sigla, p_sq_segmento)
      If Session("dbms") = 1 or Session("dbms") = 3 Then .Properties("PLSQLRSet") = FALSE End If
      .Parameters.Delete         "l_sigla"
      .Parameters.Delete         "l_sq_segmento"
+     .Parameters.Delete         "l_nome"
+     .Parameters.Delete         "l_sq_segmento_vinculo"
   end with
 End Sub
 REM =========================================================================

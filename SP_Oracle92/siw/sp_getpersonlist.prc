@@ -4,7 +4,7 @@ create or replace procedure SP_GetPersonList
     p_restricao  in varchar2 default null,
     p_nome       in varchar2 default null,
     p_sg_unidade in varchar2 default null,
-    p_codigo     in number   default null,
+    p_codigo     in varchar2 default null,
     p_filhos     in varchar2 default null,
     p_result    out sys_refcursor) is
 
@@ -33,26 +33,30 @@ begin
       -- Recupera todas as pessoas do cadastro da organização, físicas e jurídicas
       open p_result for 
          select a.sq_pessoa, a.nome, a.nome_resumido, a.nome_indice, a.nome_resumido_ind,
-                case when b.sq_pessoa is null 
-                     then b.cpf
-                     else case when f.sq_pessoa is null
-                               then f.cnpj
-                               else null
-                          end
-                end codigo, 
+                b.codigo,
                 c.username, c.ativo usuario,
                 d.sigla sg_unidade, d.nome nm_unidade, e.nome nm_local
            from co_pessoa                              a
-                 left outer    join co_pessoa_fisica   b on (a.sq_pessoa      = b.sq_pessoa)
-                 left outer    join co_pessoa_juridica f  on (a.sq_pessoa     = f.sq_pessoa)
+                left outer join (select x.sq_pessoa, 
+                                        case when y.sq_pessoa is not null 
+                                             then y.cpf
+                                             else case when z.sq_pessoa is not null
+                                                       then z.cnpj
+                                                       else null
+                                                  end
+                                        end codigo
+                                   from co_pessoa                          x
+                                        left outer join co_pessoa_fisica   y on (x.sq_pessoa = y.sq_pessoa)
+                                        left outer join co_pessoa_juridica z on (x.sq_pessoa = z.sq_pessoa)
+                                )                      b on (a.sq_pessoa      = b.sq_pessoa)
                  left outer    join sg_autenticacao    c on (a.sq_pessoa      = c.sq_pessoa) 
                     left outer join eo_unidade         d on (c.sq_unidade     = d.sq_unidade)
                     left outer join eo_localizacao     e on (c.sq_localizacao = e.sq_localizacao)
-          where a.sq_pessoa_pai = p_cliente
+          where (a.sq_pessoa = p_cliente or a.sq_pessoa_pai = p_cliente)
             and (p_nome       is null or (p_nome       is not null and ((a.nome_indice like '%'||upper(acentos(p_nome))||'%')
                                                                    or    a.nome_resumido_ind like '%'||upper(acentos(p_nome))||'%')))
             and (p_sg_unidade is null or (p_sg_unidade is not null and acentos(d.sigla) like '%'||acentos(p_sg_unidade)||'%'))
-            and (p_codigo     is null or (p_codigo     is not null and codigo = p_codigo))
+            and (p_codigo     is null or (p_codigo     is not null and b.codigo = p_codigo))
          order by a.nome_indice;
    Elsif p_restricao = 'INTERNOS' Then
       -- Recupera as pessoas internas à organização

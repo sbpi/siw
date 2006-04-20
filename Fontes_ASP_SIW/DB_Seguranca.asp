@@ -262,21 +262,31 @@ REM -------------------------------------------------------------------------
 REM =========================================================================
 REM Recupera os usuários ou tipos de vínculo habilitados para uma opção do menu
 REM -------------------------------------------------------------------------
-Sub DB_GetMenuUser(p_rs, p_cliente, p_sq_menu, p_ChaveAux, p_retorno)
-  Dim l_cliente, l_sq_menu, l_retorno, l_ChaveAux
+Sub DB_GetMenuUser(p_rs, p_cliente, p_sq_menu, p_ChaveAux, p_retorno, p_nome, p_sq_unidade, p_acesso)
+  Dim l_cliente, l_sq_menu, l_retorno, l_ChaveAux, l_nome, l_sq_unidade, l_acesso
   Set l_cliente     = Server.CreateObject("ADODB.Parameter")
   Set l_sq_menu     = Server.CreateObject("ADODB.Parameter")
   Set l_ChaveAux    = Server.CreateObject("ADODB.Parameter")
   Set l_retorno     = Server.CreateObject("ADODB.Parameter")
+  Set l_nome        = Server.CreateObject("ADODB.Parameter")
+  Set l_sq_unidade  = Server.CreateObject("ADODB.Parameter")
+  Set l_acesso      = Server.CreateObject("ADODB.Parameter")
   with sp
      set l_cliente              = .CreateParameter("l_cliente",   adInteger, adParamInput,   , p_cliente)
      set l_sq_menu              = .CreateParameter("l_sq_menu",   adInteger, adParamInput,   , p_sq_menu)
      set l_ChaveAux             = .CreateParameter("l_ChaveAux",  adInteger, adParamInput,   , Tvl(p_ChaveAux))
      set l_retorno              = .CreateParameter("l_retorno",   adVarchar, adParamInput, 20, p_retorno)
+     set l_nome                 = .CreateParameter("l_nome",      adVarchar, adParamInput, 60, Tvl(p_nome))
+     set l_sq_unidade           = .CreateParameter("l_sq_unidade",adInteger, adParamInput,   , Tvl(p_sq_unidade))
+     set l_acesso               = .CreateParameter("l_acesso",    adInteger, adParamInput,   , Tvl(p_acesso))
+     
      .parameters.Append         l_cliente
      .parameters.Append         l_sq_menu
      .parameters.Append         l_ChaveAux
      .parameters.Append         l_retorno
+     .parameters.Append         l_nome
+     .parameters.Append         l_sq_unidade
+     .parameters.Append         l_acesso
      If Session("dbms") = 1 or Session("dbms") = 3 Then .Properties("PLSQLRSet") = TRUE End If
      .CommandText               = Session("schema") & "SP_GetMenuUser"
      On Error Resume Next
@@ -289,6 +299,9 @@ Sub DB_GetMenuUser(p_rs, p_cliente, p_sq_menu, p_ChaveAux, p_retorno)
      .Parameters.Delete         "l_sq_menu"
      .Parameters.Delete         "l_ChaveAux"
      .Parameters.Delete         "l_retorno"
+     .Parameters.Delete         "l_nome"
+     .Parameters.Delete         "l_sq_unidade"
+     .Parameters.Delete         "l_acesso"
   end with
 End Sub
 REM =========================================================================
@@ -298,21 +311,30 @@ REM -------------------------------------------------------------------------
 REM =========================================================================
 REM Recupera os usuários ou tipos de vínculo habilitados para uma opção do menu
 REM -------------------------------------------------------------------------
-Sub DB_GetTramiteUser(p_rs, p_cliente, p_sq_menu, p_ChaveAux, p_retorno)
-  Dim l_cliente, l_sq_menu, l_retorno, l_ChaveAux
+Sub DB_GetTramiteUser(p_rs, p_cliente, p_sq_menu, p_ChaveAux, p_retorno, p_nome, p_sq_unidade, p_acesso)
+  Dim l_cliente, l_sq_menu, l_retorno, l_ChaveAux, l_nome, l_sq_unidade, l_acesso
   Set l_cliente     = Server.CreateObject("ADODB.Parameter")
   Set l_sq_menu     = Server.CreateObject("ADODB.Parameter")
   Set l_ChaveAux    = Server.CreateObject("ADODB.Parameter")
   Set l_retorno     = Server.CreateObject("ADODB.Parameter")
+  Set l_nome        = Server.CreateObject("ADODB.Parameter")
+  Set l_sq_unidade  = Server.CreateObject("ADODB.Parameter")
+  Set l_acesso      = Server.CreateObject("ADODB.Parameter")
   with sp
      set l_cliente              = .CreateParameter("l_cliente",   adInteger, adParamInput,   , p_cliente)
      set l_sq_menu              = .CreateParameter("l_sq_menu",   adInteger, adParamInput,   , p_sq_menu)
      set l_ChaveAux             = .CreateParameter("l_ChaveAux",  adInteger, adParamInput,   , Tvl(p_ChaveAux))
      set l_retorno              = .CreateParameter("l_retorno",   adVarchar, adParamInput, 20, p_retorno)
+     set l_nome                 = .CreateParameter("l_nome",      adVarchar, adParamInput, 60, Tvl(p_nome))
+     set l_sq_unidade           = .CreateParameter("l_sq_unidade",adInteger, adParamInput,   , Tvl(p_sq_unidade))
+     set l_acesso               = .CreateParameter("l_acesso",    adInteger, adParamInput,   , Tvl(p_acesso))
      .parameters.Append         l_cliente
      .parameters.Append         l_sq_menu
      .parameters.Append         l_ChaveAux
      .parameters.Append         l_retorno
+     .parameters.Append         l_nome
+     .parameters.Append         l_sq_unidade
+     .parameters.Append         l_acesso
      If Session("dbms") = 1 or Session("dbms") = 3 Then .Properties("PLSQLRSet") = TRUE End If
      .CommandText               = Session("schema") & "SP_GetTramiteUser"
      On Error Resume Next
@@ -325,6 +347,9 @@ Sub DB_GetTramiteUser(p_rs, p_cliente, p_sq_menu, p_ChaveAux, p_retorno)
      .Parameters.Delete         "l_sq_menu"
      .Parameters.Delete         "l_ChaveAux"
      .Parameters.Delete         "l_retorno"
+     .Parameters.Delete         "l_nome"
+     .Parameters.Delete         "l_sq_unidade"
+     .Parameters.Delete         "l_acesso"
   end with
 End Sub
 REM =========================================================================

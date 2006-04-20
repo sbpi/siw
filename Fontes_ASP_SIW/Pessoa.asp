@@ -409,8 +409,7 @@ Sub Benef
        ShowHTML "              <INPUT class=""stb"" TYPE=""submit"" NAME=""Botao"" VALUE=""Procurar"" onClick=""Botao.value=this.value; document.Form.action='" & w_Pagina & par &"'"">"
        ShowHTML "      </table>"
        If Request("w_nome") > "" Then
-          DB_GetPersonList RS, w_cliente, null, "PESSOA", null, null, null, null
-          RS.Filter = "username = null and nome_indice like '*" & Request("w_nome") & "*'"
+          DB_GetPersonList RS, w_cliente, null, "NOVOUSO", Request("w_nome"), null, null, null
           ShowHTML "<tr><td align=""center"" colspan=3>"
           ShowHTML "    <TABLE WIDTH=""100%"" bgcolor=""" & conTableBgColor & """ BORDER=""" & conTableBorder & """ CELLSPACING=""" & conTableCellSpacing & """ CELLPADDING=""" & conTableCellPadding & """ BorderColorDark=""" & conTableBorderColorDark & """ BorderColorLight=""" & conTableBorderColorLight & """>"
           ShowHTML "        <tr bgcolor=""" & conTrBgColor & """ align=""center"">"
@@ -494,9 +493,9 @@ Sub Benef
        ShowHTML "      <tr><td valign=""top"" colspan=""2""><table border=0 width=""100%"" cellspacing=0>"
        ShowHTML "      <tr>"
        If SG = "RHUSU" Then
-          SelecaoVinculo "<u>M</u>odalidade de contratação:", "M", null, w_sq_tipo_vinculo, null, "w_sq_tipo_vinculo", "ativo='S' and sq_tipo_pessoa='Física' and interno='S'"
+          SelecaoVinculo "<u>M</u>odalidade de contratação:", "M", null, w_sq_tipo_vinculo, null, "w_sq_tipo_vinculo", "S", "Física", "S"
        Else
-          SelecaoVinculo "<u>V</u>ínculo com a organização:", "V", null, w_sq_tipo_vinculo, null, "w_sq_tipo_vinculo", "ativo='S' and sq_tipo_pessoa='Física'"
+          SelecaoVinculo "<u>V</u>ínculo com a organização:", "V", null, w_sq_tipo_vinculo, null, "w_sq_tipo_vinculo", "S", "Física", null
        End If
        ShowHTML "      </tr>"
        ShowHTML "          </table>"

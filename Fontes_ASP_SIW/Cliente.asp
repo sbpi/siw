@@ -874,7 +874,7 @@ Sub Enderecos
     Else
        ShowHTML "              <input " & w_Disabled & " class=""str"" type=""radio"" name=""w_padrao"" VALUE=""N"">Não <input " & w_Disabled & " class=""str"" type=""radio"" name=""w_padrao"" VALUE=""S"" checked>Sim"
     End If  
-    SelecaoTipoEndereco "<u>T</u>ipo:", "T", "Selecione na lista o tipo deste endereço.", w_sq_tipo_endereco, null, "w_sq_tipo_endereco", "sq_tipo_pessoa='" & w_tipo_pessoa & "'", null
+    SelecaoTipoEndereco "<u>T</u>ipo:", "T", "Selecione na lista o tipo deste endereço.", w_sq_tipo_endereco, w_tipo_pessoa, "w_sq_tipo_endereco", null, null
     ShowHTML "          </table>"
     If Session("p_portal") = "" Then ShowHTML "      <tr><td align=""LEFT"" colspan=4><font size=""1""><b><U>A</U>ssinatura Eletrônica:<BR> <INPUT ACCESSKEY=""A"" class=""sti"" type=""PASSWORD"" name=""w_assinatura"" size=""30"" maxlength=""30"" value=""""></td></tr>" End If
     ShowHTML "      <tr><td align=""center"" colspan=4><hr>"
@@ -1095,7 +1095,7 @@ Sub Telefones
     ShowHTML "      <tr><td valign=""top"" colspan=""2""><table border=0 width=""100%"" cellspacing=0>"
     ShowHTML "          <tr><td valign=""top""><font size=""1""><b><u>D</u>DD:</b><br><input " & w_Disabled & " accesskey=""D"" type=""text"" name=""w_ddd"" class=""sti"" SIZE=""4"" MAXLENGTH=""4"" VALUE=""" & w_ddd & """ title=""Informe o DDD deste número.""></td>"
     ShowHTML "              <td valign=""top""><font size=""1""><b><u>N</u>úmero:</b><br><input " & w_Disabled & " accesskey=""N"" type=""text"" name=""w_numero"" class=""sti"" SIZE=""25"" MAXLENGTH=""25"" VALUE=""" & w_numero & """ title=""Informe o número do telefone.""></td>"
-    SelecaoTipoFone "<u>T</u>ipo:", "T", "Selecione na lista o tipo deste telefone.", w_sq_tipo_telefone, null, "w_sq_tipo_telefone", "sq_tipo_pessoa='" & w_tipo_pessoa & "'", null
+    SelecaoTipoFone "<u>T</u>ipo:", "T", "Selecione na lista o tipo deste telefone.", w_sq_tipo_telefone, w_tipo_pessoa, "w_sq_tipo_telefone", null, null
     ShowHTML "          </table>"
     ShowHTML "      <tr><td valign=""top"" colspan=""2""><table border=0 width=""100%"" cellspacing=0>"
     ShowHTML "      <tr>"
@@ -1832,7 +1832,7 @@ Sub Visual
   ' Recupera o logo do cliente a ser usado nas listagens
   DB_GetCustomerData RS, w_sq_pessoa
   If RS("logo") > "" Then
-     w_logo = "\img\logo" & Mid(RS("logo"),Instr(RS("logo"),"."),30)
+     w_logo = "img\logo" & Mid(RS("logo"),Instr(RS("logo"),"."),30)
   End If
   DesconectaBD
   

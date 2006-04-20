@@ -1,7 +1,9 @@
 create or replace procedure SP_GetSegVincData
-   (p_sigla       in  varchar2 default null,
-    p_sq_segmento in  number,
-    p_result      out siw.sys_refcursor
+   (p_sigla          in  varchar2 default null,
+    p_sq_segmento    in  number,
+    p_nome           in  varchar2 default null,
+    p_sq_seg_vinculo in  number   default null,
+    p_result         out siw.sys_refcursor
    ) is
 begin
    If p_sigla = 'SEGMENTOVINC' Then
@@ -12,7 +14,8 @@ begin
            from dm_seg_vinculo a,
                 co_tipo_pessoa      b
           where a.sq_tipo_pessoa = b.sq_tipo_pessoa
-            and a.sq_segmento = p_sq_segmento;
+            and a.sq_segmento = p_sq_segmento
+            and (p_sq_seg_vinculo is null or (p_sq_seg_vinculo is not null and a.sq_seg_vinculo = p_sq_seg_vinculo));            
    ElsIf p_sigla = 'SEGMENTOMENU' Then
       -- Recupera os dados do menu do segmento escolhido
       open p_result for
@@ -36,4 +39,3 @@ begin
    End If;
 end SP_GetSegVincData;
 /
-

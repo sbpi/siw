@@ -215,7 +215,7 @@ Sub LogOn
     ShowHTML "          </tr>"
     ShowHTML "          <tr valign=""top"">"
     ShowHTML "            <td align=""right""><font size=""2""><b>Regional de Ensino:</b><td><SELECT CLASS=""STI"" NAME=""regional"">"
-    DB_GetUorgList RS, P_cliente, null, null, null, null
+    DB_GetUorgList RS, P_cliente, null, null, null, null, null
     If Nvl(Session("codigo"),"00") = "00" Then
        RS.Filter = "informal='N' and codigo <> '00'"
        ShowHTML "          <option value=""00"">Todas"

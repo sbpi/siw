@@ -179,7 +179,7 @@ Sub Unidade
       End If
       ShowHTML "<tr><td colspan=3>"
       ShowHTML "    <TABLE WIDTH=""100%"" bgcolor=""" & conTableBgColor & """ BORDER=""0"" CELLSPACING=""" & conTableCellSpacing & """ CELLPADDING=""" & conTableCellPadding & """ BorderColorDark=""" & conTableBorderColorDark & """ BorderColorLight=""" & conTableBorderColorLight & """>"
-      DB_GetUorgList RS, Session("p_cliente"), null, "IS NULL", null, null
+      DB_GetUorgList RS, Session("p_cliente"), null, "IS NULL", null, null, null
       RS.Sort = "Ordem"
       
       if RS.EOF then           
@@ -202,7 +202,7 @@ Sub Unidade
             ShowHTML "<a class=""Xlink"" href=""#"" onclick=""window.open('" & w_pagina & "Responsavel&P1=" & P1 &"&P2=" & P2 &"&P3=" & P3 &"&P4=" & P4 &"&TP=" & TP &" - Responsáveis&O=L&SG=RESPONSAVEL&w_sq_unidade=" & RS("sq_unidade") & "','Responsaveis','toolbar=no,width=780,height=350,top=30,left=10,scrollbars=yes,resizable=yes');"">Responsáveis</a>"
             ShowHTML "</li>"
             ShowHTML "   <ul id=""Xtree" & w_contOut & """ class=""Xtree"" style=""display:true;"">"
-            DB_GetUorgList RS1, Session("p_cliente"), RS("sq_unidade"), "FILHO", null, null
+            DB_GetUorgList RS1, Session("p_cliente"), RS("sq_unidade"), "FILHO", null, null, null
             RS1.Sort = "Ordem"
             While Not RS1.EOF
                w_ContImg = w_ContImg + 1
@@ -216,7 +216,7 @@ Sub Unidade
                ShowHTML "<a class=""Xlink"" href=""#"" onclick=""window.open('" & w_pagina & "Responsavel&P1=" & P1 &"&P2=" & P2 &"&P3=" & P3 &"&P4=" & P4 &"&TP=" & TP &" - Responsáveis&O=L&SG=RESPONSAVEL&w_sq_unidade=" & RS1("sq_unidade") & "','Responsaveis','toolbar=no,width=780,height=350,top=30,left=10,scrollbars=yes,resizable=yes');"">Responsáveis</a>&nbsp"
                ShowHTML "   </li>"
                ShowHTML "      <ul id=""Xtree" & w_contOut & """ class=""Xtree"" style=""display:none;"">"
-               DB_GetUorgList RS2, Session("p_cliente"), RS1("sq_unidade"), "FILHO", null, null
+               DB_GetUorgList RS2, Session("p_cliente"), RS1("sq_unidade"), "FILHO", null, null, null
                RS2.Sort = "Ordem"
                While Not RS2.EOF         
                  w_ContImg = w_ContImg + 1
@@ -230,7 +230,7 @@ Sub Unidade
                  ShowHTML "<a class=""Xlink"" href=""#"" onclick=""window.open('" & w_pagina & "Responsavel&P1=" & P1 &"&P2=" & P2 &"&P3=" & P3 &"&P4=" & P4 &"&TP=" & TP &" - Responsáveis&O=L&SG=RESPONSAVEL&w_sq_unidade=" & RS2("sq_unidade") & "','Responsaveis','toolbar=no,width=780,height=350,top=30,left=10,scrollbars=yes,resizable=yes');"">Responsáveis</a>&nbsp"
                  ShowHTML "         </li>"
                  ShowHTML "            <ul id=""Xtree" & w_contOut & """ class=""Xtree"" style=""display:none;"">"
-                 DB_GetUorgList RS3, Session("p_cliente"), RS2("sq_unidade"), "FILHO", null, null
+                 DB_GetUorgList RS3, Session("p_cliente"), RS2("sq_unidade"), "FILHO", null, null, null
                  RS3.Sort = "Ordem"
                  While Not RS3.EOF
                     w_ContImg = w_ContImg + 1
@@ -244,7 +244,7 @@ Sub Unidade
                     ShowHTML "<a class=""Xlink"" href=""#"" onclick=""window.open('" & w_pagina & "Responsavel&P1=" & P1 &"&P2=" & P2 &"&P3=" & P3 &"&P4=" & P4 &"&TP=" & TP &" - Responsáveis&O=L&SG=RESPONSAVEL&w_sq_unidade=" & RS3("sq_unidade") & "','Responsaveis','toolbar=no,width=780,height=350,top=30,left=10,scrollbars=yes,resizable=yes');"">Responsáveis</a>&nbsp"
                     ShowHTML "            </li>"
                     ShowHTML "               <ul id=""Xtree" & w_contOut & """ class=""Xtree"" style=""display:none;"">"
-                    DB_GetUorgList RS4, Session("p_cliente"), RS3("sq_unidade"), "FILHO", null, null
+                    DB_GetUorgList RS4, Session("p_cliente"), RS3("sq_unidade"), "FILHO", null, null, null
                     RS4.Sort = "Ordem"
                     While Not RS4.EOF
                        w_ContImg = w_ContImg + 1
@@ -258,7 +258,7 @@ Sub Unidade
                        ShowHTML "<a class=""Xlink"" href=""#"" onclick=""window.open('" & w_pagina & "Responsavel&P1=" & P1 &"&P2=" & P2 &"&P3=" & P3 &"&P4=" & P4 &"&TP=" & TP &" - Responsáveis&O=L&SG=RESPONSAVEL&w_sq_unidade=" & RS4("sq_unidade") & "','Responsaveis','toolbar=no,width=780,height=350,top=30,left=10,scrollbars=yes,resizable=yes');"">Responsáveis</a>&nbsp"
                        ShowHTML "               </li>"
                        ShowHTML "                  <ul id=""Xtree" & w_contOut & """ class=""Xtree"" style=""display:none;"">"
-                       DB_GetUorgList RS5, Session("p_cliente"), RS4("sq_unidade"), "FILHO", null, null
+                       DB_GetUorgList RS5, Session("p_cliente"), RS4("sq_unidade"), "FILHO", null, null, null
                        RS5.Sort = "Ordem"
                        While Not RS5.EOF
                           w_ContImg = w_ContImg + 1
@@ -272,7 +272,7 @@ Sub Unidade
                           ShowHTML "<a class=""Xlink"" href=""#"" onclick=""window.open('" & w_pagina & "Responsavel&P1=" & P1 &"&P2=" & P2 &"&P3=" & P3 &"&P4=" & P4 &"&TP=" & TP &" - Responsáveis&O=L&SG=RESPONSAVEL&w_sq_unidade=" & RS5("sq_unidade") & "','Responsaveis','toolbar=no,width=780,height=350,top=30,left=10,scrollbars=yes,resizable=yes');"">Responsáveis</a>&nbsp"
                           ShowHTML "                  </li>"
                           ShowHTML "                     <ul id=""Xtree" & w_contOut & """ class=""Xtree"" style=""display:none;"">"
-                          DB_GetUorgList RS6, Session("p_cliente"), RS5("sq_unidade"), "FILHO", null, null
+                          DB_GetUorgList RS6, Session("p_cliente"), RS5("sq_unidade"), "FILHO", null, null, null
                           RS6.Sort = "Ordem"
                           While Not RS6.EOF
                              w_ContImg = w_ContImg + 1
@@ -286,7 +286,7 @@ Sub Unidade
                              ShowHTML "<a class=""Xlink"" href=""#"" onclick=""window.open('" & w_pagina & "Responsavel&P1=" & P1 &"&P2=" & P2 &"&P3=" & P3 &"&P4=" & P4 &"&TP=" & TP &" - Responsáveis&O=L&SG=RESPONSAVEL&w_sq_unidade=" & RS6("sq_unidade") & "','Responsaveis','toolbar=no,width=780,height=350,top=30,left=10,scrollbars=yes,resizable=yes');"">Responsáveis</a>&nbsp"
                              ShowHTML "                     </li>"
                              ShowHTML "                        <ul id=""Xtree" & w_contOut & """ class=""Xtree"" style=""display:none;"">"
-                             DB_GetUorgList RS7, Session("p_cliente"), RS6("sq_unidade"), "FILHO", null, null
+                             DB_GetUorgList RS7, Session("p_cliente"), RS6("sq_unidade"), "FILHO", null, null, null
                              RS7.Sort = "Ordem"
                              While Not RS7.EOF
                                 w_ContImg = w_ContImg + 1
@@ -300,7 +300,7 @@ Sub Unidade
                                 ShowHTML "<a class=""Xlink"" href=""#"" onclick=""window.open('" & w_pagina & "Responsavel&P1=" & P1 &"&P2=" & P2 &"&P3=" & P3 &"&P4=" & P4 &"&TP=" & TP &" - Responsáveis&O=L&SG=RESPONSAVEL&w_sq_unidade=" & RS7("sq_unidade") & "','Responsaveis','toolbar=no,width=780,height=350,top=30,left=10,scrollbars=yes,resizable=yes');"">Responsáveis</a>&nbsp"
                                 ShowHTML "                        </li>"
                                 ShowHTML "                           <ul id=""Xtree" & w_contOut & """ class=""Xtree"" style=""display:none;"">"
-                                DB_GetUorgList RS8, Session("p_cliente"), RS7("sq_unidade"), "FILHO", null, null
+                                DB_GetUorgList RS8, Session("p_cliente"), RS7("sq_unidade"), "FILHO", null, null, null
                                 RS8.Sort = "Ordem"
                                 While Not RS8.EOF
                                    w_ContImg = w_ContImg + 1
@@ -314,7 +314,7 @@ Sub Unidade
                                    ShowHTML "<a class=""Xlink"" href=""#"" onclick=""window.open('" & w_pagina & "Responsavel&P1=" & P1 &"&P2=" & P2 &"&P3=" & P3 &"&P4=" & P4 &"&TP=" & TP &" - Responsáveis&O=L&SG=RESPONSAVEL&w_sq_unidade=" & RS8("sq_unidade") & "','Responsaveis','toolbar=no,width=780,height=350,top=30,left=10,scrollbars=yes,resizable=yes');"">Responsáveis</a>&nbsp"
                                    ShowHTML "                           </li>"
                                    ShowHTML "                              <ul id=""Xtree" & w_contOut & """ class=""Xtree"" style=""display:none;"">"
-                                   DB_GetUorgList RS9, Session("p_cliente"), RS8("sq_unidade"), "FILHO", null, null
+                                   DB_GetUorgList RS9, Session("p_cliente"), RS8("sq_unidade"), "FILHO", null, null, null
                                    RS9.Sort = "Ordem"
                                    While Not RS9.EOF
                                       w_ContImg = w_ContImg + 1
@@ -501,8 +501,7 @@ Sub Localizacao
   Dim w_ramal,w_telefone2,w_ativo, w_nome_unidade
     
   w_sq_unidade = Request("w_sq_unidade")     
-  DB_GetUorgList RS, w_cliente, w_sq_unidade, null, null, null
-  RS.Filter = "sq_unidade = " & w_sq_unidade
+  DB_GetUorgList RS, w_cliente, w_sq_unidade, null, null, null, null
   w_nome_unidade = RS("nome")
   DesconectaBD
   If O = "L" Then
@@ -677,8 +676,7 @@ Sub Responsavel
          
   w_sq_unidade = Request("w_sq_unidade")
   p_sq_pessoa  = Request("p_sq_pessoa")  
-  DB_GetUorgList RS, w_cliente, w_sq_unidade, null, null, null
-  RS.Filter = "sq_unidade = " & w_sq_unidade
+  DB_GetUorgList RS, w_cliente, w_sq_unidade, null, null, null, null
   w_nome_unidade = RS("nome")
   DesconectaBD
   If O = "L" Then
@@ -866,13 +864,7 @@ Sub BuscaUnidade
   restricao  = Request("restricao")
   campo      = Request("campo")
   
-  If isNull(restricao) or Instr(restricao,"=") = 0 Then
-     DB_GetUorgList RS, w_cliente, ChaveAux, restricao, w_nome, w_sigla
-     RS.Filter = "ativo='S' "
-  Else
-     DB_GetUorgList RS, w_cliente, ChaveAux, null, w_nome, w_sigla
-     RS.Filter = "ativo='S' and " & restricao
-  End If
+  DB_GetUorgList RS, w_cliente, ChaveAux, "ATIVO", w_nome, w_sigla, null
   RS.Sort = "nome,co_uf"
   
   Cabecalho

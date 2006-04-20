@@ -124,16 +124,10 @@ Sub SegmentoVinc
   DesconectaBD
   
   If InStr("LP",O) Then 
-     DB_GetSegVincData RS, par, w_sq_segmento
-     If p_nome > "" Then
-        w_filter = ""
-        If p_nome > ""   Then w_filter = w_filter & " and nome   like '*" & p_nome & "*'" End If
-        RS.Filter = Mid(w_filter,6,255)
-     End If
+     DB_GetSegVincData RS, par, w_sq_segmento, null, null
      RS.sort = "nm_tipo_pessoa, ordem"
   ElseIf (O = "A" or O = "E") Then
-     DB_GetSegVincData RS, par, w_sq_segmento
-     RS.Filter = "sq_seg_vinculo = " & w_sq_segmento_vinculo
+     DB_GetSegVincData RS, par, w_sq_segmento, null, w_sq_segmento_vinculo
      w_nome                 = RS("nome_pessoa")
      w_padrao               = RS("padrao")
      w_ativo                = RS("ativo")
@@ -185,11 +179,11 @@ Sub SegmentoVinc
   ShowHTML "<table border=""0"" cellpadding=""0"" cellspacing=""0"" width=""100%"">"
   If O = "L" Then
     ShowHTML "<tr><td><font size=""2""><a accesskey=""I"" class=""SS"" href=""" & w_Pagina & par & "&R=" & w_Pagina & par & "&w_sq_segmento=" & w_sq_segmento & "&O=I&P1=" & P1 & "&P2=" & P2 & "&P3=" & P3 & "&P4=" & P4 & "&TP=" & TP & "&SG=" & SG & "&p_nome=" &  p_nome & "&p_ativo=" & p_ativo & """><u>I</u>ncluir</a>&nbsp;"
-    If p_nome  & p_ativo > "" Then
-       ShowHTML "                         <a accesskey=""F"" class=""SS"" href=""" & w_Pagina & par & "&R=" & w_Pagina & par & "&w_sq_segmento=" & w_sq_segmento & "&O=P&P1=" & P1 & "&P2=" & P2 & "&P3=" & P3 & "&P4=" & P4 & "&TP=" & TP & "&SG=" & SG & "&p_nome=" &  p_nome & "&p_ativo=" & p_ativo & """><u><font color=""#BC5100"">F</u>iltrar (sigla)</font></a></font>"
-    Else
-       ShowHTML "                         <a accesskey=""F"" class=""SS"" href=""" & w_Pagina & par & "&R=" & w_Pagina & par & "&w_sq_segmento=" & w_sq_segmento & "&O=P&P1=" & P1 & "&P2=" & P2 & "&P3=" & P3 & "&P4=" & P4 & "&TP=" & TP & "&SG=" & SG & "&p_nome=" &  p_nome & "&p_ativo=" & p_ativo & """><u>F</u>iltrar (Ativo)</a>"
-    End If
+    'If p_nome  & p_ativo > "" Then
+    '   ShowHTML "                         <a accesskey=""F"" class=""SS"" href=""" & w_Pagina & par & "&R=" & w_Pagina & par & "&w_sq_segmento=" & w_sq_segmento & "&O=P&P1=" & P1 & "&P2=" & P2 & "&P3=" & P3 & "&P4=" & P4 & "&TP=" & TP & "&SG=" & SG & "&p_nome=" &  p_nome & "&p_ativo=" & p_ativo & """><u><font color=""#BC5100"">F</u>iltrar (sigla)</font></a></font>"
+    'Else
+    '   ShowHTML "                         <a accesskey=""F"" class=""SS"" href=""" & w_Pagina & par & "&R=" & w_Pagina & par & "&w_sq_segmento=" & w_sq_segmento & "&O=P&P1=" & P1 & "&P2=" & P2 & "&P3=" & P3 & "&P4=" & P4 & "&TP=" & TP & "&SG=" & SG & "&p_nome=" &  p_nome & "&p_ativo=" & p_ativo & """><u>F</u>iltrar (Ativo)</a>"
+    'End If
     ShowHTML "                         <a class=""SS"" href=""#"" onclick=""opener.focus(); window.close();"">Fechar</a>"
     ShowHTML "    <td align=""right""><font size=""1""><b>Registros: " & RS.RecordCount
     ShowHTML "<tr><td align=""center"" colspan=3>"
@@ -349,12 +343,7 @@ Sub SegmentoMenu
   DesconectaBD
   
   If InStr("LP",O) Then 
-     DB_GetSegVincData RS, par, w_sq_segmento
-     If p_nome > "" Then
-        w_filter = ""
-        If p_nome > ""   Then w_filter = w_filter & " and nome   like '*" & p_nome & "*'" End If
-        RS.Filter = Mid(w_filter,6,255)
-     End If
+     DB_GetSegVincData RS, par, w_sq_segmento, null, null
   ElseIf (O = "A" or O = "E") Then
      ' SQL = "select a.*, b.nome, b.objetivo_geral " & VbCrLf & _
      '      "  from dm_segmento_vinculo a, co_tipo_vinculo b " & VbCrLf & _
@@ -415,11 +404,11 @@ Sub SegmentoMenu
   ShowHTML "<table border=""0"" cellpadding=""0"" cellspacing=""0"" width=""100%"">"
   If O = "L" Then
     ShowHTML "<tr><td><font size=""2""><a accesskey=""I"" class=""SS"" href=""" & w_Pagina & par & "&R=" & w_Pagina & par & "&w_sq_segmento=" & w_sq_segmento & "&O=I&P1=" & P1 & "&P2=" & P2 & "&P3=" & P3 & "&P4=" & P4 & "&TP=" & TP & "&SG=" & SG & "&p_nome=" &  p_nome & "&p_ativo=" & p_ativo & """><u>I</u>ncluir</a>&nbsp;"
-    If p_nome  & p_ativo > "" Then
-       ShowHTML "                         <a accesskey=""F"" class=""SS"" href=""" & w_Pagina & par & "&R=" & w_Pagina & par & "&w_sq_segmento=" & w_sq_segmento & "&O=P&P1=" & P1 & "&P2=" & P2 & "&P3=" & P3 & "&P4=" & P4 & "&TP=" & TP & "&SG=" & SG & "&p_nome=" &  p_nome & "&p_ativo=" & p_ativo & """><u><font color=""#BC5100"">F</u>iltrar (sigla)</font></a></font>"
-    Else
-       ShowHTML "                         <a accesskey=""F"" class=""SS"" href=""" & w_Pagina & par & "&R=" & w_Pagina & par & "&w_sq_segmento=" & w_sq_segmento & "&O=P&P1=" & P1 & "&P2=" & P2 & "&P3=" & P3 & "&P4=" & P4 & "&TP=" & TP & "&SG=" & SG & "&p_nome=" &  p_nome & "&p_ativo=" & p_ativo & """><u>F</u>iltrar (Ativo)</a>"
-    End If
+    'If p_nome  & p_ativo > "" Then
+    '   ShowHTML "                         <a accesskey=""F"" class=""SS"" href=""" & w_Pagina & par & "&R=" & w_Pagina & par & "&w_sq_segmento=" & w_sq_segmento & "&O=P&P1=" & P1 & "&P2=" & P2 & "&P3=" & P3 & "&P4=" & P4 & "&TP=" & TP & "&SG=" & SG & "&p_nome=" &  p_nome & "&p_ativo=" & p_ativo & """><u><font color=""#BC5100"">F</u>iltrar (sigla)</font></a></font>"
+    'Else
+    '   ShowHTML "                         <a accesskey=""F"" class=""SS"" href=""" & w_Pagina & par & "&R=" & w_Pagina & par & "&w_sq_segmento=" & w_sq_segmento & "&O=P&P1=" & P1 & "&P2=" & P2 & "&P3=" & P3 & "&P4=" & P4 & "&TP=" & TP & "&SG=" & SG & "&p_nome=" &  p_nome & "&p_ativo=" & p_ativo & """><u>F</u>iltrar (Ativo)</a>"
+    'End If
     ShowHTML "                         <a class=""SS"" href=""#"" onclick=""opener.focus(); window.close();"">Fechar</a>"
     ShowHTML "    <td align=""right""><font size=""1""><b>Registros: " & RS.RecordCount
     ShowHTML "<tr><td align=""center"" colspan=3>"
@@ -580,12 +569,7 @@ Sub SegmentoModulo
   DesconectaBD
   
   If InStr("LP",O) Then 
-     DB_GetSegVincData RS, par, w_sq_segmento
-     If p_objetivo_especifico > "" Then
-        w_filter = ""
-        If p_objetivo_especifico > ""   Then w_filter = w_filter & " and nome   like '*" & p_objetivo_especifico & "*'" End If
-        RS.Filter = Mid(w_filter,6,255)
-     End If
+     DB_GetSegVincData RS, par, w_sq_segmento, null, null
      RS.sort = "nm_modulo"
   ElseIf (O = "A" or O = "E") Then
      DB_GetSegModData RS, w_sq_segmento, w_sq_modulo
@@ -642,11 +626,11 @@ Sub SegmentoModulo
   ShowHTML "<table border=""0"" cellpadding=""0"" cellspacing=""0"" width=""100%"">"
   If O = "L" Then
     ShowHTML "<tr><td><font size=""2""><a accesskey=""I"" class=""SS"" href=""" & w_Pagina & par & "&R=" & w_Pagina & par & "&w_sq_segmento=" & w_sq_segmento & "&O=I&P1=" & P1 & "&P2=" & P2 & "&P3=" & P3 & "&P4=" & P4 & "&TP=" & TP & "&SG=" & SG & "&p_objetivo_especifico=" &  p_objetivo_especifico & "&p_ativo=" & p_ativo & """><u>I</u>ncluir</a>&nbsp;"
-    If p_objetivo_especifico  & p_ativo > "" Then
-       ShowHTML "                         <a accesskey=""F"" class=""SS"" href=""" & w_Pagina & par & "&R=" & w_Pagina & par & "&w_sq_segmento=" & w_sq_segmento & "&O=P&P1=" & P1 & "&P2=" & P2 & "&P3=" & P3 & "&P4=" & P4 & "&TP=" & TP & "&SG=" & SG & "&p_objetivo_especifico=" &  p_objetivo_especifico & "&p_ativo=" & p_ativo & """><u><font color=""#BC5100"">F</u>iltrar (sigla)</font></a></font>"
-    Else
-       ShowHTML "                         <a accesskey=""F"" class=""SS"" href=""" & w_Pagina & par & "&R=" & w_Pagina & par & "&w_sq_segmento=" & w_sq_segmento & "&O=P&P1=" & P1 & "&P2=" & P2 & "&P3=" & P3 & "&P4=" & P4 & "&TP=" & TP & "&SG=" & SG & "&p_objetivo_especifico=" &  p_objetivo_especifico & "&p_ativo=" & p_ativo & """><u>F</u>iltrar (Ativo)</a>"
-    End If
+    'If p_objetivo_especifico  & p_ativo > "" Then
+    '   ShowHTML "                         <a accesskey=""F"" class=""SS"" href=""" & w_Pagina & par & "&R=" & w_Pagina & par & "&w_sq_segmento=" & w_sq_segmento & "&O=P&P1=" & P1 & "&P2=" & P2 & "&P3=" & P3 & "&P4=" & P4 & "&TP=" & TP & "&SG=" & SG & "&p_objetivo_especifico=" &  p_objetivo_especifico & "&p_ativo=" & p_ativo & """><u><font color=""#BC5100"">F</u>iltrar (sigla)</font></a></font>"
+    'Else
+    '   ShowHTML "                         <a accesskey=""F"" class=""SS"" href=""" & w_Pagina & par & "&R=" & w_Pagina & par & "&w_sq_segmento=" & w_sq_segmento & "&O=P&P1=" & P1 & "&P2=" & P2 & "&P3=" & P3 & "&P4=" & P4 & "&TP=" & TP & "&SG=" & SG & "&p_objetivo_especifico=" &  p_objetivo_especifico & "&p_ativo=" & p_ativo & """><u>F</u>iltrar (Ativo)</a>"
+    'End If
     ShowHTML "                         <a class=""SS"" href=""#"" onclick=""opener.focus(); window.close();"">Fechar</a>"
     ShowHTML "    <td align=""right""><font size=""1""><b>Registros: " & RS.RecordCount
     ShowHTML "<tr><td align=""center"" colspan=3>"
@@ -790,11 +774,6 @@ Sub Modulos
   
   If InStr("LP",O) Then 
      DB_GetModList RS
-     If p_nome > "" Then
-        w_filter = ""
-        If p_nome > ""   Then w_filter = w_filter & " and nome   like '*" & p_nome & "*'" End If
-        RS.Filter = Mid(w_filter,6,255)
-     End If
      RS.sort = "nome"
   ElseIf (O = "A" or O = "E") Then               
      DB_GetModData RS, w_sq_modulo
@@ -966,12 +945,6 @@ Sub Segmento
   
   If InStr("LP",O) Then 
      DB_GetSegList RS
-     If p_nome & p_ativo > "" Then
-        w_filter = ""
-        If p_nome  > ""   Then w_filter = w_filter & " and nome   like '*" & p_nome & "*'" End If
-        If p_ativo > ""   Then w_filter = w_filter & " and ativo = '" & p_ativo & "'" End If
-        RS.Filter = Mid(w_filter,6,255)
-     End If
      RS.sort = "padrao desc, nome"
   ElseIf (O = "A" or O = "E") Then               
       DB_GetSegData RS, w_sq_segmento
