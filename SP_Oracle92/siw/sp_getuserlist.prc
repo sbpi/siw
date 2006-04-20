@@ -7,6 +7,7 @@ create or replace procedure SP_GetUserList
     p_modulo      in number   default null,
     p_uf          in varchar2 default null,
     p_ativo       in varchar2 default null,
+    p_contratado  in varchar2 default null,
     p_result      out sys_refcursor
    ) is
 begin
@@ -26,6 +27,7 @@ begin
               left outer   join co_tipo_vinculo    e on (b.sq_tipo_vinculo    = e.sq_tipo_vinculo)
       where a.cliente      = p_cliente
         and (p_ativo       is null or (p_ativo       is not null and a.ativo             = p_ativo))
+        and (p_contratado  is null or (p_contratado  is not null and e.contratado        = p_contratado))
         and (p_localizacao is null or (p_localizacao is not null and d.sq_localizacao    = p_localizacao))
         and (p_lotacao     is null or (p_lotacao     is not null and c.sq_unidade        = p_lotacao))
         and (p_gestor      is null or (p_gestor      is not null and (a.gestor_sistema   = p_gestor or 
@@ -34,4 +36,3 @@ begin
         and (p_uf          is null or (p_uf          is not null and g.co_uf             = p_uf));
 end SP_GetUserList;
 /
-

@@ -168,7 +168,7 @@ Sub Usuarios
   w_libera_edicao = RS("libera_edicao")
   
   If O = "L" Then
-     DB_GetUserList RS, w_cliente, p_localizacao, p_lotacao, p_gestor, p_nome, p_modulo, p_uf, p_ativo
+     DB_GetUserList RS, w_cliente, p_localizacao, p_lotacao, p_gestor, p_nome, p_modulo, p_uf, p_ativo, null
      If p_ordena > "" Then RS.sort = p_ordena & ", nome_indice" Else RS.sort = "nome_resumido_ind" End If
   End If
   

@@ -150,15 +150,16 @@ Sub DB_GetModList(p_rs)
      If Session("dbms") = 1 or Session("dbms") = 3 Then .Properties("PLSQLRSet") = FALSE End If
   end with
 End Sub
-REM =========================================================================
-REM Final da rotina
-REM -------------------------------------------------------------------------
 
 REM =========================================================================
 REM Recupera a lista de segmento
 REM -------------------------------------------------------------------------
-Sub DB_GetSegList(p_rs)
+Sub DB_GetSegList(p_rs, p_ativo)
+  Dim l_ativo
+  Set l_ativo = Server.CreateObject("ADODB.Parameter")
   with sp
+     set l_ativo                = .CreateParameter("l_ativo", adVarchar, adParamInput, 1, p_ativo)
+     .parameters.Append         l_ativo
      If Session("dbms") = 1 or Session("dbms") = 3 Then .Properties("PLSQLRSet") = TRUE End If
      .CommandText               = Session("schema") & "SP_GetSegList"
      On Error Resume Next     
@@ -167,11 +168,9 @@ Sub DB_GetSegList(p_rs)
         TrataErro
      End If     
      If Session("dbms") = 1 or Session("dbms") = 3 Then .Properties("PLSQLRSet") = FALSE End If
+     .Parameters.Delete         "l_ativo"
   end with
 End Sub
-REM =========================================================================
-REM Final da rotina
-REM -------------------------------------------------------------------------
 
 REM =========================================================================
 REM Recupera os dados do segmento
@@ -193,8 +192,4 @@ Sub DB_GetSegData(p_rs, p_sq_segmento)
      .Parameters.Delete         "l_sq_segmento"
   end with
 End Sub
-REM =========================================================================
-REM Final da rotina
-REM -------------------------------------------------------------------------
-
 %>

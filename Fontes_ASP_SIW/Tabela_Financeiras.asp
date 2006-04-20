@@ -497,7 +497,7 @@ Sub Agencia
      w_padrao            = Request("w_padrao")
      w_nome              = Request("w_nome")
   ElseIf O = "L" Then
-     DB_GetBankHouseList RS, p_sq_banco, p_nome, p_ordena
+     DB_GetBankHouseList RS, p_sq_banco, p_nome, p_ordena, null
   ElseIf O = "A" or O = "E" Then
      w_sq_agencia = Request("w_sq_agencia")
      DB_GetBankHouseData RS, w_sq_agencia
@@ -743,14 +743,7 @@ Sub Banco
 
   
   If O = "L" Then
-     DB_GetBankList RS
-     If p_nome & p_codigo & p_ativo > "" Then
-        w_filter = ""
-        If p_nome > ""   Then w_filter = w_filter & " and nome   like '*" & p_nome & "*'" End If
-        If p_codigo > "" Then w_filter = w_filter & " and codigo = '" & p_codigo & "'"    End If
-        If p_ativo > ""  Then w_filter = w_filter & " and ativo  = '" & p_ativo & "'"     End If
-        RS.Filter = Mid(w_filter,6,255)
-     End If
+     DB_GetBankList RS, p_codigo, p_nome, p_ativo
      If p_ordena > "" Then RS.sort = p_ordena Else RS.sort = "codigo" End If
   ElseIf O = "A" or O = "E" Then
      w_sq_banco = Request("w_sq_banco")

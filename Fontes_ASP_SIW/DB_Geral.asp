@@ -14,7 +14,7 @@ Sub DB_GetSIWArquivo (p_rs, p_cliente, p_chave, p_restricao)
     
      set l_cliente      = .CreateParameter("l_cliente"      , adInteger, adParamInput,   , p_cliente)
      set l_chave        = .CreateParameter("l_chave"        , adInteger, adParamInput,   , tvl(p_chave))
-     set l_restricao    = .CreateParameter("l_restricao", adVarChar, adParamInput, 20, tvl(p_restricao))
+     set l_restricao    = .CreateParameter("l_restricao"    , adVarChar, adParamInput, 20, tvl(p_restricao))
      
      .parameters.Append l_cliente
      .parameters.Append l_chave
@@ -548,8 +548,8 @@ End Function
 REM =========================================================================
 REM Recupera os usuários de um cliente
 REM -------------------------------------------------------------------------
-Sub DB_GetUserList(p_rs, p_cliente, p_localizacao, p_lotacao, p_gestor, p_nome, p_modulo, p_uf, p_ativo)
-  Dim l_cliente, l_localizacao, l_lotacao, l_gestor, l_nome, l_modulo, l_uf, l_ativo
+Sub DB_GetUserList(p_rs, p_cliente, p_localizacao, p_lotacao, p_gestor, p_nome, p_modulo, p_uf, p_ativo, p_contratado)
+  Dim l_cliente, l_localizacao, l_lotacao, l_gestor, l_nome, l_modulo, l_uf, l_ativo, l_contratado
   Set l_cliente     = Server.CreateObject("ADODB.Parameter")
   Set l_localizacao = Server.CreateObject("ADODB.Parameter")
   Set l_lotacao     = Server.CreateObject("ADODB.Parameter")
@@ -558,6 +558,7 @@ Sub DB_GetUserList(p_rs, p_cliente, p_localizacao, p_lotacao, p_gestor, p_nome, 
   Set l_modulo      = Server.CreateObject("ADODB.Parameter")
   Set l_uf          = Server.CreateObject("ADODB.Parameter")
   Set l_ativo       = Server.CreateObject("ADODB.Parameter")
+  Set l_contratado  = Server.CreateObject("ADODB.Parameter")
   with sp
      set l_cliente          = .CreateParameter("l_cliente",     adInteger, adParamInput,   , p_cliente)
      set l_localizacao      = .CreateParameter("l_localizacao", adInteger, adParamInput,   , tvl(p_localizacao))
@@ -567,6 +568,7 @@ Sub DB_GetUserList(p_rs, p_cliente, p_localizacao, p_lotacao, p_gestor, p_nome, 
      set l_modulo           = .CreateParameter("l_modulo",      adInteger, adParamInput,   , tvl(p_modulo))
      set l_uf               = .CreateParameter("l_uf",          adVarchar, adParamInput,  2, tvl(p_uf))
      set l_ativo            = .CreateParameter("l_ativo",       adVarchar, adParamInput,  1, tvl(p_ativo))
+     set l_contratado       = .CreateParameter("l_contratado",  adVarchar, adParamInput,  1, tvl(p_contratado))
      .parameters.Append         l_cliente
      .parameters.Append         l_localizacao
      .parameters.Append         l_lotacao
@@ -575,6 +577,7 @@ Sub DB_GetUserList(p_rs, p_cliente, p_localizacao, p_lotacao, p_gestor, p_nome, 
      .parameters.Append         l_modulo
      .parameters.Append         l_uf
      .parameters.Append         l_ativo
+     .parameters.Append         l_contratado
      If Session("dbms") = 1 or Session("dbms") = 3 Then .Properties("PLSQLRSet") = TRUE End If
      .CommandText               = Session("schema") & "SP_GetUserList"
      On Error Resume Next
@@ -591,6 +594,7 @@ Sub DB_GetUserList(p_rs, p_cliente, p_localizacao, p_lotacao, p_gestor, p_nome, 
      .Parameters.Delete         "l_modulo"
      .Parameters.Delete         "l_uf"
      .Parameters.Delete         "l_ativo"
+     .Parameters.Delete         "l_contratado"
   end with
 End Sub
 
@@ -1186,21 +1190,24 @@ End Sub
 REM =========================================================================
 REM Recupera as formas de pagamento válidas para o serviço informado
 REM -------------------------------------------------------------------------
-Sub DB_GetFormaPagamento(p_rs, p_cliente, p_chave, p_chave_aux, p_restricao)
-  Dim l_cliente, l_chave, l_chave_aux, l_restricao
+Sub DB_GetFormaPagamento(p_rs, p_cliente, p_chave, p_chave_aux, p_restricao, p_ativo)
+  Dim l_cliente, l_chave, l_chave_aux, l_restricao, l_ativo
   Set l_cliente   = Server.CreateObject("ADODB.Parameter")
-  Set l_chave    = Server.CreateObject("ADODB.Parameter")
-  Set l_chave_aux      = Server.CreateObject("ADODB.Parameter")
+  Set l_chave     = Server.CreateObject("ADODB.Parameter")
+  Set l_chave_aux = Server.CreateObject("ADODB.Parameter")
   Set l_restricao = Server.CreateObject("ADODB.Parameter")
+  Set l_ativo     = Server.CreateObject("ADODB.Parameter")
   with sp
      set l_cliente        = .CreateParameter("l_cliente",   adInteger, adParamInput,   , p_cliente)
      set l_chave          = .CreateParameter("l_chave",     adInteger, adParamInput,   , tvl(p_chave))
      set l_chave_aux      = .CreateParameter("l_chave_aux", adVarChar, adParamInput, 10, tvl(p_chave_aux))
      set l_restricao      = .CreateParameter("l_restricao", adVarChar, adParamInput, 10, p_restricao)
+     set l_ativo          = .CreateParameter("l_ativo",     adVarChar, adParamInput,  1, Tvl(p_ativo))
      .parameters.Append         l_cliente
      .parameters.Append         l_chave
      .parameters.Append         l_chave_aux
      .parameters.Append         l_restricao
+     .parameters.Append         l_ativo
      If Session("dbms") = 1 or Session("dbms") = 3 Then .Properties("PLSQLRSet") = TRUE End If
      .CommandText               = Session("schema") & "SP_GetFormaPagamento"
      On Error Resume Next
@@ -1213,6 +1220,7 @@ Sub DB_GetFormaPagamento(p_rs, p_cliente, p_chave, p_chave_aux, p_restricao)
      .Parameters.Delete         "l_chave"
      .Parameters.Delete         "l_chave_aux"
      .Parameters.Delete         "l_restricao"
+     .Parameters.Delete         "l_ativo"
   end with
 End Sub
 
@@ -1248,9 +1256,18 @@ End Sub
 REM =========================================================================
 REM Recupera os bancos existentes
 REM -------------------------------------------------------------------------
-Sub DB_GetBankList(p_rs)
-
+Sub DB_GetBankList(p_rs, p_codigo, p_nome, p_ativo)
+  Dim l_codigo, l_nome, l_ativo
+  Set l_codigo           = Server.CreateObject("ADODB.Parameter")
+  Set l_nome             = Server.CreateObject("ADODB.Parameter")
+  Set l_ativo            = Server.CreateObject("ADODB.Parameter")
   with sp
+     set l_codigo       = .CreateParameter("l_codigo",      adVarChar, adParamInput, 30, Tvl(p_codigo))
+     set l_nome         = .CreateParameter("l_nome",        adVarChar, adParamInput, 30, Tvl(p_nome))
+     set l_ativo        = .CreateParameter("l_ativo",       adVarChar, adParamInput,  1, Tvl(p_ativo))
+     .parameters.Append         l_codigo
+     .parameters.Append         l_nome
+     .parameters.Append         l_ativo     
      If Session("dbms") = 1 or Session("dbms") = 3 Then .Properties("PLSQLRSet") = TRUE End If
      .CommandText               = Session("schema") & "SP_GetBankList"
      On Error Resume Next
@@ -1259,6 +1276,9 @@ Sub DB_GetBankList(p_rs)
         TrataErro
      End If     
      If Session("dbms") = 1 or Session("dbms") = 3 Then .Properties("PLSQLRSet") = FALSE End If
+     .Parameters.Delete         "l_codigo"
+     .Parameters.Delete         "l_nome"
+     .Parameters.Delete         "l_ativo"
   end with
 
 End Sub
@@ -1506,12 +1526,18 @@ End Sub
 REM =========================================================================
 REM Recupera as agências existentes
 REM -------------------------------------------------------------------------
-Sub DB_GetBankHouseList(p_rs, p_sq_banco, p_nome, p_ordena)
-  Dim l_sq_banco
+Sub DB_GetBankHouseList(p_rs, p_sq_banco, p_nome, p_ordena, p_codigo)
+  Dim l_sq_banco, l_nome, l_codigo
   Set l_sq_banco = Server.CreateObject("ADODB.Parameter")
+  Set l_nome     = Server.CreateObject("ADODB.Parameter")
+  Set l_codigo   = Server.CreateObject("ADODB.Parameter")
   with sp
-     set l_sq_banco             = .CreateParameter("l_sq_banco", adInteger, adParamInput, , p_sq_banco)
+     set l_sq_banco             = .CreateParameter("l_sq_banco", adInteger, adParamInput,   , p_sq_banco)
+     set l_nome                 = .CreateParameter("l_nome",     adVarchar, adParamInput, 40, Tvl(p_nome))
+     set l_codigo               = .CreateParameter("l_codigo",   adVarchar, adParamInput, 30, Tvl(p_codigo))
      .parameters.Append         l_sq_banco
+     .parameters.Append         l_nome
+     .parameters.Append         l_codigo
      If Session("dbms") = 1 or Session("dbms") = 3 Then .Properties("PLSQLRSet") = TRUE End If
      .CommandText               = Session("schema") & "SP_GetBankHousList"
      On Error Resume Next
@@ -1521,9 +1547,8 @@ Sub DB_GetBankHouseList(p_rs, p_sq_banco, p_nome, p_ordena)
      End If     
      If Session("dbms") = 1 or Session("dbms") = 3 Then .Properties("PLSQLRSet") = FALSE End If
      .Parameters.Delete         "l_sq_banco"
-     If Not IsNull(p_nome) Then 
-        p_rs.Filter                = "nome like '*" & p_nome & "*'"
-     End If
+     .Parameters.Delete         "l_nome"
+     .Parameters.Delete         "l_codigo"
      If p_ordena > "" Then
         p_rs.sort               = p_ordena
      Else
@@ -2029,15 +2054,18 @@ End Sub
 REM =========================================================================
 REM Recupera os tipos de postos
 REM -------------------------------------------------------------------------
-Sub DB_GetTipoPostoList(p_rs, p_cliente, p_chave)
-  Dim l_cliente, l_chave
+Sub DB_GetTipoPostoList(p_rs, p_cliente, p_chave, p_ativo)
+  Dim l_cliente, l_chave, l_ativo
   Set l_cliente = Server.CreateObject("ADODB.Parameter")
   Set l_chave   = Server.CreateObject("ADODB.Parameter")
+  Set l_ativo   = Server.CreateObject("ADODB.Parameter")
   with sp
-     set l_cliente             = .CreateParameter("l_cliente", adInteger, adParamInput, , p_cliente)
-     set l_chave               = .CreateParameter("l_chave",   adInteger, adParamInput, , tvl(p_chave))
+     set l_cliente             = .CreateParameter("l_cliente", adInteger, adParamInput,  , p_cliente)
+     set l_chave               = .CreateParameter("l_chave",   adInteger, adParamInput,  , tvl(p_chave))
+     set l_ativo               = .CreateParameter("l_ativo",   adVarchar, adParamInput, 1, tvl(p_ativo))
      .parameters.Append         l_cliente
      .parameters.Append         l_chave
+     .parameters.Append         l_ativo
      If Session("dbms") = 1 or Session("dbms") = 3 Then .Properties("PLSQLRSet") = TRUE End If
      .CommandText               = Session("schema") & "SP_GetTipoPostoList"
      On Error Resume Next
@@ -2048,6 +2076,7 @@ Sub DB_GetTipoPostoList(p_rs, p_cliente, p_chave)
      If Session("dbms") = 1 or Session("dbms") = 3 Then .Properties("PLSQLRSet") = FALSE End If
      .Parameters.Delete         "l_cliente"
      .Parameters.Delete         "l_chave"
+     .Parameters.Delete         "l_ativo"
   end with
 
 End Sub

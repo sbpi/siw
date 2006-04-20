@@ -3,6 +3,7 @@ create or replace procedure SP_GetFormaPagamento
     p_chave     in number   default null,
     p_chave_aux in varchar2 default null,
     p_restricao in varchar2 default null,
+    p_ativo     in varchar2 default null,
     p_result    out sys_refcursor) is
 begin
    If p_restricao is null Then
@@ -19,8 +20,8 @@ begin
                                                      )
           where a.cliente  = p_cliente
             and (p_chave   is null or (p_chave   is not null and b.sq_menu = p_chave_aux and a.sq_forma_pagamento = p_chave))
+            and (p_ativo   is null or (p_ativo   is not null and a.ativo   = p_ativo))
          order by 2;
    End If;
 end SP_GetFormaPagamento;
 /
-

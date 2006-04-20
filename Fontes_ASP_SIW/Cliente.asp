@@ -2026,8 +2026,7 @@ Public Sub Grava
            End If
            
            ' Verifica se a agência informada existe para o banco selecionado
-           DB_GetBankHouseList RS, Request("w_banco"), null, null
-           RS.Filter = "codigo = '" &  Request("w_agencia") & "'"
+           DB_GetBankHouseList RS, Request("w_banco"), null, null, Request("w_agencia")
            If RS.RecordCount = 0 Then
               w_mensagem = "Agência inexistente para o banco informado. Favor verificar."
            Else

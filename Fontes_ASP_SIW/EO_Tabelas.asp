@@ -771,11 +771,11 @@ Sub TipoPosto
   
   If O = "L" Then
 
-     DB_GetTipoPostoList RS, w_cliente, null
+     DB_GetTipoPostoList RS, w_cliente, null, null
      
   ElseIf O = "A" or O = "E" Then
      
-     DB_GetTipoPostoList RS, w_cliente, w_chave
+     DB_GetTipoPostoList RS, w_cliente, w_chave, null
      w_nome      = RS("nome")
      w_sigla     = RS("sigla")
      w_descricao = RS("descricao")

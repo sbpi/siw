@@ -825,11 +825,6 @@ Sub Modulos
   ShowHTML "<table border=""0"" cellpadding=""0"" cellspacing=""0"" width=""100%"">"
   If O = "L" Then
     ShowHTML "<tr><td><font size=""2""><a accesskey=""I"" class=""SS"" href=""" & w_Pagina & par & "&R=" & w_Pagina & par & "&O=I&P1=" & P1 & "&P2=" & P2 & "&P3=" & P3 & "&P4=" & P4 & "&TP=" & TP & "&SG=" & SG & "&p_nome=" &  p_nome & "&p_sigla=" & p_sigla & """><u>I</u>ncluir</a>&nbsp;"
-    If p_nome  & p_sigla > "" Then
-       ShowHTML "                         <a accesskey=""F"" class=""SS"" href=""" & w_Pagina & par & "&R=" & w_Pagina & par & "&O=P&P1=" & P1 & "&P2=" & P2 & "&P3=" & P3 & "&P4=" & P4 & "&TP=" & TP & "&SG=" & SG & "&p_nome=" &  p_nome & "&p_sigla=" & p_sigla & """><u><font color=""#BC5100"">F</u>iltrar (sigla)</font></a></font>"
-    Else
-       ShowHTML "                         <a accesskey=""F"" class=""SS"" href=""" & w_Pagina & par & "&R=" & w_Pagina & par & "&O=P&P1=" & P1 & "&P2=" & P2 & "&P3=" & P3 & "&P4=" & P4 & "&TP=" & TP & "&SG=" & SG & "&p_nome=" &  p_nome & "&p_sigla=" & p_sigla & """><u>F</u>iltrar (Ativo)</a>"
-    End If
     ShowHTML "    <td align=""right""><font size=""1""><b>Registros: " & RS.RecordCount
     ShowHTML "<tr><td align=""center"" colspan=3>"
     ShowHTML "    <TABLE WIDTH=""100%"" bgcolor=""" & conTableBgColor & """ BORDER=""" & conTableBorder & """ CELLSPACING=""" & conTableCellSpacing & """ CELLPADDING=""" & conTableCellPadding & """ BorderColorDark=""" & conTableBorderColorDark & """ BorderColorLight=""" & conTableBorderColorLight & """>"
@@ -944,7 +939,7 @@ Sub Segmento
   If O = "" Then O="L" end if
   
   If InStr("LP",O) Then 
-     DB_GetSegList RS
+     DB_GetSegList RS, null
      RS.sort = "padrao desc, nome"
   ElseIf (O = "A" or O = "E") Then               
       DB_GetSegData RS, w_sq_segmento
@@ -994,11 +989,6 @@ Sub Segmento
   ShowHTML "<table border=""0"" cellpadding=""0"" cellspacing=""0"" width=""100%"">"
   If O = "L" Then
     ShowHTML "<tr><td><font size=""2""><a accesskey=""I"" class=""SS"" href=""" & w_Pagina & par & "&R=" & w_Pagina & par & "&O=I&P1=" & P1 & "&P2=" & P2 & "&P3=" & P3 & "&P4=" & P4 & "&TP=" & TP & "&SG=" & SG & "&p_nome=" &  p_nome & "&p_ativo=" & p_ativo & """><u>I</u>ncluir</a>&nbsp;"
-    If p_nome  & p_ativo > "" Then
-       ShowHTML "                         <a accesskey=""F"" class=""SS"" href=""" & w_Pagina & par & "&R=" & w_Pagina & par & "&O=P&P1=" & P1 & "&P2=" & P2 & "&P3=" & P3 & "&P4=" & P4 & "&TP=" & TP & "&SG=" & SG & "&p_nome=" &  p_nome & "&p_ativo=" & p_ativo & """><u><font color=""#BC5100"">F</u>iltrar (Ativo)</font></a></font>"
-    Else
-       ShowHTML "                         <a accesskey=""F"" class=""SS"" href=""" & w_Pagina & par & "&R=" & w_Pagina & par & "&O=P&P1=" & P1 & "&P2=" & P2 & "&P3=" & P3 & "&P4=" & P4 & "&TP=" & TP & "&SG=" & SG & "&p_nome=" &  p_nome & "&p_ativo=" & p_ativo & """><u>F</u>iltrar (Inativo)</a>"
-    End If
     ShowHTML "    <td align=""right""><font size=""1""><b>Registros: " & RS.RecordCount
     ShowHTML "<tr><td align=""center"" colspan=3>"
     ShowHTML "    <TABLE WIDTH=""100%"" bgcolor=""" & conTableBgColor & """ BORDER=""" & conTableBorder & """ CELLSPACING=""" & conTableCellSpacing & """ CELLPADDING=""" & conTableCellPadding & """ BorderColorDark=""" & conTableBorderColorDark & """ BorderColorLight=""" & conTableBorderColorLight & """>"

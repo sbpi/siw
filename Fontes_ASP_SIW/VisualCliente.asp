@@ -210,7 +210,7 @@ Sub VisualCliente(w_sq_cliente, O)
      ShowHTML "         </table></td></tr>"
 
      'Usuários cadastrados
-     DB_GetUserList RS, w_sq_cliente, null, null, null, null, null, null, "S"
+     DB_GetUserList RS, w_sq_cliente, null, null, null, null, null, null, "S", null
      ShowHTML "      <tr><td valign=""top"" colspan=""2"" align=""center"" bgcolor=""#D0D0D0"" style=""border: 2px solid rgb(0,0,0);""><font  size=""2""><b>Usuários Cadastrados</td>"
      ShowHTML "      <tr><td align=""center"" colspan=""2"">"
      ShowHTML "        <TABLE WIDTH=""100%"" bgcolor=""" & conTableBgColor & """ BORDER=""" & conTableBorder & """ CELLSPACING=""" & conTableCellSpacing & """ CELLPADDING=""" & conTableCellPadding & """ BorderColorDark=""" & conTableBorderColorDark & """ BorderColorLight=""" & conTableBorderColorLight & """>"

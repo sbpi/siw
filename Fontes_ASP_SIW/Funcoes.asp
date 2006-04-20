@@ -715,8 +715,7 @@ REM =========================================================================
 REM Montagem da seleção do centro de custo
 REM -------------------------------------------------------------------------
 Sub SelecaoUsuUnid (label, accesskey, hint, chave, chaveAux, campo, restricao)
-    DB_GetUserList RS, w_cliente, null, null, null, null, null, null, "S"
-    RS.Filter = "contratado = 'S'"
+    DB_GetUserList RS, w_cliente, null, null, null, null, null, null, "S", "S"
     RS.Sort = "nome_indice"
     If IsNull(hint) Then
        ShowHTML "          <td valign=""top""><font size=""1""><b>" & Label & "</b><br><SELECT ACCESSKEY=""" & accesskey & """ CLASS=""STS"" NAME=""" & campo & """ " & w_Disabled & ">"
@@ -763,9 +762,8 @@ REM =========================================================================
 REM Montagem da seleção dos tipos de postos
 REM -------------------------------------------------------------------------
 Sub SelecaoTipoPosto (label, accesskey, hint, chave, chaveAux, campo, restricao)
-    DB_GetTipoPostoList RS, w_cliente, null
+    DB_GetTipoPostoList RS, w_cliente, null, restricao
     RS.Sort = "descricao"
-    If Nvl(restricao,"") > "" Then RS.Filter = restricao End If
     If IsNull(hint) Then
        ShowHTML "          <td valign=""top""><font size=""1""><b>" & Label & "</b><br>"
     Else
@@ -833,8 +831,7 @@ REM =========================================================================
 REM Montagem da seleção da forma de pagamento
 REM -------------------------------------------------------------------------
 Sub SelecaoFormaPagamento (label, accesskey, hint, chave, chave_aux, campo, restricao)
-    DB_GetFormaPagamento RS, w_cliente, null, chave_aux, restricao
-    RS.Filter = "ativo = 'S'"
+    DB_GetFormaPagamento RS, w_cliente, null, chave_aux, restricao, "S"
     RS.Sort = "nome"
     If IsNull(hint) Then
        ShowHTML "          <td valign=""top""><font size=""1""><b>" & Label & "</b><br><SELECT ACCESSKEY=""" & accesskey & """ CLASS=""STS"" NAME=""" & campo & """ " & w_Disabled & ">"
@@ -859,9 +856,6 @@ REM Montagem da seleção de país
 REM -------------------------------------------------------------------------
 Sub SelecaoPais (label, accesskey, hint, chave, chaveAux, campo, restricao, atributo)
     DB_GetCountryList RS, restricao, null, null, null
-    'If restricao > "" Then
-    '   RS.Filter = restricao
-    'End If
     RS.Sort = "padrao desc, Nome"
     If IsNull(hint) Then
        ShowHTML "          <td valign=""top""><font size=""1""><b>" & Label & "</b><br><SELECT ACCESSKEY=""" & accesskey & """ CLASS=""STS"" NAME=""" & campo & """ " & w_Disabled & " " & atributo & ">"
@@ -1161,8 +1155,7 @@ REM =========================================================================
 REM Montagem da seleção de segmentos de mercado
 REM -------------------------------------------------------------------------
 Sub SelecaoSegMercado (label, accesskey, hint, chave, chaveAux, campo, restricao, atributo)
-    DB_GetSegList RS
-    RS.Filter = "ativo = 'S'"
+    DB_GetSegList RS, "S"
     RS.Sort = "Nome"
     If IsNull(hint) Then
        ShowHTML "          <td valign=""top""><font size=""1""><b>" & Label & "</b><br><SELECT ACCESSKEY=""" & accesskey & """ CLASS=""STS"" NAME=""" & campo & """ " & w_Disabled & " " & atributo & ">"
@@ -1364,8 +1357,7 @@ REM =========================================================================
 REM Montagem da seleção do banco
 REM -------------------------------------------------------------------------
 Sub SelecaoBanco (label, accesskey, hint, chave, chaveAux, campo, restricao, atributo)
-    DB_GetBankList RS
-    RS.Filter = "ativo='S'"
+    DB_GetBankList RS, null, null, "S"
     If IsNull(hint) Then
        ShowHTML "          <td valign=""top""><font size=""1""><b>" & Label & "</b><br><SELECT ACCESSKEY=""" & accesskey & """ CLASS=""STS"" NAME=""" & campo & """ " & w_Disabled & " " & atributo & ">"
     Else
@@ -1388,10 +1380,7 @@ REM =========================================================================
 REM Montagem da seleção de estado
 REM -------------------------------------------------------------------------
 Sub SelecaoAgencia (label, accesskey, hint, chave, chaveAux, campo, restricao, atributo)
-    DB_GetBankHouseList RS, chaveAux, null, "padrao desc, codigo"
-    If restricao > "" Then
-       RS.Filter = restricao
-    End If
+    DB_GetBankHouseList RS, chaveAux, null, "padrao desc, codigo", null
     If IsNull(hint) Then
        ShowHTML "          <td valign=""top""><font size=""1""><b>" & Label & "</b><br><SELECT ACCESSKEY=""" & accesskey & """ CLASS=""STS"" NAME=""" & campo & """ " & w_Disabled & " " & atributo & ">"
     Else
