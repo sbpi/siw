@@ -2125,11 +2125,11 @@ Sub Passagens
           ShowHTML "          <td><font size=""1""><b>D<u>a</u>ta de saída:</b><br><input " & w_Disabled & " accesskey=""A"" type=""text"" name=""w_data_saida"" class=""sti"" SIZE=""10"" MAXLENGTH=""10"" VALUE=""" & w_data_saida & """ onKeyDown=""FormataData(this,event);"" title=""Informe a data de saida.""></td>"
           ShowHTML "          <td><font size=""1""><b>Data de <u>r</u>etorno:</b><br><input " & w_Disabled & " accesskey=""R"" type=""text"" name=""w_data_volta"" class=""sti"" SIZE=""10"" MAXLENGTH=""10"" VALUE=""" & w_data_volta & """ onKeyDown=""FormataData(this,event);"" title=""Informe a data de volta.""></td>"
           ShowHTML "      <tr valign=""top"">"
-          SelecaoPais   "País de ori<u>g</u>em:", "G", null, w_sq_pais_origem, null, "w_sq_pais_origem", "nome='Brasil'", "onChange=""document.Form.action='" & w_dir & w_pagina & par & "'; document.Form.w_troca.value='w_co_uf_origem'; document.Form.submit();"""
+          SelecaoPais   "País de ori<u>g</u>em:", "G", null, w_sq_pais_origem, null, "w_sq_pais_origem", "NOMEBRASIL", "onChange=""document.Form.action='" & w_dir & w_pagina & par & "'; document.Form.w_troca.value='w_co_uf_origem'; document.Form.submit();"""
           SelecaoEstado "E<u>s</u>tado de origem:", "S", null, w_co_uf_origem, w_sq_pais_origem, "N", "w_co_uf_origem", null, "onChange=""document.Form.action='" & w_dir & w_pagina & par & "'; document.Form.w_troca.value='w_sq_cidade_origem'; document.Form.submit();"""
           SelecaoCidade "<u>C</u>idade de origem:", "C", null, w_sq_cidade_origem, w_sq_pais_origem, w_co_uf_origem, "w_sq_cidade_origem", null, null
           ShowHTML "      <tr valign=""top"">"
-          SelecaoPais   "País de des<u>t</u>ino:", "T", null, w_sq_pais_destino, null, "w_sq_pais_destino", "nome='França'", "onChange=""document.Form.action='" & w_dir & w_pagina & par & "'; document.Form.w_troca.value='w_co_uf_destino'; document.Form.submit();"""
+          SelecaoPais   "País de des<u>t</u>ino:", "T", null, w_sq_pais_destino, null, "w_sq_pais_destino", "NOMEFRANCA", "onChange=""document.Form.action='" & w_dir & w_pagina & par & "'; document.Form.w_troca.value='w_co_uf_destino'; document.Form.submit();"""
           SelecaoEstado "Estad<u>o</u> de destino:", "O", null, w_co_uf_destino, w_sq_pais_destino, "N", "w_co_uf_destino", null, "onChange=""document.Form.action='" & w_dir & w_pagina & par & "'; document.Form.w_troca.value='w_sq_cidade_destino'; document.Form.submit();"""
           SelecaoCidade "<u>C</u>idade de destino:", "C", null, w_sq_cidade_destino, w_sq_pais_destino, w_co_uf_destino, "w_sq_cidade_destino", null, null    
           ShowHTML "      <tr><td colspan=""3""><font size=""1""><b>Trec<u>h</u>os:</b><br><input " & w_Disabled & " accesskey=""H"" type=""text"" name=""w_trechos"" class=""sti"" SIZE=""70"" MAXLENGTH=""100"" VALUE=""" & w_trechos & """></td>"
@@ -2374,7 +2374,7 @@ Sub Encaminhamento
      DB_GetSolicData RS, w_chave, "PJGERAL"
      w_tramite      = RS("sq_siw_tramite")
      w_destinatario = RS("solicitante")
-     DB_GetTramiteList RS1, RS("sq_menu"), null
+     DB_GetTramiteList RS1, RS("sq_menu"), null, null
      RS1.Filter = "ordem=" & cDbl(RS("or_tramite")) + 1
      w_novo_tramite = RS1("sq_siw_tramite")
      DesconectaBD

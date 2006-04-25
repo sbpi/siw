@@ -459,7 +459,7 @@ Sub Gerencial
             Case "GRPRPRIO"    ShowHTML "    else document.Form.p_prioridade.value='" & Request("p_prioridade")& "';"
             Case "GRPRLOCAL"   ShowHTML "    else document.Form.p_uf.value='" & Request("p_uf")& "';"
          End Select
-         DB_GetTramiteList RS2, P2, null
+         DB_GetTramiteList RS2, P2, null, null
          RS2.Sort = "ordem"
          w_fase_exec = ""
          While Not RS2.EOF

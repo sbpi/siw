@@ -1403,8 +1403,7 @@ REM =========================================================================
 REM Montagem da seleção do tipo de unidade
 REM -------------------------------------------------------------------------
 Sub SelecaoTipoUnidade (label, accesskey, hint, chave, chaveAux, campo, restricao)
-    DB_GetUnitTypeList RS, chaveAux
-    RS.Filter = "ativo = 'S'"
+    DB_GetUnitTypeList RS, chaveAux, null, "S"
     RS.Sort = "Nome"
     If IsNull(hint) Then
        ShowHTML "          <td valign=""top""><font size=""1""><b>" & Label & "</b><br><SELECT ACCESSKEY=""" & accesskey & """ CLASS=""STS"" NAME=""" & campo & """ " & w_Disabled & ">"
@@ -1476,8 +1475,7 @@ REM =========================================================================
 REM Montagem da seleção do tipo de unidade
 REM -------------------------------------------------------------------------
 Sub SelecaoEOAreaAtuacao (label, accesskey, hint, chave, chaveAux, campo, restricao)
-    DB_GetEOAAtuac RS, chaveAux
-    RS.Filter = "ativo = 'S'"
+    DB_GetEOAAtuac RS, chaveAux, null, "S"
     RS.Sort = "Nome"
     If IsNull(hint) Then
        ShowHTML "          <td valign=""top""><font size=""1""><b>" & Label & "</b><br><SELECT ACCESSKEY=""" & accesskey & """ CLASS=""STS"" NAME=""" & campo & """ " & w_Disabled & ">"
@@ -1501,8 +1499,7 @@ REM =========================================================================
 REM Montagem da seleção da fase de uma solicitação
 REM -------------------------------------------------------------------------
 Sub SelecaoFase (label, accesskey, hint, chave, chaveAux, campo, restricao, atributo)
-    DB_GetTramiteList RS, chaveAux, restricao
-    RS.Filter = "ativo = 'S'"
+    DB_GetTramiteList RS, chaveAux, restricao, "S"
     RS.Sort = "Ordem"
     If IsNull(hint) Then
        ShowHTML "          <td valign=""top""><font size=""1""><b>" & Label & "</b><br><SELECT ACCESSKEY=""" & accesskey & """ CLASS=""STS"" NAME=""" & campo & """ " & w_Disabled & " " & atributo & ">"
@@ -1531,8 +1528,7 @@ Sub SelecaoFaseCheck (label, accesskey, hint, chave, chaveAux, campo, restricao,
     Dim l_i, l_marcado
     Dim l_chave, l_item
     
-    DB_GetTramiteList RS, chaveAux, null
-    'RS.Filter = "sigla <> 'CA'"
+    DB_GetTramiteList RS, chaveAux, null, null
     RS.Sort = "Ordem"
     ShowHTML "          <td valign=""top""><font size=""1""><b>" & Label & "</b>"
     While Not RS.EOF
@@ -1617,8 +1613,11 @@ REM =========================================================================
 REM Montagem da seleção dos tipos de apoio
 REM -------------------------------------------------------------------------
 Sub SelecaoTipoApoio (label, accesskey, hint, chave, chaveAux, campo, restricao, atributo)
-    DB_GetTipoApoioList RS, w_cliente, null, null, null, null
-    If Nvl(restricao,"") > "" Then RS.Filter = restricao End If
+    If Nvl(restricao,"")= "ATIVO" Then
+       DB_GetTipoApoioList RS, w_cliente, null, null, null, "S"
+    Else
+       DB_GetTipoApoioList RS, w_cliente, null, null, null, null
+    End If
     RS.Sort = "nome"
     If IsNull(hint) Then
        ShowHTML "          <td valign=""top""><font size=""1""><b>" & Label & "</b><br><SELECT ACCESSKEY=""" & accesskey & """ CLASS=""STS"" NAME=""" & campo & """ " & w_Disabled & " " & atributo & ">"
@@ -1697,8 +1696,11 @@ Sub SelecaoEtapa (label, accesskey, hint, chave, chaveAux, chaveAux2, campo, res
     End If
     ShowHTML "          <option value="""">---"
 
-    DB_GetSolicEtapa RST, chaveAux, chaveAux2, "LSTNULL"
-    If restricao = "Pesquisa" Then RST.Filter = "sq_projeto_etapa <> " & Nvl(chaveAux2,0) End If
+    If restricao = "Pesquisa" Then
+       DB_GetSolicEtapa RST, chaveAux, null, "LSTNULL", Nvl(chaveAux2,0)
+    Else
+       DB_GetSolicEtapa RST, chaveAux, null, "LSTNULL", null
+    End If
     RST.Sort = "ordem"
     While Not RST.EOF
       If restricao = "Grupo" and (RST("vincula_atividade") = "N" or cDbl(RST("perc_conclusao")) >= 100) Then
@@ -1706,8 +1708,11 @@ Sub SelecaoEtapa (label, accesskey, hint, chave, chaveAux, chaveAux2, campo, res
       Else
          If cDbl(nvl(RST("sq_projeto_etapa"),0)) = cDbl(nvl(chave,0)) Then ShowHTML "          <option value=""" & RST("sq_projeto_etapa") & """ SELECTED>" & RST("ordem") & ". " & RST("titulo") Else ShowHTML "          <option value=""" & RST("sq_projeto_etapa") & """>" & RST("ordem") & ". " & RST("titulo") End If
       End if
-      DB_GetSolicEtapa RST1, chaveAux, RST("sq_projeto_etapa"), "LSTNIVEL"
-      If restricao = "Pesquisa" Then RST1.Filter = "sq_projeto_etapa <> " & Nvl(chaveAux2,0) End If
+      If restricao = "Pesquisa" Then
+         DB_GetSolicEtapa RST1, chaveAux, RST("sq_projeto_etapa"), "LSTNIVEL", Nvl(chaveAux2,0)
+      Else
+         DB_GetSolicEtapa RST1, chaveAux, RST("sq_projeto_etapa"), "LSTNIVEL", null
+      End If
       RST1.Sort = "ordem"
       While Not RST1.EOF
         If restricao = "Grupo" and (RST1("vincula_atividade") = "N" or cDbl(RST1("perc_conclusao")) >= 100) Then
@@ -1715,7 +1720,7 @@ Sub SelecaoEtapa (label, accesskey, hint, chave, chaveAux, chaveAux2, campo, res
         Else
            If cDbl(nvl(RST1("sq_projeto_etapa"),0)) = cDbl(nvl(chave,0)) Then ShowHTML "          <option value=""" & RST1("sq_projeto_etapa") & """ SELECTED>" & RST1("ordem") & ". " & RST1("titulo") Else ShowHTML "          <option value=""" & RST1("sq_projeto_etapa") & """>" & RST("ordem") & "." & RST1("ordem") & ". " & RST1("titulo") End If
         End if
-        DB_GetSolicEtapa RST2, chaveAux, RST1("sq_projeto_etapa"), "LSTNIVEL"
+        DB_GetSolicEtapa RST2, chaveAux, RST1("sq_projeto_etapa"), "LSTNIVEL", null
         RST2.Sort = "ordem"
         While Not RST2.EOF
           If restricao = "Grupo" and (RST2("vincula_atividade") = "N" or cDbl(RST2("perc_conclusao")) >= 100) Then
@@ -1723,7 +1728,7 @@ Sub SelecaoEtapa (label, accesskey, hint, chave, chaveAux, chaveAux2, campo, res
           Else
              If cDbl(nvl(RST2("sq_projeto_etapa"),0)) = cDbl(nvl(chave,0)) Then ShowHTML "          <option value=""" & RST2("sq_projeto_etapa") & """ SELECTED>" & RST2("ordem") & ". " & RST2("titulo") Else ShowHTML "          <option value=""" & RST2("sq_projeto_etapa") & """>" & RST("ordem") & "." & RST1("ordem") & "." & RST2("ordem") & ". " & RST2("titulo") End If
           End if
-          DB_GetSolicEtapa RST3, chaveAux, RST2("sq_projeto_etapa"), "LSTNIVEL"
+          DB_GetSolicEtapa RST3, chaveAux, RST2("sq_projeto_etapa"), "LSTNIVEL", null
           RST3.Sort = "ordem"
           While Not RST3.EOF
             If restricao = "Grupo" and (RST3("vincula_atividade") = "N" or cDbl(RST3("perc_conclusao")) >= 100) Then
@@ -1731,7 +1736,7 @@ Sub SelecaoEtapa (label, accesskey, hint, chave, chaveAux, chaveAux2, campo, res
             Else
                If cDbl(nvl(RST3("sq_projeto_etapa"),0)) = cDbl(nvl(chave,0)) Then ShowHTML "          <option value=""" & RST3("sq_projeto_etapa") & """ SELECTED>" & RST3("ordem") & ". " & RST3("titulo") Else ShowHTML "          <option value=""" & RST3("sq_projeto_etapa") & """>" & RST("ordem") & "." & RST1("ordem") & "." & RST2("ordem") & "." & RST3("ordem") & ". " & RST3("titulo") End If
             End if
-            DB_GetSolicEtapa RST4, chaveAux, RST3("sq_projeto_etapa"), "LSTNIVEL"
+            DB_GetSolicEtapa RST4, chaveAux, RST3("sq_projeto_etapa"), "LSTNIVEL", null
             RST4.Sort = "ordem"
             While Not RST4.EOF
               If restricao = "Grupo" and (RST4("vincula_atividade") = "N" or cDbl(RST4("perc_conclusao")) >= 100) Then

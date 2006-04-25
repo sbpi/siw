@@ -958,11 +958,11 @@ Sub Passagens
           ShowHTML "          <td><font size=""1""><b>D<u>a</u>ta de saída:</b><br><input " & w_Disabled & " accesskey=""A"" type=""text"" name=""w_data_saida"" class=""sti"" SIZE=""10"" MAXLENGTH=""10"" VALUE=""" & w_data_saida & """ onKeyDown=""FormataData(this,event);"" title=""Informe a data de saida.""></td>"
           ShowHTML "          <td><font size=""1""><b>Data de <u>r</u>etorno:</b><br><input " & w_Disabled & " accesskey=""R"" type=""text"" name=""w_data_volta"" class=""sti"" SIZE=""10"" MAXLENGTH=""10"" VALUE=""" & w_data_volta & """ onKeyDown=""FormataData(this,event);"" title=""Informe a data de volta.""></td>"
           ShowHTML "      <tr valign=""top"">"
-          SelecaoPais   "País de ori<u>g</u>em:", "G", null, w_sq_pais_origem, null, "w_sq_pais_origem", "nome='Brasil'", "onChange=""document.Form.action='" & w_dir & w_pagina & par & "'; document.Form.w_troca.value='w_co_uf_origem'; document.Form.submit();"""
+          SelecaoPais   "País de ori<u>g</u>em:", "G", null, w_sq_pais_origem, null, "w_sq_pais_origem", "NOMEBRASIL", "onChange=""document.Form.action='" & w_dir & w_pagina & par & "'; document.Form.w_troca.value='w_co_uf_origem'; document.Form.submit();"""
           SelecaoEstado "E<u>s</u>tado de origem:", "S", null, w_co_uf_origem, w_sq_pais_origem, "N", "w_co_uf_origem", null, "onChange=""document.Form.action='" & w_dir & w_pagina & par & "'; document.Form.w_troca.value='w_sq_cidade_origem'; document.Form.submit();"""
           SelecaoCidade "<u>C</u>idade de origem:", "C", null, w_sq_cidade_origem, w_sq_pais_origem, w_co_uf_origem, "w_sq_cidade_origem", null, null
           ShowHTML "      <tr valign=""top"">"
-          SelecaoPais   "País de des<u>t</u>ino:", "T", null, w_sq_pais_destino, null, "w_sq_pais_destino", "nome='Brasil' or nome='França'", "onChange=""document.Form.action='" & w_dir & w_pagina & par & "'; document.Form.w_troca.value='w_co_uf_destino'; document.Form.submit();"""
+          SelecaoPais   "País de des<u>t</u>ino:", "T", null, w_sq_pais_destino, null, "w_sq_pais_destino", "BRASILFRANCA", "onChange=""document.Form.action='" & w_dir & w_pagina & par & "'; document.Form.w_troca.value='w_co_uf_destino'; document.Form.submit();"""
           SelecaoEstado "Estad<u>o</u> de destino:", "O", null, w_co_uf_destino, w_sq_pais_destino, "N", "w_co_uf_destino", null, "onChange=""document.Form.action='" & w_dir & w_pagina & par & "'; document.Form.w_troca.value='w_sq_cidade_destino'; document.Form.submit();"""
           SelecaoCidade "<u>C</u>idade de destino:", "C", null, w_sq_cidade_destino, w_sq_pais_destino, w_co_uf_destino, "w_sq_cidade_destino", null, null    
           ShowHTML "      <tr><td colspan=""3""><font size=""1""><b>Trec<u>h</u>os:</b><br><input " & w_Disabled & " accesskey=""H"" type=""text"" name=""w_trechos"" class=""sti"" SIZE=""70"" MAXLENGTH=""100"" VALUE=""" & w_trechos & """></td>"
@@ -1187,7 +1187,7 @@ Sub Informar
     ShowHTML "      <tr><td><font size=1>Identificação do status do projeto.</font></td></tr>"
     ShowHTML "      <tr><td align=""center"" height=""1"" bgcolor=""#000000""></td></tr>"
     ShowHTML "      <tr><td><table border=0 width=""100%"" cellspacing=0><tr valign=""top"">"    
-    SelecaoTipoApoio "<u>T</u>ipo de apoio:", "T", null, w_sq_tipo_apoio, null, "w_sq_tipo_apoio", "ativo = 'S'", null
+    SelecaoTipoApoio "<u>T</u>ipo de apoio:", "T", null, w_sq_tipo_apoio, null, "w_sq_tipo_apoio", "ATIVO", null
     ShowHTML "      <tr><td><font size=""1""><b><u>E</u>ntidade:<br><input " & w_Disabled & " accesskey=""E"" type=""text"" name=""w_entidade"" class=""sti"" SIZE=""50"" MAXLENGTH=""50"" VALUE=""" & w_entidade & """></td>"
     ShowHTML "          <td><b><u>V</u>alor:</b><br><input " & w_Disabled & " accesskey=""V"" type=""text"" name=""w_valor"" class=""sti"" SIZE=""18"" MAXLENGTH=""18"" VALUE=""" & w_valor & """ onKeyDown=""FormataValor(this,18,2,event);"" title=""Informe o valor do patrocínio ou financiamento.""></td>"
     ShowHTML "      <tr><td valign=""top"" colspan=2><b><u>D</u>escrição:</b><br><textarea " & w_Disabled & " accesskey=""D"" name=""w_descricao"" class=""sti"" ROWS=5 cols=75 title=""Escreva um texto que descreva o patrocinio ou financiamento"">" & w_descricao & "</TEXTAREA></td>"

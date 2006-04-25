@@ -937,7 +937,7 @@ Sub Geral
     'SelecaoTarefa "<u>T</u>arefa:", "T", null, w_cliente, w_ano, w_tarefa, "w_tarefa", Nvl(w_projeto,0), null
     ShowHTML "      <tr><td valign=""top""><font size=""1""><b>Des<u>c</u>rição sucinta do serviço a ser executado (Objetivo/assunto a ser tratado/evento):</b><br><textarea " & w_Disabled & " accesskey=""c"" name=""w_descricao"" class=""STI"" ROWS=5 cols=75 title=""Descreva, de forma detalhada, os objetivos da PCD."">" & w_descricao & "</TEXTAREA></td>"
     ShowHTML "      <tr><td valign=""top"" colspan=""2""><table border=0 width=""100%"" cellspacing=0>"
-    SelecaoUnidade1 "<U>U</U>nidade proponente:", "U", "Selecione a unidade proponente da PCD", w_sq_unidade_resp, null, "w_sq_unidade_resp", "VIAGEM", null, w_ano
+    SelecaoUnidade1 "<U>U</U>nidade proponente:", "U", "Selecione a unidade proponente da PCD", w_sq_unidade_resp, null, "w_sq_unidade_resp", "VIAGEMANO", null, w_ano
     SelecaoTipoPCD "Ti<u>p</u>o:", "P", null, w_tipo_missao, "w_tipo_missao", null, null
     ShowHTML "              <td valign=""top""><font size=""1""><b>Pri<u>m</u>eira saída:</b><br><input " & w_Disabled & " accesskey=""M"" type=""text"" name=""w_inicio"" class=""STI"" SIZE=""10"" MAXLENGTH=""10"" VALUE=""" & w_inicio & """ onKeyDown=""FormataData(this,event);"" title=""Usar formato dd/mm/aaaa"">" & ExibeCalendario("Form", "w_inicio") & "</td>"
     ShowHTML "              <td valign=""top""><font size=""1""><b>Último re<u>t</u>orno:</b><br><input " & w_Disabled & " accesskey=""T"" type=""text"" name=""w_fim"" class=""STI"" SIZE=""10"" MAXLENGTH=""10"" VALUE=""" & w_fim & """ onKeyDown=""FormataData(this,event);"" title=""Usar formato dd/mm/aaaa"">" & ExibeCalendario("Form", "w_fim") & "</td>"
@@ -962,7 +962,7 @@ Sub Geral
              ShowHTML "<INPUT type=""hidden"" name=""w_sexo"" value=""" & w_sexo &""">"
           End If
           If Nvl(w_vinculo,"") = "" Then
-             SelecaoVinculo "Tipo de <u>v</u>ínculo:", "V", null, w_vinculo, null, "w_vinculo", "ativo='S' and sq_tipo_pessoa='Física'"
+             SelecaoVinculo "Tipo de <u>v</u>ínculo:", "V", null, w_vinculo, null, "w_vinculo", "S", "Física", null
           Else
              ShowHTML "<INPUT type=""hidden"" name=""w_vinculo"" value=""" & w_vinculo &""">"
           End If
@@ -970,7 +970,7 @@ Sub Geral
           ShowHTML "            <td><font size=""1""><b><u>N</u>ome completo:</b><br><input " & w_Disabled & " accesskey=""N"" type=""text"" name=""w_nm_prop"" class=""sti"" SIZE=""45"" MAXLENGTH=""60"" VALUE=""" & w_nm_prop & """></td>"
           ShowHTML "            <td><font size=""1""><b><u>N</u>ome resumido:</b><br><input " & w_Disabled & " accesskey=""N"" type=""text"" name=""w_nm_prop_res"" class=""sti"" SIZE=""15"" MAXLENGTH=""15"" VALUE=""" & w_nm_prop_res & """></td>"
           SelecaoSexo "Se<u>x</u>o:", "X", null, w_sexo, null, "w_sexo", null, null
-          SelecaoVinculo "Tipo de <u>v</u>ínculo:", "V", null, w_vinculo, null, "w_vinculo", "ativo='S' and sq_tipo_pessoa='Física'"
+          SelecaoVinculo "Tipo de <u>v</u>ínculo:", "V", null, w_vinculo, null, "w_vinculo", "S", "Física", null
        End If
        If w_sq_prop > "" Then
        Else
@@ -1387,7 +1387,7 @@ Sub OutraParte
        ShowHTML "             <td><font size=""1""><b><u>N</u>ome resumido:</b><br><input " & w_Disabled & " accesskey=""N"" type=""text"" name=""w_nome_resumido"" class=""sti"" SIZE=""15"" MAXLENGTH=""15"" VALUE=""" & w_nome_resumido & """></td>"
        SelecaoSexo "Se<u>x</u>o:", "X", null, w_sexo, null, "w_sexo", null, null
        If Nvl(w_sq_tipo_vinculo,"") = "" Then
-          SelecaoVinculo "Tipo de <u>v</u>ínculo:", "V", null, w_sq_tipo_vinculo, null, "w_sq_tipo_vinculo", "ativo='S' and sq_tipo_pessoa='Física'"
+          SelecaoVinculo "Tipo de <u>v</u>ínculo:", "V", null, w_sq_tipo_vinculo, null, "w_sq_tipo_vinculo", "S", "Física", null
        Else
           ShowHTML "<INPUT type=""hidden"" name=""w_sq_tipo_vinculo"" value=""" & w_sq_tipo_vinculo &""">"
        End If
@@ -3235,9 +3235,9 @@ Public Sub Grava
           Else
              ' Verifica o próximo trâmite
              If Request("w_envio") = "N" Then
-                DB_GetTramiteList RS, Request("w_tramite"), "PROXIMO"
+                DB_GetTramiteList RS, Request("w_tramite"), "PROXIMO", null
              Else
-                DB_GetTramiteList RS, Request("w_tramite"), "ANTERIOR"
+                DB_GetTramiteList RS, Request("w_tramite"), "ANTERIOR", null
              End If
              DB_GetTramiteSolic RS1, Request("w_chave"), RS("sq_siw_tramite"), null, null
              

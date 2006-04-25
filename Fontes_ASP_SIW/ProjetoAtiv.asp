@@ -293,7 +293,7 @@ Sub Inicial
            w_filtro = w_filtro & "<tr valign=""top""><td align=""right""><font size=1>Projeto <td><font size=1>[<b><A class=""HL"" HREF=""Projeto.asp?par=Visual&O=L&w_chave=" & p_projeto & "&w_tipo=Volta&P1=" & P1 & "&P2=" & P2 & "&P3=" & P3 & "&P4=" & P4 & "&TP=" & TP & "&SG=" & SG & """ title=""Exibe as informações do projeto."">" & RS("titulo") & "</a></b>]"
         End If
         If p_atividade > ""  Then 
-           DB_GetSolicEtapa RS, p_projeto, p_atividade, "REGISTRO"
+           DB_GetSolicEtapa RS, p_projeto, p_atividade, "REGISTRO", null
            w_filtro = w_filtro & "<tr valign=""top""><td align=""right""><font size=1>Etapa <td><font size=1>[<b>" & MontaOrdemEtapa(RS("sq_projeto_etapa")) & " - " & RS("titulo") & "</b>]"
         End If
         If p_sqcc > ""  Then 
@@ -1660,7 +1660,7 @@ Sub Visual
   ' Recupera o logo do cliente a ser usado nas listagens
   DB_GetCustomerData RS, w_cliente
   If RS("logo") > "" Then
-     w_logo = "\img\logo" & Mid(RS("logo"),Instr(RS("logo"),"."),30)
+     w_logo = "img\logo" & Mid(RS("logo"),Instr(RS("logo"),"."),30)
   End If
   DesconectaBD
   

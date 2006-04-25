@@ -93,7 +93,7 @@ Function VisualProjeto(w_chave, O, w_usuario, P1, P4)
      If w_tipo_visao = 0 or w_tipo_visao = 1 Then 
         ' Metas da ação
         ' Recupera todos os registros para a listagem     
-        DB_GetSolicEtapa RS1, w_chave, null, "LSTNULL"
+        DB_GetSolicEtapa RS1, w_chave, null, "LSTNULL", null
         RS1.Sort = "ordem"
         If Not RS1.EOF Then ' Se não foram selecionados registros, exibe mensagem
            w_html = w_html & VbCrLf & "      <tr><td valign=""top"" colspan=""2"" align=""left"" bgcolor=""#D0D0D0"" style=""border: 2px solid rgb(0,0,0);""><font size=""2""><b>&nbsp;Metas Cadastradas</td></tr>"
@@ -574,7 +574,7 @@ Function VisualProjeto(w_chave, O, w_usuario, P1, P4)
 
      ' Etapas da ação
      ' Recupera todos os registros para a listagem
-     DB_GetSolicEtapa RS, w_chave, null, "LISTA"
+     DB_GetSolicEtapa RS, w_chave, null, "LISTA", null
      RS.Sort = "ordem"
 
     ' Recupera o código da opção de menu  a ser usada para listar as atividades
@@ -588,7 +588,7 @@ Function VisualProjeto(w_chave, O, w_usuario, P1, P4)
      Wend
      DesconectaBD
 
-     DB_GetSolicEtapa RS, w_chave, null, "LSTNULL"
+     DB_GetSolicEtapa RS, w_chave, null, "LSTNULL", null
      RS.Sort = "ordem"
      If Not RS.EOF Then ' Se não foram selecionados registros, exibe mensagem
         
@@ -599,7 +599,7 @@ Function VisualProjeto(w_chave, O, w_usuario, P1, P4)
            w_html = w_html & VbCrLf & "    document.Form.p_projeto.value=projeto;"
            w_html = w_html & VbCrLf & "    document.Form.p_atividade.value=etapa;"
            w_html = w_html & VbCrLf & "    document.Form.p_agrega.value='GRDMETAPA';"
-           DB_GetTramiteList RS1, w_P2, null
+           DB_GetTramiteList RS1, w_P2, null, null
            RS1.Sort = "ordem"
            w_html = w_html & VbCrLf & "    document.Form.p_fase.value='';"
            w_fases = ""
@@ -642,25 +642,25 @@ Function VisualProjeto(w_chave, O, w_usuario, P1, P4)
            w_html = w_html & VbCrLf & EtapaLinha(w_chave, Rs("sq_projeto_etapa"), Rs("titulo"), RS("nm_resp"), RS("sg_setor"), Rs("inicio_previsto"), Rs("fim_previsto"), Rs("perc_conclusao"), RS("qt_ativ"), "<b>", null, "PROJETO")
          
            ' Recupera as etapas vinculadas ao nível acima
-           DB_GetSolicEtapa RS1, w_chave, RS("sq_projeto_etapa"), "LSTNIVEL"
+           DB_GetSolicEtapa RS1, w_chave, RS("sq_projeto_etapa"), "LSTNIVEL", null
            RS1.Sort = "ordem"
            While Not RS1.EOF
              w_html = w_html & VbCrLf & EtapaLinha(w_chave, RS1("sq_projeto_etapa"), RS1("titulo"), RS1("nm_resp"), RS1("sg_setor"), RS1("inicio_previsto"), RS1("fim_previsto"), RS1("perc_conclusao"), RS1("qt_ativ"), null, null, "PROJETO")
  
              ' Recupera as etapas vinculadas ao nível acima
-             DB_GetSolicEtapa RS2, w_chave, RS1("sq_projeto_etapa"), "LSTNIVEL"
+             DB_GetSolicEtapa RS2, w_chave, RS1("sq_projeto_etapa"), "LSTNIVEL", null
              RS2.Sort = "ordem"
              While Not RS2.EOF
                w_html = w_html & VbCrLf & EtapaLinha(w_chave, RS2("sq_projeto_etapa"), RS2("titulo"), RS2("nm_resp"), RS2("sg_setor"), RS2("inicio_previsto"), RS2("fim_previsto"), RS2("perc_conclusao"), RS2("qt_ativ"), null, null, "PROJETO")
 
                ' Recupera as etapas vinculadas ao nível acima
-               DB_GetSolicEtapa RS3, w_chave, RS2("sq_projeto_etapa"), "LSTNIVEL"
+               DB_GetSolicEtapa RS3, w_chave, RS2("sq_projeto_etapa"), "LSTNIVEL", null
                RS3.Sort = "ordem"
                While Not RS3.EOF
                  w_html = w_html & VbCrLf & EtapaLinha(w_chave, RS3("sq_projeto_etapa"), RS3("titulo"), RS3("nm_resp"), RS3("sg_setor"), RS3("inicio_previsto"), RS3("fim_previsto"), RS3("perc_conclusao"), RS3("qt_ativ"), null, null, "PROJETO")
 
                  ' Recupera as etapas vinculadas ao nível acima
-                 DB_GetSolicEtapa RS4, w_chave, RS3("sq_projeto_etapa"), "LSTNIVEL"
+                 DB_GetSolicEtapa RS4, w_chave, RS3("sq_projeto_etapa"), "LSTNIVEL", null
                  RS4.Sort = "ordem"
                  While Not RS4.EOF
                    w_html = w_html & VbCrLf & EtapaLinha(w_chave, RS4("sq_projeto_etapa"), RS4("titulo"), RS4("nm_resp"), RS4("sg_setor"), RS4("inicio_previsto"), RS4("fim_previsto"), RS4("perc_conclusao"), RS4("qt_ativ"), null, null, "PROJETO")

@@ -409,16 +409,16 @@ Sub Benef
        If P3 = 1 Then ' Vide função do parâmetro no cabeçalho desta rotina
           ShowHTML "      <tr><td valign=""top"" colspan=""2""><table border=0 width=""100%"" cellspacing=0>"
           ShowHTML "          <td valign=""top""><font size=""1""><b><u>R</u>egional de Ensino:</b><br><SELECT ACCESSKEY=""R"" CLASS=""STS"" NAME=""w_sq_unidade_lotacao"" " & w_Disabled & " onChange=""document.Form.action='" & w_dir & w_pagina & par & "'; document.Form.w_troca.value='w_sq_localizacao'; document.Form.submit();"">"
-          DB_GetUorgList RS, w_cliente, null, null
           If Nvl(Session("codigo"),"00") = "00" Then
+             
              ' Recupera os dados da unidade maior da organização
-             RS.Filter = "informal='N' and sq_unidade_pai = null"
+             DB_GetUorgList RS, w_cliente, null, "CODIGO", null, null, null
              ShowHTML "          <option value=""" & RS("sq_unidade") & """>Todas"
              
              ' Recupera as unidades vinculadas para exibição na lista
-             RS.Filter = "informal='N' and codigo <> '00'"
+             DB_GetUorgList RS, w_cliente, null, "CODIGONULL", null, null, null
           Else
-             RS.Filter = "informal='N' and codigo = '" & Session("codigo") & "'"
+             DB_GetUorgList RS, w_cliente, Session("codigo"), "VALORCODIGO", null, null, null
           End If
           RS.Sort = "codigo"
           While Not RS.EOF
@@ -434,7 +434,7 @@ Sub Benef
           ShowHTML "          </table>"
 
           ShowHTML "      <tr>"
-          SelecaoVinculo "<u>P</u>erfil:", "P", null, w_sq_tipo_vinculo, null, "w_sq_tipo_vinculo", "ativo='S' and sq_tipo_pessoa='Física'"
+          SelecaoVinculo "<u>P</u>erfil:", "P", null, w_sq_tipo_vinculo, null, "w_sq_tipo_vinculo", "S", "Física", null
           ShowHTML "      </tr>"
 
           ShowHTML "      <tr><td valign=""top"" colspan=""2""><table border=0 width=""100%"" cellspacing=0>"

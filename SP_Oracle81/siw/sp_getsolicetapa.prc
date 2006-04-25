@@ -1,7 +1,8 @@
 create or replace procedure SP_GetSolicEtapa
-   (p_chave     in number   default null,
-    p_chave_aux in number   default null,
-    p_restricao in varchar2,
+   (p_chave      in number   default null,
+    p_chave_aux  in number   default null,
+    p_restricao  in varchar2,
+    p_chave_aux2 in number   default null,
     p_result    out siw.sys_refcursor) is
 begin
    If p_restricao = 'PAIS' Then
@@ -124,7 +125,8 @@ begin
             and (a.sq_unidade         = g.sq_unidade)
             and (h.sq_projeto_etapa = a.sq_projeto_etapa (+))
             and a.sq_siw_solicitacao = p_chave
-            and a.sq_etapa_pai       is null;
+            and a.sq_etapa_pai       is null
+            and (p_chave_aux2 is null or (p_chave_aux2 is not null and a.sq_projeto_etapa <> p_chave_aux2));
    ElsIf p_restricao = 'LSTNIVEL' Then
       -- Recupera as etapas vinculadas a uma etapa do projeto
       open p_result for
@@ -181,7 +183,8 @@ begin
             and (a.sq_unidade         = g.sq_unidade)
             and (h.sq_projeto_etapa = a.sq_projeto_etapa (+))
             and a.sq_siw_solicitacao = p_chave
-            and a.sq_etapa_pai       = p_chave_aux;
+            and a.sq_etapa_pai       = p_chave_aux
+            and (p_chave_aux2 is null or (p_chave_aux2 is not null and a.sq_projeto_etapa <> p_chave_aux2));
    Elsif p_restricao = 'REGISTRO' Then
       -- Recupera os dados de uma etapa de projeto
       open p_result for
@@ -232,4 +235,3 @@ begin
    End If;
 End SP_GetSolicEtapa;
 /
-

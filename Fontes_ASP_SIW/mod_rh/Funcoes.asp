@@ -3,8 +3,7 @@ REM =========================================================================
 REM Montagem da seleção de idiomas
 REM -------------------------------------------------------------------------
 Sub SelecaoIdioma (label, accesskey, hint, chave, chaveAux, campo, restricao, atributo)
-    DB_GetIdiomList RS
-    RS.Filter = "ativo='S'"
+    DB_GetIdiomList RS, null, "S"
     RS.Sort   = "Nome"
     If IsNull(hint) Then
        ShowHTML "          <td valign=""top""><font size=""1""><b>" & Label & "</b><br><SELECT ACCESSKEY=""" & accesskey & """ CLASS=""STS"" NAME=""" & campo & """ " & w_Disabled & " " & atributo & ">"
@@ -30,8 +29,7 @@ REM =========================================================================
 REM Montagem da seleção de etnia
 REM -------------------------------------------------------------------------
 Sub SelecaoEtnia (label, accesskey, hint, chave, chaveAux, campo, restricao, atributo)
-    DB_GetEtniaList RS
-    RS.Filter = "ativo='S'"
+    DB_GetEtniaList RS, null, "S"
     RS.Sort   = "codigo_siape"
     If IsNull(hint) Then
        ShowHTML "          <td valign=""top""><font size=""1""><b>" & Label & "</b><br><SELECT ACCESSKEY=""" & accesskey & """ CLASS=""STS"" NAME=""" & campo & """ " & w_Disabled & " " & atributo & ">"
@@ -57,8 +55,7 @@ REM =========================================================================
 REM Montagem da seleção de deficiência
 REM -------------------------------------------------------------------------
 Sub SelecaoDeficiencia (label, accesskey, hint, chave, chaveAux, campo, restricao, atributo)
-    DB_GetDeficiencyList RS
-    RS.Filter = "ativo='S'"
+    DB_GetDeficiencyList RS, null, "S"
     RS.Sort   = "sq_grupo_defic, nome"
     If IsNull(hint) Then
        ShowHTML "          <td valign=""top""><font size=""1""><b>" & Label & "</b><br><SELECT ACCESSKEY=""" & accesskey & """ CLASS=""STS"" NAME=""" & campo & """ " & w_Disabled & " " & atributo & ">"
@@ -111,8 +108,7 @@ REM =========================================================================
 REM Montagem da seleção de formação acadêmica
 REM -------------------------------------------------------------------------
 Sub SelecaoFormacao (label, accesskey, hint, chave, chaveAux, campo, restricao, atributo)
-    DB_GetFormationList RS
-    RS.Filter = restricao
+    DB_GetFormationList RS, chaveAux, null, null
     RS.Sort   = "ordem"
     If IsNull(hint) Then
        ShowHTML "          <td valign=""top""><font size=""1""><b>" & Label & "</b><br><SELECT ACCESSKEY=""" & accesskey & """ CLASS=""STS"" NAME=""" & campo & """ " & w_Disabled & " " & atributo & ">"
@@ -138,9 +134,8 @@ REM =========================================================================
 REM Montagem da seleção dos tipos de postos
 REM -------------------------------------------------------------------------
 Sub SelecaoTipoPosto2 (label, accesskey, hint, chave, chaveAux, campo, restricao)
-    DB_GetTipoPostoList RS, w_cliente, null
+    DB_GetTipoPostoList RS, w_cliente, null, null
     RS.Sort = "descricao"
-    If Nvl(restricao,"") > "" Then RS.Filter = restricao End If
     If IsNull(hint) Then
        ShowHTML "          <td valign=""top""><font size=""1""><b>" & Label & "</b><br><SELECT ACCESSKEY=""" & accesskey & """ CLASS=""STS"" NAME=""" & campo & """ " & w_Disabled & ">"
     Else

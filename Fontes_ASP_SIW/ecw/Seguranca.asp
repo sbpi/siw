@@ -149,7 +149,7 @@ Sub Usuarios
   p_ativo            = uCase(Request("p_ativo"))
   
   If O = "L" Then
-     DB_GetUserList RS, w_cliente, p_localizacao, p_lotacao, p_gestor, p_nome, p_modulo, p_uf, p_ativo
+     DB_GetUserList RS, w_cliente, p_localizacao, p_lotacao, p_gestor, p_nome, p_modulo, p_uf, p_ativo, null
      w_filter = ""
      If Nvl(Session("codigo"),"00") <> "00" Then
         w_filter = w_filter & "  and codigo = '" & Session("codigo") & "'"
@@ -275,7 +275,7 @@ Sub Usuarios
     
     ShowHTML "      <tr>"
     ShowHTML "            <td><font size=""1""><b><u>R</u>egional de Ensino:</b><br><SELECT ACCESSKEY=""R"" CLASS=""STI"" NAME=""p_lotacao"">"
-    DB_GetUorgList RS, w_cliente, null, null
+    DB_GetUorgList RS, w_cliente, null, null, null, null, null
     If Nvl(Session("codigo"),"00") = "00" Then
        RS.Filter = "informal='N' and codigo <> '00'"
        ShowHTML "          <option value=""00"">Todas"

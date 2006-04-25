@@ -383,15 +383,18 @@ REM -------------------------------------------------------------------------
 REM =========================================================================
 REM Recupera os trâmites de um serviço
 REM -------------------------------------------------------------------------
-Sub DB_GetTramiteList(p_rs, p_chave, p_restricao)
-  Dim l_chave, l_restricao
+Sub DB_GetTramiteList(p_rs, p_chave, p_restricao, p_ativo)
+  Dim l_chave, l_restricao, l_ativo
   Set l_chave     = Server.CreateObject("ADODB.Parameter")
   Set l_restricao = Server.CreateObject("ADODB.Parameter")
+  Set l_ativo     = Server.CreateObject("ADODB.Parameter")
   with sp
-     set l_chave                = .CreateParameter("l_chave",     adInteger, adParamInput, , p_chave)
-     set l_restricao            = .CreateParameter("l_restricao", adVarChar, adParamInput, 20, p_restricao)
+     set l_chave             = .CreateParameter("l_chave",     adInteger, adParamInput, , p_chave)
+     set l_restricao         = .CreateParameter("l_restricao", adVarChar, adParamInput, 20, Tvl(p_restricao))
+     set l_ativo             = .CreateParameter("l_ativo",     adVarChar, adParamInput,  1, Tvl(p_ativo))
      .parameters.Append         l_chave
      .parameters.Append         l_restricao
+     .parameters.Append         l_ativo
      If Session("dbms") = 1 or Session("dbms") = 3 Then .Properties("PLSQLRSet") = TRUE End If
      .CommandText               = Session("schema") & "SP_GetTramiteList"
      On Error Resume Next
@@ -402,6 +405,7 @@ Sub DB_GetTramiteList(p_rs, p_chave, p_restricao)
      If Session("dbms") = 1 or Session("dbms") = 3 Then .Properties("PLSQLRSet") = FALSE End If
      .Parameters.Delete         "l_chave"
      .Parameters.Delete         "l_restricao"
+     .Parameters.Delete         "l_ativo"
   end with
 End Sub
 %>

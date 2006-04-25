@@ -28,28 +28,6 @@ REM Final da rotina
 REM -------------------------------------------------------------------------
 
 REM =========================================================================
-REM Visualização dos parâmetros selecionados
-REM -------------------------------------------------------------------------
-Sub ExibeParametros(p_cliente)
-  Dim RS_temp
-
-  DB_GetUorgList RS_temp, p_cliente, null, null
-
-  If Session("regional") > "" Then
-     RS_temp.Filter = "codigo = '" & Session("regional") & "'"
-  Else
-     RS_temp.Filter = "informal = 'N' and codigo = null"
-  End If
-  
-  ShowHTML "<center><b>Período letivo: [" & Mid(Session("periodo"),1,4) & "] "
-  ShowHTML "Regional: [" & RS_temp("nome") & "]</b></center>"
-
-End Sub
-REM =========================================================================
-REM Final da rotina
-REM -------------------------------------------------------------------------
-
-REM =========================================================================
 REM Montagem da seleção da UF
 REM -------------------------------------------------------------------------
 Sub SelecaoUF (label, accesskey, hint, chave, chaveAux, campo, restricao, atributo)

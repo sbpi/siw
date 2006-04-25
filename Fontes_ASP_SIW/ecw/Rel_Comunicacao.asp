@@ -182,8 +182,7 @@ Sub Inicial
      w_pag   = 1
      w_linha = 6
      CabecalhoWord w_cliente, "Transferência de Arquivos", w_pag
-     DB_GetUorgList RS_temp, w_cliente, null, null
-     RS_temp.Filter = "codigo = '" & Session("regional") & "'"
+     DB_GetUorgList RS_temp, w_cliente, Session("regional"), "CODIGO", null, null, null
      ShowHTML "<TABLE WIDTH=""100%"" BORDER=0>"
      ShowHTML "  <TR><TD><FONT SIZE=2 COLOR=""#000000"">Regional de Ensino: <b>" & RS_temp("nome") & "</b></TD></TR>"
      ShowHTML "</TABLE>"
@@ -227,8 +226,7 @@ Sub Inicial
      End If
      If O = "L" Then
         CabecalhoRelatorio w_cliente, "Transferência de Arquivos"
-        DB_GetUorgList RS_temp, w_cliente, null, null
-        RS_temp.Filter = "codigo = '" & Session("regional") & "'"
+        DB_GetUorgList RS_temp, w_cliente, Session("regional"), "CODIGO", null, null, null
         ShowHTML "<TABLE WIDTH=""100%"" BORDER=0>"
         ShowHTML "  <TR><TD><FONT SIZE=2 COLOR=""#000000"">Regional de Ensino: <b>" & RS_temp("nome") & "</b></TD></TR>"
         ShowHTML "</TABLE>"
@@ -296,7 +294,7 @@ Sub Inicial
            w_linha = 6
            w_pag   = w_pag + 1
            CabecalhoWord w_cliente, "Transferência de Arquivos", w_pag
-           DB_GetUorgList RS_temp, w_cliente, null, null
+           DB_GetUorgList RS_temp, w_cliente, null, null, null, null, null
            RS_temp.Filter = "codigo = '" & Session("regional") & "'"
            ShowHTML "<div align=center><center>"
            ShowHTML "<table border=""0"" cellpadding=""0"" cellspacing=""0"" width=""100%"">"

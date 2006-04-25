@@ -463,9 +463,9 @@ Sub Inicial
     ShowHTML "      <tr>"
     SelecaoLcSituacao "<u>S</u>ituação da licitação:", "S", null, p_situacao, null, "p_situacao", null, null
     If w_gestor_sistema = "S" or w_gestor_modulo = "S" Then
-       SelecaoUnidade "<u>U</u>nidade licitante:", "U", null, p_unidade, null, "p_unidade", "lc_ativo=\'S\' and lc_licita=\'S\'", null
+       SelecaoUnidade "<u>U</u>nidade licitante:", "U", null, p_unidade, null, "p_unidade", "LICITACAO", null
     Else
-       SelecaoUnidade "<u>U</u>nidade licitante:", "U", null, p_unidade, null, "p_unidade", "lc_ativo=\'S\' and lc_licita=\'S\' and sq_pessoa_endereco = " & p_endereco, null
+       SelecaoUnidade "<u>U</u>nidade licitante:", "U", null, p_unidade, p_endereco, "p_unidade", "LICITACAOEND", null
     End If
 
     ShowHTML "      <tr>"
@@ -669,9 +669,9 @@ Sub Geral
     ShowHTML "        <tr valign=""top"">"
     SelecaoLcSituacao "<u>S</u>ituação da licitação:", "S", null, w_sq_lcsituacao, null, "w_sq_lcsituacao", null, null
     If w_gestor_sistema = "S" or w_gestor_modulo = "S" Then
-       SelecaoUnidade "<u>U</u>nidade licitante:", "U", "Selecione a unidade responsável pela contratação", w_sq_unidade, null, "w_sq_unidade", "lc_ativo=\'S\' and lc_licita=\'S\'", null
+       SelecaoUnidade "<u>U</u>nidade licitante:", "U", "Selecione a unidade responsável pela contratação", w_sq_unidade, null, "w_sq_unidade", "LICITACAO", null
     Else
-       SelecaoUnidade "<u>U</u>nidade licitante:", "U", "Selecione a unidade responsável pela contratação", w_sq_unidade, null, "w_sq_unidade", "lc_ativo=\'S\' and lc_licita=\'S\' and sq_pessoa_endereco = " & p_endereco, null
+       SelecaoUnidade "<u>U</u>nidade licitante:", "U", "Selecione a unidade responsável pela contratação", w_sq_unidade, p_endereco, "w_sq_unidade", "LICITACAOEND", null
     End If
     ShowHTML "          </table>"
 
@@ -1326,9 +1326,9 @@ Sub Contrato
     ShowHTML "<INPUT type=""hidden"" name=""w_sq_pessoa"" value=""" & w_cliente & """>"
     ShowHTML "      <tr valign=""top"">"
     If w_gestor_sistema = "S" or w_gestor_modulo = "S" Then
-       SelecaoUnidade "<u>U</u>nidade contratante:", "U", "Selecione a unidade responsável pela contratação", w_sq_unidade, null, "w_sq_unidade", "lc_ativo=\'S\' and lc_contrata=\'S\'", null
+       SelecaoUnidade "<u>U</u>nidade contratante:", "U", "Selecione a unidade responsável pela contratação", w_sq_unidade, null, "w_sq_unidade", "LICITACAO", null
     Else
-       SelecaoUnidade "<u>U</u>nidade contratante:", "U", "Selecione a unidade responsável pela contratação", w_sq_unidade, null, "w_sq_unidade", "lc_ativo=\'S\' and lc_contrata=\'S\' and sq_pessoa_endereco = " & p_endereco, null
+       SelecaoUnidade "<u>U</u>nidade contratante:", "U", "Selecione a unidade responsável pela contratação", w_sq_unidade, p_endereco, "w_sq_unidade", "LICITACAOEND", null
     End If
     ShowHTML "      <tr><td><font size=""1""><b>O<u>b</u>servações:</b><br><textarea ACCESSKEY=""O"" " & w_Disabled & " class=""STI"" type=""text"" name=""w_observacao"" ROWS=""5"" COLS=""75"" title=""Insira, se necessário, observações relevantes sobre este contrato, para publicação no portal."">" & w_observacao & "</textarea></td></tr>"
     ShowHTML "        <tr>"

@@ -313,7 +313,7 @@ Sub Inicial
     
     ShowHTML "      <tr><td valign=""top"" width=""50%""><font size=""1""><b><U>N</U>ome:<br><INPUT ACCESSKEY=""N"" " & w_Disabled & " class=""STI"" type=""text"" name=""p_nome"" size=""40"" maxlength=""40"" value=""" & p_nome & """></td>"
     ShowHTML "      <tr>"
-    SelecaoFormacao "F<u>o</u>rmação acadêmica:", "O", null, p_sq_formacao, null, "p_sq_formacao", "tipo='Acadêmica'", null
+    SelecaoFormacao "F<u>o</u>rmação acadêmica:", "O", null, p_sq_formacao, "Acadêmica", "p_sq_formacao", null, null
     ShowHTML "      <tr>"
     SelecaoIdioma "I<u>d</u>ioma:", "D", null, p_sq_idioma, null, "p_sq_idioma", null, null
     SelecaoSexo "Se<u>x</u>o:", "X", null, p_sexo, null, "p_sexo", null, null
@@ -588,7 +588,7 @@ Sub Identificacao
     SelecaoEstadoCivil "Estado ci<u>v</u>il:", "V", null, w_sq_estado_civil, null, "w_sq_estado_civil", null, null
     ShowHTML "          </table>"
     ShowHTML "        <tr valign=""top"">"
-    SelecaoFormacao "F<u>o</u>rmação acadêmica:", "O", "Selecione a formação acadêmica mais alta que você tem como comprovar a conclusão.", w_sq_formacao, null, "w_sq_formacao", "tipo='Acadêmica'", null
+    SelecaoFormacao "F<u>o</u>rmação acadêmica:", "O", "Selecione a formação acadêmica mais alta que você tem como comprovar a conclusão.", w_sq_formacao, "Acadêmica", "w_sq_formacao", null, null
     SelecaoEtnia "E<u>t</u>nia:", "T", "Selecione o grupo étnico ao qual você pertence.", w_sq_etnia, null, "w_sq_etnia", null, null
     ShowHTML "        <tr valign=""top"">"
     SelecaoDeficiencia "Portador de de<u>f</u>iciência:", "F", "Se você for portador de algum tipo de deficiência, selecione a mais adequada.", w_sq_deficiencia, null, "w_sq_deficiencia", null, null
@@ -659,7 +659,7 @@ Sub Identificacao
           SelecaoLocalizacao "Locali<u>z</u>ação:", "Z", null, w_localizacao, Nvl(w_unidade_exercicio,0), "w_localizacao", null
           ShowHTML "        </table></td></tr>"
           ShowHTML "        <td colspan=""3"" valign=""top""><font size=""1""><table border=""0"" width=""100%"" cellpadding=0 cellspacing=0><tr>"
-          SelecaoVinculo "<u>T</u>ipo de vínculo:", "T", null, w_sq_tipo_vinculo, null, "w_sq_tipo_vinculo", "ativo='S' and sq_tipo_pessoa='Física' and interno='S'"
+          SelecaoVinculo "<u>T</u>ipo de vínculo:", "T", null, w_sq_tipo_vinculo, null, "w_sq_tipo_vinculo", "S", "Física", "S"
           ShowHTML "        </table></td></tr>"          
           ShowHTML "        <tr valign=""top"">" 
           ShowHTML "        <td colspan=""3"" valign=""top""><font size=""1""><table border=""0"" width=""100%"" cellpadding=0 cellspacing=0>"
@@ -1324,7 +1324,7 @@ Sub Experiencia
     SelecaoCidade "<u>C</u>idade:", "C", "Selecine a cidade de nascimento.", w_sq_cidade, w_sq_pais, w_co_uf, "w_sq_cidade", null, null
     ShowHTML "         </table></td></tr>"
     ShowHTML "      <tr valign=""top"">"
-    SelecaoTipoPosto "Informe a principal atividade desempenhada:", "T", null, w_sq_eo_tipo_posto, null, "w_sq_eo_tipo_posto", "ativo='S'"
+    SelecaoTipoPosto "Informe a principal atividade desempenhada:", "T", null, w_sq_eo_tipo_posto, null, "w_sq_eo_tipo_posto", "S"
     ShowHTML "      <tr><td valign=""top""><font size=""1""><b>At<u>i</u>vidades desempenhadas:</b><br><textarea " & w_Disabled & " accesskey=""i""  name=""w_atividades"" class=""sti"" cols=""80"" rows=""4"">" & w_atividades & "</textarea></td>"
     If Session("p_portal") = "" Then ShowHTML "      <tr><td align=""LEFT"" colspan=4><font size=""1""><b><U>A</U>ssinatura Eletrônica:<BR> <INPUT ACCESSKEY=""A"" class=""sti"" type=""PASSWORD"" name=""w_assinatura"" size=""30"" maxlength=""30"" value=""""></td></tr>" End If
     ShowHTML "      <tr><td align=""center"" colspan=""3"" height=""1"" bgcolor=""#000000""></TD></TR>"
@@ -1721,7 +1721,7 @@ Sub Escolaridade
     ShowHTML "<tr bgcolor=""" & conTrBgColor & """><td align=""center"">"
     ShowHTML "    <table width=""97%"" border=""0"">"
     ShowHTML "      <tr>"
-    SelecaoFormacao "F<u>o</u>rmação acadêmica:", "O", "Selecione a formação acadêmica que você deseja informar os dados.", w_sq_formacao, null, "w_sq_formacao", "tipo='Acadêmica'", null
+    SelecaoFormacao "F<u>o</u>rmação acadêmica:", "O", "Selecione a formação acadêmica que você deseja informar os dados.", w_sq_formacao, "Acadêmica", "w_sq_formacao", null, null
     ShowHTML "      <tr><td valign=""top""><font size=""1""><b>Se formação for graduação ou maior, indique a área do conhecimento:</b><br>"
     ShowHTML "              <input READONLY type=""text"" name=""w_nm_area"" class=""sti"" SIZE=""50"" VALUE=""" & w_nm_area & """>"
     If O <> "E" Then
@@ -1917,7 +1917,7 @@ Sub Extensao
     ShowHTML "<tr bgcolor=""" & conTrBgColor & """><td align=""center"">"
     ShowHTML "    <table width=""97%"" border=""0"">"
     ShowHTML "      <tr>"
-    SelecaoFormacao "T<u>i</u>po de extensão:", "O", "Selecione o tipo mais adequado para a extensão acadêmica.", w_sq_formacao, null, "w_sq_formacao", "tipo='Técnica'", null
+    SelecaoFormacao "T<u>i</u>po de extensão:", "O", "Selecione o tipo mais adequado para a extensão acadêmica.", w_sq_formacao, "Técnica", "w_sq_formacao", null, null
     ShowHTML "      <tr><td valign=""top""><font size=""1""><b>Área do conhecimento relacionada:</b><br>"
     ShowHTML "              <input READONLY type=""text"" name=""w_nm_area"" class=""sti"" SIZE=""50"" VALUE=""" & w_nm_area & """>"
     If O <> "E" Then
@@ -2109,7 +2109,7 @@ Sub Producao
     ShowHTML "<tr bgcolor=""" & conTrBgColor & """><td align=""center"">"
     ShowHTML "    <table width=""97%"" border=""0"">"
     ShowHTML "      <tr>"
-    SelecaoFormacao "T<u>i</u>po da produção:", "O", "Selecione o tipo mais adequado para a produção técnica.", w_sq_formacao, null, "w_sq_formacao", "tipo='Prod.Cient.'", null
+    SelecaoFormacao "T<u>i</u>po da produção:", "O", "Selecione o tipo mais adequado para a produção técnica.", w_sq_formacao, "Prod.Cient.", "w_sq_formacao", null, null
     ShowHTML "      <tr><td valign=""top""><font size=""1""><b>Área do conhecimento relacionada:</b><br>"
     ShowHTML "              <input READONLY type=""text"" name=""w_nm_area"" class=""sti"" SIZE=""50"" VALUE=""" & w_nm_area & """>"
     If O <> "E" Then

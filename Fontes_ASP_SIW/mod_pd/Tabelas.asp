@@ -508,8 +508,7 @@ Sub Unidade
      End If
   ElseIf InStr("AE",O) > 0 and w_Troca = "" Then
      ' Recupera os dados do endereço informado
-     DB_GetUorgList RS, w_cliente, w_chave, "VIAGEM", null, null
-     RS.Filter = "ano = " & w_ano
+     DB_GetUorgList RS, w_cliente, w_chave, "VIAGEM", null, null, w_ano
      w_nome                 = RS("nome")
      w_sigla                = RS("sigla")
      w_limite_passagem      = FormatNumber(RS("limite_passagem"),2)
@@ -859,8 +858,7 @@ Public Sub Grava
      If (VerificaAssinaturaEletronica(Session("Username"),w_assinatura) and w_assinatura > "") or _
         w_assinatura = "" Then
         If O = "I" Then
-           DB_GetUorgList RS, w_cliente, Request("w_Chave"), "VIAGEM", null, null
-           RS.Filter = "ano = " & Request("w_ano")
+           DB_GetUorgList RS, w_cliente, Request("w_Chave"), "VIAGEM", null, null, Request("w_ano")
            If RS.RecordCount = 0 Then
               DML_PutPDUnidade O, Request("w_chave"), Request("w_limite_passagem"), Request("w_limite_diaria"), Request("w_ativo"), Request("w_ano")
               ScriptOpen "JavaScript"

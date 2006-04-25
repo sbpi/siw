@@ -309,7 +309,7 @@ Sub Inicial
     
     ShowHTML "      <tr><td valign=""top"" width=""50%""><font size=""1""><b><U>N</U>ome:<br><INPUT ACCESSKEY=""N"" " & w_Disabled & " class=""STI"" type=""text"" name=""p_nome"" size=""40"" maxlength=""40"" value=""" & p_nome & """></td>"
     ShowHTML "      <tr>"
-    SelecaoFormacao "F<u>o</u>rmação acadêmica:", "O", null, p_sq_formacao, null, "p_sq_formacao", "tipo='Acadêmica'", null
+    SelecaoFormacao "F<u>o</u>rmação acadêmica:", "O", null, p_sq_formacao, "Acadêmica", "p_sq_formacao", null, null
     ShowHTML "      <tr>"
     SelecaoIdioma "I<u>d</u>ioma:", "D", null, p_sq_idioma, null, "p_sq_idioma", null, null
     SelecaoSexo "Se<u>x</u>o:", "X", null, p_sexo, null, "p_sexo", null, null
@@ -507,7 +507,7 @@ Sub Identificacao
     SelecaoEstadoCivil "Estado ci<u>v</u>il:", "V", null, w_sq_estado_civil, null, "w_sq_estado_civil", null, null
     ShowHTML "          </table>"
     ShowHTML "        <tr valign=""top"">"
-    SelecaoFormacao "F<u>o</u>rmação acadêmica:", "O", "Selecione a formação acadêmica mais alta que você tem como comprovar a conclusão.", w_sq_formacao, null, "w_sq_formacao", "tipo='Acadêmica'", null
+    SelecaoFormacao "F<u>o</u>rmação acadêmica:", "O", "Selecione a formação acadêmica mais alta que você tem como comprovar a conclusão.", w_sq_formacao, "Acadêmica", "w_sq_formacao", null, null
     ShowHTML "          <td colspan=2 title=""Selecione o arquivo que contém sua foto. Deve ser um arquivo com a extensão JPG ou GIF, com até 50KB.""><font size=""1""><b><u>F</u>oto:</b><br><input " & w_Disabled & " accesskey=""N"" type=""file"" name=""w_foto"" class=""sti"" SIZE=""40"" MAXLENGTH=""200"" VALUE="""">&nbsp;"
     If w_foto > "" Then ShowHTML LinkArquivo("SS", w_cliente, w_foto, "_blank", null, "Exibir", null) End If
                         
@@ -959,7 +959,7 @@ Sub Experiencia
     SelecaoCidade "<u>C</u>idade:", "C", "Selecine a cidade de nascimento.", w_sq_cidade, w_sq_pais, w_co_uf, "w_sq_cidade", null, null
     ShowHTML "         </table></td></tr>"
     ShowHTML "      <tr valign=""top"">"
-    SelecaoTipoPosto "Informe a principal atividade desempenhada:", "T", null, w_sq_eo_tipo_posto, null, "w_sq_eo_tipo_posto", "ativo='S'"
+    SelecaoTipoPosto "Informe a principal atividade desempenhada:", "T", null, w_sq_eo_tipo_posto, null, "w_sq_eo_tipo_posto", "S"
     ShowHTML "      <tr><td valign=""top""><font size=""1""><b>At<u>i</u>vidades desempenhadas:</b><br><textarea " & w_Disabled & " accesskey=""i""  name=""w_atividades"" class=""sti"" cols=""80"" rows=""4"">" & w_atividades & "</textarea></td>"
     If Session("p_portal") = "" Then ShowHTML "      <tr><td align=""LEFT"" colspan=4><font size=""1""><b><U>A</U>ssinatura Eletrônica:<BR> <INPUT ACCESSKEY=""A"" class=""sti"" type=""PASSWORD"" name=""w_assinatura"" size=""30"" maxlength=""30"" value=""""></td></tr>" End If
     ShowHTML "      <tr><td align=""center"" colspan=""3"" height=""1"" bgcolor=""#000000""></TD></TR>"
@@ -1339,7 +1339,7 @@ Sub Escolaridade
     ShowHTML "<tr bgcolor=""" & conTrBgColor & """><td align=""center"">"
     ShowHTML "    <table width=""97%"" border=""0"">"
     ShowHTML "      <tr>"
-    SelecaoFormacao "F<u>o</u>rmação acadêmica:", "O", "Selecione a formação acadêmica que você deseja informar os dados.", w_sq_formacao, null, "w_sq_formacao", "tipo='Acadêmica'", null
+    SelecaoFormacao "F<u>o</u>rmação acadêmica:", "O", "Selecione a formação acadêmica que você deseja informar os dados.", w_sq_formacao, "Acadêmica", "w_sq_formacao", null, null
     ShowHTML "      <tr><td valign=""top""><font size=""1""><b>Se formação for graduação ou maior, indique a área do conhecimento:</b><br>"
     ShowHTML "              <input READONLY type=""text"" name=""w_nm_area"" class=""sti"" SIZE=""50"" VALUE=""" & w_nm_area & """>"
     If O <> "E" Then
@@ -1528,7 +1528,7 @@ Sub Extensao
     ShowHTML "<tr bgcolor=""" & conTrBgColor & """><td align=""center"">"
     ShowHTML "    <table width=""97%"" border=""0"">"
     ShowHTML "      <tr>"
-    SelecaoFormacao "T<u>i</u>po de extensão:", "O", "Selecione o tipo mais adequado para a extensão acadêmica.", w_sq_formacao, null, "w_sq_formacao", "tipo='Técnica'", null
+    SelecaoFormacao "T<u>i</u>po de extensão:", "O", "Selecione o tipo mais adequado para a extensão acadêmica.", w_sq_formacao, "Técnica", "w_sq_formacao", null, null
     ShowHTML "      <tr><td valign=""top""><font size=""1""><b>Área do conhecimento relacionada:</b><br>"
     ShowHTML "              <input READONLY type=""text"" name=""w_nm_area"" class=""sti"" SIZE=""50"" VALUE=""" & w_nm_area & """>"
     If O <> "E" Then
@@ -1712,7 +1712,7 @@ Sub Producao
     ShowHTML "<tr bgcolor=""" & conTrBgColor & """><td align=""center"">"
     ShowHTML "    <table width=""97%"" border=""0"">"
     ShowHTML "      <tr>"
-    SelecaoFormacao "T<u>i</u>po da produção:", "O", "Selecione o tipo mais adequado para a produção técnica.", w_sq_formacao, null, "w_sq_formacao", "tipo='Prod.Cient.'", null
+    SelecaoFormacao "T<u>i</u>po da produção:", "O", "Selecione o tipo mais adequado para a produção técnica.", w_sq_formacao, "Prod.Cient.", "w_sq_formacao", null, null
     ShowHTML "      <tr><td valign=""top""><font size=""1""><b>Área do conhecimento relacionada:</b><br>"
     ShowHTML "              <input READONLY type=""text"" name=""w_nm_area"" class=""sti"" SIZE=""50"" VALUE=""" & w_nm_area & """>"
     If O <> "E" Then

@@ -433,7 +433,7 @@ Sub Gerencial
             Case "GRDMSETOR"   ShowHTML "    else document.Form.p_unidade.value='" & Request("p_unidade")& "';"
             Case "GRDMLOCAL"   ShowHTML "    else { document.Form.p_uf.value='" & Request("p_uf")& "'; document.Form.p_pais.value='" & Request("p_uf")& "'; }"
          End Select
-         DB_GetTramiteList RS2, P2, null
+         DB_GetTramiteList RS2, P2, null, null
          RS2.Sort = "ordem"
          w_fase_exec = ""
          w_fase_conc = ""

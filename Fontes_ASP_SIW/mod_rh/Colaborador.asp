@@ -953,7 +953,7 @@ Sub Contrato
         ShowHTML "<INPUT type=""hidden"" name=""w_sq_tipo_vinculo"" value=""" & w_sq_tipo_vinculo & """>"
      Else
         ShowHTML "        <td colspan=""3"" valign=""top""><font size=""1""><table border=""0"" width=""100%"" cellpadding=0 cellspacing=0><tr>"
-        SelecaoVinculo "<u>T</u>ipo de vínculo:", "T", null, w_sq_tipo_vinculo, null, "w_sq_tipo_vinculo", "ativo='S' and sq_tipo_pessoa='Física' and interno='S'"
+        SelecaoVinculo "<u>T</u>ipo de vínculo:", "T", null, w_sq_tipo_vinculo, null, "w_sq_tipo_vinculo", "S", "Física", "S"
         ShowHTML "        </table></td></tr>"                    
      End If
      ShowHTML "        <tr valign=""top"">" 

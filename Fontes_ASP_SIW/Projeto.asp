@@ -269,7 +269,7 @@ Sub Inicial
            w_filtro = w_filtro & "<tr valign=""top""><td align=""right""><font size=1>Projeto <td><font size=1>[<b>" & RS("titulo") & "</b>]"
         End If
         If p_atividade > ""  Then 
-           DB_GetSolicEtapa RS, p_projeto, p_atividade, "REGISTRO"
+           DB_GetSolicEtapa RS, p_projeto, p_atividade, "REGISTRO", null
            w_filtro = w_filtro & "<tr valign=""top""><td align=""right""><font size=1>Etapa <td><font size=1>[<b>" & RS("titulo") & "</b>]"
         End If
         If p_sqcc > ""  Then 
@@ -1299,11 +1299,11 @@ Sub Etapas
      w_vincula_atividade    = Request("w_vincula_atividade")    
   ElseIf O = "L" Then
      ' Recupera todos os registros para a listagem
-     DB_GetSolicEtapa RS, w_chave, null, "LISTA"
+     DB_GetSolicEtapa RS, w_chave, null, "LISTA", null
      RS.Sort = "ordem"
   ElseIf InStr("AEV",O) > 0 and w_Troca = "" Then
      ' Recupera os dados do endereço informado
-     DB_GetSolicEtapa RS, w_chave, w_chave_aux, "REGISTRO"
+     DB_GetSolicEtapa RS, w_chave, w_chave_aux, "REGISTRO", null
      w_chave_pai            = RS("sq_etapa_pai")
      w_titulo               = RS("titulo")
      w_ordem                = RS("ordem")
@@ -1388,7 +1388,7 @@ Sub Etapas
     ShowHTML "          <td><font size=""1""><b>Até</font></td>"
     ShowHTML "        </tr>"
     ' Recupera as etapas principais
-    DB_GetSolicEtapa RS, w_chave, null, "LSTNULL"
+    DB_GetSolicEtapa RS, w_chave, null, "LSTNULL", null
     RS.Sort = "ordem"
     If RS.EOF Then ' Se não foram selecionados registros, exibe mensagem
         ShowHTML "      <tr bgcolor=""" & conTrBgColor & """><td colspan=9 align=""center""><font size=""2""><b>Não foram encontrados registros.</b></td></tr>"
@@ -1397,25 +1397,25 @@ Sub Etapas
         ShowHtml EtapaLinha(w_chave, Rs("sq_projeto_etapa"), Rs("titulo"), Rs("nm_resp"), Rs("sg_setor"), Rs("inicio_previsto"), Rs("fim_previsto"), Rs("perc_conclusao"), RS("qt_ativ"), "<b>", "S", "PROJETO")
         
         ' Recupera as etapas vinculadas ao nível acima
-        DB_GetSolicEtapa RS1, w_chave, RS("sq_projeto_etapa"), "LSTNIVEL"
+        DB_GetSolicEtapa RS1, w_chave, RS("sq_projeto_etapa"), "LSTNIVEL", null
         RS1.Sort = "ordem"
         While Not RS1.EOF
           ShowHTML EtapaLinha(w_chave, RS1("sq_projeto_etapa"), RS1("titulo"), RS1("nm_resp"), RS1("sg_setor"), RS1("inicio_previsto"), RS1("fim_previsto"), RS1("perc_conclusao"), RS1("qt_ativ"), null, "S", "PROJETO")
 
           ' Recupera as etapas vinculadas ao nível acima
-          DB_GetSolicEtapa RS2, w_chave, RS1("sq_projeto_etapa"), "LSTNIVEL"
+          DB_GetSolicEtapa RS2, w_chave, RS1("sq_projeto_etapa"), "LSTNIVEL", null
           RS2.Sort = "ordem"
           While Not RS2.EOF
             ShowHTML EtapaLinha(w_chave, RS2("sq_projeto_etapa"), RS2("titulo"), RS2("nm_resp"), RS2("sg_setor"), RS2("inicio_previsto"), RS2("fim_previsto"), RS2("perc_conclusao"), RS2("qt_ativ"), null, "S", "PROJETO")
 
             ' Recupera as etapas vinculadas ao nível acima
-            DB_GetSolicEtapa RS3, w_chave, RS2("sq_projeto_etapa"), "LSTNIVEL"
+            DB_GetSolicEtapa RS3, w_chave, RS2("sq_projeto_etapa"), "LSTNIVEL", null
             RS3.Sort = "ordem"
             While Not RS3.EOF
               ShowHTML EtapaLinha(w_chave, RS3("sq_projeto_etapa"), RS3("titulo"), RS3("nm_resp"), RS3("sg_setor"), RS3("inicio_previsto"), RS3("fim_previsto"), RS3("perc_conclusao"), RS3("qt_ativ"), null, "S", "PROJETO")
 
               ' Recupera as etapas vinculadas ao nível acima
-              DB_GetSolicEtapa RS4, w_chave, RS3("sq_projeto_etapa"), "LSTNIVEL"
+              DB_GetSolicEtapa RS4, w_chave, RS3("sq_projeto_etapa"), "LSTNIVEL", null
               RS4.Sort = "ordem"
               While Not RS4.EOF
                 ShowHTML EtapaLinha(w_chave, RS4("sq_projeto_etapa"), RS4("titulo"), RS4("nm_resp"), RS4("sg_setor"), RS4("inicio_previsto"), RS4("fim_previsto"), RS4("perc_conclusao"), RS("qt_ativ"), null, "S", "PROJETO")
@@ -1582,7 +1582,7 @@ Sub AtualizaEtapa
      w_vincula_atividade    = Request("w_vincula_atividade")    
   ElseIf O = "L" Then
      ' Recupera todos os registros para a listagem
-     DB_GetSolicEtapa RS, w_chave, null, "LISTA"
+     DB_GetSolicEtapa RS, w_chave, null, "LISTA", null
      RS.Sort = "ordem"
 
     ' Recupera o código da opção de menu  a ser usada para listar as atividades
@@ -1599,7 +1599,7 @@ Sub AtualizaEtapa
      End If
   ElseIf InStr("AEV",O) > 0 and w_Troca = "" Then
      ' Recupera os dados do endereço informado
-     DB_GetSolicEtapa RS, w_chave, w_chave_aux, "REGISTRO"
+     DB_GetSolicEtapa RS, w_chave, w_chave_aux, "REGISTRO", null
      w_chave_pai            = RS("sq_etapa_pai")
      w_titulo               = RS("titulo")
      w_ordem                = RS("ordem")
@@ -1676,7 +1676,7 @@ Sub AtualizaEtapa
     ShowHTML "          <td><font size=""1""><b>Até</font></td>"
     ShowHTML "        </tr>"
     ' Recupera as etapas principais
-    DB_GetSolicEtapa RS, w_chave, null, "LSTNULL"
+    DB_GetSolicEtapa RS, w_chave, null, "LSTNULL", null
     RS.Sort = "ordem"
     If RS.EOF Then ' Se não foram selecionados registros, exibe mensagem
         ShowHTML "      <tr bgcolor=""" & conTrBgColor & """><td colspan=9 align=""center""><font size=""2""><b>Não foram encontrados registros.</b></td></tr>"
@@ -1689,7 +1689,7 @@ Sub AtualizaEtapa
          ShowHTML "    document.Form.p_projeto.value=projeto;"
          ShowHTML "    document.Form.p_atividade.value=etapa;"
          ShowHTML "    document.Form.p_agrega.value='GRDMETAPA';"
-         DB_GetTramiteList RS1, w_P2, null
+         DB_GetTramiteList RS1, w_P2, null, null
          RS1.Sort = "ordem"
          ShowHTML "    document.Form.p_fase.value='';"
          w_fases = ""
@@ -1727,7 +1727,7 @@ Sub AtualizaEtapa
         End If
         
         ' Recupera as etapas vinculadas ao nível acima
-        DB_GetSolicEtapa RS1, w_chave, RS("sq_projeto_etapa"), "LSTNIVEL"
+        DB_GetSolicEtapa RS1, w_chave, RS("sq_projeto_etapa"), "LSTNIVEL", null
         RS1.Sort = "ordem"
         While Not RS1.EOF
          If cDbl(Nvl(RS1("tit_exec"),0))    = cDbl(w_usuario) or _
@@ -1744,7 +1744,7 @@ Sub AtualizaEtapa
           End If
 
           ' Recupera as etapas vinculadas ao nível acima
-          DB_GetSolicEtapa RS2, w_chave, RS1("sq_projeto_etapa"), "LSTNIVEL"
+          DB_GetSolicEtapa RS2, w_chave, RS1("sq_projeto_etapa"), "LSTNIVEL", null
           RS2.Sort = "ordem"
           While Not RS2.EOF
             If cDbl(Nvl(RS2("tit_exec"),0))    = cDbl(w_usuario) or _
@@ -1761,7 +1761,7 @@ Sub AtualizaEtapa
             End If
 
             ' Recupera as etapas vinculadas ao nível acima
-            DB_GetSolicEtapa RS3, w_chave, RS2("sq_projeto_etapa"), "LSTNIVEL"
+            DB_GetSolicEtapa RS3, w_chave, RS2("sq_projeto_etapa"), "LSTNIVEL", null
             RS3.Sort = "ordem"
             While Not RS3.EOF
               If cDbl(Nvl(RS3("tit_exec"),0))    = cDbl(w_usuario) or _
@@ -1778,7 +1778,7 @@ Sub AtualizaEtapa
               End If
 
               ' Recupera as etapas vinculadas ao nível acima
-              DB_GetSolicEtapa RS4, w_chave, RS3("sq_projeto_etapa"), "LSTNIVEL"
+              DB_GetSolicEtapa RS4, w_chave, RS3("sq_projeto_etapa"), "LSTNIVEL", null
               RS4.Sort = "ordem"
               While Not RS4.EOF
                 If cDbl(Nvl(RS4("tit_exec"),0))    = cDbl(w_usuario) or _
@@ -2936,7 +2936,7 @@ Sub Concluir
   ShowHTML "          <tr>"
   
   ' Verifica se o projeto tem etapas em aberto e avisa o usuário caso isso ocorra.
-  DB_GetSolicEtapa RS, w_chave, null, "LISTA"
+  DB_GetSolicEtapa RS, w_chave, null, "LISTA", null
   w_cont = 0
   While NOT RS.EOF
      If cDbl(RS("perc_conclusao")) <> 100 Then

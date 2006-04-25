@@ -391,7 +391,7 @@ Sub Tramite
   w_texto = OpcaoMenu(w_sq_menu)
        
   If O = "L" Then
-     DB_GetTramiteList RS, w_sq_menu, null
+     DB_GetTramiteList RS, w_sq_menu, null, null
      RS.Sort = "Ordem"
   ElseIf O = "A" or O = "E" Then
      w_sq_siw_tramite = Request("w_sq_siw_tramite")

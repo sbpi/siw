@@ -423,7 +423,7 @@ Function VisualProjeto(w_chave, O, w_usuario, P1, P4)
      
      ' Etapas do projeto
      ' Recupera todos os registros para a listagem
-     DB_GetSolicEtapa RS, w_chave, null, "LISTA"
+     DB_GetSolicEtapa RS, w_chave, null, "LISTA", null
      RS.Sort = "ordem"
 
     ' Recupera o código da opção de menu  a ser usada para listar as atividades

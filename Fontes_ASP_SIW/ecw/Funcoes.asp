@@ -33,7 +33,7 @@ REM -------------------------------------------------------------------------
 Sub ExibeParametros(p_cliente)
   Dim RS_temp
 
-  DB_GetUorgList RS_temp, p_cliente, null, null, null, null
+  DB_GetUorgList RS_temp, p_cliente, null, null, null, null, null
 
   If Session("regional") > "" Then
      RS_temp.Filter = "codigo = '" & Session("regional") & "'"
@@ -55,7 +55,7 @@ REM -------------------------------------------------------------------------
 Sub ExibeParametrosRel(p_cliente)
   Dim RS_temp
 
-  DB_GetUorgList RS_temp, p_cliente, null, null, null, null
+  DB_GetUorgList RS_temp, p_cliente, null, null, null, null, null
 
   If Session("regional") > "" Then
      RS_temp.Filter = "codigo = '" & Session("regional") & "'"
@@ -169,7 +169,7 @@ Sub SelecaoRegional (label, accesskey, hint, chave, chaveAux, campo, restricao, 
     Else
        ShowHTML "          <td valign=""top"" title=""" & hint & """><font size=""1""><b>" & Label & "</b><br><SELECT ACCESSKEY=""" & accesskey & """ CLASS=""STS"" NAME=""" & campo & """ " & w_Disabled & " " & atributo & ">"
     End If
-    DB_GetUorgList RS, w_cliente, null, null, null, null
+    DB_GetUorgList RS, w_cliente, null, null, null, null, null
     If Nvl(Session("codigo"),"00") = "00" Then
        If restricao > "" Then
           RS.Filter = restricao & " and codigo <> '00'"

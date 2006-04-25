@@ -896,12 +896,18 @@ End Sub
 REM =========================================================================
 REM Recupera a lista dos tipo de unidades
 REM -------------------------------------------------------------------------
-Sub DB_GetUnitTypeList(p_rs, p_sq_pessoa)
-  Dim l_sq_pessoa
+Sub DB_GetUnitTypeList(p_rs, p_sq_pessoa, p_nome, p_ativo)
+  Dim l_sq_pessoa, l_nome, l_ativo
   Set l_sq_pessoa = Server.CreateObject("ADODB.Parameter")
+  Set l_nome      = Server.CreateObject("ADODB.Parameter")
+  Set l_ativo     = Server.CreateObject("ADODB.Parameter")
   with sp
-     set l_sq_pessoa           = .CreateParameter("l_sq_pessoa", adInteger, adParamInput, , p_sq_pessoa)
+     set l_sq_pessoa    = .CreateParameter("l_sq_pessoa",   adInteger, adParamInput,   , p_sq_pessoa)
+     set l_nome         = .CreateParameter("l_nome",        adVarChar, adParamInput, 25, Tvl(p_nome))
+     set l_ativo        = .CreateParameter("l_ativo",       adVarChar, adParamInput,  1, Tvl(p_ativo))
      .parameters.Append         l_sq_pessoa
+     .parameters.Append         l_nome
+     .parameters.Append         l_ativo          
      If Session("dbms") = 1 or Session("dbms") = 3 Then .Properties("PLSQLRSet") = TRUE End If
      .CommandText               = Session("schema") & "SP_GetUnitTypeList"
      On Error Resume Next
@@ -911,18 +917,26 @@ Sub DB_GetUnitTypeList(p_rs, p_sq_pessoa)
      End If     
      If Session("dbms") = 1 or Session("dbms") = 3 Then .Properties("PLSQLRSet") = FALSE End If
      .Parameters.Delete         "l_sq_pessoa"
+     .Parameters.Delete         "l_nome"
+     .Parameters.Delete         "l_ativo"     
   end with
 End Sub
 
 REM =========================================================================
 REM Recupera a lista das áreas de atuações
 REM -------------------------------------------------------------------------
-Sub DB_GetEOAAtuac(p_rs, p_sq_pessoa)
-  Dim l_sq_pessoa
+Sub DB_GetEOAAtuac(p_rs, p_sq_pessoa, p_nome, p_ativo)
+  Dim l_sq_pessoa, l_nome, l_ativo
   Set l_sq_pessoa = Server.CreateObject("ADODB.Parameter")
+  Set l_nome      = Server.CreateObject("ADODB.Parameter")
+  Set l_ativo     = Server.CreateObject("ADODB.Parameter")
   with sp
      set l_sq_pessoa           = .CreateParameter("l_sq_pessoa", adInteger, adParamInput, , p_sq_pessoa)
+     set l_nome         = .CreateParameter("l_nome",        adVarChar, adParamInput, 25, Tvl(p_nome))
+     set l_ativo        = .CreateParameter("l_ativo",       adVarChar, adParamInput,  1, Tvl(p_ativo))     
      .parameters.Append         l_sq_pessoa
+     .parameters.Append         l_nome
+     .parameters.Append         l_ativo          
      If Session("dbms") = 1 or Session("dbms") = 3 Then .Properties("PLSQLRSet") = TRUE End If
      .CommandText               = Session("schema") & "SP_GetEOAAtuac"
      On Error Resume Next
@@ -932,6 +946,8 @@ Sub DB_GetEOAAtuac(p_rs, p_sq_pessoa)
      End If     
      If Session("dbms") = 1 or Session("dbms") = 3 Then .Properties("PLSQLRSet") = FALSE End If
      .Parameters.Delete         "l_sq_pessoa"
+     .Parameters.Delete         "l_nome"
+     .Parameters.Delete         "l_ativo"     
   end with
 End Sub
 
@@ -2285,18 +2301,21 @@ End Sub
 REM =========================================================================
 REM Recupera as etapas de um projeto
 REM -------------------------------------------------------------------------
-Sub DB_GetSolicEtapa(p_rs, p_chave, p_chave_aux, p_restricao)
-  Dim l_chave, l_chave_aux, l_restricao
-  Set l_chave     = Server.CreateObject("ADODB.Parameter")
-  Set l_chave_aux = Server.CreateObject("ADODB.Parameter")
-  Set l_restricao = Server.CreateObject("ADODB.Parameter")
+Sub DB_GetSolicEtapa(p_rs, p_chave, p_chave_aux, p_restricao, p_chave_aux2)
+  Dim l_chave, l_chave_aux, l_restricao, l_chave_aux2
+  Set l_chave      = Server.CreateObject("ADODB.Parameter")
+  Set l_chave_aux  = Server.CreateObject("ADODB.Parameter")
+  Set l_restricao  = Server.CreateObject("ADODB.Parameter")
+  Set l_chave_aux2 = Server.CreateObject("ADODB.Parameter")
   with sp
      set l_chave                = .CreateParameter("l_chave",         adInteger, adParamInput,   , Tvl(p_chave))
      set l_chave_aux            = .CreateParameter("l_chave_aux",     adInteger, adParamInput,   , Tvl(p_chave_aux))
      set l_restricao            = .CreateParameter("l_restricao",     adVarchar, adParamInput, 20, p_restricao)
+     set l_chave_aux2           = .CreateParameter("l_chave_aux2",    adInteger, adParamInput,   , Tvl(p_chave_aux2))
      .parameters.Append         l_chave
      .parameters.Append         l_chave_aux
      .parameters.Append         l_restricao
+     .parameters.Append         l_chave_aux2
      If Session("dbms") = 1 or Session("dbms") = 3 Then .Properties("PLSQLRSet") = TRUE End If
      .CommandText               = Session("schema") & "SP_GetSolicEtapa"
      On Error Resume Next
@@ -2308,6 +2327,7 @@ Sub DB_GetSolicEtapa(p_rs, p_chave, p_chave_aux, p_restricao)
      .Parameters.Delete         "l_chave"
      .Parameters.Delete         "l_chave_aux"
      .Parameters.Delete         "l_restricao"
+     .Parameters.Delete         "l_chave_aux2"
   end with
 
 End Sub

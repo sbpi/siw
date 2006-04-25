@@ -282,7 +282,7 @@ Sub Inicial
            w_filtro = w_filtro & "<tr valign=""top""><td align=""right""><font size=1>Projeto <td><font size=1>[<b>" & RS("titulo") & "</b>]"
         End If
         If p_atividade > ""  Then 
-           DB_GetSolicEtapa RS, p_projeto, p_atividade, "REGISTRO"
+           DB_GetSolicEtapa RS, p_projeto, p_atividade, "REGISTRO", null
            w_filtro = w_filtro & "<tr valign=""top""><td align=""right""><font size=1>Etapa <td><font size=1>[<b>" & RS("titulo") & "</b>]"
         End If
         If p_sqcc > ""  Then 
@@ -1582,7 +1582,7 @@ Sub Visual
   ' Recupera o logo do cliente a ser usado nas listagens
   DB_GetCustomerData RS, w_cliente
   If RS("logo") > "" Then
-     w_logo = "\img\logo" & Mid(RS("logo"),Instr(RS("logo"),"."),30)
+     w_logo = "img\logo" & Mid(RS("logo"),Instr(RS("logo"),"."),30)
   End If
   DesconectaBD
   

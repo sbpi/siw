@@ -833,7 +833,7 @@ Sub Rel_PPA
                  ShowHTML "      <tr bgcolor=""" & conTrBgColor & """><td colspan=" & w_col_word & " align=""center""><font size=""1""><b>Não foram encontrados registros(metas).</b></td></tr>"
                  w_linha = w_linha + 1
               Else
-                 DB_GetSolicEtapa RS3, RS2("sq_siw_solicitacao"), null, "LSTNULL"
+                 DB_GetSolicEtapa RS3, RS2("sq_siw_solicitacao"), null, "LSTNULL", null
                  RS3.Sort = "ordem"
                  If RS3.EOF Then ' Se não foram selecionados registros, exibe mensagem
                     ShowHTML "      <tr bgcolor=""" & conTrBgColor & """><td colspan=" & w_col_word & " align=""center""><font size=""1""><b>Não foram encontrados registros(metas).</b></td></tr>"
@@ -1332,7 +1332,7 @@ Sub Rel_Iniciativa
                  ShowHTML "    <tr bgcolor=""" & conTrBgColor & """><td colspan=" & w_col_word & " align=""center""><font size=""1""><b>Não foram encontrados registros(metas).</b></td></tr>"
                  w_linha = w_linha + 1
               Else
-                 DB_GetSolicEtapa RS3, RS2("sq_siw_solicitacao"), null, "LSTNULL"
+                 DB_GetSolicEtapa RS3, RS2("sq_siw_solicitacao"), null, "LSTNULL", null
                  RS3.Sort = "ordem"
                  If RS3.EOF Then ' Se não foram selecionados registros, exibe mensagem
                     ShowHTML " <tr bgcolor=""" & conTrBgColor & """><td colspan=" & w_col_word & " align=""center""><font size=""1""><b>Não foram encontrados registros(metas).</b></td></tr>"
@@ -1822,7 +1822,7 @@ Sub Rel_Sintetico_IP
              'End If
              w_visao = 0 
              If w_visao < 2 Then               
-                DB_GetSolicEtapa RS3, RS2("sq_siw_solicitacao"), null, "LSTNULL"
+                DB_GetSolicEtapa RS3, RS2("sq_siw_solicitacao"), null, "LSTNULL", null
                 If p_programada       > "" and p_exequivel    > "" and p_fim_previsto > "" Then
                    RS3.Filter = "programada = '" & p_programada & "' and exequivel = '" & p_exequivel & "' and fim_previsto < '" & Date() & "' and perc_conclusao < 100"
                 ElseIf p_programada   > "" and p_exequivel    > "" Then   
@@ -2282,7 +2282,7 @@ Sub Rel_Sintetico_PPA
              'End If
              w_visao = 0
              If w_visao < 2 Then               
-                DB_GetSolicEtapa RS3, RS2("sq_siw_solicitacao"), null, "LSTNULL"
+                DB_GetSolicEtapa RS3, RS2("sq_siw_solicitacao"), null, "LSTNULL", null
                 If p_programada       > "" and p_exequivel    > "" and p_fim_previsto > "" Then
                    RS3.Filter = "programada = '" & p_programada & "' and exequivel = '" & p_exequivel & "' and fim_previsto < '" & Date() & "'"
                 ElseIf p_programada   > "" and p_exequivel    > "" Then   

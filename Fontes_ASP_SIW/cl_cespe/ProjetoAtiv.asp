@@ -294,7 +294,7 @@ Sub Inicial
            w_filtro = w_filtro & "<tr valign=""top""><TD align=""right""><font size=1>Projeto <TD><font size=1>[<b><A class=""hl"" HREF=""" & w_dir & "Projeto.asp?par=Visual&O=L&w_chave=" & p_projeto & "&w_tipo=Volta&P1=" & P1 & "&P2=" & P2 & "&P3=" & P3 & "&P4=" & P4 & "&TP=" & TP & "&SG=" & SG & """ title=""Exibe as informações do projeto."">" & RS("titulo") & "</a></b>]"
         End If
         If p_atividade > ""  Then 
-           DB_GetSolicEtapa RS, p_projeto, p_atividade, "REGISTRO"
+           DB_GetSolicEtapa RS, p_projeto, p_atividade, "REGISTRO", null
            w_filtro = w_filtro & "<tr valign=""top""><TD align=""right""><font size=1>Etapa <TD><font size=1>[<b>" & MontaOrdemEtapa(RS("sq_projeto_etapa")) & " - " & RS("titulo") & "</b>]"
         End If
         If p_sqcc > ""  Then 

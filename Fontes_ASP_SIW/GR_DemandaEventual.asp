@@ -218,7 +218,7 @@ Sub Gerencial
         w_filtro = w_filtro & "<tr valign=""top""><td align=""right""><font size=1>Projeto <td><font size=1>[<b><A class=""HL"" HREF=""Projeto.asp?par=Visual&O=L&w_chave=" & p_projeto & "&w_tipo=Volta&P1=" & P1 & "&P2=" & P2 & "&P3=" & P3 & "&P4=" & P4 & "&TP=" & TP & "&SG=" & SG & """ title=""Exibe as informações do projeto."">" & RS("titulo") & "</a></b>]"
      End If
      If p_atividade > ""  Then 
-        DB_GetSolicEtapa RS, p_projeto, p_atividade, "REGISTRO"
+        DB_GetSolicEtapa RS, p_projeto, p_atividade, "REGISTRO", null
         w_filtro = w_filtro & "<tr valign=""top""><td align=""right""><font size=1>Etapa <td><font size=1>[<b>" & RS("titulo") & "</b>]"
      End If
      If p_sqcc > ""  Then 
@@ -477,7 +477,7 @@ Sub Gerencial
             Case "GRDMAREA"    ShowHTML "    else document.Form.p_area.value='" & Request("p_area")& "';"
             Case "GRDMINTER"   ShowHTML "    else document.Form.p_inter.value='" & Request("p_inter")& "';"
          End Select
-         DB_GetTramiteList RS2, P2, null
+         DB_GetTramiteList RS2, P2, null, null
          RS2.Sort = "ordem"
          w_fase_exec = ""
          While Not RS2.EOF

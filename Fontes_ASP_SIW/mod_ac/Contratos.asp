@@ -1002,13 +1002,11 @@ Sub Geral
     If w_pessoa_fisica = "S" and w_pessoa_juridica = "S" Then
        SelecaoTipoPessoa "O<u>u</u>tra parte é pessoa:", "T", "Selecione na lista o tipo de pessoa que será indicada como a outra parte.", w_sq_tipo_pessoa, w_cliente, "w_sq_tipo_pessoa", null, null
     ElseIf w_pessoa_fisica = "S" Then
-       DB_GetKindPersonList RS
-       RS.Filter = "nome='Física'"
+       DB_GetKindPersonList RS, "Física"
        w_sq_tipo_pessoa = RS("sq_tipo_pessoa")
        ShowHTML "<INPUT type=""hidden"" name=""w_sq_tipo_pessoa"" value=""" & RS("sq_tipo_pessoa") &""">"
     Else
-       DB_GetKindPersonList RS
-       RS.Filter = "nome='Jurídica'"
+       DB_GetKindPersonList RS, "Jurídica"
        w_sq_tipo_pessoa = RS("sq_tipo_pessoa")
        ShowHTML "<INPUT type=""hidden"" name=""w_sq_tipo_pessoa"" value=""" & RS("sq_tipo_pessoa") &""">"
     End If

@@ -282,7 +282,7 @@ Sub Inicial
            w_filtro = w_filtro & "<tr valign=""top""><td align=""right""><font size=1>Projeto <td><font size=1>[<b>" & RS("titulo") & "</b>]"
         End If
         If p_atividade > ""  Then 
-           DB_GetSolicEtapa RS, p_projeto, p_atividade, "REGISTRO"
+           DB_GetSolicEtapa RS, p_projeto, p_atividade, "REGISTRO", null
            w_filtro = w_filtro & "<tr valign=""top""><td align=""right""><font size=1>Etapa <td><font size=1>[<b>" & RS("titulo") & "</b>]"
         End If
         If p_sqcc > ""  Then 

@@ -405,7 +405,7 @@ Sub Gerencial
             Case "GRISPSETOR"    ShowHTML "    else document.Form.p_unidade.value='" & Request("p_unidade")& "';"
             'Case "GRPRINTER"    ShowHTML "    else document.Form.p_inter.value='" & Request("p_inter")& "';"
          End Select
-         DB_GetTramiteList RS2, P2, null
+         DB_GetTramiteList RS2, P2, null, null
          RS2.Sort = "ordem"
          w_fase_exec = ""
          While Not RS2.EOF

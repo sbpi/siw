@@ -1232,7 +1232,7 @@ Sub Cargo
      ShowHTML "      </tr>"
      ShowHTML "      <tr>"
      ShowHTML "         <td colspan=2 width=""100%""><table width=""100%"" border=""0"">"
-     SelecaoFormacao "F<u>o</u>rmação acadêmica:", "O", "Selecione a formação acadêmica mínima, exigida para a ocupação do cargo.", w_sq_formacao, null, "w_sq_formacao", "tipo='Acadêmica'", null
+     SelecaoFormacao "F<u>o</u>rmação acadêmica:", "O", "Selecione a formação acadêmica mínima, exigida para a ocupação do cargo.", w_sq_formacao, "Acadêmica", "w_sq_formacao", null, null
      ShowHTML "            <td><font size=""1""><b><u>N</u>ome:</b><br><input " & w_Disabled & " accesskey=""N"" type=""text"" name=""w_nome"" class=""sti"" SIZE=""30"" MAXLENGTH=""30"" VALUE=""" & w_nome & """></td>"
      ShowHTML "           </table>"
      ShowHTML "          </td>"

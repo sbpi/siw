@@ -205,7 +205,7 @@ Sub Help
                  If RS1("tramite") = "S" Then
                      ShowHTML "        <DD><BR>Como funciona: " & ExibeTexto(RS1("como_funciona"))
                      ' Verifica se têm trâmites e exibe
-                     DB_GetTramiteList RS_Tramite, RS1("sq_menu"), null
+                     DB_GetTramiteList RS_Tramite, RS1("sq_menu"), null, null
                      RS_Tramite.Sort = "Ordem"
                      If Not RS_Tramite.EOF Then
                         ShowHTML "    <DD><BR>Fases:"
@@ -252,7 +252,7 @@ Sub Help
                           ShowHTML "        <DD><BR>Como funciona: " & ExibeTexto(RS2("como_funciona"))
                           If RS2("ultimo_nivel") = "S" and w_submenu = "N" Then
                               ' Verifica se têm trâmites e exibe
-                              DB_GetTramiteList RS_Tramite, RS2("sq_menu"), null
+                              DB_GetTramiteList RS_Tramite, RS2("sq_menu"), null, null
                               RS_Tramite.Sort = "Ordem"
                               If Not RS_Tramite.EOF Then
                                  ShowHTML "    <DD><BR>Fases:"
@@ -295,7 +295,7 @@ Sub Help
                              End If
                              If RS3("ultimo_nivel") = "S" and w_submenu = "N" Then
                                  ' Verifica se têm trâmites e exibe
-                                 DB_GetTramiteList RS_Tramite, RS3("sq_menu"), null
+                                 DB_GetTramiteList RS_Tramite, RS3("sq_menu"), null, null
                                  RS_Tramite.Sort = "Ordem"
                                  If Not RS_Tramite.EOF Then
                                     ShowHTML "    <DD><BR>Fases:"

@@ -346,13 +346,7 @@ Sub AreaAtuacao
   w_libera_edicao = RS("libera_edicao")
   
   If O = "L" Then
-     DB_GetEOAAtuac RS, w_cliente
-     If p_nome & p_ativo > "" Then
-        w_filter = ""
-        If p_nome > ""            Then w_filter = w_filter & " and nome like '*" & p_nome & "*' " End If
-        If p_ativo > ""           Then w_filter = w_filter & " and ativo = '" & p_ativo & "' "    End If
-        RS.Filter = Mid(w_filter,6,255)
-     End If
+     DB_GetEOAAtuac RS, w_cliente, p_nome, p_ativo
      If p_Ordena = "" Then 
         RS.Sort = "Nome"
      Else
@@ -360,7 +354,7 @@ Sub AreaAtuacao
      End If
   ElseIf O = "A" or O = "E" Then
      w_sq_area_atuacao = Request("w_sq_area_atuacao")
-     DB_GetEOAAtuacData RS, w_sq_area_atuacao
+     DB_GetEOAAtuacData RS, w_sq_area_atuacao, null, null
      w_nome   = RS("nome")
      w_ativo  = RS("ativo")
      DesconectaBD
@@ -562,13 +556,7 @@ Sub TipoUnidade
   w_libera_edicao = RS("libera_edicao")
   
   If O = "L" Then
-     DB_GetUnitTypeList RS,w_cliente
-     If p_nome & p_ativo > "" Then
-        w_filter = ""
-        If p_nome > ""            Then w_filter = w_filter & " and nome like '*" & p_nome & "*' " End If
-        If p_ativo > ""           Then w_filter = w_filter & " and ativo = '" & p_ativo & "' "    End If
-        RS.Filter = Mid(w_filter,6,255)
-     End If
+     DB_GetUnitTypeList RS,w_cliente, p_nome, p_ativo
      If p_Ordena = "" Then 
         RS.Sort = "Nome"
      Else

@@ -2572,7 +2572,7 @@ Sub Informar
     ShowHTML "      <tr><td><font size=1>Identificação do evento e roteiro de viagem.</font></td></tr>"
     ShowHTML "      <tr><td align=""center"" height=""1"" bgcolor=""#000000""></td></tr>"
     ShowHTML "      <tr><td><table border=0 width=""100%"" cellspacing=0><tr valign=""top"">"    
-    SelecaoPais   "<u>P</u>aís do evento:", "P", null, w_sq_pais, null, "w_sq_pais", "nome='França'", "onChange=""document.Form.action='" & w_dir & w_pagina & par & "'; document.Form.w_troca.value='w_co_uf'; document.Form.submit();"""
+    SelecaoPais   "<u>P</u>aís do evento:", "P", null, w_sq_pais, null, "w_sq_pais", "NOMEFRANCA", "onChange=""document.Form.action='" & w_dir & w_pagina & par & "'; document.Form.w_troca.value='w_co_uf'; document.Form.submit();"""
     SelecaoEstado "E<u>s</u>tado do evento:", "S", null, w_co_uf, w_sq_pais, "N", "w_co_uf", null, "onChange=""document.Form.action='" & w_dir & w_pagina & par & "'; document.Form.w_troca.value='w_sq_cidade'; document.Form.submit();"""
     SelecaoCidade "<u>C</u>idade do evento:", "C", null, w_sq_cidade, w_sq_pais, w_co_uf, "w_sq_cidade", null, null
     ShowHTML "      <tr valign=""top"">"
