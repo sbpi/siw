@@ -6,7 +6,6 @@ include_once($w_dir_volta.'classes/sp/db_getLocalList.php');
 function selecaoLocalizacao($label,$accesskey,$hint,$chave,$chaveAux,$campo,$restricao) {
   extract($GLOBALS);
   $RS = db_getLocalList::getInstanceOf($dbms, $w_cliente, $ChaveAux, $restricao);
-  //if (!!isset($chaveAux)) $RS->Filter='sq_unidade = '.$chaveAux;
 
   if (!isset($hint)) {
     ShowHTML('          <td valign="top"><font size="1"><b>'.$label.'</b><br><SELECT ACCESSKEY="'.$accesskey.'" CLASS="sts" NAME="'.$campo.'" '.$w_Disabled.'>');

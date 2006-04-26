@@ -1,19 +1,17 @@
 <?
 include_once("classes/db/DatabaseQueriesFactory.php");
 /**
-* class sp_getTramiteList
+* class db_getLinkDataParents
 *
 * { Description :- 
-*    Recupera os trâmites da opção de menu indicada.
+*    Recupera os dados dos pais do link informado
 * }
 */
 
-class db_getTramiteList {
-   function getInstanceOf($dbms, $p_chave, $p_restricao, $p_ativo) {
-     $sql='sp_getTramiteList';
+class db_getLinkDataParents {
+   function getInstanceOf($dbms, $p_chave) {
+     $sql='sp_getLnkDataPrnts';
      $params=array("p_chave"    =>array($p_chave,       B_NUMERIC,     32),
-                   "p_restricao"=>array($p_restricao,   B_VARCHAR,     20),
-                   "p_ativo"    =>array($p_ativo,       B_VARCHAR,      1),
                    "p_result"   =>array(null,           B_CURSOR,      -1)
                   );
      $l_rs = DatabaseQueriesFactory::getInstanceOf($sql, $dbms, $params, DB_TYPE);

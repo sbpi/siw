@@ -1,0 +1,34 @@
+<?
+include_once('classes/db/DatabaseQueriesFactory.php');
+/**
+* class dml_putSiwUsuario
+*
+* { Description :- 
+*    Manipula usuários da SIW
+* }
+*/
+
+class dml_putSiwUsuario {
+   function getInstanceOf($dbms, $operacao, $p_chave, $p_cliente, $p_nome, $p_nome_resumido, $p_vinculo,
+         $p_tipo_pessoa, $p_unidade, $p_localizacao, $p_username, $p_email, $p_gestor_seguranca,
+         $p_gestor_sistema) {
+     $sql='sp_putSiwUsuario';
+     $params=array('operacao'           =>array($operacao,              B_VARCHAR,      1),
+                   'p_chave'            =>array($p_chave,               B_NUMERIC,     32),
+                   'cliente'            =>array($cliente,               B_NUMERIC,     32),
+                   'p_nome'             =>array($p_nome,                B_VARCHAR,     60),
+                   'p_nome_resumido'    =>array($p_nome_resumido,       B_VARCHAR,     15),
+                   'p_vinculo'          =>array($p_vinculo,             B_NUMERIC,     32),
+                   'p_tipo_pessoa'      =>array($p_tipo_pessoa,         B_VARCHAR,     15),
+                   'p_unidade'          =>array($p_unidade,             B_NUMERIC,     32),
+                   'p_localizacao'      =>array($p_localizacao,         B_NUMERIC,     32),
+                   'p_username'         =>array($p_username,            B_VARCHAR,     30),
+                   'p_email'            =>array($p_email,               B_VARCHAR,     60),
+                   'p_gestor_seguranca' =>array($p_gestor_seguranca,    B_VARCHAR,     1),
+                   'p_gestor_sistema'   =>array($p_gestor_sistema,      B_VARCHAR,     1)
+                  );
+     $l_rs = DatabaseQueriesFactory::getInstanceOf($sql, $dbms, $params, DB_TYPE);
+     if(!$l_rs->executeQuery()) return false;  else return true;
+   }
+}
+?>

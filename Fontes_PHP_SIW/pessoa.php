@@ -11,6 +11,8 @@ include_once('classes/sp/db_getPersonList.php');
 include_once('classes/sp/db_getCustomerSite.php');
 include_once('classes/sp/db_getCustomerData.php');
 include_once('classes/sp/db_getLinkData.php');
+include_once('classes/sp/db_VerificaAssinatura.php');
+include_once('classes/sp/dml_putSiwUsuario.php');
 include_once('funcoes/selecaoPais.php');
 include_once('funcoes/selecaoEstado.php');
 include_once('funcoes/selecaoCidade.php');
@@ -107,6 +109,7 @@ FechaSessao($dbms);
 // -------------------------------------------------------------------------
 function Benef() {
   extract($GLOBALS);
+  global $w_Disabled;
 
   // Nesta rotina, P1 = 0 indica que não pode haver troca do beneficiário
   //                  = 1 indica que pode haver troca de beneficiário
@@ -172,7 +175,7 @@ function Benef() {
       } 
     } 
 
-    if ((strpos('IATDEV',$O) >=0) && $w_sq_pessoa>'') {
+    if ((!(strpos('IATDEV',$O)===false)) && $w_sq_pessoa>'') {
       // Recupera os dados do beneficiário em co_pessoa
       $RS = db_getPersonData::getInstanceOf($dbms,$w_cliente,$w_sq_pessoa,null,null);
       if (count($RS)) {
@@ -209,7 +212,7 @@ function Benef() {
   FormataData();
   FormataDataHora();
   ValidateOpen('Validacao');
-  if ($w_username=="" || (strpos($_REQUEST['botao'],"Procurar") >= 0) || (strpos($_REQUEST['botao'],"Troca") >= 0)) {
+  if ($w_username=="" || (!(strpos($_REQUEST['botao'],"Procurar")===false)) || (!(strpos($_REQUEST['botao'],"Troca")===false))) {
     // Se o beneficiário ainda não foi selecionado
     ShowHTML('  if (theForm.Botao.value == \'Procurar\') {');
     Validate('w_nome','Nome','','1','4','20','1','');
@@ -262,9 +265,9 @@ function Benef() {
   ValidateClose();
   ScriptClose();
   ShowHTML('</HEAD>');
-  if ($P1!=0 && ($w_username=='' || (isset($_REQUEST['Botao']) && ((strpos($_REQUEST['Botao'],'Troca') >=0) || (strpos($_REQUEST['Botao'],'Procurar') >=0))))) {
+  if ($P1!=0 && ($w_username=='' || (isset($_REQUEST['Botao']) && ((!(strpos($_REQUEST['Botao'],'Troca')===false)) || (!(strpos($_REQUEST['Botao'],'Procurar')===false)))))) {
     // Se o beneficiário ainda não foi selecionado
-    if (isset($_REQUEST['Botao']) && strpos($_REQUEST['botao'],'Procurar') >= 0) {
+    if (isset($_REQUEST['Botao']) && (!(strpos($_REQUEST['botao'],'Procurar'))===false)) {
       // Se está sendo feita busca por nome
       if ($w_troca!='w_sq_localizacao') { BodyOpen('onLoad=\'document.focus()\';'); }
     } else {
@@ -272,7 +275,7 @@ function Benef() {
     }
   } elseif ($w_troca>'') {
     BodyOpen('onLoad=\'document.Form.'.$w_troca.'.focus()\';');
-  } elseif (strpos('ETDV',$O) >= 0) {
+  } elseif (!(strpos('ETDV',$O)===false)) {
     BodyOpen('onLoad=\'document.Form.w_assinatura.focus()\';');
   } else {
     BodyOpen('onLoad=\'document.Form.w_nome.focus()\';');
@@ -283,41 +286,25 @@ function Benef() {
   Estrutura_Corpo_Abre();
   Estrutura_Texto_Abre();
   ShowHTML('<table border="0" cellpadding="0" cellspacing="0" width="100%">');
-  if (strpos('IAETDV',$O) >=0) {
-    if (strpos('ETDV',$O) >=0) {
+  if (!(strpos('IAETDV',$O)===false)) {
+     if (!(strpos('ETDV',$O)===false)) {
       $w_Disabled=' DISABLED ';
       if ($O=='V') $w_Erro = Validacao($w_sq_solicitacao, $SG);
     } 
 
-    if ($w_username=='' || (isset($_REQUEST['Botao']) && ((strpos($_REQUEST['Botao'],'Troca') >=0) || (strpos($_REQUEST['Botao'],'Procurar') >=0)))) {
+    if ($w_username=='' || (isset($_REQUEST['Botao']) && ((!(strpos($_REQUEST['Botao'],'Troca')===false)) || (!(strpos($_REQUEST['Botao'],'Procurar')===false))))) {
       // Se o beneficiário ainda não foi selecionado
-      ShowHTML('<FORM action="'.$w_pagina.$par.'" method="POST" name="Form" onSubmit="return(Validacao(this));">');
+      AbreForm('Form',$w_pagina.$par,'POST','return(Validacao(this))',null,$P1,$P2,$P3,$P4,$TP,$SG,$R,$O);
     } else {
-      ShowHTML('<FORM action="'.$w_pagina.'Grava" method="POST" name="Form" onSubmit="return(Validacao(this));">');
+      AbreForm('Form',$w_pagina.'Grava','POST','return(Validacao(this))',null,$P1,$P2,$P3,$P4,$TP,$SG,$R,$O);
     } 
-    ShowHTML('<INPUT type="hidden" name="P1" value="'.$P1.'">');
-    ShowHTML('<INPUT type="hidden" name="P2" value="'.$P2.'">');
-    ShowHTML('<INPUT type="hidden" name="P3" value="'.$P3.'">');
-    ShowHTML('<INPUT type="hidden" name="P4" value="'.$P4.'">');
-    ShowHTML('<INPUT type="hidden" name="TP" value="'.$TP.'">');
-    ShowHTML('<INPUT type="hidden" name="SG" value="'.$SG.'">');
-    ShowHTML('<INPUT type="hidden" name="R" value="'.$R.'">');
-    ShowHTML('<INPUT type="hidden" name="O" value="'.$O.'">');
-    ShowHTML('<INPUT type="hidden" name="p_data_inicio" value="'.$p_data_inicio.'">');
-    ShowHTML('<INPUT type="hidden" name="p_data_fim" value="'.$p_data_fim.'">');
-    ShowHTML('<INPUT type="hidden" name="p_solicitante" value="'.$p_solicitante.'">');
-    ShowHTML('<INPUT type="hidden" name="p_numero" value="'.$p_numero.'">');
-    ShowHTML('<INPUT type="hidden" name="p_localizacao" value="'.$p_localizacao.'">');
-    ShowHTML('<INPUT type="hidden" name="p_lotacao" value="'.$p_lotacao.'">');
-    ShowHTML('<INPUT type="hidden" name="p_nome" value="'.$p_nome.'">');
-    ShowHTML('<INPUT type="hidden" name="p_gestor" value="'.$p_gestor.'">');
-    ShowHTML('<INPUT type="hidden" name="p_ordena" value="'.$p_ordena.'">');
     ShowHTML('<INPUT type="hidden" name="w_troca" value="">');
     ShowHTML('<INPUT type="hidden" name="w_sq_solicitacao" value="'.$w_sq_solicitacao.'">');
     ShowHTML('<INPUT type="hidden" name="w_sq_pessoa" value="'.$w_sq_pessoa.'">');
     ShowHTML('<INPUT type="hidden" name="w_cliente" value="'.$w_cliente.'">');
+    ShowHTML(MontaFiltro('POST'));
 
-    if ($P1!=0 && ($w_username=='' || (isset($_REQUEST['Botao']) && ((strpos($_REQUEST['Botao'],'Troca') >=0) || (strpos($_REQUEST['Botao'],'Procurar') >=0))))) {
+    if ($P1!=0 && ($w_username=='' || (isset($_REQUEST['Botao']) && ((!(strpos($_REQUEST['Botao'],'Troca')===false)) || (!(strpos($_REQUEST['Botao'],'Procurar')===false)))))) {
       $w_frm_pag = $_REQUEST['w_frm_pag'];
       $w_nome    = $_REQUEST['w_nome'];
       ShowHTML('<tr bgcolor="'.$conTrBgColor.'"><td>');
@@ -394,7 +381,7 @@ function Benef() {
         ShowHTML('      <tr><td valign="top" colspan="2"><table border=0 width="100%" cellspacing=0>');
         ShowHTML('          <tr><td valign="top"><font size="1"><b>Te<u>l</u>efone:</b><br><input '.$w_Disabled.' accesskey="L" type="text" name="w_telefone" class="sti" SIZE="20" MAXLENGTH="40" VALUE="'.$w_telefone.'"></td>');
         ShowHTML('              <td valign="top"><font size="1"><b>Fa<u>x</u>:</b><br><input '.$w_Disabled.' accesskey="X" type="text" name="w_fax" class="sti" SIZE="20" MAXLENGTH="20" VALUE="'.$w_fax.'"></td>');
-        if ($w_disabled==' DISABLED ') {
+        if ($w_Disabled==' DISABLED ') {
           ShowHTML('              <td valign="top"><font size="1"><b>e-<u>M</u>ail:</b><br><input '.$w_Disabled.' accesskey="M" type="text" name="w_email1" class="sti" SIZE="40" MAXLENGTH="50" VALUE="'.$w_email.'"></td>');
           ShowHTML('                   <INPUT type="hidden" name="w_email" value="'.$w_email.'">');
         } else {
@@ -402,7 +389,7 @@ function Benef() {
         } 
         ShowHTML('          </table>');
       } elseif ($SG=='SGUSU' || $SG=='CLUSUARIO') {
-        if ($w_disabled==' DISABLED ') {
+        if ($w_Disabled==' DISABLED ') {
           ShowHTML('          <tr><td valign="top"><font size="1"><b>e-<u>M</u>ail:</b><br><input '.$w_Disabled.' accesskey="M" type="text" name="w_email1" class="sti" SIZE="40" MAXLENGTH="50" VALUE="'.$w_email.'"></td>');
           ShowHTML('                   <INPUT type="hidden" name="w_email" value="'.$w_email.'">');
         } else {
@@ -529,6 +516,7 @@ function Benef() {
 // -------------------------------------------------------------------------
 function BuscaUsuario() {
   extract($GLOBALS);
+  global $w_Disabled;
 
   $w_nome       = strtoupper($_REQUEST['w_nome']);
   $w_sg_unidade = strtoupper($_REQUEST['w_sg_unidade']);
@@ -537,7 +525,7 @@ function BuscaUsuario() {
   $restricao    = $_REQUEST['restricao'];
   $campo        = $_REQUEST['campo'];
 
-  $RS = db_getPersonList::getInstanceOf($dbms,$p_cliente_session,$ChaveAux,$restricao,$w_nome,$w_sg_unidade,null,null);
+  $RS = db_getPersonList::getInstanceOf($dbms,$_SESSION['P_CLIENTE'],$ChaveAux,$restricao,$w_nome,$w_sg_unidade,null,null);
 
   Cabecalho();
   ShowHTML('<TITLE>Seleção de pessoa</TITLE>');
@@ -572,6 +560,7 @@ function BuscaUsuario() {
   AbreForm('Form',$w_dir.$w_pagina.'BuscaUsuario','POST','return(Validacao(this))',null,$P1,$P2,$P3,$P4,$TP,$SG,null,null);
   ShowHTML('<INPUT type="hidden" name="restricao" value="'.$restricao.'">');
   ShowHTML('<INPUT type="hidden" name="campo" value="'.$campo.'">');
+  ShowHTML(MontaFiltro('POST'));
 
   ShowHTML('<tr bgcolor="'.$conTrBgColor.'"><td><div align="justify"><font size=2><b><ul>Instruções</b>:<li>Informe parte do nome da ação ou o código da ação.<li>Quando a relação for exibida, selecione a ação desejada clicando sobre o link <i>Selecionar</i>.<li>Após informar o nome da ação ou o código da ação, clique sobre o botão <i>Aplicar filtro</i>. Clicando sobre o botão <i>Cancelar</i>, a procura é cancelada.</ul></div>');
   ShowHTML('<tr bgcolor="'.$conTrBgColor.'"><td>');
@@ -645,8 +634,8 @@ function Grava() {
   if (VerificaAssinaturaEletronica($_SESSION['USERNAME'],strtoupper($_REQUEST['w_assinatura'])) || $w_assinatura=='') {
     if ($SG=='SGUSU' || $SG=='CLUSUARIO') { // Identifica, a partir do tamanho da variável w_username, se é pessoa física, jurídica ou estrangeiro
       if (strlen($_REQUEST['w_username'])<=14) $w_tipo='Física'; else $w_tipo='Jurídica';
-      DML_PutSiwUsuario($O,
-            $_REQUEST['w_sq_pessoa'],$_REQUEST['w_cliente'],$_REQUEST['w_Nome'],$_REQUEST['w_nome_resumido'],
+      dml_putSiwUsuario::getInstanceOf($dbms, $O,
+            $_REQUEST['w_sq_pessoa'],$_REQUEST['w_cliente'],$_REQUEST['w_nome'],$_REQUEST['w_nome_resumido'],
             $_REQUEST['w_sq_tipo_vinculo'],$w_tipo,$_REQUEST['w_sq_unidade_lotacao'],$_REQUEST['w_sq_localizacao'],
             $_REQUEST['w_username'],$_REQUEST['w_email'],$_REQUEST['w_gestor_seguranca'],$_REQUEST['w_gestor_sistema']);
 
@@ -658,7 +647,7 @@ function Grava() {
         $w_html = $w_html.'<tr bgcolor="'.$conTrBgColor.'"><td align="center">'.chr(13);
         $w_html = $w_html.'    <table width="97%" border="0">'.chr(13);
         $w_html = $w_html.'      <tr valign="top"><td><font size=2><b><font color="#BC3131">ATENÇÃO</font>: Esta é uma mensagem de envio automático. Não responda esta mensagem.</b></font><br><br><td></tr>'.chr(13);
-        if (strpos('IT',$O) >=0) {
+        if (!(strpos('IT',$O)===false)) {
           if ($O=='I') {
             $w_html = $w_html.'      <tr valign="top"><td align="center"><font size=2><b>CRIAÇÃO DE USUÁRIO</b></font><br><br><td></tr>'.chr(13);
           } elseif ($O=='T') {
@@ -691,7 +680,7 @@ function Grava() {
           $w_html = $w_html.'         <li>Acessos bloqueados por expiração do tempo de vida da senha de acesso ou assinaturas eletrônicas, ou por exceder o máximo de erros consecutivos, só podem ser desbloqueados pelo gestor de segurança do sistema.</li>'.chr(13);
           $w_html = $w_html.'         </ol>'.chr(13);
           $w_html = $w_html.'      </font></td></tr>'.chr(13);
-        } elseif (strpos("ED",$O) >=0) {
+        } elseif (!(strpos("ED",$O)===false)) {
           if ($O=='E') {
             $w_html = $w_html.'      <tr valign="top"><td align="center"><font size=2><b>EXCLUSÃO DE USUÁRIO</b></font><br><br><td></tr>'.chr(13);
           } elseif ($O=='D') {
@@ -706,8 +695,8 @@ function Grava() {
           } 
           $w_html = $w_html.'         Em caso de dúvidas, entre em contato com o gestor:'.chr(13);
           $w_html = $w_html.'         <ul>'.chr(13);
-          $w_html = $w_html.'         <li>Nome: <b>'.$nome_session.'</b></li>'.chr(13);
-          $w_html = $w_html.'         <li>e-Mail: <b><a class="ss" href="mailto:'.$EMAIL_session.'">'.$EMAIL_session.'</a></b></li>'.chr(13);
+          $w_html = $w_html.'         <li>Nome: <b>'.$_SESSION['NOME'].'</b></li>'.chr(13);
+          $w_html = $w_html.'         <li>e-Mail: <b><a class="ss" href="mailto:'.$_SESSION['EMAIL'].'">'.$_SESSION['EMAIL'].'</a></b></li>'.chr(13);
           $w_html = $w_html.'         </ul>'.chr(13);
           $w_html = $w_html.'      </font></td></tr>'.chr(13);
         } 
@@ -738,10 +727,10 @@ function Grava() {
     } 
 
     // Aqui deve ser usada a variável de sessão para evitar erro na recuperação do link
-    $RS = db_getLinkData::getInstanceOf($dbms,$p_cliente_session,$SG);
+    $RS = db_getLinkData::getInstanceOf($dbms,$_SESSION['P_CLIENTE'],$SG);
     ScriptOpen('JavaScript');
     if ($SG=='SGUSU' || $SG=='RHUSU' || $SG=='CLUSUARIO') {
-      if (strpos('IAD',$O) >=0) {
+      if (!(strpos('IAD',$O)===false)) {
         if ($w_resultado>'') {
           ShowHTML('  alert(\'ATENÇÃO: operação executada mas não foi possível proceder o envio do e-mail.\n'.$w_resultado.'\');');
         } else {

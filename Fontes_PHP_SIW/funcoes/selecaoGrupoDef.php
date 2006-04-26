@@ -5,7 +5,7 @@ include_once($w_dir_volta.'classes/sp/db_getDeficGroupList.php');
 // -------------------------------------------------------------------------
 function selecaoGrupoDef($label,$accesskey,$hint,$chave,$chaveAux,$campo,$restricao) {
   extract($GLOBALS);
-  $RS = db_getDeficGroupList::getInstanceOf($dbms);
+  $RS = db_getDeficGroupList::getInstanceOf($dbms, null, null);
   if (!isset($hint)) {
      ShowHTML('          <td valign="top"><font size="1"><b>'.$label.'</b><br><SELECT ACCESSKEY="'.$accesskey.'" CLASS="sts" NAME="'.$campo.'" '.$w_Disabled.'>');
   } else {

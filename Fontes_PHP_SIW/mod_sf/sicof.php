@@ -87,17 +87,16 @@ function Consulta() {
 
   Cabecalho();
 
-  $w_sq_pessoa=$sq_pessoa_session;
+  $w_sq_pessoa = $_SESSION['SQ_PESSOA'];
 
-  if ($O=="L" && $_POST['p_documento']=="") {
-
-    if ($_POST['p_sq_pessoa']>"")$SQL="select cgccpf, nome from corporativo.gn_pessoas@sicof where handle = ".$_POST['p_sq_pessoa'];
-    if ($_POST['p_cnpj']>"")     $SQL="select cgccpf, nome from corporativo.gn_pessoas@sicof where cgccpf = '".$_POST['p_cnpj']."'";
-    if ($_POST['p_cpf']>"")      $SQL="select cgccpf, nome from corporativo.gn_pessoas@sicof where cgccpf = '".$_POST['p_cpf']."'";
+  if ($O=='L' && $_POST['p_documento']=='') {
+    if ($_POST['p_sq_pessoa']>'')$SQL='select cgccpf, nome from corporativo.gn_pessoas@sicof where handle = '.$_POST['p_sq_pessoa'];
+    if ($_POST['p_cnpj']>'')     $SQL='select cgccpf, nome from corporativo.gn_pessoas@sicof where cgccpf = \''.$_POST['p_cnpj'].'\'';
+    if ($_POST['p_cpf']>'')      $SQL='select cgccpf, nome from corporativo.gn_pessoas@sicof where cgccpf = \''.$_POST['p_cpf'].'\'';
     $RS = DatabaseQueriesFactory::getInstanceOf($SQL, $dbms, null, DB_TYPE);
-    $row = $RS->getResultArray();
+    if(!$RS->executeQuery()) { die("Cannot query"); }
+    else $row = $RS->getResultArray();
   } 
-
 
   ShowHTML('<HEAD>');
   if ($O=='P') {

@@ -45,7 +45,7 @@ $P3         = $_REQUEST["P3"];
 $P4         = $_REQUEST["P4"];
 $TP         = $_REQUEST["TP"];
 $SG         = strtoupper($_REQUEST["SG"]);
-$R          = strtoupper($_REQUEST["R"]);
+$R          = $_REQUEST["R"];
 $O          = strtoupper($_REQUEST["O"]);
 
 $w_Assinatura   = strtoupper(${"w_Assinatura"});

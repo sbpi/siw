@@ -463,22 +463,35 @@ class PgSqlDatabaseQueryProc extends PgSqlDatabaseQueries {
     
     function executeQuery() {
         $par = "";
+        $cursor = false;
+
         foreach($this->params as $paramName=>$value) {
             foreach($value as $paramValue=>$paramType) {
                 if (!($value[1]==B_CURSOR)) { 
                    if (!isset($value[0]) || $value[0]=='') { $par .= ", null"; }
                    elseif ($value[1]==B_VARCHAR) { $par .= ", '$value[0]'"; }
                    else { $par .= ", $value[0]"; }
+                } else {
+                  $cursor = true;
                 }
                  break;
             }
         }
-        if ($par=="") {
-              $par = "rollback; begin; select $this->query ('p_result'); fetch all in p_result;";
+        if ($cursor) {
+          if ($par=="") {
+                $par = "rollback; begin; select $this->query ('p_result'); fetch all in p_result;";
+          } else {
+                $par = "rollback; begin; select $this->query (".substr($par, 1).", 'p_result'); fetch all in p_result;";
+          }
         } else {
-              $par = "rollback; begin; select $this->query (".substr($par, 1).", 'p_result'); fetch all in p_result;";
+          if ($par=="") {
+                $par = "rollback; begin; select $this->query; commit;";
+          } else {
+                $par = "rollback; begin; select $this->query (".substr($par, 1).'); commit;';
+          }
         }
-        //echo $par;
+        // echo $par;
+
         $this->result = pg_query($this->conHandle, $par);
         if(is_resource($this->result)) { 
            $this->num_rows = pg_num_rows($this->result); 

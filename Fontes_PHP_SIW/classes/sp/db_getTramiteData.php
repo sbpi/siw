@@ -1,25 +1,23 @@
 <?
 include_once("classes/db/DatabaseQueriesFactory.php");
 /**
-* class sp_getTramiteList
+* class db_getTramiteData
 *
 * { Description :- 
-*    Recupera os trâmites da opção de menu indicada.
+*    Recupera os dados de um trâmite
 * }
 */
 
-class db_getTramiteList {
-   function getInstanceOf($dbms, $p_chave, $p_restricao, $p_ativo) {
-     $sql='sp_getTramiteList';
+class db_getTramiteData {
+   function getInstanceOf($dbms, $p_chave) {
+     $sql='sp_getTramiteData';
      $params=array("p_chave"    =>array($p_chave,       B_NUMERIC,     32),
-                   "p_restricao"=>array($p_restricao,   B_VARCHAR,     20),
-                   "p_ativo"    =>array($p_ativo,       B_VARCHAR,      1),
                    "p_result"   =>array(null,           B_CURSOR,      -1)
                   );
      $l_rs = DatabaseQueriesFactory::getInstanceOf($sql, $dbms, $params, DB_TYPE);
      if(!$l_rs->executeQuery()) { die("Cannot query"); }
      else {
-        if ($l_rs = $l_rs->getResultData()) {
+        if ($l_rs = $l_rs->getResultArray()) {
           return $l_rs;
         } else {
           return array();

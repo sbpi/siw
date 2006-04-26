@@ -23,8 +23,8 @@ include_once('classes/sp/db_getCustomerSite.php');
 include_once('classes/sp/db_getUserData.php');
 include_once('classes/sp/db_VerificaAssinatura.php');
 include_once('classes/sp/dml_SiwMenu.php');
-include_once('classes/sp/dml_SgPesMod.php');
-include_once('classes/sp/dml_PutSiwPesCC.php');
+include_once('classes/sp/dml_putSgPesMod.php');
+include_once('classes/sp/dml_putSiwPesCC.php');
 include_once('funcoes/selecaoLocalizacao.php');
 include_once('funcoes/selecaoUnidade.php');
 include_once('funcoes/selecaoEstado.php');
@@ -120,9 +120,9 @@ exit;
 // =========================================================================
 // Rotina da tabela de usuários
 // -------------------------------------------------------------------------
-
 function Usuarios() {
   extract($GLOBALS);
+  global $w_Disabled;
 
   $w_troca        = $_REQUEST['w_troca'];
   $p_localizacao  = strtoupper($_REQUEST['p_localizacao']);
@@ -335,6 +335,7 @@ function Usuarios() {
 // -------------------------------------------------------------------------
 function Menu() {
   extract($GLOBALS);
+  global $w_Disabled;
 
   $p_sq_endereco_unidade = $_REQUEST['p_sq_endereco_unidade'];
   $p_modulo              = $_REQUEST['p_modulo'];
@@ -878,7 +879,7 @@ function Menu() {
 
     ShowHTML('              <td align="left"><b><u>O</u>rdem:<br><INPUT ACCESSKEY="O" TYPE="TEXT" CLASS="sti" NAME="w_ordem" SIZE=4 MAXLENGTH=4 VALUE="'.$w_ordem.'" '.$w_Disabled.' TITLE="'.str_replace(chr(13).chr(10),"<BR>",$w_texto).'"></td>');
     ShowHTML('          <tr><td width="5%">');
-    ShowHTML('              <td colspan=3><b><U>F</U>inalidade:<br><TEXTAREA ACCESSKEY="F" class="sti" name="w_finalidade" rows=3 cols=80 title="Descreva sucintamente a finalidade desta opção. Esta informação será apresentada quando o usuário passar o mouse em cima da opção, no menu.">'.$w_finalidade.'</textarea></td>');
+    ShowHTML('              <td colspan=3><b><U>F</U>inalidade:<br><TEXTAREA ACCESSKEY="F" class="sti" name="w_finalidade" rows=3 cols=80 '.$w_Disabled.' title="Descreva sucintamente a finalidade desta opção. Esta informação será apresentada quando o usuário passar o mouse em cima da opção, no menu.">'.$w_finalidade.'</textarea></td>');
 
     ShowHTML('          <tr><td colspan=4 height="30"><font size="2"><b>Parâmetros de acesso</td>');
     ShowHTML('          <tr><td width="5%"><td colspan="3" valign="top"><table border="0" cellpadding="0" cellspacing="0" width="100%"><tr>');
@@ -1152,6 +1153,7 @@ function Menu() {
 // -------------------------------------------------------------------------
 function Acessos() {
   extract($GLOBALS);
+  global $w_Disabled;
 
   $w_troca              = $_REQUEST['w_troca'];
 
@@ -1170,7 +1172,7 @@ function Acessos() {
   ScriptOpen('JavaScript');
   ValidateOpen('Validacao');
 
-  if (strpos("IAE",$O) >0) {
+  if (!(strpos("IAE",$O)===false)) {
 
     if ($O=='I') {
       Validate('w_sq_modulo', 'Módulo', 'SELECT', 1, 1, 18, '', 1);
@@ -1322,6 +1324,7 @@ function Acessos() {
 // -------------------------------------------------------------------------
 function Visao() {
   extract($GLOBALS);
+  global $w_Disabled;
 
   $w_troca      = $_REQUEST['w_troca'];
 
@@ -1338,10 +1341,10 @@ function Visao() {
   ShowHTML('<TITLE>'.$conSgSistema.' - Usuários</TITLE>');
   ScriptOpen('JavaScript');
   ValidateOpen('Validacao');
-  if (strpos('IAE',$O) >=0) {
+  if (!(strpos('IAE',$O)===false)) {
     if ($O=='I') {
       Validate('w_sq_menu', 'Serviço', 'SELECT', '1', '1', '18', null, '1');
-      ShowHTML('  var i, j; ');
+      ShowHTML('  var i; ');
       ShowHTML('  var w_erro=true; ');
       ShowHTML('  for (i=0; i < theForm["w_sq_cc[]"].length; i++) {');
       ShowHTML('    if (theForm["w_sq_cc[]"][i].checked) w_erro=false;');
@@ -1389,8 +1392,8 @@ function Visao() {
   ShowHTML('              <td>Telefone 2:<br><b>'.f($RS,'telefone2').'</b></td>');
   ShowHTML('              <td>Fax:<br><b>'.f($RS,'fax').'</b></td>');
   ShowHTML('          </table>');
-  if ($O=="L") {
 
+  if ($O=="L") {
     ShowHTML('      <tr><td align="center" colspan="2" height="2" bgcolor="#000000">');
     ShowHTML('      <tr><td align="center" colspan="2" height="1" bgcolor="#000000">');
     ShowHTML('      <tr><td colspan="2" align="center" bgcolor="#D0D0D0"><b>Visão por serviço</td>');
@@ -1558,6 +1561,7 @@ function Visao() {
 // -------------------------------------------------------------------------
 function NovaSenha() {
   extract($GLOBALS);
+  global $w_Disabled;
 
   // Cria a nova senha, pegando a hora e o minuto correntes
   $w_senha = 'nova'.substr(str_replace(':','',strftime("%H:%M:%S %p")),2,4);
@@ -1624,6 +1628,7 @@ function NovaSenha() {
 
 function TelaUsuario() {
   extract($GLOBALS);
+  global $w_Disabled;
 
   $w_sq_pessoa = $_REQUEST['w_sq_pessoa'];
 
@@ -1675,7 +1680,7 @@ function TelaUsuario() {
     ShowHTML('  </td>');
     ShowHTML('</tr>');
     ShowHTML('</table>');
-  } elseif (strpos("Cliente,Fornecedor",f($RS,'nome_vinculo')) >0) {
+  } elseif (!(strpos("Cliente,Fornecedor",f($RS,'nome_vinculo'))===false)) {
     ShowHTML('<TITLE>Pessoa externa</TITLE>');
     ShowHTML('</HEAD>');
     BodyOpen('onLoad=document.focus();');
@@ -1757,6 +1762,7 @@ function TelaUsuario() {
 
 function TelaUnidade() {
   extract($GLOBALS);
+  global $w_Disabled;
 
   $w_sq_unidade=$_REQUEST['w_sq_unidade'];
 
@@ -1901,7 +1907,7 @@ function Grava() {
             $_REQUEST['w_tramite'], $_REQUEST['w_ultimo_nivel'], $_REQUEST['w_descentralizado'], $_REQUEST['w_externo'], 
             $_REQUEST['w_ativo'], $_REQUEST['w_ordem'], $_REQUEST['w_envio'], $_REQUEST['w_controla_ano'], $_REQUEST['w_libera_edicao']);
         ScriptOpen('JavaScript');
-        ShowHTML('  location.href=\''.$R.'&w_cliente='.$w_cliente.'&O=L&P1='.$P1.'&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP='.$TP.'&SG='.$SG.$MontaFiltro['GET'].'\';');
+        ShowHTML('  location.href=\''.$R.'&w_cliente='.$w_cliente.'&O=L&P1='.$P1.'&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP='.$TP.'&SG='.$SG.MontaFiltro('GET').'\';');
         ScriptClose();
       } else {
         ScriptOpen('JavaScript');
@@ -1953,7 +1959,6 @@ function Grava() {
 // =========================================================================
 // Rotina principal
 // -------------------------------------------------------------------------
-
 function Main() {
   extract($GLOBALS);
 

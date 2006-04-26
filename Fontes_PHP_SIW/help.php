@@ -162,7 +162,7 @@ function Help() {
               ShowHTML('        <DD><BR>Como funciona: '.ExibeTexto(f($row1,'como_funciona')));
 
               // Verifica se têm trâmites e exibe
-              $RS_Tramite = db_getTramiteList::getInstanceOf($dbms, f($row1,'sq_menu'), null);
+              $RS_Tramite = db_getTramiteList::getInstanceOf($dbms, f($row1,'sq_menu'), null, null);
               if (count($RS_Tramite) > 0) {
                 ShowHTML('    <DD><BR>Fases:');
                 ShowHTML('    <DD><TABLE bgcolor="'.$conTableBgColor.'" BORDER="'.$conTableBorder.'" CELLSPACING="'.$conTableCellSpacing.'" CELLPADDING="'.$conTableCellPadding.'" BorderColorDark="'.$conTableBorderColorDark.'" BorderColorLight="'.$conTableBorderColorLight.'">');
@@ -208,7 +208,7 @@ function Help() {
                   if (f($row2,'ultimo_nivel')=='S' && $w_submenu=='N') {
   
                     // Verifica se têm trâmites e exibe
-                    $RS_Tramite = db_getTramiteList::getInstanceOf($dbms, f($row2,'sq_menu'), null);
+                    $RS_Tramite = db_getTramiteList::getInstanceOf($dbms, f($row2,'sq_menu'), null, null);
                     if (count($RS_Tramite) > 0) {
                       ShowHTML('    <DD><BR>Fases:');
                       ShowHTML('    <DD><TABLE WIDTH="70%" bgcolor="'.$conTableBgColor.'" BORDER="'.$conTableBorder.'" CELLSPACING="'.$conTableCellSpacing.'" CELLPADDING="'.$conTableCellPadding.'" BorderColorDark="'.$conTableBorderColorDark.'" BorderColorLight="'.$conTableBorderColorLight.'">');
@@ -247,7 +247,7 @@ function Help() {
                     if (f($row3,'tramite') == 'S') ShowHTML('        <DD><BR>Como funciona: '.ExibeTexto(f($row3,'como_funciona')));
                     if (f($row3,'ultimo_nivel')=='S' && $w_submenu=='N') {
                       // Verifica se têm trâmites e exibe
-                      $RS_Tramite = db_getTramiteList::getInstanceOf($dbms, f($row3,'sq_menu'), null);
+                      $RS_Tramite = db_getTramiteList::getInstanceOf($dbms, f($row3,'sq_menu'), null, null);
                       if (count($RS_Tramite) > 0) {
                         ShowHTML('    <DD><BR>Fases:');
                         ShowHTML('    <DD><TABLE WIDTH="70%" bgcolor="'.$conTableBgColor.'" BORDER="'.$conTableBorder.'" CELLSPACING="'.$conTableCellSpacing.'" CELLPADDING="'.$conTableCellPadding.'" BorderColorDark="'.$conTableBorderColorDark.'" BorderColorLight="'.$conTableBorderColorLight.'">');

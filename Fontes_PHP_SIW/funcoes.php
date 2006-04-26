@@ -98,10 +98,10 @@ function headerWord() {
 // Montagem do cabeçalho de documentos Word
 // -------------------------------------------------------------------------
 function CabecalhoWord($p_cliente,$p_titulo,$p_pagina) {
-  db_getCustomerData($p_cliente);
+  $RS = db_getCustomerData::getInstanceOf($dbms,$p_cliente);
   ShowHTML("<TABLE WIDTH=\"100%\" BORDER=0>");
   ShowHTML("  <TR>");
-  ShowHTML("    <TD ROWSPAN=3><IMG ALIGN=\"LEFT\" SRC=\"".$conFileVirtual.$w_cliente."/img/".$RS['LOGO']."\" width=56 height=67>");
+  ShowHTML("    <TD ROWSPAN=3><IMG ALIGN=\"LEFT\" SRC=\"".$conFileVirtual.$w_cliente."/img/".f($RS,'LOGO')."\" width=56 height=67>");
   ShowHTML("    <TD ALIGN=\"RIGHT\"><B><FONT SIZE=5 COLOR=\"#000000\">".$p_titulo."</FONT>");
   ShowHTML("  </TR>");
   ShowHTML("  <TR><TD ALIGN=\"RIGHT\"><B><FONT SIZE=2 COLOR=\"#000000\">".DataHora()."</B></TD></TR>");
@@ -152,8 +152,8 @@ function LinkOrdena($p_label,$p_campo) {
 // -------------------------------------------------------------------------
 function CabecalhoRelatorio($p_cliente,$p_titulo) {
   extract($GLOBALS);
-  $RS = db_getCustomerData($p_cliente);
-  ShowHTML('<TABLE WIDTH="100%" BORDER=0><TR><TD ROWSPAN=2><IMG ALIGN="LEFT" SRC="files\\'.$w_cliente.'\\img\\'.$RS['LOGO'].'><TD ALIGN="RIGHT"><B><FONT SIZE=4 COLOR="#000000">');
+  $RS = db_getCustomerData::getInstanceOf($dbms,$p_cliente);
+  ShowHTML('<TABLE WIDTH="100%" BORDER=0><TR><TD ROWSPAN=2><IMG ALIGN="LEFT" SRC="files\\'.$w_cliente.'\\img\\'.f($RS,'logo').'><TD ALIGN="RIGHT"><B><FONT SIZE=4 COLOR="#000000">');
   ShowHTML($p_titulo);
   ShowHTML('</FONT><TR><TD ALIGN="RIGHT"><B><FONT SIZE=2 COLOR="#000000">'.DataHora().'</B></TD></TR>');
   ShowHTML('</FONT></B></TD></TR></TABLE>');
@@ -206,7 +206,7 @@ function MontaBarra($p_link,$p_PageCount,$p_AbsolutePage,$p_PageSize,$p_RecordCo
 // -------------------------------------------------------------------------
 function SolicAcesso($p_solicitacao,$p_usuario) {
   extract($GLOBALS);
-  db_getSolicAcesso($p_solicitacao, $p_usuario, $l_acesso);
+  $RS = db_getSolicAcesso::getInstanceOf($dbms, $p_solicitacao, $p_usuario, $l_acesso);
   return $l_acesso;
 }
 
@@ -375,61 +375,20 @@ function MontaFiltroUpload($p_Form) {
 }
 
 // =========================================================================
-// Monta uma string para indicar a opção selecionada
-// -------------------------------------------------------------------------
-function OpcaoMenu($p_sq_menu) {
-  extract($GLOBALS);
-  $RS = db_getMenuUpper($p_sq_menu);
-  $l_texto="";
-  $l_cont=0;
-  while(!$RS->EOF) {
-    $l_Cont=$l_Cont+1;
-    if ($l_Cont==1) {
-      $l_texto="<font color=\"#FF0000\">".$RS['NOME']."</font> -> ".$l_texto;
-    } else {
-      $l_texto=$RS['NOME']." -> ".$l_texto;
-    }
-    $RS->MoveNext;
-  }
-  return $l_texto;
-}
-
-// =========================================================================
-// Rotina que monta string da opção selecionada
-// -------------------------------------------------------------------------
-function MontaStringOpcao($p_sq_menu) {
-  extract($GLOBALS);
-  db_getLinkDataParents($RS1, $p_sq_menu);
-  $w_texto="";
-  $w_Cont=$RS1->RecordCount;
-  while(!$RS1->EOF) {
-    $w_contaux=$w_contaux+1;
-    if ($w_contaux==1) {
-      $w_texto="<font color=\"#FF0000\">".$RS1['DESCRICAO']."</font> -> ".$w_texto;
-    } else {
-      $w_texto=$RS1['DESCRICAO']." -> ".$w_texto;
-    }
-    $RS1->MoveNext;
-  }
-  return substr($w_texto,0,strlen($w_texto)-4);
-}
-
-// =========================================================================
 // Rotina que monta número de ordem da etapa do projeto
 // -------------------------------------------------------------------------
 function MontaOrdemEtapa($p_chave) {
   extract($GLOBALS);
-  db_getEtapaDataParents($RSQuery, $p_chave);
-  $w_texto="";
-  $w_Cont=$RSQuery->RecordCount;
-  while(!$RSQuery->EOF) {
-    $w_contaux=$w_contaux+1;
+  $RSQuery = db_getEtapaDataParents::getInstanceOf($dbms,$p_chave);
+  $w_texto = "";
+  $w_Cont = count($RSQuery);
+  foreach($RSQuery as $row) {
+    $w_contaux = $w_contaux+1;
     if ($w_contaux==1) {
-      $w_texto=$RSQuery['ORDEM'].".".$w_texto;
+      $w_texto = f($row,'ordem').".".$w_texto;
     } else {
-      $w_texto=$RSQuery['ORDEM'].".".$w_texto;
+      $w_texto = f($row,'ordem').".".$w_texto;
     }
-    $RSQuery->MoveNext;
   }
   return substr($w_texto,0,strlen($w_texto)-1);
 }
@@ -442,7 +401,7 @@ function CRLF2BR($expressao) { if (!isset($expressao) || $expressao=="") { retur
 // =========================================================================
 // Trata valores nulos
 // -------------------------------------------------------------------------
-function Nvl($expressao,$valor) { if (!isset($expressao) || $expressao=="") { return $valor; } else { return $expressao; } }
+function Nvl($expressao,$valor) { if ((!isset($expressao)) || $expressao==="") { return $valor; } else { return $expressao; } }
 
 // =========================================================================
 // Retorna valores nulos se chegar cadeia vazia
@@ -459,8 +418,7 @@ function Cvl($expressao) { if (!isset($expressao) || $expressao=='') { return 0;
 // -------------------------------------------------------------------------
 function DiretorioCliente($p_Cliente) {
   extract($GLOBALS);
-  $DiretorioCliente=ini_get('APPL_PHYSICAL_PATH').'files\\'.$p_cliente;
-  return $function_ret;
+  return ini_get('APPL_PHYSICAL_PATH').'files\\'.$p_cliente;
 }
 
 // =========================================================================
@@ -508,7 +466,8 @@ function AbreForm($p_Name,$p_Action,$p_Method,$p_onSubmit,$p_Target,$p_P1,$p_P2,
 // =========================================================================
 // Montagem de campo do tipo radio com padrão Não
 // -------------------------------------------------------------------------
-function MontaRadioNS($label,$Chave,$Campo) {
+function MontaRadioNS($label,$chave,$campo) {
+  extract($GLOBALS);
   ShowHTML('          <td><font size="1">');
   if (Nvl($label,'')>'') { ShowHTML($label.'</b><br>'); }
   if ($chave=='S') {
@@ -521,7 +480,8 @@ function MontaRadioNS($label,$Chave,$Campo) {
 // =========================================================================
 // Montagem de campo do tipo radio com padrão Sim
 // -------------------------------------------------------------------------
-function MontaRadioSN($label,$Chave,$Campo) {
+function MontaRadioSN($label,$chave,$campo) {
+  extract($GLOBALS);
   ShowHTML('          <td><font size="1">');
   if (Nvl($label,'')>'') { ShowHTML($label.'</b><br>'); }
   if ($chave=='N') {
@@ -622,7 +582,7 @@ function RetornaMenu($p_cliente,$p_sigla) {
   // Se receber o código do menu do SIW, o código será determinado por parâmetro;
   // caso contrário, retornará o código retornado a partir da sigla.
   if ($_REQUEST['w_menu']>'') {
-    $RetornaMenu=$_REQUEST['w_menu'];
+    return $_REQUEST['w_menu'];
   } else {
      $RS = db_getMenuCode::getInstanceOf($dbms, $p_cliente, $p_sigla);
      return f($RS,'SQ_MENU');
@@ -637,8 +597,8 @@ function RetornaCliente() {
   // Se receber o código do cliente do SIW, o cliente será determinado por parâmetro;
   // caso contrário, o cliente será a empresa ao qual o usuário logado está vinculado.
   if ($_REQUEST['w_cgccpf']>'' && strlen($_REQUEST['w_cgccpf'])>11) {
-     $RS = db_getCompanyData($_SESSION['P_CLIENTE'], $_REQUEST('w_cgccpf'));
-     if (!$RS->EOF) {
+     $RS = db_getCompanyData::getInstanceOf($dbms,$_SESSION['P_CLIENTE'], $_REQUEST('w_cgccpf'));
+     if (count($RS) > 0) {
         return $RS['SQ_PESSOA'];
      } else {
         return $_SESSION['P_CLIENTE'];
@@ -658,7 +618,7 @@ function RetornaCliente() {
 // -------------------------------------------------------------------------
 function RetornaGestor($p_solicitacao,$p_usuario) {
   extract($GLOBALS);
-  return db_getGestor($p_solicitacao, $p_usuario);
+  return db_getGestor::getInstanceOf($dbms,$p_solicitacao, $p_usuario);
 }
 
 // =========================================================================
@@ -1148,86 +1108,73 @@ function Estrutura_Menu() {
      ShowHTML('        <DIV id=mainMenu>');
      ShowHTML('          <UL id=menuList>');
      $l_cont=0;
-     db_getLinkDataUser($l_RS, $_SESSION['P_CLIENTE'], $_SESSION['SQ_PESSOA'], null);
+     $l_RS = db_getLinkDataUser::getInstanceOf($dbms,$_SESSION['P_CLIENTE'], $_SESSION['SQ_PESSOA'], null);
      $l_cont=0;
-     while(!$l_RS->EOF) {
-       $l_titulo=$l_RS['NOME'];
-       if ($cDbl[$l_RS['Filho']]>0) {
-
+     foreach($l_RS as $row) {
+       $l_titulo=f(row,'nome');
+       if (f(row,'filho')>0) {
          $l_cont=$l_cont+1;
-         ShowHTML('            <LI class=menubar>::<A class=starter href="#"> '.$l_RS['NOME'].'</A>');
+         ShowHTML('            <LI class=menubar>::<A class=starter href="#"> '.f(row,'nome').'</A>');
          ShowHTML('            <UL class=menu id=menu'.$l_cont.'>');
          $l_cont1=0;
-         db_getLinkDataUser($l_RS1, $_SESSION['P_CLIENTE'], $_SESSION['SQ_PESSOA']);
-         $l_RS['SQ_MENU'];
-         while(!$l_RS1->EOF) {
-           $l_titulo=$l_titulo.' - '.$l_RS1['NOME'];
-           if ($cDbl[$l_RS1['Filho']]>0) {
+         $l_RS1 = db_getLinkDataUser::getInstanceOf($dbms,$_SESSION['P_CLIENTE'], $_SESSION['SQ_PESSOA'], f(row,'sq_menu'));
+         foreach($l_RS1 as $row1) {
+           $l_titulo=$l_titulo.' - '.f(row1,'nome');
+           if (f(row1,'filho')>0) {
               $l_cont1=$l_cont1+1;
-              ShowHTML('              <LI><A href="#"><IMG height=12 alt=">" src="/siw/files/'.$w_cliente.'/img/arrows.gif" width=8> '.$l_RS1['NOME'].'</A> ');
+              ShowHTML('              <LI><A href="#"><IMG height=12 alt=">" src="/siw/files/'.$w_cliente.'/img/arrows.gif" width=8> '.f(row1,'nome').'</A> ');
               ShowHTML('              <UL class=menu id=menu'.$l_cont.'_'.$l_cont1.'>');
               $l_cont2=0;
-              db_getLinkDataUser($l_RS2, $_SESSION['P_CLIENTE'], $_SESSION['SQ_PESSOA']);
-              $l_RS1['SQ_MENU'];
-              while(!$l_RS2->EOF) {
-                $l_titulo=$l_titulo.' - '.$l_RS2['NOME'];
-                if ($cDbl[$l_RS2['Filho']]>0) {
+              $l_RS2 = db_getLinkDataUser::getInstanceOf($dbms,$_SESSION['P_CLIENTE'], $_SESSION['SQ_PESSOA'], f(row1,'sq_menu'));
+              foreach($l_RS2 as $row2) {
+                $l_titulo=$l_titulo.' - '.f(row2,'nome');
+                if (f(row2,'filho')>0) {
                    $l_cont2=$l_cont2+1;
-                   ShowHTML('                <LI><A href="#"><IMG height=12 alt=">" src="/siw/files/'.$w_cliente.'/img/arrows.gif" width=8> '.$l_RS2['NOME'].'</A> ');
+                   ShowHTML('                <LI><A href="#"><IMG height=12 alt=">" src="/siw/files/'.$w_cliente.'/img/arrows.gif" width=8> '.f(row2,'nome').'</A> ');
                    ShowHTML('                <UL class=menu id=menu'.$l_cont.'_'.$l_cont1.'_'.$l_cont2.'>');
-                   db_getLinkDataUser($l_RS3, $_SESSION['P_CLIENTE'], $_SESSION['SQ_PESSOA']);
-                   $l_RS2['SQ_MENU'];
-                   while(!$l_RS3->EOF) {
-                     $l_titulo=$l_titulo.' - '.$l_RS3['NOME'];
-                     if ($l_RS3['EXTERNO']=='S') {
-                       ShowHTML('                  <LI><A href="'.str_replace('@files',$conFileVirtual.$_SESSION['P_CLIENTE'],$l_RS3['LINK']).'" TARGET="'.$l_RS3['TARGET'].'">'.$l_RS3['NOME'].'</A> ');
+                   $l_RS3 = db_getLinkDataUser::getInstanceOf($dbms,$_SESSION['P_CLIENTE'], $_SESSION['SQ_PESSOA'], f(row2,'sq_menu'));
+                   foreach($l_RS3 as $row3) {
+                     $l_titulo=$l_titulo.' - '.f(row3,'nome');
+                     if (f(row3,'externo')=='S') {
+                       ShowHTML('                  <LI><A href="'.str_replace('@files',$conFileVirtual.$_SESSION['P_CLIENTE'],f(row3,'link')).'" TARGET="'.f(row3,'target').'">'.f(row3,'nome').'</A> ');
                      } else {
-                       ShowHTML('                  <LI><A href="'.$l_RS3['LINK'].'&P1='.$l_RS3['P1'].'&P2='.$l_RS3['P2'].'&P3='.$l_RS3['P3'].'&P4='.$l_RS3['P4'].'&TP='.$l_titulo.'&SG='.$l_RS3['SIGLA'].'">'.$l_RS3['NOME'].'</A> ');
+                       ShowHTML('                  <LI><A href="'.f(row3,'link').'&P1='.f(row3,'p1').'&P2='.f(row3,'p2').'&P3='.f(row3,'p3').'&P4='.f(row3,'p4').'&TP='.$l_titulo.'&SG='.f(row3,'sigla').'">'.f(row3,'nome').'</A> ');
                      }
-                     $l_titulo=str_replace(' - '.$l_RS3['NOME'],'',$l_titulo);
-                     $l_RS3->MoveNext;
+                     $l_titulo=str_replace(' - '.f(row3,'nome'),'',$l_titulo);
                    }
                    ShowHTML('            </UL>');
-                   $l_RS3->Close;
                 } else {
-                   if ($l_RS2['EXTERNO']=='S') {
-                      ShowHTML('                <LI><A href="'.str_replace('@files',$conFileVirtual.$_SESSION['P_CLIENTE'],$l_RS2['LINK']).'" TARGET="'.$l_RS2['TARGET'].'">'.$l_RS2['NOME'].'</A> ');
+                   if (f(row2,'externo')=='S') {
+                      ShowHTML('                <LI><A href="'.str_replace('@files',$conFileVirtual.$_SESSION['P_CLIENTE'],f(row2,'link')).'" TARGET="'.f(row2,'target').'">'.f(row2,'nome').'</A> ');
                    } else {
-                      ShowHTML('                <LI><A href="'.$l_RS2['LINK'].'&P1='.$l_RS2['P1'].'&P2='.$l_RS2['P2'].'&P3='.$l_RS2['P3'].'&P4='.$l_RS2['P4'].'&TP='.$l_titulo.'&SG='.$l_RS2['SIGLA'].'">'.$l_RS2['NOME'].'</A> ');
+                      ShowHTML('                <LI><A href="'.f(row2,'link').'&P1='.f(row2,'p1').'&P2='.f(row2,'p2').'&P3='.f(row2,'p3').'&P4='.f(row2,'p4').'&TP='.$l_titulo.'&SG='.f(row2,'sigla').'">'.f(row2,'nome').'</A> ');
                    }
                 }
-                $l_titulo=str_replace(' - '.$l_RS2['NOME'],'',$l_titulo);
-                $l_RS2->MoveNext;
+                $l_titulo=str_replace(' - '.f(row2,'nome'),'',$l_titulo);
               }
               ShowHTML('            </UL>');
-              $l_RS2->Close;
            } else {
-              if ($l_RS1['EXTERNO']=='S') {
-                 if ($l_RS1['LINK']>'') {
-                    ShowHTML('              <LI><A href="'.str_replace('@files',$conFileVirtual.$_SESSION['P_CLIENTE'],$l_RS1['LINK']).'" TARGET="'.$l_RS1['TARGET'].'">'.$l_RS1['NOME'].'</A> ');
+              if (f(row1,'externo')=='S') {
+                 if (f(row1,'link')>'') {
+                    ShowHTML('              <LI><A href="'.str_replace('@files',$conFileVirtual.$_SESSION['P_CLIENTE'],f(row1,'link')).'" TARGET="'.f(row1,'target').'">'.f(row1,'nome').'</A> ');
                  } else {
-                   ShowHTML('              <LI>'.$l_RS1['NOME'].' ');
+                   ShowHTML('              <LI>'.f(row1,'nome').' ');
                  }
               } else {
-                 ShowHTML('              <LI><A href="'.$l_RS1['LINK'].'&P1='.$l_RS1['P1'].'&P2='.$l_RS1['P2'].'&P3='.$l_RS1['P3'].'&P4='.$l_RS1['P4'].'&TP='.$l_titulo.'&SG='.$l_RS1['SIGLA'].'">'.$l_RS1['NOME'].'</A> ');
+                 ShowHTML('              <LI><A href="'.f(row1,'link').'&P1='.f(row1,'p1').'&P2='.f(row1,'p2').'&P3='.f(row1,'p3').'&P4='.f(row1,'p4').'&TP='.$l_titulo.'&SG='.f(row1,'sigla').'">'.f(row1,'nome').'</A> ');
               }
            }
-           $l_titulo=str_replace(' - '.$l_RS1['NOME'],'',$l_titulo);
-           $l_RS1->MoveNext;
+           $l_titulo=str_replace(' - '.f(row1,'nome'),'',$l_titulo);
          }
          ShowHTML('            </UL>');
-         $l_RS1->Close;
-
        } else {
-          if ($l_RS['EXTERNO']=='S') {
-             ShowHTML('            <LI class=menubar>::<A class=starter href="'.str_replace('@files',$conFileVirtual.$_SESSION['P_CLIENTE'],$l_RS['LINK']).'" TARGET="'.$l_RS['TARGET'].'"> '.$l_RS['NOME'].'</A>');
+          if (f(row,'externo')=='S') {
+             ShowHTML('            <LI class=menubar>::<A class=starter href="'.str_replace('@files',$conFileVirtual.$_SESSION['P_CLIENTE'],f(row,'link')).'" TARGET="'.f(row,'target').'"> '.f(row,'nome').'</A>');
           } else {
-            ShowHTML('            <LI class=menubar>::<A class=starter href="'.$l_RS['LINK'].'&P1='.$l_RS['P1'].'&P2='.$l_RS['P2'].'&P3='.$l_RS['P3'].'&P4='.$l_RS['P4'].'&TP='.$l_titulo.'&SG='.$l_RS['SIGLA'].'"> '.$l_RS['NOME'].'</A>');
+            ShowHTML('            <LI class=menubar>::<A class=starter href="'.f(row,'link').'&P1='.f(row,'p1').'&P2='.f(row,'p2').'&P3='.f(row,'p3').'&P4='.f(row,'p4').'&TP='.$l_titulo.'&SG='.f(row,'sigla').'"> '.f(row,'nome').'</A>');
           }
        }
-       $l_RS->MoveNext;
      }
-     $l_RS->Close;
      ShowHTML('            <LI class=menubar>::<A class=starter href="'.$w_dir.'Menu.php?par=Sair" & " onClick="return(confirm("Confirma saída do sistema?"));"> Sair</A>');
      ShowHTML('          </UL>');
      ShowHTML('        </DIV>');
@@ -1284,10 +1231,14 @@ function VerificaSenhaAcesso($Usuario,$Senha) {
 // =========================================================================
 function VerificaAssinaturaEletronica($Usuario,$Senha) {
    extract($GLOBALS);
-   if (db_verificaAssinatura::getInstanceOf($dbms, $_SESSION["P_CLIENTE"],$Usuario,$Senha) ==0)
-      return true;
-    else
-      return false;
+   if ($Senha>'') {
+      if (db_verificaAssinatura::getInstanceOf($dbms, $_SESSION["P_CLIENTE"],$Usuario,$Senha) ==0)
+         return true;
+       else
+         return false;
+   } else {
+     return true;
+   }
 }
 
 // =========================================================================
