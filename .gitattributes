@@ -2617,6 +2617,7 @@ SP_Oracle92/sys/SP_PUTDICIONARIO.prc -text
 SP_PostgreSQL_8-0/siw/Acesso.sql -text
 SP_PostgreSQL_8-0/siw/Marcado.sql -text
 SP_PostgreSQL_8-0/siw/SP_GetAddressList.sql -text
+SP_PostgreSQL_8-0/siw/SP_GetCCTreeVision.sql -text
 SP_PostgreSQL_8-0/siw/SP_GetCustomerData.sql -text
 SP_PostgreSQL_8-0/siw/SP_GetCustomerSite.sql -text
 SP_PostgreSQL_8-0/siw/SP_GetDeskTop.sql -text
@@ -2627,9 +2628,11 @@ SP_PostgreSQL_8-0/siw/SP_GetLinkDataUser.sql -text
 SP_PostgreSQL_8-0/siw/SP_GetLocalList.sql -text
 SP_PostgreSQL_8-0/siw/SP_GetMenuCode.sql -text
 SP_PostgreSQL_8-0/siw/SP_GetMenuData.sql -text
+SP_PostgreSQL_8-0/siw/SP_GetMenuList.sql -text
 SP_PostgreSQL_8-0/siw/SP_GetMenuOrder.sql -text
 SP_PostgreSQL_8-0/siw/SP_GetModData.sql -text
 SP_PostgreSQL_8-0/siw/SP_GetPersonData.sql -text
+SP_PostgreSQL_8-0/siw/SP_GetPersonList.sql -text
 SP_PostgreSQL_8-0/siw/SP_GetSegModData.sql -text
 SP_PostgreSQL_8-0/siw/SP_GetSiwCliModLis.sql -text
 SP_PostgreSQL_8-0/siw/SP_GetStateList.sql -text
@@ -2637,6 +2640,14 @@ SP_PostgreSQL_8-0/siw/SP_GetTramiteList.sql -text
 SP_PostgreSQL_8-0/siw/SP_GetUorgList.sql -text
 SP_PostgreSQL_8-0/siw/SP_GetUserData.sql -text
 SP_PostgreSQL_8-0/siw/SP_GetUserList.sql -text
+SP_PostgreSQL_8-0/siw/SP_GetUserModule.sql -text
+SP_PostgreSQL_8-0/siw/SP_GetUserVision.sql -text
+SP_PostgreSQL_8-0/siw/SP_GetVincKindList.sql -text
+SP_PostgreSQL_8-0/siw/SP_PutSgPesMod.sql -text
+SP_PostgreSQL_8-0/siw/SP_PutSiwPesCC.sql -text
+SP_PostgreSQL_8-0/siw/SP_UpdatePassword.sql -text
+SP_PostgreSQL_8-0/siw/SP_VerificaAssinat.sql -text
+SP_PostgreSQL_8-0/siw/SP_fGetMenuList.sql -text
 SP_PostgreSQL_8-0/siw/acentos.sql -text
 SP_PostgreSQL_8-0/siw/sp_getMenuLink.sql -text
 SP_PostgreSQL_8-0/siw/sp_verificausuario.sql -text

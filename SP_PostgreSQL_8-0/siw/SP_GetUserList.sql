@@ -7,6 +7,7 @@ create or replace function SP_GetUserList
     p_modulo      numeric,
     p_uf          varchar,
     p_ativo       varchar,
+    p_contratado  varchar,
     p_result      refcursor
    ) returns refcursor as $$
 begin
@@ -26,13 +27,12 @@ begin
               left outer   join co_tipo_vinculo    e on (b.sq_tipo_vinculo    = e.sq_tipo_vinculo)
       where a.cliente      = p_cliente
         and (p_ativo       is null or (p_ativo       is not null and a.ativo             = p_ativo))
+        and (p_contratado  is null or (p_contratado  is not null and e.contratado        = p_contratado))
         and (p_localizacao is null or (p_localizacao is not null and d.sq_localizacao    = p_localizacao))
         and (p_lotacao     is null or (p_lotacao     is not null and c.sq_unidade        = p_lotacao))
         and (p_gestor      is null or (p_gestor      is not null and (a.gestor_sistema   = p_gestor or 
                                                                       a.gestor_seguranca = p_gestor)))
-        and (p_nome        is null or (p_nome        is not null and (b.nome_indice       like '%'||upper(acentos(p_nome, null))||'%') or b.nome_resumido_ind like '%'||upper(acentos(p_nome, null))||'%'))
+        and (p_nome        is null or (p_nome        is not null and b.nome_indice       like '%'||upper(acentos(p_nome,null))||'%'))
         and (p_uf          is null or (p_uf          is not null and g.co_uf             = p_uf));
    return p_result;
 end; $$ language 'plpgsql' volatile;
-
-
