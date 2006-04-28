@@ -1,6 +1,7 @@
 create or replace procedure SP_GetSolicEtpRec
    (p_chave     in number,
     p_chave_aux in number   default null,
+    p_restricao in varchar2 default null,
     p_result    out siw.sys_refcursor
    ) is
 begin
@@ -16,7 +17,7 @@ begin
         and (b.sq_projeto_recurso   = c.sq_projeto_recurso (+) and 
              c.sq_projeto_etapa (+) = p_chave
             )
-        and a.sq_projeto_etapa     = p_chave;
+        and a.sq_projeto_etapa     = p_chave
+        and (p_restricao is null or (p_restricao = 'EXISTE' and c.sq_projeto_recurso is not null));        
 End SP_GetSolicEtpRec;
 /
-

@@ -17,8 +17,7 @@ Function VisualProjeto(w_chave, O, w_usuario, P1, P4)
   w_html = ""
 
   ' Verifica se o cliente tem o módulo de acordos contratado
-  DB_GetSiwCliModLis RS, w_cliente, null
-  RS.Filter = "sigla='AC'"
+  DB_GetSiwCliModLis RS, w_cliente, null, "AC"
   If Not RS.EOF Then w_acordo = "S" Else w_acordo = "N" End If
   DesconectaBD
 

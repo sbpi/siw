@@ -123,13 +123,7 @@ Sub Feriado
   p_ordena          = uCase(Request("p_ordena"))
   
   If O = "L" Then
-     DB_GetFeriado RS, w_cliente, Session("localizacao"), null, null
-     If p_nome & p_tipo > "" Then
-        w_filter = ""
-        If p_nome > "" Then w_filter = w_filter & " and nome like '*" & p_nome & "*' " End If
-        If p_tipo > "" Then w_filter = w_filter & " and tipo = '" & p_tipo & "' "      End If
-        RS.Filter = Mid(w_filter,6,255)
-     End If
+     DB_GetFeriado RS, w_cliente, Session("localizacao"), null, null, p_nome, p_tipo
      If p_Ordena = "" Then 
         RS.Sort = "Nome"
      Else
@@ -137,7 +131,7 @@ Sub Feriado
      End If
   ElseIf O = "A" or O = "E" Then
      w_sq_feriado = Request("w_sq_feriado")
-     DB_GetFeriado RS, w_cliente, Session("localizacao"), w_sq_feriado, null
+     DB_GetFeriado RS, w_cliente, Session("localizacao"), w_sq_feriado, null, null, null
      w_nome     = RS("nome")
      w_tipo     = RS("tipo")
      DesconectaBD

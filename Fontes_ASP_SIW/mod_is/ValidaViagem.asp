@@ -44,8 +44,7 @@ Function ValidaViagem(p_cliente, p_chave, p_sg1, p_sg2, p_sg3, p_sg4, p_tramite)
         End If
           
         ' Verifica se o cliente tem o módulo de viagens contratado
-        DB_GetSiwCliModLis l_rs_modulo, p_cliente, null
-        l_rs_modulo.Filter = "sigla='PD'"
+        DB_GetSiwCliModLis l_rs_modulo, p_cliente, null, "PD"
         If Not l_rs_modulo.EOF Then l_viagem = "S" Else l_viagem = "N" End If
         l_rs_modulo.close
 

@@ -1031,7 +1031,7 @@ Sub Endereco
   w_troca     = Request("w_troca")
   w_sq_menu = Request("w_sq_menu")
 
-  DB_GetaddressList RS, w_cliente, null, "FISICO"
+  DB_GetaddressList RS, w_cliente, null, "FISICO", null
   Cabecalho
   ShowHTML "<HEAD>"
   ShowHTML "<TITLE>" & conSgSistema & " - Endereços</TITLE>"

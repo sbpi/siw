@@ -276,7 +276,6 @@ Sub Gerencial
                 p_chave, p_assunto, p_pais, p_regiao, p_uf, p_cidade, p_usu_resp, _
                 p_uorg_resp, p_palavra, p_prazo, p_fase, p_sqcc, p_projeto, p_atividade, null, null
            w_TP = TP & " - Por etapa de projeto"
-           RS1.Filter = "cd_ordem <> null"
            RS1.sort = "cd_ordem"
         Case "GRDMPROJ"
            DB_GetSolicList RS1, P2, w_usuario, p_agrega, 4, _
@@ -293,7 +292,6 @@ Sub Gerencial
                 p_chave, p_assunto, p_pais, p_regiao, p_uf, p_cidade, p_usu_resp, _
                 p_uorg_resp, p_palavra, p_prazo, p_fase, p_sqcc, p_projeto, p_atividade, null, null
            w_TP = TP & " - Por proponente"
-           RS1.Filter = "proponente <> null"
            RS1.sort = "proponente"
         Case "GRDMRESP"
            DB_GetSolicList RS1, P2, w_usuario, p_agrega, 4, _
@@ -310,7 +308,6 @@ Sub Gerencial
                 p_chave, p_assunto, p_pais, p_regiao, p_uf, p_cidade, p_usu_resp, _
                 p_uorg_resp, p_palavra, p_prazo, p_fase, p_sqcc, p_projeto, p_atividade, null, null
            w_TP = TP & " - Por executor"
-           RS1.Filter = "executor <> null"
            RS1.sort = "nm_exec"
         Case "GRDMCC"
            DB_GetSolicList RS1, P2, w_usuario, p_agrega, 4, _

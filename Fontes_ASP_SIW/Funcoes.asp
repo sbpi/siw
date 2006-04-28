@@ -808,7 +808,7 @@ REM =========================================================================
 REM Montagem da seleção do tipo da pessoa
 REM -------------------------------------------------------------------------
 Sub SelecaoTipoPessoa (label, accesskey, hint, chave, chaveAux, campo, restricao, atributo)
-    DB_GetKindPersonList RS
+    DB_GetKindPersonList RS, null
     If IsNull(hint) Then
        ShowHTML "          <td valign=""top""><font size=""1""><b>" & Label & "</b><br><SELECT ACCESSKEY=""" & accesskey & """ CLASS=""STS"" NAME=""" & campo & """ " & w_Disabled & " " & atributo & ">"
     Else
@@ -957,7 +957,7 @@ REM =========================================================================
 REM Montagem da seleção dos endereços da organização
 REM -------------------------------------------------------------------------
 Sub SelecaoEndereco (label, accesskey, hint, chave, chaveAux, campo, restricao)
-    DB_GetaddressList RS, w_cliente, ChaveAux, restricao
+    DB_GetaddressList RS, w_cliente, ChaveAux, restricao, null
     If IsNull(hint) Then
        ShowHTML "          <td valign=""top""><font size=""1""><b>" & Label & "</b><br><SELECT ACCESSKEY=""" & accesskey & """ CLASS=""STS"" NAME=""" & campo & """ " & w_Disabled & ">"
     Else
@@ -980,7 +980,7 @@ REM =========================================================================
 REM Montagem da seleção dos telefones de uma pessoa
 REM -------------------------------------------------------------------------
 Sub SelecaoTelefone (label, accesskey, hint, chave, chaveAux, campo, restricao)
-    DB_GetFoneList RS, w_cliente, ChaveAux, restricao
+    DB_GetFoneList RS, w_cliente, ChaveAux, restricao, null
     
     
     If IsNull(hint) Then
@@ -1008,7 +1008,7 @@ REM =========================================================================
 REM Montagem da seleção dos módulos contratados pelo cliente
 REM -------------------------------------------------------------------------
 Sub SelecaoModulo (label, accesskey, hint, chave, chaveAux, campo, restricao, atributo)
-    DB_GetSiwCliModLis RS, chaveAux, restricao
+    DB_GetSiwCliModLis RS, chaveAux, restricao, null
     RS.Sort = "nome"
     If IsNull(hint) Then
        ShowHTML "          <td valign=""top""><font size=""1""><b>" & Label & "</b><br><SELECT ACCESSKEY=""" & accesskey & """ CLASS=""STS"" NAME=""" & campo & """ " & w_Disabled & " " & atributo & ">"

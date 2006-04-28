@@ -16,8 +16,7 @@ Function VisualProjeto(w_chave, O, w_usuario)
   w_html = ""
 
   ' Verifica se o cliente tem o módulo de acordos contratado
-  DB_GetSiwCliModLis RS, w_cliente, null
-  RS.Filter = "sigla='AC'"
+  DB_GetSiwCliModLis RS, w_cliente, null, "AC"
   If Not RS.EOF Then w_acordo = "S" Else w_acordo = "N" End If
   DesconectaBD
 
@@ -185,12 +184,11 @@ Function VisualProjeto(w_chave, O, w_usuario)
      
      'Lista das atividades que não são ligadas a nenhuma etapa
      If O = "T" Then
-        DB_GetSolicList RS, w_menu, w_usuario, "GDPCAD", 3, _
+        DB_GetSolicList RS, w_menu, w_usuario, "GDPCADET", 3, _
         null, null, null, null, null, null, _
         null, null, null, null, _
         null, null, null, null, null, null, null, _
         null, null, null, null, null, w_chave, null, null, null
-        RS.Filter = "sq_projeto_etapa = null"
         
         If Not RS.EOF Then
            w_html = w_html & VbCrLf & "      <tr><td valign=""top"" colspan=""2"" align=""center"" bgcolor=""#D0D0D0"" style=""border: 2px solid rgb(0,0,0);""><font size=""1""><b>Atividades não ligadas a etapas</td>"

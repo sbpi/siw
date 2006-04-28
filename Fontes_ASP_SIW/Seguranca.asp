@@ -1966,7 +1966,7 @@ Sub TelaUnidade
   ShowHTML "              <td><font size=""1""><b>Fax</font></td>"
   ShowHTML "              <td><font size=""1""><b>Endereço</font></td>"
   ShowHTML "            </tr>"
-  DB_GetaddressList RS, w_cliente, w_sq_unidade, "LISTALOCALIZACAO"
+  DB_GetaddressList RS, w_cliente, w_sq_unidade, "LISTALOCALIZACAO", null
   While Not RS.EOF
     ShowHTML "            <tr bgcolor=""" & conTrBgColor & """ valign=""top"">"
     ShowHTML "              <td><font size=""1"">" & RS("nome") &"</td>"

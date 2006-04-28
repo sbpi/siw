@@ -48,8 +48,7 @@ Function ValidaFerias(p_cliente, p_chave, p_sg1, p_sg2, p_sg3, p_sg4, p_tramite)
   End If
     
   ' Verifica se o cliente tem o módulo financeiro contratado
-  DB_GetSiwCliModLis l_rs_modulo, p_cliente, null
-  l_rs_modulo.Filter = "sigla='FN'"
+  DB_GetSiwCliModLis l_rs_modulo, p_cliente, null, "FN"
   If Not l_rs_modulo.EOF Then l_financeiro = "S" Else l_financeiro = "N" End If
   l_rs_modulo.close
 

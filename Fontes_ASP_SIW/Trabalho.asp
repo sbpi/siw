@@ -110,8 +110,7 @@ Sub Mesa
   
   If O = "L" Then
      ' Verifica se o cliente tem o módulo de telefonia contratado
-     DB_GetSiwCliModLis RS, w_cliente, null
-     RS.Filter = "sigla='TT'"
+     DB_GetSiwCliModLis RS, w_cliente, null, "TT"
      If Not RS.EOF Then w_telefonia = RS("nome") End If
      DesconectaBD
 

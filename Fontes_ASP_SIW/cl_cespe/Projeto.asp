@@ -789,8 +789,7 @@ Sub Geral
   w_troca           = Request("w_troca")
 
   ' Verifica se o cliente tem o módulo de acordos contratado
-  DB_GetSiwCliModLis RS, w_cliente, null
-  RS.Filter = "sigla='AC'"
+  DB_GetSiwCliModLis RS, w_cliente, null, "AC"
   If Not RS.EOF Then w_acordo = "S" Else w_acordo = "N" End If
   'DesconectaBD
   

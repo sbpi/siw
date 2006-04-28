@@ -2768,7 +2768,7 @@ Sub EtapaRecursos
   w_chave_aux   = Request("w_chave_aux")
   w_chave_pai   = Request("w_chave_pai")
 
-  DB_GetSolicEtpRec RS, w_chave_aux, null
+  DB_GetSolicEtpRec RS, w_chave_aux, null, null
   RS.Sort = "tipo, nome"
   Cabecalho
   ShowHTML "<HEAD>"
@@ -3877,8 +3877,7 @@ Function EtapaLinha (p_chave,  p_chave_aux, p_titulo, p_resp,  p_setor, _
   Dim l_html, RsQuery, l_recurso, l_row
   l_recurso = ""
   
-  DB_GetSolicEtpRec RSQuery, p_chave_aux, null
-  RSQuery.Filter = "existe <> null"
+  DB_GetSolicEtpRec RSQuery, p_chave_aux, null, "EXISTE"
   If Not RSQuery.EOF Then
      l_recurso = l_recurso & VbCrLf & "      <tr bgcolor=w_cor valign=""top""><td colspan=3><table border=0 width=""100%""><tr><td><font size=""1"">Recurso(s): "
      While not RsQuery.EOF

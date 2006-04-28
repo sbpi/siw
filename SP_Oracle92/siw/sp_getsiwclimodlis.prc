@@ -1,6 +1,7 @@
 create or replace procedure SP_GetSiwCliModLis
    (p_cliente   in  number,
     p_restricao in  varchar2 default null,
+    p_sigla     in  varchar2 default null,
     p_result    out sys_refcursor
    ) is
 begin
@@ -11,6 +12,7 @@ begin
            from siw_cliente_modulo    a
                 inner join siw_modulo b on (a.sq_modulo = b.sq_modulo)
           where a.sq_pessoa = p_cliente
+            and (p_sigla is null or (p_sigla is not null and b.sigla = p_sigla))
          order by nome;
    Elsif p_restricao = 'DISPONIVEL' Then
       -- Recupera a lista de módulos disponíveis para compra pelo cliente

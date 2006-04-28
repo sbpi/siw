@@ -59,7 +59,7 @@ Sub VisualCurriculo(p_cliente, p_usuario, O)
      DesconectaBD
      
      ' Telefones
-     DB_GetFoneList RS, p_usuario, null, null
+     DB_GetFoneList RS, p_usuario, null, null, null
      RS.Sort = "tipo_telefone, numero"
      HTML = VbCrLf & HTML &"      <tr><td valign=""top"" colspan=""3""><font size=""1"">&nbsp;</td>"
      HTML = VbCrLf & HTML &"      <tr><td valign=""top"" colspan=""3"" align=""center"" bgcolor=""#D0D0D0"" style=""border: 2px solid rgb(0,0,0);""><font size=""1""><b>Telefones</td>"
@@ -94,9 +94,8 @@ Sub VisualCurriculo(p_cliente, p_usuario, O)
      DesconectaBD
      
      'Endereços de e-mail e internet
-     DB_GetAddressList RS, p_usuario, null, null
+     DB_GetAddressList RS, p_usuario, null, "EMAILINTERNET", null
      RS.Sort = "tipo_endereco, endereco"
-     RS.Filter = "email='S' or internet='S'"
      HTML = VbCrLf & HTML &"      <tr><td valign=""top"" colspan=""3""><font size=""1"">&nbsp;</td>"
      HTML = VbCrLf & HTML &"      <tr><td valign=""top"" colspan=""2"" align=""center"" bgcolor=""#D0D0D0"" style=""border: 2px solid rgb(0,0,0);""><font size=""1""><b>Endereços de e-Mail e Internet</td>"
      HTML = VbCrLf & HTML &"      <tr><td align=""center"" colspan=""2"">"
@@ -127,9 +126,8 @@ Sub VisualCurriculo(p_cliente, p_usuario, O)
 
      'Endereços físicos
      HTML = VbCrLf & HTML &"      <tr><td valign=""top"" colspan=""3""><font size=""1"">&nbsp;</td>"
-     DB_GetAddressList RS, p_usuario, null, null
+     DB_GetAddressList RS, p_usuario, null, "FISICO", null
      RS.Sort = "tipo_endereco, endereco"
-     RS.Filter = "email='N' and internet='N'"
      HTML = VbCrLf & HTML &"      <tr><td valign=""top"" colspan=""2"" align=""center"" bgcolor=""#D0D0D0"" style=""border: 2px solid rgb(0,0,0);""><font size=""1""><b>Endereços Físicos</td>"
      If RS.EOF Then
         HTML = VbCrLf & HTML &"      <tr bgcolor=""" & conTrBgColor & """><font size=""1""><b>Não foi encontrado nenhum endereço.</b></td></tr>"

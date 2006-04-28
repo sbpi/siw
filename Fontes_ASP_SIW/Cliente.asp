@@ -199,20 +199,7 @@ REM -------------------------------------------------------------------------
 Sub Inicial
 
   If O = "L" Then
-     DB_GetSiwCliList RS
-     If p_pais & p_uf & p_cidade & p_ativo & p_nome > "" Then
-        w_filter = ""
-        If p_ativo = "S" Then 
-           w_filter = w_filter & "  and desativacao = null and bloqueio = null"
-        Elseif p_ativo = "N" Then
-           w_filter = w_filter & "  and (desativacao <> null or bloqueio <> null)"
-        End If
-        If p_nome        > ""  Then w_filter = w_filter & "  and nome             like '*" & p_nome & "*'"  End If
-        If p_uf          > ""  Then w_filter = w_filter & "  and uf               = '" & p_uf & "'"         End If
-        If p_cidade      > ""  Then w_filter = w_filter & "  and sq_cidade        = " & p_cidade & " "      End If
-        If p_pais        > ""  Then w_filter = w_filter & "  and sq_pais          = " & p_pais & " "        End If
-        RS.Filter = Mid(w_filter,6,255)
-     End If
+     DB_GetSiwCliList RS, p_pais, p_uf, p_cidade, p_ativo, p_nome
      If p_ordena > "" Then RS.sort = p_ordena Else RS.sort = "nome_indice" End If
   End If
   
@@ -732,7 +719,7 @@ Sub Enderecos
   
   If O = "L" Then
      ' Recupera todos os endereços do cliente, independente do tipo
-     DB_GetAddressList RS, w_sq_pessoa, null, null
+     DB_GetAddressList RS, w_sq_pessoa, null, null, null
      RS.Sort = "tipo_endereco, endereco"
   ElseIf InStr("AEV",O) > 0 and w_Troca = "" Then
      ' Recupera os dados do endereço informado
@@ -970,7 +957,7 @@ Sub Telefones
      w_numero               = Request("w_numero")
      w_padrao               = Request("w_padrao")
   ElseIf O = "L" Then
-     DB_GetFoneList RS, w_sq_pessoa, null, null
+     DB_GetFoneList RS, w_sq_pessoa, null, null, null
      RS.Sort = "tipo_telefone, numero"
   ElseIf InStr("AEV",O) > 0  Then
      ' Recupera os dados para edição
@@ -1426,7 +1413,7 @@ Sub Modulos
      w_sq_modulo = Request("w_sq_modulo")
   ElseIf O = "L" Then
      ' Recupera os módulos contratados pelo cliente
-     DB_GetSiwCliModLis RS, w_sq_pessoa, null
+     DB_GetSiwCliModLis RS, w_sq_pessoa, null, null
   End If
   
   If w_sq_modulo > "" Then
@@ -1938,12 +1925,7 @@ Public Sub Grava
            ' Se o endereço a ser gravado foi indicado como padrão, verifica se não existe algum outro
            ' nesta situação. Só pode haver um endereço padrão para a pessoa dentro de cada tipo de endereço.
            If Request("w_padrao") = "S" Then
-              DB_GetAddressList RS, Request("w_sq_pessoa"), null, null
-              w_filter = "padrao = 'S' and sq_tipo_endereco = " & Request("w_sq_tipo_endereco")
-              If Request("w_sq_pessoa_endereco") > "" Then
-                 w_filter = w_filter & " and sq_pessoa_endereco <> " & Request("w_sq_pessoa_endereco")
-              End If
-              RS.Filter = w_filter
+              DB_GetAddressList RS, Request("w_sq_pessoa"), null, Request("w_sq_pessoa_endereco"), Request("w_sq_tipo_endereco")
               If RS.RecordCount > 0 Then
                 ScriptOpen "JavaScript"
                 ShowHTML "  alert('ATENÇÃO: Só pode haver um valor padrão em cada tipo de endereço. Favor verificar!');"
@@ -1975,12 +1957,7 @@ Public Sub Grava
            ' Se o telefone a ser gravado foi indicado como padrão, verifica se não existe algum outro
            ' nesta situação. Só pode haver um telefone padrão para a pessoa.
            If Request("w_padrao") = "S" Then
-              DB_GetFoneList RS, Request("w_sq_pessoa"), null, null
-              w_filter = "padrao = 'S' and sq_tipo_telefone = " & Request("w_sq_tipo_telefone")
-              If Request("w_sq_pessoa_telefone") > "" Then
-                 w_filter = w_filter & " and sq_pessoa_telefone <> " & Request("w_sq_pessoa_telefone")
-              End If
-              RS.Filter = w_filter
+              DB_GetFoneList RS, Request("w_sq_pessoa"), Request("w_sq_pessoa_telefone"), "TELEFONE", Request("w_sq_tipo_telefone")
               If RS.RecordCount > 0 Then
                  ScriptOpen "JavaScript"
                  ShowHTML "  alert('ATENÇÃO: Só pode haver um valor padrão em cada tipo de telefone. Favor verificar.!');"
@@ -2013,12 +1990,7 @@ Public Sub Grava
            
            ' Só pode haver uma conta padrão para a pessoa
            If Request("w_padrao") = "S" Then
-              DB_GetContaBancoList RS, Request("w_sq_pessoa"), null, null
-              w_filter = "padrao = 'S'"
-              If Request("w_sq_conta_bancaria") > "" Then
-                 w_filter = w_filter & " and sq_conta_bancaria <> " & Request("w_sq_conta_bancaria")
-              End If
-              RS.Filter = w_filter
+              DB_GetContaBancoList RS, Request("w_sq_pessoa"), Request("w_sq_conta_bancaria"), "CONTASBANCARIAS"
               If RS.RecordCount > 0 Then
                  w_mensagem = "ATENÇÃO: Só pode haver uma conta padrão. Favor verificar."
               End If

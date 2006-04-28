@@ -751,8 +751,7 @@ Sub Geral
   w_troca           = Request("w_troca")
 
   ' Verifica se o cliente tem o módulo de acordos contratado
-  DB_GetSiwCliModLis RS, w_cliente, null
-  RS.Filter = "sigla='AC'"
+  DB_GetSiwCliModLis RS, w_cliente, null, "AC"
   If Not RS.EOF Then w_acordo = "S" Else w_acordo = "N" End If
   DesconectaBD
   
@@ -2093,7 +2092,7 @@ Sub EtapaRecursos
   w_chave_aux   = Request("w_chave_aux")
   w_chave_pai   = Request("w_chave_pai")
 
-  DB_GetSolicEtpRec RS, w_chave_aux, null
+  DB_GetSolicEtpRec RS, w_chave_aux, null, null
   RS.Sort = "tipo, nome"
   Cabecalho
   ShowHTML "<HEAD>"
@@ -3014,8 +3013,7 @@ Function EtapaLinha (p_chave,  p_chave_aux, p_titulo, p_resp,  p_setor, _
   Dim l_html, RsQuery, l_recurso, l_row
   l_recurso = ""
   
-  DB_GetSolicEtpRec RSQuery, p_chave_aux, null
-  RSQuery.Filter = "existe <> null"
+  DB_GetSolicEtpRec RSQuery, p_chave_aux, null, "EXISTE"
   If Not RSQuery.EOF Then
      l_recurso = l_recurso & VbCrLf & "      <tr bgcolor=w_cor valign=""top""><td colspan=3><table border=0 width=""100%""><tr><td><font size=""1"">Recurso(s): "
      While not RsQuery.EOF
@@ -3095,8 +3093,7 @@ Function EtapaLinhaAtiv (p_chave,  p_chave_aux, p_titulo, p_resp,  p_setor, _
   l_row     = 1 
   l_col     = 1
   
-  DB_GetSolicEtpRec RSQuery, p_chave_aux, null
-  RSQuery.Filter = "existe <> null"
+  DB_GetSolicEtpRec RSQuery, p_chave_aux, null, "EXISTE"
   If Not RSQuery.EOF Then
      l_recurso = l_recurso & VbCrLf & "      <tr bgcolor=w_cor valign=""top""><td colspan=7><font size=1>Recurso(s): "
      While not RsQuery.EOF

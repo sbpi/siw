@@ -213,15 +213,18 @@ REM -------------------------------------------------------------------------
 REM =========================================================================
 REM Recupera a lista de módulos disponíveis para o cliente
 REM -------------------------------------------------------------------------
-Sub DB_GetSiwCliModLis(p_rs, p_cliente, p_restricao)
-  Dim l_cliente, l_restricao
+Sub DB_GetSiwCliModLis(p_rs, p_cliente, p_restricao, p_sigla)
+  Dim l_cliente, l_restricao, l_sigla
   Set l_cliente     = Server.CreateObject("ADODB.Parameter")
   Set l_restricao   = Server.CreateObject("ADODB.Parameter")
+  Set l_sigla       = Server.CreateObject("ADODB.Parameter")
   with sp
      set l_cliente              = .CreateParameter("l_cliente",   adInteger, adParamInput, , p_cliente)
      set l_restricao            = .CreateParameter("l_restricao", adVarChar, adParamInput, 20, Tvl(p_restricao))
+     set l_sigla                = .CreateParameter("l_sigla",     adVarChar, adParamInput,  3, Tvl(p_sigla))
      .parameters.Append         l_cliente
      .parameters.Append         l_restricao
+     .parameters.Append         l_sigla
      If Session("dbms") = 1 or Session("dbms") = 3 Then .Properties("PLSQLRSet") = TRUE End If
      .CommandText               = Session("schema") & "SP_GetSiwCliModLis"
      On Error Resume Next
@@ -232,6 +235,7 @@ Sub DB_GetSiwCliModLis(p_rs, p_cliente, p_restricao)
      If Session("dbms") = 1 or Session("dbms") = 3 Then .Properties("PLSQLRSet") = FALSE End If
      .Parameters.Delete         "l_cliente"
      .Parameters.Delete         "l_restricao"
+     .Parameters.Delete         "l_sigla"
   end with
 End Sub
 

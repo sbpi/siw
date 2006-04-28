@@ -62,8 +62,7 @@ Sub VisualCliente(w_sq_cliente, O)
      ShowHTML "          </table>"
 
      'Endereços de e-mail e internet
-     DB_GetAddressList RS, w_sq_cliente, null, null
-     RS.Filter = "email = 'S' or internet = 'S'"
+     DB_GetAddressList RS, w_sq_cliente, null, "EMAILINTERNET", null
      RS.Sort = "tipo_endereco, padrao desc, endereco"
      ShowHTML "      <tr><td valign=""top"" colspan=""2"" align=""center"" bgcolor=""#D0D0D0"" style=""border: 2px solid rgb(0,0,0);""><font  size=""2""><b>Endereços e-Mail e Internet</td>"
      ShowHTML "      <tr><td align=""center"" colspan=""2"">"
@@ -91,7 +90,7 @@ Sub VisualCliente(w_sq_cliente, O)
      ShowHTML "         </table></td></tr>"
 
      'Endereços físicos
-     DB_GetAddressList RS, w_sq_cliente, null, "FISICO"
+     DB_GetAddressList RS, w_sq_cliente, null, "FISICO", null
      RS.Sort = "padrao desc, logradouro"
      ShowHTML "      <tr><td valign=""top"" colspan=""2"" align=""center"" bgcolor=""#D0D0D0"" style=""border: 2px solid rgb(0,0,0);""><font  size=""2""><b>Endereços Físicos</td>"
      If Rs.EOF Then
@@ -117,7 +116,7 @@ Sub VisualCliente(w_sq_cliente, O)
      DesconectaBD
 
      'Telefones
-     DB_GetFoneList RS, w_sq_cliente, null, null
+     DB_GetFoneList RS, w_sq_cliente, null, null, null
      RS.Sort = "tipo_telefone, cidade, padrao desc, numero"
      ShowHTML "      <tr><td valign=""top"" colspan=""2"" align=""center"" bgcolor=""#D0D0D0"" style=""border: 2px solid rgb(0,0,0);""><font  size=""2""><b>Telefones</td>"
      ShowHTML "      <tr><td align=""center"" colspan=""2"">"
@@ -185,7 +184,7 @@ Sub VisualCliente(w_sq_cliente, O)
      ShowHTML "         </table></td></tr>"
 
      'Módulos contratados
-     DB_GetSiwCliModLis RS, w_sq_cliente, null
+     DB_GetSiwCliModLis RS, w_sq_cliente, null, null
      ShowHTML "      <tr><td valign=""top"" colspan=""2"" align=""center"" bgcolor=""#D0D0D0"" style=""border: 2px solid rgb(0,0,0);""><font  size=""2""><b>Módulos Contratados</td>"
      ShowHTML "      <tr><td align=""center"" colspan=""2"">"
      ShowHTML "        <TABLE WIDTH=""100%"" bgcolor=""" & conTableBgColor & """ BORDER=""" & conTableBorder & """ CELLSPACING=""" & conTableCellSpacing & """ CELLPADDING=""" & conTableCellPadding & """ BorderColorDark=""" & conTableBorderColorDark & """ BorderColorLight=""" & conTableBorderColorLight & """>"

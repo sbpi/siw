@@ -505,10 +505,10 @@ Sub Localizacao
   w_nome_unidade = RS("nome")
   DesconectaBD
   If O = "L" Then
-    DB_GetaddressList RS, w_cliente, w_sq_unidade, "LISTALOCALIZACAO"
+    DB_GetaddressList RS, w_cliente, w_sq_unidade, "LISTALOCALIZACAO", null
   ElseIf (O = "A" or O = "E") Then  
      w_sq_localizacao = Request("w_sq_localizacao")  
-      DB_GetaddressList RS, w_cliente, w_sq_localizacao, "LOCALIZACAO"
+      DB_GetaddressList RS, w_cliente, w_sq_localizacao, "LOCALIZACAO", null
       w_sq_localizacao      = RS("sq_localizacao")
      w_sq_pessoa_endereco  = RS("sq_pessoa_endereco")
      w_sq_unidade          = RS("sq_unidade")

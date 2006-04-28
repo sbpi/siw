@@ -65,10 +65,11 @@ begin
      l_resp_unid := l_resp_unid ||','''||crec.sq_unidade||'''';
    end loop;
 
-   If p_restricao = 'GDCAD'     or p_restricao = 'GDACOMP'  or
-      p_restricao = 'GDPCAD'    or p_restricao = 'GDPACOMP' or
-      Substr(p_restricao,1,4) = 'GRDM' or p_restricao = 'ORPCAD'
-      or p_restricao = 'ORPACOMP' or Substr(p_restricao,1,4) = 'GRORP' Then
+   If p_restricao = 'GDCAD'            or p_restricao = 'GDACOMP'           or
+      p_restricao = 'GDPCAD'           or p_restricao = 'GDPACOMP'          or
+      Substr(p_restricao,1,4) = 'GRDM' or p_restricao = 'ORPCAD'            or
+      p_restricao = 'ORPACOMP'         or Substr(p_restricao,1,4) = 'GRORP' or 
+      p_restricao = 'GDPCADET'         Then
       -- Recupera as demandas que o usuário pode ver
       open p_result for
          select a.sq_menu,            a.sq_modulo,                   a.nome,
@@ -212,7 +213,12 @@ begin
                  (p_tipo         = 4     and InStr(l_resp_unid,''''||b.sq_unidade||'''') > 0) or
                  (p_tipo         = 5) or
                  (p_tipo         = 6     and b1.ativo          = 'S' and b2.acesso > 0)
-                );
+                )
+            and ((p_restricao = 'GRDMETAPA'   and MontaOrdem(q.sq_projeto_etapa)  is not null) or
+                 (p_restricao = 'GRDMPROP'    and d.proponente                    is not null) or
+                 (p_restricao = 'GRDMRESPATU' and b.executor                      is not null) or
+                 (p_restricao = 'GDPCADET'    and q.sq_projeto_etapa              is null))                                
+                ;
    Elsif p_restricao = 'PJCAD' or p_restricao = 'PJACOMP' or Substr(p_restricao,1,4) = 'GRPR' or
          p_restricao = 'ORCAD' or p_restricao = 'ORACOMP' or Substr(p_restricao,1,4) = 'GROR' Then
       -- Recupera as demandas que o usuário pode ver
@@ -369,6 +375,8 @@ begin
                  (p_tipo         = 5     and Nvl(b1.sigla,'-') <> 'CA') or
                  (p_tipo         = 6     and b1.ativo          = 'S' and b2.acesso > 0)
                 )
+            and ((p_restricao = 'GRPRPROP'    and d.proponente                    is not null) or
+                 (p_restricao = 'GRPRRESPATU' and b.executor                      is not null))                                    
             ;
    Elsif p_restricao in ('GCRCAD','GCDCAD','GCPCAD') Then
       -- Recupera os acordos que o usuário pode ver

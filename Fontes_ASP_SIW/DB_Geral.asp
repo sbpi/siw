@@ -601,18 +601,21 @@ End Sub
 REM =========================================================================
 REM Recupera os telefones de um cliente
 REM -------------------------------------------------------------------------
-Sub DB_GetFoneList(p_rs, p_cliente, p_chave, p_restricao)
-  Dim l_cliente, l_chave, l_restricao
+Sub DB_GetFoneList(p_rs, p_cliente, p_chave, p_restricao, p_tipo_fone)
+  Dim l_cliente, l_chave, l_restricao, l_tipo_fone
   Set l_cliente   = Server.CreateObject("ADODB.Parameter")
   Set l_chave     = Server.CreateObject("ADODB.Parameter")
   Set l_restricao = Server.CreateObject("ADODB.Parameter")
+  Set l_tipo_fone = Server.CreateObject("ADODB.Parameter")
   with sp
-     set l_cliente              = .CreateParameter("l_cliente", adInteger, adParamInput, , p_cliente)
-     set l_chave                = .CreateParameter("l_chave",   adInteger, adParamInput, , Tvl(p_chave))
+     set l_cliente              = .CreateParameter("l_cliente",   adInteger, adParamInput,   , p_cliente)
+     set l_chave                = .CreateParameter("l_chave",     adInteger, adParamInput,   , Tvl(p_chave))
      set l_restricao            = .CreateParameter("l_restricao", adVarChar, adParamInput, 20, Tvl(p_restricao))
+     set l_tipo_fone            = .CreateParameter("l_tipo_fone", adInteger, adParamInput,   , Tvl(p_tipo_fone))
      .parameters.Append         l_cliente
      .parameters.Append         l_chave
      .parameters.Append         l_restricao
+     .parameters.Append         l_tipo_fone
      If Session("dbms") = 1 or Session("dbms") = 3 Then .Properties("PLSQLRSet") = TRUE End If
      .CommandText               = Session("schema") & "SP_GetFoneList"
      On Error Resume Next
@@ -624,6 +627,7 @@ Sub DB_GetFoneList(p_rs, p_cliente, p_chave, p_restricao)
      .Parameters.Delete         "l_cliente"
      .Parameters.Delete         "l_chave"
      .Parameters.Delete         "l_restricao"
+     .Parameters.Delete         "l_tipo_fone"
   end with
 End Sub
 
@@ -701,18 +705,21 @@ End Sub
 REM =========================================================================
 REM Recupera os endereços de um cliente
 REM -------------------------------------------------------------------------
-Sub DB_GetAddressList(p_rs, p_cliente, p_chave, p_restricao)
-  Dim l_cliente, l_chave, l_restricao
-  Set l_cliente   = Server.CreateObject("ADODB.Parameter")
-  Set l_chave     = Server.CreateObject("ADODB.Parameter")
-  Set l_restricao = Server.CreateObject("ADODB.Parameter")
+Sub DB_GetAddressList(p_rs, p_cliente, p_chave, p_restricao, p_tipo_endereco)
+  Dim l_cliente, l_chave, l_restricao, l_tipo_endereco
+  Set l_cliente       = Server.CreateObject("ADODB.Parameter")
+  Set l_chave         = Server.CreateObject("ADODB.Parameter")
+  Set l_restricao     = Server.CreateObject("ADODB.Parameter")
+  Set l_tipo_endereco = Server.CreateObject("ADODB.Parameter")
   with sp
-     set l_cliente              = .CreateParameter("l_cliente", adInteger, adParamInput, , p_cliente)
-     set l_chave                = .CreateParameter("l_chave",   adInteger, adParamInput, , Tvl(p_chave))
-     set l_restricao            = .CreateParameter("l_restricao", adVarChar, adParamInput, 20, Tvl(p_restricao))
+     set l_cliente              = .CreateParameter("l_cliente",       adInteger, adParamInput,   , p_cliente)
+     set l_chave                = .CreateParameter("l_chave",         adInteger, adParamInput,   , Tvl(p_chave))
+     set l_restricao            = .CreateParameter("l_restricao",     adVarChar, adParamInput, 20, Tvl(p_restricao))
+     set l_tipo_endereco        = .CreateParameter("l_tipo_endereco", adInteger, adParamInput,   , Tvl(p_tipo_endereco))
      .parameters.Append         l_cliente
      .parameters.Append         l_chave
      .parameters.Append         l_restricao
+     .parameters.Append         l_tipo_endereco
      If Session("dbms") = 1 or Session("dbms") = 3 Then .Properties("PLSQLRSet") = TRUE End If
      .CommandText               = Session("schema") & "SP_GetAddressList"
      On Error Resume Next
@@ -724,6 +731,7 @@ Sub DB_GetAddressList(p_rs, p_cliente, p_chave, p_restricao)
      .Parameters.Delete         "l_cliente"
      .Parameters.Delete         "l_chave"
      .Parameters.Delete         "l_restricao"
+     .Parameters.Delete         "l_tipo_endereco"
   end with
 End Sub
 
@@ -2474,15 +2482,18 @@ End Sub
 REM =========================================================================
 REM Recupera os recursos de um projeto
 REM -------------------------------------------------------------------------
-Sub DB_GetSolicEtpRec(p_rs, p_chave, p_chave_aux)
-  Dim l_chave, l_chave_aux
+Sub DB_GetSolicEtpRec(p_rs, p_chave, p_chave_aux, p_restricao)
+  Dim l_chave, l_chave_aux, l_restricao
   Set l_chave     = Server.CreateObject("ADODB.Parameter")
   Set l_chave_aux = Server.CreateObject("ADODB.Parameter")
+  Set l_restricao = Server.CreateObject("ADODB.Parameter")
   with sp
      set l_chave                = .CreateParameter("l_chave",         adInteger, adParamInput,   , p_chave)
      set l_chave_aux            = .CreateParameter("l_chave_aux",     adInteger, adParamInput,   , Tvl(p_chave_aux))
+     set l_restricao            = .CreateParameter("l_restricao",     adVarchar, adParamInput, 30, Tvl(p_restricao))
      .parameters.Append         l_chave
      .parameters.Append         l_chave_aux
+     .parameters.Append         l_restricao
      If Session("dbms") = 1 or Session("dbms") = 3 Then .Properties("PLSQLRSet") = TRUE End If
      .CommandText               = Session("schema") & "SP_GetSolicEtpRec"
      On Error Resume Next
@@ -2493,6 +2504,7 @@ Sub DB_GetSolicEtpRec(p_rs, p_chave, p_chave_aux)
      If Session("dbms") = 1 or Session("dbms") = 3 Then .Properties("PLSQLRSet") = FALSE End If
      .Parameters.Delete         "l_chave"
      .Parameters.Delete         "l_chave_aux"
+     .Parameters.Delete         "l_restricao"
   end with
 
 End Sub

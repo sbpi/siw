@@ -43,8 +43,7 @@ Function ValidaProjeto(p_cliente, p_chave, p_sg1, p_sg2, p_sg3, p_sg4, p_tramite
         End If
           
         ' Verifica se o cliente tem o módulo de acordos contratado
-        DB_GetSiwCliModLis l_rs_modulo, p_cliente, null
-        l_rs_modulo.Filter = "sigla='AC'"
+        DB_GetSiwCliModLis l_rs_modulo, p_cliente, null, "AC"
         If Not l_rs_modulo.EOF Then l_acordo = "S" Else l_acordo = "N" End If
         l_rs_modulo.close
 

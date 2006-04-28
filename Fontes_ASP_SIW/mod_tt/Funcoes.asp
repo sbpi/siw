@@ -81,7 +81,7 @@ REM =========================================================================
 REM Montagem da seleção dos telefones de uma pessoa
 REM -------------------------------------------------------------------------
 Sub SelecaoTelefone2 (label, accesskey, hint, chave, chaveAux, campo, O, restricao)
-    DB_GetFoneList RS, w_cliente, null, restricao
+    DB_GetFoneList RS, w_cliente, null, restricao, null
     
     
     If IsNull(hint) Then
@@ -98,7 +98,7 @@ Sub SelecaoTelefone2 (label, accesskey, hint, chave, chaveAux, campo, O, restric
         End If
         RS.MoveNext
       Wend
-      DB_GetFoneList RS, w_cliente, null, "TRONCO"
+      DB_GetFoneList RS, w_cliente, null, "TRONCO", null
       While Not RS.EOF
         If cInt(nvl(RS("sq_pessoa_telefone"),0)) <> cInt(nvl(chave,0)) Then
           ShowHTML "          <option value=""" & RS("sq_pessoa_telefone") & """>" & RS("numero") & " - "& RS("tipo_telefone")

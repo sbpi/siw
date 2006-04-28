@@ -182,10 +182,9 @@ Sub ExibeDocs
    ShowHTML "         <img src=""" & LinkArquivo(null, Session("p_cliente"), "img\" & RS1("logo1"), null, null, null, "EMBED") & """ vspace=""0"" hspace=""0"" border=""1""></td></tr>"
    ShowHTML "      <tr><td height=1><tr><td height=1 bgcolor=""#000000"">"
    ShowHTML "      <tr><td colspan=2 width=""100%""><table border=0 width=""100%"" cellpadding=0 cellspacing=0><tr valign=""top"">"
-   ShowHTML "          <td><font size=1>Usuário:<b>" & Session("Nome_resumido") & "</b>"
+   ShowHTML "          <td>Usuário:<b>" & Session("Nome_resumido") & "</b>"
    ' Se o cliente tiver algum módulo com controle de ano, exibe o ano selecionado
-   DB_GetSiwCliModLis RS, w_cliente, null
-   RS.Filter = "SIGLA = 'IS'"
+   DB_GetSiwCliModLis RS, w_cliente, null, "IS"
    If Not RS.EOF Then
       ShowHTML "              <br>Exercício:<b>" & Session("ANO") & "</b></TD>"
    End If
@@ -194,7 +193,7 @@ Sub ExibeDocs
    ShowHTML "          </table>"
    ShowHTML "      <tr><td height=1><tr><td height=2 bgcolor=""#000000"">"
    ShowHTML "      </table></CENTER>"
-   ShowHTML "  <table border=0 cellpadding=0 height=""80"" width=""100%""><tr><td nowrap><font size=1><b>"
+   ShowHTML "  <table border=0 cellpadding=0 height=""80"" width=""100%""><tr><td nowrap><b>"
    w_ContOut = 0
    w_ContImg = 0
    ShowHTML "<div id=""container"">"
@@ -477,22 +476,22 @@ Sub TrocaSenha
   AbreForm "Form", w_Pagina&"Grava", "POST", "return(Validacao(this));", null,P1,P2,P3,P4,TP,SG,w_pagina&par,O
   ShowHTML "<tr bgcolor=""" & conTrBgColor & """><td>"
   ShowHTML "    <table width=""100%"" border=""0"">"
-  ShowHTML "      <tr><td valign=""top""><font size=""1"">Usuário:<br><b>" & Session("NOME") & " (" & Session("USERNAME") & ")</b></td>"
+  ShowHTML "      <tr><td valign=""top"">Usuário:<br><b>" & Session("NOME") & " (" & Session("USERNAME") & ")</b></td>"
   DB_GetUserData rs, Session("p_cliente"), Session("username")
   If P1 = 1 Then ' Se for troca de senha de acesso
-     ShowHTML "      <tr><td valign=""top""><font size=""1"">Ultima troca de " & w_texto & ":<br><b>" & FormatDateTime(RS("ultima_troca_senha"),1) & ", " & FormatDateTime(RS("ultima_troca_senha"),3) & "</b></td>"
-     ShowHTML "      <tr><td valign=""top""><font size=""1"">Expiração da " & w_texto & " atual ocorrerá em:<br><b>" & FormatDateTime(RS("ultima_troca_senha")+w_vigencia,1) & ", " & FormatDateTime(RS("ultima_troca_senha")+w_vigencia,3) & "</b></td>"
-     ShowHTML "      <tr><td valign=""top""><font size=""1"">Você será convidado a trocar sua " & w_texto & " a partir de:<br><b>" & FormatDateTime(RS("ultima_troca_senha")+w_vigencia-w_aviso,1) & ", " & FormatDateTime(RS("ultima_troca_senha")+w_vigencia-w_aviso,3) & "</b></td>"
+     ShowHTML "      <tr><td valign=""top"">Ultima troca de " & w_texto & ":<br><b>" & FormatDateTime(RS("ultima_troca_senha"),1) & ", " & FormatDateTime(RS("ultima_troca_senha"),3) & "</b></td>"
+     ShowHTML "      <tr><td valign=""top"">Expiração da " & w_texto & " atual ocorrerá em:<br><b>" & FormatDateTime(RS("ultima_troca_senha")+w_vigencia,1) & ", " & FormatDateTime(RS("ultima_troca_senha")+w_vigencia,3) & "</b></td>"
+     ShowHTML "      <tr><td valign=""top"">Você será convidado a trocar sua " & w_texto & " a partir de:<br><b>" & FormatDateTime(RS("ultima_troca_senha")+w_vigencia-w_aviso,1) & ", " & FormatDateTime(RS("ultima_troca_senha")+w_vigencia-w_aviso,3) & "</b></td>"
   ElseIf P1 = 2 Then ' Se for troca de assinatura eletrônica
-     ShowHTML "      <tr><td valign=""top""><font size=""1"">Ultima troca de " & w_texto & ":<br><b>" & FormatDateTime(RS("ultima_troca_assin"),1) & ", " & FormatDateTime(RS("ultima_troca_assin"),3) & "</b></td>"
-     ShowHTML "      <tr><td valign=""top""><font size=""1"">Expiração da " & w_texto & " atual ocorrerá em:<br><b>" & FormatDateTime(RS("ultima_troca_assin")+w_vigencia,1) & ", " & FormatDateTime(RS("ultima_troca_assin")+w_vigencia,3) & "</b></td>"
-     ShowHTML "      <tr><td valign=""top""><font size=""1"">Você será convidado a trocar sua " & w_texto & " a partir de:<br><b>" & FormatDateTime(RS("ultima_troca_assin")+w_vigencia-w_aviso,1) & ", " & FormatDateTime(RS("ultima_troca_assin")+w_vigencia-w_aviso,3) & "</b></td>"
+     ShowHTML "      <tr><td valign=""top"">Ultima troca de " & w_texto & ":<br><b>" & FormatDateTime(RS("ultima_troca_assin"),1) & ", " & FormatDateTime(RS("ultima_troca_assin"),3) & "</b></td>"
+     ShowHTML "      <tr><td valign=""top"">Expiração da " & w_texto & " atual ocorrerá em:<br><b>" & FormatDateTime(RS("ultima_troca_assin")+w_vigencia,1) & ", " & FormatDateTime(RS("ultima_troca_assin")+w_vigencia,3) & "</b></td>"
+     ShowHTML "      <tr><td valign=""top"">Você será convidado a trocar sua " & w_texto & " a partir de:<br><b>" & FormatDateTime(RS("ultima_troca_assin")+w_vigencia-w_aviso,1) & ", " & FormatDateTime(RS("ultima_troca_assin")+w_vigencia-w_aviso,3) & "</b></td>"
   End If
   DesconectaBD
   ShowHTML "      <tr><td align=""center"" colspan=""3"" height=""1"" bgcolor=""#000000""></TD></TR>"
-  ShowHTML "      <tr><td valign=""top""><font size=""1""><b>" & w_texto & " <U>a</U>tual:<br><INPUT ACCESSKEY=""A"" class=""sti"" type=""password"" name=""w_atual"" size=""" & w_maximo & """ maxlength=""" & w_maximo & """></td>"
-  ShowHTML "      <tr><td valign=""top""><font size=""1""><b><U>N</U>ova " & w_texto & ":<br><INPUT ACCESSKEY=""N"" class=""sti"" type=""password"" name=""w_nova"" size=""" & w_maximo & """ maxlength=""" & w_maximo & """></td>"
-  ShowHTML "      <tr><td valign=""top""><font size=""1""><b><U>R</U>edigite nova " & w_texto & ":<br><INPUT ACCESSKEY=""R"" class=""sti"" type=""password"" name=""w_conf"" size=""" & w_maximo & """ maxlength=""" & w_maximo & """></td>"
+  ShowHTML "      <tr><td valign=""top""><b>" & w_texto & " <U>a</U>tual:<br><INPUT ACCESSKEY=""A"" class=""sti"" type=""password"" name=""w_atual"" size=""" & w_maximo & """ maxlength=""" & w_maximo & """></td>"
+  ShowHTML "      <tr><td valign=""top""><b><U>N</U>ova " & w_texto & ":<br><INPUT ACCESSKEY=""N"" class=""sti"" type=""password"" name=""w_nova"" size=""" & w_maximo & """ maxlength=""" & w_maximo & """></td>"
+  ShowHTML "      <tr><td valign=""top""><b><U>R</U>edigite nova " & w_texto & ":<br><INPUT ACCESSKEY=""R"" class=""sti"" type=""password"" name=""w_conf"" size=""" & w_maximo & """ maxlength=""" & w_maximo & """></td>"
   ShowHTML "      <tr><td align=""center"" colspan=""3"" height=""1"" bgcolor=""#000000""></TD></TR>"
 
   ShowHTML "      <tr><td align=""center"" colspan=""3"">"

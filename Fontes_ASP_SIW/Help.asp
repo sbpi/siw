@@ -381,7 +381,7 @@ REM -------------------------------------------------------------------------
 Sub Menu
   If O = "L" Then
      ' Recupera os módulos contratados pelo cliente
-     DB_GetSiwCliModLis RS, w_cliente, null
+     DB_GetSiwCliModLis RS, w_cliente, null, null
   End If
   
   Cabecalho
