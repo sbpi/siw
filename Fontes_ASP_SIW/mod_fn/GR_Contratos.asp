@@ -265,7 +265,8 @@ Sub Gerencial
      If p_fim_i       > ""  Then w_filtro = w_filtro & "<tr valign=""top""><td align=""right""><font size=1>Término vigência <td><font size=1>[<b>" & p_fim_i & "-" & p_fim_f & "</b>]"     End If
      If p_atraso      = "S" Then w_filtro = w_filtro & "<tr valign=""top""><td align=""right""><font size=1>Código externo <td><font size=1>[<b>" & p_atraso & "</b>]"                      End If
      If w_filtro > "" Then w_filtro = "<table border=0><tr valign=""top""><td><font size=1><b>Filtro:</b><td nowrap><font size=1><ul>" & w_filtro & "</ul></tr></table>"                    End If
-
+     Response.Write RS_Menu("sigla")
+     Response.End()
      Select case p_agrega
         Case "GRDMPROJ"
            DB_GetSolicList RS1, P2, w_usuario, RS_Menu("sigla"), 4, _

@@ -398,15 +398,21 @@ End Sub
 REM =========================================================================
 REM Recupera as unidade do modulo infra-sig
 REM -------------------------------------------------------------------------
-Sub DB_GetIsUnidade_IS(p_rs, p_chave, p_cliente)
-  Dim l_chave, l_cliente
-  Set l_chave       = Server.CreateObject("ADODB.Parameter")
-  Set l_cliente     = Server.CreateObject("ADODB.Parameter")
+Sub DB_GetIsUnidade_IS(p_rs, p_chave, p_cliente, p_administrativa, p_planejamento)
+  Dim l_chave, l_cliente, l_administrativa, l_planejamento
+  Set l_chave          = Server.CreateObject("ADODB.Parameter")
+  Set l_cliente        = Server.CreateObject("ADODB.Parameter")
+  Set l_administrativa = Server.CreateObject("ADODB.Parameter")
+  Set l_planejamento   = Server.CreateObject("ADODB.Parameter")
   with sp
-     set l_chave           = .CreateParameter("l_chave",        adInteger, adParamInput,   , tvl(p_chave))
-     set l_cliente         = .CreateParameter("l_cliente",      adInteger, adParamInput,   , p_cliente)
+     set l_chave           = .CreateParameter("l_chave",          adInteger, adParamInput,   , tvl(p_chave))
+     set l_cliente         = .CreateParameter("l_cliente",        adInteger, adParamInput,   , p_cliente)
+     set l_administrativa  = .CreateParameter("l_administrativa", adVarchar, adParamInput,   1, Tvl(p_administrativa))
+     set l_planejamento    = .CreateParameter("l_planejamento",   adVarchar, adParamInput,   1, Tvl(p_planejamento))
      .parameters.Append         l_chave
      .parameters.Append         l_cliente
+     .parameters.Append         l_administrativa
+     .parameters.Append         l_planejamento
      If Session("dbms") = 1 or Session("dbms") = 3 Then .Properties("PLSQLRSet") = TRUE End If
      .CommandText               = Session("schema_is") & "SP_GetIsUnidade_IS"
      Set p_rs = Server.CreateObject("ADODB.RecordSet")
@@ -420,6 +426,8 @@ Sub DB_GetIsUnidade_IS(p_rs, p_chave, p_cliente)
      If Session("dbms") = 1 or Session("dbms") = 3 Then .Properties("PLSQLRSet") = FALSE End If
      .Parameters.Delete         "l_chave"
      .Parameters.Delete         "l_cliente"
+     .Parameters.Delete         "l_administrativa"
+     .Parameters.Delete         "l_planejamento"
   end with
 End Sub
 

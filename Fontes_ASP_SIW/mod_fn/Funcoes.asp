@@ -101,11 +101,27 @@ REM Montagem da seleção dos acordos
 REM -------------------------------------------------------------------------
 Sub SelecaoAcordo (label, accesskey, hint,  cliente, chave, chaveAux, campo, restricao, atributo)
     
-    Dim l_menu
+    Dim l_menu, l_fase
     DB_GetLinkData RS1, w_cliente, "GC"&mid(SG,3,1)&"CAD"
     l_menu = RS1("sq_menu")
     RS1.Close
     
+    If restricao = "EXECUCAO" Then
+       DB_GetTramiteList RS1, l_menu, null, null
+       While Not RS1.EOF
+          If  Nvl(RS1("sigla"),"-") = "EE" or Nvl(RS1("sigla"),"-") = "ER" Then
+             If l_fase > "" Then
+                l_fase = l_fase & "," & RS1("sq_siw_tramite")
+             Else
+                l_fase = RS1("sq_siw_tramite")
+             End If
+          End If
+          RS1.MoveNext
+       wend
+       RS1.Close
+    End If
+
+    'Response.Write "["&l_fase&"]"
     'Response.Write "["&"GC"&mid(SG,3,1)&"CAD"&"]"
     'Response.Write "["&l_menu&"]"
     'Response.Write "["&w_usuario&"]"
@@ -115,9 +131,8 @@ Sub SelecaoAcordo (label, accesskey, hint,  cliente, chave, chaveAux, campo, res
     null, null, null, null, null, null, _
     null, null, null, null, _
     null, null, null, null, null, null, null, _
-    null, null, null, null, null, null, null, null, null
+    null, null, null, l_fase, null, null, null, null, null
     RS.Sort = "nm_outra_parte_resumido, fim desc"
-    If restricao > "" Then RS.Filter = restricao End If
     
     If IsNull(hint) Then
        ShowHTML "          <td valign=""top""><font size=""1""><b>" & Label & "</b><br><SELECT ACCESSKEY=""" & accesskey & """ CLASS=""STS"" NAME=""" & campo & """ " & w_Disabled & " " & atributo & ">"
@@ -136,6 +151,7 @@ Sub SelecaoAcordo (label, accesskey, hint,  cliente, chave, chaveAux, campo, res
     ShowHTML "          </select>"
     
     Set l_menu = Nothing
+    Set l_fase = Nothing
 End Sub
 REM =========================================================================
 REM Final da rotina

@@ -344,21 +344,17 @@ Sub Inicial
 
      DB_GetLinkData RS, w_cliente, SG
      If w_copia > "" Then ' Se for cópia, aplica o filtro sobre todos os contratos visíveis pelo usuário
-        DB_GetSolicList rs, RS("sq_menu"), w_usuario, SG, 3, _
+        DB_GetSolicList rs, RS("sq_menu"), w_usuario, Nvl(Request("p_agrega"),SG), 3, _
            p_ini_i, p_ini_f, p_fim_i, p_fim_f, p_atraso, p_solicitante, _
            p_unidade, p_prioridade, p_ativo, p_proponente, _
            p_chave, p_objeto, p_pais, p_regiao, p_uf, p_cidade, p_usu_resp, _
            p_uorg_resp, p_palavra, p_prazo, p_fase, p_sqcc, p_projeto, null, null, null
      Else
-        DB_GetSolicList rs, RS("sq_menu"), w_usuario, SG, P1, _
+        DB_GetSolicList rs, RS("sq_menu"), w_usuario, Nvl(Request("p_agrega"),SG), P1, _
            p_ini_i, p_ini_f, p_fim_i, p_fim_f, p_atraso, p_solicitante, _
            p_unidade, p_prioridade, p_ativo, p_proponente, _
            p_chave, p_objeto, p_pais, p_regiao, p_uf, p_cidade, p_usu_resp, _
            p_uorg_resp, p_palavra, p_prazo, p_fase, p_sqcc, p_projeto, null, null, null
-           Select case Request("p_agrega")
-              Case "GRACRESPATU"
-                 RS.Filter = "executor <> null"
-           End Select
      End If
 
      If p_ordena > "" Then RS.sort = p_ordena & ", inicio" Else RS.sort = "nm_outra_parte, inicio desc" End If

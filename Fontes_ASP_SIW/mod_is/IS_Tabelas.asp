@@ -645,11 +645,11 @@ Sub Unidade
      w_sigla                = Request("sigla")
   ElseIf O = "L" Then
      ' Recupera todos os registros para a listagem
-     DB_GetIsUnidade_IS RS, null, w_cliente
+     DB_GetIsUnidade_IS RS, null, w_cliente, null, null
      RS.Sort = "nome"
   ElseIf InStr("AEV",O) > 0 and w_Troca = "" Then
      ' Recupera os dados do endereço informado
-     DB_GetIsUnidade_IS RS, w_chave, w_cliente
+     DB_GetIsUnidade_IS RS, w_chave, w_cliente, null, null
      w_nome                 = RS("nome")
      w_sigla                = RS("sigla")
      w_administrativa       = RS("administrativa")
@@ -800,7 +800,7 @@ Sub Limites
   w_chave           = Request("w_chave")
   
   ' Recupera os dados da unidade selecionada
-  DB_GetIsUnidade_IS RS1, w_chave, w_cliente
+  DB_GetIsUnidade_IS RS1, w_chave, w_cliente, null, null
   
   If w_troca > "" Then ' Se for recarga da página
      w_ano                  = Request("w_ano")
@@ -1050,7 +1050,7 @@ Public Sub Grava
        If (VerificaAssinaturaEletronica(Session("Username"),w_assinatura) and w_assinatura > "") or _
           w_assinatura = "" Then
           If O = "I" Then
-             DB_GetIsUnidade_IS RS, Request("w_Chave"), w_cliente
+             DB_GetIsUnidade_IS RS, Request("w_Chave"), w_cliente, null, null
              If RS.RecordCount = 0 Then
                 DML_PutIsUnidade_IS O, Request("w_chave"), Request("w_administrativa"), Request("w_planejamento")
                 ScriptOpen "JavaScript"

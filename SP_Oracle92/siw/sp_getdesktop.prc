@@ -23,11 +23,6 @@ begin
                 count(d.sq_siw_solicitacao) qtd 
            FROM siw_tramite                    e
                 inner     join siw_solicitacao d on (e.sq_siw_tramite = d.sq_siw_tramite)
-                  inner   join (select sq_siw_solicitacao, acesso(sq_siw_solicitacao, p_usuario) acesso
-                                  from siw_solicitacao
-                               )               f on (d.sq_siw_solicitacao = f.sq_siw_solicitacao and
-                                                     f.acesso             > 15
-                                                    )
                   inner   join siw_menu        c on (d.sq_menu        = c.sq_menu and
                                                      c.tramite        = 'S' and
                                                      c.ativo          = 'S' and
@@ -35,6 +30,7 @@ begin
                                                     ) 
                     inner join siw_modulo      b on (c.sq_modulo      = b.sq_modulo)
           where e.ativo = 'S' 
+            and d.executor = p_usuario
             and 'CI'    <> Nvl(e.sigla,'nulo')
             and (c.controla_ano = 'N' or (c.controla_ano = 'S' and d.ano = p_ano))
           group by c.sq_pessoa, b.sq_modulo, b.nome, b.sigla, b.objetivo_geral, c.sq_menu, c.nome, 

@@ -240,65 +240,31 @@ Sub Gerencial
      If p_atraso      = "S" Then w_filtro = w_filtro & "<tr valign=""top""><td align=""right""><font size=1>Situação <td><font size=1>[<b>Apenas atrasadas</b>]"                            End If
      If w_filtro > "" Then w_filtro = "<table border=0><tr valign=""top""><td><font size=1><b>Filtro:</b><td nowrap><font size=1><ul>" & w_filtro & "</ul></tr></table>"                    End If
 
+      DB_GetSolicList_IS RS1, P2, w_usuario, p_agrega, 3, _
+         p_ini_i, p_ini_f, p_fim_i, p_fim_f, p_atraso, p_solicitante, _
+         p_unidade, p_prioridade,  p_ativo, p_proponente, p_chave, p_assunto, _
+         null, null, null, null, p_usu_resp, p_uorg_resp, p_palavra, _
+         p_prazo, p_fase, p_projeto, null, null, null, null, null, w_ano
+
      Select case p_agrega
         Case "GRISTACAO"
-           DB_GetSolicList_IS RS1, P2, w_usuario, p_agrega, 3, _
-                p_ini_i, p_ini_f, p_fim_i, p_fim_f, p_atraso, p_solicitante, _
-                p_unidade, p_prioridade,  p_ativo, p_proponente, p_chave, p_assunto, _
-                null, null, null, null, p_usu_resp, p_uorg_resp, p_palavra, _
-                p_prazo, p_fase, p_projeto, null, null, null, null, null, w_ano
            w_TP = TP & " - Por ação"
            RS1.sort = "nm_projeto"
         Case "GRISTPROP"
-           DB_GetSolicList_IS RS1, P2, w_usuario, p_agrega, 3, _
-                p_ini_i, p_ini_f, p_fim_i, p_fim_f, p_atraso, p_solicitante, _
-                p_unidade, p_prioridade, p_ativo, p_proponente, _
-                p_chave, p_assunto, null, null, null, null, p_usu_resp, _
-                p_uorg_resp, p_palavra, p_prazo, p_fase, p_projeto, null, null, null, null, null, w_ano
            w_TP = TP & " - Por proponente"
-           RS1.Filter = "proponente <> null"
            RS1.sort = "proponente"
         Case "GRISTRESP"
-           DB_GetSolicList_IS RS1, P2, w_usuario, p_agrega, 3, _
-                p_ini_i, p_ini_f, p_fim_i, p_fim_f, p_atraso, p_solicitante, _
-                p_unidade, p_prioridade, p_ativo, p_proponente, _
-                p_chave, p_assunto, null, null, null, null, p_usu_resp, _
-                p_uorg_resp, p_palavra, p_prazo, p_fase, p_projeto, null, null, null, null, null, w_ano
            w_TP = TP & " - Por responsável"
            RS1.sort = "nm_solic"
         Case "GRISTRESPATU"
-           DB_GetSolicList_IS RS1, P2, w_usuario, p_agrega, 3, _
-                p_ini_i, p_ini_f, p_fim_i, p_fim_f, p_atraso, p_solicitante, _
-                p_unidade, p_prioridade, p_ativo, p_proponente, _
-                p_chave, p_assunto, null, null, null, null, p_usu_resp, _
-                p_uorg_resp, p_palavra, p_prazo, p_fase, p_projeto, null, null, null, null, null, w_ano
            w_TP = TP & " - Por executor"
-           RS1.Filter = "executor <> null"
            RS1.sort = "nm_exec"
         Case "GRISTSETOR"
-           DB_GetSolicList_IS RS1, P2, w_usuario, p_agrega, 3, _
-                p_ini_i, p_ini_f, p_fim_i, p_fim_f, p_atraso, p_solicitante, _
-                p_unidade, p_prioridade, p_ativo, p_proponente, _
-                p_chave, p_assunto, null, null, null, null, p_usu_resp, _
-                p_uorg_resp, p_palavra, p_prazo, p_fase, p_projeto, null, null, null, null, null, w_ano
            w_TP = TP & " - Por setor responsável"
            RS1.sort = "nm_unidade_resp"
         Case "GRISTPRIO" 
            w_TP = TP & " - Por prioridade"
-           DB_GetSolicList_IS RS1, P2, w_usuario, p_agrega, 3, _
-                p_ini_i, p_ini_f, p_fim_i, p_fim_f, p_atraso, p_solicitante, _
-                p_unidade, p_prioridade, p_ativo, p_proponente, _
-                p_chave, p_assunto, null, null, null, null, p_usu_resp, _
-                p_uorg_resp, p_palavra, p_prazo, p_fase,p_projeto, null, null, null, null, null, w_ano
            RS1.sort = "nm_prioridade"
-        Case "GRISTAREA" 
-           w_TP = TP & " - Por área envolvida"
-           DB_GetSolicGRA_IS RS1, P2, w_usuario, p_agrega, 3, _
-                p_ini_i, p_ini_f, p_fim_i, p_fim_f, p_atraso, p_solicitante, _
-                p_unidade, p_prioridade, p_ativo, p_proponente, _
-                p_chave, p_assunto, null, null, null, null, p_usu_resp, _
-                p_uorg_resp, p_palavra, p_prazo, p_fase, p_projeto
-           RS1.sort = "nm_envolv"
      End Select
   End If
   
@@ -399,7 +365,6 @@ Sub Gerencial
             Case "GRISTRESPATU" ShowHTML "      document.Form.p_usu_resp.value=filtro;"
             Case "GRISTSETOR"   ShowHTML "      document.Form.p_unidade.value=filtro;"
             Case "GRISTPRIO"    ShowHTML "      document.Form.p_prioridade.value=filtro;"
-            Case "GRISTAREA"    ShowHTML "      document.Form.p_area.value=filtro;"
          End Select
          ShowHTML "    }"
          Select case p_agrega
@@ -409,7 +374,6 @@ Sub Gerencial
             Case "GRISTRESPATU" ShowHTML "    else document.Form.p_usu_resp.value='" & Request("p_usu_resp")& "';"
             Case "GRISTSETOR"   ShowHTML "    else document.Form.p_unidade.value='" & Request("p_unidade")& "';"
             Case "GRISTPRIO"    ShowHTML "    else document.Form.p_prioridade.value='" & Request("p_prioridade")& "';"
-            Case "GRISTAREA"    ShowHTML "    else document.Form.p_area.value='" & Request("p_area")& "';"
          End Select
          DB_GetTramiteList RS2, P2, null, null
          RS2.Sort = "ordem"
@@ -443,7 +407,6 @@ Sub Gerencial
             Case "GRISTRESPATU" If Request("p_usu_resp") = ""    Then ShowHTML "<input type=""Hidden"" name=""p_usu_resp"" value="""">"      End If
             Case "GRISTSETOR"   If Request("p_unidade") = ""     Then ShowHTML "<input type=""Hidden"" name=""p_unidade"" value="""">"       End If
             Case "GRISTPRIO"    If Request("p_prioridade") = ""  Then ShowHTML "<input type=""Hidden"" name=""p_prioridade"" value="""">"    End If
-            Case "GRISTAREA"    If Request("p_area") = ""        Then ShowHTML "<input type=""Hidden"" name=""p_area"" value="""">"          End If
          End Select
       End If
   
@@ -615,29 +578,6 @@ Sub Gerencial
                  t_custo           = 0
                  w_linha           = w_linha + 1
               End If
-           Case "GRISTAREA"
-              If w_nm_quebra <> RS1("nm_envolv") Then
-                 If w_qt_quebra > 0 Then
-                    ImprimeLinha t_solic, t_cad, t_tram, t_conc, t_atraso, t_aviso, t_valor, t_custo, t_acima, w_chave
-                    w_linha = w_linha + 2
-                 End If
-                 If O <> "W" or (O = "W" and w_linha <= 25) Then
-                    ShowHTML "      <tr bgcolor=""" & w_cor & """ valign=""top""><td><font size=1><b>" & RS1("nm_envolv")
-                 End If
-                 w_nm_quebra       = RS1("nm_envolv")
-                 w_chave           = RS1("sq_unidade")
-                 w_qt_quebra       = 0
-                 t_solic           = 0
-                 t_cad             = 0
-                 t_tram            = 0
-                 t_conc            = 0
-                 t_atraso          = 0
-                 t_aviso           = 0
-                 t_valor           = 0
-                 t_acima           = 0
-                 t_custo           = 0
-                 w_linha           = w_linha + 1
-              End If
         End Select
         If O = "W" and w_linha > 25 Then ' Se for geração de MS-Word, quebra a página
            ShowHTML "    </table>"
@@ -660,7 +600,6 @@ Sub Gerencial
               Case "GRISTRESPATU" ShowHTML "      <tr bgcolor=""" & w_cor & """ valign=""top""><td><font size=1><b>" & RS1("nm_exec")
               Case "GRISTSETOR"   ShowHTML "      <tr bgcolor=""" & w_cor & """ valign=""top""><td><font size=1><b>" & RS1("nm_unidade_resp")
               Case "GRISTPRIO"    ShowHTML "      <tr bgcolor=""" & w_cor & """ valign=""top""><td><font size=1><b>" & RS1("nm_prioridade")
-              Case "GRISTAREA"    ShowHTML "      <tr bgcolor=""" & w_cor & """ valign=""top""><td><font size=1><b>" & RS1("nm_envolv")
            End Select
            w_linha = w_linha + 1
         End If
@@ -729,7 +668,6 @@ Sub Gerencial
     ShowHTML "         <tr><td valign=""top"" colspan=""2"" align=""center"" bgcolor=""#D0D0D0"" style=""border: 2px solid rgb(0,0,0);""><font size=""1""><b>Parâmetros de Apresentação</td>"
     ShowHTML "         <tr valign=""top""><td colspan=2><table border=0 width=""100%"" cellpadding=0 cellspacing=0><tr valign=""top"">"
     ShowHTML "          <td><font size=""1""><b><U>A</U>gregar por:<br><SELECT ACCESSKEY=""A"" " & w_Disabled & " class=""STS"" name=""p_agrega"" size=""1"">"
-    'If p_agrega = "GRISTAREA"        Then                             ShowHTML " <option value=""GRISTAREA"" selected>Área envolvida"                   Else ShowHTML " <option value=""GRISTAREA"">Área envolvida"                    End If
     If p_agrega = "GRISTACAO"        Then                             ShowHTML " <option value=""GRISTACAO"" selected>Ação"                             Else ShowHTML " <option value=""GRISTACAO"">Ação"                              End If
     If p_agrega = "GRISTPRIO"        Then                             ShowHTML " <option value=""GRISTPRIO"" selected>Prioridade"                       Else ShowHTML " <option value=""GRISTPRIO"">Prioridade"                        End If
     If p_agrega = "GRISTRESPATU"     Then                             ShowHTML " <option value=""GRISTRESPATU"" selected>Usuário atual"                 Else ShowHTML " <option value=""GRISTRESPATU"">Usuário atual"                       End If
@@ -821,7 +759,6 @@ Sub ImprimeCabecalho
        Case "GRISTRESPATU" ShowHTML "          <td><font size=""1""><b>Executor</font></td>"
        Case "GRISTSETOR"   ShowHTML "          <td><font size=""1""><b>Setor responsável</font></td>"
        Case "GRISTPRIO"    ShowHTML "          <td><font size=""1""><b>Prioridade</font></td>"
-       Case "GRISTAREA"    ShowHTML "          <td><font size=""1""><b>Área envolvida</font></td>"
     End Select
     ShowHTML "          <td><font size=""1""><b>Total</font></td>"
     ShowHTML "          <td><font size=""1""><b>Prog.</font></td>"

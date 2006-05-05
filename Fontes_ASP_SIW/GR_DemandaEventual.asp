@@ -267,96 +267,41 @@ Sub Gerencial
      If p_fim_i       > ""  Then w_filtro = w_filtro & "<tr valign=""top""><td align=""right""><font size=1>Limite conclusão <td><font size=1>[<b>" & p_fim_i & "-" & p_fim_f & "</b>]"     End If
      If p_atraso      = "S" Then w_filtro = w_filtro & "<tr valign=""top""><td align=""right""><font size=1>Situação <td><font size=1>[<b>Apenas atrasadas</b>]"                            End If
      If w_filtro > "" Then w_filtro = "<table border=0><tr valign=""top""><td><font size=1><b>Filtro:</b><td nowrap><font size=1><ul>" & w_filtro & "</ul></tr></table>"                    End If
+     
+     DB_GetSolicList RS1, P2, w_usuario, p_agrega, 4, _
+        p_ini_i, p_ini_f, p_fim_i, p_fim_f, p_atraso, p_solicitante, _
+        p_unidade, p_prioridade, p_ativo, p_proponente, _
+        p_chave, p_assunto, p_pais, p_regiao, p_uf, p_cidade, p_usu_resp, _
+        p_uorg_resp, p_palavra, p_prazo, p_fase, p_sqcc, p_projeto, p_atividade, null, null
 
      Select case p_agrega
         Case "GRDMETAPA"
-           DB_GetSolicList RS1, P2, w_usuario, p_agrega, 4, _
-                p_ini_i, p_ini_f, p_fim_i, p_fim_f, p_atraso, p_solicitante, _
-                p_unidade, p_prioridade, p_ativo, p_proponente, _
-                p_chave, p_assunto, p_pais, p_regiao, p_uf, p_cidade, p_usu_resp, _
-                p_uorg_resp, p_palavra, p_prazo, p_fase, p_sqcc, p_projeto, p_atividade, null, null
            w_TP = TP & " - Por etapa de projeto"
            RS1.sort = "cd_ordem"
         Case "GRDMPROJ"
-           DB_GetSolicList RS1, P2, w_usuario, p_agrega, 4, _
-                p_ini_i, p_ini_f, p_fim_i, p_fim_f, p_atraso, p_solicitante, _
-                p_unidade, p_prioridade, p_ativo, p_proponente, _
-                p_chave, p_assunto, p_pais, p_regiao, p_uf, p_cidade, p_usu_resp, _
-                p_uorg_resp, p_palavra, p_prazo, p_fase, p_sqcc, p_projeto, p_atividade, null, null
            w_TP = TP & " - Por projeto"
            RS1.sort = "nm_projeto"
         Case "GRDMPROP"
-           DB_GetSolicList RS1, P2, w_usuario, p_agrega, 4, _
-                p_ini_i, p_ini_f, p_fim_i, p_fim_f, p_atraso, p_solicitante, _
-                p_unidade, p_prioridade, p_ativo, p_proponente, _
-                p_chave, p_assunto, p_pais, p_regiao, p_uf, p_cidade, p_usu_resp, _
-                p_uorg_resp, p_palavra, p_prazo, p_fase, p_sqcc, p_projeto, p_atividade, null, null
            w_TP = TP & " - Por proponente"
            RS1.sort = "proponente"
         Case "GRDMRESP"
-           DB_GetSolicList RS1, P2, w_usuario, p_agrega, 4, _
-                p_ini_i, p_ini_f, p_fim_i, p_fim_f, p_atraso, p_solicitante, _
-                p_unidade, p_prioridade, p_ativo, p_proponente, _
-                p_chave, p_assunto, p_pais, p_regiao, p_uf, p_cidade, p_usu_resp, _
-                p_uorg_resp, p_palavra, p_prazo, p_fase, p_sqcc, p_projeto, p_atividade, null, null
            w_TP = TP & " - Por responsável"
            RS1.sort = "nm_solic"
         Case "GRDMRESPATU"
-           DB_GetSolicList RS1, P2, w_usuario, p_agrega, 4, _
-                p_ini_i, p_ini_f, p_fim_i, p_fim_f, p_atraso, p_solicitante, _
-                p_unidade, p_prioridade, p_ativo, p_proponente, _
-                p_chave, p_assunto, p_pais, p_regiao, p_uf, p_cidade, p_usu_resp, _
-                p_uorg_resp, p_palavra, p_prazo, p_fase, p_sqcc, p_projeto, p_atividade, null, null
            w_TP = TP & " - Por executor"
            RS1.sort = "nm_exec"
         Case "GRDMCC"
-           DB_GetSolicList RS1, P2, w_usuario, p_agrega, 4, _
-                p_ini_i, p_ini_f, p_fim_i, p_fim_f, p_atraso, p_solicitante, _
-                p_unidade, p_prioridade, p_ativo, p_proponente, _
-                p_chave, p_assunto, p_pais, p_regiao, p_uf, p_cidade, p_usu_resp, _
-                p_uorg_resp, p_palavra, p_prazo, p_fase, p_sqcc, p_projeto, p_atividade, null, null
            w_TP = TP & " - Por classificação"
            RS1.sort = "sg_cc"
         Case "GRDMSETOR"
-           DB_GetSolicList RS1, P2, w_usuario, p_agrega, 4, _
-                p_ini_i, p_ini_f, p_fim_i, p_fim_f, p_atraso, p_solicitante, _
-                p_unidade, p_prioridade, p_ativo, p_proponente, _
-                p_chave, p_assunto, p_pais, p_regiao, p_uf, p_cidade, p_usu_resp, _
-                p_uorg_resp, p_palavra, p_prazo, p_fase, p_sqcc, p_projeto, p_atividade, null, null
            w_TP = TP & " - Por setor responsável"
            RS1.sort = "nm_unidade_resp"
         Case "GRDMPRIO" 
            w_TP = TP & " - Por prioridade"
-           DB_GetSolicList RS1, P2, w_usuario, p_agrega, 4, _
-                p_ini_i, p_ini_f, p_fim_i, p_fim_f, p_atraso, p_solicitante, _
-                p_unidade, p_prioridade, p_ativo, p_proponente, _
-                p_chave, p_assunto, p_pais, p_regiao, p_uf, p_cidade, p_usu_resp, _
-                p_uorg_resp, p_palavra, p_prazo, p_fase, p_sqcc, p_projeto, p_atividade, null, null
            RS1.sort = "nm_prioridade"
         Case "GRDMLOCAL" 
            w_TP = TP & " - Por UF"
-           DB_GetSolicList RS1, P2, w_usuario, p_agrega, 4, _
-                p_ini_i, p_ini_f, p_fim_i, p_fim_f, p_atraso, p_solicitante, _
-                p_unidade, p_prioridade, p_ativo, p_proponente, _
-                p_chave, p_assunto, p_pais, p_regiao, p_uf, p_cidade, p_usu_resp, _
-                p_uorg_resp, p_palavra, p_prazo, p_fase, p_sqcc, p_projeto, p_atividade, null, null
            RS1.sort = "co_uf"
-        Case "GRDMAREA" 
-           w_TP = TP & " - Por área envolvida"
-           DB_GetSolicGRA RS1, P2, w_usuario, p_agrega, 4, _
-                p_ini_i, p_ini_f, p_fim_i, p_fim_f, p_atraso, p_solicitante, _
-                p_unidade, p_prioridade, p_ativo, p_proponente, _
-                p_chave, p_assunto, p_pais, p_regiao, p_uf, p_cidade, p_usu_resp, _
-                p_uorg_resp, p_palavra, p_prazo, p_fase, p_sqcc, p_projeto, p_atividade
-           RS1.sort = "nm_envolv"
-        Case "GRDMINTER" 
-           w_TP = TP & " - Por interessado"
-           DB_GetSolicGRI RS1, P2, w_usuario, p_agrega, 4, _
-                p_ini_i, p_ini_f, p_fim_i, p_fim_f, p_atraso, p_solicitante, _
-                p_unidade, p_prioridade, p_ativo, p_proponente, _
-                p_chave, p_assunto, p_pais, p_regiao, p_uf, p_cidade, p_usu_resp, _
-                p_uorg_resp, p_palavra, p_prazo, p_fase, p_sqcc, p_projeto, p_atividade
-           RS1.sort = "nm_inter"
      End Select
   End If
   
@@ -457,8 +402,6 @@ Sub Gerencial
             Case "GRDMSETOR"   ShowHTML "      document.Form.p_unidade.value=filtro;"
             Case "GRDMPRIO"    ShowHTML "      document.Form.p_prioridade.value=filtro;"
             Case "GRDMLOCAL"   ShowHTML "      document.Form.p_uf.value=filtro;"
-            Case "GRDMAREA"    ShowHTML "      document.Form.p_area.value=filtro;"
-            Case "GRDMINTER"   ShowHTML "      document.Form.p_inter.value=filtro;"
          End Select
          ShowHTML "    }"
          Select case p_agrega
@@ -471,8 +414,6 @@ Sub Gerencial
             Case "GRDMSETOR"   ShowHTML "    else document.Form.p_unidade.value='" & Request("p_unidade")& "';"
             Case "GRDMPRIO"    ShowHTML "    else document.Form.p_prioridade.value='" & Request("p_prioridade")& "';"
             Case "GRDMLOCAL"   ShowHTML "    else document.Form.p_uf.value='" & Request("p_uf")& "';"
-            Case "GRDMAREA"    ShowHTML "    else document.Form.p_area.value='" & Request("p_area")& "';"
-            Case "GRDMINTER"   ShowHTML "    else document.Form.p_inter.value='" & Request("p_inter")& "';"
          End Select
          DB_GetTramiteList RS2, P2, null, null
          RS2.Sort = "ordem"
@@ -508,8 +449,6 @@ Sub Gerencial
             Case "GRDMSETOR"   If Request("p_unidade") = ""     Then ShowHTML "<input type=""Hidden"" name=""p_unidade"" value="""">"       End If
             Case "GRDMPRIO"    If Request("p_prioridade") = ""  Then ShowHTML "<input type=""Hidden"" name=""p_prioridade"" value="""">"    End If
             Case "GRDMLOCAL"   If Request("p_uf") = ""          Then ShowHTML "<input type=""Hidden"" name=""p_uf"" value="""">"            End If
-            Case "GRDMAREA"    If Request("p_area") = ""        Then ShowHTML "<input type=""Hidden"" name=""p_area"" value="""">"          End If
-            Case "GRDMINTER"   If Request("p_inter") = ""       Then ShowHTML "<input type=""Hidden"" name=""p_inter"" value="""">"         End If
          End Select
       End If
   
@@ -753,53 +692,6 @@ Sub Gerencial
                  t_custo           = 0
                  w_linha           = w_linha + 1
               End If
-           Case "GRDMAREA"
-              If w_nm_quebra <> RS1("nm_envolv") Then
-                 If w_qt_quebra > 0 Then
-                    ImprimeLinha t_solic, t_cad, t_tram, t_conc, t_atraso, t_aviso, t_valor, t_custo, t_acima, w_chave
-                    w_linha = w_linha + 2
-                 End If
-                 If O <> "W" or (O = "W" and w_linha <= 25) Then
-                    ShowHTML "      <tr bgcolor=""" & w_cor & """ valign=""top""><td><font size=1><b>" & RS1("nm_envolv")
-                 End If
-                 w_nm_quebra       = RS1("nm_envolv")
-                 w_chave           = RS1("sq_unidade")
-                 w_qt_quebra       = 0
-                 t_solic           = 0
-                 t_cad             = 0
-                 t_tram            = 0
-                 t_conc            = 0
-                 t_atraso          = 0
-                 t_aviso           = 0
-                 t_valor           = 0
-                 t_acima           = 0
-                 t_custo           = 0
-                 w_linha           = w_linha + 1
-              End If
-           Case "GRDMINTER"
-              If w_nm_quebra <> RS1("nm_inter") Then
-                 If w_qt_quebra > 0 Then
-                    ImprimeLinha t_solic, t_cad, t_tram, t_conc, t_atraso, t_aviso, t_valor, t_custo, t_acima, w_chave
-                    w_linha = w_linha + 2
-                 End If
-                 If O <> "W" or (O = "W" and w_linha <= 25) Then
-                    ' Se for geração de MS-Word, coloca a nova quebra somente se não estourou o limite
-                    ShowHTML "      <tr bgcolor=""" & w_cor & """ valign=""top""><td><font size=1><b>" & RS1("nm_inter")
-                 End If
-                 w_nm_quebra       = RS1("nm_inter")
-                 w_chave           = RS1("sq_unidade")
-                 w_qt_quebra       = 0
-                 t_solic           = 0
-                 t_cad             = 0
-                 t_tram            = 0
-                 t_conc            = 0
-                 t_atraso          = 0
-                 t_aviso           = 0
-                 t_valor           = 0
-                 t_acima           = 0
-                 t_custo           = 0
-                 w_linha           = w_linha + 1
-              End If
         End Select
         If O = "W" and w_linha > 25 Then ' Se for geração de MS-Word, quebra a página
            ShowHTML "    </table>"
@@ -825,8 +717,6 @@ Sub Gerencial
               Case "GRDMSETOR"   ShowHTML "      <tr bgcolor=""" & w_cor & """ valign=""top""><td><font size=1><b>" & RS1("nm_unidade_resp")
               Case "GRDMPRIO"    ShowHTML "      <tr bgcolor=""" & w_cor & """ valign=""top""><td><font size=1><b>" & RS1("nm_prioridade")
               Case "GRDMLOCAL"   ShowHTML "      <tr bgcolor=""" & w_cor & """ valign=""top""><td><font size=1><b>" & RS1("co_uf")
-              Case "GRDMAREA"    ShowHTML "      <tr bgcolor=""" & w_cor & """ valign=""top""><td><font size=1><b>" & RS1("nm_envolv")
-              Case "GRDMINTER"   ShowHTML "      <tr bgcolor=""" & w_cor & """ valign=""top""><td><font size=1><b>" & RS1("nm_inter")
            End Select
            w_linha = w_linha + 1
         End If
@@ -895,14 +785,12 @@ Sub Gerencial
     ShowHTML "         <tr><td valign=""top"" colspan=""2"" align=""center"" bgcolor=""#D0D0D0"" style=""border: 2px solid rgb(0,0,0);""><font size=""1""><b>Parâmetros de Apresentação</td>"
     ShowHTML "         <tr valign=""top""><td colspan=2><table border=0 width=""100%"" cellpadding=0 cellspacing=0><tr valign=""top"">"
     ShowHTML "          <td><font size=""1""><b><U>A</U>gregar por:<br><SELECT ACCESSKEY=""O"" " & w_Disabled & " class=""STS"" name=""p_agrega"" size=""1"">"
-    If p_agrega = "GRDMAREA"    Then ShowHTML "          <option value=""GRDMAREA"" selected>Área envolvida"        Else ShowHTML "          <option value=""GRDMAREA"">Área envolvida"     End If
     If RS_menu("solicita_cc") = "S" Then
        If p_agrega = "GRDMCC"   Then ShowHTML "          <option value=""GRDMCC"" selected>Classificação"        Else ShowHTML "          <option value=""GRDMCC"">Classificação"     End If
     End If
     If SG = "PROJETO" Then
        If p_agrega = "GRDMETAPA" Then ShowHTML "          <option value=""GRDMETAPA"" selected>Etapa de projeto"    Else ShowHTML "          <option value=""GRDMETAPA"">Etapa de projeto"  End If
     End If
-    If p_agrega = "GRDMINTER"   Then ShowHTML "          <option value=""GRDMINTER"" selected>Interessado"          Else ShowHTML "          <option value=""GRDMINTER"">Interessado"       End If
     If p_agrega = "GRDMPRIO"    Then ShowHTML "          <option value=""GRDMPRIO"" selected>Prioridade"            Else ShowHTML "          <option value=""GRDMPRIO"">Prioridade"         End If
     If p_agrega = "GRDMRESPATU" Then ShowHTML "          <option value=""GRDMRESPATU"" selected>Executor"           Else ShowHTML "          <option value=""GRDMRESPATU"">Executor"        End If
     If p_agrega = "GRDMPROP"    Then ShowHTML "          <option value=""GRDMPROP"" selected>Proponente"            Else ShowHTML "          <option value=""GRDMPROP"">Proponente"         End If
@@ -1016,8 +904,6 @@ Sub ImprimeCabecalho
        Case "GRDMSETOR"   ShowHTML "          <td><font size=""1""><b>Setor responsável</font></td>"
        Case "GRDMPRIO"    ShowHTML "          <td><font size=""1""><b>Prioridade</font></td>"
        Case "GRDMLOCAL"   ShowHTML "          <td><font size=""1""><b>UF</font></td>"
-       Case "GRDMAREA"    ShowHTML "          <td><font size=""1""><b>Área envolvida</font></td>"
-       Case "GRDMINTER"   ShowHTML "          <td><font size=""1""><b>Interessado</font></td>"
     End Select
     ShowHTML "          <td><font size=""1""><b>Total</font></td>"
     ShowHTML "          <td><font size=""1""><b>Cad.</font></td>"

@@ -206,7 +206,7 @@ begin
             and (p_solicitante    is null or (p_solicitante is not null and b.solicitante        = p_solicitante))
             and ((p_tipo         = 1     and Nvl(b1.sigla,'-') = 'CI'   and b.cadastrador        = p_pessoa) or
                  (p_tipo         = 2     and Nvl(b1.sigla,'-') <> 'CI'  and b.executor           = p_pessoa and d.concluida = 'N') or
-                 (p_tipo         = 2     and b1.ativo = 'S' and Nvl(b1.sigla,'-') <> 'CI' and b2.acesso > 15) or
+                 --(p_tipo         = 2     and b1.ativo = 'S' and Nvl(b1.sigla,'-') <> 'CI' and b2.acesso > 15) or
                  (p_tipo         = 3     and b2.acesso > 0) or
                  (p_tipo         = 3     and InStr(l_resp_unid,''''||b.sq_unidade||'''') > 0) or
                  (p_tipo         = 4     and Nvl(b1.sigla,'-') <> 'CA'  and b2.acesso > 0) or
@@ -214,11 +214,15 @@ begin
                  (p_tipo         = 5) or
                  (p_tipo         = 6     and b1.ativo          = 'S' and b2.acesso > 0)
                 )
-            and ((p_restricao = 'GRDMETAPA'   and MontaOrdem(q.sq_projeto_etapa)  is not null) or
-                 (p_restricao = 'GRDMPROP'    and d.proponente                    is not null) or
-                 (p_restricao = 'GRDMRESPATU' and b.executor                      is not null) or
-                 (p_restricao = 'GDPCADET'    and q.sq_projeto_etapa              is null))                                
-                ;
+             and ((p_restricao <> 'GRDMETAPA'    and p_restricao <> 'GRDMPROP' and
+                   p_restricao <> 'GRDMRESPATU'  and p_restricao <> 'GDPCADET'
+                  ) or
+                  ((p_restricao = 'GRDMETAPA'    and MontaOrdem(q.sq_projeto_etapa)  is not null) or
+                   (p_restricao = 'GRDMPROP'     and d.proponente                    is not null) or
+                   (p_restricao = 'GRDMRESPATU'  and b.executor                      is not null) or
+                   (p_restricao = 'GDPCADET'     and q.sq_projeto_etapa              is null)
+                  )
+                 );
    Elsif p_restricao = 'PJCAD' or p_restricao = 'PJACOMP' or Substr(p_restricao,1,4) = 'GRPR' or
          p_restricao = 'ORCAD' or p_restricao = 'ORACOMP' or Substr(p_restricao,1,4) = 'GROR' Then
       -- Recupera as demandas que o usuário pode ver
@@ -367,7 +371,7 @@ begin
             and (p_solicitante    is null or (p_solicitante is not null and b.solicitante        = p_solicitante))
             and ((p_tipo         = 1     and Nvl(b1.sigla,'-') = 'CI'   and b.cadastrador        = p_pessoa) or
                  (p_tipo         = 2     and Nvl(b1.sigla,'-') <> 'CI'  and b.executor           = p_pessoa and d.concluida = 'N') or
-                 (p_tipo         = 2     and b1.ativo = 'S' and Nvl(b1.sigla,'-') <> 'CI' and b2.acesso > 15) or
+                 --(p_tipo         = 2     and b1.ativo = 'S' and Nvl(b1.sigla,'-') <> 'CI' and b2.acesso > 15) or
                  (p_tipo         = 3     and b2.acesso > 0) or
                  (p_tipo         = 3     and InStr(l_resp_unid,''''||b.sq_unidade||'''') > 0) or
                  (p_tipo         = 4     and Nvl(b1.sigla,'-') <> 'CA'  and b2.acesso > 0) or
@@ -375,10 +379,12 @@ begin
                  (p_tipo         = 5     and Nvl(b1.sigla,'-') <> 'CA') or
                  (p_tipo         = 6     and b1.ativo          = 'S' and b2.acesso > 0)
                 )
-            and ((p_restricao = 'GRPRPROP'    and d.proponente                    is not null) or
-                 (p_restricao = 'GRPRRESPATU' and b.executor                      is not null))                                    
-            ;
-   Elsif p_restricao in ('GCRCAD','GCDCAD','GCPCAD') Then
+            and ((p_restricao <> 'GRPRPROP'    and p_restricao <> 'GRPRRESPATU') or 
+                 ((p_restricao = 'GRPRPROP'    and d.proponente  is not null)   or 
+                  (p_restricao = 'GRPRRESPATU' and b.executor    is not null)
+                 )
+                );
+   Elsif substr(p_restricao,1,3) = 'GCR' or substr(p_restricao,1,3) = 'GCD' or substr(p_restricao,1,3) = 'GCP' Then
       -- Recupera os acordos que o usuário pode ver
       open p_result for
          select a.sq_menu,            a.sq_modulo,                   a.nome,
@@ -552,19 +558,30 @@ begin
                                                                             (acentos(d2.nome_resumido,null) like '%'||acentos(p_proponente,null)||'%')
                                              )
                 )
-            and ((p_restricao     = 'GCRCAD' and d1.modalidade = 'F') or
-                 (p_restricao     = 'GCDCAD' and d1.modalidade not in ('F','I')) or
-                 (p_restricao     = 'GCPCAD' and d1.modalidade = 'I')
+            and ((substr(p_restricao,1,3)     = 'GCR' and d1.modalidade = 'F') or
+                 (substr(p_restricao,1,3)     = 'GCD' and d1.modalidade not in ('F','I')) or
+                 (substr(p_restricao,1,3)     = 'GCP' and d1.modalidade = 'I')
                 )
             and ((p_tipo         = 1     and Nvl(b1.sigla,'-') = 'CI'   and b.cadastrador        = p_pessoa) or
                  (p_tipo         = 2     and b1.ativo = 'S' and Nvl(b1.sigla,'-') <> 'CI' and b.executor = p_pessoa and b.conclusao is null) or
-                 (p_tipo         = 2     and b1.ativo = 'S' and Nvl(b1.sigla,'-') <> 'CI' and b2.acesso > 15) or
+                 --(p_tipo         = 2     and b1.ativo = 'S' and Nvl(b1.sigla,'-') <> 'CI' and b2.acesso > 15) or
                  (p_tipo         = 3     and b2.acesso > 0) or
                  (p_tipo         = 3     and InStr(l_resp_unid,''''||b.sq_unidade||'''') > 0) or
                  (p_tipo         = 4     and Nvl(b1.sigla,'-') <> 'CA'  and b2.acesso > 0) or
                  (p_tipo         = 4     and InStr(l_resp_unid,''''||b.sq_unidade||'''') > 0) or
                  (p_tipo         = 5) or
                  (p_tipo         = 6     and b1.ativo          = 'S' and b2.acesso > 0)
+                )
+            and ((instr(p_restricao,'PROJ')    = 0 and
+                  instr(p_restricao,'PROP')    = 0 and
+                  instr(p_restricao,'RESPATU') = 0 and
+                  instr(p_restricao,'CC')      = 0
+                 ) or 
+                 ((instr(p_restricao,'PROJ')    > 0    and b.sq_solic_pai is not null) or
+                  (instr(p_restricao,'PROP')    > 0    and d.outra_parte  is not null) or
+                  (instr(p_restricao,'RESPATU') > 0    and b.executor     is not null) or
+                  (instr(p_restricao,'CC')      > 0    and b.sq_cc        is not null)
+                 )
                 );
    Elsif substr(p_restricao,1,2) = 'FN' Then
       -- Recupera os acordos que o usuário pode ver
@@ -735,7 +752,7 @@ begin
                 )
             and ((p_tipo         = 1     and Nvl(b1.sigla,'-') = 'CI'   and b.cadastrador        = p_pessoa) or
                  (p_tipo         = 2     and b1.ativo = 'S' and Nvl(b1.sigla,'-') <> 'CI' and b.executor = p_pessoa and b.conclusao is null) or
-                 (p_tipo         = 2     and b1.ativo = 'S' and Nvl(b1.sigla,'-') <> 'CI' and b2.acesso > 15) or
+                 --(p_tipo         = 2     and b1.ativo = 'S' and Nvl(b1.sigla,'-') <> 'CI' and b2.acesso > 15) or
                  (p_tipo         = 3     and b2.acesso > 0) or
                  (p_tipo         = 3     and InStr(l_resp_unid,''''||b.sq_unidade||'''') > 0) or
                  (p_tipo         = 4     and Nvl(b1.sigla,'-') <> 'CA'  and b2.acesso > 0) or
@@ -871,7 +888,7 @@ begin
                 )
             and ((p_tipo         = 1     and Nvl(b1.sigla,'-') = 'CI'   and b.cadastrador        = p_pessoa) or
                  (p_tipo         = 2     and b1.ativo = 'S' and Nvl(b1.sigla,'-') <> 'CI' and b.executor = p_pessoa and b.conclusao is null) or
-                 (p_tipo         = 2     and b1.ativo = 'S' and Nvl(b1.sigla,'-') <> 'CI' and b2.acesso > 15) or
+                 --(p_tipo         = 2     and b1.ativo = 'S' and Nvl(b1.sigla,'-') <> 'CI' and b2.acesso > 15) or
                  (p_tipo         = 3     and b2.acesso > 0) or
                  (p_tipo         = 3     and InStr(l_resp_unid,''''||b.sq_unidade||'''') > 0) or
                  (p_tipo         = 4     and Nvl(b1.sigla,'-') <> 'CA'  and b2.acesso > 0) or

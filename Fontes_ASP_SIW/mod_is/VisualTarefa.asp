@@ -16,7 +16,7 @@ Function VisualTarefa(w_chave, O, w_usuario, P4, w_identificacao, w_conclusao, w
   w_html = w_html & VbCrLf & "      <tr><td colspan=""2""><hr NOSHADE color=#000000 size=4></td></tr>"
   
   ' Identificação da tarefa
-  If w_identificacao = uCase("sim") Then
+  If uCase(w_identificacao) = uCase("sim") Then
      w_html = w_html & VbCrLf & "      <tr><td colspan=""2""><br><font size=""2""><b>IDENTIFICAÇÃO DA TAREFA<hr NOSHADE color=#000000 SIZE=1></b></font></td></tr>"
      If Not IsNull(RS1("nm_projeto")) Then
         ' Recupera os dados da ação
@@ -69,7 +69,7 @@ Function VisualTarefa(w_chave, O, w_usuario, P4, w_identificacao, w_conclusao, w
   End If
   
   ' Dados da conclusão do programa, se ela estiver nessa situação
-  If w_conclusao = uCase("sim") Then
+  If uCase(w_conclusao) = uCase("sim") Then
      If RS1("concluida") = "S" and Nvl(RS1("data_conclusao"),"") > "" Then
         w_html = w_html & VbCrLf & "      <tr><td colspan=""2""><br><font size=""2""><b>DADOS DA CONCLUSÃO DA TAREFA<hr NOSHADE color=#000000 SIZE=1></b></font></td></tr>"
         w_html = w_html & VbCrLf & "   <tr><td><font size=""1""><b>Recurso Executado:</b></font></td>"
@@ -80,7 +80,7 @@ Function VisualTarefa(w_chave, O, w_usuario, P4, w_identificacao, w_conclusao, w
   End If
   
   'Responsável
-  If w_responsavel = uCase("sim") Then
+  If uCase(w_responsavel) = uCase("sim") Then
      w_html = w_html & VbCrLf & "      <tr><td colspan=""2""><br><font size=""2""><b>RESPONSÁVEIS<hr NOSHADE color=#000000 SIZE=1></b></font></td></tr>"
      If RS1("nm_responsavel") > "" Then
         w_html = w_html & VbCrLf & "   <tr><td><font size=""1""><b>Responsável pela Tarefa:</b></font></td>"
@@ -96,7 +96,7 @@ Function VisualTarefa(w_chave, O, w_usuario, P4, w_identificacao, w_conclusao, w
   End If
   
   ' Arquivos vinculados ao programa
-  If w_anexo = uCase("sim") Then
+  If uCase(w_anexo) = uCase("sim") Then
      w_html = w_html & VbCrLf & "      <tr><td colspan=""2""><br><font size=""2""><b>ANEXOS<hr NOSHADE color=#000000 SIZE=1></b></font></td></tr>"
      DB_GetSolicAnexo RS2, w_chave, null, w_cliente
      RS2.Sort = "nome"
@@ -124,7 +124,7 @@ Function VisualTarefa(w_chave, O, w_usuario, P4, w_identificacao, w_conclusao, w
   End If
   
   ' Encaminhamentos
-  If w_ocorrencia = uCase("sim") Then
+  If uCase(w_ocorrencia) = uCase("sim") Then
      w_html = w_html & VbCrLf & "      <tr><td colspan=""2""><br><font size=""2""><b>OCORRÊNCIAS E ANOTAÇÕES<hr NOSHADE color=#000000 SIZE=1></b></font></td></tr>"
      DB_GetSolicLog RS1, w_chave, null, "LISTA"
      RS1.Sort = "data desc"
@@ -171,7 +171,7 @@ Function VisualTarefa(w_chave, O, w_usuario, P4, w_identificacao, w_conclusao, w
   End If
   
   'Dados da consulta
-  If w_dados_consulta = uCase("sim") Then
+  If uCase(w_dados_consulta) = uCase("sim") Then
      w_html = w_html & VbCrLf & "      <tr><td colspan=""2""><br><font size=""2""><b>DADOS DA CONSULTA<hr NOSHADE color=#000000 SIZE=1></b></font></td></tr>"
      w_html = w_html & VbCrLf & "   <tr><td><font size=""1""><b>Consulta Realizada por:</b></font></td>"
      w_html = w_html & VbCrLf & "       <td><font size=""1"">" &  Session("NOME_RESUMIDO") & "</font></td></tr>"

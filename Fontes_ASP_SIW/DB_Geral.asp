@@ -2023,7 +2023,7 @@ Sub DB_GetKindPersonList(p_rs, p_nome)
   Set l_nome = Server.CreateObject("ADODB.Parameter")
   with sp
      set l_nome                = .CreateParameter("l_nome", adVarchar, adParamInput, 60, Tvl(p_nome))
-     .parameters.Append         l_sq_cidade
+     .parameters.Append         l_nome
      If Session("dbms") = 1 or Session("dbms") = 3 Then .Properties("PLSQLRSet") = TRUE End If
      .CommandText               = Session("schema") & "SP_GetKindPersList"
      On Error Resume Next

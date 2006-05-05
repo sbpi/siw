@@ -342,22 +342,17 @@ Sub Inicial
         If w_filtro > "" Then w_filtro = "<table border=0><tr valign=""top""><td><font size=1><b>Filtro:</b><td nowrap><font size=1><ul>" & w_filtro & "</ul></tr></table>"                    End If
      End If
      If w_copia > "" Then ' Se for cópia, aplica o filtro sobre todas as demandas visíveis pelo usuário
-        DB_GetSolicList rs, RS_Menu("sq_menu"), w_usuario, SG, 3, _
+        DB_GetSolicList rs, RS_Menu("sq_menu"), w_usuario, Nvl(Request("p_agrega"),SG), 3, _
            p_ini_i, p_ini_f, p_fim_i, p_fim_f, p_atraso, p_solicitante, _
            p_unidade, p_prioridade, p_ativo, p_proponente, _
            p_chave, p_objeto, p_pais, p_regiao, p_uf, p_cidade, p_usu_resp, _
            p_uorg_resp, p_palavra, p_prazo, p_fase, p_sqcc, p_projeto, null, null, null
      Else
-        DB_GetSolicList rs, RS_Menu("sq_menu"), w_usuario, SG, P1, _
+        DB_GetSolicList rs, RS_Menu("sq_menu"), w_usuario, Nvl(Request("p_agrega"),SG), P1, _
            p_ini_i, p_ini_f, p_fim_i, p_fim_f, p_atraso, p_solicitante, _
            p_unidade, p_prioridade, p_ativo, p_proponente, _
            p_chave, p_objeto, p_pais, p_regiao, p_uf, p_cidade, p_usu_resp, _
            p_uorg_resp, p_palavra, p_prazo, p_fase, p_sqcc, p_projeto, null, null, null
-           
-           Select case Request("p_agrega")
-              Case "GRFNRESPATU"
-                 RS.Filter = "executor <> null"
-           End Select
      End If
 
      If p_ordena > "" Then RS.sort = p_ordena & ", vencimento" Else RS.sort = "nm_pessoa, vencimento desc" End If
@@ -2090,7 +2085,7 @@ Sub BuscaParcela
      ShowHTML "  <tr bgcolor=""" & conTrBgColor & """><td colspan=2>"
      ShowHTML "    <table width=""100%"" border=""0"">"
      ShowHTML "      <tr>"
-     SelecaoAcordo "<u>A</u>cordo:", "A", null, w_cliente, p_sq_acordo, null, "p_sq_acordo", "sg_tramite='EE' or sg_tramite='ER'", "onChange=""document.Form.action='" & w_dir & w_pagina & par & "'; document.Form.O.value='" & O & "'; document.Form.w_troca.value='p_sq_acordo_parcela'; document.Form.submit();"""
+     SelecaoAcordo "<u>A</u>cordo:", "A", null, w_cliente, p_sq_acordo, null, "p_sq_acordo", "EXECUCAO", "onChange=""document.Form.action='" & w_dir & w_pagina & par & "'; document.Form.O.value='" & O & "'; document.Form.w_troca.value='p_sq_acordo_parcela'; document.Form.submit();"""
      SelecaoAcordoParcela "<u>P</u>arcela:", "P", null, w_cliente, p_sq_acordo_parcela, Nvl(p_sq_acordo,0), "p_sq_acordo_parcela", "CADASTRO", null
      ShowHTML "      <tr><td valign=""top""><font size=""1""><b><u>O</u>utra parte:</b><br><input " & w_disabled & " accesskey=""O"" type=""text"" name=""p_outra_parte"" class=""sti"" SIZE=""30"" MAXLENGTH=""60"" VALUE=""" & p_outra_parte & """></td>"
      ShowHTML "      <tr><td valign=""top""><font size=""1""><b>Parcelas com <u>v</u>encimento entre:</b><br><input " & w_Disabled & " accesskey=""V"" type=""text"" name=""p_inicio"" class=""sti"" SIZE=""10"" MAXLENGTH=""10"" VALUE=""" & p_inicio & """ onKeyDown=""FormataData(this,event);""> e <input " & w_Disabled & " accesskey=""C"" type=""text"" name=""p_fim"" class=""sti"" SIZE=""10"" MAXLENGTH=""10"" VALUE=""" & p_fim & """ onKeyDown=""FormataData(this,event);""></td>"

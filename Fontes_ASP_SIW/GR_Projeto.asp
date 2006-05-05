@@ -274,87 +274,37 @@ Sub Gerencial
      If p_atraso      = "S" Then w_filtro = w_filtro & "<tr valign=""top""><td align=""right""><font size=1>Situação <td><font size=1>[<b>Apenas atrasadas</b>]"                            End If
      If w_filtro > "" Then w_filtro = "<table border=0><tr valign=""top""><td><font size=1><b>Filtro:</b><td nowrap><font size=1><ul>" & w_filtro & "</ul></tr></table>"                    End If
 
+     DB_GetSolicList RS1, P2, w_usuario, p_agrega, 4, _
+        p_ini_i, p_ini_f, p_fim_i, p_fim_f, p_atraso, p_solicitante, _
+        p_unidade, p_prioridade, p_ativo, p_proponente, _
+        p_chave, p_assunto, p_pais, p_regiao, p_uf, p_cidade, p_usu_resp, _
+        p_uorg_resp, p_palavra, p_prazo, p_fase, p_sqcc, p_projeto, p_atividade, null, null
+
      Select case p_agrega
         Case "GRPRPROJ"
-           DB_GetSolicList RS1, P2, w_usuario, p_agrega, 4, _
-                p_ini_i, p_ini_f, p_fim_i, p_fim_f, p_atraso, p_solicitante, _
-                p_unidade, p_prioridade, p_ativo, p_proponente, _
-                p_chave, p_assunto, p_pais, p_regiao, p_uf, p_cidade, p_usu_resp, _
-                p_uorg_resp, p_palavra, p_prazo, p_fase, p_sqcc, p_projeto, p_atividade, null, null
            w_TP = TP & " - Por projeto"
            RS1.sort = "titulo"
         Case "GRPRPROP"
-           DB_GetSolicList RS1, P2, w_usuario, p_agrega, 4, _
-                p_ini_i, p_ini_f, p_fim_i, p_fim_f, p_atraso, p_solicitante, _
-                p_unidade, p_prioridade, p_ativo, p_proponente, _
-                p_chave, p_assunto, p_pais, p_regiao, p_uf, p_cidade, p_usu_resp, _
-                p_uorg_resp, p_palavra, p_prazo, p_fase, p_sqcc, p_projeto, p_atividade, null, null
            w_TP = TP & " - Por proponente"
            RS1.sort = "proponente"
         Case "GRPRRESP"
-           DB_GetSolicList RS1, P2, w_usuario, p_agrega, 4, _
-                p_ini_i, p_ini_f, p_fim_i, p_fim_f, p_atraso, p_solicitante, _
-                p_unidade, p_prioridade, p_ativo, p_proponente, _
-                p_chave, p_assunto, p_pais, p_regiao, p_uf, p_cidade, p_usu_resp, _
-                p_uorg_resp, p_palavra, p_prazo, p_fase, p_sqcc, null, null, null, null
            w_TP = TP & " - Por responsável"
            RS1.sort = "nm_solic"
         Case "GRPRRESPATU"
-           DB_GetSolicList RS1, P2, w_usuario, p_agrega, 4, _
-                p_ini_i, p_ini_f, p_fim_i, p_fim_f, p_atraso, p_solicitante, _
-                p_unidade, p_prioridade, p_ativo, p_proponente, _
-                p_chave, p_assunto, p_pais, p_regiao, p_uf, p_cidade, p_usu_resp, _
-                p_uorg_resp, p_palavra, p_prazo, p_fase, p_sqcc, null, null, null, null
            w_TP = TP & " - Por executor"
            RS1.sort = "nm_exec"
         Case "GRPRCC"
-           DB_GetSolicList RS1, P2, w_usuario, p_agrega, 4, _
-                p_ini_i, p_ini_f, p_fim_i, p_fim_f, p_atraso, p_solicitante, _
-                p_unidade, p_prioridade, p_ativo, p_proponente, _
-                p_chave, p_assunto, p_pais, p_regiao, p_uf, p_cidade, p_usu_resp, _
-                p_uorg_resp, p_palavra, p_prazo, p_fase, p_sqcc, null, null, null, null
            w_TP = TP & " - Por classificação"
            RS1.sort = "sg_cc"
         Case "GRPRSETOR"
            w_TP = TP & " - Por setor responsável"
-           DB_GetSolicList RS1, P2, w_usuario, p_agrega, 4, _
-                p_ini_i, p_ini_f, p_fim_i, p_fim_f, p_atraso, p_solicitante, _
-                p_unidade, p_prioridade, p_ativo, p_proponente, _
-                p_chave, p_assunto, p_pais, p_regiao, p_uf, p_cidade, p_usu_resp, _
-                p_uorg_resp, p_palavra, p_prazo, p_fase, p_sqcc, null, null, null, null
            RS1.sort = "nm_unidade_resp"
         Case "GRPRPRIO" 
            w_TP = TP & " - Por prioridade"
-           DB_GetSolicList RS1, P2, w_usuario, p_agrega, 4, _
-                p_ini_i, p_ini_f, p_fim_i, p_fim_f, p_atraso, p_solicitante, _
-                p_unidade, p_prioridade, p_ativo, p_proponente, _
-                p_chave, p_assunto, p_pais, p_regiao, p_uf, p_cidade, p_usu_resp, _
-                p_uorg_resp, p_palavra, p_prazo, p_fase, p_sqcc, null, null, null, null
            RS1.sort = "nm_prioridade"
         Case "GRPRLOCAL" 
            w_TP = TP & " - Por UF"
-           DB_GetSolicList RS1, P2, w_usuario, p_agrega, 4, _
-                p_ini_i, p_ini_f, p_fim_i, p_fim_f, p_atraso, p_solicitante, _
-                p_unidade, p_prioridade, p_ativo, p_proponente, _
-                p_chave, p_assunto, p_pais, p_regiao, p_uf, p_cidade, p_usu_resp, _
-                p_uorg_resp, p_palavra, p_prazo, p_fase, p_sqcc, null, null, null, null
            RS1.sort = "co_uf"
-        Case "GRPRAREA" 
-           w_TP = TP & " - Por área"
-           DB_GetSolicGRA RS1, P2, w_usuario, p_agrega, 4, _
-                p_ini_i, p_ini_f, p_fim_i, p_fim_f, p_atraso, p_solicitante, _
-                p_unidade, p_prioridade, p_ativo, p_proponente, _
-                p_chave, p_assunto, p_pais, p_regiao, p_uf, p_cidade, p_usu_resp, _
-                p_uorg_resp, p_palavra, p_prazo, p_fase, p_sqcc, null, null
-           RS1.sort = "nm_envolv"
-        Case "GRPRINTER" 
-           w_TP = TP & " - Por interessado"
-           DB_GetSolicGRI RS1, P2, w_usuario, p_agrega, 4, _
-                p_ini_i, p_ini_f, p_fim_i, p_fim_f, p_atraso, p_solicitante, _
-                p_unidade, p_prioridade, p_ativo, p_proponente, _
-                p_chave, p_assunto, p_pais, p_regiao, p_uf, p_cidade, p_usu_resp, _
-                p_uorg_resp, p_palavra, p_prazo, p_fase, p_sqcc, null, null
-           RS1.sort = "nm_inter"
      End Select
   End If
   
@@ -448,8 +398,6 @@ Sub Gerencial
             Case "GRPRSETOR"   ShowHTML "      document.Form.p_unidade.value=filtro;"
             Case "GRPRPRIO"    ShowHTML "      document.Form.p_prioridade.value=filtro;"
             Case "GRPRLOCAL"   ShowHTML "      document.Form.p_uf.value=filtro;"
-            Case "GRPRAREA"    ShowHTML "      document.Form.p_area.value=filtro;"
-            Case "GRPRINTER"   ShowHTML "      document.Form.p_inter.value=filtro;"
          End Select
          ShowHTML "    }"
          Select case p_agrega
@@ -461,8 +409,6 @@ Sub Gerencial
             Case "GRPRSETOR"   ShowHTML "    else document.Form.p_unidade.value='" & Request("p_unidade")& "';"
             Case "GRPRPRIO"    ShowHTML "    else document.Form.p_prioridade.value='" & Request("p_prioridade")& "';"
             Case "GRPRLOCAL"   ShowHTML "    else document.Form.p_uf.value='" & Request("p_uf")& "';"
-            Case "GRPRAREA"    ShowHTML "    else document.Form.p_area.value='" & Request("p_area")& "';"
-            Case "GRPRINTER"   ShowHTML "    else document.Form.p_inter.value='" & Request("p_inter")& "';"
          End Select
          DB_GetTramiteList RS2, P2, null, null
          RS2.Sort = "ordem"
@@ -497,8 +443,6 @@ Sub Gerencial
             Case "GRPRSETOR"   If Request("p_unidade") = ""     Then ShowHTML "<input type=""Hidden"" name=""p_unidade"" value="""">"       End If
             Case "GRPRPRIO"    If Request("p_prioridade") = ""  Then ShowHTML "<input type=""Hidden"" name=""p_prioridade"" value="""">"    End If
             Case "GRPRLOCAL"   If Request("p_uf") = ""          Then ShowHTML "<input type=""Hidden"" name=""p_uf"" value="""">"            End If
-            Case "GRPRAREA"    If Request("p_area") = ""        Then ShowHTML "<input type=""Hidden"" name=""p_area"" value="""">"          End If
-            Case "GRPRINTER"   If Request("p_inter") = ""       Then ShowHTML "<input type=""Hidden"" name=""p_inter"" value="""">"         End If
          End Select
       End If
   
@@ -718,53 +662,6 @@ Sub Gerencial
                  t_custo           = 0
                  w_linha           = w_linha + 1
               End If
-           Case "GRPRAREA"
-              If w_nm_quebra <> RS1("nm_envolv") Then
-                 If w_qt_quebra > 0 Then
-                    ImprimeLinha t_solic, t_cad, t_tram, t_conc, t_atraso, t_aviso, t_valor, t_custo, t_acima, w_chave
-                    w_linha = w_linha + 2
-                 End If
-                 If O <> "W" or (O = "W" and w_linha <= 25) Then
-                    ShowHTML "      <tr bgcolor=""" & w_cor & """ valign=""top""><td><font size=1><b>" & RS1("nm_envolv")
-                 End If
-                 w_nm_quebra       = RS1("nm_envolv")
-                 w_chave           = RS1("sq_unidade")
-                 w_qt_quebra       = 0
-                 t_solic           = 0
-                 t_cad             = 0
-                 t_tram            = 0
-                 t_conc            = 0
-                 t_atraso          = 0
-                 t_aviso           = 0
-                 t_valor           = 0
-                 t_acima           = 0
-                 t_custo           = 0
-                 w_linha           = w_linha + 1
-              End If
-           Case "GRPRINTER"
-              If w_nm_quebra <> RS1("nm_inter") Then
-                 If w_qt_quebra > 0 Then
-                    ImprimeLinha t_solic, t_cad, t_tram, t_conc, t_atraso, t_aviso, t_valor, t_custo, t_acima, w_chave
-                    w_linha = w_linha + 2
-                 End If
-                 If O <> "W" or (O = "W" and w_linha <= 25) Then
-                    ' Se for geração de MS-Word, coloca a nova quebra somente se não estourou o limite
-                    ShowHTML "      <tr bgcolor=""" & w_cor & """ valign=""top""><td><font size=1><b>" & RS1("nm_inter")
-                 End If
-                 w_nm_quebra       = RS1("nm_inter")
-                 w_chave           = RS1("sq_unidade")
-                 w_qt_quebra       = 0
-                 t_solic           = 0
-                 t_cad             = 0
-                 t_tram            = 0
-                 t_conc            = 0
-                 t_atraso          = 0
-                 t_aviso           = 0
-                 t_valor           = 0
-                 t_acima           = 0
-                 t_custo           = 0
-                 w_linha           = w_linha + 1
-              End If
         End Select
         If O = "W" and w_linha > 25 Then ' Se for geração de MS-Word, quebra a página
            ShowHTML "    </table>"
@@ -789,8 +686,6 @@ Sub Gerencial
               Case "GRPRSETOR"   ShowHTML "      <tr bgcolor=""" & w_cor & """ valign=""top""><td><font size=1><b>" & RS1("nm_unidade_resp")
               Case "GRPRPRIO"    ShowHTML "      <tr bgcolor=""" & w_cor & """ valign=""top""><td><font size=1><b>" & RS1("nm_prioridade")
               Case "GRPRLOCAL"   ShowHTML "      <tr bgcolor=""" & w_cor & """ valign=""top""><td><font size=1><b>" & RS1("co_uf")
-              Case "GRPRAREA"    ShowHTML "      <tr bgcolor=""" & w_cor & """ valign=""top""><td><font size=1><b>" & RS1("nm_envolv")
-              Case "GRPRINTER"   ShowHTML "      <tr bgcolor=""" & w_cor & """ valign=""top""><td><font size=1><b>" & RS1("nm_inter")
            End Select
            w_linha = w_linha + 1
         End If
@@ -861,29 +756,25 @@ Sub Gerencial
     ShowHTML "          <td><font size=""1""><b><U>A</U>gregar por:<br><SELECT ACCESSKEY=""O"" " & w_Disabled & " class=""STS"" name=""p_agrega"" size=""1"">"
     If RS_menu("solicita_cc") = "S" Then
        Select case p_agrega
-          Case "GRPRAREA"    ShowHTML "          <option value=""GRPRAREA"" selected>Área envolvida<option value=""GRPRCC"">Classificação<option value=""GRPRRESPATU"">Executor<option value=""GRPRINTER"">Interessado<option value=""GRPRPRIO"">Prioridade<option value=""GRPRPROJ"">Projeto<option value=""GRPRPROP"">Proponente<option value=""GRPRRESP"">Responsável<option value=""GRPRSETOR"">Setor responsável<option value=""GRPRLOCAL"">UF"
-          Case "GRPRCC"      ShowHTML "          <option value=""GRPRAREA"">Área envolvida<option value=""GRPRCC"" selected>Classificação<option value=""GRPRRESPATU"">Executor<option value=""GRPRINTER"">Interessado<option value=""GRPRPRIO"">Prioridade<option value=""GRPRPROJ"">Projeto<option value=""GRPRPROP"">Proponente<option value=""GRPRRESP"">Responsável<option value=""GRPRSETOR"">Setor responsável<option value=""GRPRLOCAL"">UF"
-          Case "GRPRINTER"   ShowHTML "          <option value=""GRPRAREA"">Área envolvida<option value=""GRPRCC"">Classificação<option value=""GRPRRESPATU"">Executor<option value=""GRPRINTER"" selected>Interessado<option value=""GRPRPRIO"">Prioridade<option value=""GRPRPROJ"">Projeto<option value=""GRPRPROP"">Proponente<option value=""GRPRRESP"">Responsável<option value=""GRPRSETOR"">Setor responsável<option value=""GRPRLOCAL"">UF"
-          Case "GRPRPRIO"    ShowHTML "          <option value=""GRPRAREA"">Área envolvida<option value=""GRPRCC"">Classificação<option value=""GRPRRESPATU"">Executor<option value=""GRPRINTER"">Interessado<option value=""GRPRPRIO"" selected>Prioridade<option value=""GRPRPROJ"">Projeto<option value=""GRPRPROP"">Proponente<option value=""GRPRRESP"">Responsável<option value=""GRPRSETOR"">Setor responsável<option value=""GRPRLOCAL"">UF"
-          Case "GRPRPROJ"    ShowHTML "          <option value=""GRPRAREA"">Área envolvida<option value=""GRPRCC"">Classificação<option value=""GRPRRESPATU"">Executor<option value=""GRPRINTER"">Interessado<option value=""GRPRPRIO"">Prioridade<option value=""GRPRPROJ"" selected>Projeto<option value=""GRPRPROP"">Proponente<option value=""GRPRRESP"">Responsável<option value=""GRPRSETOR"">Setor responsável<option value=""GRPRLOCAL"">UF"
-          Case "GRPRPROP"    ShowHTML "          <option value=""GRPRAREA"">Área envolvida<option value=""GRPRCC"">Classificação<option value=""GRPRRESPATU"">Executor<option value=""GRPRINTER"">Interessado<option value=""GRPRPRIO"">Prioridade<option value=""GRPRPROJ"">Projeto<option value=""GRPRPROP"" selected>Proponente<option value=""GRPRRESP"">Responsável<option value=""GRPRSETOR"">Setor responsável<option value=""GRPRLOCAL"">UF"
-          Case "GRPRRESPATU" ShowHTML "          <option value=""GRPRAREA"">Área envolvida<option value=""GRPRCC"">Classificação<option value=""GRPRRESPATU"" selected>Executor<option value=""GRPRINTER"">Interessado<option value=""GRPRPRIO"">Prioridade<option value=""GRPRPROJ"">Projeto<option value=""GRPRPROP"">Proponente<option value=""GRPRRESP"">Responsável<option value=""GRPRSETOR"">Setor responsável<option value=""GRPRLOCAL"">UF"
-          Case "GRPRSETOR"   ShowHTML "          <option value=""GRPRAREA"">Área envolvida<option value=""GRPRCC"">Classificação<option value=""GRPRRESPATU"">Executor<option value=""GRPRINTER"">Interessado<option value=""GRPRPRIO"">Prioridade<option value=""GRPRPROJ"">Projeto<option value=""GRPRPROP"">Proponente<option value=""GRPRRESP"">Responsável<option value=""GRPRSETOR"" selected>Setor responsável<option value=""GRPRLOCAL"">UF"
-          Case "GRPRLOCAL"   ShowHTML "          <option value=""GRPRAREA"">Área envolvida<option value=""GRPRCC"">Classificação<option value=""GRPRRESPATU"">Executor<option value=""GRPRINTER"">Interessado<option value=""GRPRPRIO"">Prioridade<option value=""GRPRPROJ"">Projeto<option value=""GRPRPROP"">Proponente<option value=""GRPRRESP"">Responsável<option value=""GRPRSETOR"">Setor responsável<option value=""GRPRLOCAL"" selected>UF"
-          Case Else          ShowHTML "          <option value=""GRPRAREA"">Área envolvida<option value=""GRPRCC"">Classificação<option value=""GRPRRESPATU"">Executor<option value=""GRPRINTER"">Interessado<option value=""GRPRPRIO"">Prioridade<option value=""GRPRPROJ"">Projeto<option value=""GRPRPROP"">Proponente<option value=""GRPRRESP"" selected>Responsável<option value=""GRPRSETOR"">Setor responsável<option value=""GRPRLOCAL"">UF"
+          Case "GRPRCC"      ShowHTML "          <option value=""GRPRCC"" selected>Classificação<option value=""GRPRRESPATU"">Executor<option value=""GRPRPRIO"">Prioridade<option value=""GRPRPROJ"">Projeto<option value=""GRPRPROP"">Proponente<option value=""GRPRRESP"">Responsável<option value=""GRPRSETOR"">Setor responsável<option value=""GRPRLOCAL"">UF"
+          Case "GRPRPRIO"    ShowHTML "          <option value=""GRPRCC"">Classificação<option value=""GRPRRESPATU"">Executor<option value=""GRPRPRIO"" selected>Prioridade<option value=""GRPRPROJ"">Projeto<option value=""GRPRPROP"">Proponente<option value=""GRPRRESP"">Responsável<option value=""GRPRSETOR"">Setor responsável<option value=""GRPRLOCAL"">UF"
+          Case "GRPRPROJ"    ShowHTML "          <option value=""GRPRCC"">Classificação<option value=""GRPRRESPATU"">Executor<option value=""GRPRPRIO"">Prioridade<option value=""GRPRPROJ"" selected>Projeto<option value=""GRPRPROP"">Proponente<option value=""GRPRRESP"">Responsável<option value=""GRPRSETOR"">Setor responsável<option value=""GRPRLOCAL"">UF"
+          Case "GRPRPROP"    ShowHTML "          <option value=""GRPRCC"">Classificação<option value=""GRPRRESPATU"">Executor<option value=""GRPRPRIO"">Prioridade<option value=""GRPRPROJ"">Projeto<option value=""GRPRPROP"" selected>Proponente<option value=""GRPRRESP"">Responsável<option value=""GRPRSETOR"">Setor responsável<option value=""GRPRLOCAL"">UF"
+          Case "GRPRRESPATU" ShowHTML "          <option value=""GRPRCC"">Classificação<option value=""GRPRRESPATU"" selected>Executor<option value=""GRPRPRIO"">Prioridade<option value=""GRPRPROJ"">Projeto<option value=""GRPRPROP"">Proponente<option value=""GRPRRESP"">Responsável<option value=""GRPRSETOR"">Setor responsável<option value=""GRPRLOCAL"">UF"
+          Case "GRPRSETOR"   ShowHTML "          <option value=""GRPRCC"">Classificação<option value=""GRPRRESPATU"">Executor<option value=""GRPRPRIO"">Prioridade<option value=""GRPRPROJ"">Projeto<option value=""GRPRPROP"">Proponente<option value=""GRPRRESP"">Responsável<option value=""GRPRSETOR"" selected>Setor responsável<option value=""GRPRLOCAL"">UF"
+          Case "GRPRLOCAL"   ShowHTML "          <option value=""GRPRCC"">Classificação<option value=""GRPRRESPATU"">Executor<option value=""GRPRPRIO"">Prioridade<option value=""GRPRPROJ"">Projeto<option value=""GRPRPROP"">Proponente<option value=""GRPRRESP"">Responsável<option value=""GRPRSETOR"">Setor responsável<option value=""GRPRLOCAL"" selected>UF"
+          Case Else          ShowHTML "          <option value=""GRPRCC"">Classificação<option value=""GRPRRESPATU"">Executor<option value=""GRPRPRIO"">Prioridade<option value=""GRPRPROJ"">Projeto<option value=""GRPRPROP"">Proponente<option value=""GRPRRESP"" selected>Responsável<option value=""GRPRSETOR"">Setor responsável<option value=""GRPRLOCAL"">UF"
        End Select
     Else
-       Select case p_agrega
-          Case "GRPRAREA"    ShowHTML "          <option value=""GRPRAREA"" selected>Área envolvida<option value=""GRPRRESPATU"">Executor<option value=""GRPRINTER"">Interessado<option value=""GRPRPRIO"">Prioridade<option value=""GRPRPROJ"">Projeto<option value=""GRPRPROP"">Proponente<option value=""GRPRRESP"">Responsável<option value=""GRPRSETOR"">Setor responsável<option value=""GRPRLOCAL"">UF"
-          Case "GRPRCC"      ShowHTML "          <option value=""GRPRAREA"">Área envolvida<option value=""GRPRRESPATU"">Executor<option value=""GRPRINTER"">Interessado<option value=""GRPRPRIO"">Prioridade<option value=""GRPRPROJ"">Projeto<option value=""GRPRPROP"">Proponente<option value=""GRPRRESP"">Responsável<option value=""GRPRSETOR"">Setor responsável<option value=""GRPRLOCAL"">UF"
-          Case "GRPRINTER"   ShowHTML "          <option value=""GRPRAREA"">Área envolvida<option value=""GRPRRESPATU"">Executor<option value=""GRPRINTER"" selected>Interessado<option value=""GRPRPRIO"">Prioridade<option value=""GRPRPROJ"">Projeto<option value=""GRPRPROP"">Proponente<option value=""GRPRRESP"">Responsável<option value=""GRPRSETOR"">Setor responsável<option value=""GRPRLOCAL"">UF"
-          Case "GRPRPRIO"    ShowHTML "          <option value=""GRPRAREA"">Área envolvida<option value=""GRPRRESPATU"">Executor<option value=""GRPRINTER"">Interessado<option value=""GRPRPRIO"" selected>Prioridade<option value=""GRPRPROJ"">Projeto<option value=""GRPRPROP"">Proponente<option value=""GRPRRESP"">Responsável<option value=""GRPRSETOR"">Setor responsável<option value=""GRPRLOCAL"">UF"
-          Case "GRPRPROJ"    ShowHTML "          <option value=""GRPRAREA"">Área envolvida<option value=""GRPRRESPATU"">Executor<option value=""GRPRINTER"">Interessado<option value=""GRPRPRIO"">Prioridade<option value=""GRPRPROJ"" selected>Projeto<option value=""GRPRPROP"">Proponente<option value=""GRPRRESP"">Responsável<option value=""GRPRSETOR"">Setor responsável<option value=""GRPRLOCAL"">UF"
-          Case "GRPRPROP"    ShowHTML "          <option value=""GRPRAREA"">Área envolvida<option value=""GRPRRESPATU"">Executor<option value=""GRPRINTER"">Interessado<option value=""GRPRPRIO"">Prioridade<option value=""GRPRPROJ"">Projeto<option value=""GRPRPROP"" selected>Proponente<option value=""GRPRRESP"">Responsável<option value=""GRPRSETOR"">Setor responsável<option value=""GRPRLOCAL"">UF"
-          Case "GRPRRESPATU" ShowHTML "          <option value=""GRPRAREA"">Área envolvida<option value=""GRPRRESPATU"" selected>Executor<option value=""GRPRINTER"">Interessado<option value=""GRPRPRIO"">Prioridade<option value=""GRPRPROJ"">Projeto<option value=""GRPRPROP"">Proponente<option value=""GRPRRESP"">Responsável<option value=""GRPRSETOR"">Setor responsável<option value=""GRPRLOCAL"">UF"
-          Case "GRPRSETOR"   ShowHTML "          <option value=""GRPRAREA"">Área envolvida<option value=""GRPRRESPATU"">Executor<option value=""GRPRINTER"">Interessado<option value=""GRPRPRIO"">Prioridade<option value=""GRPRPROJ"">Projeto<option value=""GRPRPROP"">Proponente<option value=""GRPRRESP"">Responsável<option value=""GRPRSETOR"" selected>Setor responsável<option value=""GRPRLOCAL"">UF"
-          Case "GRPRLOCAL"   ShowHTML "          <option value=""GRPRAREA"">Área envolvida<option value=""GRPRRESPATU"">Executor<option value=""GRPRINTER"">Interessado<option value=""GRPRPRIO"">Prioridade<option value=""GRPRPROJ"">Projeto<option value=""GRPRPROP"">Proponente<option value=""GRPRRESP"">Responsável<option value=""GRPRSETOR"">Setor responsável<option value=""GRPRLOCAL"" selected>UF"
-          Case Else          ShowHTML "          <option value=""GRPRAREA"">Área envolvida<option value=""GRPRRESPATU"">Executor<option value=""GRPRINTER"">Interessado<option value=""GRPRPRIO"">Prioridade<option value=""GRPRPROJ"">Projeto<option value=""GRPRPROP"">Proponente<option value=""GRPRRESP"" selected>Responsável<option value=""GRPRSETOR"">Setor responsável<option value=""GRPRLOCAL"">UF"
+       Select case p_agrega          
+          Case "GRPRCC"      ShowHTML "          <option value=""GRPRRESPATU"">Executor<option value=""GRPRPRIO"">Prioridade<option value=""GRPRPROJ"">Projeto<option value=""GRPRPROP"">Proponente<option value=""GRPRRESP"">Responsável<option value=""GRPRSETOR"">Setor responsável<option value=""GRPRLOCAL"">UF"
+          Case "GRPRPRIO"    ShowHTML "          <option value=""GRPRRESPATU"">Executor<option value=""GRPRPRIO"" selected>Prioridade<option value=""GRPRPROJ"">Projeto<option value=""GRPRPROP"">Proponente<option value=""GRPRRESP"">Responsável<option value=""GRPRSETOR"">Setor responsável<option value=""GRPRLOCAL"">UF"
+          Case "GRPRPROJ"    ShowHTML "          <option value=""GRPRRESPATU"">Executor<option value=""GRPRPRIO"">Prioridade<option value=""GRPRPROJ"" selected>Projeto<option value=""GRPRPROP"">Proponente<option value=""GRPRRESP"">Responsável<option value=""GRPRSETOR"">Setor responsável<option value=""GRPRLOCAL"">UF"
+          Case "GRPRPROP"    ShowHTML "          <option value=""GRPRRESPATU"">Executor<option value=""GRPRPRIO"">Prioridade<option value=""GRPRPROJ"">Projeto<option value=""GRPRPROP"" selected>Proponente<option value=""GRPRRESP"">Responsável<option value=""GRPRSETOR"">Setor responsável<option value=""GRPRLOCAL"">UF"
+          Case "GRPRRESPATU" ShowHTML "          <option value=""GRPRRESPATU"" selected>Executor<option value=""GRPRPRIO"">Prioridade<option value=""GRPRPROJ"">Projeto<option value=""GRPRPROP"">Proponente<option value=""GRPRRESP"">Responsável<option value=""GRPRSETOR"">Setor responsável<option value=""GRPRLOCAL"">UF"
+          Case "GRPRSETOR"   ShowHTML "          <option value=""GRPRRESPATU"">Executor<option value=""GRPRPRIO"">Prioridade<option value=""GRPRPROJ"">Projeto<option value=""GRPRPROP"">Proponente<option value=""GRPRRESP"">Responsável<option value=""GRPRSETOR"" selected>Setor responsável<option value=""GRPRLOCAL"">UF"
+          Case "GRPRLOCAL"   ShowHTML "          <option value=""GRPRRESPATU"">Executor<option value=""GRPRPRIO"">Prioridade<option value=""GRPRPROJ"">Projeto<option value=""GRPRPROP"">Proponente<option value=""GRPRRESP"">Responsável<option value=""GRPRSETOR"">Setor responsável<option value=""GRPRLOCAL"" selected>UF"
+          Case Else          ShowHTML "          <option value=""GRPRRESPATU"">Executor<option value=""GRPRPRIO"">Prioridade<option value=""GRPRPROJ"">Projeto<option value=""GRPRPROP"">Proponente<option value=""GRPRRESP"" selected>Responsável<option value=""GRPRSETOR"">Setor responsável<option value=""GRPRLOCAL"">UF"
        End Select
     End If
     ShowHTML "          </select></td>"
@@ -976,8 +867,6 @@ Sub ImprimeCabecalho
        Case "GRPRSETOR"   ShowHTML "          <td><font size=""1""><b>Setor responsável</font></td>"
        Case "GRPRPRIO"    ShowHTML "          <td><font size=""1""><b>Prioridade</font></td>"
        Case "GRPRLOCAL"   ShowHTML "          <td><font size=""1""><b>UF</font></td>"
-       Case "GRPRAREA"    ShowHTML "          <td><font size=""1""><b>Área envolvida</font></td>"
-       Case "GRPRINTER"   ShowHTML "          <td><font size=""1""><b>Interessado</font></td>"
     End Select
     ShowHTML "          <td><font size=""1""><b>Total</font></td>"
     ShowHTML "          <td><font size=""1""><b>Cad.</font></td>"

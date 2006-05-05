@@ -250,57 +250,27 @@ Sub Gerencial
      If p_qtd_restricao = "S" Then w_filtro = w_filtro & "<tr valign=""top""><td align=""right""><font size=1>Situação <td><font size=1>[<b>Apenas programas com restrição</b>]"                            End If
      If w_filtro > "" Then w_filtro = "<table border=0><tr valign=""top""><td><font size=1><b>Filtro:</b><td nowrap><font size=1><ul>" & w_filtro & "</ul></tr></table>"                    End If
 
+     DB_GetSolicList_IS RS1, P2, w_usuario, p_agrega, 3, _
+        p_ini_i, p_ini_f, p_fim_i, p_fim_f, p_atraso, p_solicitante, _
+        p_unidade, null,  p_qtd_restricao, p_proponente, p_chave, p_assunto, _
+        null, null, null, null, p_usu_resp, p_uorg_resp, p_palavra, _
+        p_prazo, p_fase, null, null, null, p_cd_programa, null, null, w_ano
+
      Select case p_agrega
         Case "GRISPPROGRAMA"
-           DB_GetSolicList_IS RS1, P2, w_usuario, p_agrega, 3, _
-              p_ini_i, p_ini_f, p_fim_i, p_fim_f, p_atraso, p_solicitante, _
-              p_unidade, null,  p_qtd_restricao, p_proponente, p_chave, p_assunto, _
-              null, null, null, null, p_usu_resp, p_uorg_resp, p_palavra, _
-              p_prazo, p_fase, null, null, null, p_cd_programa, null, null, w_ano
            w_TP = TP & " - Por programa"
            RS1.sort = "titulo"
         Case "GRISPPROP"
-           DB_GetSolicList_IS RS1, P2, w_usuario, p_agrega, 3, _
-              p_ini_i, p_ini_f, p_fim_i, p_fim_f, p_atraso, p_solicitante, _
-              p_unidade, null,  p_qtd_restricao, p_proponente, p_chave, p_assunto, _
-              null, null, null, null, p_usu_resp, p_uorg_resp, p_palavra, _
-              p_prazo, p_fase, null, null, null, p_cd_programa, null, null, w_ano
            w_TP = TP & " - Por parcerias externas"
-           RS1.Filter = "proponente <> null"
            RS1.sort = "proponente"
         Case "GRISPRESP"
-          DB_GetSolicList_IS RS1, P2, w_usuario, p_agrega, 3, _
-              p_ini_i, p_ini_f, p_fim_i, p_fim_f, p_atraso, p_solicitante, _
-              p_unidade, null,  p_qtd_restricao, p_proponente, p_chave, p_assunto, _
-              null, null, null, null, p_usu_resp, p_uorg_resp, p_palavra, _
-              p_prazo, p_fase, null, null, null, p_cd_programa, null, null, w_ano
            w_TP = TP & " - Por responsável"
            RS1.sort = "nm_solic"
         Case "GRISPRESPATU"
-           DB_GetSolicList_IS RS1, P2, w_usuario, p_agrega, 3, _
-              p_ini_i, p_ini_f, p_fim_i, p_fim_f, p_atraso, p_solicitante, _
-              p_unidade, null,  p_qtd_restricao, p_proponente, p_chave, p_assunto, _
-              null, null, null, null, p_usu_resp, p_uorg_resp, p_palavra, _
-              p_prazo, p_fase, null, null, null, p_cd_programa, null, null, w_ano
-           w_TP = TP & " - Por executor"
-           RS1.Filter = "executor <> null"
            RS1.sort = "nm_exec"
         Case "GRISPSETOR"
            w_TP = TP & " - Por setor área de planejamento"
-           DB_GetSolicList_IS RS1, P2, w_usuario, p_agrega, 3, _
-              p_ini_i, p_ini_f, p_fim_i, p_fim_f, p_atraso, p_solicitante, _
-              p_unidade, null,  p_qtd_restricao, p_proponente, p_chave, p_assunto, _
-              null, null, null, null, p_usu_resp, p_uorg_resp, p_palavra, _
-              p_prazo, p_fase, null, null, null, p_cd_programa, null, null, w_ano
            RS1.sort = "nm_unidade_resp"
-        'Case "GRPRINTER" 
-        '   w_TP = TP & " - Por interessado"
-        '   DB_GetSolicGRI RS1, P2, w_usuario, p_agrega, 3, _
-        '        p_ini_i, p_ini_f, p_fim_i, p_fim_f, p_atraso, p_solicitante, _
-        '        p_unidade, null, p_ativo, p_proponente, _
-        '        p_chave, p_assunto, null, null, null, null, p_usu_resp, _
-        '        p_uorg_resp, p_palavra, p_prazo, p_fase, p_sqcc, null, null
-        '   RS1.sort = "nm_inter"
      End Select
   End If
   
@@ -394,7 +364,6 @@ Sub Gerencial
             Case "GRISPRESP"     ShowHTML "      document.Form.p_solicitante.value=filtro;"
             Case "GRISPRESPATU"  ShowHTML "      document.Form.p_usu_resp.value=filtro;"
             Case "GRISPSETOR"    ShowHTML "      document.Form.p_unidade.value=filtro;"
-            'Case "GRPRINTER"    ShowHTML "      document.Form.p_inter.value=filtro;"
          End Select
          ShowHTML "    }"
          Select case p_agrega
@@ -403,7 +372,6 @@ Sub Gerencial
             Case "GRISPRESP"     ShowHTML "    else document.Form.p_solicitante.value='" & Request("p_solicitante")& "';"
             Case "GRISPRESPATU"  ShowHTML "    else document.Form.p_usu_resp.value='" & Request("p_usu_resp")& "';"
             Case "GRISPSETOR"    ShowHTML "    else document.Form.p_unidade.value='" & Request("p_unidade")& "';"
-            'Case "GRPRINTER"    ShowHTML "    else document.Form.p_inter.value='" & Request("p_inter")& "';"
          End Select
          DB_GetTramiteList RS2, P2, null, null
          RS2.Sort = "ordem"
@@ -436,7 +404,6 @@ Sub Gerencial
             Case "GRISPRESP"     If Request("p_solicitante") = "" Then ShowHTML "<input type=""Hidden"" name=""p_solicitante"" value="""">"   End If  
             Case "GRISPRESPATU"  If Request("p_usu_resp") = ""    Then ShowHTML "<input type=""Hidden"" name=""p_usu_resp"" value="""">"      End If
             Case "GRISPSETOR"    If Request("p_unidade") = ""     Then ShowHTML "<input type=""Hidden"" name=""p_unidade"" value="""">"       End If
-            'Case "GRPRINTER"    If Request("p_inter") = ""       Then ShowHTML "<input type=""Hidden"" name=""p_inter"" value="""">"         End If
          End Select
       End If
   
@@ -584,30 +551,6 @@ Sub Gerencial
                  t_custo           = 0
                  w_linha           = w_linha + 1
               End If
-           'Case "GRPRINTER"
-           '   If w_nm_quebra <> RS1("nm_inter") Then
-           '      If w_qt_quebra > 0 Then
-           '         ImprimeLinha t_solic, t_cad, t_tram, t_conc, t_atraso, t_aviso, t_valor, t_custo, t_acima, w_chave
-           '         w_linha = w_linha + 2
-           '      End If
-           '      If O <> "W" or (O = "W" and w_linha <= 25) Then
-           '         ' Se for geração de MS-Word, coloca a nova quebra somente se não estourou o limite
-           '         ShowHTML "      <tr bgcolor=""" & w_cor & """ valign=""top""><td><font size=1><b>" & RS1("nm_inter")
-           '      End If
-           '      w_nm_quebra       = RS1("nm_inter")
-           '      w_chave           = RS1("sq_unidade")
-           '      w_qt_quebra       = 0
-           '      t_solic           = 0
-           '      t_cad             = 0
-           '      t_tram            = 0
-           '      t_conc            = 0
-           '      t_atraso          = 0
-           '      t_aviso           = 0
-           '      t_valor           = 0
-            '     t_acima           = 0
-            '     t_custo           = 0
-           '      w_linha           = w_linha + 1
-           '   End If
         End Select
         If O = "W" and w_linha > 25 Then ' Se for geração de MS-Word, quebra a página
            ShowHTML "    </table>"
@@ -629,7 +572,6 @@ Sub Gerencial
               Case "GRISPRESP"     ShowHTML "      <tr bgcolor=""" & w_cor & """ valign=""top""><td><font size=1><b>" & RS1("nm_solic")
               Case "GRISPRESPATU"  ShowHTML "      <tr bgcolor=""" & w_cor & """ valign=""top""><td><font size=1><b>" & RS1("nm_exec")
               Case "GRISPSETOR"    ShowHTML "      <tr bgcolor=""" & w_cor & """ valign=""top""><td><font size=1><b>" & RS1("nm_unidade_resp")
-              'Case "GRPRINTER"    ShowHTML "      <tr bgcolor=""" & w_cor & """ valign=""top""><td><font size=1><b>" & RS1("nm_inter")
            End Select
            w_linha = w_linha + 1
         End If
@@ -699,7 +641,6 @@ Sub Gerencial
     ShowHTML "         <tr valign=""top""><td colspan=2><table border=0 width=""100%"" cellpadding=0 cellspacing=0><tr valign=""top"">"
     ShowHTML "          <td><font size=""1""><b><U>A</U>gregar por:<br><SELECT ACCESSKEY=""A"" " & w_Disabled & " class=""STS"" name=""p_agrega"" size=""1"">"
     Select case p_agrega
-       'Case "GRPRINTER"   ShowHTML "          <option value=""GRPRRESPATU"">Executor<option value=""GRPRPROJ"">Ação<option value=""GRPRPROP"">Parcerias externas<option value=""GRPRRESP"">Responsável monitoramento<option value=""GRPRSETOR"">Setor responsável monitoramento"
        Case "GRISPPROGRAMA" ShowHTML "          <option value=""GRISPRESPATU"">Usuário atual<option value=""GRISPPROGRAMA"" selected>Programa<option value=""GRISPPROP"">Parcerias externas<option value=""GRISPRESP"">Responsável monitoramento<option value=""GRISPSETOR"">Área planejamento"
        Case "GRISPPROP"     ShowHTML "          <option value=""GRISPRESPATU"">Usuário atual<option value=""GRISPPROGRAMA"">Programa<option value=""GRISPPROP"" selected>Parcerias externas<option value=""GRISPRESP"">Responsável monitoramento<option value=""GRISPSETOR"">Área planejamento"
        Case "GRISPRESPATU"  ShowHTML "          <option value=""GRISPRESPATU"" selected>Usuário atual<option value=""GRISPPROGRAMA"">Programa<option value=""GRISPPROP"">Parcerias externas<option value=""GRISPRESP"">Responsável monitoramento<option value=""GRISPSETOR"">Área planejamento"
@@ -796,7 +737,6 @@ Sub ImprimeCabecalho
        Case "GRISPRESP"     ShowHTML "          <td><font size=""1""><b>Responsável</font></td>"
        Case "GRISPRESPATU"  ShowHTML "          <td><font size=""1""><b>Executor</font></td>"
        Case "GRISPSETOR"    ShowHTML "          <td><font size=""1""><b>Área planejamento</font></td>"
-       'Case "GRPRINTER"   ShowHTML "          <td><font size=""1""><b>Interessado</font></td>"
     End Select
     ShowHTML "          <td><font size=""1""><b>Total</font></td>"
     ShowHTML "          <td><font size=""1""><b>Prog.</font></td>"

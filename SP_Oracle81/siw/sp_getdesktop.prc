@@ -23,15 +23,9 @@ begin
                 count(d.sq_siw_solicitacao) qtd
            FROM siw_tramite                    e,
                 siw_solicitacao d,
-                (select sq_siw_solicitacao, acesso(sq_siw_solicitacao, p_usuario) acesso
-                   from siw_solicitacao
-                )               f,
                 siw_menu        c,
                 siw_modulo      b
           where (e.sq_siw_tramite = d.sq_siw_tramite)
-            and (d.sq_siw_solicitacao = f.sq_siw_solicitacao and
-                 f.acesso             > 15
-                )
             and (d.sq_menu        = c.sq_menu and
                  c.tramite        = 'S' and
                  c.ativo          = 'S' and
@@ -39,6 +33,7 @@ begin
                 )
             and (c.sq_modulo      = b.sq_modulo)
             and e.ativo = 'S'
+            and d.executor = p_usuario
             and 'CI'    <> Nvl(e.sigla,'nulo')
             and (c.controla_ano = 'N' or (c.controla_ano = 'S' and d.ano = p_ano))
           group by c.sq_pessoa, b.sq_modulo, b.nome, b.sigla, b.objetivo_geral, c.sq_menu, c.nome,

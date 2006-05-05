@@ -266,66 +266,33 @@ Sub Gerencial
      If p_atraso      > "" Then w_filtro = w_filtro & "<tr valign=""top""><td align=""right""><font size=1>Código externo <td><font size=1>[<b>" & p_atraso & "</b>]"                      End If
      If w_filtro      > "" Then w_filtro = "<table border=0><tr valign=""top""><td><font size=1><b>Filtro:</b><td nowrap><font size=1><ul>" & w_filtro & "</ul></tr></table>"              End If
 
+     DB_GetSolicList RS1, P2, w_usuario, p_agrega, 4, _
+        p_ini_i, p_ini_f, p_fim_i, p_fim_f, p_atraso, p_solicitante, _
+        p_unidade, p_prioridade, p_ativo, p_proponente, _
+        p_chave, p_objeto, p_pais, p_regiao, p_uf, p_cidade, p_usu_resp, _
+        p_uorg_resp, p_palavra, p_prazo, p_fase, p_sqcc, p_projeto, p_atividade, null, null
+
      Select case p_agrega
-        Case "GRDMPROJ"
-           DB_GetSolicList RS1, P2, w_usuario, RS_Menu("sigla"), 4, _
-                p_ini_i, p_ini_f, p_fim_i, p_fim_f, p_atraso, p_solicitante, _
-                p_unidade, p_prioridade, p_ativo, p_proponente, _
-                p_chave, p_objeto, p_pais, p_regiao, p_uf, p_cidade, p_usu_resp, _
-                p_uorg_resp, p_palavra, p_prazo, p_fase, p_sqcc, p_projeto, p_atividade, null, null
+        Case Mid(RS_Menu("sigla"),1,3)& "PROJ"
            w_TP = TP & " - Por projeto"
-           RS1.Filter = "sq_solic_pai <> null"
            RS1.sort = "nm_projeto"
-        Case "GRDMPROP"
-           DB_GetSolicList RS1, P2, w_usuario, RS_Menu("sigla"), 4, _
-                p_ini_i, p_ini_f, p_fim_i, p_fim_f, p_atraso, p_solicitante, _
-                p_unidade, p_prioridade, p_ativo, p_proponente, _
-                p_chave, p_objeto, p_pais, p_regiao, p_uf, p_cidade, p_usu_resp, _
-                p_uorg_resp, p_palavra, p_prazo, p_fase, p_sqcc, p_projeto, p_atividade, null, null
+        Case Mid(RS_Menu("sigla"),1,3)& "PROP"
            w_TP = TP & " - Pela outra parte"
-           RS1.Filter = "outra_parte <> null"
            RS1.sort = "nm_outra_parte_resumido"
-        Case "GRDMRESP"
-           DB_GetSolicList RS1, P2, w_usuario, RS_Menu("sigla"), 4, _
-                p_ini_i, p_ini_f, p_fim_i, p_fim_f, p_atraso, p_solicitante, _
-                p_unidade, p_prioridade, p_ativo, p_proponente, _
-                p_chave, p_objeto, p_pais, p_regiao, p_uf, p_cidade, p_usu_resp, _
-                p_uorg_resp, p_palavra, p_prazo, p_fase, p_sqcc, p_projeto, p_atividade, null, null
+        Case Mid(RS_Menu("sigla"),1,3)& "RESP"
            w_TP = TP & " - Por responsável"
            RS1.sort = "nm_solic"
-        Case "GRDMRESPATU"
-           DB_GetSolicList RS1, P2, w_usuario, RS_Menu("sigla"), 4, _
-                p_ini_i, p_ini_f, p_fim_i, p_fim_f, p_atraso, p_solicitante, _
-                p_unidade, p_prioridade, p_ativo, p_proponente, _
-                p_chave, p_objeto, p_pais, p_regiao, p_uf, p_cidade, p_usu_resp, _
-                p_uorg_resp, p_palavra, p_prazo, p_fase, p_sqcc, p_projeto, p_atividade, null, null
+        Case Mid(RS_Menu("sigla"),1,3)& "RESPATU"
            w_TP = TP & " - Por executor"
-           RS1.Filter = "executor <> null"
            RS1.sort = "nm_exec"
-        Case "GRDMCC"
-           DB_GetSolicList RS1, P2, w_usuario, RS_Menu("sigla"), 4, _
-                p_ini_i, p_ini_f, p_fim_i, p_fim_f, p_atraso, p_solicitante, _
-                p_unidade, p_prioridade, p_ativo, p_proponente, _
-                p_chave, p_objeto, p_pais, p_regiao, p_uf, p_cidade, p_usu_resp, _
-                p_uorg_resp, p_palavra, p_prazo, p_fase, p_sqcc, p_projeto, p_atividade, null, null
+        Case Mid(RS_Menu("sigla"),1,3)& "CC"
            w_TP = TP & " - Por classificação"
-           RS1.Filter = "sq_cc <> null"
            RS1.sort = "sg_cc"
-        Case "GRDMSETOR"
-           DB_GetSolicList RS1, P2, w_usuario, RS_Menu("sigla"), 4, _
-                p_ini_i, p_ini_f, p_fim_i, p_fim_f, p_atraso, p_solicitante, _
-                p_unidade, p_prioridade, p_ativo, p_proponente, _
-                p_chave, p_objeto, p_pais, p_regiao, p_uf, p_cidade, p_usu_resp, _
-                p_uorg_resp, p_palavra, p_prazo, p_fase, p_sqcc, p_projeto, p_atividade, null, null
+        Case Mid(RS_Menu("sigla"),1,3)& "SETOR"
            w_TP = TP & " - Por setor responsável"
            RS1.sort = "nm_unidade_resp"
-        Case "GRDMLOCAL" 
+        Case Mid(RS_Menu("sigla"),1,3)& "LOCAL" 
            w_TP = TP & " - Por UF"
-           DB_GetSolicList RS1, P2, w_usuario, RS_Menu("sigla"), 4, _
-                p_ini_i, p_ini_f, p_fim_i, p_fim_f, p_atraso, p_solicitante, _
-                p_unidade, p_prioridade, p_ativo, p_proponente, _
-                p_chave, p_objeto, p_pais, p_regiao, p_uf, p_cidade, p_usu_resp, _
-                p_uorg_resp, p_palavra, p_prazo, p_fase, p_sqcc, p_projeto, p_atividade, null, null
            RS1.sort = "co_uf"
      End Select
   End If
@@ -413,25 +380,25 @@ Sub Gerencial
          ShowHTML "  function lista (chave_aux, filtro, cad, exec, conc, atraso) {"
          ShowHTML "    if (filtro != -1) {"
          Select case p_agrega
-            Case "GRDMETAPA"   ShowHTML "      document.Form.p_atividade.value=filtro;"
-            Case "GRDMPROJ"    ShowHTML "      document.Form.p_projeto.value=filtro;"
-            Case "GRDMPROP"    ShowHTML "      document.Form.p_proponente.value=filtro;"
-            Case "GRDMRESP"    ShowHTML "      document.Form.p_solicitante.value=filtro;"
-            Case "GRDMRESPATU" ShowHTML "      document.Form.p_usu_resp.value=filtro;"
-            Case "GRDMCC"      ShowHTML "      document.Form.p_sqcc.value=filtro;"
-            Case "GRDMSETOR"   ShowHTML "      document.Form.p_unidade.value=filtro;"
-            Case "GRDMLOCAL"   ShowHTML "      document.Form.p_uf.value=filtro; document.Form.p_pais.value=chave_aux;"
+            Case Mid(RS_Menu("sigla"),1,3)& "ETAPA"   ShowHTML "      document.Form.p_atividade.value=filtro;"
+            Case Mid(RS_Menu("sigla"),1,3)& "PROJ"    ShowHTML "      document.Form.p_projeto.value=filtro;"
+            Case Mid(RS_Menu("sigla"),1,3)& "PROP"    ShowHTML "      document.Form.p_proponente.value=filtro;"
+            Case Mid(RS_Menu("sigla"),1,3)& "RESP"    ShowHTML "      document.Form.p_solicitante.value=filtro;"
+            Case Mid(RS_Menu("sigla"),1,3)& "RESPATU" ShowHTML "      document.Form.p_usu_resp.value=filtro;"
+            Case Mid(RS_Menu("sigla"),1,3)& "CC"      ShowHTML "      document.Form.p_sqcc.value=filtro;"
+            Case Mid(RS_Menu("sigla"),1,3)& "SETOR"   ShowHTML "      document.Form.p_unidade.value=filtro;"
+            Case Mid(RS_Menu("sigla"),1,3)& "LOCAL"   ShowHTML "      document.Form.p_uf.value=filtro; document.Form.p_pais.value=chave_aux;"
          End Select
          ShowHTML "    }"
          Select case p_agrega
-            Case "GRDMETAPA"   ShowHTML "    else document.Form.p_atividade.value='" & Request("p_atividade")& "';"
-            Case "GRDMPROJ"    ShowHTML "    else document.Form.p_projeto.value='" & Request("p_projeto")& "';"
-            Case "GRDMPROP"    ShowHTML "    else document.Form.p_proponente.value=""" & Request("p_proponente")& """;"
-            Case "GRDMRESP"    ShowHTML "    else document.Form.p_solicitante.value='" & Request("p_solicitante")& "';"
-            Case "GRDMRESPATU" ShowHTML "    else document.Form.p_usu_resp.value='" & Request("p_usu_resp")& "';"
-            Case "GRDMCC"      ShowHTML "    else document.Form.p_sqcc.value='" & Request("p_sqcc")& "';"
-            Case "GRDMSETOR"   ShowHTML "    else document.Form.p_unidade.value='" & Request("p_unidade")& "';"
-            Case "GRDMLOCAL"   ShowHTML "    else { document.Form.p_uf.value='" & Request("p_uf")& "'; document.Form.p_pais.value='" & Request("p_uf")& "'; }"
+            Case Mid(RS_Menu("sigla"),1,3)& "ETAPA"   ShowHTML "    else document.Form.p_atividade.value='" & Request("p_atividade")& "';"
+            Case Mid(RS_Menu("sigla"),1,3)& "PROJ"    ShowHTML "    else document.Form.p_projeto.value='" & Request("p_projeto")& "';"
+            Case Mid(RS_Menu("sigla"),1,3)& "PROP"    ShowHTML "    else document.Form.p_proponente.value=""" & Request("p_proponente")& """;"
+            Case Mid(RS_Menu("sigla"),1,3)& "RESP"    ShowHTML "    else document.Form.p_solicitante.value='" & Request("p_solicitante")& "';"
+            Case Mid(RS_Menu("sigla"),1,3)& "RESPATU" ShowHTML "    else document.Form.p_usu_resp.value='" & Request("p_usu_resp")& "';"
+            Case Mid(RS_Menu("sigla"),1,3)& "CC"      ShowHTML "    else document.Form.p_sqcc.value='" & Request("p_sqcc")& "';"
+            Case Mid(RS_Menu("sigla"),1,3)& "SETOR"   ShowHTML "    else document.Form.p_unidade.value='" & Request("p_unidade")& "';"
+            Case Mid(RS_Menu("sigla"),1,3)& "LOCAL"   ShowHTML "    else { document.Form.p_uf.value='" & Request("p_uf")& "'; document.Form.p_pais.value='" & Request("p_uf")& "'; }"
          End Select
          DB_GetTramiteList RS2, P2, null, null
          RS2.Sort = "ordem"
@@ -458,14 +425,14 @@ Sub Gerencial
          AbreForm "Form", RS2("link"), "POST", "return(Validacao(this));", "Contrato",3,P2,RS2("P3"),null,w_TP,RS2("sigla"),w_pagina & par,"L"
          ShowHTML MontaFiltro("POST")
          Select case p_agrega
-            Case "GRDMETAPA"   If Request("p_atividade") = ""   Then ShowHTML "<input type=""Hidden"" name=""p_atividade"" value="""">"     End If
-            Case "GRDMPROJ"    If Request("p_projeto") = ""     Then ShowHTML "<input type=""Hidden"" name=""p_projeto"" value="""">"       End If
-            Case "GRDMPROP"    If Request("p_proponente") = ""  Then ShowHTML "<input type=""Hidden"" name=""p_proponente"" value="""">"    End If
-            Case "GRDMRESP"    If Request("p_solicitante") = "" Then ShowHTML "<input type=""Hidden"" name=""p_solicitante"" value="""">"   End If  
-            Case "GRDMRESPATU" If Request("p_usu_resp") = ""    Then ShowHTML "<input type=""Hidden"" name=""p_usu_resp"" value="""">"      End If
-            Case "GRDMCC"      If Request("p_sqcc") = ""        Then ShowHTML "<input type=""Hidden"" name=""p_sqcc"" value="""">"          End If
-            Case "GRDMSETOR"   If Request("p_unidade") = ""     Then ShowHTML "<input type=""Hidden"" name=""p_unidade"" value="""">"       End If
-            Case "GRDMLOCAL"   If Request("p_uf") = ""          Then ShowHTML "<input type=""Hidden"" name=""p_uf"" value=""""><input type=""Hidden"" name=""p_pais"" value="""">"            End If
+            Case Mid(RS_Menu("sigla"),1,3)& "ETAPA"   If Request("p_atividade") = ""   Then ShowHTML "<input type=""Hidden"" name=""p_atividade"" value="""">"     End If
+            Case Mid(RS_Menu("sigla"),1,3)& "PROJ"    If Request("p_projeto") = ""     Then ShowHTML "<input type=""Hidden"" name=""p_projeto"" value="""">"       End If
+            Case Mid(RS_Menu("sigla"),1,3)& "PROP"    If Request("p_proponente") = ""  Then ShowHTML "<input type=""Hidden"" name=""p_proponente"" value="""">"    End If
+            Case Mid(RS_Menu("sigla"),1,3)& "RESP"    If Request("p_solicitante") = "" Then ShowHTML "<input type=""Hidden"" name=""p_solicitante"" value="""">"   End If  
+            Case Mid(RS_Menu("sigla"),1,3)& "RESPATU" If Request("p_usu_resp") = ""    Then ShowHTML "<input type=""Hidden"" name=""p_usu_resp"" value="""">"      End If
+            Case Mid(RS_Menu("sigla"),1,3)& "CC"      If Request("p_sqcc") = ""        Then ShowHTML "<input type=""Hidden"" name=""p_sqcc"" value="""">"          End If
+            Case Mid(RS_Menu("sigla"),1,3)& "SETOR"   If Request("p_unidade") = ""     Then ShowHTML "<input type=""Hidden"" name=""p_unidade"" value="""">"       End If
+            Case Mid(RS_Menu("sigla"),1,3)& "LOCAL"   If Request("p_uf") = ""          Then ShowHTML "<input type=""Hidden"" name=""p_uf"" value=""""><input type=""Hidden"" name=""p_pais"" value="""">"            End If
          End Select
       End If
   
@@ -493,7 +460,7 @@ Sub Gerencial
       t_totacima        = 0
       While Not RS1.EOF
         Select Case p_agrega
-           Case "GRDMETAPA"
+           Case Mid(RS_Menu("sigla"),1,3)& "ETAPA"
               If w_nm_quebra <> RS1("nm_etapa") Then
                  If w_qt_quebra > 0 Then
                     ImprimeLinha t_solic, t_cad, t_tram, t_conc, t_atraso, t_aviso, t_valor, t_custo, t_acima, w_chave, w_chave_aux
@@ -518,7 +485,7 @@ Sub Gerencial
                  t_custo           = 0
                  w_linha           = w_linha + 1
               End If
-           Case "GRDMPROJ"
+           Case Mid(RS_Menu("sigla"),1,3)& "PROJ"
               If w_nm_quebra <> RS1("nm_projeto") Then
                  If w_qt_quebra > 0 Then
                     ImprimeLinha t_solic, t_cad, t_tram, t_conc, t_atraso, t_aviso, t_valor, t_custo, t_acima, w_chave, w_chave_aux
@@ -543,7 +510,7 @@ Sub Gerencial
                  t_custo           = 0
                  w_linha           = w_linha + 1
               End If
-           Case "GRDMPROP"
+           Case Mid(RS_Menu("sigla"),1,3)& "PROP"
               If w_nm_quebra <> RS1("nm_outra_parte_resumido") Then
                  If w_qt_quebra > 0 Then
                     ImprimeLinha t_solic, t_cad, t_tram, t_conc, t_atraso, t_aviso, t_valor, t_custo, t_acima, w_chave, w_chave_aux
@@ -568,7 +535,7 @@ Sub Gerencial
                  t_custo           = 0
                  w_linha           = w_linha + 1
               End If
-           Case "GRDMRESP"
+           Case Mid(RS_Menu("sigla"),1,3)& "RESP"
               If w_nm_quebra <> RS1("nm_solic") Then
                  If w_qt_quebra > 0 Then
                     ImprimeLinha t_solic, t_cad, t_tram, t_conc, t_atraso, t_aviso, t_valor, t_custo, t_acima, w_chave, w_chave_aux
@@ -593,7 +560,7 @@ Sub Gerencial
                  t_custo           = 0
                  w_linha           = w_linha + 1
               End If
-           Case "GRDMRESPATU"
+           Case Mid(RS_Menu("sigla"),1,3)& "RESPATU"
               If w_nm_quebra <> RS1("nm_exec") Then
                  If w_qt_quebra > 0 Then
                     ImprimeLinha t_solic, t_cad, t_tram, t_conc, t_atraso, t_aviso, t_valor, t_custo, t_acima, w_chave, w_chave_aux
@@ -618,7 +585,7 @@ Sub Gerencial
                  t_custo           = 0
                  w_linha           = w_linha + 1
               End If
-           Case "GRDMCC"
+           Case Mid(RS_Menu("sigla"),1,3)& "CC"
               If w_nm_quebra <> RS1("sg_cc") Then
                  If w_qt_quebra > 0 Then
                     ImprimeLinha t_solic, t_cad, t_tram, t_conc, t_atraso, t_aviso, t_valor, t_custo, t_acima, w_chave, w_chave_aux
@@ -643,7 +610,7 @@ Sub Gerencial
                  t_custo           = 0
                  w_linha           = w_linha + 1
               End If
-           Case "GRDMSETOR"
+           Case Mid(RS_Menu("sigla"),1,3)& "SETOR"
               If w_nm_quebra <> RS1("nm_unidade_resp") Then
                  If w_qt_quebra > 0 Then
                     ImprimeLinha t_solic, t_cad, t_tram, t_conc, t_atraso, t_aviso, t_valor, t_custo, t_acima, w_chave, w_chave_aux
@@ -668,7 +635,7 @@ Sub Gerencial
                  t_custo           = 0
                  w_linha           = w_linha + 1
               End If
-           Case "GRDMLOCAL"
+           Case Mid(RS_Menu("sigla"),1,3)& "LOCAL"
               If w_nm_quebra <> RS1("co_uf") Then
                  If w_qt_quebra > 0 Then
                     ImprimeLinha t_solic, t_cad, t_tram, t_conc, t_atraso, t_aviso, t_valor, t_custo, t_acima, w_chave, w_chave_aux
@@ -709,14 +676,14 @@ Sub Gerencial
            ShowHTML "<table border=""0"" cellpadding=""0"" cellspacing=""0"" width=""100%"">"
            ImprimeCabecalho
            Select Case p_agrega
-              Case "GRDMETAPA"   ShowHTML "      <tr bgcolor=""" & w_cor & """ valign=""top""><td><font size=1><b>" & RS1("nm_etapa")
-              Case "GRDMPROJ"    ShowHTML "      <tr bgcolor=""" & w_cor & """ valign=""top""><td><font size=1><b>" & RS1("nm_projeto")
-              Case "GRDMPROP"    ShowHTML "      <tr bgcolor=""" & w_cor & """ valign=""top""><td><font size=1><b>" & RS1("nm_outra_parte_resumido")
-              Case "GRDMRESP"    ShowHTML "      <tr bgcolor=""" & w_cor & """ valign=""top""><td><font size=1><b>" & RS1("nm_solic")
-              Case "GRDMRESPATU" ShowHTML "      <tr bgcolor=""" & w_cor & """ valign=""top""><td><font size=1><b>" & RS1("nm_exec")
-              Case "GRDMCC"      ShowHTML "      <tr bgcolor=""" & w_cor & """ valign=""top""><td><font size=1><b>" & RS1("sg_cc")
-              Case "GRDMSETOR"   ShowHTML "      <tr bgcolor=""" & w_cor & """ valign=""top""><td><font size=1><b>" & RS1("nm_unidade_resp")
-              Case "GRDMLOCAL"   ShowHTML "      <tr bgcolor=""" & w_cor & """ valign=""top""><td><font size=1><b>" & RS1("co_uf")
+              Case Mid(RS_Menu("sigla"),1,3)& "ETAPA"   ShowHTML "      <tr bgcolor=""" & w_cor & """ valign=""top""><td><font size=1><b>" & RS1("nm_etapa")
+              Case Mid(RS_Menu("sigla"),1,3)& "PROJ"    ShowHTML "      <tr bgcolor=""" & w_cor & """ valign=""top""><td><font size=1><b>" & RS1("nm_projeto")
+              Case Mid(RS_Menu("sigla"),1,3)& "PROP"    ShowHTML "      <tr bgcolor=""" & w_cor & """ valign=""top""><td><font size=1><b>" & RS1("nm_outra_parte_resumido")
+              Case Mid(RS_Menu("sigla"),1,3)& "RESP"    ShowHTML "      <tr bgcolor=""" & w_cor & """ valign=""top""><td><font size=1><b>" & RS1("nm_solic")
+              Case Mid(RS_Menu("sigla"),1,3)& "RESPATU" ShowHTML "      <tr bgcolor=""" & w_cor & """ valign=""top""><td><font size=1><b>" & RS1("nm_exec")
+              Case Mid(RS_Menu("sigla"),1,3)& "CC"      ShowHTML "      <tr bgcolor=""" & w_cor & """ valign=""top""><td><font size=1><b>" & RS1("sg_cc")
+              Case Mid(RS_Menu("sigla"),1,3)& "SETOR"   ShowHTML "      <tr bgcolor=""" & w_cor & """ valign=""top""><td><font size=1><b>" & RS1("nm_unidade_resp")
+              Case Mid(RS_Menu("sigla"),1,3)& "LOCAL"   ShowHTML "      <tr bgcolor=""" & w_cor & """ valign=""top""><td><font size=1><b>" & RS1("co_uf")
            End Select
            w_linha = w_linha + 1
         End If
@@ -786,14 +753,42 @@ Sub Gerencial
     ShowHTML "         <tr valign=""top""><td colspan=2><table border=0 width=""100%"" cellpadding=0 cellspacing=0><tr valign=""top"">"
     ShowHTML "          <td><font size=""1""><b><U>A</U>gregar por:<br><SELECT ACCESSKEY=""O"" " & w_Disabled & " class=""STS"" name=""p_agrega"" size=""1"">"
     If RS_menu("solicita_cc") = "S" Then
-       If p_agrega = "GRDMCC"   Then ShowHTML "          <option value=""GRDMCC"" selected>Classificação"           Else ShowHTML "          <option value=""GRDMCC"">Classificação"        End If
+       If p_agrega = (Mid(RS_Menu("sigla"),1,3)& "CC")   Then 
+          ShowHTML "          <option value=""" & Mid(RS_Menu("sigla"),1,3)& "CC"" selected>Classificação"
+       Else 
+          ShowHTML "          <option value=""" & Mid(RS_Menu("sigla"),1,3) & "CC" & """>Classificação"
+       End If
     End If
-    If p_agrega = "GRDMRESPATU" Then ShowHTML "          <option value=""GRDMRESPATU"" selected>Executor"           Else ShowHTML "          <option value=""GRDMRESPATU"">Executor"        End If
-    If Nvl(p_agrega,"GRDMPROP") = "GRDMPROP"    Then ShowHTML "          <option value=""GRDMPROP"" selected>Outra parte"           Else ShowHTML "          <option value=""GRDMPROP"">Outra parte"        End If
-    If p_agrega = "GRDMPROJ"    Then ShowHTML "          <option value=""GRDMPROJ"" selected>Projeto"               Else ShowHTML "          <option value=""GRDMPROJ"">Projeto"            End If
-    If p_agrega = "GRDMRESP"    Then ShowHTML "          <option value=""GRDMRESP"" selected>Responsável" Else ShowHTML "          <option value=""GRDMRESP"">Responsável"     End If
-    If p_agrega = "GRDMSETOR"   Then ShowHTML "          <option value=""GRDMSETOR"" selected>Setor responsável"    Else ShowHTML "          <option value=""GRDMSETOR"">Setor responsável" End If
-    If p_agrega = "GRDMLOCAL"   Then ShowHTML "          <option value=""GRDMLOCAL"" selected>UF"                   Else ShowHTML "          <option value=""GRDMLOCAL"">UF"                End If
+    If p_agrega = Mid(RS_Menu("sigla"),1,3)& "RESPATU" Then 
+       ShowHTML "          <option value=""" & Mid(RS_Menu("sigla"),1,3)& "RESPATU"" selected>Executor"           
+    Else 
+       ShowHTML "          <option value=""" & Mid(RS_Menu("sigla"),1,3)& "RESPATU"">Executor"
+    End If
+    If Nvl(p_agrega,Mid(RS_Menu("sigla"),1,3)& "PROP") = Mid(RS_Menu("sigla"),1,3)& "PROP"    Then 
+       ShowHTML "          <option value=""" & Mid(RS_Menu("sigla"),1,3)& "PROP"" selected>Outra parte"           
+    Else 
+       ShowHTML "          <option value=""" & Mid(RS_Menu("sigla"),1,3)& "PROP"">Outra parte"        
+    End If
+    If p_agrega = Mid(RS_Menu("sigla"),1,3)& "PROJ"    Then 
+       ShowHTML "          <option value=""" & Mid(RS_Menu("sigla"),1,3)& "PROJ"" selected>Projeto"
+    Else 
+       ShowHTML "          <option value=""" & Mid(RS_Menu("sigla"),1,3)& "PROJ"">Projeto"
+    End If
+    If p_agrega = Mid(RS_Menu("sigla"),1,3)& "RESP"    Then 
+       ShowHTML "          <option value=""" & Mid(RS_Menu("sigla"),1,3)& "RESP"" selected>Responsável" 
+    Else 
+       ShowHTML "          <option value=""" & Mid(RS_Menu("sigla"),1,3)& "RESP"">Responsável"   
+    End If
+    If p_agrega = Mid(RS_Menu("sigla"),1,3)& "SETOR"   Then 
+       ShowHTML "          <option value=""" & Mid(RS_Menu("sigla"),1,3)& "SETOR"" selected>Setor responsável"
+    Else 
+       ShowHTML "          <option value=""" & Mid(RS_Menu("sigla"),1,3)& "SETOR"">Setor responsável" 
+    End If
+    If p_agrega = Mid(RS_Menu("sigla"),1,3)& "LOCAL"   Then 
+       ShowHTML "          <option value=""" & Mid(RS_Menu("sigla"),1,3)& "LOCAL"" selected>UF"
+    Else 
+       ShowHTML "          <option value=""" & Mid(RS_Menu("sigla"),1,3)& "LOCAL"">UF"
+    End If
     ShowHTML "          </select></td>"
     MontaRadioSN "<b>Inibe exibição do gráfico?</b>", p_tipo, "p_tipo"
     MontaRadioNS "<b>Limita tamanho do detalhamento?</b>", p_tamanho, "p_tamanho"
@@ -884,14 +879,14 @@ Sub ImprimeCabecalho
     ShowHTML "    <TABLE WIDTH=""100%"" bgcolor=""" & conTableBgColor & """ BORDER=""" & conTableBorder & """ CELLSPACING=""" & conTableCellSpacing & """ CELLPADDING=""" & conTableCellPadding & """ BorderColorDark=""" & conTableBorderColorDark & """ BorderColorLight=""" & conTableBorderColorLight & """>"
     ShowHTML "        <tr bgcolor=""#DCDCDC"" align=""center"">"
     Select case p_agrega
-       Case "GRDMETAPA"   ShowHTML "          <td><font size=""1""><b>Etapa</font></td>"
-       Case "GRDMPROJ"    ShowHTML "          <td><font size=""1""><b>Projeto</font></td>"
-       Case "GRDMPROP"    ShowHTML "          <td><font size=""1""><b>Proponente</font></td>"
-       Case "GRDMRESP"    ShowHTML "          <td><font size=""1""><b>Responsável</font></td>"
-       Case "GRDMRESPATU" ShowHTML "          <td><font size=""1""><b>Executor</font></td>"
-       Case "GRDMCC"      ShowHTML "          <td><font size=""1""><b>Classificação</font></td>"
-       Case "GRDMSETOR"   ShowHTML "          <td><font size=""1""><b>Setor responsável</font></td>"
-       Case "GRDMLOCAL"   ShowHTML "          <td><font size=""1""><b>UF</font></td>"
+       Case Mid(RS_Menu("sigla"),1,3)& "ETAPA"   ShowHTML "          <td><font size=""1""><b>Etapa</font></td>"
+       Case Mid(RS_Menu("sigla"),1,3)& "PROJ"    ShowHTML "          <td><font size=""1""><b>Projeto</font></td>"
+       Case Mid(RS_Menu("sigla"),1,3)& "PROP"    ShowHTML "          <td><font size=""1""><b>Proponente</font></td>"
+       Case Mid(RS_Menu("sigla"),1,3)& "RESP"    ShowHTML "          <td><font size=""1""><b>Responsável</font></td>"
+       Case Mid(RS_Menu("sigla"),1,3)& "RESPATU" ShowHTML "          <td><font size=""1""><b>Executor</font></td>"
+       Case Mid(RS_Menu("sigla"),1,3)& "CC"      ShowHTML "          <td><font size=""1""><b>Classificação</font></td>"
+       Case Mid(RS_Menu("sigla"),1,3)& "SETOR"   ShowHTML "          <td><font size=""1""><b>Setor responsável</font></td>"
+       Case Mid(RS_Menu("sigla"),1,3)& "LOCAL"   ShowHTML "          <td><font size=""1""><b>UF</font></td>"
     End Select
     ShowHTML "          <td><font size=""1""><b>Total</font></td>"
     ShowHTML "          <td><font size=""1""><b>Cad.</font></td>"

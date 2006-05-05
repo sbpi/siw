@@ -3,7 +3,8 @@ create or replace procedure Sp_GetPPALocalizador_IS
     p_ano          in  number   default null,
     p_cd_programa  in  varchar2 default null,
     p_cd_acao      in  varchar2 default null,
-    p_cd_unidade   in  varchar2 default null,        
+    p_cd_unidade   in  varchar2 default null,
+    p_cd_subacao   in  varchar2 default null,
     p_result  out sys_refcursor) is
 begin
    -- Recupera os localizadores de uma determinada ação
@@ -19,7 +20,7 @@ begin
          and a.ano         = p_ano
          and b.cd_programa = p_cd_programa
          and b.cd_acao     = p_cd_acao
-         and b.cd_unidade  = p_cd_unidade;
+         and b.cd_unidade  = p_cd_unidade
+         and (p_cd_subacao is null or (p_cd_subacao is not null and b.cd_subacao = p_cd_subacao));         
 end Sp_GetPPALocalizador_IS;
 /
-

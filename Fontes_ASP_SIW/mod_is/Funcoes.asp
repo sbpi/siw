@@ -124,9 +124,8 @@ REM =========================================================================
 REM Montagem da seleção de iniciativas prioritarias
 REM -------------------------------------------------------------------------
 Sub SelecaoIsProjeto (label, accesskey, hint, chave, chaveAux, campo, restricao, atributo)
-    DB_GetProjeto_IS RS, null, w_cliente, null, null, null, null, null, null, null, null, null, null, restricao, null
+    DB_GetProjeto_IS RS, null, w_cliente, null, null, null, null, null, null, "S", null, null, null, restricao, null
     RS.Sort   = "nome"
-    RS.Filter = "ativo = 'S'"
     Dim w_chave_test
     If IsNull(hint) Then
        ShowHTML "          <td valign=""top""><font size=""1""><b>" & Label & "</b><br><SELECT ACCESSKEY=""" & accesskey & """ CLASS=""STS"" NAME=""" & campo & """ " & w_Disabled & " " & atributo & ">"
@@ -200,18 +199,17 @@ REM =========================================================================
 REM Rotina de selecao das unidades de planejamento e administrativas do modulo infra-sig
 REM -------------------------------------------------------------------------
 Sub SelecaoUnidade_IS (label, accesskey, hint, chave, chaveAux, campo, atributo, tipo)
-    DB_GetIsUnidade_IS RS, null, w_cliente
     If tipo = "ADMINISTRATIVA" Then
-       RS.Filter = "administrativa = 'S'"
+       DB_GetIsUnidade_IS RS, null, w_cliente, "S", null
     ElseIf tipo = "PLANEJAMENTO" Then
-       RS.Filter = "planejamento = 'S'"
+       DB_GetIsUnidade_IS RS, null, w_cliente, null, "S"
     End If
     RS.Sort = "nome"
     If RS.RecordCount > 100 Then
        Dim w_nm_unidade, w_sigla
        ShowHTML "<INPUT type=""hidden"" name=""" & campo & """ value=""" & chave &""">"
        If chave > "" Then
-          DB_GetIsUnidade_IS RS, chave, w_cliente
+          DB_GetIsUnidade_IS RS, chave, w_cliente, null, null
           w_nm_unidade = RS("nome")
           w_sigla      = RS("sigla")
        End If
@@ -361,7 +359,7 @@ REM Montagem da seleção de ações do PPA(tabela SIGPLAN)
 REM -------------------------------------------------------------------------
 Sub SelecaoLocalizador_IS (label, accesskey, hint, chave, w_cd_programa, w_cd_acao, w_cd_unidade, campo, restricao, atributo)
    
-   DB_GetPPALocalizador_IS RS, w_cliente, w_ano, w_cd_programa, w_cd_acao, w_cd_unidade
+   DB_GetPPALocalizador_IS RS, w_cliente, w_ano, w_cd_programa, w_cd_acao, w_cd_unidade, null
    RS.Sort   = "nome"
     If IsNull(hint) Then
        ShowHTML "          <td valign=""top""><font size=""1""><b>" & Label & "</b><br><SELECT ACCESSKEY=""" & accesskey & """ CLASS=""STS"" NAME=""" & campo & """ " & w_Disabled & " " & atributo & ">"
@@ -414,9 +412,6 @@ REM Montagem da seleção de ações cadastradas
 REM -------------------------------------------------------------------------
 Sub SelecaoAcao (label, accesskey, hint, p_cliente, p_ano, p_programa, p_acao, p_subacao, p_unidade, campo, restricao, atributo, chave)
     DB_GetAcao_IS RS, null, null, null, w_ano, w_cliente, restricao, null
-    If restricao = "PROJETO" Then
-       RS.Filter = "sq_isprojeto <> null"
-    End If
     RS.Sort = "titulo"
     If IsNull(hint) Then
        ShowHTML "          <td valign=""top""><font size=""1""><b>" & Label & "</b><br><SELECT ACCESSKEY=""" & accesskey & """ CLASS=""STS"" NAME=""" & campo & """ " & w_Disabled & " " & atributo & ">"

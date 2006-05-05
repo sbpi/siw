@@ -86,8 +86,7 @@ w_cliente       = RetornaCliente()
 w_usuario       = RetornaUsuario()
 w_menu          = RetornaMenu(w_cliente, SG)
 w_ano           = RetornaAno()
-DB_GetModList RS
-RS.Filter = "sigla='IS'"
+DB_GetSiwCliModLis RS, w_cliente, null, "IS"
 w_sq_modulo = RS("sq_modulo")
 DesconectaBD
 

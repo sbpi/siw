@@ -561,15 +561,16 @@ REM -------------------------------------------------------------------------
 REM =========================================================================
 REM Recupera as restrições de uma ação
 REM -------------------------------------------------------------------------
-Sub DB_GetPPALocalizador_IS(p_rs, cliente, ano, p_programa, p_acao, p_unidade)
+Sub DB_GetPPALocalizador_IS(p_rs, cliente, ano, p_programa, p_acao, p_unidade, p_subacao)
   
-  Dim l_cliente, l_ano, l_programa, l_acao, l_unidade
+  Dim l_cliente, l_ano, l_programa, l_acao, l_unidade, l_subacao
   
   Set l_cliente   = Server.CreateObject("ADODB.Parameter")
   Set l_ano       = Server.CreateObject("ADODB.Parameter")
   Set l_programa  = Server.CreateObject("ADODB.Parameter")
   Set l_acao      = Server.CreateObject("ADODB.Parameter")
   Set l_unidade   = Server.CreateObject("ADODB.Parameter")
+  Set l_subacao   = Server.CreateObject("ADODB.Parameter")  
   
   with sp
      set l_cliente              = .CreateParameter("l_cliente",       adInteger, adParamInput,   , Tvl(cliente))
@@ -577,12 +578,14 @@ Sub DB_GetPPALocalizador_IS(p_rs, cliente, ano, p_programa, p_acao, p_unidade)
      set l_programa             = .CreateParameter("l_programa",      adVarchar, adParamInput,  4, Tvl(p_programa))
      set l_acao                 = .CreateParameter("l_acao",          adVarchar, adParamInput,  4, Tvl(p_acao))
      set l_unidade              = .CreateParameter("l_unidade",       adVarchar, adParamInput,  5, Tvl(p_unidade))
+     set l_subacao              = .CreateParameter("l_subacao",       adVarchar, adParamInput,  4, Tvl(p_subacao))
      
      .parameters.Append         l_cliente
      .parameters.Append         l_ano
      .parameters.Append         l_programa
      .parameters.Append         l_acao
      .parameters.Append         l_unidade
+     .parameters.Append         l_subacao
      
      If Session("dbms") = 1 or Session("dbms") = 3 Then .Properties("PLSQLRSet") = TRUE End If
      .CommandText               = Session("schema_is") & "SP_GetPPALocalizador_IS"
@@ -597,6 +600,7 @@ Sub DB_GetPPALocalizador_IS(p_rs, cliente, ano, p_programa, p_acao, p_unidade)
      .Parameters.Delete         "l_programa"
      .Parameters.Delete         "l_acao"
      .Parameters.Delete         "l_unidade"
+     .Parameters.Delete         "l_subacao"
   end with
 
 End Sub

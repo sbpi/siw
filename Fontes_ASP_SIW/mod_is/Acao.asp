@@ -357,22 +357,17 @@ Sub Inicial
      DB_GetLinkData RS, w_cliente, "ISACAD"
      
      If w_copia > "" Then ' Se for cópia, aplica o filtro sobre todas as demandas visíveis pelo usuário
-        DB_GetSolicList_IS RS, RS("sq_menu"), w_usuario, SG, 3, _
+        DB_GetSolicList_IS RS, RS("sq_menu"), w_usuario, Nvl(Request("p_agrega"),SG), 3, _
            p_ini_i, p_ini_f, p_fim_i, p_fim_f, p_atraso, p_solicitante, _
            p_unidade, p_prioridade, p_qtd_restricao, p_proponente, _
            p_chave, p_assunto, p_pais, p_regiao, p_uf, p_cidade, p_usu_resp, _
            p_uorg_resp, p_palavra, p_prazo, p_fase, p_projeto, p_atividade, null, p_sq_acao_ppa, p_sq_isprojeto, null, w_ano
      Else
-        DB_GetSolicList_IS RS, RS("sq_menu"), w_usuario, SG, P1, _
+        DB_GetSolicList_IS RS, RS("sq_menu"), w_usuario, Nvl(Request("p_agrega"),SG), P1, _
            p_ini_i, p_ini_f, p_fim_i, p_fim_f, p_atraso, p_solicitante, _
            p_unidade, p_prioridade, p_qtd_restricao, p_proponente, _
            p_chave, p_assunto, p_pais, p_regiao, p_uf, p_cidade, p_usu_resp, _
            p_uorg_resp, p_palavra, p_prazo, p_fase, p_acao, p_atividade, null, Mid(p_sq_acao_ppa,5,4), p_sq_isprojeto, Mid(p_sq_acao_ppa,9,4), w_ano
-        
-        Select case Request("p_agrega")
-           Case "GRISARESPATU"
-              RS.Filter = "executor <> null"
-        End Select
      End If
      If p_ordena > "" Then RS.sort = p_ordena Else RS.sort = "fim, prioridade" End If
   End If
@@ -3258,7 +3253,7 @@ Sub Restricoes
      formatadata
      ValidateOpen "Validacao"
      If InStr("IA",O) > 0 Then
-        DB_GetPPALocalizador_IS RS, w_cliente, w_ano, w_cd_programa, w_cd_acao, w_cd_unidade
+        DB_GetPPALocalizador_IS RS, w_cliente, w_ano, w_cd_programa, w_cd_acao, w_cd_unidade, null
         If RS.RecordCount > 1 Then
            Validate "w_cd_localizador", "Localizador", "SELECT", "1", "1", "18", "1", "1"
         End If
@@ -3362,7 +3357,7 @@ Sub Restricoes
 
     ShowHTML "<tr bgcolor=""" & conTrBgColor & """><td align=""center"">"
     ShowHTML "  <table width=""97%"" border=""0"">"
-    DB_GetPPALocalizador_IS RS, w_cliente, w_ano, w_cd_programa, w_cd_acao, w_cd_unidade
+    DB_GetPPALocalizador_IS RS, w_cliente, w_ano, w_cd_programa, w_cd_acao, w_cd_unidade, null
     If RS.RecordCount > 1 Then
        ShowHTML "    <tr valign=""top"" >"
        SelecaoLocalizador_IS "<U>L</U>ocalizador:", "L", "Selecione o localizador da restrição", w_cd_subacao, w_cd_programa, w_cd_acao, w_cd_unidade, "w_cd_subacao", null, null
@@ -3410,9 +3405,9 @@ Sub Restricoes
      ShowHTML "      <table border=1 width=""100%"">"
      ShowHTML "        <tr><td valign=""top"" colspan=""2"">"    
      ShowHTML "          <TABLE border=0 WIDTH=""100%"" CELLSPACING=""" & conTableCellSpacing & """ CELLPADDING=""" & conTableCellPadding & """ BorderColorDark=""" & conTableBorderColorDark & """ BorderColorLight=""" & conTableBorderColorLight & """>"
-     DB_GetPPALocalizador_IS RS, w_cliente, w_ano, w_cd_programa, w_cd_acao, w_cd_unidade
+     DB_GetPPALocalizador_IS RS, w_cliente, w_ano, w_cd_programa, w_cd_acao, w_cd_unidade, null
      If RS.RecordCount > 1 Then
-        RS.Filter = "cd_subacao = '" & w_cd_subacao& "'"
+        DB_GetPPALocalizador_IS RS, w_cliente, w_ano, w_cd_programa, w_cd_acao, w_cd_unidade, w_cd_subacao
         ShowHTML "            <tr><td colspan=""2""><font size=""1"">Localizador:<b><br><font size=2>" & Nvl(RS("nome"),"---") & "</font></td></tr>"
      End If
      DesconectaBD

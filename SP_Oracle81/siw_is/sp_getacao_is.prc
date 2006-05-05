@@ -42,7 +42,7 @@ begin
             and a.ano             = p_ano
             and a.cliente         = p_cliente
             and ((p_sq_isprojeto is null) or (p_sq_isprojeto is not null and a.sq_isprojeto = p_sq_isprojeto));
-    Elsif p_restricao = 'ACAO' or p_restricao = 'PROJETO' Then
+    Elsif p_restricao = 'ACAO' Then
       open p_result for 
          select b.sq_siw_solicitacao chave, e.titulo, a.sq_isprojeto,
                 a.cd_unidade, a.cd_programa, a.cd_acao,
@@ -57,6 +57,22 @@ begin
             and  ('CA'            <> Nvl(c.sigla,'-'))
             and a.ano             = p_ano
             and a.cliente         = p_cliente;
+   Elsif p_restricao = 'PROJETO' Then
+      open p_result for 
+         select b.sq_siw_solicitacao chave, e.titulo, a.sq_isprojeto,
+                a.cd_unidade, a.cd_programa, a.cd_acao,
+                a.cd_unidade||'.'||a.cd_programa||'.'||a.cd_acao codigo         
+           from is_acao a,
+                siw.pj_projeto      e,
+                siw.siw_solicitacao b,
+                siw.siw_tramite     c 
+          where (a.sq_siw_solicitacao = e.sq_siw_solicitacao)
+            and (a.sq_siw_solicitacao = b.sq_siw_solicitacao)
+            and (b.sq_siw_tramite = c.sq_siw_tramite) 
+            and a.sq_isprojeto    is not null
+            and  ('CA'            <> Nvl(c.sigla,'-'))
+            and a.ano             = p_ano
+            and a.cliente         = p_cliente;   
    End If;
 end Sp_GetAcao_IS;
 /

@@ -211,6 +211,11 @@ begin
                  (p_tipo         = 2     and Instr('CI,AT,CA', Nvl(b1.sigla,'-')) = 0 and b2.acesso > 15) or
                  (p_tipo         = 3)    or
                  (p_tipo         = 4     and Nvl(b1.sigla,'-') <> 'CA')
+                )
+            and ((p_restricao <> 'GRISTPROP'    and p_restricao <> 'GRISTRESPATU') or 
+                 ((p_restricao = 'GRISTPROP'    and d.proponente  is not null)   or 
+                  (p_restricao = 'GRISTRESPATU' and b.executor    is not null)
+                 )
                 );
    Elsif p_restricao = 'ISACAD' or Substr(p_restricao,1,5) = 'GRISA' Then
       -- Recupera as ações que o usuário pode ver
@@ -372,7 +377,11 @@ begin
                  (p_tipo         = 3) or
                  (p_tipo         = 4     and Nvl(b1.sigla,'-') <> 'CA')
                 )
-            ;
+            and ((p_restricao <> 'GRISAPROP'    and p_restricao <> 'GRISARESPATU') or 
+                 ((p_restricao = 'GRISAPROP'    and d.proponente  is not null)   or 
+                  (p_restricao = 'GRISARESPATU' and b.executor    is not null)
+                 )
+                );
    Elsif p_restricao = 'ISPCAD' or Substr(p_restricao,1,5) = 'GRISP' Then
       -- Recupera as demandas que o usuário pode ver
       open p_result for 
@@ -515,7 +524,12 @@ begin
                  (p_tipo         = 3)    or
                  (p_tipo         = 4     and Nvl(b1.sigla,'-') <> 'CA')                 
                 )
-            ;
+            and ((p_restricao <> 'GRISPPROP'    and p_restricao <> 'GRISPRESPATU') or 
+                 ((p_restricao = 'GRISPPROP'    and d.proponente  is not null)   or 
+                  (p_restricao = 'GRISPRESPATU' and b.executor    is not null)
+                 )
+                );
+
    Elsif p_restricao = 'PJEXEC' or p_restricao = 'OREXEC' Then
       -- Recupera as demandas que o usuário pode ver
       open p_result for 
