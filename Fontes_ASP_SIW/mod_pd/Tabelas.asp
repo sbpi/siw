@@ -500,7 +500,7 @@ Sub Unidade
      w_ano                  = Request("w_ano")
   ElseIf O = "L" Then
      ' Recupera todos os registros para a listagem
-     DB_GetUorgList RS, w_cliente, null, "VIAGEM", null, null
+     DB_GetUorgList RS, w_cliente, null, "VIAGEM", null, null, null
      If Nvl(p_ordena,"") > "" Then
         RS.Sort = p_ordena
      Else

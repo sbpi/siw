@@ -1394,6 +1394,11 @@ Sub Visual
   End If
   
   ShowHTML "<div align=""center"">"
+  If w_tipo > "" and w_tipo <> "WORD" Then
+     ShowHTML "<tr><td width=""100%""><div align=""center""><b><font size=""1"">Clique <a class=""HL"" href=""javascript:history.back(1);"">aqui</a> para voltar à tela anterior</b></font></div>"
+  Else
+     P4 = 1
+  End If
   ShowHTML "<table width=""95%"" border=""0"" cellspacing=""3"">"
   ShowHTML "<tr><td colspan=""2"">"
   ShowHTML "<TABLE WIDTH=""100%"" BORDER=0><TR><TD ROWSPAN=2><DIV ALIGN=""LEFT""><IMG src=""" & LinkArquivo(null, w_cliente, w_logo, null, null, null, "EMBED") & """></DIV></TD>"
@@ -1401,14 +1406,11 @@ Sub Visual
   ShowHTML "Visualização de Tarefa"
   ShowHTML "</B></FONT></DIV></TD></TR>"
   ShowHTML "</TABLE></TD></TR>"
-  If w_tipo > "" and w_tipo <> "WORD" Then
-     ShowHTML "<div align=""center""><b><font size=""1"">Clique <a class=""HL"" href=""javascript:history.back(1);"">aqui</a> para voltar à tela anterior</b></font></div>"
-  Else
-     P4 = 1
-  End If
 
   ' Chama a rotina de visualização dos dados da tarefa, na opção "Listagem"
   ShowHTML VisualTarefa(w_chave, "L", w_usuario, P4, "sim", "sim", "sim", "sim", "sim", "sim")
+
+  ShowHTML "</table>"
 
   If w_tipo > "" and w_tipo <> "WORD" Then
      ShowHTML "<div align=""center""><b><font size=""1"">Clique <a class=""HL"" href=""javascript:history.back(1);"">aqui</a> para voltar à tela anterior</b></font></div>"
@@ -2360,28 +2362,17 @@ Sub Main
   End If
 
   Select Case Par
-    Case "INICIAL"
-       Inicial
-    Case "GERAL"
-       Geral
-    Case "RESP"
-       Responsaveis    
-    Case "ANEXO"
-       Anexos
-    Case "VISUAL"
-       Visual
-    Case "EXCLUIR"
-       Excluir
-    Case "ENVIO"
-       Encaminhamento
-    Case "TRAMITE"
-       Tramitacao
-    Case "ANOTACAO"
-       Anotar
-    Case "CONCLUIR"
-       Concluir
-    Case "GRAVA"
-       Grava
+    Case "INICIAL"      Inicial
+    Case "GERAL"        Geral
+    Case "RESP"         Responsaveis    
+    Case "ANEXO"        Anexos
+    Case "VISUAL"       Visual
+    Case "EXCLUIR"      Excluir
+    Case "ENVIO"        Encaminhamento
+    Case "TRAMITE"      Tramitacao
+    Case "ANOTACAO"     Anotar
+    Case "CONCLUIR"     Concluir
+    Case "GRAVA"        Grava
     Case Else
        Cabecalho
        ShowHTML "<BASE HREF=""" & conRootSIW & """>"

@@ -292,7 +292,7 @@ REM =========================================================================
 REM Rotina de visualização resumida dos registros
 REM -------------------------------------------------------------------------
 Sub Inicial
-
+  
   Dim w_tarefa, w_total, w_parcial
   
   If O = "L" Then
@@ -1682,7 +1682,7 @@ Sub Trechos
     ShowHTML "          <td><font size=""1""><b>Operações</font></td>"
     ShowHTML "        </tr>"
     If RS.EOF Then
-        ShowHTML "      <tr bgcolor=""" & conTrBgColor & """><td colspan=4 align=""center""><font size=""1""><b>Não foram encontrados registros.</b></td></tr>"
+        ShowHTML "      <tr bgcolor=""" & conTrBgColor & """><td colspan=5 align=""center""><font size=""1""><b>Não foram encontrados registros.</b></td></tr>"
     Else
       While Not RS.EOF 
         If w_cor = conTrBgColor or w_cor = "" Then w_cor = conTrAlternateBgColor Else w_cor = conTrBgColor End If
@@ -1731,7 +1731,7 @@ Sub Trechos
     ShowHTML "      <tr><td align=""center"" colspan=""5"" height=""1"" bgcolor=""#000000""></TD></TR>"
     ShowHTML "      <tr><td align=""center"" colspan=""5"">"
     ShowHTML "            <input class=""stb"" type=""submit"" name=""Botao"" value=""Gravar"" onClick=""Botao.value=this.value;"">"
-    ShowHTML "            <input class=""stb"" type=""submit"" name=""Botao"" value=""Alterar outra parte"" onClick=""Botao.value=this.value; document.Form.action='" & w_dir & w_pagina & par & "'; document.Form.submit();"">"
+    ShowHTML "              <input class=""stb"" type=""button"" onClick=""location.href='" & R & "&P1=" & P1 & "&P2=" & P2 & "&P3=" & P3 & "&P4=" & P4 & "&TP=" & TP & "&SG=" & SG & "&w_chave=" & w_chave & "&O=L';"" name=""Botao"" value=""Cancelar"">"
     ShowHTML "          </td>"
     ShowHTML "      </tr>"
     ShowHTML "    </table>"
@@ -1974,7 +1974,7 @@ Sub Vinculacao
                ShowHTML "        <td align=""center""><font size=""1"">" & FormataDataEdicao(RS("inicio")) & "</td>"
                ShowHTML "        <td align=""center""><font size=""1"">" & FormataDataEdicao(RS("fim")) & "</td>"
             Else
-               ShowHTML "        <td align=""center""><font size=""1""" & FormataDataEdicao(RS("inicio_real")) & "</td>"
+               ShowHTML "        <td align=""center""><font size=""1"">" & FormataDataEdicao(RS("inicio_real")) & "</td>"
                ShowHTML "        <td align=""center""><font size=""1"">" & FormataDataEdicao(RS("fim_real")) & "</td>"
             End If
             ShowHTML "        <td><font size=""1"">" & RS("nm_tramite") & "</td>"
@@ -2388,14 +2388,14 @@ Sub Visual
   ShowHTML "</FONT></B></TD></TR></TABLE>"
   ShowHTML "<HR>"
   If w_tipo > "" and w_tipo <> "WORD" Then
-     ShowHTML "<center><B><FONT SIZE=2>Clique <a class=""HL"" href=""javascript:history.back(1);"">aqui</a> para voltar à tela anterior</font></b></center>"
+     ShowHTML "<center><B>Clique <a class=""HL"" href=""javascript:history.back(1);"">aqui</a> para voltar à tela anterior</b></center>"
   End If
 
   ' Chama a rotina de visualização dos dados da PCD, na opção "Listagem"
   ShowHTML VisualViagem(w_chave, "L", w_usuario, P1, P4)
 
   If w_tipo > "" and w_tipo <> "WORD" Then
-     ShowHTML "<center><B><FONT SIZE=2>Clique <a class=""HL"" href=""javascript:history.back(1);"">aqui</a> para voltar à tela anterior</font></b></center>"
+     ShowHTML "<center><B>Clique <a class=""HL"" href=""javascript:history.back(1);"">aqui</a> para voltar à tela anterior</b></center>"
   End If
 
   If w_tipo <> "WORD" Then

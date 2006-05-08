@@ -109,10 +109,10 @@ Function ValidaViagem(p_cliente, p_chave, p_sg1, p_sg2, p_sg3, p_sg4, p_tramite)
         End If
            
         ' Verifica se a viagem foi vinculada a pelo menos uma tarefa
-        If l_existe_rs4 < 1 Then
-           l_erro = l_erro & "<li>É obrigatório vincular a PCD a pelo menos uma tarefa."
-           l_tipo = 0
-        End If
+        'If l_existe_rs4 < 1 Then
+        '   l_erro = l_erro & "<li>É obrigatório vincular a PCD a pelo menos uma tarefa."
+        '   l_tipo = 0
+        'End If
            
         If not l_rs_tramite.eof Then
               If Nvl(l_rs_tramite("ordem"),"---") > "1" Then

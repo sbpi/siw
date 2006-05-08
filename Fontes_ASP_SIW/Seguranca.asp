@@ -1794,7 +1794,7 @@ Sub TelaUsuario
      ShowHTML "</tr>"
      ShowHTML "</table>"
      DesConectaBD
-  ElseIf Instr("Cliente,Fornecedor", RS("nome_vinculo")) > 0 Then
+  ElseIf Instr("Cliente,Fornecedor,Colaborador eventual", RS("nome_vinculo")) > 0 Then
      ShowHTML "<TITLE>Pessoa externa</TITLE>"
      ShowHTML "</HEAD>"
      BodyOpen "onLoad=document.focus();"
