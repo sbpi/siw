@@ -42,39 +42,43 @@ begin
   -- de abrangência internacional, ou da organização, ou ainda se é data móvel
   select count(*) into w_reg 
     from eo_data_especial a 
-   where (a.abrangencia in ('N','I','O') and 
-          a.expediente  <> 'S' and
-          ((a.tipo      = 'I' and a.data_especial = substr(w_data,1,5)) or
-           (a.tipo      = 'E' and a.data_especial = w_data)
-          )
-         )
-      or (a.tipo    in ('S','C','Q','P','D','H') and
-          a.sq_pais = p_pais and
-          ((a.tipo = 'S' and p_data = VerificaDataMovel(to_char(p_data,'yyyy'),'S')) or
-           (a.tipo = 'C' and p_data = VerificaDataMovel(to_char(p_data,'yyyy'),'C')) or
-           (a.tipo = 'Q' and p_data = VerificaDataMovel(to_char(p_data,'yyyy'),'Q')) or
-           (a.tipo = 'P' and p_data = VerificaDataMovel(to_char(p_data,'yyyy'),'P')) or
-           (a.tipo = 'D' and p_data = VerificaDataMovel(to_char(p_data,'yyyy'),'D')) or
-           (a.tipo = 'H' and p_data = VerificaDataMovel(to_char(p_data,'yyyy'),'H'))
+   where a.cliente      = coalesce(p_cliente,2)
+     and ((a.abrangencia in ('N','I','O') and 
+           a.expediente  <> 'S' and
+           ((a.tipo      = 'I' and a.data_especial = substr(w_data,1,5)) or
+            (a.tipo      = 'E' and a.data_especial = w_data)
+           )
+          ) or
+          (a.tipo    in ('S','C','Q','P','D','H') and
+           a.sq_pais = p_pais and
+           ((a.tipo = 'S' and p_data = VerificaDataMovel(to_char(p_data,'yyyy'),'S')) or
+            (a.tipo = 'C' and p_data = VerificaDataMovel(to_char(p_data,'yyyy'),'C')) or
+            (a.tipo = 'Q' and p_data = VerificaDataMovel(to_char(p_data,'yyyy'),'Q')) or
+            (a.tipo = 'P' and p_data = VerificaDataMovel(to_char(p_data,'yyyy'),'P')) or
+            (a.tipo = 'D' and p_data = VerificaDataMovel(to_char(p_data,'yyyy'),'D')) or
+            (a.tipo = 'H' and p_data = VerificaDataMovel(to_char(p_data,'yyyy'),'H'))
+           )
           )
          );
   If w_reg > 0 Then
      select a.expediente into Result 
        from eo_data_especial a 
-      where (a.abrangencia in ('N','I','O') and 
-             a.expediente  <> 'S' and
-             ((a.tipo      = 'I' and a.data_especial = substr(w_data,1,5)) or
-              (a.tipo      = 'E' and a.data_especial = w_data)
-             )
-            )
-         or (a.tipo    in ('S','C','Q','P','D','H') and
-             a.sq_pais = p_pais and
-             ((a.tipo = 'S' and p_data = VerificaDataMovel(to_char(p_data,'yyyy'),'S')) or
-              (a.tipo = 'C' and p_data = VerificaDataMovel(to_char(p_data,'yyyy'),'C')) or
-              (a.tipo = 'Q' and p_data = VerificaDataMovel(to_char(p_data,'yyyy'),'Q')) or
-              (a.tipo = 'P' and p_data = VerificaDataMovel(to_char(p_data,'yyyy'),'P')) or
-              (a.tipo = 'D' and p_data = VerificaDataMovel(to_char(p_data,'yyyy'),'D')) or
-              (a.tipo = 'H' and p_data = VerificaDataMovel(to_char(p_data,'yyyy'),'H'))
+      where a.cliente      = coalesce(p_cliente,2)
+        and ((a.abrangencia in ('N','I','O') and 
+              a.expediente  <> 'S' and
+              ((a.tipo      = 'I' and a.data_especial = substr(w_data,1,5)) or
+               (a.tipo      = 'E' and a.data_especial = w_data)
+              )
+             ) or
+             (a.tipo    in ('S','C','Q','P','D','H') and
+              a.sq_pais = p_pais and
+              ((a.tipo = 'S' and p_data = VerificaDataMovel(to_char(p_data,'yyyy'),'S')) or
+               (a.tipo = 'C' and p_data = VerificaDataMovel(to_char(p_data,'yyyy'),'C')) or
+               (a.tipo = 'Q' and p_data = VerificaDataMovel(to_char(p_data,'yyyy'),'Q')) or
+               (a.tipo = 'P' and p_data = VerificaDataMovel(to_char(p_data,'yyyy'),'P')) or
+               (a.tipo = 'D' and p_data = VerificaDataMovel(to_char(p_data,'yyyy'),'D')) or
+               (a.tipo = 'H' and p_data = VerificaDataMovel(to_char(p_data,'yyyy'),'H'))
+              )
              )
             );
   End If;       
