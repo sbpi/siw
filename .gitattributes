@@ -890,6 +890,7 @@ SP_Oracle81/siw/GetCodigo.fnc -text
 SP_Oracle81/siw/MontaOrdemMenu.fnc -text
 SP_Oracle81/siw/PD_Cadastrador_Geral.fnc -text
 SP_Oracle81/siw/PD_CriaParametro.prc -text
+SP_Oracle81/siw/Responsavel_Unidade.fnc -text
 SP_Oracle81/siw/SP_GetAfastamento.prc -text
 SP_Oracle81/siw/SP_GetCargo.prc -text
 SP_Oracle81/siw/SP_GetCiaTrans.prc -text
@@ -903,6 +904,7 @@ SP_Oracle81/siw/SP_GetGPTipoAfast.prc -text
 SP_Oracle81/siw/SP_GetPDParametro.prc -text
 SP_Oracle81/siw/SP_GetPD_Deslocamento.prc -text
 SP_Oracle81/siw/SP_GetSIWArquivo.prc -text
+SP_Oracle81/siw/SP_GetTramiteResp.prc -text
 SP_Oracle81/siw/SP_GetTramiteSolic.prc -text
 SP_Oracle81/siw/SP_PutAfastamento.prc -text
 SP_Oracle81/siw/SP_PutCargo.prc -text
