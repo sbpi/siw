@@ -7,7 +7,7 @@ begin
    open p_result for
       select a.sq_deficiencia, a.nome, a.ativo,
              decode(a.ativo,'S','Sim','Não') ativodesc,
-             a.codigo, Nvl(a.descricao,'-') descricao, b.nome sq_grupo_deficiencia
+             a.codigo, Nvl(a.descricao,'-') descricao, b.nome sq_grupo_deficiencia, b.sq_grupo_defic
         from co_deficiencia a, co_grupo_defic b
       where a.sq_grupo_defic = b.sq_grupo_defic
         and (p_nome  is null or (p_nome  is not null and acentos(a.nome) like '%'||acentos(p_nome)||'%'))
