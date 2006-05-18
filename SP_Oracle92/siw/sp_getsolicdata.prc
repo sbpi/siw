@@ -433,10 +433,11 @@ begin
                 d1.emissao_bilhete,   d1.pagamento_diaria,           d1.pagamento_bilhete,
                 d1.boletim_numero,    d1.boletim_data,               d1.valor_alimentacao,
                 d1.valor_transporte,  d1.desconto_alimentacao,       d1.desconto_transporte,
-                d1.valor_adicional,   d1.codigo_externo,
+                d1.valor_adicional,   d1.codigo_externo,             d1.tipo tipo_missao,
                 d1.sq_pais_estrang,   d1.aba_code,                   d1.swift_code,
                 d1.endereco_estrang,  d1.banco_estrang,              d1.agencia_estrang,
                 d1.cidade_estrang,    d1.informacoes,                d1.codigo_deposito,
+                d1.valor_passagem,
                 d2.nome nm_prop,      d2.nome_resumido nm_prop_res,
                 d3.sq_tipo_vinculo,   d3.nome nm_tipo_vinculo,
                 d4.sexo,              d4.cpf,
@@ -449,7 +450,7 @@ begin
                 b.fim-d.dias_aviso aviso,
                 e.sq_tipo_unidade,    e.nome nm_unidade_resp,        e.informal informal_resp,
                 e.vinculada vinc_resp,e.adm_central adm_resp,        e.sigla sg_unidade_resp,
-                e1.sq_pessoa titular, e2.sq_pessoa substituto,
+                e1.sq_pessoa titular, e2.sq_pessoa substituto,       e12.nome nm_titular,
                 f.sq_pais,            f.sq_regiao,                   f.co_uf,
                 o.nome_resumido nm_solic, o.nome_resumido||' ('||o2.sigla||')' nm_resp,
                 p.nome_resumido nm_exec
@@ -482,6 +483,7 @@ begin
                         left outer     join eo_unidade_resp            e1 on (e.sq_unidade               = e1.sq_unidade   and
                                                                               e1.tipo_respons            = 'T'             and
                                                                               e1.fim                     is null)
+                          left outer   join co_pessoa                 e12 on (e1.sq_pessoa               = e12.sq_pessoa)
                         left outer     join eo_unidade_resp            e2 on (e.sq_unidade               = e2.sq_unidade   and
                                                                               e2.tipo_respons            = 'S'             and
                                                                               e2.fim                     is null)

@@ -28,7 +28,8 @@ begin
             j.sq_pais_passaporte, j.sexo,
             k.cnpj, k.inscricao_estadual,
             o.nome nm_pais_passaporte,
-            case sexo when 'F' then 'Feminino' else 'Masculino' end nm_sexo
+            case sexo when 'F' then 'Feminino' else 'Masculino' end nm_sexo,
+            p.sigla||'/'||q.sigla nm_unidade_benef            
        from co_pessoa                           a
             left outer join  co_tipo_pessoa     c on (a.sq_tipo_pessoa  = c.sq_tipo_pessoa)
             left outer join  co_tipo_vinculo    d on (a.sq_tipo_vinculo = d.sq_tipo_vinculo)
@@ -96,6 +97,8 @@ begin
               left outer join co_pais           o on (o.sq_pais   = j.sq_pais_passaporte)
             left outer join co_pessoa_juridica  k on (a.sq_pessoa = k.sq_pessoa)
             left outer join sg_autenticacao     n on (a.sq_pessoa = n.sq_pessoa)
+              left outer join eo_unidade        p on (n.sq_unidade = p.sq_unidade)
+                left outer join eo_unidade      q on (p.sq_unidade_pai = q.sq_unidade)
       where (a.sq_pessoa_pai      = p_cliente or (a.sq_pessoa = p_cliente and Nvl(a.sq_pessoa_pai,1) = 1))
         and (p_sq_pessoa          is null     or (p_sq_pessoa          is not null and a.sq_pessoa          = p_sq_pessoa))
         and (p_tipo_pessoa        is null     or (p_tipo_pessoa        is not null and a.sq_tipo_pessoa     = p_tipo_pessoa))

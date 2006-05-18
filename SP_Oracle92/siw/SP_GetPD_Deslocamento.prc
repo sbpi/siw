@@ -49,12 +49,14 @@ begin
                   when 'S'
                   then d.nome||'-'||d.co_uf
                   else d.nome||' ('||e.nome||')'
-                  end nm_destino
-        from pd_deslocamento          a
-               inner join   co_cidade b on (a.origem  = b.sq_cidade)
-                 inner join co_pais   c on (b.sq_pais = c.sq_pais)
-               inner join   co_cidade d on (a.destino = d.sq_cidade)
-                 inner join co_pais   e on (d.sq_pais = e.sq_pais)
+                  end nm_destino,
+             f.nome nm_cia_transporte                  
+        from pd_deslocamento                  a
+               inner join      co_cidade         b on (a.origem  = b.sq_cidade)
+                 inner join    co_pais           c on (b.sq_pais = c.sq_pais)
+               inner join      co_cidade         d on (a.destino = d.sq_cidade)
+                 inner join    co_pais           e on (d.sq_pais = e.sq_pais)
+               left outer join pd_cia_transporte f on (a.sq_cia_transporte = f.sq_cia_transporte)
        where a.sq_siw_solicitacao = p_chave
          and (p_chave_aux         is null or (p_chave_aux is not null and a.sq_deslocamento = p_chave_aux));   
    End If;         
