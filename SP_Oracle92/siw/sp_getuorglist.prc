@@ -72,6 +72,18 @@ begin
              where c.sq_pessoa = p_cliente
                and a.ano = p_ano
                and a.ativo = 'S';
+      Elsif p_restricao = 'VIAGEMUNID' Then
+         open p_result for 
+            select x.ano, x.sq_unidade, y.nivel
+              from pd_unidade x,
+                   (select sq_unidade, nome, level nivel
+                      from eo_unidade a
+                    start with a.sq_unidade = p_chave
+                    connect by prior a.sq_unidade_pai = a.sq_unidade
+                   ) y
+            where x.sq_unidade = y.sq_unidade
+              and x.ano        = p_ano
+            order by y.nivel;
       ElsIf p_restricao = 'LICITACAOEND' Then
          open p_result for       
             select a.sq_unidade sq_unidade,a.sq_unidade_pai, a.nome, a.sigla, a.informal, a.adm_central, a.vinculada, 
