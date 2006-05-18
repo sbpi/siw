@@ -208,6 +208,7 @@ begin
          update siw_solicitacao set sq_siw_tramite = w_chave, conclusao = sysdate where sq_siw_solicitacao = p_chave;
       Else
          -- Remove os registros vinculados à missão
+         delete pd_missao_solic where sq_solic_missao    = p_chave;
          delete pd_deslocamento where sq_siw_solicitacao = p_chave;
          delete pd_diaria       where sq_siw_solicitacao = p_chave;
          delete pd_missao       where sq_siw_solicitacao = p_chave;
