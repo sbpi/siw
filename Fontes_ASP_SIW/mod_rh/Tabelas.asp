@@ -439,7 +439,7 @@ Sub Tipoafast
         ShowHTML "    }"   
         ShowHTML "  }"
         ShowHTML "  if (theForm.w_ativo[0].checked && cont == 0) {"
-        ShowHTML "    alert('Selecione pelo menos um modalidade para o tipo de afastamento!');"
+        ShowHTML "    alert('Selecione pelo menos uma modalidade para o tipo de afastamento!');"
         ShowHTML "    return false; "
         ShowHTML "  } else { if (theForm.w_ativo[1].checked && cont > 0) {"
         ShowHTML "     alert('Não selecione nenhuma modalidade para tipos de afastamento inativos!');"
@@ -1121,12 +1121,12 @@ Sub Cargo
      FormataValor
      ValidateOpen "Validacao"
      If InStr("IA",O) > 0 Then
-        Validate "w_sq_tipo",                   "Tipo",  "SELECT", "1", "1",    "1", "1", ""
+        Validate "w_sq_tipo",                   "Tipo",  "SELECT", "1", "1",   "18",  "", "1"
         Validate "w_sq_formacao", "Formacao Acadêmica",  "SELECT", "1", "1", "1000", "1", ""
         Validate "w_nome",                      "Nome",       "1", "1", "3",   "30", "1", "1"
         Validate "w_descricao",            "Descrição",       "1",  "", "5", "1000", "1", "1"
         Validate "w_atividades",          "Atividades",       "1",  "", "5", "1000", "1", "1"
-        Validate "w_competencias",        "Competência",       "1",  "", "5", "1000", "1", "1"
+        Validate "w_competencias",        "Competência",       "1", "", "5", "1000", "1", "1"
         Validate "w_salario_piso",      "Salário Piso",   "VALOR",  "",   4,     18,  "", "0123456789,."
         Validate "w_salario_teto",      "Salário Teto",   "VALOR",  "",   4,     18,  "", "0123456789,."
         ShowHTML "  if (theForm.w_salario_piso.value != '' && theForm.w_salario_teto.value == '') {"
@@ -1404,7 +1404,7 @@ Public Sub Grava
                   w_arq_texto   = w_ano & ".txt"
                   
                   ' Recupera as datas especiais do ano informado
-                  DB_GetDataEspecial RS, w_cliente, null, w_ano, null, null, null, null
+                  DB_GetDataEspecial RS, w_cliente, null, w_ano, "S", null, null, null
                   RS.Sort = "data_formatada"
                   
                   If Not RS.Eof Then

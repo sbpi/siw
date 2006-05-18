@@ -2393,7 +2393,7 @@ Public Sub Grava
              DB_GetGPModalidade RS, w_cliente, ul.Texts.Item("w_modalidade_contrato"), null, null, null, null, null
              If (Nvl(RS("username"),"") = "S") or (Nvl(RS("username"),"") = "P" and ul.Texts.Item("w_username_pessoa") = "S")  Then
                 DML_PutSiwUsuario "I", _
-                  ul.Texts.Item("w_chave"), ul.Texts.Item("w_cliente"), ul.Texts.Item("w_nome"), ul.Texts.Item("w_nome_resumido"), _
+                  ul.Texts.Item("w_chave"), w_cliente, ul.Texts.Item("w_nome"), ul.Texts.Item("w_nome_resumido"), _
                   ul.Texts.Item("w_sq_tipo_vinculo"), "Física", ul.Texts.Item("w_unidade_lotacao"), ul.Texts.Item("w_localizacao"), _
                   ul.Texts.Item("w_cpf"), null, null, null
                 DML_PutSiwUsuario "T", _

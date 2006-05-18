@@ -314,7 +314,7 @@ REM Montagem da seleção dos colaboradores
 REM -------------------------------------------------------------------------
 Sub SelecaoColaborador (label, accesskey, hint, chave, chaveAux, campo, restricao, atributo)
     DB_GetGPColaborador RS, w_cliente, null, null, null, null, null, null, null, null, null, null, null, null, null, chaveAux, restricao
-    'RS.Sort = "nome_resumido"
+    RS.Sort = "nome_resumido"
     If IsNull(hint) Then
        ShowHTML "          <td valign=""top""><font size=""1""><b>" & Label & "</b><br><SELECT ACCESSKEY=""" & accesskey & """ CLASS=""STS"" NAME=""" & campo & """ " & w_Disabled & " " & atributo & ">"
     Else

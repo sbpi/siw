@@ -99,7 +99,7 @@ Sub Valida
            Session("ENDERECO")         = RS("SQ_PESSOA_ENDERECO")
            ShowHTML "  location.href='ecw_sql.asp?par=Frames&Login=" & wNoUsuario &  "';"
         Else
-           w_resultado = EnviaMail("SIW - Lembrança de senha", "Senha: " & RS("SENHA") & "<br>Assinatura:" & RS("ASSINATURA"),RS("email"))
+           w_resultado = EnviaMail("SIW - Lembrança de senha", "Senha: " & RS("SENHA") & "<br>Assinatura:" & RS("ASSINATURA"),RS("email"), null)
            If w_resultado > "" Then
               ShowHTML "  alert('ATENÇÃO: não foi possível proceder o envio do e-mail.\n" & w_resultado & "');"
            Else

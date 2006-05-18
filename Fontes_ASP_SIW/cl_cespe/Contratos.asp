@@ -3803,7 +3803,7 @@ Sub SolicMail(p_solic, p_tipo)
 
   If w_destinatarios > "" Then
      ' Executa o envio do e-mail
-     w_resultado = EnviaMail(w_objeto, w_html, w_destinatarios)
+     w_resultado = EnviaMail(w_objeto, w_html, w_destinatarios, null)
   End If
         
   ' Se ocorreu algum erro, avisa da impossibilidade de envio

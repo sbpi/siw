@@ -464,7 +464,7 @@ End Sub
 REM =========================================================================
 REM Verifica se há expediente na data informada
 REM -------------------------------------------------------------------------
-Sub DB_GetDataEspecial(p_data, p_cliente, p_pais, p_uf, p_cidade, p_expediente)
+Sub DB_VerificaDataEspecial(p_data, p_cliente, p_pais, p_uf, p_cidade, p_expediente)
   ' Esta procedure faz chamada a uma função do banco de dados
     
   Dim l_data, l_cliente, l_expediente, l_pais, l_uf, l_cidade
@@ -2773,6 +2773,43 @@ Sub DB_GetTramiteSolic(p_rs, p_chave, p_chave_aux, p_endereco, p_restricao)
      .Parameters.Delete     "l_chave_aux"
      .Parameters.Delete     "l_endereco"
      .Parameters.Delete     "l_restricao"
+  end with
+End Sub
+
+REM =========================================================================
+REM Recupera os destinatários dos emails enviados na inclusao, alteração, tramitação e conclusão de alguma solicitação
+REM -------------------------------------------------------------------------
+Sub DB_GetTramiteResp (p_rs, p_solic, p_tramite, p_restricao)
+  Dim l_solic, l_tramite, l_restricao
+  
+  Set l_solic      = Server.CreateObject("ADODB.Parameter")
+  Set l_tramite    = Server.CreateObject("ADODB.Parameter")
+  Set l_restricao  = Server.CreateObject("ADODB.Parameter")
+    
+  with sp
+    
+     set l_solic      = .CreateParameter("l_solic"      , adInteger, adParamInput,   , tvl(p_solic))
+     set l_tramite    = .CreateParameter("l_tramite"    , adInteger, adParamInput,   , tvl(p_tramite))
+     set l_restricao  = .CreateParameter("l_restricao"  , adVarChar, adParamInput, 20, tvl(p_restricao))
+     
+     .parameters.Append l_solic
+     .parameters.Append l_tramite
+     .parameters.Append l_restricao
+   
+     If Session("dbms") = 1 or Session("dbms") = 3 Then .Properties("PLSQLRSet") = TRUE End If
+     .CommandText               = Session("schema") & "SP_GetTramiteResp"
+     Set p_rs = Server.CreateObject("ADODB.RecordSet")
+     p_rs.cursortype            = adOpenStatic
+     p_rs.cursorlocation        = adUseClient
+     On error Resume Next
+     Set p_rs                   = .Execute
+     If Err.Description > "" Then 
+        TrataErro
+     End If     
+     If Session("dbms") = 1 or Session("dbms") = 3 Then .Properties("PLSQLRSet") = FALSE End If
+     .Parameters.Delete         "l_solic"
+     .Parameters.Delete         "l_tramite"
+     .Parameters.Delete         "l_restricao"
   end with
 End Sub
 %>

@@ -804,12 +804,14 @@ Sub Contrato
         Validate "w_sq_tipo_vinculo", "Vínculo com a organização", "SELECT", 1, 1, 10, "", "1"
         Validate "w_matricula", "Matrícula", "1", "1", "5", "18", "1", "1"
         Validate "w_dt_ini", "Início da vigência", "DATA", "1", "10", "10", "", "0123456789/"
-        If O = "A" Then
+        If O = "A" and Nvl(w_dt_fim,"") > "" Then
            Validate "w_dt_fim", "Fim da vigência", "DATA", "1", "10", "10", "", "0123456789/"
-        Else
+        ElseIf O = "I" Then
            Validate "w_dt_fim", "Fim da vigência", "DATA", "", "10", "10", "", "0123456789/"
         End If
-        CompData "w_dt_ini", "Início da vigência", "<=", "w_dt_fim", "Fim da vigência"
+        If Not (O = "A" and Nvl(w_dt_fim,"") = "") Then
+           CompData "w_dt_ini", "Início da vigência", "<=", "w_dt_fim", "Fim da vigência"
+        End If
         Validate "w_assinatura",    "Assinatura Eletrônica",   "1", "1", "6", "30",  "1", "1"
      ElseIf O = "E" and w_erro = "" Then
         Validate "w_dt_fim", "Fim da vigência", "DATA", "", "10", "10", "", "0123456789/"

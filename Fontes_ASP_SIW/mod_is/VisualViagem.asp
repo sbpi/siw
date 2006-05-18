@@ -9,7 +9,8 @@ Function VisualViagem(w_chave, O, w_usuario, P1, P4)
   Dim w_ImagemPadrao, w_tramite
   Dim w_tipo_visao, w_titulo
   Dim w_total, w_valor, w_real, w_fim, w_sg_tramite
-  Dim w_total_diaria
+  Dim w_total_diaria, w_ativo
+  Dim w_tramite_resp
   Set RS = Server.CreateObject("ADODB.RecordSet")
   Set RSQuery = Server.CreateObject("ADODB.RecordSet")
   
@@ -23,6 +24,7 @@ Function VisualViagem(w_chave, O, w_usuario, P1, P4)
   w_valor       = cDbl(RS("valor"))
   w_fim         = cDate(RS("fim"))
   w_sg_tramite  = RS("sg_tramite")
+  w_ativo       = RS("ativo")
 
   ' Recupera o tipo de visão do usuário
   If cDbl(Nvl(RS("solicitante"),0))  = cDbl(w_usuario) or _
@@ -54,7 +56,7 @@ Function VisualViagem(w_chave, O, w_usuario, P1, P4)
      w_html = w_html & VbCrLf & "      <tr><td valign=""top"" colspan=""2""><table border=0 width=""100%"" cellspacing=0>"
      w_html = w_html & VbCrLf & "          <tr valign=""top"">"
      If Not P4 = 1 Then
-        w_html = w_html & VbCrLf & "          <td>Unidade proponente:<br><b>" & ExibeUnidade(w_dir_volta, w_cliente, RS("nm_unidade_resp"), RS("sq_unidade"), TP) & "</b></td>"
+        w_html = w_html & VbCrLf & "          <td>Unidade proponente:<br><b>" & ExibeUnidade(w_dir_volta, w_cliente, RS("nm_unidade_resp"), RS("sq_unidade_resp"), TP) & "</b></td>"
      Else
         w_html = w_html & VbCrLf & "          <td>Unidade proponente:<br><b>" & RS("nm_unidade_resp") & "</b></td>"
      End If
@@ -87,6 +89,68 @@ Function VisualViagem(w_chave, O, w_usuario, P1, P4)
         End If
      End If
 
+     ' Vinculações a tarefas
+     DB_GetLinkData RS1, w_cliente, "ISTCAD"
+
+     DB_GetSolicList_IS RS1, RS1("sq_menu"), w_usuario, "PDVINC", 5, _
+        null, null, null, null, null, null, null, null, null, null, w_chave, _
+        null, null, null, null, null, null, null, null, null, null, null, _
+        null, null, null, null, null, w_ano
+     RS1.Sort = "titulo"
+     If Not RS1.EOF Then
+        w_html = w_html & VbCrLf & "      <tr><td valign=""top"" colspan=""2"" align=""center"" bgcolor=""#D0D0D0"" style=""border: 2px solid rgb(0,0,0);""><b>Vinculada às Tarefas</td>"
+        w_html = w_html & VbCrLf & "      <tr><td align=""center"" colspan=""2"">"
+        w_html = w_html & VbCrLf & "        <TABLE WIDTH=""100%"" bgcolor=""" & conTableBgColor & """ BORDER=""" & conTableBorder & """ CELLSPACING=""" & conTableCellSpacing & """ CELLPADDING=""" & conTableCellPadding & """ BorderColorDark=""" & conTableBorderColorDark & """ BorderColorLight=""" & conTableBorderColorLight & """>"
+        w_html = w_html & VbCrLf & "          <tr bgcolor=""" & w_TrBgColor & """ align=""center"">"
+        w_html = w_html & VbCrLf & "          <td><b>Nº</td>"
+        w_html = w_html & VbCrLf & "          <td><b>Tarefa</td>"
+        w_html = w_html & VbCrLf & "          <td><b>Início</td>"
+        w_html = w_html & VbCrLf & "          <td><b>Fim</td>"
+        w_html = w_html & VbCrLf & "          <td><b>Situação</td>"
+        w_html = w_html & VbCrLf & "          </tr>"
+        w_cor = w_TrBgColor
+        w_total = 0
+        While Not RS1.EOF
+          If w_cor = w_TrBgColor or w_cor = "" Then w_cor = conTrAlternateBgColor Else w_cor = w_TrBgColor End If
+          w_html = w_html & VbCrLf & "      <tr valign=""top"" bgcolor=""" & w_cor & """>"
+          w_html = w_html & VbCrLf & "        <td nowrap>"
+          If RS1("concluida") = "N" Then
+             If RS1("fim") < Date() Then
+                w_html = w_html & VbCrLf & "           <img src=""" & conImgAtraso & """ border=0 width=15 heigth=15 align=""center"">"
+             ElseIf RS1("aviso_prox_conc") = "S" and (RS1("aviso") <= Date()) Then
+                w_html = w_html & VbCrLf & "           <img src=""" & conImgAviso & """ border=0 width=15 height=15 align=""center"">"
+             Else
+                w_html = w_html & VbCrLf & "           <img src=""" & conImgNormal & """ border=0 width=15 height=15 align=""center"">"
+             End IF
+          Else
+             If RS1("fim") < Nvl(RS1("fim_real"),RS1("fim")) Then
+                w_html = w_html & VbCrLf & "           <img src=""" & conImgOkAtraso & """ border=0 width=15 heigth=15 align=""center"">"
+             Else
+                w_html = w_html & VbCrLf & "           <img src=""" & conImgOkNormal & """ border=0 width=15 height=15 align=""center"">"
+             End IF
+          End If
+          w_html = w_html & VbCrLf & "        <A class=""HL"" HREF=""" & w_dir & "Tarefas.asp?par=visual&R=" & w_pagina & par & "&O=L&w_chave=" & RS1("sq_siw_solicitacao") & "&w_tipo=Volta&P1=2&P2=" & P2 & "&P3=" & P3 & "&P4=" & P4 & "&TP=" & TP & "&SG=" & SG & MontaFiltro("GET") & """ title=""Exibe as informações da tarefa."">" & RS1("sq_siw_solicitacao") & "</a>"
+          If Len(Nvl(RS1("titulo"),"-")) > 50 Then w_titulo = Mid(Nvl(RS1("titulo"),"-"),1,50) & "..." Else w_titulo = Nvl(RS1("titulo"),"-") End If
+          If RS1("sg_tramite") = "CA" Then
+             w_html = w_html & VbCrLf & "        <td title=""" & replace(replace(replace(RS1("titulo"), "'", "\'"), """", "\'"),VbCrLf,"\n") & """><strike>" & w_titulo & "</strike></td>"
+          Else
+             w_html = w_html & VbCrLf & "        <td title=""" & replace(replace(replace(RS1("titulo"), "'", "\'"), """", "\'"),VbCrLf,"\n") & """>" & w_titulo & "</td>"
+          End IF
+          If RS1("concluida") = "N" Then
+             w_html = w_html & VbCrLf & "        <td align=""center"">" & FormataDataEdicao(RS1("inicio")) & "</td>"
+             w_html = w_html & VbCrLf & "        <td align=""center"">" & FormataDataEdicao(RS1("fim")) & "</td>"
+          Else
+             w_html = w_html & VbCrLf & "        <td align=""center"">" & FormataDataEdicao(RS1("inicio_real")) & "</td>"
+             w_html = w_html & VbCrLf & "        <td align=""center"">" & FormataDataEdicao(RS1("fim_real")) & "</td>"
+          End If
+          w_html = w_html & VbCrLf & "        <td>" & RS1("nm_tramite") & "</td>"
+          w_html = w_html & VbCrLf & "      </tr>"
+          RS1.MoveNext
+        wend
+        w_html = w_html & VbCrLf & "         </table></td></tr>"
+     End If
+     RS1.Close
+  
      ' Outra parte
      DB_GetBenef RSQuery, w_cliente, Nvl(RS("sq_prop"),0), null, null, null, 1, null, null
      w_html = w_html & VbCrLf & "      <tr><td colspan=""2"" align=""center"" bgcolor=""#D0D0D0"" style=""border: 2px solid rgb(0,0,0);""><b>Proposto</td>"
@@ -217,7 +281,7 @@ Function VisualViagem(w_chave, O, w_usuario, P1, P4)
   DesconectaBD
   
   'Dados da viagem
-  w_html = w_html & VbCrLf & "        <tr><td valign=""top"" colspan=""2"" align=""center"" bgcolor=""#D0D0D0"" style=""border: 2px solid rgb(0,0,0);""><b>Dados da viagem/cálculo das diárias</td>"  
+  w_html = w_html & VbCrLf & "        <tr><td valign=""top"" colspan=""2"" align=""center"" bgcolor=""#D0D0D0"" style=""border: 2px solid rgb(0,0,0);""><b>Dados da viagem/cálculo das diárias</td>"
   DB_GetPD_Deslocamento RSQuery, w_chave, null, "DADFIN"
   RSQuery.Sort = "saida, chegada"
   If Not RSQuery.EOF Then
@@ -271,68 +335,51 @@ Function VisualViagem(w_chave, O, w_usuario, P1, P4)
   End If
   DesconectaBD
   
-  ' Vinculações a tarefas
-  DB_GetLinkData RS, w_cliente, "ISTCAD"
-
-  DB_GetSolicList_IS RS, RS("sq_menu"), w_usuario, "PDVINC", 5, _
-     null, null, null, null, null, null, null, null, null, null, w_chave, _
-     null, null, null, null, null, null, null, null, null, null, null, _
-     null, null, null, null, null, w_ano
-  RS.Sort = "titulo"
-  If Not Rs.EOF Then
-     w_html = w_html & VbCrLf & "      <tr><td valign=""top"" colspan=""2"" align=""center"" bgcolor=""#D0D0D0"" style=""border: 2px solid rgb(0,0,0);""><b>Vinculada às Tarefas</td>"
-     w_html = w_html & VbCrLf & "      <tr><td align=""center"" colspan=""2"">"
-     w_html = w_html & VbCrLf & "        <TABLE WIDTH=""100%"" bgcolor=""" & conTableBgColor & """ BORDER=""" & conTableBorder & """ CELLSPACING=""" & conTableCellSpacing & """ CELLPADDING=""" & conTableCellPadding & """ BorderColorDark=""" & conTableBorderColorDark & """ BorderColorLight=""" & conTableBorderColorLight & """>"
-     w_html = w_html & VbCrLf & "          <tr bgcolor=""" & w_TrBgColor & """ align=""center"">"
-     w_html = w_html & VbCrLf & "          <td><b>Nº</td>"
-     w_html = w_html & VbCrLf & "          <td><b>Tarefa</td>"
-     w_html = w_html & VbCrLf & "          <td><b>Início</td>"
-     w_html = w_html & VbCrLf & "          <td><b>Fim</td>"
-     w_html = w_html & VbCrLf & "          <td><b>Situação</td>"
-     w_html = w_html & VbCrLf & "          </tr>"
-     w_cor = w_TrBgColor
-     w_total = 0
-     While Not Rs.EOF
-       If w_cor = w_TrBgColor or w_cor = "" Then w_cor = conTrAlternateBgColor Else w_cor = w_TrBgColor End If
-       w_html = w_html & VbCrLf & "      <tr valign=""top"" bgcolor=""" & w_cor & """>"
-       w_html = w_html & VbCrLf & "        <td nowrap>"
-       If RS("concluida") = "N" Then
-          If RS("fim") < Date() Then
-             w_html = w_html & VbCrLf & "           <img src=""" & conImgAtraso & """ border=0 width=15 heigth=15 align=""center"">"
-          ElseIf RS("aviso_prox_conc") = "S" and (RS("aviso") <= Date()) Then
-             w_html = w_html & VbCrLf & "           <img src=""" & conImgAviso & """ border=0 width=15 height=15 align=""center"">"
-          Else
-             w_html = w_html & VbCrLf & "           <img src=""" & conImgNormal & """ border=0 width=15 height=15 align=""center"">"
-          End IF
-       Else
-          If RS("fim") < Nvl(RS("fim_real"),RS("fim")) Then
-             w_html = w_html & VbCrLf & "           <img src=""" & conImgOkAtraso & """ border=0 width=15 heigth=15 align=""center"">"
-          Else
-             w_html = w_html & VbCrLf & "           <img src=""" & conImgOkNormal & """ border=0 width=15 height=15 align=""center"">"
-          End IF
-       End If
-       w_html = w_html & VbCrLf & "        <A class=""HL"" HREF=""" & w_dir & "Tarefas.asp?par=visual&R=" & w_pagina & par & "&O=L&w_chave=" & RS("sq_siw_solicitacao") & "&w_tipo=Volta&P1=2&P2=" & P2 & "&P3=" & P3 & "&P4=" & P4 & "&TP=" & TP & "&SG=" & SG & MontaFiltro("GET") & """ title=""Exibe as informações da tarefa."">" & RS("sq_siw_solicitacao") & "</a>"
-       If Len(Nvl(RS("titulo"),"-")) > 50 Then w_titulo = Mid(Nvl(RS("titulo"),"-"),1,50) & "..." Else w_titulo = Nvl(RS("titulo"),"-") End If
-       If RS("sg_tramite") = "CA" Then
-          w_html = w_html & VbCrLf & "        <td title=""" & replace(replace(replace(RS("titulo"), "'", "\'"), """", "\'"),VbCrLf,"\n") & """><strike>" & w_titulo & "</strike></td>"
-       Else
-          w_html = w_html & VbCrLf & "        <td title=""" & replace(replace(replace(RS("titulo"), "'", "\'"), """", "\'"),VbCrLf,"\n") & """>" & w_titulo & "</td>"
-       End IF
-       If RS("concluida") = "N" Then
-          w_html = w_html & VbCrLf & "        <td align=""center"">" & FormataDataEdicao(RS("inicio")) & "</td>"
-          w_html = w_html & VbCrLf & "        <td align=""center"">" & FormataDataEdicao(RS("fim")) & "</td>"
-       Else
-          w_html = w_html & VbCrLf & "        <td align=""center"">" & FormataDataEdicao(RS("inicio_real")) & "</td>"
-          w_html = w_html & VbCrLf & "        <td align=""center"">" & FormataDataEdicao(RS("fim_real")) & "</td>"
-       End If
-       w_html = w_html & VbCrLf & "        <td>" & RS("nm_tramite") & "</td>"
-       w_html = w_html & VbCrLf & "      </tr>"
-       Rs.MoveNext
-     wend
-     w_html = w_html & VbCrLf & "         </table></td></tr>"
+  ' Bilhete de passagem
+  DB_GetPD_Deslocamento RS, w_chave, null, SG
+  RS.Sort = "saida, chegada"
+  If Not RS.EOF Then  
+     If RS("sq_cia_transporte") > "" Then
+        w_html = w_html & VbCrLf & "  <table border=""0"" cellpadding=""0"" cellspacing=""0"" width=""100%"">"
+        w_html = w_html & VbCrLf & "    <tr bgcolor=""" & conTrBgColor & """><td>"
+        w_html = w_html & VbCrLf & "      <table width=""99%"" border=""0"">"  
+        w_html = w_html & VbCrLf & "        <tr><td valign=""top"" colspan=""2"" align=""center"" bgcolor=""#D0D0D0"" style=""border: 2px solid rgb(0,0,0);""><font size=""1""><b>Bilhete de passagem</td>"
+        w_html = w_html & VbCrLf & "     <tr><td align=""center"" colspan=""2"">"
+        w_html = w_html & VbCrLf & "       <TABLE WIDTH=""100%"" bgcolor=""" & conTableBgColor & """ BORDER=""" & conTableBorder & """ CELLSPACING=""" & conTableCellSpacing & """ CELLPADDING=""" & conTableCellPadding & """ BorderColorDark=""" & conTableBorderColorDark & """ BorderColorLight=""" & conTableBorderColorLight & """>"
+        w_html = w_html & VbCrLf & "         <tr bgcolor=""" & conTrBgColor & """ align=""center"">"
+        w_html = w_html & VbCrLf & "         <td><font size=""1""><b>Origem</font></td>"
+        w_html = w_html & VbCrLf & "         <td><font size=""1""><b>Destino</font></td>"
+        w_html = w_html & VbCrLf & "         <td><font size=""1""><b>Saida</font></td>"
+        w_html = w_html & VbCrLf & "         <td><font size=""1""><b>Chegada</font></td>"
+        w_html = w_html & VbCrLf & "         <td><font size=""1""><b>Cia. transporte</font></td>"
+        w_html = w_html & VbCrLf & "         <td><font size=""1""><b>Código vôo</font></td>"
+        w_html = w_html & VbCrLf & "         </tr>"
+        w_cor = conTrBgColor
+        While Not RS.EOF
+           If w_cor = conTrBgColor or w_cor = "" Then w_cor = conTrAlternateBgColor Else w_cor = conTrBgColor End If
+           w_html = w_html & VbCrLf & "     <tr valign=""middle"" bgcolor=""" & w_cor & """>"
+           w_html = w_html & VbCrLf & "       <td><font size=""1"">" & Nvl(RS("nm_origem"),"---") & "</td>"
+           w_html = w_html & VbCrLf & "       <td><font size=""1"">" & Nvl(RS("nm_destino"),"---") & "</td>"
+           w_html = w_html & VbCrLf & "       <td align=""center""><font size=""1"">" & FormataDataEdicao(FormatDateTime(RS("saida"),2)) & ", " &  Mid(FormatDateTime(RS("saida"),3),1,5) & "</td>"
+           w_html = w_html & VbCrLf & "       <td align=""center""><font size=""1"">" & FormataDataEdicao(FormatDateTime(RS("chegada"),2)) & ", " &  Mid(FormatDateTime(RS("chegada"),3),1,5) & "</td>"
+           w_html = w_html & VbCrLf & "       <td><font size=""1"">" & Nvl(RS("nm_cia_transporte"),"---") & "</td>"
+           w_html = w_html & VbCrLf & "       <td><font size=""1"">" & Nvl(RS("codigo_voo"),"---") & "</td>"
+           w_html = w_html & VbCrLf & "     </tr>"
+           RS.MoveNext
+        wend
+        w_html = w_html & VbCrLf & "        </tr>"  
+        w_html = w_html & VbCrLf & "        </table></td></tr>"
+        DesconectaBD
+        DB_GetSolicData RS, w_chave, "PDGERAL"
+        w_html = w_html & VbCrLf & "        <tr><td colspan=""2""><font size=""1""><b>Nº do PTA/Ticket: </b>" & RS("PTA") & "</td>"
+        w_html = w_html & VbCrLf & "        <tr><td><font size=""1""><b>Data da emissão: </b>" & FormataDataEdicao(RS("emissao_bilhete")) & "</td>"
+        w_html = w_html & VbCrLf & "            <td><font size=""1""><b>Valor das passagens R$: </b>" & FormatNumber(Nvl(RS("valor_passagem"),0),2) & "</td>"
+        DesconectaBD  
+        w_html = w_html & VbCrLf & "      </table>"
+        w_html = w_html & VbCrLf & "    </td>"
+        w_html = w_html & VbCrLf & "</tr>"
+     End If
   End If
-  DesconectaBD
-  
   ' Se for envio, executa verificações nos dados da solicitação
   w_erro = ValidaViagem(w_cliente, w_chave, Mid(SG,1,2)&"GERAL", null, null, null, Nvl(w_tramite,0))
   If w_erro > "" Then
@@ -359,8 +406,9 @@ Function VisualViagem(w_chave, O, w_usuario, P1, P4)
      w_html = w_html & VbCrLf & "        <TABLE WIDTH=""100%"" bgcolor=""" & conTableBgColor & """ BORDER=""" & conTableBorder & """ CELLSPACING=""" & conTableCellSpacing & """ CELLPADDING=""" & conTableCellPadding & """ BorderColorDark=""" & conTableBorderColorDark & """ BorderColorLight=""" & conTableBorderColorLight & """>"
      w_html = w_html & VbCrLf & "          <tr bgcolor=""" & w_TrBgColor & """ align=""center"">"
      w_html = w_html & VbCrLf & "            <td><b>Data</td>"
-     w_html = w_html & VbCrLf & "            <td><b>Fase</td>"
+     w_html = w_html & VbCrLf & "            <td><b>Despacho/Observação</td>"
      w_html = w_html & VbCrLf & "            <td><b>Responsável</td>"
+     w_html = w_html & VbCrLf & "            <td><b>Fase</td>"
      w_html = w_html & VbCrLf & "          </tr>"    
      If Rs.EOF Then
         w_html = w_html & VbCrLf & "      <tr bgcolor=""" & w_TrBgColor & """><td colspan=6 align=""center""><b>Não foram encontrados encaminhamentos.</b></td></tr>"
@@ -368,11 +416,36 @@ Function VisualViagem(w_chave, O, w_usuario, P1, P4)
         w_html = w_html & VbCrLf & "      <tr bgcolor=""" & w_TrBgColor & """ valign=""top"">"
         w_html = w_html & VbCrLf & "        <td colspan=6>Fase atual: <b>" & RS("fase") & "</b></td>"
         w_cor = w_TrBgColor
+        If w_ativo = "S" Then
+           ' Recupera os responsáveis pelo tramite
+           DB_GetTramiteResp RS1, w_chave, null, null
+           w_html = w_html & VbCrLf & "      <tr bgcolor=""" & w_TrBgColor & """ valign=""top"">"
+           w_html = w_html & VbCrLf & "        <td colspan=6>Responsáveis pelo tramite: <b>"
+           If Not RS1.EOF Then
+              w_tramite_resp = RS1("nome_resumido")
+              w_html = w_html & VbCrLf &  ExibePessoa(w_dir_volta, w_cliente, RS1("sq_pessoa"), TP, RS1("nome_resumido"))
+              RS1.MoveNext
+              While Not RS1.EOF
+                If Instr(w_tramite_resp,RS1("nome_resumido")) = 0 Then 
+                   w_html = w_html & VbCrLf &  ", " & ExibePessoa(w_dir_volta, w_cliente, RS1("sq_pessoa"), TP, RS1("nome_resumido"))
+                   w_tramite_resp = w_tramite_resp & RS1("nome_resumido")
+                Else
+                   w_tramite_resp = w_tramite_resp & RS1("nome_resumido")
+                End If
+                RS1.MoveNext
+              wend
+           End If
+           w_html = w_html & VbCrLf & "</b></td>"
+        End If
         While Not Rs.EOF
           If w_cor = w_TrBgColor or w_cor = "" Then w_cor = conTrAlternateBgColor Else w_cor = w_TrBgColor End If
           w_html = w_html & VbCrLf & "      <tr valign=""top"" bgcolor=""" & w_cor & """>"
           w_html = w_html & VbCrLf & "        <td nowrap>" & FormatDateTime(RS("data"),2) & ", " & FormatDateTime(RS("data"),4)& "</td>"
-          w_html = w_html & VbCrLf & "        <td>" & CRLF2BR(Nvl(RS("despacho"),"---")) & "</td>"
+          If Nvl(RS("caminho"),"") > "" Then
+             w_html = w_html & VbCrLf & "        <td><font size=""1"">" & CRLF2BR(Nvl(RS("despacho"),"---") & "<br>" & LinkArquivo("HL", w_cliente, RS("sq_siw_arquivo"), "_blank", "Clique para exibir o anexo em outra janela.", "Anexo - " & RS("tipo") & " - " & Round(cDbl(RS("tamanho"))/1024,1) & " KB", null)) & "</td>"
+          Else
+             w_html = w_html & VbCrLf & "        <td><font size=""1"">" & CRLF2BR(Nvl(RS("despacho"),"---")) & "</td>"
+          End If
           If Not P4 = 1 Then
              w_html = w_html & VbCrLf & "        <td nowrap>" & ExibePessoa(w_dir_volta, w_cliente, RS("sq_pessoa"), TP, RS("responsavel")) & "</td>"
           Else
@@ -384,7 +457,10 @@ Function VisualViagem(w_chave, O, w_usuario, P1, P4)
              Else
                 w_html = w_html & VbCrLf & "        <td nowrap>" & RS("destinatario") & "</td>"
              End If
+          ElseIf (Not IsNull(Tvl(RS("sq_demanda_log")))) and IsNull(Tvl(RS("destinatario"))) Then
+             w_html = w_html & VbCrLf & "        <td nowrap><font size=""1"">Anotação</td>"
           Else
+             w_html = w_html & VbCrLf & "        <td nowrap><font size=""1"">" & Nvl(RS("tramite"),"---") & "</td>"
           End If
           w_html = w_html & VbCrLf & "      </tr>"
           Rs.MoveNext

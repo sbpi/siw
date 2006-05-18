@@ -172,7 +172,7 @@ Sub Valida
         w_html = w_html & "</HTML>" & VbCrLf
 
         ' Executa a função de envio de e-mail
-        w_resultado = EnviaMail("Aviso de reinicialização de senha", w_html, Session("email"))
+        w_resultado = EnviaMail("Aviso de reinicialização de senha", w_html, Session("email"), null)
         
         ' Se ocorreu algum erro, avisa da impossibilidade de envio do e-mail,
         ' caso contrário, avisa que o e-mail foi enviado para o usuário.

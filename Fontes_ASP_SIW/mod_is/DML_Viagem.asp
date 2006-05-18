@@ -141,33 +141,39 @@ REM =========================================================================
 REM Grava a tela de parcelas
 REM -------------------------------------------------------------------------
 Sub DML_PutPD_Deslocamento(Operacao, p_chave, p_chave_aux, _
-    p_origem, p_data_saida, p_hora_saida, p_destino, p_data_chegada, p_hora_chegada)
+    p_origem, p_data_saida, p_hora_saida, p_destino, p_data_chegada, p_hora_chegada, _
+    p_sq_cia_transporte, p_codigo_voo)
     
   Dim l_Operacao, l_chave, l_chave_aux
   Dim l_ordem, l_data, l_valor, l_observacao
   Dim l_origem, l_data_saida, l_hora_saida
   Dim l_destino, l_data_chegada, l_hora_chegada
+  Dim l_sq_cia_transporte, l_codigo_voo
   
-  Set l_Operacao        = Server.CreateObject("ADODB.Parameter")
-  Set l_chave           = Server.CreateObject("ADODB.Parameter") 
-  Set l_chave_aux       = Server.CreateObject("ADODB.Parameter") 
-  Set l_origem          = Server.CreateObject("ADODB.Parameter") 
-  Set l_data_saida      = Server.CreateObject("ADODB.Parameter") 
-  Set l_hora_saida      = Server.CreateObject("ADODB.Parameter") 
-  Set l_destino         = Server.CreateObject("ADODB.Parameter") 
-  Set l_data_chegada    = Server.CreateObject("ADODB.Parameter") 
-  Set l_hora_chegada    = Server.CreateObject("ADODB.Parameter") 
+  Set l_Operacao          = Server.CreateObject("ADODB.Parameter")
+  Set l_chave             = Server.CreateObject("ADODB.Parameter") 
+  Set l_chave_aux         = Server.CreateObject("ADODB.Parameter") 
+  Set l_origem            = Server.CreateObject("ADODB.Parameter") 
+  Set l_data_saida        = Server.CreateObject("ADODB.Parameter") 
+  Set l_hora_saida        = Server.CreateObject("ADODB.Parameter") 
+  Set l_destino           = Server.CreateObject("ADODB.Parameter") 
+  Set l_data_chegada      = Server.CreateObject("ADODB.Parameter") 
+  Set l_hora_chegada      = Server.CreateObject("ADODB.Parameter")
+  Set l_sq_cia_transporte = Server.CreateObject("ADODB.Parameter") 
+  Set l_codigo_voo        = Server.CreateObject("ADODB.Parameter")  
   
   with sp
-     set l_Operacao             = .CreateParameter("l_operacao",        adVarchar, adParamInput,   1, Operacao)
-     set l_chave                = .CreateParameter("l_chave",           adInteger, adParamInput,    , Tvl(p_chave))
-     set l_chave_aux            = .CreateParameter("l_chave_aux",       adInteger, adParamInput,    , Tvl(p_chave_aux))
-     set l_origem               = .CreateParameter("l_origem",          adInteger, adParamInput,    , Tvl(p_origem))
-     set l_data_saida           = .CreateParameter("l_data_saida",      adDate,    adParamInput,    , Tvl(p_data_saida))
-     set l_hora_saida           = .CreateParameter("l_hora_saida",      adVarchar, adParamInput,   5, Tvl(p_hora_saida))
-     set l_destino              = .CreateParameter("l_destino",         adInteger, adParamInput,    , Tvl(p_destino))
-     set l_data_chegada         = .CreateParameter("l_data_chegada",    adDate,    adParamInput,    , Tvl(p_data_chegada))
-     set l_hora_chegada         = .CreateParameter("l_hora_chegada",    adVarchar, adParamInput,   5, Tvl(p_hora_chegada))
+     set l_Operacao             = .CreateParameter("l_operacao",          adVarchar, adParamInput,   1, Operacao)
+     set l_chave                = .CreateParameter("l_chave",             adInteger, adParamInput,    , Tvl(p_chave))
+     set l_chave_aux            = .CreateParameter("l_chave_aux",         adInteger, adParamInput,    , Tvl(p_chave_aux))
+     set l_origem               = .CreateParameter("l_origem",            adInteger, adParamInput,    , Tvl(p_origem))
+     set l_data_saida           = .CreateParameter("l_data_saida",        adDate,    adParamInput,    , Tvl(p_data_saida))
+     set l_hora_saida           = .CreateParameter("l_hora_saida",        adVarchar, adParamInput,   5, Tvl(p_hora_saida))
+     set l_destino              = .CreateParameter("l_destino",           adInteger, adParamInput,    , Tvl(p_destino))
+     set l_data_chegada         = .CreateParameter("l_data_chegada",      adDate,    adParamInput,    , Tvl(p_data_chegada))
+     set l_hora_chegada         = .CreateParameter("l_hora_chegada",      adVarchar, adParamInput,   5, Tvl(p_hora_chegada))
+     set l_sq_cia_transporte    = .CreateParameter("l_sq_cia_transporte", adInteger, adParamInput,    , Tvl(p_sq_cia_transporte))
+     set l_codigo_voo           = .CreateParameter("l_codigo_voo",        adVarchar, adParamInput,  30, Tvl(p_codigo_voo))
      .parameters.Append         l_Operacao
      .parameters.Append         l_chave
      .parameters.Append         l_chave_aux
@@ -177,6 +183,8 @@ Sub DML_PutPD_Deslocamento(Operacao, p_chave, p_chave_aux, _
      .parameters.Append         l_destino
      .parameters.Append         l_data_chegada
      .parameters.Append         l_hora_chegada
+     .parameters.Append         l_sq_cia_transporte
+     .parameters.Append         l_codigo_voo
      If Session("dbms") = 1 or Session("dbms") = 3 Then .Properties("PLSQLRSet") = TRUE End If
      .CommandText               = Session("schema") & "SP_PutPD_Deslocamento"
      On Error Resume Next
@@ -194,6 +202,8 @@ Sub DML_PutPD_Deslocamento(Operacao, p_chave, p_chave_aux, _
      .parameters.Delete         "l_destino"
      .parameters.Delete         "l_data_chegada"
      .parameters.Delete         "l_hora_chegada"
+     .parameters.Delete         "l_sq_cia_transporte"
+     .parameters.Delete         "l_codigo_voo"
   end with
 End Sub
 
@@ -484,10 +494,10 @@ REM =========================================================================
 REM Atualiza os dados financeiros em PD_MISSAO
 REM -------------------------------------------------------------------------
 Sub DML_PutPDMissao(Operacao, p_chave, p_valor_alimentacao, p_valor_transporte, p_valor_adicional, _
-                    p_desconto_alimentacao, p_desconto_transporte, p_restricao)
+                    p_desconto_alimentacao, p_desconto_transporte, p_pta, p_emissao_bilhete, p_valor_passagem, p_restricao)
     
   Dim l_Operacao, l_chave, l_valor_alimentacao, l_valor_transporte, l_valor_adicional
-  Dim l_desconto_alimentacao, l_desconto_transporte, l_restricao
+  Dim l_desconto_alimentacao, l_desconto_transporte, l_pta, l_emissao_bilhete, l_valor_passagem, l_restricao
   
   Set l_Operacao              = Server.CreateObject("ADODB.Parameter")
   Set l_chave                 = Server.CreateObject("ADODB.Parameter") 
@@ -496,8 +506,10 @@ Sub DML_PutPDMissao(Operacao, p_chave, p_valor_alimentacao, p_valor_transporte, 
   Set l_valor_adicional       = Server.CreateObject("ADODB.Parameter") 
   Set l_desconto_alimentacao  = Server.CreateObject("ADODB.Parameter") 
   Set l_desconto_transporte   = Server.CreateObject("ADODB.Parameter") 
-  Set l_restricao             = Server.CreateObject("ADODB.Parameter") 
-  
+  Set l_pta                   = Server.CreateObject("ADODB.Parameter")
+  Set l_emissao_bilhete       = Server.CreateObject("ADODB.Parameter")
+  Set l_valor_passagem        = Server.CreateObject("ADODB.Parameter")
+  Set l_restricao             = Server.CreateObject("ADODB.Parameter")
   with sp
      set l_Operacao                 = .CreateParameter("l_operacao",             adVarchar, adParamInput,   1, Operacao)
      set l_chave                    = .CreateParameter("l_chave",                adInteger, adParamInput,    , p_chave)
@@ -521,6 +533,12 @@ Sub DML_PutPDMissao(Operacao, p_chave, p_valor_alimentacao, p_valor_transporte, 
      l_desconto_transporte.Precision     = 18
      l_desconto_transporte.NumericScale  = 2
      l_desconto_transporte.Value         = Tvl(p_desconto_transporte)
+     set l_pta                      = .CreateParameter("l_pta",                  adVarchar, adParamInput,  30, Tvl(p_pta))
+     set l_emissao_bilhete          = .CreateParameter("l_emissao_bilhete",      adDate,    adParamInput,    , Tvl(p_emissao_bilhete))
+     set l_valor_passagem           = .CreateParameter("l_valor_passagem",       adNumeric ,adParamInput)
+     l_valor_passagem.Precision          = 18
+     l_valor_passagem.NumericScale       = 2
+     l_valor_passagem.Value              = Tvl(p_valor_passagem)
      set l_restricao                = .CreateParameter("l_restricao",            adVarchar, adParamInput,  30, p_restricao)     
      .parameters.Append         l_Operacao
      .parameters.Append         l_chave
@@ -529,6 +547,9 @@ Sub DML_PutPDMissao(Operacao, p_chave, p_valor_alimentacao, p_valor_transporte, 
      .parameters.Append         l_valor_adicional
      .parameters.Append         l_desconto_alimentacao
      .parameters.Append         l_desconto_transporte
+     .parameters.Append         l_pta
+     .parameters.Append         l_emissao_bilhete          
+     .parameters.Append         l_valor_passagem 
      .parameters.Append         l_restricao
      
      If Session("dbms") = 1 or Session("dbms") = 3 Then .Properties("PLSQLRSet") = TRUE End If
@@ -546,6 +567,9 @@ Sub DML_PutPDMissao(Operacao, p_chave, p_valor_alimentacao, p_valor_transporte, 
      .parameters.Delete         "l_valor_adicional"
      .parameters.Delete         "l_desconto_alimentacao"
      .parameters.Delete         "l_desconto_transporte"
+     .parameters.Delete         "l_pta"
+     .parameters.Delete         "l_emissao_bilhete"
+     .parameters.Delete         "l_valor_passagem"
      .parameters.Delete         "l_restricao"
   end with
 End Sub

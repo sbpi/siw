@@ -48,9 +48,17 @@ Sub SelecaoCiaTrans (label, accesskey, hint, cliente, chave, chaveAux, campo, re
        RS.Filter = "ativo = 'S'"
     End If
     If IsNull(hint) Then
-       ShowHTML "          <td valign=""top""><font size=""1""><b>" & Label & "</b><br><SELECT ACCESSKEY=""" & accesskey & """ class=""sts"" NAME=""" & campo & """ " & w_Disabled & " " & atributo & ">"
+       If Label = "" Then
+          ShowHTML "          <td><SELECT ACCESSKEY=""" & accesskey & """ class=""STS"" NAME=""" & campo & """ " & w_Disabled & " " & atributo & ">"
+       Else
+          ShowHTML "          <td><b>" & Label & "</b><br><SELECT ACCESSKEY=""" & accesskey & """ class=""STS"" NAME=""" & campo & """ " & w_Disabled & " " & atributo & ">"
+       End If
     Else
-       ShowHTML "          <td valign=""top"" TITLE=""" & hint & """><font size=""1""><b>" & Label & "</b><br><SELECT ACCESSKEY=""" & accesskey & """ class=""sts"" NAME=""" & campo & """ " & w_Disabled & " " & atributo & ">"
+       If Label = "" Then
+          ShowHTML "          <td><SELECT ACCESSKEY=""" & accesskey & """ class=""STS"" NAME=""" & campo & """ " & w_Disabled & " " & atributo & ">"
+       Else
+          ShowHTML "          <td valign=""top"" TITLE=""" & hint & """><font size=""1""><b>" & Label & "</b><br><SELECT ACCESSKEY=""" & accesskey & """ class=""STS"" NAME=""" & campo & """ " & w_Disabled & " " & atributo & ">"
+       End If
     End If
     ShowHTML "          <option value="""">---"
     While Not RS.EOF

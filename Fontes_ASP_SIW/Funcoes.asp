@@ -740,6 +740,7 @@ REM Montagem da seleção dos tipos de vínculo
 REM -------------------------------------------------------------------------
 Sub SelecaoVinculo (label, accesskey, hint, chave, chaveAux, campo, ativo, tipo_pessoa, interno)
     DB_GetVincKindList RS, w_cliente, ativo, tipo_pessoa, null, interno
+    RS.Sort = "nome"
     If IsNull(hint) Then
        ShowHTML "          <td valign=""top""><font size=""1""><b>" & Label & "</b><br><SELECT ACCESSKEY=""" & accesskey & """ CLASS=""STS"" NAME=""" & campo & """ " & w_Disabled & ">"
     Else
@@ -1959,8 +1960,7 @@ Function RetornaExpediente(p_data, p_cliente, p_pais, p_uf, p_cidade)
   Dim l_expediente
 
   l_expediente = ""
-  
-  DB_GetDataEspecial p_data, p_cliente, p_pais, p_uf, p_cidade, l_expediente
+  DB_VerificaDataEspecial p_data, p_cliente, p_pais, p_uf, p_cidade, l_expediente
   RetornaExpediente = l_expediente
   
   Set l_expediente = Nothing
@@ -2009,11 +2009,13 @@ End Function
 REM =========================================================================
 REM Rotina de envio de e-mail
 REM -------------------------------------------------------------------------
-Function EnviaMail(w_subject, w_mensagem, w_recipients)
+Function EnviaMail(w_subject, w_mensagem, w_recipients, w_attachments)
 
   w_recipients = w_recipients & ";"
+  w_attachments = w_attachments & ";"
   Dim JMail
   Dim Recipients(500), i, j
+  Dim Attachments(500)
 
   Set JMail = Server.CreateObject("JMail.Message")
  
@@ -2032,6 +2034,7 @@ Function EnviaMail(w_subject, w_mensagem, w_recipients)
   JMail.Subject  = w_subject
   JMail.HtmlBody = w_mensagem
   JMail.ClearRecipients()
+  jMail.ClearAttachments()
   i = 0
   Do While Instr(w_recipients,";") > 0
      If Len(w_recipients) > 2 Then Recipients(i) = Mid(w_recipients,1,Instr(w_recipients,";")-1) End If
@@ -2045,6 +2048,18 @@ Function EnviaMail(w_subject, w_mensagem, w_recipients)
         JMail.AddRecipientCC Recipients(j)
      End If
   Next
+
+  If w_attachments <> ";" Then
+     i = 0
+     Do While Instr(w_attachments,";") > 0
+        If Len(w_attachments) > 2 Then attachments(i) = Mid(w_attachments,1,Instr(w_attachments,";")-1) End If
+        w_attachments = Mid(w_attachments,Instr(w_attachments,";")+1,Len(w_attachments))
+        i = i+1
+     Loop
+     For j = 0 To i-1
+        JMail.AddAttachment Attachments(j)
+     Next
+  End If
 
   JMail.Send Session("smtp_server")
 

@@ -244,6 +244,11 @@ Sub Benef
            ShowHTML "  history.back(1);"
            ScriptClose
            Exit Sub
+        Else
+           DB_GetBenef RS, w_cliente, null, w_username, null, null, 1, null, null
+           If RS.RecordCount > 0 Then 
+              w_sq_pessoa = RS("sq_pessoa")
+           End If
         End If
      End If
      
@@ -883,13 +888,13 @@ Public Sub Grava
 
             ' Executa a função de envio de e-mail
             If O = "I" Then
-               w_resultado = EnviaMail("Aviso de criação de usuário", w_html, Request("w_email"))
+               w_resultado = EnviaMail("Aviso de criação de usuário", w_html, Request("w_email"), null)
             ElseIf O = "E" Then
-               w_resultado = EnviaMail("Aviso de exclusão de usuário", w_html, Request("w_email"))
+               w_resultado = EnviaMail("Aviso de exclusão de usuário", w_html, Request("w_email"), null)
             ElseIf O = "D" Then
-               w_resultado = EnviaMail("Aviso de bloqueio de acesso", w_html, Request("w_email"))
+               w_resultado = EnviaMail("Aviso de bloqueio de acesso", w_html, Request("w_email"), null)
             ElseIf O = "T" Then
-               w_resultado = EnviaMail("Aviso de desbloqueio de acesso", w_html, Request("w_email"))
+               w_resultado = EnviaMail("Aviso de desbloqueio de acesso", w_html, Request("w_email"), null)
             End If
          End If
      End If

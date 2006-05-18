@@ -4356,7 +4356,7 @@ Sub SolicMail(p_solic, p_tipo)
 
   If w_destinatarios > "" Then
      ' Executa o envio do e-mail
-     w_resultado = EnviaMail(w_assunto, w_html, w_destinatarios)
+     w_resultado = EnviaMail(w_assunto, w_html, w_destinatarios, null)
   End If
         
   ' Se ocorreu algum erro, avisa da impossibilidade de envio
@@ -4495,7 +4495,7 @@ Sub RestricaoMail(p_solic, p_descricao, p_tp_restricao, p_providencia, p_tipo)
   
   If w_destinatarios > "" Then
      ' Executa o envio do e-mail
-     w_resultado = EnviaMail(w_assunto, w_html, w_destinatarios)
+     w_resultado = EnviaMail(w_assunto, w_html, w_destinatarios, null)
   End If
         
   ' Se ocorreu algum erro, avisa da impossibilidade de envio

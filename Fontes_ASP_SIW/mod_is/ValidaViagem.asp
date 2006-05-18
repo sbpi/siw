@@ -113,7 +113,6 @@ Function ValidaViagem(p_cliente, p_chave, p_sg1, p_sg2, p_sg3, p_sg4, p_tramite)
         '   l_erro = l_erro & "<li>É obrigatório vincular a PCD a pelo menos uma tarefa."
         '   l_tipo = 0
         'End If
-           
         If not l_rs_tramite.eof Then
               If Nvl(l_rs_tramite("ordem"),"---") > "1" Then
                  ' Este bloco faz verificações em solicitações que estão em fases posteriores ao
@@ -124,13 +123,18 @@ Function ValidaViagem(p_cliente, p_chave, p_sg1, p_sg2, p_sg3, p_sg4, p_tramite)
                        l_erro = l_erro & "<li>É obrigatório informar as diárias, mesmo que os valores sejam zeros."
                        l_tipo = 0
                     End If
+                 ElseIf Nvl(l_rs_tramite("sigla"),"---") = "AE" Then
+                    If (Nvl(l_rs_solic("pta"),"") = "" and cDbl(Nvl(l_rs_solic("valor_passagem"),0)) = 0) Then
+                       l_erro = l_erro & "<li>É obrigatório informar os dados das passagens."
+                       l_tipo = 0
+                    End If
                  End If
                  l_erro = l_erro
               End If
         End If
-
+    
         l_rs1.close()
-
+        
   l_erro = l_tipo & l_erro
 
   '-----------------------------------------------------------------------------------
