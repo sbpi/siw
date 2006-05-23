@@ -26,10 +26,11 @@ begin
    Elsif p_restricao = 'FISICO' Then
       -- Recupera apenas os endereços físicos
       open p_result for
-         select a.sq_pessoa_endereco, a.complemento, a.bairro, a.cep, d.nome pais,
-                a.logradouro||' ('||decode(c.co_uf,'EX',b.nome||'-'||d.nome,b.nome||'-'||c.co_uf) ||')' endereco,
-                a.padrao, a.logradouro,
-                e.checked
+         select a.sq_pessoa_endereco, a.complemento, a.bairro, a.cep, a1.sq_tipo_endereco, a1.nome tipo_endereco, a1.email, a1.internet,
+                a.logradouro||' ('||decode(c.co_uf,'EX',b.nome||'-'||d.nome,b.nome||'-'||c.co_uf)||')' endereco,
+                a.padrao, a.logradouro, a.sq_cidade, b.nome || '-' || c.co_uf cidade, d.nome,
+                e.checked,
+                d.nome nm_pais
          from co_pessoa_endereco a, co_tipo_endereco a1, co_cidade b, co_uf c, co_pais d,
               (select sq_pessoa_endereco, count(*) checked from siw_menu_endereco group by sq_pessoa_endereco) e
          where a.sq_cidade        = b.sq_cidade
@@ -37,7 +38,7 @@ begin
            and b.sq_pais          = c.sq_pais
            and b.sq_pais          = d.sq_pais
            and a.sq_tipo_endereco = a1.sq_tipo_endereco
-           and a.sq_pessoa_endereco = e.sq_pessoa_endereco
+           and a.sq_pessoa_endereco = e.sq_pessoa_endereco (+)
            and a1.internet        = 'N'
            and a1.email           = 'N'
            and a.sq_pessoa        = p_cliente
@@ -45,10 +46,11 @@ begin
    Elsif p_restricao = 'EMAIL' Then
       -- Recupera apenas os endereços de e-mail
       open p_result for
-         select a.sq_pessoa_endereco,
+         select a.sq_pessoa_endereco, a.complemento, a.bairro, a.cep, a1.sq_tipo_endereco, a1.nome tipo_endereco, a1.email, a1.internet,
                 a.logradouro||' ('||decode(c.co_uf,'EX',b.nome||'-'||d.nome,b.nome||'-'||c.co_uf)||')' endereco,
-                a.padrao, a.logradouro,
-                e.checked
+                a.padrao, a.logradouro, a.sq_cidade, b.nome || '-' || c.co_uf cidade, d.nome,
+                e.checked,
+                d.nome nm_pais
          from co_pessoa_endereco a, co_tipo_endereco a1, co_cidade b, co_uf c, co_pais d,
               (select sq_pessoa_endereco, count(*) checked from siw_menu_endereco group by sq_pessoa_endereco) e
          where a.sq_cidade        = b.sq_cidade
@@ -56,17 +58,18 @@ begin
            and b.sq_pais          = c.sq_pais
            and b.sq_pais          = d.sq_pais
            and a.sq_tipo_endereco = a1.sq_tipo_endereco
-           and a.sq_pessoa_endereco = e.sq_pessoa_endereco
+           and a.sq_pessoa_endereco = e.sq_pessoa_endereco (+)
            and a1.email           = 'S'
            and a.sq_pessoa        = p_cliente
          order by acentos(a.logradouro);
    Elsif p_restricao = 'INTERNET' Then
       -- Recupera apenas os endereços Web
       open p_result for
-         select a.sq_pessoa_endereco,
+         select a.sq_pessoa_endereco, a.complemento, a.bairro, a.cep, a1.sq_tipo_endereco, a1.nome tipo_endereco, a1.email, a1.internet,
                 a.logradouro||' ('||decode(c.co_uf,'EX',b.nome||'-'||d.nome,b.nome||'-'||c.co_uf)||')' endereco,
-                a.padrao, a.logradouro,
-                e.checked
+                a.padrao, a.logradouro, a.sq_cidade, b.nome || '-' || c.co_uf cidade, d.nome,
+                e.checked,
+                d.nome nm_pais
          from co_pessoa_endereco a, co_tipo_endereco a1, co_cidade b, co_uf c, co_pais d,
               (select sq_pessoa_endereco, count(*) checked from siw_menu_endereco group by sq_pessoa_endereco) e
          where a.sq_cidade        = b.sq_cidade
@@ -74,7 +77,7 @@ begin
            and b.sq_pais          = c.sq_pais
            and b.sq_pais          = d.sq_pais
            and a.sq_tipo_endereco = a1.sq_tipo_endereco
-           and a.sq_pessoa_endereco = e.sq_pessoa_endereco
+           and a.sq_pessoa_endereco = e.sq_pessoa_endereco (+)
            and a1.internet        = 'S'
            and a.sq_pessoa        = p_cliente
          order by acentos(a.logradouro);
@@ -124,7 +127,7 @@ begin
            and b.co_uf            = c.co_uf 
            and b.sq_pais          = c.sq_pais
            and b.sq_pais          = d.sq_pais 
-           and a.sq_tipo_endereco = a1.sq_tipo_endereco 
+           and a.sq_tipo_endereco = a1.sq_tipo_endereco
            and a.sq_pessoa        = p_cliente
            and a1.email           = 'S'
            and a1.internet        = 'S'
