@@ -730,21 +730,35 @@ begin
                       left outer   join gd_demanda_log      k  on (j.chave                = k.sq_siw_solic_log)
                         left outer join sg_autenticacao     l  on (k.destinatario         = l.sq_pessoa)
           where a.sq_menu        = p_menu
-            and (p_chave          is null or (p_chave       is not null and b.sq_siw_solicitacao = p_chave))
-            and (p_usu_resp       is null or (p_usu_resp    is not null and (b.executor          = p_usu_resp or 0 < (select count(*) from gd_demanda_log where destinatario = p_usu_resp and sq_siw_solicitacao = b.sq_siw_solicitacao))))
-            and (p_uorg_resp      is null or (p_uorg_resp   is not null and b.conclusao          is null and l.sq_unidade = p_uorg_resp))
-            and (p_sqcc           is null or (p_sqcc        is not null and b.sq_cc              = p_sqcc))
-            and (p_projeto        is null or (p_projeto     is not null and b.sq_solic_pai       = p_projeto))
+            and (p_projeto        is null or (p_projeto     is not null and 0 < (select count(distinct(x.sq_siw_solicitacao)) from pd_missao_solic x , siw_solicitacao y where x.sq_siw_solicitacao = y.sq_siw_solicitacao and y.sq_solic_pai = p_projeto and x.sq_solic_missao = b.sq_siw_solicitacao)))
+            and (p_atividade      is null or (p_atividade   is not null and 0 < (select count(distinct(x.sq_siw_solicitacao)) from pd_missao_solic x where x.sq_siw_solicitacao = p_atividade and x.sq_solic_missao = b.sq_siw_solicitacao)))
+            and (p_atraso         is null or (p_atraso      is not null and d1.codigo_interno like '%'||p_atraso||'%'))
+
+
             and (p_assunto        is null or (p_assunto     is not null and acentos(b.descricao,null) like '%'||acentos(p_assunto,null)||'%'))
-            and (p_fase           is null or (p_fase        is not null and InStr(x_fase,''''||b.sq_siw_tramite||'''') > 0))
-            and (p_prazo          is null or (p_prazo       is not null and b.conclusao          is null and b.fim-sysdate+1 <=p_prazo))
-            and (p_ini_i          is null or (p_ini_i       is not null and b.inicio             between p_ini_i and p_ini_f))
-            and (p_fim_i          is null or (p_fim_i       is not null and b.fim                between p_fim_i and p_fim_f))
-            and (p_unidade        is null or (p_unidade     is not null and b.sq_unidade         = p_unidade))
+
+
+
+
+
             and (p_solicitante    is null or (p_solicitante is not null and b.solicitante        = p_solicitante))
-            and (p_palavra        is null or (p_palavra     is not null and d1.codigo_interno    like '%'||p_palavra||'%'))
+            and (p_unidade        is null or (p_unidade     is not null and d.sq_unidade_resp    = p_unidade))
             and (p_proponente     is null or (p_proponente  is not null and (acentos(d2.nome,null)          like '%'||acentos(p_proponente,null)||'%') or
                                                                             (acentos(d2.nome_resumido,null) like '%'||acentos(p_proponente,null)||'%')
+                                             )
+                )
+            and (p_palavra        is null or (p_palavra     is not null and d4.cpf = p_palavra))
+            and (p_pais           is null or (p_pais        is not null and 0 < (select count(distinct(sq_deslocamento)) from pd_deslocamento x, co_cidade y where x.destino = y.sq_cidade and y.sq_pais = p_pais and x.sq_siw_solicitacao = b.sq_siw_solicitacao)))
+            and (p_regiao         is null or (p_regiao      is not null and 0 < (select count(distinct(sq_deslocamento)) from pd_deslocamento x, co_cidade y where x.destino = y.sq_cidade and y.sq_regiao = p_regiao and x.sq_siw_solicitacao = b.sq_siw_solicitacao)))
+            and (p_uf             is null or (p_uf          is not null and 0 < (select count(distinct(sq_deslocamento)) from pd_deslocamento x, co_cidade y where x.destino = y.sq_cidade and y.co_uf = p_uf and x.sq_siw_solicitacao = b.sq_siw_solicitacao)))
+            and (p_cidade         is null or (p_cidade      is not null and 0 < (select count(distinct(sq_deslocamento)) from pd_deslocamento x where x.destino = p_cidade and x.sq_siw_solicitacao = b.sq_siw_solicitacao)))
+            and (p_ativo          is null or (p_ativo       is not null and d1.tipo = p_ativo))            
+            and (p_usu_resp       is null or (p_usu_resp    is not null and 0 < (select count(distinct(sq_deslocamento)) from pd_deslocamento x where x.sq_cia_transporte = p_usu_resp and x.sq_siw_solicitacao = b.sq_siw_solicitacao)))
+            and (p_ini_i          is null or (p_ini_i       is not null and ((b.inicio           between p_ini_i  and p_ini_f) or
+                                                                             (b.fim              between p_ini_i  and p_ini_f) or
+                                                                             (p_ini_i            between b.inicio and b.fim)   or
+                                                                             (p_fim_i            between b.inicio and b.fim)
+                                                                            )
                                              )
                 )
             and ((p_tipo         = 1     and Nvl(b1.sigla,'-') = 'CI'   and b.cadastrador        = p_pessoa) or
