@@ -299,8 +299,20 @@ Sub Inicial
   If O = "L" Then
      If Instr(uCase(R),"GR_") > 0 or Instr(uCase(R),"PROJETO") > 0 Then
         w_filtro = ""
-        If p_chave       > ""  Then w_filtro = w_filtro & "<tr valign=""top""><td align=""right""><font size=1>Atividade nº <td><font size=1>[<b>" & p_chave & "</b>]" End If
-        If p_prazo       > ""  Then w_filtro = w_filtro & " <tr valign=""top""><td align=""right""><font size=1>Prazo para conclusão até<td><font size=1>[<b>" & FormatDateTime(DateAdd("d",p_prazo,Date()),1) & "</b>]" End If
+        If p_projeto > ""  Then 
+           DB_GetSolicData_IS RS, p_projeto, "ISACGERAL"
+           If Nvl(RS("cd_acao"),"") > "" Then
+              w_filtro = w_filtro & "<tr valign=""top""><td align=""right""><font size=1>Ação <td><font size=1>[<b><A class=""HL"" HREF=""" & w_dir & "Acao.asp?par=Visual&O=L&w_chave=" & p_projeto & "&w_tipo=Volta&P1=" & P1 & "&P2=" & P2 & "&P3=" & P3 & "&P4=" & P4 & "&TP=" & TP & "&SG=" & SG & """ title=""Exibe as informações da ação."">" & RS("cd_unidade") & "." & RS("cd_programa") & "." & RS("cd_acao") & " - " & RS("nm_ppa") & " (" & RS("ds_unidade") & ")</a></b>]"
+           Else
+              w_filtro = w_filtro & "<tr valign=""top""><td align=""right""><font size=1>Ação <td><font size=1>[<b><A class=""HL"" HREF=""" & w_dir & "Acao.asp?par=Visual&O=L&w_chave=" & p_projeto & "&w_tipo=Volta&P1=" & P1 & "&P2=" & P2 & "&P3=" & P3 & "&P4=" & P4 & "&TP=" & TP & "&SG=" & SG & """ title=""Exibe as informações da ação."">" & RS("titulo") & "</a></b>]"
+           End If
+        End If
+        If p_atividade > ""  Then 
+           DB_GetSolicData_IS RS, p_atividade, "ISTAGERAL"
+              w_filtro = w_filtro & "<tr valign=""top""><td align=""right""><font size=1>Tarefa <td><font size=1>[<b><A class=""HL"" HREF=""" & w_dir & "Tarefa.asp?par=Visual&O=L&w_chave=" & p_atividade & "&w_tipo=Volta&P1=" & P1 & "&P2=" & P2 & "&P3=" & P3 & "&P4=" & P4 & "&TP=" & TP & "&SG=" & SG & """ title=""Exibe as informações da tarefa."">" & RS("titulo") &"("& RS("chave") & ")</a></b>]"
+        End If                
+        If p_atraso      > ""  Then w_filtro = w_filtro & "<tr valign=""top""><td align=""right""><font size=1>PCD nº <td><font size=1>[<b>" & p_atraso & "</b>]"       End If
+        If p_assunto     > ""  Then w_filtro = w_filtro & "<tr valign=""top""><td align=""right""><font size=1>Descrição <td><font size=1>[<b>" & p_assunto & "</b>]"   End If
         If p_solicitante > ""  Then
            DB_GetPersonData RS, w_cliente, p_solicitante, null, null
            w_filtro = w_filtro & "<tr valign=""top""><td align=""right""><font size=1>Responsável <td><font size=1>[<b>" & RS("nome_resumido") & "</b>]"
@@ -309,13 +321,11 @@ Sub Inicial
            DB_GetUorgData RS, p_unidade
            w_filtro = w_filtro & "<tr valign=""top""><td align=""right""><font size=1>Unidade proponente <td><font size=1>[<b>" & RS("nome") & "</b>]"
         End If
-        If p_usu_resp > ""  Then
-           DB_GetPersonData RS, w_cliente, p_usu_resp, null, null
-           w_filtro = w_filtro & "<tr valign=""top""><td align=""right""><font size=1>Executor <td><font size=1>[<b>" & RS("nome_resumido") & "</b>]"
-        End If
-        If p_uorg_resp > ""  Then 
-           DB_GetUorgData RS, p_uorg_resp
-           w_filtro = w_filtro & "<tr valign=""top""><td align=""right""><font size=1>Unidade atual <td><font size=1>[<b>" & RS("nome") & "</b>]"
+        If p_proponente  > ""  Then 
+           w_filtro = w_filtro & "<tr valign=""top""><td align=""right""><font size=1>Proposto<td><font size=1>[<b>" & p_proponente & "</b>]"
+        End If        
+        If p_palavra     > ""  Then 
+           w_filtro = w_filtro & "<tr valign=""top""><td align=""right""><font size=1>CPF proposto <td><font size=1>[<b>" & p_palavra & "</b>]"
         End If
         If p_pais > ""  Then 
            DB_GetCountryData RS, p_pais
@@ -333,13 +343,24 @@ Sub Inicial
            DB_GetCityData RS, p_cidade
            w_filtro = w_filtro & "<tr valign=""top""><td align=""right""><font size=1>Cidade <td><font size=1>[<b>" & RS("nome") & "</b>]"
         End If
-        If p_prioridade  > ""  Then w_filtro = w_filtro & "<tr valign=""top""><td align=""right""><font size=1>Prioridade <td><font size=1>[<b>" & RetornaPrioridade(p_prioridade) & "</b>]"   End If
-        If p_proponente  > ""  Then w_filtro = w_filtro & "<tr valign=""top""><td align=""right""><font size=1>Parceria externa <td><font size=1>[<b>" & p_proponente & "</b>]"                      End If
-        If p_assunto     > ""  Then w_filtro = w_filtro & "<tr valign=""top""><td align=""right""><font size=1>Descrição <td><font size=1>[<b>" & p_assunto & "</b>]"                            End If
-        If p_palavra     > ""  Then w_filtro = w_filtro & "<tr valign=""top""><td align=""right""><font size=1>Responsável <td><font size=1>[<b>" & p_palavra & "</b>]"                     End If
-        If p_ini_i       > ""  Then w_filtro = w_filtro & "<tr valign=""top""><td align=""right""><font size=1>Data recebimento <td><font size=1>[<b>" & p_ini_i & "-" & p_ini_f & "</b>]"     End If
-        If p_fim_i       > ""  Then w_filtro = w_filtro & "<tr valign=""top""><td align=""right""><font size=1>Limite conclusão <td><font size=1>[<b>" & p_fim_i & "-" & p_fim_f & "</b>]"     End If
-        If p_atraso      = "S" Then w_filtro = w_filtro & "<tr valign=""top""><td align=""right""><font size=1>Situação <td><font size=1>[<b>Apenas atrasadas</b>]"                            End If
+        If p_usu_resp > ""  Then
+           DB_GetCiaTrans RS, cliente, p_usu_resp, null, null, null, null, null, null, null, null
+           w_filtro = w_filtro & "<tr valign=""top""><td align=""right""><font size=1>Companhia de viagem<td><font size=1>[<b>" & RS("nome") & "</b>]"
+        End If        
+        If p_ativo > ""  Then
+           w_filtro = w_filtro & "<tr valign=""top""><td align=""right""><font size=1>Tipo<td><font size=1>[<b>"
+           If p_ativo = "I" Then 
+              w_filtro = w_filtro & "Inicial"
+           ElseIf p_ativo = "P" Then 
+              w_filtro = w_filtro & "Prorrogação"
+           ElseIf p_ativo = "C" Then
+              w_filtro = w_filtro & "Complementação"
+           End If
+           w_filtro = w_filtro & "</b>]"
+        End If                
+        If p_ini_i       > ""  Then 
+           w_filtro = w_filtro & "<tr valign=""top""><td align=""right""><font size=1>Primeira saída e último retorno <td><font size=1>[<b>" & p_ini_i & "-" & p_ini_f & "</b>]"
+        End If
         If w_filtro > "" Then w_filtro = "<table border=0><tr valign=""top""><td><font size=1><b>Filtro:</b><td nowrap><font size=1><ul>" & w_filtro & "</ul></tr></table>"                    End If
      End If
 
@@ -349,13 +370,13 @@ Sub Inicial
            p_ini_i, p_ini_f, p_fim_i, p_fim_f, p_atraso, p_solicitante, _
            p_unidade, p_prioridade, p_ativo, p_proponente, _
            p_chave, p_assunto, p_pais, p_regiao, p_uf, p_cidade, p_usu_resp, _
-           p_uorg_resp, p_palavra, p_prazo, p_fase, p_sqcc, null, null, null, null
+           p_uorg_resp, p_palavra, p_prazo, p_fase, p_sqcc, p_projeto, p_atividade, null, null
      Else
         DB_GetSolicList rs, RS("sq_menu"), w_usuario, SG, P1, _
            p_ini_i, p_ini_f, p_fim_i, p_fim_f, p_atraso, p_solicitante, _
            p_unidade, p_prioridade, p_ativo, p_proponente, _
            p_chave, p_assunto, p_pais, p_regiao, p_uf, p_cidade, p_usu_resp, _
-           p_uorg_resp, p_palavra, p_prazo, p_fase, p_sqcc, null, null, null, null
+           p_uorg_resp, p_palavra, p_prazo, p_fase, p_sqcc, p_projeto, p_atividade, null, null
      End If
 
      If p_ordena > "" Then RS.sort = p_ordena Else RS.sort = "ordem, fim, prioridade" End If
@@ -366,32 +387,25 @@ Sub Inicial
   If P1 = 2 Then ShowHTML "<meta http-equiv=""Refresh"" content=""300; URL=../" & MontaURL("MESA") & """>" End If
   ShowHTML "<TITLE>" & conSgSistema & " - Listagem de Viagens</TITLE>"
   ScriptOpen "Javascript"
+  Modulo
+  FormataCPF
   CheckBranco
   FormataData
   ValidateOpen "Validacao"
   If Instr("CP",O) > 0 Then
-     If P1 <> 1 or O = "C" Then ' Se não for cadastramento ou se for cópia
-        Validate "p_chave", "Número da PCD", "", "", "1", "18", "", "0123456789"
-        Validate "p_prazo", "Dias para a data limite", "", "", "1", "2", "", "0123456789"
-        Validate "p_proponente", "Parcerias externas", "", "", "2", "90", "1", ""
+     If P1 <> 1 or O = "C" Then ' Se não for cadastramento ou se for cópia        
+        Validate "p_atraso", "Número da PCD", "", "", "2", "60", "1", "1"
         Validate "p_assunto", "Assunto", "", "", "2", "90", "1", "1"
-        Validate "p_palavra", "Palavras-chave", "", "", "2", "90", "1", "1"
-        Validate "p_ini_i", "Recebimento inicial", "DATA", "", "10", "10", "", "0123456789/"
-        Validate "p_ini_f", "Recebimento final", "DATA", "", "10", "10", "", "0123456789/"
+        Validate "p_proponente", "Proposto", "", "", "2", "60", "1", ""
+        Validate "p_palavra", "CPF", "CPF", "", "14", "14", "", "0123456789-."
+        Validate "p_ini_i", "Primeira saída", "DATA", "", "10", "10", "", "0123456789/"
+        Validate "p_ini_f", "Último retorno", "DATA", "", "10", "10", "", "0123456789/"
         ShowHTML "  if ((theForm.p_ini_i.value != '' && theForm.p_ini_f.value == '') || (theForm.p_ini_i.value == '' && theForm.p_ini_f.value != '')) {"
-        ShowHTML "     alert ('Informe ambas as datas de recebimento ou nenhuma delas!');"
+        ShowHTML "     alert ('Informe ambas as datas ou nenhuma delas!');"
         ShowHTML "     theForm.p_ini_i.focus();"
         ShowHTML "     return false;"
         ShowHTML "  }"
         CompData "p_ini_i", "Recebimento inicial", "<=", "p_ini_f", "Recebimento final"
-        Validate "p_fim_i", "Conclusão inicial", "DATA", "", "10", "10", "", "0123456789/"
-        Validate "p_fim_f", "Conclusão final", "DATA", "", "10", "10", "", "0123456789/"
-        ShowHTML "  if ((theForm.p_fim_i.value != '' && theForm.p_fim_f.value == '') || (theForm.p_fim_i.value == '' && theForm.p_fim_f.value != '')) {"
-        ShowHTML "     alert ('Informe ambas as datas de conclusão ou nenhuma delas!');"
-        ShowHTML "     theForm.p_fim_i.focus();"
-        ShowHTML "     return false;"
-        ShowHTML "  }"
-        CompData "p_fim_i", "Conclusão inicial", "<=", "p_fim_f", "Conclusão final"
      End If
      Validate "P4", "Linhas por página", "1", "1", "1", "4", "", "0123456789"
   End If
@@ -604,76 +618,47 @@ Sub Inicial
        ShowHTML "<INPUT type=""hidden"" name=""w_copia"" value=""OK"">"
     End If
 
-    ' Recupera dados da opção Projetos
+    ShowHTML "      <tr><td valign=""top"" colspan=""2"">"
+    ShowHTML "        <table border=0 width=""100%"" cellspacing=0>"
+    ShowHTML "          <tr>"     
+    SelecaoAcao "Açã<u>o</u>:", "O", "Selecione a ação da tarefa na relação.", w_cliente, w_ano, null, null, null, null, "p_projeto", "ACAO", "onchange=""document.Form.action='" & w_dir & w_pagina & par & "'; document.Form.O.value='" & O & "'; document.Form.w_troca.value='p_atividade'; document.Form.target=''; document.Form.submit();""", p_projeto
+    ShowHTML "          <tr>"
+    SelecaoTarefa "<u>T</u>arefa:", "T", null, w_cliente, w_ano, p_atividade, "p_atividade", Nvl(p_projeto,0), null
+    ShowHTML "          </tr>"
+    ShowHTML "        </table></td></tr>"
     ShowHTML "      <tr><td valign=""top"" colspan=""2""><table border=0 width=""100%"" cellspacing=0>"
-    ShowHTML "      <tr>"
-    DB_GetLinkData RS, w_cliente, "ISACAD"
-    SelecaoProjeto "Açã<u>o</u>:", "O", "Selecione a ação da PCD na relação.", p_projeto, w_usuario, RS("sq_menu"), "p_projeto", "PJLIST", "onChange=""document.Form.action='" & w_dir & w_pagina & par & "'; document.Form.O.value='" & O & "'; document.Form.w_troca.value='p_atividade'; document.Form.submit();"""
-    DesconectaBD
-    ShowHTML "      </tr>"
-    ShowHTML "      <tr>"
-    SelecaoEtapa "Eta<u>p</u>a:", "P", "Se necessário, indique a etapa à qual esta PCD deve ser vinculada.", p_atividade, p_projeto, null, "p_atividade", null, null
-    ShowHTML "      </tr>"
-    ShowHTML "          </table>"
-    ShowHTML "      <tr><td valign=""top"" colspan=""2""><table border=0 width=""100%"" cellspacing=0>"
-
     If P1 <> 1 or O = "C" Then ' Se não for cadastramento ou se for cópia
-       ShowHTML "      <tr valign=""top"">"
-       ShowHTML "          <td valign=""top""><font size=""1""><b>Número da <U>d</U>emanda:<br><INPUT ACCESSKEY=""D"" " & w_Disabled & " class=""STI"" type=""text"" name=""p_chave"" size=""18"" maxlength=""18"" value=""" & p_chave & """></td>"
-       ShowHTML "          <td valign=""top""><font size=""1""><b>Dias para a data limi<U>t</U>e:<br><INPUT ACCESSKEY=""T"" " & w_Disabled & " class=""STI"" type=""text"" name=""p_prazo"" size=""2"" maxlength=""2"" value=""" & p_prazo & """></td>"
-       ShowHTML "      <tr valign=""top"">"
+       ShowHTML "   <tr valign=""top"">"
+       ShowHTML "     <td valign=""top""><font size=""1""><b>Número da P<U>C</U>D:<br><INPUT ACCESSKEY=""C"" " & w_Disabled & " class=""STI"" type=""text"" name=""p_atraso"" size=""20"" maxlength=""60"" value=""" & p_atraso & """></td>"
+       ShowHTML "     <td valign=""top""><font size=""1""><b><U>D</U>escrição:<br><INPUT ACCESSKEY=""D"" " & w_Disabled & " class=""STI"" type=""text"" name=""p_assunto"" size=""25"" maxlength=""90"" value=""" & p_assunto & """></td>"       
+       ShowHTML "   <tr valign=""top"">"
        SelecaoPessoa "Respo<u>n</u>sável:", "N", "Selecione o responsável pela PCD na relação.", p_solicitante, null, "p_solicitante", "USUARIOS"
        SelecaoUnidade1 "<U>U</U>nidade proponente:", "U", "Selecione a unidade proponente da PCD", p_unidade, null, "p_unidade", "VIAGEMANO", null, w_ano
-       ShowHTML "      <tr valign=""top"">"
-       SelecaoPessoa "Responsável atua<u>l</u>:", "L", "Selecione o responsável atual pela PCD na relação.", p_usu_resp, null, "p_usu_resp", "USUARIOS"
-       SelecaoUnidade "<U>S</U>etor atual:", "S", "Selecione a unidade onde a PCD se encontra na relação.", p_uorg_resp, null, "p_uorg_resp", null, null
-       ShowHTML "      <tr>"
-       SelecaoPais "<u>P</u>aís:", "P", null, p_pais, null, "p_pais", null, "onChange=""document.Form.action='" & w_dir & w_pagina & par & "'; document.Form.O.value='" & O & "'; document.Form.w_troca.value='p_regiao'; document.Form.submit();"""
-       SelecaoRegiao "<u>R</u>egião:", "R", null, p_regiao, p_pais, "p_regiao", null, "onChange=""document.Form.action='" & w_dir & w_pagina & par & "'; document.Form.O.value='" & O & "'; document.Form.w_troca.value='p_uf'; document.Form.submit();"""
-       ShowHTML "      <tr>"
-       SelecaoEstado "E<u>s</u>tado:", "S", null, p_uf, p_pais, "N", "p_uf", null, "onChange=""document.Form.action='" & w_dir & w_pagina & par & "'; document.Form.O.value='" & O & "'; document.Form.w_troca.value='p_cidade'; document.Form.submit();"""
-       SelecaoCidade "<u>C</u>idade:", "C", null, p_cidade, p_pais, p_uf, "p_cidade", null, null
-       ShowHTML "      <tr>"
-       SelecaoPrioridade "<u>P</u>rioridade:", "P", "Informe a prioridade desta PCD.", p_prioridade, null, "p_prioridade", null, null
-       ShowHTML "          <td valign=""top""><font size=""1""><b>Parcerias exter<u>n</u>as:<br><INPUT ACCESSKEY=""N"" " & w_Disabled & " class=""STI"" type=""text"" name=""p_proponente"" size=""25"" maxlength=""90"" value=""" & p_proponente & """></td>"
-       ShowHTML "      <tr>"
-       ShowHTML "          <td valign=""top""><font size=""1""><b>A<U>s</U>sunto:<br><INPUT ACCESSKEY=""N"" " & w_Disabled & " class=""STI"" type=""text"" name=""p_assunto"" size=""25"" maxlength=""90"" value=""" & p_assunto & """></td>"
-       ShowHTML "          <td valign=""top"" colspan=2><font size=""1""><b>Pala<U>v</U>ras-chave:<br><INPUT ACCESSKEY=""N"" " & w_Disabled & " class=""STI"" type=""text"" name=""p_palavra"" size=""25"" maxlength=""90"" value=""" & p_palavra & """></td>"
-       ShowHTML "      <tr>"
-       ShowHTML "          <td valign=""top""><font size=""1""><b>Iní<u>c</u>io:</b><br><input " & w_Disabled & " accesskey=""C"" type=""text"" name=""p_ini_i"" class=""STI"" SIZE=""10"" MAXLENGTH=""10"" VALUE=""" & p_ini_i & """ onKeyDown=""FormataData(this,event);"" title=""Usar formato dd/mm/aaaa""> e <input " & w_Disabled & " accesskey=""C"" type=""text"" name=""p_ini_f"" class=""STI"" SIZE=""10"" MAXLENGTH=""10"" VALUE=""" & p_ini_f & """ onKeyDown=""FormataData(this,event);"" title=""Usar formato dd/mm/aaaa""></td>"
-       ShowHTML "          <td valign=""top""><font size=""1""><b>Limi<u>t</u>e para conclusão entre:</b><br><input " & w_Disabled & " accesskey=""T"" type=""text"" name=""p_fim_i"" class=""STI"" SIZE=""10"" MAXLENGTH=""10"" VALUE=""" & p_fim_i & """ onKeyDown=""FormataData(this,event);"" title=""Usar formato dd/mm/aaaa""> e <input " & w_Disabled & " accesskey=""T"" type=""text"" name=""p_fim_f"" class=""STI"" SIZE=""10"" MAXLENGTH=""10"" VALUE=""" & p_fim_f & """ onKeyDown=""FormataData(this,event);"" title=""Usar formato dd/mm/aaaa""></td>"
+       ShowHTML "   <tr>"       
+       ShowHTML "     <td valign=""top""><font size=""1""><b><U>P</U>roposto:<br><INPUT ACCESSKEY=""P"" " & w_Disabled & " class=""STI"" type=""text"" name=""p_proponente"" size=""25"" maxlength=""60"" value=""" & p_proponente & """></td>"
+       ShowHTML "     <td valign=""top""><font size=""1""><b>CP<u>F</u> do proposto:<br><INPUT ACCESSKEY=""F"" TYPE=""text"" class=""sti"" NAME=""p_palavra"" VALUE=""" & p_palavra & """ SIZE=""14"" MaxLength=""14"" onKeyDown=""FormataCPF(this, event);"">"       
+       ShowHTML "   <tr>"
+       SelecaoPais "Pa<u>í</u>s destino:", "I", null, p_pais, null, "p_pais", null, "onChange=""document.Form.action='" & w_dir & w_pagina & par & "'; document.Form.O.value='" & O & "'; document.Form.w_troca.value='p_regiao'; document.Form.submit();"""
+       SelecaoRegiao "<u>R</u>egião destino:", "R", null, p_regiao, p_pais, "p_regiao", null, "onChange=""document.Form.action='" & w_dir & w_pagina & par & "'; document.Form.O.value='" & O & "'; document.Form.w_troca.value='p_uf'; document.Form.submit();"""
+       ShowHTML "   <tr>"
+       SelecaoEstado "E<u>s</u>tado destino:", "S", null, p_uf, p_pais, "N", "p_uf", null, "onChange=""document.Form.action='" & w_dir & w_pagina & par & "'; document.Form.O.value='" & O & "'; document.Form.w_troca.value='p_cidade'; document.Form.submit();"""
+       SelecaoCidade "<u>C</u>idade destino:", "C", null, p_cidade, p_pais, p_uf, "p_cidade", null, null
+       ShowHTML "   <tr>"
+       SelecaoTipoPCD "Ti<u>p</u>o:", "P", null, p_ativo, "p_ativo", null, null
+       SelecaoCiaTrans "Cia. Via<u>g</u>em", "R", "Selecione a companhia de transporte desejada.", w_cliente,  p_usu_resp, null, "p_usu_resp", "S", null
+       ShowHTML "   <tr>"
+       ShowHTML "     <td valign=""top""><font size=""1""><b>Pri<u>m</u>eira saída e Último retorno:</b><br><input " & w_Disabled & " accesskey=""C"" type=""text"" name=""p_ini_i"" class=""STI"" SIZE=""10"" MAXLENGTH=""10"" VALUE=""" & p_ini_i & """ onKeyDown=""FormataData(this,event);"" title=""Usar formato dd/mm/aaaa""> e <input " & w_Disabled & " accesskey=""C"" type=""text"" name=""p_ini_f"" class=""STI"" SIZE=""10"" MAXLENGTH=""10"" VALUE=""" & p_ini_f & """ onKeyDown=""FormataData(this,event);"" title=""Usar formato dd/mm/aaaa""></td>"
        If O <> "C" Then ' Se não for cópia
-          ShowHTML "      <tr>"
-          ShowHTML "          <td valign=""top""><font size=""1""><b>Exibe somente atividades em atraso?</b><br>"
-          If p_atraso = "S" Then
-             ShowHTML "              <input " & w_Disabled & " class=""STR"" type=""radio"" name=""p_atraso"" value=""S"" checked> Sim <br><input " & w_Disabled & " class=""STR"" class=""STR"" type=""radio"" name=""p_atraso"" value=""N""> Não"
-          Else
-             ShowHTML "              <input " & w_Disabled & " class=""STR"" type=""radio"" name=""p_atraso"" value=""S""> Sim <br><input " & w_Disabled & " class=""STR"" class=""STR"" type=""radio"" name=""p_atraso"" value=""N"" checked> Não"
-          End If
+          ShowHTML "<tr>"
           SelecaoFaseCheck "Recuperar fases:", "S", null, p_fase, P2, "p_fase", null, null
        End If
     End If
     ShowHTML "      <tr>"
-    ShowHTML "          <td valign=""top""><font size=""1""><b><U>O</U>rdenação por:<br><SELECT ACCESSKEY=""O"" " & w_Disabled & " class=""STS"" name=""p_ordena"" size=""1"">"
-    If p_Ordena="ASSUNTO" Then
-       ShowHTML "          <option value=""assunto"" SELECTED>Descrição<option value=""inicio"">Data de recebimento<option value="""">Data limite para conclusão<option value=""nm_tramite"">Fase atual<option value=""prioridade"">Prioridade<option value=""proponente"">Parcerias externas"
-    ElseIf p_Ordena="INICIO" Then
-       ShowHTML "          <option value=""assunto"">Descrição<option value=""inicio"" SELECTED>Data de recebimento<option value="""">Data limite para conclusão<option value=""nm_tramite"">Fase atual<option value=""prioridade"">Prioridade<option value=""proponente"">Parcerias externas"
-    ElseIf p_Ordena="NM_TRAMITE" Then
-       ShowHTML "          <option value=""assunto"">Descrição<option value=""inicio"">Data de recebimento<option value="""">Data limite para conclusão<option value=""nm_tramite"" SELECTED>Fase atual<option value=""prioridade"">Prioridade<option value=""proponente"">Parcerias externas"
-    ElseIf p_Ordena="PRIORIDADE" Then
-       ShowHTML "          <option value=""assunto"">Descrição<option value=""inicio"">Data de recebimento<option value="""">Data limite para conclusão<option value=""nm_tramite"">Fase atual<option value=""prioridade"" SELECTED>Prioridade<option value=""proponente"">Parcerias externas"
-    ElseIf p_Ordena="PROPONENTE" Then
-       ShowHTML "          <option value=""assunto"">Descrição<option value=""inicio"">Data de recebimento<option value="""">Data limite para conclusão<option value=""nm_tramite"">Fase atual<option value=""prioridade"">Prioridade<option value=""proponente"" SELECTED>Parcerias externas"
-    Else
-       ShowHTML "          <option value=""assunto"">Descrição<option value=""inicio"">Data de recebimento<option value="""" SELECTED>Data limite para conclusão<option value=""nm_tramite"">Fase atual<option value=""prioridade"">Prioridade<option value=""proponente"">Parcerias externas"
-    End If
-    ShowHTML "          </select></td>"
-    ShowHTML "          <td valign=""top""><font size=""1""><b><U>L</U>inhas por página:<br><INPUT ACCESSKEY=""L"" " & w_Disabled & " class=""STI"" type=""text"" name=""P4"" size=""4"" maxlength=""4"" value=""" & P4 & """></td></tr>"
-    ShowHTML "          </table>"
-    ShowHTML "      <tr><td align=""center"" colspan=""3"" height=""1"" bgcolor=""#000000"">"
-    ShowHTML "      <tr><td align=""center"" colspan=""3"">"
-    ShowHTML "            <input class=""STB"" type=""submit"" name=""Botao"" value=""Aplicar filtro"">"
+    ShowHTML "        <td valign=""top""><font size=""1""><b><U>L</U>inhas por página:<br><INPUT ACCESSKEY=""L"" " & w_Disabled & " class=""STI"" type=""text"" name=""P4"" size=""4"" maxlength=""4"" value=""" & P4 & """></td></tr>"
+    ShowHTML "    </table>"
+    ShowHTML "    <tr><td align=""center"" colspan=""3"" height=""1"" bgcolor=""#000000"">"
+    ShowHTML "    <tr><td align=""center"" colspan=""3"">"
+    ShowHTML "          <input class=""STB"" type=""submit"" name=""Botao"" value=""Aplicar filtro"">"
     If O = "C" Then ' Se for cópia
        ShowHTML "            <input class=""STB"" type=""button"" onClick=""location.href='" & w_pagina & par & "&P1=" & P1 & "&P2=" & P2 & "&P3=" & P3 & "&P4=" & P4 & "&TP=" & TP & "&SG=" & SG & "';"" name=""Botao"" value=""Abandonar cópia"">"
     Else

@@ -27,7 +27,7 @@ Sub DML_PutCoPesEnd(Operacao, p_chave, p_pessoa, p_tipo_endereco, p_logradouro, 
      set l_cidade               = .CreateParameter("l_cidade",          adInteger, adParamInput,    , Tvl(p_cidade))
      set l_cep                  = .CreateParameter("l_cep",             adVarchar, adParamInput,   9, Tvl(p_cep))
      set l_bairro               = .CreateParameter("l_bairro",          adVarchar, adParamInput,  30, Tvl(p_bairro))
-     set l_padrao               = .CreateParameter("l_padrao",          adVarchar, adParamInput,   1, p_padrao)
+     set l_padrao               = .CreateParameter("l_padrao",          adVarchar, adParamInput,   1, Tvl(p_padrao))
      .parameters.Append         l_Operacao
      .parameters.Append         l_chave
      .parameters.Append         l_pessoa
