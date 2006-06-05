@@ -27,7 +27,7 @@ create or replace procedure SP_GetSolicList
     p_sqcc         in number   default null,
     p_projeto      in number   default null,
     p_atividade    in number   default null,
-    p_sq_acao_ppa  in number   default null,
+    p_sq_acao_ppa  in varchar2 default null,
     p_sq_orprior   in number   default null,
     p_result       out siw.sys_refcursor) is
 
@@ -760,7 +760,7 @@ begin
                  (p_tipo         = 5) or
                  (p_tipo         = 6     and b1.ativo          = 'S' and b2.acesso > 0)
                 );
-   Elsif substr(p_restricao,1,2) = 'PD' Then
+   Elsif substr(p_restricao,1,2) = 'PD' or Substr(p_restricao,1,4) = 'GRPD' Then
       -- Recupera as viagens que o usuário pode ver
       open p_result for
          select a.sq_menu,            a.sq_modulo,                   a.nome,
@@ -783,7 +783,7 @@ begin
                 b.inclusao,           b.ultima_alteracao,            b.conclusao,
                 b.data_hora,          b.opiniao,                     b.sq_solic_pai,
                 b.sq_unidade,         b.sq_cidade_origem,            b.palavra_chave,
-                b.valor,
+                b.valor,              b.fim-d.dias_aviso aviso,
                 b1.sq_siw_tramite,    b1.nome nm_tramite,            b1.ordem or_tramite,
                 b1.sigla sg_tramite,  b1.ativo,
                 c.sq_tipo_unidade,    c.nome nm_unidade_exec,        c.informal,
@@ -795,10 +795,10 @@ begin
                 decode(d.prioridade,0,'Alta',1,'Média','Normal') nm_prioridade,
                 d.ordem,
                 d1.sq_pessoa sq_prop, d1.tipo tp_missao,             d1.codigo_interno,
+                decode(d1.tipo,'I','Inicial','P','Prorrogação','Complemento') nm_tp_missao,
                 d2.nome nm_prop,      d2.nome_resumido nm_prop_res,
                 d3.sq_tipo_vinculo,   d3.nome nm_tipo_vinculo,
                 d4.sexo,              d4.cpf,
-                b.fim-d.dias_aviso aviso,
                 e.sq_tipo_unidade,    e.nome nm_unidade_resp,        e.informal informal_resp,
                 e.vinculada vinc_resp,e.adm_central adm_resp,        e.sigla sg_unidade_resp,
                 e1.sq_pessoa titular, e2.sq_pessoa substituto,
@@ -871,7 +871,7 @@ begin
             and a.sq_menu        = p_menu
             and (p_projeto        is null or (p_projeto     is not null and 0 < (select count(distinct(x.sq_siw_solicitacao)) from pd_missao_solic x , siw_solicitacao y where x.sq_siw_solicitacao = y.sq_siw_solicitacao and y.sq_solic_pai = p_projeto and x.sq_solic_missao = b.sq_siw_solicitacao)))
             and (p_atividade      is null or (p_atividade   is not null and 0 < (select count(distinct(x.sq_siw_solicitacao)) from pd_missao_solic x where x.sq_siw_solicitacao = p_atividade and x.sq_solic_missao = b.sq_siw_solicitacao)))
-            and (p_atraso         is null or (p_atraso      is not null and d1.codigo_interno like '%'||p_atraso||'%'))
+            and (p_sq_acao_ppa    is null or (p_sq_acao_ppa is not null and d1.codigo_interno like '%'||p_sq_acao_ppa||'%'))
             and (p_assunto        is null or (p_assunto     is not null and acentos(b.descricao,null) like '%'||acentos(p_assunto,null)||'%'))
             and (p_solicitante    is null or (p_solicitante is not null and b.solicitante        = p_solicitante))
             and (p_unidade        is null or (p_unidade     is not null and d.sq_unidade_resp    = p_unidade))
@@ -879,6 +879,7 @@ begin
                                                                             (acentos(d2.nome_resumido,null) like '%'||acentos(p_proponente,null)||'%')
                                              )
                 )
+            and (p_sq_orprior     is null or (p_sq_orprior  is not null and d1.sq_pessoa = p_sq_orprior))
             and (p_palavra        is null or (p_palavra     is not null and d4.cpf = p_palavra))
             and (p_pais           is null or (p_pais        is not null and 0 < (select count(distinct(sq_deslocamento)) from pd_deslocamento x, co_cidade y where x.destino = y.sq_cidade and y.sq_pais = p_pais and x.sq_siw_solicitacao = b.sq_siw_solicitacao)))
             and (p_regiao         is null or (p_regiao      is not null and 0 < (select count(distinct(sq_deslocamento)) from pd_deslocamento x, co_cidade y where x.destino = y.sq_cidade and y.sq_regiao = p_regiao and x.sq_siw_solicitacao = b.sq_siw_solicitacao)))
@@ -893,6 +894,8 @@ begin
                                                                             )
                                              )
                 )
+            and (p_fase           is null or (p_fase        is not null and InStr(x_fase,''''||b.sq_siw_tramite||'''') > 0))
+            and (Nvl(p_atraso,'N') = 'N'  or (p_atraso      = 'S'       and d.concluida          = 'N' and b.fim+1-sysdate<0))            
             and ((p_tipo         = 1     and Nvl(b1.sigla,'-') = 'CI'   and b.cadastrador        = p_pessoa) or
                  (p_tipo         = 2     and b1.ativo = 'S' and Nvl(b1.sigla,'-') <> 'CI' and b.executor = p_pessoa and b.conclusao is null) or
                  (p_tipo         = 2     and b1.ativo = 'S' and Nvl(b1.sigla,'-') <> 'CI' and b2.acesso > 15) or

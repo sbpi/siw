@@ -1256,6 +1256,7 @@ SP_Oracle81/siw/sp_getsoliclist.prc -text
 SP_Oracle81/siw/sp_getsoliclog.prc -text
 SP_Oracle81/siw/sp_getsolicrecurso.prc -text
 SP_Oracle81/siw/sp_getsolicresp.prc -text
+SP_Oracle81/siw/sp_getsolicviagem.prc -text
 SP_Oracle81/siw/sp_getspparametro.prc -text
 SP_Oracle81/siw/sp_getspsp.prc -text
 SP_Oracle81/siw/sp_getsptabs.prc -text
