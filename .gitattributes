@@ -453,10 +453,12 @@ Fontes_ASP_SIW/mod_pd/DB_Viagem.asp -text
 Fontes_ASP_SIW/mod_pd/DML_Tabelas.asp -text
 Fontes_ASP_SIW/mod_pd/DML_Viagem.asp -text
 Fontes_ASP_SIW/mod_pd/Funcoes.asp -text
+Fontes_ASP_SIW/mod_pd/GeraGrafico.asp -text
 Fontes_ASP_SIW/mod_pd/Tabelas.asp -text
 Fontes_ASP_SIW/mod_pd/ValidaViagem.asp -text
 Fontes_ASP_SIW/mod_pd/Viagem.asp -text
 Fontes_ASP_SIW/mod_pd/VisualViagem.asp -text
+Fontes_ASP_SIW/mod_pd/geragrafico.php -text
 Fontes_ASP_SIW/mod_rh/Afastamento.asp -text
 Fontes_ASP_SIW/mod_rh/CV.asp -text
 Fontes_ASP_SIW/mod_rh/Colaborador.asp -text

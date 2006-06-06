@@ -277,34 +277,34 @@ Sub Inicial
   Estrutura_Texto_Abre
   ShowHTML "<table border=""0"" cellpadding=""0"" cellspacing=""0"" width=""100%"">"
   If O = "L" Then
-    ShowHTML "<tr><td><font size=""2"">"
+    ShowHTML "<tr><td>"
     ShowHTML "                         <a accesskey=""I"" class=""ss"" href=""" & w_dir & w_Pagina & par & "&R=" & w_Pagina & par & "&O=I&w_cliente=" & w_cliente & "&P1=" & P1 & "&P2=" & P2 & "&P3=" & P3 & "&P4=" & P4 & "&TP=" & TP & "&SG=" & SG & """><u>I</u>ncluir</a>&nbsp;"
     ShowHTML "                         <a accesskey=""F"" class=""ss"" href=""" & w_dir & w_Pagina & par & "&R=" & w_Pagina & par & "&O=P&w_cliente=" & w_cliente & "&P1=" & P1 & "&P2=" & P2 & "&P3=" & P3 & "&P4=" & P4 & "&TP=" & TP & "&SG=" & SG & MontaFiltro("GET") & """><u>F</u>iltrar</a>"
-    ShowHTML "    <td align=""right""><font size=""1""><b>Registros: " & RS.RecordCount
+    ShowHTML "    <td align=""right""><b>Registros: " & RS.RecordCount
     ShowHTML "<tr><td colspan=3>"
     ShowHTML "    <TABLE WIDTH=""100%"" bgcolor=""" & conTableBgColor & """ BORDER=""" & conTableBorder & """ CELLSPACING=""" & conTableCellSpacing & """ CELLPADDING=""" & conTableCellPadding & """ BorderColorDark=""" & conTableBorderColorDark & """ BorderColorLight=""" & conTableBorderColorLight & """>"
     ShowHTML "        <tr bgcolor=""" & conTrBgColor & """ align=""center"">"
-    ShowHTML "          <td><font size=""1""><b>" & LinkOrdena("Matricula","matricula") & "</font></td>"
-    ShowHTML "          <td><font size=""1""><b>" & LinkOrdena("Nome","nome_resumido") & "</font></td>"
-    ShowHTML "          <td><font size=""1""><b>" & LinkOrdena("Modalidade","nm_modalidade_contrato") & "</font></td>"
-    ShowHTML "          <td><font size=""1""><b>" & LinkOrdena("Exercício","nm_exercicio") & "</font></td>"
-    ShowHTML "          <td><font size=""1""><b>" & LinkOrdena("Ramal","ramal") & "</font></td>"
-    ShowHTML "          <td><font size=""1""><b>Operações</font></td>"
+    ShowHTML "          <td><b>" & LinkOrdena("Matricula","matricula") & "</td>"
+    ShowHTML "          <td><b>" & LinkOrdena("Nome","nome_resumido") & "</td>"
+    ShowHTML "          <td><b>" & LinkOrdena("Modalidade","nm_modalidade_contrato") & "</td>"
+    ShowHTML "          <td><b>" & LinkOrdena("Exercício","nm_exercicio") & "</td>"
+    ShowHTML "          <td><b>" & LinkOrdena("Ramal","ramal") & "</td>"
+    ShowHTML "          <td><b>Operações</td>"
     ShowHTML "        </tr>"
     If RS.EOF Then
-        ShowHTML "      <tr bgcolor=""" & conTrBgColor & """><td colspan=6 align=""center""><font size=""2""><b>Não foram encontrados registros.</b></td></tr>"
+        ShowHTML "      <tr bgcolor=""" & conTrBgColor & """><td colspan=6 align=""center""><b>Não foram encontrados registros.</b></td></tr>"
     Else
       rs.PageSize     = P4
       rs.AbsolutePage = P3
       While Not RS.EOF and RS.AbsolutePage = P3
         If w_cor = conTrBgColor or w_cor = "" Then w_cor = conTrAlternateBgColor Else w_cor = conTrBgColor End If
         ShowHTML "      <tr bgcolor=""" & w_cor & """ valign=""top"">"
-        ShowHTML "        <td align=""center""><font size=""1"">" & Nvl(RS("matricula"),"---") & "</td>"
-        ShowHTML "        <td align=""left""><font size=""1"">" & ExibeColaborador("", w_cliente, RS("chave"), TP, RS("nome_resumido")) & "</td>"
-        ShowHTML "        <td align=""left""><font size=""1"">" & RS("nm_modalidade_contrato") & "</td>"
-        ShowHTML "        <td align=""left""><font size=""1"">" & ExibeUnidade("../", w_cliente, RS("local"), RS("sq_unidade_exercicio"), TP) & "</td>"
-        ShowHTML "        <td align=""center""><font size=""1"">" & Nvl(RS("ramal"),"---") & "</td>"
-        ShowHTML "        <td align=""top"" nowrap><font size=""1"">"
+        ShowHTML "        <td align=""center"">" & Nvl(RS("matricula"),"---") & "</td>"
+        ShowHTML "        <td align=""left"">" & ExibeColaborador("", w_cliente, RS("chave"), TP, RS("nome_resumido")) & "</td>"
+        ShowHTML "        <td align=""left"">" & RS("nm_modalidade_contrato") & "</td>"
+        ShowHTML "        <td align=""left"">" & ExibeUnidade("../", w_cliente, RS("local"), RS("sq_unidade_exercicio"), TP) & "</td>"
+        ShowHTML "        <td align=""center"">" & Nvl(RS("ramal"),"---") & "</td>"
+        ShowHTML "        <td align=""top"" nowrap>"
         ShowHTML "          <A class=""HL"" HREF=""Menu.asp?par=ExibeDocs&O=A&w_usuario=" & RS("chave") & "&R=" & w_Pagina & par & "&SG=" & SG & "&TP=" & TP & "&w_documento=" & RS("nome_resumido") & MontaFiltro("GET") & """ title=""Altera as informações cadastrais do colaborador"" TARGET=""menu"">Alterar</a>&nbsp;"
         ShowHTML "          <A class=""hl"" HREF=""" & w_dir & w_Pagina & par & "&R=" & w_Pagina & par & "&O=E&w_cliente=" & w_cliente & "&w_sq_pessoa=" & RS("chave") & "&P1=" & P1 & "&P2=" & P2 & "&P3=" & P3 & "&P4=" & P4 & "&TP=" & TP & "&SG=" & SG & MontaFiltro("GET") & """ title=""Exclui o colaborador do banco de dados"">Excluir</A>&nbsp"
         ShowHTML "        </td>"
@@ -328,7 +328,7 @@ Sub Inicial
     AbreForm "Form", w_dir & w_Pagina & par, "POST", "return(Validacao(this));", null,P1,P2,1,P4,TP,SG,R,"L"
     ShowHTML "<INPUT type=""hidden"" name=""w_cliente"" value=""" & w_cliente & """>"
 
-    ShowHTML "<tr bgcolor=""" & conTrBgColor & """><td align=""center""><div align=""justify""><font size=2>Informe nos campos abaixo os critérios que deseja filtrar e clique sobre o botão <i>Aplicar filtro</i>. Clicando sobre o botão <i>Limpar campos</i>, o filtro existente será apagado.</div><hr>"
+    ShowHTML "<tr bgcolor=""" & conTrBgColor & """><td align=""center""><div align=""justify"">Informe nos campos abaixo os critérios que deseja filtrar e clique sobre o botão <i>Aplicar filtro</i>. Clicando sobre o botão <i>Limpar campos</i>, o filtro existente será apagado.</div><hr>"
     ShowHTML "<tr bgcolor=""" & conTrBgColor & """><td>"
     ShowHTML "    <table width=""100%"" border=""0"">"
     
@@ -344,37 +344,37 @@ Sub Inicial
     SelecaoUnidade "Unidade de <U>l</U>otação:", "L", null, p_unidade_lotacao, null, "p_unidade_lotacao", null, null
     ShowHTML "      </tr>"
     ShowHTML "      <tr>"
-    ShowHTML "        <td><font size=""1""><input type=""checkbox"" name=""p_filhos_lotacao"" value=""S"">Exibir colaboradores das unidades subordinadas</td>"
+    ShowHTML "        <td><input type=""checkbox"" name=""p_filhos_lotacao"" value=""S"">Exibir colaboradores das unidades subordinadas</td>"
     ShowHTML "      </tr>"
 
     ShowHTML "      <tr>"
     SelecaoUnidade "Unidade de <U>e</U>xercício:", "E", null, p_unidade_exercicio, null, "p_unidade_exercicio", null, null
     ShowHTML "      </tr>"
     ShowHTML "      <tr>"
-    ShowHTML "        <td><font size=""1""><input type=""checkbox"" name=""p_filhos_exercicio"" value=""S"">Exibir colaboradores das unidades subordinadas</td>"
+    ShowHTML "        <td><input type=""checkbox"" name=""p_filhos_exercicio"" value=""S"">Exibir colaboradores das unidades subordinadas</td>"
     ShowHTML "      </tr>"
     
-    ShowHTML "      <tr><td><font size=""1""><b>Afastado por:</b><br>"
+    ShowHTML "      <tr><td><b>Afastado por:</b><br>"
     DB_GetGPTipoAfast RS1, w_cliente, null, null, null, "S", null, null
     RS1.Sort = "nome"
-    ShowHTML "      <tr><td><font size=""1""><table width=""100%"" border=""0"">"
+    ShowHTML "      <tr><td><table width=""100%"" border=""0"">"
     ShowHTML "        <tr>"
-    ShowHTML "          <td><font size=""1""><input type=""checkbox"" name=""p_ferias"" value=""S"">Férias"
-    ShowHTML "          <td><font size=""1""><input type=""checkbox"" name=""p_viagem"" value=""S"">Viagem a serviço"
+    ShowHTML "          <td><input type=""checkbox"" name=""p_ferias"" value=""S"">Férias"
+    ShowHTML "          <td><input type=""checkbox"" name=""p_viagem"" value=""S"">Viagem a serviço"
     If Not RS1.EOF Then
        While Not RS1.EOF
           ShowHTML "        <tr>"
-          ShowHTML "          <td><font size=""1""><input type=""checkbox"" name=""p_afastamento"" value=""" & RS1("chave") & """>" & RS1("nome") & "<br>"
+          ShowHTML "          <td><input type=""checkbox"" name=""p_afastamento"" value=""" & RS1("chave") & """>" & RS1("nome") & "<br>"
           RS1.MoveNext
           If Not RS1.EOF Then
-             ShowHTML "          <td><font size=""1""><input type=""checkbox"" name=""p_afastamento"" value=""" & RS1("chave") & """>" & RS1("nome") & "<br>"
+             ShowHTML "          <td><input type=""checkbox"" name=""p_afastamento"" value=""" & RS1("chave") & """>" & RS1("nome") & "<br>"
              RS1.MoveNext
           End If
        Wend
     End If
     ShowHTML "       </table></td></tr>"
     RS1.Close
-    ShowHTML "      <tr><td><font size=""1""><b><u>P</u>eríodo de busca:</b><br> De: <input accesskey=""P"" type=""text"" name=""p_dt_ini"" class=""STI"" SIZE=""10"" MAXLENGTH=""10"" VALUE=""" & p_dt_ini & """ onKeyDown=""FormataData(this,event);""> a <input accesskey=""P"" type=""text"" name=""p_dt_fim"" class=""STI"" SIZE=""10"" MAXLENGTH=""10"" VALUE=""" & p_dt_fim & """ onKeyDown=""FormataData(this,event);""></td>"
+    ShowHTML "      <tr><td><b><u>P</u>eríodo de busca:</b><br> De: <input accesskey=""P"" type=""text"" name=""p_dt_ini"" class=""STI"" SIZE=""10"" MAXLENGTH=""10"" VALUE=""" & p_dt_ini & """ onKeyDown=""FormataData(this,event);""> a <input accesskey=""P"" type=""text"" name=""p_dt_fim"" class=""STI"" SIZE=""10"" MAXLENGTH=""10"" VALUE=""" & p_dt_fim & """ onKeyDown=""FormataData(this,event);""></td>"
     ShowHTML "      <tr><td align=""center"" colspan=""3"" height=""1"" bgcolor=""#000000"">"
     ShowHTML "      <tr><td align=""center"" colspan=""3"">"
     ShowHTML "            <input class=""stb"" type=""submit"" name=""Botao"" value=""Aplicar filtro"">"
@@ -401,16 +401,16 @@ Sub Inicial
     ShowHTML "<INPUT type=""hidden"" name=""w_botao"" value=""" & w_botao & """>"
     ShowHTML "<tr bgcolor=""" & conTrBgColor & """><td>"
     ShowHTML "    <table border=""0"">"
-    ShowHTML "        <tr><td colspan=4><font size=2>Informe o CPF e clique no botão ""Selecionar"" para continuar.</TD>"
-    ShowHTML "        <tr><td colspan=4><font size=1><b><u>C</u>PF:<br><INPUT ACCESSKEY=""C"" TYPE=""text"" class=""sti"" NAME=""w_cpf"" VALUE=""" & w_cpf & """ SIZE=""14"" MaxLength=""14"" onKeyDown=""FormataCPF(this, event);"">"
+    ShowHTML "        <tr><td colspan=4><font size=2>Informe o CPF e clique no botão ""Selecionar"" para continuar.</font></TD>"
+    ShowHTML "        <tr><td colspan=4><b><u>C</u>PF:<br><INPUT ACCESSKEY=""C"" TYPE=""text"" class=""sti"" NAME=""w_cpf"" VALUE=""" & w_cpf & """ SIZE=""14"" MaxLength=""14"" onKeyDown=""FormataCPF(this, event);"">"
     ShowHTML "            <INPUT class=""stb"" TYPE=""submit"" NAME=""Botao"" VALUE=""Selecionar"" onClick=""Botao.value=this.value; w_botao.value=Botao.value;document.Form.action='" & w_dir & "cv.asp?par=Identificacao';document.Form.SG.value='CVIDENT';document.Form.P1.value='1';"">"
     ShowHTML "            <INPUT class=""stb"" TYPE=""button"" NAME=""Botao"" VALUE=""Cancelar"" onClick=""location.href='" & w_Pagina & par & "&R=" & w_Pagina & par & "&O=P&w_cliente=" & w_cliente & "&P1=" & P1 & "&P2=" & P2 & "&P3=" & P3 & "&P4=" & P4 & "&TP=" & TP & "&SG=" & SG & "';"">"
-    ShowHTML "        <tr><td colspan=4><font size=2>Se a pessoa não tem CPF e o sistema ainda não gerou um código para ela, clique no botão abaixo. Menores, indígenas e estrangeiros sem CPF, que ainda não tenham seu código gerado pelo sistema enquadram-se nesta situação. Se o sistema já gerou um código para a pessoa, informe-o no campo CPF, acima.</TD>"
+    ShowHTML "        <tr><td colspan=4><font size=2>Se a pessoa não tem CPF e o sistema ainda não gerou um código para ela, clique no botão abaixo. Menores, indígenas e estrangeiros sem CPF, que ainda não tenham seu código gerado pelo sistema enquadram-se nesta situação. Se o sistema já gerou um código para a pessoa, informe-o no campo CPF, acima.</font></TD>"
     ShowHTML "        <tr><td colspan=4><INPUT class=""stb"" TYPE=""submit"" NAME=""Botao"" VALUE=""Pessoa sem CPF nem código gerado pelo sistema"" onClick=""Botao.value=this.value; w_botao.value=Botao.value;document.Form.action='" & w_dir & "cv.asp?par=Identificacao';document.Form.SG.value='CVIDENT';document.Form.P1.value='1';"">"
     ShowHTML "        <tr><td colspan=4><p>&nbsp</p>"
     ShowHTML "        <tr><td colspan=4 heigth=1 bgcolor=""#000000"">"
     ShowHTML "        <tr><td colspan=4>"
-    ShowHTML "             <font size=1><b><u>P</u>rocurar pelo nome:</b> (Informe qualquer parte do nome SEM ACENTOS)<br><INPUT ACCESSKEY=""P"" TYPE=""text"" class=""sti"" NAME=""w_nome"" VALUE=""" & w_nome & """ SIZE=""20"" MaxLength=""20"">"
+    ShowHTML "             <b><u>P</u>rocurar pelo nome:</b> (Informe qualquer parte do nome SEM ACENTOS)<br><INPUT ACCESSKEY=""P"" TYPE=""text"" class=""sti"" NAME=""w_nome"" VALUE=""" & w_nome & """ SIZE=""20"" MaxLength=""20"">"
     ShowHTML "              <INPUT class=""stb"" TYPE=""submit"" NAME=""Botao"" VALUE=""Procurar"" onClick=""Botao.value=this.value; w_botao.value=Botao.value; document.Form.action='" & w_dir & w_Pagina & par &"'"">"
     ShowHTML "      </table>"
     If w_nome > "" Then
@@ -419,20 +419,20 @@ Sub Inicial
        ShowHTML "<tr><td colspan=3>"
        ShowHTML "    <TABLE WIDTH=""100%"" bgcolor=""" & conTableBgColor & """ BORDER=""" & conTableBorder & """ CELLSPACING=""" & conTableCellSpacing & """ CELLPADDING=""" & conTableCellPadding & """ BorderColorDark=""" & conTableBorderColorDark & """ BorderColorLight=""" & conTableBorderColorLight & """>"
        ShowHTML "        <tr bgcolor=""" & conTrBgColor & """ align=""center"">"
-       ShowHTML "          <td><font size=""1""><b>Nome</font></td>"
-       ShowHTML "          <td><font size=""1""><b>Nome resumido</font></td>"
-       ShowHTML "          <td><font size=""1""><b>CPF</font></td>"
-       ShowHTML "          <td><font size=""1""><b>Operações</font></td>"
+       ShowHTML "          <td><b>Nome</td>"
+       ShowHTML "          <td><b>Nome resumido</td>"
+       ShowHTML "          <td><b>CPF</td>"
+       ShowHTML "          <td><b>Operações</td>"
        ShowHTML "        </tr>"
        If RS.EOF Then
-          ShowHTML "      <tr bgcolor=""" & conTrBgColor & """><td colspan=4 align=""center""><font  size=""1""><b>Não há pessoas que contenham o texto informado.</b></td></tr>"
+          ShowHTML "      <tr bgcolor=""" & conTrBgColor & """><td colspan=4 align=""center""><b>Não há pessoas que contenham o texto informado.</b></td></tr>"
        Else
           While Not RS.EOF
              ShowHTML "      <tr bgcolor=""" & conTrBgColor & """ valign=""top"">"
-             ShowHTML "        <td><font  size=""1"">" & RS("nome") & "</td>"
-             ShowHTML "        <td><font  size=""1"">" & RS("nome_resumido") & "</td>"
-             ShowHTML "        <td align=""center""><font  size=""1"">" & Nvl(RS("cpf"),"---") & "</td>"
-             ShowHTML "        <td nowrap><font size=""1"">"
+             ShowHTML "        <td>" & RS("nome") & "</td>"
+             ShowHTML "        <td>" & RS("nome_resumido") & "</td>"
+             ShowHTML "        <td align=""center"">" & Nvl(RS("cpf"),"---") & "</td>"
+             ShowHTML "        <td nowrap>"
              ShowHTML "          <A class=""hl"" HREF=""" & w_dir & "cv.asp?par=Identificacao&R=" & R & "&O=I&w_cpf=" & RS("cpf") & "&w_sq_pessoa=" & RS("sq_pessoa") & "&P1=1&P2=" & P2 & "&P3=" & P3 & "&P4=" & P4 & "&TP=" & TP & "&SG=CVIDENT"">Selecionar</A>&nbsp"
              ShowHTML "        </td>"
              ShowHTML "      </tr>"
@@ -451,61 +451,61 @@ Sub Inicial
     ShowHTML "<INPUT type=""hidden"" name=""w_sq_pessoa"" value=""" & w_sq_pessoa &""">"
     ShowHTML"<tr bgcolor=""" & conTrBgColor & """><td align=""center"">"
     ShowHTML"    <table width=""99%"" border=""0"">"
-    ShowHTML"      <tr><td valign=""top"" colspan=""3"" align=""center"" bgcolor=""#D0D0D0"" style=""border: 2px solid rgb(0,0,0);""><font size=""1""><b>Identificação</td>"
+    ShowHTML"      <tr><td valign=""top"" colspan=""3"" align=""center"" bgcolor=""#D0D0D0"" style=""border: 2px solid rgb(0,0,0);""><b>Identificação</td>"
     ShowHTML"      <tr valign=""top"">"
-    ShowHTML"          <td><font size=""1"">Nome:<br><b>" & RS("nome") & " </b></td>"
-    ShowHTML"          <td><font size=""1"">Nome resumido:<br><b>" & RS("nome_resumido") & " </b></td>"
-    ShowHTML"          <td><font size=""1"">Data nascimento:<br><b>" & FormataDataEdicao(RS("nascimento")) & " </b></td>"
+    ShowHTML"          <td>Nome:<br><b>" & RS("nome") & " </b></td>"
+    ShowHTML"          <td>Nome resumido:<br><b>" & RS("nome_resumido") & " </b></td>"
+    ShowHTML"          <td>Data nascimento:<br><b>" & FormataDataEdicao(RS("nascimento")) & " </b></td>"
     ShowHTML"      <tr valign=""top"">"
-    ShowHTML"          <td><font size=""1"">Sexo:<br><b>" & RS("nm_sexo") & " </b></td>"
-    ShowHTML"          <td><font size=""1"">Estado civil:<br><b>" & RS("nm_estado_civil") & " </b></td>"
+    ShowHTML"          <td>Sexo:<br><b>" & RS("nm_sexo") & " </b></td>"
+    ShowHTML"          <td>Estado civil:<br><b>" & RS("nm_estado_civil") & " </b></td>"
     If nvl(RS("sq_siw_arquivo"),"nulo") <> "nulo" and P2 = 0 Then
-       ShowHTML"          <td rowspan=3><font size=""1"">" & LinkArquivo(null, w_cliente, RS("sq_siw_arquivo"), "_blank", null, "<img title=""clique para ver em tamanho original."" border=1 width=100 length=80 src=""" & LinkArquivo(null, w_cliente, RS("sq_siw_arquivo"), null, null, null, "EMBED")& """>", null)& "</td>"
+       ShowHTML"          <td rowspan=3>" & LinkArquivo(null, w_cliente, RS("sq_siw_arquivo"), "_blank", null, "<img title=""clique para ver em tamanho original."" border=1 width=100 length=80 src=""" & LinkArquivo(null, w_cliente, RS("sq_siw_arquivo"), null, null, null, "EMBED")& """>", null)& "</td>"
     Else
-       ShowHTML"          <td rowspan=3><font size=""1""></td>"
+       ShowHTML"          <td rowspan=3></td>"
     End If
     ShowHTML"      <tr valign=""top"">"
-    ShowHTML"          <td><font size=""1"">Formação acadêmica:<br><b>" & RS("nm_formacao") & " </b></td>"
-    ShowHTML"          <td><font size=""1"">Etnia:<br><b>" & RS("nm_etnia") & " </b></td>"
-    ShowHTML"      <tr><td><font size=""1"">Deficiência:<br><b>" & Nvl(RS("nm_deficiencia"),"---") & " </b></td>"
+    ShowHTML"          <td>Formação acadêmica:<br><b>" & RS("nm_formacao") & " </b></td>"
+    ShowHTML"          <td>Etnia:<br><b>" & RS("nm_etnia") & " </b></td>"
+    ShowHTML"      <tr><td>Deficiência:<br><b>" & Nvl(RS("nm_deficiencia"),"---") & " </b></td>"
     ShowHTML"      <tr valign=""top"">"
-    ShowHTML"          <td><font size=""1"">Identidade:<br><b>" & RS("rg_numero") & " </b></td>"
-    ShowHTML"          <td><font size=""1"">Emissor:<br><b>" & RS("rg_emissor") & " </b></td>"
-    ShowHTML"          <td><font size=""1"">Data de emissão:<br><b>" & FormataDataEdicao(RS("rg_emissao")) & " </b></td>"
+    ShowHTML"          <td>Identidade:<br><b>" & RS("rg_numero") & " </b></td>"
+    ShowHTML"          <td>Emissor:<br><b>" & RS("rg_emissor") & " </b></td>"
+    ShowHTML"          <td>Data de emissão:<br><b>" & FormataDataEdicao(RS("rg_emissao")) & " </b></td>"
     ShowHTML"      <tr valign=""top"">"
-    ShowHTML"          <td><font size=""1"">CPF:<br><b>" & RS("cpf")  & "</b></td>"
-    ShowHTML"          <td><font size=""1"">Passaporte:<br><b>" & Nvl(RS("passaporte_numero"),"---") & " </b></td>"    
-    ShowHTML"      <tr><td valign=""top"" colspan=""3"" align=""center"" bgcolor=""#D0D0D0"" style=""border: 2px solid rgb(0,0,0);""><font size=""1""><b>Local de nascimento</td>"
+    ShowHTML"          <td>CPF:<br><b>" & RS("cpf")  & "</b></td>"
+    ShowHTML"          <td>Passaporte:<br><b>" & Nvl(RS("passaporte_numero"),"---") & " </b></td>"    
+    ShowHTML"      <tr><td valign=""top"" colspan=""3"" align=""center"" bgcolor=""#D0D0D0"" style=""border: 2px solid rgb(0,0,0);""><b>Local de nascimento</td>"
     ShowHTML"      <tr valign=""top"">"
-    ShowHTML"          <td><font size=""1"">País:<br><b>" & RS("nm_pais_nascimento") & " </b></td>"
-    ShowHTML"          <td><font size=""1"">Estado:<br><b>" & RS("nm_uf_nascimento") & " </b></td>"
-    ShowHTML"          <td><font size=""1"">Cidade:<br><b>" & RS("nm_cidade_nascimento") & " </b></td>"
+    ShowHTML"          <td>País:<br><b>" & RS("nm_pais_nascimento") & " </b></td>"
+    ShowHTML"          <td>Estado:<br><b>" & RS("nm_uf_nascimento") & " </b></td>"
+    ShowHTML"          <td>Cidade:<br><b>" & RS("nm_cidade_nascimento") & " </b></td>"
     DesconectaBD
-    ShowHTML"      <tr><td valign=""top"" colspan=""3"" align=""center"" bgcolor=""#D0D0D0"" style=""border: 2px solid rgb(0,0,0);""><font size=""1""><b>Dados do contrato</td>"
+    ShowHTML"      <tr><td valign=""top"" colspan=""3"" align=""center"" bgcolor=""#D0D0D0"" style=""border: 2px solid rgb(0,0,0);""><b>Dados do contrato</td>"
     ShowHTML "<INPUT type=""hidden"" name=""w_sq_contrato_colaborador"" value=""" & RS1("chave") & """>"    
     ShowHTML"      <tr valign=""top"">"       
-    ShowHTML"          <td><font size=""1"">Cargo:<br><b>" & RS1("nm_posto_trabalho")  & "</b></td>"
-    ShowHTML"          <td><font size=""1"">Modalidade de contratação:<br><b>" & Nvl(RS1("nm_modalidade_contrato"),"---") & " </b></td>"
+    ShowHTML"          <td>Cargo:<br><b>" & RS1("nm_posto_trabalho")  & "</b></td>"
+    ShowHTML"          <td>Modalidade de contratação:<br><b>" & Nvl(RS1("nm_modalidade_contrato"),"---") & " </b></td>"
     ShowHTML "     </tr>"
     ShowHTML "     <tr valign=""top"">" 
-    ShowHTML "        <td valign=""top""><font size=""1"">Unidade de lotação:<br><b>" & RS1("nm_unidade_lotacao")  & "(" & RS1("sg_unidade_lotacao") & ")</b></td>"
-    ShowHTML "        <td valign=""top""><font size=""1"">Unidade de exercício:<br><b>" & RS1("nm_unidade_exercicio")  & "(" & RS1("sg_unidade_exercicio") & ")</b></td>"
-    ShowHTML "        <td valign=""top""><font size=""1"">Localização:<br><b>" & RS1("local") & "</b></td>"
+    ShowHTML "        <td valign=""top"">Unidade de lotação:<br><b>" & RS1("nm_unidade_lotacao")  & "(" & RS1("sg_unidade_lotacao") & ")</b></td>"
+    ShowHTML "        <td valign=""top"">Unidade de exercício:<br><b>" & RS1("nm_unidade_exercicio")  & "(" & RS1("sg_unidade_exercicio") & ")</b></td>"
+    ShowHTML "        <td valign=""top"">Localização:<br><b>" & RS1("local") & "</b></td>"
     ShowHTML "     </tr>"
     ShowHTML "     <tr valign=""top"">" 
-    ShowHTML "        <td><font size=""1""><b>Matrícula:</b><br>" & Nvl(RS1("matricula"),"---") & "</td>"
-    ShowHTML "        <td><font size=""1""><b>Início da vigência:</b><br>" & FormataDataEdicao(RS1("inicio"))
-    ShowHTML "        <td><font size=""1""><b>Fim da vigência:</b><br>" & Nvl(FormataDataEdicao(RS1("fim")),"---")    
+    ShowHTML "        <td><b>Matrícula:</b><br>" & Nvl(RS1("matricula"),"---") & "</td>"
+    ShowHTML "        <td><b>Início da vigência:</b><br>" & FormataDataEdicao(RS1("inicio"))
+    ShowHTML "        <td><b>Fim da vigência:</b><br>" & Nvl(FormataDataEdicao(RS1("fim")),"---")    
     RS1.Close
     If w_erro > "" Then
        ShowHTML "<tr><td align=""center"" colspan=""3"" height=""1"" bgcolor=""#000000"">"
-       ShowHTML "<tr bgcolor=""" & conTrBgColor & """><td colspan=""3""><font size=2>"
-       ShowHTML "<font color=""#BC3131""><b>ATENÇÃO:</b></font> Foram identificados os erros listados abaixo, não sendo possível a conclusão da operação."
+       ShowHTML "<tr bgcolor=""" & conTrBgColor & """><td colspan=""3"">"
+       ShowHTML "<font color=""#BC3131""><b>ATENÇÃO:</b> Foram identificados os erros listados abaixo, não sendo possível a conclusão da operação.</font>"
        ShowHTML "<UL>" & w_erro & "</UL>"
-       ShowHTML "</font></td></tr>"
+       ShowHTML "</td></tr>"
     End If
     If w_erro = "" Then
-       ShowHTML "     <tr><td align=""LEFT"" colspan=""3""><font size=""1""><b><U>A</U>ssinatura Eletrônica:<BR> <INPUT ACCESSKEY=""A"" class=""sti"" type=""PASSWORD"" name=""w_assinatura"" size=""30"" maxlength=""30"" value=""""></td></tr>"
+       ShowHTML "     <tr><td align=""LEFT"" colspan=""3""><b><U>A</U>ssinatura Eletrônica:<BR> <INPUT ACCESSKEY=""A"" class=""sti"" type=""PASSWORD"" name=""w_assinatura"" size=""30"" maxlength=""30"" value=""""></td></tr>"
     End If
     ShowHTML "      <tr><td align=""center"" colspan=""3"" height=""1"" bgcolor=""#000000"">"
     ShowHTML "      <tr><td align=""center"" colspan=""3"">"
@@ -663,7 +663,7 @@ Sub Documentacao
   Else
      BodyOpen "onLoad='document.Form.w_ctps_numero.focus()';"
   End If
-  ShowHTML "<B><FONT COLOR=""#000000"">" & w_TP & "</FONT></B>"
+  ShowHTML "<B><FONT COLOR=""#000000"">" & w_TP & "</font></B>"
   ShowHTML "<HR>"
   ShowHTML "<table align=""center"" border=""0"" cellpadding=""0"" cellspacing=""0"" width=""100%"">"
   
@@ -674,39 +674,39 @@ Sub Documentacao
   ShowHTML "  <tr bgcolor=""" & conTrBgColor & """><td align=""center"">"
   ShowHTML "   <table width=""97%"" border=""0"">"
   ShowHTML "     <tr valign=""top"">"    
-  ShowHTML "       <td valign=""top""><font size=""1""><b><u>N</u>úmero CTPS:</b><br><input " & w_Disabled & " accesskey=""N"" type=""text"" name=""w_ctps_numero"" class=""sti"" SIZE=""20"" MAXLENGTH=""20"" VALUE=""" & w_ctps_numero & """></td>"
-  ShowHTML "       <td valign=""top""><font size=""1""><b><u>S</u>érie:</b><br><input " & w_Disabled & " accesskey=""S"" type=""text"" name=""w_ctps_serie"" class=""sti"" SIZE=""5"" MAXLENGTH=""5"" VALUE=""" & w_ctps_serie & """></td>"
-  ShowHTML "       <td valign=""top""><font size=""1""><b><u>E</u>missor:</b><br><input " & w_Disabled & " accesskey=""E"" type=""text"" name=""w_ctps_emissor"" class=""sti"" SIZE=""30"" MAXLENGTH=""30"" VALUE=""" & w_ctps_emissor & """></td>"
-  ShowHTML "       <td valign=""top""><font size=""1""><b>E<u>m</u>issão CTPS:</b><br><input " & w_Disabled & " accesskey=""M"" type=""text"" name=""w_ctps_emissao"" class=""sti"" SIZE=""10"" MAXLENGTH=""10"" VALUE=""" & w_ctps_emissao & """ onKeyDown=""FormataData(this,event);""></td>"
+  ShowHTML "       <td valign=""top""><b><u>N</u>úmero CTPS:</b><br><input " & w_Disabled & " accesskey=""N"" type=""text"" name=""w_ctps_numero"" class=""sti"" SIZE=""20"" MAXLENGTH=""20"" VALUE=""" & w_ctps_numero & """></td>"
+  ShowHTML "       <td valign=""top""><b><u>S</u>érie:</b><br><input " & w_Disabled & " accesskey=""S"" type=""text"" name=""w_ctps_serie"" class=""sti"" SIZE=""5"" MAXLENGTH=""5"" VALUE=""" & w_ctps_serie & """></td>"
+  ShowHTML "       <td valign=""top""><b><u>E</u>missor:</b><br><input " & w_Disabled & " accesskey=""E"" type=""text"" name=""w_ctps_emissor"" class=""sti"" SIZE=""30"" MAXLENGTH=""30"" VALUE=""" & w_ctps_emissor & """></td>"
+  ShowHTML "       <td valign=""top""><b>E<u>m</u>issão CTPS:</b><br><input " & w_Disabled & " accesskey=""M"" type=""text"" name=""w_ctps_emissao"" class=""sti"" SIZE=""10"" MAXLENGTH=""10"" VALUE=""" & w_ctps_emissao & """ onKeyDown=""FormataData(this,event);""></td>"
   ShowHTML "     </tr>"
   ShowHTML "     <tr valign=""top"">"
-  ShowHTML "       <td valign=""top"" colspan=""2""><font size=""1""><b>Optante pelo:</b><br>"
+  ShowHTML "       <td valign=""top"" colspan=""2""><b>Optante pelo:</b><br>"
   If w_pis_pasep = "A" Then
      ShowHTML "              <input " & w_Disabled & " type=""radio"" name=""w_pis_pasep"" value=""I""> PIS <input " & w_Disabled & " type=""radio"" name=""w_pis_pasep"" value=""A"" checked> PASEP"
   Else
      ShowHTML "              <input " & w_Disabled & " type=""radio"" name=""w_pis_pasep"" value=""I"" checked> PIS <input " & w_Disabled & " type=""radio"" name=""w_pis_pasep"" value=""A""> PASEP"
   End If
-  ShowHTML "       <td valign=""top""><font size=""1""><b>N<u>ú</u>mero PIS/PASEP:</b><br><input " & w_Disabled & " accesskey=""U"" type=""text"" name=""w_pispasep_numero"" class=""sti"" SIZE=""20"" MAXLENGTH=""20"" VALUE=""" & w_pispasep_numero & """></td>"
-  ShowHTML "       <td valign=""top""><font size=""1""><b>Em<u>i</u>ssão PIS/PASEP:</b><br><input " & w_Disabled & " accesskey=""I"" type=""text"" name=""w_pispasep_cadastr"" class=""sti"" SIZE=""10"" MAXLENGTH=""10"" VALUE=""" & w_pispasep_cadastr & """ onKeyDown=""FormataData(this,event);""></td>"
+  ShowHTML "       <td valign=""top""><b>N<u>ú</u>mero PIS/PASEP:</b><br><input " & w_Disabled & " accesskey=""U"" type=""text"" name=""w_pispasep_numero"" class=""sti"" SIZE=""20"" MAXLENGTH=""20"" VALUE=""" & w_pispasep_numero & """></td>"
+  ShowHTML "       <td valign=""top""><b>Em<u>i</u>ssão PIS/PASEP:</b><br><input " & w_Disabled & " accesskey=""I"" type=""text"" name=""w_pispasep_cadastr"" class=""sti"" SIZE=""10"" MAXLENGTH=""10"" VALUE=""" & w_pispasep_cadastr & """ onKeyDown=""FormataData(this,event);""></td>"
   ShowHTML "     </tr>"
   ShowHTML "     <tr valign=""top"">"
-  ShowHTML "       <td valign=""top""><font size=""1""><b>Número <u>t</u>ítulo eleitor:</b><br><input " & w_Disabled & " accesskey=""T"" type=""text"" name=""w_te_numero"" class=""sti"" SIZE=""20"" MAXLENGTH=""20"" VALUE=""" & w_te_numero & """></td>"
-  ShowHTML "       <td valign=""top""><font size=""1""><b><u>Z</u>ona:</b><br><input " & w_Disabled & " accesskey=""Z"" type=""text"" name=""w_te_zona"" class=""sti"" SIZE=""3"" MAXLENGTH=""3"" VALUE=""" & w_te_zona & """></td>"
-  ShowHTML "       <td valign=""top""><font size=""1""><b>Seça<u>o</u>:</b><br><input " & w_Disabled & " accesskey=""O"" type=""text"" name=""w_te_secao"" class=""sti"" SIZE=""4"" MAXLENGTH=""4"" VALUE=""" & w_te_secao & """></td>"    
+  ShowHTML "       <td valign=""top""><b>Número <u>t</u>ítulo eleitor:</b><br><input " & w_Disabled & " accesskey=""T"" type=""text"" name=""w_te_numero"" class=""sti"" SIZE=""20"" MAXLENGTH=""20"" VALUE=""" & w_te_numero & """></td>"
+  ShowHTML "       <td valign=""top""><b><u>Z</u>ona:</b><br><input " & w_Disabled & " accesskey=""Z"" type=""text"" name=""w_te_zona"" class=""sti"" SIZE=""3"" MAXLENGTH=""3"" VALUE=""" & w_te_zona & """></td>"
+  ShowHTML "       <td valign=""top""><b>Seça<u>o</u>:</b><br><input " & w_Disabled & " accesskey=""O"" type=""text"" name=""w_te_secao"" class=""sti"" SIZE=""4"" MAXLENGTH=""4"" VALUE=""" & w_te_secao & """></td>"    
   ShowHTML "     </tr>"
   ShowHTML "     <tr valign=""top"">"
-  ShowHTML "       <td valign=""top""><font size=""1""><b>Certificado <u>r</u>eservista:</b><br><input " & w_Disabled & " accesskey=""R"" type=""text"" name=""w_reservista_numero"" class=""sti"" SIZE=""15"" MAXLENGTH=""15"" VALUE=""" & w_reservista_numero & """></td>"
-  ShowHTML "       <td valign=""top""><font size=""1""><b><u>C</u>SM:</b><br><input " & w_Disabled & " accesskey=""C"" type=""text"" name=""w_reservista_csm"" class=""sti"" SIZE=""4"" MAXLENGTH=""4"" VALUE=""" & w_reservista_csm & """></td>"
+  ShowHTML "       <td valign=""top""><b>Certificado <u>r</u>eservista:</b><br><input " & w_Disabled & " accesskey=""R"" type=""text"" name=""w_reservista_numero"" class=""sti"" SIZE=""15"" MAXLENGTH=""15"" VALUE=""" & w_reservista_numero & """></td>"
+  ShowHTML "       <td valign=""top""><b><u>C</u>SM:</b><br><input " & w_Disabled & " accesskey=""C"" type=""text"" name=""w_reservista_csm"" class=""sti"" SIZE=""4"" MAXLENGTH=""4"" VALUE=""" & w_reservista_csm & """></td>"
   ShowHTML "     </tr>"  
   ShowHTML "     <tr valign=""top"">"
-  ShowHTML "       <td valign=""top""><font size=""1""><b>Ti<u>p</u>agem sangüínea:</b><br><input " & w_Disabled & " accesskey=""P"" type=""text"" name=""w_tipo_sangue"" class=""sti"" SIZE=""5"" MAXLENGTH=""5"" VALUE=""" & w_tipo_sangue & """></td>"
+  ShowHTML "       <td valign=""top""><b>Ti<u>p</u>agem sangüínea:</b><br><input " & w_Disabled & " accesskey=""P"" type=""text"" name=""w_tipo_sangue"" class=""sti"" SIZE=""5"" MAXLENGTH=""5"" VALUE=""" & w_tipo_sangue & """></td>"
   MontaRadioNS "<b>Doador de sangue?</b>", w_doador_sangue, "w_doador_sangue"
   MontaRadioNS "<b>Doador de órgãos?</b>", w_doador_orgaos, "w_doador_orgaos"
   ShowHTML "     </tr>"  
   ShowHTML "     <tr valign=""top"">"
-  ShowHTML "       <td colspan=""4""><font size=""1""><b>O<U>b</U>servações:<br><TEXTAREA ACCESSKEY=""B"" " & w_Disabled & " class=""sti"" name=""w_observacoes"" rows=""5"" cols=75>" & w_observacoes & "</textarea></td>"
+  ShowHTML "       <td colspan=""4""><b>O<U>b</U>servações:<br><TEXTAREA ACCESSKEY=""B"" " & w_Disabled & " class=""sti"" name=""w_observacoes"" rows=""5"" cols=75>" & w_observacoes & "</textarea></td>"
   ShowHTML "     </tr>"  
-  ShowHTML "     <tr><td align=""LEFT"" colspan=4><font size=""1""><b><U>A</U>ssinatura Eletrônica:<BR> <INPUT ACCESSKEY=""A"" class=""sti"" type=""PASSWORD"" name=""w_assinatura"" size=""30"" maxlength=""30"" value=""""></td></tr>"
+  ShowHTML "     <tr><td align=""LEFT"" colspan=4><b><U>A</U>ssinatura Eletrônica:<BR> <INPUT ACCESSKEY=""A"" class=""sti"" type=""PASSWORD"" name=""w_assinatura"" size=""30"" maxlength=""30"" value=""""></td></tr>"
   ShowHTML "      <tr><td align=""center"" colspan=""4"" height=""1"" bgcolor=""#000000""></TD></TR>"
   ShowHTML "      <tr><td align=""center"" colspan=""4"">"
   ShowHTML "            <input class=""STB"" type=""submit"" name=""Botao"" value=""Gravar"">"
@@ -843,23 +843,23 @@ Sub Contrato
   Estrutura_Texto_Abre
   ShowHTML "<table border=""0"" cellpadding=""0"" cellspacing=""0"" width=""100%"">"
   If O = "L" Then
-     ShowHTML "<tr><td><font size=""2""><a accesskey=""I"" class=""ss"" href=""" & w_dir & w_Pagina & par & "&w_usuario=" & w_usuario & "&R=" & w_Pagina & par & "&O=I&P1=" & P1 & "&P2=" & P2 & "&P3=" & P3 & "&P4=" & P4 & "&TP=" & TP & "&SG=" & SG & """><u>I</u>ncluir</a>&nbsp;"
-     'ShowHTML "    <td><font size=""2""><a accesskey=""E"" class=""ss"" href=""" & w_dir & w_Pagina & par & "&w_usuario=" & w_usuario & "&R=" & w_Pagina & par & "&O=E&P1=" & P1 & "&P2=" & P2 & "&P3=" & P3 & "&P4=" & P4 & "&TP=" & TP & "&SG=" & SG & """><u>E</u>ncerrar</a>&nbsp;"
-     ShowHTML "    <td align=""right""><font size=""1""><b>Registros existentes: " & RS.RecordCount
+     ShowHTML "<tr><td><a accesskey=""I"" class=""ss"" href=""" & w_dir & w_Pagina & par & "&w_usuario=" & w_usuario & "&R=" & w_Pagina & par & "&O=I&P1=" & P1 & "&P2=" & P2 & "&P3=" & P3 & "&P4=" & P4 & "&TP=" & TP & "&SG=" & SG & """><u>I</u>ncluir</a>&nbsp;"
+     'ShowHTML "    <td><a accesskey=""E"" class=""ss"" href=""" & w_dir & w_Pagina & par & "&w_usuario=" & w_usuario & "&R=" & w_Pagina & par & "&O=E&P1=" & P1 & "&P2=" & P2 & "&P3=" & P3 & "&P4=" & P4 & "&TP=" & TP & "&SG=" & SG & """><u>E</u>ncerrar</a>&nbsp;"
+     ShowHTML "    <td align=""right""><b>Registros existentes: " & RS.RecordCount
      ShowHTML "<tr><td align=""center"" colspan=3>"
      ShowHTML "    <TABLE WIDTH=""100%"" bgcolor=""" & conTableBgColor & """ BORDER=""" & conTableBorder & """ CELLSPACING=""" & conTableCellSpacing & """ CELLPADDING=""" & conTableCellPadding & """ BorderColorDark=""" & conTableBorderColorDark & """ BorderColorLight=""" & conTableBorderColorLight & """>"
      ShowHTML "        <tr bgcolor=""" & conTrBgColor & """ align=""center"">"
-     ShowHTML "          <td><font size=""1""><b>" & LinkOrdena("Matrícula","matricula") & "</font></td>"
-     ShowHTML "          <td><font size=""1""><b>" & LinkOrdena("Nome","nome_resumido") & "</font></td>"
-     ShowHTML "          <td><font size=""1""><b>" & LinkOrdena("Modalidade","nm_modalidade_contrato") & "</font></td>"
-     ShowHTML "          <td><font size=""1""><b>" & LinkOrdena("Exercício","local") & "</font></td>"
-     ShowHTML "          <td><font size=""1""><b>" & LinkOrdena("Ramal","ramal") & "</font></td>"
-     ShowHTML "          <td><font size=""1""><b>" & LinkOrdena("Início","inicio") & "</font></td>"
-     ShowHTML "          <td><font size=""1""><b>" & LinkOrdena("Fim","fim") & "</font></td>"
-     ShowHTML "          <td><font size=""1""><b> Operações </font></td>"
+     ShowHTML "          <td><b>" & LinkOrdena("Matrícula","matricula") & "</td>"
+     ShowHTML "          <td><b>" & LinkOrdena("Nome","nome_resumido") & "</td>"
+     ShowHTML "          <td><b>" & LinkOrdena("Modalidade","nm_modalidade_contrato") & "</td>"
+     ShowHTML "          <td><b>" & LinkOrdena("Exercício","local") & "</td>"
+     ShowHTML "          <td><b>" & LinkOrdena("Ramal","ramal") & "</td>"
+     ShowHTML "          <td><b>" & LinkOrdena("Início","inicio") & "</td>"
+     ShowHTML "          <td><b>" & LinkOrdena("Fim","fim") & "</td>"
+     ShowHTML "          <td><b> Operações </td>"
      ShowHTML "        </tr>"
      If RS.EOF Then ' Se não foram selecionados registros, exibe mensagem
-        ShowHTML "      <tr bgcolor=""" & conTrBgColor & """><td colspan=""8"" align=""center""><font size=""1""><b>Não foram encontrados registros.</b></td></tr>"
+        ShowHTML "      <tr bgcolor=""" & conTrBgColor & """><td colspan=""8"" align=""center""><b>Não foram encontrados registros.</b></td></tr>"
      Else
        ' Lista os registros selecionados para listagem
        rs.PageSize     = P4
@@ -867,14 +867,14 @@ Sub Contrato
        While Not RS.EOF and RS.AbsolutePage = P3
          If w_cor = conTrBgColor or w_cor = "" Then w_cor = conTrAlternateBgColor Else w_cor = conTrBgColor End If
          ShowHTML "      <tr bgcolor=""" & w_cor & """ valign=""top"">"
-         ShowHTML "        <td align=""center""><font size=""1"">" & Nvl(RS("matricula"),"---")   & "</td>"
-         ShowHTML "        <td align=""left""><font size=""1"">" & ExibeColaborador("", w_cliente, RS("sq_pessoa"), TP, RS("nome_resumido")) & "</td>"
-         ShowHTML "        <td align=""left""><font size=""1"">" & RS("nm_modalidade_contrato")   & "</td>"
-         ShowHTML "        <td align=""left""><font size=""1"">" & ExibeUnidade("../", w_cliente, RS("local"), RS("sq_unidade_exercicio"), TP) & "</td>"
-         ShowHTML "        <td align=""center""><font size=""1"">" & Nvl(RS("ramal"),"---") & "</td>"
-         ShowHTML "        <td align=""center""><font size=""1"">" & FormataDataEdicao(RS("inicio")) & "</td>"
-         ShowHTML "        <td align=""center""><font size=""1"">" & Nvl(FormataDataEdicao(RS("fim")),"---") & "</td>"
-         ShowHTML "        <td align=""top"" nowrap><font size=""1"">"
+         ShowHTML "        <td align=""center"">" & Nvl(RS("matricula"),"---")   & "</td>"
+         ShowHTML "        <td align=""left"">" & ExibeColaborador("", w_cliente, RS("sq_pessoa"), TP, RS("nome_resumido")) & "</td>"
+         ShowHTML "        <td align=""left"">" & RS("nm_modalidade_contrato")   & "</td>"
+         ShowHTML "        <td align=""left"">" & ExibeUnidade("../", w_cliente, RS("local"), RS("sq_unidade_exercicio"), TP) & "</td>"
+         ShowHTML "        <td align=""center"">" & Nvl(RS("ramal"),"---") & "</td>"
+         ShowHTML "        <td align=""center"">" & FormataDataEdicao(RS("inicio")) & "</td>"
+         ShowHTML "        <td align=""center"">" & Nvl(FormataDataEdicao(RS("fim")),"---") & "</td>"
+         ShowHTML "        <td align=""top"" nowrap>"
          ShowHTML "          <A class=""hl"" HREF=""" & w_dir & w_Pagina & par & "&R= " & w_Pagina & par & "&O=A&w_chave=" & RS("chave") & "&w_usuario=" & w_usuario & "&P1=" & P1 & "&P2=" & P2 & "&P3=" & P3 & "&P4=" & P4 & "&TP=" & TP & " &SG=" & SG & MontaFiltro("GET") & """ Title=""Alterar registro"">Alterar</A>&nbsp"
          If Nvl(RS("fim"),"") = "" Then
             ShowHTML "          <A class=""hl"" HREF=""" & w_dir & w_Pagina & par & "&R= " & w_Pagina & par & "&O=E&w_chave=" & RS("chave") & "&w_usuario=" & w_usuario & "&P1=" & P1 & "&P2=" & P2 & "&P3=" & P3 & "&P4=" & P4 & "&TP=" & TP & " &SG=" & SG & MontaFiltro("GET") & """ Title=""Encerrar contrato"">Encerrar</A>&nbsp"
@@ -929,7 +929,7 @@ Sub Contrato
      ShowHTML "<tr bgcolor=""" & conTrBgColor & """><td>"
      ShowHTML "    <table width=""97%"" border=""0""><tr>"
      ShowHTML "        <tr valign=""top"">" 
-     ShowHTML "        <td colspan=""3"" valign=""top""><font size=""1""><table border=""0"" width=""100%"" cellpadding=0 cellspacing=0><tr>"       
+     ShowHTML "        <td colspan=""3"" valign=""top""><table border=""0"" width=""100%"" cellpadding=0 cellspacing=0><tr>"       
      SelecaoCargo "<u>C</u>argo:", "C", "Selecione o cargo.", w_posto_trabalho, null, "w_posto_trabalho", null, null
      SelecaoModalidade "M<u>o</u>dalidade de contratação:", "O", null, w_modalidade_contrato, null, "w_modalidade_contrato", null, "onChange=""document.Form.action='" & w_dir&w_pagina&par&"&SG="&SG&"&O="&O & "'; document.Form.w_troca.value='w_modalidade_contrato'; document.Form.submit();"""
      If Nvl(w_modalidade_contrato,"") > "" Then
@@ -940,37 +940,37 @@ Sub Contrato
      End If
      ShowHTML "        </table></td></tr>"
      ShowHTML "        <tr valign=""top"">" 
-     ShowHTML "        <td colspan=""3"" valign=""top""><font size=""1""><table border=""0"" width=""100%"" cellpadding=0 cellspacing=0><tr>"
+     ShowHTML "        <td colspan=""3"" valign=""top""><table border=""0"" width=""100%"" cellpadding=0 cellspacing=0><tr>"
      SelecaoUnidade "Unidade de <U>l</U>otação:", "L", null, w_unidade_lotacao, null, "w_unidade_lotacao", null, null
      ShowHTML "        </table></td></tr>"
      ShowHTML "        <tr valign=""top"">" 
-     ShowHTML "        <td colspan=""3"" valign=""top""><font size=""1""><table border=""0"" width=""100%"" cellpadding=0 cellspacing=0><tr>"
+     ShowHTML "        <td colspan=""3"" valign=""top""><table border=""0"" width=""100%"" cellpadding=0 cellspacing=0><tr>"
      SelecaoUnidade "Unidade de <U>e</U>xercício:", "E", null, w_unidade_exercicio, null, "w_unidade_exercicio", null, "onBlur=""document.Form.action='" & w_dir&w_pagina&par&"&SG="&SG&"&O="&O&"&w_usuario="&w_usuario& "'; document.Form.w_troca.value='w_localizacao'; document.Form.submit();"""
      ShowHTML "        </table></td></tr>"
      ShowHTML "        <tr valign=""top"">" 
-     ShowHTML "        <td colspan=""3"" valign=""top""><font size=""1""><table border=""0"" width=""100%"" cellpadding=0 cellspacing=0><tr>"
+     ShowHTML "        <td colspan=""3"" valign=""top""><table border=""0"" width=""100%"" cellpadding=0 cellspacing=0><tr>"
      SelecaoLocalizacao "Locali<u>z</u>ação:", "Z", null, w_localizacao, Nvl(w_unidade_exercicio,0), "w_localizacao", null
      ShowHTML "        </table></td></tr>"
      If Nvl(w_dt_fim,"") > "" Then
         ShowHTML "<INPUT type=""hidden"" name=""w_sq_tipo_vinculo"" value=""" & w_sq_tipo_vinculo & """>"
      Else
-        ShowHTML "        <td colspan=""3"" valign=""top""><font size=""1""><table border=""0"" width=""100%"" cellpadding=0 cellspacing=0><tr>"
+        ShowHTML "        <td colspan=""3"" valign=""top""><table border=""0"" width=""100%"" cellpadding=0 cellspacing=0><tr>"
         SelecaoVinculo "<u>T</u>ipo de vínculo:", "T", null, w_sq_tipo_vinculo, null, "w_sq_tipo_vinculo", "S", "Física", "S"
         ShowHTML "        </table></td></tr>"                    
      End If
      ShowHTML "        <tr valign=""top"">" 
-     ShowHTML "        <td colspan=""3"" valign=""top""><font size=""1""><table border=""0"" width=""100%"" cellpadding=0 cellspacing=0>"
-     ShowHTML "          <tr><td valign=""top""><font size=""1""><b><u>M</u>atrícula:</b><br><input " & w_Disabled & " accesskey=""M"" type=""text"" name=""w_matricula"" class=""sti"" SIZE=""20"" MAXLENGTH=""20"" VALUE=""" & w_matricula & """></td>"
-     ShowHTML "              <td><font size=""1""><b><u>I</u>nício da vigência:</b><br><input accesskey=""I"" type=""text"" name=""w_dt_ini"" class=""STI"" SIZE=""10"" MAXLENGTH=""10"" VALUE=""" & w_dt_ini & """ onKeyDown=""FormataData(this,event);"">"
+     ShowHTML "        <td colspan=""3"" valign=""top""><table border=""0"" width=""100%"" cellpadding=0 cellspacing=0>"
+     ShowHTML "          <tr><td valign=""top""><b><u>M</u>atrícula:</b><br><input " & w_Disabled & " accesskey=""M"" type=""text"" name=""w_matricula"" class=""sti"" SIZE=""20"" MAXLENGTH=""20"" VALUE=""" & w_matricula & """></td>"
+     ShowHTML "              <td><b><u>I</u>nício da vigência:</b><br><input accesskey=""I"" type=""text"" name=""w_dt_ini"" class=""STI"" SIZE=""10"" MAXLENGTH=""10"" VALUE=""" & w_dt_ini & """ onKeyDown=""FormataData(this,event);"">"
      If Not (O = "A" and Nvl(w_dt_fim,"") = "") Then
-        ShowHTML "              <td><font size=""1""><b><u>F</u>im da vigência:</b><br><input accesskey=""F"" type=""text"" name=""w_dt_fim"" class=""STI"" SIZE=""10"" MAXLENGTH=""10"" VALUE=""" & w_dt_fim & """ onKeyDown=""FormataData(this,event);"">"
+        ShowHTML "              <td><b><u>F</u>im da vigência:</b><br><input accesskey=""F"" type=""text"" name=""w_dt_fim"" class=""STI"" SIZE=""10"" MAXLENGTH=""10"" VALUE=""" & w_dt_fim & """ onKeyDown=""FormataData(this,event);"">"
      End If
      ShowHTML "        </table></td></tr>"
      If w_username_pessoa = "S" Then
         ShowHTML "        <tr valign=""top"">" 
-        ShowHTML "        <td colspan=""3"" valign=""top""><font size=""1""><font size=""1""><input type=""checkbox"" name=""w_username_pessoa"" value=""S""><b>Criar username para este colaborador?</b>"
+        ShowHTML "        <td colspan=""3"" valign=""top""><input type=""checkbox"" name=""w_username_pessoa"" value=""S""><b>Criar username para este colaborador?</b>"
      End If     
-     ShowHTML "      <tr><td colspan=5><font size=""1""><b><U>A</U>ssinatura Eletrônica:<BR> <INPUT ACCESSKEY=""A"" class=""sti"" type=""PASSWORD"" name=""w_assinatura"" size=""30"" maxlength=""30"" value=""""></td></tr>"
+     ShowHTML "      <tr><td colspan=5><b><U>A</U>ssinatura Eletrônica:<BR> <INPUT ACCESSKEY=""A"" class=""sti"" type=""PASSWORD"" name=""w_assinatura"" size=""30"" maxlength=""30"" value=""""></td></tr>"
      ShowHTML "      <tr><td align=""center"" colspan=5><hr>"
      If O = "I" Then
         ShowHTML "            <input class=""stb"" type=""submit"" name=""Botao"" value=""Incluir"">"
@@ -990,14 +990,14 @@ Sub Contrato
      ShowHTML "<INPUT type=""hidden"" name=""w_cliente"" value=""" & w_cliente & """>"
      ShowHTML "<INPUT type=""hidden"" name=""w_usuario"" value=""" & w_usuario & """>"
      ShowHTML "<INPUT type=""hidden"" name=""w_dt_ini"" value=""" & w_dt_ini & """>"
-     ShowHTML "<tr bgcolor=""" & conTrBgColor & """><td align=""center""><div align=""justify""><font size=2>Para efetivar o encerramento do contrato, informe os dados abaixo e clique no botão <i>Encerrar contrato</i>. ATENÇÃO: a reativação de um contrato só é possível se não houve nenhum outro contrato ativo.</div><hr>"     
+     ShowHTML "<tr bgcolor=""" & conTrBgColor & """><td align=""center""><div align=""justify"">Para efetivar o encerramento do contrato, informe os dados abaixo e clique no botão <i>Encerrar contrato</i>. ATENÇÃO: a reativação de um contrato só é possível se não houve nenhum outro contrato ativo.</div><hr>"     
      ShowHTML "<tr bgcolor=""" & conTrBgColor & """><td>"
      ShowHTML "    <table width=""97%"" border=""0""><tr>"
      ShowHTML "      <tr valign=""top"">" 
-     ShowHTML "        <td><font size=""1""><b><u>F</u>im da vigência:</b><br><input accesskey=""F"" type=""text"" name=""w_dt_fim"" class=""STI"" SIZE=""10"" MAXLENGTH=""10"" VALUE=""" & w_dt_fim & """ onKeyDown=""FormataData(this,event);""></td></tr>"
+     ShowHTML "        <td><b><u>F</u>im da vigência:</b><br><input accesskey=""F"" type=""text"" name=""w_dt_fim"" class=""STI"" SIZE=""10"" MAXLENGTH=""10"" VALUE=""" & w_dt_fim & """ onKeyDown=""FormataData(this,event);""></td></tr>"
      ShowHTML "      <tr valign=""top"">" 
-     ShowHTML "        <td><font size=""1""><font size=""1""><input type=""checkbox"" name=""w_envio_email"" value=""S""><b>Enviar e-mail comunicando o encerramento do contrato.</b></td>"
-     ShowHTML "      <tr valign=""top""><td><font size=""1""><b><U>A</U>ssinatura Eletrônica:<BR> <INPUT ACCESSKEY=""A"" class=""sti"" type=""PASSWORD"" name=""w_assinatura"" size=""30"" maxlength=""30"" value=""""></td></tr>"
+     ShowHTML "        <td><input type=""checkbox"" name=""w_envio_email"" value=""S""><b>Enviar e-mail comunicando o encerramento do contrato.</b></td>"
+     ShowHTML "      <tr valign=""top""><td><b><U>A</U>ssinatura Eletrônica:<BR> <INPUT ACCESSKEY=""A"" class=""sti"" type=""PASSWORD"" name=""w_assinatura"" size=""30"" maxlength=""30"" value=""""></td></tr>"
      ShowHTML "      <tr><td align=""center""><hr>"
      ShowHTML "          <input class=""stb"" type=""submit"" name=""Botao"" value=""Encerrar contrato"">"
      ShowHTML "          <input class=""stb"" type=""button"" onClick=""location.href='" & w_Pagina & par & "&w_usuario=" & w_usuario & "&P1=" & P1 & "&P2=" & P2 & "&P3=" & P3 & "&P4=" & P4 & "&TP=" & TP & "&SG=" & SG & "&O=L';"" name=""Botao"" value=""Cancelar"">"
@@ -1109,27 +1109,27 @@ Public Sub Grava
                   If w_erro > "" Then
                      ShowHTML "<HR>"
                      ShowHTML "<table border=""0"" cellpadding=""0"" cellspacing=""0"" width=""100%"">"
-                     ShowHTML "<tr bgcolor=""" & conTrBgColor & """><td><font size=2>"
-                     ShowHTML "<font color=""#BC3131""><b>ATENÇÃO:</b></font> Foram identificados os erros listados abaixo, não sendo possível a conclusão da operação."
+                     ShowHTML "<tr bgcolor=""" & conTrBgColor & """><td>"
+                     ShowHTML "<font color=""#BC3131""><b>ATENÇÃO:</b> Foram identificados os erros listados abaixo, não sendo possível a conclusão da operação.</font>"
                      ShowHTML "<UL>" & w_erro & "</UL>"
-                     ShowHTML "</font></td></tr></table>"
-                     ShowHTML "<center><B><font size=1>Clique <a class=""HL"" href=""javascript:history.back(1);"">aqui</a> para voltar à tela anterior</font></b></center>"
+                     ShowHTML "</td></tr></table>"
+                     ShowHTML "<center><B>Clique <a class=""HL"" href=""javascript:history.back(1);"">aqui</a> para voltar à tela anterior</b></center>"
                      Rodape
                      Exit Sub
                   End If
                End If 
                DML_PutGPContrato O, _
-                              w_cliente, Request("w_chave"), w_usuario, Request("w_posto_trabalho"), Request("w_modalidade_contrato"), _
-                              Request("w_unidade_lotacao"), Request("w_unidade_exercicio"), Request("w_localizacao"), Request("w_matricula"), _
-                              Request("w_dt_ini"), Request("w_dt_fim"), Request("w_sq_tipo_vinculo")
+                  w_cliente, Request("w_chave"), w_usuario, Request("w_posto_trabalho"), Request("w_modalidade_contrato"), _
+                  Request("w_unidade_lotacao"), Request("w_unidade_exercicio"), Request("w_localizacao"), Request("w_matricula"), _
+                  Request("w_dt_ini"), Request("w_dt_fim"), Request("w_sq_tipo_vinculo")
                
-               If Instr("I",O) > "" Then
+               If Instr("I",O) > 0 Then
                   DB_GetGPModalidade RS, w_cliente, Request("w_modalidade_contrato"), null, null, null, null, null
                   If (Nvl(RS("username"),"") = "S") or (Nvl(RS("username"),"") = "P" and Request("w_username_pessoa") = "S")  Then
                      DB_GetPersonData RS, w_cliente, w_usuario, null, null
                      DML_PutSiwUsuario "I", _
                          w_usuario, w_cliente, RS("nome"), RS("nome_resumido"), _
-                         RS("sq_tipo_vinculo"), "Física", RS("sq_unidade"), RS("sq_localizacao"), _
+                         RS("sq_tipo_vinculo"), "Física", Request("w_unidade_lotacao"), Request("w_localizacao"), _
                          RS("cpf"), RS("email"), null, null
                      DML_PutSiwUsuario "T", _
                          w_usuario, null, null, null, _
@@ -1179,7 +1179,7 @@ Sub Main
        Cabecalho
        ShowHTML "<BASE HREF=""" & conRootSIW & """>"
        BodyOpen "onLoad=document.focus();"
-       ShowHTML "<B><FONT COLOR=""#000000"">" & w_TP & "</FONT></B>"
+       ShowHTML "<B><FONT COLOR=""#000000"">" & w_TP & "</font></B>"
        ShowHTML "<HR>"
        ShowHTML "<div align=center><center><br><br><br><br><br><br><br><br><br><br><img src=""images/icone/underc.gif"" align=""center""> <b>Esta opção está sendo desenvolvida.</b><br><br><br><br><br><br><br><br><br><br></center></div>"
        Rodape

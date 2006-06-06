@@ -652,9 +652,9 @@ Sub DML_PutGPContrato(Operacao, p_cliente, p_chave, p_sq_pessoa, p_sq_posto_trab
      .parameters.Append         l_tipo_vinculo
 
      .CommandText               = Session("schema") & "SP_PutGPContrato"
-     'On Error Resume Next
+     On Error Resume Next
      .Execute
-     If Err.Description > "" Then 
+     If Err.number <> 0 Then 
         TrataErro
      End If
      .parameters.Delete         "l_Operacao"

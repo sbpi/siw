@@ -152,13 +152,13 @@ Sub VisualCurriculo(p_cliente, p_usuario, O)
         'Endereços físicos
         HTML = VbCrLf & HTML &"      <tr><td valign=""top"" colspan=""3""><font size=""1"">&nbsp;</td>"
         DB_GetAddressList RS, p_usuario, null, "FISICO", null
-        RS.Sort = "tipo_endereco, endereco"
+        RS.Sort = "endereco"
         HTML = VbCrLf & HTML &"      <tr><td valign=""top"" colspan=""2"" align=""center"" bgcolor=""#D0D0D0"" style=""border: 2px solid rgb(0,0,0);""><font size=""1""><b>Endereços Físicos</td>"
         If RS.EOF Then
            HTML = VbCrLf & HTML &"      <tr bgcolor=""" & conTrBgColor & """><td valign=""top"" colspan=""2"" align=""center""><font size=""1""><b>Não foi encontrado nenhum endereço.</b></td></tr>"
         Else
            HTML = VbCrLf & HTML &"      <tr><td align=""center"" colspan=""2""><TABLE WIDTH=""100%"" BORDER=""0"" CELLSPACING=""0"" CELLPADDING=""0"">"
-           While Not Rs.EOF
+           While Not RS.EOF
               HTML = VbCrLf & HTML &"          <tr><td colspan=4><font size=""1""><b>" & RS("tipo_endereco") & "</font></td>"
               HTML = VbCrLf & HTML &"          <tr><td width=""5%""><td colspan=3><font size=""1"">Logradouro:<br><b>" & RS("logradouro") & "</font></td></tr>"
               HTML = VbCrLf & HTML &"          <tr valign=""top""><td>"

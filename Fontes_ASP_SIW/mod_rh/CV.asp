@@ -5,6 +5,7 @@
 <!-- #INCLUDE VIRTUAL="/siw/DB_Cliente.asp" -->
 <!-- #INCLUDE VIRTUAL="/siw/DB_Seguranca.asp" -->
 <!-- #INCLUDE VIRTUAL="/siw/DML_Seguranca.asp" -->
+<!-- #INCLUDE VIRTUAL="/siw/DML_Cliente.asp" -->
 <!-- #INCLUDE VIRTUAL="/siw/jScript.asp" -->
 <!-- #INCLUDE VIRTUAL="/siw/Funcoes.asp" -->
 <!-- #INCLUDE VIRTUAL="/siw/cp_upload/_upload.asp" -->
@@ -344,13 +345,12 @@ REM =========================================================================
 REM Rotina dos dados de identificação
 REM -------------------------------------------------------------------------
 Sub Identificacao
-
   Dim w_sq_estado_civil, w_nome, w_nome_resumido, w_nascimento, w_rg_numero, w_rg_emissor, w_rg_emissao, w_cpf
   Dim w_pais, w_uf, w_cidade, w_passaporte_numero, w_sq_pais_passaporte, w_sq_etnia, w_sq_deficiencia
   Dim w_sexo, w_sq_formacao
   Dim w_foto
   Dim w_posto_trabalho, w_modalidade_contrato, w_unidade_lotacao, w_unidade_exercicio, w_localizacao, w_matricula, w_dt_ini, w_envio_email
-  Dim w_sq_contrato_colaborador, w_sq_tipo_vinculo, w_username_pessoa
+  Dim w_sq_contrato_colaborador, w_sq_tipo_vinculo, w_username_pessoa, w_email
   
   Dim i, w_erro, w_como_funciona, w_cor, w_readonly
   
@@ -378,13 +378,18 @@ Sub Identificacao
         End If
      End If
   Else
-     w_chave           = w_usuario
+     If InStr(uCase(Request.ServerVariables("http_content_type")),"MULTIPART/FORM-DATA") > 0 Then 
+        w_chave           = Nvl(ul.Texts.Item("w_chave"),w_usuario)
+     Else
+        w_chave           = Nvl(Request("w_chave"),w_usuario)
+     End If
   End If
   w_readonly        = ""
   w_erro            = ""
 
   ' Verifica se há necessidade de recarregar os dados da tela a partir
   ' da própria tela (se for recarga da tela) ou do banco de dados (se não for inclusão)
+  
   If w_troca > "" Then ' Se for recarga da página
      w_sq_estado_civil      = ul.Texts.Item("w_sq_estado_civil") 
      w_nome                 = ul.Texts.Item("w_nome") 
@@ -415,6 +420,7 @@ Sub Identificacao
         w_envio_email         = ul.Texts.Item("w_envio_email") 
         w_sq_tipo_vinculo     = ul.Texts.Item("w_sq_tipo_vinculo")
         w_username_pessoa     = ul.Texts.Item("w_username_pessoa")
+        w_email               = ul.Texts.Item("w_email")
      End If
   Else
      ' Recupera os dados do currículo a partir da chave
@@ -456,6 +462,7 @@ Sub Identificacao
            w_matricula               = RS("matricula")
            w_dt_ini                  = FormataDataEdicao(RS("inicio"))
            w_sq_tipo_vinculo         = RS("sq_tipo_vinculo")
+           w_email                   = RS("email")
         End If
         RS.Close
      End If
@@ -468,7 +475,7 @@ Sub Identificacao
   Modulo
   FormataData
   FormataCPF
-  ProgressBar w_dir, UploadID  
+  ProgressBar w_dir_volta, UploadID  
   ValidateOpen "Validacao"
   If O = "I" or O = "A" Then
      ShowHTML "  if (theForm.Botao.value == ""Troca"") { return true; }"
@@ -491,7 +498,7 @@ Sub Identificacao
      Validate "w_uf", "Estado nascimento", "SELECT", 1, 1, 3, "1", "1"
      Validate "w_cidade", "Cidade nascimento", "SELECT", 1, 1, 18, "", "0123456789"
      Validate "w_rg_numero", "RG", "1", "1", "5", "18", "1", "1"
-     Validate "w_rg_emissor", "Emissor", "1", "1", "5", "80", "1", "1"
+     Validate "w_rg_emissor", "Emissor", "1", "1", "5", "80", "1", "1"  
      Validate "w_rg_emissao", "Data de emissão", "DATA", "1", "10", "10", "", "0123456789/"
      CompData "w_nascimento", "Data de nascimento", "<", "w_rg_emissao", "Data de emissão"
      Validate "w_cpf", "CPF", "CPF", "1", "14", "14", "", "0123456789.-"
@@ -508,6 +515,12 @@ Sub Identificacao
      ShowHTML "     }"
      ShowHTML "  }"
      If Nvl(P1,0) = 1 and Nvl(w_sq_contrato_colaborador,"") = "" Then
+        If Nvl(w_modalidade_contrato,"") > "" Then
+           DB_GetGPModalidade RS1, w_cliente, w_modalidade_contrato, null, null, null, null, null
+           If RS1("username") = "P" or RS1("username") = "S" Then
+              w_username_pessoa = RS1("username")
+           End If
+        End If
         Validate "w_posto_trabalho", "Cargo", "SELECT", 1, 1, 18, "", "0123456789"
         Validate "w_modalidade_contrato", "Modalidade de contratação", "SELECT", 1, 1, 18, "", "0123456789"
         Validate "w_unidade_lotacao", "Unidade de lotação", "SELECT", 1, 1, 18, "", "0123456789"
@@ -516,6 +529,9 @@ Sub Identificacao
         Validate "w_sq_tipo_vinculo", "Vínculo com a organização", "SELECT", 1, 1, 10, "", "1"
         Validate "w_matricula", "Matrícula", "1", "1", "5", "18", "1", "1"
         Validate "w_dt_ini", "Início da vigência", "DATA", "1", "10", "10", "", "0123456789/"
+        If w_username_pessoa = "S" or w_username_pessoa = "P" Then
+           Validate "w_email", "e-Mail", "1", "1", "5", "60", "1", "1"
+        End If        
      End If
      If Session("p_portal") = "" Then Validate "w_assinatura", "Assinatura eletrônica", "1", "1", "3", "14", "1", "1" End If
      If Nvl(P1,0) = 1 Then
@@ -639,15 +655,8 @@ Sub Identificacao
           ShowHTML "        <td colspan=""3"" valign=""top""><font size=""1""><table border=""0"" width=""100%"" cellpadding=0 cellspacing=0><tr>"       
           SelecaoCargo "<u>C</u>argo:", "C", "Selecione o cargo.", w_posto_trabalho, null, "w_posto_trabalho", null, null
           SelecaoModalidade "M<u>o</u>dalidade de contratação:", "O", null, w_modalidade_contrato, null, "w_modalidade_contrato", null,  "onChange=""document.Form.action='" & w_dir&w_pagina&par&"&SG="&SG&"&O="&O & "'; document.Form.w_troca.value='w_modalidade_contrato'; document.Form.submit();"""
-          If Nvl(w_modalidade_contrato,"") > "" Then
-             DB_GetGPModalidade RS, w_cliente, w_modalidade_contrato, null, null, null, null, null
-             If RS("username") = "P" Then
-                w_username_pessoa = "S"
-             End If
-          End If
           ShowHTML "        </table></td></tr>"
-          ShowHTML "        <tr valign=""top"">" 
-          ShowHTML "        <td colspan=""3"" valign=""top""><font size=""1""><table border=""0"" width=""100%"" cellpadding=0 cellspacing=0><tr>"
+          ShowHTML "        <tr><td colspan=""3"" valign=""top""><font size=""1""><table border=""0"" width=""100%"" cellpadding=0 cellspacing=0><tr>"
           SelecaoUnidade "Unidade de <U>l</U>otação:", "L", null, w_unidade_lotacao, null, "w_unidade_lotacao", null, null
           ShowHTML "        </table></td></tr>"
           ShowHTML "        <tr valign=""top"">" 
@@ -668,9 +677,12 @@ Sub Identificacao
           ShowHTML "        </table></td></tr>"
           ShowHTML "        <tr valign=""top"">" 
           ShowHTML "        <td colspan=""3"" valign=""top""><font size=""1""><font size=""1""><input type=""checkbox"" name=""w_envio_email"" value=""S""><b>Enviar e-mail comunicando a entrada do colaborador.</b>"
-          If w_username_pessoa = "S" Then
+          If w_username_pessoa = "P" Then
              ShowHTML "        <tr valign=""top"">" 
              ShowHTML "        <td colspan=""3"" valign=""top""><font size=""1""><font size=""1""><input type=""checkbox"" name=""w_username_pessoa"" value=""S""><b>Criar username para este colaborador?</b>"
+          End If
+          If w_username_pessoa = "S" or w_username_pessoa = "P" Then
+             ShowHTML "        <tr><td valign=""top"" colspan=""3""><font size=""1""><b><u>e</u>-Mail:</b><br><input " & w_Disabled & " accesskey=""E"" type=""text"" name=""w_email"" class=""sti"" SIZE=""60"" MAXLENGTH=""60"" VALUE=""" & w_email & """></td>"
           End If
        End If
     End If   
@@ -726,6 +738,7 @@ Sub Identificacao
   Set w_envio_email         = Nothing
   Set w_sq_tipo_vinculo     = Nothing
   Set w_username_pessoa     = Nothing
+  Set w_email               = Nothing
   
   Set i                     = Nothing 
   Set w_erro                = Nothing 
@@ -2334,7 +2347,6 @@ Public Sub Grava
        ' Verifica se a Assinatura Eletrônica é válida
        If (VerificaAssinaturaEletronica(Session("Username"),w_assinatura) and w_assinatura > "") or _
           w_assinatura = "" Then
-          
           ' Recupera os dados do currículo a partir da chave
           DB_GetCV_Pessoa RS, w_cliente, ul.Texts.Item("w_cpf")
           If O = "I" and RS.RecordCount > 0 Then
@@ -2369,7 +2381,6 @@ Public Sub Grava
                    Field.SaveAs conFilePhysical & w_cliente & "\" & w_file
                 End If
              Next
-
              DML_PutCVIdent O, _
                  w_cliente, ul.Texts.Item("w_chave"), ul.Texts.Item("w_nome"), ul.Texts.Item("w_nome_resumido"), ul.Texts.Item("w_nascimento"), _
                  ul.Texts.Item("w_sexo"), ul.Texts.Item("w_sq_estado_civil"), ul.Texts.Item("w_sq_formacao"), ul.Texts.Item("w_sq_etnia"), _
@@ -2395,7 +2406,7 @@ Public Sub Grava
                 DML_PutSiwUsuario "I", _
                   ul.Texts.Item("w_chave"), w_cliente, ul.Texts.Item("w_nome"), ul.Texts.Item("w_nome_resumido"), _
                   ul.Texts.Item("w_sq_tipo_vinculo"), "Física", ul.Texts.Item("w_unidade_lotacao"), ul.Texts.Item("w_localizacao"), _
-                  ul.Texts.Item("w_cpf"), null, null, null
+                  ul.Texts.Item("w_cpf"), ul.Texts.Item("w_email"), null, null
                 DML_PutSiwUsuario "T", _
                   ul.Texts.Item("w_chave"), null, null, null, _
                   null, null, null, null, _

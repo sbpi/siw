@@ -793,6 +793,8 @@ Sub DataEspecial
             DB_GetCountryData RS1, RS("sq_pais")
             ShowHTML "        <td align=""left""><font size=""1"">" & RS1("nome") & "</td>"
             RS1.Close
+         ElseIf RS("abrangencia") = "O" Then
+            ShowHTML "        <td align=""left""><font size=""1"">Organização</td>"
          Else
             ShowHTML "        <td align=""left""><font size=""1"">Internacional</td>"
          End If

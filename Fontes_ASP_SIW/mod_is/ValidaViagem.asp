@@ -82,13 +82,6 @@ Function ValidaViagem(p_cliente, p_chave, p_sg1, p_sg2, p_sg3, p_sg4, p_tramite)
         ' Verificações de integridade de dados da solicitação, feitas sempre que houver
         ' um encaminhamento.
         '-----------------------------------------------------------------------------
-
-        ' Verifica se o início da missão atende ao número de dias de antecedência
-        ' regulamentares. Se não atender, deve ser informada justificativa.
-        If (l_rs_solic("inicio") - cDbl(l_rs2("dias_antecedencia")) < Date()) and nvl(l_rs_solic("justificativa"),"") = "" Then
-           l_erro = l_erro & "<li>No encaminhamento da PCD deve ser informada a justificativa para não cumprimento dos " & l_rs2("dias_antecedencia") & " dias de antecedência do pedido."
-           l_tipo = 2
-        End If
            
         ' Verifica se foi indicada a outra parte e se seus dados estão completos
         If l_existe_rs1 = 0 Then 
@@ -114,6 +107,14 @@ Function ValidaViagem(p_cliente, p_chave, p_sg1, p_sg2, p_sg3, p_sg4, p_tramite)
         '   l_tipo = 0
         'End If
         If not l_rs_tramite.eof Then
+              If Nvl(l_rs_tramite("ordem"),"---") > "1" and InStr("CH,DF,EA",Nvl(l_rs_tramite("sigla"),"CH")) > 0 Then
+                 ' Verifica se o início da missão atende ao número de dias de antecedência
+                 ' regulamentares. Se não atender, deve ser informada justificativa.
+                 If (l_rs_solic("inicio") - cDbl(l_rs2("dias_antecedencia")) < Date()) and nvl(l_rs_solic("justificativa"),"") = "" Then
+                    l_erro = l_erro & "<li>No encaminhamento da PCD deve ser informada a justificativa para não cumprimento dos " & l_rs2("dias_antecedencia") & " dias de antecedência do pedido."
+                    l_tipo = 2
+                 End If
+              End If
               If Nvl(l_rs_tramite("ordem"),"---") > "1" Then
                  ' Este bloco faz verificações em solicitações que estão em fases posteriores ao
                  ' cadastramento inicial

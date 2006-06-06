@@ -150,7 +150,6 @@ Sub DB_GetSolicList_IS(p_rs, p_menu, p_pessoa, p_restricao, p_tipo, _
      .CommandText               = Session("schema_is") & "SP_GetSolicList_IS"
      On Error Resume Next
      Set p_rs                   = .Execute
-
      If Err.Description > "" Then 
         TrataErro
      End If

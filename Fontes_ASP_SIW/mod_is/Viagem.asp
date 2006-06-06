@@ -13,6 +13,7 @@
 <!-- #INCLUDE VIRTUAL="/siw/DML_Demanda.asp" -->
 <!-- #INCLUDE VIRTUAL="/siw/mod_pd/Funcoes.asp" -->
 <!-- #INCLUDE VIRTUAL="/siw/mod_pd/DB_Tabelas.asp" -->
+<!-- #INCLUDE VIRTUAL="/siw/mod_pd/DB_Viagem.asp" -->
 <!-- #INCLUDE VIRTUAL="/siw/mod_rh/DB_Tabelas.asp" -->
 <!-- #INCLUDE VIRTUAL="/siw/cp_upload/_upload.asp" -->
 <!-- #INCLUDE FILE="DB_Geral.asp" -->
@@ -57,7 +58,7 @@ Dim P1, P2, P3, P4, TP, SG
 Dim R, O, w_Cont, w_Reg, w_pagina, w_Disabled, w_TP, w_classe, w_submenu, w_filtro, w_copia
 Dim w_Assinatura, w_ano, w_cadgeral
 Dim p_ativo, p_solicitante, p_prioridade, p_unidade, p_proponente, p_ordena
-Dim p_ini_i, p_ini_f, p_fim_i, p_fim_f, p_atraso, p_projeto, p_atividade
+Dim p_ini_i, p_ini_f, p_fim_i, p_fim_f, p_atraso, p_projeto, p_atividade, p_codigo
 Dim p_chave, p_assunto, p_pais, p_uf, p_cidade, p_regiao, p_usu_resp, p_uorg_resp, p_palavra, p_prazo, p_fase, p_sqcc
 Dim w_troca,w_cor, w_filter, w_cliente, w_usuario, w_menu, w_dir, w_dir_volta, UploadID
 Dim w_sq_pessoa
@@ -117,6 +118,7 @@ If InStr(uCase(Request.ServerVariables("http_content_type")),"MULTIPART/FORM-DAT
    p_fim_i          = uCase(ul.Texts.Item("p_fim_i"))  
    p_fim_f          = uCase(ul.Texts.Item("p_fim_f"))  
    p_atraso         = uCase(ul.Texts.Item("p_atraso"))  
+   p_codigo         = uCase(ul.Texts.Item("p_codigo"))
    p_chave          = uCase(ul.Texts.Item("p_chave"))  
    p_assunto        = uCase(ul.Texts.Item("p_assunto"))  
    p_pais           = uCase(ul.Texts.Item("p_pais"))  
@@ -152,7 +154,8 @@ Else
    p_ini_f          = uCase(Request("p_ini_f"))  
    p_fim_i          = uCase(Request("p_fim_i"))  
    p_fim_f          = uCase(Request("p_fim_f"))  
-   p_atraso         = uCase(Request("p_atraso"))  
+   p_atraso         = uCase(Request("p_atraso"))
+   p_codigo         = uCase(Request("p_codigo"))    
    p_chave          = uCase(Request("p_chave"))  
    p_assunto        = uCase(Request("p_assunto"))  
    p_pais           = uCase(Request("p_pais"))  
@@ -244,6 +247,7 @@ Set p_ini_f       = Nothing
 Set p_fim_i       = Nothing
 Set p_fim_f       = Nothing
 Set p_atraso      = Nothing
+Set p_codigo      = Nothing
 Set p_unidade     = Nothing
 Set p_prioridade  = Nothing
 Set p_solicitante = Nothing
@@ -309,9 +313,9 @@ Sub Inicial
         End If
         If p_atividade > ""  Then 
            DB_GetSolicData_IS RS, p_atividade, "ISTAGERAL"
-              w_filtro = w_filtro & "<tr valign=""top""><td align=""right""><font size=1>Tarefa <td><font size=1>[<b><A class=""HL"" HREF=""" & w_dir & "Tarefa.asp?par=Visual&O=L&w_chave=" & p_atividade & "&w_tipo=Volta&P1=" & P1 & "&P2=" & P2 & "&P3=" & P3 & "&P4=" & P4 & "&TP=" & TP & "&SG=" & SG & """ title=""Exibe as informações da tarefa."">" & RS("titulo") &"("& RS("chave") & ")</a></b>]"
+              w_filtro = w_filtro & "<tr valign=""top""><td align=""right""><font size=1>Tarefa <td><font size=1>[<b><A class=""HL"" HREF=""" & w_dir & "Tarefa.asp?par=Visual&O=L&w_chave=" & p_atividade & "&w_tipo=Volta&P1=" & P1 & "&P2=" & P2 & "&P3=" & P3 & "&P4=" & P4 & "&TP=" & TP & "&SG=" & SG & """ title=""Exibe as informações da tarefa."">" & RS("assunto") &"("& RS("sq_siw_solicitacao") & ")</a></b>]"
         End If                
-        If p_atraso      > ""  Then w_filtro = w_filtro & "<tr valign=""top""><td align=""right""><font size=1>PCD nº <td><font size=1>[<b>" & p_atraso & "</b>]"       End If
+        If p_codigo      > ""  Then w_filtro = w_filtro & "<tr valign=""top""><td align=""right""><font size=1>PCD nº <td><font size=1>[<b>" & p_codigo & "</b>]"       End If
         If p_assunto     > ""  Then w_filtro = w_filtro & "<tr valign=""top""><td align=""right""><font size=1>Descrição <td><font size=1>[<b>" & p_assunto & "</b>]"   End If
         If p_solicitante > ""  Then
            DB_GetPersonData RS, w_cliente, p_solicitante, null, null
@@ -344,7 +348,7 @@ Sub Inicial
            w_filtro = w_filtro & "<tr valign=""top""><td align=""right""><font size=1>Cidade <td><font size=1>[<b>" & RS("nome") & "</b>]"
         End If
         If p_usu_resp > ""  Then
-           DB_GetCiaTrans RS, cliente, p_usu_resp, null, null, null, null, null, null, null, null
+           DB_GetCiaTrans RS, w_cliente, p_usu_resp, null, null, null, null, null, null, null, null
            w_filtro = w_filtro & "<tr valign=""top""><td align=""right""><font size=1>Companhia de viagem<td><font size=1>[<b>" & RS("nome") & "</b>]"
         End If        
         If p_ativo > ""  Then
@@ -359,26 +363,39 @@ Sub Inicial
            w_filtro = w_filtro & "</b>]"
         End If                
         If p_ini_i       > ""  Then 
-           w_filtro = w_filtro & "<tr valign=""top""><td align=""right""><font size=1>Primeira saída e último retorno <td><font size=1>[<b>" & p_ini_i & "-" & p_ini_f & "</b>]"
+           w_filtro = w_filtro & "<tr valign=""top""><td align=""right""><font size=1>Mês <td><font size=1>[<b>" & p_ini_i & "</b>]"
         End If
+        If p_atraso      = "S" Then w_filtro = w_filtro & "<tr valign=""top""><td align=""right""><font size=1>Situação <td><font size=1>[<b>Apenas atrasadas</b>]"                            End If        
         If w_filtro > "" Then w_filtro = "<table border=0><tr valign=""top""><td><font size=1><b>Filtro:</b><td nowrap><font size=1><ul>" & w_filtro & "</ul></tr></table>"                    End If
      End If
-
      DB_GetLinkData RS, w_cliente, SG
      If w_copia > "" Then ' Se for cópia, aplica o filtro sobre todas as PCDs visíveis pelo usuário
         DB_GetSolicList rs, RS("sq_menu"), w_usuario, SG, 3, _
            p_ini_i, p_ini_f, p_fim_i, p_fim_f, p_atraso, p_solicitante, _
            p_unidade, p_prioridade, p_ativo, p_proponente, _
            p_chave, p_assunto, p_pais, p_regiao, p_uf, p_cidade, p_usu_resp, _
-           p_uorg_resp, p_palavra, p_prazo, p_fase, p_sqcc, p_projeto, p_atividade, null, null
+           p_uorg_resp, p_palavra, p_prazo, p_fase, p_sqcc, p_projeto, p_atividade, p_codigo, Nvl(Request("p_sq_prop"),"")
      Else
-        DB_GetSolicList rs, RS("sq_menu"), w_usuario, SG, P1, _
-           p_ini_i, p_ini_f, p_fim_i, p_fim_f, p_atraso, p_solicitante, _
-           p_unidade, p_prioridade, p_ativo, p_proponente, _
-           p_chave, p_assunto, p_pais, p_regiao, p_uf, p_cidade, p_usu_resp, _
-           p_uorg_resp, p_palavra, p_prazo, p_fase, p_sqcc, p_projeto, p_atividade, null, null
+        If Nvl(Request("p_agrega"),"") = "GRPDACAO" Then
+           DB_GetSolicList_IS RS, RS("sq_menu"), w_usuario, Nvl(Request("p_agrega"),SG), P1, _
+             p_ini_i, p_ini_f, null, null, p_atraso, p_solicitante, _
+             p_unidade, null,  p_ativo, p_proponente, p_chave, p_assunto, _
+             p_pais, p_regiao, p_uf, p_cidade, p_usu_resp, p_uorg_resp, p_palavra, _
+             p_prazo, p_fase, p_projeto, p_atividade, null, p_codigo, null, null, w_ano
+        ElseIf Nvl(Request("p_agrega"),"") = "GRPDCIAVIAGEM" or Nvl(Request("p_agrega"),"") = "GRPDCIDADE" or Nvl(Request("p_agrega"),"") = "GRPDDATA" Then
+           DB_GetSolicViagem rs, RS("sq_menu"), w_usuario, Nvl(Request("p_agrega"),SG), 3, _
+             p_ini_i, p_ini_f, p_fim_i, p_fim_f, p_atraso, p_solicitante, _
+             p_unidade, p_prioridade, p_ativo, p_proponente, _
+             p_chave, p_assunto, p_pais, p_regiao, p_uf, p_cidade, p_usu_resp, _
+             p_uorg_resp, p_palavra, p_prazo, p_fase, p_sqcc, p_projeto, p_atividade, p_codigo, Nvl(Request("p_sq_prop"),"")
+        Else
+           DB_GetSolicList rs, RS("sq_menu"), w_usuario, Nvl(Request("p_agrega"),SG), P1, _
+              p_ini_i, p_ini_f, p_fim_i, p_fim_f, p_atraso, p_solicitante, _
+              p_unidade, p_prioridade, p_ativo, p_proponente, _
+              p_chave, p_assunto, p_pais, p_regiao, p_uf, p_cidade, p_usu_resp, _
+              p_uorg_resp, p_palavra, p_prazo, p_fase, p_sqcc, p_projeto, p_atividade, p_codigo, Nvl(Request("p_sq_prop"),"")
+       End If
      End If
-
      If p_ordena > "" Then RS.sort = p_ordena Else RS.sort = "ordem, fim, prioridade" End If
   End If
   
@@ -394,7 +411,7 @@ Sub Inicial
   ValidateOpen "Validacao"
   If Instr("CP",O) > 0 Then
      If P1 <> 1 or O = "C" Then ' Se não for cadastramento ou se for cópia        
-        Validate "p_atraso", "Número da PCD", "", "", "2", "60", "1", "1"
+        Validate "p_codigo", "Número da PCD", "", "", "2", "60", "1", "1"
         Validate "p_assunto", "Assunto", "", "", "2", "90", "1", "1"
         Validate "p_proponente", "Proposto", "", "", "2", "60", "1", ""
         Validate "p_palavra", "CPF", "CPF", "", "14", "14", "", "0123456789-."
@@ -405,7 +422,7 @@ Sub Inicial
         ShowHTML "     theForm.p_ini_i.focus();"
         ShowHTML "     return false;"
         ShowHTML "  }"
-        CompData "p_ini_i", "Recebimento inicial", "<=", "p_ini_f", "Recebimento final"
+        CompData "p_ini_i", "Primeira saída", "<=", "p_ini_f", "Último retorno"
      End If
      Validate "P4", "Linhas por página", "1", "1", "1", "4", "", "0123456789"
   End If
@@ -629,7 +646,7 @@ Sub Inicial
     ShowHTML "      <tr><td valign=""top"" colspan=""2""><table border=0 width=""100%"" cellspacing=0>"
     If P1 <> 1 or O = "C" Then ' Se não for cadastramento ou se for cópia
        ShowHTML "   <tr valign=""top"">"
-       ShowHTML "     <td valign=""top""><font size=""1""><b>Número da P<U>C</U>D:<br><INPUT ACCESSKEY=""C"" " & w_Disabled & " class=""STI"" type=""text"" name=""p_atraso"" size=""20"" maxlength=""60"" value=""" & p_atraso & """></td>"
+       ShowHTML "     <td valign=""top""><font size=""1""><b>Número da P<U>C</U>D:<br><INPUT ACCESSKEY=""C"" " & w_Disabled & " class=""STI"" type=""text"" name=""p_codigo"" size=""20"" maxlength=""60"" value=""" & p_codigo & """></td>"
        ShowHTML "     <td valign=""top""><font size=""1""><b><U>D</U>escrição:<br><INPUT ACCESSKEY=""D"" " & w_Disabled & " class=""STI"" type=""text"" name=""p_assunto"" size=""25"" maxlength=""90"" value=""" & p_assunto & """></td>"       
        ShowHTML "   <tr valign=""top"">"
        SelecaoPessoa "Respo<u>n</u>sável:", "N", "Selecione o responsável pela PCD na relação.", p_solicitante, null, "p_solicitante", "USUARIOS"
@@ -2321,7 +2338,7 @@ Sub DadosFinanceiros
      While Not i = j
        ShowHTML "<INPUT type=""hidden"" name=""w_sq_diaria"" value=""" & w_vetor_trechos(i,1) & """>"
        ShowHTML "<INPUT type=""hidden"" name=""w_sq_cidade"" value=""" & w_vetor_trechos(i,2) &""">"
-       ShowHTML "<INPUT type=""hidden"" name=""w_maximo_diarias"" value=""" & DateDiff("d",FormatDateTime(w_vetor_trechos(i,9),2),FormatDateTime(Nvl(w_vetor_trechos(i+1,8),w_vetor_trechos(i,9)),2))  &""">"
+       ShowHTML "<INPUT type=""hidden"" name=""w_maximo_diarias"" value=""" & (cInt(DateDiff("d",FormatDateTime(w_vetor_trechos(i,9),2),FormatDateTime(Nvl(w_vetor_trechos(i+1,8),w_vetor_trechos(i,9)),2))) + cInt(1)) &""">"
        If w_cor = conTrBgColor or w_cor = "" Then w_cor = conTrAlternateBgColor Else w_cor = conTrBgColor End If
        ShowHTML "     <tr valign=""top"" bgcolor=""" & w_cor & """>"
        ShowHTML "       <td><font size=""1"">" & w_vetor_trechos(i,3) & "</td>"
@@ -2347,45 +2364,6 @@ Sub DadosFinanceiros
      ShowHTML "        </tr>"  
      ShowHTML "        </table></td></tr>"
   End If
-'  If Not Rs.EOF Then
-'     ShowHTML "     <tr><td align=""center"" colspan=""2"">"
-'     ShowHTML "       <TABLE WIDTH=""100%"" bgcolor=""" & conTableBgColor & """ BORDER=""" & conTableBorder & """ CELLSPACING=""" & conTableCellSpacing & """ CELLPADDING=""" & conTableCellPadding & """ BorderColorDark=""" & conTableBorderColorDark & """ BorderColorLight=""" & conTableBorderColorLight & """>"
-'     ShowHTML "         <tr bgcolor=""" & conTrBgColor & """ align=""center"">"
-'     ShowHTML "         <td><font size=""1""><b>Destino</font></td>"
-'     ShowHTML "         <td><font size=""1""><b>Saida</font></td>"
-'     ShowHTML "         <td><font size=""1""><b>Chegada</font></td>"
-'     ShowHTML "         <td><font size=""1""><b>Quantidade de diárias</font></td>"
-'     ShowHTML "         <td><font size=""1""><b>Valor unitário R$</font></td>"
-'     ShowHTML "         </tr>"
-'     w_cor = conTrBgColor
-'     While Not Rs.EOF
-'       ShowHTML "<INPUT type=""hidden"" name=""w_sq_diaria"" value=""" & RS("sq_diaria") &""">"
-'       ShowHTML "<INPUT type=""hidden"" name=""w_sq_cidade"" value=""" & RS("cidade_dest") &""">"
-'       If w_cor = conTrBgColor or w_cor = "" Then w_cor = conTrAlternateBgColor Else w_cor = conTrBgColor End If
-'       ShowHTML "     <tr valign=""top"" bgcolor=""" & w_cor & """>"
-'       ShowHTML "       <td><font size=""1"">" & RS("nm_destino") & "</td>"
-'       ShowHTML "       <td align=""center""><font size=""1"">" & FormataDataEdicao(FormatDateTime(RS("saida"),2)) & ", " &  Mid(FormatDateTime(RS("saida"),3),1,5) & "</td>"
-'       ShowHTML "       <td align=""center""><font size=""1"">" & FormataDataEdicao(FormatDateTime(RS("chegada"),2)) & ", " &  Mid(FormatDateTime(RS("chegada"),3),1,5) & "</td>"
-'       ShowHTML "       <td align=""right""><font size=""1""><input type=""text"" name=""w_qtd_diarias"" class=""sti"" SIZE=""10"" MAXLENGTH=""5"" VALUE=""" & FormatNumber(Nvl(RS("quantidade"),0),1) & """ onKeyDown=""FormataValor(this,5,1,event);"" title=""Informe a quantidade de diárias para este destino.""></td>"
-'       ShowHTML "       <td align=""right""><font size=""1""><input type=""text"" name=""w_vlr_diarias"" class=""sti"" SIZE=""10"" MAXLENGTH=""18"" VALUE=""" & FormatNumber(Nvl(RS("valor"),0),2) & """ onKeyDown=""FormataValor(this,18,2,event);"" title=""Informe o valor unitário das diárias para este destino.""></td>"    
-'       ShowHTML "     </tr>"
-'       Rs.MoveNext
-'     wend
-'     ShowHTML "        <tr><td valign=""top"" colspan=""5"" align=""center"" bgcolor=""" & conTrBgColor & """><font size=""1""><b>Outros valores</td>"  
-'     ShowHTML "        <tr bgcolor=""" & conTrAlternateBgColor & """>"
-'     ShowHTML "          <td align=""right"" colspan=""4""><font size=""1""><b>adicional:</b></td>"
-'     ShowHTML "          <td align=""right""><font size=""1""><input type=""text"" name=""w_adicional"" class=""sti"" SIZE=""10"" MAXLENGTH=""18"" VALUE=""" & w_adicional & """ onKeyDown=""FormataValor(this,18,2,event);"" title=""Informe o valor adicional.""></td>"
-'     ShowHTML "        </tr>" 
-'     ShowHTML "        <tr bgcolor=""" & conTrBgColor & """>"
-'     ShowHTML "          <td align=""right"" colspan=""4""><font size=""1""><b>desconto auxílio-alimentação:</b></td>"
-'     ShowHTML "          <td align=""right""><font size=""1""><input type=""text"" name=""w_desc_alimentacao"" class=""sti"" SIZE=""10"" MAXLENGTH=""18"" VALUE=""" & w_desc_alimentacao & """ onKeyDown=""FormataValor(this,18,2,event);"" title=""Informe o desconto do auxílio-alimentação.""></td>"
-'     ShowHTML "        </tr>"
-'     ShowHTML "        <tr bgcolor=""" & conTrAlternateBgColor & """>"
-'     ShowHTML "          <td align=""right"" colspan=""4""><font size=""1""><b>desconto auxílio-transporte:</b></td>"
-'     ShowHTML "          <td align=""right""><font size=""1""><input type=""text"" name=""w_desc_transporte"" class=""sti"" SIZE=""10"" MAXLENGTH=""18"" VALUE=""" & w_desc_transporte & """ onKeyDown=""FormataValor(this,18,2,event);"" title=""Informe o desconto do auxílio-transporte.""></td>"
-'     ShowHTML "        </tr>"  
-'     ShowHTML "        </table></td></tr>"
-'  End If
   ShowHTML "        <tr><td align=""center"" colspan=""2"">"
   ShowHTML "            <input class=""STB"" type=""submit"" name=""Botao"" value=""Gravar"">"
   ShowHTML "            <input class=""STB"" type=""button"" onClick=""window.close();"" name=""Botao"" value=""Fechar"">"
@@ -2578,14 +2556,16 @@ Sub Encaminhamento
   w_tipo            = Nvl(Request("w_tipo"),"")
   
   If w_troca > "" Then ' Se for recarga da página
-     w_tramite      = Request("w_tramite")
-     w_destinatario = Request("w_destinatario")
-     w_envio        = Request("w_envio")
-     w_despacho     = Request("w_despacho")
+     w_tramite       = Request("w_tramite")
+     w_destinatario  = Request("w_destinatario")
+     w_envio         = Request("w_envio")
+     w_despacho      = Request("w_despacho")
+     w_justificativa = Request("w_justificativa")
   Else
      DB_GetSolicData RS, w_chave, SG
-     w_inicio       = RS("inicio")
-     w_tramite      = RS("sq_siw_tramite")
+     w_inicio        = RS("inicio")
+     w_tramite       = RS("sq_siw_tramite")
+     w_justificativa = RS("justificativa")
      DesconectaBD
 
      ' Recupera os parâmetros do módulo de viagem
@@ -2627,6 +2607,16 @@ Sub Encaminhamento
            ShowHTML "     theForm.w_despacho.focus();"
            ShowHTML "     return false;"
            ShowHTML "  }"
+           If Nvl(Mid(w_erro,1,1),"") = "1" or Nvl(Mid(w_erro,1,1),"") = "2" Then
+              If (w_inicio - w_prazo) < Date() Then
+                Validate "w_justificativa", "Justificativa", "", "", "1", "2000", "1", "1"
+                ShowHTML "if (theForm.w_envio[0].checked && theForm.w_justificativa.value == '') {"
+                ShowHTML "     alert('Informe uma justificativa para o não cumprimento do prazo regulamentar!');"
+                ShowHTML "     theForm.w_justificativa.focus();"
+                ShowHTML "     return false;"
+                ShowHTML "}"
+             End If
+           End If           
         End If
      End If
      Validate "w_assinatura", "Assinatura Eletrônica", "1", "1", "6", "30", "1", "1"
@@ -2684,6 +2674,13 @@ Sub Encaminhamento
            End If
         End If
         ShowHTML "    <tr><td><font size=""1""><b>D<u>e</u>spacho (informar apenas se for devolução à fase anterior):</b><br><textarea " & w_Disabled & " accesskey=""E"" name=""w_despacho"" class=""STI"" ROWS=5 cols=75 title=""Informe o que o destinatário deve fazer quando receber a PCD."">" & w_despacho & "</TEXTAREA></td>"
+        If Not (Nvl(Mid(w_erro,1,1),"") = "0" or w_sg_tramite = "EE") Then
+           If Nvl(Mid(w_erro,1,1),"") = "1" or Nvl(Mid(w_erro,1,1),"") = "2" Then
+              If (w_inicio - w_prazo) < Date() Then
+                 ShowHTML "    <tr><td><b><u>J</u>ustificativa para não cumprimento do prazo regulamentar de " & w_prazo & " dias:</b><br><textarea " & w_Disabled & " accesskey=""J"" name=""w_justificativa"" class=""STI"" ROWS=5 cols=75 title=""Se o início da viagem for anterior a " & FormataDataEdicao(FormatDateTime(Date()+w_prazo,2)) & ", justifique o motivo do não cumprimento do prazo regulamentar para o pedido."">" & w_justificativa & "</TEXTAREA></td>"
+              End If
+           End If
+        End If
      End If
      ShowHTML "      </table>"
      ShowHTML "      <tr><td align=""LEFT"" colspan=4><font size=""1""><b><U>A</U>ssinatura Eletrônica:<BR> <INPUT ACCESSKEY=""A"" class=""STI"" type=""PASSWORD"" name=""w_assinatura"" size=""30"" maxlength=""30"" value=""""></td></tr>"
