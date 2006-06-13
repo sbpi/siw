@@ -396,7 +396,7 @@ Sub DML_SiwMenu(Operacao, Chave, sq_menu_pai, link, p1, p2, p3, p4, sigla, image
   with sp
      set l_Operacao             = .CreateParameter("l_operacao",        adVarchar, adParamInput,   1, Operacao)
      set l_chave                = .CreateParameter("l_chave",           adInteger, adParamInput,    , Tvl(chave))
-     set l_cliente              = .CreateParameter("l_cliente",         adInteger, adParamInput,    , Tvl(cliente))
+     set l_cliente              = .CreateParameter("l_cliente",         adInteger, adParamInput,    , cliente)
      set l_nome                 = .CreateParameter("l_nome",            adVarChar, adParamInput,  40, nome)
      set l_sq_menu_pai          = .CreateParameter("l_sq_menu_pai",     adInteger, adParamInput,    , Tvl(sq_menu_pai))
      set l_link                 = .CreateParameter("l_link",            adVarchar, adParamInput,  60, Tvl(link))
@@ -418,7 +418,6 @@ Sub DML_SiwMenu(Operacao, Chave, sq_menu_pai, link, p1, p2, p3, p4, sigla, image
      set l_descricao            = .CreateParameter("l_descricao",       adVarchar, adParamInput,   1, Tvl(descricao))
      set l_justificativa        = .CreateParameter("l_justificativa",   adVarchar, adParamInput,   1, Tvl(justificativa))
      set l_finalidade           = .CreateParameter("l_finalidade",      adVarchar, adParamInput, 200, Tvl(finalidade))
-     set l_cliente              = .CreateParameter("l_cliente",         adInteger, adParamInput,    , cliente)
      set l_acesso_geral         = .CreateParameter("l_acesso_geral",    adVarchar, adParamInput,   1, acesso_geral)
      set l_sq_modulo            = .CreateParameter("l_sq_modulo",       adInteger, adParamInput,    , sq_modulo)
      set l_sq_unidade_exec      = .CreateParameter("l_sq_unidade_exec", adInteger, adParamInput,    , Tvl(sq_unidade_exec))

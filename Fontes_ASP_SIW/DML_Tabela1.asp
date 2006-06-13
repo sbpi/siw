@@ -81,7 +81,6 @@ Sub DML_SIWCliConf(Chave, tamanho_minimo_senha, tamanho_maximo_senha, maximo_ten
      set l_maximo_tentativas    = .CreateParameter("l_maximo_tentativas",   adInteger, adParamInput,    , Tvl(maximo_tentativas))
      set l_dias_vigencia_senha  = .CreateParameter("l_dias_vigencia_senha", adInteger, adParamInput,    , Tvl(dias_vigencia_senha))
      set l_dias_aviso_expiracao = .CreateParameter("l_dias_aviso_expiracao",adInteger, adParamInput,    , Tvl(dias_aviso_expiracao))
-     set l_dias_aviso_expiracao = .CreateParameter("l_dias_aviso_expiracao",adInteger, adParamInput,    , Tvl(dias_aviso_expiracao))
      set l_smtp_server          = .CreateParameter("smtp_server",           adVarChar, adParamInput,  60, Tvl(smtp_server))
      set l_siw_email_nome       = .CreateParameter("siw_email_nome",        adVarChar, adParamInput,  60, Tvl(siw_email_nome))
      set l_siw_email_conta      = .CreateParameter("siw_email_conta",       adVarChar, adParamInput,  60, Tvl(siw_email_conta))

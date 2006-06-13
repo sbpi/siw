@@ -106,7 +106,7 @@ Sub VisualCliente(w_sq_cliente, O)
           ShowHTML "              <td valign=""top""><font size=""2"">CEP:<br><b>" & Nvl(RS("cep"),"---") & " </b></td>"
           ShowHTML "              </table>"
           ShowHTML "          <tr><td valign=""top""><table border=0 width=""100%"" cellspacing=0>"
-          ShowHTML "              <td valign=""top""><font size=""2"">País:<br><b>" & RS("pais") & " </b></td>"
+          ShowHTML "              <td valign=""top""><font size=""2"">País:<br><b>" & RS("nm_pais") & " </b></td>"
           ShowHTML "              <td><font size=""2"">Padrão?<br><b>" & Replace(Replace(RS("padrao"),"S","Sim"),"N","Não") & "</font></td>"
           ShowHTML "              </table>"
           ShowHTML "          </table></td></tr>"

@@ -209,7 +209,7 @@ Sub Unidade
                w_ContOut = w_ContOut + 1
                ShowHTML "   <li id=""Xnode"" class=""Xnode""><span onClick=""xSwapImg(document.getElementById('Ximg" & w_contImg & "'),'" & w_imagem & "','" & w_imagem & "');xMenuShowHide(document.getElementById('Xtree" & w_contOut & "'));""><img id=""Ximg" & w_contImg & """ src=""" & w_imagem & """ border=""0"">&nbsp;" & RS1("NOME") & "</span> "
                If w_libera_edicao = "S" Then
-                  ShowHTML " <A class=""Xlink"" HREF=""" & w_Pagina & par & "&R=" & w_Pagina & par & "&O=A&w_sq_unidade=" & RS1("sq_unidade") & "&P1=" & P1 & "&P2=" & P2 & "&P3=" & P3 & "&P4=" & P4 & "&TP=" & TP & " - Localização&SG=" & SG & """>Alterar</A>&nbsp"
+                  ShowHTML " <A class=""Xlink"" HREF=""" & w_Pagina & par & "&R=" & w_Pagina & par & "&O=A&w_sq_unidade=" & RS1("sq_unidade") & "&P1=" & P1 & "&P2=" & P2 & "&P3=" & P3 & "&P4=" & P4 & "&TP=" & TP & "&SG=" & SG & """>Alterar</A>&nbsp"
                   ShowHTML " <A class=""Xlink"" HREF=""" & w_Pagina & par & "&R=" & w_Pagina & par & "&O=E&w_sq_unidade=" & RS1("sq_unidade") & "&P1=" & P1 & "&P2=" & P2 & "&P3=" & P3 & "&P4=" & P4 & "&TP=" & TP & "&SG=" & SG & """>Excluir</A>&nbsp"
                End If
                ShowHTML "<a class=""Xlink"" href=""#"" onclick=""window.open('" & w_pagina & "Localizacao&P1=" & P1 &"&P2=" & P2 &"&P3=" & P3 &"&P4=" & P4 &"&TP=" & TP &" - Localização&O=L&SG=LUORG&w_sq_unidade=" & RS1("sq_unidade") & "','Local','toolbar=no,width=780,height=350,top=30,left=10,scrollbars=yes,resizable=yes')"">Locais</a>&nbsp"
@@ -441,7 +441,7 @@ Sub Unidade
       Else
          ShowHTML "            <input class=""stb"" type=""submit"" name=""Botao"" value=""Gravar"">"
       End If
-      ShowHTML "            <input class=""stb"" type=""button"" onClick=""location.href='" & w_Pagina & par & "&P1=" & P1 & "&P2=" & P2 & "&P3=" & P3 & "&P4=" & P4 & "&TP=" & RemoveTP(TP) & "&SG=" & SG & "';"" name=""Botao"" value=""Cancelar"">"
+      ShowHTML "            <input class=""stb"" type=""button"" onClick=""location.href='" & w_Pagina & par & "&P1=" & P1 & "&P2=" & P2 & "&P3=" & P3 & "&P4=" & P4 & "&TP=" & TP & "&SG=" & SG & "';"" name=""Botao"" value=""Cancelar"">"
       ShowHTML "          </td>"
       ShowHTML "      </tr>"
       ShowHTML "    </table>"
@@ -628,7 +628,7 @@ Sub Localizacao
     Else
        ShowHTML "            <input class=""stb"" type=""submit"" name=""Botao"" value=""Gravar"">"
     End If
-    ShowHTML "            <input class=""stb"" type=""button"" onClick=""location.href='" & w_Pagina & par & "&P1=" & P1 & "&P2=" & P2 & "&P3=" & P3 & "&P4=" & P4 & "&TP=" & RemoveTP(TP) & "&SG=" & SG & "&w_sq_unidade=" & w_sq_unidade & "';"" name=""Botao"" value=""Cancelar"">"
+    ShowHTML "            <input class=""stb"" type=""button"" onClick=""location.href='" & w_Pagina & par & "&P1=" & P1 & "&P2=" & P2 & "&P3=" & P3 & "&P4=" & P4 & "&TP=" & TP & "&SG=" & SG & "&w_sq_unidade=" & w_sq_unidade & "';"" name=""Botao"" value=""Cancelar"">"
     ShowHTML "            <input class=""stb"" type=""button"" onClick=""opener.focus(); window.close();"" name=""Botao"" value=""Fechar"">"
     ShowHTML "          </td>"
     ShowHTML "      </tr>"
@@ -689,7 +689,7 @@ Sub Responsavel
       If RS("inicio_substituto") > "" Then w_inicio_substituto    = FormatDateTime(RS("inicio_substituto")) End If
       DesconectaBD   
   ElseIf O = "I" Then
-     w_inicio_titular = FormatDateTime(Date())  
+     w_inicio_titular = FormatDateTime(Date())
   End If
   
   Cabecalho
@@ -817,7 +817,7 @@ Sub Responsavel
     Else
        ShowHTML "            <input class=""stb"" type=""submit"" name=""Botao"" value=""Gravar"">"
     End If
-    ShowHTML "            <input class=""stb"" type=""button"" onClick=""location.href='" & w_Pagina & par & "&P1=" & P1 & "&P2=" & P2 & "&P3=" & P3 & "&P4=" & P4 & "&TP=" & RemoveTP(TP) & "&SG=" & SG & "&w_sq_unidade=" & w_sq_unidade & "';"" name=""Botao"" value=""Cancelar"">"
+    ShowHTML "            <input class=""stb"" type=""button"" onClick=""location.href='" & w_Pagina & par & "&P1=" & P1 & "&P2=" & P2 & "&P3=" & P3 & "&P4=" & P4 & "&TP=" & TP & "&SG=" & SG & "&w_sq_unidade=" & w_sq_unidade & "';"" name=""Botao"" value=""Cancelar"">"
     ShowHTML "            <input class=""stb"" type=""button"" onClick=""opener.focus(); window.close();"" name=""Botao"" value=""Fechar"">"
     ShowHTML "          </td>"
     ShowHTML "      </tr>"

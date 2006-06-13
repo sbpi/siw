@@ -2118,9 +2118,9 @@ Function EnviaMailSender(w_subject, w_mensagem, w_recipients, w_from, w_from_nam
   JMail.Send Session("smtp_server")
 
   If JMail.ErrorCode > 0 Then
-    EnviaMail = Replace("Erro: " & JMail.ErrorCode & "\nMensagem: " & JMail.ErrorMessage & "\nFonte: " & JMail.ErrorSource,VbCrLf,"\n")
+    EnviaMailSender = Replace("Erro: " & JMail.ErrorCode & "\nMensagem: " & JMail.ErrorMessage & "\nFonte: " & JMail.ErrorSource,VbCrLf,"\n")
   Else
-    EnviaMail = ""
+    EnviaMailSender = ""
   End If
   
 End Function
@@ -2169,7 +2169,7 @@ REM Rotina de tratamento de erros
 REM -------------------------------------------------------------------------
 Sub TrataErro
   Dim w_resultado
-  
+
   If instr(Err.description,"ORA-02292") > 0 Then ' REGISTRO TEM FILHOS
     ScriptOpen "JavaScript"
     ShowHTML " alert('Existem registros vinculados ao que você está excluindo. Exclua-os primeiro.\n\n" & Mid(Err.Description,1,Instr(Err.Description,Chr(10))-1) & "');"
@@ -2253,18 +2253,17 @@ Sub TrataErro
     w_html = w_html & "</DT>"
     w_html = w_html & "   <br><br></font>"
     w_html = w_html & "</FONT></TD></TR></TABLE><BLOCKQUOTE>"
-    If Session("dbms") = 1 Then
-       w_resultado = EnviaMail("ERRO SIW", w_html, "alex@sbpi.com.br; celso@sbpi.com.br")
-       If w_resultado > "" Then
-          w_html = w_html & "<SCRIPTOPEN ""JAVASCRIPT"">"
-          w_html = w_html & "   alert('Não foi possível enviar o e-mail comunicando sobre o erro. Favor copiar esta página e enviá-la por e-mail aos gestores do sistema.');"
-          w_html = w_html & "<SCRIPTCLOSE>"
-       End If
+
+    w_resultado = EnviaMail("ERRO SIW", w_html, "alex@sbpi.com.br; celso@sbpi.com.br", null)
+    If w_resultado > "" Then
+       w_html = w_html & "<SCRIPTOPEN ""JAVASCRIPT"">"
+       w_html = w_html & "   alert('Não foi possível enviar o e-mail comunicando sobre o erro. Favor copiar esta página e enviá-la por e-mail aos gestores do sistema.');"
+       w_html = w_html & "<SCRIPTCLOSE>"
     End If
     w_html = w_html & "</body></html>"
     ShowHTML w_HTML
-    Err.clear
   end if
+  Err.Clear
   Response.End()
   
   Set w_resultado = Nothing
