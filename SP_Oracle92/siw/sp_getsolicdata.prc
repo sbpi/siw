@@ -409,6 +409,8 @@ begin
                 a1.nome nm_modulo,    a1.sigla sg_modulo,            a1.objetivo_geral,
                 a2.sq_tipo_unidade tp_exec, a2.nome nm_unidade_exec, a2.informal informal_exec,
                 a2.vinculada vinc_exec,a2.adm_central adm_exec,
+                a3.sq_pessoa tit_exec, a31.nome nm_tit_exec,
+                a4.sq_pessoa subst_exec,                
                 a3.sq_pessoa tit_exec,a4.sq_pessoa subst_exec,
                 b.sq_siw_solicitacao, b.sq_siw_tramite,              b.solicitante,
                 b.cadastrador,        b.executor,                    b.descricao,
@@ -459,6 +461,7 @@ begin
                     left outer         join eo_unidade_resp            a3 on (a2.sq_unidade              = a3.sq_unidade   and
                                                                               a3.tipo_respons            = 'T'             and
                                                                               a3.fim                     is null)
+                      left outer       join co_pessoa                 a31 on (a3.sq_pessoa               = a31.sq_pessoa)
                     left outer         join eo_unidade_resp            a4 on (a2.sq_unidade              = a4.sq_unidade   and
                                                                               a4.tipo_respons            = 'S'             and
                                                                               a4.fim                     is null)

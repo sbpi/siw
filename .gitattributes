@@ -1655,7 +1655,6 @@ SP_Oracle81/siw_is/SP_GetDefList.prc -text
 SP_Oracle81/siw_is/SP_GetIsUnidadeLimite_IS.prc -text
 SP_Oracle81/siw_is/SP_PutIsUnidadeLimite_IS.prc -text
 SP_Oracle81/siw_is/SP_PutMetaMensalIni_IS.prc -text
-SP_Oracle81/siw_is/acesso_is.fnc -text
 SP_Oracle81/siw_is/carga_is_sig_acao.prc -text
 SP_Oracle81/siw_is/cd_restricao_acao.seq -text
 SP_Oracle81/siw_is/cd_restricao_programa.seq -text
@@ -1809,6 +1808,7 @@ SP_Oracle81/siw_is/sp_putrestricao_is.prc -text
 SP_Oracle81/siw_is/sp_putrestricaoacao_is.prc -text
 SP_Oracle81/siw_is/sp_putrestricaoprograma_is.prc -text
 SP_Oracle81/siw_is/sp_puttarefageral_is.prc -text
+SP_Oracle81/siw_is/sp_puttarefalimite.prc -text
 SP_Oracle81/siw_is/sq_categoria_analise.seq -text
 SP_Oracle81/siw_is/sq_horizonte.seq -text
 SP_Oracle81/siw_is/sq_indicador.seq -text
@@ -2779,7 +2779,7 @@ SP_Oracle92/siw/vw_ttresumo_usu.vw -text
 SP_Oracle92/siw_is/SP_GetIsUnidadeLimite_IS.prc -text
 SP_Oracle92/siw_is/SP_PutIsUnidadeLimite_IS.prc -text
 SP_Oracle92/siw_is/SP_PutMetaMensalIni_IS.prc -text
-SP_Oracle92/siw_is/acesso_is.fnc -text
+SP_Oracle92/siw_is/SP_PutTarefaLimite.prc -text
 SP_Oracle92/siw_is/carga_is_sig_acao.prc -text
 SP_Oracle92/siw_is/cd_restricao_acao.seq -text
 SP_Oracle92/siw_is/cd_restricao_programa.seq -text

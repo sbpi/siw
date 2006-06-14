@@ -114,19 +114,30 @@ begin
                 p.nome_resumido nm_exec,
                 q.sq_projeto_etapa, q.titulo nm_etapa, q.sq_projeto_etapa cd_ordem,
                 0 resp_etapa,
-                0 sq_acao_ppa, 0 sq_orprioridade
-           from siw.siw_menu                                       a,
-                siw.eo_unidade                a2,
-                siw.eo_unidade_resp           a3,
-                siw.eo_unidade_resp           a4,
+                0 sq_acao_ppa,      0 sq_orprioridade,
+                r.cd_acao,          r.sq_siw_solicitacao sq_solic_acao, 
+                r.cd_programa,      r.cd_unidade,
+                d2.limite_orcamento
+           from siw.siw_menu             a,
+                siw.eo_unidade           a2,
+                siw.eo_unidade_resp      a3,
+                siw.eo_unidade_resp      a4,
                 siw.siw_modulo           a1,
                 siw.siw_solicitacao      b,
                 siw.siw_tramite          b1,
-                (select sq_siw_solicitacao, acesso_is(sq_siw_solicitacao, p_pessoa) acesso
+                (select sq_siw_solicitacao, siw.acesso(sq_siw_solicitacao, p_pessoa) acesso
                    from siw.siw_solicitacao
                 )                        b2,
                 siw.gd_demanda           d,
                 is_tarefa                d1,
+                (select x.sq_siw_solicitacao, z.limite_orcamento 
+                   from siw.siw_solicitacao x,
+                        siw.gd_demanda      y,
+                        is_unidade_limite   z
+                  where x.sq_siw_solicitacao = y.sq_siw_solicitacao
+                    and y.sq_unidade_resp    = z.sq_unidade
+                    and x.ano                = z.ano
+                )                        d2,                
                 siw.eo_unidade           e,
                 siw.eo_unidade_resp      e1,
                 siw.eo_unidade_resp      e2,
@@ -149,24 +160,25 @@ begin
                 is_acao                  r
           where (a.sq_unid_executora        = a2.sq_unidade)
             and (a2.sq_unidade              = a3.sq_unidade (+) and
-                 a3.tipo_respons (+)            = 'T'           and
-                 a3.fim (+)                     is null)
+                 a3.tipo_respons (+)        = 'T'               and
+                 a3.fim (+)                 is null)
             and (a2.sq_unidade              = a4.sq_unidade (+) and
-                 a4.tipo_respons (+)            = 'S'           and
-                 a4.fim (+)                     is null)
+                 a4.tipo_respons (+)        = 'S'               and
+                 a4.fim (+)                 is null)
             and (a.sq_modulo                = a1.sq_modulo)
             and (a.sq_menu                  = b.sq_menu)
             and (b.sq_siw_tramite           = b1.sq_siw_tramite)
             and (b.sq_siw_solicitacao       = b2.sq_siw_solicitacao)
             and (b.sq_siw_solicitacao       = d.sq_siw_solicitacao)
             and (d.sq_siw_solicitacao       = d1.sq_siw_solicitacao (+))
+            and (d1.sq_siw_solicitacao      = d2.sq_siw_solicitacao (+))
             and (d.sq_unidade_resp          = e.sq_unidade)
             and (e.sq_unidade               = e1.sq_unidade (+) and
-                 e1.tipo_respons (+)            = 'T'           and
-                 e1.fim (+)                     is null)
+                 e1.tipo_respons (+)        = 'T'               and
+                 e1.fim (+)                 is null)
             and (e.sq_unidade               = e2.sq_unidade (+) and
-                 e2.tipo_respons (+)            = 'S'           and
-                 e2.fim (+)                     is null)
+                 e2.tipo_respons (+)        = 'S'               and
+                 e2.fim (+)                 is null)
             and (b.sq_cidade_origem         = f.sq_cidade)
             and (b.sq_solic_pai             = m.sq_siw_solicitacao (+))
             and (b.sq_cc                    = n.sq_cc (+))
@@ -180,7 +192,7 @@ begin
             and (b.sq_siw_solicitacao       = j.sq_siw_solicitacao)
             and (j.chave                    = k.sq_siw_solic_log (+))
             and (k.destinatario             = l.sq_pessoa (+))
-            and (b.sq_solic_pai             = r.sq_siw_solicitacao)
+            and (b.sq_solic_pai             = r.sq_siw_solicitacao (+))
             and a.sq_menu        = p_menu
             and (p_chave          is null or (p_chave       is not null and b.sq_siw_solicitacao = p_chave))
             and (p_pais           is null or (p_pais        is not null and f.sq_pais            = p_pais))
@@ -271,7 +283,7 @@ begin
                 siw.siw_modulo           a1,
                 siw.siw_solicitacao      b,
                 siw.siw_tramite          b1,
-                (select sq_siw_solicitacao, acesso_is(sq_siw_solicitacao, p_pessoa) acesso
+                (select sq_siw_solicitacao, siw.acesso(sq_siw_solicitacao, p_pessoa) acesso
                    from siw.siw_solicitacao
                 )                        b2,
                 siw.pj_projeto           d,
@@ -432,7 +444,7 @@ begin
                 siw.siw_modulo           a1,
                 siw.siw_solicitacao      b,
                 siw.siw_tramite          b1,
-                (select sq_siw_solicitacao, acesso_is(sq_siw_solicitacao, p_pessoa) acesso
+                (select sq_siw_solicitacao, siw.acesso(sq_siw_solicitacao, p_pessoa) acesso
                    from siw.siw_solicitacao
                 )                        b2,
                 siw.pj_projeto           d,
@@ -566,7 +578,7 @@ begin
                 a.data_hora,          a.envia_dia_util,              a.descricao,
                 a.justificativa,
                 a1.nome nm_modulo,    a1.sigla sg_modulo,            a1.objetivo_geral,
-                a2.sq_tipo_unidade tp_exec, a2.nome nm_unidade_exec,       a2.informal informal_exec,
+                a2.sq_tipo_unidade tp_exec, a2.nome nm_unidade_exec, a2.informal informal_exec,
                 a2.vinculada vinc_exec,a2.adm_central adm_exec,
                 a3.sq_pessoa tit_exec,a4.sq_pessoa subst_exec,
                 b.sq_siw_solicitacao, b.sq_siw_tramite,              b.solicitante,
@@ -588,6 +600,7 @@ begin
                 d.ordem,
                 d1.sq_pessoa sq_prop, d1.tipo tp_missao,             d1.codigo_interno,
                 decode(d1.tipo,'I','Inicial','P','Prorrogação','Complemento') nm_tp_missao,
+                d1.valor_adicional,   d1.desconto_alimentacao,       d1.desconto_transporte,
                 d2.nome nm_prop,      d2.nome_resumido nm_prop_res,
                 d3.sq_tipo_vinculo,   d3.nome nm_tipo_vinculo,
                 d4.sexo,              d4.cpf,
@@ -596,7 +609,9 @@ begin
                 e1.sq_pessoa titular, e2.sq_pessoa substituto,
                 o.nome_resumido nm_solic, o.nome_resumido||' ('||o2.sigla||')' nm_resp,
                 p.nome_resumido nm_exec,
-                m.descricao_acao, m.cd_programa, m.cd_acao, m.sq_siw_solicitacao sq_solic_acao
+                m.descricao_acao, m.cd_programa, m.cd_acao, m.sq_siw_solicitacao sq_solic_acao,
+                n.valor_diaria, d1.valor_passagem valor_trecho,
+                d5.limite_passagem, d5.limite_diaria
            from siw.siw_menu             a,
                 siw.eo_unidade           a2,
                 siw.eo_unidade_resp      a3,
@@ -604,7 +619,7 @@ begin
                 siw.siw_modulo           a1,
                 siw.siw_solicitacao      b,
                 siw.siw_tramite          b1,
-                (select sq_siw_solicitacao, acesso_is(sq_siw_solicitacao, p_pessoa) acesso
+                (select sq_siw_solicitacao, siw.acesso(sq_siw_solicitacao, p_pessoa) acesso
                    from siw.siw_solicitacao
                 )                        b2,
                 siw.gd_demanda           d,
@@ -612,6 +627,7 @@ begin
                 siw.co_pessoa            d2,
                 siw.co_tipo_vinculo      d3,
                 siw.co_pessoa_fisica     d4,
+                siw.pd_unidade           d5,
                 siw.eo_unidade           e,
                 siw.eo_unidade_resp      e1,
                 siw.eo_unidade_resp      e2,
@@ -640,7 +656,19 @@ begin
                    and w.cliente            = z.cliente
                    and w.ano                = p_ano
                  group by x.sq_solic_missao, w.sq_siw_solicitacao, z.cd_programa, z.cd_acao, z.descricao_acao
-                )                        m
+                )                        m,
+                (select x.sq_siw_solicitacao, sum((y.quantidade*y.valor)) valor_diaria
+                   from siw.siw_solicitacao x,
+                        siw.pd_diaria       y
+                  where x.sq_siw_solicitacao = y.sq_siw_solicitacao
+                  group by x.sq_siw_solicitacao
+                )                        n,
+                (select x.sq_siw_solicitacao, sum(y.valor_trecho) valor_trecho
+                   from siw.siw_solicitacao x,
+                        siw.pd_deslocamento y
+                  where x.sq_siw_solicitacao = y.sq_siw_solicitacao
+                  group by x.sq_siw_solicitacao
+                )                        q                
           where (a.sq_unid_executora        = a2.sq_unidade)
             and (a2.sq_unidade              = a3.sq_unidade (+) and
                  a3.tipo_respons (+)        = 'T'           and
@@ -659,6 +687,8 @@ begin
             and (d1.sq_pessoa               = d2.sq_pessoa)
             and (d2.sq_tipo_vinculo         = d3.sq_tipo_vinculo)
             and (d2.sq_pessoa               = d4.sq_pessoa)
+            and (d.sq_unidade_resp          = d5.sq_unidade  (+) and
+                 p_ano                      = d5.ano         (+))
             and (d.sq_unidade_resp          = e.sq_unidade)
             and (e.sq_unidade               = e1.sq_unidade (+) and
                  e1.tipo_respons (+)        = 'T'           and
@@ -677,6 +707,8 @@ begin
             and (j.chave                    = k.sq_siw_solic_log (+))
             and (k.destinatario             = l.sq_pessoa (+))
             and (b.sq_siw_solicitacao       = m.sq_solic_missao (+))
+            and (b.sq_siw_solicitacao       = n.sq_siw_solicitacao (+))
+            and (b.sq_siw_solicitacao       = q.sq_siw_solicitacao (+))            
             and a.sq_menu        = p_menu
             and (p_projeto        is null or (p_projeto     is not null and 0 < (select count(distinct(x1.sq_siw_solicitacao)) from siw.pd_missao_solic x1 , siw.siw_solicitacao y1 where x1.sq_siw_solicitacao = y1.sq_siw_solicitacao and y1.sq_solic_pai = p_projeto and x1.sq_solic_missao = b.sq_siw_solicitacao)))
             and (p_atividade      is null or (p_atividade   is not null and 0 < (select count(distinct(x2.sq_siw_solicitacao)) from siw.pd_missao_solic x2 where x2.sq_siw_solicitacao = p_atividade and x2.sq_solic_missao = b.sq_siw_solicitacao)))
@@ -709,8 +741,7 @@ begin
                  (p_tipo         = 2     and b1.ativo = 'S' and Nvl(b1.sigla,'-') <> 'CI' and b2.acesso > 15) or
                  (p_tipo         = 3     and b2.acesso > 0) or
                  (p_tipo         = 3     and InStr(l_resp_unid,''''||b.sq_unidade||'''') > 0) or
-                 (p_tipo         = 4     and Nvl(b1.sigla,'-') <> 'CA'  and b2.acesso > 0) or
-                 (p_tipo         = 4     and InStr(l_resp_unid,''''||b.sq_unidade||'''') > 0) or
+                 (p_tipo         = 4     and Nvl(b1.sigla,'-') <> 'CA') or
                  (p_tipo         = 5) or
                  (p_tipo         = 6     and b1.ativo          = 'S' and b2.acesso > 0)
                 )
@@ -726,7 +757,7 @@ begin
             and (b.sq_siw_solicitacao       = d.sq_siw_solicitacao)
             and b.sq_menu        = p_menu
             and Nvl(b1.sigla,'-') = 'EE' 
-            and acesso_is(b.sq_siw_solicitacao,p_pessoa) > 15;
+            and siw.acesso(b.sq_siw_solicitacao,p_pessoa) > 15;
    Elsif p_restricao = 'PJLIST' or p_restricao = 'ORLIST' Then
       -- Recupera os projetos que não estão na fase de cadastramento
       open p_result for 
@@ -741,7 +772,7 @@ begin
             and b.sq_menu         = p_menu
             and e.ano             = p_ano
             and Nvl(b1.sigla,'-') <> 'CA' 
-            and (acesso_is(b.sq_siw_solicitacao,p_pessoa) > 0 or
+            and (siw.acesso(b.sq_siw_solicitacao,p_pessoa) > 0 or
                  InStr(l_resp_unid,''''||b.sq_unidade||'''') > 0
                 );
    Elsif p_restricao = 'PJLISTCAD' or p_restricao = 'ORLISTCAD' Then
@@ -755,7 +786,7 @@ begin
             and (b.sq_siw_solicitacao       = d.sq_siw_solicitacao)
             and b.sq_menu         = p_menu
             and Nvl(b1.sigla,'-') not in ('CA','AT')
-            and (acesso_is(b.sq_siw_solicitacao,p_pessoa) > 0 or
+            and (siw.acesso(b.sq_siw_solicitacao,p_pessoa) > 0 or
                  InStr(l_resp_unid,''''||b.sq_unidade||'''') > 0
                 );
    End If;

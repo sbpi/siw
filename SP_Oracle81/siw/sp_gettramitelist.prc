@@ -51,6 +51,17 @@ begin
            and a.sq_siw_tramite = p_chave
            and b.ordem          = a.ordem - 1
            and (p_ativo is null or (p_ativo is not null and a.ativo = p_ativo));
+   Elsif upper(p_restricao) = 'DEVOLUCAO' Then
+      open p_result for
+         select b.sq_siw_tramite, b.sq_menu, b.nome, b.ordem,
+                b.sigla, b.descricao, b.chefia_imediata, b.ativo, b.solicita_cc, b.envia_mail,
+                decode(b.chefia_imediata,'S','Chefia da unidade solicitante','U','Chefia e usuários com  permissão','N','Apenas usuários com permissão') nm_chefia
+         from siw_tramite a,
+              siw_tramite b
+         where a.sq_menu        = b.sq_menu
+           and a.sq_siw_tramite = p_chave
+           and b.ordem          < (select ordem+1 from siw_tramite where sq_siw_tramite = p_chave)
+           and (p_ativo is null or (p_ativo is not null and a.ativo = p_ativo));
    Else
       open p_result for
          select a.sq_siw_tramite, a.sq_menu, a.nome, a.ordem,

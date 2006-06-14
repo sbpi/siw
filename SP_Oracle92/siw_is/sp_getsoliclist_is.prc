@@ -114,7 +114,10 @@ begin
                 p.nome_resumido nm_exec,
                 q.sq_projeto_etapa, q.titulo nm_etapa, q.sq_projeto_etapa cd_ordem,
                 0 resp_etapa,
-                0 sq_acao_ppa, 0 sq_orprioridade
+                0 sq_acao_ppa, 0 sq_orprioridade,
+                r.cd_acao,          r.sq_siw_solicitacao sq_solic_acao, 
+                r.cd_programa,      r.cd_unidade,
+                d2.limite_orcamento                
            from siw.siw_menu                                       a 
                    inner        join siw.eo_unidade                a2 on (a.sq_unid_executora        = a2.sq_unidade)
                      left outer join siw.eo_unidade_resp           a3 on (a2.sq_unidade              = a3.sq_unidade and
@@ -128,11 +131,19 @@ begin
                    inner             join siw.siw_modulo           a1 on (a.sq_modulo                = a1.sq_modulo)
                    inner             join siw.siw_solicitacao      b  on (a.sq_menu                  = b.sq_menu)
                       inner          join siw.siw_tramite          b1 on (b.sq_siw_tramite           = b1.sq_siw_tramite)
-                      inner          join (select sq_siw_solicitacao, acesso_is(sq_siw_solicitacao, p_pessoa) acesso
+                      inner          join (select sq_siw_solicitacao, siw.acesso(sq_siw_solicitacao, p_pessoa) acesso
                                              from siw.siw_solicitacao
                                           )                    b2 on (b.sq_siw_solicitacao       = b2.sq_siw_solicitacao)
                       inner          join siw.gd_demanda           d  on (b.sq_siw_solicitacao       = d.sq_siw_solicitacao)
                         left outer   join is_tarefa                d1 on (d.sq_siw_solicitacao       = d1.sq_siw_solicitacao)
+                          left outer join (select x.sq_siw_solicitacao, z.limite_orcamento 
+                                             from siw.siw_solicitacao x,
+                                                  siw.gd_demanda      y,
+                                                  is_unidade_limite   z
+                                            where x.sq_siw_solicitacao = y.sq_siw_solicitacao
+                                              and y.sq_unidade_resp    = z.sq_unidade
+                                              and x.ano                = z.ano
+                                          )                        d2 on (d1.sq_siw_solicitacao     = d2.sq_siw_solicitacao)
                         inner        join siw.eo_unidade           e  on (d.sq_unidade_resp          = e.sq_unidade)
                           left outer join siw.eo_unidade_resp      e1 on (e.sq_unidade               = e1.sq_unidade and
                                                                       e1.tipo_respons            = 'T'           and
@@ -158,7 +169,7 @@ begin
                                           )                    j  on (b.sq_siw_solicitacao       = j.sq_siw_solicitacao)
                      left outer      join siw.gd_demanda_log       k  on (j.chave                    = k.sq_siw_solic_log)
                        left outer    join siw.sg_autenticacao      l  on (k.destinatario             = l.sq_pessoa)
-                       inner         join is_acao                  r on (b.sq_siw_solicitacao        = r.sq_siw_solicitacao)
+                       left outer    join is_acao                  r on (b.sq_siw_solicitacao        = r.sq_siw_solicitacao)
           where a.sq_menu        = p_menu
             and (p_chave          is null or (p_chave       is not null and b.sq_siw_solicitacao = p_chave))
             and (p_pais           is null or (p_pais        is not null and f.sq_pais            = p_pais))
@@ -255,7 +266,7 @@ begin
                    inner             join siw.siw_modulo           a1 on (a.sq_modulo                = a1.sq_modulo)
                    inner             join siw.siw_solicitacao      b  on (a.sq_menu                  = b.sq_menu)
                       inner          join siw.siw_tramite          b1 on (b.sq_siw_tramite           = b1.sq_siw_tramite)
-                      inner          join (select sq_siw_solicitacao, acesso_is(sq_siw_solicitacao, p_pessoa) acesso
+                      inner          join (select sq_siw_solicitacao, siw.acesso(sq_siw_solicitacao, p_pessoa) acesso
                                              from siw.siw_solicitacao
                                           )                        b2 on (b.sq_siw_solicitacao       = b2.sq_siw_solicitacao)
                       inner          join siw.pj_projeto           d  on (b.sq_siw_solicitacao       = d.sq_siw_solicitacao)
@@ -398,7 +409,7 @@ begin
                    inner             join siw.siw_modulo           a1 on (a.sq_modulo                = a1.sq_modulo)
                    inner             join siw.siw_solicitacao      b  on (a.sq_menu                  = b.sq_menu)
                       inner          join siw.siw_tramite          b1 on (b.sq_siw_tramite           = b1.sq_siw_tramite)
-                      inner          join (select sq_siw_solicitacao, acesso_is(sq_siw_solicitacao, p_pessoa) acesso
+                      inner          join (select sq_siw_solicitacao, siw.acesso(sq_siw_solicitacao, p_pessoa) acesso
                                              from siw.siw_solicitacao
                                           )                    b2 on (b.sq_siw_solicitacao       = b2.sq_siw_solicitacao)
                       inner          join siw.pj_projeto           d  on (b.sq_siw_solicitacao       = d.sq_siw_solicitacao)
@@ -525,6 +536,7 @@ begin
                 d.ordem,
                 d1.sq_pessoa sq_prop, d1.tipo tp_missao,             d1.codigo_interno,
                 decode(d1.tipo,'I','Inicial','P','Prorrogação','Complemento') nm_tp_missao,
+                d1.valor_adicional,   d1.desconto_alimentacao,       d1.desconto_transporte,
                 d2.nome nm_prop,      d2.nome_resumido nm_prop_res,
                 d3.sq_tipo_vinculo,   d3.nome nm_tipo_vinculo,
                 d4.sexo,              d4.cpf,
@@ -533,7 +545,9 @@ begin
                 e1.sq_pessoa titular, e2.sq_pessoa substituto,
                 o.nome_resumido nm_solic, o.nome_resumido||' ('||o2.sigla||')' nm_resp,
                 p.nome_resumido nm_exec,
-                m.descricao_acao, m.cd_programa, m.cd_acao, m.sq_siw_solicitacao sq_solic_acao
+                m.descricao_acao, m.cd_programa, m.cd_acao, m.sq_siw_solicitacao sq_solic_acao,
+                n.valor_diaria, d1.valor_passagem valor_trecho,
+                d5.limite_passagem, d5.limite_diaria                
            from siw.siw_menu                                        a
                   inner               join siw.eo_unidade           a2 on (a.sq_unid_executora        = a2.sq_unidade)
                     left outer        join siw.eo_unidade_resp      a3 on (a2.sq_unidade              = a3.sq_unidade and
@@ -545,7 +559,7 @@ begin
                   inner               join siw.siw_modulo           a1 on (a.sq_modulo                = a1.sq_modulo)
                   inner               join siw.siw_solicitacao      b  on (a.sq_menu                  = b.sq_menu)
                     inner             join siw.siw_tramite          b1 on (b.sq_siw_tramite           = b1.sq_siw_tramite)
-                    inner             join (select sq_siw_solicitacao, acesso_is(sq_siw_solicitacao, p_pessoa) acesso
+                    inner             join (select sq_siw_solicitacao, siw.acesso(sq_siw_solicitacao, p_pessoa) acesso
                                               from siw.siw_solicitacao
                                            )                        b2 on (b.sq_siw_solicitacao       = b2.sq_siw_solicitacao)
                     inner             join siw.gd_demanda           d  on (b.sq_siw_solicitacao       = d.sq_siw_solicitacao)
@@ -553,6 +567,8 @@ begin
                         inner         join siw.co_pessoa            d2 on (d1.sq_pessoa               = d2.sq_pessoa)
                           inner       join siw.co_tipo_vinculo      d3 on (d2.sq_tipo_vinculo         = d3.sq_tipo_vinculo)
                           inner       join siw.co_pessoa_fisica     d4 on (d2.sq_pessoa               = d4.sq_pessoa)
+                          left outer  join siw.pd_unidade           d5 on (d.sq_unidade_resp          = d5.sq_unidade and
+                                                                           p_ano                      = d5.ano)
                         inner         join siw.eo_unidade           e  on (d.sq_unidade_resp          = e.sq_unidade)
                           left outer  join siw.eo_unidade_resp      e1 on (e.sq_unidade               = e1.sq_unidade and
                                                                            e1.tipo_respons            = 'T'           and
@@ -584,6 +600,18 @@ begin
                                              where 1 = 1 
                                           group by x.sq_solic_missao, w.sq_siw_solicitacao, z.cd_programa, z.cd_acao, z.descricao_acao
                                            )                        m  on (b.sq_siw_solicitacao       = m.sq_solic_missao)
+                     left outer       join (select x.sq_siw_solicitacao, sum((y.quantidade*y.valor)) valor_diaria
+                                              from siw.siw_solicitacao         x
+                                                     inner join siw.pd_diaria  y on (x.sq_siw_solicitacao = y.sq_siw_solicitacao)
+                                             where 1 = 1
+                                             group by x.sq_siw_solicitacao
+                                           )                        n  on (b.sq_siw_solicitacao       = n.sq_siw_solicitacao)
+                     left outer      join  (select x.sq_siw_solicitacao, sum(y.valor_trecho) valor_trecho
+                                              from siw.siw_solicitacao              x
+                                                     inner join siw.pd_deslocamento y on (x.sq_siw_solicitacao = y.sq_siw_solicitacao)
+                                             where 1 = 1
+                                             group by x.sq_siw_solicitacao
+                                           )                        q  on (b.sq_siw_solicitacao       = q.sq_siw_solicitacao)
           where a.sq_menu        = p_menu
             and (p_projeto        is null or (p_projeto     is not null and 0 < (select count(distinct(x1.sq_siw_solicitacao)) from siw.pd_missao_solic x1 , siw.siw_solicitacao y1 where x1.sq_siw_solicitacao = y1.sq_siw_solicitacao and y1.sq_solic_pai = p_projeto and x1.sq_solic_missao = b.sq_siw_solicitacao)))
             and (p_atividade      is null or (p_atividade   is not null and 0 < (select count(distinct(x2.sq_siw_solicitacao)) from siw.pd_missao_solic x2 where x2.sq_siw_solicitacao = p_atividade and x2.sq_solic_missao = b.sq_siw_solicitacao)))
@@ -616,8 +644,7 @@ begin
                  (p_tipo         = 2     and b1.ativo = 'S' and Nvl(b1.sigla,'-') <> 'CI' and b2.acesso > 15) or
                  (p_tipo         = 3     and b2.acesso > 0) or
                  (p_tipo         = 3     and InStr(l_resp_unid,''''||b.sq_unidade||'''') > 0) or
-                 (p_tipo         = 4     and Nvl(b1.sigla,'-') <> 'CA'  and b2.acesso > 0) or
-                 (p_tipo         = 4     and InStr(l_resp_unid,''''||b.sq_unidade||'''') > 0) or
+                 (p_tipo         = 4     and Nvl(b1.sigla,'-') <> 'CA') or
                  (p_tipo         = 5) or
                  (p_tipo         = 6     and b1.ativo          = 'S' and b2.acesso > 0)
                 )
@@ -631,7 +658,7 @@ begin
                    inner   join siw.pj_projeto    d  on (b.sq_siw_solicitacao       = d.sq_siw_solicitacao)
           where b.sq_menu        = p_menu
             and Nvl(b1.sigla,'-') = 'EE' 
-            and acesso_is(b.sq_siw_solicitacao,p_pessoa) > 15;
+            and siw.acesso(b.sq_siw_solicitacao,p_pessoa) > 15;
    Elsif p_restricao = 'PJLIST' or p_restricao = 'ORLIST' Then
       -- Recupera os projetos que não estão na fase de cadastramento
       open p_result for 
@@ -641,7 +668,7 @@ begin
                    inner   join siw.pj_projeto    d  on (b.sq_siw_solicitacao       = d.sq_siw_solicitacao)
           where b.sq_menu         = p_menu
             and Nvl(b1.sigla,'-') <> 'CA' 
-            and (acesso_is(b.sq_siw_solicitacao,p_pessoa) > 0 or
+            and (siw.acesso(b.sq_siw_solicitacao,p_pessoa) > 0 or
                  InStr(l_resp_unid,''''||b.sq_unidade||'''') > 0
                 );
    Elsif p_restricao = 'PJLISTCAD' or p_restricao = 'ORLISTCAD' Then
@@ -653,7 +680,7 @@ begin
                    inner   join siw.pj_projeto    d  on (b.sq_siw_solicitacao       = d.sq_siw_solicitacao)
           where b.sq_menu         = p_menu
             and Nvl(b1.sigla,'-') not in ('CA','AT')
-            and (acesso_is(b.sq_siw_solicitacao,p_pessoa) > 0 or
+            and (siw.acesso(b.sq_siw_solicitacao,p_pessoa) > 0 or
                  InStr(l_resp_unid,''''||b.sq_unidade||'''') > 0
                 );
    End If;

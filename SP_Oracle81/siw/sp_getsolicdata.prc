@@ -507,7 +507,8 @@ begin
                 a1.nome nm_modulo,    a1.sigla sg_modulo,            a1.objetivo_geral,
                 a2.sq_tipo_unidade tp_exec, a2.nome nm_unidade_exec,       a2.informal informal_exec,
                 a2.vinculada vinc_exec,a2.adm_central adm_exec,
-                a3.sq_pessoa tit_exec,a4.sq_pessoa subst_exec,
+                a3.sq_pessoa tit_exec, a31.nome nm_tit_exec,
+                a4.sq_pessoa subst_exec,
                 b.sq_siw_solicitacao, b.sq_siw_tramite,              b.solicitante,
                 b.cadastrador,        b.executor,                    b.descricao,
                 b.justificativa,      b.inicio,                      b.fim,
@@ -555,6 +556,7 @@ begin
            from siw_menu                                       a,
                 eo_unidade                a2,
                 eo_unidade_resp           a3,
+                co_pessoa                 a31,
                 eo_unidade_resp           a4,
                 siw_modulo           a1,
                 siw_solicitacao      b,
@@ -591,6 +593,7 @@ begin
             and (a2.sq_unidade              = a4.sq_unidade (+) and
                  a4.tipo_respons (+)            = 'S'           and
                  a4.fim (+)                     is null)
+            and (a3.sq_pessoa               = a31.sq_pessoa (+))
             and (a.sq_modulo                = a1.sq_modulo)
             and (a.sq_menu                  = b.sq_menu)
             and (b.sq_siw_tramite           = b1.sq_siw_tramite)

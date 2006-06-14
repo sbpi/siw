@@ -12,6 +12,24 @@ create or replace procedure SP_PutPD_Deslocamento
     p_codigo_voo          in varchar2  default null
    ) is
 begin
+   -- Remove todos os valores já inseridos relativos as diárias e deslocamento
+   If p_operacao = 'I' or p_operacao = 'A' or p_operacao = 'E' Then
+      delete pd_diaria where sq_siw_solicitacao = p_chave;
+      update pd_missao set
+             valor_alimentacao    = 0,
+             valor_transporte     = 0,
+             desconto_alimentacao = 0,
+             desconto_transporte  = 0,
+             valor_adicional      = 0,
+             valor_passagem       = 0,
+             pta                  = null,
+             emissao_bilhete      = null
+       where sq_siw_solicitacao = p_chave;
+      update pd_deslocamento set
+             sq_cia_transporte = null,
+             codigo_voo        = null
+       where sq_siw_solicitacao = p_chave;
+   End If;
    If p_operacao = 'I' Then -- Inclusão
       -- Insere registro na tabela de deslocamentos
       insert into pd_deslocamento

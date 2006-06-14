@@ -263,7 +263,7 @@ begin
             and (b.sq_cidade_origem    = h.sq_cidade)
             and (a.sq_unid_executora   = c.sq_unidade (+))
             and b.sq_siw_solicitacao       = p_chave;
-   ElsIf p_restricao = 'ISTAGERAL' or p_restricao = 'ISTARESP' Then
+   ElsIf p_restricao = 'ISTAGERAL' or p_restricao = 'ISTARESP' or p_restricao = 'VLRTGERAL' Then
       -- Recupera as tarefas que o usuário pode ver
       open p_result for 
          select a.sq_menu,            a.sq_modulo,                   a.nome,
@@ -304,8 +304,9 @@ begin
                 f.nome_resumido nm_sol, f.nome nm_sol_comp,
                 h.sq_pais,            h.sq_regiao,                   h.co_uf,
                 h.nome nm_cidade,
-                k.titulo nm_projeto
-           from siw.siw_menu                                a,
+                k.titulo nm_projeto, 
+                d2.limite_orcamento,  l.cd_acao
+           from siw.siw_menu              a,
                 siw.eo_unidade            a2,
                 siw.eo_unidade_resp       a3,
                 siw.eo_unidade_resp       a4,
@@ -313,40 +314,52 @@ begin
                 siw.siw_solicitacao       b,
                 siw.siw_tramite           b1,
                 siw.gd_demanda            d,
-                is_tarefa               d1,
+                is_tarefa                 d1,
+                (select x.sq_siw_solicitacao, z.limite_orcamento 
+                   from siw.siw_solicitacao x,
+                        siw.gd_demanda      y,
+                        is_unidade_limite   z
+                  where x.sq_siw_solicitacao = y.sq_siw_solicitacao
+                    and y.sq_unidade_resp    = z.sq_unidade
+                    and x.ano                = z.ano
+                    and x.sq_siw_solicitacao = p_chave
+                )                         d2,
                 siw.eo_unidade            e,
-                siw.eo_unidade_resp   e1,
-                siw.eo_unidade_resp   e2,
+                siw.eo_unidade_resp       e1,
+                siw.eo_unidade_resp       e2,
                 siw.co_pessoa             f,
                 siw.co_cidade             h,
                 siw.eo_unidade            c,
                 siw.pj_etapa_demanda      i,
-                siw.pj_projeto              k
-          where (a.sq_unid_executora        = a2.sq_unidade)
-            and (a2.sq_unidade              = a3.sq_unidade (+) and
-                 a3.tipo_respons (+)            = 'T'           and
-                 a3.fim (+)                     is null)
-            and (a2.sq_unidade              = a4.sq_unidade (+) and
-                 a4.tipo_respons (+)            = 'S'           and
-                 a4.fim (+)                     is null)
-            and (a.sq_modulo           = a1.sq_modulo)
-            and (a.sq_menu             = b.sq_menu)
-            and (b.sq_siw_tramite      = b1.sq_siw_tramite)
-            and (b.sq_siw_solicitacao  = d.sq_siw_solicitacao)
-            and (d.sq_siw_solicitacao  = d1.sq_siw_solicitacao (+))
-            and (d.sq_unidade_resp     = e.sq_unidade)
-            and (e.sq_unidade               = e1.sq_unidade (+) and
-                 e1.tipo_respons (+)            = 'T'           and
-                 e1.fim (+)                     is null)
-            and (e.sq_unidade               = e2.sq_unidade (+) and
-                 e2.tipo_respons (+)            = 'S'           and
-                 e2.fim (+)                     is null)
-            and (b.solicitante         = f.sq_pessoa)
-            and (b.sq_cidade_origem    = h.sq_cidade)
-            and (a.sq_unid_executora   = c.sq_unidade (+))
-            and (b.sq_siw_solicitacao  = i.sq_siw_solicitacao (+))
-            and (b.sq_solic_pai        = k.sq_siw_solicitacao (+))
-            and b.sq_siw_solicitacao       = p_chave;
+                siw.pj_projeto            k,
+                is_acao                   l
+          where (a.sq_unid_executora      = a2.sq_unidade)
+            and (a2.sq_unidade            = a3.sq_unidade (+) and
+                 a3.tipo_respons (+)      = 'T'               and
+                 a3.fim (+)               is null)
+            and (a2.sq_unidade            = a4.sq_unidade (+) and
+                 a4.tipo_respons (+)      = 'S'               and
+                 a4.fim (+)               is null)
+            and (a.sq_modulo              = a1.sq_modulo)
+            and (a.sq_menu                = b.sq_menu)
+            and (b.sq_siw_tramite         = b1.sq_siw_tramite)
+            and (b.sq_siw_solicitacao     = d.sq_siw_solicitacao)
+            and (d.sq_siw_solicitacao     = d1.sq_siw_solicitacao (+))
+            and (d.sq_siw_solicitacao     = d2.sq_siw_solicitacao (+))
+            and (d.sq_unidade_resp        = e.sq_unidade)
+            and (e.sq_unidade             = e1.sq_unidade (+) and
+                 e1.tipo_respons (+)      = 'T'               and
+                 e1.fim (+)               is null)
+            and (e.sq_unidade             = e2.sq_unidade (+) and
+                 e2.tipo_respons (+)      = 'S'               and
+                 e2.fim (+)               is null)
+            and (b.solicitante            = f.sq_pessoa)
+            and (b.sq_cidade_origem       = h.sq_cidade)
+            and (a.sq_unid_executora      = c.sq_unidade (+))
+            and (b.sq_siw_solicitacao     = i.sq_siw_solicitacao (+))
+            and (b.sq_solic_pai           = k.sq_siw_solicitacao (+))
+            and (b.sq_solic_pai           = l.sq_siw_solicitacao (+))
+            and b.sq_siw_solicitacao      = p_chave;
    End If;
 end SP_GetSolicData_IS;
 /

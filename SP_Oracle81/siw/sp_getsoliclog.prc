@@ -232,6 +232,7 @@ begin
          open p_result for
             select h.sq_demanda_log, a.sq_siw_solic_log, a.sq_siw_tramite,a.data,
                    decode(h.sq_demanda_log,null,a.observacao,a.observacao||chr(13)||chr(10)||'DESPACHO: '||chr(13)||chr(10)||h.despacho) despacho,
+                   'TRAMITACAO' origem,
                    c.nome_resumido responsavel,
                    c.sq_pessoa,
                    i.nome_resumido destinatario,
@@ -259,6 +260,7 @@ begin
                and a.sq_siw_solicitacao = p_chave
             UNION
             select b.sq_demanda_log, b.sq_siw_solic_log, 0, b.data_inclusao,  Nvl(b.despacho, b.observacao),
+                   'ANOTACAO' origem,
                    c.nome_resumido responsavel,
                    c.sq_pessoa,
                    d.nome_resumido destinatario,
