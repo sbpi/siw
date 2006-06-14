@@ -1,5 +1,5 @@
 <?
-include_once($w_dir_volta.'classes/sp/db_getCCSubordination.php');
+include_once($w_dir_volta.'classes/sp/db_getCcSubordination.php');
 // =========================================================================
 // Montagem da seleção do centro de custo
 // -------------------------------------------------------------------------

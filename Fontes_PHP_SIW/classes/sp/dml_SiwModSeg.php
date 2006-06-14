@@ -1,5 +1,5 @@
 <?
-include_once('classes/db/DatabaseQueriesFactory.php');
+extract($GLOBALS); include_once($w_dir_volta.'classes/db/DatabaseQueriesFactory.php');
 /**
 * class dml_SiwModSeg
 *
@@ -10,7 +10,7 @@ include_once('classes/db/DatabaseQueriesFactory.php');
 
 class dml_SiwModSeg {
    function getInstanceOf($dbms, $operacao, $objetivo_especifico, $sq_modulo, $sq_segmento, $comercializar, $ativo) {
-     $sql='sp_putSiwModSeg';
+     $sql=$strschema.'sp_putSiwModSeg';
      $params=array('operacao'               =>array($operacao,              B_VARCHAR,      1),
                    'objetivo_especifico'    =>array($objetivo_especifico,   B_VARCHAR,   4000),
                    'sq_modulo'              =>array($sq_modulo,             B_NUMERIC,     32),
@@ -19,7 +19,15 @@ class dml_SiwModSeg {
                    'ativo'                  =>array($ativo,                 B_VARCHAR,      1)
                   );
      $l_rs = DatabaseQueriesFactory::getInstanceOf($sql, $dbms, $params, DB_TYPE);
-     if(!$l_rs->executeQuery()) return false;  else return true;
+     $l_error_reporting = error_reporting(); 
+     error_reporting(0); 
+     if(!$l_rs->executeQuery()) { 
+       error_reporting($l_error_reporting); 
+       TrataErro($sql, $l_rs->getError(), $params, __FILE__, __LINE__, __CLASS__); 
+     } else {
+       error_reporting($l_error_reporting); 
+       return true;
+     }
    }
 }
 ?>

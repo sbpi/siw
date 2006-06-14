@@ -6,7 +6,7 @@ include_once($w_dir_volta.'classes/sp/db_getEOAAtuac.php');
 function selecaoEOAreaAtuacao($label,$accesskey,$hint,$chave,$chaveAux,$campo,$restricao) {
   extract($GLOBALS);
 
-  $RS = db_getEOAAtuac::getInstanceOf($dbms, $chaveAux);
+  $RS = db_getEOAAtuac::getInstanceOf($dbms, $chaveAux, null, 'S');
   array_key_case_change(&$RS);
   $RS = SortArray($RS,'nome','asc');
   //$RS->Filter="ativo = 'S'";

@@ -21,7 +21,7 @@ include_once('classes/sp/db_getCCTreeVision.php');
 include_once('classes/sp/db_updatePassword.php');
 include_once('classes/sp/db_getCustomerSite.php');
 include_once('classes/sp/db_getUserData.php');
-include_once('classes/sp/db_VerificaAssinatura.php');
+include_once('classes/sp/db_verificaAssinatura.php');
 include_once('classes/sp/dml_SiwMenu.php');
 include_once('classes/sp/dml_putSgPesMod.php');
 include_once('classes/sp/dml_putSiwPesCC.php');
@@ -341,7 +341,7 @@ function Menu() {
   $p_modulo              = $_REQUEST['p_modulo'];
   $p_menu                = $_REQUEST['p_menu'];
 
-  $w_ImagemPadrao        = 'images/folder/SheetLittle.gif';
+  $w_ImagemPadrao        = 'images/Folder/SheetLittle.gif';
   $w_troca               = $_REQUEST['w_troca'];
   $w_heranca             = $_REQUEST['w_heranca'];
 
@@ -628,7 +628,7 @@ function Menu() {
       if (f($row,'Filho')>0) {
 
         ShowHTML('<A HREF="#'.f($row,'sq_menu').'"></A>');
-        ShowHTML('<span><div align="left"><img src="images/folder/FolderClose.gif" border=0 align="center"> '.f($row,'nome').'');
+        ShowHTML('<span><div align="left"><img src="images/Folder/FolderClose.gif" border=0 align="center"> '.f($row,'nome').'');
         if (f($row,'ativo')=='S') $w_classe='hl'; else $w_classe='lh';
         ShowHTML('       <A class="'.$w_classe.'" HREF="'.$w_pagina.$par.'&R='.$w_pagina.$par.'&O=A&w_sq_menu='.f($row,'sq_menu').'&w_cliente='.$w_cliente.'&P1='.$P1.'&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP='.$TP.'&SG=MENU'.MontaFiltro('GET').'" title="Altera as informações desta opção do menu">Alterar</A>&nbsp');
         // A configuração de endereços e serviço/acessos não estão disponíveis para sub-menus
@@ -657,7 +657,7 @@ function Menu() {
           if (f($row1,'Filho')>0) {
             $w_ContOut=$w_ContOut+1;
             ShowHTML('<A HREF=#"'.f($row1,'sq_menu').'"></A>');
-            ShowHTML('<span><div align="left"><img src="images/folder/FolderClose.gif" border=0 align="center"> '.f($row1,'nome'));
+            ShowHTML('<span><div align="left"><img src="images/Folder/FolderClose.gif" border=0 align="center"> '.f($row1,'nome'));
             if (f($row1,'ativo')=='S') $w_classe='hl'; else $w_classe='lh';
             ShowHTML('       <A class="'.$w_classe.'" HREF="'.$w_pagina.$par.'&R='.$w_pagina.$par.'&O=A&w_sq_menu='.f($row1,'sq_menu').'&w_cliente='.$w_cliente.'&P1='.$P1.'&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP='.$TP.'&SG=MENU'.MontaFiltro('GET').'" title="Altera as informações desta opção do menu">Alterar</A>&nbsp');
             // A configuração de endereços e serviço/acessos não estão disponíveis para sub-menus
@@ -688,7 +688,7 @@ function Menu() {
  
                 $w_ContOut=$w_ContOut+1;
                 ShowHTML('<A HREF=#"'.f($row2,'sq_menu').'"></A>');
-                ShowHTML('<span><div align="left"><img src="images/folder/FolderClose.gif" border=0 align="center"> '.f($row2,'nome'));
+                ShowHTML('<span><div align="left"><img src="images/Folder/FolderClose.gif" border=0 align="center"> '.f($row2,'nome'));
                 if (f($row2,'ativo')=='S') $w_classe='hl'; else $w_classe='lh';
                 ShowHTML('       <A class="'.$w_classe.'" HREF="'.$w_pagina.$par.'&R='.$w_pagina.$par.'&O=A&w_sq_menu='.f($row2,'sq_menu').'&w_cliente='.$w_cliente.'&P1='.$P1.'&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP='.$TP.'&SG=MENU'.MontaFiltro('GET').'" title="Altera as informações desta opção do menu">Alterar</A>&nbsp');
                 // A configuração de endereços e serviço/acessos não estão disponíveis para sub-menus
@@ -1467,7 +1467,7 @@ function Visao() {
       foreach($RS as $row) {
         $w_ContOut=$w_ContOut+1;
         if (f($row,'Filho')>0) {
-          ShowHTML('<img src="images/folder/FolderClose.gif" border=0 align="center"> '.f($row,'sigla').'</font>');
+          ShowHTML('<img src="images/Folder/FolderClose.gif" border=0 align="center"> '.f($row,'sigla').'</font>');
           ShowHTML('   <div style="position:relative; left:12;">');
           $RS1 = DB_GetCCTreeVision::getInstanceOf($dbms, $w_cliente, $w_sq_pessoa, $w_sq_menu, f($row,'sq_cc'));
           foreach($RS1 as $row1) {
@@ -1475,13 +1475,13 @@ function Visao() {
             if (f($row1,'Filho')>0) {
 
               $w_ContOut=$w_ContOut+1;
-              ShowHTML('<img src="images/folder/FolderClose.gif" border=0 align="center"> '.f($row1,'sigla'));
+              ShowHTML('<img src="images/Folder/FolderClose.gif" border=0 align="center"> '.f($row1,'sigla'));
               ShowHTML('   <div style="position:relative; left:12;">');
               $RS2 = DB_GetCCTreeVision::getInstanceOf($dbms, $w_cliente, $w_sq_pessoa, $w_sq_menu, f($row1,'sq_cc'));
               foreach($RS2 as $row2) {
                 if (f($row2,'Filho')>0) {
                   $w_ContOut=$w_ContOut+1;
-                  ShowHTML('<img src="images/folder/FolderClose.gif" border=0 align="center"> '.f($row2,'sigla'));
+                  ShowHTML('<img src="images/Folder/FolderClose.gif" border=0 align="center"> '.f($row2,'sigla'));
                   ShowHTML('   <div style="position:relative; left:12;">');
                   $RS3 = DB_GetCCTreeVision::getInstanceOf($dbms, $w_cliente, $w_sq_pessoa, $w_sq_menu, f($row2,'sq_cc'));
                   foreach($RS3 as $row3) {

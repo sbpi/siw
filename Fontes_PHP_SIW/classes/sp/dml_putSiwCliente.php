@@ -1,5 +1,5 @@
 <?
-include_once('classes/db/DatabaseQueriesFactory.php');
+extract($GLOBALS); include_once($w_dir_volta.'classes/db/DatabaseQueriesFactory.php');
 /**
 * class dml_putSiwCliente
 *
@@ -12,7 +12,7 @@ class dml_putSiwCliente {
    function getInstanceOf($dbms, $operacao, $p_chave, $p_cliente, $p_nome, $p_nome_resumido, $p_inicio_atividade,
         $p_cnpj, $p_sede, $p_inscricao_estadual, $p_cidade, $p_minimo_senha, $p_maximo_senha,
         $p_dias_vigencia, $p_aviso_expiracao, $p_maximo_tentativas, $p_agencia_padrao, $p_segmento) {
-     $sql='sp_putSiwCliente';
+     $sql=$strschema.'sp_putSiwCliente';
      $params=array('operacao'               =>array($operacao,              B_VARCHAR,      1),
                    'p_chave'                =>array($p_chave,               B_NUMERIC,     32),
                    'cliente'                =>array($cliente,               B_NUMERIC,     32),
@@ -32,7 +32,15 @@ class dml_putSiwCliente {
                    'p_segmento'             =>array($p_segmento,            B_NUMERIC,     32),
                   );
      $l_rs = DatabaseQueriesFactory::getInstanceOf($sql, $dbms, $params, DB_TYPE);
-     if(!$l_rs->executeQuery()) return false;  else return true;
+     $l_error_reporting = error_reporting(); 
+     error_reporting(0); 
+     if(!$l_rs->executeQuery()) { 
+       error_reporting($l_error_reporting); 
+       TrataErro($sql, $l_rs->getError(), $params, __FILE__, __LINE__, __CLASS__); 
+     } else {
+       error_reporting($l_error_reporting); 
+       return true;
+     }
    }
 }
 ?>

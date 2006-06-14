@@ -8,10 +8,8 @@ function selecaoUnidade($label,$accesskey,$hint,$chave,$chaveAux,$campo,$restric
 
   if (isset($restricao)) {
     $RS = db_getUorgList::getInstanceOf($dbms, $w_cliente, $ChaveAux, $restricao, null, null, null);
-    //$RS->Filter="ativo='S'";
   } else {
     $RS = db_getUorgList::getInstanceOf($dbms, $w_cliente, $ChaveAux, 'ATIVO', null, null, null);
-    //$RS->Filter="ativo='S' and '.$restricao;
   }
 
   ShowHTML('<INPUT type="hidden" name="'.$campo.'" value="'.$chave.'">');

@@ -1,5 +1,5 @@
 <?
-include_once('classes/db/DatabaseQueriesFactory.php');
+extract($GLOBALS); include_once($w_dir_volta.'classes/db/DatabaseQueriesFactory.php');
 /**
 * class dml_PutCoPesConBan
 *
@@ -10,7 +10,7 @@ include_once('classes/db/DatabaseQueriesFactory.php');
 
 class dml_PutCoPesConBan {
    function getInstanceOf($dbms, $operacao, $chave, $p_pessoa, $p_tipo_conta, $p_agencia, $p_oper, $p_numero, $p_ativo, $p_padrao) {
-     $sql='sp_putCoPesConBan';
+     $sql=$strschema.'sp_putCoPesConBan';
      $params=array('operacao'           =>array($operacao,          B_VARCHAR,      1),
                    'chave'              =>array($chave,             B_NUMERIC,     32),
                    'p_pessoa'           =>array($p_pessoa,          B_NUMERIC,     32),
@@ -22,7 +22,15 @@ class dml_PutCoPesConBan {
                    'p_padrao'           =>array($p_padrao,          B_VARCHAR,      1)
                   );
      $l_rs = DatabaseQueriesFactory::getInstanceOf($sql, $dbms, $params, DB_TYPE);
-     if(!$l_rs->executeQuery()) return false;  else return true;
+     $l_error_reporting = error_reporting(); 
+     error_reporting(0); 
+     if(!$l_rs->executeQuery()) { 
+       error_reporting($l_error_reporting); 
+       TrataErro($sql, $l_rs->getError(), $params, __FILE__, __LINE__, __CLASS__); 
+     } else {
+       error_reporting($l_error_reporting); 
+       return true;
+     }
    }
 }
 ?>

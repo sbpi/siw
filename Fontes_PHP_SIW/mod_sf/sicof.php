@@ -29,39 +29,37 @@ include_once('../classes/db/DatabaseQueriesFactory.php');
 //                   = D   : Detalhes
 //                   = N   : Nova solicitação de envio
 
-
 // Verifica se o usuário está autenticado
-
-if ($_SESSION["LOGON"] !="Sim") EncerraSessao();
+if ($_SESSION['LOGON']!='Sim') { EncerraSessao(); }
 
 // Declaração de variáveis
-$dbms = abreSessao::getInstanceOf($_SESSION["DBMS"]);
+$dbms = abreSessao::getInstanceOf($_SESSION['DBMS']);
 
 // Carrega variáveis locais com os dados dos parâmetros recebidos
 
-$w_dir          = "mod_sf/";
-$w_dir_volta    = "../";
-$w_pagina       = "sicof.php?par=";
+$w_dir          = 'mod_sf/';
+$w_dir_volta    = '../';
+$w_pagina       = 'sicof.php?par=';
 
 $par        = strtoupper($_REQUEST['par']);
-$P1         = $_REQUEST["P1"];
-$P2         = $_REQUEST["P2"];
-$P3         = $_REQUEST["P3"];
-$P4         = $_REQUEST["P4"];
-$TP         = $_REQUEST["TP"];
-$SG         = strtoupper($_REQUEST["SG"]);
-$R          = strtoupper($_REQUEST["R"]);
-$O          = strtoupper($_REQUEST["O"]);
+$P1         = $_REQUEST['P1'];
+$P2         = $_REQUEST['P2'];
+$P3         = $_REQUEST['P3'];
+$P4         = $_REQUEST['P4'];
+$TP         = $_REQUEST['TP'];
+$SG         = strtoupper($_REQUEST['SG']);
+$R          = strtoupper($_REQUEST['R']);
+$O          = strtoupper($_REQUEST['O']);
 
 $p_cliente  = $_SESSION['P_CLIENTE'];
 $sq_pessoa  = $_SESSION['SQ_PESSOA'];
-$w_disabled = "ENABLED";
+$w_disabled = 'ENABLED';
 
 // Configura o valor de O quando ele é nulo. Se for tela inicial de vinculação, chama filtragem
-if ($O=="" && $par=="INICIAL") {
-  $O="P";
-} elseif ($O=="") {
-  $O="L";
+if ($O=='' && $par=='CONSULTA') {
+  $O='P';
+} elseif ($O=='') {
+  $O='L';
 } 
 
 switch ($O) {
@@ -94,7 +92,7 @@ function Consulta() {
     if ($_POST['p_cnpj']>'')     $SQL='select cgccpf, nome from corporativo.gn_pessoas@sicof where cgccpf = \''.$_POST['p_cnpj'].'\'';
     if ($_POST['p_cpf']>'')      $SQL='select cgccpf, nome from corporativo.gn_pessoas@sicof where cgccpf = \''.$_POST['p_cpf'].'\'';
     $RS = DatabaseQueriesFactory::getInstanceOf($SQL, $dbms, null, DB_TYPE);
-    if(!$RS->executeQuery()) { die("Cannot query"); }
+    if(!$RS->executeQuery()) { die('Cannot query'); }
     else $row = $RS->getResultArray();
   } 
 

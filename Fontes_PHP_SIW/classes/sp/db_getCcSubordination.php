@@ -1,5 +1,5 @@
 <?
-include_once("classes/db/DatabaseQueriesFactory.php");
+extract($GLOBALS); include_once($w_dir_volta."classes/db/DatabaseQueriesFactory.php");
 /**
 * class db_getCcSubordination
 *
@@ -10,15 +10,16 @@ include_once("classes/db/DatabaseQueriesFactory.php");
 
 class db_getCcSubordination {
    function getInstanceOf($dbms, $p_cliente, $p_sqcc, $p_restricao) {
-     $sql='sp_getCcSubordinat';
+     $sql=$strschema.'sp_getCcSubordinat';
      $params=array("p_cliente"   =>array($p_cliente,     B_NUMERIC,   32),
                    "p_sqcc"      =>array($p_sqcc,        B_NUMERIC,   32),
                    "p_restricao" =>array($p_restricao,   B_VARCHAR,   10),
                    "p_result"    =>array(null,           B_CURSOR,    -1)
                   );
      $l_rs = DatabaseQueriesFactory::getInstanceOf($sql, $dbms, $params, DB_TYPE);
-     if(!$l_rs->executeQuery()) { die("Cannot query"); }
+     $l_error_reporting = error_reporting(); error_reporting(0); if(!$l_rs->executeQuery()) { error_reporting($l_error_reporting); TrataErro($sql, $l_rs->getError(), $params, __FILE__, __LINE__, __CLASS__); }
      else {
+       error_reporting($l_error_reporting); 
         if ($l_rs = $l_rs->getResultData()) {
           return $l_rs;
         } else {

@@ -1,6 +1,6 @@
 <?php
-include_once("DatabaseQueries.php");
-include_once("DBTypes.php");
+include_once('DatabaseQueries.php');
+include_once('DBTypes.php');
 
 
 /**
@@ -13,7 +13,7 @@ include_once("DBTypes.php");
 
 class DatabaseQueriesFactory {
    function getInstanceOf($query, $conHandle, $params) {
-      switch($_SESSION["DBMS"]) {
+      switch($_SESSION['DBMS']) {
          case MSSQL : {
 		    if (empty($params)) { return new MSSqlDatabaseQueries($query, $conHandle); }
 			else { return new MSSqlDatabaseQueryProc($query, $conHandle, $params); }

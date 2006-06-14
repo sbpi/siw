@@ -1,5 +1,5 @@
 <?
-include_once('classes/db/DatabaseQueriesFactory.php');
+extract($GLOBALS); include_once($w_dir_volta.'classes/db/DatabaseQueriesFactory.php');
 /**
 * class dml_CoTipoVinc
 *
@@ -10,7 +10,7 @@ include_once('classes/db/DatabaseQueriesFactory.php');
 
 class dml_CoTipoVinc {
    function getInstanceOf($dbms, $operacao, $chave, $sq_tipo_pessoa, $cliente, $nome, $interno, $contratado, $padrao, $ativo) {
-     $sql='sp_putCoTipoVinc';
+     $sql=$strschema.'sp_putCoTipoVinc';
      $params=array('operacao'           =>array($operacao,          B_VARCHAR,      1),
                    'chave'              =>array($chave,             B_NUMERIC,     32),
                    'sq_tipo_pessoa'     =>array($sq_tipo_pessoa,    B_NUMERIC,     32),
@@ -22,7 +22,15 @@ class dml_CoTipoVinc {
                    'ativo'              =>array($ativo,             B_VARCHAR,      1)
                   );
      $l_rs = DatabaseQueriesFactory::getInstanceOf($sql, $dbms, $params, DB_TYPE);
-     if(!$l_rs->executeQuery()) return false;  else return true;
+     $l_error_reporting = error_reporting(); 
+     error_reporting(0); 
+     if(!$l_rs->executeQuery()) { 
+       error_reporting($l_error_reporting); 
+       TrataErro($sql, $l_rs->getError(), $params, __FILE__, __LINE__, __CLASS__); 
+     } else {
+       error_reporting($l_error_reporting); 
+       return true;
+     }
    }
 }
 ?>

@@ -78,6 +78,7 @@ exit;
 // -------------------------------------------------------------------------
 function Mesa() {
   extract($GLOBALS);
+  
   if ($O=="L") {
      // Verifica se o cliente tem o módulo de telefonia contratado
      $RS = db_getSiwCliModLis::getInstanceOf($dbms, $w_cliente, null, 'TT');
@@ -116,23 +117,20 @@ function Mesa() {
         foreach ($RS as $row) {
           $w_telefonia_qtd=f($row,'existe');
         }
-        DesconectaBD();
         $w_cor = ($w_cor==$conTrBgColor || $w_cor=='') ? $w_cor=$conTrAlternateBgColor : $w_cor=$conTrBgColor;
         if ($w_telefonia_qtd>0) $w_negrito='<b>'; else $w_negrito='';
-
         ShowHTML('      <tr bgcolor="'.$w_cor.'">');
         ShowHTML('        <td>'.$w_telefonia.'</td>');
         ShowHTML('        <td>Ligações</td>');
         ShowHTML('        <td align="right">'.$w_negrito.$w_telefonia_qtd.'&nbsp;</td>');
         ShowHTML('        <td align="top" nowrap>');
-        ShowHTML('          <A class="HL" HREF="Tarifacao.php?par=Informar&R='.$w_pagina.$par.'&O=L&P1=1&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP='.$TP.'- Ligações&SG=LIGACAO">Exibir</A> ');
+        ShowHTML('          <A class="HL" HREF="tarifacao.php?par=Informar&R='.$w_pagina.$par.'&O=L&P1=1&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP='.$TP.'- Ligações&SG=LIGACAO">Exibir</A> ');
         ShowHTML('        </td>');
         ShowHTML('      </tr>');
       }
     }
 
     // Monta a mesa de trabalho para os outros serviços do SIW
-  
     $RS = db_getDeskTop::getInstanceOf($dbms, $w_cliente, $w_usuario, $w_ano);
     $w_nm_modulo='-';
     foreach ($RS as $row) {
@@ -152,7 +150,7 @@ function Mesa() {
       ShowHTML('      <td>'.f($row,'nm_servico').'</td>');
       ShowHTML('      <td align="right">'.$w_negrito.f($row,'qtd').'&nbsp;</td>');
       ShowHTML('      <td align="top" nowrap>');
-      ShowHTML('        <A CLASS="HL" HREF="'.f($row,'link').'&P1=2&P2='.f($row,'p2').'&P3='.f($row,'p3').'&P4='.f($row,'p4').'&TP='.$TP.' - '.f($row,'nm_servico').'&SG='.f($row,'sg_servico').'">Exibir</A>');
+      ShowHTML('        <A CLASS="HL" HREF="'.strtolower(f($row,'link')).'&P1=2&P2='.f($row,'p2').'&P3='.f($row,'p3').'&P4='.f($row,'p4').'&TP='.$TP.' - '.f($row,'nm_servico').'&SG='.f($row,'sg_servico').'">Exibir</A>');
       ShowHTML('      </td>');
       ShowHTML('    </tr>');
     }
@@ -168,7 +166,6 @@ function Mesa() {
     ShowHTML(' history.back(1);');
     ScriptClose();
   }
-
   ShowHTML('</table>');
   ShowHTML('</center>');
   Rodape();

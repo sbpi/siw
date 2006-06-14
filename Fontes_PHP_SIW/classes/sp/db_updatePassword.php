@@ -1,5 +1,5 @@
 <?
-include_once("classes/db/DatabaseQueriesFactory.php");
+extract($GLOBALS); include_once($w_dir_volta."classes/db/DatabaseQueriesFactory.php");
 /**
 * class db_updatePassword
 *
@@ -10,17 +10,21 @@ include_once("classes/db/DatabaseQueriesFactory.php");
 
 class db_updatePassword {
    function getInstanceOf($dbms, $p_cliente, $p_sq_pessoa, $p_valor, $p_tipo) {
-     $sql='sp_updatePassword';
+     $sql=$strschema.'sp_updatePassword';
      $params=array("p_cliente"      =>array($p_cliente,     B_NUMERIC,     32),
                    "p_sq_pessoa"    =>array($p_sq_pessoa,   B_NUMERIC,     32),
                    "p_valor"        =>array($p_valor,       B_VARCHAR,     255),
                    "p_tipo"         =>array($p_tipo,        B_VARCHAR,     10)
                   );
      $l_rs = DatabaseQueriesFactory::getInstanceOf($sql, $dbms, $params, DB_TYPE);
-     if(!$l_rs->executeQuery()) {
-        return false; 
-     } else { 
-        return true;
+     $l_error_reporting = error_reporting(); 
+     error_reporting(0); 
+     if(!$l_rs->executeQuery()) { 
+       error_reporting($l_error_reporting); 
+       TrataErro($sql, $l_rs->getError(), $params, __FILE__, __LINE__, __CLASS__); 
+     } else {
+       error_reporting($l_error_reporting); 
+       return true;
      }
    }
 }

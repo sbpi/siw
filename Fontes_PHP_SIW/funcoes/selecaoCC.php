@@ -1,5 +1,5 @@
 <?
-include_once($w_dir_volta.'classes/sp/db_getCCList.php');
+include_once($w_dir_volta.'classes/sp/db_getCcList.php');
 // =========================================================================
 // Montagem da seleção do centro de custo
 // -------------------------------------------------------------------------

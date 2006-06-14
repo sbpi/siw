@@ -1,5 +1,5 @@
 <?
-include_once("classes/db/DatabaseQueriesFactory.php");
+extract($GLOBALS); include_once($w_dir_volta."classes/db/DatabaseQueriesFactory.php");
 /**
 * class db_getPersonData
 *
@@ -10,7 +10,7 @@ include_once("classes/db/DatabaseQueriesFactory.php");
 
 class db_getPersonData {
    function getInstanceOf($dbms, $p_cliente, $p_sq_pessoa, $p_cpf, $p_cnpj) {
-     $sql='sp_getPersonData';
+     $sql=$strschema.'sp_getPersonData';
      $params=array("p_cliente"    =>array($p_cliente,     B_NUMERIC,   32),
                    "p_sq_pessoa"  =>array($p_sq_pessoa,   B_NUMERIC,   32),
                    "p_cpf"        =>array($p_cpf,         B_VARCHAR,   14),
@@ -18,8 +18,9 @@ class db_getPersonData {
                    "p_result"     =>array(null,           B_CURSOR,    -1)
                   );
      $l_rs = DatabaseQueriesFactory::getInstanceOf($sql, $dbms, $params, DB_TYPE);
-     if(!$l_rs->executeQuery()) { die("Cannot query"); }
+     $l_error_reporting = error_reporting(); error_reporting(0); if(!$l_rs->executeQuery()) { error_reporting($l_error_reporting); TrataErro($sql, $l_rs->getError(), $params, __FILE__, __LINE__, __CLASS__); }
      else {
+       error_reporting($l_error_reporting); 
         if ($l_rs = $l_rs->getResultArray()) {
           return $l_rs;
         } else {

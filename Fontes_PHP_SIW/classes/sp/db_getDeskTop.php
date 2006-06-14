@@ -1,5 +1,5 @@
 <?
-include_once("classes/db/DatabaseQueriesFactory.php");
+extract($GLOBALS); include_once($w_dir_volta."classes/db/DatabaseQueriesFactory.php");
 /**
 * class sp_getDesktop
 *
@@ -10,15 +10,16 @@ include_once("classes/db/DatabaseQueriesFactory.php");
 
 class db_getDesktop {
    function getInstanceOf($dbms, $p_cliente, $p_usuario, $p_ano) {
-     $sql='sp_getDesktop';
+     $sql=$strschema.'sp_getDesktop';
      $params=array("p_cliente"  =>array($p_cliente,     B_NUMERIC,     32),
                    "p_usuario"  =>array($p_usuario,     B_NUMERIC,     32),
                    "p_ano"      =>array($p_ano,         B_NUMERIC,     32),
                    "p_result"   =>array(null,           B_CURSOR,      -1)
                   );
      $l_rs = DatabaseQueriesFactory::getInstanceOf($sql, $dbms, $params, DB_TYPE);
-     if(!$l_rs->executeQuery()) { die("Cannot query"); }
+     $l_error_reporting = error_reporting(); error_reporting(0); if(!$l_rs->executeQuery()) { error_reporting($l_error_reporting); TrataErro($sql, $l_rs->getError(), $params, __FILE__, __LINE__, __CLASS__); }
      else {
+       error_reporting($l_error_reporting); 
         if ($l_rs = $l_rs->getResultData()) {
           return $l_rs;
         } else {

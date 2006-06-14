@@ -1,5 +1,5 @@
 <?
-include_once('classes/db/DatabaseQueriesFactory.php');
+extract($GLOBALS); include_once($w_dir_volta.'classes/db/DatabaseQueriesFactory.php');
 /**
 * class dml_SgPerMen
 *
@@ -10,14 +10,22 @@ include_once('classes/db/DatabaseQueriesFactory.php');
 
 class dml_SgPerMen {
    function getInstanceOf($dbms, $operacao, $p_perfil, $p_menu, $p_endereco) {
-     $sql='sp_putSgPerMen';
+     $sql=$strschema.'sp_putSgPerMen';
      $params=array('operacao'       =>array($operacao,      B_VARCHAR,      1),
                    'p_perfil'       =>array($p_perfil,      B_NUMERIC,     32),
                    'p_menu'         =>array($p_menu,        B_NUMERIC,     32),
                    'p_endereco'     =>array($p_endereco,    B_NUMERIC,     32)
                   );
      $l_rs = DatabaseQueriesFactory::getInstanceOf($sql, $dbms, $params, DB_TYPE);
-     if(!$l_rs->executeQuery()) return false;  else return true;
+     $l_error_reporting = error_reporting(); 
+     error_reporting(0); 
+     if(!$l_rs->executeQuery()) { 
+       error_reporting($l_error_reporting); 
+       TrataErro($sql, $l_rs->getError(), $params, __FILE__, __LINE__, __CLASS__); 
+     } else {
+       error_reporting($l_error_reporting); 
+       return true;
+     }
    }
 }
 ?>

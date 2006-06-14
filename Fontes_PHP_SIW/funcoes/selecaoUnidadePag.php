@@ -7,7 +7,7 @@ function selecaoUnidadePag($label,$accesskey,$hint,$chave,$chaveAux,$campo,$rest
   extract($GLOBALS);
 
 
-  $RS = db_getUorgList::getInstanceOf($dbms, $w_cliente, $chaveAux, null, null, null);
+  $RS = db_getUorgList::getInstanceOf($dbms, $w_cliente, $chaveAux, 'PAGADORA', null, null, null);
   array_key_case_change(&$RS);
   $RS = SortArray($RS,'nome','asc');
   //$w_filter=" unidade_pagadora = 'S' and ativo = 'S'";

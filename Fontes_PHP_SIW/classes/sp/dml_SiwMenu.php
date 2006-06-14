@@ -1,5 +1,5 @@
 <?
-include_once('classes/db/DatabaseQueriesFactory.php');
+extract($GLOBALS); include_once($w_dir_volta.'classes/db/DatabaseQueriesFactory.php');
 /**
 * class dml_SiwMenu
 *
@@ -14,7 +14,7 @@ class dml_SiwMenu {
          $vinculacao, $data_hora, $envia_dia_util, $descricao, $justificativa, $finalidade, $cliente, 
          $nome, $acesso_geral, $sq_modulo, $sq_unidade_exec, $tramite, $ultimo_nivel, $descentralizado, 
          $externo, $ativo, $ordem, $envio, $controla_ano, $libera_edicao) {
-     $sql='sp_putSiwMenu';
+     $sql=$strschema.'sp_putSiwMenu';
      $params=array('operacao'           =>array($operacao,          B_VARCHAR,      1),
                    'chave'              =>array($chave,             B_NUMERIC,     32),
                    'cliente'            =>array($cliente,           B_NUMERIC,     32),
@@ -53,7 +53,15 @@ class dml_SiwMenu {
                    'libera_edicao'      =>array($libera_edicao,     B_VARCHAR,      1)
                   );
      $l_rs = DatabaseQueriesFactory::getInstanceOf($sql, $dbms, $params, DB_TYPE);
-     if(!$l_rs->executeQuery()) return false;  else return true;
+     $l_error_reporting = error_reporting(); 
+     error_reporting(0); 
+     if(!$l_rs->executeQuery()) { 
+       error_reporting($l_error_reporting); 
+       TrataErro($sql, $l_rs->getError(), $params, __FILE__, __LINE__, __CLASS__); 
+     } else {
+       error_reporting($l_error_reporting); 
+       return true;
+     }
    }
 }
 ?>

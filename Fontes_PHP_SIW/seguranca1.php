@@ -19,7 +19,7 @@ include_once('classes/sp/dml_SiwTramite.php');
 include_once('classes/sp/dml_SgPesMen.php');
 include_once('classes/sp/dml_SgPerMen.php');
 include_once('classes/sp/dml_SiwMenEnd.php');
-include_once('classes/sp/db_VerificaAssinatura.php');
+include_once('classes/sp/db_verificaAssinatura.php');
 include_once('funcoes/selecaoMenu.php');
 include_once('funcoes/selecaoUnidade.php');
 include_once('funcoes/opcaoMenu.php');
@@ -985,7 +985,7 @@ function Grava() {
   switch ($SG) {
     case 'ACESSOTRAMITE':
       // Verifica se a Assinatura Eletrônica é válida
-      if (VerificaAssinaturaEletronica($_SESSION['USERNAME'],strtoupper($_REQUEST['w_assinatura'])) || $w_assinatura=='') {
+      if (verificaAssinaturaEletronica($_SESSION['USERNAME'],strtoupper($_REQUEST['w_assinatura'])) || $w_assinatura=='') {
         if ($O=='I') {
           for ($i=0; $i<=count($_POST['w_sq_pessoa'])-1; $i=$i+1) {
             dml_putSgTraPes::getInstanceOf($dbms,$O,$_POST['w_sq_pessoa'][$i],$_REQUEST['w_sq_siw_tramite'],null);
@@ -1006,7 +1006,7 @@ function Grava() {
       break;
     case 'SIWTRAMITE':
       // Verifica se a Assinatura Eletrônica é válida
-      if (VerificaAssinaturaEletronica($_SESSION['USERNAME'],strtoupper($_REQUEST['w_assinatura'])) || $w_assinatura=='') {
+      if (verificaAssinaturaEletronica($_SESSION['USERNAME'],strtoupper($_REQUEST['w_assinatura'])) || $w_assinatura=='') {
         dml_SiwTramite::getInstanceOf($dbms,$O,$_REQUEST['w_sq_siw_tramite'],$_REQUEST['w_sq_menu'],
             $_REQUEST['w_nome'],$_REQUEST['w_ordem'],$_REQUEST['w_sigla'],$_REQUEST['w_descricao'],
             $_REQUEST['w_chefia_imediata'],$_REQUEST['w_ativo'],$_REQUEST['w_solicita_cc'],$_REQUEST['w_envia_mail']);
@@ -1022,7 +1022,7 @@ function Grava() {
       break;
     case 'ACESSOMENU':
       // Verifica se a Assinatura Eletrônica é válida
-      if (VerificaAssinaturaEletronica($_SESSION['USERNAME'],strtoupper($_REQUEST['w_assinatura'])) || $w_assinatura=='') {
+      if (verificaAssinaturaEletronica($_SESSION['USERNAME'],strtoupper($_REQUEST['w_assinatura'])) || $w_assinatura=='') {
         if ($O=='I') {
           for ($i=0; $i<=count($_POST['w_sq_pessoa'])-1; $i=$i+1) {
             dml_SgPesMen::getInstanceOf($dbms,$O,$_POST['w_sq_pessoa'][$i],$_REQUEST['w_sq_menu'],null);
@@ -1044,7 +1044,7 @@ function Grava() {
       break;
     case 'ACESSOMENUPERFIL':
       // Verifica se a Assinatura Eletrônica é válida
-      if (VerificaAssinaturaEletronica($_SESSION['USERNAME'],strtoupper($_REQUEST['w_assinatura'])) || $w_assinatura=='') {
+      if (verificaAssinaturaEletronica($_SESSION['USERNAME'],strtoupper($_REQUEST['w_assinatura'])) || $w_assinatura=='') {
         if ($O=='I') {
           for ($i=0; $i<=count($_POST['w_sq_pessoa_endereco'])-1; $i=$i+1) {
             for ($j=0; $j<=count($_POST['w_sq_tipo_vinculo'])-1; $j=$j+1) {
@@ -1068,7 +1068,7 @@ function Grava() {
       break;
     case 'ENDERECO':
       // Verifica se a Assinatura Eletrônica é válida
-      if (VerificaAssinaturaEletronica($_SESSION['USERNAME'],strtoupper($_REQUEST['w_assinatura'])) || $w_assinatura=='') {
+      if (verificaAssinaturaEletronica($_SESSION['USERNAME'],strtoupper($_REQUEST['w_assinatura'])) || $w_assinatura=='') {
         // Inicialmente, desativa a opção em todos os endereços
         dml_SiwMenEnd::getInstanceOf($dbms,'E',$_REQUEST['w_sq_menu'],null);
         // Em seguida, ativa apenas para os endereços selecionados

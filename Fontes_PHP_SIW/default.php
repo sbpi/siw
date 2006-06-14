@@ -53,6 +53,7 @@ if ($_SESSION["DBMS"]=="" || isset($_POST["p_dbms"])) {
   }
   else { $_SESSION["DBMS"]=$_POST["p_dbms"]; }
 }
+
 // Carrega variáveis locais com os dados dos parâmetros recebidos
 
 if (count($_POST) > 0) {
@@ -259,11 +260,11 @@ function LogOn()
   ShowHTML('</style>');
   ShowHTML('</HEAD>');
   ShowHTML('<body topmargin=0 leftmargin=10 onLoad="document.Form.Login1.focus();">');
-  ShowHTML('<form method="post" action="Default.php" onsubmit="return(Validacao(this));" name="Form"> ');
+  ShowHTML('<form method="post" action="default.php" onsubmit="return(Validacao(this));" name="Form"> ');
   ShowHTML('<INPUT TYPE="HIDDEN" NAME="Login" VALUE=""> ');
   ShowHTML('<INPUT TYPE="HIDDEN" NAME="Password" VALUE=""> ');
   ShowHTML('<INPUT TYPE="HIDDEN" NAME="par" VALUE="Log"> ');
-  ShowHTML('<INPUT TYPE="HIDDEN" NAME="p_dbms" VALUE="4"> ');
+  ShowHTML('<INPUT TYPE="HIDDEN" NAME="p_dbms" VALUE="1"> ');
   ShowHTML('<INPUT TYPE="HIDDEN" NAME="p_cliente" VALUE="1"> ');
   ShowHTML('<table width="770" height="31" border="0" cellpadding=0 cellspacing=0>');
   ShowHTML('  <tr><td valign="middle" width="100%" height="100%">');
@@ -285,16 +286,13 @@ function LogOn()
 // =========================================================================
 // Rotina principal
 // -------------------------------------------------------------------------
-function Main()
-{
+function Main() {
   extract($GLOBALS);
   // Monta o formulário de autenticação apenas para a SBPI
   if (!isset($_POST["p_cliente"])) { LogOn(); }
   else {
     $_SESSION["P_CLIENTE"]=$_POST["p_cliente"];
-    
     Valida();
-
   }
 }
 ?>

@@ -1,5 +1,5 @@
 <?
-include_once('classes/db/DatabaseQueriesFactory.php');
+extract($GLOBALS); include_once($w_dir_volta.'classes/db/DatabaseQueriesFactory.php');
 /**
 * class dml_putSiwUsuario
 *
@@ -12,7 +12,7 @@ class dml_putSiwUsuario {
    function getInstanceOf($dbms, $operacao, $p_chave, $p_cliente, $p_nome, $p_nome_resumido, $p_vinculo,
          $p_tipo_pessoa, $p_unidade, $p_localizacao, $p_username, $p_email, $p_gestor_seguranca,
          $p_gestor_sistema) {
-     $sql='sp_putSiwUsuario';
+     $sql=$strschema.'sp_putSiwUsuario';
      $params=array('operacao'           =>array($operacao,              B_VARCHAR,      1),
                    'p_chave'            =>array($p_chave,               B_NUMERIC,     32),
                    'cliente'            =>array($cliente,               B_NUMERIC,     32),
@@ -28,7 +28,15 @@ class dml_putSiwUsuario {
                    'p_gestor_sistema'   =>array($p_gestor_sistema,      B_VARCHAR,     1)
                   );
      $l_rs = DatabaseQueriesFactory::getInstanceOf($sql, $dbms, $params, DB_TYPE);
-     if(!$l_rs->executeQuery()) return false;  else return true;
+     $l_error_reporting = error_reporting(); 
+     error_reporting(0); 
+     if(!$l_rs->executeQuery()) { 
+       error_reporting($l_error_reporting); 
+       TrataErro($sql, $l_rs->getError(), $params, __FILE__, __LINE__, __CLASS__); 
+     } else {
+       error_reporting($l_error_reporting); 
+       return true;
+     }
    }
 }
 ?>

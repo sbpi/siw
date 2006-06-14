@@ -1,5 +1,5 @@
 <?
-include_once("classes/db/DatabaseQueriesFactory.php");
+extract($GLOBALS); include_once($w_dir_volta."classes/db/DatabaseQueriesFactory.php");
 /**
 * class sp_getUorgList
 *
@@ -10,7 +10,7 @@ include_once("classes/db/DatabaseQueriesFactory.php");
 
 class db_getUserList {
    function getInstanceOf($dbms, $p_cliente, $p_localizacao, $p_lotacao, $p_gestor, $p_nome, $p_modulo, $p_uf, $p_ativo, $p_contratado) {
-     $sql='sp_getUserList';
+     $sql=$strschema.'sp_getUserList';
      $params=array("p_cliente"      =>array($p_cliente,     B_NUMERIC,     32),
                    "p_localizacao"  =>array($p_localizacao, B_NUMERIC,     32),
                    "p_lotacao"      =>array($p_lotacao,     B_NUMERIC,     32),
@@ -23,8 +23,9 @@ class db_getUserList {
                    "p_result"       =>array(null,           B_CURSOR,      -1)
                   );
      $l_rs = DatabaseQueriesFactory::getInstanceOf($sql, $dbms, $params, DB_TYPE);
-     if(!$l_rs->executeQuery()) { die("Cannot query"); }
+     $l_error_reporting = error_reporting(); error_reporting(0); if(!$l_rs->executeQuery()) { error_reporting($l_error_reporting); TrataErro($sql, $l_rs->getError(), $params, __FILE__, __LINE__, __CLASS__); }
      else {
+       error_reporting($l_error_reporting); 
         if ($l_rs = $l_rs->getResultData()) {
           return $l_rs;
         } else {

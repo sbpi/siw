@@ -66,7 +66,7 @@ function LinkArquivo ($p_classe, $p_cliente, $p_arquivo, $p_target, $p_hint, $p_
      If (Nvl($p_hint,'')   > '') $l_hint   = ' title="' . $p_hint . '" ';    Else $l_hint   = '';
 
      // Montagem da tag anchor
-     $l_link = '<A ' . $l_classe . 'href="' . replace($l_link,'force=false','force=true') . '"' . $l_target . $l_hint . '>' . $p_descricao . '</a>';
+     $l_link = '<a'.$l_classe.'href="'.str_replace('force=false','force=true',$l_link).'"'.$l_target.$l_hint.'>'.$p_descricao.'</a>';
   }
   
   // Retorno ao chamador
@@ -441,9 +441,9 @@ function Cvl($expressao) { if (!isset($expressao) || $expressao=='') { return 0;
 // =========================================================================
 // Retorna o caminho físico para o diretório  do cliente informado
 // -------------------------------------------------------------------------
-function DiretorioCliente($p_Cliente) {
+function DiretorioCliente($p_cliente) {
   extract($GLOBALS);
-  return ini_get('APPL_PHYSICAL_PATH').'files\\'.$p_cliente;
+  return $conFilePhysical.$p_cliente;
 }
 
 // =========================================================================
@@ -681,6 +681,22 @@ function toDate($date) {
 }
 
 // =========================================================================
+// Função que retorna uma data como string para manipulação em formulários
+// -------------------------------------------------------------------------
+function FormatDateTime($date) { 
+  if (strlen($date)!=8 && strlen($date)!=10) return nil;
+  else {
+    if (strlen($date)==10) return $date;
+    else {
+      $l_date = substr($date,0,2).'/'.substr($date,3,2).'/';
+      if (substr($date,6,2) < 30) $l_date = $l_date.'20'.substr($date,6,2);
+      else                        $l_date = $l_date.'19'.substr($date,6,2);
+    }
+    return $l_date;
+  }
+}
+
+// =========================================================================
 // Função que adiciona dias a uma data
 // date: timestamp gerado a partir da funçao toDate()
 // inc:  inteiro precedido do sinal de adição ou subtração de dias (+1, -3 etc.)
@@ -708,12 +724,11 @@ function MascaraBeneficiario($cgccpf) {
 // =========================================================================
 // Rotina de envio de e-mail
 // -------------------------------------------------------------------------
-function EnviaMail($w_subject,$w_mensagem,$w_recipients) {
+function EnviaMail($w_subject,$w_mensagem,$w_recipients,$w_attachments = null) {
   extract($GLOBALS);
   include_once('classes/mail/class_email.php');
   $_mail = new EMAIL();
-  $_mail->setHeader('Content-Type','text/html');
-  $_mail->setHeader('Content-Transfer-Encoding','quoted-printable');
+  $_mail->setHeader('Content-Type','text/html; charset=iso-8859-1');
   $_mail->setDestino(str_ireplace(';',',',$w_recipients));
   $_mail->setAssunto($w_subject);
   $_mail->setMensagem($w_mensagem);
@@ -760,30 +775,17 @@ function EnviaMailSender($w_subject,$w_mensagem,$w_recipients,$w_from,$w_from_na
   $function_ret="";
   return $function_ret;
 }
-// =========================================================================
-// Fim da rotina de envio de email
-// -------------------------------------------------------------------------
 
 
 // =========================================================================
-
 // Rotina que extrai a última parte da variável TP
-
 // -------------------------------------------------------------------------
-
-function RemoveTP($TP)
-{
-  extract($GLOBALS);
-
-
-$w_TP=$TP;
-while((strpos($w_TP,"-") ? strpos($w_TP,"-")+1 : 0)>0)
-{
-
-  $w_TP=substr($w_TP,(strpos($w_TP,"-") ? strpos($w_TP,"-")+1 : 0)+1-1,strlen($w_TP));
-}
-$RemoveTP=str_replace(" -".$w_TP,"",$TP);
-return $function_ret;
+function RemoveTP($TP) {
+  $w_TP=$TP;
+  while(!(strpos($w_TP,'-')===false)) {
+    $w_TP = substr($w_TP,strpos($w_TP,'-')+1,strlen($w_TP));
+  }
+  return str_replace(' -'.$w_TP,'',$TP);
 }
 
 // =========================================================================
@@ -795,8 +797,7 @@ function ExtractFileName($arquivo) {
   while((strpos($fsa,"\\") ? strpos($fsa,"\\")+1 : 0)>0) {
     $fsa=substr($fsa,(strpos($fsa,"\\") ? strpos($fsa,"\\")+1 : 0)+1-1,strlen($fsa));
   }
-  $ExtractFileName=$fsa;
-  return $function_ret;
+  return $fsa;
 }
 
 // =========================================================================
@@ -814,7 +815,7 @@ return $function_ret;
 // =========================================================================
 // Rotina de tratamento de erros
 // -------------------------------------------------------------------------
-function TrataErro($sp, $Err, $file, $line, $object) {
+function TrataErro($sp, $Err, $params, $file, $line, $object) {
   extract($GLOBALS);
 
   if (strpos($Err,'ORA-02292')!==false || strpos($Err,'ORA-02292')!==false ) {
@@ -857,59 +858,64 @@ function TrataErro($sp, $Err, $file, $line, $object) {
     ScriptClose;
   }
   else {
-    $w_html='<html><BASEFONT FACE="Arial"><body BGCOLOR="#FF5555" TEXT="#FFFFFF">';
-    $w_html=$w_html.'<CENTER><H2>ATENÇÃO</H2></CENTER>';
-    $w_html=$w_html.'<BLOCKQUOTE>';
-    $w_html=$w_html.'<P ALIGN="JUSTIFY">Erro não previsto. <b>Uma cópia desta tela foi enviada por e-mail para os responsáveis pela correção. Favor tentar novamente mais tarde.</P>';
-    $w_html=$w_html.'<TABLE BORDER="2" BGCOLOR="#FFCCCC" CELLPADDING="5"><TR><TD><FONT COLOR="#000000">';
-    $w_html=$w_html.'<DL><DT>Data e hora da ocorrência: <FONT FACE="courier">'.date('d/m/Y, h:i:s').'<br><br></font></DT>';
-    $w_html=$w_html.'<DT>Descrição:<DD><FONT FACE="courier">'.$Err.'<br><br></font>';
-    $w_html=$w_html.'<DT>Arquivo:<DD><FONT FACE="courier">'.$file.', linha: '.$line.'<br><br></font>';
-    $w_html=$w_html.'<DT>Objeto:<DD><FONT FACE="courier">'.$object.'<br><br></font>';
+    $w_html='<html>';
+    $w_html=$w_html.chr(10).'<head>';
+    $w_html=$w_html.chr(10).'  <BASEFONT FACE="Arial" SIZE="2">';
+    $w_html=$w_html.chr(10).'</head>';
+    $w_html=$w_html.chr(10).'<body BGCOLOR="#FF5555" TEXT="#FFFFFF">';
+    $w_html=$w_html.chr(10).'<CENTER><H2>ATENÇÃO</H2></CENTER>';
+    $w_html=$w_html.chr(10).'<BLOCKQUOTE>';
+    $w_html=$w_html.chr(10).'<P ALIGN="JUSTIFY">Erro não previsto. <b>Uma cópia desta tela foi enviada por e-mail para os responsáveis pela correção. Favor tentar novamente mais tarde.</P>';
+    $w_html=$w_html.chr(10).'<TABLE BORDER="2" BGCOLOR="#FFCCCC" CELLPADDING="5"><TR><TD><FONT COLOR="#000000">';
+    $w_html=$w_html.chr(10).'<DL><DT>Data e hora da ocorrência: <FONT FACE="courier">'.date('d/m/Y, h:i:s').'<br><br></font></DT>';
+    $w_html=$w_html.chr(10).'<DT>Descrição:<DD><FONT FACE="courier">'.$Err['message'].'<br><br></font>';
+    $w_html=$w_html.chr(10).'<DT>Arquivo:<DD><FONT FACE="courier">'.$file.', linha: '.$line.'<br><br></font>';
+    //$w_html=$w_html.chr(10).'<DT>Objeto:<DD><FONT FACE="courier">'.$object.'<br><br></font>';
 
-    //$w_html=$w_html.'<DT>Comando em execução: <FONT FACE="courier">'.$Err.'<br><br></font></DT>';
-    //$w_html=$w_html."<DT>Parâmetros do objeto:<DD><FONT FACE=\"courier\" size=1>";
-    //foreach ($sp->Parameters as $w_Item) {
-    //  $w_html=$w_html.$w_Item->Name." => ['.$w_Item->Value.']<br>";
-    //}
-    //$w_html=$w_html."   <br><br></font>";
-
-    $w_html=$w_html.'<DT>Dados da querystring:';
-    foreach($_GET as $chv => $vlr) { $w_html=$w_html.'<DD><FONT FACE="courier" size=1>'.$chv.' => ['.$vlr.']<br>'; }
-
-    $w_html=$w_html.'</DT>';
-    $w_html=$w_html.'<DT>Dados do formulário:';
-    foreach($_POST as $chv => $vlr) { $w_html=$w_html.'<DD><FONT FACE="courier" size=1>'.$chv.' => ['.$vlr.']<br>'; }
-
-    $w_html=$w_html.'</DT>';
-    $w_html=$w_html.'   <br><br></font>';
-    $w_html=$w_html.'</DT>';
-    $w_html=$w_html.'<DT>Variáveis de sessão:<DD><FONT FACE="courier" size=1>';
-    foreach($_SESSION as $chv => $vlr) { if (strpos(strtoupper($chv),'SENHA') !== true) { $w_html=$w_html.$chv.' => ['.$vlr.']<br>'; } }
-    $w_html=$w_html.'</DT>';
-    $w_html=$w_html.'   <br><br></font>';
-    $w_html=$w_html.'<DT>Variáveis de servidor:<DD><FONT FACE="courier" size=1>';
-    $w_html=$w_html.' SCRIPT_NAME => ['.$_SERVER['SCRIPT_NAME'].']<br>';
-    $w_html=$w_html.' SERVER_NAME => ['.$_SERVER['SERVER_NAME'].']<br>';
-    $w_html=$w_html.' SERVER_PORT => ['.$_SERVER['SERVER_PORT'].']<br>';
-    $w_html=$w_html.' SERVER_PROTOCOL => ['.$_SERVER['SERVER_PROTOCOL'].']<br>';
-    $w_html=$w_html.' HTTP_ACCEPT_LANGUAGE => ['.$_SERVER['HTTP_ACCEPT_LANGUAGE'].']<br>';
-    $w_html=$w_html.' HTTP_USER_AGENT => ['.$_SERVER['HTTP_USER_AGENT'].']<br>';
-    $w_html=$w_html.'</DT>';
-    $w_html=$w_html.'   <br><br></font>';
-    $w_html=$w_html.'</FONT></TD></TR></TABLE><BLOCKQUOTE>';
-    /*
-    $w_resultado=EnviaMail('ERRO SIW',$w_html,'alex@sbpi.com.br; celso@sbpi.com.br');
-    if ($w_resultado>'') {
-       $w_html=$w_html.'<SCRIPT LANGUAGE="JAVASCRIPT">';
-       $w_html=$w_html.'   alert("Não foi possível enviar o e-mail comunicando sobre o erro. Favor copiar esta página e enviá-la por e-mail aos gestores do sistema.");';
-       $w_html=$w_html.'</SCRIPT>';
+    $w_html=$w_html.chr(10).'<DT>Comando em execução:<blockquote> <FONT FACE="courier">'.$Err['sqltext'].'</blockquote></font></DT>';
+    $w_html=$w_html."<DT>Valores dos parâmetros:<DD><FONT FACE=\"courier\" size=1>";
+    foreach ($params as $w_Item) {
+      $w_html=$w_html.chr(10).'['.$w_Item[0].']<br>';
     }
-    */
+    $w_html=$w_html."   <br><br></font>";
+
+    $w_html=$w_html.chr(10).'<DT>Variáveis de servidor:<DD><FONT FACE="courier" size=1>';
+    $w_html=$w_html.chr(10).' SCRIPT_NAME => ['.$_SERVER['SCRIPT_NAME'].']<br>';
+    $w_html=$w_html.chr(10).' SERVER_NAME => ['.$_SERVER['SERVER_NAME'].']<br>';
+    $w_html=$w_html.chr(10).' SERVER_PORT => ['.$_SERVER['SERVER_PORT'].']<br>';
+    $w_html=$w_html.chr(10).' SERVER_PROTOCOL => ['.$_SERVER['SERVER_PROTOCOL'].']<br>';
+    $w_html=$w_html.chr(10).' HTTP_ACCEPT_LANGUAGE => ['.$_SERVER['HTTP_ACCEPT_LANGUAGE'].']<br>';
+    $w_html=$w_html.chr(10).' HTTP_USER_AGENT => ['.$_SERVER['HTTP_USER_AGENT'].']<br>';
+    $w_html=$w_html.chr(10).'</DT>';
+    $w_html=$w_html.chr(10).'   <br><br></font>';
+
+    $w_html=$w_html.chr(10).'<DT>Dados da querystring:';
+    foreach($_GET as $chv => $vlr) { $w_html=$w_html.chr(10).'<DD><FONT FACE="courier" size=1>'.$chv.' => ['.$vlr.']<br>'; }
+
+    $w_html=$w_html.chr(10).'</DT>';
+    $w_html=$w_html.chr(10).'<DT>Dados do formulário:';
+    foreach($_POST as $chv => $vlr) { $w_html=$w_html.chr(10).'<DD><FONT FACE="courier" size=1>'.$chv.' => ['.$vlr.']<br>'; }
+
+    $w_html=$w_html.chr(10).'</DT>';
+    $w_html=$w_html.chr(10).'   <br><br></font>';
+    $w_html=$w_html.chr(10).'</DT>';
+    $w_html=$w_html.chr(10).'<DT>Variáveis de sessão:<DD><FONT FACE="courier" size=1>';
+    foreach($_SESSION as $chv => $vlr) { if (strpos(strtoupper($chv),'SENHA') !== true) { $w_html=$w_html.chr(10).$chv.' => ['.$vlr.']<br>'; } }
+    $w_html=$w_html.chr(10).'</DT>';
+    $w_html=$w_html.chr(10).'   <br><br></font>';
+    $w_html=$w_html.chr(10).'</FONT></TD></TR></TABLE><BLOCKQUOTE>';
     $w_html=$w_html.'</body></html>';
+
+    $w_resultado = EnviaMail('ERRO SIW',$w_html,'alex@sbpi.com.br; celso@sbpi.com.br');
+    if ($w_resultado>'') {
+       ShowHTML('<SCRIPT LANGUAGE="JAVASCRIPT">');
+       ShowHTML('   alert("Não foi possível enviar o e-mail comunicando sobre o erro. Favor copiar esta página e enviá-la por e-mail aos gestores do sistema.");');
+       ShowHTML('</SCRIPT>');
+    }
+
     ShowHTML($w_html);
   }
-  exit();
+  exit;
 }
 // =========================================================================
 // Fim da rotina de tratamento de erros
@@ -964,7 +970,7 @@ function Estrutura_Topo() {
 // -------------------------------------------------------------------------
 function Estrutura_CSS($l_cliente) {
   extract($GLOBALS);
-  if ($cDbl[$l_cliente]==6761) {
+  if ($l_cliente==6761) {
     ShowHTML('<LINK  media=screen href="/siw/files/'.$l_cliente.'/css/estilo.css" type=text/css rel=stylesheet>');
     ShowHTML('<LINK media=print href="/siw/files/'.$l_cliente.'/css/print.css" type=text/css rel=stylesheet>');
     ShowHTML('<SCRIPT language=javascript src="/siw/files/'.$l_cliente.'/js/scripts.js" type=text/javascript> ');
@@ -1212,7 +1218,7 @@ function Estrutura_Menu() {
 // =========================================================================
 // Abre conexão com o banco de dados
 // -------------------------------------------------------------------------
-function AbreSessao() {
+function abreSessao() {
   return abreSessao::getInstanceOf($_SESSION["DBMS"]);
 }
 
@@ -1258,7 +1264,7 @@ function VerificaSenhaAcesso($Usuario,$Senha) {
 function VerificaAssinaturaEletronica($Usuario,$Senha) {
    extract($GLOBALS);
    if ($Senha>'') {
-      if (db_verificaAssinatura::getInstanceOf($dbms, $_SESSION["P_CLIENTE"],$Usuario,$Senha) ==0)
+      if (db_verificaAssinatura::getInstanceOf($dbms, $_SESSION["P_CLIENTE"],$Usuario,$Senha)==0)
          return true;
        else
          return false;

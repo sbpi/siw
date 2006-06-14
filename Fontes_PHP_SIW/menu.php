@@ -40,13 +40,13 @@ $P3         = $_REQUEST['P3'];
 $P4         = $_REQUEST['P4'];
 $TP         = $_REQUEST['TP'];
 $SG         = strtoupper($_REQUEST['SG']);
-$R          = strtoupper($_REQUEST['R']);
+$R          = strtolower($_REQUEST['R']);
 $O          = strtoupper($_REQUEST['O']);
 
 $p_cliente  = $_SESSION['P_CLIENTE'];
 $sq_pessoa  = $_SESSION['SQ_PESSOA'];
 $w_pagina   = 'menu.php?par=';
-$w_ImagemPadrao='images/folder/SheetLittle.gif';
+$w_ImagemPadrao='images/Folder/SheetLittle.gif';
 
 if ($O=='' && $par=='TROCASENHA') { $O='A'; }
 
@@ -78,7 +78,7 @@ function Frames() {
   ShowHTML('  </HEAD> ');
   ShowHTML('    <FRAMESET COLS="20%,80%"> ');
   ShowHTML('     <FRAME SRC="menu.php?par=ExibeDocs" SCROLLING="AUTO" FRAMEBORDER="0" FRAMESPACING=0 NAME="menu"> ');
-  if ($cliente=='' || $cliente==1) {
+  if ($_SESSION['P_CLIENTE']=='' || $_SESSION['P_CLIENTE']==1) {
     ShowHTML('     <FRAME SRC="branco.htm" FRAMEBORDER="0" SCROLLING="AUTO"  FRAMEBORDER="0" FRAMESPACING=0 NAME="content"> ');
   } else {
     ShowHTML('     <FRAME SRC="" SCROLLING="AUTO" FRAMEBORDER="0" NAME="content"> ');
@@ -89,7 +89,6 @@ function Frames() {
   ShowHTML('     </BODY> ');
   ShowHTML('    </FRAMESET> ');
   ShowHTML('</HTML> ');
-  return $function_ret;
 }
 
 // =========================================================================
@@ -140,7 +139,7 @@ function ExibeDocs() {
                   $w_titulo=$w_titulo.' - '.f($row3,'NOME');
                   if (f($row3,'IMAGEM') > '') $w_Imagem=f($row3,'IMAGEM'); else $w_Imagem=$w_ImagemPadrao;
                   if (f($row3,'externo')=='S') 
-                     eval('$node'.i.'_'.j.'_'.k.'_'.l.' = &$node'.i.'_'.j.'_'.k.'->addItem(new XNode(f($row3,\'nome\'),str_replace(\'@files\',$conFileVirtual.$p_cliente,f($row3,\'LINK\')),$w_Imagem,$w_Imagem,f($row3,\'target\')));');
+                     eval('$node'.i.'_'.j.'_'.k.'_'.l.' = &$node'.i.'_'.j.'_'.k.'->addItem(new XNode(null,LinkArquivo(\'hl\',$p_cliente,str_replace(\'@files/\',\'\',f($row3,\'LINK\')),f($row3,\'target\'),null,\'<img src="\'.$w_Imagem.\'" border=0>\'.f($row3,\'nome\'),null),null,null,null));');
                   else
                      eval('$node'.i.'_'.j.'_'.k.'_'.l.' = &$node'.i.'_'.j.'_'.k.'->addItem(new XNode(f($row3,\'nome\'),f($row3,\'LINK\').\'&P1=\'.f($row3,\'P1\').\'&P2=\'.f($row3,\'P2\').\'&P3=\'.f($row3,\'P3\').\'&P4=\'.f($row3,\'P4\').\'&TP=<img src=\'.$w_Imagem.\' BORDER=0>\'.$w_titulo.\'&SG=\'.f($row3,\'SIGLA\'),$w_Imagem,$w_Imagem,f($row3,\'target\')));');
  
@@ -151,7 +150,7 @@ function ExibeDocs() {
                 if (f($row2,'IMAGEM')>'') $w_Imagem=f($row2,'IMAGEM'); else $w_Imagem=$w_ImagemPadrao;
 
                 if (f($row2,'externo')=='S')
-                   eval('$node'.i.'_'.j.'_'.k.' = &$node'.i.'_'.j.'->addItem(new XNode(f($row2,\'nome\'),str_replace(\'@files\',$conFileVirtual.$p_cliente,f($row2,\'LINK\')),$w_Imagem,$w_Imagem,f($row2,\'target\')));');
+                   eval('$node'.i.'_'.j.'_'.k.' = &$node'.i.'_'.j.'->addItem(new XNode(null,LinkArquivo(\'hl\',$p_cliente,str_replace(\'@files/\',\'\',f($row2,\'LINK\')),f($row2,\'target\'),null,\'<img src="\'.$w_Imagem.\'" border=0>\'.f($row2,\'nome\'),null),null,null,null));');
                 else
                    eval('$node'.i.'_'.j.'_'.k.' = &$node'.i.'_'.j.'->addItem(new XNode(f($row2,\'nome\'),f($row2,\'LINK\').\'&P1=\'.f($row2,\'P1\').\'&P2=\'.f($row2,\'P2\').\'&P3=\'.f($row2,\'P3\').\'&P4=\'.f($row2,\'P4\').\'&TP=<img src=\'.$w_Imagem.\' BORDER=0>\'.$w_titulo.\'&SG=\'.f($row2,\'SIGLA\'),$w_Imagem,$w_Imagem,f($row2,\'target\')));');
 
@@ -167,7 +166,7 @@ function ExibeDocs() {
             if (f($row1,'externo')=='S') {
 
               if (f($row1,'LINK')>'') 
-                 eval('$node'.i.'_'.j.' = &$node'.i.'->addItem(new XNode(f($row1,\'nome\'),str_replace(\'@files\',$conFileVirtual.$p_cliente,f($row1,\'LINK\')),$w_Imagem,$w_Imagem,f($row1,\'target\')));');
+                 eval('$node'.i.'_'.j.' = &$node'.i.'->addItem(new XNode(null,LinkArquivo(\'hl\',$p_cliente,str_replace(\'@files/\',\'\',f($row1,\'LINK\')),f($row1,\'target\'),null,\'<img src="\'.$w_Imagem.\'" border=0>\'.f($row1,\'nome\'),null),null,null,null));');
               else
                  eval('$node'.i.'_'.j.' = &$node'.i.'->addItem(new XNode(f($row1,\'nome\'),\'#\'.f($row1,\'nome\'),$w_Imagem,$w_Imagem,f($row1,\'target\')));');
  
@@ -182,7 +181,7 @@ function ExibeDocs() {
         if (f($row,'IMAGEM')>'') $w_Imagem=f($row,'IMAGEM'); else $w_Imagem=$w_ImagemPadrao;
 
         if (f($row,'externo')=='S')
-           eval('$node'.i.' = &$root->addItem(new XNode(f($row,\'nome\'),str_replace(\'@files\',$conFileVirtual.$p_cliente,f($row,\'LINK\')),$w_Imagem,$w_Imagem,f($row,\'target\')));');
+           eval('$node'.i.' = &$root->addItem(new XNode(null,LinkArquivo(\'hl\',$p_cliente,str_replace(\'@files/\',\'\',f($row,\'LINK\')),f($row,\'target\'),null,\'<img src="\'.$w_Imagem.\'" border=0>\'.f($row,\'nome\'),null),null,null,null));');
         else
            eval('$node'.i.' = &$root->addItem(new XNode(f($row,\'nome\'),f($row,\'LINK\').\'&P1=\'.f($row,\'P1\').\'&P2=\'.f($row,\'P2\').\'&P3=\'.f($row,\'P3\').\'&P4=\'.f($row,\'P4\').\'&TP=<img src=\'.$w_Imagem.\' BORDER=0>\'.$w_titulo.\'&SG=\'.f($row,\'SIGLA\'),$w_Imagem,$w_Imagem,f($row,\'target\')));');
       }
@@ -198,14 +197,14 @@ function ExibeDocs() {
       $w_descricao=f($RS,'NOME');
     }
 
-    $node1 = &$root->addItem(new XNode($w_descricao,false));
+    $node1 = &$root->addItem(new XNode($w_descricao,false,null,null,null,null,true));
 
     $RS = db_getLinkSubMenu::getInstanceOf($dbms, $p_cliente, $SG);
     foreach ($RS as $row) {
       $w_titulo = $TP.' - '.f($row,'nome');
       if (f($row,'imagem') > '') $w_Imagem=f($row,'imagem'); else $w_Imagem=$w_ImagemPadrao; 
       if (f($row,'externo')=='S')
-         eval('$node1_'.i.' = &$node1->addItem(new XNode(f($row,\'nome\'),str_replace(\'@files\',$conFileVirtual.$p_cliente,f($row,\'LINK\')),$w_Imagem,$w_Imagem,f($row,\'target\')));');
+         eval('$node1_'.i.' = &$node1->addItem(new XNode(null,LinkArquivo(\'hl\',$p_cliente,str_replace(\'@files/\',\'\',f($row,\'LINK\')),f($row,\'target\'),null,\'<img src="\'.$w_Imagem.\'" border=0>\'.f($row,\'nome\'),null),null,null,null));');
       else {
         if ($_REQUEST['w_cgccpf']>'')
            eval('$node'.i.' = &$node1->addItem(new XNode(f($row,\'nome\'),f($row,\'LINK\').\'&P1=\'.f($row,\'P1\').\'&P2=\'.f($row,\'P2\').\'&P3=\'.f($row,\'P3\').\'&P4=\'.f($row,\'P4\').\'&TP=<img src=\'.$w_Imagem.\' BORDER=0>\'.$w_titulo.\'&SG=\'.f($row,\'SIGLA\').\'&O=L&w_cgccpf=\'.$_REQUEST[\'w_cgccpf\'].MontaFiltro(\'GET\'),$w_Imagem,$w_Imagem,f($row,\'target\')));');
@@ -222,10 +221,10 @@ function ExibeDocs() {
       $i = $i +1;
     }
     $RS = db_getLinkData::getInstanceOf($dbms, $p_cliente, $SG);
-    $node2 = &$root->addItem(new XNode('Nova consulta',$w_pagina.$par.'&O=L&R='.$R.'&SG='.f($row,'sigla').'&TP='.RemoveTP($TP).'&P1='.f($row,'P1').'&P2='.f($row,'P2').'&P3='.f($row,'P3').'&P4='.f($row,'P4').MontaFiltro('GET'),$w_Imagem,$w_Imagem));
+    $node2 = &$root->addItem(new XNode('Nova consulta',$w_pagina.$par.'&O=L&R='.$R.'&SG='.f($RS,'sigla').'&TP='.RemoveTP($TP).'&P1='.f($RS,'P1').'&P2='.f($RS,'P2').'&P3='.f($RS,'P3').'&P4='.f($RS,'P4').MontaFiltro('GET'),$w_Imagem,$w_Imagem));
     $node3 = &$root->addItem(new XNode('Menu','menu.php?par=ExibeDocs',$w_Imagem,$w_Imagem));
     $i = 4;
-  }  
+  }
 
   eval('$node'.i.' = &$root->addItem(new XNode(\'Sair do sistema\',\'menu.php?par=Sair\',$w_Imagem,$w_Imagem,\'_top\', \'onClick="return(confirm(\\\'Confirma saída do sistema?\\\'));"\' ));');
 
@@ -254,10 +253,10 @@ function ExibeDocs() {
   // Decide se montará o body do menu principal ou o body do sub-menu de uma opção a partir do valor de w_sq_pagina
 
   $RS = db_getCustomerData::getInstanceOf($dbms, $p_cliente);
-  print '<BODY topmargin=0 bgcolor="#FFFFFF" BACKGROUND="'.$conFileVirtual.$p_cliente.'/img/'.f($RS,'fundo').'" BGPROPERTIES="FIXED" text="#000000" link="#000000" vlink="#000000" alink="#FF0000" ';
+  print '<BODY topmargin=0 bgcolor="#FFFFFF" BACKGROUND="'.LinkArquivo(null,$p_cliente,'img/'.f($RS,'fundo'),null,null,null,'EMBED').'" BGPROPERTIES="FIXED" text="#000000" link="#000000" vlink="#000000" alink="#FF0000" ';
   if ($SG=='') {
     $RS = db_getLinkData::getInstanceOf($dbms, $p_cliente, 'MESA');
-    if (!$RS->EOF) {
+    if (count($RS)>0) {
       if (f($RS,'IMAGEM')>'') {
         ShowHTML('onLoad=\'javascript:top.content.location="'.f($RS,'LINK').'&P1='.f($RS,'P1').'&P2='.f($RS,'P2').'&P3='.f($RS,'P3').'&P4='.f($RS,'P4').'&TP=<img src='.f($RS,'IMAGEM').' BORDER=0>'.f($RS,'nome').'&SG='.f($RS,'SIGLA').'"\'> ');
       } else {
@@ -269,8 +268,6 @@ function ExibeDocs() {
   } else {
     if ($O=='L') {
       $RS = db_getLinkData::getInstanceOf($dbms, $p_cliente, $SG);
-      array_key_case_change(&$RS);
-      $RS = SortArray($RS,'ordem','asc');
       ShowHTML('onLoad=\'javascript:top.content.location="'.f($RS,'LINK').'&R='.$_REQUEST['R'].'&P1='.f($RS,'P1').'&P2='.f($RS,'P2').'&P3='.f($RS,'P3').'&P4='.f($RS,'P4').'&TP='.$_REQUEST['TP'].' - '.f($RS,'nome').'&SG='.f($RS,'SIGLA').'&O='.$_REQUEST['O'].MontaFiltro('GET').'";\'>');
     } else {
       $RS = db_getLinkDataParent::getInstanceOf($dbms, $p_cliente, $SG);
@@ -292,7 +289,7 @@ function ExibeDocs() {
   ShowHTML('  <CENTER><table border=0 cellpadding=0 height="80" width="100%">');
   ShowHTML('      <tr><td width="100%" valign="center" align="center">');
   $RS = db_getCustomerData::getInstanceOf($dbms, $p_cliente);
-  ShowHTML('         <img src="'.$conFileVirtual.$p_cliente.'/img/'.f($RS,'logo1').'" vspace="0" hspace="0" border="1"></td></tr>');
+  ShowHTML('         <img src="'.LinkArquivo(null,$p_cliente,'img/'.f($RS,'logo1'),null,null,null,'EMBED').'" vspace="0" hspace="0" border="1"></td></tr>');
   ShowHTML('      <tr><td height=1><tr><td height=1 bgcolor="#000000">');
   ShowHTML('      <tr><td colspan=2 width="100%"><table border=0 width="100%" cellpadding=0 cellspacing=0><tr valign="top">');
   ShowHTML('          <td>Usuário:<b>'.$_SESSION['NOME_RESUMIDO'].'</b></TD>');
@@ -317,9 +314,9 @@ function TrocaSenha() {
 
   $RS           = db_getCustomerData::getInstanceOf($dbms, $p_cliente);
   $w_minimo     = f($RS,'tamanho_min_senha');
-  $w_maximo     = f($RS,'TAMANHO_MAX_SENHA');
-  $w_vigencia   = f($RS,'DIAS_VIG_SENHA');
-  $w_aviso      = f($RS,'DIAS_AVISO_EXPIR');
+  $w_maximo     = f($RS,'tamanho_max_senha');
+  $w_vigencia   = f($RS,'dias_vig_senha');
+  $w_aviso      = f($RS,'dias_aviso_expir');
 
   if ($P1==1) { $w_texto='Senha de Acesso'; } else { $w_texto='Assinatura Eletrônica'; }
   Cabecalho();
@@ -492,14 +489,6 @@ function Sair() {
 // -------------------------------------------------------------------------
 function Main() {
   extract($GLOBALS);
-  // Verifica se o usuário tem lotação e localização
-  if ((strlen($LOTACAO.'')==0 || strlen($LOCALIZACAO.'')==0) && $LogOn=='Sim') {
-     ScriptOpen('JavaScript');
-     ShowHTML(' alert(\'Você não tem lotação ou localização definida. Entre em contato com o RH!\'); ');
-     ShowHTML(' top.location.href=\'default.php\'; ');
-     ScriptClose();
-     exit();
-  }
 
   switch ($par) {
   case 'GRAVA':         Grava(); break;

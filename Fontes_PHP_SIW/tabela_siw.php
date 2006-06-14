@@ -15,7 +15,7 @@ include_once('classes/sp/db_getModData.php');
 include_once('classes/sp/db_getModList.php');
 include_once('classes/sp/db_getSegList.php');
 include_once('classes/sp/db_getSegData.php');
-include_once('classes/sp/db_VerificaAssinatura.php');
+include_once('classes/sp/db_verificaAssinatura.php');
 include_once('classes/sp/dml_DmSegVinc.php');
 include_once('classes/sp/dml_SiwModSeg.php');
 include_once('classes/sp/dml_SiwModulo.php');
@@ -286,8 +286,6 @@ function SegmentoVinc() {
   ShowHTML('</table>');
   ShowHTML('</center>');
   Rodape();
-
-  return $function_ret;
 } 
 
 
@@ -462,8 +460,6 @@ function SegmentoMenu() {
   ShowHTML('</table>');
   ShowHTML('</center>');
   Rodape();
-
-  return $function_ret;
 } 
 
 // =========================================================================
@@ -646,8 +642,6 @@ function SegmentoModulo() {
   ShowHTML('</table>');
   ShowHTML('</center>');
   Rodape();
-  
-  return $function_ret;
 } 
 
 // =========================================================================
@@ -798,8 +792,6 @@ function Modulos() {
   ShowHTML('</table>');
   ShowHTML('</center>');
   Rodape();
-
-  return $function_ret;
 } 
 
 // =========================================================================
@@ -970,8 +962,6 @@ function Segmento() {
   ShowHTML('</table>');
   ShowHTML('</center>');
   Rodape();
-
-  return $function_ret;
 } 
 
 // =========================================================================
@@ -987,7 +977,7 @@ function Grava() {
   switch ($SG) {
     case 'SEGVINC':
       // Verifica se a Assinatura Eletrônica é válida
-      if (VerificaAssinaturaEletronica($_SESSION['USERNAME'],strtoupper($_REQUEST['w_assinatura'])) || $w_assinatura=='') {
+      if (verificaAssinaturaEletronica($_SESSION['USERNAME'],strtoupper($_REQUEST['w_assinatura'])) || $w_assinatura=='') {
         dml_DmSegVinc::getInstanceOf($dbms,$O,
             $_REQUEST['w_sq_segmento_vinculo'],$_REQUEST['w_sq_segmento'],$_REQUEST['w_sq_tipo_pessoa'],
             $_REQUEST['w_nome'],$_REQUEST['w_padrao'],$_REQUEST['w_ativo'],$_REQUEST['w_interno'],$_REQUEST['w_contratado'],$_REQUEST['w_ordem']);
@@ -1003,7 +993,7 @@ function Grava() {
       break;
     case 'SEGMOD':
       // Verifica se a Assinatura Eletrônica é válida
-      if (VerificaAssinaturaEletronica($_SESSION['USERNAME'],strtoupper($_REQUEST['w_assinatura'])) || $w_assinatura=='') {
+      if (verificaAssinaturaEletronica($_SESSION['USERNAME'],strtoupper($_REQUEST['w_assinatura'])) || $w_assinatura=='') {
         dml_SiwModSeg::getInstanceOf($dbms, $O,
             $_REQUEST['w_objetivo_especifico'],$_REQUEST['w_sq_modulo'],$_REQUEST['w_sq_segmento'],$_REQUEST['w_comercializar'],
             $_REQUEST['w_ativo']);
@@ -1019,7 +1009,7 @@ function Grava() {
       break;
     case 'COTPMODULO':
       // Verifica se a Assinatura Eletrônica é válida
-      if (VerificaAssinaturaEletronica($_SESSION['USERNAME'],strtoupper($_REQUEST['w_assinatura'])) || $w_assinatura=='') {
+      if (verificaAssinaturaEletronica($_SESSION['USERNAME'],strtoupper($_REQUEST['w_assinatura'])) || $w_assinatura=='') {
         dml_SiwModulo::getInstanceOf($dbms, $O,
             $_REQUEST['w_sq_modulo'],$_REQUEST['w_nome'],$_REQUEST['w_sigla'],$_REQUEST['w_objetivo_geral']);
         ScriptOpen('JavaScript');
@@ -1034,7 +1024,7 @@ function Grava() {
       break;
     case 'COTPSEG':
       // Verifica se a Assinatura Eletrônica é válida
-      if (VerificaAssinaturaEletronica($_SESSION['USERNAME'],strtoupper($_REQUEST['w_assinatura'])) || $w_assinatura=='') {
+      if (verificaAssinaturaEletronica($_SESSION['USERNAME'],strtoupper($_REQUEST['w_assinatura'])) || $w_assinatura=='') {
         dml_CoSegmento::getInstanceOf($dbms, $O,
             $_REQUEST['w_sq_segmento'],$_REQUEST['w_nome'],$_REQUEST['w_padrao'],$_REQUEST['w_ativo']);
         ScriptOpen('JavaScript');
@@ -1048,7 +1038,6 @@ function Grava() {
       } 
       break;
   } 
-  return $function_ret;
 } 
 
 // =========================================================================
@@ -1079,6 +1068,5 @@ function Main() {
     Estrutura_Fecha();
     Rodape();
   } 
-  return $function_ret;
 } 
 ?>

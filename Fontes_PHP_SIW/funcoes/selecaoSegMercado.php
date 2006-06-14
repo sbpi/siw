@@ -25,6 +25,5 @@ function selecaoSegMercado($label,$accesskey,$hint,$chave,$chaveAux,$campo,$rest
     }
   }
   ShowHTML('          </select>');
-  return $function_ret;
 }
 ?>

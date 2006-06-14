@@ -1,5 +1,5 @@
 <?
-header('Expires: '.-1500);
+ob_start();
 session_start();
 include_once('constants.inc');
 include_once('funcoes.php');
@@ -16,8 +16,6 @@ include_once('classes/db/abreSessao.php');
 // Local    : Brasília - DF
 // -------------------------------------------------------------------------
 
-ob_start();
-
 $w_cliente  = $_REQUEST['cliente'];
 $w_id       = $_REQUEST['id'];
 $w_force    = Nvl($_REQUEST['force'],'false');
@@ -31,9 +29,10 @@ if (Nvl($w_cliente,'')=='' || Nvl($w_id,'')=='' || (Nvl($w_sessao,'')=='' && $_S
   $w_descricao  = '';
   $w_inclusao   = '';
   $w_tamanho    = '';
-  $w_tipo       = substr($w_id,(strpos($w_id,'.') ? strpos($w_id,'.')+1 : 0)-1,30);
+  $w_tipo       = substr($w_id,strpos($w_id,'.'),30);
   $w_caminho    = $w_id;
   $w_filename   = $w_id;
+  $w_id         = str_replace('\\','/',$w_id);
 } else {
   // Configura objetos de BD
   $dbms = abreSessao::getInstanceOf($_SESSION['DBMS']);
@@ -70,8 +69,6 @@ if ($w_erro>0) { // Se houve erro, exibe HTML
   if (strlen($strFileName)>0) DownloadFile($strFileName,$w_force);
 } 
 
-exit;
-
 function DownloadFile($strFileName,$blnForceDownload) {
   extract($GLOBALS);
 
@@ -80,11 +77,10 @@ function DownloadFile($strFileName,$blnForceDownload) {
   //----------------------
 
   //build file path:
-  $strFilePath = $conFilePhysical.$w_cliente.'\\';
+  $strFilePath = $conFilePhysical.$w_cliente.'/';
   // add backslash if needed:
-  if (substr($strFilePath,strlen($strFilePath)-(1))!='\\') $strFilePath = $strFilePath.'\\';
+  if (substr($strFilePath,strlen($strFilePath)-(1))!='/') $strFilePath = $strFilePath.'/';
   $strFilePath = $strFilePath.$strFileName;
-
   //check that the file exists:
   if (!(file_exists($strFilePath))) {
     ShowHTML('Arquivo inexistente');
@@ -99,74 +95,89 @@ function DownloadFile($strFileName,$blnForceDownload) {
   //----------------------
   //third step: check whether file is binary or not and get content type of the file. (according to its extension)
   //----------------------
-  $blnBinary  = GetContentType($w_tipo,$strExtension);
+  $blnBinary  = GetExtension($w_tipo,$strExtension);
   $strAllFile = '';
-  if (!(strpos($w_filename,'.')===false)) $w_filename = $w_filename.$strExtension;
+  if (strpos($w_filename,'.')===false) $w_filename = $w_filename.$strExtension;
+
+  //----------------------
+  //final step: apply content type and send file contents to the browser
+  //----------------------
+  if (substr($w_tipo,0,1)!='.') {
+    header('Content-Type: '.$w_tipo);
+  } else {
+    header('Content-Type: '.GetContentType($w_tipo));
+  }
+  
+  if ($blnForceDownload=='true') {
+    header('Content-Disposition: attachment; filename='.$w_filename,false);
+  } else {
+    header('Content-Disposition: inline; filename='.$w_filename,false);
+  } 
+  header('Content-Length: '.$fileSize,false);
 
   //----------------------
   //fourth step: read the file contents.
   //----------------------
   $strAllFile = '';
-  if ($blnBinary) {
-    $objStream = fopen($strFilePath, 'rb');
-  } else {
-    $objStream = fopen($strFilePath, 'r');
-  } 
-  do {
-    $data = fread($objStream, 8192);
-    if (strlen($data)==0) break;
-    $strAllFile .= $data;
-  } while (true);
+  $objStream = fopen($strFilePath, 'rb');
+  while (!feof($objStream)) {
+    $data = fread($objStream, 32768);
+    echo $data;
+  };
   fclose($objStream);
+  
+  ob_end_flush();
 
-  //----------------------
-  //final step: apply content type and send file contents to the browser
-  //----------------------
-  if ($blnForceDownload=='true') {
-    header('Content-Disposition'.': '.'attachment; filename='.$w_filename);
-  } else {
-    header('Content-Disposition'.': '.'filename='.$w_filename);
-  } 
-  header('Content-Length'.': '.$fileSize);
-  if (!(strpos($w_tipo,'.')===false)) {
-    header('Content-type: '.$w_tipo);
-  } 
-  if ($blnBinary) {
-    print $strAllFile;
-  } else {
-    print $strAllFile;
-  } 
-
-  return $function_ret;
 } 
 
-function GetContentType(&$strName,&$Extension) {
+function GetExtension($strName,&$Extension) {
   extract($GLOBALS);
 
   //return whether binary or not, put type into second parameter
-  switch ($strName) {
-    case 'video/x-ms-asf':                  $Extension='.asf';      $GetContentType=true;   break;
-    case 'video/avi':                       $Extension='.avi';      $GetContentType=true;   break;
-    case 'application/msword':              $Extension='.doc';      $GetContentType=true;   break;
-    case 'application/zip':                 $Extension='.zip';      $GetContentType=true;   break;
-    case 'application/vnd.ms-excel':        $Extension='.xls';      $GetContentType=true;   break;
-    case 'application/vnd.ms-powerpoint':   $Extension='.ppt';      $GetContentType=true;   break;
-    case 'image/gif':                       $Extension='.gif';      $GetContentType=true;   break;
-    case 'image/jpeg':                      $Extension='.jpg';      $GetContentType=true;   break;
-    case 'audio/wav':                       $Extension='.wav';      $GetContentType=true;   break;
-    case 'audio/mpeg3':                     $Extension='.mp3';      $GetContentType=true;   break;
-    case 'video/mpeg':                      $Extension='.mpg';      $GetContentType=true;   break;
-    case 'application/rtf':                 $Extension='.rtf';      $GetContentType=true;   break;
-    case 'text/html':                       $Extension='.htm';      $GetContentType=false;  break;
-    case 'text/asp':                        $Extension='.asp';      $GetContentType=false;  break;
-    case 'text/plain':                      $Extension='.htm';      $GetContentType=false;  break;
-    case '.gif':                            $Extension='.gif';      $GetContentType=true;   break;
-    case '.js':                             $Extension='.js';       $GetContentType=true;   break;
-    case '.css':                            $Extension='.css';      $GetContentType=false;  break;
-    case '.jpg':                            $Extension='.jpg';      $GetContentType=true;   break;
-    case '.jpeg':                           $Extension='.jpg';      $GetContentType=true;   break;
-    default:                                $Extension='';          $GetContentType=true;   break;
+  switch (strtolower($strName)) {
+    case 'video/x-ms-asf':                  $Extension='.asf';      return true;   break;
+    case 'video/avi':                       $Extension='.avi';      return true;   break;
+    case 'application/msword':              $Extension='.doc';      return true;   break;
+    case 'application/zip':                 $Extension='.zip';      return true;   break;
+    case 'application/vnd.ms-excel':        $Extension='.xls';      return true;   break;
+    case 'application/vnd.ms-powerpoint':   $Extension='.ppt';      return true;   break;
+    case 'image/gif':                       $Extension='.gif';      return true;   break;
+    case 'image/jpeg':                      $Extension='.jpg';      return true;   break;
+    case 'audio/wav':                       $Extension='.wav';      return true;   break;
+    case 'audio/mpeg3':                     $Extension='.mp3';      return true;   break;
+    case 'video/mpeg':                      $Extension='.mpg';      return true;   break;
+    case 'application/rtf':                 $Extension='.rtf';      return true;   break;
+    case 'text/html':                       $Extension='.htm';      return false;  break;
+    case 'text/asp':                        $Extension='.asp';      return false;  break;
+    case 'text/plain':                      $Extension='.htm';      return false;  break;
+    case '.gif':                            $Extension='.gif';      return true;   break;
+    case '.js':                             $Extension='.js';       return true;   break;
+    case '.css':                            $Extension='.css';      return false;  break;
+    case '.jpg':                            $Extension='.jpg';      return true;   break;
+    case '.jpeg':                           $Extension='.jpg';      return true;   break;
+    default:                                $Extension='';          return true;   break;
   } 
-  return $function_ret;
+} 
+
+function GetContentType($strName) {
+  switch (strtolower($strName)) {
+    case '.asf':    return 'video/x-ms-asf';                break;
+    case '.avi':    return 'video/avi';                     break;
+    case '.doc':    return 'application/msword';            break;
+    case '.zip':    return 'application/zip';               break;
+    case '.xls':    return 'application/vnd.ms-excel';      break;
+    case '.ppt':    return 'application/vnd.ms-powerpoint'; break;
+    case '.gif':    return 'image/gif';                     break;
+    case '.jpg':    return 'image/jpeg';                    break;
+    case '.wav':    return 'audio/wav';                     break;
+    case '.mp3':    return 'audio/mpeg3';                   break;
+    case '.mpg':    return 'video/mpeg';                    break;
+    case '.rtf':    return 'application/rtf';               break;
+    case '.htm':    return 'text/html';                     break;
+    case '.html':   return 'text/html';                     break;
+    case '.asp':    return 'text/asp';                      break;
+    case '.txt':    return 'text/plain';                    break;
+    default:        return 'application/octet-stream';      break;
+  } 
 } 
 ?>

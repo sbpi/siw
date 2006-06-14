@@ -1,5 +1,5 @@
 <?
-include_once('classes/db/DatabaseQueriesFactory.php');
+extract($GLOBALS); include_once($w_dir_volta.'classes/db/DatabaseQueriesFactory.php');
 /**
 * class dml_SiwTramite
 *
@@ -11,7 +11,7 @@ include_once('classes/db/DatabaseQueriesFactory.php');
 class dml_SiwTramite {
    function getInstanceOf($dbms, $operacao, $chave, $p_sq_menu, $p_nome, $p_ordem, $p_sigla, $p_descricao,
                    $p_chefia_imediata, $p_ativo, $p_solicita_cc, $p_envia_mail) {
-     $sql='sp_putSiwTramite';
+     $sql=$strschema.'sp_putSiwTramite';
      $params=array('operacao'          =>array($operacao,          B_VARCHAR,      1),
                    'chave'             =>array($chave,             B_NUMERIC,     32),
                    'p_sq_menu'         =>array($p_sq_menu,         B_NUMERIC,     32),
@@ -25,7 +25,15 @@ class dml_SiwTramite {
                    'p_envia_mail'      =>array($p_envia_mail,      B_VARCHAR,      1)
                   );
      $l_rs = DatabaseQueriesFactory::getInstanceOf($sql, $dbms, $params, DB_TYPE);
-     if(!$l_rs->executeQuery()) return false;  else return true;
+     $l_error_reporting = error_reporting(); 
+     error_reporting(0); 
+     if(!$l_rs->executeQuery()) { 
+       error_reporting($l_error_reporting); 
+       TrataErro($sql, $l_rs->getError(), $params, __FILE__, __LINE__, __CLASS__); 
+     } else {
+       error_reporting($l_error_reporting); 
+       return true;
+     }
    }
 }
 ?>

@@ -15,7 +15,7 @@ include_once('classes/sp/db_getRegionList.php');
 include_once('classes/sp/db_getRegionData.php');
 include_once('classes/sp/db_getCountryList.php');
 include_once('classes/sp/db_getCountryData.php');
-include_once('classes/sp/db_VerificaAssinatura.php');
+include_once('classes/sp/db_verificaAssinatura.php');
 include_once('classes/sp/dml_CoCidade.php');
 include_once('classes/sp/dml_CoUf.php');
 include_once('classes/sp/dml_CoRegiao.php');
@@ -980,7 +980,7 @@ function Grava() {
       $p_ordena  = strtoupper($_REQUEST['p_ordena']);
 
       // Verifica se a Assinatura Eletrônica é válida
-      if (VerificaAssinaturaEletronica($_SESSION['USERNAME'],strtoupper($_REQUEST['w_assinatura'])) || $w_assinatura=='') {
+      if (verificaAssinaturaEletronica($_SESSION['USERNAME'],strtoupper($_REQUEST['w_assinatura'])) || $w_assinatura=='') {
         dml_CoCidade::getInstanceOf($dbms, $O,
             $_REQUEST['w_sq_cidade'],$_REQUEST['w_ddd'],$_REQUEST['w_codigo_ibge'],$_REQUEST['w_sq_pais'],
             $_REQUEST['w_sq_regiao'],$_REQUEST['w_co_uf'],$_REQUEST['w_nome'],$_REQUEST['w_capital']);
@@ -1000,7 +1000,7 @@ function Grava() {
       $p_ativo  = strtoupper($_REQUEST['p_ativo']);
       $p_ordena = strtoupper($_REQUEST['p_ordena']);
 
-      if (VerificaAssinaturaEletronica($_SESSION['USERNAME'],strtoupper($_REQUEST['w_assinatura'])) || $w_assinatura=='') {
+      if (verificaAssinaturaEletronica($_SESSION['USERNAME'],strtoupper($_REQUEST['w_assinatura'])) || $w_assinatura=='') {
         dml_CoPais::getInstanceOf($dbms, $O,
             $_REQUEST['w_sq_pais'],$_REQUEST['w_nome'],$_REQUEST['w_ativo'],
             $_REQUEST['w_padrao'],$_REQUEST['w_ddi'],$_REQUEST['w_sigla']);
@@ -1020,7 +1020,7 @@ function Grava() {
       $p_ordena  = strtoupper($_REQUEST['p_ordena']);
 
       // Verifica se a Assinatura Eletrônica é válida
-      if (VerificaAssinaturaEletronica($_SESSION['USERNAME'],strtoupper($_REQUEST['w_assinatura'])) || $w_assinatura=='') {
+      if (verificaAssinaturaEletronica($_SESSION['USERNAME'],strtoupper($_REQUEST['w_assinatura'])) || $w_assinatura=='') {
         dml_CoRegiao::getInstanceOf($dbms, $O,
             $_REQUEST['w_sq_regiao'],$_REQUEST['w_sq_pais'],$_REQUEST['w_nome'],
             $_REQUEST['w_sigla'],$_REQUEST['w_ordem']);
@@ -1041,7 +1041,7 @@ function Grava() {
       $p_ordena     = strtoupper($_REQUEST['p_ordena']);
 
       // Verifica se a Assinatura Eletrônica é válida
-      if (VerificaAssinaturaEletronica($_SESSION['USERNAME'],strtoupper($_REQUEST['w_assinatura'])) || $w_assinatura=='') {
+      if (verificaAssinaturaEletronica($_SESSION['USERNAME'],strtoupper($_REQUEST['w_assinatura'])) || $w_assinatura=='') {
         dml_CoUf::getInstanceOf($dbms, $O,
             $_REQUEST['w_co_uf'],$_REQUEST['w_sq_pais'],$_REQUEST['w_sq_regiao'],$_REQUEST['w_nome'],
             $_REQUEST['w_ativo'],$_REQUEST['w_padrao'],$_REQUEST['w_codigo_ibge'],$_REQUEST['w_ordem']);

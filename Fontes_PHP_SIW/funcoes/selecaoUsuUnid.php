@@ -5,10 +5,9 @@ include_once($w_dir_volta.'classes/sp/db_getUserList.php');
 // -------------------------------------------------------------------------
 function selecaoUsuUnid($label,$accesskey,$hint,$chave,$chaveAux,$campo,$restricao) {
   extract($GLOBALS);
-  $RS = db_getUserList($dbms, $w_cliente, null, null, null, null, null, null, 'S', null);
+  $RS = db_getUserList::getInstanceOf($dbms, $w_cliente, null, null, null, null, null, null, 'S', 'S');
   array_key_case_change(&$RS);
   $RS = SortArray($RS,'nome_indice','asc');
-  //$RS->Filter='contratado = \'S\'';
 
   if (!isset($hint)) {
      ShowHTML('          <td valign="top"><font size="1"><b>'.$label.'</b><br><SELECT ACCESSKEY="'.$accesskey.'" CLASS="sts" NAME="'.$campo.'" '.$w_Disabled.'>');
@@ -20,7 +19,7 @@ function selecaoUsuUnid($label,$accesskey,$hint,$chave,$chaveAux,$campo,$restric
     if (nvl(f($row,'sq_pessoa'),0)==nvl($chave,0)) {
        ShowHTML('          <option value="'.f($row,'sq_pessoa').'" SELECTED>'.f($row,'nome'));
     } else {
-       ShowHTML('          <option value="'.f($row,'sq_pessoa')].'">'.f($row,'nome'));
+       ShowHTML('          <option value="'.f($row,'sq_pessoa').'">'.f($row,'nome'));
     }
   }
   ShowHTML('          </select>');

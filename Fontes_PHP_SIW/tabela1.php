@@ -11,7 +11,7 @@ include_once('classes/sp/db_getVincKindList.php');
 include_once('classes/sp/db_getVincKindData.php');
 include_once('classes/sp/db_getCustomerData.php');
 include_once('classes/sp/db_getCodigo.php');
-include_once('classes/sp/db_VerificaAssinatura.php');
+include_once('classes/sp/db_verificaAssinatura.php');
 include_once('classes/sp/dml_CoTipoVinc.php');
 include_once('classes/sp/dml_putSiwCliConf.php');
 include_once('classes/sp/dml_putCodigoExterno.php');

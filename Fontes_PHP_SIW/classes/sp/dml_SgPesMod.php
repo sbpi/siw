@@ -1,24 +1,32 @@
 <?
-include_once('classes/db/DatabaseQueriesFactory.php');
+extract($GLOBALS); include_once($w_dir_volta.'classes/db/DatabaseQueriesFactory.php');
 /**
-* class dml_SgPesMod
+* class dml_sgpesMod
 *
 * { Description :- 
-*    Grava permissões especiais de usuários a um módulo da SIW.
+*    Manipula registros de SIW_MENU
 * }
 */
 
-class dml_SgPesMod {
+class dml_sgpesMod {
    function getInstanceOf($dbms, $operacao, $chave, $cliente, $sq_modulo, $sq_endereco) {
-     $sql='sp_putSgPesMod';
-     $params=array('operacao'           =>array($operacao,          B_VARCHAR,      1),
-                   'chave'              =>array($chave,             B_NUMERIC,     32),
-                   'cliente'            =>array($cliente,           B_NUMERIC,     32),
-                   'sq_modulo'          =>array($sq_modulo,         B_NUMERIC,     32),
-                   'sq_endereco'        =>array($sq_endereco,       B_NUMERIC,     32),
+     $sql=$strschema.'SP_PUTSGPESMOD';
+     $params=array('p_operacao'                  =>array($operacao,                                        B_VARCHAR,         1),
+                   'p_chave'                     =>array(tvl($chave),                                      B_INTEGER,        32),
+                   'p_cliente'                   =>array(tvl($cliente),                                    B_INTEGER,        32),
+                   'p_sq_modulo'                 =>array($sq_modulo,                                       B_INTEGER,        32),
+                   'p_sq_endereco'               =>array($sq_endereco,                                     B_INTEGER,        32)
                   );
      $l_rs = DatabaseQueriesFactory::getInstanceOf($sql, $dbms, $params, DB_TYPE);
-     if(!$l_rs->executeQuery()) return false;  else return true;
+     $l_error_reporting = error_reporting(); 
+     error_reporting(0); 
+     if(!$l_rs->executeQuery()) { 
+       error_reporting($l_error_reporting); 
+       TrataErro($sql, $l_rs->getError(), $params, __FILE__, __LINE__, __CLASS__); 
+     } else {
+       error_reporting($l_error_reporting); 
+       return true;
+     }
    }
 }
 ?>

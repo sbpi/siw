@@ -47,6 +47,16 @@ class DatabaseQueries
     */
     
     function getNumRows() { return $this->num_rows; }
+
+    /**
+    * Method DatabaseQueries::getError()
+    *
+    * { Description :- 
+    *    This class returns the error message ocurred while calling a stored procedure
+    * }
+    */
+    
+    function getError() { return $this->error; }
 }
 
 /**
@@ -328,15 +338,24 @@ class OraDatabaseQueryProc extends OraDatabaseQueries {
                }
            }
 
-           if(!(oci_execute($this->stmt))) { return false; }
-           else {
+           if(!(oci_execute($this->stmt))) { 
+             $this->error = oci_error($this->stmt); 
+             return false; 
+           } else {
               oci_execute($this->result);
               if(is_resource($this->result)) { 
                  $this->num_rows = oci_fetch_all($this->result, $this->resultData, 0, -1,OCI_ASSOC+OCI_FETCHSTATEMENT_BY_ROW);
+              } else { 
+                $this->num_rows = -1; 
+                $this->error    = oci_error($this->result);
               }
-              else { $this->num_rows = -1; }
-              oci_execute($this->stmt);
-              oci_execute($this->result);
+              if (!oci_execute($this->stmt)) { 
+                $this->error = oci_error($this->stmt); 
+              } else {
+                if (!oci_execute($this->result)) {
+                  $this->error = oci_error($this->result);
+                }
+              }
            }
         } else {
            $this->result = oci_parse($this->conHandle, "begin $this->query ($par); end;");
@@ -348,7 +367,15 @@ class OraDatabaseQueryProc extends OraDatabaseQueries {
                }
            }
 
-           if(is_resource($this->result)) oci_execute($this->result); else $this->num_rows = -1; 
+           if(is_resource($this->result)) {
+             if (!oci_execute($this->result)) {
+               $this->error = oci_error($this->result);
+               return false; 
+             }
+           } else { 
+             $this->num_rows = -1; 
+             return false;
+           }
         }
         
         return true;

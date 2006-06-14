@@ -7,7 +7,7 @@ include_once('funcoes.php');
 include_once('classes/db/abreSessao.php');
 include_once('classes/sp/db_getMenuData.php');
 include_once('classes/sp/db_getMenuCode.php');
-include_once('classes/sp/db_getLinkSubmenu.php');
+include_once('classes/sp/db_getLinkSubMenu.php');
 include_once('classes/sp/db_getSiwCliList.php');
 include_once('classes/sp/db_getSiwCliData.php');
 include_once('classes/sp/db_getAddressList.php');
@@ -22,7 +22,9 @@ include_once('classes/sp/db_getBankHouseList.php');
 include_once('classes/sp/db_getSiwCliModLis.php');
 include_once('classes/sp/db_getModData.php');
 include_once('classes/sp/db_getLinkData.php');
-include_once('classes/sp/db_VerificaAssinatura.php');
+include_once('classes/sp/db_getUserList.php');
+include_once('classes/sp/db_getLinkDataUser.php');
+include_once('classes/sp/db_verificaAssinatura.php');
 include_once('classes/sp/dml_putSiwCliente.php');
 include_once('classes/sp/dml_putCoPesEnd.php');
 include_once('classes/sp/dml_putCoPesTel.php');
@@ -93,37 +95,20 @@ $p_ordena       = strtoupper($_REQUEST['p_ordena']);
 // caso contrário, o cliente será a empresa ao qual o usuário logado está vinculado.
 $w_cliente  = RetornaCliente();
 
-//$ul = new ASPForm();
-if ($_REQUEST['UploadID']>'') $UploadID=$_REQUEST['UploadID']; else $UploadID=$ul->NewUploadID;
+$P1           = $_REQUEST['P1'];
+$P2           = $_REQUEST['P2'];
+$P3           = nvl($_REQUEST['P3'],1);
+$P4           = nvl($_REQUEST['P4'],$conPageSize);
+$TP           = $_REQUEST['TP'];
+$R            = $_REQUEST['R'];
+$w_assinatura = strtoupper($_REQUEST['w_assinatura']);
 
-if (!(strpos(strtoupper($_SERVER['http_content_type']),'MULTIPART/FORM-DATA')===false)) {
-  //set_time_limit(2000);
-  //$ul->SizeLimit = 0x$A00000;
-  //if ($UploadID>0) $ul->UploadID=$UploadID;
-
-  $P1           = $_REQUEST['P1'];
-  $P2           = $_REQUEST['P2'];
-  $P3           = nvl($_REQUEST['P3'],1);
-  $P4           = nvl($_REQUEST['P4'],$conPageSize);
-  $TP           = $_REQUEST['TP'];
-  $R            = $_REQUEST['R'];
-  $w_assinatura = strtoupper($_REQUEST['w_assinatura']);
-} else {
-  $P1           = $_REQUEST['P1'];
-  $P2           = $_REQUEST['P2'];
-  $P3           = nvl($_REQUEST['P3'],1);
-  $P4           = nvl($_REQUEST['P4'],$conPageSize);
-  $TP           = $_REQUEST['TP'];
-  $R            = $_REQUEST['R'];
-  $w_assinatura = strtoupper($_REQUEST['w_assinatura']);
-
-  if ($O=='L' && (strtoupper($_REQUEST['par'])=='GERAL' || strtoupper($_REQUEST['par'])=='CONFIGURACAO')) {
-    $O='A';
-  } elseif ($O=='' && strtoupper($_REQUEST['par'])=='CONFIGURACAO') {
-    $O='A';
-  } elseif ($O=='') {
-    $O='L';
-  } 
+if ($O=='L' && (strtoupper($_REQUEST['par'])=='GERAL' || strtoupper($_REQUEST['par'])=='CONFIGURACAO')) {
+  $O='A';
+} elseif ($O=='' && strtoupper($_REQUEST['par'])=='CONFIGURACAO') {
+  $O='A';
+} elseif ($O=='') {
+  $O='L';
 } 
 
 switch ($O) {
@@ -293,8 +278,6 @@ function Inicial() {
   Estrutura_Fecha();
   Estrutura_Fecha();
   Rodape();
-
-  return $function_ret;
 } 
 
 // =========================================================================
@@ -358,7 +341,7 @@ function Geral() {
           $w_nome                   = f($RS,'Nome');
           $w_nome_resumido          = f($RS,'Nome_Resumido');
           $w_inscricao_estadual     = f($RS,'inscricao_estadual');
-          $w_inicio_atividade       = FormataDataEdicao(f($RS,'inicio_atividade'));
+          $w_inicio_atividade       = FormatDateTime(f($RS,'inicio_atividade'));
           $w_sede                   = f($RS,'sede');
           $w_sq_tipo_vinculo        = f($RS,'sq_tipo_vinculo');
           $w_pais                   = f($RS,'sq_pais');
@@ -552,8 +535,6 @@ function Geral() {
   Estrutura_Fecha();
   Estrutura_Fecha();
   Rodape();
-
-  return $function_ret;
 } 
 
 // =========================================================================
@@ -771,8 +752,6 @@ function Enderecos() {
   Estrutura_Fecha();
   Estrutura_Fecha();
   Rodape();
-
-  return $function_ret;
 } 
 
 // =========================================================================
@@ -981,8 +960,6 @@ function Telefones() {
   Estrutura_Fecha();
   Estrutura_Fecha();
   Rodape();
-
-  return $function_ret;
 } 
 
 // =========================================================================
@@ -1157,7 +1134,7 @@ function ContasBancarias() {
     } else {
       ShowHTML('              <input class="str" type="radio" name="w_ativo" VALUE="N">Não <input class="str" type="radio" name="w_ativo" VALUE="S" checked>Sim');
     } 
-    ShowHTML('          <td valign="top" title="Indique se esta conta é a padrão da organização, clicando sobre a opção "Sim".<br>Somente pode haver uma conta padrão."><b>Conta padrão?</b><br>');
+    ShowHTML('          <td valign="top" title="Indique se esta conta é a padrão da organização, clicando sobre a opção SIM.Somente pode haver uma conta padrão."><b>Conta padrão?</b><br>');
     if ($w_padrao=='' || $w_padrao=='N') {
       ShowHTML('              <input type="radio" name="w_padrao" class="str" VALUE="N" checked>Não <input type="radio" name="w_padrao" class="str" VALUE="S">Sim');
     } else {
@@ -1197,8 +1174,6 @@ function ContasBancarias() {
   Estrutura_Fecha();
   Estrutura_Fecha();
   Rodape();
-
-  return $function_ret;
 } 
 
 // =========================================================================
@@ -1353,8 +1328,6 @@ function Modulos() {
   Estrutura_Fecha();
   Estrutura_Fecha();
   Rodape();
-
-  return $function_ret;
 } 
 
 // =========================================================================
@@ -1422,7 +1395,6 @@ function Configuracao() {
   FormataCNPJ();
   CheckBranco();
   FormataData();
-  //ProgressBar($w_dir,$UploadID);
   ValidateOpen('Validacao');
   Validate('w_smtp_server','Servidor SMTP','1',1,3,60,'1','1');
   Validate('w_siw_email_nome','Nome','1',1,3,60,'1','1');
@@ -1441,8 +1413,6 @@ function Configuracao() {
   Validate('w_logo1','Logo menu','1','',3,100,'1','1');
   Validate('w_fundo','Fundo menu','1','',3,100,'1','1');
   Validate('w_assinatura','Assinatura Eletrônica','1','1','6','30','1','1');
-  ShowHTML('if (theForm.w_logo.value != \'\') {return ProgressBar();}');
-  ShowHTML('if (theForm.w_logo1.value != \'\') {return ProgressBar();}');
   ValidateClose();
   ScriptClose();
   ShowHTML('</HEAD>');
@@ -1460,7 +1430,7 @@ function Configuracao() {
   ShowHTML('<table align="center" border="0" cellpadding="0" cellspacing="0" width="100%">');
   if (!(strpos('IAEV',$O)===false)) {
     if (!(strpos('EV',$O)===false)) $w_Disabled=' DISABLED ';
-    ShowHTML('<FORM action="'.$w_pagina.'Grava&O='.$O.'&UploadID='.$UploadID.'&SG='.$SG.'" method="POST" name="Form" onSubmit="return(Validacao(this));" ENCTYPE="multipart/form-data">');
+    ShowHTML('<FORM action="'.$w_pagina.'Grava&O='.$O.'&SG='.$SG.'" method="POST" name="Form" onSubmit="return(Validacao(this));" ENCTYPE="multipart/form-data">');
     ShowHTML('<INPUT type="hidden" name="P1" value="'.$P1.'">');
     ShowHTML('<INPUT type="hidden" name="P2" value="'.$P2.'">');
     ShowHTML('<INPUT type="hidden" name="P3" value="'.$P3.'">');
@@ -1483,7 +1453,7 @@ function Configuracao() {
     ShowHTML('             <td colspan=2><b><u>N</u>ome:</b><br><input '.$w_Disabled.' accesskey="N" type="text" name="w_siw_email_nome" class="sti" SIZE="40" MAXLENGTH="60" VALUE="'.$w_siw_email_nome.'" title="Nome a ser exibido como remetente da mensagem automática."></td>');
     ShowHTML('          <tr valign="top">');
     ShowHTML('             <td><b><u>C</u>onta de e-mail:</b><br><input '.$w_Disabled.' accesskey="C" type="text" name="w_siw_email_conta" class="sti" SIZE="40" MAXLENGTH="60" VALUE="'.$w_siw_email_conta.'" title="Conta de e-mail a ser usada quando o remetente for a aplicação."></td>');
-    ShowHTML('             <td><b><u>S</u>enha da conta:</b><br><input '.$w_Disabled.' accesskey="S" type="password" name="w_siw_email_senha" class="sti" SIZE="15" MAXLENGTH="15" VALUE="" title="Senha da conta de e-mail a ser usada quando o remetente for a aplicação."></td>');
+        ShowHTML('             <td><b><u>S</u>enha da conta:</b><br><input '.$w_Disabled.' accesskey="S" type="password" name="w_siw_email_senha" class="sti" SIZE="15" MAXLENGTH="15" VALUE="" title="Senha da conta de e-mail a ser usada quando o remetente for a aplicação."></td>');
     ShowHTML('             <td><b><u>R</u>edigite a senha:</b><br><input '.$w_Disabled.' accesskey="R" type="password" name="w_siw_email_senha1" class="sti" SIZE="15" MAXLENGTH="15" VALUE="" title="Redigite a senha da conta de e-mail."></td>');
     ShowHTML('          </table>');
     ShowHTML('      <tr><td><b><u>L</u>imite para upload (em bytes):</b><br><input '.$w_Disabled.' accesskey="L" type="text" name="w_upload_maximo" class="sti" SIZE="18" MAXLENGTH="18" VALUE="'.$w_upload_maximo.'" title="Informe o tamanho máximo, em bytes, a ser aceito nas rotinas de upload de arquivos."></td>');
@@ -1497,14 +1467,14 @@ function Configuracao() {
     ShowHTML('          <tr><td valign="top"><b>L<u>o</u>gomarca telas e relatórios:</b><br><input '.$w_Disabled.' accesskey="O" type="FILE" name="w_logo" class="sti" SIZE="45" MAXLENGTH="100" VALUE="" title="Localize o arquivo da logomarca a ser utilizada nas telas e relatórios da aplicação. Uma cópia dele será transferida para o servidor da aplicação por "upload"."></td>');
     if ($w_logo>'') {
       ShowHTML('              <td valign="top"><b>Imagem atual:</b><br>');
-      ShowHTML('              <img src="'.LinkArquivo(null,$w_sq_pessoa,'img\logo'.substr($w_logo,(strpos($w_logo,'.') ? strpos($w_logo,'.')+1 : 0)-1,30),null,null,null,'EMBED').'" border=1>');
+      ShowHTML('              <img src="'.LinkArquivo(null,$w_sq_pessoa,'img/logo'.substr($w_logo,(strpos($w_logo,'.') ? strpos($w_logo,'.')+1 : 0)-1,30),null,null,null,'EMBED').'" border=1>');
     } 
     ShowHTML('          </table>');
     ShowHTML('      <tr><td valign="top" colspan="2"><table border=0 width="100%" cellspacing=0>');
     ShowHTML('          <tr><td valign="top"><b>Lo<u>g</u>omarca menu:</b><br><input '.$w_Disabled.' accesskey="G" type="FILE" name="w_logo1" class="sti" SIZE="45" MAXLENGTH="100" VALUE="" title="Localize o arquivo da logomarca a ser utilizada no menu da aplicação. Uma cópia dele será transferida para o servidor da aplicação por "upload"."></td>');
     if ($w_logo1>'') {
       ShowHTML('              <td valign="top"><b>Imagem atual:</b><br>');
-      ShowHTML('              <img src="'.LinkArquivo(null,$w_sq_pessoa,'img\logo1'.substr($w_logo1,(strpos($w_logo1,'.') ? strpos($w_logo1,'.')+1 : 0)-1,30),null,null,null,'EMBED').'" border=1>');
+      ShowHTML('              <img src="'.LinkArquivo(null,$w_sq_pessoa,'img/logo1'.substr($w_logo1,(strpos($w_logo1,'.') ? strpos($w_logo1,'.')+1 : 0)-1,30),null,null,null,'EMBED').'" border=1>');
     } 
     ShowHTML('          </table>');
     ShowHTML('      <tr><td align="center" height="2" bgcolor="#000000"></td></tr>');
@@ -1517,7 +1487,7 @@ function Configuracao() {
     ShowHTML('          <tr><td valign="top"><b>Imagem de <u>f</u>undo do menu:</b><br><input '.$w_Disabled.' accesskey="F" type="FILE" name="w_fundo" class="sti" SIZE="45" MAXLENGTH="100" VALUE="" title="Localize o arquivo a ser usado como fundo do menu. Uma cópia dele será transferida para o servidor da aplicação por "upload"."></td>');
     if ($w_fundo>'') {
       ShowHTML('              <td valign="top"><b>Imagem atual:</b><br>');
-      ShowHTML('              <img src="'.LinkArquivo(null,$w_sq_pessoa,'img\fundo'.substr($w_fundo,(strpos($w_fundo,'.') ? strpos($w_fundo,'.')+1 : 0)-1,30),null,null,null,'EMBED').'" border=1>');
+      ShowHTML('              <img src="'.LinkArquivo(null,$w_sq_pessoa,'img/fundo'.substr($w_fundo,(strpos($w_fundo,'.') ? strpos($w_fundo,'.')+1 : 0)-1,30),null,null,null,'EMBED').'" border=1>');
     } 
     ShowHTML('          </table>');
     ShowHTML('      <tr><td align="center" height="2" bgcolor="#000000"></td></tr>');
@@ -1556,8 +1526,6 @@ function Configuracao() {
   Estrutura_Fecha();
   Estrutura_Fecha();
   Rodape();
-
-  return $function_ret;
 } 
 
 // =========================================================================
@@ -1565,6 +1533,7 @@ function Configuracao() {
 // -------------------------------------------------------------------------
 function Visual() {
   extract($GLOBALS);
+  include_once('visualCliente.php');
   global $w_Disabled;
 
   $w_sq_pessoa  = $_REQUEST['w_sq_pessoa'];
@@ -1580,7 +1549,7 @@ function Visual() {
   // Recupera o logo do cliente a ser usado nas listagens
   $RS = db_getCustomerData::getInstanceOf($dbms,$w_sq_pessoa); 
   if (f($RS,'logo')>'') {
-    $w_logo='img\logo'.substr(f($RS,'logo'),(strpos(f($RS,'logo'),'.') ? strpos(f($RS,'logo'),'.')+1 : 0)-1,30);
+    $w_logo='img/logo'.substr(f($RS,'logo'),(strpos(f($RS,'logo'),'.') ? strpos(f($RS,'logo'),'.')+1 : 0)-1,30);
   }  
 
   Cabecalho();
@@ -1596,11 +1565,9 @@ function Visual() {
   ShowHTML('<HR>');
 
   // Chama a rotina de visualização dos dados do cliente, na opção 'Listagem'
-  VisualCliente($w_sq_pessoa,'L');
+  visualCliente($w_sq_pessoa,'L');
 
   Rodape();
-
-  return $function_ret;
 } 
 
 // =========================================================================
@@ -1621,12 +1588,13 @@ function Grava() {
   switch ($SG) {
     case 'CLGERAL':
       // Verifica se a Assinatura Eletrônica é válida
-      if (VerificaAssinaturaEletronica($_SESSION['USERNAME'],strtoupper($_REQUEST['w_assinatura'])) || $w_assinatura=='') {
+      if (verificaAssinaturaEletronica($_SESSION['USERNAME'],strtoupper($_REQUEST['w_assinatura'])) || $w_assinatura=='') {
+        //exibevariaveis();
         dml_putSiwCliente::getInstanceOf($dbms,$O,
-            $_REQUEST['w_sq_pessoa'],$_REQUEST['p_cliente'.'_session'],$_REQUEST['w_Nome'],$_REQUEST['w_Nome_Resumido'],
+            $_REQUEST['w_sq_pessoa'],$_SESSION['P_CLIENTE'],$_REQUEST['w_nome'],$_REQUEST['w_nome_resumido'],
             $_REQUEST['w_inicio_atividade'],$_REQUEST['w_cgccpf'],$_REQUEST['w_sede'],$_REQUEST['w_inscricao_estadual'],
             $_REQUEST['w_cidade'],$_REQUEST['w_tamanho_minimo_senha'],$_REQUEST['w_tamanho_maximo_senha'],$_REQUEST['w_dias_vigencia_senha'],
-            $_REQUEST['w_dias_aviso_expiracao'],$_REQUEST['w_maximo_tentativas']);
+            $_REQUEST['w_dias_aviso_expiracao'],$_REQUEST['w_maximo_tentativas'],$_REQUEST['w_sq_agencia'],$_REQUEST['w_sq_segmento']);
         ScriptOpen('JavaScript');
         if ($O=='I') {
           ShowHTML('  parent.menu.location=\'menu.php?par=ExibeDocs&O=A&w_cgccpf='.$_REQUEST['w_cgccpf'].'&w_documento='.$_REQUEST['w_nome_resumido'].'&R='.$w_pagina.'INICIAL&SG=CLIENTE&TP='.RemoveTP($TP).MontaFiltro('GET').'\';');
@@ -1645,9 +1613,9 @@ function Grava() {
       break;
     case 'CLIENTE':
       // Verifica se a Assinatura Eletrônica é válida
-      if (VerificaAssinaturaEletronica($_SESSION['USERNAME'],strtoupper($_REQUEST['w_assinatura'])) || $w_assinatura=='') {
+      if (verificaAssinaturaEletronica($_SESSION['USERNAME'],strtoupper($_REQUEST['w_assinatura'])) || $w_assinatura=='') {
         dml_putSiwCliente::getInstanceOf($dbms,$O,
-            $_REQUEST['w_sq_pessoa'],$_REQUEST['p_cliente'.'_session'],$_REQUEST['w_Nome'],$_REQUEST['w_Nome_Resumido'],
+            $_REQUEST['w_sq_pessoa'],$_REQUEST['p_cliente'.'_session'],$_REQUEST['w_nome'],$_REQUEST['w_nome_resumido'],
             $_REQUEST['w_inicio_atividade'],$_REQUEST['w_cgccpf'],$_REQUEST['w_sede'],$_REQUEST['w_inscricao_estadual'],
             $_REQUEST['w_cidade'],$_REQUEST['w_tamanho_minimo_senha'],$_REQUEST['w_tamanho_maximo_senha'],$_REQUEST['w_dias_vigencia_senha'],
             $_REQUEST['w_dias_aviso_expiracao'],$_REQUEST['w_maximo_tentativas']);
@@ -1675,11 +1643,10 @@ function Grava() {
             ShowHTML('  alert(\'ATENÇÃO: Só pode haver um valor padrão em cada tipo de endereço. Favor verificar!\');');
             ShowHTML('  history.back(1);');
             ScriptClose();
-            return $function_ret;
           } 
         } 
       } 
-      if (VerificaAssinaturaEletronica($_SESSION['USERNAME'],strtoupper($_REQUEST['w_assinatura'])) || $w_assinatura=='') {
+      if (verificaAssinaturaEletronica($_SESSION['USERNAME'],strtoupper($_REQUEST['w_assinatura'])) || $w_assinatura=='') {
         dml_putCoPesEnd::getInstanceOf($dbms,$O,
             $_REQUEST['w_sq_pessoa_endereco'],$_REQUEST['w_sq_pessoa'],$_REQUEST['w_sq_tipo_endereco'],$_REQUEST['w_logradouro'],
             $_REQUEST['w_complemento'],$_REQUEST['w_cidade'],$_REQUEST['w_bairro'],$_REQUEST['w_cep'],$_REQUEST['w_padrao']);
@@ -1705,11 +1672,10 @@ function Grava() {
             ShowHTML('  alert(\'ATENÇÃO: Só pode haver um valor padrão em cada tipo de telefone. Favor verificar.!\');');
             ShowHTML('  history.back(1);');
             ScriptClose();
-            return $function_ret;
           } 
         } 
       } 
-      if (VerificaAssinaturaEletronica($_SESSION['USERNAME'],strtoupper($_REQUEST['w_assinatura'])) || $w_assinatura=='') {
+      if (verificaAssinaturaEletronica($_SESSION['USERNAME'],strtoupper($_REQUEST['w_assinatura'])) || $w_assinatura=='') {
         dml_putCoPesTel::getInstanceOf($dbms,$O,
             $_REQUEST['w_sq_pessoa_telefone'],$_REQUEST['w_sq_pessoa'],$_REQUEST['w_sq_tipo_telefone'],
             $_REQUEST['w_cidade'],$_REQUEST['w_ddd'],$_REQUEST['w_numero'],$_REQUEST['w_padrao']);
@@ -1747,10 +1713,9 @@ function Grava() {
           ShowHTML('  alert(\''.$w_mensagem.'\');');
           ShowHTML('  history.back(1);');
           ScriptClose();
-          return $function_ret;
         } 
       } 
-      if (VerificaAssinaturaEletronica($_SESSION['USERNAME'],strtoupper($_REQUEST['w_assinatura'])) || $w_assinatura=='') {
+      if (verificaAssinaturaEletronica($_SESSION['USERNAME'],strtoupper($_REQUEST['w_assinatura'])) || $w_assinatura=='') {
         dml_putCoPesConBan::getInstanceOf($dbms,$O,
             $_REQUEST['w_sq_pessoa_conta'],$_REQUEST['w_sq_pessoa'],$_REQUEST['w_tipo_conta'],
             $w_Chave,$_REQUEST['w_operacao'],$_REQUEST['w_numero_conta'],$_REQUEST['w_ativo'],
@@ -1767,7 +1732,7 @@ function Grava() {
       } 
       break;
     case 'CLMODULO':
-      if (VerificaAssinaturaEletronica($_SESSION['USERNAME'],strtoupper($_REQUEST['w_assinatura'])) || $w_assinatura=='') {
+      if (verificaAssinaturaEletronica($_SESSION['USERNAME'],strtoupper($_REQUEST['w_assinatura'])) || $w_assinatura=='') {
         dml_putSiwCliMod::getInstanceOf($dbms,$O,$_REQUEST['w_sq_modulo'],$_REQUEST['w_sq_pessoa']);
 
         ScriptOpen('JavaScript');
@@ -1782,62 +1747,56 @@ function Grava() {
       break;
     case 'CLCONFIG':
       // Verifica se a Assinatura Eletrônica é válida
-      if (VerificaAssinaturaEletronica($_SESSION['USERNAME'],strtoupper($_REQUEST['w_assinatura'])) || $w_assinatura=='') {
+      if (verificaAssinaturaEletronica($_SESSION['USERNAME'],strtoupper($_REQUEST['w_assinatura'])) || $w_assinatura=='') {
         // O tratamento deste tipo de gravação é diferenciado, em função do uso do objeto upload
-//        $FS=$CreateObject['Scripting.FileSystemObject'];
-//        if ($ul->State==0) {
-//        $w_maximo=$_REQUEST['w_upload_maximo'];
-//        foreach ($ul->Files as $Field) {
-//          $Items;
-//          if ($Field->Length>0) {
-//            // Verifica a necessidade de criação dos diretórios do cliente
-//            $FS=$CreateObject['Scripting.FileSystemObject'];
-//            if (!($FS->FolderExists(DiretorioCliente($_REQUEST['w_sq_pessoa'])))) {
-//              $F1=$FS->CreateFolder    DiretorioCliente($_REQUEST['w_sq_pessoa']);
-//              $F1=$FS->CreateFolder    DiretorioCliente($_REQUEST['w_sq_pessoa']).'\img')
-//            } 
+        if (UPLOAD_ERR_OK==0) {
+          $w_maximo = (100*1024);
+          $w_logo   = null;
+          $w_logo1  = null;
+          $w_fundo  = null;
+          foreach ($_FILES as $Chv => $Field) {
+            if ($Field['size'] > 0) {
+              // Verifica a necessidade de criação dos diretórios do cliente
+              if (!(file_exists(DiretorioCliente($_REQUEST['w_sq_pessoa'])))) {
+                mkdir(DiretorioCliente($_REQUEST['w_sq_pessoa']));
+                mkdir(DiretorioCliente($_REQUEST['w_sq_pessoa']).'/img');
+              } 
 
-            // Verifica se o tamanho das fotos está compatível com  o limite de 100KB. 
-//            if ($Field->Length>$w_maximo) {
-//              ScriptOpen('JavaScript');
-//              ShowHTML('  alert(\'Atenção: o tamanho máximo do arquivo não pode exceder '.$w_maximo/1024.' KBytes!\');');
-//              ShowHTML('  history.back(1);');
-//              ScriptClose();
-//              exit();
-//              return $function_ret;
-//            } 
+              // Verifica se o tamanho das fotos está compatível com  o limite de 100KB. 
+              if ($Field['size'] > $w_maximo) {
+                ScriptOpen('JavaScript');
+                ShowHTML('  alert(\'Atenção: o tamanho máximo do arquivo não pode exceder '.($w_maximo/1024).' KBytes!\');');
+                ShowHTML('  history.back(1);');
+                ScriptClose();
+                exit();
+              } 
 
-//            $FS=$CreateObject['Scripting.FileSystemObject')
-            if ($Field->Name=='w_logo') {
-              $w_file = 'logo'.substr($Field->FileName,(strpos($Field->FileName,'.') ? strpos($Field->FileName,'.')+1 : 0)-1,10);
-              $w_logo = 'logo'.substr($Field->FileName,(strpos($Field->FileName,'.') ? strpos($Field->FileName,'.')+1 : 0)-1,10);
-            } else {
-              $w_logo = null;
-            } 
+              if ($Chv=='w_logo') {
+                $w_file = 'logo'.substr($Field['name'],(strpos($Field['name'],'.') ? strpos($Field['name'],'.')+1 : 0)-1,10);
+                $w_logo = $w_file;
+                if ($w_file>'') move_uploaded_file($Field['tmp_name'],DiretorioCliente($_REQUEST['w_sq_pessoa']).'/img/'.$w_file);
+              }
 
-            if ($Field->Name=='w_logo1') {
-              $w_file  = 'logo1'.substr($Field->FileName,(strpos($Field->FileName,'.') ? strpos($Field->FileName,'.')+1 : 0)-1,10);
-              $w_logo1 = 'logo1'.substr($Field->FileName,(strpos($Field->FileName,'.') ? strpos($Field->FileName,'.')+1 : 0)-1,10);
-            } else {
-              $w_logo1 = null;
-            } 
+              if ($Chv=='w_logo1') {
+                $w_file  = 'logo1'.substr($Field['name'],(strpos($Field['name'],'.') ? strpos($Field['name'],'.')+1 : 0)-1,10);
+                $w_logo1 = $w_file;
+                if ($w_file>'') move_uploaded_file($Field['tmp_name'],DiretorioCliente($_REQUEST['w_sq_pessoa']).'/img/'.$w_file);
+              } 
             
-            if ($Field->Name=='w_fundo') {
-              $w_file  = 'fundo'.substr($Field->FileName,(strpos($Field->FileName,'.') ? strpos($Field->FileName,'.')+1 : 0)-1,10);
-              $w_fundo = 'fundo'.substr($Field->FileName,(strpos($Field->FileName,'.') ? strpos($Field->FileName,'.')+1 : 0)-1,10);
-            }  else {
-              $w_fundo = null;
-            } 
-//            if ($w_file>'') $Field->SaveAs($conFilePhysical.$w_cliente.'\img\'.$w_file);
-//          }
-//        } else { 
-//          ScriptOpen('JavaScript');
-//          ShowHTML('  alert(\'ATENÇÃO: ocorreu um erro na transferência do arquivo. Tente novamente!\');');
-//          ScriptClose();
-//          exit();
-//          return $function_ret;
-//        } 
-        dml_SiwCliConf(
+              if ($Chv=='w_fundo') {
+                $w_file  = 'fundo'.substr($Field['name'],(strpos($Field['name'],'.') ? strpos($Field['name'],'.')+1 : 0)-1,10);
+                $w_fundo = $w_file;
+                if ($w_file>'') move_uploaded_file($Field['tmp_name'],DiretorioCliente($_REQUEST['w_sq_pessoa']).'/img/'.$w_file);
+              } 
+            }
+          }
+        } else { 
+          ScriptOpen('JavaScript');
+          ShowHTML('  alert(\'ATENÇÃO: ocorreu um erro na transferência do arquivo. Tente novamente!\');');
+          ScriptClose();
+          exit();
+        } 
+        dml_putSiwCliConf::getInstanceOf($dbms,
             $_REQUEST['w_sq_pessoa'],null,null,null,null,null,$_REQUEST['w_smtp_server'],
             $_REQUEST['w_siw_email_nome'],$_REQUEST['w_siw_email_conta'],
             $_REQUEST['w_siw_email_senha'],$w_logo,$w_logo1,$w_fundo,'SERVIDOR',
@@ -1866,8 +1825,6 @@ function Grava() {
       ScriptClose();
       break;
   } 
-
-  return $function_ret;
 } 
 
 // =========================================================================
@@ -1900,6 +1857,5 @@ function Main() {
     Estrutura_Fecha();
     Rodape();
   } 
-  return $function_ret;
 } 
 ?>

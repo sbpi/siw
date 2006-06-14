@@ -23,14 +23,14 @@ include_once('classes/sp/db_getEtniaList.php');
 include_once('classes/sp/db_getEtniaData.php');
 include_once('classes/sp/db_getFormationList.php');
 include_once('classes/sp/db_getFormationData.php');
-include_once('classes/sp/db_VerificaAssinatura.php');
+include_once('classes/sp/db_verificaAssinatura.php');
 include_once('classes/sp/dml_CoTpEnder.php');
 include_once('classes/sp/dml_CoTpFone.php');
 include_once('classes/sp/dml_CoTpPessoa.php');
 include_once('classes/sp/dml_CoTpDef.php');
 include_once('classes/sp/dml_CoGrDef.php');
 include_once('classes/sp/dml_CoIdioma.php');
-include_once('classes/sp/dml_coEtnia.php');
+include_once('classes/sp/dml_CoEtnia.php');
 include_once('classes/sp/dml_CoForm.php');
 include_once('funcoes/selecaoTipoPessoa.php');
 include_once('funcoes/selecaoGrupoDef.php');
@@ -1555,7 +1555,7 @@ function Grava() {
   switch ($SG) {
     case 'COTPENDER':
       // Verifica se a Assinatura Eletrônica é válida
-      if (VerificaAssinaturaEletronica($_SESSION['USERNAME'],strtoupper($_REQUEST['w_assinatura'])) || $w_assinatura=='') {
+      if (verificaAssinaturaEletronica($_SESSION['USERNAME'],strtoupper($_REQUEST['w_assinatura'])) || $w_assinatura=='') {
         dml_CoTpEnder::getInstanceOf($dbms,$O, 
           $_REQUEST['w_sq_tipo_endereco'],$_REQUEST['w_sq_tipo_pessoa'],$_REQUEST['w_nome'],
           $_REQUEST['w_padrao'],$_REQUEST['w_ativo'],$_REQUEST['w_email'],$_REQUEST['w_internet']);
@@ -1572,7 +1572,7 @@ function Grava() {
       break;
     case 'COTPFONE':
       // Verifica se a Assinatura Eletrônica é válida
-      if (VerificaAssinaturaEletronica($_SESSION['USERNAME'],strtoupper($_REQUEST['w_assinatura'])) || $w_assinatura=='') {
+      if (verificaAssinaturaEletronica($_SESSION['USERNAME'],strtoupper($_REQUEST['w_assinatura'])) || $w_assinatura=='') {
         dml_CoTpFone::getInstanceOf($dbms, $O,
             $_REQUEST['w_sq_tipo_telefone'],$_REQUEST['w_sq_tipo_pessoa'],$_REQUEST['w_nome'],
             $_REQUEST['w_padrao'],$_REQUEST['w_ativo']);
@@ -1588,7 +1588,7 @@ function Grava() {
       break;
     case 'COTPPESSOA':
       // Verifica se a Assinatura Eletrônica é válida
-      if (VerificaAssinaturaEletronica($_SESSION['USERNAME'],strtoupper($_REQUEST['w_assinatura'])) || $w_assinatura=='') {
+      if (verificaAssinaturaEletronica($_SESSION['USERNAME'],strtoupper($_REQUEST['w_assinatura'])) || $w_assinatura=='') {
         dml_CoTpPessoa::getInstanceOf($dbms, $O,
             $_REQUEST['w_sq_tipo_pessoa'],$_REQUEST['w_nome'],
             $_REQUEST['w_padrao'],$_REQUEST['w_ativo']);
@@ -1604,7 +1604,7 @@ function Grava() {
       break;
     case 'COTPDEF': 
       // Verifica se a Assinatura Eletrônica é válida
-      if (VerificaAssinaturaEletronica($_SESSION['USERNAME'],strtoupper($_REQUEST['w_assinatura'])) || $w_assinatura=='') {
+      if (verificaAssinaturaEletronica($_SESSION['USERNAME'],strtoupper($_REQUEST['w_assinatura'])) || $w_assinatura=='') {
         dml_CoTpDef::getInstanceOf($dbms, $O,
             $_REQUEST['w_sq_deficiencia'],$_REQUEST['w_sq_grupo_deficiencia'],$_REQUEST['w_codigo'],
             $_REQUEST['w_nome'],$_REQUEST['w_descricao'],$_REQUEST['w_ativo']);
@@ -1620,7 +1620,7 @@ function Grava() {
       break;
     case 'COGRDEF':
       // Verifica se a Assinatura Eletrônica é válida
-      if (VerificaAssinaturaEletronica($_SESSION['USERNAME'],strtoupper($_REQUEST['w_assinatura'])) || $w_assinatura=='') {
+      if (verificaAssinaturaEletronica($_SESSION['USERNAME'],strtoupper($_REQUEST['w_assinatura'])) || $w_assinatura=='') {
         dml_CoGrDef::getInstanceOf($dbms, $O,
             $_REQUEST['w_sq_grupo_deficiencia'],$_REQUEST['w_nome'],
             $_REQUEST['w_ativo']);
@@ -1636,7 +1636,7 @@ function Grava() {
       break;
     case 'COIDIOMA':
       // Verifica se a Assinatura Eletrônica é válida
-      if (VerificaAssinaturaEletronica($_SESSION['USERNAME'],strtoupper($_REQUEST['w_assinatura'])) || $w_assinatura=='') {
+      if (verificaAssinaturaEletronica($_SESSION['USERNAME'],strtoupper($_REQUEST['w_assinatura'])) || $w_assinatura=='') {
         dml_CoIdioma::getInstanceOf($dbms, $O,
             $_REQUEST['w_sq_idioma'],$_REQUEST['w_nome'],
             $_REQUEST['w_padrao'],$_REQUEST['w_ativo']);
@@ -1652,7 +1652,7 @@ function Grava() {
       break;
     case 'COETNIA':
       // Verifica se a Assinatura Eletrônica é válida
-      if (VerificaAssinaturaEletronica($_SESSION['USERNAME'],strtoupper($_REQUEST['w_assinatura'])) || $w_assinatura=='') {
+      if (verificaAssinaturaEletronica($_SESSION['USERNAME'],strtoupper($_REQUEST['w_assinatura'])) || $w_assinatura=='') {
         dml_CoEtnia::getInstanceOf($dbms, $O,
             $_REQUEST['w_sq_etnia'],$_REQUEST['w_nome'],$_REQUEST['w_codigo_siape'],
             $_REQUEST['w_ativo']);
@@ -1668,7 +1668,7 @@ function Grava() {
       break;
     case 'COFORM':
       // Verifica se a Assinatura Eletrônica é válida
-      if (VerificaAssinaturaEletronica($_SESSION['USERNAME'],strtoupper($_REQUEST['w_assinatura'])) || $w_assinatura=='') {
+      if (verificaAssinaturaEletronica($_SESSION['USERNAME'],strtoupper($_REQUEST['w_assinatura'])) || $w_assinatura=='') {
         dml_CoForm::getInstanceOf($dbms,$O,
             $_REQUEST['w_sq_formacao'],$_REQUEST['w_tipo'],$_REQUEST['w_nome'],
             $_REQUEST['w_ordem'],$_REQUEST['w_ativo']);

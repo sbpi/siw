@@ -1,5 +1,5 @@
 <?
-include_once('classes/db/DatabaseQueriesFactory.php');
+extract($GLOBALS); include_once($w_dir_volta.'classes/db/DatabaseQueriesFactory.php');
 /**
 * class sp_getVincKindList
 *
@@ -10,7 +10,7 @@ include_once('classes/db/DatabaseQueriesFactory.php');
 
 class db_getVincKindList {
    function getInstanceOf($dbms, $p_cliente, $p_ativo, $p_tipo_pessoa, $p_nome, $p_interno) {
-     $sql='sp_getVincKindList';
+     $sql=$strschema.'sp_getVincKindList';
      $params=array('p_cliente'      =>array($p_cliente,     B_NUMERIC,     32),
                    'p_ativo'        =>array($p_ativo,       B_VARCHAR,      1),
                    'p_tipo_pessoa'  =>array($p_tipo_pessoa, B_VARCHAR,     60),
@@ -21,6 +21,7 @@ class db_getVincKindList {
      $l_rs = DatabaseQueriesFactory::getInstanceOf($sql, $dbms, $params, DB_TYPE);
      if(!$l_rs->executeQuery()) { die('Cannot query.'); }
      else {
+       error_reporting($l_error_reporting); 
         if ($l_rs = $l_rs->getResultData()) {
           return $l_rs;
         } else {

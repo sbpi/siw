@@ -1,5 +1,5 @@
 <?
-include_once('classes/db/DatabaseQueriesFactory.php');
+extract($GLOBALS); include_once($w_dir_volta.'classes/db/DatabaseQueriesFactory.php');
 /**
 * class dml_CoUf
 *
@@ -10,7 +10,7 @@ include_once('classes/db/DatabaseQueriesFactory.php');
 
 class dml_CoUf {
    function getInstanceOf($dbms, $operacao, $chave, $p_sq_pais, $p_sq_regiao, $p_nome, $p_ativo, $p_padrao, $p_codigo_ibge, $p_ordem) {
-     $sql='sp_putCoUf';
+     $sql=$strschema.'sp_putCoUf';
      $params=array('operacao'          =>array($operacao,          B_VARCHAR,      1),
                    'chave'             =>array($chave,             B_VARCHAR,      3),
                    'p_sq_pais'         =>array($p_sq_pais,         B_NUMERIC,     32),
@@ -22,7 +22,15 @@ class dml_CoUf {
                    'p_ordem'           =>array($p_ordem,           B_VARCHAR,      5)
                   );
      $l_rs = DatabaseQueriesFactory::getInstanceOf($sql, $dbms, $params, DB_TYPE);
-     if(!$l_rs->executeQuery()) return false;  else return true;
+     $l_error_reporting = error_reporting(); 
+     error_reporting(0); 
+     if(!$l_rs->executeQuery()) { 
+       error_reporting($l_error_reporting); 
+       TrataErro($sql, $l_rs->getError(), $params, __FILE__, __LINE__, __CLASS__); 
+     } else {
+       error_reporting($l_error_reporting); 
+       return true;
+     }
    }
 }
 ?>
