@@ -1550,9 +1550,6 @@ Sub RecursoProgramado
   Set w_cor                     = Nothing 
 
 End Sub
-REM =========================================================================
-REM Fim da rotina de recurso programado
-REM -------------------------------------------------------------------------
 
 REM =========================================================================
 REM Rotina dos responsaveis

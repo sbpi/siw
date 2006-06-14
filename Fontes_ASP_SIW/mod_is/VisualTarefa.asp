@@ -39,12 +39,15 @@ Function VisualTarefa(w_chave, O, w_usuario, P4, w_identificacao, w_conclusao, w
               w_html = w_html & VbCrLf & "       <td><div align=""justify""><font size=""1""><b>" & RS2("nm_pri") & "</b></font></div></td></tr>"
            End If
         End If
-        RS2.Close
      End If
      w_html = w_html & VbCrLf & "   <tr><td width=""30%""><font size=""1""><b>Descrição:</b></font></td>"
      w_html = w_html & VbCrLf & "       <td><div align=""justify""><font size=""1"">" & Nvl(RS1("assunto"),"-") & "</font></div></td></tr>"
      w_html = w_html & VbCrLf & "   <tr><td><font size=""1""><b>Recurso Programado " & w_ano & ":</b></font></td>"
      w_html = w_html & VbCrLf & "       <td><font size=""1"">R$ " & FormatNumber(RS1("valor"),2) & "</font></td></tr>"
+     If Not IsNull(RS2("cd_acao")) Then
+        w_html = w_html & VbCrLf & "   <tr><td><font size=""1""><b>Limite Orçamentário " & w_ano & ":</b></font></td>"
+        w_html = w_html & VbCrLf & "       <td><font size=""1"">R$ " & FormatNumber(RS1("custo_real"),2) & "</font></td></tr>"     
+     End If
      If P4 = 1 Then
         w_html = w_html & VbCrLf & "   <tr><td><font size=""1""><b>Área Planejamento:</b></font></td>"
         w_html = w_html & VbCrLf & "       <td><font size=""1"">" & RS1("nm_unidade_resp") & "</font></td></tr>"
@@ -72,8 +75,14 @@ Function VisualTarefa(w_chave, O, w_usuario, P4, w_identificacao, w_conclusao, w
   If uCase(w_conclusao) = uCase("sim") Then
      If RS1("concluida") = "S" and Nvl(RS1("data_conclusao"),"") > "" Then
         w_html = w_html & VbCrLf & "      <tr><td colspan=""2""><br><font size=""2""><b>DADOS DA CONCLUSÃO DA TAREFA<hr NOSHADE color=#000000 SIZE=1></b></font></td></tr>"
-        w_html = w_html & VbCrLf & "   <tr><td><font size=""1""><b>Recurso Executado:</b></font></td>"
-        w_html = w_html & VbCrLf & "       <td><font size=""1"">" & FormatNumber(RS1("custo_real"),2) & "</font></td></tr>"
+        If IsNull(RS2("cd_acao")) Then
+           w_html = w_html & VbCrLf & "   <tr><td><font size=""1""><b>Recurso Executado:</b></font></td>"
+           w_html = w_html & VbCrLf & "       <td><font size=""1"">" & FormatNumber(RS1("custo_real"),2) & "</font></td></tr>"
+        End If
+        w_html = w_html & VbCrLf & "   <tr><td><font size=""1""><b>Início Real:</b></font></td>"
+        w_html = w_html & VbCrLf & "       <td><font size=""1"">" & FormataDataEdicao(RS1("inicio_real")) & "</font></td></tr>"
+        w_html = w_html & VbCrLf & "   <tr><td><font size=""1""><b>Fim Real:</b></font></td>"
+        w_html = w_html & VbCrLf & "       <td><font size=""1"">" & FormataDataEdicao(RS1("fim_real")) & "</font></td></tr>"
         w_html = w_html & VbCrLf & "   <tr><td><font size=""1""><b>Nota de Conclusão:</b></font></td>"
         w_html = w_html & VbCrLf & "       <td><div align=""justify""><font size=""1"">" & CRLF2BR(RS1("nota_conclusao")) & "</font></div></td></tr>"
      End If

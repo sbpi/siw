@@ -81,7 +81,7 @@ Function VisualViagem(w_chave, O, w_usuario, P1, P4)
         w_html = w_html & VbCrLf & "          <td>Início da vigência:<br><b>" & FormataDataEdicao(RS("inicio_real")) & " </b></td>"
         w_html = w_html & VbCrLf & "          <td>Término da vigência:<br><b>" & FormataDataEdicao(RS("fim_real")) & " </b></td>"
         If w_tipo_visao = 0 Then
-           w_html = w_html & VbCrLf & "          <td>Valor realizado:<br><b>" & FormatNumber(RS("valor_atual"),2) & " </b></td>"
+           w_html = w_html & VbCrLf & "          <td>Valor realizado:<br><b>" & FormatNumber(RS("custo_real"),2) & " </b></td>"
         End If
         w_html = w_html & VbCrLf & "          </table>"
         If w_tipo_visao = 0 Then
@@ -457,7 +457,7 @@ Function VisualViagem(w_chave, O, w_usuario, P1, P4)
              Else
                 w_html = w_html & VbCrLf & "        <td nowrap>" & RS("destinatario") & "</td>"
              End If
-          ElseIf (Not IsNull(Tvl(RS("sq_demanda_log")))) and IsNull(Tvl(RS("destinatario"))) Then
+          ElseIf RS("origem") = "ANOTACAO" Then
              w_html = w_html & VbCrLf & "        <td nowrap><font size=""1"">Anotação</td>"
           Else
              w_html = w_html & VbCrLf & "        <td nowrap><font size=""1"">" & Nvl(RS("tramite"),"---") & "</td>"

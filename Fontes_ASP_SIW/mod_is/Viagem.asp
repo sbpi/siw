@@ -565,12 +565,7 @@ Sub Inicial
               End If
            End If
         Else
-           If cDbl(Nvl(RS("solicitante"),0)) = cDbl(w_usuario) or _
-              cDbl(Nvl(RS("titular"),0))     = cDbl(w_usuario) or _
-              cDbl(Nvl(RS("substituto"),0))  = cDbl(w_usuario) or _
-              cDbl(Nvl(RS("tit_exec"),0))    = cDbl(w_usuario) or _
-              cDbl(Nvl(RS("subst_exec"),0))  = cDbl(w_usuario) _
-           Then
+           If RetornaGestor(RS("sq_siw_solicitacao"), w_usuario) = "S" Then
               ShowHTML "          <A class=""HL"" HREF=""" & w_dir & w_pagina & "envio&R=" & w_pagina & par & "&O=V&w_chave=" & RS("sq_siw_solicitacao") & "&w_tipo=Volta&P1=" & P1 & "&P2=" & P2 & "&P3=" & P3 & "&P4=" & P4 & "&TP=" & TP & "&SG=" & SG & MontaFiltro("GET") & """ title=""Envia a PCD para outro responsável."">Enviar</A>&nbsp"
            Else
               ShowHTML "          ---&nbsp"
@@ -2546,7 +2541,7 @@ Sub Encaminhamento
 
   Dim w_chave, w_chave_pai, w_chave_aux, w_destinatario, w_despacho, w_justificativa
   Dim w_inicio, w_prazo
-  Dim w_tramite, w_sg_tramite, w_envio, w_tipo
+  Dim w_tramite, w_sg_tramite, w_envio, w_tipo, w_novo_tramite
   
   Dim w_troca, i, w_erro
   
@@ -2556,11 +2551,13 @@ Sub Encaminhamento
   w_tipo            = Nvl(Request("w_tipo"),"")
   
   If w_troca > "" Then ' Se for recarga da página
-     w_tramite       = Request("w_tramite")
-     w_destinatario  = Request("w_destinatario")
-     w_envio         = Request("w_envio")
-     w_despacho      = Request("w_despacho")
-     w_justificativa = Request("w_justificativa")
+     w_tramite         = Request("w_tramite")
+     w_sg_tramite      = Request("w_sg_tramite")
+     w_sg_novo_tramite = Request("w_tramite")
+     w_destinatario    = Request("w_destinatario")
+     w_envio           = Request("w_envio")
+     w_despacho        = Request("w_despacho")
+     w_justificativa   = Request("w_justificativa")
   Else
      DB_GetSolicData RS, w_chave, SG
      w_inicio        = RS("inicio")
@@ -2579,6 +2576,13 @@ Sub Encaminhamento
   w_sg_tramite   = RS("sigla")
   DesconectaBD
 
+  If w_sg_tramite <> "CI" Then
+     'Verifica a fase anterior para a caixa de seleção da fase.
+     DB_GetTramiteList RS, w_tramite, "ANTERIOR", null
+     w_novo_tramite = RS("sq_siw_tramite")
+     DesconectaBD  
+  End If
+  
   ' Se for envio, executa verificações nos dados da solicitação
   If O = "V" Then w_erro = ValidaViagem(w_cliente, w_chave, SG, "PDGERAL", null, null, w_tramite) End If
 
@@ -2601,7 +2605,7 @@ Sub Encaminhamento
            ShowHTML "     alert('Informe o despacho apenas se for devolução para a fase anterior!');"
            ShowHTML "     theForm.w_despacho.focus();"
            ShowHTML "     return false;"
-           ShowHTML "  }"
+           ShowHTML "  }"           
            ShowHTML "  if (theForm.w_envio[1].checked && theForm.w_despacho.value == '') {"
            ShowHTML "     alert('Informe um despacho descrevendo o motivo da devolução!');"
            ShowHTML "     theForm.w_despacho.focus();"
@@ -2655,14 +2659,14 @@ Sub Encaminhamento
  
      ShowHTML "<tr bgcolor=""" & conTrBgColor & """><td align=""center"">"
      ShowHTML "  <table width=""97%"" border=""0"">"
-     ShowHTML "    <tr><td valign=""top"" colspan=""2""><table border=0 width=""100%""><tr valign=""top"">"
+     ShowHTML "    <tr><td valign=""top"" colspan=""2""><table border=0 width=""100%"">"
      If w_sg_tramite = "CI" Then ' Se cadastramento inicial
         ShowHTML "<INPUT type=""hidden"" name=""w_envio"" value=""N"">"
         If (w_inicio - w_prazo) < Date() Then
            ShowHTML "    <tr><td><font size=""1""><b><u>J</u>ustificativa para não cumprimento do prazo regulamentar de " & w_prazo & " dias:</b><br><textarea " & w_Disabled & " accesskey=""J"" name=""w_justificativa"" class=""STI"" ROWS=5 cols=75 title=""Se o início da viagem for anterior a " & FormataDataEdicao(FormatDateTime(Date()+w_prazo,2)) & ", justifique o motivo do não cumprimento do prazo regulamentar para o pedido."">" & w_justificativa & "</TEXTAREA></td>"
         End If
      Else
-        ShowHTML "    <tr valign=""top"" align=""center""><font size=1><b>Tipo do Encaminhamento</b><br>"
+        ShowHTML "    <tr><td><b>Tipo do Encaminhamento</b><br>"
         If Nvl(Mid(w_erro,1,1),"") = "0" or w_sg_tramite = "EE" Then
            ShowHTML "              <input DISABLED class=""STR"" type=""radio"" name=""w_envio"" value=""N""> Enviar para a próxima fase <br><input DISABLED class=""STR"" class=""STR"" type=""radio"" name=""w_envio"" value=""S"" checked> Devolver para a fase anterior"
            ShowHTML "<INPUT type=""hidden"" name=""w_envio"" value=""S"">"
@@ -2673,7 +2677,9 @@ Sub Encaminhamento
               ShowHTML "              <input " & w_Disabled & " class=""STR"" type=""radio"" name=""w_envio"" value=""N""> Enviar para a próxima fase <br><input " & w_Disabled & " class=""STR"" class=""STR"" type=""radio"" name=""w_envio"" value=""S"" checked> Devolver para a fase anterior"
            End If
         End If
-        ShowHTML "    <tr><td><font size=""1""><b>D<u>e</u>spacho (informar apenas se for devolução à fase anterior):</b><br><textarea " & w_Disabled & " accesskey=""E"" name=""w_despacho"" class=""STI"" ROWS=5 cols=75 title=""Informe o que o destinatário deve fazer quando receber a PCD."">" & w_despacho & "</TEXTAREA></td>"
+        ShowHTML "    <tr>"
+        SelecaoFase "<u>F</u>ase: (válido apenas se for devolução)", "F", "Se deseja devolver a PCD, selecione a fase para a qual deseja devolvê-la.", w_novo_tramite, w_novo_tramite, "w_novo_tramite", "DEVOLUCAO", null
+        ShowHTML "    <tr><td><b>D<u>e</u>spacho (informar apenas se for devolução):</b><br><textarea " & w_Disabled & " accesskey=""E"" name=""w_despacho"" class=""STI"" ROWS=5 cols=75 title=""Informe o que o destinatário deve fazer quando receber a PCD."">" & w_despacho & "</TEXTAREA></td>"
         If Not (Nvl(Mid(w_erro,1,1),"") = "0" or w_sg_tramite = "EE") Then
            If Nvl(Mid(w_erro,1,1),"") = "1" or Nvl(Mid(w_erro,1,1),"") = "2" Then
               If (w_inicio - w_prazo) < Date() Then
@@ -3226,8 +3232,8 @@ Sub Emissao
   ShowHTML "\par "
   ShowHTML "\par "
   ShowHTML "\par "
-  ShowHTML "\par }\pard\plain \s1\qc \li0\ri0\keepn\widctlpar\aspalpha\aspnum\faauto\outlinelevel0\adjustright\rin0\lin0\itap0\pararsid9184405 \b\f1\fs24\lang1046\langfe1046\cgrid\langnp1046\langfenp1046 {\insrsid9184405 " & RS("nm_titular")
-  ShowHTML "\par }\pard\plain \qc \li0\ri0\widctlpar\aspalpha\aspnum\faauto\adjustright\rin0\lin0\itap0\pararsid3545814 \fs24\lang1046\langfe1046\cgrid\langnp1046\langfenp1046 {\f1\insrsid9184405 " &RS("nm_unidade_resp")& "}{\f1\insrsid12326642 "
+  ShowHTML "\par }\pard\plain \s1\qc \li0\ri0\keepn\widctlpar\aspalpha\aspnum\faauto\outlinelevel0\adjustright\rin0\lin0\itap0\pararsid9184405 \b\f1\fs24\lang1046\langfe1046\cgrid\langnp1046\langfenp1046 {\insrsid9184405 " & RS("nm_tit_exec")
+  ShowHTML "\par }\pard\plain \qc \li0\ri0\widctlpar\aspalpha\aspnum\faauto\adjustright\rin0\lin0\itap0\pararsid3545814 \fs24\lang1046\langfe1046\cgrid\langnp1046\langfenp1046 {\f1\insrsid9184405 " &RS("nm_unidade_exec")& "}{\f1\insrsid12326642 "
   ShowHTML "\par \page }{\insrsid12326642\charrsid3545814 "
   ShowHTML "\par }\trowd \irow0\irowband0\ts11\trrh90\trleft-1440\trkeep\trftsWidth3\trwWidth11794\trftsWidthB3\trftsWidthA3\trpaddfl3\trpaddft3\trpaddfb3\trpaddfr3 \clvertalb\clbrdrt\brdrs\brdrw10 \clbrdrl\brdrs\brdrw10 \clbrdrb\brdrnone \clbrdrr\brdrnone "
   ShowHTML "\cltxlrtb\clNoWrap\clftsWidth3\clwWidth4500 \cellx3060\clvertalb\clbrdrt\brdrs\brdrw10 \clbrdrl\brdrs\brdrw10 \clbrdrb\brdrnone \clbrdrr\brdrs\brdrw10\brdrcf1 \cltxlrtb\clNoWrap\clftsWidth3\clwWidth7220 \cellx10280\clvertalb\clbrdrt\brdrnone \clbrdrl"
@@ -4983,9 +4989,14 @@ Public Sub Grava
                    Response.End()
                    Exit Sub
                 End If
-             
-                DML_PutViagemEnvio Request("w_menu"), Request("w_chave"), w_usuario, Request("w_tramite"), _ 
-                    Request("w_envio"), Request("w_despacho"), Request("w_justificativa")
+                
+                If Request("w_envio") = "N" Then
+                   DML_PutViagemEnvio Request("w_menu"), Request("w_chave"), w_usuario, Request("w_tramite"), null,_ 
+                       Request("w_envio"), Request("w_despacho"), Request("w_justificativa")
+                Else
+                   DML_PutViagemEnvio Request("w_menu"), Request("w_chave"), w_usuario, Request("w_tramite"), Request("w_novo_tramite"),_ 
+                       Request("w_envio"), Request("w_despacho"), Request("w_justificativa")                
+                End If
              
                 ' Envia e-mail comunicando de tramitação
                 SolicMail Request("w_chave"),2

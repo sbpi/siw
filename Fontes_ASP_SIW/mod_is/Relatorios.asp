@@ -87,24 +87,28 @@ w_Dir        = "mod_is/"
 w_dir_volta  = "../"  
 w_Disabled   = "ENABLED"
 
-If O = "" Then 
-   If par= "REL_PPA" _
-      or par = "REL_PROJETO"          _ 
-      or par = "REL_SINTETICO_PR"     _
-      or par = "REL_SINTETICO_PPA"    _
-      or par = "REL_SINTETICO_PROG"   _
-      or par = "REL_PROGRAMA"         _
-      or par = "REL_GERENCIAL_PROG"   _
-      or par = "REL_GERENCIAL_ACAO"   _
-      or par = "REL_GERENCIAL_TAREFA" _
-      or par = "REL_DET_TAREFA"       _
-      or par = "REL_DET_ACAO"         _
-      or par = "REL_DET_PROG"         _
-      or par = "REL_METAS"            Then
-      O = "P"
-   Else 
-      O = "L"
-   End If
+'If O = "" Then 
+'   If par= "REL_PPA" _
+'      or par = "REL_PROJETO"          _ 
+'      or par = "REL_SINTETICO_PR"     _
+'      or par = "REL_SINTETICO_PPA"    _
+'      or par = "REL_SINTETICO_PROG"   _
+'      or par = "REL_PROGRAMA"         _
+'      or par = "REL_GERENCIAL_PROG"   _
+'      or par = "REL_GERENCIAL_ACAO"   _
+ '     or par = "REL_GERENCIAL_TAREFA" _
+ '     or par = "REL_DET_TAREFA"       _
+'      or par = "REL_DET_ACAO"         _
+'      or par = "REL_DET_PROG"         _
+'      or par = "REL_METAS"            Then
+'      O = "P"
+ '  Else 
+'      O = "L"
+'   End If
+'End If
+
+If O = "" Then
+   O = "P"
 End If
 
 Select Case O
@@ -584,8 +588,8 @@ Sub Rel_PPA
                     w_linha = w_linha + 1
                  Else
                     ShowHTML "        <tr bgcolor=""" & conTrBgColor & """ align=""center"">"
-                    ShowHTML "          <td><font size=""1""><b>Tarefas</font></td>"
-                    ShowHTML "          <td><font size=""1""><b>Detalhamento</font></td>"
+                    ShowHTML "          <td><font size=""1""><b>Código</font></td>"
+                    ShowHTML "          <td><font size=""1""><b>Tarefa</font></td>"
                     ShowHTML "          <td><font size=""1""><b>Responsável</font></td>"
                     ShowHTML "          <td><font size=""1""><b>Parcerias</font></td>"
                     ShowHTML "          <td><font size=""1""><b>Fim previsto</font></td>"
@@ -616,8 +620,8 @@ Sub Rel_PPA
                          End IF
                       End If
                       ShowHTML "        <A class=""HL"" HREF=""" & w_dir & "Tarefas.asp?par=Visual&R=" & w_pagina & par & "&O=L&w_chave=" & RS3("sq_siw_solicitacao") & "&w_tipo=&P1=" & P1 & "&P2=" & P2 & "&P3=" & P3 & "&P4=" & P4 & "&TP=" & TP & "&SG=" & SG & MontaFiltro("GET") & """ TARGET=""VisualTarefa"" title=""Exibe as informações desta tarefa."">" & RS3("sq_siw_solicitacao") & "&nbsp;</a>"
-                      If Len(Nvl(RS3("assunto"),"-")) > 50 Then w_titulo = Mid(Nvl(RS3("assunto"),"-"),1,50) & "..." Else w_titulo = Nvl(RS3("assunto"),"-") End If
-                      ShowHTML "        <td><font size=""1"">" & w_titulo & "</td>"
+                      'If Len(Nvl(RS3("assunto"),"-")) > 50 Then w_titulo = Mid(Nvl(RS3("assunto"),"-"),1,50) & "..." Else w_titulo = Nvl(RS3("assunto"),"-") End If
+                      ShowHTML "        <td><font size=""1"">" & RS3("titulo") & "</td>"
                       ShowHTML "        <td><font size=""1"">" & RS3("nm_solic") & "</td>"
                       ShowHTML "        <td><font size=""1"">" & Nvl(RS3("proponente"),"---") & "</td>"
                       ShowHTML "        <td align=""center""><font size=""1"">&nbsp;" & Nvl(FormatDateTime(RS3("fim"),2),"-") & "</td>"
@@ -1130,8 +1134,8 @@ Sub Rel_Projeto
                     w_linha = w_linha + 1
                  Else
                     ShowHTML "   <tr bgcolor=""" & conTrBgColor & """ align=""center"">"
-                    ShowHTML "     <td><font size=""1""><b>Tarefas</font></td>"
-                    ShowHTML "     <td><font size=""1""><b>Detalhamento</font></td>"
+                    ShowHTML "     <td><font size=""1""><b>Código</font></td>"
+                    ShowHTML "     <td><font size=""1""><b>Tarefa</font></td>"
                     ShowHTML "     <td><font size=""1""><b>Responsável</font></td>"
                     ShowHTML "     <td><font size=""1""><b>Parcerias</font></td>"
                     ShowHTML "     <td><font size=""1""><b>Fim previsto</font></td>"
@@ -1167,7 +1171,7 @@ Sub Rel_Projeto
                          ShowHTML "        <A class=""HL"" HREF=""" & w_dir & "Tarefas.asp?par=Visual&R=" & w_pagina & par & "&O=L&w_chave=" & RS3("sq_siw_solicitacao") & "&w_tipo=&P1=" & P1 & "&P2=" & P2 & "&P3=" & P3 & "&P4=" & P4 & "&TP=" & TP & "&SG=" & SG & MontaFiltro("GET") & """ TARGET=""VisualTarefa"" title=""Exibe as informações desta tarefa."">" & RS3("sq_siw_solicitacao") & "&nbsp;</a>"
                       End If
                       ShowHTML "   </font></td>"  
-                      ShowHTML "   <td><font size=""1"">" & Nvl(RS3("assunto"),"-") & "</td>"
+                      ShowHTML "   <td><font size=""1"">" & Nvl(RS3("titulo"),"-") & "</td>"
                       ShowHTML "   <td><font size=""1"">" & RS3("nm_solic") & "</td>"
                       ShowHTML "   <td><font size=""1"">" & Nvl(RS3("proponente"),"---") & "</td>"
                       ShowHTML "   <td align=""center""><font size=""1"">&nbsp;" & Nvl(FormatDateTime(RS3("fim"),2),"-") & "</td>"
@@ -3127,9 +3131,6 @@ Sub Rel_Gerencial_Acao
   Set w_chave               = Nothing
 
 End Sub
-REM =========================================================================
-REM Fim da rotina de visualização
-REM -------------------------------------------------------------------------
 
 REM =========================================================================
 REM Relatório do Plano Gerencial de Programas
@@ -3932,7 +3933,7 @@ Sub Rel_Metas
     ShowHTML "      <tr bgcolor=""" & conTrAlternateBgColor & """><td colspan=""2""><font size=""1""><b>OPÇÕES DE CONSULTA</b></font></td></tr>"    
     ShowHTML "      <tr><td width=""25%"" bgcolor=""" & conTrBgColor & """><font size=""1""><b><u>S</u>ituação Atual da Meta:</b>"
     ShowHTML "          <td bgcolor=""" & conTrBgColor & """><font size=""1""><SELECT ACCESSKEY=""S"" CLASS=""STS"" NAME=""p_preenchida"">"
-    If nvl(p_preenchida,"-") <> "S" or nvl(p_preenchida,"-") <> "N" Then 
+    If nvl(p_preenchida,"-") <> "S" or nvl(p_preenchida,"-") <> "N" Then
        ShowHTML "          <option value="""" SELECTED>Todas"
        ShowHTML "          <option value=""S"">Preenchida"
        ShowHTML "          <option value=""N"">Não preenchida"
@@ -4431,7 +4432,7 @@ Sub Rel_Det_Acao
           If w_tipo_rel = "WORD" Then 
              ShowHTML VisualAcao(RS("sq_siw_solicitacao"), "", w_usuario, 0, 1, w_identificacao, w_responsavel, w_qualitativa, w_orcamentaria, w_meta, w_restricao, w_tarefa, w_interessado, w_anexo, w_ocorrencia, "nao", w_identificacao)
           Else
-             ShowHTML VisualAcao(RS("sq_siw_solicitacao"), "", w_usuario, 0, 1, w_identificacao, w_responsavel, w_qualitativa, w_orcamentaria, w_meta, w_restricao, w_tarefa, w_interessado, w_anexo, w_ocorrencia, "nao", w_identificacao)
+             ShowHTML VisualAcao(RS("sq_siw_solicitacao"), "", w_usuario, 0, 0, w_identificacao, w_responsavel, w_qualitativa, w_orcamentaria, w_meta, w_restricao, w_tarefa, w_interessado, w_anexo, w_ocorrencia, "nao", w_identificacao)
           End If
           w_linha = w_linha + 30
           RS.MoveNext
@@ -4530,9 +4531,9 @@ Sub Rel_Det_Prog
   w_responsavel              = uCase(trim(Request("w_responsavel")))
   w_qualitativa              = uCase(trim(Request("w_qualitativa")))
   w_orcamentaria             = uCase(trim(Request("w_orcamentaria")))
-  w_indicador                = uCase(trim(Request("w_meta")))
+  w_indicador                = uCase(trim(Request("w_indicador")))
   w_restricao                = uCase(trim(Request("w_restricao")))
-  w_acao                     = uCase(trim(Request("w_tarefa")))
+  w_acao                     = uCase(trim(Request("w_acao")))
   w_interessado              = uCase(trim(Request("w_interessado")))
   w_anexo                    = uCase(trim(Request("w_anexo")))
   w_ocorrencia               = uCase(trim(Request("w_ocorrencia")))
@@ -4691,7 +4692,7 @@ Sub Rel_Det_Prog
              ShowHTML VisualPrograma(RS4("sq_siw_solicitacao"), "", w_usuario, 0, 1, w_identificacao, w_responsavel, w_qualitativa, w_orcamentaria, w_indicador, w_restricao, w_interessado, w_anexo, w_acao, w_ocorrencia, "nao")
              ShowHTML "<tr><td colspan=""2""><div align=""center""><BR></div></td></tr>"
           Else
-             ShowHTML VisualPrograma(RS4("sq_siw_solicitacao"), "", w_usuario, 0, 1, w_identificacao, w_responsavel, w_qualitativa, w_orcamentaria, w_indicador, w_restricao, w_interessado, w_anexo, w_acao, w_ocorrencia, "nao")
+             ShowHTML VisualPrograma(RS4("sq_siw_solicitacao"), "", w_usuario, 0, 0, w_identificacao, w_responsavel, w_qualitativa, w_orcamentaria, w_indicador, w_restricao, w_interessado, w_anexo, w_acao, w_ocorrencia, "nao")
              ShowHTML "<tr><td colspan=""2""><div align=""center""><BR></div></td></tr>"
           End If
           w_linha = w_linha + 30
@@ -4751,6 +4752,366 @@ Sub Rel_Det_Prog
     ShowHTML "          <td><font size=""1""><INPUT " & w_Disabled & " class=""STC"" type=""CHECKBOX"" name=""w_ocorrencia"" value=""sim""> Ocorrência/Anotações</td>"
     ShowHTML "      <tr bgcolor=""" & conTrBgColor & """>"
     ShowHTML "          <td colspan=""2""><font size=""1""><INPUT " & w_Disabled & " class=""STC"" type=""CHECKBOX"" name=""w_marca_bloco"" value="""" onClick=""javascript:MarcaTodosBloco();"" TITLE=""Marca todos os itens da relação""> Todos</td>"    
+    ShowHTML "    </table></td></tr>"
+    ShowHTML "    <table width=""100%"" border=""0"">"            
+    ShowHTML "      <tr><td align=""center""><hr>"
+    ShowHTML "            <input class=""STB"" type=""submit"" name=""Botao"" value=""Exibir"">"
+    ShowHTML "          </td>"
+    ShowHTML "      </tr>"
+    ShowHTML "    </table>"
+    ShowHTML "    </TD>"
+    ShowHTML "</tr>"
+    ShowHTML "</FORM>"
+  Else
+    ScriptOpen "JavaScript"
+    ShowHTML " alert('Opção não disponível');"
+    ShowHTML " history.back(1);"
+    ScriptClose
+  End If
+  ShowHTML "</table>"
+  ShowHTML "</DIV>"
+  ShowHTML "</BODY>"
+  ShowHTML "</HTML>"  
+End Sub
+
+REM =========================================================================
+REM Relatório de limites das unidades
+REM -------------------------------------------------------------------------
+Sub Rel_Limite
+  Dim p_sq_unidade, p_cd_acao, p_cd_programa, w_tipo_rel
+  Dim w_logo, w_det_tarefa, w_unidade_atual, i
+  Dim w_utilizado, w_tot_utilizado, w_limite, w_tot_limite
+  Dim w_valor(20, 2)
+  
+  p_sq_unidade               = ucase(Trim(Request("p_sq_unidade")))
+  p_cd_programa              = ucase(Trim(Request("p_cd_programa")))
+  p_cd_acao                  = ucase(Trim(Request("p_cd_acao")))
+  w_tipo_rel                 = uCase(trim(Request("w_tipo_rel")))
+  w_det_tarefa               = uCase(trim(Request("w_det_tarefa")))
+  
+  w_cont                  = 0
+  w_utilizado             = 0
+  w_tot_utilizado         = 0
+  w_limite                = 0
+  w_tot_limite            = 0
+  
+  If O = "L" Then
+     ' Recupera o logo do cliente a ser usado nas listagens
+     DB_GetCustomerData RS, w_cliente
+     If RS("logo") > "" Then
+         w_logo = "\img\logo" & Mid(RS("logo"),Instr(RS("logo"),"."),30)
+     End If
+     DesconectaBD
+  End If
+
+  DB_GetLinkData RS1, RetornaCliente(), "ISTCAD"
+  DB_GetSolicList_IS RS, RS1("sq_menu"), w_usuario, "ISTCAD", 4, _
+     null, null, null, null, null, null, _
+     p_sq_unidade, null, null, null, _
+     null, null, null, null, null, null, null, _
+     null, null, null, null, null, null, p_cd_programa, Mid(p_cd_acao,5,4), null, null, w_ano
+  RS.sort = "sq_unidade_resp"
+  If w_tipo_rel = "WORD" Then
+     HeaderWord null
+     w_pag   = 1
+     w_linha = 8
+     ShowHTML "<BASE HREF=""" & conRootSIW & """>"
+     ShowHTML "<div align=""center"">"
+     ShowHTML "<table width=""95%"" border=""0"" cellspacing=""3"">"
+     ShowHTML "<tr><td colspan=""2"">"     
+     ShowHTML "<TABLE WIDTH=""100%"" BORDER=0><TR><TD ROWSPAN=2><IMG ALIGN=""LEFT"" src=""" & LinkArquivo(null, w_cliente, w_logo, null, null, null, "WORD") & """></TD><TD ALIGN=""RIGHT"" NOWRAP><B><FONT SIZE=4 COLOR=""#000000"">"
+     ShowHTML "RELATÓRIO DE LIMITES<br> Exercício " & w_ano
+     ShowHTML "</FONT></TD></TR></TABLE>"
+  Else
+     Cabecalho
+     ShowHTML "<HEAD>"
+     ShowHTML "<TITLE>Relatório de Limites - Exercício " & w_ano & "</TITLE>"
+     If InStr("P",O) > 0 Then
+        ScriptOpen "JavaScript"
+        ValidateOpen "Validacao"
+        Validate "p_sq_unidade", "Responsável", "HIDDEN", "", "2", "60", "1", "1"
+        Validate "p_cd_programa", "Programa", "HIDDEN", "", "1", "18", "1", "1"
+        Validate "p_cd_acao", "Ação", "HIDDEN", "", "1", "18", "1", "1"
+        ValidateClose
+        ScriptClose        
+     End If
+     ShowHTML "</HEAD>"
+     ShowHTML "<BASE HREF=""" & conRootSIW & """>"
+     If O = "L" Then
+        BodyOpenClean "onLoad='document.focus()';"
+        ShowHTML "<BASE HREF=""" & conRootSIW & """>"
+        ShowHTML "<div align=""center"">"
+        ShowHTML "<table width=""95%"" border=""0"" cellspacing=""3"">"
+        ShowHTML "<tr><td colspan=""2"">"             
+        ShowHTML "<TABLE WIDTH=""100%"" BORDER=0><TR><TD ROWSPAN=2><IMG ALIGN=""LEFT"" src=""" & LinkArquivo(null, w_cliente, w_logo, null, null, null, "EMBED") & """></TD><TD ALIGN=""RIGHT"" NOWRAP><B><FONT SIZE=4 COLOR=""#000000"">"
+        ShowHTML "RELATÓRIO DE LIMITES<br> Exercício " & w_ano
+        ShowHTML "</FONT></B></TD></TR></TABLE>"
+     Else
+        BodyOpen "onLoad='document.Form.p_cd_programa.focus()';"
+        ShowHTML "<B><FONT COLOR=""#000000"">" & w_TP & "</FONT></B>"
+        ShowHTML "<div align=center><center>"
+        ShowHTML "<table border=""0"" cellpadding=""0"" cellspacing=""0"" width=""100%"">"
+        ShowHTML "<HR>"
+     End If
+  End If
+  If O = "L" Then
+    ShowHTML "<tr><td colspan=""2""><div align=""center""><hr NOSHADE color=#000000 size=2></div></td></tr>"
+    ShowHTML "<tr><td colspan=""2""><div align=""center"">"
+    ShowHTML "<table border=""0"" width=""100%"">"
+    If p_sq_unidade > "" Then
+       DB_GetUorgData RS1, p_sq_unidade
+       ShowHTML "<tr><td width=""15%""><font size=""1""><b>Área de planejamento:</b></font></td><td><font size=""1"">" & RS1("nome") & " - " & RS1("sigla")& "</font></td>"
+       RS1.Close
+    Else
+       ShowHTML "<tr><td width=""15%""><font size=""1""><b>Área de planejamento:</b></font></td><td><font size=""1"">Todas</font></td>"
+    End If
+    If p_cd_programa > "" Then
+       DB_GetProgramaPPA_IS RS1, p_cd_programa, w_cliente, w_ano, null, null
+       ShowHTML "    <td width=""7%""><font size=""1""><b>Programa:</b></font></td><td nowrap><font size=""1"">" & p_cd_programa & " - " & RS1("ds_programa") & "</font></td></tr>"
+       RS1.Close
+    Else
+       ShowHTML "    <td width=""7%""><font size=""1""><b>Programa:</b></font></td><td><font size=""1"">Todos</font></td></tr>"
+    End If
+    If p_cd_acao > "" Then
+       DB_GetAcaoPPA_IS RS1, w_cliente, w_ano, p_cd_programa, Mid(p_cd_acao,5,4), null, null, null, null, null
+       ShowHTML "<tr valign=""top""><td><font size=""1""><b>Ação:</b></font></td><td><font size=""1"">" & Mid(p_cd_acao,5,4) & " - " & RS1("descricao_acao") & "</font></td>"
+       RS1.Close
+    Else
+       ShowHTML "<tr valign=""top""><td><font size=""1""><b>Ação:</b></font></td><td><font size=""1"">Todas</font></td>"
+    End If
+    
+    ShowHTML "</ul></td></tr></table>"
+    ShowHTML "</div></td></tr>"
+    ShowHTML "<tr><td colspan=""2""><div align=""center""><hr NOSHADE color=#000000 size=2></div></td></tr>"    
+    ShowHTML "<tr><td colspan=""2""><div align=""center""><font size=""3""><b>RELATÓRIO DE LIMITES</b></font></div></td></tr>"
+    w_linha = 9
+    If RS.EOF Then  
+       w_linha = w_linha + 1
+       ShowHTML "    <tr><td colspan=""13""><div align=""center""><font size=""3"" color=""red""><b><br>Nenhum limite de unidade encontrada</b></div></td></tr>"
+    Else
+       ShowHTML "   <tr><td colspan=""2"">"
+       ShowHTML "     <table width=100%  border=""1"" bordercolor=""#00000"">"
+       ShowHTML "       <tr bgcolor=""" & conTrAlternateBgColor & """><td align=""center""><b>Unidade</b></td>"
+       ShowHTML "           <td align=""center""><b>Limite (R$)</b></td>"        
+       ShowHTML "           <td align=""center""><b>Utilizado (R$)</b></td>"
+       ShowHTML "           <td align=""center""><b>Saldo (R$)</b></td></tr>"
+       w_unidade_atual = ""
+       i = 1
+       While Not RS.EOF
+          If w_linha > 19 and w_tipo_rel = "WORD" Then
+             ShowHTML "    </table>"
+             ShowHTML "  </td>"
+             ShowHTML "</tr>"
+             ShowHTML "</table>"
+             ShowHTML "</div>"
+             ShowHTML "    <br style=""page-break-after:always"">"
+             w_linha = 9
+             w_pag   = w_pag + 1
+             ShowHTML "<div align=""center"">"
+             ShowHTML "<table width=""95%"" border=""0"" cellspacing=""3"">"
+             ShowHTML "<tr><td colspan=""2"">"     
+             ShowHTML "<TABLE WIDTH=""100%"" BORDER=0><TR><TD ROWSPAN=2><IMG ALIGN=""LEFT"" src=""" & LinkArquivo(null, w_cliente, w_logo, null, null, null, "WORD") & """></TD><TD ALIGN=""RIGHT"" NOWRAP><B><FONT SIZE=4 COLOR=""#000000"">"
+             ShowHTML "RELATÓRIO DE LIMITES<br> Exercício " & w_ano
+             ShowHTML "</FONT></TD></TR></TABLE>"
+             ShowHTML "<tr><td colspan=""2""><div align=""center""><hr NOSHADE color=#000000 size=2></div></td></tr>"
+             ShowHTML "<tr><td colspan=""2""><div align=""center"">"
+             ShowHTML "<table border=""0"" width=""100%"">"
+             If p_sq_unidade > "" Then
+                DB_GetUorgData RS1, p_sq_unidade
+                ShowHTML "<tr><td width=""15%""><font size=""1""><b>Área de planejamento:</b></font></td><td><font size=""1"">" & RS1("nome") & " - " & RS1("sigla")& "</font></td>"
+                RS1.Close
+             Else
+                ShowHTML "<tr><td width=""15%""><font size=""1""><b>Área de planejamento:</b></font></td><td><font size=""1"">Todas</font></td>"
+             End If
+             If p_cd_programa > "" Then
+                DB_GetProgramaPPA_IS RS1, p_cd_programa, w_cliente, w_ano, null, null
+                ShowHTML "    <td width=""7%""><font size=""1""><b>Programa:</b></font></td><td nowrap><font size=""1"">" & p_cd_programa & " - " & RS1("ds_programa") & "</font></td></tr>"
+                RS1.Close
+             Else
+                ShowHTML "    <td width=""7%""><font size=""1""><b>Programa:</b></font></td><td><font size=""1"">Todos</font></td></tr>"
+             End If
+             If p_cd_acao > "" Then
+                DB_GetAcaoPPA_IS RS1, w_cliente, w_ano, p_cd_programa, Mid(p_cd_acao,5,4), null, null, null, null, null
+                ShowHTML "<tr valign=""top""><td><font size=""1""><b>Ação:</b></font></td><td><font size=""1"">" & Mid(p_cd_acao,5,4) & " - " & RS1("descricao_acao") & "</font></td>"
+                RS1.Close
+             Else
+                ShowHTML "<tr valign=""top""><td><font size=""1""><b>Ação:</b></font></td><td><font size=""1"">Todas</font></td>"
+             End If 
+             ShowHTML "</ul></td></tr></table>"
+             ShowHTML "</div></td></tr>"
+             ShowHTML "<tr><td colspan=""2""><div align=""center""><hr NOSHADE color=#000000 size=2></div></td></tr>"    
+             ShowHTML "<tr><td colspan=""2""><div align=""center""><font size=""3""><b>RELATÓRIO DE LIMITES</b></font></div></td></tr>"
+          End If          
+          If Not IsNull(RS("cd_acao")) Then             
+             If w_unidade_atual <> "" and (w_unidade_atual <> RS("nm_unidade_resp")) Then
+                ShowHTML "    <tr><td>" & w_unidade_atual & "</td>"
+                ShowHTML "        <td align=""right"">" & FormatNumber(cDbl(Nvl(w_limite,0)),2) & "</td>"
+                ShowHTML "        <td align=""right"">" & FormatNumber(cDbl(Nvl(w_utilizado,0)),2) & "</td>"
+                ShowHTML "        <td align=""right"">" & FormatNumber(FormatNumber(cDbl(Nvl(w_limite,0)),2) - FormatNumber(cDbl(Nvl(w_utilizado,0)),2),2) & "</td>"
+                w_tot_limite = w_tot_limite + cDbl(Nvl(w_limite,0))
+                w_valor (i,1) = FormatNumber(cDbl(Nvl(w_limite,0)),2)
+                w_valor (i,2) = FormatNumber(cDbl(Nvl(w_utilizado,0)),2)
+                w_utilizado  = 0
+                i = i + 1
+             End If
+             w_limite        = RS("limite_orcamento")
+             w_utilizado     = w_utilizado + cDbl(Nvl(RS("custo_real"),0))
+             w_tot_utilizado = w_tot_utilizado + cDbl(Nvl(RS("custo_real"),0))
+             w_unidade_atual = RS("nm_unidade_resp")
+          End If
+          RS.MoveNext
+       wend
+       w_linha = w_linha + 8
+       ShowHTML "    <tr><td>" & w_unidade_atual & "</td>"
+       ShowHTML "        <td align=""right"">" & FormatNumber(cDbl(Nvl(w_limite,0)),2) & "</td>"
+       ShowHTML "        <td align=""right"">" & FormatNumber(cDbl(Nvl(w_utilizado,0)),2) & "</td>"
+       ShowHTML "        <td align=""right"">" & FormatNumber(FormatNumber(cDbl(Nvl(w_limite,0)),2) - FormatNumber(cDbl(Nvl(w_utilizado,0)),2),2) & "</td>"
+       w_tot_limite = w_tot_limite + cDbl(Nvl(w_limite,0))
+       w_valor (i,1) = FormatNumber(cDbl(Nvl(w_limite,0)),2)
+       w_valor (i,2) = FormatNumber(cDbl(Nvl(w_utilizado,0)),2)
+
+       ShowHTML "    <tr bgcolor=""" & conTrAlternateBgColor & """><td align=""right""><b>Totais</b></td>"
+       ShowHTML "        <td align=""right""><b>" & FormatNumber(cDbl(Nvl(w_tot_limite,0)),2) & "</b></td>"
+       ShowHTML "        <td align=""right""><b>" & FormatNumber(cDbl(Nvl(w_tot_utilizado,0)),2) & "</b></td>"
+       ShowHTML "        <td align=""right""><b>" & FormatNumber(FormatNumber(cDbl(Nvl(w_tot_limite,0)),2) - FormatNumber(cDbl(Nvl(w_tot_utilizado,0)),2),2) & "</b></td>"
+       ShowHTML "</table>"
+       If uCase(w_det_tarefa) = uCase("sim") Then
+          ShowHTML "<br><br><br><tr><td colspan=""2""><div align=""center""><font size=""3""><b>DETALHAMENTO DAS TAREFAS</b></font></div></td></tr>"       
+          RS.MoveFirst
+          w_unidade_atual = ""
+          i = 1
+          w_tot_limite = 0
+          ShowHTML "<tr><td colspan=""2"">"
+          ShowHTML "<table border=""0"" cellpadding=""0"" cellspacing=""0"" width=""100%"">"
+          While Not RS.EOF
+             If Not IsNull(RS("cd_acao")) Then
+                If w_linha > 19 and w_tipo_rel = "WORD" Then
+                   ShowHTML "</table>"
+                   ShowHTML "</table>"
+                   ShowHTML "</table>"
+                   ShowHTML "</div>"
+                   ShowHTML "    <br style=""page-break-after:always"">"
+                   w_linha = 9
+                   w_pag   = w_pag + 1
+                   ShowHTML "<div align=""center"">"
+                   ShowHTML "<table width=""95%"" border=""0"" cellspacing=""3"">"
+                   ShowHTML "<tr><td colspan=""2"">"     
+                   ShowHTML "<TABLE WIDTH=""100%"" BORDER=0><TR><TD ROWSPAN=2><IMG ALIGN=""LEFT"" src=""" & LinkArquivo(null, w_cliente, w_logo, null, null, null, "WORD") & """></TD><TD ALIGN=""RIGHT"" NOWRAP><B><FONT SIZE=4 COLOR=""#000000"">"
+                   ShowHTML "RELATÓRIO DE LIMITES<br> Exercício " & w_ano
+                   ShowHTML "</FONT></TD></TR></TABLE>"
+                   ShowHTML "<tr><td colspan=""2""><div align=""center""><hr NOSHADE color=#000000 size=2></div></td></tr>"
+                   ShowHTML "<tr><td colspan=""2""><div align=""center"">"
+                   ShowHTML "<table border=""0"" width=""100%"">"
+                   If p_sq_unidade > "" Then
+                      DB_GetUorgData RS1, p_sq_unidade
+                      ShowHTML "<tr><td width=""15%""><font size=""1""><b>Área de planejamento:</b></font></td><td><font size=""1"">" & RS1("nome") & " - " & RS1("sigla")& "</font></td>"
+                      RS1.Close
+                   Else
+                      ShowHTML "<tr><td width=""15%""><font size=""1""><b>Área de planejamento:</b></font></td><td><font size=""1"">Todas</font></td>"
+                   End If
+                   If p_cd_programa > "" Then
+                      DB_GetProgramaPPA_IS RS1, p_cd_programa, w_cliente, w_ano, null, null
+                      ShowHTML "    <td width=""7%""><font size=""1""><b>Programa:</b></font></td><td nowrap><font size=""1"">" & p_cd_programa & " - " & RS1("ds_programa") & "</font></td></tr>"
+                      RS1.Close
+                   Else
+                      ShowHTML "    <td width=""7%""><font size=""1""><b>Programa:</b></font></td><td><font size=""1"">Todos</font></td></tr>"
+                   End If
+                   If p_cd_acao > "" Then
+                      DB_GetAcaoPPA_IS RS1, w_cliente, w_ano, p_cd_programa, Mid(p_cd_acao,5,4), null, null, null, null, null
+                      ShowHTML "<tr valign=""top""><td><font size=""1""><b>Ação:</b></font></td><td><font size=""1"">" & Mid(p_cd_acao,5,4) & " - " & RS1("descricao_acao") & "</font></td>"
+                      RS1.Close
+                   Else
+                      ShowHTML "<tr valign=""top""><td><font size=""1""><b>Ação:</b></font></td><td><font size=""1"">Todas</font></td>"
+                   End If 
+                   ShowHTML "</ul></td></tr></table>"
+                   ShowHTML "</div></td></tr>"
+                   ShowHTML "<tr><td colspan=""2""><div align=""center""><hr NOSHADE color=#000000 size=2></div></td></tr>"    
+                   ShowHTML "<tr><td colspan=""2""><div align=""center""><font size=""3""><b>RELATÓRIO DE LIMITES</b></font></div></td></tr>"
+                   ShowHTML "<tr><td colspan=""2"">"
+                   ShowHTML "<table border=""0"" cellpadding=""0"" cellspacing=""0"" width=""100%"">"
+                End If               
+                If w_unidade_atual = "" or w_unidade_atual <> RS("nm_unidade_resp") Then
+                   If w_unidade_atual <> "" Then
+                      ShowHTML "       <tr bgcolor=""" & conTrAlternateBgColor & """><td colspan=""3"" align=""right""><b>Total</b></td>"
+                      ShowHTML "           <td align=""right""><b>" & FormatNumber(cDbl(Nvl(w_tot_limite,0)),2) & "</b></td>"
+                      ShowHTML "</table>"
+                   End If
+                   ShowHTML "<br><tr><td colspan=""4""><hr NOSHADE color=#000000 size=4></td></tr>"
+                   ShowHTML "   <tr><td bgcolor=""#f0f0f0""><font size=""2""><b>UNIDADE: " & RS("nm_unidade_resp") & "</b></td>"
+                   ShowHTML "       <td bgcolor=""#f0f0f0""><b>Limite: " & w_valor(i,1) & "</b></td>" 
+                   ShowHTML "       <td bgcolor=""#f0f0f0""><b>Utilizado: " & w_valor(i,2) & "</b></td>"
+                   ShowHTML "       <td bgcolor=""#f0f0f0""><b>Saldo: " & FormatNumber(w_valor(i,1) - w_valor(i,2),2) & "</b></td>"
+                   ShowHTML "   <tr><td colspan=""4""><hr NOSHADE color=#000000 size=4></td></tr>"
+                   i = i + 1
+                   ShowHTML "   <tr><td colspan=""4"">"
+                   ShowHTML "     <table width=100%  border=""1"" bordercolor=""#00000"">"
+                   ShowHTML "       <tr bgcolor=""" & conTrAlternateBgColor & """><td align=""center""><b>Ação</b></td>"
+                   ShowHTML "           <td colspan=""2"" align=""center""><b>Tarefa</b></td>"
+                   ShowHTML "           <td align=""center""><b>Limite orçamentário</b></td></tr>"
+                   w_linha = w_linha + 4
+                End If
+                If w_tipo_rel = "WORD" Then
+                   ShowHTML "       <tr><td align=""center"">" & RS("cd_unidade") & "." & RS("cd_programa") & "." & RS("cd_acao") & "</td>"
+                Else
+                   ShowHTML "       <tr><td align=""center""><A class=""HL"" HREF=""" & w_dir & "Acao.asp?par=" & "Visual&R=" & w_pagina & par & "&O=L&w_chave=" & RS("sq_solic_acao") & "&w_tipo=Volta&P1=2&P2=" & P2 & "&P3=" & P3 & "&P4=" & P4 & "&TP=" & TP & "&SG=" & SG & MontaFiltro("GET") & """ title=""Exibe as informações deste registro."">" & RS("cd_unidade") & "." & RS("cd_programa") & "." & RS("cd_acao") & "</a></td>"
+                End If
+                If w_tipo_rel = "WORD" Then
+                   ShowHTML "           <td colspan=""2"">" & RS("titulo") & "</td>"
+                Else
+                   ShowHTML "           <td colspan=""2""><A class=""HL"" HREF=""" & w_dir & "Tarefas.asp?par=" & "Visual&R=" & w_pagina & par & "&O=L&w_chave=" & RS("sq_siw_solicitacao") & "&w_tipo=Volta&P1=2&P2=" & P2 & "&P3=" & P3 & "&P4=" & P4 & "&TP=" & TP & "&SG=" & SG & MontaFiltro("GET") & """ title=""Exibe as informações deste registro."">" & RS("titulo") & "</a></td>"
+                End If
+                ShowHTML "              <td align=""right"">" & FormatNumber(cDbl(Nvl(RS("custo_real"),0)),2) & "</td>"
+             End If
+             w_tot_limite = w_tot_limite + FormatNumber(cDbl(Nvl(RS("custo_real"),0)),2)
+             w_unidade_atual = RS("nm_unidade_resp")
+             RS.MoveNext
+             w_linha = w_linha + 1
+          Wend
+          ShowHTML "       <tr bgcolor=""" & conTrAlternateBgColor & """><td colspan=""3"" align=""right""><b>Total</b></td>"
+          ShowHTML "           <td align=""right""><b>" & FormatNumber(cDbl(Nvl(w_tot_limite,0)),2) & "</b></td>"
+          ShowHTML "</table>"
+          ShowHTML "</table>"
+       End If
+    End If
+    ShowHTML "   <tr><td colspan=""2""><br><font size=""2""><b>DADOS DA CONSULTA<hr NOSHADE color=#000000 SIZE=1></b></font></td></tr>"
+    ShowHTML "   <tr><td><font size=""1""><b>Consulta Realizada por:</b></font></td>"
+    ShowHTML "       <td><font size=""1"">" &  Session("NOME_RESUMIDO") & "</font></td></tr>"
+    ShowHTML "   <tr><td><font size=""1""><b>Data da Consulta:</b></font></td>"
+    ShowHTML "       <td><font size=""1"">" &  FormataDataEdicao(FormatDateTime(now(),2)) & ", " & FormatDateTime(now(),4) & "</font></td></tr>"
+    
+    ShowHTML "    </table>"
+    ShowHTML "  </div></td>"
+    ShowHTML "</tr>"
+    DesconectaBD
+  ElseIf O = "P" Then
+    AbreForm "Form", w_dir & w_pagina & par, "POST", "return(Validacao(this));", "Acao",P1,P2,P3,P4,TP,SG,R,"L"
+    ShowHTML "<INPUT type=""hidden"" name=""w_chave"" value=""" & w_chave & """>"
+    ShowHTML "<INPUT type=""hidden"" name=""w_troca"" value="""">"
+
+    ShowHTML "<tr><td align=""center"">"
+    ShowHTML "    <table width=""97%"" border=""0"">"
+    ShowHTML "      <tr bgcolor=""" & conTrBgColor & """>"
+    SelecaoUnidade "Á<U>r</U>ea planejamento:", "R", null, p_sq_unidade, null, "p_sq_unidade", null, "onchange=""document.Form.action='" & w_dir & w_pagina & par & "'; document.Form.w_troca.value='p_sq_unidade'; document.Form.target=''; document.Form.O.value='P'; document.Form.submit();"""
+    ShowHTML "      <tr bgcolor=""" & conTrBgColor & """>"
+    SelecaoProgramaPPA "<u>P</u>rograma PPA:", "P", null, w_cliente, w_ano, p_cd_programa, "p_cd_programa", "RELATORIO", "onchange=""document.Form.action='" & w_dir & w_pagina & par & "'; document.Form.w_troca.value='p_cd_programa'; document.Form.target=''; document.Form.O.value='P'; document.Form.submit();""", w_menu
+    ShowHTML "      <tr bgcolor=""" & conTrBgColor & """>"
+    SelecaoAcaoPPA "<u>A</u>ção PPA:", "A", null, w_cliente, w_ano, p_cd_programa, null, null, null, "p_cd_acao", null, null, null, w_menu
+    ShowHTML "      <tr bgcolor=""" & conTrBgColor & """>"
+    ShowHTML "        <td><font size=""1""><b><u>T</u>ipo de relatório:</b><br><SELECT ACCESSKEY=""T"" CLASS=""STS"" NAME=""w_tipo_rel"" " & w_Disabled & ">"
+    If nvl(w_tipo_rel,"-") = "Word"  Then
+       ShowHTML "          <option value="""">Consulta na Tela"
+       ShowHTML "          <option value=""Word"" SELECTED>Documento Word"
+    Else
+       ShowHTML "          <option value="""" SELECTED>Consulta na Tela"
+       ShowHTML "          <option value=""Word"">Documento Word"
+    End If
+    ShowHTML "          </select></td><tr>"
+    ShowHTML "    </table></td></tr>"
+    ShowHTML "<tr><td align=""center"">"
+    ShowHTML "    <table width=""97%"" border=""0"">"    
+    ShowHTML "      <tr bgcolor=""" & conTrAlternateBgColor & """><td colspan=""2""><font size=""1""><b>ESCOLHA OS BLOCOS A SEREM VISUALIZADOS NO RELATÓRIO</b></font></td></tr>"    
+    ShowHTML "      <tr bgcolor=""" & conTrBgColor & """>"
+    ShowHTML "          <td colspan=""2""><font size=""1""><INPUT " & w_Disabled & " class=""STC"" type=""CHECKBOX"" name=""w_det_tarefa"" value=""sim""> Detalhamento das tarefas</td>"
     ShowHTML "    </table></td></tr>"
     ShowHTML "    <table width=""100%"" border=""0"">"            
     ShowHTML "      <tr><td align=""center""><hr>"
@@ -4887,6 +5248,7 @@ Sub Main
     Case "REL_DET_TAREFA"       Rel_Det_Tarefa
     Case "REL_DET_ACAO"         Rel_Det_Acao
     Case "REL_DET_PROG"         Rel_Det_Prog
+    Case "REL_LIMITE"           Rel_Limite
     Case Else
        Cabecalho
        ShowHTML "<BASE HREF=""" & conRootSIW & """>"

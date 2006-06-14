@@ -1049,9 +1049,201 @@ Sub Geral
   Set w_cor                 = Nothing 
 
 End Sub
+
 REM =========================================================================
-REM Fim da rotina de dados gerais
+REM Rotina de cadastramento do limite orçamentário da tarefa
 REM -------------------------------------------------------------------------
+Sub Limite
+
+  Dim w_chave, w_chave_pai, w_sq_tramite
+  Dim w_limite, w_limite_tarefa, w_sq_unidade, w_valor
+  
+  Dim w_troca, i, w_erro, w_como_funciona, w_cor, w_readonly
+
+  w_chave           = Request("w_chave")
+  w_chave_pai       = Request("w_chave_pai")
+  w_readonly        = ""
+  w_erro            = ""
+  w_troca           = Request("w_troca")
+  
+  If InStr("A",O) > 0 Then
+     ' Recupera os dados da ação
+     DB_GetSolicData_IS RS, w_chave, SG
+     If RS.RecordCount > 0 Then
+        If Nvl(RS("cd_acao"),"") = "" Then
+           ScriptOpen "JavaScript"
+           ShowHTML " alert('Para tarefa não orçamentária, não é permitido inserir limite orçamentário!');"
+           ShowHTML " history.back(1);"
+           ScriptClose        
+        End If
+        w_valor               = FormatNumber(cDbl(Nvl(RS("custo_real"),0)),2) 
+        w_chave_pai           = RS("sq_solic_pai") 
+        w_sq_tramite          = RS("sq_siw_tramite") 
+        w_limite              = RS("limite_orcamento")
+        w_sq_unidade          = RS("sq_unidade_resp")    
+     End If
+  End If  
+  Cabecalho
+  ShowHTML "<HEAD>"
+  ' Monta o código JavaScript necessário para validação de campos e preenchimento automático de máscara,
+  ' tratando as particularidades de cada serviço
+  ScriptOpen "JavaScript"
+  FormataValor
+  ValidateOpen "Validacao"
+  If O = "A" Then
+     Validate "w_valor", "Limite orçamentário", "VALOR", "1", 4, 18, "", "0123456789.,"
+     CompValor "w_valor", "Limite orçamentário", ">", "0,00", "zero"
+     Validate "w_assinatura", "Assinatura Eletrônica", "1", "1", "6", "30", "1", "1"
+  ElseIf O = "P" Then
+     Validate "w_chave_pai", "Ação PPA", "SELECT", "", 1, 18, "", "0123456789"
+     Validate "w_chave", "Tarefa", "SELECT", "1", 1, 18, "", "0123456789"
+  End If
+  ValidateClose
+  ScriptClose
+  ShowHTML "</HEAD>"
+  ShowHTML "<BASE HREF=""" & conRootSIW & """>"
+  If Instr("A",O) > 0 Then
+     BodyOpen "onLoad='document.Form.w_valor.focus()';"
+  Else
+     BodyOpen "onLoad='document.Form.w_chave.focus()';"
+  End If
+  ShowHTML "<B><FONT COLOR=""#000000"">" & w_TP & "</FONT></B>"
+  ShowHTML "<HR>"
+  ShowHTML "<table align=""center"" border=""0"" cellpadding=""0"" cellspacing=""0"" width=""100%"">"
+  If Instr("A",O) > 0 Then
+    AbreForm "Form", w_dir & w_pagina & "Grava", "POST", "return(Validacao(this));", null,P1,P2,P3,P4,TP,SG,R,O
+    ShowHTML MontaFiltro("POST")
+    ShowHTML "<INPUT type=""hidden"" name=""w_troca"" value="""">"
+    ShowHTML "<INPUT type=""hidden"" name=""w_copia"" value=""" & w_copia &""">"
+    ShowHTML "<INPUT type=""hidden"" name=""w_chave"" value=""" & w_chave &""">"    
+    ShowHTML "<INPUT type=""hidden"" name=""w_chave_pai"" value=""" & w_chave_pai & """>"
+    ShowHTML "<INPUT type=""hidden"" name=""w_sq_unidade"" value=""" & w_sq_unidade & """>"
+    ShowHTML "<INPUT type=""hidden"" name=""w_sq_tramite"" value=""" & w_sq_tramite & """>"
+    
+    ShowHTML "<tr bgcolor=""" & conTrBgColor & """><td align=""center"">"
+    ShowHTML "    <table width=""97%"" border=""0"">"
+    ShowHTML "<table border=""0"" cellpadding=""0"" cellspacing=""0"" width=""100%"">"
+    ShowHTML "<tr bgcolor=""" & conTrBgColor & """><td align=""center"">"
+    
+    ' Recupera os dados da tarefa
+    DB_GetSolicData_IS RS1, w_chave, SG
+    ShowHTML "    <table width=""99%"" border=""0"">"
+    ShowHTML "      <tr><td colspan=""2""><hr NOSHADE color=#000000 size=4></td></tr>"
+    ShowHTML "      <tr><td colspan=""2""  bgcolor=""#f0f0f0""><div align=justify><font size=""2""><b>TAREFA: "& w_chave & " - " & RS1("titulo") & "</b></font></div></td></tr>"
+    ShowHTML "      <tr><td colspan=""2""><hr NOSHADE color=#000000 size=4></td></tr>"
+   
+    ' Identificação da tarefa
+    ShowHTML "      <tr><td colspan=""2""><br><font size=""2""><b>IDENTIFICAÇÃO DA TAREFA<hr NOSHADE color=#000000 SIZE=1></b></font></td></tr>"
+    If w_chave_pai > "" Then
+       ' Recupera os dados da ação
+       DB_GetSolicData_IS RS2, w_chave_pai, "ISACGERAL"
+       ' Se a ação no PPA for informada, exibe.
+       ShowHTML "   <tr><td><font size=""1""><b>Programa:</b></font></td>"
+       ShowHTML "       <td><font size=""1"">" & RS2("cd_ppa_pai") & " - " & RS2("nm_ppa_pai") & "</font></div></td></tr>"
+       ShowHTML "   <tr><td><font size=""1""><b>Ação:</b></font></td>"
+       ShowHTML "       <td><font size=""1"">" & RS2("cd_acao") & " - " & RS2("nm_ppa") & "</font></div></td></tr>"
+       ShowHTML "   <tr><td><font size=""1""><b>Unidade:</b></font></td>"
+       ShowHTML "       <td><font size=""1"">" & RS2("cd_unidade") & " - " & RS2("ds_unidade") & "</font></div></td></tr>"
+       RS2.Close
+       ShowHTML "   <tr><td width=""30%""><b>Descrição:</b></font></td>"
+       ShowHTML "       <td><div align=""justify"">" & Nvl(RS1("assunto"),"-") & "</font></div></td></tr>"
+       ShowHTML "   <tr><td><b>Recurso Programado " & w_ano & ":</b></font></td>"
+       ShowHTML "       <td>R$ " & FormatNumber(RS1("valor"),2) & "</font></td></tr>"
+       ShowHTML "   <tr><td><b>Área Planejamento:</b></font></td>"
+       ShowHTML "       <td>" & ExibeUnidade("../", w_cliente, RS1("nm_unidade_resp"), RS1("sq_unidade_resp"), TP) & "</font></td></tr>"
+       ShowHTML "   <tr><td><b>Responsável SISPLAM:</b></font></td>"
+       ShowHTML "       <td>" & ExibePessoa("../", w_cliente, RS1("solicitante"), TP, RS1("nm_sol_comp")) & "</font></td></tr>"
+       ShowHTML "   <tr><td><b>Início Previsto:</b></font></td>"
+       ShowHTML "       <td>" & FormataDataEdicao(RS1("inicio")) & "</font></td></tr>"
+       ShowHTML "   <tr><td><b>Fim Previsto:</b></font></td>"
+       ShowHTML "       <td>" & FormataDataEdicao(RS1("fim")) & "</font></td></tr>"
+       ShowHTML "   <tr><td><b>Prioridade:</b></font></td>"
+       ShowHTML "       <td>" & RetornaPrioridade(RS1("prioridade")) & "</font></td></tr>"
+       ShowHTML "   <tr><td><b>Parecerias Externas:</b></font></td>"
+       ShowHTML "       <td>" & Nvl(RS1("proponente"),"-") & "</font></td></tr>"
+       ShowHTML "   <tr><td><b>Fase Atual:</b></font></td>"
+       ShowHTML "       <td>" & Nvl(RS1("nm_tramite"),"-") & "</font></td></tr>"
+    End If
+    RS1.Close    
+    ShowHTML "      <tr><td valign=""top""><b><u>L</u>mite orçamentário:</b><br><input " & w_Disabled & " accesskey=""L"" type=""text"" name=""w_valor"" class=""STI"" SIZE=""18"" MAXLENGTH=""18"" VALUE=""" & w_valor & """ onKeyDown=""FormataValor(this,18,2,event);""></td>"
+    ShowHTML "          <td valign=""top"">"
+    ShowHTML "            <table width=""99%"" border=""0"">"
+    ShowHTML "              <tr><td valign=""top""><b>Limite da unidade:</b><br>" & FormatNumber(cDbl(Nvl(w_limite,0)),2)& "</td>"
+    w_limite_tarefa = 0
+    DB_GetLinkData RS1, w_cliente, "ISTCAD"
+    DB_GetSolicList_IS RS1, RS("sq_menu"), w_usuario, "ISTCAD", 3, _
+      null, null, null, null, null, null, _
+      w_sq_unidade, null, null, null, _
+      null, null, null, null, null, null, null, _
+      null, null, null, null, null, null, null, null, null, null, w_ano
+    If Not RS1.EOF Then
+       While Not RS1.EOF
+          DB_GetSolicData_IS RS2, RS1("sq_solic_pai"), "ISACGERAL"
+          If Not IsNull(RS2("cd_acao")) Then
+             w_limite_tarefa = w_limite_tarefa + cDbl(Nvl(RS1("custo_real"),0))
+          End If
+          RS1.MoveNext
+       wend
+    End If
+    ShowHTML "                  <td valign=""top""><b>Limite utilizado:</b><br>" & FormatNumber(cDbl(Nvl(w_limite_tarefa,0)),2) & "</td>"
+    ShowHTML "                  <td valign=""top""><b>Saldo disponível:</b><br>" & FormatNumber(FormatNumber(cDbl(Nvl(w_limite,0)),2) - FormatNumber(cDbl(Nvl(w_limite_tarefa,0)),2),2) & "</td>"
+    ShowHTML "              </table>"
+    ShowHTML "      <tr><td><font size=""1""><b><U>A</U>ssinatura Eletrônica:<BR> <INPUT ACCESSKEY=""A"" class=""sti"" type=""PASSWORD"" name=""w_assinatura"" size=""30"" maxlength=""30"" value=""""></td></tr>"
+    ShowHTML "      <tr><td align=""center"" colspan=""2""><hr>"
+    ShowHTML "      <tr><td align=""center"" colspan=""2"">"
+    ShowHTML "            <input class=""STB"" type=""submit"" name=""Botao"" value=""Gravar"">"
+    ShowHTML "            <input class=""STB"" type=""button"" onClick=""location.href='" & w_pagina & par & "&O=P&SG=" & SG & "&P1=" & P1 & "&P2=" & P2 & "&P3=" & P3 & "&P4=" & P4 & "&TP=" & TP & MontaFiltro("GET") & "';"" name=""Botao"" value=""Cancelar"">"
+    ShowHTML "          </td>"
+    ShowHTML "      </tr>"
+    ShowHTML "    </table>"
+    ShowHTML "    </TD>"
+    ShowHTML "</tr>"
+    ShowHTML "</FORM>"
+  ElseIf Instr("P",O) > 0 Then
+    AbreForm "Form", w_dir & w_Pagina & par, "POST", "return(Validacao(this));", null,P1,P2,P3,P4,TP,SG,R,"A"
+    ShowHTML "<INPUT type=""hidden"" name=""w_cliente"" value=""" & w_cliente & """>"
+    ShowHTML "<INPUT type=""hidden"" name=""w_troca"" value=""" & w_troca & """>"
+    ShowHTML "<tr bgcolor=""" & conTrBgColor & """><td align=""center"">"
+    ShowHTML "    <table width=""97%"" border=""0"">"
+    DB_GetLinkData RS, w_cliente, "ISACAD"
+    ShowHTML "<tr valign=""top"">"
+    SelecaoAcao "Açã<u>o</u>:", "O", "Selecione a ação da tarefa na relação.", w_cliente, w_ano, null, null, null, null, "w_chave_pai", "ACAO", "onchange=""document.Form.action='" & w_dir & w_pagina & par & "'; document.Form.O.value='P'; document.Form.w_troca.value='w_chave'; document.Form.target=''; document.Form.submit();""", w_chave_pai
+    ShowHTML "<tr valign=""top"">"
+    SelecaoTarefa "<u>T</u>arefa:", "T", null, w_cliente, w_ano, w_chave, "w_chave", Nvl(w_chave_pai,0), null
+    DesconectaBD
+    ShowHTML "      <tr><td align=""center"">"
+    ShowHTML "            <input class=""STB"" type=""submit"" name=""Botao"" value=""Aplicar filtro"">"
+    ShowHTML "          </td>"
+    ShowHTML "      </tr>"    
+    ShowHTML "    </table>"
+    ShowHTML "    </TD>"
+    ShowHTML "</tr>"
+    ShowHTML "</FORM>"
+  Else
+    ScriptOpen "JavaScript"
+    ShowHTML " alert('Opção não disponível');"
+    ShowHTML " history.back(1);"
+    ScriptClose
+  End If
+  ShowHTML "</table>"
+  ShowHTML "</center>"
+  Rodape
+
+  Set w_chave               = Nothing 
+  Set w_chave_pai           = Nothing 
+  Set w_sq_unidade          = Nothing 
+  Set w_sq_tramite          = Nothing 
+  Set w_valor               = Nothing 
+  Set w_limite              = Nothing
+  Set w_limite_tarefa       = Nothing
+  
+  Set w_troca                   = Nothing 
+  Set i                         = Nothing 
+  Set w_erro                    = Nothing 
+  Set w_como_funciona           = Nothing 
+  Set w_cor                     = Nothing 
+
+End Sub
 
 REM =========================================================================
 REM Rotina dos responsaveis
@@ -1750,12 +1942,25 @@ Sub Concluir
 
   Dim w_chave, w_chave_pai, w_chave_aux, w_destinatario
   Dim w_inicio_real, w_fim_real, w_nota_conclusao, w_custo_real
+  Dim w_ppa, w_tramite
   
   Dim w_troca, i, w_erro
   
   w_Chave           = Request("w_Chave")
   w_chave_aux       = Request("w_chave_aux")
   w_troca           = Request("w_troca")
+  
+  DB_GetSolicData_IS RS, w_chave, "ISTAGERAL"
+  If Not RS.EOF Then
+     w_tramite = RS("sq_siw_tramite")
+     If Nvl(RS("cd_acao"),"") > "" Then
+        w_custo_real = RS("limite_orcamento")
+        w_ppa = "S"
+     Else
+        w_ppa = "N"
+     End If
+  End If
+  DesconectaBD
   
   If w_troca > "" Then ' Se for recarga da página
      w_inicio_real         = Request("w_inicio_real") 
@@ -1781,7 +1986,9 @@ Sub Concluir
      Validate "w_fim_real", "Término da execução", "DATA", 1, 10, 10, "", "0123456789/"
      CompData "w_inicio_real", "Início da execução", "<=", "w_fim_real", "Término da execução"
      CompData "w_fim_real", "Término da execução", "<=", FormataDataEdicao(FormatDateTime(Date(),2)), "data atual"
-     Validate "w_custo_real", "Rercurso executado", "VALOR", "1", 4, 18, "", "0123456789.,"
+     If w_ppa = "N" Then
+        Validate "w_custo_real", "Rercurso executado", "VALOR", "1", 4, 18, "", "0123456789.,"
+     End If
      Validate "w_nota_conclusao", "Nota de conclusão", "", "1", "1", "2000", "1", "1"
      Validate "w_assinatura", "Assinatura Eletrônica", "1", "1", "6", "30", "1", "1"
      If P1 <> 1 Then ' Se não for encaminhamento
@@ -1807,8 +2014,8 @@ Sub Concluir
   ShowHTML "<table width=""95%"" border=""0"" cellspacing=""3"">"
 
   ' Chama a rotina de visualização dos dados da tarefa, na opção "Listagem"
-  ShowHTML VisualTarefa(w_chave, "V", w_usuario, P4)
-
+  ShowHTML VisualTarefa(w_chave, "L", w_usuario, P4, "sim", "nao", "sim", "sim", "sim", "nao")
+  showHTML "</table>"
   ShowHTML "<HR>"
   ShowHTML "<FORM action=""" & w_dir & w_pagina & "Grava&SG=GDCONC&O="&O&"&w_menu="&w_menu&"&UploadID="&UploadID&""" name=""Form"" onSubmit=""return(Validacao(this));"" enctype=""multipart/form-data"" method=""POST"">"  
   ShowHTML "<INPUT type=""hidden"" name=""P1"" value=""" & P1 & """>"  
@@ -1822,9 +2029,7 @@ Sub Concluir
   ShowHTML "<INPUT type=""hidden"" name=""w_chave"" value=""" & w_chave & """>"
   ShowHTML "<INPUT type=""hidden"" name=""w_troca"" value="""">"
   ShowHTML "<INPUT type=""hidden"" name=""w_concluida"" value=""S"">"
-  DB_GetSolicData_IS RS, w_chave, "ISTAGERAL"
-  ShowHTML "<INPUT type=""hidden"" name=""w_tramite"" value=""" & RS("sq_siw_tramite") & """>"
-  DesconectaBD
+  ShowHTML "<INPUT type=""hidden"" name=""w_tramite"" value=""" & w_tramite & """>"
 
   ShowHTML "<tr bgcolor=""" & conTrBgColor & """><td align=""center"">"
   ShowHTML "  <table width=""97%"" border=""0"">"
@@ -1836,7 +2041,12 @@ Sub Concluir
   ShowHTML "          <tr>"
   ShowHTML "              <td valign=""top""><font size=""1""><b>Iní<u>c</u>io da execução:</b><br><input " & w_Disabled & " accesskey=""C"" type=""text"" name=""w_inicio_real"" class=""STI"" SIZE=""10"" MAXLENGTH=""10"" VALUE=""" & w_inicio_real & """ onKeyDown=""FormataData(this,event);"" title=""Informe a data de início da execução da tarefa.(Usar formato dd/mm/aaaa)""></td>"
   ShowHTML "              <td valign=""top""><font size=""1""><b><u>T</u>érmino da execução:</b><br><input " & w_Disabled & " accesskey=""T"" type=""text"" name=""w_fim_real"" class=""STI"" SIZE=""10"" MAXLENGTH=""10"" VALUE=""" & w_fim_real & """ onKeyDown=""FormataData(this,event);"" title=""Informe a data de término da execução da tarefa.(Usar formato dd/mm/aaaa)""></td>"
-  ShowHTML "              <td valign=""top""><font size=""1""><b><u>R</u>ecurso executado:</b><br><input " & w_Disabled & " accesskey=""O"" type=""text"" name=""w_custo_real"" class=""STI"" SIZE=""18"" MAXLENGTH=""18"" VALUE=""" & w_custo_real & """ onKeyDown=""FormataValor(this,18,2,event);"" title=""Informe o valor que foi efetivamente gasto com a execução da tarefa.""></td>"
+  If w_ppa = "N" Then
+     ShowHTML "              <td valign=""top""><font size=""1""><b><u>R</u>ecurso executado:</b><br><input " & w_Disabled & " accesskey=""O"" type=""text"" name=""w_custo_real"" class=""STI"" SIZE=""18"" MAXLENGTH=""18"" VALUE=""" & w_custo_real & """ onKeyDown=""FormataValor(this,18,2,event);"" title=""Informe o valor que foi efetivamente gasto com a execução da tarefa.""></td>"
+  Else
+     ShowHTML "              <td valign=""top""><font size=""1"">&nbsp;</td>"
+     ShowHTML "<INPUT type=""hidden"" name=""w_custo_real"" value=""" & w_custo_real & """>"
+  End If
   ShowHTML "          </table>"
   ShowHTML "      <tr><td valign=""top""><font size=""1""><b>Nota d<u>e</u> conclusão:</b><br><textarea " & w_Disabled & " accesskey=""E"" name=""w_nota_conclusao"" class=""STI"" ROWS=5 cols=75 title=""Insira informações relevantes sobre a conclusão da tarefa."">" & w_nota_conclusao & "</TEXTAREA></td>"  
   ShowHTML "      <tr><td><font size=""1""><b>A<u>r</u>quivo:</b><br><input " & w_Disabled & " accesskey=""R"" type=""file"" name=""w_caminho"" class=""STI"" SIZE=""80"" MAXLENGTH=""100"" VALUE="""" title=""OPCIONAL. Se desejar anexar um arquivo, clique no botão ao lado para localizá-lo. Ele será transferido automaticamente para o servidor."">"  
@@ -1861,6 +2071,11 @@ Sub Concluir
   Set w_chave_aux       = Nothing 
   Set w_destinatario    = Nothing 
   Set w_nota_conclusao  = Nothing 
+  Set w_inicio_real     = Nothing 
+  Set w_fim_real        = Nothing 
+  Set w_custo_real      = Nothing 
+  Set w_tramite         = Nothing 
+  Set w_ppa             = Nothing 
   
   Set w_troca           = Nothing 
   Set i                 = Nothing 
@@ -1909,6 +2124,7 @@ Sub SolicMail(p_solic, p_tipo)
 
   w_html = w_html & VbCrLf & "<tr bgcolor=""" & conTrBgColor & """><td align=""center"">"
   w_html = w_html & VbCrLf & "    <table width=""99%"" border=""0"">"
+  w_html = w_html & VbCrLf & "      <tr><td valign=""top""><font size=""1"">Tarefa: <b>" & RSM("titulo") & "</b></td>"
   w_html = w_html & VbCrLf & "      <tr><td valign=""top""><font size=""1"">Ação: <b>" & RSM("nm_projeto") & "</b></td>"
   w_html = w_html & VbCrLf & "      <tr><td><font size=1>Detalhamento: <b>" & CRLF2BR(RSM("assunto")) & "</b></font></td></tr>"
       
@@ -2107,6 +2323,25 @@ Public Sub Grava
           ShowHTML "  history.back(1);"
           ScriptClose
        End If
+    Case "VLRTGERAL"
+       ' Verifica se a Assinatura Eletrônica é válida
+       If (VerificaAssinaturaEletronica(Session("Username"),w_assinatura) and w_assinatura > "") or _
+          w_assinatura = "" Then
+
+          DML_PutTarefaLimite Request("w_chave"), w_usuario, Request("w_sq_tramite"), Request("w_valor")
+          
+          ScriptOpen "JavaScript"
+          ' Recupera a sigla do serviço pai, para fazer a chamada ao menu
+          DB_GetLinkData RS, Session("p_cliente"), SG
+          ShowHTML "  location.href='" & replace(RS("link"),w_dir,"") & "&O=P&w_chave=" & Request("w_chave") & "&P1=" & P1 & "&P2=" & P2 & "&P3=" & P3 & "&P4=" & P4 & "&TP=" & TP & "&SG=" & SG & "';"
+          DesconectaBD
+          ScriptClose
+       Else
+          ScriptOpen "JavaScript"
+          ShowHTML "  alert('Assinatura Eletrônica inválida!');"
+          ShowHTML "  history.back(1);"
+          ScriptClose
+       End If           
     Case "ISTARESP"
        ' Verifica se a Assinatura Eletrônica é válida
        If (VerificaAssinaturaEletronica(Session("Username"),w_assinatura) and w_assinatura > "") or _
@@ -2364,6 +2599,7 @@ Sub Main
   Select Case Par
     Case "INICIAL"      Inicial
     Case "GERAL"        Geral
+    Case "LIMITE"       Limite
     Case "RESP"         Responsaveis    
     Case "ANEXO"        Anexos
     Case "VISUAL"       Visual

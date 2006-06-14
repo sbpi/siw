@@ -208,7 +208,7 @@ Function VisualAcao(w_chave, O, w_usuario, P1, P4, w_identificacao, w_responsave
               End If
            End If        
            w_html = w_html & VbCrLf & "    <A class=""HL"" HREF=""" & w_dir & "Tarefas.asp?par=Visual&R=" & w_pagina & par & "&O=L&w_chave=" & RS2("sq_siw_solicitacao") & "&w_tipo=&P1=" & P1 & "&P2=" & P2 & "&P3=" & P3 & "&P4=" & P4 & "&TP=" & TP & "&SG=" & SG & MontaFiltro("GET") & """ title=""Exibe as informações deste registro."" target=""blank"">" & RS2("sq_siw_solicitacao") & "&nbsp;</a>"
-           w_html = w_html & VbCrLf & "    <td>" & Nvl(RS2("assunto"),"-") & "</td>"
+           w_html = w_html & VbCrLf & "    <td>" & Nvl(RS2("titulo"),"-") & "</td>"
            w_html = w_html & VbCrLf & "    <td>"& ExibePessoa("../", w_cliente, RS2("solicitante"), TP, RS2("nm_solic")) & "</td>"
            w_html = w_html & VbCrLf & "    <td><div align=""center"">"& FormataDataEdicao(RS2("inicio")) & "</div></td>"
            w_html = w_html & VbCrLf & "    <td><div align=""center"">"& FormataDataEdicao(RS2("fim")) & "</div></td>"
@@ -866,7 +866,7 @@ Function VisualAcao(w_chave, O, w_usuario, P1, P4, w_identificacao, w_responsave
                  End If
               End If
               w_html = w_html & VbCrLf & "    <A class=""HL"" HREF=""" & w_dir & "Tarefas.asp?par=Visual&R=" & w_pagina & par & "&O=L&w_chave=" & RS2("sq_siw_solicitacao") & "&w_tipo=&P1=" & P1 & "&P2=" & P2 & "&P3=" & P3 & "&P4=" & P4 & "&TP=" & TP & "&SG=" & SG & MontaFiltro("GET") & """ title=""Exibe as informações deste registro."" target=""blank"">" & RS2("sq_siw_solicitacao") & "&nbsp;</a>"
-              w_html = w_html & VbCrLf & "    <td>" & Nvl(RS2("assunto"),"-") & "</td>"
+              w_html = w_html & VbCrLf & "    <td>" & Nvl(RS2("titulo"),"-") & "</td>"
               w_html = w_html & VbCrLf & "    <td>"& ExibePessoa("../", w_cliente, RS2("solicitante"), TP, RS2("nm_solic")) & "</td>"
               w_html = w_html & VbCrLf & "    <td><div align=""center"">"& FormataDataEdicao(RS2("inicio")) & "</div></td>"
               w_html = w_html & VbCrLf & "    <td><div align=""center"">"& FormataDataEdicao(RS2("fim")) & "</div></td>"

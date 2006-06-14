@@ -218,8 +218,43 @@ Sub DML_PutRespTarefa_IS (p_chave, _
      .parameters.Delete         "l_em_responsavel"
   end with
 End Sub
-REM =========================================================================
-REM Final da rotina
-REM -------------------------------------------------------------------------
 
+REM =========================================================================
+REM Atualiza o limite orçamentário da tarefa
+REM -------------------------------------------------------------------------
+Sub DML_PutTarefaLimite (p_chave, p_pessoa, p_tramite, p_custo_real)
+
+  Dim l_chave, l_pessoa, l_tramite, l_custo_real
+  
+  Set l_chave              = Server.CreateObject("ADODB.Parameter") 
+  Set l_pessoa             = Server.CreateObject("ADODB.Parameter") 
+  Set l_tramite            = Server.CreateObject("ADODB.Parameter") 
+  Set l_custo_real         = Server.CreateObject("ADODB.Parameter") 
+  
+  with sp
+     set l_chave            = .CreateParameter("l_chave",              adInteger, adParamInput,    , Tvl(p_chave))
+     set l_pessoa           = .CreateParameter("l_pessoa",             adInteger, adParamInput,    , Tvl(p_pessoa))
+     set l_tramite          = .CreateParameter("l_tramite",            adInteger, adParamInput,    , Tvl(p_tramite))
+     set l_custo_real       = .CreateParameter("l_custo_real",         adNumeric ,adParamInput)
+     l_custo_real.Precision    = 18
+     l_custo_real.NumericScale = 2
+     l_custo_real.Value        = Tvl(p_custo_real)
+  
+     .parameters.Append         l_chave
+     .parameters.Append         l_pessoa
+     .parameters.Append         l_tramite
+     .parameters.Append         l_custo_real
+     
+     .CommandText               = Session("schema_is") & "SP_PutTarefaLimite"
+     On Error Resume Next
+     .Execute
+     If Err.Description > "" Then 
+        TrataErro
+     End If
+     .parameters.Delete         "l_chave"
+     .parameters.Delete         "l_pessoa"
+     .parameters.Delete         "l_tramite"
+     .parameters.Delete         "l_custo_real"
+  end with
+End Sub
 %>

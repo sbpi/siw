@@ -391,21 +391,23 @@ End Sub
 REM =========================================================================
 REM Encaminha a solicitacao
 REM -------------------------------------------------------------------------
-Sub DML_PutViagemEnvio(p_menu, p_chave, p_pessoa, p_tramite, p_devolucao, p_despacho, p_justificativa)
-  Dim l_Operacao, l_menu, l_chave, l_pessoa, l_tramite, l_devolucao, l_despacho, l_justificativa
+Sub DML_PutViagemEnvio(p_menu, p_chave, p_pessoa, p_tramite, p_novo_tramite, p_devolucao, p_despacho, p_justificativa)
+  Dim l_Operacao, l_menu, l_chave, l_pessoa, l_tramite, l_novo_tramite, l_devolucao, l_despacho, l_justificativa
   
-  Set l_menu                = Server.CreateObject("ADODB.Parameter") 
-  Set l_chave               = Server.CreateObject("ADODB.Parameter") 
-  Set l_pessoa              = Server.CreateObject("ADODB.Parameter") 
-  Set l_tramite             = Server.CreateObject("ADODB.Parameter") 
-  Set l_devolucao           = Server.CreateObject("ADODB.Parameter") 
-  Set l_despacho            = Server.CreateObject("ADODB.Parameter") 
-  Set l_justificativa             = Server.CreateObject("ADODB.Parameter") 
+  Set l_menu                = Server.CreateObject("ADODB.Parameter")
+  Set l_chave               = Server.CreateObject("ADODB.Parameter")
+  Set l_pessoa              = Server.CreateObject("ADODB.Parameter")
+  Set l_tramite             = Server.CreateObject("ADODB.Parameter")
+  Set l_novo_tramite        = Server.CreateObject("ADODB.Parameter")
+  Set l_devolucao           = Server.CreateObject("ADODB.Parameter")
+  Set l_despacho            = Server.CreateObject("ADODB.Parameter")
+  Set l_justificativa       = Server.CreateObject("ADODB.Parameter")
   with sp
      set l_menu                 = .CreateParameter("l_menu",            adInteger, adParamInput,    , p_menu)
      set l_chave                = .CreateParameter("l_chave",           adInteger, adParamInput,    , p_chave)
      set l_pessoa               = .CreateParameter("l_pessoa",          adInteger, adParamInput,    , p_pessoa)
      set l_tramite              = .CreateParameter("l_tramite",         adInteger, adParamInput,    , p_tramite)
+     set l_novo_tramite         = .CreateParameter("l_novo_tramite",    adInteger, adParamInput,    , Tvl(p_novo_tramite))
      set l_devolucao            = .CreateParameter("l_devolucao",       adVarchar, adParamInput,   1, p_devolucao)
      set l_despacho             = .CreateParameter("l_despacho",        adVarchar, adParamInput,2000, tvl(p_despacho))
      set l_justificativa        = .CreateParameter("l_justificativa",   adVarchar, adParamInput,2000, tvl(p_justificativa))
@@ -413,6 +415,7 @@ Sub DML_PutViagemEnvio(p_menu, p_chave, p_pessoa, p_tramite, p_devolucao, p_desp
      .parameters.Append         l_chave
      .parameters.Append         l_pessoa
      .parameters.Append         l_tramite
+     .parameters.Append         l_novo_tramite
      .parameters.Append         l_devolucao
      .parameters.Append         l_despacho
      .parameters.Append         l_justificativa
@@ -426,6 +429,7 @@ Sub DML_PutViagemEnvio(p_menu, p_chave, p_pessoa, p_tramite, p_devolucao, p_desp
      .parameters.Delete         "l_chave"
      .parameters.Delete         "l_pessoa"
      .parameters.Delete         "l_tramite"
+     .parameters.Delete         "l_novo_tramite"
      .parameters.Delete         "l_devolucao"
      .parameters.Delete         "l_despacho"
      .parameters.Delete         "l_justificativa"
