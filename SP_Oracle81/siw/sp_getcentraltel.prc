@@ -41,7 +41,7 @@ begin
      open p_result for
      select a.sq_central_fone, a.arquivo_bilhetes arquivo, a.recupera_bilhetes recupera, a.cliente, a.sq_pessoa_endereco,
             b.sq_usuario_central, b.cliente, b.usuario, b.codigo,
-            c.nome nm_usuario, c.sq_pessoa chave, c.nome_indice
+            c.nome nm_usuario, c.nome_resumido nm_usuario_res, c.sq_pessoa chave, c.nome_indice
        from tt_central        a,
        tt_usuario b,
          co_pessoa c
@@ -72,4 +72,3 @@ begin
     End If;
 end SP_getCentralTel;
 /
-
