@@ -8,26 +8,14 @@ create or replace procedure SP_PutTTUsuarioCentral
     ) is
 begin
    If p_operacao = 'I' Then
-   
-   insert into tt_usuario
-     (sq_usuario_central, cliente, usuario, sq_central_fone, codigo)
-     (select sq_usuario_central.nextVal, p_cliente, p_usuario, p_sq_central_fone, p_codigo from dual);
-     
+      insert into tt_usuario (sq_usuario_central, cliente, usuario, sq_central_fone, codigo)
+      values (sq_usuario_central.nextVal, p_cliente, p_usuario, p_sq_central_fone, p_codigo);
    Elsif p_operacao = 'A' Then
       -- Altera registro
-     update tt_usuario
-       set 
-       sq_usuario_central = p_chave,
-       cliente            = p_cliente,
-       usuario            = p_usuario,
-       sq_central_fone    = p_sq_central_fone,
-       codigo             = p_codigo
-       where sq_usuario_central = p_chave;
+     update tt_usuario set codigo = p_codigo where sq_usuario_central = p_chave;
    Elsif p_operacao = 'E' Then
       -- Exclui registro
-       delete tt_usuario
-        where sq_usuario_central = p_chave;
+       delete tt_usuario where sq_usuario_central = p_chave;
    End If;
 end SP_PutTTUsuarioCentral;
 /
-

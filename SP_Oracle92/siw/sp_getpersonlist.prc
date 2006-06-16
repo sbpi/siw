@@ -27,7 +27,7 @@ begin
             and (p_nome       is null or (p_nome       is not null and ((a.nome_indice like '%'||upper(acentos(p_nome))||'%')
                                                                    or    a.nome_resumido_ind like '%'||upper(acentos(p_nome))||'%')))
             and (p_sg_unidade is null or (p_sg_unidade is not null and acentos(d.sigla) like '%'||acentos(p_sg_unidade)||'%'))
-            and (p_restricao  is null or (p_restricao = 'NOVOUSO' and c.username is null))
+            and (p_restricao  <> 'NOVOUSO' or (p_restricao = 'NOVOUSO' and c.username is null))
          order by a.nome_indice;
    Elsif p_restricao = 'TODOS' Then
       -- Recupera todas as pessoas do cadastro da organização, físicas e jurídicas
