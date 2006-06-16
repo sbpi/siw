@@ -684,7 +684,7 @@ function toDate($date) {
 // Função que retorna uma data como string para manipulação em formulários
 // -------------------------------------------------------------------------
 function FormatDateTime($date) { 
-  if (strlen($date)!=8 && strlen($date)!=10) return nil;
+  if (strlen($date)!=8 && strlen($date)!=10) return null;
   else {
     if (strlen($date)==10) return $date;
     else {
@@ -1286,7 +1286,7 @@ function FormataDataEdicao($w_dt_grade) {
         }
      }
   }
-  else { $l_dt_grade = ''; }
+  else { $l_dt_grade = null; }
   return $l_dt_grade;
   $l_dt_grade = null;
 }

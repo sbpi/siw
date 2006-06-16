@@ -29,14 +29,15 @@ include_once('../funcoes/selecaoCidadeCentral.php');
 include_once('../funcoes/selecaoTelefoneTT.php');
 include_once('../funcoes/selecaoCentralFone.php');
 include_once('../funcoes/selecaoTTUsuario.php');
+include_once('../funcoes/selecaoPessoa.php');
 
 // =========================================================================
 //  tabelas.PHP
 // ------------------------------------------------------------------------
-// Nome     : Egisberto Vicente da Silva
+// Nome     : Alexandre Vinhadelli Papadópolis
 // Descricao: Gerenciar tabelas básicas do módulo	
 // Mail     : Beto@sbpi.com.br
-// Criacao  : 07/07/2004 10:40
+// Criacao  : 13/06/2006 10:40
 // Versao   : 1.0.0.0
 // Local    : Brasília - DF
 // -------------------------------------------------------------------------
@@ -76,7 +77,10 @@ $w_dir          = 'mod_tt/';
 $w_troca        = $_REQUEST['w_troca'];
 $w_copia        = $_REQUEST['w_copia'];
 
-if ($O=='') $O='L';
+if ($O=='') {
+  if ($SG=='TTPREFIXO') $O='P';
+  else $O = 'L';
+}
 
 switch ($O) {
   case 'I': $w_TP=$TP.' - Inclusão';  break;
@@ -245,8 +249,8 @@ function centralTel() {
         ShowHTML('        <td align="top" nowrap><font size="1">');
         ShowHTML('          <A class="HL" HREF="'.$w_dir.$w_pagina.$par.'&R='.$w_pagina.$par.'&O=A&w_chave='.f($row,'chave').'&w_sq_pessoa_endereco='.f($row,'sq_pessoa_endereco').'&w_arquivo_bilhetes='.f($row,'arquivo').'&w_recupera_bilhetes='.f($row,'recupera').'&P1='.$P1.'&P2='.$P2.'&P3=1&P4='.$P4.'&TP='.$TP.'&SG='.$SG.MontaFiltro('GET').'" Title="Nome">Alterar</A>&nbsp');
         ShowHTML('          <A class="HL" HREF="'.$w_dir.$w_pagina.$par.'&R='.$w_pagina.$par.'&O=E&w_chave='.f($row,'chave').'&w_sq_pessoa_endereco='.f($row,'sq_pessoa_endereco').'&w_arquivo_bilhetes='.f($row,'arquivo').'&w_recupera_bilhetes='.f($row,'recupera').'&P1='.$P1.'&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP='.$TP.'&SG='.$SG.'">Excluir</A>&nbsp');
-        ShowHTML('          <A class="HL" HREF="'.$w_dir.$w_pagina.'TRONCOS&R='.$w_pagina.$par.'&O=L&w_chave='.f($row,'chave').'&P1='.$P1.'&P2='.$P2.'&P3=1&P4='.$P4.'&TP='.$TP.' - Parâmetros&SG='.$SG.MontaFiltro('GET').'" Target="_blank" Title="Visualizar e manipular os trocos desta central  ">Troncos</A>&nbsp');
-        ShowHTML('          <A class="HL" HREF="'.$w_dir.$w_pagina.'USUARIOCENTRAL&R='.$w_pagina.$par.'&O=L&w_chave='.f($row,'chave').'&P1='.$P1.'&P2='.$P2.'&P3=1&P4='.$P4.'&TP='.$TP.' - Parâmetros&SG='.$SG.MontaFiltro('GET').'" Target="_blank" Title="Visualizar e manipular os usuários desta central">Usuários</A>&nbsp');
+        ShowHTML('          <A class="HL" HREF="'.$w_dir.$w_pagina.'TRONCOS&R='.$w_pagina.$par.'&O=L&w_sq_central_fone='.f($row,'chave').'&P1='.$P1.'&P2='.$P2.'&P3=1&P4='.$P4.'&TP='.$TP.' - Parâmetros&SG='.$SG.MontaFiltro('GET').'" Target="_blank" Title="Visualizar e manipular os trocos desta central  ">Troncos</A>&nbsp');
+        ShowHTML('          <A class="HL" HREF="'.$w_dir.$w_pagina.'USUARIOCENTRAL&R='.$w_pagina.$par.'&O=L&w_sq_central_fone='.f($row,'chave').'&P1='.$P1.'&P2='.$P2.'&P3=1&P4='.$P4.'&TP='.$TP.' - Parâmetros&SG='.$SG.MontaFiltro('GET').'" Target="_blank" Title="Visualizar e manipular os usuários desta central">Usuários</A>&nbsp');
         ShowHTML('        </td>');
         ShowHTML('      </tr>');
       } 
@@ -508,9 +512,11 @@ function Ramais() {
     $RS = db_getTTRamal::getInstanceOf($dbms,null,null,null,null);
   } elseif ((!(strpos('AEV',$O)===false)) && $w_Troca=='') {
     $RS = db_getTTRamal::getInstanceOf($dbms,$w_chave,$w_sq_central_fone,$w_codigo,null);
-    $w_chave            = f($RS,'chave');
-    $w_sq_central_fone  = f($RS,'sq_central_fone');
-    $w_codigo           = f($RS,'codigo');
+    foreach ($RS as $row) {
+      $w_chave            = f($row,'chave');
+      $w_sq_central_fone  = f($row,'sq_central_fone');
+      $w_codigo           = f($row,'codigo');
+    }
   } 
   Cabecalho();
   ShowHTML('<HEAD>');
@@ -640,8 +646,6 @@ function UsuarioCentral() {
   $w_sq_central_fone = $_REQUEST['w_sq_central_fone'];
   $w_codigo          = $_REQUEST['w_codigo'];
 
-  // Recupera sempre todos os registros
-  $RS = db_getCentralTel::getInstanceOf($dbms,$w_chave,null,null,null,null);
   Cabecalho();
   ShowHTML('<HEAD>');
   ShowHTML('<TITLE>SIW - Associação entre Central telefônica e Usuários</TITLE>');
@@ -665,12 +669,22 @@ function UsuarioCentral() {
   } 
   ShowHTML('</HEAD>');
   ShowHTML('<BASE HREF="'.$conRootSIW.'">');
-  BodyOpen('onLoad="document.focus()";');
+  if ($O=='I') {
+    BodyOpen('onLoad="document.Form.w_usuario.focus()";');
+  } elseif ($O=='A') {
+    BodyOpen('onLoad="document.Form.w_codigo.focus()";');
+  } elseif ($O=='E') {
+    BodyOpen('onLoad="document.Form.w_assinatura.focus()";');
+  } else {
+    BodyOpen('onLoad="document.focus()";');
+  }
   ShowHTML('<B><FONT COLOR="#000000">'.$w_TP.'</FONT></B>');
   ShowHTML('<HR>');
   ShowHTML('<div align=center><center>');
   ShowHTML('          <td><br><b>Central Telefônica</td>');
   ShowHTML('<table border="0" cellpadding="0" cellspacing="0" width="100%">');
+  // Recupera sempre todos os registros
+  $RS = db_getCentralTel::getInstanceOf($dbms,$w_chave,null,null,null,null);
   foreach ($RS as $row) {
     ShowHTML('<tr><td align="center" bgcolor="#FAEBD7" colspan=3><table border=1 width="100%"><tr><td>');
     ShowHTML('    <TABLE WIDTH="100%" CELLSPACING="'.$conTableCellSpacing.'" CELLPADDING="'.$conTableCellPadding.'" BorderColorDark="'.$conTableBorderColorDark.'" BorderColorLight="'.$conTableBorderColorLight.'">');
@@ -696,7 +710,7 @@ function UsuarioCentral() {
     ShowHTML('<div align=center><center>');
     ShowHTML('          <td><br><b>Usuários</td>');
     ShowHTML('<div align=left><left>');
-    ShowHTML('<tr><td><font size="1"><a accesskey="I" class="SS" href="'.$w_dir.$w_pagina.$par.'&R='.$w_pagina.$par.'&O=I&w_sq_central_fone='.f($RS,'sq_central_fone').'&P1='.$P1.'&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP='.$TP.'&SG='.$SG.'"><u>I</u>ncluir</a>&nbsp;');
+    ShowHTML('<tr><td><font size="1"><a accesskey="I" class="SS" href="'.$w_dir.$w_pagina.$par.'&R='.$w_pagina.$par.'&O=I&w_sq_central_fone='.$w_sq_central_fone.'&P1='.$P1.'&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP='.$TP.'&SG='.$SG.'"><u>I</u>ncluir</a>&nbsp;');
     ShowHTML('    <TABLE WIDTH="100%" bgcolor="'.$conTableBgColor.'" BORDER="'.$conTableBorder.'" CELLSPACING="'.$conTableCellSpacing.'" CELLPADDING="'.$conTableCellPadding.'" BorderColorDark="'.$conTableBorderColorDark.'" BorderColorLight="'.$conTableBorderColorLight.'">');
     ShowHTML('        <tr bgcolor="'.$conTrBgColor.'" align="center">');
     ShowHTML('          <td><font size="1"><b>Código    </b></font></td>');
@@ -715,8 +729,8 @@ function UsuarioCentral() {
         ShowHTML('        <td align="center"><font size="1">'.f($row,'codigo').'</td>');
         ShowHTML('        <td><font size="1">'.f($row,'nm_usuario').' ('.f($row,'nm_usuario_res').')</td>');
         ShowHTML('        <td align="top" nowrap><font size="1">');
-        ShowHTML('          <A class="HL" HREF="'.$w_dir.$w_pagina.$par.'&R='.$w_pagina.$par.'&O=A&w_chaveAux='.f($row,'sq_usuario_central').'&w_sq_central_fone='.f($row,'sq_central_fone').'&w_codigo='.f($row,'codigo').'&w_usuario='.f($row,'usuario').'&P1='.$P1.'&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP='.$TP.'&SG='.$SG.MontaFiltro('GET').'">Alterar</A>&nbsp');
-        ShowHTML('          <A class="HL" HREF="'.$w_dir.$w_pagina.$par.'&R='.$w_pagina.$par.'&O=E&w_chaveAux='.f($row,'sq_usuario_central').'&w_sq_central_fone='.f($row,'sq_central_fone').'&w_codigo='.f($row,'codigo').'&w_usuario='.f($row,'usuario').'&P1='.$P1.'&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP='.$TP.'&SG='.$SG.MontaFiltro('GET').'">Excluir</A>&nbsp');
+        ShowHTML('          <A class="HL" HREF="'.$w_dir.$w_pagina.$par.'&R='.$w_pagina.$par.'&O=A&w_chave='.f($row,'sq_usuario_central').'&w_sq_central_fone='.$w_sq_central_fone.'&w_codigo='.f($row,'codigo').'&w_usuario='.f($row,'usuario').'&P1='.$P1.'&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP='.$TP.'&SG='.$SG.MontaFiltro('GET').'">Alterar</A>&nbsp');
+        ShowHTML('          <A class="HL" HREF="'.$w_dir.$w_pagina.$par.'&R='.$w_pagina.$par.'&O=E&w_chave='.f($row,'sq_usuario_central').'&w_sq_central_fone='.$w_sq_central_fone.'&w_codigo='.f($row,'codigo').'&w_usuario='.f($row,'usuario').'&P1='.$P1.'&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP='.$TP.'&SG='.$SG.MontaFiltro('GET').'">Excluir</A>&nbsp');
         ShowHTML('        </td>');
         ShowHTML('      </tr>');
       } 
@@ -734,17 +748,19 @@ function UsuarioCentral() {
     if (!(strpos('EV',$O)===false)) $w_Disabled=' DISABLED ';
     AbreForm('Form',$w_dir.$w_pagina.'Grava','POST','return(Validacao(this));',null,$P1,$P2,$P3,$P4,$TP,'TTUSUCTRL',$R,$O);
     ShowHTML(MontaFiltro('POST'));
-    ShowHTML('<INPUT type="hidden" name="w_chaveAux" value="'.$w_chaveAux.'">');
+    ShowHTML('<INPUT type="hidden" name="w_chave" value="'.$w_chave.'">');
     ShowHTML('<INPUT type="hidden" name="w_sq_central_fone" value="'.$w_sq_central_fone.'">');
     ShowHTML('<INPUT type="hidden" name="w_troca" value="">');
     ShowHTML('<INPUT type="hidden" name="w_sg" value="'.$SG.'">');
+    if ($O!='I') ShowHTML('<INPUT type="hidden" name="w_usuario" value="'.$w_usuario.'">');
     ShowHTML('<tr bgcolor="'.$conTrBgColor.'"><td align="center">');
     ShowHTML('    <table width="97%" border="0">');
     if ($O=='I') {
-      selecaoPessoaTT('Usua<u>r</u>io:','R',null,null,$w_sq_central_fone,'w_usuario',null,'TTUSUCENTRAL');
+      selecaoPessoaTT('Usuá<u>r</u>io:','R',null,$w_sq_central_fone,$w_cliente,'w_usuario','TTUSUCENTRAL');
     } else {
-      selecaoPessoaTT('Usua<u>r</u>io:','R',null,$w_usuario,$w_sq_central_fone,'w_usuario','A','PESSOA');
-    } 
+      $RS = db_getPersonData::getInstanceOf($dbms, $w_cliente, $w_usuario, null, null);
+      ShowHTML('      <tr><td valign="top"><font size="1">Usuário: <br><b>'.f($RS,'nome').'</b>');
+    }
     ShowHTML('      <tr><td valign="top"><font size="1"><b><u>C</u>odigo:   </b><br><input '.$w_Disabled.' accesskey="C" type="text" name="w_codigo" class="sti" SIZE="8"  MAXLENGTH="2"  VALUE="'.$w_codigo.'"></td>');
     ShowHTML('      <tr><td align="LEFT" colspan=2><font size="1"><b><U>A</U>ssinatura Eletrônica:<BR> <INPUT ACCESSKEY="A" class="sti" type="PASSWORD" name="w_assinatura" size="30" maxlength="30" value=""></td></tr>');
     if ($O=='E') {
@@ -759,7 +775,7 @@ function UsuarioCentral() {
         ShowHTML('            <input class="STB" type="submit" name="Botao" value="Atualizar">');
       } 
     } 
-    ShowHTML('            <input class="STB" type="button" onClick="location.href=\''.$w_pagina.$par.'&w_chave='.$w_chave.'&P1='.$P1.'&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP='.$TP.'&SG='.$SG.'&O=L'.MontaFiltro('GET').'\';" name="Botao" value="Cancelar">');
+    ShowHTML('            <input class="STB" type="button" onClick="location.href=\''.$w_pagina.$par.'&w_sq_central_fone='.$w_sq_central_fone.'&P1='.$P1.'&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP='.$TP.'&SG='.$SG.'&O=L'.MontaFiltro('GET').'\';" name="Botao" value="Cancelar">');
     ShowHTML('          </td>');
     ShowHTML('      </tr>');
     ShowHTML('    </table>');
@@ -837,19 +853,21 @@ function RamalUsr() {
   } else {
     BodyOpen('onLoad="document.focus()";');
   } 
-  $RS = db_getTTRamal::getInstanceOf($dbms,$w_chave,null,null,null);
   ShowHTML('<B><FONT COLOR="#000000">'.$w_TP.'</FONT></B>');
   ShowHTML('<HR>');
   ShowHTML('<div align=center><center>');
   ShowHTML('          <td><br><b>Ramal</td>');
   ShowHTML('<table border="0" cellpadding="0" cellspacing="0" width="100%">');
-  ShowHTML('<tr><td align="center" bgcolor="#FAEBD7" colspan=3><table border=1 width="100%"><tr><td>');
-  ShowHTML('    <TABLE WIDTH="100%" CELLSPACING="'.$conTableCellSpacing.'" CELLPADDING="'.$conTableCellPadding.'" BorderColorDark="'.$conTableBorderColorDark.'" BorderColorLight="'.$conTableBorderColorLight.'">');
-  ShowHTML('        <tr valign="top">');
-  ShowHTML('          <td><font size="1">Cidade-UF: <br><b>'.f($RS,'nm_cidade').' - '.f($RS,'uf').'</font></td>');
-  ShowHTML('          <td><font size="1">Endereço:  <br><b>'.f($RS,'logradouro').'</font></td>');
-  ShowHTML('          <td><font size="1">Ramal:     <br><b>'.f($RS,'codigo').'</font></td>');
-  ShowHTML('    </TABLE>');
+  $RS = db_getTTRamal::getInstanceOf($dbms,$w_chave,null,null,null);
+  foreach ($RS as $row) {
+    ShowHTML('<tr><td align="center" bgcolor="#FAEBD7" colspan=3><table border=1 width="100%"><tr><td>');
+    ShowHTML('    <TABLE WIDTH="100%" CELLSPACING="'.$conTableCellSpacing.'" CELLPADDING="'.$conTableCellPadding.'" BorderColorDark="'.$conTableBorderColorDark.'" BorderColorLight="'.$conTableBorderColorLight.'">');
+    ShowHTML('        <tr valign="top">');
+    ShowHTML('          <td><font size="1">Cidade-UF: <br><b>'.f($row,'nm_cidade').' - '.f($row,'uf').'</font></td>');
+    ShowHTML('          <td><font size="1">Endereço:  <br><b>'.f($row,'logradouro').'</font></td>');
+    ShowHTML('          <td><font size="1">Ramal:     <br><b>'.f($row,'codigo').'</font></td>');
+    ShowHTML('    </TABLE>');
+  }
   ShowHTML('</table>');
   ShowHTML('</table>');
   if ($O=='L') {
@@ -871,24 +889,24 @@ function RamalUsr() {
       // Se não foram selecionados registros, exibe mensagem
       ShowHTML('      <tr bgcolor="'.$conTrBgColor.'"><td colspan=4 align="center"><font size="1"><b>Não foram encontrados registros.</b></td></tr>');
     } else {
-      //Lista os registros selecionados para listagem
+      // Lista os registros selecionados para listagem
       $RS1 = array_slice($RS, (($P3-1)*$P4), $P4);
       foreach ($RS1 as $row) {
         $w_cor = ($w_cor==$conTrBgColor || $w_cor=='') ? $w_cor=$conTrAlternateBgColor : $w_cor=$conTrBgColor;
         ShowHTML('      <tr bgcolor="'.$w_cor.'" valign="top">');
         ShowHTML('        <td><font size="1">'.f($row,'nm_usuario').'</td>');
-        ShowHTML('        <td align="center"><font size="1">'.FormataDataEdicao(f($row,'inicio')).'</td>');
+        ShowHTML('        <td align="center"><font size="1">'.FormatDateTime(f($row,'inicio')).'</td>');
         if (f($row,'fim')!='') {
-          ShowHTML('      <td align="center"><font size="1">'.FormataDataEdicao(f($row,'fim')).' </td>');
+          ShowHTML('      <td align="center"><font size="1">'.FormatDateTime(f($row,'fim')).' </td>');
         } else {
           ShowHTML('      <td align="CENTER"><font size="1"> ---                    </td>');
         } 
         ShowHTML('        <td align="top" nowrap><font size="1">');
-        ShowHTML('          <A class="HL" HREF="'.$w_dir.$w_pagina.$par.'&R='.$w_pagina.$par.'&O=A&w_chave='.$w_chave.'&w_chaveAux='.f($row,'usuario').'&w_inicio='.FormataDataEdicao(f($row,'inicio')).'&w_fim='.FormataDataEdicao(f($row,'fim')).'&P1='.$P1.'&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP='.$TP.'&SG='.$SG.MontaFiltro('GET').'">Alterar</A>&nbsp');
+        ShowHTML('          <A class="HL" HREF="'.$w_dir.$w_pagina.$par.'&R='.$w_pagina.$par.'&O=A&w_chave='.$w_chave.'&w_chaveAux='.f($row,'usuario').'&w_inicio='.FormatDateTime(f($row,'inicio')).'&w_fim='.FormatDateTime(f($row,'fim')).'&P1='.$P1.'&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP='.$TP.'&SG='.$SG.MontaFiltro('GET').'">Alterar</A>&nbsp');
         if (Nvl(f($row,'fim'),'')=='') {
-          ShowHTML('          <A class="HL" HREF="'.$w_dir.$w_pagina.$par.'&R='.$w_pagina.$par.'&O=F&w_chave='.$w_chave.'&w_chaveAux='.f($row,'usuario').'&w_inicio='.FormataDataEdicao(f($row,'inicio')).'&w_fim='.FormataDataEdicao(f($row,'fim')).'&P1='.$P1.'&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP='.$TP.'&SG='.$SG.MontaFiltro('GET').'">Finalizar</A>&nbsp');
+          ShowHTML('          <A class="HL" HREF="'.$w_dir.$w_pagina.$par.'&R='.$w_pagina.$par.'&O=F&w_chave='.$w_chave.'&w_chaveAux='.f($row,'usuario').'&w_inicio='.FormatDateTime(f($row,'inicio')).'&w_fim='.FormatDateTime(f($row,'fim')).'&P1='.$P1.'&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP='.$TP.'&SG='.$SG.MontaFiltro('GET').'">Finalizar</A>&nbsp');
         } 
-        ShowHTML('          <A class="HL" HREF="'.$w_dir.$w_pagina.$par.'&R='.$w_pagina.$par.'&O=E&w_chave='.$w_chave.'&w_chaveAux='.f($row,'usuario').'&w_inicio='.FormataDataEdicao(f($row,'inicio')).'&w_fim='.FormataDataEdicao(f($row,'fim')).'&P1='.$P1.'&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP='.$TP.'&SG='.$SG.MontaFiltro('GET').'">Excluir</A>&nbsp');
+        ShowHTML('          <A class="HL" HREF="'.$w_dir.$w_pagina.$par.'&R='.$w_pagina.$par.'&O=E&w_chave='.$w_chave.'&w_chaveAux='.f($row,'usuario').'&w_inicio='.FormatDateTime(f($row,'inicio')).'&w_fim='.FormatDateTime(f($row,'fim')).'&P1='.$P1.'&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP='.$TP.'&SG='.$SG.MontaFiltro('GET').'">Excluir</A>&nbsp');
         ShowHTML('        </td>');
         ShowHTML('      </tr>');
       } 
@@ -1000,16 +1018,22 @@ function prefixo() {
   } elseif ($O=='L') {
     $RS = db_getPrefixo::getInstanceOf($dbms,null,$p_prefixo,$p_uf);
     array_key_case_change(&$RS);
-    $RS = SortArray($RS,$_REQUEST['p_ordena'],'asc');
+    if ($_REQUEST['p_ordena']>'') {
+       $RS = SortArray($RS,$_REQUEST['p_ordena'],'asc','prefixo','asc');
+    } else {
+       $RS = SortArray($RS,'prefixo','asc','localidade','asc');
+    }
   } elseif ((!(strpos('AEV',$O)===false)) && $w_Troca=='') {
     $RS = db_getPrefixo::getInstanceOf($dbms,$w_chave,null,null);
-    $w_prefixo      = f($RS,'prefixo');
-    $w_localidade   = f($RS,'localidade');
-    $w_sigla        = f($RS,'sigla');
-    $w_uf           = f($RS,'uf');
-    $w_ddd          = f($RS,'ddd');
-    $w_controle     = f($RS,'controle');
-    $w_degrau       = f($RS,'degrau');
+    foreach ($RS as $row) {
+      $w_prefixo      = f($row,'prefixo');
+      $w_localidade   = f($row,'localidade');
+      $w_sigla        = f($row,'sigla');
+      $w_uf           = f($row,'uf');
+      $w_ddd          = f($row,'ddd');
+      $w_controle     = f($row,'controle');
+      $w_degrau       = f($row,'degrau'); 
+    }
   } 
 
   Cabecalho();
@@ -1071,8 +1095,8 @@ function prefixo() {
       ShowHTML('          <td><font size="1"><b>Prefixo    </font></td>');
       ShowHTML('          <td><font size="1"><b>Localidade </font></td>');
     } else {
-      ShowHTML('          <td><font size="1"><b><a class="SS" href="'.$w_dir.$w_pagina.$par.'&p_ordena=prefixo, localidade&P1='.$P1.'&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP='.$TP.'&SG='.$SG.'">Prefixo    </a></font></td>');
-      ShowHTML('          <td><font size="1"><b><a class="SS" href="'.$w_dir.$w_pagina.$par.'&p_ordena=localidade, prefixo&P1='.$P1.'&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP='.$TP.'&SG='.$SG.'">Localidade </a></font></td>');
+      ShowHTML('          <td><font size="1"><b><a class="SS" href="'.$w_dir.$w_pagina.$par.'&O='.$O.'&P1='.$P1.'&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP='.$TP.'&SG='.$SG.MontaFiltro('GET').'">Prefixo    </a></font></td>');
+      ShowHTML('          <td><font size="1"><b><a class="SS" href="'.$w_dir.$w_pagina.$par.'&p_ordena=localidade&O='.$O.'&P1='.$P1.'&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP='.$TP.'&SG='.$SG.MontaFiltro('GET').'">Localidade </a></font></td>');
     } 
     ShowHTML('          <td><font size="1"><b> Sigla      </font></td>');
     ShowHTML('          <td><font size="1"><b> UF         </font></td>');
@@ -1138,6 +1162,7 @@ function prefixo() {
     if (!(strpos('EV',$O)===false)) $w_Disabled=' DISABLED ';
     AbreForm('Form',$w_dir.$w_pagina.'Grava','POST','return(Validacao(this));',null,$P1,$P2,$P3,$P4,$TP,$SG,$w_pagina.$par,$O);
     ShowHTML('<INPUT type="hidden" name="w_cliente" value="'.$w_cliente.'">');
+    ShowHTML('<INPUT type="hidden" name="w_chave" value="'.$w_chave.'">');
     ShowHTML('<INPUT type="hidden" name="w_troca"   value="">');
     ShowHTML('<tr bgcolor="'.$conTrBgColor.'"><td align="center">');
     ShowHTML('    <table width="97%" border="0"><tr>');
@@ -1272,10 +1297,10 @@ function Grava() {
     case 'TTUSUCTRL':
       // Verifica se a Assinatura Eletrônica é válida
       if (verificaAssinaturaEletronica($_SESSION['USERNAME'],strtoupper($_REQUEST['w_assinatura'])) || $w_assinatura=='') {
-        dml_putTTUsuarioCentral::getInstanceOf($dbms,$O,$_REQUEST['w_chaveAux'],$w_cliente,
+        dml_putTTUsuarioCentral::getInstanceOf($dbms,$O,$_REQUEST['w_chave'],$w_cliente,
             $_REQUEST['w_usuario'],$_REQUEST['w_sq_central_fone'],$_REQUEST['w_codigo']);
         ScriptOpen('JavaScript');
-        ShowHTML('  location.href=\''.$R.'&w_chave='.$_REQUEST['w_chave'].'&P1='.$P1.'&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP='.$TP.'&SG='.$_REQUEST['w_sg'].MontaFiltro('GET').'\';');
+        ShowHTML('  location.href=\''.$R.'&w_sq_central_fone='.$_REQUEST['w_sq_central_fone'].'&P1='.$P1.'&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP='.$TP.'&SG='.$_REQUEST['w_sg'].MontaFiltro('GET').'\';');
         ScriptClose();
       } else {
         ScriptOpen('JavaScript');

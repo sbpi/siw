@@ -15,8 +15,9 @@ class dml_putTTRamalUsuario {
      $params=array('p_operacao'                  =>array($operacao,                                        B_VARCHAR,         1),
                    'p_chave'                     =>array($p_chave,                                         B_INTEGER,        18),
                    'p_chave_aux'                 =>array($p_chave_aux,                                     B_INTEGER,        18),
-                   'p_chave_aux2'                =>array(nvl($p_chave_aux2,p_inicio),                      B_DATE,           32),
-                   'p_inicio'                    =>array(tvl($p_inicio),                                   B_DATE,           32)
+                   'p_chave_aux2'                =>array(nvl($p_chave_aux2,$p_inicio),                     B_DATE,           32),
+                   'p_inicio'                    =>array(tvl($p_inicio),                                   B_DATE,           32),
+                   'p_fim'                       =>array(tvl($p_fim),                                      B_DATE,           32)
                   );
      $l_rs = DatabaseQueriesFactory::getInstanceOf($sql, $dbms, $params, DB_TYPE);
      $l_error_reporting = error_reporting(); 
