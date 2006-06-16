@@ -1664,11 +1664,11 @@ Sub Excluir
   End If
   ShowHTML "<B><FONT COLOR=""#000000"">" & w_TP & "</FONT></B>"
   ShowHTML "<HR>"
-  ShowHTML "<div align=center><center>"
-  ShowHTML "<table border=""0"" cellpadding=""0"" cellspacing=""0"" width=""100%"">"
+  ShowHTML "<div align=""center"">"
+  ShowHTML "<table width=""95%"" border=""0"" cellspacing=""3"">"
 
   ' Chama a rotina de visualização dos dados da tarefa, na opção "Listagem"
-  ShowHTML VisualTarefa(w_chave, "V", w_usuario)
+  ShowHTML VisualTarefa(w_chave, "V", w_usuario, P4, "sim", "sim", "sim", "nao", "sim", "nao")
 
   ShowHTML "<HR>"
   AbreForm "Form", w_dir & w_pagina & "Grava", "POST", "return(Validacao(this));", null,P1,P2,P3,P4,TP,"ISTAGERAL",R,O

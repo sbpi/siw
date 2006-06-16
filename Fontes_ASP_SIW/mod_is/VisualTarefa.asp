@@ -185,9 +185,9 @@ Function VisualTarefa(w_chave, O, w_usuario, P4, w_identificacao, w_conclusao, w
      w_html = w_html & VbCrLf & "   <tr><td><font size=""1""><b>Consulta Realizada por:</b></font></td>"
      w_html = w_html & VbCrLf & "       <td><font size=""1"">" &  Session("NOME_RESUMIDO") & "</font></td></tr>"
      w_html = w_html & VbCrLf & "   <tr><td><font size=""1""><b>Data da Consulta:</b></font></td>"
-    w_html = w_html & VbCrLf & "       <td><font size=""1"">" &  FormataDataEdicao(FormatDateTime(now(),2)) & ", " & FormatDateTime(now(),4) & "</font></td></tr>"
+     w_html = w_html & VbCrLf & "       <td><font size=""1"">" &  FormataDataEdicao(FormatDateTime(now(),2)) & ", " & FormatDateTime(now(),4) & "</font></td></tr>"
   End If
-  
+  w_html = w_html & VbCrLf & "       </table>"
   VisualTarefa = w_html
 
   Set w_html = Nothing
