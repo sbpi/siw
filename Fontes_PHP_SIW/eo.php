@@ -151,7 +151,6 @@ function Unidade() {
     ShowHTML('<tr><td colspan=3>');
     ShowHTML('    <TABLE WIDTH="100%" bgcolor="'.$conTableBgColor.'" BORDER="0" CELLSPACING="'.$conTableCellSpacing.'" CELLPADDING="'.$conTableCellPadding.'" BorderColorDark="'.$conTableBorderColorDark.'" BorderColorLight="'.$conTableBorderColorLight.'">');
     $RS = db_getUorgList::getInstanceOf($dbms,$w_cliente,null,'IS NULL',null,null,null);
-    array_key_case_change(&$RS);
     $RS = SortArray($RS,'ordem','asc');
     if (count($RS)<=0) {
       ShowHTML('      <tr bgcolor="'.$conTrBgColor.'"><td align="center"><b>Estrutura organizacional inexistente.</b></td></tr>');
@@ -174,7 +173,6 @@ function Unidade() {
         ShowHTML('</li>');
         ShowHTML('   <ul id="Xtree'.$w_ContOut.'" class="Xtree" style="display:true;">');
         $RS1 = db_getUorgList::getInstanceOf($dbms, $w_cliente,f($row,'sq_unidade'),'FILHO',null,null,null);
-        array_key_case_change(&$RS1);
         $RS1 = SortArray($RS1,'ordem','asc');
         foreach($RS1 as $row1) {
           $w_ContImg=$w_ContImg+1;
@@ -189,7 +187,6 @@ function Unidade() {
           ShowHTML('   </li>');
           ShowHTML('      <ul id="Xtree'.$w_ContOut.'" class="Xtree" style="display:none;">');
           $RS2 = db_getUorgList::getInstanceOf($dbms,$w_cliente,f($row1,'sq_unidade'),'FILHO',null,null,null);
-          array_key_case_change(&$RS2);
           $RS2 = SortArray($RS2,'ordem','asc');
           foreach($RS2 as $row2) {
             $w_ContImg=$w_ContImg+1;
@@ -204,7 +201,6 @@ function Unidade() {
             ShowHTML('         </li>');
             ShowHTML('            <ul id="Xtree'.$w_ContOut.'" class="Xtree" style="display:none;">');
             $RS3 = db_getUorgList::getInstanceOf($dbms,$w_cliente,f($row2,'sq_unidade'),'FILHO',null,null,null);
-            array_key_case_change(&$RS3);
             $RS3 = SortArray($RS3,'ordem','asc');
             foreach($RS3 as $row3) {
               $w_ContImg=$w_ContImg+1;
@@ -219,7 +215,6 @@ function Unidade() {
               ShowHTML('            </li>');
               ShowHTML('               <ul id="Xtree'.$w_ContOut.'" class="Xtree" style="display:none;">');
               $RS4 = db_getUorgList::getInstanceOf($dbms,$w_cliente,f($row3,'sq_unidade'),'FILHO',null,null,null);
-              array_key_case_change(&$RS4);
               $RS4 = SortArray($RS4,'ordem','asc');
               foreach($RS4 as $row4) {
                 $w_ContImg=$w_ContImg+1;
@@ -234,7 +229,6 @@ function Unidade() {
                 ShowHTML('               </li>');
                 ShowHTML('                  <ul id="Xtree'.$w_ContOut.'" class="Xtree" style="display:none;">');
                 $RS5 = db_getUorgList::getInstanceOf($dbms,$w_cliente,f($row4,'sq_unidade'),'FILHO',null,null,null);
-                array_key_case_change(&$RS5);
                 $RS5 = SortArray($RS5,'ordem','asc');
                 foreach($RS5 as $row5) {
                   $w_ContImg=$w_ContImg+1;
@@ -249,7 +243,6 @@ function Unidade() {
                   ShowHTML('                  </li>');
                   ShowHTML('                     <ul id="Xtree'.$w_ContOut.'" class="Xtree" style="display:none;">');
                   $RS6 = db_getUorgList::getInstanceOf($dbms,$w_cliente,f($row5,'sq_unidade'),'FILHO',null,null,null);
-                  array_key_case_change(&$RS6);
                   $RS6 = SortArray($RS6,'ordem','asc');
                   foreach($RS6 as $row6) {
                     $w_ContImg=$w_ContImg+1;
@@ -264,7 +257,6 @@ function Unidade() {
                     ShowHTML('                     </li>');
                     ShowHTML('                        <ul id="Xtree'.$w_ContOut.'" class="Xtree" style="display:none;">');
                     $RS7 = db_getUorgList::getInstanceOf($dbms,$w_cliente,f($row6,'sq_unidade'),'FILHO',null,null,null);
-                    array_key_case_change(&$RS7);
                     $RS7 = SortArray($RS7,'ordem','asc');
                     foreach($RS7 as $row7) {
                       $w_ContImg=$w_ContImg+1;
@@ -279,7 +271,6 @@ function Unidade() {
                       ShowHTML('                        </li>');
                       ShowHTML('                           <ul id="Xtree'.$w_ContOut.'" class="Xtree" style="display:none;">');
                       $RS8 = db_getUorgList::getInstanceOf($dbms,$w_cliente,f($row7,'sq_unidade'),'FILHO',null,null,null);
-                      array_key_case_change(&$RS8);
                       $RS8 = SortArray($RS8,'ordem','asc');
                       foreach($RS8 as $row8) {
                         $w_ContImg=$w_ContImg+1;
@@ -294,7 +285,6 @@ function Unidade() {
                         ShowHTML('                           </li>');
                         ShowHTML('                              <ul id="Xtree'.$w_ContOut.'" class="Xtree" style="display:none;">');
                         $RS9 = db_getUorgList::getInstanceOf($dbms,$w_cliente,f($row8,'sq_unidade'),'FILHO',null,null,null);
-                        array_key_case_change(&$RS9);
                         $RS9 = SortArray($RS9,'ordem','asc');
                         foreach($RS9 as $row9) {
                           $w_ContImg=$w_ContImg+1;
@@ -592,8 +582,8 @@ function Responsavel() {
     foreach ($RS as $row) {
       $w_sq_pessoa            = f($row,'titular2');
       $w_sq_pessoa_substituto = f($row,'substituto2');
-      $w_inicio_titular       = FormatDateTime(Nvl(f($row,'inicio_titular'),time()));
-      if (f($row,'inicio_substituto')>'') $w_inicio_substituto = FormatDateTime(f($row,'inicio_substituto'));
+      $w_inicio_titular       = Nvl(f($row,'inicio_titular'),time());
+      if (f($row,'inicio_substituto')>'') $w_inicio_substituto = f($row,'inicio_substituto');
     }
   } elseif ($O=='I') {
     $w_inicio_titular = date('d/m/Y',time());
@@ -752,7 +742,6 @@ function BuscaUnidade() {
   $campo        = $_REQUEST['campo'];
 
   $RS = db_getUorgList::getInstanceOf($dbms,$w_cliente,$chaveaux,'ATIVO',$w_nome,$w_sigla,null);
-  array_key_case_change(&$RS);
   $RS = SortArray($RS,'nome','asc', 'co_uf', 'asc');
   Cabecalho();
   ShowHTML('<TITLE>Seleção de unidade</TITLE>');

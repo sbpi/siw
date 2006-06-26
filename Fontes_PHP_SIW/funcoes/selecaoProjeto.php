@@ -7,7 +7,6 @@ function selecaoProjeto($label,$accesskey,$hint,$chave,$chaveAux,$chaveAux2,$cam
   extract($GLOBALS);
 
   $RS = db_getSolicList::getInstanceOf($dbms, $chaveAux2, $chaveAux, $restricao, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null);
-  array_key_case_change(&$RS);
   $RS = SortArray($RS,'titulo','asc');
 
   if (!isset($hint)) {

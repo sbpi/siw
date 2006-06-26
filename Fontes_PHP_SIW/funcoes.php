@@ -1,5 +1,25 @@
 <?
 setlocale(LC_ALL, 'pt_BR');
+//$locale_info = localeconv();
+//echo "<pre>\n";
+//echo "--------------------------------------------\n";
+//echo "  Monetary information for current locale:  \n";
+//echo "--------------------------------------------\n\n";
+//echo "int_curr_symbol:   {$locale_info["int_curr_symbol"]}\n";
+//echo "currency_symbol:   {$locale_info["currency_symbol"]}\n";
+//echo "mon_decimal_point: {$locale_info["mon_decimal_point"]}\n";
+//echo "mon_thousands_sep: {$locale_info["mon_thousands_sep"]}\n";
+//echo "positive_sign:     {$locale_info["positive_sign"]}\n";
+//echo "negative_sign:     {$locale_info["negative_sign"]}\n";
+//echo "int_frac_digits:   {$locale_info["int_frac_digits"]}\n";
+//echo "frac_digits:       {$locale_info["frac_digits"]}\n";
+//echo "p_cs_precedes:     {$locale_info["p_cs_precedes"]}\n";
+//echo "p_sep_by_space:    {$locale_info["p_sep_by_space"]}\n";
+//echo "n_cs_precedes:     {$locale_info["n_cs_precedes"]}\n";
+//echo "n_sep_by_space:    {$locale_info["n_sep_by_space"]}\n";
+//echo "p_sign_posn:       {$locale_info["p_sign_posn"]}\n";
+//echo "n_sign_posn:       {$locale_info["n_sign_posn"]}\n";
+//echo "</pre>\n";
 
 // =========================================================================
 // Função garante que as chaves de um array estarão no caso indicado
@@ -49,6 +69,14 @@ function SortArray() {
 }
 
 // =========================================================================
+// Montagem do link para abrir o calendário
+// -------------------------------------------------------------------------
+function exibeCalendario ($form, $campo) {
+  extract($GLOBALS);
+  return '   <a class="ss" href="#" onClick="window.open(\''.$w_dir_volta.'calendario.php?nmForm='.$form.'&nmCampo='.$campo.'&vData=\'+document.'.$form.'.'.$campo.'.value,\'dp\',\'toolbar=0,location=0,directories=0,status=0,menubar=0,scrollbars=0,resizable=0,width=250,height=250,left=500,top=200\'); return false;" title="Visualizar calendário"><img src=images/Icone/goToTop.gif border=0 align=top height=13 width=15></a>';
+}
+
+// =========================================================================
 // Gera um link chamando o arquivo desejado
 // -------------------------------------------------------------------------
 function LinkArquivo ($p_classe, $p_cliente, $p_arquivo, $p_target, $p_hint, $p_descricao, $p_retorno) {
@@ -58,7 +86,7 @@ function LinkArquivo ($p_classe, $p_cliente, $p_arquivo, $p_target, $p_hint, $p_
 
   If (strtoupper(Nvl($p_retorno,'')) == 'WORD') { // Se for geraçao de Word, dispensa sessão ativa
      // Altera a chamada padrão, dispensando a sessão
-     $l_link = 'file.asp?force=false&sessao=false&cliente=' & $p_cliente & '&id=' & $p_arquivo;
+     $l_link = 'file.php?force=false&sessao=false&cliente=' & $p_cliente & '&id=' & $p_arquivo;
   } ElseIf (strtoupper(Nvl($p_retorno,'')) <> 'EMBED') { // Se não for objeto incorporado, monta tag anchor
      // Trata a possibilidade da chamada ter passado classe, target e hint
      If (Nvl($p_classe,'') > '') $l_classe = ' class="' . $p_classe . '" ';  Else $l_classe = '';
@@ -280,37 +308,40 @@ function Piece($p_line,$p_delimiter,$p_separator,$p_position) {
 // -------------------------------------------------------------------------
 function MontaFiltro($p_method) {
   extract($GLOBALS);
-  if (strtoupper($p_method)=="GET" || strtoupper($p_method)=="POST") {
-    $l_string="";
-    if (strtoupper($p_method)!="UL") {
-      foreach ($_POST as $l_Item => $l_valor) {
-        if (substr($l_Item,0,2)=="p_" && $l_valor>'') {
-          if (strtoupper($p_method)=="GET") {
-            $l_string=$l_string."&".$l_Item."=".$l_valor;
+  if (strtoupper($p_method)=='GET' || strtoupper($p_method)=='POST') {
+    $l_string='';
+    foreach ($_POST as $l_Item => $l_valor) {
+      if (substr($l_Item,0,2)=='p_' && $l_valor>'') {
+        if (strtoupper($p_method)=='GET') {
+          if (is_array($_POST[$l_Item])) {
+            $l_string=$l_string.'&'.$l_Item.'='.explodeArray($_POST[$l_Item]);
+          } else {
+            $l_string=$l_string.'&'.$l_Item.'='.$l_valor;
           }
-          elseif (strtoupper($p_method)=="POST") {
+        }
+        elseif (strtoupper($p_method)=='POST') {
+          if (is_array($_POST[$l_Item])) {
+            $l_string=$l_string.'<INPUT TYPE="HIDDEN" NAME="'.$l_Item.'" VALUE="'.explodeArray($_POST[$l_Item]).'">';
+          } else {
             $l_string=$l_string.'<INPUT TYPE="HIDDEN" NAME="'.$l_Item.'" VALUE="'.$l_valor.'">';
           }
         }
       }
-      foreach ($_GET as $l_Item => $l_valor) {
-        if (substr($l_Item,0,2)=="p_" && $l_valor>'') {
-          if (strtoupper($p_method)=="GET") {
-            $l_string=$l_string."&".$l_Item."=".$l_valor;
-          }
-          elseif (strtoupper($p_method)=="POST") {
-            $l_string=$l_string.'<INPUT TYPE="HIDDEN" NAME="'.$l_Item.'" VALUE="'.$l_valor.'">';
+    }
+    foreach ($_GET as $l_Item => $l_valor) {
+      if (substr($l_Item,0,2)=='p_' && $l_valor>'') {
+        if (strtoupper($p_method)=='GET') {
+          if (is_array($_GET[$l_Item])) {
+            $l_string=$l_string.'&'.$l_Item.'='.explodeArray($_GET[$l_Item]);
+          } else {
+            $l_string=$l_string.'&'.$l_Item.'='.$l_valor;
           }
         }
-      }
-    } else {
-      foreach ($ul->Form as $l_Item) {
-        if (substr($l_Item,0,2)=="p_" && $ul->Form($l_Item)>'') {
-          if (strtoupper($p_method)=="GET") {
-            $l_string=$l_string."&".$l_Item."=".$ul->Form($l_Item);
-          }
-          elseif (strtoupper($p_method)=="POST") {
-            $l_string=$l_string.'<INPUT TYPE="HIDDEN" NAME="'.$l_Item.'" VALUE="'.$ul->Form($l_Item).'">';
+        elseif (strtoupper($p_method)=='POST') {
+          if (is_array($_GET[$l_Item])) {
+            $l_string=$l_string.'<INPUT TYPE="HIDDEN" NAME="'.$l_Item.'" VALUE="'.explodeArray($_GET[$l_Item]).'">';
+          } else {
+            $l_string=$l_string.'<INPUT TYPE="HIDDEN" NAME="'.$l_Item.'" VALUE="'.$l_valor.'">';
           }
         }
       }
@@ -356,7 +387,7 @@ function ExibePessoa($p_dir,$p_cliente,$p_pessoa,$p_tp,$p_nome) {
   if (Nvl($p_nome,'')=='') {
     $l_string='---';
   } else {
-    $l_string=$l_string.'<A class="hl" HREF="#" onClick="window.open(\''.$p_dir.'Seguranca.php?par=TELAUSUARIO&w_cliente='.$p_cliente.'&w_sq_pessoa='.$p_pessoa.'&P1='.$P1.'&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP='.$p_TP.'&SG='.'\',\'Pessoa\',\'width=780,height=300,top=10,left=10,toolbar=no,scrollbars=yes,resizable=yes,status=no\'); return false;" title="Clique para exibir os dados desta pessoa!">'.$p_nome.'</A>';
+    $l_string=$l_string.'<A class="hl" HREF="#" onClick="window.open(\''.$p_dir.'seguranca.php?par=TELAUSUARIO&w_cliente='.$p_cliente.'&w_sq_pessoa='.$p_pessoa.'&P1='.$P1.'&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP='.$p_tp.'&SG='.'\',\'Pessoa\',\'width=780,height=300,top=10,left=10,toolbar=no,scrollbars=yes,resizable=yes,status=no\'); return false;" title="Clique para exibir os dados desta pessoa!">'.$p_nome.'</A>';
   }
   return $l_string;
 }
@@ -368,7 +399,7 @@ function ExibeUnidade($p_dir,$p_cliente,$p_unidade,$p_sq_unidade,$p_tp) {
   if (Nvl($p_unidade,'')=='') {
     $l_string='---';
   } else {
-    $l_string=$l_string.'<A class="hl" HREF="#" onClick="window.open(\''.$p_dir.'Seguranca.php?par=TELAUNIDADE&w_cliente='.$p_cliente.'&w_sq_unidade='.$p_sq_unidade.'&P1='.$P1.'&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP='.$p_TP.'&SG='.'\',\'Unidade\',\'width=780,height=300,top=10,left=10,toolbar=no,scrollbars=yes,resizable=yes,status=no\'); return false;" title="Clique para exibir os dados desta unidade!">'.$p_unidade.'</A>';
+    $l_string=$l_string.'<A class="hl" HREF="#" onClick="window.open(\''.$p_dir.'seguranca.php?par=TELAUNIDADE&w_cliente='.$p_cliente.'&w_sq_unidade='.$p_sq_unidade.'&P1='.$P1.'&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP='.$p_tp.'&SG='.'\',\'Unidade\',\'width=780,height=300,top=10,left=10,toolbar=no,scrollbars=yes,resizable=yes,status=no\'); return false;" title="Clique para exibir os dados desta unidade!">'.$p_unidade.'</A>';
   }
   return $l_string;
 }
@@ -380,7 +411,7 @@ function ExibeEtapa($O,$p_chave,$p_chave_aux,$p_tipo,$p_P1,$p_etapa,$p_tp,$p_sg)
   if (Nvl($p_etapa,'')=='') {
     $l_string="---";
   } else {
-    $l_string=$l_string.'<A class="hl" HREF="#" onClick="window.open(\'Projeto.php?par=AtualizaEtapa&w_chave='.$p_chave.'&O='.$O.'&w_chave_aux='.$p_chave_aux.'&w_tipo='.$p_tipo.'&P1='.$p_P1.'&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP='.$p_TP.'&SG='.$p_sg.'\',\'Etapa\',\'width=780,height=350,top=50,left=10,toolbar=no,scrollbars=yes,resizable=yes,status=no\'); return false;" title="Clique para exibir os dados!">'.$p_etapa.'</A>';
+    $l_string=$l_string.'<A class="hl" HREF="#" onClick="window.open(\'projeto.php?par=AtualizaEtapa&w_chave='.$p_chave.'&O='.$O.'&w_chave_aux='.$p_chave_aux.'&w_tipo='.$p_tipo.'&P1='.$p_P1.'&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP='.$p_tp.'&SG='.$p_sg.'\',\'Etapa\',\'width=780,height=350,top=50,left=10,toolbar=no,scrollbars=yes,resizable=yes,status=no\'); return false;" title="Clique para exibir os dados!">'.$p_etapa.'</A>';
   }
   return $l_string;
 }
@@ -402,17 +433,17 @@ function MontaFiltroUpload($p_Form) {
 // =========================================================================
 // Rotina que monta número de ordem da etapa do projeto
 // -------------------------------------------------------------------------
-function MontaOrdemEtapa($p_chave) {
+function MontaOrdemEtapa($l_chave) {
   extract($GLOBALS);
-  $RSQuery = db_getEtapaDataParents::getInstanceOf($dbms,$p_chave);
-  $w_texto = "";
-  $w_Cont = count($RSQuery);
+  $RSQuery = db_getEtapaDataParents::getInstanceOf($dbms, $l_chave);
+  $w_texto = '';
+  $w_contaux = 0;
   foreach($RSQuery as $row) {
     $w_contaux = $w_contaux+1;
     if ($w_contaux==1) {
-      $w_texto = f($row,'ordem').".".$w_texto;
+      $w_texto = f($row,'ordem').'.'.$w_texto;
     } else {
-      $w_texto = f($row,'ordem').".".$w_texto;
+      $w_texto = f($row,'ordem').'.'.$w_texto;
     }
   }
   return substr($w_texto,0,strlen($w_texto)-1);
@@ -421,17 +452,17 @@ function MontaOrdemEtapa($p_chave) {
 // =========================================================================
 // Converte CFLF para <BR>
 // -------------------------------------------------------------------------
-function CRLF2BR($expressao) { if (!isset($expressao) || $expressao=="") { return ''; } else { return str_replace("\\r\\n","<BR>",$expressao); } }
+function CRLF2BR($expressao) { if (!isset($expressao) || $expressao=='') { return ''; } else { return str_replace(chr(10),'<br>',str_replace(chr(13),'',$expressao)); } }
 
 // =========================================================================
 // Trata valores nulos
 // -------------------------------------------------------------------------
-function Nvl($expressao,$valor) { if ((!isset($expressao)) || $expressao==="") { return $valor; } else { return $expressao; } }
+function Nvl($expressao,$valor) { if ((!isset($expressao)) || $expressao==='') { return $valor; } else { return $expressao; } }
 
 // =========================================================================
 // Retorna valores nulos se chegar cadeia vazia
 // -------------------------------------------------------------------------
-function Tvl($expressao) { if (!isset($expressao) || $expressao=="") { return  null; } else { return $expressao; } }
+function Tvl($expressao) { if (!isset($expressao) || $expressao=='') { return  null; } else { return $expressao; } }
 
 // =========================================================================
 // Retorna valores nulos se chegar cadeia vazia
@@ -451,7 +482,7 @@ function DiretorioCliente($p_cliente) {
 // -------------------------------------------------------------------------
 function MontaURL($p_sigla) {
   extract($GLOBALS);
-  $RS_montaurl = db_getLinkData::getInstanceOf($dmbs, $_SESSION['P_CLIENTE'], $p_sigla);
+  $RS_montaurl = db_getLinkData::getInstanceOf($dbms, $_SESSION['P_CLIENTE'], $p_sigla);
   $l_ImagemPadrao='images/folder/SheetLittle.gif';
   if (count($RS_montaUrl)<=0) return '';
   else {
@@ -520,26 +551,23 @@ function MontaRadioSN($label,$chave,$campo) {
 // Retorna a prioridade a partir do código
 // -------------------------------------------------------------------------
 function RetornaPrioridade($p_chave) {
-  extract($GLOBALS);
-  switch (Nvl($p_Chave,999)) {
-  case 0: $RetornaPrioridade='Alta'; break;
-  case 1: $RetornaPrioridade='Média'; break;
-  case 2: $RetornaPrioridade='Normal'; break;
-  default:$RetornaPrioridade='---'; break;
+  switch (Nvl($p_chave,999)) {
+  case 0:  return 'Alta';   break;
+  case 1:  return 'Média';  break;
+  case 2:  return 'Normal'; break;
+  default: return '---';    break;
   }
-  return $function_ret;
 }
 
 // =========================================================================
 // Retorna o tipo de visao a partir do código
 // -------------------------------------------------------------------------
 function RetornaTipoVisao($p_chave) {
-  extract($GLOBALS);
-  switch ($cDbl[$p_Chave]) {
-    case 0: $RetornaTipoVisao='Completa'; break;
-    case 1: $RetornaTipoVisao='Parcial'; break;
-    case 2: $RetornaTipoVisao='Resumida'; break;
-    default:$RetornaTipoVisao='Erro'; break;
+  switch ($p_chave) {
+    case 0: return 'Completa';  break;
+    case 1: return 'Parcial';   break;
+    case 2: return 'Resumida';  break;
+    default:return 'Erro';      break;
   }
 }
 
@@ -703,6 +731,20 @@ function FormatDateTime($date) {
 // -------------------------------------------------------------------------
 function addDays($date,$inc) { 
   return mktime(date(H,$date), date(i,$date), date(s,$date), date(m,$date), date(d,$date)+$inc, date(Y,$date));
+}
+
+// =========================================================================
+// Função que transforma um array numa lista separada por vírgulas
+// array: array de entrada
+// -------------------------------------------------------------------------
+function explodeArray($array) { 
+  if (is_array($array)) {
+    $lista = '';
+    foreach ($array as $key => $val) $lista = $lista.','.trim($val);
+    return substr($lista,1,strlen($lista)+1);
+  } else {
+    return $array;
+  }
 }
 
 // =========================================================================
@@ -1207,7 +1249,7 @@ function Estrutura_Menu() {
           }
        }
      }
-     ShowHTML('            <LI class=menubar>::<A class=starter href="'.$w_dir.'Menu.php?par=Sair" & " onClick="return(confirm("Confirma saída do sistema?"));"> Sair</A>');
+     ShowHTML('            <LI class=menubar>::<A class=starter href="'.$w_dir.'menu.php?par=Sair" & " onClick="return(confirm("Confirma saída do sistema?"));"> Sair</A>');
      ShowHTML('          </UL>');
      ShowHTML('        </DIV>');
      ShowHTML('      </DIV>');
@@ -1276,19 +1318,12 @@ function VerificaAssinaturaEletronica($Usuario,$Senha) {
 // =========================================================================
 // Função que formata dias, horas, minutos e segundos a partir dos segundos
 // -------------------------------------------------------------------------
-function FormataDataEdicao($w_dt_grade) {
-  $l_dt_grade = $w_dt_grade;
-  if ($l_dt_grade > '') {
-     if (strlen($l_dt_grade) < 10) {
-        if (substr($l_dt_grade,3,1) != '/') { $l_dt_grade = '0'.$l_dt_grade; }
-        if (strlen($l_dt_grade) < 10 && (substr($l_dt_grade,6,1) != '/')) {
-           $l_dt_grade = substr($l_dt_grade,1,3).'0'.substr($l_dt_grade,4,6);
-        }
-     }
+function FormataDataEdicao($w_dt_grade) { 
+  if (nvl($w_dt_grade,'')>'') {
+    return date('d/m/Y',$w_dt_grade); 
+  } else {
+    return null;
   }
-  else { $l_dt_grade = null; }
-  return $l_dt_grade;
-  $l_dt_grade = null;
 }
 
 //Limpa Mascara para gravar os dados no banco de dados

@@ -19,18 +19,17 @@ class db_putCall {
                    'p_assunto'                   =>array(tvl($p_assunto),                                  B_VARCHAR,      1000),
                    'p_pessoa'                    =>array(tvl($p_pessoa),                                   B_INTEGER,        32),
                    'p_fax'                       =>array(tvl($p_fax),                                      B_VARCHAR,         1),
-                   'p_trabalho'                  =>array(tvl($p_trabalho),                                 B_VARCHAR,         1),
-                   'p_result'                    =>array(null,                                             B_CURSOR,         -1)
+                   'p_trabalho'                  =>array(tvl($p_trabalho),                                 B_VARCHAR,         1)
                   );
      $l_rs = DatabaseQueriesFactory::getInstanceOf($sql, $dbms, $params, DB_TYPE);
-     $l_error_reporting = error_reporting(); error_reporting(0); if(!$l_rs->executeQuery()) { error_reporting($l_error_reporting); TrataErro($sql, $l_rs->getError(), $params, __FILE__, __LINE__, __CLASS__); }
-     else {
+     $l_error_reporting = error_reporting(); 
+     error_reporting(0); 
+     if(!$l_rs->executeQuery()) { 
        error_reporting($l_error_reporting); 
-        if ($l_rs = $l_rs->getResultData()) {
-          return $l_rs;
-        } else {
-          return array();
-        }
+       TrataErro($sql, $l_rs->getError(), $params, __FILE__, __LINE__, __CLASS__); 
+     } else {
+       error_reporting($l_error_reporting); 
+       return true;
      }
    }
 }

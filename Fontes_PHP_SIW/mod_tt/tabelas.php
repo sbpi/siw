@@ -154,8 +154,7 @@ function centralTel() {
     $w_recupera_bilhetes  = $_REQUEST['w_recupera_bilhetes'];
   } elseif ($O=='L') {
     $RS = db_getCentralTel::getInstanceOf($dbms,null,null,$p_sq_pessoa_endereco,null,null);
-    array_key_case_change(&$RS);
-    $RS = SortArray($RS,$_REQUEST['p_ordena'],'asc');
+    $RS = SortArray($RS,strtolower($_REQUEST['p_ordena']),'asc');
   } elseif ((!(strpos('AEV',$O)===false)) && $w_Troca=='') {
     $RS = db_getCentralTel::getInstanceOf($dbms,$w_chave,$w_cliente,$w_sq_pessoa_endereco,null,null);
     foreach ($RS as $row) {
@@ -342,8 +341,7 @@ function Troncos() {
 
   // Recupera sempre todos os registros
   $RS = db_getCentralTel::getInstanceOf($dbms,$w_chave,null,null,null,null);
-  array_key_case_change(&$RS);
-  $RS = SortArray($RS,$_REQUEST['p_ordena'],'asc');
+  $RS = SortArray($RS,strtolower($_REQUEST['p_ordena']),'asc');
   Cabecalho();
   ShowHTML('<HEAD>');
   ShowHTML('<TITLE>SIW - Troncos da Central</TITLE>');
@@ -704,7 +702,6 @@ function UsuarioCentral() {
   ShowHTML('</table>');
   if ($O=='L') {
     $RS = db_getCentralTel::getInstanceOf($dbms,$w_chave,$w_cliente,null,null,'USER');
-    array_key_case_change(&$RS);
     $RS = SortArray($RS,'nm_usuario','asc');
     // Exibe a quantidade de registros apresentados na listagem e o cabeçalho da tabela de listagem
     ShowHTML('<div align=center><center>');
@@ -872,18 +869,22 @@ function RamalUsr() {
   ShowHTML('</table>');
   if ($O=='L') {
     $RS = db_getTTRamal::getInstanceOf($dbms,$w_chave,null,null,'USER');
-    array_key_case_change(&$RS);
-    $RS = SortArray($RS,'inicio','desc','dt_fim','desc', 'nm_usuario', 'desc');
+    if (nvl($_REQUEST['p_ordena'],'')>'') {
+      $lista = explode(',',str_replace(' ',',',strtolower($_REQUEST['p_ordena'])));
+      $RS = SortArray($RS,$lista[0],$lista[1],'inicio','desc','dt_fim','desc');
+    } else {
+      $RS = SortArray($RS,'inicio','desc','dt_fim','desc', 'nm_usuario', 'desc');
+    }
     ShowHTML('<div align=center><center>');
     ShowHTML('          <td><br><b>Usuários</td>');
     ShowHTML('<div align=left><left>');
     ShowHTML('<tr><td><font size="1"><a accesskey="I" class="SS" href="'.$w_dir.$w_pagina.$par.'&R='.$w_pagina.$par.'&O=I&w_chave='.$w_chave.'&P1='.$P1.'&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP='.$TP.'&SG='.$SG.'"><u>I</u>ncluir</a>&nbsp;');
     ShowHTML('    <TABLE WIDTH="100%" bgcolor="'.$conTableBgColor.'" BORDER="'.$conTableBorder.'" CELLSPACING="'.$conTableCellSpacing.'" CELLPADDING="'.$conTableCellPadding.'" BorderColorDark="'.$conTableBorderColorDark.'" BorderColorLight="'.$conTableBorderColorLight.'">');
     ShowHTML('        <tr bgcolor="'.$conTrBgColor.'" align="center">');
-    ShowHTML('          <td><font size="1"><b>Usuário   </b></font></td>');
-    ShowHTML('          <td><font size="1"><b>De        </b></font></td>');
-    ShowHTML('          <td><font size="1"><b>Até       </b></font></td>');
-    ShowHTML('          <td><font size="1"><b>Opereções </b></font></td>');
+    ShowHTML('          <td><font size="1"><b>'.linkOrdena('Usuário','nm_usuario').'</b></font></td>');
+    ShowHTML('          <td><font size="1"><b>'.linkOrdena('De','inicio').'</b></font></td>');
+    ShowHTML('          <td><font size="1"><b>'.linkOrdena('Até','fim').'</b></font></td>');
+    ShowHTML('          <td><font size="1"><b>Operações </b></font></td>');
     ShowHTML('        </tr>');
     if (count($RS)<=0) {
       // Se não foram selecionados registros, exibe mensagem
@@ -895,18 +896,18 @@ function RamalUsr() {
         $w_cor = ($w_cor==$conTrBgColor || $w_cor=='') ? $w_cor=$conTrAlternateBgColor : $w_cor=$conTrBgColor;
         ShowHTML('      <tr bgcolor="'.$w_cor.'" valign="top">');
         ShowHTML('        <td><font size="1">'.f($row,'nm_usuario').'</td>');
-        ShowHTML('        <td align="center"><font size="1">'.FormatDateTime(f($row,'inicio')).'</td>');
+        ShowHTML('        <td align="center"><font size="1">'.FormataDataEdicao(f($row,'inicio')).'</td>');
         if (f($row,'fim')!='') {
-          ShowHTML('      <td align="center"><font size="1">'.FormatDateTime(f($row,'fim')).' </td>');
+          ShowHTML('      <td align="center"><font size="1">'.FormataDataEdicao(f($row,'fim')).' </td>');
         } else {
           ShowHTML('      <td align="CENTER"><font size="1"> ---                    </td>');
         } 
         ShowHTML('        <td align="top" nowrap><font size="1">');
-        ShowHTML('          <A class="HL" HREF="'.$w_dir.$w_pagina.$par.'&R='.$w_pagina.$par.'&O=A&w_chave='.$w_chave.'&w_chaveAux='.f($row,'usuario').'&w_inicio='.FormatDateTime(f($row,'inicio')).'&w_fim='.FormatDateTime(f($row,'fim')).'&P1='.$P1.'&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP='.$TP.'&SG='.$SG.MontaFiltro('GET').'">Alterar</A>&nbsp');
+        ShowHTML('          <A class="HL" HREF="'.$w_dir.$w_pagina.$par.'&R='.$w_pagina.$par.'&O=A&w_chave='.$w_chave.'&w_chaveAux='.f($row,'usuario').'&w_inicio='.FormataDataEdicao(f($row,'inicio')).'&w_fim='.FormataDataEdicao(f($row,'fim')).'&P1='.$P1.'&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP='.$TP.'&SG='.$SG.MontaFiltro('GET').'">Alterar</A>&nbsp');
         if (Nvl(f($row,'fim'),'')=='') {
-          ShowHTML('          <A class="HL" HREF="'.$w_dir.$w_pagina.$par.'&R='.$w_pagina.$par.'&O=F&w_chave='.$w_chave.'&w_chaveAux='.f($row,'usuario').'&w_inicio='.FormatDateTime(f($row,'inicio')).'&w_fim='.FormatDateTime(f($row,'fim')).'&P1='.$P1.'&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP='.$TP.'&SG='.$SG.MontaFiltro('GET').'">Finalizar</A>&nbsp');
+          ShowHTML('          <A class="HL" HREF="'.$w_dir.$w_pagina.$par.'&R='.$w_pagina.$par.'&O=F&w_chave='.$w_chave.'&w_chaveAux='.f($row,'usuario').'&w_inicio='.FormataDataEdicao(f($row,'inicio')).'&w_fim='.FormataDataEdicao(f($row,'fim')).'&P1='.$P1.'&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP='.$TP.'&SG='.$SG.MontaFiltro('GET').'">Finalizar</A>&nbsp');
         } 
-        ShowHTML('          <A class="HL" HREF="'.$w_dir.$w_pagina.$par.'&R='.$w_pagina.$par.'&O=E&w_chave='.$w_chave.'&w_chaveAux='.f($row,'usuario').'&w_inicio='.FormatDateTime(f($row,'inicio')).'&w_fim='.FormatDateTime(f($row,'fim')).'&P1='.$P1.'&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP='.$TP.'&SG='.$SG.MontaFiltro('GET').'">Excluir</A>&nbsp');
+        ShowHTML('          <A class="HL" HREF="'.$w_dir.$w_pagina.$par.'&R='.$w_pagina.$par.'&O=E&w_chave='.$w_chave.'&w_chaveAux='.f($row,'usuario').'&w_inicio='.FormataDataEdicao(f($row,'inicio')).'&w_fim='.FormataDataEdicao(f($row,'fim')).'&P1='.$P1.'&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP='.$TP.'&SG='.$SG.MontaFiltro('GET').'">Excluir</A>&nbsp');
         ShowHTML('        </td>');
         ShowHTML('      </tr>');
       } 
@@ -1017,9 +1018,8 @@ function prefixo() {
     $w_degrau       = $_REQUEST['w_degrau'];
   } elseif ($O=='L') {
     $RS = db_getPrefixo::getInstanceOf($dbms,null,$p_prefixo,$p_uf);
-    array_key_case_change(&$RS);
     if ($_REQUEST['p_ordena']>'') {
-       $RS = SortArray($RS,$_REQUEST['p_ordena'],'asc','prefixo','asc');
+       $RS = SortArray($RS,strtolower($_REQUEST['p_ordena']),'asc','prefixo','asc');
     } else {
        $RS = SortArray($RS,'prefixo','asc','localidade','asc');
     }

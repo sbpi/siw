@@ -501,6 +501,7 @@ Fontes_ASP_SIW/mod_tt/VisualResumoLigacaoParticular.asp -text
 Fontes_ASP_SIW/mod_tt/VisualResumoLigacaoParticularWord.asp -text
 Fontes_ASP_SIW/results.asp -text
 Fontes_PHP_SIW/branco.htm -text
+Fontes_PHP_SIW/calendario.php -text
 Fontes_PHP_SIW/classes/db/ConnectionManager.php -text
 Fontes_PHP_SIW/classes/db/ConnectionManagerFactory.php -text
 Fontes_PHP_SIW/classes/db/DBTypes.php -text
@@ -781,12 +782,16 @@ Fontes_PHP_SIW/funcoes/selecaoUnidadePai.php -text
 Fontes_PHP_SIW/funcoes/selecaoUsuUnid.php -text
 Fontes_PHP_SIW/funcoes/selecaoVinculo.php -text
 Fontes_PHP_SIW/geragrafico.php -text
+Fontes_PHP_SIW/gr_demandaeventual.php -text
+Fontes_PHP_SIW/gr_projeto.php -text
 Fontes_PHP_SIW/help.php -text
 Fontes_PHP_SIW/jscript.php -text
 Fontes_PHP_SIW/menu.php -text
 Fontes_PHP_SIW/mod_sf/sicof.php -text
 Fontes_PHP_SIW/mod_tt/tabelas.php -text
 Fontes_PHP_SIW/pessoa.php -text
+Fontes_PHP_SIW/projeto.php -text
+Fontes_PHP_SIW/projetoativ.php -text
 Fontes_PHP_SIW/seguranca.php -text
 Fontes_PHP_SIW/seguranca1.php -text
 Fontes_PHP_SIW/tabela1.php -text
@@ -797,6 +802,7 @@ Fontes_PHP_SIW/tabela_siw.php -text
 Fontes_PHP_SIW/tarifacao.php -text
 Fontes_PHP_SIW/trabalho.php -text
 Fontes_PHP_SIW/visualCliente.php -text
+Fontes_PHP_SIW/visualdemanda.php -text
 SP_MSSQL2000/SIW/SIW.ACENTOS.UDF -text
 SP_MSSQL2000/SIW/SIW.AC_CriaParametro.PRC -text
 SP_MSSQL2000/SIW/SIW.Criptografia.UDF -text

@@ -52,7 +52,6 @@ function visualCliente($w_sq_cliente,$O) {
 
     //Endereços de e-mail e internet
     $RS = db_getAddressList::getInstanceOf($dbms,$w_sq_cliente,null,'EMAILINTERNET',null);
-    array_key_case_change(&$RS);
     $RS = SortArray($RS,'tipo_endereco','asc','padrao','desc','endereco','asc');
     ShowHTML('      <tr><td valign="top" colspan="2" align="center" bgcolor="#D0D0D0" style="border: 2px solid rgb(0,0,0);"><b>Endereços e-Mail e Internet ('.count($RS).')</td>');
     ShowHTML('      <tr><td align="center" colspan="2">');
@@ -79,7 +78,6 @@ function visualCliente($w_sq_cliente,$O) {
   
     //Endereços físicos
     $RS = db_getAddressList::getInstanceOf($dbms,$w_sq_cliente,null,'FISICO',null);
-    array_key_case_change(&$RS);
     $RS = SortArray($RS,'padrao','desc','logradouro','asc');
     ShowHTML('      <tr><td valign="top" colspan="2" align="center" bgcolor="#D0D0D0" style="border: 2px solid rgb(0,0,0);"><b>Endereços Físicos ('.count($RS).')</td>');
     if (count($RS)==0) {
@@ -104,7 +102,6 @@ function visualCliente($w_sq_cliente,$O) {
 
     //Telefones
     $RS = db_getFoneList::getInstanceOf($dbms,$w_sq_cliente,null,null,null);
-    array_key_case_change(&$RS);
     $RS = SortArray($RS,'tipo_telefone','asc','cidade','asc','padrao','desc','numero','asc');
     ShowHTML('      <tr><td valign="top" colspan="2" align="center" bgcolor="#D0D0D0" style="border: 2px solid rgb(0,0,0);"><b>Telefones ('.count($RS).')</td>');
     ShowHTML('      <tr><td align="center" colspan="2">');
@@ -137,7 +134,6 @@ function visualCliente($w_sq_cliente,$O) {
 
     //Contas bancárias
     $RS = db_getContaBancoList::getInstanceOf($dbms,$w_sq_cliente,null,null);
-    array_key_case_change(&$RS);
     $RS = SortArray($RS,'tipo_conta','asc','padrao','desc','banco','asc','numero','asc');
     ShowHTML('      <tr><td valign="top" colspan="2" align="center" bgcolor="#D0D0D0" style="border: 2px solid rgb(0,0,0);"><b>Contas Bancárias ('.count($RS).')</td>');
     ShowHTML('      <tr><td align="center" colspan="2">');
@@ -193,7 +189,6 @@ function visualCliente($w_sq_cliente,$O) {
 
     //Usuários cadastrados
     $RS = db_getUserList::getInstanceOf($dbms,$w_sq_cliente,null,null,null,null,null,null,'S',null);
-    array_key_case_change(&$RS);
     $RS = SortArray($RS,'nome_resumido_ind','asc');
     ShowHTML('      <tr><td valign="top" colspan="2" align="center" bgcolor="#D0D0D0" style="border: 2px solid rgb(0,0,0);"><b>Usuários Cadastrados ('.count($RS).')</td>');
     ShowHTML('      <tr><td align="center" colspan="2">');

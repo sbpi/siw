@@ -9,7 +9,18 @@ extract($GLOBALS); include_once($w_dir_volta.'classes/db/DatabaseQueriesFactory.
 */
 
 class db_getSolicList {
-   function getInstanceOf($dbms, $p_menu, $p_pessoa, $p_restricao, $p_tipo, $p_ini_i, $p_ini_f, $p_fim_i, $p_fim_f, $p_atraso, $p_solicitante, $p_unidade, $p_prioridade, $p_ativo, $p_proponente, $p_chave, $p_assunto, $p_pais, $p_regiao, $p_uf, $p_cidade, $p_usu_resp, $p_uorg_resp, $p_palavra, $p_prazo, $p_fase, $p_sqcc, $p_projeto, $p_atividade, $p_acao_ppa, $p_orprior) {
+   function getInstanceOf($dbms, $p_menu, $p_pessoa, $p_restricao, $p_tipo, 
+        $p_ini_i, $p_ini_f, $p_fim_i, $p_fim_f, $p_atraso, $p_solicitante, 
+        $p_unidade, $p_prioridade, $p_ativo, $p_proponente, 
+        $p_chave, $p_assunto, $p_pais, $p_regiao, $p_uf, $p_cidade, $p_usu_resp, 
+        $p_uorg_resp, $p_palavra, $p_prazo, $p_fase, $p_sqcc, $p_projeto, $p_atividade, 
+        $p_acao_ppa, $p_orprior) {
+
+     //$l_fase = '';
+     //for ($i=0; $i<=count($p_fase)-1; $i=$i+1) {
+     //  $l_fase = $l_fase.','.$p_fase[$i];
+     //} 
+     //$l_fase = substr($l_fase,1,500);
      $sql=$strschema.'SP_GETSOLICLIST';
      $params=array('p_menu'                      =>array($p_menu,                                          B_INTEGER,        32),
                    'p_pessoa'                    =>array($p_pessoa,                                        B_INTEGER,        32),

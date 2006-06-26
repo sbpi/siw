@@ -119,7 +119,6 @@ function Cidade() {
     $w_capital      = $_REQUEST['w_capital'];
   } elseif ($O=='L') {
     $RS = db_getCityList::getInstanceOf($dbms,$p_sq_pais,$p_co_uf,$p_nome,null);
-    array_key_case_change(&$RS);
     if ($p_ordena>'') { 
       $RS = SortArray($RS,$p_ordena,'asc');
     } else {
@@ -351,7 +350,6 @@ function Estado() {
     $w_ordem        = $_REQUEST['w_ordem'];
   } elseif ($O=='L') {
     $RS = db_getStateList::getInstanceOf($dbms,nvl($p_sq_pais,0),$p_sq_regiao,$p_ativo,null);
-    array_key_case_change(&$RS);
     if ($p_ordena>'') { 
       $RS = SortArray($RS,$p_ordena,'asc','nome','asc');
     } else {
@@ -584,7 +582,6 @@ function Regiao() {
 
   if ($O=='L') {
     $RS = db_getRegionList::getInstanceOf($dbms,$p_sq_pais,'N',$p_nome);
-    array_key_case_change(&$RS);
     if ($p_ordena>'') { 
       $RS = SortArray($RS,$p_ordena,'asc');
     } else {
@@ -776,7 +773,6 @@ function Pais() {
   
   if ($O=='L') {
     $RS = db_getCountryList::getInstanceOf($dbms,null,$p_nome,$p_ativo,$p_sigla);
-    array_key_case_change(&$RS);
     if ($p_ordena>'') { 
       $RS = SortArray($RS,$p_ordena,'asc','nome','asc');
     } else {

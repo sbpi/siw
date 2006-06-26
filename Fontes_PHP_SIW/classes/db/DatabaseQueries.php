@@ -253,8 +253,25 @@ class OraDatabaseQueries extends DatabaseQueries {
     */
     
     function getResultArray() {
-        if(is_resource($this->result)) { return oci_fetch_array($this->result, OCI_BOTH+OCI_RETURN_NULLS); }
-        else { return null; }
+        if(is_resource($this->result)) { 
+          for ($i = 1; $i <= oci_num_fields($this->result); $i++) {
+            if (oci_field_type($this->result, $i)=='DATE' || oci_field_type($this->result, $i)=='NUMBER') $this->column_datatype[oci_field_name($this->result, $i)] = oci_field_type($this->result, $i);
+          }
+          $this->temp = oci_fetch_array($this->result, OCI_BOTH+OCI_RETURN_NULLS); 
+          if (isset($this->column_datatype)) {
+            foreach ($this->column_datatype as $key => $val) {
+              if (nvl($this->temp[$key],'')>'') { 
+                if ($val=='DATE') {
+                  $tmp = formatDateTime($this->temp[$key]);
+                  $this->temp[$key] = mktime(0,0,0,substr($tmp,3,2),substr($tmp,0,2),substr($tmp,6,4)); 
+                } else {
+                  $this->temp[$key] = str_replace(',','.',$this->temp[$key]); 
+                }
+              }
+            }
+          }
+          return $this->temp;
+        } else { return null; }
     }
 
 }
@@ -327,6 +344,7 @@ class OraDatabaseQueryProc extends OraDatabaseQueries {
            $this->result = oci_new_cursor($this->conHandle);
            $this->stmt = oci_parse($this->conHandle, "begin $this->query ($par); end;");
 
+           $exibe = false;
            foreach($this->params as $paramName=>$value) {
                foreach($value as $paramValue=>$paramType) {
                    if($value[1]!=B_CURSOR)
@@ -344,7 +362,25 @@ class OraDatabaseQueryProc extends OraDatabaseQueries {
            } else {
               oci_execute($this->result);
               if(is_resource($this->result)) { 
+                 for ($i = 1; $i <= oci_num_fields($this->result); $i++) {
+                   if (oci_field_type($this->result, $i)=='DATE' || oci_field_type($this->result, $i)=='NUMBER') { $this->column_datatype[strtolower(oci_field_name($this->result, $i))] = oci_field_type($this->result, $i); }
+                 }
                  $this->num_rows = oci_fetch_all($this->result, $this->resultData, 0, -1,OCI_ASSOC+OCI_FETCHSTATEMENT_BY_ROW);
+                 array_key_case_change(&$this->resultData);
+                 if (isset($this->column_datatype)) {
+                   for ($i = 0; $i < $this->num_rows; $i++) {
+                     foreach ($this->column_datatype as $key => $val) {
+                       if (nvl($this->resultData[$i][$key],'')>'') { 
+                         if ($val=='DATE') {
+                           $tmp = formatDateTime($this->resultData[$i][$key]);
+                           $this->resultData[$i][$key] = mktime(0,0,0,substr($tmp,3,2),substr($tmp,0,2),substr($tmp,6,4)); 
+                         } else {
+                           $this->resultData[$i][$key] = str_replace(',','.',$this->resultData[$i][$key]); 
+                         }
+                       }
+                     }
+                   }
+                 }
               } else { 
                 $this->num_rows = -1; 
                 $this->error    = oci_error($this->result);

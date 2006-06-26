@@ -9,10 +9,11 @@ extract($GLOBALS); include_once($w_dir_volta.'classes/db/DatabaseQueriesFactory.
 */
 
 class db_getSolicEtpRec {
-   function getInstanceOf($dbms, $p_chave, $p_chave_aux) {
+   function getInstanceOf($dbms, $p_chave, $p_chave_aux, $p_restricao) {
      $sql=$strschema.'SP_GETSOLICETPREC';
      $params=array('p_chave'                     =>array($p_chave,                                         B_INTEGER,        32),
                    'p_chave_aux'                 =>array(tvl($p_chave_aux),                                B_INTEGER,        32),
+                   'p_restricao'                 =>array(tvl($p_restricao),                                B_VARCHAR,        30),
                    'p_result'                    =>array(null,                                             B_CURSOR,         -1)
                   );
      $l_rs = DatabaseQueriesFactory::getInstanceOf($sql, $dbms, $params, DB_TYPE);

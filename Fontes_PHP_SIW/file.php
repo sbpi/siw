@@ -1,9 +1,10 @@
 <?
 ob_start();
 session_start();
-include_once('constants.inc');
-include_once('funcoes.php');
-include_once('classes/db/abreSessao.php');
+include_once($w_dir_volta.'constants.inc');
+include_once($w_dir_volta.'funcoes.php');
+include_once($w_dir_volta.'classes/db/abreSessao.php');
+include_once($w_dir_volta.'classes/sp/db_getSiwArquivo.php');
 
 // =========================================================================
 //  /file.asp
@@ -42,13 +43,15 @@ if (Nvl($w_cliente,'')=='' || Nvl($w_id,'')=='' || (Nvl($w_sessao,'')=='' && $_S
   if (count($RS)==0) {
     $w_erro=2; // Arquivo não encontrado
   } else {
-    $w_nome      = f($RS,'nome');
-    $w_descricao = f($RS,'descricao');
-    $w_inclusao  = f($RS,'inclusao');
-    $w_tamanho   = f($RS,'tamanho');
-    $w_tipo      = f($RS,'tipo');
-    $w_caminho   = f($RS,'caminho');
-    $w_filename  = f($RS,'nome_original');
+    foreach ($RS as $row) {
+      $w_nome      = f($row,'nome');
+      $w_descricao = f($row,'descricao');
+      $w_inclusao  = f($row,'inclusao');
+      $w_tamanho   = f($row,'tamanho');
+      $w_tipo      = f($row,'tipo');
+      $w_caminho   = f($row,'caminho');
+      $w_filename  = f($row,'nome_original');
+    }
   } 
   FechaSessao($dbms);
 } 
@@ -90,12 +93,12 @@ function DownloadFile($strFileName,$blnForceDownload) {
   //----------------------
   //second step: get file size.
   //----------------------
-  $fileSize = filesize($strFilePath);
+  $fileSize = fileSize($strFilePath);
 
   //----------------------
   //third step: check whether file is binary or not and get content type of the file. (according to its extension)
   //----------------------
-  $blnBinary  = GetExtension($w_tipo,$strExtension);
+  $blnBinary  = GetExtension($w_tipo,&$strExtension);
   $strAllFile = '';
   if (strpos($w_filename,'.')===false) $w_filename = $w_filename.$strExtension;
 
@@ -109,9 +112,9 @@ function DownloadFile($strFileName,$blnForceDownload) {
   }
   
   if ($blnForceDownload=='true') {
-    header('Content-Disposition: attachment; filename='.$w_filename,false);
+    header('Content-Disposition: attachment; filename='.$w_filename);
   } else {
-    header('Content-Disposition: inline; filename='.$w_filename,false);
+    header('Content-Disposition: inline; filename='.$w_filename);
   } 
   header('Content-Length: '.$fileSize,false);
 
@@ -143,6 +146,7 @@ function GetExtension($strName,&$Extension) {
     case 'application/vnd.ms-powerpoint':   $Extension='.ppt';      return true;   break;
     case 'image/gif':                       $Extension='.gif';      return true;   break;
     case 'image/jpeg':                      $Extension='.jpg';      return true;   break;
+    case 'image/pjpeg':                     $Extension='.jpg';      return true;   break;
     case 'audio/wav':                       $Extension='.wav';      return true;   break;
     case 'audio/mpeg3':                     $Extension='.mp3';      return true;   break;
     case 'video/mpeg':                      $Extension='.mpg';      return true;   break;

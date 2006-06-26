@@ -100,7 +100,6 @@ function TipoVinculo() {
 
   if (!(strpos('LP',$O)===false)) {
     $RS = db_getVincKindList::getInstanceOf($dbms,$w_cliente,$p_ativo,null,$p_nome,null);
-    array_key_case_change(&$RS);
     $RS = SortArray($RS,'sq_tipo_pessoa','asc','padrao','desc','nome','asc');
   } elseif (($O=='A' || $O=='E')) {
     $RS = db_getVincKindData::getInstanceOf($dbms,$w_sq_tipo_vinculo);

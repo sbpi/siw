@@ -637,7 +637,6 @@ function Banco() {
 
   if ($O=='L') {
     $RS = db_getBankList::getInstanceOf($dbms,$p_codigo,$p_nome,$p_ativo);
-    array_key_case_change(&$RS);
     if ($p_ordena>'') { 
       $RS = SortArray($RS,$p_ordena,'asc','nome','asc');
     } else {

@@ -7,7 +7,6 @@ function selecaoEOAreaAtuacao($label,$accesskey,$hint,$chave,$chaveAux,$campo,$r
   extract($GLOBALS);
 
   $RS = db_getEOAAtuac::getInstanceOf($dbms, $chaveAux, null, 'S');
-  array_key_case_change(&$RS);
   $RS = SortArray($RS,'nome','asc');
   //$RS->Filter="ativo = 'S'";
   if (!isset($hint)) {

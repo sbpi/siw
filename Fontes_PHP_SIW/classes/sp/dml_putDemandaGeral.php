@@ -9,7 +9,11 @@ extract($GLOBALS); include_once($w_dir_volta.'classes/db/DatabaseQueriesFactory.
 */
 
 class dml_putDemandaGeral {
-   function getInstanceOf($dbms, $operacao, $p_chave, $p_menu, $p_unidade, $p_solicitante, $p_proponente, $p_cadastrador, $p_executor, $p_sqcc, $p_descricao, $p_justificativa, $p_ordem, $p_inicio, $p_fim, $p_valor, $p_data_hora, $p_unid_resp, $p_assunto, $p_prioridade, $p_aviso, $p_dias, $p_cidade, $p_palavra_chave, $p_inicio_real, $p_fim_real, $p_concluida, $p_data_conclusao, $p_nota_conclusao, $p_custo_real, $p_opiniao, $p_projeto, $p_atividade, $p_projeto_ant, $p_atividade_ant, $p_chave_nova, $p_copia) {
+   function getInstanceOf($dbms, $operacao, $p_chave, $p_menu, $p_unidade, $p_solicitante, $p_proponente, $p_cadastrador, $p_executor, 
+        $p_sqcc, $p_descricao, $p_justificativa, $p_ordem, $p_inicio, $p_fim, $p_valor, $p_data_hora, $p_unid_resp, $p_assunto, 
+        $p_prioridade, $p_aviso, $p_dias, $p_cidade, $p_palavra_chave, $p_inicio_real, $p_fim_real, $p_concluida, $p_data_conclusao, 
+        $p_nota_conclusao, $p_custo_real, $p_opiniao, $p_projeto, $p_atividade, $p_projeto_ant, $p_atividade_ant, $p_chave_nova, 
+        $p_copia) {
      $sql=$strschema.'SP_PUTDEMANDAGERAL';
      $params=array('p_operacao'                  =>array($operacao,                                        B_VARCHAR,         1),
                    'p_chave'                     =>array(tvl($p_chave),                                    B_INTEGER,        32),
@@ -46,7 +50,7 @@ class dml_putDemandaGeral {
                    'p_atividade'                 =>array(tvl($p_atividade),                                B_INTEGER,        32),
                    'p_projeto_ant'               =>array(tvl($p_projeto_ant),                              B_INTEGER,        32),
                    'p_atividade_ant'             =>array(tvl($p_atividade_ant),                            B_INTEGER,        32),
-                   'p_chave_nova'                =>array(null,                                             B_INTEGER,        32)
+                   'p_chave_nova'                =>array(&$p_chave_nova,                                   B_INTEGER,        32)
                   );
      $l_rs = DatabaseQueriesFactory::getInstanceOf($sql, $dbms, $params, DB_TYPE);
      $l_error_reporting = error_reporting(); 

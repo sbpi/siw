@@ -6,7 +6,6 @@ include_once($w_dir_volta.'classes/sp/db_getUserList.php');
 function selecaoUsuUnid($label,$accesskey,$hint,$chave,$chaveAux,$campo,$restricao) {
   extract($GLOBALS);
   $RS = db_getUserList::getInstanceOf($dbms, $w_cliente, null, null, null, null, null, null, 'S', 'S');
-  array_key_case_change(&$RS);
   $RS = SortArray($RS,'nome_indice','asc');
 
   if (!isset($hint)) {

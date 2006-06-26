@@ -7,11 +7,7 @@ function selecaoTipoEndereco($label,$accesskey,$hint,$chave,$chaveAux,$campo,$re
   extract($GLOBALS);
 
   $RS = db_getAdressTypeList::getInstanceOf($dbms, $chaveAux, null, null);
-  array_key_case_change(&$RS);
   $RS = SortArray($RS,'nome','asc');
-  //if ($restricao>'') {
-  //  $RS->Filter=$restricao;
-  //}
 
   if (!isset($hint)) {
     ShowHTML('          <td valign="top"><font size="1"><b>'.$label.'</b><br><SELECT ACCESSKEY="'.$accesskey.'" CLASS="sts" NAME="'.$campo.'" '.$w_Disabled.' '.$atributo.'>');
@@ -27,6 +23,5 @@ function selecaoTipoEndereco($label,$accesskey,$hint,$chave,$chaveAux,$campo,$re
     }
   }
   ShowHTML('          </select>');
-  return $function_ret;
 }
 ?>

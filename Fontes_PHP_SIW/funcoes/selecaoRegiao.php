@@ -6,7 +6,6 @@ include_once($w_dir_volta.'classes/sp/db_getRegionList.php');
 function selecaoRegiao($label,$accesskey,$hint,$chave,$chaveAux,$campo,$restricao,$atributo) {
   extract($GLOBALS);
   $RS = db_getRegionList::getInstanceOf($dbms, $chaveAux, null, null);
-  array_key_case_change(&$RS);
   $RS = SortArray($RS,'ordem','asc');
 
   if (!isset($hint)) {

@@ -142,7 +142,6 @@ function Inicial() {
 
   if ($O=='L') {
     $RS = db_getSiwCliList::getInstanceOf($dbms,$p_pais,$p_uf,$p_cidade,$p_ativo,$p_nome);
-    array_key_case_change(&$RS);
     $RS = SortArray($RS,'nome_indice','asc');
   } 
 
@@ -207,7 +206,7 @@ function Inicial() {
       ShowHTML('        <td align="center" nowrap>'.Nvl(f($row,'cnpj'),'-').'</td>');
       ShowHTML('        <td align="left" title="'.f($row,'nome').'">'.f($row,'nome_resumido').'</td>');
       ShowHTML('        <td align="center">'.f($row,'cidade').'&nbsp;('.f($row,'uf').')</td>');
-      ShowHTML('        <td align="center">&nbsp;'.Nvl($FormatDateTime[f($row,'ativacao')][2],'-').'</td>');
+      ShowHTML('        <td align="center">&nbsp;'.Nvl(FormataDataEdicao(f($row,'ativacao')),'-').'</td>');
       ShowHTML('        <td align="top" nowrap>');
       if ($w_submenu>'') {
         ShowHTML('          <A class="hl" HREF="menu.php?par=ExibeDocs&O=A&w_cgccpf='.f($row,'cnpj').'&R='.$w_pagina.$par.'&SG='.$SG.'&TP='.$TP.'&w_documento='.f($row,'nome_resumido').MontaFiltro('GET').'" title="Altera as informações cadastrais do cliente" TARGET="menu">Alterar</a>&nbsp;');
@@ -341,7 +340,7 @@ function Geral() {
           $w_nome                   = f($RS,'Nome');
           $w_nome_resumido          = f($RS,'Nome_Resumido');
           $w_inscricao_estadual     = f($RS,'inscricao_estadual');
-          $w_inicio_atividade       = FormatDateTime(f($RS,'inicio_atividade'));
+          $w_inicio_atividade       = FormataDataEdicao(f($RS,'inicio_atividade'));
           $w_sede                   = f($RS,'sede');
           $w_sq_tipo_vinculo        = f($RS,'sq_tipo_vinculo');
           $w_pais                   = f($RS,'sq_pais');
@@ -582,8 +581,7 @@ function Enderecos() {
   if ($O=='L') {
     // Recupera todos os endereços do cliente, independente do tipo
     $RS = db_getAddressList::getInstanceOf($dbms,$w_sq_pessoa,null,null,null);
-    array_key_case_change(&$RS);
-    $RS = SortArray($RS,'tipo_endereco','asc','endereco','asc');
+    $RS = SortArray($RS,'padrao','desc','tipo_endereco','asc','endereco','asc');
   } elseif (!(strpos('AEV',$O)===false)) {
     // Recupera os dados do endereço informado
     $RS = db_getAddressData::getInstanceOf($dbms,$w_sq_pessoa_endereco);
@@ -684,7 +682,7 @@ function Enderecos() {
   } elseif (!(strpos('IAEV',$O)===false)) {
     // Recupera o tipo de pessoa
     $RS = db_getBenef::getInstanceOf($dbms,$w_cliente,$w_sq_pessoa,null,null,null,null,null,null);
-    $w_tipo_pessoa = f($RS,'nm_tipo_pessoa');
+    foreach ($RS as $row) { $w_tipo_pessoa = f($row,'nm_tipo_pessoa'); }
     if ($w_pais=='') {
       // Carrega os valores padrão para país, estado e cidade
       $RS = db_getCustomerData::getInstanceOf($dbms,$w_sq_pessoa);
@@ -791,7 +789,6 @@ function Telefones() {
     $w_padrao           = $_REQUEST['w_padrao'];
   } elseif ($O=='L') {
     $RS = db_getFoneList::getInstanceOf($dbms,$w_sq_pessoa,null,null,null);
-    array_key_case_change(&$RS);
     $RS = SortArray($RS,'tipo_telefone','asc','numero','asc');
   } elseif (!(strpos('AEV',$O)===false)) {
     // Recupera os dados para edição
@@ -890,7 +887,7 @@ function Telefones() {
   } elseif (!(strpos('IAEV',$O)===false)) {
     // Recupera o tipo de pessoa
     $RS = db_getBenef::getInstanceOf($dbms,$w_cliente,$w_sq_pessoa,null,null,null,null,null,null);
-    $w_tipo_pessoa = f($RS,'nm_tipo_pessoa');
+    foreach ($RS as $row) { $w_tipo_pessoa = f($row,'nm_tipo_pessoa'); }
     if ($w_pais=='') {
       // Carrega os valores padrão para país, estado e cidade
       $RS = db_getCustomerData::getInstanceOf($dbms,$w_sq_pessoa);
@@ -991,7 +988,6 @@ function ContasBancarias() {
   if ($O=='L') {
     // Recupera as contas bancárias do cliente
     $RS = db_getContaBancoList::getInstanceOf($dbms,$w_sq_pessoa,null,null);
-    array_key_case_change(&$RS);
     $RS = SortArray($RS,'tipo_conta','asc','banco','asc','numero','asc');
   } elseif (!(strpos('AEV',$O)===false)) {
     // Recupera os dados da conta bancária informada
@@ -1637,12 +1633,16 @@ function Grava() {
         // Se o endereço a ser gravado foi indicado como padrão, verifica se não existe algum outro
         // nesta situação. Só pode haver um endereço padrão para a pessoa dentro de cada tipo de endereço.
         if ($_REQUEST['w_padrao']=='S') {
-          $RS = db_getAddressList::getInstanceOf($dbms,$_REQUEST['w_sq_pessoa'],null,$_REQUEST['w_sq_pessoa_endereco'],$_REQUEST['w_sq_tipo_endereco']);
+          $RS = db_getAddressList::getInstanceOf($dbms,$_REQUEST['w_sq_pessoa'],$_REQUEST['w_sq_pessoa_endereco'],'ENDERECO',$_REQUEST['w_sq_tipo_endereco']);
           if (count($RS)>0) {
-            ScriptOpen('JavaScript');
-            ShowHTML('  alert(\'ATENÇÃO: Só pode haver um valor padrão em cada tipo de endereço. Favor verificar!\');');
-            ShowHTML('  history.back(1);');
-            ScriptClose();
+            foreach($RS as $row) {
+              if (f($row,'sq_pessoa_endereco')!=Nvl($_REQUEST['w_sq_pessoa_endereco'],0)) {
+                ScriptOpen('JavaScript');
+                ShowHTML('  alert(\'ATENÇÃO: Só pode haver um valor padrão em cada tipo de endereço. Favor verificar!\');');
+                ShowHTML('  history.back(1);');
+                ScriptClose();
+              }
+            }
           } 
         } 
       } 
@@ -1668,10 +1668,14 @@ function Grava() {
         if ($_REQUEST['w_padrao']=='S') {
           $RS = db_getFoneList::getInstanceOf($dbms,$_REQUEST['w_sq_pessoa'],$_REQUEST['w_sq_pessoa_telefone'],'TELEFONE',$_REQUEST['w_sq_tipo_telefone']);
           if (count($RS)>0) {
-            ScriptOpen('JavaScript');
-            ShowHTML('  alert(\'ATENÇÃO: Só pode haver um valor padrão em cada tipo de telefone. Favor verificar.!\');');
-            ShowHTML('  history.back(1);');
-            ScriptClose();
+            foreach($RS as $row) {
+              if (f($row,'sq_pessoa_telefone')!=Nvl($_REQUEST['w_sq_pessoa_telefone'],0)) {
+                ScriptOpen('JavaScript');
+                ShowHTML('  alert(\'ATENÇÃO: Só pode haver um valor padrão em cada tipo de telefone. Favor verificar.!\');');
+                ShowHTML('  history.back(1);');
+                ScriptClose();
+              }
+            }
           } 
         } 
       } 
@@ -1695,9 +1699,13 @@ function Grava() {
         $w_mensagem = '';
         // Só pode haver uma conta padrão para a pessoa
         if ($_REQUEST['w_padrao']=='S') {
-          $RS = db_getContaBancoList::getInstanceOf($dbms,$_REQUEST['w_sq_pessoa'],$_REQUEST['w_sq_conta_bancaria'],'CONTASBANCARIAS');
+          $RS = db_getContaBancoList::getInstanceOf($dbms,$_REQUEST['w_sq_pessoa'],$_REQUEST['w_sq_pessoa_conta'],'CONTASBANCARIAS');
           if (count($RS)>0) {
-            $w_mensagem='ATENÇÃO: Só pode haver uma conta padrão. Favor verificar.';
+            foreach($RS as $row) {
+              if (f($row,'sq_pessoa_conta')!=Nvl($_REQUEST['w_sq_pessoa_conta'],0)) {
+                $w_mensagem='ATENÇÃO: Só pode haver uma conta padrão. Favor verificar.';
+              }
+            }
           } 
         } 
         // Verifica se a agência informada existe para o banco selecionado
@@ -1705,7 +1713,7 @@ function Grava() {
         if (count($RS)<=0) {
           $w_mensagem='Agência inexistente para o banco informado. Favor verificar.';
         } else {
-          $w_chave = f($RS,'sq_agencia');
+          foreach ($RS as $row) { $w_chave = f($row,'sq_agencia'); }
         } 
         // Se algum erro for detectado, apresenta mensagem e aborta a gravação
         if ($w_mensagem>'') {
@@ -1718,7 +1726,7 @@ function Grava() {
       if (verificaAssinaturaEletronica($_SESSION['USERNAME'],strtoupper($_REQUEST['w_assinatura'])) || $w_assinatura=='') {
         dml_putCoPesConBan::getInstanceOf($dbms,$O,
             $_REQUEST['w_sq_pessoa_conta'],$_REQUEST['w_sq_pessoa'],$_REQUEST['w_tipo_conta'],
-            $w_Chave,$_REQUEST['w_operacao'],$_REQUEST['w_numero_conta'],$_REQUEST['w_ativo'],
+            $w_chave,$_REQUEST['w_operacao'],$_REQUEST['w_numero_conta'],$_REQUEST['w_ativo'],
             $_REQUEST['w_padrao']);
 
         ScriptOpen('JavaScript');

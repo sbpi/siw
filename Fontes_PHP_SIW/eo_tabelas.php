@@ -96,7 +96,6 @@ function AreaAtuacao(){
   $w_libera_edicao = f($RS,'libera_edicao');
   if ($O=='L') {
     $RS = db_getEOAAtuac::getInstanceOf($dbms,$w_cliente,$p_nome,$p_ativo);
-    array_key_case_change(&$RS);
     if ($p_ordena>'') { 
       $RS = SortArray($RS,$p_ordena,'asc');
     } else {
@@ -285,7 +284,6 @@ function TipoUnidade() {
 
   if ($O=='L') {
     $RS = db_getUnitTypeList::getInstanceOf($dbms,$w_cliente,$p_nome,$p_ativo);
-    array_key_case_change(&$RS);
     if ($p_ordena>'') { 
       $RS = SortArray($RS,$p_ordena,'asc');
     } else {

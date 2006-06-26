@@ -121,7 +121,6 @@ function TipoEndereco() {
 
   if (!(strpos('LP',$O)===false)) {
     $RS = db_getAdressTypeList::getInstanceOf($dbms,null,$p_nome,$p_ativo);
-    array_key_case_change(&$RS);
     if ($p_ordena>'') { 
       $RS = SortArray($RS,substr($p_ordena,0,strpos($p_ordena,' ')),substr($p_ordena,strpos($p_ordena,' ')+1));
     } else {
@@ -316,7 +315,6 @@ function TipoTelefone() {
   if ($O=='') $O='L';
   if (!(strpos('LP',$O)===false)) {
     $RS = db_getFoneTypeList::getInstanceOf($dbms,null,$p_nome,$p_ativo);
-    array_key_case_change(&$RS);
     if ($p_ordena>'') { 
       $RS = SortArray($RS,substr($p_ordena,0,strpos($p_ordena,' ')),substr($p_ordena,strpos($p_ordena,' ')+1));
     } else {
@@ -498,7 +496,6 @@ function TipoPessoa() {
 
   if (!(strpos('LP',$O)===false)) {
     $RS = db_getUserTypeList::getInstanceOf($dbms,$p_nome,$p_ativo);
-    array_key_case_change(&$RS);
     if ($p_ordena>'') { 
       $RS = SortArray($RS,substr($p_ordena,0,strpos($p_ordena,' ')),substr($p_ordena,strpos($p_ordena,' ')+1));
     } else {
@@ -680,7 +677,6 @@ function Deficiencia() {
 
   if (!(strpos('LP',$O)===false)) {
     $RS = db_getDeficiencyList::getInstanceOf($dbms,$p_nome,$p_ativo);
-    array_key_case_change(&$RS);
     if ($p_ordena>'') { 
       $RS = SortArray($RS,substr($p_ordena,0,strpos($p_ordena,' ')),substr($p_ordena,strpos($p_ordena,' ')+1));
     } else {
@@ -865,7 +861,6 @@ function GrupoDeficiencia() {
 
   if (!(strpos('LP',$O)===false)) {
     $RS = db_getDeficGroupList::getInstanceOf($dbms,$p_nome,$p_ativo);
-    array_key_case_change(&$RS);
     if ($p_ordena>'') { 
       $RS = SortArray($RS,substr($p_ordena,0,strpos($p_ordena,' ')),substr($p_ordena,strpos($p_ordena,' ')+1));
     } else {
@@ -1032,7 +1027,6 @@ function Idioma() {
 
   if (!(strpos('LP',$O)===false)) {
     $RS = db_getIdiomList::getInstanceOf($dbms,$p_nome,$p_ativo);
-    array_key_case_change(&$RS);
     if ($p_ordena>'') { 
       $RS = SortArray($RS,substr($p_ordena,0,strpos($p_ordena,' ')),substr($p_ordena,strpos($p_ordena,' ')+1));
     } else {
@@ -1204,7 +1198,6 @@ function Etnia() {
 
   if (!(strpos('LP',$O)===false)) {
     $RS = db_getEtniaList::getInstanceOf($dbms,$p_nome,$p_ativo);
-    array_key_case_change(&$RS);
     if ($p_ordena>'') { 
       $RS = SortArray($RS,substr($p_ordena,0,strpos($p_ordena,' ')),substr($p_ordena,strpos($p_ordena,' ')+1));
     } else {
@@ -1379,7 +1372,6 @@ function Formacao() {
 
   if (!(strpos('LP',$O)===false)) {
     $RS = db_getFormationList::getInstanceOf($dbms,null,$p_nome,$p_ativo);
-    array_key_case_change(&$RS);
     if ($p_ordena>'') { 
       $RS = SortArray($RS,substr($p_ordena,0,strpos($p_ordena,' ')),substr($p_ordena,strpos($p_ordena,' ')+1));
     } else {

@@ -114,7 +114,6 @@ function SegmentoVinc() {
   if (!(strpos('LP',$O)===false)) {
 
     $RS = db_getSegVincData::getInstanceOf($dbms,$par,$w_sq_segmento,null,null);
-    array_key_case_change(&$RS);
     $RS = SortArray($RS,'nm_tipo_pessoa','asc','ordem','asc');
   } elseif (($O=='A' || $O=='E')) {
     $RS = db_getSegVincData::getInstanceOf($dbms,$par,$w_sq_segmento,null,$w_sq_segmento_vinculo);
@@ -481,7 +480,6 @@ function SegmentoModulo() {
 
   if (!(strpos('LP',$O)===false)) {
     $RS = db_getSegVincData::getInstanceOf($dbms,$par,$w_sq_segmento,null,null);
-    array_key_case_change(&$RS);
     $RS = SortArray($RS,'nm_modulo','asc');
   } elseif (($O=='A' || $O=='E')) {
     $RS = db_getSegModData::getInstanceOf($dbms,$w_sq_segmento,$w_sq_modulo);
@@ -660,7 +658,6 @@ function Modulos() {
   if (!(strpos('LP',$O)===false)) {
 
     $RS = db_getModList::getInstanceOf($dbms);
-    array_key_case_change(&$RS);
     $RS = SortArray($RS,'nome','asc');
   } elseif (($O=='A' || $O=='E')) {
     $RS = db_getModData::getInstanceOf($dbms,$w_sq_modulo);
@@ -809,7 +806,6 @@ function Segmento() {
 
   if (!(strpos('LP',$O)===false)) {
     $RS = db_getSegList::getInstanceOf($dbms, null);
-    array_key_case_change(&$RS);
     $RS = SortArray($RS,'padrao','desc','nome','asc');
   } elseif (($O=='A' || $O=='E')) {
     $RS = db_getSegData::getInstanceOf($dbms,$w_sq_segmento);

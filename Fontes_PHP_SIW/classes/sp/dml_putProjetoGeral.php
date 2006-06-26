@@ -41,7 +41,7 @@ class dml_putProjetoGeral {
                    'p_selecionada_mpog'          =>array(tvl($p_selecionada_mpog),                         B_VARCHAR,         1),
                    'p_selecionada_relev'         =>array(tvl($p_selecionada_relev),                        B_VARCHAR,         1),
                    'p_sq_tipo_pessoa'            =>array(tvl($p_sq_tipo_pessoa),                           B_INTEGER,        32),
-                   'p_chave_nova'                =>array(null,                                             B_INTEGER,        32)
+                   'p_chave_nova'                =>array(&$p_chave_nova,                                   B_INTEGER,        32)
                   );
      $l_rs = DatabaseQueriesFactory::getInstanceOf($sql, $dbms, $params, DB_TYPE);
      $l_error_reporting = error_reporting(); 

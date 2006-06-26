@@ -16,6 +16,8 @@ include_once('classes/sp/db_getMenuLink.php');
 include_once('classes/sp/db_getPersonData.php');
 include_once('classes/sp/db_getUserModule.php');
 include_once('classes/sp/db_getUserVision.php');
+include_once('classes/sp/db_getUorgData.php');
+include_once('classes/sp/db_getUorgResp.php');
 include_once('classes/sp/db_getMenuList.php');
 include_once('classes/sp/db_getCCTreeVision.php');
 include_once('classes/sp/db_updatePassword.php');
@@ -140,7 +142,6 @@ function Usuarios() {
 
   if ($O=='L') {
     $RS = db_getUserList::getInstanceOf($dbms,$w_cliente,$p_localizacao,$p_lotacao,$p_gestor,$p_nome,$p_modulo,$p_uf,$p_ativo, null);
-    array_key_case_change(&$RS);
     if ($p_ordena>'') { 
       $RS = SortArray($RS,substr($p_ordena,0,strpos($p_ordena,' ')),substr($p_ordena,strpos($p_ordena,' ')+1),'nome_resumido_ind','asc');
     } else {
@@ -1628,7 +1629,7 @@ function NovaSenha() {
 
 function TelaUsuario() {
   extract($GLOBALS);
-  global $w_Disabled;
+  global $w_Disabled, $w_TP;
 
   $w_sq_pessoa = $_REQUEST['w_sq_pessoa'];
 
@@ -1641,7 +1642,7 @@ function TelaUsuario() {
     ShowHTML('<TITLE>Usuário</TITLE>');
     ShowHTML('</HEAD>');
     BodyOpen('onLoad=document.focus();');
-    $TP = 'Dados usuário';
+    $w_TP = 'Usuário - Visualização de dados';
     Estrutura_Texto_Abre();
     ShowHTML('<table border="0" width="100%">');
     ShowHTML('<tr bgcolor="'.$conTrBgColor.'"><td>');
@@ -1762,11 +1763,11 @@ function TelaUsuario() {
 
 function TelaUnidade() {
   extract($GLOBALS);
-  global $w_Disabled;
+  global $w_Disabled, $w_TP;
 
   $w_sq_unidade=$_REQUEST['w_sq_unidade'];
 
-  $RS = DB_GetUorgData::getInstanceOf($dbms, $w_sq_unidade);
+  $RS = db_getUorgData::getInstanceOf($dbms, $w_sq_unidade);
   Cabecalho();
   ShowHTML('<HEAD>');
   Estrutura_CSS($w_cliente);
@@ -1777,7 +1778,7 @@ function TelaUnidade() {
   ScriptClose();
   ShowHTML('</HEAD>');
   BodyOpen('onLoad=document.focus();');
-  $TP = 'Dados de unidade';
+  $w_TP = 'Unidade - Visualização de dados';
   Estrutura_Texto_Abre();
   ShowHTML('<table border="0" width="100%">');
   ShowHTML('<tr bgcolor="'.$conTrBgColor.'"><td>');
@@ -1804,47 +1805,48 @@ function TelaUnidade() {
   ShowHTML('      <tr><td   colspan="2" align="center" bgcolor="#D0D0D0"><b>Responsáveis</td>');
   ShowHTML('      <tr><td align="center" colspan="2" height="1"     bgcolor="#000000">');
   ShowHTML('      <tr><td align="center" colspan="2" height="2" bgcolor="#000000">');
-  $RS = DB_GetUorgResp::getInstanceOf($dbms, $w_sq_unidade);
+  $RS = db_getUorgResp::getInstanceOf($dbms, $w_sq_unidade);
   if (count($RS)<=0) {
     ShowHTML('      <tr><td align="center" colspan=2><font size="2"><b>Não informados</b></b></td>');
   } else {
-    if (nvl(f($RS,'titular2'),0)==0 && nvl(f($RS,'substituto2'),0)==0) {
-      ShowHTML('      <tr><td align="center" colspan=2><font size="2"><b>Não informados</b></b></td>');
-    } else {
-      ShowHTML('      <tr valign="top">');
-      ShowHTML('          <td>Titular: <br><b>'.f($RS,'nm_titular').'</b></td>');
-      ShowHTML('          <td>Desde: <br><b>'.FormataDataEdicao(f($RS,'inicio_titular')).'</b></td>');
-      ShowHTML('      <tr><td colspan=2>Localização: <br><b>'.f($RS,'tit_sala').' ( '.f($RS,'tit_logradouro').' )</b><td>');
-      if (nvl(f($RS,'email_titular'),'')>'') {
-        ShowHTML('      <tr><td colspan=2>e-Mail:<br><b><A class="hl" HREF="mailto:'.f($RS,'email_titular').'">'.f($RS,'email_titular').'</a></b></td>');
+    foreach ($RS as $row) {
+      if (nvl(f($row,'titular2'),0)==0 && nvl(f($row,'substituto2'),0)==0) {
+        ShowHTML('      <tr><td align="center" colspan=2><font size="2"><b>Não informados</b></b></td>');
       } else {
-        ShowHTML('      <tr><td colspan=2>e-Mail:<br><b>---</b></td>');
-      } 
-
-      ShowHTML('      <tr><td align="center" colspan="2" height="1" bgcolor="#000000">');
-      if (nvl(f($RS,'nm_substituto'),'')>'') {
-
         ShowHTML('      <tr valign="top">');
-        ShowHTML('          <td>Substituto: <br><b>'.f($RS,'nm_substituto').'</b></td>');
-        ShowHTML('          <td>Desde: <br><b>'.FormataDataEdicao(f($RS,'inicio_substituto')).'</b></td>');
-        if (nvl(f($RS,'sub_sala'),'')>'') {
-          ShowHTML('      <tr><td colspan=2>Localização: <br><b>'.f($RS,'sub_sala').' ( '.f($RS,'sub_logradouro').' )</b><td>');
-        } else {
-          ShowHTML('      <tr><td colspan=2>Localização:<br><b>---</b></td>');
-        } 
-
-        if (nvl(f($RS,'email_substituto'),'')>'') {
-          ShowHTML('      <tr><td colspan=2>e-Mail:<br><b><A class="hl" HREF="mailto:'.f($RS,'email_substituto').'">'.f($RS,'email_substituto').'</a></b></td>');
+        ShowHTML('          <td>Titular: <br><b>'.f($row,'nm_titular').'</b></td>');
+        ShowHTML('          <td>Desde: <br><b>'.FormataDataEdicao(f($row,'inicio_titular')).'</b></td>');
+        ShowHTML('      <tr><td colspan=2>Localização: <br><b>'.f($row,'tit_sala').' ( '.f($row,'tit_logradouro').' )</b><td>');
+        if (nvl(f($row,'email_titular'),'')>'') {
+          ShowHTML('      <tr><td colspan=2>e-Mail:<br><b><A class="hl" HREF="mailto:'.f($row,'email_titular').'">'.f($row,'email_titular').'</a></b></td>');
         } else {
           ShowHTML('      <tr><td colspan=2>e-Mail:<br><b>---</b></td>');
         } 
+ 
+         ShowHTML('      <tr><td align="center" colspan="2" height="1" bgcolor="#000000">');
+        if (nvl(f($row,'nm_substituto'),'')>'') {
 
-      } else {
-        ShowHTML('      <tr><td colspan=2>Substituto:<br><b>Não indicado</b></td>');
+          ShowHTML('      <tr valign="top">');
+          ShowHTML('          <td>Substituto: <br><b>'.f($row,'nm_substituto').'</b></td>');
+          ShowHTML('          <td>Desde: <br><b>'.FormataDataEdicao(f($row,'inicio_substituto')).'</b></td>');
+          if (nvl(f($row,'sub_sala'),'')>'') {
+            ShowHTML('      <tr><td colspan=2>Localização: <br><b>'.f($row,'sub_sala').' ( '.f($row,'sub_logradouro').' )</b><td>');
+          } else {
+            ShowHTML('      <tr><td colspan=2>Localização:<br><b>---</b></td>');
+          } 
+
+          if (nvl(f($row,'email_substituto'),'')>'') {
+            ShowHTML('      <tr><td colspan=2>e-Mail:<br><b><A class="hl" HREF="mailto:'.f($row,'email_substituto').'">'.f($row,'email_substituto').'</a></b></td>');
+          } else {
+            ShowHTML('      <tr><td colspan=2>e-Mail:<br><b>---</b></td>');
+          } 
+
+        } else {
+          ShowHTML('      <tr><td colspan=2>Substituto:<br><b>Não indicado</b></td>');
+        } 
+
       } 
-
-    } 
-
+    }
   } 
   ShowHTML('          </b></td>');
   ShowHTML('      <tr><td align="center" colspan="2" height="2" bgcolor="#000000">');

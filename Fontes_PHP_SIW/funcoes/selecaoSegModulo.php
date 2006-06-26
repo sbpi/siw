@@ -8,7 +8,6 @@ function selecaoSegModulo($label,$accesskey,$hint,$chave,$chaveAux,$campo,$restr
 
 
   $RS = db_getSegModList::getInstanceOf($dbms, $ChaveAux);
-  array_key_case_change(&$RS);
   $RS = SortArray($RS,'nome','asc');
   if (!isset($hint)) {
     ShowHTML('          <td valign="top"><font size="1"><b>'.$label.'</b><br><SELECT ACCESSKEY="'.$accesskey.'" CLASS="sts" NAME="'.$campo.'" '.$w_Disabled.'>');

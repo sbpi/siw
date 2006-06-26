@@ -338,7 +338,6 @@ function Tramite() {
   $w_texto = opcaoMenu($w_sq_menu);
   if ($O=='L') {
     $RS = db_getTramiteList::getInstanceOf($dbms,$w_sq_menu,null,null);
-    array_key_case_change(&$RS);
     $RS = SortArray($RS,'ordem','asc');
   } elseif ($O=='A' || $O=='E') {
 

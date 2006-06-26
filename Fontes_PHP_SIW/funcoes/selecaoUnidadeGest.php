@@ -7,7 +7,6 @@ function selecaoUnidadeGest($label,$accesskey,$hint,$chave,$chaveAux,$campo,$res
   extract($GLOBALS);
 
   $RS = db_getUorgList::getInstanceOf($dbms, $w_cliente, $chaveAux, 'GESTORA', null, null, null);
-  array_key_case_change(&$RS);
   $RS = SortArray($RS,'nome','asc');
   if (!isset($hint)) {
     ShowHTML('          <td valign="top"><font size="1"><b>'.$label.'</b><br><SELECT ACCESSKEY="'.$accesskey.'" CLASS="sts" NAME="'.$campo.'" '.$w_Disabled.'>');
