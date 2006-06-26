@@ -856,7 +856,7 @@ Public Sub Grava
                    Nvl(Request("w_carteira_Emissao"),""), Nvl(Request("w_carteira_Validade"),"")
                    
           ScriptOpen "JavaScript"
-          ShowHTML "  location.href='" & R & "&O=L&P1=" & P1 & "&P2=" & P2 & "&P3=" & P3 & "&P4=" & P4 & "&TP=" & TP & "&SG=" & SG & "&p_carteira=" & Request("p_carteira") & "&p_nome=" & Request("p_nome") & "&p_ordena=" & Request("p_ordena") & "';"
+          ShowHTML "  location.href='" & R & "&O=P&P1=" & P1 & "&P2=" & P2 & "&P3=" & P3 & "&P4=" & P4 & "&TP=" & TP & "&SG=" & SG & "&p_carteira=" & Request("p_carteira") & "&p_nome=" & Request("p_nome") & "&p_ordena=" & Request("p_ordena") & "';"
           ScriptClose
        Else
           ScriptOpen "JavaScript"

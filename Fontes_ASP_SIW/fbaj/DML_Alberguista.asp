@@ -81,8 +81,6 @@ Sub DML_ALBCAD(operacao, chave, carteira, nome, nascimento, endereco, bairro,_
   Set l_carteira_emissao  = Server.CreateObject("ADODB.Parameter")
   Set l_carteira_validade = Server.CreateObject("ADODB.Parameter")
   
-  
-  
   with sp
      set l_Operacao          = .CreateParameter("l_operacao",          adVarchar, adParamInput,  1, Operacao)
      set l_chave             = .CreateParameter("l_chave",             adInteger, adParamInput,   , Tvl(chave))
@@ -158,7 +156,7 @@ Sub DML_ALBCAD(operacao, chave, carteira, nome, nascimento, endereco, bairro,_
      'End If
      .CommandText      = "FBAJ.SP_PutAlbCad"
         
-     On error Resume Next
+     'On error Resume Next
      .Execute
      If Err.Description > "" Then 
         TrataErro

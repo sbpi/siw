@@ -2204,7 +2204,7 @@ Sub DB_GetSolicList(p_rs, p_menu, p_pessoa, p_restricao, p_tipo, _
      set l_sqcc                 = .CreateParameter("l_sqcc",        adInteger,  adParamInput,   , Tvl(p_sqcc))
      set l_projeto              = .CreateParameter("l_projeto",     adInteger,  adParamInput,   , Tvl(p_projeto))
      set l_atividade            = .CreateParameter("l_atividade",   adInteger,  adParamInput,   , Tvl(p_atividade))
-     set l_acao_ppa             = .CreateParameter("l_acao_ppa",    adInteger,  adParamInput,   , Tvl(p_acao_ppa))
+     set l_acao_ppa             = .CreateParameter("l_acao_ppa",    adVarchar,  adParamInput, 40, Tvl(p_acao_ppa))
      set l_orprior              = .CreateParameter("l_orprior",     adInteger,  adParamInput,   , Tvl(p_orprior))
      .parameters.Append         l_menu
      .parameters.Append         l_pessoa

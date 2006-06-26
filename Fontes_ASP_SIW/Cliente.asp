@@ -720,7 +720,7 @@ Sub Enderecos
   If O = "L" Then
      ' Recupera todos os endereços do cliente, independente do tipo
      DB_GetAddressList RS, w_sq_pessoa, null, null, null
-     RS.Sort = "tipo_endereco, endereco"
+     RS.Sort = "padrao desc, tipo_endereco, endereco"
   ElseIf InStr("AEV",O) > 0 and w_Troca = "" Then
      ' Recupera os dados do endereço informado
      DB_GetAddressData RS, w_sq_pessoa_endereco
@@ -1925,13 +1925,15 @@ Public Sub Grava
            ' Se o endereço a ser gravado foi indicado como padrão, verifica se não existe algum outro
            ' nesta situação. Só pode haver um endereço padrão para a pessoa dentro de cada tipo de endereço.
            If Request("w_padrao") = "S" Then
-              DB_GetAddressList RS, Request("w_sq_pessoa"), null, Request("w_sq_pessoa_endereco"), Request("w_sq_tipo_endereco")
-              If RS.RecordCount > 0 Then
-                ScriptOpen "JavaScript"
-                ShowHTML "  alert('ATENÇÃO: Só pode haver um valor padrão em cada tipo de endereço. Favor verificar!');"
-                ShowHTML "  history.back(1);"
-                ScriptClose
-                Exit Sub
+              DB_GetAddressList RS, Request("w_sq_pessoa"), Request("w_sq_pessoa_endereco"), "ENDERECO", Request("w_sq_tipo_endereco")
+              If Not RS.EOF Then
+                If cDbl(RS("sq_pessoa_endereco")) <> cDbl(Nvl(Request("w_sq_pessoa_endereco"),0)) Then
+                   ScriptOpen "JavaScript"
+                   ShowHTML "  alert('ATENÇÃO: Só pode haver um valor padrão em cada tipo de endereço. Favor verificar!');"
+                   ShowHTML "  history.back(1);"
+                   ScriptClose
+                   Exit Sub
+                End If
               End If
            End If
         End If
@@ -1959,11 +1961,13 @@ Public Sub Grava
            If Request("w_padrao") = "S" Then
               DB_GetFoneList RS, Request("w_sq_pessoa"), Request("w_sq_pessoa_telefone"), "TELEFONE", Request("w_sq_tipo_telefone")
               If RS.RecordCount > 0 Then
+                If cDbl(RS("sq_pessoa_telefone")) <> cDbl(Nvl(Request("w_sq_pessoa_telefone"),0)) Then
                  ScriptOpen "JavaScript"
                  ShowHTML "  alert('ATENÇÃO: Só pode haver um valor padrão em cada tipo de telefone. Favor verificar.!');"
                  ShowHTML "  history.back(1);"
                  ScriptClose
                  Exit Sub
+                End If
               End If
            End If
         End If
@@ -1990,9 +1994,11 @@ Public Sub Grava
            
            ' Só pode haver uma conta padrão para a pessoa
            If Request("w_padrao") = "S" Then
-              DB_GetContaBancoList RS, Request("w_sq_pessoa"), Request("w_sq_conta_bancaria"), "CONTASBANCARIAS"
+              DB_GetContaBancoList RS, Request("w_sq_pessoa"), Request("w_sq_pessoa_conta"), "CONTASBANCARIAS"
               If RS.RecordCount > 0 Then
+                If cDbl(RS("sq_pessoa_conta")) <> cDbl(Nvl(Request("w_sq_pessoa_conta"),0)) Then
                  w_mensagem = "ATENÇÃO: Só pode haver uma conta padrão. Favor verificar."
+                End If
               End If
               DesconectaBD
            End If

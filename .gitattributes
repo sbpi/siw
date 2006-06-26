@@ -408,6 +408,7 @@ Fontes_ASP_SIW/mod_is/GR_Acao.asp -text
 Fontes_ASP_SIW/mod_is/GR_Programa.asp -text
 Fontes_ASP_SIW/mod_is/GR_Tarefas.asp -text
 Fontes_ASP_SIW/mod_is/GR_Viagem.asp -text
+Fontes_ASP_SIW/mod_is/GeraGrafico.asp -text
 Fontes_ASP_SIW/mod_is/IS_Tabelas.asp -text
 Fontes_ASP_SIW/mod_is/Programa.asp -text
 Fontes_ASP_SIW/mod_is/Relatorios.asp -text
@@ -420,8 +421,10 @@ Fontes_ASP_SIW/mod_is/VisualAcao.asp -text
 Fontes_ASP_SIW/mod_is/VisualAcao1.asp -text
 Fontes_ASP_SIW/mod_is/VisualAcaoGer.asp -text
 Fontes_ASP_SIW/mod_is/VisualPrograma.asp -text
+Fontes_ASP_SIW/mod_is/VisualPrograma1.asp -text
 Fontes_ASP_SIW/mod_is/VisualProgramaGer.asp -text
 Fontes_ASP_SIW/mod_is/VisualTarefa.asp -text
+Fontes_ASP_SIW/mod_is/VisualTarefa1.asp -text
 Fontes_ASP_SIW/mod_is/VisualTarefaGer.asp -text
 Fontes_ASP_SIW/mod_is/VisualViagem.asp -text
 Fontes_ASP_SIW/mod_is/geragrafico.php -text
@@ -469,6 +472,7 @@ Fontes_ASP_SIW/mod_rh/DB_Tabelas.asp -text
 Fontes_ASP_SIW/mod_rh/DML_CV.asp -text
 Fontes_ASP_SIW/mod_rh/DML_Colaborador.asp -text
 Fontes_ASP_SIW/mod_rh/DML_Geral.asp -text
+Fontes_ASP_SIW/mod_rh/DML_Tabelas.asp -text
 Fontes_ASP_SIW/mod_rh/Ferias.asp -text
 Fontes_ASP_SIW/mod_rh/Funcoes.asp -text
 Fontes_ASP_SIW/mod_rh/Tabelas.asp -text
