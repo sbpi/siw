@@ -21,7 +21,8 @@ begin
                 Nvl(a.outra_parte_cont,'-') d_nome,
                 Nvl(g.sigla,'-') d_cc, nvl(lower(h.localidade),'-') localidade,
                 decode(a.entrante,'S', decode(a.recebida,'N','NAT','REC'),'ORI') tipo,
-                i.nome_resumido responsavel
+                i.nome_resumido responsavel, 
+                to_char(a.data, 'DD/MM/YYYY, HH24:MI:SS') phpdt_ordem
            from tt_ligacao         a,
                    tt_usuario         b,
                       co_pessoa          i,
@@ -57,7 +58,8 @@ begin
                 Nvl(a.outra_parte_cont,'-') d_nome,
                 Nvl(g.sigla,'-') d_cc, nvl(lower(h.localidade),'-') localidade,
                 decode(a.entrante,'S',decode(a.recebida,'N','NAT','REC'),'ORI') tipo,
-                null
+                null, 
+                to_char(a.data, 'DD/MM/YYYY, HH24:MI:SS') phpdt_ordem
            from tt_ligacao         a,
                    tt_ramal_usuario   c,
                       tt_usuario         b,
@@ -91,7 +93,10 @@ begin
       If p_restricao = 'REGISTRO' Then
          -- Recupera os dados de uma ligação
          open p_result for
-            select a.*, c.nome_resumido responsavel
+            select a.sq_ligacao, a.cliente, a.sq_central_fone, a.sq_tronco, a.sq_usuario_central, a.sq_ramal, a.sq_cc, a.sq_prefixo, a.data, a.operadora, 
+                   a.valor, a.duracao, a.recebida, a.entrante, a.fax, a.numero, a.inclusao, a.trabalho, a.assunto, a.outra_parte_cont, a.imagem,
+                   c.nome_resumido responsavel, 
+                   to_char(a.data, 'DD/MM/YYYY, HH24:MI:SS') phpdt_data
               from tt_ligacao a,
                      tt_usuario b,
                        co_pessoa  c
@@ -104,7 +109,8 @@ begin
             select a.sq_ligacao, a.data, a.data ordem,
                    Nvl(a.numero,'---') numero, a.duracao, a.valor,
                    decode(a.trabalho,null,0,1) informada, d.codigo sq_ramal,f.numero sq_tronco,
-                   decode(a.entrante,'S',decode(a.recebida,'N','Não atendida','Recebida'),'Originada') tipo
+                   decode(a.entrante,'S',decode(a.recebida,'N','Não atendida','Recebida'),'Originada') tipo, 
+                   to_char(a.data, 'DD/MM/YYYY, HH24:MI:SS') phpdt_ordem 
               from tt_ligacao         a,
                    tt_usuario         b,
                    tt_ramal_usuario   c,
@@ -134,7 +140,8 @@ begin
          -- Recupera o histórico de transferências de uma ligação
          open p_result for
             select a.data, a.observacao,
-                   d.nome_resumido origem, e.nome_resumido destino
+                   d.nome_resumido origem, e.nome_resumido destino, 
+                   to_char(a.data, 'DD/MM/YYYY, HH24:MI:SS') phpdt_ordem 
               from tt_ligacao_log a,
                       tt_usuario     b,
                          co_pessoa      d,
@@ -742,4 +749,3 @@ begin
    End If;
 end SP_GetCall;
 /
-

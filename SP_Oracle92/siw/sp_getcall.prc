@@ -21,7 +21,8 @@ begin
                 Nvl(a.outra_parte_cont,'-') d_nome,  
                 Nvl(g.sigla,'-') d_cc, nvl(lower(h.localidade),'-') localidade,  
                 case a.entrante when 'S' then case a.recebida when 'N' then 'NAT' else 'REC' end else 'ORI' end tipo,
-                i.nome_resumido responsavel
+                i.nome_resumido responsavel, 
+                to_char(a.data, 'DD/MM/YYYY, HH24:MI:SS') phpdt_ordem
            from tt_ligacao         a 
                    inner      join tt_usuario         b on (a.sq_usuario_central = b.sq_usuario_central) 
                       inner   join co_pessoa          i on (b.usuario            = i.sq_pessoa)
@@ -50,7 +51,8 @@ begin
                 Nvl(a.outra_parte_cont,'-') d_nome,  
                 Nvl(g.sigla,'-') d_cc, nvl(lower(h.localidade),'-') localidade,  
                 case a.entrante when 'S' then case a.recebida when 'N' then 'NAT' else 'REC' end else 'ORI' end tipo,
-                null
+                null, 
+                to_char(a.data, 'DD/MM/YYYY, HH24:MI:SS') phpdt_ordem
            from tt_ligacao         a 
                    inner      join tt_ramal_usuario   c on (a.sq_ramal           = c.sq_ramal) 
                       inner   join tt_usuario         b on (c.sq_usuario_central = b.sq_usuario_central) 
@@ -77,7 +79,10 @@ begin
       If p_restricao = 'REGISTRO' Then
          -- Recupera os dados de uma ligação
          open p_result for
-            select a.*, c.nome_resumido responsavel
+            select a.sq_ligacao, a.cliente, a.sq_central_fone, a.sq_tronco, a.sq_usuario_central, a.sq_ramal, a.sq_cc, a.sq_prefixo, a.data, a.operadora, 
+                   a.valor, a.duracao, a.recebida, a.entrante, a.fax, a.numero, a.inclusao, a.trabalho, a.assunto, a.outra_parte_cont, a.imagem,
+                   c.nome_resumido responsavel, 
+                   to_char(a.data, 'DD/MM/YYYY, HH24:MI:SS') phpdt_data
               from tt_ligacao a
                      left outer   join tt_usuario b on (a.sq_usuario_central = b.sq_usuario_central)
                        left outer join co_pessoa  c on (b.usuario            = c.sq_pessoa)
@@ -88,7 +93,8 @@ begin
             select a.sq_ligacao, a.data, a.data ordem, 
                    Nvl(a.numero,'---') numero, a.duracao, a.valor, 
                    case when a.trabalho is null then 0 else 1 end informada, d.codigo sq_ramal,f.numero sq_tronco, 
-                   case a.entrante when 'S' then case a.recebida when 'N' then 'Não atendida' else 'Recebida' end else 'Originada' end tipo 
+                   case a.entrante when 'S' then case a.recebida when 'N' then 'Não atendida' else 'Recebida' end else 'Originada' end tipo, 
+                   to_char(a.data, 'DD/MM/YYYY, HH24:MI:SS') phpdt_ordem 
               from tt_ligacao         a, 
                    tt_usuario         b,  
                    tt_ramal_usuario   c, 
@@ -116,7 +122,8 @@ begin
          -- Recupera o histórico de transferências de uma ligação
          open p_result for
             select a.data, a.observacao, 
-                   d.nome_resumido origem, e.nome_resumido destino 
+                   d.nome_resumido origem, e.nome_resumido destino, 
+                   to_char(a.data, 'DD/MM/YYYY, HH24:MI:SS') phpdt_ordem 
               from tt_ligacao_log a
                       inner    join tt_usuario     b on (a.usuario_origem  = b.sq_usuario_central)
                          inner join co_pessoa      d on (b.usuario         = d.sq_pessoa)
@@ -655,4 +662,3 @@ begin
    End If;
 end SP_GetCall;
 /
-

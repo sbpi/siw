@@ -29,7 +29,8 @@ begin
                    i.sq_pessoa sq_pessoa_destinatario,
                    f.nome fase, 
                    e.nome tramite,
-                   k.sq_siw_arquivo, k.caminho, k.tipo, k.tamanho
+                   k.sq_siw_arquivo, k.caminho, k.tipo, k.tamanho, 
+                   to_char(a.data, 'DD/MM/YYYY, HH24:MI:SS') phpdt_data
               from siw_solic_log                     a
                    inner      join co_pessoa         c on (a.sq_pessoa          = c.sq_pessoa)
                    inner      join siw_tramite       e on (a.sq_siw_tramite     = e.sq_siw_tramite)
@@ -47,7 +48,8 @@ begin
                    d.nome_resumido destinatario,
                    d.sq_pessoa sq_pessoa_destinatario,
                    f.nome fase, f.nome tramite,
-                   k.sq_siw_arquivo, k.caminho, k.tipo, k.tamanho
+                   k.sq_siw_arquivo, k.caminho, k.tipo, k.tamanho, 
+                   to_char(b.data_inclusao, 'DD/MM/YYYY, HH24:MI:SS') phpdt_data
               from gd_demanda_log                     b 
                    left outer join co_pessoa          d on (b.destinatario       = d.sq_pessoa)
                    inner      join co_pessoa          c on (b.cadastrador        = c.sq_pessoa)
@@ -73,7 +75,8 @@ begin
                    i.sq_pessoa sq_pessoa_destinatario,
                    f.nome fase, 
                    e.nome tramite,
-                   k.sq_siw_arquivo, k.caminho, k.tipo, k.tamanho
+                   k.sq_siw_arquivo, k.caminho, k.tipo, k.tamanho, 
+                   to_char(a.data, 'DD/MM/YYYY, HH24:MI:SS') phpdt_data
               from siw_solic_log   a
                       inner      join co_pessoa       c on (a.sq_pessoa          = c.sq_pessoa)
                       inner      join siw_tramite     e on (a.sq_siw_tramite     = e.sq_siw_tramite)
@@ -91,7 +94,8 @@ begin
                    d.nome_resumido destinatario,
                    d.sq_pessoa sq_pessoa_destinatario,
                    f.nome fase, f.nome tramite,
-                   k.sq_siw_arquivo, k.caminho, k.tipo, k.tamanho
+                   k.sq_siw_arquivo, k.caminho, k.tipo, k.tamanho, 
+                   to_char(b.data_inclusao, 'DD/MM/YYYY, HH24:MI:SS') phpdt_data
               from pj_projeto_log  b 
                       left outer join co_pessoa       d on (b.destinatario       = d.sq_pessoa)
                       inner      join co_pessoa       c on (b.cadastrador        = c.sq_pessoa)
@@ -117,7 +121,8 @@ begin
                    i.sq_pessoa sq_pessoa_destinatario,
                    f.nome fase, 
                    e.nome tramite,
-                   k.sq_siw_arquivo, k.caminho, k.tipo, k.tamanho
+                   k.sq_siw_arquivo, k.caminho, k.tipo, k.tamanho, 
+                   to_char(a.data, 'DD/MM/YYYY, HH24:MI:SS') phpdt_data
               from siw_solic_log                       a
                    inner        join co_pessoa         c on (a.sq_pessoa          = c.sq_pessoa)
                    inner        join siw_tramite       e on (a.sq_siw_tramite     = e.sq_siw_tramite)
@@ -135,7 +140,8 @@ begin
                    d.nome_resumido destinatario,
                    d.sq_pessoa sq_pessoa_destinatario,
                    f.nome fase, f.nome tramite,
-                   k.sq_siw_arquivo, k.caminho, k.tipo, k.tamanho
+                   k.sq_siw_arquivo, k.caminho, k.tipo, k.tamanho, 
+                   to_char(b.data_inclusao, 'DD/MM/YYYY, HH24:MI:SS') phpdt_data
               from ac_acordo_log                       b 
                    left outer   join co_pessoa         d on (b.destinatario       = d.sq_pessoa)
                    inner        join co_pessoa         c on (b.cadastrador        = c.sq_pessoa)
@@ -161,7 +167,8 @@ begin
                    i.sq_pessoa sq_pessoa_destinatario,
                    f.nome fase, 
                    e.nome tramite,
-                   k.sq_siw_arquivo, k.caminho, k.tipo, k.tamanho
+                   k.sq_siw_arquivo, k.caminho, k.tipo, k.tamanho, 
+                   to_char(a.data, 'DD/MM/YYYY, HH24:MI:SS') phpdt_data
               from siw_solic_log                       a
                    inner        join co_pessoa         c on (a.sq_pessoa          = c.sq_pessoa)
                    inner        join siw_tramite       e on (a.sq_siw_tramite     = e.sq_siw_tramite)
@@ -179,7 +186,8 @@ begin
                    d.nome_resumido destinatario,
                    d.sq_pessoa sq_pessoa_destinatario,
                    f.nome fase, f.nome tramite,
-                   k.sq_siw_arquivo, k.caminho, k.tipo, k.tamanho
+                   k.sq_siw_arquivo, k.caminho, k.tipo, k.tamanho, 
+                   to_char(b.data_inclusao, 'DD/MM/YYYY, HH24:MI:SS') phpdt_data
               from fn_lancamento_log                       b 
                    left outer   join co_pessoa             d on (b.destinatario       = d.sq_pessoa)
                    inner        join co_pessoa             c on (b.cadastrador        = c.sq_pessoa)
@@ -203,7 +211,8 @@ begin
                    i.sq_pessoa sq_pessoa_destinatario,
                    f.nome fase,
                    e.nome tramite,
-                   k.sq_siw_arquivo, k.caminho, k.tipo, k.tamanho
+                   k.sq_siw_arquivo, k.caminho, k.tipo, k.tamanho, 
+                   to_char(a.data, 'DD/MM/YYYY, HH24:MI:SS') phpdt_data
               from siw_solic_log                        a
                      inner        join co_pessoa         c on (a.sq_pessoa          = c.sq_pessoa)
                      inner        join siw_tramite       e on (a.sq_siw_tramite     = e.sq_siw_tramite)
@@ -222,7 +231,8 @@ begin
                    d.nome_resumido destinatario,
                    d.sq_pessoa sq_pessoa_destinatario,
                    f.nome fase, f.nome tramite,
-                   k.sq_siw_arquivo, k.caminho, k.tipo, k.tamanho
+                   k.sq_siw_arquivo, k.caminho, k.tipo, k.tamanho, 
+                   to_char(b.data_inclusao, 'DD/MM/YYYY, HH24:MI:SS') phpdt_data
               from gd_demanda_log                           b
                      left outer     join co_pessoa          d on (b.destinatario       = d.sq_pessoa)
                      inner          join co_pessoa          c on (b.cadastrador        = c.sq_pessoa)

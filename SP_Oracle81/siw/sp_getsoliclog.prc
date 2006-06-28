@@ -28,7 +28,8 @@ begin
                    i.sq_pessoa sq_pessoa_destinatario,
                    f.nome fase,
                    e.nome tramite,
-                   k.sq_siw_arquivo, k.caminho, k.tipo, k.tamanho
+                   k.sq_siw_arquivo, k.caminho, k.tipo, k.tamanho, 
+                   to_char(a.data, 'DD/MM/YYYY, HH24:MI:SS') phpdt_data
               from siw_solic_log                     a,
                    co_pessoa         c,
                    siw_tramite       e,
@@ -54,7 +55,8 @@ begin
                    d.nome_resumido destinatario,
                    d.sq_pessoa sq_pessoa_destinatario,
                    f.nome fase, f.nome tramite,
-                   k.sq_siw_arquivo, k.caminho, k.tipo, k.tamanho
+                   k.sq_siw_arquivo, k.caminho, k.tipo, k.tamanho, 
+                   to_char(b.data_inclusao, 'DD/MM/YYYY, HH24:MI:SS') phpdt_data
               from gd_demanda_log                     b,
                    co_pessoa          d,
                    co_pessoa          c,
@@ -82,20 +84,26 @@ begin
                    i.nome_resumido destinatario,
                    i.sq_pessoa sq_pessoa_destinatario,
                    f.nome fase,
-                   e.nome tramite, null caminho
+                   e.nome tramite,
+                   k.sq_siw_arquivo, k.caminho, k.tipo, k.tamanho, 
+                   to_char(a.data, 'DD/MM/YYYY, HH24:MI:SS') phpdt_data
               from siw_solic_log   a,
                    co_pessoa       c,
                    siw_tramite     e,
                    siw_solicitacao g,
                    siw_tramite     f,
                    pj_projeto_log  h,
-                   co_pessoa     i
+                   co_pessoa       i,
+                   pj_projeto_log_arq j,
+                   siw_arquivo     k
              where (a.sq_pessoa          = c.sq_pessoa)
                and (a.sq_siw_tramite     = e.sq_siw_tramite)
                and (a.sq_siw_solicitacao = g.sq_siw_solicitacao)
                and (g.sq_siw_tramite     = f.sq_siw_tramite)
                and (a.sq_siw_solic_log   = h.sq_siw_solic_log (+))
                and (h.destinatario       = i.sq_pessoa (+))
+               and (h.sq_projeto_log     = j.sq_projeto_log (+))
+               and (j.sq_siw_arquivo     = k.sq_siw_arquivo (+))
                and a.sq_siw_solicitacao = p_chave
             UNION
             select b.sq_projeto_log, b.sq_siw_solic_log, 0, b.data_inclusao,  Nvl(b.despacho, b.observacao),
@@ -103,16 +111,22 @@ begin
                    c.sq_pessoa,
                    d.nome_resumido destinatario,
                    d.sq_pessoa sq_pessoa_destinatario,
-                   f.nome fase, f.nome tramite, null caminho
+                   f.nome fase, f.nome tramite,
+                   k.sq_siw_arquivo, k.caminho, k.tipo, k.tamanho, 
+                   to_char(b.data_inclusao, 'DD/MM/YYYY, HH24:MI:SS') phpdt_data
               from pj_projeto_log  b,
                    co_pessoa       d,
                    co_pessoa       c,
                    siw_solicitacao g,
-                   siw_tramite     f
+                   siw_tramite     f,
+                   pj_projeto_log_arq j,
+                   siw_arquivo     k
              where (b.destinatario       = d.sq_pessoa (+))
                and (b.cadastrador        = c.sq_pessoa)
                and (b.sq_siw_solicitacao = g.sq_siw_solicitacao)
                and (g.sq_siw_tramite     = f.sq_siw_tramite)
+               and (b.sq_projeto_log     = j.sq_projeto_log (+))
+               and (j.sq_siw_arquivo     = k.sq_siw_arquivo (+))
                and b.sq_siw_solic_log   is null
                and b.sq_siw_solicitacao = p_chave;
       End If;
@@ -128,7 +142,8 @@ begin
                    i.sq_pessoa sq_pessoa_destinatario,
                    f.nome fase,
                    e.nome tramite,
-                   k.sq_siw_arquivo, k.caminho, k.tipo, k.tamanho
+                   k.sq_siw_arquivo, k.caminho, k.tipo, k.tamanho, 
+                   to_char(a.data, 'DD/MM/YYYY, HH24:MI:SS') phpdt_data
               from siw_solic_log                       a,
                    co_pessoa         c,
                    siw_tramite       e,
@@ -154,7 +169,8 @@ begin
                    d.nome_resumido destinatario,
                    d.sq_pessoa sq_pessoa_destinatario,
                    f.nome fase, f.nome tramite,
-                   k.sq_siw_arquivo, k.caminho, k.tipo, k.tamanho
+                   k.sq_siw_arquivo, k.caminho, k.tipo, k.tamanho, 
+                   to_char(b.data_inclusao, 'DD/MM/YYYY, HH24:MI:SS') phpdt_data
               from ac_acordo_log                       b,
                    co_pessoa         d,
                    co_pessoa         c,
@@ -183,7 +199,8 @@ begin
                    i.sq_pessoa sq_pessoa_destinatario,
                    f.nome fase,
                    e.nome tramite,
-                   k.sq_siw_arquivo, k.caminho, k.tipo, k.tamanho
+                   k.sq_siw_arquivo, k.caminho, k.tipo, k.tamanho, 
+                   to_char(a.data, 'DD/MM/YYYY, HH24:MI:SS') phpdt_data
               from siw_solic_log                       a,
                    co_pessoa         c,
                    siw_tramite       e,
@@ -209,7 +226,8 @@ begin
                    d.nome_resumido destinatario,
                    d.sq_pessoa sq_pessoa_destinatario,
                    f.nome fase, f.nome tramite,
-                   k.sq_siw_arquivo, k.caminho, k.tipo, k.tamanho
+                   k.sq_siw_arquivo, k.caminho, k.tipo, k.tamanho, 
+                   to_char(b.data_inclusao, 'DD/MM/YYYY, HH24:MI:SS') phpdt_data
               from fn_lancamento_log                       b,
                    co_pessoa             d,
                    co_pessoa             c,
@@ -239,7 +257,8 @@ begin
                    i.sq_pessoa sq_pessoa_destinatario,
                    f.nome fase,
                    e.nome tramite,
-                   k.sq_siw_arquivo, k.caminho, k.tipo, k.tamanho
+                   k.sq_siw_arquivo, k.caminho, k.tipo, k.tamanho, 
+                   to_char(a.data, 'DD/MM/YYYY, HH24:MI:SS') phpdt_data
               from siw_solic_log                     a,
                    co_pessoa         c,
                    siw_tramite       e,
@@ -266,7 +285,8 @@ begin
                    d.nome_resumido destinatario,
                    d.sq_pessoa sq_pessoa_destinatario,
                    f.nome fase, f.nome tramite,
-                   k.sq_siw_arquivo, k.caminho, k.tipo, k.tamanho
+                   k.sq_siw_arquivo, k.caminho, k.tipo, k.tamanho, 
+                   to_char(b.data_inclusao, 'DD/MM/YYYY, HH24:MI:SS') phpdt_data
               from gd_demanda_log                     b,
                    co_pessoa          d,
                    co_pessoa          c,
