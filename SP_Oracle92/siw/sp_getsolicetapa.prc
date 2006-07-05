@@ -149,7 +149,8 @@ begin
                 case a.programada when 'S' then 'Sim' else 'Não' end nm_programada,
                 case a.cumulativa when 'S' then 'Sim' else 'Não' end nm_cumulativa,                
                 d.nome_resumido||' ('||f.sigla||')' nm_resp, g.sigla sg_setor,
-                nvl(h.qt_ativ,0) qt_ativ, h.sq_menu p2
+                nvl(h.qt_ativ,0) qt_ativ, h.sq_menu p2, 
+                   to_char(a.ultima_atualizacao, 'DD/MM/YYYY, HH24:MI:SS') phpdt_data
            from pj_projeto_etapa                a
                 left outer join eo_unidade_resp b on (a.sq_unidade       = b.sq_unidade and
                                                       b.tipo_respons     = 'T'          and
