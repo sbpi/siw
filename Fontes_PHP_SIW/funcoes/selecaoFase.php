@@ -7,7 +7,6 @@ function selecaoFase($label,$accesskey,$hint,$chave,$chaveAux,$campo,$restricao,
   extract($GLOBALS);
   $RS = db_getTramiteList::getInstanceOf($dbms, $chaveAux, $restricao,'S');
   $RS = SortArray($RS,'ordem','asc');
-  //$RS->Filter="ativo = 'S'";
   if (!isset($hint)) {
     ShowHTML('          <td valign="top"><font size="1"><b>'.$label.'</b><br><SELECT ACCESSKEY="'.$accesskey.'" CLASS="sts" NAME="'.$campo.'" '.$w_Disabled.' '.$atributo.'>');
   } else {

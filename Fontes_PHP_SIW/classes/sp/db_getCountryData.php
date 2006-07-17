@@ -1,16 +1,16 @@
 <?
 extract($GLOBALS); include_once($w_dir_volta."classes/db/DatabaseQueriesFactory.php");
 /**
-* class db_getRegionData
+* class db_getCountryData
 *
 * { Description :- 
-*    Recupera os dados da região
+*    Recupera os dados do país
 * }
 */
 
-class db_getRegionData {
+class db_getCountryData {
    function getInstanceOf($dbms, $p_chave) {
-     $sql=$strschema.'sp_getRegionData';
+     $sql=$strschema.'sp_getCountryData';
      $params=array("p_chave"    =>array($p_chave,       B_NUMERIC,   32),
                    "p_result"   =>array(null,           B_CURSOR,    -1)
                   );

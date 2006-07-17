@@ -1,0 +1,60 @@
+<html>
+<head>
+<title>ccalendar ex 1</title>
+</head>
+<body bgcolor="#FFEEEE">
+<TABLE WIDTH="100%"><TR><TH BGCOLOR="#FF0808"><H2>Applet Calendar, Calendrier avec photos</H2></TH></TR></TABLE>
+<A HREF="ccalendf.htm">Retour &agrave; l'applet</A>
+<TABLE WIDTH=100%>
+<TR>
+<TD WIDTH="250">
+<applet
+    code=ccalendar.class
+    archive = "ccalendar.jar"
+    name=ccalendar MAYSCRIPT
+    width=210
+    height=340
+	id = "cal" >
+<param name="lst_img" value="alison02.gif;alison03.gif;alison04.gif">
+<param name="color_fond" value="FFCCCC">
+<param name="color_case" value="FFC0C0">
+<param name="color_Comment" value="FFAAAA">
+<param name="color_empty" value="FF9090">
+<param name="field" value="DateField">
+<param name="form" value="DateForm">
+</applet>
+</TD>
+<TD>
+<h2>Le Calendrier Alison Ermitage </h2>
+<br>
+Merci &agrave; tous les garagistes que j'ai visit&eacute; qui m'ont donn&eacute;s l'id&eacute;e de cette applet.<br>
+S'il vous plait, Mlle Ermitage n'attaquez pas mon provider pour ces photos. Je les retirerai si vous me le demandez.
+<br><br>
+Notez que cette applet peut mettre &agrave; jour un champs de saisie. Cliquez sur un des jours<br>
+<FORM NAME="DateForm">
+Votre choix <INPUT type=TEXTE NAME="DateField" value="""><BR><br>
+Cette exemple montre trois photos diff&egrave;rentes mais l'applet en accepte jusq'&agrave 12 ( une par mois).
+</FORM>
+</TD>
+</TR>
+</TABLE>
+<TABLE WIDTH="100%"><TR><TD BGCOLOR="FF0808"><H2>Code de l'applet</H2></TD></TR></TABLE>
+<PRE>
+N'oubliez pas de rajouter le mot cl&eacute; <b>MAYSCRIPT</b> dans le code HTML pour pouvoir mettre &agrave; jour les champs de la page.<br>
+&lt;applet
+    code=ccalendar.class
+    name=ccalendar <b>MAYSCRIPT</b>
+    width=210
+    height=340
+	id = "cal" >
+&lt;param name="lst_img" value="alison02.gif;alison03.gif;alison04.gif"&gt;
+&lt;param name="color_fond" value="FFCCCC"&gt;
+&lt;param name="color_case" value="FFC0C0"&gt;
+&lt;param name="color_Comment" value="FFAAAA"&gt;
+&lt;param name="color_empty" value="FF9090"&gt;
+&lt;param name="field" value="DateField"&gt;
+&lt;param name="form" value="DateForm"&gt;
+&lt;/applet&gt;
+</PRE>
+</body>
+</html>

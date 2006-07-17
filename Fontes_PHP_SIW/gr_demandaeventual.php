@@ -1,5 +1,4 @@
 <?
-header('Expires: '.-1500);
 session_start();
 include_once('constants.inc');
 include_once('jscript.php');
@@ -145,7 +144,11 @@ function Gerencial() {
     $w_filtro='';
     if ($p_projeto>'') {
       $RS = db_getSolicData::getInstanceOf($dbms,$p_projeto,'PJGERAL');
-      $w_filtro = $w_filtro.'<tr valign="top"><td align="right"><font size=1>Projeto <td><font size=1>[<b><A class="HL" HREF="projeto.php?par=Visual&O=L&w_chave='.$p_projeto.'&w_tipo=Volta&P1='.$P1.'&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP='.$TP.'&SG='.$SG.'" title="Exibe as informações do projeto.">'.f($RS,'titulo').'</a></b>]';
+      if ($O=='W') {
+        $w_filtro = $w_filtro.'<tr valign="top"><td align="right"><font size=1>Projeto <td><font size=1>[<b>'.f($RS,'titulo').'</b>]';
+      } else {
+        $w_filtro = $w_filtro.'<tr valign="top"><td align="right"><font size=1>Projeto <td><font size=1>[<b><A class="HL" HREF="projeto.php?par=Visual&O=L&w_chave='.$p_projeto.'&w_tipo=Volta&P1='.$P1.'&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP='.$TP.'&SG='.$SG.'" title="Exibe as informações do projeto.">'.f($RS,'titulo').'</a></b>]';
+      }
     } 
     if ($p_atividade>'') {
       $RS = db_getSolicEtapa::getInstanceOf($dbms,$p_projeto,$p_atividade,'REGISTRO',null);
@@ -219,11 +222,11 @@ function Gerencial() {
         break;
       case 'GRDMRESP':
         $w_TP = $TP.' - Por responsável';
-        $RS1  = SortArray($RS1,'nm_solic','asc');
+        $RS1  = SortArray($RS1,'nm_solic_ind','asc');
         break;
       case 'GRDMRESPATU':
         $w_TP = $TP.' - Por executor';
-        $RS1  = SortArray($RS1,'nm_exec','asc');
+        $RS1  = SortArray($RS1,'nm_exec_ind','asc');
         break;
       case 'GRDMCC':
         $w_TP = $TP.' - Por classificação';
@@ -244,7 +247,7 @@ function Gerencial() {
     } 
   } 
   if ($O=='W') {
-    HeaderWord(null);
+    HeaderWord();
     $w_pag   = 1;
     $w_linha = 0;
     CabecalhoWord($w_cliente,$w_TP,$w_pag);
@@ -369,13 +372,13 @@ function Gerencial() {
         ShowHTML('    if (cad >= 0) document.Form.p_fase.value='.$w_fase_cad.';');
         ShowHTML('    if (exec >= 0) document.Form.p_fase.value=\''.substr($w_fase_exec,1,100).'\';');
         ShowHTML('    if (conc >= 0) document.Form.p_fase.value='.$w_fase_conc.';');
-        ShowHTML('    if (cad==-1 && exec==-1 && conc==-1) document.Form.p_fase.value=\''.$_REQUEST['p_fase'].'\'; ');
+        ShowHTML('    if (cad==-1 && exec==-1 && conc==-1) document.Form.p_fase.value=\''.$p_fase.'\'; ');
         ShowHTML('    if (atraso >= 0) document.Form.p_atraso.value=\'S\'; else document.Form.p_atraso.value=\''.$_REQUEST['p_atraso'].'\'; ');
         ShowHTML('    document.Form.submit();');
         ShowHTML('  }');
         ShowHTML('</SCRIPT>');
         $RS2 = db_getMenuData::getInstanceOf($dbms,$P2);
-        AbreForm('Form',f($RS2,'link'),'POST','return(Validacao(this));','Demanda',3,$P2,f($RS2,'P3'),null,$w_TP,f($RS2,'sigla'),$w_pagina.$par,'L');
+        AbreForm('Form',f($RS2,'link'),'POST','return(Validacao(this));','Atividade',3,$P2,f($RS2,'P3'),null,$w_TP,f($RS2,'sigla'),$w_pagina.$par,'L');
         ShowHTML(MontaFiltro('POST'));
         switch ($p_agrega) {
           case 'GRDMETAPA':     if ($_REQUEST['p_atividade']=='')   ShowHTML('<input type="Hidden" name="p_atividade" value="">');    break;
@@ -415,7 +418,7 @@ function Gerencial() {
             if ($w_nm_quebra!=f($row,'nm_etapa')) {
               if ($w_qt_quebra>0) {
                 ImprimeLinha($t_solic,$t_cad,$t_tram,$t_conc,$t_atraso,$t_aviso,$t_valor,$t_custo,$t_acima,$w_chave);
-                $w_linha = $w_linha + 2;
+                $w_linha = $w_linha + 1;
               } 
               if ($O!='W' || ($O=='W' && $w_linha<=25)) {
                 // Se for geração de MS-Word, coloca a nova quebra somente se não estourou o limite
@@ -433,14 +436,13 @@ function Gerencial() {
               $t_valor      = 0;
               $t_acima      = 0;
               $t_custo      = 0;
-              $w_linha      = $w_linha + 1;
             } 
             break;
           case 'GRDMPROJ':
             if ($w_nm_quebra!=f($row,'nm_projeto')) {
               if ($w_qt_quebra>0) {
                 ImprimeLinha($t_solic,$t_cad,$t_tram,$t_conc,$t_atraso,$t_aviso,$t_valor,$t_custo,$t_acima,$w_chave);
-                $w_linha = $w_linha + 2;
+                $w_linha = $w_linha + 1;
               } 
               if ($O!='W' || ($O=='W' && $w_linha<=25)) {
                 // Se for geração de MS-Word, coloca a nova quebra somente se não estourou o limite
@@ -458,14 +460,13 @@ function Gerencial() {
               $t_valor      = 0;
               $t_acima      = 0;
               $t_custo      = 0;
-              $w_linha      = $w_linha + 1;
             } 
             break;
           case 'GRDMPROP':
             if ($w_nm_quebra!=f($row,'proponente')) {
               if ($w_qt_quebra>0) {
                 ImprimeLinha($t_solic,$t_cad,$t_tram,$t_conc,$t_atraso,$t_aviso,$t_valor,$t_custo,$t_acima,$w_chave);
-                $w_linha = $w_linha + 2;
+                $w_linha = $w_linha + 1;
               } 
               if ($O!='W' || ($O=='W' && $w_linha<=25)) {
                 // Se for geração de MS-Word, coloca a nova quebra somente se não estourou o limite
@@ -483,14 +484,13 @@ function Gerencial() {
               $t_valor      = 0;
               $t_acima      = 0;
               $t_custo      = 0;
-              $w_linha      = $w_linha + 1;
             } 
             break;
           case 'GRDMRESP':
             if ($w_nm_quebra!=f($row,'nm_solic')) {
               if ($w_qt_quebra>0) {
                 ImprimeLinha($t_solic,$t_cad,$t_tram,$t_conc,$t_atraso,$t_aviso,$t_valor,$t_custo,$t_acima,$w_chave);
-                $w_linha = $w_linha + 2;
+                $w_linha = $w_linha + 1;
               } 
               if ($O!='W' || ($O=='W' && $w_linha<=25)) {
                 // Se for geração de MS-Word, coloca a nova quebra somente se não estourou o limite
@@ -508,14 +508,13 @@ function Gerencial() {
               $t_valor      = 0;
               $t_acima      = 0;
               $t_custo      = 0;
-              $w_linha      = $w_linha + 1;
             } 
             break;
           case 'GRDMRESPATU': 
             if ($w_nm_quebra!=f($row,'nm_exec')) {
               if ($w_qt_quebra>0) {
                 ImprimeLinha($t_solic,$t_cad,$t_tram,$t_conc,$t_atraso,$t_aviso,$t_valor,$t_custo,$t_acima,$w_chave);
-                $w_linha = $w_linha + 2;
+                $w_linha = $w_linha + 1;
               } 
               if ($O!='W' || ($O=='W' && $w_linha<=25)) {
                 // Se for geração de MS-Word, coloca a nova quebra somente se não estourou o limite
@@ -533,14 +532,13 @@ function Gerencial() {
               $t_valor      = 0;
               $t_acima      = 0;
               $t_custo      = 0;
-              $w_linha      = $w_linha + 1;
             } 
             break;
           case 'GRDMCC':
             if ($w_nm_quebra!=f($row,'sg_cc')) {
               if ($w_qt_quebra>0) {
                 ImprimeLinha($t_solic,$t_cad,$t_tram,$t_conc,$t_atraso,$t_aviso,$t_valor,$t_custo,$t_acima,$w_chave);
-                $w_linha = $w_linha + 2;
+                $w_linha = $w_linha + 1;
               } 
               if ($O!='W' || ($O=='W' && $w_linha<=25)) {
                 // Se for geração de MS-Word, coloca a nova quebra somente se não estourou o limite
@@ -558,14 +556,13 @@ function Gerencial() {
               $t_valor      = 0;
               $t_acima      = 0;
               $t_custo      = 0;
-              $w_linha      = $w_linha + 1;
             } 
             break;
           case 'GRDMSETOR':
             if ($w_nm_quebra!=f($row,'nm_unidade_resp')) {
               if ($w_qt_quebra>0) {
                 ImprimeLinha($t_solic,$t_cad,$t_tram,$t_conc,$t_atraso,$t_aviso,$t_valor,$t_custo,$t_acima,$w_chave);
-                $w_linha = $w_linha + 2;
+                $w_linha = $w_linha + 1;
               } 
               if ($O!='W' || ($O=='W' && $w_linha<=25)) {
                 // Se for geração de MS-Word, coloca a nova quebra somente se não estourou o limite
@@ -583,14 +580,13 @@ function Gerencial() {
               $t_valor      = 0;
               $t_acima      = 0;
               $t_custo      = 0;
-              $w_linha      = $w_linha + 1;
             } 
             break;
           case 'GRDMPRIO':
             if ($w_nm_quebra!=f($row,'nm_prioridade')) {
               if ($w_qt_quebra>0) {
                 ImprimeLinha($t_solic,$t_cad,$t_tram,$t_conc,$t_atraso,$t_aviso,$t_valor,$t_custo,$t_acima,$w_chave);
-                $w_linha = $w_linha + 2;
+                $w_linha = $w_linha + 1;
               } 
               if ($O!='W' || ($O=='W' && $w_linha<=25)) {
                 // Se for geração de MS-Word, coloca a nova quebra somente se não estourou o limite
@@ -608,14 +604,13 @@ function Gerencial() {
               $t_valor      = 0;
               $t_acima      = 0;
               $t_custo      = 0;
-              $w_linha      = $w_linha + 1;
             } 
             break;
           case 'GRDMLOCAL':
             if ($w_nm_quebra!=f($row,'co_uf')) {
               if ($w_qt_quebra>0) {
                 ImprimeLinha($t_solic,$t_cad,$t_tram,$t_conc,$t_atraso,$t_aviso,$t_valor,$t_custo,$t_acima,$w_chave);
-                $w_linha = $w_linha + 2;
+                $w_linha = $w_linha + 1;
               } 
               if ($O!='W' || ($O=='W' && $w_linha<=25)) {
                 // Se for geração de MS-Word, coloca a nova quebra somente se não estourou o limite
@@ -633,7 +628,6 @@ function Gerencial() {
               $t_valor      = 0;
               $t_acima      = 0;
               $t_custo      = 0;
-              $w_linha      = $w_linha + 1;
             } 
             break;
         } 
@@ -701,7 +695,7 @@ function Gerencial() {
       ShowHTML('          <td><font size="1"><b>Totais</font></td>');
       ImprimeLinha($t_totsolic,$t_totcad,$t_tottram,$t_totconc,$t_totatraso,$t_totaviso,$t_totvalor,$t_totcusto,$t_totacima,-1);
     } 
-    ShowHTML('      </FORM>');
+    if ($O!='W') ShowHTML('      </FORM>');
     ShowHTML('      </center>');
     ShowHTML('    </table>');
     ShowHTML('  </td>');
@@ -797,8 +791,8 @@ function Gerencial() {
     SelecaoFaseCheck('Recuperar fases:','S',null,$p_fase,$P2,'p_fase[]',null,null);
     ShowHTML('      <tr><td align="center" colspan="2" height="1" bgcolor="#000000">');
     ShowHTML('      <tr><td align="center" colspan="2">');
-    ShowHTML('            <input class="STB" type="submit" name="Botao" value="Exibir" onClick="javascript:document.Form.O.value=\'L\';">');
-    ShowHTML('            <input class="STB" type="submit" name="Botao" value="Gerar Word" onClick="javascript:document.Form.O.value=\'W\'; document.Form.target=\'Word\'">');
+    ShowHTML('            <input class="STB" type="submit" name="Botao" value="Exibir resumo" onClick="javascript:document.Form.O.value=\'L\'; document.Form.target=\'\';">');
+    ShowHTML('            <input class="STB" type="submit" name="Botao" value="Gerar Word" onClick="javascript:document.Form.O.value=\'W\'; document.Form.target=\'Word\';">');
     ShowHTML('          </td>');
     ShowHTML('      </tr>');
     ShowHTML('    </table>');

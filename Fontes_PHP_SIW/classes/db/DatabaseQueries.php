@@ -256,14 +256,20 @@ class OraDatabaseQueries extends DatabaseQueries {
         if(is_resource($this->result)) { 
           for ($i = 1; $i <= oci_num_fields($this->result); $i++) {
             if (oci_field_type($this->result, $i)=='DATE' || oci_field_type($this->result, $i)=='NUMBER') $this->column_datatype[oci_field_name($this->result, $i)] = oci_field_type($this->result, $i);
+            elseif (substr(strtolower(oci_field_name($this->result, $i)),0,6)=='phpdt_') { $this->column_datatype[strtolower(oci_field_name($this->result, $i))] = 'DATETIME'; }
           }
           $this->temp = oci_fetch_array($this->result, OCI_BOTH+OCI_RETURN_NULLS); 
           if (isset($this->column_datatype)) {
             foreach ($this->column_datatype as $key => $val) {
-              if (nvl($this->temp[$key],'')>'') { 
+              if (substr($key,0,6)=='phpdt_') {
+                $this->temp[$key] = toDate($this->temp[$key]); 
+              } elseif (nvl($this->temp[$key],'')>'') { 
                 if ($val=='DATE') {
                   $tmp = formatDateTime($this->temp[$key]);
                   $this->temp[$key] = mktime(0,0,0,substr($tmp,3,2),substr($tmp,0,2),substr($tmp,6,4)); 
+                } elseif ($val=='DATETIME') {
+                  $tmp = $this->temp[$key];
+                  $this->resultData[$i][$key] = mktime(substr($tmp,12,2),substr($tmp,15,2),substr($tmp,18,2),substr($tmp,3,2),substr($tmp,0,2),substr($tmp,6,4));
                 } else {
                   $this->temp[$key] = str_replace(',','.',$this->temp[$key]); 
                 }
@@ -342,7 +348,12 @@ class OraDatabaseQueryProc extends OraDatabaseQueries {
 
         if ($cursor) {
            $this->result = oci_new_cursor($this->conHandle);
-           $this->stmt = oci_parse($this->conHandle, "begin $this->query ($par); end;");
+           if (substr($this->query,0,8)=='FUNCTION') {
+             $this->query = substr($this->query,8);
+             $this->stmt = oci_parse($this->conHandle, "select $this->query ($par) from dual;");
+           } else { 
+             $this->stmt = oci_parse($this->conHandle, "begin $this->query ($par); end;");
+           }
 
            $exibe = false;
            foreach($this->params as $paramName=>$value) {
@@ -364,6 +375,7 @@ class OraDatabaseQueryProc extends OraDatabaseQueries {
               if(is_resource($this->result)) { 
                  for ($i = 1; $i <= oci_num_fields($this->result); $i++) {
                    if (oci_field_type($this->result, $i)=='DATE' || oci_field_type($this->result, $i)=='NUMBER') { $this->column_datatype[strtolower(oci_field_name($this->result, $i))] = oci_field_type($this->result, $i); }
+                   elseif (substr(strtolower(oci_field_name($this->result, $i)),0,6)=='phpdt_') { $this->column_datatype[strtolower(oci_field_name($this->result, $i))] = 'DATETIME'; }
                  }
                  $this->num_rows = oci_fetch_all($this->result, $this->resultData, 0, -1,OCI_ASSOC+OCI_FETCHSTATEMENT_BY_ROW);
                  array_key_case_change(&$this->resultData);
@@ -374,6 +386,8 @@ class OraDatabaseQueryProc extends OraDatabaseQueries {
                          if ($val=='DATE') {
                            $tmp = formatDateTime($this->resultData[$i][$key]);
                            $this->resultData[$i][$key] = mktime(0,0,0,substr($tmp,3,2),substr($tmp,0,2),substr($tmp,6,4)); 
+                         } elseif ($val=='DATETIME') {
+                           $this->resultData[$i][$key] = toDate($this->resultData[$i][$key]);
                          } else {
                            $this->resultData[$i][$key] = str_replace(',','.',$this->resultData[$i][$key]); 
                          }
@@ -394,7 +408,12 @@ class OraDatabaseQueryProc extends OraDatabaseQueries {
               }
            }
         } else {
-           $this->result = oci_parse($this->conHandle, "begin $this->query ($par); end;");
+           if (substr($this->query,0,8)=='FUNCTION') {
+             $this->query = substr($this->query,8);
+             $this->result = oci_parse($this->conHandle, "select $this->query ($par) from dual");
+           } else { 
+             $this->result = oci_parse($this->conHandle, "begin $this->query ($par); end;");
+           }
 
            foreach($this->params as $paramName=>$value) {
                foreach($value as $paramValue=>$paramType) { 

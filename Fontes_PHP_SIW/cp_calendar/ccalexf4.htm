@@ -1,0 +1,72 @@
+<html>
+<head>
+<title>ccalendar, Appel d'une fonction javascript</title>
+</head>
+<SCRIPT LANGUAGE="JavaScript">
+<!--
+function alertDate()
+{
+ alert("Year = "+document.ccalendar.getYear()+", month="+document.ccalendar.getMonth()+", day="+document.ccalendar.getDay());
+}
+//-->
+</SCRIPT>
+<body bgcolor="#FFFFFF">
+<TABLE BORDER=0  WIDTH="100%">
+<TR><TH BGCOLOR="#E0E0F0"><H2>Calendar, Appel d'une fonction javascript</H1></TH></TR>
+</TABLE>
+<a href="ccalendf.htm">Retour &agrave; l'applet</A>
+<TABLE width="100%">
+<TR><TD BGCOLOR="E0E0F0"><H2>Que montre cet exemple</H2></TD></TR></table>
+Cet exemple monter un appel d'une fonction javascript &agrave; partir de l'applet.
+Notre fonction se nomme alertDate().
+L'applet propose 3 fonctions qui peuvent &ecirc;tre appel&eacute;es d'une fonction javascript.
+
+<ul>
+<li>GetYear(), retourne un entier repr&egrave;sentant l'annéeacute;</li>
+<li>GetMonth(), retourne un entier repr&egrave;sentant le mois</li>
+<li>GetDay(), retourne un entier repr&egrave;sentant le jour</li>
+</ul>
+<table width="100%"><TR><TD BGCOLOR="E0E0F0"><H2>Example</H2></TD></TR>
+<tr><td>
+<applet
+    code=ccalendar.class
+    name=ccalendar MAYSCRIPT
+    archive="ccalendar.jar"
+    width=200
+    height=200
+	id = "cal" >
+<param name="color_fond" value="CCCCFF">
+<param name="color_case" value="C0C0FF">
+<param name="color_Comment" value="AAAAFF">
+<param name="color_empty" value="9090FF">
+<param name="jvf" value="alertDate()">
+</applet>
+</td></tr>
+</TABLE>
+Cliquez sur un jour pour lancer alertDate().
+<TABLE width="100%"><TR><TD BGCOLOR="E0E0F0"><H2>Code HTML</H2></TD></TR></table>
+N'oubliez pas de rajouter le mot cl&eacute; <b>MAYSCRIPT</b> dans le code HTML pour pouvoir 	appeler la fonction.<br>
+<PRE>
+&lt;applet
+    code=ccalendar.class
+    name=ccalendar <b>MAYSCRIPT</b>
+    width=160
+    height=160
+	id = "cal"&gt;
+&lt;param name="color_fond" value="CCCCFF"&gt;
+&lt;param name="color_case" value="C0C0FF"&gt;
+&lt;param name="color_Comment" value="AAAAFF"&gt;
+&lt;param name="color_empty" value="9090FF"&gt;
+&lt;param name="jvf" value="alertDate()"&gt;
+&lt;/applet&gt;
+</PRE>
+<TABLE width="100%"><TR><TD BGCOLOR="E0E0F0"><H2>Code javascript</H2></TD></TR></table>
+<pre>
+function alertDate()
+{
+ alert("Year = "+document.ccalendar.getYear()+", month="+document.ccalendar.getMonth()+", day="+document.ccalendar.getDay());
+}
+</pre>
+<hr>
+</body>
+</html>

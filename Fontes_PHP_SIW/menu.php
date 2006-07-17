@@ -138,40 +138,55 @@ function ExibeDocs() {
 
                   $w_titulo=$w_titulo.' - '.f($row3,'NOME');
                   if (f($row3,'IMAGEM') > '') $w_Imagem=f($row3,'IMAGEM'); else $w_Imagem=$w_ImagemPadrao;
-                  if (f($row3,'externo')=='S') 
-                     eval('$node'.i.'_'.j.'_'.k.'_'.l.' = &$node'.i.'_'.j.'_'.k.'->addItem(new XNode(null,LinkArquivo(\'hl\',$p_cliente,str_replace(\'@files/\',\'\',f($row3,\'LINK\')),f($row3,\'target\'),null,\'<img src="\'.$w_Imagem.\'" border=0>\'.f($row3,\'nome\'),null),null,null,null));');
-                  else
-                     eval('$node'.i.'_'.j.'_'.k.'_'.l.' = &$node'.i.'_'.j.'_'.k.'->addItem(new XNode(f($row3,\'nome\'),f($row3,\'LINK\').\'&P1=\'.f($row3,\'P1\').\'&P2=\'.f($row3,\'P2\').\'&P3=\'.f($row3,\'P3\').\'&P4=\'.f($row3,\'P4\').\'&TP=<img src=\'.$w_Imagem.\' BORDER=0>\'.$w_titulo.\'&SG=\'.f($row3,\'SIGLA\'),$w_Imagem,$w_Imagem,f($row3,\'target\')));');
- 
+                  if (f($row3,'link')>'') {
+                    if (f($row3,'externo')=='S') {
+                      if (!(strpos(f($row3,'link'),'@file')===false)) {
+                        eval('$node'.i.'_'.j.'_'.k.'_'.l.' = &$node'.i.'_'.j.'_'.k.'->addItem(new XNode(null,LinkArquivo(\'hl\',$p_cliente,str_replace(\'@files/\',\'\',f($row3,\'LINK\')),f($row3,\'target\'),null,\'<img src="\'.$w_Imagem.\'" border=0>\'.f($row3,\'nome\'),null),null,null,null));');
+                      } else {
+                         eval('$node'.i.'_'.j.'_'.k.'_'.l.' = &$node'.i.'_'.j.'_'.k.'->addItem(new XNode(f($row3,\'nome\'),f($row3,\'LINK\'),$w_Imagem,$w_Imagem,f($row3,\'target\')));');
+                      }
+                    } else {
+                       eval('$node'.i.'_'.j.'_'.k.'_'.l.' = &$node'.i.'_'.j.'_'.k.'->addItem(new XNode(f($row3,\'nome\'),f($row3,\'LINK\').\'&P1=\'.f($row3,\'P1\').\'&P2=\'.f($row3,\'P2\').\'&P3=\'.f($row3,\'P3\').\'&P4=\'.f($row3,\'P4\').\'&TP=<img src=\'.$w_Imagem.\' BORDER=0>\'.$w_titulo.\'&SG=\'.f($row3,\'SIGLA\'),$w_Imagem,$w_Imagem,f($row3,\'target\')));');
+                    }
+                  } else {
+                    eval('$node'.i.'_'.j.'_'.k.'_'.l.' = &$node'.i.'_'.j.'_'.k.'->addItem(new XNode(null,null,null,null,\'<img src="\'.$w_Imagem.\'" border=0>\'.f($row3,\'nome\'),null,null,null,null));');
+                  }
                   $w_titulo=str_replace(' - '.f($row3,'NOME'),'',$w_titulo);
                   $l = $l + 1;
                 }
               } else {
                 if (f($row2,'IMAGEM')>'') $w_Imagem=f($row2,'IMAGEM'); else $w_Imagem=$w_ImagemPadrao;
-
-                if (f($row2,'externo')=='S')
-                   eval('$node'.i.'_'.j.'_'.k.' = &$node'.i.'_'.j.'->addItem(new XNode(null,LinkArquivo(\'hl\',$p_cliente,str_replace(\'@files/\',\'\',f($row2,\'LINK\')),f($row2,\'target\'),null,\'<img src="\'.$w_Imagem.\'" border=0>\'.f($row2,\'nome\'),null),null,null,null));');
-                else
-                   eval('$node'.i.'_'.j.'_'.k.' = &$node'.i.'_'.j.'->addItem(new XNode(f($row2,\'nome\'),f($row2,\'LINK\').\'&P1=\'.f($row2,\'P1\').\'&P2=\'.f($row2,\'P2\').\'&P3=\'.f($row2,\'P3\').\'&P4=\'.f($row2,\'P4\').\'&TP=<img src=\'.$w_Imagem.\' BORDER=0>\'.$w_titulo.\'&SG=\'.f($row2,\'SIGLA\'),$w_Imagem,$w_Imagem,f($row2,\'target\')));');
-
+                if (f($row2,'link')>'') {
+                  if (f($row2,'externo')=='S') {
+                    if (!(strpos(f($row2,'link'),'@file')===false)) {
+                      eval('$node'.i.'_'.j.'_'.k.' = &$node'.i.'_'.j.'->addItem(new XNode(null,LinkArquivo(\'hl\',$p_cliente,str_replace(\'@files/\',\'\',f($row2,\'LINK\')),f($row2,\'target\'),null,\'<img src="\'.$w_Imagem.\'" border=0>\'.f($row2,\'nome\'),null),null,null,null));');
+                    } else {
+                       eval('$node'.i.'_'.j.'_'.k.' = &$node'.i.'_'.j.'->addItem(new XNode(f($row2,\'nome\'),f($row2,\'LINK\'),$w_Imagem,$w_Imagem,f($row2,\'target\')));');
+                    }
+                  } else {
+                     eval('$node'.i.'_'.j.'_'.k.' = &$node'.i.'_'.j.'->addItem(new XNode(f($row2,\'nome\'),f($row2,\'LINK\').\'&P1=\'.f($row2,\'P1\').\'&P2=\'.f($row2,\'P2\').\'&P3=\'.f($row2,\'P3\').\'&P4=\'.f($row2,\'P4\').\'&TP=<img src=\'.$w_Imagem.\' BORDER=0>\'.$w_titulo.\'&SG=\'.f($row2,\'SIGLA\'),$w_Imagem,$w_Imagem,f($row2,\'target\')));');
+                  }
+                } else {
+                  eval('$node'.i.'_'.j.'_'.k.' = &$node'.i.'_'.j.'->addItem(new XNode(null,null,null,null,\'<img src="\'.$w_Imagem.\'" border=0>\'.f($row2,\'nome\'),null,null,null,null));');
+                }
               }
-
               $w_titulo=str_replace(' - '.f($row2,'NOME'),'',$w_titulo);
               $k = $k + 1;
             }
           } else {
-
             if (f($row1,'IMAGEM')>'') $w_Imagem=f($row1,'IMAGEM'); else $w_Imagem=$w_ImagemPadrao;
-
-            if (f($row1,'externo')=='S') {
-
-              if (f($row1,'LINK')>'') 
-                 eval('$node'.i.'_'.j.' = &$node'.i.'->addItem(new XNode(null,LinkArquivo(\'hl\',$p_cliente,str_replace(\'@files/\',\'\',f($row1,\'LINK\')),f($row1,\'target\'),null,\'<img src="\'.$w_Imagem.\'" border=0>\'.f($row1,\'nome\'),null),null,null,null));');
-              else
-                 eval('$node'.i.'_'.j.' = &$node'.i.'->addItem(new XNode(f($row1,\'nome\'),\'#\'.f($row1,\'nome\'),$w_Imagem,$w_Imagem,f($row1,\'target\')));');
- 
+            if (f($row1,'link')>'') {
+              if (f($row1,'externo')=='S') {
+                if (!(strpos(f($row1,'link'),'@file')===false)) {
+                  eval('$node'.i.'_'.j.' = &$node'.i.'->addItem(new XNode(null,LinkArquivo(\'hl\',$p_cliente,str_replace(\'@files/\',\'\',f($row1,\'LINK\')),f($row1,\'target\'),null,\'<img src="\'.$w_Imagem.\'" border=0>\'.f($row1,\'nome\'),null),null,null,null));');
+                } else {
+                   eval('$node'.i.'_'.j.' = &$node'.i.'->addItem(new XNode(f($row1,\'nome\'),f($row1,\'LINK\'),$w_Imagem,$w_Imagem,f($row1,\'target\')));');
+                }
+              } else {
+                 eval('$node'.i.'_'.j.' = &$node'.i.'->addItem(new XNode(f($row1,\'nome\'),f($row1,\'LINK\').\'&P1=\'.f($row1,\'P1\').\'&P2=\'.f($row1,\'P2\').\'&P3=\'.f($row1,\'P3\').\'&P4=\'.f($row1,\'P4\').\'&TP=<img src=\'.$w_Imagem.\' BORDER=0>\'.$w_titulo.\'&SG=\'.f($row1,\'SIGLA\'),$w_Imagem,$w_Imagem,f($row1,\'target\')));');
+              }
             } else {
-              eval('$node'.i.'_'.j.' = &$node'.i.'->addItem(new XNode(f($row1,\'nome\'),f($row1,\'LINK\').\'&P1=\'.f($row1,\'P1\').\'&P2=\'.f($row1,\'P2\').\'&P3=\'.f($row1,\'P3\').\'&P4=\'.f($row1,\'P4\').\'&TP=<img src=\'.$w_Imagem.\' BORDER=0>\'.$w_titulo.\'&SG=\'.f($row1,\'SIGLA\'),$w_Imagem,$w_Imagem,f($row1,\'target\')));');
+              eval('$node'.i.'_'.j.' = &$node'.i.'->addItem(new XNode(null,null,null,null,\'<img src="\'.$w_Imagem.\'" border=0>\'.f($row1,\'nome\'),null,null,null,null));');
             }
           }
           $w_titulo=str_replace(' - '.f($row1,'NOME'),'',$w_titulo);
@@ -180,10 +195,19 @@ function ExibeDocs() {
       } else {
         if (f($row,'IMAGEM')>'') $w_Imagem=f($row,'IMAGEM'); else $w_Imagem=$w_ImagemPadrao;
 
-        if (f($row,'externo')=='S')
-           eval('$node'.i.' = &$root->addItem(new XNode(null,LinkArquivo(\'hl\',$p_cliente,str_replace(\'@files/\',\'\',f($row,\'LINK\')),f($row,\'target\'),null,\'<img src="\'.$w_Imagem.\'" border=0>\'.f($row,\'nome\'),null),null,null,null));');
-        else
-           eval('$node'.i.' = &$root->addItem(new XNode(f($row,\'nome\'),f($row,\'LINK\').\'&P1=\'.f($row,\'P1\').\'&P2=\'.f($row,\'P2\').\'&P3=\'.f($row,\'P3\').\'&P4=\'.f($row,\'P4\').\'&TP=<img src=\'.$w_Imagem.\' BORDER=0>\'.$w_titulo.\'&SG=\'.f($row,\'SIGLA\'),$w_Imagem,$w_Imagem,f($row,\'target\')));');
+        if (f($row,'link')>'') {
+          if (f($row,'externo')=='S') {
+            if (!(strpos(f($row,'link'),'@file')===false)) {
+              eval('$node'.i.' = &$root->addItem(new XNode(null,LinkArquivo(\'hl\',$p_cliente,str_replace(\'@files/\',\'\',f($row,\'LINK\')),f($row,\'target\'),null,\'<img src="\'.$w_Imagem.\'" border=0>\'.f($row,\'nome\'),null),null,null,null));');
+            } else {
+              eval('$node'.i.' = &$root->addItem(new XNode(f($row,\'nome\'),f($row,\'LINK\'),$w_Imagem,$w_Imagem,f($row,\'target\')));');
+            }
+          } else {
+            eval('$node'.i.' = &$root->addItem(new XNode(f($row,\'nome\'),f($row,\'LINK\').\'&P1=\'.f($row,\'P1\').\'&P2=\'.f($row,\'P2\').\'&P3=\'.f($row,\'P3\').\'&P4=\'.f($row,\'P4\').\'&TP=<img src=\'.$w_Imagem.\' BORDER=0>\'.$w_titulo.\'&SG=\'.f($row,\'SIGLA\'),$w_Imagem,$w_Imagem,f($row,\'target\')));');
+          }
+        } else {
+          eval('$node'.i.' = &$root->addItem(new XNode(null,null,null,null,\'<img src="\'.$w_Imagem.\'" border=0>\'.f($row,\'nome\'),null,null,null,null));');
+        }
       }
       $i = $i +1;
     }
@@ -207,13 +231,13 @@ function ExibeDocs() {
          eval('$node1_'.i.' = &$node1->addItem(new XNode(null,LinkArquivo(\'hl\',$p_cliente,str_replace(\'@files/\',\'\',f($row,\'LINK\')),f($row,\'target\'),null,\'<img src="\'.$w_Imagem.\'" border=0>\'.f($row,\'nome\'),null),null,null,null));');
       else {
         if ($_REQUEST['w_cgccpf']>'')
-           eval('$node'.i.' = &$node1->addItem(new XNode(f($row,\'nome\'),f($row,\'LINK\').\'&P1=\'.f($row,\'P1\').\'&P2=\'.f($row,\'P2\').\'&P3=\'.f($row,\'P3\').\'&P4=\'.f($row,\'P4\').\'&TP=<img src=\'.$w_Imagem.\' BORDER=0>\'.$w_titulo.\'&SG=\'.f($row,\'SIGLA\').\'&O=L&w_cgccpf=\'.$_REQUEST[\'w_cgccpf\'].MontaFiltro(\'GET\'),$w_Imagem,$w_Imagem,f($row,\'target\')));');
+           eval('$node'.i.' = &$node1->addItem(new XNode(f($row,\'nome\'),f($row,\'LINK\').\'&P1=\'.f($row,\'P1\').\'&P2=\'.f($row,\'P2\').\'&P3=\'.f($row,\'P3\').\'&P4=\'.f($row,\'P4\').\'&TP=\'.$w_titulo.\'&SG=\'.f($row,\'SIGLA\').\'&O=L&w_cgccpf=\'.$_REQUEST[\'w_cgccpf\'].MontaFiltro(\'GET\'),$w_Imagem,$w_Imagem,f($row,\'target\')));');
         elseif ($_REQUEST['w_usuario']>'')
-              eval('$node'.i.' = &$node1->addItem(new XNode(f($row,\'nome\'),f($row,\'LINK\').\'&P1=\'.f($row,\'P1\').\'&P2=\'.f($row,\'P2\').\'&P3=\'.f($row,\'P3\').\'&P4=\'.f($row,\'P4\').\'&TP=<img src=\'.$w_Imagem.\' BORDER=0>\'.$w_titulo.\'&SG=\'.f($row,\'SIGLA\').\'&O=L&w_usuario=\'.$_REQUEST[\'w_usuario\'].\'&w_menu=\'.f($row,\'menu_pai\'),$w_Imagem,$w_Imagem,f($row,\'target\')));');
+              eval('$node'.i.' = &$node1->addItem(new XNode(f($row,\'nome\'),f($row,\'LINK\').\'&P1=\'.f($row,\'P1\').\'&P2=\'.f($row,\'P2\').\'&P3=\'.f($row,\'P3\').\'&P4=\'.f($row,\'P4\').\'&TP=\'.$w_titulo.\'&SG=\'.f($row,\'SIGLA\').\'&O=L&w_usuario=\'.$_REQUEST[\'w_usuario\'].\'&w_menu=\'.f($row,\'menu_pai\'),$w_Imagem,$w_Imagem,f($row,\'target\')));');
         elseif ($_REQUEST['w_sq_acordo']>'')
-              eval('$node'.i.' = &$node1->addItem(new XNode(f($row,\'nome\'),f($row,\'LINK\').\'&P1=\'.f($row,\'P1\').\'&P2=\'.f($row,\'P2\').\'&P3=\'.f($row,\'P3\').\'&P4=\'.f($row,\'P4\').\'&TP=<img src=\'.$w_Imagem.\' BORDER=0>\'.$w_titulo.\'&SG=\'.f($row,\'SIGLA\').\'&O=L&w_sq_acordo=\'.$_REQUEST[\'w_sq_acordo\'].\'&w_menu=\'.f($row,\'menu_pai\'),$w_Imagem,$w_Imagem,f($row,\'target\')));');
+              eval('$node'.i.' = &$node1->addItem(new XNode(f($row,\'nome\'),f($row,\'LINK\').\'&P1=\'.f($row,\'P1\').\'&P2=\'.f($row,\'P2\').\'&P3=\'.f($row,\'P3\').\'&P4=\'.f($row,\'P4\').\'&TP=\'.$w_titulo.\'&SG=\'.f($row,\'SIGLA\').\'&O=L&w_sq_acordo=\'.$_REQUEST[\'w_sq_acordo\'].\'&w_menu=\'.f($row,\'menu_pai\'),$w_Imagem,$w_Imagem,f($row,\'target\')));');
         else
-           eval('$node'.i.' = &$node1->addItem(new XNode(f($row,\'nome\'),f($row,\'LINK\').\'&P1=\'.f($row,\'P1\').\'&P2=\'.f($row,\'P2\').\'&P3=\'.f($row,\'P3\').\'&P4=\'.f($row,\'P4\').\'&TP=<img src=\'.$w_Imagem.\' BORDER=0>\'.$w_titulo.\'&SG=\'.f($row,\'SIGLA\').\'&O=\'.$O.\'&w_chave=\'.$_REQUEST[\'w_chave\'].\'&w_menu=\'.f($row,\'menu_pai\').MontaFiltro(\'GET\'),$w_Imagem,$w_Imagem,f($row,\'target\')));');
+           eval('$node'.i.' = &$node1->addItem(new XNode(f($row,\'nome\'),f($row,\'LINK\').\'&P1=\'.f($row,\'P1\').\'&P2=\'.f($row,\'P2\').\'&P3=\'.f($row,\'P3\').\'&P4=\'.f($row,\'P4\').\'&TP=\'.$w_titulo.\'&SG=\'.f($row,\'SIGLA\').\'&O=\'.$O.\'&w_chave=\'.$_REQUEST[\'w_chave\'].\'&w_menu=\'.f($row,\'menu_pai\').MontaFiltro(\'GET\'),$w_Imagem,$w_Imagem,f($row,\'target\')));');
       }
 
       if ($_REQUEST['O']=='I') last($RS);

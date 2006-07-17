@@ -1,5 +1,6 @@
 <?
-setlocale(LC_ALL, 'pt_BR');
+setlocale(LC_ALL, 'ptb');
+date_default_timezone_set('America/Sao_Paulo');
 //$locale_info = localeconv();
 //echo "<pre>\n";
 //echo "--------------------------------------------\n";
@@ -104,63 +105,77 @@ function LinkArquivo ($p_classe, $p_cliente, $p_arquivo, $p_target, $p_hint, $p_
 // =========================================================================
 // Declaração inicial para páginas OLE com Word
 // -------------------------------------------------------------------------
-function headerWord() {
-  header("Content-type: "."application/msword");
-  ShowHTML("<html xmlns:o=\"urn:schemas-microsoft-com:office:office\" ");
-  ShowHTML("xmlns:w=\"urn:schemas-microsoft-com:office:word\" ");
-  ShowHTML("xmlns=\"http://www.w3.org/TR/REC-html40\"> ");
-  ShowHTML("<head> ");
-  ShowHTML("<meta http-equiv=Content-Type content=\"text/html; charset=windows-1252\"> ");
-  ShowHTML("<meta name=ProgId content=Word.Document> ");
-  ShowHTML("<!--[if gte mso 9]><xml> ");
-  ShowHTML(" <w:WordDocument> ");
-  ShowHTML("  <w:View>Print</w:View> ");
-  ShowHTML("  <w:Zoom>BestFit</w:Zoom> ");
-  ShowHTML("  <w:SpellingState>Clean</w:SpellingState> ");
-  ShowHTML("  <w:GrammarState>Clean</w:GrammarState> ");
-  ShowHTML("  <w:HyphenationZone>21</w:HyphenationZone> ");
-  ShowHTML("  <w:Compatibility> ");
-  ShowHTML("   <w:BreakWrappedTables/> ");
-  ShowHTML("   <w:SnapToGridInCell/> ");
-  ShowHTML("   <w:WrapTextWithPunct/> ");
-  ShowHTML("   <w:UseAsianBreakRules/> ");
-  ShowHTML("  </w:Compatibility> ");
-  ShowHTML("  <w:BrowserLevel>MicrosoftInternetExplorer4</w:BrowserLevel> ");
-  ShowHTML(" </w:WordDocument> ");
-  ShowHTML("</xml><![endif]--> ");
-  ShowHTML("<style> ");
-  ShowHTML("<!-- ");
-  ShowHTML(" /* Style Definitions */ ");
-  ShowHTML("@page Section1 ");
-  ShowHTML("    {size:11.0in 8.5in; ");
-  ShowHTML("    mso-page-orientation:landscape; ");
-  ShowHTML("    margin:60.85pt 1.0cm 60.85pt 2.0cm; ");
-  ShowHTML("    mso-header-margin:35.4pt; ");
-  ShowHTML("    mso-footer-margin:35.4pt; ");
-  ShowHTML("    mso-paper-source:0;} ");
-  ShowHTML("div.Section1 ");
-  ShowHTML("    {page:Section1;} ");
-  ShowHTML("--> ");
-  ShowHTML("</style> ");
-  ShowHTML("</head> ");
-  $BodyOpenClean("onLoad=document.focus();");
-  ShowHTML("<div class=Section1> ");
+function headerWord($p_orientation='LANDSCAPE') {
+  extract($GLOBALS);
+  header('Content-type: application/msword',false);
+  ShowHTML('<html xmlns:o="urn:schemas-microsoft-com:office:office" ');
+  ShowHTML('xmlns:w="urn:schemas-microsoft-com:office:word" ');
+  ShowHTML('xmlns="http://www.w3.org/TR/REC-html40"> ');
+  ShowHTML('<head> ');
+  ShowHTML('<meta http-equiv=Content-Type content="text/html; charset=windows-1252"> ');
+  ShowHTML('<meta name=ProgId content=Word.Document> ');
+  ShowHTML('<!--[if gte mso 9]><xml> ');
+  ShowHTML(' <w:WordDocument> ');
+  ShowHTML('  <w:View>Print</w:View> ');
+  ShowHTML('  <w:Zoom>BestFit</w:Zoom> ');
+  ShowHTML('  <w:SpellingState>Clean</w:SpellingState> ');
+  ShowHTML('  <w:GrammarState>Clean</w:GrammarState> ');
+  ShowHTML('  <w:HyphenationZone>21</w:HyphenationZone> ');
+  ShowHTML('  <w:Compatibility> ');
+  ShowHTML('   <w:BreakWrappedTables/> ');
+  ShowHTML('   <w:SnapToGridInCell/> ');
+  ShowHTML('   <w:WrapTextWithPunct/> ');
+  ShowHTML('   <w:UseAsianBreakRules/> ');
+  ShowHTML('  </w:Compatibility> ');
+  ShowHTML('  <w:BrowserLevel>MicrosoftInternetExplorer4</w:BrowserLevel> ');
+  ShowHTML(' </w:WordDocument> ');
+  ShowHTML('</xml><![endif]--> ');
+  ShowHTML('<style> ');
+  ShowHTML('<!-- ');
+  ShowHTML(' /* Style Definitions */ ');
+  ShowHTML('@page Section1 ');
+  if (strtoupper(Nvl($p_orientation,'LANDSCAPE'))=='PORTRAIT') {
+     ShowHTML('    {mso-page-orientation:portrait; ');
+     ShowHTML('    margin:1.0cm 1.0cm 2.0cm 2.0cm; ');
+     ShowHTML('    mso-header-margin:35.4pt; ');
+     ShowHTML('    mso-footer-margin:35.4pt; ');
+     ShowHTML('    mso-paper-source:0;} ');
+  } else {
+     ShowHTML('    {size:11.0in 8.5in; ');
+     ShowHTML('    mso-page-orientation:landscape; ');
+     ShowHTML('    margin:60.85pt 1.0cm 60.85pt 2.0cm; ');
+     ShowHTML('    mso-header-margin:35.4pt; ');
+     ShowHTML('    mso-footer-margin:35.4pt; ');
+     ShowHTML('    mso-paper-source:0;} ');
+  }
+  ShowHTML('div.Section1 ');
+  ShowHTML('    {page:Section1;} ');
+  ShowHTML('--> ');
+  ShowHTML('</style> ');
+  ShowHTML('</head> ');
+  ShowHTML('<LINK  media=screen href="/siw/files/'.$p_cliente.'/css/estilo.css" type=text/css rel=stylesheet>');
+  ShowHTML('<LINK media=print href="/siw/files/'.$p_cliente.'/css/print.css" type=text/css rel=stylesheet>');
+  BodyOpen('onLoad=document.focus();');
+  ShowHTML('<div class=Section1> ');
 }
 
 // =========================================================================
 // Montagem do cabeçalho de documentos Word
 // -------------------------------------------------------------------------
 function CabecalhoWord($p_cliente,$p_titulo,$p_pagina) {
+  extract($GLOBALS);
+  include_once($w_dir_volta.'classes/sp/db_getCustomerData.php');
   $RS = db_getCustomerData::getInstanceOf($dbms,$p_cliente);
-  ShowHTML("<TABLE WIDTH=\"100%\" BORDER=0>");
-  ShowHTML("  <TR>");
-  ShowHTML("    <TD ROWSPAN=3><IMG ALIGN=\"LEFT\" SRC=\"".$conFileVirtual.$w_cliente."/img/".f($RS,'LOGO')."\" width=56 height=67>");
-  ShowHTML("    <TD ALIGN=\"RIGHT\"><B><FONT SIZE=5 COLOR=\"#000000\">".$p_titulo."</FONT>");
-  ShowHTML("  </TR>");
-  ShowHTML("  <TR><TD ALIGN=\"RIGHT\"><B><FONT SIZE=2 COLOR=\"#000000\">".DataHora()."</B></TD></TR>");
-  ShowHTML("  <TR><TD ALIGN=\"RIGHT\"><B><FONT SIZE=2 COLOR=\"#000000\">Página: ".$p_pagina."</B></TD></TR>");
-  ShowHTML("  <TR><TD colspan=2><HR></td></tr>");
-  ShowHTML("</TABLE>");
+  ShowHTML('<TABLE WIDTH="100%" BORDER=0>');
+  ShowHTML('  <TR>');
+  if (nvl($p_pagina,0)>0) $l_colspan = 3; else $l_colspan = 2;
+  ShowHTML('    <TD ROWSPAN='.$l_colspan.'><IMG ALIGN="LEFT" SRC="'.$conFileVirtual.$w_cliente.'/img/'.f($RS,'LOGO').'" width=56 height=67>');
+  ShowHTML('    <TD ALIGN="RIGHT"><B><FONT SIZE=4 COLOR="#000000">'.$p_titulo.'</FONT>');
+  ShowHTML('  </TR>');
+  ShowHTML('  <TR><TD ALIGN="RIGHT"><B><FONT SIZE=2 COLOR="#000000">'.DataHora().'</B></TD></TR>');
+  if (nvl($p_pagina,0)>0) ShowHTML('  <TR><TD ALIGN="RIGHT"><B><FONT SIZE=2 COLOR="#000000">Página: '.$p_pagina.'</B></TD></TR>');
+  ShowHTML('  <TR><TD colspan=2><HR></td></tr>');
+  ShowHTML('</TABLE>');
 }
 
 // =========================================================================
@@ -259,25 +274,23 @@ function MontaBarra($p_link,$p_PageCount,$p_AbsolutePage,$p_PageSize,$p_RecordCo
 // -------------------------------------------------------------------------
 function SolicAcesso($p_solicitacao,$p_usuario) {
   extract($GLOBALS);
-  $RS = db_getSolicAcesso::getInstanceOf($dbms, $p_solicitacao, $p_usuario, $l_acesso);
+  $l_acesso = db_getSolicAcesso::getInstanceOf($dbms, $p_solicitacao, $p_usuario);
   return $l_acesso;
 }
 
 // =========================================================================
 // Retorna o tipo de recurso a partir do código
 // -------------------------------------------------------------------------
-function RetornaTipoRecurso($p_chave) {
+function RetornaTipoRecurso($l_chave) {
   extract($GLOBALS);
 
-  switch ($p_Chave) {
-  case 0: return 'Financeiro';   break;
-  case 1: return 'Humano';       break;
-  case 2: return 'Material';     break;
-  case 3: return 'Metodológico'; break;
-  default:return 'Erro';        break;
-}
-
-return $function_ret;
+  switch ($l_chave) {
+    case 0: return 'Financeiro';   break;
+    case 1: return 'Humano';       break;
+    case 2: return 'Material';     break;
+    case 3: return 'Metodológico'; break;
+    default:return 'Erro';        break;
+  }
 }
 
 // =========================================================================
@@ -482,16 +495,16 @@ function DiretorioCliente($p_cliente) {
 // -------------------------------------------------------------------------
 function MontaURL($p_sigla) {
   extract($GLOBALS);
-  $RS_montaurl = db_getLinkData::getInstanceOf($dbms, $_SESSION['P_CLIENTE'], $p_sigla);
+  $RS_MontaURL = db_getLinkData::getInstanceOf($dbms, $_SESSION['P_CLIENTE'], $p_sigla);
   $l_ImagemPadrao='images/folder/SheetLittle.gif';
-  if (count($RS_montaUrl)<=0) return '';
+  if (count($RS_MontaURL)<=0) return '';
   else {
-    if (nvl(f($RS_montaUrl,'imagem'),'-')!='-') {
-      $l_Imagem=f($RS_montaUrl,'imagem');
+    if (nvl(f($RS_MontaURL,'imagem'),'-')!='-') {
+      $l_Imagem=f($RS_MontaURL,'imagem');
     } else {
       $l_Imagem=$l_ImagemPadrao;
     }
-    return f($RS_montaUrl,'link')."&P1=".f($RS_montaUrl,'p1')."&P2=".f($RS_montaUrl,'p2')."&P3=".f($RS_montaUrl,'p3')."&P4=".f($RS_montaUrl,'p4')."&TP=<img src=".$l_imagem." BORDER=0>".f($RS_montaUrl,'nome')."&SG=".f($RS_montaUrl,'sigla');
+    return f($RS_MontaURL,'link')."&P1=".f($RS_MontaURL,'p1')."&P2=".f($RS_MontaURL,'p2')."&P3=".f($RS_MontaURL,'p3')."&P4=".f($RS_MontaURL,'p4')."&TP=<img src=".$l_Imagem." BORDER=0>".f($RS_MontaURL,'nome')."&SG=".f($RS_MontaURL,'sigla');
   }
   return $function_ret;
 }
@@ -682,6 +695,7 @@ function EncerraSessao() {
   extract($GLOBALS);
   ScriptOpen('JavaScript');
   ShowHTML(' alert("Tempo máximo de inatividade atingido! Autentique-se novamente."); ');
+  ShowHTML(' top.location.href=\'' . $conRootSIW . '\';');
   ScriptClose();
   exit();
 }
@@ -694,7 +708,7 @@ function ExibeTexto($p_texto) { return str_replace('  ','&nbsp;&nbsp;',str_repla
 // =========================================================================
 // Função que retorna a data/hora do banco
 // -------------------------------------------------------------------------
-function DataHora() { return date('d/m/Y, H:i:s'); }
+function DataHora() { return diaSemana(date('l, d/m/Y, H:i:s')); }
 
 // =========================================================================
 // Função que retorna um timestamp da string informada
@@ -707,6 +721,12 @@ function toDate($date) {
     else return mktime(substr($date,12,2),substr($date,15,2),substr($date,18,2),substr($date,3,2),substr($date,0,2),substr($date,6,4));
   }
 }
+
+// =========================================================================
+// Função que retorna um valor da string informada
+// valor: string contendo o valor
+// -------------------------------------------------------------------------
+function toNumber($valor) { return str_replace('.','',$valor); } 
 
 // =========================================================================
 // Função que retorna uma data como string para manipulação em formulários
@@ -860,44 +880,45 @@ return $function_ret;
 function TrataErro($sp, $Err, $params, $file, $line, $object) {
   extract($GLOBALS);
 
-  if (strpos($Err,'ORA-02292')!==false || strpos($Err,'ORA-02292')!==false ) {
+  if (!(strpos($Err['message'],'ORA-02292')===false) || !(strpos($Err['message'],'ORA-02292')===false) ) {
      // REGISTRO TEM FILHOS
      ScriptOpen('JavaScript');
      ShowHTML(' alert("Existem registros vinculados ao que você está excluindo. Exclua-os primeiro.\\n\\n'.substr($Err,0,(strpos($Err,chr(10)) ? strpos($Err,chr(10))+1 : 0)-1).'");');
      ShowHTML(' history.back(1);');
-     ScriptClose;
+     ScriptClose();
   }
-  elseif (strpos($Err,'ORA-02291')!==false || strpos($Err,'ORA-02291')!==false) {
+  elseif (!(strpos($Err['message'],'ORA-02291')===false) || !(strpos($Err['message'],'ORA-02291')===false)) {
      // REGISTRO NÃO ENCONTRADO
      ScriptOpen('JavaScript');
      ShowHTML(' alert("Registro não encontrado.");');
      ShowHTML(' history.back(1);');
-     ScriptClose;
+     ScriptClose();
   }
-  elseif (strpos($Err,'ORA-00001')!==false) {
+  elseif (!(strpos($Err['message'],'ORA-00001')===false)) {
      // REGISTRO JÁ EXISTENTE
     ScriptOpen('JavaScript');
     ShowHTML(' alert("Um dos campos digitados já existe no banco de dados e é único.\\n\\n'.substr($Err,0,(strpos($Err,chr(10)) ? strpos($Err,chr(10))+1 : 0)-1).'");');
     ShowHTML(' history.back(1);');
-    ScriptClose;
+    ScriptClose();
   }
-  elseif (strpos($Err,'ORA-03113')!==false ||
-    strpos($Err,'ORA-03113')!==false ||
-    strpos($Err,'ORA-03114')!==false ||
-    strpos($Err,'ORA-03114')!==false ||
-    strpos($Err,'ORA-12224')!==false ||
-    strpos($Err,'ORA-12224')!==false ||
-    strpos($Err,'ORA-12514')!==false ||
-    strpos($Err,'ORA-12514')!==false ||
-    strpos($Err,'ORA-12541')!==false ||
-    strpos($Err,'ORA-12541')!==false ||
-    strpos($Err,'ORA-12545')!==false ||
-    strpos($Err,'ORA-12545')!==false) {
+  elseif (!(strpos($Err['message'],'ORA-03113')===false) ||
+    !(strpos($Err['message'],'ORA-03113')===false) ||
+    !(strpos($Err['message'],'ORA-03114')===false) ||
+    !(strpos($Err['message'],'ORA-03114')===false) ||
+    !(strpos($Err['message'],'ORA-12224')===false) ||
+    !(strpos($Err['message'],'ORA-12224')===false) ||
+    !(strpos($Err['message'],'ORA-12514')===false) ||
+    !(strpos($Err['message'],'ORA-12514')===false) ||
+    !(strpos($Err['message'],'ORA-12541')===false) ||
+    !(strpos($Err['message'],'ORA-12541')===false) ||
+    !(strpos($Err['message'],'ORA-12545')===false) ||
+    !(strpos($Err['message'],'ORA-24327')===false) ||
+    !(strpos($Err['message'],'ORA-12545')===false)) {
 
     ScriptOpen('JavaScript');
     ShowHTML(' alert("Banco de dados fora do ar. Aguarde alguns instantes e tente novamente!");');
     ShowHTML(' history.back(1);');
-    ScriptClose;
+    ScriptClose();
   }
   else {
     $w_html='<html>';
@@ -915,9 +936,11 @@ function TrataErro($sp, $Err, $params, $file, $line, $object) {
     //$w_html=$w_html.chr(10).'<DT>Objeto:<DD><FONT FACE="courier">'.$object.'<br><br></font>';
 
     $w_html=$w_html.chr(10).'<DT>Comando em execução:<blockquote> <FONT FACE="courier">'.$Err['sqltext'].'</blockquote></font></DT>';
-    $w_html=$w_html."<DT>Valores dos parâmetros:<DD><FONT FACE=\"courier\" size=1>";
-    foreach ($params as $w_Item) {
-      $w_html=$w_html.chr(10).'['.$w_Item[0].']<br>';
+    if (is_array($params)) {
+      $w_html=$w_html."<DT>Valores dos parâmetros:<DD><FONT FACE=\"courier\" size=1>";
+      foreach ($params as $w_Item) {
+        $w_html=$w_html.chr(10).'['.$w_Item[0].']<br>';
+      }
     }
     $w_html=$w_html."   <br><br></font>";
 
@@ -1318,9 +1341,34 @@ function VerificaAssinaturaEletronica($Usuario,$Senha) {
 // =========================================================================
 // Função que formata dias, horas, minutos e segundos a partir dos segundos
 // -------------------------------------------------------------------------
-function FormataDataEdicao($w_dt_grade) { 
+function FormataDataEdicao($w_dt_grade, $w_formato=1) { 
   if (nvl($w_dt_grade,'')>'') {
-    return date('d/m/Y',$w_dt_grade); 
+    switch ($w_formato){
+      case 1: return date('d/m/Y',$w_dt_grade);                         break;
+      case 2: return date('H:i:s',$w_dt_grade);                         break;
+      case 3: return date('d/m/Y, H:i:s',$w_dt_grade);                  break;
+      case 4: return diaSemana(date('l, d/m/Y, H:i:s',$w_dt_grade));    break;
+    }
+  } else {
+    return null;
+  }
+}
+
+// =========================================================================
+// Função que traduz os dias da semana de inglês para português
+// -------------------------------------------------------------------------
+function diaSemana($l_data) {
+  if (nvl($l_data,'')>'') {
+    $l_texto = substr($l_data,strpos($l_data,',')); 
+    switch (strtoupper(substr($l_data,0,strpos($l_data,',')))) {
+      case 'SUNDAY':    return 'Domingo'.$l_texto;       break;
+      case 'MONDAY':    return 'Segunda-feira'.$l_texto; break;
+      case 'TUESDAY':   return 'Terça-feira'.$l_texto;   break;
+      case 'WEDNESDAY': return 'Quarta-feira'.$l_texto;  break;
+      case 'THURSDAY':  return 'Quinta-feira'.$l_texto;  break;
+      case 'FRIDAY':    return 'Sexta-feira'.$l_texto;   break;
+      case 'SATURDAY':  return 'Sábado'.$l_texto;        break;
+    }
   } else {
     return null;
   }

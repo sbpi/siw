@@ -117,14 +117,14 @@ if (count($RS)>0) {
 
 // Recupera a configuração do serviço
 if ($P2>0) {
-  $RS_menu = db_getMenuData::getInstanceOf($dbms,$P2);
+  $RS_Menu = db_getMenuData::getInstanceOf($dbms,$P2);
 } else {
-  $RS_menu = db_getMenuData::getInstanceOf($dbms,$w_menu);
+  $RS_Menu = db_getMenuData::getInstanceOf($dbms,$w_menu);
 }
 
 // Se for sub-menu, pega a configuração do pai
-if ($RS_menu['ultimo_nivel']=='S') {
-  $RS_menu = db_getMenuData::getInstanceOf($dbms,f($RS_menu,'sq_menu_pai'));
+if ($RS_Menu['ultimo_nivel']=='S') {
+  $RS_Menu = db_getMenuData::getInstanceOf($dbms,f($RS_Menu,'sq_menu_pai'));
 } 
 
 Main();

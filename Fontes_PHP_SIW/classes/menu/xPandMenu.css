@@ -175,3 +175,9 @@ TD
     FONT-SIZE: xx-small;
     FONT-FAMILY: Verdana
 }
+.LH
+{
+    COLOR: red;
+    FONT-FAMILY: Verdana;
+    TEXT-DECORATION: none
+}

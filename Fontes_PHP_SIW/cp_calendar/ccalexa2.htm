@@ -1,0 +1,78 @@
+<html>
+<head>
+<title>ccalendar ex 2</title>
+</head>
+<body bgcolor="#FFFFFF">
+<TABLE BORDER=0  WIDTH="100%">
+<TR>
+<TH BGCOLOR="#E0E0F0">
+<H2>Calendar applet, date object</H1>
+</TH></TR>
+<TR><TD>
+This applet can be use as a date object. The result is under anglo-saxon format mm/dd/yyyy.
+This is an example of a form with a date field that you can update with the caldendar object. Click in the
+calendar and you will see the date you choose in the entry field.
+The date format chosen is "m.d.y" ( default format is "d/m/y" ).<br>
+<a href="ccalenda.htm">Back to applet first page</A>
+</TD>
+</TR>
+<TR><TD BGCOLOR="E0E0F0"><H2>What does this example show</H2></TD></TR>
+<TR><TD>
+<ul>
+<li>Updating a field from the calendar</li>
+<li>Choosing the date format</li>
+</ul>
+</TD></TR>
+<TR><TD BGCOLOR="E0E0F0"><H2>Exemple</H2></TD></TR>
+<TR>
+<TD>
+<FORM NAME="DateForm">
+<TABLE>
+<tr><td>
+Your name :</td><td><INPUT type=TEXTE NAME="name" value="""></td></tr>
+<tr><td>
+Your next birthday : </td><td><INPUT type=TEXTE NAME="DateField" value=""">
+</td></tr>
+<tr><td colspan=2>
+<applet
+    code=ccalendar.class
+    name=ccalendar MAYSCRIPT
+    archive = "ccalendar.jar"
+    width=160
+    height=160
+	id = "cal" >
+<param name="color_fond" value="CCCCFF">
+<param name="color_case" value="C0C0FF">
+<param name="color_Comment" value="AAAAFF">
+<param name="color_empty" value="9090FF">
+<param name="field" value="DateField">
+<param name="form" value="DateForm">
+<param name="format" value="m.d.y">
+</applet>
+</FORM>
+</TABLE>
+</TD>
+</TR>
+<TR><TD BGCOLOR="E0E0F0"><H2>HTML applet code</H2></TD></TR>
+<TR><TD>
+Don't forget to add the keyword <b>MAYSCRIPT</b> if you want the applet to update your field.<br><br>
+<PRE>
+&lt;applet
+    code=ccalendar.class
+    name=ccalendar <b>MAYSCRIPT</b>
+    width=160
+    height=160
+	id = "cal"&gt;
+&lt;param name="color_fond" value="CCCCFF"&gt;
+&lt;param name="color_case" value="C0C0FF"&gt;
+&lt;param name="color_Comment" value="AAAAFF"&gt;
+&lt;param name="color_empty" value="9090FF"&gt;
+&lt;param name="field" value="DateField"&gt;
+&lt;param name="form" value="DateForm"&gt;
+&lt;param name="format" value="m.d.y"&gt;
+&lt;/applet&gt;
+</PRE></TD></TR>
+</TABLE>
+<hr>
+</body>
+</html>

@@ -90,89 +90,72 @@ function CheckBranco() {
 
 // Rotina de comparação de datas
 function CompData($Date1,$DisplayName1,$Operator,$Date2,$DisplayName2) {
-  switch ($Operator)
-  {
-    case "==":
-      $w_Operator=" igual a ";
-      break;
-    case "!=":
-      $w_Operator=" diferente de ";
-      break;
-    case ">":
-      $w_Operator=" maior que ";
-      break;
-    case "<":
-      $w_Operator=" menor que ";
-      break;
-    case ">=":
-      $w_Operator=" maior ou igual a ";
-      break;
-    case "=>":
-      $w_Operator=" maior ou igual a ";
-      break;
-    case "<=":
-      $w_Operator=" menor ou igual a ";
-      break;
-    case "=<":
-      $w_Operator=" menor ou igual a ";
-      break;
+  switch ($Operator) {
+    case "==":  $w_Operator=" igual a ";            break;
+    case "!=":  $w_Operator=" diferente de ";       break;
+    case ">":   $w_Operator=" maior que ";          break;
+    case "<":   $w_Operator=" menor que ";          break;
+    case ">=":  $w_Operator=" maior ou igual a ";   break;
+    case "=>":  $w_Operator=" maior ou igual a ";   break;
+    case "<=":  $w_Operator=" menor ou igual a ";   break;
+    case "=<":  $w_Operator=" menor ou igual a ";   break;
   }
   print "  var D1 = theForm.".$Date1.".value; "."\r\n";
-  if ((strpos("1234567890",substr($Date2,0,1)) ? strpos("1234567890",substr($Date2,0,1))+1 : 0)==0) {
-     print "   var D2 = theForm.".$Date2.".value;"."\r\n"; }
+  if (strpos("1234567890",substr($Date2,0,1))===false) {
+     print "  var D2 = theForm.".$Date2.".value;"."\r\n"; }
   else {
-    print "   var D2 = '".$Date2."';"."\r\n";
+    print "  var D2 = '".$Date2."';"."\r\n";
   }
 
   print "  if (D1.length != 0 && D2.length != 0) { "."\r\n";
-  print "   var d1; "."\r\n";
-  print "   var m1; "."\r\n";
-  print "   var a1; "."\r\n";
-  print "   var h1; "."\r\n";
-  print "   var d2; "."\r\n";
-  print "   var m2; "."\r\n";
-  print "   var a2; "."\r\n";
-  print "   var h2; "."\r\n";
-  print "   var Data1; "."\r\n";
-  print "   var Data2; "."\r\n";
-  print "   if (D1.length == 17) { "."\r\n";
-  print "      d1 = D1.substr(0,2); "."\r\n";
-  print "      m1 = D1.substr(3,2); "."\r\n";
-  print "      a1 = D1.substr(6,4); "."\r\n";
-  print "      h1 = D1.substr(12,2) + D1.substr(15,2); "."\r\n";
-  print "      d2 = D2.substr(0,2); "."\r\n";
-  print "      m2 = D2.substr(3,2); "."\r\n";
-  print "      a2 = D2.substr(6,4); "."\r\n";
-  print "      h2 = D2.substr(12,2) + D2.substr(15,2); "."\r\n";
-  print "      Data1 = a1 + m1 + d1 + h1; "."\r\n";
-  print "      Data2 = a2 + m2 + d2 + h2; "."\r\n";
-  print "   } "."\r\n";
-  print "   if (D1.length == 10) { "."\r\n";
-  print "      d1 = D1.substr(0,2); "."\r\n";
-  print "      m1 = D1.substr(3,2); "."\r\n";
-  print "      a1 = D1.substr(6,4); "."\r\n";
-  print "      d2 = D2.substr(0,2); "."\r\n";
-  print "      m2 = D2.substr(3,2); "."\r\n";
-  print "      a2 = D2.substr(6,4); "."\r\n";
-  print "      Data1 = a1 + m1 + d1; "."\r\n";
-  print "      Data2 = a2 + m2 + d2; "."\r\n";
-  print "   } "."\r\n";
-  print "   if (D1.length == 7) { "."\r\n";
-  print "      d1 = '01'; "."\r\n";
-  print "      m1 = D1.substr(0,2); "."\r\n";
-  print "      a1 = D1.substr(3,6); "."\r\n";
-  print "      d2 = '01'; "."\r\n";
-  print "      m2 = D2.substr(0,2); "."\r\n";
-  print "      a2 = D2.substr(3,7); "."\r\n";
-  print "      Data1 = a1 + m1 + d1; "."\r\n";
-  print "      Data2 = a2 + m2 + d2; "."\r\n";
-  print "   } "."\r\n";
-  print "   if (!(Data1 ".$Operator." Data2)) { "."\r\n";
-  print "      alert('".$DisplayName1." deve ser ".$w_Operator.$DisplayName2.".'); "."\r\n";
-  print "      theForm.".$Date1.".focus(); "."\r\n";
-  print "      return (false); "."\r\n";
-  print "   } "."\r\n";
-  print " } "."\r\n";
+  print "     var d1; "."\r\n";
+  print "     var m1; "."\r\n";
+  print "     var a1; "."\r\n";
+  print "     var h1; "."\r\n";
+  print "     var d2; "."\r\n";
+  print "     var m2; "."\r\n";
+  print "     var a2; "."\r\n";
+  print "     var h2; "."\r\n";
+  print "     var Data1; "."\r\n";
+  print "     var Data2; "."\r\n";
+  print "     if (D1.length == 17) { "."\r\n";
+  print "        d1 = D1.substr(0,2); "."\r\n";
+  print "        m1 = D1.substr(3,2); "."\r\n";
+  print "        a1 = D1.substr(6,4); "."\r\n";
+  print "        h1 = D1.substr(12,2) + D1.substr(15,2); "."\r\n";
+  print "        d2 = D2.substr(0,2); "."\r\n";
+  print "        m2 = D2.substr(3,2); "."\r\n";
+  print "        a2 = D2.substr(6,4); "."\r\n";
+  print "        h2 = D2.substr(12,2) + D2.substr(15,2); "."\r\n";
+  print "        Data1 = a1 + m1 + d1 + h1; "."\r\n";
+  print "        Data2 = a2 + m2 + d2 + h2; "."\r\n";
+  print "     } "."\r\n";
+  print "     if (D1.length == 10) { "."\r\n";
+  print "        d1 = D1.substr(0,2); "."\r\n";
+  print "        m1 = D1.substr(3,2); "."\r\n";
+  print "        a1 = D1.substr(6,4); "."\r\n";
+  print "        d2 = D2.substr(0,2); "."\r\n";
+  print "        m2 = D2.substr(3,2); "."\r\n";
+  print "        a2 = D2.substr(6,4); "."\r\n";
+  print "        Data1 = a1 + m1 + d1; "."\r\n";
+  print "        Data2 = a2 + m2 + d2; "."\r\n";
+  print "     } "."\r\n";
+  print "     if (D1.length == 7) { "."\r\n";
+  print "        d1 = '01'; "."\r\n";
+  print "        m1 = D1.substr(0,2); "."\r\n";
+  print "        a1 = D1.substr(3,6); "."\r\n";
+  print "        d2 = '01'; "."\r\n";
+  print "        m2 = D2.substr(0,2); "."\r\n";
+  print "        a2 = D2.substr(3,7); "."\r\n";
+  print "        Data1 = a1 + m1 + d1; "."\r\n";
+  print "        Data2 = a2 + m2 + d2; "."\r\n";
+  print "     } "."\r\n";
+  print "     if (!(Data1 ".$Operator." Data2)) { "."\r\n";
+  print "        alert('".$DisplayName1." deve ser ".$w_Operator.$DisplayName2.".'); "."\r\n";
+  print "        theForm.".$Date1.".focus(); "."\r\n";
+  print "        return (false); "."\r\n";
+  print "     } "."\r\n";
+  print "  } "."\r\n";
 }
 
 function toMoney() {
@@ -619,8 +602,7 @@ function Validate($VariableName,$DisplayName,$DataType,$ValueRequired,$MinimumLe
     "       theForm.".$VariableName.".focus();"."\r\n".
     "       return (false);"."\r\n".
     "    }"."\r\n";
-  }
-  elseif (strtoupper($DataType)=="DATADM") {
+  } elseif (strtoupper($DataType)=="DATADM") {
     print
     "    var checkStr = theForm.".$VariableName.".value;"."\r\n".
     "    var err=0;"."\r\n".
@@ -661,8 +643,7 @@ function Validate($VariableName,$DisplayName,$DataType,$ValueRequired,$MinimumLe
     "       theForm.".$VariableName.".focus();"."\r\n".
     "       return (false);"."\r\n".
     "    }"."\r\n";
-  }
-  elseif (strtoupper($DataType)=="DATAMA") {
+  } elseif (strtoupper($DataType)=="DATAMA") {
     print
     "var checkStr = theForm.".$VariableName.".value;"."\r\n".
     "var err=0;"."\r\n".

@@ -328,19 +328,19 @@ function Unidade() {
       $w_nome                   = f($RS,'nome');
       $w_sigla                  = f($RS,'sigla');
       $w_ordem                  = f($RS,'ordem');
-      $w_informal               = f($RS,'Informal');
-      $w_vinculada              = f($RS,'Vinculada');
-      $w_adm_central            = f($RS,'Adm_Central');
+      $w_informal               = f($RS,'informal');
+      $w_vinculada              = f($RS,'vinculada');
+      $w_adm_central            = f($RS,'adm_central');
       $w_sq_unidade_gestora     = f($RS,'sq_unidade_gestora');
       $w_sq_unidade_pagadora    = f($RS,'sq_unid_pagadora');
       $w_sq_area_atuacao        = f($RS,'sq_area_atuacao');
       $w_sq_unidade_pai         = f($RS,'sq_unidade_pai');
       $w_sq_pessoa_endereco     = f($RS,'sq_pessoa_endereco');
       $w_sq_tipo_unidade        = f($RS,'sq_tipo_unidade');
-      $w_unidade_gestora        = f($RS,'Unidade_Gestora');
+      $w_unidade_gestora        = f($RS,'unidade_gestora');
       $w_ativo                  = f($RS,'ativo');
       $w_codigo                 = f($RS,'codigo');
-      $w_unidade_pagadora       = f($RS,'Unidade_Pagadora');
+      $w_unidade_pagadora       = f($RS,'unidade_pagadora');
       $w_email                  = f($RS,'email');
     } 
     AbreForm('Form',$w_pagina.'Grava','POST','return(Validacao(this));',null,$P1,$P2,$P3,$P4,$TP,$SG,$R,$O);

@@ -33,10 +33,7 @@ include_once('funcoes/selecaoServico.php');
 include_once('funcoes/selecaoMenu.php');
 include_once('funcoes/selecaoCC.php');
 include_once('funcoes/selecaoPessoa.php');
-?>
-<? // asp2php (vbscript) converted
-?>
-<? 
+
 // =========================================================================
 //  /tarifacao.php
 // ------------------------------------------------------------------------
@@ -147,14 +144,10 @@ function Informar(){
   } elseif ($O=='L'){
     $RS = db_getCall::getInstanceOf($dbms,null,$w_usuario,$P1,null,$p_sq_cc,$p_outra_parte_contato,$p_numero,$p_inicio,$p_fim,$p_ativo);
     if ($p_ordena==''){ 
-      if ($P1==3) $RS = SortArray($RS,'ordem','desc');
-      else $RS = SortArray($RS,'ordem','asc'); 
-      } else {
-      if ($P1==3) {
-        $lista = explode(',',str_replace(' ',',',strtolower($_REQUEST['p_ordena'])));
-        $RS = SortArray($RS,$lista[0],$lista[1],'ordem','desc');
-      } else { $RS = SortArray($RS,'ordem','asc'); 
-      }
+      if ($P1==3) $RS = SortArray($RS,'phpdt_ordem','desc'); else $RS = SortArray($RS,'phpdt_ordem','asc'); 
+    } else {
+      $lista = explode(',',str_replace(' ',',',strtolower($_REQUEST['p_ordena'])));
+      if ($P1==3) $RS = SortArray($RS,$lista[0],$lista[1],'phpdt_ordem','desc'); else $RS = SortArray($RS,$lista[0],$lista[1],'phpdt_ordem','asc'); 
     }
   } else {
     if ($O=='I' || $O=='A' || $O=='E'){
@@ -196,7 +189,7 @@ function Informar(){
     CheckBranco();
     FormataData();
     ValidateOpen('Validacao');
-    if ((strpos('I',$O) ? strpos('I',$O)+1 : 0)>0){
+    if ($O=='I') {
       ShowHTML('  if (theForm.w_trabalho[0].checked) {');
       Validate('w_sq_cc','Classificação','SELECT','1','1','18','1','1');
       Validate('w_outra_parte_contato','Pessoa de contato','1','1','3','60','1','1');
@@ -208,7 +201,7 @@ function Informar(){
       Validate('w_assunto','Assunto','1','','4','1000','1','1');
       ShowHTML('   }');
       Validate('w_assinatura','Assinatura Eletrônica','1','1','6','30','1','1');
-    } elseif ((strpos('A',$O) ? strpos('A',$O)+1 : 0)>0) {
+    } elseif ($O=='A') {
       Validate('w_destino','Pessoa','HIDDEN','1','1','18','1','1');
       Validate('w_assunto','Observação','1','1','4','500','1','1');
       Validate('w_assinatura','Assinatura Eletrônica','1','1','6','30','1','1');
@@ -227,20 +220,15 @@ function Informar(){
         CompData('p_inicio','Data inicial','<=','p_fim','Data final');
         ShowHTML('  var w_data, w_data1, w_data2;');
         ShowHTML('  w_data = theForm.p_inicio.value;');
-        ShowHTML('  w_data = w_data.substr(3,2) + '/' + w_data.substr(0,2) + '/' + w_data.substr(6,4);');
+        ShowHTML('  w_data = w_data.substr(3,2) + \'/\' + w_data.substr(0,2) + \'/\' + w_data.substr(6,4);');
         ShowHTML('  w_data1  = new Date(Date.parse(w_data));');
         ShowHTML('  w_data = theForm.p_fim.value;');
-        ShowHTML('  w_data = w_data.substr(3,2) + '/' + w_data.substr(0,2) + '/' + w_data.substr(6,4);');
+        ShowHTML('  w_data = w_data.substr(3,2) + \'/\' + w_data.substr(0,2) + \'/\' + w_data.substr(6,4);');
         ShowHTML('  w_data2= new Date(Date.parse(w_data));');
         ShowHTML('  var MinMilli = 1000 * 60;');
         ShowHTML('  var HrMilli = MinMilli * 60;');
         ShowHTML('  var DyMilli = HrMilli * 24;');
         ShowHTML('  var Days = Math.round(Math.abs((w_data2 - w_data1) / DyMilli));');
-        //ShowHTML '  if (Days > 60) {'
-        //ShowHTML '     ("'('O intervalo não pode ser superior a 60 dias!');'
-        //ShowHTML '     theForm.p_inicio.focus();'
-        //ShowHTML '     return false;'
-        //ShowHTML '  }'
       } else {
         Validate('p_inicio','Data inicial','DATA','','10','10','','0123456789/');
         Validate('p_fim','Data final','DATA','','10','10','','0123456789/');
@@ -267,9 +255,9 @@ function Informar(){
   ShowHTML('</HEAD>');
   if ($w_troca>''){
     BodyOpen('onload=document.Form.'.$w_troca.'.focus();');
-  } elseif ((strpos('A',$O) ? strpos('A',$O)+1 : 0)>0){
+  } elseif ($O=='A'){
     BodyOpen('onload=document.Form.w_destino.focus();');
-  } elseif ((strpos('PR',$O) ? strpos('PR',$O)+1 : 0)>0){
+  } elseif (!(strpos('PR',$O)===false)){
     BodyOpen('onload=document.Form.p_sq_cc.focus();');
   } else {
     BodyOpen('onload=document.focus();');
@@ -297,7 +285,7 @@ function Informar(){
     ShowHTML('    <TABLE WIDTH="100%" bgcolor="'.$conTableBgColor.'" BORDER="'.$conTableBorder.'" CELLSPACING="'.$conTableCellSpacing.'" CELLPADDING="'.$conTableCellPadding.'" BorderColorDark="'.$conTableBorderColorDark.'" BorderColorLight="'.$conTableBorderColorLight.'">');
     ShowHTML('        <tr bgcolor="'.$conTrBgColor.'" align="center">');
     ShowHTML('          <td><b>'.LinkOrdena('Tipo','tipo').'</td>');
-    ShowHTML('          <td><b>'.LinkOrdena('Data','data').'</td>');
+    ShowHTML('          <td><b>'.LinkOrdena('Data','phpdt_ordem').'</td>');
     ShowHTML('          <td><b>'.LinkOrdena('Número','numero').'</td>');
     ShowHTML('          <td><b>'.LinkOrdena('Duração','duracao').'</td>');
     ShowHTML('          <td><b>'.LinkOrdena('RM','sq_ramal').'</td>');
@@ -332,7 +320,7 @@ function Informar(){
         } 
         ShowHTML('      <tr bgcolor="'.$w_cor.'" valign="top">');
         ShowHTML('      <td align="center"><font '.$w_cor_fonte.'>'.f($row,'tipo').'</td>');
-        ShowHTML('      <td nowrap align="center"><font '.$w_cor_fonte.'>'.$w_negrito.FormataDataEdicao(f($row,'data')).'</td>');
+        ShowHTML('      <td nowrap align="center"><font '.$w_cor_fonte.'>'.$w_negrito.FormataDataEdicao(f($row,'phpdt_ordem'),3).'</td>');
         ShowHTML('      <td><font '.$w_cor_fonte.'>'.f($row,'numero').'</td>');
         ShowHTML('      <td align="center"><font '.$w_cor_fonte.'>'.FormataTempo(f($row,'duracao')).'&nbsp;</td>');
         ShowHTML('      <td align="center"><font '.$w_cor_fonte.'>'.f($row,'sq_ramal').'</td>');
@@ -395,7 +383,7 @@ function Informar(){
       ShowHTML('        <tr valign="top"><td colspan=3>Tipo da ligação: <b>'.f($row,'tipo').'</td></tr>');
       ShowHTML('        <tr valign="top">');
       ShowHTML('          <td>Nº:<br><b>'.f($row,'numero').'</td>');
-      ShowHTML('          <td>Data:<br> <b>'.FormataDataEdicao(f($row,'data')).'</td>');
+      ShowHTML('          <td>Data:<br> <b>'.FormataDataEdicao(f($row,'phpdt_ordem'),4).'</td>');
       ShowHTML('          <td align="right">Duração:<br><b>'.FormataTempo(f($row,'duracao')).'</td>');
       ShowHTML('        <tr valign="top">');
       ShowHTML('          <td>Ramal:<br><b>'.f($row,'sq_ramal').'</td>');
@@ -414,7 +402,7 @@ function Informar(){
         ShowHTML('          <td><b>Observação</td>');
         foreach($RS2 as $row2) {
           ShowHTML('        <tr valign="top">');
-          ShowHTML('          <td  align="center" nowrap> '.FormataDataEdicao(f($row2,'data')).'</td>');
+          ShowHTML('          <td  align="center" nowrap> '.FormataDataEdicao(f($row2,'phpdt_ordem'),3).'</td>');
           ShowHTML('          <td>'.f($row2,'origem').'</td>');
           ShowHTML('          <td>'.f($row2,'destino').'</td>');
           ShowHTML('          <td>'.f($row2,'observacao').'</td>');
@@ -448,32 +436,35 @@ function Informar(){
         ShowHTML('      <tr>');
         SelecaoPessoa('Pe<u>s</u>soa:','S','Selecione a pessoa na relação.',$w_destino,$w_sq_central_telefonica,'w_destino','TTTRANSFERE');
         ShowHTML('      </tr>');
-        ShowHTML('      <td colspan=3><b><U>O</U>bservação:<br><TEXTAREA ACCESSKEY="O" '.$w_Disabled.' class="sti" name="w_assunto" rows="5" cols=75>'.$w_assunto.'</textarea></td>');
+        ShowHTML('      <tr><td colspan=3><b><U>O</U>bservação:<br><TEXTAREA ACCESSKEY="O" '.$w_Disabled.' class="sti" name="w_assunto" rows="5" cols=75>'.$w_assunto.'</textarea></td>');
       } else {
         // Outras operações
         ShowHTML('      <tr align="left"><td><table width="100%" cellpadding=0 cellspacing=0><tr valign="top">');
         MontaRadioNS('<b>Ligação a trabalho?</b>',$w_trabalho,'w_trabalho');
-        // Recupera o nome da pessoa de contato e o responsável pela ligação no caso de tarifação telefônica 
-        //dentro do mês anterior independente do usuário logado.
-        $w_texto='';
-        $w_texto='<b>Relação de nomes para este número no mês passado</b>:<br>'.
-                 '<table border=1 width=100% cellpadding=0 cellspacing=0>'.
-                 '<tr><td align=left><b>Nome'.
-                 '    <td><b>Responsável';
-        $RS2 = db_getCall::getInstanceOf($dbms,null,$w_usuario,$P1,'HINT',null,null,f($row,'numero'),'01/'.date('m/Y',time()),date('d/m/Y',time()),'N');
-        if (count($RS2) >= 0){
-          foreach($RS2 as $row2) {
-            if ((strpos($w_texto,f($row2,'d_nome'))===false) && nvl(f($row2,'d_nome'),'nulo')!='nulo'){
-              $w_texto=$w_texto.'<tr><td valign=top align=left>'.f($row2,'d_nome').'<td valign=top>'.f($row2,'responsavel');
-            }
-          } 
-        } 
-        $RS2 = db_getCall::getInstanceOf($dbms,null,$w_usuario,$P1,'HINT',null,null,f($row,'numero'),'01/'.date('m/Y',time()),date('d/m/Y',time()),'S');
-        if (count($RS2) >= 0){
+        // Recupera as 3 últimas ligações para o número, independente do usuário logado.
+        $w_texto='<b>Últimos registros para este número</b>:<br>'.chr(13).
+                 '<table border=1>'.chr(13).
+                 '<tr align="center">'.chr(13).
+                 '  <td><b>Data'.chr(13).
+                 '  <td><b>Responsável'.chr(13).
+                 '  <td><b>Contato'.chr(13).
+                 '  <td><b>Tipo'.chr(13);
+        $RS2 = db_getCall::getInstanceOf($dbms,null,$w_usuario,$P1,'HINT',null,null,f($row,'numero'),null,null,null);
+        $RS2 = SortArray($RS2,'phpdt_ordem','desc');
+        $l_count = 0;
+        if (count($RS2)==0){
+          $w_texto .= '<tr><td colspan=4>Não foram encontrados registros.';
+        } else {
           foreach($RS2 as $row2) {  
             if ((strpos($w_texto,f($row2,'d_nome'))===false) && nvl(f($row2,'d_nome'),'nulo')!='nulo'){
-              $w_texto=$w_texto.'<tr><td valign=top align=left>'.f($row2,'d_nome').'<td valign=top>'.f($row2,'responsavel');
+              $l_count += 1;
+              $w_texto .= '<tr valign=top>';
+              $w_texto .= '  <td>'.FormataDataEdicao(f($row2,'phpdt_ordem'),3);
+              $w_texto .= '  <td>'.f($row2,'responsavel');
+              $w_texto .= '  <td>'.f($row2,'d_nome');
+              $w_texto .= '  <td>'.f($row2,'tipo').chr(13);
             }
+            if ($l_count > 2) break;
           } 
         } 
         $w_texto=$w_texto.'</table>';
@@ -486,7 +477,8 @@ function Informar(){
         if ($w_responsavel>''){
           ShowHTML('      <tr><td><b>Responsável pela ligação:<br><font size=2>'.$w_responsavel.'</td>');
         } 
-        ShowHTML('      <tr><td><b><U>P</U>essoa de contato:<br><INPUT ACCESSKEY="P" '.$w_Disabled.' class="sti" type="text" name="w_outra_parte_contato" size="60" maxlength="60" value="'.$w_outra_parte_contato.'" '.$w_Disabled.' TITLE="'.str_replace(chr(13).chr(10),'<BR>',$w_texto).'"></td>');
+        ShowHTML('      <tr><td><b><U>P</U>essoa de contato:<br><INPUT ACCESSKEY="P" '.$w_Disabled.' class="sti" type="text" name="w_outra_parte_contato" size="60" maxlength="60" value="'.$w_outra_parte_contato.'" '.$w_Disabled.'></td>');
+        ShowHTML('      <tr><td>'.str_replace(chr(13).chr(10),'<BR>',$w_texto));
         ShowHTML('      <tr><td><b>Assu<U>n</U>to:<br><TEXTAREA ACCESSKEY="N" '.$w_Disabled.' class="sti" name="w_assunto" rows="5" cols=75>'.$w_assunto.'</textarea></td>');
       } 
       if ($O!='E'){

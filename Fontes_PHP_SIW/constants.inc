@@ -43,6 +43,7 @@ $conImgOkAtraso='images/tickvermelho.gif';
 $conImgNormal='images/BallGreen.png';
 $conImgAviso='images/BallYellow.png';
 $conImgAtraso='images/BallRed.png';
+$conImgCancel ='images/Icone/REQUIRED.GIF';
 
 
 //---------------------------Definições de banco
@@ -55,9 +56,9 @@ $conPageSize=30;
 
 $conSgSistema   = 'SIW';
 $conNmSistema   = 'Solução Integrada Web';
-$conRootSIW     = 'http://io/siw/';
-$conDiretorio   = 'c:/inetpub/wwwroot/siw/';
-$conFileVirtual = '/siw/files/';
+$conRootSIW     = 'http://www2.sbpi.com.br/psiw/';
+$conDiretorio   = 'c:/inetpub/wwwroot/psiw/';
+$conFileVirtual = '/siw_files/';
 //$conFilePhysical= '/srv/www/htdocs/siw/files/'; // Formato Linux
-$conFilePhysical= 'c:/inetpub/wwwroot/siw/files/'; // Formato Windows (IIS)
+$conFilePhysical= 'c:/inetpub/wwwroot/siw_Files/'; // Formato Windows (IIS)
 ?>

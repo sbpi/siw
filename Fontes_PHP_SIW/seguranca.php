@@ -24,6 +24,7 @@ include_once('classes/sp/db_updatePassword.php');
 include_once('classes/sp/db_getCustomerSite.php');
 include_once('classes/sp/db_getUserData.php');
 include_once('classes/sp/db_verificaAssinatura.php');
+include_once('classes/sp/db_getBenef.php');
 include_once('classes/sp/dml_SiwMenu.php');
 include_once('classes/sp/dml_putSgPesMod.php');
 include_once('classes/sp/dml_putSiwPesCC.php');
@@ -861,24 +862,24 @@ function Menu() {
 
     ShowHTML('          <tr><td width="5%">');
     ShowHTML('              <td align="left" colspan="2"><b><u>I</u>magem:<br><INPUT ACCESSKEY="I" TYPE="TEXT" CLASS="sti" NAME="w_imagem" SIZE=60 MAXLENGTH=60 VALUE="'.$w_imagem.'" '.$w_Disabled.' title="O SIW apresenta ícones padrão na montagem do menu. Se desejar outro ícone, informe o caminho onde está localizado."></td>');
-    // Recupera o número de ordem das outras opções irmãs à selecionada
+    ShowHTML('              <td align="left"><b><u>O</u>rdem:<br><INPUT ACCESSKEY="O" TYPE="TEXT" CLASS="sti" NAME="w_ordem" SIZE=4 MAXLENGTH=4 VALUE="'.$w_ordem.'" '.$w_Disabled.' TITLE="Verifique na tabela abaixo os números de ordem existentes."></td>');
 
+    // Recupera o número de ordem das outras opções irmãs à selecionada
     $RS = db_getMenuOrder::getInstanceOf($dbms, $w_cliente, $w_sq_menu_pai, null, null);
     if (count($RS) > 0)  {
-
       $w_texto='<b>Nºs de ordem em uso para esta subordinação:</b>:<br>'.
-               '<table border=1 width=100% cellpadding=0 cellspacing=0>'.
+               '<table border=1>'.
                '<tr><td align=center><b>Ordem'.
                '    <td><b><font size=1>Descrição';
       foreach($RS as $row) {
-        $w_texto=$w_texto.'<tr><td valign=top align=center>'.f($row,'ordem').'<td valign=top>'.f($row,'ordem');
+        $w_texto=$w_texto.'<tr><td valign=top align=center>'.f($row,'ordem').'<td valign=top>'.f($row,'nome');
       } 
       $w_texto=$w_texto.'</table>';
     } else {
       $w_texto = 'Não há outros números de ordem vinculados à subordinação desta opção';
     } 
+    ShowHTML('          <tr><td width="5%"><td colspan=3>'.$w_texto);
 
-    ShowHTML('              <td align="left"><b><u>O</u>rdem:<br><INPUT ACCESSKEY="O" TYPE="TEXT" CLASS="sti" NAME="w_ordem" SIZE=4 MAXLENGTH=4 VALUE="'.$w_ordem.'" '.$w_Disabled.' TITLE="'.str_replace(chr(13).chr(10),"<BR>",$w_texto).'"></td>');
     ShowHTML('          <tr><td width="5%">');
     ShowHTML('              <td colspan=3><b><U>F</U>inalidade:<br><TEXTAREA ACCESSKEY="F" class="sti" name="w_finalidade" rows=3 cols=80 '.$w_Disabled.' title="Descreva sucintamente a finalidade desta opção. Esta informação será apresentada quando o usuário passar o mouse em cima da opção, no menu.">'.$w_finalidade.'</textarea></td>');
 
@@ -1630,11 +1631,8 @@ function NovaSenha() {
 function TelaUsuario() {
   extract($GLOBALS);
   global $w_Disabled, $w_TP;
-
-  $w_sq_pessoa = $_REQUEST['w_sq_pessoa'];
-
-  $RS = db_getPersonData::getInstanceOf($dbms, $w_cliente, $w_sq_pessoa, null, null);
-
+  $l_sq_pessoa = $_REQUEST['w_sq_pessoa'];
+  $RS = db_getPersonData::getInstanceOf($dbms, $w_cliente, $l_sq_pessoa, null, null);
   Cabecalho();
   ShowHTML('<HEAD>');
   Estrutura_CSS($w_cliente);
@@ -1691,60 +1689,58 @@ function TelaUsuario() {
     ShowHTML('<tr bgcolor="'.$conTrBgColor.'"><td>');
     ShowHTML('    <table width="99%" border="0">');
     // Outra parte
-    $RS1 = DB_GetBenef::getInstanceOf($dbms, $w_cliente, $w_sq_pessoa, null, null, null, null, null, null);
+    $RS1 = db_getBenef::getInstanceOf($dbms, $w_cliente, $l_sq_pessoa, null, null, null, null, null, null);
     if (count($RS1)<=0) {
       ShowHTML('      <tr><td colspan=2><font size=2><b>Outra parte não informada');
     } else {
-      ShowHTML('      <tr><td>Nome:<br><font size=2><b>'.f($RS1,'nm_pessoa'));
-      ShowHTML('          <td>Nome resumido:<br><font size=2><b>'.f($RS1,'nome_resumido'));
-      if (nvl(f($RS1,'email'),'nulo')!='nulo') {
-        ShowHTML('      <tr><td>e-Mail:<b><br><a class="hl" href="mailto:'.f($RS1,'email').'">'.f($RS1,'email').'</a></td>');
-      } else {
-        ShowHTML('      <tr><td>e-Mail:<b><br>---</td>');
-      } 
-
-      if (f($RS1,'sq_tipo_pessoa')==1) {
-        ShowHTML('          <td colspan="2">Sexo:<b><br>'.f($RS1,'nm_sexo').'</td>');
-        ShowHTML('      <tr><td align="center" colspan="2" height="2" bgcolor="#000000">');
-        ShowHTML('      <tr><td align="center" colspan="2" height="1" bgcolor="#000000">');
-        ShowHTML('      <tr><td colspan="2" align="center" bgcolor="#D0D0D0"><b>Endereço comercial, Telefones e e-Mail</td>');
-        ShowHTML('      <tr><td align="center" colspan="2" height="1" bgcolor="#000000">');
-        ShowHTML('      <tr><td align="center" colspan="2" height="2" bgcolor="#000000">');
-      } else {
-        ShowHTML('      <tr><td align="center" colspan="2" height="2" bgcolor="#000000">');
-        ShowHTML('      <tr><td align="center" colspan="2" height="1" bgcolor="#000000">');
-        ShowHTML('      <tr><td colspan="2" align="center" bgcolor="#D0D0D0"><b>Endereço principal, Telefones e e-Mail</td>');
-        ShowHTML('      <tr><td align="center" colspan="2" height="1" bgcolor="#000000">');
-        ShowHTML('      <tr><td align="center" colspan="2" height="2" bgcolor="#000000">');
-      } 
-
-      ShowHTML('      <tr><td colspan="2"><table border=0 width="100%" cellspacing=0>');
-      ShowHTML('          <tr valign="top">');
-      if (nvl(f($RS1,'ddd'),'')>'') {
-        ShowHTML('          <td>Telefone:<b><br>('.f($RS1,'ddd').') '.f($RS1,'nr_telefone').'</td>');
-      } else {
-        ShowHTML('          <td>Telefone:<b><br>---</td>');
-      } 
-
-      ShowHTML('          <td>Fax:<b><br>'.nvl(f($RS1,'nr_fax'),'---').'</td>');
-      ShowHTML('          <td>Celular:<b><br>'.nvl(f($RS1,'nr_celular'),'---').'</td>');
-      ShowHTML('          <tr valign="top">');
-      ShowHTML('          <td>Endereço:<b><br>'.nvl(f($RS1,'logradouro'),'---').'</td>');
-      ShowHTML('          <td>Complemento:<b><br>'.nvl(f($RS1,'complemento'),'---').'</td>');
-      ShowHTML('          <td>Bairro:<b><br>'.nvl(f($RS1,'bairro'),'---').'</td>');
-      ShowHTML('          <tr valign="top">');
-      if (nvl(f,$RS1('pd_pais'),'')>'') {
-        if (f($RS1,'pd_pais')=='S') {
-          ShowHTML('          <td>Cidade:<b><br>'.f($RS1,'nm_cidade').'-'.f($RS1,'co_uf').'</td>');
+      foreach ($RS1 as $row1) {
+        ShowHTML('      <tr><td>Nome:<br><font size=2><b>'.f($row1,'nm_pessoa'));
+        ShowHTML('          <td>Nome resumido:<br><font size=2><b>'.f($row1,'nome_resumido'));
+        if (nvl(f($row1,'email'),'nulo')!='nulo') {
+          ShowHTML('      <tr><td>e-Mail:<b><br><a class="hl" href="mailto:'.f($row1,'email').'">'.f($row1,'email').'</a></td>');
         } else {
-          ShowHTML('          <td>Cidade:<b><br>'.f($RS1,'nm_cidade').'-'.f($RS1,'nm_pais').'</td>');
+          ShowHTML('      <tr><td>e-Mail:<b><br>---</td>');
         } 
-      } else {
-        ShowHTML('          <td>Cidade:<b><br>---</td>');
-      } 
-
-      ShowHTML('          <td>CEP:<b><br>'.nvl(f,$RS1('cep'),'---').'</td>');
-      ShowHTML('          </table>');
+        if (f($row1,'sq_tipo_pessoa')==1) {
+          ShowHTML('          <td colspan="2">Sexo:<b><br>'.f($row1,'nm_sexo').'</td>');
+          ShowHTML('      <tr><td align="center" colspan="2" height="2" bgcolor="#000000">');
+          ShowHTML('      <tr><td align="center" colspan="2" height="1" bgcolor="#000000">');
+          ShowHTML('      <tr><td colspan="2" align="center" bgcolor="#D0D0D0"><b>Endereço comercial, Telefones e e-Mail</td>');
+          ShowHTML('      <tr><td align="center" colspan="2" height="1" bgcolor="#000000">');
+          ShowHTML('      <tr><td align="center" colspan="2" height="2" bgcolor="#000000">');
+        } else {
+          ShowHTML('      <tr><td align="center" colspan="2" height="2" bgcolor="#000000">');
+          ShowHTML('      <tr><td align="center" colspan="2" height="1" bgcolor="#000000">');
+          ShowHTML('      <tr><td colspan="2" align="center" bgcolor="#D0D0D0"><b>Endereço principal, Telefones e e-Mail</td>');
+          ShowHTML('      <tr><td align="center" colspan="2" height="1" bgcolor="#000000">');
+          ShowHTML('      <tr><td align="center" colspan="2" height="2" bgcolor="#000000">');
+        } 
+        ShowHTML('      <tr><td colspan="2"><table border=0 width="100%" cellspacing=0>');
+        ShowHTML('          <tr valign="top">');
+        if (nvl(f($row1,'ddd'),'')>'') {
+          ShowHTML('          <td>Telefone:<b><br>('.f($row1,'ddd').') '.f($row1,'nr_telefone').'</td>');
+        } else {
+          ShowHTML('          <td>Telefone:<b><br>---</td>');
+        } 
+        ShowHTML('          <td>Fax:<b><br>'.nvl(f($row1,'nr_fax'),'---').'</td>');
+        ShowHTML('          <td>Celular:<b><br>'.nvl(f($row1,'nr_celular'),'---').'</td>');
+        ShowHTML('          <tr valign="top">');
+        ShowHTML('          <td>Endereço:<b><br>'.nvl(f($row1,'logradouro'),'---').'</td>');
+        ShowHTML('          <td>Complemento:<b><br>'.nvl(f($row1,'complemento'),'---').'</td>');
+        ShowHTML('          <td>Bairro:<b><br>'.nvl(f($row1,'bairro'),'---').'</td>');
+        ShowHTML('          <tr valign="top">');
+        if (nvl(f,$row1('pd_pais'),'')>'') {
+          if (f($row1,'pd_pais')=='S') {
+            ShowHTML('          <td>Cidade:<b><br>'.f($row1,'nm_cidade').'-'.f($row1,'co_uf').'</td>');
+          } else {
+            ShowHTML('          <td>Cidade:<b><br>'.f($row1,'nm_cidade').'-'.f($row1,'nm_pais').'</td>');
+          } 
+        } else {
+          ShowHTML('          <td>Cidade:<b><br>---</td>');
+        } 
+        ShowHTML('          <td>CEP:<b><br>'.nvl(f,$row1('cep'),'---').'</td>');
+        ShowHTML('          </table>');
+      }
     } 
 
     ShowHTML('  </td>');
@@ -1753,8 +1749,6 @@ function TelaUsuario() {
   } 
 
   Estrutura_Texto_Fecha();
-
-  return $function_ret;
 } 
 
 // =========================================================================

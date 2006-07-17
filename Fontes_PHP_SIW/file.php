@@ -63,7 +63,7 @@ if ($w_erro>0) { // Se houve erro, exibe HTML
   if ($w_erro==1) {
     ShowHTML('Parâmetros de chamada incorretos');
   } else {
-    ShowHTML('Arquivo inexistente');
+    ShowHTML('Erro: '.$w_erro.' - Arquivo inexistente');
   } 
   ShowHTML('</b></center></div>');
   Rodape();
@@ -82,11 +82,11 @@ function DownloadFile($strFileName,$blnForceDownload) {
   //build file path:
   $strFilePath = $conFilePhysical.$w_cliente.'/';
   // add backslash if needed:
-  if (substr($strFilePath,strlen($strFilePath)-(1))!='/') $strFilePath = $strFilePath.'/';
-  $strFilePath = $strFilePath.$strFileName;
+  if (substr($strFilePath,strlen($strFilePath)-1)!='/') $strFilePath = $strFilePath.'/';
+  $strFilePath = trim($strFilePath.$strFileName);
   //check that the file exists:
   if (!(file_exists($strFilePath))) {
-    ShowHTML('Arquivo inexistente');
+    ShowHTML('Arquivo inexistente no caminho '.$strFilePath);
     exit();
   } 
 
