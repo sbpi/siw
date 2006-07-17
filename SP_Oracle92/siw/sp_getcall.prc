@@ -21,7 +21,7 @@ begin
                 Nvl(a.outra_parte_cont,'-') d_nome,  
                 Nvl(g.sigla,'-') d_cc, nvl(lower(h.localidade),'-') localidade,  
                 case a.entrante when 'S' then case a.recebida when 'N' then 'NAT' else 'REC' end else 'ORI' end tipo,
-                i.nome_resumido responsavel, 
+                i.nome_resumido responsavel, i.nome responsavel_nome,
                 to_char(a.data, 'DD/MM/YYYY, HH24:MI:SS') phpdt_ordem
            from tt_ligacao         a 
                    inner      join tt_usuario         b on (a.sq_usuario_central = b.sq_usuario_central) 
@@ -51,7 +51,7 @@ begin
                 Nvl(a.outra_parte_cont,'-') d_nome,  
                 Nvl(g.sigla,'-') d_cc, nvl(lower(h.localidade),'-') localidade,  
                 case a.entrante when 'S' then case a.recebida when 'N' then 'NAT' else 'REC' end else 'ORI' end tipo,
-                null, 
+                null, null, 
                 to_char(a.data, 'DD/MM/YYYY, HH24:MI:SS') phpdt_ordem
            from tt_ligacao         a 
                    inner      join tt_ramal_usuario   c on (a.sq_ramal           = c.sq_ramal) 
@@ -62,18 +62,15 @@ begin
                    left outer join ct_cc              g on (a.sq_cc              = g.sq_cc) 
                    left outer join tt_prefixos        h on (a.sq_prefixo         = h.sq_prefixo) 
           where a.sq_usuario_central is null 
+            and a.trabalho           is null
             and trunc(a.data)        between c.inicio and Nvl(c.fim,sysdate)
-            and b.usuario            = p_pessoa
+            and ((nvl(p_tipo,1)      = 3) or (nvl(p_tipo,1)      <> 3 and b.usuario          = p_pessoa))
             and (p_sq_cc             is null or (p_sq_cc   is not null and a.sq_cc   = p_sq_cc))
             and (p_contato           is null or (p_contato is not null and acentos(upper(a.outra_parte_cont)) like acentos(upper('%'||p_contato||'%'))))
             and (p_numero            is null or (p_numero  is not null and a.numero like '%'||p_numero||'%'))
             and (p_inicio            is null or ((p_inicio  is not null and p_fim is not null and trunc(a.data) between p_inicio and p_fim) or
                                                  (p_fim     is null                           and trunc(a.data) >= p_inicio)
                                                 )
-                )
-            and ((p_ativo            is null and a.trabalho is null) or
-                 (p_ativo            = 'A'   and a.trabalho is not null) or
-                 (p_ativo            in ('S','N') and a.trabalho = p_ativo)
                 );
    Else
       If p_restricao = 'REGISTRO' Then
@@ -601,63 +598,17 @@ begin
       Elsif p_restricao = 'HINT' Then
          -- Recupera todas as ligações
          open p_result for 
-            select /*+ FIRST_ROWS */ a.sq_ligacao, a.data, a.data ordem, a.assunto,
-                   Nvl(a.numero,'---') numero, a.duracao, a.sq_usuario_central, a.trabalho,
-                   case when a.trabalho is null then 0 else 1 end informada, c.codigo sq_ramal,e.numero sq_tronco,  
-                   case when a.trabalho is null then '-' when a.trabalho = 'S' then 'Sim' else 'Não' end d_trabalho,  
-                   Nvl(a.outra_parte_cont,'-') d_nome,  
-                   Nvl(g.sigla,'-') d_cc, nvl(lower(h.localidade),'-') localidade,  
+            select /*+ FIRST_ROWS */ a.data, Nvl(a.outra_parte_cont,'-') d_nome,  
                    case a.entrante when 'S' then case a.recebida when 'N' then 'NAT' else 'REC' end else 'ORI' end tipo,
-                   i.nome_resumido responsavel
+                   i.nome_resumido responsavel, 
+                   to_char(a.data, 'DD/MM/YYYY, HH24:MI:SS') phpdt_ordem
               from tt_ligacao         a 
                       inner      join tt_usuario         b on (a.sq_usuario_central = b.sq_usuario_central) 
                          inner   join co_pessoa          i on (b.usuario            = i.sq_pessoa)
-                      inner      join tt_ramal           c on (a.sq_ramal           = c.sq_ramal) 
-                      inner      join tt_tronco          d on (a.sq_tronco          = d.sq_tronco) 
-                         inner   join co_pessoa_telefone e on (d.sq_pessoa_telefone = e.sq_pessoa_telefone) 
-                      left outer join ct_cc              g on (a.sq_cc              = g.sq_cc) 
-                      left outer join tt_prefixos        h on (a.sq_prefixo         = h.sq_prefixo) 
-             where (p_sq_cc           is null or (p_sq_cc   is not null and a.sq_cc   = p_sq_cc))
-               and (p_contato         is null or (p_contato is not null and acentos(upper(a.outra_parte_cont)) like acentos(upper('%'||p_contato||'%'))))
-               and (p_numero          is null or (p_numero  is not null and a.numero like '%'||p_numero||'%'))
-               and (p_inicio          is null or ((p_inicio  is not null and p_fim is not null and trunc(a.data) between p_inicio and p_fim) or
-                                                  (p_fim     is null                           and trunc(a.data) >= p_inicio)
-                                                 )
-                   )
-               and ((p_ativo          is null and a.trabalho is null) or
-                    (p_ativo          = 'A'   and a.trabalho is not null) or
-                    (p_ativo          in ('S','N') and a.trabalho = p_ativo)
-                   )
-            UNION 
-            select /*+ FIRST_ROWS */ a.sq_ligacao, a.data, a.data ordem,  a.assunto,
-                   Nvl(a.numero,'---') numero, a.duracao, a.sq_usuario_central, a.trabalho,  
-                   case when a.trabalho is null then 0 else 1 end informada, d.codigo sq_ramal,f.numero sq_tronco,  
-                   case when a.trabalho is null then '-' when a.trabalho = 'S' then 'Sim' else 'Não' end d_trabalho,  
-                   Nvl(a.outra_parte_cont,'-') d_nome,  
-                   Nvl(g.sigla,'-') d_cc, nvl(lower(h.localidade),'-') localidade,  
-                   case a.entrante when 'S' then case a.recebida when 'N' then 'NAT' else 'REC' end else 'ORI' end tipo,
-                   null
-              from tt_ligacao         a 
-                      inner      join tt_ramal_usuario   c on (a.sq_ramal           = c.sq_ramal) 
-                         inner   join tt_usuario         b on (c.sq_usuario_central = b.sq_usuario_central) 
-                      inner      join tt_ramal           d on (a.sq_ramal           = d.sq_ramal) 
-                      inner      join tt_tronco          e on (a.sq_tronco          = e.sq_tronco) 
-                         inner   join co_pessoa_telefone f on (e.sq_pessoa_telefone = f.sq_pessoa_telefone) 
-                      left outer join ct_cc              g on (a.sq_cc              = g.sq_cc) 
-                      left outer join tt_prefixos        h on (a.sq_prefixo         = h.sq_prefixo) 
-             where a.sq_usuario_central is null 
-               and trunc(a.data)        between c.inicio and Nvl(c.fim,sysdate)
-               and (p_sq_cc             is null or (p_sq_cc   is not null and a.sq_cc   = p_sq_cc))
-               and (p_contato           is null or (p_contato is not null and acentos(upper(a.outra_parte_cont)) like acentos(upper('%'||p_contato||'%'))))
-               and (p_numero            is null or (p_numero  is not null and a.numero like '%'||p_numero||'%'))
-               and (p_inicio            is null or ((p_inicio  is not null and p_fim is not null and trunc(a.data) between p_inicio and p_fim) or
-                                                    (p_fim     is null                           and trunc(a.data) >= p_inicio)
-                                                   )
-                   )
-               and ((p_ativo            is null and a.trabalho is null) or
-                    (p_ativo            = 'A'   and a.trabalho is not null) or
-                    (p_ativo            in ('S','N') and a.trabalho = p_ativo)
-                   );
+             where a.numero   = p_numero
+               and a.trabalho is not null
+               and a.data     > sysdate-365
+           order by data desc;
       End If;
    End If;
 end SP_GetCall;

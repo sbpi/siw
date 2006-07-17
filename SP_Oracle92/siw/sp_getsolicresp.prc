@@ -128,7 +128,7 @@ begin
       open p_result for 
          select distinct d.sq_pessoa, d.nome, d.nome_resumido,
                 e.email, e.ativo ativo_usuario,
-                f.sigla sg_unidade
+                f.sigla sg_unidade, d.nome_resumido_ind
            from siw_tramite                           c
                 inner       join sg_tramite_pessoa    g on (c.sq_siw_tramite     = g.sq_siw_tramite)
                   inner     join co_pessoa            d on (g.sq_pessoa          = d.sq_pessoa)
@@ -143,7 +143,7 @@ begin
          UNION
          select distinct d.sq_pessoa, d.nome, d.nome_resumido,
                 e.email, e.ativo ativo_usuario,
-                f.sigla sg_unidade
+                f.sigla sg_unidade, d.nome_resumido_ind
            from siw_tramite                             c
                 inner         join siw_menu             a on (c.sq_menu            = a.sq_menu)
                   inner       join sg_pessoa_modulo     g on (a.sq_modulo          = g.sq_modulo and
@@ -160,12 +160,13 @@ begin
             and c.sigla              = 'CI'
          UNION
          select distinct 
-                case g.chefia_imediata when 'U' then c.sq_pessoa     else i.sq_pessoa     end sq_pessoa, 
-                case g.chefia_imediata when 'U' then c.nome          else i.nome          end nome, 
-                case g.chefia_imediata when 'U' then c.nome_resumido else i.nome_resumido end nome_resumido,
-                case g.chefia_imediata when 'U' then d.email         else j.email         end email, 
-                case g.chefia_imediata when 'U' then d.ativo         else j.ativo         end ativo_usuario,
-                case g.chefia_imediata when 'U' then e.sigla         else k.sigla         end sg_unidade
+                case g.chefia_imediata when 'U' then c.sq_pessoa         else i.sq_pessoa         end sq_pessoa, 
+                case g.chefia_imediata when 'U' then c.nome              else i.nome              end nome, 
+                case g.chefia_imediata when 'U' then c.nome_resumido     else i.nome_resumido     end nome_resumido,
+                case g.chefia_imediata when 'U' then d.email             else j.email             end email, 
+                case g.chefia_imediata when 'U' then d.ativo             else j.ativo             end ativo_usuario,
+                case g.chefia_imediata when 'U' then e.sigla             else k.sigla             end sg_unidade,
+                case g.chefia_imediata when 'U' then c.nome_resumido_ind else i.nome_resumido_ind end nome_resumido_ind
            from siw_tramite                           g
                 inner       join siw_menu             f on (g.sq_menu            = f.sq_menu)
                 left outer  join eo_unidade_resp      b on (f.sq_unid_executora  = b.sq_unidade and
@@ -192,4 +193,3 @@ begin
    End If;
 end SP_GetSolicResp;
 /
-
