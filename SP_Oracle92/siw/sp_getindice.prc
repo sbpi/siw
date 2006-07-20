@@ -16,13 +16,12 @@ begin
             d.sigla sg_sistema, d.nome nm_sistema, d.sq_sistema,
             case when e.sq_tabela is null then 0     else e.sq_tabela end sq_tabela,
             case when e.nm_tabela is null then '---' else e.nm_tabela end nm_tabela,
-            case when e.sq_coluna is null then 0     else e.sq_coluna end sq_coluna,
             IndiceCols(a.sq_indice) colunas
      from dc_indice                      a
           inner      join dc_indice_tipo b on (a.sq_indice_tipo = b.sq_indice_tipo)
           inner      join dc_usuario     c on (a.sq_usuario     = c.sq_usuario)
           inner      join dc_sistema     d on (a.sq_sistema     = d.sq_sistema)
-          left outer join (select distinct w.sq_indice, z.sq_tabela, z.nome nm_tabela, y.sq_coluna
+          left outer join (select distinct w.sq_indice, z.sq_tabela, z.nome nm_tabela
                              from dc_indice                     w
                                   inner     join dc_indice_cols x on (w.sq_indice = x.sq_indice)
                                     inner   join dc_coluna      y on (x.sq_coluna = y.sq_coluna)
@@ -37,4 +36,3 @@ begin
       and  ((p_sq_tabela      is null) or (p_sq_tabela      is not null and sq_tabela = p_sq_tabela));
 end SP_GetIndice;
 /
-

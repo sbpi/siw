@@ -14,8 +14,8 @@ begin
           b.sq_tabela sq_tabela_filha, b.nome nm_tabela_filha, 
           c.sq_sistema, c.sigla sg_sistema,
           d.sq_tabela sq_tabela_pai, d.nome nm_tabela_pai,
-          e.nome nm_usuario_tab_filha,
-          f.nome nm_usuario_tab_pai
+          e.sq_usuario usuario_pai, e.nome nm_usuario_tab_filha,
+          f.sq_usuario usuario_filha, f.nome nm_usuario_tab_pai
      from dc_relacionamento       a
           inner   join dc_tabela  b on (a.tabela_filha = b.sq_tabela)
             inner join dc_usuario e on (b.sq_usuario   = e.sq_usuario)
@@ -31,4 +31,3 @@ begin
       and ((p_nome       is null) or (p_nome       is not null and  upper(a.nome)       like '%'||upper(p_nome)||'%'));
 end SP_GetRelacionamento;
 /
-
