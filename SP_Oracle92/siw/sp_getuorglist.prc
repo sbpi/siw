@@ -11,7 +11,7 @@ begin
       p_restricao = 'CODIGONULL' Then
       -- Recupera as unidades organizacionais do cliente
       open p_result for 
-         select a.sq_unidade sq_unidade,a.sq_unidade_pai, a.nome, a.sigla, a.informal, a.adm_central, a.vinculada, 
+         select a.sq_unidade,a.sq_unidade_pai, a.nome, a.sigla, a.informal, a.adm_central, a.vinculada, 
                 a.codigo, a.sq_unidade_pai, a.ordem, Nvl(d.nome,'Informar') responsavel, a.ativo,
                 a.sq_unidade_gestora, a.sq_unid_pagadora, a.unidade_gestora, a.unidade_pagadora,
                 b.sq_pessoa_endereco, b.logradouro,
@@ -52,29 +52,37 @@ begin
             order by nome;
       Elsif p_restricao = 'VIAGEM' Then
          open p_result for 
-            select a.sq_unidade chave, a.limite_passagem, a.limite_diaria, a.ativo, a.ano, 
+            select a.sq_unidade, a.ativo, 
                    case a.ativo when 'S' then 'Sim' else 'Não' end nm_ativo,
-                   b.nome, b.sigla
-              from pd_unidade                           a
-                     left outer join eo_unidade         b on (a.sq_unidade = b.sq_unidade)
-                     left outer join co_pessoa_endereco c on (b.sq_pessoa_endereco = c.sq_pessoa_endereco)
+                   b.nome, b.sigla,
+                   c.sq_pessoa_endereco, c.logradouro,
+                   f.nome nm_cidade, f.co_uf
+              from pd_unidade                        a
+                   inner     join eo_unidade         b on (a.sq_unidade = b.sq_unidade)
+                     inner   join co_pessoa_endereco c on (b.sq_pessoa_endereco = c.sq_pessoa_endereco)
+                       inner join co_cidade          f on (c.sq_cidade          = f.sq_cidade)
              where c.sq_pessoa = p_cliente 
-               and ((p_chave is null) or (p_chave is not null and a.sq_unidade = p_chave))
-               and ((p_ano   is null) or (p_ano   is not null and a.ano        = p_ano));
-      Elsif p_restricao = 'VIAGEMANO' Then
+               and ((p_chave is null) or (p_chave is not null and a.sq_unidade = p_chave));
+      Elsif p_restricao = 'PDUNIDLIM' Then
          open p_result for 
-            select a.sq_unidade chave, a.limite_passagem, a.limite_diaria, a.ativo, a.ano,
+            select a.sq_unidade, a.ativo, 
                    case a.ativo when 'S' then 'Sim' else 'Não' end nm_ativo,
-                   b.nome, b.sigla
-              from pd_unidade                           a
-                     left outer join eo_unidade         b on (a.sq_unidade = b.sq_unidade)
-                     left outer join co_pessoa_endereco c on (b.sq_pessoa_endereco = c.sq_pessoa_endereco)
-             where c.sq_pessoa = p_cliente
-               and a.ano = p_ano
-               and a.ativo = 'S';
+                   b.nome, b.sigla,
+                   c.sq_pessoa_endereco, c.logradouro,
+                   f.nome nm_cidade, f.co_uf,
+                   g.ano, coalesce(g.limite_passagem,0) limite_passagem, coalesce(g.limite_diaria,0) limite_diaria
+              from pd_unidade                        a
+                   inner     join eo_unidade         b on (a.sq_unidade = b.sq_unidade)
+                     inner   join co_pessoa_endereco c on (b.sq_pessoa_endereco = c.sq_pessoa_endereco)
+                       inner join co_cidade          f on (c.sq_cidade          = f.sq_cidade)
+                   inner     join pd_unidade_limite  g on (a.sq_unidade         = g.sq_unidade and
+                                                           ((p_ano              is null) or (p_ano is not null and g.ano = p_ano))
+                                                          )
+             where c.sq_pessoa = p_cliente 
+               and ((p_chave is null) or (p_chave is not null and a.sq_unidade = p_chave));
       Elsif p_restricao = 'VIAGEMUNID' Then
          open p_result for 
-            select x.ano, x.sq_unidade, y.nivel
+            select x.sq_unidade, y.nivel
               from pd_unidade x,
                    (select sq_unidade, nome, level nivel
                       from eo_unidade a
@@ -82,7 +90,6 @@ begin
                     connect by prior a.sq_unidade_pai = a.sq_unidade
                    ) y
             where x.sq_unidade = y.sq_unidade
-              and x.ano        = p_ano
             order by y.nivel;
       ElsIf p_restricao = 'LICITACAOEND' Then
          open p_result for       

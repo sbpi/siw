@@ -48,7 +48,18 @@ begin
    -- Atualiza a situação da demanda
    Update siw_solicitacao set
       sq_siw_tramite        = w_tramite,
+      conclusao             = null,
       justificativa         = Nvl(p_justificativa, justificativa)
+   Where sq_siw_solicitacao = p_chave;
+
+   -- Atualiza o situacao da demanda para não concluída
+   Update gd_demanda set 
+      concluida      = 'N',
+      inicio_real    = null,
+      fim_real       = null,
+      data_conclusao = null, 
+      nota_conclusao = null, 
+      custo_real     = 0
    Where sq_siw_solicitacao = p_chave;
 
    -- Se um despacho foi informado, insere em GD_DEMANDA_LOG.

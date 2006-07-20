@@ -12,8 +12,8 @@ begin
   select count(*) into w_existe from pd_parametro where cliente = p_cliente;
   If w_existe = 0 Then
      insert into pd_parametro 
-            (cliente,   sequencial, ano_corrente,              prefixo, sufixo) 
-     values (p_cliente, 0,          to_char(sysdate, 'yyyy'),  'AC-',   null);
+            (cliente,   sequencial, ano_corrente,              prefixo, sufixo, limite_unidade) 
+     values (p_cliente, 0,          to_char(sysdate, 'yyyy'),  'PD-',   null,   'N');
   End If;
   
   -- Recupera os parâmetros do cliente informado

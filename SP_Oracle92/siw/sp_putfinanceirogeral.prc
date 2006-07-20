@@ -231,7 +231,7 @@ begin
          w_sequencial := w_reg.sequencial + 1;
          update fn_parametro set sequencial = w_sequencial where cliente = p_cliente;
          
-         p_codigo_interno := Nvl(w_reg.prefixo,'')||w_sequencial||'/'||w_ano||Nvl(w_reg.sufixo,'');
+         p_codigo_interno := Nvl(w_reg.prefixo,'')||w_sequencial||'/'||w_reg.ano_corrente||Nvl(w_reg.sufixo,'');
 
          -- Atualiza o código interno do acordo para o sequencial encontrato
          update fn_lancamento a set
@@ -248,4 +248,3 @@ begin
    End If;
 end SP_PutFinanceiroGeral;
 /
-

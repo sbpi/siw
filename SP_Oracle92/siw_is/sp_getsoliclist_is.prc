@@ -500,7 +500,7 @@ begin
                   inner join siw.gd_demanda       f  on (b.sq_siw_solicitacao       = f.sq_siw_solicitacao)
           where Nvl(b1.sigla,'-') <> 'CA'
             and (p_chave is null or (p_chave is not null and e.sq_solic_missao = p_chave));                
-   Elsif substr(p_restricao,1,2) = 'PD' or Substr(p_restricao,1,4) = 'GRPD' Then
+   Elsif p_restricao = 'GRPDACAO' Then
       -- Recupera as viagens que o usuário pode ver
       open p_result for
          select a.sq_menu,            a.sq_modulo,                   a.nome,
@@ -546,8 +546,9 @@ begin
                 o.nome_resumido nm_solic, o.nome_resumido||' ('||o2.sigla||')' nm_resp,
                 p.nome_resumido nm_exec,
                 m.descricao_acao, m.cd_programa, m.cd_acao, m.sq_siw_solicitacao sq_solic_acao,
+                m.cd_unidade||'.'||m.cd_programa||'.'||m.cd_acao codigo_acao,
                 n.valor_diaria, d1.valor_passagem valor_trecho,
-                d5.limite_passagem, d5.limite_diaria                
+                d5.limite_passagem, d5.limite_diaria
            from siw.siw_menu                                        a
                   inner               join siw.eo_unidade           a2 on (a.sq_unid_executora        = a2.sq_unidade)
                     left outer        join siw.eo_unidade_resp      a3 on (a2.sq_unidade              = a3.sq_unidade and
@@ -567,8 +568,14 @@ begin
                         inner         join siw.co_pessoa            d2 on (d1.sq_pessoa               = d2.sq_pessoa)
                           inner       join siw.co_tipo_vinculo      d3 on (d2.sq_tipo_vinculo         = d3.sq_tipo_vinculo)
                           inner       join siw.co_pessoa_fisica     d4 on (d2.sq_pessoa               = d4.sq_pessoa)
-                          left outer  join siw.pd_unidade           d5 on (d.sq_unidade_resp          = d5.sq_unidade and
-                                                                           p_ano                      = d5.ano)
+                          inner       join (select x.sq_unidade, 
+                                                   coalesce(y.limite_passagem,0) as limite_passagem, 
+                                                   coalesce(y.limite_diaria,0)   as limite_diaria
+                                             from siw.pd_unidade                  x
+                                                  left join siw.pd_unidade_limite y on (x.sq_unidade = y.sq_unidade and
+                                                                                        y.ano         = p_ano
+                                                                                       )
+                                           )                        d5 on (d.sq_unidade_resp              = d5.sq_unidade)
                         inner         join siw.eo_unidade           e  on (d.sq_unidade_resp          = e.sq_unidade)
                           left outer  join siw.eo_unidade_resp      e1 on (e.sq_unidade               = e1.sq_unidade and
                                                                            e1.tipo_respons            = 'T'           and
@@ -587,7 +594,7 @@ begin
                                            )                        j  on (b.sq_siw_solicitacao       = j.sq_siw_solicitacao)
                         left outer    join siw.gd_demanda_log       k  on (j.chave                    = k.sq_siw_solic_log)
                         left outer    join siw.sg_autenticacao      l  on (k.destinatario             = l.sq_pessoa)
-                      left outer      join (select x.sq_solic_missao, w.sq_siw_solicitacao, z.cd_programa, z.cd_acao, z.descricao_acao
+                      inner           join (select x.sq_solic_missao, w.sq_siw_solicitacao, z.cd_programa, z.cd_acao, z.descricao_acao, w.cd_unidade
                                               from siw.pd_missao_solic x
                                                    inner     join siw.siw_solicitacao y on (x.sq_siw_solicitacao = y.sq_siw_solicitacao)
                                                      inner   join is_acao             w on (y.sq_solic_pai       = w.sq_siw_solicitacao)
@@ -598,7 +605,7 @@ begin
                                                                              w.cliente            = z.cliente     and
                                                                              w.ano                = p_ano)
                                              where 1 = 1 
-                                          group by x.sq_solic_missao, w.sq_siw_solicitacao, z.cd_programa, z.cd_acao, z.descricao_acao
+                                          group by x.sq_solic_missao, w.sq_siw_solicitacao, z.cd_programa, z.cd_acao, z.descricao_acao, w.cd_unidade
                                            )                        m  on (b.sq_siw_solicitacao       = m.sq_solic_missao)
                      left outer       join (select x.sq_siw_solicitacao, sum((y.quantidade*y.valor)) valor_diaria
                                               from siw.siw_solicitacao         x
@@ -647,8 +654,147 @@ begin
                  (p_tipo         = 4     and Nvl(b1.sigla,'-') <> 'CA') or
                  (p_tipo         = 5) or
                  (p_tipo         = 6     and b1.ativo          = 'S' and b2.acesso > 0)
+                );
+   Elsif substr(p_restricao,1,2) = 'PD' or Substr(p_restricao,1,4) = 'GRPD' Then
+      -- Recupera as viagens que o usuário pode ver
+      open p_result for
+         select a.sq_menu,            a.sq_modulo,                   a.nome,
+                a.tramite,            a.ultimo_nivel,                a.p1,
+                a.p2,                 a.p3,                          a.p4,
+                a.sigla,              a.descentralizado,             a.externo,
+                a.acesso_geral,       a.como_funciona,               a.acompanha_fases,
+                a.sq_unid_executora,  a.finalidade,                  a.arquivo_proced,
+                a.emite_os,           a.consulta_opiniao,            a.envia_email,
+                a.exibe_relatorio,    a.vinculacao,                  a.data_hora,
+                a.data_hora,          a.envia_dia_util,              a.descricao,
+                a.justificativa,
+                a1.nome nm_modulo,    a1.sigla sg_modulo,            a1.objetivo_geral,
+                a2.sq_tipo_unidade tp_exec, a2.nome nm_unidade_exec,       a2.informal informal_exec,
+                a2.vinculada vinc_exec,a2.adm_central adm_exec,
+                a3.sq_pessoa tit_exec,a4.sq_pessoa subst_exec,
+                b.sq_siw_solicitacao, b.sq_siw_tramite,              b.solicitante,
+                b.cadastrador,        b.executor,                    b.descricao,
+                b.justificativa,      b.inicio,                      b.fim,
+                b.inclusao,           b.ultima_alteracao,            b.conclusao,
+                b.data_hora,          b.opiniao,                     b.sq_solic_pai,
+                b.sq_unidade,         b.sq_cidade_origem,            b.palavra_chave,
+                b.valor,              b.fim-d.dias_aviso aviso,
+                b1.sq_siw_tramite,    b1.nome nm_tramite,            b1.ordem or_tramite,
+                b1.sigla sg_tramite,  b1.ativo,
+                c.sq_tipo_unidade,    c.nome nm_unidade_exec,        c.informal,
+                c.vinculada,          c.adm_central,
+                d.sq_unidade_resp,    d.assunto,                     d.prioridade,
+                d.aviso_prox_conc,    d.dias_aviso,                  d.inicio_real,
+                d.fim_real,           d.concluida,                   d.data_conclusao,
+                d.nota_conclusao,     d.custo_real,                  d.proponente,
+                decode(d.prioridade,0,'Alta',1,'Média','Normal') nm_prioridade,
+                d.ordem,
+                d1.sq_pessoa sq_prop, d1.tipo tp_missao,             d1.codigo_interno,
+                decode(d1.tipo,'I','Inicial','P','Prorrogação','Complemento') nm_tp_missao,
+                d1.valor_adicional,   d1.desconto_alimentacao,       d1.desconto_transporte,
+                d2.nome nm_prop,      d2.nome_resumido nm_prop_res,
+                d3.sq_tipo_vinculo,   d3.nome nm_tipo_vinculo,
+                d4.sexo,              d4.cpf,
+                e.sq_tipo_unidade,    e.nome nm_unidade_resp,        e.informal informal_resp,
+                e.vinculada vinc_resp,e.adm_central adm_resp,        e.sigla sg_unidade_resp,
+                e1.sq_pessoa titular, e2.sq_pessoa substituto,
+                o.nome_resumido nm_solic, o.nome_resumido||' ('||o2.sigla||')' nm_resp,
+                p.nome_resumido nm_exec,
+                n.valor_diaria, d1.valor_passagem valor_trecho,
+                d5.limite_passagem, d5.limite_diaria
+           from siw.siw_menu                                        a
+                  inner               join siw.eo_unidade           a2 on (a.sq_unid_executora        = a2.sq_unidade)
+                    left outer        join siw.eo_unidade_resp      a3 on (a2.sq_unidade              = a3.sq_unidade and
+                                                                           a3.tipo_respons            = 'T'           and
+                                                                           a3.fim                     is null)
+                    left outer        join siw.eo_unidade_resp      a4 on (a2.sq_unidade              = a4.sq_unidade and
+                                                                           a4.tipo_respons            = 'S'           and
+                                                                           a4.fim                     is null)
+                  inner               join siw.siw_modulo           a1 on (a.sq_modulo                = a1.sq_modulo)
+                  inner               join siw.siw_solicitacao      b  on (a.sq_menu                  = b.sq_menu)
+                    inner             join siw.siw_tramite          b1 on (b.sq_siw_tramite           = b1.sq_siw_tramite)
+                    inner             join (select sq_siw_solicitacao, siw.acesso(sq_siw_solicitacao, p_pessoa) acesso
+                                              from siw.siw_solicitacao
+                                           )                        b2 on (b.sq_siw_solicitacao       = b2.sq_siw_solicitacao)
+                    inner             join siw.gd_demanda           d  on (b.sq_siw_solicitacao       = d.sq_siw_solicitacao)
+                      inner           join siw.pd_missao            d1 on (d.sq_siw_solicitacao       = d1.sq_siw_solicitacao)
+                        inner         join siw.co_pessoa            d2 on (d1.sq_pessoa               = d2.sq_pessoa)
+                          inner       join siw.co_tipo_vinculo      d3 on (d2.sq_tipo_vinculo         = d3.sq_tipo_vinculo)
+                          inner       join siw.co_pessoa_fisica     d4 on (d2.sq_pessoa               = d4.sq_pessoa)
+                          inner       join (select x.sq_unidade, 
+                                                   coalesce(y.limite_passagem,0) as limite_passagem, 
+                                                   coalesce(y.limite_diaria,0)   as limite_diaria
+                                             from siw.pd_unidade                  x
+                                                  left join siw.pd_unidade_limite y on (x.sq_unidade = y.sq_unidade and
+                                                                                        y.ano         = p_ano
+                                                                                       )
+                                           )                        d5 on (d.sq_unidade_resp              = d5.sq_unidade)
+                        inner         join siw.eo_unidade           e  on (d.sq_unidade_resp          = e.sq_unidade)
+                          left outer  join siw.eo_unidade_resp      e1 on (e.sq_unidade               = e1.sq_unidade and
+                                                                           e1.tipo_respons            = 'T'           and
+                                                                           e1.fim                     is null)
+                          left outer  join siw.eo_unidade_resp      e2 on (e.sq_unidade               = e2.sq_unidade and
+                                                                           e2.tipo_respons            = 'S'           and
+                                                                           e2.fim                     is null)
+                      inner           join siw.co_pessoa            o  on (b.solicitante              = o.sq_pessoa)
+                        inner         join siw.sg_autenticacao      o1 on (o.sq_pessoa                = o1.sq_pessoa)
+                          inner       join siw.eo_unidade           o2 on (o1.sq_unidade              = o2.sq_unidade)
+                      left outer      join siw.co_pessoa            p  on (b.executor                 = p.sq_pessoa)
+                    left outer        join siw.eo_unidade           c  on (a.sq_unid_executora        = c.sq_unidade)
+                      inner           join (select sq_siw_solicitacao, max(sq_siw_solic_log) chave
+                                              from siw.siw_solic_log
+                                          group by sq_siw_solicitacao
+                                           )                        j  on (b.sq_siw_solicitacao       = j.sq_siw_solicitacao)
+                        left outer    join siw.gd_demanda_log       k  on (j.chave                    = k.sq_siw_solic_log)
+                        left outer    join siw.sg_autenticacao      l  on (k.destinatario             = l.sq_pessoa)
+                     left outer       join (select x.sq_siw_solicitacao, sum((y.quantidade*y.valor)) valor_diaria
+                                              from siw.siw_solicitacao         x
+                                                     inner join siw.pd_diaria  y on (x.sq_siw_solicitacao = y.sq_siw_solicitacao)
+                                             where 1 = 1
+                                             group by x.sq_siw_solicitacao
+                                           )                        n  on (b.sq_siw_solicitacao       = n.sq_siw_solicitacao)
+                     left outer      join  (select x.sq_siw_solicitacao, sum(y.valor_trecho) valor_trecho
+                                              from siw.siw_solicitacao              x
+                                                     inner join siw.pd_deslocamento y on (x.sq_siw_solicitacao = y.sq_siw_solicitacao)
+                                             where 1 = 1
+                                             group by x.sq_siw_solicitacao
+                                           )                        q  on (b.sq_siw_solicitacao       = q.sq_siw_solicitacao)
+          where a.sq_menu        = p_menu
+            and (p_projeto        is null or (p_projeto     is not null and 0 < (select count(distinct(x1.sq_siw_solicitacao)) from siw.pd_missao_solic x1 , siw.siw_solicitacao y1 where x1.sq_siw_solicitacao = y1.sq_siw_solicitacao and y1.sq_solic_pai = p_projeto and x1.sq_solic_missao = b.sq_siw_solicitacao)))
+            and (p_atividade      is null or (p_atividade   is not null and 0 < (select count(distinct(x2.sq_siw_solicitacao)) from siw.pd_missao_solic x2 where x2.sq_siw_solicitacao = p_atividade and x2.sq_solic_missao = b.sq_siw_solicitacao)))
+            and (p_codigo         is null or (p_codigo      is not null and d1.codigo_interno like '%'||p_codigo||'%'))
+            and (p_assunto        is null or (p_assunto     is not null and siw.acentos(b.descricao,null) like '%'||siw.acentos(p_assunto,null)||'%'))
+            and (p_solicitante    is null or (p_solicitante is not null and b.solicitante        = p_solicitante))
+            and (p_unidade        is null or (p_unidade     is not null and d.sq_unidade_resp    = p_unidade))
+            and (p_proponente     is null or (p_proponente  is not null and (siw.acentos(d2.nome,null)          like '%'||siw.acentos(p_proponente,null)||'%') or
+                                                                            (siw.acentos(d2.nome_resumido,null) like '%'||siw.acentos(p_proponente,null)||'%')
+                                             )
                 )
-            and ((p_restricao <> 'GRPDACAO') or (p_restricao = 'GRPDACAO' and m.sq_siw_solicitacao  is not null));                    
+            and (p_palavra        is null or (p_palavra     is not null and d4.cpf = p_palavra))
+            and (p_pais           is null or (p_pais        is not null and 0 < (select count(distinct(sq_deslocamento)) from siw.pd_deslocamento x, siw.co_cidade y where x.destino = y.sq_cidade and y.sq_pais = p_pais and x.sq_siw_solicitacao = b.sq_siw_solicitacao)))
+            and (p_regiao         is null or (p_regiao      is not null and 0 < (select count(distinct(sq_deslocamento)) from siw.pd_deslocamento x, siw.co_cidade y where x.destino = y.sq_cidade and y.sq_regiao = p_regiao and x.sq_siw_solicitacao = b.sq_siw_solicitacao)))
+            and (p_uf             is null or (p_uf          is not null and 0 < (select count(distinct(sq_deslocamento)) from siw.pd_deslocamento x, siw.co_cidade y where x.destino = y.sq_cidade and y.co_uf = p_uf and x.sq_siw_solicitacao = b.sq_siw_solicitacao)))
+            and (p_cidade         is null or (p_cidade      is not null and 0 < (select count(distinct(sq_deslocamento)) from siw.pd_deslocamento x where x.destino = p_cidade and x.sq_siw_solicitacao = b.sq_siw_solicitacao)))
+            and (p_ativo          is null or (p_ativo       is not null and d1.tipo = p_ativo))            
+            and (p_usu_resp       is null or (p_usu_resp    is not null and 0 < (select count(distinct(sq_deslocamento)) from siw.pd_deslocamento x where x.sq_cia_transporte = p_usu_resp and x.sq_siw_solicitacao = b.sq_siw_solicitacao)))
+            and (p_ini_i          is null or (p_ini_i       is not null and ((b.inicio           between p_ini_i  and p_ini_f) or
+                                                                             (b.fim              between p_ini_i  and p_ini_f) or
+                                                                             (p_ini_i            between b.inicio and b.fim)   or
+                                                                             (p_fim_i            between b.inicio and b.fim)
+                                                                            )
+                                             )
+                )
+            and (p_fase           is null or (p_fase        is not null and InStr(x_fase,''''||b.sq_siw_tramite||'''') > 0))
+            and (Nvl(p_atraso,'N') = 'N'  or (p_atraso      = 'S'       and d.concluida          = 'N' and b.fim+1-sysdate<0))            
+            and ((p_tipo         = 1     and Nvl(b1.sigla,'-') = 'CI'   and b.cadastrador        = p_pessoa) or
+                 (p_tipo         = 2     and b1.ativo = 'S' and Nvl(b1.sigla,'-') <> 'CI' and b.executor = p_pessoa and b.conclusao is null) or
+                 (p_tipo         = 2     and b1.ativo = 'S' and Nvl(b1.sigla,'-') <> 'CI' and b2.acesso > 15) or
+                 (p_tipo         = 3     and b2.acesso > 0) or
+                 (p_tipo         = 3     and InStr(l_resp_unid,''''||b.sq_unidade||'''') > 0) or
+                 (p_tipo         = 4     and Nvl(b1.sigla,'-') <> 'CA') or
+                 (p_tipo         = 5) or
+                 (p_tipo         = 6     and b1.ativo          = 'S' and b2.acesso > 0)
+                );
    Elsif p_restricao = 'PJEXEC' or p_restricao = 'OREXEC' Then
       -- Recupera as demandas que o usuário pode ver
       open p_result for 

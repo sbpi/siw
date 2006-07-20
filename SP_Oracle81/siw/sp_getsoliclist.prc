@@ -797,7 +797,8 @@ begin
                 decode(d.prioridade,0,'Alta',1,'Média','Normal') nm_prioridade,
                 d.ordem,
                 d1.sq_pessoa sq_prop, d1.tipo tp_missao,             d1.codigo_interno,
-                decode(d1.tipo,'I','Inicial','P','Prorrogação','Complemento') nm_tp_missao,
+                decode(d1.tipo,'I','Inicial','P','Prorrogação','Complementação') nm_tp_missao,
+                d1.valor_adicional,   d1.desconto_alimentacao,       d1.desconto_transporte,
                 d2.nome nm_prop,      d2.nome_resumido nm_prop_res,
                 d3.sq_tipo_vinculo,   d3.nome nm_tipo_vinculo,
                 d4.sexo,              d4.cpf,
@@ -805,7 +806,9 @@ begin
                 e.vinculada vinc_resp,e.adm_central adm_resp,        e.sigla sg_unidade_resp,
                 e1.sq_pessoa titular, e2.sq_pessoa substituto,
                 o.nome_resumido nm_solic, o.nome_resumido||' ('||o2.sigla||')' nm_resp,
-                p.nome_resumido nm_exec
+                p.nome_resumido nm_exec,
+                n.valor_diaria, d1.valor_passagem valor_trecho,
+                d5.limite_passagem, d5.limite_diaria                
            from siw_menu             a,
                 eo_unidade           a2,
                 eo_unidade_resp      a3,
@@ -814,13 +817,21 @@ begin
                 siw_solicitacao      b,
                 siw_tramite          b1,
                 (select sq_siw_solicitacao, acesso(sq_siw_solicitacao, p_pessoa) acesso
-                   from siw_solicitacao
+                  from siw_solicitacao
                 )                    b2,
                 gd_demanda           d,
                 pd_missao            d1,
                 co_pessoa            d2,
                 co_tipo_vinculo      d3,
                 co_pessoa_fisica     d4,
+                (select x.sq_unidade, 
+                        nvl(y.limite_passagem,0) as limite_passagem, 
+                        nvl(y.limite_diaria,0)   as limite_diaria
+                   from pd_unidade        x,
+                        pd_unidade_limite y
+                  where x.sq_unidade = y.sq_unidade 
+                    and y.ano        = nvl(p_sq_orprior,y.ano)
+                )                    d5,
                 eo_unidade           e,
                 eo_unidade_resp      e1,
                 eo_unidade_resp      e2,
@@ -834,14 +845,26 @@ begin
                  group by sq_siw_solicitacao
                 )                    j,
                 gd_demanda_log       k,
-                sg_autenticacao      l
+                sg_autenticacao      l,
+                (select x.sq_siw_solicitacao, sum((y.quantidade*y.valor)) valor_diaria
+                   from siw_solicitacao x,
+                        pd_diaria       y
+                  where (x.sq_siw_solicitacao = y.sq_siw_solicitacao)
+                 group by x.sq_siw_solicitacao
+                )                    n,
+                (select x.sq_siw_solicitacao, sum(y.valor_trecho) valor_trecho
+                   from siw_solicitacao x,
+                        pd_deslocamento y
+                  where (x.sq_siw_solicitacao = y.sq_siw_solicitacao)
+                 group by x.sq_siw_solicitacao
+                )                    q
           where (a.sq_unid_executora        = a2.sq_unidade)
             and (a2.sq_unidade              = a3.sq_unidade (+) and
                  a3.tipo_respons (+)        = 'T'           and
                  a3.fim (+)                 is null
                 )
             and (a2.sq_unidade              = a4.sq_unidade (+) and
-                 a4.tipo_respons  (+)       = 'S'           and
+                 a4.tipo_respons (+)        = 'S'           and
                  a4.fim (+)                 is null
                 )
             and (a.sq_modulo                = a1.sq_modulo)
@@ -853,12 +876,13 @@ begin
             and (d1.sq_pessoa               = d2.sq_pessoa)
             and (d2.sq_tipo_vinculo         = d3.sq_tipo_vinculo)
             and (d2.sq_pessoa               = d4.sq_pessoa)
+            and (d.sq_unidade_resp          = d5.sq_unidade)
             and (d.sq_unidade_resp          = e.sq_unidade)
             and (e.sq_unidade               = e1.sq_unidade (+) and
                  e1.tipo_respons (+)        = 'T'           and
                  e1.fim (+)                 is null
                 )
-            and (e.sq_unidade               = e2.sq_unidade  (+)and
+            and (e.sq_unidade               = e2.sq_unidade (+) and
                  e2.tipo_respons (+)        = 'S'           and
                  e2.fim (+)                 is null
                 )
@@ -870,9 +894,11 @@ begin
             and (b.sq_siw_solicitacao       = j.sq_siw_solicitacao)
             and (j.chave                    = k.sq_siw_solic_log (+))
             and (k.destinatario             = l.sq_pessoa (+))
-            and a.sq_menu        = p_menu
-            and (p_projeto        is null or (p_projeto     is not null and 0 < (select count(distinct(x.sq_siw_solicitacao)) from pd_missao_solic x , siw_solicitacao y where x.sq_siw_solicitacao = y.sq_siw_solicitacao and y.sq_solic_pai = p_projeto and x.sq_solic_missao = b.sq_siw_solicitacao)))
-            and (p_atividade      is null or (p_atividade   is not null and 0 < (select count(distinct(x.sq_siw_solicitacao)) from pd_missao_solic x where x.sq_siw_solicitacao = p_atividade and x.sq_solic_missao = b.sq_siw_solicitacao)))
+            and (b.sq_siw_solicitacao       = n.sq_siw_solicitacao (+))
+            and (b.sq_siw_solicitacao       = q.sq_siw_solicitacao (+))
+            and a.sq_menu         = p_menu
+            and (p_projeto        is null or (p_projeto     is not null and 0 < (select count(distinct(x1.sq_siw_solicitacao)) from pd_missao_solic x1 , siw_solicitacao y1 where x1.sq_siw_solicitacao = y1.sq_siw_solicitacao and y1.sq_solic_pai = p_projeto and x1.sq_solic_missao = b.sq_siw_solicitacao)))
+            and (p_atividade      is null or (p_atividade   is not null and 0 < (select count(distinct(x2.sq_siw_solicitacao)) from pd_missao_solic x2 where x2.sq_siw_solicitacao = p_atividade and x2.sq_solic_missao = b.sq_siw_solicitacao)))
             and (p_sq_acao_ppa    is null or (p_sq_acao_ppa is not null and d1.codigo_interno like '%'||p_sq_acao_ppa||'%'))
             and (p_assunto        is null or (p_assunto     is not null and acentos(b.descricao,null) like '%'||acentos(p_assunto,null)||'%'))
             and (p_solicitante    is null or (p_solicitante is not null and b.solicitante        = p_solicitante))
@@ -881,7 +907,6 @@ begin
                                                                             (acentos(d2.nome_resumido,null) like '%'||acentos(p_proponente,null)||'%')
                                              )
                 )
-            and (p_sq_orprior     is null or (p_sq_orprior  is not null and d1.sq_pessoa = p_sq_orprior))
             and (p_palavra        is null or (p_palavra     is not null and d4.cpf = p_palavra))
             and (p_pais           is null or (p_pais        is not null and 0 < (select count(distinct(sq_deslocamento)) from pd_deslocamento x, co_cidade y where x.destino = y.sq_cidade and y.sq_pais = p_pais and x.sq_siw_solicitacao = b.sq_siw_solicitacao)))
             and (p_regiao         is null or (p_regiao      is not null and 0 < (select count(distinct(sq_deslocamento)) from pd_deslocamento x, co_cidade y where x.destino = y.sq_cidade and y.sq_regiao = p_regiao and x.sq_siw_solicitacao = b.sq_siw_solicitacao)))
@@ -903,8 +928,7 @@ begin
                  (p_tipo         = 2     and b1.ativo = 'S' and Nvl(b1.sigla,'-') <> 'CI' and b2.acesso > 15) or
                  (p_tipo         = 3     and b2.acesso > 0) or
                  (p_tipo         = 3     and InStr(l_resp_unid,''''||b.sq_unidade||'''') > 0) or
-                 (p_tipo         = 4     and Nvl(b1.sigla,'-') <> 'CA'  and b2.acesso > 0) or
-                 (p_tipo         = 4     and InStr(l_resp_unid,''''||b.sq_unidade||'''') > 0) or
+                 (p_tipo         = 4     and Nvl(b1.sigla,'-') <> 'CA') or
                  (p_tipo         = 5) or
                  (p_tipo         = 6     and b1.ativo          = 'S' and b2.acesso > 0)
                 );
