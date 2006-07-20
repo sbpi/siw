@@ -15,7 +15,7 @@ class dml_putSiwUsuario {
      $sql=$strschema.'sp_putSiwUsuario';
      $params=array('operacao'           =>array($operacao,              B_VARCHAR,      1),
                    'p_chave'            =>array($p_chave,               B_NUMERIC,     32),
-                   'cliente'            =>array($cliente,               B_NUMERIC,     32),
+                   'cliente'            =>array($p_cliente,             B_NUMERIC,     32),
                    'p_nome'             =>array($p_nome,                B_VARCHAR,     60),
                    'p_nome_resumido'    =>array($p_nome_resumido,       B_VARCHAR,     15),
                    'p_vinculo'          =>array($p_vinculo,             B_NUMERIC,     32),

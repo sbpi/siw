@@ -23,6 +23,5 @@ function selecaoProjeto($label,$accesskey,$hint,$chave,$chaveAux,$chaveAux2,$cam
     }
   }
   ShowHTML('          </select>');
-  return $function_ret;
 }
 ?>

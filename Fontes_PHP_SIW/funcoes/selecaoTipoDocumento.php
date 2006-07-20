@@ -13,11 +13,11 @@ function selecaoTipoDocumento($label,$accesskey,$hint,$chave,$cliente,$campo,$re
     ShowHTML(' <td valign="top" TITLE="'.$hint.'"><font size="1"><b>'.$label.'</b><br><SELECT ACCESSKEY="'.$accesskey.'" CLASS="STS" NAME="'.$campo.'" '.$w_Disabled.' '.$atributo.'>');
   ShowHTML('          <option value="">---');
   foreach ($RS as $row) {
-    if (nvl(f($row,'chave'),0)==nvl($chave,0)) {
-    ShowHTML(' <option value="'.f($row,'chave').'" SELECTED>'.f($row,'nome'));
+    if (nvl(f($row,'chave'),0)==nvl($chave,0))
+      ShowHTML(' <option value="'.f($row,'chave').'" SELECTED>'.f($row,'nome'));
     else
-    ShowHTML(' <option value="'.f($row,'chave').'">'.f($row,'nome'));
-  } 
-ShowHTML('          </select>');
+      ShowHTML(' <option value="'.f($row,'chave').'">'.f($row,'nome')); 
+  }
+  ShowHTML('          </select>');
 } 
 ?>

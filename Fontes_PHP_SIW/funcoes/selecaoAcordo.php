@@ -10,7 +10,7 @@ function selecaoAcordo($label,$accesskey,$hint,$cliente,$chave,$chaveAux,$campo,
   $RS1 = db_getLinkData::getInstanceOf($dbms,$w_cliente,'GC'.substr($SG,2,1).'CAD');
   $l_menu = f($RS1,'sq_menu');
   if ($restricao=='EXECUCAO') {
-    $RS1 = db_getTramiteList($RS1,$l_menu,null,null);
+    $RS1 = db_getTramiteList::getInstanceOf($dbms,$l_menu,null,null);
     foreach ($RS1 as $row) {
       if (Nvl(f($row,'sigla'),'-')=='EE' || Nvl(f($row,'sigla'),'-')=='ER') {
         if ($l_fase>'') 

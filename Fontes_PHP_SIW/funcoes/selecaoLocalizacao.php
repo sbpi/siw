@@ -5,7 +5,7 @@ include_once($w_dir_volta.'classes/sp/db_getLocalList.php');
 // -------------------------------------------------------------------------
 function selecaoLocalizacao($label,$accesskey,$hint,$chave,$chaveAux,$campo,$restricao) {
   extract($GLOBALS);
-  $RS = db_getLocalList::getInstanceOf($dbms, $w_cliente, $ChaveAux, $restricao);
+  $RS = db_getLocalList::getInstanceOf($dbms, $w_cliente, $chaveAux, $restricao);
 
   if (!isset($hint)) {
     ShowHTML('          <td valign="top"><font size="1"><b>'.$label.'</b><br><SELECT ACCESSKEY="'.$accesskey.'" CLASS="sts" NAME="'.$campo.'" '.$w_Disabled.'>');
@@ -16,10 +16,10 @@ function selecaoLocalizacao($label,$accesskey,$hint,$chave,$chaveAux,$campo,$res
   ShowHTML('          <option value="">---');
 
   foreach ($RS as $row)  {
-    if (nvl(f($row,'SQ_LOCALIZACAO'),0) == nvl($chave,0)) {
-      ShowHTML('          <option value="'.f($row,'SQ_LOCALIZACAO').'" SELECTED>'.f($row,'LOCALIZACAO'));
+    if (nvl(f($row,'sq_localizacao'),0) == nvl($chave,0)) {
+      ShowHTML('          <option value="'.f($row,'sq_localizacao').'" SELECTED>'.f($row,'localizacao'));
     } else {
-      ShowHTML('          <option value="'.f($row,'SQ_LOCALIZACAO').'">'.f($row,'LOCALIZACAO'));
+      ShowHTML('          <option value="'.f($row,'sq_localizacao').'">'.f($row,'localizacao'));
     }
   }
   ShowHTML('          </select>');

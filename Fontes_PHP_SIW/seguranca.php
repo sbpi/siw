@@ -329,7 +329,6 @@ function Usuarios() {
   Estrutura_Fecha();
   Estrutura_Fecha();
   Rodape();
-  return $function_ret;
 } 
 
 // =========================================================================
@@ -1146,8 +1145,6 @@ function Menu() {
     Estrutura_Fecha();
     Rodape();
   } 
-
-  return $function_ret;
 } 
 
 // =========================================================================
@@ -1317,8 +1314,6 @@ function Acessos() {
   Estrutura_Fecha();
   Estrutura_Fecha();
   Rodape();
-
-  return $function_ret;
 } 
 
 // =========================================================================
@@ -1555,7 +1550,6 @@ function Visao() {
   Estrutura_Fecha();
   Estrutura_Fecha();
   Rodape();
-  return $function_ret;
 } 
 
 // =========================================================================
@@ -1620,8 +1614,6 @@ function NovaSenha() {
   $w_html = $w_html.'</BODY>'.chr(13);
   $w_html = $w_html.'</HTML>'.chr(13);
   print $w_html;
-
-  return $function_ret;
 } 
 
 // =========================================================================
@@ -1873,8 +1865,6 @@ function TelaUnidade() {
   ShowHTML('    </table>');
   ShowHTML('</table>');
   Estrutura_Texto_Fecha();
-
-  return $function_ret;
 } 
 
 // =========================================================================
@@ -1948,8 +1938,6 @@ function Grava() {
       } 
       break;
   } 
-
-  return $function_ret;
 } 
 
 // =========================================================================
@@ -1981,7 +1969,6 @@ function Main() {
     Estrutura_Fecha();
     Rodape();
   }
-   return $function_ret;
 } 
 ?>
 

@@ -171,7 +171,7 @@ function Benef() {
         ShowHTML('  alert(\'Usuário já existente!\');');
         ShowHTML('  history.back(1);');
         ScriptClose();
-        return $function_ret;
+        exit;
       } 
     } 
 
@@ -400,7 +400,7 @@ function Benef() {
 
       ShowHTML('      <tr><td valign="top" colspan="2"><table border=0 width="100%" cellspacing=0>');
       ShowHTML('          <tr>');
-      selecaoUnidade('<U>U</U>nidade de lotação:','U',null,$w_sq_unidade_lotacao,null,'w_sq_unidade_lotacao',null,'onBlur="document.Form.action=\''.$w_pagina.$par.'\'; document.Form.w_troca.value=\'w_sq_localizacao\'; document.Form.submit();"');
+      selecaoUnidade('<U>U</U>nidade de lotação:','U','Selecione a unidade de lotação e aguarde a recarga da página para selecionar sua localização.',$w_sq_unidade_lotacao,null,'w_sq_unidade_lotacao',null,'onBlur="document.Form.action=\''.$w_pagina.$par.'\'; document.Form.w_troca.value=\'w_sq_localizacao\'; document.Form.submit();"');
       ShowHTML('          <tr>');
       selecaoLocalizacao('Locali<u>z</u>ação:','Z',null,$w_sq_localizacao,nvl($w_sq_unidade_lotacao,0),'w_sq_localizacao',null);
       ShowHTML('          </table>');
@@ -507,8 +507,6 @@ function Benef() {
   Estrutura_Fecha();
   Estrutura_Fecha();
   Rodape();
-
-  return $function_ret;
 } 
 
 // =========================================================================
@@ -616,8 +614,6 @@ function BuscaUsuario() {
   ShowHTML('</table>');
   ShowHTML('</center>');
   Estrutura_Texto_Fecha();
-
-  return $function_ret;
 } 
 
 // =========================================================================
@@ -749,7 +745,6 @@ function Grava() {
     ShowHTML('  history.back(1);');
     ScriptClose();
   } 
-  return $function_ret;
 } 
 
 // =========================================================================
@@ -776,6 +771,5 @@ function Main() {
     Estrutura_Fecha();
     Rodape();
   }
-  return $function_ret;
 } 
 ?>

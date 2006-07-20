@@ -734,6 +734,7 @@ function BuscaUnidade() {
   extract($GLOBALS);
   global $w_Disabled;
 
+  $w_ano        = $_REQUEST['w_ano'];
   $w_nome       = strtoupper($_REQUEST['w_nome']);
   $w_sigla      = strtoupper($_REQUEST['w_sigla']);
   $w_cliente    = $_REQUEST['w_cliente'];
@@ -741,7 +742,7 @@ function BuscaUnidade() {
   $restricao    = $_REQUEST['restricao'];
   $campo        = $_REQUEST['campo'];
 
-  $RS = db_getUorgList::getInstanceOf($dbms,$w_cliente,$chaveaux,'ATIVO',$w_nome,$w_sigla,null);
+  $RS = db_getUorgList::getInstanceOf($dbms,$w_cliente,$chaveaux,nvl($restricao,'ATIVO'),$w_nome,$w_sigla,$w_ano);
   $RS = SortArray($RS,'nome','asc', 'co_uf', 'asc');
   Cabecalho();
   ShowHTML('<TITLE>Seleção de unidade</TITLE>');

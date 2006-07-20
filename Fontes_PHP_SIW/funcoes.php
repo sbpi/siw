@@ -475,7 +475,7 @@ function Nvl($expressao,$valor) { if ((!isset($expressao)) || $expressao==='') {
 // =========================================================================
 // Retorna valores nulos se chegar cadeia vazia
 // -------------------------------------------------------------------------
-function Tvl($expressao) { if (!isset($expressao) || $expressao=='') { return  null; } else { return $expressao; } }
+function Tvl($expressao) { if (!isset($expressao) || $expressao==='') { return  null; } else { return $expressao; } }
 
 // =========================================================================
 // Retorna valores nulos se chegar cadeia vazia
@@ -685,7 +685,8 @@ function RetornaCliente() {
 // -------------------------------------------------------------------------
 function RetornaGestor($p_solicitacao,$p_usuario) {
   extract($GLOBALS);
-  return db_getGestor::getInstanceOf($dbms,$p_solicitacao, $p_usuario);
+  $l_acesso = db_getGestor::getInstanceOf($dbms,$p_solicitacao, $p_usuario);
+  return $l_acesso;
 }
 
 // =========================================================================
