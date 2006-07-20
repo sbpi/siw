@@ -307,7 +307,7 @@ Sub Gerencial
              p_ini_i, p_ini_f, null, null, p_atraso, p_solicitante, _
              p_unidade, null,  p_ativo, p_proponente, p_chave, p_assunto, _
              p_pais, p_regiao, p_uf, p_cidade, p_usu_resp, p_uorg_resp, p_palavra, _
-             p_prazo, p_fase, null, p_projeto, p_atividade, p_codigo, p_sq_prop
+             p_prazo, p_fase, null, p_projeto, p_atividade, p_codigo, w_ano
            w_TP = TP & " - Por unidade proponente"
            RS1.sort = "nm_unidade_resp"
         Case "GRPDACAO"
@@ -332,7 +332,7 @@ Sub Gerencial
              p_ini_i, p_ini_f, null, null, p_atraso, p_solicitante, _
              p_unidade, null,  p_ativo, p_proponente, p_chave, p_assunto, _
              p_pais, p_regiao, p_uf, p_cidade, p_usu_resp, p_uorg_resp, p_palavra, _
-             p_prazo, p_fase, null, p_projeto, p_atividade, p_codigo, p_sq_prop
+             p_prazo, p_fase, null, p_projeto, p_atividade, p_codigo, w_ano
            w_TP = TP & " - Por proposto"
            RS1.sort = "nm_prop"
         Case "GRPDTIPO"
@@ -340,7 +340,7 @@ Sub Gerencial
              p_ini_i, p_ini_f, null, null, p_atraso, p_solicitante, _
              p_unidade, null,  p_ativo, p_proponente, p_chave, p_assunto, _
              p_pais, p_regiao, p_uf, p_cidade, p_usu_resp, p_uorg_resp, p_palavra, _
-             p_prazo, p_fase, null, p_projeto, p_atividade, p_codigo, p_sq_prop
+             p_prazo, p_fase, null, p_projeto, p_atividade, p_codigo, w_ano
            w_TP = TP & " - Por tipo"
            RS1.sort = "tp_missao"
      End Select
@@ -763,7 +763,7 @@ Sub Gerencial
     ShowHTML "          <td><font size=""1""><b><U>A</U>gregar por:<br><SELECT ACCESSKEY=""A"" " & w_Disabled & " class=""STS"" name=""p_agrega"" size=""1"">"
     If p_agrega = "GRPDCIAVIAGEM" Then                   ShowHTML " <option value=""GRPDCIAVIAGEM"" selected>Cia. Viagem"      Else ShowHTML " <option value=""GRPDCIAVIAGEM"">Cia. viagem"      End If
     If p_agrega = "GRPDCIDADE"    Then                   ShowHTML " <option value=""GRPDCIDADE"" selected>Cidade destino"      Else ShowHTML " <option value=""GRPDCIDADE"">Cidade destino"      End If
-    If p_agrega = "GRPDUNIDADE"   Then                   ShowHTML " <option value=""GRPDUNIDADE"" selected>Unidade proponente" Else ShowHTML " <option value=""GRPDUNIDADE"">Unidade proponente" End If
+    If p_agrega = "" or p_agrega = "GRPDUNIDADE"   Then                   ShowHTML " <option value=""GRPDUNIDADE"" selected>Unidade proponente" Else ShowHTML " <option value=""GRPDUNIDADE"">Unidade proponente" End If
     If p_agrega = "GRPDACAO"      Then                   ShowHTML " <option value=""GRPDACAO"" selected>Ação"                  Else ShowHTML " <option value=""GRPDACAO"">Ação"                  End If
     If p_agrega = "GRPDDATA"      Then                   ShowHTML " <option value=""GRPDDATA"" selected>Mês"                   Else ShowHTML " <option value=""GRPDDATA"">Mês"                   End If
     If p_agrega = "GRPDPROPOSTO"  Then                   ShowHTML " <option value=""GRPDPROPOSTO"" selected>Proposto"          Else ShowHTML " <option value=""GRPDPROPOSTO"">Proposto"          End If
@@ -790,7 +790,7 @@ Sub Gerencial
     ShowHTML "     <td valign=""top""><font size=""1""><b><U>D</U>escrição:<br><INPUT ACCESSKEY=""D"" " & w_Disabled & " class=""STI"" type=""text"" name=""p_assunto"" size=""25"" maxlength=""90"" value=""" & p_assunto & """></td>"       
     ShowHTML "   <tr valign=""top"">"
     SelecaoPessoa "Respo<u>n</u>sável:", "N", "Selecione o responsável pela PCD na relação.", p_solicitante, null, "p_solicitante", "USUARIOS"
-    SelecaoUnidade1 "<U>U</U>nidade proponente:", "U", "Selecione a unidade proponente da PCD", p_unidade, null, "p_unidade", "VIAGEMANO", null, w_ano
+    SelecaoUnidade "<U>U</U>nidade proponente:", "U", "Selecione a unidade proponente da PCD", p_unidade, null, "p_unidade", "VIAGEM", null
     ShowHTML "   <tr>"       
     ShowHTML "     <td valign=""top""><font size=""1""><b><U>P</U>roposto:<br><INPUT ACCESSKEY=""P"" " & w_Disabled & " class=""STI"" type=""text"" name=""p_proponente"" size=""25"" maxlength=""60"" value=""" & p_proponente & """></td>"
     ShowHTML "     <td valign=""top""><font size=""1""><b>CP<u>F</u> do proposto:<br><INPUT ACCESSKEY=""F"" TYPE=""text"" class=""sti"" NAME=""p_palavra"" VALUE=""" & p_palavra & """ SIZE=""14"" MaxLength=""14"" onKeyDown=""FormataCPF(this, event);"">"       

@@ -630,7 +630,7 @@ Sub Inicial
     ShowHTML "      <tr><td colspan=""2""><table border=0 width=""100%"" cellspacing=0>"
     ShowHTML "      <tr>"
     DB_GetLinkData RS, w_cliente, "PJCAD"
-    SelecaoProjeto "Pr<u>o</u>jeto:", "O", "Selecione o projeto do contrato na relação.", p_projeto, w_usuario, RS("sq_menu"), "p_projeto", w_menu, null
+    SelecaoProjeto "Pr<u>o</u>jeto:", "O", "Selecione o projeto do contrato na relação.", p_projeto, w_usuario, RS("sq_menu"), "p_projeto", "PJLIST", null
     DesconectaBD
     ShowHTML "      </tr>"
     ShowHTML "          </table>"

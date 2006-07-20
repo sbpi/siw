@@ -42,7 +42,7 @@ If Session("LogOn") <> "Sim" Then
 End If
 
 ' Declaração de variáveis
-Dim dbms, sp, RS, RS1, RS2, RS3, RS4, RS_menu
+Dim dbms, sp, RS, RS1, RS2, RS3, RS4, RS_menu,w_ano
 Dim P1, P2, P3, P4, TP, SG
 Dim R, O, w_Cont, w_Reg, w_pagina, w_Disabled, w_TP, w_classe, w_submenu, w_filtro, w_copia
 Dim w_Assinatura
@@ -70,7 +70,11 @@ SG           = ucase(Request("SG"))
 O            = ucase(Request("O"))
 w_cliente    = RetornaCliente()
 w_usuario    = RetornaUsuario()
-w_menu       = RetornaMenu(w_cliente, SG)
+If SG <> "PDUNIDLIM" Then 
+   w_menu         = RetornaMenu(w_cliente, SG) 
+Else
+   w_menu         = RetornaMenu(w_cliente, Request("w_SG")) 
+End If
 
 Set ul            = New ASPForm
 
@@ -126,22 +130,6 @@ Select Case O
   Case Else
      w_TP = TP & " - Listagem"
 End Select
-
-' Verifica se o documento tem sub-menu. Se tiver, agrega no HREF uma chamada para montagem do mesmo.
-DB_GetLinkSubMenu RS, Session("p_cliente"), SG
-If RS.RecordCount > 0 Then
-   w_submenu = "Existe"
-Else
-   w_submenu = ""
-End If
-DesconectaBD
-
-' Recupera a configuração do serviço
-If P2 > 0 Then DB_GetMenuData RS_menu, P2 Else DB_GetMenuData RS_menu, w_menu End If
-If RS_menu("ultimo_nivel") = "S" Then
-   ' Se for sub-menu, pega a configuração do pai
-   DB_GetMenuData RS_menu, RS_menu("sq_menu_pai")
-End If
 
 Main
 
@@ -363,7 +351,7 @@ REM =========================================================================
 REM Rotina dos parâmetros
 REM -------------------------------------------------------------------------
 Sub Parametros
-  Dim w_sequencial, w_ano_corrente, w_prefixo, w_sufixo, w_dias_antecedencia
+  Dim w_sequencial, w_ano_corrente, w_prefixo, w_sufixo, w_dias_antecedencia, w_limite_unidade
   Dim w_dias_prest_contas, w_sequencial_atual
    
 
@@ -377,6 +365,7 @@ Sub Parametros
      w_sufixo              = Request("w_sufixo") 
      w_dias_antecedencia   = Request("w_dias_antecedencia") 
      w_dias_prest_contas   = Request("w_dias_prest_contas") 
+     w_limite_unidade      = Request("w_limite_unidade") 
   Else
      ' Recupera os dados do parâmetro
      DB_GetPDParametro RS, w_cliente, null, null
@@ -388,6 +377,7 @@ Sub Parametros
         w_sufixo             = RS("sufixo") 
         w_dias_antecedencia  = RS("dias_antecedencia") 
         w_dias_prest_contas  = RS("dias_prestacao_contas") 
+        w_limite_unidade     = RS("limite_unidade") 
         DesconectaBD
      End If
   End If  
@@ -450,6 +440,8 @@ Sub Parametros
   ShowHTML "      <tr><td><font size=""1""><b><u>D</u>ias de antecedência:</b><br><input " & w_Disabled & " accesskey=""D"" type=""text"" name=""w_dias_antecedencia"" class=""sti"" SIZE=""10"" MAXLENGTH=""10"" VALUE=""" & w_dias_antecedencia & """></td>"
   ShowHTML "          <td><font size=""1""><b>D<u>i</u>as para prestação de contas:</b><br><input " & w_Disabled & " accesskey=""I"" type=""text"" name=""w_dias_prest_contas"" class=""sti"" SIZE=""10"" MAXLENGTH=""10"" VALUE=""" & w_dias_prest_contas & """></td>"  
   ShowHTML "      </table>"
+  ShowHTML "      <tr>"
+  MontaRadioNS "<b>Controla limite orçamentário de passagens e diárias por unidade e ano?</b>", w_limite_unidade, "w_limite_unidade"
   ShowHTML "      <tr><td align=""center"" colspan=""3"" height=""1"" bgcolor=""#000000""></TD></TR>"
   
   ' Verifica se poderá ser feito o envio da solicitação, a partir do resultado da validação
@@ -483,38 +475,37 @@ REM Rotina de unidade
 REM -------------------------------------------------------------------------
 Sub Unidade
 
-  Dim w_nome, w_sigla, w_chave, w_chave1, w_limite_passagem, w_limite_diaria
-  Dim w_ativo, w_ano, p_ordena
+  Dim w_nome, w_sigla, w_chave, w_ativo, w_limite_unidade, p_ordena
   
   w_troca           = Request("w_troca")
   w_chave           = Request("w_chave")
-  w_ano             = Request("w_ano")
   p_ordena          = Request("p_ordena")
   
   If w_troca > "" Then ' Se for recarga da página
      w_nome                 = Request("w_nome")
      w_sigla                = Request("w_sigla")
-     w_limite_passagem      = Request("w_limite_passagem")
-     w_limite_diaria        = Request("w_limite_diaria")
      w_ativo                = Request("w_ativo")
-     w_ano                  = Request("w_ano")
   ElseIf O = "L" Then
+     ' Recupera os dados do módulo
+     DB_GetPDParametro RS, w_cliente, null, null
+     If RS.RecordCount > 0 Then 
+        w_limite_unidade     = RS("limite_unidade") 
+        DesconectaBD
+     End If
+
      ' Recupera todos os registros para a listagem
      DB_GetUorgList RS, w_cliente, null, "VIAGEM", null, null, null
      If Nvl(p_ordena,"") > "" Then
         RS.Sort = p_ordena
      Else
-        RS.Sort = "ano, nome"
+        RS.Sort = "nome"
      End If
   ElseIf InStr("AE",O) > 0 and w_Troca = "" Then
      ' Recupera os dados do endereço informado
      DB_GetUorgList RS, w_cliente, w_chave, "VIAGEM", null, null, w_ano
      w_nome                 = RS("nome")
      w_sigla                = RS("sigla")
-     w_limite_passagem      = FormatNumber(RS("limite_passagem"),2)
-     w_limite_diaria        = FormatNumber(RS("limite_diaria"),2)
      w_ativo                = RS("ativo")
-     w_ano                  = RS("ano")
      DesconectaBD
   End If
   
@@ -529,9 +520,6 @@ Sub Unidade
         If O = "I" Then
            Validate "w_chave", "Unidade", "HIDDEN", "1", "1", "50", "1", "1"
         End If
-        Validate "w_limite_passagem", "Limite financeiro para passagens", "VALOR", "1", 4, 18, "", "0123456789.,"
-        Validate "w_limite_diaria", "Limite financeiro para diárias", "VALOR", "1", 4, 18, "", "0123456789.,"
-        Validate "w_ano", "Ano", "SELECT", "1", "4", "4", "", "0123456789"
         Validate "w_assinatura", "Assinatura Eletrônica", "1", "1", "6", "30", "1", "1"
      ElseIf O = "E" Then
         Validate "w_assinatura", "Assinatura Eletrônica", "1", "1", "6", "30", "1", "1"
@@ -553,7 +541,7 @@ Sub Unidade
   ElseIf O = "E" Then
      BodyOpen "onLoad='document.Form.w_assinatura.focus()';"
   Else
-     BodyOpen "onLoad='document.focus()';"
+     BodyOpen null
   End If
   ShowHTML "<B><FONT COLOR=""#000000"">" & w_TP & "</FONT></B>"
   ShowHTML "<HR>"
@@ -566,32 +554,29 @@ Sub Unidade
     ShowHTML "<tr><td align=""center"" colspan=3>"
     ShowHTML "    <TABLE WIDTH=""100%"" bgcolor=""" & conTableBgColor & """ BORDER=""" & conTableBorder & """ CELLSPACING=""" & conTableCellSpacing & """ CELLPADDING=""" & conTableCellPadding & """ BorderColorDark=""" & conTableBorderColorDark & """ BorderColorLight=""" & conTableBorderColorLight & """>"
     ShowHTML "        <tr bgcolor=""" & conTrBgColor & """ align=""center"">"
-    ShowHTML "          <td><font size=""1""><b>" & LinkOrdena("Ano","ano") & "</font></td>"    
     ShowHTML "          <td><font size=""1""><b>" & LinkOrdena("Unidade","nome") & "</font></td>"    
-    ShowHTML "          <td><font size=""1""><b>" & LinkOrdena("Limite passagens","limite_passagem") & "</font></td>"
-    ShowHTML "          <td><font size=""1""><b>" & LinkOrdena("Limite diárias","limite_diaria") & "</font></td>"
     ShowHTML "          <td><font size=""1""><b>" & LinkOrdena("Ativo","ativo") & "</font></td>"
     ShowHTML "          <td><font size=""1""><b>Operações</font></td>"
     ShowHTML "        </tr>"
     If RS.EOF Then ' Se não foram selecionados registros, exibe mensagem
-        ShowHTML "      <tr bgcolor=""" & conTrBgColor & """><td colspan=5 align=""center""><font size=""1""><b>Não foram encontrados registros.</b></td></tr>"
+        ShowHTML "      <tr bgcolor=""" & conTrBgColor & """><td colspan=6 align=""center""><font size=""1""><b>Não foram encontrados registros.</b></td></tr>"
     Else
       ' Lista os registros selecionados para listagem
       While Not RS.EOF
         If w_cor = conTrBgColor or w_cor = "" Then w_cor = conTrAlternateBgColor Else w_cor = conTrBgColor End If
         ShowHTML "      <tr bgcolor=""" & w_cor & """ valign=""top"">"
-        ShowHTML "        <td align=""center""><font size=""1"">" & RS("ano") & "</td>"
         ShowHTML "        <td><font size=""1"">" & RS("nome") &" (" &RS("sigla") & ")</td>"
-        ShowHTML "        <td align=""right""><font size=""1"">" & FormatNumber(RS("limite_passagem"),2) &"</td>"
-        ShowHTML "        <td align=""right""><font size=""1"">" & FormatNumber(RS("limite_diaria"),2) &"</td>"
         If RS("ativo") = "S" Then
            ShowHTML "        <td align=""center""><font size=""1"">" & RS("nm_ativo") & "</td>"
         Else
            ShowHTML "        <td align=""center""><font size=""1"" color=""red"">" & RS("nm_ativo") & "</td>"
         End If 
         ShowHTML "        <td align=""top"" nowrap><font size=""1"">"
-        ShowHTML "          <A class=""HL"" HREF=""" & w_dir & w_Pagina & par & "&R=" & w_Pagina & par & "&O=A&w_chave=" & RS("chave") & "&w_ano=" & RS("ano") & "&P1=" & P1 & "&P2=" & P2 & "&P3=" & P3 & "&P4=" & P4 & "&TP=" & TP & "&SG=" & SG & """>Alterar</A>&nbsp"
-        ShowHTML "          <A class=""HL"" HREF=""" & w_dir & w_Pagina & par & "&R=" & w_Pagina & par & "&O=E&w_chave=" & RS("chave") & "&w_ano=" & RS("ano") & "&P1=" & P1 & "&P2=" & P2 & "&P3=" & P3 & "&P4=" & P4 & "&TP=" & TP & "&SG=" & SG & """>Excluir</A>&nbsp"
+        ShowHTML "          <A class=""HL"" HREF=""" & w_dir & w_Pagina & par & "&R=" & w_Pagina & par & "&O=A&w_chave=" & RS("sq_unidade") & "&P1=" & P1 & "&P2=" & P2 & "&P3=" & P3 & "&P4=" & P4 & "&TP=" & TP & "&SG=" & SG & """>Alterar</A>&nbsp"
+        ShowHTML "          <A class=""HL"" HREF=""" & w_dir & w_Pagina & par & "&R=" & w_Pagina & par & "&O=E&w_chave=" & RS("sq_unidade") & "&P1=" & P1 & "&P2=" & P2 & "&P3=" & P3 & "&P4=" & P4 & "&TP=" & TP & "&SG=" & SG & """>Excluir</A>&nbsp"
+        If w_limite_unidade = "S" Then
+           ShowHTML "          <a class=""HL"" href=""javascript:location.href=this.location.href"" onclick=""window.open('" & w_pagina & "LIMUNIDADE&R=" & w_pagina & par & "&O=L&w_chave=" & RS("sq_unidade") & "&P1="&P1&"&P2="&P2&"&P3="&P3&"&P4="&P4&"&TP="&TP&"&SG=PDUNIDLIM&w_sg="&SG&"','Limites','toolbar=no,width=780,height=350,top=30,left=10,scrollbars=yes,resizable=yes');"">Limites</a>"
+        End If
         ShowHTML "        </td>"
         ShowHTML "      </tr>"
         RS.MoveNext
@@ -608,7 +593,6 @@ Sub Unidade
     End If
     AbreForm "Form", w_dir & w_Pagina & "Grava", "POST", "return(Validacao(this));", null,P1,P2,P3,P4,TP,SG,R,O
     ShowHTML "<INPUT type=""hidden"" name=""w_troca"" value="""">"
-    ShowHTML "<INPUT type=""hidden"" name=""w_chave1"" value=""" &w_chave1& """>"
     If O <> "I" Then
        ShowHTML "<INPUT type=""hidden"" name=""w_chave"" value=""" & w_chave & """>"
        ShowHTML "<INPUT type=""hidden"" name=""w_ano"" value=""" & w_ano & """>"
@@ -620,16 +604,6 @@ Sub Unidade
        SelecaoUnidade "<U>U</U>nidade:", "S", null, w_chave, null, "w_chave", null, null
     Else
        ShowHTML "        <tr><td><font size=1><b>Unidade:<br>" & w_nome & " (" & w_sigla & ")</b>"
-    End If
-    ShowHTML "           </table>"
-    ShowHTML "      <tr><td><table border=""0"" width=""100%"" cellspacing=0 cellpadding=0><tr valign=""top"">"
-    ShowHTML "          <td valign=""top""><font size=""1""><b><u>L</u>imite financeiro para passagens:</b><br><input " & w_Disabled & " accesskey=""L"" type=""text"" name=""w_limite_passagem"" class=""STI"" SIZE=""18"" MAXLENGTH=""18"" VALUE=""" & w_limite_passagem & """ onKeyDown=""FormataValor(this,18,2,event);"" title=""Informe o limite financeiro para passagens para a unidade selecionada.""></td>"
-    ShowHTML "          <td valign=""top""><font size=""1""><b>L<u>i</u>mite financeiro para diárias:</b><br><input " & w_Disabled & " accesskey=""I"" type=""text"" name=""w_limite_diaria"" class=""STI"" SIZE=""18"" MAXLENGTH=""18"" VALUE=""" & w_limite_diaria & """ onKeyDown=""FormataValor(this,18,2,event);"" title=""Informe o limite financeiro para diárias para a unidade selecionada.""></td>"
-    ShowHTML "      <tr valign=""top"">"
-    If O = "I" Then
-       SelecaoAno "<U>A</U>no:", "A", null, w_ano, null, "w_ano", null, null
-    Else
-       ShowHTML "          <td valign=""top""><font size=""1""><b>Ano:<br>" & w_ano & "</b></td>"
     End If
     MontaRadioSN "<b>Ativo?</b>", w_ativo, "w_ativo"
     ShowHTML "         </table>"    
@@ -664,7 +638,191 @@ Sub Unidade
   Set w_nome                = Nothing
   Set w_sigla               = Nothing 
   Set w_chave               = Nothing
-  Set w_chave1              = Nothing
+  Set w_ativo               = Nothing
+  Set w_limite_unidade      = Nothing
+  Set p_ordena              = Nothing
+End Sub
+
+REM =========================================================================
+REM Rotina de limites de unidade
+REM -------------------------------------------------------------------------
+Sub LimiteUnidade
+
+  Dim w_nome, w_sigla, w_chave, w_limite_passagem, w_limite_diaria, w_limite_unidade
+  Dim w_ativo, w_ano, p_ordena
+  
+  w_troca           = Request("w_troca")
+  w_chave           = Request("w_chave")
+  w_ano             = Request("w_ano")
+  p_ordena          = Request("p_ordena")
+  
+  ' Recupera os dados da unidade
+  DB_GetUorgList RS, w_cliente, w_chave, null, null, null, null
+  w_nome  = RS("nome")
+  w_sigla = RS("sigla")
+  w_ativo = RS("ativo")
+
+  If w_troca > "" Then ' Se for recarga da página
+     w_limite_passagem      = Request("w_limite_passagem")
+     w_limite_diaria        = Request("w_limite_diaria")
+     w_ano                  = Request("w_ano")
+  ElseIf O = "L" Then
+     ' Recupera os dados do módulo
+     DB_GetPDParametro RS, w_cliente, null, null
+     If RS.RecordCount > 0 Then 
+        w_limite_unidade     = RS("limite_unidade") 
+        DesconectaBD
+     End If
+
+     ' Recupera todos os registros para a listagem
+     DB_GetUorgList RS, w_cliente, W_CHAVE, "PDUNIDLIM", null, null, null
+     If Nvl(p_ordena,"") > "" Then
+        RS.Sort = p_ordena
+     Else
+        RS.Sort = "nome"
+     End If
+  ElseIf InStr("AE",O) > 0 and w_Troca = "" Then
+     ' Recupera os dados do endereço informado
+     DB_GetUorgList RS, w_cliente, w_chave, "PDUNIDLIM", null, null, w_ano
+     w_limite_passagem      = FormatNumber(RS("limite_passagem"),2)
+     w_limite_diaria        = FormatNumber(RS("limite_diaria"),2)
+     w_ano                  = RS("ano")
+     DesconectaBD
+  End If
+  
+  Cabecalho
+  ShowHTML "<HEAD>"
+  ShowHTML "<TITLE>" & conSgSistema & " - Limites de passagens e diárias por unidade</TITLE>"
+  If InStr("IAEP",O) > 0 Then
+     ScriptOpen "JavaScript"
+     CheckBranco
+     FormataValor
+     ValidateOpen "Validacao"
+     If InStr("IA",O) > 0 Then
+        If O = "I" Then
+           Validate "w_ano", "Ano", "SELECT", "1", "4", "4", "", "0123456789"
+        End If
+        Validate "w_limite_passagem", "Limite financeiro para passagens", "VALOR", "1", 4, 18, "", "0123456789.,"
+        Validate "w_limite_diaria", "Limite financeiro para diárias", "VALOR", "1", 4, 18, "", "0123456789.,"
+        Validate "w_assinatura", "Assinatura Eletrônica", "1", "1", "6", "30", "1", "1"
+     ElseIf O = "E" Then
+        Validate "w_assinatura", "Assinatura Eletrônica", "1", "1", "6", "30", "1", "1"
+        ShowHTML "  if (confirm('Confirma a exclusão deste registro?')) "
+        ShowHTML "     { return (true); }; "
+        ShowHTML "     { return (false); }; "
+     End If
+     ShowHTML "  theForm.Botao[0].disabled=true;"
+     ShowHTML "  theForm.Botao[1].disabled=true;"
+     ValidateClose
+     ScriptClose
+  End If
+  ShowHTML "</HEAD>"
+  ShowHTML "<BASE HREF=""" & conRootSIW & """>"
+  If w_troca > "" Then
+     BodyOpen "onLoad='document.Form." & w_troca & ".focus()';"
+  ElseIf Instr("A",O) > 0 Then
+     BodyOpen "onLoad='document.focus()';"
+  ElseIf O = "E" Then
+     BodyOpen "onLoad='document.Form.w_assinatura.focus()';"
+  Else
+     BodyOpen "onLoad='document.focus()';"
+  End If
+  ShowHTML "<div align=center><center>"
+  ShowHTML "<table border=1 width=""100%"" bgcolor=""#FAEBD7""><tr><td>"
+  ShowHTML "  <TABLE WIDTH=""100%"" CELLSPACING=""" & conTableCellSpacing & """ CELLPADDING=""" & conTableCellPadding & """ BorderColorDark=""" & conTableBorderColorDark & """ BorderColorLight=""" & conTableBorderColorLight & """>"
+  ShowHTML "    <tr valign=""top""><td>Limites orçamentários da unidade:<b> " & w_nome & "  (" & w_sigla & ")</td>"
+  ShowHTML "  </TABLE>"
+  ShowHTML "</table>"
+  ShowHTML "<HR>"
+  ShowHTML "<table border=""0"" cellpadding=""0"" cellspacing=""0"" width=""100%"">"
+  If O = "L" Then
+    ' Exibe a quantidade de registros apresentados na listagem e o cabeçalho da tabela de listagem
+    ShowHTML "<tr><td><font size=""1""><a accesskey=""I"" class=""SS"" href=""" & w_dir & w_Pagina & par & "&R=" & w_Pagina & par & "&O=I&w_chave=" & w_chave & "&P1=" & P1 & "&P2=" & P2 & "&P3=" & P3 & "&P4=" & P4 & "&TP=" & TP & "&SG=" & SG & "&w_sg=" & Request("w_sg") & """><u>I</u>ncluir</a>&nbsp;"
+    ShowHTML "    <a accesskey=""F"" class=""ss"" href=""#"" onClick=""opener.focus(); window.close();""><u>F</u>echar</a>&nbsp;"
+    ShowHTML "    <td align=""right""><font size=""1""><b>Registros existentes: " & RS.RecordCount
+    ShowHTML "<tr><td align=""center"" colspan=3>"
+    ShowHTML "    <TABLE WIDTH=""100%"" bgcolor=""" & conTableBgColor & """ BORDER=""" & conTableBorder & """ CELLSPACING=""" & conTableCellSpacing & """ CELLPADDING=""" & conTableCellPadding & """ BorderColorDark=""" & conTableBorderColorDark & """ BorderColorLight=""" & conTableBorderColorLight & """>"
+    ShowHTML "        <tr bgcolor=""" & conTrBgColor & """ align=""center"">"
+    ShowHTML "          <td><font size=""1""><b>" & LinkOrdena("Ano","ano") & "</font></td>"    
+    ShowHTML "          <td><font size=""1""><b>" & LinkOrdena("Limite passagens","limite_passagem") & "</font></td>"
+    ShowHTML "          <td><font size=""1""><b>" & LinkOrdena("Limite diárias","limite_diaria") & "</font></td>"
+    ShowHTML "          <td><font size=""1""><b>Operações</font></td>"
+    ShowHTML "        </tr>"
+    If RS.EOF Then ' Se não foram selecionados registros, exibe mensagem
+        ShowHTML "      <tr bgcolor=""" & conTrBgColor & """><td colspan=6 align=""center""><font size=""1""><b>Não foram encontrados registros.</b></td></tr>"
+    Else
+      ' Lista os registros selecionados para listagem
+      While Not RS.EOF
+        If w_cor = conTrBgColor or w_cor = "" Then w_cor = conTrAlternateBgColor Else w_cor = conTrBgColor End If
+        ShowHTML "      <tr bgcolor=""" & w_cor & """ valign=""top"">"
+        ShowHTML "        <td align=""center""><font size=""1"">" & RS("ano") & "</td>"
+        ShowHTML "        <td align=""right""><font size=""1"">" & FormatNumber(RS("limite_passagem"),2) &"</td>"
+        ShowHTML "        <td align=""right""><font size=""1"">" & FormatNumber(RS("limite_diaria"),2) &"</td>"
+        ShowHTML "        <td align=""top"" nowrap><font size=""1"">"
+        ShowHTML "          <A class=""HL"" HREF=""" & w_dir & w_Pagina & par & "&R=" & w_Pagina & par & "&O=A&w_chave=" & RS("sq_unidade") & "&w_ano=" & RS("ano") & "&P1=" & P1 & "&P2=" & P2 & "&P3=" & P3 & "&P4=" & P4 & "&TP=" & TP & "&SG=" & SG & "&w_sg=" & Request("w_sg") & """>Alterar</A>&nbsp"
+        ShowHTML "          <A class=""HL"" HREF=""" & w_dir & w_Pagina & par & "&R=" & w_Pagina & par & "&O=E&w_chave=" & RS("sq_unidade") & "&w_ano=" & RS("ano") & "&P1=" & P1 & "&P2=" & P2 & "&P3=" & P3 & "&P4=" & P4 & "&TP=" & TP & "&SG=" & SG & "&w_sg=" & Request("w_sg") & """>Excluir</A>&nbsp"
+        ShowHTML "        </td>"
+        ShowHTML "      </tr>"
+        RS.MoveNext
+      wend
+    End If
+    ShowHTML "      </center>"
+    ShowHTML "    </table>"
+    ShowHTML "  </td>"
+    ShowHTML "</tr>"
+    DesconectaBD
+  ElseIf Instr("IAEV",O) > 0 Then
+    If InStr("EV",O) Then
+       w_Disabled = " DISABLED "
+    End If
+    AbreForm "Form", w_dir & w_Pagina & "Grava", "POST", "return(Validacao(this));", null,P1,P2,P3,P4,TP,"PDUNIDLIM",R,O
+    ShowHTML "<INPUT type=""hidden"" name=""w_troca"" value="""">"
+    ShowHTML "<INPUT type=""hidden"" name=""w_sg"" value=""" & Request("w_sg") & """>"
+    ShowHTML "<INPUT type=""hidden"" name=""w_chave"" value=""" & w_chave & """>"
+    ShowHTML "<tr bgcolor=""" & conTrBgColor & """><td align=""center"">"
+    ShowHTML "    <table width=""97%"" border=""0"">"
+    ShowHTML "      <tr><td><table border=""0"" width=""100%"" cellspacing=0 cellpadding=0><tr valign=""top"">"
+    ShowHTML "      <tr valign=""top"">"
+    If O = "I" Then
+       SelecaoAno "<U>A</U>no:", "A", null, w_ano, null, "w_ano", null, null
+    Else
+       ShowHTML "<INPUT type=""hidden"" name=""w_ano"" value=""" & w_ano & """>"
+       ShowHTML "          <td valign=""top""><font size=""1""><b>Ano:<br>" & w_ano & "</b></td>"
+    End If
+    ShowHTML "          <td valign=""top""><font size=""1""><b><u>L</u>imite financeiro para passagens:</b><br><input " & w_Disabled & " accesskey=""L"" type=""text"" name=""w_limite_passagem"" class=""STI"" SIZE=""18"" MAXLENGTH=""18"" VALUE=""" & w_limite_passagem & """ onKeyDown=""FormataValor(this,18,2,event);"" title=""Informe o limite financeiro para passagens para a unidade selecionada.""></td>"
+    ShowHTML "          <td valign=""top""><font size=""1""><b>L<u>i</u>mite financeiro para diárias:</b><br><input " & w_Disabled & " accesskey=""I"" type=""text"" name=""w_limite_diaria"" class=""STI"" SIZE=""18"" MAXLENGTH=""18"" VALUE=""" & w_limite_diaria & """ onKeyDown=""FormataValor(this,18,2,event);"" title=""Informe o limite financeiro para diárias para a unidade selecionada.""></td>"
+    ShowHTML "         </table>"    
+    ShowHTML "      <tr><td align=""LEFT""><font size=""1""><b><U>A</U>ssinatura Eletrônica:<BR> <INPUT ACCESSKEY=""A"" class=""sti"" type=""PASSWORD"" name=""w_assinatura"" size=""30"" maxlength=""30"" value=""""></td></tr>"
+    ShowHTML "      <tr><td align=""center""><hr>"
+    If O = "E" Then
+       ShowHTML "   <input class=""STB"" type=""submit"" name=""Botao"" value=""Excluir"">"
+    Else
+       If O = "I" Then
+          ShowHTML "            <input class=""STB"" type=""submit"" name=""Botao"" value=""Incluir"">"
+       Else
+          ShowHTML "            <input class=""STB"" type=""submit"" name=""Botao"" value=""Atualizar"">"
+       End If
+    End If
+    ShowHTML "            <input class=""STB"" type=""button"" onClick=""history.back(1);"" name=""Botao"" value=""Cancelar"">"
+    ShowHTML "          </td>"
+    ShowHTML "      </tr>"
+    ShowHTML "    </table>"
+    ShowHTML "    </TD>"
+    ShowHTML "</tr>"
+    ShowHTML "</FORM>"
+  Else
+    ScriptOpen "JavaScript"
+    ShowHTML " alert('Opção não disponível');"
+    ShowHTML " history.back(1);"
+    ScriptClose
+  End If
+  ShowHTML "</table>"
+  ShowHTML "</center>"
+  Rodape
+
+  Set w_nome                = Nothing
+  Set w_sigla               = Nothing 
+  Set w_chave               = Nothing
   Set w_limite_passagem     = Nothing
   Set w_limite_diaria       = Nothing
   Set w_ativo               = Nothing
@@ -842,7 +1000,8 @@ Public Sub Grava
  
         DML_PutPDParametro w_cliente, _
             Request("w_sequencial"), Request("w_ano_corrente"), Request("w_prefixo"), _
-            Request("w_sufixo"), Request("w_dias_antecedencia"), Request("w_dias_prest_contas")
+            Request("w_sufixo"), Request("w_dias_antecedencia"), Request("w_dias_prest_contas"), _
+            Request("w_limite_unidade")
               
         ScriptOpen "JavaScript"
         ShowHTML "  location.href='" & R & "&O=" & O & "&P1=" & P1 & "&P2=" & P2 & "&P3=" & P3 & "&P4=" & P4 & "&TP=" & TP & "&SG=" & SG & MontaFiltro("GET") & "';"
@@ -858,22 +1017,51 @@ Public Sub Grava
      If (VerificaAssinaturaEletronica(Session("Username"),w_assinatura) and w_assinatura > "") or _
         w_assinatura = "" Then
         If O = "I" Then
-           DB_GetUorgList RS, w_cliente, Request("w_Chave"), "VIAGEM", null, null, Request("w_ano")
+           DB_GetUorgList RS, w_cliente, Request("w_Chave"), "VIAGEM", null, null, null
            If RS.RecordCount = 0 Then
-              DML_PutPDUnidade O, Request("w_chave"), Request("w_limite_passagem"), Request("w_limite_diaria"), Request("w_ativo"), Request("w_ano")
+              DML_PutPDUnidade O, Request("w_chave"), Request("w_ativo")
               ScriptOpen "JavaScript"
-              ShowHTML "  location.href='" & R & "&w_chave=&P1=" & P1 & "&P2=" & P2 & "&P3=" & P3 & "&P4=" & P4 & "&TP=" & TP & "&SG=" & SG & MontaFiltro("GET") & "';"
+              ShowHTML "  location.href='" & R & "&P1=" & P1 & "&P2=" & P2 & "&P3=" & P3 & "&P4=" & P4 & "&TP=" & TP & "&SG=" & SG & MontaFiltro("GET") & "';"
               ScriptClose
            Else
               ScriptOpen "JavaScript"
-              ShowHTML "  alert('Unidade já cadastrada no ano de " & Request("w_ano") & "!');"
+              ShowHTML "  alert('Unidade já cadastrada!');"
               ShowHTML "  history.back(1);"
               ScriptClose
            End If
         Else
-           DML_PutPDUnidade O, Request("w_chave"), Request("w_limite_passagem"), Request("w_limite_diaria"), Request("w_ativo"), Request("w_ano")
+           DML_PutPDUnidade O, Request("w_chave"), Request("w_ativo")
            ScriptOpen "JavaScript"
-           ShowHTML "  location.href='" & R & "&w_chave=&P1=" & P1 & "&P2=" & P2 & "&P3=" & P3 & "&P4=" & P4 & "&TP=" & TP & "&SG=" & SG & MontaFiltro("GET") & "';"
+           ShowHTML "  location.href='" & R & "&P1=" & P1 & "&P2=" & P2 & "&P3=" & P3 & "&P4=" & P4 & "&TP=" & TP & "&SG=" & SG & MontaFiltro("GET") & "';"
+           ScriptClose
+        End If  
+     Else
+        ScriptOpen "JavaScript"
+        ShowHTML "  alert('Assinatura Eletrônica inválida!');"
+        ShowHTML "  history.back(1);"
+        ScriptClose
+     End If
+  ElseIf Instr(SG, "PDUNIDLIM") > 0 Then
+     ' Verifica se a Assinatura Eletrônica é válida
+     If (VerificaAssinaturaEletronica(Session("Username"),w_assinatura) and w_assinatura > "") or _
+        w_assinatura = "" Then
+        If O = "I" Then
+           DB_GetUorgList RS, w_cliente, Request("w_Chave"), "PDUNIDLIM", null, null, Request("w_ano")
+           If RS.RecordCount = 0 Then
+              DML_PutPDUnidLimite O, Request("w_chave"), Request("w_limite_passagem"), Request("w_limite_diaria"), Request("w_ano")
+              ScriptOpen "JavaScript"
+              ShowHTML "  location.href='" & R & "&w_chave="&Request("w_chave")&"&P1=" & P1 & "&P2=" & P2 & "&P3=" & P3 & "&P4=" & P4 & "&TP=" & TP & "&SG=" & SG & "&w_sg=" & Request("w_sg") & MontaFiltro("GET") & "';"
+              ScriptClose
+           Else
+              ScriptOpen "JavaScript"
+              ShowHTML "  alert('Limite da unidade já cadastrada no ano de " & Request("w_ano") & "!');"
+              ShowHTML "  history.back(1);"
+              ScriptClose
+           End If
+        Else
+           DML_PutPDUnidLimite O, Request("w_chave"), Request("w_limite_passagem"), Request("w_limite_diaria"), Request("w_ano")
+           ScriptOpen "JavaScript"
+           ShowHTML "  location.href='" & R & "&w_chave="&Request("w_chave")&"&P1=" & P1 & "&P2=" & P2 & "&P3=" & P3 & "&P4=" & P4 & "&TP=" & TP & "&w_sg=" & Request("w_sg") & "&SG=" & SG & MontaFiltro("GET") & "';"
            ScriptClose
         End If  
      Else
@@ -936,6 +1124,7 @@ Sub Main
     Case "CIATRANS"      CiaTrans
     Case "PARAMETROS"    Parametros
     Case "UNIDADE"       Unidade
+    Case "LIMUNIDADE"    LimiteUnidade
     Case "USUARIO"       Usuario
     Case "GRAVA"         Grava
     Case Else

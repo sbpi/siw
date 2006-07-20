@@ -1180,53 +1180,46 @@ REM =========================================================================
 REM Montagem da seleção das unidades organizacionais
 REM -------------------------------------------------------------------------
 Sub SelecaoUnidade (label, accesskey, hint, chave, chaveAux, campo, restricao, atributo)
-    If restricao > "" Then
-       DB_GetUorgList RS, w_cliente, ChaveAux, restricao, null, null, null
-    Else
-       DB_GetUorgList RS, w_cliente, ChaveAux, "ATIVO", null, null, null
-    End If
     Dim w_nm_unidade, w_sigla
-    ShowHTML "<INPUT type=""hidden"" name=""" & campo & """ value=""" & chave &""">"
-    If chave > "" Then
-       DB_GetUorgList RS, w_cliente, chave, null, null, null, null
-       If not RS.EOF Then
-          w_nm_unidade = RS("nome")
-          w_sigla      = RS("sigla")
-       End If
-    End If
-    If IsNull(hint) Then
-       ShowHTML "      <td valign=""top""><font size=""1""><b>" & Label & "</b><br>"
-       ShowHTML "          <input READONLY ACCESSKEY=""" & accesskey & """ CLASS=""sti"" type=""text"" name=""" & campo & "_nm" & """ SIZE=""60"" VALUE=""" & w_nm_unidade & """ " & atributo & ">"
-    Else
-       ShowHTML "      <td valign=""top"" title=""" & hint & """><font size=""1""><b>" & Label & "</b><br>"
-       ShowHTML "          <input READONLY ACCESSKEY=""" & accesskey & """ CLASS=""sti"" type=""text"" name=""" & campo & "_nm" & """ SIZE=""60"" VALUE=""" & w_nm_unidade & """ " & atributo & ">"
-    End If
-    ShowHTML "              <a class=""ss"" href=""#"" onClick=""window.open('" & w_dir_volta & "EO.asp?par=BuscaUnidade&TP=" & TP & "&w_cliente=" &w_cliente& "&ChaveAux=" &ChaveAux& "&restricao=" &restricao& "&campo=" &campo& "','Unidade','top=10,left=10,width=780,height=550,toolbar=yes,status=yes,resizable=yes,scrollbars=yes'); return false;"" title=""Clique aqui para selecionar a unidade.""><img src=images/Folder/Explorer.gif border=0 align=top height=15 width=15></a>"
-    ShowHTML "              <a class=""ss"" href=""#"" onClick=""document.Form." & campo & "_nm" & ".value=''; document.Form." & campo & ".value=''; return false;"" title=""Clique aqui para apagar o valor deste campo.""><img src=images/Folder/Recyfull.gif border=0 align=top height=15 width=15></a>"
-    RS.Close
-End Sub
 
-REM =========================================================================
-REM Rotina de selecao das unidades do modulo passagens e diárias
-REM -------------------------------------------------------------------------
-Sub SelecaoUnidade1(label, accesskey, hint, chave, chaveAux, campo, restricao, atributo, ano)
-    DB_GetUorgList RS, w_cliente, null, restricao, null, null, ano
-    RS.Sort = "nome"
-    If IsNull(hint) Then
-       ShowHTML "          <td valign=""top""><font size=""1""><b>" & Label & "</b><br><SELECT ACCESSKEY=""" & accesskey & """ CLASS=""STS"" NAME=""" & campo & """ " & w_Disabled & " " & atributo & ">"
-    Else
-       ShowHTML "          <td valign=""top"" title=""" & hint & """><font size=""1""><b>" & Label & "</b><br><SELECT ACCESSKEY=""" & accesskey & """ CLASS=""STS"" NAME=""" & campo & """ " & w_Disabled & " " & atributo & ">"
-    End If
-    ShowHTML "          <option value="""">---"
-    While Not RS.EOF
-       If cDbl(nvl(RS("chave"),0)) = cDbl(nvl(chave,0)) Then
-          ShowHTML "          <OPTION VALUE=""" & RS("chave") & """ SELECTED>" & RS("Nome") & " (" & RS("Sigla") & ")"
+    DB_GetUorgList RS, w_cliente, ChaveAux, nvl(restricao,"ATIVO"), null, null, w_ano
+    If RS.RecordCount <= 50 Then
+       RS.Sort = "nome"
+       If IsNull(hint) Then
+          ShowHTML "          <td valign=""top""><font size=""1""><b>" & Label & "</b><br><SELECT ACCESSKEY=""" & accesskey & """ CLASS=""STS"" NAME=""" & campo & """ " & w_Disabled & " " & atributo & ">"
        Else
-          ShowHTML "          <OPTION VALUE=""" & RS("chave") & """>" & RS("Nome") & " (" & RS("Sigla") & ")"
+          ShowHTML "          <td valign=""top"" title=""" & hint & """><font size=""1""><b>" & Label & "</b><br><SELECT ACCESSKEY=""" & accesskey & """ CLASS=""STS"" NAME=""" & campo & """ " & w_Disabled & " " & atributo & ">"
        End If
-       RS.MoveNext
-    Wend
-    ShowHTML "          </select>"
+       ShowHTML "          <option value="""">---"
+       While Not RS.EOF
+          If cDbl(nvl(RS("sq_unidade"),0)) = cDbl(nvl(chave,0)) Then
+             ShowHTML "          <OPTION VALUE=""" & RS("sq_unidade") & """ SELECTED>" & RS("Nome") & " (" & RS("Sigla") & ")"
+          Else
+             ShowHTML "          <OPTION VALUE=""" & RS("sq_unidade") & """>" & RS("Nome") & " (" & RS("Sigla") & ")"
+          End If
+          RS.MoveNext
+       Wend
+       ShowHTML "          </select>"
+    Else
+       ShowHTML "<INPUT type=""hidden"" name=""" & campo & """ value=""" & chave &""">"
+       If chave > "" Then
+          DB_GetUorgList RS, w_cliente, chave, null, null, null, null
+          If not RS.EOF Then
+             w_nm_unidade = RS("nome")
+             w_sigla      = RS("sigla")
+          End If
+       End If
+       If IsNull(hint) Then
+          ShowHTML "      <td valign=""top""><font size=""1""><b>" & Label & "</b><br>"
+          ShowHTML "          <input READONLY ACCESSKEY=""" & accesskey & """ CLASS=""sti"" type=""text"" name=""" & campo & "_nm" & """ SIZE=""60"" VALUE=""" & w_nm_unidade & """ " & atributo & ">"
+       Else
+          ShowHTML "      <td valign=""top"" title=""" & hint & """><font size=""1""><b>" & Label & "</b><br>"
+          ShowHTML "          <input READONLY ACCESSKEY=""" & accesskey & """ CLASS=""sti"" type=""text"" name=""" & campo & "_nm" & """ SIZE=""60"" VALUE=""" & w_nm_unidade & """ " & atributo & ">"
+       End If
+       ShowHTML "              <a class=""ss"" href=""#"" onClick=""window.open('" & w_dir_volta & "EO.asp?par=BuscaUnidade&TP=" & TP & "&w_ano=" &w_ano&"&w_cliente=" &w_cliente& "&ChaveAux=" &ChaveAux& "&restricao=" &restricao& "&campo=" &campo& "','Unidade','top=10,left=10,width=780,height=550,toolbar=yes,status=yes,resizable=yes,scrollbars=yes'); return false;"" title=""Clique aqui para selecionar a unidade.""><img src=images/Folder/Explorer.gif border=0 align=top height=15 width=15></a>"
+       ShowHTML "              <a class=""ss"" href=""#"" onClick=""document.Form." & campo & "_nm" & ".value=''; document.Form." & campo & ".value=''; return false;"" title=""Clique aqui para apagar o valor deste campo.""><img src=images/Folder/Recyfull.gif border=0 align=top height=15 width=15></a>"
+       RS.Close
+    End If
 End Sub
 
 REM =========================================================================

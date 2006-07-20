@@ -42,7 +42,7 @@ If Session("LogOn") <> "Sim" Then
 End If
 
 ' Declaração de variáveis
-Dim dbms, sp, RS, RS1, RS2, RS3, RS4, RS_menu
+Dim dbms, sp, RS, RS1, RS2, RS3, RS4, RS_menu, w_ano
 Dim P1, P2, P3, P4, TP, SG
 Dim R, O, w_Cont, w_Reg, w_Pagina, w_Disabled, w_TP, w_classe, w_submenu, w_filtro, w_copia
 Dim w_Assinatura
@@ -2092,8 +2092,6 @@ Sub EtapaRecursos
   w_chave_aux   = Request("w_chave_aux")
   w_chave_pai   = Request("w_chave_pai")
 
-  DB_GetSolicEtpRec RS, w_chave_aux, null, null
-  RS.Sort = "tipo, nome"
   Cabecalho
   ShowHTML "<HEAD>"
   ScriptOpen "JavaScript"
@@ -2110,6 +2108,7 @@ Sub EtapaRecursos
   ValidateClose
   ScriptClose
   ShowHTML "</HEAD>"
+  DB_GetSolicEtapa RS, w_chave, w_chave_aux, "REGISTRO", null
   BodyOpenClean "onLoad=document.focus();"
   ShowHTML "<B><FONT COLOR=""#000000"">" & w_TP & "</FONT></B>"
   ShowHTML "<HR>"
@@ -2124,6 +2123,8 @@ Sub EtapaRecursos
   ShowHTML "        <tr colspan=3><td><font size=""1"">Descrição:<br><b>" & CRLF2BR(RS("descricao")) & "</font></td></tr>"
   ShowHTML "    </TABLE>"
   ShowHTML "</table>"
+  DB_GetSolicEtpRec RS, w_chave_aux, null, null
+  RS.Sort = "tipo, nome"  
   ShowHTML "<tr><td align=""right""><font size=""1"">&nbsp;"
   AbreForm "Form", w_Pagina & "Grava", "POST", "return(Validacao(this));", null,P1,P2,P3,P4,TP,"ETAPAREC",R,O
   ShowHTML "<INPUT type=""hidden"" name=""w_chave"" value=""" & w_chave & """>"

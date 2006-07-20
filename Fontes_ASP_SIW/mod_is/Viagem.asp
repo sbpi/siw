@@ -298,7 +298,7 @@ REM Rotina de visualização resumida dos registros
 REM -------------------------------------------------------------------------
 Sub Inicial
   
-  Dim w_tarefa, w_total, w_parcial
+  Dim w_tarefa, w_total, w_parcial, w_colspan
   
   If O = "L" Then
      If Instr(uCase(R),"GR_") > 0 or Instr(uCase(R),"PROJETO") > 0 Then
@@ -374,7 +374,7 @@ Sub Inicial
            p_ini_i, p_ini_f, p_fim_i, p_fim_f, p_atraso, p_solicitante, _
            p_unidade, p_prioridade, p_ativo, p_proponente, _
            p_chave, p_assunto, p_pais, p_regiao, p_uf, p_cidade, p_usu_resp, _
-           p_uorg_resp, p_palavra, p_prazo, p_fase, p_sqcc, p_projeto, p_atividade, p_codigo, Nvl(Request("p_sq_prop"),"")
+           p_uorg_resp, p_palavra, p_prazo, p_fase, p_sqcc, p_projeto, p_atividade, p_codigo, w_ano
      Else
         If Nvl(Request("p_agrega"),"") = "GRPDACAO" Then
            DB_GetSolicList_IS RS, RS("sq_menu"), w_usuario, Nvl(Request("p_agrega"),SG), P1, _
@@ -393,7 +393,7 @@ Sub Inicial
               p_ini_i, p_ini_f, p_fim_i, p_fim_f, p_atraso, p_solicitante, _
               p_unidade, p_prioridade, p_ativo, p_proponente, _
               p_chave, p_assunto, p_pais, p_regiao, p_uf, p_cidade, p_usu_resp, _
-              p_uorg_resp, p_palavra, p_prazo, p_fase, p_sqcc, p_projeto, p_atividade, p_codigo, Nvl(Request("p_sq_prop"),"")
+              p_uorg_resp, p_palavra, p_prazo, p_fase, p_sqcc, p_projeto, p_atividade, p_codigo, w_ano
        End If
      End If
      If p_ordena > "" Then RS.sort = p_ordena Else RS.sort = "ordem, fim, prioridade" End If
@@ -473,6 +473,9 @@ Sub Inicial
     ShowHTML "    <TABLE WIDTH=""100%"" bgcolor=""" & conTableBgColor & """ BORDER=""" & conTableBorder & """ CELLSPACING=""" & conTableCellSpacing & """ CELLPADDING=""" & conTableCellPadding & """ BorderColorDark=""" & conTableBorderColorDark & """ BorderColorLight=""" & conTableBorderColorLight & """>"
     ShowHTML "        <tr bgcolor=""" & conTrBgColor & """ align=""center"">"
     ShowHTML "          <td><font size=""1""><b>" & LinkOrdena("Nº","codigo_interno") & "</font></td>"
+    If Nvl(Request("p_agrega"),"") = "GRPDACAO" Then
+       ShowHTML "          <td><font size=""1""><b>" & LinkOrdena("Ação","codigo_acao") & "</font></td>"
+    End If
     ShowHTML "          <td><font size=""1""><b>" & LinkOrdena("Proposto","nm_prop") & "</font></td>"
     ShowHTML "          <td><font size=""1""><b>" & LinkOrdena("Proponente","sg_unidade_resp") & "</font></td>"
     If P1 > 2 Then ShowHTML "          <td><font size=""1""><b>" & LinkOrdena("Usuário atual", "nm_exec") & "</font></td>" End If
@@ -510,6 +513,9 @@ Sub Inicial
            End IF
         End If
         ShowHTML "        <A class=""HL"" HREF=""" & w_dir & w_pagina & "Visual&R=" & w_pagina & par & "&O=L&w_chave=" & RS("sq_siw_solicitacao") & "&w_tipo=Volta&P1=" & P1 & "&P2=" & P2 & "&P3=" & P3 & "&P4=" & P4 & "&TP=" & TP & "&SG=" & SG & MontaFiltro("GET") & """ title=""Exibe as informações deste registro."">" & RS("codigo_interno") & "&nbsp;</a>"
+        If Nvl(Request("p_agrega"),"") = "GRPDACAO" Then
+           ShowHTML "        <td align=""center""><font size=""1"">" & RS("codigo_acao")
+        End If
         ShowHTML "        <td><font size=""1"">" & ExibePessoa("../", w_cliente, RS("sq_prop"), TP, RS("nm_prop")) & "</td>"
         ShowHTML "        <td><font size=""1"">" & ExibeUnidade("../", w_cliente, RS("sg_unidade_resp"), RS("sq_unidade_resp"), TP) & "</td>"
         If P1 > 2 Then ' Se for cadastramento ou mesa de trabalho, não exibe o executor, pois já é o usuário logado
@@ -575,12 +581,15 @@ Sub Inicial
         ShowHTML "      </tr>"
         RS.MoveNext
       wend
+      
+      If Nvl(Request("p_agrega"),"") = "GRPDACAO" Then w_colspan = 7 Else w_colspan = 6 End If
+
 
       If P1 <> 1 and P1 <> 2 Then ' Se não for cadastramento nem mesa de trabalho
          ' Coloca o valor parcial apenas se a listagem ocupar mais de uma página
          If RS.PageCount > 1 Then
             ShowHTML "        <tr bgcolor=""" & conTrBgColor & """>"
-            ShowHTML "          <td colspan=7 align=""right""><font size=""1""><b>Total desta página&nbsp;</font></td>"
+            ShowHTML "          <td colspan=" & w_colspan & " align=""right""><font size=""1""><b>Total desta página&nbsp;</font></td>"
             ShowHTML "          <td align=""right""><font size=""1""><b>" & FormatNumber(w_parcial,2) & "&nbsp;</font></td>"
             ShowHTML "          <td colspan=2><font size=""1"">&nbsp;</font></td>"
             ShowHTML "        </tr>"
@@ -598,7 +607,7 @@ Sub Inicial
                RS.MoveNext
             Wend
             ShowHTML "        <tr bgcolor=""" & conTrBgColor & """>"
-            ShowHTML "          <td colspan=7 align=""right""><font size=""1""><b>Total da listagem&nbsp;</font></td>"
+            ShowHTML "          <td colspan=" & w_colspan & " align=""right""><font size=""1""><b>Total da listagem&nbsp;</font></td>"
             ShowHTML "          <td align=""right""><font size=""1""><b>" & FormatNumber(w_total,2) & "&nbsp;</font></td>"
             ShowHTML "          <td colspan=2><font size=""1"">&nbsp;</font></td>"
             ShowHTML "        </tr>"
@@ -645,7 +654,7 @@ Sub Inicial
        ShowHTML "     <td valign=""top""><font size=""1""><b><U>D</U>escrição:<br><INPUT ACCESSKEY=""D"" " & w_Disabled & " class=""STI"" type=""text"" name=""p_assunto"" size=""25"" maxlength=""90"" value=""" & p_assunto & """></td>"       
        ShowHTML "   <tr valign=""top"">"
        SelecaoPessoa "Respo<u>n</u>sável:", "N", "Selecione o responsável pela PCD na relação.", p_solicitante, null, "p_solicitante", "USUARIOS"
-       SelecaoUnidade1 "<U>U</U>nidade proponente:", "U", "Selecione a unidade proponente da PCD", p_unidade, null, "p_unidade", "VIAGEMANO", null, w_ano
+       SelecaoUnidade "<U>U</U>nidade proponente:", "U", "Selecione a unidade proponente da PCD", p_unidade, null, "p_unidade", "VIAGEM", null
        ShowHTML "   <tr>"       
        ShowHTML "     <td valign=""top""><font size=""1""><b><U>P</U>roposto:<br><INPUT ACCESSKEY=""P"" " & w_Disabled & " class=""STI"" type=""text"" name=""p_proponente"" size=""25"" maxlength=""60"" value=""" & p_proponente & """></td>"
        ShowHTML "     <td valign=""top""><font size=""1""><b>CP<u>F</u> do proposto:<br><INPUT ACCESSKEY=""F"" TYPE=""text"" class=""sti"" NAME=""p_palavra"" VALUE=""" & p_palavra & """ SIZE=""14"" MaxLength=""14"" onKeyDown=""FormataCPF(this, event);"">"       
@@ -970,7 +979,7 @@ Sub Geral
           If w_cadgeral = "N" Then
              ShowHTML "<INPUT type=""hidden"" name=""w_sq_unidade_resp"" value=""" & w_sq_unidade_resp &""">"
           Else
-             SelecaoUnidade1 "<U>U</U>nidade proponente:", "U", "Selecione a unidade proponente da PCD", w_sq_unidade_resp, null, "w_sq_unidade_resp", "VIAGEMANO", null, w_ano
+             SelecaoUnidade "<U>U</U>nidade proponente:", "U", "Selecione a unidade proponente da PCD", w_sq_unidade_resp, null, "w_sq_unidade_resp", "VIAGEM", null
           End if
        Else
           If w_cadgeral = "N" Then
@@ -979,14 +988,14 @@ Sub Geral
              ShowHTML "  history.back(1);"
              ScriptClose
           Else
-             SelecaoUnidade1 "<U>U</U>nidade proponente:", "U", "Selecione a unidade proponente da PCD", w_sq_unidade_resp, null, "w_sq_unidade_resp", "VIAGEMANO", null, w_ano
+             SelecaoUnidade "<U>U</U>nidade proponente:", "U", "Selecione a unidade proponente da PCD", w_sq_unidade_resp, null, "w_sq_unidade_resp", "VIAGEM", null
           End if
        End If
     Else
        If w_cadgeral = "N" Then
           ShowHTML "<INPUT type=""hidden"" name=""w_sq_unidade_resp"" value=""" & w_sq_unidade_resp &""">"
        Else
-          SelecaoUnidade1 "<U>U</U>nidade proponente:", "U", "Selecione a unidade proponente da PCD", w_sq_unidade_resp, null, "w_sq_unidade_resp", "VIAGEMANO", null, w_ano
+          SelecaoUnidade "<U>U</U>nidade proponente:", "U", "Selecione a unidade proponente da PCD", w_sq_unidade_resp, null, "w_sq_unidade_resp", "VIAGEM", null
        End if
     End If
     SelecaoTipoPCD "Ti<u>p</u>o:", "P", null, w_tipo_missao, "w_tipo_missao", null, null

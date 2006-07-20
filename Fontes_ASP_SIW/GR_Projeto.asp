@@ -38,7 +38,7 @@ End If
 ' Declaração de variáveis
 Dim dbms, sp, RS, RS1, RS2, RS_menu
 Dim P1, P2, P3, P4, TP, SG, FS, w_file
-Dim R, O, w_Cont, w_Reg, w_Pagina, w_Disabled, w_TP, w_classe, w_submenu
+Dim R, O, w_Cont, w_Reg, w_Pagina, w_Disabled, w_TP, w_classe, w_submenu, w_ano
 Dim w_Assinatura
 Dim p_chave,p_assunto, p_pais, p_regiao, p_uf, p_cidade, p_usu_resp, p_uorg_resp, p_palavra
 Dim p_prazo, p_fase, p_sqcc, p_agrega, p_tamanho, p_projeto, p_atividade, p_ini_i

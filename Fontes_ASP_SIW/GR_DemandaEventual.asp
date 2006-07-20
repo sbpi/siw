@@ -43,7 +43,7 @@ Dim w_Assinatura
 Dim p_ativo, p_solicitante, p_prioridade, p_unidade, p_proponente, p_ordena, p_agrega, p_tamanho
 Dim p_ini_i, p_ini_f, p_fim_i, p_fim_f, p_atraso, p_tipo, p_projeto, p_atividade
 Dim p_chave, p_assunto, p_pais, p_regiao, p_uf, p_cidade, p_usu_resp, p_uorg_resp, p_palavra, p_prazo, p_fase, p_sqcc
-Dim w_troca,w_cor, w_filter, w_cliente, w_usuario, w_menu
+Dim w_troca,w_cor, w_filter, w_cliente, w_usuario, w_menu, w_ano
 Dim w_sq_pessoa, w_pag, w_linha, w_nm_quebra, w_qt_quebra, w_filtro
 Dim ul,File
 Dim t_solic, t_cad, t_tram, t_conc, t_atraso, t_aviso, t_valor, t_acima, t_custo

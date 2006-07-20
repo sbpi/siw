@@ -204,15 +204,16 @@ Sub Rel_Limite
          w_logo = "\img\logo" & Mid(RS("logo"),Instr(RS("logo"),"."),30)
      End If
      DesconectaBD
-  End If
 
-  DB_GetLinkData RS1, RetornaCliente(), "PDINICIAL"
-  DB_GetSolicList_IS RS, RS1("sq_menu"), w_usuario, "GRPDUNIDADE", 4, _
-     null, null, null, null, null, null, _
-     p_sq_unidade, null, null, null, _
-     null, null, null, null, null, null, null, _
-     null, null, null, null, p_cd_programa, Mid(p_cd_acao,5,4), null, null, null, null, w_ano
-  RS.sort = "sq_unidade_resp"
+     DB_GetLinkData RS1, w_cliente, "PDINICIAL"
+     DB_GetSolicList_IS RS, RS1("sq_menu"), w_usuario, "GRPDUNIDADE", 4, _
+        null, null, null, null, null, null, _
+        p_sq_unidade, null, null, null, _
+        null, null, null, null, null, null, null, _
+        null, null, null, null, p_cd_programa, Mid(p_cd_acao,5,4), null, null, null, null, w_ano
+     RS.sort = "sq_unidade_resp"
+  End If
+  
   If w_tipo_rel = "WORD" Then
      HeaderWord null
      w_pag   = 1
@@ -539,7 +540,7 @@ Sub Rel_Limite
     ShowHTML "<tr><td align=""center"">"
     ShowHTML "    <table width=""97%"" border=""0"">"
     ShowHTML "      <tr bgcolor=""" & conTrBgColor & """>"
-    SelecaoUnidade "Á<U>r</U>ea planejamento:", "R", null, p_sq_unidade, null, "p_sq_unidade", null, "onchange=""document.Form.action='" & w_dir & w_pagina & par & "'; document.Form.w_troca.value='p_sq_unidade'; document.Form.target=''; document.Form.O.value='P'; document.Form.submit();"""
+    SelecaoUnidade "Á<U>r</U>ea planejamento:", "R", null, p_sq_unidade, null, "p_sq_unidade", "VIAGEM", "onchange=""document.Form.action='" & w_dir & w_pagina & par & "'; document.Form.w_troca.value='p_sq_unidade'; document.Form.target=''; document.Form.O.value='P'; document.Form.submit();"""
     ShowHTML "      <tr bgcolor=""" & conTrBgColor & """>"
     SelecaoProgramaPPA "<u>P</u>rograma PPA:", "P", null, w_cliente, w_ano, p_cd_programa, "p_cd_programa", "RELATORIO", "onchange=""document.Form.action='" & w_dir & w_pagina & par & "'; document.Form.w_troca.value='p_cd_programa'; document.Form.target=''; document.Form.O.value='P'; document.Form.submit();""", w_menu
     ShowHTML "      <tr bgcolor=""" & conTrBgColor & """>"

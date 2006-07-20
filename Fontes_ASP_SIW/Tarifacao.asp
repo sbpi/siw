@@ -37,7 +37,7 @@ End If
 ' Declaração de variáveis
 Dim dbms, sp, RS, RS2
 Dim P1, P2, P3, P4, TP, SG
-Dim R, O, w_Cont, w_Pagina, w_Disabled, w_TP, w_troca, w_cor
+Dim R, O, w_Cont, w_Pagina, w_Disabled, w_TP, w_troca, w_cor, w_ano
 Dim w_ContOut
 Dim w_Titulo
 Dim w_Imagem

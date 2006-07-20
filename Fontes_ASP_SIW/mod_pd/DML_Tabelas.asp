@@ -1,5 +1,4 @@
 <%
-
 REM =========================================================================
 REM Mantém a tabela de tipos de contrato
 REM -------------------------------------------------------------------------
@@ -61,9 +60,6 @@ Sub DML_PutAgreeType(Operacao, p_chave, p_chave_pai, p_cliente, p_nome, p_sigla,
      .parameters.Delete         "l_ativo"
   end with
 End Sub
-REM =========================================================================
-REM Final da rotina
-REM -------------------------------------------------------------------------
 
 REM =========================================================================
 REM Mantém a tabela de companhias de viagem
@@ -120,17 +116,14 @@ Sub DML_PutCiaTrans(Operacao, p_cliente, p_chave, p_nome, p_aereo, p_rodoviario,
      .parameters.Delete         "l_ativo"
   end with
 End Sub
-REM =========================================================================
-REM Final da rotina
-REM -------------------------------------------------------------------------
 
 REM =========================================================================
 REM Mantém a tabela de parâmetros do módulo de passagens e diárias
 REM -------------------------------------------------------------------------
 Sub DML_PutPDParametro(p_cliente, p_sequencial, p_ano_corrente, p_prefixo, p_sufixo, _
-                       p_dias_antecedencia, p_dias_prest_contas)
+                       p_dias_antecedencia, p_dias_prest_contas, p_limite_unidade)
   Dim l_cliente, l_sequencial, l_ano_corrente, l_prefixo, l_sufixo
-  Dim l_dias_antecedencia, l_dias_prest_contas
+  Dim l_dias_antecedencia, l_dias_prest_contas, l_limite_unidade
   
   Set l_cliente             = Server.CreateObject("ADODB.Parameter") 
   Set l_sequencial          = Server.CreateObject("ADODB.Parameter") 
@@ -138,7 +131,8 @@ Sub DML_PutPDParametro(p_cliente, p_sequencial, p_ano_corrente, p_prefixo, p_suf
   Set l_prefixo             = Server.CreateObject("ADODB.Parameter") 
   Set l_sufixo              = Server.CreateObject("ADODB.Parameter") 
   Set l_dias_antecedencia   = Server.CreateObject("ADODB.Parameter") 
-  Set l_dias_prest_contas   = Server.CreateObject("ADODB.Parameter") 
+  Set l_dias_prest_contas   = Server.CreateObject("ADODB.Parameter")
+  Set l_limite_unidade      = Server.CreateObject("ADODB.Parameter")  
   
   with sp
      set l_cliente              = .CreateParameter("l_cliente",           adInteger, adParamInput,    , Tvl(p_cliente))     
@@ -148,6 +142,7 @@ Sub DML_PutPDParametro(p_cliente, p_sequencial, p_ano_corrente, p_prefixo, p_suf
      set l_sufixo               = .CreateParameter("l_sufixo",            adVarchar, adParamInput,  10, Tvl(p_sufixo))
      set l_dias_antecedencia    = .CreateParameter("l_dias_antecedencia", adInteger, adParamInput,    , Tvl(p_dias_antecedencia))
      set l_dias_prest_contas    = .CreateParameter("l_dias_prest_contas", adInteger, adParamInput,    , Tvl(p_dias_prest_contas))
+     set l_limite_unidade       = .CreateParameter("l_limite_unidade",    adVarchar, adParamInput,   1, Tvl(p_limite_unidade))
      
      .parameters.Append         l_cliente
      .parameters.Append         l_sequencial
@@ -156,6 +151,7 @@ Sub DML_PutPDParametro(p_cliente, p_sequencial, p_ano_corrente, p_prefixo, p_suf
      .parameters.Append         l_sufixo
      .parameters.Append         l_dias_antecedencia
      .parameters.Append         l_dias_prest_contas
+     .parameters.Append         l_limite_unidade
      .CommandText               = Session("schema") & "SP_PutPDParametro"
      On Error Resume Next
      .Execute
@@ -169,24 +165,53 @@ Sub DML_PutPDParametro(p_cliente, p_sequencial, p_ano_corrente, p_prefixo, p_suf
      .parameters.Delete         "l_sufixo"
      .parameters.Delete         "l_dias_antecedencia"
      .parameters.Delete         "l_dias_prest_contas"
+     .parameters.Delete         "l_limite_unidade"
   end with
 End Sub
-REM =========================================================================
-REM Final da rotina
-REM -------------------------------------------------------------------------
 
 REM =========================================================================
-REM Mantém as unidade do módulo de passagens e diárias
+REM Mantém as unidades do módulo de passagens e diárias
 REM -------------------------------------------------------------------------
-Sub DML_PutPDUnidade(Operacao, p_chave, p_limite_passagem, p_limite_diaria, p_ativo, p_ano)
+Sub DML_PutPDUnidade(Operacao, p_chave, p_ativo)
 
-  Dim l_Operacao, l_Chave, l_limite_passagem, l_limite_diaria, l_ativo, l_ano
+  Dim l_Operacao, l_Chave, l_ativo
+  
+  Set l_Operacao                = Server.CreateObject("ADODB.Parameter")
+  Set l_chave                   = Server.CreateObject("ADODB.Parameter") 
+  Set l_ativo                   = Server.CreateObject("ADODB.Parameter")
+  
+  with sp
+     set l_Operacao             = .CreateParameter("l_operacao",            adVarchar, adParamInput,   1, Operacao)
+     set l_chave                = .CreateParameter("l_chave",               adInteger, adParamInput,    , p_chave)
+     set l_ativo              = .CreateParameter("l_ativo",                 adVarchar, adParamInput,   1, p_ativo)
+  
+     .parameters.Append         l_Operacao
+     .parameters.Append         l_Chave
+     .parameters.Append         l_ativo
+
+     .CommandText               = Session("schema") & "SP_PutPDUnidade"
+     On Error Resume Next
+     .Execute
+     If Err.Number <> 0 Then 
+        TrataErro
+     End If
+     .parameters.Delete         "l_Operacao"
+     .parameters.Delete         "l_Chave"
+     .parameters.Delete         "l_ativo"
+  end with
+End Sub
+
+REM =========================================================================
+REM Mantém os limites das unidades do módulo de passagens e diárias
+REM -------------------------------------------------------------------------
+Sub DML_PutPDUnidLimite(Operacao, p_chave, p_limite_passagem, p_limite_diaria, p_ano)
+
+  Dim l_Operacao, l_Chave, l_limite_passagem, l_limite_diaria, l_ano
   
   Set l_Operacao                = Server.CreateObject("ADODB.Parameter")
   Set l_chave                   = Server.CreateObject("ADODB.Parameter") 
   Set l_limite_passagem         = Server.CreateObject("ADODB.Parameter") 
   Set l_limite_diaria           = Server.CreateObject("ADODB.Parameter")
-  Set l_ativo                   = Server.CreateObject("ADODB.Parameter")
   Set l_ano                     = Server.CreateObject("ADODB.Parameter")
   
   with sp
@@ -200,17 +225,15 @@ Sub DML_PutPDUnidade(Operacao, p_chave, p_limite_passagem, p_limite_diaria, p_at
      l_limite_diaria.Precision    = 18
      l_limite_diaria.NumericScale = 2
      l_limite_diaria.Value        = Tvl(p_limite_diaria)          
-     set l_ativo              = .CreateParameter("l_ativo",                 adVarchar, adParamInput,   1, p_ativo)
      set l_ano                = .CreateParameter("l_ano",                   adInteger, adParamInput,    , p_ano)
   
      .parameters.Append         l_Operacao
      .parameters.Append         l_Chave
      .parameters.Append         l_limite_passagem
      .parameters.Append         l_limite_diaria
-     .parameters.Append         l_ativo
      .parameters.Append         l_ano
 
-     .CommandText               = Session("schema") & "SP_PutPDUnidade"
+     .CommandText               = Session("schema") & "SP_PutPDUnidLimite"
      On Error Resume Next
      .Execute
      If Err.Number <> 0 Then 
@@ -220,13 +243,9 @@ Sub DML_PutPDUnidade(Operacao, p_chave, p_limite_passagem, p_limite_diaria, p_at
      .parameters.Delete         "l_Chave"
      .parameters.Delete         "l_limite_passagem"
      .parameters.Delete         "l_limite_diaria"
-     .parameters.Delete         "l_ativo"
      .parameters.Delete         "l_ano"
   end with
 End Sub
-REM =========================================================================
-REM Final da rotina
-REM -------------------------------------------------------------------------
 
 REM =========================================================================
 REM Mantém os usuários do módulo de passagens e diárias
@@ -259,7 +278,4 @@ Sub DML_PutPDUsuario(Operacao, p_cliente, p_chave)
      .parameters.Delete         "l_chave"
   end with
 End Sub
-REM =========================================================================
-REM Final da rotina
-REM -------------------------------------------------------------------------
 %>

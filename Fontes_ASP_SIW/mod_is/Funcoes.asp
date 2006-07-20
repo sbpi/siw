@@ -199,19 +199,21 @@ REM =========================================================================
 REM Rotina de selecao das unidades de planejamento e administrativas do modulo infra-sig
 REM -------------------------------------------------------------------------
 Sub SelecaoUnidade_IS (label, accesskey, hint, chave, chaveAux, campo, atributo, tipo)
+    Dim l_RS
+    Set l_RS  = Server.CreateObject("ADODB.RecordSet")
     If tipo = "ADMINISTRATIVA" Then
-       DB_GetIsUnidade_IS RS, null, w_cliente, "S", null
+       DB_GetIsUnidade_IS l_RS, null, w_cliente, "S", null
     ElseIf tipo = "PLANEJAMENTO" Then
-       DB_GetIsUnidade_IS RS, null, w_cliente, null, "S"
+       DB_GetIsUnidade_IS l_RS, null, w_cliente, null, "S"
     End If
-    RS.Sort = "nome"
-    If RS.RecordCount > 100 Then
+    l_RS.Sort = "nome"
+    If l_RS.RecordCount > 100 Then
        Dim w_nm_unidade, w_sigla
        ShowHTML "<INPUT type=""hidden"" name=""" & campo & """ value=""" & chave &""">"
        If chave > "" Then
-          DB_GetIsUnidade_IS RS, chave, w_cliente, null, null
-          w_nm_unidade = RS("nome")
-          w_sigla      = RS("sigla")
+          DB_GetIsUnidade_IS l_RS, chave, w_cliente, null, null
+          w_nm_unidade = l_RS("nome")
+          w_sigla      = l_RS("sigla")
        End If
        If IsNull(hint) Then
           ShowHTML "      <td valign=""top""><font size=""1""><b>" & Label & "</b><br>"
@@ -229,13 +231,13 @@ Sub SelecaoUnidade_IS (label, accesskey, hint, chave, chaveAux, campo, atributo,
           ShowHTML "          <td valign=""top"" title=""" & hint & """><font size=""1""><b>" & Label & "</b><br><SELECT ACCESSKEY=""" & accesskey & """ CLASS=""STS"" NAME=""" & campo & """ " & w_Disabled & " " & atributo & ">"
        End If
        ShowHTML "          <option value="""">---"
-       While Not RS.EOF
-          If cDbl(nvl(RS("chave"),0)) = cDbl(nvl(chave,0)) Then
-             ShowHTML "          <OPTION VALUE=""" & RS("chave") & """ SELECTED>" & RS("Nome") & " (" & RS("Sigla") & ")"
+       While Not l_RS.EOF
+          If cDbl(nvl(l_RS("chave"),0)) = cDbl(nvl(chave,0)) Then
+             ShowHTML "          <OPTION VALUE=""" & l_RS("chave") & """ SELECTED>" & l_RS("Nome") & " (" & l_RS("Sigla") & ")"
           Else
-            ShowHTML "          <OPTION VALUE=""" & RS("chave") & """>" & RS("Nome") & " (" & RS("Sigla") & ")"
+            ShowHTML "          <OPTION VALUE=""" & l_RS("chave") & """>" & l_RS("Nome") & " (" & l_RS("Sigla") & ")"
           End If
-          RS.MoveNext
+          l_RS.MoveNext
        Wend
        ShowHTML "          </select>"
     End If

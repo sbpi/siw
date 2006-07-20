@@ -36,7 +36,7 @@ If Session("LogOn") <> "Sim" Then
 End If
 
 ' Declaração de variáveis
-Dim dbms, sp, RS
+Dim dbms, sp, RS, w_ano
 Dim P1, P2, P3, P4, TP, SG
 Dim R, O, w_Cont, w_Pagina, w_Disabled, w_TP, w_cliente, w_usuario
 Dim w_Assinatura

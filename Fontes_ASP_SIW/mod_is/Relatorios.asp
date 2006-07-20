@@ -4887,7 +4887,7 @@ Sub Rel_Limite
     w_linha = 9
     If RS.EOF Then  
        w_linha = w_linha + 1
-       ShowHTML "    <tr><td colspan=""13""><div align=""center""><font size=""3"" color=""red""><b><br>Nenhum limite de unidade encontrada</b></div></td></tr>"
+       ShowHTML "    <tr><td colspan=""13""><div align=""center""><font size=""3"" color=""red""><b><br>Nenhum limite de unidade encontrado</b></div></td></tr>"
     Else
        ShowHTML "   <tr><td colspan=""2"">"
        ShowHTML "     <table width=100%  border=""1"" bordercolor=""#00000"">"
@@ -4976,7 +4976,7 @@ Sub Rel_Limite
        ShowHTML "        <td align=""right""><b>" & FormatNumber(FormatNumber(cDbl(Nvl(w_tot_limite,0)),2) - FormatNumber(cDbl(Nvl(w_tot_utilizado,0)),2),2) & "</b></td>"
        ShowHTML "</table>"
        If uCase(w_det_tarefa) = uCase("sim") Then
-          ShowHTML "<br><br><br><tr><td colspan=""2""><div align=""center""><font size=""3""><b>DETALHAMENTO DAS TAREFAS</b></font></div></td></tr>"       
+          ShowHTML "<br><br><br><tr><td colspan=""2""><div align=""center""><font size=""3""><b>DETALHAMENTO DAS TAREFAS</b></font></div></td></tr>"
           RS.MoveFirst
           w_unidade_atual = ""
           i = 1
@@ -5035,6 +5035,7 @@ Sub Rel_Limite
                       ShowHTML "       <tr bgcolor=""" & conTrAlternateBgColor & """><td colspan=""3"" align=""right""><b>Total</b></td>"
                       ShowHTML "           <td align=""right""><b>" & FormatNumber(cDbl(Nvl(w_tot_limite,0)),2) & "</b></td>"
                       ShowHTML "</table>"
+                      w_tot_limite = 0
                    End If
                    ShowHTML "<br><tr><td colspan=""4""><hr NOSHADE color=#000000 size=4></td></tr>"
                    ShowHTML "   <tr><td bgcolor=""#f0f0f0""><font size=""2""><b>UNIDADE: " & RS("nm_unidade_resp") & "</b></td>"
@@ -5061,11 +5062,11 @@ Sub Rel_Limite
                    ShowHTML "           <td colspan=""2""><A class=""HL"" HREF=""" & w_dir & "Tarefas.asp?par=" & "Visual&R=" & w_pagina & par & "&O=L&w_chave=" & RS("sq_siw_solicitacao") & "&w_tipo=Volta&P1=2&P2=" & P2 & "&P3=" & P3 & "&P4=" & P4 & "&TP=" & TP & "&SG=" & SG & MontaFiltro("GET") & """ title=""Exibe as informações deste registro."">" & RS("titulo") & "</a></td>"
                 End If
                 ShowHTML "              <td align=""right"">" & FormatNumber(cDbl(Nvl(RS("custo_real"),0)),2) & "</td>"
+                w_tot_limite = w_tot_limite + cDbl(Nvl(RS("custo_real"),0))
+                w_unidade_atual = RS("nm_unidade_resp")
+                w_linha = w_linha + 1
              End If
-             w_tot_limite = w_tot_limite + FormatNumber(cDbl(Nvl(RS("custo_real"),0)),2)
-             w_unidade_atual = RS("nm_unidade_resp")
              RS.MoveNext
-             w_linha = w_linha + 1
           Wend
           ShowHTML "       <tr bgcolor=""" & conTrAlternateBgColor & """><td colspan=""3"" align=""right""><b>Total</b></td>"
           ShowHTML "           <td align=""right""><b>" & FormatNumber(cDbl(Nvl(w_tot_limite,0)),2) & "</b></td>"
@@ -5091,7 +5092,7 @@ Sub Rel_Limite
     ShowHTML "<tr><td align=""center"">"
     ShowHTML "    <table width=""97%"" border=""0"">"
     ShowHTML "      <tr bgcolor=""" & conTrBgColor & """>"
-    SelecaoUnidade "Á<U>r</U>ea planejamento:", "R", null, p_sq_unidade, null, "p_sq_unidade", null, "onchange=""document.Form.action='" & w_dir & w_pagina & par & "'; document.Form.w_troca.value='p_sq_unidade'; document.Form.target=''; document.Form.O.value='P'; document.Form.submit();"""
+    SelecaoUnidade_IS "Á<U>r</U>ea planejamento:", "R", null, p_sq_unidade, null, "p_sq_unidade", "onchange=""document.Form.action='" & w_dir & w_pagina & par & "'; document.Form.w_troca.value='p_sq_unidade'; document.Form.target=''; document.Form.O.value='P'; document.Form.submit();""", "PLANEJAMENTO"
     ShowHTML "      <tr bgcolor=""" & conTrBgColor & """>"
     SelecaoProgramaPPA "<u>P</u>rograma PPA:", "P", null, w_cliente, w_ano, p_cd_programa, "p_cd_programa", "RELATORIO", "onchange=""document.Form.action='" & w_dir & w_pagina & par & "'; document.Form.w_troca.value='p_cd_programa'; document.Form.target=''; document.Form.O.value='P'; document.Form.submit();""", w_menu
     ShowHTML "      <tr bgcolor=""" & conTrBgColor & """>"

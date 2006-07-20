@@ -855,8 +855,9 @@ REM Rotina de busca das unidades da organização
 REM -------------------------------------------------------------------------
 Sub BuscaUnidade
  
-  Dim w_nome, w_cliente, ChaveAux, restricao, campo, w_sigla
+  Dim w_nome, w_cliente, ChaveAux, restricao, campo, w_sigla, w_ano
   
+  w_ano      = UCase(Request("w_ano"))
   w_nome     = UCase(Request("w_nome"))
   w_sigla    = UCase(Request("w_sigla"))
   w_cliente  = Request("w_cliente")
@@ -864,7 +865,7 @@ Sub BuscaUnidade
   restricao  = Request("restricao")
   campo      = Request("campo")
   
-  DB_GetUorgList RS, w_cliente, ChaveAux, "ATIVO", w_nome, w_sigla, null
+  DB_GetUorgList RS, w_cliente, ChaveAux, nvl(restricao,"ATIVO"), w_nome, w_sigla, w_ano
   RS.Sort = "nome,co_uf"
   
   Cabecalho

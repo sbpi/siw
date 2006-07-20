@@ -49,7 +49,7 @@ If Session("LogOn") <> "Sim" Then
 End If
 
 ' Declaração de variáveis
-Dim dbms, sp, RS, RS1, RS2, RS3, RS4, RS_menu
+Dim dbms, sp, RS, RS1, RS2, RS3, RS4, RS_menu, w_ano
 Dim P1, P2, P3, P4, TP, SG
 Dim R, O, w_Cont, w_Reg, w_pagina, w_Disabled, w_TP, w_classe, w_submenu, w_filtro, w_copia
 Dim w_Assinatura
@@ -426,7 +426,7 @@ Sub Inicial
           ShowHTML "    <a accesskey=""I"" class=""ss"" href=""" & w_dir & w_pagina & "Geral&R=" & w_pagina & par & "&O=I&SG=" & SG & "&w_menu=" & w_menu & "&P1=" & P1 & "&P2=" & P2 & "&P3=" & P3 & "&P4=" & P4 & "&TP=" & TP & MontaFiltro("GET") & """><u>I</u>ncluir</a>&nbsp;"
        End If
     End If
-    If Instr(uCase(R),"GR_") = 0 and Instr(uCase(R),"LANCAMENTO") = 0 Then
+    If Instr(uCase(R),"GR_") = 0 and Instr(uCase(R),"LANCAMENTO") = 0 and Nvl(R,"") > "" Then
        If w_copia > "" Then ' Se for cópia
           If MontaFiltro("GET") > "" Then
              ShowHTML "                         <a accesskey=""F"" class=""ss"" href=""" & w_dir & w_pagina & par & "&R=" & w_pagina & par & "&O=C&P1=" & P1 & "&P2=" & P2 & "&P3=1&P4=" & P4 & "&TP=" & TP & "&SG=" & SG & MontaFiltro("GET") & """><u><font color=""#BC5100"">F</u>iltrar (Ativo)</font></a>"

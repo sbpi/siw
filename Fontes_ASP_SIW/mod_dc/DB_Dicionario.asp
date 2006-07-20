@@ -437,7 +437,7 @@ REM =========================================================================
 REM Recupera Procedure
 REM -------------------------------------------------------------------------
 Sub DB_GetProcedure (p_rs, p_cliente, p_chave, p_sq_arquivo, p_sq_sistema, p_sq_sp_tipo, p_nome)
-  Dim l_chave, l_sq_arquivo, l_sq_sistema, l_sq_sp_tipo, l_nome
+  Dim l_chave, l_sq_arquivo, l_sq_sistema, l_sq_sp_tipo, l_nome, L_cliente
   
   Set l_cliente         = Server.CreateObject("ADODB.Parameter")
   Set l_chave           = Server.CreateObject("ADODB.Parameter")

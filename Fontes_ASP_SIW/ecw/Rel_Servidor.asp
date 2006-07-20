@@ -43,7 +43,7 @@ Dim dbms, sp, RS, RS1, RS2, RS3
 Dim P1, P2, P3, P4, TP, SG
 Dim R, O, w_Cont, w_Pagina, w_Disabled, w_TP, w_troca, w_cor, w_Dir
 Dim w_ContOut
-Dim w_Titulo
+Dim w_Titulo, w_ano
 Dim w_Imagem
 Dim w_ImagemPadrao
 Dim w_Assinatura, w_Cliente, w_Classe, w_filter
