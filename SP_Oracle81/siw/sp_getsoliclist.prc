@@ -111,7 +111,8 @@ begin
                 m.titulo nm_projeto,
                 n.sq_cc,              n.nome nm_cc,                  n.sigla sg_cc,
                 o.nome_resumido nm_solic, o.nome_resumido||' ('||o2.sigla||')' nm_resp,
-                p.nome_resumido nm_exec,
+                o.nome_resumido_ind nm_solic_ind,
+                p.nome_resumido nm_exec, p.nome_resumido_ind nm_exec_ind,
                 q.sq_projeto_etapa, q.titulo nm_etapa, MontaOrdem(q.sq_projeto_etapa) cd_ordem,
                 0 resp_etapa,
                 0 sq_acao_ppa, 0 sq_orprioridade
@@ -266,8 +267,8 @@ begin
                 e1.sq_pessoa titular, e2.sq_pessoa substituto,
                 f.sq_pais,            f.sq_regiao,                   f.co_uf,
                 n.sq_cc,              n.nome nm_cc,                  n.sigla sg_cc,
-                o.nome_resumido nm_solic,
-                p.nome_resumido nm_exec,
+                o.nome_resumido nm_solic, o.nome_resumido_ind nm_solic_ind,
+                p.nome_resumido nm_exec,  p.nome_resumido_ind nm_exec_ind,
                 Nvl(q.existe,0) resp_etapa,
                 r.sq_acao_ppa, r.sq_orprioridade
            from siw_menu                                       a,
@@ -421,6 +422,7 @@ begin
                 d.vincula_viagem,     d.aviso_prox_conc,             d.dias_aviso,
                 d1.nome nm_tipo_acordo,d1.sigla sg_acordo,           d1.modalidade cd_modalidade,
                 d2.nome nm_outra_parte, d2.nome_resumido nm_outra_parte_resumido,
+                d2.nome_resumido_ind nm_outra_parte_resumido_ind,                
                 d21.cpf, d22.cnpj,
                 d3.nome nm_preposto,  d3.nome_resumido nm_preposto_resumido,
                 d4.sq_pessoa_conta,   d4.operacao,                   d4.numero nr_conta,
