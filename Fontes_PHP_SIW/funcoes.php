@@ -1356,6 +1356,93 @@ function FormataDataEdicao($w_dt_grade, $w_formato=1) {
 }
 
 // =========================================================================
+// Função que retorna o primeiro dia da data informada
+// -------------------------------------------------------------------------
+function first_day($w_valor) {
+  extract($GLOBALS);
+
+  $l_valor  = FormataDataEdicao($w_valor);
+  $l_mes    = substr($l_valor,3,2);
+  $l_ano    = substr($l_valor,6,4);
+  return '01'.substr($l_valor,2,1).$l_mes.substr($l_valor,2,1).$l_ano;
+} 
+
+// =========================================================================
+// Função que retorna o último dia da data informada
+// -------------------------------------------------------------------------
+function Last_Day($w_valor) {
+  extract($GLOBALS);
+
+  $l_valor  = FormataDataEdicao($w_valor);
+  $l_dia    = substr($l_valor,0,2);
+  $l_mes    = substr($l_valor,3,2);
+  $l_ano    = substr($l_valor,6,4);
+  
+  $l_result = mktime(0,0,0,($l_mes + 1),0,$l_ano);
+
+  return $l_result;
+} 
+
+// =========================================================================
+// Função que retorna data indicando o domingo de páscoa de um ano
+// -------------------------------------------------------------------------
+function DomingoPascoa($p_ano) {
+  extract($GLOBALS);
+
+  $a = intval($p_ano%19);
+  $b = intval($p_ano/100);
+  $c = intval($p_ano%100);
+  $d = intval($b/4);
+  $e = intval($b%4);
+  $f = intval(($b+8)/25);
+  $g = intval(($b-$f+1)/3);
+  $h = intval(((19*$a)+$b-$d-$g+15)%30);
+  $i = intval($c/4);
+  $k = intval($c%4);
+  $l = intval((32+(2*$e)+(2*$i)-$h-$k)%7);
+  $m = intval(($a+(11*$h)+(22*$l))/451);
+  $p = intval(($h+$l-(7*$m)+114)/31);
+  $q = intval(($h+$l-(7*$m)+114)%31);
+  return mktime(0,0,0,$p,$q+1,$p_ano);
+} 
+
+// =========================================================================
+// Função que retorna data indicando a sexta-feira santa de um ano
+// Sexta-feira Santa é 2 dias antes do Domingo de Páscoa
+// -------------------------------------------------------------------------
+function SextaSanta($p_ano) {
+  extract($GLOBALS);
+
+  return addDays(DomingoPascoa($p_ano),-2);
+} 
+
+// =========================================================================
+// Função que retorna data de Corpus Christi de um ano
+// Corpus Chirsti é 60 dias depois do Domingo de Páscoa
+// -------------------------------------------------------------------------
+function CorpusChristi($p_ano) {
+  extract($GLOBALS);
+
+  return addDays(DomingoPascoa($p_ano),60);
+} 
+
+// =========================================================================
+// Função que retorna data indicando a terça-feira de carnaval de um ano
+// Terça-feira de carnaval é a primeira terça-feira 42 dias antes do domingo
+// de páscoa
+// -------------------------------------------------------------------------
+function TercaCarnaval($p_ano) {
+  extract($GLOBALS);
+
+  $l_dia = addDays(DomingoPascoa($p_ano),-42);
+  if (date('w',$l_dia)>2) {
+    return addDays($l_dia,(-1*date('w',addDays($l_dia,-2))));
+  } else {
+    return addDays($l_dia,(-1*date('w',addDays($l_dia,-4))));
+  } 
+} 
+
+// =========================================================================
 // Função que traduz os dias da semana de inglês para português
 // -------------------------------------------------------------------------
 function diaSemana($l_data) {

@@ -16,7 +16,7 @@ function selecaoOrdenaRel($label,$accesskey,$hint,$cliente,$chave,$campo,$restri
     elseif (substr($restricao,2,1)=='D')
       ShowHTML('          <option value="NM_PESSOA_RESUMIDO">Fornecedor');
     ShowHTML('          <option value="NM_TRAMITE">Situação');
-  elseif (Nvl($chave,'')=='SQ_PESSOA') {
+  } elseif (Nvl($chave,'')=='SQ_PESSOA') {
     ShowHTML('          <option value="VENCIMENTO">Vencimento');
     if (substr($restricao,2,1)=='R')
       ShowHTML('          <option value="NM_PESSOA_RESUMIDO" SELECTED>Cliente');

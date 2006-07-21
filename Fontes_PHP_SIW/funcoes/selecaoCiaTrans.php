@@ -6,7 +6,7 @@ include_once($w_dir_volta.'classes/sp/db_getCiaTrans.php');
 function selecaoCiaTrans($label,$accesskey,$hint,$cliente,$chave,$chaveAux,$campo,$restricao,$atributo) {
   extract($GLOBALS);
 
-  $RS = db_getCiaTrans:getInstanceOf($dbms,$cliente,null,null,null,null,null,null,'S',null,null);
+  $RS = db_getCiaTrans::getInstanceOf($dbms,$cliente,null,null,null,null,null,null,'S',null,null);
   $RS = SortArray($RS,'padrao','desc','nome','asc');
   if (!isset($hint)) {
     if ($label=='') {
@@ -23,7 +23,7 @@ function selecaoCiaTrans($label,$accesskey,$hint,$cliente,$chave,$chaveAux,$camp
   } 
   ShowHTML('          <option value="">---');
   foreach($RS as $row) {
-    if (nvl(f($RS,'chave'),0)==nvl($chave,0)) {
+    if (nvl(f($row,'chave'),0)==nvl($chave,0)) {
       ShowHTML('          <option value="'.f($row,'chave').'" SELECTED>'.f($row,'nome'));
     } else {
       ShowHTML('          <option value="'.f($row,'chave').'">'.f($row,'nome'));

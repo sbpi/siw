@@ -960,6 +960,8 @@ Fontes_PHP_SIW/mod_dc/dc_consulta.php -text
 Fontes_PHP_SIW/mod_dc/dc_dicionario.php -text
 Fontes_PHP_SIW/mod_dc/dc_tabelas.php -text
 Fontes_PHP_SIW/mod_fn/lancamento.php -text
+Fontes_PHP_SIW/mod_fn/rel_plano.php -text
+Fontes_PHP_SIW/mod_fn/tabelas.php -text
 Fontes_PHP_SIW/mod_fn/validalancamento.php -text
 Fontes_PHP_SIW/mod_fn/visuallancamento.php -text
 Fontes_PHP_SIW/mod_pd/geragrafico.php -text

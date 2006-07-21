@@ -10,7 +10,7 @@ include_once($w_dir_volta.'classes/db/DatabaseQueriesFactory.php');
 */
 
 class dml_putImposto {
-   function getInstanceOf($dbms, $operacao, $p_chave, $p_cliente, $p_nome, $p_descricao, $p_sigla, $_) {
+   function getInstanceOf($dbms, $operacao, $p_chave, $p_cliente, $p_nome, $p_descricao, $p_sigla, $p_esfera, $p_calculo, $p_dia_pagamento, $p_ativo) {
      $sql=$strschema.'SP_PUTIMPOSTO';
      $params=array('p_operacao'                  =>array($operacao,                                        B_VARCHAR,         1),
                    'p_chave'                     =>array(tvl($p_chave),                                    B_INTEGER,        32),

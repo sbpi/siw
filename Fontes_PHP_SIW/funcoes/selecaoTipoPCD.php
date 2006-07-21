@@ -13,8 +13,8 @@ function selecaoTipoPCD($label,$accesskey,$hint,$chave,$campo,$restricao,$atribu
 
   ShowHTML('          <option value="">---');
   if (nvl($chave,'')=='I') ShowHTML('          <option value="I" SELECTED>Inicial');              else ShowHTML('          <option value="I">Inicial');
-  if (nvl($chave,'')=='P') ShowHTML('          <option value="P" SELECTED>Prorrogação');  }       else ShowHTML('          <option value="P">Prorrogação');
-  if (nvl($chave,'')=='C') ShowHTML('          <option value="C" SELECTED>Complementação');  }    else ShowHTML('          <option value="C">Complementação');
+  if (nvl($chave,'')=='P') ShowHTML('          <option value="P" SELECTED>Prorrogação');          else ShowHTML('          <option value="P">Prorrogação');
+  if (nvl($chave,'')=='C') ShowHTML('          <option value="C" SELECTED>Complementação');       else ShowHTML('          <option value="C">Complementação');
   ShowHTML('          </select>');
 } 
 ?>
