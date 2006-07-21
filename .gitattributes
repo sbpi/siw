@@ -2302,6 +2302,7 @@ SP_Oracle92/fbaj/sq_alberguista.seq -text
 SP_Oracle92/fbaj/subname.fnc -text
 SP_Oracle92/siw/GetCodigo.fnc -text
 SP_Oracle92/siw/MontaOrdemMenu.fnc -text
+SP_Oracle92/siw/PD_Cadastrador_Geral.fnc -text
 SP_Oracle92/siw/PD_CriaParametro.prc -text
 SP_Oracle92/siw/Responsavel_Unidade.fnc -text
 SP_Oracle92/siw/SP_GetAfastamento.prc -text
