@@ -6,8 +6,7 @@ create or replace procedure SP_PutSiwMenEnd
 begin
    If p_operacao = 'I' Then
       -- Insere registro em SIW_MENU_ENDERECO
-      insert into siw_menu_endereco(sq_menu, sq_pessoa_endereco)
-           values (p_menu, p_endereco);
+      insert into siw_menu_endereco(sq_menu, sq_pessoa_endereco) values (p_menu, p_endereco);
    Elsif p_operacao = 'E' Then
       -- Remove a opção de todos os endereços da organização
       delete siw_menu_endereco where sq_menu = p_menu;
@@ -16,4 +15,3 @@ begin
    commit;   
 end SP_PutSiwMenEnd;
 /
-

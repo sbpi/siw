@@ -6,7 +6,10 @@ create or replace procedure SP_GetPD_Deslocamento
 begin
    If p_restricao = 'DADFIN' Then
       open p_result for
-         select a.*,
+         select a.sq_deslocamento, a.sq_siw_solicitacao, a.origem, a.destino, a.sq_cia_transporte, 
+                a.saida, a.chegada, a.codigo_cia_transporte, a.valor_trecho, a.codigo_voo,
+                to_char(a.saida,'dd/mm/yyyy, hh24:mi:ss') phpdt_saida,
+                to_char(a.chegada,'dd/mm/yyyy, hh24:mi:ss') phpdt_chegada,
                 b.sq_cidade cidade_orig, b.co_uf uf_orig, b.sq_pais pais_orig,
                 d.sq_cidade cidade_dest, d.co_uf uf_dest, d.sq_pais pais_dest,
                 decode(c.padrao,'S',b.nome||'-'||b.co_uf,b.nome||' ('||c.nome||')') nm_origem,
@@ -34,7 +37,10 @@ begin
    --If p_restricao is null or p_restricao = 'PDINICIAL' or p_restricao = 'PDGERAL' Then
       -- Recupera as demandas que o usuário pode ver   
       open p_result for
-         select a.*,
+         select a.sq_deslocamento, a.sq_siw_solicitacao, a.origem, a.destino, a.sq_cia_transporte, 
+                a.saida, a.chegada, a.codigo_cia_transporte, a.valor_trecho, a.codigo_voo,
+                to_char(a.saida,'dd/mm/yyyy, hh24:mi:ss') phpdt_saida,
+                to_char(a.chegada,'dd/mm/yyyy, hh24:mi:ss') phpdt_chegada,
                 b.sq_cidade cidade_orig, b.co_uf uf_orig, b.sq_pais pais_orig,
                 d.sq_cidade cidade_dest, d.co_uf uf_dest, d.sq_pais pais_dest,
                 decode(c.padrao,'S',b.nome||'-'||b.co_uf,b.nome||' ('||c.nome||')') nm_origem,

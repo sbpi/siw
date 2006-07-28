@@ -203,7 +203,7 @@ begin
          -- Recupera os encaminhamentos de uma demanda
          open p_result for
             select h.sq_demanda_log, a.sq_siw_solic_log, a.sq_siw_tramite,a.data,
-                   case h.sq_demanda_log when null then a.observacao else a.observacao||chr(13)||chr(10)||'DESPACHO: '||chr(13)||chr(10)||h.despacho end despacho,
+                   case when h.sq_demanda_log is null then a.observacao else a.observacao||chr(13)||chr(10)||'DESPACHO: '||chr(13)||chr(10)||h.despacho end despacho,
                    'TRAMITACAO' origem,
                    c.nome_resumido responsavel,
                    c.sq_pessoa,

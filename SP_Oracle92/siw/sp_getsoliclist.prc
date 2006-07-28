@@ -187,7 +187,7 @@ begin
                  (p_tipo         = 3     and b2.acesso > 0) or
                  (p_tipo         = 3     and InStr(l_resp_unid,''''||b.sq_unidade||'''') > 0) or
                  (p_tipo         = 4     and Nvl(b1.sigla,'-') <> 'CA'  and b2.acesso > 0) or
-                 (p_tipo         = 4     and InStr(l_resp_unid,''''||b.sq_unidade||'''') > 0) or
+                 (p_tipo         = 4     and Nvl(b1.sigla,'-') <> 'CA'  and InStr(l_resp_unid,''''||b.sq_unidade||'''') > 0) or
                  (p_tipo         = 5) or
                  (p_tipo         = 6     and b1.ativo          = 'S' and b2.acesso > 0)
                 )
@@ -825,21 +825,48 @@ begin
    Else -- Trata a vinculação entre serviços
       -- Recupera as solicitações que o usuário pode ver
       open p_result for 
-         select b.sq_siw_solicitacao, d.titulo
-           from siw_solicitacao            b
-                inner   join siw_tramite   b1 on (b.sq_siw_tramite     = b1.sq_siw_tramite)
-                inner   join pj_projeto    d  on (b.sq_siw_solicitacao = d.sq_siw_solicitacao and
-                                                  d.vincula_contrato   = 'S'
+         select b.sq_siw_solicitacao, 
+                case when d.sq_siw_solicitacao is not null 
+                     then d.titulo
+                     else case when e.sq_siw_solicitacao is not null
+                               then e.titulo
+                               else null
+                          end
+                end titulo
+           from siw_menu                   a
+                inner join siw_modulo      a1 on (a.sq_modulo          = a1.sq_modulo),
+                siw_solicitacao            b
+                inner   join siw_tramite   b1 on (b.sq_siw_tramite     = b1.sq_siw_tramite and 
+                                                  b1.sq_siw_tramite    in (select sq_siw_tramite 
+                                                                             from siw_menu_relac 
+                                                                            where servico_cliente    = p_restricao 
+                                                                              and servico_fornecedor = p_menu
+                                                                          )
                                                  )
-          where b.sq_menu         = p_menu
-            and b1.sq_siw_tramite in (select sq_siw_tramite 
-                                        from siw_menu_relac 
-                                       where servico_cliente    = p_restricao 
-                                         and servico_fornecedor = p_menu
-                                     )
+                inner   join siw_menu      b2 on (b.sq_menu            = b2.sq_menu)
+                  inner join siw_modulo    b3 on (b2.sq_modulo         = b3.sq_modulo)
+                left    join pj_projeto    d  on (b.sq_siw_solicitacao = d.sq_siw_solicitacao)
+                left    join (select x.sq_siw_solicitacao, x.codigo_interno, x.vincula_demanda, 
+                                     x.vincula_projeto, x.vincula_viagem,
+                                     w.nome_resumido||' - '||z.nome||' ('||to_char(x.inicio,'dd/mm/yyyy')||'-'||to_char(x.fim,'dd/mm/yyyy')||')' as titulo
+                                from ac_acordo              x
+                                     join   co_pessoa       w on x.outra_parte        = w.sq_pessoa
+                                     join   siw_solicitacao y on x.sq_siw_solicitacao = y.sq_siw_solicitacao
+                                       join ct_cc           z on y.sq_cc = z.sq_cc
+                             )             e  on (b.sq_siw_solicitacao = e.sq_siw_solicitacao)
+          where a.sq_menu         = p_restricao
+            and b.sq_menu         = p_menu
+            and ((a1.sigla = 'DM' and b3.sigla = 'AC' and e.vincula_demanda  = 'S') or
+                 (a1.sigla = 'PR' and b3.sigla = 'AC' and e.vincula_projeto  = 'S') or
+                 (a1.sigla = 'PD' and b3.sigla = 'AC' and e.vincula_viagem   = 'S') or
+                 (a1.sigla = 'AC' and b3.sigla = 'PR' and d.vincula_contrato = 'S') or
+                 (a1.sigla = 'PD' and b3.sigla = 'PR' and d.vincula_viagem   = 'S') or
+                 (a1.sigla = 'FN' and b3.sigla = 'AC')
+                )
             and (acesso(b.sq_siw_solicitacao,p_pessoa) > 0 or
                  InStr(l_resp_unid,''''||b.sq_unidade||'''') > 0
-                );
+                )
+         order by titulo;
    End If;
 end SP_GetSolicList;
 /

@@ -536,12 +536,11 @@ begin
                 d1.sq_pais_estrang,   d1.aba_code,                   d1.swift_code,
                 d1.endereco_estrang,  d1.banco_estrang,              d1.agencia_estrang,
                 d1.cidade_estrang,    d1.informacoes,                d1.codigo_deposito,
+                d1.numero_conta,      d1.operacao_conta,
                 d1.valor_passagem,    
                 d2.nome nm_prop,      d2.nome_resumido nm_prop_res,  
                 d3.sq_tipo_vinculo,   d3.nome nm_tipo_vinculo,
                 d4.sexo,              d4.cpf,                        
-                d5.operacao,          d5.numero numero_conta,        d5.tipo_conta,
-                d5.invalida,          d5.operacao operacao_conta,
                 d6.sq_agencia,        d6.codigo cd_agencia,          d6.nome nm_agencia,
                 d7.sq_banco,          d7.codigo cd_banco,            d7.nome nm_banco,
                 d8.sq_posto_trabalho, d8.sq_posto_trabalho,          d8.sq_modalidade_contrato,
@@ -566,7 +565,6 @@ begin
                 co_pessoa            d2,
                 co_tipo_vinculo      d3,
                 co_pessoa_fisica     d4,
-                co_pessoa_conta      d5,
                 co_agencia           d6,
                 co_banco             d7,
                 gp_contrato_colaborador d8,
@@ -602,12 +600,7 @@ begin
             and (d1.sq_pessoa               = d2.sq_pessoa)
             and (d2.sq_tipo_vinculo         = d3.sq_tipo_vinculo)
             and (d2.sq_pessoa               = d4.sq_pessoa)
-            and (d2.sq_pessoa               = d5.sq_pessoa (+) and
-                 d5.ativo (+)               = 'S' and
-                 d5.padrao (+)              = 'S' and
-                 d5.tipo_conta (+)          = 1 -- Apenas conta corrente
-                )
-            and (d5.sq_agencia              = d6.sq_agencia (+))
+            and (d1.sq_agencia              = d6.sq_agencia (+))
             and (d6.sq_banco                = d7.sq_banco (+))
             and (d4.cliente                 = d8.cliente (+) and
                  d4.sq_pessoa               = d8.sq_pessoa (+) and

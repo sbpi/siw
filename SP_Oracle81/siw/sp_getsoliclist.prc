@@ -975,23 +975,51 @@ begin
    Else -- Trata a vinculação entre serviços
       -- Recupera as solicitações que o usuário pode ver
       open p_result for
-         select b.sq_siw_solicitacao, d.titulo
-           from siw_solicitacao            b,
-                siw_tramite   b1,
-                pj_projeto    d
-          where (b.sq_siw_tramite     = b1.sq_siw_tramite)
-            and (b.sq_siw_solicitacao = d.sq_siw_solicitacao and
-                 d.vincula_contrato   = 'S'
+         select b.sq_siw_solicitacao, 
+                decode(d.sq_siw_solicitacao,null,decode(e.sq_siw_solicitacao,null,null,e.titulo),d.titulo) titulo
+           from siw_menu         a,
+                siw_modulo       a1,
+                siw_solicitacao  b,
+                siw_tramite      b1,
+                siw_menu         b2,
+                siw_modulo       b3,
+                pj_projeto       d,
+               (select x.sq_siw_solicitacao, x.codigo_interno, x.vincula_demanda, 
+                        x.vincula_projeto, x.vincula_viagem,
+                        w.nome_resumido||' - '||z.nome||' ('||to_char(x.inicio,'dd/mm/yyyy')||'-'||to_char(x.fim,'dd/mm/yyyy')||')' as titulo
+                   from ac_acordo       x,
+                        co_pessoa       w,
+                        siw_solicitacao y,
+                        ct_cc           z
+                  where x.outra_parte        = w.sq_pessoa
+                    and x.sq_siw_solicitacao = y.sq_siw_solicitacao
+                    and y.sq_cc              = z.sq_cc
+                )                e
+          where (a.sq_modulo          = a1.sq_modulo)
+            and (b.sq_siw_tramite     = b1.sq_siw_tramite and 
+                 b1.sq_siw_tramite    in (select sq_siw_tramite 
+                                            from siw_menu_relac 
+                                           where servico_cliente    = p_restricao 
+                                             and servico_fornecedor = p_menu
+                                         )
                 )
+            and (b.sq_menu            = b2.sq_menu)
+            and (b2.sq_modulo         = b3.sq_modulo)
+            and (b.sq_siw_solicitacao = d.sq_siw_solicitacao (+))
+            and (b.sq_siw_solicitacao = e.sq_siw_solicitacao (+))
+            and a.sq_menu         = p_restricao
             and b.sq_menu         = p_menu
-            and b1.sq_siw_tramite in (select sq_siw_tramite
-                                        from siw_menu_relac
-                                       where servico_cliente    = p_restricao
-                                         and servico_fornecedor = p_menu
-                                     )
+            and ((a1.sigla = 'DM' and b3.sigla = 'AC' and e.vincula_demanda  = 'S') or
+                 (a1.sigla = 'PR' and b3.sigla = 'AC' and e.vincula_projeto  = 'S') or
+                 (a1.sigla = 'PD' and b3.sigla = 'AC' and e.vincula_viagem   = 'S') or
+                 (a1.sigla = 'AC' and b3.sigla = 'PR' and d.vincula_contrato = 'S') or
+                 (a1.sigla = 'PD' and b3.sigla = 'PR' and d.vincula_viagem   = 'S') or
+                 (a1.sigla = 'FN' and b3.sigla = 'AC')
+                )
             and (acesso(b.sq_siw_solicitacao,p_pessoa) > 0 or
                  InStr(l_resp_unid,''''||b.sq_unidade||'''') > 0
-                );
+                )
+         order by 2;
    End If;
 end SP_GetSolicList;
 /

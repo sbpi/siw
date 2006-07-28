@@ -209,9 +209,9 @@ begin
                 d.produtos,           d.requisitos,                  d.observacao,
                 d.dia_vencimento,     d.vincula_projeto,             d.vincula_demanda,
                 d.vincula_viagem,     d.aviso_prox_conc,             d.dias_aviso,
-                case vincula_projeto when 'S' then 'Sim' else 'Não' end nm_vincula_projeto,
-                case vincula_demanda when 'S' then 'Sim' else 'Não' end nm_vincula_demanda,
-                case vincula_viagem  when 'S' then 'Sim' else 'Não' end nm_vincula_viagem,
+                case d.vincula_projeto when 'S' then 'Sim' else 'Não' end nm_vincula_projeto,
+                case d.vincula_demanda when 'S' then 'Sim' else 'Não' end nm_vincula_demanda,
+                case d.vincula_viagem  when 'S' then 'Sim' else 'Não' end nm_vincula_viagem,
                 d.sq_tipo_pessoa,     d.sq_forma_pagamento,          d.sq_agencia,
                 d.operacao_conta,     d.numero_conta,                d.sq_pais_estrang,
                 d.aba_code,           d.swift_code,                  d.endereco_estrang,
@@ -439,12 +439,11 @@ begin
                 d1.sq_pais_estrang,   d1.aba_code,                   d1.swift_code,
                 d1.endereco_estrang,  d1.banco_estrang,              d1.agencia_estrang,
                 d1.cidade_estrang,    d1.informacoes,                d1.codigo_deposito,
+                d1.numero_conta,      d1.operacao_conta,
                 d1.valor_passagem,
                 d2.nome nm_prop,      d2.nome_resumido nm_prop_res,
                 d3.sq_tipo_vinculo,   d3.nome nm_tipo_vinculo,
                 d4.sexo,              d4.cpf,
-                d5.operacao,          d5.numero numero_conta,        d5.tipo_conta,
-                d5.invalida,          d5.operacao operacao_conta,
                 d6.sq_agencia,        d6.codigo cd_agencia,          d6.nome nm_agencia,
                 d7.sq_banco,          d7.codigo cd_banco,            d7.nome nm_banco,
                 d8.sq_posto_trabalho, d8.sq_posto_trabalho,          d8.sq_modalidade_contrato,
@@ -473,15 +472,11 @@ begin
                         inner          join co_pessoa                  d2 on (d1.sq_pessoa               = d2.sq_pessoa)
                           inner        join co_tipo_vinculo            d3 on (d2.sq_tipo_vinculo         = d3.sq_tipo_vinculo)
                           inner        join co_pessoa_fisica           d4 on (d2.sq_pessoa               = d4.sq_pessoa)
-                          left outer   join co_pessoa_conta            d5 on (d2.sq_pessoa               = d5.sq_pessoa    and
-                                                                              d5.ativo                   = 'S'             and
-                                                                              d5.padrao                  = 'S'             and
-                                                                              d5.tipo_conta              = 1) -- Apenas conta corrente
-                            left outer join co_agencia                 d6 on (d5.sq_agencia              = d6.sq_agencia)
-                              left outer join co_banco                 d7 on (d6.sq_banco                = d7.sq_banco)
                             left outer join gp_contrato_colaborador    d8 on (d4.cliente                 = d8.cliente      and
                                                                               d4.sq_pessoa               = d8.sq_pessoa    and
                                                                               d8.fim                     is null)
+                        left outer join co_agencia                     d6 on (d1.sq_agencia              = d6.sq_agencia)
+                          left outer join co_banco                     d7 on (d6.sq_banco                = d7.sq_banco)
                       inner            join eo_unidade                 e  on (d.sq_unidade_resp          = e.sq_unidade)
                         left outer     join eo_unidade_resp            e1 on (e.sq_unidade               = e1.sq_unidade   and
                                                                               e1.tipo_respons            = 'T'             and
