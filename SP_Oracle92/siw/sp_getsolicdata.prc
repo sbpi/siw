@@ -135,7 +135,8 @@ begin
                 k.ativo ativo_ppa_pai,k.padrao padrao_ppa_pai,       k.selecionada_relevante relev_ppa_pai,
                 l.codigo cd_pri,      l.nome nm_pri,                 l.responsavel resp_pri,
                 l.telefone fone_pri,  l.email mail_pri,              l.ordem ord_pri,
-                l.ativo ativo_pri,    l.padrao padrao_pri
+                l.ativo ativo_pri,    l.padrao padrao_pri,
+                m.sq_acordo,          m.cd_acordo,                   m.nm_acordo
            from siw_menu                                        a 
                 inner        join eo_unidade                a2 on (a.sq_unid_executora        = a2.sq_unidade)
                   left outer join eo_unidade_resp           a3 on (a2.sq_unidade              = a3.sq_unidade and
@@ -173,6 +174,13 @@ begin
                                                                    )
                   left outer       join ct_cc                g  on (b.sq_cc               = g.sq_cc)
                 left outer         join eo_unidade           c  on (a.sq_unid_executora   = c.sq_unidade)
+                left               join (select x.sq_siw_solicitacao sq_acordo, x.codigo_interno cd_acordo,
+                                                w.nome_resumido||' - '||z.nome||' ('||to_char(x.inicio,'dd/mm/yyyy')||'-'||to_char(x.fim,'dd/mm/yyyy')||')' as nm_acordo
+                                           from ac_acordo              x
+                                                join   co_pessoa       w on (x.outra_parte        = w.sq_pessoa)
+                                                join   siw_solicitacao y on (x.sq_siw_solicitacao = y.sq_siw_solicitacao)
+                                                  join ct_cc           z on (y.sq_cc              = z.sq_cc)
+                                        )                    m  on (b.sq_solic_pai        = m.sq_acordo)
           where b.sq_siw_solicitacao       = p_chave;
    Elsif substr(p_restricao,1,2) = 'GC' Then
       -- Recupera os acordos que o usuário pode ver
