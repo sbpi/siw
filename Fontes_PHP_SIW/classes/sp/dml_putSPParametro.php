@@ -11,7 +11,7 @@ include_once($w_dir_volta.'classes/db/DatabaseQueriesFactory.php');
 
 class dml_putSPParametro {
    function getInstanceOf($dbms, $operacao, $p_chave, $p_chave_aux, $p_sq_dado_tipo, $p_nome, $p_descricao, $p_tipo, $p_ordem) {
-     $sql=$strschema.'SP_PUTSPPARAMETRO';
+     extract($GLOBALS,EXTR_PREFIX_SAME,'strchema'); $sql=$strschema.'SP_PUTSPPARAMETRO';
      $params=array('p_operacao'                  =>array($operacao,                                        B_VARCHAR,         1),
                    'p_chave'                     =>array($p_chave,                                         B_INTEGER,        18),
                    'p_chave_aux'                 =>array($p_chave_aux,                                     B_INTEGER,        18),

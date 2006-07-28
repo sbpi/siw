@@ -433,9 +433,9 @@ function Inicial() {
         ShowHTML('        <td nowrap>');
         if ($w_tipo!='WORD') {
           if (f($row,'concluida')=='N') {
-            if (f($row,'fim')<time()) {
+            if (f($row,'fim')<addDays(time(),-1)) {
               ShowHTML('           <img src="'.$conImgAtraso.'" border=0 width=15 heigth=15 align="center">');
-            } elseif (f($row,'aviso_prox_conc')=='S' && (f($row,'aviso')<=time())) {
+            } elseif (f($row,'aviso_prox_conc')=='S' && (f($row,'aviso')<=addDays(time(),-1))) {
               ShowHTML('           <img src="'.$conImgAviso.'" border=0 width=15 height=15 align="center">');
             } else {
               ShowHTML('           <img src="'.$conImgNormal.'" border=0 width=15 height=15 align="center">');

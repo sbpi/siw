@@ -10,7 +10,7 @@ extract($GLOBALS); include_once($w_dir_volta.'classes/db/DatabaseQueriesFactory.
 
 class db_getModMaster {
    function getInstanceOf($dbms, $p_cliente, $p_pessoa, $p_menu) {
-     $sql=$strschema.'SP_GETMODMASTER';
+     extract($GLOBALS,EXTR_PREFIX_SAME,'strchema'); $sql=$strschema.'SP_GETMODMASTER';
      $params=array('p_cliente'                   =>array($p_cliente,                                       B_INTEGER,        32),
                    'p_pessoa'                    =>array($p_pessoa,                                        B_INTEGER,        32),
                    'p_menu'                      =>array($p_menu,                                          B_INTEGER,        32),

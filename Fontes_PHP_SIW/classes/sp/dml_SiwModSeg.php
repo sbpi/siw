@@ -10,7 +10,7 @@ extract($GLOBALS); include_once($w_dir_volta.'classes/db/DatabaseQueriesFactory.
 
 class dml_SiwModSeg {
    function getInstanceOf($dbms, $operacao, $objetivo_especifico, $sq_modulo, $sq_segmento, $comercializar, $ativo) {
-     $sql=$strschema.'sp_putSiwModSeg';
+     extract($GLOBALS,EXTR_PREFIX_SAME,'strchema'); $sql=$strschema.'sp_putSiwModSeg';
      $params=array('operacao'               =>array($operacao,              B_VARCHAR,      1),
                    'objetivo_especifico'    =>array($objetivo_especifico,   B_VARCHAR,   4000),
                    'sq_modulo'              =>array($sq_modulo,             B_NUMERIC,     32),

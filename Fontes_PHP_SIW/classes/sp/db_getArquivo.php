@@ -11,7 +11,7 @@ include_once($w_dir_volta.'classes/db/DatabaseQueriesFactory.php');
 
 class db_getArquivo  {
    function getInstanceOf($dbms, $p_cliente, $p_chave, $p_sq_sistema, $p_nome, $p_tipo_arquivo) {
-     $sql=$strschema.'SP_GETARQUIVO';
+     extract($GLOBALS,EXTR_PREFIX_SAME,'strchema'); $sql=$strschema.'SP_GETARQUIVO';
      $params=array('p_cliente'                   =>array($p_cliente,                                       B_INTEGER,        32),
                    'p_chave'                     =>array(tvl($p_chave),                                    B_INTEGER,        32),
                    'p_sq_sistema'                =>array(tvl($p_sq_sistema),                               B_INTEGER,        32),

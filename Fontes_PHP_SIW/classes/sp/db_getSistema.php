@@ -11,7 +11,7 @@ include_once($w_dir_volta.'classes/db/DatabaseQueriesFactory.php');
 
 class db_getSistema {
    function getInstanceOf($dbms, $p_chave, $p_cliente) {
-     $sql=$strschema.'SP_GETSISTEMA';
+     extract($GLOBALS,EXTR_PREFIX_SAME,'strchema'); $sql=$strschema.'SP_GETSISTEMA';
      $params=array('p_chave'                     =>array(tvl($p_chave),                                    B_INTEGER,        32),
                    'p_cliente'                   =>array($p_cliente,                                       B_INTEGER,        32),
                    'p_result'                    =>array(null,                                             B_CURSOR,         -1)

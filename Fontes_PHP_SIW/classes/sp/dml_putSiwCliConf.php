@@ -12,7 +12,7 @@ class dml_putSiwCliConf {
    function getInstanceOf($dbms, $chave, $tamanho_minimo_senha, $tamanho_maximo_senha, $maximo_tentativas,
         $dias_vigencia_senha, $dias_aviso_expiracao, $smtp_server, $siw_email_nome, $siw_email_conta,
         $siw_email_senha, $logo, $logo1, $fundo, $tipo, $upload_maximo) {
-     $sql=$strschema.'sp_putSiwCliConf';
+     extract($GLOBALS,EXTR_PREFIX_SAME,'strchema'); $sql=$strschema.'sp_putSiwCliConf';
      $params=array('chave'                  =>array($chave,                 B_NUMERIC,     32),
                    'tamanho_minimo_senha'   =>array($tamanho_minimo_senha,  B_NUMERIC,     32),
                    'tamanho_maximo_senha'   =>array($tamanho_maximo_senha,  B_NUMERIC,     32),

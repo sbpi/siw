@@ -11,7 +11,7 @@ include_once($w_dir_volta.'classes/db/DatabaseQueriesFactory.php');
 
 class db_getSPParametro {
    function getInstanceOf($dbms, $p_chave, $p_chave_aux, $p_sq_dado_tipo) {
-     $sql=$strschema.'SP_GETSPPARAMETRO';
+     extract($GLOBALS,EXTR_PREFIX_SAME,'strchema'); $sql=$strschema.'SP_GETSPPARAMETRO';
      $params=array('p_chave'                     =>array($p_chave,                                         B_INTEGER,        32),
                    'p_chave_aux'                 =>array($p_chave_aux,                                     B_INTEGER,        32),
                    'p_sq_dado_tipo'              =>array(tvl($p_sq_dado_tipo),                             B_INTEGER,        32),

@@ -11,7 +11,7 @@ include_once($w_dir_volta.'classes/db/DatabaseQueriesFactory.php');
 
 class db_getStoredProcedure  {
    function getInstanceOf($dbms, $p_cliente, $p_chave, $p_chave_aux, $p_sq_sp_tipo, $p_sq_usuario, $p_sq_sistema, $p_nome, $p_restricao) {
-     $sql=$strschema.'SP_GETSTOREDPROCEDURE';
+     extract($GLOBALS,EXTR_PREFIX_SAME,'strchema'); $sql=$strschema.'SP_GETSTOREDPROCEDURE';
      $params=array('p_cliente'                   =>array($p_cliente,                                       B_INTEGER,        32),
                    'p_chave'                     =>array(tvl($p_chave),                                    B_INTEGER,        32),
                    'p_chave_aux'                 =>array(tvl($p_chave_aux),                                B_INTEGER,        32),

@@ -10,7 +10,7 @@ extract($GLOBALS); include_once($w_dir_volta.'classes/db/DatabaseQueriesFactory.
 
 class dml_SiwMenEnd {
    function getInstanceOf($dbms, $operacao, $p_menu, $p_endereco) {
-     $sql=$strschema.'sp_putSiwMenEnd';
+     extract($GLOBALS,EXTR_PREFIX_SAME,'strchema'); $sql=$strschema.'SP_PUTSIWMENEND';
      $params=array('operacao'       =>array($operacao,      B_VARCHAR,      1),
                    'p_menu'         =>array($p_menu,        B_NUMERIC,     32),
                    'p_endereco'     =>array($p_endereco,    B_NUMERIC,     32)

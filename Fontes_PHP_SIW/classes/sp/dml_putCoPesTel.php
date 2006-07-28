@@ -10,7 +10,7 @@ extract($GLOBALS); include_once($w_dir_volta.'classes/db/DatabaseQueriesFactory.
 
 class dml_PutCoPesTel {
    function getInstanceOf($dbms, $operacao, $chave, $p_pessoa, $p_tipo_telefone, $p_cidade, $p_ddd, $p_numero, $p_padrao) {
-     $sql=$strschema.'sp_putCoPesTel';
+     extract($GLOBALS,EXTR_PREFIX_SAME,'strchema'); $sql=$strschema.'sp_putCoPesTel';
      $params=array('operacao'           =>array($operacao,          B_VARCHAR,      1),
                    'chave'              =>array($chave,             B_NUMERIC,     32),
                    'p_pessoa'           =>array($p_pessoa,          B_NUMERIC,     32),

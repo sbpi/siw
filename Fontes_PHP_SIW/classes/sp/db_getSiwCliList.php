@@ -10,7 +10,7 @@ extract($GLOBALS); include_once($w_dir_volta."classes/db/DatabaseQueriesFactory.
 
 class db_getSiwCliList {
    function getInstanceOf($dbms, $p_pais, $p_uf, $p_cidade, $p_ativo, $p_nome) {
-     $sql=$strschema.'sp_getSiwCliList';
+     extract($GLOBALS,EXTR_PREFIX_SAME,'strchema'); $sql=$strschema.'sp_getSiwCliList';
      $params=array("p_pais"     =>array($p_pais,    B_NUMERIC,     32),
                    "p_uf"       =>array($p_uf,      B_VARCHAR,      3),
                    "p_cidade"   =>array($p_cidade,  B_NUMERIC,     32),

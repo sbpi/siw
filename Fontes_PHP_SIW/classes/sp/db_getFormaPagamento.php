@@ -10,7 +10,7 @@ extract($GLOBALS); include_once($w_dir_volta.'classes/db/DatabaseQueriesFactory.
 
 class db_getFormaPagamento {
    function getInstanceOf($dbms, $p_cliente, $p_chave, $p_chave_aux, $p_restricao, $p_ativo) {
-     $sql=$strschema.'SP_GETFORMAPAGAMENTO';
+     extract($GLOBALS,EXTR_PREFIX_SAME,'strchema'); $sql=$strschema.'SP_GETFORMAPAGAMENTO';
      $params=array('p_cliente'                   =>array($p_cliente,                                       B_INTEGER,        32),
                    'p_chave'                     =>array(tvl($p_chave),                                    B_INTEGER,        32),
                    'p_chave_aux'                 =>array(tvl($p_chave_aux),                                B_VARCHAR,        10),

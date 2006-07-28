@@ -10,7 +10,7 @@ extract($GLOBALS); include_once($w_dir_volta."classes/db/DatabaseQueriesFactory.
 
 class db_getSiwCliData {
    function getInstanceOf($dbms, $p_cnpj) {
-     $sql=$strschema.'sp_getSiwCliData';
+     extract($GLOBALS,EXTR_PREFIX_SAME,'strchema'); $sql=$strschema.'sp_getSiwCliData';
      $params=array("p_cnpj"     =>array($p_cnpj,        B_VARCHAR,   18),
                    "p_result"   =>array(null,           B_CURSOR,    -1)
                   );

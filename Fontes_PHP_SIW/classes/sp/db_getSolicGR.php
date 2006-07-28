@@ -10,7 +10,7 @@ extract($GLOBALS); include_once($w_dir_volta.'classes/db/DatabaseQueriesFactory.
 
 class db_getSolicGR {
    function getInstanceOf($dbms, $p_menu, $p_pessoa, $p_restricao) {
-     $sql=$strschema.'SP_GETSOLICLIST';
+     extract($GLOBALS,EXTR_PREFIX_SAME,'strchema'); $sql=$strschema.'SP_GETSOLICLIST';
      $params=array('p_menu'                      =>array($p_menu,                                          B_INTEGER,        32),
                    'p_pessoa'                    =>array($p_pessoa,                                        B_INTEGER,        32),
                    'p_restricao'                 =>array($p_restricao,                                     B_VARCHAR,        20),

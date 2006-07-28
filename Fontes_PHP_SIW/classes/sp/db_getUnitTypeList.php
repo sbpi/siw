@@ -10,7 +10,7 @@ extract($GLOBALS); include_once($w_dir_volta.'classes/db/DatabaseQueriesFactory.
 
 class db_getUnitTypeList {
    function getInstanceOf($dbms, $p_sq_pessoa, $p_nome, $p_ativo) {
-     $sql=$strschema.'SP_GETUNITTYPELIST';
+     extract($GLOBALS,EXTR_PREFIX_SAME,'strchema'); $sql=$strschema.'SP_GETUNITTYPELIST';
      $params=array('p_sq_pessoa'                 =>array($p_sq_pessoa,                                     B_INTEGER,        32),
                    'p_nome'                      =>array($p_nome,                                          B_VARCHAR,        25),
                    'p_ativo'                     =>array($p_ativo,                                         B_VARCHAR,         1),

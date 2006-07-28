@@ -10,7 +10,7 @@ extract($GLOBALS); include_once($w_dir_volta.'classes/db/DatabaseQueriesFactory.
 
 class db_getTramiteSolic {
    function getInstanceOf($dbms, $p_chave, $p_chave_aux, $p_endereco, $p_restricao) {
-     $sql=$strschema.'SP_GETTRAMITESOLIC';
+     extract($GLOBALS,EXTR_PREFIX_SAME,'strchema'); $sql=$strschema.'SP_GETTRAMITESOLIC';
      $params=array('p_chave'                     =>array($p_chave,                                         B_INTEGER,        32),
                    'p_chave_aux'                 =>array($p_chave_aux,                                     B_INTEGER,        32),
                    'p_endereco'                  =>array(tvl($p_endereco),                                 B_INTEGER,        32),

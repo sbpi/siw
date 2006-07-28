@@ -11,7 +11,7 @@ include_once($w_dir_volta.'classes/db/DatabaseQueriesFactory.php');
 
 class db_getProcTabs  {
    function getInstanceOf($dbms, $p_sq_procedure, $p_sq_tabela) {
-     $sql=$strschema.'SP_GETPROCSP';
+     extract($GLOBALS,EXTR_PREFIX_SAME,'strchema'); $sql=$strschema.'SP_GETPROCSP';
      $params=array('p_sq_procedure'              =>array(tvl($p_sq_procedure),                             B_INTEGER,        32),
                    'p_sq_tabela'                 =>array(tvl($p_sq_tabela),                                B_INTEGER,        32),
                    'p_result'                    =>array(null,                                             B_CURSOR,         -1)

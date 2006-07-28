@@ -10,7 +10,7 @@ extract($GLOBALS); include_once($w_dir_volta."classes/db/DatabaseQueriesFactory.
 
 class db_getPersonData {
    function getInstanceOf($dbms, $p_cliente, $p_sq_pessoa, $p_cpf, $p_cnpj) {
-     $sql=$strschema.'sp_getPersonData';
+     extract($GLOBALS,EXTR_PREFIX_SAME,'strchema'); $sql=$strschema.'sp_getPersonData';
      $params=array("p_cliente"    =>array($p_cliente,     B_NUMERIC,   32),
                    "p_sq_pessoa"  =>array($p_sq_pessoa,   B_NUMERIC,   32),
                    "p_cpf"        =>array($p_cpf,         B_VARCHAR,   14),

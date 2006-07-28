@@ -10,7 +10,7 @@ extract($GLOBALS); include_once($w_dir_volta."classes/db/DatabaseQueriesFactory.
 
 class db_getFormationList {
    function getInstanceOf($dbms, $p_tipo, $p_nome, $p_ativo) {
-     $sql=$strschema.'sp_getFormatList';
+     extract($GLOBALS,EXTR_PREFIX_SAME,'strchema'); $sql=$strschema.'sp_getFormatList';
      $params=array("p_tipo"         =>array($p_tipo,        B_VARCHAR,     20),
                    "p_nome"         =>array($p_nome,        B_VARCHAR,     50),
                    "p_ativo"        =>array($p_ativo,       B_VARCHAR,      1),

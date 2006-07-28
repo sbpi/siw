@@ -12,7 +12,7 @@ class dml_putSiwCliente {
    function getInstanceOf($dbms, $operacao, $p_chave, $p_cliente, $p_nome, $p_nome_resumido, $p_inicio_atividade,
         $p_cnpj, $p_sede, $p_inscricao_estadual, $p_cidade, $p_minimo_senha, $p_maximo_senha,
         $p_dias_vigencia, $p_aviso_expiracao, $p_maximo_tentativas, $p_agencia_padrao, $p_segmento) {
-     $sql=$strschema.'sp_putSiwCliente';
+     extract($GLOBALS,EXTR_PREFIX_SAME,'strchema'); $sql=$strschema.'sp_putSiwCliente';
      $params=array('operacao'               =>array($operacao,              B_VARCHAR,      1),
                    'p_chave'                =>array($p_chave,               B_NUMERIC,     32),
                    'cliente'                =>array($cliente,               B_NUMERIC,     32),

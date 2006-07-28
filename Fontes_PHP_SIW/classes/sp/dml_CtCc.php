@@ -10,7 +10,7 @@ extract($GLOBALS); include_once($w_dir_volta.'classes/db/DatabaseQueriesFactory.
 
 class dml_CtCc {
    function getInstanceOf($dbms, $operacao, $chave, $sq_cc_pai, $cliente, $nome, $descricao, $sigla, $receita, $regular, $ativo) {
-     $sql=$strschema.'sp_putCtCc';
+     extract($GLOBALS,EXTR_PREFIX_SAME,'strchema'); $sql=$strschema.'sp_putCtCc';
      $params=array('operacao'   =>array($operacao,  B_VARCHAR,      1),
                    'chave'      =>array($chave,     B_NUMERIC,     32),
                    'sq_cc_pai'  =>array($sq_cc_pai, B_NUMERIC,     32),

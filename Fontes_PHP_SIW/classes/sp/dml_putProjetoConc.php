@@ -10,7 +10,7 @@ extract($GLOBALS); include_once($w_dir_volta.'classes/db/DatabaseQueriesFactory.
 
 class dml_putProjetoConc {
    function getInstanceOf($dbms, $p_menu, $p_chave, $p_pessoa, $p_tramite, $p_inicio_real, $p_fim_real, $p_nota_conclusao, $p_custo_real) {
-     $sql=$strschema.'SP_PUTPROJETOCONC';
+     extract($GLOBALS,EXTR_PREFIX_SAME,'strchema'); $sql=$strschema.'SP_PUTPROJETOCONC';
      $params=array('p_menu'                      =>array($p_menu,                                          B_INTEGER,        32),
                    'p_chave'                     =>array($p_chave,                                         B_INTEGER,        32),
                    'p_pessoa'                    =>array($p_pessoa,                                        B_INTEGER,        32),

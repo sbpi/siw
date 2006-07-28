@@ -10,7 +10,7 @@ extract($GLOBALS); include_once($w_dir_volta."classes/db/DatabaseQueriesFactory.
 
 class db_getModData {
    function getInstanceOf($dbms, $p_modulo) {
-     $sql=$strschema.'sp_getModData';
+     extract($GLOBALS,EXTR_PREFIX_SAME,'strchema'); $sql=$strschema.'sp_getModData';
      $params=array("p_modulo"   =>array($p_modulo,      B_NUMERIC,   32),
                    "p_result"   =>array(null,           B_CURSOR,    -1)
                   );

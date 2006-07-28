@@ -10,7 +10,7 @@ extract($GLOBALS); include_once($w_dir_volta.'classes/db/DatabaseQueriesFactory.
 
 class dml_CoRegiao {
    function getInstanceOf($dbms, $operacao, $chave, $p_sq_pais, $p_nome, $p_sigla, $p_ordem) {
-     $sql=$strschema.'sp_putCoRegiao';
+     extract($GLOBALS,EXTR_PREFIX_SAME,'strchema'); $sql=$strschema.'sp_putCoRegiao';
      $params=array('operacao'          =>array($operacao,          B_VARCHAR,      1),
                    'chave'             =>array($chave,             B_NUMERIC,     32),
                    'p_sq_pais'         =>array($p_sq_pais,         B_NUMERIC,     32),

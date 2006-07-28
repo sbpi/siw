@@ -10,7 +10,7 @@ extract($GLOBALS); include_once($w_dir_volta.'classes/db/DatabaseQueriesFactory.
 
 class db_getEOUnitPaiList {
    function getInstanceOf($dbms, $operacao, $p_sq_pessoa, $p_sq_unidade) {
-     $sql=$strschema.'SP_GETUNITPAILIST';
+     extract($GLOBALS,EXTR_PREFIX_SAME,'strchema'); $sql=$strschema.'SP_GETUNITPAILIST';
      $params=array('p_operacao'                  =>array($operacao,                                        B_VARCHAR,         1),
                    'p_sq_pessoa'                 =>array(tvl($p_sq_pessoa),                                B_INTEGER,        32),
                    'p_sq_unidade'                =>array(tvl($p_sq_unidade),                               B_INTEGER,        32),

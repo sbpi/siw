@@ -10,7 +10,7 @@ extract($GLOBALS); include_once($w_dir_volta.'classes/db/DatabaseQueriesFactory.
 
 class dml_sgpesMod {
    function getInstanceOf($dbms, $operacao, $chave, $cliente, $sq_modulo, $sq_endereco) {
-     $sql=$strschema.'SP_PUTSGPESMOD';
+     extract($GLOBALS,EXTR_PREFIX_SAME,'strchema'); $sql=$strschema.'SP_PUTSGPESMOD';
      $params=array('p_operacao'                  =>array($operacao,                                        B_VARCHAR,         1),
                    'p_chave'                     =>array(tvl($chave),                                      B_INTEGER,        32),
                    'p_cliente'                   =>array(tvl($cliente),                                    B_INTEGER,        32),

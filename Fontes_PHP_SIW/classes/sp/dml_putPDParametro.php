@@ -12,7 +12,7 @@ include_once($w_dir_volta.'classes/db/DatabaseQueriesFactory.php');
 class dml_putPDParametro {
    function getInstanceOf($dbms, $p_cliente, $p_sequencial, $p_ano_corrente, $p_prefixo, $p_sufixo, $p_dias_antecedencia, 
             $p_dias_prest_contas, $p_limite_unidade) {
-     $sql=$strschema.'SP_PUTPDPARAMETRO';
+     extract($GLOBALS,EXTR_PREFIX_SAME,'strchema'); $sql=$strschema.'SP_PUTPDPARAMETRO';
      $params=array('p_cliente'                   =>array(tvl($p_cliente),                                  B_INTEGER,        32),
                    'p_sequencial'                =>array(tvl($p_sequencial),                               B_INTEGER,        32),
                    'p_ano_corrente'              =>array(tvl($p_ano_corrente),                             B_INTEGER,        32),

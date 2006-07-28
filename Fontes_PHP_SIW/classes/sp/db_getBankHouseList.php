@@ -10,7 +10,7 @@ extract($GLOBALS); include_once($w_dir_volta."classes/db/DatabaseQueriesFactory.
 
 class db_getBankHouseList {
    function getInstanceOf($dbms, $p_chave, $p_ordena) {
-     $sql=$strschema.'sp_getBankHousList';
+     extract($GLOBALS,EXTR_PREFIX_SAME,'strchema'); $sql=$strschema.'sp_getBankHousList';
      $params=array("p_chave"    =>array($p_chave,       B_NUMERIC,     32),
                    "p_ordena"   =>array($p_ordena,      B_VARCHAR,     40),
                    "p_codigo"   =>array($p_codigo,      B_VARCHAR,     30),

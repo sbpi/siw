@@ -11,7 +11,7 @@ include_once($w_dir_volta.'classes/db/DatabaseQueriesFactory.php');
 
 class dml_putTTRamalUsuario {
    function getInstanceOf($dbms, $operacao, $p_chave, $p_chave_aux, $p_chave_aux2, $p_inicio, $p_fim) {
-     $sql=$strschema.'SP_PUTTTRAMALUSUARIO';
+     extract($GLOBALS,EXTR_PREFIX_SAME,'strchema'); $sql=$strschema.'SP_PUTTTRAMALUSUARIO';
      $params=array('p_operacao'                  =>array($operacao,                                        B_VARCHAR,         1),
                    'p_chave'                     =>array($p_chave,                                         B_INTEGER,        18),
                    'p_chave_aux'                 =>array($p_chave_aux,                                     B_INTEGER,        18),

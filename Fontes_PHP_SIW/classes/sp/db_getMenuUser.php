@@ -10,7 +10,7 @@ extract($GLOBALS); include_once($w_dir_volta."classes/db/DatabaseQueriesFactory.
 
 class db_getMenuUser {
    function getInstanceOf($dbms, $p_cliente, $p_sq_menu, $p_chaveAux, $p_retorno, $p_nome, $p_sq_unidade, $p_acesso) {
-     $sql=$strschema.'sp_getMenuUser';
+     extract($GLOBALS,EXTR_PREFIX_SAME,'strchema'); $sql=$strschema.'sp_getMenuUser';
      $params=array("p_cliente"      =>array($p_cliente,     B_NUMERIC,   32),
                    "p_sq_menu"      =>array($p_sq_menu,     B_NUMERIC,   32),
                    "p_chaveAux"     =>array($p_chaveAux,    B_NUMERIC,   32),

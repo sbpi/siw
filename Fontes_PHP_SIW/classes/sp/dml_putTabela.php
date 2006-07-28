@@ -11,7 +11,7 @@ include_once($w_dir_volta.'classes/db/DatabaseQueriesFactory.php');
 
 class dml_putTabela {
    function getInstanceOf($dbms, $operacao, $p_chave, $p_sq_tabela_tipo, $p_sq_usuario, $p_sq_sistema, $p_nome, $p_descricao) {
-     $sql=$strschema.'SP_PUTTABELA';
+     extract($GLOBALS,EXTR_PREFIX_SAME,'strchema'); $sql=$strschema.'SP_PUTTABELA';
      $params=array('p_operacao'                  =>array($operacao,                                        B_VARCHAR,         1),
                    'p_chave'                     =>array(tvl($p_chave),                                    B_INTEGER,        32),
                    'p_sq_tabela_tipo'            =>array(tvl($p_sq_tabela_tipo),                           B_INTEGER,        32),

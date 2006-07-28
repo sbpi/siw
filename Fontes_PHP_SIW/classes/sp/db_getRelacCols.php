@@ -11,7 +11,7 @@ include_once($w_dir_volta.'classes/db/DatabaseQueriesFactory.php');
 
 class db_getRelacCols  {
    function getInstanceOf($dbms, $p_chave, $p_sq_coluna) {
-     $sql=$strschema.'SP_GETRELACCOLS';
+     extract($GLOBALS,EXTR_PREFIX_SAME,'strchema'); $sql=$strschema.'SP_GETRELACCOLS';
      $params=array('p_chave'                     =>array(tvl($p_chave),                                    B_INTEGER,        32),
                    'p_sq_coluna'                 =>array(tvl($p_sq_coluna),                                B_INTEGER,        32),
                    'p_result'                    =>array(null,                                             B_CURSOR,         -1)

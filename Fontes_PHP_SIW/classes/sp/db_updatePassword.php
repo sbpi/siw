@@ -10,7 +10,7 @@ extract($GLOBALS); include_once($w_dir_volta."classes/db/DatabaseQueriesFactory.
 
 class db_updatePassword {
    function getInstanceOf($dbms, $p_cliente, $p_sq_pessoa, $p_valor, $p_tipo) {
-     $sql=$strschema.'sp_updatePassword';
+     extract($GLOBALS,EXTR_PREFIX_SAME,'strchema'); $sql=$strschema.'sp_updatePassword';
      $params=array("p_cliente"      =>array($p_cliente,     B_NUMERIC,     32),
                    "p_sq_pessoa"    =>array($p_sq_pessoa,   B_NUMERIC,     32),
                    "p_valor"        =>array($p_valor,       B_VARCHAR,     255),

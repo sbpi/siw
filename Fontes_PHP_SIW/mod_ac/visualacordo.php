@@ -345,9 +345,9 @@ function VisualAcordo($l_chave,$l_O,$l_usuario,$l_P1,$l_P4) {
       if (Nvl($w_sg_tramite,'-')=='CR' && $w_fim-f($row,'vencimento')<0) {
         $w_html.=chr(13).'           <img src="'.$conImgCancel.'" border=0 width=15 heigth=15 align="center" title="Parcela cancelada!">';
       } elseif (Nvl(f($row,'quitacao'),'nulo')=='nulo') {
-        if (f($row,'vencimento')<time())  {
+        if (f($row,'vencimento')<addDays(time(),-1))  {
           $w_html.=chr(13).'           <img src="'.$conImgAtraso.'" border=0 width=15 heigth=15 align="center">';
-        } elseif (f($row,'vencimento')-time()<=5) {
+        } elseif (f($row,'vencimento')-addDays(time(),-1)<=5) {
           $w_html.=chr(13).'           <img src="'.$conImgAviso.'" border=0 width=15 height=15 align="center">';
         } else {
           $w_html.=chr(13).'           <img src="'.$conImgNormal.'" border=0 width=15 height=15 align="center">';

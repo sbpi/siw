@@ -11,7 +11,7 @@ include_once($w_dir_volta.'classes/db/DatabaseQueriesFactory.php');
 
 class dml_putAgreeType {
    function getInstanceOf($dbms, $operacao, $p_chave, $p_chave_pai, $p_cliente, $p_nome, $p_sigla, $p_modalidade, $p_prazo_indeterm, $p_pessoa_juridica, $p_pessoa_fisica, $p_ativo) {
-     $sql=$strschema.'SP_PUTAGREETYPE';
+     extract($GLOBALS,EXTR_PREFIX_SAME,'strchema'); $sql=$strschema.'SP_PUTAGREETYPE';
      $params=array('p_operacao'                  =>array($operacao,                                        B_VARCHAR,         1),
                    'p_chave'                     =>array(tvl($p_chave),                                    B_INTEGER,        32),
                    'p_chave_pai'                 =>array(tvl($p_chave_pai),                                B_INTEGER,        32),

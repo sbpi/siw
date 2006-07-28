@@ -9,7 +9,12 @@ extract($GLOBALS); include_once($w_dir_volta.'classes/db/DatabaseQueriesFactory.
 */
 
 class dml_putProjetoGeral {
-   function getInstanceOf($dbms, $operacao, $p_chave, $p_menu, $p_unidade, $p_solicitante, $p_proponente, $p_cadastrador, $p_executor, $p_sqcc, $p_descricao, $p_justificativa, $p_inicio, $p_fim, $p_valor, $p_data_hora, $p_unid_resp, $p_assunto, $p_prioridade, $p_aviso, $p_dias, $p_cidade, $p_palavra_chave, $p_vincula_contrato, $p_vincula_viagem, $p_sq_acao_ppa, $p_sq_orprioridade, $p_selecionada_mpog, $p_selecionada_relev, $p_sq_tipo_pessoa, $p_chave_nova, $p_copia) {
+   function getInstanceOf($dbms, $operacao, $p_chave, $p_menu, $p_unidade, $p_solicitante, $p_proponente, $p_cadastrador, 
+        $p_executor, $p_sqcc, $p_solic_pai, $p_descricao, $p_justificativa, $p_inicio, $p_fim, $p_valor, $p_data_hora, 
+        $p_unid_resp, $p_assunto, $p_prioridade, $p_aviso, $p_dias, $p_cidade, $p_palavra_chave, $p_vincula_contrato, 
+        $p_vincula_viagem, $p_sq_acao_ppa, $p_sq_orprioridade, $p_selecionada_mpog, $p_selecionada_relev, $p_sq_tipo_pessoa, 
+        $p_chave_nova, $p_copia) {
+     extract($GLOBALS,EXTR_PREFIX_SAME,'strchema'); 
      $sql=$strschema.'SP_PUTPROJETOGERAL';
      $params=array('p_operacao'                  =>array($operacao,                                        B_VARCHAR,         1),
                    'p_chave'                     =>array(tvl($p_chave),                                    B_INTEGER,        32),
@@ -21,11 +26,12 @@ class dml_putProjetoGeral {
                    'p_cadastrador'               =>array(tvl($p_cadastrador),                              B_INTEGER,        32),
                    'p_executor'                  =>array(tvl($p_executor),                                 B_INTEGER,        32),
                    'p_sqcc'                      =>array(tvl($p_sqcc),                                     B_INTEGER,        32),
+                   'p_solic_pai'                 =>array(tvl($p_solic_pai),                                B_INTEGER,        32),
                    'p_descricao'                 =>array(tvl($p_descricao),                                B_VARCHAR,      2000),
                    'p_justificativa'             =>array(tvl($p_justificativa),                            B_VARCHAR,      2000),
                    'p_inicio'                    =>array(tvl($p_inicio),                                   B_DATE,           32),
                    'p_fim'                       =>array(tvl($p_fim),                                      B_DATE,           32),
-                   'p_valor'                     =>array(tvl($p_valor),                                    B_NUMERIC,      18,2),
+                   'p_valor'                     =>array(toNumber(tvl($p_valor)),                          B_NUMERIC,      18,2),
                    'p_data_hora'                 =>array(tvl($p_data_hora),                                B_VARCHAR,         1),
                    'p_unid_resp'                 =>array(tvl($p_unid_resp),                                B_INTEGER,        32),
                    'p_assunto'                   =>array(tvl($p_assunto),                                  B_VARCHAR,      2000),

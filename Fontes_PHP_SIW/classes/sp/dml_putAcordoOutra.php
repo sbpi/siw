@@ -16,7 +16,7 @@ class dml_putAcordoOutra  {
         $p_nr_celular, $p_email, $p_sq_agencia, $p_op_conta, $p_nr_conta, $p_sq_pais_estrang, $p_aba_code, $p_swift_code, 
         $p_endereco_estrang, $p_banco_estrang, $p_agencia_estrang, $p_cidade_estrang, $p_informacoes, $p_codigo_deposito, 
         $p_pessoa_atual) {
-     $sql=$strschema.'SP_PUTACORDOOUTRA';
+     extract($GLOBALS,EXTR_PREFIX_SAME,'strchema'); $sql=$strschema.'SP_PUTACORDOOUTRA';
      $params=array('p_operacao'                  =>array($operacao,                                        B_VARCHAR,         1),
                    'p_restricao'                 =>array($p_restricao,                                     B_VARCHAR,        10),
                    'p_chave'                     =>array(tvl($p_chave),                                    B_INTEGER,        32),

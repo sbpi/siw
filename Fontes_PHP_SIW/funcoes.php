@@ -135,8 +135,9 @@ function headerWord($p_orientation='LANDSCAPE') {
   ShowHTML(' /* Style Definitions */ ');
   ShowHTML('@page Section1 ');
   if (strtoupper(Nvl($p_orientation,'LANDSCAPE'))=='PORTRAIT') {
-     ShowHTML('    {mso-page-orientation:portrait; ');
-     ShowHTML('    margin:1.0cm 1.0cm 2.0cm 2.0cm; ');
+     ShowHTML('    {size:8.5in 11.0in; ');
+     ShowHTML('    mso-page-orientation:landscape; ');
+     ShowHTML('    margin:2.0cm 2.0cm 2.0cm 2.0cm; ');
      ShowHTML('    mso-header-margin:35.4pt; ');
      ShowHTML('    mso-footer-margin:35.4pt; ');
      ShowHTML('    mso-paper-source:0;} ');
@@ -153,8 +154,7 @@ function headerWord($p_orientation='LANDSCAPE') {
   ShowHTML('--> ');
   ShowHTML('</style> ');
   ShowHTML('</head> ');
-  ShowHTML('<LINK  media=screen href="/siw/files/'.$p_cliente.'/css/estilo.css" type=text/css rel=stylesheet>');
-  ShowHTML('<LINK media=print href="/siw/files/'.$p_cliente.'/css/print.css" type=text/css rel=stylesheet>');
+  ShowHTML('<BASE HREF="'.$conRootSIW.'">');
   BodyOpen('onLoad=document.focus();');
   ShowHTML('<div class=Section1> ');
 }
@@ -276,6 +276,16 @@ function SolicAcesso($p_solicitacao,$p_usuario) {
   extract($GLOBALS);
   $l_acesso = db_getSolicAcesso::getInstanceOf($dbms, $p_solicitacao, $p_usuario);
   return $l_acesso;
+}
+
+// =========================================================================
+// Função que retorna S/N indicando se há expediente na data informada
+// -------------------------------------------------------------------------
+function RetornaExpediente($p_data, $p_cliente, $p_pais, $p_uf, $p_cidade) {
+  extract($GLOBALS);
+  include_once($w_dir_volta.'classes/sp/db_VerificaDataEspecial.php');
+  $l_expediente = db_VerificaDataEspecial::getInstanceOf($dbms,$p_data, $p_cliente, $p_pais, $p_uf, $p_cidade);
+  return $l_expediente;
 }
 
 // =========================================================================
@@ -684,6 +694,7 @@ function RetornaCliente() {
 // ou do módulo ao qual a solicitação pertence
 // -------------------------------------------------------------------------
 function RetornaGestor($p_solicitacao,$p_usuario) {
+  include_once($w_dir_volta.'classes/sp/db_getGestor.php');
   extract($GLOBALS);
   $l_acesso = db_getGestor::getInstanceOf($dbms,$p_solicitacao, $p_usuario);
   return $l_acesso;
@@ -1344,11 +1355,15 @@ function VerificaAssinaturaEletronica($Usuario,$Senha) {
 // -------------------------------------------------------------------------
 function FormataDataEdicao($w_dt_grade, $w_formato=1) { 
   if (nvl($w_dt_grade,'')>'') {
-    switch ($w_formato){
-      case 1: return date('d/m/Y',$w_dt_grade);                         break;
-      case 2: return date('H:i:s',$w_dt_grade);                         break;
-      case 3: return date('d/m/Y, H:i:s',$w_dt_grade);                  break;
-      case 4: return diaSemana(date('l, d/m/Y, H:i:s',$w_dt_grade));    break;
+    if (is_numeric($w_dt_grade)) {
+      switch ($w_formato){
+        case 1: return date('d/m/Y',$w_dt_grade);                         break;
+        case 2: return date('H:i:s',$w_dt_grade);                         break;
+        case 3: return date('d/m/Y, H:i:s',$w_dt_grade);                  break;
+        case 4: return diaSemana(date('l, d/m/Y, H:i:s',$w_dt_grade));    break;
+      }
+    } else {
+      return $w_dt_grade;
     }
   } else {
     return null;
@@ -1364,7 +1379,7 @@ function first_day($w_valor) {
   $l_valor  = FormataDataEdicao($w_valor);
   $l_mes    = substr($l_valor,3,2);
   $l_ano    = substr($l_valor,6,4);
-  return '01'.substr($l_valor,2,1).$l_mes.substr($l_valor,2,1).$l_ano;
+  return mktime(0,0,0,$l_mes,1,$l_ano);
 } 
 
 // =========================================================================
@@ -1459,6 +1474,18 @@ function diaSemana($l_data) {
     }
   } else {
     return null;
+  }
+}
+
+// =========================================================================
+// Função para retornar a strig 'Sim' ou 'Não'
+// -------------------------------------------------------------------------
+function retornaSimNao($chave) {
+  extract($GLOBALS);
+  switch ($chave) {
+    case 'S': return 'Sim';  break;
+    case 'N': return 'Não';  break;
+    default:  return 'Não';
   }
 }
 

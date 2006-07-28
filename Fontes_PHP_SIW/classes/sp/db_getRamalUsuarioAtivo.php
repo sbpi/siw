@@ -11,7 +11,7 @@ include_once($w_dir_volta.'classes/db/DatabaseQueriesFactory.php');
 
 class db_getRamalUsuarioAtivo {
    function getInstanceOf($dbms, $p_cliente) {
-     $sql=$strschema.'SP_GETTTRAMALUSUARIOATIVO';
+     extract($GLOBALS,EXTR_PREFIX_SAME,'strchema'); $sql=$strschema.'SP_GETTTRAMALUSUARIOATIVO';
      $params=array('p_cliente'                   =>array($p_cliente,                                       B_INTEGER,        18),
                    'p_result'                    =>array(null,                                             B_CURSOR,         -1)
                   );

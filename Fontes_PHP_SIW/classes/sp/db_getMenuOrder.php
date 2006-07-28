@@ -10,7 +10,7 @@ extract($GLOBALS); include_once($w_dir_volta."classes/db/DatabaseQueriesFactory.
 
 class db_getMenuOrder {
    function getInstanceOf($dbms, $p_cliente, $p_chave, $p_chave_aux, $p_ultimo_nivel) {
-     $sql=$strschema.'sp_getMenuOrder';
+     extract($GLOBALS,EXTR_PREFIX_SAME,'strchema'); $sql=$strschema.'sp_getMenuOrder';
      $params=array("p_cliente"      =>array($p_cliente,          B_NUMERIC,   32),
                    "p_chave"        =>array($p_chave,            B_NUMERIC,   32),
                    "p_chave_aux"    =>array($p_chave_aux,        B_NUMERIC,   32),

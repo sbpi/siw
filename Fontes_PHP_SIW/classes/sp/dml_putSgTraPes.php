@@ -10,7 +10,7 @@ extract($GLOBALS); include_once($w_dir_volta.'classes/db/DatabaseQueriesFactory.
 
 class dml_putSgTraPes {
    function getInstanceOf($dbms, $operacao, $p_pessoa, $p_tramite, $p_endereco) {
-     $sql=$strschema.'sp_putSgTraPes';
+     extract($GLOBALS,EXTR_PREFIX_SAME,'strchema'); $sql=$strschema.'SP_PUTSGTRAPES';
      $params=array('operacao'       =>array($operacao,      B_VARCHAR,      1),
                    'p_pessoa'       =>array($p_pessoa,      B_NUMERIC,     32),
                    'p_tramite'      =>array($p_tramite,     B_NUMERIC,     32),

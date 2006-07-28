@@ -10,7 +10,7 @@ extract($GLOBALS); include_once($w_dir_volta.'classes/db/DatabaseQueriesFactory.
 
 class db_getCNPJCPF {
    function getInstanceOf($dbms, $p_tipo, $p_valor) {
-     $sql=$strschema.'GERACPFESPECIAL';
+     extract($GLOBALS,EXTR_PREFIX_SAME,'strchema'); $sql=$strschema.'GERACPFESPECIAL';
      $params=array('p_valor'                     =>array(null,                                             B_VARCHAR,        20),
                    'p_tipo'                      =>array($p_tipo,                                          B_INTEGER,        32),
                    'p_result'                    =>array(null,                                             B_CURSOR,         -1)

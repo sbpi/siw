@@ -11,7 +11,7 @@ include_once($w_dir_volta.'classes/db/DatabaseQueriesFactory.php');
 
 class db_getTTRamal {
    function getInstanceOf($dbms, $p_chave, $p_sq_central_fone, $p_codigo, $p_restricao) {
-     $sql=$strschema.'SP_GETTTRAMAL';
+     extract($GLOBALS,EXTR_PREFIX_SAME,'strchema'); $sql=$strschema.'SP_GETTTRAMAL';
      $params=array('p_chave'                     =>array(tvl($p_chave),                                    B_INTEGER,        18),
                    'p_sq_central_fone'           =>array(tvl($p_sq_central_fone),                          B_INTEGER,        18),
                    'p_codigo'                    =>array(tvl($p_codigo),                                   B_VARCHAR,         4),

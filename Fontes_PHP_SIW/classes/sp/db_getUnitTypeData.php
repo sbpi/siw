@@ -10,7 +10,7 @@ extract($GLOBALS); include_once($w_dir_volta.'classes/db/DatabaseQueriesFactory.
 
 class db_getUnitTypeData {
    function getInstanceOf($dbms, $p_sq_tipo_unidade) {
-     $sql=$strschema.'SP_GETUNITTYPEDATA';
+     extract($GLOBALS,EXTR_PREFIX_SAME,'strchema'); $sql=$strschema.'SP_GETUNITTYPEDATA';
      $params=array('p_sq_tipo_unidade'           =>array($p_sq_tipo_unidade,                               B_INTEGER,        32),
                    'p_result'                    =>array(null,                                             B_CURSOR,         -1)
                   );

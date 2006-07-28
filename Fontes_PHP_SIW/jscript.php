@@ -158,6 +158,82 @@ function CompData($Date1,$DisplayName1,$Operator,$Date2,$DisplayName2) {
   print "  } "."\r\n";
 }
 
+function CompHora ($hour1, $DisplayName1, $Operator, $hour2, $DisplayName2) {
+  switch ($Operator) {
+    case "==":  $w_Operator=" igual a ";            break;
+    case "!=":  $w_Operator=" diferente de ";       break;
+    case ">":   $w_Operator=" maior que ";          break;
+    case "<":   $w_Operator=" menor que ";          break;
+    case ">=":  $w_Operator=" maior ou igual a ";   break;
+    case "=>":  $w_Operator=" maior ou igual a ";   break;
+    case "<=":  $w_Operator=" menor ou igual a ";   break;
+    case "=<":  $w_Operator=" menor ou igual a ";   break;
+  }
+  print "  var D1 = theForm.".$hour1.".value; "."\r\n";
+  if (strpos("1234567890", substr($hour2,0,1))===false) {
+    print "   var D2 = theForm.".$hour2.".value;"."\r\n";
+  } else {
+    print "   var D2 = '".$hour2."';"."\r\n";
+  }
+  print "  if (D1.length != 0 && D2.length != 0) { "."\r\n";
+  print "   var h1; "."\r\n";
+  print "   var h2; "."\r\n";
+  print "   h1 = D1.substr(0,2) + D1.substr(3,2); "."\r\n";
+  print "   h2 = D2.substr(0,2) + D2.substr(3,2); "."\r\n";
+  print "   if (!(parseFloat(h1) ".$Operator." parseFloat(h2))) { "."\r\n";
+  print "      alert('".$DisplayName1." deve ser ".$w_Operator.$DisplayName2.".'); "."\r\n";
+  print "      theForm.".$hour1.".focus(); "."\r\n";
+  print "      return (false); "."\r\n";
+  print "   } "."\r\n";
+  print " } "."\r\n";
+}
+
+function CompValor ($Valor1, $DisplayName1, $Operator, $Valor2, $DisplayName2) {
+  switch ($Operator) {
+    case "==":  $w_Operator=" igual a ";            break;
+    case "!=":  $w_Operator=" diferente de ";       break;
+    case ">":   $w_Operator=" maior que ";          break;
+    case "<":   $w_Operator=" menor que ";          break;
+    case ">=":  $w_Operator=" maior ou igual a ";   break;
+    case "=>":  $w_Operator=" maior ou igual a ";   break;
+    case "<=":  $w_Operator=" menor ou igual a ";   break;
+    case "=<":  $w_Operator=" menor ou igual a ";   break;
+  }
+  print "  var V1 = theForm." . $Valor1 . ".value; "."\r\n";
+  if (strpos("1234567890", substr($Valor2,0,1))===false) {
+    print "   var V2 = theForm." . $Valor2 . ".value;"."\r\n";
+  } else {
+    print "   var V2 = '" . $Valor2 . "';"."\r\n";
+  }
+  print "  if (V1.length != 0 && V2.length != 0) { "."\r\n";
+  print "     V1 = V1.toString().replace(/\\$|\\./g,''); "."\r\n";
+  print "     V2 = V2.toString().replace(/\\$|\\./g,''); "."\r\n";
+  print "     V1 = V1.toString().replace(',','.'); "."\r\n";
+  print "     V2 = V2.toString().replace(',','.'); "."\r\n";
+  print "     if (isNaN(V1)) { "."\r\n";
+  print "        alert('" . $DisplayName1 . " não é um valor válido!.'); "."\r\n";
+  print "        theForm." . $Valor1 . ".focus(); "."\r\n";
+  print "        return false; "."\r\n";
+  print "     } "."\r\n";
+  print "     if (isNaN(V2)) { "."\r\n";
+  print "        alert('" . $DisplayName2 . " não é um valor válido!.'); "."\r\n";
+  if (strpos("1234567890",substr($Valor2,0,1))===false) {
+     print "        theForm." . $Valor2 . ".focus(); "."\r\n";
+  } else {
+     print "        theForm." . $Valor1 . ".focus(); "."\r\n";
+  }
+  print "        return false; "."\r\n";
+  print "     } "."\r\n";
+  print "     var v1 = parseFloat(V1);"."\r\n";
+  print "     var v2 = parseFloat(V2);"."\r\n";
+  print "     if (!(v1 " . $Operator . " v2)) { "."\r\n";
+  print "        alert('" . $DisplayName1 . " deve ser " .$w_Operator . $DisplayName2 . ".'); "."\r\n";
+  print "        theForm." . $Valor1 . ".focus(); "."\r\n";
+  print "        return false; "."\r\n";
+  print "     } "."\r\n";
+  print "  } "."\r\n";
+}
+
 function toMoney() {
   print " function toMoney(campo, fmt) { "."\r\n";
   print "  num = campo.toString().replace(/\$|\,/g,''); "."\r\n";
@@ -227,6 +303,22 @@ function FormataData() {
   print "      } "."\r\n";
   print "   } "."\r\n";
   print "} "."\r\n";
+}
+
+function FormataHora() {
+ print "function FormataHora(campo, teclapres) { " ."\r\n";
+ print "    var tecla = teclapres.keyCode; " ."\r\n";
+ print "    vr = campo.value; " ."\r\n";
+ print "    vr = vr.replace( ':', '' ); " ."\r\n";
+ print "    tam = vr.length + 1; " ."\r\n";
+ print "    if (tecla == 8 ){    tam = tam - 1 ; } " ."\r\n";
+ print "    if ( tecla != 9 && tecla != 8 ){ " ."\r\n";
+ print "    if ( tecla == 8 || tecla >= 48 && tecla <= 57 || tecla >= 96 && tecla <= 105 ){ " ."\r\n";
+ print "        if ( tam <= 2 ) campo.value = vr ; " ."\r\n";
+ print "        if ( tam > 2 ) campo.value = vr.substr( 0, 2 ) + ':' + vr.substr( 2, tam ); " ."\r\n";
+ print "    } " ."\r\n";
+ print "  } " ."\r\n";
+ print "} " ."\r\n";
 }
 
 function FormataMat() {

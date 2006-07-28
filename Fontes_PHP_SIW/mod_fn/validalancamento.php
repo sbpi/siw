@@ -51,7 +51,7 @@ function ValidaLancamento($p_cliente,$l_chave,$p_sg1,$p_sg2,$p_sg3,$p_sg4,$p_tra
   $l_rs1 = db_getLancamentoDoc::getInstanceOf($dbms,$l_chave,null,'LISTA');
   if (count($l_rs1)<=0) $l_existe_rs1=0; else $l_existe_rs1=count($l_rs1);
   if (((f($l_rs_solic,'valor')!=f($l_rs_solic,'valor_doc')) && count($l_rs1)!=0) && Nvl(f($l_rs_tramite,'ordem'),'---')<='2') {
-    $l_erro=$l_erro.'<li>O valor do lançamento (<b>R$ '.$FormatNumber[$cDbl[Nvl($l_rs_solic['valor'],0)]][2].'</b>) difere da soma dos valores dos documentos (<b>R$ '.$FormatNumber[$cDbl[Nvl($l_rs_solic['valor_doc'],0)]][2].'</b>).';
+    $l_erro=$l_erro.'<li>O valor do lançamento (<b>R$ '.number_format(Nvl(f($l_rs_solic,'valor'),0),2,',','.').'</b>) difere da soma dos valores dos documentos (<b>R$ '.number_format(Nvl(f($l_rs_solic,'valor_doc'),0),2,',','.').'</b>).';
     $l_tipo=0;
   } 
   //-----------------------------------------------------------------------------
@@ -70,7 +70,11 @@ function ValidaLancamento($p_cliente,$l_chave,$p_sg1,$p_sg2,$p_sg3,$p_sg4,$p_tra
       if (Nvl(f($l_rs_tramite,'sigla'),'---')=='EE') {
         // 1 - Recupera os dados da pessoa
         $l_rs1 = db_getBenef::getInstanceOf($dbms,$p_cliente,Nvl(f($l_rs_solic,'pessoa'),0),null,null,null,null,null,null);
-        if (count($l_rs1)<=0) $l_existe_rs1=0; else $l_existe_rs1=count($l_rs1);
+        if (count($l_rs1)<=0) 
+          $l_existe_rs1=0; 
+        else 
+          $l_existe_rs1=count($l_rs1);
+          foreach ($l_rs1 as $row){$l_rs1 = $row; break;}
         if ($l_existe_rs1==0) {
           // 2 - Verifica se foi indicada a pessoa
           $l_erro=$l_erro.'<li>A pessoa não foi informada';
@@ -107,5 +111,3 @@ function ValidaLancamento($p_cliente,$l_chave,$p_sg1,$p_sg2,$p_sg3,$p_sg4,$p_tra
   return $l_erro;
 } 
 ?>
-
-

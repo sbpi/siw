@@ -11,7 +11,7 @@ include_once($w_dir_volta.'classes/db/DatabaseQueriesFactory.php');
 
 class dml_putUsuario {
    function getInstanceOf($dbms, $operacao, $p_chave, $p_sq_sistema, $p_nome, $p_descricao) {
-     $sql=$strschema.'SP_PUTUSUARIO';
+     extract($GLOBALS,EXTR_PREFIX_SAME,'strchema'); $sql=$strschema.'SP_PUTUSUARIO';
      $params=array('p_operacao'                  =>array($operacao,                                        B_VARCHAR,         1),
                    'p_chave'                     =>array(tvl($p_chave),                                    B_INTEGER,        32),
                    'p_sq_sistema'                =>array(tvl($p_sq_sistema),                               B_INTEGER,        32),

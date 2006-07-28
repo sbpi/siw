@@ -12,7 +12,7 @@ include_once($w_dir_volta.'classes/db/DatabaseQueriesFactory.php');
 class dml_putAcordoConc {
    function getInstanceOf($dbms, $p_menu, $p_chave, $p_pessoa, $p_tramite, $p_inicio_real, $p_fim_real, $p_nota_conclusao, 
         $p_custo_real, $p_tipo) {
-     $sql=$strschema.'SP_PUTACORDOCONC';
+     extract($GLOBALS,EXTR_PREFIX_SAME,'strchema'); $sql=$strschema.'SP_PUTACORDOCONC';
      $params=array('p_menu'                      =>array($p_menu,                                          B_INTEGER,        32),
                    'p_chave'                     =>array($p_chave,                                         B_INTEGER,        32),
                    'p_pessoa'                    =>array($p_pessoa,                                        B_INTEGER,        32),

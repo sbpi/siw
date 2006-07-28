@@ -11,7 +11,7 @@ include_once($w_dir_volta.'classes/db/DatabaseQueriesFactory.php');
 
 class db_getAcordoParcela {
    function getInstanceOf($dbms, $p_chave, $p_chave_aux, $p_restricao, $p_outra_parte, $p_dt_ini, $p_dt_fim, $p_usuario, $p_fase, $p_menu) {
-     $sql=$strschema.'SP_GETACORDOPARCELA';
+     extract($GLOBALS,EXTR_PREFIX_SAME,'strchema'); $sql=$strschema.'SP_GETACORDOPARCELA';
      $params=array('p_chave'                     =>array(tvl($p_chave),                                    B_INTEGER,        32),
                    'p_chave_aux'                 =>array(tvl($p_chave_aux),                                B_INTEGER,        32),
                    'p_restricao'                 =>array(tvl($p_restricao),                                B_VARCHAR,        50),

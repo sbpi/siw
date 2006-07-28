@@ -12,7 +12,7 @@ class dml_putSiwUsuario {
    function getInstanceOf($dbms, $operacao, $p_chave, $p_cliente, $p_nome, $p_nome_resumido, $p_vinculo,
          $p_tipo_pessoa, $p_unidade, $p_localizacao, $p_username, $p_email, $p_gestor_seguranca,
          $p_gestor_sistema) {
-     $sql=$strschema.'sp_putSiwUsuario';
+     extract($GLOBALS,EXTR_PREFIX_SAME,'strchema'); $sql=$strschema.'sp_putSiwUsuario';
      $params=array('operacao'           =>array($operacao,              B_VARCHAR,      1),
                    'p_chave'            =>array($p_chave,               B_NUMERIC,     32),
                    'cliente'            =>array($p_cliente,             B_NUMERIC,     32),

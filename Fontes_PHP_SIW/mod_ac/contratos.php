@@ -412,9 +412,9 @@ function Inicial() {
         ShowHTML('      <tr bgcolor="'.$w_cor.'" valign="top">');
         ShowHTML('        <td nowrap>');
         if (Nvl(f($row,'conclusao'),'nulo')=='nulo') {
-          if (f($row,'fim')<time()) {
+          if (f($row,'fim')<addDays(time(),-1)) {
             ShowHTML('           <img src="'.$conImgAtraso.'" border=0 width=15 heigth=15 align="center">');
-          } elseif (f($row,'aviso_prox_conc')=='S' && (f($row,'aviso')<=time())) {
+          } elseif (f($row,'aviso_prox_conc')=='S' && (f($row,'aviso')<=addDays(time(),-1))) {
             ShowHTML('           <img src="'.$conImgAviso.'" border=0 width=15 height=15 align="center">');
           } else {
             ShowHTML('           <img src="'.$conImgNormal.'" border=0 width=15 height=15 align="center">');
@@ -446,14 +446,14 @@ function Inicial() {
           ShowHTML('        <td align="center">&nbsp;');
         } 
         ShowHTML('        <td align="right">'.number_format(f($row,'valor'),2,',','.').'&nbsp;</td>');
-        $w_parcial=$w_parcial+f($row,'valor');
+        $w_parcial += f($row,'valor');
         if (!(strpos(strtoupper($R),'GR_')===false)) {
           if (Nvl(f($row,'valor_atual'),0)>0 && Nvl(f($row,'valor_atual'),0)!=f($row,'valor')) {
             ShowHTML('        <td align="right"><font color="#BC3131"><b>'.number_format(Nvl(f($row,'valor_atual'),0),2,',','.').'&nbsp;</td>');
           } else {
             ShowHTML('        <td align="right">'.number_format(Nvl(f($row,'valor_atual'),0),2,',','.').'&nbsp;</td>');
           } 
-          $w_atual = $w_atual + Nvl(f($row,'valor_atual'),0);
+          $w_atual += Nvl(f($row,'valor_atual'),0);
         } 
         if ($P1!=1) {
           // Se for cadastramento ou mesa de trabalho
@@ -522,8 +522,8 @@ function Inicial() {
         // Se for a última página da listagem, soma e exibe o valor total
         if ($P3==ceil(count($RS)/$P4)) {
           foreach($RS as $row) {
-            $w_real  = $w_real  + Nvl(f($row,'valor_atual'),0);
-            $w_total = $w_total + f($row,'valor');
+            $w_real  += Nvl(f($row,'valor_atual'),0);
+            $w_total += f($row,'valor');
           } 
           ShowHTML('        <tr bgcolor="'.$conTrBgColor.'">');
           ShowHTML('          <td colspan=5 align="right"><b>Total da listagem&nbsp;</font></td>');
@@ -2144,7 +2144,7 @@ function Representante() {
     ShowHTML('<INPUT type="hidden" name="w_sq_pessoa" value="'.$w_sq_pessoa.'">');
     if ($w_cpf=='' || !(strpos($_REQUEST['botao'],'Alterar')===false) || !(strpos($_REQUEST['botao'],'Procurar')===false)) {
       $w_nome=$_REQUEST['w_nome'];
-      if ((strpos($_REQUEST['botao'],'Alterar') ? strpos($_REQUEST['botao'],'Alterar')+1 : 0)>0) {
+      if (!(strpos($_REQUEST['botao'],'Alterar')===false)) {
         $w_cpf  = '';
         $w_nome = '';
       } 
@@ -2445,9 +2445,9 @@ function Parcelas() {
         ShowHTML('      <tr bgcolor="'.$w_cor.'" valign="top">');
         ShowHTML('        <td>');
         if (nvl(f($row,'quitacao'),'nulo')=='nulo') {
-          if (f($row,'vencimento')<time()) {
+          if (f($row,'vencimento')<addDays(time(),-1)) {
             ShowHTML('           <img src="'.$conImgAtraso.'" border=0 width=15 heigth=15 align="center">');
-          } elseif (f($row,'vencimento')-time()<=5) {
+          } elseif (f($row,'vencimento')-addDays(time(),-1)<=5) {
             ShowHTML('           <img src="'.$conImgAviso.'" border=0 width=15 height=15 align="center">');
           } else {
             ShowHTML('           <img src="'.$conImgNormal.'" border=0 width=15 height=15 align="center">');
@@ -2468,7 +2468,7 @@ function Parcelas() {
         ShowHTML('          <A class="hl" HREF="'.$w_dir.$w_pagina.'GRAVA&R='.$w_pagina.$par.'&O=E&w_chave='.$w_chave.'&w_chave_aux='.f($row,'sq_acordo_parcela').'&P1='.$P1.'&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP='.$TP.'&SG='.$SG.'" onClick="return confirm(\'Confirma a exclusão do registro?\');">Excluir</A>&nbsp');
         ShowHTML('        </td>');
         ShowHTML('      </tr>');
-        $w_total = $w_total + f($row,'valor');
+        $w_total += f($row,'valor');
       } 
     } 
     if ($w_total>0) {

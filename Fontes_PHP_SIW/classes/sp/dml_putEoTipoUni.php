@@ -10,7 +10,7 @@ extract($GLOBALS); include_once($w_dir_volta.'classes/db/DatabaseQueriesFactory.
 
 class dml_putEOTipoUni {
    function getInstanceOf($dbms, $operacao, $chave, $p_cliente, $nome, $ativo) {
-     $sql=$strschema.'SP_PUTEOTIPOUNI';
+     extract($GLOBALS,EXTR_PREFIX_SAME,'strchema'); $sql=$strschema.'SP_PUTEOTIPOUNI';
      $params=array('p_operacao'                  =>array($operacao,                                        B_VARCHAR,         1),
                    'p_chave'                     =>array(tvl($chave),                                      B_INTEGER,        32),
                    'p_cliente'                   =>array(tvl($p_cliente),                                  B_INTEGER,        32),

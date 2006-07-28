@@ -10,7 +10,7 @@ extract($GLOBALS); include_once($w_dir_volta."classes/db/DatabaseQueriesFactory.
 
 class db_getCityList {
    function getInstanceOf($dbms, $p_pais, $p_estado, $p_nome, $p_restricao) {
-     $sql=$strschema.'sp_getCityList';
+     extract($GLOBALS,EXTR_PREFIX_SAME,'strchema'); $sql=$strschema.'sp_getCityList';
      $params=array("p_pais"      =>array($p_pais,       B_NUMERIC,     32),
                    "p_estado"    =>array($p_estado,     B_VARCHAR,      2),
                    "p_nome"      =>array($p_nome,       B_VARCHAR,     60),

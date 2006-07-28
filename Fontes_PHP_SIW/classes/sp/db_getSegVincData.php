@@ -10,7 +10,7 @@ extract($GLOBALS); include_once($w_dir_volta."classes/db/DatabaseQueriesFactory.
 
 class db_getSegVincData {
    function getInstanceOf($dbms, $p_sigla, $p_sq_segmento, $p_nome, $p_sq_segmento_vinculo) {
-     $sql=$strschema.'sp_getSegVincData';
+     extract($GLOBALS,EXTR_PREFIX_SAME,'strchema'); $sql=$strschema.'sp_getSegVincData';
      $params=array("p_sigla"                =>array($p_sigla,               B_VARCHAR,     30),
                    "p_sq_segmento"          =>array($p_sq_segmento,         B_NUMERIC,     32),
                    "p_nome"                 =>array($p_nome,                B_VARCHAR,     60),

@@ -11,7 +11,7 @@ include_once($w_dir_volta.'classes/db/DatabaseQueriesFactory.php');
 
 class db_getCentralTel {
    function getInstanceOf($dbms, $p_chave, $p_cliente, $p_sq_pessoa_endereco, $p_sq_pessoa_telefone, $p_restricao) {
-     $sql=$strschema.'SP_GETCENTRALTEL';
+     extract($GLOBALS,EXTR_PREFIX_SAME,'strchema'); $sql=$strschema.'SP_GETCENTRALTEL';
      $params=array('p_chave'                     =>array(tvl($p_chave),                                    B_INTEGER,        32),
                    'p_cliente'                   =>array(tvl($p_cliente),                                  B_INTEGER,        32),
                    'p_sq_pessoa_endereco'        =>array(tvl($p_sq_pessoa_endereco),                       B_INTEGER,        32),

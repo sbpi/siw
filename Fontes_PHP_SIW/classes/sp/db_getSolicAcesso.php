@@ -10,7 +10,7 @@ extract($GLOBALS); include_once($w_dir_volta.'classes/db/DatabaseQueriesFactory.
 
 class db_getSolicAcesso {
    function getInstanceOf($dbms, $p_solicitacao, $p_usuario) {
-     $sql='FUNCTION'.$strschema.'ACESSO';
+     extract($GLOBALS,EXTR_PREFIX_SAME,'strchema'); $sql='FUNCTION'.$strschema.'ACESSO';
      $params=array('p_solicitacao'               =>array($p_solicitacao,                                   B_INTEGER,        32),
                    'p_usuario'                   =>array($p_usuario,                                       B_INTEGER,        32)
                   );

@@ -11,7 +11,7 @@ include_once($w_dir_volta.'classes/db/DatabaseQueriesFactory.php');
 
 class db_getColuna {
    function getInstanceOf($dbms, $p_cliente, $p_chave, $p_sq_tabela, $p_sq_dado_tipo, $p_sq_sistema, $p_sq_usuario, $p_nome, $p_esq_tab) {
-     $sql=$strschema.'SP_GETCOLUNA';
+     extract($GLOBALS,EXTR_PREFIX_SAME,'strchema'); $sql=$strschema.'SP_GETCOLUNA';
      $params=array('p_cliente'                   =>array($p_cliente,                                       B_INTEGER,        32),
                    'p_chave'                     =>array(tvl($p_chave),                                    B_INTEGER,        32),
                    'p_tabela'                    =>array(tvl($p_sq_tabela),                                B_INTEGER,        32),

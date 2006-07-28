@@ -10,7 +10,7 @@ extract($GLOBALS); include_once($w_dir_volta.'classes/db/DatabaseQueriesFactory.
 
 class dml_putCodigoExterno {
    function getInstanceOf($dbms, $p_cliente, $p_restricao, $p_chave, $p_chave_externa, $p_chave_aux) {
-     $sql=$strschema.'sp_putCodigoExterno';
+     extract($GLOBALS,EXTR_PREFIX_SAME,'strchema'); $sql=$strschema.'sp_putCodigoExterno';
      $params=array('cliente'                =>array($cliente,           B_NUMERIC,     32),
                    'p_restricao'            =>array($p_restricao,       B_VARCHAR,     20),
                    'p_chave'                =>array($p_chave,           B_VARCHAR,    255),

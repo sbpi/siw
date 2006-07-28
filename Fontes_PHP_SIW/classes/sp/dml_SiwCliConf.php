@@ -10,7 +10,7 @@ extract($GLOBALS); include_once($w_dir_volta.'classes/db/DatabaseQueriesFactory.
 
 class dml_sIWCliConf {
    function getInstanceOf($dbms, $chave, $tamanho_minimo_senha, $tamanho_maximo_senha, $maximo_tentativas, $dias_vigencia_senha, $dias_aviso_expiracao, $smtp_server, $siw_email_nome, $siw_email_conta, $siw_email_senha, $logo, $logo1, $fundo, $tipo, $upload_maximo) {
-     $sql=$strschema.'SP_PUTSIWCLICONF';
+     extract($GLOBALS,EXTR_PREFIX_SAME,'strchema'); $sql=$strschema.'SP_PUTSIWCLICONF';
      $params=array('p_chave'                     =>array($chave,                                           B_INTEGER,        32),
                    'p_tamanho_minimo_senha'      =>array(tvl($tamanho_minimo_senha),                       B_INTEGER,        32),
                    'p_tamanho_maximo_senha'      =>array(tvl($tamanho_maximo_senha),                       B_INTEGER,        32),

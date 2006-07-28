@@ -11,7 +11,7 @@ include_once($w_dir_volta.'classes/db/DatabaseQueriesFactory.php');
 
 class db_getPrefixo  {
    function getInstanceOf($dbms, $p_chave, $p_prefixo, $p_uf) {
-     $sql=$strschema.'SP_GETTTPREFIXO';
+     extract($GLOBALS,EXTR_PREFIX_SAME,'strchema'); $sql=$strschema.'SP_GETTTPREFIXO';
      $params=array('p_chave'                     =>array(tvl($p_chave),                                    B_INTEGER,        32),
                    'p_prefixo'                   =>array(tvl($p_prefixo),                                  B_VARCHAR,        15),
                    'p_uf'                        =>array(tvl($p_uf),                                       B_VARCHAR,         2),

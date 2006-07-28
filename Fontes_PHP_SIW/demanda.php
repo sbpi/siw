@@ -358,7 +358,6 @@ function Inicial() {
     ShowHTML('    <td align="right">');
     if ($w_tipo!='WORD') {
       ShowHTML('     <IMG ALIGN="CENTER" TITLE="Imprimir" SRC="images/impressora.jpg" onClick="window.print();">');
-      //ShowHTML('     &nbsp;&nbsp;<IMG ALIGN="CENTER" TITLE="" SRC="images/word.gif" onClick="window.open(\''.$w_dir.$w_pagina.$par.'&O=L&P1='.$P1.'&P2='.$P2.'&P3='.$P3.'&P4='.count($RS).'&TP='.$TP.'&SG='.$SG.'&w_tipo=WORD'.MontaFiltro('GET').'\',\'MetaWord\',\'width=600, height=350, top=65, left=65, menubar=yes, scrollbars=yes, resizable=yes, status=no\');">');
       ShowHTML('     &nbsp;&nbsp;<a target="MetaWord" href="'.$w_dir.$w_pagina.$par.'&O=L&P1='.$P1.'&P2='.$P2.'&P3=1&P4='.count($RS).'&TP='.$TP.'&SG='.$SG.'&w_tipo=WORD'.MontaFiltro('GET').'"><IMG border=0 ALIGN="CENTER" TITLE="Gerar word" SRC="images/word.gif"></a>');
     } 
     ShowHTML('    <b>Registros: '.count($RS));
@@ -409,9 +408,9 @@ function Inicial() {
         ShowHTML('        <td nowrap>');
         if ($w_tipo!='WORD') {
           if (f($row,'concluida')=='N') {
-            if (f($row,'fim')<time()) {
+            if (f($row,'fim')<addDays(time(),-1)) {
               ShowHTML('           <img src="'.$conImgAtraso.'" border=0 width=15 heigth=15 align="center">');
-            } elseif (f($row,'aviso_prox_conc')=='S' && (f($row,'aviso')<=time())) {
+            } elseif (f($row,'aviso_prox_conc')=='S' && (f($row,'aviso')<=addDays(time(),-1))) {
               ShowHTML('           <img src="'.$conImgAviso.'" border=0 width=15 height=15 align="center">');
             } else {
               ShowHTML('           <img src="'.$conImgNormal.'" border=0 width=15 height=15 align="center">');
@@ -1683,7 +1682,6 @@ function Concluir() {
   Cabecalho();
   ShowHTML('<HEAD>');
   ShowHTML('<meta http-equiv="Refresh" content="300; URL='.MontaURL('MESA').'">');
-  echo f($RS_Menu,'data_hora');
   if ($O=='V') {
     ScriptOpen('JavaScript');
     CheckBranco();

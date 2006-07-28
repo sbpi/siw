@@ -10,7 +10,7 @@ extract($GLOBALS); include_once($w_dir_volta."classes/db/DatabaseQueriesFactory.
 
 class db_getDesktop {
    function getInstanceOf($dbms, $p_cliente, $p_usuario, $p_ano) {
-     $sql=$strschema.'sp_getDesktop';
+     extract($GLOBALS,EXTR_PREFIX_SAME,'strchema'); $sql=$strschema.'sp_getDesktop';
      $params=array("p_cliente"  =>array($p_cliente,     B_NUMERIC,     32),
                    "p_usuario"  =>array($p_usuario,     B_NUMERIC,     32),
                    "p_ano"      =>array($p_ano,         B_NUMERIC,     32),

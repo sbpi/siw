@@ -10,7 +10,7 @@ extract($GLOBALS); include_once($w_dir_volta."classes/db/DatabaseQueriesFactory.
 
 class db_getUserModule {
    function getInstanceOf($dbms, $p_cliente, $p_chave) {
-     $sql=$strschema.'sp_getUserModule';
+     extract($GLOBALS,EXTR_PREFIX_SAME,'strchema'); $sql=$strschema.'sp_getUserModule';
      $params=array("p_cliente"  =>array($p_cliente,     B_NUMERIC,   32),
                    "p_chave"    =>array($p_chave,       B_NUMERIC,   32),
                    "p_result"   =>array(null,           B_CURSOR,    -1)

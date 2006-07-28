@@ -10,7 +10,7 @@ extract($GLOBALS); include_once($w_dir_volta."classes/db/DatabaseQueriesFactory.
 
 class db_getLinkDataHelp {
    function getInstanceOf($dbms, $p_cliente, $p_modulo, $p_chave, $p_restricao) {
-     $sql=$strschema.'sp_getLinkDataHelp';
+     extract($GLOBALS,EXTR_PREFIX_SAME,'strchema'); $sql=$strschema.'sp_getLinkDataHelp';
      $params=array("p_cliente"  =>array($p_cliente,     B_NUMERIC,     32),
                    "p_modulo"   =>array($p_modulo,      B_NUMERIC,     32),
                    "p_chave"    =>array($p_chave,       B_NUMERIC,     32),

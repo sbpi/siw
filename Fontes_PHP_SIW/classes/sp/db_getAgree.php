@@ -11,7 +11,7 @@ include_once($w_dir_volta.'classes/db/DatabaseQueriesFactory.php');
 
 class db_getAgree {
    function getInstanceOf($dbms, $p_chave, $p_cliente, $p_restricao) {
-     $sql=$strschema.'SP_GETAGREE';
+     extract($GLOBALS,EXTR_PREFIX_SAME,'strchema'); $sql=$strschema.'SP_GETAGREE';
      $params=array('p_chave'                     =>array(tvl($p_chave),                                    B_INTEGER,        32),
                    'p_cliente'                   =>array($p_cliente,                                       B_INTEGER,        32),
                    'p_restricao'                 =>array($p_restricao,                                     B_VARCHAR,        50),

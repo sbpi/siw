@@ -10,7 +10,7 @@ extract($GLOBALS); include_once($w_dir_volta.'classes/db/DatabaseQueriesFactory.
 
 class db_getRegionList {
    function getInstanceOf($dbms, $p_sq_pais, $p_tipo, $p_nome) {
-     $sql=$strschema.'sp_getRegionList';
+     extract($GLOBALS,EXTR_PREFIX_SAME,'strchema'); $sql=$strschema.'sp_getRegionList';
      $params=array('p_sq_pais'  =>array($p_sq_pais,       B_NUMERIC,   32),
                    'p_tipo'     =>array($p_tipo,          B_VARCHAR,    1),
                    'p_nome'     =>array($p_nome,          B_VARCHAR,   20),

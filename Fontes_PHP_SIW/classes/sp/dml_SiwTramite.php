@@ -11,7 +11,7 @@ extract($GLOBALS); include_once($w_dir_volta.'classes/db/DatabaseQueriesFactory.
 class dml_SiwTramite {
    function getInstanceOf($dbms, $operacao, $chave, $p_sq_menu, $p_nome, $p_ordem, $p_sigla, $p_descricao,
                    $p_chefia_imediata, $p_ativo, $p_solicita_cc, $p_envia_mail) {
-     $sql=$strschema.'sp_putSiwTramite';
+     extract($GLOBALS,EXTR_PREFIX_SAME,'strchema'); $sql=$strschema.'sp_putSiwTramite';
      $params=array('operacao'          =>array($operacao,          B_VARCHAR,      1),
                    'chave'             =>array($chave,             B_NUMERIC,     32),
                    'p_sq_menu'         =>array($p_sq_menu,         B_NUMERIC,     32),

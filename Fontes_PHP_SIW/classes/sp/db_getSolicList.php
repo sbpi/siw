@@ -21,7 +21,7 @@ class db_getSolicList {
      //  $l_fase = $l_fase.','.$p_fase[$i];
      //} 
      //$l_fase = substr($l_fase,1,500);
-     $sql=$strschema.'SP_GETSOLICLIST';
+     extract($GLOBALS,EXTR_PREFIX_SAME,'strchema'); $sql=$strschema.'SP_GETSOLICLIST';
      $params=array('p_menu'                      =>array($p_menu,                                          B_INTEGER,        32),
                    'p_pessoa'                    =>array($p_pessoa,                                        B_INTEGER,        32),
                    'p_restricao'                 =>array($p_restricao,                                     B_VARCHAR,        20),

@@ -10,7 +10,7 @@ extract($GLOBALS); include_once($w_dir_volta.'classes/db/DatabaseQueriesFactory.
 
 class dml_CoSegmento {
    function getInstanceOf($dbms, $operacao, $chave, $nome, $padrao, $ativo) {
-     $sql=$strschema.'sp_putCoSegmento';
+     extract($GLOBALS,EXTR_PREFIX_SAME,'strchema'); $sql=$strschema.'sp_putCoSegmento';
      $params=array('operacao'   =>array($operacao,  B_VARCHAR,      1),
                    'chave'      =>array($chave,     B_NUMERIC,     32),
                    'nome'       =>array($nome,      B_VARCHAR,     40),

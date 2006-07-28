@@ -19,7 +19,7 @@ function selecaoAcordoParcela($label,$accesskey,$hint,$cliente,$chave,$chaveAux,
     if (nvl(f($row,'sq_acordo_parcela'),0)==nvl($chave,0))
       ShowHTML('          <option value="'.f($row,'sq_acordo_parcela').'" SELECTED>'.substr(1000+f($row,'ordem'),1,3).' - '.FormataDataEdicao(f($row,'vencimento')).' - '.number_format(f($row,'valor'),2,',','.'));
     else
-     ShowHTML('          <option value="'.f($row,'sq_acordo_parcela').'">'.substr(1000+$cDbl[f($row,'ordem')],1,3).' - '.FormataDataEdicao(f($row,'vencimento')).' - '.number_format(f($row,'valor'),2,',','.'));
+     ShowHTML('          <option value="'.f($row,'sq_acordo_parcela').'">'.substr(1000+f($row,'ordem'),1,3).' - '.FormataDataEdicao(f($row,'vencimento')).' - '.number_format(f($row,'valor'),2,',','.'));
   } 
   ShowHTML('          </select>');
 }

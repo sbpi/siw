@@ -10,7 +10,7 @@ extract($GLOBALS); include_once($w_dir_volta."classes/db/DatabaseQueriesFactory.
 
 class db_getKindPersonList {
    function getInstanceOf($dbms, $p_nome) {
-     $sql=$strschema.'sp_getKindPersList';
+     extract($GLOBALS,EXTR_PREFIX_SAME,'strchema'); $sql=$strschema.'sp_getKindPersList';
      $params=array("p_nome"     =>array($p_nome,    B_VARCHAR,     60),
                    "p_result"   =>array(null,       B_CURSOR,      -1)
                   );

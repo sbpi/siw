@@ -10,7 +10,7 @@ extract($GLOBALS); include_once($w_dir_volta.'classes/db/DatabaseQueriesFactory.
 
 class db_getTipoPostoList {
    function getInstanceOf($dbms, $p_cliente, $p_chave, $p_ativo) {
-     $sql=$strschema.'SP_GETTIPOPOSTOLIST';
+     extract($GLOBALS,EXTR_PREFIX_SAME,'strchema'); $sql=$strschema.'SP_GETTIPOPOSTOLIST';
      $params=array('p_cliente'                   =>array($p_cliente,                                       B_INTEGER,        32),
                    'p_chave'                     =>array(tvl($p_chave),                                    B_INTEGER,        32),
                    'p_ativo'                     =>array(tvl($p_ativo),                                    B_VARCHAR,         1),

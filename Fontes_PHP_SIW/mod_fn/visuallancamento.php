@@ -213,7 +213,7 @@ function VisualLancamento($v_chave,$l_O,$w_usuario,$l_P1,$l_P4) {
     $w_total=0;
     foreach ($RS as $row) {
       $w_cor = ($w_cor==$conTrBgColor || $w_cor=='') ? $w_cor=$conTrAlternateBgColor : $w_cor=$conTrBgColor;  $w_html.=chr(13).'      <tr valign=\'top\' bgcolor=\''.$w_cor.'\'>';
-      $RS2 = db_getImpostoDoc($dbms,$w_cliente,$v_chave,f($RS,'sq_lancamento_doc'),$w_SG);
+      $RS2 = db_getImpostoDoc::getInstanceOf($dbms,$w_cliente,$v_chave,f($RS,'sq_lancamento_doc'),$w_SG);
       $RS2 = SortArray($RS2,'calculo','asc','esfera','asc','nm_imposto','asc');
       if (count($RS2)<=0) {
         $w_html.=chr(13).'        <td><font size=\'1\'>'.f($row,'nm_tipo_documento').'</td>';
@@ -358,6 +358,7 @@ function VisualLancamento($v_chave,$l_O,$w_usuario,$l_P1,$l_P4) {
       $w_cor = ($w_cor==$conTrBgColor || $w_cor=='') ? $w_cor=$conTrAlternateBgColor : $w_cor=$conTrBgColor;
       if ($i==0) {
         $w_html.=chr(13).'        <td colspan=4><font size=\'1\'>Fase atual: <b>'.f($row,'fase').'</b></td>';
+        $i=1;
       }
       $w_html.=chr(13).'      <tr valign=\'top\' bgcolor=\''.$w_cor.'\'>';
       $w_html.=chr(13).'        <td nowrap><font size=\'1\'>'.FormataDataEdicao(f($row,'phpdt_data'),3).'</td>';

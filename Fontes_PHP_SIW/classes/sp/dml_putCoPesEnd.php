@@ -11,7 +11,7 @@ extract($GLOBALS); include_once($w_dir_volta.'classes/db/DatabaseQueriesFactory.
 class dml_PutCoPesEnd {
    function getInstanceOf($dbms, $operacao, $chave, $p_pessoa, $p_tipo_endereco, $p_logradouro, $p_complemento,
          $p_cidade, $p_bairro, $p_cep, $p_padrao) {
-     $sql=$strschema.'sp_putCoPesEnd';
+     extract($GLOBALS,EXTR_PREFIX_SAME,'strchema'); $sql=$strschema.'sp_putCoPesEnd';
      $params=array('operacao'           =>array($operacao,          B_VARCHAR,      1),
                    'chave'              =>array($chave,             B_NUMERIC,     32),
                    'p_pessoa'           =>array($p_pessoa,          B_NUMERIC,     32),

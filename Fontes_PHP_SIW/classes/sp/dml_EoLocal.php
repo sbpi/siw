@@ -10,7 +10,7 @@ extract($GLOBALS); include_once($w_dir_volta.'classes/db/DatabaseQueriesFactory.
 
 class dml_eOLocal {
    function getInstanceOf($dbms, $operacao, $chave, $sq_pessoa_endereco, $sq_unidade, $nome, $fax, $telefone, $ramal, $telefone2, $ativo) {
-     $sql=$strschema.'SP_PUTEOLOCAL';
+     extract($GLOBALS,EXTR_PREFIX_SAME,'strchema'); $sql=$strschema.'SP_PUTEOLOCAL';
      $params=array('p_operacao'                  =>array($operacao,                                        B_VARCHAR,         1),
                    'p_chave'                     =>array(tvl($chave),                                      B_INTEGER,        32),
                    'p_sq_pessoa_endereco'        =>array(tvl($sq_pessoa_endereco),                         B_INTEGER,        32),

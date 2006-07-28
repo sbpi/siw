@@ -10,7 +10,7 @@ extract($GLOBALS); include_once($w_dir_volta.'classes/db/DatabaseQueriesFactory.
 
 class db_getSolicResp {
    function getInstanceOf($dbms, $p_chave, $p_tramite, $p_fase, $p_restricao) {
-     $sql=$strschema.'SP_GETSOLICRESP';
+     extract($GLOBALS,EXTR_PREFIX_SAME,'strchema'); $sql=$strschema.'SP_GETSOLICRESP';
      $params=array('p_chave'                     =>array(tvl($p_chave),                                    B_INTEGER,        32),
                    'p_tramite'                   =>array(tvl($p_tramite),                                  B_INTEGER,        32),
                    'p_fase'                      =>array(tvl($p_fase),                                     B_VARCHAR,        20),

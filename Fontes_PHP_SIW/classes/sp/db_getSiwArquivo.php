@@ -10,7 +10,7 @@ extract($GLOBALS); include_once($w_dir_volta.'classes/db/DatabaseQueriesFactory.
 
 class db_getSIWArquivo  {
    function getInstanceOf($dbms, $p_cliente, $p_chave, $p_restricao) {
-     $sql=$strschema.'SP_GETSIWARQUIVO';
+     extract($GLOBALS,EXTR_PREFIX_SAME,'strchema'); $sql=$strschema.'SP_GETSIWARQUIVO';
      $params=array('p_cliente'                   =>array($p_cliente,                                       B_INTEGER,        32),
                    'p_chave'                     =>array(tvl($p_chave),                                    B_INTEGER,        32),
                    'p_restricao'                 =>array(tvl($p_restricao),                                B_VARCHAR,        20),

@@ -10,7 +10,7 @@ extract($GLOBALS); include_once($w_dir_volta.'classes/db/DatabaseQueriesFactory.
 
 class dml_SgPerMen {
    function getInstanceOf($dbms, $operacao, $p_perfil, $p_menu, $p_endereco) {
-     $sql=$strschema.'sp_putSgPerMen';
+     extract($GLOBALS,EXTR_PREFIX_SAME,'strchema'); $sql=$strschema.'sp_putSgPerMen';
      $params=array('operacao'       =>array($operacao,      B_VARCHAR,      1),
                    'p_perfil'       =>array($p_perfil,      B_NUMERIC,     32),
                    'p_menu'         =>array($p_menu,        B_NUMERIC,     32),

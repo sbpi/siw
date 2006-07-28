@@ -10,7 +10,7 @@ extract($GLOBALS); include_once($w_dir_volta."classes/db/DatabaseQueriesFactory.
 
 class db_getUserList {
    function getInstanceOf($dbms, $p_cliente, $p_localizacao, $p_lotacao, $p_gestor, $p_nome, $p_modulo, $p_uf, $p_ativo, $p_contratado) {
-     $sql=$strschema.'sp_getUserList';
+     extract($GLOBALS,EXTR_PREFIX_SAME,'strchema'); $sql=$strschema.'sp_getUserList';
      $params=array("p_cliente"      =>array($p_cliente,     B_NUMERIC,     32),
                    "p_localizacao"  =>array($p_localizacao, B_NUMERIC,     32),
                    "p_lotacao"      =>array($p_lotacao,     B_NUMERIC,     32),

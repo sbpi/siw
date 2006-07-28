@@ -10,7 +10,7 @@ extract($GLOBALS); include_once($w_dir_volta."classes/db/DatabaseQueriesFactory.
 
 class db_getCodigo {
    function getInstanceOf($dbms, $p_cliente, $p_restricao, $p_chave_interna, $p_chave_aux) {
-     $sql=$strschema.'sp_getCodigo';
+     extract($GLOBALS,EXTR_PREFIX_SAME,'strchema'); $sql=$strschema.'sp_getCodigo';
      $params=array("p_cliente"       =>array($p_cliente,       B_NUMERIC,     32),
                    "p_restricao"     =>array($p_restricao,     B_VARCHAR,     20),
                    "p_chave_interna" =>array($p_chave_interna, B_VARCHAR,    255),

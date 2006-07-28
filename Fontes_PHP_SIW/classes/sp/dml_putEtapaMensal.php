@@ -10,7 +10,7 @@ extract($GLOBALS); include_once($w_dir_volta.'classes/db/DatabaseQueriesFactory.
 
 class dml_putEtapaMensal {
    function getInstanceOf($dbms, $operacao, $p_chave, $p_quantitativo, $p_referencia) {
-     $sql=$strschema.'SP_PUTETAPAMENSAL';
+     extract($GLOBALS,EXTR_PREFIX_SAME,'strchema'); $sql=$strschema.'SP_PUTETAPAMENSAL';
      $params=array('p_operacao'                  =>array($operacao,                                        B_VARCHAR,         1),
                    'p_chave'                     =>array(tvl($p_chave),                                    B_INTEGER,        32),
                    'p_quantitativo'              =>array(tvl($p_quantitativo),                             B_INTEGER,        32),

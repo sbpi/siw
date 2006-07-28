@@ -11,7 +11,7 @@ include_once($w_dir_volta.'classes/db/DatabaseQueriesFactory.php');
 
 class dml_putPDUsuario {
    function getInstanceOf($dbms, $operacao, $p_cliente, $p_chave) {
-     $sql=$strschema.'SP_PUTPDUSUARIO';
+     extract($GLOBALS,EXTR_PREFIX_SAME,'strchema'); $sql=$strschema.'SP_PUTPDUSUARIO';
      $params=array('p_operacao'                  =>array($operacao,                                        B_VARCHAR,         1),
                    'p_cliente'                   =>array($p_cliente,                                       B_INTEGER,        32),
                    'p_chave'                     =>array($p_chave,                                         B_INTEGER,        32)

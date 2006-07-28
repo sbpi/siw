@@ -10,7 +10,7 @@ extract($GLOBALS); include_once($w_dir_volta.'classes/db/DatabaseQueriesFactory.
 
 class db_getEOAAtuacData {
    function getInstanceOf($dbms, $p_sq_area_atuacao) {
-     $sql=$strschema.'SP_GETEOAATUACDATA';
+     extract($GLOBALS,EXTR_PREFIX_SAME,'strchema'); $sql=$strschema.'SP_GETEOAATUACDATA';
      $params=array('p_sq_area_atuacao'           =>array($p_sq_area_atuacao,                               B_INTEGER,        32),
                    'p_result'                    =>array(null,                                             B_CURSOR,         -1)
                   );

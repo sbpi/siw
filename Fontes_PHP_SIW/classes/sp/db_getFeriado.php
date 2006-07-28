@@ -10,7 +10,7 @@ extract($GLOBALS); include_once($w_dir_volta.'classes/db/DatabaseQueriesFactory.
 
 class db_getFeriado {
    function getInstanceOf($dbms, $p_cliente, $p_cidade, $p_chave, $p_data, $p_nome, $p_tipo) {
-     $sql=$strschema.'SP_GETFERIADO';
+     extract($GLOBALS,EXTR_PREFIX_SAME,'strchema'); $sql=$strschema.'SP_GETFERIADO';
      $params=array('p_cliente'                   =>array($p_cliente,                                       B_INTEGER,        32),
                    'p_cidade'                    =>array(tvl($p_cidade),                                   B_INTEGER,        32),
                    'p_chave'                     =>array(tvl($p_chave),                                    B_INTEGER,        32),

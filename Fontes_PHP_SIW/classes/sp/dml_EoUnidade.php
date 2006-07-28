@@ -12,7 +12,7 @@ class dml_EOUnidade {
    function getInstanceOf($dbms, $operacao, $chave, $sq_tipo_unidade, $sq_area_atuacao, $sq_unidade_gestora, $sq_unidade_pai, 
         $sq_unidade_pagadora, $sq_pessoa_endereco, $ordem, $email, $codigo, $cliente, $nome, $sigla, $informal, $vinculada, 
         $adm_central, $unidade_gestora, $unidade_pagadora, $ativo) {
-     $sql=$strschema.'SP_PUTEOUNIDADE';
+     extract($GLOBALS,EXTR_PREFIX_SAME,'strchema'); $sql=$strschema.'SP_PUTEOUNIDADE';
      $params=array('p_operacao'                  =>array($operacao,                                        B_VARCHAR,         1),
                    'p_chave'                     =>array(tvl($chave),                                      B_INTEGER,        32),
                    'p_sq_tipo_unidade'           =>array(tvl($sq_tipo_unidade),                            B_INTEGER,        32),

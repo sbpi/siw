@@ -10,7 +10,7 @@ extract($GLOBALS); include_once($w_dir_volta.'classes/db/DatabaseQueriesFactory.
 
 class db_verificaAssinatura {
    function getInstanceOf($dbms, $p_cliente, $p_username, $p_senha) {
-     $sql=$strschema.'sp_verificaAssinat';
+     extract($GLOBALS,EXTR_PREFIX_SAME,'strchema'); $sql=$strschema.'sp_verificaAssinat';
      $params=array('p_cliente'  =>array($p_cliente,     B_NUMERIC,     32),
                    'p_username' =>array($p_username,    B_VARCHAR,     30),
                    'p_senha'    =>array($p_senha,       B_VARCHAR,    255),

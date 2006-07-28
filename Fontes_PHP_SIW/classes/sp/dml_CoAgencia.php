@@ -10,7 +10,7 @@ extract($GLOBALS); include_once($w_dir_volta.'classes/db/DatabaseQueriesFactory.
 
 class dml_CoAgencia {
    function getInstanceOf($dbms, $operacao, $chave, $p_banco, $p_nome, $p_codigo, $p_padrao, $p_ativo) {
-     $sql=$strschema.'sp_putCoAgencia';
+     extract($GLOBALS,EXTR_PREFIX_SAME,'strchema'); $sql=$strschema.'sp_putCoAgencia';
      $params=array('operacao'          =>array($operacao,          B_VARCHAR,      1),
                    'chave'             =>array($chave,             B_NUMERIC,     32),
                    'p_banco'           =>array($p_banco,           B_NUMERIC,     32),

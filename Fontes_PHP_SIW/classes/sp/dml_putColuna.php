@@ -11,7 +11,7 @@ include_once($w_dir_volta.'classes/db/DatabaseQueriesFactory.php');
 
 class dml_putColuna {
    function getInstanceOf($dbms, $operacao, $p_chave, $p_sq_tabela, $p_sq_dado_tipo, $p_nome, $p_descricao, $p_ordem, $p_tamanho, $p_precisao, $p_escala, $p_obrigatorio, $p_valor_padrao) {
-     $sql=$strschema.'SP_PUTCOLUNA';
+     extract($GLOBALS,EXTR_PREFIX_SAME,'strchema'); $sql=$strschema.'SP_PUTCOLUNA';
      $params=array('p_operacao'                  =>array($operacao,                                        B_VARCHAR,         1),
                    'p_chave'                     =>array(tvl($p_chave),                                    B_INTEGER,        32),
                    'p_sq_tabela'                 =>array(tvl($p_sq_tabela),                                B_INTEGER,        32),

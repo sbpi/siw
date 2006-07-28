@@ -10,7 +10,7 @@ extract($GLOBALS); include_once($w_dir_volta."classes/db/DatabaseQueriesFactory.
 
 class db_getCCTreeVision {
    function getInstanceOf($dbms, $p_cliente, $p_pessoa, $p_menu, $p_restricao) {
-     $sql=$strschema.'sp_getCCTreeVision';
+     extract($GLOBALS,EXTR_PREFIX_SAME,'strchema'); $sql=$strschema.'sp_getCCTreeVision';
      $params=array("p_cliente"   =>array($p_cliente,     B_NUMERIC,   32),
                    "p_pessoa"    =>array($p_pessoa,      B_NUMERIC,   32),
                    "p_menu"      =>array($p_menu,        B_NUMERIC,   32),

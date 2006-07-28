@@ -11,7 +11,7 @@ include_once($w_dir_volta.'classes/db/DatabaseQueriesFactory.php');
 
 class dml_putTTCentral {
    function getInstanceOf($dbms, $operacao, $p_chave, $p_cliente, $p_sq_pessoa_endereco, $p_arquivo_bilhetes, $p_recupera_bilhetes) {
-     $sql=$strschema.'SP_PUTTTCENTRAL';
+     extract($GLOBALS,EXTR_PREFIX_SAME,'strchema'); $sql=$strschema.'SP_PUTTTCENTRAL';
      $params=array('p_operacao'                  =>array($operacao,                                        B_VARCHAR,         1),
                    'p_chave'                     =>array(tvl($p_chave),                                    B_INTEGER,        18),
                    'p_cliente'                   =>array(tvl($p_cliente),                                  B_INTEGER,        18),

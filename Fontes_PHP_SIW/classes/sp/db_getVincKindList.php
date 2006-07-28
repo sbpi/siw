@@ -10,7 +10,7 @@ extract($GLOBALS); include_once($w_dir_volta.'classes/db/DatabaseQueriesFactory.
 
 class db_getVincKindList {
    function getInstanceOf($dbms, $p_cliente, $p_ativo, $p_tipo_pessoa, $p_nome, $p_interno) {
-     $sql=$strschema.'sp_getVincKindList';
+     extract($GLOBALS,EXTR_PREFIX_SAME,'strchema'); $sql=$strschema.'sp_getVincKindList';
      $params=array('p_cliente'      =>array($p_cliente,     B_NUMERIC,     32),
                    'p_ativo'        =>array($p_ativo,       B_VARCHAR,      1),
                    'p_tipo_pessoa'  =>array($p_tipo_pessoa, B_VARCHAR,     60),

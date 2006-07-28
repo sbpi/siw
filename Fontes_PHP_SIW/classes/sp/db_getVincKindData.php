@@ -10,7 +10,7 @@ extract($GLOBALS); include_once($w_dir_volta."classes/db/DatabaseQueriesFactory.
 
 class db_getVincKindData {
    function getInstanceOf($dbms, $p_sq_tipo_vinculo) {
-     $sql=$strschema.'sp_getVincKindData';
+     extract($GLOBALS,EXTR_PREFIX_SAME,'strchema'); $sql=$strschema.'sp_getVincKindData';
      $params=array("p_sq_tipo_vinculo"  =>array($p_sq_tipo_vinculo, B_NUMERIC,     32),
                    "p_result"           =>array(null,               B_CURSOR,      -1)
                   );

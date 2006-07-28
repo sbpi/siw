@@ -10,7 +10,7 @@ extract($GLOBALS); include_once($w_dir_volta.'classes/db/DatabaseQueriesFactory.
 
 class db_getEtapaMensal {
    function getInstanceOf($dbms, $p_chave) {
-     $sql=$strschema.'SP_GETETAPAMENSAL';
+     extract($GLOBALS,EXTR_PREFIX_SAME,'strchema'); $sql=$strschema.'SP_GETETAPAMENSAL';
      $params=array('p_chave'                     =>array($p_chave,                                         B_INTEGER,        32),
                    'p_result'                    =>array(null,                                             B_CURSOR,         -1)
                   );

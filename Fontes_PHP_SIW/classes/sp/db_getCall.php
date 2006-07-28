@@ -10,7 +10,7 @@ extract($GLOBALS); include_once($w_dir_volta.'classes/db/DatabaseQueriesFactory.
 
 class db_getCall {
    function getInstanceOf($dbms, $p_chave, $p_pessoa, $p_tipo, $p_restricao, $p_sq_cc, $p_contato, $p_numero, $p_inicio, $p_fim, $p_ativo) {
-     $sql=$strschema.'SP_GETCALL';
+     extract($GLOBALS,EXTR_PREFIX_SAME,'strchema'); $sql=$strschema.'SP_GETCALL';
      $params=array('p_chave'                     =>array(tvl($p_chave),                                    B_INTEGER,        32),
                    'p_pessoa'                    =>array($p_pessoa,                                        B_INTEGER,        32),
                    'p_tipo'                      =>array($p_tipo,                                          B_INTEGER,        32),

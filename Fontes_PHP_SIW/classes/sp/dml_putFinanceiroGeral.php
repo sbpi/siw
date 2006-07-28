@@ -11,7 +11,7 @@ include_once($w_dir_volta.'classes/db/DatabaseQueriesFactory.php');
 
 class dml_putFinanceiroGeral {
    function getInstanceOf($dbms, $operacao, $p_cliente, $p_chave, $p_menu, $p_unidade, $p_solicitante, $p_cadastrador, $p_sqcc, $p_descricao, $p_vencimento, $p_valor, $p_data_hora, $p_aviso, $p_dias, $p_cidade, $p_projeto, $p_sq_acordo_parcela, $p_observacao, $p_sq_tipo_lancamento, $p_sq_forma_pagamento, $p_sq_tipo_pessoa, $p_forma_atual, $p_vencimento_atual, $p_chave_nova, $p_codigo_interno) {
-     $sql=$strschema.'SP_PUTFINANCEIROGERAL';
+     extract($GLOBALS,EXTR_PREFIX_SAME,'strchema'); $sql=$strschema.'SP_PUTFINANCEIROGERAL';
      $params=array('p_operacao'                  =>array($operacao,                                        B_VARCHAR,         1),
                    'p_cliente'                   =>array($p_cliente,                                       B_INTEGER,        32),
                    'p_chave'                     =>array(tvl($p_chave),                                    B_INTEGER,        32),
@@ -22,7 +22,7 @@ class dml_putFinanceiroGeral {
                    'p_sqcc'                      =>array(tvl($p_sqcc),                                     B_INTEGER,        32),
                    'p_descricao'                 =>array(tvl($p_descricao),                                B_VARCHAR,      2000),
                    'p_vencimento'                =>array(tvl($p_vencimento),                               B_DATE,           32),
-                   'p_valor'                     =>array(tvl($p_valor),                                    B_NUMERIC,      18,2),
+                   'p_valor'                     =>array(tonumber(tvl($p_valor)),                          B_NUMERIC,      18,2),
                    'p_data_hora'                 =>array(tvl($p_data_hora),                                B_VARCHAR,         1),
                    'p_aviso'                     =>array(tvl($p_aviso),                                    B_VARCHAR,         1),
                    'p_dias'                      =>array(nvl($p_dias,0),                                   B_INTEGER,        32),

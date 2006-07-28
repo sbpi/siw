@@ -10,7 +10,7 @@ extract($GLOBALS); include_once($w_dir_volta.'classes/db/DatabaseQueriesFactory.
 
 class dml_eOResp {
    function getInstanceOf($dbms, $operacao, $chave, $fim_substituto, $sq_pessoa_substituto, $inicio_substituto, $fim_titular, $sq_pessoa, $inicio_titular) {
-     $sql=$strschema.'SP_PUTEORESP';
+     extract($GLOBALS,EXTR_PREFIX_SAME,'strchema'); $sql=$strschema.'SP_PUTEORESP';
      $params=array('p_operacao'                  =>array($operacao,                                        B_VARCHAR,         1),
                    'p_chave'                     =>array(tvl($chave),                                      B_INTEGER,        32),
                    'p_fim_substituto'            =>array(tvl($fim_substituto),                             B_DATE,           15),

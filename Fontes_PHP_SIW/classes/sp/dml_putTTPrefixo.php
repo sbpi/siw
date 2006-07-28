@@ -11,7 +11,7 @@ include_once($w_dir_volta.'classes/db/DatabaseQueriesFactory.php');
 
 class dml_putTTPrefixo  {
    function getInstanceOf($dbms, $operacao, $p_chave, $p_prefixo, $p_localidade, $p_sigla, $p_uf, $p_ddd, $p_controle, $p_degrau) {
-     $sql=$strschema.'SP_PUTTTPREFIXO';
+     extract($GLOBALS,EXTR_PREFIX_SAME,'strchema'); $sql=$strschema.'SP_PUTTTPREFIXO';
      $params=array('p_operacao'                  =>array($operacao,                                        B_VARCHAR,         1),
                    'p_chave'                     =>array(tvl($p_chave),                                    B_INTEGER,        18),
                    'p_prefixo'                   =>array(tvl($p_prefixo),                                  B_VARCHAR,        15),

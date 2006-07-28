@@ -10,7 +10,7 @@ extract($GLOBALS); include_once($w_dir_volta."classes/db/DatabaseQueriesFactory.
 
 class db_getStateData {
    function getInstanceOf($dbms, $p_sq_pais, $p_co_uf) {
-     $sql=$strschema.'sp_getStateData';
+     extract($GLOBALS,EXTR_PREFIX_SAME,'strchema'); $sql=$strschema.'sp_getStateData';
      $params=array("p_sq_pais"  =>array($p_sq_pais,       B_NUMERIC,   32),
                    "p_co_uf"    =>array($p_co_uf,         B_VARCHAR,    3),
                    "p_result"   =>array(null,             B_CURSOR,    -1)

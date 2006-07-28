@@ -11,7 +11,7 @@ include_once($w_dir_volta.'classes/db/DatabaseQueriesFactory.php');
 
 class dml_putLancamentoEnvio {
    function getInstanceOf($dbms, $p_menu, $p_chave, $p_pessoa, $p_tramite, $p_novo_tramite, $p_devolucao, $p_observacao, $p_destinatario, $p_despacho, $p_caminho, $p_tamanho, $p_tipo, $p_nome_original) {
-     $sql=$strschema.'SP_PUTLANCAMENTOENVIO';
+     extract($GLOBALS,EXTR_PREFIX_SAME,'strchema'); $sql=$strschema.'SP_PUTLANCAMENTOENVIO';
      $params=array('p_menu'                      =>array($p_menu,                                          B_INTEGER,        32),
                    'p_chave'                     =>array($p_chave,                                         B_INTEGER,        32),
                    'p_pessoa'                    =>array($p_pessoa,                                        B_INTEGER,        32),

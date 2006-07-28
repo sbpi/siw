@@ -11,7 +11,7 @@ include_once($w_dir_volta.'classes/db/DatabaseQueriesFactory.php');
 
 class db_getTTUsuario  {
    function getInstanceOf($dbms, $p_chave, $p_cliente, $p_usuario, $p_sq_central_fone, $p_codigo) {
-     $sql=$strschema.'SP_GETTTUSUARIO';
+     extract($GLOBALS,EXTR_PREFIX_SAME,'strchema'); $sql=$strschema.'SP_GETTTUSUARIO';
      $params=array('p_chave'                     =>array(tvl($p_chave),                                    B_INTEGER,        18),
                    'p_cliente'                   =>array(tvl($p_cliente),                                  B_INTEGER,        18),
                    'p_usuario'                   =>array(tvl($p_usuario),                                  B_INTEGER,        18),

@@ -15,7 +15,7 @@ include_once($w_dir_volta.'classes/sp/db_getBenef.php');
 include_once($w_dir_volta.'funcoes/selecaoOrdenaRel.php');
 
 // =========================================================================
-//  /Rel_contas.php
+//  /Rel_plano.php
 // ------------------------------------------------------------------------
 // Nome     : Celso Miguel Lago Filho
 // Descricao: Diversos tipos de relatórios para fazer o acompanhamento gerencial 
@@ -100,24 +100,17 @@ function Inicial() {
     if (f($RS,'logo')>'') $w_logo='\img\logo'.substr(f($RS,'logo'),(strpos(f($RS,'logo'),'.') ? strpos(f($RS,'logo'),'.')+1 : 0)-1,30);
     // Recupera todos os registros para a listagem
     $RS = db_getLancamento::getInstanceOf($dbms,$w_cliente,substr($SG,0,3),$p_dt_ini,$p_dt_fim,$w_sq_pessoa,'EE,ER');
-    $lista = explode(',',str_replace(' ',',',$p_ordena));
-    $RS = SortArray($RS,$lista[0],$lista[1]);
+    $RS = SortArray($RS,strtolower($p_ordena),'asc');
   } 
   if ($w_tipo_rel=='WORD') {
-    HeaderWord('Portrait');
+    HeaderWord();
     $w_pag=1;
     $w_linha=5;
-    ShowHTML('<BASE HREF="'.$conRootSIW.'">');
-    ShowHTML('<TABLE WIDTH="100%" BORDER=0><TR><TD ROWSPAN=2><IMG ALIGN="LEFT" src="'.LinkArquivo(null,$w_cliente,$w_logo,null,null,null,'EMBED').'"><TD ALIGN="RIGHT"><B><FONT SIZE=4 COLOR="#000000">');
     if (substr($SG,2,1)=='R') {
-      ShowHTML('Contas a receber');
+      CabecalhoWord($w_cliente,'Contas a receber',$w_pag);
     } elseif (substr($SG,2,1)=='D') {
-      ShowHTML('Contas a pagar');
+      CabecalhoWord($w_cliente,'Contas a pagar',$w_pag);            
     } 
-    ShowHTML('</FONT><TR><TD WIDTH="50%" ALIGN="RIGHT"><B><font size=1 COLOR="#000000">'.DataHora().'</B>');
-    ShowHTML('<TR><TD COLSPAN="2" ALIGN="RIGHT"><B><FONT SIZE=2 COLOR="#000000">Página: '.$w_pag.'</B></TD></TR>');
-    ShowHTML('</TD></TR>');
-    ShowHTML('</FONT></B></TD></TR></TABLE>');
   } else {
     Cabecalho();
     ShowHTML('<HEAD>');
@@ -155,35 +148,34 @@ function Inicial() {
       } elseif (substr($SG,2,1)=='D') {
         ShowHTML('Contas a pagar');
       } 
-      ShowHTML('</FONT><TR><TD WIDTH="50%" ALIGN="RIGHT"><B><font size=1 COLOR="#000000">'.DataHora().'</B>');
-      ShowHTML('&nbsp;&nbsp;<IMG BORDER=0 ALIGN="CENTER" TITLE="Gerar word" SRC="images/word.gif" onClick="window.open(\''.$w_pagina.$par.'&R='.$w_pagina.$par.'&O=L&w_chave='.$w_chave.'&w_tipo_rel=word&P1='.$P1.'&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP='.$TP.'&SG='.$SG.MontaFiltro('GET').'\',\'VisualRelPPAWord\',\'menubar=yes resizable=yes scrollbars=yes\');">');
-      ShowHTML('&nbsp;&nbsp;<IMG ALIGN="CENTER" TITLE="Imprimir" SRC="images/impressora.jpg" onClick="window.print();">');
+      ShowHTML('</font><TR><TD WIDTH="50%" ALIGN="RIGHT"><B><font COLOR="#000000">'.DataHora().'</font></B>');
+      ShowHTML('&nbsp;&nbsp;<a target="MetaWord" href="'.$w_dir.$w_pagina.$par.'&R='.$w_pagina.$par.'&O=L&w_chave='.$w_chave.'&w_tipo_rel=word&P1='.$P1.'&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP='.$TP.'&SG='.$SG.MontaFiltro('GET').'"><IMG border=0 ALIGN="CENTER" TITLE="Gerar word" SRC="images/word.gif"></a>');      
+      ShowHTML('&nbsp;&nbsp;<IMG ALIGN="CENTER" TITLE="Imprimir" SRC="images/impressora.jpg" onClick="window.print();">');      
       ShowHTML('</TD></TR>');
-      ShowHTML('</FONT></B></TD></TR></TABLE>');
+      ShowHTML('</B></TD></TR></TABLE>');
     } else {
       BodyOpen('onLoad=\'document.Form.p_dt_ini.focus()\';');
-      ShowHTML('<B><FONT COLOR="#000000">'.$w_TP.'</FONT></B>');
+      ShowHTML('<B><FONT COLOR="#000000">'.$w_TP.'</font></B>');
     } 
     ShowHTML('<HR>');
   } 
-  ShowHTML('<div align=center><center>');
   ShowHTML('<table border="0" cellpadding="0" cellspacing="0" width="100%">');
   if ($O=='L') {
     // Exibe a quantidade de registros apresentados na listagem e o cabeçalho da tabela de listagem
     $w_filtro='';
-    if ($p_dt_ini>'') $w_filtro=$w_filtro.'<tr valign="top"><td align="right"><font size=1>Vencimento de <td><font size=1><b>'.$p_dt_ini.'</b> até <b>'.$p_dt_fim.'</b>'; 
+    if ($p_dt_ini>'') $w_filtro=$w_filtro.'<tr valign="top"><td align="right">Vencimento de <td><b>'.$p_dt_ini.'</b> até <b>'.$p_dt_fim.'</b>'; 
     if ($w_sq_pessoa>'') {
       if (substr($SG,2,1)=='R') {
-        $w_filtro=$w_filtro.'<tr valign="top"><td align="right"><font size=1>Cliente<td><font size=1>: <b>'.$p_nome.'</b>';
+        $w_filtro=$w_filtro.'<tr valign="top"><td align="right">Cliente<td>: <b>'.$p_nome.'</b>';
       } elseif (substr($SG,2,1)=='D') {
-        $w_filtro=$w_filtro.'<tr valign="top"><td align="right"><font size=1>Fornecedor<td><font size=1>: <b>'.$p_nome.'</b>';
+        $w_filtro=$w_filtro.'<tr valign="top"><td align="right">Fornecedor<td>: <b>'.$p_nome.'</b>';
       } 
     }
     if (Nvl($p_ordena,'')>'') {
-      $w_filtro=$w_filtro.'<tr valign="top"><td align="right"><font size=1>Agregado por<td><font size=1>: <b>';
+      $w_filtro=$w_filtro.'<tr valign="top"><td align="right">Agregado por<td>: <b>';
       switch ($p_ordena) {
         case 'VENCIMENTO':     $w_filtro=$w_filtro.'Vencimento';    break;
-        case 'SQ_PESSOA':
+        case 'NM_PESSOA_RESUMIDO':
           if (substr($SG,2,1)=='R') {
             $w_filtro=$w_filtro.'Cliente';
           } elseif (substr($SG,2,1)=='D') {
@@ -195,25 +187,25 @@ function Inicial() {
       $w_filtro=$w_filtro.'</b>';
     } 
     ShowHTML('<tr><td align="left" colspan=2>');
-    if ($w_filtro>'') ShowHTML('<table border=0><tr valign="top"><td><font size=1><b>Filtro:</b><td nowrap><font size=1><ul>'.$w_filtro.'</ul></tr></table>'); 
-    ShowHTML('    <td align="right" valign="botton"><font size="1"><b>Registros listados: '.$RS->RecordCount);
+    if ($w_filtro>'') ShowHTML('<table border=0><tr valign="top"><td><b>Filtro:</b><td nowrap><ul>'.$w_filtro.'</ul></tr></table>'); 
+    ShowHTML('    <td align="right" valign="botton"><b>Registros listados: '.count($RS));
     ShowHTML('<tr><td align="center" colspan=3>');
     ShowHTML('    <TABLE WIDTH="100%" bgcolor="'.$conTableBgColor.'" BORDER="'.$conTableBorder.'" CELLSPACING="'.$conTableCellSpacing.'" CELLPADDING="'.$conTableCellPadding.'" BorderColorDark="'.$conTableBorderColorDark.'" BorderColorLight="'.$conTableBorderColorLight.'">');
     ShowHTML('        <tr bgcolor="'.$conTrBgColor.'" align="center">');
-    ShowHTML('          <td><font size="1"><b>Código</font></td>');
-    ShowHTML('          <td><font size="1"><b>Vencto.</font></td>');
+    ShowHTML('          <td><b>Código</td>');
+     ShowHTML('          <td><b>Vencto.</td>');
     if (substr($SG,2,1)=='R') {
-      ShowHTML('       <td><font size="1"><b>Cliente</font></td>');
+      ShowHTML('       <td><b>Cliente</td>');
     } elseif (substr($SG,2,1)=='D') {
-      ShowHTML('       <td><font size="1"><b>Fornecedor</font></td>');
+      ShowHTML('       <td><b>Fornecedor</td>');
     } 
-    ShowHTML('          <td><font size="1"><b>Histórico</font></td>');
-    ShowHTML('          <td><font size="1"><b>Prazo</font></td>');
-    ShowHTML('          <td><font size="1"><b>Valor</font></td>');
+    ShowHTML('          <td><b>Histórico</td>');
+    ShowHTML('          <td><b>Prazo</td>');
+    ShowHTML('          <td><b>Valor</td>');
     ShowHTML('        </tr>');
     if (count($RS)<=0) {
       // Se não foram selecionados registros, exibe mensagem
-      ShowHTML('      <tr bgcolor="'.$conTrBgColor.'"><td colspan=6 align="center"><font size="1"><b>Não foram encontrados registros.</b></td></tr>');
+      ShowHTML('      <tr bgcolor="'.$conTrBgColor.'"><td colspan=6 align="center"><b>Não foram encontrados registros.</b></td></tr>');
     } else {
       $w_valor=0.00;
       $w_valor_total=0.00;
@@ -225,50 +217,32 @@ function Inicial() {
           ShowHTML('  </td>');
           ShowHTML('</tr>');
           ShowHTML('</table>');
-          ShowHTML('</center></div>');
           ShowHTML('    <br style="page-break-after:always">');
           $w_linha=5;
           $w_pag=$w_pag+1;
-          ShowHTML('<TABLE WIDTH="100%" BORDER=0><TR><TD ROWSPAN=2><IMG ALIGN="LEFT" SRC="'.$w_logo.'"><TD ALIGN="RIGHT"><B><FONT SIZE=4 COLOR="#000000">');
           if (substr($SG,2,1)=='R') {
-            ShowHTML('Contas a receber');
+            CabecalhoWord($w_cliente,'Contas a receber',$w_pag);
           } elseif (substr($SG,2,1)=='D') {
-            ShowHTML('Contas a pagar');
+            CabecalhoWord($w_cliente,'Contas a pagar',$w_pag);            
           } 
-          ShowHTML('</FONT><TR><TD WIDTH="50%" ALIGN="RIGHT"><B><font size=1 COLOR="#000000">'.DataHora().'</B>');
-          ShowHTML('<TR><TD COLSPAN="2" ALIGN="RIGHT"><B><FONT SIZE=2 COLOR="#000000">Página: '.$w_pag.'</B></TD></TR>');
-          ShowHTML('</TD></TR>');
-          ShowHTML('</FONT></B></TD></TR></TABLE>');
-          ShowHTML('<div align=center><center>');
           ShowHTML('<table border="0" cellpadding="0" cellspacing="0" width="100%">');
           // Exibe a quantidade de registros apresentados na listagem e o cabeçalho da tabela de listagem
-          $w_filtro='';
-          if ($p_dt_ini>'') $w_filtro=$w_filtro.'<tr valign="top"><td align="right"><font size=1>Vencimento de <td><font size=1><b>'.$p_dt_ini.'</b> até '.$p_dt_fim; 
-          if ($p_sq_pessoa>'') {
-            if (substr($SG,2,1)=='R') {
-              $w_filtro=$w_filtro.'<tr valign="top"><td align="right"><font size=1>Cliente<td><font size=1>: <b>'.f($row,'nome_resumido').'</b>';
-            } elseif (substr($SG,2,1)=='D') {
-              $w_filtro=$w_filtro.'<tr valign="top"><td align="right"><font size=1>Fornecedor<td><font size=1>: <b>'.f($row,'nome_resumido').'</b>';
-            } 
-          } 
-          if ($p_ordena>'') $w_filtro=$w_filtro.'<tr valign="top"><td align="right"><font size=1>Agregado por <td><font size=1>: <b>'.$p_ordena.'</b>'; 
           ShowHTML('<tr><td align="left" colspan=2>');
-          if ($w_filtro>'') ShowHTML ('<table border=0><tr valign="top"><td><font size=1><b>Filtro:</b><td nowrap><font size=1><ul>'.$w_filtro.'</ul></tr></table>');    
-          ShowHTML('    <td align="right" valign="botton"><font size="1"><b>Registros listados: '.$row->RecordCount);
+          if ($w_filtro>'') ShowHTML ('<table border=0><tr valign="top"><td><b>Filtro:</b><td nowrap><ul>'.$w_filtro.'</ul></tr></table>');    
+          ShowHTML('    <td align="right" valign="botton"><b>Registros listados: '.count($RS));
           ShowHTML('<tr><td align="center" colspan=3>');
           ShowHTML('    <TABLE WIDTH="100%" bgcolor="'.$conTableBgColor.'" BORDER="'.$conTableBorder.'" CELLSPACING="'.$conTableCellSpacing.'" CELLPADDING="'.$conTableCellPadding.'" BorderColorDark="'.$conTableBorderColorDark.'" BorderColorLight="'.$conTableBorderColorLight.'">');
           ShowHTML('        <tr bgcolor="'.$conTrBgColor.'" align="center">');
-          ShowHTML('          <td><font size="1"><b>Código</font></td>');
-          ShowHTML('          <td><font size="1"><b>Nome</font></td>');
-          ShowHTML('          <td><font size="1"><b>Vencto.</font></td>');
+          ShowHTML('          <td><b>Código</td>');
+          ShowHTML('          <td><b>Vencto.</td>');
           if (substr($SG,2,1)=='R') {
-            ShowHTML('       <td><font size="1"><b>Cliente</font></td>');
+            ShowHTML('       <td><b>Cliente</td>');
           } elseif (substr($SG,2,1)=='D') {
-            ShowHTML('       <td><font size="1"><b>Fornecedor</font></td>');
+            ShowHTML('       <td><b>Fornecedor</td>');
           } 
-          ShowHTML('          <td><font size="1"><b>Histórico</font></td>');
-          ShowHTML('          <td><font size="1"><b>Prazo</font></td>');
-          ShowHTML('          <td><font size="1"><b>Valor</font></td>');
+          ShowHTML('          <td><b>Histórico</td>');
+          ShowHTML('          <td><b>Prazo</td>');
+          ShowHTML('          <td><b>Valor</td>');
           ShowHTML('        </tr>');
         } 
         $w_cor = ($w_cor==$conTrBgColor || $w_cor=='') ? $w_cor=$conTrAlternateBgColor : $w_cor=$conTrBgColor;
@@ -276,112 +250,110 @@ function Inicial() {
           switch ($p_ordena) {
             case 'VENCIMENTO':
               if (Nvl($w_atual,'')!=f($row,'vencimento')) {
-                ShowHTML('      <tr bgcolor="'.$conTrBgColor.'" valign="top">');
-                ShowHTML('        <td colspan=5 align="right" height=18><font size="1"><b>Total do dia </td>');
-                ShowHTML('        <td align="right"><font size="1"><b>'.number_format($w_valor,2,',','.').'</b></td>');
+                ShowHTML('      <tr bgcolor="'.$conTrAlternateBgColor.'" valign="top">');                
+                ShowHTML('        <td colspan=5 align="right" height=18><b>Total do dia </td>');
+                ShowHTML('        <td align="right" nowrap><b>'.number_format($w_valor,2,',','.').'</b></td>');
                 ShowHTML('      </tr>');
-                $w_valor=0.00;
-                $w_linha=$w_linha+1;
+                $w_valor  =0.00;
+                $w_linha += 1;
               } 
               break;
-            case 'SQ_PESSOA':
+            case 'NM_PESSOA_RESUMIDO':
               if (Nvl($w_atual,0)!=Nvl(f($row,'sq_pessoa'),0)) {
+                ShowHTML('      <tr bgcolor="'.$conTrAlternateBgColor.'" valign="top">');                                
                 if (substr($SG,2,1)=='R') {
-                  ShowHTML('        <td colspan=5 align="right" height=18><font size="1"><b>Total do cliente </td>');
+                  ShowHTML('        <td colspan=5 align="right" height=18><b>Total do cliente </td>');
                 } elseif (substr($SG,2,1)=='D') {
-                  ShowHTML('        <td colspan=5 align="right" height=18><font size="1"><b>Total do fornecedor </td>');
+                  ShowHTML('        <td colspan=5 align="right" height=18><b>Total do fornecedor </td>');
                 } 
-                ShowHTML('        <td align="right"><font size="1"><b>'.number_format($w_valor,2,',','.').'</b></td>');
+                ShowHTML('        <td align="right" nowrap><b>'.number_format($w_valor,2,',','.').'</b></td>');
                 ShowHTML('      </tr>');
-                $w_valor=0.00;
-                $w_linha=$w_linha+1;
-              } 
+                $w_valor  =0.00;
+                $w_linha += 1;
+              }
               break;
             case 'NM_TRAMITE':
               if (Nvl($w_atual,'')!=f($row,'nm_tramite')) {
-                ShowHTML('        <td colspan=5 align="right" height=18><font size="1"><b>Total da situação <b>'.$w_atual.'</b></td>');
-                ShowHTML('        <td align="right"><font size="1"><b>'.number_format($w_valor,2,',','.').'</b></td>');
+                ShowHTML('      <tr bgcolor="'.$conTrAlternateBgColor.'" valign="top">');                                
+                ShowHTML('        <td colspan=5 align="right" height=18><b>Total da situação <b>'.$w_atual.'</b></td>');
+                ShowHTML('        <td align="right" nowrap><b>'.number_format($w_valor,2,',','.').'</b></td>');
                 ShowHTML('      </tr>');
-                $w_valor=0.00;
-                $w_linha=$w_linha+1;
-              } 
+                $w_valor  =0.00;
+                $w_linha += 1;
+              }
               break;
           } 
         } 
         ShowHTML('      <tr bgcolor="'.$conTrBgColor.'" valign="top">');
-        ShowHTML('        <td nowrap><font size=1>');
-        if (Nvl(f($row,'conclusao'),'nulo')=='nulo'){
-          if (f($row,'fim')<time()) {
-            ShowHTML('           <img src="'.$conImgAtraso.'" border=0 width=15 heigth=15 align="center">');
-          } elseif (f($row,'aviso_prox_conc')=='S' && (f($row,'aviso')<=time())) {
-            ShowHTML('           <img src="'.$conImgAviso.'" border=0 width=15 height=15 align="center">');
+        ShowHTML('        <td nowrap>');
+        if (Nvl($w_tipo_rel,'')!='WORD') {
+          if (Nvl(f($row,'conclusao'),'nulo')=='nulo'){
+            if (f($row,'fim')<addDays(time(),-1)) {
+              ShowHTML('           <img src="'.$conImgAtraso.'" border=0 width=15 heigth=15 align="center">');
+            } elseif (f($row,'aviso_prox_conc')=='S' && (f($row,'aviso')<=addDays(time(),-1))) {
+              ShowHTML('           <img src="'.$conImgAviso.'" border=0 width=15 height=15 align="center">');
+            } else {
+              ShowHTML('           <img src="'.$conImgNormal.'" border=0 width=15 height=15 align="center">');
+            } 
           } else {
-            ShowHTML('           <img src="'.$conImgNormal.'" border=0 width=15 height=15 align="center">');
+            if (f($row,'vencimento')<Nvl(f($row,'quitacao'),f($row,'vencimento'))) {
+              ShowHTML('           <img src="'.$conImgOkAtraso.'" border=0 width=15 heigth=15 align="center">');
+            } else {
+              ShowHTML('           <img src="'.$conImgOkNormal.'" border=0 width=15 height=15 align="center">');
+            } 
           } 
-        } else {
-          if (f($row,'vencimento')<Nvl(f($row,'quitacao'),f($row,'vencimento'))) {
-            ShowHTML('           <img src="'.$conImgOkAtraso.'" border=0 width=15 heigth=15 align="center">');
-          } else {
-            ShowHTML('           <img src="'.$conImgOkNormal.'" border=0 width=15 height=15 align="center">');
-          } 
-        } 
+        }
         if (Nvl($w_tipo_rel,'')=='WORD') {
           ShowHTML('        '.f($row,'codigo_interno').'&nbsp;');
         } else {
           ShowHTML('        <A class="hl" HREF="'.$w_dir.'lancamento.php?par=Visual&R='.$w_pagina.$par.'&O=L&w_chave='.f($row,'sq_siw_solicitacao').'&w_tipo=Volta&P1='.$P1.'&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP='.$TP.'&SG='.$SG.MontaFiltro('GET').'" title="Exibe as informações deste registro.">'.f($row,'codigo_interno').'&nbsp;</a>');
         } 
-        ShowHTML('        <td align="center"><font size="1">'.FormataDataEdicao(f($row,'vencimento')).'</td>');
-        ShowHTML('        <td><font size="1">'.f($row,'nm_pessoa_resumido').'</td>');
+        ShowHTML('        <td align="center">'.FormataDataEdicao(f($row,'vencimento')).'</td>');
+        ShowHTML('        <td>'.f($row,'nm_pessoa_resumido').'</td>');
         if (Nvl(f($row,'cd_acordo'),'')>'') {
-          ShowHTML('        <td><font size="1"><A class="hl" HREF="'.'mod_ac/contratos.php?par=Visual&O=L&w_chave='.f($row,'sq_acordo').'&w_tipo=&P1=2&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP='.$TP.'&SG=GC'.substr($SG,2,1).'CAD" title="Exibe as informações do projeto." target="_blank">'.f($row,'cd_acordo').'</a> - '.f($row,'descricao').'</td>');
+          if (Nvl($w_tipo_rel,'')=='WORD')
+             ShowHTML('        <td>'.f($row,'cd_acordo').' - '.f($row,'descricao').'</td>');
+          else
+             ShowHTML('        <td><A class="hl" HREF="'.'mod_ac/contratos.php?par=Visual&O=L&w_chave='.f($row,'sq_acordo').'&w_tipo=&P1=2&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP='.$TP.'&SG=GC'.substr($SG,2,1).'CAD" title="Exibe as informações do projeto." target="_blank">'.f($row,'cd_acordo').'</a> - '.f($row,'descricao').'</td>');
         } else {
-          ShowHTML('        <td><font size="1">'.f($row,'descricao').'</td>');
+          ShowHTML('        <td>'.f($row,'descricao').'</td>');
         } 
-        ShowHTML('        <td align="right"><font size="1">'.f($row,'prazo').'</td>');
-        ShowHTML('        <td align="right"><font size="1">'.number_format(f($row,'valor'),2,',','.').'</td>');
+        ShowHTML('        <td align="right">'.f($row,'prazo').'</td>');
+        ShowHTML('        <td align="right" nowrap>'.number_format(f($row,'valor'),2,',','.').'</td>');
         ShowHTML('</tr>');
-        $w_valor=$w_valor+f($row,'valor');
-        $w_valor_total=$w_valor_total+f($row,'valor');
-        $w_linha=$w_linha+1;
+        $w_valor        += f($row,'valor');
+        $w_valor_total  += f($row,'valor');
+        $w_linha        += 1;
         switch ($p_ordena) {
-          case 'VENCIMENTO':      $w_atual=f($row,'vencimento');   break;
-          case 'SQ_PESSOA':       $w_atual=f($row,'sq_pessoa');    break;
-          case 'NM_TRAMITE':      $w_atual=f($row,'nm_tramite');   break;
+          case 'VENCIMENTO':         $w_atual=f($row,'vencimento');   break;
+          case 'NM_PESSOA_RESUMIDO': $w_atual=f($row,'sq_pessoa');    break;
+          case 'NM_TRAMITE':         $w_atual=f($row,'nm_tramite');   break;
         } 
       } 
+      ShowHTML('      <tr bgcolor="'.$conTrAlternateBgColor.'" valign="top">');
       switch ($p_ordena) {
-        case 'VENCIMENTO':
-          ShowHTML('      <tr bgcolor="'.$conTrBgColor.'" valign="top">');
-          ShowHTML('        <td colspan=5 align="right" height=18><font size="1"><b>Total do dia </td>');
-          ShowHTML('        <td align="right"><font size="1"><b>'.number_format($w_valor,2,',','.').'</b></td>');
-          ShowHTML('      </tr>');
-          $w_valor=0.00;
-          $w_linha=$w_linha+1;
+        case 'VENCIMENTO': 
+          ShowHTML('        <td colspan=5 align="right" height=18><b>Total do dia </td>');
           break;
-        case 'SQ_PESSOA':
+        case 'NM_PESSOA_RESUMIDO':
           if (substr($SG,2,1)=='R') {
-            ShowHTML('        <td colspan=5 align="right" height=18><font size="1"><b>Total do cliente </td>');
+            ShowHTML('        <td colspan=5 align="right" height=18><b>Total do cliente </td>');
           } elseif (substr($SG,2,1)=='D'){
-            ShowHTML('        <td colspan=5 align="right" height=18><font size="1"><b>Total do fornecedor </td>');
+            ShowHTML('        <td colspan=5 align="right" height=18><b>Total do fornecedor </td>');
           } 
-          ShowHTML('        <td align="right"><font size="1"><b>'.number_format($w_valor,2,',','.').'</b></td>');
-          ShowHTML('      </tr>');
-          $w_valor=0.00;
-          $w_linha=$w_linha+1;
           break;
         case 'NM_TRAMITE':
-          ShowHTML('        <td colspan=5 align="right" height=18><font size="1"><b>Total da situação <b>'.$w_atual.'</b></td>');
-          ShowHTML('        <td align="right"><font size="1"><b>'.number_format($w_valor,2,',','.').'</b></td>');
-          ShowHTML('      </tr>');
-          $w_valor=0.00;
-          $w_linha=$w_linha+1;
+          ShowHTML('        <td colspan=5 align="right" height=18><b>Total da situação <b>'.$w_atual.'</b></td>');
           break;
       } 
-      ShowHTML('      <tr bgcolor="'.$conTrBgColor.'" height=5><td colspan=6><font size=1>&nbsp;</td></tr>');
-      ShowHTML('      <tr bgcolor="'.$conTrBgColor.'" valign="center" height=30>');
-      ShowHTML('        <td colspan=5 align="right"><font size="2"><b>Totais do relatório</td>');
-      ShowHTML('        <td align="right"><font size="1"><b>'.number_format($w_valor,2,',','.').'</b></td>');
-      $w_linha=$w_linha+1;
+      ShowHTML('        <td align="right" nowrap><b>'.number_format($w_valor,2,',','.').'</b></td>');
+      ShowHTML('      </tr>');
+      $w_linha += 1;
+      ShowHTML('      <tr bgcolor="'.$conTrBgColor.'" height=5><td colspan=6>&nbsp;</td></tr>');
+      ShowHTML('      <tr bgcolor="'.$conTrAlternateBgColor.'" valign="center" height=30>');
+      ShowHTML('        <td colspan=5 align="right"><font size="2"><b>Totais do relatório</font></td>');
+      ShowHTML('        <td align="right" nowrap><b>'.number_format($w_valor,2,',','.').'</b></td>');
+      $w_linha += 1;
     } 
     ShowHTML('      </center>');
     ShowHTML('    </table>');
@@ -392,13 +364,13 @@ function Inicial() {
     ShowHTML('<INPUT type="hidden" name="w_troca" value="">');
     ShowHTML('<tr bgcolor="'.$conTrBgColor.'"><td>');
     ShowHTML('    <table border="0">');
-    ShowHTML('      <tr><td valign="top"><font size="1"><b><u>V</u>encimento entre:</b><br><input '.$w_Disabled.' accesskey="V" type="text" name="p_dt_ini" class="sti" SIZE="10" MAXLENGTH="10" VALUE="'.Nvl($p_dt_ini,First_Day(time())).'" onKeyDown="FormataData(this,event);">'.ExibeCalendario('Form','p_dt_ini').' e <input '.$w_Disabled.' type="text" name="p_dt_fim" class="sti" SIZE="10" MAXLENGTH="10" VALUE="'.Nvl($p_dt_fim,FormataDataEdicao(Last_Day(time()))).'" onKeyDown="FormataData(this,event);">'.ExibeCalendario('Form','p_dt_fim').'</td>');
-    ShowHTML('      <tr><td valign="top"><font size=1><b><u>P</u>rocurar pelo nome:</b> (Informe qualquer parte do nome SEM ACENTOS)<br><INPUT ACCESSKEY="P" TYPE="text" class="sti" NAME="p_nome" VALUE="'.$p_nome.'" SIZE="20" MaxLength="20">');
+    ShowHTML('      <tr><td valign="top"><b><u>V</u>encimento entre:</b><br><input '.$w_Disabled.' accesskey="V" type="text" name="p_dt_ini" class="sti" SIZE="10" MAXLENGTH="10" VALUE="'.Nvl($p_dt_ini,FormataDataEdicao(First_Day(time()))).'" onKeyDown="FormataData(this,event);">'.ExibeCalendario('Form','p_dt_ini').' e <input '.$w_Disabled.' type="text" name="p_dt_fim" class="sti" SIZE="10" MAXLENGTH="10" VALUE="'.Nvl($p_dt_fim,FormataDataEdicao(Last_Day(time()))).'" onKeyDown="FormataData(this,event);">'.ExibeCalendario('Form','p_dt_fim').'</td>');
+    ShowHTML('      <tr><td valign="top"><b><u>P</u>rocurar pelo nome:</b> (Informe qualquer parte do nome SEM ACENTOS)<br><INPUT ACCESSKEY="P" TYPE="text" class="sti" NAME="p_nome" VALUE="'.$p_nome.'" SIZE="20" MaxLength="20">');
     ShowHTML('              <INPUT class="stb" TYPE="button" NAME="Botao" VALUE="Procurar" onClick="Botao.value=this.value; document.Form.O.value=\'P\'; document.Form.target=\'\'; if (Validacao(document.Form)) {document.Form.submit();}">');
     if ($p_nome>'') {
       $RS = db_getBenef::getInstanceOf($dbms,$w_cliente,null,null,null,$p_nome,null,null,null);
       $RS = SortArray($RS,'nm_pessoa','asc');
-      ShowHTML('      <tr><td valign="top"><font size="1"><b><u>P</u>essoa:</b><br><SELECT ACCESSKEY="P" CLASS="STS" NAME="w_sq_pessoa">');
+      ShowHTML('      <tr><td valign="top"><b><u>P</u>essoa:</b><br><SELECT ACCESSKEY="P" CLASS="STS" NAME="w_sq_pessoa">');
       ShowHTML('          <option value="">---');
       foreach($RS as $row){
         if (f($row,'sq_tipo_pessoa')==1) {
@@ -430,7 +402,7 @@ function Inicial() {
   } 
   ShowHTML('</table>');
   ShowHTML('</center>');
-  if ($w_tipo_rel!='WORD') Rodape(); 
+  if ($w_tipo_rel!='WORD') Rodape(); else ShowHTML('</div>');
 } 
 // =========================================================================
 // Rotina principal

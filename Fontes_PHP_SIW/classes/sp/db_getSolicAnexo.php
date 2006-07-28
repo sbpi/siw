@@ -10,7 +10,7 @@ extract($GLOBALS); include_once($w_dir_volta.'classes/db/DatabaseQueriesFactory.
 
 class db_getSolicAnexo {
    function getInstanceOf($dbms, $p_chave, $p_chave_aux, $p_cliente) {
-     $sql=$strschema.'SP_GETSOLICANEXO';
+     extract($GLOBALS,EXTR_PREFIX_SAME,'strchema'); $sql=$strschema.'SP_GETSOLICANEXO';
      $params=array('p_chave'                     =>array($p_chave,                                         B_INTEGER,        32),
                    'p_chave_aux'                 =>array(tvl($p_chave_aux),                                B_INTEGER,        32),
                    'p_cliente'                   =>array($p_cliente,                                       B_INTEGER,        32),
