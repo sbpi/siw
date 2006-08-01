@@ -180,17 +180,17 @@ REM Recupera informações consolidadas das solicitações
 REM -------------------------------------------------------------------------
 Sub DB_GetCVList(p_rs, p_cliente,p_sq_formacao, p_sq_idioma, p_sexo, p_nome)
   Dim l_cliente, l_sq_formacao, l_sq_idioma, l_sexo, l_nome
-  Set l_cliente			     = Server.CreateObject("ADODB.Parameter")
+  Set l_cliente                 = Server.CreateObject("ADODB.Parameter")
   Set l_sq_formacao          = Server.CreateObject("ADODB.Parameter")
   Set l_sq_idioma            = Server.CreateObject("ADODB.Parameter")
   Set l_sexo                 = Server.CreateObject("ADODB.Parameter")
   Set l_nome                 = Server.CreateObject("ADODB.Parameter")
   with sp
-     set l_cliente				= .CreateParameter("l_cliente",              adInteger, adParamInput,   , p_cliente)
-     set l_sq_formacao      	= .CreateParameter("l_sq_formacao",          adInteger, adParamInput,   , tvl(p_sq_formacao))
-     set l_sq_idioma    		= .CreateParameter("l_sq_idioma",            adInteger, adParamInput,   , tvl(p_sq_idioma))
-     set l_sexo         		= .CreateParameter("l_sexo",	             adVarchar, adParamInput,  1, tvl(p_sexo))
-     set l_nome         		= .CreateParameter("l_nome",	             adVarchar, adParamInput, 40, tvl(p_nome))
+     set l_cliente                = .CreateParameter("l_cliente",              adInteger, adParamInput,   , p_cliente)
+     set l_sq_formacao          = .CreateParameter("l_sq_formacao",          adInteger, adParamInput,   , tvl(p_sq_formacao))
+     set l_sq_idioma            = .CreateParameter("l_sq_idioma",            adInteger, adParamInput,   , tvl(p_sq_idioma))
+     set l_sexo                 = .CreateParameter("l_sexo",                 adVarchar, adParamInput,  1, tvl(p_sexo))
+     set l_nome                 = .CreateParameter("l_nome",                 adVarchar, adParamInput, 40, tvl(p_nome))
      .parameters.Append         l_cliente
      .parameters.Append         l_sq_formacao
      .parameters.Append         l_sq_idioma
