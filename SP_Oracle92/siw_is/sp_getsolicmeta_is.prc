@@ -17,7 +17,8 @@ begin
   If p_restricao = 'LISTA' Then
       -- Recupera todas as metas de um ação
       open p_result for 
-         select a.*, b.sq_pessoa titular, c.sq_pessoa substituto, 
+         select a.*, to_char(a.ultima_atualizacao, 'DD/MM/YYYY, HH24:MI:SS') phpdt_ultima_atualizacao,
+                b.sq_pessoa titular, c.sq_pessoa substituto, 
                 k.sq_pessoa tit_exec, l.sq_pessoa sub_exec,
                 d.nome_resumido||' ('||f.sigla||')' nm_resp, g.sigla sg_setor,
                 i.solicitante, i.sq_unidade
@@ -48,7 +49,8 @@ begin
    ElsIf p_restricao = 'LSTNULL' Then
       -- Recupera as metas principais de uma ação
       open p_result for 
-         select a.*, b.sq_pessoa titular, c.sq_pessoa substituto, i.executor, i.solicitante,
+         select a.*, to_char(a.ultima_atualizacao, 'DD/MM/YYYY, HH24:MI:SS') phpdt_ultima_atualizacao,
+                b.sq_pessoa titular, c.sq_pessoa substituto, i.executor, i.solicitante,
                 case a.programada when 'S' then 'Sim' else 'Não' end nm_programada,
                 case a.cumulativa when 'S' then 'Sim' else 'Não' end nm_cumulativa,  
                 case a.exequivel  when 'S' then 'Sim' else 'Não' end nm_exequivel,    
@@ -102,7 +104,8 @@ begin
    ElsIf p_restricao = 'LSTNIVEL' Then
       -- Recupera as metas vinculadas a uma meta da ação
       open p_result for 
-         select a.*, b.sq_pessoa titular, c.sq_pessoa substituto, i.executor, i.solicitante,
+         select a.*, to_char(a.ultima_atualizacao, 'DD/MM/YYYY, HH24:MI:SS') phpdt_ultima_atualizacao,
+                b.sq_pessoa titular, c.sq_pessoa substituto, i.executor, i.solicitante,
                 k.sq_pessoa tit_exec, l.sq_pessoa sub_exec,
                 d.nome_resumido||' ('||f.sigla||')' nm_resp, g.sigla sg_setor
            from is_meta                             a
@@ -133,7 +136,8 @@ begin
       -- Recupera os dados de uma meta da ação
       select cd_subacao into w_cd_subacao from is_meta where sq_meta = p_chave_aux;      
       open p_result for 
-         select a.*, b.sq_pessoa titular, c.sq_pessoa substituto, 
+         select a.*, to_char(a.ultima_atualizacao, 'DD/MM/YYYY, HH24:MI:SS') phpdt_ultima_atualizacao,
+                b.sq_pessoa titular, c.sq_pessoa substituto, 
                 case a.programada when 'S' then 'Sim' else 'Não' end nm_programada,
                 case a.cumulativa when 'S' then 'Sim' else 'Não' end nm_cumulativa,                
                 d.nome_resumido||' ('||f.sigla||')' nm_resp, g.sigla sg_setor,
