@@ -1426,7 +1426,7 @@ Sub DB_GetDeficiencyList(p_rs, p_nome, p_ativo)
      set l_nome         = .CreateParameter("l_nome",        adVarChar, adParamInput, 50, Tvl(p_nome))
      set l_ativo        = .CreateParameter("l_ativo",       adVarChar, adParamInput,  1, Tvl(p_ativo))
      .parameters.Append         l_nome
-     .parameters.Append         l_ativo  
+     .parameters.Append         l_ativo
      If Session("dbms") = 1 or Session("dbms") = 3 Then .Properties("PLSQLRSet") = TRUE End If
      .CommandText               = Session("schema") & "SP_GetDefList"
      On Error Resume Next
@@ -1444,9 +1444,12 @@ End Sub
 REM =========================================================================
 REM Recupera a lista de estados civis
 REM -------------------------------------------------------------------------
-Sub DB_GetCivStateList(p_rs)
-
+Sub DB_GetCivStateList(p_rs, p_ativo)
+  Dim l_ativo
+  Set l_ativo            = Server.CreateObject("ADODB.Parameter")  
   with sp
+     set l_ativo        = .CreateParameter("l_ativo",       adVarChar, adParamInput,  1, Tvl(p_ativo))
+     .parameters.Append         l_ativo
      If Session("dbms") = 1 or Session("dbms") = 3 Then .Properties("PLSQLRSet") = TRUE End If
      .CommandText               = Session("schema") & "SP_GetCivStateList"
      On Error Resume Next
@@ -1455,6 +1458,7 @@ Sub DB_GetCivStateList(p_rs)
         TrataErro
      End If     
      If Session("dbms") = 1 or Session("dbms") = 3 Then .Properties("PLSQLRSet") = FALSE End If
+     .Parameters.Delete         "l_ativo"  
   end with
 
 End Sub

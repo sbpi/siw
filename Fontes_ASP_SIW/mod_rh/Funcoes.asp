@@ -81,8 +81,7 @@ REM =========================================================================
 REM Montagem da seleção de estado civil
 REM -------------------------------------------------------------------------
 Sub SelecaoEstadoCivil (label, accesskey, hint, chave, chaveAux, campo, restricao, atributo)
-    DB_GetCivStateList RS
-    RS.Filter = "ativo='S'"
+    DB_GetCivStateList RS, restricao
     RS.Sort   = "nome"
     If IsNull(hint) Then
        ShowHTML "          <td valign=""top""><font size=""1""><b>" & Label & "</b><br><SELECT ACCESSKEY=""" & accesskey & """ CLASS=""STS"" NAME=""" & campo & """ " & w_Disabled & " " & atributo & ">"
@@ -282,8 +281,7 @@ REM Montagem da seleção dos tipos de afastamentos
 REM -------------------------------------------------------------------------
 Sub SelecaoTipoAfastamento (label, accesskey, hint, chave, chaveAux, campo, restricao, atributo)
     If restricao = "AFASTAMENTO" Then
-       DB_GetGPTipoAfast RS, w_cliente, null, null, null, null, null, restricao
-       RS.Filter = "ativo = 'S'"
+       DB_GetGPTipoAfast RS, w_cliente, null, null, "S", null, null, restricao
        RS.Sort = "nome"
     Else
        DB_GetGPTipoAfast RS, w_cliente, null, null, null, null, null, null

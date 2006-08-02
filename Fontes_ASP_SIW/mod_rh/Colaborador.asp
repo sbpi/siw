@@ -901,10 +901,7 @@ Sub Contrato
         w_Disabled = " DISABLED "
      ElseIf InStr("IA",O) and w_troca = "" Then
         w_ativo = 0
-        DB_GetGPContrato RS, w_cliente, null, w_usuario, null, null, null, null, null, null, null, null, null, null
-        If w_chave > "" tHEN
-           RS.Filter = "chave <> " & w_chave
-        End If
+        DB_GetGPContrato RS, w_cliente, null, w_usuario, null, null, null, null, null, null, null, null, w_chave, null
         If Not RS.EOF Then
            While Not RS.EOF 
               If Nvl(RS("fim"),"") = "" Then
