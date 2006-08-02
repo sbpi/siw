@@ -20,12 +20,12 @@ class dml_putXMLDadoFinanceiro_PPA {
                    'p_cd_fonte'                  =>array(tvl($p_cd_fonte),                                 B_VARCHAR,         5),
                    'p_cd_natureza'               =>array(tvl($p_cd_natureza),                              B_VARCHAR,         2),
                    'p_cd_tipo_despesa'           =>array(tvl($p_cd_tipo_despesa),                          B_INTEGER,        32),
-                   'p_valor_ano_1'               =>array(tvl(str_replace('.',',',$p_valor_ano_1)),         B_NUMERIC,      18,2),
-                   'p_valor_ano_2'               =>array(tvl(str_replace('.',',',$p_valor_ano_2)),         B_NUMERIC,      18,2),
-                   'p_valor_ano_3'               =>array(tvl(str_replace('.',',',$p_valor_ano_3)),         B_NUMERIC,      18,2),
-                   'p_valor_ano_4'               =>array(tvl(str_replace('.',',',$p_valor_ano_4)),         B_NUMERIC,      18,2),
-                   'p_valor_ano_5'               =>array(tvl(str_replace('.',',',$p_valor_ano_5)),         B_NUMERIC,      18,2),
-                   'p_valor_ano_6'               =>array(tvl(str_replace('.',',',$p_valor_ano_6)),         B_NUMERIC,      18,2),
+                   'p_valor_ano_1'               =>array(toNumber(tvl(str_replace('.',',',$p_valor_ano_1))),B_NUMERIC,     18,2),
+                   'p_valor_ano_2'               =>array(toNumber(tvl(str_replace('.',',',$p_valor_ano_2))),B_NUMERIC,     18,2),
+                   'p_valor_ano_3'               =>array(toNumber(tvl(str_replace('.',',',$p_valor_ano_3))),B_NUMERIC,     18,2),
+                   'p_valor_ano_4'               =>array(toNumber(tvl(str_replace('.',',',$p_valor_ano_4))),B_NUMERIC,     18,2),
+                   'p_valor_ano_5'               =>array(toNumber(tvl(str_replace('.',',',$p_valor_ano_5))),B_NUMERIC,     18,2),
+                   'p_valor_ano_6'               =>array(toNumber(tvl(str_replace('.',',',$p_valor_ano_6))),B_NUMERIC,     18,2),
                    'p_observacao'                =>array(tvl($p_observacao),                               B_VARCHAR,      4000)
                   );
      $l_rs = DatabaseQueriesFactory::getInstanceOf($sql, $dbms, $params, DB_TYPE);

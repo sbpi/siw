@@ -28,7 +28,7 @@ class dml_putXMLPrograma_PPA {
                    'p_publico_alvo'              =>array(tvl($p_publico_alvo),                             B_VARCHAR,      4000),
                    'p_justificativa'             =>array(tvl(substr($p_justificativa,0,3999)),             B_VARCHAR,      4000),
                    'p_estrategia'                =>array(tvl(substr($p_estrategia,0,3999)),                B_VARCHAR,      4000),
-                   'p_valor_estimado'            =>array(tvl(str_replace('.',',',$p_valor_estimado)),      B_NUMERIC,      18,2),
+                   'p_valor_estimado'            =>array(toNumber(tvl(str_replace('.',',',$p_valor_estimado))), B_NUMERIC, 18,2),
                    'p_temporario'                =>array(tvl($p_temporario),                               B_VARCHAR,         1),
                    'p_padronizado'               =>array(tvl($p_padronizado),                              B_VARCHAR,         1),
                    'p_observacao'                =>array(tvl($p_observacao),                               B_VARCHAR,      4000)

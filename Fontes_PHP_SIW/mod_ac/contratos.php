@@ -246,7 +246,7 @@ function Inicial() {
       } 
       if ($p_prioridade>'') $w_filtro = $w_filtro.'<tr valign="top"><td align="right">Prioridade <td>[<b>'.RetornaPrioridade($p_prioridade).'</b>]';
       if ($p_proponente>'') $w_filtro = $w_filtro.'<tr valign="top"><td align="right">Outra parte <td>[<b>'.$p_proponente.'</b>]';
-      if ($p_objeto>'')     $w_filtro = $w_filtro.'<tr valign="top"><td align="right">Detalhamento <td>[<b>'.$p_objeto.'</b>]';
+      if ($p_objeto>'')     $w_filtro = $w_filtro.'<tr valign="top"><td align="right">Objeto <td>[<b>'.$p_objeto.'</b>]';
       if ($p_palavra>'')    $w_filtro=$w_filtro.'<tr valign="top"><td align="right">Responsável <td>[<b>'.$p_palavra.'</b>]';
       if ($p_ini_i>'')      $w_filtro=$w_filtro.'<tr valign="top"><td align="right">Data recebimento <td>[<b>'.$p_ini_i.'-'.$p_ini_f.'</b>]';
       if ($p_fim_i>'')      $w_filtro=$w_filtro.'<tr valign="top"><td align="right">Limite conclusão <td>[<b>'.$p_fim_i.'-'.$p_fim_f.'</b>]';
@@ -260,13 +260,13 @@ function Inicial() {
       $RS = db_getSolicList::getInstanceOf($dbms,f($RS,'sq_menu'),$w_usuario,Nvl($_REQUEST['p_agrega'],$SG),3,
           $p_ini_i,$p_ini_f,$p_fim_i,$p_fim_f,$p_atraso,$p_solicitante,
           $p_unidade,$p_prioridade,$p_ativo,$p_proponente,
-          $p_chave, $p_assunto, $p_pais, $p_regiao, $p_uf, $p_cidade, $p_usu_resp,
+          $p_chave, $p_objeto, $p_pais, $p_regiao, $p_uf, $p_cidade, $p_usu_resp,
           $p_uorg_resp, $p_palavra, $p_prazo, $p_fase, $p_sqcc, $p_projeto, $p_atividade, null, null);
     } else {
       $RS = db_getSolicList::getInstanceOf($dbms,f($RS,'sq_menu'),$w_usuario,Nvl($_REQUEST['p_agrega'],$SG),$P1,
           $p_ini_i,$p_ini_f,$p_fim_i,$p_fim_f,$p_atraso,$p_solicitante,
           $p_unidade,$p_prioridade,$p_ativo,$p_proponente,
-          $p_chave, $p_assunto, $p_pais, $p_regiao, $p_uf, $p_cidade, $p_usu_resp,
+          $p_chave, $p_objeto, $p_pais, $p_regiao, $p_uf, $p_cidade, $p_usu_resp,
           $p_uorg_resp, $p_palavra, $p_prazo, $p_fase, $p_sqcc, $p_projeto, $p_atividade, null, null);
     } 
     if (nvl($p_ordena,'')>'') {
@@ -2890,11 +2890,11 @@ function Encaminhamento() {
   // Recupera a sigla do trâmite desejado, para verificar a lista de possíveis destinatários.
   $RS = db_getTramiteData::getInstanceOf($dbms,$w_novo_tramite);
   $w_sg_tramite = f($RS,'sigla');
+  $w_ativo      = f($RS,'ativo');
   if ($w_ativo == 'N') {
     $RS = db_getTramiteList::getInstanceOf($dbms, $w_menu, null,'S');
     $RS = SortArray($RS,'ordem','asc');
     foreach ($RS as $row) {
-      $w_tramite      = f($row,'sq_siw_tramite');
       $w_novo_tramite = f($row,'sq_siw_tramite');
       $w_sg_tramite   = f($row,'sigla');
       break;
@@ -3260,7 +3260,7 @@ function SolicMail($p_solic,$p_tipo) {
 
   // Recupera os dados da tarefa
   $RSM= db_getSolicData::getInstanceOf($dbms,$p_solic,substr($SG,0,3).'GERAL');
-  $w_html='<HTML>'.chr(13);
+  $w_html = '<HTML>'.chr(13);
   $w_html.=BodyOpenMail(null).chr(13);
   $w_html.='<table border="0" cellpadding="0" cellspacing="0" width="100%">'.chr(13);
   $w_html.='<tr bgcolor="'.$conTrBgColor.'"><td align="center">'.chr(13);
@@ -3273,7 +3273,7 @@ function SolicMail($p_solic,$p_tipo) {
     $w_html.='      <tr valign="top"><td align="center"><font size=2><b>CONCLUSÃO DE '.strtoupper(f($RSM,'nome')).'</b></font><br><br><td></tr>'.chr(13);
   } 
   $w_html.='      <tr valign="top"><td><font size=2><b><font color="#BC3131">ATENÇÃO</font>: Esta é uma mensagem de envio automático. Não responda esta mensagem.</b></font><br><br><td></tr>'.chr(13);
-  $w_nome=f($RSM,'nome').' '.f($RSM,'codigo_interno').' ('.f($RSM,'sq_siw_solicitacao').')';
+  $w_nome = f($RSM,'nome').' '.f($RSM,'codigo_interno').' ('.f($RSM,'sq_siw_solicitacao').')';
   $w_html.=chr(13).'<tr bgcolor="'.$conTrBgColor.'"><td align="center">';
   $w_html.=chr(13).'    <table width="99%" border="0">';
   $w_html.=chr(13).'      <tr><td>Objeto: <b>'.f($RSM,'codigo_interno').' ('.f($RSM,'sq_siw_solicitacao').')<br>'.CRLF2BR(f($RSM,'objeto')).'</b></td></tr>';
@@ -3309,38 +3309,36 @@ function SolicMail($p_solic,$p_tipo) {
     }
   } 
   $w_html.=chr(13).'</tr>';
+  //Recupera o último log
+  $RS = db_getSolicLog::getInstanceOf($dbms,$p_solic,null,'LISTA');
+  $RS = SortArray($RS,'phpdt_data','desc');
+  foreach ($RS as $row) { $RS = $row; break; }
+  $w_data_encaminhamento = f($RS,'phpdt_data');
   if ($p_tipo==2) {
-    // Se for tramitação
-    // Encaminhamentos
-    $RS = db_getSolicLog::getInstanceOf($dbms,$p_solic,null,'LISTA');
-    $RS = SortArray($RS,'phpdt_data','desc');
-    foreach($RS as $row) {
-      $w_html.=chr(13).'      <tr><td align="center" bgcolor="#D0D0D0" style="border: 2px solid rgb(0,0,0);"><b>ÚLTIMO ENCAMINHAMENTO</td>';
-      $w_html.=chr(13).'      <tr><td><table border=0 width="100%" cellspacing=0>';
-      $w_html.=chr(13).'          <tr valign="top">';
-      $w_html.=chr(13).'          <td>De:<br><b>'.f($row,'responsavel').'</b></td>';
-      $w_html.=chr(13).'          <td>Para:<br><b>'.f($row,'destinatario').'</b></td>';
-      $w_html.=chr(13).'          <tr valign="top"><td colspan=2>Despacho:<br><b>'.CRLF2BR(Nvl(f($row,'despacho'),'---')).' </b></td>';
-      $w_html.=chr(13).'          </table>';
-      // Configura o destinatário da tramitação como destinatário da mensagem
-      $row = db_getPersonData::getInstanceOf($dbms,$w_cliente,f($row,'sq_pessoa_destinatario'),null,null);
-      $w_destinatarios=f($row,'email').'; ';
-      break;
-    }
+    $w_html.=chr(13).'      <tr><td align="center" bgcolor="#D0D0D0" style="border: 2px solid rgb(0,0,0);"><b>ÚLTIMO ENCAMINHAMENTO</td>';
+    $w_html.=chr(13).'      <tr><td><table border=0 width="100%" cellspacing=0>';
+    $w_html.=chr(13).'          <tr valign="top">';
+    $w_html.=chr(13).'          <td>De:<br><b>'.f($RS,'responsavel').'</b></td>';
+    $w_html.=chr(13).'          <td>Para:<br><b>'.f($RS,'destinatario').'</b></td>';
+    $w_html.=chr(13).'          <tr valign="top"><td colspan=2>Despacho:<br><b>'.CRLF2BR(Nvl(f($RS,'despacho'),'---')).' </b></td>';
+    $w_html.=chr(13).'          </table>';
+    // Configura o destinatário da tramitação como destinatário da mensagem
+    $RS = db_getPersonData::getInstanceOf($dbms,$w_cliente,f($RS,'sq_pessoa_destinatario'),null,null);
+    $w_destinatarios       = f($RS,'email').'; ';
   } 
   $w_html.=chr(13).'      <tr><td align="center" bgcolor="#D0D0D0" style="border: 2px solid rgb(0,0,0);"><b>OUTRAS INFORMAÇÕES</td>';
   $RS = db_getCustomerSite::getInstanceOf($dbms,$_SESSION['P_CLIENTE']);
-  $w_html.='      <tr valign="top"><td><font size=2>'.chr(13);
+  $w_html.='      <tr valign="top"><td>'.chr(13);
   $w_html.='         Para acessar o sistema use o endereço: <b><a class="ss" href="'.f($RS,'logradouro').'" target="_blank">'.f($RS,'Logradouro').'</a></b></li>'.chr(13);
-  $w_html.='      </font></td></tr>'.chr(13);
-  $w_html.='      <tr valign="top"><td><font size=2>'.chr(13);
+  $w_html.='      </td></tr>'.chr(13);
+  $w_html.='      <tr valign="top"><td>'.chr(13);
   $w_html.='         Dados da ocorrência:<br>'.chr(13);
   $w_html.='         <ul>'.chr(13);
   $w_html.='         <li>Responsável: <b>'.$_SESSION['NOME'].'</b></li>'.chr(13);
   $w_html.='         <li>Data: <b>'.date('d/m/Y, H:i:s',$w_data_encaminhamento).'</b></li>'.chr(13);
   $w_html.='         <li>IP de origem: <b>'.$_SERVER['REMOTE_HOST'].'</b></li>'.chr(13);
   $w_html.='         </ul>'.chr(13);
-  $w_html.='      </font></td></tr>'.chr(13);
+  $w_html.='      </td></tr>'.chr(13);
   $w_html.='    </table>'.chr(13);
   $w_html.='</td></tr>'.chr(13);
   $w_html.='</table>'.chr(13);

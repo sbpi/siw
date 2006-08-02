@@ -16,8 +16,8 @@ class dml_putPD_Diaria {
                    'p_chave'                     =>array($p_chave,                                         B_INTEGER,        32),
                    'p_sq_diaria'                 =>array($p_sq_diaria,                                     B_INTEGER,        32),
                    'p_sq_cidade'                 =>array($p_sq_cidade,                                     B_INTEGER,        32),
-                   'p_quantidade'                =>array(tvl($p_quantidade),                               B_NUMERIC,       5,1),
-                   'p_valor'                     =>array(tvl($p_valor),                                    B_NUMERIC,      18,2)
+                   'p_quantidade'                =>array(toNumber(tvl($p_quantidade)),                     B_NUMERIC,       5,1),
+                   'p_valor'                     =>array(toNumber(tvl($p_valor)),                          B_NUMERIC,      18,2)
                   );
      $l_rs = DatabaseQueriesFactory::getInstanceOf($sql, $dbms, $params, DB_TYPE);
      $l_error_reporting = error_reporting(); 

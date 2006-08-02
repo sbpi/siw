@@ -21,10 +21,10 @@ class dml_putAcaoMeta_IS {
                    'p_inicio'                    =>array(tvl($p_inicio),                                   B_DATE,           32),
                    'p_fim'                       =>array(tvl($p_fim),                                      B_DATE,           32),
                    'p_perc_conclusao'            =>array(tvl($p_perc_conclusao),                           B_INTEGER,        32),
-                   'p_orcamento'                 =>array(tvl($p_orcamento),                                B_NUMERIC,      18,2),
+                   'p_orcamento'                 =>array(toNumber(tvl($p_orcamento)),                      B_NUMERIC,      18,2),
                    'p_programada'                =>array($p_programada,                                    B_VARCHAR,         1),
                    'p_cumulativa'                =>array($p_cumulativa,                                    B_VARCHAR,         1),
-                   'p_quantidade'                =>array(tvl($p_quantidade),                               B_NUMERIC,      18,2),
+                   'p_quantidade'                =>array(toNumber(tvl($p_quantidade)),                     B_NUMERIC,      18,2),
                    'p_unidade_medida'            =>array($p_unidade_medida,                                B_VARCHAR,        30)
                   );
      $l_rs = DatabaseQueriesFactory::getInstanceOf($sql, $dbms, $params, DB_TYPE);

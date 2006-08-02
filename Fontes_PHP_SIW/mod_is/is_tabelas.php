@@ -112,7 +112,7 @@ function Natureza() {
     $RS = SortArray($RS,'nome','asc');
   } elseif (!(strpos('AEV',$O)===false) && $w_troca=='') {
     // Recupera os dados chave informada
-    $RS = db_getNatureza_IS::getInstanceOf($dbms,$w_chave,$p_cliente_session,null,null);
+    $RS = db_getNatureza_IS::getInstanceOf($dbms,$w_chave,$w_cliente,null,null);
     foreach ($RS as $row) {$RS = $row; break;}
     $w_chave    = f($RS,'chave');
     $w_nome     = f($RS,'nome');
@@ -185,9 +185,7 @@ function Natureza() {
     ShowHTML('  </td>');
     ShowHTML('</tr>');
   } elseif (!(strpos('IAEV',$O)===false)) {
-    if (!(strpos('EV',$O)===false)) {
-      $w_Disabled=' DISABLED ';
-    }
+    if (!(strpos('EV',$O)===false)) $w_Disabled=' DISABLED ';
     AbreForm('Form',$w_dir.$w_pagina.'Grava','POST','return(Validacao(this));',null,$P1,$P2,$P3,$P4,$TP,$SG,$R,$O);
     ShowHTML('<INPUT type="hidden" name="w_chave" value="'.$w_chave.'">');
     ShowHTML('<INPUT type="hidden" name="w_troca" value="">');
@@ -219,7 +217,6 @@ function Natureza() {
   } else {
     ScriptOpen('JavaScript');
     ShowHTML(' alert(\'Opção não disponível\');');
-    //ShowHTML ' history.back(1);'
     ScriptClose();
   } 
   ShowHTML('</table>');
@@ -244,7 +241,7 @@ function Horizonte() {
     $RS = SortArray($RS,'nome','asc');
   } elseif (!(strpos('AEV',$O)===false && $w_troca=='')) {
     // Recupera os dados do endereço informado
-    $RS = db_getHorizonte_IS::getInstanceOf($dbms,$w_chave,$p_cliente_session,null,null);
+    $RS = db_getHorizonte_IS::getInstanceOf($dbms,$w_chave,$w_cliente,null,null);
     foreach ($RS as $row) {$RS = $row; break;}
     $w_chave    = f($RS,'chave');
     $w_cliente  = f($RS,'cliente');
@@ -693,7 +690,7 @@ function Limites() {
   $w_chave  = $_REQUEST['w_chave'];
   $p_ordena = strtolower($_REQUEST['p_ordena']);
   // Recupera os dados da unidade selecionada  
-  $RS = db_getIsUnidade_IS::getInstanceOf($dbms,$RS1,$w_chave,$w_cliente,null,null);
+  $RS1 = db_getIsUnidade_IS::getInstanceOf($dbms,$w_chave,$w_cliente,null,null);
   if ($w_troca>'') {
     // Se for recarga da página
     $w_ano      = $_REQUEST['w_ano'];
@@ -703,11 +700,10 @@ function Limites() {
     $RS = db_getIsUnidadeLimite_IS::getInstanceOf($dbms,$w_chave,null,$w_cliente);
     if ($p_ordena>'') { 
       $lista = explode(',',str_replace(' ',',',$p_ordena));
-      $RS = SortArray($RS,$lista[0],$lista[1]);    
-      //$RS = SortArray($RS,$p_ordena,'asc');
+      $RS = SortArray($RS,$lista[0],$lista[1]);
     } else {
       $RS = SortArray($RS,'ano','asc','nome','asc');
-    } 
+    }
   } elseif (!(strpos('AEV',$O)===false) && $w_troca=='') {
     // Recupera os dados do endereço informado
     $RS = db_getIsUnidadeLimite_IS::getInstanceOf($dbms,$w_chave,$w_ano,$w_cliente);
@@ -753,28 +749,25 @@ function Limites() {
   ShowHTML('<table border="0" cellpadding="0" cellspacing="0" width="100%">');
   if ($O=='L') {
     // Exibe a quantidade de registros apresentados na listagem e o cabeçalho da tabela de listagem
+    ShowHTML('<tr><td align="center" height="1" bgcolor="#000000" colspan="2"></td></tr>');
+    ShowHTML('<tr><td valign="top" align="center" bgcolor="#D0D0D0" colspan="2"><font size="2"><b>'.f($row,'nome').' - Limites orçamentários</td></td></tr>');
+    ShowHTML('<tr><td align="center" height="1" bgcolor="#000000" colspan="2"></td></tr>');
+    ShowHTML('<tr><td><a accesskey="I" class="SS" href="'.$w_dir.$w_pagina.$par.'&R='.$w_pagina.$par.'&O=I&w_chave='.$w_chave.'&P1='.$P1.'&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP='.$TP.'&SG='.$SG.'"><u>I</u>ncluir</a>&nbsp;');
+    ShowHTML('            <a accesskey="F" class="SS" href="javascript:window.close(); opener.focus();"><u>F</u>echar</a>');
+    ShowHTML('    <td align="right"><b>Registros existentes: '.count($RS));
+    ShowHTML('<tr><td align="center" colspan=3>');
+    ShowHTML('    <TABLE WIDTH="100%" bgcolor="'.$conTableBgColor.'" BORDER="'.$conTableBorder.'" CELLSPACING="'.$conTableCellSpacing.'" CELLPADDING="'.$conTableCellPadding.'" BorderColorDark="'.$conTableBorderColorDark.'" BorderColorLight="'.$conTableBorderColorLight.'">');
+    ShowHTML('        <tr bgcolor="'.$conTrBgColor.'" align="center">');
+    ShowHTML('          <td><b>'.LinkOrdena('Ano','ano').'</td>');
+    ShowHTML('          <td><b>'.LinkOrdena('Limite','limite_orcamento').'</td>');
+    ShowHTML('          <td><b>Operações</td>');
+    ShowHTML('        </tr>');
     if (count($RS)<=0) {
       // Se não foram selecionados registros, exibe mensagem
       ShowHTML('      <tr bgcolor="'.$conTrBgColor.'"><td colspan=3 align="center"><b>Não foram encontrados registros.</b></td></tr>');
     } else {
       // Lista os registros selecionados para listagem
       foreach ($RS as $row) {
-        if ($i==0) {
-          ShowHTML('<tr><td align="center" height="1" bgcolor="#000000" colspan="2"></td></tr>');
-          ShowHTML('<tr><td valign="top" align="center" bgcolor="#D0D0D0" colspan="2"><font size="2"><b>'.f($row,'nome').' - Limites orçamentários</td></td></tr>');
-          ShowHTML('<tr><td align="center" height="1" bgcolor="#000000" colspan="2"></td></tr>');
-          ShowHTML('<tr><td><a accesskey="I" class="SS" href="'.$w_dir.$w_pagina.$par.'&R='.$w_pagina.$par.'&O=I&w_chave='.$w_chave.'&P1='.$P1.'&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP='.$TP.'&SG='.$SG.'"><u>I</u>ncluir</a>&nbsp;');
-          ShowHTML('            <a accesskey="F" class="SS" href="javascript:window.close(); opener.focus();"><u>F</u>echar</a>');
-          ShowHTML('    <td align="right"><b>Registros existentes: '.count($RS));
-          ShowHTML('<tr><td align="center" colspan=3>');
-          ShowHTML('    <TABLE WIDTH="100%" bgcolor="'.$conTableBgColor.'" BORDER="'.$conTableBorder.'" CELLSPACING="'.$conTableCellSpacing.'" CELLPADDING="'.$conTableCellPadding.'" BorderColorDark="'.$conTableBorderColorDark.'" BorderColorLight="'.$conTableBorderColorLight.'">');
-          ShowHTML('        <tr bgcolor="'.$conTrBgColor.'" align="center">');
-          ShowHTML('          <td><b>'.LinkOrdena('Ano','ano').'</td>');
-          ShowHTML('          <td><b>'.LinkOrdena('Limite','limite_orcamento').'</td>');
-          ShowHTML('          <td><b>Operações</td>');
-          ShowHTML('        </tr>');
-          $i = 1;
-        }
         $w_cor = ($w_cor==$conTrBgColor || $w_cor=='') ? $w_cor=$conTrAlternateBgColor : $w_cor=$conTrBgColor;     
         ShowHTML('      <tr bgcolor="'.$w_cor.'" valign="top">');
         ShowHTML('        <td align="center">'.f($row,'ano').'</td>');
@@ -980,9 +973,9 @@ function Grava() {
        ScriptClose();
       } 
       break;
-    case 'ISANO':   $ANO_session=$_REQUEST['w_ano_escolhido'];
+    case 'ISANO':   $_SESSION['ANO']=$_REQUEST['w_ano_escolhido'];
       ScriptOpen('JavaScript');
-      ShowHTML('  parent.menu.location=\'../Menu.asp?par=ExibeDocs\';');
+      ShowHTML('  parent.menu.location=\'../menu.php?par=ExibeDocs\';');
       ScriptClose();
       break;
     default:

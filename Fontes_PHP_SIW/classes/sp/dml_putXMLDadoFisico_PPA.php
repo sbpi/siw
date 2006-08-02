@@ -17,12 +17,12 @@ class dml_putXMLDadoFisico_PPA {
                    'p_cd_programa'               =>array(tvl($p_cd_programa),                              B_VARCHAR,         4),
                    'p_cd_acao_ppa'               =>array(tvl($p_cd_acao_ppa),                              B_VARCHAR,         5),
                    'p_cd_localizador_ppa'        =>array(tvl($p_cd_localizador_ppa),                       B_VARCHAR,         5),
-                   'p_qtd_ano_1'                 =>array(tvl(str_replace('.',',',$p_qtd_ano_1)),           B_NUMERIC,      18,4),
-                   'p_qtd_ano_2'                 =>array(tvl(str_replace('.',',',$p_qtd_ano_2)),           B_NUMERIC,      18,4),
-                   'p_qtd_ano_3'                 =>array(tvl(str_replace('.',',',$p_qtd_ano_3)),           B_NUMERIC,      18,4),
-                   'p_qtd_ano_4'                 =>array(tvl(str_replace('.',',',$p_qtd_ano_4)),           B_NUMERIC,      18,4),
-                   'p_qtd_ano_5'                 =>array(tvl(str_replace('.',',',$p_qtd_ano_5)),           B_NUMERIC,      18,4),
-                   'p_qtd_ano_6'                 =>array(tvl(str_replace('.',',',$p_qtd_ano_6)),           B_NUMERIC,      18,4),
+                   'p_qtd_ano_1'                 =>array(toNumber(tvl(str_replace('.',',',$p_qtd_ano_1))), B_NUMERIC,      18,4),
+                   'p_qtd_ano_2'                 =>array(toNumber(tvl(str_replace('.',',',$p_qtd_ano_2))), B_NUMERIC,      18,4),
+                   'p_qtd_ano_3'                 =>array(toNumber(tvl(str_replace('.',',',$p_qtd_ano_3))), B_NUMERIC,      18,4),
+                   'p_qtd_ano_4'                 =>array(toNumber(tvl(str_replace('.',',',$p_qtd_ano_4))), B_NUMERIC,      18,4),
+                   'p_qtd_ano_5'                 =>array(toNumber(tvl(str_replace('.',',',$p_qtd_ano_5))), B_NUMERIC,      18,4),
+                   'p_qtd_ano_6'                 =>array(toNumber(tvl(str_replace('.',',',$p_qtd_ano_6))), B_NUMERIC,      18,4),
                    'p_observacao'                =>array(tvl($p_observacao),                               B_VARCHAR,      4000),
                    'p_cumulativa'                =>array(tvl($p_cumulativa),                               B_VARCHAR,         1)
                   );

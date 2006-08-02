@@ -25,7 +25,7 @@ class dml_putAcaoGeral_IS {
                    'p_justificativa'             =>array(tvl($p_justificativa),                            B_VARCHAR,      2000),
                    'p_inicio'                    =>array(tvl($p_inicio),                                   B_DATE,           32),
                    'p_fim'                       =>array(tvl($p_fim),                                      B_DATE,           32),
-                   'p_valor'                     =>array(tvl($p_valor),                                    B_NUMERIC,      18,2),
+                   'p_valor'                     =>array(tonumber(tvl($p_valor)),                          B_NUMERIC,      18,2),
                    'p_data_hora'                 =>array(tvl($p_data_hora),                                B_VARCHAR,         1),
                    'p_unid_resp'                 =>array(tvl($p_unid_resp),                                B_INTEGER,        32),
                    'p_assunto'                   =>array(tvl($p_assunto),                                  B_VARCHAR,      2000),
@@ -54,7 +54,7 @@ class dml_putAcaoGeral_IS {
                    'p_sq_horizonte'              =>array(tvl($p_sq_horizonte),                             B_INTEGER,        32),
                    'p_unidade_adm'               =>array(tvl($p_unidade_adm),                              B_INTEGER,        32),
                    'p_ln_programa'               =>array(tvl($p_ln_programa),                              B_VARCHAR,       120),
-                   'p_chave_nova'                =>array(null,                                             B_INTEGER,        32)
+                   'p_chave_nova'                =>array(&$p_chave_nova,                                   B_INTEGER,        32),
                   );
      $l_rs = DatabaseQueriesFactory::getInstanceOf($sql, $dbms, $params, DB_TYPE);
      $l_error_reporting = error_reporting(); 

@@ -11,7 +11,7 @@ extract($GLOBALS); include_once($w_dir_volta."classes/db/DatabaseQueriesFactory.
 class db_getLinkData {
    function getInstanceOf($dbms, $p_cliente, $p_sg) {
      extract($GLOBALS,EXTR_PREFIX_SAME,'strchema'); $sql=$strschema.'sp_getLinkData';
-     $params=array("p_cliente"  =>array($p_cliente,     B_NUMERIC,   null),
+     $params=array("p_cliente"  =>array($p_cliente,     B_NUMERIC,     32),
                    "p_sg"       =>array($p_sg,          B_VARCHAR,     50),
                    "p_result"   =>array(null,           B_CURSOR,      -1)
                   );

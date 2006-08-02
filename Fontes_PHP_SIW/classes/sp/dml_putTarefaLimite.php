@@ -15,7 +15,7 @@ class dml_putTarefaLimite {
      $params=array('p_chave'                     =>array(tvl($p_chave),                                    B_INTEGER,        32),
                    'p_pessoa'                    =>array(tvl($p_pessoa),                                   B_INTEGER,        32),
                    'p_tramite'                   =>array(tvl($p_tramite),                                  B_INTEGER,        32),
-                   'p_custo_real'                =>array(tvl($p_custo_real),                               B_NUMERIC,      18,2)
+                   'p_custo_real'                =>array(toNumber(tvl($p_custo_real)),                     B_NUMERIC,      18,2)
                   );
      $l_rs = DatabaseQueriesFactory::getInstanceOf($sql, $dbms, $params, DB_TYPE);
      $l_error_reporting = error_reporting(); 

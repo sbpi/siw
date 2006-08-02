@@ -11,8 +11,8 @@ extract($GLOBALS); include_once($w_dir_volta."classes/db/DatabaseQueriesFactory.
 class db_getUserVision {
    function getInstanceOf($dbms, $p_menu, $p_chave) {
      extract($GLOBALS,EXTR_PREFIX_SAME,'strchema'); $sql=$strschema.'sp_getUserVision';
-     $params=array("p_menu"     =>array($p_menu,         B_NUMERIC,   32),
-                   "p_chave"    =>array($p_chave,        B_NUMERIC,   32),
+     $params=array("p_menu"     =>array($p_menu,        B_NUMERIC,   32),
+                   "p_chave"    =>array($p_chave,       B_NUMERIC,   32),
                    "p_result"   =>array(null,           B_CURSOR,    -1)
                   );
      $l_rs = DatabaseQueriesFactory::getInstanceOf($sql, $dbms, $params, DB_TYPE);

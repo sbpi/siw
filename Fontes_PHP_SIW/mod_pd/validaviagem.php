@@ -106,6 +106,7 @@ function ValidaViagem($v_cliente,$v_chave,$v_sg1,$v_sg2,$v_sg3,$v_sg4,$v_tramite
         
         if (Nvl(f($l_rs_tramite,'sigla'),'---')=='DF') {
           $l_rs5 = db_getPD_Deslocamento::getInstanceOf($dbms,$v_chave,null,f($l_rs_tramite,'sigla'));
+          foreach($l_rs5 as $row) {$l_rs5 = $row; break;}
           if (f($l_rs5,'existe')==0) {
             $l_erro .= '<li>É obrigatório informar as diárias, mesmo que os valores sejam zeros.';
             $l_tipo  = 0;

@@ -14,6 +14,7 @@ function VisualViagem($l_chave,$l_O,$l_usuario,$l_P1,$l_P4) {
   $w_valor      = f($RS,'valor');
   $w_fim        = f($RS,'fim');
   $w_sg_tramite = f($RS,'sg_tramite');
+  $w_or_tramite = f($RS,'or_tramite');
   $w_ativo      = f($RS,'ativo');
 
   // Recupera o tipo de visão do usuário
@@ -150,7 +151,7 @@ function VisualViagem($l_chave,$l_O,$l_usuario,$l_P1,$l_P4) {
       $w_html .= chr(13).'          <td>Nome resumido:<b><br>'.f($RSQuery,'nome_resumido').'</td>';
       $w_html .= chr(13).'          <td>Sexo:<b><br>'.f($RSQuery,'nm_sexo').'</td>';
       $w_html .= chr(13).'      <tr valign="top">';
-      $w_html .= chr(13).'          <td>Matrícula SIAPE:<b><br>'.Nvl(f($RS,'matricula'),'---').'</td>';
+      $w_html .= chr(13).'          <td>Matrícula:<b><br>'.Nvl(f($RS,'matricula'),'---').'</td>';
       $w_html .= chr(13).'          <td>Identidade:<b><br>'.Nvl(f($RSQuery,'rg_numero'),'---').'</td>';
       $w_html .= chr(13).'          <td>Data de emissão:<b><br>'.FormataDataEdicao(Nvl(f($RSQuery,'rg_emissao'),'---')).'</td>';
       $w_html .= chr(13).'          <td>Órgão emissor:<b><br>'.Nvl(f($RSQuery,'rg_emissor'),'---').'</td>';
@@ -213,7 +214,7 @@ function VisualViagem($l_chave,$l_O,$l_usuario,$l_P1,$l_P4) {
   // Deslocamentos
   $RS = db_getPD_Deslocamento::getInstanceOf($dbms,$l_chave,null,'PDGERAL');
   $RS = SortArray($RS,'phpdt_saida','asc', 'phpdt_chegada', 'asc');
-  if (!($Rs==0)) {
+  if (count($RS)>0) {
     $w_html .= chr(13).'      <tr><td valign="top" colspan="2" align="center" bgcolor="#D0D0D0" style="border: 2px solid rgb(0,0,0);"><b>Deslocamentos</td>';
     $w_html .= chr(13).'      <tr><td align="center" colspan="2">';
     $w_html .= chr(13).'        <TABLE WIDTH="100%" bgcolor="'.$conTableBgColor.'" BORDER="'.$conTableBorder.'" CELLSPACING="'.$conTableCellSpacing.'" CELLPADDING="'.$conTableCellPadding.'" BorderColorDark="'.$conTableBorderColorDark.'" BorderColorLight="'.$conTableBorderColorLight.'">';
@@ -230,8 +231,8 @@ function VisualViagem($l_chave,$l_O,$l_usuario,$l_P1,$l_P4) {
       $w_html .= chr(13).'      <tr valign="top" bgcolor="'.$w_cor.'">';
       $w_html .= chr(13).'        <td>'.f($row,'nm_origem').'</td>';
       $w_html .= chr(13).'        <td>'.f($row,'nm_destino').'</td>';
-      $w_html .= chr(13).'        <td align="center">'.FormataDataEdicao(f($row,'phpdt_saida'),3).'</td>';
-      $w_html .= chr(13).'        <td align="center">'.FormataDataEdicao(f($row,'phpdt_chegada'),3).'</td>';
+      $w_html .= chr(13).'        <td align="center">'.substr(FormataDataEdicao(f($row,'phpdt_saida'),3),0,-3).'</td>';
+      $w_html .= chr(13).'        <td align="center">'.substr(FormataDataEdicao(f($row,'phpdt_chegada'),3),0,-3).'</td>';
       $w_html .= chr(13).'      </tr>';
     } 
     $w_html .= chr(13).'         </table></td></tr>';
@@ -239,24 +240,16 @@ function VisualViagem($l_chave,$l_O,$l_usuario,$l_P1,$l_P4) {
 
   // Benefícios servidor
   $RS = db_getSolicData::getInstanceOf($dbms,$l_chave,'PDGERAL');
-  if (!($RS==0)) {
-    $w_html .= chr(13).'        <tr><td valign="top" colspan="2" align="center" bgcolor="#D0D0D0" style="border: 2px solid rgb(0,0,0);"><b>Benefícios recebidos pelo servidor</td>';
+  if (count($RS)>0) {
+    $w_html .= chr(13).'        <tr><td valign="top" colspan="2" align="center" bgcolor="#D0D0D0" style="border: 2px solid rgb(0,0,0);"><b>Benefícios recebidos pelo proposto</td>';
     $w_html .= chr(13).'        <tr><td align="center" colspan="2">';
     $w_html .= chr(13).'          <TABLE WIDTH="100%" bgcolor="'.$conTableBgColor.'" BORDER="'.$conTableBorder.'" CELLSPACING="'.$conTableCellSpacing.'" CELLPADDING="'.$conTableCellPadding.'" BorderColorDark="'.$conTableBorderColorDark.'" BorderColorLight="'.$conTableBorderColorLight.'">';
     $w_html .= chr(13).'            <tr bgcolor="'.$w_TrBgColor.'">';
-    if (Nvl(f($RS,'valor_alimentacao'),0)>0) {
-      $w_html .= chr(13).'           <td>Auxílio-alimentação: <b>Sim</b></td>';
-    } else {
-      $w_html .= chr(13).'           <td>Auxílio-alimentação: <b>Não</b></td>';
-    } 
+    if (Nvl(f($RS,'valor_alimentacao'),0)>0) $w_html .= chr(13).'           <td>Auxílio-alimentação: <b>Sim</b></td>'; else $w_html .= chr(13).'           <td>Auxílio-alimentação: <b>Não</b></td>';
     $w_html .= chr(13).'              <td>Valor R$: <b>'.number_format(Nvl(f($RS,'valor_alimentacao'),0),2,',','.').'</b></td>';
     $w_html .= chr(13).'            </tr>';
     $w_html .= chr(13).'            <tr bgcolor="'.$w_TrBgColor.'">';
-    if (Nvl(f($RS,'valor_transporte'),0)>0) {
-      $w_html .= chr(13).'           <td>Auxílio-transporte: <b>Sim</b></td>';
-    } else {
-      $w_html .= chr(13).'           <td>Auxílio-transporte: <b>Não</b></td>';
-    } 
+    if (Nvl(f($RS,'valor_transporte'),0)>0) $w_html .= chr(13).'           <td>Auxílio-transporte: <b>Sim</b></td>'; else $w_html .= chr(13).'           <td>Auxílio-transporte: <b>Não</b></td>';
     $w_html .= chr(13).'              <td>Valor R$: <b>'.number_format(Nvl(f($RS,'valor_transporte'),0),2,',','.').'</b></td>';
     $w_html .= chr(13).'            </tr>';
     $w_html .= chr(13).'          </table></td></tr>';
@@ -264,9 +257,29 @@ function VisualViagem($l_chave,$l_O,$l_usuario,$l_P1,$l_P4) {
 
   //Dados da viagem
   $w_html .= chr(13).'        <tr><td valign="top" colspan="2" align="center" bgcolor="#D0D0D0" style="border: 2px solid rgb(0,0,0);"><b>Dados da viagem/cálculo das diárias</td>';
+
   $RSQuery = db_getPD_Deslocamento::getInstanceOf($dbms,$l_chave,null,'DADFIN');
   $RSQuery = SortArray($RSQuery,'phpdt_saida','asc', 'phpdt_chegada', 'asc');
   if (count($RSQuery)>0) {
+    $i = 1;
+    foreach($RSQuery as $row) {
+      $w_vetor_trechos[$i][1] = f($row,'sq_diaria');
+      $w_vetor_trechos[$i][2] = f($row,'cidade_dest');
+      $w_vetor_trechos[$i][3] = f($row,'nm_destino');
+      $w_vetor_trechos[$i][4] = FormataDataEdicao(f($row,'phpdt_chegada'));
+      $w_vetor_trechos[$i][5] = FormataDataEdicao(f($row,'phpdt_saida'));
+      $w_vetor_trechos[$i][6] = number_format(Nvl(f($row,'quantidade'),0),1,',','.');
+      $w_vetor_trechos[$i][7] = number_format(Nvl(f($row,'valor'),0),2,',','.');
+      $w_vetor_trechos[$i][8] = Nvl(f($row,'quantidade'),0);
+      $w_vetor_trechos[$i][9] = Nvl(f($row,'valor'),0);
+      if ($i>1) {
+        $w_vetor_trechos[$i-1][5] = FormataDataEdicao(f($row,'phpdt_saida'));
+      }
+      $i += 1;
+    } 
+    $j       = $i;
+    $i       = 1;
+    $w_total = 0;
     $w_html .= chr(13).'     <tr><td align="center" colspan="2">';
     $w_html .= chr(13).'       <TABLE WIDTH="100%" bgcolor="'.$conTableBgColor.'" BORDER="'.$conTableBorder.'" CELLSPACING="'.$conTableCellSpacing.'" CELLPADDING="'.$conTableCellPadding.'" BorderColorDark="'.$conTableBorderColorDark.'" BorderColorLight="'.$conTableBorderColorLight.'">';
     $w_html .= chr(13).'         <tr bgcolor="'.$conTrBgColor.'" align="center">';
@@ -278,18 +291,19 @@ function VisualViagem($l_chave,$l_O,$l_usuario,$l_P1,$l_P4) {
     $w_html .= chr(13).'         <td><b>Total por localidade - R$</td>';
     $w_html .= chr(13).'         </tr>';
     $w_cor=$conTrBgColor;
-    $w_total=0;
-    foreach($RSQuery as $row) {
+    while($i!=($j-1)) {
       $w_html .= chr(13).'     <tr valign="top" bgcolor="'.$conTrBgColor.'">';
-      $w_html .= chr(13).'       <td>'.f($row,'nm_destino').'</td>';
-      $w_html .= chr(13).'       <td align="center">'.FormataDataEdicao(f($row,'phpdt_saida'),3).'</td>';
-      $w_html .= chr(13).'       <td align="center">'.FormataDataEdicao(f($row,'phpdt_chegada'),3).'</td>';
-      $w_html .= chr(13).'       <td align="right">'.number_format(Nvl(f($row,'quantidade'),0),1,',','.').'</td>';
-      $w_html .= chr(13).'       <td align="right">'.number_format(Nvl(f($row,'valor'),0),2,',','.').'</td>';
-      $w_html .= chr(13).'       <td align="right" bgcolor="'.$conTrAlternateBgColor.'">'.number_format((Nvl(f($row,'quantidade'),0)*Nvl(f($row,'valor'),0)),2,',','.').'</td>';
+      $w_html .= chr(13).'       <td>'.$w_vetor_trechos[$i][3].'</td>';
+      $w_html .= chr(13).'       <td align="center">'.$w_vetor_trechos[$i][4].'</td>';
+      $w_html .= chr(13).'       <td align="center">'.$w_vetor_trechos[$i][5].'</td>';
+      $w_html .= chr(13).'       <td align="right">'.$w_vetor_trechos[$i][6].'</td>';
+      $w_html .= chr(13).'       <td align="right">'.$w_vetor_trechos[$i][7].'</td>';
+      $w_html .= chr(13).'       <td align="right" bgcolor="'.$conTrAlternateBgColor.'">'.number_format(($w_vetor_trechos[$i][8]*$w_vetor_trechos[$i][9]),2,',','.').'</td>';
       $w_html .= chr(13).'     </tr>';
-      $w_total += (Nvl(f($row,'quantidade'),0)*Nvl(f($row,'valor'),0));
-    } 
+      $w_total += ($w_vetor_trechos[$i][8]*$w_vetor_trechos[$i][9]);
+      $i += 1;
+    }
+
     $w_html .= chr(13).'        <tr bgcolor="'.$conTrBgColor.'">';
     $w_html .= chr(13).'          <td rowspan="5" align="right" colspan="3">&nbsp;</td>';
     $w_html .= chr(13).'          <td colspan="2"><b>(a) subtotal:</b></td>';
@@ -318,44 +332,59 @@ function VisualViagem($l_chave,$l_O,$l_usuario,$l_P1,$l_P4) {
   $RS = db_getPD_Deslocamento::getInstanceOf($dbms,$l_chave,null,$SG);
   $RS = SortArray($RS,'phpdt_saida','asc', 'phpdt_chegada', 'asc');
   if (count($RS)>0) {
-    if (f($RS,'sq_cia_transporte')>'') {
-      $w_html .= chr(13).'  <table border="0" cellpadding="0" cellspacing="0" width="100%">';
-      $w_html .= chr(13).'    <tr bgcolor="'.$conTrBgColor.'"><td>';
-      $w_html .= chr(13).'      <table width="99%" border="0">';
-      $w_html .= chr(13).'        <tr><td valign="top" colspan="2" align="center" bgcolor="#D0D0D0" style="border: 2px solid rgb(0,0,0);"><font size="1"><b>Bilhete de passagem</td>';
-      $w_html .= chr(13).'     <tr><td align="center" colspan="2">';
-      $w_html .= chr(13).'       <TABLE WIDTH="100%" bgcolor="'.$conTableBgColor.'" BORDER="'.$conTableBorder.'" CELLSPACING="'.$conTableCellSpacing.'" CELLPADDING="'.$conTableCellPadding.'" BorderColorDark="'.$conTableBorderColorDark.'" BorderColorLight="'.$conTableBorderColorLight.'">';
-      $w_html .= chr(13).'         <tr bgcolor="'.$conTrBgColor.'" align="center">';
-      $w_html .= chr(13).'         <td><font size="1"><b>Origem</font></td>';
-      $w_html .= chr(13).'         <td><font size="1"><b>Destino</font></td>';
-      $w_html .= chr(13).'         <td><font size="1"><b>Saida</font></td>';
-      $w_html .= chr(13).'         <td><font size="1"><b>Chegada</font></td>';
-      $w_html .= chr(13).'         <td><font size="1"><b>Cia. transporte</font></td>';
-      $w_html .= chr(13).'         <td><font size="1"><b>Código vôo</font></td>';
-      $w_html .= chr(13).'         </tr>';
-      $w_cor=$conTrBgColor;
-      foreach($RS as $row) {
+    $i=0;
+    $j=0;
+    foreach($RS as $row) {
+      if (nvl(f($row,'sq_cia_transporte'),'')>'') {
+        if ($i==0) {
+          $w_html .= chr(13).'        <tr><td valign="top" colspan="2" align="center" bgcolor="#D0D0D0" style="border: 2px solid rgb(0,0,0);"><b>Bilhete de passagem</td>';
+          $w_html .= chr(13).'        <tr><td align="center" colspan="2"><TABLE WIDTH="100%" bgcolor="'.$conTableBgColor.'" BORDER="'.$conTableBorder.'" CELLSPACING="'.$conTableCellSpacing.'" CELLPADDING="'.$conTableCellPadding.'" BorderColorDark="'.$conTableBorderColorDark.'" BorderColorLight="'.$conTableBorderColorLight.'">';
+          $w_html .= chr(13).'         <tr bgcolor="'.$conTrBgColor.'" align="center">';
+          $w_html .= chr(13).'         <td><b>Origem</td>';
+          $w_html .= chr(13).'         <td><b>Destino</td>';
+          $w_html .= chr(13).'         <td><b>Saida</td>';
+          $w_html .= chr(13).'         <td><b>Chegada</td>';
+          $w_html .= chr(13).'         <td><b>Cia. transporte</td>';
+          $w_html .= chr(13).'         <td><b>Código vôo</td>';
+          $w_html .= chr(13).'         </tr>';
+          $w_cor=$conTrBgColor;
+          $i=1;
+        }
         $w_cor = ($w_cor==$conTrBgColor || $w_cor=='') ? $w_cor=$conTrAlternateBgColor : $w_cor=$conTrBgColor;
         $w_html .= chr(13).'     <tr valign="middle" bgcolor="'.$w_cor.'">';
-        $w_html .= chr(13).'       <td><font size="1">'.Nvl(f($row,'nm_origem'),'---').'</td>';
-        $w_html .= chr(13).'       <td><font size="1">'.Nvl(f($row,'nm_destino'),'---').'</td>';
-        $w_html .= chr(13).'       <td align="center"><font size="1">'.FormataDataEdicao(f($row,'phpdt_saida'),3).'</td>';
-        $w_html .= chr(13).'       <td align="center"><font size="1">'.FormataDataEdicao(f($row,'phpdt_chegada'),3).'</td>';
-        $w_html .= chr(13).'       <td><font size="1">'.Nvl(f($row,'nm_cia_transporte'),'---').'</td>';
-        $w_html .= chr(13).'       <td><font size="1">'.Nvl(f($row,'codigo_voo'),'---').'</td>';
+        $w_html .= chr(13).'       <td>'.Nvl(f($row,'nm_origem'),'---').'</td>';
+        $w_html .= chr(13).'       <td>'.Nvl(f($row,'nm_destino'),'---').'</td>';
+        $w_html .= chr(13).'       <td align="center">'.substr(FormataDataEdicao(f($row,'phpdt_saida'),3),0,-3).'</td>';
+        $w_html .= chr(13).'       <td align="center">'.substr(FormataDataEdicao(f($row,'phpdt_chegada'),3),0,-3).'</td>';
+        $w_html .= chr(13).'       <td>'.Nvl(f($row,'nm_cia_transporte'),'---').'</td>';
+        $w_html .= chr(13).'       <td>'.Nvl(f($row,'codigo_voo'),'---').'</td>';
         $w_html .= chr(13).'     </tr>';
-      } 
+        $j=1;
+      }
+    } 
+    if ($j==1) {
       $w_html .= chr(13).'        </tr>';
       $w_html .= chr(13).'        </table></td></tr>';
       $RS = db_getSolicData::getInstanceOf($dbms,$l_chave,'PDGERAL');
-      $w_html .= chr(13).'        <tr><td colspan="2"><font size="1"><b>Nº do PTA/Ticket: </b>'.f($RS,'PTA').'</td>';
-      $w_html .= chr(13).'        <tr><td><font size="1"><b>Data da emissão: </b>'.FormataDataEdicao(f($RS,'emissao_bilhete')).'</td>';
-      $w_html .= chr(13).'            <td><font size="1"><b>Valor das passagens R$: </b>'.number_format(Nvl(f($RS,'valor_passagem'),0),2,',','.').'</td>';
+      $w_html .= chr(13).'        <tr><td align="center" colspan="2"><TABLE WIDTH="100%" bgcolor="'.$conTableBgColor.'" BorderColorDark="'.$conTableBorderColorDark.'" BorderColorLight="'.$conTableBorderColorLight.'">';
+      $w_html .= chr(13).'        <tr><td colspan="2"><b>Nº do PTA/Ticket: </b>'.f($RS,'PTA').'</td>';
+      $w_html .= chr(13).'        <tr><td><b>Data da emissão: </b>'.FormataDataEdicao(f($RS,'emissao_bilhete')).'</td>';
+      $w_html .= chr(13).'            <td><b>Valor das passagens R$: </b>'.number_format(Nvl(f($RS,'valor_passagem'),0),2,',','.').'</td>';
       $w_html .= chr(13).'      </table>';
       $w_html .= chr(13).'    </td>';
-      $w_html .= chr(13).'</tr>';
-    } 
+    }
   } 
+
+  // Arquivos gerados para a PCD
+  if ($w_or_tramite > 4) {
+    $w_html .= chr(13).'        <tr><td valign="top" colspan="2" align="center" bgcolor="#D0D0D0" style="border: 2px solid rgb(0,0,0);"><b>Arquivos</td>';
+    $w_html .= chr(13).'        <tr><td align="center" colspan="2">';
+    $w_html .= chr(13).'          <TABLE WIDTH="100%" bgcolor="'.$conTableBgColor.'" BORDER="'.$conTableBorder.'" CELLSPACING="'.$conTableCellSpacing.'" CELLPADDING="'.$conTableCellPadding.'" BorderColorDark="'.$conTableBorderColorDark.'" BorderColorLight="'.$conTableBorderColorLight.'">';
+    $w_html .= chr(13).'            <tr bgcolor="'.$w_TrBgColor.'"><td><a target="Emissao" class="hl" title="Emitir autorização e proposta de concessão." href="'.$w_dir.$w_pagina.'Emissao&R='.$w_pagina.$par.'&O=L&w_menu='.$w_menu.'&w_chave='.$l_chave.'&P1='.$P1.'&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&SG='.$SG.'">Autorização para emissão de bilhetes</A>';
+    $w_html .= chr(13).'            <tr bgcolor="'.$w_TrBgColor.'"><td><a target="Relatorio" class="hl" title="Emitir relatório para prestacao de contas." href="'.$w_dir.$w_pagina.'Prestacaocontas&R='.$w_pagina.$par.'&O=L&w_menu='.$w_menu.'&w_chave='.$l_chave.'&P1='.$P1.'&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP='.$TP.'&SG='.$SG.'">Relatório de viagem</A>';
+    $w_html .= chr(13).'            </tr>';
+    $w_html .= chr(13).'          </table></td></tr>';
+  }
 
   // Se for envio, executa verificações nos dados da solicitação
   $w_erro = ValidaViagem($w_cliente,$l_chave,'PDGERAL',null,null,null,Nvl($w_tramite,0));
@@ -363,11 +392,11 @@ function VisualViagem($l_chave,$l_O,$l_usuario,$l_P1,$l_P4) {
     $w_html .= chr(13).'<tr bgcolor="'.$w_TrBgColor.'"><td colspan=2>';
     $w_html .= chr(13).'<HR>';
     if (substr($w_erro,0,1)=='0') {
-      $w_html .= chr(13).'  <font color="#BC3131"><b>ATENÇÃO:</b> Foram identificados os erros listados abaixo, não sendo possível seu encaminhamento para fases posteriores à atual.';
+      $w_html .= chr(13).'  <font color="#BC3131"><b>ATENÇÃO:</b> Foram identificados os erros listados abaixo, não sendo possível seu encaminhamento para fases posteriores à atual.</font>';
     } elseif (substr($w_erro,0,1)=='1') {
-      $w_html .= chr(13).'  <font color="#BC3131"><b>ATENÇÃO:</b> Foram identificados os erros listados abaixo. Seu encaminhamento para fases posteriores à atual só pode ser feito por um gestor do sistema ou do módulo de projetos.';
+      $w_html .= chr(13).'  <font color="#BC3131"><b>ATENÇÃO:</b> Foram identificados os erros listados abaixo. Seu encaminhamento para fases posteriores à atual só pode ser feito por um gestor do sistema ou do módulo de projetos.</font>';
     } else {
-      $w_html .= chr(13).'  <font color="#BC3131"><b>ATENÇÃO:</b> Foram identificados os alertas listados abaixo. Eles não impedem o encaminhamento para fases posteriores à atual, mas convém sua verificação.';
+      $w_html .= chr(13).'  <font color="#BC3131"><b>ATENÇÃO:</b> Foram identificados os alertas listados abaixo. Eles não impedem o encaminhamento para fases posteriores à atual, mas convém sua verificação.</font>';
     } 
     $w_html .= chr(13).'  <ul>'.substr($w_erro,1,1000).'</ul>';
     $w_html .= chr(13).'  </td></tr>';
@@ -423,11 +452,11 @@ function VisualViagem($l_chave,$l_O,$l_usuario,$l_P1,$l_P4) {
         }
         $w_cor = ($w_cor==$conTrBgColor || $w_cor=='') ? $w_cor=$conTrAlternateBgColor : $w_cor=$conTrBgColor;
         $w_html .= chr(13).'      <tr valign="top" bgcolor="'.$w_cor.'">';
-        $w_html .= chr(13).'        <td nowrap><font size="1">'.FormataDataEdicao(f($row,'phpdt_data'),3).'</td>';
+        $w_html .= chr(13).'        <td nowrap>'.FormataDataEdicao(f($row,'phpdt_data'),3).'</td>';
         if (Nvl(f($row,'caminho'),'')>'') {
-          $w_html .= chr(13).'        <td><font size="1">'.CRLF2BR(Nvl(f($row,'despacho'),'---').'<br>'.LinkArquivo('HL',$w_cliente,f($row,'sq_siw_arquivo'),'_blank','Clique para exibir o anexo em outra janela.','Anexo - '.f($row,'tipo').' - '.round(f($row,'tamanho')/1024,1).' KB',null)).'</td>';
+          $w_html .= chr(13).'        <td>'.CRLF2BR(Nvl(f($row,'despacho'),'---').'<br>'.LinkArquivo('HL',$w_cliente,f($row,'sq_siw_arquivo'),'_blank','Clique para exibir o anexo em outra janela.','Anexo - '.f($row,'tipo').' - '.round(f($row,'tamanho')/1024,1).' KB',null)).'</td>';
         } else {
-          $w_html .= chr(13).'        <td><font size="1">'.CRLF2BR(Nvl(f($row,'despacho'),'---')).'</td>';
+          $w_html .= chr(13).'        <td>'.CRLF2BR(Nvl(f($row,'despacho'),'---')).'</td>';
         } 
         if ($l_P4!=1) {
           $w_html .= chr(13).'        <td nowrap>'.ExibePessoa($w_dir_volta,$w_cliente,f($row,'sq_pessoa'),$TP,f($row,'responsavel')).'</td>';
@@ -441,9 +470,9 @@ function VisualViagem($l_chave,$l_O,$l_usuario,$l_P1,$l_P4) {
             $w_html .= chr(13).'        <td nowrap>'.f($row,'destinatario').'</td>';
           } 
         } elseif (f($row,'origem')=='ANOTACAO') {
-          $w_html .= chr(13).'        <td nowrap><font size="1">Anotação</td>';
+          $w_html .= chr(13).'        <td nowrap>Anotação</td>';
         } else {
-          $w_html .= chr(13).'        <td nowrap><font size="1">'.Nvl(f($row,'tramite'),'---').'</td>';
+          $w_html .= chr(13).'        <td nowrap>'.Nvl(f($row,'tramite'),'---').'</td>';
         } 
         $w_html .= chr(13).'      </tr>';
       } 

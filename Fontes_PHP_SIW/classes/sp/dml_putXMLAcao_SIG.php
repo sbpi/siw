@@ -40,7 +40,7 @@ class dml_putXMLAcao_SIG {
                    'p_ano_ini'                   =>array(tvl($p_ano_ini),                                  B_VARCHAR,         4),
                    'p_mes_fim'                   =>array(tvl($p_mes_fim),                                  B_VARCHAR,         2),
                    'p_ano_fim'                   =>array(tvl($p_ano_fim),                                  B_VARCHAR,         4),
-                   'p_valor_ano_ant'             =>array(tvl(str_replace('.',',',$p_valor_ano_ant)),       B_NUMERIC,      18,2),
+                   'p_valor_ano_ant'             =>array(toNumber(tvl(str_replace('.',',',$p_valor_ano_ant))),B_NUMERIC,   18,2),
                    'p_coment_situacao'           =>array(tvl($p_coment_situacao),                          B_VARCHAR,      4000),
                    'p_situacao_atual'            =>array(tvl($p_situacao_atual),                           B_VARCHAR,      4000),
                    'p_result_obtidos'            =>array(tvl($p_result_obtidos),                           B_VARCHAR,      4000),

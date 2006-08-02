@@ -14,8 +14,8 @@ class dml_putMetaMensal_IS {
      extract($GLOBALS,EXTR_PREFIX_SAME,'strchema'); $sql=$strschema_is.'SP_PUTMETAMENSAL_IS';
      $params=array('p_operacao'                  =>array($operacao,                                        B_VARCHAR,         1),
                    'p_chave'                     =>array(tvl($p_chave),                                    B_INTEGER,        32),
-                   'p_realizado'                 =>array(tvl($p_realizado),                                B_NUMERIC,      18,4),
-                   'p_revisado'                  =>array(tvl($p_revisado),                                 B_NUMERIC,      18,4),
+                   'p_realizado'                 =>array(toNumber(tvl($p_realizado)),                      B_NUMERIC,      18,4),
+                   'p_revisado'                  =>array(toNumber(tvl($p_revisado)),                       B_NUMERIC,      18,4),
                    'p_referencia'                =>array(tvl($p_referencia),                               B_DATE,           32),
                    'p_cliente'                   =>array(tvl($p_cliente),                                  B_INTEGER,        32)
                   );

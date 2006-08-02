@@ -168,7 +168,7 @@ function Gerencial() {
     if ($p_proponente>'')
       $w_filtro=$w_filtro.'<tr valign="top"><td align="right"><font size=1>Outra parte <td><font size=1>[<b>'.$p_proponente.'</b>]';
     if ($p_objeto>'')
-      $w_filtro=$w_filtro.'<tr valign="top"><td align="right"><font size=1>Detalhamento <td><font size=1>[<b>'.$p_objeto.'</b>]';
+      $w_filtro=$w_filtro.'<tr valign="top"><td align="right"><font size=1>Objeto <td><font size=1>[<b>'.$p_objeto.'</b>]';
     if ($p_palavra>'')
       $w_filtro=$w_filtro.'<tr valign="top"><td align="right"><font size=1>Código interno <td><font size=1>[<b>'.$p_palavra.'</b>]';
     if ($p_ini_i>'')
@@ -748,7 +748,7 @@ function Gerencial() {
       ShowHTML('          <option value="'.substr(f($RS_Menu,'sigla'),0,3).'LOCAL">UF');
     ShowHTML('          </select></td>');
     MontaRadioSN('<b>Inibe exibição do gráfico?</b>',$p_tipo,'p_tipo');
-    MontaRadioNS('<b>Limita tamanho do detalhamento?</b>',$p_tamanho,'p_tamanho');
+    MontaRadioNS('<b>Limita tamanho do objeto?</b>',$p_tamanho,'p_tamanho');
     ShowHTML('           </table>');
     ShowHTML('         </tr>');
     ShowHTML('         <tr><td valign="top" colspan="2" align="center" bgcolor="#D0D0D0" style="border: 2px solid rgb(0,0,0);"><font size="1"><b>Critérios de Busca</td>');

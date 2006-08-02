@@ -18,7 +18,7 @@ class dml_putDemandaConc {
                    'p_inicio_real'               =>array(tvl($p_inicio_real),                              B_DATE,           32),
                    'p_fim_real'                  =>array(tvl($p_fim_real),                                 B_DATE,           32),
                    'p_nota_conclusao'            =>array(tvl($p_nota_conclusao),                           B_VARCHAR,      2000),
-                   'p_custo_real'                =>array(tvl($p_custo_real),                               B_NUMERIC,      18,2),
+                   'p_custo_real'                =>array(toNumber(tvl($p_custo_real)),                     B_NUMERIC,      18,2),
                    'p_caminho'                   =>array(tvl($p_caminho),                                  B_VARCHAR,       255),
                    'p_tamanho'                   =>array(tvl($p_tamanho),                                  B_INTEGER,        32),
                    'p_tipo'                      =>array(tvl($p_tipo),                                     B_VARCHAR,        60),

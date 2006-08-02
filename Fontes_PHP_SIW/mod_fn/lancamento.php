@@ -51,6 +51,7 @@ include_once($w_dir_volta.'funcoes/selecaoEstado.php');
 include_once($w_dir_volta.'funcoes/selecaoCidade.php');
 include_once($w_dir_volta.'funcoes/selecaoBanco.php');
 include_once($w_dir_volta.'funcoes/selecaoAgencia.php');
+include_once($w_dir_volta.'funcoes/selecaoSexo.php');
 include_once('visuallancamento.php');
 include_once('validalancamento.php');
 // =========================================================================
@@ -979,8 +980,7 @@ function OutraParte() {
     Validate('w_sq_cidade','Cidade','SELECT',1,1,10,'','1');
     if (Nvl($w_pd_pais,'S')=='S') Validate('w_cep','CEP','1','',9,9,'','0123456789-');
     else                          Validate('w_cep','CEP','1',1,5,9,'','0123456789');
-    if ($w_tipo_pessoa==1)  Validate('w_email','E-Mail','1','1',4,60,'1','1');
-    else                    Validate('w_email','E-Mail','1','',4,60,'1','1');
+    Validate('w_email','E-Mail','1','',4,60,'1','1');
     if (substr(f($RS1,'sigla'),0,3)=='FND') {
       if (!(strpos('CREDITO,DEPOSITO',$w_forma_pagamento)===false)) {
         Validate('w_sq_banco','Banco','SELECT',1,1,10,'1','1');
@@ -1700,19 +1700,19 @@ function BuscaParcela() {
     ShowHTML('<INPUT type="hidden" name="w_data_hora" value="'.f($RS_Menu,'data_hora').'">');
     ShowHTML('<INPUT type="hidden" name="w_aviso" value="S">');
     ShowHTML('<INPUT type="hidden" name="w_dias" value="3">');
-    ShowHTML('<INPUT disabled type="hidden" name="w_sq_acordo_parcela[]" value="">');
-    ShowHTML('<INPUT disabled type="hidden" name="w_sq_tipo_lancamento[]" value="">');
-    ShowHTML('<INPUT disabled type="hidden" name="w_valor[]" value="">');
-    ShowHTML('<INPUT disabled type="hidden" name="w_solicitante[]" value="">');
-    ShowHTML('<INPUT disabled type="hidden" name="w_sqcc[]" value="">');
-    ShowHTML('<INPUT disabled type="hidden" name="w_descricao[]" value="">');
-    ShowHTML('<INPUT disabled type="hidden" name="w_vencimento[]" value="">');
-    ShowHTML('<INPUT disabled type="hidden" name="w_chave_pai[]" value="">');
-    ShowHTML('<INPUT disabled type="hidden" name="w_sq_forma_pagamento[]" value="">');
-    ShowHTML('<INPUT disabled type="hidden" name="w_tipo_pessoa[]" value="">');
-    ShowHTML('<INPUT disabled type="hidden" name="w_forma_atual[]" value="">');
-    ShowHTML('<INPUT disabled type="hidden" name="w_vencimento_atual[]" value="">');
-    ShowHTML('<INPUT disabled type="hidden" name="w_outra_parte[]" value="">');
+    ShowHTML('<INPUT type="hidden" name="w_sq_acordo_parcela[]" value="">');
+    ShowHTML('<INPUT type="hidden" name="w_sq_tipo_lancamento[]" value="">');
+    ShowHTML('<INPUT type="hidden" name="w_valor[]" value="">');
+    ShowHTML('<INPUT type="hidden" name="w_solicitante[]" value="">');
+    ShowHTML('<INPUT type="hidden" name="w_sqcc[]" value="">');
+    ShowHTML('<INPUT type="hidden" name="w_descricao[]" value="">');
+    ShowHTML('<INPUT type="hidden" name="w_vencimento[]" value="">');
+    ShowHTML('<INPUT type="hidden" name="w_chave_pai[]" value="">');
+    ShowHTML('<INPUT type="hidden" name="w_sq_forma_pagamento[]" value="">');
+    ShowHTML('<INPUT type="hidden" name="w_tipo_pessoa[]" value="">');
+    ShowHTML('<INPUT type="hidden" name="w_forma_atual[]" value="">');
+    ShowHTML('<INPUT type="hidden" name="w_vencimento_atual[]" value="">');
+    ShowHTML('<INPUT type="hidden" name="w_outra_parte[]" value="">');
     ShowHTML('<tr><td>');
     ShowHTML('                         <a accesskey="F" class="SS" href="'.$w_dir.$w_pagina.$par.'&R='.$R.'&O=P&P1='.$P1.'&P2='.$P2.'&P4='.$P4.'&TP='.$TP.'&SG='.$SG.MontaFiltro('GET').'"><u><font color="#BC5100">F</u>iltrar (Ativo)</font></a></font>');
     ShowHTML('    <td align="right"><b>Registros existentes: '.count($RS));
@@ -1959,7 +1959,17 @@ function Encaminhamento() {
   } 
   // Recupera a sigla do trâmite desejado, para verificar a lista de possíveis destinatários.
   $RS = db_getTramiteData::getInstanceOf($dbms,$w_novo_tramite);
-  $w_sg_tramite=f($RS,'sigla');
+  $w_sg_tramite = f($RS,'sigla');
+  $w_ativo      = f($RS,'ativo');
+  if ($w_ativo == 'N') {
+    $RS = db_getTramiteList::getInstanceOf($dbms, $w_menu, null,'S');
+    $RS = SortArray($RS,'ordem','asc');
+    foreach ($RS as $row) {
+      $w_novo_tramite = f($row,'sq_siw_tramite');
+      $w_sg_tramite   = f($row,'sigla');
+      break;
+    }   
+  }
   // Se for envio, executa verificações nos dados da solicitação
   if ($O=='V') $w_erro = ValidaLancamento($w_cliente,$w_chave,$SG,null,null,null,$w_tramite);
   Cabecalho();
@@ -2345,38 +2355,37 @@ function SolicMail($p_solic,$p_tipo) {
       if (!(strpos($w_destinatarios,f($RS,'email_substituto').'; ')===false) && Nvl(f($RS,'email_substituto'),'nulo')!='nulo')
         $w_destinatarios=$w_destinatarios.f($RS,'email_substituto').'; ';
     }
-  } elseif ($p_tipo==2) {
-    // Se for tramitação
-    // Encaminhamentos
-    $RS = db_getSolicLog::getInstanceOf($dbms,$p_solic,null,'LISTA');
-    $RS = SortArray($RS,'php_data','desc');
-    foreach ($RS as $row) {
-      $w_html.=chr(13).'      <tr><td align="center" bgcolor="#D0D0D0" style="border: 2px solid rgb(0,0,0);"><b>ÚLTIMO ENCAMINHAMENTO</td>';
-      $w_html.=chr(13).'      <tr><td><table border=0 width="100%" cellspacing=0>';
-      $w_html.=chr(13).'          <tr valign="top">';
-      $w_html.=chr(13).'          <td>De:<br><b>'.f($row,'responsavel').'</b></td>';
-      $w_html.=chr(13).'          <td>Para:<br><b>'.f($row,'destinatario').'</b></td>';
-      $w_html.=chr(13).'          <tr valign="top"><td colspan=2>Despacho:<br><b>'.CRLF2BR(Nvl(f($row,'despacho'),'---')).' </b></td>';
-      $w_html.=chr(13).'          </table>';
-      // Configura o destinatário da tramitação como destinatário da mensagem
-      $row = db_getPersonData::getInstanceOf($dbms,$w_cliente,f($row,'sq_pessoa_destinatario'),null,null);
-      $w_destinatarios = f($row,'email').'; ';      
-      break;
-    }
+  }
+  //Recupera o último log
+  $RS = db_getSolicLog::getInstanceOf($dbms,$p_solic,null,'LISTA');
+  $RS = SortArray($RS,'phpdt_data','desc');
+  foreach ($RS as $row) { $RS = $row; break; }
+  $w_data_encaminhamento = f($RS,'phpdt_data');
+  if ($p_tipo==2) {
+    $w_html.=chr(13).'      <tr><td align="center" bgcolor="#D0D0D0" style="border: 2px solid rgb(0,0,0);"><b>ÚLTIMO ENCAMINHAMENTO</td>';
+    $w_html.=chr(13).'      <tr><td><table border=0 width="100%" cellspacing=0>';
+    $w_html.=chr(13).'          <tr valign="top">';
+    $w_html.=chr(13).'          <td>De:<br><b>'.f($RS,'responsavel').'</b></td>';
+    $w_html.=chr(13).'          <td>Para:<br><b>'.f($RS,'destinatario').'</b></td>';
+    $w_html.=chr(13).'          <tr valign="top"><td colspan=2>Despacho:<br><b>'.CRLF2BR(Nvl(f($RS,'despacho'),'---')).' </b></td>';
+    $w_html.=chr(13).'          </table>';
+    // Configura o destinatário da tramitação como destinatário da mensagem
+    $RS = db_getPersonData::getInstanceOf($dbms,$w_cliente,f($RS,'sq_pessoa_destinatario'),null,null);
+    $w_destinatarios = f($RS,'email').'; ';      
   } 
   $w_html.=chr(13).'      <tr><td align="center" bgcolor="#D0D0D0" style="border: 2px solid rgb(0,0,0);"><b>OUTRAS INFORMAÇÕES</td>';
   $RS = db_getCustomerSite::getInstanceOf($dbms,$w_cliente);
-  $w_html.='      <tr valign="top"><td><font size=2>'.chr(13);
+  $w_html.='      <tr valign="top"><td>'.chr(13);
   $w_html.='         Para acessar o sistema use o endereço: <b><a class="ss" href="'.f($RS,'logradouro').'" target="_blank">'.f($RS,'Logradouro').'</a></b></li>'.chr(13);
-  $w_html.='      </font></td></tr>'.chr(13);
-  $w_html.='      <tr valign="top"><td><font size=2>'.chr(13);
+  $w_html.='      </td></tr>'.chr(13);
+  $w_html.='      <tr valign="top"><td>'.chr(13);
   $w_html.='         Dados da ocorrência:<br>'.chr(13);
   $w_html.='         <ul>'.chr(13);
   $w_html.='         <li>Responsável: <b>'.$_SESSION['NOME'].'</b></li>'.chr(13);
   $w_html.='         <li>Data<b> '.date('d/m/Y, H:i:s',$w_data_encaminhamento).'</b></li>'.chr(13);
   $w_html.='         <li>IP de origem: <b>'.$_SERVER['REMOTE_HOST'].'</b></li>'.chr(13);
   $w_html.='         </ul>'.chr(13);
-  $w_html.='      </font></td></tr>'.chr(13);
+  $w_html.='      </td></tr>'.chr(13);
   $w_html.='    </table>'.chr(13);
   $w_html.='</td></tr>'.chr(13);
   $w_html.='</table>'.chr(13);
@@ -2633,7 +2642,7 @@ function Grava() {
       ScriptOpen('JavaScript');
       ShowHTML('  alert(\'Assinatura Eletrônica inválida!\');');
       ShowHTML('  history.back(1);');
-      ScriptClose;
+      ScriptClose();
     } 
   } else {
     ScriptOpen('JavaScript');

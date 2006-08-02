@@ -116,6 +116,29 @@ function ValidaAcordo($l_cliente,$l_chave,$l_sg1,$l_sg2,$l_sg3,$l_sg4,$l_tramite
         } 
       }
 
+      // Verifica os dados bancários
+      $l_erro_banco = 0;
+      if (substr(f($l_rs_solic,'sigla'),0,3)!='GCR') {
+        if (!(strpos('CREDITO,DEPOSITO',f($l_rs_solic,'sg_forma_pagamento'))===false)) {
+          if (substr(f($l_rs_solic,'sigla'),0,3)=='GCD') {
+            if (nvl(f($l_rs_solic,'sq_agencia'),'')=='' || nvl(f($l_rs_solic,'numero_conta'),'')=='') $l_erro_banco = 1;
+          }
+        } elseif (f($l_rs_solic,'sg_forma_pagamento')=='ORDEM') {
+          if (nvl(f($l_rs_solic,'sq_agencia'),'')=='') $l_erro_banco = 1;
+        } elseif (f($l_rs_solic,'sg_forma_pagamento')=='EXTERIOR') {
+          if (nvl(f($l_rs_solic,'banco_estrang'),'')=='' || 
+              nvl(f($l_rs_solic,'agencia_estrang'),'')=='' ||
+              nvl(f($l_rs_solic,'numero_conta'),'')=='' ||
+              nvl(f($l_rs_solic,'cidade_estrang'),'')=='' ||
+              nvl(f($l_rs_solic,'sq_pais_estrang'),'')==''
+             ) $l_erro_banco = 1;
+       }
+      } 
+      if ($l_erro_banco==1) {
+        $l_erro=$l_erro.'<li>Dados bancários incompletos. Acesse a opção "Outra parte", confira os dados e grave a tela.';
+        $l_tipo=0;
+      }
+
       // Verifica as parcelas
       if ($l_existe_rs3==0) {
         $l_erro.='<li>É obrigatório informar pelo menos uma parcela';
@@ -132,7 +155,7 @@ function ValidaAcordo($l_cliente,$l_chave,$l_sg1,$l_sg2,$l_sg3,$l_sg4,$l_tramite
   
   // Este bloco faz verificações em solicitações que estão em fases posteriores ao
   // cadastramento inicial
-      if (count($l_rs_tramite)==0) {
+      if (count($l_rs_tramite)>0) {
         if (Nvl(f($l_rs_tramite,'ordem'),'---')>'1') {
           $l_erro=$l_erro; 
         } 

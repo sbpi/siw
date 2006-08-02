@@ -54,43 +54,56 @@ function ValidaLancamento($p_cliente,$l_chave,$p_sg1,$p_sg2,$p_sg3,$p_sg4,$p_tra
     $l_erro=$l_erro.'<li>O valor do lançamento (<b>R$ '.number_format(Nvl(f($l_rs_solic,'valor'),0),2,',','.').'</b>) difere da soma dos valores dos documentos (<b>R$ '.number_format(Nvl(f($l_rs_solic,'valor_doc'),0),2,',','.').'</b>).';
     $l_tipo=0;
   } 
-  //-----------------------------------------------------------------------------
-  // Verificações de integridade de dados da solicitação, feitas sempre que houver
-  // um encaminhamento e tiver fase posterior a 2ª.
-  // 1 - Recupera os dados da pessoa
-  // 2 - Verifica se foi indicada a pessoa
-  // 3 - Verifica se a pessoa informada é do tipo indicada no cadastro do lançamento 
-  // 4 - Recupera os documentos associados ao lançamento
-  // 5 - Verifica se a pessoa foi indicada
-  // 6 - Verifica se o valor do lançamento é igual à soma dos valores dos documentos
-  //-----------------------------------------------------------------------------
+
   if (count($l_rs_tramite)>0) {
-    if (Nvl(f($l_rs_tramite,'ordem'),'---')>'2') {
+    // Recupera os dados da pessoa
+    $l_rs1 = db_getBenef::getInstanceOf($dbms,$p_cliente,Nvl(f($l_rs_solic,'pessoa'),0),null,null,null,null,null,null);
+    if (count($l_rs1)<=0) $l_existe_rs1=0; else $l_existe_rs1=count($l_rs1);
+    foreach ($l_rs1 as $row){$l_rs1 = $row; break;}
+    if ($l_existe_rs1==0) {
+      // Verifica se foi indicada a pessoa
+      $l_erro=$l_erro.'<li>A pessoa não foi informada';
+      $l_tipo=0;
+    } else {
+      if (!(Nvl(f($l_rs_solic,'sq_tipo_pessoa'),0)==Nvl(f($l_rs1,'sq_tipo_pessoa'),0))) {
+        // Verifica se a pessoa informada é do tipo indicada no cadastro do lançamento 
+        $l_erro=$l_erro.'<li>A pessoa não é do tipo informado na tela de dados gerais.';
+        $l_tipo=0;
+      } 
+    } 
+
+    // Verifica os dados bancários
+    $l_erro_banco = 0;
+    if (substr(f($l_rs_solic,'sigla'),0,3)=='FND') {
+      if (!(strpos('CREDITO,DEPOSITO',f($l_rs_solic,'sg_forma_pagamento'))===false)) {
+        if (nvl(f($l_rs_solic,'sq_agencia'),'')=='' || nvl(f($l_rs_solic,'numero_conta'),'')=='') $l_erro_banco = 1;
+      } elseif (f($l_rs_solic,'sg_forma_pagamento')=='ORDEM') {
+        if (nvl(f($l_rs_solic,'sq_agencia'),'')=='') $l_erro_banco = 1;
+      } elseif (f($l_rs_solic,'sg_forma_pagamento')=='EXTERIOR') {
+        if (nvl(f($l_rs_solic,'banco_estrang'),'')=='' || 
+            nvl(f($l_rs_solic,'agencia_estrang'),'')=='' ||
+            nvl(f($l_rs_solic,'numero_conta'),'')=='' ||
+            nvl(f($l_rs_solic,'cidade_estrang'),'')=='' ||
+            nvl(f($l_rs_solic,'sq_pais_estrang'),'')==''
+           ) $l_erro_banco = 1;
+     }
+    } 
+    if ($l_erro_banco==1) {
+      $l_erro=$l_erro.'<li>Dados bancários incompletos. Acesse a operação "Pessoa", confira os dados e grave a tela.';
+      $l_tipo=0;
+    }
+
+
+  // Este bloco faz verificações em solicitações que estão em fases posteriores ao
+  // cadastramento inicial
+    if (Nvl(f($l_rs_tramite,'ordem'),0)>2) {
       $l_erro=$l_erro;
       if (Nvl(f($l_rs_tramite,'sigla'),'---')=='EE') {
-        // 1 - Recupera os dados da pessoa
-        $l_rs1 = db_getBenef::getInstanceOf($dbms,$p_cliente,Nvl(f($l_rs_solic,'pessoa'),0),null,null,null,null,null,null);
-        if (count($l_rs1)<=0) 
-          $l_existe_rs1=0; 
-        else 
-          $l_existe_rs1=count($l_rs1);
-          foreach ($l_rs1 as $row){$l_rs1 = $row; break;}
-        if ($l_existe_rs1==0) {
-          // 2 - Verifica se foi indicada a pessoa
-          $l_erro=$l_erro.'<li>A pessoa não foi informada';
-          $l_tipo=0;
-        } else {
-          if (!(Nvl(f($l_rs_solic,'sq_tipo_pessoa'),0)==Nvl(f($l_rs1,'sq_tipo_pessoa'),0))) {
-            // 3 - Verifica se a pessoa informada é do tipo indicada no cadastro do lançamento 
-            $l_erro=$l_erro.'<li>A pessoa não é do tipo informado na tela de dados gerais.';
-            $l_tipo=0;
-          } 
-        } 
         // 4 - Recupera os documentos associados ao lançamento
         $l_rs1 = db_getLancamentoDoc::getInstanceOf($dbms,$l_chave,null,'LISTA');
         if (count($l_rs1)<=0) $l_existe_rs1=0; else $l_existe_rs1=count($l_rs1);
         if ($l_existe_rs1==0) {
-          // 5 - Verifica se a pessoa foi indicada
+          // 5 - Verifica se foi informado pelo menos um documento
           $l_erro=$l_erro.'<li>Não foram informados documentos para o lançamento. Informe pelo menos um.';
           $l_tipo=0;
         } else {

@@ -18,9 +18,9 @@ class dml_putDadosAcaoPPA_IS {
                    'p_programa'                  =>array(tvl($p_programa),                                 B_VARCHAR,         4),
                    'p_acao'                      =>array(tvl($p_acao),                                     B_VARCHAR,         4),
                    'p_subacao'                   =>array(tvl($p_subacao),                                  B_VARCHAR,         4),
-                   'p_aprovado'                  =>array(tvl($p_aprovado),                                 B_NUMERIC,      18,2),
-                   'p_empenhado'                 =>array(tvl($p_empenhado),                                B_NUMERIC,      18,2),
-                   'p_liquidado'                 =>array(tvl($p_liquidado),                                B_NUMERIC,      18,2)
+                   'p_aprovado'                  =>array(toNumber(tvl($p_aprovado)),                       B_NUMERIC,      18,2),
+                   'p_empenhado'                 =>array(toNumber(tvl($p_empenhado)),                      B_NUMERIC,      18,2),
+                   'p_liquidado'                 =>array(toNumber(tvl($p_liquidado)),                      B_NUMERIC,      18,2)
                   );
      $l_rs = DatabaseQueriesFactory::getInstanceOf($sql, $dbms, $params, DB_TYPE);
      $l_error_reporting = error_reporting(); 
