@@ -15,6 +15,7 @@ include_once('classes/sp/db_getUserData.php');
 include_once('classes/sp/db_verificaSenha.php');
 include_once('classes/sp/db_verificaAssinatura.php');
 include_once('classes/sp/db_updatePassword.php');
+include_once('classes/sp/db_getSiwCliModLis.php');
 // =========================================================================
 //  /menu.php
 // ------------------------------------------------------------------------
@@ -315,7 +316,9 @@ function ExibeDocs() {
   ShowHTML('         <img src="'.LinkArquivo(null,$p_cliente,'img/'.f($RS,'logo1'),null,null,null,'EMBED').'" vspace="0" hspace="0" border="1"></td></tr>');
   ShowHTML('      <tr><td height=1><tr><td height=1 bgcolor="#000000">');
   ShowHTML('      <tr><td colspan=2 width="100%"><table border=0 width="100%" cellpadding=0 cellspacing=0><tr valign="top">');
-  ShowHTML('          <td>Usuário:<b>'.$_SESSION['NOME_RESUMIDO'].'</b></TD>');
+  ShowHTML('          <td>Usuário:<b>'.$_SESSION['NOME_RESUMIDO'].'</b>');
+  $RS = db_getSiwCliModLis::getInstanceOf($dbms,$w_cliente,null,'IS');
+  if (count($RS)>0) ShowHTML('          <br>Exercício:<b>'.$_SESSION['ANO'].'</b></TD>');
   ShowHTML('          <td align="right"><a class="hl" href="help.php?par=Menu&TP=<img src=images/Folder/hlp.gif border=0> SIW - Visão Geral&SG=MESA&O=L" target="content" title="Exibe informações sobre os módulos do sistema."><img src="images/Folder/hlp.gif" border=0></a></TD>');
   ShowHTML('          </table>');
   ShowHTML('      <tr><td height=1><tr><td height=2 bgcolor="#000000">');

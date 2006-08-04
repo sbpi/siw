@@ -185,35 +185,40 @@ function VisualAcao($l_chave,$O,$l_usuario,$P1,$P4,$l_identificacao,$l_responsav
     } else {
       $l_html.=chr(13).'      <tr><td colspan="2"><div align="center">Nenhuma tarefa cadastrada</div></td></tr>';
     } 
-    // Encaminhamentos
+    //Encaminhamentos
     $l_html.=chr(13).'      <tr><td colspan="2"><br><font size="2"><b>OCORRÊNCIAS E ANOTAÇÕES<hr NOSHADE color=#000000 SIZE=1></b></td></tr>';
     $RS1 = db_getSolicLog::getInstanceOf($dbms,$l_chave,null,'LISTA');
     $RS1 = SortArray($RS1,'phpdt_data','desc','sq_siw_solic_log','desc');
-    if (count($RS1)>0) {
-      $l_html.=chr(13).'   <tr><td colspan="2"><div align="center">';
-      $l_html.=chr(13).'     <table width=100%  border="1" bordercolor="#00000">';
-      $l_html.=chr(13).'       <tr><td bgColor="#f0f0f0"><div align="center"><b>Data</b></div></td>';
-      $l_html.=chr(13).'         <td bgColor="#f0f0f0"><div align="center"><b>Ocorrência/Anotação</b></div></td>';
-      $l_html.=chr(13).'         <td bgColor="#f0f0f0"><div align="center"><b>Responsável</b></div></td>';
-      $l_html.=chr(13).'         <td bgColor="#f0f0f0"><div align="center"><b>Fase/Destinatário</b></div></td>';
-      $l_html.=chr(13).'       </tr>';
+    $l_html.=chr(13).'   <tr><td colspan="2"><div align="center">';
+    $l_html.=chr(13).'     <table width=100%  border="1" bordercolor="#00000">';
+    $l_html.=chr(13).'       <tr><td bgColor="#f0f0f0"><div align="center"><b>Data</b></div></td>';
+    $l_html.=chr(13).'         <td bgColor="#f0f0f0"><div align="center"><b>Ocorrência/Anotação</b></div></td>';
+    $l_html.=chr(13).'         <td bgColor="#f0f0f0"><div align="center"><b>Responsável</b></div></td>';
+    $l_html.=chr(13).'         <td bgColor="#f0f0f0"><div align="center"><b>Fase/Destinatário</b></div></td>';
+    $l_html.=chr(13).'       </tr>';
+    $i=0;
+    if (count($RS1)==0) {
+      $w_html .= chr(13).'      <tr bgcolor="'.$conTrBgColor.'"><td colspan=4 align="center"><b>Não foram encontrados encaminhamentos.</b></td></tr>';
+    } else {
+      $w_html .= chr(13).'      <tr bgcolor="'.$conTrBgColor.'" valign="top">';
+      $w_cor=$conTrBgColor;
       $i = 0;
       foreach ($RS1 as $row1) {
+        $w_cor = ($w_cor==$conTrBgColor || $w_cor=='') ? $w_cor=$conTrAlternateBgColor : $w_cor=$conTrBgColor;
         if ($i==0) {
-          $w_html .= chr(13).'    <tr><td colspan=4>Fase atual: <b>'.f($row1,'fase').'</b></td>';
-          $i = 1;
+          $l_html.=chr(13).'     <td colspan=4>Fase atual: <b>'.f($row1,'fase').'</b></td></tr>';
+          $i=1;
         }
-        $l_html.=chr(13).'    <tr><td nowrap>'.FormataDataEdicao(f($row1,'phpdt_data'),3).'</td>';
+        $w_html = $w_html.chr(13).'      <tr valign="top" bgcolor="'.$w_cor.'">';
+        $l_html.=chr(13).'        <td nowrap>'.FormataDataEdicao(f($row1,'phpdt_data'),3).'</td>';
         $l_html.=chr(13).'        <td>'.CRLF2BR(Nvl(f($row1,'despacho'),'---')).'</td>';
         $l_html.=chr(13).'        <td nowrap>'.ExibePessoa('../',$w_cliente,f($row1,'sq_pessoa'),$TP,f($row1,'responsavel')).'</td>';
         if ((Nvl(f($row1,'sq_projeto_log'),'')>'') && (Nvl(f($row1,'destinatario'),'')>''))         $l_html.=chr(13).'        <td nowrap>'.ExibePessoa('../',$w_cliente,f($row1,'sq_pessoa_destinatario'),$TP,f($row1,'destinatario')).'</td>';
         elseif ((Nvl(f($row1,'sq_projeto_log'),'')>'')  && (Nvl(f($row1,'destinatario'),'')==''))   $l_html.=chr(13).'        <td nowrap>Anotação</td>';
-        else                                                                                        $l_html.=chr(13).'        <td nowrap>'.Nvl(f($row1,'tramite'),'---').'</td>';
+        else $l_html.=chr(13).'        <td nowrap>'.Nvl(f($row1,'tramite'),'---').'</td>';
         $l_html.=chr(13).'      </tr>';
       } 
       $l_html.=chr(13).'         </table></div></td></tr>';
-    } else {
-      $l_html.=chr(13).'      <tr><td colspan="2"><div align="center">Não foi encontrado nenhum encaminhamento</div></td></tr>';
     } 
     $l_html.=chr(13).'</table>';
   } else {

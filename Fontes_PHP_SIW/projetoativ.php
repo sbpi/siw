@@ -246,8 +246,8 @@ function Inicial() {
       if ($p_proponente>'') $w_filtro = $w_filtro.'<tr valign="top"><td align="right">Proponente <td>[<b>'.$p_proponente.'</b>]';
       if ($p_assunto>'')    $w_filtro = $w_filtro.'<tr valign="top"><td align="right">Detalhamento <td>[<b>'.$p_assunto.'</b>]';
       if ($p_palavra>'')    $w_filtro=$w_filtro.'<tr valign="top"><td align="right">Palavras-chave <td>[<b>'.$p_palavra.'</b>]';
-      if ($p_ini_i>'')      $w_filtro=$w_filtro.'<tr valign="top"><td align="right">Data recebimento <td>[<b>'.$p_ini_i.'-'.$p_ini_f.'</b>]';
-      if ($p_fim_i>'')      $w_filtro=$w_filtro.'<tr valign="top"><td align="right">Limite conclusão <td>[<b>'.$p_fim_i.'-'.$p_fim_f.'</b>]';
+      if ($p_ini_i>'')      $w_filtro=$w_filtro.'<tr valign="top"><td align="right">Início previsto <td>[<b>'.$p_ini_i.'-'.$p_ini_f.'</b>]';
+      if ($p_fim_i>'')      $w_filtro=$w_filtro.'<tr valign="top"><td align="right">Término previsto <td>[<b>'.$p_fim_i.'-'.$p_fim_f.'</b>]';
       if ($p_atraso=='S')   $w_filtro=$w_filtro.'<tr valign="top"><td align="right">Situação <td>[<b>Apenas atrasadas</b>]';
       if ($w_filtro>'')     $w_filtro='<div align="left"><table border=0><tr valign="top"><td><b>Filtro:</b><td nowrap><ul>'.$w_filtro.'</ul></tr></table></div>';
     } 
@@ -291,26 +291,26 @@ function Inicial() {
       if ($P1!=1 || $O=='C') {
         // Se não for cadastramento ou se for cópia
         Validate('p_chave','Número da atividade','','','1','18','','0123456789');
-        Validate('p_prazo','Dias para a data limite','','','1','2','','0123456789');
+        Validate('p_prazo','Dias para o término previsto','','','1','2','','0123456789');
         Validate('p_proponente','Proponente externo','','','2','90','1','');
         Validate('p_assunto','Assunto','','','2','90','1','1');
         Validate('p_palavra','Palavras-chave','','','2','90','1','1');
-        Validate('p_ini_i','Recebimento inicial','DATA','','10','10','','0123456789/');
-        Validate('p_ini_f','Recebimento final','DATA','','10','10','','0123456789/');
+        Validate('p_ini_i','Início de','DATA','','10','10','','0123456789/');
+        Validate('p_ini_f','Início até','DATA','','10','10','','0123456789/');
         ShowHTML('  if ((theForm.p_ini_i.value != \'\' && theForm.p_ini_f.value == \'\') || (theForm.p_ini_i.value == \'\' && theForm.p_ini_f.value != \'\')) {');
-        ShowHTML('     alert (\'Informe ambas as datas de recebimento ou nenhuma delas!\');');
+        ShowHTML('     alert (\'Informe o período completo de início ou nenhuma das datas!\');');
         ShowHTML('     theForm.p_ini_i.focus();');
         ShowHTML('     return false;');
         ShowHTML('  }');
-        CompData('p_ini_i','Recebimento inicial','<=','p_ini_f','Recebimento final');
-        Validate('p_fim_i','Conclusão inicial','DATA','','10','10','','0123456789/');
-        Validate('p_fim_f','Conclusão final','DATA','','10','10','','0123456789/');
+        CompData('p_ini_i','Início de','<=','p_ini_f','Início até');
+        Validate('p_fim_i','Término de','DATA','','10','10','','0123456789/');
+        Validate('p_fim_f','Término até','DATA','','10','10','','0123456789/');
         ShowHTML('  if ((theForm.p_fim_i.value != \'\' && theForm.p_fim_f.value == \'\') || (theForm.p_fim_i.value == \'\' && theForm.p_fim_f.value != \'\')) {');
-        ShowHTML('     alert (\'Informe ambas as datas de conclusão ou nenhuma delas!\');');
+        ShowHTML('     alert (\'Informe o período completo de término ou nenhuma das datas!\');');
         ShowHTML('     theForm.p_fim_i.focus();');
         ShowHTML('     return false;');
         ShowHTML('  }');
-        CompData('p_fim_i','Conclusão inicial','<=','p_fim_f','Conclusão final');
+        CompData('p_fim_i','Término de','<=','p_fim_f','Término até');
       } 
       Validate('P4','Linhas por página','1','1','1','4','','0123456789');
     } 
@@ -634,7 +634,7 @@ function Inicial() {
       } 
       ShowHTML('      <tr valign="top">');
       ShowHTML('          <td valign="top"><b>Número da <U>d</U>emanda:<br><INPUT ACCESSKEY="D" '.$w_Disabled.' class="STI" type="text" name="p_chave" size="18" maxlength="18" value="'.$p_chave.'"></td>');
-      ShowHTML('          <td valign="top"><b>Dias para a data limi<U>t</U>e:<br><INPUT ACCESSKEY="T" '.$w_Disabled.' class="STI" type="text" name="p_prazo" size="2" maxlength="2" value="'.$p_prazo.'"></td>');
+      ShowHTML('          <td valign="top"><b>Dias para a data previs<U>t</U>a de término:<br><INPUT ACCESSKEY="T" '.$w_Disabled.' class="STI" type="text" name="p_prazo" size="2" maxlength="2" value="'.$p_prazo.'"></td>');
       ShowHTML('      <tr valign="top">');
       SelecaoPessoa('Respo<u>n</u>sável:','N','Selecione o responsável pela atividade na relação.',$p_solicitante,null,'p_solicitante','USUARIOS');
       SelecaoUnidade('<U>S</U>etor responsável:','S',null,$p_unidade,null,'p_unidade',null,null);
@@ -654,8 +654,8 @@ function Inicial() {
       ShowHTML('          <td valign="top"><b>A<U>s</U>sunto:<br><INPUT ACCESSKEY="N" '.$w_Disabled.' class="STI" type="text" name="p_assunto" size="25" maxlength="90" value="'.$p_assunto.'"></td>');
       ShowHTML('          <td valign="top" colspan=2><b>Pala<U>v</U>ras-chave:<br><INPUT ACCESSKEY="N" '.$w_Disabled.' class="STI" type="text" name="p_palavra" size="25" maxlength="90" value="'.$p_palavra.'"></td>');
       ShowHTML('      <tr>');
-      ShowHTML('          <td valign="top"><b>Data de re<u>c</u>ebimento entre:</b><br><input '.$w_Disabled.' accesskey="C" type="text" name="p_ini_i" class="STI" SIZE="10" MAXLENGTH="10" VALUE="'.$p_ini_i.'" onKeyDown="FormataData(this,event);"> e <input '.$w_Disabled.' accesskey="C" type="text" name="p_ini_f" class="STI" SIZE="10" MAXLENGTH="10" VALUE="'.$p_ini_f.'" onKeyDown="FormataData(this,event);"></td>');
-      ShowHTML('          <td valign="top"><b>Limi<u>t</u>e para conclusão entre:</b><br><input '.$w_Disabled.' accesskey="T" type="text" name="p_fim_i" class="STI" SIZE="10" MAXLENGTH="10" VALUE="'.$p_fim_i.'" onKeyDown="FormataData(this,event);"> e <input '.$w_Disabled.' accesskey="T" type="text" name="p_fim_f" class="STI" SIZE="10" MAXLENGTH="10" VALUE="'.$p_fim_f.'" onKeyDown="FormataData(this,event);"></td>');
+      ShowHTML('          <td valign="top"><b>Iní<u>c</u>io previsto entre:</b><br><input '.$w_Disabled.' accesskey="C" type="text" name="p_ini_i" class="STI" SIZE="10" MAXLENGTH="10" VALUE="'.$p_ini_i.'" onKeyDown="FormataData(this,event);"> e <input '.$w_Disabled.' accesskey="C" type="text" name="p_ini_f" class="STI" SIZE="10" MAXLENGTH="10" VALUE="'.$p_ini_f.'" onKeyDown="FormataData(this,event);"></td>');
+      ShowHTML('          <td valign="top"><b><u>T</u>érmino previsto entre:</b><br><input '.$w_Disabled.' accesskey="T" type="text" name="p_fim_i" class="STI" SIZE="10" MAXLENGTH="10" VALUE="'.$p_fim_i.'" onKeyDown="FormataData(this,event);"> e <input '.$w_Disabled.' accesskey="T" type="text" name="p_fim_f" class="STI" SIZE="10" MAXLENGTH="10" VALUE="'.$p_fim_f.'" onKeyDown="FormataData(this,event);"></td>');
       if ($O!='C') {
         // Se não for cópia
         ShowHTML('      <tr>');
@@ -671,17 +671,17 @@ function Inicial() {
     ShowHTML('      <tr>');
     ShowHTML('          <td valign="top"><b><U>O</U>rdenação por:<br><SELECT ACCESSKEY="O" '.$w_Disabled.' class="STS" name="p_ordena" size="1">');
     if ($p_Ordena=='ASSUNTO') {
-      ShowHTML('          <option value="assunto" SELECTED>Detalhamento<option value="inicio">Data de recebimento<option value="">Data limite para conclusão<option value="nm_tramite">Fase atual<option value="prioridade">Prioridade<option value="proponente">Proponente externo');
+      ShowHTML('          <option value="assunto" SELECTED>Detalhamento<option value="inicio">Início previsto<option value="">Término previsto<option value="nm_tramite">Fase atual<option value="prioridade">Prioridade<option value="proponente">Proponente externo');
     } elseif ($p_Ordena=='INICIO') {
-      ShowHTML('          <option value="assunto">Detalhamento<option value="inicio" SELECTED>Data de recebimento<option value="">Data limite para conclusão<option value="nm_tramite">Fase atual<option value="prioridade">Prioridade<option value="proponente">Proponente externo');
+      ShowHTML('          <option value="assunto">Detalhamento<option value="inicio" SELECTED>Início previsto<option value="">Término previsto<option value="nm_tramite">Fase atual<option value="prioridade">Prioridade<option value="proponente">Proponente externo');
     } elseif ($p_Ordena=='NM_TRAMITE') {
-      ShowHTML('          <option value="assunto">Detalhamento<option value="inicio">Data de recebimento<option value="">Data limite para conclusão<option value="nm_tramite" SELECTED>Fase atual<option value="prioridade">Prioridade<option value="proponente">Proponente externo');
+      ShowHTML('          <option value="assunto">Detalhamento<option value="inicio">Início previsto<option value="">Término previsto<option value="nm_tramite" SELECTED>Fase atual<option value="prioridade">Prioridade<option value="proponente">Proponente externo');
     } elseif ($p_Ordena=='PRIORIDADE') {
-      ShowHTML('          <option value="assunto">Detalhamento<option value="inicio">Data de recebimento<option value="">Data limite para conclusão<option value="nm_tramite">Fase atual<option value="prioridade" SELECTED>Prioridade<option value="proponente">Proponente externo');
+      ShowHTML('          <option value="assunto">Detalhamento<option value="inicio">Início previsto<option value="">Término previsto<option value="nm_tramite">Fase atual<option value="prioridade" SELECTED>Prioridade<option value="proponente">Proponente externo');
     } elseif ($p_Ordena=='PROPONENTE') {
-      ShowHTML('          <option value="assunto">Detalhamento<option value="inicio">Data de recebimento<option value="">Data limite para conclusão<option value="nm_tramite">Fase atual<option value="prioridade">Prioridade<option value="proponente" SELECTED>Proponente externo');
+      ShowHTML('          <option value="assunto">Detalhamento<option value="inicio">Início previsto<option value="">Término previsto<option value="nm_tramite">Fase atual<option value="prioridade">Prioridade<option value="proponente" SELECTED>Proponente externo');
     } else {
-      ShowHTML('          <option value="assunto">Detalhamento<option value="inicio">Data de recebimento<option value="" SELECTED>Data limite para conclusão<option value="nm_tramite">Fase atual<option value="prioridade">Prioridade<option value="proponente">Proponente externo');
+      ShowHTML('          <option value="assunto">Detalhamento<option value="inicio">Início previsto<option value="" SELECTED>Término previsto<option value="nm_tramite">Fase atual<option value="prioridade">Prioridade<option value="proponente">Proponente externo');
     } 
     ShowHTML('          </select></td>');
     ShowHTML('          <td valign="top"><b><U>L</U>inhas por página:<br><INPUT ACCESSKEY="L" '.$w_Disabled.' class="STI" type="text" name="P4" size="4" maxlength="4" value="'.$P4.'"></td></tr>');
@@ -846,17 +846,17 @@ function Geral() {
     Validate('w_sq_unidade_resp','Setor responsável','HIDDEN',1,1,18,'','0123456789');
     Validate('w_prioridade','Prioridade','SELECT',1,1,1,'','0123456789');
     switch (f($RS_Menu,'data_hora')) {
-      case 1: Validate('w_fim','Limite para conclusão','DATA',1,10,10,'','0123456789/');        break;
-      case 2: Validate('w_fim','Limite para conclusão','DATAHORA',1,17,17,'','0123456789/');    break;
+      case 1: Validate('w_fim','Término previsto','DATA',1,10,10,'','0123456789/');        break;
+      case 2: Validate('w_fim','Término previsto','DATAHORA',1,17,17,'','0123456789/');    break;
       case 3: 
-        Validate('w_inicio','Data de recebimento','DATA',1,10,10,'','0123456789/');       
-        Validate('w_fim','Limite para conclusão','DATA',1,10,10,'','0123456789/');
-        CompData('w_inicio','Data de recebimento','<=','w_fim','Limite para conclusão');
+        Validate('w_inicio','Início previsto','DATA',1,10,10,'','0123456789/');       
+        Validate('w_fim','Término previsto','DATA',1,10,10,'','0123456789/');
+        CompData('w_inicio','Início previsto','<=','w_fim','Término previsto');
         break;
     case 4:
-        Validate('w_inicio','Data de recebimento','DATAHORA',1,17,17,'','0123456789/,: ');
-        Validate('w_fim','Limite para conclusão','DATAHORA',1,17,17,'','0123456789/,: ');
-        CompData('w_inicio','Data de recebimento','<=','w_fim','Limite para conclusão');
+        Validate('w_inicio','Início previsto','DATAHORA',1,17,17,'','0123456789/,: ');
+        Validate('w_fim','Término previsto','DATAHORA',1,17,17,'','0123456789/,: ');
+        CompData('w_inicio','Início previsto','<=','w_fim','Término previsto');
         break;
     } 
     Validate('w_valor','Orçamento disponível','VALOR','1',4,18,'','0123456789.,');
@@ -874,7 +874,7 @@ function Geral() {
     Validate('w_dias','Dias de alerta','1','',1,2,'','0123456789');
     ShowHTML('  if (theForm.w_aviso[0].checked) {');
     ShowHTML('     if (theForm.w_dias.value == \'\') {');
-    ShowHTML('        alert(\'Informe a partir de quantos dias antes da data limite você deseja ser avisado de sua proximidade!\');');
+    ShowHTML('        alert(\'Informe a partir de quantos dias antes da data prevista de término você deseja ser avisado de sua proximidade!\');');
     ShowHTML('        theForm.w_dias.focus();');
     ShowHTML('        return false;');
     ShowHTML('     }');
@@ -947,15 +947,15 @@ function Geral() {
     SelecaoPrioridade('<u>P</u>rioridade:','P','Informe a prioridade desta atividade.',$w_prioridade,null,'w_prioridade',null,null);
     ShowHTML('          <tr>');
     switch (f($RS_Menu,'data_hora')) {
-      case 1: ShowHTML('              <td valign="top"><b>Limi<u>t</u>e para conclusão:</b><br><input '.$w_Disabled.' accesskey="T" type="text" name="w_fim" class="STI" SIZE="10" MAXLENGTH="10" VALUE="'.$w_fim.'" onKeyDown="FormataData(this,event);" title="Data limite para que a execução da atividade esteja concluída."></td>');           break;
-      case 2: ShowHTML('              <td valign="top"><b>Limi<u>t</u>e para conclusão:</b><br><input '.$w_Disabled.' accesskey="T" type="text" name="w_fim" class="STI" SIZE="17" MAXLENGTH="17" VALUE="'.$w_fim.'" onKeyDown="FormataDataHora(this,event);" title="Data/hora limite para que a execução da atividade esteja concluída."></td>');  break;
+      case 1: ShowHTML('              <td valign="top"><b>Limi<u>t</u>e para conclusão:</b><br><input '.$w_Disabled.' accesskey="T" type="text" name="w_fim" class="STI" SIZE="10" MAXLENGTH="10" VALUE="'.$w_fim.'" onKeyDown="FormataData(this,event);" title="Data prevista para que a execução da atividade esteja concluída."></td>');           break;
+      case 2: ShowHTML('              <td valign="top"><b>Limi<u>t</u>e para conclusão:</b><br><input '.$w_Disabled.' accesskey="T" type="text" name="w_fim" class="STI" SIZE="17" MAXLENGTH="17" VALUE="'.$w_fim.'" onKeyDown="FormataDataHora(this,event);" title="Data/hora prevista para que a execução da atividade esteja concluída."></td>');  break;
       case 3: 
-        ShowHTML('              <td valign="top"><b>Data de re<u>c</u>ebimento:</b><br><input '.$w_Disabled.' accesskey="C" type="text" name="w_inicio" class="STI" SIZE="10" MAXLENGTH="10" VALUE="'.Nvl($w_inicio,FormataDataEdicao(time())).'" onKeyDown="FormataData(this,event);" title="Data de recebimento da solicitação."></td>'); 
-        ShowHTML('              <td valign="top"><b>Limi<u>t</u>e para conclusão:</b><br><input '.$w_Disabled.' accesskey="T" type="text" name="w_fim" class="STI" SIZE="10" MAXLENGTH="10" VALUE="'.$w_fim.'" onKeyDown="FormataData(this,event);" title="Data limite para que a execução da atividade esteja concluída."></td>');
+        ShowHTML('              <td valign="top"><b>Iní<u>c</u>io previsto:</b><br><input '.$w_Disabled.' accesskey="C" type="text" name="w_inicio" class="STI" SIZE="10" MAXLENGTH="10" VALUE="'.Nvl($w_inicio,FormataDataEdicao(time())).'" onKeyDown="FormataData(this,event);" title="Início previsto da solicitação."></td>'); 
+        ShowHTML('              <td valign="top"><b><u>T</u>érmino previsto:</b><br><input '.$w_Disabled.' accesskey="T" type="text" name="w_fim" class="STI" SIZE="10" MAXLENGTH="10" VALUE="'.$w_fim.'" onKeyDown="FormataData(this,event);" title="Data prevista para que a execução da atividade esteja concluída."></td>');
         break;
       case 4:
-        ShowHTML('              <td valign="top"><b>Data de re<u>c</u>ebimento:</b><br><input '.$w_Disabled.' accesskey="C" type="text" name="w_inicio" class="STI" SIZE="17" MAXLENGTH="17" VALUE="'.$w_inicio.'" onKeyDown="FormataDataHora(this,event);" title="Data/hora de recebimento da solicitação."></td>');
-        ShowHTML('              <td valign="top"><b>Limi<u>t</u>e para conclusão:</b><br><input '.$w_Disabled.' accesskey="T" type="text" name="w_fim" class="STI" SIZE="17" MAXLENGTH="17" VALUE="'.$w_fim.'" onKeyDown="FormataDataHora(this,event);" title="Data/hora limite para que a execução da atividade esteja concluída."></td>');
+        ShowHTML('              <td valign="top"><b>Iní<u>c</u>io previsto:</b><br><input '.$w_Disabled.' accesskey="C" type="text" name="w_inicio" class="STI" SIZE="17" MAXLENGTH="17" VALUE="'.$w_inicio.'" onKeyDown="FormataDataHora(this,event);" title="Data/hora de início de execução da solicitação."></td>');
+        ShowHTML('              <td valign="top"><b>T</u>érmino previsto:</b><br><input '.$w_Disabled.' accesskey="T" type="text" name="w_fim" class="STI" SIZE="17" MAXLENGTH="17" VALUE="'.$w_fim.'" onKeyDown="FormataDataHora(this,event);" title="Data/hora prevista para que a execução da atividade esteja concluída."></td>');
         break;
     } 
     ShowHTML('              <td valign="top"><b>O<u>r</u>çamento disponível:</b><br><input '.$w_Disabled.' accesskey="O" type="text" name="w_valor" class="STI" SIZE="18" MAXLENGTH="18" VALUE="'.$w_valor.'" onKeyDown="FormataValor(this,18,2,event);" title="Informe o orçamento disponível para execução da atividade, ou zero se não for o caso."></td>');
@@ -992,12 +992,12 @@ function Geral() {
     ShowHTML('      <tr><td align="center" height="1" bgcolor="#000000"></td></tr>');
     ShowHTML('      <tr><td valign="top" align="center" bgcolor="#D0D0D0"><b>Alerta de atraso</td></td></tr>');
     ShowHTML('      <tr><td align="center" height="1" bgcolor="#000000"></td></tr>');
-    ShowHTML('      <tr><td>Os dados abaixo indicam como deve ser tratada a proximidade da data limite para conclusão da atividade.</td></tr>');
+    ShowHTML('      <tr><td>Os dados abaixo indicam como deve ser tratada a proximidade da Término previsto da atividade.</td></tr>');
     ShowHTML('      <tr><td align="center" height="1" bgcolor="#000000"></td></tr>');
     ShowHTML('      <tr><td><table border="0" width="100%">');
     ShowHTML('          <tr>');
     MontaRadioNS('<b>Emite alerta?</b>',$w_aviso,'w_aviso');
-    ShowHTML('              <td valign="top"><b>Quantos <U>d</U>ias antes da data limite?<br><INPUT ACCESSKEY="D" '.$w_Disabled.' class="STI" type="text" name="w_dias" size="2" maxlength="2" value="'.$w_dias.'" title="Número de dias para emissão do alerta de proximidade da data limite para conclusão da atividade."></td>');
+    ShowHTML('              <td valign="top"><b>Quantos <U>d</U>ias antes da data prevista para término?<br><INPUT ACCESSKEY="D" '.$w_Disabled.' class="STI" type="text" name="w_dias" size="2" maxlength="2" value="'.$w_dias.'" title="Número de dias para emissão do alerta de proximidade da previsão de término da atividade."></td>');
     ShowHTML('          </table>');
     ShowHTML('      <tr><td align="center" colspan="3" height="1" bgcolor="#000000"></TD></TR>');
     // Verifica se poderá ser feito o envio da solicitação, a partir do resultado da validação
@@ -1568,12 +1568,12 @@ function Encaminhamento() {
   } 
   // Recupera a sigla do trâmite desejado, para verificar a lista de possíveis destinatários.
   $RS = db_getTramiteData::getInstanceOf($dbms,$w_novo_tramite);
-  $w_sg_tramite=f($RS,'sigla');
+  $w_sg_tramite = f($RS,'sigla');
+  $w_ativo      = f($RS,'ativo');
   if ($w_ativo == 'N') {
     $RS = db_getTramiteList::getInstanceOf($dbms, $w_menu, null,'S');
     $RS = SortArray($RS,'ordem','asc');
     foreach ($RS as $row) {
-      $w_tramite      = f($row,'sq_siw_tramite');
       $w_novo_tramite = f($row,'sq_siw_tramite');
       $w_sg_tramite   = f($row,'sigla');
       break;
@@ -1876,99 +1876,94 @@ function SolicMail($p_solic,$p_tipo) {
   $w_destinatarios  = '';
   $w_resultado      = '';
   $w_html='<HTML>'.chr(13);
-  $w_html=$w_html.BodyOpenMail(null).chr(13);
-  $w_html=$w_html.'<table border="0" cellpadding="0" cellspacing="0" width="100%">'.chr(13);
-  $w_html=$w_html.'<tr bgcolor="'.$conTrBgColor.'"><td align="center">'.chr(13);
-  $w_html=$w_html.'    <table width="97%" border="0">'.chr(13);
+  $w_html.=BodyOpenMail(null).chr(13);
+  $w_html.='<table border="0" cellpadding="0" cellspacing="0" width="100%">'.chr(13);
+  $w_html.='<tr bgcolor="'.$conTrBgColor.'"><td align="center">'.chr(13);
+  $w_html.='    <table width="97%" border="0">'.chr(13);
   if ($p_tipo==1) {
-    $w_html=$w_html.'      <tr valign="top"><td align="center"><font size=2><b>INCLUSÃO DE ATIVIDADE</b><br><br><td></tr>'.chr(13);
+    $w_html.='      <tr valign="top"><td align="center"><font size=2><b>INCLUSÃO DE ATIVIDADE</b><br><br><td></tr>'.chr(13);
   } elseif ($p_tipo==2) {
-    $w_html=$w_html.'      <tr valign="top"><td align="center"><font size=2><b>TRAMITAÇÃO DE ATIVIDADE</b><br><br><td></tr>'.chr(13);
+    $w_html.='      <tr valign="top"><td align="center"><font size=2><b>TRAMITAÇÃO DE ATIVIDADE</b><br><br><td></tr>'.chr(13);
   } elseif ($p_tipo==3) {
-    $w_html=$w_html.'      <tr valign="top"><td align="center"><font size=2><b>CONCLUSÃO DE ATIVIDADE</b><br><br><td></tr>'.chr(13);
+    $w_html.='      <tr valign="top"><td align="center"><font size=2><b>CONCLUSÃO DE ATIVIDADE</b><br><br><td></tr>'.chr(13);
   } 
-  $w_html=$w_html.'      <tr valign="top"><td><font size=2><b><font color="#BC3131">ATENÇÃO: Esta é uma mensagem de envio automático. Não responda esta mensagem.</b><br><br><td></tr>'.chr(13);
+  $w_html.='      <tr valign="top"><td><font size=2><b><font color="#BC3131">ATENÇÃO: Esta é uma mensagem de envio automático. Não responda esta mensagem.</b><br><br><td></tr>'.chr(13);
   // Recupera os dados da atividade
   $RSM = db_getSolicData::getInstanceOf($dbms,$p_solic,'GDPGERAL');
   $w_nome='Atividade '.f($RSM,'sq_siw_solicitacao');
-  $w_html=$w_html.chr(13).'<tr bgcolor="'.$conTrBgColor.'"><td align="center">';
-  $w_html=$w_html.chr(13).'    <table width="99%" border="0">';
-  $w_html=$w_html.chr(13).'      <tr><td valign="top">Projeto: <b>'.f($RSM,'nm_projeto').'  ('.f($RSM,'sq_solic_pai').')</b></td>';
+  $w_html.=chr(13).'<tr bgcolor="'.$conTrBgColor.'"><td align="center">';
+  $w_html.=chr(13).'    <table width="99%" border="0">';
+  $w_html.=chr(13).'      <tr><td valign="top">Projeto: <b>'.f($RSM,'nm_projeto').'  ('.f($RSM,'sq_solic_pai').')</b></td>';
   if (nvl(f($RSM,'nm_etapa'),'')>'') {
-    $w_html=$w_html.chr(13).'      <tr><td valign="top">Etapa: <b>'.MontaOrdemEtapa(f($RSM,'sq_projeto_etapa')).'. '.f($RSM,'nm_etapa').' </b></td>';
+    $w_html.=chr(13).'      <tr><td valign="top">Etapa: <b>'.MontaOrdemEtapa(f($RSM,'sq_projeto_etapa')).'. '.f($RSM,'nm_etapa').' </b></td>';
   } 
-  $w_html=$w_html.chr(13).'      <tr><td>Detalhamento: <b>'.$p_solic.'<br>'.CRLF2BR(f($RSM,'assunto')).'</b></td></tr>';
+  $w_html.=chr(13).'      <tr><td>Detalhamento: <b>'.$p_solic.'<br>'.CRLF2BR(f($RSM,'assunto')).'</b></td></tr>';
   // Identificação da atividade
-  $w_html=$w_html.chr(13).'      <tr><td valign="top" colspan="2" align="center" bgcolor="#D0D0D0" style="border: 2px solid rgb(0,0,0);"><b>EXTRATO DA ATIVIDADE</td>';
+  $w_html.=chr(13).'      <tr><td valign="top" colspan="2" align="center" bgcolor="#D0D0D0" style="border: 2px solid rgb(0,0,0);"><b>EXTRATO DA ATIVIDADE</td>';
   // Se a classificação foi informada, exibe.
   if (nvl(f($RSM,'sq_cc'),'')>'') {
-    $w_html=$w_html.chr(13).'      <tr><td valign="top">Classificação:<br><b>'.f($RSM,'cc_nome').' </b></td>';
+    $w_html.=chr(13).'      <tr><td valign="top">Classificação:<br><b>'.f($RSM,'cc_nome').' </b></td>';
   } 
-  $w_html=$w_html.chr(13).'      <tr><td valign="top" colspan="2"><table border=0 width="100%" cellspacing=0>';
-  $w_html=$w_html.chr(13).'          <tr valign="top">';
-  $w_html=$w_html.chr(13).'          <td>Responsável:<br><b>'.f($RSM,'nm_sol').'</b></td>';
-  $w_html=$w_html.chr(13).'          <td>Unidade responsável:<br><b>'.f($RSM,'nm_unidade_resp').'</b></td>';
-  $w_html=$w_html.chr(13).'          <tr valign="top">';
-  $w_html=$w_html.chr(13).'          <td>Data de recebimento:<br><b>'.FormataDataEdicao(f($RSM,'inicio')).' </b></td>';
-  $w_html=$w_html.chr(13).'          <td>Limite para conclusão:<br><b>'.FormataDataEdicao(f($RSM,'fim')).' </b></td>';
-  $w_html=$w_html.chr(13).'          <td>Prioridade:<br><b>'.RetornaPrioridade(f($RSM,'prioridade')).' </b></td>';
-  $w_html=$w_html.chr(13).'          </table>';
+  $w_html.=chr(13).'      <tr><td valign="top" colspan="2"><table border=0 width="100%" cellspacing=0>';
+  $w_html.=chr(13).'          <tr valign="top">';
+  $w_html.=chr(13).'          <td>Responsável:<br><b>'.f($RSM,'nm_sol').'</b></td>';
+  $w_html.=chr(13).'          <td>Unidade responsável:<br><b>'.f($RSM,'nm_unidade_resp').'</b></td>';
+  $w_html.=chr(13).'          <tr valign="top">';
+  $w_html.=chr(13).'          <td>Início previsto:<br><b>'.FormataDataEdicao(f($RSM,'inicio')).' </b></td>';
+  $w_html.=chr(13).'          <td>Término previsto:<br><b>'.FormataDataEdicao(f($RSM,'fim')).' </b></td>';
+  $w_html.=chr(13).'          <td>Prioridade:<br><b>'.RetornaPrioridade(f($RSM,'prioridade')).' </b></td>';
+  $w_html.=chr(13).'          </table>';
   // Informações adicionais
   if (Nvl(f($RSM,'descricao'),'')>'') {
-    $w_html=$w_html.chr(13).'      <tr><td valign="top">Resultados da atividade:<br><b>'.CRLF2BR(f($RSM,'descricao')).' </b></td>';
+    $w_html.=chr(13).'      <tr><td valign="top">Resultados da atividade:<br><b>'.CRLF2BR(f($RSM,'descricao')).' </b></td>';
   }
-  $w_html=$w_html.chr(13).'    </table>';
-  $w_html=$w_html.chr(13).'</tr>';
+  $w_html.=chr(13).'    </table>';
+  $w_html.=chr(13).'</tr>';
   // Dados da conclusão da atividade, se ela estiver nessa situação
   if (f($RSM,'concluida')=='S' && Nvl(f($RSM,'data_conclusao'),'')>'') {
-    $w_html=$w_html.chr(13).'      <tr><td valign="top" colspan="2" align="center" bgcolor="#D0D0D0" style="border: 2px solid rgb(0,0,0);"><b>DADOS DA CONCLUSÃO</td>';
-    $w_html=$w_html.chr(13).'      <tr><td valign="top" colspan="2"><table border=0 width="100%" cellspacing=0>';
-    $w_html=$w_html.chr(13).'          <tr valign="top">';
-    $w_html=$w_html.chr(13).'          <td>Início da execução:<br><b>'.FormataDataEdicao(f($RSM,'inicio_real')).' </b></td>';
-    $w_html=$w_html.chr(13).'          <td>Término da execução:<br><b>'.FormataDataEdicao(f($RSM,'fim_real')).' </b></td>';
-    $w_html=$w_html.chr(13).'          </table>';
-    $w_html=$w_html.chr(13).'      <tr><td valign="top">Nota de conclusão:<br><b>'.CRLF2BR(f($RSM,'nota_conclusao')).' </b></td>';
+    $w_html.=chr(13).'      <tr><td valign="top" colspan="2" align="center" bgcolor="#D0D0D0" style="border: 2px solid rgb(0,0,0);"><b>DADOS DA CONCLUSÃO</td>';
+    $w_html.=chr(13).'      <tr><td valign="top" colspan="2"><table border=0 width="100%" cellspacing=0>';
+    $w_html.=chr(13).'          <tr valign="top">';
+    $w_html.=chr(13).'          <td>Início da execução:<br><b>'.FormataDataEdicao(f($RSM,'inicio_real')).' </b></td>';
+    $w_html.=chr(13).'          <td>Término da execução:<br><b>'.FormataDataEdicao(f($RSM,'fim_real')).' </b></td>';
+    $w_html.=chr(13).'          </table>';
+    $w_html.=chr(13).'      <tr><td valign="top">Nota de conclusão:<br><b>'.CRLF2BR(f($RSM,'nota_conclusao')).' </b></td>';
   } 
-  // Encaminhamentos
+  //Recupera o último log
   $RS = db_getSolicLog::getInstanceOf($dbms,$p_solic,null,'LISTA');
   $RS = SortArray($RS,'phpdt_data','desc');
-  foreach ($RS as $row) {
-    // Exibe dados do encaminhamento apenas se for tramitação. Se for conclusão, apenas recupera o momento de registro.
-    if ($p_tipo==2) {
-      $w_html=$w_html.chr(13).'      <tr><td valign="top" colspan="2" align="center" bgcolor="#D0D0D0" style="border: 2px solid rgb(0,0,0);"><b>ÚLTIMO ENCAMINHAMENTO</td>';
-      $w_html=$w_html.chr(13).'      <tr><td valign="top" colspan="2"><table border=0 width="100%" cellspacing=0>';
-      $w_html=$w_html.chr(13).'          <tr valign="top">';
-      $w_html=$w_html.chr(13).'          <td>De:<br><b>'.f($row,'responsavel').'</b></td>';
-      $w_html=$w_html.chr(13).'          <td>Para:<br><b>'.f($row,'destinatario').'</b></td>';
-      $w_html=$w_html.chr(13).'          <tr valign="top"><td colspan=2>Despacho:<br><b>'.CRLF2BR(Nvl(f($row,'despacho'),'---')).' </b></td>';
-      $w_html=$w_html.chr(13).'          </table>';
-    }
-    $w_data_encaminhamento = f($row,'phpdt_data');
-    break;
-  }
-  // Se for tramitação, configura o destinatário da tramitação como destinatário da mensagem
+  foreach ($RS as $row) { $RS = $row; break; }
+  $w_data_encaminhamento = f($RS,'phpdt_data');
   if ($p_tipo==2) {
+    $w_html.=chr(13).'      <tr><td valign="top" colspan="2" align="center" bgcolor="#D0D0D0" style="border: 2px solid rgb(0,0,0);"><b>ÚLTIMO ENCAMINHAMENTO</td>';
+    $w_html.=chr(13).'      <tr><td valign="top" colspan="2"><table border=0 width="100%" cellspacing=0>';
+    $w_html.=chr(13).'          <tr valign="top">';
+    $w_html.=chr(13).'          <td>De:<br><b>'.f($RS,'responsavel').'</b></td>';
+    $w_html.=chr(13).'          <td>Para:<br><b>'.f($RS,'destinatario').'</b></td>';
+    $w_html.=chr(13).'          <tr valign="top"><td colspan=2>Despacho:<br><b>'.CRLF2BR(Nvl(f($RS,'despacho'),'---')).' </b></td>';
+    $w_html.=chr(13).'          </table>';
+    // Se for tramitação, configura o destinatário da tramitação como destinatário da mensagem
     $RS = db_getPersonData::getInstanceOf($dbms,$w_cliente,f($RS,'sq_pessoa_destinatario'),null,null);
-    $w_destinatarios=f($RS,'email').'; ';
+    $w_destinatarios = f($RS,'email').'; ';
   } 
-  $w_html=$w_html.chr(13).'      <tr><td valign="top" colspan="2" align="center" bgcolor="#D0D0D0" style="border: 2px solid rgb(0,0,0);"><b>OUTRAS INFORMAÇÕES</td>';
+  $w_html.=chr(13).'      <tr><td valign="top" colspan="2" align="center" bgcolor="#D0D0D0" style="border: 2px solid rgb(0,0,0);"><b>OUTRAS INFORMAÇÕES</td>';
   $RS = db_getCustomerSite::getInstanceOf($dbms,$_SESSION['P_CLIENTE']);
-  $w_html=$w_html.'      <tr valign="top"><td><font size=2>'.chr(13);
-  $w_html=$w_html.'         Para acessar o sistema use o endereço: <b><a class="SS" href="'.f($RS,'logradouro').'" target="_blank">'.f($RS,'Logradouro').'</a></b></li>'.chr(13);
-  $w_html=$w_html.'      </td></tr>'.chr(13);
-  $w_html=$w_html.'      <tr valign="top"><td><font size=2>'.chr(13);
-  $w_html=$w_html.'         Dados da ocorrência:<br>'.chr(13);
-  $w_html=$w_html.'         <ul>'.chr(13);
-  $w_html=$w_html.'         <li>Responsável: <b>'.$_SESSION['NOME'].'</b></li>'.chr(13);
-  $w_html=$w_html.'         <li>Data: <b>'.date('d/m/Y, H:i:s',$w_data_encaminhamento).'</b></li>'.chr(13);
-  $w_html=$w_html.'         <li>IP de origem: <b>'.$_SERVER['REMOTE_HOST'].'</b></li>'.chr(13);
-  $w_html=$w_html.'         </ul>'.chr(13);
-  $w_html=$w_html.'      </td></tr>'.chr(13);
-  $w_html=$w_html.'    </table>'.chr(13);
-  $w_html=$w_html.'</td></tr>'.chr(13);
-  $w_html=$w_html.'</table>'.chr(13);
-  $w_html=$w_html.'</BODY>'.chr(13);
-  $w_html=$w_html.'</HTML>'.chr(13);
+  $w_html.='      <tr valign="top"><td>'.chr(13);
+  $w_html.='         Para acessar o sistema use o endereço: <b><a class="SS" href="'.f($RS,'logradouro').'" target="_blank">'.f($RS,'Logradouro').'</a></b></li>'.chr(13);
+  $w_html.='      </td></tr>'.chr(13);
+  $w_html.='      <tr valign="top"><td>'.chr(13);
+  $w_html.='         Dados da ocorrência:<br>'.chr(13);
+  $w_html.='         <ul>'.chr(13);
+  $w_html.='         <li>Responsável: <b>'.$_SESSION['NOME'].'</b></li>'.chr(13);
+  $w_html.='         <li>Data: <b>'.date('d/m/Y, H:i:s',$w_data_encaminhamento).'</b></li>'.chr(13);
+  $w_html.='         <li>IP de origem: <b>'.$_SERVER['REMOTE_HOST'].'</b></li>'.chr(13);
+  $w_html.='         </ul>'.chr(13);
+  $w_html.='      </td></tr>'.chr(13);
+  $w_html.='    </table>'.chr(13);
+  $w_html.='</td></tr>'.chr(13);
+  $w_html.='</table>'.chr(13);
+  $w_html.='</BODY>'.chr(13);
+  $w_html.='</HTML>'.chr(13);
 
   // Recupera o e-mail do responsável
   $RS = db_getPersonData::getInstanceOf($dbms,$w_cliente,f($RSM,'solicitante'),null,null);

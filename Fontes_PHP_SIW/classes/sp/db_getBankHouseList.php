@@ -9,12 +9,12 @@ extract($GLOBALS); include_once($w_dir_volta."classes/db/DatabaseQueriesFactory.
 */
 
 class db_getBankHouseList {
-   function getInstanceOf($dbms, $p_chave, $p_ordena) {
+   function getInstanceOf($dbms, $p_sq_banco, $p_nome, $p_ordena, $p_codigo) {
      extract($GLOBALS,EXTR_PREFIX_SAME,'strchema'); $sql=$strschema.'sp_getBankHousList';
-     $params=array("p_chave"    =>array($p_chave,       B_NUMERIC,     32),
-                   "p_ordena"   =>array($p_ordena,      B_VARCHAR,     40),
-                   "p_codigo"   =>array($p_codigo,      B_VARCHAR,     30),
-                   "p_result"   =>array(null,           B_CURSOR,      -1)
+     $params=array("p_sq_banco"     =>array($p_sq_banco,       B_NUMERIC,     32),
+                   "p_nome"         =>array($p_nome,           B_VARCHAR,     40),
+                   "p_codigo"       =>array($p_codigo,         B_VARCHAR,     30),
+                   "p_result"       =>array(null,              B_CURSOR,      -1)
                   );
      $l_rs = DatabaseQueriesFactory::getInstanceOf($sql, $dbms, $params, DB_TYPE);
      $l_error_reporting = error_reporting(); error_reporting(0); if(!$l_rs->executeQuery()) { error_reporting($l_error_reporting); TrataErro($sql, $l_rs->getError(), $params, __FILE__, __LINE__, __CLASS__); }

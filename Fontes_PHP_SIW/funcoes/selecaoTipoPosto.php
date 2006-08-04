@@ -5,7 +5,7 @@ include_once($w_dir_volta.'classes/sp/db_getTipoPostoList.php');
 // -------------------------------------------------------------------------
 function selecaoTipoPosto($label,$accesskey,$hint,$chave,$chaveAux,$campo,$restricao) {
   extract($GLOBALS);
-  $RS = db_getTipoPostoList::getInstanceOf($dbms, $w_cliente, null);
+  $RS = db_getTipoPostoList::getInstanceOf($dbms,$w_cliente,null,null);
   //if (nvl($restricao,'')>'') { $RS->Filter=$restricao; }
   if (!isset($hint)) {
      ShowHTML('          <td valign="top"><font size="1"><b>'.$label.'</b><br>');

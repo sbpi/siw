@@ -124,12 +124,12 @@ function visualCurriculo($p_cliente,$p_usuario,$O) {
         $w_cor = ($w_cor==$conTrBgColor || $w_cor=='') ? $w_cor=$conTrAlternateBgColor : $w_cor=$conTrBgColor;  
         foreach ($RS as $row) {
           $html.=chr(13).'      <tr bgcolor="'.$w_cor.'" valign="top">';
-            if (f($RS,'email')=='S') {
-              $html.=chr(13).'        <td><a href="mailto:'.f($RS,'logradouro').'">'.f($RS,'logradouro').'</a></td>';
+            if (f($row,'email')=='S') {
+              $html.=chr(13).'        <td><a href="mailto:'.f($row,'logradouro').'">'.f($row,'logradouro').'</a></td>';
             } else {
-              $html.=chr(13).'        <td><a href="://'.str_replace('://','',f($RS,'logradouro')).'" target="_blank">'.f($RS,'logradouro').'</a></td>';
+              $html.=chr(13).'        <td><a href="://'.str_replace('://','',f($row,'logradouro')).'" target="_blank">'.f($row,'logradouro').'</a></td>';
             } 
-            $html.=chr(13).'        <td align="center">'.f($RS,'padrao').'</td>';
+            $html.=chr(13).'        <td align="center">'.f($row,'padrao').'</td>';
             $html.=chr(13).'      </tr>';
         } 
       } 

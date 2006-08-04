@@ -806,8 +806,9 @@ function EnviaMail($w_subject,$w_mensagem,$w_recipients,$w_attachments = null) {
   $_mail->setDestino(str_ireplace(';',',',$w_recipients));
   $_mail->setAssunto($w_subject);
   $_mail->setMensagem($w_mensagem);
+  if (!is_null($w_attachments)) $_mail->setArquivo(str_ireplace(';',',',$w_attachments));
+
   return $_mail->enviar();
-  //}
 }
 
 // =========================================================================
@@ -895,7 +896,7 @@ function TrataErro($sp, $Err, $params, $file, $line, $object) {
   if (!(strpos($Err['message'],'ORA-02292')===false) || !(strpos($Err['message'],'ORA-02292')===false) ) {
      // REGISTRO TEM FILHOS
      ScriptOpen('JavaScript');
-     ShowHTML(' alert("Existem registros vinculados ao que você está excluindo. Exclua-os primeiro.\\n\\n'.substr($Err,0,(strpos($Err,chr(10)) ? strpos($Err,chr(10))+1 : 0)-1).'");');
+     ShowHTML(' alert("Existem registros vinculados ao que você está excluindo. Exclua-os primeiro.\\n\\n'.substr($Err['message'],0,(strpos($Err['message'],chr(10)) ? strpos($Err['message'],chr(10))+1 : 0)-1).'");');
      ShowHTML(' history.back(1);');
      ScriptClose();
   }
@@ -909,7 +910,7 @@ function TrataErro($sp, $Err, $params, $file, $line, $object) {
   elseif (!(strpos($Err['message'],'ORA-00001')===false)) {
      // REGISTRO JÁ EXISTENTE
     ScriptOpen('JavaScript');
-    ShowHTML(' alert("Um dos campos digitados já existe no banco de dados e é único.\\n\\n'.substr($Err,0,(strpos($Err,chr(10)) ? strpos($Err,chr(10))+1 : 0)-1).'");');
+    ShowHTML(' alert("Um dos campos digitados já existe no banco de dados e é único.\\n\\n'.substr($Err['message'],0,(strpos($Err['message'],chr(10)) ? strpos($Err['message'],chr(10))+1 : 0)-1).'");');
     ShowHTML(' history.back(1);');
     ScriptClose();
   }
@@ -934,54 +935,54 @@ function TrataErro($sp, $Err, $params, $file, $line, $object) {
   }
   else {
     $w_html='<html>';
-    $w_html=$w_html.chr(10).'<head>';
-    $w_html=$w_html.chr(10).'  <BASEFONT FACE="Arial" SIZE="2">';
-    $w_html=$w_html.chr(10).'</head>';
-    $w_html=$w_html.chr(10).'<body BGCOLOR="#FF5555" TEXT="#FFFFFF">';
-    $w_html=$w_html.chr(10).'<CENTER><H2>ATENÇÃO</H2></CENTER>';
-    $w_html=$w_html.chr(10).'<BLOCKQUOTE>';
-    $w_html=$w_html.chr(10).'<P ALIGN="JUSTIFY">Erro não previsto. <b>Uma cópia desta tela foi enviada por e-mail para os responsáveis pela correção. Favor tentar novamente mais tarde.</P>';
-    $w_html=$w_html.chr(10).'<TABLE BORDER="2" BGCOLOR="#FFCCCC" CELLPADDING="5"><TR><TD><FONT COLOR="#000000">';
-    $w_html=$w_html.chr(10).'<DL><DT>Data e hora da ocorrência: <FONT FACE="courier">'.date('d/m/Y, h:i:s').'<br><br></font></DT>';
-    $w_html=$w_html.chr(10).'<DT>Descrição:<DD><FONT FACE="courier">'.$Err['message'].'<br><br></font>';
-    $w_html=$w_html.chr(10).'<DT>Arquivo:<DD><FONT FACE="courier">'.$file.', linha: '.$line.'<br><br></font>';
-    //$w_html=$w_html.chr(10).'<DT>Objeto:<DD><FONT FACE="courier">'.$object.'<br><br></font>';
+    $w_html .= chr(10).'<head>';
+    $w_html .= chr(10).'  <BASEFONT FACE="Arial" SIZE="2">';
+    $w_html .= chr(10).'</head>';
+    $w_html .= chr(10).'<body BGCOLOR="#FF5555" TEXT="#FFFFFF">';
+    $w_html .= chr(10).'<CENTER><H2>ATENÇÃO</H2></CENTER>';
+    $w_html .= chr(10).'<BLOCKQUOTE>';
+    $w_html .= chr(10).'<P ALIGN="JUSTIFY">Erro não previsto. <b>Uma cópia desta tela foi enviada por e-mail para os responsáveis pela correção. Favor tentar novamente mais tarde.</P>';
+    $w_html .= chr(10).'<TABLE BORDER="2" BGCOLOR="#FFCCCC" CELLPADDING="5"><TR><TD><FONT COLOR="#000000">';
+    $w_html .= chr(10).'<DL><DT>Data e hora da ocorrência: <FONT FACE="courier">'.date('d/m/Y, h:i:s').'<br><br></font></DT>';
+    $w_html .= chr(10).'<DT>Descrição:<DD><FONT FACE="courier">'.$Err['message'].'<br><br></font>';
+    $w_html .= chr(10).'<DT>Arquivo:<DD><FONT FACE="courier">'.$file.', linha: '.$line.'<br><br></font>';
+    //$w_html .= chr(10).'<DT>Objeto:<DD><FONT FACE="courier">'.$object.'<br><br></font>';
 
-    $w_html=$w_html.chr(10).'<DT>Comando em execução:<blockquote> <FONT FACE="courier">'.$Err['sqltext'].'</blockquote></font></DT>';
+    $w_html .= chr(10).'<DT>Comando em execução:<blockquote> <FONT FACE="courier">'.$Err['sqltext'].'</blockquote></font></DT>';
     if (is_array($params)) {
-      $w_html=$w_html."<DT>Valores dos parâmetros:<DD><FONT FACE=\"courier\" size=1>";
+      $w_html .= "<DT>Valores dos parâmetros:<DD><FONT FACE=\"courier\" size=1>";
       foreach ($params as $w_Item) {
-        $w_html=$w_html.chr(10).'['.$w_Item[0].']<br>';
+        $w_html .= chr(10).'['.$w_Item[0].']<br>';
       }
     }
-    $w_html=$w_html."   <br><br></font>";
+    $w_html .= "   <br><br></font>";
 
-    $w_html=$w_html.chr(10).'<DT>Variáveis de servidor:<DD><FONT FACE="courier" size=1>';
-    $w_html=$w_html.chr(10).' SCRIPT_NAME => ['.$_SERVER['SCRIPT_NAME'].']<br>';
-    $w_html=$w_html.chr(10).' SERVER_NAME => ['.$_SERVER['SERVER_NAME'].']<br>';
-    $w_html=$w_html.chr(10).' SERVER_PORT => ['.$_SERVER['SERVER_PORT'].']<br>';
-    $w_html=$w_html.chr(10).' SERVER_PROTOCOL => ['.$_SERVER['SERVER_PROTOCOL'].']<br>';
-    $w_html=$w_html.chr(10).' HTTP_ACCEPT_LANGUAGE => ['.$_SERVER['HTTP_ACCEPT_LANGUAGE'].']<br>';
-    $w_html=$w_html.chr(10).' HTTP_USER_AGENT => ['.$_SERVER['HTTP_USER_AGENT'].']<br>';
-    $w_html=$w_html.chr(10).'</DT>';
-    $w_html=$w_html.chr(10).'   <br><br></font>';
+    $w_html .= chr(10).'<DT>Variáveis de servidor:<DD><FONT FACE="courier" size=1>';
+    $w_html .= chr(10).' SCRIPT_NAME => ['.$_SERVER['SCRIPT_NAME'].']<br>';
+    $w_html .= chr(10).' SERVER_NAME => ['.$_SERVER['SERVER_NAME'].']<br>';
+    $w_html .= chr(10).' SERVER_PORT => ['.$_SERVER['SERVER_PORT'].']<br>';
+    $w_html .= chr(10).' SERVER_PROTOCOL => ['.$_SERVER['SERVER_PROTOCOL'].']<br>';
+    $w_html .= chr(10).' HTTP_ACCEPT_LANGUAGE => ['.$_SERVER['HTTP_ACCEPT_LANGUAGE'].']<br>';
+    $w_html .= chr(10).' HTTP_USER_AGENT => ['.$_SERVER['HTTP_USER_AGENT'].']<br>';
+    $w_html .= chr(10).'</DT>';
+    $w_html .= chr(10).'   <br><br></font>';
 
-    $w_html=$w_html.chr(10).'<DT>Dados da querystring:';
-    foreach($_GET as $chv => $vlr) { $w_html=$w_html.chr(10).'<DD><FONT FACE="courier" size=1>'.$chv.' => ['.$vlr.']<br>'; }
+    $w_html .= chr(10).'<DT>Dados da querystring:';
+    foreach($_GET as $chv => $vlr) { $w_html .= chr(10).'<DD><FONT FACE="courier" size=1>'.$chv.' => ['.$vlr.']<br>'; }
 
-    $w_html=$w_html.chr(10).'</DT>';
-    $w_html=$w_html.chr(10).'<DT>Dados do formulário:';
-    foreach($_POST as $chv => $vlr) { $w_html=$w_html.chr(10).'<DD><FONT FACE="courier" size=1>'.$chv.' => ['.$vlr.']<br>'; }
+    $w_html .= chr(10).'</DT>';
+    $w_html .= chr(10).'<DT>Dados do formulário:';
+    foreach($_POST as $chv => $vlr) { $w_html .= chr(10).'<DD><FONT FACE="courier" size=1>'.$chv.' => ['.$vlr.']<br>'; }
 
-    $w_html=$w_html.chr(10).'</DT>';
-    $w_html=$w_html.chr(10).'   <br><br></font>';
-    $w_html=$w_html.chr(10).'</DT>';
-    $w_html=$w_html.chr(10).'<DT>Variáveis de sessão:<DD><FONT FACE="courier" size=1>';
-    foreach($_SESSION as $chv => $vlr) { if (strpos(strtoupper($chv),'SENHA') !== true) { $w_html=$w_html.chr(10).$chv.' => ['.$vlr.']<br>'; } }
-    $w_html=$w_html.chr(10).'</DT>';
-    $w_html=$w_html.chr(10).'   <br><br></font>';
-    $w_html=$w_html.chr(10).'</FONT></TD></TR></TABLE><BLOCKQUOTE>';
-    $w_html=$w_html.'</body></html>';
+    $w_html .= chr(10).'</DT>';
+    $w_html .= chr(10).'   <br><br></font>';
+    $w_html .= chr(10).'</DT>';
+    $w_html .= chr(10).'<DT>Variáveis de sessão:<DD><FONT FACE="courier" size=1>';
+    foreach($_SESSION as $chv => $vlr) { if (strpos(strtoupper($chv),'SENHA') !== true) { $w_html .= chr(10).$chv.' => ['.$vlr.']<br>'; } }
+    $w_html .= chr(10).'</DT>';
+    $w_html .= chr(10).'   <br><br></font>';
+    $w_html .= chr(10).'</FONT></TD></TR></TABLE><BLOCKQUOTE>';
+    $w_html .= '</body></html>';
 
     $w_resultado = EnviaMail('ERRO SIW',$w_html,'alex@sbpi.com.br; celso@sbpi.com.br');
     if ($w_resultado>'') {

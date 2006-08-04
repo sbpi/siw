@@ -1714,7 +1714,7 @@ function Grava() {
           $w_mensagem='Agência inexistente para o banco informado. Favor verificar.';
         } else {
           foreach ($RS as $row) { $w_chave = f($row,'sq_agencia'); }
-        } 
+        }
         // Se algum erro for detectado, apresenta mensagem e aborta a gravação
         if ($w_mensagem>'') {
           ScriptOpen('JavaScript');

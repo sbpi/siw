@@ -7,7 +7,7 @@ function selecaoIdioma($label,$accesskey,$hint,$chave,$chaveAux,$campo,$restrica
   extract($GLOBALS);
   $RS = db_getIdiomList::getInstanceOf($dbms,null,'S');
   $RS = SortArray($RS,'Nome','asc');
-  if (Nvl($hint),'')>'') {
+  if (Nvl($hint,'')>'') {
     ShowHTML('          <td valign="top"><font size="1"><b>'.$Label.'</b><br><SELECT ACCESSKEY="'.$accesskey.'" CLASS="STS" NAME="'.$campo.'" '.$w_Disabled.' '.$atributo.'>');
   } else {
     ShowHTML('          <td valign="top" title="'.$hint.'"><font size="1"><b>'.$Label.'</b><br><SELECT ACCESSKEY="'.$accesskey.'" CLASS="STS" NAME="'.$campo.'" '.$w_Disabled.' '.$atributo.'>');

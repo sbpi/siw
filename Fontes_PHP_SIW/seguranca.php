@@ -1920,10 +1920,9 @@ function Grava() {
     case "VISAO":
       // Verifica se a Assinatura Eletrônica é válida
       if (VerificaAssinaturaEletronica($_SESSION['USERNAME'],strtoupper($_REQUEST['w_assinatura'])) || $w_assinatura=='') {
-        if ($O=='A') {
-          // Se for alteração, elimina todas as permissões existentes para depois incluir
-          dml_PutSiwPesCC::getInstanceOf($dbms, 'E', $_REQUEST['w_sq_pessoa'], $_REQUEST['w_sq_menu'], null);
-        } 
+        // Elimina todas as permissões existentes para depois incluir
+        dml_PutSiwPesCC::getInstanceOf($dbms, 'E', $_REQUEST['w_sq_pessoa'], $_REQUEST['w_sq_menu'], null);
+
         for ($i=0; $i<=count($_POST['w_sq_cc'])-1; $i=$i+1)   {
           dml_PutSiwPesCC::getInstanceOf($dbms, 'I', $_REQUEST['w_sq_pessoa'], $_REQUEST['w_sq_menu'], $_POST['w_sq_cc'][$i]);
         } 

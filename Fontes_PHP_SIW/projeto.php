@@ -478,8 +478,9 @@ function Inicial() {
             // Se não for acompanhamento
             if ($w_copia > '') {
               // Se for listagem para cópia
-              $row1 = db_getLinkSubMenu::getInstanceOf($dbms,$w_cliente,$_REQUEST['SG']);
-              ShowHTML('          <a accesskey="I" class="HL" href="'.$w_pagina.'Geral&R='.$w_pagina.$par.'&O=I&SG='.f($row1,'sigla').'&w_menu='.$w_menu.'&P1='.$P1.'&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP='.$TP.'&w_copia='.f($row,'sq_siw_solicitacao').MontaFiltro('GET').'">Copiar</a>&nbsp;');
+              $RS1 = db_getLinkSubMenu::getInstanceOf($dbms,$w_cliente,$_REQUEST['SG']);
+              foreach($RS1 as $row1) { $RS1 = $row1; break; }
+              ShowHTML('          <a accesskey="I" class="HL" href="'.$w_pagina.'Geral&R='.$w_pagina.$par.'&O=I&SG='.f($RS1,'sigla').'&w_menu='.$w_menu.'&P1='.$P1.'&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP='.$TP.'&w_copia='.f($row,'sq_siw_solicitacao').MontaFiltro('GET').'">Copiar</a>&nbsp;');
             } elseif ($P1==1) {
               // Se for cadastramento
               if ($w_submenu>'') ShowHTML('          <A class="HL" HREF="Menu.php?par=ExibeDocs&O=A&w_chave='.f($row,'sq_siw_solicitacao').'&R='.$w_pagina.$par.'&SG='.$SG.'&TP='.$TP.'&w_documento=Nr. '.f($row,'sq_siw_solicitacao').MontaFiltro('GET').'" title="Altera as informações cadastrais do projeto" TARGET="menu">Alterar</a>&nbsp;');
@@ -716,10 +717,11 @@ function Geral() {
   } else {
     if (!(strpos('AEV',$O)===false) || $w_copia>'') {
       // Recupera os dados do projeto
-      if ($w_copia > '') 
+      if ($w_copia > '')  {
         $RS = db_getSolicData::getInstanceOf($dbms,$w_copia,$SG); 
-      else 
+      } else {
         $RS = db_getSolicData::getInstanceOf($dbms,$w_chave,$SG);
+      }
       if (count($RS)>0) {
         $w_solic_pai            = f($RS,'sq_solic_pai');
         $w_proponente           = f($RS,'proponente');
@@ -2187,11 +2189,11 @@ function Encaminhamento() {
   // Recupera a sigla do trâmite desejado, para verificar a lista de possíveis destinatários.
   $RS = db_getTramiteData::getInstanceOf($dbms,$w_novo_tramite);
   $w_sg_tramite = f($RS,'sigla');
+  $w_ativo      = f($RS,'ativo');
   if ($w_ativo == 'N') {
     $RS = db_getTramiteList::getInstanceOf($dbms, $w_menu, null,'S');
     $RS = SortArray($RS,'ordem','asc');
     foreach ($RS as $row) {
-      $w_tramite      = f($row,'sq_siw_tramite');
       $w_novo_tramite = f($row,'sq_siw_tramite');
       $w_sg_tramite   = f($row,'sigla');
       break;
@@ -2661,21 +2663,22 @@ function SolicMail($p_solic,$p_tipo) {
     $w_html .= chr(13).'          </table>';
    $w_html .= chr(13).'      <tr><td valign="top">Nota de conclusão:<br><b>'.CRLF2BR(f($RSM,'nota_conclusao')).' </b></td>';
   } 
-  if ($p_tipo == 2) {
-    // Se for tramitação
-    // Encaminhamentos
-    $RS = db_getSolicLog::getInstanceOf($dbms,$p_solic,null,'LISTA');
-    $RS = SortArray($RS,'phpdt_data','desc');
-    foreach ($RS as $row) {
-      $w_html .= chr(13).'      <tr><td valign="top" colspan="2" align="center" bgcolor="#D0D0D0" style="border: 2px solid rgb(0,0,0);"><b>ÚLTIMO ENCAMINHAMENTO</td>';
-      $w_html .= chr(13).'      <tr><td valign="top" colspan="2"><table border=0 width="100%" cellspacing=0>';
-      $w_html .= chr(13).'          <tr valign="top">';
-      $w_html .= chr(13).'          <td>De:<br><b>'.f($row,'responsavel').'</b></td>';
-      $w_html .= chr(13).'          <td>Para:<br><b>'.f($row,'destinatario').'</b></td>';
-      $w_html .= chr(13).'          <tr valign="top"><td colspan=2>Despacho:<br><b>'.CRLF2BR(Nvl(f($row,'despacho'),'---')).' </b></td>';
-      $w_html .= chr(13).'          </table>';
-      break;
-    }
+
+  //Recupera o último log
+  $RS = db_getSolicLog::getInstanceOf($dbms,$p_solic,null,'LISTA');
+  $RS = SortArray($RS,'phpdt_data','desc');
+  foreach ($RS as $row) { $RS = $row; break; }
+  $w_data_encaminhamento = f($RS,'phpdt_data');
+  if ($p_tipo == 2) { // Se for tramitação
+    // Encaminhamento
+    $w_html .= chr(13).'      <tr><td valign="top" colspan="2" align="center" bgcolor="#D0D0D0" style="border: 2px solid rgb(0,0,0);"><b>ÚLTIMO ENCAMINHAMENTO</td>';
+    $w_html .= chr(13).'      <tr><td valign="top" colspan="2"><table border=0 width="100%" cellspacing=0>';
+    $w_html .= chr(13).'          <tr valign="top">';
+    $w_html .= chr(13).'          <td>De:<br><b>'.f($RS,'responsavel').'</b></td>';
+    $w_html .= chr(13).'          <td>Para:<br><b>'.f($RS,'destinatario').'</b></td>';
+    $w_html .= chr(13).'          <tr valign="top"><td colspan=2>Despacho:<br><b>'.CRLF2BR(Nvl(f($RS,'despacho'),'---')).' </b></td>';
+    $w_html .= chr(13).'          </table>';
+
     // Configura o destinatário da tramitação como destinatário da mensagem
     $RS = db_getPersonData::getInstanceOf($dbms,$w_cliente,f($RS,'sq_pessoa_destinatario'),null,null);
     $w_destinatarios = f($RS,'email').'; ';
@@ -2688,8 +2691,8 @@ function SolicMail($p_solic,$p_tipo) {
   $w_html .= '      <tr valign="top"><td>'.chr(13);
   $w_html .= '         Dados da ocorrência:<br>'.chr(13);
   $w_html .= '         <ul>'.chr(13);
-  $w_html .= '         <li>Responsável: <b>'.$SESSION['NOME'].'</b></li>'.chr(13);
-  $w_html .= '         <li>Data do servidor: <b>'.date('d/m/Y, H:i:s',toDate(time())).'</b></li>'.chr(13);
+  $w_html .= '         <li>Responsável: <b>'.$_SESSION['NOME'].'</b></li>'.chr(13);
+  $w_html .= '         <li>Data: <b>'.date('d/m/Y, H:i:s',$w_data_encaminhamento).'</b></li>'.chr(13);
   $w_html .= '         <li>IP de origem: <b>'.$_SERVER['REMOTE_HOST'].'</b></li>'.chr(13);
   $w_html .= '         </ul>'.chr(13);
   $w_html .= '      </td></tr>'.chr(13);

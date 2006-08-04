@@ -86,8 +86,8 @@ function VisualDemanda($w_chave,$operacao,$w_usuario) {
     } 
 
     $w_html.=chr(13).'          <tr valign="top">';
-    $w_html.=chr(13).'          <td>Data de recebimento:<br><b>'.FormataDataEdicao(f($RS,'inicio')).' </b></td>';
-    $w_html.=chr(13).'          <td>Limite para conclusão:<br><b>'.FormataDataEdicao(f($RS,'fim')).' </b></td>';
+    $w_html.=chr(13).'          <td>Início previsto:<br><b>'.FormataDataEdicao(f($RS,'inicio')).' </b></td>';
+    $w_html.=chr(13).'          <td>Término previsto:<br><b>'.FormataDataEdicao(f($RS,'fim')).' </b></td>';
     $w_html.=chr(13).'          <td>Prioridade:<br><b>'.RetornaPrioridade(f($RS,'prioridade')).' </b></td>';
     $w_html.=chr(13).'          <tr>';
     $w_html.=chr(13).'          <td colspan=3>Palavras-chave:<br><b>'.f($RS,'palavra_chave').' </b></td>';
