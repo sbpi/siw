@@ -15,7 +15,8 @@ begin
            from co_pessoa                             a
                 inner         join co_pessoa_telefone b on (a.sq_pessoa        = b.sq_pessoa)
                    left outer join co_cidade          f on (b.sq_cidade        = f.sq_cidade)
-                   left outer join co_uf              e on (f.co_uf            = e.co_uf)
+                   left outer join co_uf              e on (f.co_uf            = e.co_uf and
+                                                            f.sq_pais          = e.sq_pais)
                    left outer join co_pais            d on (e.sq_pais          = d.sq_pais)
                    inner      join co_tipo_telefone   c on (b.sq_tipo_telefone = c.sq_tipo_telefone)
           where a.sq_pessoa        = p_cliente

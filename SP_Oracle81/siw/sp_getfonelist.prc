@@ -12,15 +12,16 @@ begin
                 b.sq_pessoa_telefone, b.numero,b.sq_pessoa_telefone, b.ddd, b.padrao,
                 c.sq_tipo_telefone, InitCap(c.nome) tipo_telefone,
                 d.nome pais, e.co_uf, f.nome cidade
-           from co_pessoa                             a,
-                co_pessoa_telefone b,
+           from co_pessoa             a,
+                co_pessoa_telefone    b,
                    co_cidade          f,
                    co_uf              e,
                    co_pais            d,
                    co_tipo_telefone   c
           where (a.sq_pessoa        = b.sq_pessoa)
             and (b.sq_cidade        = f.sq_cidade (+))
-            and (f.co_uf            = e.co_uf (+))
+            and (f.co_uf            = e.co_uf   (+) and
+                 f.sq_pais          = e.sq_pais (+))
             and (e.sq_pais          = d.sq_pais (+))
             and (b.sq_tipo_telefone = c.sq_tipo_telefone)
             and a.sq_pessoa        = p_cliente
