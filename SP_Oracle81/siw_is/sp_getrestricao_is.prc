@@ -9,7 +9,8 @@ begin
       open p_result for 
          select a.sq_restricao, a.sq_programa, a.cd_tipo_restricao, a.cd_tipo_inclusao,
                 a.cd_competencia, a.inclusao, a.descricao, a.providencia, a.superacao, a.relatorio,
-                a.tempo_habil, a.observacao_monitor, a.observacao_controle, b.nome nm_tp_restricao
+                a.tempo_habil, a.observacao_monitor, a.observacao_controle, b.nome nm_tp_restricao,
+                to_char(a.inclusao, 'DD/MM/YYYY, HH24:MI:SS') phpdt_inclusao
            from is_restricao                     a,
                 is_sig_tipo_restricao            b
           where (a.cd_tipo_restricao = b.cd_tipo_restricao)
@@ -20,7 +21,8 @@ begin
          select a.sq_restricao, a.sq_acao, a.sq_projeto, a.cd_subacao, a.cd_tipo_restricao, 
                 a.cd_tipo_inclusao,
                 a.cd_competencia, a.inclusao, a.descricao, a.providencia, a.superacao, a.relatorio,
-                a.tempo_habil, a.observacao_monitor, a.observacao_controle, b.nome nm_tp_restricao
+                a.tempo_habil, a.observacao_monitor, a.observacao_controle, b.nome nm_tp_restricao,
+                to_char(a.inclusao, 'DD/MM/YYYY, HH24:MI:SS') phpdt_inclusao
            from is_restricao                     a,
                 is_sig_tipo_restricao b,
                 is_acao               c,
