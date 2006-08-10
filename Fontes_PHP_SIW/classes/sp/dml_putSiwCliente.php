@@ -15,7 +15,7 @@ class dml_putSiwCliente {
      extract($GLOBALS,EXTR_PREFIX_SAME,'strchema'); $sql=$strschema.'sp_putSiwCliente';
      $params=array('operacao'               =>array($operacao,              B_VARCHAR,      1),
                    'p_chave'                =>array($p_chave,               B_NUMERIC,     32),
-                   'cliente'                =>array($cliente,               B_NUMERIC,     32),
+                   'cliente'                =>array($p_cliente,             B_NUMERIC,     32),
                    'p_nome'                 =>array($p_nome,                B_VARCHAR,     60),
                    'p_nome_resumido'        =>array($p_nome_resumido,       B_VARCHAR,     15),
                    'p_inicio_atividade'     =>array($p_inicio_atividade,    B_DATE,        32),
@@ -33,7 +33,7 @@ class dml_putSiwCliente {
                   );
      $l_rs = DatabaseQueriesFactory::getInstanceOf($sql, $dbms, $params, DB_TYPE);
      $l_error_reporting = error_reporting(); 
-     error_reporting(0); 
+     //error_reporting(0); 
      if(!$l_rs->executeQuery()) { 
        error_reporting($l_error_reporting); 
        TrataErro($sql, $l_rs->getError(), $params, __FILE__, __LINE__, __CLASS__); 

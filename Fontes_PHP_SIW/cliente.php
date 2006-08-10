@@ -374,10 +374,10 @@ function Geral() {
     ShowHTML('  if (theForm.Botao.value == "Procurar") {');
     Validate('w_nome','Nome','','1','4','20','1','');
     ShowHTML('  theForm.Botao.value = "Procurar";');
-    ShowHTML(']');
+    ShowHTML('}');
     ShowHTML('else {');
     Validate('w_cgccpf','CNPJ/Cód. Estrangeiro','CNPJ','1','7','18','','1');
-    ShowHTML(']');
+    ShowHTML('}');
   } else if ($O!='E' && $O!='V') {
     // Se o beneficiário já foi selecionado
     ShowHTML('  if (theForm.Botao.value == "Troca") { return true; }');

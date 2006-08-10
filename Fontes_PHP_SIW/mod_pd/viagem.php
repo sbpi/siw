@@ -151,6 +151,7 @@ $p_solicitante  = strtoupper($_REQUEST['p_solicitante']);
 $p_prioridade   = strtoupper($_REQUEST['p_prioridade']);
 $p_unidade      = strtoupper($_REQUEST['p_unidade']);
 $p_proponente   = strtoupper($_REQUEST['p_proponente']);
+$p_sq_prop      = strtoupper($_REQUEST['p_sq_prop']);
 $p_ordena       = strtolower($_REQUEST['p_ordena']);
 $p_ini_i        = strtoupper($_REQUEST['p_ini_i']);
 $p_ini_f        = strtoupper($_REQUEST['p_ini_f']);
@@ -209,60 +210,61 @@ function Inicial() {
     if (!(strpos(strtoupper($R),'GR_')===false) || !(strpos(strtoupper($R),'PROJETO')===false)) {
       $w_filtro='';
       if ($p_projeto>'') {
-        $RS = db_getSolicData_IS::getInstanceOf($dbms,$p_projeto,'ISACGERAL');
-        if (Nvl(f($RS,'cd_acao'),'')>'') {
-          $w_filtro=$w_filtro.'<tr valign="top"><td align="right">Ação <td>[<b><A class="HL" HREF="'.$w_dir.'acao.php?par=Visual&O=L&w_chave='.$p_projeto.'&w_tipo=Volta&P1='.$P1.'&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP='.$TP.'&SG='.$SG.'" title="Exibe as informações da ação.">'.f($RS,'cd_unidade').'.'.f($RS,'cd_programa').'.'.f($RS,'cd_acao').' - '.f($RS,'nm_ppa').' ('.f($RS,'ds_unidade').')</a></b>]';
-        } else {
-          $w_filtro=$w_filtro.'<tr valign="top"><td align="right">Ação <td>[<b><A class="HL" HREF="'.$w_dir.'acao.php?par=Visual&O=L&w_chave='.$p_projeto.'&w_tipo=Volta&P1='.$P1.'&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP='.$TP.'&SG='.$SG.'" title="Exibe as informações da ação.">'.f($RS,'assunto').'</a></b>]';
-        } 
+        $RS = db_getSolicData::getInstanceOf($dbms,$p_projeto,'PJGERAL');
+        $w_filtro .= '<tr valign="top"><td align="right">Projeto <td>[<b><A class="HL" HREF="projeto.php?par=Visual&O=L&w_chave='.$p_projeto.'&w_tipo=Volta&P1='.$P1.'&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP='.$TP.'&SG='.$SG.'" title="Exibe as informações do projeto.">'.f($RS,'titulo').'</a></b>]';
       } 
       if ($p_atividade>'') {
-        $RS = db_getSolicData_IS::getInstanceOf($dbms,$p_atividade,'ISTAGERAL');
-        $w_filtro=$w_filtro.'<tr valign="top"><td align="right">Atividade/demanda <td>[<b><A class="HL" HREF="'.$w_dir.'tarefa.php?par=Visual&O=L&w_chave='.$p_atividade.'&w_tipo=Volta&P1='.$P1.'&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP='.$TP.'&SG='.$SG.'" title="Exibe as informações da atividade.">'.f($RS,'assunto').'('.f($RS,'sq_siw_solicitacao').')</a></b>]';
+        $RS = db_getSolicEtapa::getInstanceOf($dbms,$p_projeto,$p_atividade,'REGISTRO',null);
+        foreach($RS as $row) { $RS = $row; break; }
+        $w_filtro .= '<tr valign="top"><td align="right">Etapa <td>[<b>'.f($RS,'titulo').'</b>]';
       } 
-      if ($p_codigo>'') $w_filtro=$w_filtro.'<tr valign="top"><td align="right">PCD nº <td>[<b>'.$p_codigo.'</b>]';
-      if ($p_assunto>'') $w_filtro=$w_filtro.'<tr valign="top"><td align="right">Descrição <td>[<b>'.$p_assunto.'</b>]';
+      if ($p_codigo>'')  $w_filtro .= '<tr valign="top"><td align="right">PCD nº <td>[<b>'.$p_codigo.'</b>]';
+      if ($p_assunto>'') $w_filtro .= '<tr valign="top"><td align="right">Descrição <td>[<b>'.$p_assunto.'</b>]';
       if ($p_solicitante>'') {
         $RS = db_getPersonData::getInstanceOf($dbms,$w_cliente,$p_solicitante,null,null);
-        $w_filtro=$w_filtro.'<tr valign="top"><td align="right">Responsável <td>[<b>'.f($RS,'nome_resumido').'</b>]';
+        $w_filtro .= '<tr valign="top"><td align="right">Responsável <td>[<b>'.f($RS,'nome_resumido').'</b>]';
       } 
       if ($p_unidade>'') {
         $RS = db_getUorgData::getInstanceOf($dbms,$p_unidade);
-        $w_filtro=$w_filtro.'<tr valign="top"><td align="right">Unidade proponente <td>[<b>'.f($RS,'nome').'</b>]';
+        $w_filtro .= '<tr valign="top"><td align="right">Unidade proponente <td>[<b>'.f($RS,'nome').'</b>]';
       } 
-      if ($p_proponente>'') $w_filtro=$w_filtro.'<tr valign="top"><td align="right">Proposto<td>[<b>'.$p_proponente.'</b>]';
-      if ($p_palavra>'') $w_filtro=$w_filtro.'<tr valign="top"><td align="right">CPF proposto <td>[<b>'.$p_palavra.'</b>]';
+      if ($p_proponente>'') $w_filtro .= '<tr valign="top"><td align="right">Proposto<td>[<b>'.$p_proponente.'</b>]';
+      if ($p_palavra>'')    $w_filtro .= '<tr valign="top"><td align="right">CPF proposto <td>[<b>'.$p_palavra.'</b>]';
+      if ($p_sq_prop>'') {
+        $RS = db_getPersonData::getInstanceOf($dbms,$w_cliente,$p_sq_prop,null,null);
+        $w_filtro .= '<tr valign="top"><td align="right">Proposto<td>[<b>'.f($RS,'nome_resumido').'</b>]';
+      } 
       if ($p_pais>'') {
         $RS = db_getCountryData::getInstanceOf($dbms,$p_pais);
-        $w_filtro=$w_filtro.'<tr valign="top"><td align="right">País <td>[<b>'.f($RS,'nome').'</b>]';
+        $w_filtro .= '<tr valign="top"><td align="right">País <td>[<b>'.f($RS,'nome').'</b>]';
       } 
       if ($p_regiao>'') {
         $RS = db_getRegionData::getInstanceOf($dbms,$p_regiao);
-        $w_filtro=$w_filtro.'<tr valign="top"><td align="right">Região <td>[<b>'.f($RS,'nome').'</b>]';
+        $w_filtro .= '<tr valign="top"><td align="right">Região <td>[<b>'.f($RS,'nome').'</b>]';
       } 
       if ($p_uf>'') {
         $RS = db_getStateData::getInstanceOf($dbms,$p_pais,$p_uf);
-        $w_filtro=$w_filtro.'<tr valign="top"><td align="right">Estado <td>[<b>'.f($RS,'nome').'</b>]';
+        $w_filtro .= '<tr valign="top"><td align="right">Estado <td>[<b>'.f($RS,'nome').'</b>]';
       } 
       if ($p_cidade>'') {
         $RS = db_getCityData::getInstanceOf($dbms,$p_cidade);
-        $w_filtro=$w_filtro.'<tr valign="top"><td align="right">Cidade <td>[<b>'.f($RS,'nome').'</b>]';
+        $w_filtro .= '<tr valign="top"><td align="right">Cidade <td>[<b>'.f($RS,'nome').'</b>]';
       } 
       if ($p_usu_resp>'') {
         $RS = db_getCiaTrans::getInstanceOf($dbms,$w_cliente,$p_usu_resp,null,null,null,null,null,null,null,null);
         foreach($RS as $row) { $RS = $row; break; }
-        $w_filtro=$w_filtro.'<tr valign="top"><td align="right">Companhia de viagem<td>[<b>'.f($RS,'nome').'</b>]';
+        $w_filtro .= '<tr valign="top"><td align="right">Companhia de viagem<td>[<b>'.f($RS,'nome').'</b>]';
       } 
       if ($p_ativo>'') {
-        $w_filtro=$w_filtro.'<tr valign="top"><td align="right">Tipo<td>[<b>';
-        if ($p_ativo=='I') $w_filtro=$w_filtro.'Inicial';
-        elseif ($p_ativo=='P') $w_filtro=$w_filtro.'Prorrogação';
-        elseif ($p_ativo=='C') $w_filtro=$w_filtro.'Complementação';
-        $w_filtro=$w_filtro.'</b>]';
+        $w_filtro .= '<tr valign="top"><td align="right">Tipo<td>[<b>';
+        if ($p_ativo=='I') $w_filtro .= 'Inicial';
+        elseif ($p_ativo=='P') $w_filtro .= 'Prorrogação';
+        elseif ($p_ativo=='C') $w_filtro .= 'Complementação';
+        $w_filtro .= '</b>]';
       } 
-      if ($p_ini_i>'') $w_filtro=$w_filtro.'<tr valign="top"><td align="right">Mês <td>[<b>'.$p_ini_i.'</b>]';
-      if ($p_atraso=='S') $w_filtro=$w_filtro.'<tr valign="top"><td align="right">Situação <td>[<b>Apenas atrasadas</b>]';
-      if ($w_filtro>'') $w_filtro='<table border=0><tr valign="top"><td><b>Filtro:</b><td nowrap><ul>'.$w_filtro.'</ul></tr></table>';
+      if ($p_ini_i>'')      $w_filtro .= '<tr valign="top"><td align="right">Mês <td>[<b>'.$p_ini_i.'</b>]';
+      if ($p_atraso=='S')   $w_filtro .= '<tr valign="top"><td align="right">Situação <td>[<b>Apenas atrasadas</b>]';
+      if ($w_filtro>'')     $w_filtro  ='<table border=0><tr valign="top"><td><b>Filtro:</b><td nowrap><ul>'.$w_filtro.'</ul></tr></table>';
     } 
  
     $RS = db_getLinkData::getInstanceOf($dbms,$w_cliente,$SG);
@@ -279,9 +281,10 @@ function Inicial() {
             $p_ini_i,$p_ini_f,null,null,$p_atraso,$p_solicitante,
             $p_unidade,null,$p_ativo,$p_proponente);
       } elseif (Nvl($_REQUEST['p_agrega'],'')=='GRPDCIAVIAGEM' || Nvl($_REQUEST['p_agrega'],'')=='GRPDCIDADE' || Nvl($_REQUEST['p_agrega'],'')=='GRPDDATA') {
-            $RS = db_getSolicViagem::getInstanceOf($dbms,f($RS,'sq_menu'),$w_usuario,Nvl($_REQUEST['p_agrega'],$SG),3,
-            $p_ini_i,$p_ini_f,$p_fim_i,$p_fim_f,$p_atraso,$p_solicitante,
-            $p_unidade,$p_prioridade,$p_ativo,$p_proponente);
+        $RS = db_getSolicViagem::getInstanceOf($dbms,f($RS,'sq_menu'),$w_usuario,Nvl($_REQUEST['p_agrega'],$SG),3,
+            $p_ini_i,$p_ini_f,$p_fim_i,$p_fim_f,$p_atraso,$p_solicitante, $p_unidade,$p_prioridade,$p_ativo,$p_proponente, 
+            $p_chave, $p_assunto, $p_pais, $p_regiao, $p_uf, $p_cidade, $p_usu_resp, $p_uorg_resp, $p_palavra, $p_prazo, 
+            $p_fase, $p_sqcc, $p_projeto, $p_atividade, $p_acao_ppa, $p_orprior);
       } else {
         $RS = db_getSolicList::getInstanceOf($dbms,f($RS,'sq_menu'),$w_usuario,Nvl($_REQUEST['p_agrega'],$SG),$P1,
             $p_ini_i,$p_ini_f,$p_fim_i,$p_fim_f,$p_atraso,$p_solicitante,
@@ -384,7 +387,6 @@ function Inicial() {
     } 
     ShowHTML('          <td><b>'.LinkOrdena('Proposto','nm_prop').'</td>');
     ShowHTML('          <td><b>'.LinkOrdena('Proponente','sg_unidade_resp').'</td>');
-    if ($P1>2) ShowHTML('          <td><b>'.LinkOrdena('Usuário atual','nm_exec').'</td>');
     ShowHTML('          <td><b>'.LinkOrdena('Início','inicio').'</td>');
     ShowHTML('          <td><b>'.LinkOrdena('Fim','fim').'</td>');
     if ($P1>1) {
@@ -423,14 +425,6 @@ function Inicial() {
         } 
         ShowHTML('        <td>'.ExibePessoa('../',$w_cliente,f($row,'sq_prop'),$TP,f($row,'nm_prop')).'</td>');
         ShowHTML('        <td>'.ExibeUnidade('../',$w_cliente,f($row,'sg_unidade_resp'),f($row,'sq_unidade_resp'),$TP).'</td>');
-        if ($P1>2) {
-          // Se for cadastramento ou mesa de trabalho, não exibe o executor, pois já é o usuário logado
-          if (Nvl(f($row,'nm_exec'),'---')>'---') {
-            ShowHTML('        <td>'.ExibePessoa('../',$w_cliente,f($row,'executor'),$TP,f($row,'nm_exec')).'</td>');
-          } else {
-            ShowHTML('        <td>---</td>');
-          } 
-        } 
         if (f($row,'sg_tramite')=='AT') {
           ShowHTML('        <td align="center">&nbsp;'.Nvl(FormataDataEdicao(f($row,'inicio_real')),'-').'</td>');
           ShowHTML('        <td align="center">&nbsp;'.Nvl(FormataDataEdicao(f($row,'fim_real')),'-').'</td>');
@@ -491,7 +485,7 @@ function Inicial() {
         ShowHTML('        </td>');
         ShowHTML('      </tr>');
       } 
-      if (Nvl($_REQUEST['p_agrega'],'')=='GRPDACAO') $w_colspan=7; else $w_colspan=6;
+      if (Nvl($_REQUEST['p_agrega'],'')=='GRPDACAO') $w_colspan=6; else $w_colspan=5;
       if ($P1!=1 && $P1!=2) {
         // Se não for cadastramento nem mesa de trabalho
         // Coloca o valor parcial apenas se a listagem ocupar mais de uma página

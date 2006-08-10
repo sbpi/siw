@@ -17,6 +17,7 @@ include_once('classes/sp/db_getStateData.php');
 include_once('classes/sp/db_getCityData.php');
 include_once('classes/sp/db_getSolicList.php');
 include_once('classes/sp/db_getSolicData.php');
+include_once('classes/sp/db_getSolicEtapa.php');
 include_once('classes/sp/db_getEtapaDataParents.php');
 include_once('classes/sp/db_getTramiteList.php');
 include_once('funcoes/selecaoCC.php');
@@ -32,7 +33,7 @@ include_once('funcoes/selecaoProjeto.php');
 include_once('funcoes/selecaoEtapa.php');
 
 // =========================================================================
-//  /GR_DemandaEventual.php
+//  gr_demandaeventual.php
 // ------------------------------------------------------------------------
 // Nome     : Alexandre Vinhadelli Papadópolis
 // Descricao: Gerencia o módulo de demandas
@@ -77,9 +78,9 @@ $w_troca        = strtoupper($_REQUEST['w_troca']);
 if ($O=='') $O='P';
 
 switch ($O) {
-  case 'V': $w_TP=$TP.' - Gráfico'; break;
-  case 'P': $w_TP=$TP.' - Filtragem'; break;
-  default : $w_TP=$TP.' - Listagem'; 
+  case 'V': $w_TP = $TP.' - Gráfico'; break;
+  case 'P': $w_TP = $TP.' - Filtragem'; break;
+  default : $w_TP = $TP.' - Listagem'; 
 }
 
 // Se receber o código do cliente do SIW, o cliente será determinado por parâmetro;
@@ -145,61 +146,61 @@ function Gerencial() {
     if ($p_projeto>'') {
       $RS = db_getSolicData::getInstanceOf($dbms,$p_projeto,'PJGERAL');
       if ($O=='W') {
-        $w_filtro = $w_filtro.'<tr valign="top"><td align="right"><font size=1>Projeto <td><font size=1>[<b>'.f($RS,'titulo').'</b>]';
+        $w_filtro = $w_filtro.'<tr valign="top"><td align="right">Projeto <td>[<b>'.f($RS,'titulo').'</b>]';
       } else {
-        $w_filtro = $w_filtro.'<tr valign="top"><td align="right"><font size=1>Projeto <td><font size=1>[<b><A class="HL" HREF="projeto.php?par=Visual&O=L&w_chave='.$p_projeto.'&w_tipo=Volta&P1='.$P1.'&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP='.$TP.'&SG='.$SG.'" title="Exibe as informações do projeto.">'.f($RS,'titulo').'</a></b>]';
+        $w_filtro = $w_filtro.'<tr valign="top"><td align="right">Projeto <td>[<b><A class="HL" HREF="projeto.php?par=Visual&O=L&w_chave='.$p_projeto.'&w_tipo=Volta&P1='.$P1.'&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP='.$TP.'&SG='.$SG.'" title="Exibe as informações do projeto.">'.f($RS,'titulo').'</a></b>]';
       }
     } 
     if ($p_atividade>'') {
       $RS = db_getSolicEtapa::getInstanceOf($dbms,$p_projeto,$p_atividade,'REGISTRO',null);
-      $w_filtro = $w_filtro.'<tr valign="top"><td align="right"><font size=1>Etapa <td><font size=1>[<b>'.f($RS,'titulo').'</b>]';
+      $w_filtro = $w_filtro.'<tr valign="top"><td align="right">Etapa <td>[<b>'.f($RS,'titulo').'</b>]';
     } 
     if ($p_sqcc>'') {
       $RS = db_getCCData::getInstanceOf($dbms,$p_sqcc);
-      $w_filtro = $w_filtro.'<tr valign="top"><td align="right"><font size=1>Classificação <td><font size=1>[<b>'.f($RS,'nome').'</b>]';
+      $w_filtro = $w_filtro.'<tr valign="top"><td align="right">Classificação <td>[<b>'.f($RS,'nome').'</b>]';
     } 
-    if ($p_chave>'') $w_filtro = $w_filtro.'<tr valign="top"><td align="right"><font size=1>Demanda nº <td><font size=1>[<b>'.$p_chave.'</b>]';
-    if ($p_prazo>'') $w_filtro = $w_filtro.' <tr valign="top"><td align="right"><font size=1>Prazo para conclusão até<td><font size=1>[<b>'.FormataDataEdicao(addDays(time(),$p_prazo)).'</b>]';
+    if ($p_chave>'') $w_filtro = $w_filtro.'<tr valign="top"><td align="right">Demanda nº <td>[<b>'.$p_chave.'</b>]';
+    if ($p_prazo>'') $w_filtro = $w_filtro.' <tr valign="top"><td align="right">Prazo para conclusão até<td>[<b>'.FormataDataEdicao(addDays(time(),$p_prazo)).'</b>]';
     if ($p_solicitante>'') {
       $RS = db_getPersonData::getInstanceOf($dbms,$w_cliente,$p_solicitante,null,null);
-      $w_filtro = $w_filtro.'<tr valign="top"><td align="right"><font size=1>Responsável <td><font size=1>[<b>'.f($RS,'nome_resumido').'</b>]';
+      $w_filtro = $w_filtro.'<tr valign="top"><td align="right">Responsável <td>[<b>'.f($RS,'nome_resumido').'</b>]';
     } 
     if ($p_unidade>'') {
       $RS = db_getUorgData::getInstanceOf($dbms,$p_unidade);
-      $w_filtro = $w_filtro.'<tr valign="top"><td align="right"><font size=1>Unidade responsável <td><font size=1>[<b>'.f($RS,'nome').'</b>]';
+      $w_filtro = $w_filtro.'<tr valign="top"><td align="right">Unidade responsável <td>[<b>'.f($RS,'nome').'</b>]';
     } 
     if ($p_usu_resp>'') {
       $RS = db_getPersonData::getInstanceOf($dbms,$w_cliente,$p_usu_resp,null,null);
-      $w_filtro = $w_filtro.'<tr valign="top"><td align="right"><font size=1>Executor <td><font size=1>[<b>'.f($RS,'nome_resumido').'</b>]';
+      $w_filtro = $w_filtro.'<tr valign="top"><td align="right">Executor <td>[<b>'.f($RS,'nome_resumido').'</b>]';
     } 
     if ($p_uorg_resp>''){
       $RS = db_getUorgData::getInstanceOf($dbms,$p_uorg_resp);
-      $w_filtro = $w_filtro.'<tr valign="top"><td align="right"><font size=1>Unidade atual <td><font size=1>[<b>'.f($RS,'nome').'</b>]';
+      $w_filtro = $w_filtro.'<tr valign="top"><td align="right">Unidade atual <td>[<b>'.f($RS,'nome').'</b>]';
     } 
     if ($p_pais>'') {
       $RS = db_getCountryData::getInstanceOf($dbms,$p_pais);
-      $w_filtro = $w_filtro.'<tr valign="top"><td align="right"><font size=1>País <td><font size=1>[<b>'.f($RS,'nome').'</b>]';
+      $w_filtro = $w_filtro.'<tr valign="top"><td align="right">País <td>[<b>'.f($RS,'nome').'</b>]';
     } 
     if ($p_regiao>'') {
       $RS = db_getRegionData::getInstanceOf($dbms,$p_regiao);
-      $w_filtro=$w_filtro.'<tr valign="top"><td align="right"><font size=1>Região <td><font size=1>[<b>'.f($RS,'nome').'</b>]';
+      $w_filtro=$w_filtro.'<tr valign="top"><td align="right">Região <td>[<b>'.f($RS,'nome').'</b>]';
     } 
     if ($p_uf>'') {
       $RS = db_getStateData::getInstanceOf($dbms,$p_pais,$p_uf);
-      $w_filtro = $w_filtro.'<tr valign="top"><td align="right"><font size=1>Estado <td><font size=1>[<b>'.f($RS,'nome').'</b>]';
+      $w_filtro = $w_filtro.'<tr valign="top"><td align="right">Estado <td>[<b>'.f($RS,'nome').'</b>]';
     } 
     if ($p_cidade>'') {
       $RS = db_getCityData::getInstanceOf($dbms,$p_cidade);
-      $w_filtro = $w_filtro.'<tr valign="top"><td align="right"><font size=1>Cidade <td><font size=1>[<b>'.f($RS,'nome').'</b>]';
+      $w_filtro = $w_filtro.'<tr valign="top"><td align="right">Cidade <td>[<b>'.f($RS,'nome').'</b>]';
     } 
-    if ($p_prioridade>'') $w_filtro = $w_filtro.'<tr valign="top"><td align="right"><font size=1>Prioridade <td><font size=1>[<b>'.RetornaPrioridade($p_prioridade).'</b>]';
-    if ($p_proponente>'') $w_filtro = $w_filtro.'<tr valign="top"><td align="right"><font size=1>Proponente <td><font size=1>[<b>'.$p_proponente.'</b>]';
-    if ($p_assunto>'')    $w_filtro = $w_filtro.'<tr valign="top"><td align="right"><font size=1>Detalhamento <td><font size=1>[<b>'.$p_assunto.'</b>]';
-    if ($p_palavra>'')    $w_filtro=$w_filtro.'<tr valign="top"><td align="right"><font size=1>Palavras-chave <td><font size=1>[<b>'.$p_palavra.'</b>]';
-    if ($p_ini_i>'')      $w_filtro=$w_filtro.'<tr valign="top"><td align="right"><font size=1>Data recebimento <td><font size=1>[<b>'.$p_ini_i.'-'.$p_ini_f.'</b>]';
-    if ($p_fim_i>'')      $w_filtro=$w_filtro.'<tr valign="top"><td align="right"><font size=1>Limite conclusão <td><font size=1>[<b>'.$p_fim_i.'-'.$p_fim_f.'</b>]';
-    if ($p_atraso=='S')   $w_filtro=$w_filtro.'<tr valign="top"><td align="right"><font size=1>Situação <td><font size=1>[<b>Apenas atrasadas</b>]';
-    if ($w_filtro>'')     $w_filtro='<table border=0><tr valign="top"><td><font size=1><b>Filtro:</b><td nowrap><font size=1><ul>'.$w_filtro.'</ul></tr></table>';
+    if ($p_prioridade>'') $w_filtro = $w_filtro.'<tr valign="top"><td align="right">Prioridade <td>[<b>'.RetornaPrioridade($p_prioridade).'</b>]';
+    if ($p_proponente>'') $w_filtro = $w_filtro.'<tr valign="top"><td align="right">Proponente <td>[<b>'.$p_proponente.'</b>]';
+    if ($p_assunto>'')    $w_filtro = $w_filtro.'<tr valign="top"><td align="right">Detalhamento <td>[<b>'.$p_assunto.'</b>]';
+    if ($p_palavra>'')    $w_filtro=$w_filtro.'<tr valign="top"><td align="right">Palavras-chave <td>[<b>'.$p_palavra.'</b>]';
+    if ($p_ini_i>'')      $w_filtro=$w_filtro.'<tr valign="top"><td align="right">Data recebimento <td>[<b>'.$p_ini_i.'-'.$p_ini_f.'</b>]';
+    if ($p_fim_i>'')      $w_filtro=$w_filtro.'<tr valign="top"><td align="right">Limite conclusão <td>[<b>'.$p_fim_i.'-'.$p_fim_f.'</b>]';
+    if ($p_atraso=='S')   $w_filtro=$w_filtro.'<tr valign="top"><td align="right">Situação <td>[<b>Apenas atrasadas</b>]';
+    if ($w_filtro>'')     $w_filtro='<table border=0><tr valign="top"><td><b>Filtro:</b><td nowrap><ul>'.$w_filtro.'</ul></tr></table>';
 
     $RS1 = db_getSolicList::getInstanceOf($dbms,$P2,$w_usuario,$p_agrega,4,
         $p_ini_i,$p_ini_f,$p_fim_i,$p_fim_f,$p_atraso,$p_solicitante,
@@ -308,18 +309,18 @@ function Gerencial() {
       BodyOpenClean('onLoad=document.focus();');
     } 
     if ($O=='L') {
-      ShowHTML('<B><FONT COLOR="#000000">'.$w_TP.'</FONT></B>');
+      ShowHTML('<B><FONT COLOR="#000000">'.$w_TP.'</font></B>');
       ShowHTML('<HR>');
       if ($w_filtro>'') ShowHTML($w_filtro);
     } else {
-      ShowHTML('<B><FONT COLOR="#000000">'.$w_TP.'</FONT></B>');
+      ShowHTML('<B><FONT COLOR="#000000">'.$w_TP.'</font></B>');
       ShowHTML('<HR>');
     } 
   } 
   ShowHTML('<table border="0" cellpadding="0" cellspacing="0" width="100%">');
   if ($O=='L' || $O=='W') {
     if ($O=='L') {
-      ShowHTML('<tr><td><font size="1">');
+      ShowHTML('<tr><td>');
       if (MontaFiltro('GET')>'') {
         ShowHTML('                         <a accesskey="F" class="SS" href="'.$w_pagina.$par.'&R='.$w_pagina.$par.'&O=P&P1='.$P1.'&P2='.$P2.'&P3=1&P4='.$P4.'&TP='.$TP.'&SG='.$SG.MontaFiltro('GET').'"><u><font color="#BC5100">F</u>iltrar (Ativo)</font></a>');
       } else {
@@ -328,7 +329,7 @@ function Gerencial() {
     } 
     ImprimeCabecalho();
     if (count($RS1)<=0) {
-      ShowHTML('      <tr bgcolor="'.$conTrBgColor.'"><td colspan=10 align="center"><font size="1"><b>Não foram encontrados registros.</b></td></tr>');
+      ShowHTML('      <tr bgcolor="'.$conTrBgColor.'"><td colspan=10 align="center"><b>Não foram encontrados registros.</b></td></tr>');
     } else {
       if ($O=='L') {
         ShowHTML('<SCRIPT LANGUAGE="JAVASCRIPT">');
@@ -422,7 +423,7 @@ function Gerencial() {
               } 
               if ($O!='W' || ($O=='W' && $w_linha<=25)) {
                 // Se for geração de MS-Word, coloca a nova quebra somente se não estourou o limite
-                ShowHTML('      <tr bgcolor="'.$w_cor.'" valign="top"><td><font size=1><b>'.MontaOrdemEtapa(f($row,'sq_projeto_etapa')).' - '.f($row,'nm_etapa'));
+                ShowHTML('      <tr bgcolor="'.$w_cor.'" valign="top"><td><b>'.MontaOrdemEtapa(f($row,'sq_projeto_etapa')).' - '.f($row,'nm_etapa'));
               } 
               $w_nm_quebra  = f($row,'nm_etapa');
               $w_chave      = f($row,'sq_projeto_etapa');
@@ -446,7 +447,7 @@ function Gerencial() {
               } 
               if ($O!='W' || ($O=='W' && $w_linha<=25)) {
                 // Se for geração de MS-Word, coloca a nova quebra somente se não estourou o limite
-                ShowHTML('      <tr bgcolor="'.$w_cor.'" valign="top"><td><font size=1><b>'.f($row,'nm_projeto'));
+                ShowHTML('      <tr bgcolor="'.$w_cor.'" valign="top"><td><b>'.f($row,'nm_projeto'));
               } 
               $w_nm_quebra  =  f($row,'nm_projeto');
               $w_chave      = f($row,'sq_solic_pai');
@@ -470,7 +471,7 @@ function Gerencial() {
               } 
               if ($O!='W' || ($O=='W' && $w_linha<=25)) {
                 // Se for geração de MS-Word, coloca a nova quebra somente se não estourou o limite
-                ShowHTML('      <tr bgcolor="'.$w_cor.'" valign="top"><td><font size=1><b>'.f($row,'proponente'));
+                ShowHTML('      <tr bgcolor="'.$w_cor.'" valign="top"><td><b>'.f($row,'proponente'));
               } 
               $w_nm_quebra  = f($row,'proponente');
               $w_chave      = f($row,'proponente');
@@ -494,7 +495,7 @@ function Gerencial() {
               } 
               if ($O!='W' || ($O=='W' && $w_linha<=25)) {
                 // Se for geração de MS-Word, coloca a nova quebra somente se não estourou o limite
-                ShowHTML('      <tr bgcolor="'.$w_cor.'" valign="top"><td><font size=1><b>'.f($row,'nm_solic'));
+                ShowHTML('      <tr bgcolor="'.$w_cor.'" valign="top"><td><b>'.f($row,'nm_solic'));
               } 
               $w_nm_quebra  = f($row,'nm_solic');
               $w_chave      = f($row,'solicitante');
@@ -518,7 +519,7 @@ function Gerencial() {
               } 
               if ($O!='W' || ($O=='W' && $w_linha<=25)) {
                 // Se for geração de MS-Word, coloca a nova quebra somente se não estourou o limite
-                ShowHTML('      <tr bgcolor="'.$w_cor.'" valign="top"><td><font size=1><b>'.f($row,'nm_exec'));
+                ShowHTML('      <tr bgcolor="'.$w_cor.'" valign="top"><td><b>'.f($row,'nm_exec'));
               } 
               $w_nm_quebra  = f($row,'nm_exec');
               $w_chave      = f($row,'executor');
@@ -542,7 +543,7 @@ function Gerencial() {
               } 
               if ($O!='W' || ($O=='W' && $w_linha<=25)) {
                 // Se for geração de MS-Word, coloca a nova quebra somente se não estourou o limite
-                ShowHTML('      <tr bgcolor="'.$w_cor.'" valign="top"><td><font size=1><b>'.f($row,'sg_cc'));
+                ShowHTML('      <tr bgcolor="'.$w_cor.'" valign="top"><td><b>'.f($row,'sg_cc'));
               } 
               $w_nm_quebra  = f($row,'sg_cc');
               $w_chave      = f($row,'sq_cc');
@@ -566,7 +567,7 @@ function Gerencial() {
               } 
               if ($O!='W' || ($O=='W' && $w_linha<=25)) {
                 // Se for geração de MS-Word, coloca a nova quebra somente se não estourou o limite
-                ShowHTML('      <tr bgcolor="'.$w_cor.'" valign="top"><td><font size=1><b>'.f($row,'nm_unidade_resp'));
+                ShowHTML('      <tr bgcolor="'.$w_cor.'" valign="top"><td><b>'.f($row,'nm_unidade_resp'));
               } 
               $w_nm_quebra  = f($row,'nm_unidade_resp');
               $w_chave      = f($row,'sq_unidade_resp');
@@ -590,7 +591,7 @@ function Gerencial() {
               } 
               if ($O!='W' || ($O=='W' && $w_linha<=25)) {
                 // Se for geração de MS-Word, coloca a nova quebra somente se não estourou o limite
-                ShowHTML('      <tr bgcolor="'.$w_cor.'" valign="top"><td><font size=1><b>'.f($row,'nm_prioridade'));
+                ShowHTML('      <tr bgcolor="'.$w_cor.'" valign="top"><td><b>'.f($row,'nm_prioridade'));
               } 
               $w_nm_quebra  = f($row,'nm_prioridade');
               $w_chave      = f($row,'prioridade');
@@ -614,7 +615,7 @@ function Gerencial() {
               } 
               if ($O!='W' || ($O=='W' && $w_linha<=25)) {
                 // Se for geração de MS-Word, coloca a nova quebra somente se não estourou o limite
-                ShowHTML('      <tr bgcolor="'.$w_cor.'" valign="top"><td><font size=1><b>'.f($row,'co_uf'));
+                ShowHTML('      <tr bgcolor="'.$w_cor.'" valign="top"><td><b>'.f($row,'co_uf'));
               } 
               $w_nm_quebra  = f($row,'co_uf');
               $w_chave      = f($row,'co_uf');
@@ -647,15 +648,15 @@ function Gerencial() {
           ShowHTML('<table border="0" cellpadding="0" cellspacing="0" width="100%">');
           ImprimeCabecalho();
           switch ($p_agrega) {
-            case 'GRDMETAPA':       ShowHTML('      <tr bgcolor="'.$w_cor.'" valign="top"><td><font size=1><b>'.f($row,'nm_etapa'));          break;
-            case 'GRDMPROJ':        ShowHTML('      <tr bgcolor="'.$w_cor.'" valign="top"><td><font size=1><b>'.f($row,'nm_projeto'));        break;
-            case 'GRDMPROP':        ShowHTML('      <tr bgcolor="'.$w_cor.'" valign="top"><td><font size=1><b>'.f($row,'proponente'));        break;
-            case 'GRDMRESP':        ShowHTML('      <tr bgcolor="'.$w_cor.'" valign="top"><td><font size=1><b>'.f($row,'nm_solic'));          break;
-            case 'GRDMRESPATU':     ShowHTML('      <tr bgcolor="'.$w_cor.'" valign="top"><td><font size=1><b>'.f($row,'nm_exec'));           break;
-            case 'GRDMCC':          ShowHTML('      <tr bgcolor="'.$w_cor.'" valign="top"><td><font size=1><b>'.f($row,'sg_cc'));             break;
-            case 'GRDMSETOR':       ShowHTML('      <tr bgcolor="'.$w_cor.'" valign="top"><td><font size=1><b>'.f($row,'nm_unidade_resp'));   break;
-            case 'GRDMPRIO':        ShowHTML('      <tr bgcolor="'.$w_cor.'" valign="top"><td><font size=1><b>'.f($row,'nm_prioridade'));     break;
-            case 'GRDMLOCAL':       ShowHTML('      <tr bgcolor="'.$w_cor.'" valign="top"><td><font size=1><b>'.f($row,'co_uf'));             break;
+            case 'GRDMETAPA':       ShowHTML('      <tr bgcolor="'.$w_cor.'" valign="top"><td><b>'.f($row,'nm_etapa'));          break;
+            case 'GRDMPROJ':        ShowHTML('      <tr bgcolor="'.$w_cor.'" valign="top"><td><b>'.f($row,'nm_projeto'));        break;
+            case 'GRDMPROP':        ShowHTML('      <tr bgcolor="'.$w_cor.'" valign="top"><td><b>'.f($row,'proponente'));        break;
+            case 'GRDMRESP':        ShowHTML('      <tr bgcolor="'.$w_cor.'" valign="top"><td><b>'.f($row,'nm_solic'));          break;
+            case 'GRDMRESPATU':     ShowHTML('      <tr bgcolor="'.$w_cor.'" valign="top"><td><b>'.f($row,'nm_exec'));           break;
+            case 'GRDMCC':          ShowHTML('      <tr bgcolor="'.$w_cor.'" valign="top"><td><b>'.f($row,'sg_cc'));             break;
+            case 'GRDMSETOR':       ShowHTML('      <tr bgcolor="'.$w_cor.'" valign="top"><td><b>'.f($row,'nm_unidade_resp'));   break;
+            case 'GRDMPRIO':        ShowHTML('      <tr bgcolor="'.$w_cor.'" valign="top"><td><b>'.f($row,'nm_prioridade'));     break;
+            case 'GRDMLOCAL':       ShowHTML('      <tr bgcolor="'.$w_cor.'" valign="top"><td><b>'.f($row,'co_uf'));             break;
           } 
           $w_linha = $w_linha + 1;
         } 
@@ -692,7 +693,7 @@ function Gerencial() {
       } 
       ImprimeLinha($t_solic,$t_cad,$t_tram,$t_conc,$t_atraso,$t_aviso,$t_valor,$t_custo,$t_acima,$w_chave);
       ShowHTML('      <tr bgcolor="#DCDCDC" valign="top" align="right">');
-      ShowHTML('          <td><font size="1"><b>Totais</font></td>');
+      ShowHTML('          <td><b>Totais</td>');
       ImprimeLinha($t_totsolic,$t_totcad,$t_tottram,$t_totconc,$t_totatraso,$t_totaviso,$t_totvalor,$t_totcusto,$t_totacima,-1);
     } 
     if ($O!='W') ShowHTML('      </FORM>');
@@ -710,14 +711,14 @@ function Gerencial() {
       } 
     } 
   } elseif ($O=='P') {
-    ShowHTML('<tr bgcolor="'.$conTrBgColor.'"><td><div align="justify"><font size=2>Informe nos campos abaixo os valores que deseja filtrar e clique sobre o botão <i>Aplicar filtro</i>. Clicando sobre o botão <i>Remover filtro</i>, o filtro existente será apagado.</div><hr>');
+    ShowHTML('<tr bgcolor="'.$conTrBgColor.'"><td><div align="justify">Informe nos campos abaixo os valores que deseja filtrar e clique sobre o botão <i>Aplicar filtro</i>. Clicando sobre o botão <i>Remover filtro</i>, o filtro existente será apagado.</div><hr>');
     ShowHTML('<tr bgcolor="'.$conTrBgColor.'"><td align="center">');
     AbreForm('Form',$w_pagina.$par,'POST','return(Validacao(this));',null,$P1,$P2,$P3,null,$TP,$SG,$R,'L');
     // Exibe parâmetros de apresentação
     ShowHTML('      <tr bgcolor="'.$conTrBgColor.'"><td align="center" valign="top"><table border=0 width="90%" cellspacing=0>');
-    ShowHTML('         <tr><td valign="top" colspan="2" align="center" bgcolor="#D0D0D0" style="border: 2px solid rgb(0,0,0);"><font size="1"><b>Parâmetros de Apresentação</td>');
+    ShowHTML('         <tr><td valign="top" colspan="2" align="center" bgcolor="#D0D0D0" style="border: 2px solid rgb(0,0,0);"><b>Parâmetros de Apresentação</td>');
     ShowHTML('         <tr valign="top"><td colspan=2><table border=0 width="100%" cellpadding=0 cellspacing=0><tr valign="top">');
-    ShowHTML('          <td><font size="1"><b><U>A</U>gregar por:<br><SELECT ACCESSKEY="O" '.$w_Disabled.' class="STS" name="p_agrega" size="1">');
+    ShowHTML('          <td><b><U>A</U>gregar por:<br><SELECT ACCESSKEY="O" '.$w_Disabled.' class="STS" name="p_agrega" size="1">');
     if (f($RS_Menu,'solicita_cc')=='S') {
       if ($p_agrega=='GRDMCC')      ShowHTML('          <option value="GRDMCC" selected>Classificação');              else ShowHTML('          <option value="GRDMCC">Classificação');
     } 
@@ -738,13 +739,12 @@ function Gerencial() {
     MontaRadioSN('<b>Limita tamanho do detalhamento?</b>',$p_tamanho,'p_tamanho');
     ShowHTML('           </table>');
     ShowHTML('         </tr>');
-    ShowHTML('         <tr><td valign="top" colspan="2" align="center" bgcolor="#D0D0D0" style="border: 2px solid rgb(0,0,0);"><font size="1"><b>Critérios de Busca</td>');
+    ShowHTML('         <tr><td valign="top" colspan="2" align="center" bgcolor="#D0D0D0" style="border: 2px solid rgb(0,0,0);"><b>Critérios de Busca</td>');
     // Se a opção for ligada ao módulo de projetos, permite a seleção do projeto  e da etapa
     if ($SG=='PROJETO') {
       ShowHTML('      <tr><td colspan=2><table border=0 width="90%" cellspacing=0><tr valign="top">');
       $RS = db_getLinkData::getInstanceOf($dbms,$w_cliente,'PJCAD');
       SelecaoProjeto('Pro<u>j</u>eto:','J','Selecione o projeto da atividade na relação.',$p_projeto,$w_usuario,f($RS,'sq_menu'),'p_projeto','PJLIST','onChange="document.Form.action=\''.$w_pagina.$par.'\'; document.Form.O.value=\''.$O.'\'; document.Form.w_troca.value=\'p_atividade\'; document.Form.submit();"');
-      DesconectaBD();
       ShowHTML('      </tr>');
       ShowHTML('      <tr>');
       SelecaoEtapa('Eta<u>p</u>a:','P','Se necessário, indique a etapa à qual esta atividade deve ser vinculada.',$p_atividade,$p_projeto,null,'p_atividade',null,null);
@@ -758,8 +758,8 @@ function Gerencial() {
       ShowHTML('          </table>');
     } 
     ShowHTML('      <tr valign="top">');
-    ShowHTML('          <td valign="top"><font size="1"><b>Número da <U>d</U>emanda:<br><INPUT ACCESSKEY="D" '.$w_Disabled.' class="STI" type="text" name="p_chave" size="18" maxlength="18" value="'.$p_chave.'"></td>');
-    ShowHTML('          <td valign="top"><font size="1"><b>Dias para a data limi<U>t</U>e:<br><INPUT ACCESSKEY="T" '.$w_Disabled.' class="STI" type="text" name="p_prazo" size="2" maxlength="2" value="'.$p_prazo.'"></td>');
+    ShowHTML('          <td valign="top"><b>Número da <U>d</U>emanda:<br><INPUT ACCESSKEY="D" '.$w_Disabled.' class="STI" type="text" name="p_chave" size="18" maxlength="18" value="'.$p_chave.'"></td>');
+    ShowHTML('          <td valign="top"><b>Dias para a data limi<U>t</U>e:<br><INPUT ACCESSKEY="T" '.$w_Disabled.' class="STI" type="text" name="p_prazo" size="2" maxlength="2" value="'.$p_prazo.'"></td>');
     ShowHTML('      <tr valign="top">');
     SelecaoPessoa('Respo<u>n</u>sável:','N','Selecione o responsável na relação.',$p_solicitante,null,'p_solicitante','USUARIOS');
     SelecaoUnidade('<U>S</U>etor responsável:','S',null,$p_unidade,null,'p_unidade',null,null);
@@ -774,15 +774,15 @@ function Gerencial() {
     SelecaoCidade('<u>C</u>idade:','C',null,$p_cidade,$p_pais,$p_uf,'p_cidade',null,null);
     ShowHTML('      <tr>');
     SelecaoPrioridade('<u>P</u>rioridade:','P','Informe a prioridade desta demanda.',$p_prioridade,null,'p_prioridade',null,null);
-    ShowHTML('          <td valign="top"><font size="1"><b>Propo<U>n</U>ente externo:<br><INPUT ACCESSKEY="N" '.$w_Disabled.' class="STI" type="text" name="p_proponente" size="25" maxlength="90" value="'.$p_proponente.'"></td>');
+    ShowHTML('          <td valign="top"><b>Propo<U>n</U>ente externo:<br><INPUT ACCESSKEY="N" '.$w_Disabled.' class="STI" type="text" name="p_proponente" size="25" maxlength="90" value="'.$p_proponente.'"></td>');
     ShowHTML('      <tr>');
-    ShowHTML('          <td valign="top"><font size="1"><b>Detalh<U>a</U>mento:<br><INPUT ACCESSKEY="N" '.$w_Disabled.' class="STI" type="text" name="p_assunto" size="25" maxlength="90" value="'.$p_assunto.'"></td>');
-    ShowHTML('          <td valign="top" colspan=2><font size="1"><b>Pala<U>v</U>ras-chave:<br><INPUT ACCESSKEY="N" '.$w_Disabled.' class="STI" type="text" name="p_palavra" size="25" maxlength="90" value="'.$p_palavra.'"></td>');
+    ShowHTML('          <td valign="top"><b>Detalh<U>a</U>mento:<br><INPUT ACCESSKEY="N" '.$w_Disabled.' class="STI" type="text" name="p_assunto" size="25" maxlength="90" value="'.$p_assunto.'"></td>');
+    ShowHTML('          <td valign="top" colspan=2><b>Pala<U>v</U>ras-chave:<br><INPUT ACCESSKEY="N" '.$w_Disabled.' class="STI" type="text" name="p_palavra" size="25" maxlength="90" value="'.$p_palavra.'"></td>');
     ShowHTML('      <tr>');
-    ShowHTML('          <td valign="top"><font size="1"><b>Re<u>c</u>ebimento entre:</b><br><input '.$w_Disabled.' accesskey="C" type="text" name="p_ini_i" class="STI" SIZE="10" MAXLENGTH="10" VALUE="'.$p_ini_i.'" onKeyDown="FormataData(this,event);">'.ExibeCalendario('Form','p_ini_i').' e <input '.$w_Disabled.' accesskey="C" type="text" name="p_ini_f" class="STI" SIZE="10" MAXLENGTH="10" VALUE="'.$p_ini_f.'" onKeyDown="FormataData(this,event);">'.ExibeCalendario('Form','p_ini_f').'</td>');
-    ShowHTML('          <td valign="top"><font size="1"><b>Conclusão en<u>t</u>re:</b><br><input '.$w_Disabled.' accesskey="T" type="text" name="p_fim_i" class="STI" SIZE="10" MAXLENGTH="10" VALUE="'.$p_fim_i.'" onKeyDown="FormataData(this,event);">'.ExibeCalendario('Form','p_fim_i').' e <input '.$w_Disabled.' accesskey="T" type="text" name="p_fim_f" class="STI" SIZE="10" MAXLENGTH="10" VALUE="'.$p_fim_f.'" onKeyDown="FormataData(this,event);">'.ExibeCalendario('Form','p_fim_f').'</td>');
+    ShowHTML('          <td valign="top"><b>Re<u>c</u>ebimento entre:</b><br><input '.$w_Disabled.' accesskey="C" type="text" name="p_ini_i" class="STI" SIZE="10" MAXLENGTH="10" VALUE="'.$p_ini_i.'" onKeyDown="FormataData(this,event);">'.ExibeCalendario('Form','p_ini_i').' e <input '.$w_Disabled.' accesskey="C" type="text" name="p_ini_f" class="STI" SIZE="10" MAXLENGTH="10" VALUE="'.$p_ini_f.'" onKeyDown="FormataData(this,event);">'.ExibeCalendario('Form','p_ini_f').'</td>');
+    ShowHTML('          <td valign="top"><b>Conclusão en<u>t</u>re:</b><br><input '.$w_Disabled.' accesskey="T" type="text" name="p_fim_i" class="STI" SIZE="10" MAXLENGTH="10" VALUE="'.$p_fim_i.'" onKeyDown="FormataData(this,event);">'.ExibeCalendario('Form','p_fim_i').' e <input '.$w_Disabled.' accesskey="T" type="text" name="p_fim_f" class="STI" SIZE="10" MAXLENGTH="10" VALUE="'.$p_fim_f.'" onKeyDown="FormataData(this,event);">'.ExibeCalendario('Form','p_fim_f').'</td>');
     ShowHTML('      <tr>');
-    ShowHTML('          <td valign="top"><font size="1"><b>Exibe somente demandas em atraso?</b><br>');
+    ShowHTML('          <td valign="top"><b>Exibe somente demandas em atraso?</b><br>');
     if ($p_atraso=='S') {
       ShowHTML('              <input '.$w_Disabled.' class="STR" type="radio" name="p_atraso" value="S" checked> Sim <br><input '.$w_Disabled.' class="STR" class="STR" type="radio" name="p_atraso" value="N"> Não');
     } else {
@@ -820,26 +820,26 @@ function ImprimeCabecalho() {
   ShowHTML('    <TABLE WIDTH="100%" bgcolor="'.$conTableBgColor.'" BORDER="'.$conTableBorder.'" CELLSPACING="'.$conTableCellSpacing.'" CELLPADDING="'.$conTableCellPadding.'" BorderColorDark="'.$conTableBorderColorDark.'" BorderColorLight="'.$conTableBorderColorLight.'">');
   ShowHTML('        <tr bgcolor="#DCDCDC" align="center">');
   switch ($p_agrega) {
-    case 'GRDMETAPA':   ShowHTML('          <td><font size="1"><b>Etapa</font></td>');                break;
-    case 'GRDMPROJ':    ShowHTML('          <td><font size="1"><b>Projeto</font></td>');              break;
-    case 'GRDMPROP':    ShowHTML('          <td><font size="1"><b>Proponente</font></td>');           break;
-    case 'GRDMRESP':    ShowHTML('          <td><font size="1"><b>Responsável</font></td>');          break;
-    case 'GRDMRESPATU': ShowHTML('          <td><font size="1"><b>Executor</font></td>');             break;
-    case 'GRDMCC':      ShowHTML('          <td><font size="1"><b>Classificação</font></td>');        break;
-    case 'GRDMSETOR':   ShowHTML('          <td><font size="1"><b>Setor responsável</font></td>');    break;
-    case 'GRDMPRIO':    ShowHTML('          <td><font size="1"><b>Prioridade</font></td>');           break;
-    case 'GRDMLOCAL':   ShowHTML('          <td><font size="1"><b>UF</font></td>');                   break;
+    case 'GRDMETAPA':   ShowHTML('          <td><b>Etapa</td>');                break;
+    case 'GRDMPROJ':    ShowHTML('          <td><b>Projeto</td>');              break;
+    case 'GRDMPROP':    ShowHTML('          <td><b>Proponente</td>');           break;
+    case 'GRDMRESP':    ShowHTML('          <td><b>Responsável</td>');          break;
+    case 'GRDMRESPATU': ShowHTML('          <td><b>Executor</td>');             break;
+    case 'GRDMCC':      ShowHTML('          <td><b>Classificação</td>');        break;
+    case 'GRDMSETOR':   ShowHTML('          <td><b>Setor responsável</td>');    break;
+    case 'GRDMPRIO':    ShowHTML('          <td><b>Prioridade</td>');           break;
+    case 'GRDMLOCAL':   ShowHTML('          <td><b>UF</td>');                   break;
   } 
-  ShowHTML('          <td><font size="1"><b>Total</font></td>');
-  ShowHTML('          <td><font size="1"><b>Cad.</font></td>');
-  ShowHTML('          <td><font size="1"><b>Exec.</font></td>');
-  ShowHTML('          <td><font size="1"><b>Conc.</font></td>');
-  ShowHTML('          <td><font size="1"><b>Atraso</font></td>');
-  ShowHTML('          <td><font size="1"><b>Aviso</font></td>');
+  ShowHTML('          <td><b>Total</td>');
+  ShowHTML('          <td><b>Cad.</td>');
+  ShowHTML('          <td><b>Exec.</td>');
+  ShowHTML('          <td><b>Conc.</td>');
+  ShowHTML('          <td><b>Atraso</td>');
+  ShowHTML('          <td><b>Aviso</td>');
   if ($_SESSION['INTERNO']=='S') {
-    ShowHTML('          <td><font size="1"><b>$ Prev.</font></td>');
-    ShowHTML('          <td><font size="1"><b>$ Real</font></td>');
-    ShowHTML('          <td><font size="1"><b>Real > Previsto</font></td>');
+    ShowHTML('          <td><b>$ Prev.</td>');
+    ShowHTML('          <td><b>$ Real</td>');
+    ShowHTML('          <td><b>Real > Previsto</td>');
   } 
   ShowHTML('        </tr>');
 } 
@@ -850,16 +850,16 @@ function ImprimeCabecalho() {
 function ImprimeLinha($l_solic,$l_cad,$l_tram,$l_conc,$l_atraso,$l_aviso,$l_valor,$l_custo,$l_acima,$l_chave) {
   extract($GLOBALS);
 
-  if ($O=='L')                  ShowHTML('          <td align="right"><font size="1"><a class="hl" href="javascript:lista(\''.$l_chave.'\', -1, -1, -1, -1);" onMouseOver="window.status=\'Exibe as demandas.\'; return true" onMouseOut="window.status=\'\'; return true">'.number_format($l_solic,0,',','.').'</a>&nbsp;</font></td>');                  else ShowHTML('          <td align="right"><font size="1">'.number_format($l_solic,0,',','.').'&nbsp;</font></td>');
-  if ($l_cad>0 && $O=='L')      ShowHTML('          <td align="right"><a class="hl" href="javascript:lista(\''.$l_chave.'\', 0, -1, -1, -1);" onMouseOver="window.status=\'Exibe as demandas.\'; return true" onMouseOut="window.status=\'\'; return true"><font size="1">'.number_format($l_cad,0,',','.').'</a>&nbsp;</font></td>');                     else ShowHTML('          <td align="right"><font size="1">'.number_format($l_cad,0,',','.').'&nbsp;</font></td>');
-  if ($l_tram>0 && $O=='L')     ShowHTML('          <td align="right"><a class="hl" href="javascript:lista(\''.$l_chave.'\', -1, 0, -1, -1);" onMouseOver="window.status=\'Exibe as demandas.\'; return true" onMouseOut="window.status=\'\'; return true"><font size="1">'.number_format($l_tram,0,',','.').'</a>&nbsp;</font></td>');                    else ShowHTML('          <td align="right"><font size="1">'.number_format($l_tram,0,',','.').'&nbsp;</font></td>');
-  if ($l_conc>0 && $O=='L')     ShowHTML('          <td align="right"><a class="hl" href="javascript:lista(\''.$l_chave.'\', -1, -1, 0, -1);" onMouseOver="window.status=\'Exibe as demandas.\'; return true" onMouseOut="window.status=\'\'; return true"><font size="1">'.number_format($l_conc,0,',','.').'</a>&nbsp;</font></td>');                    else ShowHTML('          <td align="right"><font size="1">'.number_format($l_conc,0,',','.').'&nbsp;</font></td>');
-  if ($l_atraso>0 && $O=='L')   ShowHTML('          <td align="right"><a class="hl" href="javascript:lista(\''.$l_chave.'\', -1, -1, -1, 0);" onMouseOver="window.status=\'Exibe as demandas.\'; return true" onMouseOut="window.status=\'\'; return true"><font size="1" color="red"><b>'.number_format($l_atraso,0,',','.').'</a>&nbsp;</font></td>'); else ShowHTML('          <td align="right"><font size="1"><b>'.$l_atraso.'&nbsp;</font></td>');
-  if ($l_aviso>0 && $O=='L')    ShowHTML('          <td align="right"><font size="1" color="red"><b>'.number_format($l_aviso,0,',','.').'&nbsp;</font></td>');                                                                                                                                                                                             else ShowHTML('          <td align="right"><font size="1"><b>'.$l_aviso.'&nbsp;</font></td>');
+  if ($O=='L')                  ShowHTML('          <td align="right"><a class="hl" href="javascript:lista(\''.$l_chave.'\', -1, -1, -1, -1);" onMouseOver="window.status=\'Exibe as demandas.\'; return true" onMouseOut="window.status=\'\'; return true">'.number_format($l_solic,0,',','.').'</a>&nbsp;</td>');                  else ShowHTML('          <td align="right">'.number_format($l_solic,0,',','.').'&nbsp;</td>');
+  if ($l_cad>0 && $O=='L')      ShowHTML('          <td align="right"><a class="hl" href="javascript:lista(\''.$l_chave.'\', 0, -1, -1, -1);" onMouseOver="window.status=\'Exibe as demandas.\'; return true" onMouseOut="window.status=\'\'; return true">'.number_format($l_cad,0,',','.').'</a>&nbsp;</td>');                     else ShowHTML('          <td align="right">'.number_format($l_cad,0,',','.').'&nbsp;</td>');
+  if ($l_tram>0 && $O=='L')     ShowHTML('          <td align="right"><a class="hl" href="javascript:lista(\''.$l_chave.'\', -1, 0, -1, -1);" onMouseOver="window.status=\'Exibe as demandas.\'; return true" onMouseOut="window.status=\'\'; return true">'.number_format($l_tram,0,',','.').'</a>&nbsp;</td>');                    else ShowHTML('          <td align="right">'.number_format($l_tram,0,',','.').'&nbsp;</td>');
+  if ($l_conc>0 && $O=='L')     ShowHTML('          <td align="right"><a class="hl" href="javascript:lista(\''.$l_chave.'\', -1, -1, 0, -1);" onMouseOver="window.status=\'Exibe as demandas.\'; return true" onMouseOut="window.status=\'\'; return true">'.number_format($l_conc,0,',','.').'</a>&nbsp;</td>');                    else ShowHTML('          <td align="right">'.number_format($l_conc,0,',','.').'&nbsp;</td>');
+  if ($l_atraso>0 && $O=='L')   ShowHTML('          <td align="right"><a class="hl" href="javascript:lista(\''.$l_chave.'\', -1, -1, -1, 0);" onMouseOver="window.status=\'Exibe as demandas.\'; return true" onMouseOut="window.status=\'\'; return true"><font color="red"><b>'.number_format($l_atraso,0,',','.').'</a>&nbsp;</td>'); else ShowHTML('          <td align="right"><b>'.$l_atraso.'&nbsp;</td>');
+  if ($l_aviso>0 && $O=='L')    ShowHTML('          <td align="right"><font color="red"><b>'.number_format($l_aviso,0,',','.').'&nbsp;</td>');                                                                                                                                                                                             else ShowHTML('          <td align="right"><b>'.$l_aviso.'&nbsp;</td>');
   if ($_SESSION['INTERNO']=='S') {
-    ShowHTML('          <td align="right"><font size="1">'.number_format($l_valor,2,',','.').'&nbsp;</font></td>');
-    ShowHTML('          <td align="right"><font size="1">'.number_format($l_custo,2,',','.').'&nbsp;</font></td>');
-    if ($l_acima>0) ShowHTML('          <td align="right"><font size="1" color="red"><b>'.number_format($l_acima,2,',','.').'&nbsp;</font></td>'); else ShowHTML('          <td align="right"><font size="1"><b>'.$l_acima.'&nbsp;</font></td>');
+    ShowHTML('          <td align="right">'.number_format($l_valor,2,',','.').'&nbsp;</td>');
+    ShowHTML('          <td align="right">'.number_format($l_custo,2,',','.').'&nbsp;</td>');
+    if ($l_acima>0) ShowHTML('          <td align="right"><font color="red"><b>'.number_format($l_acima,2,',','.').'&nbsp;</td>'); else ShowHTML('          <td align="right"><b>'.$l_acima.'&nbsp;</td>');
   } 
   ShowHTML('        </tr>');
 } 

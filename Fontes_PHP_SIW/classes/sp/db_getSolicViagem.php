@@ -10,8 +10,12 @@ include_once($w_dir_volta.'classes/db/DatabaseQueriesFactory.php');
 */
 
 class db_getSolicViagem {
-   function getInstanceOf($dbms, $p_menu, $p_pessoa, $p_restricao, $p_tipo, $p_ini_i, $p_ini_f, $p_fim_i, $p_fim_f, $p_atraso, $p_solicitante, $p_unidade, $p_prioridade, $p_ativo, $p_proponente, $p_chave, $p_assunto, $p_pais, $p_regiao, $p_uf, $p_cidade, $p_usu_resp, $p_uorg_resp, $p_palavra, $p_prazo, $p_fase, $p_sqcc, $p_projeto, $p_atividade, $p_acao_ppa, $p_orprior) {
-     extract($GLOBALS,EXTR_PREFIX_SAME,'strchema'); $sql=$strschema.'SP_GETSOLICVIAGEM';
+   function getInstanceOf($dbms, $p_menu, $p_pessoa, $p_restricao, $p_tipo, $p_ini_i, $p_ini_f, $p_fim_i, $p_fim_f, $p_atraso, 
+        $p_solicitante, $p_unidade, $p_prioridade, $p_ativo, $p_proponente, $p_chave, $p_assunto, $p_pais, $p_regiao, $p_uf, 
+        $p_cidade, $p_usu_resp, $p_uorg_resp, $p_palavra, $p_prazo, $p_fase, $p_sqcc, $p_projeto, $p_atividade, $p_acao_ppa, 
+        $p_orprior) {
+     extract($GLOBALS,EXTR_PREFIX_SAME,'strchema'); 
+     $sql=$strschema.'SP_GETSOLICVIAGEM';
      $params=array('p_menu'                      =>array($p_menu,                                          B_INTEGER,        32),
                    'p_pessoa'                    =>array($p_pessoa,                                        B_INTEGER,        32),
                    'p_restricao'                 =>array($p_restricao,                                     B_VARCHAR,        20),

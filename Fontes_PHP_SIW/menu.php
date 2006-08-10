@@ -241,7 +241,7 @@ function ExibeDocs() {
            eval('$node'.i.' = &$node1->addItem(new XNode(f($row,\'nome\'),f($row,\'LINK\').\'&P1=\'.f($row,\'P1\').\'&P2=\'.f($row,\'P2\').\'&P3=\'.f($row,\'P3\').\'&P4=\'.f($row,\'P4\').\'&TP=\'.$w_titulo.\'&SG=\'.f($row,\'SIGLA\').\'&O=\'.$O.\'&w_chave=\'.$_REQUEST[\'w_chave\'].\'&w_menu=\'.f($row,\'menu_pai\').MontaFiltro(\'GET\'),$w_Imagem,$w_Imagem,f($row,\'target\')));');
       }
 
-      if ($_REQUEST['O']=='I') last($RS);
+      if ($_REQUEST['O']=='I') break;
 
       $i = $i +1;
     }
