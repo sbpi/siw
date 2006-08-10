@@ -432,8 +432,14 @@ begin
                        End If;
                     End If;
                  Else
-                    w_unidade_atual := crec.sq_unidade_pai;
-                    w_existe        := 0;
+                    If crec.sq_pessoa_titular    = w_solicitante and
+                       crec.sq_pessoa_substituto = p_usuario and
+                       crec.sq_unidade_pai       is null Then
+                          Result   := Result + 16;
+                    Else
+                       w_unidade_atual := crec.sq_unidade_pai;
+                       w_existe        := 0;
+                    End If;
                  End If;
               Elsif w_vinculacao = 'U' Then
                  If crec.sq_pessoa_titular = p_usuario or crec.sq_pessoa_substituto = p_usuario Then
