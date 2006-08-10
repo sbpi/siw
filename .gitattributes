@@ -1384,6 +1384,7 @@ SP_Oracle81/siw/SP_PutPDUnidade.prc -text
 SP_Oracle81/siw/SP_PutPDUsuario.prc -text
 SP_Oracle81/siw/SP_PutPD_Atividade.prc -text
 SP_Oracle81/siw/SP_PutPD_Deslocamento.prc -text
+SP_Oracle81/siw/SP_PutPdDiaria.prc -text
 SP_Oracle81/siw/SP_PutPdMissao.prc -text
 SP_Oracle81/siw/SP_PutPdTarefa.prc -text
 SP_Oracle81/siw/SP_PutViagemEnvio.prc -text
@@ -2512,6 +2513,7 @@ SP_Oracle92/siw/SP_PutPDUnidade.prc -text
 SP_Oracle92/siw/SP_PutPDUsuario.prc -text
 SP_Oracle92/siw/SP_PutPD_Atividade.prc -text
 SP_Oracle92/siw/SP_PutPD_Deslocamento.prc -text
+SP_Oracle92/siw/SP_PutPdDiaria.prc -text
 SP_Oracle92/siw/SP_PutPdMissao.prc -text
 SP_Oracle92/siw/SP_PutPdTarefa.prc -text
 SP_Oracle92/siw/SP_PutViagemEnvio.prc -text
