@@ -898,7 +898,7 @@ begin
             and (b.sq_siw_solicitacao       = q.sq_siw_solicitacao (+))
             and a.sq_menu         = p_menu
             and (p_projeto        is null or (p_projeto     is not null and 0 < (select count(distinct(x1.sq_siw_solicitacao)) from pd_missao_solic x1 , siw_solicitacao y1 where x1.sq_siw_solicitacao = y1.sq_siw_solicitacao and y1.sq_solic_pai = p_projeto and x1.sq_solic_missao = b.sq_siw_solicitacao)))
-            and (p_atividade      is null or (p_atividade   is not null and 0 < (select count(distinct(x2.sq_siw_solicitacao)) from pd_missao_solic x2 where x2.sq_siw_solicitacao = p_atividade and x2.sq_solic_missao = b.sq_siw_solicitacao)))
+            and (p_atividade      is null or (p_atividade   is not null and 0 < (select count(distinct(x2.sq_siw_solicitacao)) from pd_missao_solic x2, pj_etapa_demanda x3 where (x2.sq_siw_solicitacao = x3.sq_siw_solicitacao and x3.sq_projeto_etapa = p_atividade) and x2.sq_solic_missao = b.sq_siw_solicitacao)))
             and (p_sq_acao_ppa    is null or (p_sq_acao_ppa is not null and d1.codigo_interno like '%'||p_sq_acao_ppa||'%'))
             and (p_assunto        is null or (p_assunto     is not null and acentos(b.descricao,null) like '%'||acentos(p_assunto,null)||'%'))
             and (p_solicitante    is null or (p_solicitante is not null and b.solicitante        = p_solicitante))
