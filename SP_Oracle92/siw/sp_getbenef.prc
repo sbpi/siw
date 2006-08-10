@@ -39,8 +39,7 @@ begin
                                 from co_pessoa_conta         w
                                      inner   join co_agencia x on (w.sq_agencia = x.sq_agencia)
                                        inner join co_banco   y on (x.sq_banco   = y.sq_banco)
-                               where w.tipo_conta         = 1 -- Conta corrente
-                                 and w.ativo              = 'S'
+                               where w.ativo              = 'S'
                                  and w.padrao             = 'S'
                                  and x.ativo              = 'S'
                              )                  e on (a.sq_pessoa     = e.sq_pessoa)

@@ -444,7 +444,6 @@ begin
       select count(*) into w_existe
         from co_pessoa_conta a
        where a.sq_pessoa  = w_chave_pessoa
-         and a.tipo_conta = 1 -- Conta corrente
          and a.ativo      = 'S'
          and a.padrao     = 'S';
 
@@ -461,7 +460,6 @@ begin
          select sq_pessoa_conta into w_chave_conta
            from co_pessoa_conta a
           where a.sq_pessoa  = w_chave_pessoa
-            and a.tipo_conta = 1 -- Conta corrente
             and a.ativo      = 'S'
             and a.padrao     = 'S';
 
@@ -569,4 +567,3 @@ begin
 
 end SP_PutAcordoOutra;
 /
-

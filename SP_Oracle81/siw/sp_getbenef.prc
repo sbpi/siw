@@ -41,7 +41,6 @@ begin
                     co_banco        y
               where (w.sq_agencia = x.sq_agencia)
                 and (x.sq_banco   = y.sq_banco)
-                and w.tipo_conta  = 1 -- Conta corrente
                 and w.ativo       = 'S'
                 and w.padrao      = 'S'
                 and x.ativo       = 'S'
