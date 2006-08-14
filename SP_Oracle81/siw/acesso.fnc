@@ -178,47 +178,34 @@ begin
     Result                   := Result + 2;
     w_unidade_beneficiario   := w_sq_unidade_lotacao;
  Else
-    -- Verifica se o usuário é interessado na demanda ou se já participou em algum momento
-    select count(*) into w_existe
-      from gd_demanda_interes a
-     where a.sq_siw_solicitacao = p_solicitacao
-       and a.sq_pessoa          = p_usuario;
+    -- Verifica se o usuário participu de alguma forma na solicitação
+    select count(*) into w_existe from (
+      -- Verifica se o usuário é interessado na demanda
+      select 1 from gd_demanda_interes a where a.sq_siw_solicitacao = p_solicitacao and a.sq_pessoa = p_usuario
+      UNION
+      -- Verifica se já participou em algum momento na demanda 
+      select 1 from gd_demanda_log a where a.sq_siw_solicitacao = p_solicitacao and a.destinatario = p_usuario
+      UNION
+      -- Verifica se o usuário é interessado no projeto
+      select 1 from pj_projeto_interes a where a.sq_siw_solicitacao = p_solicitacao and a.sq_pessoa = p_usuario
+      UNION
+      -- Verifica se já participou em algum momento no projeto
+      select 1 from pj_projeto_log a where a.sq_siw_solicitacao = p_solicitacao and a.destinatario = p_usuario
+      UNION
+      -- Verifica se é responsável por alguma etapa do projeto
+      select 1 from pj_projeto_etapa a where a.sq_siw_solicitacao = p_solicitacao and a.sq_pessoa = p_usuario
+      UNION
+      -- Verifica se é outra parte no acordo
+      select 1 from ac_acordo a where a.sq_siw_solicitacao = p_solicitacao and a.outra_parte= p_usuario
+      UNION
+      -- Verifica se é beneficiário de algum lançamento financeiro
+      select 1 from fn_lancamento a where a.sq_siw_solicitacao = p_solicitacao and a.pessoa = p_usuario
+      UNION
+      -- Verifica se é proposto de alguma viagem
+      select 1 from pd_missao a where a.sq_siw_solicitacao = p_solicitacao and a.sq_pessoa = p_usuario
+    );
     If w_existe > 0 Then
-      Result := + 2;
-    Else
-      select count(*) into w_existe
-        from gd_demanda_log a
-       where a.sq_siw_solicitacao = p_solicitacao
-         and a.destinatario      = p_usuario;
-       If w_existe > 0 Then
-          Result := + 2;
-       Else
-          -- Verifica se o usuário é interessado no projeto ou se já participou em algum momento
-          select count(*) into w_existe
-            from pj_projeto_interes a
-           where a.sq_siw_solicitacao = p_solicitacao
-             and a.sq_pessoa          = p_usuario;
-          If w_existe > 0 Then
-            Result := + 2;
-          Else
-            select count(*) into w_existe
-              from pj_projeto_log a
-             where a.sq_siw_solicitacao = p_solicitacao
-               and a.destinatario      = p_usuario;
-             If w_existe > 0 Then
-                Result := + 2;
-             Else
-                -- Verifica se é responsável por uma etapa de projeto
-                select count(*) into w_existe
-                  from pj_projeto_etapa a
-                 where a.sq_siw_solicitacao = p_solicitacao
-                   and a.sq_pessoa          = p_usuario;
-                If w_existe > 0 Then
-                   Result := + 2;
-                End If;
-             End If;
-          End If;
-       End If;
+       Result := + 2;
     End If;
 
     -- recupera o código e a lotação do solicitante, para verificar, mais abaixo,
