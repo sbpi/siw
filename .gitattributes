@@ -591,7 +591,6 @@ Fontes_PHP_SIW/classes/sp/db_getEtapaOrder.php -text
 Fontes_PHP_SIW/classes/sp/db_getEtniaData.php -text
 Fontes_PHP_SIW/classes/sp/db_getEtniaList.php -text
 Fontes_PHP_SIW/classes/sp/db_getEventoTrigger.php -text
-Fontes_PHP_SIW/classes/sp/db_getFeriado.php -text
 Fontes_PHP_SIW/classes/sp/db_getFinancAcaoPPA_IS.php -text
 Fontes_PHP_SIW/classes/sp/db_getFoneData.php -text
 Fontes_PHP_SIW/classes/sp/db_getFoneList.php -text
