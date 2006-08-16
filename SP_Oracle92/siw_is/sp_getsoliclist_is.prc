@@ -117,7 +117,8 @@ begin
                 0 sq_acao_ppa, 0 sq_orprioridade,
                 r.cd_acao,          r.sq_siw_solicitacao sq_solic_acao, 
                 r.cd_programa,      r.cd_unidade,
-                d2.limite_orcamento                
+                d2.limite_orcamento,
+                to_char(b.fim, 'DD/MM/YYYY, HH24:MI:SS') phpdt_fim           
            from siw.siw_menu                                       a 
                    inner        join siw.eo_unidade                a2 on (a.sq_unid_executora        = a2.sq_unidade)
                      left outer join siw.eo_unidade_resp           a3 on (a2.sq_unidade              = a3.sq_unidade and
@@ -252,7 +253,8 @@ begin
                 upper(r.nm_coordenador) nm_coordenador,              r1.cd_unidade,
                 r1.cd_unidade||'.'||r.cd_programa||'.'||r.cd_acao cd_acao_completa,
                 r2.previsao_ano,      r2.atual_ano,                  r2.real_ano,
-                r2.flag_alteracao dt_carga_financ
+                r2.flag_alteracao dt_carga_financ,
+                to_char(b.fim, 'DD/MM/YYYY, HH24:MI:SS') phpdt_fim
            from siw.siw_menu                                       a 
                    inner        join siw.eo_unidade                a2 on (a.sq_unid_executora        = a2.sq_unidade)
                      left outer join siw.eo_unidade_resp           a3 on (a2.sq_unidade              = a3.sq_unidade and
@@ -395,7 +397,8 @@ begin
                 o.nome_resumido nm_solic,
                 p.nome_resumido nm_exec,
                 Nvl(q.existe,0) resp_etapa,
-                r.cd_programa,        r.nm_gerente_programa
+                r.cd_programa,        r.nm_gerente_programa,
+                to_char(b.fim, 'DD/MM/YYYY, HH24:MI:SS') phpdt_fim
            from siw.siw_menu                                       a 
                    inner        join siw.eo_unidade                a2 on (a.sq_unid_executora        = a2.sq_unidade)
                      left outer join siw.eo_unidade_resp           a3 on (a2.sq_unidade              = a3.sq_unidade and

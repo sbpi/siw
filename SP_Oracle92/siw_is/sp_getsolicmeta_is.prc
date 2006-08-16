@@ -177,37 +177,39 @@ begin
                 inner          join siw.eo_unidade      g on (i.sq_unidade         = g.sq_unidade)
                 left outer     join is_acao             h on (a.sq_siw_solicitacao = h.sq_siw_solicitacao)
                 left outer     join (select x.ano, x.cliente, x.cd_programa, x.cd_acao, y.cd_subacao, z.descricao_subacao,
-                        w.cd_unidade, 
-                        x.real_mes_1, x.real_mes_2, x.real_mes_3, x.real_mes_4, x.real_mes_5,
-                        x.real_mes_6, x.real_mes_7, x.real_mes_8, x.real_mes_9, x.real_mes_10,
-                        x.real_mes_11, x.real_mes_12, x.previsao_ano, x.atual_ano, x.real_ano,
-                        x.cron_ini_mes_1 valor_ini_1, x.cron_ini_mes_2 valor_ini_2, x.cron_ini_mes_3 valor_ini_3, x.cron_ini_mes_4 valor_ini_4, 
-                        x.cron_ini_mes_5 valor_ini_5, x.cron_ini_mes_6 valor_ini_6, x.cron_ini_mes_7 valor_ini_7, x.cron_ini_mes_8 valor_ini_8, 
-                        x.cron_ini_mes_9 valor_ini_9, x.cron_ini_mes_10 valor_ini_10, x.cron_ini_mes_11 valor_ini_11, x.cron_ini_mes_12 valor_ini_12, 
-                        v.cron_ini_mes_1, v.cron_ini_mes_2, v.cron_ini_mes_3, v.cron_ini_mes_4,
-                        v.cron_ini_mes_5, v.cron_ini_mes_6, v.cron_ini_mes_7, v.cron_ini_mes_8,
-                        v.cron_ini_mes_9, v.cron_ini_mes_10, v.cron_ini_mes_11, v.cron_ini_mes_12
-                   from is_acao                w,
-                        is_sig_dado_financeiro x,
-                        is_sig_dado_fisico     v,                        
-                        is_meta                y,
-                        is_sig_acao            z
-                  where w.sq_siw_solicitacao = p_chave
-                    and y.sq_meta            = p_chave_aux
-                    and y.sq_siw_solicitacao  = w.sq_siw_solicitacao
-                    and (w.cd_programa        = x.cd_programa     and
-                         w.cd_acao            = x.cd_acao         and
-                         x.cd_subacao  (+)    = w_cd_subacao)
-                    and (w.cd_programa        = v.cd_programa (+) and
-                         w.cd_acao            = v.cd_acao     (+) and
-                         v.cd_subacao  (+)    = w_cd_subacao)                         
-                    and (w.cd_programa        = z.cd_programa     and
-                         w.cd_acao            = z.cd_acao         and
-                         w.cd_subacao         = z.cd_subacao      and
-                         w.ano                = z.ano             and
-                         w.cliente            = z.cliente         and
-                         z.cd_subacao  (+)    = w_cd_subacao)
-                                  )                     m on (h.cd_programa        = m.cd_programa and
+                                            w.cd_unidade, 
+                                            x.real_mes_1, x.real_mes_2, x.real_mes_3, x.real_mes_4, x.real_mes_5,
+                                            x.real_mes_6, x.real_mes_7, x.real_mes_8, x.real_mes_9, x.real_mes_10,
+                                            x.real_mes_11, x.real_mes_12, x.previsao_ano, x.atual_ano, x.real_ano,
+                                            x.cron_ini_mes_1 valor_ini_1, x.cron_ini_mes_2 valor_ini_2, x.cron_ini_mes_3 valor_ini_3, x.cron_ini_mes_4 valor_ini_4, 
+                                            x.cron_ini_mes_5 valor_ini_5, x.cron_ini_mes_6 valor_ini_6, x.cron_ini_mes_7 valor_ini_7, x.cron_ini_mes_8 valor_ini_8, 
+                                            x.cron_ini_mes_9 valor_ini_9, x.cron_ini_mes_10 valor_ini_10, x.cron_ini_mes_11 valor_ini_11, x.cron_ini_mes_12 valor_ini_12, 
+                                            v.cron_ini_mes_1, v.cron_ini_mes_2, v.cron_ini_mes_3, v.cron_ini_mes_4,
+                                            v.cron_ini_mes_5, v.cron_ini_mes_6, v.cron_ini_mes_7, v.cron_ini_mes_8,
+                                            v.cron_ini_mes_9, v.cron_ini_mes_10, v.cron_ini_mes_11, v.cron_ini_mes_12
+                                       from is_acao                w,
+                                            is_sig_dado_financeiro x,
+                                            is_sig_dado_fisico     v,                        
+                                            is_meta                y,
+                                            is_sig_acao            z
+                                      where w.sq_siw_solicitacao = p_chave
+                                        and y.sq_meta            = p_chave_aux
+                                        and y.sq_siw_solicitacao  = w.sq_siw_solicitacao
+                                        and (w.cd_programa        = x.cd_programa     and
+                                             w.cd_acao            = x.cd_acao         and
+                                             w.ano                = x.ano             and
+                                             x.cd_subacao  (+)    = w_cd_subacao)
+                                        and (w.cd_programa        = v.cd_programa (+) and
+                                             w.cd_acao            = v.cd_acao     (+) and
+                                             w.ano                = v.ano         (+) and
+                                             v.cd_subacao  (+)    = w_cd_subacao)                         
+                                        and (w.cd_programa        = z.cd_programa     and
+                                             w.cd_acao            = z.cd_acao         and
+                                             w.cd_subacao         = z.cd_subacao      and
+                                             w.ano                = z.ano             and
+                                             w.cliente            = z.cliente         and
+                                             z.cd_subacao  (+)    = w_cd_subacao)
+                                    )                   m on (h.cd_programa        = m.cd_programa and
                                                               h.cd_acao            = m.cd_acao     and
                                                               h.cliente            = m.cliente     and
                                                               h.ano                = m.ano)

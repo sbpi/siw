@@ -211,9 +211,11 @@ begin
                     and w.sq_siw_solicitacao  = w.sq_siw_solicitacao
                     and (w.cd_programa        = x.cd_programa (+) and
                          w.cd_acao            = x.cd_acao     (+) and
+                         w.ano                = x.ano         (+) and
                          x.cd_subacao(+)      = w_cd_subacao)
                     and (w.cd_programa        = v.cd_programa (+) and
                          w.cd_acao            = v.cd_acao     (+) and
+                         w.ano                = v.ano         (+) and
                          v.cd_subacao(+)      = w_cd_subacao)
                     and (w.cd_programa        = z.cd_programa     and
                          w.cd_acao            = z.cd_acao         and
