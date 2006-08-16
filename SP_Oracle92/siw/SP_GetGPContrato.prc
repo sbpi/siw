@@ -70,7 +70,13 @@ begin
                                                                                                                                                                                                                                 start with sq_unidade = p_unidade_exercicio
                                                                                                                                                                                                                                 connect by prior sq_unidade = sq_unidade_pai)))))
            and (p_afastamento          is null or (p_afastamento         is not null and f.sq_tipo_afastamento in (x_afastamento)))
-           and (p_dt_ini               is null or (p_dt_ini              is not null and (f.inicio_data between p_dt_ini and p_dt_fim) or (f.fim_data between p_dt_ini and p_dt_fim)));
+           and (p_dt_ini               is null or (p_dt_ini              is not null and ((f.inicio_data           between p_dt_ini      and p_dt_fim)   or
+                                                                                          (Nvl(f.fim_data,sysdate) between p_dt_ini      and p_dt_fim)   or
+                                                                                          (p_dt_ini                between f.inicio_data and Nvl(f.fim_data,sysdate)) or
+                                                                                          (p_dt_fim                between f.inicio_data and Nvl(f.fim_data,sysdate))
+                                                                                         )
+                                                   )
+                );
    End If;
 end SP_GetGPContrato;
 /

@@ -1,17 +1,17 @@
 create or replace procedure SP_PutSiwUsuario
    (p_operacao            in  varchar2,
     p_chave               in  number   default null,
-    p_cliente             in  number,
-    p_nome                in  varchar2,
-    p_nome_resumido       in  varchar2,
-    p_vinculo             in  number,
-    p_tipo_pessoa         in  varchar2,
-    p_unidade             in  number,
-    p_localizacao         in  number,
-    p_username            in  varchar2,
-    p_email               in  varchar2,
-    p_gestor_seguranca    in  varchar2,
-    p_gestor_sistema      in  varchar2
+    p_cliente             in  number   default null,
+    p_nome                in  varchar2 default null,
+    p_nome_resumido       in  varchar2 default null,
+    p_vinculo             in  number   default null,
+    p_tipo_pessoa         in  varchar2 default null,
+    p_unidade             in  number   default null,
+    p_localizacao         in  number   default null,
+    p_username            in  varchar2 default null,
+    p_email               in  varchar2 default null,
+    p_gestor_seguranca    in  varchar2 default null,
+    p_gestor_sistema      in  varchar2 default null
    ) is
    w_existe number(18);
    w_chave  number(18);
@@ -96,4 +96,3 @@ begin
    commit;
 end SP_PutSiwUsuario;
 /
-
