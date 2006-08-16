@@ -93,7 +93,8 @@ begin
             and (f.sq_unidade     = g.sq_unidade     (+))
             and a.cliente  = p_cliente
             and ((p_chave  is null) or (p_chave is not null and a.sq_pessoa    = p_chave))
-            and ((p_nome   is null) or (p_nome  is not null and (b.nome_indice like '%'||acentos(p_nome)||'%' or b.nome_resumido_ind like '%'||acentos(p_nome)||'%')));
+            and ((p_nome   is null) or (p_nome  is not null and (b.nome_indice like '%'||acentos(p_nome)||'%' or b.nome_resumido_ind like '%'||acentos(p_nome)||'%')))
+            and (p_ativo       is null or (p_ativo    = 'S' and e.fim is null));
    ElsIf p_restricao = 'AFASTAMENTO' Then
       -- Recupera os colaboradores que estão ligados a um afastamento
       open p_result for 
