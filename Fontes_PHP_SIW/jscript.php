@@ -560,8 +560,13 @@ function Validate($VariableName,$DisplayName,$DataType,$ValueRequired,$MinimumLe
     print "  if (!allValid)"."\r\n";
     print "  {"."\r\n";
     if     ($AllowLetters>"" && $AllowDigits>"")  { print "    alert('Você digitou caracteres inválidos no campo ".$DisplayName.".');"."\r\n"; }
-    elseif ($AllowLetters>"" && $AllowDigits=="") { print "    alert('Favor digitar apenas letras no campo ".$DisplayName.".');"."\r\n"; }
-    elseif ($AllowLetters=="" && $AllowDigits>"") { print "    alert('Favor digitar apenas números no campo ".$DisplayName.".');"."\r\n"; }
+    elseif ($AllowLetters>"" && $AllowDigits=="") { 
+      if ($AllowLetters == "1") { 
+        print "    alert('Favor digitar apenas letras no campo ".$DisplayName.".');"."\r\n"; 
+      } else {
+        print "    alert('O campo ".$DisplayName." aceita apenas os caracteres abaixo.\\n".$AllowLetters."');"."\r\n"; 
+      }
+    } elseif ($AllowLetters=="" && $AllowDigits>"") { print "    alert('Favor digitar apenas números no campo ".$DisplayName.".');"."\r\n"; }
 
     if (strtoupper($DataType)!="HIDDEN") { print "    theForm.".$VariableName.".focus();"."\r\n"; }
     print "    return (false);"."\r\n";

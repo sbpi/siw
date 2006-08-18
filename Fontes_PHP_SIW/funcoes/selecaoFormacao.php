@@ -15,9 +15,9 @@ function selecaoFormacao($label,$accesskey,$hint,$chave,$chaveAux,$campo,$restri
   ShowHTML('          <option value="">---');
   foreach ($RS as $row) {
     if (nvl(f($row,'sq_formacao'),0)==nvl($chave,0)) {
-      ShowHTML('          <option value="'.f($row,'sq_formacao').'" SELECTED>'.f($row,'Nome'));
+      ShowHTML('          <option value="'.f($row,'sq_formacao').'" SELECTED>'.f($row,'nome'));
     } else {
-      ShowHTML('          <option value="'.f($row,'sq_formacao').'">'.f($row,'Nome'));
+      ShowHTML('          <option value="'.f($row,'sq_formacao').'">'.f($row,'nome'));
     } 
   } 
   ShowHTML('          </select>'); 

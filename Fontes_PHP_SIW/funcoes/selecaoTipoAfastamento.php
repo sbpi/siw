@@ -11,10 +11,10 @@ function selecaoTipoAfastamento($label,$accesskey,$hint,$chave,$chaveAux,$campo,
   } else {
     $RS = db_getGPTipoAfast::getInstanceOf($dbms,$w_cliente,null,null,null,null,null,null);
     $RS = SortArray($RS,'nome','asc');
-  } if (Nvl($hint),'')>'') {
-    ShowHTML('          <td valign="top"><font size="1"><b>'.$Label.'</b><br><SELECT ACCESSKEY="'.$accesskey.'" CLASS="STS" NAME="'.$campo.'" '.$w_Disabled.' '.$atributo.'>');
+  } if (Nvl($hint,'')>'') {
+    ShowHTML('          <td valign="top"><font size="1"><b>'.$label.'</b><br><SELECT ACCESSKEY="'.$accesskey.'" CLASS="STS" NAME="'.$campo.'" '.$w_Disabled.' '.$atributo.'>');
   } else {
-    ShowHTML('          <td valign="top" title="'.$hint.'"><font size="1"><b>'.$Label.'</b><br><SELECT ACCESSKEY="'.$accesskey.'" CLASS="STS" NAME="'.$campo.'" '.$w_Disabled.' '.$atributo.'>');
+    ShowHTML('          <td valign="top" title="'.$hint.'"><font size="1"><b>'.$label.'</b><br><SELECT ACCESSKEY="'.$accesskey.'" CLASS="STS" NAME="'.$campo.'" '.$w_Disabled.' '.$atributo.'>');
   } 
   ShowHTML('          <option value="">---');
   foreach ($RS as $row) {

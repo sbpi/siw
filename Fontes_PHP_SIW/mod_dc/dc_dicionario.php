@@ -155,7 +155,7 @@ function Arquivos() {
     $w_sq_arquivo   = $_REQUEST['w_sq_arquivo'];
   } elseif ($O=='L') {
     // Recupera todos os registros para a listagem
-    $RS = db_getArquivo::getInstanceOf($dbms,$w_cliente,null,$p_sq_sistema,$p_nome,$p_tipo_arquivo);
+    $RS = db_getArquivo::getInstanceOf($dbms,$w_cliente,null,$p_sq_sistema,$p_nome,null, $p_tipo_arquivo);
     if ($p_ordena>'') {
       $lista = explode(',',str_replace(' ',',',$p_ordena));
       $RS = SortArray($RS,$lista[0],$lista[1],'nm_arquivo','asc');    
@@ -164,7 +164,7 @@ function Arquivos() {
     }
   } elseif (!(strpos('AEV',$O)===false) && $w_troca=='') {
     // Recupera os dados do Endereço informado
-    $RS = db_getArquivo::getInstanceOf($dbms,$w_cliente,$w_chave,null,null,null);
+    $RS = db_getArquivo::getInstanceOf($dbms,$w_cliente,$w_chave,null,null,null,null);
     foreach ($RS as $row) {
       $w_sq_sistema   = f($row,'sq_sistema');
       $w_nome         = strtolower(f($row,'nm_arquivo'));

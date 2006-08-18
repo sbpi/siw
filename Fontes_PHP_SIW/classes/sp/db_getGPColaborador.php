@@ -10,7 +10,7 @@ include_once($w_dir_volta.'classes/db/DatabaseQueriesFactory.php');
 */
 
 class db_getGPColaborador {
-   function getInstanceOf($dbms, $p_cliente, $p_chave, $p_nome, $p_ativo, $p_modalidade_contrato, $p_unidade_lotacao, $p_filhos_lotacao, $p_unidade_exercicio, $p_filhos_exercicio, $p_afastamento, $p_dt_ini, $p_dt_fim, $p_ferias, $p_viagem, $p_chave_aux, $p_restricao) {
+   function getInstanceOf($dbms, $p_cliente, $p_chave, $p_nome, $p_ativo, $p_modalidade_contrato, $p_unidade_lotacao, $p_filhos_lotacao, $p_unidade_exercicio, $p_filhos_exercicio, $p_afastamento, $p_dt_ini, $p_dt_fim, $p_ferias, $p_viagem, $p_chave_aux, $p_restricao) {                                                
      extract($GLOBALS,EXTR_PREFIX_SAME,'strchema');
      $sql=$strschema.'SP_GETGPCOLABORADOR';
      $params=array('p_cliente'                   =>array($p_cliente,                                       B_INTEGER,        32),

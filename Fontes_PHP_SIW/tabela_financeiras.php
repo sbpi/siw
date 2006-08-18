@@ -17,8 +17,8 @@ include_once('classes/sp/db_verificaAssinatura.php');
 include_once('classes/sp/dml_CtCc.php');
 include_once('classes/sp/dml_CoBanco.php');
 include_once('classes/sp/dml_CoAgencia.php');
-include_once('funcoes/selecaoCcSubordination.php');
-include_once('funcoes/selecaoCc.php');
+include_once('funcoes/selecaoCCSubordination.php');
+include_once('funcoes/selecaoCC.php');
 include_once('funcoes/selecaoBanco.php');
 
 // =========================================================================

@@ -35,7 +35,7 @@ class dml_putCVIdent {
                    'p_cpf'                       =>array($p_cpf,                                           B_VARCHAR,        14),
                    'p_passaporte_numero'         =>array(tvl($p_passaporte_numero),                        B_VARCHAR,        20),
                    'p_sq_pais_passaporte'        =>array(tvl($p_sq_pais_passaporte),                       B_INTEGER,        32),
-                   'p_chave_nova'                =>array(null,                                             B_INTEGER,        32)
+                   'p_chave_nova'                =>array(&$p_chave_nova,                                   B_INTEGER,        32)
                   );
      $l_rs = DatabaseQueriesFactory::getInstanceOf($sql, $dbms, $params, DB_TYPE);
      $l_error_reporting = error_reporting(); 

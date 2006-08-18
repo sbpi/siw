@@ -12,7 +12,7 @@ include_once('classes/sp/db_getCustomerSite.php');
 include_once('classes/sp/db_getLinkSubMenu.php');
 include_once('classes/sp/db_getLinkDataParent.php');
 include_once('classes/sp/db_getUserData.php');
-include_once('classes/sp/db_verificaSenha.php');
+include_once('classes/sp/db_verificasenha.php');
 include_once('classes/sp/db_verificaAssinatura.php');
 include_once('classes/sp/db_updatePassword.php');
 include_once('classes/sp/db_getSiwCliModLis.php');
@@ -121,7 +121,7 @@ function ExibeDocs() {
 
         $RS1 = DB_GetLinkDataUser::getInstanceOf($dbms, $p_cliente, $sq_pessoa, f($row,'sq_menu'));
         foreach ($RS1 as $row1) {
-          $w_titulo=$w_titulo.' - '.f($row1,'NOME');
+          $w_titulo .= ' - '.f($row1,'NOME');
           if (f($row1,'Filho') >0) {
 
             eval('$node'.i.'_'.j.' = &$node'.i.'->addItem(new XNode(f($row1,\'nome\'),false));');
@@ -129,7 +129,7 @@ function ExibeDocs() {
             $RS2 = DB_GetLinkDataUser::getInstanceOf($dbms, $p_cliente, $sq_pessoa, f($row1,'sq_menu'));
             foreach ($RS2 as $row2) {
 
-              $w_titulo=$w_titulo.' - '.f($row2,'NOME');
+              $w_titulo .= ' - '.f($row2,'NOME');
               if (f($row2,'Filho') > 0) {
 
                 eval('$node'.i.'_'.j.'_'.k.' = &$node'.i.'_'.j.'->addItem(new XNode(f($row2,\'nome\'),false));');
@@ -137,7 +137,7 @@ function ExibeDocs() {
                 $RS3 = DB_GetLinkDataUser::getInstanceOf($dbms, $p_cliente, $sq_pessoa, f($row2,'sq_menu'));
                 foreach ($RS3 as $row3) {
 
-                  $w_titulo=$w_titulo.' - '.f($row3,'NOME');
+                  $w_titulo .= ' - '.f($row3,'NOME');
                   if (f($row3,'IMAGEM') > '') $w_Imagem=f($row3,'IMAGEM'); else $w_Imagem=$w_ImagemPadrao;
                   if (f($row3,'link')>'') {
                     if (f($row3,'externo')=='S') {
@@ -153,7 +153,7 @@ function ExibeDocs() {
                     eval('$node'.i.'_'.j.'_'.k.'_'.l.' = &$node'.i.'_'.j.'_'.k.'->addItem(new XNode(null,null,null,null,\'<img src="\'.$w_Imagem.\'" border=0>\'.f($row3,\'nome\'),null,null,null,null));');
                   }
                   $w_titulo=str_replace(' - '.f($row3,'NOME'),'',$w_titulo);
-                  $l = $l + 1;
+                  $l += 1;
                 }
               } else {
                 if (f($row2,'IMAGEM')>'') $w_Imagem=f($row2,'IMAGEM'); else $w_Imagem=$w_ImagemPadrao;
@@ -172,7 +172,7 @@ function ExibeDocs() {
                 }
               }
               $w_titulo=str_replace(' - '.f($row2,'NOME'),'',$w_titulo);
-              $k = $k + 1;
+              $k += 1;
             }
           } else {
             if (f($row1,'IMAGEM')>'') $w_Imagem=f($row1,'IMAGEM'); else $w_Imagem=$w_ImagemPadrao;
@@ -191,7 +191,7 @@ function ExibeDocs() {
             }
           }
           $w_titulo=str_replace(' - '.f($row1,'NOME'),'',$w_titulo);
-          $j = $j + 1;
+          $j += 1;
         }
       } else {
         if (f($row,'IMAGEM')>'') $w_Imagem=f($row,'IMAGEM'); else $w_Imagem=$w_ImagemPadrao;
@@ -210,7 +210,7 @@ function ExibeDocs() {
           eval('$node'.i.' = &$root->addItem(new XNode(null,null,null,null,\'<img src="\'.$w_Imagem.\'" border=0>\'.f($row,\'nome\'),null,null,null,null));');
         }
       }
-      $i = $i +1;
+      $i += 1;
     }
   } else {
     // Se for montagem de sub-menu para uma opção do menu principal
@@ -268,7 +268,6 @@ function ExibeDocs() {
   // - Exiba o código HTML gerado anteriormente
   ShowHTML('<html>');
   ShowHTML('<head>');
-  ShowHTML('  <title>XpandMenu Multi-level</title>');
   ShowHTML('  <!-- CSS FILE for my tree-view menu -->');
   ShowHTML('  <link rel="stylesheet" type="text/css" href="classes/menu/xPandMenu.css">');
   ShowHTML('  <!-- JS FILE for my tree-view menu -->');

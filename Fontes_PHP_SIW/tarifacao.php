@@ -270,7 +270,7 @@ function Informar(){
     ShowHTML('<tr><td>');
     if ($P1!=3){
       // Se não for inclusão
-      ShowHTML('      <tr><td><font size="2"><a accesskey="I" class="SS" href="'.$w_pagina.$par.'&R='.$w_pagina.$par.'&O=I&P1='.$P1.'&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP='.$TP.'&SG='.$SG.MontaFiltro('GET').MontaFiltro('GET').'"><u>I</u>ncluir</a>&nbsp;');
+      ShowHTML('      <tr><td><a accesskey="I" class="SS" href="'.$w_pagina.$par.'&R='.$w_pagina.$par.'&O=I&P1='.$P1.'&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP='.$TP.'&SG='.$SG.MontaFiltro('GET').MontaFiltro('GET').'"><u>I</u>ncluir</a>&nbsp;');
     } 
     if ($p_sq_cc.$p_outra_parte_contato.$p_ativo.$p_numero.$p_inicio.$p_fim.$p_ordena>''){
       ShowHTML('                         <a accesskey="F" class="SS" href="'.$w_pagina.$par.'&R='.$w_pagina.$par.'&O=P&P1='.$P1.'&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP='.$TP.'&SG='.$SG.MontaFiltro('GET').'"><u><font color="#BC5100">F</u>iltrar (Ativo)</font></a>');
@@ -304,7 +304,7 @@ function Informar(){
     ShowHTML('          <td><b>Operações</td>');
     ShowHTML('        </tr>');
     if (count($RS) <= 0) {
-      ShowHTML('      <tr bgcolor="'.$conTrBgColor.'"><td colspan=12 align="center"><font size="2"><b>Não foram encontrados registros.</b></td></tr>');
+      ShowHTML('      <tr bgcolor="'.$conTrBgColor.'"><td colspan=12 align="center"><b>Não foram encontrados registros.</b></td></tr>');
     } else {
       $RS1 = array_slice($RS, (($P3-1)*$P4), $P4);
       foreach ($RS1 as $row) {
@@ -475,7 +475,7 @@ function Informar(){
         SelecaoCC('<u>C</u>entro de custo:','C','Selecione na lista a classificação à qual a ligação está vinculada.',$w_sq_cc,$w_sq_central_telefonica,'w_sq_cc','TTCENTRAL');
         ShowHTML('      </tr>');
         if ($w_responsavel>''){
-          ShowHTML('      <tr><td><b>Responsável pela ligação:<br><font size=2>'.$w_responsavel.'</td>');
+          ShowHTML('      <tr><td><b>Responsável pela ligação:<br>'.$w_responsavel.'</td>');
         } 
         ShowHTML('      <tr><td><b><U>P</U>essoa de contato:<br><INPUT ACCESSKEY="P" '.$w_Disabled.' class="sti" type="text" name="w_outra_parte_contato" size="60" maxlength="60" value="'.$w_outra_parte_contato.'" '.$w_Disabled.'></td>');
         ShowHTML('      <tr><td>'.str_replace(chr(13).chr(10),'<BR>',$w_texto));
@@ -509,7 +509,7 @@ function Informar(){
     ShowHTML('<INPUT type="hidden" name="SG" value="'.$SG.'">');
     ShowHTML('<INPUT type="hidden" name="R"  value="'.$R.'">');
     ShowHTML('<INPUT type="hidden" name="O"  value="L">');
-    ShowHTML('<tr bgcolor="'.$conTrBgColor.'"><td><div align="justify"><font size=2>Informe nos campos abaixo os valores que deseja filtrar e clique sobre o botão <i>Aplicar filtro</i> Clicando sobre o botão <i>Remover filtro</i>, o filtro existente será apagado.</div><hr>');
+    ShowHTML('<tr bgcolor="'.$conTrBgColor.'"><td><div align="justify">Informe nos campos abaixo os valores que deseja filtrar e clique sobre o botão <i>Aplicar filtro</i> Clicando sobre o botão <i>Remover filtro</i>, o filtro existente será apagado.</div><hr>');
     ShowHTML('<tr bgcolor="'.$conTrBgColor.'"><td align="center">');
     ShowHTML('    <table width="90%" border="0">');
     ShowHTML('      <tr align="left"><td><table width="100%" cellpadding=0 cellspacing=0><tr valign="top">');
@@ -576,7 +576,7 @@ function Informar(){
     ShowHTML('<INPUT type="hidden" name="SG" value="'.$SG.'">');
     ShowHTML('<INPUT type="hidden" name="R" value="'.$R.'">');
     ShowHTML('<INPUT type="hidden" name="O" value="'.$O.'">');
-    ShowHTML('<tr bgcolor="'.$conTrBgColor.'"><td><div align="justify"><font size=2>Informe nos campos abaixo os valores que deseja filtrar e clique sobre o botão <i>Exibir resumo</i>. Clicando sobre o botão <i>Voltar a informar</i>, o filtro existente será apagado e será exibida a tela com as ligações a informar.</div><hr>');
+    ShowHTML('<tr bgcolor="'.$conTrBgColor.'"><td><div align="justify">Informe nos campos abaixo os valores que deseja filtrar e clique sobre o botão <i>Exibir resumo</i>. Clicando sobre o botão <i>Voltar a informar</i>, o filtro existente será apagado e será exibida a tela com as ligações a informar.</div><hr>');
     ShowHTML('<tr bgcolor="'.$conTrBgColor.'"><td align="center">');
     ShowHTML('    <table width="90%" border="0">');
     ShowHTML('      <tr align="left"><td><table width="100%" cellpadding=0 cellspacing=0><tr valign="top">');
@@ -624,7 +624,7 @@ function Informar(){
             // Se não for arquivo
         $RS = db_getCall::getInstanceOf($dbms,null,$w_usuario,$P1,'PESSOAS',$p_sq_cc,$p_outra_parte_contato,$p_numero,$p_inicio,$p_fim,$p_ativo);
         $RS = SortArray($RS,'dura_tot','desc');
-        ShowHTML('<tr bgcolor="'.$conTrBgColor.'"><td><font size=2><b>Resumo comparativo por ligações particulares</b>&nbsp;&nbsp;&nbsp;');
+        ShowHTML('<tr bgcolor="'.$conTrBgColor.'"><td><b>Resumo comparativo por ligações particulares</b>&nbsp;&nbsp;&nbsp;');
         ShowHTML('<tr bgcolor="'.$conTrBgColor.'"><td align="center">');
         ShowHTML('    <TABLE WIDTH="90%" align="center" BORDER=1 CELLSPACING="'.$conTableCellSpacing.'" CELLPADDING="'.$conTableCellPadding.'" BorderColorDark="'.$conTableBorderColorDark.'" BorderColorLight="'.$conTableBorderColorLight.'">');
         ShowHTML('        <tr align="center">');
@@ -641,7 +641,7 @@ function Informar(){
         ShowHTML('          <td><b>NAT</td>');
         ShowHTML('          <td><b>TOT</td>');
         if (count($RS)<=0){
-          ShowHTML('      <tr bgcolor="'.$conTrBgColor.'"><td colspan=10 align="center"><font size="2"><b>Não foram encontrados registros.</b></td></tr>');
+          ShowHTML('      <tr bgcolor="'.$conTrBgColor.'"><td colspan=10 align="center"><b>Não foram encontrados registros.</b></td></tr>');
         } else {
           $w_cor=$conTrAlternateBgColor;
           foreach($RS as $row) {
@@ -666,9 +666,9 @@ function Informar(){
       ShowHTML('    </TABLE>');
       ShowHTML('    </TD>');
       ShowHTML('</tr>');
-      ShowHTML('<tr bgcolor="'.$conTrBgColor.'"><td><font size=2><br><br></td></tr>');
+      ShowHTML('<tr bgcolor="'.$conTrBgColor.'"><td><br><br></td></tr>');
       $RS = db_getCall::getInstanceOf($dbms,null,$w_sq_usuario_central,$P1,'GERAL',$p_sq_cc,$p_outra_parte_contato,$p_numero,$p_inicio,$p_fim,$p_ativo);
-      ShowHTML('<tr bgcolor="'.$conTrBgColor.'"><td><font size=2><b>Resumo geral</b>&nbsp;&nbsp;&nbsp;<a accesskey="F" class="SS" href="'.$w_pagina.$par.'&R='.$w_pagina.$par.'&O=L&P1='.$P1.'&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP='.$TP.'&SG='.$SG.MontaFiltro('GET').'">[Exibir ligações]</a>');
+      ShowHTML('<tr bgcolor="'.$conTrBgColor.'"><td><b>Resumo geral</b>&nbsp;&nbsp;&nbsp;<a accesskey="F" class="SS" href="'.$w_pagina.$par.'&R='.$w_pagina.$par.'&O=L&P1='.$P1.'&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP='.$TP.'&SG='.$SG.MontaFiltro('GET').'">[Exibir ligações]</a>');
       ShowHTML('<tr bgcolor="'.$conTrBgColor.'"><td align="center">');
       ShowHTML('    <TABLE WIDTH="90%" align="center" BORDER=1 CELLSPACING="'.$conTableCellSpacing.'" CELLPADDING="'.$conTableCellPadding.'" BorderColorDark="'.$conTableBorderColorDark.'" BorderColorLight="'.$conTableBorderColorLight.'">');
       ShowHTML('        <tr align="center">');
@@ -685,7 +685,7 @@ function Informar(){
       ShowHTML('          <td><b>NAT</td>');
       ShowHTML('          <td><b>TOT</td>');
       if (count($RS)<=0){
-        ShowHTML('      <tr bgcolor="'.$conTrBgColor.'"><td colspan=10 align="center"><font size="2"><b>Não foram encontrados registros.</b></td></tr>');
+        ShowHTML('      <tr bgcolor="'.$conTrBgColor.'"><td colspan=10 align="center"><b>Não foram encontrados registros.</b></td></tr>');
       } else {
         $w_cor=$conTrBgColor;
         foreach($RS as $row) {
@@ -708,7 +708,7 @@ function Informar(){
       ShowHTML('    </TD>');
       ShowHTML('</tr>');
       $RS = db_getCall::getInstanceOf($dbms,null,$w_sq_usuario_central,$P1,'CTCC',$p_sq_cc,$p_outra_parte_contato,$p_numero,$p_inicio,$p_fim,$p_ativo);
-      ShowHTML('<tr bgcolor="'.$conTrBgColor.'"><td><font size=2><br><br><b>Resumo por Classificação</b>&nbsp;&nbsp;&nbsp;<a accesskey="F" class="SS" href="'.$w_pagina.$par.'&R='.$w_pagina.$par.'&O=L&P1='.$P1.'&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP='.$TP.'&SG='.$SG.MontaFiltro('GET').'">[Exibir ligações]</a>');
+      ShowHTML('<tr bgcolor="'.$conTrBgColor.'"><td><br><br><b>Resumo por Classificação</b>&nbsp;&nbsp;&nbsp;<a accesskey="F" class="SS" href="'.$w_pagina.$par.'&R='.$w_pagina.$par.'&O=L&P1='.$P1.'&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP='.$TP.'&SG='.$SG.MontaFiltro('GET').'">[Exibir ligações]</a>');
       ShowHTML('<tr bgcolor="'.$conTrBgColor.'"><td align="center">');
       ShowHTML('    <TABLE WIDTH="90%" align="center" BORDER=1 CELLSPACING="'.$conTableCellSpacing.'" CELLPADDING="'.$conTableCellPadding.'" BorderColorDark="'.$conTableBorderColorDark.'" BorderColorLight="'.$conTableBorderColorLight.'">');
       ShowHTML('        <tr align="center">');
@@ -725,7 +725,7 @@ function Informar(){
       ShowHTML('          <td><b>NAT</td>');
       ShowHTML('          <td><b>TOT</td>');
       if (count($RS)<=0){
-        ShowHTML('      <tr bgcolor="'.$conTrBgColor.'"><td colspan=10 align="center"><font size="2"><b>Não foram encontrados registros.</b></td></tr>');
+        ShowHTML('      <tr bgcolor="'.$conTrBgColor.'"><td colspan=10 align="center"><b>Não foram encontrados registros.</b></td></tr>');
       } else {
         $w_cor=$conTrBgColor;
         foreach($RS as $row) {
@@ -750,7 +750,7 @@ function Informar(){
       ShowHTML('    </TD>');
       ShowHTML('</tr>');
       $RS = db_getCall::getInstanceOf($dbms,null,$w_sq_usuario_central,$P1,'MES',$p_sq_cc,$p_outra_parte_contato,$p_numero,$p_inicio,$p_fim,$p_ativo);
-      ShowHTML('<tr bgcolor="'.$conTrBgColor.'"><td><font size=2><br><br><b>Resumo por mês</b>&nbsp;&nbsp;&nbsp;<a accesskey="F" class="SS" href="'.$w_pagina.$par.'&R='.$w_pagina.$par.'&O=L&P1='.$P1.'&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP='.$TP.'&SG='.$SG.MontaFiltro('GET').'">[Exibir ligações]</a>');
+      ShowHTML('<tr bgcolor="'.$conTrBgColor.'"><td><br><br><b>Resumo por mês</b>&nbsp;&nbsp;&nbsp;<a accesskey="F" class="SS" href="'.$w_pagina.$par.'&R='.$w_pagina.$par.'&O=L&P1='.$P1.'&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP='.$TP.'&SG='.$SG.MontaFiltro('GET').'">[Exibir ligações]</a>');
       ShowHTML('<tr bgcolor="'.$conTrBgColor.'"><td align="center">');
       ShowHTML('    <TABLE WIDTH="90%" align="center" BORDER=1 CELLSPACING="'.$conTableCellSpacing.'" CELLPADDING="'.$conTableCellPadding.'" BorderColorDark="'.$conTableBorderColorDark.'" BorderColorLight="'.$conTableBorderColorLight.'">');
       ShowHTML('        <tr align="center">');
@@ -767,7 +767,7 @@ function Informar(){
       ShowHTML('          <td><b>NAT</td>');
       ShowHTML('          <td><b>TOT</td>');
       if (count($RS)<=0){
-        ShowHTML('      <tr bgcolor="'.$conTrBgColor.'"><td colspan=10 align="center"><font size="2"><b>Não foram encontrados registros.</b></td></tr>');
+        ShowHTML('      <tr bgcolor="'.$conTrBgColor.'"><td colspan=10 align="center"><b>Não foram encontrados registros.</b></td></tr>');
       } else {
         $w_cor=$conTrBgColor;
         foreach($RS as $row) {
@@ -792,7 +792,7 @@ function Informar(){
       ShowHTML('    </TD>');
       ShowHTML('</tr>');
       $RS = db_getCall::getInstanceOf($dbms,null,$w_sq_usuario_central,$P1,'DIASEMANA',$p_sq_cc,$p_outra_parte_contato,$p_numero,$p_inicio,$p_fim,$p_ativo);
-      ShowHTML('<tr bgcolor="'.$conTrBgColor.'"><td><font size=2><br><br><b>Resumo por dia da semana</b>&nbsp;&nbsp;&nbsp;<a accesskey="F" class="SS" href="'.$w_pagina.$par.'&R='.$w_pagina.$par.'&O=L&P1='.$P1.'&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP='.$TP.'&SG='.$SG.MontaFiltro('GET').'">[Exibir ligações]</a>');
+      ShowHTML('<tr bgcolor="'.$conTrBgColor.'"><td><br><br><b>Resumo por dia da semana</b>&nbsp;&nbsp;&nbsp;<a accesskey="F" class="SS" href="'.$w_pagina.$par.'&R='.$w_pagina.$par.'&O=L&P1='.$P1.'&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP='.$TP.'&SG='.$SG.MontaFiltro('GET').'">[Exibir ligações]</a>');
       ShowHTML('<tr bgcolor="'.$conTrBgColor.'"><td align="center">');
       ShowHTML('    <TABLE WIDTH="90%" align="center" BORDER=1 CELLSPACING="'.$conTableCellSpacing.'" CELLPADDING="'.$conTableCellPadding.'" BorderColorDark="'.$conTableBorderColorDark.'" BorderColorLight="'.$conTableBorderColorLight.'">');
       ShowHTML('        <tr align="center">');
@@ -809,7 +809,7 @@ function Informar(){
       ShowHTML('          <td><b>NAT</td>');
       ShowHTML('          <td><b>TOT</td>');
       if (count($RS)<=0){
-        ShowHTML('      <tr bgcolor="'.$conTrBgColor.'"><td colspan=10 align="center"><font size="2"><b>Não foram encontrados registros.</b></td></tr>');
+        ShowHTML('      <tr bgcolor="'.$conTrBgColor.'"><td colspan=10 align="center"><b>Não foram encontrados registros.</b></td></tr>');
       } else {
         $w_cor=$conTrBgColor;
         foreach($RS as $row) {
@@ -834,7 +834,7 @@ function Informar(){
       ShowHTML('    </TD>');
       ShowHTML('</tr>');
       $RS = db_getCall::getInstanceOf($dbms,null,$w_sq_usuario_central,$P1,'DIAMES',$p_sq_cc,$p_outra_parte_contato,$p_numero,$p_inicio,$p_fim,$p_ativo);
-      ShowHTML('<tr bgcolor="'.$conTrBgColor.'"><td><font size=2><br><br><b>Resumo por dia do mês</b>&nbsp;&nbsp;&nbsp;<a accesskey="F" class="SS" href="'.$w_pagina.$par.'&R='.$w_pagina.$par.'&O=L&P1='.$P1.'&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP='.$TP.'&SG='.$SG.MontaFiltro('GET').'">[Exibir ligações]</a>');
+      ShowHTML('<tr bgcolor="'.$conTrBgColor.'"><td><br><br><b>Resumo por dia do mês</b>&nbsp;&nbsp;&nbsp;<a accesskey="F" class="SS" href="'.$w_pagina.$par.'&R='.$w_pagina.$par.'&O=L&P1='.$P1.'&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP='.$TP.'&SG='.$SG.MontaFiltro('GET').'">[Exibir ligações]</a>');
       ShowHTML('<tr bgcolor="'.$conTrBgColor.'"><td align="center">');
       ShowHTML('    <TABLE WIDTH="90%" align="center" BORDER=1 CELLSPACING="'.$conTableCellSpacing.'" CELLPADDING="'.$conTableCellPadding.'" BorderColorDark="'.$conTableBorderColorDark.'" BorderColorLight="'.$conTableBorderColorLight.'">');
       ShowHTML('        <tr align="center">');
@@ -851,7 +851,7 @@ function Informar(){
       ShowHTML('          <td><b>NAT</td>');
       ShowHTML('          <td><b>TOT</td>');
       if (count($RS)<=0){
-        ShowHTML('      <tr bgcolor="'.$conTrBgColor.'"><td colspan=10 align="center"><font size="2"><b>Não foram encontrados registros.</b></td></tr>');
+        ShowHTML('      <tr bgcolor="'.$conTrBgColor.'"><td colspan=10 align="center"><b>Não foram encontrados registros.</b></td></tr>');
       } else {
         $w_cor=$conTrBgColor;
         foreach($RS as $row) {

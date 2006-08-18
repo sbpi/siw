@@ -80,7 +80,7 @@ class Ora8ConnectionManager extends ConnectionManager {
    }
 
    function doConnection() {
-      if(!($this->conHandle = oci_connect($this->userName, $this->passWord, $this->hostName))){
+      if(!($this->conHandle = oci_new_connect($this->userName, $this->passWord, $this->hostName))){
          die("Cannot Connect to Host");
       }
    }
@@ -97,7 +97,7 @@ class Ora9ConnectionManager extends ConnectionManager {
 
    function doConnection() {
       $l_error_reporting = error_reporting(); error_reporting(0);
-      if(!($this->conHandle = oci_connect($this->userName, $this->passWord, $this->hostName))) { error_reporting($l_error_reporting); TrataErro($sql, oci_error(), $params, __FILE__, __LINE__, __CLASS__); }
+      if(!($this->conHandle = oci_new_connect($this->userName, $this->passWord, $this->hostName))) { error_reporting($l_error_reporting); TrataErro($sql, oci_error(), $params, __FILE__, __LINE__, __CLASS__); }
       else {
         error_reporting($l_error_reporting); 
       }

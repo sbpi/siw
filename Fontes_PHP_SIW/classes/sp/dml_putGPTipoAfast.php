@@ -10,9 +10,9 @@ include_once($w_dir_volta.'classes/db/DatabaseQueriesFactory.php');
 */
 
 class dml_putGPTipoAfast {
-   function getInstanceOf($dbms, $operacao, $p_chave, $p_cliente, $p_nome, $p_sigla, $p_limite_dias, $p_sexo, $p_percentual_pagamento, $p_contagem_dias, $p_periodo, $p_sobrepoe_ferias, $p_ativo, $p_fase) {
+   function getInstanceOf($dbms, $operacao, $p_chave, $p_cliente, $p_nome, $p_sigla, $p_limite_dias, $p_sexo, $p_perc_pag, $p_contagem_dias, $p_periodo, $p_sobrepoe_ferias, $p_ativo, $p_fase) {
      extract($GLOBALS,EXTR_PREFIX_SAME,'strchema');
-     $sql=$strschema.'SP_PUTGPTIPOAFAST';
+     $sql = $strschema.'SP_PUTGPTIPOAFAST';
      $params=array('p_operacao'                  =>array($operacao,                                        B_VARCHAR,         1),
                    'p_chave'                     =>array(tvl($p_chave),                                    B_INTEGER,        32),
                    'p_cliente'                   =>array(tvl($p_cliente),                                  B_INTEGER,        32),
@@ -20,7 +20,7 @@ class dml_putGPTipoAfast {
                    'p_sigla'                     =>array(tvl($p_sigla),                                    B_VARCHAR,         2),
                    'p_limite_dias'               =>array(tvl($p_limite_dias),                              B_INTEGER,        32),
                    'p_sexo'                      =>array(tvl($p_sexo),                                     B_VARCHAR,         1),
-                   'p_percentuap_pagamento'      =>array(toNumber(tvl($p_percentual_pagamento)),           B_NUMERIC,      18,2),
+                   'p_perc_pag'                  =>array(toNumber(tvl($p_perc_pag)),                       B_NUMERIC,      18,2),
                    'p_contagem_dias'             =>array(tvl($p_contagem_dias),                            B_VARCHAR,         1),
                    'p_periodo'                   =>array(tvl($p_periodo),                                  B_VARCHAR,         1),
                    'p_sobrepoe_ferias'           =>array(tvl($p_sobrepoe_ferias),                          B_VARCHAR,         1),

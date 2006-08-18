@@ -4,10 +4,10 @@
 // -------------------------------------------------------------------------
 function selecaoAbrangData($label,$accesskey,$hint,$chave,$chaveAux,$campo,$restricao,$atributo) {
   extract($GLOBALS);
-  if (Nvl($hint),'')>'') {
-    ShowHTML('          <td valign="top"><font size="1"><b>'.$Label.'</b><br><SELECT ACCESSKEY="'.$accesskey.'" CLASS="sts" NAME="'.$campo.'" '.$w_Disabled.' '.$atributo.'>');
+  if (Nvl($hint,'')>'') {
+    ShowHTML('          <td valign="top"><font size="1"><b>'.$label.'</b><br><SELECT ACCESSKEY="'.$accesskey.'" CLASS="sts" NAME="'.$campo.'" '.$w_Disabled.' '.$atributo.'>');
   } else {
-    ShowHTML('          <td valign="top" title="'.$hint.'"><font size="1"><b>'.$Label.'</b><br><SELECT ACCESSKEY="'.$accesskey.'" CLASS="sts" NAME="'.$campo.'" '.$w_Disabled.' '.$atributo.'>');
+    ShowHTML('          <td valign="top" title="'.$hint.'"><font size="1"><b>'.$label.'</b><br><SELECT ACCESSKEY="'.$accesskey.'" CLASS="sts" NAME="'.$campo.'" '.$w_Disabled.' '.$atributo.'>');
   } 
   ShowHTML('          <option value="">---');
   if (Nvl($chave,'')=='I') {

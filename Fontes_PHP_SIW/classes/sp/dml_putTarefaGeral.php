@@ -47,7 +47,7 @@ class dml_putTarefaGeral {
                    'p_atividade'                 =>array(tvl($p_atividade),                                B_INTEGER,        32),
                    'p_projeto_ant'               =>array(tvl($p_projeto_ant),                              B_INTEGER,        32),
                    'p_atividade_ant'             =>array(tvl($p_atividade_ant),                            B_INTEGER,        32),
-                   'p_chave_nova'                =>array(null,                                             B_INTEGER,        32)
+                   'p_chave_nova'                =>array(&$p_chave_nova,                                   B_INTEGER,        32)
                   );
      $l_rs = DatabaseQueriesFactory::getInstanceOf($sql, $dbms, $params, DB_TYPE);
      $l_error_reporting = error_reporting(); 

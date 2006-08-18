@@ -12,8 +12,8 @@ include_once($w_dir_volta.'classes/db/DatabaseQueriesFactory.php');
 class dml_putCargo {
    function getInstanceOf($dbms, $operacao, $p_chave, $p_cliente, $p_sq_tipo, $p_sq_formacao, $p_nome, $p_descricao, $p_atividades, $p_competencias, $p_salario_piso, $p_salario_teto, $p_ativo) {
      extract($GLOBALS,EXTR_PREFIX_SAME,'strchema');
-     $sql=$strschema.'SP_PUTCARGO';
-     $params=array('p_operacao'                  =>array($operacao,                                        B_VARCHAR,         1),
+     $sql = $strschema.'SP_PUTCARGO';
+     $params = array('p_operacao'                =>array($operacao,                                        B_VARCHAR,         1),
                    'p_chave'                     =>array(tvl($p_chave),                                    B_INTEGER,        32),
                    'p_cliente'                   =>array(tvl($p_cliente),                                  B_INTEGER,        32),
                    'p_sq_tipo'                   =>array(tvl($p_sq_tipo),                                  B_INTEGER,        32),

@@ -483,7 +483,7 @@ function Inicial() {
               ShowHTML('          <a accesskey="I" class="HL" href="'.$w_pagina.'Geral&R='.$w_pagina.$par.'&O=I&SG='.f($RS1,'sigla').'&w_menu='.$w_menu.'&P1='.$P1.'&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP='.$TP.'&w_copia='.f($row,'sq_siw_solicitacao').MontaFiltro('GET').'">Copiar</a>&nbsp;');
             } elseif ($P1==1) {
               // Se for cadastramento
-              if ($w_submenu>'') ShowHTML('          <A class="HL" HREF="Menu.php?par=ExibeDocs&O=A&w_chave='.f($row,'sq_siw_solicitacao').'&R='.$w_pagina.$par.'&SG='.$SG.'&TP='.$TP.'&w_documento=Nr. '.f($row,'sq_siw_solicitacao').MontaFiltro('GET').'" title="Altera as informações cadastrais do projeto" TARGET="menu">Alterar</a>&nbsp;');
+              if ($w_submenu>'') ShowHTML('          <A class="HL" HREF="menu.php?par=ExibeDocs&O=A&w_chave='.f($row,'sq_siw_solicitacao').'&R='.$w_pagina.$par.'&SG='.$SG.'&TP='.$TP.'&w_documento=Nr. '.f($row,'sq_siw_solicitacao').MontaFiltro('GET').'" title="Altera as informações cadastrais do projeto" TARGET="menu">Alterar</a>&nbsp;');
               else               ShowHTML('          <A class="HL" HREF="'.$w_pagina.$par.'&R='.$w_pagina.$par.'&O=A&w_chave='.f($row,'sq_siw_solicitacao').'&P1='.$P1.'&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP='.$TP.'&SG='.$SG.MontaFiltro('GET').'" title="Altera as informações cadastrais do projeto">Alterar</A>&nbsp');
               ShowHTML('          <A class="HL" HREF="'.$w_pagina.'Excluir&R='.$w_pagina.$par.'&O=E&w_chave='.f($row,'sq_siw_solicitacao').'&w_tipo=Volta&P1='.$P1.'&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP='.$TP.'&SG='.$SG.MontaFiltro('GET').'" title="Exclusão do projeto.">Excluir</A>&nbsp');
             } elseif ($P1==2 || $P1==6) {
@@ -614,7 +614,7 @@ function Inicial() {
         ShowHTML('          <td valign="top"><b>Exibe somente projetos em atraso?</b><br>');
         if ($p_atraso=='S') ShowHTML('              <input '.$w_Disabled.' class="STR" type="radio" name="p_atraso" value="S" checked> Sim <br><input '.$w_Disabled.' class="STR" class="STR" type="radio" name="p_atraso" value="N"> Não');
         else                ShowHTML('              <input '.$w_Disabled.' class="STR" type="radio" name="p_atraso" value="S"> Sim <br><input '.$w_Disabled.' class="STR" class="STR" type="radio" name="p_atraso" value="N" checked> Não');
-        SelecaoFaseCheck('Recuperar fases:','S',null,$p_fase,$P2,'p_fase',null,null);
+        SelecaoFaseCheck('Recuperar fases:','S',null,$p_fase,$P2,'p_fase[]',null,null);
       } 
     } 
     ShowHTML('      <tr>');
@@ -3002,15 +3002,15 @@ function Grava() {
             dml_putProjetoEnvio($w_menu,$_REQUEST['w_chave'],$w_usuario,$_REQUEST['w_tramite'],
                 $_REQUEST['w_tramite'],'N',$_REQUEST['w_observacao'],Tvl($_REQUEST['w_destinatario']),$_REQUEST['w_despacho'],
                 $w_file,$w_tamanho,$w_tipo,$w_nome);
-           } else {
-             ScriptOpen('JavaScript');
+          } else {
+            ScriptOpen('JavaScript');
             ShowHTML('  alert(\'ATENÇÃO: ocorreu um erro na transferência do arquivo. Tente novamente!\');');
             ScriptClose();
           } 
-          ScriptOpen('JavaScript');
           // Volta para a listagem 
           $RS = db_getMenuData::getInstanceOf($dbms,$w_menu);
-          ShowHTML('  location.href=\''.f($RS,'link').'&O=L&w_chave='.$_REQUEST['w_chave'].'&P1='.$P1.'&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP='.RemoveTP($TP).'&SG='.f($RS,'sigla').MontaFiltro('UPLOAD').'\';');
+          ScriptOpen('JavaScript');
+          ShowHTML('  location.href=\''.f($RS,'link').'&O=L&w_chave='.$_REQUEST['w_chave'].'&P1='.$P1.'&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP='.RemoveTP($TP).'&SG='.f($RS,'sigla').MontaFiltro('GET').'\';');
           ScriptClose();
         } else {
           $RS = db_getSolicData::getInstanceOf($dbms,$_REQUEST['w_chave'],'PJGERAL');
@@ -3027,13 +3027,13 @@ function Grava() {
             if ($P1==1) {
               // Se for envio da fase de cadastramento, remonta o menu principal
               // Recupera os dados para montagem correta do menu
-              db_getMenuData::getInstanceOf($dbms,$w_menu);
+              $RS = db_getMenuData::getInstanceOf($dbms,$w_menu);
               ScriptOpen('JavaScript');
               ShowHTML('  parent.menu.location=\'menu.php?par=ExibeDocs&O=L&R='.$R.'&SG='.f($RS,'sigla').'&TP='.RemoveTP(RemoveTP($TP)).MontaFiltro('GET').'\';');
               ScriptClose();
             } else {
               // Volta para a listagem
-              db_getMenuData::getInstanceOf($dbms,$w_menu);
+              $RS = db_getMenuData::getInstanceOf($dbms,$w_menu);
               ScriptOpen('JavaScript');
               ShowHTML('  location.href=\''.f($RS,'link').'&O=L&w_chave='.$_REQUEST['w_chave'].'&P1='.$P1.'&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP='.RemoveTP($TP).'&SG='.f($RS,'sigla').MontaFiltro('GET').'\';');
               ScriptClose();

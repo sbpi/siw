@@ -15,7 +15,7 @@ include_once('../classes/sp/dml_putAgreeType.php');
 include_once('../funcoes/selecaoTipoAcordo.php');
 
 // =========================================================================
-//  /Tabelas.asp
+//  /Tabelas.php
 // ------------------------------------------------------------------------
 // Nome     : Alexandre Vinhadelli Papadópolis
 // Descricao: Gerenciar tabelas básicas do módulo	
@@ -113,7 +113,7 @@ function TipoAcordo() {
   extract($GLOBALS);
   global $w_Disabled;
 
-  $w_imagem='images/folder/SheetLittle.gif';
+  $w_imagem='images/Folder/SheetLittle.gif';
   $w_troca=$_REQUEST['w_troca'];
   $w_heranca=$_REQUEST['w_heranca'];
   $w_sq_tipo_acordo=$_REQUEST['w_sq_tipo_acordo'];
@@ -211,7 +211,7 @@ function TipoAcordo() {
       $w_ContOut=$w_ContOut+1;
       if (f($row,'Filho')>0) {
         ShowHTML('<A HREF=#"'.f($row,'sq_tipo_acordo').'"></A>');
-        ShowHTML('<span><div align="left"><img src="images/folder/FolderClose.gif" border=0 align="center"> '.f($row,'nome'));
+        ShowHTML('<span><div align="left"><img src="images/Folder/FolderClose.gif" border=0 align="center"> '.f($row,'nome'));
         if (f($row,'ativo')=='S') $w_classe='HL'; else $w_classe='LH';
         ShowHTML('       <A class="'.$w_classe.'" HREF="'.$w_dir.$w_pagina.$par.'&R='.$w_pagina.$par.'&O=A&w_sq_tipo_acordo='.f($row,'sq_tipo_acordo').'&w_cliente='.$w_cliente.'&P1='.$P1.'&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP='.$TP.'&SG='.$SG.'" title="Altera as informações deste tipo de acordos">Alterar</A>&nbsp');
         if (f($row,'ativo')=='S') {
@@ -228,7 +228,7 @@ function TipoAcordo() {
           if (f($row1,'Filho')>0) {
             $w_ContOut=$w_ContOut+1;
             ShowHTML('<A HREF=#"'.f($row1,'sq_tipo_acordo').'"></A>');
-            ShowHTML('<span><div align="left"><img src="images/folder/FolderClose.gif" border=0 align="center"> '.f($row1,'nome'));
+            ShowHTML('<span><div align="left"><img src="images/Folder/FolderClose.gif" border=0 align="center"> '.f($row1,'nome'));
             if (f($row1,'ativo')=='S') $w_classe='HL'; else $w_classe='LH';
             ShowHTML('       <A class="'.$w_classe.'" HREF="'.$w_dir.$w_pagina.$par.'&R='.$w_pagina.$par.'&O=A&w_sq_tipo_acordo='.f($row1,'sq_tipo_acordo').'&w_cliente='.$w_cliente.'&P1='.$P1.'&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP='.$TP.'&SG='.$SG.'" title="Altera as informações deste tipo de acordos">Alterar</A>&nbsp');
             if (f($row1,'ativo')=='S') {
@@ -245,7 +245,7 @@ function TipoAcordo() {
               if (f($row2,'Filho')>0) {
                 $w_ContOut=$w_ContOut+1;
                 ShowHTML('<A HREF=#"'.f($row2,'sq_tipo_acordo').'"></A>');
-                ShowHTML('<span><div align="left"><img src="images/folder/FolderClose.gif" border=0 align="center"> '.f($row2,'nome'));
+                ShowHTML('<span><div align="left"><img src="images/Folder/FolderClose.gif" border=0 align="center"> '.f($row2,'nome'));
                 if (f($row2,'ativo')=='S') $w_classe='HL'; else $w_classe='LH';
                 ShowHTML('       <A class="'.$w_classe.'" HREF="'.$w_dir.$w_pagina.$par.'&R='.$w_pagina.$par.'&O=A&w_sq_tipo_acordo='.f($row2,'sq_tipo_acordo').'&w_cliente='.$w_cliente.'&P1='.$P1.'&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP='.$TP.'&SG='.$SG.'" title="Altera as informações deste tipo de acordos">Alterar</A>&nbsp');
                 if (f($row2,'ativo')=='S') {

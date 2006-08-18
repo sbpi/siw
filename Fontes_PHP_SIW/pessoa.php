@@ -11,7 +11,7 @@ include_once('classes/sp/db_getPersonList.php');
 include_once('classes/sp/db_getCustomerSite.php');
 include_once('classes/sp/db_getCustomerData.php');
 include_once('classes/sp/db_getLinkData.php');
-include_once('classes/sp/db_VerificaAssinatura.php');
+include_once('classes/sp/db_verificaAssinatura.php');
 include_once('classes/sp/dml_putSiwUsuario.php');
 include_once('funcoes/selecaoPais.php');
 include_once('funcoes/selecaoEstado.php');
@@ -400,7 +400,7 @@ function Benef() {
 
       ShowHTML('      <tr><td valign="top" colspan="2"><table border=0 width="100%" cellspacing=0>');
       ShowHTML('          <tr>');
-      selecaoUnidade('<U>U</U>nidade de lotação:','U','Selecione a unidade de lotação e aguarde a recarga da página para selecionar sua localização.',$w_sq_unidade_lotacao,null,'w_sq_unidade_lotacao',null,'onBlur="document.Form.action=\''.$w_pagina.$par.'\'; document.Form.w_troca.value=\'w_sq_localizacao\'; document.Form.submit();"');
+      selecaoUnidade('<U>U</U>nidade de lotação:','U','Selecione a unidade de lotação e aguarde a recarga da página para selecionar sua localização.',$w_sq_unidade_lotacao,null,'w_sq_unidade_lotacao',null,'onChange="document.Form.action=\''.$w_pagina.$par.'\'; document.Form.w_troca.value=\'w_sq_localizacao\'; document.Form.submit();"');
       ShowHTML('          <tr>');
       selecaoLocalizacao('Locali<u>z</u>ação:','Z',null,$w_sq_localizacao,nvl($w_sq_unidade_lotacao,0),'w_sq_localizacao',null);
       ShowHTML('          </table>');

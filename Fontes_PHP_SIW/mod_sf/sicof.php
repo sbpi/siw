@@ -169,12 +169,11 @@ function Consulta() {
 
 
   if ($O=='L') {
-    ShowHTML('<TABLE WIDTH="100%" BORDER=0><TR><TD ROWSPAN=2><TD ALIGN="RIGHT"><B><FONT SIZE=5 COLOR="#000000">');
-    ShowHTML('CONSULTA AO SICOF - UNESCO');
-    ShowHTML('</FONT><TR><TD ALIGN="RIGHT"><B><FONT SIZE=2 COLOR="#000000">'.date('d/m/Y, H:i:s').'</B></TD></TR>');
-    ShowHTML('</FONT></B></TD></TR></TABLE>');
+    ShowHTML('<TABLE WIDTH="100%" BORDER=0><TR><TD ROWSPAN=2><TD ALIGN="RIGHT"><B><FONT SIZE=2 COLOR="#000000">CONSULTA AO SICOF - UNESCO</font>');
+    ShowHTML('<TR><TD ALIGN="RIGHT"><B><FONT COLOR="#000000">'.date('d/m/Y, H:i:s').'</font></B></TD></TR>');
+    ShowHTML('</B></TD></TR></TABLE>');
   } else {
-    ShowHTML('<B><FONT COLOR="#000000">'.$w_TP.'</FONT></B>');
+    ShowHTML('<B><FONT COLOR="#000000">'.$w_TP.'</font></B>');
   } 
 
 
@@ -185,7 +184,7 @@ function Consulta() {
 
     ShowHTML('<tr bgcolor="'.$conTrBgColor.'"><td align="center">');
     ShowHTML('    <table width="99%" border="0">');
-    ShowHTML('      <tr><td align="left" colspan="2"><font size="2">Critério(s) de busca:<ul>');
+    ShowHTML('      <tr><td align="left" colspan="2">Critério(s) de busca:<ul>');
     if ($_POST['p_sq_pessoa']>"" || $_POST['p_cpf']>"" || $_POST['p_cnpj']>"") {
       ShowHTML('<li>Beneficiário: <b>'.f($row,'cgccpf').' - '.f($row,'nome').'</b>');
     }
@@ -213,7 +212,7 @@ function Consulta() {
     } 
 
     ShowHTML('</ul>');
-    ShowHTML('      <tr><td align="center" colspan="2"><font size="2">Clique <a accesskey="F" class="SS" href="#" onClick="window.close(); opener.focus();">aqui</a> para fechar esta janela.</font>');
+    ShowHTML('      <tr><td align="center" colspan="2">Clique <a accesskey="F" class="SS" href="#" onClick="window.close(); opener.focus();">aqui</a> para fechar esta janela.');
 
     //CONTRATOS
     if ($_POST["p_sq_pessoa"]>"" || $_POST["p_cpf"]>"" || $_POST["p_cnpj"] || ($_POST["p_documento"]=="" && $_POST["p_inicio"]>"") || ($_POST["p_documento"]>"" && substr(strtoupper($_POST["p_documento"]),0,3)=='SA-')) {
@@ -283,54 +282,54 @@ function Consulta() {
 
       ShowHTML('      <tr><td align="center" colspan="2" height="2" bgcolor="#000000">');
       ShowHTML('      <tr><td align="center" colspan="2" height="1" bgcolor="#000000">');
-      ShowHTML('      <tr><td valign="top" colspan="2" align="center" bgcolor="#D0D0D0"><font  size="2"><b>Contratos</td>');
+      ShowHTML('      <tr><td valign="top" colspan="2" align="center" bgcolor="#D0D0D0"><b>Contratos</td>');
       ShowHTML('      <tr><td align="center" colspan="2" height="1" bgcolor="#000000">');
       ShowHTML('      <tr><td align="center" colspan="2" height="2" bgcolor="#000000">');
       $RS = DatabaseQueriesFactory::getInstanceOf($SQL, $dbms, null, DB_TYPE);
       if(!$RS->executeQuery()) die("Cannot query"); else $RS = $RS->getResultData();
       if (count($RS) <= 0) {
-        ShowHTML('      <tr bgcolor="'.$conTrBgColor.'"><td colspan=7 align="center"><font  size="2"><b>Nenhum registro encontrado.</b></td></tr>');
+        ShowHTML('      <tr bgcolor="'.$conTrBgColor.'"><td colspan=7 align="center"><b>Nenhum registro encontrado.</b></td></tr>');
       } else {
-        ShowHTML('      <tr><td align="right" colspan="2"><font size="1"><b>Registros: '.count($RS));
+        ShowHTML('      <tr><td align="right" colspan="2"><b>Registros: '.count($RS));
         ShowHTML('      <tr><td align="center" colspan="2">');
         ShowHTML('        <TABLE WIDTH="100%" bgcolor="'.$conTableBgColor.'" BORDER="'.$conTableBorder.'" CELLSPACING="'.$conTableCellSpacing.'" CELLPADDING="'.$conTableCellPadding.'" BorderColorDark="'.$conTableBorderColorDark.'" BorderColorLight="'.$conTableBorderColorLight.'">');
         ShowHTML('          <tr bgcolor="'.$conTrBgColor.'" align="center">');
-        ShowHTML('            <td rowspan=2><font size="1"><b>Documento</font></td>');
-        ShowHTML('            <td rowspan=2><font size="1"><b>Beneficiário</font></td>');
-        ShowHTML('            <td colspan=2><font size="1"><b>Vigência</font></td>');
-        ShowHTML('            <td rowspan=2><font size="1"><b>Acordo</font></td>');
-        ShowHTML('            <td rowspan=2><font size="1"><b>Valor</font></td>');
-        ShowHTML('            <td rowspan=2><font size="1"><b>Modalidade</font></td>');
-        ShowHTML('            <td rowspan=2><font size="1"><b>Fase atual</font></td>');
+        ShowHTML('            <td rowspan=2><b>Documento</td>');
+        ShowHTML('            <td rowspan=2><b>Beneficiário</td>');
+        ShowHTML('            <td colspan=2><b>Vigência</td>');
+        ShowHTML('            <td rowspan=2><b>Acordo</td>');
+        ShowHTML('            <td rowspan=2><b>Valor</td>');
+        ShowHTML('            <td rowspan=2><b>Modalidade</td>');
+        ShowHTML('            <td rowspan=2><b>Fase atual</td>');
         ShowHTML('          </tr>');
         ShowHTML('          <tr bgcolor="'.$conTrBgColor.'" align="center">');
-        ShowHTML('            <td><font size="2"><b>Início</font></td>');
-        ShowHTML('            <td><font size="2"><b>Término</font></td>');
+        ShowHTML('            <td><b>Início</td>');
+        ShowHTML('            <td><b>Término</td>');
         ShowHTML('          </tr>');
 
         $w_total=0;
         foreach ($RS as $row) {
           ShowHTML('      <tr bgcolor="'.$conTrBgColor.'" valign="top">');
-          ShowHTML('        <td nowrap><font size="1"><a class="HL" href="https://honda.unesco.org.br/pls/seguranca/Frm_SA.Visualizar?p_usuario=167&p_Documento=111800&p_Acesso=C&p_Nro_Doc='.f($row,'documento').'&P1=0&P2=0&P3=0&TP=Consultar&p_ValidaTempo=Nao">'.f($row,'documento').'</a>');
-          ShowHTML('        <td><font size="1">'.f($row,'nome').'</td>');
-          ShowHTML('        <td align="center"><font size="1">'.f($row,'inicio').'</td>');
-          ShowHTML('        <td align="center"><font size="1">'.f($row,'fim').'</td>');
-          ShowHTML('        <td align="center"><font size="1">'.f($row,'projeto').'</td>');
-          ShowHTML('        <td align="right"><font size="1">'.FormatNumber(f($row,'totcontratacao'),2).'</td>');
-          ShowHTML('        <td><font size="1">'.f($row,'modalidade').'</td>');
-          ShowHTML('        <td><font size="1">'.f($row,'fase_atual').'</td>');
+          ShowHTML('        <td nowrap><a class="HL" href="https://honda.unesco.org.br/pls/seguranca/Frm_SA.Visualizar?p_usuario=167&p_Documento=111800&p_Acesso=C&p_Nro_Doc='.f($row,'documento').'&P1=0&P2=0&P3=0&TP=Consultar&p_ValidaTempo=Nao">'.f($row,'documento').'</a>');
+          ShowHTML('        <td>'.f($row,'nome').'</td>');
+          ShowHTML('        <td align="center">'.f($row,'inicio').'</td>');
+          ShowHTML('        <td align="center">'.f($row,'fim').'</td>');
+          ShowHTML('        <td align="center">'.f($row,'projeto').'</td>');
+          ShowHTML('        <td align="right">'.FormatNumber(f($row,'totcontratacao'),2).'</td>');
+          ShowHTML('        <td>'.f($row,'modalidade').'</td>');
+          ShowHTML('        <td>'.f($row,'fase_atual').'</td>');
           ShowHTML('      </tr>');
           $w_total = $w_total + f($row,'totcontratacao');
         } 
       } 
 
       ShowHTML('      <tr bgcolor="'.$conTrBgColor.'" valign="top">');
-      ShowHTML('        <td colspan=5 align="right"><font size="1"><b>Total</b></font></td>');
-      ShowHTML('        <td align="right"><font size="1"><b>'.FormatNumber($w_total,2).'</b></font></td>');
-      ShowHTML('        <td colspan=2><font size="1">&nbsp;</td>');
+      ShowHTML('        <td colspan=5 align="right"><b>Total</b></td>');
+      ShowHTML('        <td align="right"><b>'.FormatNumber($w_total,2).'</b></td>');
+      ShowHTML('        <td colspan=2>&nbsp;</td>');
       ShowHTML('      </tr>');
       ShowHTML('         </table></td></tr>');
-      ShowHTML('      <tr><td align="right" colspan="2"><font size="1">&nbsp;');
+      ShowHTML('      <tr><td align="right" colspan="2">&nbsp;');
     } 
 
 
@@ -368,33 +367,33 @@ function Consulta() {
 
       ShowHTML('      <tr><td align="center" colspan="2" height="2" bgcolor="#000000">');
       ShowHTML('      <tr><td align="center" colspan="2" height="1" bgcolor="#000000">');
-      ShowHTML('      <tr><td valign="top" colspan="2" align="center" bgcolor="#D0D0D0"><font  size="2"><b>Pagamentos</td>');
+      ShowHTML('      <tr><td valign="top" colspan="2" align="center" bgcolor="#D0D0D0"><b>Pagamentos</td>');
       ShowHTML('      <tr><td align="center" colspan="2" height="1" bgcolor="#000000">');
       ShowHTML('      <tr><td align="center" colspan="2" height="2" bgcolor="#000000">');
       $RS = DatabaseQueriesFactory::getInstanceOf($SQL, $dbms, null, DB_TYPE);
       if(!$RS->executeQuery()) die("Cannot query"); else $RS = $RS->getResultData();
       if (count($RS) <= 0) {
-        ShowHTML('      <tr bgcolor="'.$conTrBgColor.'"><td colspan=7 align="center"><font  size="2"><b>Nenhum registro encontrado.</b></td></tr>');
+        ShowHTML('      <tr bgcolor="'.$conTrBgColor.'"><td colspan=7 align="center"><b>Nenhum registro encontrado.</b></td></tr>');
       } else {
-        ShowHTML('      <tr><td align="right" colspan="2"><font size="1"><b>Registros: '.count($RS));
+        ShowHTML('      <tr><td align="right" colspan="2"><b>Registros: '.count($RS));
         ShowHTML('      <tr><td align="center" colspan="2">');
         ShowHTML('        <TABLE WIDTH="100%" bgcolor="'.$conTableBgColor.'" BORDER="'.$conTableBorder.'" CELLSPACING="'.$conTableCellSpacing.'" CELLPADDING="'.$conTableCellPadding.'" BorderColorDark="'.$conTableBorderColorDark.'" BorderColorLight="'.$conTableBorderColorLight.'">');
         ShowHTML('          <tr bgcolor="'.$conTrBgColor.'" align="center">');
-        ShowHTML('            <td><font size="1"><b>Documento</font></td>');
-        ShowHTML('            <td><font size="1"><b>Comprovante</font></td>');
-        ShowHTML('            <td><font size="1"><b>Beneficiário</font></td>');
-        ShowHTML('            <td><font size="1"><b>Vencimento</font></td>');
-        ShowHTML('            <td><font size="1"><b>Acordo</font></td>');
-        ShowHTML('            <td><font size="1"><b>Valor</font></td>');
-        if ($_POST['p_documento']=="") ShowHTML('            <td><font size="1"><b>Histórico</font></td>');
-        ShowHTML('            <td><font size="1"><b>Fase atual</font></td>');
+        ShowHTML('            <td><b>Documento</td>');
+        ShowHTML('            <td><b>Comprovante</td>');
+        ShowHTML('            <td><b>Beneficiário</td>');
+        ShowHTML('            <td><b>Vencimento</td>');
+        ShowHTML('            <td><b>Acordo</td>');
+        ShowHTML('            <td><b>Valor</td>');
+        if ($_POST['p_documento']=="") ShowHTML('            <td><b>Histórico</td>');
+        ShowHTML('            <td><b>Fase atual</td>');
         ShowHTML('          </tr>');
 
         $w_total=0;
         foreach ($RS as $row) {
           ShowHTML('      <tr bgcolor="'.$conTrBgColor.'" valign="top">');
-          ShowHTML('        <td nowrap><font size="1"><a class="HL" href="https://honda.unesco.org.br/pls/seguranca/Frm_SP.Visualizar?p_usuario=167&p_Documento=111800&p_Acesso=C&p_Nro_Doc='.f($row,'documento').'&P1=0&P2=0&P3=0&TP=Consultar&p_ValidaTempo=Nao">'.f($row,'documento').'</a>');
-          ShowHTML('        <td nowrap><font size="1">');
+          ShowHTML('        <td nowrap><a class="HL" href="https://honda.unesco.org.br/pls/seguranca/Frm_SP.Visualizar?p_usuario=167&p_Documento=111800&p_Acesso=C&p_Nro_Doc='.f($row,'documento').'&P1=0&P2=0&P3=0&TP=Consultar&p_ValidaTempo=Nao">'.f($row,'documento').'</a>');
+          ShowHTML('        <td nowrap>');
           $SQL="select numerodoc from corporativo.un_sol_pgto_doc_anexos@sicof a where a.automatico_sp = '".f($row,'handle')."' order by a.numerodoc ";
           $RS1 = DatabaseQueriesFactory::getInstanceOf($SQL, $dbms, null, DB_TYPE);
           if(!$RS1->executeQuery()) die("Cannot query"); else $RS1 = $RS1->getResultData();
@@ -406,23 +405,23 @@ function Consulta() {
             } 
           } 
           ShowHTML('            </td>');
-          ShowHTML('        <td><font size="1">'.f($row,'nome').'</td>');
-          ShowHTML('        <td align="center" nowrap><font size="1">'.f($row,'inicio').'</td>');
-          ShowHTML('        <td nowrap><font size="1">'.f($row,'projeto').'</td>');
-          ShowHTML('        <td align="right" nowrap><font size="1">'.FormatNumber(f($row,'valor'),2).'</td>');
-          if ($_POST['p_documento']=="") ShowHTML('        <td><font size="1">'.f($row,'historico').'</td>');
-          ShowHTML('        <td><font size="1">'.f($row,'fase_atual').'</td>');
+          ShowHTML('        <td>'.f($row,'nome').'</td>');
+          ShowHTML('        <td align="center" nowrap>'.f($row,'inicio').'</td>');
+          ShowHTML('        <td nowrap>'.f($row,'projeto').'</td>');
+          ShowHTML('        <td align="right" nowrap>'.FormatNumber(f($row,'valor'),2).'</td>');
+          if ($_POST['p_documento']=="") ShowHTML('        <td>'.f($row,'historico').'</td>');
+          ShowHTML('        <td>'.f($row,'fase_atual').'</td>');
           ShowHTML('      </tr>');
           $w_total = $w_total + f($row,'valor');
         } 
         ShowHTML('      <tr bgcolor="'.$conTrBgColor.'" valign="top">');
-        ShowHTML('        <td colspan=5 align="right"><font size="1"><b>Total</b></font></td>');
-        ShowHTML('        <td align="right"><font size="1"><b>'.FormatNumber($w_total,2).'</b></font></td>');
-        ShowHTML('        <td colspan=2><font size="1">&nbsp;</td>');
+        ShowHTML('        <td colspan=5 align="right"><b>Total</b></td>');
+        ShowHTML('        <td align="right"><b>'.FormatNumber($w_total,2).'</b></td>');
+        ShowHTML('        <td colspan=2>&nbsp;</td>');
         ShowHTML('      </tr>');
       } 
       ShowHTML('         </table></td></tr>');
-      ShowHTML('      <tr><td align="right" colspan="2"><font size="1">&nbsp;');
+      ShowHTML('      <tr><td align="right" colspan="2">&nbsp;');
     } 
 
 
@@ -455,46 +454,46 @@ function Consulta() {
 
       ShowHTML('      <tr><td align="center" colspan="2" height="2" bgcolor="#000000">');
       ShowHTML('      <tr><td align="center" colspan="2" height="1" bgcolor="#000000">');
-      ShowHTML('      <tr><td valign="top" colspan="2" align="center" bgcolor="#D0D0D0"><font  size="2"><b>Passagens e Diárias</td>');
+      ShowHTML('      <tr><td valign="top" colspan="2" align="center" bgcolor="#D0D0D0"><b>Passagens e Diárias</td>');
       ShowHTML('      <tr><td align="center" colspan="2" height="1" bgcolor="#000000">');
       ShowHTML('      <tr><td align="center" colspan="2" height="2" bgcolor="#000000">');
       $RS = DatabaseQueriesFactory::getInstanceOf($SQL, $dbms, null, DB_TYPE);
       if(!$RS->executeQuery()) die("Cannot query"); else $RS = $RS->getResultData();
       if (count($RS) <= 0) {
-        ShowHTML('      <tr bgcolor="'.$conTrBgColor.'"><td colspan=7 align="center"><font  size="2"><b>Nenhum registro encontrado.</b></td></tr>');
+        ShowHTML('      <tr bgcolor="'.$conTrBgColor.'"><td colspan=7 align="center"><b>Nenhum registro encontrado.</b></td></tr>');
       } else {
-        ShowHTML('      <tr><td align="right" colspan="2"><font size="1"><b>Registros: '.count($RS));
+        ShowHTML('      <tr><td align="right" colspan="2"><b>Registros: '.count($RS));
         ShowHTML('      <tr><td align="center" colspan="2">');
         ShowHTML('        <TABLE WIDTH="100%" bgcolor="'.$conTableBgColor.'" BORDER="'.$conTableBorder.'" CELLSPACING="'.$conTableCellSpacing.'" CELLPADDING="'.$conTableCellPadding.'" BorderColorDark="'.$conTableBorderColorDark.'" BorderColorLight="'.$conTableBorderColorLight.'">');
         ShowHTML('          <tr bgcolor="'.$conTrBgColor.'" align="center">');
-        ShowHTML('            <td rowspan=2><font size="1"><b>Documento</font></td>');
-        ShowHTML('            <td rowspan=2><font size="1"><b>Beneficiário</font></td>');
-        ShowHTML('            <td colspan=2><font size="1"><b>Missão</font></td>');
-        ShowHTML('            <td rowspan=2><font size="1"><b>Acordo</font></td>');
-        if ($_POST['p_documento']=="") ShowHTML('            <td rowspan=2><font size="1"><b>Histórico</font></td>');
-        ShowHTML('            <td rowspan=2><font size="1"><b>Fase atual</font></td>');
+        ShowHTML('            <td rowspan=2><b>Documento</td>');
+        ShowHTML('            <td rowspan=2><b>Beneficiário</td>');
+        ShowHTML('            <td colspan=2><b>Missão</td>');
+        ShowHTML('            <td rowspan=2><b>Acordo</td>');
+        if ($_POST['p_documento']=="") ShowHTML('            <td rowspan=2><b>Histórico</td>');
+        ShowHTML('            <td rowspan=2><b>Fase atual</td>');
         ShowHTML('          </tr>');
         ShowHTML('          <tr bgcolor="'.$conTrBgColor.'" align="center">');
-        ShowHTML('            <td><font size="2"><b>Início</font></td>');
-        ShowHTML('            <td><font size="2"><b>Término</font></td>');
+        ShowHTML('            <td><b>Início</td>');
+        ShowHTML('            <td><b>Término</td>');
         ShowHTML('          </tr>');
 
         foreach ($RS as $row) {
           ShowHTML('      <tr bgcolor="'.$conTrBgColor.'" valign="top">');
-          ShowHTML('        <td nowrap><font size="1"><a class="HL" href="https://honda.unesco.org.br/pls/seguranca/Frm_SPD.Visualizar?p_usuario=167&p_Documento=111800&p_Acesso=C&p_Nro_Doc='.f($row,'documento').'&P1=0&P2=0&P3=0&TP=Consultar&p_ValidaTempo=Nao">'.f($row,'documento').'</a>');
-          ShowHTML('        <td><font size="1">'.f($row,'nome').'</td>');
-          ShowHTML('        <td align="center" nowrap><font size="1">'.f($row,'inicio').'</td>');
-          ShowHTML('        <td align="center" nowrap><font size="1">'.f($row,'fim').'</td>');
-          ShowHTML('        <td><font size="1">'.f($row,'projeto').'</td>');
-          if ($_POST['p_documento']=="") ShowHTML('        <td><font size="1">'.f($row,'historico').'</td>');
-          ShowHTML('        <td><font size="1">'.f($row,'fase_atual').'</td>');
+          ShowHTML('        <td nowrap><a class="HL" href="https://honda.unesco.org.br/pls/seguranca/Frm_SPD.Visualizar?p_usuario=167&p_Documento=111800&p_Acesso=C&p_Nro_Doc='.f($row,'documento').'&P1=0&P2=0&P3=0&TP=Consultar&p_ValidaTempo=Nao">'.f($row,'documento').'</a>');
+          ShowHTML('        <td>'.f($row,'nome').'</td>');
+          ShowHTML('        <td align="center" nowrap>'.f($row,'inicio').'</td>');
+          ShowHTML('        <td align="center" nowrap>'.f($row,'fim').'</td>');
+          ShowHTML('        <td>'.f($row,'projeto').'</td>');
+          if ($_POST['p_documento']=="") ShowHTML('        <td>'.f($row,'historico').'</td>');
+          ShowHTML('        <td>'.f($row,'fase_atual').'</td>');
           ShowHTML('      </tr>');
         } 
       } 
       ShowHTML('         </table></td></tr>');
     } 
 
-    ShowHTML('      <tr><td align="center" colspan="2"><font size="2">Clique <a accesskey="F" class="SS" href="#" onClick="window.close(); opener.focus();">aqui</a> para fechar esta janela.</font>');
+    ShowHTML('      <tr><td align="center" colspan="2">Clique <a accesskey="F" class="SS" href="#" onClick="window.close(); opener.focus();">aqui</a> para fechar esta janela.');
     ShowHTML('     </tr></tr></td></table>');
 
     ShowHTML('</table>');
@@ -502,7 +501,7 @@ function Consulta() {
   } elseif ($O=='P') {
 
     AbreForm('Form',$w_dir.$w_pagina.$par,'POST','return(Validacao(this));',null,$P1,$P2,$P3,null,$TP,$SG,$R,'L');
-    ShowHTML('<tr bgcolor="'.$conTrBgColor.'"><td><div align="left"><font size=2>Instruções:<ul>');
+    ShowHTML('<tr bgcolor="'.$conTrBgColor.'"><td><div align="left">Instruções:<ul>');
     ShowHTML('  <li>Informe um dos critérios apresentados abaixo e clique sobre o botão <i>Aplicar filtro</i>.');
     ShowHTML('  <li>A procura pelo nome do beneficiário é feita em duas partes. Primeiro, informe parte dele em <i>Procurar nome</i> e clique sobre o botão <i>Procura</i>. Em seguida, selecione o nome desejado na lista disponível em <i>Beneficiário</i> e clique no botão <i>Aplicar Filtro</i>;');
     ShowHTML('  <li>Você pode informar quantos critérios desejar.');
@@ -510,11 +509,11 @@ function Consulta() {
     ShowHTML('  </ul></div><hr>');
     ShowHTML('<tr bgcolor="'.$conTrBgColor.'"><td align="center">');
     ShowHTML('    <table width="70%" border="0">');
-    ShowHTML('      <tr valign="top"><td valign="top"><font  size="1">');
+    ShowHTML('      <tr valign="top"><td valign="top">');
     ShowHTML('            <b>Pr<U>o</U>curar nome:<br> <INPUT TYPE="TEXT" ACCESSKEY="O" class="STI" name="p_beneficiario" size=40 maxlength=40>');
     ShowHTML('            <input class="STB" type="button" name="Procura" value="Procura" onClick="procura()">');
 
-    ShowHTML('      <tr valign="top"><td valign="top"><font  size="1"><b><U>B</U>eneficiário:<br> <SELECT ACCESSKEY="B" class="STS" name="p_sq_pessoa" size="1">');
+    ShowHTML('      <tr valign="top"><td valign="top"><b><U>B</U>eneficiário:<br> <SELECT ACCESSKEY="B" class="STS" name="p_sq_pessoa" size="1">');
     ShowHTML('          <OPTION VALUE="">---');
 
     if ($_POST['p_beneficiario']>"") {
@@ -534,7 +533,7 @@ function Consulta() {
     ShowHTML('          </SELECT></td>');
     ShowHTML('      </tr>');
 
-    ShowHTML('      <tr valign="top"><td valign="top"><font  size="1"><b>Pro<U>j</U>eto:<br> <SELECT ACCESSKEY="J" class="STS" name="p_ctcc" size="1">');
+    ShowHTML('      <tr valign="top"><td valign="top"><b>Pro<U>j</U>eto:<br> <SELECT ACCESSKEY="J" class="STS" name="p_ctcc" size="1">');
     ShowHTML('          <OPTION VALUE="">---');
 
     $SQL="select a.HANDLE, a.NOME, a.CODIGOUNESCO, a.INICIO, a.TERMINO from CORPORATIVO.CT_CC@sicof a where a.ultimonivel='S' order by a.nome";
@@ -550,17 +549,17 @@ function Consulta() {
     ShowHTML('          </SELECT></td>');
     ShowHTML('      </tr>');
     ShowHTML('      <tr valign="top"><td valign="top"><table border=0 width="100%" cellpadding=0 cellspacing=0><tr valign="top">');
-    ShowHTML('          <td><font  size="1"><b><U>C</U>NPJ:<br> <INPUT TYPE="TEXT" ACCESSKEY="C" class="STI" name="p_cnpj" size=18 maxlength=18 onKeyPress="FormataCNPJ(this,event);"  value="'.$_POST['p_cnpj'].'"></td>');
-    ShowHTML('          <td><font  size="1"><b>C<U>P</U>F:<br> <INPUT TYPE="TEXT" ACCESSKEY="C" class="STI" name="p_cpf" size=14 maxlength=14 onKeyPress="FormataCPF(this,event);" value="'.$_POST['p_cpf'].'"></td>');
+    ShowHTML('          <td><b><U>C</U>NPJ:<br> <INPUT TYPE="TEXT" ACCESSKEY="C" class="STI" name="p_cnpj" size=18 maxlength=18 onKeyPress="FormataCNPJ(this,event);"  value="'.$_POST['p_cnpj'].'"></td>');
+    ShowHTML('          <td><b>C<U>P</U>F:<br> <INPUT TYPE="TEXT" ACCESSKEY="C" class="STI" name="p_cpf" size=14 maxlength=14 onKeyPress="FormataCPF(this,event);" value="'.$_POST['p_cpf'].'"></td>');
     ShowHTML('          </table>');
     ShowHTML('      <tr valign="top"><td valign="top"><table border=0 width="100%" cellpadding=0 cellspacing=0><tr valign="top">');
-    ShowHTML('          <td valign="top"><font  size="1"><b>SA/SP/SP<U>D</U>:</b> (identificação completa)<br> <INPUT TYPE="TEXT" ACCESSKEY="D" class="STI" name="p_documento" size=15 maxlength=15 value="'.$_POST['p_documento'].'"></td>');
-    ShowHTML('          <td><font  size="1">Período: <b>D<U>e</U>: <INPUT TYPE="TEXT" ACCESSKEY="E" class="STI" name="p_inicio" size=10 maxlength=10 onKeyPress="FormataData(this,event);"  value="'.$_POST['p_inicio'].'">');
+    ShowHTML('          <td valign="top"><b>SA/SP/SP<U>D</U>:</b> (identificação completa)<br> <INPUT TYPE="TEXT" ACCESSKEY="D" class="STI" name="p_documento" size=15 maxlength=15 value="'.$_POST['p_documento'].'"></td>');
+    ShowHTML('          <td>Período: <b>D<U>e</U>: <INPUT TYPE="TEXT" ACCESSKEY="E" class="STI" name="p_inicio" size=10 maxlength=10 onKeyPress="FormataData(this,event);"  value="'.$_POST['p_inicio'].'">');
     ShowHTML('                                <U>a</U>té: <INPUT TYPE="TEXT" ACCESSKEY="A" class="STI" name="p_fim" size=10 maxlength=10 onKeyPress="FormataData(this,event);" value="'.$_POST['p_fim'].'"></td>');
     ShowHTML('          </table>');
     ShowHTML('      <tr valign="top"><td valign="top"><table border=0 width="100%" cellpadding=0 cellspacing=0><tr valign="top">');
-    ShowHTML('          <td><font  size="1"><b>Co<U>m</U>provante (NF/Fatura/Recibo):<br><INPUT TYPE="TEXT" ACCESSKEY="M" class="STI" name="p_comprovante" size=10 maxlength=10 value="'.$_POST['p_comprovante'].'">');
-    ShowHTML('          <td><font  size="1">Período: <b>D<U>e</U>: <INPUT TYPE="TEXT" ACCESSKEY="E" class="STI" name="p_inicio_nf" size=10 maxlength=10 onKeyPress="FormataData(this,event);"  value="'.$_POST['p_inicio_nf'].'">');
+    ShowHTML('          <td><b>Co<U>m</U>provante (NF/Fatura/Recibo):<br><INPUT TYPE="TEXT" ACCESSKEY="M" class="STI" name="p_comprovante" size=10 maxlength=10 value="'.$_POST['p_comprovante'].'">');
+    ShowHTML('          <td>Período: <b>D<U>e</U>: <INPUT TYPE="TEXT" ACCESSKEY="E" class="STI" name="p_inicio_nf" size=10 maxlength=10 onKeyPress="FormataData(this,event);"  value="'.$_POST['p_inicio_nf'].'">');
     ShowHTML('                                <b><U>a</U>té: <INPUT TYPE="TEXT" ACCESSKEY="A" class="STI" name="p_fim_nf" size=10 maxlength=10 onKeyPress="FormataData(this,event);" value="'.$_POST['p_fim_nf'].'"></td>');
     ShowHTML('          </table>');
     ShowHTML('      <tr><td align="center" colspan="3" height="1" bgcolor="#000000">');
@@ -595,7 +594,7 @@ function Main() {
       Cabecalho();
       ShowHTML('<BASE HREF="'.$conRootSIW.'">');
       BodyOpen('onLoad=document.focus();');
-      ShowHTML('<B><FONT COLOR="#000000">'.$w_TP.'</FONT></B>');
+      ShowHTML('<B><FONT COLOR="#000000">'.$w_TP.'</font></B>');
       ShowHTML('<HR>');
       ShowHTML('<div align=center><center><br><br><br><br><br><br><br><br><br><br><img src="images/icone/underc.gif" align="center"> <b>Esta opção está sendo desenvolvida.</b><br><br><br><br><br><br><br><br><br><br></center></div>');
       Rodape();

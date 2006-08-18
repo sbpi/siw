@@ -10,10 +10,12 @@ include_once($w_dir_volta.'classes/sp/db_getLinkData.php');
 include_once($w_dir_volta.'classes/sp/db_getMenuData.php');
 include_once($w_dir_volta.'classes/sp/db_getMenuCode.php');
 include_once($w_dir_volta.'classes/sp/db_getPersonData.php');
+include_once($w_dir_volta.'classes/sp/db_getCVList.php');
 include_once($w_dir_volta.'classes/sp/db_getCV.php');
 include_once($w_dir_volta.'classes/sp/db_getCustomerData.php');
 include_once($w_dir_volta.'classes/sp/db_getCVAcadForm.php');
 include_once($w_dir_volta.'classes/sp/db_getCVIdioma.php');
+include_once($w_dir_volta.'classes/sp/db_getGPColaborador.php');
 include_once($w_dir_volta.'classes/sp/db_getFoneList.php');
 include_once($w_dir_volta.'classes/sp/db_getAddressList.php');
 include_once($w_dir_volta.'classes/sp/db_getContaBancoList.php');
@@ -30,6 +32,9 @@ include_once($w_dir_volta.'classes/sp/dml_putCVIdioma.php');
 include_once($w_dir_volta.'classes/sp/dml_putCVCurso.php');
 include_once($w_dir_volta.'classes/sp/dml_putCVHist.php');
 include_once($w_dir_volta.'classes/sp/dml_putCVExperiencia.php');
+include_once($w_dir_volta.'classes/sp/dml_putGPContrato.php');
+include_once($w_dir_volta.'classes/sp/dml_putSiwUsuario.php');
+include_once($w_dir_volta.'funcoes/selecaoCargo.php');
 include_once($w_dir_volta.'funcoes/selecaoSexo.php');
 include_once($w_dir_volta.'funcoes/selecaoEstadoCivil.php');
 include_once($w_dir_volta.'funcoes/selecaoFormacao.php');
@@ -40,6 +45,10 @@ include_once($w_dir_volta.'funcoes/selecaoEstado.php');
 include_once($w_dir_volta.'funcoes/selecaoCidade.php');
 include_once($w_dir_volta.'funcoes/selecaoIdioma.php');
 include_once($w_dir_volta.'funcoes/selecaoTipoPosto.php');
+include_once($w_dir_volta.'funcoes/selecaoModalidade.php');
+include_once($w_dir_volta.'funcoes/selecaoUnidade.php');
+include_once($w_dir_volta.'funcoes/selecaoLocalizacao.php');
+include_once($w_dir_volta.'funcoes/selecaoVinculo.php');
 include_once('visualCurriculo.php');
 
 // =========================================================================
@@ -66,7 +75,7 @@ include_once('visualCurriculo.php');
 
 if(nvl($_REQUEST['p_cliente'],'nulo')!='nulo') $_SESSION['CLIENTE'] = $_REQUEST['p_cliente'];
 if(nvl($_REQUEST['p_portal'],'nulo')!='nulo')  $_SESSION['PORTAL']  = $_REQUEST['p_portal'];
-if(nvl($_REQUEST['p_logon'],'nulo')!='nulo')   $_SESSION['LOGON']    = $_REQUEST['p_LogOn'];
+if(nvl($_REQUEST['p_logon'],'nulo')!='nulo')   $_SESSION['LOGON']   = $_REQUEST['p_LogOn'];
 if(nvl($_REQUEST['p_dbms'],'nulo')!='nulo')    $_SESSION['DBMS']    = $_REQUEST['p_dbms'];
 
 // Verifica se o usuário está autenticado
@@ -79,7 +88,6 @@ $dbms = abreSessao::getInstanceOf($_SESSION['DBMS']);
 $par          = strtoupper($_REQUEST['par']);
 $w_pagina     = 'cv.php?par=';
 $w_dir        = 'mod_rh/';
-$w_dir_volta  = '../';
 $w_Disabled   = 'ENABLED';
 $SG           = strtoupper($_REQUEST['SG']);
 $O            = strtoupper($_REQUEST['O']);
@@ -88,19 +96,19 @@ $w_usuario    = RetornaUsuario();
 $P1           = Nvl($_REQUEST['P1'],0);
 $P2           = Nvl($_REQUEST['P2'],0);
 $P3           = Nvl($_REQUEST['P3'],1);
-$P4           = Nvl($_REQUEST['P4'],$conPagesize);
+$P4           = Nvl($_REQUEST['P4'],$conPageSize);
 $TP           = $_REQUEST['TP'];
 $R            = $_REQUEST['R'];
-$w_troca      = $_REQUEST['w_troca'];
+$w_troca      = strtolower($_REQUEST['w_troca']);
 $w_copia      = $_REQUEST['w_copia'];
 $w_assinatura = strtoupper($_REQUEST['w_assinatura']);
   
 if ($_SESSION['PORTAL'] >'') $_SESSION['SQ_PESSOA'] = $w_usuario;
+
 if (nvl($SG,'nulo')!='nulo' && nvl($SG,'nulo')!='CVCARGOS') $w_menu = RetornaMenu($w_cliente,$SG);
+
 if ($SG=='GDPINTERES' || $SG=='GDPAREAS') {
-  if ($O!='I' && $_REQUEST['w_chave_aux']=='') {
-    $O='L';
-  }
+  if ($O!='I' && nvl($_REQUEST['w_chave_aux'],'')=='') $O='L';
 } elseif ($SG=='GDPENVIO') {
   $O='V';
 } elseif ($O=='') {
@@ -137,6 +145,7 @@ exit;
 function Inicial() {
   extract($GLOBALS);
   global $w_Disabled;
+
   $p_sq_idioma   = $_REQUEST['p_sq_idioma'];
   $p_sexo        = $_REQUEST['p_sexo'];
   $p_nome        = strtoupper($_REQUEST['p_nome']);
@@ -261,19 +270,25 @@ function Identificacao() {
   extract($GLOBALS);
   global $w_Disabled;
   if (Nvl($P1,0)==1 && $w_troca=='') {
-    $w_chave  = Nvl($_REQUEST['w_sq_pessoa'],$w_usuario);
+    //$w_chave  = Nvl($_REQUEST['w_sq_pessoa'],$w_usuario);
     $w_cpf    = $_REQUEST['w_cpf'];
-    if ($w_cpf>'') {
-      $RS = db_getPersonData::getInstanceOf($dbms,$w_cliente,null,$w_cpf,null);
-      if (!(count($RS)<=0)) {
-        $w_chave  = f($RS,'sq_pessoa');
+    if ($w_cpf>'' || (Nvl($_REQUEST['w_sq_pessoa'],'')>'') || (Nvl($_REQUEST['w_chave'],'')>'')) {
+      if ($w_cpf > '') {
+          $RS = db_getPersonData::getInstanceOf($dbms,$w_cliente,null,$w_cpf,null);
+        if (count($RS)>0) {
+          $w_chave  = f($RS,'sq_pessoa');
+        } else {
+          $w_chave='';
+        } 
       } else {
-        $w_chave='';
-      } 
-    } 
+        $w_chave  = Nvl($_REQUEST['w_sq_pessoa'],$_REQUEST['w_chave']);
+      }
+    } else {
+      $w_chave = $w_usuario;
+    }
     if (Nvl($w_chave,'')>'' && $O=='I'){
-      $RS = db_getGPColaborador($dbms,$RS,$w_cliente,$w_chave,null,null,null,null,null,null,null,null,null,null,null,null);
-      if (count($RS)>=0) {
+      $RS = db_getGPColaborador::getInstanceOf($dbms,$w_cliente,$w_chave,null,null,null,null,null,null,null,null,null,null,null,null,null,null);
+      if (count($RS)>0) {
         ScriptOpen('JavaScript');
         ShowHTML(' alert(\'Colaborador já cadastrado!\');');
         ShowHTML(' history.back(1);');
@@ -281,11 +296,7 @@ function Identificacao() {
       } 
     } 
   } else {
-    if (!(strpos(strtoupper($_SERVER['http_content_type']),'MULTIPART/FORM-DATA')===false)) {
-      $w_chave = Nvl($_REQUEST['w_chave'],$w_usuario);
-    } else {
-      $w_chave = Nvl($_REQUEST['w_chave'],$w_usuario);
-    } 
+    if ($O!='I') $w_chave = Nvl($_REQUEST['w_chave'],$w_usuario);
   } 
   $w_readonly = '';
   $w_erro = '';
@@ -352,7 +363,7 @@ function Identificacao() {
       $w_nome = null;
       $O ='I';
     } if (Nvl($P1,0)==1 && Nvl($w_chave,'')>'') {
-        $RS = db_getGPColaborador::getInstanceOf($dbms,$w_cliente,$w_chave,null,null,null,null,null,null,null,null,null,null,null,null);
+        $RS = db_getGPColaborador::getInstanceOf($dbms,$w_cliente,$w_chave,null,null,null,null,null,null,null,null,null,null,null,null,null,null);
         foreach ($RS as $row) {$RS=$row; break;}
         if (!(count($RS)<=0)) {
           $w_sq_contrato_colaborador = f($RS,'sq_contrato_colaborador');
@@ -417,8 +428,10 @@ function Identificacao() {
     if (Nvl($P1,0)==1 && Nvl($w_sq_contrato_colaborador,'')=='') {
       if (Nvl($w_modalidade_contrato,'')>'') {
         $RS1 = db_getGPModalidade::getInstanceOf($dbms,$w_cliente,$w_modalidade_contrato,null,null,null,null,null);
-        if (f($RS1,'username')=='P' || f($RS1,'username')=='S') {
-          $w_username_pessoa = f($RS1,'username');
+        foreach ($RS1 as $row){
+          if (f($row,'username')=='P' || f($row,'username')=='S') {
+            $w_username_pessoa = f($row,'username');
+          }
         } 
       } 
       Validate('w_posto_trabalho','Cargo','SELECT',1,1,18,'','0123456789');
@@ -445,7 +458,6 @@ function Identificacao() {
       } 
     } 
   } 
-  ShowHTML('if (theForm.w_foto.value != \'\') {return ProgressBar();}');
   ValidateClose();
   ScriptClose();
   ShowHTML('</HEAD>');
@@ -540,7 +552,7 @@ function Identificacao() {
     ShowHTML('      </table>');
     if (Nvl($P1,0)==1) {
       ShowHTML('<INPUT type="hidden" name="w_sq_contrato_colaborador" value="'.$w_sq_contrato_colaborador.'">');
-      ShowHTML('<INPUT type="hidden" name="w_usuario" value="'.$w_usuario.'">');
+      //ShowHTML('<INPUT type="hidden" name="w_usuario" value="'.$w_usuario.'">');
       if (Nvl($w_sq_contrato_colaborador,'')=='') {
         ShowHTML('        <tr><td colspan=3 align="center" height="2" bgcolor="#000000"></td></tr>');
         ShowHTML('        <tr><td colspan=3 align="center" height="1" bgcolor="#000000"></td></tr>');
@@ -558,7 +570,7 @@ function Identificacao() {
         ShowHTML('        </table></td></tr>');
         ShowHTML('        <tr valign="top">');
         ShowHTML('        <td colspan="3" valign="top"><table border="0" width="100%" cellpadding=0 cellspacing=0><tr>');
-        SelecaoUnidade('Unidade de <U>e</U>xercício:','E',null,$w_unidade_exercicio,null,'w_unidade_exercicio',null,'onBlur="document.Form.action=\''.$w_dir.$w_pagina.$par.'&SG='.$SG.'&O='.$O.'&w_usuario='.$w_chave.'\'; document.Form.w_troca.value=\'w_localizacao\'; document.Form.submit();"');
+        SelecaoUnidade('Unidade de <U>e</U>xercício:','E',null,$w_unidade_exercicio,null,'w_unidade_exercicio',null,'onChange="document.Form.action=\''.$w_dir.$w_pagina.$par.'&SG='.$SG.'&O='.$O.'&w_usuario='.$w_chave.'\'; document.Form.w_troca.value=\'w_localizacao\'; document.Form.submit();"');
         ShowHTML('        </table></td></tr>');
         ShowHTML('        <tr valign="top">');
         ShowHTML('        <td colspan="3" valign="top"><table border="0" width="100%" cellpadding=0 cellspacing=0><tr>');
@@ -591,7 +603,7 @@ function Identificacao() {
     ShowHTML('      <tr><td align="center" colspan="3">');
     ShowHTML('            <input class="STB" type="submit" name="Botao" value="Gravar">');
     if (Nvl($P1,0)==1 && Nvl($w_sq_contrato_colaborador,'')=='') {
-      ShowHTML('            <INPUT class="stb" TYPE="button" NAME="Botao" VALUE="Cancelar" onClick="location.href=\'Colaborador.php?par=Inicial&R=Colaborador.php?par=Inicial&O=P&w_cliente='.$w_cliente.'&P1='.$P1.'&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP='.$TP.'&SG=COINICIAL\';">');
+      ShowHTML('            <INPUT class="stb" TYPE="button" NAME="Botao" VALUE="Cancelar" onClick="location.href=\'colaborador.php?par=Inicial&R=colaborador.php?par=Inicial&O=P&w_cliente='.$w_cliente.'&P1='.$P1.'&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP='.$TP.'&SG=COINICIAL\';">');
     } 
     ShowHTML('          </td>');
     ShowHTML('      </tr>');
@@ -622,7 +634,7 @@ function Historico() {
   if (Nvl(f($RS,'inclusao'),'')=='') {
     ScriptOpen('JavaScript');
     ShowHTML(' alert(\'Efetue o cadastro da identificação primeiro!\');');
-    ShowHTML(' location.href=\'CV.php?par=Identificacao &w_usuario='.$w_chave.'&P1='.$P1.'&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP='.$TP.'&SG='.$SG.MontaFiltro('GET').'\';');
+    ShowHTML(' location.href=\'cv.php?par=Identificacao &w_usuario='.$w_chave.'&P1='.$P1.'&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP='.$TP.'&SG='.$SG.MontaFiltro('GET').'\';');
     ScriptClose();
   } 
   // Verifica se há necessidade de recarregar os dados da tela a partir
@@ -780,7 +792,7 @@ function Idiomas() {
     if (Nvl(f($RS,'inclusao'),'')=='') {
       ScriptOpen('JavaScript');
       ShowHTML('alert(\'Efetue o cadastro da identificação primeiro!\');');
-      ShowHTML('location.href=\'CV.php?par=Identificacao &w_usuario='.$w_chave.'&P1='.$P1.'&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP='.$TP.'&SG='.$SG.MontaFiltro('GET').'\';');
+      ShowHTML('location.href=\'cv.php?par=Identificacao &w_usuario='.$w_chave.'&P1='.$P1.'&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP='.$TP.'&SG='.$SG.MontaFiltro('GET').'\';');
       ScriptClose();
     } 
   } 
@@ -840,7 +852,7 @@ function Idiomas() {
   ShowHTML('<table border="0" cellpadding="0" cellspacing="0" width="100%">');
   if ($O=='L') {
     // Exibe a quantidade de registros apresentados na listagem e o cabeçalho da tabela de listagem
-    ShowHTML('<tr><td><a accesskey="I" class="SS" href="'.$w_dir.$w_pagina.$par.'&R='.$w_pagina.$par.'&O=I&P1='.$P1.'&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP='.$TP.'&SG='.$SG.MontaFiltro('GET').'"><u>I</u>ncluir</a>&nbsp;');
+    ShowHTML('<tr><td><a accesskey="I" class="SS" href="'.$w_dir.$w_pagina.$par.'&R='.$w_pagina.$par.'&w_usuario='.$w_usuario.'&O=I&P1='.$P1.'&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP='.$TP.'&SG='.$SG.MontaFiltro('GET').'"><u>I</u>ncluir</a>&nbsp;');
     ShowHTML('    <td align="right"><b>Registros existentes: '.count($RS));
     ShowHTML('<tr><td align="center" colspan=3>');
     ShowHTML('    <TABLE WIDTH="100%" bgcolor="'.$conTableBgColor.'" BORDER="'.$conTableBorder.'" CELLSPACING="'.$conTableCellSpacing.'" CELLPADDING="'.$conTableCellPadding.'" BorderColorDark="'.$conTableBorderColorDark.'" BorderColorLight="'.$conTableBorderColorLight.'">');
@@ -866,8 +878,8 @@ function Idiomas() {
         ShowHTML('        <td align="center">'.f($row,'nm_conversacao').'</td>');
         ShowHTML('        <td align="center">'.f($row,'nm_compreensao').'</td>');
         ShowHTML('        <td align="top" nowrap>');
-        ShowHTML('          <A class="HL" HREF="'.$w_dir.$w_pagina.$par.'&R='.$w_pagina.$par.'&O=A&w_chave='.f($row,'sq_idioma').'&P1='.$P1.'&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP='.$TP.'&SG='.$SG.'">Alterar</A>&nbsp');
-        ShowHTML('          <A class="HL" HREF="'.$w_dir.$w_pagina.$par.'&R='.$w_pagina.$par.'&O=E&w_chave='.f($row,'sq_idioma').'&P1='.$P1.'&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP='.$TP.'&SG='.$SG.'">Excluir</A>&nbsp');
+        ShowHTML('          <A class="HL" HREF="'.$w_dir.$w_pagina.$par.'&R='.$w_pagina.$par.'&O=A&w_chave='.f($row,'sq_idioma').'&w_usuario='.$w_usuario.'&P1='.$P1.'&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP='.$TP.'&SG='.$SG.'">Alterar</A>&nbsp');
+        ShowHTML('          <A class="HL" HREF="'.$w_dir.$w_pagina.$par.'&R='.$w_pagina.$par.'&O=E&w_chave='.f($row,'sq_idioma').'&w_usuario='.$w_usuario.'&P1='.$P1.'&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP='.$TP.'&SG='.$SG.'">Excluir</A>&nbsp');
         ShowHTML('        </td>');
         ShowHTML('      </tr>');
       } 
@@ -882,6 +894,7 @@ function Idiomas() {
     } 
     AbreForm('Form',$w_dir.$w_pagina.'Grava','POST','return(Validacao(this));',null,$P1,$P2,$P3,$P4,$TP,$SG,$R,$O);
     ShowHTML('<INPUT type="hidden" name="w_troca" value="">');
+    ShowHTML('<INPUT type="hidden" name="w_usuario" value="'.$w_usuario.'">');
     ShowHTML('<tr bgcolor="'.$conTrBgColor.'"><td align="center">');
     ShowHTML('    <table width="97%" border="0">');
     if ($O=='I') {
@@ -891,7 +904,6 @@ function Idiomas() {
       ShowHTML('<INPUT type="hidden" name="w_chave" value="'.$w_chave.'">');
       ShowHTML('      <tr><td valign="top">Idioma:</b><br><b>'.$w_nm_idioma);
     } 
-    echo nvl($O,'nulo');echo nvl($w_nm_idioma,'nulo');
     ShowHTML('      <tr>');
     MontaRadioNS('<b>Você lê com facilidade textos escritos no idioma selecionado acima?</b>',$w_leitura,'w_leitura');
     ShowHTML('      <tr>');
@@ -914,7 +926,7 @@ function Idiomas() {
         ShowHTML('            <input class="STB" type="submit" name="Botao" value="Atualizar">');
       } 
     } 
-    ShowHTML('            <input class="STB" type="button" onClick="location.href=\''.$w_pagina.$par.'&w_chave='.$w_chave.'&P1='.$P1.'&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP='.$TP.'&SG='.$SG.'&O=L\';" name="Botao" value="Cancelar">');
+    ShowHTML('            <input class="STB" type="button" onClick="location.href=\''.$w_pagina.$par.'&w_chave='.$w_chave.'&w_usuario='.$w_usuario.'&P1='.$P1.'&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP='.$TP.'&SG='.$SG.'&O=L\';" name="Botao" value="Cancelar">');
     ShowHTML('          </td>');
     ShowHTML('      </tr>');
     ShowHTML('    </table>');
@@ -943,7 +955,7 @@ function Experiencia() {
     if (Nvl(f($row,'inclusao'),'')=='') {
       ScriptOpen('JavaScript');
       ShowHTML('alert(\'Efetue o cadastro da identificação primeiro!\');');
-      ShowHTML('location.href=\'CV.php?par=Identificacao&w_usuario='.$w_chave.'&P1='.$P1.'&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP='.$TP.'&SG='.$SG.MontaFiltro('GET').'\';');
+      ShowHTML('location.href=\'cv.php?par=Identificacao&w_usuario='.$w_chave.'&P1='.$P1.'&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP='.$TP.'&SG='.$SG.MontaFiltro('GET').'\';');
       ScriptClose();
     } 
   } if ($w_troca >'') {
@@ -1048,7 +1060,7 @@ function Experiencia() {
   ShowHTML('</HEAD>');
   ShowHTML('<BASE HREF="'.$conRootSIW.'">');
   if ($O=='L') {
-    BodyOpen('onLoad=\'document.focus()\';');
+    BodyOpen(null);
   } elseif ($w_troca >'') {
     BodyOpen('onLoad=\'document.Form.'.$w_troca.'.focus()\';');
   } else {
@@ -1086,7 +1098,7 @@ function Experiencia() {
         ShowHTML('        <td align="top" nowrap>');
         ShowHTML('          <A class="HL" HREF="'.$w_dir.$w_pagina.$par.'&R='.$w_pagina.$par.'&O=A&w_sq_cvpessoa='.$w_sq_cvpessoa.'&w_chave='.f($row,'sq_cvpesexp').'&P1='.$P1.'&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP='.$TP.'&SG='.$SG.MontaFiltro('GET').'">Alterar</A>&nbsp');
         ShowHTML('          <A class="HL" HREF="'.$w_dir.$w_pagina.'GRAVA&R='.$w_pagina.$par.'&O=E&w_sq_cvpessoa='.$w_sq_cvpessoa.'&w_chave='.f($row,'sq_cvpesexp').'&P1='.$P1.'&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP='.$TP.'&SG='.$SG.MontaFiltro('GET').'" onClick="return confirm(\'Confirma a exclusão do emprego?\');">Excluir</A>&nbsp');
-        ShowHTML('          <u class="HL" style="cursor:hand;" onclick="javascript:window.open(\''.$w_pagina.'CARGOS&R='.$w_pagina.'CARGOS&O=L&w_sq_cvpessoa='.$w_sq_cvpessoa.'&w_sq_cvpesexp='.f($row,'sq_cvpesexp').'&P1=2&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP='.$TP.' - Cargos&SG=CVCARGOS'.MontaFiltro('GET').'\',\'Cargos\',\'toolbar=no,width=780,height=350,top=30,left=10,scrollbars=yes,resizable=yes\')">Cargos</u>&nbsp');
+        ShowHTML('          <A class="HL" HREF="javascript:location.href=this.location.href;" onClick="window.open(\''.$w_pagina.'CARGOS&R='.$w_pagina.'CARGOS&O=L&w_sq_cvpessoa='.$w_sq_cvpessoa.'&w_sq_cvpesexp='.f($row,'sq_cvpesexp').'&P1=2&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP='.$TP.' - Cargos&SG=CVCARGOS'.MontaFiltro('GET').'\',\'Cargos\',\'toolbar=no,width=780,height=350,top=30,left=10,scrollbars=yes,resizable=yes\');" title="Clique aqui para inserir os cargos que ocupou nesse emprego.">Cargos</A>&nbsp');
         ShowHTML('        </td>');
         ShowHTML('      </tr>');
       } 
@@ -1180,20 +1192,23 @@ function Cargos() {
   $w_sq_cvpesexp    = $_REQUEST['w_sq_cvpesexp'];
   if (Nvl($P1,0)!=1) {
     $RS = db_getCV::getInstanceOf($dbms,$w_cliente,nvl($w_usuario,0),$SG,'DADOS');
+    foreach($RS as $row) { $RS = $row; break; }
     if (Nvl(f($RS,'inclusao'),'')=='') {
       ScriptOpen('JavaScript');
       ShowHTML('alert(\'Efetue o cadastro da identificação primeiro!\');');
-      ShowHTML('location.href=\'CV.php?par=Identificacao&w_usuario='.$w_chave.'&P1='.$P1.'&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP='.$TP.'&SG='.$SG.MontaFiltro('GET').'\';');
+      ShowHTML('location.href=\'cv.php?par=Identificacao&w_usuario='.$w_chave.'&P1='.$P1.'&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP='.$TP.'&SG='.$SG.MontaFiltro('GET').'\';');
       ScriptClose();   
     }
   } 
   $RS = db_getCVAcadForm::getInstanceOf($dbms,$w_usuario,$w_sq_cvpesexp,'EXPERIENCIA');
+ foreach($RS as $row) { $RS = $row; break; }
   $w_nome_empregador = f($RS,'empregador'); 
   if ($O=='L') {
     $RS = db_getCVAcadForm::getInstanceOf($dbms,$w_sq_cvpesexp,null,'CARGO');
   } elseif ((strpos('AEV',$O)===false)) {
     // Recupera o conjunto de informações comum a todos os serviços
     $RS = db_getCVAcadForm::getInstanceOf($dbms,$w_sq_cvpesexp,$w_sq_cvpescargo,'CARGO');
+    foreach($RS as $row) { $RS = $row; break; }
     $w_sq_area_conhecimento = f($RS,'sq_area_conhecimento');
     $w_nm_area              = f($RS,'nm_area');
     $w_especialidades       = f($RS,'especialidades');
@@ -1250,9 +1265,9 @@ function Cargos() {
   ShowHTML('<table border="0" cellpadding="0" cellspacing="0" width="100%">');
   if ($O=='L') {
     // Exibe a quantidade de registros apresentados na listagem e o cabeçalho da tabela de listagem
-    ShowHTML('<tr><td>Empregador:<b> '.$w_nome_empregador.'</b>');
+    ShowHTML('<tr><td>Empregador:<b> '.$w_nome_empregador.'</b><br>&nbsp;');
     ShowHTML('<tr><td><a accesskey="I" class="SS" href="'.$w_dir.$w_pagina.$par.'&w_sq_cvpesexp= '.$w_sq_cvpesexp.'&R='.$w_pagina.$par.'&O=I&w_sq_cvpessoa='.$w_sq_cvpessoa.'&P1='.$P1.'&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP='.$TP.'&SG='.$SG.MontaFiltro('GET').'"><u>I</u>ncluir</a>&nbsp;');
-    ShowHTML('    <a accesskey="F" class="SS" href="javascript:opener.location.reload();javascript:window.close();"><u>F</u>echar</a>&nbsp;');
+    ShowHTML('    <a accesskey="F" class="SS" href="javascript:opener.focus();javascript:window.close();"><u>F</u>echar</a>&nbsp;');
     ShowHTML('    <td align="right"><b>Registros existentes: '.count($RS));
     ShowHTML('<tr><td align="center" colspan=3>');
     ShowHTML('    <TABLE WIDTH="100%" bgcolor="'.$conTableBgColor.'" BORDER="'.$conTableBorder.'" CELLSPACING="'.$conTableCellSpacing.'" CELLPADDING="'.$conTableCellPadding.'" BorderColorDark="'.$conTableBorderColorDark.'" BorderColorLight="'.$conTableBorderColorLight.'">');
@@ -1284,9 +1299,7 @@ function Cargos() {
     ShowHTML('  </td>');
     ShowHTML('</tr>');
   } elseif (!(strpos('IAEV',$O)===false)) {
-    if (!(strpos('EV',$O)===false)) {
-      $w_Disabled=' DISABLED ';
-    } 
+    if (!(strpos('EV',$O)===false)) $w_Disabled=' DISABLED ';
     AbreForm('Form',$w_dir.$w_pagina.'Grava','POST','return(Validacao(this))',null,$P1,$P2,$P3,$P4,$TP,$SG,$R,$O);
     ShowHTML('<INPUT type="hidden" name="w_sq_cvpessoa" value="'.$w_sq_cvpessoa.'">');
     ShowHTML('<INPUT type="hidden" name="w_sq_cvpescargo" value="'.$w_sq_cvpescargo.'">');
@@ -1303,7 +1316,7 @@ function Cargos() {
     ShowHTML('          </table>');
     ShowHTML('      <tr><td valign="top"><b>Cargo desempenhado:</b><br>');
     ShowHTML('          <input READONLY type="text" name="w_nm_area" class="sti" SIZE="50" VALUE="'.$w_nm_area.'">');
-    ShowHTML('          [<u onMouseOver="this.style.cursor=\'Hand\'" onMouseOut="this.style.cursor=\'Pointer\'" onClick="window.open(\''.$w_pagina.'BuscaAreaConhecimento&TP='.$TP.'&P1=2','SelecaoCargo','top=70,left=100,width=600,height=400,toolbar=yes,status=yes,resizable=yes,scrollbars=yes\');"><b><font color="#0000FF">Procurar</font></b></u>]');
+    ShowHTML('          [<u onMouseOver="this.style.cursor=\'Hand\'" onMouseOut="this.style.cursor=\'Pointer\'" onClick="window.open(\''.$w_pagina.'BuscaAreaConhecimento&TP='.$TP.'&P1=2\',\'SelecaoCargo\',\'top=70,left=100,width=600,height=400,toolbar=yes,status=yes,resizable=yes,scrollbars=yes\');"><b><font color="#0000FF">Procurar</font></b></u>]');
     // Verifica se poderá ser feito o envio da solicitação, a partir do resultado da validação    
     if ($_SESSION['PORTAL']=='') {
       ShowHTML('      <tr><td align="LEFT" colspan=4><b><U>A</U>ssinatura Eletrônica:<BR> <INPUT ACCESSKEY="A" class="sti" type="PASSWORD" name="w_assinatura" size="30" maxlength="30" value=""></td></tr>'); 
@@ -1343,10 +1356,10 @@ function Escolaridade() {
   if (Nvl($P1,0)!=1) {
     $RS = db_getCV::getInstanceOf($dbms,$w_cliente,nvl($w_usuario,0),$SG,'DADOS');
     foreach ($RS as $row) {$RS=$row; break;}
-    if (Nvl(f($row,'inclusao'),'')=='') {
+    if (Nvl(f($RS,'inclusao'),'')=='') {
       ScriptOpen('JavaScript');
       ShowHTML('alert(\'Efetue o cadastro da identificação primeiro!\');');
-      ShowHTML('location.href=\'CV.php?par=Identificacao&w_usuario='.$w_chave.'&P1='.$P1.'&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP='.$TP.'&SG='.$SG.MontaFiltro('GET').'\';');
+      ShowHTML('location.href=\'cv.php?par=Identificacao&w_usuario='.$w_chave.'&P1='.$P1.'&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP='.$TP.'&SG='.$SG.MontaFiltro('GET').'\';');
       ScriptClose();
     } 
   } if ($w_troca >'') {
@@ -1431,7 +1444,7 @@ function Escolaridade() {
   ShowHTML('<table border="0" cellpadding="0" cellspacing="0" width="100%">');
   if ($O=='L') {
     // Exibe a quantidade de registros apresentados na listagem e o cabeçalho da tabela de listagem
-    ShowHTML('<tr><td><a accesskey="I" class="SS" href="'.$w_dir.$w_pagina.$par.'&R='.$w_pagina.$par.'&O=I&w_chave='.$w_chave.'&P1='.$P1.'&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP='.$TP.'&SG='.$SG.MontaFiltro('GET').'"><u>I</u>ncluir</a>&nbsp;');
+    ShowHTML('<tr><td><a accesskey="I" class="SS" href="'.$w_dir.$w_pagina.$par.'&R='.$w_pagina.$par.'&O=I&w_chave='.$w_chave.'&w_usuario='.$w_usuario.'&P1='.$P1.'&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP='.$TP.'&SG='.$SG.MontaFiltro('GET').'"><u>I</u>ncluir</a>&nbsp;');
     ShowHTML('    <td align="right"><b>Registros existentes: '.count($RS));
     ShowHTML('<tr><td align="center" colspan=3>');
     ShowHTML('    <TABLE WIDTH="100%" bgcolor="'.$conTableBgColor.'" BORDER="'.$conTableBorder.'" CELLSPACING="'.$conTableCellSpacing.'" CELLPADDING="'.$conTableCellPadding.'" BorderColorDark="'.$conTableBorderColorDark.'" BorderColorLight="'.$conTableBorderColorLight.'">');
@@ -1457,8 +1470,8 @@ function Escolaridade() {
         ShowHTML('        <td align="center">'.f($row,'inicio').'</td>');
         ShowHTML('        <td align="center">'.Nvl(f($row,'fim'),'---').'</td>');
         ShowHTML('        <td align="top" nowrap>');
-        ShowHTML('          <A class="HL" HREF="'.$w_dir.$w_pagina.$par.'&R='.$w_pagina.$par.'&O=A&w_chave='.f($row,'sq_cvpessoa_escol').'&P1='.$P1.'&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP='.$TP.'&SG='.$SG.'">Alterar</A>&nbsp');
-        ShowHTML('          <A class="HL" HREF="'.$w_dir.$w_pagina.$par.'&R='.$w_pagina.$par.'&O=E&w_chave='.f($row,'sq_cvpessoa_escol').'&P1='.$P1.'&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP='.$TP.'&SG='.$SG.'">Excluir</A>&nbsp');
+        ShowHTML('          <A class="HL" HREF="'.$w_dir.$w_pagina.$par.'&R='.$w_pagina.$par.'&O=A&w_chave='.f($row,'sq_cvpessoa_escol').'&w_usuario='.$w_usuario.'&P1='.$P1.'&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP='.$TP.'&SG='.$SG.'">Alterar</A>&nbsp');
+        ShowHTML('          <A class="HL" HREF="'.$w_dir.$w_pagina.$par.'&R='.$w_pagina.$par.'&O=E&w_chave='.f($row,'sq_cvpessoa_escol').'&w_usuario='.$w_usuario.'&P1='.$P1.'&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP='.$TP.'&SG='.$SG.'">Excluir</A>&nbsp');
         ShowHTML('        </td>');
         ShowHTML('      </tr>');
       } 
@@ -1473,6 +1486,7 @@ function Escolaridade() {
     } 
     AbreForm('Form',$w_dir.$w_pagina.'Grava','POST','return(Validacao(this));',null,$P1,$P2,$P3,$P4,$TP,$SG,$R,$O);
     ShowHTML('<INPUT type="hidden" name="w_chave" value="'.$w_chave.'">');
+    ShowHTML('<INPUT type="hidden" name="w_usuario" value="'.$w_usuario.'">');
     ShowHTML('<INPUT type="hidden" name="w_troca" value="">');
     ShowHTML('<INPUT type="hidden" name="w_sq_area_conhecimento" value="'.$w_sq_area_conhecimento.'">');
     ShowHTML('<tr bgcolor="'.$conTrBgColor.'"><td align="center">');
@@ -1504,7 +1518,7 @@ function Escolaridade() {
         ShowHTML('            <input class="STB" type="submit" name="Botao" value="Atualizar">');
       }  
     }  
-    ShowHTML('            <input class="STB" type="button" onClick="location.href=\''.$w_pagina.$par.'&w_chave='.$w_chave.'&P1='.$P1.'&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP='.$TP.'&SG='.$SG.'&O=L\';" name="Botao" value="Cancelar">');
+    ShowHTML('            <input class="STB" type="button" onClick="location.href=\''.$w_pagina.$par.'&w_chave='.$w_chave.'&w_usuario='.$w_usuario.'&P1='.$P1.'&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP='.$TP.'&SG='.$SG.'&O=L\';" name="Botao" value="Cancelar">');
     ShowHTML('          </td>');
     ShowHTML('      </tr>');
     ShowHTML('    </table>');
@@ -1533,7 +1547,7 @@ function Extensao() {
     if (Nvl(f($row,'inclusao'),'')=='') {
       ScriptOpen('JavaScript');
       ShowHTML('alert(\'Efetue o cadastro da identificação primeiro!\');');
-      ShowHTML('location.href=\'CV.php?par=Identificacao&w_usuario='.$w_chave.'&P1='.$P1.'&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP='.$TP.'&SG='.$SG.MontaFiltro('GET').'\';');
+      ShowHTML('location.href=\'cv.php?par=Identificacao&w_usuario='.$w_chave.'&P1='.$P1.'&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP='.$TP.'&SG='.$SG.MontaFiltro('GET').'\';');
       ScriptClose();
     } 
   } if ($w_troca >'') {
@@ -1607,7 +1621,7 @@ function Extensao() {
   ShowHTML('<table border="0" cellpadding="0" cellspacing="0" width="100%">');
   if ($O=='L') {
     // Exibe a quantidade de registros apresentados na listagem e o cabeçalho da tabela de listagem
-    ShowHTML('<tr><td><a accesskey="I" class="SS" href="'.$w_dir.$w_pagina.$par.'&R='.$w_pagina.$par.'&O=I&w_chave='.$w_chave.'&P1='.$P1.'&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP='.$TP.'&SG='.$SG.MontaFiltro('GET').'"><u>I</u>ncluir</a>&nbsp;');
+    ShowHTML('<tr><td><a accesskey="I" class="SS" href="'.$w_dir.$w_pagina.$par.'&R='.$w_pagina.$par.'&O=I&w_chave='.$w_chave.'&w_usuario='.$w_usuario.'&P1='.$P1.'&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP='.$TP.'&SG='.$SG.MontaFiltro('GET').'"><u>I</u>ncluir</a>&nbsp;');
     ShowHTML('    <td align="right"><b>Registros existentes: '.count($RS));
     ShowHTML('<tr><td align="center" colspan=3>');
     ShowHTML('    <TABLE WIDTH="100%" bgcolor="'.$conTableBgColor.'" BORDER="'.$conTableBorder.'" CELLSPACING="'.$conTableCellSpacing.'" CELLPADDING="'.$conTableCellPadding.'" BorderColorDark="'.$conTableBorderColorDark.'" BorderColorLight="'.$conTableBorderColorLight.'">');
@@ -1633,8 +1647,8 @@ function Extensao() {
         ShowHTML('        <td align="center">'.f($row,'carga_horaria').'</td>');
         ShowHTML('        <td align="center">'.Nvl(FormataDataEdicao(f($row,'conclusao')),'---').'</td>');
         ShowHTML('        <td align="top" nowrap>');
-        ShowHTML('          <A class="HL" HREF="'.$w_dir.$w_pagina.$par.'&R='.$w_pagina.$par.'&O=A&w_chave='.f($row,'sq_cvpescurtec').'&P1='.$P1.'&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP='.$TP.'&SG='.$SG.'">Alterar</A>&nbsp');
-        ShowHTML('          <A class="HL" HREF="'.$w_dir.$w_pagina.$par.'&R='.$w_pagina.$par.'&O=E&w_chave='.f($row,'sq_cvpescurtec').'&P1='.$P1.'&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP='.$TP.'&SG='.$SG.'">Excluir</A>&nbsp');
+        ShowHTML('          <A class="HL" HREF="'.$w_dir.$w_pagina.$par.'&R='.$w_pagina.$par.'&O=A&w_chave='.f($row,'sq_cvpescurtec').'&w_usuario='.$w_usuario.'&P1='.$P1.'&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP='.$TP.'&SG='.$SG.'">Alterar</A>&nbsp');
+        ShowHTML('          <A class="HL" HREF="'.$w_dir.$w_pagina.$par.'&R='.$w_pagina.$par.'&O=E&w_chave='.f($row,'sq_cvpescurtec').'&w_usuario='.$w_usuario.'&P1='.$P1.'&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP='.$TP.'&SG='.$SG.'">Excluir</A>&nbsp');
         ShowHTML('        </td>');
         ShowHTML('      </tr>');
       } 
@@ -1644,11 +1658,10 @@ function Extensao() {
     ShowHTML('  </td>');
     ShowHTML('</tr>');
   } elseif (!(strpos('IAEV',$O)===false)) {
-    if (!(strpos('EV',$O)===false)) {
-      $w_Disabled=' DISABLED ';
-    } 
+    if (!(strpos('EV',$O)===false)) $w_Disabled=' DISABLED ';
     AbreForm('Form',$w_dir.$w_pagina.'Grava','POST','return(Validacao(this));',null,$P1,$P2,$P3,$P4,$TP,$SG,$R,$O);
     ShowHTML('<INPUT type="hidden" name="w_chave" value="'.$w_chave.'">');
+    ShowHTML('<INPUT type="hidden" name="w_usuario" value="'.$w_usuario.'">');
     ShowHTML('<INPUT type="hidden" name="w_troca" value="">');
     ShowHTML('<INPUT type="hidden" name="w_sq_area_conhecimento" value="'.$w_sq_area_conhecimento.'">');
     ShowHTML('<tr bgcolor="'.$conTrBgColor.'"><td align="center">');
@@ -1679,7 +1692,7 @@ function Extensao() {
         ShowHTML('            <input class="STB" type="submit" name="Botao" value="Atualizar">');
       } 
     } 
-    ShowHTML('            <input class="STB" type="button" onClick="location.href=\''.$w_pagina.$par.'&w_chave='.$w_chave.'&P1='.$P1.'&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP='.$TP.'&SG='.$SG.'&O=L\';" name="Botao" value="Cancelar">');
+    ShowHTML('            <input class="STB" type="button" onClick="location.href=\''.$w_pagina.$par.'&w_chave='.$w_chave.'&w_usuario='.$w_usuario.'&P1='.$P1.'&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP='.$TP.'&SG='.$SG.'&O=L\';" name="Botao" value="Cancelar">');
     ShowHTML('          </td>');
     ShowHTML('      </tr>');
     ShowHTML('    </table>');
@@ -1708,7 +1721,7 @@ function Producao() {
     if (Nvl(f($RS,'inclusao'),'')=='') {
       ScriptOpen('JavaScript');
       ShowHTML('alert(\'Efetue o cadastro da identificação primeiro!\');');
-      ShowHTML('location.href=\'CV.php?par=Identificacao&w_usuario='.$w_chave.'&P1='.$P1.'&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP='.$TP.'&SG='.$SG.MontaFiltro('GET').'\';');
+      ShowHTML('location.href=\'cv.php?par=Identificacao&w_usuario='.$w_chave.'&P1='.$P1.'&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP='.$TP.'&SG='.$SG.MontaFiltro('GET').'\';');
       ScriptClose();
     } 
   } if ($w_troca >'') {
@@ -1779,7 +1792,7 @@ function Producao() {
   ShowHTML('<table border="0" cellpadding="0" cellspacing="0" width="100%">');
   if ($O=='L') {
     // Exibe a quantidade de registros apresentados na listagem e o cabeçalho da tabela de listagem
-    ShowHTML('<tr><td><a accesskey="I" class="SS" href="'.$w_dir.$w_pagina.$par.'&R='.$w_pagina.$par.'&O=I&w_chave='.$w_chave.'&P1='.$P1.'&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP='.$TP.'&SG='.$SG.MontaFiltro('GET').'"><u>I</u>ncluir</a>&nbsp;');
+    ShowHTML('<tr><td><a accesskey="I" class="SS" href="'.$w_dir.$w_pagina.$par.'&R='.$w_pagina.$par.'&O=I&w_chave='.$w_chave.'&w_usuario='.$w_usuario.'&P1='.$P1.'&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP='.$TP.'&SG='.$SG.MontaFiltro('GET').'"><u>I</u>ncluir</a>&nbsp;');
     ShowHTML('    <td align="right"><b>Registros existentes: '.count($RS));
     ShowHTML('<tr><td align="center" colspan=3>');
     ShowHTML('    <TABLE WIDTH="100%" bgcolor="'.$conTableBgColor.'" BORDER="'.$conTableBorder.'" CELLSPACING="'.$conTableCellSpacing.'" CELLPADDING="'.$conTableCellPadding.'" BorderColorDark="'.$conTableBorderColorDark.'" BorderColorLight="'.$conTableBorderColorLight.'">');
@@ -1805,8 +1818,8 @@ function Producao() {
         ShowHTML('        <td>'.f($row,'meio').'</td>');
         ShowHTML('        <td align="center">'.Nvl(FormataDataEdicao(f($row,'data')),'---').'</td>');
         ShowHTML('        <td align="top" nowrap>');
-        ShowHTML('          <A class="HL" HREF="'.$w_dir.$w_pagina.$par.'&R='.$w_pagina.$par.'&O=A&w_chave='.f($row,'sq_cvpessoa_prod').'&P1='.$P1.'&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP='.$TP.'&SG='.$SG.'">Alterar</A>&nbsp');
-        ShowHTML('          <A class="HL" HREF="'.$w_dir.$w_pagina.$par.'&R='.$w_pagina.$par.'&O=E&w_chave='.f($row,'sq_cvpessoa_prod').'&P1='.$P1.'&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP='.$TP.'&SG='.$SG.'">Excluir</A>&nbsp');
+        ShowHTML('          <A class="HL" HREF="'.$w_dir.$w_pagina.$par.'&R='.$w_pagina.$par.'&O=A&w_chave='.f($row,'sq_cvpessoa_prod').'&w_usuario='.$w_usuario.'&P1='.$P1.'&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP='.$TP.'&SG='.$SG.'">Alterar</A>&nbsp');
+        ShowHTML('          <A class="HL" HREF="'.$w_dir.$w_pagina.$par.'&R='.$w_pagina.$par.'&O=E&w_chave='.f($row,'sq_cvpessoa_prod').'&w_usuario='.$w_usuario.'&P1='.$P1.'&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP='.$TP.'&SG='.$SG.'">Excluir</A>&nbsp');
         ShowHTML('        </td>');
         ShowHTML('      </tr>');
       } 
@@ -1821,6 +1834,7 @@ function Producao() {
     } 
     AbreForm('Form',$w_dir.$w_pagina.'Grava','POST','return(Validacao(this));',null,$P1,$P2,$P3,$P4,$TP,$SG,$R,$O);
     ShowHTML('<INPUT type="hidden" name="w_chave" value="'.$w_chave.'">');
+    ShowHTML('<INPUT type="hidden" name="w_usuario" value="'.$w_usuario.'">');    
     ShowHTML('<INPUT type="hidden" name="w_troca" value=" ">');
     ShowHTML('<INPUT type="hidden" name="w_sq_area_conhecimento" value="'.$w_sq_area_conhecimento.'">');
     ShowHTML('<tr bgcolor="'.$conTrBgColor.'"><td align="center">');
@@ -1851,7 +1865,7 @@ function Producao() {
         ShowHTML('            <input class="STB" type="submit" name="Botao" value="Atualizar">');
       } 
     }
-    ShowHTML('            <input class="STB" type="button" onClick="location.href=\''.$w_pagina.$par.'&w_chave='.$w_chave.'&P1='.$P1.'&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP='.$TP.'&SG='.$SG.'&O=L\';" name="Botao" value="Cancelar">');
+    ShowHTML('            <input class="STB" type="button" onClick="location.href=\''.$w_pagina.$par.'&w_chave='.$w_chave.'&w_usuario='.$w_usuario.'&P1='.$P1.'&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP='.$TP.'&SG='.$SG.'&O=L\';" name="Botao" value="Cancelar">');
     ShowHTML('          </td>');
     ShowHTML('      </tr>');
     ShowHTML('    </table>');
@@ -1978,11 +1992,10 @@ function Visualizar() {
     $RS = db_getCustomerData::getInstanceOf($dbms,$w_cliente);
     ShowHTML('  <TD ROWSPAN=2><IMG ALIGN="LEFT" src="'.LinkArquivo(null,$w_cliente,'\img\logo'.substr(f($RS,'logo'),(strpos(f($RS,'logo'),'.') ? strpos(f($RS,'logo'),'.')+1 : 0)-1,30),null,null,null,'EMBED').'">');    
   } 
-  ShowHTML('  <TD ALIGN="RIGHT"><B><FONT SIZE=5 COLOR="#000000">');
-  ShowHTML('Curriculum Vitae');
-  ShowHTML('</FONT><TR><TD ALIGN="RIGHT"><B><FONT SIZE=2 COLOR="#000000">'.DataHora().'</B>');
+  ShowHTML('  <TD ALIGN="RIGHT"><B><FONT SIZE=5 COLOR="#000000">Curriculum Vitae</FONT>');
   if ($P2==0) {
-    ShowHTML('&nbsp;&nbsp;<a target="MetaWord" href="'.$w_dir.$w_pagina.'Visualizar&P2=1&SG=CVVISUAL\'"><IMG border=0 ALIGN="CENTER" TITLE="Gerar word" SRC="images/word.gif"></a>');
+    ShowHTML('<TR><TD ALIGN="RIGHT"><B><FONT SIZE=2 COLOR="#000000">'.DataHora().'</B>');
+    ShowHTML('&nbsp;&nbsp;<a target="MetaWord" href="'.$w_dir.$w_pagina.'Visualizar&P2=1&SG=CVVISUAL"><IMG border=0 ALIGN="CENTER" TITLE="Gerar word" SRC="images/word.gif"></a>');
   } 
   ShowHTML('</TD></TR>');
   ShowHTML('</FONT></B></TD></TR></TABLE>');
@@ -1990,7 +2003,7 @@ function Visualizar() {
     ShowHTML('<HR>');
   } 
   // Chama a função de visualização dos dados do usuário, na opção 'Listagem'
-  VisualCurriculo($w_cliente,$w_usuario,'L');
+  VisualCurriculo($w_cliente,$w_usuario,'L',$P2);
   if ($P2==0) {
     Rodape();
   } 
@@ -2049,7 +2062,7 @@ function Grava() {
           $_REQUEST['w_sexo'],$_REQUEST['w_sq_estado_civil'],$_REQUEST['w_sq_formacao'],$_REQUEST['w_sq_etnia'],
           $_REQUEST['w_sq_deficiencia'],$_REQUEST['w_cidade'],$_REQUEST['w_rg_numero'],$_REQUEST['w_rg_emissor'],
           $_REQUEST['w_rg_emissao'],$_REQUEST['w_cpf'],$_REQUEST['w_passaporte_numero'],$_REQUEST['w_sq_pais_passaporte'],
-          $w_file,$w_tamanho,$w_tipo,$w_nome_original,$w_chave_nova);    
+          $w_file,$w_tamanho,$w_tipo,$w_nome_original,&$w_chave_nova);    
         } else {
           ScriptOpen('JavaScript');
           ShowHTML('  alert(\'ATENÇÃO: ocorreu um erro na transferência do arquivo. Tente novamente!\');');
@@ -2062,15 +2075,13 @@ function Grava() {
           $_REQUEST['w_unidade_lotacao'],$_REQUEST['w_unidade_exercicio'],$_REQUEST['w_localizacao'],$_REQUEST['w_matricula'],
           $_REQUEST['w_dt_ini'],null,$_REQUEST['w_sq_tipo_vinculo']);
           $RS = db_getGPModalidade::getInstanceOf($dbms,$w_cliente,$_REQUEST['w_modalidade_contrato'],null,null,null,null,null);
+          foreach($RS as $row){$RS=$row; break;}
           if ((Nvl(f($RS,'username'),'')=='S') || (Nvl(f($RS,'username'),'')=='P' && $_REQUEST['w_username_pessoa']=='S')) {
-            dml_putSiwUsuario('I',
-            $_REQUEST['w_chave'],$w_cliente,$_REQUEST['w_nome'],$_REQUEST['w_nome_resumido'],
-            $_REQUEST['w_sq_tipo_vinculo'],'Física',$_REQUEST['w_unidade_lotacao'],$_REQUEST['w_localizacao'],
-            $_REQUEST['w_cpf'],$_REQUEST['w_email'],null,null);
-            dml_putSiwUsuario('T',
-            $_REQUEST['w_chave'],null,null,null,
-            null,null,null,null,
-            null,null,null,null);
+            dml_putSiwUsuario::getInstanceOf($dbms,'I',
+                $_REQUEST['w_chave'],$w_cliente,$_REQUEST['w_nome'],$_REQUEST['w_nome_resumido'],
+                $_REQUEST['w_sq_tipo_vinculo'],'Física',$_REQUEST['w_unidade_lotacao'],$_REQUEST['w_localizacao'],
+                $_REQUEST['w_cpf'],$_REQUEST['w_email'],'N','N');
+            dml_putSiwUsuario::getInstanceOf($dbms,'T',$_REQUEST['w_chave'],null,null,null,null,null,null,null,null,null,null,null);
           } 
         } 
         ScriptOpen('JavaScript');
@@ -2079,7 +2090,7 @@ function Grava() {
         } else {
           if (Nvl($P1,0)==1) {
             $RS = db_getMenuData::getInstanceOf($dbms,$RS1,$w_menu);
-            ShowHTML('  parent.menu.location=\'../Menu.php?par=ExibeDocs&O=A&w_usuario='.$w_chave_nova.'&w_sq_pessoa='.$w_chave_nova.'&w_documento='.$_REQUEST['w_nome_resumido'].'&R='.$R.'&SG=COINICIAL&TP='.RemoveTP($TP).MontaFiltro('UL').'\';');
+            ShowHTML('  parent.menu.location=\'../menu.php?par=ExibeDocs&O=A&w_usuario='.$w_chave_nova.'&w_sq_pessoa='.$w_chave_nova.'&w_documento='.$_REQUEST['w_nome_resumido'].'&R='.$R.'&SG=COINICIAL&TP='.RemoveTP($TP).MontaFiltro('UL').'\';');
           } else {
             ShowHTML('  location.href=\''.$R.'&w_usuario='.$_REQUEST['w_chave'].'&w_chave='.$_REQUEST['w_chave'].'&P1='.$P1.'&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP='.$TP.'&SG='.$SG.MontaFiltro('UL').'\';');
           } 
@@ -2102,7 +2113,7 @@ function Grava() {
             $_REQUEST['w_fato_relevante_vida'],$_REQUEST['w_servidor_publico'],$_REQUEST['w_servico_publico_inicio'],
             $_REQUEST['w_servico_publico_fim'],$_REQUEST['w_atividades_civicas'],$_REQUEST['w_familiar']);
         ScriptOpen('JavaScript');
-        ShowHTML('  location.href=\''.$R.'&w_chave='.$_REQUEST['w_chave'].'&P1='.$P1.'&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP='.$TP.'&SG='.$SG.MontaFiltro('GET').'\';');
+        ShowHTML('  location.href=\''.$R.'&w_chave='.$_REQUEST['w_chave'].'&w_usuario='.$w_usuario.'&P1='.$P1.'&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP='.$TP.'&SG='.$SG.MontaFiltro('GET').'\';');
         ScriptClose();
       } else {
         ScriptOpen('JavaScript');
@@ -2118,7 +2129,7 @@ function Grava() {
         $_REQUEST['w_chave'],$_REQUEST['w_leitura'],$_REQUEST['w_escrita'],
         $_REQUEST['w_compreensao'],$_REQUEST['w_conversacao']);
         ScriptOpen('JavaScript');
-        ShowHTML('  location.href=\''.$R.'&w_chave='.$_REQUEST['w_chave'].'&P1='.$P1.'&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP='.$TP.'&SG='.$SG.MontaFiltro('GET').'\';');
+        ShowHTML('  location.href=\''.$R.'&w_chave='.$_REQUEST['w_chave'].'&w_usuario='.$w_usuario.'&P1='.$P1.'&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP='.$TP.'&SG='.$SG.MontaFiltro('GET').'\';');
         ScriptClose();
       } else {
         ScriptOpen('JavaScript');
@@ -2136,7 +2147,7 @@ function Grava() {
         $_REQUEST['w_duracao_mes'],$_REQUEST['w_duracao_ano'],$_REQUEST['w_motivo_saida'],$_REQUEST['w_ultimo_salario'],
         $_REQUEST['w_atividades']);
         ScriptOpen('JavaScript');
-        ShowHTML('  location.href=\''.$R.'&w_chave='.$_REQUEST['w_chave'].'&P1='.$P1.'&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP='.$TP.'&SG='.$SG.MontaFiltro('GET').'\';');
+        ShowHTML('  location.href=\''.$R.'&w_chave='.$_REQUEST['w_chave'].'&w_usuario='.$w_usuario.'&P1='.$P1.'&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP='.$TP.'&SG='.$SG.MontaFiltro('GET').'\';');
         ScriptClose();
       } else {
         ScriptOpen('JavaScript');
@@ -2152,7 +2163,7 @@ function Grava() {
         $_REQUEST['w_sq_cvpesexp'],$_REQUEST['w_sq_area_conhecimento'],$_REQUEST['w_especialidades'],
         $_REQUEST['w_inicio'],$_REQUEST['w_fim']);
         ScriptOpen('JavaScript');
-        ShowHTML('  location.href=\''.$R.'&w_sq_cvpesexp='.$_REQUEST['w_sq_cvpesexp'].'&P1='.$P1.'&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP='.$TP.'&SG='.$SG.MontaFiltro('GET').'\';');
+        ShowHTML('  location.href=\''.$R.'&w_sq_cvpesexp='.$_REQUEST['w_sq_cvpesexp'].'&w_usuario='.$w_usuario.'&P1='.$P1.'&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP='.$TP.'&SG='.$SG.MontaFiltro('GET').'\';');
         ScriptClose();
       } else {
         ScriptOpen('JavaScript');
@@ -2168,7 +2179,7 @@ function Grava() {
         $_REQUEST['w_chave'],$_REQUEST['w_sq_area_conhecimento'],$_REQUEST['w_sq_pais'],$_REQUEST['w_sq_formacao'],
         $_REQUEST['w_nome'],$_REQUEST['w_instituicao'],$_REQUEST['w_inicio'],$_REQUEST['w_fim']);
         ScriptOpen('JavaScript');
-        ShowHTML('  location.href=\''.$R.'&w_chave='.$_REQUEST['w_chave'].'&P1='.$P1.'&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP='.$TP.'&SG='.$SG.MontaFiltro('GET').'\';');
+        ShowHTML('  location.href=\''.$R.'&w_chave='.$_REQUEST['w_chave'].'&w_usuario='.$w_usuario.'&P1='.$P1.'&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP='.$TP.'&SG='.$SG.MontaFiltro('GET').'\';');
         ScriptClose();
       } else {
         ScriptOpen('JavaScript');
@@ -2184,7 +2195,7 @@ function Grava() {
         $_REQUEST['w_chave'],$_REQUEST['w_sq_area_conhecimento'],$_REQUEST['w_sq_formacao'],
         $_REQUEST['w_nome'],$_REQUEST['w_instituicao'],$_REQUEST['w_carga_horaria'],$_REQUEST['w_conclusao']);
         ScriptOpen('JavaScript');
-        ShowHTML('  location.href=\''.$R.'&w_chave='.$_REQUEST['w_chave'].'&P1='.$P1.'&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP='.$TP.'&SG='.$SG.MontaFiltro('GET').'\';');
+        ShowHTML('  location.href=\''.$R.'&w_chave='.$_REQUEST['w_chave'].'&w_usuario='.$w_usuario.'&P1='.$P1.'&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP='.$TP.'&SG='.$SG.MontaFiltro('GET').'\';');
         ScriptClose();
       } else {
         ScriptOpen('JavaScript');
@@ -2200,7 +2211,7 @@ function Grava() {
         $_REQUEST['w_chave'],$_REQUEST['w_sq_area_conhecimento'],$_REQUEST['w_sq_formacao'],
         $_REQUEST['w_nome'],$_REQUEST['w_meio'],$_REQUEST['w_data']);
         ScriptOpen('JavaScript');
-        ShowHTML('  location.href=\''.$R.'&w_chave='.$_REQUEST['w_chave'].'&P1='.$P1.'&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP='.$TP.'&SG='.$SG.MontaFiltro('GET').'\';');
+        ShowHTML('  location.href=\''.$R.'&w_chave='.$_REQUEST['w_chave'].'&w_usuario='.$w_usuario.'&P1='.$P1.'&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP='.$TP.'&SG='.$SG.MontaFiltro('GET').'\';');
         ScriptClose();
       } else {
         ScriptOpen('JavaScript');

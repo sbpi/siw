@@ -908,7 +908,7 @@ function Arquivo() {
   $w_troca      = $_REQUEST['w_troca'];
   $w_sq_arquivo = $_REQUEST['w_sq_arquivo'];
   if ($O=='L') {
-    $RS = db_getArquivo::getInstanceOf($dbms,$w_cliente,null,$w_chave,null,null);
+    $RS = db_getArquivo::getInstanceOf($dbms,$w_cliente,null,$w_chave,null,null,null);
     $RS = SortArray($RS,'chave','asc');
     Cabecalho();
     ShowHTML('<BASE HREF="'.$conRootSIW.'">');
@@ -958,7 +958,7 @@ function Arquivo() {
     } 
     ShowHTML('</tr>');
   }elseif ($O=='NIVEL2') {
-    $RS = db_getArquivo::getInstanceOf($dbms,$w_cliente,$w_sq_arquivo,$w_chave,null,null);
+    $RS = db_getArquivo::getInstanceOf($dbms,$w_cliente,$w_sq_arquivo,$w_chave,null,null,null);
     $RS = SortArray($RS,'chave','asc');
     Cabecalho();
     ShowHTML('<HEAD>');

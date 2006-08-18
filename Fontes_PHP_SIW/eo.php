@@ -161,8 +161,8 @@ function Unidade() {
       ShowHTML('<div id="container">');
       ShowHTML('<ul id="XRoot" class="XtreeRoot">');
       foreach($RS as $row) {
-        $w_ContImg=$w_ContImg+1;
-        $w_ContOut=$w_ContOut+1;
+        $w_ContImg += 1;
+        $w_ContOut += 1;
         ShowHTML('<li id="Xnode" class="Xnode" nowrap><span onClick="xSwapImg(document.getElementById(\'Ximg'.$w_ContImg.'\'),\''.$w_imagem.'\',\''.$w_imagem.'\');xMenuShowHide(document.getElementById(\'Xtree'.$w_ContOut.'\'));"><img id="Ximg'.$w_ContImg.'" src="'.$w_imagem.'" border="0">&nbsp;'.f($row,'NOME').'</span> ');
         if ($w_libera_edicao=='S') {
           ShowHTML('<A class="Xlink" HREF="'.$w_pagina.$par.'&R='.$w_pagina.$par.'&O=A&w_sq_unidade='.f($row,'sq_unidade').'&P1='.$P1.'&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP='.$TP.'&SG='.$SG.'">Alterar</A>&nbsp');
@@ -175,8 +175,8 @@ function Unidade() {
         $RS1 = db_getUorgList::getInstanceOf($dbms, $w_cliente,f($row,'sq_unidade'),'FILHO',null,null,null);
         $RS1 = SortArray($RS1,'ordem','asc');
         foreach($RS1 as $row1) {
-          $w_ContImg=$w_ContImg+1;
-          $w_ContOut=$w_ContOut+1;
+          $w_ContImg += 1;
+          $w_ContOut += 1;
           ShowHTML('   <li id="Xnode" class="Xnode"><span onClick="xSwapImg(document.getElementById(\'Ximg'.$w_ContImg.'\'),\''.$w_imagem.'\',\''.$w_imagem.'\');xMenuShowHide(document.getElementById(\'Xtree'.$w_ContOut.'\'));"><img id="Ximg'.$w_ContImg.'" src="'.$w_imagem.'" border="0">&nbsp;'.f($row1,'NOME').'</span> ');
           if ($w_libera_edicao=='S') {
             ShowHTML(' <A class="Xlink" HREF="'.$w_pagina.$par.'&R='.$w_pagina.$par.'&O=A&w_sq_unidade='.f($row1,'sq_unidade').'&P1='.$P1.'&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP='.$TP.'&SG='.$SG.'">Alterar</A>&nbsp');
@@ -189,8 +189,8 @@ function Unidade() {
           $RS2 = db_getUorgList::getInstanceOf($dbms,$w_cliente,f($row1,'sq_unidade'),'FILHO',null,null,null);
           $RS2 = SortArray($RS2,'ordem','asc');
           foreach($RS2 as $row2) {
-            $w_ContImg=$w_ContImg+1;
-            $w_ContOut=$w_ContOut+1;
+            $w_ContImg += 1;
+            $w_ContOut += 1;
             ShowHTML('         <li id="Xnode" class="Xnode"><span onClick="xSwapImg(document.getElementById(\'Ximg'.$w_ContImg.'\'),\''.$w_imagem.'\',\''.$w_imagem.'\');xMenuShowHide(document.getElementById(\'Xtree'.$w_ContOut.'\'));"><img id="Ximg'.$w_ContImg.'" src="'.$w_imagem.'" border="0">&nbsp;'.f($row2,'NOME').'</span> ');
             if ($w_libera_edicao=='S') {
               ShowHTML(' <A class="Xlink" HREF="'.$w_pagina.$par.'&R='.$w_pagina.$par.'&O=A&w_sq_unidade='.f($row2,'sq_unidade').'&P1='.$P1.'&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP='.$TP.'&SG='.$SG.'">Alterar</A>&nbsp');
@@ -203,8 +203,8 @@ function Unidade() {
             $RS3 = db_getUorgList::getInstanceOf($dbms,$w_cliente,f($row2,'sq_unidade'),'FILHO',null,null,null);
             $RS3 = SortArray($RS3,'ordem','asc');
             foreach($RS3 as $row3) {
-              $w_ContImg=$w_ContImg+1;
-              $w_ContOut=$w_ContOut+1;
+              $w_ContImg += 1;
+              $w_ContOut += 1;
               ShowHTML('            <li id="Xnode" class="Xnode"><span onClick="xSwapImg(document.getElementById(\'Ximg'.$w_ContImg.'\'),\''.$w_imagem.'\',\''.$w_imagem.'\');xMenuShowHide(document.getElementById(\'Xtree'.$w_ContOut.'\'));"><img id="Ximg'.$w_ContImg.'" src="'.$w_imagem.'" border="0">&nbsp;'.f($row3,'NOME').'</span> ');
               if ($w_libera_edicao=='S') {
                 ShowHTML(' <A class="Xlink" HREF="'.$w_pagina.$par.'&R='.$w_pagina.$par.'&O=A&w_sq_unidade='.f($row3,'sq_unidade').'&P1='.$P1.'&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP='.$TP.'&SG='.$SG.'">Alterar</A>&nbsp');
@@ -217,8 +217,8 @@ function Unidade() {
               $RS4 = db_getUorgList::getInstanceOf($dbms,$w_cliente,f($row3,'sq_unidade'),'FILHO',null,null,null);
               $RS4 = SortArray($RS4,'ordem','asc');
               foreach($RS4 as $row4) {
-                $w_ContImg=$w_ContImg+1;
-                $w_ContOut=$w_ContOut+1;
+                $w_ContImg += 1;
+                $w_ContOut += 1;
                 ShowHTML('               <li id="Xnode" class="Xnode"><span onClick="xSwapImg(document.getElementById(\'Ximg'.$w_ContImg.'\'),\''.$w_imagem.'\',\''.$w_imagem.'\');xMenuShowHide(document.getElementById(\'Xtree'.$w_ContOut.'\'));"><img id="Ximg'.$w_ContImg.'" src="'.$w_imagem.'" border="0">&nbsp;'.f($row4,'NOME').'</span> ');
                 if ($w_libera_edicao=='S') {
                   ShowHTML(' <A class="Xlink" HREF="'.$w_pagina.$par.'&R='.$w_pagina.$par.'&O=A&w_sq_unidade='.f($row4,'sq_unidade').'&P1='.$P1.'&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP='.$TP.'&SG='.$SG.'">Alterar</A>&nbsp');
@@ -231,8 +231,8 @@ function Unidade() {
                 $RS5 = db_getUorgList::getInstanceOf($dbms,$w_cliente,f($row4,'sq_unidade'),'FILHO',null,null,null);
                 $RS5 = SortArray($RS5,'ordem','asc');
                 foreach($RS5 as $row5) {
-                  $w_ContImg=$w_ContImg+1;
-                  $w_ContOut=$w_ContOut+1;
+                  $w_ContImg += 1;
+                  $w_ContOut += 1;
                   ShowHTML('                  <li id="Xnode" class="Xnode"><span onClick="xSwapImg(document.getElementById(\'Ximg'.$w_ContImg.'\'),\''.$w_imagem.'\',\''.$w_imagem.'\');xMenuShowHide(document.getElementById(\'Xtree'.$w_ContOut.'\'));"><img id="Ximg'.$w_ContImg.'" src="'.$w_imagem.'" border="0">&nbsp;'.f($row5,'NOME').'</span> ');
                   if ($w_libera_edicao=='S') {
                     ShowHTML(' <A class="Xlink" HREF="'.$w_pagina.$par.'&R='.$w_pagina.$par.'&O=A&w_sq_unidade='.f($row5,'sq_unidade').'&P1='.$P1.'&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP='.$TP.'&SG='.$SG.'">Alterar</A>&nbsp');
@@ -245,8 +245,8 @@ function Unidade() {
                   $RS6 = db_getUorgList::getInstanceOf($dbms,$w_cliente,f($row5,'sq_unidade'),'FILHO',null,null,null);
                   $RS6 = SortArray($RS6,'ordem','asc');
                   foreach($RS6 as $row6) {
-                    $w_ContImg=$w_ContImg+1;
-                    $w_ContOut=$w_ContOut+1;
+                    $w_ContImg += 1;
+                    $w_ContOut += 1;
                     ShowHTML('                     <li id="Xnode" class="Xnode"><span onClick="xSwapImg(document.getElementById(\'Ximg'.$w_ContImg.'\'),\''.$w_imagem.'\',\''.$w_imagem.'\');xMenuShowHide(document.getElementById(\'Xtree'.$w_ContOut.'\'));"><img id="Ximg'.$w_ContImg.'" src="'.$w_imagem.'" border="0">&nbsp;'.f($row6,'NOME').'</span> ');
                     if ($w_libera_edicao=='S') {
                       ShowHTML(' <A class="Xlink" HREF="'.$w_pagina.$par.'&R='.$w_pagina.$par.'&O=A&w_sq_unidade='.f($row6,'sq_unidade').'&P1='.$P1.'&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP='.$TP.'&SG='.$SG.'">Alterar</A>&nbsp');
@@ -259,8 +259,8 @@ function Unidade() {
                     $RS7 = db_getUorgList::getInstanceOf($dbms,$w_cliente,f($row6,'sq_unidade'),'FILHO',null,null,null);
                     $RS7 = SortArray($RS7,'ordem','asc');
                     foreach($RS7 as $row7) {
-                      $w_ContImg=$w_ContImg+1;
-                      $w_ContOut=$w_ContOut+1;
+                      $w_ContImg += 1;
+                      $w_ContOut += 1;
                       ShowHTML('                        <li id="Xnode" class="Xnode"><span onClick="xSwapImg(document.getElementById(\'Ximg'.$w_ContImg.'\'),\''.$w_imagem.'\',\''.$w_imagem.'\');xMenuShowHide(document.getElementById(\'Xtree'.$w_ContOut.'\'));"><img id="Ximg'.$w_ContImg.'" src="'.$w_imagem.'" border="0">&nbsp;'.f($row7,'NOME').'</span> ');
                       if ($w_libera_edicao=='S') {
                         ShowHTML(' <A class="Xlink" HREF="'.$w_pagina.$par.'&R='.$w_pagina.$par.'&O=A&w_sq_unidade='.f($row7,'sq_unidade').'&P1='.$P1.'&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP='.$TP.'&SG='.$SG.'">Alterar</A>&nbsp');
@@ -273,8 +273,8 @@ function Unidade() {
                       $RS8 = db_getUorgList::getInstanceOf($dbms,$w_cliente,f($row7,'sq_unidade'),'FILHO',null,null,null);
                       $RS8 = SortArray($RS8,'ordem','asc');
                       foreach($RS8 as $row8) {
-                        $w_ContImg=$w_ContImg+1;
-                        $w_ContOut=$w_ContOut+1;
+                        $w_ContImg += 1;
+                        $w_ContOut += 1;
                         ShowHTML('                           <li id="Xnode" class="Xnode"><span onClick="xSwapImg(document.getElementById(\'Ximg'.$w_ContImg.'\'),\''.$w_imagem.'\',\''.$w_imagem.'\');xMenuShowHide(document.getElementById(\'Xtree'.$w_ContOut.'\'));"><img id="Ximg'.$w_ContImg.'" src="'.$w_imagem.'" border="0">&nbsp;'.f($row8,'NOME').'</span> ');
                         if ($w_libera_edicao=='S') {
                           ShowHTML(' <A class="Xlink" HREF="'.$w_pagina.$par.'&R='.$w_pagina.$par.'&O=A&w_sq_unidade='.f($row8,'sq_unidade').'&P1='.$P1.'&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP='.$TP.'&SG='.$SG.'">Alterar</A>&nbsp');
@@ -287,8 +287,8 @@ function Unidade() {
                         $RS9 = db_getUorgList::getInstanceOf($dbms,$w_cliente,f($row8,'sq_unidade'),'FILHO',null,null,null);
                         $RS9 = SortArray($RS9,'ordem','asc');
                         foreach($RS9 as $row9) {
-                          $w_ContImg=$w_ContImg+1;
-                          $w_ContOut=$w_ContOut+1;
+                          $w_ContImg += 1;
+                          $w_ContOut += 1;
                           ShowHTML('                              <li id="Xnode" class="Xnode"><span onClick="xSwapImg(document.getElementById(\'Ximg'.$w_ContImg.'\'),\''.$w_imagem.'\',\''.$w_imagem.'\');xMenuShowHide(document.getElementById(\'Xtree'.$w_ContOut.'\'));"><img id="Ximg'.$w_ContImg.'" src="'.$w_imagem.'" border="0">&nbsp;'.f($row9,'NOME').'</span> ');
                           if ($w_libera_edicao=='S') {
                             ShowHTML(' <A class="Xlink" HREF="'.$w_pagina.$par.'&R='.$w_pagina.$par.'&O=A&w_sq_unidade='.f($row9,'sq_unidade').'&P1='.$P1.'&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP='.$TP.'&SG='.$SG.'">Alterar</A>&nbsp');

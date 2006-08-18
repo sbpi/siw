@@ -30,6 +30,7 @@ include_once($w_dir_volta.'classes/sp/db_getTPRestricao_IS.php');
 include_once($w_dir_volta.'classes/sp/db_getSolicInter.php');
 include_once($w_dir_volta.'classes/sp/db_getTramiteData.php');
 include_once($w_dir_volta.'classes/sp/db_verificaAssinatura.php');
+include_once($w_dir_volta.'classes/sp/db_getUorgResp.php');
 include_once($w_dir_volta.'classes/sp/dml_putAcaoGeral_IS.php');
 include_once($w_dir_volta.'classes/sp/dml_putAcaoMeta_IS.php');
 include_once($w_dir_volta.'classes/sp/dml_putRespAcao_IS.php');
@@ -42,12 +43,14 @@ include_once($w_dir_volta.'classes/sp/dml_putProjetoInter.php');
 include_once($w_dir_volta.'classes/sp/dml_putSolicArquivo.php');
 include_once($w_dir_volta.'classes/sp/dml_putProjetoEnvio.php');
 include_once($w_dir_volta.'classes/sp/dml_putAtualizaMeta_IS.php');
+include_once($w_dir_volta.'classes/sp/dml_putProjetoConc.php');
 include_once($w_dir_volta.'funcoes/selecaoIsProjeto.php');
 include_once($w_dir_volta.'funcoes/selecaoAcaoPPA.php');
 include_once($w_dir_volta.'funcoes/selecaoUnidade_IS.php');
 include_once($w_dir_volta.'funcoes/selecaoPessoa.php');
 include_once($w_dir_volta.'funcoes/selecaoTPRestricao_IS.php');
 include_once($w_dir_volta.'funcoes/selecaoFase.php');
+include_once($w_dir_volta.'funcoes/selecaoSolicResp.php');
 include_once('visualacao.php');
 // =========================================================================
 // acao.php
@@ -140,7 +143,7 @@ $p_usu_resp         = strtoupper($_REQUEST['p_usu_resp']);
 $p_uorg_resp        = strtoupper($_REQUEST['p_uorg_resp']);
 $p_palavra          = strtoupper($_REQUEST['p_palavra']);
 $p_prazo            = strtoupper($_REQUEST['p_prazo']);
-$p_fase             = strtoupper($_REQUEST['p_fase']);
+$p_fase             = explodeArray($_REQUEST['p_fase']);
 $p_sqcc             = strtoupper($_REQUEST['p_sqcc']);
 $p_sq_acao_ppa      = strtoupper($_REQUEST['p_sq_acao_ppa']);
 $p_sq_isprojeto     = strtoupper($_REQUEST['p_sq_isprojeto']);
@@ -176,42 +179,45 @@ function Inicial() {
       $w_filtro='';
       if ($p_acao>'' && $p_sq_acao_ppa=='') {
         $RS = db_getSolicData_IS::getInstanceOf($dbms,$p_acao,'ISACGERAL');
-        $w_filtro=$w_filtro.'<tr valign="top"><td align="right"><font size=1>Ação <td><font size=1>[<b>'.f($RS,'titulo').'</b>]';
+        foreach ($RS as $row){$RS=$row; break;}
+        $w_filtro=$w_filtro.'<tr valign="top"><td align="right">Ação <td>[<b>'.f($RS,'titulo').'</b>]';
       } 
       if ($p_sq_acao_ppa>'') {
         $RS = db_getAcaoPPA_IS::getInstanceOf($dbms,$w_cliente,$w_ano,substr($p_sq_acao_ppa,0,4),substr($p_sq_acao_ppa,4,4),null,substr($p_sq_acao_ppa,12,17),null,null,null);
-        $w_filtro=$w_filtro.'<tr valign="top"><td align="right"><font size=1>Ação <td><font size=1>[<b>'.f($RS,'cd_unidade').'.'.f($RS,'cd_programa').'.'.f($RS,'cd_acao').' - '.f($RS,'descricao_acao').' ('.f($RS,'ds_unidade').')</b>]';
+        foreach ($RS as $row){$RS=$row; break;}
+        $w_filtro=$w_filtro.'<tr valign="top"><td align="right">Ação <td>[<b>'.f($RS,'cd_unidade').'.'.f($RS,'cd_programa').'.'.f($RS,'cd_acao').' - '.f($RS,'descricao_acao').' ('.f($RS,'ds_unidade').')</b>]';
       } 
       if ($p_sq_isprojeto>'') {
         $RS = db_getProjeto_IS::getInstanceOf($dbms,$p_sq_isprojeto,$w_cliente,null,null,null,null,null,null,null,null,null,null,null,null);
-        $w_filtro=$w_filtro.'<tr valign="top"><td align="right"><font size=1>Programa interno<td><font size=1>[<b>'.f($RS,'nome').'</b>]';
+        foreach ($RS as $row){$RS=$row; break;}
+        $w_filtro=$w_filtro.'<tr valign="top"><td align="right">Programa interno<td>[<b>'.f($RS,'nome').'</b>]';
       } 
-      if ($p_chave>'') $w_filtro=$w_filtro.'<tr valign="top"><td align="right"><font size=1>Demanda nº <td><font size=1>[<b>'.$p_chave.'</b>]';
-      if ($p_prazo>'') $w_filtro=$w_filtro.' <tr valign="top"><td align="right"><font size=1>Prazo para conclusão até<td><font size=1>[<b>'.FormataDataEdicao(addDays(time(),$p_prazo)).'</b>]';
+      if ($p_chave>'') $w_filtro=$w_filtro.'<tr valign="top"><td align="right">Demanda nº <td>[<b>'.$p_chave.'</b>]';
+      if ($p_prazo>'') $w_filtro=$w_filtro.' <tr valign="top"><td align="right">Prazo para conclusão até<td>[<b>'.FormataDataEdicao(addDays(time(),$p_prazo)).'</b>]';
       if ($p_solicitante>'') {
         $RS = db_getPersonData::getInstanceOf($dbms,$w_cliente,$p_solicitante,null,null);
-        $w_filtro=$w_filtro.'<tr valign="top"><td align="right"><font size=1>Responsável <td><font size=1>[<b>'.f($RS,'nome_resumido').'</b>]';
+        $w_filtro=$w_filtro.'<tr valign="top"><td align="right">Responsável <td>[<b>'.f($RS,'nome_resumido').'</b>]';
       } 
       if ($p_unidade>'') {
         $RS = db_getUorgData::getInstanceOf($dbms,$p_unidade);
-        $w_filtro=$w_filtro.'<tr valign="top"><td align="right"><font size=1>Área planejamento <td><font size=1>[<b>'.f($RS,'nome').'</b>]';
+        $w_filtro=$w_filtro.'<tr valign="top"><td align="right">Área planejamento <td>[<b>'.f($RS,'nome').'</b>]';
       } 
       if ($p_usu_resp>'') {
         $RS = db_getPersonData::getInstanceOf($dbms,$w_cliente,$p_usu_resp,null,null);
-        $w_filtro=$w_filtro.'<tr valign="top"><td align="right"><font size=1>Executor <td><font size=1>[<b>'.f($RS,'nome_resumido').'</b>]';
+        $w_filtro=$w_filtro.'<tr valign="top"><td align="right">Executor <td>[<b>'.f($RS,'nome_resumido').'</b>]';
       } 
       if ($p_uorg_resp>'') {
         $RS = db_getUorgData::getInstanceOf($dbms,$p_uorg_resp);
-        $w_filtro=$w_filtro.'<tr valign="top"><td align="right"><font size=1>Unidade atual <td><font size=1>[<b>'.f($RS,'nome').'</b>]';
+        $w_filtro=$w_filtro.'<tr valign="top"><td align="right">Unidade atual <td>[<b>'.f($RS,'nome').'</b>]';
       } 
-      if ($p_proponente>'') $w_filtro=$w_filtro.'<tr valign="top"><td align="right"><font size=1>Parcerias externas<td><font size=1>[<b>'.$p_proponente.'</b>]';
-      if ($p_assunto>'')    $w_filtro=$w_filtro.'<tr valign="top"><td align="right"><font size=1>Assunto <td><font size=1>[<b>'.$p_assunto.'</b>]';
-      if ($p_palavra>'')    $w_filtro=$w_filtro.'<tr valign="top"><td align="right"><font size=1>Parcerias internas <td><font size=1>[<b>'.$p_palavra.'</b>]';
-      if ($p_ini_i>'')      $w_filtro=$w_filtro.'<tr valign="top"><td align="right"><font size=1>Data recebimento <td><font size=1>[<b>'.$p_ini_i.'-'.$p_ini_f.'</b>]';
-      if ($p_fim_i>'')      $w_filtro=$w_filtro.'<tr valign="top"><td align="right"><font size=1>Limite conclusão <td><font size=1>[<b>'.$p_fim_i.'-'.$p_fim_f.'</b>]';
-      if ($p_atraso=='S')   $w_filtro=$w_filtro.'<tr valign="top"><td align="right"><font size=1>Situação <td><font size=1>[<b>Apenas atrasadas</b>]';
-      if ($p_qtd_restricao=='S') $w_filtro=$w_filtro.'<tr valign="top"><td align="right"><font size=1>Situação <td><font size=1>[<b>Apenas ações com restrição</b>]';
-      if ($w_filtro>'')     $w_filtro='<table border=0><tr valign="top"><td><font size=1><b>Filtro:</b><td nowrap><font size=1><ul>'.$w_filtro.'</ul></tr></table>';
+      if ($p_proponente>'') $w_filtro=$w_filtro.'<tr valign="top"><td align="right">Parcerias externas<td>[<b>'.$p_proponente.'</b>]';
+      if ($p_assunto>'')    $w_filtro=$w_filtro.'<tr valign="top"><td align="right">Assunto <td>[<b>'.$p_assunto.'</b>]';
+      if ($p_palavra>'')    $w_filtro=$w_filtro.'<tr valign="top"><td align="right">Parcerias internas <td>[<b>'.$p_palavra.'</b>]';
+      if ($p_ini_i>'')      $w_filtro=$w_filtro.'<tr valign="top"><td align="right">Data recebimento <td>[<b>'.$p_ini_i.'-'.$p_ini_f.'</b>]';
+      if ($p_fim_i>'')      $w_filtro=$w_filtro.'<tr valign="top"><td align="right">Limite conclusão <td>[<b>'.$p_fim_i.'-'.$p_fim_f.'</b>]';
+      if ($p_atraso=='S')   $w_filtro=$w_filtro.'<tr valign="top"><td align="right">Situação <td>[<b>Apenas atrasadas</b>]';
+      if ($p_qtd_restricao=='S') $w_filtro=$w_filtro.'<tr valign="top"><td align="right">Situação <td>[<b>Apenas ações com restrição</b>]';
+      if ($w_filtro>'')     $w_filtro='<table border=0><tr valign="top"><td><b>Filtro:</b><td nowrap><ul>'.$w_filtro.'</ul></tr></table>';
     } 
     $RS = db_getLinkData::getInstanceOf($dbms,$w_cliente,'ISACAD');
     if ($w_copia>'') {
@@ -302,11 +308,11 @@ function Inicial() {
       if ($w_submenu>'') {
         $RS1 = db_getLinkSubMenu::getInstanceOf($dbms,$w_cliente,$SG);
         foreach ($RS1 as $row) {$RS1=$row; break;}
-        ShowHTML('<tr><td><font size="1">');
+        ShowHTML('<tr><td>');
         ShowHTML('    <a accesskey="I" class="SS" href="'.$w_dir.$w_pagina.'Geral&R='.$w_pagina.$par.'&O=I&SG='.f($RS1,'sigla').'&w_menu='.$w_menu.'&P1='.$P1.'&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP='.$TP.MontaFiltro('GET').'"><u>I</u>ncluir</a>&nbsp;');
         //ShowHTML '    <a accesskey=''C'' class=''SS'' href=''' & w_dir & w_pagina & par & '&R=' & w_pagina & par & '&O=C&P1=' & P1 & '&P2=' & P2 & '&P3=1&P4=' & P4 & '&TP=' & TP & '&SG=' & SG & MontaFiltro('GET') & '''><u>C</u>opiar</a>'
       } else {
-        ShowHTML('<tr><td><font size="1"><a accesskey="I" class="SS" href="'.$w_dir.$w_pagina.$par.'&R='.$w_pagina.$par.'&O=I&P1='.$P1.'&P2='.$P2.'&P3=1&P4='.$P4.'&TP='.$TP.'&SG='.$SG.MontaFiltro('GET').'"><u>I</u>ncluir</a>&nbsp;');
+        ShowHTML('<tr><td><a accesskey="I" class="SS" href="'.$w_dir.$w_pagina.$par.'&R='.$w_pagina.$par.'&O=I&P1='.$P1.'&P2='.$P2.'&P3=1&P4='.$P4.'&TP='.$TP.'&SG='.$SG.MontaFiltro('GET').'"><u>I</u>ncluir</a>&nbsp;');
       } 
     } 
     if ((strpos(strtoupper($R),'GR_')===false)) {
@@ -325,28 +331,28 @@ function Inicial() {
         } 
       } 
     } 
-    ShowHTML('    <td align="right"><font size="1"><b>Registros: '.count($RS));
+    ShowHTML('    <td align="right"><b>Registros: '.count($RS));
     ShowHTML('<tr><td align="center" colspan=3>');
     ShowHTML('    <TABLE WIDTH="100%" bgcolor="'.$conTableBgColor.'" BORDER="'.$conTableBorder.'" CELLSPACING="'.$conTableCellSpacing.'" CELLPADDING="'.$conTableCellPadding.'" BorderColorDark="'.$conTableBorderColorDark.'" BorderColorLight="'.$conTableBorderColorLight.'">');
     ShowHTML('        <tr bgcolor="'.$conTrBgColor.'" align="center">');
-    ShowHTML('          <td rowspan=2><font size="1"><b>'.LinkOrdena('Ação','cd_acao_completa').'</font></td>');
-    ShowHTML('          <td rowspan=2><font size="1"><b>'.LinkOrdena('Responsável','nm_solic').'</font></td>');
-    if ($P1!=2)ShowHTML('<td rowspan=2><font size="1"><b>'.LinkOrdena('Usuário atual','nm_exec').'</font></td>');
+    ShowHTML('          <td rowspan=2><b>'.LinkOrdena('Ação','cd_acao_completa').'</td>');
+    ShowHTML('          <td rowspan=2><b>'.LinkOrdena('Responsável','nm_solic').'</td>');
+    if ($P1!=2)ShowHTML('<td rowspan=2><b>'.LinkOrdena('Usuário atual','nm_exec').'</td>');
     if ($P1==1 || $P1==2) {
       // Se for cadastramento ou mesa de trabalho
-      ShowHTML('          <td rowspan=2><font size="1"><b>'.LinkOrdena('Título','titulo').'</font></td>');
-      ShowHTML('          <td colspan=2><font size="1"><b>Execução</font></td>');
+      ShowHTML('          <td rowspan=2><b>'.LinkOrdena('Título','titulo').'</td>');
+      ShowHTML('          <td colspan=2><b>Execução</td>');
     } else {
-      ShowHTML('          <td rowspan=2><font size="1"><b>'.LinkOrdena('Título','titulo').'</font></td>');
-      ShowHTML('          <td colspan=2><font size="1"><b>Execução</font></td>');
-      ShowHTML('          <td rowspan=2><font size="1"><b>'.LinkOrdena('Valor','valor').'</font></td>');
-      ShowHTML('          <td rowspan=2><font size="1"><b>'.LinkOrdena('Fase atual','nm_tramite').'</font></td>');
+      ShowHTML('          <td rowspan=2><b>'.LinkOrdena('Título','titulo').'</td>');
+      ShowHTML('          <td colspan=2><b>Execução</td>');
+      ShowHTML('          <td rowspan=2><b>'.LinkOrdena('Valor','valor').'</td>');
+      ShowHTML('          <td rowspan=2><b>'.LinkOrdena('Fase atual','nm_tramite').'</td>');
     } 
-    ShowHTML('          <td rowspan=2><font size="1"><b>Operações</font></td>');
+    ShowHTML('          <td rowspan=2><b>Operações</td>');
     ShowHTML('        </tr>');
     ShowHTML('        <tr bgcolor="'.$conTrBgColor.'" align="center">');
-    ShowHTML('          <td><font size="1"><b>'.LinkOrdena('De','inicio').'</font></td>');
-    ShowHTML('          <td><font size="1"><b>'.LinkOrdena('Até','fim').'</font></td>');
+    ShowHTML('          <td><b>'.LinkOrdena('De','inicio').'</td>');
+    ShowHTML('          <td><b>'.LinkOrdena('Até','fim').'</td>');
     ShowHTML('        </tr>');
     if (count($RS)<=0) {
       ShowHTML('      <tr bgcolor="'.$conTrBgColor.'"><td colspan=10 align="center"><font size="2"><b>Não foram encontrados registros.</b></td></tr>');
@@ -356,11 +362,11 @@ function Inicial() {
       foreach($RS1 as $row) {
         $w_cor = ($w_cor==$conTrBgColor || $w_cor=='') ? $w_cor=$conTrAlternateBgColor : $w_cor=$conTrBgColor;
         ShowHTML('      <tr bgcolor="'.$w_cor.'" valign="top">');
-        ShowHTML('        <td nowrap><font size="1">');
+        ShowHTML('        <td nowrap>');
         if (f($row,'concluida')=='N') {
           if (f($row,'fim')<addDays(time(),-1)) {
             ShowHTML('           <img src="'.$conImgAtraso.'" border=0 width=15 heigth=15 align="center">');
-          } else if (f($row,'aviso_prox_conc')=='S' && (f($row,'aviso')<=addDays(time(),-1))) {
+          } elseif (f($row,'aviso_prox_conc')=='S' && (f($row,'aviso')<=addDays(time(),-1))) {
             ShowHTML('           <img src="'.$conImgAviso.'" border=0 width=15 height=15 align="center">');
           } else {
             ShowHTML('           <img src="'.$conImgNormal.'" border=0 width=15 height=15 align="center">');
@@ -378,20 +384,20 @@ function Inicial() {
         } else {
           ShowHTML('        <A class="HL" HREF="'.$w_dir.$w_pagina.'Visual&R='.$w_pagina.$par.'&O=L&w_chave='.f($row,'sq_siw_solicitacao').'&w_tipo=Volta&P1=2&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP='.$TP.'&SG='.$SG.MontaFiltro('GET').'" title="Exibe as informações deste registro.">'.f($row,'cd_acao_completa').'</a>');
         } 
-        ShowHTML('        <td><font size="1">'.ExibePessoa('../',$w_cliente,f($row,'solicitante'),$TP,f($row,'nm_solic')).'</A></td>');
+        ShowHTML('        <td>'.ExibePessoa('../',$w_cliente,f($row,'solicitante'),$TP,f($row,'nm_solic')).'</A></td>');
         if ($P1!=2) {
           // Se for mesa de trabalho, não exibe o executor, pois já é o usuário logado
-          if (Nvl(f($row,'nm_exec'),'---')>'---') ShowHTML('        <td><font size="1">'.ExibePessoa('../',$w_cliente,f($row,'executor'),$TP,f($row,'nm_exec')).'</td>');
-          else                                   ShowHTML('        <td><font size="1">---</td>');
+          if (Nvl(f($row,'nm_exec'),'---')>'---') ShowHTML('        <td>'.ExibePessoa('../',$w_cliente,f($row,'executor'),$TP,f($row,'nm_exec')).'</td>');
+          else                                   ShowHTML('        <td>---</td>');
         } 
         if ($P1!=1 && $P1!=2) {
           // Se não for cadastramento nem mesa de trabalho
-          //ShowHTML '        <td><font size=''1''>' & Nvl(RS('proponente'),'---') & '</td>'
+          //ShowHTML '        <td>' & Nvl(RS('proponente'),'---') & '</td>'
         } 
         // Verifica se foi enviado o parâmetro p_tamanho = N. Se chegou, o assunto deve ser exibido sem corte.
         // Este parâmetro é enviado pela tela de filtragem das páginas gerenciais
         if ($_REQUEST['p_tamanho']=='N') {
-          ShowHTML('        <td><font size="1">'.Nvl(f($row,'titulo'),'-').'</td>');
+          ShowHTML('        <td>'.Nvl(f($row,'titulo'),'-').'</td>');
         } else {
           if (strlen(Nvl(f($row,'titulo'),'-'))>50) $w_titulo=substr(Nvl(f($row,'titulo'),'-'),0,50).'...'; else $w_titulo=Nvl(f($row,'titulo'),'-');
           if (f($row,'sg_tramite')=='CA') {
@@ -400,20 +406,20 @@ function Inicial() {
             ShowHTML('        <td title="'.htmlspecialchars(f($row,'assunto')).'">'.htmlspecialchars($w_titulo).'</td>');
           } 
         }
-        ShowHTML('        <td align="center"><font size="1">&nbsp;'.FormataDataEdicao(f($row,'inicio')).'</td>');
-        ShowHTML('        <td align="center"><font size="1">&nbsp;'.FormataDataEdicao(f($row,'fim')).'</td>');
+        ShowHTML('        <td align="center">&nbsp;'.FormataDataEdicao(f($row,'inicio')).'</td>');
+        ShowHTML('        <td align="center">&nbsp;'.FormataDataEdicao(f($row,'fim')).'</td>');
         if ($P1!=1 && $P1!=2) {
           // Se não for cadastramento nem mesa de trabalho
           if (f($row,'sg_tramite')=='AT') {
-            ShowHTML('        <td align="right"><font size="1">'.number_format(f($row,'custo_real'),2,',','.').'&nbsp;</td>');
+            ShowHTML('        <td align="right">'.number_format(f($row,'custo_real'),2,',','.').'&nbsp;</td>');
             $w_parcial+=f($row,'custo_real');
           } else {
-            ShowHTML('        <td align="right"><font size="1">'.number_format(f($row,'valor'),2,',','.').'&nbsp;</td>');
+            ShowHTML('        <td align="right">'.number_format(f($row,'valor'),2,',','.').'&nbsp;</td>');
             $w_parcial+=f($row,'valor');
           } 
-          ShowHTML('        <td nowrap><font size="1">'.f($row,'nm_tramite').'</td>');
+          ShowHTML('        <td nowrap>'.f($row,'nm_tramite').'</td>');
         } 
-        ShowHTML('        <td align="top" nowrap><font size="1">');
+        ShowHTML('        <td align="top" nowrap>');
         if ($P1!=3 && $P1!=5) {
           // Se não for acompanhamento
           if ($w_copia>'') {
@@ -472,9 +478,9 @@ function Inicial() {
         // Coloca o valor parcial apenas se a listagem ocupar mais de uma página
         if (ceil(count($RS)/$P4)>1) { 
           ShowHTML('        <tr bgcolor="'.$conTrBgColor.'">');
-          ShowHTML('          <td colspan=6 align="right"><font size="1"><b>Total desta página&nbsp;</font></td>');
-          ShowHTML('          <td align="right"><font size="1"><b>'.number_format($w_parcial,2,',','.').'&nbsp;</font></td>');
-          ShowHTML('          <td colspan=2><font size="1">&nbsp;</font></td>');
+          ShowHTML('          <td colspan=6 align="right"><b>Total desta página&nbsp;</td>');
+          ShowHTML('          <td align="right"><b>'.number_format($w_parcial,2,',','.').'&nbsp;</td>');
+          ShowHTML('          <td colspan=2>&nbsp;</td>');
           ShowHTML('        </tr>');
         } 
         // Se for a última página da listagem, soma e exibe o valor total
@@ -484,9 +490,9 @@ function Inicial() {
             else                            $w_total += f($row,'valor');
           } 
           ShowHTML('        <tr bgcolor="'.$conTrBgColor.'">');
-          ShowHTML('          <td colspan=6 align="right"><font size="1"><b>Total da listagem&nbsp;</font></td>');
-          ShowHTML('          <td align="right"><font size="1"><b>'.number_format($w_total,2,',','.').'&nbsp;</font></td>');
-          ShowHTML('          <td colspan=2><font size="1">&nbsp;</font></td>');
+          ShowHTML('          <td colspan=6 align="right"><b>Total da listagem&nbsp;</td>');
+          ShowHTML('          <td align="right"><b>'.number_format($w_total,2,',','.').'&nbsp;</td>');
+          ShowHTML('          <td colspan=2>&nbsp;</td>');
           ShowHTML('        </tr>');
         } 
       } 
@@ -530,7 +536,7 @@ function Inicial() {
       ShowHTML('      </tr>');
       ShowHTML('      </table>');
       ShowHTML('      <tr valign="top">');
-      ShowHTML('          <td valign="top"><font size="1"><b>Dias para a data limi<U>t</U>e:<br><INPUT ACCESSKEY="T" '.$w_Disabled.' class="STI" type="text" name="p_prazo" size="2" maxlength="2" value="'.$p_prazo.'"></td>');
+      ShowHTML('          <td valign="top"><b>Dias para a data limi<U>t</U>e:<br><INPUT ACCESSKEY="T" '.$w_Disabled.' class="STI" type="text" name="p_prazo" size="2" maxlength="2" value="'.$p_prazo.'"></td>');
       ShowHTML('      <tr valign="top">');
       SelecaoPessoa('Respo<u>n</u>sável:','N','Selecione o responsável pela ação na relação.',$p_solicitante,null,'p_solicitante','USUARIOS');
       SelecaoUnidade('<U>Á</U>rea planejamento:','A',null,$p_unidade,null,'p_unidade',null,null);
@@ -538,24 +544,24 @@ function Inicial() {
       SelecaoPessoa('Responsável atua<u>l</u>:','L','Selecione o responsável atual pela ação na relação.',$p_usu_resp,null,'p_usu_resp','USUARIOS');
       SelecaoUnidade('<U>S</U>etor atual:','S','Selecione a unidade onde a ação se encontra na relação.',$p_uorg_resp,null,'p_uorg_resp',null,null);
       ShowHTML('      <tr>');
-      ShowHTML('          <td valign="top"><font size="1"><b>Par<U>c</U>erias externas:<br><INPUT ACCESSKEY="P" '.$w_Disabled.' class="STI" type="text" name="p_proponente" size="25" maxlength="90" value="'.$p_proponente.'"></td>');
-      ShowHTML('          <td valign="top"><font size="1"><b>Par<U>c</U>erias internas:<br><INPUT ACCESSKEY="C" '.$w_Disabled.' class="STI" type="text" name="p_palavra" size="25" maxlength="90" value="'.$p_palavra.'"></td>');
+      ShowHTML('          <td valign="top"><b>Par<U>c</U>erias externas:<br><INPUT ACCESSKEY="P" '.$w_Disabled.' class="STI" type="text" name="p_proponente" size="25" maxlength="90" value="'.$p_proponente.'"></td>');
+      ShowHTML('          <td valign="top"><b>Par<U>c</U>erias internas:<br><INPUT ACCESSKEY="C" '.$w_Disabled.' class="STI" type="text" name="p_palavra" size="25" maxlength="90" value="'.$p_palavra.'"></td>');
       ShowHTML('      <tr>');
-      ShowHTML('          <td valign="top"><font size="1"><b>Data de re<u>c</u>ebimento entre:</b><br><input '.$w_Disabled.' accesskey="C" type="text" name="p_ini_i" class="STI" SIZE="10" MAXLENGTH="10" VALUE="'.$p_ini_i.'" onKeyDown="FormataData(this,event);" title="Usar formato dd/mm/aaaa"> e <input '.$w_Disabled.' accesskey="C" type="text" name="p_ini_f" class="STI" SIZE="10" MAXLENGTH="10" VALUE="'.$p_ini_f.'" onKeyDown="FormataData(this,event);" title="Usar formato dd/mm/aaaa"></td>');
-      ShowHTML('          <td valign="top"><font size="1"><b>Limi<u>t</u>e para conclusão entre:</b><br><input '.$w_Disabled.' accesskey="T" type="text" name="p_fim_i" class="STI" SIZE="10" MAXLENGTH="10" VALUE="'.$p_fim_i.'" onKeyDown="FormataData(this,event);" title="Usar formato dd/mm/aaaa"> e <input '.$w_Disabled.' accesskey="T" type="text" name="p_fim_f" class="STI" SIZE="10" MAXLENGTH="10" VALUE="'.$p_fim_f.'" onKeyDown="FormataData(this,event);" title="Usar formato dd/mm/aaaa"></td>');
+      ShowHTML('          <td valign="top"><b>Data de re<u>c</u>ebimento entre:</b><br><input '.$w_Disabled.' accesskey="C" type="text" name="p_ini_i" class="STI" SIZE="10" MAXLENGTH="10" VALUE="'.$p_ini_i.'" onKeyDown="FormataData(this,event);" title="Usar formato dd/mm/aaaa"> e <input '.$w_Disabled.' accesskey="C" type="text" name="p_ini_f" class="STI" SIZE="10" MAXLENGTH="10" VALUE="'.$p_ini_f.'" onKeyDown="FormataData(this,event);" title="Usar formato dd/mm/aaaa"></td>');
+      ShowHTML('          <td valign="top"><b>Limi<u>t</u>e para conclusão entre:</b><br><input '.$w_Disabled.' accesskey="T" type="text" name="p_fim_i" class="STI" SIZE="10" MAXLENGTH="10" VALUE="'.$p_fim_i.'" onKeyDown="FormataData(this,event);" title="Usar formato dd/mm/aaaa"> e <input '.$w_Disabled.' accesskey="T" type="text" name="p_fim_f" class="STI" SIZE="10" MAXLENGTH="10" VALUE="'.$p_fim_f.'" onKeyDown="FormataData(this,event);" title="Usar formato dd/mm/aaaa"></td>');
       if ($O!='C') {
         // Se não for cópia
         ShowHTML('      <tr>');
-        ShowHTML('          <td valign="top"><font size="1"><b>Exibe somente ações em atraso?</b><br>');
+        ShowHTML('          <td valign="top"><b>Exibe somente ações em atraso?</b><br>');
         if ($p_atraso=='S')
           ShowHTML('              <input '.$w_Disabled.' class="STR" type="radio" name="p_atraso" value="S" checked> Sim <br><input '.$w_Disabled.' class="STR" class="STR" type="radio" name="p_atraso" value="N"> Não');
         else
           ShowHTML('              <input '.$w_Disabled.' class="STR" type="radio" name="p_atraso" value="S"> Sim <br><input '.$w_Disabled.' class="STR" class="STR" type="radio" name="p_atraso" value="N" checked> Não');
-        SelecaoFaseCheck('Recuperar fases:','S',null,$p_fase,$P2,'p_fase',null,null);
+        SelecaoFaseCheck('Recuperar fases:','S',null,$p_fase,$P2,'p_fase[]',null,null);
       } 
     } 
     ShowHTML('      <tr>');
-    ShowHTML('          <td valign="top"><font size="1"><b><U>O</U>rdenação por:<br><SELECT ACCESSKEY="O" '.$w_Disabled.' class="STS" name="p_ordena" size="1">');
+    ShowHTML('          <td valign="top"><b><U>O</U>rdenação por:<br><SELECT ACCESSKEY="O" '.$w_Disabled.' class="STS" name="p_ordena" size="1">');
     if ($p_ordena=='INICIO')
       ShowHTML('          <option value="inicio" SELECTED>Data de recebimento<option value="">Data limite para conclusão<option value="nm_tramite">Fase atual');
     elseif ($p_ordena=='NM_TRAMITE')
@@ -563,7 +569,7 @@ function Inicial() {
     else
       ShowHTML('          <option value="inicio">Data de recebimento<option value="" SELECTED>Data limite para conclusão<option value="nm_tramite">Fase atual');
     ShowHTML('          </select></td>');
-    ShowHTML('          <td valign="top"><font size="1"><b><U>L</U>inhas por página:<br><INPUT ACCESSKEY="L" '.$w_Disabled.' class="STI" type="text" name="P4" size="4" maxlength="4" value="'.$P4.'"></td></tr>');
+    ShowHTML('          <td valign="top"><b><U>L</U>inhas por página:<br><INPUT ACCESSKEY="L" '.$w_Disabled.' class="STI" type="text" name="P4" size="4" maxlength="4" value="'.$P4.'"></td></tr>');
     ShowHTML('      <tr><td align="center" colspan="2" height="1" bgcolor="#000000">');
     ShowHTML('      <tr><td align="center" colspan="2">');
     ShowHTML('            <input class="STB" type="submit" name="Botao" value="Aplicar filtro">');
@@ -779,10 +785,10 @@ function Geral() {
     ShowHTML('      <tr><td align="center" height="1" bgcolor="#000000"></td></tr>');
     ShowHTML('      <tr><td valign="top" align="center" bgcolor="#D0D0D0"><font size="2"><b>Identificação</td></td></tr>');
     ShowHTML('      <tr><td align="center" height="1" bgcolor="#000000"></td></tr>');
-    ShowHTML('      <tr><td><font size=1>Os dados deste bloco serão utilizados para identificação da ação, bem como para o controle de sua execução.</font></td></tr>');
+    ShowHTML('      <tr><td>Os dados deste bloco serão utilizados para identificação da ação, bem como para o controle de sua execução.</td></tr>');
     ShowHTML('      <tr><td align="center" height="1" bgcolor="#000000"></td></tr>');
-    if ($w_sq_acao_ppa>'') ShowHTML('      <tr><td valign="top"><font size="1"><b><u>A</u>ção:</b><br><INPUT READONLY ACCESSKEY="A" '.$w_Disabled.' class="STI" type="text" name="w_titulo" size="90" maxlength="100" value="'.$w_titulo.'" ></td>');
-    else                   ShowHTML('      <tr><td valign="top"><font size="1"><b><u>A</u>ção:</b><br><INPUT ACCESSKEY="A" '.$w_Disabled.' class="STI" type="text" name="w_titulo" size="90" maxlength="100" value="'.$w_titulo.'" ></td>');
+    if ($w_sq_acao_ppa>'') ShowHTML('      <tr><td valign="top"><b><u>A</u>ção:</b><br><INPUT READONLY ACCESSKEY="A" '.$w_Disabled.' class="STI" type="text" name="w_titulo" size="90" maxlength="100" value="'.$w_titulo.'" ></td>');
+    else                   ShowHTML('      <tr><td valign="top"><b><u>A</u>ção:</b><br><INPUT ACCESSKEY="A" '.$w_Disabled.' class="STI" type="text" name="w_titulo" size="90" maxlength="100" value="'.$w_titulo.'" ></td>');
     ShowHTML('          <tr>');
     if ($O=='I' || $w_sq_acao_ppa=='') SelecaoIsProjeto('<u>P</u>rograma interno:','P',null,$w_sq_isprojeto,null,'w_sq_isprojeto','CADASTRAMENTO','onchange="document.Form.action=\''.$w_dir.$w_pagina.$par.'\'; document.Form.w_troca.value=\'w_sq_acao_ppa\'; document.Form.submit();"');
     else                               SelecaoIsProjeto('<u>P</u>rograma interno:','P',null,$w_sq_isprojeto,null,'w_sq_isprojeto',null,'onchange="document.Form.action=\''.$w_dir.$w_pagina.$par.'\'; document.Form.w_troca.value=\'w_sq_unidade_adm\'; document.Form.submit();"');
@@ -810,15 +816,15 @@ function Geral() {
     ShowHTML('      <tr><td valign="top" colspan="2"><table border=0 width="100%" cellspacing=0>');
     ShowHTML('          <tr>');
     if ($w_sq_acao_ppa>'') {
-      ShowHTML('              <td valign="top"><font size="1"><b>Iní<u>c</u>io previsto:</b><br><input readonly '.$w_Disabled.' accesskey="C" type="text" name="w_inicio" class="STI" SIZE="10" MAXLENGTH="10" VALUE="'.Nvl($w_inicio,'01/01/'.$w_ano).'" onKeyDown="FormataData(this,event);" title="Usar formato dd/mm/aaaa"></td>');
-      ShowHTML('              <td valign="top"><font size="1"><b><u>F</u>im previsto:</b><br><input readonly '.$w_Disabled.' accesskey="F" type="text" name="w_fim" class="STI" SIZE="10" MAXLENGTH="10" VALUE="'.Nvl($w_fim,'31/12/'.$w_ano).'" onKeyDown="FormataData(this,event);" title="Usar formato dd/mm/aaaa"></td>');
+      ShowHTML('              <td valign="top"><b>Iní<u>c</u>io previsto:</b><br><input readonly '.$w_Disabled.' accesskey="C" type="text" name="w_inicio" class="STI" SIZE="10" MAXLENGTH="10" VALUE="'.Nvl($w_inicio,'01/01/'.$w_ano).'" onKeyDown="FormataData(this,event);" title="Usar formato dd/mm/aaaa"></td>');
+      ShowHTML('              <td valign="top"><b><u>F</u>im previsto:</b><br><input readonly '.$w_Disabled.' accesskey="F" type="text" name="w_fim" class="STI" SIZE="10" MAXLENGTH="10" VALUE="'.Nvl($w_fim,'31/12/'.$w_ano).'" onKeyDown="FormataData(this,event);" title="Usar formato dd/mm/aaaa"></td>');
     } else {
-      ShowHTML('              <td valign="top"><font size="1"><b>Iní<u>c</u>io previsto:</b><br><input '.$w_Disabled.' accesskey="C" type="text" name="w_inicio" class="STI" SIZE="10" MAXLENGTH="10" VALUE="'.Nvl($w_inicio,'01/01/'.$w_ano).'" onKeyDown="FormataData(this,event);" title="Usar formato dd/mm/aaaa"></td>');
-      ShowHTML('              <td valign="top"><font size="1"><b><u>F</u>im previsto:</b><br><input '.$w_Disabled.' accesskey="F" type="text" name="w_fim" class="STI" SIZE="10" MAXLENGTH="10" VALUE="'.Nvl($w_fim,'31/12/'.$w_ano).'" onKeyDown="FormataData(this,event);" title="Usar formato dd/mm/aaaa"></td>');
+      ShowHTML('              <td valign="top"><b>Iní<u>c</u>io previsto:</b><br><input '.$w_Disabled.' accesskey="C" type="text" name="w_inicio" class="STI" SIZE="10" MAXLENGTH="10" VALUE="'.Nvl($w_inicio,'01/01/'.$w_ano).'" onKeyDown="FormataData(this,event);" title="Usar formato dd/mm/aaaa"></td>');
+      ShowHTML('              <td valign="top"><b><u>F</u>im previsto:</b><br><input '.$w_Disabled.' accesskey="F" type="text" name="w_fim" class="STI" SIZE="10" MAXLENGTH="10" VALUE="'.Nvl($w_fim,'31/12/'.$w_ano).'" onKeyDown="FormataData(this,event);" title="Usar formato dd/mm/aaaa"></td>');
     } 
     ShowHTML('          </table>');
-    ShowHTML('      <tr><td valign="top"><font size="1"><b>Parc<u>e</u>rias externas:<br><INPUT ACCESSKEY="E" '.$w_Disabled.' class="STI" type="text" name="w_proponente" size="90" maxlength="90" value="'.$w_proponente.'" title="Informar quais são os parceiros externos na execução da ação (campo opcional)."></td>');
-    ShowHTML('      <tr><td valign="top"><font size="1"><b><u>P</u>arcerias internas:<br><INPUT ACCESSKEY="P" '.$w_Disabled.' class="STI" type="text" name="w_palavra_chave" size="90" maxlength="90" value="'.$w_palavra_chave.'" title="Informar quais são os parceiros internos na execução da ação (campo opcional)."></td>');
+    ShowHTML('      <tr><td valign="top"><b>Parc<u>e</u>rias externas:<br><INPUT ACCESSKEY="E" '.$w_Disabled.' class="STI" type="text" name="w_proponente" size="90" maxlength="90" value="'.$w_proponente.'" title="Informar quais são os parceiros externos na execução da ação (campo opcional)."></td>');
+    ShowHTML('      <tr><td valign="top"><b><u>P</u>arcerias internas:<br><INPUT ACCESSKEY="P" '.$w_Disabled.' class="STI" type="text" name="w_palavra_chave" size="90" maxlength="90" value="'.$w_palavra_chave.'" title="Informar quais são os parceiros internos na execução da ação (campo opcional)."></td>');
     // Verifica se poderá ser feito o envio da solicitação, a partir do resultado da validação
     ShowHTML('      <tr><td align="center" colspan="3">');
     ShowHTML('            <input class="STB" type="submit" name="Botao" value="Gravar">');
@@ -976,144 +982,148 @@ function RecursoProgramado() {
     ShowHTML('    <table width="99%" border="0">');
     ShowHTML('      <tr valign="top"><td colspan="2"><font size=2>Ação: <b>'.f($RS,'titulo').'</b></font></td></tr>');
     // Identificação da ação
-    ShowHTML('      <tr valign="top"><td colspan="2" align="center" bgcolor="#D0D0D0" style="border: 2px solid rgb(0,0,0);"><font size="1"><b>Identificação</td>');
+    ShowHTML('      <tr valign="top"><td colspan="2" align="center" bgcolor="#D0D0D0" style="border: 2px solid rgb(0,0,0);"><b>Identificação</td>');
     // Se a ação no PPA for informada, exibe.
     if (Nvl(f($RS,'cd_acao'),'')>'') {
       ShowHTML('   <tr valign="top" bgcolor="#D0D0D0"><td colspan="2"><table border=0 width="100%" cellspacing=0>');
       ShowHTML('     <tr valign="top"><td valign="top" colspan="2"><table border=0 width="100%" cellspacing=0>');
-      ShowHTML('       <tr bgcolor="#D0D0D0"><td colspan="1" nowrap><font size="1">Unidade:<br><b>'.f($RS,'cd_unidade').' - '.f($RS,'ds_unidade').' </b></td>');
-      ShowHTML('        <td><font size="1">Órgão:<br><b>'.f($RS,'cd_orgao').' - '.f($RS,'nm_orgao').' </b></td></tr>');
+      ShowHTML('       <tr bgcolor="#D0D0D0"><td colspan="1" nowrap>Unidade:<br><b>'.f($RS,'cd_unidade').' - '.f($RS,'ds_unidade').' </b></td>');
+      ShowHTML('        <td>Órgão:<br><b>'.f($RS,'cd_orgao').' - '.f($RS,'nm_orgao').' </b></td></tr>');
       ShowHTML('     </table></td></tr>');
-      ShowHTML('      <tr bgcolor="#D0D0D0"><td colspan="2"><font size="1">Programa PPA:<br><b>'.f($RS,'cd_ppa_pai').' - '.f($RS,'nm_ppa_pai').'</b></td></tr>');
-      ShowHTML('      <tr bgcolor="#D0D0D0"><td colspan="1"><font size="1">Ação PPA:<br><b>'.f($RS,'cd_acao').' - '.f($RS,'nm_ppa').' </b></td>');
-      ShowHTML('        <td valign="top" nowrap><font size="1">Recurso programado:<br><b>'.number_format(f($RS,'valor'),2,',','.').' </b></td>');
+      ShowHTML('      <tr bgcolor="#D0D0D0"><td colspan="2">Programa PPA:<br><b>'.f($RS,'cd_ppa_pai').' - '.f($RS,'nm_ppa_pai').'</b></td></tr>');
+      ShowHTML('      <tr bgcolor="#D0D0D0"><td colspan="1">Ação PPA:<br><b>'.f($RS,'cd_acao').' - '.f($RS,'nm_ppa').' </b></td>');
+      ShowHTML('        <td valign="top" nowrap>Recurso programado:<br><b>'.number_format(f($RS,'valor'),2,',','.').' </b></td>');
       ShowHTML('   </table>');
     } 
     // Se a programa interno for informado, exibe.
     if (Nvl(f($RS,'sq_isprojeto'),'')>'') {
-      ShowHTML('      <tr><td valign="top" colspan="1"><font size="1">Programa interno:<br><b>'.f($RS,'nm_pri'));
+      ShowHTML('      <tr><td valign="top" colspan="1">Programa interno:<br><b>'.f($RS,'nm_pri'));
       if (Nvl(f($RS,'cd_pri'),'')>'')  ShowHTML(' ('.f($RS,'cd_pri').')');
-      if (Nvl(f($RS,'cd_acao'),'')>'') ShowHTML('          <td><font size="1">Recurso programado:<br><b>'.number_format(f($RS,'valor'),2,',','.').' </b></td>');
+      if (Nvl(f($RS,'cd_acao'),'')>'') ShowHTML('          <td>Recurso programado:<br><b>'.number_format(f($RS,'valor'),2,',','.').' </b></td>');
     } 
-    ShowHTML('  <tr><td colspan="2"><font size="1">Unidade Administrativa:<br><b>'.ExibeUnidade('../',$w_cliente,f($RS,'nm_unidade_adm'),f($RS,'sq_unidade_adm'),$TP).'</b></td>');
+    ShowHTML('  <tr><td colspan="2">Unidade Administrativa:<br><b>'.ExibeUnidade('../',$w_cliente,f($RS,'nm_unidade_adm'),f($RS,'sq_unidade_adm'),$TP).'</b></td>');
     ShowHTML('   <tr valign="top"><td colspan="2"><table border=0 width="100%" cellspacing=0>');
     ShowHTML('     <tr valign="top">');
-    if (f($RS,'mpog_ppa')=='S') ShowHTML('    <td><font size="1">Selecionada SPI/MP:<br><b>Sim</b></td>');
-    else                        ShowHTML('    <td><font size="1">Selecionada SPI/MP:<br><b>Não</b></td>');
-    if (f($RS,'relev_ppa')=='S')ShowHTML('    <td><font size="1">Selecionada SE/SEPPIR:<br><b>Sim</b></td>');
-    else                        ShowHTML('    <td><font size="1">Selecionada SE/SEPPIR:<br><b>Não</b></td>');
+    if (f($RS,'mpog_ppa')=='S') ShowHTML('    <td>Selecionada SPI/MP:<br><b>Sim</b></td>');
+    else                        ShowHTML('    <td>Selecionada SPI/MP:<br><b>Não</b></td>');
+    if (f($RS,'relev_ppa')=='S')ShowHTML('    <td>Selecionada SE/SEPPIR:<br><b>Sim</b></td>');
+    else                        ShowHTML('    <td>Selecionada SE/SEPPIR:<br><b>Não</b></td>');
     ShowHTML('     <tr valign="top">');
-    ShowHTML('    <td><font size="1">Responsável monitoramento:<br><b>'.ExibePessoa('../',$w_cliente,f($RS,'solicitante'),$TP,f($RS,'nm_sol')).'</b></td>');
-    ShowHTML('    <td><font size="1">Área planejamento:<br><b>'.ExibeUnidade('../',$w_cliente,f($RS,'nm_unidade_resp'),f($RS,'sq_unidade'),$TP).'</b></td>');
+    ShowHTML('    <td>Responsável monitoramento:<br><b>'.ExibePessoa('../',$w_cliente,f($RS,'solicitante'),$TP,f($RS,'nm_sol')).'</b></td>');
+    ShowHTML('    <td>Área planejamento:<br><b>'.ExibeUnidade('../',$w_cliente,f($RS,'nm_unidade_resp'),f($RS,'sq_unidade'),$TP).'</b></td>');
     if (Nvl(f($RS,'cd_acao'),'')>'') {
       $RS1 = db_getAcaoPPA_IS::getInstanceOf($dbms,$w_cliente,$w_ano,f($RS,'cd_ppa_pai'),f($RS,'cd_acao'),null,f($RS,'cd_unidade'),null,null,null);
       ShowHTML('     <tr valign="top">');
-      ShowHTML('       <td><font size="1">Função:<br><b>'.f($RS1,'ds_funcao').' </b></td>');
-      ShowHTML('       <td><font size="1">Subfunção:<br><b>'.f($RS1,'ds_subfuncao').' </b></td>');
+      ShowHTML('       <td>Função:<br><b>'.f($RS1,'ds_funcao').' </b></td>');
+      ShowHTML('       <td>Subfunção:<br><b>'.f($RS1,'ds_subfuncao').' </b></td>');
       ShowHTML('     <tr valign="top">');
-      ShowHTML('       <td><font size="1">Esfera:<br><b>'.f($RS1,'ds_esfera').' </b></td>');
-      ShowHTML('       <td><font size="1">Tipo de ação:<br><b>'.f($RS1,'nm_tipo_acao').' </b></td>');
+      ShowHTML('       <td>Esfera:<br><b>'.f($RS1,'ds_esfera').' </b></td>');
+      ShowHTML('       <td>Tipo de ação:<br><b>'.f($RS1,'nm_tipo_acao').' </b></td>');
     } 
     ShowHTML('     <tr valign="top">');
-    ShowHTML('       <td><font size="1">Início previsto:<br><b>'.FormataDataEdicao(f($RS,'inicio')).' </b></td>');
-    ShowHTML('       <td><font size="1">Fim previsto:<br><b>'.FormataDataEdicao(f($RS,'fim')).' </b></td>');
+    ShowHTML('       <td>Início previsto:<br><b>'.FormataDataEdicao(f($RS,'inicio')).' </b></td>');
+    ShowHTML('       <td>Fim previsto:<br><b>'.FormataDataEdicao(f($RS,'fim')).' </b></td>');
     ShowHTML('     </table>');
-    ShowHTML('     <tr valign="top"><td colspan="2"><font size="1">Parcerias externas:<br><b>'.CRLF2BR(Nvl(f($RS,'proponente'),'---')).' </b></td>');
-    ShowHTML('     <tr valign="top"><td colspan="2"><font size="1">Parcerias internas:<br><b>'.CRLF2BR(Nvl(f($RS,'palavra_chave'),'---')).' </b></td>');
+    ShowHTML('     <tr valign="top"><td colspan="2">Parcerias externas:<br><b>'.CRLF2BR(Nvl(f($RS,'proponente'),'---')).' </b></td>');
+    ShowHTML('     <tr valign="top"><td colspan="2">Parcerias internas:<br><b>'.CRLF2BR(Nvl(f($RS,'palavra_chave'),'---')).' </b></td>');
     // Responsaveis
     if (f($RS,'nm_gerente_programa')>'' || f($RS,'nm_gerente_executivo')>'' || f($RS,'nm_gerente_adjunto')>'' || f($RS,'resp_ppa')>'' || f($RS,'resp_pri')>'')
-      ShowHTML('      <tr><td valign="top" colspan="2" align="center" bgcolor="#D0D0D0" style="border: 2px solid rgb(0,0,0);"><font size="1"><b>Responsáveis</td>');
+      ShowHTML('      <tr><td valign="top" colspan="2" align="center" bgcolor="#D0D0D0" style="border: 2px solid rgb(0,0,0);"><b>Responsáveis</td>');
     if (f($RS,'nm_gerente_programa')>'' || f($RS,'nm_gerente_executivo')>'' || f($RS,'nm_gerente_adjunto')>'') {
       ShowHTML('      <tr><td valign="top" colspan="2"><table border=0 width="100%" cellspacing=0>');
       if (Nvl(f($RS,'nm_gerente_programa'),'')>'') {
-        ShowHTML('      <tr><td valign="top"><font size="1">Gerente do programa:<br><b>'.f($RS,'nm_gerente_programa').' </b></td>');
-        if (Nvl(f($RS,'fn_gerente_programa'),'')>'') ShowHTML('          <td><font size="1">Telefone:<br><b>'.f($RS,'fn_gerente_programa').' </b></td>');
-        if (Nvl(f($RS,'em_gerente_programa'),'')>'') ShowHTML('          <td><font size="1">Email:<br><b>'.f($RS,'em_gerente_programa').' </b></td>');
+        ShowHTML('      <tr><td valign="top">Gerente do programa:<br><b>'.f($RS,'nm_gerente_programa').' </b></td>');
+        if (Nvl(f($RS,'fn_gerente_programa'),'')>'') ShowHTML('          <td>Telefone:<br><b>'.f($RS,'fn_gerente_programa').' </b></td>');
+        if (Nvl(f($RS,'em_gerente_programa'),'')>'') ShowHTML('          <td>Email:<br><b>'.f($RS,'em_gerente_programa').' </b></td>');
       } 
       if (Nvl(f($RS,'nm_gerente_executivo'),'')>'') {
-        ShowHTML('      <tr><td valign="top"><font size="1">Gerente executivo do programa:<br><b>'.f($RS,'nm_gerente_executivo').' </b></td>');
-        if (Nvl(f($RS,'fn_gerente_executivo'),'')>'') ShowHTML('          <td><font size="1">Telefone:<br><b>'.f($RS,'fn_gerente_executivo').' </b></td>');
-        if (Nvl(f($RS,'em_gerente_executivo'),'')>'') ShowHTML('          <td><font size="1">Email:<br><b>'.f($RS,'em_gerente_executivo').' </b></td>');
+        ShowHTML('      <tr><td valign="top">Gerente executivo do programa:<br><b>'.f($RS,'nm_gerente_executivo').' </b></td>');
+        if (Nvl(f($RS,'fn_gerente_executivo'),'')>'') ShowHTML('          <td>Telefone:<br><b>'.f($RS,'fn_gerente_executivo').' </b></td>');
+        if (Nvl(f($RS,'em_gerente_executivo'),'')>'') ShowHTML('          <td>Email:<br><b>'.f($RS,'em_gerente_executivo').' </b></td>');
       } 
       if (Nvl(f($RS,'nm_gerente_adjunto'),'')>'') {
-        ShowHTML('      <tr><td valign="top"><font size="1">Gerente executivo adjunto:<br><b>'.f($RS,'nm_gerente_adjunto').' </b></td>');
-        if (Nvl(f($RS,'fn_gerente_adjunto'),'')>'') ShowHTML('          <td><font size="1">Telefone:<br><b>'.f($RS,'fn_gerente_adjunto').' </b></td>');
-        if (Nvl(f($RS,'em_gerente_adjunto'),'')>'') ShowHTML('          <td><font size="1">Email:<br><b>'.f($RS,'em_gerente_adjunto').' </b></td>');
+        ShowHTML('      <tr><td valign="top">Gerente executivo adjunto:<br><b>'.f($RS,'nm_gerente_adjunto').' </b></td>');
+        if (Nvl(f($RS,'fn_gerente_adjunto'),'')>'') ShowHTML('          <td>Telefone:<br><b>'.f($RS,'fn_gerente_adjunto').' </b></td>');
+        if (Nvl(f($RS,'em_gerente_adjunto'),'')>'') ShowHTML('          <td>Email:<br><b>'.f($RS,'em_gerente_adjunto').' </b></td>');
       } 
       ShowHTML('          </table>');
     } 
     if (Nvl(f($RS,'resp_ppa'),'')>'') {
       ShowHTML('      <tr><td valign="top" colspan="2"><table border=0 width="100%" cellspacing=0>');
-      ShowHTML('        <tr><td valign="top"><font size="1">Coordenador:<br><b>'.f($RS,'resp_ppa').' </b></td>');
-      if (Nvl(f($RS,'fone_ppa'),'')>'') ShowHTML('          <td><font size="1">Telefone:<br><b>'.f($RS,'fone_ppa').' </b></td>');
-      if (Nvl(f($RS,'mail_ppa'),'')>'') ShowHTML('          <td><font size="1">Email:<br><b>'.f($RS,'mail_ppa').' </b></td>');
+      ShowHTML('        <tr><td valign="top">Coordenador:<br><b>'.f($RS,'resp_ppa').' </b></td>');
+      if (Nvl(f($RS,'fone_ppa'),'')>'') ShowHTML('          <td>Telefone:<br><b>'.f($RS,'fone_ppa').' </b></td>');
+      if (Nvl(f($RS,'mail_ppa'),'')>'') ShowHTML('          <td>Email:<br><b>'.f($RS,'mail_ppa').' </b></td>');
       ShowHTML('          </table>');
     } 
     if (Nvl(f($RS,'resp_pri'),'')>'') {
       ShowHTML('      <tr><td valign="top" colspan="2"><table border=0 width="100%" cellspacing=0>');
-      ShowHTML('        <tr><td valign="top"><font size="1">Responsável pela ação:<br><b>'.f($RS,'resp_pri').' </b></td>');
-      if (Nvl(f($RS,'fone_pri'),'')>'') ShowHTML('         <td><font size="1">Telefone:<br><b>'.f($RS,'fone_pri').' </b></td>');
-      if (Nvl(f($RS,'mail_pri'),'')>'') ShowHTML('            <td><font size="1">Email:<br><b>'.f($RS,'mail_pri').' </b></td>');
+      ShowHTML('        <tr><td valign="top">Responsável pela ação:<br><b>'.f($RS,'resp_pri').' </b></td>');
+      if (Nvl(f($RS,'fone_pri'),'')>'') ShowHTML('         <td>Telefone:<br><b>'.f($RS,'fone_pri').' </b></td>');
+      if (Nvl(f($RS,'mail_pri'),'')>'') ShowHTML('            <td>Email:<br><b>'.f($RS,'mail_pri').' </b></td>');
       ShowHTML('           </table>');
     } 
     //Programação Financeira
     if (Nvl(f($RS,'cd_acao'),'')>'') {
-      ShowHTML('        <tr><td valign="top" colspan="2" align="center" bgcolor="#D0D0D0" style="border: 2px solid rgb(0,0,0);"><font size="1"><b>Programação financeira</td>');
+      ShowHTML('        <tr><td valign="top" colspan="2" align="center" bgcolor="#D0D0D0" style="border: 2px solid rgb(0,0,0);"><b>Programação financeira</td>');
       if (f($RS,'cd_tipo_acao')!=3) {
         $RS1 = db_getPPADadoFinanc_IS::getInstanceOf($dbms,f($RS,'cd_acao'),f($RS,'cd_unidade'),$w_ano,$w_cliente,'VALORFONTEACAO');
         if (count($RS1)<=0) {
-          ShowHTML('                      <tr><td valign="top" colspan="2"><font size="1"><DD><b>Nao existe nenhum valor para esta ação</b></DD></td>');
+          ShowHTML('                      <tr><td valign="top" colspan="2"><DD><b>Nao existe nenhum valor para esta ação</b></DD></td>');
         } else {
           $w_cor='';
-          ShowHTML('                      <tr><td valign="top" colspan="2"><font size="1">Fonte: SIGPLAN/MP - PPA 2004-2007</td>');
+          ShowHTML('                      <tr><td valign="top" colspan="2">Fonte: SIGPLAN/MP - PPA 2004-2007</td>');
           if (f($RS,'cd_tipo_acao')==1) {
-            ShowHTML('                   <tr><td valign="top" colspan="2"><font size="1">Realizado até 2004: <b>'.number_format(Nvl(f($RS,'valor_ano_anterior'),0),2,',','.').'</b></td>');
-            ShowHTML('                   <tr><td valign="top" colspan="2"><font size="1">Justificativa da repercusão financeira sobre o custeio da União: <b>'.Nvl(f($RS,'reperc_financeira'),'---').'</b></td>');
-            ShowHTML('                   <tr><td valign="top" colspan="2"><font size="1">Valor estimado da repercussão financeira por ano (R$ 1,00): <b>'.number_format(Nvl(f($RS,'valor_reperc_financeira'),0),2,',','.').'</b></td>');
+            ShowHTML('                   <tr><td valign="top" colspan="2">Realizado até 2004: <b>'.number_format(Nvl(f($RS,'valor_ano_anterior'),0),2,',','.').'</b></td>');
+            ShowHTML('                   <tr><td valign="top" colspan="2">Justificativa da repercusão financeira sobre o custeio da União: <b>'.Nvl(f($RS,'reperc_financeira'),'---').'</b></td>');
+            ShowHTML('                   <tr><td valign="top" colspan="2">Valor estimado da repercussão financeira por ano (R$ 1,00): <b>'.number_format(Nvl(f($RS,'valor_reperc_financeira'),0),2,',','.').'</b></td>');
           } 
-          ShowHTML('                      <tr><td valign="top" colspan="2"><font size="1"><b>Ação: </b>'.f($RS1,'cd_unidade').'.'.f($RS,'cd_programa').'.'.f($RS1,'cd_acao').' - '.f($RS1,'descricao_acao').'</td>');
-          ShowHTML('                      <tr><td valign="top" align="center">');
-          ShowHTML('                        <TABLE WIDTH="100%" bgcolor="'.$conTableBgColor.'" BORDER="'.$conTableBorder.'" CELLSPACING="'.$conTableCellSpacing.'" CELLPADDING="'.$conTableCellPadding.'" BorderColorDark="'.$conTableBorderColorDark.'" BorderColorLight="'.$conTableBorderColorLight.'">');
-          ShowHTML('                          <tr bgcolor="'.$conTrBgColor.'" align="center">');
-          ShowHTML('                            <td><font size="1"><b>Fonte</font></td>');
-          ShowHTML('                            <td><font size="1"><b>2004*</font></td>');
-          ShowHTML('                            <td><font size="1"><b>2005**</font></td>');
-          ShowHTML('                            <td><font size="1"><b>2006</font></td>');
-          ShowHTML('                            <td><font size="1"><b>2007</font></td>');
-          ShowHTML('                            <td><font size="1"><b>2008</font></td>');
-          ShowHTML('                            <td><font size="1"><b>Total 2004-2008</font></td>');
-          ShowHTML('                          </tr>');
+          $i=0;
           foreach($RS1 as $row1) {
+            if ($i==0) {
+              ShowHTML('                      <tr><td valign="top" colspan="2"><b>Ação: </b>'.f($row1,'cd_unidade').'.'.f($RS,'cd_programa').'.'.f($row1,'cd_acao').' - '.f($row1,'descricao_acao').'</td>');
+              ShowHTML('                      <tr><td valign="top" align="center">');
+              ShowHTML('                        <TABLE WIDTH="100%" bgcolor="'.$conTableBgColor.'" BORDER="'.$conTableBorder.'" CELLSPACING="'.$conTableCellSpacing.'" CELLPADDING="'.$conTableCellPadding.'" BorderColorDark="'.$conTableBorderColorDark.'" BorderColorLight="'.$conTableBorderColorLight.'">');
+              ShowHTML('                          <tr bgcolor="'.$conTrBgColor.'" align="center">');
+              ShowHTML('                            <td><b>Fonte</td>');
+              ShowHTML('                            <td><b>2004*</td>');
+              ShowHTML('                            <td><b>2005**</td>');
+              ShowHTML('                            <td><b>2006</td>');
+              ShowHTML('                            <td><b>2007</td>');
+              ShowHTML('                            <td><b>2008</td>');
+              ShowHTML('                            <td><b>Total 2004-2008</td>');
+              ShowHTML('                          </tr>');
+              $i+=1;
+            }
             $w_cor = ($w_cor==$conTrBgColor || $w_cor=='') ? $w_cor=$conTrAlternateBgColor : $w_cor=$conTrBgColor;
             ShowHTML('                       <tr bgcolor="'.$w_cor.'" valign="top">');
-            ShowHTML('                         <td><font size="1">'.f($row1,'nm_fonte').'</td>');
-            ShowHTML('                         <td align="center"><font size="1">'.number_format(Nvl(f($row1,'valor_ano_1'),0),2,',','.').'</td>');
-            ShowHTML('                         <td align="center"><font size="1">'.number_format(Nvl(f($row1,'valor_ano_2'),0),2,',','.').'</td>');
-            ShowHTML('                         <td align="center"><font size="1">'.number_format(Nvl(f($row1,'valor_ano_3'),0),2,',','.').'</td>');
-            ShowHTML('                         <td align="center"><font size="1">'.number_format(Nvl(f($row1,'valor_ano_4'),0),2,',','.').'</td>');
-            ShowHTML('                         <td align="center"><font size="1">'.number_format(Nvl(f($row1,'valor_ano_5'),0),2,',','.').'</td>');
-            ShowHTML('                         <td align="center"><font size="1">'.number_format(Nvl(f($row1,'valor_total'),0),2,',','.').'</td>');
+            ShowHTML('                         <td>'.f($row1,'nm_fonte').'</td>');
+            ShowHTML('                         <td align="center">'.number_format(Nvl(f($row1,'valor_ano_1'),0),2,',','.').'</td>');
+            ShowHTML('                         <td align="center">'.number_format(Nvl(f($row1,'valor_ano_2'),0),2,',','.').'</td>');
+            ShowHTML('                         <td align="center">'.number_format(Nvl(f($row1,'valor_ano_3'),0),2,',','.').'</td>');
+            ShowHTML('                         <td align="center">'.number_format(Nvl(f($row1,'valor_ano_4'),0),2,',','.').'</td>');
+            ShowHTML('                         <td align="center">'.number_format(Nvl(f($row1,'valor_ano_5'),0),2,',','.').'</td>');
+            ShowHTML('                         <td align="center">'.number_format(Nvl(f($row1,'valor_total'),0),2,',','.').'</td>');
             ShowHTML('                       </tr>');
           } 
           $RS1 = db_getPPADadoFinanc_IS::getInstanceOf($dbms,f($RS,'cd_acao'),f($RS,'cd_unidade'),$w_ano,$w_cliente,'VALORTOTALACAO');
-          ShowHTML('      <tr><td valign="top" align="right"><font size="1"><b>Totais </td>');
+          ShowHTML('      <tr><td valign="top" align="right"><b>Totais </td>');
           if (count($RS1)<=0) {
-            ShowHTML('          <td valign="top" colspan="6"><font size="1"><DD><b>Nao existe nenhum valor para esta ação</b></DD></td>');
+            ShowHTML('          <td valign="top" colspan="6"><DD><b>Nao existe nenhum valor para esta ação</b></DD></td>');
           } else {
             foreach ($RS1 as $row1) {$RS1=$row1; break;}
             $w_cor = ($w_cor==$conTrBgColor || $w_cor=='') ? $w_cor=$conTrAlternateBgColor : $w_cor=$conTrBgColor;
-            ShowHTML('         <td align="center"><font size="1"><b>'.number_format(Nvl(f($RS1,'valor_ano_1'),0),2,',','.').'</td>');
-            ShowHTML('         <td align="center"><font size="1"><b>'.number_format(Nvl(f($RS1,'valor_ano_2'),0),2,',','.').'</td>');
-            ShowHTML('         <td align="center"><font size="1"><b>'.number_format(Nvl(f($RS1,'valor_ano_3'),0),2,',','.').'</td>');
-            ShowHTML('         <td align="center"><font size="1"><b>'.number_format(Nvl(f($RS1,'valor_ano_4'),0),2,',','.').'</td>');
-            ShowHTML('         <td align="center"><font size="1"><b>'.number_format(Nvl(f($RS1,'valor_ano_5'),0),2,',','.').'</td>');
-            ShowHTML('         <td align="center"><font size="1"><b>'.number_format(Nvl(f($RS1,'valor_total'),0),2,',','.').'</td>');
+            ShowHTML('         <td align="center"><b>'.number_format(Nvl(f($RS1,'valor_ano_1'),0),2,',','.').'</td>');
+            ShowHTML('         <td align="center"><b>'.number_format(Nvl(f($RS1,'valor_ano_2'),0),2,',','.').'</td>');
+            ShowHTML('         <td align="center"><b>'.number_format(Nvl(f($RS1,'valor_ano_3'),0),2,',','.').'</td>');
+            ShowHTML('         <td align="center"><b>'.number_format(Nvl(f($RS1,'valor_ano_4'),0),2,',','.').'</td>');
+            ShowHTML('         <td align="center"><b>'.number_format(Nvl(f($RS1,'valor_ano_5'),0),2,',','.').'</td>');
+            ShowHTML('         <td align="center"><b>'.number_format(Nvl(f($RS1,'valor_total'),0),2,',','.').'</td>');
             ShowHTML('       </tr>');
             ShowHTML('       </table>');
           } 
         } 
-        ShowHTML('<tr><td valign="top" colspan="2"><font size="1">* Valor Lei Orçamentária Anual - LOA 2004 + Créditos</td>');
-        ShowHTML('<tr><td valign="top" colspan="2"><font size="1">** Valor do Projeto de Lei Orçamentária Anual - PLOA 2005</td>');
+        ShowHTML('<tr><td valign="top" colspan="2">* Valor Lei Orçamentária Anual - LOA 2004 + Créditos</td>');
+        ShowHTML('<tr><td valign="top" colspan="2">** Valor do Projeto de Lei Orçamentária Anual - PLOA 2005</td>');
       } 
       // Recupera todos os registros para a listagem
       $RS1 = db_getFinancAcaoPPA_IS::getInstanceOf($dbms,$w_chave,$w_cliente,$w_ano,null,null,null);
@@ -1123,16 +1133,16 @@ function RecursoProgramado() {
         ShowHTML('<tr><td colspan="2" align="center">');
         ShowHTML('    <TABLE WIDTH="100%" bgcolor="'.$conTableBgColor.'" BORDER="'.$conTableBorder.'" CELLSPACING="'.$conTableCellSpacing.'" CELLPADDING="'.$conTableCellPadding.'" BorderColorDark="'.$conTableBorderColorDark.'" BorderColorLight="'.$conTableBorderColorLight.'">');
         ShowHTML('        <tr bgcolor="'.$conTrBgColor.'" align="center">');
-        ShowHTML('          <td><font size="1"><b>Código</font></td>');
-        ShowHTML('          <td><font size="1"><b>Nome</font></td>');
+        ShowHTML('          <td><b>Código</td>');
+        ShowHTML('          <td><b>Nome</td>');
         ShowHTML('        </tr>');
         $w_cor='';
         // Lista os registros selecionados para listagem
         foreach($RS1 as $row1) {
           $w_cor = ($w_cor==$conTrBgColor || $w_cor=='') ? $w_cor=$conTrAlternateBgColor : $w_cor=$conTrBgColor;
           ShowHTML('      <tr bgcolor="'.$w_cor.'" valign="top">');
-          ShowHTML('        <td><font size="1">'.f($RS1,'cd_programa').'.'.f($RS1,'cd_acao').'.'.f($RS1,'cd_unidade').'</td>');
-          ShowHTML('        <td><font size="1">'.f($RS1,'descricao_acao').'</td>');
+          ShowHTML('        <td>'.f($RS1,'cd_programa').'.'.f($RS1,'cd_acao').'.'.f($RS1,'cd_unidade').'</td>');
+          ShowHTML('        <td>'.f($RS1,'descricao_acao').'</td>');
           ShowHTML('      </tr>');
         } 
         ShowHTML('          </table>');
@@ -1143,27 +1153,27 @@ function RecursoProgramado() {
       // Exibe a quantidade de registros apresentados na listagem e o cabeçalho da tabela de listagem
       if (count($RS1)>0) {
         // Se não foram selecionados registros, exibe mensagem
-        ShowHTML('        <tr><td valign="top" colspan="2" align="center" bgcolor="#D0D0D0" style="border: 2px solid rgb(0,0,0);"><font size="1"><b>Programação financeira</td>');
+        ShowHTML('        <tr><td valign="top" colspan="2" align="center" bgcolor="#D0D0D0" style="border: 2px solid rgb(0,0,0);"><b>Programação financeira</td>');
         ShowHTML('<tr><td colspan="2" align="center">');
         ShowHTML('    <TABLE WIDTH="100%" bgcolor="'.$conTableBgColor.'" BORDER="'.$conTableBorder.'" CELLSPACING="'.$conTableCellSpacing.'" CELLPADDING="'.$conTableCellPadding.'" BorderColorDark="'.$conTableBorderColorDark.'" BorderColorLight="'.$conTableBorderColorLight.'">');
         ShowHTML('        <tr bgcolor="'.$conTrBgColor.'" align="center">');
-        ShowHTML('          <td><font size="1"><b>Código</font></td>');
-        ShowHTML('          <td><font size="1"><b>Nome</font></td>');
+        ShowHTML('          <td><b>Código</td>');
+        ShowHTML('          <td><b>Nome</td>');
         ShowHTML('        </tr>');
         $w_cor='';
         // Lista os registros selecionados para listagem
         foreach($RS1 as $row1) {
           $w_cor = ($w_cor==$conTrBgColor || $w_cor=='') ? $w_cor=$conTrAlternateBgColor : $w_cor=$conTrBgColor;
           ShowHTML('      <tr bgcolor="'.$w_cor.'" valign="top">');
-          ShowHTML('        <td><font size="1">'.f($RS1,'cd_unidade').'.'.f($RS1,'cd_programa').'.'.f($RS1,'cd_acao').'</td>');
-          ShowHTML('        <td><font size="1">'.f($RS1,'descricao_acao').'</td>');
+          ShowHTML('        <td>'.f($RS1,'cd_unidade').'.'.f($RS1,'cd_programa').'.'.f($RS1,'cd_acao').'</td>');
+          ShowHTML('        <td>'.f($RS1,'descricao_acao').'</td>');
           ShowHTML('      </tr>');
         } 
         ShowHTML('          </table>');
       } 
     } 
-    ShowHTML('      <tr><td valign="top"><font size="1"><b><u>R</u>ecurso programado:</b><br><input '.$w_Disabled.' accesskey="O" type="text" name="w_valor" class="STI" SIZE="18" MAXLENGTH="18" VALUE="'.$w_valor.'" onKeyDown="FormataValor(this,18,2,event);"></td>');
-    ShowHTML('      <tr><td><font size="1"><b><U>A</U>ssinatura Eletrônica:<BR> <INPUT ACCESSKEY="A" class="sti" type="PASSWORD" name="w_assinatura" size="30" maxlength="30" value=""></td></tr>');
+    ShowHTML('      <tr><td valign="top"><b><u>R</u>ecurso programado:</b><br><input '.$w_Disabled.' accesskey="O" type="text" name="w_valor" class="STI" SIZE="18" MAXLENGTH="18" VALUE="'.$w_valor.'" onKeyDown="FormataValor(this,18,2,event);"></td>');
+    ShowHTML('      <tr><td><b><U>A</U>ssinatura Eletrônica:<BR> <INPUT ACCESSKEY="A" class="sti" type="PASSWORD" name="w_assinatura" size="30" maxlength="30" value=""></td></tr>');
     ShowHTML('      <tr><td align="center" colspan="2"><hr>');
     ShowHTML('      <tr><td align="center" colspan="2">');
     ShowHTML('            <input class="STB" type="submit" name="Botao" value="Gravar">');
@@ -1276,9 +1286,9 @@ function Responsaveis() {
     ShowHTML('<tr><td align="center" colspan=3>');
     ShowHTML('    <TABLE WIDTH="100%" bgcolor="'.$conTableBgColor.'" BORDER="'.$conTableBorder.'" CELLSPACING="'.$conTableCellSpacing.'" CELLPADDING="'.$conTableCellPadding.'" BorderColorDark="'.$conTableBorderColorDark.'" BorderColorLight="'.$conTableBorderColorLight.'">');
     ShowHTML('        <tr bgcolor="'.$conTrBgColor.'" align="center">');
-    ShowHTML('          <td><font size="1"><b>Tipo</font></td>');
-    ShowHTML('          <td><font size="1"><b>Nome</font></td>');
-    ShowHTML('          <td><font size="1"><b>Operações</font></td>');
+    ShowHTML('          <td><b>Tipo</td>');
+    ShowHTML('          <td><b>Nome</td>');
+    ShowHTML('          <td><b>Operações</td>');
     ShowHTML('        </tr>');
     if (count($RS)<=0) {
       // Se não foram selecionados registros, exibe mensagem
@@ -1288,9 +1298,9 @@ function Responsaveis() {
       if ((Nvl(f($RS,'cd_ppa_pai'),'')>'' && Nvl(f($RS,'cd_acao'),'')>'' && Nvl(f($RS,'cd_unidade'),'')>'')) {
         $w_cor = ($w_cor==$conTrBgColor || $w_cor=='') ? $w_cor=$conTrAlternateBgColor : $w_cor=$conTrBgColor;
         ShowHTML('      <tr bgcolor="'.$w_cor.'" valign="top">');
-        ShowHTML('        <td><font size="1">Ação PPA</td>');
-        ShowHTML('        <td><font size="1">'.f($RS,'cd_unidade').'.'.f($RS,'cd_programa').'.'.f($RS,'cd_acao').' - '.f($RS,'nm_ppa').'</td>');
-        ShowHTML('        <td align="top" nowrap><font size="1">');
+        ShowHTML('        <td>Ação PPA</td>');
+        ShowHTML('        <td>'.f($RS,'cd_unidade').'.'.f($RS,'cd_programa').'.'.f($RS,'cd_acao').' - '.f($RS,'nm_ppa').'</td>');
+        ShowHTML('        <td align="top" nowrap>');
         ShowHTML('          <A class="HL" HREF="'.$w_dir.$w_pagina.$par.'&R='.$w_pagina.$par.'&O=A&w_chave='.$w_chave.'&w_programa='.f($RS,'sq_acao_ppa_pai').'&w_acao='.f($RS,'cd_acao').'&w_unidade='.f($RS,'cd_unidade').'&P1='.$P1.'&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP='.$TP.'&SG='.$SG.'&w_chave_aux='.f($RS,'sq_siw_solicitacao').'">Coordenador</A>&nbsp');
         ShowHTML('        </td>');
         ShowHTML('      </tr>');
@@ -1298,9 +1308,9 @@ function Responsaveis() {
       if (Nvl(f($RS,'sq_isprojeto'),'')>'') {
         $w_cor = ($w_cor==$conTrBgColor || $w_cor=='') ? $w_cor=$conTrAlternateBgColor : $w_cor=$conTrBgColor;
         ShowHTML('      <tr bgcolor="'.$w_cor.'" valign="top">');
-        ShowHTML('        <td><font size="1">Programa interno</td>');
-        ShowHTML('        <td><font size="1">'.f($RS,'nm_pri').'</td>');
-        ShowHTML('        <td align="top" nowrap><font size="1">');
+        ShowHTML('        <td>Programa interno</td>');
+        ShowHTML('        <td>'.f($RS,'nm_pri').'</td>');
+        ShowHTML('        <td align="top" nowrap>');
         ShowHTML('          <A class="HL" HREF="'.$w_dir.$w_pagina.$par.'&R='.$w_pagina.$par.'&O=A&w_chave='.$w_chave.'&w_sq_isprojeto='.f($RS,'sq_isprojeto').'&P1='.$P1.'&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP='.$TP.'&SG='.$SG.'&w_chave_aux='.f($RS,'sq_isprojeto').'">Responsável</A>&nbsp');
         ShowHTML('        </td>');
         ShowHTML('      </tr>');
@@ -1325,14 +1335,14 @@ function Responsaveis() {
     ShowHTML('<INPUT type="hidden" name="w_chave_aux" value="'.$w_chave_aux.'">');
     ShowHTML('<tr bgcolor="'.$conTrBgColor.'"><td align="center">');
     ShowHTML('    <table width="97%" border="0">');
-    if ($w_tipo==1) ShowHTML('      <tr><td valign="top"><font size="1"><b>Programa PPA: </b>'.$w_codigo_pai.' - '.$w_nome_pai.' </b>');
-    ShowHTML('      <tr><td valign="top"><font size="1"><b>'.$w_label.': </b>');
+    if ($w_tipo==1) ShowHTML('      <tr><td valign="top"><b>Programa PPA: </b>'.$w_codigo_pai.' - '.$w_nome_pai.' </b>');
+    ShowHTML('      <tr><td valign="top"><b>'.$w_label.': </b>');
     if ($w_tipo!=2) ShowHTML(''.$w_codigo.' - ');
     ShowHTML(''.$w_nome.'</td>');
-    if ($w_tipo==1)     ShowHTML('      <tr><td><font size="1"><b><u>C</u>oordenador:</b><br><input '.$w_Disabled.' accesskey="C" type="text" name="w_responsavel" class="STI" SIZE="50" MAXLENGTH="60" VALUE="'.$w_responsavel.'" title="Informe o nome do coordenador da ação."></td>');
-    elseif ($w_tipo==2) ShowHTML('      <tr><td><font size="1"><b>Res<u>p</u>onsável:</b><br><input '.$w_Disabled.' accesskey="P" type="text" name="w_responsavel" class="STI" SIZE="50" MAXLENGTH="60" VALUE="'.$w_responsavel.'" title="Informe o nome do responsável da ação."></td>');
-    ShowHTML('      <tr><td valign="top"><font size="1"><b><u>T</u>elefone:</b><br><input '.$w_Disabled.' accesskey="T" type="text" name="w_telefone" class="STI" SIZE="15" MAXLENGTH="14" VALUE="'.$w_telefone.'" title="Informe o telefone do coordenador da ação"></td>');
-    ShowHTML('      <tr><td><font size="1"><b>E<u>m</u>ail:</b><br><input '.$w_Disabled.' accesskey="M" type="text" name="w_email" class="STI" SIZE="50" MAXLENGTH="60" VALUE="'.$w_email.'" title="Informe o e-mail do coordenador da ação."></td>');
+    if ($w_tipo==1)     ShowHTML('      <tr><td><b><u>C</u>oordenador:</b><br><input '.$w_Disabled.' accesskey="C" type="text" name="w_responsavel" class="STI" SIZE="50" MAXLENGTH="60" VALUE="'.$w_responsavel.'" title="Informe o nome do coordenador da ação."></td>');
+    elseif ($w_tipo==2) ShowHTML('      <tr><td><b>Res<u>p</u>onsável:</b><br><input '.$w_Disabled.' accesskey="P" type="text" name="w_responsavel" class="STI" SIZE="50" MAXLENGTH="60" VALUE="'.$w_responsavel.'" title="Informe o nome do responsável da ação."></td>');
+    ShowHTML('      <tr><td valign="top"><b><u>T</u>elefone:</b><br><input '.$w_Disabled.' accesskey="T" type="text" name="w_telefone" class="STI" SIZE="15" MAXLENGTH="14" VALUE="'.$w_telefone.'" title="Informe o telefone do coordenador da ação"></td>');
+    ShowHTML('      <tr><td><b>E<u>m</u>ail:</b><br><input '.$w_Disabled.' accesskey="M" type="text" name="w_email" class="STI" SIZE="50" MAXLENGTH="60" VALUE="'.$w_email.'" title="Informe o e-mail do coordenador da ação."></td>');
     ShowHTML('      <tr><td align="center" colspan=4><hr>');
     ShowHTML('            <input class="STB" type="submit" name="Botao" value="Gravar">');
     ShowHTML('            <input class="STB" type="button" onClick="location.href=\''.$w_pagina.$par.'&w_chave='.$w_chave.'&P1='.$P1.'&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP='.$TP.'&SG='.$SG.'&O=L\';" name="Botao" value="Cancelar">');
@@ -1449,23 +1459,23 @@ function ProgramacaoQualitativa() {
     ShowHTML('      <tr><td align="center" height="1" bgcolor="#000000"></td></tr>');
     ShowHTML('      <tr><td valign="top" align="center" bgcolor="#D0D0D0"><font size="2"><b>Programação qualitativa</td></td></tr>');
     ShowHTML('      <tr><td align="center" height="1" bgcolor="#000000"></td></tr>');
-    ShowHTML('      <tr><td><font size=1>Os dados deste bloco visam orientar os executores do programa.</font></td></tr>');
+    ShowHTML('      <tr><td>Os dados deste bloco visam orientar os executores do programa.</td></tr>');
     if ($w_cd_programa>'' && $w_cd_acao>'' && $w_cd_unidade>'') {
-      ShowHTML('      <tr><td><font size="1">Programa Codº '.$w_cd_programa.' - '.$w_ds_programa.'</td>');
-      ShowHTML('      <tr><td><font size="1">Ação Codº '.$w_cd_unidade.'.'.$w_cd_acao.' - '.$w_ds_acao.'</td>');
+      ShowHTML('      <tr><td>Programa Codº '.$w_cd_programa.' - '.$w_ds_programa.'</td>');
+      ShowHTML('      <tr><td>Ação Codº '.$w_cd_unidade.'.'.$w_cd_acao.' - '.$w_ds_acao.'</td>');
     } 
     ShowHTML('      <tr><td align="center" height="1" bgcolor="#000000"></td></tr>');
-    if ($w_cd_acao>'') ShowHTML('      <tr><td valign="top"><div align="justify"><font size="1">Objetivo:<br><b>'.Nvl($w_finalidade,'---').'</b></div></td>');
-    ShowHTML('      <tr><td valign="top"><font size="1"><b><u>J</u>ustificativa:</b><br><textarea '.$w_Disabled.' accesskey="P" name="w_problema" class="STI" ROWS=5 cols=75 title="Descrição do problema que a ação tem por objetivo enfrentar, abordando o diagnóstico e as causas da situação-problema para a qual a ação foi proposta; alertando quanto às conseqüências da não implementação da ação; e informando a existência de condicionantes favoráveis ou desfavoráveis à ação.">'.$w_problema.'</TEXTAREA></td>');
-    ShowHTML('      <tr><td valign="top"><font size="1"><b><u>O</u>bjetivo específico:</b><br><textarea '.$w_Disabled.' accesskey="O" name="w_objetivo" class="STI" ROWS=5 cols=75 title="Informar, de forma  detalhada e específica, o resultado que se quer alcançar, ou seja, a transformação ou mudança da realidade concreta a qual a ação se propôs modificar.">'.$w_objetivo.'</TEXTAREA></td>');
-    if ($w_cd_acao>'') ShowHTML('      <tr><td><div align="justify"><font size="1">Descrição da ação:<br><b>'.Nvl($w_descricao_ppa,'---').'</b></div></td>');
-    ShowHTML('      <tr><td valign="top"><font size="1"><b>P<u>ú</u>blico alvo:</b><br><textarea '.$w_Disabled.' accesskey="U" name="w_publico_alvo" class="STI" ROWS=5 cols=75 title="Especifique os segmentos da sociedade aos quais a ação se destina e que se beneficiam direta e legitimamente com sua execução. São os grupos de pessoas, comunidades, instituições ou setores que serão atingidos diretamente pelos resultados da ação.">'.$w_publico_alvo.'</TEXTAREA></td>');
+    if ($w_cd_acao>'') ShowHTML('      <tr><td valign="top"><div align="justify">Objetivo:<br><b>'.Nvl($w_finalidade,'---').'</b></div></td>');
+    ShowHTML('      <tr><td valign="top"><b><u>J</u>ustificativa:</b><br><textarea '.$w_Disabled.' accesskey="P" name="w_problema" class="STI" ROWS=5 cols=75 title="Descrição do problema que a ação tem por objetivo enfrentar, abordando o diagnóstico e as causas da situação-problema para a qual a ação foi proposta; alertando quanto às conseqüências da não implementação da ação; e informando a existência de condicionantes favoráveis ou desfavoráveis à ação.">'.$w_problema.'</TEXTAREA></td>');
+    ShowHTML('      <tr><td valign="top"><b><u>O</u>bjetivo específico:</b><br><textarea '.$w_Disabled.' accesskey="O" name="w_objetivo" class="STI" ROWS=5 cols=75 title="Informar, de forma  detalhada e específica, o resultado que se quer alcançar, ou seja, a transformação ou mudança da realidade concreta a qual a ação se propôs modificar.">'.$w_objetivo.'</TEXTAREA></td>');
+    if ($w_cd_acao>'') ShowHTML('      <tr><td><div align="justify">Descrição da ação:<br><b>'.Nvl($w_descricao_ppa,'---').'</b></div></td>');
+    ShowHTML('      <tr><td valign="top"><b>P<u>ú</u>blico alvo:</b><br><textarea '.$w_Disabled.' accesskey="U" name="w_publico_alvo" class="STI" ROWS=5 cols=75 title="Especifique os segmentos da sociedade aos quais a ação se destina e que se beneficiam direta e legitimamente com sua execução. São os grupos de pessoas, comunidades, instituições ou setores que serão atingidos diretamente pelos resultados da ação.">'.$w_publico_alvo.'</TEXTAREA></td>');
     if ($w_cd_acao>'') {
       $RS = db_getSolicData_IS::getInstanceOf($dbms,$w_chave,$SG);
       foreach ($RS as $row) {$RS=$row; break;}
-      ShowHTML('      <tr><td valign="top" colspan="2"><div align="justify"><font size="1">Origem da ação:<br><b>'.Nvl(f($RS,'nm_tipo_inclusao_acao'),'---').'</b></div></td>');
-      ShowHTML('      <tr><td valign="top" colspan="2"><div align="justify"><font size="1">Base legal:<br><b>'.Nvl(f($RS,'base_legal'),'---').'</b></div></td>');
-      ShowHTML('      <tr><td valign="top" colspan="2"><font size="1">Forma de implementação:<br><b>');
+      ShowHTML('      <tr><td valign="top" colspan="2"><div align="justify">Origem da ação:<br><b>'.Nvl(f($RS,'nm_tipo_inclusao_acao'),'---').'</b></div></td>');
+      ShowHTML('      <tr><td valign="top" colspan="2"><div align="justify">Base legal:<br><b>'.Nvl(f($RS,'base_legal'),'---').'</b></div></td>');
+      ShowHTML('      <tr><td valign="top" colspan="2">Forma de implementação:<br><b>');
       if (f($RS,'cd_tipo_acao')==1 || f($RS,'cd_tipo_acao')==2) {
         if (f($RS,'direta') == 'S')           ShowHTML('       direta');
         if (f($RS,'descentralizada') == 'S')  ShowHTML('       descentralizada');
@@ -1476,11 +1486,11 @@ function ProgramacaoQualitativa() {
         if (f($RS,'transf_outras') == 'S')        ShowHTML('        outras');
       } 
       ShowHTML('            </b></td>');
-      ShowHTML('      <tr><td valign="top" colspan="2"><div align="justify"><font size="1">Detalhamento da implementação:<br><b>'.Nvl(f($RS,'detalhamento'),'---').'</b></div></td>');
+      ShowHTML('      <tr><td valign="top" colspan="2"><div align="justify">Detalhamento da implementação:<br><b>'.Nvl(f($RS,'detalhamento'),'---').'</b></div></td>');
     } 
-    ShowHTML('      <tr><td valign="top"><font size="1"><b>Sistemática e <u>e</u>stratégias a serem adotadas para o monitoramento da ação:</b><br><textarea '.$w_Disabled.' accesskey="E" name="w_estrategia" class="STI" ROWS=5 cols=75 title="Descreva a sistemática e as estratégias que serão adotadas para o monitoramento da ação, informando, inclusive as ferramentas que serão utilizadas.">'.$w_estrategia.'</TEXTAREA></td>');
-    ShowHTML('      <tr><td valign="top"><font size="1"><b><u>S</u>istemática e metodologias a serem adotadas para avaliação da ação:</b><br><textarea '.$w_Disabled.' accesskey="S" name="w_sistematica" class="STI" ROWS=5 cols=75 title="Descreva a sistemática e as metodologias que serão adotadas para a avaliação da ação, informando, inclusive as ferramentas que serão utilizadas.">'.$w_sistematica.'</TEXTAREA></td>');
-    ShowHTML('      <tr><td valign="top"><font size="1"><b>O<u>b</u>servações:</b><br><textarea '.$w_Disabled.' accesskey="B" name="w_observacao" class="STI" ROWS=5 cols=75 title="Informe as observações pertinentes (campo não obrigatório).">'.$w_observacao.'</TEXTAREA></td>');
+    ShowHTML('      <tr><td valign="top"><b>Sistemática e <u>e</u>stratégias a serem adotadas para o monitoramento da ação:</b><br><textarea '.$w_Disabled.' accesskey="E" name="w_estrategia" class="STI" ROWS=5 cols=75 title="Descreva a sistemática e as estratégias que serão adotadas para o monitoramento da ação, informando, inclusive as ferramentas que serão utilizadas.">'.$w_estrategia.'</TEXTAREA></td>');
+    ShowHTML('      <tr><td valign="top"><b><u>S</u>istemática e metodologias a serem adotadas para avaliação da ação:</b><br><textarea '.$w_Disabled.' accesskey="S" name="w_sistematica" class="STI" ROWS=5 cols=75 title="Descreva a sistemática e as metodologias que serão adotadas para a avaliação da ação, informando, inclusive as ferramentas que serão utilizadas.">'.$w_sistematica.'</TEXTAREA></td>');
+    ShowHTML('      <tr><td valign="top"><b>O<u>b</u>servações:</b><br><textarea '.$w_Disabled.' accesskey="B" name="w_observacao" class="STI" ROWS=5 cols=75 title="Informe as observações pertinentes (campo não obrigatório).">'.$w_observacao.'</TEXTAREA></td>');
     // Verifica se poderá ser feito o envio da solicitação, a partir do resultado da validação
     ShowHTML('      <tr><td align="center" colspan="3">');
     ShowHTML('            <input class="STB" type="submit" name="Botao" value="Gravar">');
@@ -1659,20 +1669,20 @@ function Metas() {
     $RS1 = db_getSolicData_IS::getInstanceOf($dbms,$w_chave,$SG);
     foreach ($RS1 as $row) {$RS1=$row; break;}
     if (Nvl(f($RS1,'cd_programa'),'')>'' && Nvl(f($RS1,'cd_acao'),'')>'' && Nvl(f($RS1,'cd_unidade'),'')>'') {
-      ShowHTML('      <tr><td colspan="2"><font size="1">Programa Codº '.f($RS1,'cd_programa').' - '.f($RS1,'nm_ppa_pai').'</td>');
-      ShowHTML('      <tr><td colspan="2"><font size="1">Ação Codº '.f($RS1,'cd_unidade').'.'.f($RS1,'cd_acao').' - '.f($RS1,'nm_ppa').'</td>');
+      ShowHTML('      <tr><td colspan="2">Programa Codº '.f($RS1,'cd_programa').' - '.f($RS1,'nm_ppa_pai').'</td>');
+      ShowHTML('      <tr><td colspan="2">Ação Codº '.f($RS1,'cd_unidade').'.'.f($RS1,'cd_acao').' - '.f($RS1,'nm_ppa').'</td>');
     } 
     // Exibe a quantidade de registros apresentados na listagem e o cabeçalho da tabela de listagem
     ShowHTML('<tr><td><font size="2"><a accesskey="I" class="SS" href="'.$w_dir.$w_pagina.$par.'&R='.$w_pagina.$par.'&O=I&w_chave='.$w_chave.'&P1='.$P1.'&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP='.$TP.'&SG='.$SG.'"><u>I</u>ncluir</a>&nbsp;');
-    ShowHTML('    <td align="right"><font size="1"><b>Registros existentes: '.count($RS));
+    ShowHTML('    <td align="right"><b>Registros existentes: '.count($RS));
     ShowHTML('<tr><td align="center" colspan=3>');
     ShowHTML('    <TABLE WIDTH="100%" bgcolor="'.$conTableBgColor.'" BORDER="'.$conTableBorder.'" CELLSPACING="'.$conTableCellSpacing.'" CELLPADDING="'.$conTableCellPadding.'" BorderColorDark="'.$conTableBorderColorDark.'" BorderColorLight="'.$conTableBorderColorLight.'">');
     ShowHTML('        <tr bgcolor="'.$conTrBgColor.'" align="center">');
-    ShowHTML('          <td><font size="1"><b>Produtos</font></td>');
-    ShowHTML('          <td><font size="1"><b>PPA</font></td>');
-    ShowHTML('          <td><font size="1"><b>Data conclusão</font></td>');
-    ShowHTML('          <td><font size="1"><b>Executado</font></td>');
-    ShowHTML('          <td><font size="1"><b>Operações</font></td>');
+    ShowHTML('          <td><b>Produtos</td>');
+    ShowHTML('          <td><b>PPA</td>');
+    ShowHTML('          <td><b>Data conclusão</td>');
+    ShowHTML('          <td><b>Executado</td>');
+    ShowHTML('          <td><b>Operações</td>');
     ShowHTML('        </tr>');
     // Recupera as etapas principais
     $RS = db_getSolicMeta_IS::getInstanceOf($dbms,$w_chave,null,'LSTNULL',null,null,null,null,null,null,null);
@@ -1717,7 +1727,7 @@ function Metas() {
     ShowHTML('<tr bgcolor="'.$conTrBgColor.'"><td align="center">');
     ShowHTML('    <table width="97%" border="0">');
     if ($w_cd_subacao>'') $w_Disabled='DISABLED';
-    ShowHTML('      <tr><td><font size="1"><b>Prod<u>u</u>to:</b><br><input '.$w_Disabled.' accesskey="U" type="text" name="w_titulo" class="STI" SIZE="90" MAXLENGTH="90" VALUE="'.$w_titulo.'" title="Informe o bem ou serviço que resulta da ação, destinado ao público-alvo ou o investimento para a produção deste bem ou serviço. Em situações especiais, expressa a quantidade de beneficiários atendidos pela ação."></td>');
+    ShowHTML('      <tr><td><b>Prod<u>u</u>to:</b><br><input '.$w_Disabled.' accesskey="U" type="text" name="w_titulo" class="STI" SIZE="90" MAXLENGTH="90" VALUE="'.$w_titulo.'" title="Informe o bem ou serviço que resulta da ação, destinado ao público-alvo ou o investimento para a produção deste bem ou serviço. Em situações especiais, expressa a quantidade de beneficiários atendidos pela ação."></td>');
     if ($w_cd_subacao>'') $w_Disabled='';
     ShowHTML('     <tr><td valign="top" colspan="2"><table border=0 width="100%" cellspacing=0><tr valign="top">');
     MontaRadioNS('<b>Meta cumulativa?</b>',$w_cumulativa,'w_cumulativa');
@@ -1725,57 +1735,57 @@ function Metas() {
     ShowHTML('         </table></td></tr>');
     if ($w_cd_subacao>'') $w_Disabled='DISABLED';
     ShowHTML('     <tr><td valign="top" colspan="2"><table border=0 width="100%" cellspacing=0><tr valign="top">');
-    ShowHTML('         <tr><td align="left"><font size="1"><b><u>Q</u>uantitativo:<br><input accesskey="Q" type="text" name="w_quantidade" class="STI" SIZE="18" MAXLENGTH="18" VALUE="'.$w_quantidade.'" '.$w_Disabled.' onKeyDown="FormataValor(this,18,2,event);" title="Indicar a quantidade da meta da ação programada para determinado período de tempo."></td>');
-    ShowHTML('             <td align="left"><font size="1"><b><u>U</u>nidade de medida:<br><INPUT ACCESSKEY="U" TYPE="TEXT" CLASS="STI" NAME="w_unidade_medida" SIZE=15 MAXLENGTH=30 VALUE="'.$w_unidade_medida.'" '.$w_Disabled.' title="Informar o padrão escolhido para mensuração da relação adotada como meta."></td>');
+    ShowHTML('         <tr><td align="left"><b><u>Q</u>uantitativo:<br><input accesskey="Q" type="text" name="w_quantidade" class="STI" SIZE="18" MAXLENGTH="18" VALUE="'.$w_quantidade.'" '.$w_Disabled.' onKeyDown="FormataValor(this,18,2,event);" title="Indicar a quantidade da meta da ação programada para determinado período de tempo."></td>');
+    ShowHTML('             <td align="left"><b><u>U</u>nidade de medida:<br><INPUT ACCESSKEY="U" TYPE="TEXT" CLASS="STI" NAME="w_unidade_medida" SIZE=15 MAXLENGTH=30 VALUE="'.$w_unidade_medida.'" '.$w_Disabled.' title="Informar o padrão escolhido para mensuração da relação adotada como meta."></td>');
     ShowHTML('         </table></td></tr>');
-    ShowHTML('      <tr><td><font size="1"><b><u>E</u>specificação do produto:</b><br><textarea  accesskey="E" name="w_descricao" class="STI" ROWS=5 cols=75 title="Descrever as características do produto acabado visando sua melhor identificação.">'.$w_descricao.'</TEXTAREA></td>');
+    ShowHTML('      <tr><td><b><u>E</u>specificação do produto:</b><br><textarea  accesskey="E" name="w_descricao" class="STI" ROWS=5 cols=75 title="Descrever as características do produto acabado visando sua melhor identificação.">'.$w_descricao.'</TEXTAREA></td>');
     ShowHTML('      <tr><td valign="top" colspan="2"><table border=0 width="100%" cellspacing=0><tr valign="top">');
-    ShowHTML('              <td align="left"><font size="1"><b><u>O</u>rdem:<br><INPUT ACCESSKEY="O" TYPE="TEXT" CLASS="STI" NAME="w_ordem" SIZE=3 MAXLENGTH=3 VALUE="'.$w_ordem.'"></td>');
-    ShowHTML('              <td><font size="1"><b>Previsão iní<u>c</u>io:</b><br><input accesskey="C" type="text" name="w_inicio" class="STI" SIZE="10" MAXLENGTH="10" VALUE="'.FormataDataEdicao(Nvl($w_inicio,time())).'" onKeyDown="FormataData(this,event);" title="Data prevista para início da meta." title="Usar formato dd/mm/aaaa"></td>');
-    ShowHTML('              <td><font size="1"><b>Previsão <u>t</u>érmino:</b><br><input accesskey="T" type="text" name="w_fim" class="STI" SIZE="10" MAXLENGTH="10" VALUE="'.FormataDataEdicao($w_fim).'" onKeyDown="FormataData(this,event);" title="Data prevista para término da meta." title="Usar formato dd/mm/aaaa"></td>');
+    ShowHTML('              <td align="left"><b><u>O</u>rdem:<br><INPUT ACCESSKEY="O" TYPE="TEXT" CLASS="STI" NAME="w_ordem" SIZE=3 MAXLENGTH=3 VALUE="'.$w_ordem.'"></td>');
+    ShowHTML('              <td><b>Previsão iní<u>c</u>io:</b><br><input accesskey="C" type="text" name="w_inicio" class="STI" SIZE="10" MAXLENGTH="10" VALUE="'.FormataDataEdicao(Nvl($w_inicio,time())).'" onKeyDown="FormataData(this,event);" title="Data prevista para início da meta." title="Usar formato dd/mm/aaaa"></td>');
+    ShowHTML('              <td><b>Previsão <u>t</u>érmino:</b><br><input accesskey="T" type="text" name="w_fim" class="STI" SIZE="10" MAXLENGTH="10" VALUE="'.FormataDataEdicao($w_fim).'" onKeyDown="FormataData(this,event);" title="Data prevista para término da meta." title="Usar formato dd/mm/aaaa"></td>');
     ShowHTML('          </table>');
     if ($w_cd_subacao>'') {
       $w_Disabled='';
       ShowHTML('     <tr><td valign="top" colspan="1">');
       ShowHTML('       <table border=0 width="40%" cellspacing=0>');
-      ShowHTML('         <tr><td>&nbsp<td title="Informe o meta programada mês a mês, nos campos abaixo."><font size="1"><br><b>Quantitativo programado</b></td>');
-      ShowHTML('             <td><font size="1"><br><b>Financeiro programado</b></td>');
-      ShowHTML('         <tr><td width="4%" align="right"><font size="1"><b>Janeiro:');
-      ShowHTML('             <td width="8%"><font size="1"><INPUT TYPE="TEXT" CLASS="STI" NAME="w_cron_ini_1" SIZE=10 MAXLENGTH=18 VALUE="'.$w_cron_ini_1.'" '.$w_Disabled.'></td>');
-      ShowHTML('             <td width="5%" align="right"><font size="1">'.Nvl($w_previsto_acao_1,'---').'</td>');
-      ShowHTML('         <tr><td align="right"><font size="1"><b>Fevereiro:');
-      ShowHTML('             <td><font size="1"><INPUT TYPE="TEXT" CLASS="STI" NAME="w_cron_ini_2" SIZE=10 MAXLENGTH=18 VALUE="'.$w_cron_ini_2.'" '.$w_Disabled.'></td>');
-      ShowHTML('             <td align="right"><font size="1">'.Nvl($w_previsto_acao_2,'---').'</td>');
-      ShowHTML('         <tr><td align="right"><font size="1"><b>Março:');
-      ShowHTML('             <td><font size="1"><INPUT TYPE="TEXT" CLASS="STI" NAME="w_cron_ini_3" SIZE=10 MAXLENGTH=18 VALUE="'.$w_cron_ini_3.'" '.$w_Disabled.'></td>');
-      ShowHTML('             <td align="right"><font size="1">'.Nvl($w_previsto_acao_3,'---').'</td>');
-      ShowHTML('         <tr><td align="right"><font size="1"><b>Abril:');
-      ShowHTML('             <td><font size="1"><INPUT TYPE="TEXT" CLASS="STI" NAME="w_cron_ini_4" SIZE=10 MAXLENGTH=18 VALUE="'.$w_cron_ini_4.'" '.$w_Disabled.'></td>');
-      ShowHTML('             <td align="right"><font size="1">'.Nvl($w_previsto_acao_4,'---').'</td>');
-      ShowHTML('         <tr><td align="right"><font size="1"><b>Maio:');
-      ShowHTML('             <td><font size="1"><INPUT TYPE="TEXT" CLASS="STI" NAME="w_cron_ini_5" SIZE=10 MAXLENGTH=18 VALUE="'.$w_cron_ini_5.'" '.$w_Disabled.'></td>');
-      ShowHTML('             <td align="right"><font size="1">'.Nvl($w_previsto_acao_5,'---').'</td>');
-      ShowHTML('         <tr><td align="right"><font size="1"><b>Junho:');
-      ShowHTML('             <td><font size="1"><INPUT TYPE="TEXT" CLASS="STI" NAME="w_cron_ini_6" SIZE=10 MAXLENGTH=18 VALUE="'.$w_cron_ini_6.'" '.$w_Disabled.' ></td>');
-      ShowHTML('             <td align="right"><font size="1">'.Nvl($w_previsto_acao_6,'---').'</td>');
-      ShowHTML('         <tr><td align="right"><font size="1"><b>Julho:');
-      ShowHTML('             <td><font size="1"><INPUT TYPE="TEXT" CLASS="STI" NAME="w_cron_ini_7" SIZE=10 MAXLENGTH=18 VALUE="'.$w_cron_ini_7.'" '.$w_Disabled.'></td>');
-      ShowHTML('             <td align="right"><font size="1">'.Nvl($w_previsto_acao_7,'---').'</td>');
-      ShowHTML('         <tr><td align="right"><font size="1"><b>Agosto:');
-      ShowHTML('             <td><font size="1"><INPUT TYPE="TEXT" CLASS="STI" NAME="w_cron_ini_8" SIZE=10 MAXLENGTH=18 VALUE="'.$w_cron_ini_8.'" '.$w_Disabled.'></td>');
-      ShowHTML('             <td align="right"><font size="1">'.Nvl($w_previsto_acao_8,'---').'</td>');
-      ShowHTML('         <tr><td align="right"><font size="1"><b>Setembro:');
-      ShowHTML('             <td><font size="1"><INPUT TYPE="TEXT" CLASS="STI" NAME="w_cron_ini_9" SIZE=10 MAXLENGTH=18 VALUE="'.$w_cron_ini_9.'" '.$w_Disabled.'></td>');
-      ShowHTML('             <td align="right"><font size="1">'.Nvl($w_previsto_acao_9,'---').'</td>');
-      ShowHTML('         <tr><td align="right"><font size="1"><b>Outubro:');
-      ShowHTML('             <td><font size="1"><INPUT TYPE="TEXT" CLASS="STI" NAME="w_cron_ini_10" SIZE=10 MAXLENGTH=18 VALUE="'.$w_cron_ini_10.'" '.$w_Disabled.'></td>');
-      ShowHTML('             <td align="right"><font size="1">'.Nvl($w_previsto_acao_10,'---').'</td>');
-      ShowHTML('         <tr><td align="right"><font size="1"><b>Novembro:');
-      ShowHTML('             <td><font size="1"><INPUT TYPE="TEXT" CLASS="STI" NAME="w_cron_ini_11" SIZE=10 MAXLENGTH=18 VALUE="'.$w_cron_ini_11.'" '.$w_Disabled.'></td>');
-      ShowHTML('             <td align="right"><font size="1">'.Nvl($w_previsto_acao_11,'---').'</td>');
-      ShowHTML('         <tr><td align="right"><font size="1"><b>Dezembro:');
-      ShowHTML('             <td><font size="1"><INPUT TYPE="TEXT" CLASS="STI" NAME="w_cron_ini_12" SIZE=10 MAXLENGTH=18 VALUE="'.$w_cron_ini_12.'" '.$w_Disabled.' ></td>');
-      ShowHTML('             <td align="right"><font size="1">'.Nvl($w_previsto_acao_12,'---').'</td>');
+      ShowHTML('         <tr><td>&nbsp<td title="Informe o meta programada mês a mês, nos campos abaixo."><br><b>Quantitativo programado</b></td>');
+      ShowHTML('             <td><br><b>Financeiro programado</b></td>');
+      ShowHTML('         <tr><td width="4%" align="right"><b>Janeiro:');
+      ShowHTML('             <td width="8%"><INPUT TYPE="TEXT" CLASS="STI" NAME="w_cron_ini_1" SIZE=10 MAXLENGTH=18 VALUE="'.$w_cron_ini_1.'" '.$w_Disabled.'></td>');
+      ShowHTML('             <td width="5%" align="right">'.Nvl($w_previsto_acao_1,'---').'</td>');
+      ShowHTML('         <tr><td align="right"><b>Fevereiro:');
+      ShowHTML('             <td><INPUT TYPE="TEXT" CLASS="STI" NAME="w_cron_ini_2" SIZE=10 MAXLENGTH=18 VALUE="'.$w_cron_ini_2.'" '.$w_Disabled.'></td>');
+      ShowHTML('             <td align="right">'.Nvl($w_previsto_acao_2,'---').'</td>');
+      ShowHTML('         <tr><td align="right"><b>Março:');
+      ShowHTML('             <td><INPUT TYPE="TEXT" CLASS="STI" NAME="w_cron_ini_3" SIZE=10 MAXLENGTH=18 VALUE="'.$w_cron_ini_3.'" '.$w_Disabled.'></td>');
+      ShowHTML('             <td align="right">'.Nvl($w_previsto_acao_3,'---').'</td>');
+      ShowHTML('         <tr><td align="right"><b>Abril:');
+      ShowHTML('             <td><INPUT TYPE="TEXT" CLASS="STI" NAME="w_cron_ini_4" SIZE=10 MAXLENGTH=18 VALUE="'.$w_cron_ini_4.'" '.$w_Disabled.'></td>');
+      ShowHTML('             <td align="right">'.Nvl($w_previsto_acao_4,'---').'</td>');
+      ShowHTML('         <tr><td align="right"><b>Maio:');
+      ShowHTML('             <td><INPUT TYPE="TEXT" CLASS="STI" NAME="w_cron_ini_5" SIZE=10 MAXLENGTH=18 VALUE="'.$w_cron_ini_5.'" '.$w_Disabled.'></td>');
+      ShowHTML('             <td align="right">'.Nvl($w_previsto_acao_5,'---').'</td>');
+      ShowHTML('         <tr><td align="right"><b>Junho:');
+      ShowHTML('             <td><INPUT TYPE="TEXT" CLASS="STI" NAME="w_cron_ini_6" SIZE=10 MAXLENGTH=18 VALUE="'.$w_cron_ini_6.'" '.$w_Disabled.' ></td>');
+      ShowHTML('             <td align="right">'.Nvl($w_previsto_acao_6,'---').'</td>');
+      ShowHTML('         <tr><td align="right"><b>Julho:');
+      ShowHTML('             <td><INPUT TYPE="TEXT" CLASS="STI" NAME="w_cron_ini_7" SIZE=10 MAXLENGTH=18 VALUE="'.$w_cron_ini_7.'" '.$w_Disabled.'></td>');
+      ShowHTML('             <td align="right">'.Nvl($w_previsto_acao_7,'---').'</td>');
+      ShowHTML('         <tr><td align="right"><b>Agosto:');
+      ShowHTML('             <td><INPUT TYPE="TEXT" CLASS="STI" NAME="w_cron_ini_8" SIZE=10 MAXLENGTH=18 VALUE="'.$w_cron_ini_8.'" '.$w_Disabled.'></td>');
+      ShowHTML('             <td align="right">'.Nvl($w_previsto_acao_8,'---').'</td>');
+      ShowHTML('         <tr><td align="right"><b>Setembro:');
+      ShowHTML('             <td><INPUT TYPE="TEXT" CLASS="STI" NAME="w_cron_ini_9" SIZE=10 MAXLENGTH=18 VALUE="'.$w_cron_ini_9.'" '.$w_Disabled.'></td>');
+      ShowHTML('             <td align="right">'.Nvl($w_previsto_acao_9,'---').'</td>');
+      ShowHTML('         <tr><td align="right"><b>Outubro:');
+      ShowHTML('             <td><INPUT TYPE="TEXT" CLASS="STI" NAME="w_cron_ini_10" SIZE=10 MAXLENGTH=18 VALUE="'.$w_cron_ini_10.'" '.$w_Disabled.'></td>');
+      ShowHTML('             <td align="right">'.Nvl($w_previsto_acao_10,'---').'</td>');
+      ShowHTML('         <tr><td align="right"><b>Novembro:');
+      ShowHTML('             <td><INPUT TYPE="TEXT" CLASS="STI" NAME="w_cron_ini_11" SIZE=10 MAXLENGTH=18 VALUE="'.$w_cron_ini_11.'" '.$w_Disabled.'></td>');
+      ShowHTML('             <td align="right">'.Nvl($w_previsto_acao_11,'---').'</td>');
+      ShowHTML('         <tr><td align="right"><b>Dezembro:');
+      ShowHTML('             <td><INPUT TYPE="TEXT" CLASS="STI" NAME="w_cron_ini_12" SIZE=10 MAXLENGTH=18 VALUE="'.$w_cron_ini_12.'" '.$w_Disabled.' ></td>');
+      ShowHTML('             <td align="right">'.Nvl($w_previsto_acao_12,'---').'</td>');
       ShowHTML('       </table>');
     } 
     ShowHTML('      <tr><td valign="top" colspan="2"><table border=0 width="100%" cellspacing=0>');
@@ -1900,18 +1910,18 @@ function AtualizaMeta() {
     $w_real_acao_10         = number_format(Nvl(f($RS,'real_mes_10'),0),2,',','.');
     $w_real_acao_11         = number_format(Nvl(f($RS,'real_mes_11'),0),2,',','.');
     $w_real_acao_12         = number_format(Nvl(f($RS,'real_mes_12'),0),2,',','.');
-    $w_cron_ini_1           = f($RS,'valor_ini_1');
-    $w_cron_ini_2           = f($RS,'valor_ini_2');
-    $w_cron_ini_3           = f($RS,'valor_ini_3');
-    $w_cron_ini_4           = f($RS,'valor_ini_4');
-    $w_cron_ini_5           = f($RS,'valor_ini_5');
-    $w_cron_ini_6           = f($RS,'valor_ini_6');
-    $w_cron_ini_7           = f($RS,'valor_ini_7');
-    $w_cron_ini_8           = f($RS,'valor_ini_8');
-    $w_cron_ini_9           = f($RS,'valor_ini_9');
-    $w_cron_ini_10          = f($RS,'valor_ini_10');
-    $w_cron_ini_11          = f($RS,'valor_ini_11');
-    $w_cron_ini_12          = f($RS,'valor_ini_12');
+    $w_cron_ini_1           = f($RS,'cron_ini_mes_1');
+    $w_cron_ini_2           = f($RS,'cron_ini_mes_2');
+    $w_cron_ini_3           = f($RS,'cron_ini_mes_3');
+    $w_cron_ini_4           = f($RS,'cron_ini_mes_4');
+    $w_cron_ini_5           = f($RS,'cron_ini_mes_5');
+    $w_cron_ini_6           = f($RS,'cron_ini_mes_6');
+    $w_cron_ini_7           = f($RS,'cron_ini_mes_7');
+    $w_cron_ini_8           = f($RS,'cron_ini_mes_8');
+    $w_cron_ini_9           = f($RS,'cron_ini_mes_9');
+    $w_cron_ini_10          = f($RS,'cron_ini_mes_10');
+    $w_cron_ini_11          = f($RS,'cron_ini_mes_11');
+    $w_cron_ini_12          = f($RS,'cron_ini_mes_12');
     $w_aprovado_acao        = number_format(Nvl(f($RS,'previsao_ano'),0),2,',','.');
     $w_autorizado_acao      = number_format(Nvl(f($RS,'atual_ano'),0),2,',','.');
     $w_realizado_acao       = number_format(Nvl(f($RS,'real_ano'),0),2,',','.');
@@ -2038,21 +2048,21 @@ function AtualizaMeta() {
   if ($w_tipo!='WORD' && $O=='V') {
     ShowHTML('<tr><td align="right"colspan="2">');
     ShowHTML('&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<IMG ALIGN="CENTER" TITLE="Imprimir" SRC="images/impressora.jpg" onClick="window.print();">');
-    ShowHTML('&nbsp;&nbsp;<IMG ALIGN="CENTER" TITLE="Gerar word" SRC="images/word.gif" onClick="window.open(\'acao.php?par=AtualizaMeta&O=V&w_chave='.$w_chave.'&w_chave_aux='.$w_chave_aux.'&w_tipo=WORD&P1=10&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP='.$TP.'&SG='.$SG.'\',\'MetaWord\',\'width=600, height=350, top=65, left=65, menubar=yes, scrollbars=yes, resizable=yes, status=no\');">');
+    ShowHTML('&nbsp;&nbsp;<a target="MetaWord" href="'.$w_dir.$w_pagina.$par.'&O=V&w_chave='.$w_chave.'&w_chave_aux='.$w_chave_aux.'&P1=10&P2='.$P2.'&P3='.$P3.'&TP='.$TP.'&SG='.$SG.'&w_tipo=WORD'.MontaFiltro('GET').'"><IMG border=0 ALIGN="CENTER" TITLE="Gerar word" SRC="images/word.gif"></a>');
     ShowHTML('</td></tr>');
   } 
   if ($O=='L') {
     // Exibe a quantidade de registros apresentados na listagem e o cabeçalho da tabela de listagem
     ShowHTML('  <tr><td colspan="2"><font size="3"></td>');
-    ShowHTML('    <td align="right"><font size="1"><b>Registros existentes: '.count($RS).'</td></tr>');
+    ShowHTML('    <td align="right"><b>Registros existentes: '.count($RS).'</td></tr>');
     ShowHTML('  <tr><td align="center" colspan="3">');
     ShowHTML('      <TABLE WIDTH="100%" bgcolor="'.$conTableBgColor.'" BORDER="'.$conTableBorder.'" CELLSPACING="'.$conTableCellSpacing.'" CELLPADDING="'.$conTableCellPadding.'" BorderColorDark="'.$conTableBorderColorDark.'" BorderColorLight="'.$conTableBorderColorLight.'">');
     ShowHTML('        <tr bgcolor="'.$conTrBgColor.'" align="center">');
-    ShowHTML('          <td><font size="1"><b>Produtos</font></td>');
-    ShowHTML('          <td><font size="1"><b>PPA</font></td>');
-    ShowHTML('          <td><font size="1"><b>Data conclusão</font></td>');
-    ShowHTML('          <td><font size="1"><b>Executado</font></td>');
-    ShowHTML('          <td><font size="1"><b>Operações</font></td>');
+    ShowHTML('          <td><b>Produtos</td>');
+    ShowHTML('          <td><b>PPA</td>');
+    ShowHTML('          <td><b>Data conclusão</td>');
+    ShowHTML('          <td><b>Executado</td>');
+    ShowHTML('          <td><b>Operações</td>');
     ShowHTML('        </tr>');
     if (count($RS)<=0) {
       // Se não foram selecionados registros, exibe mensagem
@@ -2103,36 +2113,36 @@ function AtualizaMeta() {
     ShowHTML('      <table border=1 width="100%">');
     ShowHTML('        <tr><td valign="top" colspan="2">');
     ShowHTML('          <TABLE border=0 WIDTH="100%" CELLSPACING="'.$conTableCellSpacing.'" CELLPADDING="'.$conTableCellPadding.'" BorderColorDark="'.$conTableBorderColorDark.'" BorderColorLight="'.$conTableBorderColorLight.'">');
-    if (Nvl($w_desc_subacao,'')>'')     ShowHTML('            <tr><td colspan="2"><font size="1">Subação:<b><br><font size=2>'.$w_desc_subacao.'</font></td></tr>');
-    if (Nvl(trim($w_descricao),'')>'')  ShowHTML('            <tr><td colspan="2"><font size="1">Especificação do produto:<b><br>'.$w_descricao.'</td></tr>');
+    if (Nvl($w_desc_subacao,'')>'')     ShowHTML('            <tr><td colspan="2">Subação:<b><br><font size=2>'.$w_desc_subacao.'</font></td></tr>');
+    if (Nvl(trim($w_descricao),'')>'')  ShowHTML('            <tr><td colspan="2">Especificação do produto:<b><br>'.$w_descricao.'</td></tr>');
     ShowHTML('            <tr><td valign="top" colspan="2">');
     ShowHTML('              <table border=0 width="100%" cellspacing=0><tr valign="top">');
-    if ($w_cd_subacao>'')   ShowHTML('                <td><font size="1">Meta PPA:<b><br>Sim</td>');
-    else                    ShowHTML('                <td><font size="1">Meta PPA:<b><br>Não</td>');
-    ShowHTML('                <td><font size="1">Meta cumulativa:<b><br>'.$w_nm_cumulativa.'</td></tr>');
-    ShowHTML('                <td><font size="1">Meta do PNPIR:<b><br>'.$w_nm_programada.'</td></tr>');
+    if ($w_cd_subacao>'')   ShowHTML('                <td>Meta PPA:<b><br>Sim</td>');
+    else                    ShowHTML('                <td>Meta PPA:<b><br>Não</td>');
+    ShowHTML('                <td>Meta cumulativa:<b><br>'.$w_nm_cumulativa.'</td></tr>');
+    ShowHTML('                <td>Meta do PNPIR:<b><br>'.$w_nm_programada.'</td></tr>');
     ShowHTML('              </table></td></tr>');
     ShowHTML('            <tr><td valign="top" colspan="2">');
     ShowHTML('              <table border=0 width="100%" cellspacing=0><tr valign="top">');
-    ShowHTML('                <td><font size="1">Quantitativo:<b><br>'.$w_quantidade.'</td>');
-    ShowHTML('                <td><font size="1">Unidade de medida:<b><br>'.Nvl($w_unidade_medida,'---').'</td></tr>');
+    ShowHTML('                <td>Quantitativo:<b><br>'.$w_quantidade.'</td>');
+    ShowHTML('                <td>Unidade de medida:<b><br>'.Nvl($w_unidade_medida,'---').'</td></tr>');
     ShowHTML('              </table></td></tr>');
     ShowHTML('            <tr><td valign="top" colspan="2">');
     ShowHTML('              <table border=0 width="100%" cellspacing=0><tr valign="top">');
-    ShowHTML('                <td><font size="1">Valor aprovado da ação:<b><br>'.$w_aprovado_acao.'</td>');
-    ShowHTML('                <td><font size="1">Valor autorizado da ação:<b><br>'.$w_autorizado_acao.'</td>');
-    ShowHTML('                <td><font size="1">Valor realizado da ação:<b><br>'.$w_realizado_acao.'</td></tr>');
+    ShowHTML('                <td>Valor aprovado da ação:<b><br>'.$w_aprovado_acao.'</td>');
+    ShowHTML('                <td>Valor autorizado da ação:<b><br>'.$w_autorizado_acao.'</td>');
+    ShowHTML('                <td>Valor realizado da ação:<b><br>'.$w_realizado_acao.'</td></tr>');
     ShowHTML('              </table></td></tr>');
     ShowHTML('            <tr><td valign="top" colspan="2">');
     ShowHTML('              <table border=0 width="100%" cellspacing=0><tr valign="top">');
-    ShowHTML('                <td><font size="1">Previsão início:<b><br>'.FormataDataEdicao(Nvl($w_inicio,time())).'</td>');
-    ShowHTML('                <td><font size="1">Previsão término:<b><br>'.FormataDataEdicao($w_fim).'</td></tr>');
+    ShowHTML('                <td>Previsão início:<b><br>'.FormataDataEdicao(Nvl($w_inicio,time())).'</td>');
+    ShowHTML('                <td>Previsão término:<b><br>'.FormataDataEdicao($w_fim).'</td></tr>');
     ShowHTML('                <tr valign="top">');
     $RS = db_getPersonData::getInstanceOf($dbms,$w_cliente,$w_sq_pessoa,null,null);
-    ShowHTML('                  <td><font size="1">Responsável pela meta:<b><br>'.f($RS,'nome_resumido').'</td>');
+    ShowHTML('                  <td>Responsável pela meta:<b><br>'.f($RS,'nome_resumido').'</td>');
     DesconectaBD();
     $RS = db_getUorgData::getInstanceOf($dbms,$w_sq_unidade);
-    ShowHTML('                  <td><font size="1">Setor responsável pela meta:<b><br>'.f($RS,'nome').' ('.f($RS,'sigla').')</td></tr>');
+    ShowHTML('                  <td>Setor responsável pela meta:<b><br>'.f($RS,'nome').' ('.f($RS,'sigla').')</td></tr>');
     $RS = db_getPersonData::getInstanceOf($dbms,$w_cliente,Nvl($w_sq_pessoa_atualizacao,0),null,null);
     ShowHTML('      <tr><td colspan=3>Criação/última atualização:<b><br>'.FormataDataEdicao($w_ultima_atualizacao,3));//'</b>, feita por <b>'.f($RS,'nome_resumido').' ('.f($RS,'sigla').')</b></td>');
     ShowHTML('              </table></td></tr>');
@@ -2143,155 +2153,159 @@ function AtualizaMeta() {
     if ($O=='V') {
       ShowHTML('     <tr><td valign="top">');
       ShowHTML('       <table border=1 width="100%" cellspacing=0><tr valign="top">');
-      ShowHTML('         <tr><td>&nbsp<td width="100%"><font size="1"><br><b>Quantitativo inicial</b></td>');
-      ShowHTML('             <td><font size="1"><br><b>Quantitativo revisado</b></td>');
-      ShowHTML('             <td><font size="1"><br><b>Quantitativo realizado</b></td>');
-      ShowHTML('             <td><font size="1"><br><b>Financeiro realizado</b></td>');
-      ShowHTML('         <tr><td width="10%" align="right"><font size="1"><b>Janeiro:');
-      ShowHTML('             <td align="right" width="30%"><font size="1">'.Nvl($w_cron_ini_1,'---').'</td>');
-      ShowHTML('             <td align="right"><font size="1">'.Nvl($w_revisado_1,'---').'</td>');
-      ShowHTML('             <td align="right"><font size="1">'.Nvl($w_realizado_1,'---').'</td>');
-      ShowHTML('             <td align="right"><font size="1">'.Nvl($w_real_acao_1,'---').'</td>');
-      ShowHTML('         <tr><td align="right"><font size="1"><b>Fevereiro:');
-      ShowHTML('             <td align="right"><font size="1">'.Nvl($w_cron_ini_2,'---').'</td>');
-      ShowHTML('             <td align="right"><font size="1">'.Nvl($w_revisado_2,'---').'</td>');
-      ShowHTML('             <td align="right"><font size="1">'.Nvl($w_realizado_2,'---').'</td>');
-      ShowHTML('             <td align="right"><font size="1">'.Nvl($w_real_acao_2,'---').'</td>');
-      ShowHTML('         <tr><td align="right"><font size="1"><b>Março:');
-      ShowHTML('             <td align="right"><font size="1">'.Nvl($w_cron_ini_3,'---').'</td>');
-      ShowHTML('             <td align="right"><font size="1">'.Nvl($w_revisado_3,'---').'</td>');
-      ShowHTML('             <td align="right"><font size="1">'.Nvl($w_realizado_3,'---').'</td>');
-      ShowHTML('             <td align="right"><font size="1">'.Nvl($w_real_acao_3,'---').'</td>');
-      ShowHTML('         <tr><td align="right"><font size="1"><b>Abril:');
-      ShowHTML('             <td align="right"><font size="1">'.Nvl($w_cron_ini_4,'---').'</td>');
-      ShowHTML('             <td align="right"><font size="1">'.Nvl($w_revisado_4,'---').'</td>');
-      ShowHTML('             <td align="right"><font size="1">'.Nvl($w_realizado_4,'---').'</td>');
-      ShowHTML('             <td align="right"><font size="1">'.Nvl($w_real_acao_4,'---').'</td>');
-      ShowHTML('         <tr><td align="right"><font size="1"><b>Maio:');
-      ShowHTML('             <td align="right"><font size="1">'.Nvl($w_cron_ini_5,'---').'</td>');
-      ShowHTML('             <td align="right"><font size="1">'.Nvl($w_revisado_5,'---').'</td>');
-      ShowHTML('             <td align="right"><font size="1">'.Nvl($w_realizado_5,'---').'</td>');
-      ShowHTML('             <td align="right"><font size="1">'.Nvl($w_real_acao_5,'---').'</td>');
-      ShowHTML('         <tr><td align="right"><font size="1"><b>Junho:');
-      ShowHTML('             <td align="right"><font size="1">'.Nvl($w_cron_ini_6,'---').'</td>');
-      ShowHTML('             <td align="right"><font size="1">'.Nvl($w_revisado_6,'---').'</td>');
-      ShowHTML('             <td align="right"><font size="1">'.Nvl($w_realizado_6,'---').'</td>');
-      ShowHTML('             <td align="right"><font size="1">'.Nvl($w_real_acao_6,'---').'</td>');
-      ShowHTML('         <tr><td align="right"><font size="1"><b>Julho:');
-      ShowHTML('             <td align="right"><font size="1">'.Nvl($w_cron_ini_7,'---').'</td>');
-      ShowHTML('             <td align="right"><font size="1">'.Nvl($w_revisado_7,'---').'</td>');
-      ShowHTML('             <td align="right"><font size="1">'.Nvl($w_realizado_7,'---').'</td>');
-      ShowHTML('             <td align="right"><font size="1">'.Nvl($w_real_acao_7,'---').'</td>');
-      ShowHTML('         <tr><td align="right"><font size="1"><b>Agosto:');
-      ShowHTML('             <td align="right"><font size="1">'.Nvl($w_cron_ini_8,'---').'</td>');
-      ShowHTML('             <td align="right"><font size="1">'.Nvl($w_revisado_8,'---').'</td>');
-      ShowHTML('             <td align="right"><font size="1">'.Nvl($w_realizado_8,'---').'</td>');
-      ShowHTML('             <td align="right"><font size="1">'.Nvl($w_real_acao_8,'---').'</td>');
-      ShowHTML('         <tr><td align="right"><font size="1"><b>Setembro:');
-      ShowHTML('             <td align="right"><font size="1">'.Nvl($w_cron_ini_9,'---').'</td>');
-      ShowHTML('             <td align="right"><font size="1">'.Nvl($w_revisado_9,'---').'</td>');
-      ShowHTML('             <td align="right"><font size="1">'.Nvl($w_realizado_9,'---').'</td>');
-      ShowHTML('             <td align="right"><font size="1">'.Nvl($w_real_acao_9,'---').'</td>');
-      ShowHTML('         <tr><td align="right"><font size="1"><b>Outubro:');
-      ShowHTML('             <td align="right"><font size="1">'.Nvl($w_cron_ini_10,'---').'</td>');
-      ShowHTML('             <td align="right"><font size="1">'.Nvl($w_revisado_10,'---').'</td>');
-      ShowHTML('             <td align="right"><font size="1">'.Nvl($w_realizado_10,'---').'</td>');
-      ShowHTML('             <td align="right"><font size="1">'.Nvl($w_real_acao_10,'---').'</td>');
-      ShowHTML('         <tr><td align="right"><font size="1"><b>Novembro:');
-      ShowHTML('             <td align="right"><font size="1">'.Nvl($w_cron_ini_11,'---').'</td>');
-      ShowHTML('             <td align="right"><font size="1">'.Nvl($w_revisado_11,'---').'</td>');
-      ShowHTML('             <td align="right"><font size="1">'.Nvl($w_realizado_11,'---').'</td>');
-      ShowHTML('             <td align="right"><font size="1">'.Nvl($w_real_acao_11,'---').'</td>');
-      ShowHTML('         <tr><td align="right"><font size="1"><b>Dezembro:');
-      ShowHTML('             <td align="right"><font size="1">'.Nvl($w_cron_ini_12,'---').'</td>');
-      ShowHTML('             <td align="right"><font size="1">'.Nvl($w_revisado_12,'---').'</td>');
-      ShowHTML('             <td align="right"><font size="1">'.Nvl($w_realizado_12,'---').'</td>');
-      ShowHTML('             <td align="right"><font size="1">'.Nvl($w_real_acao_12,'---').'</td>');
-      ShowHTML('         <tr><td align="right"><font size="1"><b>Total:');
-      ShowHTML('             <td align="right"><font size="1"><b>'.(Nvl($w_cron_ini_1,0) + Nvl($w_cron_ini_2,0)  + Nvl($w_cron_ini_3,0) + Nvl($w_cron_ini_4,0)  + Nvl($w_cron_ini_5,0)  + Nvl($w_cron_ini_6,0)  + Nvl($w_cron_ini_7,0)  + Nvl($w_cron_ini_8,0)  + Nvl($w_cron_ini_9,0)  + Nvl($w_cron_ini_10,0)  + Nvl($w_cron_ini_11,0)  + Nvl($w_cron_ini_12,0)).'</td>');
-      ShowHTML('             <td align="right"><font size="1"><b>'.(Nvl($w_revisado_1,0) + Nvl($w_revisado_2,0)  + Nvl($w_revisado_3,0) + Nvl($w_revisado_4,0)  + Nvl($w_revisado_5,0)  + Nvl($w_revisado_6,0)  + Nvl($w_revisado_7,0)  + Nvl($w_revisado_8,0)  + Nvl($w_revisado_9,0)  + Nvl($w_revisado_10,0)  + Nvl($w_revisado_11,0)  + Nvl($w_revisado_12,0)).'</td>');
-      ShowHTML('             <td align="right"><font size="1"><b>'.(Nvl($w_realizado_1,0)+ Nvl($w_realizado_2,0) + Nvl($w_realizado_3,0)+ Nvl($w_realizado_4,0) + Nvl($w_realizado_5,0) + Nvl($w_realizado_6,0) + Nvl($w_realizado_7,0) + Nvl($w_realizado_8,0) + Nvl($w_realizado_9,0) + Nvl($w_realizado_10,0) + Nvl($w_realizado_11,0) + Nvl($w_realizado_12,0)).'</td>');
-      ShowHTML('             <td align="right"><font size="1"><b>'.number_format(Nvl($w_real_acao_1,0) + Nvl($w_real_acao_2,0) + Nvl($w_real_acao_3,0) + Nvl($w_real_acao_4,0) + Nvl($w_real_acao_5,0) + Nvl($w_real_acao_6,0) + Nvl($w_real_acao_7,0) + Nvl($w_real_acao_8,0) + Nvl($w_real_acao_9,0) + Nvl($w_real_acao_10,0) + Nvl($w_real_acao_11,0) + Nvl($w_real_acao_12,0),2,',','.').'</td>');
+      ShowHTML('         <tr align="center" valign="middle">');
+      ShowHTML('             <td rowspan=2><b>Mês</b>');
+      ShowHTML('             <td colspan=3><b>Quantitativos</b>');
+      ShowHTML('             <td rowspan=2><b>Financeiro realizado</b></td>');
+      ShowHTML('         <tr align="center" valign="top">');
+      ShowHTML('             <td><b>Inicial</b></td>');
+      ShowHTML('             <td><b>Revisado</b></td>');
+      ShowHTML('             <td><b>Realizado</b></td>');
+      ShowHTML('         <tr><td width="12%" align="right"><b>Janeiro:');
+      ShowHTML('             <td align="right" width="22%">'.Nvl($w_cron_ini_1,'---').'</td>');
+      ShowHTML('             <td align="right" width="22%">'.Nvl($w_revisado_1,'---').'</td>');
+      ShowHTML('             <td align="right" width="22%">'.Nvl($w_realizado_1,'---').'</td>');
+      ShowHTML('             <td align="right" width="22%">'.Nvl($w_real_acao_1,'---').'</td>');
+      ShowHTML('         <tr><td align="right"><b>Fevereiro:');
+      ShowHTML('             <td align="right">'.Nvl($w_cron_ini_2,'---').'</td>');
+      ShowHTML('             <td align="right">'.Nvl($w_revisado_2,'---').'</td>');
+      ShowHTML('             <td align="right">'.Nvl($w_realizado_2,'---').'</td>');
+      ShowHTML('             <td align="right">'.Nvl($w_real_acao_2,'---').'</td>');
+      ShowHTML('         <tr><td align="right"><b>Março:');
+      ShowHTML('             <td align="right">'.Nvl($w_cron_ini_3,'---').'</td>');
+      ShowHTML('             <td align="right">'.Nvl($w_revisado_3,'---').'</td>');
+      ShowHTML('             <td align="right">'.Nvl($w_realizado_3,'---').'</td>');
+      ShowHTML('             <td align="right">'.Nvl($w_real_acao_3,'---').'</td>');
+      ShowHTML('         <tr><td align="right"><b>Abril:');
+      ShowHTML('             <td align="right">'.Nvl($w_cron_ini_4,'---').'</td>');
+      ShowHTML('             <td align="right">'.Nvl($w_revisado_4,'---').'</td>');
+      ShowHTML('             <td align="right">'.Nvl($w_realizado_4,'---').'</td>');
+      ShowHTML('             <td align="right">'.Nvl($w_real_acao_4,'---').'</td>');
+      ShowHTML('         <tr><td align="right"><b>Maio:');
+      ShowHTML('             <td align="right">'.Nvl($w_cron_ini_5,'---').'</td>');
+      ShowHTML('             <td align="right">'.Nvl($w_revisado_5,'---').'</td>');
+      ShowHTML('             <td align="right">'.Nvl($w_realizado_5,'---').'</td>');
+      ShowHTML('             <td align="right">'.Nvl($w_real_acao_5,'---').'</td>');
+      ShowHTML('         <tr><td align="right"><b>Junho:');
+      ShowHTML('             <td align="right">'.Nvl($w_cron_ini_6,'---').'</td>');
+      ShowHTML('             <td align="right">'.Nvl($w_revisado_6,'---').'</td>');
+      ShowHTML('             <td align="right">'.Nvl($w_realizado_6,'---').'</td>');
+      ShowHTML('             <td align="right">'.Nvl($w_real_acao_6,'---').'</td>');
+      ShowHTML('         <tr><td align="right"><b>Julho:');
+      ShowHTML('             <td align="right">'.Nvl($w_cron_ini_7,'---').'</td>');
+      ShowHTML('             <td align="right">'.Nvl($w_revisado_7,'---').'</td>');
+      ShowHTML('             <td align="right">'.Nvl($w_realizado_7,'---').'</td>');
+      ShowHTML('             <td align="right">'.Nvl($w_real_acao_7,'---').'</td>');
+      ShowHTML('         <tr><td align="right"><b>Agosto:');
+      ShowHTML('             <td align="right">'.Nvl($w_cron_ini_8,'---').'</td>');
+      ShowHTML('             <td align="right">'.Nvl($w_revisado_8,'---').'</td>');
+      ShowHTML('             <td align="right">'.Nvl($w_realizado_8,'---').'</td>');
+      ShowHTML('             <td align="right">'.Nvl($w_real_acao_8,'---').'</td>');
+      ShowHTML('         <tr><td align="right"><b>Setembro:');
+      ShowHTML('             <td align="right">'.Nvl($w_cron_ini_9,'---').'</td>');
+      ShowHTML('             <td align="right">'.Nvl($w_revisado_9,'---').'</td>');
+      ShowHTML('             <td align="right">'.Nvl($w_realizado_9,'---').'</td>');
+      ShowHTML('             <td align="right">'.Nvl($w_real_acao_9,'---').'</td>');
+      ShowHTML('         <tr><td align="right"><b>Outubro:');
+      ShowHTML('             <td align="right">'.Nvl($w_cron_ini_10,'---').'</td>');
+      ShowHTML('             <td align="right">'.Nvl($w_revisado_10,'---').'</td>');
+      ShowHTML('             <td align="right">'.Nvl($w_realizado_10,'---').'</td>');
+      ShowHTML('             <td align="right">'.Nvl($w_real_acao_10,'---').'</td>');
+      ShowHTML('         <tr><td align="right"><b>Novembro:');
+      ShowHTML('             <td align="right">'.Nvl($w_cron_ini_11,'---').'</td>');
+      ShowHTML('             <td align="right">'.Nvl($w_revisado_11,'---').'</td>');
+      ShowHTML('             <td align="right">'.Nvl($w_realizado_11,'---').'</td>');
+      ShowHTML('             <td align="right">'.Nvl($w_real_acao_11,'---').'</td>');
+      ShowHTML('         <tr><td align="right"><b>Dezembro:');
+      ShowHTML('             <td align="right">'.Nvl($w_cron_ini_12,'---').'</td>');
+      ShowHTML('             <td align="right">'.Nvl($w_revisado_12,'---').'</td>');
+      ShowHTML('             <td align="right">'.Nvl($w_realizado_12,'---').'</td>');
+      ShowHTML('             <td align="right">'.Nvl($w_real_acao_12,'---').'</td>');
+      ShowHTML('         <tr><td align="right"><b>Total:');
+      ShowHTML('             <td align="right"><b>'.(Nvl($w_cron_ini_1,0) + Nvl($w_cron_ini_2,0)  + Nvl($w_cron_ini_3,0) + Nvl($w_cron_ini_4,0)  + Nvl($w_cron_ini_5,0)  + Nvl($w_cron_ini_6,0)  + Nvl($w_cron_ini_7,0)  + Nvl($w_cron_ini_8,0)  + Nvl($w_cron_ini_9,0)  + Nvl($w_cron_ini_10,0)  + Nvl($w_cron_ini_11,0)  + Nvl($w_cron_ini_12,0)).'</td>');
+      ShowHTML('             <td align="right"><b>'.(Nvl($w_revisado_1,0) + Nvl($w_revisado_2,0)  + Nvl($w_revisado_3,0) + Nvl($w_revisado_4,0)  + Nvl($w_revisado_5,0)  + Nvl($w_revisado_6,0)  + Nvl($w_revisado_7,0)  + Nvl($w_revisado_8,0)  + Nvl($w_revisado_9,0)  + Nvl($w_revisado_10,0)  + Nvl($w_revisado_11,0)  + Nvl($w_revisado_12,0)).'</td>');
+      ShowHTML('             <td align="right"><b>'.(Nvl($w_realizado_1,0)+ Nvl($w_realizado_2,0) + Nvl($w_realizado_3,0)+ Nvl($w_realizado_4,0) + Nvl($w_realizado_5,0) + Nvl($w_realizado_6,0) + Nvl($w_realizado_7,0) + Nvl($w_realizado_8,0) + Nvl($w_realizado_9,0) + Nvl($w_realizado_10,0) + Nvl($w_realizado_11,0) + Nvl($w_realizado_12,0)).'</td>');
+      ShowHTML('             <td align="right"><b>'.number_format(Nvl($w_real_acao_1,0) + Nvl($w_real_acao_2,0) + Nvl($w_real_acao_3,0) + Nvl($w_real_acao_4,0) + Nvl($w_real_acao_5,0) + Nvl($w_real_acao_6,0) + Nvl($w_real_acao_7,0) + Nvl($w_real_acao_8,0) + Nvl($w_real_acao_9,0) + Nvl($w_real_acao_10,0) + Nvl($w_real_acao_11,0) + Nvl($w_real_acao_12,0),2,',','.').'</td>');
       ShowHTML('       </table>');
-      ShowHTML('     <tr><td><font size="1">Percentual de conlusão:<br><b>'.nvl($w_perc_conclusao,0).'%</b></td>');
-      ShowHTML('     <tr><td valign="top"><font size="1">Situação atual da meta:<b><br>'.Nvl($w_situacao_atual,'---').'</td>');
-      ShowHTML('     <tr><td valign="top"><font size="1">Justificar os motivos em caso de não cumprimento da meta:<b><br>'.Nvl($w_justificativa_inex,'---').'</td>');
-      ShowHTML('     <tr><td valign="top"><font size="1">Quais medidas necessárias para o cumprimento da meta:<b><br>'.Nvl($w_outras_medidas,'---').'</td>');
+      ShowHTML('     <tr><td>Percentual de conlusão:<br><b>'.nvl($w_perc_conclusao,0).'%</b></td>');
+      ShowHTML('     <tr><td valign="top">Situação atual da meta:<b><br>'.Nvl($w_situacao_atual,'---').'</td>');
+      ShowHTML('     <tr><td valign="top">Justificar os motivos em caso de não cumprimento da meta:<b><br>'.Nvl($w_justificativa_inex,'---').'</td>');
+      ShowHTML('     <tr><td valign="top">Quais medidas necessárias para o cumprimento da meta:<b><br>'.Nvl($w_outras_medidas,'---').'</td>');
     } else {
-      ShowHTML('     <tr><td><font size="1">Percentual de conlusão:<br><b>'.nvl($w_perc_conclusao,0).'%</b></td>');
+      ShowHTML('     <tr><td>Percentual de conlusão:<br><b>'.nvl($w_perc_conclusao,0).'%</b></td>');
       ShowHTML('     <tr><td valign="top" colspan="1">');
       ShowHTML('       <table border=0 width="40%" cellspacing=0>');
-      ShowHTML('         <tr><td>&nbsp<td><font size="1"><br><b>Quantitativo inicial</b></td>');
-      ShowHTML('             <td title="Em caso de revisão da meta programada, os novos valores devem ser informados, mês a mês, nestes campos."><font size="1"><br><b>Quantitativo revisado</b></td>');
-      ShowHTML('             <td title="Em caso de revisão da meta programada, os novos valores devem ser informados, mês a mês, nestes campos."><font size="1"><br><b>Quantitativo realizado</b></td>');
-      ShowHTML('             <td><font size="1"><br><b>Financeiro realizado</b></td>');
-      ShowHTML('         <tr><td width="4%" align="right"><font size="1"><b>Janeiro:');
-      ShowHTML('             <td width="5%" align="right"><font size="1">'.Nvl($w_cron_ini_1,'---').'</td>');
-      ShowHTML('             <td width="8%"><font size="1"><INPUT TYPE="TEXT" CLASS="STI" NAME="w_revisado_1" SIZE=10 MAXLENGTH=18 VALUE="'.$w_revisado_1.'" '.$w_Disabled.'></td>');
-      ShowHTML('             <td width="8%"><font size="1"><INPUT TYPE="TEXT" CLASS="STI" NAME="w_realizado_1" SIZE=10 MAXLENGTH=18 VALUE="'.$w_realizado_1.'" '.$w_Disabled.'></td>');
-      ShowHTML('             <td width="5%" align="right"><font size="1">'.Nvl($w_real_acao_1,'---').'</td>');
-      ShowHTML('         <tr><td align="right"><font size="1"><b>Fevereiro:');
-      ShowHTML('             <td align="right"><font size="1">'.Nvl($w_cron_ini_2,'---').'</td>');
-      ShowHTML('             <td><font size="1"><INPUT TYPE="TEXT" CLASS="STI" NAME="w_revisado_2" SIZE=10 MAXLENGTH=18 VALUE="'.$w_revisado_2.'" '.$w_Disabled.'></td>');
-      ShowHTML('             <td><font size="1"><INPUT TYPE="TEXT" CLASS="STI" NAME="w_realizado_2" SIZE=10 MAXLENGTH=18 VALUE="'.$w_realizado_2.'" '.$w_Disabled.'></td>');
-      ShowHTML('             <td align="right"><font size="1">'.Nvl($w_real_acao_2,'---').'</td>');
-      ShowHTML('         <tr><td align="right"><font size="1"><b>Março:');
-      ShowHTML('             <td align="right"><font size="1">'.Nvl($w_cron_ini_3,'---').'</td>');
-      ShowHTML('             <td><font size="1"><INPUT TYPE="TEXT" CLASS="STI" NAME="w_revisado_3" SIZE=10 MAXLENGTH=18 VALUE="'.$w_revisado_3.'" '.$w_Disabled.'></td>');
-      ShowHTML('             <td><font size="1"><INPUT TYPE="TEXT" CLASS="STI" NAME="w_realizado_3" SIZE=10 MAXLENGTH=18 VALUE="'.$w_realizado_3.'" '.$w_Disabled.'></td>');
-      ShowHTML('             <td align="right"><font size="1">'.Nvl($w_real_acao_3,'---').'</td>');
-      ShowHTML('         <tr><td align="right"><font size="1"><b>Abril:');
-      ShowHTML('             <td align="right"><font size="1">'.Nvl($w_cron_ini_4,'---').'</td>');
-      ShowHTML('             <td><font size="1"><INPUT TYPE="TEXT" CLASS="STI" NAME="w_revisado_4" SIZE=10 MAXLENGTH=18 VALUE="'.$w_revisado_4.'" '.$w_Disabled.'></td>');
-      ShowHTML('             <td><font size="1"><INPUT TYPE="TEXT" CLASS="STI" NAME="w_realizado_4" SIZE=10 MAXLENGTH=18 VALUE="'.$w_realizado_4.'" '.$w_Disabled.'></td>');
-      ShowHTML('             <td align="right"><font size="1">'.Nvl($w_real_acao_4,'---').'</td>');
-      ShowHTML('         <tr><td align="right"><font size="1"><b>Maio:');
-      ShowHTML('             <td align="right"><font size="1">'.Nvl($w_cron_ini_5,'---').'</td>');
-      ShowHTML('             <td><font size="1"><INPUT TYPE="TEXT" CLASS="STI" NAME="w_revisado_5" SIZE=10 MAXLENGTH=18 VALUE="'.$w_revisado_5.'" '.$w_Disabled.'></td>');
-      ShowHTML('             <td><font size="1"><INPUT TYPE="TEXT" CLASS="STI" NAME="w_realizado_5" SIZE=10 MAXLENGTH=18 VALUE="'.$w_realizado_5.'" '.$w_Disabled.'></td>');
-      ShowHTML('             <td align="right"><font size="1">'.Nvl($w_real_acao_5,'---').'</td>');
-      ShowHTML('         <tr><td align="right"><font size="1"><b>Junho:');
-      ShowHTML('             <td align="right"><font size="1">'.Nvl($w_cron_ini_6,'---').'</td>');
-      ShowHTML('             <td><font size="1"><INPUT TYPE="TEXT" CLASS="STI" NAME="w_revisado_6" SIZE=10 MAXLENGTH=18 VALUE="'.$w_revisado_6.'" '.$w_Disabled.'></td>');
-      ShowHTML('             <td><font size="1"><INPUT TYPE="TEXT" CLASS="STI" NAME="w_realizado_6" SIZE=10 MAXLENGTH=18 VALUE="'.$w_realizado_6.'" '.$w_Disabled.' ></td>');
-      ShowHTML('             <td align="right"><font size="1">'.Nvl($w_real_acao_6,'---').'</td>');
-      ShowHTML('         <tr><td align="right"><font size="1"><b>Julho:');
-      ShowHTML('             <td align="right"><font size="1">'.Nvl($w_cron_ini_7,'---').'</td>');
-      ShowHTML('             <td><font size="1"><INPUT TYPE="TEXT" CLASS="STI" NAME="w_revisado_7" SIZE=10 MAXLENGTH=18 VALUE="'.$w_revisado_7.'" '.$w_Disabled.'></td>');
-      ShowHTML('             <td><font size="1"><INPUT TYPE="TEXT" CLASS="STI" NAME="w_realizado_7" SIZE=10 MAXLENGTH=18 VALUE="'.$w_realizado_7.'" '.$w_Disabled.'></td>');
-      ShowHTML('             <td align="right"><font size="1">'.Nvl($w_real_acao_7,'---').'</td>');
-      ShowHTML('         <tr><td align="right"><font size="1"><b>Agosto:');
-      ShowHTML('             <td align="right"><font size="1">'.Nvl($w_cron_ini_8,'---').'</td>');
-      ShowHTML('             <td><font size="1"><INPUT TYPE="TEXT" CLASS="STI" NAME="w_revisado_8" SIZE=10 MAXLENGTH=18 VALUE="'.$w_revisado_8.'" '.$w_Disabled.'></td>');
-      ShowHTML('             <td><font size="1"><INPUT TYPE="TEXT" CLASS="STI" NAME="w_realizado_8" SIZE=10 MAXLENGTH=18 VALUE="'.$w_realizado_8.'" '.$w_Disabled.'></td>');
-      ShowHTML('             <td align="right"><font size="1">'.Nvl($w_real_acao_8,'---').'</td>');
-      ShowHTML('         <tr><td align="right"><font size="1"><b>Setembro:');
-      ShowHTML('             <td align="right"><font size="1">'.Nvl($w_cron_ini_9,'---').'</td>');
-      ShowHTML('             <td><font size="1"><INPUT TYPE="TEXT" CLASS="STI" NAME="w_revisado_9" SIZE=10 MAXLENGTH=18 VALUE="'.$w_revisado_9.'" '.$w_Disabled.'></td>');
-      ShowHTML('             <td><font size="1"><INPUT TYPE="TEXT" CLASS="STI" NAME="w_realizado_9" SIZE=10 MAXLENGTH=18 VALUE="'.$w_realizado_9.'" '.$w_Disabled.'></td>');
-      ShowHTML('             <td align="right"><font size="1">'.Nvl($w_real_acao_9,'---').'</td>');
-      ShowHTML('         <tr><td align="right"><font size="1"><b>Outubro:');
-      ShowHTML('             <td align="right"><font size="1">'.Nvl($w_cron_ini_10,'---').'</td>');
-      ShowHTML('             <td><font size="1"><INPUT TYPE="TEXT" CLASS="STI" NAME="w_revisado_10" SIZE=10 MAXLENGTH=18 VALUE="'.$w_revisado_10.'" '.$w_Disabled.'></td>');
-      ShowHTML('             <td><font size="1"><INPUT TYPE="TEXT" CLASS="STI" NAME="w_realizado_10" SIZE=10 MAXLENGTH=18 VALUE="'.$w_realizado_10.'" '.$w_Disabled.'></td>');
-      ShowHTML('             <td align="right"><font size="1">'.Nvl($w_real_acao_10,'---').'</td>');
-      ShowHTML('         <tr><td align="right"><font size="1"><b>Novembro:');
-      ShowHTML('             <td align="right"><font size="1">'.Nvl($w_cron_ini_11,'---').'</td>');
-      ShowHTML('             <td><font size="1"><INPUT TYPE="TEXT" CLASS="STI" NAME="w_revisado_11" SIZE=10 MAXLENGTH=18 VALUE="'.$w_revisado_11.'" '.$w_Disabled.'></td>');
-      ShowHTML('             <td><font size="1"><INPUT TYPE="TEXT" CLASS="STI" NAME="w_realizado_11" SIZE=10 MAXLENGTH=18 VALUE="'.$w_realizado_11.'" '.$w_Disabled.'></td>');
-      ShowHTML('             <td align="right"><font size="1">'.Nvl($w_real_acao_11,'---').'</td>');
-      ShowHTML('         <tr><td align="right"><font size="1"><b>Dezembro:');
-      ShowHTML('             <td align="right"><font size="1">'.Nvl($w_cron_ini_12,'---').'</td>');
-      ShowHTML('             <td><font size="1"><INPUT TYPE="TEXT" CLASS="STI" NAME="w_revisado_12" SIZE=10 MAXLENGTH=18 VALUE="'.$w_revisado_12.'" '.$w_Disabled.'></td>');
-      ShowHTML('             <td><font size="1"><INPUT TYPE="TEXT" CLASS="STI" NAME="w_realizado_12" SIZE=10 MAXLENGTH=18 VALUE="'.$w_realizado_12.'" '.$w_Disabled.' ></td>');
-      ShowHTML('             <td align="right"><font size="1">'.Nvl($w_real_acao_12,'---').'</td>');
+      ShowHTML('         <tr><td>&nbsp<td><br><b>Quantitativo inicial</b></td>');
+      ShowHTML('             <td title="Em caso de revisão da meta programada, os novos valores devem ser informados, mês a mês, nestes campos."><br><b>Quantitativo revisado</b></td>');
+      ShowHTML('             <td title="Em caso de revisão da meta programada, os novos valores devem ser informados, mês a mês, nestes campos."><br><b>Quantitativo realizado</b></td>');
+      ShowHTML('             <td><br><b>Financeiro realizado</b></td>');
+      ShowHTML('         <tr><td width="4%" align="right"><b>Janeiro:');
+      ShowHTML('             <td width="5%" align="right">'.Nvl($w_cron_ini_1,'---').'</td>');
+      ShowHTML('             <td width="8%"><INPUT TYPE="TEXT" CLASS="STI" NAME="w_revisado_1" SIZE=10 MAXLENGTH=18 VALUE="'.$w_revisado_1.'" '.$w_Disabled.'></td>');
+      ShowHTML('             <td width="8%"><INPUT TYPE="TEXT" CLASS="STI" NAME="w_realizado_1" SIZE=10 MAXLENGTH=18 VALUE="'.$w_realizado_1.'" '.$w_Disabled.'></td>');
+      ShowHTML('             <td width="5%" align="right">'.Nvl($w_real_acao_1,'---').'</td>');
+      ShowHTML('         <tr><td align="right"><b>Fevereiro:');
+      ShowHTML('             <td align="right">'.Nvl($w_cron_ini_2,'---').'</td>');
+      ShowHTML('             <td><INPUT TYPE="TEXT" CLASS="STI" NAME="w_revisado_2" SIZE=10 MAXLENGTH=18 VALUE="'.$w_revisado_2.'" '.$w_Disabled.'></td>');
+      ShowHTML('             <td><INPUT TYPE="TEXT" CLASS="STI" NAME="w_realizado_2" SIZE=10 MAXLENGTH=18 VALUE="'.$w_realizado_2.'" '.$w_Disabled.'></td>');
+      ShowHTML('             <td align="right">'.Nvl($w_real_acao_2,'---').'</td>');
+      ShowHTML('         <tr><td align="right"><b>Março:');
+      ShowHTML('             <td align="right">'.Nvl($w_cron_ini_3,'---').'</td>');
+      ShowHTML('             <td><INPUT TYPE="TEXT" CLASS="STI" NAME="w_revisado_3" SIZE=10 MAXLENGTH=18 VALUE="'.$w_revisado_3.'" '.$w_Disabled.'></td>');
+      ShowHTML('             <td><INPUT TYPE="TEXT" CLASS="STI" NAME="w_realizado_3" SIZE=10 MAXLENGTH=18 VALUE="'.$w_realizado_3.'" '.$w_Disabled.'></td>');
+      ShowHTML('             <td align="right">'.Nvl($w_real_acao_3,'---').'</td>');
+      ShowHTML('         <tr><td align="right"><b>Abril:');
+      ShowHTML('             <td align="right">'.Nvl($w_cron_ini_4,'---').'</td>');
+      ShowHTML('             <td><INPUT TYPE="TEXT" CLASS="STI" NAME="w_revisado_4" SIZE=10 MAXLENGTH=18 VALUE="'.$w_revisado_4.'" '.$w_Disabled.'></td>');
+      ShowHTML('             <td><INPUT TYPE="TEXT" CLASS="STI" NAME="w_realizado_4" SIZE=10 MAXLENGTH=18 VALUE="'.$w_realizado_4.'" '.$w_Disabled.'></td>');
+      ShowHTML('             <td align="right">'.Nvl($w_real_acao_4,'---').'</td>');
+      ShowHTML('         <tr><td align="right"><b>Maio:');
+      ShowHTML('             <td align="right">'.Nvl($w_cron_ini_5,'---').'</td>');
+      ShowHTML('             <td><INPUT TYPE="TEXT" CLASS="STI" NAME="w_revisado_5" SIZE=10 MAXLENGTH=18 VALUE="'.$w_revisado_5.'" '.$w_Disabled.'></td>');
+      ShowHTML('             <td><INPUT TYPE="TEXT" CLASS="STI" NAME="w_realizado_5" SIZE=10 MAXLENGTH=18 VALUE="'.$w_realizado_5.'" '.$w_Disabled.'></td>');
+      ShowHTML('             <td align="right">'.Nvl($w_real_acao_5,'---').'</td>');
+      ShowHTML('         <tr><td align="right"><b>Junho:');
+      ShowHTML('             <td align="right">'.Nvl($w_cron_ini_6,'---').'</td>');
+      ShowHTML('             <td><INPUT TYPE="TEXT" CLASS="STI" NAME="w_revisado_6" SIZE=10 MAXLENGTH=18 VALUE="'.$w_revisado_6.'" '.$w_Disabled.'></td>');
+      ShowHTML('             <td><INPUT TYPE="TEXT" CLASS="STI" NAME="w_realizado_6" SIZE=10 MAXLENGTH=18 VALUE="'.$w_realizado_6.'" '.$w_Disabled.' ></td>');
+      ShowHTML('             <td align="right">'.Nvl($w_real_acao_6,'---').'</td>');
+      ShowHTML('         <tr><td align="right"><b>Julho:');
+      ShowHTML('             <td align="right">'.Nvl($w_cron_ini_7,'---').'</td>');
+      ShowHTML('             <td><INPUT TYPE="TEXT" CLASS="STI" NAME="w_revisado_7" SIZE=10 MAXLENGTH=18 VALUE="'.$w_revisado_7.'" '.$w_Disabled.'></td>');
+      ShowHTML('             <td><INPUT TYPE="TEXT" CLASS="STI" NAME="w_realizado_7" SIZE=10 MAXLENGTH=18 VALUE="'.$w_realizado_7.'" '.$w_Disabled.'></td>');
+      ShowHTML('             <td align="right">'.Nvl($w_real_acao_7,'---').'</td>');
+      ShowHTML('         <tr><td align="right"><b>Agosto:');
+      ShowHTML('             <td align="right">'.Nvl($w_cron_ini_8,'---').'</td>');
+      ShowHTML('             <td><INPUT TYPE="TEXT" CLASS="STI" NAME="w_revisado_8" SIZE=10 MAXLENGTH=18 VALUE="'.$w_revisado_8.'" '.$w_Disabled.'></td>');
+      ShowHTML('             <td><INPUT TYPE="TEXT" CLASS="STI" NAME="w_realizado_8" SIZE=10 MAXLENGTH=18 VALUE="'.$w_realizado_8.'" '.$w_Disabled.'></td>');
+      ShowHTML('             <td align="right">'.Nvl($w_real_acao_8,'---').'</td>');
+      ShowHTML('         <tr><td align="right"><b>Setembro:');
+      ShowHTML('             <td align="right">'.Nvl($w_cron_ini_9,'---').'</td>');
+      ShowHTML('             <td><INPUT TYPE="TEXT" CLASS="STI" NAME="w_revisado_9" SIZE=10 MAXLENGTH=18 VALUE="'.$w_revisado_9.'" '.$w_Disabled.'></td>');
+      ShowHTML('             <td><INPUT TYPE="TEXT" CLASS="STI" NAME="w_realizado_9" SIZE=10 MAXLENGTH=18 VALUE="'.$w_realizado_9.'" '.$w_Disabled.'></td>');
+      ShowHTML('             <td align="right">'.Nvl($w_real_acao_9,'---').'</td>');
+      ShowHTML('         <tr><td align="right"><b>Outubro:');
+      ShowHTML('             <td align="right">'.Nvl($w_cron_ini_10,'---').'</td>');
+      ShowHTML('             <td><INPUT TYPE="TEXT" CLASS="STI" NAME="w_revisado_10" SIZE=10 MAXLENGTH=18 VALUE="'.$w_revisado_10.'" '.$w_Disabled.'></td>');
+      ShowHTML('             <td><INPUT TYPE="TEXT" CLASS="STI" NAME="w_realizado_10" SIZE=10 MAXLENGTH=18 VALUE="'.$w_realizado_10.'" '.$w_Disabled.'></td>');
+      ShowHTML('             <td align="right">'.Nvl($w_real_acao_10,'---').'</td>');
+      ShowHTML('         <tr><td align="right"><b>Novembro:');
+      ShowHTML('             <td align="right">'.Nvl($w_cron_ini_11,'---').'</td>');
+      ShowHTML('             <td><INPUT TYPE="TEXT" CLASS="STI" NAME="w_revisado_11" SIZE=10 MAXLENGTH=18 VALUE="'.$w_revisado_11.'" '.$w_Disabled.'></td>');
+      ShowHTML('             <td><INPUT TYPE="TEXT" CLASS="STI" NAME="w_realizado_11" SIZE=10 MAXLENGTH=18 VALUE="'.$w_realizado_11.'" '.$w_Disabled.'></td>');
+      ShowHTML('             <td align="right">'.Nvl($w_real_acao_11,'---').'</td>');
+      ShowHTML('         <tr><td align="right"><b>Dezembro:');
+      ShowHTML('             <td align="right">'.Nvl($w_cron_ini_12,'---').'</td>');
+      ShowHTML('             <td><INPUT TYPE="TEXT" CLASS="STI" NAME="w_revisado_12" SIZE=10 MAXLENGTH=18 VALUE="'.$w_revisado_12.'" '.$w_Disabled.'></td>');
+      ShowHTML('             <td><INPUT TYPE="TEXT" CLASS="STI" NAME="w_realizado_12" SIZE=10 MAXLENGTH=18 VALUE="'.$w_realizado_12.'" '.$w_Disabled.' ></td>');
+      ShowHTML('             <td align="right">'.Nvl($w_real_acao_12,'---').'</td>');
       ShowHTML('       </table>');
-      ShowHTML('     <tr><td valign="top"><font size="1"><b><u>S</u>ituação atual da meta:</b><br><textarea '.$w_Disabled.' accesskey="S" name="w_situacao_atual" class="STI" ROWS=5 cols=75 title="Descreva, de maneria sucinta, qual é a situação atual da meta.">'.$w_situacao_atual.'</TEXTAREA></td>');
+      ShowHTML('     <tr><td valign="top"><b><u>S</u>ituação atual da meta:</b><br><textarea '.$w_Disabled.' accesskey="S" name="w_situacao_atual" class="STI" ROWS=5 cols=75 title="Descreva, de maneria sucinta, qual é a situação atual da meta.">'.$w_situacao_atual.'</TEXTAREA></td>');
       ShowHTML('     <tr valign="top">');
       MontaRadioSN('<b>A meta será cumprida?</b>',$w_exequivel,'w_exequivel');
       ShowHTML('     </tr>');
-      ShowHTML('     <tr><td valign="top"><font size="1"><b><u>J</u>ustificar os motivos em caso de não cumprimento da meta:</b><br><textarea '.$w_Disabled.' accesskey="J" name="w_justificativa_inex" class="STI" ROWS=5 cols=75 title="Informe os motivos que inviabilizam o cumprimento da meta.">'.$w_justificativa_inex.'</TEXTAREA></td>');
-      ShowHTML('     <tr><td valign="top"><font size="1"><b><u>Q</u>uais medidas necessárias para o cumprimento da meta?</b><br><textarea '.$w_Disabled.' accesskey="Q" name="w_outras_medidas" class="STI" ROWS=5 cols=75 title="Descreva quais são as medidas que devem ser adotadas para  que a tendencia de não cumprimento da meta programada possa ser revertida.">'.$w_outras_medidas.'</TEXTAREA></td>');
+      ShowHTML('     <tr><td valign="top"><b><u>J</u>ustificar os motivos em caso de não cumprimento da meta:</b><br><textarea '.$w_Disabled.' accesskey="J" name="w_justificativa_inex" class="STI" ROWS=5 cols=75 title="Informe os motivos que inviabilizam o cumprimento da meta.">'.$w_justificativa_inex.'</TEXTAREA></td>');
+      ShowHTML('     <tr><td valign="top"><b><u>Q</u>uais medidas necessárias para o cumprimento da meta?</b><br><textarea '.$w_Disabled.' accesskey="Q" name="w_outras_medidas" class="STI" ROWS=5 cols=75 title="Descreva quais são as medidas que devem ser adotadas para  que a tendencia de não cumprimento da meta programada possa ser revertida.">'.$w_outras_medidas.'</TEXTAREA></td>');
     } 
     ShowHTML('        <tr><td align="center"><hr>');
     if ($w_tipo!='WORD') {
@@ -2368,96 +2382,96 @@ function Financiamento() {
   if ($O=='L') {
     //$RS1 = db_getSolicData_IS::getInstanceOf($dbms,$w_chave,$SG);
     if (Nvl(f($RS,'cd_programa'),'')>'' && Nvl(f($RS,'cd_acao'),'')>'' && Nvl(f($RS,'cd_unidade'),'')>'') {
-      ShowHTML('      <tr><td colspan="2"><font size="1">Programa Codº '.f($RS,'cd_programa').' - '.f($RS,'nm_ppa_pai').'</td>');
-      ShowHTML('      <tr><td colspan="2"><font size="1">Ação Codº '.f($RS,'cd_unidade').'.'.f($RS,'cd_acao').' - '.f($RS,'nm_ppa').'</td>');
-      ShowHTML('      <tr><td colspan="2"><font size="1">&nbsp</td>');
+      ShowHTML('      <tr><td colspan="2">Programa Codº '.f($RS,'cd_programa').' - '.f($RS,'nm_ppa_pai').'</td>');
+      ShowHTML('      <tr><td colspan="2">Ação Codº '.f($RS,'cd_unidade').'.'.f($RS,'cd_acao').' - '.f($RS,'nm_ppa').'</td>');
+      ShowHTML('      <tr><td colspan="2">&nbsp</td>');
     } 
     if (Nvl(f($RS,'cd_acao'),'')>'') {
       if (f($RS,'cd_tipo_acao')!=3) {
         // Exibe os dados da programação financeira desssa ação
         $RS1 = db_getPPADadoFinanc_IS::getInstanceOf($dbms,f($RS,'cd_acao'),f($RS,'cd_unidade'),$w_ano,$w_cliente,'VALORFONTEACAO');
         if (count($RS1)<=0) {
-          ShowHTML('      <tr><td valign="top"><font size="1"><DD><b>Nao existe nenhum valor para esta ação</b></DD></td>');
+          ShowHTML('      <tr><td valign="top"><DD><b>Nao existe nenhum valor para esta ação</b></DD></td>');
         } else {
           $i=0;
           foreach($RS1 as $row1) {
             if ($i==0) {
               $w_cor='';
-              ShowHTML('      <tr><td valign="top"><font size="1">Fonte: SIGPLAN/MP - PPA 2004-2007</td>');
-              ShowHTML('      <tr><td valign="top"><font size="1">Tipo de orçamento: <b>'.f($row1,'nm_orcamento').'</b></td>');
+              ShowHTML('      <tr><td valign="top">Fonte: SIGPLAN/MP - PPA 2004-2007</td>');
+              ShowHTML('      <tr><td valign="top">Tipo de orçamento: <b>'.f($row1,'nm_orcamento').'</b></td>');
               if (f($RS,'cd_tipo_acao')==1) {
-                ShowHTML('      <tr><td valign="top"><font size="1">Realizado até 2004: <b>'.number_format(Nvl(f($RS,'valor_ano_anterior'),0),2,',','.').'</b></td>');
-                ShowHTML('      <tr><td valign="top"><font size="1">Justificativa da repercusão financeira sobre o custeio da União: <b>'.Nvl(f($RS,'reperc_financeira'),'---').'</b></td>');
-                ShowHTML('      <tr><td valign="top"><font size="1">Valor estimado da repercussão financeira por ano (R$ 1,00): <b>'.number_format(Nvl(f($RS,'valor_reperc_financeira'),0),2,',','.').'</b></td>');
+                ShowHTML('      <tr><td valign="top">Realizado até 2004: <b>'.number_format(Nvl(f($RS,'valor_ano_anterior'),0),2,',','.').'</b></td>');
+                ShowHTML('      <tr><td valign="top">Justificativa da repercusão financeira sobre o custeio da União: <b>'.Nvl(f($RS,'reperc_financeira'),'---').'</b></td>');
+                ShowHTML('      <tr><td valign="top">Valor estimado da repercussão financeira por ano (R$ 1,00): <b>'.number_format(Nvl(f($RS,'valor_reperc_financeira'),0),2,',','.').'</b></td>');
               } 
-              ShowHTML('      <tr><td valign="top"><font size="1">Valor por fonte: </td>');
+              ShowHTML('      <tr><td valign="top">Valor por fonte: </td>');
               ShowHTML('      <tr><td align="center" colspan="2">');
               ShowHTML('        <TABLE WIDTH="100%" bgcolor="'.$conTableBgColor.'" BORDER="'.$conTableBorder.'" CELLSPACING="'.$conTableCellSpacing.'" CELLPADDING="'.$conTableCellPadding.'" BorderColorDark="'.$conTableBorderColorDark.'" BorderColorLight="'.$conTableBorderColorLight.'">');
               ShowHTML('          <tr bgcolor="'.$conTrBgColor.'" align="center">');
-              ShowHTML('            <td><font size="1"><b>Fonte</font></td>');
-              ShowHTML('            <td><font size="1"><b>2004*</font></td>');
-              ShowHTML('            <td><font size="1"><b>2005**</font></td>');
-              ShowHTML('            <td><font size="1"><b>2006</font></td>');
-              ShowHTML('            <td><font size="1"><b>2007</font></td>');
-              ShowHTML('            <td><font size="1"><b>2008</font></td>');
-              ShowHTML('            <td><font size="1"><b>Total</font></td>');
+              ShowHTML('            <td><b>Fonte</td>');
+              ShowHTML('            <td><b>2004*</td>');
+              ShowHTML('            <td><b>2005**</td>');
+              ShowHTML('            <td><b>2006</td>');
+              ShowHTML('            <td><b>2007</td>');
+              ShowHTML('            <td><b>2008</td>');
+              ShowHTML('            <td><b>Total</td>');
               ShowHTML('          </tr>');
               $i=1;
             }
             $w_cor = ($w_cor==$conTrBgColor || $w_cor=='') ? $w_cor=$conTrAlternateBgColor : $w_cor=$conTrBgColor;
             ShowHTML('       <tr bgcolor="'.$w_cor.'" valign="top">');
-            ShowHTML('         <td><font size="1">'.f($row1,'nm_fonte').'</td>');
-            ShowHTML('         <td align="center"><font size="1">'.number_format(Nvl(f($row1,'valor_ano_1'),0),2,',','.').'</td>');
-            ShowHTML('         <td align="center"><font size="1">'.number_format(Nvl(f($row1,'valor_ano_2'),0),2,',','.').'</td>');
-            ShowHTML('         <td align="center"><font size="1">'.number_format(Nvl(f($row1,'valor_ano_3'),0),2,',','.').'</td>');
-            ShowHTML('         <td align="center"><font size="1">'.number_format(Nvl(f($row1,'valor_ano_4'),0),2,',','.').'</td>');
-            ShowHTML('         <td align="center"><font size="1">'.number_format(Nvl(f($row1,'valor_ano_5'),0),2,',','.').'</td>');
-            ShowHTML('         <td align="center"><font size="1">'.number_format(Nvl(f($row1,'valor_total'),0),2,',','.').'</td>');
+            ShowHTML('         <td>'.f($row1,'nm_fonte').'</td>');
+            ShowHTML('         <td align="center">'.number_format(Nvl(f($row1,'valor_ano_1'),0),2,',','.').'</td>');
+            ShowHTML('         <td align="center">'.number_format(Nvl(f($row1,'valor_ano_2'),0),2,',','.').'</td>');
+            ShowHTML('         <td align="center">'.number_format(Nvl(f($row1,'valor_ano_3'),0),2,',','.').'</td>');
+            ShowHTML('         <td align="center">'.number_format(Nvl(f($row1,'valor_ano_4'),0),2,',','.').'</td>');
+            ShowHTML('         <td align="center">'.number_format(Nvl(f($row1,'valor_ano_5'),0),2,',','.').'</td>');
+            ShowHTML('         <td align="center">'.number_format(Nvl(f($row1,'valor_total'),0),2,',','.').'</td>');
             ShowHTML('       </tr>');
           } 
           ShowHTML('          </table>');
         } 
         $RS1 = db_getPPADadoFinanc_IS::getInstanceOf($dbms,f($RS,'cd_acao'),f($RS,'cd_unidade'),$w_ano,$w_cliente,'VALORTOTALACAO');
         foreach ($RS1 as $row) {$RS1 = $row; break;}
-        ShowHTML('      <tr><td valign="top"><font size="1">Valor total: </td>');
+        ShowHTML('      <tr><td valign="top">Valor total: </td>');
         if (count($RS1)<=0) {
-          ShowHTML('      <tr><td valign="top"><font size="1"><DD><b>Nao existe nenhum valor para esta ação</b></DD></td>');
+          ShowHTML('      <tr><td valign="top"><DD><b>Nao existe nenhum valor para esta ação</b></DD></td>');
         } else {
           $w_cor='';
           ShowHTML('      <tr><td align="center" colspan="2">');
           ShowHTML('        <TABLE WIDTH="100%" bgcolor="'.$conTableBgColor.'" BORDER="'.$conTableBorder.'" CELLSPACING="'.$conTableCellSpacing.'" CELLPADDING="'.$conTableCellPadding.'" BorderColorDark="'.$conTableBorderColorDark.'" BorderColorLight="'.$conTableBorderColorLight.'">');
           ShowHTML('          <tr bgcolor="'.$conTrBgColor.'" align="center">');
-          ShowHTML('            <td><font size="1"><b>2004*</font></td>');
-          ShowHTML('            <td><font size="1"><b>2005**</font></td>');
-          ShowHTML('            <td><font size="1"><b>2006</font></td>');
-          ShowHTML('            <td><font size="1"><b>2007</font></td>');
-          ShowHTML('            <td><font size="1"><b>2008</font></td>');
-          ShowHTML('            <td><font size="1"><b>Total</font></td>');
+          ShowHTML('            <td><b>2004*</td>');
+          ShowHTML('            <td><b>2005**</td>');
+          ShowHTML('            <td><b>2006</td>');
+          ShowHTML('            <td><b>2007</td>');
+          ShowHTML('            <td><b>2008</td>');
+          ShowHTML('            <td><b>Total</td>');
           ShowHTML('          </tr>');
           $w_cor = ($w_cor==$conTrBgColor || $w_cor=='') ? $w_cor=$conTrAlternateBgColor : $w_cor=$conTrBgColor;
           ShowHTML('       <tr bgcolor="'.$w_cor.'" valign="top">');
-          ShowHTML('         <td align="center"><font size="1">'.number_format(Nvl(f($RS1,'valor_ano_1'),0),2,',','.').'</td>');
-          ShowHTML('         <td align="center"><font size="1">'.number_format(Nvl(f($RS1,'valor_ano_2'),0),2,',','.').'</td>');
-          ShowHTML('         <td align="center"><font size="1">'.number_format(Nvl(f($RS1,'valor_ano_3'),0),2,',','.').'</td>');
-          ShowHTML('         <td align="center"><font size="1">'.number_format(Nvl(f($RS1,'valor_ano_4'),0),2,',','.').'</td>');
-          ShowHTML('         <td align="center"><font size="1">'.number_format(Nvl(f($RS1,'valor_ano_5'),0),2,',','.').'</td>');
-          ShowHTML('         <td align="center"><font size="1">'.number_format(Nvl(f($RS1,'valor_total'),0),2,',','.').'</td>');
+          ShowHTML('         <td align="center">'.number_format(Nvl(f($RS1,'valor_ano_1'),0),2,',','.').'</td>');
+          ShowHTML('         <td align="center">'.number_format(Nvl(f($RS1,'valor_ano_2'),0),2,',','.').'</td>');
+          ShowHTML('         <td align="center">'.number_format(Nvl(f($RS1,'valor_ano_3'),0),2,',','.').'</td>');
+          ShowHTML('         <td align="center">'.number_format(Nvl(f($RS1,'valor_ano_4'),0),2,',','.').'</td>');
+          ShowHTML('         <td align="center">'.number_format(Nvl(f($RS1,'valor_ano_5'),0),2,',','.').'</td>');
+          ShowHTML('         <td align="center">'.number_format(Nvl(f($RS1,'valor_total'),0),2,',','.').'</td>');
           ShowHTML('       </tr>');
           ShowHTML('       </table>');
-          ShowHTML('          <tr><td valign="top" colspan="2"><font size="1">* Valor Lei Orçamentária Anual - LOA 2004 + Créditos</td>');
-          ShowHTML('          <tr><td valign="top" colspan="2"><font size="1">** Valor do Projeto de Lei Orçamentária Anual - PLOA 2005</td>');
+          ShowHTML('          <tr><td valign="top" colspan="2">* Valor Lei Orçamentária Anual - LOA 2004 + Créditos</td>');
+          ShowHTML('          <tr><td valign="top" colspan="2">** Valor do Projeto de Lei Orçamentária Anual - PLOA 2005</td>');
         } 
         // Recupera todos os registros para a listagem
         $RS = db_getFinancAcaoPPA_IS::getInstanceOf($dbms,$w_chave,$w_cliente,$w_ano,null,null,null);
         // Exibe a quantidade de registros apresentados na listagem e o cabeçalho da tabela de listagem
         ShowHTML('<tr><td><font size="2"><a accesskey="I" class="SS" href="'.$w_dir.$w_pagina.$par.'&R='.$w_pagina.$par.'&O=I&w_chave='.$w_chave.'&P1='.$P1.'&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP='.$TP.'&SG='.$SG.'"><u>I</u>ncluir</a>&nbsp;');
-        ShowHTML('    <td align="right"><font size="1"><b>Registros existentes: '.count($RS));
+        ShowHTML('    <td align="right"><b>Registros existentes: '.count($RS));
         ShowHTML('<tr><td align="center" colspan=3>');
         ShowHTML('    <TABLE WIDTH="100%" bgcolor="'.$conTableBgColor.'" BORDER="'.$conTableBorder.'" CELLSPACING="'.$conTableCellSpacing.'" CELLPADDING="'.$conTableCellPadding.'" BorderColorDark="'.$conTableBorderColorDark.'" BorderColorLight="'.$conTableBorderColorLight.'">');
         ShowHTML('        <tr bgcolor="'.$conTrBgColor.'" align="center">');
-        ShowHTML('          <td><font size="1"><b>Código</font></td>');
-        ShowHTML('          <td><font size="1"><b>Nome</font></td>');
-        ShowHTML('          <td><font size="1"><b>Operações</font></td>');
+        ShowHTML('          <td><b>Código</td>');
+        ShowHTML('          <td><b>Nome</td>');
+        ShowHTML('          <td><b>Operações</td>');
         if (count($RS)<=0) {
           // Se não foram selecionados registros, exibe mensagem
           ShowHTML('      <tr bgcolor="'.$conTrBgColor.'"><td colspan=7 align="center"><font size="2"><b>Não foram encontrados registros.</b></td></tr>');
@@ -2467,9 +2481,9 @@ function Financiamento() {
           foreach($RS as $row) {
             $w_cor = ($w_cor==$conTrBgColor || $w_cor=='') ? $w_cor=$conTrAlternateBgColor : $w_cor=$conTrBgColor;
             ShowHTML('      <tr bgcolor="'.$w_cor.'" valign="top">');
-            ShowHTML('        <td><font size="1">'.f($row,'cd_programa').'.'.f($row,'cd_acao').'.'.f($row,'cd_unidade').'</td>');
-            ShowHTML('        <td><font size="1">'.f($row,'descricao_acao').'</td>');
-            ShowHTML('        <td align="top" nowrap><font size="1">');
+            ShowHTML('        <td>'.f($row,'cd_programa').'.'.f($row,'cd_acao').'.'.f($row,'cd_unidade').'</td>');
+            ShowHTML('        <td>'.f($row,'descricao_acao').'</td>');
+            ShowHTML('        <td align="top" nowrap>');
             ShowHTML('          <A class="HL" HREF="'.$w_dir.$w_pagina.$par.'&R='.$w_pagina.$par.'&O=A&w_chave='.$w_chave.'&w_chave_aux='.f($row,'sq_acao_ppa').'&P1='.$P1.'&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP='.$TP.'&SG='.$SG.'">Alterar</A>&nbsp');
             ShowHTML('          <A class="HL" HREF="'.$w_dir.$w_pagina.$par.'&R='.$w_pagina.$par.'&O=E&w_chave='.$w_chave.'&w_chave_aux='.f($row,'sq_acao_ppa').'&P1='.$P1.'&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP='.$TP.'&SG='.$SG.'">Excluir</A>&nbsp');
             ShowHTML('        </td>');
@@ -2477,20 +2491,20 @@ function Financiamento() {
           } 
         } 
       } else {
-        ShowHTML('      <tr><td valign="top"><font size="1"><DD><b>Nao existe progração financeira para esta açao, pois é uma ação nao orçamentária.</b></DD></td>');
+        ShowHTML('      <tr><td valign="top"><DD><b>Nao existe progração financeira para esta açao, pois é uma ação nao orçamentária.</b></DD></td>');
       } 
     } else {
       // Recupera todos os registros para a listagem
       $RS = db_getFinancAcaoPPA_IS::getInstanceOf($dbms,$w_chave,$w_cliente,$w_ano,null,null,null);
       // Exibe a quantidade de registros apresentados na listagem e o cabeçalho da tabela de listagem
       ShowHTML('<tr><td><font size="2"><a accesskey="I" class="SS" href="'.$w_dir.$w_pagina.$par.'&R='.$w_pagina.$par.'&O=I&w_chave='.$w_chave.'&P1='.$P1.'&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP='.$TP.'&SG='.$SG.'"><u>I</u>ncluir</a>&nbsp;');
-      ShowHTML('    <td align="right"><font size="1"><b>Registros existentes: '.count($RS));
+      ShowHTML('    <td align="right"><b>Registros existentes: '.count($RS));
       ShowHTML('<tr><td align="center" colspan=3>');
       ShowHTML('    <TABLE WIDTH="100%" bgcolor="'.$conTableBgColor.'" BORDER="'.$conTableBorder.'" CELLSPACING="'.$conTableCellSpacing.'" CELLPADDING="'.$conTableCellPadding.'" BorderColorDark="'.$conTableBorderColorDark.'" BorderColorLight="'.$conTableBorderColorLight.'">');
       ShowHTML('        <tr bgcolor="'.$conTrBgColor.'" align="center">');
-      ShowHTML('          <td><font size="1"><b>Código</font></td>');
-      ShowHTML('          <td><font size="1"><b>Nome</font></td>');
-      ShowHTML('          <td><font size="1"><b>Operações</font></td>');
+      ShowHTML('          <td><b>Código</td>');
+      ShowHTML('          <td><b>Nome</td>');
+      ShowHTML('          <td><b>Operações</td>');
       ShowHTML('        </tr>');
       if (count($RS)<=0) {
         // Se não foram selecionados registros, exibe mensagem
@@ -2501,9 +2515,9 @@ function Financiamento() {
         foreach($RS as $row) {
           $w_cor = ($w_cor==$conTrBgColor || $w_cor=='') ? $w_cor=$conTrAlternateBgColor : $w_cor=$conTrBgColor;
           ShowHTML('      <tr bgcolor="'.$w_cor.'" valign="top">');
-          ShowHTML('        <td><font size="1">'.f($row,'cd_unidade').'.'.f($row,'cd_programa').'.'.f($row,'cd_acao').'</td>');
-          ShowHTML('        <td><font size="1">'.f($row,'descricao_acao').'</td>');
-          ShowHTML('        <td align="top" nowrap><font size="1">');
+          ShowHTML('        <td>'.f($row,'cd_unidade').'.'.f($row,'cd_programa').'.'.f($row,'cd_acao').'</td>');
+          ShowHTML('        <td>'.f($row,'descricao_acao').'</td>');
+          ShowHTML('        <td align="top" nowrap>');
           ShowHTML('          <A class="HL" HREF="'.$w_dir.$w_pagina.$par.'&R='.$w_pagina.$par.'&O=A&w_chave='.$w_chave.'&w_chave_aux='.f($row,'sq_acao_ppa').'&P1='.$P1.'&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP='.$TP.'&SG='.$SG.'">Alterar</A>&nbsp');
           ShowHTML('          <A class="HL" HREF="'.$w_dir.$w_pagina.$par.'&R='.$w_pagina.$par.'&O=E&w_chave='.$w_chave.'&w_chave_aux='.f($row,'sq_acao_ppa').'&P1='.$P1.'&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP='.$TP.'&SG='.$SG.'">Excluir</A>&nbsp');
           ShowHTML('        </td>');
@@ -2527,10 +2541,10 @@ function Financiamento() {
     ShowHTML('<tr bgcolor="'.$conTrBgColor.'"><td align="center">');
     ShowHTML('    <table width="97%" border="0">');
     if (Nvl(f($RS1,'cd_acao'),'')>'') {
-      ShowHTML('      <tr><td valign="top"><font size="1"><b>Programa PPA: </b><br>'.f($RS1,'cd_ppa_pai').' - '.f($RS1,'nm_ppa_pai').' </b>');
-      ShowHTML('      <tr><td valign="top"><font size="1"><b>Ação PPA: </b><br>('.f($RS1,'cd_unidade').'.'.f($RS1,'cd_acao').') - '.f($RS1,'nm_ppa').' </b>');
+      ShowHTML('      <tr><td valign="top"><b>Programa PPA: </b><br>'.f($RS1,'cd_ppa_pai').' - '.f($RS1,'nm_ppa_pai').' </b>');
+      ShowHTML('      <tr><td valign="top"><b>Ação PPA: </b><br>('.f($RS1,'cd_unidade').'.'.f($RS1,'cd_acao').') - '.f($RS1,'nm_ppa').' </b>');
     } 
-    if (Nvl(f($RS1,'sq_isprojeto'),'')>'') ShowHTML('      <tr><td valign="top"><font size="1"><b>Programa interno: </b><br>'.f($RS1,'nm_pri').' </b>');
+    if (Nvl(f($RS1,'sq_isprojeto'),'')>'') ShowHTML('      <tr><td valign="top"><b>Programa interno: </b><br>'.f($RS1,'nm_pri').' </b>');
     ShowHTML('      <tr><td valign="top" colspan="2"><table border=0 width="100%" cellspacing=0><tr valign="top">');
     if ($O=='I') {
       SelecaoAcaoPPA('Ação <u>P</u>PA:','P','Selecionar, quando for o caso, outra ação do PPA que contribua para o financiamento da ação que está sendo cadastrada.',$w_cliente,$w_ano,f($RS1,'cd_programa'),f($RS1,'cd_acao'),null,f($RS1,'cd_unidade'),'w_chave_aux','FINANCIAMENTO',null,$w_chave,$w_menu);
@@ -2538,7 +2552,7 @@ function Financiamento() {
       SelecaoAcaoPPA('Ação <u>P</u>PA:','P','Selecionar, quando for o caso, outra ação do PPA que contribua para o financiamento da ação que está sendo cadastrada.',$w_cliente,$w_ano,substr($w_chave_aux,0,4),substr($w_chave_aux,4,4),substr($w_chave_aux,8,4),substr($w_chave_aux,12,5),'w_chave_aux',null,'disabled',null,$w_menu);
       ShowHTML('<INPUT type="hidden" name="w_chave_aux" value="'.$w_chave_aux.'">');
     } 
-    ShowHTML('      <tr><td valign="top"><font size="1"><b>Obse<u>r</u>vações:</b><br><textarea '.$w_Disabled.' accesskey="R" name="w_obs_financ" class="STI" ROWS=5 cols=75 title="Informar fatos ou situações que sejam relevantes para uma melhor compreensão do financiamento da ação.">'.$w_obs_financ.'</TEXTAREA></td>');
+    ShowHTML('      <tr><td valign="top"><b>Obse<u>r</u>vações:</b><br><textarea '.$w_Disabled.' accesskey="R" name="w_obs_financ" class="STI" ROWS=5 cols=75 title="Informar fatos ou situações que sejam relevantes para uma melhor compreensão do financiamento da ação.">'.$w_obs_financ.'</TEXTAREA></td>');
     ShowHTML('      <tr><td align="center" colspan=4><hr>');
     if ($O=='E') {
       ShowHTML('   <input class="STB" type="submit" name="Botao" value="Excluir">');
@@ -2672,20 +2686,20 @@ function Restricoes() {
   } 
   if ($O=='L') {
     if (Nvl($w_cd_programa,'')>'' && Nvl($w_cd_acao,'')>'' && Nvl($w_cd_unidade,'')>'') {
-      ShowHTML('      <tr><td colspan="2"><font size="1">Programa Codº '.$w_cd_programa.' - '.$w_ds_programa.'</td>');
-      ShowHTML('      <tr><td colspan="2"><font size="1">Ação Codº '.$w_cd_unidade.'.'.$w_cd_acao.' - '.$w_ds_acao.'</td>');
+      ShowHTML('      <tr><td colspan="2">Programa Codº '.$w_cd_programa.' - '.$w_ds_programa.'</td>');
+      ShowHTML('      <tr><td colspan="2">Ação Codº '.$w_cd_unidade.'.'.$w_cd_acao.' - '.$w_ds_acao.'</td>');
     } 
     // Exibe a quantidade de registros apresentados na listagem e o cabeçalho da tabela de listagem
     if ($w_acesso==1) ShowHTML('<tr><td><font size="2"><a accesskey="I" class="SS" href="'.$w_dir.$w_pagina.$par.'&R='.$w_pagina.$par.'&O=I&w_chave='.$w_chave.'&P1='.$P1.'&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP='.$TP.'&SG='.$SG.'"><u>I</u>ncluir</a>&nbsp;');
     else              ShowHTML('<tr><td><font size="2">&nbsp;');
-    ShowHTML('    <td align="right"><font size="1"><b>Registros existentes: '.count($RS));
+    ShowHTML('    <td align="right"><b>Registros existentes: '.count($RS));
     ShowHTML('<tr><td align="center" colspan=3>');
     ShowHTML('    <TABLE WIDTH="100%" bgcolor="'.$conTableBgColor.'" BORDER="'.$conTableBorder.'" CELLSPACING="'.$conTableCellSpacing.'" CELLPADDING="'.$conTableCellPadding.'" BorderColorDark="'.$conTableBorderColorDark.'" BorderColorLight="'.$conTableBorderColorLight.'">');
     ShowHTML('        <tr bgcolor="'.$conTrBgColor.'" align="center">');
-    ShowHTML('          <td><font size="1"><b>Descrição</font></td>');
-    ShowHTML('          <td><font size="1"><b>Tipo restricao</font></td>');
-    ShowHTML('          <td><font size="1"><b>Inclusão</font></td>');
-    ShowHTML('          <td><font size="1"><b>Operações</font></td>');
+    ShowHTML('          <td><b>Descrição</td>');
+    ShowHTML('          <td><b>Tipo restricao</td>');
+    ShowHTML('          <td><b>Inclusão</td>');
+    ShowHTML('          <td><b>Operações</td>');
     ShowHTML('        </tr>');
     if (count($RS)<=0) {
       // Se não foram selecionados registros, exibe mensagem
@@ -2694,10 +2708,10 @@ function Restricoes() {
       foreach($RS as $row) {
         $w_cor = ($w_cor==$conTrBgColor || $w_cor=='') ? $w_cor=$conTrAlternateBgColor : $w_cor=$conTrBgColor;
         ShowHTML('      <tr bgcolor="'.$w_cor.'" valign="top">');
-        ShowHTML('        <td><font size="1"><A class="HL" HREF="#" onClick="window.open(\''.$w_pagina.$par.'&R='.$w_pagina.$par.'&O=V&w_chave='.$w_chave.'&w_chave_aux='.f($row,'sq_restricao').'&P1=10&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP='.$TP.'&SG='.$SG.'\',\'Restricao\',\'width=600, height=350, top=50, left=50, toolbar=no, scrollbars=yes, resizable=yes, status=no\'); return false;" title="Clique para exibir os dados!">'.f($row,'descricao').'</A></td>');
-        ShowHTML('        <td><font size="1">'.f($row,'nm_tp_restricao').'</td>');
-        ShowHTML('        <td align="center"><font size="1">'.FormataDataEdicao(f($row,'inclusao')).'</td>');
-        ShowHTML('        <td align="top" nowrap><font size="1">');
+        ShowHTML('        <td><A class="HL" HREF="#" onClick="window.open(\''.$w_pagina.$par.'&R='.$w_pagina.$par.'&O=V&w_chave='.$w_chave.'&w_chave_aux='.f($row,'sq_restricao').'&P1=10&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP='.$TP.'&SG='.$SG.'\',\'Restricao\',\'width=600, height=350, top=50, left=50, toolbar=no, scrollbars=yes, resizable=yes, status=no\'); return false;" title="Clique para exibir os dados!">'.f($row,'descricao').'</A></td>');
+        ShowHTML('        <td>'.f($row,'nm_tp_restricao').'</td>');
+        ShowHTML('        <td align="center">'.FormataDataEdicao(f($row,'inclusao')).'</td>');
+        ShowHTML('        <td align="top" nowrap>');
         if ($w_acesso==1) {
           ShowHTML('          <A class="HL" HREF="'.$w_dir.$w_pagina.$par.'&R='.$w_pagina.$par.'&O=A&w_chave='.$w_chave.'&w_chave_aux='.f($row,'sq_restricao').'&P1='.$P1.'&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP='.$TP.'&SG='.$SG.'">Alterar</A>&nbsp');
           ShowHTML('          <A class="HL" HREF="'.$w_dir.$w_pagina.'GRAVA&R='.$w_pagina.$par.'&O=E&w_chave='.$w_chave.'&w_chave_aux='.f($row,'sq_restricao').'&w_descricao='.f($row,'descricao').'&w_providencia='.f($row,'providencia').'&w_cd_tipo_restricao='.f($row,'cd_tipo_restricao').'&P1='.$P1.'&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP='.$TP.'&SG='.$SG.'" onClick="return confirm(\'Confirma a exclusão do registro?\');">Excluir</A>&nbsp');
@@ -2734,8 +2748,8 @@ function Restricoes() {
     } 
     ShowHTML('    <tr valign="top" >');
     SelecaoTPRestricao_IS('<U>T</U>ipo de restrição:','T','Selecione o tipo de restrição',$w_cd_tipo_restricao,'w_cd_tipo_restricao',null,null);
-    ShowHTML('    <tr><td colspan=2><font size="1"><b><u>D</u>escrição:</b><br><textarea '.$w_Disabled.' accesskey="D" name="w_descricao" class="STI" ROWS=5 cols=75 title="Descreva os fatores que podem prejudicar o andamento da ação. As restrições podem ser administrativas, ambientais, de auditoria, de licitações, financeiras, institucuionais, políticas, tecnológicas, judiciais, etc. Cada tipo de restrição deve ser inserido separadamente.">'.$w_descricao.'</TEXTAREA></td>');
-    ShowHTML('    <tr><td colspan=2><font size="1"><b><u>P</u>rovidência:</b><br><textarea '.$w_Disabled.' accesskey="P" name="w_providencia" class="STI" ROWS=5 cols=75 title="Informe as providências que devem ser tomadas para a superação da restrição.">'.$w_providencia.'</TEXTAREA></td>');
+    ShowHTML('    <tr><td colspan=2><b><u>D</u>escrição:</b><br><textarea '.$w_Disabled.' accesskey="D" name="w_descricao" class="STI" ROWS=5 cols=75 title="Descreva os fatores que podem prejudicar o andamento da ação. As restrições podem ser administrativas, ambientais, de auditoria, de licitações, financeiras, institucuionais, políticas, tecnológicas, judiciais, etc. Cada tipo de restrição deve ser inserido separadamente.">'.$w_descricao.'</TEXTAREA></td>');
+    ShowHTML('    <tr><td colspan=2><b><u>P</u>rovidência:</b><br><textarea '.$w_Disabled.' accesskey="P" name="w_providencia" class="STI" ROWS=5 cols=75 title="Informe as providências que devem ser tomadas para a superação da restrição.">'.$w_providencia.'</TEXTAREA></td>');
     ShowHTML('    <tr><td align="center" colspan=2><hr>');
     if ($O=='E') {
       ShowHTML('   <input class="STB" type="submit" name="Botao" value="Excluir">');
@@ -2754,7 +2768,7 @@ function Restricoes() {
     if ($w_tipo!='WORD' && $O=='V') {
       ShowHTML('<tr><td align="right"colspan="2">');
       ShowHTML('&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<IMG ALIGN="CENTER" TITLE="Imprimir" SRC="images/impressora.jpg" onClick="window.print();">');
-      ShowHTML('&nbsp;&nbsp;<IMG ALIGN="CENTER" TITLE="Gerar word" SRC="images/word.gif" onClick="window.open(\''.$w_pagina.$par.'&O=V&w_chave='.$w_chave.'&w_chave_aux='.$w_chave_aux.'&w_cd_programa='.$w_cd_programa.'&w_tipo=WORD&P1=10&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP='.$TP.'&SG='.$SG.'\',\'RestricaoWord\',\'width=600, height=350, top=65, left=65, menubar=yes, scrollbars=yes, resizable=yes, status=no\');">');
+      ShowHTML('&nbsp;&nbsp;<a target="MetaWord" href="'.$w_dir.$w_pagina.$par.'&O=V&w_chave='.$w_chave.'&w_chave_aux='.$w_chave_aux.'&w_cd_programa='.$w_cd_programa.'&w_tipo=WORD&P1=10&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP='.$TP.'&SG='.$SG.MontaFiltro('GET').'"><IMG border=0 ALIGN="CENTER" TITLE="Gerar word" SRC="images/word.gif"></a>');
       ShowHTML('</td></tr>');
     } 
     ShowHTML('    <tr><td align="center" bgcolor="#FAEBD7" colspan="2">');
@@ -2764,16 +2778,16 @@ function Restricoes() {
     $RS = db_getPPALocalizador_IS::getInstanceOf($dbms,$w_cliente,$w_ano,$w_cd_programa,$w_cd_acao,$w_cd_unidade,null);
     if (count($RS)>1) {
       $RS = db_getPPALocalizador_IS::getInstanceOf($dbms,$w_cliente,$w_ano,$w_cd_programa,$w_cd_acao,$w_cd_unidade,$w_cd_subacao);
-      ShowHTML('            <tr><td colspan="2"><font size="1">Localizador:<b><br><font size=2>'.Nvl(f($RS,'nome'),'---').'</font></td></tr>');
+      ShowHTML('            <tr><td colspan="2">Localizador:<b><br><font size=2>'.Nvl(f($RS,'nome'),'---').'</font></td></tr>');
     } 
-    ShowHTML('            <tr><td colspan="2"><font size="1">Descrição da restrição:<b><br><font size=2>'.Nvl($w_descricao,'---').'</font></td></tr>');
-    ShowHTML('            <tr><td><font size="1">Tipo de restrição<b><br>'.Nvl($w_nm_tipo_restricao,'---').'</td>');
-    ShowHTML('            <tr><td><font size="1">Data inclusão:<b><br>'.Nvl(FormataDataEdicao($w_inclusao),'---').'</td>');
+    ShowHTML('            <tr><td colspan="2">Descrição da restrição:<b><br><font size=2>'.Nvl($w_descricao,'---').'</font></td></tr>');
+    ShowHTML('            <tr><td>Tipo de restrição<b><br>'.Nvl($w_nm_tipo_restricao,'---').'</td>');
+    ShowHTML('            <tr><td>Data inclusão:<b><br>'.Nvl(FormataDataEdicao($w_inclusao),'---').'</td>');
     ShowHTML('          </TABLE>');
     ShowHTML('      </table>');
     ShowHTML('    <tr bgcolor="'.$conTrBgColor.'"><td align="center" colspan="2">');
     ShowHTML('      <table width="100%" border="0">');
-    ShowHTML('     <tr><td valign="top"><font size="1"><b>Providência:</b><br>'.Nvl($w_providencia,'---').'</td>');
+    ShowHTML('     <tr><td valign="top"><b>Providência:</b><br>'.Nvl($w_providencia,'---').'</td>');
     ShowHTML('           </table></td></tr>');
     ShowHTML('        <tr><td align="center"><hr>');
     if ($w_tipo!='WORD') {
@@ -2853,7 +2867,7 @@ function Interessados() {
   ShowHTML('<div align=center><center>');
   ShowHTML('<table border="0" cellpadding="0" cellspacing="0" width="100%">');
   if ($O=='L') {
-    ShowHTML('      <tr><td colspan=3><font size=1>Usuários que devem receber emails dos encaminhamentos desta ação.</font></td></tr>');
+    ShowHTML('      <tr><td colspan=3>Usuários que devem receber emails dos encaminhamentos desta ação.</td></tr>');
     ShowHTML('      <tr><td colspan=3 align="center" height="1" bgcolor="#000000"></td></tr>');
     // Exibe a quantidade de registros apresentados na listagem e o cabeçalho da tabela de listagem
     if ($P1!=4) {
@@ -2864,20 +2878,20 @@ function Interessados() {
       ShowHTML('<tr><td colspan=3 align="center" bgcolor="#FAEBD7"><table border=1 width="100%"><tr><td>');
       ShowHTML('    <TABLE WIDTH="100%" CELLSPACING="'.$conTableCellSpacing.'" CELLPADDING="'.$conTableCellPadding.'" BorderColorDark="'.$conTableBorderColorDark.'" BorderColorLight="'.$conTableBorderColorLight.'">');
       ShowHTML('        <tr valign="top">');
-      if (f($RS1,'cd_acao')>'') ShowHTML('          <td><font size="1"><b>Ação PPA: </b><br>'.f($RS1,'cd_unidade').'.'.f($RS1,'cd_ppa_pai').'.'.f($RS1,'cd_acao').' - '.f($RS1,'nm_ppa').'</b>');
-      if (f($RS1,'sq_isprojeto')>'') ShowHTML('        <td><font size="1"><b>Programa interno: </b><br>'.f($RS1,'nm_pri').' </b>');
+      if (f($RS1,'cd_acao')>'') ShowHTML('          <td><b>Ação PPA: </b><br>'.f($RS1,'cd_unidade').'.'.f($RS1,'cd_ppa_pai').'.'.f($RS1,'cd_acao').' - '.f($RS1,'nm_ppa').'</b>');
+      if (f($RS1,'sq_isprojeto')>'') ShowHTML('        <td><b>Programa interno: </b><br>'.f($RS1,'nm_pri').' </b>');
       ShowHTML('    </TABLE>');
       ShowHTML('</table>');
       ShowHTML('<tr><td colspan=3>&nbsp;');
       ShowHTML('<tr><td colspan=2><font size="2"><a accesskey="F" class="SS" href="javascript:window.close();"><u>F</u>echar</a>&nbsp;');
     } 
-    ShowHTML('    <td align="right"><font size="1"><b>Registros existentes: '.count($RS));
+    ShowHTML('    <td align="right"><b>Registros existentes: '.count($RS));
     ShowHTML('<tr><td align="center" colspan=3>');
     ShowHTML('    <TABLE WIDTH="100%" bgcolor="'.$conTableBgColor.'" BORDER="'.$conTableBorder.'" CELLSPACING="'.$conTableCellSpacing.'" CELLPADDING="'.$conTableCellPadding.'" BorderColorDark="'.$conTableBorderColorDark.'" BorderColorLight="'.$conTableBorderColorLight.'">');
     ShowHTML('        <tr bgcolor="'.$conTrBgColor.'" align="center">');
-    ShowHTML('          <td><font size="1"><b>Pessoa</font></td>');
-    ShowHTML('          <td><font size="1"><b>Envia e-mail</font></td>');
-    if ($P1!=4) ShowHTML('          <td><font size="1"><b>Operações</font></td>');
+    ShowHTML('          <td><b>Pessoa</td>');
+    ShowHTML('          <td><b>Envia e-mail</td>');
+    if ($P1!=4) ShowHTML('          <td><b>Operações</td>');
     ShowHTML('        </tr>');
     if (count($RS)<=0) {
       // Se não foram selecionados registros, exibe mensagem
@@ -2887,10 +2901,10 @@ function Interessados() {
       foreach($RS as $row) {
         $w_cor = ($w_cor==$conTrBgColor || $w_cor=='') ? $w_cor=$conTrAlternateBgColor : $w_cor=$conTrBgColor;
         ShowHTML('      <tr bgcolor="'.$w_cor.'" valign="top">');
-        ShowHTML('        <td><font size="1">'.ExibePessoa('../',$w_cliente,f($row,'sq_pessoa'),$TP,f($row,'nome').' ('.f($row,'lotacao').')').'</td>');
-        ShowHTML('        <td align="center"><font size="1">'.str_replace('N','Não',str_replace('S','Sim',f($row,'envia_email'))).'</td>');
+        ShowHTML('        <td>'.ExibePessoa('../',$w_cliente,f($row,'sq_pessoa'),$TP,f($row,'nome').' ('.f($row,'lotacao').')').'</td>');
+        ShowHTML('        <td align="center">'.str_replace('N','Não',str_replace('S','Sim',f($row,'envia_email'))).'</td>');
         if ($P1!=4) {
-          ShowHTML('        <td align="top" nowrap><font size="1">');
+          ShowHTML('        <td align="top" nowrap>');
           ShowHTML('          <A class="HL" HREF="'.$w_dir.$w_pagina.'GRAVA&R='.$w_pagina.$par.'&O=E&w_chave='.$w_chave.'&w_chave_aux='.f($row,'sq_pessoa').'&P1='.$P1.'&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP='.$TP.'&SG='.$SG.'" onClick="return confirm(\'Confirma a exclusão do registro?\');">Excluir</A>&nbsp');
           ShowHTML('        </td>');
         } 
@@ -2915,7 +2929,7 @@ function Interessados() {
       SelecaoPessoa('<u>P</u>essoa:','N','Selecione a pessoa que deve receber e-mails com informações sobre a ação.',$w_chave_aux,null,'w_chave_aux','USUARIOS');
     } else {
       ShowHTML('<INPUT type="hidden" name="w_chave_aux" value="'.$w_chave_aux.'">');
-      ShowHTML('      <tr><td valign="top"><font size="1"><b>Pessoa:</b><br>'.$w_nome.'</td>');
+      ShowHTML('      <tr><td valign="top"><b>Pessoa:</b><br>'.$w_nome.'</td>');
     } 
     ShowHTML('          </table>');
     ShowHTML('      <tr><td align="center" colspan=4><hr>');
@@ -3000,34 +3014,34 @@ function Anexos() {
   if ($O=='L') {
     $RS1 = db_getSolicData_IS::getInstanceOf($dbms,$w_chave,$SG);
     if (Nvl(f($RS1,'cd_programa'),'')>'' && Nvl(f($RS1,'cd_acao'),'')>'' && Nvl(f($RS1,'cd_unidade'),'')>'') {
-      ShowHTML('      <tr><td colspan="2"><font size="1">Programa Codº '.f($RS1,'cd_programa').' - '.f($RS1,'nm_ppa_pai').'</td>');
-      ShowHTML('      <tr><td colspan="2"><font size="1">Ação Codº '.f($RS1,'cd_unidade').'.'.f($RS1,'cd_acao').' - '.f($RS1,'nm_ppa').'</td>');
+      ShowHTML('      <tr><td colspan="2">Programa Codº '.f($RS1,'cd_programa').' - '.f($RS1,'nm_ppa_pai').'</td>');
+      ShowHTML('      <tr><td colspan="2">Ação Codº '.f($RS1,'cd_unidade').'.'.f($RS1,'cd_acao').' - '.f($RS1,'nm_ppa').'</td>');
     } 
     // Exibe a quantidade de registros apresentados na listagem e o cabeçalho da tabela de listagem 
-    ShowHTML('<tr><td><font size="1"><a accesskey="I" class="SS" href="'.$w_dir.$w_pagina.$par.'&R='.$w_pagina.$par.'&O=I&w_chave='.$w_chave.'&P1='.$P1.'&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP='.$TP.'&SG='.$SG.'"><u>I</u>ncluir</a>&nbsp;');
-    ShowHTML('    <td align="right"><font size="1"><b>Registros existentes: '.count($RS));
+    ShowHTML('<tr><td><a accesskey="I" class="SS" href="'.$w_dir.$w_pagina.$par.'&R='.$w_pagina.$par.'&O=I&w_chave='.$w_chave.'&P1='.$P1.'&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP='.$TP.'&SG='.$SG.'"><u>I</u>ncluir</a>&nbsp;');
+    ShowHTML('    <td align="right"><b>Registros existentes: '.count($RS));
     ShowHTML('<tr><td align="center" colspan=3>');
     ShowHTML('    <TABLE WIDTH="100%" bgcolor="'.$conTableBgColor.'" BORDER="'.$conTableBorder.'" CELLSPACING="'.$conTableCellSpacing.'" CELLPADDING="'.$conTableCellPadding.'" BorderColorDark="'.$conTableBorderColorDark.'" BorderColorLight="'.$conTableBorderColorLight.'">');
     ShowHTML('        <tr bgcolor="'.$conTrBgColor.'" align="center">');
-    ShowHTML('          <td><font size="1"><b>Título</font></td>');
-    ShowHTML('          <td><font size="1"><b>Descrição</font></td>');
-    ShowHTML('          <td><font size="1"><b>Tipo</font></td>');
-    ShowHTML('          <td><font size="1"><b>KB</font></td>');
-    ShowHTML('          <td><font size="1"><b>Operações</font></td>');
+    ShowHTML('          <td><b>Título</td>');
+    ShowHTML('          <td><b>Descrição</td>');
+    ShowHTML('          <td><b>Tipo</td>');
+    ShowHTML('          <td><b>KB</td>');
+    ShowHTML('          <td><b>Operações</td>');
     ShowHTML('        </tr>');
     if (count($RS)<=0) {
       // Se não foram selecionados registros, exibe mensagem 
-      ShowHTML('      <tr bgcolor="'.$conTrBgColor.'"><td colspan=7 align="center"><font size="1"><b>Não foram encontrados registros.</b></td></tr>');
+      ShowHTML('      <tr bgcolor="'.$conTrBgColor.'"><td colspan=7 align="center"><b>Não foram encontrados registros.</b></td></tr>');
     } else {
       // Lista os registros selecionados para listagem 
       foreach($RS as $row) {
         $w_cor = ($w_cor==$conTrBgColor || $w_cor=='') ? $w_cor=$conTrAlternateBgColor : $w_cor=$conTrBgColor;
         ShowHTML('      <tr bgcolor="'.$w_cor.'" valign="top">');
-        ShowHTML('        <td><font size="1">'.LinkArquivo('HL',$w_cliente,f($row,'chave_aux'),'_blank','Clique para exibir o arquivo em outra janela.',f($row,'nome'),null).'</td>');
-        ShowHTML('        <td><font size="1">'.Nvl(f($row,'descricao'),'---').'</td>');
-        ShowHTML('        <td><font size="1">'.f($row,'tipo').'</td>');
-        ShowHTML('        <td align="right"><font size="1">'.round((f($row,'tamanho')/1024),1).'&nbsp;</td>');
-        ShowHTML('        <td align="top" nowrap><font size="1">');
+        ShowHTML('        <td>'.LinkArquivo('HL',$w_cliente,f($row,'chave_aux'),'_blank','Clique para exibir o arquivo em outra janela.',f($row,'nome'),null).'</td>');
+        ShowHTML('        <td>'.Nvl(f($row,'descricao'),'---').'</td>');
+        ShowHTML('        <td>'.f($row,'tipo').'</td>');
+        ShowHTML('        <td align="right">'.round((f($row,'tamanho')/1024),1).'&nbsp;</td>');
+        ShowHTML('        <td align="top" nowrap>');
         ShowHTML('          <A class="HL" HREF="'.$w_dir.$w_pagina.$par.'&R='.$w_pagina.$par.'&O=A&w_chave='.$w_chave.'&w_chave_aux='.f($row,'chave_aux').'&P1='.$P1.'&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP='.$TP.'&SG='.$SG.'">Alterar</A>&nbsp');
         ShowHTML('          <A class="HL" HREF="'.$w_dir.$w_pagina.$par.'&R='.$w_pagina.$par.'&O=E&w_chave='.$w_chave.'&w_chave_aux='.f($row,'chave_aux').'&P1='.$P1.'&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP='.$TP.'&SG='.$SG.'">Excluir</A>&nbsp');
         ShowHTML('        </td>');
@@ -3058,9 +3072,9 @@ function Anexos() {
       ShowHTML('      <tr><td align="center" bgcolor="#D0D0D0" style="border: 2px solid rgb(0,0,0);"><font size="2"><b><font color="#BC3131">ATENÇÃO</font>: o tamanho máximo aceito para o arquivo é de '.(f($RS,'upload_maximo')/1024).' KBytes</b>.</font></td>');
       ShowHTML('<INPUT type="hidden" name="w_upload_maximo" value="'.f($RS,'upload_maximo').'">');
     } 
-    ShowHTML('      <tr><td><font size="1"><b><u>T</u>ítulo:</b><br><input '.$w_Disabled.' accesskey="T" type="text" name="w_nome" class="STI" SIZE="75" MAXLENGTH="255" VALUE="'.$w_nome.'" title="Informe o tíulo do arquivo."></td>');
-    ShowHTML('      <tr><td><font size="1"><b><u>D</u>escrição:</b><br><textarea '.$w_Disabled.' accesskey="D" name="w_descricao" class="STI" ROWS=5 cols=65 title="Descreva o conteúdo do arquivo.">'.$w_descricao.'</TEXTAREA></td>');
-    ShowHTML('      <tr><td><font size="1"><b>A<u>r</u>quivo:</b><br><input '.$w_Disabled.' accesskey="R" type="file" name="w_caminho" class="STI" SIZE="80" MAXLENGTH="100" VALUE="" title="OBRIGATÓRIO. Clique no botão ao lado para localizar o arquivo. Ele será transferido automaticamente para o servidor.">');
+    ShowHTML('      <tr><td><b><u>T</u>ítulo:</b><br><input '.$w_Disabled.' accesskey="T" type="text" name="w_nome" class="STI" SIZE="75" MAXLENGTH="255" VALUE="'.$w_nome.'" title="Informe o tíulo do arquivo."></td>');
+    ShowHTML('      <tr><td><b><u>D</u>escrição:</b><br><textarea '.$w_Disabled.' accesskey="D" name="w_descricao" class="STI" ROWS=5 cols=65 title="Descreva o conteúdo do arquivo.">'.$w_descricao.'</TEXTAREA></td>');
+    ShowHTML('      <tr><td><b>A<u>r</u>quivo:</b><br><input '.$w_Disabled.' accesskey="R" type="file" name="w_caminho" class="STI" SIZE="80" MAXLENGTH="100" VALUE="" title="OBRIGATÓRIO. Clique no botão ao lado para localizar o arquivo. Ele será transferido automaticamente para o servidor.">');
     if ($w_caminho>'') ShowHTML('              <b>'.LinkArquivo('SS',$w_cliente,$w_caminho,'_blank','Clique para exibir o arquivo atual.','Exibir',null).'</b>');
     ShowHTML('      <tr><td align="center"><hr>');
     if ($O=='E') {
@@ -3110,18 +3124,18 @@ function VisualNovo() {
   } else {
     ShowHTML('Visualização de Ação');
   } 
-  ShowHTML('</FONT><TR><TD ALIGN="RIGHT"><B><font size=1 COLOR="#000000">'.DataHora().'</B>');
+  ShowHTML('</FONT><TR><TD ALIGN="RIGHT"><B><font COLOR="#000000">'.DataHora().'</B>');
   if ($w_tipo!='WORD') {
     ShowHTML('&nbsp;&nbsp;<IMG ALIGN="CENTER" TITLE="Imprimir" SRC="images/impressora.jpg" onClick="window.print();">');
-    ShowHTML('&nbsp;&nbsp;<IMG ALIGN="CENTER" TITLE="Gerar word" SRC="images/word.gif" onClick="window.open(\''.$w_pagina.'Visual&R='.$w_pagina.$par.'&O=L&w_chave='.$w_chave.'&w_tipo=word&P1='.$P1.'&P2='.$P2.'&P3='.$P3.'&P4=1&TP='.$TP.'&SG='.$SG.MontaFiltro('GET').'\',\'VisualAcaoWord\',\'menubar=yes resizable=yes scrollbars=yes\');">');
+    ShowHTML('&nbsp;&nbsp;<a target="MetaWord" href="'.$w_dir.$w_pagina.'Visual&R='.$w_pagina.$par.'&O=L&w_chave='.$w_chave.'&w_tipo=word&P1='.$P1.'&P2='.$P2.'&P3='.$P3.'&P4=1&TP='.$TP.'&SG='.$SG.MontaFiltro('GET').'"><IMG border=0 ALIGN="CENTER" TITLE="Gerar word" SRC="images/word.gif"></a>');    
   } 
   ShowHTML('</TD></TR>');
   ShowHTML('</FONT></B></TD></TR></TABLE>');
   ShowHTML('<HR>');
-  if ($w_tipo>'' && $w_tipo!='WORD') ShowHTML('<center><B><font size=1>Clique <a class="HL" href="javascript:history.back(1);">aqui</a> para voltar à tela anterior</font></b></center>');
+  if ($w_tipo>'' && $w_tipo!='WORD') ShowHTML('<center><B>Clique <a class="HL" href="javascript:history.back(1);">aqui</a> para voltar à tela anterior</b></center>');
   // Chama a rotina de visualização dos dados da ação, na opção 'Listagem'
   ShowHTML(VisualAcao($w_chave,'L',$w_usuario,$P1,$P4));
-  if ($w_tipo>'' && $w_tipo!='WORD') ShowHTML('<center><B><font size=1>Clique <a class="HL" href="javascript:history.back(1);">aqui</a> para voltar à tela anterior</font></b></center>');
+  if ($w_tipo>'' && $w_tipo!='WORD') ShowHTML('<center><B>Clique <a class="HL" href="javascript:history.back(1);">aqui</a> para voltar à tela anterior</b></center>');
   if ($w_tipo!='WORD') Rodape();
 } 
 // =========================================================================
@@ -3151,14 +3165,14 @@ function Visual() {
   ShowHTML('</TABLE></TD></TR>');
   if ($w_tipo>'' && $w_tipo!='WORD') {
     ShowHTML('<tr><td colspan="2">');
-    ShowHTML('<div align="center"><b><font size="1">Clique <a class="HL" href="javascript:history.back(1);">aqui</a> para voltar à tela anterior</b></font></div>');
+    ShowHTML('<div align="center"><b>Clique <a class="HL" href="javascript:history.back(1);">aqui</a> para voltar à tela anterior</b></div>');
     ShowHTML('</td</tr>');
   }
   // Chama a rotina de visualização dos dados da ação, na opção 'Listagem'
   ShowHTML(VisualAcao($w_chave,'L',$w_usuario,$P1,$P4,'sim','sim','sim','sim','sim','sim','sim','sim','sim','sim','sim','sim'));
   if ($w_tipo>'' && $w_tipo!='WORD') {
     ShowHTML('<tr><td colspan="2">');
-    ShowHTML('<div align="center"><b><font size="1">Clique <a class="HL" href="javascript:history.back(1);">aqui</a> para voltar à tela anterior</b></font></div>');
+    ShowHTML('<div align="center"><b>Clique <a class="HL" href="javascript:history.back(1);">aqui</a> para voltar à tela anterior</b></div>');
     ShowHTML('</td</tr>');    
   }
   ShowHTML('</DIV>');
@@ -3216,7 +3230,7 @@ function Excluir() {
   ShowHTML('<INPUT type="hidden" name="w_tramite" value="'.f($RS,'sq_siw_tramite').'">');
   ShowHTML('<tr bgcolor="'.$conTrBgColor.'"><td align="center">');
   ShowHTML('  <table width="97%" border="0">');
-  ShowHTML('      <tr><td align="LEFT" colspan=4><font size="1"><b><U>A</U>ssinatura Eletrônica:<BR> <INPUT ACCESSKEY="A" class="STI" type="PASSWORD" name="w_assinatura" size="30" maxlength="30" value=""></td></tr>');
+  ShowHTML('      <tr><td align="LEFT" colspan=4><b><U>A</U>ssinatura Eletrônica:<BR> <INPUT ACCESSKEY="A" class="STI" type="PASSWORD" name="w_assinatura" size="30" maxlength="30" value=""></td></tr>');
   ShowHTML('    <tr><td align="center" colspan=4><hr>');
   ShowHTML('      <input class="STB" type="submit" name="Botao" value="Excluir">');
   ShowHTML('      <input class="STB" type="button" onClick="history.back(1);" name="Botao" value="Abandonar">');
@@ -3306,9 +3320,9 @@ function Encaminhamento() {
     SelecaoFase('<u>F</u>ase da ação:','F','Se deseja alterar a fase atual da ação, selecione a fase para a qual deseja enviá-la.',$w_novo_tramite,$w_menu,'w_novo_tramite',null,null);
     SelecaoPessoa('<u>D</u>estinatário:','D','Selecione, na relação, um destinatário para a ação.',$w_destinatario,null,'w_destinatario','USUARIOS');
   } 
-  ShowHTML('    <tr><td valign="top" colspan=2><font size="1"><b>D<u>e</u>spacho:</b><br><textarea '.$w_Disabled.' accesskey="E" name="w_despacho" class="STI" ROWS=5 cols=75 title="Informe o que o destinatário deve fazer quando receber a ação.">'.$w_despacho.'</TEXTAREA></td>');
+  ShowHTML('    <tr><td valign="top" colspan=2><b>D<u>e</u>spacho:</b><br><textarea '.$w_Disabled.' accesskey="E" name="w_despacho" class="STI" ROWS=5 cols=75 title="Informe o que o destinatário deve fazer quando receber a ação.">'.$w_despacho.'</TEXTAREA></td>');
   ShowHTML('      </table>');
-  ShowHTML('      <tr><td align="LEFT" colspan=4><font size="1"><b><U>A</U>ssinatura Eletrônica:<BR> <INPUT ACCESSKEY="A" class="STI" type="PASSWORD" name="w_assinatura" size="30" maxlength="30" value=""></td></tr>');
+  ShowHTML('      <tr><td align="LEFT" colspan=4><b><U>A</U>ssinatura Eletrônica:<BR> <INPUT ACCESSKEY="A" class="STI" type="PASSWORD" name="w_assinatura" size="30" maxlength="30" value=""></td></tr>');
   ShowHTML('    <tr><td align="center" colspan=4><hr>');
   ShowHTML('      <input class="STB" type="submit" name="Botao" value="Enviar">');
   if ($P1!=1) {
@@ -3378,13 +3392,14 @@ function Anotar() {
   ShowHTML('<INPUT type="hidden" name="w_troca" value="">');
   ShowHTML('<INPUT type="hidden" name="w_menu" value="'.$w_menu.'">');
   $RS = db_getSolicData_IS::getInstanceOf($dbms,$w_chave,'ISACGERAL');
+  foreach ($RS as $row) {$RS=$row; break;}
   ShowHTML('<INPUT type="hidden" name="w_tramite" value="'.f($RS,'sq_siw_tramite').'">');
   ShowHTML('<tr bgcolor="'.$conTrBgColor.'"><td align="center">');
   ShowHTML('  <table width="97%" border="0">');
   ShowHTML('    <tr><td valign="top" colspan="2"><table border=0 width="100%" cellspacing=0><tr valign="top">');
-  ShowHTML('    <tr><td valign="top"><font size="1"><b>A<u>n</u>otação:</b><br><textarea '.$w_Disabled.' accesskey="N" name="w_observacao" class="STI" ROWS=5 cols=75 title="Redija a anotação desejada.">'.$w_observacao.'</TEXTAREA></td>');
+  ShowHTML('    <tr><td valign="top"><b>A<u>n</u>otação:</b><br><textarea '.$w_Disabled.' accesskey="N" name="w_observacao" class="STI" ROWS=5 cols=75 title="Redija a anotação desejada.">'.$w_observacao.'</TEXTAREA></td>');
   ShowHTML('      </table>');
-  ShowHTML('      <tr><td align="LEFT" colspan=4><font size="1"><b><U>A</U>ssinatura Eletrônica:<BR> <INPUT ACCESSKEY="A" class="STI" type="PASSWORD" name="w_assinatura" size="30" maxlength="30" value=""></td></tr>');
+  ShowHTML('      <tr><td align="LEFT" colspan=4><b><U>A</U>ssinatura Eletrônica:<BR> <INPUT ACCESSKEY="A" class="STI" type="PASSWORD" name="w_assinatura" size="30" maxlength="30" value=""></td></tr>');
   ShowHTML('    <tr><td align="center" colspan=4><hr>');
   ShowHTML('      <input class="STB" type="submit" name="Botao" value="Gravar">');
   ShowHTML('      <input class="STB" type="button" onClick="history.back(1);" name="Botao" value="Abandonar">');
@@ -3453,7 +3468,7 @@ function Concluir() {
   ShowHTML('<div align="center">');
   ShowHTML('<table width="95%" border="0" cellspacing="3">');
   // Chama a rotina de visualização dos dados da ação, na opção 'Listagem'
-  ShowHTML(VisualAcao($w_chave,'V',$w_usuario,$P1,$P4,'','','','','','','','','',''));
+  ShowHTML(VisualAcao($w_chave,'V',$w_usuario,$P1,$P4,'','','','','','','','','','','',''));
   ShowHTML('<HR>');
   ShowHTML('<tr bgcolor="'.$conTrBgColor.'"><td align="center">');
   ShowHTML('  <table width="97%" border="0">');
@@ -3468,7 +3483,9 @@ function Concluir() {
   $RS = db_getLinkData::getInstanceOf($dbms,$w_cliente,'ISTCAD');
   $RS = db_getSolicList_IS::getInstanceOf($dbms,f($RS,'sq_menu'),$w_usuario,'ISTCAD',5,
           null,null,null,null,null,null,
-          null,null,null,null);
+          null,null,null,null,
+          null,null,null,null,null,null,null,
+          null,null,null,null,$w_chave,null,null,null,null,null,$w_ano);
   $RS = SortArray($RS,'ordem','asc','fim','asc','prioridade','asc');
   $w_cont_t=0;
   foreach($RS as $row) {
@@ -3490,18 +3507,19 @@ function Concluir() {
   ShowHTML('<INPUT type="hidden" name="w_menu" value="'.$w_menu.'">');
   ShowHTML('<INPUT type="hidden" name="w_concluida" value="S">');
   $RS = db_getSolicData_IS::getInstanceOf($dbms,$w_chave,'ISACGERAL');
+  foreach($RS as $row){$RS=$row;break;}
   ShowHTML('<INPUT type="hidden" name="w_tramite" value="'.f($RS,'sq_siw_tramite').'">');
   if (Nvl(f($RS,'cd_acao'),'')>'') {
-    ShowHTML('              <td valign="top"><font size="1"><b>Iní<u>c</u>io da execução:</b><br><input readonly '.$w_Disabled.' accesskey="C" type="text" name="w_inicio_real" class="STI" SIZE="10" MAXLENGTH="10" VALUE="'.Nvl($w_inicio_real,'01/01/'.$w_ano).'" onKeyDown="FormataData(this,event);" title="Informe a data de início da execução da ação.(Usar formato dd/mm/aaaa)"></td>');
-    ShowHTML('              <td valign="top"><font size="1"><b><u>T</u>érmino da execução:</b><br><input readonly '.$w_Disabled.' accesskey="T" type="text" name="w_fim_real" class="STI" SIZE="10" MAXLENGTH="10" VALUE="'.Nvl($w_fim_real,'31/12/'.$w_ano).'" onKeyDown="FormataData(this,event);" title="Informe a data de término da execução da ação.(Usar formato dd/mm/aaaa)"></td>');
+    ShowHTML('              <td valign="top"><b>Iní<u>c</u>io da execução:</b><br><input readonly '.$w_Disabled.' accesskey="C" type="text" name="w_inicio_real" class="STI" SIZE="10" MAXLENGTH="10" VALUE="'.Nvl($w_inicio_real,'01/01/'.$w_ano).'" onKeyDown="FormataData(this,event);" title="Informe a data de início da execução da ação.(Usar formato dd/mm/aaaa)"></td>');
+    ShowHTML('              <td valign="top"><b><u>T</u>érmino da execução:</b><br><input readonly '.$w_Disabled.' accesskey="T" type="text" name="w_fim_real" class="STI" SIZE="10" MAXLENGTH="10" VALUE="'.Nvl($w_fim_real,'31/12/'.$w_ano).'" onKeyDown="FormataData(this,event);" title="Informe a data de término da execução da ação.(Usar formato dd/mm/aaaa)"></td>');
   } else {
-    ShowHTML('              <td valign="top"><font size="1"><b>Iní<u>c</u>io da execução:</b><br><input '.$w_Disabled.' accesskey="C" type="text" name="w_inicio_real" class="STI" SIZE="10" MAXLENGTH="10" VALUE="'.Nvl($w_inicio_real,'01/01/'.$w_ano).'" onKeyDown="FormataData(this,event);" title="Informe a data de início da execução da ação.(Usar formato dd/mm/aaaa)"></td>');
-    ShowHTML('              <td valign="top"><font size="1"><b><u>T</u>érmino da execução:</b><br><input '.$w_Disabled.' accesskey="T" type="text" name="w_fim_real" class="STI" SIZE="10" MAXLENGTH="10" VALUE="'.Nvl($w_fim_real,'31/12/'.$w_ano).'" onKeyDown="FormataData(this,event);" title="Informe a data de término da execução da ação.(Usar formato dd/mm/aaaa)"></td>');
+    ShowHTML('              <td valign="top"><b>Iní<u>c</u>io da execução:</b><br><input '.$w_Disabled.' accesskey="C" type="text" name="w_inicio_real" class="STI" SIZE="10" MAXLENGTH="10" VALUE="'.Nvl($w_inicio_real,'01/01/'.$w_ano).'" onKeyDown="FormataData(this,event);" title="Informe a data de início da execução da ação.(Usar formato dd/mm/aaaa)"></td>');
+    ShowHTML('              <td valign="top"><b><u>T</u>érmino da execução:</b><br><input '.$w_Disabled.' accesskey="T" type="text" name="w_fim_real" class="STI" SIZE="10" MAXLENGTH="10" VALUE="'.Nvl($w_fim_real,'31/12/'.$w_ano).'" onKeyDown="FormataData(this,event);" title="Informe a data de término da execução da ação.(Usar formato dd/mm/aaaa)"></td>');
   } 
-  ShowHTML('              <td valign="top"><font size="1"><b><u>R</u>ecurso executado:</b><br><input '.$w_Disabled.' accesskey="O" type="text" name="w_custo_real" class="STI" SIZE="18" MAXLENGTH="18" VALUE="'.$w_custo_real.'" onKeyDown="FormataValor(this,18,2,event);" title="Informe o valor que foi efetivamente gasto com a execução da ação."></td>');
+  ShowHTML('              <td valign="top"><b><u>R</u>ecurso executado:</b><br><input '.$w_Disabled.' accesskey="O" type="text" name="w_custo_real" class="STI" SIZE="18" MAXLENGTH="18" VALUE="'.$w_custo_real.'" onKeyDown="FormataValor(this,18,2,event);" title="Informe o valor que foi efetivamente gasto com a execução da ação."></td>');
   ShowHTML('          </table>');
-  ShowHTML('    <tr><td valign="top"><font size="1"><b>Nota d<u>e</u> conclusão:</b><br><textarea '.$w_Disabled.' accesskey="E" name="w_nota_conclusao" class="STI" ROWS=5 cols=75 title="Insira informações relevantes sobre o encerramento do exercício.">'.$w_nota_conclusao.'</TEXTAREA></td>');
-  ShowHTML('      <tr><td align="LEFT" colspan=4><font size="1"><b><U>A</U>ssinatura Eletrônica:<BR> <INPUT ACCESSKEY="A" class="STI" type="PASSWORD" name="w_assinatura" size="30" maxlength="30" value=""></td></tr>');
+  ShowHTML('    <tr><td valign="top"><b>Nota d<u>e</u> conclusão:</b><br><textarea '.$w_Disabled.' accesskey="E" name="w_nota_conclusao" class="STI" ROWS=5 cols=75 title="Insira informações relevantes sobre o encerramento do exercício.">'.$w_nota_conclusao.'</TEXTAREA></td>');
+  ShowHTML('      <tr><td align="LEFT" colspan=4><b><U>A</U>ssinatura Eletrônica:<BR> <INPUT ACCESSKEY="A" class="STI" type="PASSWORD" name="w_assinatura" size="30" maxlength="30" value=""></td></tr>');
   ShowHTML('    <tr><td align="center" colspan=4><hr>');
   ShowHTML('      <input class="STB" type="submit" name="Botao" value="Concluir">');
   if ($P1!=1) {
@@ -3528,20 +3546,20 @@ function Metalinha($l_chave,$l_chave_aux,$l_titulo,$l_resp,$l_setor,$l_inicio,$l
   $l_row='';
   $w_cor = ($w_cor==$conTrBgColor || $w_cor=='') ? $w_cor=$conTrAlternateBgColor : $w_cor=$conTrBgColor;
   $l_html.=chr(13).'      <tr bgcolor="'.$w_cor.'" valign="top">';
-  $l_html.=chr(13).'        <td nowrap '.$l_row.'><font size="1">';
+  $l_html.=chr(13).'        <td nowrap '.$l_row.'>';
   if ($l_fim < time() && $l_perc<100)
     $l_html.=chr(13).'           <img src="'.$conImgAtraso.'" border=0 width=15 height=15 align="center">';
   elseif ($l_perc<100)
     $l_html.=chr(13).'           <img src="'.$conImgNormal.'" border=0 width=15 height=15 align="center">';
   else
     $l_html.=chr(13).'           <img src="'.$conImgOkNormal.'" border=0 width=15 height=15 align="center">';
-  if (Nvl($l_word,0)==1) $l_html.=chr(13).'        <td><font size="1">'.$l_destaque.$l_titulo.'</b>';
+  if (Nvl($l_word,0)==1) $l_html.=chr(13).'        <td>'.$l_destaque.$l_titulo.'</b>';
   else                   $l_html.=chr(13).'<A class="HL" HREF="#" onClick="window.open(\'acao.php?par=AtualizaMeta&O=V&w_chave='.$l_chave.'&w_chave_aux='.$l_chave_aux.'&w_tipo=Volta&P1=10&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP='.$TP.'&SG='.$SG.'\',\'Meta\',\'width=600, height=350, top=50, left=50, toolbar=no, scrollbars=yes, resizable=yes, status=no\'); return false;" title="Clique para exibir os dados!">'.$l_destaque.$l_titulo.'</A>';
-  $l_html.=chr(13).'        <td align="center" '.$l_row.'><font size="1">'.$l_loa.'</td>';
-  $l_html.=chr(13).'        <td align="center" '.$l_row.'><font size="1">'.FormataDataEdicao($l_fim).'</td>';
-  $l_html.=chr(13).'        <td nowrap align="right" '.$l_row.'><font size="1">'.$l_perc.' %</td>';
+  $l_html.=chr(13).'        <td align="center" '.$l_row.'>'.$l_loa.'</td>';
+  $l_html.=chr(13).'        <td align="center" '.$l_row.'>'.FormataDataEdicao($l_fim).'</td>';
+  $l_html.=chr(13).'        <td nowrap align="right" '.$l_row.'>'.$l_perc.' %</td>';
   if ($l_oper=='S') {
-    $l_html.=chr(13).'        <td align="top" nowrap '.$l_row.'><font size="1">';
+    $l_html.=chr(13).'        <td align="top" nowrap '.$l_row.'>';
     // Se for listagem de metas no cadastramento da ação, exibe operações de alteração e exclusão
     if ($l_tipo=='PROJETO') {
       $l_html.=chr(13).'          <A class="HL" HREF="'.$w_dir.$w_pagina.$par.'&R='.$w_pagina.$par.'&O=A&w_chave='.$l_chave.'&w_chave_aux='.$l_chave_aux.'&P1='.$P1.'&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP='.$TP.'&SG='.$SG.'" title="Alterar">Alt</A>&nbsp';
@@ -3553,7 +3571,7 @@ function Metalinha($l_chave,$l_chave_aux,$l_titulo,$l_resp,$l_setor,$l_inicio,$l
     $l_html.=chr(13).'        </td>';
   } else {
     if ($l_tipo=='ETAPA') {
-      $l_html.=chr(13).'        <td align="top" nowrap '.$l_row.'><font size="1">';
+      $l_html.=chr(13).'        <td align="top" nowrap '.$l_row.'>';
       $l_html.=chr(13).'          <A class="HL" HREF="'.$w_dir.$w_pagina.$par.'&R='.$w_pagina.$par.'&O=V&w_chave='.$l_chave.'&w_chave_aux='.$l_chave_aux.'&P1='.$P1.'&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP='.$TP.'&SG='.$SG.'" title="Exibe os dados da meta">Exibir</A>&nbsp';
       $l_html.=chr(13).'        </td>';
     } 
@@ -3586,35 +3604,35 @@ function SolicMail($p_solic,$p_tipo) {
   // Recupera os dados da ação
   $RSM = db_getSolicData_IS::getInstanceOf($dbms,$p_solic,'ISACGERAL');
   foreach($RSM as $row){$RSM=$row; break;}
-  $w_nome = 'Ação '.f($RSM.'titulo');
+  $w_nome = 'Ação '.f($RSM,'titulo');
   $w_html .= chr(13).'<tr bgcolor="'.$conTrBgColor.'"><td align="center">';
   $w_html .= chr(13).'    <table width="99%" border="0">';
-  $w_html .= chr(13).'      <tr><td><font size=2>Ação: <b>'.f($RSM.'titulo').'</b></font></td>';
+  $w_html .= chr(13).'      <tr><td><font size=2>Ação: <b>'.f($RSM,'titulo').'</b></font></td>';
   // Identificação da ação
-  $w_html .= chr(13).'      <tr><td valign="top" colspan="2" align="center" bgcolor="#D0D0D0" style="border: 2px solid rgb(0,0,0);"><font size="1"><b>EXTRATO DA AÇÃO</td>';
+  $w_html .= chr(13).'      <tr><td valign="top" colspan="2" align="center" bgcolor="#D0D0D0" style="border: 2px solid rgb(0,0,0);"><b>EXTRATO DA AÇÃO</td>';
   // Se a classificação foi informada, exibe.
-  if (Nvl(f($RSM,'sq_cc'),'')>'') $w_html .= chr(13).'      <tr><td valign="top"><font size="1">Classificação:<br><b>'.f($RSM.'cc_nome').' </b></td>';
+  if (Nvl(f($RSM,'sq_cc'),'')>'') $w_html .= chr(13).'      <tr><td valign="top">Classificação:<br><b>'.f($RSM,'cc_nome').' </b></td>';
   $w_html .= chr(13).'      <tr><td valign="top" colspan="2"><table border=0 width="100%" cellspacing=0>';
   $w_html .= chr(13).'          <tr valign="top">';
-  $w_html .= chr(13).'          <td><font size="1">Responsável pelo monitoramento:<br><b>'.f($RSM.'nm_sol').'</b></td>';
-  $w_html .= chr(13).'          <td><font size="1">Unidade responsável pelo monitoramento:<br><b>'.f($RSM.'nm_unidade_resp').'</b></td>';
+  $w_html .= chr(13).'          <td>Responsável pelo monitoramento:<br><b>'.f($RSM,'nm_sol').'</b></td>';
+  $w_html .= chr(13).'          <td>Unidade responsável pelo monitoramento:<br><b>'.f($RSM,'nm_unidade_resp').'</b></td>';
   $w_html .= chr(13).'          <tr valign="top">';
-  $w_html .= chr(13).'          <td><font size="1">Data de recebimento:<br><b>'.$FormataDataEdicao[f($RSM.'inicio')].' </b></td>';
-  $w_html .= chr(13).'          <td><font size="1">Limite para conclusão:<br><b>'.$FormataDataEdicao[f($RSM.'fim')].' </b></td>';
+  $w_html .= chr(13).'          <td>Data de recebimento:<br><b>'.$FormataDataEdicao[f($RSM,'inicio')].' </b></td>';
+  $w_html .= chr(13).'          <td>Limite para conclusão:<br><b>'.$FormataDataEdicao[f($RSM,'fim')].' </b></td>';
   $w_html .= chr(13).'          </table>';
   // Informações adicionais
-  if (Nvl(f($RSM.'descricao'),'')>'') $w_html .= chr(13).'      <tr><td valign="top"><font size="1">Resultados da ação:<br><b>'.CRLF2BR(f($RSM.'descricao')).' </b></td>';
+  if (Nvl(f($RSM,'descricao'),'')>'') $w_html .= chr(13).'      <tr><td valign="top">Resultados da ação:<br><b>'.CRLF2BR(f($RSM,'descricao')).' </b></td>';
   $w_html .= chr(13).'    </table>';
   $w_html .= chr(13).'</tr>';
   // Dados da conclusão da ação, se ela estiver nessa situação
-  if (f($RSM.'concluida')=='S' && Nvl(f($RSM.'data_conclusao'),'')>'') {
-    $w_html .= chr(13).'      <tr><td valign="top" colspan="2" align="center" bgcolor="#D0D0D0" style="border: 2px solid rgb(0,0,0);"><font size="1"><b>DADOS DA CONCLUSÃO</td>';
+  if (f($RSM,'concluida')=='S' && Nvl(f($RSM,'data_conclusao'),'')>'') {
+    $w_html .= chr(13).'      <tr><td valign="top" colspan="2" align="center" bgcolor="#D0D0D0" style="border: 2px solid rgb(0,0,0);"><b>DADOS DA CONCLUSÃO</td>';
     $w_html .= chr(13).'      <tr><td valign="top" colspan="2"><table border=0 width="100%" cellspacing=0>';
     $w_html .= chr(13).'          <tr valign="top">';
-    $w_html .= chr(13).'          <td><font size="1">Início da execução:<br><b>'.$FormataDataEdicao[f($RSM.'inicio_real')].' </b></td>';
-    $w_html .= chr(13).'          <td><font size="1">Término da execução:<br><b>'.$FormataDataEdicao[f($RSM.'fim_real')].' </b></td>';
+    $w_html .= chr(13).'          <td>Início da execução:<br><b>'.$FormataDataEdicao[f($RSM,'inicio_real')].' </b></td>';
+    $w_html .= chr(13).'          <td>Término da execução:<br><b>'.$FormataDataEdicao[f($RSM,'fim_real')].' </b></td>';
     $w_html .= chr(13).'          </table>';
-    $w_html .= chr(13).'      <tr><td valign="top"><font size="1">Nota de conclusão:<br><b>'.CRLF2BR(f($RSM.'nota_conclusao')).' </b></td>';
+    $w_html .= chr(13).'      <tr><td valign="top">Nota de conclusão:<br><b>'.CRLF2BR(f($RSM,'nota_conclusao')).' </b></td>';
   } 
   if ($p_tipo==2) {
     // Se for tramitação
@@ -3622,18 +3640,18 @@ function SolicMail($p_solic,$p_tipo) {
     $RS = db_getSolicLog::getInstanceOf($dbms,$p_solic,null,'LISTA');
     $RS = SortArray($RS,'phpdt_data','desc');
     foreach ($RS as $row) {$RS = $row; break;}
-    $w_html .= chr(13).'      <tr><td valign="top" colspan="2" align="center" bgcolor="#D0D0D0" style="border: 2px solid rgb(0,0,0);"><font size="1"><b>ÚLTIMO ENCAMINHAMENTO</td>';
+    $w_html .= chr(13).'      <tr><td valign="top" colspan="2" align="center" bgcolor="#D0D0D0" style="border: 2px solid rgb(0,0,0);"><b>ÚLTIMO ENCAMINHAMENTO</td>';
     $w_html .= chr(13).'      <tr><td valign="top" colspan="2"><table border=0 width="100%" cellspacing=0>';
     $w_html .= chr(13).'          <tr valign="top">';
-    $w_html .= chr(13).'          <td><font size="1">De:<br><b>'.f($RS,'responsavel').'</b></td>';
-    $w_html .= chr(13).'          <td><font size="1">Para:<br><b>'.f($RS,'destinatario').'</b></td>';
-    $w_html .= chr(13).'          <tr valign="top"><td colspan=2><font size="1">Despacho:<br><b>'.CRLF2BR(Nvl(f($RS,'despacho'),'---')).' </b></td>';
+    $w_html .= chr(13).'          <td>De:<br><b>'.f($RS,'responsavel').'</b></td>';
+    $w_html .= chr(13).'          <td>Para:<br><b>'.f($RS,'destinatario').'</b></td>';
+    $w_html .= chr(13).'          <tr valign="top"><td colspan=2>Despacho:<br><b>'.CRLF2BR(Nvl(f($RS,'despacho'),'---')).' </b></td>';
     $w_html .= chr(13).'          </table>';
     // Configura o destinatário da tramitação como destinatário da mensagem
     $RS1 = db_getPersonData::getInstanceOf($dbms,$w_cliente,f($RS,'sq_pessoa_destinatario'),null,null);
     $w_destinatarios=f($RS1,'email').'; ';
   } 
-  $w_html .= chr(13).'      <tr><td valign="top" colspan="2" align="center" bgcolor="#D0D0D0" style="border: 2px solid rgb(0,0,0);"><font size="1"><b>OUTRAS INFORMAÇÕES</td>';
+  $w_html .= chr(13).'      <tr><td valign="top" colspan="2" align="center" bgcolor="#D0D0D0" style="border: 2px solid rgb(0,0,0);"><b>OUTRAS INFORMAÇÕES</td>';
   $RS = db_getCustomerSite::getInstanceOf($dbms,$w_cliente);;
   $w_html .= '      <tr valign="top"><td><font size=2>'.chr(13);
   $w_html .= '         Para acessar o sistema use o endereço: <b><a class="SS" href="'.f($RS,'logradouro').'" target="_blank">'.f($RS,'Logradouro').'</a></b></li>'.chr(13);
@@ -3652,10 +3670,10 @@ function SolicMail($p_solic,$p_tipo) {
   $w_html .= '</BODY>'.chr(13);
   $w_html .= '</HTML>'.chr(13);
   // Recupera o e-mail do responsável
-  $RS = db_getPersonData::getInstanceOf($dbms,$w_cliente,f($RSM.'solicitante'),null,null);
+  $RS = db_getPersonData::getInstanceOf($dbms,$w_cliente,f($RSM,'solicitante'),null,null);
   if ((strpos($w_destinatarios,f($RS,'email').'; ')===false)) $w_destinatarios = $w_destinatarios.f($RS,'email').'; ';
   // Recupera o e-mail do titular e do substituto pelo setor responsável
-  $RS = db_getUorgResp::getInstanceOf($dbms,f($RSM.'sq_unidade'));
+  $RS = db_getUorgResp::getInstanceOf($dbms,f($RSM,'sq_unidade'));
   if ((strpos($w_destinatarios,f($RS,'email_titular').'; ')===false) && Nvl(f($RS,'email_titular'),'nulo')!='nulo')       $w_destinatarios = $w_destinatarios.f($RS,'email_titular').'; ';
   if ((strpos($w_destinatarios,f($RS,'email_substituto').'; ')===false) && Nvl(f($RS,'email_substituto'),'nulo')!='nulo') $w_destinatarios = $w_destinatarios.f($RS,'email_substituto').'; ';
   // Prepara os dados necessários ao envio
@@ -3704,33 +3722,33 @@ function RestricaoMail($l_solic,$l_descricao,$l_tl_restricao,$l_providencia,$l_t
   $w_html .= chr(13).'    <table width="99%" border="0">';
   $w_html .= chr(13).'      <tr><td><font size=2>Ação: <b>'.f($RSM,'cd_unidade').'.'.f($RSM,'cd_programa').'.'.f($RSM,'cd_acao').' - '.f($RSM,'nm_ppa').'</b></font></td>';
   // Identificação da ação
-  $w_html .= chr(13).'      <tr><td valign="top" colspan="2" align="center" bgcolor="#D0D0D0" style="border: 2px solid rgb(0,0,0);"><font size="1"><b>EXTRATO DA AÇÃO</td>';
+  $w_html .= chr(13).'      <tr><td valign="top" colspan="2" align="center" bgcolor="#D0D0D0" style="border: 2px solid rgb(0,0,0);"><b>EXTRATO DA AÇÃO</td>';
   $w_html .= chr(13).'      <tr><td valign="top" colspan="2"><table border=0 width="100%" cellspacing=0>';
   $w_html .= chr(13).'          <tr valign="top">';
-  $w_html .= chr(13).'          <td><font size="1">Responsável pelo monitoramento:<br><b>'.f($RSM,'nm_sol').'</b></td>';
-  $w_html .= chr(13).'          <td><font size="1">Unidade responsável pelo monitoramento:<br><b>'.f($RSM,'nm_unidade_resp').'</b></td>';
+  $w_html .= chr(13).'          <td>Responsável pelo monitoramento:<br><b>'.f($RSM,'nm_sol').'</b></td>';
+  $w_html .= chr(13).'          <td>Unidade responsável pelo monitoramento:<br><b>'.f($RSM,'nm_unidade_resp').'</b></td>';
   $w_html .= chr(13).'          <tr valign="top">';
-  $w_html .= chr(13).'          <td><font size="1">Data de recebimento:<br><b>'.FormataDataEdicao(f($RSM,'inicio')).' </b></td>';
-  $w_html .= chr(13).'          <td><font size="1">Limite para conclusão:<br><b>'.FormataDataEdicao(f($RSM,'fim')).' </b></td>';
+  $w_html .= chr(13).'          <td>Data de recebimento:<br><b>'.FormataDataEdicao(f($RSM,'inicio')).' </b></td>';
+  $w_html .= chr(13).'          <td>Limite para conclusão:<br><b>'.FormataDataEdicao(f($RSM,'fim')).' </b></td>';
   $w_html .= chr(13).'          </table>';
   // Recupera o e-mail do responsável
   $RS = db_getPersonData::getInstanceOf($dbms,$w_cliente,f($RSM,'solicitante'),null,null);
   if ((strpos($w_destinatarios,f($RS,'email').'; ')===false)) $w_destinatarios = $w_destinatarios.f($RS,'email').'; ';
   // Identificação da restrição
-  $w_html .= chr(13).'      <tr><td valign="top" colspan="2" align="center" bgcolor="#D0D0D0" style="border: 2px solid rgb(0,0,0);"><font size="1"><b>EXTRATO DA RESTRIÇÃO</td>';
+  $w_html .= chr(13).'      <tr><td valign="top" colspan="2" align="center" bgcolor="#D0D0D0" style="border: 2px solid rgb(0,0,0);"><b>EXTRATO DA RESTRIÇÃO</td>';
   $w_html .= chr(13).'      <tr><td valign="top" colspan="2"><table border=0 width="100%" cellspacing=0>';
   $w_html .= chr(13).'          <tr valign="top">';
-  $w_html .= chr(13).'          <td><font size="1">Descrição da restrição:<br><b>'.$l_descricao.'</b></td>';
+  $w_html .= chr(13).'          <td>Descrição da restrição:<br><b>'.$l_descricao.'</b></td>';
   $RSM = db_getTPRestricao_IS::getInstanceOf($dbms,$l_tl_restricao,null);
   foreach($RSM as $row){$RSM=$row; break;}
   $w_html .= chr(13).'          <tr valign="top">';
-  $w_html .= chr(13).'          <td><font size="1">Tipo da restrição:<br><b>'.f($RSM,'nome').'</b></td>';
+  $w_html .= chr(13).'          <td>Tipo da restrição:<br><b>'.f($RSM,'nome').'</b></td>';
   $w_html .= chr(13).'          <tr valign="top">';
-  $w_html .= chr(13).'          <td><font size="1">Providência:<br><b>'.Nvl($l_providencia,'---').'</b></td>';
+  $w_html .= chr(13).'          <td>Providência:<br><b>'.Nvl($l_providencia,'---').'</b></td>';
   $w_html .= chr(13).'          </table>';
   $w_html .= chr(13).'    </table>';
   $w_html .= chr(13).'</tr>';
-  $w_html .= chr(13).'      <tr><td valign="top" colspan="2" align="center" bgcolor="#D0D0D0" style="border: 2px solid rgb(0,0,0);"><font size="1"><b>OUTRAS INFORMAÇÕES</td>';
+  $w_html .= chr(13).'      <tr><td valign="top" colspan="2" align="center" bgcolor="#D0D0D0" style="border: 2px solid rgb(0,0,0);"><b>OUTRAS INFORMAÇÕES</td>';
   $RS = db_getCustomerSite::getInstanceOf($dbms,$w_cliente);
   $w_html .= '      <tr valign="top"><td><font size=2>'.chr(13);
   $w_html .= '         Para acessar o sistema use o endereço: <b><a class="SS" href="'.f($RS,'logradouro').'" target="_blank">'.f($RS,'Logradouro').'</a></b></li>'.chr(13);
@@ -3845,8 +3863,8 @@ function BuscaAcao() {
   ShowHTML('<tr bgcolor="'.$conTrBgColor.'"><td><div align="justify"><font size=2><b><ul>Instruções</b>:<li>Informe parte do nome da ação ou o código da ação.<li>Quando a relação for exibida, selecione a ação desejada clicando sobre o link <i>Selecionar</i>.<li>Após informar o nome da ação ou o código da ação, clique sobre o botão <i>Aplicar filtro</i>. Clicando sobre o botão <i>Cancelar</i>, a procura é cancelada.</ul></div>');
   ShowHTML('<tr bgcolor="'.$conTrBgColor.'"><td>');
   ShowHTML('    <table width="100%" border="0">');
-  ShowHTML('      <tr><td valign="top"><font size="1"><b>Parte do <U>n</U>ome da ação:<br><INPUT ACCESSKEY="N" '.$w_Disabled.' class="sti" type="text" name="w_nome" size="50" maxlength="100" value="'.$w_nome.'">');
-  ShowHTML('      <tr><td valign="top"><font size="1"><b><U>C</U>ódigo da ação:<br><INPUT ACCESSKEY="S" '.$w_Disabled.' class="sti" type="text" name="ChaveAux" size="5" maxlength="4" value="'.$ChaveAux.'">');
+  ShowHTML('      <tr><td valign="top"><b>Parte do <U>n</U>ome da ação:<br><INPUT ACCESSKEY="N" '.$w_Disabled.' class="sti" type="text" name="w_nome" size="50" maxlength="100" value="'.$w_nome.'">');
+  ShowHTML('      <tr><td valign="top"><b><U>C</U>ódigo da ação:<br><INPUT ACCESSKEY="S" '.$w_Disabled.' class="sti" type="text" name="ChaveAux" size="5" maxlength="4" value="'.$ChaveAux.'">');
   ShowHTML('      <tr><td align="center" colspan="3" height="1" bgcolor="#000000">');
   ShowHTML('      <tr><td align="center" colspan="3">');
   ShowHTML('            <input class="stb" type="submit" name="Botao" value="Aplicar filtro">');
@@ -3858,25 +3876,25 @@ function BuscaAcao() {
   ShowHTML('</tr>');
   ShowHTML('</form>');
   if ($w_nome>'' || $ChaveAux>'') {
-    ShowHTML('<tr><td align="right"><font size="1"><b>Registros: '.count($RS));
+    ShowHTML('<tr><td align="right"><b>Registros: '.count($RS));
     ShowHTML('<tr><td>');
     ShowHTML('    <TABLE WIDTH="100%" border=0>');
     if (count($RS)<=0) {
-      ShowHTML('      <tr bgcolor="'.$conTrBgColor.'"><td colspan=5 align="center"><font size="1"><b>Não foram encontrados registros.</b></td></tr>');
+      ShowHTML('      <tr bgcolor="'.$conTrBgColor.'"><td colspan=5 align="center"><b>Não foram encontrados registros.</b></td></tr>');
     } else {
       ShowHTML('      <tr bgcolor="'.$conTrBgColor.'"><td>');
       ShowHTML('        <TABLE WIDTH="100%" bgcolor="'.$conTableBgColor.'" BORDER="'.$conTableBorder.'" CELLSPACING="'.$conTableCellSpacing.'" CELLPADDING="'.$conTableCellPadding.'" BorderColorDark="'.$conTableBorderColorDark.'" BorderColorLight="'.$conTableBorderColorLight.'">');
       ShowHTML('          <tr bgcolor="'.$conTrBgColor.'" align="center">');
-      ShowHTML('            <td><font size="1"><b>Código</font></td>');
-      ShowHTML('            <td><font size="1"><b>Nome</font></td>');
-      ShowHTML('            <td><font size="1"><b>Operações</font></td>');
+      ShowHTML('            <td><b>Código</td>');
+      ShowHTML('            <td><b>Nome</td>');
+      ShowHTML('            <td><b>Operações</td>');
       ShowHTML('          </tr>');
       foreach($RS as $row) {
         $w_cor = ($w_cor==$conTrBgColor || $w_cor=='') ? $w_cor=$conTrAlternateBgColor : $w_cor=$conTrBgColor;
         ShowHTML('      <tr bgcolor="'.$w_cor.'" valign="top">');
-        ShowHTML('            <td align="center"><font size="1">'.f($row,'cd_unidade').'.'.f($row,'cd_programa').'.'.f($row,'cd_acao').'</td>');
-        ShowHTML('            <td><font size="1">'.f($row,'descricao_acao').'</td>');
-        ShowHTML('            <td><font size="1"><a class="ss" href="#" onClick="javascript:volta(\''.f($row,'chave').'\');">Selecionar</a>');
+        ShowHTML('            <td align="center">'.f($row,'cd_unidade').'.'.f($row,'cd_programa').'.'.f($row,'cd_acao').'</td>');
+        ShowHTML('            <td>'.f($row,'descricao_acao').'</td>');
+        ShowHTML('            <td><a class="ss" href="#" onClick="javascript:volta(\''.f($row,'chave').'\');">Selecionar</a>');
       } 
       ShowHTML('        </table></tr>');
       ShowHTML('      </center>');
@@ -4014,7 +4032,7 @@ function Grava() {
           $_REQUEST['w_titulo'],$_REQUEST['w_descricao'],$_REQUEST['w_ordem'],$_REQUEST['w_inicio'],
           $_REQUEST['w_fim'],$_REQUEST['w_perc_conclusao'],$_REQUEST['w_orcamento'],
           $_REQUEST['w_programada'],$_REQUEST['w_cumulativa'],$_REQUEST['w_quantidade'],$_REQUEST['w_unidade_medida']);
-      if (O == 'I') {
+      If ($O!='E') {
         dml_putMetaMensalIni_IS::getInstanceOf($dbms,'W',$_REQUEST['w_chave_aux'],$w_cliente,
             trim($_REQUEST['w_cron_ini_1']),trim($_REQUEST['w_cron_ini_2']),trim($_REQUEST['w_cron_ini_3']),trim($_REQUEST['w_cron_ini_4']),
             trim($_REQUEST['w_cron_ini_5']),trim($_REQUEST['w_cron_ini_6']),trim($_REQUEST['w_cron_ini_7']),trim($_REQUEST['w_cron_ini_8']),
@@ -4079,7 +4097,7 @@ function Grava() {
       $i=1;
       // Gravação da execução física e feita mês por mês
       dml_putMetaMensal_IS::getInstanceOf($dbms,'E',$_REQUEST['w_chave_aux'],$_REQUEST['w_realizado_'.$i],$_REQUEST['w_revisado_'.$i],$_REQUEST['w_referencia_'.$i],$w_cliente);
-      for ($i=1; $i<=13; $i=$i+1) {
+      for ($i=1; $i<13; $i=$i+1) {
         dml_putMetaMensal_IS::getInstanceOf($dbms,'Z',$_REQUEST['w_chave_aux'],Nvl($_REQUEST['w_realizado_'.$i],0),Nvl($_REQUEST['w_revisado_'.$i],0),$_REQUEST['w_referencia_'.$i],$w_cliente);
         if (Nvl($_REQUEST['w_realizado_'.$i],0)>0 || Nvl($_REQUEST['w_revisado_'.$i],0)>0) {
           dml_putMetaMensal_IS::getInstanceOf($dbms,'I',$_REQUEST['w_chave_aux'],$_REQUEST['w_realizado_'.$i.''],$_REQUEST['w_revisado_'.$i],$_REQUEST['w_referencia_'.$i],$w_cliente);
@@ -4241,7 +4259,7 @@ function Grava() {
       } else {
         dml_putProjetoConc::getInstanceOf($dbms,$_REQUEST['w_menu'],$_REQUEST['w_chave'],$w_usuario,$_REQUEST['w_tramite'],$_REQUEST['w_inicio_real'],$_REQUEST['w_fim_real'],$_REQUEST['w_nota_conclusao'],$_REQUEST['w_custo_real']);
         // Envia e-mail comunicando a conclusão
-        SolicMail($_REQUEST['w_chave']);
+        SolicMail($_REQUEST['w_chave'],3);
         ScriptOpen('JavaScript');
         // Volta para a listagem
         $RS = db_getMenuData::getInstanceOf($dbms,$w_menu);

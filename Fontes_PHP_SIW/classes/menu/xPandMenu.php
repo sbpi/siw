@@ -1,5 +1,6 @@
 <?php
-include_once('constants.inc');
+extract($GLOBALS,EXTR_PREFIX_SAME,'local'); 
+include_once($w_dir_volta.'constants.inc');
 /********************************
 * xPandMenu MULTI-LEVEL class
 *********************************
@@ -17,10 +18,10 @@ include_once('constants.inc');
 
 
 // Path to default image files (directories and documents icons) -- (use absolute URL)
-define('NODE_DEFAULT_IMG',$conRootSIW.'images/folder/folder_win.gif');
-define('LEAF_DEFAULT_IMG',$conRootSIW.'images/folder/document_win.gif');
-define('NODE_DEFAULT_ALT_IMG',$conRootSIW.'images/folder/folder_win_o.gif');
-define('LEAF_DEFAULT_ALT_IMG',$conRootSIW.'images/folder/document_win_o.gif');
+define('NODE_DEFAULT_IMG',$conRootSIW.'images/Folder/folder_win.gif');
+define('LEAF_DEFAULT_IMG',$conRootSIW.'images/Folder/document_win.gif');
+define('NODE_DEFAULT_ALT_IMG',$conRootSIW.'images/Folder/folder_win_o.gif');
+define('LEAF_DEFAULT_ALT_IMG',$conRootSIW.'images/Folder/document_win_o.gif');
 
 // Reference to the File class for saving and loading the generated menu
 //include_once 'File.php';
@@ -218,7 +219,7 @@ class XNode
     // Takes a XNode object reference as argument
     function &addItem(&$node)
     {
-        if($this->img == LEAF_DEFAULT_IMG){$this->img = NODE_DEFAULT_IMG;}
+        if($this->img == LEAF_DEFAULT_IMG){ ($this->uncollapsed) ? $this->img = NODE_DEFAULT_ALT_IMG : $this->img = NODE_DEFAULT_IMG;}
         if($this->alt_img == LEAF_DEFAULT_ALT_IMG){$this->alt_img = NODE_DEFAULT_ALT_IMG;}
         $this->items[] = &$node;
         return $this->items[count($this->items) - 1];

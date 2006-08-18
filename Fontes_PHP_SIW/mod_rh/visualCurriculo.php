@@ -2,7 +2,7 @@
 // =========================================================================
 // Rotina de visualização do currículo
 // -------------------------------------------------------------------------
-function visualCurriculo($p_cliente,$p_usuario,$O) {
+function visualCurriculo($p_cliente,$p_usuario,$O,$p_formato=0) {
   extract($GLOBALS);
   if ($O=='L') {
     // Se for listagem dos dados
@@ -26,11 +26,13 @@ function visualCurriculo($p_cliente,$p_usuario,$O) {
       $html.= chr(13).'      <tr valign="top">';
       $html.= chr(13).'          <td>Sexo:<br><b>'.f($RS,'nm_sexo').' </b></td>';
       $html.= chr(13).'          <td>Estado civil:<br><b>'.f($RS,'nm_estado_civil').' </b></td>';
-      if (nvl(f($RS,'sq_siw_arquivo'),'nulo')!='nulo' && $P2==0) {
-        $html.=chr(13).'          <td rowspan=3>'.LinkArquivo('HL',$w_cliente,f($RS,'sq_siw_arquivo'),'_blank',null,'<img title="clique para ver em tamanho original." border=1 width=100 length=80 src="'.LinkArquivo(null,$w_cliente,f($RS,'sq_siw_arquivo'),null,null,null,'EMBED').'">',null).'</td>';
-      } else {
-        $html.=chr(13).'          <td rowspan=3></td>';
-      } 
+      if (nvl(f($RS,'sq_siw_arquivo'),'nulo')!='nulo') {
+        if ($p_formato==0) {
+          $html.=chr(13).'          <td rowspan=3>'.LinkArquivo('HL',$w_cliente,f($RS,'sq_siw_arquivo'),'_blank',null,'<img title="clique para ver em tamanho original." border=1 width=100 length=80 src="'.LinkArquivo(null,$w_cliente,f($RS,'sq_siw_arquivo'),null,null,null,'EMBED').'">',null).'</td>';
+        } else {
+          $html.=chr(13).'          <td rowspan=3><img border=1 width=100 length=80 src="'.$conFileVirtual.$p_cliente.'/'.f($RS,'sq_siw_arquivo').'"></td>';
+        } 
+      }
       $html.=chr(13).'      <tr valign="top">';
       $html.=chr(13).'          <td>Formação acadêmica:<br><b>'.f($RS,'nm_formacao').' </b></td>';
       $html.=chr(13).'          <td>Etnia:<br><b>'.f($RS,'nm_etnia').' </b></td>';
@@ -99,7 +101,7 @@ function visualCurriculo($p_cliente,$p_usuario,$O) {
           $html.=chr(13).'        <td>'.f($row,'tipo_telefone').'</td>';
           $html.=chr(13).'        <td align="center">'.f($row,'ddd').'</td>';
           $html.=chr(13).'        <td>'.f($row,'numero').'</td>';
-          $html.=chr(13).'        <td align="center">'.f($row,'padrao').'</td>';
+          $html.=chr(13).'        <td align="center">'.retornaSimNao(f($row,'padrao')).'</td>';
           $html.=chr(13).'      </tr>';
         } 
       } 
@@ -129,7 +131,7 @@ function visualCurriculo($p_cliente,$p_usuario,$O) {
             } else {
               $html.=chr(13).'        <td><a href="://'.str_replace('://','',f($row,'logradouro')).'" target="_blank">'.f($row,'logradouro').'</a></td>';
             } 
-            $html.=chr(13).'        <td align="center">'.f($row,'padrao').'</td>';
+            $html.=chr(13).'        <td align="center">'.retornaSimNao(f($row,'padrao')).'</td>';
             $html.=chr(13).'      </tr>';
         } 
       } 
@@ -153,7 +155,7 @@ function visualCurriculo($p_cliente,$p_usuario,$O) {
           $html.=chr(13).'          <tr valign="top"><td>';
           $html.=chr(13).'              <td valign="top" colspan=2>Cidade:<br><b>'.f($row,'cidade').' </b></td>';
           $html.=chr(13).'              <td valign="top">País:<br><b>'.f($row,'nm_pais').' </b></td>';
-          $html.=chr(13).'          <tr><td><td colspan=3>Padrão?<br><b>'.f($row,'padrao').'</td></tr>';
+          $html.=chr(13).'          <tr><td><td colspan=3>Padrão?<br><b>'.retornaSimNao(f($row,'padrao')).'</td></tr>';
           $html.=chr(13).'          <tr><td colspan="4"><hr>';
         } 
         $html.=chr(13).'          </table></td></tr>';
@@ -332,7 +334,7 @@ function visualCurriculo($p_cliente,$p_usuario,$O) {
           $html.=chr(13).'        <td align="center">'.Nvl(f($row,'operacao'),'---').'</td>';
           $html.=chr(13).'        <td>'.f($row,'numero').'</td>';
           $html.=chr(13).'        <td align="center">'.f($row,'ativo').'</td>';
-          $html.=chr(13).'        <td align="center">'.f($row,'padrao').'</td>';
+          $html.=chr(13).'        <td align="center">'.retornaSimNao(f($row,'padrao')).'</td>';
           $html.=chr(13).'      </tr>';
         } 
       }  
@@ -394,9 +396,12 @@ function visualCurriculo($p_cliente,$p_usuario,$O) {
         } 
       } 
       $html.=chr(13).'         </table></td></tr>';
-      $html.=chr(13).'      <tr><td valign="top" colspan="3">&nbsp;</td>';
-      $html.=chr(13).'      <tr><td valign="top" colspan="3" align="center" bgcolor="#D0D0D0" style="border: 2px solid rgb(0,0,0);"><b>Declaração</td>';
-      $html.=chr(13).'      <tr><td valign="top" colspan="3"><font size="3"><blockquote><p align="justify"><br>Eu, <b>'.$w_nome.'</b>, declaro que as informações aqui constantes estão atualizadas, são verdadeiras e passíveis de comprovação.</p><p><br></p><p align="center">'.FormataDataEdicao(time(),3).'</p></blockquote></td>';
+      // Se for formato Word, exibe declaração
+      if ($p_formato!=0) {
+        $html.=chr(13).'      <tr><td valign="top" colspan="3">&nbsp;</td>';
+        $html.=chr(13).'      <tr><td valign="top" colspan="3" align="center" bgcolor="#D0D0D0" style="border: 2px solid rgb(0,0,0);"><b>Declaração</td>';
+        $html.=chr(13).'      <tr><td valign="top" colspan="3"><font size="3"><blockquote><p align="justify"><br>Eu, <b>'.$w_nome.'</b>, declaro que as informações aqui constantes estão atualizadas, são verdadeiras e passíveis de comprovação.</p><p><br></p><p align="center">'.substr(DataHora(),0,-10).'</p></blockquote></td>';
+      }
       $html.=chr(13).'</table>';
     } 
   } else {

@@ -10,10 +10,10 @@ function selecaoProgramaPPA($label,$accesskey,$hint,$cliente,$ano,$chave,$campo,
     $RS = SortArray($RS,'ds_programa','asc');
   } elseif ($restricao=='RELATORIO') {
     $RS = db_getProgramaPPA_IS::getInstanceOf($dbms,null,$w_cliente,$w_ano,null,null);
-    $RS = SortArray($RS,'ds_programa';
+    $RS = SortArray($RS,'ds_programa','asc');
   } else {
     $RS = db_getProgramaPPA_IS::getInstanceOf($dbms,$chave,$w_cliente,$w_ano,$restricao,null);
-    $RS = SortArray($RS,'ds_programa';
+    $RS = SortArray($RS,'ds_programa','asc');
   } 
   if (!isset($hint))
     ShowHTML('          <td valign="top"><font size="1"><b>'.$label.'</b><br><SELECT ACCESSKEY="'.$accesskey.'" CLASS="STS" NAME="'.$campo.'" '.$w_Disabled.' '.$atributo.'>');

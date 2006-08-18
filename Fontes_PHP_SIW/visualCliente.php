@@ -245,7 +245,7 @@ function visualCliente($w_sq_cliente,$O) {
     ShowHTML('         </table></td></tr>');
 
     //Funcionalidades
-    $w_imagemPadrao='images/folder/SheetLittle.gif';
+    $w_imagemPadrao='images/Folder/SheetLittle.gif';
     ShowHTML('      <tr><td valign="top" colspan="2" align="center" bgcolor="#D0D0D0" style="border: 2px solid rgb(0,0,0);"><b>Funcionalidades</td>');
     $RS = db_getLinkDataUser::getInstanceOf($dbms,$w_sq_cliente,0,'IS NULL');
     ShowHTML('      <tr><td align="center" colspan="2">');
@@ -268,17 +268,17 @@ function visualCliente($w_sq_cliente,$O) {
       foreach ($RS as $row) {
         if (f($row,'Filho')>0) {
           ShowHTML('      <tr bgcolor="'.$conTrBgColor.'" valign="top">');
-          ShowHTML('        <td colspan=10><img src="images/folder/FolderClose.gif" border=0 align="center"> <b>'.f($row,'nome'));
+          ShowHTML('        <td colspan=10><img src="images/Folder/FolderClose.gif" border=0 align="center"> <b>'.f($row,'nome'));
           $RS1 = db_getLinkDataUser::getInstanceOf($dbms,$w_sq_cliente,0,f($row,'sq_menu'));
           foreach ($RS1 as $row1) {
             if (f($row1,'Filho')>0) {
               ShowHTML('      <tr bgcolor="'.$conTrBgColor.'" valign="top">');
-              ShowHTML('        <td colspan=10 nowrap>&nbsp;&nbsp;&nbsp;&nbsp;<img src="images/folder/FolderClose.gif" border=0 align="center"> '.f($row1,'nome'));
+              ShowHTML('        <td colspan=10 nowrap>&nbsp;&nbsp;&nbsp;&nbsp;<img src="images/Folder/FolderClose.gif" border=0 align="center"> '.f($row1,'nome'));
               $RS2 = db_getLinkDataUser::getInstanceOf($dbms,$w_sq_cliente,0,f($row1,'sq_menu'));
               foreach ($RS2 as $row2) {
                 if (f($row2,'Filho')>0) {
                   ShowHTML('      <tr bgcolor="'.$conTrBgColor.'" valign="top">');
-                  ShowHTML('        <td colspan=10 nowrap>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<img src="images/folder/FolderClose.gif" border=0 align="center"> '.f($row2,'nome'));
+                  ShowHTML('        <td colspan=10 nowrap>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<img src="images/Folder/FolderClose.gif" border=0 align="center"> '.f($row2,'nome'));
                   $RS3 = db_getLinkDataUser::getInstanceOf($dbms,$w_sq_cliente,0,f($row2,'sq_menu'));
                   foreach ($RS3 as $row3) {
                     ShowHTML('      <tr bgcolor="'.$conTrBgColor.'" valign="top">');

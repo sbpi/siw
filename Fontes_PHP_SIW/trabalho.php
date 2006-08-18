@@ -7,10 +7,10 @@ include_once('funcoes.php');
 include_once('classes/db/abreSessao.php');
 include_once('classes/sp/db_getSiwCliModLis.php');
 include_once('classes/sp/db_getPersonData.php');
-include_once('classes/sp/db_getDesktop_TT.php');
-include_once('classes/sp/db_getDesktop.php');
+include_once('classes/sp/db_getDeskTop_TT.php');
+include_once('classes/sp/db_getDeskTop.php');
 // =========================================================================
-//  /Trabalho.php
+//  trabalho.php
 // ------------------------------------------------------------------------
 // Nome     : Alexandre Vinhadelli Papadópolis
 // Descricao: Gerencia a atualização das tabelas do sistema

@@ -204,10 +204,10 @@ function LinkOrdena($p_label,$p_campo) {
   if (strtoupper($p_campo)==str_replace(' DESC','',str_replace(' ASC','',strtoupper($l_ordena)))) {
     if (strpos(strtoupper($l_ordena),' DESC') !== false) {
       $l_string=$l_string.'&p_ordena='.$p_campo.' asc&';
-      $l_img='&nbsp;<img src=images/down.gif width=8 height=8 border=0 align="absmiddle">';
+      $l_img='&nbsp;<img src="images/down.gif" width=8 height=8 border=0 align="absmiddle">';
     } else {
       $l_string=$l_string.'&p_ordena='.$p_campo.' desc&';
-      $l_img='&nbsp;<img src=images/up.gif width=8 height=8 border=0 align="absmiddle">';
+      $l_img='&nbsp;<img src="images/up.gif" width=8 height=8 border=0 align="absmiddle">';
     }
   } else {
     $l_string=$l_string.'&p_ordena='.$p_campo.' asc&';
@@ -302,7 +302,36 @@ function RetornaTipoRecurso($l_chave) {
     default:return 'Erro';        break;
   }
 }
-
+// =========================================================================
+// Funçao para retornar o tipo da data
+// -------------------------------------------------------------------------
+function RetornaTipoData ($l_chave) {
+  extract($GLOBALS);
+  switch ($l_chave) {
+    case 'I': return 'Invariável';        break;
+    case 'E': return 'Específica';        break;
+    case 'S': return 'Segunda Carnaval';  break;
+    case 'C': return 'Terça Carnaval';    break;
+    case 'Q': return 'Quarta Cinzas';     break;
+    case 'P': return 'Sexta Santa';       break;
+    case 'D': return 'Domingo Páscoa';    break;
+    case 'H': return 'Corpus Christi';    break;
+    default:return 'Erro';                break;
+  }
+}
+// =========================================================================
+// Funçao para retornar o expediente da data
+// -------------------------------------------------------------------------
+function RetornaExpedienteData ($l_chave) {
+  extract($GLOBALS);
+  switch ($l_chave) {
+    case 'S': return 'Sim';             break;
+    case 'N': return 'Não';             break;
+    case 'M': return 'Somente manhã';   break;
+    case 'T': return 'Somente tarde';   break;
+    default:  return 'Sim';             break;
+  }
+}
 // =========================================================================
 // Retorna uma parte qualquer de uma linha delimitada
 // -------------------------------------------------------------------------
@@ -501,12 +530,30 @@ function DiretorioCliente($p_cliente) {
 }
 
 // =========================================================================
+// Verifica se um arquivo ou diretório existe, se é possível a leitura 
+// e se é possível a escrita
+// -------------------------------------------------------------------------
+function testFile($l_erro, $l_raiz, $l_leitura = false, $l_escrita = false) {
+  if (!file_exists($l_raiz)) {
+    $l_erro = 'inexistente';
+    return false;
+  } elseif (!is_readable($l_raiz)) {
+    $l_erro = 'sem permissão de leitura';
+    return false;
+  } elseif (!is_writable($l_raiz)) {
+    $l_erro = 'sem permissão de escrita';
+    return false;
+  }
+  return true;
+}
+
+// =========================================================================
 // Montagem de URL a partir da sigla da opção do menu
 // -------------------------------------------------------------------------
 function MontaURL($p_sigla) {
   extract($GLOBALS);
   $RS_MontaURL = db_getLinkData::getInstanceOf($dbms, $_SESSION['P_CLIENTE'], $p_sigla);
-  $l_ImagemPadrao='images/folder/SheetLittle.gif';
+  $l_ImagemPadrao='images/Folder/SheetLittle.gif';
   if (count($RS_MontaURL)<=0) return '';
   else {
     if (nvl(f($RS_MontaURL,'imagem'),'-')!='-') {
@@ -938,7 +985,7 @@ function TrataErro($sp, $Err, $params, $file, $line, $object) {
     $w_html .= chr(10).'<head>';
     $w_html .= chr(10).'  <BASEFONT FACE="Arial" SIZE="2">';
     $w_html .= chr(10).'</head>';
-    $w_html .= chr(10).'<body BGCOLOR="#FF5555" TEXT="#FFFFFF">';
+    $w_html .= chr(10).'<body BGCOLOR="#FF5555">';
     $w_html .= chr(10).'<CENTER><H2>ATENÇÃO</H2></CENTER>';
     $w_html .= chr(10).'<BLOCKQUOTE>';
     $w_html .= chr(10).'<P ALIGN="JUSTIFY">Erro não previsto. <b>Uma cópia desta tela foi enviada por e-mail para os responsáveis pela correção. Favor tentar novamente mais tarde.</P>';
@@ -948,7 +995,7 @@ function TrataErro($sp, $Err, $params, $file, $line, $object) {
     $w_html .= chr(10).'<DT>Arquivo:<DD><FONT FACE="courier">'.$file.', linha: '.$line.'<br><br></font>';
     //$w_html .= chr(10).'<DT>Objeto:<DD><FONT FACE="courier">'.$object.'<br><br></font>';
 
-    $w_html .= chr(10).'<DT>Comando em execução:<blockquote> <FONT FACE="courier">'.$Err['sqltext'].'</blockquote></font></DT>';
+    $w_html .= chr(10).'<DT>Comando em execução:<blockquote> <FONT FACE="courier">'.nvl($Err['sqltext'],'nenhum').'</blockquote></font></DT>';
     if (is_array($params)) {
       $w_html .= "<DT>Valores dos parâmetros:<DD><FONT FACE=\"courier\" size=1>";
       foreach ($params as $w_Item) {
@@ -984,7 +1031,7 @@ function TrataErro($sp, $Err, $params, $file, $line, $object) {
     $w_html .= chr(10).'</FONT></TD></TR></TABLE><BLOCKQUOTE>';
     $w_html .= '</body></html>';
 
-    $w_resultado = EnviaMail('ERRO SIW',$w_html,'alex@sbpi.com.br; celso@sbpi.com.br');
+    $w_resultado = EnviaMail('ERRO SIW',$w_html,'desenv@sbpi.com.br');
     if ($w_resultado>'') {
        ShowHTML('<SCRIPT LANGUAGE="JAVASCRIPT">');
        ShowHTML('   alert("Não foi possível enviar o e-mail comunicando sobre o erro. Favor copiar esta página e enviá-la por e-mail aos gestores do sistema.");');
