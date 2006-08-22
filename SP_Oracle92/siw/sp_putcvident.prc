@@ -23,28 +23,37 @@ create or replace procedure SP_PutCVIdent
     p_sq_pais_passaporte  in number     default null,
     p_chave_nova          out number
    ) is
-   w_existe number(18);
-   w_chave  number(18);
-   w_foto   number(18);
+   w_existe         number(18);
+   w_chave          number(18);
+   w_foto           number(18);
 begin
    w_chave := p_chave;
    w_foto  := null;
    
    If nvl(p_chave,0) = 0 Then
-      -- Recupera a próxima chave
-      select sq_pessoa.nextval into w_Chave from dual;
-      
-     -- Insere registro em CO_PESSOA
-     insert into co_pessoa (
-        sq_pessoa,      sq_pessoa_pai, sq_tipo_vinculo,
-        sq_tipo_pessoa, nome,          nome_resumido)
-     (select
-        w_Chave,        p_cliente,     null,
-        sq_tipo_pessoa, p_nome,        p_nome_resumido
-        from co_tipo_pessoa
-       where ativo         = 'S'
-         and nome          = 'Física'
-     );
+      select count(*)       into w_existe from co_pessoa_fisica where cliente = p_cliente and cpf = p_cpf;
+      If w_existe > 0 Then
+         -- Recupera a chave da pessoa
+         select sq_pessoa into w_chave from co_pessoa_fisica where cliente = p_cliente and cpf = p_cpf;
+         update co_pessoa
+            set nome          = p_nome,
+                nome_resumido = p_nome_resumido
+          where sq_pessoa = w_chave;         
+      Else
+         -- Recupera a próxima chave
+         select sq_pessoa.nextval into w_chave from dual;
+         -- Insere registro em CO_PESSOA
+         insert into co_pessoa (
+                sq_pessoa,      sq_pessoa_pai, sq_tipo_vinculo,
+                sq_tipo_pessoa, nome,          nome_resumido)
+        (select
+               w_chave,        p_cliente,     null,
+               sq_tipo_pessoa, p_nome,        p_nome_resumido
+          from co_tipo_pessoa
+         where ativo         = 'S'
+           and nome          = 'Física'
+         );
+      End If;
    Else
      -- Altera o nome e o nome resumido na tabela de pessoas
      update co_pessoa
