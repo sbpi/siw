@@ -202,7 +202,7 @@ Sub Rel_PPA
   Dim p_cd_acao, p_cd_programa, p_selecionada_mp, p_selecionada_se, p_codigo
   Dim w_acao_aprovado, w_acao_saldo, w_acao_empenhado, w_acao_liquidado, w_acao_liquidar
   Dim w_tot_aprovado, w_tot_saldo, w_tot_empenhado, w_tot_liquidado, w_tot_liquidar
-  Dim p_responsavel, p_sq_unidade_resp, p_prioridade, p_tarefas_atraso
+  Dim p_sq_unidade_resp, p_prioridade, p_tarefas_atraso
   Dim w_atual, w_col, w_col_word, p_campos, p_metas, p_tarefas, w_logo, w_titulo 
   Dim w_tipo_rel, w_linha, w_pag, p_ordena
   
@@ -217,7 +217,6 @@ Sub Rel_PPA
      p_cd_programa              = ucase(Trim(Mid(p_codigo,1,4)))
   End If
   p_cd_acao                  = ucase(Trim(Mid(p_codigo,5,4)))
-  p_responsavel              = ucase(Trim(Request("p_responsavel")))
   p_sq_unidade_resp          = ucase(Trim(Request("p_sq_unidade_resp")))
   p_prioridade               = ucase(Trim(Request("p_prioridade")))
   p_selecionada_mp           = ucase(Trim(Request("p_selecionada_mp")))
@@ -240,9 +239,6 @@ Sub Rel_PPA
         DB_GetAcaoPPA_IS RS, w_cliente, w_ano, p_cd_programa , null, null, null, null, null, null
      Else
         DB_GetAcaoPPA_IS RS, w_cliente, w_ano, Mid(p_codigo,1,4), Mid(p_codigo,5,4), null, Mid(p_codigo,13,17), null, null, null
-     End If
-     If p_responsavel > "" Then
-        RS.Filter = "nm_coordenador like '%" & p_responsavel & "%'"
      End If
      If p_ordena > "" Then 
         RS.sort = p_ordena 
@@ -271,7 +267,6 @@ Sub Rel_PPA
         ValidateOpen "Validacao"
         Validate "p_cd_programa", "Programa", "SELECT", "", "1", "18", "", "1"
         Validate "p_codigo", "Ação", "SELECT", "", "1", "18", "1", "1"
-        Validate "p_responsavel", "Responsável", "1", "", "2", "60", "1", "1"
         ShowHTML "  if (theForm.p_tarefas.checked == false) {"
         ShowHTML "     theForm.p_prioridade.value = ''"
         ShowHTML "  }"
@@ -327,7 +322,6 @@ Sub Rel_PPA
     w_col_word = 2
     ' Exibe a quantidade de registros apresentados na listagem e o cabeçalho da tabela de listagem
     w_filtro = ""
-    If p_responsavel           > "" Then w_filtro = w_filtro & "<tr valign=""top""><td align=""right""><font size=1>Responsável<td><font size=1>[<b>" & p_responsavel & "</b>]"                     End If
     If p_prioridade            > "" Then w_filtro = w_filtro & "<tr valign=""top""><td align=""right""><font size=1>Prioridade<td><font size=1>[<b>" & RetornaPrioridade(p_prioridade) & "</b>]"    End If
     If p_selecionada_mp        > "" Then w_filtro = w_filtro & "<tr valign=""top""><td align=""right""><font size=1>Selecionada SPI/MP<td><font size=1>[<b>" & p_selecionada_mp & "</b>]"             End If
     If p_selecionada_se        > "" Then w_filtro = w_filtro & "<tr valign=""top""><td align=""right""><font size=1>Selecionada SE/SEPPIR<td><font size=1>[<b>" & p_selecionada_se & "</b>]" End If
@@ -453,7 +447,6 @@ Sub Rel_PPA
            ShowHTML "<table border=""0"" cellpadding=""0"" cellspacing=""0"" width=""100%"">"
            ' Exibe a quantidade de registros apresentados na listagem e o cabeçalho da tabela de listagem
            w_filtro = ""
-           If p_responsavel           > "" Then w_filtro = w_filtro & "<tr valign=""top""><td align=""right""><font size=1>Responsável<td><font size=1>[<b>" & p_responsavel & "</b>]"                     End If
            If p_prioridade            > "" Then w_filtro = w_filtro & "<tr valign=""top""><td align=""right""><font size=1>Prioridade<td><font size=1>[<b>" & RetornaPrioridade(p_prioridade) & "</b>]"    End If
            If p_selecionada_mp        > "" Then w_filtro = w_filtro & "<tr valign=""top""><td align=""right""><font size=1>Selecionada SPI/MP<td><font size=1>[<b>" & p_selecionada_mp & "</b>]"             End If
            If p_selecionada_se        > "" Then w_filtro = w_filtro & "<tr valign=""top""><td align=""right""><font size=1>Selecionada SE/SEPPIR<td><font size=1>[<b>" & p_selecionada_se & "</b>]" End If
@@ -536,7 +529,7 @@ Sub Rel_PPA
                  ShowHTML "      <tr bgcolor=""" & conTrBgColor & """><td colspan=" & w_col_word & " align=""center""><font size=""1""><b>Não foram encontrados registros(metas).</b></td></tr>"
                  w_linha = w_linha + 1
               Else
-                 DB_GetSolicMeta_IS RS3, RS2("sq_siw_solicitacao"), null, "LISTA", null, null, null, null, null, null, null
+                 DB_GetSolicMeta_IS RS3, RS2("sq_siw_solicitacao"), null, "LISTA", null, null, null, null, null, null, null, null, null
                  RS3.Sort = "ordem"
                  If RS3.EOF Then ' Se não foram selecionados registros, exibe mensagem
                     ShowHTML "      <tr bgcolor=""" & conTrBgColor & """><td colspan=" & w_col_word & " align=""center""><font size=""1""><b>Não foram encontrados registros(metas).</b></td></tr>"
@@ -579,9 +572,6 @@ Sub Rel_PPA
                     null, null, null, null, null, null, null, p_prioridade, null, null, null, null, _
                     null, null, null, null, null, null, null, null, null, RS2("sq_siw_solicitacao"), null, _
                     null, null, null, null, w_ano
-                 If p_tarefas_atraso > "" Then
-                    RS3.Filter = "fim < " & Date()
-                 End If
                  RS3.sort = "fim, prioridade" 
                  If RS3.EOF Then ' Se não foram selecionados registros, exibe mensagem
                     ShowHTML "      <tr bgcolor=""" & conTrBgColor & """><td colspan=" & w_col_word & " align=""center""><font size=""1""><b>Não foram encontrados registros(tarefas).</b></td></tr>"
@@ -600,39 +590,41 @@ Sub Rel_PPA
                     ShowHTML "        </tr>"
                     w_linha = w_linha + 1
                     While Not RS3.EOF
-                      'If w_cor = conTrBgColor or w_cor = "" Then w_cor = conTrAlternateBgColor Else w_cor = conTrBgColor End If
-                      w_cor = conTrBgColor
-                      ShowHTML "      <tr bgcolor=""" & w_cor & """ valign=""top"">"
-                      ShowHTML "        <td nowrap><font size=""1"">"
-                      If RS3("concluida") = "N" Then
-                         If RS3("fim") < Date() Then
-                            ShowHTML "           <img src=""" & conImgAtraso & """ border=0 width=15 heigth=15 align=""center"">"
-                         ElseIf RS3("aviso_prox_conc") = "S" and (RS3("aviso") <= Date()) Then
-                            ShowHTML "           <img src=""" & conImgAviso & """ border=0 width=15 height=15 align=""center"">"
-                         Else
-                            ShowHTML "           <img src=""" & conImgNormal & """ border=0 width=15 height=15 align=""center"">"
-                         End IF
-                      Else
-                         If RS3("fim") < Nvl(RS3("fim_real"),RS3("fim")) Then
-                            ShowHTML "           <img src=""" & conImgOkAtraso & """ border=0 width=15 heigth=15 align=""center"">"
-                         Else
-                            ShowHTML "           <img src=""" & conImgOkNormal & """ border=0 width=15 height=15 align=""center"">"
-                         End IF
-                      End If
-                      ShowHTML "        <A class=""HL"" HREF=""" & w_dir & "Tarefas.asp?par=Visual&R=" & w_pagina & par & "&O=L&w_chave=" & RS3("sq_siw_solicitacao") & "&w_tipo=&P1=" & P1 & "&P2=" & P2 & "&P3=" & P3 & "&P4=" & P4 & "&TP=" & TP & "&SG=" & SG & MontaFiltro("GET") & """ TARGET=""VisualTarefa"" title=""Exibe as informações desta tarefa."">" & RS3("sq_siw_solicitacao") & "&nbsp;</a>"
-                      'If Len(Nvl(RS3("assunto"),"-")) > 50 Then w_titulo = Mid(Nvl(RS3("assunto"),"-"),1,50) & "..." Else w_titulo = Nvl(RS3("assunto"),"-") End If
-                      ShowHTML "        <td><font size=""1"">" & RS3("titulo") & "</td>"
-                      ShowHTML "        <td><font size=""1"">" & RS3("nm_solic") & "</td>"
-                      ShowHTML "        <td><font size=""1"">" & Nvl(RS3("proponente"),"---") & "</td>"
-                      ShowHTML "        <td align=""center""><font size=""1"">&nbsp;" & Nvl(FormatDateTime(RS3("fim"),2),"-") & "</td>"
-                      ShowHTML "        <td align=""right""><font size=""1"">" & FormatNumber(RS3("valor"),2) & "&nbsp;</td>"
-                      ShowHTML "        <td align=""right""><font size=""1"">" & FormatNumber(RS3("custo_real"),2) & "&nbsp;</td>"
-                      ShowHTML "        <td nowrap><font size=""1"">" & RS3("nm_tramite") & "</td>"
-                      If p_prioridade = "" Then ShowHTML "<td nowrap><font size=""1"">" & RetornaPrioridade(RS3("prioridade")) & "</td>" End If
-                      ShowHTML "        </td>"
-                      ShowHTML "      </tr>"
-                      RS3.MoveNext
-                      w_linha = w_linha + 1
+                       If (p_tarefas_atraso > "" and RS3("fim") < Date()) or (p_tarefas_atraso = "") Then
+                          'If w_cor = conTrBgColor or w_cor = "" Then w_cor = conTrAlternateBgColor Else w_cor = conTrBgColor End If
+                          w_cor = conTrBgColor
+                          ShowHTML "      <tr bgcolor=""" & w_cor & """ valign=""top"">"
+                          ShowHTML "        <td nowrap><font size=""1"">"
+                          If RS3("concluida") = "N" Then
+                             If RS3("fim") < Date() Then
+                                ShowHTML "           <img src=""" & conImgAtraso & """ border=0 width=15 heigth=15 align=""center"">"
+                             ElseIf RS3("aviso_prox_conc") = "S" and (RS3("aviso") <= Date()) Then
+                                ShowHTML "           <img src=""" & conImgAviso & """ border=0 width=15 height=15 align=""center"">"
+                             Else
+                                ShowHTML "           <img src=""" & conImgNormal & """ border=0 width=15 height=15 align=""center"">"
+                             End IF
+                          Else
+                             If RS3("fim") < Nvl(RS3("fim_real"),RS3("fim")) Then
+                                ShowHTML "           <img src=""" & conImgOkAtraso & """ border=0 width=15 heigth=15 align=""center"">"
+                             Else
+                                ShowHTML "           <img src=""" & conImgOkNormal & """ border=0 width=15 height=15 align=""center"">"
+                             End IF
+                          End If
+                          ShowHTML "        <A class=""HL"" HREF=""" & w_dir & "Tarefas.asp?par=Visual&R=" & w_pagina & par & "&O=L&w_chave=" & RS3("sq_siw_solicitacao") & "&w_tipo=&P1=" & P1 & "&P2=" & P2 & "&P3=" & P3 & "&P4=" & P4 & "&TP=" & TP & "&SG=" & SG & MontaFiltro("GET") & """ TARGET=""VisualTarefa"" title=""Exibe as informações desta tarefa."">" & RS3("sq_siw_solicitacao") & "&nbsp;</a>"
+                          'If Len(Nvl(RS3("assunto"),"-")) > 50 Then w_titulo = Mid(Nvl(RS3("assunto"),"-"),1,50) & "..." Else w_titulo = Nvl(RS3("assunto"),"-") End If
+                          ShowHTML "        <td><font size=""1"">" & RS3("titulo") & "</td>"
+                          ShowHTML "        <td><font size=""1"">" & RS3("nm_solic") & "</td>"
+                          ShowHTML "        <td><font size=""1"">" & Nvl(RS3("proponente"),"---") & "</td>"
+                          ShowHTML "        <td align=""center""><font size=""1"">&nbsp;" & Nvl(FormatDateTime(RS3("fim"),2),"-") & "</td>"
+                          ShowHTML "        <td align=""right""><font size=""1"">" & FormatNumber(RS3("valor"),2) & "&nbsp;</td>"
+                          ShowHTML "        <td align=""right""><font size=""1"">" & FormatNumber(RS3("custo_real"),2) & "&nbsp;</td>"
+                          ShowHTML "        <td nowrap><font size=""1"">" & RS3("nm_tramite") & "</td>"
+                          If p_prioridade = "" Then ShowHTML "<td nowrap><font size=""1"">" & RetornaPrioridade(RS3("prioridade")) & "</td>" End If
+                          ShowHTML "        </td>"
+                          ShowHTML "      </tr>"
+                          w_linha = w_linha + 1
+                       End If 
+                       RS3.MoveNext
                     Wend
                  End If
               End If
@@ -719,7 +711,6 @@ Sub Rel_PPA
     SelecaoProgramaPPA "<u>P</u>rograma PPA:", "P", null, w_cliente, w_ano, p_cd_programa, "p_cd_programa", null, "onchange=""document.Form.action='" & w_dir & w_pagina & par & "'; document.Form.w_troca.value='p_cd_programa'; document.Form.target=''; document.Form.O.value='P'; document.Form.submit();""", w_menu
     ShowHTML "      <tr>"
     SelecaoAcaoPPA "<u>A</u>ção PPA:", "A", null, w_cliente, w_ano, p_cd_programa, null, null, null, "p_codigo", null, null, null, w_menu
-    ShowHTML "      <tr><td><font size=""1""><b><u>R</u>esponsável:</b><br><input " & w_disabled & " accesskey=""R"" type=""text"" name=""p_responsavel"" class=""sti"" SIZE=""40"" MAXLENGTH=""60"" VALUE=""" & p_responsavel & """></td>"
     ShowHTML "      <tr><td colspan=3><table border=0 width=""100%"" cellspacing=0 cellpadding=0><tr valign=""top"">"
     SelecaoPrioridade "<u>P</u>rioridade das tarefas:", "P", "Informe a prioridade da tarefa.", p_prioridade, null, "p_prioridade", null, null
     ShowHTML "          <td><font size=""1""><b>Exibir somente tarefas em atraso?</b><br><input " & w_Disabled & " type=""radio"" name=""p_tarefas_atraso"" value=""S""> Sim <input " & w_Disabled & " type=""radio"" name=""p_tarefas_atraso"" value="""" checked> Não"
@@ -810,7 +801,6 @@ Sub Rel_PPA
   Set p_cd_programa             = Nothing 
   Set p_selecionada_mp          = Nothing 
   Set p_selecionada_se          = Nothing 
-  Set p_responsavel             = Nothing 
   Set p_sq_unidade_resp         = Nothing
   Set p_ordena                  = Nothing 
 End Sub
@@ -825,7 +815,7 @@ Sub Rel_Projeto
   Dim p_sq_isprojeto, p_selecao_mp, p_selecao_se, p_siw_solic
   Dim w_acao_aprovado, w_acao_saldo, w_acao_empenhado, w_acao_liquidado, w_acao_liquidar
   Dim w_tot_aprovado, w_tot_saldo, w_tot_empenhado, w_tot_liquidado, w_tot_liquidar
-  Dim p_responsavel, p_sq_unidade_resp, p_prioridade, p_tarefas_atraso
+  Dim p_sq_unidade_resp, p_prioridade, p_tarefas_atraso
   Dim w_atual, w_col, w_col_word, p_campos, p_metas, p_tarefas, w_logo, w_titulo, w_sq_siw_solicitacao
   Dim w_tipo_rel, w_pag, w_linha, p_ordena
   
@@ -834,7 +824,6 @@ Sub Rel_Projeto
   w_tipo_rel        = uCase(trim(Request("w_tipo_rel")))
   
   p_sq_isprojeto             = ucase(Trim(Request("p_sq_isprojeto")))
-  p_responsavel              = ucase(Trim(Request("p_responsavel")))
   p_prioridade               = ucase(Trim(Request("p_prioridade")))
   p_sq_unidade_resp          = ucase(Trim(Request("p_sq_unidade_resp")))
   p_selecao_mp               = ucase(Trim(Request("p_selecao_mp")))
@@ -854,7 +843,7 @@ Sub Rel_Projeto
      End If
      DesconectaBD
      ' Recupera todos os registros para a listagem     
-     DB_GetProjeto_IS RS, p_sq_isprojeto, w_cliente, null, null, p_responsavel, null, null, null, null, null, p_selecao_mp, p_selecao_se, null, p_siw_solic
+     DB_GetProjeto_IS RS, p_sq_isprojeto, w_cliente, null, null, null, null, null, null, null, null, p_selecao_mp, p_selecao_se, null, p_siw_solic
      If p_ordena > "" Then RS.sort = p_ordena Else RS.Sort = "ordem" End If
   End If
   
@@ -878,7 +867,6 @@ Sub Rel_Projeto
         ValidateOpen "Validacao"
         Validate "p_sq_isprojeto", "Programa interno", "SELECT", "", "1", "18", "", "1"
         Validate "p_siw_solic", "Ações específicas", "SELECT", "", "1", "18", "", "1"
-        Validate "p_responsavel", "Responsável", "1", "", "2", "60", "1", "1"
         ShowHTML "  if (theForm.p_tarefas.checked == false) {"
         ShowHTML "     theForm.p_prioridade.value = '';"
         ShowHTML "  }"
@@ -935,7 +923,6 @@ Sub Rel_Projeto
     ' Exibe a quantidade de registros apresentados na listagem e o cabeçalho da tabela de listagem
     'ShowHTML "<tr><td colspan=2><font size=""1""><font size=""1""><b>Filtro:"
     w_filtro = ""
-    If p_responsavel           > "" Then w_filtro = w_filtro & "<tr valign=""top""><td align=""right""><font size=1>Responsável<td><font size=1>[<b>" & RetornaSimNao(p_responsavel) & "</b>]"                   End If
     If p_prioridade            > "" Then w_filtro = w_filtro & "<tr valign=""top""><td align=""right""><font size=1>Prioridade<td><font size=1>[<b>" & RetornaPrioridade(p_prioridade) & "</b>]"                 End If
     If p_selecao_mp            > "" Then w_filtro = w_filtro & "<tr valign=""top""><td align=""right""><font size=1>Selecionada MP<td><font size=1>[<b>" & RetornaSimNao(p_selecao_mp) & "</b>]"                 End If
     If p_selecao_se            > "" Then w_filtro = w_filtro & "<tr valign=""top""><td align=""right""><font size=1>Selecionada Relevante<td><font size=1>[<b>" & RetornaSimNao(p_selecao_se) & "</b>]"          End If
@@ -1018,7 +1005,7 @@ Sub Rel_Projeto
       ' Lista os registros selecionados para listagem
       While Not RS.EOF
         If w_linha > 20 and w_tipo_rel = "WORD" Then
-           CabecalhoWordRel w_logo, w_pag, w_linha, p_responsavel, p_prioridade, _
+           CabecalhoWordRel w_logo, w_pag, w_linha, null, p_prioridade, _
                             p_selecao_mp, p_selecao_se, p_tarefas_atraso, w_filtro, _
                             p_campos
            w_linha = w_linha + 1
@@ -1083,7 +1070,7 @@ Sub Rel_Projeto
                  ShowHTML "    <tr bgcolor=""" & conTrBgColor & """><td colspan=" & w_col_word & " align=""center""><font size=""1""><b>Não foram encontrados registros(metas).</b></td></tr>"
                  w_linha = w_linha + 1
               Else
-                 DB_GetSolicMeta_IS RS3, RS2("sq_siw_solicitacao"), null, "LSTNULL", null, null, null, null, null, null, null
+                 DB_GetSolicMeta_IS RS3, RS2("sq_siw_solicitacao"), null, "LSTNULL", null, null, null, null, null, null, null, null, null
                  RS3.Sort = "ordem"
                  If RS3.EOF Then ' Se não foram selecionados registros, exibe mensagem
                     ShowHTML " <tr bgcolor=""" & conTrBgColor & """><td colspan=" & w_col_word & " align=""center""><font size=""1""><b>Não foram encontrados registros(metas).</b></td></tr>"
@@ -1125,9 +1112,6 @@ Sub Rel_Projeto
                     null, null, null, null, null, null, null, p_prioridade, null, null, null, null, _
                     null, null, null, null, null, null, null, null, null, RS2("sq_siw_solicitacao"), null, _
                     null, null, null, null, w_ano
-                 If p_tarefas_atraso > "" Then
-                    RS3.Filter = "fim < " & Date()
-                 End If
                  RS3.sort = "fim, prioridade" 
                  If RS3.EOF Then ' Se não foram selecionados registros, exibe mensagem
                     ShowHTML "   <tr bgcolor=""" & conTrBgColor & """><td colspan=" & w_col_word & " align=""center""><font size=""1""><b>Não foram encontrados registros(tarefas).</b></td></tr>"
@@ -1146,41 +1130,43 @@ Sub Rel_Projeto
                     ShowHTML "   </tr>"
                     w_linha = w_linha + 1
                     While Not RS3.EOF
-                      'If w_cor = conTrBgColor or w_cor = "" Then w_cor = conTrAlternateBgColor Else w_cor = conTrBgColor End If
-                      w_cor = conTrBgColor
-                      ShowHTML " <tr bgcolor=""" & w_cor & """ valign=""top"">"
-                      ShowHTML "   <td nowrap><font size=""1"">"
-                      If RS3("concluida") = "N" Then
-                         If RS3("fim") < Date() Then
-                            ShowHTML "           <img src=""" & conImgAtraso & """ border=0 width=15 heigth=15 align=""center"">"
-                         ElseIf RS3("aviso_prox_conc") = "S" and (RS3("aviso") <= Date()) Then
-                            ShowHTML "           <img src=""" & conImgAviso & """ border=0 width=15 height=15 align=""center"">"
+                       If (p_tarefas_atraso > "" and RS3("fim") < Date()) or (p_atraso = "") Then
+                          'If w_cor = conTrBgColor or w_cor = "" Then w_cor = conTrAlternateBgColor Else w_cor = conTrBgColor End If
+                          w_cor = conTrBgColor
+                          ShowHTML " <tr bgcolor=""" & w_cor & """ valign=""top"">"
+                          ShowHTML "   <td nowrap><font size=""1"">"
+                         If RS3("concluida") = "N" Then
+                            If RS3("fim") < Date() Then
+                               ShowHTML "           <img src=""" & conImgAtraso & """ border=0 width=15 heigth=15 align=""center"">"
+                            ElseIf RS3("aviso_prox_conc") = "S" and (RS3("aviso") <= Date()) Then
+                               ShowHTML "           <img src=""" & conImgAviso & """ border=0 width=15 height=15 align=""center"">"
+                            Else
+                               ShowHTML "           <img src=""" & conImgNormal & """ border=0 width=15 height=15 align=""center"">"
+                            End IF
                          Else
-                            ShowHTML "           <img src=""" & conImgNormal & """ border=0 width=15 height=15 align=""center"">"
-                         End IF
-                      Else
-                         If RS3("fim") < Nvl(RS3("fim_real"),RS3("fim")) Then
-                            ShowHTML "           <img src=""" & conImgOkAtraso & """ border=0 width=15 heigth=15 align=""center"">"
+                            If RS3("fim") < Nvl(RS3("fim_real"),RS3("fim")) Then
+                               ShowHTML "           <img src=""" & conImgOkAtraso & """ border=0 width=15 heigth=15 align=""center"">"
+                            Else
+                              ShowHTML "           <img src=""" & conImgOkNormal & """ border=0 width=15 height=15 align=""center"">"
+                            End IF
+                         End If
+                         If w_tipo_rel = "WORD" Then
+                            ShowHTML "" & RS3("sq_siw_solicitacao") & "&nbsp;"
                          Else
-                            ShowHTML "           <img src=""" & conImgOkNormal & """ border=0 width=15 height=15 align=""center"">"
-                         End IF
+                            ShowHTML "        <A class=""HL"" HREF=""" & w_dir & "Tarefas.asp?par=Visual&R=" & w_pagina & par & "&O=L&w_chave=" & RS3("sq_siw_solicitacao") & "&w_tipo=&P1=" & P1 & "&P2=" & P2 & "&P3=" & P3 & "&P4=" & P4 & "&TP=" & TP & "&SG=" & SG & MontaFiltro("GET") & """ TARGET=""VisualTarefa"" title=""Exibe as informações desta tarefa."">" & RS3("sq_siw_solicitacao") & "&nbsp;</a>"
+                         End If
+                         ShowHTML "   </font></td>"  
+                         ShowHTML "   <td><font size=""1"">" & Nvl(RS3("titulo"),"-") & "</td>"
+                         ShowHTML "   <td><font size=""1"">" & RS3("nm_solic") & "</td>"
+                         ShowHTML "   <td><font size=""1"">" & Nvl(RS3("proponente"),"---") & "</td>"
+                         ShowHTML "   <td align=""center""><font size=""1"">&nbsp;" & Nvl(FormatDateTime(RS3("fim"),2),"-") & "</td>"
+                         ShowHTML "   <td align=""right""><font size=""1"">" & FormatNumber(RS3("valor"),2) & "&nbsp;</td>"
+                         ShowHTML "   <td align=""right""><font size=""1"">" & FormatNumber(RS3("custo_real"),2) & "&nbsp;</td>"
+                        ShowHTML "   <td nowrap><font size=""1"">" & RS3("nm_tramite") & "</td>"
+                         If p_prioridade = "" Then ShowHTML "<td nowrap><font size=""1"">" & RetornaPrioridade(RS3("prioridade")) & "</td>" End If
+                         ShowHTML " </tr>"
+                         w_linha = w_linha + 1
                       End If
-                      If w_tipo_rel = "WORD" Then
-                         ShowHTML "" & RS3("sq_siw_solicitacao") & "&nbsp;"
-                      Else
-                         ShowHTML "        <A class=""HL"" HREF=""" & w_dir & "Tarefas.asp?par=Visual&R=" & w_pagina & par & "&O=L&w_chave=" & RS3("sq_siw_solicitacao") & "&w_tipo=&P1=" & P1 & "&P2=" & P2 & "&P3=" & P3 & "&P4=" & P4 & "&TP=" & TP & "&SG=" & SG & MontaFiltro("GET") & """ TARGET=""VisualTarefa"" title=""Exibe as informações desta tarefa."">" & RS3("sq_siw_solicitacao") & "&nbsp;</a>"
-                      End If
-                      ShowHTML "   </font></td>"  
-                      ShowHTML "   <td><font size=""1"">" & Nvl(RS3("titulo"),"-") & "</td>"
-                      ShowHTML "   <td><font size=""1"">" & RS3("nm_solic") & "</td>"
-                      ShowHTML "   <td><font size=""1"">" & Nvl(RS3("proponente"),"---") & "</td>"
-                      ShowHTML "   <td align=""center""><font size=""1"">&nbsp;" & Nvl(FormatDateTime(RS3("fim"),2),"-") & "</td>"
-                      ShowHTML "   <td align=""right""><font size=""1"">" & FormatNumber(RS3("valor"),2) & "&nbsp;</td>"
-                      ShowHTML "   <td align=""right""><font size=""1"">" & FormatNumber(RS3("custo_real"),2) & "&nbsp;</td>"
-                      ShowHTML "   <td nowrap><font size=""1"">" & RS3("nm_tramite") & "</td>"
-                      If p_prioridade = "" Then ShowHTML "<td nowrap><font size=""1"">" & RetornaPrioridade(RS3("prioridade")) & "</td>" End If
-                      ShowHTML " </tr>"
-                      w_linha = w_linha + 1
                       RS3.MoveNext
                     Wend
                  End If
@@ -1276,7 +1262,6 @@ Sub Rel_Projeto
     ShowHTML "          <tr>"
     SelecaoAcao "<u>A</u>ção:", "A", null, w_cliente, w_ano, null, null, null, null, "p_siw_solic", "PROJETO", null, p_sq_isprojeto
     ShowHTML "          </tr>"
-    ShowHTML "      <tr><td><font size=""1""><b><u>R</u>esponsável:</b><br><input " & w_disabled & " accesskey=""R"" type=""text"" name=""p_responsavel"" class=""sti"" SIZE=""40"" MAXLENGTH=""60"" VALUE=""" & p_responsavel & """></td>"
     ShowHTML "      <tr><td colspan=3><table border=0 width=""100%"" cellspacing=0 cellpadding=0><tr valign=""top"">"
     SelecaoPrioridade "<u>P</u>rioridade das tarefas:", "P", "Informe a prioridade da tarefa.", p_prioridade, null, "p_prioridade", null, null
     ShowHTML "          <td><font size=""1""><b>Exibir somente tarefas em atraso?</b><br><input " & w_Disabled & " type=""radio"" name=""p_tarefas_atraso"" value=""S""> Sim <input " & w_Disabled & " type=""radio"" name=""p_tarefas_atraso"" value="""" checked> Não"
@@ -1362,8 +1347,7 @@ Sub Rel_Projeto
   Set w_tot_liquidar            = Nothing
   Set p_sq_isprojeto            = Nothing 
   Set p_selecao_mp              = Nothing 
-  Set p_selecao_se              = Nothing 
-  Set p_responsavel             = Nothing 
+  Set p_selecao_se              = Nothing  
   Set p_sq_unidade_resp         = Nothing
   Set p_ordena                  = Nothing
 End Sub
@@ -1376,7 +1360,7 @@ REM Relatório dos programas PPA
 REM -------------------------------------------------------------------------
 Sub Rel_Programa
   Dim p_cd_programa, p_selecao_mp, p_selecao_se
-  Dim p_responsavel, p_sq_unidade_resp
+  Dim p_sq_unidade_resp
   Dim w_col, w_col_word, p_campos, p_indicador, w_logo, w_titulo 
   Dim w_tipo_rel, w_linha, w_pag, p_ordena
   
@@ -1385,7 +1369,6 @@ Sub Rel_Programa
   w_tipo_rel        = uCase(trim(Request("w_tipo_rel")))
   
   p_cd_programa              = ucase(Trim(Request("p_cd_programa")))
-  p_responsavel              = ucase(Trim(Request("p_responsavel")))
   p_sq_unidade_resp          = ucase(Trim(Request("p_sq_unidade_resp")))
   p_selecao_mp               = ucase(Trim(Request("p_selecao_mp")))
   p_selecao_se               = ucase(Trim(Request("p_selecao_se")))
@@ -1402,9 +1385,6 @@ Sub Rel_Programa
      DesconectaBD
      ' Recupera todos os registros para a listagem
      DB_GetProgramaPPA_IS RS, p_cd_programa, w_cliente, w_ano, null, null
-     If p_responsavel > "" Then
-        RS.Filter = "nm_gerente_programa like '%" &p_responsavel& "%'"
-     End If
      If Nvl(p_ordena,"") > "" Then RS.Sort = p_ordena Else RS.Sort = "ds_programa"
   End If
   
@@ -1427,7 +1407,6 @@ Sub Rel_Programa
         ScriptOpen "JavaScript"
         ValidateOpen "Validacao"
         Validate "p_cd_programa", "Programa", "SELECT", "", "1", "18", "", "1"
-        Validate "p_responsavel", "Responsável", "1", "", "2", "60", "1", "1"
         ValidateClose
         ShowHTML "  function MarcaTodosCampos() {"
         ShowHTML "    if (document.Form.w_marca_campos.checked==true) "
@@ -1474,7 +1453,6 @@ Sub Rel_Programa
     w_col_word = 2
     ' Exibe a quantidade de registros apresentados na listagem e o cabeçalho da tabela de listagem
     w_filtro = ""
-    If p_responsavel           > "" Then w_filtro = w_filtro & "<tr valign=""top""><td align=""right""><font size=1>Responsável<td><font size=1>[<b>" & p_responsavel & "</b>]"                   End If
     If p_selecao_mp            > "" Then w_filtro = w_filtro & "<tr valign=""top""><td align=""right""><font size=1>Selecionada SPI/MP<td><font size=1>[<b>" & p_selecao_mp & "</b>]"             End If
     If p_selecao_se            > "" Then w_filtro = w_filtro & "<tr valign=""top""><td align=""right""><font size=1>Selecionada SE/SEPPIR<td><font size=1>[<b>" & p_selecao_se & "</b>]"              End If
     ShowHTML "<tr><td align=""left"" colspan=2>"
@@ -1554,7 +1532,6 @@ Sub Rel_Programa
            ShowHTML "<table border=""0"" cellpadding=""0"" cellspacing=""0"" width=""100%"">"
            ' Exibe a quantidade de registros apresentados na listagem e o cabeçalho da tabela de listagem
            w_filtro = ""
-           If p_responsavel           > "" Then w_filtro = w_filtro & "<tr valign=""top""><td align=""right""><font size=1>Responsável<td><font size=1>[<b>" & p_responsavel & "</b>]"                   End If
            If p_selecao_mp            > "" Then w_filtro = w_filtro & "<tr valign=""top""><td align=""right""><font size=1>Selecionada SPI/MP<td><font size=1>[<b>" & p_selecao_mp & "</b>]"             End If
            If p_selecao_se            > "" Then w_filtro = w_filtro & "<tr valign=""top""><td align=""right""><font size=1>Selecionada SE/SEPPIR<td><font size=1>[<b>" & p_selecao_se & "</b>]"              End If
            ShowHTML "<tr><td align=""left"" colspan=2>"
@@ -1588,9 +1565,6 @@ Sub Rel_Programa
               null, null, null, null, null, null, null, null, null, null, null, null, _
               null, null, null, null, null, null, null, null, null, null, null, null, _
               RS("cd_programa"), null, null, w_ano
-           If p_responsavel > "" Then
-              RS2.Filter = "nm_gerente_programa like '%" &p_responsavel& "%'"
-           End If
            RS2.sort = "fim" 
            If RS2.EOF Then
               ShowHTML "      <tr bgcolor=""" & conTrBgColor & """><td colspan=" & w_col_word & " align=""center""><font size=""1""><b>Não foram encontrados registros(indicadores).</b></td></tr>"
@@ -1628,9 +1602,6 @@ Sub Rel_Programa
               null, null, null, null, null, null, null, null, null, null, null, null, _
               null, null, null, null, null, null, null, null, null, null, null, null, _
               RS("cd_programa"), null, null, w_ano
-           If p_responsavel > "" Then
-              RS2.Filter = "nm_gerente_programa like '%" &p_responsavel& "%'"
-           End If
            RS2.sort = "fim" 
            If RS2.EOF Then
               w_linha = w_linha + 1
@@ -1669,7 +1640,6 @@ Sub Rel_Programa
     ShowHTML "    <table width=""97%"" border=""0"">"
     ShowHTML "      <tr>"
     SelecaoProgramaPPA "<u>P</u>rograma PPA:", "P", null, w_cliente, w_ano, p_cd_programa, "p_cd_programa", null, null, w_menu
-    ShowHTML "      <tr><td><font size=""1""><b><u>R</u>esponsável:</b><br><input " & w_disabled & " accesskey=""R"" type=""text"" name=""p_responsavel"" class=""sti"" SIZE=""40"" MAXLENGTH=""60"" VALUE=""" & p_responsavel & """></td>"
     ShowHTML "      <tr><td colspan=3><table border=0 width=""100%"" cellspacing=0 cellpadding=0><tr valign=""top"">"
     ShowHTML "          <td><font size=""1""><b>Selecionada pela SPI/MP?</b><br>"
     If p_selecao_mp = "S" Then
@@ -1734,7 +1704,6 @@ Sub Rel_Programa
   Set p_cd_programa             = Nothing 
   Set p_selecao_mp              = Nothing 
   Set p_selecao_se              = Nothing 
-  Set p_responsavel             = Nothing 
   Set p_sq_unidade_resp         = Nothing
 End Sub
 REM =========================================================================
@@ -1746,7 +1715,7 @@ REM Relatório Sintético de Programas Internos
 REM -------------------------------------------------------------------------
 Sub Rel_Sintetico_PR
   Dim p_sq_isprojeto, p_selecao_mp, p_selecao_se, p_siw_solic
-  Dim p_responsavel, p_sq_unidade_resp, p_prioridade
+  Dim p_sq_unidade_resp, p_prioridade
   Dim w_atual, w_logo, w_titulo, w_sq_siw_solicitacao
   Dim w_tipo_rel, w_quantitativo_total
   Dim p_programada, p_exequivel, p_fim_previsto, p_atraso, p_tarefas_atraso
@@ -1758,7 +1727,6 @@ Sub Rel_Sintetico_PR
   
   p_sq_isprojeto             = ucase(Trim(Request("p_sq_isprojeto")))
   p_siw_solic                = ucase(Trim(Request("p_siw_solic")))
-  p_responsavel              = ucase(Trim(Request("p_responsavel")))
   p_prioridade               = ucase(Trim(Request("p_prioridade")))
   p_sq_unidade_resp          = ucase(Trim(Request("p_sq_unidade_resp")))
   p_selecao_mp               = ucase(Trim(Request("p_selecao_mp")))
@@ -1779,7 +1747,7 @@ Sub Rel_Sintetico_PR
      End If
      DesconectaBD
      ' Recupera todos os registros para a listagem
-     DB_GetProjeto_IS RS, p_sq_isprojeto, w_cliente, null, null, p_responsavel, null, null, null, null, null, p_selecao_mp, p_selecao_se, null, p_siw_solic
+     DB_GetProjeto_IS RS, p_sq_isprojeto, w_cliente, null, null, null, null, null, null, null, null, p_selecao_mp, p_selecao_se, null, p_siw_solic
      RS.Sort = "ordem"
   End If
   
@@ -1803,7 +1771,6 @@ Sub Rel_Sintetico_PR
         ValidateOpen "Validacao"
         Validate "p_sq_isprojeto", "Programa interno", "SELECT", "", "1", "18", "", "1"
         Validate "p_siw_solic", "Ação", "SELECT", "", "1", "18", "", "1"
-        Validate "p_responsavel", "Responsável", "1", "", "2", "60", "1", "1"
         ValidateClose
         ScriptClose
      End If
@@ -1829,7 +1796,6 @@ Sub Rel_Sintetico_PR
   If O = "L" Then
      ' Exibe a quantidade de registros apresentados na listagem e o cabeçalho da tabela de listagem
      w_filtro = "<tr valign=""top"">"
-    If p_responsavel           > "" Then w_filtro = w_filtro & "<td><font size=1>Responsável&nbsp;<font size=1>[<b>" & p_responsavel & "</b>]&nbsp;"                     End If
     If p_prioridade            > "" Then w_filtro = w_filtro & "<td><font size=1>Prioridade&nbsp;<font size=1>[<b>" & RetornaPrioridade(p_prioridade) & "</b>]&nbsp;"    End If
     If p_selecao_mp            > "" Then w_filtro = w_filtro & "<td><font size=1>Selecionada MP&nbsp;<font size=1>[<b>" & p_selecao_mp & "</b>]&nbsp;"             End If
     If p_selecao_se            > "" Then w_filtro = w_filtro & "<td><font size=1>Selecionada Relevante&nbsp;<font size=1>[<b>" & p_selecao_se & "</b>]&nbsp;" End If
@@ -1880,7 +1846,6 @@ Sub Rel_Sintetico_PR
              ShowHTML "<div align=center><center>"
              ShowHTML "<table border=""0"" cellpadding=""0"" cellspacing=""0"" width=""100%"">"
              w_filtro = "<tr valign=""top"">"
-             If p_responsavel           > "" Then w_filtro = w_filtro & "<td><font size=1>Responsável&nbsp;<font size=1>[<b>" & p_responsavel & "</b>]&nbsp;"                     End If
              If p_prioridade            > "" Then w_filtro = w_filtro & "<td><font size=1>Prioridade&nbsp;<font size=1>[<b>" & RetornaPrioridade(p_prioridade) & "</b>]&nbsp;"    End If
              If p_selecao_mp            > "" Then w_filtro = w_filtro & "<td><font size=1>Selecionada MP&nbsp;<font size=1>[<b>" & p_selecao_mp & "</b>]&nbsp;"             End If
              If p_selecao_se            > "" Then w_filtro = w_filtro & "<td><font size=1>Selecionada Relevante&nbsp;<font size=1>[<b>" & p_selecao_se & "</b>]&nbsp;" End If
@@ -1924,22 +1889,7 @@ Sub Rel_Sintetico_PR
              w_teste_acoes = 1
              w_visao = 0 
              If w_visao < 2 Then               
-                DB_GetSolicMeta_IS RS3, RS2("sq_siw_solicitacao"), null, "LSTNULL", null, null, null, null, null, null, null
-                If p_programada       > "" and p_exequivel    > "" and p_fim_previsto > "" Then
-                   RS3.Filter = "programada = '" & p_programada & "' and exequivel = '" & p_exequivel & "' and fim_previsto < '" & Date() & "' and perc_conclusao < 100"
-                ElseIf p_programada   > "" and p_exequivel    > "" Then   
-                   RS3.Filter = "programada = '" & p_programada & "' and exequivel = '" & p_exequivel & "'"
-                ElseIf p_programada   > "" and p_fim_previsto > "" Then
-                   RS3.Filter = "programada = '" & p_programada & "' and fim_previsto < '" & Date() & "' and perc_conclusao < 100"
-                ElseIf p_fim_previsto > "" and p_exequivel    > "" Then
-                   RS3.Filter = "exequivel = '" & p_exequivel & "' and fim_previsto < '" & Date() & "' and perc_conclusao < 100"
-                ElseIf p_programada   > "" Then
-                   RS3.Filter = "programada = '" & p_programada & "'"
-                ElseIf p_exequivel    > "" Then
-                   RS3.Filter = "exequivel = '" & p_exequivel & "'"
-                ElseIf p_fim_previsto > "" Then
-                   RS3.Filter = "fim_previsto < '" & Date() & "' and perc_conclusao < 100"
-                End If
+                DB_GetSolicMeta_IS RS3, RS2("sq_siw_solicitacao"), null, "LSTNULL", null, null, null, null, null, null, p_exequivel, p_programada, p_fim_previsto
                 RS3.Sort = "ordem"
                 If Not RS3.EOF Then
                    w_teste_metas = 1
@@ -2088,7 +2038,6 @@ Sub Rel_Sintetico_PR
     ShowHTML "          <tr>"
     SelecaoAcao "<u>A</u>ção:", "A", null, w_cliente, w_ano, null, null, null, null, "p_siw_solic", "PROJETO", null, p_sq_isprojeto
     ShowHTML "          </tr>"
-    ShowHTML "      <tr><td><font size=""1""><b><u>R</u>esponsável:</b><br><input " & w_disabled & " accesskey=""R"" type=""text"" name=""p_responsavel"" class=""sti"" SIZE=""40"" MAXLENGTH=""60"" VALUE=""" & p_responsavel & """></td>"
     ShowHTML "      <tr>"
     SelecaoPrioridade "<u>P</u>rioridade das tarefas:", "P", "Informe a prioridade da tarefa.", p_prioridade, null, "p_prioridade", null, null
     ShowHTML "      <tr><td colspan=3><table border=0 width=""100%"" cellspacing=0 cellpadding=0><tr valign=""top"">"
@@ -2138,7 +2087,6 @@ Sub Rel_Sintetico_PR
   Set p_siw_solic               = Nothing
   Set p_selecao_mp              = Nothing 
   Set p_selecao_se              = Nothing 
-  Set p_responsavel             = Nothing 
   Set p_sq_unidade_resp         = Nothing
 End Sub
 REM =========================================================================
@@ -2150,7 +2098,7 @@ REM Relatório Sintético das Ações do PPA
 REM -------------------------------------------------------------------------
 Sub Rel_Sintetico_PPA
   Dim p_codigo, p_cd_acao, p_cd_programa, p_selecao_mp, p_selecao_se
-  Dim p_responsavel, p_sq_unidade_resp, p_prioridade
+  Dim p_sq_unidade_resp, p_prioridade
   Dim w_atual, w_logo, w_titulo 
   Dim w_tipo_rel, w_quantitativo_total
   Dim p_programada, p_exequivel, p_fim_previsto, p_atraso, p_tarefas_atraso
@@ -2167,7 +2115,6 @@ Sub Rel_Sintetico_PPA
      p_cd_programa              = ucase(Trim(Mid(p_codigo,1,4)))
   End If
   p_cd_acao                  = ucase(Trim(Mid(p_codigo,5,4)))
-  p_responsavel              = ucase(Trim(Request("p_responsavel")))
   p_sq_unidade_resp          = ucase(Trim(Request("p_sq_unidade_resp")))
   p_prioridade               = ucase(Trim(Request("p_prioridade")))
   p_selecao_mp               = ucase(Trim(Request("p_selecao_mp")))
@@ -2192,9 +2139,6 @@ Sub Rel_Sintetico_PPA
      Else
         DB_GetAcaoPPA_IS RS, w_cliente, w_ano, Mid(p_codigo,1,4), Mid(p_codigo,5,4), null, Mid(p_codigo,13,17), null, null, null
      End If
-     If p_responsavel > "" Then
-        RS.Filter = "nm_coordenador like '%" & p_responsavel &"%'"
-     End If
      RS.Sort = "cd_programa, cd_acao, cd_unidade"
   End If
   
@@ -2218,7 +2162,6 @@ Sub Rel_Sintetico_PPA
         ValidateOpen "Validacao"
         Validate "p_cd_programa", "Programa", "SELECT", "", "1", "18", "1", "1"
         Validate "p_codigo", "Ação", "SELECT", "", "1", "18", "1", "1"
-        Validate "p_responsavel", "Responsável", "1", "", "2", "60", "1", "1"
         ValidateClose
         ScriptClose
      End If
@@ -2244,7 +2187,6 @@ Sub Rel_Sintetico_PPA
   If O = "L" Then
      ' Exibe a quantidade de registros apresentados na listagem e o cabeçalho da tabela de listagem
      w_filtro = "<tr valign=""top"">"
-    If p_responsavel           > "" Then w_filtro = w_filtro & "<td><font size=1>Responsável&nbsp;<font size=1>[<b>" & p_responsavel & "</b>]&nbsp;"                     End If
     If p_prioridade            > "" Then w_filtro = w_filtro & "<td><font size=1>Prioridade&nbsp;<font size=1>[<b>" & RetornaPrioridade(p_prioridade) & "</b>]&nbsp;"    End If
     If p_selecao_mp            > "" Then w_filtro = w_filtro & "<td><font size=1>Selecionada SPI/MP&nbsp;<font size=1>[<b>" & p_selecao_mp & "</b>]&nbsp;"             End If
     If p_selecao_se            > "" Then w_filtro = w_filtro & "<td><font size=1>Selecionada SE/SEPPIR&nbsp;<font size=1>[<b>" & p_selecao_se & "</b>]&nbsp;" End If
@@ -2367,9 +2309,6 @@ Sub Rel_Sintetico_PPA
              null, null, null, null, p_atraso, null, null, null, null, null, null, null, _
              null, null, null, null, null, null, null, null, null, null, null, Mid(RS("chave"),1,4), _
              RS("cd_acao"), null, Mid(RS("chave"),9,4), w_ano
-           If p_responsavel > "" Then
-             RS2.Filter = "nm_coordenador like '%" &p_responsavel& "%'"
-          End If
           'Variarel para o teste de existencia de metas e açoes para visualização no relatorio
           w_teste_metas = 0
           w_teste_acoes = 0 
@@ -2379,22 +2318,7 @@ Sub Rel_Sintetico_PPA
              w_teste_acoes = 1
              w_visao = 0
              If w_visao < 2 Then               
-                DB_GetSolicMeta_IS RS3, RS2("sq_siw_solicitacao"), null, "LSTNULL", null, null, null, null, null, null, null
-                If p_programada       > "" and p_exequivel    > "" and p_fim_previsto > "" Then
-                   RS3.Filter = "cd_subacao <> null and exequivel = '" & p_exequivel & "' and fim_previsto < '" & Date() & "'"
-                ElseIf p_programada   > "" and p_exequivel    > "" Then   
-                   RS3.Filter = "cd_subacao <> null and exequivel = '" & p_exequivel & "'"
-                ElseIf p_programada   > "" and p_fim_previsto > "" Then
-                   RS3.Filter = "cd_subacao <> null and fim_previsto < '" & Date() & "'"
-                ElseIf p_fim_previsto > "" and p_exequivel    > "" Then
-                   RS3.Filter = "exequivel = '" & p_exequivel & "' and fim_previsto < '" & Date() & "'"
-                ElseIf p_programada   > "" Then
-                   RS3.Filter = "cd_subacao <> null"
-                ElseIf p_exequivel    > "" Then
-                   RS3.Filter = "exequivel = '" & p_exequivel & "'"
-                ElseIf p_fim_previsto > "" Then
-                   RS3.Filter = "fim_previsto < '" & Date() & "'"
-                End If
+                DB_GetSolicMeta_IS RS3, RS2("sq_siw_solicitacao"), null, "LSTNULL", null, null, null, null, null, p_programada, p_exequivel, null, p_fim_previsto
                 RS3.Sort = "ordem"
                 If Not RS3.EOF Then
                    w_teste_metas = 1
@@ -2577,7 +2501,6 @@ Sub Rel_Sintetico_PPA
     SelecaoProgramaPPA "<u>P</u>rograma PPA:", "P", null, w_cliente, w_ano, p_cd_programa, "p_cd_programa", null, "onchange=""document.Form.action='" & w_dir & w_pagina & par & "'; document.Form.w_troca.value='p_cd_programa'; document.Form.target=''; document.Form.O.value='P'; document.Form.submit();""", w_menu
     ShowHTML "      <tr>"
     SelecaoAcaoPPA "<u>A</u>ção PPA:", "A", null, w_cliente, w_ano, p_cd_programa, null, null, null, "p_codigo", null, null, null, w_menu
-    ShowHTML "      <tr><td><font size=""1""><b><u>R</u>esponsável:</b><br><input " & w_disabled & " accesskey=""R"" type=""text"" name=""p_responsavel"" class=""sti"" SIZE=""40"" MAXLENGTH=""60"" VALUE=""" & p_responsavel & """></td>"
     ShowHTML "      <tr>"
     SelecaoPrioridade "<u>P</u>rioridade das tarefas:", "P", "Informe a prioridade da tarefa.", p_prioridade, null, "p_prioridade", null, null
     ShowHTML "      <tr><td colspan=3><table border=0 width=""100%"" cellspacing=0 cellpadding=0><tr valign=""top"">"
@@ -2629,7 +2552,6 @@ Sub Rel_Sintetico_PPA
   Set p_cd_programa             = Nothing 
   Set p_selecao_mp              = Nothing 
   Set p_selecao_se              = Nothing 
-  Set p_responsavel             = Nothing 
   Set p_sq_unidade_resp         = Nothing
 End Sub
 
@@ -3415,7 +3337,7 @@ Sub Rel_Metas
      End If
      DesconectaBD
   End If
-  DB_GetSolicMeta_IS RS, null, null, "LSTNULL", w_ano, p_sq_unidade, p_cd_programa, p_cd_acao, p_preenchida, p_meta_ppa, p_exequivel
+  DB_GetSolicMeta_IS RS, null, null, "LSTNULL", w_ano, p_sq_unidade, p_cd_programa, p_cd_acao, p_preenchida, p_meta_ppa, p_exequivel, null, null
   RS.Sort = "cd_programa, cd_acao, cd_unidade, cd_subacao"
   If w_tipo_rel = "WORD" Then
      HeaderWord null
