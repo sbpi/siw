@@ -2,6 +2,8 @@ create or replace procedure SP_GetSolicIndic_IS
    (p_chave     in number   default null,
     p_chave_aux in number   default null,
     p_restricao in varchar2,
+    p_loa       in varchar2 default null,
+    p_exequivel in varchar2 default null,
     p_result    out sys_refcursor) is
 begin
   If p_restricao = 'LISTA' Then
@@ -38,7 +40,9 @@ begin
                 left outer     join is_sig_unidade_medida  g on (a.cd_unidade_medida  = g.cd_unidade_medida)
                 left outer     join is_sig_periodicidade   h on (a.cd_periodicidade   = h.cd_periodicidade)
                 left outer     join is_sig_base_geografica m on (a.cd_base_geografica = m.cd_base_geografica)
-          where a.sq_siw_solicitacao = p_chave;
+          where a.sq_siw_solicitacao = p_chave
+            and (p_loa       is null or (p_loa       is not null and a.cd_indicador is not null))
+            and (p_exequivel is null or (p_exequivel is not null and a.exequivel = p_exequivel));
    Elsif p_restricao = 'REGISTRO' Then
       -- Recupera os dados de um indicador do programa
       open p_result for 

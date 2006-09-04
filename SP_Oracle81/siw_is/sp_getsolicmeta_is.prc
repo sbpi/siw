@@ -9,6 +9,8 @@ create or replace procedure SP_GetSolicMeta_IS
     p_preenchida  in varchar2 default null,
     p_meta_ppa    in varchar2 default null,
     p_exequivel   in varchar2 default null,
+    p_programada  in varchar2 default null,
+    p_atraso      in varchar2 default null,    
     p_result      out siw.siw.sys_refcursor) is
     
     w_cd_subacao  varchar(4);
@@ -120,7 +122,9 @@ begin
             and (p_cd_acao            is null or (p_cd_acao     is not null and m.cd_acao            = p_cd_acao))
             and (p_preenchida         is null or (p_preenchida  = 'S' and trim(a.descricao)          is not null) or (p_preenchida  = 'N' and trim(a.descricao)    is null))
             and (p_meta_ppa           is null or (p_meta_ppa    = 'S' and a.cd_subacao               is not null) or (p_meta_ppa    = 'N' and a.cd_subacao         is null))
-            and (p_exequivel          is null or (p_exequivel   is not null and a.exequivel          = p_exequivel));
+            and (p_programada         is null or (p_programada  = 'S' and a.programada               = 'S')       or (p_programada  = 'N' and a.programada         = 'N'))
+            and (p_exequivel          is null or (p_exequivel   is not null and a.exequivel          = p_exequivel))
+            and (p_atraso             is null or (a.fim_previsto < sysdate() and a.perc_conclusao < 100));
    ElsIf p_restricao = 'LSTNIVEL' Then
       -- Recupera as metas vinculadas a uma meta da ação
       open p_result for 

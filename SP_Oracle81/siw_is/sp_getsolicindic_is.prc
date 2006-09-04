@@ -1,6 +1,8 @@
 create or replace procedure SP_GetSolicIndic_IS
    (p_chave     in number   default null,
     p_chave_aux in number   default null,
+    p_loa       in varchar2 default null,
+    p_exequivel in varchar2 default null,    
     p_restricao in varchar2,
     p_result    out siw.siw.sys_refcursor) is
 begin
@@ -46,7 +48,9 @@ begin
             and (a.cd_unidade_medida  = g.cd_unidade_medida (+))
             and (a.cd_periodicidade   = h.cd_periodicidade (+))
             and (a.cd_base_geografica = m.cd_base_geografica (+))
-            and a.sq_siw_solicitacao = p_chave;
+            and a.sq_siw_solicitacao = p_chave
+            and (p_loa       is null or (p_loa       is not null and a.cd_indicador is not null))
+            and (p_exequivel is null or (p_exequivel is not null and a.exequivel = p_exequivel));            
    Elsif p_restricao = 'REGISTRO' Then
       -- Recupera os dados de um indicador do programa
       open p_result for 

@@ -41,7 +41,7 @@ begin
                 left outer join or_acao     e on (a.sq_acao_ppa     = e.sq_acao_ppa)
           where a.cliente        = p_cliente
             and a.sq_acao_ppa_pai is null 
-            and a.sq_acao_ppa    <> p_sq_siw_solicitacao
+            and ((p_sq_siw_solicitacao is null) or (p_sq_siw_solicitacao is not null and a.sq_acao_ppa <> p_sq_siw_solicitacao))
             and ((p_chave        is null) or (p_chave       is not null and a.sq_acao_ppa           = p_chave))
             and ((p_programa     is null) or (p_programa    is not null and a.sq_acao_ppa_pai       = p_programa or
                                                                             a.sq_acao_ppa           = p_programa))
@@ -51,7 +51,7 @@ begin
             and ((p_relevante    is null) or (p_relevante   is not null and a.selecionada_relevante = p_relevante))
             and ((p_cod_programa is null) or (p_cod_programa is not null and b.codigo               = p_cod_programa))
             and ((p_cod_acao     is null) or (p_cod_acao     is not null and a.codigo               = p_cod_acao));      
-   ElsIf p_restricao = 'IDENTIFICACAO' Then
+   ElsIf p_restricao = 'IDENTIFICACAO' or p_restricao = 'CONSULTA' Then
       open p_result for 
          select a.sq_acao_ppa chave, a.sq_acao_ppa_pai, a.cliente, a.codigo, a.nome,
                 a.responsavel, a.telefone, a.email, a.ativo, a.padrao, 
@@ -80,7 +80,7 @@ begin
                 left outer join or_acao     e on (a.sq_acao_ppa     = e.sq_acao_ppa)
           where a.cliente            = p_cliente
             and a.sq_acao_ppa_pai    is not null
-            and acao                 = 0
+            and ((p_restricao = 'CONSULTA') or (p_restricao = 'IDENTIFICACAO' and c.acao          = 0))
             and ((p_chave       is null) or (p_chave       is not null and a.sq_acao_ppa           = p_chave))
             and ((p_programa    is null) or (p_programa    is not null and a.sq_acao_ppa_pai       = p_programa or
                                                                            a.sq_acao_ppa           = p_programa))

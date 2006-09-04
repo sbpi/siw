@@ -23,7 +23,7 @@ begin
                 k.em_coordenador email, k.sq_unidade sq_unidade_adm, k.sq_siw_solicitacao, k.nome nm_tramite,
                 m.nome ds_programa, m.cd_programa, sum(a.empenhado) empenhado, sum(a.aprovado) aprovado, sum(a.liquidado) liquidado,
                 Nvl(k.sigla,'---') sg_tramite, upper(k.nm_coordenador) nm_coordenador,
-                sum(n.previsao_ano), sum(n.atual_ano), sum(n.real_ano), nvl(max(n.flag_alteracao),max(n.flag_inclusao)) dt_carga_financ                
+                sum(n.previsao_ano) previsao_ano, sum(n.atual_ano) atual_ano, sum(n.real_ano) real_ano, nvl(max(n.flag_alteracao),max(n.flag_inclusao)) dt_carga_financ                
            from is_sig_acao                              a
                 left outer   join  is_sig_tipo_acao      b  on (a.cd_tipo_acao      = b.cd_tipo_acao)
                 left outer   join  is_sig_unidade_medida c  on (a.cd_unidade_medida = c.cd_unidade_medida)
