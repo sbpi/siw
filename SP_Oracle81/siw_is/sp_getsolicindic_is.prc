@@ -1,9 +1,9 @@
 create or replace procedure SP_GetSolicIndic_IS
    (p_chave     in number   default null,
     p_chave_aux in number   default null,
-    p_loa       in varchar2 default null,
-    p_exequivel in varchar2 default null,    
     p_restricao in varchar2,
+    p_loa       in varchar2 default null,
+    p_exequivel in varchar2 default null,
     p_result    out siw.siw.sys_refcursor) is
 begin
   If p_restricao = 'LISTA' Then

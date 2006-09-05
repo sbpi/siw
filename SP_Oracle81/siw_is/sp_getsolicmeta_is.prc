@@ -22,7 +22,7 @@ begin
                 b.sq_pessoa titular, c.sq_pessoa substituto,
                 k.sq_pessoa tit_exec, l.sq_pessoa sub_exec,
                 d.nome_resumido||' ('||f.sigla||')' nm_resp, g.sigla sg_setor,
-                i.solicitante, i.sq_unidade
+                i.solicitante, i.sq_unidade, i.executor
            from is_meta                             a,
                 siw.siw_solicitacao i,
                 siw.siw_menu        j,
@@ -65,7 +65,8 @@ begin
                 d.nome_resumido||' ('||f.sigla||')' nm_resp, g.nome ||' - '||g.sigla sg_setor,
                 h.sigla sg_tramite, h.nome descricao_tramite ,
                 n.cd_unidade, n.cd_programa, n.cd_acao, n.descricao_acao, 
-                o.nome descricao_programa, p.nome descricao_unidade
+                o.nome descricao_programa, p.nome descricao_unidade,
+                i.solicitante, i.executor
            from is_meta             a,
                 siw.siw_solicitacao i,
                 is_acao             m,
@@ -131,6 +132,7 @@ begin
          select a.*, to_char(a.ultima_atualizacao, 'DD/MM/YYYY, HH24:MI:SS') phpdt_ultima_atualizacao,
                 b.sq_pessoa titular, c.sq_pessoa substituto, 
                 k.sq_pessoa tit_exec, l.sq_pessoa sub_exec,
+                i.solicitante, i.executor,
                 d.nome_resumido||' ('||f.sigla||')' nm_resp, g.sigla sg_setor
            from is_meta                             a,
                 siw.siw_solicitacao i,
@@ -171,7 +173,7 @@ begin
                 decode(a.programada,'S','Sim','Não') nm_programada,
                 decode(a.cumulativa,'S','Sim','Não') nm_cumulativa,                
                 d.nome_resumido||' ('||f.sigla||')' nm_resp, g.sigla sg_setor,
-                i.solicitante sq_pessoa, i.sq_unidade,
+                i.solicitante sq_pessoa, i.sq_unidade, i.executor,
                 m.cd_programa, m.cd_acao, m.descricao_subacao, m.cd_subacao, m.cd_unidade,
                 m.real_mes_1, m.real_mes_2, m.real_mes_3, m.real_mes_4, m.real_mes_5,
                 m.real_mes_6, m.real_mes_7, m.real_mes_8, m.real_mes_9, m.real_mes_10,
