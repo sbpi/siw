@@ -6,7 +6,7 @@ include_once($w_dir_volta.'classes/sp/db_getOrPrioridade.php');
 function SelecaoOrPrioridade($label,$accesskey,$hint,$chave,$chaveAux,$campo,$restricao,$atributo) {
   extract($GLOBALS);
   $RS = db_getOrPrioridade::getInstanceOf($dbms,null,$w_cliente,null,null,null,null);
-  $RS = SortArray::getInstanceOf($dbms,'nome','asc');
+  $RS = SortArray($RS,'nome','asc');
   if (!isset($hint)) {
     ShowHTML('          <td valign=\'top\'><font size=\'1\'><b>'.$label.'</b><br><SELECT ACCESSKEY=\''.$accesskey.'\' CLASS=\'STS\' NAME=\''.$campo.'\' '.$w_Disabled.' '.$atributo.'>');
   } else {

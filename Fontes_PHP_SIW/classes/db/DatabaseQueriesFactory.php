@@ -29,6 +29,11 @@ class DatabaseQueriesFactory {
 			else { return new OraDatabaseQueryProc($query, $conHandle, $params); }
 			break;
 		 }
+		 case ORA10  : {
+		    if (empty($params)) { return new OraDatabaseQueries($query, $conHandle); }
+			else { return new OraDatabaseQueryProc($query, $conHandle, $params); }
+			break;
+		 }
 		 case PGSQL : {
 		    if (empty($params)) { return new PgSqlDatabaseQueries($query, $conHandle); }
 			else { return new PgSqlDatabaseQueryProc($query, $conHandle, $params); }

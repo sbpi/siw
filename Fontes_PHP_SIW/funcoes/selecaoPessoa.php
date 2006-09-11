@@ -6,6 +6,7 @@ include_once($w_dir_volta.'classes/sp/db_getPersonList.php');
 function selecaoPessoa($label,$accesskey,$hint,$chave,$chaveAux,$campo,$restricao) {
   extract($GLOBALS);
   $RS = db_getPersonList::getInstanceOf($dbms, $w_cliente, $chaveAux, $restricao, null, null, null, null);
+  $RS = SortArray($RS,'nome_resumido_ind','asc');
   if (!isset($hint)) {
      ShowHTML('          <td valign="top"><font size="1"><b>'.$label.'</b><br><SELECT ACCESSKEY="'.$accesskey.'" CLASS="sts" NAME="'.$campo.'" '.$w_Disabled.'>');
   } else {

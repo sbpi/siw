@@ -22,6 +22,8 @@ class db_getSolicMeta_IS {
                    'p_preenchida'                =>array(tvl($p_preenchida),                               B_VARCHAR,         1),
                    'p_meta_ppa'                  =>array(tvl($p_meta_ppa),                                 B_VARCHAR,         1),
                    'p_exequivel'                 =>array(tvl($p_exequivel),                                B_VARCHAR,         1),
+                   'p_programada'                =>array(tvl($p_programada),                               B_VARCHAR,         1),
+                   'p_atraso'                    =>array(tvl($p_atraso),                                   B_VARCHAR,         1),
                    'p_result'                    =>array(null,                                             B_CURSOR,         -1)
                   );
      $l_rs = DatabaseQueriesFactory::getInstanceOf($sql, $dbms, $params, DB_TYPE);

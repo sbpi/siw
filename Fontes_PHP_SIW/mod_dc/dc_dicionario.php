@@ -155,7 +155,7 @@ function Arquivos() {
     $w_sq_arquivo   = $_REQUEST['w_sq_arquivo'];
   } elseif ($O=='L') {
     // Recupera todos os registros para a listagem
-    $RS = db_getArquivo::getInstanceOf($dbms,$w_cliente,null,$p_sq_sistema,$p_nome,null, $p_tipo_arquivo);
+    $RS = db_getArquivo::getInstanceOf($dbms,$w_cliente,null,null,$p_sq_sistema,$p_nome,null, $p_tipo_arquivo);
     if ($p_ordena>'') {
       $lista = explode(',',str_replace(' ',',',$p_ordena));
       $RS = SortArray($RS,$lista[0],$lista[1],'nm_arquivo','asc');    
@@ -164,7 +164,7 @@ function Arquivos() {
     }
   } elseif (!(strpos('AEV',$O)===false) && $w_troca=='') {
     // Recupera os dados do Endereço informado
-    $RS = db_getArquivo::getInstanceOf($dbms,$w_cliente,$w_chave,null,null,null,null);
+    $RS = db_getArquivo::getInstanceOf($dbms,$w_cliente,null,$w_chave,null,null,null,null);
     foreach ($RS as $row) {
       $w_sq_sistema   = f($row,'sq_sistema');
       $w_nome         = strtolower(f($row,'nm_arquivo'));
@@ -247,7 +247,7 @@ function Arquivos() {
         $w_cor = ($w_cor==$conTrBgColor || $w_cor=='') ? $w_cor=$conTrAlternateBgColor : $w_cor=$conTrBgColor;
         ShowHTML('      <tr bgcolor="'.$w_cor.'" valign="top">');
         ShowHTML('        <td>'.f($row,'sg_sistema').'</td>');
-        ShowHTML('        <td><A class="HL" HREF="'.$w_dir.'dc_consulta.php?par=ARQUIVO&R='.$w_pagina.$par.'&O=NIVEL2&w_chave='.f($row,'sq_sistema').'&w_sq_arquivo='.f($row,'chave').'&P1='.$P1.'&P2='.$P2.'&P3=1&P4='.$P4.'&TP='.$TP.'&SG='.$SG.MontaFiltro('GET').'"  Title="Nome" target="'.f($row,'nm_arquivo').'">'.strtolower(f($row,'nm_arquivo')).'</A>&nbsp');
+        ShowHTML('        <td><A class="HL" HREF="'.$w_dir.'dc_consulta.php?par=ARQUIVO&R='.$w_pagina.$par.'&O=NIVEL2&w_chave='.f($row,'sq_sistema').'&w_sq_arquivo='.f($row,'chave').'&P1='.$P1.'&P2='.$P2.'&P3=1&P4='.$P4.'&TP='.$TP.'&SG='.$SG.MontaFiltro('GET').'"  Title="Nome" target="'.f($row,'nm_arquivo').'">'.f($row,'nm_arquivo').'</A>&nbsp');
         if (f($row,'diretorio')!='') ShowHTML('<td align="center">'.f($row,'diretorio').'</td>');
         else                         ShowHTML('<td align="center">---</td>');
         ShowHTML('        <td>'.exibeTipoArquivo(f($row,'tipo')).'</td>');

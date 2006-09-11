@@ -17,11 +17,24 @@ include_once($w_dir_volta.'classes/sp/db_get10PercentDays_IS.php');
 include_once($w_dir_volta.'classes/sp/db_getSolicLog.php');
 include_once($w_dir_volta.'classes/sp/db_getSolicAnexo.php');
 include_once($w_dir_volta.'classes/sp/db_getSolicData_IS.php');
+include_once($w_dir_volta.'classes/sp/db_getPersonData.php');
+include_once($w_dir_volta.'classes/sp/db_verificaAssinatura.php');
+include_once($w_dir_volta.'classes/sp/db_getTramiteData.php');
+include_once($w_dir_volta.'classes/sp/db_getUorgResp.php');
+include_once($w_dir_volta.'classes/sp/db_getUorgData.php');
 include_once($w_dir_volta.'classes/sp/dml_putTarefaGeral.php');
+include_once($w_dir_volta.'classes/sp/dml_putRespTarefa_IS.php');
+include_once($w_dir_volta.'classes/sp/dml_putSolicArquivo.php');
+include_once($w_dir_volta.'classes/sp/dml_putDemandaEnvio.php');
+include_once($w_dir_volta.'classes/sp/dml_putTarefaLimite.php');
+include_once($w_dir_volta.'classes/sp/dml_putDemandaConc.php');
 include_once($w_dir_volta.'funcoes/selecaoAcao.php');
 include_once($w_dir_volta.'funcoes/selecaoPessoa.php');
 include_once($w_dir_volta.'funcoes/selecaoUnidade_IS.php');
 include_once($w_dir_volta.'funcoes/selecaoPrioridade.php');
+include_once($w_dir_volta.'funcoes/selecaoFase.php');
+include_once($w_dir_volta.'funcoes/selecaoSolicResp.php');
+include_once($w_dir_volta.'funcoes/selecaoTarefa.php');
 include_once('visualtarefa.php');
 // =========================================================================
 //  /tarefas.php
@@ -72,8 +85,7 @@ if ($SG=='ISTAANEXO' || $SG=='ISTARESP') {
   // Se for acompanhamento, entra na filtragem  
   if ($P1==3) $O='P';
   else        $O='L';
-} 
-switch ($O) {
+} switch ($O) {
   case 'I':     $w_TP=$TP.' - Inclusão';        break;
   case 'A':     $w_TP=$TP.' - Alteração';       break;
   case 'E':     $w_TP=$TP.' - Exclusão';        break;
@@ -350,10 +362,10 @@ function Inicial() {
           // Se não for cadastramento nem mesa de trabalho
           if (f($row,'sg_tramite')=='AT') {
             ShowHTML('        <td align="right"><font size="1">'.number_format(f($row,'custo_real'),2,',','.').'&nbsp;</td>');
-            $w_parcial=$w_parcial+$cDbl[f($row,'custo_real')];
+            $w_parcial=$w_parcial+f($row,'custo_real');
           } else {
             ShowHTML('        <td align="right"><font size="1">'.number_format(f($row,'valor'),2,',','.').'&nbsp;</td>');
-            $w_parcial=$w_parcial+$cDbl[f($row,'valor')];
+            $w_parcial=$w_parcial+f($row,'valor');
           } 
           ShowHTML('        <td nowrap><font size="1">'.f($row,'nm_tramite').'</td>');
         } 
@@ -783,7 +795,7 @@ function Limite() {
         ShowHTML(' history.back(1);');
         ScriptClose();
       } 
-      $w_valor      = number_format($cDbl[Nvl(f($RS,'custo_real'),0)],2,',','.');
+      $w_valor      = number_format(Nvl(f($RS,'custo_real'),0),2,',','.');
       $w_chave_pai  = f($RS,'sq_solic_pai');
       $w_sq_tramite = f($RS,'sq_siw_tramite');
       $w_limite     = f($RS,'limite_orcamento');
@@ -841,7 +853,7 @@ function Limite() {
     ShowHTML('      <tr><td colspan="2"><br><font size="2"><b>IDENTIFICAÇÃO DA TAREFA<hr NOSHADE color=#000000 SIZE=1></b></font></td></tr>');
     if ($w_chave_pai>'') {
       // Recupera os dados da ação
-      $RS2 = db_getSolicData_IS::getInstanceOf($RS2,$w_chave_pai,'ISACGERAL');
+      $RS2 = db_getSolicData_IS::getInstanceOf($dbms,$w_chave_pai,'ISACGERAL');
       foreach ($RS2 as $row){$RS2=$row; break;}
       // Se a ação no PPA for informada, exibe.
       ShowHTML('   <tr><td><font size="1"><b>Programa:</b></font></td>');
@@ -872,10 +884,10 @@ function Limite() {
     ShowHTML('      <tr><td valign="top"><b><u>L</u>mite orçamentário:</b><br><input '.$w_Disabled.' accesskey="L" type="text" name="w_valor" class="STI" SIZE="18" MAXLENGTH="18" VALUE="'.$w_valor.'" onKeyDown="FormataValor(this,18,2,event);"></td>');
     ShowHTML('          <td valign="top">');
     ShowHTML('            <table width="99%" border="0">');
-    ShowHTML('              <tr><td valign="top"><b>Limite da unidade:</b><br>'.number_format($cDbl[Nvl($w_limite,0)],2,',','.').'</td>');
+    ShowHTML('              <tr><td valign="top"><b>Limite da unidade:</b><br>'.number_format(Nvl($w_limite,0),2,',','.').'</td>');
     $w_limite_tarefa=0;
     //$RS1 = db_getLinkData::getInstanceOf($dbms,$w_cliente,'ISTCAD');
-    $RS1 = db_getSolicList_IS($dbms,f($RS,'sq_menu'),$w_usuario,'ISTCAD',3,
+    $RS1 = db_getSolicList_IS::getInstanceOf($dbms,f($RS,'sq_menu'),$w_usuario,'ISTCAD',3,
             null,null,null,null,null,null,
             $w_sq_unidade,null,null,null,
             null,null,null,null,null,null,null,
@@ -887,8 +899,8 @@ function Limite() {
         if (Nvl(f($RS2,'cd_acao'),'')>'') $w_limite_tarefa = $w_limite_tarefa + Nvl(f($RS1,'custo_real'),0);
       } 
     } 
-    ShowHTML('                  <td valign="top"><b>Limite utilizado:</b><br>'.number_format($cDbl[Nvl($w_limite_tarefa,0)],2,',','.').'</td>');
-    ShowHTML('                  <td valign="top"><b>Saldo disponível:</b><br>'.number_format(number_format($cDbl[Nvl($w_limite,0)],2,',','.')-number_format($cDbl[Nvl($w_limite_tarefa,0)],2,',','.'),2,',','.').'</td>');
+    ShowHTML('                  <td valign="top"><b>Limite utilizado:</b><br>'.number_format(Nvl($w_limite_tarefa,0),2,',','.').'</td>');
+    ShowHTML('                  <td valign="top"><b>Saldo disponível:</b><br>'.number_format(number_format(Nvl($w_limite,0),2,',','.')-number_format(Nvl($w_limite_tarefa,0),2,',','.'),2,',','.').'</td>');
     ShowHTML('              </table>');
     ShowHTML('      <tr><td><font size="1"><b><U>A</U>ssinatura Eletrônica:<BR> <INPUT ACCESSKEY="A" class="sti" type="PASSWORD" name="w_assinatura" size="30" maxlength="30" value=""></td></tr>');
     ShowHTML('      <tr><td align="center" colspan="2"><hr>');
@@ -1010,7 +1022,7 @@ function Responsaveis() {
     ShowHTML('    </table>');
     ShowHTML('  </td>');
     ShowHTML('</tr>');
-  } elseif ((strpos('A',$O) ? strpos('A',$O)+1 : 0)>0) {
+  } elseif (!(strpos('A',$O)===false)) {
     AbreForm('Form',$w_dir.$w_pagina.'Grava','POST','return(Validacao(this));',null,$P1,$P2,$P3,$P4,$TP,$SG,$R,$O);
     ShowHTML('<INPUT type="hidden" name="w_troca" value="">');
     ShowHTML('<INPUT type="hidden" name="w_chave" value="'.$w_chave.'">');
@@ -1121,7 +1133,7 @@ function Anexos() {
         ShowHTML('        <td><font size="1">'.LinkArquivo('HL',$w_cliente,f($row,'chave_aux'),'_blank','Clique para exibir o arquivo em outra janela.',f($row,'nome'),null).'</td>');
         ShowHTML('        <td><font size="1">'.Nvl(f($row,'descricao'),'---').'</td>');
         ShowHTML('        <td><font size="1">'.f($row,'tipo').'</td>');
-        ShowHTML('        <td align="right"><font size="1">'.round($cDbl[f($row,'tamanho')]/1024,1).'&nbsp;</td>');
+        ShowHTML('        <td align="right"><font size="1">'.(round(f($row,'tamanho')/1024,1)).'&nbsp;</td>');
         ShowHTML('        <td align="top" nowrap><font size="1">');
         ShowHTML('          <A class="HL" HREF="'.$w_dir.$w_pagina.$par.'&R='.$w_pagina.$par.'&O=A&w_chave='.$w_chave.'&w_chave_aux='.f($row,'chave_aux').'&P1='.$P1.'&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP='.$TP.'&SG='.$SG.'">Alterar</A>&nbsp');
         ShowHTML('          <A class="HL" HREF="'.$w_dir.$w_pagina.$par.'&R='.$w_pagina.$par.'&O=E&w_chave='.$w_chave.'&w_chave_aux='.f($row,'chave_aux').'&P1='.$P1.'&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP='.$TP.'&SG='.$SG.'">Excluir</A>&nbsp');
@@ -1193,7 +1205,7 @@ function Visual() {
   $w_tipo   = strtoupper(trim($_REQUEST['w_tipo']));
   // Recupera o logo do cliente a ser usado nas listagens
   $RS = db_getCustomerData::getInstanceof($dbms,$w_cliente);
-  if (f($RS,'logo')>'') $w_logo='\img\logo'.substr(f($RS,'logo'),(strpos(f($RS,'logo'),'.') ? strpos(f($RS,'logo'),'.')+1 : 0)-1,30);
+  if (f($RS,'logo')>'') $w_logo='/img/logo'.substr(f($RS,'logo'),(strpos(f($RS,'logo'),'.') ? strpos(f($RS,'logo'),'.')+1 : 0)-1,30);
   if ($w_tipo=='WORD') HeaderWord(null); else Cabecalho();
   ShowHTML('<HEAD>');
   ShowHTML('<TITLE>'.$conSgSistema.' - Visualização de Tarefa</TITLE>');
@@ -1475,15 +1487,16 @@ function Concluir() {
   $w_chave_aux  = $_REQUEST['w_chave_aux'];
   $RS = db_getSolicData_IS::getInstanceof($dbms,$w_chave,'ISTAGERAL');
   if (count($RS)>0) {
-    foreach($RS as $row){$RS=$row; break;}
-    $w_tramite=f($RS,'sq_siw_tramite');
-    if (Nvl(f($RS,'cd_acao'),'')>'') {
-      $w_custo_real=f($RS,'limite_orcamento');
-      $w_ppa='S';
-    } else {
-      $w_ppa='N';
-    } 
-  } 
+    foreach($RS as $row) {
+      $w_tramite = f($row,'sq_siw_tramite');
+      if (Nvl(f($row,'cd_acao'),'')>'') {
+        $w_custo_real = Nvl(f($row,'custo_real'),0);
+        $w_ppa='S';
+      } else {
+        $w_ppa='N';
+      } 
+    }
+  }
   if ($w_troca>'') {
     // Se for recarga da página
     $w_inicio_real      = $_REQUEST['w_inicio_real'];
@@ -1733,6 +1746,7 @@ function Grava() {
         //Recupera 10  dos dias de prazo da tarefa, para emitir o alerta  
         $RS = db_get10PercentDays_IS::getInstanceof($dbms,$_REQUEST['w_inicio'],$_REQUEST['w_fim']);
         foreach($RS as $row){$RS=$row; break;}
+        if ($w_dias<1) $w_dias=1;
         $w_dias = f($RS,'dias');
         dml_putTarefaGeral::getInstanceOf($dbms,$O,
             $_REQUEST['w_chave'],$_REQUEST['w_menu'],$_SESSION['LOTACAO'],$_REQUEST['w_solicitante'],$_REQUEST['w_proponente'],
@@ -1783,7 +1797,7 @@ function Grava() {
     case 'ISTARESP':
       // Verifica se a Assinatura Eletrônica é válida
       if (verificaAssinaturaEletronica($_SESSION['USERNAME'],strtoupper($_REQUEST['w_assinatura'])) || $w_assinatura=='') {
-        dml_putRespTarefa_IS($_REQUEST['w_chave'],
+        dml_putRespTarefa_IS::getInstanceOf($dbms,$_REQUEST['w_chave'],
          $_REQUEST['w_nm_responsavel'],$_REQUEST['w_fn_responsavel'],$_REQUEST['w_em_responsavel']);
          ScriptOpen('JavaScript');
         // Recupera a sigla do serviço pai, para fazer a chamada ao menu
@@ -1800,7 +1814,7 @@ function Grava() {
     case 'ISTAANEXO':
       // Verifica se a Assinatura Eletrônica é válida
       if (verificaAssinaturaEletronica($_SESSION['USERNAME'],strtoupper($_REQUEST['w_assinatura'])) || $w_assinatura=='') {
-        if (UPLOAD_ERR_OK==0) {
+       if (UPLOAD_ERR_OK==0) {
           $w_maximo = $_REQUEST['w_upload_maximo'];
           foreach ($_FILES as $Chv => $Field) {
             if ($Field['size'] > 0) {
@@ -1867,7 +1881,7 @@ function Grava() {
       // Verifica se a Assinatura Eletrônica é válida
       if (verificaAssinaturaEletronica($_SESSION['USERNAME'],strtoupper($_REQUEST['w_assinatura'])) || $w_assinatura=='') {
         // Trata o recebimento de upload ou dados 
-        if (!(strpos(strtoupper($_SERVER['http_content_type']),'MULTIPART/FORM-DATA')===false)) {
+        if (!(strpos(strtoupper($_SERVER['HTTP_CONTENT_TYPE']),'MULTIPART/FORM-DATA')===false)) {
           // Se foi feito o upload de um arquivo 
           if (UPLOAD_ERR_OK==0) {
             $w_maximo = $_REQUEST['w_upload_maximo'];
@@ -1882,7 +1896,7 @@ function Grava() {
                   exit();
                 } 
                 // Se já há um nome para o arquivo, mantém 
-                $w_file = $Field['tmp_name'];
+                $w_file = basename($Field['tmp_name']);
                 if (!(strpos($Field['name'],'.')===false)) {
                   $w_file = $w_file.'.'.substr($Field['name'],(strpos($Field['name'],'.') ? strpos($Field['name'],'.')+1 : 0)-1,10);
                 }
@@ -1893,8 +1907,8 @@ function Grava() {
               } 
             } 
             dml_putDemandaEnvio::getInstanceOf($dbms,$w_menu,$_REQUEST['w_chave'],$w_usuario,$_REQUEST['w_tramite'],
-              $_REQUEST['w_novo_tramite'],'N',$_REQUEST['w_observacao'],$_REQUEST['w_destinatario'],$_REQUEST['w_despacho'],
-              $w_file,$w_tamanho,$w_tipo,$w_nome);
+                $_REQUEST['w_novo_tramite'],'N',$_REQUEST['w_observacao'],$_REQUEST['w_destinatario'],$_REQUEST['w_despacho'],
+                $w_file,$w_tamanho,$w_tipo,$w_nome);
           } else {
             ScriptOpen('JavaScript');
             ShowHTML('  alert(\'ATENÇÃO: ocorreu um erro na transferência do arquivo. Tente novamente!\');');
@@ -1902,7 +1916,7 @@ function Grava() {
           } 
           ScriptOpen('JavaScript');
           // Volta para a listagem 
-          $RS = db_getMenuData::getInstanceof($dbms,$w_menu);
+          $RS = db_getMenuData::getInstanceOf($dbms,$w_menu);
           ShowHTML('  location.href=\''.str_replace($w_dir,'',f($RS,'link')).'&O=L&w_chave='.$_REQUEST['w_chave'].'&P1='.$P1.'&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP='.RemoveTP($TP).'&SG='.f($RS,'sigla').MontaFiltro('GET').'\';');
           ScriptClose();
         } else {
@@ -1943,7 +1957,7 @@ function Grava() {
           ShowHTML('  alert(\'ATENÇÃO: Outro usuário já encaminhou esta tarefa para outra fase de execução!\');');
           ScriptClose();
         } else {
-          // Se foi feito o upload de um arquivo 
+          // Se foi feito o upload de um arquivo  
           if (UPLOAD_ERR_OK==0) {
             $w_maximo = $_REQUEST['w_upload_maximo'];
             foreach ($_FILES as $Chv => $Field) {
@@ -1957,7 +1971,7 @@ function Grava() {
                   exit();
                 } 
                 // Se já há um nome para o arquivo, mantém 
-                $w_file = $Field['tmp_name'];
+                $w_file = basename($Field['tmp_name']);
                 if (!(strpos($Field['name'],'.')===false)) {
                   $w_file = $w_file.'.'.substr($Field['name'],(strpos($Field['name'],'.') ? strpos($Field['name'],'.')+1 : 0)-1,10);
                 }
@@ -1965,15 +1979,17 @@ function Grava() {
                 $w_tipo    = $Field['type'];
                 $w_nome    = $Field['name'];
                 if ($w_file>'') move_uploaded_file($Field['tmp_name'],DiretorioCliente($w_cliente).'/'.$w_file);
-              }
-            }
+              } 
+            } 
           } else {
             ScriptOpen('JavaScript');
             ShowHTML('  alert(\'ATENÇÃO: ocorreu um erro na transferência do arquivo. Tente novamente!\');');
+            ShowHTML('  history.back(1);');
             ScriptClose();
+            exit();
           } 
           dml_putDemandaConc::getInstanceOf($dbms,$w_menu,$_REQUEST['w_chave'],$w_usuario,$_REQUEST['w_tramite'],$_REQUEST['w_inicio_real'],$_REQUEST['w_fim_real'],$_REQUEST['w_nota_conclusao'],$_REQUEST['w_custo_real'],
-            $w_file,$w_tamanho,$w_tipo,$w_nome);
+              $w_file,$w_tamanho,$w_tipo,$w_nome);
           // Envia e-mail comunicando a conclusão
           SolicMail($_REQUEST['w_chave'],3);
           ScriptOpen('JavaScript');
@@ -1981,7 +1997,7 @@ function Grava() {
           $RS = db_getMenuData::getInstanceOf($dbms,$w_menu);
           ShowHTML('  location.href=\''.str_replace($w_dir,'',f($RS,'link')).'&O=L&w_chave='.$_REQUEST['w_chave'].'&P1='.$P1.'&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP='.$TP.'&SG='.f($RS,'sigla').MontaFiltro('GET').'\';');
           ScriptClose();
-        }
+        } 
       } else {
         ScriptOpen('JavaScript');
         ShowHTML('  alert(\'Assinatura Eletrônica inválida!\');');

@@ -1,5 +1,5 @@
 <?
-include_once($w_dir_volta.'classes/sp/db_getEOAAtuac.php');
+include_once($w_dir_volta.'classes/sp/db_getEoAAtuac.php');
 // =========================================================================
 // Montagem da seleção do tipo de unidade
 // -------------------------------------------------------------------------

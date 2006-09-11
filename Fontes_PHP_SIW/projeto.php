@@ -1180,8 +1180,8 @@ function Etapas() {
       CompData('w_inicio','Início previsto','<=','w_fim','Fim previsto');
       Validate('w_orcamento','Orçamento disponível','VALOR','1','4','18','','0123456789.,');
       Validate('w_perc_conclusao','Percentual de conclusão','','1','1','3','','0123456789');
-      Validate('w_sq_pessoa','Responsável','HIDDEN','','1','10','','1');
-      Validate('w_sq_unidade','Setor responsável','HIDDEN','','1','10','','1');
+      Validate('w_sq_pessoa','Responsável','HIDDEN','1','1','10','','1');
+      Validate('w_sq_unidade','Setor responsável','HIDDEN','1','1','10','','1');
     } 
     ShowHTML('  theForm.Botao[0].disabled=true;');
     ShowHTML('  theForm.Botao[1].disabled=true;');
@@ -2089,7 +2089,7 @@ function Visual() {
   // Recupera o logo do cliente a ser usado nas listagens
   $RS = db_getCustomerData::getInstanceOf($dbms,$w_cliente);
   if (f($RS,'logo')>'') {
-    $w_logo='img\logo'.substr(f($RS,'logo'),(strpos(f($RS,'logo'),'.') ? strpos(f($RS,'logo'),'.')+1 : 0)-1,30);
+    $w_logo='img/logo'.substr(f($RS,'logo'),(strpos(f($RS,'logo'),'.') ? strpos(f($RS,'logo'),'.')+1 : 0)-1,30);
   } 
   cabecalho();
   ShowHTML('<HEAD>');

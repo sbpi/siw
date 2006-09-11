@@ -231,17 +231,37 @@ class OraDatabaseQueries extends DatabaseQueries {
     */
     
     function executeQuery() {
-        if(!($this->result = oci_parse($this->conHandle, $this->query))) { return false; }
-        else { 
+
+/*
+           $this->result = oci_parse($this->conHandle, $this->query);
+
+           if(!(oci_execute($this->result))) { 
+             $this->error = oci_error($this->result); 
+             return false; 
+           } else {
+              if(is_resource($this->result)) { 
+                 $this->num_rows = oci_fetch_all($this->result, $this->resultData, 0, -1,OCI_ASSOC+OCI_FETCHSTATEMENT_BY_ROW);
+                 array_key_case_change(&$this->resultData);
+           echo 'ok';
+              } else { 
+                $this->num_rows = -1; 
+                $this->error    = oci_error($this->result);
+              }
+           }
+*/
+
+        if(!($this->result = oci_parse($this->conHandle, $this->query))) { 
+         return false; 
+        } else { 
            if(is_resource($this->result)) { 
-              oci_execute($this->result);
+              if (!oci_execute($this->result)) { die($this->query.'<br>'); }
               $this->num_rows = oci_fetch_all($this->result, $this->resultData, 0, -1,OCI_ASSOC+OCI_FETCHSTATEMENT_BY_ROW);
               oci_execute($this->result);
            }
            else { $this->num_rows = -1; }
 
-           return true; 
         }
+        return true; 
     }
     
     /**
@@ -276,6 +296,7 @@ class OraDatabaseQueries extends DatabaseQueries {
               }
             }
           }
+          oci_free_statement($this->result);
           return $this->temp;
         } else { return null; }
     }
@@ -339,7 +360,7 @@ class OraDatabaseQueryProc extends OraDatabaseQueries {
         $cursor = false;
         foreach($this->params as $paramName=>$value) {
             foreach($value as $paramValue=>$paramType) { 
-              $par .= ", :$paramName"; 
+              $par .= ", :$paramName";
               if ($paramName == 'p_result') $cursor = true;
               break; 
             }

@@ -1,11 +1,14 @@
 <?
 header('Expires: '.-1500);
 session_start();
-include_once('../constants.inc');
-include_once('../jscript.php');
-include_once('../funcoes.php');
-include_once('../classes/db/abreSessao.php');
-include_once('../classes/db/DatabaseQueriesFactory.php');
+$w_dir_volta    = '../';
+include_once($w_dir_volta.'constants.inc');
+include_once($w_dir_volta.'jscript.php');
+include_once($w_dir_volta.'funcoes.php');
+include_once($w_dir_volta.'classes/db/abreSessao.php');
+include_once($w_dir_volta.'classes/db/DatabaseQueriesFactory.php');
+include_once($w_dir_volta.'classes/sp/db_getSF.php');
+
 // =========================================================================
 //  sicof.php
 // ------------------------------------------------------------------------
@@ -38,7 +41,6 @@ $dbms = abreSessao::getInstanceOf($_SESSION['DBMS']);
 // Carrega variáveis locais com os dados dos parâmetros recebidos
 
 $w_dir          = 'mod_sf/';
-$w_dir_volta    = '../';
 $w_pagina       = 'sicof.php?par=';
 
 $par        = strtoupper($_REQUEST['par']);
@@ -80,7 +82,7 @@ FechaSessao($dbms);
 // =========================================================================
 // Rotina de consulta ao SICOF
 // -------------------------------------------------------------------------
-function Consulta() {
+function ConsultaDoc() {
   extract($GLOBALS);
 
   Cabecalho();
@@ -88,12 +90,8 @@ function Consulta() {
   $w_sq_pessoa = $_SESSION['SQ_PESSOA'];
 
   if ($O=='L' && $_POST['p_documento']=='') {
-    if ($_POST['p_sq_pessoa']>'')$SQL='select cgccpf, nome from corporativo.gn_pessoas@sicof where handle = '.$_POST['p_sq_pessoa'];
-    if ($_POST['p_cnpj']>'')     $SQL='select cgccpf, nome from corporativo.gn_pessoas@sicof where cgccpf = \''.$_POST['p_cnpj'].'\'';
-    if ($_POST['p_cpf']>'')      $SQL='select cgccpf, nome from corporativo.gn_pessoas@sicof where cgccpf = \''.$_POST['p_cpf'].'\'';
-    $RS = DatabaseQueriesFactory::getInstanceOf($SQL, $dbms, null, DB_TYPE);
-    if(!$RS->executeQuery()) { die('Cannot query'); }
-    else $row = $RS->getResultArray();
+    $RS = db_getSF::getInstanceOf($dbms, 'NM_PESSOA', null, $_POST['p_sq_pessoa'], $_POST['p_cpf'], $_POST['p_cnpj'], null, null, null, null, null, null, null);
+    foreach ($RS as $row) { $RS = $row; break; }
   } 
 
   ShowHTML('<HEAD>');
@@ -180,18 +178,17 @@ function Consulta() {
   ShowHTML('<HR>');
   ShowHTML('<div align="center"><center>');
   if ($O=='L') {
-    ShowHTML('<table border="0" cellpadding="0" cellspacing="0" width="100%">');
+    ShowHTML('<table border="0" width="100%">');
 
     ShowHTML('<tr bgcolor="'.$conTrBgColor.'"><td align="center">');
     ShowHTML('    <table width="99%" border="0">');
     ShowHTML('      <tr><td align="left" colspan="2">Critério(s) de busca:<ul>');
     if ($_POST['p_sq_pessoa']>"" || $_POST['p_cpf']>"" || $_POST['p_cnpj']>"") {
-      ShowHTML('<li>Beneficiário: <b>'.f($row,'cgccpf').' - '.f($row,'nome').'</b>');
+      ShowHTML('<li>Beneficiário: <b>'.f($RS,'cgccpf').' - '.f($RS,'nome').'</b>');
     }
     if ($_POST['p_ctcc']>"") {
-      $SQL="select nome from corporativo.ct_cc@sicof where handle = ".$_POST['p_ctcc'];
-      $RS = DatabaseQueriesFactory::getInstanceOf($SQL, $dbms, null, DB_TYPE);
-      $RS->getResultArray();
+      $RS = db_getSF::getInstanceOf($dbms, 'NM_PROJETO', $_POST['p_ctcc'], null, null, null, null, null, null, null, null, null, null);
+      foreach ($RS as $row) { $RS = $row; break; }
       ShowHTML('<li>Projeto: <b>'.f($RS,'nome').'</b>');
       DesconectaBD();
     } 
@@ -211,84 +208,21 @@ function Consulta() {
       } 
     } 
 
-    ShowHTML('</ul>');
+    ShowHTML('    </ul>');
+    ShowHTML('    </table>');
     ShowHTML('      <tr><td align="center" colspan="2">Clique <a accesskey="F" class="SS" href="#" onClick="window.close(); opener.focus();">aqui</a> para fechar esta janela.');
 
     //CONTRATOS
     if ($_POST["p_sq_pessoa"]>"" || $_POST["p_cpf"]>"" || $_POST["p_cnpj"] || ($_POST["p_documento"]=="" && $_POST["p_inicio"]>"") || ($_POST["p_documento"]>"" && substr(strtoupper($_POST["p_documento"]),0,3)=='SA-')) {
-      $SQL="select a.automatico_sa Documento, to_char(c.duracaoinicio,'dd/mm/yyyy') inicio, c.duracaoinicio, "."\r\n".
-        "       to_char(c.duracaofim,'dd/mm/yyyy') fim, "."\r\n".
-        "       d.codigounesco projeto,  "."\r\n".
-        "       decode(c.tipodepagamento,1,'Permanente',2,'Consultor',3,'Produto',4,'Financiamento de atividades')||' ('|| "."\r\n".
-        "       decode(a.alteracao,1,'Contrato',2,'Emenda')||')' Modalidade, "."\r\n".
-        "       seguranca.fcfaseatual@sicof(a.automatico_sa) fase_atual, e.nome, c.totcontratacao "."\r\n".
-        "  from corporativo.un_solicitacaoadministrativa@sicof a, "."\r\n".
-        "       corporativo.un_sol_adm_certifica@sicof         b, "."\r\n".
-        "       corporativo.ct_cc@sicof                        d, "."\r\n".
-        "       corporativo.un_termoreferenciapf@sicof         c, "."\r\n".
-        "       corporativo.gn_pessoas@sicof                   e "."\r\n".
-        " where a.handle     = b.numsolicitacao "."\r\n".
-        "   and b.acordo     = d.handle "."\r\n".
-        "   and a.handle     = c.numerosolicitacao "."\r\n".
-        "   and a.contratado = e.handle "."\r\n";
-      if ($_POST['p_sq_pessoa']>"") {
-        $SQL=$SQL."  and e.handle = ".$_POST['p_sq_pessoa']."\r\n";
-      }
-
-      if ($_POST['p_ctcc']>"")       $SQL=$SQL."  and b.acordo = ".$_POST['p_ctcc']."\r\n";
-      if ($_POST['p_cnpj']>"")       $SQL=$SQL."  and e.cgccpf = '".$_POST['p_cnpj']."'"."\r\n";
-      if ($_POST['p_cpf']>"")        $SQL=$SQL."  and e.cgccpf = '".$_POST['p_cpf']."'"."\r\n";
-      if ($_POST['p_documento']>"")  $SQL=$SQL."  and a.automatico_sa = '".strtoupper($_POST['p_documento'])."'"."\r\n";
-      if ($_POST['p_inicio']>"") {
-        $SQL=$SQL.
-          "  and (c.duracaoinicio between to_date('".$_POST['p_inicio']."', 'dd/mm/yyyy') and to_date('".$_POST['p_fim']."', 'dd/mm/yyyy') or "."\r\n".
-          "       c.duracaofim    between to_date('".$_POST['p_inicio']."', 'dd/mm/yyyy') and to_date('".$_POST['p_fim']."', 'dd/mm/yyyy') or "."\r\n".
-          "       to_date('".$_POST['p_inicio']."', 'dd/mm/yyyy') between c.duracaoinicio and c.duracaofim or "."\r\n".
-          "       to_date('".$_POST['p_fim']."', 'dd/mm/yyyy')    between c.duracaoinicio and c.duracaofim "."\r\n".
-          "      ) "."\r\n";
-      } 
-
-      $SQL=$SQL.
-        "UNION "."\r\n".
-        "select a.automatico_sa Documento, to_char(c.duracaoinicio,'dd/mm/yyyy') inicio, c.duracaoinicio, "."\r\n".
-        "       to_char(c.duracaofim,'dd/mm/yyyy') fim, "."\r\n".
-        "       d.codigounesco projeto,  "."\r\n".
-        "       decode(c.tipodepagamento,1,'Serviços',2,'Aquis.Mat/Bens',3,'Pub/Serv.Gráf.',4,'Promoção Eventos','Financiamento de atividades')||' ('|| "."\r\n".
-        "       decode(a.alteracao,1,'Contrato',2,'Emenda')||')' Modalidade, "."\r\n".
-        "       seguranca.fcfaseatual@sicof(a.automatico_sa) fase_atual, e.nome, c.totcontratacao "."\r\n".
-        "  from corporativo.un_solicitacaoadministrativa@sicof a, "."\r\n".
-        "       corporativo.un_sol_adm_certifica@sicof         b, "."\r\n".
-        "       corporativo.ct_cc@sicof                        d, "."\r\n".
-        "       corporativo.un_termoreferenciapj@sicof         c, "."\r\n".
-        "       corporativo.gn_pessoas@sicof                   e "."\r\n".
-        " where a.handle     = b.numsolicitacao "."\r\n".
-        "   and b.acordo     = d.handle "."\r\n".
-        "   and a.handle     = c.solicitacao "."\r\n".
-        "   and a.contratado = e.handle "."\r\n";
-      if ($_POST['p_sq_pessoa']>"")  $SQL=$SQL."  and e.handle = ".$_POST['p_sq_pessoa']."\r\n";
-      if ($_POST['p_ctcc']>"")       $SQL=$SQL."  and b.acordo = ".$_POST['p_ctcc']."\r\n";
-      if ($_POST['p_cnpj']>"")       $SQL=$SQL."  and e.cgccpf = '".$_POST['p_cnpj']."'"."\r\n";
-      if ($_POST['p_cpf']>"")        $SQL=$SQL."  and e.cgccpf = '".$_POST['p_cpf']."'"."\r\n";
-      if ($_POST['p_documento']>"")  $SQL=$SQL."  and a.automatico_sa = '".strtoupper($_POST['p_documento'])."'"."\r\n";
-      if ($_POST['p_inicio']>"") {
-        $SQL=$SQL.
-          "  and (c.duracaoinicio between to_date('".$_POST['p_inicio']."', 'dd/mm/yyyy') and to_date('".$_POST['p_fim']."', 'dd/mm/yyyy') or "."\r\n".
-          "       c.duracaofim    between to_date('".$_POST['p_inicio']."', 'dd/mm/yyyy') and to_date('".$_POST['p_fim']."', 'dd/mm/yyyy') or "."\r\n".
-          "       to_date('".$_POST['p_inicio']."', 'dd/mm/yyyy') between c.duracaoinicio and c.duracaofim or "."\r\n".
-          "       to_date('".$_POST['p_fim']."', 'dd/mm/yyyy')    between c.duracaoinicio and c.duracaofim "."\r\n".
-          "      ) "."\r\n";
-      } 
-      $SQL=$SQL." order by duracaoinicio desc"."\r\n";
-
       ShowHTML('      <tr><td align="center" colspan="2" height="2" bgcolor="#000000">');
       ShowHTML('      <tr><td align="center" colspan="2" height="1" bgcolor="#000000">');
       ShowHTML('      <tr><td valign="top" colspan="2" align="center" bgcolor="#D0D0D0"><b>Contratos</td>');
       ShowHTML('      <tr><td align="center" colspan="2" height="1" bgcolor="#000000">');
       ShowHTML('      <tr><td align="center" colspan="2" height="2" bgcolor="#000000">');
-      $RS = DatabaseQueriesFactory::getInstanceOf($SQL, $dbms, null, DB_TYPE);
-      if(!$RS->executeQuery()) die("Cannot query"); else $RS = $RS->getResultData();
+
+      $RS = db_getSF::getInstanceOf($dbms, 'CONTRATOS', $_POST['p_ctcc'], $_POST['p_sq_pessoa'], $_POST['p_cpf'], $_POST['p_cnpj'], null, $_POST["p_documento"], $_POST['p_inicio'], $_POST['p_fim'], null, null, null);
       if (count($RS) <= 0) {
-        ShowHTML('      <tr bgcolor="'.$conTrBgColor.'"><td colspan=7 align="center"><b>Nenhum registro encontrado.</b></td></tr>');
+        ShowHTML('      <tr bgcolor="'.$conTrBgColor.'"><td colspan=2 align="center"><b>Nenhum registro encontrado.</b></td></tr>');
       } else {
         ShowHTML('      <tr><td align="right" colspan="2"><b>Registros: '.count($RS));
         ShowHTML('      <tr><td align="center" colspan="2">');
@@ -319,61 +253,30 @@ function Consulta() {
           ShowHTML('        <td>'.f($row,'modalidade').'</td>');
           ShowHTML('        <td>'.f($row,'fase_atual').'</td>');
           ShowHTML('      </tr>');
-          $w_total = $w_total + f($row,'totcontratacao');
+          $w_total += f($row,'totcontratacao');
         } 
-      } 
 
-      ShowHTML('      <tr bgcolor="'.$conTrBgColor.'" valign="top">');
-      ShowHTML('        <td colspan=5 align="right"><b>Total</b></td>');
-      ShowHTML('        <td align="right"><b>'.FormatNumber($w_total,2).'</b></td>');
-      ShowHTML('        <td colspan=2>&nbsp;</td>');
-      ShowHTML('      </tr>');
-      ShowHTML('         </table></td></tr>');
+        ShowHTML('      <tr bgcolor="'.$conTrBgColor.'" valign="top">');
+        ShowHTML('        <td colspan=5 align="right"><b>Total</b></td>');
+        ShowHTML('        <td align="right"><b>'.FormatNumber($w_total,2).'</b></td>');
+        ShowHTML('        <td colspan=2>&nbsp;</td>');
+        ShowHTML('      </tr>');
+        ShowHTML('         </table></td></tr>');
+      } 
       ShowHTML('      <tr><td align="right" colspan="2">&nbsp;');
     } 
 
 
     //PAGAMENTOS
     if (($_POST['p_comprovante']>"") || $_POST['p_sq_pessoa']>"" || $_POST['p_cpf']>"" || $_POST['p_cnpj']>"" || ($_POST['p_documento']=="" && $_POST['p_inicio']>"") || ($_POST['p_documento']>"" && substr(strtoupper($_POST['p_documento']),0,3)=="SP-")) {
-
-      $SQL="select a.handle, a.automatico_sp documento, Decode(c.handle,null,a.proposito_pgto,c.ds_portugues) historico, "."\r\n".
-        "       Nvl(to_char(a.dt_vcto,'dd/mm/yyyy'),'-') inicio,  "."\r\n".
-        "       d.codigounesco projeto, "."\r\n".
-        "       (Nvl(a.valornominal,0) - Nvl(a.abatimento,0)) Valor, "."\r\n".
-        "       seguranca.fcfaseatual@sicof(a.automatico_sp) fase_atual, b.nome "."\r\n".
-        "from corporativo.Un_Sol_Pgto@sicof a, "."\r\n".
-        "    corporativo.Gn_Pessoas@sicof b, "."\r\n".
-        "    corporativo.Un_HistoricoPadrao@sicof c, "."\r\n".
-        "    corporativo.ct_cc@sicof d "."\r\n".
-        "where a.Favorecido     = b.Handle "."\r\n".
-        "  and a.historicopadrao= c.handle (+) "."\r\n".
-        "  and a.acordo         = d.handle "."\r\n";
-      if ($_POST['p_sq_pessoa']>"")  $SQL=$SQL."  and b.handle = ".$_POST['p_sq_pessoa']."\r\n";
-      if ($_POST['p_ctcc']>"")       $SQL=$SQL."  and a.acordo = ".$_POST['p_ctcc']."\r\n";
-      if ($_POST['p_cnpj']>"")       $SQL=$SQL."  and b.cgccpf = '".$_POST['p_cnpj']."'"."\r\n";
-      if ($_POST['p_cpf']>"")        $SQL=$SQL."  and b.cgccpf = '".$_POST['p_cpf']."'"."\r\n";
-      if ($_POST['p_documento']>"")  $SQL=$SQL."  and a.automatico_sp = '".strtoupper($_POST['p_documento']."'")."\r\n";
-      if ($_POST['p_inicio']>"")     $SQL=$SQL."  and a.dt_vcto between to_date('".$_POST['p_inicio']."', 'dd/mm/yyyy') and to_date('".$_POST['p_fim']."', 'dd/mm/yyyy') "."\r\n";
-      if ($_POST['p_comprovante']>"") {
-        $SQL=$SQL.
-          "  and a.handle in "."\r\n".
-          "      (select a.automatico_sp "."\r\n".
-          "         from corporativo.un_sol_pgto_doc_anexos@sicof a "."\r\n".
-          "        where a.numerodoc like '%".$_POST['p_comprovante']."%' "."\r\n";
-        if ($_POST['p_inicio_nf']>"") $SQL=$SQL."          and a.data between to_date('".$_POST['p_inicio_nf']."', 'dd/mm/yyyy') and to_date('".$_POST['p_fim_nf']."', 'dd/mm/yyyy') "."\r\n";
-        $SQL=$SQL."      ) "."\r\n";
-      } 
-      $SQL=$SQL." order by a.dt_vcto desc "."\r\n";
-
       ShowHTML('      <tr><td align="center" colspan="2" height="2" bgcolor="#000000">');
       ShowHTML('      <tr><td align="center" colspan="2" height="1" bgcolor="#000000">');
       ShowHTML('      <tr><td valign="top" colspan="2" align="center" bgcolor="#D0D0D0"><b>Pagamentos</td>');
       ShowHTML('      <tr><td align="center" colspan="2" height="1" bgcolor="#000000">');
       ShowHTML('      <tr><td align="center" colspan="2" height="2" bgcolor="#000000">');
-      $RS = DatabaseQueriesFactory::getInstanceOf($SQL, $dbms, null, DB_TYPE);
-      if(!$RS->executeQuery()) die("Cannot query"); else $RS = $RS->getResultData();
+      $RS = db_getSF::getInstanceOf($dbms, 'PAGAMENTOS', $_POST['p_ctcc'], $_POST['p_sq_pessoa'], $_POST['p_cpf'], $_POST['p_cnpj'], null, $_POST["p_documento"], $_POST['p_inicio'], $_POST['p_fim'], $_POST['p_comprovante'], $_POST['p_inicio_nf'], $_POST['p_fim_nf']);
       if (count($RS) <= 0) {
-        ShowHTML('      <tr bgcolor="'.$conTrBgColor.'"><td colspan=7 align="center"><b>Nenhum registro encontrado.</b></td></tr>');
+        ShowHTML('      <tr bgcolor="'.$conTrBgColor.'"><td colspan=2 align="center"><b>Nenhum registro encontrado.</b></td></tr>');
       } else {
         ShowHTML('      <tr><td align="right" colspan="2"><b>Registros: '.count($RS));
         ShowHTML('      <tr><td align="center" colspan="2">');
@@ -394,9 +297,7 @@ function Consulta() {
           ShowHTML('      <tr bgcolor="'.$conTrBgColor.'" valign="top">');
           ShowHTML('        <td nowrap><a class="HL" href="https://honda.unesco.org.br/pls/seguranca/Frm_SP.Visualizar?p_usuario=167&p_Documento=111800&p_Acesso=C&p_Nro_Doc='.f($row,'documento').'&P1=0&P2=0&P3=0&TP=Consultar&p_ValidaTempo=Nao">'.f($row,'documento').'</a>');
           ShowHTML('        <td nowrap>');
-          $SQL="select numerodoc from corporativo.un_sol_pgto_doc_anexos@sicof a where a.automatico_sp = '".f($row,'handle')."' order by a.numerodoc ";
-          $RS1 = DatabaseQueriesFactory::getInstanceOf($SQL, $dbms, null, DB_TYPE);
-          if(!$RS1->executeQuery()) die("Cannot query"); else $RS1 = $RS1->getResultData();
+          $RS1 = db_getSF::getInstanceOf($dbms, 'NR_COMPROVANTE', null, null, null, null, null, null, null, null, f($row,'handle'), null, null);
           if (count($RS1) <= 0) {
             print '---';
           } else {
@@ -412,55 +313,28 @@ function Consulta() {
           if ($_POST['p_documento']=="") ShowHTML('        <td>'.f($row,'historico').'</td>');
           ShowHTML('        <td>'.f($row,'fase_atual').'</td>');
           ShowHTML('      </tr>');
-          $w_total = $w_total + f($row,'valor');
+          $w_total += f($row,'valor');
         } 
         ShowHTML('      <tr bgcolor="'.$conTrBgColor.'" valign="top">');
         ShowHTML('        <td colspan=5 align="right"><b>Total</b></td>');
         ShowHTML('        <td align="right"><b>'.FormatNumber($w_total,2).'</b></td>');
         ShowHTML('        <td colspan=2>&nbsp;</td>');
         ShowHTML('      </tr>');
+        ShowHTML('         </table></td></tr>');
       } 
-      ShowHTML('         </table></td></tr>');
       ShowHTML('      <tr><td align="right" colspan="2">&nbsp;');
     } 
 
-
     //VIAGENS A SERVIÇO
     if ($_POST['p_sq_pessoa']>"" || $_POST['p_cpf']>"" || $_POST['p_cnpj']>"" || ($_POST['p_documento']=="" && $_POST['p_inicio']>"") || ($_POST['p_documento']>"" && substr(strtoupper($_POST['p_documento']),0,3)=="SPD")) {
-
-      $SQL="select a.handle, a.automatico_spd documento, a.finalidade historico, "."\r\n".
-        "       nvl(to_char(a.dt_inicio,'dd/mm/yyyy'),'-') inicio, "."\r\n".
-        "       nvl(to_char(a.dt_fim,'dd/mm/yyyy'),'-') fim,  "."\r\n".
-        "       d.codigounesco projeto, "."\r\n".
-        "       seguranca.fValor@sicof(a.valortotal) Valor, "."\r\n".
-        "       seguranca.fcfaseatual@sicof(a.automatico_spd) fase_atual, b.nome "."\r\n".
-        "from corporativo.Un_SolicitacaoPD@sicof a, "."\r\n".
-        "    corporativo.Gn_Pessoas@sicof b, "."\r\n".
-        "    corporativo.ct_cc@sicof d "."\r\n".
-        "where a.contratado     = b.Handle "."\r\n".
-        "  and a.acordo         = d.handle "."\r\n";
-      if ($_POST['p_sq_pessoa']>"")  $SQL=$SQL."  and b.handle = ".$_POST['p_sq_pessoa']."\r\n";
-      if ($_POST['p_ctcc']>"")       $SQL=$SQL."  and a.acordo = ".$_POST['p_ctcc']."\r\n";
-      if ($_POST['p_cnpj']>"")       $SQL=$SQL."  and b.cgccpf = '".$_POST['p_cnpj']."'"."\r\n";
-      if ($_POST['p_cpf']>"")        $SQL=$SQL."  and b.cgccpf = '".$_POST['p_cpf']."'"."\r\n";
-      if ($_POST['p_documento']>"")  $SQL=$SQL."  and a.automatico_spd = '".strtoupper($_POST['p_documento'])."'"."\r\n";
-      if ($_POST['p_inicio']>"") {
-        $SQL=$SQL.
-          "  and (a.dt_inicio  between to_date('".$_POST['p_inicio']."', 'dd/mm/yyyy') and to_date('".$_POST['p_fim']."', 'dd/mm/yyyy') or "."\r\n".
-          "       a.dt_fim     between to_date('".$_POST['p_inicio']."', 'dd/mm/yyyy') and to_date('".$_POST['p_fim']."', 'dd/mm/yyyy') "."\r\n".
-          "      ) "."\r\n";
-      } 
-      $SQL=$SQL." order by a.dt_inicio desc"."\r\n";
-
       ShowHTML('      <tr><td align="center" colspan="2" height="2" bgcolor="#000000">');
       ShowHTML('      <tr><td align="center" colspan="2" height="1" bgcolor="#000000">');
       ShowHTML('      <tr><td valign="top" colspan="2" align="center" bgcolor="#D0D0D0"><b>Passagens e Diárias</td>');
       ShowHTML('      <tr><td align="center" colspan="2" height="1" bgcolor="#000000">');
       ShowHTML('      <tr><td align="center" colspan="2" height="2" bgcolor="#000000">');
-      $RS = DatabaseQueriesFactory::getInstanceOf($SQL, $dbms, null, DB_TYPE);
-      if(!$RS->executeQuery()) die("Cannot query"); else $RS = $RS->getResultData();
+      $RS = db_getSF::getInstanceOf($dbms, 'VIAGENS', $_POST['p_ctcc'], $_POST['p_sq_pessoa'], $_POST['p_cpf'], $_POST['p_cnpj'], null, $_POST["p_documento"], $_POST['p_inicio'], $_POST['p_fim'], null, null, null);
       if (count($RS) <= 0) {
-        ShowHTML('      <tr bgcolor="'.$conTrBgColor.'"><td colspan=7 align="center"><b>Nenhum registro encontrado.</b></td></tr>');
+        ShowHTML('      <tr bgcolor="'.$conTrBgColor.'"><td colspan=2 align="center"><b>Nenhum registro encontrado.</b></td></tr>');
       } else {
         ShowHTML('      <tr><td align="right" colspan="2"><b>Registros: '.count($RS));
         ShowHTML('      <tr><td align="center" colspan="2">');
@@ -489,11 +363,11 @@ function Consulta() {
           ShowHTML('        <td>'.f($row,'fase_atual').'</td>');
           ShowHTML('      </tr>');
         } 
+        ShowHTML('         </table></td></tr>');
       } 
-      ShowHTML('         </table></td></tr>');
     } 
 
-    ShowHTML('      <tr><td align="center" colspan="2">Clique <a accesskey="F" class="SS" href="#" onClick="window.close(); opener.focus();">aqui</a> para fechar esta janela.');
+    ShowHTML('      <tr><td align="center" colspan="2"><br>Clique <a accesskey="F" class="SS" href="#" onClick="window.close(); opener.focus();">aqui</a> para fechar esta janela.');
     ShowHTML('     </tr></tr></td></table>');
 
     ShowHTML('</table>');
@@ -508,37 +382,52 @@ function Consulta() {
     ShowHTML('  <li>O resultado será apresentado em outra janela.');
     ShowHTML('  </ul></div><hr>');
     ShowHTML('<tr bgcolor="'.$conTrBgColor.'"><td align="center">');
-    ShowHTML('    <table width="70%" border="0">');
-    ShowHTML('      <tr valign="top"><td valign="top">');
+    ShowHTML('    <table width="90%" border="0">');
+    ShowHTML('      <tr><td>');
     ShowHTML('            <b>Pr<U>o</U>curar nome:<br> <INPUT TYPE="TEXT" ACCESSKEY="O" class="STI" name="p_beneficiario" size=40 maxlength=40>');
     ShowHTML('            <input class="STB" type="button" name="Procura" value="Procura" onClick="procura()">');
 
-    ShowHTML('      <tr valign="top"><td valign="top"><b><U>B</U>eneficiário:<br> <SELECT ACCESSKEY="B" class="STS" name="p_sq_pessoa" size="1">');
+    $RS = db_getSF::getInstanceOf($dbms, 'DOLAR', null, null, null, null, null, null, null, null, null, null, null);
+    ShowHTML('          <td rowspan=6><center><b>Dólar ONU</b>');
+    ShowHTML('              <table border=0>');
+    ShowHTML('              <tr valign="top" align="center">');
+    ShowHTML('                <td><b>Mês');;
+    ShowHTML('                <td><b>R$');;
+    ShowHTML('              </tr>');
+    $i = 0;
+    foreach($RS as $row) {
+      ShowHTML('              <tr valign="top">');
+      if ($i==0) {
+        ShowHTML('                <td align="center"><b>'.f($row,mes));;
+        ShowHTML('                <td align="rignt"><b>'.formatNumber(f($row,valor),2));;
+        $i = 1;
+      } else {
+        ShowHTML('                <td align="center">'.f($row,mes));;
+        ShowHTML('                <td align="rignt">'.formatNumber(f($row,valor),2));;
+      }
+      ShowHTML('              </tr>');
+    }
+    ShowHTML('              </table>');
+    ShowHTML('      <tr><td><b><U>B</U>eneficiário:<br> <SELECT ACCESSKEY="B" class="STS" name="p_sq_pessoa" size="1">');
     ShowHTML('          <OPTION VALUE="">---');
 
-    if ($_POST['p_beneficiario']>"") {
-      $SQL="select b.handle, b.nome from corporativo.gn_pessoas@sicof b where upper(b.nome) like '%".strtoupper(str_replace("'","''",$_POST['p_beneficiario']))."%' order by seguranca.acentos@sicof(nome)";
-    } else {
-      $SQL="select * from corporativo.gn_pessoas@sicof where handle < 0";
-    } 
-    $RS = DatabaseQueriesFactory::getInstanceOf($SQL, $dbms, null, DB_TYPE);
-    if(!$RS->executeQuery()) die("Cannot query"); else $RS = $RS->getResultData();
-    foreach ($RS as $row) {
-      if (f($row,'handle')==$_POST['p_sq_pessoa']) {
-        ShowHTML('          <OPTION VALUE='.f($row,'handle').' selected>'.f($row,'nome'));
-      } else {
-        ShowHTML('          <OPTION VALUE='.f($row,'handle').'>'.f($row,'nome'));
+    if (nvl($_POST['p_beneficiario'],'')!='') {
+      $RS = db_getSF::getInstanceOf($dbms, 'NOME', null, null, null, null, $_POST["p_beneficiario"], null, null, null, null, null, null);
+      foreach ($RS as $row) {
+        if (f($row,'handle')==$_POST['p_sq_pessoa']) {
+          ShowHTML('          <OPTION VALUE='.f($row,'handle').' selected>'.f($row,'nome'));
+        } else {
+          ShowHTML('          <OPTION VALUE='.f($row,'handle').'>'.f($row,'nome'));
+        } 
       } 
-    } 
+    }
     ShowHTML('          </SELECT></td>');
     ShowHTML('      </tr>');
 
-    ShowHTML('      <tr valign="top"><td valign="top"><b>Pro<U>j</U>eto:<br> <SELECT ACCESSKEY="J" class="STS" name="p_ctcc" size="1">');
+    ShowHTML('      <tr><td><b>Pro<U>j</U>eto:<br> <SELECT ACCESSKEY="J" class="STS" name="p_ctcc" size="1">');
     ShowHTML('          <OPTION VALUE="">---');
 
-    $SQL="select a.HANDLE, a.NOME, a.CODIGOUNESCO, a.INICIO, a.TERMINO from CORPORATIVO.CT_CC@sicof a where a.ultimonivel='S' order by a.nome";
-    $RS = DatabaseQueriesFactory::getInstanceOf($SQL, $dbms, null, DB_TYPE);
-    if(!$RS->executeQuery()) die("Cannot query"); else $RS = $RS->getResultData();
+    $RS = db_getSF::getInstanceOf($dbms, 'PROJETOS', null, null, null, null, null, null, null, null, null, null, null);
     foreach ($RS as $row) {
       if (f($row,'handle')==$_POST['p_ctcc']) {
         ShowHTML('          <OPTION VALUE='.f($row,'handle').' selected>'.f($row,'nome'));
@@ -548,16 +437,16 @@ function Consulta() {
     } 
     ShowHTML('          </SELECT></td>');
     ShowHTML('      </tr>');
-    ShowHTML('      <tr valign="top"><td valign="top"><table border=0 width="100%" cellpadding=0 cellspacing=0><tr valign="top">');
+    ShowHTML('      <tr><td><table border=0 width="100%" cellpadding=0 cellspacing=0><tr valign="top">');
     ShowHTML('          <td><b><U>C</U>NPJ:<br> <INPUT TYPE="TEXT" ACCESSKEY="C" class="STI" name="p_cnpj" size=18 maxlength=18 onKeyPress="FormataCNPJ(this,event);"  value="'.$_POST['p_cnpj'].'"></td>');
     ShowHTML('          <td><b>C<U>P</U>F:<br> <INPUT TYPE="TEXT" ACCESSKEY="C" class="STI" name="p_cpf" size=14 maxlength=14 onKeyPress="FormataCPF(this,event);" value="'.$_POST['p_cpf'].'"></td>');
     ShowHTML('          </table>');
-    ShowHTML('      <tr valign="top"><td valign="top"><table border=0 width="100%" cellpadding=0 cellspacing=0><tr valign="top">');
-    ShowHTML('          <td valign="top"><b>SA/SP/SP<U>D</U>:</b> (identificação completa)<br> <INPUT TYPE="TEXT" ACCESSKEY="D" class="STI" name="p_documento" size=15 maxlength=15 value="'.$_POST['p_documento'].'"></td>');
+    ShowHTML('      <tr><td><table border=0 width="100%" cellpadding=0 cellspacing=0><tr valign="top">');
+    ShowHTML('          <td><b>SA/SP/SP<U>D</U>:</b> (identificação completa)<br> <INPUT TYPE="TEXT" ACCESSKEY="D" class="STI" name="p_documento" size=15 maxlength=15 value="'.$_POST['p_documento'].'"></td>');
     ShowHTML('          <td>Período: <b>D<U>e</U>: <INPUT TYPE="TEXT" ACCESSKEY="E" class="STI" name="p_inicio" size=10 maxlength=10 onKeyPress="FormataData(this,event);"  value="'.$_POST['p_inicio'].'">');
     ShowHTML('                                <U>a</U>té: <INPUT TYPE="TEXT" ACCESSKEY="A" class="STI" name="p_fim" size=10 maxlength=10 onKeyPress="FormataData(this,event);" value="'.$_POST['p_fim'].'"></td>');
     ShowHTML('          </table>');
-    ShowHTML('      <tr valign="top"><td valign="top"><table border=0 width="100%" cellpadding=0 cellspacing=0><tr valign="top">');
+    ShowHTML('      <tr><td><table border=0 width="100%" cellpadding=0 cellspacing=0><tr valign="top">');
     ShowHTML('          <td><b>Co<U>m</U>provante (NF/Fatura/Recibo):<br><INPUT TYPE="TEXT" ACCESSKEY="M" class="STI" name="p_comprovante" size=10 maxlength=10 value="'.$_POST['p_comprovante'].'">');
     ShowHTML('          <td>Período: <b>D<U>e</U>: <INPUT TYPE="TEXT" ACCESSKEY="E" class="STI" name="p_inicio_nf" size=10 maxlength=10 onKeyPress="FormataData(this,event);"  value="'.$_POST['p_inicio_nf'].'">');
     ShowHTML('                                <b><U>a</U>té: <INPUT TYPE="TEXT" ACCESSKEY="A" class="STI" name="p_fim_nf" size=10 maxlength=10 onKeyPress="FormataData(this,event);" value="'.$_POST['p_fim_nf'].'"></td>');
@@ -579,7 +468,6 @@ function Consulta() {
   } 
 
   Rodape();
-  return $function_ret;
 } 
 
 // =========================================================================
@@ -589,7 +477,7 @@ function Main() {
   extract($GLOBALS);
 
   switch ($par) {
-    case "CONSULTA": Consulta(); break;
+    case "CONSULTA": ConsultaDoc(); break;
     default:
       Cabecalho();
       ShowHTML('<BASE HREF="'.$conRootSIW.'">');
@@ -600,7 +488,6 @@ function Main() {
       Rodape();
       break;
   } 
-  return $function_ret;
 } 
 ?>
 

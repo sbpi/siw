@@ -11,7 +11,7 @@ include_once($w_dir_volta.'classes/db/DatabaseQueriesFactory.php');
 
 class dml_putDicionario {
    function getInstanceOf($dbms, $p_cliente, $p_sg_sistema, $p_sg_usuario) {
-     extract($GLOBALS,EXTR_PREFIX_SAME,'strchema'); $sql=$strschema.'SYS.SP_PUTDICIONARIO';
+     extract($GLOBALS,EXTR_PREFIX_SAME,'strchema'); $sql='SYS.SP_PUTDICIONARIO';
      $params=array('p_cliente'                   =>array($p_cliente,                                       B_INTEGER,        32),
                    'p_sg_sistema'                =>array($p_sg_sistema,                                    B_VARCHAR,        50),
                    'p_sg_usuario'                =>array($p_sg_usuario,                                    B_VARCHAR,        50)

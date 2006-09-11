@@ -296,7 +296,7 @@ function SelecaoColaborador($label,$accesskey,$hint,$chave,$chaveAux,$campo,$res
     } 
   } 
   ShowHTML('          </select>');
-  ShowHTML('              <a class="ss" href="#" onClick="window.open('Afastamento.asp?par=BuscaColaborador&TP='.RemoveTP($TP).'&w_cliente='.$w_cliente.'&chaveAux='.$chaveAux.'&w_menu='.$w_menu.'&restricao='.$restricao.'&campo='.$campo.'','Colaborador','top=10,left=10,width=780,height=550,toolbar=yes,status=yes,resizable=yes,scrollbars=yes'); return false;" title="Clique aqui para selecionar o colaborador."><img src=images/Folder/Explorer.gif border=0 align=top height=15 width=15></a>');
+  ShowHTML('              <a class="ss" href="#" onClick="window.open('Afastamento.asp?par=BuscaColaborador&TP='.RemoveTP($TP).'&w_cliente='.$w_cliente.'&chaveAux='.$chaveAux.'&w_menu='.$w_menu.'&restricao='.$restricao.'&campo='.$campo.'','Colaborador','top=10,left=10,width=780,height=550,toolbar=yes,status=yes,resizable=yes,scrollbars=yes'); return false;" title="Clique aqui para selecionar o colaborador."><img src="images/Folder/Explorer.gif" border=0 align=top height=15 width=15></a>');
 }
 
 // =========================================================================

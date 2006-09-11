@@ -19,7 +19,7 @@ if ($p_cliente_session==6601) {
   $w_url     = str_replace('/sgpa/','',$conRootSIW).$conFileVirtual.$_SESSION['P_CLIENTE'];
   $w_caminho = 'sgpa';
 } else {
-  $w_url     = str_replace('/psiw/','',$conRootSIW).$conFileVirtual.$_SESSION['P_CLIENTE'];
+  $w_url     = str_replace('/siw/','',$conRootSIW).$conFileVirtual.$_SESSION['P_CLIENTE'];
   $w_caminho = 'siw';
 } 
 ?>

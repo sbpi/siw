@@ -22,7 +22,7 @@ include_once($w_dir_volta.'funcoes/selecaoUnidade_IS.php');
 include_once($w_dir_volta.'funcoes/selecaoUnidade.php');
 include_once($w_dir_volta.'funcoes/selecaoFaseCheck.php');
 // =========================================================================
-//  /GR_acao.php
+//  /gr_acao.php
 // ------------------------------------------------------------------------
 // Nome     : Celso Miguel Lago Filho
 // Descricao: Gerencia o módulo de ações

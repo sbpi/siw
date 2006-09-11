@@ -232,12 +232,12 @@ function visualCliente($w_sq_cliente,$O) {
     ShowHTML('        <TABLE WIDTH="100%">');
     ShowHTML('          <tr bgcolor="'.$conTrBgColor.'" valign="top">');
     if (f($RS,'logo')>'') {
-      ShowHTML('             <td colspan=3>Logomarca telas e relatórios:<br><b><img src="'.LinkArquivo(null,$w_sq_cliente,'img\logo'.substr(f($RS,'logo'),(strpos(f($RS,'logo'),'.') ? strpos(f($RS,'logo'),'.')+1 : 0)-1,30),null,null,null,'EMBED').'" border=1></b></td>');
+      ShowHTML('             <td colspan=3>Logomarca telas e relatórios:<br><b><img src="'.LinkArquivo(null,$w_sq_cliente,'img/logo'.substr(f($RS,'logo'),(strpos(f($RS,'logo'),'.') ? strpos(f($RS,'logo'),'.')+1 : 0)-1,30),null,null,null,'EMBED').'" border=1></b></td>');
     } else {
       ShowHTML('             <td colspan=3>Não informado</td>');
     } 
     if (f($RS,'logo')>'') {
-      ShowHTML('             <td colspan=3>Logomarca menu:<br><b><img src="'.LinkArquivo(null,$w_sq_cliente,'img\logo1'.substr(f($RS,'logo1'),(strpos(f($RS,'logo1'),'.') ? strpos(f($RS,'logo1'),'.')+1 : 0)-1,30),null,null,null,'EMBED').'" border=1></b></td>');
+      ShowHTML('             <td colspan=3>Logomarca menu:<br><b><img src="'.LinkArquivo(null,$w_sq_cliente,'img/logo1'.substr(f($RS,'logo1'),(strpos(f($RS,'logo1'),'.') ? strpos(f($RS,'logo1'),'.')+1 : 0)-1,30),null,null,null,'EMBED').'" border=1></b></td>');
     } else {
       ShowHTML('             <td colspan=3>Não informado</td>');
     } 

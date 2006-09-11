@@ -10,11 +10,13 @@ include_once($w_dir_volta.'classes/db/DatabaseQueriesFactory.php');
 */
 
 class db_getSolicIndic_IS {
-   function getInstanceOf($dbms, $p_chave, $p_chave_aux, $p_restricao) {
+   function getInstanceOf($dbms, $p_chave, $p_chave_aux, $p_restricao, $p_loa, $p_exequivel) {
      extract($GLOBALS,EXTR_PREFIX_SAME,'strchema'); $sql=$strschema_is.'SP_GETSOLICINDIC_IS';
      $params=array('p_chave'                     =>array(tvl($p_chave),                                    B_INTEGER,        32),
                    'p_chave_aux'                 =>array(tvl($p_chave_aux),                                B_INTEGER,        32),
                    'p_restricao'                 =>array($p_restricao,                                     B_VARCHAR,        20),
+                   'p_loa'                       =>array($p_loa,                                           B_VARCHAR,         1),
+                   'p_exequivel'                 =>array($p_exequivel,                                     B_VARCHAR,         1),
                    'p_result'                    =>array(null,                                             B_CURSOR,         -1)
                   );
      $l_rs = DatabaseQueriesFactory::getInstanceOf($sql, $dbms, $params, DB_TYPE);

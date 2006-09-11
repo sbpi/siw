@@ -10,7 +10,7 @@ include_once($w_dir_volta.'classes/db/DatabaseQueriesFactory.php');
 */
 
 class db_getAcaoPPA {
-   function getInstanceOf($dbms, $p_chave, $p_cliente, $p_programa, $p_acao, $p_responsavel, $p_mpog, $p_relevante, $p_sq_siw_solicitacao, $p_cod_programa, $p_cod_acao) {
+   function getInstanceOf($dbms, $p_chave, $p_cliente, $p_programa, $p_acao, $p_responsavel, $p_mpog, $p_relevante, $p_sq_siw_solicitacao, $p_cod_programa, $p_cod_acao, $p_restricao) {
      extract($GLOBALS,EXTR_PREFIX_SAME,'strchema');
      $sql=$strschema.'SP_GETACAOPPA';
      $params=array('p_chave'                     =>array(tvl($p_chave),                                    B_INTEGER,        32),
@@ -23,6 +23,7 @@ class db_getAcaoPPA {
                    'p_sq_siw_solicitacao'        =>array(tvl($p_sq_siw_solicitacao),                       B_INTEGER,        32),
                    'p_cod_programa'              =>array(tvl($p_cod_programa),                             B_VARCHAR,        50),
                    'p_cod_acao'                  =>array(tvl($p_cod_acao),                                 B_VARCHAR,        50),
+                   'p_restricao'                 =>array(tvl($p_restricao),                                B_VARCHAR,        60),                   
                    'p_result'                    =>array(null,                                             B_CURSOR,         -1)
                   );
      $l_rs = DatabaseQueriesFactory::getInstanceOf($sql, $dbms, $params, DB_TYPE);

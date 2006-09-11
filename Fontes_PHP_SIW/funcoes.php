@@ -1,5 +1,5 @@
 <?
-setlocale(LC_ALL, 'ptb');
+setlocale(LC_ALL, 'pt_BR');
 date_default_timezone_set('America/Sao_Paulo');
 //$locale_info = localeconv();
 //echo "<pre>\n";
@@ -74,7 +74,7 @@ function SortArray() {
 // -------------------------------------------------------------------------
 function exibeCalendario ($form, $campo) {
   extract($GLOBALS);
-  return '   <a class="ss" href="#" onClick="window.open(\''.$w_dir_volta.'calendario.php?nmForm='.$form.'&nmCampo='.$campo.'&vData=\'+document.'.$form.'.'.$campo.'.value,\'dp\',\'toolbar=0,location=0,directories=0,status=0,menubar=0,scrollbars=0,resizable=0,width=250,height=250,left=500,top=200\'); return false;" title="Visualizar calendário"><img src=images/Icone/goToTop.gif border=0 align=top height=13 width=15></a>';
+  return '   <a class="ss" href="#" onClick="window.open(\''.$w_dir_volta.'calendario.php?nmForm='.$form.'&nmCampo='.$campo.'&vData=\'+document.'.$form.'.'.$campo.'.value,\'dp\',\'toolbar=0,location=0,directories=0,status=0,menubar=0,scrollbars=0,resizable=0,width=250,height=250,left=500,top=200\'); return false;" title="Visualizar calendário"><img src="images/icone/GotoTop.gif" border=0 align=top height=13 width=15></a>';
 }
 
 // =========================================================================
@@ -221,7 +221,7 @@ function LinkOrdena($p_label,$p_campo) {
 function CabecalhoRelatorio($p_cliente,$p_titulo) {
   extract($GLOBALS);
   $RS = db_getCustomerData::getInstanceOf($dbms,$p_cliente);
-  ShowHTML('<TABLE WIDTH="100%" BORDER=0><TR><TD ROWSPAN=2><IMG ALIGN="LEFT" SRC="files\\'.$w_cliente.'\\img\\'.f($RS,'logo').'><TD ALIGN="RIGHT"><B><FONT SIZE=4 COLOR="#000000">');
+  ShowHTML('<TABLE WIDTH="100%" BORDER=0><TR><TD ROWSPAN=2><IMG ALIGN="LEFT" SRC="files/'.$w_cliente.'/img/'.f($RS,'logo').'><TD ALIGN="RIGHT"><B><FONT SIZE=4 COLOR="#000000">');
   ShowHTML($p_titulo);
   ShowHTML('</FONT><TR><TD ALIGN="RIGHT"><B><FONT SIZE=2 COLOR="#000000">'.DataHora().'</B></TD></TR>');
   ShowHTML('</FONT></B></TD></TR></TABLE>');
@@ -919,6 +919,9 @@ function ExtractFileName($arquivo) {
   while((strpos($fsa,"\\") ? strpos($fsa,"\\")+1 : 0)>0) {
     $fsa=substr($fsa,(strpos($fsa,"\\") ? strpos($fsa,"\\")+1 : 0)+1-1,strlen($fsa));
   }
+  while((strpos($fsa,"/") ? strpos($fsa,"/")+1 : 0)>0) {
+    $fsa=substr($fsa,(strpos($fsa,"/") ? strpos($fsa,"/")+1 : 0)+1-1,strlen($fsa));
+  }
   return $fsa;
 }
 
@@ -954,7 +957,7 @@ function TrataErro($sp, $Err, $params, $file, $line, $object) {
      ShowHTML(' history.back(1);');
      ScriptClose();
   }
-  elseif (!(strpos($Err['message'],'ORA-00001')===false)) {
+  elseif (!(strpos($Err['message'],'ORA-0000x1')===false)) {
      // REGISTRO JÁ EXISTENTE
     ScriptOpen('JavaScript');
     ShowHTML(' alert("Um dos campos digitados já existe no banco de dados e é único.\\n\\n'.substr($Err['message'],0,(strpos($Err['message'],chr(10)) ? strpos($Err['message'],chr(10))+1 : 0)-1).'");');

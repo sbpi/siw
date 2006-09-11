@@ -43,12 +43,12 @@ function VisualPrograma($l_chave,$O,$l_usuario,$P1,$P4,$l_identificacao,$l_respo
     // Indicadores do programa
     // Recupera todos os registros para a listagem     
     $l_html.=chr(13).'      <tr><td colspan="2"><br><font size="2"><b>INDICADORES<hr NOSHADE color=#000000 SIZE=1></b></font></td></tr>';
-    $RS1 = db_getSolicIndic_IS::getInstanceOf($dbms,$l_chave,null,'LISTA');
+    $RS1 = db_getSolicIndic_IS::getInstanceOf($dbms,$l_chave,null,'LISTA',null,null);
     $RS1 = SortArray($RS1,'ordem','asc');
     if (count($RS1)>0) {
       $l_cont=1;
       foreach($RS1 as $row1) {
-        $RS2 = db_getSolicIndic_IS::getInstanceOf($dbms,$l_chave,f($row1,'sq_indicador'),'REGISTRO');
+        $RS2 = db_getSolicIndic_IS::getInstanceOf($dbms,$l_chave,f($row1,'sq_indicador'),'REGISTRO',null,null);
         foreach($RS2 as $row2){$RS2=$row2; break;}
         $l_html.=chr(13).'   <tr><td valigin="top" bgcolor="#f0f0f0"><b>'.$l_cont.') Indicador:</b></td>';
         $l_html.=chr(13).'       <td bgcolor="#f0f0f0"><b>'.f($RS2,'titulo').'</b></td></tr>';
@@ -340,12 +340,12 @@ function VisualPrograma($l_chave,$O,$l_usuario,$P1,$P4,$l_identificacao,$l_respo
     if (strtoupper($l_indicador)==strtoupper('sim')) {
       // Recupera todos os registros para a listagem     
       $l_html.=chr(13).'      <tr><td colspan="2"><br><font size="2"><b>INDICADORES<hr NOSHADE color=#000000 SIZE=1></b></font></td></tr>';
-      $RS1 = db_getSolicIndic_IS::getInstanceOf($dbms,$l_chave,null,'LISTA');
+      $RS1 = db_getSolicIndic_IS::getInstanceOf($dbms,$l_chave,null,'LISTA',null,null);
       $RS1 = SortArray($RS1,'ordem','asc');
       if (count($RS1)>0) {
         $l_cont=1;
         foreach($RS1 as $row) {
-          $RS2 = db_getSolicIndic_IS::getInstanceOf($dbms,$l_chave,f($row,'sq_indicador'),'REGISTRO');
+          $RS2 = db_getSolicIndic_IS::getInstanceOf($dbms,$l_chave,f($row,'sq_indicador'),'REGISTRO',null,null);
           foreach($RS2 as $row2){$RS=$row2; break;}
           $l_html.=chr(13).'   <tr><td valigin="top" bgcolor="#f0f0f0"><b>'.$l_cont.') Indicador:</b></td>';
           $l_html.=chr(13).'       <td bgcolor="#f0f0f0"><b>'.f($row2,'titulo').'</b></td></tr>';

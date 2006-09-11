@@ -339,7 +339,7 @@ function listaTelefonica(){
   ShowHTML('<TABLE WIDTH="100%" BORDER=0><tr>');
   if ($P2==0){
     $RS = db_getCustomerData::getInstanceOf($dbms,$w_cliente);
-    ShowHTML('  <td rowspan=2><img align="left" src="'.LinkArquivo(null,$w_cliente,'img\logo'.substr((f($RS,'logo')),strpos(f($RS,'logo'),'.'),30),null,null,null,'EMBED').'">');
+    ShowHTML('  <td rowspan=2><img align="left" src="'.LinkArquivo(null,$w_cliente,'img/logo'.substr((f($RS,'logo')),strpos(f($RS,'logo'),'.'),30),null,null,null,'EMBED').'">');
     ShowHTML('  <td align="right"><B><font size=5 color="#000000">');
     ShowHTML('Lista Telefônica');
     ShowHTML('</FONT><tr><td ALIGN="RIGHT"><B><font size=2 color="#000000">'.DataHora().'</B>');
@@ -382,7 +382,7 @@ function ResumoLigacaoParticular(){
   if ($P2==0) {
     $RS = db_getCustomerData::getInstanceOf($dbms,$w_cliente);
     if (f($RS,'logo')>'') {
-      $w_logo='img\logo'.substr(f($RS,'logo'),(strpos(f($RS,'logo'),'.') ? strpos(f($RS,'logo'),'.')+1 : 0)-1,30);
+      $w_logo='img/logo'.substr(f($RS,'logo'),(strpos(f($RS,'logo'),'.') ? strpos(f($RS,'logo'),'.')+1 : 0)-1,30);
       ShowHTML('<TABLE WIDTH="100%" BORDER=0><TR><TD ROWSPAN=2><IMG ALIGN="LEFT" SRC="'.LinkArquivo(null,$w_cliente,$w_logo,null,null,null,'EMBED').'">');
     } 
     ShowHTML('  <td align="right"><B><font size=5 color="#000000">');

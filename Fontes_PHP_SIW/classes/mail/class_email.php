@@ -93,7 +93,11 @@
                     $_cte = '7BIT'; //$this->_headers["Content-Transfer-Encoding"];
                     unset($this->_headers["Content-Transfer-Encoding"]);
                 }
-                $_MHeader='';
+                if (false!==strpos($_SERVER['SERVER_NAME'],'.')) {
+                  $_MHeader="From: siw@".substr(strstr($_SERVER['SERVER_NAME'],'.'),1)."\r\n";
+                } else {
+                  $_MHeader="From: siw@".$_SERVER['SERVER_NAME']."\r\n";
+                }
                 $_MBody='';
                 foreach($this->_headers as $_h=>$_vlr) {
                     $_MHeader .= "{$_h}: {$_vlr};\n";

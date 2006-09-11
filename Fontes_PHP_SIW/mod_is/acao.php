@@ -51,6 +51,7 @@ include_once($w_dir_volta.'funcoes/selecaoPessoa.php');
 include_once($w_dir_volta.'funcoes/selecaoTPRestricao_IS.php');
 include_once($w_dir_volta.'funcoes/selecaoFase.php');
 include_once($w_dir_volta.'funcoes/selecaoSolicResp.php');
+include_once($w_dir_volta.'funcoes/selecaoAcao.php');
 include_once('visualacao.php');
 // =========================================================================
 // acao.php
@@ -428,7 +429,7 @@ function Inicial() {
             //ShowHTML '          <a accesskey=''I'' class=''HL'' href=''' & w_dir & w_pagina & 'Geral&R=' & w_pagina & par & '&O=I&SG=' & RS1('sigla') & '&w_menu=' & w_menu & '&P1=' & P1 & '&P2=' & P2 & '&P3=' & P3 & '&P4=' & P4 & '&TP=' & TP & '&w_copia=' & RS('sq_siw_solicitacao') & MontaFiltro('GET') & '''>Copiar</a>&nbsp;'
           } elseif ($P1==1) {
             // Se for cadastramento
-            if ($w_submenu>'') ShowHTML('          <A class="HL" HREF="Menu.php?par=ExibeDocs&O=A&w_chave='.f($row,'sq_siw_solicitacao').'&R='.$w_pagina.$par.'&SG='.$SG.'&TP='.$TP.'&w_documento=Nr. '.f($row,'sq_siw_solicitacao').MontaFiltro('GET').'" title="Altera as informações cadastrais da ação" TARGET="menu">Alterar</a>&nbsp;');
+            if ($w_submenu>'') ShowHTML('          <A class="HL" HREF="menu.php?par=ExibeDocs&O=A&w_chave='.f($row,'sq_siw_solicitacao').'&R='.$w_pagina.$par.'&SG='.$SG.'&TP='.$TP.'&w_documento=Nr. '.f($row,'sq_siw_solicitacao').MontaFiltro('GET').'" title="Altera as informações cadastrais da ação" TARGET="menu">Alterar</a>&nbsp;');
             else               ShowHTML('          <A class="HL" HREF="'.$w_dir.$w_pagina.$par.'&R='.$w_pagina.$par.'&O=A&w_chave='.f($row,'sq_siw_solicitacao').'&P1='.$P1.'&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP='.$TP.'&SG='.$SG.MontaFiltro('GET').'" title="Altera as informações cadastrais da ação">Alterar</A>&nbsp');
             ShowHTML('          <A class="HL" HREF="'.$w_dir.$w_pagina.'Excluir&R='.$w_pagina.$par.'&O=E&w_chave='.f($row,'sq_siw_solicitacao').'&w_tipo=Volta&P1='.$P1.'&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP='.$TP.'&SG='.$SG.MontaFiltro('GET').'" title="Exclusão da ação.">Excluir</A>&nbsp');
            ShowHTML('          <A class="HL" HREF="'.$w_dir.$w_pagina.'Envio&R='.$w_pagina.$par.'&O=V&w_chave='.f($row,'sq_siw_solicitacao').'&w_tipo=Volta&P1='.$P1.'&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP='.$TP.'&SG='.$SG.MontaFiltro('GET').'" title="Encaminhamento da ação.">Enviar</A>&nbsp');
@@ -860,6 +861,7 @@ function RecursoProgramado() {
   if (!(strpos('A',$O)===false)) {
     // Recupera os dados da ação
     $RS = db_getSolicData_IS::getInstanceOf($dbms,$w_chave,$SG);
+    foreach($RS as $row){$RS=$row; break;}
     if (count($RS)>0) {
       $w_proponente           = f($RS,'proponente');
       $w_sq_unidade_resp      = f($RS,'sq_unidade_resp');
@@ -1214,6 +1216,7 @@ function RecursoProgramado() {
 // -------------------------------------------------------------------------
 function Responsaveis() {
   extract($GLOBALS);
+  echo nvl($O,'nulo');
   global $w_Disabled;
   $w_chave          = $_REQUEST['w_chave'];
   $w_chave_aux      = $_REQUEST['w_chave_aux'];
@@ -1564,11 +1567,11 @@ function Metas() {
     $w_previsto_acao_12     = $_REQUEST['w_previsto_acao_12'];
   } elseif ($O=='L') {
     // Recupera todos os registros para a listagem
-    $RS = db_getSolicMeta_IS::getInstanceOf($dbms,$w_chave,null,'LISTA',null,null,null,null,null,null,null);
+    $RS = db_getSolicMeta_IS::getInstanceOf($dbms,$w_chave,null,'LISTA',null,null,null,null,null,null,null,null,null);
     $RS = SortArray($RS,'ordem','asc');
   } elseif (!(strpos('AEV',$O)===false) && $w_troca=='') {
     // Recupera os dados do endereço informado
-    $RS = db_getSolicMeta_IS::getInstanceOf($dbms,$w_chave,$w_chave_aux,'REGISTRO',null,null,null,null,null,null,null);
+    $RS = db_getSolicMeta_IS::getInstanceOf($dbms,$w_chave,$w_chave_aux,'REGISTRO',null,null,null,null,null,null,null,null,null);
     foreach($RS as $row) {$RS=$row; break;}
     $w_titulo                   =f($RS,'titulo');
     $w_ordem                    =f($RS,'ordem');
@@ -1684,9 +1687,6 @@ function Metas() {
     ShowHTML('          <td><b>Executado</td>');
     ShowHTML('          <td><b>Operações</td>');
     ShowHTML('        </tr>');
-    // Recupera as etapas principais
-    $RS = db_getSolicMeta_IS::getInstanceOf($dbms,$w_chave,null,'LSTNULL',null,null,null,null,null,null,null);
-    $RS = SortArray($RS,'ordem','asc');
     if (count($RS)<=0) {
       // Se não foram selecionados registros, exibe mensagem
       ShowHTML('      <tr bgcolor="'.$conTrBgColor.'"><td colspan=9 align="center"><font size="2"><b>Não foram encontrados registros.</b></td></tr>');
@@ -1864,14 +1864,14 @@ function AtualizaMeta() {
     } 
   } elseif ($O=='L') {
     // Recupera todos os registros para a listagem
-    //$RS = db_getSolicMeta_IS::getInstanceOf($dbms,$w_chave,null,'LISTA',null,null,null,null,null,null,null);
+    //$RS = db_getSolicMeta_IS::getInstanceOf($dbms,$w_chave,null,'LISTA',null,null,null,null,null,null,null,null,null);
     //$RS = SortArray($RS,'ordem','asc');
     // Recupera as metas
-    $RS = db_getSolicMeta_IS::getInstanceOf($dbms,$w_chave,null,'LSTNULL',null,null,null,null,null,null,null);
+    $RS = db_getSolicMeta_IS::getInstanceOf($dbms,$w_chave,null,'LSTNULL',null,null,null,null,null,null,null,null,null);
     $RS = SortArray($RS,'ordem','asc');
   } elseif (!(strpos('AEV',$O)===false) && $w_troca=='') {
     // Recupera os dados do endereço informado
-    $RS = db_getSolicMeta_IS::getInstanceOf($dbms,$w_chave,$w_chave_aux,'REGISTRO',null,null,null,null,null,null,null);
+    $RS = db_getSolicMeta_IS::getInstanceOf($dbms,$w_chave,$w_chave_aux,'REGISTRO',null,null,null,null,null,null,null,null,null);
     foreach ($RS as $row) {$RS=$row; break;}
     $w_titulo               = f($RS,'titulo');
     $w_ordem                = f($RS,'ordem');
@@ -2358,7 +2358,7 @@ function Financiamento() {
     checkbranco();
     ValidateOpen('Validacao');
     if (!(strpos('IA',$O)===false)) {
-      If (O=='I') Validate('w_chave_aux','Ação PPA','SELECT','1','1','18','1','1');
+      if ($O=='I') Validate('w_chave_aux','Ação PPA','SELECT','1','1','18','1','1');
       Validate('w_obs_financ','Observações','1','',5,2000,'1','1');
     } 
     ShowHTML('  theForm.Botao[0].disabled=true;');
@@ -3109,7 +3109,7 @@ function VisualNovo() {
   $w_tipo   =strtoupper(trim($_REQUEST['w_tipo']));
   // Recupera o logo do cliente a ser usado nas listagens
   $RS = db_getCustomerData::getInstanceOf($dbms,$w_cliente);
-  if (f($RS,'logo')>'') $w_logo='\img\logo'.substr(f($RS,'logo'),(strpos(f($RS,'logo'),'.') ? strpos(f($RS,'logo'),'.')+1 : 0)-1,30);
+  if (f($RS,'logo')>'') $w_logo='/img/logo'.substr(f($RS,'logo'),(strpos(f($RS,'logo'),'.') ? strpos(f($RS,'logo'),'.')+1 : 0)-1,30);
   if ($w_tipo=='WORD') HeaderWord(); else Cabecalho();
   ShowHTML('<HEAD>');
   ShowHTML('<TITLE>'.$conSgSistema.' - Visualização de Ação</TITLE>');
@@ -3147,7 +3147,7 @@ function Visual() {
   $w_tipo   = strtoupper(trim($_REQUEST['w_tipo']));
   // Recupera o logo do cliente a ser usado nas listagens
   $RS = db_getCustomerData::getInstanceOf($dbms,$w_cliente);
-  if (f($RS,'logo')>'') $w_logo='\img\logo'.substr(f($RS,'logo'),(strpos(f($RS,'logo'),'.') ? strpos(f($RS,'logo'),'.')+1 : 0)-1,30);
+  if (f($RS,'logo')>'') $w_logo='/img/logo'.substr(f($RS,'logo'),(strpos(f($RS,'logo'),'.') ? strpos(f($RS,'logo'),'.')+1 : 0)-1,30);
   if ($w_tipo=='WORD') HeaderWord(); else Cabecalho();
   ShowHTML('<HEAD>');
   ShowHTML('<TITLE>'.$conSgSistema.' - Ações - Exercício '.$w_ano.'</TITLE>');
@@ -3475,7 +3475,7 @@ function Concluir() {
   ShowHTML('      <tr><td valign="top" colspan="2"><table border=0 width="100%" cellspacing=0>');
   ShowHTML('          <tr>');
   // Verifica se a ação tem etapas em aberto e avisa o usuário caso isso ocorra.
-  $RS = db_getSolicMeta_IS::getInstanceOf($dbms,$w_chave,null,'LISTA',null,null,null,null,null,null,null);
+  $RS = db_getSolicMeta_IS::getInstanceOf($dbms,$w_chave,null,'LISTA',null,null,null,null,null,null,null,null,null);
   $w_cont_m = 0;
   foreach($RS as $row) {
     if (f($RS,'perc_conclusao')!=100) $w_cont_m=$w_cont_m+1;
@@ -3545,38 +3545,38 @@ function Metalinha($l_chave,$l_chave_aux,$l_titulo,$l_resp,$l_setor,$l_inicio,$l
   if ($l_loa>'') $l_loa='Sim'; else $l_loa='Não';
   $l_row='';
   $w_cor = ($w_cor==$conTrBgColor || $w_cor=='') ? $w_cor=$conTrAlternateBgColor : $w_cor=$conTrBgColor;
-  $l_html.=chr(13).'      <tr bgcolor="'.$w_cor.'" valign="top">';
-  $l_html.=chr(13).'        <td nowrap '.$l_row.'>';
+  $l_html.= chr(13).'      <tr bgcolor="'.$w_cor.'" valign="top">';
+  $l_html.= chr(13).'        <td nowrap '.$l_row.'>';
   if ($l_fim < time() && $l_perc<100)
-    $l_html.=chr(13).'           <img src="'.$conImgAtraso.'" border=0 width=15 height=15 align="center">';
+    $l_html.= chr(13).'           <img src="'.$conImgAtraso.'" border=0 width=15 height=15 align="center">';
   elseif ($l_perc<100)
-    $l_html.=chr(13).'           <img src="'.$conImgNormal.'" border=0 width=15 height=15 align="center">';
+    $l_html.= chr(13).'           <img src="'.$conImgNormal.'" border=0 width=15 height=15 align="center">';
   else
-    $l_html.=chr(13).'           <img src="'.$conImgOkNormal.'" border=0 width=15 height=15 align="center">';
+    $l_html.= chr(13).'           <img src="'.$conImgOkNormal.'" border=0 width=15 height=15 align="center">';
   if (Nvl($l_word,0)==1) $l_html.=chr(13).'        <td>'.$l_destaque.$l_titulo.'</b>';
   else                   $l_html.=chr(13).'<A class="HL" HREF="#" onClick="window.open(\'acao.php?par=AtualizaMeta&O=V&w_chave='.$l_chave.'&w_chave_aux='.$l_chave_aux.'&w_tipo=Volta&P1=10&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP='.$TP.'&SG='.$SG.'\',\'Meta\',\'width=600, height=350, top=50, left=50, toolbar=no, scrollbars=yes, resizable=yes, status=no\'); return false;" title="Clique para exibir os dados!">'.$l_destaque.$l_titulo.'</A>';
-  $l_html.=chr(13).'        <td align="center" '.$l_row.'>'.$l_loa.'</td>';
-  $l_html.=chr(13).'        <td align="center" '.$l_row.'>'.FormataDataEdicao($l_fim).'</td>';
-  $l_html.=chr(13).'        <td nowrap align="right" '.$l_row.'>'.$l_perc.' %</td>';
+  $l_html.= chr(13).'        <td align="center" '.$l_row.'>'.$l_loa.'</td>';
+  $l_html.= chr(13).'        <td align="center" '.$l_row.'>'.FormataDataEdicao($l_fim).'</td>';
+  $l_html.= chr(13).'        <td nowrap align="right" '.$l_row.'>'.$l_perc.' %</td>';
   if ($l_oper=='S') {
-    $l_html.=chr(13).'        <td align="top" nowrap '.$l_row.'>';
+    $l_html.= chr(13).'        <td align="top" nowrap '.$l_row.'>';
     // Se for listagem de metas no cadastramento da ação, exibe operações de alteração e exclusão
     if ($l_tipo=='PROJETO') {
-      $l_html.=chr(13).'          <A class="HL" HREF="'.$w_dir.$w_pagina.$par.'&R='.$w_pagina.$par.'&O=A&w_chave='.$l_chave.'&w_chave_aux='.$l_chave_aux.'&P1='.$P1.'&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP='.$TP.'&SG='.$SG.'" title="Alterar">Alt</A>&nbsp';
+      $l_html.= chr(13).'          <A class="HL" HREF="'.$w_dir.$w_pagina.$par.'&R='.$w_pagina.$par.'&O=A&w_chave='.$l_chave.'&w_chave_aux='.$l_chave_aux.'&P1='.$P1.'&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP='.$TP.'&SG='.$SG.'" title="Alterar">Alt</A>&nbsp';
       if ($l_loa=='Não') $l_html.=chr(13).'          <A class="HL" HREF="'.$w_dir.$w_pagina.'GRAVA&R='.$w_pagina.$par.'&O=E&w_chave='.$l_chave.'&w_chave_aux='.$l_chave_aux.'&P1='.$P1.'&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP='.$TP.'&SG='.$SG.'" onClick="return confirm(\'Confirma a exclusão do registro?\');" title="Excluir">Excl</A>&nbsp';
       // Caso contrário, é listagem de atualização de metas. Neste caso, coloca apenas a opção de alteração
     } else {
-      $l_html.=chr(13).'          <A class="HL" HREF="'.$w_dir.$w_pagina.$par.'&R='.$w_pagina.$par.'&O=A&w_chave='.$l_chave.'&w_chave_aux='.$l_chave_aux.'&P1='.$P1.'&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP='.$TP.'&SG='.$SG.'" title="Atualiza dados da meta">Atualizar</A>&nbsp';
+      $l_html.= chr(13).'          <A class="HL" HREF="'.$w_dir.$w_pagina.$par.'&R='.$w_pagina.$par.'&O=A&w_chave='.$l_chave.'&w_chave_aux='.$l_chave_aux.'&P1='.$P1.'&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP='.$TP.'&SG='.$SG.'" title="Atualiza dados da meta">Atualizar</A>&nbsp';
     } 
-    $l_html.=chr(13).'        </td>';
+    $l_html.= chr(13).'        </td>';
   } else {
     if ($l_tipo=='ETAPA') {
-      $l_html.=chr(13).'        <td align="top" nowrap '.$l_row.'>';
-      $l_html.=chr(13).'          <A class="HL" HREF="'.$w_dir.$w_pagina.$par.'&R='.$w_pagina.$par.'&O=V&w_chave='.$l_chave.'&w_chave_aux='.$l_chave_aux.'&P1='.$P1.'&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP='.$TP.'&SG='.$SG.'" title="Exibe os dados da meta">Exibir</A>&nbsp';
-      $l_html.=chr(13).'        </td>';
+      $l_html.= chr(13).'        <td align="top" nowrap '.$l_row.'>';
+      $l_html.= chr(13).'          <A class="HL" HREF="'.$w_dir.$w_pagina.$par.'&R='.$w_pagina.$par.'&O=V&w_chave='.$l_chave.'&w_chave_aux='.$l_chave_aux.'&P1='.$P1.'&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP='.$TP.'&SG='.$SG.'" title="Exibe os dados da meta">Exibir</A>&nbsp';
+      $l_html.= chr(13).'        </td>';
     } 
   } 
-  $l_html.=chr(13).'      </tr>';
+  $l_html.= chr(13).'      </tr>';
   return $l_html;
 } 
 // =========================================================================
@@ -3951,6 +3951,7 @@ function Grava() {
       //Recupera 10  dos dias de prazo da tarefa, para emitir o alerta 
       $RS = db_get10PercentDays_IS::getInstanceOf($dbms,$_REQUEST['w_inicio'],$_REQUEST['w_fim']);
       $w_dias = f($RS,'dias');
+      if ($w_dias<1) $w_dias=1;
       dml_putAcaoGeral_IS::getInstanceOf($dbms,$O,
         $_REQUEST['w_chave'],$_REQUEST['w_menu'],$_SESSION['LOTACAO'],$_REQUEST['w_solicitante'],$_REQUEST['w_proponente'],
         $_SESSION['SQ_PESSOA'],null,$_REQUEST['w_descricao'],$_REQUEST['w_justificativa'],$_REQUEST['w_inicio'],$_REQUEST['w_fim'],$_REQUEST['w_valor'],
@@ -4012,7 +4013,7 @@ function Grava() {
       if ($O=='I') {
         // Recupera os dados para montagem correta do menu
         $RS1 = db_getMenuData::getInsatnceOf($dbms,$w_menu);
-        ShowHTML('  parent.menu.location=\'../Menu.php?par=ExibeDocs&O=A&w_chave='.$w_chave_nova.'&w_documento=Nr. '.$w_chave_nova.'&R='.$R.'&SG='.f($RS1,'sigla').'&TP='.$TP.MontaFiltro('GET').'\';');
+        ShowHTML('  parent.menu.location=\'../menu.php?par=ExibeDocs&O=A&w_chave='.$w_chave_nova.'&w_documento=Nr. '.$w_chave_nova.'&R='.$R.'&SG='.f($RS1,'sigla').'&TP='.$TP.MontaFiltro('GET').'\';');
       } else {
         // Aqui deve ser usada a variável de sessão para evitar erro na recuperação do link
         $RS1 = db_getLinkData::getInstanceOf($dbms,$w_cliente,$SG);
@@ -4032,7 +4033,7 @@ function Grava() {
           $_REQUEST['w_titulo'],$_REQUEST['w_descricao'],$_REQUEST['w_ordem'],$_REQUEST['w_inicio'],
           $_REQUEST['w_fim'],$_REQUEST['w_perc_conclusao'],$_REQUEST['w_orcamento'],
           $_REQUEST['w_programada'],$_REQUEST['w_cumulativa'],$_REQUEST['w_quantidade'],$_REQUEST['w_unidade_medida']);
-      If ($O!='E') {
+      If (($O!='E') && $_REQUEST['w_programada']=='S'){
         dml_putMetaMensalIni_IS::getInstanceOf($dbms,'W',$_REQUEST['w_chave_aux'],$w_cliente,
             trim($_REQUEST['w_cron_ini_1']),trim($_REQUEST['w_cron_ini_2']),trim($_REQUEST['w_cron_ini_3']),trim($_REQUEST['w_cron_ini_4']),
             trim($_REQUEST['w_cron_ini_5']),trim($_REQUEST['w_cron_ini_6']),trim($_REQUEST['w_cron_ini_7']),trim($_REQUEST['w_cron_ini_8']),
@@ -4046,7 +4047,7 @@ function Grava() {
     } else {
       ScriptOpen('JavaScript');
       ShowHTML('  alert(\'Assinatura Eletrônica inválida!\');');
-      ShowHTML('  history.back(1);');
+      ShowHTML('  history.back(1);'); 
       ScriptClose();
     } 
   } elseif ($SG=='ISACPROFIN') {

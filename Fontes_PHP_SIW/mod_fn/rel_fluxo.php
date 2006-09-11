@@ -94,7 +94,7 @@ function Inicial(){
     // Recupera o logo do cliente a ser usado nas listagens
     $RS = db_getCustomerData::getInstanceOf($dbms,$w_cliente);
     if (f($RS,'logo')>'') {
-      $w_logo='\img\logo'.substr(f($RS,'logo'),(strpos(f($RS,'logo'),'.') ? strpos(f($RS,'logo'),'.')+1 : 0)-1,30);
+      $w_logo='/img/logo'.substr(f($RS,'logo'),(strpos(f($RS,'logo'),'.') ? strpos(f($RS,'logo'),'.')+1 : 0)-1,30);
     } 
     // Recupera todos os registros para a listagem
     $RS = db_getLancamento::getInstanceOf($dbms,$w_cliente,$SG,FormataDataEdicao($p_dt_ini),FormataDataEdicao($p_dt_fim),null,'EE,ER');

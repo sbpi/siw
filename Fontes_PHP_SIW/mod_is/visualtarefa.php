@@ -111,7 +111,7 @@ function VisualTarefa($l_chave,$O,$l_usuario,$P4,$l_identificacao,$l_conclusao,$
         $l_html.=chr(13).'       <tr><td><font size=\'1\'>'.LinkArquivo('HL',$w_cliente,f($row2,'chave_aux'),'_blank','Clique para exibir o arquivo em outra janela.',f($row2,'nome'),null).'</font></td>';
         $l_html.=chr(13).'           <td><font size=\'1\'>'.Nvl(f($row2,'descricao'),'-').'</font></td>';
         $l_html.=chr(13).'           <td><font size=\'1\'>'.f($row2,'tipo').'</font></td>';
-        $l_html.=chr(13).'         <td><div align=\'right\'><font size=\'1\'>'.round($cDbl[f($row2,'tamanho')]/1024,1).'&nbsp;</font></td>';
+        $l_html.=chr(13).'         <td><div align=\'right\'><font size=\'1\'>'.(round(f($row2,'tamanho')/1024,1)).'&nbsp;</font></td>';
         $l_html.=chr(13).'      </tr>';
       } 
       $l_html.=chr(13).'         </table></div></td></tr>';
@@ -133,7 +133,7 @@ function VisualTarefa($l_chave,$O,$l_usuario,$P4,$l_identificacao,$l_conclusao,$
     $l_html.=chr(13).'       </tr>';
     $i=0;
     if (count($RS1)==0) {
-      $w_html .= chr(13).'      <tr bgcolor="'.$conTrBgColor.'"><td colspan=4 align="center"><b>Não foram encontrados encaminhamentos.</b></td></tr>';
+      $w_html .= chr(13).'      <tr bgcolor="'.$conTrBgColor.'"><td colspan=2 align="center"><b>Não foram encontrados encaminhamentos.</b></td></tr>';
     } else {
       $w_html .= chr(13).'      <tr bgcolor="'.$conTrBgColor.'" valign="top">';
       $w_cor=$conTrBgColor;
@@ -146,7 +146,11 @@ function VisualTarefa($l_chave,$O,$l_usuario,$P4,$l_identificacao,$l_conclusao,$
         }
         $w_html = $w_html.chr(13).'      <tr valign="top" bgcolor="'.$w_cor.'">';
         $l_html.=chr(13).'        <td nowrap>'.FormataDataEdicao(f($row1,'phpdt_data'),3).'</td>';
-        $l_html.=chr(13).'        <td>'.CRLF2BR(Nvl(f($row1,'despacho'),'---')).'</td>';
+        if (Nvl(f($row1,'caminho'),'')>'') {
+          $l_html.=chr(13).'        <td>'.CRLF2BR(Nvl(f($row1,'despacho'),'---').'<br>'.LinkArquivo('HL',$w_cliente,f($row1,'sq_siw_arquivo'),'_blank','Clique para exibir o anexo em outra janela.','Anexo - '.f($row1,'tipo').' - '.round(f($row1,'tamanho')/1024,1).' KB',null)).'</td>';
+        } else {
+          $l_html.=chr(13).'        <td>'.CRLF2BR(Nvl(f($row1,'despacho'),'---')).'</td>';
+        }         
         $l_html.=chr(13).'        <td nowrap>'.ExibePessoa('../',$w_cliente,f($row1,'sq_pessoa'),$TP,f($row1,'responsavel')).'</td>';
         if ((Nvl(f($row1,'sq_demanda_log'),'')>'') && (Nvl(f($row1,'destinatario'),'')>''))         $l_html.=chr(13).'        <td nowrap>'.ExibePessoa('../',$w_cliente,f($row1,'sq_pessoa_destinatario'),$TP,f($row1,'destinatario')).'</td>';
         elseif ((Nvl(f($row1,'sq_demanda_log'),'')>'')  && (Nvl(f($row1,'destinatario'),'')==''))   $l_html.=chr(13).'        <td nowrap>Anotação</td>';
@@ -163,6 +167,7 @@ function VisualTarefa($l_chave,$O,$l_usuario,$P4,$l_identificacao,$l_conclusao,$
     $l_html.=chr(13).'   <tr><td><b>Data da Consulta:</b></td>';
     $l_html.=chr(13).'       <td>'.FormataDataEdicao(time(),3).'</td></tr>';
   }
+  $l_html.=chr(13).'         </table>';
   return $l_html;
 } 
 ?>

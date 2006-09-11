@@ -25,6 +25,7 @@ include_once('funcoes.php');
 include_once('classes/db/abreSessao.php');
 include_once('classes/sp/db_verificausuario.php');
 include_once('classes/sp/db_verificasenha.php');
+include_once('classes/sp/db_updatePassword.php');
 include_once('classes/sp/db_getCustomerData.php');
 include_once('classes/sp/db_getUserData.php');
 include_once('classes/sp/db_getLinkData.php');
@@ -88,9 +89,9 @@ function Valida() {
 
   if (db_verificaUsuario::getInstanceOf($dbms, $_SESSION["P_CLIENTE"], $wNoUsuario)==0) {
     $w_erro=1;
+  } else {
+    if ($wDsSenha>"") { $w_erro=db_verificaSenha::getInstanceOf($dbms, $_SESSION["P_CLIENTE"],$wNoUsuario,$wDsSenha); }
   }
-  else
-     if ($wDsSenha>"") { $w_erro=db_verificaSenha::getInstanceOf($dbms, $_SESSION["P_CLIENTE"],$wNoUsuario,$wDsSenha); }
 
   if ($w_erro>0) {
     ScriptOpen("JavaScript");
@@ -101,8 +102,7 @@ function Valida() {
           if ($w_erro==3) { ShowHTML("  alert('Usuário com acesso bloqueado pelo gestor de segurança!');"); }
     ShowHTML("  history.back(1);");
     ScriptClose();
-  }
-  else {
+  } else {
     // Recupera informações do cliente, relativas ao envio de e-mail
     $RS = db_getCustomerData::getInstanceOf($dbms, $_SESSION["P_CLIENTE"]);
     $_SESSION['SMTP_SERVER']     = f($RS, 'smtp_server');
@@ -127,20 +127,17 @@ function Valida() {
       ScriptOpen("JavaScript");
       if ($_POST["p_cliente"]==6761 && $_POST["p_versao"]==2) {
         if ($RS["interno"]=="S") {
-           ShowHTML("  top.location.href='cl_cespe/trabalho.php?par=mesa&TP=Acompanhamento';");
+          ShowHTML("  top.location.href='cl_cespe/trabalho.php?par=mesa&TP=Acompanhamento';");
+        } else {
+          $RS = db_getLinkData::getInstanceOf($dbms, $_SESSION['P_CLIENTE'], 'PJCADP');
+          ShowHTML("  location.href='".$RS["link"]."&O=&P1=".$RS["P1"]."&P2=".$RS["P2"]."&P3=".$RS["P3"]."&P4=".$RS["P4"]."&TP=".$RS["nome"]."&SG=".$RS["sigla"]."';");
         }
-        else {
-           $RS = db_getLinkData::getInstanceOf($dbms, $_SESSION['P_CLIENTE'], 'PJCADP');
-           ShowHTML("  location.href='".$RS["link"]."&O=&P1=".$RS["P1"]."&P2=".$RS["P2"]."&P3=".$RS["P3"]."&P4=".$RS["P4"]."&TP=".$RS["nome"]."&SG=".$RS["sigla"]."';");
-        }
-      }
-      else {
-         if ($_POST["p_cliente"]==1) ShowHTML("  top.location.href='menu.php?par=Frames';");
-         else                        ShowHTML("  location.href='menu.php?par=Frames';");
+      } else {
+        if ($_POST["p_cliente"]==1) ShowHTML("  top.location.href='menu.php?par=Frames';");
+        else                        ShowHTML("  location.href='menu.php?par=Frames';");
       }
       ScriptClose();
-    }
-    else {
+    } else {
        // Cria a nova senha, pegando a hora e o minuto correntes
       $w_senha='nova'.date('is');
 
@@ -200,8 +197,8 @@ function Valida() {
          ShowHTML('  alert("ATENÇÃO: sua senha NÃO foi recriada pois não foi possível proceder o envio do e-mail\n'.$w_resultado.'");'); 
       } else {
          // Atualiza a senha de acesso e a assinatura eletrônica, igualando as duas
-         DB_UpdatePassword($_SESSION['P_CLIENTE'], $_SESSION['SQ_PESSOA'], $w_senha, 'PASSWORD');
-         DB_UpdatePassword($_SESSION['P_CLIENTE'], $_SESSION['SQ_PESSOA'], $w_senha, 'SIGNATURE');
+         db_updatePassword::getInstanceOf($dbms,$_SESSION['P_CLIENTE'], $_SESSION['SQ_PESSOA'], $w_senha, 'PASSWORD');
+         db_updatePassword::getInstanceOf($dbms,$_SESSION['P_CLIENTE'], $_SESSION['SQ_PESSOA'], $w_senha, 'SIGNATURE');
 
          ShowHTML("  alert('Sua senha foi recriada e enviada para ".$_SESSION['EMAIL']."!');");
       }

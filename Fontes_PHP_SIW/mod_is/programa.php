@@ -48,6 +48,7 @@ include_once($w_dir_volta.'funcoes/selecaoUniMedida_IS.php');
 include_once($w_dir_volta.'funcoes/montaTipoIndicador.php');
 include_once($w_dir_volta.'funcoes/selecaoPeriodicidade_IS.php');
 include_once($w_dir_volta.'funcoes/selecaoBaseGeografica_IS.php');
+include_once($w_dir_volta.'funcoes/selecaoProgramaIS.php');
 include_once('visualprograma.php');
 // =========================================================================
 //  /programa.php
@@ -632,7 +633,7 @@ function Geral() {
     if ($w_cd_programa>'') {
       $RS = db_getProgramaPPA_IS::getInstanceOf($dbms,$w_cd_programa,$w_cliente,$w_ano,null,null);
       foreach($RS as $row){$RS=$row; break;}
-      $w_titulo=f($RS,'cd_programa').' - '.substr(f($RS,'ds_programa'),0,60);
+      $w_titulo = f($RS,'cd_programa').' - '.substr(f($RS,'ds_programa'),0,60);
     } 
   } else {
     if (!(strpos('AEV',$O)===false) || $w_copia>'') {
@@ -1061,7 +1062,7 @@ function RecursoProgramado() {
     }
     ShowHTML('<tr><td valign="top" colspan="2">*Valor Lei Orçamentária Anual - LOA2004 + Créditos</td>');
     ShowHTML('<tr><td valign="top" colspan="2">**Valor do Projeto de Lei Orçamentária  Anual - PLOA 2005</td>');
-    ShowHTML('<tr><td valign="top"><b><u>R</u>ecursoprogramado</b><br><input '.$w_Disabled.'accesskey="O" type="text" name="w_valor" class="STI" SIZE="18" MAXLENGTH="18" VALUE="'& $w_valor & '" onKeyDown="FormataValor(this,18,2,event)"></td>');
+    ShowHTML('<tr><td valign="top"><b><u>R</u>ecurso programado</b><br><input '.$w_Disabled.'accesskey="O" type="text" name="w_valor" class="STI" SIZE="18" MAXLENGTH="18" VALUE="'.$w_valor.'" onKeyDown="FormataValor(this,18,2,event)"></td>');
     ShowHTML('<tr><td><b><U>A</U>ssinatura Eletrônica</b><br><INPUT ACCESSKEY="A" class="sti" type="PASSWORD" name="w_assinatura" size="30" maxlength="30" value=""></td></tr>');
     ShowHTML('<tr><td align="center"><hr>');
     ShowHTML('<tr><td align="center">');
@@ -1430,11 +1431,11 @@ function Indicadores() {
       $w_acesso=0;
     } 
     // Recupera todos os registros para a listagem
-    $RS = db_getSolicIndic_IS::getInstanceOf($dbms,$w_chave,null,'LISTA');
+    $RS = db_getSolicIndic_IS::getInstanceOf($dbms,$w_chave,null,'LISTA',null,null);
     $RS = SortArray($RS,'ordem','asc');
   } elseif (!(strpos('AEV',$O)===false) && $w_troca=='') {
     // Recupera os dados do endereço informado
-    $RS = db_getSolicIndic_IS::getInstanceOf($dbms,$w_chave,$w_chave_aux,'REGISTRO');
+    $RS = db_getSolicIndic_IS::getInstanceOf($dbms,$w_chave,$w_chave_aux,'REGISTRO',null,null);
     foreach($RS as $row){$RS=$row; break;}
     $w_cd_unidade_medida    = f($RS,'cd_unidade_medida');
     $w_cd_periodicidade     = f($RS,'cd_periodicidade');
@@ -1793,11 +1794,11 @@ function AtualizaIndicador() {
     } 
   } elseif ($O=='L') {
     // Recupera todos os registros para a listagem
-    $RS = db_getSolicIndic_IS::getInstanceOf($dbms,$w_chave,null,'LISTA');
+    $RS = db_getSolicIndic_IS::getInstanceOf($dbms,$w_chave,null,'LISTA',null,null);
     $RS = SortArray($RS,'ordem','asc');
   } elseif (!(strpos('AEV',$O)===false) && $w_troca=='') {
     // Recupera os dados do endereço informado
-    $RS = db_getSolicIndic_IS::getInstanceOf($dbms,$w_chave,$w_chave_aux,'REGISTRO');
+    $RS = db_getSolicIndic_IS::getInstanceOf($dbms,$w_chave,$w_chave_aux,'REGISTRO',null,null);
     foreach($RS as $row){$RS=$row; break;}
     $w_titulo=f($RS,'titulo');
     $w_ordem                = f($RS,'ordem');
@@ -2798,7 +2799,7 @@ function Visual1() {
   $w_tipo   = strtoupper(trim($_REQUEST['w_tipo']));
   // Recupera o logo do cliente a ser usado nas listagens
   $RS = db_getCustomerData::getInstanceOf($dbms,$w_cliente);
-  if (f($RS,'logo')>'') $w_logo='\img\logo'.substr(f($RS,'logo'),(strpos(f($RS,'logo'),'.') ? strpos(f($RS,'logo'),'.')+1 : 0)-1,30);
+  if (f($RS,'logo')>'') $w_logo='/img/logo'.substr(f($RS,'logo'),(strpos(f($RS,'logo'),'.') ? strpos(f($RS,'logo'),'.')+1 : 0)-1,30);
   if ($w_tipo=='WORD') HeaderWord(null); else Cabecalho();
   ShowHTML('<HEAD>');
   ShowHTML('<TITLE>'.$conSgSistema.' - Visualização de Ação</TITLE>');
@@ -2832,7 +2833,7 @@ function Visual() {
   $w_tipo=strtoupper(trim($_REQUEST['w_tipo']));
   // Recupera o logo do cliente a ser usado nas listagens
   $RS = db_getCustomerData::getInstanceOf($dbms,$w_cliente);
-  if (f($RS,'logo')>'') $w_logo='\img\logo'.substr(f($RS,'logo'),(strpos(f($RS,'logo'),'.') ? strpos(f($RS,'logo'),'.')+1 : 0)-1,30);
+  if (f($RS,'logo')>'') $w_logo='/img/logo'.substr(f($RS,'logo'),(strpos(f($RS,'logo'),'.') ? strpos(f($RS,'logo'),'.')+1 : 0)-1,30);
   if ($w_tipo=='WORD') HeaderWord(null); else Cabecalho();
   ShowHTML('<HEAD>');
   ShowHTML('<TITLE>'.$conSgSistema.' - Visualização do Programa</TITLE>');
@@ -3588,7 +3589,8 @@ function Grava() {
         //Recupera 10  dos dias de prazo da tarefa, para emitir o alerta  
         $RS = db_get10PercentDays_IS::getInstanceOf($dbms,$_REQUEST['w_inicio'],$_REQUEST['w_fim']);
         foreach ($RS as $row){$RS=$row; break;}
-        $w_dias = f($RS,'dias');
+        $w_dias = f($RS,'dias');[
+        if ($w_dias<1) $w_dias=1;
       } 
       dml_putAcaoGeral_IS::getInstanceOf($dbms,$O,
           $_REQUEST['w_chave'],$_REQUEST['w_menu'],$_SESSION['LOTACAO'],$_REQUEST['w_solicitante'],$_REQUEST['w_proponente'],

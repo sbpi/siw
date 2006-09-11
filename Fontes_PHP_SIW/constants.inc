@@ -56,9 +56,9 @@ $conPageSize	= 30;
 
 $conSgSistema   = 'SIW';
 $conNmSistema   = 'Solução Integrada Web';
-$conRootSIW     = 'http://www2.sbpi.com.br/psiw/';
-$conDiretorio   = 'c:/inetpub/wwwroot/psiw/';
+$conRootSIW     = 'http://www2.sbpi.com.br/siw/';
+$conDiretorio   = '/var/www/html/siw/';
 $conFileVirtual = '/siw_files/';
-//$conFilePhysical= '/srv/www/htdocs/siw/files/'; // Formato Linux
-$conFilePhysical= 'c:/inetpub/wwwroot/siw_Files/'; // Formato Windows (IIS)
+$conFilePhysical= '/var/www/html/siw_files/'; // Formato Linux
+//$conFilePhysical= 'c:/inetpub/wwwroot/siw_Files/'; // Formato Windows (IIS)
 ?>

@@ -274,7 +274,7 @@ function Identificacao() {
     $w_cpf    = $_REQUEST['w_cpf'];
     if ($w_cpf>'' || (Nvl($_REQUEST['w_sq_pessoa'],'')>'') || (Nvl($_REQUEST['w_chave'],'')>'')) {
       if ($w_cpf > '') {
-          $RS = db_getPersonData::getInstanceOf($dbms,$w_cliente,null,$w_cpf,null);
+        $RS = db_getPersonData::getInstanceOf($dbms,$w_cliente,null,$w_cpf,null);
         if (count($RS)>0) {
           $w_chave  = f($RS,'sq_pessoa');
         } else {
@@ -1990,7 +1990,7 @@ function Visualizar() {
   ShowHTML('<TABLE WIDTH="100%" BORDER=0><TR>');
   if ($P2==0) {
     $RS = db_getCustomerData::getInstanceOf($dbms,$w_cliente);
-    ShowHTML('  <TD ROWSPAN=2><IMG ALIGN="LEFT" src="'.LinkArquivo(null,$w_cliente,'\img\logo'.substr(f($RS,'logo'),(strpos(f($RS,'logo'),'.') ? strpos(f($RS,'logo'),'.')+1 : 0)-1,30),null,null,null,'EMBED').'">');    
+    ShowHTML('  <TD ROWSPAN=2><IMG ALIGN="LEFT" src="'.LinkArquivo(null,$w_cliente,'/img/logo'.substr(f($RS,'logo'),(strpos(f($RS,'logo'),'.') ? strpos(f($RS,'logo'),'.')+1 : 0)-1,30),null,null,null,'EMBED').'">');    
   } 
   ShowHTML('  <TD ALIGN="RIGHT"><B><FONT SIZE=5 COLOR="#000000">Curriculum Vitae</FONT>');
   if ($P2==0) {
@@ -2090,9 +2090,9 @@ function Grava() {
         } else {
           if (Nvl($P1,0)==1) {
             $RS = db_getMenuData::getInstanceOf($dbms,$RS1,$w_menu);
-            ShowHTML('  parent.menu.location=\'../menu.php?par=ExibeDocs&O=A&w_usuario='.$w_chave_nova.'&w_sq_pessoa='.$w_chave_nova.'&w_documento='.$_REQUEST['w_nome_resumido'].'&R='.$R.'&SG=COINICIAL&TP='.RemoveTP($TP).MontaFiltro('UL').'\';');
+            ShowHTML('  parent.menu.location=\'../menu.php?par=ExibeDocs&O=A&w_usuario='.$w_chave_nova.'&w_sq_pessoa='.$w_chave_nova.'&w_documento='.$_REQUEST['w_nome_resumido'].'&R='.$R.'&SG=COINICIAL&TP='.RemoveTP($TP).MontaFiltro('GET').'\';');
           } else {
-            ShowHTML('  location.href=\''.$R.'&w_usuario='.$_REQUEST['w_chave'].'&w_chave='.$_REQUEST['w_chave'].'&P1='.$P1.'&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP='.$TP.'&SG='.$SG.MontaFiltro('UL').'\';');
+            ShowHTML('  location.href=\''.$R.'&w_usuario='.$_REQUEST['w_chave'].'&w_chave='.$_REQUEST['w_chave'].'&P1='.$P1.'&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP='.$TP.'&SG='.$SG.MontaFiltro('GET').'\';');
           } 
         } 
         ScriptClose();

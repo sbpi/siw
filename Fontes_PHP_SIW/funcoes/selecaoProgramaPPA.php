@@ -27,6 +27,6 @@ function selecaoProgramaPPA($label,$accesskey,$hint,$cliente,$ano,$chave,$campo,
       ShowHTML('          <option value="'.f($row,'cd_programa').'">'.f($row,'cd_programa').' - '.f($row,'ds_programa'));
   } 
   ShowHTML('          </select>');
-  ShowHTML('              <a class="ss" href="#" onClick="window.open(\'Programa.php?par=BuscaPrograma&TP='.RemoveTP($TP).'&w_cliente='.$cliente.'&w_ano='.$ano.'&w_menu='.$menu.'&restricao='.$restricao.'&campo='.$campo.'\',\'Programa\',\'top=10,left=10,width=780,height=550,toolbar=yes,status=yes,resizable=yes,scrollbars=yes\'); return false;" title="Clique aqui para selecionar o programa."><img src=images/Folder/Explorer.gif border=0 align=top height=15 width=15></a>');
+  ShowHTML('              <a class="ss" href="#" onClick="window.open(\'programa.php?par=BuscaPrograma&TP='.RemoveTP($TP).'&w_cliente='.$cliente.'&w_ano='.$ano.'&w_menu='.$menu.'&restricao='.$restricao.'&campo='.$campo.'\',\'Programa\',\'top=10,left=10,width=780,height=550,toolbar=yes,status=yes,resizable=yes,scrollbars=yes\'); return false;" title="Clique aqui para selecionar o programa."><img src=images/Folder/Explorer.gif border=0 align=top height=15 width=15></a>');
 } 
 ?>

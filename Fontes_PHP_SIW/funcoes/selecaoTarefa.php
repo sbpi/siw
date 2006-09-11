@@ -8,7 +8,9 @@ function selecaoTarefa($label,$accesskey,$hint,$cliente,$ano,$p_chave,$campo,$re
   $RS = db_getLinkData::getInstanceOf($dbms,$w_cliente,'ISTCAD');
   $RS = db_getSolicList_IS::getInstanceOf($dbms,f($RS,'sq_menu'),$w_usuario,'ISTCAD',3,
           null,null,null,null,null,null,
-          null,null,null,null);
+          null,null,null,null,
+          null,null,null,null,null,null,null,
+          null,null,null,null,$restricao,null,null,null,null,null,$w_ano);
   if (!isset($hint))
     ShowHTML('          <td valign="top"><font size="1"><b>'.$label.'</b><br><SELECT ACCESSKEY="'.$accesskey.'" CLASS="STS" NAME="'.$campo.'" '.$w_Disabled.' '.$atributo.'>');
   else

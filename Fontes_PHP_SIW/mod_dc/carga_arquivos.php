@@ -15,6 +15,7 @@ include_once($w_dir_volta.'classes/sp/db_getCustomerData.php');
 include_once($w_dir_volta.'classes/sp/db_getCustomerSite.php');
 include_once($w_dir_volta.'classes/sp/db_getPersonData.php');
 include_once($w_dir_volta.'classes/sp/db_getArquivo.php');
+include_once($w_dir_volta.'classes/sp/db_getMenuList.php');
 include_once($w_dir_volta.'classes/sp/db_verificaAssinatura.php');
 include_once($w_dir_volta.'classes/sp/dml_putArquivo.php');
 include_once($w_dir_volta.'funcoes/selecaoSistema.php');
@@ -160,21 +161,21 @@ function Inicial() {
     Validate('w_raiz','Diretório raiz','1','1','4','80','1','1');
     ShowHTML('  theForm.Botao.disabled=true;');
   } else {
-    ShowHTML('  if ((!theForm.w_banco.checked) && (!theForm.w_nomes.checked)) { ');
+    ShowHTML('  if ((!theForm.w_opcao[0].checked) && (!theForm.w_opcao[1].checked) && (!theForm.w_opcao[2].checked)) { ');
     ShowHTML('     alert(\'Você deve indicar um dos parâmetros de execução!\'); ');
     ShowHTML('     return false; ');
     ShowHTML('  }');
-    ShowHTML('  if ((!theForm.w_banco.checked) && (theForm.w_sq_sistema.selectedIndex>0)) { ');
+    ShowHTML('  if ((!theForm.w_opcao[1].checked) && (theForm.w_sq_sistema.selectedIndex>0)) { ');
     ShowHTML('     alert(\'Indique o sistema apenas se desejar atualizar as informações do banco!\'); ');
     ShowHTML('     theForm.w_sq_sistema.focus();');
     ShowHTML('     return false; ');
-    ShowHTML('  } else if ((theForm.w_banco.checked) && (theForm.w_sq_sistema.selectedIndex==0)) { ');
+    ShowHTML('  } else if ((theForm.w_opcao[1].checked) && (theForm.w_sq_sistema.selectedIndex==0)) { ');
     ShowHTML('     alert(\'Para atualizar as informações do banco é necessário indicar o sistema!\'); ');
     ShowHTML('     theForm.w_sq_sistema.focus();');
     ShowHTML('     return false; ');
     ShowHTML('  }');
     Validate('w_extensao','Extensão','1','1','2','80','ABCDEFGHIJKLMNOPQRSTUVWXYZ1234567890, ',null);
-    ShowHTML('  if (theForm.w_extensao.value.toUpperCase().indexOf(\'PHP\') < 0 && (theForm.w_nomes.checked)) {');
+    ShowHTML('  if (theForm.w_extensao.value.toUpperCase().indexOf(\'PHP\') < 0 && (theForm.w_opcao[2].checked)) {');
     ShowHTML('     alert(\'A identificação de arquivos inexistentes só é aplicavel a arquivos PHP.\nVocê deve indicar essa extensão!\');');
     ShowHTML('     theForm.w_extensao.focus();');
     ShowHTML('     return false;');
@@ -235,10 +236,11 @@ function Inicial() {
       ShowHTML('      <tr><td colspan="2" align="center" height="1" bgcolor="#000000"></td></tr>');
       ShowHTML('      <tr><td colspan="2" align="center" bgcolor="#D0D0D0"><b>Configuração dos parâmetros de execução</td></td></tr>');
       ShowHTML('      <tr><td colspan="2" align="center" height="1" bgcolor="#000000"></td></tr>');
-      ShowHTML('      <tr><td width="1%"><INPUT TYPE="checkbox" class="STC" NAME="w_banco" VALUE="S" ><td>Atualizar informações dos arquivos e rotinas no banco de dados');
+      ShowHTML('      <tr><td><INPUT TYPE="radio" class="STC" NAME="w_opcao" VALUE="links" ><td>Verificar chamadas do menu dinâmico');
+      ShowHTML('      <tr><td width="1%"><INPUT TYPE="radio" class="STC" NAME="w_opcao" VALUE="atualiza" ><td>Atualizar informações dos arquivos e rotinas no banco de dados');
       ShowHTML('      <tr><td>');
       SelecaoSistema('Vincular ao <u>s</u>istema:','S','Indique apenas se desejar atualizar as informaçoes do banco',null,$w_cliente,'w_sq_sistema',null,null);
-      ShowHTML('      <tr><td><INPUT TYPE="checkbox" class="STC" NAME="w_nomes" VALUE="S" ><td>Identificar inclusão de arquivos inexistentes (opção válida apenas para arquivos PHP)');
+      ShowHTML('      <tr><td><INPUT TYPE="radio" class="STC" NAME="w_opcao" VALUE="nomes" ><td>Identificar inclusão de arquivos inexistentes (opção válida apenas para arquivos PHP)');
       ShowHTML('      <tr><td colspan="2"><b>Aplicar busca a arquivos com a extensão:</b> (informe as extensões com letras maiúsculas e separe-as com vírgulas)<br><INPUT TYPE="text" class="STI" NAME="w_extensao" VALUE="'.nvl($w_extensao,'PHP, INC').'" SIZE="80" MaxLength="80">');
 
       ShowHTML('      <tr><td colspan="2" align="center" height="2" bgcolor="#000000"></td></tr>');
@@ -419,6 +421,7 @@ function Grava() {
   $w_tamanho    = '';
   $w_tipo       = '';
   $w_nome       = '';
+  $w_opcao      = nvl($_REQUEST['w_opcao'],'N');
   Cabecalho();
   ShowHTML('</HEAD>');
   ShowHTML('<BASE HREF="'.$conRootSIW.'">');
@@ -427,61 +430,82 @@ function Grava() {
     case 'DCINICIAL':
       // Verifica se a Assinatura Eletrônica é válida
       if (verificaAssinaturaEletronica($_SESSION['USERNAME'],strtoupper($_REQUEST['w_assinatura'])) || $w_assinatura=='') {
-        // Para cada diretório indicado, verifica e trata os arquivos
-        for ($i=0; $i<=count($_REQUEST['w_dir'])-1; $i += 1)   {
-          // Informa o diretório em execução
-          if (!$i) {
-            if (nvl($_REQUEST['w_nomes'],'N')=='S') {
-              // Carrega array com todos os arquivos do diretório raiz, para poder testar nomes inválidos
-              $lista = retrieveTree($_REQUEST['w_raiz'],true, true);
-              array_walk_recursive($lista,'flatArray',&$base);
-            }
-            ShowHTML('<b>Processando a lista de diretórios selecionados</b>');
-            ShowHTML('<DL>');
-          }
-          ShowHTML('<DT><b>'.$_REQUEST['w_dir'][$i].'</b>');
-          // Recupera a lista de arquivos do diretório
-          $arquivos = retrieveTree($_REQUEST['w_dir'][$i]);
-          foreach($arquivos as $k => $v) {
-            // verifica se a extensão do arquivo é uma das selecionadas
-            if ((false!==strpos($v,'.')) && (false!==strpos($_REQUEST['w_extensao'],strtoupper(substr($v,strpos($v,'.')+1))))) {
-              if (nvl($_REQUEST['w_banco'],'N')=='S') {
-                if (nvl($_REQUEST['w_nomes'],'N')=='S') {
-                  ShowHTML('<DD><b>'.basename($v).'</b>');
-                } else {
-                  ShowHTML('<DD>'.basename($v));
-                }
-              }
-              $arquivo = $v;
-              $file = analisa_arquivo($arquivo, nvl($_REQUEST['w_banco'],'N'), nvl($_REQUEST['w_nomes'],'N'), $base);
+        $cont = 0;
+        if ($w_opcao=='links') {
+          // Carrega array com todos os arquivos do diretório raiz, para poder testar nomes inválidos
+          $lista = retrieveTree($_REQUEST['w_raiz'],true, true);
+          array_walk_recursive($lista,'flatArray',&$base);
 
-              // Se foi indicada a atualização do banco de dados, verifica se o arquivo já existe e grava.
-              if (nvl($_REQUEST['w_banco'],'N')=='S') {
-                $RS = db_getArquivo::getInstanceOf($dbms,$w_cliente,null,$_REQUEST['w_sq_sistema'],$file['nome'],$file['diretorio'],null);
-                if (!count($RS)) {
-                  $w_chave      = null;
-                  $operacao     = 'I';
-                  $w_diretorio  = $file['diretorio'];
-                  $w_descricao  = $file['descricao'];
-                  $w_tipo       = $file['tipo'];
-                } else {
-                  // Se o arquivo já existir no banco, atualiza mantendo as informações existentes caso
-                  // não consiga identificar pela análise do arquivo
-                  foreach($RS as $row) { $RS = $row; break; }
-                  $w_chave      = f($RS,'chave');
-                  $operacao     = 'A';
-                  $w_diretorio  = nvl($file['diretorio'],f($RS,'diretorio'));
-                  $w_descricao  = nvl($file['descricao'],f($RS,'descricao'));
-                  $w_tipo       = nvl($file['tipo'],f($RS,'tipo'));
-                }
-                //dml_putArquivo::getInstanceOf($dbms,$operacao,$w_chave,$_REQUEST['w_sq_sistema'],
-                //  $file['nome'],$w_descricao,$w_tipo,$w_diretorio);
-              }
-
+          // Recupera os itens do menu
+          $RS = db_getMenuList::getInstanceOf($dbms, $w_cliente, 'L', null);
+          $RS = SortArray($RS,'or_menu','asc');    
+          ShowHTML('<b>Processando o menu</b>');
+          ShowHTML('<DL>');
+          foreach($RS as $row) {
+            $arq_menu = f($row,link);
+            if (false!==strpos($arq_menu,'?')) $arq_menu = substr($arq_menu,0,strpos($arq_menu,'?'));
+            if (false!==strpos($arq_menu,'.')) $arq_menu = substr($arq_menu,0,strpos($arq_menu,'.')+4);
+            
+            if (!array_key_exists($arq_menu,$base)) {
+              ShowHTML('<DT>'.f($row,'nm_menu').' ('.f($row,'sq_menu').')');
+              ShowHTML('  <DD>===> '.f($row,'link'));
             }
           }
-          if ($i==count($_REQUEST['w_dir'])-1) ShowHTML('</DL>');
-        } 
+          ShowHTML('</DL>');
+        } else {
+          // Para cada diretório indicado, verifica e trata os arquivos
+          for ($i=0; $i<=count($_REQUEST['w_dir'])-1; $i += 1)   {
+            // Informa o diretório em execução
+            if (!$i) {
+              if ($w_opcao=='nomes') {
+                // Carrega array com todos os arquivos do diretório raiz, para poder testar nomes inválidos
+                $lista = retrieveTree($_REQUEST['w_raiz'],true, true);
+                array_walk_recursive($lista,'flatArray',&$base);
+              }
+              ShowHTML('<b>Processando a lista de diretórios selecionados</b>');
+              ShowHTML('<DL>');
+            }
+            ShowHTML('<DT><b>'.$_REQUEST['w_dir'][$i].'</b>');
+            // Recupera a lista de arquivos do diretório
+            $arquivos = retrieveTree($_REQUEST['w_dir'][$i]);
+            foreach($arquivos as $k => $v) {
+              // verifica se a extensão do arquivo é uma das selecionadas
+              if ((false!==strpos($v,'.')) && (false!==strpos($_REQUEST['w_extensao'],strtoupper(substr($v,strpos($v,'.')+1))))) {
+                if ($w_opcao=='atualiza') { $cont += 1; ShowHTML('<DD>'.$cont.' - '.basename($v)); }
+                $arquivo = $v;
+                $file = analisa_arquivo($arquivo, $w_opcao, $base);
+
+                // Se foi indicada a atualização do banco de dados, verifica se o arquivo já existe e grava.
+                if ($w_opcao=='atualiza') {
+                  $w_diretorio  = nvl((substr(strrev($file['diretorio']),0,1)=='/') ? substr($file['diretorio'],0,-1) : $file['diretorio'],'/');
+                  //echo '['.$w_cliente.'] ['.$_REQUEST['w_sq_sistema'].'] ['.$file['nome'].'] ['.$w_diretorio.'] ';
+                  $RS = db_getArquivo::getInstanceOf($dbms,$w_cliente,'existe',null,$_REQUEST['w_sq_sistema'],$file['nome'],$w_diretorio,null);
+                  if (!count($RS)) {
+                    $w_chave      = null;
+                    $operacao     = 'I';
+                    $w_descricao  = nvl($file['descricao'],'A ser inserida.');
+                    $w_tipo       = nvl($file['tipo'],'G');
+                  } else {
+                    // Se o arquivo já existir no banco, atualiza mantendo as informações existentes caso
+                    // não consiga identificar pela análise do arquivo
+                    foreach($RS as $row) { $RS = $row; break; }
+                    $w_chave      = f($RS,'chave');
+                    $operacao     = 'A';
+                    $w_diretorio  = nvl($w_diretorio,f($RS,'diretorio'));
+                    $w_descricao  = nvl($file['descricao'],f($RS,'descricao'));
+                    $w_tipo       = nvl($file['tipo'],f($RS,'tipo'));
+                }  
+                if ($w_diretorio=='/') $w_diretorio = null;
+                  //echo '['.$operacao.'] '.'['.$w_chave.'] '.'['.$_REQUEST['w_sq_sistema'].'] '.'['.$file['nome'].'] '.'['.$w_descricao.'] '.'['.$w_tipo.'] '.'['.$w_diretorio.'] ';
+                  dml_putArquivo::getInstanceOf($dbms,$operacao,$w_chave,$_REQUEST['w_sq_sistema'],
+                    $file['nome'],$w_descricao,$w_tipo,$w_diretorio);
+                }
+  
+              }
+            }
+            if ($i==count($_REQUEST['w_dir'])-1) ShowHTML('</DL>');
+          } 
+        }
         ShowHTML('Processamento concluído. Clique <a class="hl" href="'.$w_dir.$R.'&O=L&SG='.$SG.'&P1='.$P1.'&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP='.$TP.MontaFiltro('GET').'">aqui</a> para processar outro diretório.');
       } else {
         ScriptOpen('JavaScript');
@@ -528,7 +552,7 @@ function flatArray($item, $key, $base) {
 // =========================================================================
 // Analisa o código fonte do arquivo informado
 // -------------------------------------------------------------------------
-function analisa_arquivo($arquivo, $banco, $nomes, &$lista) {
+function analisa_arquivo($arquivo, $opcao, &$lista) {
   global $w_raiz;
   $l_array['nome']      = basename($arquivo);
   $l_diretorio          = str_replace($w_raiz,'',str_replace(basename($arquivo),'',$arquivo));
@@ -541,105 +565,137 @@ function analisa_arquivo($arquivo, $banco, $nomes, &$lista) {
     
   $i = 1;
   $print = true;
+  $php   = false;
   while (!feof($w_origem)) {
     // lê uma linha do arquivo de origem
     $buffer = str_replace('\'.$w_cliente.\'','1',fgets($w_origem));
-      
-    // Conjunto de testes para verificar se os arquivos incluídos ou referenciados existem, 
-    // com o mesmo nome que são referenciados
-    if ($nomes=='S') {
-      // Verifica se está sendo incluído um arquivo existente
-      if ((strpos(strtolower($buffer),'include(')!==false) ||
-          (strpos(strtolower($buffer),'include_once(')!==false) ||
-          (strpos(strtolower($buffer),'require(')!==false) ||
-          (strpos(strtolower($buffer),'require_once(')!==false)
-         ) {
-        // Configura o nome do arquivo que está sendo incluído
-        if (strpos(strtolower($buffer),'include(')!==false) {
-          $arq_inclusao = substr($buffer,strpos($buffer,'include(')+8);
-        } elseif (strpos(strtolower($buffer),'include_once(')!==false) {
-          $arq_inclusao = substr($buffer,strpos($buffer,'include_once(')+13);
-        } elseif (strpos(strtolower($buffer),'require(')!==false) {
-          $arq_inclusao = substr($buffer,strpos($buffer,'require(')+8);
-        } elseif (strpos(strtolower($buffer),'require_once(')!==false) {
-          $arq_inclusao = substr($buffer,strpos($buffer,'require_once(')+13);
-        }
-        // Ajusta o nome do arquivo
-        if (strpos(strtolower($arq_inclusao),'"')!==false) {
-          $arq_inclusao = substr($arq_inclusao,strpos($arq_inclusao,'"')+1);
-          $arq_inclusao = str_replace('../','',substr($arq_inclusao,0,strpos($arq_inclusao,'"')));
-        } else {
-          $arq_inclusao = substr($arq_inclusao,strpos($arq_inclusao,'\'')+1);
-          $arq_inclusao = str_replace('../','',substr($arq_inclusao,0,strpos($arq_inclusao,'\'')));
-        }
-        if (nvl($arq_inclusao,'') > '') {
-          if (!array_key_exists($arq_inclusao,$lista) && !array_key_exists($l_diretorio.$arq_inclusao,$lista)) {
-            if ($banco=='N' && $print) { $print = false; ShowHTML('<DD><b>'.basename($arquivo).'</b>'); }
-            ShowHTML('<DD>===> [linha '.$i.', inclusão de arquivo inexistente ('.$arq_inclusao.')] ');
+    
+    // Trata início e fim de código PHP
+    if (false!==strpos($buffer,'<?')) $php = true;
+    elseif (false!==strpos($buffer,'?>')) $php = false;
+    
+    // Analisa o código se for PHP
+    if ($php) {
+      // Conjunto de testes para verificar se os arquivos incluídos ou referenciados existem, 
+      // com o mesmo nome que são referenciados
+      if ($opcao=='nomes') {
+        // Verifica se está sendo incluído um arquivo existente
+        if ((strpos(strtolower($buffer),'include(')!==false) ||
+            (strpos(strtolower($buffer),'include_once(')!==false) ||
+            (strpos(strtolower($buffer),'require(')!==false) ||
+            (strpos(strtolower($buffer),'require_once(')!==false)
+           ) {
+          // Configura o nome do arquivo que está sendo incluído
+          if (strpos(strtolower($buffer),'include(')!==false) {
+            $arq_inclusao = substr($buffer,strpos($buffer,'include(')+8);
+          } elseif (strpos(strtolower($buffer),'include_once(')!==false) {
+            $arq_inclusao = substr($buffer,strpos($buffer,'include_once(')+13);
+          } elseif (strpos(strtolower($buffer),'require(')!==false) {
+            $arq_inclusao = substr($buffer,strpos($buffer,'require(')+8);
+          } elseif (strpos(strtolower($buffer),'require_once(')!==false) {
+            $arq_inclusao = substr($buffer,strpos($buffer,'require_once(')+13);
           }
-        }
-      } elseif 
-         (substr(trim($buffer),0,2)!='//' &&
-          (false===strpos(str_replace(' ','',trim($buffer)),'$w_pagina=')) &&
-          ((strpos(strtolower($buffer),'.php')!==false && strpos(strtolower($buffer),'\'.php')===false && strpos(strtolower($buffer),'(.php')===false) ||
-           (strpos(strtolower($buffer),'.htm')!==false && strpos(strtolower($buffer),'\'.htm')===false && strpos(strtolower($buffer),'.html')===false) ||
-           (strpos(strtolower($buffer),'.jpg')!==false && strpos(strtolower($buffer),'\'.jpg')===false) ||
-           (strpos(strtolower($buffer),'.jpeg')!==false && strpos(strtolower($buffer),'\'.jpeg')===false) ||
-           (strpos(strtolower($buffer),'.gif')!==false && strpos(strtolower($buffer),'\'.gif')===false)
-          )
-         ) {
-        // Verifica se está sendo referenciado um arquivo existente
-
-        // Configura o nome do arquivo que está sendo referenciado
-        if (strpos(strtolower($buffer),'.php')!==false) {
-          $arq_inclusao = strrev(substr($buffer,0,strpos($buffer,'.php')+4));
-        } elseif (strpos(strtolower($buffer),'.htm')!==false) {
-          $arq_inclusao = strrev(substr($buffer,0,strpos($buffer,'.htm')+4));
-        } elseif (strpos(strtolower($buffer),'.html')!==false) {
-          $arq_inclusao = strrev(substr($buffer,0,strpos($buffer,'.html')+5));
-        } elseif (strpos(strtolower($buffer),'.jpg')!==false) {
-          $arq_inclusao = strrev(substr($buffer,0,strpos($buffer,'.jpg')+4));
-        } elseif (strpos(strtolower($buffer),'.gif')!==false) {
-          $arq_inclusao = strrev(substr($buffer,0,strpos($buffer,'.gif')+4));
-        } elseif (strpos(strtolower($buffer),'.jpe')!==false) {
-          $arq_inclusao = strrev(substr($buffer,0,strpos($buffer,'.jpeg')+5));
-        } 
-        
-        // Ajusta o nome do arquivo
-        if (strpos($arq_inclusao,'"')!==false) {
-          if (strpos($arq_inclusao,'\'')!==false && strpos($arq_inclusao,'"') < strpos($arq_inclusao,'\'')) {
-            $arq_inclusao = str_replace('../','',strrev(substr($arq_inclusao,0,strpos($arq_inclusao,'"'))));
+          // Ajusta o nome do arquivo
+          if (strpos(strtolower($arq_inclusao),'"')!==false) {
+            $arq_inclusao = substr($arq_inclusao,strpos($arq_inclusao,'"')+1);
+            $arq_inclusao = str_replace('../','',substr($arq_inclusao,0,strpos($arq_inclusao,'"')));
+          } else {
+            $arq_inclusao = substr($arq_inclusao,strpos($arq_inclusao,'\'')+1);
+            $arq_inclusao = str_replace('../','',substr($arq_inclusao,0,strpos($arq_inclusao,'\'')));
+          }
+          if (nvl($arq_inclusao,'') > '') {
+            if (!array_key_exists($arq_inclusao,$lista) && !array_key_exists($l_diretorio.$arq_inclusao,$lista)) {
+              if ($opcao=='atualiza' && $print) { $cont += 1; $print = false; ShowHTML('<DD><b>'.$cont.' - '.basename($arquivo).'</b>'); }
+              ShowHTML('<DD>===> [linha '.$i.', inclusão de arquivo inexistente ('.$arq_inclusao.')] ');
+            }
+          }
+        } elseif 
+           (substr(trim($buffer),0,2)!='//' &&
+            (false===strpos(str_replace(' ','',trim($buffer)),'$w_pagina=')) &&
+            ((strpos(strtolower($buffer),'.php')!==false && strpos(strtolower($buffer),'\'.php')===false && strpos(strtolower($buffer),'(.php')===false) ||
+             (strpos(strtolower($buffer),'.htm')!==false && strpos(strtolower($buffer),'\'.htm')===false && strpos(strtolower($buffer),'.html')===false) ||
+             (strpos(strtolower($buffer),'.jpg')!==false && strpos(strtolower($buffer),'\'.jpg')===false) ||
+             (strpos(strtolower($buffer),'.jpeg')!==false && strpos(strtolower($buffer),'\'.jpeg')===false) ||
+             (strpos(strtolower($buffer),'.gif')!==false && strpos(strtolower($buffer),'\'.gif')===false)
+            )
+           ) {
+          // Verifica se está sendo referenciado um arquivo existente
+  
+          // Configura o nome do arquivo que está sendo referenciado
+          if (strpos(strtolower($buffer),'.php')!==false) {
+            $arq_inclusao = strrev(substr($buffer,0,strpos($buffer,'.php')+4));
+          } elseif (strpos(strtolower($buffer),'.htm')!==false) {
+            $arq_inclusao = strrev(substr($buffer,0,strpos($buffer,'.htm')+4));
+          } elseif (strpos(strtolower($buffer),'.html')!==false) {
+            $arq_inclusao = strrev(substr($buffer,0,strpos($buffer,'.html')+5));
+          } elseif (strpos(strtolower($buffer),'.jpg')!==false) {
+            $arq_inclusao = strrev(substr($buffer,0,strpos($buffer,'.jpg')+4));
+          } elseif (strpos(strtolower($buffer),'.gif')!==false) {
+            $arq_inclusao = strrev(substr($buffer,0,strpos($buffer,'.gif')+4));
+          } elseif (strpos(strtolower($buffer),'.jpe')!==false) {
+            $arq_inclusao = strrev(substr($buffer,0,strpos($buffer,'.jpeg')+5));
+          } 
+         
+          // Ajusta o nome do arquivo
+          if (strpos($arq_inclusao,'"')!==false) {
+            if (strpos($arq_inclusao,'\'')!==false && strpos($arq_inclusao,'"') < strpos($arq_inclusao,'\'')) {
+              $arq_inclusao = str_replace('../','',strrev(substr($arq_inclusao,0,strpos($arq_inclusao,'"'))));
+            } else {
+              $arq_inclusao = str_replace('../','',strrev(substr($arq_inclusao,0,strpos($arq_inclusao,'\''))));
+            }
           } else {
             $arq_inclusao = str_replace('../','',strrev(substr($arq_inclusao,0,strpos($arq_inclusao,'\''))));
           }
-        } else {
-          $arq_inclusao = str_replace('../','',strrev(substr($arq_inclusao,0,strpos($arq_inclusao,'\''))));
-        }
-        if (nvl($arq_inclusao,'') > '') {
-          if (!array_key_exists($arq_inclusao,$lista) && !array_key_exists($l_diretorio.$arq_inclusao,$lista)) {
-            if ($banco=='N' && $print) { $print = false; ShowHTML('<DD><b>'.basename($arquivo).'</b>'); }
-            ShowHTML('<DD>===> [linha '.$i.', referência a arquivo inexistente ('.$arq_inclusao.')] ');
+          if (nvl($arq_inclusao,'') > '') {
+            if (!array_key_exists($arq_inclusao,$lista) && !array_key_exists($l_diretorio.$arq_inclusao,$lista)) {
+              if ($print) { $print = false; ShowHTML('<DD><b>'.basename($arquivo).'</b>'); }
+              ShowHTML('<DD>===> [linha '.$i.', referência a arquivo inexistente ('.$arq_inclusao.')] ');
+            }
           }
         }
-      }
-    }
-
-    // Identificação dos dados necessários à atualização do banco de dados
-    if ($banco=='S') {
-      // guarda a descrição da página, a partir dos padrões "// Descricao:"
-      if (!(strpos(strtoupper($buffer),'// DESCRICAO:')===false) ||
-          ($i < 10 && !(strpos(strtoupper($buffer),'// ')===false) && (strpos($buffer,'// ===')===false) && (strpos($buffer,'// ---')===false)) ||
-          (!(strpos(strtoupper($line),'* { DESCRIPTION :-')===false))
-         ) {
-        if (false!==strpos($buffer,':')) {
-          $l_array['descricao'] = trim(substr($buffer,strpos($buffer,':')+1));
-        } else {
-          $l_array['descricao'] = trim(substr($buffer,strpos($buffer,'/')+3));
+      } elseif ($opcao=='atualiza') {
+        // Identificação dos dados necessários à atualização do banco de dados
+  
+        // guarda a descrição da página, a partir dos padrões "// Descricao:"
+        if (!(strpos(strtoupper($buffer),'// DESCRICAO:')===false) ||
+            ($i < 10 && !(strpos(strtoupper($buffer),'// ')===false) && (strpos($buffer,'// ===')===false) && (strpos($buffer,'// ---')===false)) ||
+            (!(strpos(strtoupper($line),'* { DESCRIPTION :-')===false))
+           ) {
+          if (false!==strpos($buffer,':')) {
+            $l_array['descricao'] = trim(substr($buffer,strpos($buffer,':')+1));
+          } else {
+            $l_array['descricao'] = trim(substr($buffer,strpos($buffer,'/')+3));
+          }
         }
+
+        // guarda a descrição da função, a partir dos padrões "// ="
+        if ((false!==strpos($buffer,'// ===')) || (false!==strpos($buffer,'// ---')) || ((false!==strpos($buffer,'//')) && $funcaodesc)) {
+          if     (false!==strpos($buffer,'// ===')) $funcaodesc = true;
+          elseif (false!==strpos($buffer,'// ---')) $funcaodesc = false;
+          elseif (false!==strpos($buffer,'//')) $funcaodescricao .= trim(substr($buffer,strpos($buffer,'//')+2)) . chr(10) . chr(13);
+        }
+
+        // guarda o nome das funções da página, a partir do padrão "function"
+        if ((false!==strpos(strtoupper($buffer),'FUNCTION ')) && 
+            (false===strpos(strtoupper($buffer),'SHOWHTML')) && 
+            (false===strpos(strtoupper($buffer),'W_HTML')) && 
+            (false===strpos(strtoupper($buffer),'PRINT'))
+           ) {
+          $linha = trim($buffer);
+          $pos = (strpos(strtoupper($linha),'FUNCTION')+9);
+          $funcao = substr($linha,$pos);
+          if     (false!==strpos($funcao,'(')) $funcao = trim(substr($funcao,0,strpos($funcao, '(')));
+          elseif (false!==strpos($funcao,' ')) $funcao = trim(substr($funcao,0,strpos($funcao, ' ')));
+          elseif (false!==strpos($funcao,'{')) $funcao = trim(substr($funcao,0,strpos($funcao, '{')));
+          $l_array['funcao'][$funcao][descricao] = nvl($funcaodescricao,'A ser inserida.');
+          $l_array['funcao'][$funcao][tipo] = 'FUNCTION';
+          $funcaodesc = false;
+          $funcaodescricao = '';
+        }
+        $line = $buffer;
       }
-      $line = $buffer;
-    }
-    $i += 1;  
+      $i += 1;  
+    }   
   }
   fclose($w_origem);
 
