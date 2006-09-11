@@ -326,146 +326,146 @@ Function VisualProjeto(w_chave, O, w_usuario, P1, P4)
               w_html = w_html & VbCrLf & "      <tr><td valign=""top""><font size=""1"">Responsável iniciativa prioritária:<br><b>" & RS("resp_pri") & " </b></td>"
               If Not IsNull(RS("fone_pri")) Then
                  w_html = w_html & VbCrLf & "          <td><font size=""1"">Telefone:<br><b>" & RS("fone_pri") & " </b></td>"
+              End If
+              If Not IsNull(RS("mail_ppa_pai")) Then
+                 w_html = w_html & VbCrLf & "          <td><font size=""1"">Email:<br><b>" & RS("mail_pri") & " </b></td>"
+			  End If
+              w_html = w_html & VbCrLf & "          </table>"
            End If
-           If Not IsNull(RS("mail_ppa_pai")) Then
-              w_html = w_html & VbCrLf & "          <td><font size=""1"">Email:<br><b>" & RS("mail_pri") & " </b></td>"
-           End If
-           w_html = w_html & VbCrLf & "          </table>"
-        End If
-        w_html = w_html & VbCrLf & "          </b></td>"
-     End If     
+           w_html = w_html & VbCrLf & "          </b></td>"
+        End If     
      
-     ' Se a ação no PPA for informada, exibe.
-     If Not IsNull(RS("sq_acao_ppa")) Then
-        w_html = w_html & VbCrLf & "      <tr><td valign=""top""><font size=""1"">Programa PPA:<br><b>" & RS("nm_ppa_pai") & " (" & RS("cd_ppa_pai") & ")" & " </b></td>"
-        If Not IsNull(RS("resp_ppa_pai")) Then
+        ' Se a ação no PPA for informada, exibe.
+        If Not IsNull(RS("sq_acao_ppa")) Then
+           w_html = w_html & VbCrLf & "      <tr><td valign=""top""><font size=""1"">Programa PPA:<br><b>" & RS("nm_ppa_pai") & " (" & RS("cd_ppa_pai") & ")" & " </b></td>"
+           If Not IsNull(RS("resp_ppa_pai")) Then
+              w_html = w_html & VbCrLf & "      <tr><td valign=""top"" colspan=""2""><table border=0 width=""100%"" cellspacing=0>"
+              w_html = w_html & VbCrLf & "      <tr><td valign=""top""><font size=""1"">Gerente executivo:<br><b>" & RS("resp_ppa_pai") & " </b></td>"
+              If Not IsNull(RS("fone_ppa_pai")) Then
+                 w_html = w_html & VbCrLf & "          <td><font size=""1"">Telefone:<br><b>" & RS("fone_ppa_pai") & " </b></td>"
+              End If
+              If Not IsNull(RS("mail_ppa_pai")) Then
+                 w_html = w_html & VbCrLf & "          <td><font size=""1"">Email:<br><b>" & RS("mail_ppa_pai") & " </b></td>"
+              End If
+              w_html = w_html & VbCrLf & "          </table>"
+           End If
+           w_html = w_html & VbCrLf & "      <tr><td valign=""top""><font size=""1"">Ação PPA:<br><b>" & RS("nm_ppa") & " (" & RS("cd_ppa") & ")" & " </b></td>"
            w_html = w_html & VbCrLf & "      <tr><td valign=""top"" colspan=""2""><table border=0 width=""100%"" cellspacing=0>"
-           w_html = w_html & VbCrLf & "      <tr><td valign=""top""><font size=""1"">Gerente executivo:<br><b>" & RS("resp_ppa_pai") & " </b></td>"
-           If Not IsNull(RS("fone_ppa_pai")) Then
-              w_html = w_html & VbCrLf & "          <td><font size=""1"">Telefone:<br><b>" & RS("fone_ppa_pai") & " </b></td>"
+           w_html = w_html & VbCrLf & "          <tr valign=""top"">"
+           If RS("mpog_ppa") = "S" Then
+              w_html = w_html & VbCrLf & "          <td><font size=""1"">Selecionada MP:<br><b>Sim</b></td>"
+           Else
+              w_html = w_html & VbCrLf & "          <td><font size=""1"">Selecionada MP:<br><b>Não</b></td>"
            End If
-           If Not IsNull(RS("mail_ppa_pai")) Then
-              w_html = w_html & VbCrLf & "          <td><font size=""1"">Email:<br><b>" & RS("mail_ppa_pai") & " </b></td>"
+           If RS("relev_ppa") = "S" Then
+              w_html = w_html & VbCrLf & "          <td><font size=""1"">Selecionada SE/MS:<br><b>Sim</b></td>"
+           Else
+              w_html = w_html & VbCrLf & "          <td><font size=""1"">Selecionada SE/MS:<br><b>Não</b></td>"
            End If
            w_html = w_html & VbCrLf & "          </table>"
+           If Not IsNull(RS("resp_ppa")) Then
+              w_html = w_html & VbCrLf & "      <tr><td valign=""top"" colspan=""2""><table border=0 width=""100%"" cellspacing=0>"
+              w_html = w_html & VbCrLf & "      <tr><td valign=""top""><font size=""1"">Coordenador:<br><b>" & RS("resp_ppa") & " </b></td>"
+              If Not IsNull(RS("fone_ppa")) Then
+                 w_html = w_html & VbCrLf & "          <td><font size=""1"">Telefone:<br><b>" & RS("fone_ppa") & " </b></td>"
+              End If
+              If Not IsNull(RS("mail_ppa")) Then
+                 w_html = w_html & VbCrLf & "          <td><font size=""1"">Email:<br><b>" & RS("mail_ppa") & " </b></td>"
+              End If
+              w_html = w_html & VbCrLf & "          </table>"
+           End If
         End If
-        w_html = w_html & VbCrLf & "      <tr><td valign=""top""><font size=""1"">Ação PPA:<br><b>" & RS("nm_ppa") & " (" & RS("cd_ppa") & ")" & " </b></td>"
         w_html = w_html & VbCrLf & "      <tr><td valign=""top"" colspan=""2""><table border=0 width=""100%"" cellspacing=0>"
+        'w_html = w_html & VbCrLf & "          <tr valign=""top"">"
+        'w_html = w_html & VbCrLf & "          <td colspan=3><font size=""1"">Abrangência da ação:(Quando Brasília-DF, impacto nacional. Quando a capital de um estado, impacto estadual.)<br><b>" & RS("nm_cidade") & " (" & RS("co_uf") & ")</b></td>"
         w_html = w_html & VbCrLf & "          <tr valign=""top"">"
-        If RS("mpog_ppa") = "S" Then
-           w_html = w_html & VbCrLf & "          <td><font size=""1"">Selecionada MP:<br><b>Sim</b></td>"
-        Else
-           w_html = w_html & VbCrLf & "          <td><font size=""1"">Selecionada MP:<br><b>Não</b></td>"
+        w_html = w_html & VbCrLf & "          <td><font size=""1"">Responsável monitoramento:<br><b>" & ExibePessoa("../", w_cliente, RS("solicitante"), TP, RS("nm_sol")) & "</b></td>"
+        w_html = w_html & VbCrLf & "          <td><font size=""1"">Setor responsável monitoramento:<br><b>" & RS("nm_unidade_resp") & " </b></td>"
+        If w_tipo_visao = 0 Then ' Se for visão completa
+           w_html = w_html & VbCrLf & "          <td><font size=""1"">Recurso programado:<br><b>" & FormatNumber(RS("valor"),2) & " </b></td>"
         End If
-        If RS("relev_ppa") = "S" Then
-           w_html = w_html & VbCrLf & "          <td><font size=""1"">Selecionada SE/MS:<br><b>Sim</b></td>"
-        Else
-           w_html = w_html & VbCrLf & "          <td><font size=""1"">Selecionada SE/MS:<br><b>Não</b></td>"
-        End If
+        w_html = w_html & VbCrLf & "          <tr valign=""top"">"
+        w_html = w_html & VbCrLf & "          <td><font size=""1"">Início previsto:<br><b>" & FormataDataEdicao(RS("inicio")) & " </b></td>"
+        w_html = w_html & VbCrLf & "          <td><font size=""1"">Fim previsto:<br><b>" & FormataDataEdicao(RS("fim")) & " </b></td>"
+        'w_html = w_html & VbCrLf & "          <td><font size=""1"">Prioridade:<br><b>" & RetornaPrioridade(RS("prioridade")) & " </b></td>"
+        w_html = w_html & VbCrLf & "          <tr valign=""top""><td><font size=""1"">Parcerias externas:<br><b>" & CRLF2BR(Nvl(RS("proponente"),"---")) & " </b></td>"
+        w_html = w_html & VbCrLf & "          <tr valign=""top""><td><font size=""1"">Parcerias internas:<br><b>" & CRLF2BR(Nvl(RS("palavra_chave"),"---")) & " </b></td>"  
         w_html = w_html & VbCrLf & "          </table>"
-        If Not IsNull(RS("resp_ppa")) Then
+ 
+        If w_tipo_visao = 0 or w_tipo_visao = 1 Then
+           ' Informações adicionais
+           w_html = w_html & VbCrLf & "      <tr><td valign=""top"" colspan=""2"" align=""center"" bgcolor=""#D0D0D0"" style=""border: 2px solid rgb(0,0,0);""><font size=""1""><b>Informações adicionais</td>"
+           w_html = w_html & VbCrLf & "      <tr><td valign=""top""><font size=""1"">Situação problema:<br><b>" & CRLF2BR(Nvl(RS("problema"),"---")) & " </b></td>"
+           w_html = w_html & VbCrLf & "      <tr><td valign=""top""><font size=""1"">Objetivo da ação:<br><b>" & CRLF2BR(Nvl(RS("objetivo"),"---")) & " </b></td>"
+           w_html = w_html & VbCrLf & "      <tr><td valign=""top""><font size=""1"">Descrição da ação:<br><b>" & CRLF2BR(Nvl(RS("ds_acao"),"---")) & " </b></td>"
+           w_html = w_html & VbCrLf & "      <tr><td valign=""top""><font size=""1"">Público alvo:<br><b>" & CRLF2BR(Nvl(RS("publico_alvo"),"---")) & " </b></td>"
+           If Nvl(RS("descricao"),"") > "" Then 
+             w_html = w_html & VbCrLf & "      <tr><td valign=""top""><font size=""1"">Resultados da ação:<br><b>" & CRLF2BR(RS("descricao")) & " </b></td>" 
+          End If
+           w_html = w_html & VbCrLf & "      <tr><td valign=""top""><font size=""1"">Estratégia de implantação:<br><b>" & CRLF2BR(Nvl(RS("estrategia"),"---")) & " </b></td>"
+           w_html = w_html & VbCrLf & "      <tr><td valign=""top""><font size=""1"">Indicadores de desempenho:<br><b>" & CRLF2BR(Nvl(RS("indicadores"),"---")) & " </b></td>"
+           If w_tipo_visao = 0 and Nvl(RS("justificativa"),"") > "" Then ' Se for visão completa
+              w_html = w_html & VbCrLf & "      <tr><td valign=""top""><font size=""1"">Observações:<br><b>" & CRLF2BR(RS("justificativa")) & " </b></td>"
+           End If
+        End If
+        
+        If w_tipo_visao = 0 or w_tipo_visao = 1 Then
+           ' Outras iniciativas
+           DB_GetOrPrioridadeList RS1, w_chave, RetornaCliente(), null
+           RS1.Sort = "Existe desc"
+           If Not RS1.EOF Then
+              If cDbl(Nvl(RS1("Existe"),0)) > 0 Then
+                 w_html = w_html & VbCrLf & "      <tr><td valign=""top"" colspan=""2"" align=""center"" bgcolor=""#D0D0D0"" style=""border: 2px solid rgb(0,0,0);""><font size=""1""><b>Outras iniciativas</td>"
+                 w_html = w_html & VbCrLf & "      <tr><td align=""center"" colspan=""2"">"
+                 w_html = w_html & VbCrLf & "        <TABLE WIDTH=""100%"" bgcolor=""" & conTableBgColor & """ BORDER=""" & conTableBorder & """ CELLSPACING=""" & conTableCellSpacing & """ CELLPADDING=""" & conTableCellPadding & """ BorderColorDark=""" & conTableBorderColorDark & """ BorderColorLight=""" & conTableBorderColorLight & """>"
+                 w_html = w_html & VbCrLf & "          <tr bgcolor=""" & conTrBgColor & """ align=""center"">"
+                 w_html = w_html & VbCrLf & "            <td><font size=""1""><b>Nome</font></td>"
+                 w_html = w_html & VbCrLf & "          </tr>"    
+                 While Not RS1.EOF
+                    If cDbl(Nvl(RS1("Existe"),0)) > 0 Then
+                       If w_cor = conTrBgColor or w_cor = "" Then w_cor = conTrAlternateBgColor Else w_cor = conTrBgColor End If
+                       w_html = w_html & VbCrLf & "      <tr valign=""top"" bgcolor=""" & w_cor & """>"
+                       w_html = w_html & VbCrLf & "        <td><font size=""1""><ul><li>" & RS1("nome") & "</td>"
+                       w_html = w_html & VbCrLf & "      </tr>"
+                    End If
+                    RS1.MoveNext
+                 wend
+                 w_html = w_html & VbCrLf & "         </table></td></tr>"
+              End If
+           End If
+           RS1.close
+        End If
+     
+        ' Dados da conclusão da ação, se ela estiver nessa situação
+        If RS("concluida") = "S" and Nvl(RS("data_conclusao"),"") > "" Then
+           w_html = w_html & VbCrLf & "      <tr><td valign=""top"" colspan=""2"" align=""center"" bgcolor=""#D0D0D0"" style=""border: 2px solid rgb(0,0,0);""><font size=""1""><b>Dados da conclusão</td>"
            w_html = w_html & VbCrLf & "      <tr><td valign=""top"" colspan=""2""><table border=0 width=""100%"" cellspacing=0>"
-           w_html = w_html & VbCrLf & "      <tr><td valign=""top""><font size=""1"">Coordenador:<br><b>" & RS("resp_ppa") & " </b></td>"
-           If Not IsNull(RS("fone_ppa")) Then
-              w_html = w_html & VbCrLf & "          <td><font size=""1"">Telefone:<br><b>" & RS("fone_ppa") & " </b></td>"
-           End If
-           If Not IsNull(RS("mail_ppa")) Then
-              w_html = w_html & VbCrLf & "          <td><font size=""1"">Email:<br><b>" & RS("mail_ppa") & " </b></td>"
+           w_html = w_html & VbCrLf & "          <tr valign=""top"">"
+           w_html = w_html & VbCrLf & "          <td><font size=""1"">Início da execução:<br><b>" & FormataDataEdicao(RS("inicio_real")) & " </b></td>"
+           w_html = w_html & VbCrLf & "          <td><font size=""1"">Término da execução:<br><b>" & FormataDataEdicao(RS("fim_real")) & " </b></td>"
+           If w_tipo_visao = 0 Then
+              w_html = w_html & VbCrLf & "          <td><font size=""1"">Recurso executado:<br><b>" & FormatNumber(RS("custo_real"),2) & " </b></td>"
            End If
            w_html = w_html & VbCrLf & "          </table>"
-        End If
-     End If
-     w_html = w_html & VbCrLf & "      <tr><td valign=""top"" colspan=""2""><table border=0 width=""100%"" cellspacing=0>"
-     'w_html = w_html & VbCrLf & "          <tr valign=""top"">"
-     'w_html = w_html & VbCrLf & "          <td colspan=3><font size=""1"">Abrangência da ação:(Quando Brasília-DF, impacto nacional. Quando a capital de um estado, impacto estadual.)<br><b>" & RS("nm_cidade") & " (" & RS("co_uf") & ")</b></td>"
-     w_html = w_html & VbCrLf & "          <tr valign=""top"">"
-     w_html = w_html & VbCrLf & "          <td><font size=""1"">Responsável monitoramento:<br><b>" & ExibePessoa("../", w_cliente, RS("solicitante"), TP, RS("nm_sol")) & "</b></td>"
-     w_html = w_html & VbCrLf & "          <td><font size=""1"">Setor responsável monitoramento:<br><b>" & RS("nm_unidade_resp") & " </b></td>"
-     If w_tipo_visao = 0 Then ' Se for visão completa
-        w_html = w_html & VbCrLf & "          <td><font size=""1"">Recurso programado:<br><b>" & FormatNumber(RS("valor"),2) & " </b></td>"
-     End If
-     w_html = w_html & VbCrLf & "          <tr valign=""top"">"
-     w_html = w_html & VbCrLf & "          <td><font size=""1"">Início previsto:<br><b>" & FormataDataEdicao(RS("inicio")) & " </b></td>"
-     w_html = w_html & VbCrLf & "          <td><font size=""1"">Fim previsto:<br><b>" & FormataDataEdicao(RS("fim")) & " </b></td>"
-     'w_html = w_html & VbCrLf & "          <td><font size=""1"">Prioridade:<br><b>" & RetornaPrioridade(RS("prioridade")) & " </b></td>"
-     w_html = w_html & VbCrLf & "          <tr valign=""top""><td><font size=""1"">Parcerias externas:<br><b>" & CRLF2BR(Nvl(RS("proponente"),"---")) & " </b></td>"
-     w_html = w_html & VbCrLf & "          <tr valign=""top""><td><font size=""1"">Parcerias internas:<br><b>" & CRLF2BR(Nvl(RS("palavra_chave"),"---")) & " </b></td>"  
-     w_html = w_html & VbCrLf & "          </table>"
-
-     If w_tipo_visao = 0 or w_tipo_visao = 1 Then
-        ' Informações adicionais
-        w_html = w_html & VbCrLf & "      <tr><td valign=""top"" colspan=""2"" align=""center"" bgcolor=""#D0D0D0"" style=""border: 2px solid rgb(0,0,0);""><font size=""1""><b>Informações adicionais</td>"
-        w_html = w_html & VbCrLf & "      <tr><td valign=""top""><font size=""1"">Situação problema:<br><b>" & CRLF2BR(Nvl(RS("problema"),"---")) & " </b></td>"
-        w_html = w_html & VbCrLf & "      <tr><td valign=""top""><font size=""1"">Objetivo da ação:<br><b>" & CRLF2BR(Nvl(RS("objetivo"),"---")) & " </b></td>"
-        w_html = w_html & VbCrLf & "      <tr><td valign=""top""><font size=""1"">Descrição da ação:<br><b>" & CRLF2BR(Nvl(RS("ds_acao"),"---")) & " </b></td>"
-        w_html = w_html & VbCrLf & "      <tr><td valign=""top""><font size=""1"">Público alvo:<br><b>" & CRLF2BR(Nvl(RS("publico_alvo"),"---")) & " </b></td>"
-        If Nvl(RS("descricao"),"") > "" Then 
-           w_html = w_html & VbCrLf & "      <tr><td valign=""top""><font size=""1"">Resultados da ação:<br><b>" & CRLF2BR(RS("descricao")) & " </b></td>" 
-        End If
-        w_html = w_html & VbCrLf & "      <tr><td valign=""top""><font size=""1"">Estratégia de implantação:<br><b>" & CRLF2BR(Nvl(RS("estrategia"),"---")) & " </b></td>"
-        w_html = w_html & VbCrLf & "      <tr><td valign=""top""><font size=""1"">Indicadores de desempenho:<br><b>" & CRLF2BR(Nvl(RS("indicadores"),"---")) & " </b></td>"
-        If w_tipo_visao = 0 and Nvl(RS("justificativa"),"") > "" Then ' Se for visão completa
-           w_html = w_html & VbCrLf & "      <tr><td valign=""top""><font size=""1"">Observações:<br><b>" & CRLF2BR(RS("justificativa")) & " </b></td>"
-        End If
-     End If
-     
-     If w_tipo_visao = 0 or w_tipo_visao = 1 Then
-        ' Outras iniciativas
-        DB_GetOrPrioridadeList RS1, w_chave, RetornaCliente(), null
-        RS1.Sort = "Existe desc"
-        If Not RS1.EOF Then
-           If cDbl(Nvl(RS1("Existe"),0)) > 0 Then
-              w_html = w_html & VbCrLf & "      <tr><td valign=""top"" colspan=""2"" align=""center"" bgcolor=""#D0D0D0"" style=""border: 2px solid rgb(0,0,0);""><font size=""1""><b>Outras iniciativas</td>"
-              w_html = w_html & VbCrLf & "      <tr><td align=""center"" colspan=""2"">"
-              w_html = w_html & VbCrLf & "        <TABLE WIDTH=""100%"" bgcolor=""" & conTableBgColor & """ BORDER=""" & conTableBorder & """ CELLSPACING=""" & conTableCellSpacing & """ CELLPADDING=""" & conTableCellPadding & """ BorderColorDark=""" & conTableBorderColorDark & """ BorderColorLight=""" & conTableBorderColorLight & """>"
-              w_html = w_html & VbCrLf & "          <tr bgcolor=""" & conTrBgColor & """ align=""center"">"
-              w_html = w_html & VbCrLf & "            <td><font size=""1""><b>Nome</font></td>"
-              w_html = w_html & VbCrLf & "          </tr>"    
-              While Not RS1.EOF
-                 If cDbl(Nvl(RS1("Existe"),0)) > 0 Then
-                    If w_cor = conTrBgColor or w_cor = "" Then w_cor = conTrAlternateBgColor Else w_cor = conTrBgColor End If
-                    w_html = w_html & VbCrLf & "      <tr valign=""top"" bgcolor=""" & w_cor & """>"
-                    w_html = w_html & VbCrLf & "        <td><font size=""1""><ul><li>" & RS1("nome") & "</td>"
-                    w_html = w_html & VbCrLf & "      </tr>"
-                 End If
-                 RS1.MoveNext
-              wend
-              w_html = w_html & VbCrLf & "         </table></td></tr>"
+           If w_tipo_visao = 0 Then
+              w_html = w_html & VbCrLf & "      <tr><td valign=""top""><font size=""1"">Nota de conclusão:<br><b>" & CRLF2BR(RS("nota_conclusao")) & " </b></td>"
            End If
         End If
-        RS1.close
      End If
      
-     ' Dados da conclusão da ação, se ela estiver nessa situação
-     If RS("concluida") = "S" and Nvl(RS("data_conclusao"),"") > "" Then
-        w_html = w_html & VbCrLf & "      <tr><td valign=""top"" colspan=""2"" align=""center"" bgcolor=""#D0D0D0"" style=""border: 2px solid rgb(0,0,0);""><font size=""1""><b>Dados da conclusão</td>"
-        w_html = w_html & VbCrLf & "      <tr><td valign=""top"" colspan=""2""><table border=0 width=""100%"" cellspacing=0>"
-        w_html = w_html & VbCrLf & "          <tr valign=""top"">"
-        w_html = w_html & VbCrLf & "          <td><font size=""1"">Início da execução:<br><b>" & FormataDataEdicao(RS("inicio_real")) & " </b></td>"
-        w_html = w_html & VbCrLf & "          <td><font size=""1"">Término da execução:<br><b>" & FormataDataEdicao(RS("fim_real")) & " </b></td>"
-        If w_tipo_visao = 0 Then
-           w_html = w_html & VbCrLf & "          <td><font size=""1"">Recurso executado:<br><b>" & FormatNumber(RS("custo_real"),2) & " </b></td>"
-        End If
-        w_html = w_html & VbCrLf & "          </table>"
-        If w_tipo_visao = 0 Then
-           w_html = w_html & VbCrLf & "      <tr><td valign=""top""><font size=""1"">Nota de conclusão:<br><b>" & CRLF2BR(RS("nota_conclusao")) & " </b></td>"
-        End If
-     End If
-  End If
-  
-  If w_tipo_visao = 0 Then
-       'Financiamento
-     DB_GetFinancAcaoPPA RS1, w_chave, RetornaCliente(), null
-     If RS("cd_ppa") > "" Then
-        w_html = w_html & VbCrLf & "      <tr><td valign=""top"" colspan=""2"" align=""center"" bgcolor=""#D0D0D0"" style=""border: 2px solid rgb(0,0,0);""><font size=""1""><b>Financiamento</td>"
-        w_html = w_html & VbCrLf & "      <tr><td align=""center"" colspan=""2"">"
-        w_html = w_html & VbCrLf & "        <TABLE WIDTH=""100%"" bgcolor=""" & conTableBgColor & """ BORDER=""" & conTableBorder & """ CELLSPACING=""" & conTableCellSpacing & """ CELLPADDING=""" & conTableCellPadding & """ BorderColorDark=""" & conTableBorderColorDark & """ BorderColorLight=""" & conTableBorderColorLight & """>"
-        w_html = w_html & VbCrLf & "          <tr bgcolor=""" & conTrBgColor & """ align=""center"">"
-        w_html = w_html & VbCrLf & "            <td><font size=""1""><b>Código</font></td>"
-        w_html = w_html & VbCrLf & "            <td><font size=""1""><b>Nome</font></td>"
-        w_html = w_html & VbCrLf & "            <td><font size=""1""><b>Dotação autorizada</font></td>"
-        w_html = w_html & VbCrLf & "          </tr>" 
-        w_html = w_html & VbCrLf & "      <tr valign=""top"">"
+     If w_tipo_visao = 0 Then
+          'Financiamento
+        DB_GetFinancAcaoPPA RS1, w_chave, RetornaCliente(), null
+        If RS("cd_ppa") > "" Then
+           w_html = w_html & VbCrLf & "      <tr><td valign=""top"" colspan=""2"" align=""center"" bgcolor=""#D0D0D0"" style=""border: 2px solid rgb(0,0,0);""><font size=""1""><b>Financiamento</td>"
+           w_html = w_html & VbCrLf & "      <tr><td align=""center"" colspan=""2"">"
+           w_html = w_html & VbCrLf & "        <TABLE WIDTH=""100%"" bgcolor=""" & conTableBgColor & """ BORDER=""" & conTableBorder & """ CELLSPACING=""" & conTableCellSpacing & """ CELLPADDING=""" & conTableCellPadding & """ BorderColorDark=""" & conTableBorderColorDark & """ BorderColorLight=""" & conTableBorderColorLight & """>"
+           w_html = w_html & VbCrLf & "          <tr bgcolor=""" & conTrBgColor & """ align=""center"">"
+           w_html = w_html & VbCrLf & "            <td><font size=""1""><b>Código</font></td>"
+           w_html = w_html & VbCrLf & "            <td><font size=""1""><b>Nome</font></td>"
+           w_html = w_html & VbCrLf & "            <td><font size=""1""><b>Dotação autorizada</font></td>"
+           w_html = w_html & VbCrLf & "          </tr>" 
+           w_html = w_html & VbCrLf & "      <tr valign=""top"">"
         w_html = w_html & VbCrLf & "        <td><font size=""1"">" &RS("cd_ppa_pai") & "." & RS("cd_ppa") & "</td>"
         w_html = w_html & VbCrLf & "        <td><font size=""1"">" & RS("nm_ppa") & "</td>"
         w_html = w_html & VbCrLf & "        <td align=""right""><font size=""1"">" & FormatNumber(RS("aprovado"),2) & "</td>"

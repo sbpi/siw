@@ -4,17 +4,14 @@ REM Montagem da seleção de ações do PPA
 REM -------------------------------------------------------------------------
 Sub SelecaoAcaoPPA (label, accesskey, hint, chave, chaveAux, campo, restricao, atributo)
     If restricao = "CADASTRO" Then
-       DB_GetAcaoPPA RS, null, w_cliente, null, null, null, null, null, null, null, null
+       DB_GetAcaoPPA RS, null, w_cliente, null, null, null, null, null, null, null, null, "CADASTRO"
        RS.Sort   = "nome"
-       RS.Filter = "sq_acao_ppa_pai = null and chave <> " &  cDbl(Nvl(chaveAux,0))
     ElseIf restricao = "IDENTIFICACAO" Then
-       DB_GetAcaoPPA RS, null, w_cliente, null, null, null, null, null, chaveAux, null, null
+       DB_GetAcaoPPA RS, null, w_cliente, null, null, null, null, null, chaveAux, null, null, "IDENTIFCACAO"
        RS.Sort   = "nome"
-       RS.Filter = "sq_acao_ppa_pai <> null and acao = 0"
     ElseIf restricao = "FINANCIAMENTO" Then
-       DB_GetAcaoPPA RS, null, w_cliente, null, null, null, null, null, chaveAux, null, null
+       DB_GetAcaoPPA RS, null, w_cliente, null, null, null, null, null, chaveAux, null, null, "FINANCIAMENTO"
        RS.Sort   = "nome"
-       RS.Filter = "sq_acao_ppa_pai <> null and outras_acao = 0 and acao = 0"
     Else
        DB_GetAcaoPPA RS, chave, w_cliente, null, null, null, null, null, null, null, null
        RS.Sort   = "nome"

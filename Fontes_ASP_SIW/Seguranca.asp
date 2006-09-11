@@ -42,7 +42,7 @@ Dim P1, P2, P3, P4, TP, SG
 Dim R, O, w_Cont, w_Pagina, w_Disabled, w_TP, w_classe, w_cliente, w_menu
 Dim w_Assinatura, w_cor, w_filter
 Dim p_gestor, p_lotacao, p_localizacao, p_nome, p_ordena
-Dim w_dir, w_dir_volta, w_submenu, w_ano
+Dim w_dir, w_dir_volta, w_submenu
 Private Par
 Set RS  = Server.CreateObject("ADODB.RecordSet")
 Set RS1 = Server.CreateObject("ADODB.RecordSet")

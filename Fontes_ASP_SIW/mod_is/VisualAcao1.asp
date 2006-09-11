@@ -61,7 +61,7 @@ Function VisualAcao(w_chave, O, w_usuario, P1, P4)
      If w_tipo_visao = 0 or w_tipo_visao = 1 Then 
         ' Metas da ação
         ' Recupera todos os registros para a listagem     
-        DB_GetSolicMeta_IS RS1, w_chave, null, "LSTNULL", null, null, null, null, null, null, null
+        DB_GetSolicMeta_IS RS1, w_chave, null, "LSTNULL", null, null, null, null, null, null, null, null, null
         RS1.Sort = "ordem"
         If Not RS1.EOF Then ' Se não foram selecionados registros, exibe mensagem
            w_html = w_html & VbCrLf & "      <tr><td valign=""top"" colspan=""2"" align=""left"" bgcolor=""#D0D0D0"" style=""border: 2px solid rgb(0,0,0);""><font size=""2""><b>&nbsp;Metas Cadastradas</td></tr>"
@@ -547,7 +547,7 @@ Function VisualAcao(w_chave, O, w_usuario, P1, P4)
      End If
 
      ' Metas da ação
-     DB_GetSolicMeta_IS RS1, w_chave, null, "LSTNULL", null, null, null, null, null, null, null
+     DB_GetSolicMeta_IS RS1, w_chave, null, "LSTNULL", null, null, null, null, null, null, null, null, null
      RS1.Sort = "ordem"
      If Not RS1.EOF Then ' Se não foram selecionados registros, exibe mensagem        
         w_html = w_html & VbCrLf & "      <tr><td valign=""top"" colspan=""2"" align=""center"" bgcolor=""#D0D0D0"" style=""border: 2px solid rgb(0,0,0);""><font size=""1""><b>Metas físicas</td>"

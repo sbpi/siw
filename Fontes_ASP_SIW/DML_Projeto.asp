@@ -3,13 +3,13 @@ REM =========================================================================
 REM Mantém a tabela principal de Projetos
 REM -------------------------------------------------------------------------
 Sub DML_PutProjetoGeral(Operacao, p_chave, p_menu, p_unidade, p_solicitante, p_proponente, _
-    p_cadastrador, p_executor, p_sqcc, p_descricao, p_justificativa, p_inicio, p_fim, p_valor, _
+    p_cadastrador, p_executor, p_sqcc, p_solic_pai, p_descricao, p_justificativa, p_inicio, p_fim, p_valor, _
     p_data_hora, p_unid_resp, p_assunto, p_prioridade, p_aviso, p_dias, p_cidade, p_palavra_chave, _
     p_vincula_contrato, p_vincula_viagem, p_sq_acao_ppa, p_sq_orprioridade, p_selecionada_mpog, _
     p_selecionada_relev, p_sq_tipo_pessoa, p_chave_nova, p_copia)
     
   Dim l_Operacao, l_Chave, l_menu, l_unidade, l_solicitante, l_proponente
-  Dim l_cadastrador, l_executor, l_sqcc, l_descricao, l_justificativa, l_inicio, l_fim, l_valor
+  Dim l_cadastrador, l_executor, l_sqcc, l_solic_pai, l_descricao, l_justificativa, l_inicio, l_fim, l_valor
   Dim l_data_hora, l_unid_resp, l_assunto, l_prioridade, l_aviso, l_dias, l_cidade, l_palavra_chave
   Dim l_vincula_contrato, l_vincula_viagem, l_chave_nova, l_copia
   Dim l_sq_acao_ppa, l_sq_orprioridade, l_selecionada_mpog, l_selecionada_relev, l_sq_tipo_pessoa
@@ -24,6 +24,7 @@ Sub DML_PutProjetoGeral(Operacao, p_chave, p_menu, p_unidade, p_solicitante, p_p
   Set l_cadastrador         = Server.CreateObject("ADODB.Parameter") 
   Set l_executor            = Server.CreateObject("ADODB.Parameter") 
   Set l_sqcc                = Server.CreateObject("ADODB.Parameter")
+  Set l_solic_pai           = Server.CreateObject("ADODB.Parameter")
   Set l_descricao           = Server.CreateObject("ADODB.Parameter") 
   Set l_justificativa       = Server.CreateObject("ADODB.Parameter")  
   Set l_inicio              = Server.CreateObject("ADODB.Parameter") 
@@ -57,6 +58,7 @@ Sub DML_PutProjetoGeral(Operacao, p_chave, p_menu, p_unidade, p_solicitante, p_p
      set l_cadastrador          = .CreateParameter("l_cadastrador",     adInteger, adParamInput,    , Tvl(p_cadastrador))
      set l_executor             = .CreateParameter("l_executor",        adInteger, adParamInput,    , Tvl(p_executor))
      set l_sqcc                 = .CreateParameter("l_sqcc",            adInteger, adParamInput,    , Tvl(p_sqcc))
+     set l_solic_pai            = .CreateParameter("l_solic_pai",       adInteger, adParamInput,    , Tvl(p_solic_pai))
      set l_descricao            = .CreateParameter("l_descricao",       adVarchar, adParamInput,2000, Tvl(p_descricao))
      set l_justificativa        = .CreateParameter("l_justificativa",   adVarchar, adParamInput,2000, Tvl(p_justificativa))
      set l_inicio               = .CreateParameter("l_inicio",          adDate,    adParamInput,    , Tvl(p_inicio))
@@ -91,6 +93,7 @@ Sub DML_PutProjetoGeral(Operacao, p_chave, p_menu, p_unidade, p_solicitante, p_p
      .parameters.Append         l_cadastrador
      .parameters.Append         l_executor
      .parameters.Append         l_sqcc
+     .parameters.Append         l_solic_pai
      .parameters.Append         l_descricao
      .parameters.Append         l_justificativa
      .parameters.Append         l_inicio
@@ -131,6 +134,7 @@ Sub DML_PutProjetoGeral(Operacao, p_chave, p_menu, p_unidade, p_solicitante, p_p
      .parameters.Delete         "l_cadastrador"
      .parameters.Delete         "l_executor"
      .parameters.Delete         "l_sqcc"
+     .parameters.Delete         "l_solic_pai"
      .parameters.Delete         "l_descricao"
      .parameters.Delete         "l_justificativa"
      .parameters.Delete         "l_inicio"

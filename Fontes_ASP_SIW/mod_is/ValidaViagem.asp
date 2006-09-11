@@ -89,7 +89,7 @@ Function ValidaViagem(p_cliente, p_chave, p_sg1, p_sg2, p_sg3, p_sg4, p_tramite)
            l_tipo = 0
         Else
            ' Verifica se o beneficiário tem os dados bancários cadastrados
-           If nvl(l_rs1("sq_banco"),"") = "" or nvl(l_rs1("sq_agencia"),"") = "" or  nvl(l_rs1("nr_conta"),"") = "" Then
+           If nvl(l_rs_solic("sq_banco"),"") = "" or nvl(l_rs_solic("sq_agencia"),"") = "" or  nvl(l_rs_solic("numero_conta"),"") = "" Then
               l_erro = l_erro & "<li>Dados bancários incompletos."
               l_tipo = 0
            End If

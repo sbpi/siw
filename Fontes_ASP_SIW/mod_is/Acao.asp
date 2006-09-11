@@ -315,7 +315,7 @@ Sub Inicial
            w_filtro = w_filtro & "<tr valign=""top""><td align=""right""><font size=1>Ação <td><font size=1>[<b>" & RS("titulo") & "</b>]"
         End If
         'If p_atividade > ""  Then 
-        '   DB_GetSolicMeta_IS RS, p_projeto, p_atividade, "REGISTRO", null, null, null, null, null, null, null
+        '   DB_GetSolicMeta_IS RS, p_projeto, p_atividade, "REGISTRO", null, null, null, null, null, null, null, null, null
         '   w_filtro = w_filtro & "<tr valign=""top""><td align=""right""><font size=1>Meta <td><font size=1>[<b>" & RS("titulo") & "</b>]"
         'End If
         If p_sq_acao_ppa > ""  Then 
@@ -2006,11 +2006,11 @@ Sub Metas
      w_previsto_acao_12     = Request("w_previsto_acao_12")         
   ElseIf O = "L" Then
      ' Recupera todos os registros para a listagem
-     DB_GetSolicMeta_IS RS, w_chave, null, "LISTA", null, null, null, null, null, null, null
+     DB_GetSolicMeta_IS RS, w_chave, null, "LISTA", null, null, null, null, null, null, null, null, null
      RS.Sort = "ordem"
   ElseIf InStr("AEV",O) > 0 and w_Troca = "" Then
      ' Recupera os dados do endereço informado
-     DB_GetSolicMeta_IS RS, w_chave, w_chave_aux, "REGISTRO", null, null, null, null, null, null, null
+     DB_GetSolicMeta_IS RS, w_chave, w_chave_aux, "REGISTRO", null, null, null, null, null, null, null, null, null
      w_titulo               = RS("titulo")
      w_ordem                = RS("ordem")
      w_descricao            = RS("descricao")    
@@ -2129,7 +2129,7 @@ Sub Metas
     ShowHTML "          <td><font size=""1""><b>Operações</font></td>"
     ShowHTML "        </tr>"
     ' Recupera as etapas principais
-    DB_GetSolicMeta_IS RS, w_chave, null, "LSTNULL", null, null, null, null, null, null, null
+    DB_GetSolicMeta_IS RS, w_chave, null, "LSTNULL", null, null, null, null, null, null, null, null, null
     RS.Sort = "ordem"
     If RS.EOF Then ' Se não foram selecionados registros, exibe mensagem
         ShowHTML "      <tr bgcolor=""" & conTrBgColor & """><td colspan=9 align=""center""><font size=""2""><b>Não foram encontrados registros.</b></td></tr>"
@@ -2369,12 +2369,12 @@ Sub AtualizaMeta
      next
   ElseIf O = "L" Then
      ' Recupera todos os registros para a listagem
-     DB_GetSolicMeta_IS RS, w_chave, null, "LISTA", null, null, null, null, null, null, null
+     DB_GetSolicMeta_IS RS, w_chave, null, "LISTA", null, null, null, null, null, null, null, null, null
      RS.Sort = "ordem"
 
   ElseIf InStr("AEV",O) > 0 and w_Troca = "" Then
      ' Recupera os dados do endereço informado
-     DB_GetSolicMeta_IS RS, w_chave, w_chave_aux, "REGISTRO", null, null, null, null, null, null, null
+     DB_GetSolicMeta_IS RS, w_chave, w_chave_aux, "REGISTRO", null, null, null, null, null, null, null, null, null
      w_titulo               = RS("titulo")
      w_ordem                = RS("ordem")
      w_descricao            = RS("descricao")
@@ -2411,18 +2411,18 @@ Sub AtualizaMeta
      w_real_acao_10         = FormatNumber(cDbl(Nvl(RS("real_mes_10"),0)),2)
      w_real_acao_11         = FormatNumber(cDbl(Nvl(RS("real_mes_11"),0)),2)
      w_real_acao_12         = FormatNumber(cDbl(Nvl(RS("real_mes_12"),0)),2)
-     w_cron_ini_1           = RS("valor_ini_1")
-     w_cron_ini_2           = RS("valor_ini_2")
-     w_cron_ini_3           = RS("valor_ini_3")
-     w_cron_ini_4           = RS("valor_ini_4")
-     w_cron_ini_5           = RS("valor_ini_5")
-     w_cron_ini_6           = RS("valor_ini_6")
-     w_cron_ini_7           = RS("valor_ini_7")
-     w_cron_ini_8           = RS("valor_ini_8")
-     w_cron_ini_9           = RS("valor_ini_9")
-     w_cron_ini_10          = RS("valor_ini_10")
-     w_cron_ini_11          = RS("valor_ini_11")
-     w_cron_ini_12          = RS("valor_ini_12")
+     w_cron_ini_1           = RS("cron_ini_mes_1")
+     w_cron_ini_2           = RS("cron_ini_mes_2")
+     w_cron_ini_3           = RS("cron_ini_mes_3")
+     w_cron_ini_4           = RS("cron_ini_mes_4")
+     w_cron_ini_5           = RS("cron_ini_mes_5")
+     w_cron_ini_6           = RS("cron_ini_mes_6")
+     w_cron_ini_7           = RS("cron_ini_mes_7")
+     w_cron_ini_8           = RS("cron_ini_mes_8")
+     w_cron_ini_9           = RS("cron_ini_mes_9")
+     w_cron_ini_10          = RS("cron_ini_mes_10")
+     w_cron_ini_11          = RS("cron_ini_mes_11")
+     w_cron_ini_12          = RS("cron_ini_mes_12")
      w_aprovado_acao        = FormatNumber(cDbl(Nvl(RS("previsao_ano"),0)),2)
      w_autorizado_acao      = FormatNumber(cDbl(Nvl(RS("atual_ano"),0)),2)
      w_realizado_acao       = FormatNumber(cDbl(Nvl(RS("real_ano"),0)),2)
@@ -2563,7 +2563,7 @@ Sub AtualizaMeta
     ShowHTML "          <td><font size=""1""><b>Operações</font></td>"
     ShowHTML "        </tr>"
     ' Recupera as metas
-    DB_GetSolicMeta_IS RS, w_chave, null, "LSTNULL", null, null, null, null, null, null, null
+    DB_GetSolicMeta_IS RS, w_chave, null, "LSTNULL", null, null, null, null, null, null, null, null, null
     RS.Sort = "ordem"
     If RS.EOF Then ' Se não foram selecionados registros, exibe mensagem
         ShowHTML "    <tr bgcolor=""" & conTrBgColor & """><td colspan=5 align=""center""><font size=""2""><b>Não foi encontrado nenhum registro.</b></td></tr>"
@@ -3547,12 +3547,6 @@ Sub Interessados
   If O = "L" Then
     ShowHTML "      <tr><td colspan=3><font size=1>Usuários que devem receber emails dos encaminhamentos desta ação.</font></td></tr>"
     ShowHTML "      <tr><td colspan=3 align=""center"" height=""1"" bgcolor=""#000000""></td></tr>"
-    DB_GetSolicData_IS RS1, w_chave, SG
-    If Nvl(RS1("cd_programa"),"") > "" and Nvl(RS1("cd_acao"),"") > "" and Nvl(RS1("cd_unidade"),"") > "" Then
-       ShowHTML "      <tr><td colspan=""2""><font size=""1"">Programa Codº " & RS1("cd_programa") & " - " & RS1("nm_ppa_pai") & "</td>"
-       ShowHTML "      <tr><td colspan=""2""><font size=""1"">Ação Codº " & RS1("cd_unidade") & "." & RS1("cd_acao") & " - " & RS1("nm_ppa") & "</td>"
-    End If
-    RS1.Close
     ' Exibe a quantidade de registros apresentados na listagem e o cabeçalho da tabela de listagem
     If P1 <> 4 Then 
        ShowHTML "<tr><td><font size=""2""><a accesskey=""I"" class=""SS"" href=""" & w_dir & w_pagina & par & "&R=" & w_Pagina & par & "&O=I&w_chave=" & w_chave & "&P1=" & P1 & "&P2=" & P2 & "&P3=" & P3 & "&P4=" & P4 & "&TP=" & TP & "&SG=" & SG & """><u>I</u>ncluir</a>&nbsp;"
@@ -4371,7 +4365,7 @@ Sub Concluir
   ShowHTML "          <tr>"
   
   ' Verifica se a ação tem etapas em aberto e avisa o usuário caso isso ocorra.
-  DB_GetSolicMeta_IS RS, w_chave, null, "LISTA", null, null, null, null, null, null, null
+  DB_GetSolicMeta_IS RS, w_chave, null, "LISTA", null, null, null, null, null, null, null, null, null
   w_cont_m = 0
   While NOT RS.EOF
      If cDbl(RS("perc_conclusao")) <> 100 Then
@@ -4489,7 +4483,7 @@ Function Metalinha (p_chave,  p_chave_aux, p_titulo, p_resp,  p_setor, _
   If cDbl(Nvl(p_word,0)) = 1 Then
      l_html = l_html & VbCrLf & "        <td><font size=""1"">" & p_destaque & p_titulo & "</b>"
   Else
-     l_html = l_html & VbCrLf & "<A class=""HL"" HREF=""#"" onClick=""window.open('Acao.asp?par=AtualizaMeta&O=V&w_chave=" & RS("sq_siw_solicitacao") & "&w_chave_aux=" & p_chave_aux & "&w_tipo=Volta&P1=10&P2=" & P2 & "&P3=" & P3 & "&P4=" & P4 & "&TP=" & TP & "&SG=" & SG & "','Meta','width=600, height=350, top=50, left=50, toolbar=no, scrollbars=yes, resizable=yes, status=no'); return false;"" title=""Clique para exibir os dados!"">" & p_destaque & p_titulo & "</A>"
+     l_html = l_html & VbCrLf & "<A class=""HL"" HREF=""#"" onClick=""window.open('Acao.asp?par=AtualizaMeta&O=V&w_chave=" & p_chave & "&w_chave_aux=" & p_chave_aux & "&w_tipo=Volta&P1=10&P2=" & P2 & "&P3=" & P3 & "&P4=" & P4 & "&TP=" & TP & "&SG=" & SG & "','Meta','width=600, height=350, top=50, left=50, toolbar=no, scrollbars=yes, resizable=yes, status=no'); return false;"" title=""Clique para exibir os dados!"">" & p_destaque & p_titulo & "</A>"
   End If
   l_html = l_html & VbCrLf & "        <td align=""center"" " & l_row & "><font size=""1"">" & p_loa & "</td>"
   l_html = l_html & VbCrLf & "        <td align=""center"" " & l_row & "><font size=""1"">" & FormataDataEdicao(p_fim) & "</td>"
@@ -5109,10 +5103,12 @@ Public Sub Grava
         'For i = 1 to 12
         '   DML_PutMetaMensalIni_IS "W", Request("w_chave_aux"), Trim(Request("w_cron_ini_"&i&"")), Request("w_referencia_"&i&""), w_cliente
         'Next 
-        DML_PutMetaMensalIni_IS "W", Request("w_chave_aux"), w_cliente, _
-           Trim(Request("w_cron_ini_1")), Trim(Request("w_cron_ini_2")), Trim(Request("w_cron_ini_3")), Trim(Request("w_cron_ini_4")), _
-           Trim(Request("w_cron_ini_5")), Trim(Request("w_cron_ini_6")), Trim(Request("w_cron_ini_7")), Trim(Request("w_cron_ini_8")), _
-           Trim(Request("w_cron_ini_9")), Trim(Request("w_cron_ini_10")), Trim(Request("w_cron_ini_11")), Trim(Request("w_cron_ini_12"))
+        If O <> "E" Then
+           DML_PutMetaMensalIni_IS "W", Request("w_chave_aux"), w_cliente, _
+              Trim(Request("w_cron_ini_1")), Trim(Request("w_cron_ini_2")), Trim(Request("w_cron_ini_3")), Trim(Request("w_cron_ini_4")), _
+              Trim(Request("w_cron_ini_5")), Trim(Request("w_cron_ini_6")), Trim(Request("w_cron_ini_7")), Trim(Request("w_cron_ini_8")), _
+              Trim(Request("w_cron_ini_9")), Trim(Request("w_cron_ini_10")), Trim(Request("w_cron_ini_11")), Trim(Request("w_cron_ini_12"))
+        End If
         dbms.CommitTrans()
         ScriptOpen "JavaScript"
         ' Recupera a sigla do serviço pai, para fazer a chamada ao menu

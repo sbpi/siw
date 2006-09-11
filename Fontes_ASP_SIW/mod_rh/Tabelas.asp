@@ -35,7 +35,7 @@ If Session("LogOn") <> "Sim" Then
 End If
 
 ' Declaração de variáveis
-Dim dbms, sp, RS, RS1, RS2, RS3, RS4, RS_menu
+Dim dbms, sp, RS, RS1, RS2, RS3, RS4, RS_menu, w_ano
 Dim P1, P2, P3, P4, TP, SG, p_ordena
 Dim R, O, w_Cont, w_Reg, w_Pagina, w_Disabled, w_TP, w_classe, w_submenu, w_filtro, w_copia
 Dim w_Assinatura
@@ -1393,7 +1393,7 @@ Public Sub Grava
          ' Verifica se a Assinatura Eletrônica é válida
          If (VerificaAssinaturaEletronica(Session("Username"),w_assinatura) and w_assinatura > "") or w_assinatura = "" Then            
             If O = "G" Then
-               Dim w_data, w_ano, w_mes, w_dia, w_lista, w_caminho, w_arq_evento, w_arq_texto
+               Dim w_data, w_mes, w_dia, w_lista, w_caminho, w_arq_evento, w_arq_texto
 
                ' Instancia os arquivos
                Set FS = CreateObject("Scripting.FileSystemObject")
@@ -1450,7 +1450,6 @@ Public Sub Grava
                Next
 
                Set w_data        = Nothing 
-               Set w_ano         = Nothing 
                Set w_mes         = Nothing 
                Set w_dia         = Nothing 
                Set w_lista       = Nothing 

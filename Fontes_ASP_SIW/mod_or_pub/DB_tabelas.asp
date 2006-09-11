@@ -3,9 +3,9 @@ REM =========================================================================
 REM Recupera ações do ppa
 REM -------------------------------------------------------------------------
 Sub DB_GetAcaoPPA(p_rs, p_chave, p_cliente, p_programa, p_acao, p_responsavel, _
-        p_mpog, p_relevante, p_sq_siw_solicitacao, p_cod_programa, p_cod_acao)
+        p_mpog, p_relevante, p_sq_siw_solicitacao, p_cod_programa, p_cod_acao, p_restricao)
   Dim l_chave, l_cliente, l_programa, l_acao, l_responsavel, l_mpog, l_relevante
-  Dim l_sq_siw_solicitacao, l_cod_programa, l_cod_acao
+  Dim l_sq_siw_solicitacao, l_cod_programa, l_cod_acao, l_restricao
   Set l_chave              = Server.CreateObject("ADODB.Parameter")
   Set l_cliente            = Server.CreateObject("ADODB.Parameter")
   Set l_programa           = Server.CreateObject("ADODB.Parameter")
@@ -16,6 +16,7 @@ Sub DB_GetAcaoPPA(p_rs, p_chave, p_cliente, p_programa, p_acao, p_responsavel, _
   Set l_sq_siw_solicitacao = Server.CreateObject("ADODB.Parameter")
   Set l_cod_programa       = Server.CreateObject("ADODB.Parameter")
   Set l_cod_acao           = Server.CreateObject("ADODB.Parameter")
+  Set l_restricao          = Server.CreateObject("ADODB.Parameter")
   with sp
      set l_chave              = .CreateParameter("l_chave",              adInteger, adParamInput,    , tvl(p_chave))
      set l_cliente            = .CreateParameter("l_cliente",            adInteger, adParamInput,    , p_cliente)
@@ -27,6 +28,7 @@ Sub DB_GetAcaoPPA(p_rs, p_chave, p_cliente, p_programa, p_acao, p_responsavel, _
      set l_sq_siw_solicitacao = .CreateParameter("l_sq_siw_solicitacao", adInteger, adParamInput,    , tvl(p_sq_siw_solicitacao))
      set l_cod_programa       = .CreateParameter("l_cod_programa",       adVarchar, adParamInput,  50, Tvl(p_cod_programa))
      set l_cod_acao           = .CreateParameter("l_cod_acao",           adVarchar, adParamInput,  50, Tvl(p_cod_acao))
+     set l_restricao          = .CreateParameter("l_restricao",          adVarchar, adParamInput,  60, Tvl(p_restricao))
      .parameters.Append         l_chave
      .parameters.Append         l_cliente
      .parameters.Append         l_programa
@@ -37,6 +39,7 @@ Sub DB_GetAcaoPPA(p_rs, p_chave, p_cliente, p_programa, p_acao, p_responsavel, _
      .parameters.Append         l_sq_siw_solicitacao
      .parameters.Append         l_cod_programa
      .parameters.Append         l_cod_acao
+     .parameters.Append         l_restricao
      If Session("dbms") = 1 or Session("dbms") = 3 Then .Properties("PLSQLRSet") = TRUE End If
      .CommandText               = Session("schema") & "SP_GetAcaoPPA"
      Set p_rs = Server.CreateObject("ADODB.RecordSet")
@@ -58,6 +61,7 @@ Sub DB_GetAcaoPPA(p_rs, p_chave, p_cliente, p_programa, p_acao, p_responsavel, _
      .Parameters.Delete         "l_sq_siw_solicitacao"
      .Parameters.Delete         "l_cod_programa"
      .Parameters.Delete         "l_cod_acao"
+     .Parameters.Delete         "l_restricao"
   end with
 
 End Sub

@@ -69,6 +69,10 @@ Function VisualTarefa(w_chave, O, w_usuario, P4, w_identificacao, w_conclusao, w
      w_html = w_html & VbCrLf & "       <td><font size=""1"">" & Nvl(RS1("proponente"),"-") & "</font></td></tr>"
      w_html = w_html & VbCrLf & "   <tr><td><font size=""1""><b>Fase Atual:</b></font></td>"
      w_html = w_html & VbCrLf & "       <td><font size=""1"">" & Nvl(RS1("nm_tramite"),"-") & "</font></td></tr>"
+     w_html = w_html & VbCrLf & "   <tr><td><font size=""1""><b>Resultados Esperados:</b></font></td>"
+     w_html = w_html & VbCrLf & "       <td><font size=""1"">" & Nvl(RS1("descricao"),"-") & "</font></td></tr>"
+     w_html = w_html & VbCrLf & "   <tr><td><font size=""1""><b>Observação:</b></font></td>"
+     w_html = w_html & VbCrLf & "       <td><font size=""1"">" & Nvl(RS1("justificativa"),"-") & "</font></td></tr>"
   End If
   
   ' Dados da conclusão do programa, se ela estiver nessa situação

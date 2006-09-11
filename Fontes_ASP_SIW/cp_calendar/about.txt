@@ -1,0 +1,4 @@
+CCalendar v.1.0 (FreeWare)
+
+
+CCalendar is a small java applet that displys a calendar. It can also be used to have users select the date and automatically fill in a form field (for example to place a reservation). The calendar can be customized with colors and your own images. CCalendar can be used freely for a non commercial site.

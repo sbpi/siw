@@ -78,7 +78,7 @@ Function VisualPrograma(w_chave, O, w_usuario, P1, P4)
      If w_tipo_visao = 0 or w_tipo_visao = 1 Then 
         ' Indicadores do programa
         ' Recupera todos os registros para a listagem     
-        DB_GetSolicIndic_IS RS1, w_chave, null, "LISTA"
+        DB_GetSolicIndic_IS RS1, w_chave, null, "LISTA", null, null
         RS1.Sort = "ordem"
         If Not RS1.EOF Then ' Se não foram selecionados registros, exibe mensagem
            w_html = w_html & VbCrLf & "      <tr><td valign=""top"" colspan=""3"" align=""left"" bgcolor=""#D0D0D0"" style=""border: 2px solid rgb(0,0,0);""><font size=""2""><b>&nbsp;Indicadores</td></tr>"
@@ -300,7 +300,7 @@ Function VisualPrograma(w_chave, O, w_usuario, P1, P4)
         
         ' Indicadores do programa
         ' Recupera todos os registros para a listagem
-        DB_GetSolicIndic_IS RS1, w_chave, null, "LISTA"
+        DB_GetSolicIndic_IS RS1, w_chave, null, "LISTA", null, null
         RS1.Sort = "ordem"
         
         If Not RS1.EOF Then ' Se não foram selecionados registros, exibe mensagem   

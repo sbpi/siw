@@ -1570,7 +1570,7 @@ Sub Rel_Programa
               ShowHTML "      <tr bgcolor=""" & conTrBgColor & """><td colspan=" & w_col_word & " align=""center""><font size=""1""><b>Não foram encontrados registros(indicadores).</b></td></tr>"
               w_linha = w_linha + 1
            Else
-              DB_GetSolicIndic_IS RS3, RS2("sq_siw_solicitacao"), null, "LISTA"
+              DB_GetSolicIndic_IS RS3, RS2("sq_siw_solicitacao"), null, "LISTA", null, null
               RS3.Sort = "ordem"
               If RS3.EOF Then ' Se não foram selecionados registros, exibe mensagem
                  ShowHTML "      <tr bgcolor=""" & conTrBgColor & """><td colspan=" & w_col_word & " align=""center""><font size=""1""><b>Não foram encontrados registros(indicadores).</b></td></tr>"
@@ -2255,7 +2255,6 @@ Sub Rel_Sintetico_PPA
             ShowHTML "<div align=center><center>"
             ShowHTML "<table border=""0"" cellpadding=""0"" cellspacing=""0"" width=""100%"">"
             w_filtro = "<tr valign=""top"">"
-            If p_responsavel           > "" Then w_filtro = w_filtro & "<td><font size=1>Responsável&nbsp;<font size=1>[<b>" & p_responsavel & "</b>]&nbsp;"                     End If
             If p_prioridade            > "" Then w_filtro = w_filtro & "<td><font size=1>Prioridade&nbsp;<font size=1>[<b>" & RetornaPrioridade(p_prioridade) & "</b>]&nbsp;"    End If
             If p_selecao_mp            > "" Then w_filtro = w_filtro & "<td><font size=1>Selecionada SPI/MP&nbsp;<font size=1>[<b>" & p_selecao_mp & "</b>]&nbsp;"             End If
             If p_selecao_se            > "" Then w_filtro = w_filtro & "<td><font size=1>Selecionada SE/SEPPIR&nbsp;<font size=1>[<b>" & p_selecao_se & "</b>]&nbsp;" End If
@@ -2560,7 +2559,7 @@ REM Relatório Sintético dos programas PPA
 REM -------------------------------------------------------------------------
 Sub Rel_Sintetico_Prog
   Dim p_cd_programa, p_selecao_mp, p_selecao_se
-  Dim p_responsavel, p_sq_unidade_resp, p_prioridade
+  Dim p_sq_unidade_resp, p_prioridade
   Dim w_atual, w_logo, w_titulo 
   Dim w_tipo_rel, w_quantitativo_total
   Dim p_loa, p_exequivel, p_atraso
@@ -2571,7 +2570,6 @@ Sub Rel_Sintetico_Prog
   w_tipo_rel        = uCase(trim(Request("w_tipo_rel")))
   
   p_cd_programa              = ucase(Trim(Request("p_cd_programa")))
-  p_responsavel              = ucase(Trim(Request("p_responsavel")))
   p_sq_unidade_resp          = ucase(Trim(Request("p_sq_unidade_resp")))
   p_prioridade               = ucase(Trim(Request("p_prioridade")))
   p_selecao_mp               = ucase(Trim(Request("p_selecao_mp")))
@@ -2590,9 +2588,6 @@ Sub Rel_Sintetico_Prog
      End If
      DesconectaBD
      DB_GetProgramaPPA_IS RS, p_cd_programa, w_cliente, w_ano, null, null
-     If p_responsavel > "" Then
-        RS.Filter = "nm_gerente_programa like '%" &p_responsavel& "%'"
-     End If
      RS.Sort = "ds_programa"
   End If
   
@@ -2615,7 +2610,6 @@ Sub Rel_Sintetico_Prog
         ScriptOpen "JavaScript"
         ValidateOpen "Validacao"
         Validate "p_cd_programa", "Programa", "SELECT", "", "1", "18", "1", "1"
-        Validate "p_responsavel", "Responsável", "1", "", "2", "60", "1", "1"
         ValidateClose
         ScriptClose
      End If
@@ -2641,7 +2635,6 @@ Sub Rel_Sintetico_Prog
   If O = "L" Then
      ' Exibe a quantidade de registros apresentados na listagem e o cabeçalho da tabela de listagem
      w_filtro = "<tr valign=""top"">"
-    If p_responsavel           > "" Then w_filtro = w_filtro & "<td><font size=1>Responsável&nbsp;<font size=1>[<b>" & p_responsavel & "</b>]&nbsp;"                     End If
     If p_selecao_mp            > "" Then w_filtro = w_filtro & "<td><font size=1>Selecionada SPI/MP&nbsp;<font size=1>[<b>" & p_selecao_mp & "</b>]&nbsp;"               End If
     If p_selecao_se            > "" Then w_filtro = w_filtro & "<td><font size=1>Selecionada SE/SEPPIR&nbsp;<font size=1>[<b>" & p_selecao_se & "</b>]&nbsp;"                End If
     If p_loa                   > "" Then w_filtro = w_filtro & "<td><font size=1>Indicador PPA&nbsp;<font size=1>[<b>" & p_loa & "</b>]&nbsp;"                           End If
@@ -2692,7 +2685,6 @@ Sub Rel_Sintetico_Prog
             ShowHTML "<div align=center><center>"
             ShowHTML "<table border=""0"" cellpadding=""0"" cellspacing=""0"" width=""100%"">"
             w_filtro = "<tr valign=""top"">"
-            If p_responsavel           > "" Then w_filtro = w_filtro & "<td><font size=1>Responsável&nbsp;<font size=1>[<b>" & p_responsavel & "</b>]&nbsp;"                     End If
             If p_selecao_mp            > "" Then w_filtro = w_filtro & "<td><font size=1>Selecionada SPI/MP&nbsp;<font size=1>[<b>" & p_selecao_mp & "</b>]&nbsp;"             End If
             If p_selecao_se            > "" Then w_filtro = w_filtro & "<td><font size=1>Selecionada SE/SEPPIR&nbsp;<font size=1>[<b>" & p_selecao_se & "</b>]&nbsp;" End If
             If p_loa                   > "" Then w_filtro = w_filtro & "<td><font size=1>Indicador PPA&nbsp;<font size=1>[<b>" & p_loa & "</b>]&nbsp;"                         End If
@@ -2725,9 +2717,6 @@ Sub Rel_Sintetico_Prog
              null, null, null, null, p_atraso, null, null, null, null, null, null, null, _
              null, null, null, null, null, null, null, null, null, null, null, null, _
              RS("cd_programa"), null, null, w_ano
-          If p_responsavel > "" Then
-             RS2.Filter = "nm_gerente_programa like '%" &p_responsavel& "%'"
-          End If
           'Variarel para o teste de existencia de metas e açoes para visualização no relatorio
           w_teste_indicador = 0
           w_teste_programas = 0 
@@ -2737,14 +2726,7 @@ Sub Rel_Sintetico_Prog
              w_teste_programas = 1
              w_visao = 0
              If w_visao < 2 Then    
-                DB_GetSolicIndic_IS RS3, RS2("sq_siw_solicitacao"), null, "LISTA"           
-                If p_loa > "" and p_exequivel    > "" Then
-                   RS3.Filter = "cd_indicador <> null and exequivel = '" & p_exequivel & "'"
-                ElseIf p_loa > "" Then
-                   RS3.Filter = "cd_indicador <> null"
-                ElseIf p_exequivel    > "" Then
-                   RS3.Filter = "exequivel = '" & p_exequivel & "'"
-                End If
+                DB_GetSolicIndic_IS RS3, RS2("sq_siw_solicitacao"), null, "LISTA", p_loa, p_exequivel
                 RS3.Sort = "ordem"
                 If Not RS3.EOF Then
                    w_teste_indicador = 1
@@ -2882,7 +2864,6 @@ Sub Rel_Sintetico_Prog
     ShowHTML "    <table width=""97%"" border=""0"">"
     ShowHTML "      <tr>"
     SelecaoProgramaPPA "<u>P</u>rograma PPA:", "P", null, w_cliente, w_ano, p_cd_programa, "p_cd_programa", null, null, w_menu
-    ShowHTML "      <tr><td><font size=""1""><b><u>R</u>esponsável:</b><br><input " & w_disabled & " accesskey=""R"" type=""text"" name=""p_responsavel"" class=""sti"" SIZE=""40"" MAXLENGTH=""60"" VALUE=""" & p_responsavel & """></td>"
     ShowHTML "      <tr><td colspan=3><table border=0 width=""100%"" cellspacing=0 cellpadding=0><tr valign=""top"">"
     ShowHTML "          <td><font size=""1""><b>Selecionada SPI/MP?</b><br>"
     ShowHTML "              <input " & w_Disabled & " type=""radio"" name=""p_selecao_mp"" value=""S""> Sim <input " & w_Disabled & " type=""radio"" name=""p_selecao_mp"" value=""N""> Não <input " & w_Disabled & " type=""radio"" name=""p_selecao_mp"" value="""" checked> Independe"
@@ -2925,7 +2906,6 @@ Sub Rel_Sintetico_Prog
   Set p_cd_programa             = Nothing 
   Set p_selecao_mp              = Nothing 
   Set p_selecao_se              = Nothing 
-  Set p_responsavel             = Nothing 
   Set p_sq_unidade_resp         = Nothing
 End Sub
 REM =========================================================================
@@ -4864,7 +4844,7 @@ Sub Rel_Limite
              ShowHTML "<tr><td colspan=""2""><div align=""center""><hr NOSHADE color=#000000 size=2></div></td></tr>"    
              ShowHTML "<tr><td colspan=""2""><div align=""center""><font size=""3""><b>RELATÓRIO DE LIMITES</b></font></div></td></tr>"
           End If          
-          If Not IsNull(RS("cd_acao")) Then             
+          If Not IsNull(RS("cd_acao")) Then
              If w_unidade_atual <> "" and (w_unidade_atual <> RS("nm_unidade_resp")) Then
                 ShowHTML "    <tr><td>" & w_unidade_atual & "</td>"
                 ShowHTML "        <td align=""right"">" & FormatNumber(cDbl(Nvl(w_limite,0)),2) & "</td>"

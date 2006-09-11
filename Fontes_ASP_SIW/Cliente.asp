@@ -1920,7 +1920,6 @@ Public Sub Grava
           ScriptClose
        End If
     Case "CLENDER"  'ENDEREÇO
-        
         If O = "I" or O = "A" Then
            ' Se o endereço a ser gravado foi indicado como padrão, verifica se não existe algum outro
            ' nesta situação. Só pode haver um endereço padrão para a pessoa dentro de cada tipo de endereço.
@@ -1997,7 +1996,7 @@ Public Sub Grava
               DB_GetContaBancoList RS, Request("w_sq_pessoa"), Request("w_sq_pessoa_conta"), "CONTASBANCARIAS"
               If RS.RecordCount > 0 Then
                 If cDbl(RS("sq_pessoa_conta")) <> cDbl(Nvl(Request("w_sq_pessoa_conta"),0)) Then
-                 w_mensagem = "ATENÇÃO: Só pode haver uma conta padrão. Favor verificar."
+                   w_mensagem = "ATENÇÃO: Só pode haver uma conta padrão. Favor verificar."
                 End If
               End If
               DesconectaBD

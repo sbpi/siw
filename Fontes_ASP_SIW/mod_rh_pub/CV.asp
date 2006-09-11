@@ -504,7 +504,7 @@ Sub Identificacao
     ShowHTML "        <tr valign=""top"">"
     SelecaoSexo "<u>S</u>exo:", "S", null, w_sexo, null, "w_sexo", null, null
     ShowHTML "          <td colspan=2><table border=""0"" width=""100%"" cellpadding=0 cellspacing=0><tr>"
-    SelecaoEstadoCivil "Estado ci<u>v</u>il:", "V", null, w_sq_estado_civil, null, "w_sq_estado_civil", null, null
+    SelecaoEstadoCivil "Estado ci<u>v</u>il:", "V", null, w_sq_estado_civil, null, "w_sq_estado_civil", "S", null
     ShowHTML "          </table>"
     ShowHTML "        <tr valign=""top"">"
     SelecaoFormacao "F<u>o</u>rmação acadêmica:", "O", "Selecione a formação acadêmica mais alta que você tem como comprovar a conclusão.", w_sq_formacao, "Acadêmica", "w_sq_formacao", null, null

@@ -9,6 +9,7 @@
 <!-- #INCLUDE VIRTUAL="/siw/jScript.asp" -->
 <!-- #INCLUDE VIRTUAL="/siw/Funcoes.asp" -->
 <!-- #INCLUDE VIRTUAL="/siw/cp_upload/_upload.asp" -->
+<!-- #INCLUDE FILE="DB_Geral.asp" -->
 <!-- #INCLUDE FILE="DB_CV.asp" -->
 <!-- #INCLUDE FILE="DB_Tabelas.asp" -->
 <!-- #INCLUDE FILE="DML_CV.asp" -->
@@ -83,7 +84,6 @@ w_usuario = RetornaUsuario()
 If Session("p_portal") > "" Then
    Session("sq_pessoa") = w_usuario
 End If
-
 
 If nvl(SG,"nulo") <> "nulo" and nvl(SG,"nulo") <> "CVCARGOS"  Then 
    w_menu    = RetornaMenu(w_cliente, SG) 
@@ -353,19 +353,23 @@ Sub Identificacao
   Dim w_sq_contrato_colaborador, w_sq_tipo_vinculo, w_username_pessoa, w_email
   
   Dim i, w_erro, w_como_funciona, w_cor, w_readonly
-  
   If cDbl(Nvl(P1,0)) = 1 and w_troca = "" Then
-     w_chave           = Nvl(Request("w_sq_pessoa"),w_usuario)
-
+     'w_chave           = Nvl(Request("w_sq_pessoa"),w_usuario)
      w_cpf             = Request("w_cpf")
-     If w_cpf > "" Then
-        DB_GetPersonData RS, w_cliente, null, w_cpf, null
-        If Not RS.EOF Then
-           w_chave = RS("sq_pessoa")
+     If (w_cpf > "" or Nvl(Request("w_sq_pessoa"),"") > "" or Nvl(Request("w_chave"),"") > "") Then
+        If w_cpf > "" Then
+           DB_GetPersonData RS, w_cliente, null, w_cpf, null
+           If Not RS.EOF Then
+              w_chave = RS("sq_pessoa")
+           Else
+              w_chave = ""
+           End If
         Else
-           w_chave = ""
+           w_chave = Nvl(Request("w_sq_pessoa"),Request("w_sq_pessoa"))
         End If
         DesconectaBD     
+     Else
+        w_chave = w_usuario
      End If
      If Nvl(w_chave,"") > "" and O = "I" Then
         DB_GetGPColaborador RS, w_cliente, w_chave, null, null, null, null, null, null, null, null, null, null, null, null, null, null
@@ -378,10 +382,12 @@ Sub Identificacao
         End If
      End If
   Else
-     If InStr(uCase(Request.ServerVariables("http_content_type")),"MULTIPART/FORM-DATA") > 0 Then 
-        w_chave           = Nvl(ul.Texts.Item("w_chave"),w_usuario)
-     Else
-        w_chave           = Nvl(Request("w_chave"),w_usuario)
+     If O <> "I" Then
+       If InStr(uCase(Request.ServerVariables("http_content_type")),"MULTIPART/FORM-DATA") > 0 Then 
+          w_chave           = Nvl(ul.Texts.Item("w_chave"),w_usuario)
+       Else
+          w_chave           = Nvl(Request("w_chave"),w_usuario)
+       End If
      End If
   End If
   w_readonly        = ""
@@ -583,6 +589,9 @@ Sub Identificacao
     ShowHTML "<INPUT type=""hidden"" name=""w_troca"" value="""">"
     ShowHTML "<INPUT type=""hidden"" name=""w_chave"" value=""" & w_chave &""">"
     ShowHTML "<INPUT type=""hidden"" name=""w_atual"" value=""" & w_foto &""">"
+    If cDbl(Nvl(P1,0)) <> 1 Then
+       ShowHTML "<INPUT type=""hidden"" name=""w_usuario"" value=""" & w_usuario &""">"
+    End If
 
     ShowHTML "<tr bgcolor=""" & conTrBgColor & """><td align=""center"">"
     ShowHTML "    <table width=""97%"" border=""0"">"
@@ -643,7 +652,7 @@ Sub Identificacao
     ShowHTML "      </table>"
     If cDbl(Nvl(P1,0)) = 1 Then
        ShowHTML "<INPUT type=""hidden"" name=""w_sq_contrato_colaborador"" value=""" & w_sq_contrato_colaborador & """>"
-       ShowHTML "<INPUT type=""hidden"" name=""w_usuario"" value=""" & w_usuario & """>"
+       'ShowHTML "<INPUT type=""hidden"" name=""w_usuario"" value=""" & w_usuario & """>"
        If Nvl(w_sq_contrato_colaborador,"") = "" Then
           ShowHTML "        <tr><td colspan=3 align=""center"" height=""2"" bgcolor=""#000000""></td></tr>"
           ShowHTML "        <tr><td colspan=3 align=""center"" height=""1"" bgcolor=""#000000""></td></tr>"
@@ -1025,7 +1034,7 @@ Sub Idiomas
   If O = "L" Then
     AbreSessao
     ' Exibe a quantidade de registros apresentados na listagem e o cabeçalho da tabela de listagem
-    ShowHTML "<tr><td><font size=""1""><a accesskey=""I"" class=""SS"" href=""" & w_dir & w_Pagina & par & "&R=" & w_Pagina & par & "&O=I&P1=" & P1 & "&P2=" & P2 & "&P3=" & P3 & "&P4=" & P4 & "&TP=" & TP & "&SG=" & SG & MontaFiltro("GET") & """><u>I</u>ncluir</a>&nbsp;"
+    ShowHTML "<tr><td><font size=""1""><a accesskey=""I"" class=""SS"" href=""" & w_dir & w_Pagina & par & "&R=" & w_Pagina & par & "&w_usuario=" & w_usuario & "&O=I&P1=" & P1 & "&P2=" & P2 & "&P3=" & P3 & "&P4=" & P4 & "&TP=" & TP & "&SG=" & SG & MontaFiltro("GET") & """><u>I</u>ncluir</a>&nbsp;"
     ShowHTML "    <td align=""right""><font size=""1""><b>Registros existentes: " & RS.RecordCount
     ShowHTML "<tr><td align=""center"" colspan=3>"
     ShowHTML "    <TABLE WIDTH=""100%"" bgcolor=""" & conTableBgColor & """ BORDER=""" & conTableBorder & """ CELLSPACING=""" & conTableCellSpacing & """ CELLPADDING=""" & conTableCellPadding & """ BorderColorDark=""" & conTableBorderColorDark & """ BorderColorLight=""" & conTableBorderColorLight & """>"
@@ -1050,8 +1059,8 @@ Sub Idiomas
         ShowHTML "        <td align=""center""><font size=""1"">" & RS("nm_conversacao") & "</td>"
         ShowHTML "        <td align=""center""><font size=""1"">" & RS("nm_compreensao") & "</td>"
         ShowHTML "        <td align=""top"" nowrap><font size=""1"">"
-        ShowHTML "          <A class=""HL"" HREF=""" & w_dir & w_Pagina & par & "&R=" & w_Pagina & par & "&O=A&w_chave=" & RS("sq_idioma") & "&P1=" & P1 & "&P2=" & P2 & "&P3=" & P3 & "&P4=" & P4 & "&TP=" & TP & "&SG=" & SG & """>Alterar</A>&nbsp"
-        ShowHTML "          <A class=""HL"" HREF=""" & w_dir & w_Pagina & par & "&R=" & w_Pagina & par & "&O=E&w_chave=" & RS("sq_idioma") & "&P1=" & P1 & "&P2=" & P2 & "&P3=" & P3 & "&P4=" & P4 & "&TP=" & TP & "&SG=" & SG & """>Excluir</A>&nbsp"
+        ShowHTML "          <A class=""HL"" HREF=""" & w_dir & w_Pagina & par & "&R=" & w_Pagina & par & "&O=A&w_chave=" & RS("sq_idioma") & "&w_usuario=" & w_usuario & "&P1=" & P1 & "&P2=" & P2 & "&P3=" & P3 & "&P4=" & P4 & "&TP=" & TP & "&SG=" & SG & """>Alterar</A>&nbsp"
+        ShowHTML "          <A class=""HL"" HREF=""" & w_dir & w_Pagina & par & "&R=" & w_Pagina & par & "&O=E&w_chave=" & RS("sq_idioma") & "&w_usuario=" & w_usuario & "&P1=" & P1 & "&P2=" & P2 & "&P3=" & P3 & "&P4=" & P4 & "&TP=" & TP & "&SG=" & SG & """>Excluir</A>&nbsp"
         ShowHTML "        </td>"
         ShowHTML "      </tr>"
         RS.MoveNext
@@ -1068,6 +1077,7 @@ Sub Idiomas
     End If
     AbreForm "Form", w_dir & w_Pagina & "Grava", "POST", "return(Validacao(this));", null,P1,P2,P3,P4,TP,SG,R,O
     ShowHTML "<INPUT type=""hidden"" name=""w_troca"" value="""">"
+    ShowHTML "<INPUT type=""hidden"" name=""w_usuario"" value=""" & w_usuario & """>"
 
     ShowHTML "<tr bgcolor=""" & conTrBgColor & """><td align=""center"">"
     ShowHTML "    <table width=""97%"" border=""0"">"
@@ -1098,7 +1108,7 @@ Sub Idiomas
           ShowHTML "            <input class=""STB"" type=""submit"" name=""Botao"" value=""Atualizar"">"
        End If
     End If
-    ShowHTML "            <input class=""STB"" type=""button"" onClick=""location.href='" & w_Pagina & par & "&w_chave=" & w_chave & "&P1=" & P1 & "&P2=" & P2 & "&P3=" & P3 & "&P4=" & P4 & "&TP=" & TP & "&SG=" & SG & "&O=L';"" name=""Botao"" value=""Cancelar"">"
+    ShowHTML "            <input class=""STB"" type=""button"" onClick=""location.href='" & w_Pagina & par & "&w_chave=" & w_chave & "&w_usuario=" & w_usuario & "&P1=" & P1 & "&P2=" & P2 & "&P3=" & P3 & "&P4=" & P4 & "&TP=" & TP & "&SG=" & SG & "&O=L';"" name=""Botao"" value=""Cancelar"">"
     ShowHTML "          </td>"
     ShowHTML "      </tr>"
     ShowHTML "    </table>"
@@ -1206,7 +1216,7 @@ Sub Experiencia
      ValidateOpen "Validacao"
      If InStr("IA",O) > 0 Then
         Validate "w_empregador", "Empregador", "1", "1", "1", "60", "1", "1"
-        Validate "w_nm_area", "Área do conhecimento", "", "1", "1", "80", "1", "1"
+        Validate "w_nm_area", "Área do conhecimento", "", "1", "1", "92", "1", "1"
         Validate "w_entrada", "Data entrada", "DATA", "1", "10", "10", "", "1"
         Validate "w_saida", "Data saída", "DATA", "", "10", "10", "", "1"
         Validate "w_ultimo_salario", "Último salário mensal", "VALOR", "1", "4", "15", "", "0123456789,."
@@ -1460,7 +1470,7 @@ Sub Cargos
         ShowHTML " }"
         Validate "w_inicio", "Início", "Data", "1", "10", "10", "", "1"
         Validate "w_fim", "Fim", "Data", "", "10", "10", "", "1"
-        Validate "w_nm_area", "Área do conhecimento", "", "1", "1", "80", "1", "1"
+        Validate "w_nm_area", "Área do conhecimento", "", "1", "1", "92", "1", "1"
         If Session("p_portal") = "" Then Validate "w_assinatura", "Assinatura Eletrônica", "1", "1", "6", "30", "1", "1" End If
      ElseIf O = "E" Then
         If Session("p_portal") = "" Then Validate "w_assinatura", "Assinatura Eletrônica", "1", "1", "6", "30", "1", "1" End If
@@ -1643,7 +1653,7 @@ Sub Escolaridade
      ValidateOpen "Validacao"
      If InStr("IA",O) > 0 Then
         Validate "w_sq_formacao", "Formação", "SELECT", "1", "1", "10", "", "1"
-        Validate "w_nm_area", "Área do conhecimento", "", "", "1", "80", "1", "1"
+        Validate "w_nm_area", "Área do conhecimento", "", "", "1", "92", "1", "1"
         ShowHTML "  if (theForm.w_sq_formacao.selectedIndex > 3 && (theForm.w_sq_area_conhecimento.value=='' || theForm.w_nome.value=='')) { "
         ShowHTML "     alert('Se formação acadêmica for graduação ou acima, informe a área do conhecimento e o nome do curso'); "
         ShowHTML "     return false; "
@@ -1685,7 +1695,7 @@ Sub Escolaridade
   If O = "L" Then
     AbreSessao
     ' Exibe a quantidade de registros apresentados na listagem e o cabeçalho da tabela de listagem
-    ShowHTML "<tr><td><font size=""1""><a accesskey=""I"" class=""SS"" href=""" & w_dir & w_Pagina & par & "&R=" & w_Pagina & par & "&O=I&w_chave=" & w_chave & "&P1=" & P1 & "&P2=" & P2 & "&P3=" & P3 & "&P4=" & P4 & "&TP=" & TP & "&SG=" & SG & MontaFiltro("GET") & """><u>I</u>ncluir</a>&nbsp;"
+    ShowHTML "<tr><td><font size=""1""><a accesskey=""I"" class=""SS"" href=""" & w_dir & w_Pagina & par & "&R=" & w_Pagina & par & "&O=I&w_chave=" & w_chave & "&w_usuario=" & w_usuario & "&P1=" & P1 & "&P2=" & P2 & "&P3=" & P3 & "&P4=" & P4 & "&TP=" & TP & "&SG=" & SG & MontaFiltro("GET") & """><u>I</u>ncluir</a>&nbsp;"
     ShowHTML "    <td align=""right""><font size=""1""><b>Registros existentes: " & RS.RecordCount
     ShowHTML "<tr><td align=""center"" colspan=3>"
     ShowHTML "    <TABLE WIDTH=""100%"" bgcolor=""" & conTableBgColor & """ BORDER=""" & conTableBorder & """ CELLSPACING=""" & conTableCellSpacing & """ CELLPADDING=""" & conTableCellPadding & """ BorderColorDark=""" & conTableBorderColorDark & """ BorderColorLight=""" & conTableBorderColorLight & """>"
@@ -1710,8 +1720,8 @@ Sub Escolaridade
         ShowHTML "        <td align=""center""><font size=""1"">" & RS("inicio") & "</td>"
         ShowHTML "        <td align=""center""><font size=""1"">" & Nvl(RS("fim"),"---") & "</td>"
         ShowHTML "        <td align=""top"" nowrap><font size=""1"">"
-        ShowHTML "          <A class=""HL"" HREF=""" & w_dir & w_Pagina & par & "&R=" & w_Pagina & par & "&O=A&w_chave=" & RS("sq_cvpessoa_escol") & "&P1=" & P1 & "&P2=" & P2 & "&P3=" & P3 & "&P4=" & P4 & "&TP=" & TP & "&SG=" & SG & """>Alterar</A>&nbsp"
-        ShowHTML "          <A class=""HL"" HREF=""" & w_dir & w_Pagina & par & "&R=" & w_Pagina & par & "&O=E&w_chave=" & RS("sq_cvpessoa_escol") & "&P1=" & P1 & "&P2=" & P2 & "&P3=" & P3 & "&P4=" & P4 & "&TP=" & TP & "&SG=" & SG & """>Excluir</A>&nbsp"
+        ShowHTML "          <A class=""HL"" HREF=""" & w_dir & w_Pagina & par & "&R=" & w_Pagina & par & "&O=A&w_chave=" & RS("sq_cvpessoa_escol") & "&w_usuario=" & w_usuario & "&P1=" & P1 & "&P2=" & P2 & "&P3=" & P3 & "&P4=" & P4 & "&TP=" & TP & "&SG=" & SG & """>Alterar</A>&nbsp"
+        ShowHTML "          <A class=""HL"" HREF=""" & w_dir & w_Pagina & par & "&R=" & w_Pagina & par & "&O=E&w_chave=" & RS("sq_cvpessoa_escol") & "&w_usuario=" & w_usuario & "&P1=" & P1 & "&P2=" & P2 & "&P3=" & P3 & "&P4=" & P4 & "&TP=" & TP & "&SG=" & SG & """>Excluir</A>&nbsp"
         ShowHTML "        </td>"
         ShowHTML "      </tr>"
         RS.MoveNext
@@ -1730,6 +1740,7 @@ Sub Escolaridade
     ShowHTML "<INPUT type=""hidden"" name=""w_chave"" value=""" & w_chave & """>"
     ShowHTML "<INPUT type=""hidden"" name=""w_troca"" value="""">"
     ShowHTML "<INPUT type=""hidden"" name=""w_sq_area_conhecimento"" value=""" & w_sq_area_conhecimento & """>"
+    ShowHTML "<INPUT type=""hidden"" name=""w_usuario"" value=""" & w_usuario & """>"
 
     ShowHTML "<tr bgcolor=""" & conTrBgColor & """><td align=""center"">"
     ShowHTML "    <table width=""97%"" border=""0"">"
@@ -1758,7 +1769,7 @@ Sub Escolaridade
           ShowHTML "            <input class=""STB"" type=""submit"" name=""Botao"" value=""Atualizar"">"
        End If
     End If
-    ShowHTML "            <input class=""STB"" type=""button"" onClick=""location.href='" & w_Pagina & par & "&w_chave=" & w_chave & "&P1=" & P1 & "&P2=" & P2 & "&P3=" & P3 & "&P4=" & P4 & "&TP=" & TP & "&SG=" & SG & "&O=L';"" name=""Botao"" value=""Cancelar"">"
+    ShowHTML "            <input class=""STB"" type=""button"" onClick=""location.href='" & w_Pagina & par & "&w_chave=" & w_chave & "&w_usuario=" & w_usuario & "&P1=" & P1 & "&P2=" & P2 & "&P3=" & P3 & "&P4=" & P4 & "&TP=" & TP & "&SG=" & SG & "&O=L';"" name=""Botao"" value=""Cancelar"">"
     ShowHTML "          </td>"
     ShowHTML "      </tr>"
     ShowHTML "    </table>"
@@ -1844,7 +1855,7 @@ Sub Extensao
      ValidateOpen "Validacao"
      If InStr("IA",O) > 0 Then
         Validate "w_sq_formacao", "Tipo de extensão", "SELECT", "1", "1", "10", "", "1"
-        Validate "w_nm_area", "Área do conhecimento", "", "1", "1", "80", "1", "1"
+        Validate "w_nm_area", "Área do conhecimento", "", "1", "1", "92", "1", "1"
         Validate "w_nome", "Nome", "1", "1", "5", "80", "1", "1"
         Validate "w_instituicao", "Instituição", "1", "1", "1", "100", "1", "1"
         Validate "w_carga_horaria", "Carga horária", "", "1", "2", "4", "", "0123456789"
@@ -1881,7 +1892,7 @@ Sub Extensao
   If O = "L" Then
     AbreSessao
     ' Exibe a quantidade de registros apresentados na listagem e o cabeçalho da tabela de listagem
-    ShowHTML "<tr><td><font size=""1""><a accesskey=""I"" class=""SS"" href=""" & w_dir & w_Pagina & par & "&R=" & w_Pagina & par & "&O=I&w_chave=" & w_chave & "&P1=" & P1 & "&P2=" & P2 & "&P3=" & P3 & "&P4=" & P4 & "&TP=" & TP & "&SG=" & SG & MontaFiltro("GET") & """><u>I</u>ncluir</a>&nbsp;"
+    ShowHTML "<tr><td><font size=""1""><a accesskey=""I"" class=""SS"" href=""" & w_dir & w_Pagina & par & "&R=" & w_Pagina & par & "&O=I&w_chave=" & w_chave & "&w_usuario=" & w_usuario & "&P1=" & P1 & "&P2=" & P2 & "&P3=" & P3 & "&P4=" & P4 & "&TP=" & TP & "&SG=" & SG & MontaFiltro("GET") & """><u>I</u>ncluir</a>&nbsp;"
     ShowHTML "    <td align=""right""><font size=""1""><b>Registros existentes: " & RS.RecordCount
     ShowHTML "<tr><td align=""center"" colspan=3>"
     ShowHTML "    <TABLE WIDTH=""100%"" bgcolor=""" & conTableBgColor & """ BORDER=""" & conTableBorder & """ CELLSPACING=""" & conTableCellSpacing & """ CELLPADDING=""" & conTableCellPadding & """ BorderColorDark=""" & conTableBorderColorDark & """ BorderColorLight=""" & conTableBorderColorLight & """>"
@@ -1906,8 +1917,8 @@ Sub Extensao
         ShowHTML "        <td align=""center""><font size=""1"">" & RS("carga_horaria") & "</td>"
         ShowHTML "        <td align=""center""><font size=""1"">" & Nvl(FormataDataEdicao(RS("conclusao")),"---") & "</td>"
         ShowHTML "        <td align=""top"" nowrap><font size=""1"">"
-        ShowHTML "          <A class=""HL"" HREF=""" & w_dir & w_Pagina & par & "&R=" & w_Pagina & par & "&O=A&w_chave=" & RS("sq_cvpescurtec") & "&P1=" & P1 & "&P2=" & P2 & "&P3=" & P3 & "&P4=" & P4 & "&TP=" & TP & "&SG=" & SG & """>Alterar</A>&nbsp"
-        ShowHTML "          <A class=""HL"" HREF=""" & w_dir & w_Pagina & par & "&R=" & w_Pagina & par & "&O=E&w_chave=" & RS("sq_cvpescurtec") & "&P1=" & P1 & "&P2=" & P2 & "&P3=" & P3 & "&P4=" & P4 & "&TP=" & TP & "&SG=" & SG & """>Excluir</A>&nbsp"
+        ShowHTML "          <A class=""HL"" HREF=""" & w_dir & w_Pagina & par & "&R=" & w_Pagina & par & "&O=A&w_chave=" & RS("sq_cvpescurtec") & "&w_usuario=" & w_usuario & "&P1=" & P1 & "&P2=" & P2 & "&P3=" & P3 & "&P4=" & P4 & "&TP=" & TP & "&SG=" & SG & """>Alterar</A>&nbsp"
+        ShowHTML "          <A class=""HL"" HREF=""" & w_dir & w_Pagina & par & "&R=" & w_Pagina & par & "&O=E&w_chave=" & RS("sq_cvpescurtec") & "&w_usuario=" & w_usuario & "&P1=" & P1 & "&P2=" & P2 & "&P3=" & P3 & "&P4=" & P4 & "&TP=" & TP & "&SG=" & SG & """>Excluir</A>&nbsp"
         ShowHTML "        </td>"
         ShowHTML "      </tr>"
         RS.MoveNext
@@ -1925,6 +1936,7 @@ Sub Extensao
     AbreForm "Form", w_dir & w_Pagina & "Grava", "POST", "return(Validacao(this));", null,P1,P2,P3,P4,TP,SG,R,O
     ShowHTML "<INPUT type=""hidden"" name=""w_chave"" value=""" & w_chave & """>"
     ShowHTML "<INPUT type=""hidden"" name=""w_troca"" value="""">"
+    ShowHTML "<INPUT type=""hidden"" name=""w_usuario"" value=""" & w_usuario & """>"
     ShowHTML "<INPUT type=""hidden"" name=""w_sq_area_conhecimento"" value=""" & w_sq_area_conhecimento & """>"
 
     ShowHTML "<tr bgcolor=""" & conTrBgColor & """><td align=""center"">"
@@ -1953,7 +1965,7 @@ Sub Extensao
           ShowHTML "            <input class=""STB"" type=""submit"" name=""Botao"" value=""Atualizar"">"
        End If
     End If
-    ShowHTML "            <input class=""STB"" type=""button"" onClick=""location.href='" & w_Pagina & par & "&w_chave=" & w_chave & "&P1=" & P1 & "&P2=" & P2 & "&P3=" & P3 & "&P4=" & P4 & "&TP=" & TP & "&SG=" & SG & "&O=L';"" name=""Botao"" value=""Cancelar"">"
+    ShowHTML "            <input class=""STB"" type=""button"" onClick=""location.href='" & w_Pagina & par & "&w_chave=" & w_chave & "&w_usuario=" & w_usuario & "&P1=" & P1 & "&P2=" & P2 & "&P3=" & P3 & "&P4=" & P4 & "&TP=" & TP & "&SG=" & SG & "&O=L';"" name=""Botao"" value=""Cancelar"">"
     ShowHTML "          </td>"
     ShowHTML "      </tr>"
     ShowHTML "    </table>"
@@ -2037,7 +2049,7 @@ Sub Producao
      ValidateOpen "Validacao"
      If InStr("IA",O) > 0 Then
         Validate "w_sq_formacao", "Tipo da produção", "SELECT", "1", "1", "10", "", "1"
-        Validate "w_nm_area", "Área do conhecimento", "", "1", "5", "80", "1", "1"
+        Validate "w_nm_area", "Área do conhecimento", "", "1", "5", "92", "1", "1"
         Validate "w_nome", "Nome", "1", "1", "1", "80", "1", "1"
         Validate "w_meio", "Meio de publicação", "", "1", "2", "100", "1", "1"
         Validate "w_data", "Data", "DATA", "1", "10", "10", "", "0123456789/"
@@ -2073,7 +2085,7 @@ Sub Producao
   If O = "L" Then
     AbreSessao
     ' Exibe a quantidade de registros apresentados na listagem e o cabeçalho da tabela de listagem
-    ShowHTML "<tr><td><font size=""1""><a accesskey=""I"" class=""SS"" href=""" & w_dir & w_Pagina & par & "&R=" & w_Pagina & par & "&O=I&w_chave=" & w_chave & "&P1=" & P1 & "&P2=" & P2 & "&P3=" & P3 & "&P4=" & P4 & "&TP=" & TP & "&SG=" & SG & MontaFiltro("GET") & """><u>I</u>ncluir</a>&nbsp;"
+    ShowHTML "<tr><td><font size=""1""><a accesskey=""I"" class=""SS"" href=""" & w_dir & w_Pagina & par & "&R=" & w_Pagina & par & "&O=I&w_chave=" & w_chave & "&w_usuario=" & w_usuario & "&P1=" & P1 & "&P2=" & P2 & "&P3=" & P3 & "&P4=" & P4 & "&TP=" & TP & "&SG=" & SG & MontaFiltro("GET") & """><u>I</u>ncluir</a>&nbsp;"
     ShowHTML "    <td align=""right""><font size=""1""><b>Registros existentes: " & RS.RecordCount
     ShowHTML "<tr><td align=""center"" colspan=3>"
     ShowHTML "    <TABLE WIDTH=""100%"" bgcolor=""" & conTableBgColor & """ BORDER=""" & conTableBorder & """ CELLSPACING=""" & conTableCellSpacing & """ CELLPADDING=""" & conTableCellPadding & """ BorderColorDark=""" & conTableBorderColorDark & """ BorderColorLight=""" & conTableBorderColorLight & """>"
@@ -2098,8 +2110,8 @@ Sub Producao
         ShowHTML "        <td><font size=""1"">" & RS("meio") & "</td>"
         ShowHTML "        <td align=""center""><font size=""1"">" & Nvl(FormataDataEdicao(RS("data")),"---") & "</td>"
         ShowHTML "        <td align=""top"" nowrap><font size=""1"">"
-        ShowHTML "          <A class=""HL"" HREF=""" & w_dir & w_Pagina & par & "&R=" & w_Pagina & par & "&O=A&w_chave=" & RS("sq_cvpessoa_prod") & "&P1=" & P1 & "&P2=" & P2 & "&P3=" & P3 & "&P4=" & P4 & "&TP=" & TP & "&SG=" & SG & """>Alterar</A>&nbsp"
-        ShowHTML "          <A class=""HL"" HREF=""" & w_dir & w_Pagina & par & "&R=" & w_Pagina & par & "&O=E&w_chave=" & RS("sq_cvpessoa_prod") & "&P1=" & P1 & "&P2=" & P2 & "&P3=" & P3 & "&P4=" & P4 & "&TP=" & TP & "&SG=" & SG & """>Excluir</A>&nbsp"
+        ShowHTML "          <A class=""HL"" HREF=""" & w_dir & w_Pagina & par & "&R=" & w_Pagina & par & "&O=A&w_chave=" & RS("sq_cvpessoa_prod") & "&w_usuario=" & w_usuario & "&P1=" & P1 & "&P2=" & P2 & "&P3=" & P3 & "&P4=" & P4 & "&TP=" & TP & "&SG=" & SG & """>Alterar</A>&nbsp"
+        ShowHTML "          <A class=""HL"" HREF=""" & w_dir & w_Pagina & par & "&R=" & w_Pagina & par & "&O=E&w_chave=" & RS("sq_cvpessoa_prod") & "&w_usuario=" & w_usuario & "&P1=" & P1 & "&P2=" & P2 & "&P3=" & P3 & "&P4=" & P4 & "&TP=" & TP & "&SG=" & SG & """>Excluir</A>&nbsp"
         ShowHTML "        </td>"
         ShowHTML "      </tr>"
         RS.MoveNext
@@ -2117,6 +2129,7 @@ Sub Producao
     AbreForm "Form", w_dir & w_Pagina & "Grava", "POST", "return(Validacao(this));", null,P1,P2,P3,P4,TP,SG,R,O
     ShowHTML "<INPUT type=""hidden"" name=""w_chave"" value=""" & w_chave & """>"
     ShowHTML "<INPUT type=""hidden"" name=""w_troca"" value="""">"
+    ShowHTML "<INPUT type=""hidden"" name=""w_usuario"" value=""" & w_usuario & """>"
     ShowHTML "<INPUT type=""hidden"" name=""w_sq_area_conhecimento"" value=""" & w_sq_area_conhecimento & """>"
 
     ShowHTML "<tr bgcolor=""" & conTrBgColor & """><td align=""center"">"
@@ -2144,7 +2157,7 @@ Sub Producao
           ShowHTML "            <input class=""STB"" type=""submit"" name=""Botao"" value=""Atualizar"">"
        End If
     End If
-    ShowHTML "            <input class=""STB"" type=""button"" onClick=""location.href='" & w_Pagina & par & "&w_chave=" & w_chave & "&P1=" & P1 & "&P2=" & P2 & "&P3=" & P3 & "&P4=" & P4 & "&TP=" & TP & "&SG=" & SG & "&O=L';"" name=""Botao"" value=""Cancelar"">"
+    ShowHTML "            <input class=""STB"" type=""button"" onClick=""location.href='" & w_Pagina & par & "&w_chave=" & w_chave & "&w_usuario=" & w_usuario & "&P1=" & P1 & "&P2=" & P2 & "&P3=" & P3 & "&P4=" & P4 & "&TP=" & TP & "&SG=" & SG & "&O=L';"" name=""Botao"" value=""Cancelar"">"
     ShowHTML "          </td>"
     ShowHTML "      </tr>"
     ShowHTML "    </table>"
@@ -2429,7 +2442,7 @@ Public Sub Grava
        Else
           ScriptOpen "JavaScript"
           ShowHTML "  alert('Assinatura Eletrônica inválida!');"
-          ShowHTML "  history.back(1);"
+          ShowHTML "  history.back(-1);"
           ScriptClose
        End If
     Case "CVHIST"
@@ -2445,7 +2458,7 @@ Public Sub Grava
               Request("w_servico_publico_fim"), Request("w_atividades_civicas"), Request("w_familiar")
           
           ScriptOpen "JavaScript"
-          ShowHTML "  location.href='" & R & "&w_chave=" & Request("w_Chave") & "&P1=" & P1 & "&P2=" & P2 & "&P3=" & P3 & "&P4=" & P4 & "&TP=" & TP & "&SG=" & SG & MontaFiltro("GET") & "';"
+          ShowHTML "  location.href='" & R & "&w_chave=" & Request("w_Chave") & "&w_usuario=" & w_usuario & "&P1=" & P1 & "&P2=" & P2 & "&P3=" & P3 & "&P4=" & P4 & "&TP=" & TP & "&SG=" & SG & MontaFiltro("GET") & "';"
           ScriptClose
        Else
           ScriptOpen "JavaScript"
@@ -2463,7 +2476,7 @@ Public Sub Grava
               Request("w_compreensao"), Request("w_conversacao")
           
           ScriptOpen "JavaScript"
-          ShowHTML "  location.href='" & R & "&w_chave=" & Request("w_Chave") & "&P1=" & P1 & "&P2=" & P2 & "&P3=" & P3 & "&P4=" & P4 & "&TP=" & TP & "&SG=" & SG & MontaFiltro("GET") & "';"
+          ShowHTML "  location.href='" & R & "&w_chave=" & Request("w_Chave") & "&w_usuario=" & w_usuario & "&P1=" & P1 & "&P2=" & P2 & "&P3=" & P3 & "&P4=" & P4 & "&TP=" & TP & "&SG=" & SG & MontaFiltro("GET") & "';"
           ScriptClose
        Else
           ScriptOpen "JavaScript"
@@ -2483,7 +2496,7 @@ Public Sub Grava
               Request("w_atividades")
           
           ScriptOpen "JavaScript"
-          ShowHTML "  location.href='" & R & "&w_chave=" & Request("w_Chave") & "&P1=" & P1 & "&P2=" & P2 & "&P3=" & P3 & "&P4=" & P4 & "&TP=" & TP & "&SG=" & SG & MontaFiltro("GET") & "';"
+          ShowHTML "  location.href='" & R & "&w_chave=" & Request("w_Chave") & "&w_usuario=" & w_usuario & "&P1=" & P1 & "&P2=" & P2 & "&P3=" & P3 & "&P4=" & P4 & "&TP=" & TP & "&SG=" & SG & MontaFiltro("GET") & "';"
           ScriptClose
        Else
           ScriptOpen "JavaScript"
@@ -2501,7 +2514,7 @@ Public Sub Grava
               Request("w_inicio"), Request("w_fim")
           
           ScriptOpen "JavaScript"
-          ShowHTML "  location.href='" & R & "&w_sq_cvpesexp=" & Request("w_sq_cvpesexp") & "&P1=" & P1 & "&P2=" & P2 & "&P3=" & P3 & "&P4=" & P4 & "&TP=" & TP & "&SG=" & SG & MontaFiltro("GET") & "';"
+          ShowHTML "  location.href='" & R & "&w_sq_cvpesexp=" & Request("w_sq_cvpesexp") & "&w_usuario=" & w_usuario & "&P1=" & P1 & "&P2=" & P2 & "&P3=" & P3 & "&P4=" & P4 & "&TP=" & TP & "&SG=" & SG & MontaFiltro("GET") & "';"
           ScriptClose
        Else
           ScriptOpen "JavaScript"
@@ -2519,7 +2532,7 @@ Public Sub Grava
               Request("w_nome"), Request("w_instituicao"), Request("w_inicio"), Request("w_fim")
           
           ScriptOpen "JavaScript"
-          ShowHTML "  location.href='" & R & "&w_chave=" & Request("w_Chave") & "&P1=" & P1 & "&P2=" & P2 & "&P3=" & P3 & "&P4=" & P4 & "&TP=" & TP & "&SG=" & SG & MontaFiltro("GET") & "';"
+          ShowHTML "  location.href='" & R & "&w_chave=" & Request("w_Chave") & "&w_usuario=" & w_usuario & "&P1=" & P1 & "&P2=" & P2 & "&P3=" & P3 & "&P4=" & P4 & "&TP=" & TP & "&SG=" & SG & MontaFiltro("GET") & "';"
           ScriptClose
        Else
           ScriptOpen "JavaScript"
@@ -2537,7 +2550,7 @@ Public Sub Grava
               Request("w_nome"), Request("w_instituicao"), Request("w_carga_horaria"), Request("w_conclusao")
           
           ScriptOpen "JavaScript"
-          ShowHTML "  location.href='" & R & "&w_chave=" & Request("w_Chave") & "&P1=" & P1 & "&P2=" & P2 & "&P3=" & P3 & "&P4=" & P4 & "&TP=" & TP & "&SG=" & SG & MontaFiltro("GET") & "';"
+          ShowHTML "  location.href='" & R & "&w_chave=" & Request("w_Chave") & "&w_usuario=" & w_usuario & "&P1=" & P1 & "&P2=" & P2 & "&P3=" & P3 & "&P4=" & P4 & "&TP=" & TP & "&SG=" & SG & MontaFiltro("GET") & "';"
           ScriptClose
        Else
           ScriptOpen "JavaScript"
@@ -2555,7 +2568,7 @@ Public Sub Grava
               Request("w_nome"), Request("w_meio"), Request("w_data")
           
           ScriptOpen "JavaScript"
-          ShowHTML "  location.href='" & R & "&w_chave=" & Request("w_Chave") & "&P1=" & P1 & "&P2=" & P2 & "&P3=" & P3 & "&P4=" & P4 & "&TP=" & TP & "&SG=" & SG & MontaFiltro("GET") & "';"
+          ShowHTML "  location.href='" & R & "&w_chave=" & Request("w_Chave") & "&w_usuario=" & w_usuario & "&P1=" & P1 & "&P2=" & P2 & "&P3=" & P3 & "&P4=" & P4 & "&TP=" & TP & "&SG=" & SG & MontaFiltro("GET") & "';"
           ScriptClose
        Else
           ScriptOpen "JavaScript"

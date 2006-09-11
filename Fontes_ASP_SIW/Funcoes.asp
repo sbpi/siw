@@ -2247,7 +2247,7 @@ Sub TrataErro
     w_html = w_html & "   <br><br></font>"
     w_html = w_html & "</FONT></TD></TR></TABLE><BLOCKQUOTE>"
 
-    w_resultado = EnviaMail("ERRO SIW", w_html, "alex@sbpi.com.br; celso@sbpi.com.br", null)
+    w_resultado = EnviaMail("ERRO SIW", w_html, "desenv@sbpi.com.br", null)
     If w_resultado > "" Then
        w_html = w_html & "<SCRIPTOPEN ""JAVASCRIPT"">"
        w_html = w_html & "   alert('Não foi possível enviar o e-mail comunicando sobre o erro. Favor copiar esta página e enviá-la por e-mail aos gestores do sistema.');"

@@ -1861,11 +1861,11 @@ Sub Indicadores
      End If
      DesconectaBD
      ' Recupera todos os registros para a listagem
-     DB_GetSolicIndic_IS RS, w_chave, null, "LISTA"
+     DB_GetSolicIndic_IS RS, w_chave, null, "LISTA", null, null
      RS.Sort = "ordem"
   ElseIf InStr("AEV",O) > 0 and w_Troca = "" Then
      ' Recupera os dados do endereço informado
-     DB_GetSolicIndic_IS RS, w_chave, w_chave_aux, "REGISTRO"
+     DB_GetSolicIndic_IS RS, w_chave, w_chave_aux, "REGISTRO", null, null
      w_cd_unidade_medida    = RS("cd_unidade_medida")
      w_cd_periodicidade     = RS("cd_periodicidade")
      w_cd_base_geografica   = RS("cd_base_geografica")
@@ -2332,12 +2332,12 @@ Sub AtualizaIndicador
      next
   ElseIf O = "L" Then
      ' Recupera todos os registros para a listagem
-     DB_GetSolicIndic_IS RS, w_chave, null, "LISTA"
+     DB_GetSolicIndic_IS RS, w_chave, null, "LISTA", null, null
      RS.Sort = "ordem"
 
   ElseIf InStr("AEV",O) > 0 and w_Troca = "" Then
      ' Recupera os dados do endereço informado
-     DB_GetSolicIndic_IS RS, w_chave, w_chave_aux, "REGISTRO"
+     DB_GetSolicIndic_IS RS, w_chave, w_chave_aux, "REGISTRO", null, null
      w_titulo               = RS("titulo")
      w_ordem                = RS("ordem")
      w_sq_pessoa            = RS("sq_pessoa")
@@ -4103,7 +4103,7 @@ Sub Concluir
   ShowHTML "          <tr>"
   
   ' Verifica se o programa tem indicadores em aberto e avisa o usuário caso isso ocorra.
-  'DB_GetSolicIndic_IS RS, w_chave, null, "LISTA"
+  'DB_GetSolicIndic_IS RS, w_chave, null, "LISTA", null, null
   'w_cont = 0
   'While NOT RS.EOF
   '   If cDbl(RS("perc_conclusao")) <> 100 Then

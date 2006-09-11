@@ -377,11 +377,11 @@ Sub PPA
      w_selecionada_relevante    = Request("w_selecionada_relevante")
   ElseIf O = "L" Then
      ' Recupera todos os registros para a listagem
-     DB_GetAcaoPPA RS, null, w_cliente, null, null, null, null, null, null, null, null
+     DB_GetAcaoPPA RS, null, w_cliente, null, null, null, null, null, null, null, null, null
      RS.Sort = "ordena"
   ElseIf InStr("AEV",O) > 0 and w_Troca = "" Then
      ' Recupera os dados do endereço informado
-     DB_GetAcaoPPA RS, w_chave, w_cliente, null, null, null, null, null, null, null, null
+     DB_GetAcaoPPA RS, w_chave, w_cliente, null, null, null, null, null, null, null, null, null
      w_codigo                   = RS("codigo")
      w_nome                     = RS("nome")
      w_responsavel              = RS("responsavel")
@@ -609,7 +609,7 @@ Sub Rel_PPA
      End If
      DesconectaBD
      ' Recupera todos os registros para a listagem
-     DB_GetAcaoPPA RS, null, w_cliente, p_sq_acao_ppa_pai, p_sq_acao_ppa, p_responsavel, p_selecionada_mpog, p_selecionada_relevante, null, null, null
+     DB_GetAcaoPPA RS, null, w_cliente, p_sq_acao_ppa_pai, p_sq_acao_ppa, p_responsavel, p_selecionada_mpog, p_selecionada_relevante, null, null, null, null
      RS.Sort = "ordena"
   End If
   
@@ -2078,7 +2078,7 @@ Sub Rel_Sintetico_PPA
      End If
      DesconectaBD
      ' Recupera todos os registros para a listagem
-     DB_GetAcaoPPA RS, null, w_cliente, p_sq_acao_ppa_pai, p_sq_acao_ppa, p_responsavel, p_selecionada_mpog, p_selecionada_relevante, null, null, null
+     DB_GetAcaoPPA RS, null, w_cliente, p_sq_acao_ppa_pai, p_sq_acao_ppa, p_responsavel, p_selecionada_mpog, p_selecionada_relevante, null, null, null, null
      RS.Sort = "ordena"
   End If
   

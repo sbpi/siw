@@ -1,0 +1,165 @@
+<html>
+<head>
+<title>ccalendar ex 3</title>
+</head>
+<body bgcolor="#FFFFFF">
+<TABLE BORDER=0 WIDTH="100%"><TR><TH BGCOLOR="#E0E0F0"><H2>CCalendar, planning mannaging</H2></TH></TR></TABLE>
+<a href="ccalenda.htm">Back to applet</A>
+<TABLE BORDER=0 WIDTH="100%"><TR><TD BGCOLOR="E0E0F0"><H2>Purpose of this example</H2></TD></TR></TABLE>
+<ul>
+<li>Multilangage support ( Here, the french ).</li>
+<li>Change the first day of the week. Here Monday ( <i>Lundi</i> in French ).</li>
+<li>Change the color the days. In this example, an hotel shows the free days for congress organisation.</li>
+For more information about the usage, look at <A HREF="#EXPLAIN">the end of the page</A>.
+<li>Associate events to days. October 14 th is a simple example. For an example with URL associated, look at the 21th of each month, the game day.</li>
+</ul>
+<TABLE WIDTH="100%"><TR><TD BGCOLOR="E0E0F0"><H2>Example</H2></TD></TR></TABLE>
+<TABLE>
+<TR><TH><H2>AIGLON HOTEL</H2></TH></TR>
+<TR><TD><H3>Planning of congress reservations</H3></TD></TR>
+<TR><TD>
+<applet
+    code=ccalendar.class
+    name=ccalendar MAYSCRIPT
+    archive = "ccalendar.jar"
+    width=260
+    height=260
+	id = "cal" >
+<param name="fdw" value="1">
+<param name="color_fond" value="AAAAAA">
+<param name="color_full" value = "FF0000">
+<param name="color_case" value="AAFFAA">
+<param name="color_Comment" value="C0C0C0">
+<param name="color_empty" value=" AAAADD">
+<param name="field" value="DateField">
+<param name="form" value="DateForm">
+<param name="day1" value="Dimanche">
+<param name="day2" value="Lundi">
+<param name="day3" value="Mardi">
+<param name="day4" value="Mercredi">
+<param name="day5" value="Jeudi">
+<param name="day6" value="Vendredi">
+<param name="day7" value="Samedi">
+<param name="month1" value="Janvier">
+<param name="month2" value="Février">
+<param name="month3" value="Mars">
+<param name="month4" value="Avril">
+<param name="month5" value="Mai">
+<param name="month6" value="Juin">
+<param name="month7" value="Juillet">
+<param name="month8" value="Aout">
+<param name="month9" value="Septembre">
+<param name="month10" value="Octobre">
+<param name="month11" value="Novembre">
+<param name="month12" value="Décembre">
+<param name="etarget" value="_new">
+</applet>
+</TD>
+</TR>
+</TABLE>
+<TABLE>
+<TD BGCOLOR="FF0000" WIDTH=30>_</TD><TD>Used</TD></TR>
+<TR><TD BGCOLOR="AAFFAA" WIDTH=30>_</TD><TD>Free</TD></TR>
+</TABLE>
+</TD>
+</TR>
+<TR>
+<TD>
+Click in a case to reserve your day<br>
+<FORM NAME="DateForm">
+Reservation date : <INPUT type=TEXTE NAME="DateField" value="""><BR>
+</FORM>
+</TD>
+</TR>
+</TABLE>
+<TABLE WIDTH="100%"><TR><TD BGCOLOR="#E0E0F0"><H2>HTML CODE</H2></TD></TR></TABLE>
+Don't forget to add the keyword <b>MAYSCRIPT</b> if you want the applet to update your field.<br><br>
+<PRE>
+&lt;applet
+    code=ccalendar.class
+    name=ccalendar <b>MAYSCRIPT</b>
+    width=260
+    height=260
+	id = "cal"&gt;
+&lt;param name="fdw" value="1"&gt;
+&lt;param name="color_fond" value="AAAAAA"&gt;
+&lt;param name="color_full" value = "FF0000"&gt;
+&lt;param name="color_case" value="AAFFAA"&gt;
+&lt;param name="color_Comment" value="C0C0C0"&gt;
+&lt;param name="color_empty" value=" AAAADD"&gt;
+&lt;param name="field" value="DateField"&gt;
+&lt;param name="form" value="DateForm"&gt;
+&lt;param name="day1" value="Dimanche"&gt;
+&lt;param name="day2" value="Lundi"&gt;
+&lt;param name="day3" value="Mardi"&gt;
+&lt;param name="day4" value="Mercredi"&gt;
+&lt;param name="day5" value="Jeudi"&gt;
+&lt;param name="day6" value="Vendredi"&gt;
+&lt;param name="day7" value="Samedi"&gt;
+&lt;param name="month1" value="Janvier"&gt;
+&lt;param name="month2" value="Février"&gt;
+&lt;param name="month3" value="Mars"&gt;
+&lt;param name="month4" value="Avril"&gt;
+&lt;param name="month5" value="Mai"&gt;
+&lt;param name="month6" value="Juin"&gt;
+&lt;param name="month7" value="Juillet"&gt;
+&lt;param name="month8" value="Aout"&gt;
+&lt;param name="month9" value="Septembre"&gt;
+&lt;param name="month10" value="Octobre"&gt;
+&lt;param name="month11" value="Novembre"&gt;
+&lt;param name="month12" value="Décembre"&gt;
+&lt;param name="etarget" value="_new"&gt;
+&lt;/applet&gt;
+</PRE>
+<TABLE WIDTH="100%"><TR><TD BGCOLOR="#E0E0F0"><H2><A NAME="EXPLAIN">Explanation on the free/used days</A></H2></TD></TR></TABLE>
+For each year, the applet looks for a file called 'year'.txt in the current directory ( for example 1999.txt or 2000.txt ).
+This file text contains lines. Each line equals a month.
+Each line is done with 0 and 1. 0 for a free day. 1 for an used day.
+If the line is empty, all the month is empty.
+If the file does not exist, all the year is considered as free.
+For the example the file for years 1999.txt and 2000.txt ( they are the same ) are like this :
+<PRE>
+0101010101010101010101010101010
+1010101010101010101010101010101
+1111111
+00000001111111
+0000000111111100000001111111
+000000000000001111111
+00000001111111
+1111111111111111111111111111
+1111111000000011111111111111
+000000000000001111111
+1111111
+0101010101010101010101010101010
+</PRE>
+<TABLE WIDTH="100%"><TR><TD BGCOLOR="E0E0F0"><H2><A NAME="EXPLAIN">The event file</A></H2></TD></TR></TABLE>
+For each year, the applet looks for a file called 'year'.evt in the current directory ( for example 1999.evt or 2000.evt ).
+This file text contains lines. Each line equals a event.
+Each information of a ligne is separated by blanks or tabulations.
+<br>A line contains :
+<ul>
+<li>- An integer for 1 to 12 for the month.</li>
+<li>- An integer for 1 to 12 for the day.</li>
+<li>- A string for the event label.</li>
+<li>- A string for the vent URL.</li>
+</ul>
+Our example use this file :
+<pre>
+06 21 "Music day, and a lot of thing easy to listen, 50% on all the articles"
+07 4 "US independance day"
+10 14  "My birthday"
+01 21 "Game day" "http://www.arcadevillage.com"
+02 21 "Game day" "http://www.arcadevillage.com"
+03 21 "Game day" "http://www.arcadevillage.com"
+04 21 "Game day" "http://www.arcadevillage.com"
+05 21 "Game day" "http://www.arcadevillage.com"
+06 21 "Game day" "http://www.arcadevillage.com"
+07 21 "Game day" "http://www.arcadevillage.com"
+08 21 "Game day" "http://www.arcadevillage.com"
+09 21 "Game day" "http://www.arcadevillage.com"
+10 21 "Game day" "http://www.arcadevillage.com"
+11 21 "Game day" "http://www.arcadevillage.com"
+12 21 "Game day" "http://www.arcadevillage.com"
+</pre>
+</body>
+</html>

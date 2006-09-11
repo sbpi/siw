@@ -546,15 +546,15 @@ Const conTituloFontColor	= "#008000"
 
 '---------------------------Configuração do ambiente do sistema
 Const conSgSistema		= "SIW"
-Const conDefaultPath            = "http://www.sbpi.com.br"
-Const conRootSIW                = "http://www2.sbpi.com.br/siw/"
+Const conDefaultPath            = "http://netuno/siw/"
+Const conRootSIW                = "http://netuno/siw/"
 Const conNmSistema		= "Solução Integrada Web"
 Const conDiretorio              = "c:\inetpub\wwwroot\siw\"
 'Const conFilePhysical           = "c:\@temp@\@tempsiw@\"
 Const conFilePhysical           = "c:\inetpub\wwwroot\siw_files\"
 Const conFileVirtual            = "/siw_files/"
 Const conEndPage                = "<!-- #Fim da Pagina -->"
-Const conPHP4			= "http://www2.sbpi.com.br/siw/"
+Const conPHP4			= "http://netuno/siw/"
 
 'Const strconn = "Provider=MSDAORA.1;User ID=siw;Password=siw;Data Source=mercurio.sbpi.com.br;Persist Security Info=False"
 Const strconn  = "Provider=OraOLEDB.Oracle.1;Password=siw;Persist Security Info=True;User ID=siw;Data Source=mercurio.sbpi.com.br"

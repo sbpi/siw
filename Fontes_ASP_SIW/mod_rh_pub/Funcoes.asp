@@ -81,8 +81,7 @@ REM =========================================================================
 REM Montagem da seleção de estado civil
 REM -------------------------------------------------------------------------
 Sub SelecaoEstadoCivil (label, accesskey, hint, chave, chaveAux, campo, restricao, atributo)
-    DB_GetCivStateList RS
-    RS.Filter = "ativo='S'"
+    DB_GetCivStateList RS, restricao
     RS.Sort   = "nome"
     If IsNull(hint) Then
        ShowHTML "          <td valign=""top""><font size=""1""><b>" & Label & "</b><br><SELECT ACCESSKEY=""" & accesskey & """ CLASS=""STS"" NAME=""" & campo & """ " & w_Disabled & " " & atributo & ">"

@@ -2488,7 +2488,7 @@ Sub DML_PutXMLAcao_SIG(p_resultado, p_cliente, p_ano, p_cd_programa, p_cd_acao, 
      .parameters.Append         l_cd_sof_ref
   
      .CommandText               = Session("schema_is") & "SP_PutXMLAcao_SIG"
-     On error Resume Next
+     'On error Resume Next
      .Execute
      If Err.Description > "" Then 
         p_resultado = Err.Description

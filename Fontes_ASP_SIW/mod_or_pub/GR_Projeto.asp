@@ -221,7 +221,7 @@ Sub Gerencial
         w_filtro = w_filtro & "<tr valign=""top""><td align=""right""><font size=1>Classificação <td><font size=1>[<b>" & RS("nome") & "</b>]"
      End If
      If p_sq_acao_ppa > ""  Then 
-        DB_GetAcaoPPA RS, p_sq_acao_ppa, w_cliente, null, null, null, null, null, null, null, null
+        DB_GetAcaoPPA RS, p_sq_acao_ppa, w_cliente, null, null, null, null, null, null, null, null, null
         w_filtro = w_filtro & "<tr valign=""top""><td align=""right""><font size=1>Ação PPA <td><font size=1>[<b>" & RS("nome") & " (" & RS("codigo") & ")" & "</b>]"
      End If
      If p_sq_orprioridade > ""  Then 

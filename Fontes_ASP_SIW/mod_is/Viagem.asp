@@ -1726,9 +1726,9 @@ Sub Trechos
      Validate "w_hora_chegada", "Hora de chegada", "HORA", "1", 5, 5, "", "0123456789:"
 
      ShowHTML "  if (theForm.w_pais_orig.selectedIndex == theForm.w_pais_dest.selectedIndex && theForm.w_uf_orig.selectedIndex == theForm.w_uf_dest.selectedIndex && theForm.w_cidade_orig.selectedIndex == theForm.w_cidade_dest.selectedIndex) {"
-     ShowHTML "      alert('Cidades de origem e de destino não podem ser iguais!'); " & VbCrLf
-     ShowHTML "      theForm.w_cidade_dest.focus(); " & VbCrLf
-     ShowHTML "      return (false); " & VbCrLf
+     ShowHTML "      alert('Cidades de origem e de destino não podem ser iguais!'); "
+     ShowHTML "      theForm.w_cidade_dest.focus(); "
+     ShowHTML "      return (false); "
      ShowHTML "  }"
 
      CompData "w_data_saida", "Data de saída", "<=", "w_data_chegada", "Data de chegada"
@@ -4155,27 +4155,31 @@ REM Devolve string com o relatório de viagem no formato RTF
 REM -------------------------------------------------------------------------
 Function RelatorioViagem(w_chave)
 
-  Dim w_percurso, w_diaria, w_valor, w_html
+  Dim w_percurso, w_diaria, w_valor, w_html, i
   
   w_chave = Request("w_chave")
   
   'Recupera os dados da solicitacao de passagens e diárias
   DB_GetSolicData RS, w_chave, Mid(SG,1,3) & "GERAL"
-
+  
+  ' Inicializa o valor da viagem
+  w_valor    = (cDbl(FormatNumber(Nvl(RS("valor_adicional"),0),2)) - cDbl(FormatNumber(Nvl(RS("desconto_alimentacao"),0),2)) - cDbl(FormatNumber(Nvl(RS("desconto_transporte"),0),2)))
+  w_diaria   = 0
+  w_percurso = ""
 
   'Recupera a data da primeira saída
   DB_GetPD_Deslocamento RS1, w_chave, null, "DADFIN"
   RS1.Sort = "saida, chegada"
   If Not RS1.EOF Then
-     w_percurso = RS1("nm_origem")
-     w_percurso = w_percurso & "/" & RS1("nm_destino")
-     w_diaria = w_diaria + cDbl(RS1("quantidade"))
-     w_valor  = w_valor  + (cDbl(FormatNumber(Nvl(RS1("quantidade"),0),1)) * cDbl(FormatNumber(Nvl(RS1("valor"),0),2))) + cDbl(FormatNumber(Nvl(RS("valor_adicional"),0),2)) - cDbl(FormatNumber(Nvl(RS("desconto_alimentacao"),0),2)) - cDbl(FormatNumber(Nvl(RS("desconto_transporte"),0),2))
-     RS1.MoveNext
+     i        = 0
      While Not RS1.EOF
-        w_diaria = w_diaria + cDbl(RS1("quantidade"))
-        w_valor  = w_valor  + (cDbl(FormatNumber(Nvl(RS1("quantidade"),0),1)) * cDbl(FormatNumber(Nvl(RS1("valor"),0),2)))
-        w_percurso = w_percurso & "/" & RS1("nm_destino")
+        If i = 0 Then
+           w_percurso = RS1("nm_origem")
+           i = 1
+        End If
+        w_diaria    = w_diaria + cDbl(RS1("quantidade"))
+        w_valor     = w_valor  + (cDbl(FormatNumber(Nvl(RS1("quantidade"),0),1)) * cDbl(FormatNumber(Nvl(RS1("valor"),0),2)))
+        w_percurso  = w_percurso & "/" & RS1("nm_destino")
         RS1.MoveNext
      wend
   End If

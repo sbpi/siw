@@ -108,7 +108,7 @@ Function VisualProgramaGer(w_chave, P4)
 
   ' Indicadores do programa
   ' Recupera todos os registros para a listagem
-  DB_GetSolicIndic_IS RS1, w_chave, null, "LISTA"
+  DB_GetSolicIndic_IS RS1, w_chave, null, "LISTA", null, null
   RS1.Sort = "ordem"
         
   If Not RS1.EOF Then ' Se não foram selecionados registros, exibe mensagem   

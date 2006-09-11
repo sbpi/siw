@@ -324,7 +324,7 @@ Sub Inicial
            w_filtro = w_filtro & "<tr valign=""top""><td align=""right""><font size=1>Etapa <td><font size=1>[<b>" & RS("titulo") & "</b>]"
         End If
         If p_sq_acao_ppa > ""  Then 
-           DB_GetAcaoPPA RS, p_sq_acao_ppa, w_cliente, null, null, null, null, null, null, null, null
+           DB_GetAcaoPPA RS, p_sq_acao_ppa, w_cliente, null, null, null, null, null, null, null, null, null
            w_filtro = w_filtro & "<tr valign=""top""><td align=""right""><font size=1>Ação PPA <td><font size=1>[<b>" & RS("nome") & " (" & RS("codigo") & ")" & "</b>]"
         End If
         If p_sq_orprioridade > ""  Then 
@@ -850,7 +850,7 @@ Sub Geral
      w_descricao               = Request("w_descricao")
      w_justificativa           = Request("w_justificativa")
      If w_sq_acao_ppa > "" Then
-        DB_GetAcaoPPA RS, w_sq_acao_ppa, w_cliente, null, null, null, null, null, null, null, null
+        DB_GetAcaoPPA RS, w_sq_acao_ppa, w_cliente, null, null, null, null, null, null, null, null, null
         w_selecionada_mpog        = RS("selecionada_mpog")
         w_selecionada_relevante   = RS("selecionada_relevante")
         w_titulo                  = RS("nome")
@@ -1654,10 +1654,10 @@ Sub Responsaveis
   ElseIf InStr("A",O) > 0 Then
      If w_sq_acao_ppa_pai > "" Then
         w_tipo = 1
-        DB_GetAcaoPPA RS, w_sq_acao_ppa_pai, w_cliente, null, null, null, null, null, null, null, null
+        DB_GetAcaoPPA RS, w_sq_acao_ppa_pai, w_cliente, null, null, null, null, null, null, null, null, null
      ElseIf w_sq_acao_ppa > "" Then
         w_tipo = 2
-        DB_GetAcaoPPA RS, w_sq_acao_ppa, w_cliente, null, null, null, null, null, null, null, null
+        DB_GetAcaoPPA RS, w_sq_acao_ppa, w_cliente, null, null, null, null, null, null, null, null, null
      ElseIf w_sq_orprioridade > "" Then
         w_tipo = 3
         DB_GetOrPrioridade RS, null, w_cliente, w_sq_orprioridade, null, null, null
@@ -4147,7 +4147,7 @@ Public Sub Grava
           End If
           DML_PutProjetoGeral O, _
               Request("w_chave"), Request("w_menu"), Session("lotacao"), Request("w_solicitante"), Request("w_proponente"), _
-              Session("sq_pessoa"), null, Request("w_sqcc"),Request("w_descricao"), Request("w_justificativa"), Request("w_inicio"), Request("w_fim"), Request("w_valor"), _
+              Session("sq_pessoa"), null, Request("w_sqcc"),null,Request("w_descricao"), Request("w_justificativa"), Request("w_inicio"), Request("w_fim"), Request("w_valor"), _
               Request("w_data_hora"), Request("w_sq_unidade_resp"), Request("w_titulo"), Request("w_prioridade"), Request("w_aviso"), w_dias, _
               Request("w_cidade"), Request("w_palavra_chave"), _
               null, null, _
@@ -4503,7 +4503,7 @@ Public Sub Grava
              ShowHTML "  alert('ATENÇÃO: Outro usuário já encaminhou esta ação para outra fase de execução!');"
              ScriptClose
           Else
-             DML_PutProjetoEnvio Request("w_menu"), Request("w_chave"), w_usuario, Request("w_tramite"), Request("w_novo_tramite"), "N", Request("w_observacao"), Request("w_destinatario"), Request("w_despacho"), null, null, null
+             DML_PutProjetoEnvio Request("w_menu"), Request("w_chave"), w_usuario, Request("w_tramite"), Request("w_novo_tramite"), "N", Request("w_observacao"), Request("w_destinatario"), Request("w_despacho"), null, null, null, null
              
              ' Envia e-mail comunicando a tramitação
              If Request("w_novo_tramite") > "" Then

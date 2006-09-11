@@ -3416,7 +3416,7 @@ Public Sub Grava
         
           DML_PutProjetoGeral O, _
               Request("w_chave"), Request("w_menu"), Session("lotacao"), Request("w_solicitante"), _
-              Request("w_proponente"), Session("sq_pessoa"), null, Request("w_sqcc"), _
+              Request("w_proponente"), Session("sq_pessoa"), null, Request("w_sqcc"), null, _
               Request("w_descricao"), Request("w_justificativa"), Request("w_inicio"), _
               Request("w_fim"), Request("w_valor"), Request("w_data_hora"), _
               Request("w_sq_unidade_resp"), Request("w_titulo"), Request("w_prioridade"), _
@@ -3424,7 +3424,7 @@ Public Sub Grava
               Request("w_vincula_contrato"), Request("w_vincula_viagem"), null, null, null, null, null, _
               w_chave_nova, w_copia
           
-          If O = "I" Then
+              If O = "I" Then
              ' Envia e-mail comunicando a inclusão
              SolicMail Nvl(Request("w_chave"), w_chave_nova) ,1
 

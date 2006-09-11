@@ -194,7 +194,6 @@ Sub Inicial
   ElseIf O = "E" Then
     DB_GetCV RS, w_cliente, w_sq_pessoa, "CVIDENT", "DADOS"
     DB_GetGPContrato RS1, w_cliente, null, w_sq_pessoa, null, null, null, null, null, null, null, null, null, null
-    RS1.Filter = "fim = null"
     w_erro = ValidaColaborador(w_cliente, w_sq_pessoa, RS1("chave"), null)
   End If
   
@@ -584,6 +583,7 @@ Sub Documentacao
      w_observacoes          = Request("w_observacoes")
   Else
      ' Recupera os dados do colaborador a partir do código da pessoa
+     Response.Write w_usuario
      DB_GetGPColaborador RS, w_cliente, w_usuario, null, null, null, null, null, null, null, null, null, null, null, null, null, null
      If RS.RecordCount > 0 Then 
         w_ctps_numero          = RS("ctps_numero") 
@@ -904,7 +904,7 @@ Sub Contrato
         DB_GetGPContrato RS, w_cliente, null, w_usuario, null, null, null, null, null, null, null, null, w_chave, null
         If Not RS.EOF Then
            While Not RS.EOF 
-              If Nvl(RS("fim"),"") = "" Then
+              If (Nvl(RS("fim"),"") = "") Then
                  w_ativo = w_ativo + 1
               End If
               RS.MoveNext
@@ -1083,7 +1083,7 @@ Public Sub Grava
                                  Request("w_reservista_csm"), Request("w_tipo_sangue"), Request("w_doador_sangue"), Request("w_doador_orgaos"), _
                                  Request("w_observacoes")
             ScriptOpen "JavaScript"
-            ShowHTML "  location.href='" & R & "&O=P&P1=" & P1 & "&P2=" & P2 & "&P3=" & P3 & "&P4=" & P4 & "&TP=" & TP & "&SG=" & SG & MontaFiltro("GET") & "';"
+            ShowHTML "  location.href='" & R & "&O=P&w_usuario=" & w_usuario & "&P1=" & P1 & "&P2=" & P2 & "&P3=" & P3 & "&P4=" & P4 & "&TP=" & TP & "&SG=" & SG & MontaFiltro("GET") & "';"
             ScriptClose
          Else
             ScriptOpen "JavaScript"
@@ -1094,7 +1094,13 @@ Public Sub Grava
       Case "COCONTR"
          ' Verifica se a Assinatura Eletrônica é válida
          If (VerificaAssinaturaEletronica(Session("Username"),w_assinatura) and w_assinatura > "") or w_assinatura = "" Then
-            If cDbl(Nvl(Request("w_ativo"),0)) > 0 and Nvl(Request("w_dt_fim"),"") = "" Then
+            If (O = "A" and cDbl(Nvl(Request("w_ativo"),0)) = 0 and Nvl(Request("w_dt_fim"),"") = "") Then
+               ScriptOpen "JavaScript"
+               ShowHTML "alert('Já existe contrato ativo para este colaborador, não sendo possível uma nova inclusão');" 
+               ShowHTML "history.back(1);"
+               ScriptClose
+               Exit Sub
+            ElseIf (O <> "A" and cDbl(Nvl(Request("w_ativo"),0)) > 0 and Nvl(Request("w_dt_fim"),"") = "") Then
                ScriptOpen "JavaScript"
                ShowHTML "alert('Já existe contrato ativo para este colaborador, não sendo possível uma nova inclusão');" 
                ShowHTML "history.back(1);"

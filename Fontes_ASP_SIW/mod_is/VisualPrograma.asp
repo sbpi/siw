@@ -54,12 +54,12 @@ Function VisualPrograma(w_chave, O, w_usuario, P1, P4, w_identificacao, w_respon
      ' Indicadores do programa
      ' Recupera todos os registros para a listagem     
      w_html = w_html & VbCrLf & "      <tr><td colspan=""2""><br><font size=""2""><b>INDICADORES<hr NOSHADE color=#000000 SIZE=1></b></font></td></tr>"
-     DB_GetSolicIndic_IS RS1, w_chave, null, "LISTA"
+     DB_GetSolicIndic_IS RS1, w_chave, null, "LISTA", null, null
      RS1.Sort = "ordem"
      If Not RS1.EOF Then
         w_cont = 1
         While Not RS1.EOF
-           DB_GetSolicIndic_IS RS2, w_chave, RS1("sq_indicador"), "REGISTRO"
+           DB_GetSolicIndic_IS RS2, w_chave, RS1("sq_indicador"), "REGISTRO", null, null
            w_html = w_html & VbCrLf & "   <tr><td valigin=""top"" bgcolor=""#f0f0f0""><font size=""1""><b>" & w_cont & ") Indicador:</b></font></td>"
            w_html = w_html & VbCrLf & "       <td bgcolor=""#f0f0f0""><font size=""1""><b>" & RS2("titulo") & "</b></font></td></tr>"
            w_html = w_html & VbCrLf & "   <tr><td><font size=""1""><b>Tipo indicador:</b></font></td>"
@@ -373,12 +373,12 @@ Function VisualPrograma(w_chave, O, w_usuario, P1, P4, w_identificacao, w_respon
      If uCase(w_indicador) = uCase("sim") Then   
         ' Recupera todos os registros para a listagem     
         w_html = w_html & VbCrLf & "      <tr><td colspan=""2""><br><font size=""2""><b>INDICADORES<hr NOSHADE color=#000000 SIZE=1></b></font></td></tr>"
-        DB_GetSolicIndic_IS RS1, w_chave, null, "LISTA"
+        DB_GetSolicIndic_IS RS1, w_chave, null, "LISTA", null, null
         RS1.Sort = "ordem"
         If Not RS1.EOF Then
            w_cont = 1
            While Not RS1.EOF
-              DB_GetSolicIndic_IS RS2, w_chave, RS1("sq_indicador"), "REGISTRO"
+              DB_GetSolicIndic_IS RS2, w_chave, RS1("sq_indicador"), "REGISTRO", null, null
               w_html = w_html & VbCrLf & "   <tr><td valigin=""top"" bgcolor=""#f0f0f0""><font size=""1""><b>" & w_cont & ") Indicador:</b></font></td>"
               w_html = w_html & VbCrLf & "       <td bgcolor=""#f0f0f0""><font size=""1""><b>" & RS2("titulo") & "</b></font></td></tr>"
               w_html = w_html & VbCrLf & "   <tr><td><font size=""1""><b>Tipo indicador:</b></font></td>"

@@ -138,7 +138,7 @@ Function VisualAcaoGer(w_chave, P4)
 
   ' Metas da ação
   ' Recupera todos os registros para a listagem     
-  DB_GetSolicMeta_IS RS1, w_chave, null, "LSTNULL", null, null, null, null, null, null, null
+  DB_GetSolicMeta_IS RS1, w_chave, null, "LSTNULL", null, null, null, null, null, null, null, null, null
   RS1.Sort = "ordem"
   If Not RS1.EOF Then ' Se não foram selecionados registros, exibe mensagem
     w_html = w_html & VbCrLf & "      <tr><td colspan=""2"" align=""center"" bgcolor=""#D0D0D0"" style=""border: 2px solid rgb(0,0,0);""><font size=""1""><b>Metas físicas</td></tr>"

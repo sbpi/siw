@@ -85,12 +85,12 @@ Function VisualAcao(w_chave, O, w_usuario, P1, P4, w_identificacao, w_responsave
 
      ' Listagem das metas da ação
      w_html = w_html & VbCrLf & "      <tr><td colspan=""2""><br><font size=""2""><b>METAS FÍSICAS<hr NOSHADE color=#000000 SIZE=1></b></td></tr>"
-     DB_GetSolicMeta_IS RS2, w_chave, null, "LSTNULL", null, null, null, null, null, null, null
+     DB_GetSolicMeta_IS RS2, w_chave, null, "LSTNULL", null, null, null, null, null, null, null, null, null
      RS2.Sort = "ordem"
      If Not RS2.EOF Then
         w_cont = 1
         While Not RS2.EOF
-           DB_GetSolicMeta_IS RS3, w_chave, RS2("sq_meta"), "REGISTRO", null, null, null, null, null, null, null
+           DB_GetSolicMeta_IS RS3, w_chave, RS2("sq_meta"), "REGISTRO", null, null, null, null, null, null, null, null, null
            w_html = w_html & VbCrLf & "   <tr><td valigin=""top"" bgcolor=""#f0f0f0""><b>" & w_cont & ") Meta:</b></td>"
            If Nvl(RS3("descricao_subacao"),"") > "" Then
               w_html = w_html & VbCrLf & "       <td bgcolor=""#f0f0f0""><b>" & RS2("titulo") & "("& RS3("descricao_subacao")&")</b></td></tr>"
@@ -582,12 +582,12 @@ Function VisualAcao(w_chave, O, w_usuario, P1, P4, w_identificacao, w_responsave
      ' Listagem das metas da ação
      If uCase(w_meta) = uCase("sim") Then
         w_html = w_html & VbCrLf & "      <tr><td colspan=""2""><br><font size=""2""><b>METAS FÍSICAS<hr NOSHADE color=#000000 SIZE=1></b></td></tr>"
-        DB_GetSolicMeta_IS RS2, w_chave, null, "LSTNULL", null, null, null, null, null, null, null
+        DB_GetSolicMeta_IS RS2, w_chave, null, "LSTNULL", null, null, null, null, null, null, null, null, null
         RS2.Sort = "ordem"
         If Not RS2.EOF Then
            w_cont = 1
            While Not RS2.EOF
-              DB_GetSolicMeta_IS RS3, w_chave, RS2("sq_meta"), "REGISTRO", null, null, null, null, null, null, null
+              DB_GetSolicMeta_IS RS3, w_chave, RS2("sq_meta"), "REGISTRO", null, null, null, null, null, null, null, null, null
               w_html = w_html & VbCrLf & "   <tr><td valigin=""top"" bgcolor=""#f0f0f0""><b>" & w_cont & ") Meta:</b></td>"
               If Nvl(RS3("descricao_subacao"),"") > "" Then
                  w_html = w_html & VbCrLf & "       <td bgcolor=""#f0f0f0""><b>" & RS2("titulo") & "("& RS3("descricao_subacao")&")</b></td></tr>"
