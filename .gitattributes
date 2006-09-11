@@ -1438,6 +1438,8 @@ SP_Oracle81/fbaj/SP_GetAlberData.prc -text
 SP_Oracle81/fbaj/SP_GetAlberList.prc -text
 SP_Oracle81/fbaj/SP_PutAlbCad.prc -text
 SP_Oracle81/siw/GetCodigo.fnc -text
+SP_Oracle81/siw/LIMPA_BASE.prc -text
+SP_Oracle81/siw/MontaNomeMenu.fnc -text
 SP_Oracle81/siw/MontaOrdemMenu.fnc -text
 SP_Oracle81/siw/PD_Cadastrador_Geral.fnc -text
 SP_Oracle81/siw/PD_CriaParametro.prc -text
@@ -2569,10 +2571,13 @@ SP_Oracle92/fbaj/sp_putalbcad.prc -text
 SP_Oracle92/fbaj/sq_alberguista.seq -text
 SP_Oracle92/fbaj/subname.fnc -text
 SP_Oracle92/siw/GetCodigo.fnc -text
+SP_Oracle92/siw/LIMPA_BASE.prc -text
+SP_Oracle92/siw/MontaNomeMenu.fnc -text
 SP_Oracle92/siw/MontaOrdemMenu.fnc -text
 SP_Oracle92/siw/PD_Cadastrador_Geral.fnc -text
 SP_Oracle92/siw/PD_CriaParametro.prc -text
 SP_Oracle92/siw/Responsavel_Unidade.fnc -text
+SP_Oracle92/siw/SF_Consulta.prc -text
 SP_Oracle92/siw/SP_GetAfastamento.prc -text
 SP_Oracle92/siw/SP_GetCiaTrans.prc -text
 SP_Oracle92/siw/SP_GetCodigo.prc -text
@@ -2763,6 +2768,7 @@ SP_Oracle92/siw/pj_projeto_recurso.tab -text
 SP_Oracle92/siw/pj_projeto_representante.tab -text
 SP_Oracle92/siw/pj_recurso_etapa.tab -text
 SP_Oracle92/siw/plan_table.tab -text
+SP_Oracle92/siw/reinicializa_sequences.prc -text
 SP_Oracle92/siw/sg_autenticacao.tab -text
 SP_Oracle92/siw/sg_geraclimod.prc -text
 SP_Oracle92/siw/sg_geramenu.prc -text
@@ -2997,6 +3003,7 @@ SP_Oracle92/siw/sp_putagreetype.prc -text
 SP_Oracle92/siw/sp_putarquivo.prc -text
 SP_Oracle92/siw/sp_putatualizaetapa.prc -text
 SP_Oracle92/siw/sp_putcall.prc -text
+SP_Oracle92/siw/sp_putcargo.prc -text
 SP_Oracle92/siw/sp_putcoagencia.prc -text
 SP_Oracle92/siw/sp_putcobanco.prc -text
 SP_Oracle92/siw/sp_putcocidade.prc -text

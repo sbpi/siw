@@ -5,7 +5,20 @@ create or replace procedure SP_GetMenuList
     p_result    out siw.sys_refcursor
    ) is
 begin
-   If upper(p_operacao) = 'X' Then
+   If upper(p_operacao) = 'L' Then
+      -- Recupera os links que referenciam rotinas do sistema
+      open p_result for
+        select a.sq_menu, a.nome, a.link, a.ativo,
+               b.nome, 
+               MontaOrdemMenu(a.sq_menu) or_menu,
+               MontaNomeMenu(a.sq_menu)  nm_menu
+          from siw_menu   a,
+               siw_modulo b
+         where a.sq_modulo = b.sq_modulo
+           and a.sq_pessoa = p_cliente
+           and a.externo   = 'N'
+           and a.link      is not null;
+   Elsif upper(p_operacao) = 'X' Then
       -- Recupera os links vinculados a serviços
       open p_result for
         select a.sq_menu,
@@ -47,4 +60,3 @@ begin
     End If;
 end SP_GetMenuList;
 /
-
