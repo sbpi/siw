@@ -1460,6 +1460,7 @@ SP_Oracle81/siw/SP_GetPD_Vinculacao.prc -text
 SP_Oracle81/siw/SP_GetSIWArquivo.prc -text
 SP_Oracle81/siw/SP_GetTramiteResp.prc -text
 SP_Oracle81/siw/SP_GetTramiteSolic.prc -text
+SP_Oracle81/siw/SP_GetUsuarioTemp.prc -text
 SP_Oracle81/siw/SP_PutAfastamento.prc -text
 SP_Oracle81/siw/SP_PutCargo.prc -text
 SP_Oracle81/siw/SP_PutCiaTrans.prc -text
@@ -1479,6 +1480,7 @@ SP_Oracle81/siw/SP_PutPD_Deslocamento.prc -text
 SP_Oracle81/siw/SP_PutPdDiaria.prc -text
 SP_Oracle81/siw/SP_PutPdMissao.prc -text
 SP_Oracle81/siw/SP_PutPdTarefa.prc -text
+SP_Oracle81/siw/SP_PutUsuarioTemp.prc -text
 SP_Oracle81/siw/SP_PutViagemEnvio.prc -text
 SP_Oracle81/siw/SP_PutViagemOutra.prc -text
 SP_Oracle81/siw/TG_PD_MISSAO_IN_UP.trg -text
@@ -2593,6 +2595,7 @@ SP_Oracle92/siw/SP_GetPD_Vinculacao.prc -text
 SP_Oracle92/siw/SP_GetSIWArquivo.prc -text
 SP_Oracle92/siw/SP_GetTramiteResp.prc -text
 SP_Oracle92/siw/SP_GetTramiteSolic.prc -text
+SP_Oracle92/siw/SP_GetUsuarioTemp.prc -text
 SP_Oracle92/siw/SP_PutAfastamento.prc -text
 SP_Oracle92/siw/SP_PutCiaTrans.prc -text
 SP_Oracle92/siw/SP_PutCodigoExterno.prc -text
@@ -2611,6 +2614,7 @@ SP_Oracle92/siw/SP_PutPD_Deslocamento.prc -text
 SP_Oracle92/siw/SP_PutPdDiaria.prc -text
 SP_Oracle92/siw/SP_PutPdMissao.prc -text
 SP_Oracle92/siw/SP_PutPdTarefa.prc -text
+SP_Oracle92/siw/SP_PutUsuarioTemp.prc -text
 SP_Oracle92/siw/SP_PutViagemEnvio.prc -text
 SP_Oracle92/siw/SP_PutViagemGeral.prc -text
 SP_Oracle92/siw/SP_PutViagemOutra.prc -text
