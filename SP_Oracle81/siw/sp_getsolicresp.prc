@@ -160,7 +160,7 @@ begin
       open p_result for
          select distinct d.sq_pessoa, d.nome, d.nome_resumido,
                 e.email, e.ativo ativo_usuario,
-                f.sigla sg_unidade
+                f.sigla sg_unidade, d.nome_resumido_ind
            from siw_tramite                           c,
                 sg_tramite_pessoa    g,
                 co_pessoa            d,
@@ -179,7 +179,25 @@ begin
          UNION
          select distinct d.sq_pessoa, d.nome, d.nome_resumido,
                 e.email, e.ativo ativo_usuario,
-                f.sigla sg_unidade
+                f.sigla sg_unidade, d.nome_resumido_ind
+           from siw_tramite          c,
+                siw_menu             a,
+                co_pessoa            d,
+                sg_autenticacao      e,
+                eo_unidade           f
+          where (c.sq_menu            = a.sq_menu)
+            and (a.sq_pessoa          = d.sq_pessoa_pai)
+            and (d.sq_pessoa          = e.sq_pessoa and
+                 e.gestor_sistema     = 'S' and
+                 e.ativo              = 'S'
+                )
+            and (e.sq_unidade         = f.sq_unidade)
+            and c.sq_siw_tramite     = p_tramite
+            and c.sigla              = 'CI'
+         UNION
+         select distinct d.sq_pessoa, d.nome, d.nome_resumido,
+                e.email, e.ativo ativo_usuario,
+                f.sigla sg_unidade, d.nome_resumido_ind
            from siw_tramite                             c,
                 siw_menu             a,
                 sg_pessoa_modulo     g,
@@ -206,18 +224,18 @@ begin
                 decode(g.chefia_imediata,'U',c.nome_resumido,i.nome_resumido) nome_resumido,
                 decode(g.chefia_imediata,'U',d.email,j.email) email,
                 decode(g.chefia_imediata,'U',d.ativo,j.ativo) ativo_usuario,
-                decode(g.chefia_imediata,'U',e.sigla,k.sigla) sg_unidade
-           from siw_tramite                           g,
+                decode(g.chefia_imediata,'U',e.sigla,k.sigla) sg_unidade, c.nome_resumido_ind
+           from siw_tramite          g,
                 siw_menu             f,
                 eo_unidade_resp      b,
                 co_pessoa            c,
-                sg_autenticacao     d,
-                eo_unidade        e,
-                siw_solicitacao                       a,
+                sg_autenticacao      d,
+                eo_unidade           e,
+                siw_solicitacao      a,
                 eo_unidade_resp      h,
                 co_pessoa            i,
-                sg_autenticacao     j,
-                eo_unidade      k
+                sg_autenticacao      j,
+                eo_unidade           k
           where (g.sq_menu            = f.sq_menu)
             and (f.sq_unid_executora  = b.sq_unidade (+) and
                  b.fim (+)            is null
@@ -242,4 +260,3 @@ begin
    End If;
 end SP_GetSolicResp;
 /
-

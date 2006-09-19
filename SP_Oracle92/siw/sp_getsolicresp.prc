@@ -146,6 +146,20 @@ begin
                 f.sigla sg_unidade, d.nome_resumido_ind
            from siw_tramite                             c
                 inner         join siw_menu             a on (c.sq_menu            = a.sq_menu)
+                    inner     join co_pessoa            d on (a.sq_pessoa          = d.sq_pessoa_pai)
+                      inner   join sg_autenticacao      e on (d.sq_pessoa          = e.sq_pessoa and
+                                                              e.gestor_sistema     = 'S' and
+                                                              e.ativo              = 'S'
+                                                             )
+                        inner join eo_unidade           f on (e.sq_unidade         = f.sq_unidade)
+          where c.sq_siw_tramite     = p_tramite
+            and c.sigla              = 'CI'
+         UNION
+         select distinct d.sq_pessoa, d.nome, d.nome_resumido,
+                e.email, e.ativo ativo_usuario,
+                f.sigla sg_unidade, d.nome_resumido_ind
+           from siw_tramite                             c
+                inner         join siw_menu             a on (c.sq_menu            = a.sq_menu)
                   inner       join sg_pessoa_modulo     g on (a.sq_modulo          = g.sq_modulo and
                                                               a.sq_pessoa          = g.cliente
                                                              )
