@@ -984,17 +984,19 @@ begin
                 siw_menu         b2,
                 siw_modulo       b3,
                 pj_projeto       d,
-               (select x.sq_siw_solicitacao, x.codigo_interno, x.vincula_demanda, 
+                (select x.sq_siw_solicitacao, x.codigo_interno, x.vincula_demanda, 
                         x.vincula_projeto, x.vincula_viagem,
-                        w.nome_resumido||' - '||z.nome||' ('||to_char(x.inicio,'dd/mm/yyyy')||'-'||to_char(x.fim,'dd/mm/yyyy')||')' as titulo
+                        w.nome_resumido||' - '||decode(z.sq_cc,null,k.titulo,z.nome)||' ('||to_char(x.inicio,'dd/mm/yyyy')||'-'||to_char(x.fim,'dd/mm/yyyy')||')' as titulo
                    from ac_acordo       x,
                         co_pessoa       w,
                         siw_solicitacao y,
-                        ct_cc           z
+                        ct_cc           z,
+                        pj_projeto      k
                   where x.outra_parte        = w.sq_pessoa
                     and x.sq_siw_solicitacao = y.sq_siw_solicitacao
                     and y.sq_cc              = z.sq_cc
-                )                e
+                    and y.sq_solic_pai       = k.sq_siw_solicitacao
+               )                 e
           where (a.sq_modulo          = a1.sq_modulo)
             and (b.sq_siw_tramite     = b1.sq_siw_tramite and 
                  b1.sq_siw_tramite    in (select sq_siw_tramite 
