@@ -43,7 +43,7 @@ $conImgOkAtraso	= 'images/tickvermelho.gif';
 $conImgNormal	= 'images/BallGreen.png';
 $conImgAviso	= 'images/BallYellow.png';
 $conImgAtraso	= 'images/BallRed.png';
-$conImgCancel 	='images/Icone/REQUIRED.GIF';
+$conImgCancel 	='images/icone/REQUIRED.GIF';
 
 
 //---------------------------Definições de banco

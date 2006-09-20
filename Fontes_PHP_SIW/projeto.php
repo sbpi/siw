@@ -1223,6 +1223,36 @@ function Etapas() {
       // Se não foram selecionados registros, exibe mensagem
       ShowHTML('      <tr bgcolor="'.$conTrBgColor.'"><td colspan=9 align="center"><b>Não foram encontrados registros.</b></td></tr>');
     } else {
+      // Recupera o código da opção de menu  a ser usada para listar as atividades
+      $w_p2 = '';
+      foreach ($RS as $row) {
+        if (Nvl(f($row,'P2'),0) > 0) $w_p2 = f($row,'P2');
+        break;
+      } 
+      reset($RS);
+      ShowHTML('<SCRIPT LANGUAGE="JAVASCRIPT">');
+      ShowHTML('  function lista (projeto, etapa) {');
+      ShowHTML('    document.Form.p_projeto.value=projeto;');
+      ShowHTML('    document.Form.p_atividade.value=etapa;');
+      ShowHTML('    document.Form.p_agrega.value=\'GRDMETAPA\';');
+      $RS1 = db_getTramiteList::getInstanceOf($dbms,$w_p2,null,null);
+      $RS1 = SortArray($RS1,'ordem','asc');
+      ShowHTML('    document.Form.p_fase.value=\'\';');
+      $w_fases = '';
+      foreach ($RS1 as $row1) {
+        if (f($row1,'sigla')!='CA') $w_fases = $w_fases.','.f($row1,'sq_siw_tramite');
+      } 
+      ShowHTML('    document.Form.p_fase.value=\''.substr($w_fases,1,100).'\';');
+      ShowHTML('    document.Form.submit();');
+      ShowHTML('  }');
+      ShowHTML('</SCRIPT>');
+      $RS1 = db_getMenuData::getInstanceOf($dbms,$w_p2);
+      AbreForm('Form',f($RS1,'link'),'POST','return(Validacao(this));','Atividades',3,$w_p2,1,null,$w_TP,f($RS1,'sigla'),$w_pagina.$par,'L');
+      ShowHTML(MontaFiltro('POST'));
+      ShowHTML('<input type="Hidden" name="p_projeto" value="">');
+      ShowHTML('<input type="Hidden" name="p_atividade" value="">');
+      ShowHTML('<input type="Hidden" name="p_agrega" value="">');
+      ShowHTML('<input type="Hidden" name="p_fase" value="">');
       foreach($RS as $row) {
         ShowHtml(EtapaLinha($w_chave,f($row,'sq_projeto_etapa'),f($row,'titulo'),f($row,'nm_resp'),f($row,'sg_setor'),f($row,'inicio_previsto'),f($row,'fim_previsto'),f($row,'perc_conclusao'),f($row,'qt_ativ'),'<b>','S','PROJETO',f($row,'sq_pessoa'),f($row,'sq_unidade')));
         // Recupera as etapas vinculadas ao nível acima
@@ -1586,7 +1616,7 @@ function AtualizaEtapa() {
     ShowHTML('    <table width="97%" border="0">');
     if ($O=='V') {
       ShowHTML('      <tr><td>Percentual de conlusão:<br><b>'.nvl($w_perc_conclusao,0).'%</b></td>');
-      ShowHTML('      <tr><td valign="top">Situação atual da etapa:<b><br>'.Nvl($w_situacao_atual,'---').'</td>');
+      ShowHTML('      <tr><td valign="top">Situação atual da etapa:<b><br>'.crlf2br(Nvl($w_situacao_atual,'---')).'</td>');
     } else {
       ShowHTML('      <tr><td><b>Percentual de co<u>n</u>clusão:<br><INPUT ACCESSKEY="N" TYPE="TEXT" CLASS="STI" NAME="w_perc_conclusao" SIZE=3 MAXLENGTH=3 VALUE="'.nvl($w_perc_conclusao,0).'" '.$w_Disabled.' title="Indique o percentual de conclusão já atingido por essa etapa."></td>');
       ShowHTML('      <tr><td valign="top"><b><u>S</u>ituação atual da etapa:</b><br><textarea '.$w_Disabled.' accesskey="S" name="w_situacao_atual" class="STI" ROWS=5 cols=75 title="Descreva a situação em a etapa encontra-se.">'.$w_situacao_atual.'</TEXTAREA></td>');
@@ -2693,7 +2723,7 @@ function SolicMail($p_solic,$p_tipo) {
   $w_html .= '         <ul>'.chr(13);
   $w_html .= '         <li>Responsável: <b>'.$_SESSION['NOME'].'</b></li>'.chr(13);
   $w_html .= '         <li>Data: <b>'.date('d/m/Y, H:i:s',$w_data_encaminhamento).'</b></li>'.chr(13);
-  $w_html .= '         <li>IP de origem: <b>'.$_SERVER['REMOTE_HOST'].'</b></li>'.chr(13);
+  $w_html .= '         <li>IP de origem: <b>'.$_SERVER['REMOTE_ADDR'].'</b></li>'.chr(13);
   $w_html .= '         </ul>'.chr(13);
   $w_html .= '      </td></tr>'.chr(13);
   $w_html .= '    </table>'.chr(13);
@@ -2974,7 +3004,7 @@ function Grava() {
       // Verifica se a Assinatura Eletrônica é válida
       if (verificaAssinaturaEletronica($_SESSION['USERNAME'],strtoupper($_REQUEST['w_assinatura'])) || $w_assinatura=='') {
         // Trata o recebimento de upload ou dados 
-        if (!(strpos(strtoupper($_SERVER['http_content_type']),'MULTIPART/FORM-DATA')===false)) {
+        if ((false!==(strpos(strtoupper($_SERVER['HTTP_CONTENT_TYPE']),'MULTIPART/FORM-DATA'))) || (false!==(strpos(strtoupper($_SERVER['CONTENT_TYPE']),'MULTIPART/FORM-DATA')))) {
           // Se foi feito o upload de um arquivo 
           if (UPLOAD_ERR_OK==0) {
             $w_maximo = $_REQUEST['w_upload_maximo'];

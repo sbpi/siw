@@ -16,6 +16,12 @@ include_once($w_dir_volta.'classes/sp/db_getCustomerData.php');
 include_once($w_dir_volta.'classes/sp/db_getSolicIndic_IS.php');
 include_once($w_dir_volta.'classes/sp/db_getOrImport.php');
 include_once($w_dir_volta.'classes/sp/db_getMetaMensal_IS.php');
+include_once($w_dir_volta.'classes/sp/db_getSolicData_IS.php');
+include_once($w_dir_volta.'classes/sp/db_getPPADadoFinanc_IS.php');
+include_once($w_dir_volta.'classes/sp/db_getRestricao_IS.php');
+include_once($w_dir_volta.'classes/sp/db_getSolicInter.php');
+include_once($w_dir_volta.'classes/sp/db_getSolicAnexo.php');
+include_once($w_dir_volta.'classes/sp/db_getSolicLog.php');
 include_once($w_dir_volta.'funcoes/selecaoUnidade.php');
 include_once($w_dir_volta.'funcoes/selecaoUnidade_IS.php');
 include_once($w_dir_volta.'funcoes/selecaoProgramaPPA.php');
@@ -23,6 +29,9 @@ include_once($w_dir_volta.'funcoes/selecaoAcaoPPA.php');
 include_once($w_dir_volta.'funcoes/selecaoPrioridade.php');
 include_once($w_dir_volta.'funcoes/selecaoIsProjeto.php');
 include_once($w_dir_volta.'funcoes/selecaoAcao.php');
+include_once('visualprograma.php');
+include_once('visualacao.php');
+include_once('visualtarefa.php');
 // =========================================================================
 //  /relatorios.php
 // ------------------------------------------------------------------------
@@ -1441,6 +1450,7 @@ function Rel_Sintetico_PR() {
         $RS1 = db_getLinkData::getInstanceOf($dbms,$w_cliente,'ISACAD');
         $RS2 = db_getSolicList_IS::getInstanceOf($dbms,f($RS1,'sq_menu'),$w_usuario,f($RS1,'sigla'),4,
                 null,null,null,null,null,null,null,null,null,null,f($row,'sq_siw_solicitacao'),null,
+                null,null,null,null,null,null,null,null,null,null,null,null,
                 null,f($row,'chave'),null,$w_ano);
         $RS2 = SortArray($RS2,'phpdt_fim','asc','prioridade','asc');
         foreach($RS2 as $row2) {$RS2=$row2; break;}
@@ -3359,8 +3369,8 @@ function Rel_Det_Acao() {
           ShowHTML('<tr><td colspan="2"><div align="center"><hr NOSHADE color=#000000 size=2></div></td></tr>');
           ShowHTML('<tr><td colspan="2"><div align="center"><font size="3"><b>RELATÓRIO DE AÇÕES</b></font></div></td></tr>');
         } 
-        if ($w_tipo_rel=='WORD') ShowHTML(VisualAcao(f($row,'sq_siw_solicitacao'),'',$w_usuario,0,1,$w_identificacao,$w_responsavel,$w_qualitativa,$w_orcamentaria,$w_meta,$w_restricao,$w_tarefa,$w_interessado,$w_anexo,$w_ocorrencia));
-        else                     ShowHTML(VisualAcao(f($row,'sq_siw_solicitacao'),'',$w_usuario,0,0,$w_identificacao,$w_responsavel,$w_qualitativa,$w_orcamentaria,$w_meta,$w_restricao,$w_tarefa,$w_interessado,$w_anexo,$w_ocorrencia));
+        if ($w_tipo_rel=='WORD') ShowHTML(VisualAcao(f($row,'sq_siw_solicitacao'),'',$w_usuario,0,1,$w_identificacao,$w_responsavel,$w_qualitativa,$w_orcamentaria,$w_meta,$w_restricao,$w_tarefa,$w_interessado,$w_anexo,$w_ocorrencia,'nao',$w_identificacao));
+        else                     ShowHTML(VisualAcao(f($row,'sq_siw_solicitacao'),'',$w_usuario,0,0,$w_identificacao,$w_responsavel,$w_qualitativa,$w_orcamentaria,$w_meta,$w_restricao,$w_tarefa,$w_interessado,$w_anexo,$w_ocorrencia,'nao',$w_identificacao));
         $w_linha += 30;
       } 
     } 
@@ -3599,10 +3609,10 @@ function Rel_Det_Prog() {
           ShowHTML('<tr><td colspan="2"><div align="center"><font size="3"><b>RELATÓRIO DE PROGRAMAS</b></font></div></td></tr>');
         } 
         if ($w_tipo_rel=='WORD') {
-          ShowHTML(VisualPrograma(f($row4,'sq_siw_solicitacao'),'',$w_usuario,0,1,$w_identificacao,$w_responsavel,$w_qualitativa,$w_orcamentaria,$w_indicador,$w_restricao,$w_interessado,$w_anexo,$w_acao,$w_ocorrencia));
+          ShowHTML(VisualPrograma(f($row4,'sq_siw_solicitacao'),'',$w_usuario,0,1,$w_identificacao,$w_responsavel,$w_qualitativa,$w_orcamentaria,$w_indicador,$w_restricao,$w_interessado,$w_anexo,$w_acao,$w_ocorrencia,'nao'));
           ShowHTML('<tr><td colspan="2"><div align="center"><BR></div></td></tr>');
         } else {
-          ShowHTML(VisualPrograma(f($row4,'sq_siw_solicitacao'),'',$w_usuario,0,0,$w_identificacao,$w_responsavel,$w_qualitativa,$w_orcamentaria,$w_indicador,$w_restricao,$w_interessado,$w_anexo,$w_acao,$w_ocorrencia));
+          ShowHTML(VisualPrograma(f($row4,'sq_siw_solicitacao'),'',$w_usuario,0,0,$w_identificacao,$w_responsavel,$w_qualitativa,$w_orcamentaria,$w_indicador,$w_restricao,$w_interessado,$w_anexo,$w_acao,$w_ocorrencia,'nao'));
           ShowHTML('<tr><td colspan="2"><div align="center"><BR></div></td></tr>');
         } 
         $w_linha=$w_linha+30;

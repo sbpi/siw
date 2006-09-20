@@ -1380,6 +1380,7 @@ function Formacao() {
   } elseif (($O=='A' || $O=='E')) {
     $RS = db_getFormationData::getInstanceOf($dbms,$w_sq_formacao);
     $w_nome     = f($RS,'nome');
+    $w_tipo     = f($RS,'tipo');
     $w_ativo    = f($RS,'ativo');
     $w_ordem    = f($RS,'ordem');
   } 
@@ -1629,12 +1630,27 @@ function Grava() {
     case 'COIDIOMA':
       // Verifica se a Assinatura Eletrônica é válida
       if (verificaAssinaturaEletronica($_SESSION['USERNAME'],strtoupper($_REQUEST['w_assinatura'])) || $w_assinatura=='') {
-        dml_CoIdioma::getInstanceOf($dbms, $O,
-            $_REQUEST['w_sq_idioma'],$_REQUEST['w_nome'],
-            $_REQUEST['w_padrao'],$_REQUEST['w_ativo']);
-        ScriptOpen('JavaScript');
-        ShowHTML('  location.href=\''.$R.'&O=L&P1='.$P1.'&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP='.$TP.'&SG='.$SG.'\';');
-        ScriptClose();
+        $w_cont = 0;
+        $RS = db_getIdiomList::getInstanceOf($dbms,null,null);
+        foreach($RS as $row) {
+          if(f($row,'padrao')=='S' && $_REQUEST['w_padrao']=='S') {
+            if ($O=='I') $w_cont = $w_cont + 1;
+            elseif ($O=='A' && $_REQUEST['w_sq_idioma']!=f($row,'sq_idioma'))  $w_cont = $w_cont + 1;
+          }
+        }
+        if($w_cont>0) {
+          ScriptOpen('JavaScript');
+          ShowHTML('  alert(\'ATENÇÃO: Só pode haver um valor padrão para idioma. Favor verificar.\');');
+          ShowHTML('  history.back(1);');
+          ScriptClose();
+        } else {
+          dml_CoIdioma::getInstanceOf($dbms, $O,
+              $_REQUEST['w_sq_idioma'],$_REQUEST['w_nome'],
+              $_REQUEST['w_padrao'],$_REQUEST['w_ativo']);
+          ScriptOpen('JavaScript');
+          ShowHTML('  location.href=\''.$R.'&O=L&P1='.$P1.'&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP='.$TP.'&SG='.$SG.'\';');
+          ScriptClose();
+        }
       } else {
         ScriptOpen('JavaScript');
         ShowHTML('  alert(\'Assinatura Eletrônica inválida!\');');
@@ -1669,7 +1685,7 @@ function Grava() {
         ScriptClose();
       } else {
         ScriptOpen('JavaScript');
-        ShowHTML('  alert(\'Assinatura Eletrônica inválida!\');');
+        ShowHTML('  alert(\'ATENÇÃO: Só pode haver um valor padrão para idioma Favor verificar.!\');');
         ShowHTML('  history.back(1);');
         ScriptClose();
       } 

@@ -29,7 +29,8 @@ class dml_putOrImport {
                    'p_importados'                =>array(tvl($p_importados),                               B_INTEGER,        32),
                    'p_rejeitados'                =>array(tvl($p_rejeitados),                               B_INTEGER,        32),
                    'p_situacao'                  =>array(tvl($p_situacao),                                 B_INTEGER,        32),
-                   'p_nome_recebido'             =>array(tvl($p_nome_recebido),                            B_VARCHAR,       255)
+                   'p_nome_recebido'             =>array(tvl($p_nome_recebido),                            B_VARCHAR,       255),
+                   'p_nome_registro'             =>array(tvl($p_nome_registro),                            B_VARCHAR,       255)
                   );
      $l_rs = DatabaseQueriesFactory::getInstanceOf($sql, $dbms, $params, DB_TYPE);
      $l_error_reporting = error_reporting(); 

@@ -4392,7 +4392,7 @@ function SolicMail($p_solic,$p_tipo) {
   $w_html .= '         <ul>'.chr(13);
   $w_html .= '         <li>Responsável: <b>'.$_SESSION['NOME'].'</b></li>'.chr(13);
   $w_html .= '         <li>Data: <b>'.date('d/m/Y, H:i:s',$w_data_encaminhamento).'</b></li>'.chr(13);
-  $w_html .= '         <li>IP de origem: <b>'.$_SERVER['REMOTE_HOST'].'</b></li>'.chr(13);
+  $w_html .= '         <li>IP de origem: <b>'.$_SERVER['REMOTE_ADDR'].'</b></li>'.chr(13);
   $w_html .= '         </ul>'.chr(13);
   $w_html .= '      </td></tr>'.chr(13);
   $w_html .= '    </table>'.chr(13);
@@ -4617,7 +4617,7 @@ function Grava() {
     case 'PDENVIO':
       // Verifica se a Assinatura Eletrônica é válida
       if (verificaAssinaturaEletronica($_SESSION['USERNAME'],strtoupper($_REQUEST['w_assinatura'])) || $w_assinatura=='') {
-        if (!(strpos(strtoupper($_SERVER['HTTP_CONTENT_TYPE']),'MULTIPART/FORM-DATA')===false)) {
+        if ((false!==(strpos(strtoupper($_SERVER['HTTP_CONTENT_TYPE']),'MULTIPART/FORM-DATA'))) || (false!==(strpos(strtoupper($_SERVER['CONTENT_TYPE']),'MULTIPART/FORM-DATA')))) {
           // Verifica se outro usuário já enviou a solicitação
           $RS = db_getSolicData::getInstanceOf($dbms,$_REQUEST['w_chave'],'PDINICIAL');
           if (f($RS,'sq_siw_tramite')!=$_REQUEST['w_tramite']) {

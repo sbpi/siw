@@ -55,7 +55,7 @@ $O          = strtoupper($_REQUEST['O']);
 $w_assinatura   = strtoupper($_REQUEST['w_assinatura']);
 $w_pagina       = 'siafi.php?par=';
 $w_Disabled     = 'ENABLED';
-$w_dir          = 'mod_or_pub/';
+$w_dir          = 'mod_is/';
 $w_troca        = $_REQUEST['w_troca'];
 // Configura o caminho para gravação física de arquivos<u></u>
 $p_responsavel  = strtoupper($_REQUEST['p_responsavel']);
@@ -323,7 +323,7 @@ function Grava() {
   ShowHTML('</HEAD>');
   BodyOpen(null);
   switch ($SG) {
-    case 'ORIMPSIAFI':
+    case 'ISIMPSIAFI':
       // Verifica se a Assinatura Eletrônica é válida
       if (verificaAssinaturaEletronica($_SESSION['USERNAME'],strtoupper($_REQUEST['w_assinatura'])) || $w_assinatura=='') {
         if (UPLOAD_ERR_OK==0) {

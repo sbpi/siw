@@ -5,11 +5,10 @@ include_once($w_dir_volta.'classes/sp/db_getUorgList.php');
 // -------------------------------------------------------------------------
 function selecaoUnidade($label,$accesskey,$hint,$chave,$chaveAux,$campo,$restricao,$atributo) {
   extract($GLOBALS);
-
   $RS = db_getUorgList::getInstanceOf($dbms, $w_cliente, $chaveAux, nvl($restricao,'ATIVO'), null, null, $w_ano);
   if (count($RS)<=50) {
     $RS = SortArray($RS,'nome','asc');
-
+    $atributo = str_replace('onBlur','onChange',$atributo);
     if (!isset($hint)) {
        ShowHTML('          <td valign="top"><font size="1"><b>'.$label.'</b><br><SELECT ACCESSKEY="'.$accesskey.'" CLASS="sts" NAME="'.$campo.'" '.$w_Disabled.' '.$atributo.'>');
     } else {
@@ -25,6 +24,7 @@ function selecaoUnidade($label,$accesskey,$hint,$chave,$chaveAux,$campo,$restric
     }
     ShowHTML('          </select>');
   } else {
+    $atributo = str_replace('onChange','onBlur',$atributo);
     ShowHTML('<INPUT type="hidden" name="'.$campo.'" value="'.$chave.'">');
     if ($chave>'') {
       $RS = db_getUorgList::getInstanceOf($dbms, $w_cliente, $chave, null, null, null, null);

@@ -178,7 +178,7 @@ function Valida() {
       $w_html=$w_html."         Dados da ocorrência:<br>"."\r\n";
       $w_html=$w_html."         <ul>"."\r\n";
       $w_html=$w_html."         <li>Data do servidor: <b>".DataHora()."</b></li>"."\r\n";
-      $w_html=$w_html."         <li>IP de origem: <b>".$_SERVER["REMOTE_HOST"]."</b></li>"."\r\n";
+      $w_html=$w_html."         <li>IP de origem: <b>".$_SERVER["REMOTE_ADDR"]."</b></li>"."\r\n";
       $w_html=$w_html."         </ul>"."\r\n";
       $w_html=$w_html."      </font></td></tr>"."\r\n";
       $w_html=$w_html."    </table>"."\r\n";
@@ -225,7 +225,7 @@ function LogOn()
   extract($GLOBALS);
   ShowHTML('<HTML>');
   ShowHTML('<HEAD>');
-  ShowHTML('<link rel="shortcut icon" href="favicon.ico">');
+  ShowHTML('<link rel="shortcut icon" href="'.$conRootSIW.'favicon.ico" type="image/ico" />');
   ShowHTML('<TITLE>'.$conSgSistema.' - Autenticação</TITLE>');
   ScriptOpen('JavaScript');
   ShowHTML('function Ajuda() ');

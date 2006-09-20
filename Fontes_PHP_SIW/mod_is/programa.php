@@ -3313,7 +3313,7 @@ function SolicMail($p_solic,$p_tipo) {
   $w_html.='         <ul>'.chr(13);
   $w_html.='         <li>Responsável: <b>'.$_SESSION['NOME'].'</b></li>'.chr(13);
   $w_html .= '         <li>Data: <b>'.date('d/m/Y, H:i:s',$w_data_encaminhamento).'</b></li>'.chr(13);
-  $w_html.='         <li>IP de origem: <b>'.$_SERVER['REMOTE_HOST'].'</b></li>'.chr(13);
+  $w_html.='         <li>IP de origem: <b>'.$_SERVER['REMOTE_ADDR'].'</b></li>'.chr(13);
   $w_html.='         </ul>'.chr(13);
   $w_html.='      </font></td></tr>'.chr(13);
   $w_html.='    </table>'.chr(13);
@@ -3410,7 +3410,7 @@ function RestricaoMail($l_solic,$l_descricao,$l_tp_restricao,$l_providencia,$l_t
   $w_html.='         <ul>'.chr(13);
   $w_html.='         <li>Responsável: <b>'.$_REQUEST['nome'.'_session'].'</b></li>'.chr(13);
   $w_html .= '         <li>Data: <b>'.date('d/m/Y, H:i:s',$w_data_encaminhamento).'</b></li>'.chr(13);
-  $w_html.='         <li>IP de origem: <b>'.$_SERVER['REMOTE_HOST'].'</b></li>'.chr(13);
+  $w_html.='         <li>IP de origem: <b>'.$_SERVER['REMOTE_ADDR'].'</b></li>'.chr(13);
   $w_html.='         </ul>'.chr(13);
   $w_html.='      </font></td></tr>'.chr(13);
   $w_html.='    </table>'.chr(13);
@@ -3589,7 +3589,7 @@ function Grava() {
         //Recupera 10  dos dias de prazo da tarefa, para emitir o alerta  
         $RS = db_get10PercentDays_IS::getInstanceOf($dbms,$_REQUEST['w_inicio'],$_REQUEST['w_fim']);
         foreach ($RS as $row){$RS=$row; break;}
-        $w_dias = f($RS,'dias');[
+        $w_dias = f($RS,'dias');
         if ($w_dias<1) $w_dias=1;
       } 
       dml_putAcaoGeral_IS::getInstanceOf($dbms,$O,

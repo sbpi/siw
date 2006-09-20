@@ -1943,15 +1943,15 @@ function Rel_Sintetico_PPA() {
   if ($O=='L') {
     // Exibe a quantidade de registros apresentados na listagem e o cabeçalho da tabela de listagem
     $w_filtro='<tr valign="top">';
-    if ($p_responsavel>'') $w_filtro=$w_filtro.'<td>Responsável&nbsp;[<b>'.$p_responsavel.'</b>]&nbsp;';
-    if ($p_prioridade>'') $w_filtro=$w_filtro.'<td>Prioridade&nbsp;[<b>'.RetornaPrioridade($p_prioridade).'</b>]&nbsp;';
-    if ($p_selecionada_mpog>'') $w_filtro=$w_filtro.'<td>Selecionada MP&nbsp;[<b>'.$p_selecionada_mpog.'</b>]&nbsp;';
-    if ($p_selecionada_relevante>'') $w_filtro=$w_filtro.'<td>Selecionada Relevante&nbsp;[<b>'.$p_selecionada_relevante.'</b>]&nbsp;';
-    if ($p_programada>'') $w_filtro=$w_filtro.'<td>Meta LOA&nbsp;[<b>'.$p_programada.'</b>]&nbsp;';
-    if ($p_exequivel>'') $w_filtro=$w_filtro.'<td>Meta será cumprida&nbsp;[<b>'.$p_exequivel.'</b>]&nbsp;';
-    if ($p_fim_previsto>'') $w_filtro=$w_filtro.'<td>Metas em atraso&nbsp;[<b>'.$p_fim_previsto.'</b>]&nbsp;';
-    if ($p_atraso>'') $w_filtro=$w_filtro.'<td>Ações em atraso&nbsp;[<b>'.$p_atraso.'</b>]&nbsp;'; 
-    if ($p_tarefas_atraso>'')$w_filtro=$w_filtro.'<td>Ações com tarefas em atraso&nbsp;[<b>'.$p_tarefas_atraso.'</b>]&nbsp;';
+    if ($p_responsavel>'')           $w_filtro = $w_filtro.'<td>Responsável&nbsp;[<b>'.$p_responsavel.'</b>]&nbsp;';
+    if ($p_prioridade>'')            $w_filtro = $w_filtro.'<td>Prioridade&nbsp;[<b>'.RetornaPrioridade($p_prioridade).'</b>]&nbsp;';
+    if ($p_selecionada_mpog>'')      $w_filtro = $w_filtro.'<td>Selecionada MP&nbsp;[<b>'.$p_selecionada_mpog.'</b>]&nbsp;';
+    if ($p_selecionada_relevante>'') $w_filtro = $w_filtro.'<td>Selecionada Relevante&nbsp;[<b>'.$p_selecionada_relevante.'</b>]&nbsp;';
+    if ($p_programada>'')            $w_filtro = $w_filtro.'<td>Meta LOA&nbsp;[<b>'.$p_programada.'</b>]&nbsp;';
+    if ($p_exequivel>'')             $w_filtro = $w_filtro.'<td>Meta será cumprida&nbsp;[<b>'.$p_exequivel.'</b>]&nbsp;';
+    if ($p_fim_previsto>'')          $w_filtro = $w_filtro.'<td>Metas em atraso&nbsp;[<b>'.$p_fim_previsto.'</b>]&nbsp;';
+    if ($p_atraso>'')                $w_filtro = $w_filtro.'<td>Ações em atraso&nbsp;[<b>'.$p_atraso.'</b>]&nbsp;'; 
+    if ($p_tarefas_atraso>'')        $w_filtro = $w_filtro.'<td>Ações com tarefas em atraso&nbsp;[<b>'.$p_tarefas_atraso.'</b>]&nbsp;';
     ShowHTML('<tr><td align="left">');
     if ($w_filtro>'') ShowHTML('<table border=0><tr valign="top"><td><b>Filtro:</b><td nowrap><ul>'.$w_filtro.'</ul></tr></table>');
     ShowHTML('<tr><td align="center" colspan="2">');
@@ -1960,7 +1960,7 @@ function Rel_Sintetico_PPA() {
     ShowHTML('          <td rowspan="1" colspan="2"><b>Programas</td>');
     ShowHTML('          <td rowspan="1" colspan="2"><b>Ações</td>');
     $RS1 = db_getOrImport::getInstanceOf($dbms,null,$w_cliente,null,null,null,null,null);
-    $RS1 = SortArray($RS1,'data_arquivo','desc');
+    $RS1 = SortArray($RS1,'phpdt_data_arquivo','desc');
     ShowHTML('          <td rowspan="1" colspan="5"><b>Dados SIAFI&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Atualização: '.Nvl(FormataDataEdicao(f($RS1,'data_arquivo')),'-').'</td>');
     ShowHTML('          <td rowspan="1" colspan="6"><b>Metas</td>');
     ShowHTML('        </tr>');
@@ -2007,16 +2007,6 @@ function Rel_Sintetico_PPA() {
           ShowHTML('</FONT></B></TD></TR></TABLE>');
           ShowHTML('<div align=center><center>');
           ShowHTML('<table border="0" cellpadding="0" cellspacing="0" width="100%">');
-          $w_filtro='<tr valign="top">';
-          if ($p_responsavel>'') $w_filtro=$w_filtro.'<td>Responsável&nbsp;[<b>'.$p_responsavel.'</b>]&nbsp;';        
-          if ($p_prioridade>'') $w_filtro=$w_filtro.'<td>Prioridade&nbsp;[<b>'.RetornaPrioridade($p_prioridade).'</b>]&nbsp;'; 
-          if ($p_selecionada_mpog>'') $w_filtro=$w_filtro.'<td>Selecionada MP&nbsp;[<b>'.$p_selecionada_mpog.'</b>]&nbsp;';
-          if ($p_selecionada_relevante>'') $w_filtro=$w_filtro.'<td>Selecionada Relevante&nbsp;[<b>'.$p_selecionada_relevante.'</b>]&nbsp;'; 
-          if ($p_programada>'') $w_filtro=$w_filtro.'<td>Meta LOA&nbsp;[<b>'.$p_programada.'</b>]&nbsp;';
-          if ($p_exequivel>'') $w_filtro=$w_filtro.'<td>Meta será cumprida&nbsp;[<b>'.$p_exequivel.'</b>]&nbsp;'; 
-          if ($p_fim_previsto>'') $w_filtro=$w_filtro.'<td>Metas em atraso&nbsp;[<b>'.$p_fim_previsto.'</b>]&nbsp;';
-          if ($p_atraso>'') $w_filtro=$w_filtro.'<td>Ações em atraso&nbsp;[<b>'.$p_atraso.'</b>]&nbsp;';
-          if ($p_tarefas_atraso>'') $w_filtro=$w_filtro.'<td>Ações com tarefas em atraso&nbsp;[<b>'.$p_tarefas_atraso.'</b>]&nbsp;';
           ShowHTML('<tr><td align="left">');
           if ($w_filtro>'') ShowHTML('<table border=0><tr valign="top"><td><b>Filtro:</b><td nowrap><ul>'.$w_filtro.'</ul></tr></table>');
           ShowHTML('<tr><td align="center" colspan="2">');
@@ -2025,7 +2015,7 @@ function Rel_Sintetico_PPA() {
           ShowHTML('          <td rowspan="1" colspan="2"><b>Programas</td>');
           ShowHTML('          <td rowspan="1" colspan="2"><b>Ações</td>');
           $RS1 = db_getOrImport::getInstanceOf($dbms,null,$w_cliente,null,null,null,null,null);
-          $RS1 = SortArray($RS1,'data_arquivo','desc');
+          $RS1 = SortArray($RS1,'phpdt_data_arquivo','desc');
           ShowHTML('          <td rowspan="1" colspan="5"><b>Dados SIAFI&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Atualização: '.Nvl(FormataDataEdicao(f($RS1,'data_arquivo')),'-').'</td>');
           ShowHTML('          <td rowspan="1" colspan="6"><b>Metas</td>');
           ShowHTML('        </tr>');
@@ -2047,47 +2037,41 @@ function Rel_Sintetico_PPA() {
           ShowHTML('          <td><b>Meta<br>LOA</td>');
           ShowHTML('        </tr>');
         } 
-        if (Nvl(f($row,'sq_acao_ppa_pai'),'')=='') {
-          next($RS);
-          $w_teste_pai=1;
-        } 
-        //Montagem da lista das ações
-        $RS1 = db_getLinkData::getInstanceOf($dbms,$w_cliente,'ORCAD');
-        $RS2 = db_getSolicList::getInstanceOf($dbms,f($RS1,'sq_menu'),$w_usuario,f($RS1,'sigla'),5,
-               null,null,null,null,$p_atraso,null,null,null,null,null,f($row,'sq_siw_solicitacao'),null,
-               null,null,null,null,null,null,null,null,null,null,null,null,f($row,'chave'),null);
-        $RS2 = SortArray($RS2,'phpdt_fim','asc','prioridade','asc');
-        foreach($RS2 as $row2){$RS2=$row2; break;}
-        //Variarel para o teste de existencia de metas e açoes para visualização no relatorio
-        $w_teste_metas = 0 ;
-        $w_teste_acoes = 0;
-        //Recuperação e verificação das metas das ações de acordo com a visão do usuário
-        if (count($RS2)>0) {
-          $w_teste_acoes = 1;
-          $w_visao = 0;
-          if ($w_visao<2) {
-            $RS3 = db_getSolicEtapa::getInstanceOf($dbms,f($RS2,'sq_siw_solicitacao'),null,'LSTNULL',null);
-            $RS3 = SortArray($RS3,'ordem','asc');
-            if (count($RS3)>0) {
-              $w_teste_metas = 1;
-            } elseif ($p_programada=='' && $p_exequivel=='' && $p_fim_previsto=='') {
-              $w_teste_metas = 3;
-            }           
-          } else {
-            $w_teste_metas = 0;
-          } 
-        } else {
-          if (f($row,'sq_siw_solicitacao')>'') {
+        if (Nvl(f($row,'sq_acao_ppa_pai'),'')!='') {
+          //Montagem da lista das ações
+          $RS1 = db_getLinkData::getInstanceOf($dbms,$w_cliente,'ORCAD');
+          $RS2 = db_getSolicList::getInstanceOf($dbms,f($RS1,'sq_menu'),$w_usuario,f($RS1,'sigla'),5,
+                 null,null,null,null,$p_atraso,null,null,null,null,null,f($row,'sq_siw_solicitacao'),null,
+                 null,null,null,null,null,null,null,null,null,null,null,null,f($row,'chave'),null);
+          $RS2 = SortArray($RS2,'phpdt_fim','asc','prioridade','asc');
+          foreach($RS2 as $row2){$RS2=$row2; break;}
+          //Variarel para o teste de existencia de metas e açoes para visualização no relatorio
+          $w_teste_metas = 0 ;
+          $w_teste_acoes = 0;
+          //Recuperação e verificação das metas das ações de acordo com a visão do usuário
+          if (count($RS2)>0) {
             $w_teste_acoes = 1;
-            $w_teste_metas = 0;
+            $w_visao = 0;
+            if ($w_visao<2) {
+              $RS3 = db_getSolicEtapa::getInstanceOf($dbms,f($RS2,'sq_siw_solicitacao'),null,'LSTNULL',null);
+              $RS3 = SortArray($RS3,'ordem','asc');
+              if (count($RS3)>0) {
+                $w_teste_metas = 1;
+              } elseif ($p_programada=='' && $p_exequivel=='' && $p_fim_previsto=='') {
+                $w_teste_metas = 3;
+              }           
+            } else {
+              $w_teste_metas = 0;
+            } 
           } else {
-            $w_teste_acoes=0;
+            if (f($row,'sq_siw_solicitacao')>'') {
+              $w_teste_acoes = 1;
+              $w_teste_metas = 0;
+            } else {
+              $w_teste_acoes=0;
+            } 
           } 
-        } 
-        if ($w_teste_pai==1) {
-          prev($RS);
-          $w_teste_pai=0;
-        } 
+        }
         if ($w_teste_metas==1 || $w_teste_metas==3) {
           //Inicio da montagem da lista das ações e metas de acordo com o filtro
           $w_cont+=1;
@@ -2098,61 +2082,65 @@ function Rel_Sintetico_PPA() {
             ShowHTML('   <td><b>'.f($row,'nome').'</td>');
             $w_atual=1;
           } else {
-            ShowHTML(' <tr valign="top">');
-            ShowHTML('   <td><b>&nbsp;</td>');
-            ShowHTML('   <td><b>&nbsp;</td>');
-          } 
-          $w_linha+=1;
-          ShowHTML('      <td><b>'.f($row,'codigo').'</td>');
-          if ($w_tipo_rel=='WORD' || f($row,'acao')==0) {
-            ShowHTML('   <td><b>'.f($row,'nome').'</td>');
-          } else {
-            ShowHTML('   <td><b><A class="HL" HREF="'.$w_dir.'projeto.php?par=Visual&O=L&w_chave='.f($row,'sq_siw_solicitacao').'&w_tipo=&P1=2&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP='.$TP.'&SG='.$SG.'" TARGET="VisualAcao" title="Exibe as informações da ação.">'.f($row,'nome').'</a></td>');
-          } 
-          ShowHTML('      <td align="right">'.number_format(f($row,'aprovado'),2,',','.').'</td>');
-          ShowHTML('      <td align="right">'.number_format(f($row,'empenhado'),2,',','.').'</td>');
-          ShowHTML('      <td align="right">'.number_format(Nvl(f($row,'aprovado'),0.00),2,',','.')-number_format(Nvl(f($row,'empenhado'),0.00),2,',','.').'</td>');
-          ShowHTML('      <td align="right">'.number_format(f($row,'liquidado',2,',','.')).'</td>');
-          ShowHTML('      <td align="right">'.number_format(Nvl(f($row,'empenhado'),0.00),2,',','.')-number_format(Nvl(f($row,'liquidado'),0.00),2,',','.').'</td>');
-          if (count($RS2)<=0) {          
-            ShowHTML('   <td colspan="6" align="center"><b>Não foram encontrados registros.</b></td>');
-          } else {
-            if (count($RS3)<=0) {
-              // Se não foram selecionados registros, exibe mensagem
-              ShowHTML('<td colspan="6" align="center"><b>Não foram encontrados registros.</b></td></tr>');
+            if(w_atual!=1) {
+              ShowHTML(' <tr valign="top">');
+              ShowHTML('   <td><b>&nbsp;</td>');
+              ShowHTML('   <td><b>&nbsp;</td>');
+            }
+            $w_atual=0;
+          }
+          if(w_atual!=1) {
+            $w_linha+=1;
+            ShowHTML('      <td><b>'.f($row,'codigo').'</td>');
+            if ($w_tipo_rel=='WORD' || f($row,'acao')==0) {
+              ShowHTML('   <td><b>'.f($row,'nome').'</td>');
             } else {
-              $i = 0;
-              foreach ($RS3 as $row3) {
-                if ($i==1) ShowHTML('<tr><td colspan="9">&nbsp;');
-                $i=1;
-                if ($w_tipo_rel=='WORD') {
-                  ShowHTML('<td>'.f($row3,'titulo').'</td>');
-                } else {
-                  ShowHTML('<td><A class="HL" HREF="#" onClick="window.open(\'projeto.php?par=AtualizaEtapa&O=V&w_chave='.f($RS2,'sq_siw_solicitacao').'&w_chave_aux='.f($row3,'sq_projeto_etapa').'&w_tipo=Volta&P1=10&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP='.$TP.'&SG='.$SG.'\',\'Meta','width=600, height=350, top=50, left=50, toolbar=no, scrollbars=yes, resizable=yes, status=no\'); return false;" title="Clique para exibir os dados!">'.f($row3,'titulo').'</A></td>');
-                } 
-                ShowHTML('      <td nowrap align="center">'.Nvl(f($row3,'unidade_medida'),'---').'</td>');
-                ShowHTML('      <td nowrap align="right" >'.f($row3,'quantidade').'</td>');
-                $RS4 = db_getEtapaMensal::getInstanceOf($dbms,f($row3,'sq_projeto_etapa'));
-                $RS4 = SortArray($RS4,'referencia','desc');
-                if (count($RS4)>0) {
-                  if (f($row3,'cumulativa')=='S') {
-                    foreach($RS4 as $row4) {
-                      ShowHTML('      <td nowrap align="right" >'.Nvl(f($row4,'execucao_fisica'),0).'</td>');
-                    }
+              ShowHTML('   <td><b><A class="HL" HREF="'.$w_dir.'projeto.php?par=Visual&O=L&w_chave='.f($row,'sq_siw_solicitacao').'&w_tipo=&P1=2&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP='.$TP.'&SG='.$SG.'" TARGET="VisualAcao" title="Exibe as informações da ação.">'.f($row,'nome').'</a></td>');
+            } 
+            ShowHTML('      <td align="right" nowrap>'.number_format(Nvl(f($row,'aprovado'),0.00),2,',','.').'</td>');
+            ShowHTML('      <td align="right" nowrap>'.number_format(Nvl(f($row,'empenhado'),0.00),2,',','.').'</td>');
+            ShowHTML('      <td align="right" nowrap>'.number_format(Nvl(f($row,'aprovado'),0.00)-Nvl(f($row,'empenhado'),0.00),2,',','.').'</td>');
+            ShowHTML('      <td align="right" nowrap>'.number_format(Nvl(f($row,'liquidado'),0.00),2,',','.').'</td>');
+            ShowHTML('      <td align="right" nowrap>'.number_format(Nvl(f($row,'empenhado'),0.00)-Nvl(f($row,'liquidado'),0.00),2,',','.').'</td>');
+            if (count($RS2)<=0) {          
+              ShowHTML('   <td colspan="6" align="center"><b>Não foram encontrados registros.</b></td>');
+            } else {
+              if (count($RS3)<=0) {
+                // Se não foram selecionados registros, exibe mensagem
+                ShowHTML('<td colspan="6" align="center"><b>Não foram encontrados registros.</b></td>');
+              } else {
+                $i = 0;
+                foreach ($RS3 as $row3) {
+                  if ($i==1) ShowHTML('<tr><td colspan="9">&nbsp;');
+                  $i=1;
+                  if ($w_tipo_rel=='WORD') {
+                    ShowHTML('<td>'.f($row3,'titulo').'</td>');
                   } else {
-                    $w_quantitativo_total=0;
-                    foreach ($RS4 as $row4) {
-                      $w_quantitativo_total = $w_quantitativo_total + Nvl(f($row4,'execucao_fisica'),0);
-                    } 
-                    ShowHTML('      <td nowrap align="right" >'.$w_quantitativo_total.'</td>');
+                    ShowHTML('<td><A class="HL" HREF="#" onClick="window.open(\'projeto.php?par=AtualizaEtapa&O=V&w_chave='.f($RS2,'sq_siw_solicitacao').'&w_chave_aux='.f($row3,'sq_projeto_etapa').'&w_tipo=Volta&P1=10&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP='.$TP.'&SG='.$SG.'\',\'Meta\',\'width=600, height=350, top=50, left=50, toolbar=no, scrollbars=yes, resizable=yes, status=no\'); return false;" title="Clique para exibir os dados!">'.f($row3,'titulo').'</A></td>');
                   } 
-                } else {
-                  ShowHTML('      <td nowrap align="right" >---</td>');
+                  ShowHTML('      <td nowrap align="center">'.Nvl(f($row3,'unidade_medida'),'---').'</td>');
+                  ShowHTML('      <td nowrap align="right">'.f($row3,'quantidade').'</td>');
+                  $RS4 = db_getEtapaMensal::getInstanceOf($dbms,f($row3,'sq_projeto_etapa'));
+                  $RS4 = SortArray($RS4,'phpdt_referencia','desc');
+                  if (count($RS4)>0) {
+                    if (f($row3,'cumulativa')=='S') {
+                      foreach($RS4 as $row4){$RS4=$row4; break;}
+                      ShowHTML('      <td nowrap align="right">'.Nvl(f($RS4,'execucao_fisica'),0).'</td>');
+                    } else {
+                      $w_quantitativo_total=0;
+                      foreach ($RS4 as $row4) {
+                        $w_quantitativo_total = $w_quantitativo_total + Nvl(f($row4,'execucao_fisica'),0);
+                      } 
+                      ShowHTML('      <td nowrap align="right">'.$w_quantitativo_total.'</td>');
+                    } 
+                  } else {
+                    ShowHTML('      <td nowrap align="right">---</td>');
+                  } 
+                  $w_linha=$w_linha+1;
                 } 
-                $w_linha=$w_linha+1;
               } 
             } 
-          } 
+          }
         } else {
           if ($p_programada=='' && $p_exequivel=='' && $p_fim_previsto=='' && $p_atraso=='') {
             $w_cont+=1;
@@ -2162,28 +2150,34 @@ function Rel_Sintetico_PPA() {
               ShowHTML('   <td><b>'.f($row,'nome').'</td>');
               $w_atual=1;
             } else {
-              ShowHTML(' <tr valign="top">');
-              ShowHTML('   <td><b>&nbsp;</td>');
-              ShowHTML('   <td><b>&nbsp;</td>');
-            } 
-            $w_linha+=1;
-            if ($w_teste_acoes==1) {
-              ShowHTML('        <td colspan="1"><b>'.f($row,'codigo').'</b></td>');
-              ShowHTML('        <td colspan="1"><b>'.f($row,'nome').'</b></td>');
-              if ($w_teste_metas==3) {
-                ShowHTML('        <td colspan="11" align="center"><b>Não foram encontrados registros.<b></td>');
+              if(w_atual!=1) {
+                ShowHTML(' <tr valign="top">');
+                ShowHTML('   <td><b>&nbsp;</td>');
+                ShowHTML('   <td><b>&nbsp;</td>');
+              }
+              $w_atual=0;
+            }
+            if(w_atual!=1) {
+              $w_linha+=1;
+              if ($w_teste_acoes==1) {
+                ShowHTML('        <td colspan="1"><b>'.f($row,'codigo').'</b></td>');
+                ShowHTML('        <td colspan="1"><b>'.f($row,'nome').'</b></td>');
+                if ($w_teste_metas==3) {
+                  ShowHTML('        <td colspan="11" align="center"><b>Não foram encontrados registros.<b></td>');
+                } else {
+                  ShowHTML('        <td colspan="11" align="center"><b>Não há permissão para visualização da ação<b></td>');
+                } 
               } else {
-                ShowHTML('        <td colspan="11" align="center"><b>Não há permissão para visualização da ação<b></td>');
+                ShowHTML('        <td colspan="1"><b>'.f($row,'codigo').'</b></td>');
+                ShowHTML('        <td colspan="1"><b>'.f($row,'nome').'</b></td>');
+                ShowHTML('        <td colspan="11" align="center"><b>Não foram encontrados registros.</b></td>');
               } 
-            } else {
-              ShowHTML('        <td colspan="1"><b>'.f($row,'codigo').'</b></td>');
-              ShowHTML('        <td colspan="1"><b>'.f($row,'nome').'</b></td>');
-              ShowHTML('        <td colspan="11" align="center"><b>Não foram encontrados registros.</b></td>');
             } 
           } 
         } 
-      } 
-    } if ($w_cont==0) {
+      }
+    } 
+    if ($w_cont==0) {
       ShowHTML('        <td colspan="17" align="center"><b>Não foram encontrados registros.</b></td>');
     } 
     ShowHTML('      </center>');

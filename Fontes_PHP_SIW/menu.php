@@ -73,9 +73,9 @@ function Frames() {
   extract($GLOBALS);
   ShowHTML('<HTML> ');
   ShowHTML('  <HEAD> ');
+  ShowHTML('  <link rel="shortcut icon" href="'.$conRootSIW.'favicon.ico" type="image/ico" />');
   Estrutura_CSS($w_cliente);
   ShowHTML('  <TITLE>'.$conSgSistema.' - '.$conNmSistema.'</TITLE> ');
-  ShowHTML('  <link href="images/sbpi.ico" rel="shortcut icon">');
   ShowHTML('  </HEAD> ');
   ShowHTML('    <FRAMESET COLS="20%,80%"> ');
   ShowHTML('     <FRAME SRC="menu.php?par=ExibeDocs" SCROLLING="AUTO" FRAMEBORDER="0" FRAMESPACING=0 NAME="menu"> ');

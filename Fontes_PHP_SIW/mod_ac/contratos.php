@@ -2967,9 +2967,9 @@ function Encaminhamento() {
     } 
   } else {
     if (Nvl($w_erro,'')=='' || (Nvl($w_erro,'')>'' && substr($w_erro,0,1)!='0' && RetornaGestor($w_chave,$w_usuario)=='S')) {
-      SelecaoFase('<u>F</u>ase do contrato:','F','Se deseja alterar a fase atual do contrato, selecione a fase para a qual deseja enviá-la.',$w_novo_tramite,$w_menu,'w_novo_tramite',null,null);
+      SelecaoFase('<u>F</u>ase do contrato:','F','Se deseja alterar a fase atual do contrato, selecione a fase para a qual deseja enviá-la.',$w_novo_tramite,$w_menu,'w_novo_tramite',null,'onChange="document.Form.action=\''.$w_dir.$w_pagina.$par.'\'; document.Form.O.value=\''.$O.'\'; document.Form.w_troca.value=\'w_destinatario\'; document.Form.submit();"');
     } else {
-      SelecaoFase('<u>F</u>ase do contrato:','F','Se deseja alterar a fase atual do contrato, selecione a fase para a qual deseja enviá-la.',$w_novo_tramite,$w_tramite,'w_novo_tramite','ERRO',null);
+      SelecaoFase('<u>F</u>ase do contrato:','F','Se deseja alterar a fase atual do contrato, selecione a fase para a qual deseja enviá-la.',$w_novo_tramite,$w_tramite,'w_novo_tramite','ERRO','onChange="document.Form.action=\''.$w_dir.$w_pagina.$par.'\'; document.Form.O.value=\''.$O.'\'; document.Form.w_troca.value=\'w_destinatario\'; document.Form.submit();"');
     } 
     SelecaoSolicResp('<u>D</u>estinatário:','D','Selecione um destinatário para o projeto na relação.',$w_destinatario,$w_chave,$w_novo_tramite,$w_novo_tramite,'w_destinatario','USUARIOS');
   } 
@@ -3259,7 +3259,7 @@ function SolicMail($p_solic,$p_tipo) {
   $w_resultado      = '';
 
   // Recupera os dados da tarefa
-  $RSM= db_getSolicData::getInstanceOf($dbms,$p_solic,substr($SG,0,3).'GERAL');
+  $RSM = db_getSolicData::getInstanceOf($dbms,$p_solic,substr($SG,0,3).'GERAL');
   $w_html = '<HTML>'.chr(13);
   $w_html.=BodyOpenMail(null).chr(13);
   $w_html.='<table border="0" cellpadding="0" cellspacing="0" width="100%">'.chr(13);
@@ -3336,7 +3336,7 @@ function SolicMail($p_solic,$p_tipo) {
   $w_html.='         <ul>'.chr(13);
   $w_html.='         <li>Responsável: <b>'.$_SESSION['NOME'].'</b></li>'.chr(13);
   $w_html.='         <li>Data: <b>'.date('d/m/Y, H:i:s',$w_data_encaminhamento).'</b></li>'.chr(13);
-  $w_html.='         <li>IP de origem: <b>'.$_SERVER['REMOTE_HOST'].'</b></li>'.chr(13);
+  $w_html.='         <li>IP de origem: <b>'.$_SERVER['REMOTE_ADDR'].'</b></li>'.chr(13);
   $w_html.='         </ul>'.chr(13);
   $w_html.='      </td></tr>'.chr(13);
   $w_html.='    </table>'.chr(13);
@@ -3352,6 +3352,7 @@ function SolicMail($p_solic,$p_tipo) {
 
   // Recupera o e-mail do titular e do substituto pelo setor responsável
   $RS = db_getUorgResp::getInstanceOf($dbms,f($RSM,'sq_unidade'));
+  foreach($RS as $row) {$RS = $row; break;}
   if ((strpos($w_destinatarios,f($RS,'email_titular').'; ')===false) && Nvl(f($RS,'email_titular'),'nulo')!='nulo')         $w_destinatarios=$w_destinatarios.f($RS,'email_titular').'; ';
   if ((strpos($w_destinatarios,f($RS,'email_substituto').'; ')===false) && Nvl(f($RS,'email_substituto'),'nulo')!='nulo')   $w_destinatarios=$w_destinatarios.f($RS,'email_substituto').'; ';
 
@@ -3604,7 +3605,7 @@ function Grava() {
     // Verifica se a Assinatura Eletrônica é válida
     if (verificaAssinaturaEletronica($_SESSION['USERNAME'],strtoupper($_REQUEST['w_assinatura'])) || $w_assinatura=='') {
       // Trata o recebimento de upload ou dados 
-      if (!(strpos(strtoupper($_SERVER['HTTP_CONTENT_TYPE']),'MULTIPART/FORM-DATA')===false)) {
+      if ((false!==(strpos(strtoupper($_SERVER['HTTP_CONTENT_TYPE']),'MULTIPART/FORM-DATA'))) || (false!==(strpos(strtoupper($_SERVER['CONTENT_TYPE']),'MULTIPART/FORM-DATA')))) {
         // Se foi feito o upload de um arquivo 
         if (UPLOAD_ERR_OK==0) {
           $w_maximo = $_REQUEST['w_upload_maximo'];

@@ -20,7 +20,6 @@ include_once($w_dir_volta.'funcoes/selecaoPessoa.php');
 include_once($w_dir_volta.'funcoes/selecaoUnidade.php');
 include_once($w_dir_volta.'funcoes/selecaoPrioridade.php');
 include_once($w_dir_volta.'funcoes/selecaoFaseCheck.php');
-
 // =========================================================================
 //  /gr_demandaeventual.php
 // ------------------------------------------------------------------------

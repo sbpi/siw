@@ -977,12 +977,27 @@ function Grava() {
 
       // Verifica se a Assinatura Eletrônica é válida
       if (verificaAssinaturaEletronica($_SESSION['USERNAME'],strtoupper($_REQUEST['w_assinatura'])) || $w_assinatura=='') {
-        dml_CoCidade::getInstanceOf($dbms, $O,
-            $_REQUEST['w_sq_cidade'],$_REQUEST['w_ddd'],$_REQUEST['w_codigo_ibge'],$_REQUEST['w_sq_pais'],
-            $_REQUEST['w_sq_regiao'],$_REQUEST['w_co_uf'],$_REQUEST['w_nome'],$_REQUEST['w_capital']);
-        ScriptOpen('JavaScript');
-        ShowHTML('  location.href=\''.$R.'&O=L&P1='.$P1.'&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP='.$TP.'&SG='.$SG.MontaFiltro('GET').'\';');
-        ScriptClose();
+        $w_cont = 0;
+        $RS = db_getCityList::getInstanceOf($dbms,$_REQUEST['w_sq_pais'],$_REQUEST['w_co_uf'],null,null);
+        foreach($RS as $row) {
+          if(f($row,'capital')=='Sim' && $_REQUEST['w_capital']=='S') {
+            if ($O=='I') $w_cont = $w_cont + 1;
+            elseif ($O=='A' && $_REQUEST['w_sq_cidade']!=f($row,'sq_cidade'))  $w_cont = $w_cont + 1;
+          }
+        }
+        if($w_cont>0) {
+          ScriptOpen('JavaScript');
+          ShowHTML('  alert(\'ATENÇÃO: Só pode haver uma capital por estado. Favor verificar.\');');
+          ShowHTML('  history.back(1);');
+          ScriptClose();
+        } else {        
+          dml_CoCidade::getInstanceOf($dbms, $O,
+              $_REQUEST['w_sq_cidade'],$_REQUEST['w_ddd'],$_REQUEST['w_codigo_ibge'],$_REQUEST['w_sq_pais'],
+              $_REQUEST['w_sq_regiao'],$_REQUEST['w_co_uf'],$_REQUEST['w_nome'],$_REQUEST['w_capital']);
+          ScriptOpen('JavaScript');
+          ShowHTML('  location.href=\''.$R.'&O=L&P1='.$P1.'&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP='.$TP.'&SG='.$SG.MontaFiltro('GET').'\';');
+          ScriptClose();
+        }
       } else {
         ScriptOpen('JavaScript');
         ShowHTML('  alert(\'Assinatura Eletrônica inválida!\');');
@@ -997,12 +1012,27 @@ function Grava() {
       $p_ordena = strtoupper($_REQUEST['p_ordena']);
 
       if (verificaAssinaturaEletronica($_SESSION['USERNAME'],strtoupper($_REQUEST['w_assinatura'])) || $w_assinatura=='') {
-        dml_CoPais::getInstanceOf($dbms, $O,
-            $_REQUEST['w_sq_pais'],$_REQUEST['w_nome'],$_REQUEST['w_ativo'],
-            $_REQUEST['w_padrao'],$_REQUEST['w_ddi'],$_REQUEST['w_sigla']);
-        ScriptOpen('JavaScript');
-        ShowHTML('  location.href=\''.$R.'&O=L&P1='.$P1.'&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP='.$TP.'&SG='.$SG.MontaFiltro('GET').'\';');
-        ScriptClose();
+        $w_cont = 0;
+        $RS = db_getCountryList::getInstanceOf($dbms,null,null,null,null);
+        foreach($RS as $row) {
+          if(f($row,'padrao')=='S' && $_REQUEST['w_padrao']=='S') {
+            if ($O=='I') $w_cont = $w_cont + 1;
+            elseif ($O=='A' && $_REQUEST['w_sq_pais']!=f($row,'sq_pais'))  $w_cont = $w_cont + 1;
+          }
+        }
+        if($w_cont>0) {
+          ScriptOpen('JavaScript');
+          ShowHTML('  alert(\'ATENÇÃO: Só pode haver um valor padrão para país. Favor verificar.\');');
+          ShowHTML('  history.back(1);');
+          ScriptClose();
+        } else {
+          dml_CoPais::getInstanceOf($dbms, $O,
+              $_REQUEST['w_sq_pais'],$_REQUEST['w_nome'],$_REQUEST['w_ativo'],
+              $_REQUEST['w_padrao'],$_REQUEST['w_ddi'],$_REQUEST['w_sigla']);
+          ScriptOpen('JavaScript');
+          ShowHTML('  location.href=\''.$R.'&O=L&P1='.$P1.'&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP='.$TP.'&SG='.$SG.MontaFiltro('GET').'\';');
+          ScriptClose();
+        }
       } else {
         ScriptOpen('JavaScript');
         ShowHTML('  alert(\'Assinatura Eletrônica inválida!\');');
@@ -1038,12 +1068,27 @@ function Grava() {
 
       // Verifica se a Assinatura Eletrônica é válida
       if (verificaAssinaturaEletronica($_SESSION['USERNAME'],strtoupper($_REQUEST['w_assinatura'])) || $w_assinatura=='') {
-        dml_CoUf::getInstanceOf($dbms, $O,
-            $_REQUEST['w_co_uf'],$_REQUEST['w_sq_pais'],$_REQUEST['w_sq_regiao'],$_REQUEST['w_nome'],
-            $_REQUEST['w_ativo'],$_REQUEST['w_padrao'],$_REQUEST['w_codigo_ibge'],$_REQUEST['w_ordem']);
-        ScriptOpen('JavaScript');
-        ShowHTML('  location.href=\''.$R.'&O=L&P1='.$P1.'&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP='.$TP.'&SG='.$SG.MontaFiltro('GET').'\';');
-        ScriptClose();
+        $w_cont = 0;
+        $RS = db_getStateList::getInstanceOf($dbms,$_REQUEST['w_sq_pais'],null,null,null);
+        foreach($RS as $row) {
+          if(f($row,'padrao')=='S' && $_REQUEST['w_padrao']=='S') {
+            if ($O=='I') $w_cont = $w_cont + 1;
+            elseif ($O=='A' && $_REQUEST['w_co_uf']!=f($row,'co_uf'))  $w_cont = $w_cont + 1;
+          }
+        }
+        if($w_cont>0) {
+          ScriptOpen('JavaScript');
+          ShowHTML('  alert(\'ATENÇÃO: Só pode haver um valor padrão para país. Favor verificar.\');');
+          ShowHTML('  history.back(1);');
+          ScriptClose();
+        } else {        
+          dml_CoUf::getInstanceOf($dbms, $O,
+              $_REQUEST['w_co_uf'],$_REQUEST['w_sq_pais'],$_REQUEST['w_sq_regiao'],$_REQUEST['w_nome'],
+              $_REQUEST['w_ativo'],$_REQUEST['w_padrao'],$_REQUEST['w_codigo_ibge'],$_REQUEST['w_ordem']);
+          ScriptOpen('JavaScript');
+          ShowHTML('  location.href=\''.$R.'&O=L&P1='.$P1.'&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP='.$TP.'&SG='.$SG.MontaFiltro('GET').'\';');
+          ScriptClose();
+        }
       } else {
         ScriptOpen('JavaScript');
         ShowHTML('  alert(\'Assinatura Eletrônica inválida!\');');

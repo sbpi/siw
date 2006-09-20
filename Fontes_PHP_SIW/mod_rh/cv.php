@@ -899,7 +899,7 @@ function Idiomas() {
     ShowHTML('    <table width="97%" border="0">');
     if ($O=='I') {
       ShowHTML('      <tr>');
-      SelecaoIdioma('I<u>d</u>dioma:','D','Selecione o idioma que você deseja informar os dados.',$w_chave,null,'w_chave',null,null);
+      SelecaoIdioma('I<u>d</u>ioma:','D','Selecione o idioma que você deseja informar os dados.',$w_chave,null,'w_chave',null,null);
     } else {
       ShowHTML('<INPUT type="hidden" name="w_chave" value="'.$w_chave.'">');
       ShowHTML('      <tr><td valign="top">Idioma:</b><br><b>'.$w_nm_idioma);
@@ -2035,7 +2035,7 @@ function Grava() {
         } 
         // Se foi feito o upload de um arquivo 
         if (UPLOAD_ERR_OK==0) {
-          $w_maximo = $_REQUEST['w_upload_maximo'];
+          $w_maximo = 51200;
           foreach ($_FILES as $Chv => $Field) {
             if ($Field['size'] > 0) {
               // Verifica se o tamanho das fotos está compatível com  o limite de 100KB. 
@@ -2058,11 +2058,11 @@ function Grava() {
             } 
           } 
           dml_putCVIdent::getInstanceOf($dbms,$O,
-          $w_cliente,$_REQUEST['w_chave'],$_REQUEST['w_nome'],$_REQUEST['w_nome_resumido'],$_REQUEST['w_nascimento'],
-          $_REQUEST['w_sexo'],$_REQUEST['w_sq_estado_civil'],$_REQUEST['w_sq_formacao'],$_REQUEST['w_sq_etnia'],
-          $_REQUEST['w_sq_deficiencia'],$_REQUEST['w_cidade'],$_REQUEST['w_rg_numero'],$_REQUEST['w_rg_emissor'],
-          $_REQUEST['w_rg_emissao'],$_REQUEST['w_cpf'],$_REQUEST['w_passaporte_numero'],$_REQUEST['w_sq_pais_passaporte'],
-          $w_file,$w_tamanho,$w_tipo,$w_nome_original,&$w_chave_nova);    
+              $w_cliente,$_REQUEST['w_chave'],$_REQUEST['w_nome'],$_REQUEST['w_nome_resumido'],$_REQUEST['w_nascimento'],
+              $_REQUEST['w_sexo'],$_REQUEST['w_sq_estado_civil'],$_REQUEST['w_sq_formacao'],$_REQUEST['w_sq_etnia'],
+              $_REQUEST['w_sq_deficiencia'],$_REQUEST['w_cidade'],$_REQUEST['w_rg_numero'],$_REQUEST['w_rg_emissor'],
+              $_REQUEST['w_rg_emissao'],$_REQUEST['w_cpf'],$_REQUEST['w_passaporte_numero'],$_REQUEST['w_sq_pais_passaporte'],
+              $w_file,$w_tamanho,$w_tipo,$w_nome,&$w_chave_nova);    
         } else {
           ScriptOpen('JavaScript');
           ShowHTML('  alert(\'ATENÇÃO: ocorreu um erro na transferência do arquivo. Tente novamente!\');');

@@ -243,7 +243,8 @@ function ConsultaDoc() {
 
         $w_total=0;
         foreach ($RS as $row) {
-          ShowHTML('      <tr bgcolor="'.$conTrBgColor.'" valign="top">');
+          $w_cor = ($w_cor==$conTrBgColor || $w_cor=='') ? $w_cor=$conTrAlternateBgColor : $w_cor=$conTrBgColor;
+          ShowHTML('      <tr bgcolor="'.$w_cor.'" valign="top">');
           ShowHTML('        <td nowrap><a class="HL" href="https://honda.unesco.org.br/pls/seguranca/Frm_SA.Visualizar?p_usuario=167&p_Documento=111800&p_Acesso=C&p_Nro_Doc='.f($row,'documento').'&P1=0&P2=0&P3=0&TP=Consultar&p_ValidaTempo=Nao">'.f($row,'documento').'</a>');
           ShowHTML('        <td>'.f($row,'nome').'</td>');
           ShowHTML('        <td align="center">'.f($row,'inicio').'</td>');
@@ -283,8 +284,8 @@ function ConsultaDoc() {
         ShowHTML('        <TABLE WIDTH="100%" bgcolor="'.$conTableBgColor.'" BORDER="'.$conTableBorder.'" CELLSPACING="'.$conTableCellSpacing.'" CELLPADDING="'.$conTableCellPadding.'" BorderColorDark="'.$conTableBorderColorDark.'" BorderColorLight="'.$conTableBorderColorLight.'">');
         ShowHTML('          <tr bgcolor="'.$conTrBgColor.'" align="center">');
         ShowHTML('            <td><b>Documento</td>');
-        ShowHTML('            <td><b>Comprovante</td>');
         ShowHTML('            <td><b>Beneficiário</td>');
+        ShowHTML('            <td><b>NF</td>');
         ShowHTML('            <td><b>Vencimento</td>');
         ShowHTML('            <td><b>Acordo</td>');
         ShowHTML('            <td><b>Valor</td>');
@@ -294,8 +295,10 @@ function ConsultaDoc() {
 
         $w_total=0;
         foreach ($RS as $row) {
-          ShowHTML('      <tr bgcolor="'.$conTrBgColor.'" valign="top">');
+          $w_cor = ($w_cor==$conTrBgColor || $w_cor=='') ? $w_cor=$conTrAlternateBgColor : $w_cor=$conTrBgColor;
+          ShowHTML('      <tr bgcolor="'.$w_cor.'" valign="top">');
           ShowHTML('        <td nowrap><a class="HL" href="https://honda.unesco.org.br/pls/seguranca/Frm_SP.Visualizar?p_usuario=167&p_Documento=111800&p_Acesso=C&p_Nro_Doc='.f($row,'documento').'&P1=0&P2=0&P3=0&TP=Consultar&p_ValidaTempo=Nao">'.f($row,'documento').'</a>');
+          ShowHTML('        <td>'.f($row,'nome').'</td>');
           ShowHTML('        <td nowrap>');
           $RS1 = db_getSF::getInstanceOf($dbms, 'NR_COMPROVANTE', null, null, null, null, null, null, null, null, f($row,'handle'), null, null);
           if (count($RS1) <= 0) {
@@ -306,11 +309,10 @@ function ConsultaDoc() {
             } 
           } 
           ShowHTML('            </td>');
-          ShowHTML('        <td>'.f($row,'nome').'</td>');
           ShowHTML('        <td align="center" nowrap>'.f($row,'inicio').'</td>');
           ShowHTML('        <td nowrap>'.f($row,'projeto').'</td>');
           ShowHTML('        <td align="right" nowrap>'.FormatNumber(f($row,'valor'),2).'</td>');
-          if ($_POST['p_documento']=="") ShowHTML('        <td>'.f($row,'historico').'</td>');
+          if ($_POST['p_documento']=='') ShowHTML('        <td>'.substr(f($row,'historico'),0,69).'</td>');
           ShowHTML('        <td>'.f($row,'fase_atual').'</td>');
           ShowHTML('      </tr>');
           $w_total += f($row,'valor');
@@ -353,7 +355,8 @@ function ConsultaDoc() {
         ShowHTML('          </tr>');
 
         foreach ($RS as $row) {
-          ShowHTML('      <tr bgcolor="'.$conTrBgColor.'" valign="top">');
+          $w_cor = ($w_cor==$conTrBgColor || $w_cor=='') ? $w_cor=$conTrAlternateBgColor : $w_cor=$conTrBgColor;
+          ShowHTML('      <tr bgcolor="'.$w_cor.'" valign="top">');
           ShowHTML('        <td nowrap><a class="HL" href="https://honda.unesco.org.br/pls/seguranca/Frm_SPD.Visualizar?p_usuario=167&p_Documento=111800&p_Acesso=C&p_Nro_Doc='.f($row,'documento').'&P1=0&P2=0&P3=0&TP=Consultar&p_ValidaTempo=Nao">'.f($row,'documento').'</a>');
           ShowHTML('        <td>'.f($row,'nome').'</td>');
           ShowHTML('        <td align="center" nowrap>'.f($row,'inicio').'</td>');

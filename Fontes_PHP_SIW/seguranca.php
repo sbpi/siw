@@ -1604,7 +1604,7 @@ function NovaSenha() {
   $w_html = $w_html.'         Dados da ocorrência:<br>'.chr(13);
   $w_html = $w_html.'         <ul>'.chr(13);
   $w_html = $w_html.'         <li>Data do servidor: <b>'.date('d/m/Y, H:i:s').'</b></li>'.chr(13);
-  $w_html = $w_html.'         <li>IP de origem: <b>'.$_SERVER['REMOTE_HOST'].'</b></li>'.chr(13);
+  $w_html = $w_html.'         <li>IP de origem: <b>'.$_SERVER['REMOTE_ADDR'].'</b></li>'.chr(13);
   $w_html = $w_html.'         <li>Usuário responsável: <b>'.$_SESSION['NOME'].' ('.$_SESSION['EMAIL'].')</b></li>'.chr(13);
   $w_html = $w_html.'         </ul>'.chr(13);
   $w_html = $w_html.'      </font></td></tr>'.chr(13);

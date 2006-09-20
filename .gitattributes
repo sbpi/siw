@@ -522,6 +522,21 @@ Fontes_ASP_SIW/mod_tt/VisualResumoLigacaoParticularWord.asp -text
 Fontes_ASP_SIW/results.asp -text
 Fontes_PHP_SIW/branco.htm -text
 Fontes_PHP_SIW/calendario.php -text
+Fontes_PHP_SIW/cl_ibict/ajuda.jpg -text
+Fontes_PHP_SIW/cl_ibict/barrasuperior.jpg -text
+Fontes_PHP_SIW/cl_ibict/brasil2.gif -text
+Fontes_PHP_SIW/cl_ibict/fundo.jpg -text
+Fontes_PHP_SIW/cl_ibict/ibict.css -text
+Fontes_PHP_SIW/cl_ibict/linha.jpg -text
+Fontes_PHP_SIW/cl_ibict/logo.gif -text
+Fontes_PHP_SIW/cl_ibict/logo.jpg -text
+Fontes_PHP_SIW/cl_ibict/logo3.gif -text
+Fontes_PHP_SIW/cl_ibict/logo_ct2.gif -text
+Fontes_PHP_SIW/cl_ibict/logo_sgpa.gif -text
+Fontes_PHP_SIW/cl_ibict/logo_sistema.gif -text
+Fontes_PHP_SIW/cl_ibict/sgpa_logo.jpg -text
+Fontes_PHP_SIW/cl_ibict/topbg.jpg -text
+Fontes_PHP_SIW/cl_ibict/usuario.php -text
 Fontes_PHP_SIW/classes/db/ConnectionManager.php -text
 Fontes_PHP_SIW/classes/db/ConnectionManagerFactory.php -text
 Fontes_PHP_SIW/classes/db/DBTypes.php -text
@@ -797,6 +812,7 @@ Fontes_PHP_SIW/classes/sp/db_getUserTypeList.php -text
 Fontes_PHP_SIW/classes/sp/db_getUserVision.php -text
 Fontes_PHP_SIW/classes/sp/db_getUsuario.php -text
 Fontes_PHP_SIW/classes/sp/db_getUsuarioTabs.php -text
+Fontes_PHP_SIW/classes/sp/db_getUsuarioTemp.php -text
 Fontes_PHP_SIW/classes/sp/db_getViagemBenef.php -text
 Fontes_PHP_SIW/classes/sp/db_getVincKindData.php -text
 Fontes_PHP_SIW/classes/sp/db_getVincKindList.php -text
@@ -891,6 +907,7 @@ Fontes_PHP_SIW/classes/sp/dml_putEventoTrigger.php -text
 Fontes_PHP_SIW/classes/sp/dml_putFinancAcaoPPA_IS.php -text
 Fontes_PHP_SIW/classes/sp/dml_putFinanceiroConc.php -text
 Fontes_PHP_SIW/classes/sp/dml_putFinanceiroGeral.php -text
+Fontes_PHP_SIW/classes/sp/dml_putFormaPagamento.php -text
 Fontes_PHP_SIW/classes/sp/dml_putGPColaborador.php -text
 Fontes_PHP_SIW/classes/sp/dml_putGPContrato.php -text
 Fontes_PHP_SIW/classes/sp/dml_putGPModalidade.php -text
@@ -978,6 +995,7 @@ Fontes_PHP_SIW/classes/sp/dml_putTrigEvento.php -text
 Fontes_PHP_SIW/classes/sp/dml_putTrigger[!!-~].php -text
 Fontes_PHP_SIW/classes/sp/dml_putTrigger.php -text
 Fontes_PHP_SIW/classes/sp/dml_putUsuario.php -text
+Fontes_PHP_SIW/classes/sp/dml_putUsuarioTemp.php -text
 Fontes_PHP_SIW/classes/sp/dml_putViagemEnvio.php -text
 Fontes_PHP_SIW/classes/sp/dml_putViagemGeral.php -text
 Fontes_PHP_SIW/classes/sp/dml_putViagemOutra.php -text
@@ -1054,6 +1072,7 @@ Fontes_PHP_SIW/demanda.php -text
 Fontes_PHP_SIW/env.php -text
 Fontes_PHP_SIW/eo.php -text
 Fontes_PHP_SIW/eo_tabelas.php -text
+Fontes_PHP_SIW/execsql.html -text
 Fontes_PHP_SIW/favicon.ico -text
 Fontes_PHP_SIW/file.php -text
 Fontes_PHP_SIW/funcoes.php -text
@@ -1103,6 +1122,7 @@ Fontes_PHP_SIW/funcoes/selecaoFase.php -text
 Fontes_PHP_SIW/funcoes/selecaoFaseCheck.php -text
 Fontes_PHP_SIW/funcoes/selecaoFormaPagamento.php -text
 Fontes_PHP_SIW/funcoes/selecaoFormacao.php -text
+Fontes_PHP_SIW/funcoes/selecaoFormato.php -text
 Fontes_PHP_SIW/funcoes/selecaoFuncao.php -text
 Fontes_PHP_SIW/funcoes/selecaoGrupoDef.php -text
 Fontes_PHP_SIW/funcoes/selecaoHorizonte_IS.php -text
@@ -1170,10 +1190,12 @@ Fontes_PHP_SIW/funcoes/selecaoUnidade_IS.php -text
 Fontes_PHP_SIW/funcoes/selecaoUsuUnid.php -text
 Fontes_PHP_SIW/funcoes/selecaoUsuario.php -text
 Fontes_PHP_SIW/funcoes/selecaoVinculo.php -text
+Fontes_PHP_SIW/funcoes_valida.php -text
 Fontes_PHP_SIW/geragrafico.php -text
 Fontes_PHP_SIW/gr_demandaeventual.php -text
 Fontes_PHP_SIW/gr_projeto.php -text
 Fontes_PHP_SIW/help.php -text
+Fontes_PHP_SIW/inputsql.html -text
 Fontes_PHP_SIW/jscript.php -text
 Fontes_PHP_SIW/menu.php -text
 Fontes_PHP_SIW/mod_ac/contratos.php -text
@@ -1186,6 +1208,7 @@ Fontes_PHP_SIW/mod_dc/carga_arquivos.php -text
 Fontes_PHP_SIW/mod_dc/dc_consulta.php -text
 Fontes_PHP_SIW/mod_dc/dc_dicionario.php -text
 Fontes_PHP_SIW/mod_dc/dc_tabelas.php -text
+Fontes_PHP_SIW/mod_dc/etl.php -text
 Fontes_PHP_SIW/mod_fn/lancamento.php -text
 Fontes_PHP_SIW/mod_fn/rel_contas.php -text
 Fontes_PHP_SIW/mod_fn/rel_fluxo.php -text
@@ -1201,6 +1224,7 @@ Fontes_PHP_SIW/mod_is/gr_tarefas.php -text
 Fontes_PHP_SIW/mod_is/is_tabelas.php -text
 Fontes_PHP_SIW/mod_is/programa.php -text
 Fontes_PHP_SIW/mod_is/relatorios.php -text
+Fontes_PHP_SIW/mod_is/siafi.php -text
 Fontes_PHP_SIW/mod_is/tarefas.php -text
 Fontes_PHP_SIW/mod_is/visualacao.php -text
 Fontes_PHP_SIW/mod_is/visualprograma.php -text
@@ -1241,6 +1265,7 @@ Fontes_PHP_SIW/mod_tt/visualresumoligacaoparticular.php -text
 Fontes_PHP_SIW/pessoa.php -text
 Fontes_PHP_SIW/projeto.php -text
 Fontes_PHP_SIW/projetoativ.php -text
+Fontes_PHP_SIW/results.php -text
 Fontes_PHP_SIW/seguranca.php -text
 Fontes_PHP_SIW/seguranca1.php -text
 Fontes_PHP_SIW/tabela1.php -text
@@ -1249,6 +1274,7 @@ Fontes_PHP_SIW/tabela_financeiras.php -text
 Fontes_PHP_SIW/tabela_localizacao.php -text
 Fontes_PHP_SIW/tabela_siw.php -text
 Fontes_PHP_SIW/tarifacao.php -text
+Fontes_PHP_SIW/test.php -text
 Fontes_PHP_SIW/trabalho.php -text
 Fontes_PHP_SIW/visualCliente.php -text
 Fontes_PHP_SIW/visualdemanda.php -text

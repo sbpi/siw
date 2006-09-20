@@ -336,23 +336,8 @@ function RetornaExpedienteData ($l_chave) {
 // Retorna uma parte qualquer de uma linha delimitada
 // -------------------------------------------------------------------------
 function Piece($p_line,$p_delimiter,$p_separator,$p_position) {
-  $l_actual=$p_line;
-  $l_result=$p_line;
-  if (Nvl($p_separator,'')>'') {
-    for ($l_i=1; $l_i<=$p_position; $l_i=$l_i+1) {
-      if ((strpos($l_actual,$p_separator) ? strpos($l_actual,$p_separator)+1 : 0)>0) {
-        $l_result=substr($l_actual,0,(strpos($l_actual,$p_separator) ? strpos($l_actual,$p_separator)+1 : 0)-1);
-        $l_actual=substr($l_actual,(strpos($l_actual,$p_separator) ? strpos($l_actual,$p_separator)+1 : 0)+1-1,strlen($l_actual));
-        if ($l_i==$p_position-1 && (strpos($l_actual,$p_separator) ? strpos($l_actual,$p_separator)+1 : 0)==0) {
-          $l_actual=$l_actual.';';
-        }
-      } else {
-        $Piece='';
-        break;
-      }
-    }
-  }
-  return $l_result;
+  $l_array = explode($p_separator,$p_line);
+  return $l_array[($p_position-1)];
 }
 
 // =========================================================================
@@ -504,7 +489,31 @@ function MontaOrdemEtapa($l_chave) {
 // =========================================================================
 // Converte CFLF para <BR>
 // -------------------------------------------------------------------------
-function CRLF2BR($expressao) { if (!isset($expressao) || $expressao=='') { return ''; } else { return str_replace(chr(10),'<br>',str_replace(chr(13),'',$expressao)); } }
+function CRLF2BR($expressao) { 
+  if (Nvl($expressao,'')=='') { 
+    return ''; 
+  } else { 
+    if (false!==strpos($expressao,'\n\r')) {
+      return str_replace('\n\r','<br>',$expressao); 
+    } elseif (false!==strpos($expressao,'\r\n')) {
+      return str_replace('\r\n','<br>',$expressao); 
+    } elseif (false!==strpos($expressao,'\r')) {
+      return str_replace('\r','<br>',$expressao); 
+    } elseif (false!==strpos($expressao,'\n')) {
+      return str_replace('\n','<br>',$expressao); 
+    } elseif (false!==strpos($expressao,chr(10).chr(13))) {
+      return str_replace(chr(10).chr(13),'<br>',$expressao); 
+    } elseif (false!==strpos($expressao,chr(13).chr(10))) {
+      return str_replace(chr(13).chr(10),'<br>',$expressao); 
+    } elseif (false!==strpos($expressao,chr(13))) {
+      return str_replace(chr(13),'<br>',$expressao); 
+    } elseif (false!==strpos($expressao,chr(10))) {
+      return str_replace(chr(10),'<br>',$expressao); 
+    } else {
+      return $expressao; 
+    }
+  } 
+}
 
 // =========================================================================
 // Trata valores nulos

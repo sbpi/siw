@@ -210,7 +210,7 @@ function VisualDemanda($l_chave,$Operacao,$l_usuario) {
     } 
     // Encaminhamentos
     $RS = db_getSolicLog::getInstanceOf($dbms,$l_chave,null,'LISTA');
-    $RS = SortArray($RS,'data','desc','sq_siw_solic_log','desc');
+    $RS = SortArray($RS,'phpdt_data','desc','sq_siw_solic_log','desc');
     $l_html .=chr(13).'      <tr><td valign="top" colspan="2" align="center" bgcolor="#D0D0D0" style="border: 2px solid rgb(0,0,0);"><b>Ocorrências e Anotações</td>';
     $l_html .=chr(13).'      <tr><td align="center" colspan="2">';
     $l_html .=chr(13).'        <TABLE WIDTH="100%" bgcolor="'.$conTableBgColor.'" BORDER="'.$conTableBorder.'" CELLSPACING="'.$conTableCellSpacing.'" CELLPADDING="'.$conTableCellPadding.'" BorderColorDark="'.$conTableBorderColorDark.'" BorderColorLight="'.$conTableBorderColorLight.'">';

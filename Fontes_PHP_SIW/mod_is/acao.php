@@ -3661,7 +3661,7 @@ function SolicMail($p_solic,$p_tipo) {
   $w_html .= '         <ul>'.chr(13);
   $w_html .= '         <li>Responsável: <b>'.$_SESSION['NOME'].'</b></li>'.chr(13);
   $w_html .= '         <li>Data do servidor: <b>'.date('d/m/Y, H:i:s',toDate(time())).'</b></li>'.chr(13);
-  $w_html .= '         <li>IP de origem: <b>'.$_SERVER['REMOTE_HOST'].'</b></li>'.chr(13);
+  $w_html .= '         <li>IP de origem: <b>'.$_SERVER['REMOTE_ADDR'].'</b></li>'.chr(13);
   $w_html .= '         </ul>'.chr(13);
   $w_html .= '      </font></td></tr>'.chr(13);
   $w_html .= '    </table>'.chr(13);
@@ -3677,7 +3677,7 @@ function SolicMail($p_solic,$p_tipo) {
   if ((strpos($w_destinatarios,f($RS,'email_titular').'; ')===false) && Nvl(f($RS,'email_titular'),'nulo')!='nulo')       $w_destinatarios = $w_destinatarios.f($RS,'email_titular').'; ';
   if ((strpos($w_destinatarios,f($RS,'email_substituto').'; ')===false) && Nvl(f($RS,'email_substituto'),'nulo')!='nulo') $w_destinatarios = $w_destinatarios.f($RS,'email_substituto').'; ';
   // Prepara os dados necessários ao envio
-  $RS = db_getCustomerData::getInstanceOf($dbms,$_REQUEST['p_cliente'.'_session']);
+  $RS = db_getCustomerData::getInstanceOf($dbms,$w_cliente);
   if ($p_tipo==1 || $p_tipo==3) {
     // Inclusão ou Conclusão
     if ($p_tipo==1) $w_assunto='Inclusão - '.$w_nome; else $w_assunto='Conclusão - '.$w_nome;
@@ -3758,7 +3758,7 @@ function RestricaoMail($l_solic,$l_descricao,$l_tl_restricao,$l_providencia,$l_t
   $w_html .= '         <ul>'.chr(13);
   $w_html .= '         <li>Responsável: <b>'.$_SESSION['NOME'].'</b></li>'.chr(13);
   $w_html .= '         <li>Data do servidor: <b>'.date('d/m/Y, H:i:s',toDate(time())).'</b></li>'.chr(13);
-  $w_html .= '         <li>IP de origem: <b>'.$_SERVER['REMOTE_HOST'].'</b></li>'.chr(13);
+  $w_html .= '         <li>IP de origem: <b>'.$_SERVER['REMOTE_ADDR'].'</b></li>'.chr(13);
   $w_html .= '         </ul>'.chr(13);
   $w_html .= '      </font></td></tr>'.chr(13);
   $w_html .= '    </table>'.chr(13);
