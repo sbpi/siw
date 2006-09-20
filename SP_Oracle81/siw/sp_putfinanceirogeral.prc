@@ -38,9 +38,6 @@ create or replace procedure SP_PutFinanceiroGeral
       select t.sq_siw_arquivo from siw_solic_arquivo t where t.sq_siw_solicitacao = p_chave;
    
 begin
-   -- Recupera os parâmetros do cliente informado
-   select * into w_reg from fn_parametro where cliente = p_cliente;
-
    If p_operacao = 'I' Then -- Inclusão
       -- Recupera a próxima chave
       select sq_siw_solicitacao.nextval into w_Chave from dual;
@@ -188,6 +185,9 @@ begin
       End If;
    End If;
    
+   -- Recupera os parâmetros do cliente informado
+   select * into w_reg from fn_parametro where cliente = p_cliente;
+
    -- O tratamento a seguir é relativo ao código interno do lançamento.
    If p_operacao               in ('I','A')  and 
       (to_char(p_vencimento,'yyyy') <> to_char(Nvl(p_vencimento_atual, p_vencimento),'yyyy') or
