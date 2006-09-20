@@ -1882,6 +1882,7 @@ SP_Oracle81/siw/sp_getusuariotabs.prc -text
 SP_Oracle81/siw/sp_getviagembenef.prc -text
 SP_Oracle81/siw/sp_getvinckinddata.prc -text
 SP_Oracle81/siw/sp_getvinckindlist.prc -text
+SP_Oracle81/siw/sp_putFormaPagamento.prc -text
 SP_Oracle81/siw/sp_putPDUnidLimite.prc -text
 SP_Oracle81/siw/sp_putacaoppa.prc -text
 SP_Oracle81/siw/sp_putacordoconc.prc -text
@@ -3019,6 +3020,7 @@ SP_Oracle92/siw/sp_getusuariotabs.prc -text
 SP_Oracle92/siw/sp_getviagembenef.prc -text
 SP_Oracle92/siw/sp_getvinckinddata.prc -text
 SP_Oracle92/siw/sp_getvinckindlist.prc -text
+SP_Oracle92/siw/sp_putFormaPagamento.prc -text
 SP_Oracle92/siw/sp_putPDUnidLimite.prc -text
 SP_Oracle92/siw/sp_putacaoppa.prc -text
 SP_Oracle92/siw/sp_putacordoconc.prc -text
