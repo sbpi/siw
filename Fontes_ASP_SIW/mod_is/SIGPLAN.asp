@@ -327,7 +327,7 @@ Sub Inicial
   ElseIf Instr("E",O) > 0 Then
      BodyOpen "onLoad='document.Form.w_assinatura.focus()';"
   Else
-     BodyOpen "onLoad='document.focus()';"
+     BodyOpen ""
   End If
   ShowHTML "<B><FONT COLOR=""#000000"">" & w_TP & "</FONT></B>"
   ShowHTML "<HR>"
