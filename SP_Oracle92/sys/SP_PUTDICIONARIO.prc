@@ -51,7 +51,7 @@ create or replace procedure SP_PUTDICIONARIO
            inner        join all_tab_columns  t2 on (t2.OWNER       = t1.owner and
                                                      t2.TABLE_NAME  = t1.table_name
                                                     )
-             inner      join siw.dc_dado_tipo b  on (b.nome         = replace(replace(replace(replace(replace(replace(replace(replace(replace(t2.data_type,'CHAR','Char'),'VARCHAR2','VarChar'), 'NUMBER', 'Numeric'), 'DATE','Date'), 'BLOB','Blob'), 'BFILE', 'Blob'), 'RAW', 'Blob'), 'FLOAT', 'Numeric'), 'LONG', 'VarChar'))
+             inner      join siw.dc_dado_tipo b  on (b.nome         = replace(replace(replace(replace(replace(replace(replace(replace(replace(t2.data_type,'VARCHAR2','VarChar'),'CHAR','Char'), 'NUMBER', 'Numeric'), 'DATE','Date'), 'BLOB','Blob'), 'BFILE', 'Blob'), 'RAW', 'Blob'), 'FLOAT', 'Numeric'), 'LONG', 'VarChar'))
            inner        join all_col_comments t3 on (t3.owner       = t1.owner and
                                                      t3.table_name  = t2.TABLE_NAME and
                                                      t3.column_name = t2.COLUMN_NAME
@@ -191,7 +191,7 @@ create or replace procedure SP_PUTDICIONARIO
            siw.dc_dado_tipo                   b
      where t1.owner       = upper(p_owner)
        and t1.object_type in ('FUNCTION', 'PROCEDURE')
-       and b.nome         = replace(replace(replace(replace(replace(replace(t2.data_type,'CHAR','Char'),'VARCHAR2','VarChar'),'CHAR','Char'),'NUMBER','Numeric'), 'DATE', 'Date'),'REF CURSOR', 'Cursor')
+       and b.nome         = replace(replace(replace(replace(replace(t2.data_type,'VARCHAR2','VarChar'),'CHAR','Char'),'NUMBER','Numeric'), 'DATE', 'Date'),'REF CURSOR', 'Cursor')
     order by t1.object_name, t2.position;
 
 begin
@@ -281,7 +281,7 @@ begin
                                                        e.sigla             = upper(p_sistema)
                                                       )
   );
-  -- Remove colunas de relacionamento onde a tabela filha seja do sistema e usuário indicado
+  -- Remove colunas de relacionamento onde a tabela pai seja do sistema e usuário indicado
   delete from 
   (select a.*
      from siw.dc_relac_cols                      a
@@ -307,7 +307,9 @@ begin
                                                           t2.column_name       = b.nome
                                                          )
               inner     join siw.dc_usuario        f  on (a.sq_usuario         = f.sq_usuario)
-                inner   join siw.dc_sistema        g  on (f.sq_sistema         = g.sq_sistema)
+                inner   join siw.dc_sistema        g  on (f.sq_sistema         = g.sq_sistema and
+                                                          g.cliente            = p_cliente
+                                                         )
           inner         join all_constraints       t3 on (t1.r_owner           = t3.owner and
                                                           t1.r_constraint_name = t3.constraint_name
                                                          )
@@ -321,15 +323,19 @@ begin
                                                         )
                 inner   join siw.dc_usuario        h  on (c.sq_usuario         = h.sq_usuario)
                   inner join siw.dc_sistema        i  on (h.sq_sistema         = i.sq_sistema and
-                                                          g.sq_sistema         = i.sq_sistema
+                                                          g.sq_sistema         = i.sq_sistema and
+                                                          i.cliente            = p_cliente
                                                          )
           inner         join siw.dc_relacionamento e on (t1.constraint_name    = e.nome)
+            inner       join siw.dc_sistema        j on (e.sq_sistema          = j.sq_sistema and
+                                                         j.cliente             = p_cliente
+                                                        )
     where t1.owner                   = upper(p_owner)
       and t1.constraint_type         = 'R'
       and (instr(t1.table_name, '$') = 0 
-      and upper(t1.table_name)       not in ('PLAN_TABLE', 'SG_PESSOA_MENU_TMP', 'LIGORI', 'LIGNATE', 'LIGREC', 'SQLEXPERT_PLAN1'))  
-      and ((f.nome = upper(p_owner) and g.sigla = upper(p_sistema) and g.cliente = p_cliente) or
-           (h.nome = upper(p_owner) and i.sigla = upper(p_sistema) and i.cliente = p_cliente)
+      and upper(t1.table_name)       not in ('PLAN_TABLE', 'SG_PESSOA_MENU_TMP', 'LIGORI', 'LIGNATE', 'LIGREC', 'SQLEXPERT_PLAN1')) 
+      and ((f.nome = upper(p_owner) and g.sigla = upper(p_sistema)) or
+           (h.nome = upper(p_owner) and i.sigla = upper(p_sistema))
           )
       and 0 = (select count(*) 
                  from siw.dc_relac_cols 
