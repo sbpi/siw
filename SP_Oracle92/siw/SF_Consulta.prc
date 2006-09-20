@@ -22,7 +22,7 @@ begin
          order by 1 desc;
   Elsif upper(p_restricao) = 'NOME' Then
      open p_result for
-        select b.handle, b.nome
+        select b.handle, b.cgccpf, b.nome
           from corporativo.gn_pessoas@sicof b
          where upper(b.nome) like '%'||upper(replace(p_nome,'''',''''''))||'%'
         order by seguranca.acentos@sicof(nome);
