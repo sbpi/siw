@@ -18,7 +18,8 @@ begin
              d.sigla sg_sistema, d.nome nm_sistema, d.sq_sistema,
              e.nome nm_usuario, e.sq_usuario,
              f.nome nm_tabela_tipo, g.sq_relacionamento,
-             h.ordem or_esquma_atributo, h.campo_externo, h.sq_esquema_tabela
+             h.ordem or_esquma_atributo, h.campo_externo, h.sq_esquema_tabela, 
+             h.mascara_data, h.valor_default
         from dc_coluna                      a
              inner      join dc_tabela      b on (a.sq_tabela      = b.sq_tabela)
                inner    join dc_tabela_tipo f on (b.sq_tabela_tipo = f.sq_tabela_tipo)
@@ -26,7 +27,8 @@ begin
              inner      join dc_sistema     d on (b.sq_sistema     = d.sq_sistema)
              inner      join dc_usuario     e on (b.sq_usuario     = e.sq_usuario)
              left outer join dc_relac_cols  g on (a.sq_coluna      = g.coluna_filha)
-             left outer join (select sq_coluna, ordem, campo_externo, sq_esquema_tabela 
+             left outer join (select sq_coluna, ordem, campo_externo, sq_esquema_tabela ,
+                                     mascara_data, valor_default
                                 from dc_esquema_atributo 
                                where sq_esquema_tabela = nvl(p_esq_tab, sq_esquema_tabela)
                              )              h on (a.sq_coluna = h.sq_coluna)

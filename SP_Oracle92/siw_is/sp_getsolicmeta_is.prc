@@ -64,16 +64,16 @@ begin
            from is_meta                                 a
                 inner          join siw.siw_solicitacao i on (a.sq_siw_solicitacao = i.sq_siw_solicitacao)
                   inner        join is_acao             m on (i.sq_siw_solicitacao = m.sq_siw_solicitacao)
-                    inner join is_sig_programa          o on (m.cd_programa        = o.cd_programa     and
+                    left outer join is_sig_programa          o on (m.cd_programa        = o.cd_programa     and
                                                               m.cliente            = o.cliente         and
                                                               m.ano                = o.ano)
-                    inner      join is_sig_acao         n on (m.cd_programa        = n.cd_programa     and
+                    left outer join is_sig_acao         n on (m.cd_programa        = n.cd_programa     and
                                                               m.cd_acao            = n.cd_acao         and
                                                               m.cd_subacao         = n.cd_subacao      and
                                                               m.cd_unidade         = n.cd_unidade      and
                                                               m.cliente            = n.cliente         and
                                                               m.ano                = n.ano)
-                      inner    join is_sig_unidade      p on (n.cd_unidade         = p.cd_unidade      and
+                      left outer join is_sig_unidade      p on (n.cd_unidade         = p.cd_unidade      and
                                                               n.cd_tipo_unidade    = p.cd_tipo_unidade and
                                                               n.ano                = p.ano)
                   inner        join siw.siw_menu        j on (i.sq_menu            = j.sq_menu)

@@ -17,9 +17,10 @@ begin
    If p_restricao is null Then
       open p_result for 
          select a.sq_esquema, a.cliente, a.nome, a.descricao, a.tipo, a.ativo, a.formato,
-                a.ws_servidor, a.ws_url, a.ws_acao, a.ws_mensagem, a.no_raiz,
+                a.ws_servidor, a.ws_url, a.ws_acao, a.ws_mensagem, a.no_raiz, a.bd_hostname,
+                a.bd_username, a.bd_password, a.tx_delimitador, a.tipo_efetivacao,
                 case a.tipo    when 'I' then 'Importação' else 'Exportação'  end nm_tipo,
-                case a.formato when 'A' then 'Arquivo'    else 'Web service' end nm_formato,
+                case a.formato when 'A' then 'Arquivo'    when 'T' then 'TXT' else 'Web service' end nm_formato,
                 case a.ativo   when 'S' then 'Sim'        else 'Não'         end nm_ativo,
                 b.sq_modulo, b.nome nm_modulo, b.sigla sg_modulo,
                 c.qtd_tabela,

@@ -15,7 +15,7 @@ begin
               b.nome nm_recebido, b.tamanho tm_recebido, b.tipo tp_recebido, b.caminho cm_recebido, b.sq_siw_arquivo chave_recebido,
               c.nome nm_result,   c.tamanho tm_result,   c.tipo tp_result,   c.caminho cm_result,   c.sq_siw_arquivo chave_result,
               d.nome nm_resp,     d.nome_resumido nm_resumido_resp,
-              to_char(a.data_arquivo, 'DD/MM/YYYY, HH24:MI:SS') phpdt_data_arquivo,
+              to_char(a.data, 'DD/MM/YYYY, HH24:MI:SS') phpdt_data_arquivo,
               case situacao
                 when 0 then 'Completa'
                 else        'Parcial'

@@ -1,0 +1,1 @@
+select 'ALTER '||OBJECT_TYPE||' '||OBJECT_NAME||' COMPILE;' from user_objects where object_type in ('FUNCTION','PROCEDURE','VIEW','TRIGGER') order by object_type, last_ddl_time;

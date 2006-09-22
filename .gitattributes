@@ -2628,6 +2628,7 @@ SP_Oracle92/siw/SP_PutCiaTrans.prc -text
 SP_Oracle92/siw/SP_PutCodigoExterno.prc -text
 SP_Oracle92/siw/SP_PutDataEspecial.prc -text
 SP_Oracle92/siw/SP_PutDcOcorrencia.prc -text
+SP_Oracle92/siw/SP_PutEsquemaInsert.prc -text
 SP_Oracle92/siw/SP_PutGPColaborador.prc -text
 SP_Oracle92/siw/SP_PutGPContrato.prc -text
 SP_Oracle92/siw/SP_PutGPModalidade.prc -text
@@ -2799,6 +2800,7 @@ SP_Oracle92/siw/pj_projeto_recurso.tab -text
 SP_Oracle92/siw/pj_projeto_representante.tab -text
 SP_Oracle92/siw/pj_recurso_etapa.tab -text
 SP_Oracle92/siw/plan_table.tab -text
+SP_Oracle92/siw/recompile.sql -text
 SP_Oracle92/siw/reinicializa_sequences.prc -text
 SP_Oracle92/siw/sg_autenticacao.tab -text
 SP_Oracle92/siw/sg_geraclimod.prc -text
@@ -2879,6 +2881,8 @@ SP_Oracle92/siw/sp_geteoaatuac.prc -text
 SP_Oracle92/siw/sp_geteoaatuacdata.prc -text
 SP_Oracle92/siw/sp_getesquema.prc -text
 SP_Oracle92/siw/sp_getesquemaatributo.prc -text
+SP_Oracle92/siw/sp_getesquemainsert.prc -text
+SP_Oracle92/siw/sp_getesquemascript.prc -text
 SP_Oracle92/siw/sp_getesquematabela.prc -text
 SP_Oracle92/siw/sp_getetapamensal.prc -text
 SP_Oracle92/siw/sp_getetapaorder.prc -text
@@ -3080,6 +3084,7 @@ SP_Oracle92/siw/sp_puteotipouni.prc -text
 SP_Oracle92/siw/sp_puteounidade.prc -text
 SP_Oracle92/siw/sp_putesquema.prc -text
 SP_Oracle92/siw/sp_putesquemaatributo.prc -text
+SP_Oracle92/siw/sp_putesquemascript.prc -text
 SP_Oracle92/siw/sp_putesquematabela.prc -text
 SP_Oracle92/siw/sp_putetapamensal.prc -text
 SP_Oracle92/siw/sp_puteventotrigger.prc -text
