@@ -11,7 +11,12 @@ begin
       select a.sq_esquema_insert, a.registro, a.sq_coluna, a.ordem, a.ordem, a.valor,
              b.sq_esquema_tabela, b.sq_esquema, b.sq_tabela,
              f.nome nm_tabela, c.qtd_coluna, d.campo_externo, d.ordem or_coluna,
-             e.nome cl_nome, e.obrigatorio cl_obrigatorio, e.tamanho cl_tamanho
+             e.nome cl_nome, e.obrigatorio cl_obrigatorio, e.tamanho cl_tamanho,
+             case e.sq_dado_tipo when 1 then 'B_VARCHAR' 
+                                 when 2 then 'B_INTEGER' 
+                                 when 3 then 'B_DATE'
+                                 when 4 then 'B_VARCHAR' 
+                                 when 6 then 'B_VARCHAR' end nm_tipo             
         from dc_esquema_insert                     a 
              inner        join dc_esquema_tabela   b on (a.sq_esquema_tabela = b.sq_esquema_tabela) 
              inner        join dc_tabela           f on (b.sq_tabela         = f.sq_tabela) 

@@ -8,7 +8,12 @@ begin
    open p_result for 
       select a.sq_esquema_tabela, a.sq_esquema, a.sq_tabela, a.ordem, a.elemento,
              b.nome nm_tabela, c.qtd_coluna, d.campo_externo, d.ordem or_coluna,
-             e.nome cl_nome, e.obrigatorio cl_obrigatorio, e.tamanho cl_tamanho
+             e.nome cl_nome, e.obrigatorio cl_obrigatorio, e.tamanho cl_tamanho, a.remove_registro,
+             case e.sq_dado_tipo when 1 then 'B_VARCHAR' 
+                                 when 2 then 'B_INTEGER' 
+                                 when 3 then 'B_DATE'
+                                 when 4 then 'B_VARCHAR' 
+                                 when 6 then 'B_VARCHAR' end nm_tipo
         from dc_esquema_tabela                     a 
              inner        join dc_tabela           b on (a.sq_tabela = b.sq_tabela) 
              left   outer join (select x.sq_esquema_tabela, count(*) qtd_coluna
@@ -21,4 +26,3 @@ begin
          and ((p_sq_esquema_tabela is null) or (p_sq_esquema_tabela is not null and a.sq_esquema_tabela = p_sq_esquema_tabela));
 end SP_GetEsquemaTabela;
 /
-

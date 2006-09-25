@@ -1,37 +1,35 @@
-create or replace procedure SP_PutEsquemaInsert
-   (p_operacao          in  varchar2,
-    p_chave             in  number   default null,
-    p_sq_esquema_tabela in  number   default null,
-    p_sq_coluna         in  number   default null,
-    p_ordem             in  number   default null,
-    p_valor             in  varchar2 default null
+create or replace procedure SP_PutEsquemaTabela
+   (p_operacao                 in  varchar2,
+    p_chave                    in  number   default null,
+    p_sq_esquema               in  number   default null,
+    p_sq_tabela                in  number   default null,
+    p_ordem                    in  number   default null,
+    p_elemento                 in  varchar2 default null,
+    p_remove_registro          in  varchar2 default null
    ) is
-   w_registro number(4);
 begin
-   If p_chave is null Then
-     select nvl(max(registro),0)+1 into w_registro from dc_esquema_insert;
-   End If;
    If p_operacao = 'I' Then
       -- Insere registro
-      insert into dc_esquema_insert (sq_esquema_insert, sq_esquema_tabela, registro, sq_coluna, 
-                                     ordem, valor)
-         (select sq_esquema_insert.nextval,
-                 p_sq_esquema_tabela,
-                 w_registro,
-                 p_sq_coluna,
+      insert into dc_esquema_tabela (sq_esquema_tabela, sq_esquema, sq_tabela, ordem, 
+                                     elemento, remove_registro)
+         (select sq_esquema_tabela.nextval,
+                 p_sq_esquema,
+                 p_sq_tabela,
                  p_ordem,
-                 p_valor
+                 trim(p_elemento),
+                 p_remove_registro
             from dual
          );
    Elsif p_operacao = 'A' Then
       -- Altera registro
-      update dc_esquema_insert set
-         ordem  = p_ordem,
-         valor  = p_valor
-      where sq_esquema_insert = p_chave;
+      update dc_esquema_tabela set
+         ordem                = p_ordem,
+         elemento             = trim(p_elemento),
+         remove_registro      = p_remove_registro
+      where sq_esquema_tabela    = p_chave;
    Elsif p_operacao = 'E' Then
       -- Exclui registro
-      delete dc_esquema_insert where sq_esquema_tabela = p_sq_esquema_tabela;
+      delete dc_esquema_tabela where sq_esquema_tabela = p_chave;
    End If;
-end SP_PutEsquemaInsert;
+end SP_PutEsquemaTabela;
 /
