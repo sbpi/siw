@@ -8,6 +8,7 @@ begin
    open p_result for
       select a.sq_esquema_tabela, a.sq_esquema, a.sq_tabela, a.ordem, a.elemento,
              b.nome nm_tabela, c.qtd_coluna, d.campo_externo, d.ordem or_coluna,
+             d.mascara_data, d.valor_default,
              e.nome cl_nome, e.obrigatorio cl_obrigatorio, e.tamanho cl_tamanho
         from dc_esquema_tabela                     a,
              dc_tabela           b,
@@ -25,4 +26,3 @@ begin
          and ((p_sq_esquema_tabela is null) or (p_sq_esquema_tabela is not null and a.sq_esquema_tabela = p_sq_esquema_tabela));
 end SP_GetEsquemaTabela;
 /
-
