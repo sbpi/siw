@@ -1792,6 +1792,7 @@ SP_Oracle81/siw/sp_getlnkdataprnts.prc -text
 SP_Oracle81/siw/sp_getlocallist.prc -text
 SP_Oracle81/siw/sp_getmenucode.prc -text
 SP_Oracle81/siw/sp_getmenudata.prc -text
+SP_Oracle81/siw/sp_getmenuformapag.prc -text
 SP_Oracle81/siw/sp_getmenulink.prc -text
 SP_Oracle81/siw/sp_getmenulist.prc -text
 SP_Oracle81/siw/sp_getmenuorder.prc -text
@@ -1883,6 +1884,7 @@ SP_Oracle81/siw/sp_getviagembenef.prc -text
 SP_Oracle81/siw/sp_getvinckinddata.prc -text
 SP_Oracle81/siw/sp_getvinckindlist.prc -text
 SP_Oracle81/siw/sp_putFormaPagamento.prc -text
+SP_Oracle81/siw/sp_putFormaPagamentoVinc.prc -text
 SP_Oracle81/siw/sp_putPDUnidLimite.prc -text
 SP_Oracle81/siw/sp_putacaoppa.prc -text
 SP_Oracle81/siw/sp_putacordoconc.prc -text
