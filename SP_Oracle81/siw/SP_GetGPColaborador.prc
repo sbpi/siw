@@ -8,7 +8,7 @@ create or replace procedure SP_GetGPColaborador
     p_filhos_lotacao          in varchar2  default null,
     p_unidade_exercicio       in number    default null,
     p_filhos_exercicio        in varchar2  default null,
-    p_afastamento             in number    default null,
+    p_afastamento             in varchar2  default null,
     p_dt_ini                  in date      default null,
     p_dt_fim                  in date      default null,
     p_ferias                  in varchar2  default null,
@@ -18,7 +18,7 @@ create or replace procedure SP_GetGPColaborador
     p_result    out siw.sys_refcursor) is
     
     l_item        varchar2(18);
-    l_afastamento varchar2(200) := p_afastamento ||',';
+    l_afastamento varchar2(200) := replace(p_afastamento,' ','') ||',';
     x_afastamento varchar2(200) := '';
     
 begin
@@ -153,9 +153,49 @@ begin
          select distinct a.sq_pessoa chave, a.ctps_numero, a.ctps_serie, a.ctps_emissor, a.ctps_emissao_data,
                 a.pis_pasep, a.pispasep_numero, a.pispasep_cadastr, a.te_numero, a.te_zona, a.te_secao,
                 a.tipo_sangue, a.doador_sangue, a.doador_orgaos, a.reservista_csm, a.reservista_numero,
-                a.observacoes, b.nome, b.nome_resumido, c.nascimento, c.rg_numero, c.rg_emissor, c.rg_emissao,
+                a.observacoes, b.nome, b.nome_resumido, b.nome_resumido_ind, c.nascimento, c.rg_numero, c.rg_emissor, c.rg_emissao,
                 c.cpf, c.sq_cidade_nasc, c.passaporte_numero, c.sq_pais_passaporte, c.sq_etnia, c.sq_deficiencia,
-                e.sq_contrato_colaborador, e.matricula, g.nome nm_exercicio, e.inicio, e.fim,
+                e.sq_contrato_colaborador, e.matricula, h.sigla nm_exercicio, e.inicio, e.fim,
+                e.sq_posto_trabalho, e.sq_unidade_lotacao, e.sq_unidade_exercicio, e.sq_modalidade_contrato,
+                e.matricula, e.sq_localizacao,
+                h.sigla||' ('||g.nome||')' local, g.ramal,
+                i.nome nm_modalidade_contrato, c.cpf
+           from gp_colaborador            a,
+                co_pessoa                 b,
+                co_pessoa_fisica          c,
+                gp_contrato_colaborador   e,
+                eo_localizacao            g,
+                eo_unidade                h,
+                gp_modalidade_contrato    i
+          where (a.sq_pessoa              = b.sq_pessoa and
+                 a.cliente                = b.sq_pessoa_pai)
+            and (a.sq_pessoa              = c.sq_pessoa)
+            and (a.sq_pessoa              = e.sq_pessoa and
+                 e.fim                    is null)
+            and (e.sq_localizacao         = g.sq_localizacao)
+            and (g.sq_unidade             = h.sq_unidade)
+            and (e.sq_modalidade_contrato = i.sq_modalidade_contrato)
+            and a.cliente              = p_cliente 
+            and p_afastamento          is null
+            and p_viagem               is null
+            and (p_chave               is null or (p_chave               is not null and e.sq_contrato_colaborador = p_chave))
+            and (p_nome                is null or (p_nome                is not null and (b.nome_indice like '%'||acentos(p_nome)||'%' or b.nome_resumido_ind like '%'||acentos(p_nome)||'%')))
+            and (p_modalidade_contrato is null or (p_modalidade_contrato is not null and e.sq_modalidade_contrato  = p_modalidade_contrato))
+            and (p_unidade_lotacao     is null or (p_unidade_lotacao     is not null and ((p_filhos_lotacao   is null and e.sq_unidade_lotacao   = p_unidade_lotacao)   or (p_filhos_lotacao   is not null and e.sq_unidade_lotacao in (select sq_unidade 
+                                                                                                                                                                                                                                  from eo_unidade
+                                                                                                                                                                                                                                start with sq_unidade = p_unidade_lotacao
+                                                                                                                                                                                                                                connect by prior sq_unidade = sq_unidade_pai)))))
+            and (p_unidade_exercicio   is null or (p_unidade_exercicio   is not null and ((p_filhos_exercicio is null and e.sq_unidade_exercicio = p_unidade_exercicio) or (p_filhos_exercicio is not null and e.sq_unidade_exercicio in (select sq_unidade 
+                                                                                                                                                                                                                                  from eo_unidade
+                                                                                                                                                                                                                                start with sq_unidade = p_unidade_exercicio
+                                                                                                                                                                                                                                connect by prior sq_unidade = sq_unidade_pai)))))
+     UNION
+         select distinct a.sq_pessoa chave, a.ctps_numero, a.ctps_serie, a.ctps_emissor, a.ctps_emissao_data,
+                a.pis_pasep, a.pispasep_numero, a.pispasep_cadastr, a.te_numero, a.te_zona, a.te_secao,
+                a.tipo_sangue, a.doador_sangue, a.doador_orgaos, a.reservista_csm, a.reservista_numero,
+                a.observacoes, b.nome, b.nome_resumido, b.nome_resumido_ind, c.nascimento, c.rg_numero, c.rg_emissor, c.rg_emissao,
+                c.cpf, c.sq_cidade_nasc, c.passaporte_numero, c.sq_pais_passaporte, c.sq_etnia, c.sq_deficiencia,
+                e.sq_contrato_colaborador, e.matricula, h.sigla nm_exercicio, e.inicio, e.fim,
                 e.sq_posto_trabalho, e.sq_unidade_lotacao, e.sq_unidade_exercicio, e.sq_modalidade_contrato,
                 e.matricula, e.sq_localizacao,
                 h.sigla||' ('||g.nome||')' local, g.ramal,
@@ -167,23 +207,22 @@ begin
                 eo_localizacao            g,
                 eo_unidade                h,
                 gp_modalidade_contrato    i,
-                gp_afastamento            f,
-                pd_viagem                 j
+                gp_afastamento            f
           where (a.sq_pessoa               = b.sq_pessoa and
-                 a.cliente                 = b.sq_pessoa_pai) 
+                 a.cliente                 = b.sq_pessoa_pai)
             and (a.sq_pessoa               = c.sq_pessoa)
             and (a.sq_pessoa               = e.sq_pessoa and
                  e.fim                     is null)
-            and (e.sq_localizacao          = g.sq_localizacao          (+))
-            and (g.sq_unidade              = h.sq_unidade              (+))
-            and (e.sq_modalidade_contrato  = i.sq_modalidade_contrato  (+))
-            and (e.sq_contrato_colaborador = f.sq_contrato_colaborador (+))
-            and (a.sq_pessoa               = j.pessoa                  (+))
-            and a.cliente                  = p_cliente 
-            and (p_chave                   is null or (p_chave               is not null and e.sq_contrato_colaborador = p_chave))
-            and (p_nome                    is null or (p_nome                is not null and (b.nome_indice like '%'||acentos(p_nome)||'%' or b.nome_resumido_ind like '%'||acentos(p_nome)||'%')))
-            and (p_modalidade_contrato     is null or (p_modalidade_contrato is not null and e.sq_modalidade_contrato  = p_modalidade_contrato))
-            and (p_unidade_lotacao         is null or (p_unidade_lotacao     is not null and ((p_filhos_lotacao   is null and e.sq_unidade_lotacao   = p_unidade_lotacao)   or (p_filhos_lotacao   is not null and e.sq_unidade_lotacao in (select sq_unidade 
+            and (e.sq_localizacao          = g.sq_localizacao)
+            and (g.sq_unidade              = h.sq_unidade)
+            and (e.sq_modalidade_contrato  = i.sq_modalidade_contrato)
+            and (e.sq_contrato_colaborador = f.sq_contrato_colaborador)
+            and a.cliente              = p_cliente
+            and p_afastamento          is not null 
+            and (p_chave               is null or (p_chave               is not null and e.sq_contrato_colaborador = p_chave))
+            and (p_nome                is null or (p_nome                is not null and (b.nome_indice like '%'||acentos(p_nome)||'%' or b.nome_resumido_ind like '%'||acentos(p_nome)||'%')))
+            and (p_modalidade_contrato is null or (p_modalidade_contrato is not null and e.sq_modalidade_contrato  = p_modalidade_contrato))
+            and (p_unidade_lotacao     is null or (p_unidade_lotacao     is not null and ((p_filhos_lotacao   is null and e.sq_unidade_lotacao   = p_unidade_lotacao)   or (p_filhos_lotacao   is not null and e.sq_unidade_lotacao in (select sq_unidade 
                                                                                                                                                                                                                                   from eo_unidade
                                                                                                                                                                                                                                 start with sq_unidade = p_unidade_lotacao
                                                                                                                                                                                                                                 connect by prior sq_unidade = sq_unidade_pai)))))
@@ -191,9 +230,52 @@ begin
                                                                                                                                                                                                                                   from eo_unidade
                                                                                                                                                                                                                                 start with sq_unidade = p_unidade_exercicio
                                                                                                                                                                                                                                 connect by prior sq_unidade = sq_unidade_pai)))))
-           and (p_afastamento          is null or (p_afastamento         is not null and f.sq_tipo_afastamento in (x_afastamento)))
+           and instr(x_afastamento,''''||f.sq_tipo_afastamento||'''') > 0
            and (p_dt_ini               is null or (p_dt_ini              is not null and (f.inicio_data between p_dt_ini and p_dt_fim) or (f.fim_data between p_dt_ini and p_dt_fim)))
-           and (p_viagem               is null or (p_viagem              is not null and (j.saida       between p_dt_ini and p_dt_fim) or (j.retorno  between p_dt_ini and p_dt_fim)));
+     UNION
+         select distinct a.sq_pessoa chave, a.ctps_numero, a.ctps_serie, a.ctps_emissor, a.ctps_emissao_data,
+                a.pis_pasep, a.pispasep_numero, a.pispasep_cadastr, a.te_numero, a.te_zona, a.te_secao,
+                a.tipo_sangue, a.doador_sangue, a.doador_orgaos, a.reservista_csm, a.reservista_numero,
+                a.observacoes, b.nome, b.nome_resumido, b.nome_resumido_ind, c.nascimento, c.rg_numero, c.rg_emissor, c.rg_emissao,
+                c.cpf, c.sq_cidade_nasc, c.passaporte_numero, c.sq_pais_passaporte, c.sq_etnia, c.sq_deficiencia,
+                e.sq_contrato_colaborador, e.matricula, h.sigla nm_exercicio, e.inicio, e.fim,
+                e.sq_posto_trabalho, e.sq_unidade_lotacao, e.sq_unidade_exercicio, e.sq_modalidade_contrato,
+                e.matricula, e.sq_localizacao,
+                h.sigla||' ('||g.nome||')' local, g.ramal,
+                i.nome nm_modalidade_contrato, c.cpf
+           from gp_colaborador            a,
+                co_pessoa                 b,
+                co_pessoa_fisica          c,
+                gp_contrato_colaborador   e,
+                eo_localizacao            g,
+                eo_unidade                h,
+                gp_modalidade_contrato    i,
+                pd_missao                 j,
+                siw_solicitacao           l
+          where (a.sq_pessoa              = b.sq_pessoa and
+                 a.cliente                = b.sq_pessoa_pai)
+            and (a.sq_pessoa              = c.sq_pessoa)
+            and (a.sq_pessoa              = e.sq_pessoa and
+                 e.fim                    is null)
+            and (e.sq_localizacao         = g.sq_localizacao)
+            and (g.sq_unidade             = h.sq_unidade)
+            and (e.sq_modalidade_contrato = i.sq_modalidade_contrato)
+            and (a.sq_pessoa              = j.sq_pessoa)
+            and (j.sq_siw_solicitacao     = l.sq_siw_solicitacao)
+            and a.cliente              = p_cliente
+            and p_viagem               is not null 
+            and (p_chave               is null or (p_chave               is not null and e.sq_contrato_colaborador = p_chave))
+            and (p_nome                is null or (p_nome                is not null and (b.nome_indice like '%'||acentos(p_nome)||'%' or b.nome_resumido_ind like '%'||acentos(p_nome)||'%')))
+            and (p_modalidade_contrato is null or (p_modalidade_contrato is not null and e.sq_modalidade_contrato  = p_modalidade_contrato))
+            and (p_unidade_lotacao     is null or (p_unidade_lotacao     is not null and ((p_filhos_lotacao   is null and e.sq_unidade_lotacao   = p_unidade_lotacao)   or (p_filhos_lotacao   is not null and e.sq_unidade_lotacao in (select sq_unidade 
+                                                                                                                                                                                                                                  from eo_unidade
+                                                                                                                                                                                                                                start with sq_unidade = p_unidade_lotacao
+                                                                                                                                                                                                                                connect by prior sq_unidade = sq_unidade_pai)))))
+            and (p_unidade_exercicio   is null or (p_unidade_exercicio   is not null and ((p_filhos_exercicio is null and e.sq_unidade_exercicio = p_unidade_exercicio) or (p_filhos_exercicio is not null and e.sq_unidade_exercicio in (select sq_unidade 
+                                                                                                                                                                                                                                  from eo_unidade
+                                                                                                                                                                                                                                start with sq_unidade = p_unidade_exercicio
+                                                                                                                                                                                                                                connect by prior sq_unidade = sq_unidade_pai)))))
+           and ((l.inicio              between p_dt_ini and p_dt_fim) or (l.fim      between p_dt_ini and p_dt_fim));
    End If;
 end SP_GetGPColaborador;
 /

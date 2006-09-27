@@ -18,15 +18,20 @@ begin
              d.sigla sg_sistema, d.nome nm_sistema, d.sq_sistema,
              e.nome nm_usuario, e.sq_usuario,
              f.nome nm_tabela_tipo, g.sq_relacionamento,
-             h.ordem or_esquma_atributo, h.campo_externo, h.sq_esquema_tabela
-        from dc_coluna                      a,
-             dc_tabela      b,
+             h.ordem or_esquma_atributo, h.campo_externo, h.sq_esquema_tabela,
+             h.mascara_data, h.valor_default
+        from dc_coluna        a,
+             dc_tabela        b,
                dc_tabela_tipo f,
-             dc_dado_tipo   c,
-             dc_sistema     d,
-             dc_usuario     e,
-             dc_relac_cols  g,
-             (select sq_coluna, ordem, campo_externo, sq_esquema_tabela from dc_esquema_atributo where sq_esquema_tabela = nvl(p_esq_tab, sq_esquema_tabela)) h
+             dc_dado_tipo     c,
+             dc_sistema       d,
+             dc_usuario       e,
+             dc_relac_cols    g,
+             (select sq_coluna, ordem, campo_externo, sq_esquema_tabela,
+                     mascara_data, valor_default
+                from dc_esquema_atributo 
+               where sq_esquema_tabela = nvl(p_esq_tab, sq_esquema_tabela)
+             )                h
        where (a.sq_tabela      = b.sq_tabela)
          and (b.sq_tabela_tipo = f.sq_tabela_tipo)
          and (a.sq_dado_tipo   = c.sq_dado_tipo)

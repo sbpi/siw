@@ -51,7 +51,7 @@ begin
          Else
             open p_result for 
                select a.*, b.nome, b.informal, b.vinculada, b.adm_central
-                 from gd_demanda_envolv   a,
+                 from pj_projeto_envolv   a,
                       eo_unidade          b
                 where a.sq_unidade         = b.sq_unidade
                    and a.sq_siw_solicitacao = p_chave

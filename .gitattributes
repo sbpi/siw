@@ -1493,6 +1493,7 @@ SP_Oracle81/siw/SP_PutCiaTrans.prc -text
 SP_Oracle81/siw/SP_PutCodigoExterno.prc -text
 SP_Oracle81/siw/SP_PutDataEspecial.prc -text
 SP_Oracle81/siw/SP_PutDcOcorrencia.prc -text
+SP_Oracle81/siw/SP_PutEsquemaScript.prc -text
 SP_Oracle81/siw/SP_PutGPColaborador.prc -text
 SP_Oracle81/siw/SP_PutGPContrato.prc -text
 SP_Oracle81/siw/SP_PutGPModalidade.prc -text
@@ -1741,6 +1742,8 @@ SP_Oracle81/siw/sp_geteoaatuac.prc -text
 SP_Oracle81/siw/sp_geteoaatuacdata.prc -text
 SP_Oracle81/siw/sp_getesquema.prc -text
 SP_Oracle81/siw/sp_getesquemaatributo.prc -text
+SP_Oracle81/siw/sp_getesquemainsert.prc -text
+SP_Oracle81/siw/sp_getesquemascript.prc -text
 SP_Oracle81/siw/sp_getesquematabela.prc -text
 SP_Oracle81/siw/sp_getetapamensal.prc -text
 SP_Oracle81/siw/sp_getetapaorder.prc -text
@@ -1796,6 +1799,7 @@ SP_Oracle81/siw/sp_getmenuformapag.prc -text
 SP_Oracle81/siw/sp_getmenulink.prc -text
 SP_Oracle81/siw/sp_getmenulist.prc -text
 SP_Oracle81/siw/sp_getmenuorder.prc -text
+SP_Oracle81/siw/sp_getmenurelac.prc -text
 SP_Oracle81/siw/sp_getmenuupper.prc -text
 SP_Oracle81/siw/sp_getmenuuser.prc -text
 SP_Oracle81/siw/sp_getmoddata.prc -text
@@ -1943,6 +1947,7 @@ SP_Oracle81/siw/sp_puteotipouni.prc -text
 SP_Oracle81/siw/sp_puteounidade.prc -text
 SP_Oracle81/siw/sp_putesquema.prc -text
 SP_Oracle81/siw/sp_putesquemaatributo.prc -text
+SP_Oracle81/siw/sp_putesquemainsert.prc -text
 SP_Oracle81/siw/sp_putesquematabela.prc -text
 SP_Oracle81/siw/sp_putetapamensal.prc -text
 SP_Oracle81/siw/sp_puteventotrigger.prc -text
@@ -1965,6 +1970,7 @@ SP_Oracle81/siw/sp_putlcportallicitem.prc -text
 SP_Oracle81/siw/sp_putlcsituacao.prc -text
 SP_Oracle81/siw/sp_putlcunidade.prc -text
 SP_Oracle81/siw/sp_putlcunidadefornec.prc -text
+SP_Oracle81/siw/sp_putmenurelac.prc -text
 SP_Oracle81/siw/sp_putorimport.prc -text
 SP_Oracle81/siw/sp_putorprioridade.prc -text
 SP_Oracle81/siw/sp_putprocedure.prc -text

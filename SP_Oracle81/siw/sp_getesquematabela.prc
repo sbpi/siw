@@ -9,7 +9,8 @@ begin
       select a.sq_esquema_tabela, a.sq_esquema, a.sq_tabela, a.ordem, a.elemento,
              b.nome nm_tabela, c.qtd_coluna, d.campo_externo, d.ordem or_coluna,
              d.mascara_data, d.valor_default,
-             e.nome cl_nome, e.obrigatorio cl_obrigatorio, e.tamanho cl_tamanho
+             e.nome cl_nome, e.obrigatorio cl_obrigatorio, e.tamanho cl_tamanho,
+             decode(e.sq_dado_tipo,1,'B_VARCHAR',2,'B_INTEGER',3,'B_DATE',4,'B_VARCHAR',6,'B_VARCHAR') nm_tipo
         from dc_esquema_tabela                     a,
              dc_tabela           b,
              (select x.sq_esquema_tabela, count(*) qtd_coluna

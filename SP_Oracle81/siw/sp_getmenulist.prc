@@ -30,6 +30,19 @@ begin
            and a.sq_pessoa = p_cliente
            and a.tramite   = 'S'
         order by acentos(a.nome);
+   Elsif upper(p_operacao) = 'XVINC' Then
+      -- Recupera os links vinculados a serviços
+      open p_result for
+        select a.sq_menu,
+               decode(a.sq_modulo,null,a.nome,a.nome||' ('||b.nome||')') nome,
+               a.acesso_geral, a.ultimo_nivel, a.tramite
+          from siw_menu              a,
+               siw_modulo b
+         where (a.sq_modulo = b.sq_modulo)
+           and a.sq_pessoa = p_cliente
+           and a.tramite   = 'S'
+           and a.sq_menu <> p_chave
+        order by acentos(a.nome);        
    ElsIf upper(p_operacao) <> 'I' and upper(p_operacao) <> 'H' Then
       -- Se for alteração, evita a exibição do próprio registro e dos seus subordinados
       open p_result for
