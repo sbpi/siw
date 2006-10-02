@@ -92,9 +92,9 @@ begin
             and (i.sq_projeto_etapa    = j.sq_projeto_etapa (+))
             and (b.sq_solic_pai        = k.sq_siw_solicitacao (+))
             and b.sq_siw_solicitacao       = p_chave;
-   Elsif p_restricao = 'PJGERAL' or p_restricao = 'ORGERAL' or p_restricao = 'ORINFO'
-         or p_restricao = 'ORRESP' or p_restricao = 'OROUTRAS' or p_restricao = 'ORVISUAL'
-         or p_restricao = 'ORFINANC' Then
+   Elsif p_restricao = 'PJGERAL' or p_restricao = 'ORGERAL' or p_restricao = 'ORINFO'      or
+         p_restricao = 'ORRESP' or p_restricao = 'OROUTRAS' or p_restricao = 'ORVISUAL' or
+         p_restricao = 'ORFINANC' or p_restricao = 'PJBGERAL' Then
       -- Recupera as demandas que o usuário pode ver
       open p_result for
          select a.sq_menu,            a.sq_modulo,                   a.nome,
@@ -128,7 +128,8 @@ begin
                 d.nota_conclusao,     d.custo_real,                  d.proponente,
                 d.vincula_contrato,   d.vincula_viagem,              d.sq_tipo_pessoa,
                 d.outra_parte,        d.preposto,                    d.limite_passagem,
-                d.sq_cidade cidade_evento, d2.sq_pais pais_evento,   d2.co_uf uf_evento,
+                d.sq_cidade cidade_evento, d.vincula_contrato, 
+                d2.sq_pais pais_evento,   d2.co_uf uf_evento,
                 d1.nome nm_prop,      d1.nome_resumido nm_prop_res,
                 decode(upper(d3.nome),'BRASIL',d2.nome||'-'||d2.co_uf||' ('||d3.nome||')',d2.nome||' ('||d3.nome||')') nm_cidade_evento,
                 e.sq_tipo_unidade,    e.nome nm_unidade_resp,        e.informal informal_resp,

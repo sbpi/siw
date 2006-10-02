@@ -200,8 +200,8 @@ begin
                    (p_restricao = 'GDPCADET'     and q.sq_projeto_etapa              is null)
                   )
                  );
-   Elsif p_restricao = 'PJCAD' or p_restricao = 'PJACOMP' or Substr(p_restricao,1,4) = 'GRPR' or 
-         p_restricao = 'ORCAD' or p_restricao = 'ORACOMP' or Substr(p_restricao,1,4) = 'GROR' Then
+   Elsif substr(p_restricao,1,5) = 'PJCAD' or p_restricao = 'PJACOMP' or Substr(p_restricao,1,4) = 'GRPR' or 
+         p_restricao = 'ORCAD'             or p_restricao = 'ORACOMP' or Substr(p_restricao,1,4) = 'GROR' Then
       -- Recupera as demandas que o usuário pode ver
       open p_result for 
          select a.sq_menu,            a.sq_modulo,                   a.nome,
@@ -338,7 +338,9 @@ begin
                   (p_restricao = 'GRPRRESPATU' and b.executor    is not null)
                  )
                 );
-   Elsif substr(p_restricao,1,3) = 'GCR' or substr(p_restricao,1,3) = 'GCD' or substr(p_restricao,1,3) = 'GCP' Then
+   Elsif substr(p_restricao,1,3) = 'GCR' or substr(p_restricao,1,3) = 'GCD' or 
+         substr(p_restricao,1,3) = 'GCP' or substr(p_restricao,1,3) = 'GCA' or
+         substr(p_restricao,1,3) = 'GCB' Then
       -- Recupera os acordos que o usuário pode ver
       open p_result for 
          select a.sq_menu,            a.sq_modulo,                   a.nome,
@@ -480,6 +482,9 @@ begin
                                              )
                 )
             and ((substr(p_restricao,1,3)     = 'GCR' and d1.modalidade = 'F') or
+                 (substr(p_restricao,1,3)     = 'GCA' and d1.modalidade = 'I') or
+                 (substr(p_restricao,1,3)     = 'GCB' and d1.modalidade = 'E') or
+                 (substr(p_restricao,1,3)     = 'GCC' and d1.modalidade = 'I') or
                  (substr(p_restricao,1,3)     = 'GCD' and d1.modalidade not in ('F','I')) or
                  (substr(p_restricao,1,3)     = 'GCP' and d1.modalidade = 'I')
                 )

@@ -24,9 +24,11 @@ begin
          select a.*, b.sq_pessoa titular, c.sq_pessoa substituto, 
                 k.sq_pessoa tit_exec, l.sq_pessoa sub_exec,
                 d.nome_resumido||' ('||f.sigla||')' nm_resp, g.sigla sg_setor,
-                nvl(h.qt_ativ,0) qt_ativ, h.sq_menu p2
+                nvl(h.qt_ativ,0) qt_ativ, h.sq_menu p2,
+                m.vincula_contrato pj_vincula_contrato, nvl(n.qt_contr,0) 
            from pj_projeto_etapa                a
                 inner          join siw_solicitacao i on (a.sq_siw_solicitacao = i.sq_siw_solicitacao)
+                  inner        join pj_projeto      m on (a.sq_siw_solicitacao = m.sq_siw_solicitacao)
                   inner        join siw_menu        j on (i.sq_menu            = j.sq_menu)
                     left outer join eo_unidade_resp k on (j.sq_unid_executora  = k.sq_unidade and
                                                           k.tipo_respons       = 'T'          and
@@ -56,6 +58,14 @@ begin
                                                                               )
                                      group by x.sq_projeto_etapa, y.sq_menu
                                 )                   h on (h.sq_projeto_etapa = a.sq_projeto_etapa)
+                left outer     join (select x.sq_projeto_etapa, y.sq_menu, count(*) qt_contr
+                                       from pj_etapa_contrato            x
+                                            inner   join siw_solicitacao y on (x.sq_siw_solicitacao = y.sq_siw_solicitacao)
+                                              inner join siw_tramite     z on (y.sq_siw_tramite     = z.sq_siw_tramite and
+                                                                               Nvl(z.sigla,'-')     <> 'CA'
+                                                                              )
+                                     group by x.sq_projeto_etapa, y.sq_menu
+                                )                   n on (h.sq_projeto_etapa = a.sq_projeto_etapa)
           where a.sq_siw_solicitacao = p_chave;
    ElsIf p_restricao = 'LSTNULL' Then
       -- Recupera as etapas principais de um projeto
@@ -66,9 +76,11 @@ begin
                 case a.exequivel  when 'S' then 'Sim' else 'Não' end nm_exequivel,    
                 k.sq_pessoa tit_exec, l.sq_pessoa sub_exec,
                 d.nome_resumido||' ('||f.sigla||')' nm_resp, g.sigla sg_setor,
-                nvl(h.qt_ativ,0) qt_ativ, h.sq_menu p2
+                nvl(h.qt_ativ,0) qt_ativ, h.sq_menu p2,
+                m.vincula_contrato pj_vincula_contrato, nvl(n.qt_contr,0) qt_contr
            from pj_projeto_etapa                a
                 inner          join siw_solicitacao i on (a.sq_siw_solicitacao = i.sq_siw_solicitacao)
+                inner        join pj_projeto      m on (a.sq_siw_solicitacao = m.sq_siw_solicitacao)
                   inner        join siw_menu        j on (i.sq_menu            = j.sq_menu)
                     left outer join eo_unidade_resp k on (j.sq_unid_executora  = k.sq_unidade and
                                                           k.tipo_respons       = 'T'          and
@@ -98,6 +110,14 @@ begin
                                                                               )
                                      group by x.sq_projeto_etapa, y.sq_menu
                                 )                   h on (h.sq_projeto_etapa = a.sq_projeto_etapa)
+                left outer     join (select x.sq_projeto_etapa, y.sq_menu, count(*) qt_contr
+                                       from pj_etapa_contrato            x
+                                            inner   join siw_solicitacao y on (x.sq_siw_solicitacao = y.sq_siw_solicitacao)
+                                              inner join siw_tramite     z on (y.sq_siw_tramite     = z.sq_siw_tramite and
+                                                                               Nvl(z.sigla,'-')     <> 'CA'
+                                                                              )
+                                     group by x.sq_projeto_etapa, y.sq_menu
+                                )                   n on (h.sq_projeto_etapa = a.sq_projeto_etapa)
           where a.sq_siw_solicitacao = p_chave
             and (p_chave_aux2 is null or (p_chave_aux2 is not null and a.sq_projeto_etapa <> p_chave_aux2))
             and a.sq_etapa_pai       is null;
@@ -107,9 +127,11 @@ begin
          select a.*, b.sq_pessoa titular, c.sq_pessoa substituto, i.executor, i.solicitante,
                 k.sq_pessoa tit_exec, l.sq_pessoa sub_exec,
                 d.nome_resumido||' ('||f.sigla||')' nm_resp, g.sigla sg_setor,
-                nvl(h.qt_ativ,0) qt_ativ, h.sq_menu p2
+                nvl(h.qt_ativ,0) qt_ativ, h.sq_menu p2,
+                m.vincula_contrato pj_vincula_contrato, nvl(n.qt_contr,0) qt_contr
            from pj_projeto_etapa                a
                 inner          join siw_solicitacao i on (a.sq_siw_solicitacao = i.sq_siw_solicitacao)
+                inner          join pj_projeto      m on (a.sq_siw_solicitacao = m.sq_siw_solicitacao)                
                   inner        join siw_menu        j on (i.sq_menu            = j.sq_menu)
                     left outer join eo_unidade_resp k on (j.sq_unid_executora  = k.sq_unidade and
                                                           k.tipo_respons       = 'T'          and
@@ -139,6 +161,14 @@ begin
                                                                               )
                                      group by x.sq_projeto_etapa, y.sq_menu
                                 )                   h on (h.sq_projeto_etapa = a.sq_projeto_etapa)
+                left outer     join (select x.sq_projeto_etapa, y.sq_menu, count(*) qt_contr
+                                       from pj_etapa_contrato            x
+                                            inner   join siw_solicitacao y on (x.sq_siw_solicitacao = y.sq_siw_solicitacao)
+                                              inner join siw_tramite     z on (y.sq_siw_tramite     = z.sq_siw_tramite and
+                                                                               Nvl(z.sigla,'-')     <> 'CA'
+                                                                              )
+                                     group by x.sq_projeto_etapa, y.sq_menu
+                                )                   n on (h.sq_projeto_etapa = a.sq_projeto_etapa)                                
           where a.sq_siw_solicitacao = p_chave
             and a.sq_etapa_pai       = p_chave_aux
             and (p_chave_aux2 is null or (p_chave_aux2 is not null and a.sq_projeto_etapa <> p_chave_aux2));
@@ -149,8 +179,8 @@ begin
                 case a.programada when 'S' then 'Sim' else 'Não' end nm_programada,
                 case a.cumulativa when 'S' then 'Sim' else 'Não' end nm_cumulativa,                
                 d.nome_resumido||' ('||f.sigla||')' nm_resp, g.sigla sg_setor,
-                nvl(h.qt_ativ,0) qt_ativ, h.sq_menu p2, 
-                   to_char(a.ultima_atualizacao, 'DD/MM/YYYY, HH24:MI:SS') phpdt_data
+                nvl(h.qt_ativ,0) qt_ativ, h.sq_menu p2, nvl(n.qt_contr,0) qt_contr, 
+                to_char(a.ultima_atualizacao, 'DD/MM/YYYY, HH24:MI:SS') phpdt_data
            from pj_projeto_etapa                a
                 left outer join eo_unidade_resp b on (a.sq_unidade       = b.sq_unidade and
                                                       b.tipo_respons     = 'T'          and
@@ -172,6 +202,14 @@ begin
                                                                               )
                                      group by x.sq_projeto_etapa, y.sq_menu
                                 )               h on (h.sq_projeto_etapa = a.sq_projeto_etapa)
+                left outer     join (select x.sq_projeto_etapa, y.sq_menu, count(*) qt_contr
+                                       from pj_etapa_contrato            x
+                                            inner   join siw_solicitacao y on (x.sq_siw_solicitacao = y.sq_siw_solicitacao)
+                                              inner join siw_tramite     z on (y.sq_siw_tramite     = z.sq_siw_tramite and
+                                                                               Nvl(z.sigla,'-')     <> 'CA'
+                                                                              )
+                                     group by x.sq_projeto_etapa, y.sq_menu
+                                )                   n on (h.sq_projeto_etapa = a.sq_projeto_etapa)
           where a.sq_siw_solicitacao = p_chave
             and a.sq_projeto_etapa   = p_chave_aux;
    Elsif p_restricao = 'FILHOS' Then

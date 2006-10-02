@@ -24,9 +24,11 @@ begin
          select a.*, b.sq_pessoa titular, c.sq_pessoa substituto,
                 k.sq_pessoa tit_exec, l.sq_pessoa sub_exec,
                 d.nome_resumido||' ('||f.sigla||')' nm_resp, g.sigla sg_setor,
-                nvl(h.qt_ativ,0) qt_ativ, h.sq_menu p2
+                nvl(h.qt_ativ,0) qt_ativ, h.sq_menu p2,
+                m.vincula_contrato pj_vincula_contrato, nvl(n.qt_contr,0)                 
            from pj_projeto_etapa                a,
                 siw_solicitacao i,
+                pj_projeto      m,
                 siw_menu        j,
                 eo_unidade_resp k,
                 eo_unidade_resp l,
@@ -45,9 +47,20 @@ begin
                          Nvl(z.sigla,'-')     <> 'CA'
                         )
                  group by x.sq_projeto_etapa, y.sq_menu
-                )                   h
+                )                   h,
+                (select x.sq_projeto_etapa, y.sq_menu, count(*) qt_contr
+                   from pj_etapa_contrato             x,
+                        siw_solicitacao y,
+                        siw_tramite     z
+                  where (x.sq_siw_solicitacao = y.sq_siw_solicitacao)
+                    and (y.sq_siw_tramite     = z.sq_siw_tramite and
+                         Nvl(z.sigla,'-')     <> 'CA'
+                        )
+                 group by x.sq_projeto_etapa, y.sq_menu
+                )                   n
           where (a.sq_siw_solicitacao = i.sq_siw_solicitacao)
             and (i.sq_menu            = j.sq_menu)
+            and (i.sq_siw_solicitacao = m.sq_siw_solicitacao)
             and (j.sq_unid_executora  = k.sq_unidade (+) and
                  k.tipo_respons(+)    = 'T'          and
                  k.fim(+)             is null
@@ -69,6 +82,7 @@ begin
             and (e.sq_unidade         = f.sq_unidade)
             and (a.sq_unidade         = g.sq_unidade)
             and (h.sq_projeto_etapa = a.sq_projeto_etapa (+))
+            and (n.sq_projeto_etapa = a.sq_projeto_etapa (+))
             and a.sq_siw_solicitacao = p_chave;
    ElsIf p_restricao = 'LSTNULL' Then
       -- Recupera as etapas principais de um projeto
@@ -79,9 +93,11 @@ begin
                 decode(a.exequivel,'S','Sim','Não') nm_exequivel,
                 k.sq_pessoa tit_exec, l.sq_pessoa sub_exec,
                 d.nome_resumido||' ('||f.sigla||')' nm_resp, g.sigla sg_setor,
-                nvl(h.qt_ativ,0) qt_ativ, h.sq_menu p2
+                nvl(h.qt_ativ,0) qt_ativ, h.sq_menu p2,
+                m.vincula_contrato pj_vincula_contrato, nvl(n.qt_contr,0)  
            from pj_projeto_etapa                a,
                 siw_solicitacao i,
+                pj_projeto      m,
                 siw_menu        j,
                 eo_unidade_resp k,
                 eo_unidade_resp l,
@@ -100,9 +116,20 @@ begin
                          Nvl(z.sigla,'-')     <> 'CA'
                         )
                  group by x.sq_projeto_etapa, y.sq_menu
-                )                   h
+                )                   h,
+                (select x.sq_projeto_etapa, y.sq_menu, count(*) qt_contr
+                   from pj_etapa_contrato             x,
+                        siw_solicitacao y,
+                        siw_tramite     z
+                  where (x.sq_siw_solicitacao = y.sq_siw_solicitacao)
+                    and (y.sq_siw_tramite     = z.sq_siw_tramite and
+                         Nvl(z.sigla,'-')     <> 'CA'
+                        )
+                 group by x.sq_projeto_etapa, y.sq_menu
+                )                   n
           where (a.sq_siw_solicitacao = i.sq_siw_solicitacao)
             and (i.sq_menu            = j.sq_menu)
+            and (i.sq_siw_solicitacao = m.sq_siw_solicitacao)
             and (j.sq_unid_executora  = k.sq_unidade (+) and
                  k.tipo_respons (+)   = 'T'          and
                  k.fim (+)            is null
@@ -124,6 +151,7 @@ begin
             and (e.sq_unidade         = f.sq_unidade)
             and (a.sq_unidade         = g.sq_unidade)
             and (h.sq_projeto_etapa = a.sq_projeto_etapa (+))
+            and (n.sq_projeto_etapa = a.sq_projeto_etapa (+))
             and a.sq_siw_solicitacao = p_chave
             and a.sq_etapa_pai       is null
             and (p_chave_aux2 is null or (p_chave_aux2 is not null and a.sq_projeto_etapa <> p_chave_aux2));
@@ -133,9 +161,11 @@ begin
          select a.*, b.sq_pessoa titular, c.sq_pessoa substituto, i.executor, i.solicitante,
                 k.sq_pessoa tit_exec, l.sq_pessoa sub_exec,
                 d.nome_resumido||' ('||f.sigla||')' nm_resp, g.sigla sg_setor,
-                nvl(h.qt_ativ,0) qt_ativ, h.sq_menu p2
+                nvl(h.qt_ativ,0) qt_ativ, h.sq_menu p2,
+                m.vincula_contrato pj_vincula_contrato, nvl(n.qt_contr,0)  
            from pj_projeto_etapa                a,
                 siw_solicitacao i,
+                pj_projeto      m,
                 siw_menu        j,
                 eo_unidade_resp k,
                 eo_unidade_resp l,
@@ -154,9 +184,20 @@ begin
                          Nvl(z.sigla,'-')     <> 'CA'
                         )
                  group by x.sq_projeto_etapa, y.sq_menu
-                )                   h
+                )                   h,
+                (select x.sq_projeto_etapa, y.sq_menu, count(*) qt_contr
+                   from pj_etapa_contrato             x,
+                        siw_solicitacao y,
+                        siw_tramite     z
+                  where (x.sq_siw_solicitacao = y.sq_siw_solicitacao)
+                    and (y.sq_siw_tramite     = z.sq_siw_tramite and
+                         Nvl(z.sigla,'-')     <> 'CA'
+                        )
+                 group by x.sq_projeto_etapa, y.sq_menu
+                )                   n
           where (a.sq_siw_solicitacao = i.sq_siw_solicitacao)
             and (i.sq_menu            = j.sq_menu)
+            and (i.sq_siw_solicitacao = m.sq_siw_solicitacao)
             and (j.sq_unid_executora  = k.sq_unidade (+) and
                  k.tipo_respons (+)   = 'T'          and
                  k.fim (+)            is null
@@ -182,6 +223,7 @@ begin
             and (e.sq_unidade         = f.sq_unidade)
             and (a.sq_unidade         = g.sq_unidade)
             and (h.sq_projeto_etapa = a.sq_projeto_etapa (+))
+            and (n.sq_projeto_etapa = a.sq_projeto_etapa (+))
             and a.sq_siw_solicitacao = p_chave
             and a.sq_etapa_pai       = p_chave_aux
             and (p_chave_aux2 is null or (p_chave_aux2 is not null and a.sq_projeto_etapa <> p_chave_aux2));
@@ -192,8 +234,10 @@ begin
                 decode(a.programada,'S','Sim','Não') nm_programada,
                 decode(a.cumulativa,'S','Sim','Não') nm_cumulativa,
                 d.nome_resumido||' ('||f.sigla||')' nm_resp, g.sigla sg_setor,
-                nvl(h.qt_ativ,0) qt_ativ, h.sq_menu p2
+                nvl(h.qt_ativ,0) qt_ativ, h.sq_menu p2,
+                m.vincula_contrato pj_vincula_contrato, nvl(n.qt_contr,0)
            from pj_projeto_etapa                a,
+                pj_projeto      m,
                 eo_unidade_resp b,
                 eo_unidade_resp c,
                 co_pessoa       d,
@@ -209,7 +253,17 @@ begin
                          Nvl(z.sigla,'-')     <> 'CA'
                         )
                  group by x.sq_projeto_etapa, y.sq_menu
-                )               h
+                )               h,
+                (select x.sq_projeto_etapa, y.sq_menu, count(*) qt_contr
+                   from pj_etapa_contrato             x,
+                        siw_solicitacao y,
+                        siw_tramite     z
+                  where (x.sq_siw_solicitacao = y.sq_siw_solicitacao)
+                    and (y.sq_siw_tramite     = z.sq_siw_tramite and
+                         Nvl(z.sigla,'-')     <> 'CA'
+                        )
+                 group by x.sq_projeto_etapa, y.sq_menu
+                )                   n                
           where (a.sq_unidade       = b.sq_unidade (+) and
                  b.tipo_respons (+) = 'T'          and
                  b.fim (+)          is null
@@ -218,11 +272,13 @@ begin
                  c.tipo_respons (+) = 'S'          and
                  c.fim (+)          is null
                 )
+            and (a.sq_siw_solicitacao = m.sq_siw_solicitacao)
             and (a.sq_pessoa        = d.sq_pessoa)
             and (d.sq_pessoa        = e.sq_pessoa)
             and (e.sq_unidade       = f.sq_unidade)
             and (a.sq_unidade       = g.sq_unidade)
             and (h.sq_projeto_etapa = a.sq_projeto_etapa (+))
+            and (n.sq_projeto_etapa = a.sq_projeto_etapa (+))
             and a.sq_siw_solicitacao = p_chave
             and a.sq_projeto_etapa   = p_chave_aux;
    Elsif p_restricao = 'FILHOS' Then

@@ -12,7 +12,8 @@ create or replace procedure SP_PutProjetoEtapa
     p_orcamento           in number    default null,
     p_sq_pessoa           in number,
     p_sq_unidade          in number,
-    p_vincula_atividade   in varchar2,
+    p_vincula_atividade   in varchar2  default null,
+    p_vincula_contrato    in varchar2  default null,
     p_usuario             in number,
     p_programada          in varchar2  default null,
     p_cumulativa          in varchar2  default null,
@@ -30,13 +31,13 @@ begin
          ( sq_projeto_etapa, sq_siw_solicitacao, sq_etapa_pai,       ordem, 
            titulo,           descricao,          inicio_previsto,    fim_previsto, 
            perc_conclusao,   orcamento,          sq_pessoa,          sq_unidade,
-           vincula_atividade,sq_pessoa_atualizacao, ultima_atualizacao,programada,
+           vincula_atividade,vincula_contrato,   sq_pessoa_atualizacao, ultima_atualizacao,programada,
            cumulativa,       quantidade,         unidade_medida)
       Values
          ( w_chave,           p_chave,            p_chave_pai,        p_ordem,
            p_titulo,          p_descricao,        p_inicio,           p_fim,
            p_perc_conclusao,  p_orcamento,        p_sq_pessoa,        p_sq_unidade,
-           p_vincula_atividade, p_usuario,        sysdate,            p_programada,
+           p_vincula_atividade,p_vincula_contrato,p_usuario,          sysdate,            p_programada,
            p_cumulativa,      p_quantidade,       p_unidade_medida);
    Elsif p_operacao = 'A' Then -- Alteração
       -- Atualiza a tabela de etapas do projeto
@@ -52,6 +53,7 @@ begin
           sq_pessoa         = p_sq_pessoa,
           sq_unidade        = p_sq_unidade,
           vincula_atividade = p_vincula_atividade,
+          vincula_contrato  = p_vincula_contrato,
           programada        = p_programada,
           cumulativa        = p_cumulativa,
           quantidade        = p_quantidade,
@@ -71,4 +73,3 @@ begin
    End If;
 end SP_PutProjetoEtapa;
 /
-
