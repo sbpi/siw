@@ -17,7 +17,7 @@ begin
             and a.ativo              = 'S'
             and a.cliente            = p_cliente
          order by 2;
-   ElsIf p_restricao in ('GCRGERAL','GCDGERAL','GCPGERAL') Then
+   ElsIf substr(p_restricao,1,2)='GC' Then
       -- Recupera os tipos de contrato do cliente
       open p_result for
          select a.sq_tipo_acordo,     decode(b.nome,null,a.nome,b.nome||' - '||a.nome) nm_tipo,
@@ -29,7 +29,10 @@ begin
             and (p_chave       is null and
                  a.ativo       = 'S' and
                  a.cliente     = p_cliente and
-                 ((p_restricao = 'GCDGERAL' and a.modalidade not in ('F','I')) or
+                 ((p_restricao = 'GCAGERAL' and a.modalidade = 'I') or
+                  (p_restricao = 'GCBGERAL' and a.modalidade = 'E') or
+                  (p_restricao = 'GCCGERAL' and a.modalidade = 'I') or
+                  (p_restricao = 'GCDGERAL' and a.modalidade not in ('F','I')) or
                   (p_restricao = 'GCRGERAL' and a.modalidade = 'F') or
                   (p_restricao = 'GCPGERAL' and a.modalidade = 'I')
                  )
@@ -97,4 +100,3 @@ begin
    End If;
 end SP_GetAgreeType;
 /
-

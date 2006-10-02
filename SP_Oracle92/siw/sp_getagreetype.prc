@@ -16,7 +16,7 @@ begin
           where a.ativo              = 'S' 
             and a.cliente            = p_cliente
          order by 2;
-   ElsIf p_restricao in ('GCAGERAL','GCRGERAL','GCDGERAL','GCPGERAL') Then
+   ElsIf substr(p_restricao,1,2)='GC' Then
       -- Recupera os tipos de contrato do cliente
       open p_result for 
          select a.sq_tipo_acordo,     case when b.nome is null then a.nome else b.nome||' - '||a.nome end nm_tipo,
@@ -28,6 +28,8 @@ begin
                  a.ativo       = 'S' and 
                  a.cliente     = p_cliente and 
                  ((p_restricao = 'GCAGERAL' and a.modalidade = 'I') or
+                  (p_restricao = 'GCBGERAL' and a.modalidade = 'E') or
+                  (p_restricao = 'GCCGERAL' and a.modalidade = 'I') or
                   (p_restricao = 'GCDGERAL' and a.modalidade not in ('F','I')) or
                   (p_restricao = 'GCRGERAL' and a.modalidade = 'F') or
                   (p_restricao = 'GCPGERAL' and a.modalidade = 'I')
