@@ -271,8 +271,9 @@ begin
          delete siw_arquivo       where sq_siw_arquivo     in (w_arq);
          
          -- Remove os registros vinculados à demanda
-         delete ac_acordo_log      where sq_siw_solicitacao = p_chave;
-         delete ac_acordo_parcela  where sq_siw_solicitacao = p_chave;
+         delete ac_acordo_representante where sq_siw_solicitacao = p_chave;
+         delete ac_acordo_log           where sq_siw_solicitacao = p_chave;
+         delete ac_acordo_parcela       where sq_siw_solicitacao = p_chave;
 
          -- Remove o registro na tabela de demandas
          delete ac_acordo          where sq_siw_solicitacao = p_chave;
@@ -327,7 +328,7 @@ begin
       Else
          
          -- Se não for ano anterior, recupera o próximo sequencial e atualiza AC_PARAMETRO
-         w_sequencial := w_reg.sequencial + 1;
+         w_sequencial := w_reg.sequencial;
          update ac_parametro set sequencial = w_sequencial where cliente = p_cliente;
          
          p_codigo_interno := Nvl(w_reg.prefixo,'')||w_sequencial||'/'||w_reg.ano_corrente||Nvl(w_reg.sufixo,'');
@@ -347,4 +348,3 @@ begin
    End If;
 end SP_PutAcordoGeral;
 /
-
