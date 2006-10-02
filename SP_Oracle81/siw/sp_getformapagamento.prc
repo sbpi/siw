@@ -4,6 +4,7 @@ create or replace procedure SP_GetFormaPagamento
     p_chave_aux in varchar2 default null,
     p_restricao in varchar2 default null,
     p_ativo     in varchar2 default null,
+    p_sigla     in varchar2 default null,
     p_result    out siw.sys_refcursor) is
 begin
    If p_restricao is null Then
@@ -12,9 +13,9 @@ begin
          select a.sq_forma_pagamento, a.cliente, a.nome, a.sigla, a.ativo,
                 decode(a.ativo,'S','Sim','Não') nm_ativo,
                 c.sq_menu, c.nome nm_menu, c.sigla sg_menu
-           from co_forma_pagamento              a,
-                siw_menu_forma_pag b,
-                  siw_menu           c
+           from co_forma_pagamento        a,
+                siw_menu_forma_pag        b,
+                siw_menu                  c
           where (a.sq_forma_pagamento = b.sq_forma_pagamento)
             and (a.cliente            = c.sq_pessoa and
                  b.sq_menu            = c.sq_menu and
@@ -23,6 +24,7 @@ begin
             and a.cliente  = p_cliente
             and (p_chave   is null or (p_chave   is not null and b.sq_menu = p_chave_aux and a.sq_forma_pagamento = p_chave))
             and (p_ativo   is null or (p_ativo   is not null and a.ativo = p_ativo))
+            and (p_sigla   is null or (p_sigla   is not null and a.sigla = p_sigla))
          order by 2;
    elsif p_restricao = 'REGISTRO' then
       open p_result for 
