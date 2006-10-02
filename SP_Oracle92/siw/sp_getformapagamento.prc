@@ -4,6 +4,7 @@ create or replace procedure SP_GetFormaPagamento
     p_chave_aux in varchar2 default null,
     p_restricao in varchar2 default null,
     p_ativo     in varchar2 default null,
+    p_sigla     in varchar2 default null,
     p_result    out sys_refcursor) is
 begin
    If p_restricao is null Then
@@ -21,6 +22,7 @@ begin
           where a.cliente  = p_cliente
             and (p_chave   is null or (p_chave   is not null and b.sq_menu = p_chave_aux and a.sq_forma_pagamento = p_chave))
             and (p_ativo   is null or (p_ativo   is not null and a.ativo   = p_ativo))
+            and (p_sigla   is null or (p_sigla   is not null and a.sigla   = p_sigla))
          order by 2;
    elsif p_restricao = 'REGISTRO' then
       open p_result for 
