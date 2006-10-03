@@ -109,6 +109,10 @@ $p_agrega       = strtoupper($_REQUEST['p_agrega']);
 $p_tamanho      = strtoupper($_REQUEST['p_tamanho']);
 // Recupera a configuração do serviço
 $RS_Menu = db_getMenuData::getInstanceOf($dbms,$w_menu);
+
+// Recupera a configuração do serviço de origem
+$RS_Menu_Origem = db_getMenuData::getInstanceOf($dbms,$P2);
+
 Main();
 FechaSessao($dbms);
 exit;
@@ -722,42 +726,26 @@ function Gerencial() {
       else
         ShowHTML('          <option value="'.substr(f($RS_Menu,'sigla'),0,3).'CC'.'">Classificação');
     } 
-    if ($p_agrega==substr(f($RS_Menu,'sigla'),0,3).'RESPATU')
-      ShowHTML('          <option value="'.substr(f($RS_Menu,'sigla'),0,3).'RESPATU" selected>Executor');
-    else
-      ShowHTML('          <option value="'.substr(f($RS_Menu,'sigla'),0,3).'RESPATU">Executor');
-    if (Nvl($p_agrega,substr(f($RS_Menu,'sigla'),0,3).'PROP')==substr(f($RS_Menu,'sigla'),0,3).'PROP')
-      ShowHTML('          <option value="'.substr(f($RS_Menu,'sigla'),0,3).'PROP" selected>Outra parte');
-    else
-      ShowHTML('          <option value="'.substr(f($RS_Menu,'sigla'),0,3).'PROP">Outra parte');
-    if ($p_agrega==substr(f($RS_Menu,'sigla'),0,3).'PROJ')
-      ShowHTML('          <option value="'.substr(f($RS_Menu,'sigla'),0,3).'PROJ" selected>projeto');
-    else
-      ShowHTML('          <option value="'.substr(f($RS_Menu,'sigla'),0,3).'PROJ">Projeto');
-    if ($p_agrega==substr(f($RS_Menu,'sigla'),0,3).'RESP')
-      ShowHTML('          <option value="'.substr(f($RS_Menu,'sigla'),0,3).'RESP" selected>Responsável');
-    else
-      ShowHTML('          <option value="'.substr(f($RS_Menu,'sigla'),0,3).'RESP">Responsável');
-    if ($p_agrega==substr(f($RS_Menu,'sigla'),0,3).'SETOR')
-      ShowHTML('          <option value="'.substr(f($RS_Menu,'sigla'),0,3).'SETOR" selected>Setor responsável');
-    else
-      ShowHTML('          <option value="'.substr(f($RS_Menu,'sigla'),0,3).'SETOR">Setor responsável');
-    if ($p_agrega==substr(f($RS_Menu,'sigla'),0,3).'LOCAL')
-      ShowHTML('          <option value="'.substr(f($RS_Menu,'sigla'),0,3).'LOCAL" selected>UF');
-    else
-      ShowHTML('          <option value="'.substr(f($RS_Menu,'sigla'),0,3).'LOCAL">UF');
+    if ($p_agrega==substr(f($RS_Menu,'sigla'),0,3).'RESPATU')                                                   ShowHTML('          <option value="'.substr(f($RS_Menu,'sigla'),0,3).'RESPATU" selected>Executor');         else ShowHTML('          <option value="'.substr(f($RS_Menu,'sigla'),0,3).'RESPATU">Executor');
+    if (Nvl($p_agrega,substr(f($RS_Menu,'sigla'),0,3).'PROP')==substr(f($RS_Menu,'sigla'),0,3).'PROP')          ShowHTML('          <option value="'.substr(f($RS_Menu,'sigla'),0,3).'PROP" selected>Outra parte');         else ShowHTML('          <option value="'.substr(f($RS_Menu,'sigla'),0,3).'PROP">Outra parte');
+    if (substr(f($RS_Menu_Origem,'sigla'),0,3)!='GCA') { if ($p_agrega==substr(f($RS_Menu,'sigla'),0,3).'PROJ') ShowHTML('          <option value="'.substr(f($RS_Menu,'sigla'),0,3).'PROJ" selected>projeto');             else ShowHTML('          <option value="'.substr(f($RS_Menu,'sigla'),0,3).'PROJ">Projeto'); }
+    if ($p_agrega==substr(f($RS_Menu,'sigla'),0,3).'RESP')                                                      ShowHTML('          <option value="'.substr(f($RS_Menu,'sigla'),0,3).'RESP" selected>Responsável');         else ShowHTML('          <option value="'.substr(f($RS_Menu,'sigla'),0,3).'RESP">Responsável');
+    if ($p_agrega==substr(f($RS_Menu,'sigla'),0,3).'SETOR')                                                     ShowHTML('          <option value="'.substr(f($RS_Menu,'sigla'),0,3).'SETOR" selected>Setor responsável');  else ShowHTML('          <option value="'.substr(f($RS_Menu,'sigla'),0,3).'SETOR">Setor responsável');
+    if ($p_agrega==substr(f($RS_Menu,'sigla'),0,3).'LOCAL')                                                     ShowHTML('          <option value="'.substr(f($RS_Menu,'sigla'),0,3).'LOCAL" selected>UF');                 else ShowHTML('          <option value="'.substr(f($RS_Menu,'sigla'),0,3).'LOCAL">UF');
     ShowHTML('          </select></td>');
     MontaRadioSN('<b>Inibe exibição do gráfico?</b>',$p_tipo,'p_tipo');
     MontaRadioNS('<b>Limita tamanho do objeto?</b>',$p_tamanho,'p_tamanho');
     ShowHTML('           </table>');
     ShowHTML('         </tr>');
     ShowHTML('         <tr><td valign="top" colspan="2" align="center" bgcolor="#D0D0D0" style="border: 2px solid rgb(0,0,0);"><font size="1"><b>Critérios de Busca</td>');
-      // Se a opção for ligada ao módulo de projetos, permite a seleção do projeto  e da etapa
-    ShowHTML('      <tr><td colspan=2><table border=0 width="90%" cellspacing=0><tr valign="top">');
-    $RS = db_getLinkData::getInstanceOf($dbms,$w_cliente,'PJCAD');
-    Selecaoprojeto('Pro<u>j</u>eto:','J','Selecione o projeto do contrato na relação.',$p_projeto,$w_usuario,f($RS,'sq_menu'),'p_projeto','PJLIST',null);
-    ShowHTML('      </tr>');
-    ShowHTML('          </table>');
+    if (substr(f($RS_Menu_Origem,'sigla'),0,3)!='GCA') {
+        // Se a opção for ligada ao módulo de projetos, permite a seleção do projeto  e da etapa
+      ShowHTML('      <tr><td colspan=2><table border=0 width="90%" cellspacing=0><tr valign="top">');
+      $RS = db_getLinkData::getInstanceOf($dbms,$w_cliente,'PJCAD');
+      SelecaoProjeto('Pro<u>j</u>eto:','J','Selecione o projeto do contrato na relação.',$p_projeto,$w_usuario,f($RS,'sq_menu'),'p_projeto','PJLIST',null);
+      ShowHTML('      </tr>');
+      ShowHTML('          </table>');
+    }
     ShowHTML('<INPUT type="hidden" name="w_troca" value="">');
     if (f($RS_Menu,'solicita_cc')=='S') {
       ShowHTML('      <tr><td colspan=2><table border=0 width="90%" cellspacing=0><tr valign="top">');

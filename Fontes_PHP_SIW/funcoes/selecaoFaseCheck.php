@@ -5,12 +5,11 @@ include_once($w_dir_volta.'classes/sp/db_getTramiteList.php');
 // -------------------------------------------------------------------------
 function selecaoFaseCheck($label,$accesskey,$hint,$chave,$chaveAux,$campo,$restricao,$atributo) {
   extract($GLOBALS);
-
   $RS = db_getTramiteList::getInstanceOf($dbms, $chaveAux, null, null);
   $RS = SortArray($RS,'ordem','asc');
   ShowHTML('          <td valign="top"><b>'.$label.'</b>');
   foreach($RS as $row)  {
-    if (nvl($chave,'')=='') { 
+    if (nvl($chave,'')=='' && nvl($restricao,'')!='MENURELAC') { 
       if (f($row,'sigla')<>'CA') {
         ShowHTML('          <BR><input type="CHECKBOX" name="'.$campo.'" value="'.f($row,'SQ_SIW_TRAMITE').'" CHECKED>'.f($row,'nome')); 
       } else {

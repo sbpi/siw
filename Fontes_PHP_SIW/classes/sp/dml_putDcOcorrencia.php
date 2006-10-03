@@ -4,13 +4,15 @@ include_once($w_dir_volta.'classes/db/DatabaseQueriesFactory.php');
 /**
 * class dml_putDcOcorrencia
 *
-* { Description :- 
+* { Description :-
 *    Grava dados da importação de arquivos oriundos do SIGPLAN(Formato XML)
 * }
 */
 
 class dml_putDcOcorrencia {
-   function getInstanceOf($dbms, $operacao, $p_sq_esquema, $p_cliente, $p_sq_pessoa, $p_data_arquivo, $p_arquivo_recebido, $p_caminho_recebido, $p_tamanho_recebido, $p_tipo_recebido, $p_arquivo_registro, $p_caminho_registro, $p_tamanho_registro, $p_tipo_registro, $p_processados, $p_rejeitados, $p_nome_recebido, $p_nome_registro) {
+   function getInstanceOf($dbms, $operacao, $p_sq_esquema, $p_cliente, $p_sq_pessoa, $p_data_arquivo, $p_arquivo_recebido, $p_caminho_recebido,
+   		$p_tamanho_recebido, $p_tipo_recebido, $p_arquivo_registro, $p_caminho_registro, $p_tamanho_registro, $p_tipo_registro,
+   		$p_processados, $p_rejeitados, $p_nome_recebido, $p_nome_registro) {
      extract($GLOBALS,EXTR_PREFIX_SAME,'strchema'); $sql=$strschema.'SP_PUTDCOCORRENCIA';
      $params=array('p_operacao'                  =>array($operacao,                                        B_VARCHAR,         1),
                    'p_sq_esquema'                =>array(tvl($p_sq_esquema),                               B_INTEGER,        32),
@@ -31,13 +33,13 @@ class dml_putDcOcorrencia {
                    'p_nome_registro'             =>array(tvl($p_nome_registro),                            B_VARCHAR,       255)
                   );
      $l_rs = DatabaseQueriesFactory::getInstanceOf($sql, $dbms, $params, DB_TYPE);
-     $l_error_reporting = error_reporting(); 
-     error_reporting(0); 
-     if(!$l_rs->executeQuery()) { 
-       error_reporting($l_error_reporting); 
-       TrataErro($sql, $l_rs->getError(), $params, __FILE__, __LINE__, __CLASS__); 
+     $l_error_reporting = error_reporting();
+     error_reporting(0);
+     if(!$l_rs->executeQuery()) {
+       error_reporting($l_error_reporting);
+       TrataErro($sql, $l_rs->getError(), $params, __FILE__, __LINE__, __CLASS__);
      } else {
-       error_reporting($l_error_reporting); 
+       error_reporting($l_error_reporting);
        return true;
      }
    }

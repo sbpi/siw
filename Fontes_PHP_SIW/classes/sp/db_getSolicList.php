@@ -15,7 +15,6 @@ class db_getSolicList {
         $p_chave, $p_assunto, $p_pais, $p_regiao, $p_uf, $p_cidade, $p_usu_resp, 
         $p_uorg_resp, $p_palavra, $p_prazo, $p_fase, $p_sqcc, $p_projeto, $p_atividade, 
         $p_acao_ppa, $p_orprior) {
-
      //$l_fase = '';
      //for ($i=0; $i<=count($p_fase)-1; $i=$i+1) {
      //  $l_fase = $l_fase.','.$p_fase[$i];

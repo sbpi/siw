@@ -9,7 +9,7 @@ extract($GLOBALS); include_once($w_dir_volta.'classes/db/DatabaseQueriesFactory.
 */
 
 class dml_putProjetoEtapa {
-   function getInstanceOf($dbms, $operacao, $p_chave, $p_chave_aux, $p_chave_pai, $p_titulo, $p_descricao, $p_ordem, $p_inicio, $p_fim, $p_perc_conclusao, $p_orcamento, $p_sq_pessoa, $p_sq_unidade, $p_vincula_atividade, $p_usuario, $p_programada, $p_cumulativa, $p_quantidade, $p_unidade_medida) {
+   function getInstanceOf($dbms, $operacao, $p_chave, $p_chave_aux, $p_chave_pai, $p_titulo, $p_descricao, $p_ordem, $p_inicio, $p_fim, $p_perc_conclusao, $p_orcamento, $p_sq_pessoa, $p_sq_unidade, $p_vincula_atividade, $p_vincula_contrato, $p_usuario, $p_programada, $p_cumulativa, $p_quantidade, $p_unidade_medida) {
      extract($GLOBALS,EXTR_PREFIX_SAME,'strchema'); $sql=$strschema.'SP_PUTPROJETOETAPA';
      $params=array('p_operacao'                  =>array($operacao,                                        B_VARCHAR,         1),
                    'p_chave'                     =>array(tvl($p_chave),                                    B_INTEGER,        32),
@@ -25,6 +25,7 @@ class dml_putProjetoEtapa {
                    'p_sq_pessoa'                 =>array($p_sq_pessoa,                                     B_INTEGER,        32),
                    'p_sq_unidade'                =>array($p_sq_unidade,                                    B_INTEGER,        32),
                    'p_vincula_atividade'         =>array($p_vincula_atividade,                             B_VARCHAR,         1),
+                   'p_vincula_contrato'          =>array($p_vincula_contrato,                              B_VARCHAR,         1),
                    'p_usuario'                   =>array($p_usuario,                                       B_INTEGER,        32),
                    'p_programada'                =>array($p_programada,                                    B_VARCHAR,         1),
                    'p_cumulativa'                =>array($p_cumulativa,                                    B_VARCHAR,         1),

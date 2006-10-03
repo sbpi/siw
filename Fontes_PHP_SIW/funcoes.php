@@ -763,7 +763,7 @@ function EncerraSessao() {
   extract($GLOBALS);
   ScriptOpen('JavaScript');
   ShowHTML(' alert("Tempo máximo de inatividade atingido! Autentique-se novamente."); ');
-  ShowHTML(' top.location.href=\'' . $conRootSIW . '\';');
+  ShowHTML(' top.location.href=\'' . $conDefaultPath . '\';');
   ScriptClose();
   exit();
 }
@@ -856,57 +856,46 @@ function MascaraBeneficiario($cgccpf) {
 // -------------------------------------------------------------------------
 function EnviaMail($w_subject,$w_mensagem,$w_recipients,$w_attachments = null) {
   extract($GLOBALS);
-  include_once('classes/mail/class_email.php');
-  $_mail = new EMAIL();
-  $_mail->setHeader('Content-Type','text/html; charset=iso-8859-1');
-  $_mail->setDestino(str_ireplace(';',',',$w_recipients));
-  $_mail->setAssunto($w_subject);
-  $_mail->setMensagem($w_mensagem);
-  if (!is_null($w_attachments)) $_mail->setArquivo(str_ireplace(';',',',$w_attachments));
+  include_once($conDiretorio.'classes/mail/inc_cPHPezMail.php');
+  $_mail = new cPHPezMail();
+  $l_server = nvl($_SERVER['SERVER_NAME'],$_SERVER['HOSTNAME']);
+  if (false!==strpos($l_server,'.')) {
+    $_mail->SetFrom('siw@'.substr(strstr($l_server,'.'),1), 'Solução Integrada Web');
+  } else {
+    $_mail->SetFrom('siw@'.$l_server, 'Solução Integrada Web');
+  }
 
-  return $_mail->enviar();
+  $l_recipients = explode(';',$w_recipients);
+  foreach($l_recipients as $k => $v) {
+    if (nvl($v,'')!='') $_mail->AddTo($v, null);
+  }
+
+  $_mail->SetSubject($w_subject);
+
+  $_mail->SetBodyHTML($w_mensagem);
+
+  $_mail->SetCharset('iso-8859-1');
+  $_mail->SetEncodingBit(8);
+
+  //Attach local file
+  if (!is_null($w_attachments)) {
+    $w_anexos = explode(';',$w_attachments);
+    foreach($w_anexos as $k => $v) {
+      if (nvl($v,'')!='') $_mail->AddAttachLocalFile($v);
+    }
+  }
+
+  //send your e-mail
+  if (!$_mail->Send()) {
+    if (strtoupper(substr(PHP_OS,0,3)=='WIN') || strtoupper(substr(PHP_OS,0,5)=='LINUX')) {
+      return 'ERRO: ocorreu algum erro no envio da mensagem. Verifique as configurações de SMTP';
+    } else {
+      return null;
+    }
+  } else {
+     return null;
+  }
 }
-
-// =========================================================================
-// Rotina de envio de e-mail
-// -------------------------------------------------------------------------
-function EnviaMailSender($w_subject,$w_mensagem,$w_recipients,$w_from,$w_from_name) {
-  extract($GLOBALS);
-  $w_recipients=$w_recipients.';';
-  // $_mail is of type "JMail.Message"
-  $_mail->Silent=true;
-  $_mail->From=$w_from;
-  $_mail->FromName=$w_from_name;
-  if ($_SESSION['SIW_EMAIL_SENHA']>'') {
-     $_mail->Logging=true;
-     $_mail->MailServerUserName=$_SESSION['SIW_EMAIL_CONTA'];
-     $_mail->MailServerPassWord=$_SESSION['SIW_EMAIL_SENHA'];
-  }
-  else {
-     $_mail->Logging=false;
-     $_mail->MailServerUserName=$_SESSION['SIW_EMAIL_CONTA'];
-  }
-
-  $_mail->Subject=$w_subject;
-  $_mail->HtmlBody=$w_mensagem;
-  $_mail->ClearRecipients();
-  $i=0;
-  while((strpos($w_recipients,';') ? strpos($w_recipients,';')+1 : 0)>0) {
-    if (strlen($w_recipients)>2) { $Recipients[$i]=substr($w_recipients,0,(strpos($w_recipients,";") ? strpos($w_recipients,";")+1 : 0)-1); }
-    $w_recipients=substr($w_recipients,(strpos($w_recipients,";") ? strpos($w_recipients,";")+1 : 0)+1-1,strlen($w_recipients));
-    $i=$i+1;
-  }
-  for ($j=0; $j<=$i-1; $j=$j+1) {
-    if ($j==0) // Se for o primeiro, coloca como destinatário principal. Caso contrário, coloca como CC.
-       { $_mail->AddRecipient($Recipients[$j]); }
-    else
-       { $_mail->AddRecipientCC($Recipients[$j]); }
-  }
-  $_mail->Send($_SESSION['SMTP_SERVER']);
-  $function_ret="";
-  return $function_ret;
-}
-
 
 // =========================================================================
 // Rotina que extrai a última parte da variável TP

@@ -54,7 +54,9 @@ $conPageSize	= 30;
 
 //---------------------------Configuração do ambiente do sistema
 
+$crlf           = chr(13).chr(10);
 $conSgSistema   = 'SIW';
+$conDefaultPath = 'http://www.sbpi.com.br';
 $conNmSistema   = 'Solução Integrada Web';
 $conRootSIW     = 'http://www2.sbpi.com.br/siw/';
 $conDiretorio   = '/var/www/html/siw/';

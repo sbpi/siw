@@ -2037,7 +2037,15 @@ function Grava() {
         if (UPLOAD_ERR_OK==0) {
           $w_maximo = 51200;
           foreach ($_FILES as $Chv => $Field) {
-            if ($Field['size'] > 0) {
+            if ($Field['error'] > 0) {
+              // Verifica se o tamanho das fotos está compatível com  o limite de 100KB. 
+              ScriptOpen('JavaScript');
+              ShowHTML('  alert(\'Atenção: o tamanho máximo do arquivo não pode exceder '.($w_maximo/1024).' KBytes!\');');
+              ShowHTML('  history.go(-1);');
+              ScriptClose();
+              exit();
+            }
+            if ($Field['size'] >= 0) {
               // Verifica se o tamanho das fotos está compatível com  o limite de 100KB. 
               if ($Field['size'] > $w_maximo) {
                 ScriptOpen('JavaScript');
@@ -2049,7 +2057,7 @@ function Grava() {
               // Se já há um nome para o arquivo, mantém 
               $w_file = basename($Field['tmp_name']);
               if (!(strpos($Field['name'],'.')===false)) {
-                $w_file = $w_file.'.'.substr($Field['name'],(strpos($Field['name'],'.')===false));
+                $w_file = $w_file.substr($Field['name'],(strpos($Field['name'],'.')===false));
               }
               $w_tamanho = $Field['size'];
               $w_tipo    = $Field['type'];

@@ -212,6 +212,11 @@ function Benef() {
     Validate('w_unidade','Unidade de Exercício','1',1,5,60,'1','1');
     Validate('w_sala','Sala','1',1,2,15,'1','1');
     Validate('w_ramal','Ramal','1',1,2,15,'1','1');   
+  } else {
+    ScriptOpen('JavaScript');
+    ShowHTML('  alert(\'Teste!\');');
+    ShowHTML('  history.back(1);');
+    ScriptClose();
   }
   ShowHTML('  theForm.Botao[0].disabled=true;');
   ShowHTML('  theForm.Botao[1].disabled=true;');
@@ -288,7 +293,7 @@ function Benef() {
     ShowHTML('          </table>');
     ShowHTML('          <tr bgcolor="'.$conTrBgColor.'"><td>');
     ShowHTML('        <table width="100%" border="0">');
-    ShowHTML('          <tr><td valign="top" title="Informe sua unidade de exercicio."><b><u>U</u>nidade de exercício</b><br><input accesskey="U" type="text" name="w_unidade" class="sti" SIZE="40" MAXLENGTH="60" VALUE="'.$w_unidade.'"></td>');
+    ShowHTML('          <tr><td valign="top" title="Informe sua Coordenação ou Unidade em que trabalha."><b><u>C</u>oordenação ou Unidade em que trabalha:</b><br><input accesskey="U" type="text" name="w_unidade" class="sti" SIZE="45" MAXLENGTH="60" VALUE="'.$w_unidade.'"></td>');
     ShowHTML('          <tr><td valign="top" title="Informe o número da sua sala." ><b>S<u>a</u>la</b><br><input accesskey="s" type="text" name="w_sala" class="sti" SIZE="20" MAXLENGTH="20" VALUE="'.$w_sala.'"></td>');
     ShowHTML('          <tr><td valign="top" title="Informe o número do seu ramal. Se houver mais de um número separar com /."><b><u>R</u>amal</b><br><input  accesskey="R" type="text" name="w_ramal" class="sti" SIZE="20" MAXLENGTH="20" VALUE="'.$w_ramal.'"></td>');
     ShowHTML('          <tr><td valign="top" colspan="2"><table border=0 width="100%" cellspacing=0>');
@@ -311,7 +316,7 @@ function Benef() {
     ShowHTML('      <tr><td align="center" colspan="3" height="1" bgcolor="#000000"></TD></TR>');
     // Verifica se poderá ser feito o envio da solicitação, a partir do resultado da validação
     ShowHTML('      <tr><td align="center" colspan="3">');
-    ShowHTML('            <input class="stb" type="button" name="Botao" value="Gravar" onClick="document.Form.submit()">');
+    ShowHTML('            <input class="stb" type="button" name="Botao" value="Gravar" onClick="if (Validacao(document.Form)) {document.Form.submit()}">');
     ShowHTML('            <input class="stb" type="button" name="Botao" value="Limpar formulário" onClick="location.href=\''.$w_pagina.'\';document.Form.Botao[0].disabled=true; document.Form.Botao[1].disabled=true;">');
     ShowHTML('          </td>');
     ShowHTML('      </tr>');

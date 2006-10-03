@@ -418,9 +418,9 @@ function ConsultaDoc() {
       $RS = db_getSF::getInstanceOf($dbms, 'NOME', null, null, null, null, $_POST["p_beneficiario"], null, null, null, null, null, null);
       foreach ($RS as $row) {
         if (f($row,'handle')==$_POST['p_sq_pessoa']) {
-          ShowHTML('          <OPTION VALUE='.f($row,'handle').' selected>'.f($row,'nome'));
+          ShowHTML('          <OPTION VALUE='.f($row,'handle').' selected>'.f($row,'nome').' ('.f($row,'cgccpf').')');
         } else {
-          ShowHTML('          <OPTION VALUE='.f($row,'handle').'>'.f($row,'nome'));
+          ShowHTML('          <OPTION VALUE='.f($row,'handle').'>'.f($row,'nome').' ('.f($row,'cgccpf').')');
         } 
       } 
     }

@@ -261,136 +261,142 @@ function VisualProjeto($l_chave,$operacao,$l_usuario) {
       $w_html .= chr(13).'<input type="Hidden" name="p_atividade" value="">';
       $w_html .= chr(13).'<input type="Hidden" name="p_agrega" value="">';
       $w_html .= chr(13).'<input type="Hidden" name="p_fase" value="">';
-    } 
-    $w_html .= chr(13).'      <tr><td valign="top" colspan="2" align="center" bgcolor="#D0D0D0" style="border: 2px solid rgb(0,0,0);"><b>Etapas</td>';
-    $w_html .= chr(13).'      <tr><td align="center" colspan="2">';
-    $w_html .= chr(13).'        <TABLE WIDTH="100%" bgcolor="'.$conTableBgColor.'" BORDER="'.$conTableBorder.'" CELLSPACING="'.$conTableCellSpacing.'" CELLPADDING="'.$conTableCellPadding.'" BorderColorDark="'.$conTableBorderColorDark.'" BorderColorLight="'.$conTableBorderColorLight.'">';
-    $w_html .= chr(13).'          <tr bgcolor="'.$conTrBgColor.'" align="center">';
-    $w_html .= chr(13).'          <td rowspan=2><b>Etapa</td>';
-    $w_html .= chr(13).'          <td rowspan=2><b>Título</td>';
-    $w_html .= chr(13).'          <td rowspan=2><b>Responsável</td>';
-    $w_html .= chr(13).'          <td rowspan=2><b>Setor</td>';
-    $w_html .= chr(13).'          <td colspan=2><b>Execução</td>';
-    $w_html .= chr(13).'          <td rowspan=2><b>Conc.</td>';
-    $w_html .= chr(13).'          <td rowspan=2><b>Ativ.</td>';
-    $w_html .= chr(13).'          </tr>';
-    $w_html .= chr(13).'          <tr bgcolor="'.$conTrBgColor.'" align="center">';
-    $w_html .= chr(13).'          <td><b>De</td>';
-    $w_html .= chr(13).'          <td><b>Até</td>';
-    $w_html .= chr(13).'          </tr>';
-    //Se for visualização normal, irá visualizar somente as etapas
-    if ($operacao=='L') {
-      foreach($RS as $row) {
-        $w_html .= chr(13).EtapaLinha($l_chave,f($row,'sq_projeto_etapa'),f($row,'titulo'),f($row,'nm_resp'),f($row,'sg_setor'),f($row,'inicio_previsto'),f($row,'fim_previsto'),f($row,'perc_conclusao'),f($row,'qt_ativ'),'<b>',null,'PROJETO',f($row,'sq_pessoa'),f($row,'sq_unidade'));
-        // Recupera as etapas vinculadas ao nível acima
-        $RS1 = db_getSolicEtapa::getInstanceOf($dbms,$l_chave,f($row,'sq_projeto_etapa'),'LSTNIVEL',null);
-        $RS1 = SortArray($RS1,'ordem','asc');
-        foreach($RS1 as $row1) {
-          $w_html .= chr(13).EtapaLinha($l_chave,f($row1,'sq_projeto_etapa'),f($row1,'titulo'),f($row1,'nm_resp'),f($row1,'sg_setor'),f($row1,'inicio_previsto'),f($row1,'fim_previsto'),f($row1,'perc_conclusao'),f($row1,'qt_ativ'),null,null,'PROJETO',f($row1,'sq_pessoa'),f($row1,'sq_unidade'));
-          // Recupera as etapas vinculadas ao nível acima
-          $RS2 = db_getSolicEtapa::getInstanceOf($dbms,$l_chave,f($row1,'sq_projeto_etapa'),'LSTNIVEL',null);
-          $RS2 = SortArray($RS2,'ordem','asc');
-          foreach($RS2 as $row2) {
-            $w_html .= chr(13).EtapaLinha($l_chave,f($row2,'sq_projeto_etapa'),f($row2,'titulo'),f($row2,'nm_resp'),f($row2,'sg_setor'),f($row2,'inicio_previsto'),f($row2,'fim_previsto'),f($row2,'perc_conclusao'),f($row2,'qt_ativ'),null,null,'PROJETO',f($row2,'sq_pessoa'),f($row2,'sq_unidade'));
-            // Recupera as etapas vinculadas ao nível acima
-            $RS3 = db_getSolicEtapa::getInstanceOf($dbms,$l_chave,f($row2,'sq_projeto_etapa'),'LSTNIVEL',null);
-            $RS3 = SortArray($RS3,'ordem','asc');
-            foreach($RS3 as $row3) {
-              $w_html .= chr(13).EtapaLinha($l_chave,f($row3,'sq_projeto_etapa'),f($row3,'titulo'),f($row3,'nm_resp'),f($row3,'sg_setor'),f($row3,'inicio_previsto'),f($row3,'fim_previsto'),f($row3,'perc_conclusao'),f($row3,'qt_ativ'),null,null,'PROJETO',f($row3,'sq_pessoa'),f($row3,'sq_unidade'));
-              // Recupera as etapas vinculadas ao nível acima
-              $RS4 = db_getSolicEtapa::getInstanceOf($dbms,$l_chave,f($row3,'sq_projeto_etapa'),'LSTNIVEL',null);
-              $RS4 = SortArray($RS4,'ordem','asc');
-              foreach($RS4 as $row4) {
-                $w_html .= chr(13).EtapaLinha($l_chave,f($row4,'sq_projeto_etapa'),f($row4,'titulo'),f($row4,'nm_resp'),f($row4,'sg_setor'),f($row4,'inicio_previsto'),f($row4,'fim_previsto'),f($row4,'perc_conclusao'),f($row4,'qt_ativ'),null,null,'PROJETO',f($row4,'sq_pessoa'),f($row4,'sq_unidade'));
-              } 
-            } 
-          } 
-        } 
-      } 
-    }elseif ($operacao=='T'){
-      //Se for visualização total, ira visualizar as etapas e as atividades correspondentes
-      foreach($RS as $row) {
-        $w_html .= chr(13).EtapaLinhaAtiv($l_chave,f($row,'sq_projeto_etapa'),f($row,'titulo'),f($row,'nm_resp'),f($row,'sg_setor'),f($row,'inicio_previsto'),f($row,'fim_previsto'),f($row,'perc_conclusao'),f($row,'qt_ativ'),'<b>',null,'PROJETO','RESUMIDO',f($row,'sq_pessoa'),f($row,'sq_unidade'));
-        // Recupera as etapas vinculadas ao nível acima
-        $RS1 = db_getSolicEtapa::getInstanceOf($dbms,$l_chave,f($row,'sq_projeto_etapa'),'LSTNIVEL',null);
-        $RS1 = SortArray($RS1,'ordem','asc');
-        foreach($RS1 as $row1) {
-          $w_html .= chr(13).EtapaLinhaAtiv($l_chave,f($row1,'sq_projeto_etapa'),f($row1,'titulo'),f($row1,'nm_resp'),f($row1,'sg_setor'),f($row1,'inicio_previsto'),f($row1,'fim_previsto'),f($row1,'perc_conclusao'),f($row1,'qt_ativ'),null,null,'PROJETO','RESUMIDO',f($row1,'sq_pessoa'),f($row1,'sq_unidade'));
-          // Recupera as etapas vinculadas ao nível acima
-          $RS2 = db_getSolicEtapa::getInstanceOf($dbms,$l_chave,f($row1,'sq_projeto_etapa'),'LSTNIVEL',null);
-          $RS2 = SortArray($RS2,'ordem','asc');
-          foreach($RS2 as $row2) {
-            $w_html .= chr(13).EtapaLinhaAtiv($l_chave,f($row2,'sq_projeto_etapa'),f($row2,'titulo'),f($row2,'nm_resp'),f($row2,'sg_setor'),f($row2,'inicio_previsto'),f($row2,'fim_previsto'),f($row2,'perc_conclusao'),f($row2,'qt_ativ'),null,null,'PROJETO','RESUMIDO',f($row2,'sq_pessoa'),f($row2,'sq_unidade'));
-            // Recupera as etapas vinculadas ao nível acima
-            $RS3 = db_getSolicEtapa::getInstanceOf($dbms,$l_chave,f($row2,'sq_projeto_etapa'),'LSTNIVEL',null);
-            $RS3 = SortArray($RS3,'ordem','asc');
-            foreach($RS3 as $row3) {
-              $w_html .= chr(13).EtapaLinhaAtiv($l_chave,f($row3,'sq_projeto_etapa'),f($row3,'titulo'),f($row3,'nm_resp'),f($row3,'sg_setor'),f($row3,'inicio_previsto'),f($row3,'fim_previsto'),f($row3,'perc_conclusao'),f($row3,'qt_ativ'),null,null,'PROJETO','RESUMIDO',f($row3,'sq_pessoa'),f($row3,'sq_unidade'));
-              // Recupera as etapas vinculadas ao nível acima
-              $RS4 = db_getSolicEtapa::getInstanceOf($dbms,$l_chave,f($row3,'sq_projeto_etapa'),'LSTNIVEL',null);
-              $RS4 = SortArray($RS4,'ordem','asc');
-              foreach($RS4 as $row4) {
-                $w_html .= chr(13).EtapaLinhaAtiv($l_chave,f($row4,'sq_projeto_etapa'),f($row4,'titulo'),f($row4,'nm_resp'),f($row4,'sg_setor'),f($row4,'inicio_previsto'),f($row4,'fim_previsto'),f($row4,'perc_conclusao'),f($row4,'qt_ativ'),null,null,'PROJETO','RESUMIDO',f($row4,'sq_pessoa'),f($row4,'sq_unidade'));
-              } 
-            } 
-          } 
-        } 
-      } 
-    } 
-    $w_html .= chr(13).'      </form>';
-    $w_html .= chr(13).'      </center>';
-    $w_html .= chr(13).'         </table></td></tr>';
-  }
-  // Recursos envolvidos na execução do projeto
-  $RS = db_getSolicRecurso::getInstanceOf($dbms,$l_chave,null,'LISTA');
-  $RS = SortArray($RS,'tipo','asc','nome','asc');
-  if (count($RS)>0) {
-    $w_html .= chr(13).'      <tr><td valign="top" colspan="2" align="center" bgcolor="#D0D0D0" style="border: 2px solid rgb(0,0,0);"><b>Recursos</td>';
-    $w_html .= chr(13).'      <tr><td align="center" colspan="2">';
-    $w_html .= chr(13).'        <TABLE WIDTH="100%" bgcolor="'.$conTableBgColor.'" BORDER="'.$conTableBorder.'" CELLSPACING="'.$conTableCellSpacing.'" CELLPADDING="'.$conTableCellPadding.'" BorderColorDark="'.$conTableBorderColorDark.'" BorderColorLight="'.$conTableBorderColorLight.'">';
-    $w_html .= chr(13).'          <tr bgcolor="'.$conTrBgColor.'" align="center">';
-    $w_html .= chr(13).'            <td><b>Tipo</td>';
-    $w_html .= chr(13).'            <td><b>Nome</td>';
-    $w_html .= chr(13).'            <td><b>Finalidade</td>';
-    $w_html .= chr(13).'          </tr>';
-    $w_cor=$conTrBgColor;
-    foreach ($RS as $row) {
-      $w_cor = ($w_cor==$conTrBgColor || $w_cor=='') ? $w_cor=$conTrAlternateBgColor : $w_cor=$conTrBgColor; 
-      $w_html .= chr(13).'      <tr valign="top" bgcolor="'.$w_cor.'">';
-      $w_html .= chr(13).'        <td>'.RetornaTipoRecurso(f($row,'tipo')).'</td>';
-      $w_html .= chr(13).'        <td>'.f($row,'nome').'</td>';
-      $w_html .= chr(13).'        <td>'.CRLF2BR(Nvl(f($row,'finalidade'),'---')).'</td>';
-      $w_html .= chr(13).'      </tr>';
-    } 
-    $w_html .= chr(13).'         </table></td></tr>';
-  } 
-  if ($operacao=='L' || $operacao=='V' || $operacao=='T') {
-    // Se for listagem dos dados
-    // Arquivos vinculados
-    $RS = db_getSolicAnexo::getInstanceOf($dbms,$l_chave,null,$w_cliente);
-    $RS = SortArray($RS,'nome','asc');
-    if (count($RS)>0) {
-      $w_html .= chr(13).'      <tr><td valign="top" colspan="2" align="center" bgcolor="#D0D0D0" style="border: 2px solid rgb(0,0,0);"><b>Arquivos anexos</td>';
+    }
+    if(count($RS)>0) {
+      $RS1 = db_getSolicData::getInstanceOf($dbms,$l_chave,'PJGERAL');
+      $w_html .= chr(13).'      <tr><td valign="top" colspan="2" align="center" bgcolor="#D0D0D0" style="border: 2px solid rgb(0,0,0);"><b>Etapas</td>';
       $w_html .= chr(13).'      <tr><td align="center" colspan="2">';
       $w_html .= chr(13).'        <TABLE WIDTH="100%" bgcolor="'.$conTableBgColor.'" BORDER="'.$conTableBorder.'" CELLSPACING="'.$conTableCellSpacing.'" CELLPADDING="'.$conTableCellPadding.'" BorderColorDark="'.$conTableBorderColorDark.'" BorderColorLight="'.$conTableBorderColorLight.'">';
       $w_html .= chr(13).'          <tr bgcolor="'.$conTrBgColor.'" align="center">';
-      $w_html .= chr(13).'          <td><b>Título</td>';
-      $w_html .= chr(13).'          <td><b>Descrição</td>';
-      $w_html .= chr(13).'          <td><b>Tipo</td>';
-      $w_html .= chr(13).'          <td><b>KB</td>';
+      $w_html .= chr(13).'          <td rowspan=2><b>Etapa</td>';
+      $w_html .= chr(13).'          <td rowspan=2><b>Título</td>';
+      $w_html .= chr(13).'          <td rowspan=2><b>Responsável</td>';
+      $w_html .= chr(13).'          <td rowspan=2><b>Setor</td>';
+      $w_html .= chr(13).'          <td colspan=2><b>Execução</td>';
+      $w_html .= chr(13).'          <td rowspan=2><b>Conc.</td>';
+      $w_html .= chr(13).'          <td rowspan=2><b>Ativ.</td>';
+      if(f($RS1,'vincula_contrato')=='S') $w_html .= chr(13).'          <td rowspan=2><b>Contr.</td>';
+      $w_html .= chr(13).'          </tr>';
+      $w_html .= chr(13).'          <tr bgcolor="'.$conTrBgColor.'" align="center">';
+      $w_html .= chr(13).'          <td><b>De</td>';
+      $w_html .= chr(13).'          <td><b>Até</td>';
+      $w_html .= chr(13).'          </tr>';
+      //Se for visualização normal, irá visualizar somente as etapas
+      if ($operacao=='L') {
+        foreach($RS as $row) {
+          $w_html .= chr(13).EtapaLinha($l_chave,f($row,'sq_projeto_etapa'),f($row,'titulo'),f($row,'nm_resp'),f($row,'sg_setor'),f($row,'inicio_previsto'),f($row,'fim_previsto'),f($row,'perc_conclusao'),f($row,'qt_ativ'),'<b>',null,'PROJETO',f($row,'sq_pessoa'),f($row,'sq_unidade'),f($row,'pj_vincula_contrato'),f($row,'qt_contr'));
+          // Recupera as etapas vinculadas ao nível acima
+          $RS1 = db_getSolicEtapa::getInstanceOf($dbms,$l_chave,f($row,'sq_projeto_etapa'),'LSTNIVEL',null);
+          $RS1 = SortArray($RS1,'ordem','asc');
+          foreach($RS1 as $row1) {
+           $w_html .= chr(13).EtapaLinha($l_chave,f($row1,'sq_projeto_etapa'),f($row1,'titulo'),f($row1,'nm_resp'),f($row1,'sg_setor'),f($row1,'inicio_previsto'),f($row1,'fim_previsto'),f($row1,'perc_conclusao'),f($row1,'qt_ativ'),null,null,'PROJETO',f($row1,'sq_pessoa'),f($row1,'sq_unidade'),f($row1,'pj_vincula_contrato'),f($row1,'qt_contr'));
+             // Recupera as etapas vinculadas ao nível acima
+            $RS2 = db_getSolicEtapa::getInstanceOf($dbms,$l_chave,f($row1,'sq_projeto_etapa'),'LSTNIVEL',null);
+            $RS2 = SortArray($RS2,'ordem','asc');
+            foreach($RS2 as $row2) {
+              $w_html .= chr(13).EtapaLinha($l_chave,f($row2,'sq_projeto_etapa'),f($row2,'titulo'),f($row2,'nm_resp'),f($row2,'sg_setor'),f($row2,'inicio_previsto'),f($row2,'fim_previsto'),f($row2,'perc_conclusao'),f($row2,'qt_ativ'),null,null,'PROJETO',f($row2,'sq_pessoa'),f($row2,'sq_unidade'),f($row2,'pj_vincula_contrato'),f($row2,'qt_contr'));
+              // Recupera as etapas vinculadas ao nível acima
+              $RS3 = db_getSolicEtapa::getInstanceOf($dbms,$l_chave,f($row2,'sq_projeto_etapa'),'LSTNIVEL',null);
+              $RS3 = SortArray($RS3,'ordem','asc');
+              foreach($RS3 as $row3) {
+                $w_html .= chr(13).EtapaLinha($l_chave,f($row3,'sq_projeto_etapa'),f($row3,'titulo'),f($row3,'nm_resp'),f($row3,'sg_setor'),f($row3,'inicio_previsto'),f($row3,'fim_previsto'),f($row3,'perc_conclusao'),f($row3,'qt_ativ'),null,null,'PROJETO',f($row3,'sq_pessoa'),f($row3,'sq_unidade'),f($row3,'pj_vincula_contrato'),f($row3,'qt_contr'));
+                // Recupera as etapas vinculadas ao nível acima
+                $RS4 = db_getSolicEtapa::getInstanceOf($dbms,$l_chave,f($row3,'sq_projeto_etapa'),'LSTNIVEL',null);
+                $RS4 = SortArray($RS4,'ordem','asc');
+                foreach($RS4 as $row4) {
+                  $w_html .= chr(13).EtapaLinha($l_chave,f($row4,'sq_projeto_etapa'),f($row4,'titulo'),f($row4,'nm_resp'),f($row4,'sg_setor'),f($row4,'inicio_previsto'),f($row4,'fim_previsto'),f($row4,'perc_conclusao'),f($row4,'qt_ativ'),null,null,'PROJETO',f($row4,'sq_pessoa'),f($row4,'sq_unidade'),f($row4,'pj_vincula_contrato'),f($row4,'qt_contr'));
+                } 
+              } 
+            } 
+          } 
+        } 
+      }elseif ($operacao=='T'){
+        //Se for visualização total, ira visualizar as etapas e as atividades correspondentes
+        foreach($RS as $row) {
+          $w_html .= chr(13).EtapaLinhaAtiv($l_chave,f($row,'sq_projeto_etapa'),f($row,'titulo'),f($row,'nm_resp'),f($row,'sg_setor'),f($row,'inicio_previsto'),f($row,'fim_previsto'),f($row,'perc_conclusao'),f($row,'qt_ativ'),'<b>',null,'PROJETO','RESUMIDO',f($row,'sq_pessoa'),f($row,'sq_unidade'),f($row,'pj_vincula_contrato'),f($row,'qt_contr'));
+          // Recupera as etapas vinculadas ao nível acima
+          $RS1 = db_getSolicEtapa::getInstanceOf($dbms,$l_chave,f($row,'sq_projeto_etapa'),'LSTNIVEL',null);
+          $RS1 = SortArray($RS1,'ordem','asc');
+          foreach($RS1 as $row1) {
+            $w_html .= chr(13).EtapaLinhaAtiv($l_chave,f($row1,'sq_projeto_etapa'),f($row1,'titulo'),f($row1,'nm_resp'),f($row1,'sg_setor'),f($row1,'inicio_previsto'),f($row1,'fim_previsto'),f($row1,'perc_conclusao'),f($row1,'qt_ativ'),null,null,'PROJETO','RESUMIDO',f($row1,'sq_pessoa'),f($row1,'sq_unidade'),f($row1,'pj_vincula_contrato'),f($row1,'qt_contr'));
+            // Recupera as etapas vinculadas ao nível acima
+            $RS2 = db_getSolicEtapa::getInstanceOf($dbms,$l_chave,f($row1,'sq_projeto_etapa'),'LSTNIVEL',null);
+            $RS2 = SortArray($RS2,'ordem','asc');
+            foreach($RS2 as $row2) {
+              $w_html .= chr(13).EtapaLinhaAtiv($l_chave,f($row2,'sq_projeto_etapa'),f($row2,'titulo'),f($row2,'nm_resp'),f($row2,'sg_setor'),f($row2,'inicio_previsto'),f($row2,'fim_previsto'),f($row2,'perc_conclusao'),f($row2,'qt_ativ'),null,null,'PROJETO','RESUMIDO',f($row2,'sq_pessoa'),f($row2,'sq_unidade'),f($row2,'pj_vincula_contrato'),f($row2,'qt_contr'));
+              // Recupera as etapas vinculadas ao nível acima
+              $RS3 = db_getSolicEtapa::getInstanceOf($dbms,$l_chave,f($row2,'sq_projeto_etapa'),'LSTNIVEL',null);
+              $RS3 = SortArray($RS3,'ordem','asc');
+              foreach($RS3 as $row3) {
+                $w_html .= chr(13).EtapaLinhaAtiv($l_chave,f($row3,'sq_projeto_etapa'),f($row3,'titulo'),f($row3,'nm_resp'),f($row3,'sg_setor'),f($row3,'inicio_previsto'),f($row3,'fim_previsto'),f($row3,'perc_conclusao'),f($row3,'qt_ativ'),null,null,'PROJETO','RESUMIDO',f($row3,'sq_pessoa'),f($row3,'sq_unidade'),f($row3,'pj_vincula_contrato'),f($row3,'qt_contr'));
+                // Recupera as etapas vinculadas ao nível acima
+                $RS4 = db_getSolicEtapa::getInstanceOf($dbms,$l_chave,f($row3,'sq_projeto_etapa'),'LSTNIVEL',null);
+                $RS4 = SortArray($RS4,'ordem','asc');
+                foreach($RS4 as $row4) {
+                  $w_html .= chr(13).EtapaLinhaAtiv($l_chave,f($row4,'sq_projeto_etapa'),f($row4,'titulo'),f($row4,'nm_resp'),f($row4,'sg_setor'),f($row4,'inicio_previsto'),f($row4,'fim_previsto'),f($row4,'perc_conclusao'),f($row4,'qt_ativ'),null,null,'PROJETO','RESUMIDO',f($row4,'sq_pessoa'),f($row4,'sq_unidade'),f($row4,'pj_vincula_contrato'),f($row4,'qt_contr'));
+                } 
+              } 
+            } 
+          } 
+        } 
+      } 
+      $w_html .= chr(13).'      </form>';
+      $w_html .= chr(13).'      </center>';
+      $w_html .= chr(13).'         </table></td></tr>';
+    }
+    // Recursos envolvidos na execução do projeto
+    $RS = db_getSolicRecurso::getInstanceOf($dbms,$l_chave,null,'LISTA');
+    $RS = SortArray($RS,'tipo','asc','nome','asc');
+    if (count($RS)>0) {
+      $w_html .= chr(13).'      <tr><td valign="top" colspan="2" align="center" bgcolor="#D0D0D0" style="border: 2px solid rgb(0,0,0);"><b>Recursos</td>';
+      $w_html .= chr(13).'      <tr><td align="center" colspan="2">';
+      $w_html .= chr(13).'        <TABLE WIDTH="100%" bgcolor="'.$conTableBgColor.'" BORDER="'.$conTableBorder.'" CELLSPACING="'.$conTableCellSpacing.'" CELLPADDING="'.$conTableCellPadding.'" BorderColorDark="'.$conTableBorderColorDark.'" BorderColorLight="'.$conTableBorderColorLight.'">';
+      $w_html .= chr(13).'          <tr bgcolor="'.$conTrBgColor.'" align="center">';
+      $w_html .= chr(13).'            <td><b>Tipo</td>';
+      $w_html .= chr(13).'            <td><b>Nome</td>';
+      $w_html .= chr(13).'            <td><b>Finalidade</td>';
       $w_html .= chr(13).'          </tr>';
       $w_cor=$conTrBgColor;
       foreach ($RS as $row) {
         $w_cor = ($w_cor==$conTrBgColor || $w_cor=='') ? $w_cor=$conTrAlternateBgColor : $w_cor=$conTrBgColor; 
         $w_html .= chr(13).'      <tr valign="top" bgcolor="'.$w_cor.'">';
-        $w_html .= chr(13).'        <td>'.LinkArquivo('HL',$w_cliente,f($row,'chave_aux'),'_blank','Clique para exibir o arquivo em outra janela.',f($row,'nome'),null).'</td>';
-        $w_html .= chr(13).'        <td>'.Nvl(f($row,'descricao'),'---').'</td>';
-        $w_html .= chr(13).'        <td>'.f($row,'tipo').'</td>';
-        $w_html .= chr(13).'        <td align="right">'.round(f($row,'tamanho')/1024,1).'&nbsp;</td>';
+        $w_html .= chr(13).'        <td>'.RetornaTipoRecurso(f($row,'tipo')).'</td>';
+        $w_html .= chr(13).'        <td>'.f($row,'nome').'</td>';
+        $w_html .= chr(13).'        <td>'.CRLF2BR(Nvl(f($row,'finalidade'),'---')).'</td>';
         $w_html .= chr(13).'      </tr>';
       } 
       $w_html .= chr(13).'         </table></td></tr>';
-    } 
+    }     
+  }
+  if ($operacao=='L' || $operacao=='V' || $operacao=='T') {
+    // Se for listagem dos dados
+    if($w_tipo_visao!=2) {
+      // Arquivos vinculados
+      $RS = db_getSolicAnexo::getInstanceOf($dbms,$l_chave,null,$w_cliente);
+      $RS = SortArray($RS,'nome','asc');
+      if (count($RS)>0) {
+        $w_html .= chr(13).'      <tr><td valign="top" colspan="2" align="center" bgcolor="#D0D0D0" style="border: 2px solid rgb(0,0,0);"><b>Arquivos anexos</td>';
+        $w_html .= chr(13).'      <tr><td align="center" colspan="2">';
+        $w_html .= chr(13).'        <TABLE WIDTH="100%" bgcolor="'.$conTableBgColor.'" BORDER="'.$conTableBorder.'" CELLSPACING="'.$conTableCellSpacing.'" CELLPADDING="'.$conTableCellPadding.'" BorderColorDark="'.$conTableBorderColorDark.'" BorderColorLight="'.$conTableBorderColorLight.'">';
+        $w_html .= chr(13).'          <tr bgcolor="'.$conTrBgColor.'" align="center">';
+        $w_html .= chr(13).'          <td><b>Título</td>';
+        $w_html .= chr(13).'          <td><b>Descrição</td>';
+        $w_html .= chr(13).'          <td><b>Tipo</td>';
+        $w_html .= chr(13).'          <td><b>KB</td>';
+        $w_html .= chr(13).'          </tr>';
+        $w_cor=$conTrBgColor;
+        foreach ($RS as $row) {
+          $w_cor = ($w_cor==$conTrBgColor || $w_cor=='') ? $w_cor=$conTrAlternateBgColor : $w_cor=$conTrBgColor; 
+          $w_html .= chr(13).'      <tr valign="top" bgcolor="'.$w_cor.'">';
+          $w_html .= chr(13).'        <td>'.LinkArquivo('HL',$w_cliente,f($row,'chave_aux'),'_blank','Clique para exibir o arquivo em outra janela.',f($row,'nome'),null).'</td>';
+          $w_html .= chr(13).'        <td>'.Nvl(f($row,'descricao'),'---').'</td>';
+          $w_html .= chr(13).'        <td>'.f($row,'tipo').'</td>';
+          $w_html .= chr(13).'        <td align="right">'.round(f($row,'tamanho')/1024,1).'&nbsp;</td>';
+          $w_html .= chr(13).'      </tr>';
+        } 
+        $w_html .= chr(13).'         </table></td></tr>';
+      } 
+    }
     // Encaminhamentos
     $RS = db_getSolicLog::getInstanceOf($dbms,$l_chave,null,'LISTA');
     $RS = SortArray($RS,'phpdt_data','desc','sq_siw_solic_log','desc');

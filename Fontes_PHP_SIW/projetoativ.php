@@ -1274,7 +1274,7 @@ function Interessados() {
     ShowHTML('    <table width="97%" border="0">');
     ShowHTML('      <tr><td valign="top" colspan="2"><table border=0 width="100%" cellspacing=0><tr valign="top">');
     if ($O=='I') {
-      SelecaoPessoa('<u>P</u>essoa:','N','Selecione o interessado na relação.',$w_chave_aux,null,'w_chave_aux','USUARIOS');
+      SelecaoPessoa('<u>P</u>essoa:','N','Selecione o interessado na relação.',$w_chave_aux,$w_chave,'w_chave_aux','INTERES');
     } else {
       ShowHTML('<INPUT type="hidden" name="w_chave_aux" value="'.$w_chave_aux.'">');
       ShowHTML('      <tr><td valign="top"><b>Pessoa:</b><br>'.$w_nome.'</td>');
@@ -1875,59 +1875,59 @@ function SolicMail($p_solic,$p_tipo) {
   $l_solic          = $p_solic;
   $w_destinatarios  = '';
   $w_resultado      = '';
-  $w_html='<HTML>'.chr(13);
-  $w_html.=BodyOpenMail(null).chr(13);
-  $w_html.='<table border="0" cellpadding="0" cellspacing="0" width="100%">'.chr(13);
-  $w_html.='<tr bgcolor="'.$conTrBgColor.'"><td align="center">'.chr(13);
-  $w_html.='    <table width="97%" border="0">'.chr(13);
+  $w_html='<HTML>'.$crlf;
+  $w_html.=BodyOpenMail(null).$crlf;
+  $w_html.='<table border="0" cellpadding="0" cellspacing="0" width="100%">'.$crlf;
+  $w_html.='<tr bgcolor="'.$conTrBgColor.'"><td align="center">'.$crlf;
+  $w_html.='    <table width="97%" border="0">'.$crlf;
   if ($p_tipo==1) {
-    $w_html.='      <tr valign="top"><td align="center"><font size=2><b>INCLUSÃO DE ATIVIDADE</b><br><br><td></tr>'.chr(13);
+    $w_html.='      <tr valign="top"><td align="center"><font size=2><b>INCLUSÃO DE ATIVIDADE</b><br><br><td></tr>'.$crlf;
   } elseif ($p_tipo==2) {
-    $w_html.='      <tr valign="top"><td align="center"><font size=2><b>TRAMITAÇÃO DE ATIVIDADE</b><br><br><td></tr>'.chr(13);
+    $w_html.='      <tr valign="top"><td align="center"><font size=2><b>TRAMITAÇÃO DE ATIVIDADE</b><br><br><td></tr>'.$crlf;
   } elseif ($p_tipo==3) {
-    $w_html.='      <tr valign="top"><td align="center"><font size=2><b>CONCLUSÃO DE ATIVIDADE</b><br><br><td></tr>'.chr(13);
+    $w_html.='      <tr valign="top"><td align="center"><font size=2><b>CONCLUSÃO DE ATIVIDADE</b><br><br><td></tr>'.$crlf;
   } 
-  $w_html.='      <tr valign="top"><td><font size=2><b><font color="#BC3131">ATENÇÃO: Esta é uma mensagem de envio automático. Não responda esta mensagem.</b><br><br><td></tr>'.chr(13);
+  $w_html.='      <tr valign="top"><td><font size=2><b><font color="#BC3131">ATENÇÃO: Esta é uma mensagem de envio automático. Não responda esta mensagem.</b><br><br><td></tr>'.$crlf;
   // Recupera os dados da atividade
   $RSM = db_getSolicData::getInstanceOf($dbms,$p_solic,'GDPGERAL');
   $w_nome='Atividade '.f($RSM,'sq_siw_solicitacao');
-  $w_html.=chr(13).'<tr bgcolor="'.$conTrBgColor.'"><td align="center">';
-  $w_html.=chr(13).'    <table width="99%" border="0">';
-  $w_html.=chr(13).'      <tr><td valign="top">Projeto: <b>'.f($RSM,'nm_projeto').'  ('.f($RSM,'sq_solic_pai').')</b></td>';
+  $w_html.=$crlf.'<tr bgcolor="'.$conTrBgColor.'"><td align="center">';
+  $w_html.=$crlf.'    <table width="99%" border="0">';
+  $w_html.=$crlf.'      <tr><td valign="top">Projeto: <b>'.f($RSM,'nm_projeto').'  ('.f($RSM,'sq_solic_pai').')</b></td>';
   if (nvl(f($RSM,'nm_etapa'),'')>'') {
-    $w_html.=chr(13).'      <tr><td valign="top">Etapa: <b>'.MontaOrdemEtapa(f($RSM,'sq_projeto_etapa')).'. '.f($RSM,'nm_etapa').' </b></td>';
+    $w_html.=$crlf.'      <tr><td valign="top">Etapa: <b>'.MontaOrdemEtapa(f($RSM,'sq_projeto_etapa')).'. '.f($RSM,'nm_etapa').' </b></td>';
   } 
-  $w_html.=chr(13).'      <tr><td>Detalhamento: <b>'.$p_solic.'<br>'.CRLF2BR(f($RSM,'assunto')).'</b></td></tr>';
+  $w_html.=$crlf.'      <tr><td>Detalhamento: <b>'.$p_solic.'<br>'.CRLF2BR(f($RSM,'assunto')).'</b></td></tr>';
   // Identificação da atividade
-  $w_html.=chr(13).'      <tr><td valign="top" colspan="2" align="center" bgcolor="#D0D0D0" style="border: 2px solid rgb(0,0,0);"><b>EXTRATO DA ATIVIDADE</td>';
+  $w_html.=$crlf.'      <tr><td valign="top" colspan="2" align="center" bgcolor="#D0D0D0" style="border: 2px solid rgb(0,0,0);"><b>EXTRATO DA ATIVIDADE</td>';
   // Se a classificação foi informada, exibe.
   if (nvl(f($RSM,'sq_cc'),'')>'') {
-    $w_html.=chr(13).'      <tr><td valign="top">Classificação:<br><b>'.f($RSM,'cc_nome').' </b></td>';
+    $w_html.=$crlf.'      <tr><td valign="top">Classificação:<br><b>'.f($RSM,'cc_nome').' </b></td>';
   } 
-  $w_html.=chr(13).'      <tr><td valign="top" colspan="2"><table border=0 width="100%" cellspacing=0>';
-  $w_html.=chr(13).'          <tr valign="top">';
-  $w_html.=chr(13).'          <td>Responsável:<br><b>'.f($RSM,'nm_sol').'</b></td>';
-  $w_html.=chr(13).'          <td>Unidade responsável:<br><b>'.f($RSM,'nm_unidade_resp').'</b></td>';
-  $w_html.=chr(13).'          <tr valign="top">';
-  $w_html.=chr(13).'          <td>Início previsto:<br><b>'.FormataDataEdicao(f($RSM,'inicio')).' </b></td>';
-  $w_html.=chr(13).'          <td>Término previsto:<br><b>'.FormataDataEdicao(f($RSM,'fim')).' </b></td>';
-  $w_html.=chr(13).'          <td>Prioridade:<br><b>'.RetornaPrioridade(f($RSM,'prioridade')).' </b></td>';
-  $w_html.=chr(13).'          </table>';
+  $w_html.=$crlf.'      <tr><td valign="top" colspan="2"><table border=0 width="100%" cellspacing=0>';
+  $w_html.=$crlf.'          <tr valign="top">';
+  $w_html.=$crlf.'          <td>Responsável:<br><b>'.f($RSM,'nm_sol').'</b></td>';
+  $w_html.=$crlf.'          <td>Unidade responsável:<br><b>'.f($RSM,'nm_unidade_resp').'</b></td>';
+  $w_html.=$crlf.'          <tr valign="top">';
+  $w_html.=$crlf.'          <td>Início previsto:<br><b>'.FormataDataEdicao(f($RSM,'inicio')).' </b></td>';
+  $w_html.=$crlf.'          <td>Término previsto:<br><b>'.FormataDataEdicao(f($RSM,'fim')).' </b></td>';
+  $w_html.=$crlf.'          <td>Prioridade:<br><b>'.RetornaPrioridade(f($RSM,'prioridade')).' </b></td>';
+  $w_html.=$crlf.'          </table>';
   // Informações adicionais
   if (Nvl(f($RSM,'descricao'),'')>'') {
-    $w_html.=chr(13).'      <tr><td valign="top">Resultados da atividade:<br><b>'.CRLF2BR(f($RSM,'descricao')).' </b></td>';
+    $w_html.=$crlf.'      <tr><td valign="top">Resultados da atividade:<br><b>'.CRLF2BR(f($RSM,'descricao')).' </b></td>';
   }
-  $w_html.=chr(13).'    </table>';
-  $w_html.=chr(13).'</tr>';
+  $w_html.=$crlf.'    </table>';
+  $w_html.=$crlf.'</tr>';
   // Dados da conclusão da atividade, se ela estiver nessa situação
   if (f($RSM,'concluida')=='S' && Nvl(f($RSM,'data_conclusao'),'')>'') {
-    $w_html.=chr(13).'      <tr><td valign="top" colspan="2" align="center" bgcolor="#D0D0D0" style="border: 2px solid rgb(0,0,0);"><b>DADOS DA CONCLUSÃO</td>';
-    $w_html.=chr(13).'      <tr><td valign="top" colspan="2"><table border=0 width="100%" cellspacing=0>';
-    $w_html.=chr(13).'          <tr valign="top">';
-    $w_html.=chr(13).'          <td>Início da execução:<br><b>'.FormataDataEdicao(f($RSM,'inicio_real')).' </b></td>';
-    $w_html.=chr(13).'          <td>Término da execução:<br><b>'.FormataDataEdicao(f($RSM,'fim_real')).' </b></td>';
-    $w_html.=chr(13).'          </table>';
-    $w_html.=chr(13).'      <tr><td valign="top">Nota de conclusão:<br><b>'.CRLF2BR(f($RSM,'nota_conclusao')).' </b></td>';
+    $w_html.=$crlf.'      <tr><td valign="top" colspan="2" align="center" bgcolor="#D0D0D0" style="border: 2px solid rgb(0,0,0);"><b>DADOS DA CONCLUSÃO</td>';
+    $w_html.=$crlf.'      <tr><td valign="top" colspan="2"><table border=0 width="100%" cellspacing=0>';
+    $w_html.=$crlf.'          <tr valign="top">';
+    $w_html.=$crlf.'          <td>Início da execução:<br><b>'.FormataDataEdicao(f($RSM,'inicio_real')).' </b></td>';
+    $w_html.=$crlf.'          <td>Término da execução:<br><b>'.FormataDataEdicao(f($RSM,'fim_real')).' </b></td>';
+    $w_html.=$crlf.'          </table>';
+    $w_html.=$crlf.'      <tr><td valign="top">Nota de conclusão:<br><b>'.CRLF2BR(f($RSM,'nota_conclusao')).' </b></td>';
   } 
   //Recupera o último log
   $RS = db_getSolicLog::getInstanceOf($dbms,$p_solic,null,'LISTA');
@@ -1935,35 +1935,35 @@ function SolicMail($p_solic,$p_tipo) {
   foreach ($RS as $row) { $RS = $row; break; }
   $w_data_encaminhamento = f($RS,'phpdt_data');
   if ($p_tipo==2) {
-    $w_html.=chr(13).'      <tr><td valign="top" colspan="2" align="center" bgcolor="#D0D0D0" style="border: 2px solid rgb(0,0,0);"><b>ÚLTIMO ENCAMINHAMENTO</td>';
-    $w_html.=chr(13).'      <tr><td valign="top" colspan="2"><table border=0 width="100%" cellspacing=0>';
-    $w_html.=chr(13).'          <tr valign="top">';
-    $w_html.=chr(13).'          <td>De:<br><b>'.f($RS,'responsavel').'</b></td>';
-    $w_html.=chr(13).'          <td>Para:<br><b>'.f($RS,'destinatario').'</b></td>';
-    $w_html.=chr(13).'          <tr valign="top"><td colspan=2>Despacho:<br><b>'.CRLF2BR(Nvl(f($RS,'despacho'),'---')).' </b></td>';
-    $w_html.=chr(13).'          </table>';
+    $w_html.=$crlf.'      <tr><td valign="top" colspan="2" align="center" bgcolor="#D0D0D0" style="border: 2px solid rgb(0,0,0);"><b>ÚLTIMO ENCAMINHAMENTO</td>';
+    $w_html.=$crlf.'      <tr><td valign="top" colspan="2"><table border=0 width="100%" cellspacing=0>';
+    $w_html.=$crlf.'          <tr valign="top">';
+    $w_html.=$crlf.'          <td>De:<br><b>'.f($RS,'responsavel').'</b></td>';
+    $w_html.=$crlf.'          <td>Para:<br><b>'.f($RS,'destinatario').'</b></td>';
+    $w_html.=$crlf.'          <tr valign="top"><td colspan=2>Despacho:<br><b>'.CRLF2BR(Nvl(f($RS,'despacho'),'---')).' </b></td>';
+    $w_html.=$crlf.'          </table>';
     // Se for tramitação, configura o destinatário da tramitação como destinatário da mensagem
     $RS = db_getPersonData::getInstanceOf($dbms,$w_cliente,f($RS,'sq_pessoa_destinatario'),null,null);
     $w_destinatarios = f($RS,'email').'; ';
   } 
-  $w_html.=chr(13).'      <tr><td valign="top" colspan="2" align="center" bgcolor="#D0D0D0" style="border: 2px solid rgb(0,0,0);"><b>OUTRAS INFORMAÇÕES</td>';
+  $w_html.=$crlf.'      <tr><td valign="top" colspan="2" align="center" bgcolor="#D0D0D0" style="border: 2px solid rgb(0,0,0);"><b>OUTRAS INFORMAÇÕES</td>';
   $RS = db_getCustomerSite::getInstanceOf($dbms,$_SESSION['P_CLIENTE']);
-  $w_html.='      <tr valign="top"><td>'.chr(13);
-  $w_html.='         Para acessar o sistema use o endereço: <b><a class="SS" href="'.f($RS,'logradouro').'" target="_blank">'.f($RS,'Logradouro').'</a></b></li>'.chr(13);
-  $w_html.='      </td></tr>'.chr(13);
-  $w_html.='      <tr valign="top"><td>'.chr(13);
-  $w_html.='         Dados da ocorrência:<br>'.chr(13);
-  $w_html.='         <ul>'.chr(13);
-  $w_html.='         <li>Responsável: <b>'.$_SESSION['NOME'].'</b></li>'.chr(13);
-  $w_html.='         <li>Data: <b>'.date('d/m/Y, H:i:s',$w_data_encaminhamento).'</b></li>'.chr(13);
-  $w_html.='         <li>IP de origem: <b>'.$_SERVER['REMOTE_ADDR'].'</b></li>'.chr(13);
-  $w_html.='         </ul>'.chr(13);
-  $w_html.='      </td></tr>'.chr(13);
-  $w_html.='    </table>'.chr(13);
-  $w_html.='</td></tr>'.chr(13);
-  $w_html.='</table>'.chr(13);
-  $w_html.='</BODY>'.chr(13);
-  $w_html.='</HTML>'.chr(13);
+  $w_html.='      <tr valign="top"><td>'.$crlf;
+  $w_html.='         Para acessar o sistema use o endereço: <b><a class="SS" href="'.f($RS,'logradouro').'" target="_blank">'.f($RS,'Logradouro').'</a></b></li>'.$crlf;
+  $w_html.='      </td></tr>'.$crlf;
+  $w_html.='      <tr valign="top"><td>'.$crlf;
+  $w_html.='         Dados da ocorrência:<br>'.$crlf;
+  $w_html.='         <ul>'.$crlf;
+  $w_html.='         <li>Responsável: <b>'.$_SESSION['NOME'].'</b></li>'.$crlf;
+  $w_html.='         <li>Data: <b>'.date('d/m/Y, H:i:s',$w_data_encaminhamento).'</b></li>'.$crlf;
+  $w_html.='         <li>IP de origem: <b>'.$_SERVER['REMOTE_ADDR'].'</b></li>'.$crlf;
+  $w_html.='         </ul>'.$crlf;
+  $w_html.='      </td></tr>'.$crlf;
+  $w_html.='    </table>'.$crlf;
+  $w_html.='</td></tr>'.$crlf;
+  $w_html.='</table>'.$crlf;
+  $w_html.='</BODY>'.$crlf;
+  $w_html.='</HTML>'.$crlf;
 
   // Recupera o e-mail do responsável
   $RS = db_getPersonData::getInstanceOf($dbms,$w_cliente,f($RSM,'solicitante'),null,null);
@@ -2092,7 +2092,15 @@ function Grava() {
         if (UPLOAD_ERR_OK==0) {
           $w_maximo = $_REQUEST['w_upload_maximo'];
           foreach ($_FILES as $Chv => $Field) {
-            if ($Field['size'] > 0) {
+            if ($Field['error'] > 0) {
+              // Verifica se o tamanho das fotos está compatível com  o limite de 100KB. 
+              ScriptOpen('JavaScript');
+              ShowHTML('  alert(\'Atenção: o tamanho máximo do arquivo não pode exceder '.($w_maximo/1024).' KBytes!\');');
+              ShowHTML('  history.go(-1);');
+              ScriptClose();
+              exit();
+            }
+            if ($Field['size'] >= 0) {
               // Verifica se o tamanho das fotos está compatível com  o limite de 100KB. 
               if ($Field['size'] > $w_maximo) {
                 ScriptOpen('JavaScript');
@@ -2115,7 +2123,7 @@ function Grava() {
               } else {
                 $w_file = str_replace('.tmp','',basename($Field['tmp_name']));
                 if (!(strpos($Field['name'],'.')===false)) {
-                  $w_file = $w_file.'.'.substr($Field['name'],(strpos($Field['name'],'.') ? strpos($Field['name'],'.')+1 : 0)-1,10);
+                  $w_file = $w_file.substr($Field['name'],(strpos($Field['name'],'.') ? strpos($Field['name'],'.')+1 : 0)-1,10);
                 }
               } 
               $w_tamanho = $Field['size'];
@@ -2161,7 +2169,15 @@ function Grava() {
           if (UPLOAD_ERR_OK==0) {
             $w_maximo = $_REQUEST['w_upload_maximo'];
             foreach ($_FILES as $Chv => $Field) {
-              if ($Field['size'] > 0) {
+              if ($Field['error'] > 0) {
+                // Verifica se o tamanho das fotos está compatível com  o limite de 100KB. 
+                ScriptOpen('JavaScript');
+                ShowHTML('  alert(\'Atenção: o tamanho máximo do arquivo não pode exceder '.($w_maximo/1024).' KBytes!\');');
+                ShowHTML('  history.go(-1);');
+                ScriptClose();
+                exit();
+              }
+              if ($Field['size'] >= 0) {
                 // Verifica se o tamanho das fotos está compatível com  o limite de 100KB. 
                 if ($Field['size'] > $w_maximo) {
                   ScriptOpen('JavaScript');
@@ -2173,7 +2189,7 @@ function Grava() {
                 // Se já há um nome para o arquivo, mantém 
                 $w_file = basename($Field['tmp_name']);
                 if (!(strpos($Field['name'],'.')===false)) {
-                  $w_file = $w_file.'.'.substr($Field['name'],(strpos($Field['name'],'.') ? strpos($Field['name'],'.')+1 : 0)-1,10);
+                  $w_file = $w_file.substr($Field['name'],(strpos($Field['name'],'.') ? strpos($Field['name'],'.')+1 : 0)-1,10);
                 }
                 $w_tamanho = $Field['size'];
                 $w_tipo    = $Field['type'];
@@ -2235,7 +2251,15 @@ function Grava() {
           if (UPLOAD_ERR_OK==0) {
             $w_maximo = $_REQUEST['w_upload_maximo'];
             foreach ($_FILES as $Chv => $Field) {
-              if ($Field['size'] > 0) {
+              if ($Field['error'] > 0) {
+                // Verifica se o tamanho das fotos está compatível com  o limite de 100KB. 
+                ScriptOpen('JavaScript');
+                ShowHTML('  alert(\'Atenção: o tamanho máximo do arquivo não pode exceder '.($w_maximo/1024).' KBytes!\');');
+                ShowHTML('  history.go(-1);');
+                ScriptClose();
+                exit();
+              }
+              if ($Field['size'] >= 0) {
                 // Verifica se o tamanho das fotos está compatível com  o limite de 100KB. 
                 if ($Field['size'] > $w_maximo) {
                   ScriptOpen('JavaScript');
@@ -2247,7 +2271,7 @@ function Grava() {
                 // Se já há um nome para o arquivo, mantém 
                 $w_file = basename($Field['tmp_name']);
                 if (!(strpos($Field['name'],'.')===false)) {
-                  $w_file = $w_file.'.'.substr($Field['name'],(strpos($Field['name'],'.') ? strpos($Field['name'],'.')+1 : 0)-1,10);
+                  $w_file = $w_file.substr($Field['name'],(strpos($Field['name'],'.') ? strpos($Field['name'],'.')+1 : 0)-1,10);
                 }
                 $w_tamanho = $Field['size'];
                 $w_tipo    = $Field['type'];

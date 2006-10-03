@@ -4180,43 +4180,43 @@ function SolicMail($p_solic,$p_tipo) {
     }
   } 
 
-  $w_html='<HTML>'.chr(13);
-  $w_html .= BodyOpenMail(null).chr(13);
-  $w_html .= '<table border="0" cellpadding="0" cellspacing="0" width="100%">'.chr(13);
-  $w_html .= '<tr bgcolor="'.$conTrBgColor.'"><td align="center">'.chr(13);
-  $w_html .= '    <table width="97%" border="0">'.chr(13);
+  $w_html='<HTML>'.$crlf;
+  $w_html .= BodyOpenMail(null).$crlf;
+  $w_html .= '<table border="0" cellpadding="0" cellspacing="0" width="100%">'.$crlf;
+  $w_html .= '<tr bgcolor="'.$conTrBgColor.'"><td align="center">'.$crlf;
+  $w_html .= '    <table width="97%" border="0">'.$crlf;
   if ($p_tipo==1) {
-    $w_html .= '      <tr valign="top"><td align="center"><b>INCLUSÃO DE PCD</b><br><br><td></tr>'.chr(13);
+    $w_html .= '      <tr valign="top"><td align="center"><b>INCLUSÃO DE PCD</b><br><br><td></tr>'.$crlf;
   } elseif ($w_sg_tramite=='EE') {
-    $w_html .= '      <tr valign="top"><td align="center"><b>PRESTAÇÃO DE CONTAS DE PCD</b><br><br><td></tr>'.chr(13);
+    $w_html .= '      <tr valign="top"><td align="center"><b>PRESTAÇÃO DE CONTAS DE PCD</b><br><br><td></tr>'.$crlf;
   } elseif ($p_tipo==2) {
-    $w_html .= '      <tr valign="top"><td align="center"><b>TRAMITAÇÃO DE PCD</b><br><br><td></tr>'.chr(13);
+    $w_html .= '      <tr valign="top"><td align="center"><b>TRAMITAÇÃO DE PCD</b><br><br><td></tr>'.$crlf;
   } elseif ($p_tipo==3) {
-    $w_html .= '      <tr valign="top"><td align="center"><b>CONCLUSÃO DE PCD</b><br><br><td></tr>'.chr(13);
+    $w_html .= '      <tr valign="top"><td align="center"><b>CONCLUSÃO DE PCD</b><br><br><td></tr>'.$crlf;
   } 
   if ($w_sg_tramite=='EE') {
-    $w_html .= '      <tr valign="top"><td><b><font color="#BC3131">ATENÇÃO:<br>Conforme Portaria Nº 47/MPO 29/04/2003 – DOU 30/04/2003, é necessário elaborar o relatório de viagem e entregar os bilhetes de embarque.<br><br>Use o arquivo anexo para elaborar seu relatório de viagem e entregue-o assinado ao setor competente, juntamente com os bilhetes.</font></b><br><br><td></tr>'.chr(13);
+    $w_html .= '      <tr valign="top"><td><b><font color="#BC3131">ATENÇÃO:<br>Conforme Portaria Nº 47/MPO 29/04/2003 – DOU 30/04/2003, é necessário elaborar o relatório de viagem e entregar os bilhetes de embarque.<br><br>Use o arquivo anexo para elaborar seu relatório de viagem e entregue-o assinado ao setor competente, juntamente com os bilhetes.</font></b><br><br><td></tr>'.$crlf;
   } else {
-    $w_html .= '      <tr valign="top"><td><font size=2><b><font color="#BC3131">ATENÇÃO: Esta é uma mensagem de envio automático. Não responda esta mensagem.</font></b><br><br><td></tr>'.chr(13);
+    $w_html .= '      <tr valign="top"><td><font size=2><b><font color="#BC3131">ATENÇÃO: Esta é uma mensagem de envio automático. Não responda esta mensagem.</font></b><br><br><td></tr>'.$crlf;
   } 
-  $w_html .= chr(13).'<tr bgcolor="'.$conTrBgColor.'"><td align="center">';
-  $w_html .= chr(13).'    <table width="99%" border="0">';
+  $w_html .= $crlf.'<tr bgcolor="'.$conTrBgColor.'"><td align="center">';
+  $w_html .= $crlf.'    <table width="99%" border="0">';
   // Identificação da PCD
-  $w_html .= chr(13).'      <tr><td valign="top" colspan="2" align="center" bgcolor="#D0D0D0" style="border: 2px solid rgb(0,0,0);"><b>EXTRATO DA PCD</td>';
-  $w_html .= chr(13).'      <tr><td valign="top" colspan="2"><table border=0 width="100%" cellspacing=0>';
-  $w_html .= chr(13).'          <tr valign="top">';
-  $w_html .= chr(13).'            <td>Proposto:<br><b>'.f($RSM,'nm_prop').'</b></td>';
-  $w_html .= chr(13).'            <td>Unidade proponente:<br><b>'.f($RSM,'nm_unidade_resp').'</b></td>';
-  $w_html .= chr(13).'          <tr valign="top">';
-  $w_html .= chr(13).'            <td>Primeira saída:<br><b>'.FormataDataEdicao(f($RSM,'inicio')).' </b></td>';
-  $w_html .= chr(13).'            <td>Último retorno:<br><b>'.FormataDataEdicao(f($RSM,'fim')).' </b></td>';
-  $w_html .= chr(13).'          </table>';
+  $w_html .= $crlf.'      <tr><td valign="top" colspan="2" align="center" bgcolor="#D0D0D0" style="border: 2px solid rgb(0,0,0);"><b>EXTRATO DA PCD</td>';
+  $w_html .= $crlf.'      <tr><td valign="top" colspan="2"><table border=0 width="100%" cellspacing=0>';
+  $w_html .= $crlf.'          <tr valign="top">';
+  $w_html .= $crlf.'            <td>Proposto:<br><b>'.f($RSM,'nm_prop').'</b></td>';
+  $w_html .= $crlf.'            <td>Unidade proponente:<br><b>'.f($RSM,'nm_unidade_resp').'</b></td>';
+  $w_html .= $crlf.'          <tr valign="top">';
+  $w_html .= $crlf.'            <td>Primeira saída:<br><b>'.FormataDataEdicao(f($RSM,'inicio')).' </b></td>';
+  $w_html .= $crlf.'            <td>Último retorno:<br><b>'.FormataDataEdicao(f($RSM,'fim')).' </b></td>';
+  $w_html .= $crlf.'          </table>';
   // Informações adicionais
   if (Nvl(f($RSM,'descricao'),'')>'') {
-    if (Nvl(f($RSM,'descricao'),'')>'') $w_html .= chr(13).'      <tr><td valign="top">Descrição da PCD:<br><b>'.CRLF2BR(f($RSM,'descricao')).' </b></td>';
+    if (Nvl(f($RSM,'descricao'),'')>'') $w_html .= $crlf.'      <tr><td valign="top">Descrição da PCD:<br><b>'.CRLF2BR(f($RSM,'descricao')).' </b></td>';
   } 
-  $w_html .= chr(13).'    </table>';
-  $w_html .= chr(13).'</tr>';
+  $w_html .= $crlf.'    </table>';
+  $w_html .= $crlf.'</tr>';
 
   //Recupera o último log
   $RS = db_getSolicLog::getInstanceOf($dbms,$p_solic,null,'LISTA');
@@ -4230,34 +4230,34 @@ function SolicMail($p_solic,$p_tipo) {
       foreach($RS1 as $row) { $RS1 = $row; break; }
       $w_dias_prest_contas = f($RS1,'dias_prestacao_contas');
 
-      $w_html .= chr(13).'      <tr><td valign="top" colspan="2" align="center" bgcolor="#D0D0D0" style="border: 2px solid rgb(0,0,0);"><b>ORIENTAÇÕES PARA PRESTAÇÃO DE CONTAS</td>';
-      $w_html .= chr(13).'        <tr><td valign="top" colspan="2" bgcolor="'.$w_TrBgColor.'">';
-      $w_html .= chr(13).'          <p>Esta PCD foi autorizada. Você deve entregar os documentos abaixo na unidade proponente (<b>'.f($RSM,'nm_unidade_resp').')</b>';
-      $w_html .= chr(13).'          <ul>';
-      $w_html .= chr(13).'          <li>Relatório de viagem (anexo) preenchido;';
-      $w_html .= chr(13).'          <li>Bilhetes de embarque;';
-      $w_html .= chr(13).'          <li>Notas fiscais de taxi, restaurante e hotel.';
-      $w_html .= chr(13).'          </ul>';
-      $w_html .= chr(13).'          <p>A data limite para entrega é até o último dia útil antes de: <b>'.substr(FormataDataEdicao(addDays(f($RSM,'fim'),$w_dias_prest_contas),4),0,-10).' </b>; caso contrário, suas viagens serão automaticamente bloqueadas pelo sistema.';
+      $w_html .= $crlf.'      <tr><td valign="top" colspan="2" align="center" bgcolor="#D0D0D0" style="border: 2px solid rgb(0,0,0);"><b>ORIENTAÇÕES PARA PRESTAÇÃO DE CONTAS</td>';
+      $w_html .= $crlf.'        <tr><td valign="top" colspan="2" bgcolor="'.$w_TrBgColor.'">';
+      $w_html .= $crlf.'          <p>Esta PCD foi autorizada. Você deve entregar os documentos abaixo na unidade proponente (<b>'.f($RSM,'nm_unidade_resp').')</b>';
+      $w_html .= $crlf.'          <ul>';
+      $w_html .= $crlf.'          <li>Relatório de viagem (anexo) preenchido;';
+      $w_html .= $crlf.'          <li>Bilhetes de embarque;';
+      $w_html .= $crlf.'          <li>Notas fiscais de taxi, restaurante e hotel.';
+      $w_html .= $crlf.'          </ul>';
+      $w_html .= $crlf.'          <p>A data limite para entrega é até o último dia útil antes de: <b>'.substr(FormataDataEdicao(addDays(f($RSM,'fim'),$w_dias_prest_contas),4),0,-10).' </b>; caso contrário, suas viagens serão automaticamente bloqueadas pelo sistema.';
 
-      $w_html .= chr(13).'      <tr><td valign="top" colspan="2" align="center" bgcolor="#D0D0D0" style="border: 2px solid rgb(0,0,0);"><b>DADOS DA CONCESSÃO</td>';
+      $w_html .= $crlf.'      <tr><td valign="top" colspan="2" align="center" bgcolor="#D0D0D0" style="border: 2px solid rgb(0,0,0);"><b>DADOS DA CONCESSÃO</td>';
       // Benefícios servidor
       $RS1 = db_getSolicData::getInstanceOf($dbms,$p_solic,'PDGERAL');
       if (count($RS1)>0) {
-        $w_html .= chr(13).'        <tr><td valign="top" colspan="2" align="center" bgcolor="'.$w_TrBgColor.'"><b>Benefícios recebidos pelo proposto</td>';
-        $w_html .= chr(13).'        <tr><td align="center" colspan="2">';
-        $w_html .= chr(13).'          <TABLE WIDTH="100%" bgcolor="'.$w_TrBgColor.'" BORDER="'.$conTableBorder.'" CELLSPACING="'.$conTableCellSpacing.'" CELLPADDING="'.$conTableCellPadding.'" BorderColorDark="'.$conTableBorderColorDark.'" BorderColorLight="'.$conTableBorderColorLight.'">';
-        $w_html .= chr(13).'            <tr>';
-        if (Nvl(f($RS1,'valor_alimentacao'),0)>0) $w_html .= chr(13).'           <td>Auxílio-alimentação: <b>Sim</b></td>'; else $w_html .= chr(13).'           <td>Auxílio-alimentação: <b>Não</b></td>';
-        $w_html .= chr(13).'              <td>Valor R$: <b>'.number_format(Nvl(f($RS1,'valor_alimentacao'),0),2,',','.').'</b></td>';
-        $w_html .= chr(13).'            <tr>';
-        if (Nvl(f($RS1,'valor_transporte'),0)>0) $w_html .= chr(13).'           <td>Auxílio-transporte: <b>Sim</b></td>'; else $w_html .= chr(13).'           <td>Auxílio-transporte: <b>Não</b></td>';
-        $w_html .= chr(13).'              <td>Valor R$: <b>'.number_format(Nvl(f($RS1,'valor_transporte'),0),2,',','.').'</b></td>';
-        $w_html .= chr(13).'          </table></td></tr>';
+        $w_html .= $crlf.'        <tr><td valign="top" colspan="2" align="center" bgcolor="'.$w_TrBgColor.'"><b>Benefícios recebidos pelo proposto</td>';
+        $w_html .= $crlf.'        <tr><td align="center" colspan="2">';
+        $w_html .= $crlf.'          <TABLE WIDTH="100%" bgcolor="'.$w_TrBgColor.'" BORDER="'.$conTableBorder.'" CELLSPACING="'.$conTableCellSpacing.'" CELLPADDING="'.$conTableCellPadding.'" BorderColorDark="'.$conTableBorderColorDark.'" BorderColorLight="'.$conTableBorderColorLight.'">';
+        $w_html .= $crlf.'            <tr>';
+        if (Nvl(f($RS1,'valor_alimentacao'),0)>0) $w_html .= $crlf.'           <td>Auxílio-alimentação: <b>Sim</b></td>'; else $w_html .= $crlf.'           <td>Auxílio-alimentação: <b>Não</b></td>';
+        $w_html .= $crlf.'              <td>Valor R$: <b>'.number_format(Nvl(f($RS1,'valor_alimentacao'),0),2,',','.').'</b></td>';
+        $w_html .= $crlf.'            <tr>';
+        if (Nvl(f($RS1,'valor_transporte'),0)>0) $w_html .= $crlf.'           <td>Auxílio-transporte: <b>Sim</b></td>'; else $w_html .= $crlf.'           <td>Auxílio-transporte: <b>Não</b></td>';
+        $w_html .= $crlf.'              <td>Valor R$: <b>'.number_format(Nvl(f($RS1,'valor_transporte'),0),2,',','.').'</b></td>';
+        $w_html .= $crlf.'          </table></td></tr>';
       } 
 
       //Dados da viagem
-      $w_html .= chr(13).'        <tr><td valign="top" colspan="2" align="center" bgcolor="'.$w_TrBgColor.'"><b>Dados da viagem/cálculo das diárias</td>';
+      $w_html .= $crlf.'        <tr><td valign="top" colspan="2" align="center" bgcolor="'.$w_TrBgColor.'"><b>Dados da viagem/cálculo das diárias</td>';
 
       $RS1 = db_getPD_Deslocamento::getInstanceOf($dbms,$p_solic,null,'DADFIN');
       $RS1 = SortArray($RS1,'phpdt_saida','asc', 'phpdt_chegada', 'asc');
@@ -4281,52 +4281,52 @@ function SolicMail($p_solic,$p_tipo) {
         $j       = $i;
         $i       = 1;
         $w_total = 0;
-        $w_html .= chr(13).'     <tr><td align="center" colspan="2">';
-        $w_html .= chr(13).'       <TABLE WIDTH="100%" bgcolor="'.$w_TrBgColor.'" BORDER="'.$conTableBorder.'" CELLSPACING="'.$conTableCellSpacing.'" CELLPADDING="'.$conTableCellPadding.'" BorderColorDark="'.$conTableBorderColorDark.'" BorderColorLight="'.$conTableBorderColorLight.'">';
-        $w_html .= chr(13).'         <tr align="center">';
-        $w_html .= chr(13).'         <td><b>Destino</td>';
-        $w_html .= chr(13).'         <td><b>Saida</td>';
-        $w_html .= chr(13).'         <td><b>Chegada</td>';
-        $w_html .= chr(13).'         <td><b>Quantidade de diárias</td>';
-        $w_html .= chr(13).'         <td><b>Valor unitário R$</td>';
-        $w_html .= chr(13).'         <td><b>Total por localidade - R$</td>';
-        $w_html .= chr(13).'         </tr>';
+        $w_html .= $crlf.'     <tr><td align="center" colspan="2">';
+        $w_html .= $crlf.'       <TABLE WIDTH="100%" bgcolor="'.$w_TrBgColor.'" BORDER="'.$conTableBorder.'" CELLSPACING="'.$conTableCellSpacing.'" CELLPADDING="'.$conTableCellPadding.'" BorderColorDark="'.$conTableBorderColorDark.'" BorderColorLight="'.$conTableBorderColorLight.'">';
+        $w_html .= $crlf.'         <tr align="center">';
+        $w_html .= $crlf.'         <td><b>Destino</td>';
+        $w_html .= $crlf.'         <td><b>Saida</td>';
+        $w_html .= $crlf.'         <td><b>Chegada</td>';
+        $w_html .= $crlf.'         <td><b>Quantidade de diárias</td>';
+        $w_html .= $crlf.'         <td><b>Valor unitário R$</td>';
+        $w_html .= $crlf.'         <td><b>Total por localidade - R$</td>';
+        $w_html .= $crlf.'         </tr>';
         $w_cor=$conTrBgColor;
         while($i!=($j-1)) {
-          $w_html .= chr(13).'     <tr valign="top">';
-          $w_html .= chr(13).'       <td>'.$w_vetor_trechos[$i][3].'</td>';
-          $w_html .= chr(13).'       <td align="center">'.$w_vetor_trechos[$i][4].'</td>';
-          $w_html .= chr(13).'       <td align="center">'.$w_vetor_trechos[$i][5].'</td>';
-          $w_html .= chr(13).'       <td align="right">'.$w_vetor_trechos[$i][6].'</td>';
-          $w_html .= chr(13).'       <td align="right">'.$w_vetor_trechos[$i][7].'</td>';
-          $w_html .= chr(13).'       <td align="right" bgcolor="'.$conTrAlternateBgColor.'">'.number_format(($w_vetor_trechos[$i][8]*$w_vetor_trechos[$i][9]),2,',','.').'</td>';
-          $w_html .= chr(13).'     </tr>';
+          $w_html .= $crlf.'     <tr valign="top">';
+          $w_html .= $crlf.'       <td>'.$w_vetor_trechos[$i][3].'</td>';
+          $w_html .= $crlf.'       <td align="center">'.$w_vetor_trechos[$i][4].'</td>';
+          $w_html .= $crlf.'       <td align="center">'.$w_vetor_trechos[$i][5].'</td>';
+          $w_html .= $crlf.'       <td align="right">'.$w_vetor_trechos[$i][6].'</td>';
+          $w_html .= $crlf.'       <td align="right">'.$w_vetor_trechos[$i][7].'</td>';
+          $w_html .= $crlf.'       <td align="right" bgcolor="'.$conTrAlternateBgColor.'">'.number_format(($w_vetor_trechos[$i][8]*$w_vetor_trechos[$i][9]),2,',','.').'</td>';
+          $w_html .= $crlf.'     </tr>';
           $w_total += ($w_vetor_trechos[$i][8]*$w_vetor_trechos[$i][9]);
           $i += 1;
         }
 
-        $w_html .= chr(13).'        <tr>';
-        $w_html .= chr(13).'          <td rowspan="5" align="right" colspan="3">&nbsp;</td>';
-        $w_html .= chr(13).'          <td colspan="2"><b>(a) subtotal:</b></td>';
-        $w_html .= chr(13).'          <td align="right" bgcolor="'.$conTrAlternateBgColor.'">'.number_format(Nvl($w_total,0),2,',','.').'</td>';
-        $w_html .= chr(13).'        </tr>';
-        $w_html .= chr(13).'        <tr>';
-        $w_html .= chr(13).'          <td colspan="2"><b>(b) adicional:</b></td>';
-        $w_html .= chr(13).'          <td align="right">'.number_format(Nvl(f($RS,'valor_adicional'),0),2,',','.').'</td>';
-        $w_html .= chr(13).'        </tr>';
-        $w_html .= chr(13).'        <tr>';
-        $w_html .= chr(13).'          <td colspan="2"><b>(c) desconto auxílio-alimentação:</b></td>';
-        $w_html .= chr(13).'          <td align="right">'.number_format(Nvl(f($RS,'desconto_alimentacao'),0),2,',','.').'</td>';
-        $w_html .= chr(13).'        </tr>';
-        $w_html .= chr(13).'        <tr>';
-        $w_html .= chr(13).'          <td colspan="2"><b>(d) desconto auxílio-transporte:</b></td>';
-        $w_html .= chr(13).'          <td align="right">'.number_format(Nvl(f($RS,'desconto_transporte'),0),2,',','.').'</td>';
-        $w_html .= chr(13).'        </tr>';
-        $w_html .= chr(13).'        <tr>';
-        $w_html .= chr(13).'          <td colspan="2"><b>Total(a + b - c - d):</b></td>';
-        $w_html .= chr(13).'          <td align="right" bgcolor="'.$conTrAlternateBgColor.'">'.number_format(Nvl($w_total,0)+Nvl(f($RS,'valor_adicional'),0)-Nvl(f($RS,'desconto_alimentacao'),0)-Nvl(f($RS,'desconto_transporte'),0),2,',','.').'</td>';
-        $w_html .= chr(13).'        </tr>';
-        $w_html .= chr(13).'        </table></td></tr>';
+        $w_html .= $crlf.'        <tr>';
+        $w_html .= $crlf.'          <td rowspan="5" align="right" colspan="3">&nbsp;</td>';
+        $w_html .= $crlf.'          <td colspan="2"><b>(a) subtotal:</b></td>';
+        $w_html .= $crlf.'          <td align="right" bgcolor="'.$conTrAlternateBgColor.'">'.number_format(Nvl($w_total,0),2,',','.').'</td>';
+        $w_html .= $crlf.'        </tr>';
+        $w_html .= $crlf.'        <tr>';
+        $w_html .= $crlf.'          <td colspan="2"><b>(b) adicional:</b></td>';
+        $w_html .= $crlf.'          <td align="right">'.number_format(Nvl(f($RS,'valor_adicional'),0),2,',','.').'</td>';
+        $w_html .= $crlf.'        </tr>';
+        $w_html .= $crlf.'        <tr>';
+        $w_html .= $crlf.'          <td colspan="2"><b>(c) desconto auxílio-alimentação:</b></td>';
+        $w_html .= $crlf.'          <td align="right">'.number_format(Nvl(f($RS,'desconto_alimentacao'),0),2,',','.').'</td>';
+        $w_html .= $crlf.'        </tr>';
+        $w_html .= $crlf.'        <tr>';
+        $w_html .= $crlf.'          <td colspan="2"><b>(d) desconto auxílio-transporte:</b></td>';
+        $w_html .= $crlf.'          <td align="right">'.number_format(Nvl(f($RS,'desconto_transporte'),0),2,',','.').'</td>';
+        $w_html .= $crlf.'        </tr>';
+        $w_html .= $crlf.'        <tr>';
+        $w_html .= $crlf.'          <td colspan="2"><b>Total(a + b - c - d):</b></td>';
+        $w_html .= $crlf.'          <td align="right" bgcolor="'.$conTrAlternateBgColor.'">'.number_format(Nvl($w_total,0)+Nvl(f($RS,'valor_adicional'),0)-Nvl(f($RS,'desconto_alimentacao'),0)-Nvl(f($RS,'desconto_transporte'),0),2,',','.').'</td>';
+        $w_html .= $crlf.'        </tr>';
+        $w_html .= $crlf.'        </table></td></tr>';
       } 
 
       // Bilhete de passagem
@@ -4338,68 +4338,68 @@ function SolicMail($p_solic,$p_tipo) {
         foreach($RS1 as $row) {
           if (nvl(f($row,'sq_cia_transporte'),'')>'') {
             if ($i==0) {
-              $w_html .= chr(13).'        <tr><td valign="top" colspan="2" align="center" bgcolor="'.$w_TrBgColor.'"><b>Bilhete de passagem</td>';
-              $w_html .= chr(13).'        <tr><td align="center" colspan="2"><TABLE WIDTH="100%" bgcolor="'.$conTableBgColor.'" BORDER="'.$conTableBorder.'" CELLSPACING="'.$conTableCellSpacing.'" CELLPADDING="'.$conTableCellPadding.'" BorderColorDark="'.$conTableBorderColorDark.'" BorderColorLight="'.$conTableBorderColorLight.'">';
-              $w_html .= chr(13).'         <tr bgcolor="'.$conTrBgColor.'" align="center">';
-              $w_html .= chr(13).'         <td><b>Origem</td>';
-              $w_html .= chr(13).'         <td><b>Destino</td>';
-              $w_html .= chr(13).'         <td><b>Saida</td>';
-              $w_html .= chr(13).'         <td><b>Chegada</td>';
-              $w_html .= chr(13).'         <td><b>Cia. transporte</td>';
-              $w_html .= chr(13).'         <td><b>Código vôo</td>';
-              $w_html .= chr(13).'         </tr>';
+              $w_html .= $crlf.'        <tr><td valign="top" colspan="2" align="center" bgcolor="'.$w_TrBgColor.'"><b>Bilhete de passagem</td>';
+              $w_html .= $crlf.'        <tr><td align="center" colspan="2"><TABLE WIDTH="100%" bgcolor="'.$conTableBgColor.'" BORDER="'.$conTableBorder.'" CELLSPACING="'.$conTableCellSpacing.'" CELLPADDING="'.$conTableCellPadding.'" BorderColorDark="'.$conTableBorderColorDark.'" BorderColorLight="'.$conTableBorderColorLight.'">';
+              $w_html .= $crlf.'         <tr bgcolor="'.$conTrBgColor.'" align="center">';
+              $w_html .= $crlf.'         <td><b>Origem</td>';
+              $w_html .= $crlf.'         <td><b>Destino</td>';
+              $w_html .= $crlf.'         <td><b>Saida</td>';
+              $w_html .= $crlf.'         <td><b>Chegada</td>';
+              $w_html .= $crlf.'         <td><b>Cia. transporte</td>';
+              $w_html .= $crlf.'         <td><b>Código vôo</td>';
+              $w_html .= $crlf.'         </tr>';
               $w_cor=$conTrBgColor;
               $i=1;
             }
             $w_cor = ($w_cor==$conTrBgColor || $w_cor=='') ? $w_cor=$conTrAlternateBgColor : $w_cor=$conTrBgColor;
-            $w_html .= chr(13).'     <tr valign="middle" bgcolor="'.$w_cor.'">';
-            $w_html .= chr(13).'       <td>'.Nvl(f($row,'nm_origem'),'---').'</td>';
-            $w_html .= chr(13).'       <td>'.Nvl(f($row,'nm_destino'),'---').'</td>';
-            $w_html .= chr(13).'       <td align="center">'.substr(FormataDataEdicao(f($row,'phpdt_saida'),3),0,-3).'</td>';
-            $w_html .= chr(13).'       <td align="center">'.substr(FormataDataEdicao(f($row,'phpdt_chegada'),3),0,-3).'</td>';
-            $w_html .= chr(13).'       <td>'.Nvl(f($row,'nm_cia_transporte'),'---').'</td>';
-            $w_html .= chr(13).'       <td>'.Nvl(f($row,'codigo_voo'),'---').'</td>';
-            $w_html .= chr(13).'     </tr>';
+            $w_html .= $crlf.'     <tr valign="middle" bgcolor="'.$w_cor.'">';
+            $w_html .= $crlf.'       <td>'.Nvl(f($row,'nm_origem'),'---').'</td>';
+            $w_html .= $crlf.'       <td>'.Nvl(f($row,'nm_destino'),'---').'</td>';
+            $w_html .= $crlf.'       <td align="center">'.substr(FormataDataEdicao(f($row,'phpdt_saida'),3),0,-3).'</td>';
+            $w_html .= $crlf.'       <td align="center">'.substr(FormataDataEdicao(f($row,'phpdt_chegada'),3),0,-3).'</td>';
+            $w_html .= $crlf.'       <td>'.Nvl(f($row,'nm_cia_transporte'),'---').'</td>';
+            $w_html .= $crlf.'       <td>'.Nvl(f($row,'codigo_voo'),'---').'</td>';
+            $w_html .= $crlf.'     </tr>';
             $j=1;
           }
         } 
         if ($j==1) {
-          $w_html .= chr(13).'        </tr>';
-          $w_html .= chr(13).'        </table></td></tr>';
+          $w_html .= $crlf.'        </tr>';
+          $w_html .= $crlf.'        </table></td></tr>';
           $RS1 = db_getSolicData::getInstanceOf($dbms,$p_solic,'PDGERAL');
-          $w_html .= chr(13).'        <tr><td align="center" colspan="2"><TABLE WIDTH="100%" bgcolor="'.$w_TrBgColor.'" BorderColorDark="'.$conTableBorderColorDark.'" BorderColorLight="'.$conTableBorderColorLight.'">';
-          $w_html .= chr(13).'        <tr><td><b>Nº do PTA/Ticket: </b>'.f($RS1,'PTA').'</td>';
-          $w_html .= chr(13).'            <td><b>Data da emissão: </b>'.FormataDataEdicao(f($RS1,'emissao_bilhete')).'</td>';
-          $w_html .= chr(13).'      </table>';
-          $w_html .= chr(13).'    </td>';
+          $w_html .= $crlf.'        <tr><td align="center" colspan="2"><TABLE WIDTH="100%" bgcolor="'.$w_TrBgColor.'" BorderColorDark="'.$conTableBorderColorDark.'" BorderColorLight="'.$conTableBorderColorLight.'">';
+          $w_html .= $crlf.'        <tr><td><b>Nº do PTA/Ticket: </b>'.f($RS1,'PTA').'</td>';
+          $w_html .= $crlf.'            <td><b>Data da emissão: </b>'.FormataDataEdicao(f($RS1,'emissao_bilhete')).'</td>';
+          $w_html .= $crlf.'      </table>';
+          $w_html .= $crlf.'    </td>';
         }
       } 
     } else {
-      $w_html .= chr(13).'      <tr><td valign="top" colspan="2" align="center" bgcolor="#D0D0D0" style="border: 2px solid rgb(0,0,0);"><b>ÚLTIMO ENCAMINHAMENTO</td>';
-      $w_html .= chr(13).'      <tr><td valign="top" colspan="2"><table border=0 width="100%" cellspacing=0>';
-      $w_html .= chr(13).'          <tr><td>De:<br><b>'.f($RS,'responsavel').'</b></td>';
-      $w_html .= chr(13).'          <tr><td>Despacho:<br><b>'.CRLF2BR(Nvl(f($RS,'despacho'),'---')).' </b></td>';
-      $w_html .= chr(13).'          </table>';
+      $w_html .= $crlf.'      <tr><td valign="top" colspan="2" align="center" bgcolor="#D0D0D0" style="border: 2px solid rgb(0,0,0);"><b>ÚLTIMO ENCAMINHAMENTO</td>';
+      $w_html .= $crlf.'      <tr><td valign="top" colspan="2"><table border=0 width="100%" cellspacing=0>';
+      $w_html .= $crlf.'          <tr><td>De:<br><b>'.f($RS,'responsavel').'</b></td>';
+      $w_html .= $crlf.'          <tr><td>Despacho:<br><b>'.CRLF2BR(Nvl(f($RS,'despacho'),'---')).' </b></td>';
+      $w_html .= $crlf.'          </table>';
     }
   } 
-  $w_html .= chr(13).'      <tr><td valign="top" colspan="2" align="center" bgcolor="#D0D0D0" style="border: 2px solid rgb(0,0,0);"><b>OUTRAS INFORMAÇÕES</td>';
+  $w_html .= $crlf.'      <tr><td valign="top" colspan="2" align="center" bgcolor="#D0D0D0" style="border: 2px solid rgb(0,0,0);"><b>OUTRAS INFORMAÇÕES</td>';
   $RS = db_getCustomerSite::getInstanceOf($dbms,$_SESSION['P_CLIENTE']);
-  $w_html .= '      <tr valign="top"><td>'.chr(13);
-  $w_html .= '         Para acessar o sistema use o endereço: <b><a class="SS" href="'.f($RS,'logradouro').'" target="_blank">'.f($RS,'Logradouro').'</a></b></li>'.chr(13);
-  $w_html .= '      </td></tr>'.chr(13);
-  $w_html .= '      <tr valign="top"><td>'.chr(13);
-  $w_html .= '         Dados da ocorrência:<br>'.chr(13);
-  $w_html .= '         <ul>'.chr(13);
-  $w_html .= '         <li>Responsável: <b>'.$_SESSION['NOME'].'</b></li>'.chr(13);
-  $w_html .= '         <li>Data: <b>'.date('d/m/Y, H:i:s',$w_data_encaminhamento).'</b></li>'.chr(13);
-  $w_html .= '         <li>IP de origem: <b>'.$_SERVER['REMOTE_ADDR'].'</b></li>'.chr(13);
-  $w_html .= '         </ul>'.chr(13);
-  $w_html .= '      </td></tr>'.chr(13);
-  $w_html .= '    </table>'.chr(13);
-  $w_html .= '</td></tr>'.chr(13);
-  $w_html .= '</table>'.chr(13);
-  $w_html .= '</BODY>'.chr(13);
-  $w_html .= '</HTML>'.chr(13);
+  $w_html .= '      <tr valign="top"><td>'.$crlf;
+  $w_html .= '         Para acessar o sistema use o endereço: <b><a class="SS" href="'.f($RS,'logradouro').'" target="_blank">'.f($RS,'Logradouro').'</a></b></li>'.$crlf;
+  $w_html .= '      </td></tr>'.$crlf;
+  $w_html .= '      <tr valign="top"><td>'.$crlf;
+  $w_html .= '         Dados da ocorrência:<br>'.$crlf;
+  $w_html .= '         <ul>'.$crlf;
+  $w_html .= '         <li>Responsável: <b>'.$_SESSION['NOME'].'</b></li>'.$crlf;
+  $w_html .= '         <li>Data: <b>'.date('d/m/Y, H:i:s',$w_data_encaminhamento).'</b></li>'.$crlf;
+  $w_html .= '         <li>IP de origem: <b>'.$_SERVER['REMOTE_ADDR'].'</b></li>'.$crlf;
+  $w_html .= '         </ul>'.$crlf;
+  $w_html .= '      </td></tr>'.$crlf;
+  $w_html .= '    </table>'.$crlf;
+  $w_html .= '</td></tr>'.$crlf;
+  $w_html .= '</table>'.$crlf;
+  $w_html .= '</BODY>'.$crlf;
+  $w_html .= '</HTML>'.$crlf;
   // Prepara os dados necessários ao envio
   $RS = db_getCustomerData::getInstanceOf($dbms,$_SESSION['P_CLIENTE']);
   if ($p_tipo==1 || $p_tipo==3) {
@@ -4631,7 +4631,15 @@ function Grava() {
             if (UPLOAD_ERR_OK==0) {
               $w_maximo = $_REQUEST['w_upload_maximo'];
               foreach ($_FILES as $Chv => $Field) {
-                if ($Field['size'] > 0) {
+                if ($Field['error'] > 0) {
+                  // Verifica se o tamanho das fotos está compatível com  o limite de 100KB. 
+                  ScriptOpen('JavaScript');
+                  ShowHTML('  alert(\'Atenção: o tamanho máximo do arquivo não pode exceder '.($w_maximo/1024).' KBytes!\');');
+                  ShowHTML('  history.go(-1);');
+                  ScriptClose();
+                  exit();
+                }
+                if ($Field['size'] >= 0) {
                   // Verifica se o tamanho das fotos está compatível com  o limite de 100KB. 
                   if ($Field['size'] > $w_maximo) {
                     ScriptOpen('JavaScript');
@@ -4643,7 +4651,7 @@ function Grava() {
                   // Se já há um nome para o arquivo, mantém 
                   $w_file = basename($Field['tmp_name']);
                   if (!(strpos($Field['name'],'.')===false)) {
-                    $w_file = $w_file.'.'.substr($Field['name'],(strpos($Field['name'],'.') ? strpos($Field['name'],'.')+1 : 0)-1,10);
+                    $w_file = $w_file.substr($Field['name'],(strpos($Field['name'],'.') ? strpos($Field['name'],'.')+1 : 0)-1,10);
                   }
                   $w_tamanho = $Field['size'];
                   $w_tipo    = $Field['type'];

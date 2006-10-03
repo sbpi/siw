@@ -165,7 +165,7 @@ function Benef() {
       } 
     } 
     if (strpos('IATDEV',$O)!==false) {
-      if (nvl($w_sq_pessoa,'')>'') {
+      if (nvl($w_sq_pessoa,'')!='') {
         // Recupera os dados do beneficiário em co_pessoa
         $RS = db_getPersonData::getInstanceOf($dbms,$w_cliente,$w_sq_pessoa,null,null);
         if (count($RS)) {
@@ -182,6 +182,7 @@ function Benef() {
         // Recupera os dados do beneficiário em co_pessoa
         $RS = db_getPersonData::getInstanceOf($dbms,$w_cliente,null,$w_username,null);
         if (count($RS)) {
+          $w_sq_pessoa            = f($RS,'sq_pessoa');
           $w_nome                 = f($RS,'Nome');
           $w_nome_resumido        = f($RS,'Nome_Resumido');
           $w_email                = f($RS,'Email');
@@ -319,7 +320,7 @@ function Benef() {
       ShowHTML('              <INPUT class="stb" TYPE="submit" NAME="Botao" VALUE="Procurar" onClick="Botao.value=this.value; document.Form.action=\''.$w_pagina.$par.'\'">');
       ShowHTML('      </table>');
       if ($_REQUEST['w_nome']>"") {
-        $RS = db_getPersonList::getInstanceOf($dbms,$w_cliente,null,"NOVOUSO",$_REQUEST['w_nome'],null,null,null);
+        $RS = db_getPersonList::getInstanceOf($dbms,$w_cliente,null,"PESSOA",$_REQUEST['w_nome'],null,null,null);
         ShowHTML('<tr><td align="center" colspan=3>');
         ShowHTML('    <TABLE WIDTH="100%" bgcolor="'.$conTableBgColor.'" BORDER="'.$conTableBorder.'" CELLSPACING="'.$conTableCellSpacing.'" CELLPADDING="'.$conTableCellPadding.'" BorderColorDark="'.$conTableBorderColorDark.'" BorderColorLight="'.$conTableBorderColorLight.'">');
         ShowHTML('        <tr bgcolor="'.$conTrBgColor.'" align="center">');
@@ -612,77 +613,77 @@ function Grava() {
 
       // Se o usuário deseja comunicar a ocorrência ao usuário, configura e envia mensagem automática.
       if ($_REQUEST['w_envia_mail']>'') { // Configuração do texto da mensagem
-        $w_html = '<HTML>'.chr(13);
-        $w_html = $w_html.BodyOpenMail().chr(13);
-        $w_html = $w_html.'<table border="0" cellpadding="0" cellspacing="0" width="100%">'.chr(13);
-        $w_html = $w_html.'<tr bgcolor="'.$conTrBgColor.'"><td align="center">'.chr(13);
-        $w_html = $w_html.'    <table width="97%" border="0">'.chr(13);
-        $w_html = $w_html.'      <tr valign="top"><td><font size=2><b><font color="#BC3131">ATENÇÃO</font>: Esta é uma mensagem de envio automático. Não responda esta mensagem.</b></font><br><br><td></tr>'.chr(13);
+        $w_html = '<HTML>'.$crlf;
+        $w_html = $w_html.BodyOpenMail().$crlf;
+        $w_html = $w_html.'<table border="0" cellpadding="0" cellspacing="0" width="100%">'.$crlf;
+        $w_html = $w_html.'<tr bgcolor="'.$conTrBgColor.'"><td align="center">'.$crlf;
+        $w_html = $w_html.'    <table width="97%" border="0">'.$crlf;
+        $w_html = $w_html.'      <tr valign="top"><td><font size=2><b><font color="#BC3131">ATENÇÃO</font>: Esta é uma mensagem de envio automático. Não responda esta mensagem.</b></font><br><br><td></tr>'.$crlf;
         if (!(strpos('IT',$O)===false)) {
           if ($O=='I') {
-            $w_html = $w_html.'      <tr valign="top"><td align="center"><font size=2><b>CRIAÇÃO DE USUÁRIO</b></font><br><br><td></tr>'.chr(13);
+            $w_html = $w_html.'      <tr valign="top"><td align="center"><font size=2><b>CRIAÇÃO DE USUÁRIO</b></font><br><br><td></tr>'.$crlf;
           } elseif ($O=='T') {
-            $w_html = $w_html.'      <tr valign="top"><td align="center"><font size=2><b>DESBLOQUEIO DE USUÁRIO</b></font><br><br><td></tr>'.chr(13);
+            $w_html = $w_html.'      <tr valign="top"><td align="center"><font size=2><b>DESBLOQUEIO DE USUÁRIO</b></font><br><br><td></tr>'.$crlf;
           } 
-          $w_html = $w_html.'      <tr valign="top"><td><font size=2>'.chr(13);
+          $w_html = $w_html.'      <tr valign="top"><td><font size=2>'.$crlf;
           if ($O=='I') {
-            $w_html = $w_html.'         Sua senha e assinatura eletrônica para acesso ao sistema foram criadas. Utilize os dados informados abaixo:<br>'.chr(13);
+            $w_html = $w_html.'         Sua senha e assinatura eletrônica para acesso ao sistema foram criadas. Utilize os dados informados abaixo:<br>'.$crlf;
           } elseif ($O=='T') {
-            $w_html = $w_html.'         Sua senha e assinatura eletrônica para acesso ao sistema foram desbloqueadas. Utilize os dados informados abaixo:<br>'.chr(13);
+            $w_html = $w_html.'         Sua senha e assinatura eletrônica para acesso ao sistema foram desbloqueadas. Utilize os dados informados abaixo:<br>'.$crlf;
           }
-          $w_html = $w_html.'         <ul>'.chr(13);
+          $w_html = $w_html.'         <ul>'.$crlf;
           $RS = db_getCustomerSite::getInstanceOf($dbms,$w_cliente);
-          $w_html = $w_html.'         <li>Endereço de acesso ao sistema: <b><a class="ss" href="'.f($RS,'logradouro').'" target="_blank">'.f($RS,'Logradouro').'</a></b></li>'.chr(13);
-          $w_html = $w_html.'         <li>CPF: <b>'.$_REQUEST['w_username'].'</b></li>'.chr(13);
-          $w_html = $w_html.'         <li>Senha de acesso: <b>'.$_REQUEST['w_username'].'</b></li>'.chr(13);
-          $w_html = $w_html.'         <li>Assinatura eletrônica: <b>'.$_REQUEST['w_username'].'</b></li>'.chr(13);
-          $w_html = $w_html.'         </ul>'.chr(13);
-          $w_html = $w_html.'      </font></td></tr>'.chr(13);
-          $w_html = $w_html.'      <tr valign="top"><td><font size=2>'.chr(13);
-          $w_html = $w_html.'         Orientações e observações:<br>'.chr(13);
-          $w_html = $w_html.'         <ol>'.chr(13);
-          $w_html = $w_html.'         <li>Troque sua senha de acesso e assinatura no primeiro acesso que fizer ao sistema.</li>'.chr(13);
-          $w_html = $w_html.'         <li>Para trocar sua senha de acesso, localize no menu a opção <b>Troca senha</b> e clique sobre ela, seguindo as orientações apresentadas.</li>'.chr(13);
-          $w_html = $w_html.'         <li>Para trocar sua assinatura eletrônica, localize no menu a opção <b>Assinatura eletrônica</b> e clique sobre ela, seguindo as orientações apresentadas.</li>'.chr(13);
-          $w_html = $w_html.'         <li>Você pode fazer com que a senha de acesso e a assinatura eletrônica tenham o mesmo valor ou valores diferentes. A decisão é sua.</li>'.chr(13);
+          $w_html = $w_html.'         <li>Endereço de acesso ao sistema: <b><a class="ss" href="'.f($RS,'logradouro').'" target="_blank">'.f($RS,'Logradouro').'</a></b></li>'.$crlf;
+          $w_html = $w_html.'         <li>CPF: <b>'.$_REQUEST['w_username'].'</b></li>'.$crlf;
+          $w_html = $w_html.'         <li>Senha de acesso: <b>'.$_REQUEST['w_username'].'</b></li>'.$crlf;
+          $w_html = $w_html.'         <li>Assinatura eletrônica: <b>'.$_REQUEST['w_username'].'</b></li>'.$crlf;
+          $w_html = $w_html.'         </ul>'.$crlf;
+          $w_html = $w_html.'      </font></td></tr>'.$crlf;
+          $w_html = $w_html.'      <tr valign="top"><td><font size=2>'.$crlf;
+          $w_html = $w_html.'         Orientações e observações:<br>'.$crlf;
+          $w_html = $w_html.'         <ol>'.$crlf;
+          $w_html = $w_html.'         <li>Troque sua senha de acesso e assinatura no primeiro acesso que fizer ao sistema.</li>'.$crlf;
+          $w_html = $w_html.'         <li>Para trocar sua senha de acesso, localize no menu a opção <b>Troca senha</b> e clique sobre ela, seguindo as orientações apresentadas.</li>'.$crlf;
+          $w_html = $w_html.'         <li>Para trocar sua assinatura eletrônica, localize no menu a opção <b>Assinatura eletrônica</b> e clique sobre ela, seguindo as orientações apresentadas.</li>'.$crlf;
+          $w_html = $w_html.'         <li>Você pode fazer com que a senha de acesso e a assinatura eletrônica tenham o mesmo valor ou valores diferentes. A decisão é sua.</li>'.$crlf;
           $RS = db_getCustomerData::getInstanceOf($dbms,$w_cliente);
-          $w_html = $w_html.'         <li>Tanto a senha quanto a assinatura eletrônica têm tempo de vida máximo de <b>'.f($RS,'dias_vig_senha').'</b> dias. O sistema irá recomendar a troca <b>'.f($RS,'dias_aviso_expir').'</b> dias antes da expiração do tempo de vida.</li>'.chr(13);
-          $w_html = $w_html.'         <li>O sistema irá bloquear seu acesso se você errar sua senha de acesso ou sua senha de acesso <b>'.f($RS,'maximo_tentativas').'</b> vezes consecutivas. Se você tiver dúvidas ou não lembrar sua senha de acesso ou assinatura de acesso, utilize a opção "Lembrar senha" na tela de autenticação do sistema.</li>'.chr(13);
-          $w_html = $w_html.'         <li>Acessos bloqueados por expiração do tempo de vida da senha de acesso ou assinaturas eletrônicas, ou por exceder o máximo de erros consecutivos, só podem ser desbloqueados pelo gestor de segurança do sistema.</li>'.chr(13);
-          $w_html = $w_html.'         </ol>'.chr(13);
-          $w_html = $w_html.'      </font></td></tr>'.chr(13);
+          $w_html = $w_html.'         <li>Tanto a senha quanto a assinatura eletrônica têm tempo de vida máximo de <b>'.f($RS,'dias_vig_senha').'</b> dias. O sistema irá recomendar a troca <b>'.f($RS,'dias_aviso_expir').'</b> dias antes da expiração do tempo de vida.</li>'.$crlf;
+          $w_html = $w_html.'         <li>O sistema irá bloquear seu acesso se você errar sua senha de acesso ou sua senha de acesso <b>'.f($RS,'maximo_tentativas').'</b> vezes consecutivas. Se você tiver dúvidas ou não lembrar sua senha de acesso ou assinatura de acesso, utilize a opção "Lembrar senha" na tela de autenticação do sistema.</li>'.$crlf;
+          $w_html = $w_html.'         <li>Acessos bloqueados por expiração do tempo de vida da senha de acesso ou assinaturas eletrônicas, ou por exceder o máximo de erros consecutivos, só podem ser desbloqueados pelo gestor de segurança do sistema.</li>'.$crlf;
+          $w_html = $w_html.'         </ol>'.$crlf;
+          $w_html = $w_html.'      </font></td></tr>'.$crlf;
         } elseif (!(strpos("ED",$O)===false)) {
           if ($O=='E') {
-            $w_html = $w_html.'      <tr valign="top"><td align="center"><font size=2><b>EXCLUSÃO DE USUÁRIO</b></font><br><br><td></tr>'.chr(13);
+            $w_html = $w_html.'      <tr valign="top"><td align="center"><font size=2><b>EXCLUSÃO DE USUÁRIO</b></font><br><br><td></tr>'.$crlf;
           } elseif ($O=='D') {
-            $w_html = $w_html.'      <tr valign="top"><td align="center"><font size=2><b>BLOQUEIO DE USUÁRIO</b></font><br><br><td></tr>'.chr(13);
+            $w_html = $w_html.'      <tr valign="top"><td align="center"><font size=2><b>BLOQUEIO DE USUÁRIO</b></font><br><br><td></tr>'.$crlf;
           } 
-          $w_html = $w_html.'      <tr valign="top"><td><font size=2>'.chr(13);
+          $w_html = $w_html.'      <tr valign="top"><td><font size=2>'.$crlf;
           $RS = db_getCustomerSite::getInstanceOf($dbms,$w_cliente);
           if ($O=='E') {
-            $w_html = $w_html.'         Seus dados foram excluídos do sistema existente no endereço '.f($RS,'logradouro').'. A partir de agora você não poderá mais acessá-lo.<br>'.chr(13);
+            $w_html = $w_html.'         Seus dados foram excluídos do sistema existente no endereço '.f($RS,'logradouro').'. A partir de agora você não poderá mais acessá-lo.<br>'.$crlf;
           } elseif ($O=='D') {
-            $w_html = $w_html.'         Sua senha e assinatura eletrônica para acesso ao sistema existente no endereço '.f($RS,'logradouro').' foram bloqueadas pelo gestor de segurança. A partir de agora você não poderá mais acessá-lo.<br>'.chr(13);
+            $w_html = $w_html.'         Sua senha e assinatura eletrônica para acesso ao sistema existente no endereço '.f($RS,'logradouro').' foram bloqueadas pelo gestor de segurança. A partir de agora você não poderá mais acessá-lo.<br>'.$crlf;
           } 
-          $w_html = $w_html.'         Em caso de dúvidas, entre em contato com o gestor:'.chr(13);
-          $w_html = $w_html.'         <ul>'.chr(13);
-          $w_html = $w_html.'         <li>Nome: <b>'.$_SESSION['NOME'].'</b></li>'.chr(13);
-          $w_html = $w_html.'         <li>e-Mail: <b><a class="ss" href="mailto:'.$_SESSION['EMAIL'].'">'.$_SESSION['EMAIL'].'</a></b></li>'.chr(13);
-          $w_html = $w_html.'         </ul>'.chr(13);
-          $w_html = $w_html.'      </font></td></tr>'.chr(13);
+          $w_html = $w_html.'         Em caso de dúvidas, entre em contato com o gestor:'.$crlf;
+          $w_html = $w_html.'         <ul>'.$crlf;
+          $w_html = $w_html.'         <li>Nome: <b>'.$_SESSION['NOME'].'</b></li>'.$crlf;
+          $w_html = $w_html.'         <li>e-Mail: <b><a class="ss" href="mailto:'.$_SESSION['EMAIL'].'">'.$_SESSION['EMAIL'].'</a></b></li>'.$crlf;
+          $w_html = $w_html.'         </ul>'.$crlf;
+          $w_html = $w_html.'      </font></td></tr>'.$crlf;
         } 
-        $w_html = $w_html.'      <tr valign="top"><td><font size=2>'.chr(13);
-        $w_html = $w_html.'         Dados da ocorrência:<br>'.chr(13);
-        $w_html = $w_html.'         <ul>'.chr(13);
-        $w_html = $w_html.'         <li>Data do servidor: <b>'.date('d/m/Y, H:i:s').'</b></li>'.chr(13);
-        $w_html = $w_html.'         <li>IP de origem: <b>'.$_SERVER['REMOTE_ADDR'].'</b></li>'.chr(13);
-        $w_html = $w_html.'         </ul>'.chr(13);
-        $w_html = $w_html.'      </font></td></tr>'.chr(13);
-        $w_html = $w_html.'    </table>'.chr(13);
-        $w_html = $w_html.'</td></tr>'.chr(13);
-        $w_html = $w_html.'</table>'.chr(13);
-        $w_html = $w_html.'</BODY>'.chr(13);
-        $w_html = $w_html.'</HTML>'.chr(13);
+        $w_html = $w_html.'      <tr valign="top"><td><font size=2>'.$crlf;
+        $w_html = $w_html.'         Dados da ocorrência:<br>'.$crlf;
+        $w_html = $w_html.'         <ul>'.$crlf;
+        $w_html = $w_html.'         <li>Data do servidor: <b>'.date('d/m/Y, H:i:s').'</b></li>'.$crlf;
+        $w_html = $w_html.'         <li>IP de origem: <b>'.$_SERVER['REMOTE_ADDR'].'</b></li>'.$crlf;
+        $w_html = $w_html.'         </ul>'.$crlf;
+        $w_html = $w_html.'      </font></td></tr>'.$crlf;
+        $w_html = $w_html.'    </table>'.$crlf;
+        $w_html = $w_html.'</td></tr>'.$crlf;
+        $w_html = $w_html.'</table>'.$crlf;
+        $w_html = $w_html.'</BODY>'.$crlf;
+        $w_html = $w_html.'</HTML>'.$crlf;
         // Executa a função de envio de e-mail
         if ($O=='I') {
           $w_resultado=EnviaMail('Aviso de criação de usuário',$w_html,$_REQUEST['w_email']);

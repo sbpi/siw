@@ -12,10 +12,14 @@ include_once($w_dir_volta.'classes/sp/db_getMenuCode.php');
 include_once($w_dir_volta.'classes/sp/db_getAgreeType.php');
 include_once($w_dir_volta.'classes/sp/db_getTipoDocumento.php');
 include_once($w_dir_volta.'classes/sp/db_getFormaPagamento.php');
+include_once($w_dir_volta.'classes/sp/db_getMenuList.php');
+include_once($w_dir_volta.'classes/sp/db_getMenuFormaPag.php');
 include_once($w_dir_volta.'classes/sp/db_verificaAssinatura.php');
 include_once($w_dir_volta.'classes/sp/dml_putAgreeType.php');
 include_once($w_dir_volta.'classes/sp/dml_putFormaPagamento.php');
+include_once($w_dir_volta.'classes/sp/dml_putFormaPagamentoVinc.php');
 include_once($w_dir_volta.'funcoes/selecaoTipoAcordo.php');
+include_once($w_dir_volta.'funcoes/selecaoServico.php');
 
 // =========================================================================
 //  /tabelas.php
@@ -35,6 +39,7 @@ include_once($w_dir_volta.'funcoes/selecaoTipoAcordo.php');
 //                   = C   : Cancelamento
 //                   = E   : Exclusão
 //                   = L   : Listagem
+//                   = T   : Vinculação
 //                   = P   : Pesquisa
 //                   = D   : Detalhes
 //                   = N   : Nova solicitação de envio
@@ -66,13 +71,14 @@ $p_ordena       = strtolower(trim($_REQUEST['p_ordena']));
 if ($O=='') $O = 'L';
 
 switch ($O) {
-  case 'I': $w_TP=$TP.' - Inclusão';  break;
-  case 'A': $w_TP=$TP.' - Alteração'; break;
-  case 'E': $w_TP=$TP.' - Exclusão';  break;
-  case 'P': $w_TP=$TP.' - Filtragem'; break;
-  case 'C': $w_TP=$TP.' - Cópia';     break;
-  case 'V': $w_TP=$TP.' - Envio';     break;
-  case 'H': $w_TP=$TP.' - Herança';   break;
+  case 'I': $w_TP=$TP.' - Inclusão';    break;
+  case 'A': $w_TP=$TP.' - Alteração';   break;
+  case 'E': $w_TP=$TP.' - Exclusão';    break;
+  case 'P': $w_TP=$TP.' - Filtragem';   break;
+  case 'C': $w_TP=$TP.' - Cópia';       break;
+  case 'V': $w_TP=$TP.' - Envio';       break;
+  case 'H': $w_TP=$TP.' - Herança';     break;
+  case 'T': $w_TP=$TP.' - Vinculação';  break;  
   default : $w_TP=$TP.' - Listagem'; 
 }
 // Se receber o código do cliente do SIW, o cliente será determinado por parâmetro;
@@ -90,11 +96,8 @@ if (count($RS)>0) {
 } 
 
 // Recupera a configuração do serviço
-if ($P2>0) {
-  $RS_Menu = db_getMenuData::getInstanceOf($dbms,$P2);
-} else {
-  $RS_Menu = db_getMenuData::getInstanceOf($dbms,$w_menu);
-}
+if ($P2>0)   $RS_Menu = db_getMenuData::getInstanceOf($dbms,$P2);
+else         $RS_Menu = db_getMenuData::getInstanceOf($dbms,$w_menu);
 
 // Se for sub-menu, pega a configuração do pai
 if ($RS_Menu['ultimo_nivel']=='S') {
@@ -161,6 +164,10 @@ function TipoAcordo() {
       if ($O=='I' || $O=='A') {
         Validate('w_nome','Nome','1','1','5','60','1','1');
         Validate('w_sigla','Sigla','1','1','2','10','1','1');
+        ShowHTML('if (theForm.w_prazo_indeterminado[0].checked) {');
+        ShowHTML('  alert(\'Opção escolhida no campo prazo indetermindo é inválido!\')');
+        ShowHTML('  return false;');
+        ShowHTML('}');
       } 
       Validate('w_assinatura','Assinatura Eletrônica','1','1','6','30','1','1');
     } elseif ($O=='H') {
@@ -376,7 +383,7 @@ function TipoAcordo() {
     ShowHTML('      </td></tr>');
     ShowHTML('      <tr><td><b><U>A</U>ssinatura Eletrônica:<br><INPUT ACCESSKEY="A" class="sti" type="PASSWORD" name="w_assinatura" size="30" maxlength="30" value=""></td>');
     ShowHTML('      <tr><td align="center" colspan="3" height="1" bgcolor="#000000">');
-    ShowHTML('      <tr><td colspan="3"><input class="stb" type="submit" name="Botao" value="Gravar">&nbsp;');
+    ShowHTML('      <tr><td align="center"  colspan="3"><input class="stb" type="submit" name="Botao" value="Gravar">&nbsp;');
     ShowHTML('            <input class="stb" type="button" onClick="location.href=\''.$R.'&O=L&w_cliente='.$w_cliente.'&P1='.$P1.'&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP='.$TP.'&SG='.$SG.'\';" name="Botao" value="Cancelar">');
     ShowHTML('</FORM>');
     ShowHTML('  </table>');
@@ -428,30 +435,29 @@ function FormaPagamento(){
   $w_chave   = $_REQUEST['w_chave'];
   Cabecalho();
   ShowHTML('<HEAD>');
-  ShowHTML('<TITLE>'.$conSgSistema.' - Listagem de tipos de documentos</TITLE>');
-  if ($P1==2) ShowHTML('<meta http-equiv="Refresh" content="300; URL='.str_replace($w_dir,'',MontaURL('MESA')).'">');
+  ShowHTML('<TITLE>'.$conSgSistema.' - Listagem das formas de pagamentos</TITLE>');
   Estrutura_CSS($w_cliente);
   if ($O=='') $O='L';
   if ($O=='L') {
-    $RS = db_getFormaPagamento::getInstanceOf($dbms,$w_cliente,null,null,'REGISTRO',null);
+    $RS = db_getFormaPagamento::getInstanceOf($dbms,$w_cliente,null,null,'REGISTRO',null,null);
     if (Nvl($p_ordena,'') > '') {
       $lista = explode(',',str_replace(' ',',',$p_ordena));
       $RS = SortArray($RS,$lista[0],$lista[1]);
     } else {
       $RS = SortArray($RS,'nome','asc'); 
     }
-  } elseif (!(strpos('AEV',$O)===false && $w_troca=='')) {
-    $RS = db_getFormaPagamento::getInstanceOf($dbms,$w_cliente,$w_chave,null,'REGISTRO',$w_ativo);
+  } elseif (!(strpos('AEVT',$O)===false && $w_troca=='')) {
+    $RS = db_getFormaPagamento::getInstanceOf($dbms,$w_cliente,$w_chave,null,'REGISTRO',$w_ativo,null);
     foreach ($RS as $row) {$RS=$row; break;}
     $w_chave    = f($RS,'chave');
     $w_nome     = f($RS,'nome');
     $w_sigla    = f($RS,'sigla');
     $w_ativo    = f($RS,'ativo');
   } 
-  if (!(strpos('IAE',$O)===false)) {
+  if (!(strpos('IAET',$O)===false)) {
     ScriptOpen('JavaScript');
     modulo();
-    ValidateOpen('Validacao');
+    ValidateOpen('Validacao');  
     if (!(strpos('IA',$O)===false)) {
       Validate('w_nome','Nome','1','1','3','30','1','1');
       Validate('w_sigla','Sigla','1','1','2','10','1','1');
@@ -461,21 +467,17 @@ function FormaPagamento(){
       ShowHTML('  if (confirm(\'Confirma a exclusão deste registro?\')) ');
       ShowHTML('     { return (true); }; ');
       ShowHTML('     { return (false); }; ');
-    } 
+    }
+    if ($O=='T') Validate('w_assinatura','Assinatura Eletrônica','1','1','6','30','1','1'); 
     ValidateClose();
     ScriptClose();
   } 
   ShowHTML('</HEAD>');
   ShowHTML('<BASE HREF="'.$conRootSIW.'">');
-  if ($w_troca>'') {
-    BodyOpen('onLoad=document.Form.'.$w_troca.'.focus();');
-  } elseif ($O=='I' || $O=='A') {
-    BodyOpen('onLoad=document.Form.w_nome.focus();');
-  } elseif ($O=='L') {
-    BodyOpen('onLoad=document.focus();');
-  } else {
-    BodyOpen('onLoad=document.Form.w_assinatura.focus();');
-  } 
+  if ($w_troca>'')                BodyOpen('onLoad=\'document.Form.'.$w_troca.'.focus();\'');
+  elseif ($O=='I' || $O=='A')     BodyOpen('onLoad=\'document.Form.w_nome.focus();\'');
+  elseif ($O=='L')                BodyOpen(null);
+  else                            BodyOpen('onLoad=\'document.Form.w_assinatura.focus();\'');
   Estrutura_Topo_Limpo();
   Estrutura_Menu();
   Estrutura_Corpo_Abre();
@@ -504,9 +506,11 @@ function FormaPagamento(){
         ShowHTML('        <td align="left">'.f($row,'nome').'</td>');
         ShowHTML('        <td align="center">'.f($row,'sigla').'</td>');
         ShowHTML('        <td align="center">'.f($row,'nm_ativo').'</td>');
-        ShowHTML('        <td align="top" nowrap>');
-        ShowHTML('          <A class="hl" HREF="'.$w_dir.$w_pagina.$par.'&R='.$w_pagina.$par.'&O=A&w_chave='.f($row,'chave').'&P1='.$P1.'&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP='.$TP.' &SG='.$SG.MontaFiltro('GET').'" Title="Nome">Alterar </A>&nbsp');
-        ShowHTML('          <A class="hl" HREF="'.$w_dir.$w_pagina.$par.'&R='.$w_pagina.$par.'&O=E&w_chave='.f($row,'chave').'&P1='.$P1.'&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP='.$TP.' &SG='.$SG.'">Excluir </A>&nbsp');
+        ShowHTML('        <td>');
+        ShowHTML('          <A class="hl" HREF="'.$w_dir.$w_pagina.$par.'&R='.$w_pagina.$par.'&O=A&w_chave='.f($row,'chave').'&P1='.$P1.'&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP='.$TP.'&SG='.$SG.MontaFiltro('GET').'" Title="Nome">Alterar </A>&nbsp');
+        ShowHTML('          <A class="hl" HREF="'.$w_dir.$w_pagina.$par.'&R='.$w_pagina.$par.'&O=E&w_chave='.f($row,'chave').'&P1='.$P1.'&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP='.$TP.'&SG='.$SG.'">Excluir </A>&nbsp');
+        //ShowHTML('          <A class="hl" HREF="'.$w_dir.$w_pagina.$par.'&R='.$w_pagina.$par.'&O=T&w_chave='.f($row,'chave').'&P1='.$P1.'&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP='.$TP.' &SG='.$SG.'" target="vinculacao">Vinculações</A>&nbsp');
+        ShowHTML('          <A class="hl" HREF="'.$w_dir.$w_pagina.$par.'&R='.$w_pagina.$par.'&TP='.$TP.'&SG='.$SG.'" onClick="window.open(\'tabelas.php?par=FORMAPAG&R='.$w_pagina.$par.'&O=T&w_chave='.f($row,'chave').'&P1='.$P1.'&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP='.$TP.'&SG=FORMAPAG'.MontaFiltro('GET').'\',\'Vinculacoes\',\'width=730,height=500,top=30,left=30,status=yes,resizable=yes,scrollbars=yes,toolbar=yes\');">Vinculações</A>&nbsp'); 
         ShowHTML('        </td>');
         ShowHTML('      </tr>');
       } 
@@ -532,7 +536,7 @@ function FormaPagamento(){
     ShowHTML('      <tr>');
     MontaRadioSN('<b>Ativo</b>?',$w_ativo,'w_ativo');
     ShowHTML('      <tr><td align="LEFT" colspan=2><b><U>A</U>ssinatura Eletrônica:<BR> <INPUT ACCESSKEY="A" class="sti" type="PASSWORD" name="w_assinatura" size="30" maxlength="30" value=""></td></tr>');
-    ShowHTML('      <tr><td align="center" colspan=2><hr>');
+    ShowHTML('      <tr><td align="center" colspan=2><hr>'); 
     if ($O=='E') {
       ShowHTML('   <input class="stb" type="submit" name="Botao" value="Excluir">');
     } else {
@@ -548,7 +552,58 @@ function FormaPagamento(){
     ShowHTML('    </table>');
     ShowHTML('    </TD>');
     ShowHTML('</tr>');
-    ShowHTML('</FORM>');
+    ShowHTML('</FORM>'); 
+  } elseif (!(strpos('T',$O)===false)){
+    $RS = DB_GetMenuFormaPag::getInstanceOf($dbms, $w_chave, null);
+    $i=0;
+    foreach($RS as $row) {
+      if ($i==0) $w_vinculo = f($row,'sq_menu');
+      else       $w_vinculo .= ','.f($row,'sq_menu');
+      $i=1;
+    }
+    AbreForm('Form',$w_dir.$w_pagina.'Grava','POST','return(Validacao(this));',null,$P1,$P2,$P3,$P4,$TP,$SG,$w_pagina.$par,$O);
+    ShowHTML('<INPUT type="hidden" name="w_chave" value="'.$w_chave.'">');
+    ShowHTML('<INPUT type="hidden" name="w_cliente" value="'.$w_cliente.'">');
+    ShowHTML('<INPUT type="hidden" name="w_troca" value="">');
+    ShowHTML('<table border="0" cellpadding="0" cellspacing="0" width="100%">');
+    ShowHTML('<tr><td colspan=3 bgcolor="#FAEBD7"><table border=1 width="100%"><tr><td>');
+    ShowHTML('    <TABLE WIDTH="100%" CELLSPACING="'.$conTableCellSpacing.'" CELLPADDING="'.$conTableCellPadding.'" BorderColorDark="'.$conTableBorderColorDark.'" BorderColorLight="'.$conTableBorderColorLight.'">');
+    ShowHTML('      <tr><td>Nome:<br><b>'.$w_nome.'</b></td>');
+    ShowHTML('          <td>Sigla:<br><b>'.$w_sigla.'</b></td>');    
+    ShowHTML('    </TABLE>');
+    ShowHTML('</TABLE>');
+    ShowHTML('  <tr><td>&nbsp;');
+    ShowHTML('      <tr><td><b>Vincular:</b><br>');
+    $RS1 = db_getMenuList::getInstanceOf($dbms, $w_cliente, 'X', $chaveAux);
+    $RS1 = SortArray($RS1,'nome','asc');
+    ShowHTML('      <tr><td><table width="100%" border="0">');
+    ShowHTML('        <tr>');
+    if (count($RS1)>0) {
+      $i = 2;
+      foreach ($RS1 as $row) {
+        if (!($i%2)) ShowHTML('        <tr>');
+        $l_marcado = 'N';
+        $l_chave   = $w_vinculo.',';
+        while (!(strpos($l_chave,',')===false)) {
+          $l_item  = trim(substr($l_chave,0,strpos($l_chave,',')));
+          $l_chave = trim(substr($l_chave,(strpos($l_chave,',')+1),100));
+          if ($l_item > '') {if (f($row,'sq_menu')==$l_item) $l_marcado = 'S'; }
+        }
+        if ($l_marcado=='S')  ShowHTML('          <td><input type="checkbox" name="w_vinculo[]" value="'.f($row,'sq_menu').'" checked>'.f($row,'nome').'<br>');
+        else                  ShowHTML('          <td><input type="checkbox" name="w_vinculo[]" value="'.f($row,'sq_menu').'">'.f($row,'nome').'<br>');
+        $i += 1;
+      } 
+    }
+    ShowHTML('      <tr><td align="LEFT" colspan=2><br><b><U>A</U>ssinatura Eletrônica:<BR> <INPUT ACCESSKEY="A" class="sti" type="PASSWORD" name="w_assinatura" size="30" maxlength="30" value=""></td></tr>');
+    ShowHTML('      <tr><td align="center" colspan=2><hr>');
+    ShowHTML('            <input class="stb" type="submit" name="Botao" value="Gravar">');
+    ShowHTML('            <input class="stb" type="button" onClick="window.close();" name="Botao" value="Fechar">');
+    ShowHTML('          </td>');
+    ShowHTML('      </tr>');
+    ShowHTML('    </table>');
+    ShowHTML('    </TD>');
+    ShowHTML('</tr>');
+    ShowHTML('</FORM>'); 
   } else {
     ScriptOpen('JavaScript');
     ShowHTML(' alert(\'Opção não disponível\');');
@@ -566,7 +621,6 @@ function FormaPagamento(){
   Estrutura_Fecha();
   Rodape();
 } 
-
 // =========================================================================
 // Procedimento que executa as operações de BD
 // -------------------------------------------------------------------------
@@ -597,14 +651,23 @@ function Grava() {
       break;
     case 'FORMAPAG':
       // Verifica se a Assinatura Eletrônica é válida
-       if (verificaAssinaturaEletronica($_SESSION['USERNAME'],strtoupper($_REQUEST['w_assinatura'])) || $w_assinatura=='') {  
-
-        dml_putFormaPagamento::getInstanceOf($dbms,$O,Nvl($_REQUEST['w_chave'],''),$_REQUEST['w_cliente'],$_REQUEST['w_nome'],
-             $_REQUEST['w_sigla'],$_REQUEST['w_ativo']);
-        ScriptOpen('JavaScript');
-        //ShowHTML('  location.href=\''.$R.'&w_chave='.$_REQUEST['w_chave'].'&P1='.$P1.'&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP='.$TP.'&SG='.$SG.MontaFiltro('GET').'\';');
-        ShowHTML('  location.href=\''.$R.'&O=L&P1='.$P1.'&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP='.$TP.'&SG='.$SG.'\';');
-        ScriptClose();
+      if (verificaAssinaturaEletronica($_SESSION['USERNAME'],strtoupper($_REQUEST['w_assinatura'])) || $w_assinatura=='') {  
+        if (!(strpos('IAE',$O)===false))  {
+          dml_putFormaPagamento::getInstanceOf($dbms,$O,Nvl($_REQUEST['w_chave'],''),$_REQUEST['w_cliente'],$_REQUEST['w_nome'],
+               $_REQUEST['w_sigla'],$_REQUEST['w_ativo']);
+          ScriptOpen('JavaScript');
+          ShowHTML('  location.href=\''.$R.'&O=L&P1='.$P1.'&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP='.$TP.'&SG='.$SG.'\';');
+          ScriptClose();
+        } else {                  
+           // Elimina todas as permissões existentes para depois incluir
+           dml_PutFormaPagamentoVinc::getInstanceOf($dbms, 'E',$_REQUEST['w_chave'],null);
+           for ($i=0; $i<=count($_POST['w_vinculo'])-1; $i=$i+1)   {
+             dml_PutFormaPagamentoVinc::getInstanceOf($dbms, 'I', $_REQUEST['w_chave'], $_POST['w_vinculo'][$i]);
+           }
+           ScriptOpen('JavaScript');
+           ShowHTML('  window.close() ;'); 
+           ScriptClose();
+        }       
       } else {
         ScriptOpen('JavaScript');
         ShowHTML('  alert(\'Assinatura Eletrônica inválida!\');');
@@ -620,7 +683,6 @@ function Grava() {
       break;
     } 
 } 
-
 // =========================================================================
 // Rotina principal
 // -------------------------------------------------------------------------

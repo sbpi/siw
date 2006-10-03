@@ -1,19 +1,18 @@
 <?
 extract($GLOBALS); include_once($w_dir_volta."classes/db/DatabaseQueriesFactory.php");
 /**
-* class db_getMenuList
+* class db_getMenuRelac
 *
 * { Description :- 
-*    Recupera os links aos quais uma opção pode ser subordinada
+*    Recupera os serviços a que o módulo está ligado
 * }
 */
 
-class db_getMenuList {
-   function getInstanceOf($dbms, $p_cliente, $p_operacao, $p_chave) {
-     extract($GLOBALS,EXTR_PREFIX_SAME,'strchema'); $sql=$strschema.'sp_getMenuList';
-     $params=array("p_cliente"  =>array($p_cliente,     B_NUMERIC,   32),
-                   "p_operacao" =>array($p_operacao,    B_VARCHAR,   40),
-                   "p_chave"    =>array($p_chave,       B_NUMERIC,   32),
+class db_getMenuRelac {
+   function getInstanceOf($dbms, $p_menu, $p_tramite) {
+     extract($GLOBALS,EXTR_PREFIX_SAME,'strchema'); $sql=$strschema.'SP_GETMENURELAC';
+     $params=array("p_menu"     =>array($p_menu,        B_INTEGER,   32),
+                   "p_tramite"  =>array($p_tramite,     B_INTEGER,   32),
                    "p_result"   =>array(null,           B_CURSOR,    -1)
                   );
      $l_rs = DatabaseQueriesFactory::getInstanceOf($sql, $dbms, $params, DB_TYPE);

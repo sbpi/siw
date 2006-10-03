@@ -12,10 +12,15 @@ include_once('classes/sp/db_getCustomerSite.php');
 include_once('classes/sp/db_getLinkSubMenu.php');
 include_once('classes/sp/db_getLinkDataParent.php');
 include_once('classes/sp/db_getUserData.php');
+include_once('classes/sp/db_getMenuRelac.php');
 include_once('classes/sp/db_verificasenha.php');
 include_once('classes/sp/db_verificaAssinatura.php');
 include_once('classes/sp/db_updatePassword.php');
 include_once('classes/sp/db_getSiwCliModLis.php');
+include_once('classes/sp/dml_putMenuRelac.php');
+include_once('funcoes/opcaoMenu.php');
+include_once('funcoes/selecaoFaseCheck.php');
+include_once('funcoes/selecaoServico.php');
 // =========================================================================
 //  /menu.php
 // ------------------------------------------------------------------------
@@ -444,7 +449,149 @@ function TrocaSenha() {
   Estrutura_Fecha();
   Rodape();
 }
+// =========================================================================
+// Rotina de inserção dos dados na tabela SIW_MENU_RELAC
+// -------------------------------------------------------------------------
+function Vinculacao() {
+  extract($GLOBALS);
+  global $w_Disabled;
+  $w_troca          = $_REQUEST['w_troca'];
+  $w_sq_menu        = $_REQUEST['w_sq_menu'];
+  $w_sq_tramite     = $_REQUEST['w_sq_tramite'];
+  $w_sq_menu_fornec = $_REQUEST['w_sq_menu_fornec'];
+  // Monta uma string para indicar a opção selecionada
+  $w_texto = opcaoMenu($w_sq_menu);
+  Cabecalho();
+  ShowHTML('<HEAD>');
+  Estrutura_CSS($w_cliente);
+  ShowHTML('<TITLE>'.$conSgSistema.' - Configuração das configurações</TITLE>');
+  ScriptOpen('JavaScript');
+  ValidateOpen('Validacao');
+  if (!(strpos('IAE',$O)===false)) {
+    if ($O=='I') {
+      Validate('w_sq_menu_fornec', 'Serviço', 'SELECT', '1', '1', '18', null, '1');
+      ShowHTML('  var i; ');
+      ShowHTML('  var w_erro=true; ');
+      ShowHTML('  for (i=0; i < theForm["w_sq_tramite[]"].length; i++) {');
+      ShowHTML('    if (theForm["w_sq_tramite[]"][i].checked) w_erro=false;');
+      ShowHTML('  }');
+      ShowHTML('  if (w_erro) {');
+      ShowHTML('    alert(\'Você deve informar pelo menos um trâmite!\'); ');
+      ShowHTML('    return false;');
+      ShowHTML('  }');
+    } 
+    Validate('w_assinatura', 'Assinatura Eletrônica', '1', '1', '6', '30', '1', '1');
+    ShowHTML('  theForm.Botao[0].disabled=true;');
+    ShowHTML('  theForm.Botao[1].disabled=true;');
+  } 
 
+  ValidateClose();
+  ScriptClose();
+  ShowHTML('</HEAD>');
+  if ($O=='I')      BodyOpen('onLoad=document.Form.w_sq_menu_fornec.focus();');
+  elseif ($O=='E')  BodyOpen('onLoad=document.Form.w_assinatura.focus();');
+  else              BodyOpen(null);
+  Estrutura_Topo_Limpo();
+  Estrutura_Menu();
+  Estrutura_Corpo_Abre();
+  Estrutura_Texto_Abre();
+  ShowHTML('<table border="0" cellpadding="0" cellspacing="0" width="100%">');
+  ShowHTML('<tr><td colspan=3 bgcolor="#FAEBD7"><table border=1 width="100%"><tr><td>');
+  ShowHTML('    <TABLE WIDTH="100%" CELLSPACING="'.$conTableCellSpacing.'" CELLPADDING="'.$conTableCellPadding.'" BorderColorDark="'.$conTableBorderColorDark.'" BorderColorLight="'.$conTableBorderColorLight.'">');
+  ShowHTML('        <tr valign="top">');
+  ShowHTML('          <td><font size="1">Opção:<br><b><font size=1 class="hl">'.substr($w_texto,0,strlen($w_texto)-4).'</font></b></td>');
+  ShowHTML('    </TABLE>');
+  ShowHTML('</TABLE>');
+  ShowHTML('  <tr><td>&nbsp;');
+  if ($O=='L') {
+    $RS = db_getMenuRelac::getInstanceOf($dbms, $w_sq_menu, null);
+    ShowHTML('<tr><td>');
+    ShowHTML('    <a accesskey="I" class="ss" href="'.$w_pagina.$par.'&R='.$w_pagina.$par.'&O=I&P1='.$P1.'&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP='.$TP.'&SG='.$SG.'&w_sq_menu='.$w_sq_menu.'"><u>I</u>ncluir</a>&nbsp;');
+    ShowHTML('    <a class="ss" href="#" onClick="opener.focus(); window.close();">Fechar</a>&nbsp;');
+    ShowHTML('    <td align="right"><b>Registros: '.count($RS));
+    ShowHTML('<tr><td align="center" colspan=2>');
+    ShowHTML('    <TABLE WIDTH="100%" bgcolor="'.$conTableBgColor.'" BORDER="'.$conTableBorder.'" CELLSPACING="'.$conTableCellSpacing.'" CELLPADDING="'.$conTableCellPadding.'" BorderColorDark="'.$conTableBorderColorDark.'" BorderColorLight="'.$conTableBorderColorLight.'">');
+    ShowHTML('        <tr bgcolor="'.$conTrBgColor.'" align="center" valign="top">');
+    ShowHTML('          <td><b>Serviço</td>');
+    ShowHTML('          <td><b>Operações</td>');
+    ShowHTML('          <td><b>Trâmites</td>');
+    ShowHTML('        </tr>');
+    $w_cont='';
+    if (count($RS)<=0) {
+      ShowHTML('      <tr bgcolor="'.$conTrBgColor.'"><td colspan=6 align="center"><font size="2"><b>Não foram encontrados registros.</b></td></tr>');
+    } else {
+      foreach($RS as $row) {
+        // Se for quebra de endereço, exibe uma linha com o endereço
+        if ($w_cont!=f($row,'nm_servico_fornecedor')) {
+          ShowHTML('      <tr bgcolor="'.$conTrBgColor.'" valign="top">');
+          ShowHTML('        <td>'.f($row,'nm_servico_fornecedor').' ('.f($row,'nm_modulo_fornecedor').')</td>');
+          $w_cont=f($row,'nm_servico_fornecedor');
+          ShowHTML('        <td>');
+          ShowHTML('          <A class="hl" HREF="'.$w_pagina.$par.'&R='.$w_pagina.$par.'&O=A&P1='.$P1.'&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP='.$TP.'&SG='.$SG.'&w_sq_menu='.$w_sq_menu.'&w_sq_tramite='.f($row,'sq_siw_tramite').'&w_sq_menu_fornec='.f($row,'servico_fornecedor').'">Alterar</A>&nbsp');
+          ShowHTML('&nbsp');
+          ShowHTML('        </td>');
+        } else {
+          ShowHTML('      <tr bgcolor="'.$conTrBgColor.'" valign="top">');
+          ShowHTML('        <td align="center"></td>');
+          ShowHTML('        <td align="center"></td>');
+        } 
+        ShowHTML('        <td>'.f($row,'nm_tramite').'</td>');
+        ShowHTML('      </tr>');
+      } 
+    } 
+
+    ShowHTML('      </center>');
+    ShowHTML('    </table>');
+    ShowHTML('  </table>');
+  } else {
+    if($O=='A')$w_Disabled='DISABLED';
+    $RS = DB_GetMenuRelac::getInstanceOf($dbms, $w_sq_menu, null);
+    $i=0;
+    foreach($RS as $row) {
+      if ($i==0) $w_sq_tramite = f($row,'sq_siw_tramite');
+      else       $w_sq_tramite .= ','.f($row,'sq_siw_tramite');
+      $i=1;
+    }
+    ShowHTML('      <tr><td align="justify" colspan="2"><font size=2>Informe o serviço e os trâmites nas quais esse serviço deve ter vinculação.</font></td></tr>');
+    ShowHTML('      <tr><td align="center" colspan="2" height="2" bgcolor="#000000">');
+    ShowHTML('      <tr><td colspan="2"><font size=2><b>');
+    AbreForm('Form',$w_pagina.'Grava', 'POST', 'return(Validacao(this));', null,$P1,$P2,$P3,$P4,$TP,$SG,$R,$O);
+    ShowHTML('<INPUT type="hidden" name="w_troca" value="">');
+    ShowHTML('<INPUT type="hidden" name="w_sq_menu" value="'.$w_sq_menu.'">');
+    if($O=='A') ShowHTML('<INPUT type="hidden" name="w_sq_menu_fornec" value="'.$w_sq_menu_fornec.'">');
+    ShowHTML('<tr bgcolor="'.$conTrBgColor.'"><td align="center">');
+    ShowHTML('    <table width="90%" border="0">');
+    ShowHTML('      <tr valign="top">');
+    selecaoServico('<U>S</U>erviço:', 'S', null, $w_sq_menu_fornec, $w_sq_menu, 'w_sq_menu_fornec', null, 'onChange="document.Form.action=\''.$w_pagina.$par.'\'; document.Form.O.value=\''.$O.'\'; document.Form.w_troca.value=\'w_sq_menu_fornec\'; document.Form.submit();"');
+    SelecaoFaseCheck('<u>T</u>râmites','T',null,$w_sq_tramite,$w_sq_menu_fornec,'w_sq_tramite[]','MENURELAC',null);
+    ShowHTML('      <tr><td colspan=2><b><U>A</U>ssinatura Eletrônica:<br><INPUT ACCESSKEY="A" class="sti" type="PASSWORD" name="w_assinatura" size="30" maxlength="30" value=""></td>');
+    ShowHTML('      </table>');
+    ShowHTML('      <tr><td align="center" colspan="2" height="1" bgcolor="#000000">');
+    ShowHTML('      <tr><td align="center" colspan="2">');
+    if ($O=='E') {
+      ShowHTML('            <input class="stb" type="submit" name="Botao" value="Excluir">');
+    } else {
+      ShowHTML('            <input class="stb" type="submit" name="Botao" value="Gravar">');
+    } 
+
+    ShowHTML('            <input class="stb" type="button" onClick="location.href=\''.$w_pagina.$par.'&P1='.$P1.'&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP='.$TP.'&SG='.$SG.'&w_sq_menu='.$w_sq_menu.'&O=L\';" name="Botao" value="Cancelar">');
+    ShowHTML('          </td>');
+    ShowHTML('      </tr>');
+    ShowHTML('    </table>');
+    ShowHTML('    </TD>');
+    ShowHTML('</tr>');
+    ShowHTML('</FORM>');
+  } 
+
+  ShowHTML('  </td>');
+  ShowHTML('</tr>');
+  ShowHTML('</table>');
+  Estrutura_Texto_Fecha();
+  Estrutura_Fecha();
+  Estrutura_Fecha();
+  Estrutura_Fecha();
+  Rodape();
+} 
 // =========================================================================
 // Procedimento que executa as operações de BD
 // -------------------------------------------------------------------------
@@ -479,6 +626,23 @@ function Grava() {
        ShowHTML('  alert(\'Assinatura Eletrônica atual inválida!\');');
        ShowHTML('  history.back(1);');
        ScriptClose();
+    } break;
+  case "SIWMENURELAC":
+    // Verifica se a Assinatura Eletrônica é válida
+    if (VerificaAssinaturaEletronica($_SESSION['USERNAME'],strtoupper($_REQUEST['w_assinatura'])) || $w_assinatura=='') {
+      // Elimina todas as permissões existentes para depois incluir
+      dml_PutMenuRelac::getInstanceOf($dbms, 'E', $_REQUEST['w_sq_menu'],$_REQUEST['w_sq_menu_fornec'], null);
+      for ($i=0; $i<=count($_POST['w_sq_tramite'])-1; $i=$i+1)   {
+        dml_PutMenuRelac::getInstanceOf($dbms, 'I', $_REQUEST['w_sq_menu'], $_REQUEST['w_sq_menu_fornec'], $_POST['w_sq_tramite'][$i]);
+      } 
+      ScriptOpen('JavaScript');
+      ShowHTML('  location.href=\''.$R.'&O=L&P1='.$P1.'&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP='.$TP.'&SG='.$SG.'&w_sq_menu='.$_REQUEST['w_sq_menu'].'\';');
+      ScriptClose();
+    } else {
+      ScriptOpen('JavaScript');
+      ShowHTML('  alert(\'Assinatura Eletrônica inválida!\');');
+      ShowHTML('  history.back(1);');
+      ScriptClose();
     } break;
   default:
     ScriptOpen('JavaScript');
@@ -521,6 +685,7 @@ function Main() {
   case 'FRAMES':        Frames(); break;
   case 'EXIBEDOCS':     ExibeDocs(); break;
   case 'SAIR':          Sair(); break;
+  case 'VINCULACAO':    Vinculacao(); break;
   default:
     Cabecalho();
     BodyOpen('onLoad=document.focus();');

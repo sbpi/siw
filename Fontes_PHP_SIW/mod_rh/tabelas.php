@@ -28,7 +28,7 @@ include_once($w_dir_volta.'funcoes/selecaoAbrangData.php');
 include_once($w_dir_volta.'funcoes/selecaoPais.php'); 
 
 // =========================================================================
-//  /Tabelas.php
+//  /tabelas.php
 // ------------------------------------------------------------------------
 // Nome     : Billy Jones Leal dos Santos
 // Descricao: Gerenciar tabelas básicas do módulo de gestão de pessoal
@@ -772,7 +772,8 @@ function DataEspecial() {
       } else {
           ShowHTML('            <input class="stb" type="submit" name="Botao" value="Atualizar">');
       } 
-    }            ShowHTML('            <input class="stb" type="button" onClick="location.href=\''.$w_pagina.$par.'&P1='.$P1.'&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP='.$TP.'&SG='.$SG.'&O=L\';" name="Botao" value="Cancelar">');
+    }
+    ShowHTML('            <input class="stb" type="button" onClick="location.href=\''.$w_pagina.$par.'&P1='.$P1.'&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP='.$TP.'&SG='.$SG.'&O=L\';" name="Botao" value="Cancelar">');
     ShowHTML('          </td>');
     ShowHTML('      </tr>');
     ShowHTML('    </table>');

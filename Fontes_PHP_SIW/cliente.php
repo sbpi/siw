@@ -1763,7 +1763,15 @@ function Grava() {
           $w_logo1  = null;
           $w_fundo  = null;
           foreach ($_FILES as $Chv => $Field) {
-            if ($Field['size'] > 0) {
+            if ($Field['error'] > 0) {
+              // Verifica se o tamanho das fotos está compatível com  o limite de 100KB. 
+              ScriptOpen('JavaScript');
+              ShowHTML('  alert(\'Atenção: o tamanho máximo do arquivo não pode exceder '.($w_maximo/1024).' KBytes!\');');
+              ShowHTML('  history.go(-1);');
+              ScriptClose();
+              exit();
+            }
+            if ($Field['size'] >= 0) {
               // Verifica a necessidade de criação dos diretórios do cliente
               if (!(file_exists(DiretorioCliente($_REQUEST['w_sq_pessoa'])))) {
                 mkdir(DiretorioCliente($_REQUEST['w_sq_pessoa']));

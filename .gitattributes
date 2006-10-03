@@ -579,7 +579,7 @@ Fontes_PHP_SIW/classes/jpgraph/jpgraph_radar.php -text
 Fontes_PHP_SIW/classes/jpgraph/jpgraph_regstat.php -text
 Fontes_PHP_SIW/classes/jpgraph/jpgraph_scatter.php -text
 Fontes_PHP_SIW/classes/jpgraph/jpgraph_stock.php -text
-Fontes_PHP_SIW/classes/mail/class_email.php -text
+Fontes_PHP_SIW/classes/mail/inc_cPHPezMail.php -text
 Fontes_PHP_SIW/classes/menu/readme.txt -text
 Fontes_PHP_SIW/classes/menu/xPandMenu.css -text
 Fontes_PHP_SIW/classes/menu/xPandMenu.js -text
@@ -650,6 +650,8 @@ Fontes_PHP_SIW/classes/sp/db_getEoUnitPaiList.php -text
 Fontes_PHP_SIW/classes/sp/db_getEsfera_IS.php -text
 Fontes_PHP_SIW/classes/sp/db_getEsquema.php -text
 Fontes_PHP_SIW/classes/sp/db_getEsquemaAtributo.php -text
+Fontes_PHP_SIW/classes/sp/db_getEsquemaInsert.php -text
+Fontes_PHP_SIW/classes/sp/db_getEsquemaScript.php -text
 Fontes_PHP_SIW/classes/sp/db_getEsquemaTabela.php -text
 Fontes_PHP_SIW/classes/sp/db_getEtapaDataParent.php -text
 Fontes_PHP_SIW/classes/sp/db_getEtapaDataParents.php -text
@@ -699,9 +701,11 @@ Fontes_PHP_SIW/classes/sp/db_getLinkSubMenu.php -text
 Fontes_PHP_SIW/classes/sp/db_getLocalList.php -text
 Fontes_PHP_SIW/classes/sp/db_getMenuCode.php -text
 Fontes_PHP_SIW/classes/sp/db_getMenuData.php -text
+Fontes_PHP_SIW/classes/sp/db_getMenuFormaPag.php -text
 Fontes_PHP_SIW/classes/sp/db_getMenuLink.php -text
 Fontes_PHP_SIW/classes/sp/db_getMenuList.php -text
 Fontes_PHP_SIW/classes/sp/db_getMenuOrder.php -text
+Fontes_PHP_SIW/classes/sp/db_getMenuRelac.php -text
 Fontes_PHP_SIW/classes/sp/db_getMenuUpper.php -text
 Fontes_PHP_SIW/classes/sp/db_getMenuUser.php -text
 Fontes_PHP_SIW/classes/sp/db_getMetaMensal_IS.php -text
@@ -901,6 +905,8 @@ Fontes_PHP_SIW/classes/sp/dml_putEoTipoPosto.php -text
 Fontes_PHP_SIW/classes/sp/dml_putEoTipoUni.php -text
 Fontes_PHP_SIW/classes/sp/dml_putEsquema.php -text
 Fontes_PHP_SIW/classes/sp/dml_putEsquemaAtributo.php -text
+Fontes_PHP_SIW/classes/sp/dml_putEsquemaInsert.php -text
+Fontes_PHP_SIW/classes/sp/dml_putEsquemaScript.php -text
 Fontes_PHP_SIW/classes/sp/dml_putEsquemaTabela.php -text
 Fontes_PHP_SIW/classes/sp/dml_putEtapaMensal.php -text
 Fontes_PHP_SIW/classes/sp/dml_putEventoTrigger.php -text
@@ -908,6 +914,7 @@ Fontes_PHP_SIW/classes/sp/dml_putFinancAcaoPPA_IS.php -text
 Fontes_PHP_SIW/classes/sp/dml_putFinanceiroConc.php -text
 Fontes_PHP_SIW/classes/sp/dml_putFinanceiroGeral.php -text
 Fontes_PHP_SIW/classes/sp/dml_putFormaPagamento.php -text
+Fontes_PHP_SIW/classes/sp/dml_putFormaPagamentoVinc.php -text
 Fontes_PHP_SIW/classes/sp/dml_putGPColaborador.php -text
 Fontes_PHP_SIW/classes/sp/dml_putGPContrato.php -text
 Fontes_PHP_SIW/classes/sp/dml_putGPModalidade.php -text
@@ -923,6 +930,7 @@ Fontes_PHP_SIW/classes/sp/dml_putLancamentoDoc.php -text
 Fontes_PHP_SIW/classes/sp/dml_putLancamentoEnvio.php -text
 Fontes_PHP_SIW/classes/sp/dml_putLancamentoOutra[!!-~].php -text
 Fontes_PHP_SIW/classes/sp/dml_putLancamentoOutra.php -text
+Fontes_PHP_SIW/classes/sp/dml_putMenuRelac.php -text
 Fontes_PHP_SIW/classes/sp/dml_putMetaMensalIni_IS.php -text
 Fontes_PHP_SIW/classes/sp/dml_putMetaMensal_IS.php -text
 Fontes_PHP_SIW/classes/sp/dml_putNatureza_IS.php -text
@@ -1209,6 +1217,7 @@ Fontes_PHP_SIW/mod_dc/dc_consulta.php -text
 Fontes_PHP_SIW/mod_dc/dc_dicionario.php -text
 Fontes_PHP_SIW/mod_dc/dc_tabelas.php -text
 Fontes_PHP_SIW/mod_dc/etl.php -text
+Fontes_PHP_SIW/mod_dc/etl_txt.php -text
 Fontes_PHP_SIW/mod_fn/lancamento.php -text
 Fontes_PHP_SIW/mod_fn/rel_contas.php -text
 Fontes_PHP_SIW/mod_fn/rel_fluxo.php -text

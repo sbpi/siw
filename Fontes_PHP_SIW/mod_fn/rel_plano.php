@@ -15,7 +15,7 @@ include_once($w_dir_volta.'classes/sp/db_getBenef.php');
 include_once($w_dir_volta.'funcoes/selecaoOrdenaRel.php');
 
 // =========================================================================
-//  /Rel_plano.php
+//  /rel_plano.php
 // ------------------------------------------------------------------------
 // Nome     : Celso Miguel Lago Filho
 // Descricao: Diversos tipos de relatórios para fazer o acompanhamento gerencial 

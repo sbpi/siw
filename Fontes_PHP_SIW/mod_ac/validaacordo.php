@@ -140,19 +140,20 @@ function ValidaAcordo($l_cliente,$l_chave,$l_sg1,$l_sg2,$l_sg3,$l_sg4,$l_tramite
       }
 
       // Verifica as parcelas
-      if ($l_existe_rs3==0) {
-        $l_erro.='<li>É obrigatório informar pelo menos uma parcela';
-        $l_tipo=0;
-      } else {
-        // Verifica se a soma das parcelas é igual ao valor total do acordo
-        $l_valor_pacelas=0.00;
-        foreach($l_rs3 as $row) { $l_valor_parcelas += f($row,'valor'); }
-        if (round(f($l_rs_solic,'valor_inicial')-$l_valor_parcelas,2)!=0) {
-          $l_erro.='<li>Valor do acordo ('.number_format(f($l_rs_solic,'valor_inicial'),2,',','.').') difere da soma das parcelas ('.number_format($l_valor_parcelas,2,',','.').')';
+      if (substr(f($l_rs_solic,'sigla'),0,3)!='GCA') {
+        if ($l_existe_rs3==0) {
+          $l_erro.='<li>É obrigatório informar pelo menos uma parcela';
           $l_tipo=0;
+        } else {
+          // Verifica se a soma das parcelas é igual ao valor total do acordo
+          $l_valor_pacelas=0.00;
+          foreach($l_rs3 as $row) { $l_valor_parcelas += f($row,'valor'); }
+          if (round(f($l_rs_solic,'valor_inicial')-$l_valor_parcelas,2)!=0) {
+            $l_erro.='<li>Valor do acordo ('.number_format(f($l_rs_solic,'valor_inicial'),2,',','.').') difere da soma das parcelas ('.number_format($l_valor_parcelas,2,',','.').')';
+            $l_tipo=0;
+          }
         }
-      }
-  
+      }  
   // Este bloco faz verificações em solicitações que estão em fases posteriores ao
   // cadastramento inicial
       if (count($l_rs_tramite)>0) {

@@ -2,24 +2,23 @@
 extract($GLOBALS);
 include_once($w_dir_volta.'classes/db/DatabaseQueriesFactory.php');
 /**
-* class dml_putEsquemaAtributo
+* class dml_putEsquemaInsert
 *
 * { Description :- 
-*    Mantem as colunas de uma tabela de um esquema para importação
+*    Mantem as tabelas de insert para inserção de registros
 * }
 */
 
-class dml_putEsquemaAtributo {
-   function getInstanceOf($dbms, $operacao, $p_chave, $p_sq_esquema_tabela, $p_sq_coluna, $p_ordem, $p_campo_externo, $p_mascara_data, $p_valor_default) {
-     extract($GLOBALS,EXTR_PREFIX_SAME,'strchema'); $sql=$strschema.'SP_PUTESQUEMAATRIBUTO';
+class dml_putEsquemaInsert {
+   function getInstanceOf($dbms, $operacao, $p_chave, $p_sq_esquema_tabela, $p_sq_coluna, $p_ordem, $p_valor, $p_registro) {
+     extract($GLOBALS,EXTR_PREFIX_SAME,'strchema'); $sql=$strschema.'SP_PUTESQUEMAINSERT';
      $params=array('p_operacao'                  =>array(tvl($operacao),                                   B_VARCHAR,        10),
                    'p_chave'                     =>array(tvl($p_chave),                                    B_INTEGER,        32),
                    'p_sq_esquema_tabela'         =>array(tvl($p_sq_esquema_tabela),                        B_INTEGER,        32),
                    'p_sq_coluna'                 =>array(tvl($p_sq_coluna),                                B_INTEGER,        32),
                    'p_ordem'                     =>array(tvl($p_ordem),                                    B_INTEGER,        32),
-                   'p_campo_externo'             =>array(tvl($p_campo_externo),                            B_VARCHAR,        30),
-                   'p_mascara_data'              =>array(tvl($p_mascara_data),                             B_VARCHAR,        50),
-                   'p_valor_default'             =>array(tvl($p_valor_default),                            B_VARCHAR,        50)                   
+                   'p_valor'                     =>array(tvl($p_valor),                                    B_VARCHAR,       255),
+                   'p_registro'                  =>array(tvl($p_registro),                                 B_INTEGER,        32)
                   );
      $l_rs = DatabaseQueriesFactory::getInstanceOf($sql, $dbms, $params, DB_TYPE);
      $l_error_reporting = error_reporting(); 
