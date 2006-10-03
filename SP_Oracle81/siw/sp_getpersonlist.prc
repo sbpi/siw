@@ -118,6 +118,44 @@ begin
                                                                    or    a.nome_resumido_ind like '%'||upper(acentos(p_nome))||'%')))
             and (p_sg_unidade is null or (p_sg_unidade is not null and acentos(f.sigla) like '%'||acentos(p_sg_unidade)||'%'))                     
       order by a.nome_indice;
+   Elsif p_restricao = 'INTERES' Then
+      -- Recupera os usuários do sistema
+      open p_result for
+        select a.sq_pessoa, b.cpf, a.nome, a.nome_resumido, a.nome_indice, a.nome_resumido_ind,
+               c.username,
+               f.sigla sg_unidade, f.nome nm_unidade, g.nome nm_local
+          from co_pessoa           a,
+                co_pessoa_fisica   b,
+                sg_autenticacao    c,
+                eo_unidade         f,
+                eo_localizacao     g,
+                co_tipo_vinculo    d,
+                co_tipo_pessoa     e,
+                pj_projeto_interes h,
+                gd_demanda_interes i
+         where (a.sq_pessoa          = b.sq_pessoa (+))
+           and (a.sq_pessoa          = c.sq_pessoa)
+           and (c.sq_unidade         = f.sq_unidade)
+           and (c.sq_localizacao     = g.sq_localizacao)
+           and (a.sq_tipo_vinculo    = d.sq_tipo_vinculo)
+           and (a.sq_tipo_pessoa     = e.sq_tipo_pessoa)
+           and (a.sq_pessoa          = h.sq_pessoa (+) and
+                p_chave              = h.sq_siw_solicitacao (+)
+               )
+           and (a.sq_pessoa          = i.sq_pessoa (+) and
+                p_chave              = i.sq_siw_solicitacao (+)
+               )
+           and c.ativo          = 'S'
+           and d.interno        = 'S'
+           and e.ativo          = 'S'
+           and e.nome           = 'Física'
+           and h.sq_pessoa      is null
+           and i.sq_pessoa      is null
+           and a.sq_pessoa_pai  = p_cliente
+            and (p_nome       is null or (p_nome       is not null and ((a.nome_indice like '%'||upper(acentos(p_nome))||'%')
+                                                                   or    a.nome_resumido_ind like '%'||upper(acentos(p_nome))||'%')))
+            and (p_sg_unidade is null or (p_sg_unidade is not null and acentos(f.sigla) like '%'||acentos(p_sg_unidade)||'%'))                     
+      order by a.nome_indice;
    Elsif p_restricao = 'TTCENTRAL' Then
       -- Recupera as pessoas vinculadas a uma central telefônica
       open p_result for
