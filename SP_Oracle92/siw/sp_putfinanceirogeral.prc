@@ -32,7 +32,7 @@ create or replace procedure SP_PutFinanceiroGeral
    w_chave      number(18) := Nvl(p_chave,0);
    w_log_sol    number(18);
    w_log_esp    number(18);
-   w_reg        ac_parametro%rowtype;
+   w_reg        fn_parametro%rowtype;
 
    cursor c_arquivos is
       select t.sq_siw_arquivo from siw_solic_arquivo t where t.sq_siw_solicitacao = p_chave;
