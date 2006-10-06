@@ -16,7 +16,8 @@ begin
       If p_restricao = 'LISTA' Then
          -- Recupera as demandas que o usuário pode ver
          open p_result for 
-            select a.*, b.nome, b.nome_resumido, b.nome_indice, b.nome_resumido_ind, d.sigla lotacao
+            select a.*, b.nome, b.nome_resumido, b.nome_indice, b.nome_resumido_ind, d.sigla lotacao,
+                   c.email
               from gd_demanda_interes  a,
                    co_pessoa           b,
                    sg_autenticacao     c,
@@ -39,7 +40,8 @@ begin
       If p_restricao = 'LISTA' Then
          -- Recupera as demandas que o usuário pode ver
          open p_result for 
-            select a.*, b.nome, b.nome_resumido, b.nome_indice, b.nome_resumido_ind, d.sigla lotacao
+            select a.*, b.nome, b.nome_resumido, b.nome_indice, b.nome_resumido_ind, d.sigla lotacao,
+                   c.email
               from pj_projeto_interes  a,
                    co_pessoa           b,
                    sg_autenticacao     c,
@@ -61,4 +63,3 @@ begin
    End If;
 End SP_GetSolicInter;
 /
-

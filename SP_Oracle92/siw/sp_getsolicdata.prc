@@ -226,6 +226,8 @@ begin
                 d.aba_code,           d.swift_code,                  d.endereco_estrang,
                 d.banco_estrang,      d.agencia_estrang,             d.cidade_estrang,
                 d.inicio,             d.informacoes,                 d.codigo_deposito,
+                d.empenho,            d.processo,                    d.assinatura,
+                d.publicacao,
                 d1.nome nm_tipo_acordo,d1.sigla sg_acordo,           d1.modalidade cd_modalidade,
                 d1.prazo_indeterm,    d1.pessoa_fisica,              d1.pessoa_juridica,  
                 d2.nome nm_outra_parte, d2.nome_resumido nm_outra_parte_resumido,
@@ -243,7 +245,8 @@ begin
                 m.titulo nm_projeto,
                 n.sq_cc,              n.nome nm_cc,                  n.sigla sg_cc,
                 o.nome_resumido nm_solic, o.nome_resumido||' ('||o2.sigla||')' nm_resp,
-                p.nome_resumido nm_exec
+                p.nome_resumido nm_exec,
+                i.sq_projeto_etapa,   i1.titulo nm_etapa
            from siw_menu                                       a 
                 inner        join eo_unidade                a2 on (a.sq_unid_executora        = a2.sq_unidade)
                   left outer join eo_unidade_resp           a3 on (a2.sq_unidade              = a3.sq_unidade and
@@ -282,6 +285,8 @@ begin
                        inner      join eo_unidade           o2 on (o1.sq_unidade              = o2.sq_unidade)
                    left outer     join co_pessoa            p  on (b.executor                 = p.sq_pessoa)
                 left outer        join eo_unidade           c  on (a.sq_unid_executora        = c.sq_unidade)
+                left outer   join pj_etapa_contrato         i  on (b.sq_siw_solicitacao  = i.sq_siw_solicitacao)
+                  left outer join pj_projeto_etapa          i1 on (i.sq_projeto_etapa    = i1.sq_projeto_etapa)                
                 inner             join (select sq_siw_solicitacao, max(sq_siw_solic_log) chave 
                                           from siw_solic_log
                                         group by sq_siw_solicitacao

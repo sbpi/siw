@@ -375,6 +375,8 @@ begin
                 d.produtos,           d.requisitos,                  d.observacao,
                 d.dia_vencimento,     d.vincula_projeto,             d.vincula_demanda,
                 d.vincula_viagem,     d.aviso_prox_conc,             d.dias_aviso,
+                d.empenho,            d.processo,                    d.assinatura,
+                d.publicacao,
                 d1.nome nm_tipo_acordo,d1.sigla sg_acordo,           d1.modalidade cd_modalidade,
                 d2.nome nm_outra_parte, d2.nome_resumido nm_outra_parte_resumido,
                 d2.nome_resumido_ind nm_outra_parte_resumido_ind,
@@ -394,7 +396,8 @@ begin
                 m.titulo nm_projeto,
                 n.sq_cc,              n.nome nm_cc,                  n.sigla sg_cc,
                 o.nome_resumido nm_solic, o.nome_resumido||' ('||o2.sigla||')' nm_resp,
-                p.nome_resumido nm_exec
+                p.nome_resumido nm_exec,
+                q.sq_projeto_etapa, q.titulo nm_etapa, MontaOrdem(q.sq_projeto_etapa) cd_ordem
            from siw_menu                                       a 
                    inner        join eo_unidade                a2 on (a.sq_unid_executora        = a2.sq_unidade)
                      left       join eo_unidade_resp           a3 on (a2.sq_unidade              = a3.sq_unidade and
@@ -452,6 +455,8 @@ begin
                           inner      join eo_unidade           o2 on (o1.sq_unidade              = o2.sq_unidade)
                       left           join co_pessoa            p  on (b.executor                 = p.sq_pessoa)
                    left              join eo_unidade           c  on (a.sq_unid_executora        = c.sq_unidade)
+                   left              join pj_etapa_contrato    i  on (b.sq_siw_solicitacao       = i.sq_siw_solicitacao)
+                      left           join pj_projeto_etapa     q  on (i.sq_projeto_etapa         = q.sq_projeto_etapa)                   
                    inner             join (select sq_siw_solicitacao, max(sq_siw_solic_log) chave 
                                              from siw_solic_log
                                            group by sq_siw_solicitacao
@@ -467,6 +472,7 @@ begin
             and (p_uorg_resp      is null or (p_uorg_resp   is not null and b.conclusao          is null and l.sq_unidade = p_uorg_resp))
             and (p_sqcc           is null or (p_sqcc        is not null and b.sq_cc              = p_sqcc))
             and (p_projeto        is null or (p_projeto     is not null and b.sq_solic_pai       = p_projeto))
+            and (p_atividade      is null or (p_atividade   is not null and i.sq_projeto_etapa   = p_atividade))
             and (p_uf             is null or (p_uf          is not null and f.co_uf              = p_uf))
             and (p_assunto        is null or (p_assunto     is not null and acentos(d.objeto,null) like '%'||acentos(p_assunto,null)||'%'))
             and (p_fase           is null or (p_fase        is not null and InStr(x_fase,''''||b.sq_siw_tramite||'''') > 0))
@@ -499,11 +505,13 @@ begin
                  (p_tipo         = 6     and b1.ativo          = 'S' and b2.acesso > 0)
                 )
             and ((instr(p_restricao,'PROJ')    = 0 and
+                  instr(p_restricao,'ETAPA')   = 0 and
                   instr(p_restricao,'PROP')    = 0 and
                   instr(p_restricao,'RESPATU') = 0 and
                   instr(p_restricao,'CC')      = 0
                  ) or 
                  ((instr(p_restricao,'PROJ')    > 0    and b.sq_solic_pai is not null) or
+                  (instr(p_restricao,'ETAPA')   > 0    and MontaOrdem(q.sq_projeto_etapa)  is not null) or                 
                   (instr(p_restricao,'PROP')    > 0    and d.outra_parte  is not null) or
                   (instr(p_restricao,'RESPATU') > 0    and b.executor     is not null) or
                   (instr(p_restricao,'CC')      > 0    and b.sq_cc        is not null)

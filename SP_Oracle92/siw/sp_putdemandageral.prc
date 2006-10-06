@@ -153,17 +153,12 @@ begin
           ordem            = p_ordem
       where sq_siw_solicitacao = p_chave;
 
-      -- Verifica a tabela de etapas, se receber p_atividade
-      If Nvl(p_atividade_ant,0) <> Nvl(p_atividade,0) Then
-         -- Apaga a vinculação com os dados antigos
-         delete pj_etapa_demanda where sq_siw_solicitacao = p_chave and Nvl(sq_projeto_etapa,0) = Nvl(p_atividade_ant,0);
-         
-         If p_atividade is not null then
-            -- Cria a vinculação com os novos dados
-            Insert Into pj_etapa_demanda 
-                   (sq_etapa_demanda,         sq_projeto_etapa, sq_siw_solicitacao)
-            Values (sq_etapa_demanda.nextval, p_atividade,      p_chave);
-         End If;
+      delete pj_etapa_demanda where sq_siw_solicitacao = p_chave;
+      If p_atividade is not null then
+         -- Cria a vinculação com os novos dados
+         Insert Into pj_etapa_demanda 
+                (sq_etapa_demanda,         sq_projeto_etapa, sq_siw_solicitacao)
+          Values (sq_etapa_demanda.nextval, p_atividade,     p_chave);
       End If;
    Elsif p_operacao = 'E' Then -- Exclusão
       -- Verifica a quantidade de logs da solicitação

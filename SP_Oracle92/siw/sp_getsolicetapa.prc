@@ -25,7 +25,7 @@ begin
                 k.sq_pessoa tit_exec, l.sq_pessoa sub_exec,
                 d.nome_resumido||' ('||f.sigla||')' nm_resp, g.sigla sg_setor,
                 nvl(h.qt_ativ,0) qt_ativ, h.sq_menu p2,
-                m.vincula_contrato pj_vincula_contrato, nvl(n.qt_contr,0) 
+                m.vincula_contrato pj_vincula_contrato, nvl(n.qt_contr,0) , n.sq_menu p3
            from pj_projeto_etapa                a
                 inner          join siw_solicitacao i on (a.sq_siw_solicitacao = i.sq_siw_solicitacao)
                   inner        join pj_projeto      m on (a.sq_siw_solicitacao = m.sq_siw_solicitacao)
@@ -65,7 +65,7 @@ begin
                                                                                Nvl(z.sigla,'-')     <> 'CA'
                                                                               )
                                      group by x.sq_projeto_etapa, y.sq_menu
-                                )                   n on (h.sq_projeto_etapa = a.sq_projeto_etapa)
+                                )                   n on (n.sq_projeto_etapa = a.sq_projeto_etapa)
           where a.sq_siw_solicitacao = p_chave;
    ElsIf p_restricao = 'LSTNULL' Then
       -- Recupera as etapas principais de um projeto
@@ -77,7 +77,7 @@ begin
                 k.sq_pessoa tit_exec, l.sq_pessoa sub_exec,
                 d.nome_resumido||' ('||f.sigla||')' nm_resp, g.sigla sg_setor,
                 nvl(h.qt_ativ,0) qt_ativ, h.sq_menu p2,
-                m.vincula_contrato pj_vincula_contrato, nvl(n.qt_contr,0) qt_contr
+                m.vincula_contrato pj_vincula_contrato, nvl(n.qt_contr,0) qt_contr, n.sq_menu p3
            from pj_projeto_etapa                a
                 inner          join siw_solicitacao i on (a.sq_siw_solicitacao = i.sq_siw_solicitacao)
                 inner        join pj_projeto      m on (a.sq_siw_solicitacao = m.sq_siw_solicitacao)
@@ -117,7 +117,7 @@ begin
                                                                                Nvl(z.sigla,'-')     <> 'CA'
                                                                               )
                                      group by x.sq_projeto_etapa, y.sq_menu
-                                )                   n on (h.sq_projeto_etapa = a.sq_projeto_etapa)
+                                )                   n on (n.sq_projeto_etapa = a.sq_projeto_etapa)
           where a.sq_siw_solicitacao = p_chave
             and (p_chave_aux2 is null or (p_chave_aux2 is not null and a.sq_projeto_etapa <> p_chave_aux2))
             and a.sq_etapa_pai       is null;
@@ -128,7 +128,7 @@ begin
                 k.sq_pessoa tit_exec, l.sq_pessoa sub_exec,
                 d.nome_resumido||' ('||f.sigla||')' nm_resp, g.sigla sg_setor,
                 nvl(h.qt_ativ,0) qt_ativ, h.sq_menu p2,
-                m.vincula_contrato pj_vincula_contrato, nvl(n.qt_contr,0) qt_contr
+                m.vincula_contrato pj_vincula_contrato, nvl(n.qt_contr,0) qt_contr, n.sq_menu p3
            from pj_projeto_etapa                a
                 inner          join siw_solicitacao i on (a.sq_siw_solicitacao = i.sq_siw_solicitacao)
                 inner          join pj_projeto      m on (a.sq_siw_solicitacao = m.sq_siw_solicitacao)                
@@ -168,7 +168,7 @@ begin
                                                                                Nvl(z.sigla,'-')     <> 'CA'
                                                                               )
                                      group by x.sq_projeto_etapa, y.sq_menu
-                                )                   n on (h.sq_projeto_etapa = a.sq_projeto_etapa)                                
+                                )                   n on (n.sq_projeto_etapa = a.sq_projeto_etapa)                                
           where a.sq_siw_solicitacao = p_chave
             and a.sq_etapa_pai       = p_chave_aux
             and (p_chave_aux2 is null or (p_chave_aux2 is not null and a.sq_projeto_etapa <> p_chave_aux2));
@@ -179,7 +179,7 @@ begin
                 case a.programada when 'S' then 'Sim' else 'Não' end nm_programada,
                 case a.cumulativa when 'S' then 'Sim' else 'Não' end nm_cumulativa,                
                 d.nome_resumido||' ('||f.sigla||')' nm_resp, g.sigla sg_setor,
-                nvl(h.qt_ativ,0) qt_ativ, h.sq_menu p2, nvl(n.qt_contr,0) qt_contr, 
+                nvl(h.qt_ativ,0) qt_ativ, h.sq_menu p2, nvl(n.qt_contr,0) qt_contr, n.sq_menu p3,
                 to_char(a.ultima_atualizacao, 'DD/MM/YYYY, HH24:MI:SS') phpdt_data
            from pj_projeto_etapa                a
                 left outer join eo_unidade_resp b on (a.sq_unidade       = b.sq_unidade and
@@ -209,7 +209,7 @@ begin
                                                                                Nvl(z.sigla,'-')     <> 'CA'
                                                                               )
                                      group by x.sq_projeto_etapa, y.sq_menu
-                                )                   n on (h.sq_projeto_etapa = a.sq_projeto_etapa)
+                                )                   n on (n.sq_projeto_etapa = a.sq_projeto_etapa)
           where a.sq_siw_solicitacao = p_chave
             and a.sq_projeto_etapa   = p_chave_aux;
    Elsif p_restricao = 'FILHOS' Then
