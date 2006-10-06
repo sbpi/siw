@@ -29,6 +29,8 @@ create or replace procedure SP_GetSolicList
     p_atividade    in number   default null,
     p_sq_acao_ppa  in varchar2 default null,
     p_sq_orprior   in number   default null,
+    p_empenho      in varchar2 default null,
+    p_processo     in varchar2 default null,
     p_result       out sys_refcursor) is
     
     l_item       varchar2(18);
@@ -487,6 +489,8 @@ begin
                                                                             (acentos(d2.nome_resumido,null) like '%'||acentos(p_proponente,null)||'%')
                                              )
                 )
+            and (p_empenho        is null or (p_empenho     is not null and upper(d.empenho)     = upper(p_empenho)))
+            and (p_processo       is null or (p_processo    is not null and upper(d.processo)    = upper(p_processo)))
             and ((substr(p_restricao,1,3)     = 'GCR' and d1.modalidade = 'F') or
                  (substr(p_restricao,1,3)     = 'GCA' and d1.modalidade = 'I') or
                  (substr(p_restricao,1,3)     = 'GCB' and d1.modalidade = 'E') or
@@ -847,14 +851,13 @@ begin
                           end
                 end titulo
            from siw_menu                   a
-                inner join siw_modulo      a1 on (a.sq_modulo          = a1.sq_modulo),
-                siw_solicitacao            b
-                inner   join siw_tramite   b1 on (b.sq_siw_tramite     = b1.sq_siw_tramite and 
-                                                  b1.sq_siw_tramite    in (select sq_siw_tramite 
-                                                                             from siw_menu_relac 
-                                                                            where servico_cliente    = p_restricao 
-                                                                              and servico_fornecedor = p_menu
-                                                                          )
+                inner join siw_modulo      a1 on (a.sq_modulo          = a1.sq_modulo)
+                inner join siw_menu_relac  a2 on (a.sq_menu            = a2.servico_cliente and
+                                                  a2.servico_cliente   = p_restricao
+                                                 )
+                inner join siw_solicitacao b  on (a2.servico_fornecedor= b.sq_menu and
+                                                  a2.sq_siw_tramite    = b.sq_siw_tramite and
+                                                  b.sq_menu            = nvl(p_menu, b.sq_menu) 
                                                  )
                 inner   join siw_menu      b2 on (b.sq_menu            = b2.sq_menu)
                   inner join siw_modulo    b3 on (b2.sq_modulo         = b3.sq_modulo)
@@ -868,8 +871,8 @@ begin
                                        left join ct_cc           z on y.sq_cc              = z.sq_cc
                                        left join pj_projeto      k on y.sq_solic_pai       = k.sq_siw_solicitacao
                              )             e  on (b.sq_siw_solicitacao = e.sq_siw_solicitacao)
-          where a.sq_menu         = p_restricao
-            and b.sq_menu         = p_menu
+          where a.sq_menu        = p_restricao
+            and b.sq_menu        = nvl(p_menu, b.sq_menu)
             and ((a1.sigla = 'DM' and b3.sigla = 'AC' and e.vincula_demanda  = 'S') or
                  (a1.sigla = 'PR' and b3.sigla = 'AC' and e.vincula_projeto  = 'S') or
                  (a1.sigla = 'PD' and b3.sigla = 'AC' and e.vincula_viagem   = 'S') or
