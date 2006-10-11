@@ -25,7 +25,7 @@ begin
                 k.sq_pessoa tit_exec, l.sq_pessoa sub_exec,
                 d.nome_resumido||' ('||f.sigla||')' nm_resp, g.sigla sg_setor,
                 nvl(h.qt_ativ,0) qt_ativ, h.sq_menu p2,
-                m.vincula_contrato pj_vincula_contrato, nvl(n.qt_contr,0)                 
+                m.vincula_contrato pj_vincula_contrato, nvl(n.qt_contr,0), n.sq_menu p3           
            from pj_projeto_etapa                a,
                 siw_solicitacao i,
                 pj_projeto      m,
@@ -94,7 +94,7 @@ begin
                 k.sq_pessoa tit_exec, l.sq_pessoa sub_exec,
                 d.nome_resumido||' ('||f.sigla||')' nm_resp, g.sigla sg_setor,
                 nvl(h.qt_ativ,0) qt_ativ, h.sq_menu p2,
-                m.vincula_contrato pj_vincula_contrato, nvl(n.qt_contr,0)  
+                m.vincula_contrato pj_vincula_contrato, nvl(n.qt_contr,0) qt_contr, n.sq_menu p3 
            from pj_projeto_etapa                a,
                 siw_solicitacao i,
                 pj_projeto      m,
@@ -162,7 +162,7 @@ begin
                 k.sq_pessoa tit_exec, l.sq_pessoa sub_exec,
                 d.nome_resumido||' ('||f.sigla||')' nm_resp, g.sigla sg_setor,
                 nvl(h.qt_ativ,0) qt_ativ, h.sq_menu p2,
-                m.vincula_contrato pj_vincula_contrato, nvl(n.qt_contr,0)  
+                m.vincula_contrato pj_vincula_contrato, nvl(n.qt_contr,0) qt_contr, n.sq_menu p3
            from pj_projeto_etapa                a,
                 siw_solicitacao i,
                 pj_projeto      m,
@@ -235,7 +235,7 @@ begin
                 decode(a.cumulativa,'S','Sim','Não') nm_cumulativa,
                 d.nome_resumido||' ('||f.sigla||')' nm_resp, g.sigla sg_setor,
                 nvl(h.qt_ativ,0) qt_ativ, h.sq_menu p2,
-                m.vincula_contrato pj_vincula_contrato, nvl(n.qt_contr,0)
+                m.vincula_contrato pj_vincula_contrato, nvl(n.qt_contr,0) qt_contr, n.sq_menu p3
            from pj_projeto_etapa                a,
                 pj_projeto      m,
                 eo_unidade_resp b,

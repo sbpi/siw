@@ -269,6 +269,8 @@ begin
                 d.aba_code,           d.swift_code,                  d.endereco_estrang,
                 d.banco_estrang,      d.agencia_estrang,             d.cidade_estrang,
                 d.inicio,             d.informacoes,                 d.codigo_deposito,
+                d.empenho,            d.processo,                    d.assinatura,
+                d.publicacao,                
                 d1.nome nm_tipo_acordo,d1.sigla sg_acordo,           d1.modalidade cd_modalidade,
                 d1.prazo_indeterm,    d1.pessoa_fisica,              d1.pessoa_juridica,
                 d2.nome nm_outra_parte, d2.nome_resumido nm_outra_parte_resumido,
@@ -286,11 +288,12 @@ begin
                 m.titulo nm_projeto,
                 n.sq_cc,              n.nome nm_cc,                  n.sigla sg_cc,
                 o.nome_resumido nm_solic, o.nome_resumido||' ('||o2.sigla||')' nm_resp,
-                p.nome_resumido nm_exec
-           from siw_menu                                       a,
-                eo_unidade                a2,
-                eo_unidade_resp           a3,
-                eo_unidade_resp           a4,
+                p.nome_resumido nm_exec,
+                i.sq_projeto_etapa,   i1.titulo nm_etapa                
+           from siw_menu             a,
+                eo_unidade           a2,
+                eo_unidade_resp      a3,
+                eo_unidade_resp      a4,
                 siw_modulo           a1,
                 siw_solicitacao      b ,
                 siw_tramite          b1,
@@ -313,10 +316,12 @@ begin
                 eo_unidade           o2,
                 co_pessoa            p ,
                 eo_unidade           c ,
+                pj_etapa_contrato    i,
+                pj_projeto_etapa     i1,
                 (select sq_siw_solicitacao, max(sq_siw_solic_log) chave
                    from siw_solic_log
                  group by sq_siw_solicitacao
-               )                    j ,
+               )                     j ,
                 gd_demanda_log       k ,
                 sg_autenticacao      l
           where (a.sq_unid_executora        = a2.sq_unidade)
@@ -356,6 +361,8 @@ begin
             and (o1.sq_unidade              = o2.sq_unidade)
             and (b.executor                 = p.sq_pessoa (+))
             and (a.sq_unid_executora        = c.sq_unidade (+))
+            and (b.sq_siw_solicitacao       = i.sq_siw_solicitacao (+))
+            and (i.sq_projeto_etapa         = i1.sq_projeto_etapa (+))
             and (b.sq_siw_solicitacao       = j.sq_siw_solicitacao)
             and (j.chave                    = k.sq_siw_solic_log (+))
             and (k.destinatario             = l.sq_pessoa (+))

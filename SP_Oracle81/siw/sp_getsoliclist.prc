@@ -29,6 +29,8 @@ create or replace procedure SP_GetSolicList
     p_atividade    in number   default null,
     p_sq_acao_ppa  in varchar2 default null,
     p_sq_orprior   in number   default null,
+    p_empenho      in varchar2 default null,
+    p_processo     in varchar2 default null,    
     p_result       out siw.sys_refcursor) is
 
     l_item       varchar2(18);
@@ -422,6 +424,8 @@ begin
                 d.produtos,           d.requisitos,                  d.observacao,
                 d.dia_vencimento,     d.vincula_projeto,             d.vincula_demanda,
                 d.vincula_viagem,     d.aviso_prox_conc,             d.dias_aviso,
+                d.empenho,            d.processo,                    d.assinatura,
+                d.publicacao,
                 d1.nome nm_tipo_acordo,d1.sigla sg_acordo,           d1.modalidade cd_modalidade,
                 d2.nome nm_outra_parte, d2.nome_resumido nm_outra_parte_resumido,
                 d2.nome_resumido_ind nm_outra_parte_resumido_ind,                
@@ -441,19 +445,20 @@ begin
                 m.titulo nm_projeto,
                 n.sq_cc,              n.nome nm_cc,                  n.sigla sg_cc,
                 o.nome_resumido nm_solic, o.nome_resumido||' ('||o2.sigla||')' nm_resp,
-                p.nome_resumido nm_exec
-           from siw_menu                                       a,
+                p.nome_resumido nm_exec,
+                q.sq_projeto_etapa, q.titulo nm_etapa, MontaOrdem(q.sq_projeto_etapa) cd_ordem
+           from siw_menu                  a,
                 eo_unidade                a2,
                 eo_unidade_resp           a3,
                 eo_unidade_resp           a4,
-                siw_modulo           a1,
-                siw_solicitacao      b,
-                siw_tramite          b1,
+                siw_modulo                a1,
+                siw_solicitacao           b,
+                siw_tramite               b1,
                 (select sq_siw_solicitacao, acesso(sq_siw_solicitacao, p_pessoa) acesso
                                              from siw_solicitacao
-                                          )                    b2,
-                ac_acordo            d,
-                co_forma_pagamento   d7,
+                )                         b2,
+                ac_acordo                 d,
+                co_forma_pagamento        d7,
                 (select x.sq_siw_solicitacao, sum(z.valor) valor
                    from ac_acordo_parcela x,
                         fn_lancamento     y,
@@ -462,32 +467,34 @@ begin
                     and (y.sq_siw_solicitacao = z.sq_siw_solicitacao)
                     and x.quitacao            is not null
                  group by x.sq_siw_solicitacao
-                )                    d8,
-                ac_tipo_acordo       d1,
-                co_pessoa            d2,
-                co_pessoa_fisica     d21,
-                co_pessoa_juridica   d22,
-                co_pessoa_conta      d4,
-                co_agencia           d5,
-                co_banco             d6,
-                co_pessoa            d3,
-                eo_unidade           e,
-                eo_unidade_resp      e1,
-                eo_unidade_resp      e2,
-                co_cidade            f,
-                pj_projeto           m,
-                ct_cc                n,
-                co_pessoa            o,
-                sg_autenticacao      o1,
-                eo_unidade           o2,
-                co_pessoa            p,
-                eo_unidade           c,
+                )                         d8,
+                ac_tipo_acordo            d1,
+                co_pessoa                 d2,
+                co_pessoa_fisica          d21,
+                co_pessoa_juridica        d22,
+                co_pessoa_conta           d4,
+                co_agencia                d5,
+                co_banco                  d6,
+                co_pessoa                 d3,
+                eo_unidade                e,
+                eo_unidade_resp           e1,
+                eo_unidade_resp           e2,
+                co_cidade                 f,
+                pj_projeto                m,
+                ct_cc                     n,
+                co_pessoa                 o,
+                sg_autenticacao           o1,
+                eo_unidade                o2,
+                co_pessoa                 p,
+                eo_unidade                c,
+                pj_etapa_contrato         i,
+                pj_projeto_etapa          q,
                 (select sq_siw_solicitacao, max(sq_siw_solic_log) chave
-                                             from siw_solic_log
-                                           group by sq_siw_solicitacao
-                                          )                    j,
-                ac_acordo_log        k,
-                sg_autenticacao      l
+                   from siw_solic_log
+                 group by sq_siw_solicitacao
+                )                          j,
+                ac_acordo_log              k,
+                sg_autenticacao            l
           where (a.sq_unid_executora        = a2.sq_unidade)
             and (a2.sq_unidade              = a3.sq_unidade (+) and
                  a3.tipo_respons (+)        = 'T'           and
@@ -536,6 +543,8 @@ begin
             and (o1.sq_unidade              = o2.sq_unidade)
             and (b.executor                 = p.sq_pessoa (+))
             and (a.sq_unid_executora        = c.sq_unidade (+))
+            and (b.sq_siw_solicitacao       = i.sq_siw_solicitacao (+))
+            and (i.sq_projeto_etapa         = q.sq_projeto_etapa (+))
             and (b.sq_siw_solicitacao       = j.sq_siw_solicitacao)
             and (j.chave                    = k.sq_siw_solic_log (+))
             and (k.destinatario             = l.sq_pessoa (+))
@@ -548,6 +557,7 @@ begin
             and (p_uorg_resp      is null or (p_uorg_resp   is not null and b.conclusao          is null and l.sq_unidade = p_uorg_resp))
             and (p_sqcc           is null or (p_sqcc        is not null and b.sq_cc              = p_sqcc))
             and (p_projeto        is null or (p_projeto     is not null and b.sq_solic_pai       = p_projeto))
+            and (p_atividade      is null or (p_atividade   is not null and i.sq_projeto_etapa   = p_atividade))            
             and (p_uf             is null or (p_uf          is not null and f.co_uf              = p_uf))
             and (p_assunto        is null or (p_assunto     is not null and acentos(d.objeto,null) like '%'||acentos(p_assunto,null)||'%'))
             and (p_fase           is null or (p_fase        is not null and InStr(x_fase,''''||b.sq_siw_tramite||'''') > 0))
@@ -562,6 +572,8 @@ begin
                                                                             (acentos(d2.nome_resumido,null) like '%'||acentos(p_proponente,null)||'%')
                                              )
                 )
+            and (p_empenho        is null or (p_empenho     is not null and upper(d.empenho)     = upper(p_empenho)))
+            and (p_processo       is null or (p_processo    is not null and upper(d.processo)    = upper(p_processo)))                
             and ((substr(p_restricao,1,3)     = 'GCR' and d1.modalidade = 'F') or
                  (substr(p_restricao,1,3)     = 'GCA' and d1.modalidade = 'I') or
                  (substr(p_restricao,1,3)     = 'GCB' and d1.modalidade = 'E') or
@@ -580,11 +592,13 @@ begin
                  (p_tipo         = 6     and b1.ativo          = 'S' and b2.acesso > 0)
                 )
             and ((instr(p_restricao,'PROJ')    = 0 and
+                  instr(p_restricao,'ETAPA')   = 0 and            
                   instr(p_restricao,'PROP')    = 0 and
                   instr(p_restricao,'RESPATU') = 0 and
                   instr(p_restricao,'CC')      = 0
                  ) or 
                  ((instr(p_restricao,'PROJ')    > 0    and b.sq_solic_pai is not null) or
+                  (instr(p_restricao,'ETAPA')   > 0    and MontaOrdem(q.sq_projeto_etapa)  is not null) or                                  
                   (instr(p_restricao,'PROP')    > 0    and d.outra_parte  is not null) or
                   (instr(p_restricao,'RESPATU') > 0    and b.executor     is not null) or
                   (instr(p_restricao,'CC')      > 0    and b.sq_cc        is not null)
@@ -980,15 +994,15 @@ begin
    Else -- Trata a vinculação entre serviços
       -- Recupera as solicitações que o usuário pode ver
       open p_result for
-         select b.sq_siw_solicitacao, 
+         select b.sq_siw_solicitacao,
                 decode(d.sq_siw_solicitacao,null,decode(e.sq_siw_solicitacao,null,null,e.titulo),d.titulo) titulo
-           from siw_menu         a,
-                siw_modulo       a1,
-                siw_solicitacao  b,
-                siw_tramite      b1,
-                siw_menu         b2,
-                siw_modulo       b3,
-                pj_projeto       d,
+           from siw_menu        a,
+                siw_modulo      a1,
+                siw_menu_relac  a2,
+                siw_solicitacao b,
+                siw_menu        b2,
+                siw_modulo      b3,
+                pj_projeto      d,
                 (select x.sq_siw_solicitacao, x.codigo_interno, x.vincula_demanda, 
                         x.vincula_projeto, x.vincula_viagem,
                         w.nome_resumido||' - '||decode(z.sq_cc,null,k.titulo,z.nome)||' ('||to_char(x.inicio,'dd/mm/yyyy')||'-'||to_char(x.fim,'dd/mm/yyyy')||')' as titulo
@@ -999,23 +1013,21 @@ begin
                         pj_projeto      k
                   where x.outra_parte        = w.sq_pessoa
                     and x.sq_siw_solicitacao = y.sq_siw_solicitacao
-                    and y.sq_cc              = z.sq_cc
-                    and y.sq_solic_pai       = k.sq_siw_solicitacao
-               )                 e
+                    and y.sq_cc              = z.sq_cc (+)
+                    and y.sq_solic_pai       = k.sq_siw_solicitacao (+)
+                )               e
           where (a.sq_modulo          = a1.sq_modulo)
-            and (b.sq_siw_tramite     = b1.sq_siw_tramite and 
-                 b1.sq_siw_tramite    in (select sq_siw_tramite 
-                                            from siw_menu_relac 
-                                           where servico_cliente    = p_restricao 
-                                             and servico_fornecedor = p_menu
-                                         )
-                )
+            and (a.sq_menu            = a2.servico_cliente and
+                 a2.servico_cliente   = p_restricao)
+            and (a2.servico_fornecedor= b.sq_menu and
+                 a2.sq_siw_tramite    = b.sq_siw_tramite and
+                 b.sq_menu            = nvl(p_menu, b.sq_menu))
             and (b.sq_menu            = b2.sq_menu)
             and (b2.sq_modulo         = b3.sq_modulo)
             and (b.sq_siw_solicitacao = d.sq_siw_solicitacao (+))
             and (b.sq_siw_solicitacao = e.sq_siw_solicitacao (+))
-            and a.sq_menu         = p_restricao
-            and b.sq_menu         = p_menu
+            and a.sq_menu        = p_restricao
+            and b.sq_menu        = nvl(p_menu, b.sq_menu)
             and ((a1.sigla = 'DM' and b3.sigla = 'AC' and e.vincula_demanda  = 'S') or
                  (a1.sigla = 'PR' and b3.sigla = 'AC' and e.vincula_projeto  = 'S') or
                  (a1.sigla = 'PD' and b3.sigla = 'AC' and e.vincula_viagem   = 'S') or
@@ -1026,7 +1038,7 @@ begin
             and (acesso(b.sq_siw_solicitacao,p_pessoa) > 0 or
                  InStr(l_resp_unid,''''||b.sq_unidade||'''') > 0
                 )
-         order by 2;
+         order by 2;         
    End If;
 end SP_GetSolicList;
 /

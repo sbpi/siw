@@ -87,7 +87,6 @@ begin
            and d.sq_acordo_parcela   is null
            and (b.sq_siw_solicitacao = e.sq_siw_solicitacao (+))
            and (e.sq_acordo_parcela  = f.sq_acordo_parcela  (+))
-           and a.sq_menu             = p_menu
            and (p_chave       is null or (p_chave       is not null and a.sq_siw_solicitacao = p_chave))
            and (p_chave_aux   is null or (p_chave_aux   is not null and c.sq_acordo_parcela  = p_chave_aux))
            and (p_outra_parte is null or (p_outra_parte is not null and (acentos(g.nome,null) like '%'||acentos(p_outra_parte,null)||'%' or acentos(g.nome_resumido,null) like '%'||acentos(p_outra_parte,null)||'%')))

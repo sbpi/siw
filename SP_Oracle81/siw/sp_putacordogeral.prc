@@ -24,6 +24,12 @@ create or replace procedure SP_PutAcordoGeral
     p_sq_forma_pagamento  in number    default null,
     p_forma_atual         in number    default null,
     p_inicio_atual        in date      default null,
+    p_etapa               in number    default null,    
+    p_codigo              in varchar2  default null,
+    p_numero_empenho      in varchar2  default null,
+    p_numero_processo     in varchar2  default null,
+    p_assinatura          in date      default null,
+    p_publicacao          in date      default null,    
     p_chave_nova          out number,
     p_codigo_interno      in out varchar2
    ) is
@@ -79,12 +85,14 @@ begin
       Insert into ac_acordo
          ( sq_siw_solicitacao,  cliente,           sq_tipo_acordo,       inicio,
            fim,                 valor_inicial,     objeto,               aviso_prox_conc,     
-           dias_aviso,          sq_tipo_pessoa,    sq_forma_pagamento
+           dias_aviso,          sq_tipo_pessoa,    sq_forma_pagamento,   empenho,
+           processo,            assinatura,        publicacao
          )
       (select
            w_chave,             p_cliente,         p_sq_tipo_acordo,     p_inicio,
            p_fim,               p_valor,           p_objeto,             p_aviso,
-           p_dias,              p_sq_tipo_pessoa,  p_sq_forma_pagamento
+           p_dias,              p_sq_tipo_pessoa,  p_sq_forma_pagamento, p_numero_empenho,
+           p_numero_processo,   p_assinatura,      p_publicacao
         from dual
       );
 
@@ -102,7 +110,14 @@ begin
         where a.sq_menu = p_menu
           and a.sigla   = 'CI'
       );
-           
+      
+      -- Se receber p_atividade, grava na tabela de atividades de projeto
+      If p_etapa is not null Then
+         Insert Into pj_etapa_contrato
+                (sq_etapa_contrato,         sq_projeto_etapa, sq_siw_solicitacao)
+         Values (sq_etapa_contrato.nextval, p_etapa,          w_chave);
+      End If;
+                 
       -- Recupera o código interno  do acordo, gerado por trigger
       select codigo_interno into p_codigo_interno from ac_acordo where sq_siw_solicitacao = w_chave;
 
@@ -208,7 +223,11 @@ begin
           objeto             = trim(p_objeto),
           aviso_prox_conc    = p_aviso,
           dias_aviso         = p_dias,
-          sq_forma_pagamento = p_sq_forma_pagamento 
+          sq_forma_pagamento = p_sq_forma_pagamento,
+          empenho            = p_numero_empenho,
+          processo           = p_numero_processo,
+          assinatura         = p_assinatura,
+          publicacao         = p_publicacao
       where sq_siw_solicitacao = p_chave;
       
       If Nvl(p_sq_tipo_pessoa,0) = 1 Then
@@ -232,7 +251,14 @@ begin
                codigo_deposito  = null
          where sq_siw_solicitacao = p_chave;
       End If;
-
+      delete pj_etapa_contrato where sq_siw_solicitacao = p_chave;
+      
+      If p_etapa is not null then
+         -- Cria a vinculação com os novos dados
+         Insert Into pj_etapa_contrato 
+                (sq_etapa_contrato,         sq_projeto_etapa, sq_siw_solicitacao)
+         Values (sq_etapa_contrato.nextval, p_etapa,      p_chave);
+      End If;
    Elsif p_operacao = 'E' Then -- Exclusão
       -- Verifica a quantidade de logs da solicitação
       select count(*) into w_log_sol from siw_solic_log  where sq_siw_solicitacao = p_chave;
@@ -269,7 +295,7 @@ begin
          
          delete siw_solic_arquivo where sq_siw_solicitacao = p_chave;
          delete siw_arquivo       where sq_siw_arquivo     in (w_arq);
-         
+         delete pj_etapa_contrato where sq_siw_solicitacao = p_chave;         
          -- Remove os registros vinculados à demanda
          delete ac_acordo_representante where sq_siw_solicitacao = p_chave;
          delete ac_acordo_log           where sq_siw_solicitacao = p_chave;

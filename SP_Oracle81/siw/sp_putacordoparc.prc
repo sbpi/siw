@@ -46,7 +46,9 @@ begin
            (sq_acordo_parcela.nextval, p_chave,            1,       sysdate, w_reg.fim,    p_observacao, w_reg.valor_inicial);
       Else
          w_meses := round(months_between(w_reg.fim, w_reg.inicio));
-          
+         If w_meses = 0 Then
+            w_meses := 1;
+         End If;
          If p_valor_parcela = 'I' Then
             w_valor   := w_reg.valor_inicial / w_meses;
             w_valor_1 := w_valor;
@@ -132,4 +134,3 @@ begin
    End If;
 end SP_PutAcordoParc;
 /
-
