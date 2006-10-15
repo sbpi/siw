@@ -15,7 +15,6 @@ begin
              inner   join siw_menu    c on (a.servico_fornecedor = c.sq_menu)
                inner join siw_modulo  d on (c.sq_modulo          = d.sq_modulo)
              inner   join siw_tramite e on (a.sq_siw_tramite     = e.sq_siw_tramite)
-             inner   join (select 
        where a.servico_cliente = p_sq_menu
          and ((p_sq_tramite  is null) or (p_sq_tramite is not null and a.sq_siw_tramite = p_sq_tramite))
        order by b.nome, c.nome, e.nome;
