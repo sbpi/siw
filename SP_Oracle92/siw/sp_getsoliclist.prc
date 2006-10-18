@@ -183,6 +183,7 @@ begin
             and (p_unidade        is null or (p_unidade     is not null and d.sq_unidade_resp    = p_unidade))
             and (p_prioridade     is null or (p_prioridade  is not null and d.prioridade         = p_prioridade))
             and (p_solicitante    is null or (p_solicitante is not null and b.solicitante        = p_solicitante))
+            and (p_sq_acao_ppa    is null or (p_sq_acao_ppa     is not null and d.sq_demanda_pai = p_sq_acao_ppa))
             and ((p_tipo         = 1     and Nvl(b1.sigla,'-') = 'CI'   and b.cadastrador        = p_pessoa) or
                  (p_tipo         = 2     and Nvl(b1.sigla,'-') <> 'CI'  and b.executor           = p_pessoa and d.concluida = 'N') or
                  --(p_tipo         = 2     and b1.ativo = 'S' and Nvl(b1.sigla,'-') <> 'CI' and b2.acesso > 15) or
@@ -342,7 +343,7 @@ begin
                 );
    Elsif substr(p_restricao,1,3) = 'GCR' or substr(p_restricao,1,3) = 'GCD' or 
          substr(p_restricao,1,3) = 'GCP' or substr(p_restricao,1,3) = 'GCA' or
-         substr(p_restricao,1,3) = 'GCB' Then
+         substr(p_restricao,1,3) = 'GCB' or substr(p_restricao,1,3) = 'GCC' Then
       -- Recupera os acordos que o usuário pode ver
       open p_result for 
          select a.sq_menu,            a.sq_modulo,                   a.nome,
@@ -512,13 +513,13 @@ begin
                   instr(p_restricao,'ETAPA')   = 0 and
                   instr(p_restricao,'PROP')    = 0 and
                   instr(p_restricao,'RESPATU') = 0 and
-                  instr(p_restricao,'CC')      = 0
+                  substr(p_restricao,4,2)      <>'CC'
                  ) or 
                  ((instr(p_restricao,'PROJ')    > 0    and b.sq_solic_pai is not null) or
                   (instr(p_restricao,'ETAPA')   > 0    and MontaOrdem(q.sq_projeto_etapa)  is not null) or                 
                   (instr(p_restricao,'PROP')    > 0    and d.outra_parte  is not null) or
                   (instr(p_restricao,'RESPATU') > 0    and b.executor     is not null) or
-                  (instr(p_restricao,'CC')      > 0    and b.sq_cc        is not null)
+                  (substr(p_restricao,4,2)      ='CC'  and b.sq_cc        is not null)
                  )
                 );
    Elsif substr(p_restricao,1,2) = 'FN' Then
