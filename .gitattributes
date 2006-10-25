@@ -3433,8 +3433,10 @@ SP_Oracle92/siw_is/sp_getfinacacaoppa_is.prc -text
 SP_Oracle92/siw_is/sp_getfuncao_is.prc -text
 SP_Oracle92/siw_is/sp_gethorizonte_is.prc -text
 SP_Oracle92/siw_is/sp_getisunidade_is.prc -text
+SP_Oracle92/siw_is/sp_getmacroobjetivo_is.prc -text
 SP_Oracle92/siw_is/sp_getmetamensal_is.prc -text
 SP_Oracle92/siw_is/sp_getnatureza_is.prc -text
+SP_Oracle92/siw_is/sp_getopcaoestrat_is.prc -text
 SP_Oracle92/siw_is/sp_getperiodicidade_is.prc -text
 SP_Oracle92/siw_is/sp_getppadadofinanc_is.prc -text
 SP_Oracle92/siw_is/sp_getppalocalizador_is.prc -text

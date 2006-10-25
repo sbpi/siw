@@ -8,6 +8,8 @@ create or replace procedure SP_GetAcaoPPA_IS
     p_restricao in  varchar2  default null,
     p_chave     in  number    default null,
     P_nome      in  varchar2  default null,
+    p_macro     in  varchar2  default null,
+    p_opcao     in  varchar2  default null,
     p_result    out sys_refcursor) is
 begin
    If p_restricao is null or p_restricao in ('CONSULTA','IDENTIFICACAO') Then
@@ -22,6 +24,7 @@ begin
                 i.descricao ds_subfuncao, j.nome ds_esfera, k.nm_coordenador responsavel, k.fn_coordenador telefone,
                 k.em_coordenador email, k.sq_unidade sq_unidade_adm, k.sq_siw_solicitacao, k.nome nm_tramite,
                 m.nome ds_programa, m.cd_programa, sum(a.empenhado) empenhado, sum(a.aprovado) aprovado, sum(a.liquidado) liquidado,
+                m1.nome macro_objetivo, m2.nome opcao_estrategica,
                 Nvl(k.sigla,'---') sg_tramite, upper(k.nm_coordenador) nm_coordenador,
                 sum(n.previsao_ano) previsao_ano, sum(n.atual_ano) atual_ano, sum(n.real_ano) real_ano, nvl(max(n.flag_alteracao),max(n.flag_inclusao)) dt_carga_financ                
            from is_sig_acao                              a
@@ -44,6 +47,8 @@ begin
                 inner        join  is_sig_programa       m  on (a.cd_programa       = m.cd_programa     and
                                                                 a.ano               = m.ano             and
                                                                 a.cliente           = m.cliente)
+                  left outer join  is_sig_macro_objetivo m1 on (m.cd_macro          = m1.cd_macro)
+                    left outer join is_sig_opcao_estrat  m2 on (m1.cd_opcao         = m2.cd_opcao)
                 left outer join (select l.cd_programa, l.cd_acao, l.cd_subacao, l.cd_unidade,
                                         l.ano, l.cliente, l.nm_coordenador, l.fn_coordenador,
                                         l.em_coordenador, l.sq_unidade, l.sq_siw_solicitacao,
@@ -71,6 +76,8 @@ begin
             and (p_acao      is null or (p_acao      is not null and a.cd_acao         = p_acao))
             and (p_subacao   is null or (p_subacao   is not null and a.cd_localizador  = p_subacao))
             and (p_unidade   is null or (p_unidade   is not null and a.cd_unidade      = p_unidade))
+            and (p_macro     is null or (p_macro     is not null and m.cd_macro        = p_macro))
+            and (p_opcao     is null or (p_opcao     is not null and m1.cd_opcao       = p_opcao))
             and (p_nome      is null or (p_nome      is not null and siw.acentos(a.descricao_acao,null) like '%'||siw.acentos(p_nome,null)||'%'))
             and ('CONSULTA'  = Nvl(p_restricao,'CONSULTA') or
                  (p_restricao = 'IDENTIFICACAO' and 
@@ -83,6 +90,16 @@ begin
                                                                     and n.ano = p_ano 
                                                                     and n.cd_acao is not null
                                                                 )
+                                                and 
+                  a.cd_programa                              in (select n.cd_programa
+                                                                   from is_programa                      n 
+                                                                        inner   join siw.siw_solicitacao o on (n.sq_siw_solicitacao = o.sq_siw_solicitacao)
+                                                                          inner join siw.siw_tramite     p on (o.sq_siw_tramite     = p.sq_siw_tramite and
+                                                                                                               'CA'                 <> Nvl(p.sigla,'-'))
+                                                                  where n.cliente = p_cliente 
+                                                                    and n.ano = p_ano 
+                                                                    and n.cd_programa is not null
+                                                                )                                                                
                  )
                 )
        group by a.cd_acao, a.cd_programa, a.cd_programa||a.cd_acao||a.cd_unidade, a.cd_tipo_acao, 
@@ -93,7 +110,8 @@ begin
                 f.cd_tipo_unidade, g.cd_funcao, g.cd_subfuncao, g.valor_ano_corrente,
                 g.valor_total, g.valor_ano_anterior, h.nome, 
                 i.descricao, j.nome, k.nm_coordenador, k.fn_coordenador,
-                k.em_coordenador, k.sq_unidade, m.nome, m.cd_programa, k.sq_siw_solicitacao, k.sigla, k.nome;
+                k.em_coordenador, k.sq_unidade, m.nome, m.cd_programa, k.sq_siw_solicitacao, k.sigla, k.nome,
+                m1.nome, m2.nome;
    Elsif p_restricao = 'FINANCIAMENTO' Then
       open p_result for 
          select a.cd_acao, a.cd_programa, a.cd_programa||a.cd_acao||min(a.cd_subacao)||a.cd_unidade chave, a.cd_tipo_acao, 
