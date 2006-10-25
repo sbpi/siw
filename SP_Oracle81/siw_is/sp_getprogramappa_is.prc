@@ -4,6 +4,8 @@ create or replace procedure SP_GetProgramaPPA_IS
     p_programa  in  varchar2  default null,
     p_restricao in  varchar2  default null,
     P_nome      in  varchar2  default null,
+    p_macro     in  varchar2  default null,
+    p_opcao     in  varchar2  default null,    
     p_result    out siw.siw.sys_refcursor) is
 begin
    open p_result for 
@@ -50,6 +52,8 @@ begin
          and a.ano     = p_ano
          and (p_programa  is null or (p_programa  is not null   and a.cd_programa = p_programa))
          and (p_nome      is null or (p_nome      is not null and siw.acentos(a.nome,null) like '%'||siw.acentos(p_nome,null)||'%'))
+         and (p_macro     is null or (p_macro     is not null and a.cd_macro    = p_macro))
+         and (p_opcao     is null or (p_opcao     is not null and e.cd_opcao    = p_opcao))         
          and (p_restricao is null or 
               (p_restricao = 'IDENTIFICACAO' and 
                a.cd_programa not in (select l.cd_programa 
