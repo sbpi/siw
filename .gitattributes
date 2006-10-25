@@ -2314,6 +2314,7 @@ SP_Oracle81/siw_is/sp_putindicador_is.prc -text
 SP_Oracle81/siw_is/sp_putisunidade_is.prc -text
 SP_Oracle81/siw_is/sp_putmetamensal_is.prc -text
 SP_Oracle81/siw_is/sp_putnatureza_is.prc -text
+SP_Oracle81/siw_is/sp_putopcaoestrat_IS.prc -text
 SP_Oracle81/siw_is/sp_putprogqualitativa_is.prc -text
 SP_Oracle81/siw_is/sp_putprojeto_is.prc -text
 SP_Oracle81/siw_is/sp_putrespacao_is.prc -text
@@ -3464,6 +3465,7 @@ SP_Oracle92/siw_is/sp_putindicador_is.prc -text
 SP_Oracle92/siw_is/sp_putisunidade_is.prc -text
 SP_Oracle92/siw_is/sp_putmetamensal_is.prc -text
 SP_Oracle92/siw_is/sp_putnatureza_is.prc -text
+SP_Oracle92/siw_is/sp_putopcaoestrat_IS.prc -text
 SP_Oracle92/siw_is/sp_putprogqualitativa_is.prc -text
 SP_Oracle92/siw_is/sp_putprojeto_is.prc -text
 SP_Oracle92/siw_is/sp_putrespacao_is.prc -text
