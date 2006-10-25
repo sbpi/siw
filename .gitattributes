@@ -2312,6 +2312,7 @@ SP_Oracle81/siw_is/sp_putfinancacaoppa_is.prc -text
 SP_Oracle81/siw_is/sp_puthorizonte_is.prc -text
 SP_Oracle81/siw_is/sp_putindicador_is.prc -text
 SP_Oracle81/siw_is/sp_putisunidade_is.prc -text
+SP_Oracle81/siw_is/sp_putmacroObjetivo_IS.prc -text
 SP_Oracle81/siw_is/sp_putmetamensal_is.prc -text
 SP_Oracle81/siw_is/sp_putnatureza_is.prc -text
 SP_Oracle81/siw_is/sp_putopcaoestrat_IS.prc -text
@@ -3463,6 +3464,7 @@ SP_Oracle92/siw_is/sp_putfinancacaoppa_is.prc -text
 SP_Oracle92/siw_is/sp_puthorizonte_is.prc -text
 SP_Oracle92/siw_is/sp_putindicador_is.prc -text
 SP_Oracle92/siw_is/sp_putisunidade_is.prc -text
+SP_Oracle92/siw_is/sp_putmacroObjetivo_IS.prc -text
 SP_Oracle92/siw_is/sp_putmetamensal_is.prc -text
 SP_Oracle92/siw_is/sp_putnatureza_is.prc -text
 SP_Oracle92/siw_is/sp_putopcaoestrat_IS.prc -text
