@@ -301,7 +301,7 @@ begin
                        left          join sg_autenticacao      l  on (k.destinatario             = l.sq_pessoa)
           where a.sq_menu        = p_menu
             and (p_chave          is null or (p_chave       is not null and b.sq_siw_solicitacao = p_chave))
-            and (p_sq_acao_ppa    is null or (p_sq_acao_ppa is not null and r.sq_acao_ppa        = p_sq_acao_ppa))
+            and (p_sq_acao_ppa    is null or (p_sq_acao_ppa is not null and (r.sq_acao_ppa       = p_sq_acao_ppa or b.sq_solic_pai = p_sq_acao_ppa)))
             and (p_sq_orprior     is null or (p_sq_orprior  is not null and r.sq_orprioridade    = p_sq_orprior))
             and (p_pais           is null or (p_pais        is not null and f.sq_pais            = p_pais))
             and (p_regiao         is null or (p_regiao      is not null and f.sq_regiao          = p_regiao))

@@ -1,5 +1,6 @@
 create or replace procedure SP_GetSolicMeta_IS
-   (p_chave       in number   default null,
+   (p_cliente     in number,
+    p_chave       in number   default null,
     p_chave_aux   in number   default null,
     p_restricao   in varchar2,
     p_ano         in number   default null,
@@ -47,7 +48,46 @@ begin
                   inner        join siw.sg_autenticacao e on (d.sq_pessoa          = e.sq_pessoa)
                     inner      join siw.eo_unidade      f on (e.sq_unidade         = f.sq_unidade)
                 inner          join siw.eo_unidade      g on (i.sq_unidade         = g.sq_unidade)
-          where a.sq_siw_solicitacao = p_chave;
+          where j.sq_pessoa          = p_cliente
+            and a.sq_siw_solicitacao = p_chave;
+   ElsIf p_restricao = 'GERENCIAL' Then
+      -- Recupera informações para relatório gerencial
+      open p_result for 
+         select a.cd_opcao, a.nome nm_opcao, b.cd_macro, b.nome nm_macro,
+                c1.sq_siw_solicitacao sq_programa, c.cd_programa, c.nome nm_programa, f.cd_tipo_programa, f.nome nm_tipo_programa,
+                g.cd_acao, g.cd_subacao, g.descricao_acao nm_acao, g.descricao_subacao nm_subacao, h.cd_tipo_acao, h.nome nm_tipo_acao,
+                i.cd_produto, i.nome nm_produto, j.nome nm_unid_med_produto,
+                m.nome nm_estagio, n.nome nm_andamento, o.nome nm_cronograma,
+                p.sq_siw_solicitacao sq_acao,
+                q.ordem or_meta, q.titulo nm_meta, 
+                case coalesce(q.cd_subacao,'N') when 'N' then 'Não' else 'Sim' end nm_meta_ppa, 
+                case coalesce(q.exequivel,'N')  when 'N' then 'Não' else 'Sim' end ex_meta, 
+                q.perc_conclusao pr_meta, q.situacao_atual st_meta, q.fim_previsto dt_meta
+           from is_sig_opcao_estrat                            a
+                inner           join is_sig_macro_objetivo     b  on (a.cd_opcao            = b.cd_opcao)
+                  inner         join is_sig_programa           c  on (b.cd_macro            = c.cd_macro)
+                    inner       join is_programa               c1 on (c.cliente             = c1.cliente and c.ano = c1.ano and c.cd_programa = c1.cd_programa)
+                    inner       join is_sig_tipo_programa      f  on (c.cd_tipo_programa    = f.cd_tipo_programa)
+                    inner       join is_sig_acao               g  on (c.cliente             = g.cliente and c.ano = g.ano and c.cd_programa = g.cd_programa)
+                      inner     join is_sig_tipo_acao          h  on (g.cd_tipo_acao        = h.cd_tipo_acao)
+                      left      join is_sig_produto            i  on (g.cd_produto          = i.cd_produto)
+                      left      join is_sig_unidade_medida     j  on (g.cd_unidade_medida   = j.cd_unidade_medida)
+                      left      join is_sig_tipo_situacao      m  on (g.cd_estagio          = m.cd_tipo_situacao)
+                      left      join is_sig_tipo_situacao      n  on (g.cd_andamento        = n.cd_tipo_situacao)
+                      left      join is_sig_tipo_situacao      o  on (g.cd_cronograma       = o.cd_tipo_situacao)
+                      left      join is_acao                   p  on (g.cliente             = p.cliente and g.ano = p.ano and g.cd_programa = p.cd_programa and g.cd_acao = p.cd_acao)
+                        left    join is_meta                   q  on (p.sq_siw_solicitacao  = q.sq_siw_solicitacao and g.cd_subacao = q.cd_subacao)
+                        left    join siw.siw_solicitacao       r  on (p.sq_siw_solicitacao  = r.sq_siw_solicitacao)
+                          left  join siw.siw_tramite           s  on (r.sq_siw_tramite      = s.sq_siw_tramite)
+          where c.cliente = p_cliente
+            and (Nvl(s.sigla,'-')     <> 'CA')
+            and (p_unidade            is null or (p_unidade     is not null and r.sq_unidade         = p_unidade))
+            and (p_ano                is null or (p_ano         is not null and c.ano                = p_ano))
+            and (p_cd_programa        is null or (p_cd_programa is not null and c.cd_programa        = p_cd_programa))
+            and (p_cd_acao            is null or (p_cd_acao     is not null and g.cd_acao            = p_cd_acao))
+            and (p_meta_ppa           is null or (p_meta_ppa    = 'S' and p.sq_siw_solicitacao       is not null) or (p_meta_ppa    = 'N' and p.sq_siw_solicitacao is null))
+            and (p_exequivel          is null or (p_exequivel   is not null and q.exequivel          = p_exequivel))
+         order by a.cd_opcao, b.cd_macro, c.cd_programa, g.cd_acao, g.cd_subacao;
    ElsIf p_restricao = 'LSTNULL' Then
       -- Recupera as metas principais de uma ação
       open p_result for 
@@ -94,7 +134,8 @@ begin
                     inner      join siw.eo_unidade      f on (e.sq_unidade         = f.sq_unidade)
                 inner          join siw.eo_unidade      g on (i.sq_unidade         = g.sq_unidade)
                 inner          join siw.siw_tramite     h on (i.sq_siw_tramite     = h.sq_siw_tramite)
-          where (Nvl(h.sigla,'-')     <> 'CA')
+          where j.sq_pessoa           = p_cliente
+            and (Nvl(h.sigla,'-')     <> 'CA')
             and (p_chave              is null or (p_chave       is not null and a.sq_siw_solicitacao = p_chave))
             and (p_unidade            is null or (p_unidade     is not null and g.sq_unidade         = p_unidade))
             and (p_ano                is null or (p_ano         is not null and i.ano                = p_ano))
@@ -135,7 +176,8 @@ begin
                   inner        join siw.sg_autenticacao e on (d.sq_pessoa          = e.sq_pessoa)
                     inner      join siw.eo_unidade      f on (e.sq_unidade         = f.sq_unidade)
                 inner          join siw.eo_unidade      g on (i.sq_unidade         = g.sq_unidade)
-          where a.sq_siw_solicitacao = p_chave;
+          where j.sq_pessoa          = p_cliente
+            and a.sq_siw_solicitacao = p_chave;
    Elsif p_restricao = 'REGISTRO' Then
       -- Recupera os dados de uma meta da ação
       select cd_subacao into w_cd_subacao from is_meta where sq_meta = p_chave_aux;      
@@ -196,7 +238,8 @@ begin
                                             is_sig_dado_fisico     v,                        
                                             is_meta                y,
                                             is_sig_acao            z
-                                      where w.sq_siw_solicitacao = p_chave
+                                      where z.cliente            = p_cliente
+                                        and w.sq_siw_solicitacao = p_chave
                                         and y.sq_meta            = p_chave_aux
                                         and y.sq_siw_solicitacao  = w.sq_siw_solicitacao
                                         and (w.cd_programa        = x.cd_programa     and
@@ -217,7 +260,8 @@ begin
                                                               h.cd_acao            = m.cd_acao     and
                                                               h.cliente            = m.cliente     and
                                                               h.ano                = m.ano)
-          where a.sq_siw_solicitacao = p_chave
+          where j.sq_pessoa          = p_cliente
+            and a.sq_siw_solicitacao = p_chave
             and a.sq_meta = p_chave_aux;
 
    Elsif p_restricao = 'FILHOS' Then

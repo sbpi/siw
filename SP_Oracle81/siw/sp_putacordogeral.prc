@@ -86,13 +86,13 @@ begin
          ( sq_siw_solicitacao,  cliente,           sq_tipo_acordo,       inicio,
            fim,                 valor_inicial,     objeto,               aviso_prox_conc,     
            dias_aviso,          sq_tipo_pessoa,    sq_forma_pagamento,   empenho,
-           processo,            assinatura,        publicacao
+           processo,            assinatura,        publicacao,           codigo_interno
          )
       (select
            w_chave,             p_cliente,         p_sq_tipo_acordo,     p_inicio,
            p_fim,               p_valor,           p_objeto,             p_aviso,
            p_dias,              p_sq_tipo_pessoa,  p_sq_forma_pagamento, p_numero_empenho,
-           p_numero_processo,   p_assinatura,      p_publicacao
+           p_numero_processo,   p_assinatura,      p_publicacao,         p_codigo
         from dual
       );
 
@@ -118,8 +118,12 @@ begin
          Values (sq_etapa_contrato.nextval, p_etapa,          w_chave);
       End If;
                  
-      -- Recupera o código interno  do acordo, gerado por trigger
-      select codigo_interno into p_codigo_interno from ac_acordo where sq_siw_solicitacao = w_chave;
+      If p_codigo is null Then
+         -- Recupera o código interno  do acordo, gerado por trigger
+         select codigo_interno into p_codigo_interno from ac_acordo where sq_siw_solicitacao = w_chave;
+      Else
+         p_codigo_interno := p_codigo;
+      End If;
 
       -- Se a demanda foi copiada de outra, grava os dados complementares
       If p_copia is not null Then
@@ -230,6 +234,10 @@ begin
           publicacao         = p_publicacao
       where sq_siw_solicitacao = p_chave;
       
+      If p_codigo is not null Then
+         update ac_acordo set codigo_interno = p_codigo where sq_siw_solicitacao = p_chave;
+      End If;
+      
       If Nvl(p_sq_tipo_pessoa,0) = 1 Then
          update ac_acordo set preposto = null where sq_siw_solicitacao = p_chave;
          delete ac_acordo_representante where sq_siw_solicitacao = p_chave;
@@ -313,10 +321,12 @@ begin
    End If;
    
    -- O tratamento a seguir é relativo ao código interno do acordo.
-   If p_operacao                in ('I','A')  and 
-      (p_inicio_atual           is null       or
-       to_char(p_inicio,'yyyy') <> to_char(Nvl(p_inicio_atual, p_inicio),'yyyy')
-      ) Then
+   If p_codigo is not null Then
+      p_codigo_interno := p_codigo;
+   Elsif p_operacao                in ('I','A')  and 
+        (p_inicio_atual           is null       or
+         to_char(p_inicio,'yyyy') <> to_char(Nvl(p_inicio_atual, p_inicio),'yyyy')
+        ) Then
       
       -- Recupera os parâmetros do cliente informado
       select * into w_reg from ac_parametro where cliente = p_cliente;

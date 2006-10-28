@@ -27,8 +27,8 @@ begin
                 left outer join lc_unidade         e on (a.sq_unidade         = e.sq_unidade)
           where b.sq_pessoa            = p_cliente
             and (p_chave               is null or (p_chave is not null and a.sq_unidade = p_chave))
-            and (p_nome                is null or (p_nome  is not null and a.nome  like '%'||p_nome||'%'))
-            and (p_sigla               is null or (p_sigla is not null and a.sigla like '%'||p_sigla||'%'))
+            and (p_nome                is null or (p_nome  is not null and acentos(a.nome)  like '%'||acentos(p_nome)||'%'))
+            and (p_sigla               is null or (p_sigla is not null and acentos(a.sigla) like '%'||acentos(p_sigla)||'%'))
             and (p_restricao           is null or (p_restricao = 'LICITACAO'  and (a.ativo    = 'S' and e.ativo = 'S' and e.contrata = 'S'))
                                                or (p_restricao = 'ATIVO'      and (a.ativo    = 'S'))
                                                or (p_restricao = 'CODIGO'     and (a.informal = 'N' and a.sq_unidade_pai is null))
@@ -47,8 +47,8 @@ begin
              where a.sq_pessoa_endereco   = b.sq_pessoa_endereco
                and a.sq_unidade_pai       is null
                and b.sq_pessoa            = p_cliente
-               and (p_nome                is null or (p_nome  is not null and a.nome  like '%'||p_nome||'%'))
-               and (p_sigla               is null or (p_sigla is not null and a.sigla like '%'||p_sigla||'%'))
+               and (p_nome                is null or (p_nome  is not null and acentos(a.nome)  like '%'||acentos(p_nome)||'%'))
+               and (p_sigla               is null or (p_sigla is not null and acentos(a.sigla) like '%'||acentos(p_sigla)||'%'))
             order by nome;
       Elsif p_restricao = 'VIAGEM' Then
          open p_result for 
@@ -108,8 +108,8 @@ begin
                    left outer join co_pessoa          d on (c.sq_pessoa          = d.sq_pessoa)
                    left outer join lc_unidade         e on (a.sq_unidade         = e.sq_unidade)
               where b.sq_pessoa            = p_cliente
-                and (p_nome                is null or (p_nome  is not null and a.nome  like '%'||p_nome||'%'))
-                and (p_sigla               is null or (p_sigla is not null and a.sigla like '%'||p_sigla||'%'))
+                and (p_nome                is null or (p_nome  is not null and acentos(a.nome)  like '%'||acentos(p_nome)||'%'))
+                and (p_sigla               is null or (p_sigla is not null and acentos(a.sigla) like '%'||acentos(p_sigla)||'%'))
                 and a.ativo                = 'S' 
                 and e.ativo                = 'S' 
                 and e.contrata             = 'S' 
@@ -132,8 +132,8 @@ begin
                    left outer join co_pessoa          d on (c.sq_pessoa          = d.sq_pessoa)
                     left outer join lc_unidade         e on (a.sq_unidade         = e.sq_unidade)
              where b.sq_pessoa            = p_cliente
-               and (p_nome                is null or (p_nome  is not null and a.nome  like '%'||p_nome||'%'))
-               and (p_sigla               is null or (p_sigla is not null and a.sigla like '%'||p_sigla||'%'))
+               and (p_nome                is null or (p_nome  is not null and acentos(a.nome)  like '%'||acentos(p_nome)||'%'))
+               and (p_sigla               is null or (p_sigla is not null and acentos(a.sigla) like '%'||acentos(p_sigla)||'%'))
                and a.unidade_gestora      = 'S' 
                and a.ativo                = 'S' 
                and (p_chave is null or (p_chave is not null and a.sq_unidade <> p_chave))
@@ -155,8 +155,8 @@ begin
                    left outer join co_pessoa          d on (c.sq_pessoa          = d.sq_pessoa)
                     left outer join lc_unidade         e on (a.sq_unidade         = e.sq_unidade)
              where b.sq_pessoa            = p_cliente
-               and (p_nome                is null or (p_nome  is not null and a.nome  like '%'||p_nome||'%'))
-               and (p_sigla               is null or (p_sigla is not null and a.sigla like '%'||p_sigla||'%'))
+               and (p_nome                is null or (p_nome  is not null and acentos(a.nome)  like '%'||acentos(p_nome)||'%'))
+               and (p_sigla               is null or (p_sigla is not null and acentos(a.sigla) like '%'||acentos(p_sigla)||'%'))
                and a.unidade_pagadora     = 'S' 
                and a.ativo                = 'S' 
                and (p_chave is null or (p_chave is not null and a.sq_unidade <> p_chave))
@@ -178,8 +178,8 @@ begin
                    left outer join co_pessoa          d on (c.sq_pessoa          = d.sq_pessoa)
                    left outer join lc_unidade         e on (a.sq_unidade         = e.sq_unidade)
              where b.sq_pessoa            = p_cliente
-               and (p_nome                is null or (p_nome  is not null and a.nome  like '%'||p_nome||'%'))
-               and (p_sigla               is null or (p_sigla is not null and a.sigla like '%'||p_sigla||'%'))
+               and (p_nome                is null or (p_nome  is not null and acentos(a.nome)  like '%'||acentos(p_nome)||'%'))
+               and (p_sigla               is null or (p_sigla is not null and acentos(a.sigla) like '%'||acentos(p_sigla)||'%'))
                and a.informal             = 'N' 
                and a.codigo               = p_chave
             order by a.nome;      
@@ -195,8 +195,8 @@ begin
              where a.sq_pessoa_endereco   = b.sq_pessoa_endereco
                and a.sq_unidade_pai       = p_chave
                and b.sq_pessoa            = p_cliente
-               and (p_nome                is null or (p_nome  is not null and a.nome  like '%'||p_nome||'%'))
-               and (p_sigla               is null or (p_sigla is not null and a.sigla like '%'||p_sigla||'%'))
+               and (p_nome                is null or (p_nome  is not null and acentos(a.nome)  like '%'||acentos(p_nome)||'%'))
+               and (p_sigla               is null or (p_sigla is not null and acentos(a.sigla) like '%'||acentos(p_sigla)||'%'))
             order by nome;
       End If;
    End If;

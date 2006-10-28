@@ -3,7 +3,7 @@ create or replace procedure SP_GetSolicData
     p_restricao in varchar2,
     p_result    out sys_refcursor) is
 begin
-   If p_restricao = 'GDGERAL' or p_restricao = 'GDPGERAL' or p_restricao = 'ORPGERAL' Then
+   If p_restricao = 'GDGERAL' or p_restricao = 'GDPGERAL' or p_restricao = 'GDPCAD' or p_restricao = 'ORPGERAL' Then
       -- Recupera as demandas que o usuário pode ver
       open p_result for 
          select a.sq_menu,            a.sq_modulo,                   a.nome,
@@ -35,7 +35,7 @@ begin
                 d.aviso_prox_conc,    d.dias_aviso,                  d.inicio_real,
                 d.fim_real,           d.concluida,                   d.data_conclusao,
                 d.nota_conclusao,     d.custo_real,                  d.proponente,
-                d.ordem,
+                d.ordem,              d.sq_demanda_pai,
                 e.sq_tipo_unidade,    e.nome nm_unidade_resp,        e.informal informal_resp,
                 e.vinculada vinc_resp,e.adm_central adm_resp,
                 e1.sq_pessoa titular, e2.sq_pessoa substituto,

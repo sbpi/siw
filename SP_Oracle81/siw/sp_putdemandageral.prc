@@ -73,13 +73,13 @@ begin
          ( sq_siw_solicitacao,  sq_unidade_resp, assunto,           prioridade,
            aviso_prox_conc,     dias_aviso,      inicio_real,       fim_real,
            concluida,           data_conclusao,  nota_conclusao,    custo_real,
-           proponente,          ordem
+           proponente,          ordem,           sq_demanda_pai
          )
       (select
            w_chave,             p_unid_resp,     p_assunto,         p_prioridade,
            p_aviso,             p_dias,          null,              null,
            'N',                 null,            null,              0,
-           p_proponente,        p_ordem
+           p_proponente,        p_ordem,         p_atividade_ant
         from dual
       );
 
@@ -143,6 +143,7 @@ begin
       
       -- Atualiza a tabela de demandas
       Update gd_demanda set
+          sq_demanda_pai   = p_atividade_ant,
           sq_unidade_resp  = p_unid_resp,
           proponente       = p_proponente,
           assunto          = trim(p_assunto),

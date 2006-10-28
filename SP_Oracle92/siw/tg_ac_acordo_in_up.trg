@@ -5,8 +5,10 @@ declare
   w_chave varchar2(60) := null;
 begin
   If INSERTING Then
-     AC_CriaParametro(:new.cliente, :new.inicio, w_chave);
-     :new.codigo_interno := w_chave;
+     If :new.codigo_interno is null Then
+        AC_CriaParametro(:new.cliente, :new.inicio, w_chave);
+        :new.codigo_interno := w_chave;
+     End If;
   End If;
   
   -- Calcula a data fim ou a duração do acordo em dias, dependendo
@@ -20,4 +22,3 @@ begin
   End If;
 end TG_AC_ACORDO_IN_UP;
 /
-

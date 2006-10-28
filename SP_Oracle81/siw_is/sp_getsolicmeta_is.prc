@@ -1,5 +1,6 @@
 create or replace procedure SP_GetSolicMeta_IS
-   (p_chave       in number   default null,
+   (p_cliente     in number,
+    p_chave       in number   default null,
     p_chave_aux   in number   default null,
     p_restricao   in varchar2,
     p_ano         in number   default null,
@@ -23,7 +24,7 @@ begin
                 k.sq_pessoa tit_exec, l.sq_pessoa sub_exec,
                 d.nome_resumido||' ('||f.sigla||')' nm_resp, g.sigla sg_setor,
                 i.solicitante, i.sq_unidade, i.executor
-           from is_meta                             a,
+           from is_meta             a,
                 siw.siw_solicitacao i,
                 siw.siw_menu        j,
                 siw.eo_unidade_resp k,
@@ -52,7 +53,61 @@ begin
             and (d.sq_pessoa          = e.sq_pessoa)
             and (e.sq_unidade         = f.sq_unidade)
             and (i.sq_unidade         = g.sq_unidade)
+            and j.sq_pessoa          = p_cliente
             and a.sq_siw_solicitacao = p_chave;
+   ElsIf p_restricao = 'GERENCIAL' Then
+      -- Recupera informações para relatório gerencial
+      open p_result for 
+         select a.cd_opcao, a.nome nm_opcao, b.cd_macro, b.nome nm_macro,
+                c1.sq_siw_solicitacao sq_programa, c.cd_programa, c.nome nm_programa, f.cd_tipo_programa, f.nome nm_tipo_programa,
+                g.cd_acao, g.cd_subacao, g.descricao_acao nm_acao, g.descricao_subacao nm_subacao, h.cd_tipo_acao, h.nome nm_tipo_acao,
+                i.cd_produto, i.nome nm_produto, j.nome nm_unid_med_produto,
+                m.nome nm_estagio, n.nome nm_andamento, o.nome nm_cronograma,
+                p.sq_siw_solicitacao sq_acao,
+                q.ordem or_meta, q.titulo nm_meta, 
+                decode(nvl(q.cd_subacao,'N'),'N','Não','Sim') nm_meta_ppa, 
+                decode(nvl(q.exequivel,'N'),'N','Não','Sim') ex_meta, 
+                q.perc_conclusao pr_meta, q.situacao_atual st_meta, q.fim_previsto dt_meta
+           from is_sig_opcao_estrat       a,
+                is_sig_macro_objetivo     b,
+                is_sig_programa           c,
+                is_programa               c1,
+                is_sig_tipo_programa      f,
+                is_sig_acao               g,
+                is_sig_tipo_acao          h,
+                is_sig_produto            i,
+                is_sig_unidade_medida     j,
+                is_sig_tipo_situacao      m,
+                is_sig_tipo_situacao      n,
+                is_sig_tipo_situacao      o,
+                is_acao                   p,
+                is_meta                   q,
+                siw.siw_solicitacao       r,
+                siw.siw_tramite           s
+          where (a.cd_opcao            = b.cd_opcao)
+            and (b.cd_macro            = c.cd_macro)
+            and (c.cliente             = c1.cliente and c.ano = c1.ano and c.cd_programa = c1.cd_programa)
+            and (c.cd_tipo_programa    = f.cd_tipo_programa)
+            and (c.cliente             = g.cliente and c.ano = g.ano and c.cd_programa = g.cd_programa)
+            and (g.cd_tipo_acao        = h.cd_tipo_acao)
+            and (g.cd_produto          = i.cd_produto (+))
+            and (g.cd_unidade_medida   = j.cd_unidade_medida (+))
+            and (g.cd_estagio          = m.cd_tipo_situacao (+))
+            and (g.cd_andamento        = n.cd_tipo_situacao (+))
+            and (g.cd_cronograma       = o.cd_tipo_situacao (+))
+            and (g.cliente             = p.cliente (+) and g.ano = p.ano (+) and g.cd_programa = p.cd_programa (+) and g.cd_acao = p.cd_acao (+))
+            and (p.sq_siw_solicitacao  = q.sq_siw_solicitacao (+) and g.cd_subacao = q.cd_subacao (+))
+            and (p.sq_siw_solicitacao  = r.sq_siw_solicitacao (+))
+            and (r.sq_siw_tramite      = s.sq_siw_tramite (+))
+            and c.cliente = p_cliente
+            and (Nvl(s.sigla,'-')     <> 'CA')
+            and (p_unidade            is null or (p_unidade     is not null and r.sq_unidade         = p_unidade))
+            and (p_ano                is null or (p_ano         is not null and c.ano                = p_ano))
+            and (p_cd_programa        is null or (p_cd_programa is not null and c.cd_programa        = p_cd_programa))
+            and (p_cd_acao            is null or (p_cd_acao     is not null and g.cd_acao            = p_cd_acao))
+            and (p_meta_ppa           is null or (p_meta_ppa    = 'S' and p.sq_siw_solicitacao       is not null) or (p_meta_ppa    = 'N' and p.sq_siw_solicitacao is null))
+            and (p_exequivel          is null or (p_exequivel   is not null and q.exequivel          = p_exequivel))
+         order by a.cd_opcao, b.cd_macro, c.cd_programa, g.cd_acao, g.cd_subacao;
    ElsIf p_restricao = 'LSTNULL' Then  
       -- Recupera as metas principais de uma ação
       open p_result for 
@@ -115,6 +170,7 @@ begin
             and (e.sq_unidade         = f.sq_unidade)
             and (i.sq_unidade         = g.sq_unidade)
             and (i.sq_siw_tramite     = h.sq_siw_tramite)
+            and j.sq_pessoa           = p_cliente
             and (Nvl(h.sigla,'-')     <> 'CA')
             and (p_chave              is null or (p_chave       is not null and a.sq_siw_solicitacao = p_chave))
             and (p_unidade            is null or (p_unidade     is not null and g.sq_unidade         = p_unidade))
@@ -163,6 +219,7 @@ begin
             and (d.sq_pessoa          = e.sq_pessoa)
             and (e.sq_unidade         = f.sq_unidade)
             and (i.sq_unidade         = g.sq_unidade)
+            and j.sq_pessoa          = p_cliente
             and a.sq_siw_solicitacao = p_chave;
    Elsif p_restricao = 'REGISTRO' Then
       -- Recupera os dados de uma meta da ação
@@ -212,7 +269,8 @@ begin
                         is_sig_dado_fisico     v,
                         is_meta                y,
                         is_sig_acao            z
-                  where w.sq_siw_solicitacao = p_chave
+                  where z.cliente            = p_cliente
+                    and w.sq_siw_solicitacao = p_chave
                     and y.sq_meta            = p_chave_aux
                     and w.sq_siw_solicitacao  = w.sq_siw_solicitacao
                     and (w.cd_programa        = x.cd_programa (+) and
@@ -252,6 +310,7 @@ begin
                  h.cd_acao            = m.cd_acao            (+) and
                  h.cliente            = m.cliente            (+) and
                  h.ano                = m.ano                (+))
+            and j.sq_pessoa          = p_cliente
             and a.sq_siw_solicitacao = p_chave
             and a.sq_meta = p_chave_aux;
 
