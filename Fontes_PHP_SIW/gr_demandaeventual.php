@@ -153,6 +153,7 @@ function Gerencial() {
     } 
     if ($p_atividade>'') {
       $RS = db_getSolicEtapa::getInstanceOf($dbms,$p_projeto,$p_atividade,'REGISTRO',null);
+      foreach ($RS as $row) { $RS = $row; break; }
       $w_filtro = $w_filtro.'<tr valign="top"><td align="right">Etapa <td>[<b>'.f($RS,'titulo').'</b>]';
     } 
     if ($p_sqcc>'') {
@@ -273,6 +274,15 @@ function Gerencial() {
       ShowHTML('     theForm.p_ini_i.focus();');
       ShowHTML('     return false;');
       ShowHTML('  }');
+      ShowHTML('  var i; ');
+      ShowHTML('  var w_erro=true; ');
+      ShowHTML('  for (i=0; i < theForm["p_fase[]"].length; i++) {');
+      ShowHTML('    if (theForm["p_fase[]"][i].checked) w_erro=false;');
+      ShowHTML('  }');
+      ShowHTML('  if (w_erro) {');
+      ShowHTML('    alert(\'Você deve informar pelo menos uma fase!\'); ');
+      ShowHTML('    return false;');
+      ShowHTML('  }');      
       CompData('p_ini_i','Recebimento inicial','<=','p_ini_f','Recebimento final');
       Validate('p_fim_i','Conclusão inicial','DATA','','10','10','','0123456789/');
       Validate('p_fim_f','Conclusão final','DATA','','10','10','','0123456789/');
@@ -288,7 +298,7 @@ function Gerencial() {
         ShowHTML('     theForm.p_projeto.focus();');
         ShowHTML('     return false;');
         ShowHTML('  }');
-      } 
+      }
       ValidateClose();
       ScriptClose();
     } else {
@@ -661,13 +671,13 @@ function Gerencial() {
           $w_linha = $w_linha + 1;
         } 
         if (f($row,'concluida')=='N') {
-          if (f($row,'fim')<time()) {
+          if (f($row,'fim') < addDays(time(),-1)) {
             $t_atraso    = $t_atraso + 1;
             $t_totatraso = $t_totatraso + 1;
-          } elseif (f($row,'aviso_prox_conc')=='S' && (f($row,'aviso')<=time())) {
-            $t_aviso     = $t_aviso + 1;
-            $t_totaviso  = $t_totaviso + 1;
-          } 
+          } elseif (f($row,'aviso_prox_conc') == 'S' && (f($row,'aviso') <= addDays(time(),-1))) {
+            $t_aviso    = $t_aviso+1;
+            $t_totaviso = $t_totaviso+1;
+          }
           if (f($row,'or_tramite')==1) {
             $t_cad      = $t_cad + 1;
             $t_totcad   = $t_totcad + 1;
@@ -779,8 +789,8 @@ function Gerencial() {
     ShowHTML('          <td valign="top"><b>Detalh<U>a</U>mento:<br><INPUT ACCESSKEY="N" '.$w_Disabled.' class="STI" type="text" name="p_assunto" size="25" maxlength="90" value="'.$p_assunto.'"></td>');
     ShowHTML('          <td valign="top" colspan=2><b>Pala<U>v</U>ras-chave:<br><INPUT ACCESSKEY="N" '.$w_Disabled.' class="STI" type="text" name="p_palavra" size="25" maxlength="90" value="'.$p_palavra.'"></td>');
     ShowHTML('      <tr>');
-    ShowHTML('          <td valign="top"><b>Re<u>c</u>ebimento entre:</b><br><input '.$w_Disabled.' accesskey="C" type="text" name="p_ini_i" class="STI" SIZE="10" MAXLENGTH="10" VALUE="'.$p_ini_i.'" onKeyDown="FormataData(this,event);">'.ExibeCalendario('Form','p_ini_i').' e <input '.$w_Disabled.' accesskey="C" type="text" name="p_ini_f" class="STI" SIZE="10" MAXLENGTH="10" VALUE="'.$p_ini_f.'" onKeyDown="FormataData(this,event);">'.ExibeCalendario('Form','p_ini_f').'</td>');
-    ShowHTML('          <td valign="top"><b>Conclusão en<u>t</u>re:</b><br><input '.$w_Disabled.' accesskey="T" type="text" name="p_fim_i" class="STI" SIZE="10" MAXLENGTH="10" VALUE="'.$p_fim_i.'" onKeyDown="FormataData(this,event);">'.ExibeCalendario('Form','p_fim_i').' e <input '.$w_Disabled.' accesskey="T" type="text" name="p_fim_f" class="STI" SIZE="10" MAXLENGTH="10" VALUE="'.$p_fim_f.'" onKeyDown="FormataData(this,event);">'.ExibeCalendario('Form','p_fim_f').'</td>');
+    ShowHTML('          <td valign="top"><b>Iní<u>c</u>io previsto entre:</b><br><input '.$w_Disabled.' accesskey="C" type="text" name="p_ini_i" class="STI" SIZE="10" MAXLENGTH="10" VALUE="'.$p_ini_i.'" onKeyDown="FormataData(this,event);">'.ExibeCalendario('Form','p_ini_i').' e <input '.$w_Disabled.' accesskey="C" type="text" name="p_ini_f" class="STI" SIZE="10" MAXLENGTH="10" VALUE="'.$p_ini_f.'" onKeyDown="FormataData(this,event);">'.ExibeCalendario('Form','p_ini_f').'</td>');
+    ShowHTML('          <td valign="top"><b><u>T</u>érmino previsto entre:</b><br><input '.$w_Disabled.' accesskey="T" type="text" name="p_fim_i" class="STI" SIZE="10" MAXLENGTH="10" VALUE="'.$p_fim_i.'" onKeyDown="FormataData(this,event);">'.ExibeCalendario('Form','p_fim_i').' e <input '.$w_Disabled.' accesskey="T" type="text" name="p_fim_f" class="STI" SIZE="10" MAXLENGTH="10" VALUE="'.$p_fim_f.'" onKeyDown="FormataData(this,event);">'.ExibeCalendario('Form','p_fim_f').'</td>');
     ShowHTML('      <tr>');
     ShowHTML('          <td valign="top"><b>Exibe somente demandas em atraso?</b><br>');
     if ($p_atraso=='S') {
@@ -791,7 +801,7 @@ function Gerencial() {
     SelecaoFaseCheck('Recuperar fases:','S',null,$p_fase,$P2,'p_fase[]',null,null);
     ShowHTML('      <tr><td align="center" colspan="2" height="1" bgcolor="#000000">');
     ShowHTML('      <tr><td align="center" colspan="2">');
-    ShowHTML('            <input class="STB" type="submit" name="Botao" value="Exibir resumo" onClick="javascript:document.Form.O.value=\'L\'; document.Form.target=\'\';">');
+    ShowHTML('            <input class="STB" type="submit" name="Botao" value="Exibir resumo" onClick="document.Form.target=\'\'; javascript:document.Form.O.value=\'L\'; document.Form.target=\'\';">');
     ShowHTML('            <input class="STB" type="submit" name="Botao" value="Gerar Word" onClick="javascript:document.Form.O.value=\'W\'; document.Form.target=\'Word\';">');
     ShowHTML('          </td>');
     ShowHTML('      </tr>');

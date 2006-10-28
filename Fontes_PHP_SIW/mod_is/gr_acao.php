@@ -120,7 +120,7 @@ function Gerencial() {
   if ($O=='L' || $O=='V' || $O=='W') {
     $w_filtro='';
     if ($p_sq_acao_ppa>'') {
-      $RS = db_getAcaoPPA_IS::getInstanceOf($dbms,$w_cliente,$w_ano,substr($p_sq_acao_ppa,0,4),substr($p_sq_acao_ppa,4,4),null,substr($p_sq_acao_ppa,12,17),null,null,null);
+      $RS = db_getAcaoPPA_IS::getInstanceOf($dbms,$w_cliente,$w_ano,substr($p_sq_acao_ppa,0,4),substr($p_sq_acao_ppa,4,4),null,substr($p_sq_acao_ppa,12,17),null,null,null,null,null);
       foreach($RS as $row){$RS=$row; break;}
       $w_filtro=$w_filtro.'<tr valign="top"><td align="right">Ação <td>[<b>'.f($RS,'cd_unidade').'.'.f($RS,'cd_programa').'.'.f($RS,'cd_acao').' - '.f($RS,'descricao_acao').' ('.f($RS,'ds_unidade').')</b>]';
     } 
@@ -210,6 +210,15 @@ function Gerencial() {
       ShowHTML('     theForm.p_ini_i.focus();');
       ShowHTML('     return false;');
       ShowHTML('  }');
+      ShowHTML('  var i; ');
+      ShowHTML('  var w_erro=true; ');
+      ShowHTML('  for (i=0; i < theForm["p_fase[]"].length; i++) {');
+      ShowHTML('    if (theForm["p_fase[]"][i].checked) w_erro=false;');
+      ShowHTML('  }');
+      ShowHTML('  if (w_erro) {');
+      ShowHTML('    alert(\'Você deve informar pelo menos uma fase!\'); ');
+      ShowHTML('    return false;');
+      ShowHTML('  }');      
       CompData('p_ini_i','Recebimento inicial','<=','p_ini_f','Recebimento final');
       Validate('p_fim_i','Conclusão inicial','DATA','','10','10','','0123456789/');
       Validate('p_fim_f','Conclusão final','DATA','','10','10','','0123456789/');
@@ -480,13 +489,13 @@ function Gerencial() {
           $w_linha = $w_linha + 1;
         }
         if (f($row,'concluida')=='N') {
-          if (f($row,'fim')<time()) {
-            $t_atraso       = $t_atraso+1;
-            $t_totatraso    = $t_totatraso+1;
-          } elseif (f($row,'aviso_prox_conc')=='S' && (f($row,'aviso')<=time())) {
-            $t_aviso        = $t_aviso+1;
-            $t_totaviso     = $t_totaviso+1;
-          } 
+          if (f($row,'fim') < addDays(time(),-1)) {
+            $t_atraso    = $t_atraso + 1;
+            $t_totatraso = $t_totatraso + 1;
+          } elseif (f($row,'aviso_prox_conc') == 'S' && (f($row,'aviso') <= addDays(time(),-1))) {
+            $t_aviso    = $t_aviso+1;
+            $t_totaviso = $t_totaviso+1;
+          }
           if (f($row,'or_tramite')==1) {
             $t_cad      = $t_cad+1;
             $t_totcad   = $t_totcad+1;
@@ -551,7 +560,7 @@ function Gerencial() {
     ShowHTML('         <tr><td valign="top" colspan="2" align="center" bgcolor="#D0D0D0" style="border: 2px solid rgb(0,0,0);"><b>Critérios de Busca</td>');
     ShowHTML('      <tr><td colspan=2><table border=0 width="90%" cellspacing=0><tr valign="top">');
     $p_sq_acao_ppa = '';
-    SelecaoAcaoPPA('<u>A</u>ção PPA:','A',null,$w_cliente,$w_ano,null,null,null,null,'p_sq_acao_ppa','CONSULTA',null,null,$w_menu);
+    SelecaoAcaoPPA('<u>A</u>ção PPA:','A',null,$w_cliente,$w_ano,null,null,null,null,'p_sq_acao_ppa','CONSULTA',null,null,$w_menu,null,null);
     ShowHTML('          </table>');
     ShowHTML('      <tr><td colspan=2><table border=0 width="90%" cellspacing=0><tr valign="top">');
     SelecaoIsProjeto('<u>P</u>rograma interno:','P',null,$p_sq_isprojeto,null,'p_sq_isprojeto',null,null);
@@ -580,7 +589,7 @@ function Gerencial() {
     SelecaoFaseCheck('Recuperar fases:','S',null,$p_fase,$P2,'p_fase[]',null,null);
     ShowHTML('      <tr><td align="center" colspan="2" height="1" bgcolor="#000000">');
     ShowHTML('      <tr><td align="center" colspan="2">');
-    ShowHTML('            <input class="STB" type="submit" name="Botao" value="Exibir" onClick="javascript:document.Form.O.value=\'L\';">');
+    ShowHTML('            <input class="STB" type="submit" name="Botao" value="Exibir" onClick="document.Form.target=\'\'; javascript:document.Form.O.value=\'L\';">');
     ShowHTML('            <input class="STB" type="submit" name="Botao" value="Gerar Word" onClick="javascript:document.Form.O.value=\'W\'; document.Form.target=\'Word\'">');
     ShowHTML('          </td>');
     ShowHTML('      </tr>');

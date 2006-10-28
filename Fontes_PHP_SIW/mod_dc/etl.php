@@ -305,8 +305,8 @@ function Inicial() {
         ShowHTML('          <A class="hl" HREF="'.$w_dir.$w_pagina.$par.'&R='.$w_pagina.$par.'&O=A&w_sq_esquema='.f($row,'sq_esquema').'&P1='.$P1.'&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP='.$TP.'&SG='.$SG.MontaFiltro('GET').'" title="Altera as informações gerais do esquema">Alterar</A>&nbsp');
         if (Nvl(f($row,'sq_ocorrencia'),'')>'')     ShowHTML('          <A class="hl" onClick="alert(\'Este esquema possui ocorrências, para desabilita-lo, inative-o!\');"title="Exclui o esquema">Excluir</A>&nbsp');
         else                                        ShowHTML('          <A class="hl" HREF="'.$w_dir.$w_pagina.$par.'&R='.$w_pagina.$par.'&O=E&w_sq_esquema='.f($row,'sq_esquema').'&P1='.$P1.'&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP='.$TP.'&SG='.$SG.MontaFiltro('GET').'" title="Exclui o esquema">Excluir</A>&nbsp');
-        ShowHTML('          <A class="hl" HREF="javascript:location.href=this.location.href;" onClick="window.open(\''.$w_pagina.'Tabela&R='.$w_dir.$w_pagina.'Tabela&O=L&w_sq_esquema='.f($row,'sq_esquema').'&P1='.$P1.'&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP='.$TP.' - Tabelas&SG=ISSIGTAB&w_menu='.$w_menu.MontaFiltro('GET').'\',\'Tabelas\',\'toolbar=no,width=780,height=530,top=30,left=10,scrollbars=yes\');" title="Relaciona as tabelas que compõem o esquema">Tabelas</A>&nbsp');
-        ShowHTML('          <A class="hl" HREF="javascript:location.href=this.location.href;" onClick="window.open(\''.$w_pagina.'Script&R='.$w_dir.$w_pagina.'Script&O=L&w_sq_esquema='.f($row,'sq_esquema').'&P1='.$P1.'&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP='.$TP.' - Scripts&SG=TISCRIPT&w_menu='.$w_menu.MontaFiltro('GET').'\',\'Script\',\'toolbar=no,width=780,height=530,top=30,left=10,scrollbars=yes\');" title="Faz o upload dos scripts quem devem ser executados no banco de dados na próxima carga">Scripts</A>&nbsp');
+        ShowHTML('          <A class="hl" HREF="javascript:location.href=this.location.href;" onClick="window.open(\''.montaURL_JS(null,$conRootSIW.$w_dir.$w_pagina.'Tabela&R='.$w_dir.$w_pagina.'Tabela&O=L&w_sq_esquema='.f($row,'sq_esquema').'&P1='.$P1.'&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP='.$TP.' - Tabelas&SG=ISSIGTAB&w_menu='.$w_menu.MontaFiltro('GET')).'\',\'Tabelas\',\'toolbar=no,width=780,height=530,top=30,left=10,scrollbars=yes\');" title="Relaciona as tabelas que compõem o esquema">Tabelas</A>&nbsp');
+        ShowHTML('          <A class="hl" HREF="javascript:location.href=this.location.href;" onClick="window.open(\''.montaURL_JS(null,$conRootSIW.$w_dir.$w_pagina.'Script&R='.$w_dir.$w_pagina.'Script&O=L&w_sq_esquema='.f($row,'sq_esquema').'&P1='.$P1.'&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP='.$TP.' - Scripts&SG=TISCRIPT&w_menu='.$w_menu.MontaFiltro('GET')).'\',\'Script\',\'toolbar=no,width=780,height=530,top=30,left=10,scrollbars=yes\');" title="Faz o upload dos scripts quem devem ser executados no banco de dados na próxima carga">Scripts</A>&nbsp');
         if (Nvl(f($row,'qtd_tabela'),0)>0) {
           if ($P1==1)   ShowHTML('          <A class="hl" HREF="'.$w_dir.$w_pagina.'IMPORTACAO&R='.$w_pagina.$par.'&O=I&w_sq_esquema='.f($row,'sq_esquema').'&P1='.$P1.'&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP='.$TP.'&SG='.$SG.'&w_menu='.$w_menu.MontaFiltro('GET').'" title="Importa a partir da definição do esquema" onClick="return(confirm(\'A importação usará o último arquivo de configuração gerado.\\nPressione OK apenas se o arquivo de configuração foi atualizado após a última alteração do esquema!\'));">Importar</A>&nbsp');
           else          ShowHTML('          <A class="hl" HREF="'.$w_dir.$w_pagina.'EXPORTACAO&R='.$w_pagina.$par.'&O=I&w_sq_esquema='.f($row,'sq_esquema').'&P1='.$P1.'&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP='.$TP.'&SG='.$SG.'&w_menu='.$w_menu.MontaFiltro('GET').'" title="Exporta a partir da definição do esquema" onClick="return(confirm(\'Confirma geração do arquivo de exportação?\'))">Exportar</A>&nbsp');
@@ -415,7 +415,7 @@ function Inicial() {
     ShowHTML('      <tr><td align="center" colspan=2><hr>');
     if ($O=='E')    ShowHTML('          <input class="STB" type="submit" name="Botao" value="Excluir">');
     else            ShowHTML('          <input class="STB" type="submit" name="Botao" value="Gravar">');
-    ShowHTML('          <input class="stb" type="button" onClick="location.href=\''.$w_pagina.$par.'&P1='.$P1.'&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP='.$TP.'&SG='.$SG.'&O=L\';" name="Botao" value="Cancelar">');
+    ShowHTML('          <input class="stb" type="button" onClick="location.href=\''.montaURL_JS($w_dir,$w_pagina.$par.'&P1='.$P1.'&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP='.$TP.'&SG='.$SG.'&O=L').'\';" name="Botao" value="Cancelar">');
     ShowHTML('          </td>');
     ShowHTML('      </tr>');
     ShowHTML('    </table>');
@@ -636,7 +636,7 @@ function Tabela() {
           ShowHTML('          <A class="hl" HREF="'.$w_dir.$w_pagina.$par.'&R='.$w_pagina.$par.'&O=A&w_sq_esquema='.f($row,'sq_esquema').'&w_sq_esquema_tabela='.f($row,'sq_esquema_tabela').'&P1='.$P1.'&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP='.$TP.'&SG='.$SG.'&w_menu='.$w_menu.MontaFiltro('GET').'" title="Altera a os dados da tabela deste esquema">Alterar</A>&nbsp');
           ShowHTML('          <A class="hl" HREF="'.$w_dir.$w_pagina.'Grava'.'&R='.$w_pagina.$par.'&O=E&w_sq_esquema='.f($row,'sq_esquema').'&w_sq_esquema_tabela='.f($row,'sq_esquema_tabela').'&P1='.$P1.'&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP='.$TP.'&SG='.$SG.'&w_menu='.$w_menu.MontaFiltro('GET').'" title="Exclui a tabela deste esquema" onClick="return confirm(\'Confirma a exclusão do registro?\');">Excluir</A>&nbsp');
           ShowHTML('          <A class="hl" HREF="'.$w_dir.$w_pagina.'MAPEAMENTO&R='.$w_pagina.$par.'&O=I&w_sq_esquema='.f($row,'sq_esquema').'&w_sq_esquema_tabela='.f($row,'sq_esquema_tabela').'&w_sq_tabela='.f($row,'sq_tabela').'&P1='.$P1.'&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP='.$TP.'&SG='.$SG.'&w_menu='.$w_menu.MontaFiltro('GET').'" title="Relaciona os campos da tabela">Mapear</A>&nbsp');
-          if (f($row,'qtd_coluna')>0) ShowHTML('          <A class="hl" HREF="javascript:location.href=this.location.href;" onClick="window.open(\''.$w_pagina.'Registro&R='.$w_dir.$w_pagina.'Registro&O=L&w_sq_esquema='.f($row,'sq_esquema').'&w_sq_esquema_tabela='.f($row,'sq_esquema_tabela').'&w_sq_tabela='.f($row,'sq_tabela').'&P1='.$P1.'&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP='.$TP.' - Registros&SG=TIREGISTRO&w_menu='.$w_menu.MontaFiltro('GET').'\',\'Registros\',\'toolbar=no,width=780,height=530,top=40,left=20,scrollbars=yes\');" title="Registros a serem inseridos na tabela.">Registros</A>&nbsp');
+          if (f($row,'qtd_coluna')>0) ShowHTML('          <A class="hl" HREF="javascript:location.href=this.location.href;" onClick="window.open(\''.montaURL_JS(null,$conRootSIW.$w_dir.$w_pagina.'Registro&R='.$w_dir.$w_pagina.'Registro&O=L&w_sq_esquema='.f($row,'sq_esquema').'&w_sq_esquema_tabela='.f($row,'sq_esquema_tabela').'&w_sq_tabela='.f($row,'sq_tabela').'&P1='.$P1.'&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP='.$TP.' - Registros&SG=TIREGISTRO&w_menu='.$w_menu.MontaFiltro('GET')).'\',\'Registros\',\'toolbar=no,width=780,height=530,top=40,left=20,scrollbars=yes\');" title="Registros a serem inseridos na tabela.">Registros</A>&nbsp');
         } 
         ShowHTML('        </td>');
         ShowHTML('      </tr>');
@@ -667,8 +667,8 @@ function Tabela() {
     ShowHTML('      <tr><td align="center" colspan="3" height="1" bgcolor="#000000">');
     ShowHTML('      <tr><td align="center" colspan="3">');
     ShowHTML('            <input class="STB" type="submit" name="Botao" value="Aplicar filtro">');
-    ShowHTML('            <input class="STB" type="button" onClick="location.href=\''.$w_pagina.$par.'&w_sq_esquema='.$w_sq_esquema.'&R='.$R.'&P1='.$P1.'&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP='.$TP.'&O=P&SG='.$SG.'&w_menu='.$w_menu.'\';" name="Botao" value="Limpar campos">');
-    ShowHTML('            <input class="stb" type="button" onClick="location.href=\''.$w_pagina.$par.'&w_sq_esquema='.$w_sq_esquema.'&R='.$R.'&P1='.$P1.'&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP='.$TP.'&SG='.$SG.'&w_menu='.$w_menu.'&O=L\';" name="Botao" value="Cancelar">');
+    ShowHTML('            <input class="STB" type="button" onClick="location.href=\''.montaURL_JS($w_dir,$w_pagina.$par.'&w_sq_esquema='.$w_sq_esquema.'&R='.$R.'&P1='.$P1.'&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP='.$TP.'&O=P&SG='.$SG.'&w_menu='.$w_menu).'\';" name="Botao" value="Limpar campos">');
+    ShowHTML('            <input class="stb" type="button" onClick="location.href=\''.montaURL_JS($w_dir,$w_pagina.$par.'&w_sq_esquema='.$w_sq_esquema.'&R='.$R.'&P1='.$P1.'&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP='.$TP.'&SG='.$SG.'&w_menu='.$w_menu.'&O=L').'\';" name="Botao" value="Cancelar">');
     ShowHTML('          </td>');
     ShowHTML('      </tr>');
     ShowHTML('    </table>');
@@ -724,7 +724,7 @@ function Tabela() {
     ShowHTML('    </table>');
     ShowHTML('<tr><td align="center" colspan="3">');
     ShowHTML('            <input class="stb" type="submit" name="Botao" value="Gravar">');
-    ShowHTML('            <input class="stb" type="button" onClick="location.href=\''.$w_pagina.$par.'&w_sq_esquema='.$w_sq_esquema.'&R='.$R.'&P1='.$P1.'&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP='.$TP.'&SG='.$SG.'&w_menu='.$w_menu.'&O=L\';" name="Botao" value="Cancelar">');
+    ShowHTML('            <input class="stb" type="button" onClick="location.href=\''.montaURL_JS($w_dir,$w_pagina.$par.'&w_sq_esquema='.$w_sq_esquema.'&R='.$R.'&P1='.$P1.'&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP='.$TP.'&SG='.$SG.'&w_menu='.$w_menu.'&O=L').'\';" name="Botao" value="Cancelar">');
     ShowHTML('  </td>');
     ShowHTML('</FORM>');
     ShowHTML('<tr><td align="center" colspan=3>');
@@ -752,7 +752,7 @@ function Tabela() {
     ShowHTML('      <tr><td align="center" colspan="3" height="1" bgcolor="#000000">');
     ShowHTML('      <tr><td align="center" colspan="3">');
     ShowHTML('            <input class="STB" type="submit" name="Botao" value="Gravar">');
-    ShowHTML('            <input class="stb" type="button" onClick="location.href=\''.$w_pagina.$par.'&w_sq_esquema='.$w_sq_esquema.'&R='.$R.'&P1='.$P1.'&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP='.$TP.'&SG='.$SG.'&w_menu='.$w_menu.'&O=L\';" name="Botao" value="Cancelar">');
+    ShowHTML('            <input class="stb" type="button" onClick="location.href=\''.montaURL_JS($w_dir,$w_pagina.$par.'&w_sq_esquema='.$w_sq_esquema.'&R='.$R.'&P1='.$P1.'&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP='.$TP.'&SG='.$SG.'&w_menu='.$w_menu.'&O=L').'\';" name="Botao" value="Cancelar">');
     ShowHTML('          </td>');
     ShowHTML('      </tr>');
     ShowHTML('    </table>');
@@ -1009,7 +1009,7 @@ function Mapeamento() {
     ShowHTML('    </table>');
     ShowHTML('<tr><td align="center" colspan="3">');
     ShowHTML('            <input class="stb" type="submit" name="Botao" value="Gravar">');
-    ShowHTML('            <input class="stb" type="button" onClick="location.href=\''.$w_pagina.'Tabela'.'&w_sq_esquema='.$w_sq_esquema.'&R='.$R.'&P1='.$P1.'&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP='.$TP.'&SG='.$SG.'&w_menu='.$w_menu.'&O=L\';" name="Botao" value="Cancelar">');
+    ShowHTML('            <input class="stb" type="button" onClick="location.href=\''.montaURL_JS($w_dir,$w_pagina.'Tabela'.'&w_sq_esquema='.$w_sq_esquema.'&R='.$R.'&P1='.$P1.'&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP='.$TP.'&SG='.$SG.'&w_menu='.$w_menu.'&O=L').'\';" name="Botao" value="Cancelar">');
     ShowHTML('  </td>');
     ShowHTML('</FORM>');
   } else {
@@ -1141,7 +1141,7 @@ function Importacao() {
     ShowHTML('      <tr><td align="LEFT"><b><U>A</U>ssinatura Eletrônica:<BR> <INPUT ACCESSKEY="A" class="sti" type="PASSWORD" name="w_assinatura" size="30" maxlength="30" value=""></td></tr>');
     ShowHTML('      <tr><td align="center"><hr>');
     ShowHTML('          <input class="STB" type="submit" name="Botao" value="Importar">');
-    ShowHTML('          <input class="stb" type="button" onClick="location.href=\''.$R.'&P1='.$P1.'&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP='.$TP.'&SG='.'TIMPORT'.'&O=L\';" name="Botao" value="Cancelar">');
+    ShowHTML('          <input class="stb" type="button" onClick="location.href=\''.montaURL_JS($w_dir,$R.'&P1='.$P1.'&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP='.$TP.'&SG='.'TIMPORT'.'&O=L').'\';" name="Botao" value="Cancelar">');
     ShowHTML('          </td>');
     ShowHTML('      </tr>');
     ShowHTML('    </table>');
@@ -1321,7 +1321,7 @@ function Registro() {
     ShowHTML('    </table>');
     ShowHTML('<tr><td align="center" colspan="3">');
     ShowHTML('            <input class="stb" type="submit" name="Botao" value="Gravar">');
-    ShowHTML('            <input class="stb" type="button" onClick="location.href=\''.$w_pagina.'Registro&w_sq_esquema_tabela='.$w_sq_esquema_tabela.'&w_sq_tabela='.$w_sq_tabela.'&w_sq_esquema='.$w_sq_esquema.'&R='.$R.'&P1='.$P1.'&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP='.$TP.'&SG='.$SG.'&w_menu='.$w_menu.'&O=L\';" name="Botao" value="Cancelar">');
+    ShowHTML('            <input class="stb" type="button" onClick="location.href=\''.montaURL_JS($w_dir,$w_pagina.'Registro&w_sq_esquema_tabela='.$w_sq_esquema_tabela.'&w_sq_tabela='.$w_sq_tabela.'&w_sq_esquema='.$w_sq_esquema.'&R='.$R.'&P1='.$P1.'&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP='.$TP.'&SG='.$SG.'&w_menu='.$w_menu.'&O=L').'\';" name="Botao" value="Cancelar">');
     ShowHTML('  </td>');
     ShowHTML('</FORM>');
   } else {
@@ -1475,7 +1475,7 @@ function Script() {
       if ($O=='I') ShowHTML('            <input class="STB" type="submit" name="Botao" value="Incluir">');
       else         ShowHTML('            <input class="STB" type="submit" name="Botao" value="Atualizar">');
     } 
-    ShowHTML('            <input class="STB" type="button" onClick="location.href=\''.$w_pagina.$par.'&w_sq_esquema='.$w_sq_esquema.'&P1='.$P1.'&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP='.$TP.'&SG='.$SG.'&O=L\';" name="Botao" value="Cancelar">');
+    ShowHTML('            <input class="STB" type="button" onClick="location.href=\''.montaURL_JS($w_dir,$w_pagina.$par.'&w_sq_esquema='.$w_sq_esquema.'&P1='.$P1.'&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP='.$TP.'&SG='.$SG.'&O=L').'\';" name="Botao" value="Cancelar">');
     ShowHTML('          </td>');
     ShowHTML('      </tr>');
     ShowHTML('    </table>');
@@ -1588,6 +1588,7 @@ function Grava() {
   extract($GLOBALS);
   Cabecalho();
   ShowHTML('</HEAD>');
+  ShowHTML('<BASE HREF="'.$conRootSIW.'">');  
   BodyOpenClean(null);
   switch ($SG) {
     case 'TIMPORT':
@@ -1599,7 +1600,7 @@ function Grava() {
                 $_REQUEST['w_bd_password'],$_REQUEST['w_tx_delimitador'],$_REQUEST['w_tipo_efetivacao'],$_REQUEST['w_tx_origem_arquivos'],$_REQUEST['w_ftp_hostname'],$_REQUEST['w_ftp_username'],
                 $_REQUEST['w_ftp_password'],$_REQUEST['w_ftp_diretorio'],$_REQUEST['w_envia_mail'],$_REQUEST['w_lista_mail']);
         ScriptOpen('JavaScript');
-        ShowHTML('  location.href=\''.$R.'&O=L&w_sq_esquema='.$_REQUEST['w_sq_esquema'].'&P1='.$P1.'&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP='.$TP.'&SG='.$SG.MontaFiltro('GET').'\';');
+        ShowHTML('  location.href=\''.montaURL_JS($w_dir,$R.'&O=L&w_sq_esquema='.$_REQUEST['w_sq_esquema'].'&P1='.$P1.'&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP='.$TP.'&SG='.$SG.MontaFiltro('GET')).'\';');
         ScriptClose();
       } else {
         ScriptOpen('JavaScript');
@@ -1624,7 +1625,7 @@ function Grava() {
           dml_putEsquemaTabela::getInstanceOf($dbms,$O,$_REQUEST['w_sq_esquema_tabela'],null,null,null,null,null);
         } 
         ScriptOpen('JavaScript');
-        ShowHTML('  location.href=\''.$R.'&O=L&w_sq_esquema='.$_REQUEST['w_sq_esquema'].'&P1='.$P1.'&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP='.$TP.'&SG='.$SG.'&w_menu='.$w_menu.MontaFiltro('GET').'\';');
+        ShowHTML('  location.href=\''.montaURL_JS($w_dir,$R.'&O=L&w_sq_esquema='.$_REQUEST['w_sq_esquema'].'&P1='.$P1.'&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP='.$TP.'&SG='.$SG.'&w_menu='.$w_menu.MontaFiltro('GET')).'\';');
         ScriptClose();
       } else {
         ScriptOpen('JavaScript');
@@ -1646,7 +1647,7 @@ function Grava() {
           }
         } 
         ScriptOpen('JavaScript');
-        ShowHTML('  location.href=\''.$w_pagina.'Tabela'.'&O=L&w_sq_esquema='.$_REQUEST['w_sq_esquema'].'&w_sq_esquema_tabela='.$_REQUEST['w_sq_esquema_tabela'].'&P1='.$P1.'&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP='.$TP.'&SG='.'ISSIGTAB'.MontaFiltro('GET').'\';');
+        ShowHTML('  location.href=\''.montaURL_JS($w_dir,$w_pagina.'Tabela'.'&O=L&w_sq_esquema='.$_REQUEST['w_sq_esquema'].'&w_sq_esquema_tabela='.$_REQUEST['w_sq_esquema_tabela'].'&P1='.$P1.'&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP='.$TP.'&SG='.'ISSIGTAB'.MontaFiltro('GET')).'\';');
         ScriptClose();
       } else {
         ScriptOpen('JavaScript');
@@ -1666,7 +1667,7 @@ function Grava() {
           dml_putEsquemaInsert::getInstanceOf($dbms,$O,null,$_REQUEST['w_sq_esquema_tabela'],null,null,null,$_REQUEST['w_registro']);
         } 
         ScriptOpen('JavaScript');
-        ShowHTML('  location.href=\''.$R.'&O=L&w_sq_esquema='.$_REQUEST['w_sq_esquema'].'&w_sq_esquema_tabela='.$_REQUEST['w_sq_esquema_tabela'].'&w_sq_tabela='.$_REQUEST['w_sq_tabela'].'&P1='.$P1.'&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP='.$TP.'&SG='.$SG.'&w_menu='.$w_menu.MontaFiltro('GET').'\';');
+        ShowHTML('  location.href=\''.montaURL_JS($w_dir,$R.'&O=L&w_sq_esquema='.$_REQUEST['w_sq_esquema'].'&w_sq_esquema_tabela='.$_REQUEST['w_sq_esquema_tabela'].'&w_sq_tabela='.$_REQUEST['w_sq_tabela'].'&P1='.$P1.'&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP='.$TP.'&SG='.$SG.'&w_menu='.$w_menu.MontaFiltro('GET')).'\';');
         ScriptClose();
       } else {
         ScriptOpen('JavaScript');
@@ -1681,7 +1682,7 @@ function Grava() {
       if (UPLOAD_ERR_OK==0) {
         $w_maximo = $_REQUEST['w_upload_maximo'];
         foreach ($_FILES as $Chv => $Field) {
-          if ($Field['error'] > 0) {
+          if (!($Field['error']==UPLOAD_ERR_OK || $Field['error']==UPLOAD_ERR_NO_FILE)) {
             // Verifica se o tamanho das fotos está compatível com  o limite de 100KB. 
             ScriptOpen('JavaScript');
             ShowHTML('  alert(\'Atenção: o tamanho máximo do arquivo não pode exceder '.($w_maximo/1024).' KBytes!\');');
@@ -1689,7 +1690,7 @@ function Grava() {
             ScriptClose();
             exit();
           }
-          if ($Field['size'] >= 0) {
+          if ($Field['size'] > 0) {
             // Verifica se o tamanho das fotos está compatível com  o limite de 100KB. 
             if ($Field['size'] > $w_maximo) {
               ScriptOpen('JavaScript');
@@ -1740,7 +1741,7 @@ function Grava() {
       ScriptOpen('JavaScript');
      // Recupera a sigla do serviço pai, para fazer a chamada ao menu 
       $RS = db_getLinkData::getInstanceOf($dbms,$w_cliente,$SG);
-      ShowHTML('  location.href=\''.$R.'&O=L&w_sq_esquema='.$_REQUEST['w_sq_esquema'].'&P1='.$P1.'&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP='.$TP.'&SG='.$SG.'\';');
+      ShowHTML('  location.href=\''.montaURL_JS($w_dir,$R.'&O=L&w_sq_esquema='.$_REQUEST['w_sq_esquema'].'&P1='.$P1.'&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP='.$TP.'&SG='.$SG).'\';');
       ScriptClose();
     } else {
       ScriptOpen('JavaScript');
@@ -1775,7 +1776,7 @@ function Grava() {
 
       // Recupera a sigla do serviço pai, para fazer a chamada ao menu 
        $RS1 = db_getLinkData::getInstanceOf($dbms,$w_cliente,'TIMPORT');
-       ShowHTML('  location.href=\''.str_replace($w_dir,'',f($RS1,'link')).'&O=L&P1='.$P1.'&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP='.$TP.'&SG='.f($RS1,'sigla').MontaFiltro('GET').'\';');
+       ShowHTML('  location.href=\''.montaURL_JS($w_dir,f($RS1,'link').'&O=L&P1='.$P1.'&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP='.$TP.'&SG='.f($RS1,'sigla').MontaFiltro('GET')).'\';');
        ScriptClose();
      } else {
        ScriptOpen('JavaScript');

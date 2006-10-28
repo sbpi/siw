@@ -8,7 +8,27 @@ include_once($w_dir_volta.'funcoes.php');
 include_once($w_dir_volta.'classes/db/abreSessao.php');
 include_once($w_dir_volta.'classes/sp/db_getLinkData.php');
 include_once($w_dir_volta.'classes/sp/db_getMenuData.php');
-include_once($w_dir_volta.'classes/sp/db_getMenuCode.php')
+include_once($w_dir_volta.'classes/sp/db_getMenuCode.php');
+include_once($w_dir_volta.'classes/sp/db_getCustomerData.php');
+include_once($w_dir_volta.'classes/sp/db_getKnowArea.php');
+include_once($w_dir_volta.'classes/sp/db_getCVAcadForm.php');
+include_once($w_dir_volta.'classes/sp/db_verificaAssinatura.php');
+include_once($w_dir_volta.'funcoes/selecaoCargo.php');
+include_once($w_dir_volta.'funcoes/selecaoSexo.php');
+include_once($w_dir_volta.'funcoes/selecaoEstadoCivil.php');
+include_once($w_dir_volta.'funcoes/selecaoFormacao.php');
+include_once($w_dir_volta.'funcoes/selecaoEtnia.php');
+include_once($w_dir_volta.'funcoes/selecaoDeficiencia.php');
+include_once($w_dir_volta.'funcoes/selecaoPais.php');
+include_once($w_dir_volta.'funcoes/selecaoEstado.php');
+include_once($w_dir_volta.'funcoes/selecaoCidade.php');
+include_once($w_dir_volta.'funcoes/selecaoIdioma.php');
+include_once($w_dir_volta.'funcoes/selecaoTipoPosto.php');
+include_once($w_dir_volta.'funcoes/selecaoModalidade.php');
+include_once($w_dir_volta.'funcoes/selecaoUnidade.php');
+include_once($w_dir_volta.'funcoes/selecaoLocalizacao.php');
+include_once($w_dir_volta.'funcoes/selecaoVinculo.php');
+include_once('visualcurriculo.php');
 
 // =========================================================================
 //  /cv.php
@@ -16,8 +36,8 @@ include_once($w_dir_volta.'classes/sp/db_getMenuCode.php')
 
 // Nome     : Billy Jones Leal dos Santos   
 // Descricao: Gerencia telas do currículo do colaborador
-// Mail     : alex@sbpi.com.br
-// Criacao  : 17/08/2006 13:30
+// Mail     : billy@sbpi.com.br
+// Criacao  : 26/10/2006 10:30
 // Versao   : 1.0.0.0
 // Local    : Brasília - DF
 // -------------------------------------------------------------------------
@@ -42,8 +62,7 @@ if(nvl($_REQUEST['p_dbms'],'nulo')!='nulo')    $_SESSION['DBMS']    = $_REQUEST[
 if ($_SESSION['LOGON']!='Sim') { EncerraSessao(); }
 
 // Declaração de variáveis
-$dbms = abreSessao::getInstanceOf($_SESSION['DBMS']);
-
+$dbms = abreSessao::getInstanceOf($dbms,$_SESSION['DBMS']);
 $w_troca=$_REQUEST['w_troca'];
 $w_copia=$_REQUEST['w_copia'];
 
@@ -66,21 +85,17 @@ $TP           = $_REQUEST['TP'];
 $R            = strtoupper($_REQUEST['R']);
 $w_assinatura = strtoupper($_REQUEST['w_assinatura']);
   
-if ($p_portal_session>'') $sq_pessoa_session = $w_usuario;
-if (nvl($SG,'nulo')!='nulo' && nvl($SG,'nulo')!='CVCARGOS') $w_menu=RetornaMenu($w_cliente,$SG);
+if ($_SESSION['PORTAL'] >'') $_SESSION['SQ_PESSOA'] = $w_usuario;
+
+if (nvl($SG,'nulo')!='nulo' && nvl($SG,'nulo')!='CVCARGOS') $w_menu = RetornaMenu($w_cliente,$SG);
+
 if ($SG=='GDPINTERES' || $SG=='GDPAREAS') {
-  if ($O!='I' && $_REQUEST['w_chave_aux']=='') {
-    $O='L';
-  } 
+  if ($O!='I' && nvl($_REQUEST['w_chave_aux']==''),'') $O='L';
 } elseif ($SG=='GDPENVIO') {
   $O='V';
 } elseif ($O=='') {
   // Se for acompanhamento, entra na filtragem
-  if ($P1==3) {
-    $O='P';
-  } else {
-    $O='L';
-  }
+  if ($P1==3) $O='P';  else  $O='L';
 } 
 switch ($O) {
 case 'I':   $w_TP=$TP.' - Inclusão';    break;
@@ -95,28 +110,24 @@ default :   $w_TP=$TP.' - Listagem';    break;
 
 // Verifica se o documento tem sub-menu. Se tiver, agrega no HREF uma chamada para montagem do mesmo.
 
-$RS = db_getLinkSubMenu($p_cliente_session,$SG);
-if (mysql_num_rows($RS_query)>0) {
-  $w_submenu='Existe';
-}
-  else {
-  $w_submenu='';
-} 
+$RS = db_getLinkSubMenu::getInstanceOf($dbms,$_SESSION['P_CLIENTE'],$SG);
+if (mysql_num_rows($RS_query)>0) $w_submenu='Existe';
+else  $w_submenu='';
+ 
 // Recupera a configuração do serviço
 if ($P2>0 && $SG!='CVVISUAL') {
-$RS = db_getMenuData($P2);} 
+  $RS_Menu = db_getMenuData::getInstanceOf($dbms,$P2); 
 } else {
-$RS = db_getMenuData;
+  $RS_Menu = db_getMenuData::getInstanceOf($dbms,$w_menu);
 }
-($w_menu);
-if (!($RS_menu==0)) {
-if ($RS_menu['ultimo_nivel')='S'$Then;
-) // Se for sub-menu, pega a configuração do pai
-{
-  $RS = db_getMenuData($RS_menu['sq_menu_pai'));
+// Se for sub-menu, pega a configuração do pai
+if (f($RS_Menu,'ultimo_nivel')=='S') { 
+  $RS_Menu = db_getMenuData::getInstanceOf($dbms,f($RS_Menu,'sq_menu_pai'));
 } 
+Main();
+FechaSessao($dbms);
+exit; 
 
-} 
 // =========================================================================
 // Rotina de visualização resumida dos registros
 // -------------------------------------------------------------------------
@@ -154,7 +165,7 @@ function Inicial() {
   if ($w_troca>'') {
     // Se for recarga da página
     BodyOpen('onLoad='document.Form.'.$w_troca.'.focus();'');
-  } elseif ((strpos('P',$O) ? strpos('P',$O)+1 : 0)>0) {
+  } elseif (!(strpos('P',$O)===false) {
     BodyOpen('onLoad='document.Form.P4.focus()';');
   } else {
     BodyOpen('onLoad=document.focus();');
@@ -224,7 +235,7 @@ function Inicial() {
     ShowHTML('      <tr><td align="center" colspan="3" height="1" bgcolor="#000000">');
     ShowHTML('      <tr><td align="center" colspan="3">');
     ShowHTML('            <input class="STB" type="submit" name="Botao" value="Aplicar filtro">');
-    ShowHTML('            <input class="STB" type="button" onClick="location.href=\''.$w_pagina.$par.'&P1='.$P1.'&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP='.$TP.'&SG='.$SG.'\';" name="Botao" value="Remover filtro">');
+    ShowHTML('            <input class="STB" type="button" onClick="location.href=\''.montaURL_JS($w_dir,$w_pagina.$par.'&P1='.$P1.'&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP='.$TP.'&SG='.$SG).'\';" name="Botao" value="Remover filtro">');
     ShowHTML('          </td>');
     ShowHTML('      </tr>');
     ShowHTML('    </table>');
@@ -255,22 +266,22 @@ function Identificacao() {
   // da própria tela (se for recarga da tela) ou do banco de dados (se não for inclusão)
   if ($w_troca>'') {
     // Se for recarga da página
-    $w_sq_estado_civil    = $ul->Texts.$Item['w_sq_estado_civil');
-    $w_nome               = $ul->Texts.$Item['w_nome');
-    $w_nome_resumido      = $ul->Texts.$Item['w_nome_resumido');
-    $w_foto               = $ul->Texts.$Item['w_foto');
-    $w_nascimento         = $ul->Texts.$Item['w_nascimento');
-    $w_rg_numero          = $ul->Texts.$Item['w_rg_numero');
-    $w_rg_emissor         = $ul->Texts.$Item['w_rg_emissor');
-    $w_rg_emissao         = $ul->Texts.$Item['w_rg_emissao');
-    $w_cpf                = $ul->Texts.$Item['w_cpf');
-    $w_pais               = $ul->Texts.$Item['w_pais');
-    $w_uf                 = $ul->Texts.$Item['w_uf');
-    $w_cidade             = $ul->Texts.$Item['w_cidade');
-    $w_passaporte_numero  = $ul->Texts.$Item['w_passaporte_numero');
-    $w_sq_pais_passaporte = $ul->Texts.$Item['w_passaporte_numero');
-    $w_sexo               = $ul->Texts.$Item['w_sexo');
-    $w_sq_formacao        = $ul->Texts.$Item['w_sq_formacao');
+    $w_sq_estado_civil    = $_REQUEST['w_sq_estado_civil'];
+    $w_nome               = $_REQUEST['w_nome'];
+    $w_nome_resumido      = $_REQUEST['w_nome_resumido'];
+    $w_foto               = $_REQUEST['w_foto'];
+    $w_nascimento         = $_REQUEST['w_nascimento'];
+    $w_rg_numero          = $_REQUEST['w_rg_numero'];
+    $w_rg_emissor         = $_REQUEST['w_rg_emissor'];
+    $w_rg_emissao         = $_REQUEST['w_rg_emissao'];
+    $w_cpf                = $_REQUEST['w_cpf'];
+    $w_pais               = $_REQUEST['w_pais'];
+    $w_uf                 = $_REQUEST['w_uf'];
+    $w_cidade             = $_REQUEST['w_cidade'];
+    $w_passaporte_numero  = $_REQUEST['w_passaporte_numero'];
+    $w_sq_pais_passaporte = $_REQUEST['w_passaporte_numero'];
+    $w_sexo               = $_REQUEST['w_sexo'];
+    $w_sq_formacao        = $_REQUEST['w_sq_formacao'];
   } else {
     // Recupera os dados do currículo a partir da chave
     $RS = db_getCV::getInstanceOf($dbms,$w_cliente,nvl($w_chave,0),$SG,'DADOS');
@@ -305,7 +316,6 @@ function Identificacao() {
   Modulo();
   FormataData();
   FormataCPF();
-  ProgressBar($w_dir,$UploadID);
   ValidateOpen('Validacao');
   if ($O=='I' || $O=='A') {
     ShowHTML('  if (theForm.Botao.value == "Troca") { return true; }');
@@ -343,7 +353,7 @@ function Identificacao() {
     ShowHTML('        theForm.w_sq_pais_passaporte.selectedIndex = 0;');
     ShowHTML('     }');
     ShowHTML('  }');
-    if ($p_portal_session=='') {
+    if ($_SESSION['PORTAL']=='') {
       Validate('w_assinatura','Assinatura eletrônica','1','1','3','14','1','1');
      }
   } 
@@ -356,7 +366,7 @@ function Identificacao() {
     BodyOpen('onLoad=\'document.Form.'.$w_troca.'.focus()\';');
   } else {
     BodyOpen('onLoad='document.Form.w_nome.focus()';');
-  } if ($p_portal_session=='') {
+  } if ($_SESSION['PORTAL']=='') {
     ShowHTML('<B><FONT COLOR="#000000">'.$w_TP.'</FONT></B>');
     ShowHTML('<HR>');
   } 
@@ -375,7 +385,7 @@ function Identificacao() {
   ShowHTML('<INPUT type="hidden" name="P3" value="'.$P3.'">');
   ShowHTML('<INPUT type="hidden" name="P4" value="'.$P4.'">');
   ShowHTML('<INPUT type="hidden" name="TP" value="'.$TP.'">');
-  if ($p_portal_session>'' && $O=='I') {
+  if ($_SESSION['PORTAL'] >'' && $O=='I') {
     ShowHTML('<INPUT type="hidden" name="R" value="'.$_SERVER['HTTP_REFERER').'">');
   } else {
     ShowHTML('<INPUT type="hidden" name="R" value="'.$w_pagina.$par.'">');
@@ -437,7 +447,7 @@ function Identificacao() {
   ShowHTML('          <td title="Se possuir um passaporte, informe o número."><b>Número passapo<u>r</u>te:</b><br><input '.$w_Disabled.' accesskey="R" type="text" name="w_passaporte_numero" class="sti" SIZE="15" MAXLENGTH="15" VALUE="'.$w_passaporte_numero.'"></td>');
   SelecaoPais('<u>P</u>aís passaporte:','P','Se possuir um passaporte, selecione o país de emissão.',$w_sq_pais_passaporte,null,'w_sq_pais_passaporte',null,null);
   ShowHTML('      </table>');
-  if ($p_portal_session=='') {
+  if ($_SESSION['PORTAL']=='') {
     ShowHTML('      <tr><td align="LEFT" colspan=3><b><U>A</U>ssinatura Eletrônica:<BR> <INPUT ACCESSKEY="A" class="sti" type="PASSWORD" name="w_assinatura" size="30" maxlength="30" value=""></td></tr>'); 
   }
   ShowHTML('      <tr><td align="center" colspan="3" height="1" bgcolor="#000000"></TD></TR>');
@@ -467,21 +477,22 @@ function Identificacao() {
 function Idiomas() {
   extract($GLOBALS);
   global $w_Disabled;
-  $w_chave=$_REQUEST['w_chave'];
-  $w_troca=$_REQUEST['w_troca'];
+  $w_chave  = $_REQUEST['w_chave'];
+  $w_troca  = $_REQUEST['w_troca'];
   if ($w_troca>'') {
     // Se for recarga da página
-    $w_leitura=$_REQUEST['w_leitura'];
-    $w_escrita=$_REQUEST['w_escrita'];
-    $w_compreensao=$_REQUEST['w_compreensao'];
-    $w_conversacao=$_REQUEST['w_conversacao'];
+    $w_leitura     = $_REQUEST['w_leitura'];
+    $w_escrita     = $_REQUEST['w_escrita'];
+    $w_compreensao = $_REQUEST['w_compreensao'];
+    $w_conversacao = $_REQUEST['w_conversacao'];
   } elseif ($O=='L') {
     // Recupera todos os registros para a listagem
     $RS = db_getCVIdioma::getInstanceOf($dbms,$w_usuario,null);
-    $RS = SortArray($RS,='nome';
+    $RS = SortArray($RS,'nome','asc');
   } elseif (!(strpos('AEV',$O)===false)) {
     // Recupera os dados do registro informado
     $RS = db_getCVIdioma::getInstanceOf($dbms,$w_usuario,$w_chave);
+    foreach ($RS as $row) {$RS=$row; break;}
     $w_nm_idioma   = f($RS,'nome');
     $w_chave       = f($RS,'sq_idioma');
     $w_leitura     = f($RS,'leitura');
@@ -496,7 +507,7 @@ function Idiomas() {
     ValidateOpen('Validacao');
     if (!(strpos('I',$O)===false)) {
       Validate('w_chave','Idioma','SELECT','1','1','10','','1');
-    } elseif ($O=='E' && $p_portal_session=='') {
+    } elseif ($O=='E' && $_SESSION['PORTAL']=='') {
       Validate('w_assinatura','Assinatura Eletrônica','1','1','6','30','1','1');
       ShowHTML('  if (confirm(\'Confirma a exclusão deste registro?\')) ');
       ShowHTML('     { return (true); }; ');
@@ -513,7 +524,7 @@ function Idiomas() {
     BodyOpen('onLoad=\'document.Form.'.$w_troca.'.focus()\';');
   } elseif ($O=='I'){
     BodyOpen('onLoad='document.Form.w_chave.focus()';');
-  } elseif ($O=='E' && $p_portal_session=='') {
+  } elseif ($O=='E' && $_SESSION['PORTAL']=='') {
     BodyOpen('onLoad='document.Form.w_assinatura.focus()';');
   } else {
     BodyOpen('onLoad='document.focus()';');
@@ -584,7 +595,7 @@ function Idiomas() {
     ShowHTML('      <tr>');
     MontaRadioNS('<b>Você conversa fluentemente no idioma selecionado acima?</b>',$w_conversacao,'w_conversacao');
     ShowHTML('          </table>');
-    if ($p_portal_session=='') {
+    if ($_SESSION['PORTAL']=='') {
       ShowHTML ('      <tr><td align="LEFT"><b><U>A</U>ssinatura Eletrônica:<BR> <INPUT ACCESSKEY="A" class="sti" type="PASSWORD" name="w_assinatura" size="30" maxlength="30" value=""></td></tr>'); 
     }
     ShowHTML('      <tr><td align="center"><hr>');
@@ -597,7 +608,7 @@ function Idiomas() {
         ShowHTML('            <input class="STB" type="submit" name="Botao" value="Atualizar">');
       } 
     } 
-    ShowHTML('            <input class="STB" type="button" onClick="location.href=''.$w_pagina.$par.'&w_chave='.$w_chave.'&P1='.$P1.'&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP='.$TP.'&SG='.$SG.'&O=L';" name="Botao" value="Cancelar">');
+    ShowHTML('            <input class="STB" type="button" onClick="location.href=\''.montaURL_JS($w_dir,$w_pagina.$par.'&w_chave='.$w_chave.'&P1='.$P1.'&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP='.$TP.'&SG='.$SG.'&O=L').'\';" name="Botao" value="Cancelar">');
     ShowHTML('          </td>');
     ShowHTML('      </tr>');
     ShowHTML('    </table>');
@@ -621,47 +632,47 @@ function Idiomas() {
 function Experiencia() {
   extract($GLOBALS);
   global $w_disabled;
-  $w_chave=$_REQUEST['w_chave'];
-  $w_troca=$_REQUEST['w_troca'];
+  $w_chave  = $_REQUEST['w_chave'];
+  $w_troca  = $_REQUEST['w_troca'];
   if ($w_troca>'') {
-    $w_sq_area_conhecimento=$_REQUEST['w_sq_area_conhecimento'];
-    $w_nm_area=$_REQUEST['w_nm_area'];
-    $w_sq_pais=$_REQUEST['w_sq_pais'];
-    $w_co_uf=$_REQUEST['w_co_uf'];
-    $w_sq_cidade=$_REQUEST['w_sq_cidade'];
-    $w_sq_eo_tipo_posto=$_REQUEST['w_sq_eo_tipo_posto'];
-    $w_sq_tipo_vinculo=$_REQUEST['w_sq_tipo_vinculo'];
-    $w_atividades=$_REQUEST['w_atividades'];
-    $w_empregador=$_REQUEST['w_empregador'];
-    $w_entrada=$_REQUEST['w_entrada'];
-    $w_saida=$_REQUEST['w_saida'];
-    $w_duracao_mes=$_REQUEST['w_duracao_mes'];
-    $w_duracao_ano=$_REQUEST['w_duracao_ano'];
-    $w_motivo_saida=$_REQUEST['w_motivo_saida'];
+    $w_sq_area_conhecimento = $_REQUEST['w_sq_area_conhecimento'];
+    $w_nm_area              = $_REQUEST['w_nm_area'];
+    $w_sq_pais              = $_REQUEST['w_sq_pais'];
+    $w_co_uf                = $_REQUEST['w_co_uf'];
+    $w_sq_cidade            = $_REQUEST['w_sq_cidade'];
+    $w_sq_eo_tipo_posto     = $_REQUEST['w_sq_eo_tipo_posto'];
+    $w_sq_tipo_vinculo      = $_REQUEST['w_sq_tipo_vinculo'];
+    $w_atividades           = $_REQUEST['w_atividades'];
+    $w_empregador           = $_REQUEST['w_empregador'];
+    $w_entrada              = $_REQUEST['w_entrada'];
+    $w_saida                = $_REQUEST['w_saida'];
+    $w_duracao_mes          = $_REQUEST['w_duracao_mes'];
+    $w_duracao_ano          = $_REQUEST['w_duracao_ano'];
+    $w_motivo_saida         = $_REQUEST['w_motivo_saida'];
   } if ($O=='L') {
     // Recupera todos os registros para a listagem
     $RS = db_getCVAcadForm::getInstanceOf($dbms,$w_usuario,null,'EXPERIENCIA');
     $RS = SortArray($RS,='entrada desc';
   } elseif (!(strpos('AEV',$O)===false) && $w_troca=='') {
     $RS = db_getCVAcadForm::getInstanceOf($dbms,$w_usuario,$w_chave,'EXPERIENCIA');
-    $w_sq_area_conhecimento=f($RS,'sq_area_conhecimento');
-    if (!isset(f($RS,'nm_area'))) {
-      $w_nm_area='';
+    $w_sq_area_conhecimento = f($RS,'sq_area_conhecimento');
+    if (nvl(f($RS,'nm_area'),'')=='') {
+      $w_nm_area = '';
     } else {
-      $w_nm_area=f($RS,'nm_area').' ('.f($RS,'codigo_cnpq').')';
+      $w_nm_area = f($RS,'nm_area').' ('.f($RS,'codigo_cnpq').')';
     }
-    $w_sq_pais=f($RS,'sq_pais');
-    $w_co_uf=f($RS,'co_uf');
-    $w_sq_cidade=f($RS,'sq_cidade');
-    $w_sq_eo_tipo_posto=f($RS,'sq_eo_tipo_posto');
-    $w_sq_tipo_vinculo=f($RS,'sq_tipo_vinculo');
-    $w_empregador=f($RS,'empregador');
-    $w_atividades=f($RS,'atividades');
-    $w_entrada=FormataDataEdicao(f($RS,'entrada'));
-    $w_saida=FormataDataEdicao(f($RS,'saida'));
-    $w_duracao_mes=f($RS,'duracao_mes');
-    $w_duracao_ano=f($RS,'duracao_ano');
-    $w_motivo_saida=f($RS,'motivo_saida');
+    $w_sq_pais          = f($RS,'sq_pais');
+    $w_co_uf            = f($RS,'co_uf');
+    $w_sq_cidade        = f($RS,'sq_cidade');
+    $w_sq_eo_tipo_posto = f($RS,'sq_eo_tipo_posto');
+    $w_sq_tipo_vinculo  = f($RS,'sq_tipo_vinculo');
+    $w_empregador       = f($RS,'empregador');
+    $w_atividades       = f($RS,'atividades');
+    $w_entrada          = FormataDataEdicao(f($RS,'entrada'));
+    $w_saida            = FormataDataEdicao(f($RS,'saida'));
+    $w_duracao_mes      = f($RS,'duracao_mes');
+    $w_duracao_ano      = f($RS,'duracao_ano');
+    $w_motivo_saida     = f($RS,'motivo_saida');
   } 
   Cabecalho();
   ShowHTML('<HEAD>');
@@ -702,11 +713,11 @@ function Experiencia() {
       ShowHTML('    return false;');
       ShowHTML('  }');
       Validate('w_atividades','Atividades desempenhadas','','1','4','4000','1','1');
-      if ($p_portal_session=='') {
+      if ($_SESSION['PORTAL']=='') {
         Validate ('w_assinatura','Assinatura Eletrônica','1','1','6','30','1','1');
       }
     } elseif ($O=='E') {
-      if ($p_portal_session=='') {
+      if ($_SESSION['PORTAL']=='') {
         Validate('w_assinatura','Assinatura Eletrônica','1','1','6','30','1','1'); 
         ShowHTML('  if (confirm(\'Confirma a exclusão deste registro?\')) ');
         ShowHTML('     { return (true); }; ');
@@ -757,10 +768,9 @@ function Experiencia() {
           ShowHTML('        <td align="top" nowrap>');
           ShowHTML('          <A class="HL" HREF="'.$w_dir.$w_pagina.$par.'&R='.$w_pagina.$par.'&O=A&w_sq_cvpessoa='.$w_sq_cvpessoa.'&w_chave='.f($RS,'sq_cvpesexp').'&P1='.$P1.'&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP='.$TP.'&SG='.$SG.MontaFiltro('GET').'">Alterar</A>&nbsp');
           ShowHTML('          <A class="HL" HREF="'.$w_dir.$w_pagina.'GRAVA&R='.$w_pagina.$par.'&O=E&w_sq_cvpessoa='.$w_sq_cvpessoa.'&w_chave='.f($RS,'sq_cvpesexp').'&P1='.$P1.'&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP='.$TP.'&SG='.$SG.MontaFiltro('GET').'" onClick="return confirm('Confirma a exclusão do emprego?');">Excluir</A>&nbsp');
-          ShowHTML('          <u class="HL" style="cursor:hand;" onclick="javascript:window.open(''.$w_pagina.'CARGOS&R='.$w_pagina.'CARGOS&O=L&w_sq_cvpessoa='.$w_sq_cvpessoa.'&w_sq_cvpesexp='.f($RS,'sq_cvpesexp').'&P1=2&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP='.$TP.' - Cargos&SG=CVCARGOS'.MontaFiltro('GET').'','Cargos','toolbar=no,width=780,height=350,top=30,left=10,scrollbars=yes,resizable=yes')">Cargos</u>&nbsp');
+          ShowHTML('          <u class="HL" style="cursor:hand;" onclick="javascript:window.open(\''.montaURL_JS($w_dir,$w_pagina.'CARGOS&R='.$w_pagina.'CARGOS&O=L&w_sq_cvpessoa='.$w_sq_cvpessoa.'&w_sq_cvpesexp='.f($RS,'sq_cvpesexp').'&P1=2&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP='.$TP.' - Cargos&SG=CVCARGOS'.MontaFiltro('GET').'\',\'Cargos').'\',\'toolbar=no,width=780,height=350,top=30,left=10,scrollbars=yes,resizable=yes\')">Cargos</u>&nbsp');
           ShowHTML('        </td>');
           ShowHTML('      </tr>');
-          $RS->MoveNext;
         } 
       } 
       ShowHTML('      </center>');
@@ -790,7 +800,7 @@ function Experiencia() {
     ShowHTML('      <tr><td valign="top"><b>Área do conhecimento relacionada:</b><br>');
     ShowHTML('              <input READONLY type="text" name="w_nm_area" class="sti" SIZE="50" VALUE="'.$w_nm_area.'">');
     if ($O!='E') {
-      ShowHTML('              [<u onMouseOver="this.style.cursor='Hand'" onMouseOut="this.style.cursor='Pointer'" onClick="window.open(''.$w_pagina.'BuscaAreaConhecimento&TP='.$TP.'&SG='.$SG.'&P1=1','AreaConhecimento','top=70,left=100,width=600,height=400,toolbar=yes,status=yes,resizable=yes,scrollbars=yes');"><b><font color="#0000FF">Procurar</font></b></u>]');
+      ShowHTML('              [<u onMouseOver="this.style.cursor='Hand'" onMouseOut="this.style.cursor='Pointer'" onClick="window.open(''.montaURL_JS($w_dir,$w_pagina.'BuscaAreaConhecimento&TP='.$TP.'&SG='.$SG.'&P1=1','AreaConhecimento','top=70,left=100,width=600,height=400,toolbar=yes,status=yes,resizable=yes,scrollbars=yes');"><b><font color="#0000FF">Procurar</font></b></u>]');
     } 
     ShowHTML('      <tr><td valign="top" colspan="2"><table border=0 width="100%" cellspacing=0>');
     ShowHTML('          <tr><td valign="top"><b>E<U>n</U>trada:</b></br><INPUT ACCESSKEY="n" '.$w_Disabled.' class="sti" type="text" name="w_entrada" size="10" maxlength="10" value="'.$w_entrada.'" onKeyDown="FormataData(this, event)">');
@@ -800,14 +810,14 @@ function Experiencia() {
     ShowHTML('      <tr valign="top"><td colspan="2">');
     ShowHTML('         <table border=0 width="100%" cellspacing=0>');
     ShowHTML('           <tr valign="top">');
-    SelecaoPais('<u>P</u>aís:','P','Selecione o país da experiência profissional e aguarde a tela carregar os estados.',$w_sq_pais,null,'w_sq_pais',null,'onChange="document.Form.action=''.$w_dir.$w_pagina.$par.''; document.Form.w_troca.value='w_co_uf'; document.Form.submit();"');
-    SelecaoEstado('E<u>s</u>tado:','S','Selecione o estado da experiência profissional e aguarde a tela carregar as cidades.',$w_co_uf,$w_sq_pais,'N','w_co_uf',null,'onChange="document.Form.action=''.$w_dir.$w_pagina.$par.''; document.Form.w_troca.value='w_sq_cidade'; document.Form.submit();"');
+    SelecaoPais('<u>P</u>aís:','P','Selecione o país da experiência profissional e aguarde a tela carregar os estados.',$w_sq_pais,null,'w_sq_pais',null,'onChange="document.Form.action=\''.$w_dir.$w_pagina.$par.'\'; document.Form.w_troca.value=\'w_co_uf\'; document.Form.submit();"');
+    SelecaoEstado('E<u>s</u>tado:','S','Selecione o estado da experiência profissional e aguarde a tela carregar as cidades.',$w_co_uf,$w_sq_pais,'N','w_co_uf',null,'onChange="document.Form.action=\''.$w_dir.$w_pagina.$par.'\'; document.Form.w_troca.value=\'w_sq_cidade\'; document.Form.submit();"');
     SelecaoCidade('<u>C</u>idade:','C','Selecine a cidade de nascimento.',$w_sq_cidade,$w_sq_pais,$w_co_uf,'w_sq_cidade',null,null);
     ShowHTML('         </table></td></tr>');
     ShowHTML('      <tr valign="top">');
     SelecaoTipoPosto('Informe a principal atividade desempenhada:','T',null,$w_sq_eo_tipo_posto,null,'w_sq_eo_tipo_posto','S');
     ShowHTML('      <tr><td valign="top"><b>At<u>i</u>vidades desempenhadas:</b><br><textarea '.$w_Disabled.' accesskey="i"  name="w_atividades" class="sti" cols="80" rows="4">'.$w_atividades.'</textarea></td>');
-    if ($p_portal_session=='') {
+    if ($_SESSION['PORTAL']=='') {
       ShowHTML('      <tr><td align="LEFT" colspan=4><b><U>A</U>ssinatura Eletrônica:<BR> <INPUT ACCESSKEY="A" class="sti" type="PASSWORD" name="w_assinatura" size="30" maxlength="30" value=""></td></tr>');
     }
     ShowHTML('      <tr><td align="center" colspan="3" height="1" bgcolor="#000000"></TD></TR>');
@@ -815,7 +825,7 @@ function Experiencia() {
     ShowHTML('      <tr><td align="center" colspan="3">');
     if ($O=='E') {
       ShowHTML('            <input class="sti" type="submit" name="Botao" value="Excluir">');
-      ShowHTML('            <input class="sti" type="button" onClick="location.href=''.$R.'&P1='.$P1.'&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP='.$TP.'&SG='.$SG.MontaFiltro('GET').'';" name="Botao" value="Cancelar">');
+      ShowHTML('            <input class="sti" type="button" onClick="location.href=\''.montaURL_JS($w_dir,$R.'&P1='.$P1.'&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP='.$TP.'&SG='.$SG.MontaFiltro('GET')).'\';" name="Botao" value="Cancelar">');
     } else {
       if ($O=='I') {
         ShowHTML('            <input class="sti" type="submit" name="Botao" value="Incluir">');
@@ -823,7 +833,7 @@ function Experiencia() {
         ShowHTML('            <input class="sti" type="submit" name="Botao" value="Atualizar">');
       } 
     } 
-    ShowHTML('            <input class="sti" type="button" onClick="location.href=''.$w_pagina.$par.'&P1='.$P1.'&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP='.$TP.'&SG='.$SG.'&O=L'.MontaFiltro('GET').'';" name="Botao" value="Cancelar">');
+    ShowHTML('            <input class="sti" type="button" onClick="location.href=\''.montaURL_JS($w_dir,$w_pagina.$par.'&P1='.$P1.'&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP='.$TP.'&SG='.$SG.'&O=L'.MontaFiltro('GET')).'\';" name="Botao" value="Cancelar">');
     ShowHTML('          </td>');
     ShowHTML('      </tr>');
     ShowHTML('    </table>');
@@ -833,7 +843,7 @@ function Experiencia() {
     ShowHTML('</FORM>');
   } else {
     ScriptOpen('JavaScript');
-    ShowHTML(' alert('Opção não disponível');');
+    ShowHTML(' alert(\'Opção não disponível\');');
     //ShowHTML ' history.back(1);'
     ScriptClose();
   } 
@@ -850,17 +860,17 @@ function Cargos() {
   $w_sq_cvpescargo = $_REQUEST['w_sq_cvpescargo'];
   $w_sq_cvpesexp   = $_REQUEST['w_sq_cvpesexp'];
   $RS = db_getCVAcadForm::getInstanceOf($dbms,$w_usuario,$w_sq_cvpesexp,'EXPERIENCIA');
-  $w_nome_empregador=f($RS,'empregador');
+  $w_nome_empregador = f($RS,'empregador');
   if ($O=='L') {
     $RS = db_getCVAcadForm::getInstanceOf($dbms,$w_sq_cvpesexp,null,'CARGO');
   } elseif (!(strpos('AEV',$O)===false)) {
     // Recupera o conjunto de informações comum a todos os serviços
     $RS = db_getCVAcadForm::getInstanceOf($dbms,$w_sq_cvpesexp,$w_sq_cvpescargo,'CARGO');
-    $w_sq_area_conhecimento=f($RS,'sq_area_conhecimento');
-    $w_nm_area=f($RS,'nm_area');
-    $w_especialidades=f($RS,'especialidades');
-    $w_inicio=FormataDataEdicao(f($RS,'inicio'));
-    $w_fim=FormataDataEdicao(f($RS,'fim'));
+    $w_sq_area_conhecimento = f($RS,'sq_area_conhecimento');
+    $w_nm_area              = f($RS,'nm_area');
+    $w_especialidades       = f($RS,'especialidades');
+    $w_inicio               = FormataDataEdicao(f($RS,'inicio'));
+    $w_fim                  = FormataDataEdicao(f($RS,'fim'));
   } 
   Cabecalho();
   ShowHTML('<HEAD>');
@@ -883,13 +893,13 @@ function Cargos() {
       Validate('w_inicio','Início','Data','1','10','10','','1');
       Validate('w_fim','Fim','Data','','10','10','','1');
       Validate('w_nm_area','Área do conhecimento','','1','1','80','1','1');
-      if ($p_portal_session=='') {
+      if ($_SESSION['PORTAL']=='') {
         Validate('w_assinatura','Assinatura Eletrônica','1','1','6','30','1','1');
       } elseif ($O=='E') {
-        if ($p_portal_session=='') {
+        if ($_SESSION['PORTAL']=='') {
           Validate('w_assinatura','Assinatura Eletrônica','1','1','6','30','1','1'); 
         }
-        ShowHTML('  if (confirm('Confirma a exclusão deste registro?')) ');
+        ShowHTML('  if (confirm(\'Confirma a exclusão deste registro?\')) ');
         ShowHTML('     { return (true); }; ');
         ShowHTML('     { return (false); }; ');
       } 
@@ -964,9 +974,9 @@ function Cargos() {
       ShowHTML('          </table>');
       ShowHTML('      <tr><td valign="top"><b>Cargo desempenhado:</b><br>');
       ShowHTML('          <input READONLY type="text" name="w_nm_area" class="sti" SIZE="50" VALUE="'.$w_nm_area.'">');
-      ShowHTML('          [<u onMouseOver="this.style.cursor='Hand'" onMouseOut="this.style.cursor='Pointer'" onClick="window.open(''.$w_pagina.'BuscaAreaConhecimento&TP='.$TP.'&P1=2','SelecaoCargo','top=70,left=100,width=600,height=400,toolbar=yes,status=yes,resizable=yes,scrollbars=yes');"><b><font color="#0000FF">Procurar</font></b></u>]');
+      ShowHTML('          [<u onMouseOver="this.style.cursor=\'Hand\'" onMouseOut="this.style.cursor=\'Pointer\'" onClick="window.open(\''.montaURL_JS($w_dir,$w_pagina.'BuscaAreaConhecimento&TP='.$TP.'&P1=2\',\'SelecaoCargo\',\'top=70,left=100,width=600,height=400,toolbar=yes,status=yes,resizable=yes,scrollbars=yes\');"><b><font color="#0000FF">Procurar</font></b></u>]');
       // Verifica se poderá ser feito o envio da solicitação, a partir do resultado da validação
-      if ($p_portal_session=='') {
+      if ($_SESSION['PORTAL']=='') {
         ShowHTML('      <tr><td align="LEFT" colspan=4><b><U>A</U>ssinatura Eletrônica:<BR> <INPUT ACCESSKEY="A" class="sti" type="PASSWORD" name="w_assinatura" size="30" maxlength="30" value=""></td></tr>');
       }
       ShowHTML('      <tr><td align="center" colspan=4><hr>');
@@ -979,7 +989,7 @@ function Cargos() {
           ShowHTML('            <input class="sti" type="submit" name="Botao" value="Atualizar">');
         } 
       } 
-      ShowHTML('            <input class="sti" type="button" onClick="location.href=''.$w_pagina.$par.'&w_sq_cvpesexp= '.$w_sq_cvpesexp.'&P1='.$P1.'&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP='.$TP.'&SG='.$SG.'&O=L'.MontaFiltro('GET').'';" name="Botao" value="Cancelar">');
+      ShowHTML('            <input class="sti" type="button" onClick="location.href=\''.montaURL_JS($w_dir,$w_pagina.$par.'&w_sq_cvpesexp= '.$w_sq_cvpesexp.'&P1='.$P1.'&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP='.$TP.'&SG='.$SG.'&O=L'.MontaFiltro('GET')).'\';" name="Botao" value="Cancelar">');
       ShowHTML('          </td>');
       ShowHTML('      </tr>');
       ShowHTML('    </table>');
@@ -1003,17 +1013,17 @@ function Cargos() {
 function Escolaridade() {
   extract($GLOBALS);
   global $w_disabled; 
-  $w_chave=$_REQUEST['w_chave'];
-  $w_troca=$_REQUEST['w_troca'];
+  $w_chave   = $_REQUEST['w_chave'];
+  $w_troca   = $_REQUEST['w_troca'];
   if ($w_troca>'') {
     // Se for recarga da página
-    $w_sq_area_conhecimento=$_REQUEST['w_sq_area_conhecimento'];
-    $w_sq_pais=$_REQUEST['w_sq_pais'];
-    $w_sq_formacao=$_REQUEST['w_sq_formacao'];
-    $w_nome=$_REQUEST['w_nome'];
-    $w_instituicao=$_REQUEST['w_instituicao'];
-    $w_inicio=$_REQUEST['w_inicio'];
-    $w_fim=$_REQUEST['w_fim'];
+    $w_sq_area_conhecimento = $_REQUEST['w_sq_area_conhecimento'];
+    $w_sq_pais              = $_REQUEST['w_sq_pais'];
+    $w_sq_formacao          = $_REQUEST['w_sq_formacao'];
+    $w_nome                 = $_REQUEST['w_nome'];
+    $w_instituicao          = $_REQUEST['w_instituicao'];
+    $w_inicio               = $_REQUEST['w_inicio'];
+    $w_fim                  = $_REQUEST['w_fim'];
   } elseif ($O=='L') {
     // Recupera todos os registros para a listagem
     $RS = db_getCVAcadForm::getInstanceOf($dbms,$w_usuario,null,'ACADEMICA');
@@ -1021,8 +1031,9 @@ function Escolaridade() {
     } elseif (!(strpos('AEV',$O)===false) && $w_troca=='') {
       // Recupera os dados do endereço informado
       $RS = db_getCVAcadForm::getInstanceOf($dbms,$w_usuario,$w_chave,'ACADEMICA');
-      $w_sq_area_conhecimento=f($RS,'sq_area_conhecimento');
-      if (!isset(f($RS,'nm_area'))) {
+      $w_sq_area_conhecimento = f($RS,'sq_area_conhecimento');
+      foreach ($RS as $row) {$RS=$row; break;}
+      if (nvl(f($RS,'nm_area'),'')=='') {
         $w_nm_area='';
       } else {
         $w_nm_area = f($RS,'nm_area').' ('.f($RS,'codigo_cnpq').')';
@@ -1053,10 +1064,10 @@ function Escolaridade() {
         Validate('w_inicio','Início','DATAMA','1','7','7','','0123456789/');
         Validate('w_fim','Fim','DATAMA','','7','7','','0123456789/');
         Validate('w_sq_pais','País conclusão','SELECT','1','1','10','','1');
-        if ($p_portal_session=='') {
+        if ($_SESSION['PORTAL']=='') {
           Validate('w_assinatura','Assinatura Eletrônica','1','1','6','30','1','1');
         }
-      } elseif ($O=='E' && $p_portal_session=='') {
+      } elseif ($O=='E' && $_SESSION['PORTAL']=='') {
       Validate('w_assinatura','Assinatura Eletrônica','1','1','6','30','1','1');
       ShowHTML('  if (confirm(\'Confirma a exclusão deste registro?\')) ');
       ShowHTML('     { return (true); }; ');
@@ -1075,7 +1086,7 @@ function Escolaridade() {
     BodyOpen('onLoad='document.Form.w_sq_formacao.focus()';');
   } elseif ($O=='A') {
     BodyOpen('onLoad='document.Form.w_nome.focus()';');
-  } elseif ($O=='E' && $p_portal_session=='') {
+  } elseif ($O=='E' && $_SESSION['PORTAL']=='') {
     BodyOpen('onLoad='document.Form.w_assinatura.focus()';');
   } else{
     BodyOpen('onLoad='document.focus()';');
@@ -1137,7 +1148,7 @@ function Escolaridade() {
     ShowHTML('      <tr><td valign="top"><b>Se formação for graduação ou maior, indique a área do conhecimento:</b><br>');
     ShowHTML('              <input READONLY type="text" name="w_nm_area" class="sti" SIZE="50" VALUE="'.$w_nm_area.'">');
     if ($O!='E') {
-      ShowHTML('              [<u onMouseOver="this.style.cursor='Hand'" onMouseOut="this.style.cursor='Pointer'" onClick="window.open(''.$w_pagina.'BuscaAreaConhecimento&TP='.$TP.'&SG='.$SG.'&P1=1','AreaConhecimento','top=70,left=100,width=600,height=400,toolbar=yes,status=yes,resizable=yes,scrollbars=yes');"><b><font color="#0000FF">Procurar</font></b></u>]');
+      ShowHTML('              [<u onMouseOver="this.style.cursor='Hand'" onMouseOut="this.style.cursor='Pointer'" onClick="window.open(''.montaURL_JS($w_dir,$w_pagina.'BuscaAreaConhecimento&TP='.$TP.'&SG='.$SG.'&P1=1','AreaConhecimento','top=70,left=100,width=600,height=400,toolbar=yes,status=yes,resizable=yes,scrollbars=yes');"><b><font color="#0000FF">Procurar</font></b></u>]');
     } 
     ShowHTML('      <tr><td valign="top"><b><u>N</u>ome curso:</b><br><input '.$w_Disabled.' accesskey="N" type="text" name="w_nome" class="sti" SIZE="80" MAXLENGTH="80" VALUE="'.$w_nome.'"></td>');
     ShowHTML('      <tr><td valign="top"><b><u>I</u>nstituição:</b><br><input '.$w_Disabled.' accesskey="I" type="text" name="w_instituicao" class="sti" SIZE="80" MAXLENGTH="100" VALUE="'.$w_instituicao.'"></td>');
@@ -1146,7 +1157,7 @@ function Escolaridade() {
     ShowHTML('              <td valign="top"><b>Fi<u>m</u>: (mm/aaaa)</b><br><input '.$w_Disabled.' accesskey="M" type="text" name="w_fim" class="sti" SIZE="7" MAXLENGTH="7" VALUE="'.$w_fim.'" onKeyDown="FormataDataMA(this,event);"></td>');
     SelecaoPais('<u>P</u>aís de conclusão:','P','Selecione o país onde concluiu esta formação.',Nvl($w_sq_pais,2),null,'w_sq_pais',null,null);
     ShowHTML('          </table>');
-    if ($p_portal_session=='') {
+    if ($_SESSION['PORTAL']=='') {
       ShowHTML('      <tr><td align="LEFT"><b><U>A</U>ssinatura Eletrônica:<BR> <INPUT ACCESSKEY="A" class="sti" type="PASSWORD" name="w_assinatura" size="30" maxlength="30" value=""></td></tr>');
     }
     ShowHTML('      <tr><td align="center"><hr>');
@@ -1159,7 +1170,7 @@ function Escolaridade() {
         ShowHTML('            <input class="STB" type="submit" name="Botao" value="Atualizar">');
       } 
     } 
-    ShowHTML('            <input class="STB" type="button" onClick="location.href=''.$w_pagina.$par.'&w_chave='.$w_chave.'&P1='.$P1.'&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP='.$TP.'&SG='.$SG.'&O=L';" name="Botao" value="Cancelar">');
+    ShowHTML('            <input class="STB" type="button" onClick="location.href=\''.$w_pagina.$par.'&w_chave='.$w_chave.'&P1='.$P1.'&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP='.$TP.'&SG='.$SG.'&O=L').'\';" name="Botao" value="Cancelar">');
     ShowHTML('          </td>');
     ShowHTML('      </tr>');
     ShowHTML('    </table>');
@@ -1187,26 +1198,27 @@ function Extensao() {
   $w_troca = $_REQUEST['w_troca'];
   if ($w_troca>''){
     // Se for recarga da página
-    $w_sq_area_conhecimento=$_REQUEST['w_sq_area_conhecimento'];
-    $w_sq_formacao=$_REQUEST['w_sq_formacao'];
-    $w_nome=$_REQUEST['w_nome'];
-    $w_instituicao=$_REQUEST['w_instituicao'];
-    $w_carga_horaria=$_REQUEST['w_carga_horaria'];
-    $w_conclusao=$_REQUEST['w_conclusao'];
+    $w_sq_area_conhecimento = $_REQUEST['w_sq_area_conhecimento'];
+    $w_sq_formacao          = $_REQUEST['w_sq_formacao'];
+    $w_nome                 = $_REQUEST['w_nome'];
+    $w_instituicao          = $_REQUEST['w_instituicao'];
+    $w_carga_horaria        = $_REQUEST['w_carga_horaria'];
+    $w_conclusao            = $_REQUEST['w_conclusao'];
   } elseif ($O=='L') {
     // Recupera todos os registros para a listagem
     $RS = db_getCVAcadForm::getInstanceOf($dbms,$w_usuario,null,'CURSO');
-    $RS = SortArray($RS,='ordem','desc','carga_horaria','desc';
+    $RS = SortArray($RS,'ordem','desc','carga_horaria','desc');
   } elseif (!(strpos('AEV',$O)===false && $w_troca=='') {
     // Recupera os dados do endereço informado
     $RS = db_getCVAcadForm::getInstanceOf($dbms,$w_usuario,$w_chave,'CURSO');
-    $w_sq_area_conhecimento=f($RS,'sq_area_conhecimento');
-    $w_nm_area       = f($RS,'nm_area').' ('.f($RS,'codigo_cnpq').')';
-    $w_sq_formacao   = f($RS,'sq_formacao');
-    $w_nome          = f($RS,'nome');
-    $w_instituicao   = f($RS,'instituicao');
-    $w_carga_horaria = f($RS,'carga_horaria');
-    $w_conclusao     = FormataDataEdicao(f($RS,'conclusao'));
+    foreach ($RS as $row) {$RS=$row; break;}
+    $w_sq_area_conhecimento = f($RS,'sq_area_conhecimento');
+    $w_nm_area              = f($RS,'nm_area').' ('.f($RS,'codigo_cnpq').')';
+    $w_sq_formacao          = f($RS,'sq_formacao');
+    $w_nome                 = f($RS,'nome');
+    $w_instituicao          = f($RS,'instituicao');
+    $w_carga_horaria        = f($RS,'carga_horaria');
+    $w_conclusao            = FormataDataEdicao(f($RS,'conclusao'));
   } 
   Cabecalho();
   ShowHTML('<HEAD>');
@@ -1222,10 +1234,10 @@ function Extensao() {
       Validate('w_instituicao','Instituição','1','1','1','100','1','1');
       Validate('w_carga_horaria','Carga horária','','1','2','4','','0123456789');
       Validate('w_conclusao','conclusao','DATA','','10','10','','0123456789/');
-      if ($p_portal_session=='') {
+      if ($_SESSION['PORTAL']=='') {
         Validate('w_assinatura','Assinatura Eletrônica','1','1','6','30','1','1');
       }
-    } elseif ($O=='E' && $p_portal_session=='') {
+    } elseif ($O=='E' && $_SESSION['PORTAL']=='') {
       Validate('w_assinatura','Assinatura Eletrônica','1','1','6','30','1','1');
       ShowHTML('  if (confirm(\'Confirma a exclusão deste registro?\')) ');
       ShowHTML('     { return (true); }; ');
@@ -1244,7 +1256,7 @@ function Extensao() {
     BodyOpen('onLoad='document.Form.w_sq_formacao.focus()';');
   } elseif ($O=='A') {
     BodyOpen('onLoad='document.Form.w_nome.focus()';');
-  } elseif ($O=='E' && $p_portal_session=='') {
+  } elseif ($O=='E' && $_SESSION['PORTAL']=='') {
     BodyOpen('onLoad='document.Form.w_assinatura.focus()';');
   } else {
     BodyOpen('onLoad='document.focus()';');
@@ -1307,7 +1319,7 @@ function Extensao() {
     ShowHTML('      <tr><td valign="top"><b>Área do conhecimento relacionada:</b><br>');
     ShowHTML('              <input READONLY type="text" name="w_nm_area" class="sti" SIZE="50" VALUE="'.$w_nm_area.'">');
     if ($O!='E') {
-      ShowHTML('              [<u onMouseOver="this.style.cursor='Hand'" onMouseOut="this.style.cursor='Pointer'" onClick="window.open(''.$w_pagina.'BuscaAreaConhecimento&TP='.$TP.'&SG='.$SG.'&P1=1','AreaConhecimento','top=70,left=100,width=600,height=400,toolbar=yes,status=yes,resizable=yes,scrollbars=yes');"><b><font color="#0000FF">Procurar</font></b></u>]');
+      ShowHTML('              [<u onMouseOver="this.style.cursor='Hand'" onMouseOut="this.style.cursor='Pointer'" onClick="window.open(''.montaURL_JS($w_dir,$w_pagina.'BuscaAreaConhecimento&TP='.$TP.'&SG='.$SG.'&P1=1','AreaConhecimento','top=70,left=100,width=600,height=400,toolbar=yes,status=yes,resizable=yes,scrollbars=yes');"><b><font color="#0000FF">Procurar</font></b></u>]');
     } 
     ShowHTML('      <tr><td valign="top"><b><u>N</u>ome curso:</b><br><input '.$w_Disabled.' accesskey="N" type="text" name="w_nome" class="sti" SIZE="80" MAXLENGTH="80" VALUE="'.$w_nome.'"></td>');
     ShowHTML('      <tr><td valign="top"><b><u>I</u>nstituição:</b><br><input '.$w_Disabled.' accesskey="I" type="text" name="w_instituicao" class="sti" SIZE="80" MAXLENGTH="100" VALUE="'.$w_instituicao.'"></td>');
@@ -1315,7 +1327,7 @@ function Extensao() {
     ShowHTML('          <tr><td valign="top"><b><u>C</u>arga horária:</b><br><input '.$w_Disabled.' accesskey="c" type="text" name="w_carga_horaria" class="sti" SIZE="7" MAXLENGTH="7" VALUE="'.$w_carga_horaria.'"></td>');
     ShowHTML('              <td valign="top"><b>C<u>o</u>nclusão: (dd/mm/aaaa)</b><br><input '.$w_Disabled.' accesskey="O" type="text" name="w_conclusao" class="sti" SIZE="10" MAXLENGTH="10" VALUE="'.$w_conclusao.'" onKeyDown="FormataData(this,event);"></td>');
     ShowHTML('          </table>');
-    if ($p_portal_session=='') {
+    if ($_SESSION['PORTAL']=='') {
       ShowHTML('      <tr><td align="LEFT"><b><U>A</U>ssinatura Eletrônica:<BR> <INPUT ACCESSKEY="A" class="sti" type="PASSWORD" name="w_assinatura" size="30" maxlength="30" value=""></td></tr>');
     }
     ShowHTML('      <tr><td align="center"><hr>');
@@ -1328,7 +1340,7 @@ function Extensao() {
         ShowHTML('            <input class="STB" type="submit" name="Botao" value="Atualizar">');
       } 
     } 
-    ShowHTML('            <input class="STB" type="button" onClick="location.href=''.$w_pagina.$par.'&w_chave='.$w_chave.'&P1='.$P1.'&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP='.$TP.'&SG='.$SG.'&O=L';" name="Botao" value="Cancelar">');
+    ShowHTML('            <input class="STB" type="button" onClick="location.href=\''.montaURL_JS($w_dir,$w_pagina.$par.'&w_chave='.$w_chave.'&P1='.$P1.'&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP='.$TP.'&SG='.$SG.'&O=L').'\';" name="Botao" value="Cancelar">');
     ShowHTML('          </td>');
     ShowHTML('      </tr>');
     ShowHTML('    </table>');
@@ -1350,8 +1362,8 @@ function Extensao() {
 // -------------------------------------------------------------------------
 function Producao(){
   extract($GLOBALS);
-  $w_chave=$_REQUEST['w_chave'];
-  $w_troca=$_REQUEST['w_troca'];  
+  $w_chave = $_REQUEST['w_chave'];
+  $w_troca = $_REQUEST['w_troca'];  
   if ($w_troca>'') {
     // Se for recarga da página
     $w_sq_area_conhecimento = $_REQUEST['w_sq_area_conhecimento'];
@@ -1366,6 +1378,7 @@ function Producao(){
   } elseif (!(strpos('AEV',$O)===false && $w_troca=='') {
     // Recupera os dados do endereço informado
     $RS = db_getCVAcadForm::getInstanceOf($dbms,$w_usuario,$w_chave,'PRODUCAO');
+    foreach ($RS as $row) {$RS=$row; break;}
     $w_sq_area_conhecimento = f($RS,'sq_area_conhecimento');
     $w_nm_area              = f($RS,'nm_area').' ('.f($RS,'codigo_cnpq').')';
     $w_sq_formacao          = f($RS,'sq_formacao');
@@ -1386,11 +1399,11 @@ function Producao(){
       Validate('w_nome','Nome','1','1','1','80','1','1');
       Validate('w_meio','Meio de publicação','','1','2','100','1','1');
       Validate('w_data','Data','DATA','1','10','10','','0123456789/');
-      if ($p_portal_session=='') {
+      if ($_SESSION['PORTAL']=='') {
         Validate('w_assinatura','Assinatura Eletrônica','1','1','6','30','1','1');
-      } elseif ($O=='E' && $p_portal_session=='') {
+      } elseif ($O=='E' && $_SESSION['PORTAL']=='') {
         Validate('w_assinatura','Assinatura Eletrônica','1','1','6','30','1','1');
-        ShowHTML('  if (confirm('Confirma a exclusão deste registro?')) ');
+        ShowHTML('  if (confirm(\'Confirma a exclusão deste registro?\')) ');
         ShowHTML('     { return (true); }; ');
         ShowHTML('     { return (false); }; ');
       } 
@@ -1407,7 +1420,7 @@ function Producao(){
       BodyOpen('onLoad='document.Form.w_sq_formacao.focus()';');
     } elseif ($O=='A') {
       BodyOpen('onLoad='document.Form.w_nome.focus()';');
-    } elseif ($O=='E' && $p_portal_session=='') {
+    } elseif ($O=='E' && $_SESSION['PORTAL']=='') {
       BodyOpen('onLoad='document.Form.w_assinatura.focus()';');
     } else {
       BodyOpen('onLoad='document.focus()';');
@@ -1435,17 +1448,17 @@ function Producao(){
           ShowHTML('      <tr bgcolor="'.$conTrBgColor.'"><td colspan=6 align="center"><b>Não foram encontrados registros.</b></td></tr>');
         } else {
           // Lista os registros selecionados para listagem
-          while(!count($RS)<=0) {
+          foreach ($RS as $row) {
             $w_cor = ($w_cor==$conTrBgColor || $w_cor=='') ? $w_cor=$conTrAlternateBgColor : $w_cor=$conTrBgColor;
             ShowHTML('      <tr bgcolor="'.$w_cor.'" valign="top">');
-            ShowHTML('        <td>'.f($RS,'nm_formacao').'</td>');
-            ShowHTML('        <td>'.f($RS,'nm_area').'</td>');
-            ShowHTML('        <td>'.f($RS,'nome').'</td>');
-            ShowHTML('        <td>'.f($RS,'meio').'</td>');
-            ShowHTML('        <td align="center">'.Nvl(FormataDataEdicao(f($RS,'data')),'---').'</td>');
+            ShowHTML('        <td>'.f($row,'nm_formacao').'</td>');
+            ShowHTML('        <td>'.f($row,'nm_area').'</td>');
+            ShowHTML('        <td>'.f($row,'nome').'</td>');
+            ShowHTML('        <td>'.f($row,'meio').'</td>');
+            ShowHTML('        <td align="center">'.Nvl(FormataDataEdicao(f($row,'data')),'---').'</td>');
             ShowHTML('        <td align="top" nowrap>');
-            ShowHTML('          <A class="HL" HREF="'.$w_dir.$w_pagina.$par.'&R='.$w_pagina.$par.'&O=A&w_chave='.f($RS,'sq_cvpessoa_prod').'&P1='.$P1.'&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP='.$TP.'&SG='.$SG.'">Alterar</A>&nbsp');
-            ShowHTML('          <A class="HL" HREF="'.$w_dir.$w_pagina.$par.'&R='.$w_pagina.$par.'&O=E&w_chave='.f($RS,'sq_cvpessoa_prod').'&P1='.$P1.'&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP='.$TP.'&SG='.$SG.'">Excluir</A>&nbsp');
+            ShowHTML('          <A class="HL" HREF="'.$w_dir.$w_pagina.$par.'&R='.$w_pagina.$par.'&O=A&w_chave='.f($row,'sq_cvpessoa_prod').'&P1='.$P1.'&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP='.$TP.'&SG='.$SG.'">Alterar</A>&nbsp');
+            ShowHTML('          <A class="HL" HREF="'.$w_dir.$w_pagina.$par.'&R='.$w_pagina.$par.'&O=E&w_chave='.f($row,'sq_cvpessoa_prod').'&P1='.$P1.'&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP='.$TP.'&SG='.$SG.'">Excluir</A>&nbsp');
             ShowHTML('        </td>');
             ShowHTML('      </tr>');
           } 
@@ -1470,14 +1483,14 @@ function Producao(){
         ShowHTML('      <tr><td valign="top"><b>Área do conhecimento relacionada:</b><br>');
         ShowHTML('              <input READONLY type="text" name="w_nm_area" class="sti" SIZE="50" VALUE="'.$w_nm_area.'">');
         if ($O!='E') {
-          ShowHTML('              [<u onMouseOver="this.style.cursor='Hand'" onMouseOut="this.style.cursor='Pointer'" onClick="window.open(''.$w_pagina.'BuscaAreaConhecimento&TP='.$TP.'&SG='.$SG.'&P1=1','AreaConhecimento','top=70,left=100,width=600,height=400,toolbar=yes,status=yes,resizable=yes,scrollbars=yes');"><b><font color="#0000FF">Procurar</font></b></u>]');
+          ShowHTML('              [<u onMouseOver="this.style.cursor='Hand'" onMouseOut="this.style.cursor='Pointer'" onClick="window.open(''.montaURL_JS($w_dir,$w_pagina.'BuscaAreaConhecimento&TP='.$TP.'&SG='.$SG.'&P1=1','AreaConhecimento','top=70,left=100,width=600,height=400,toolbar=yes,status=yes,resizable=yes,scrollbars=yes');"><b><font color="#0000FF">Procurar</font></b></u>]');
         } 
           ShowHTML('      <tr><td valign="top"><b><u>N</u>ome:</b><br><input '.$w_Disabled.' accesskey="N" type="text" name="w_nome" class="sti" SIZE="80" MAXLENGTH="80" VALUE="'.$w_nome.'"></td>');
           ShowHTML('      <tr><td valign="top" colspan="2"><table border=0 width="100%" cellspacing=0>');
           ShowHTML('          <tr><td valign="top"><b><u>M</u>eio de divulgação:</b><br><input '.$w_Disabled.' accesskey="M" type="text" name="w_meio" class="sti" SIZE="50" MAXLENGTH="80" VALUE="'.$w_meio.'"></td>');
           ShowHTML('              <td valign="top"><b><u>D</u>ata de publicação: (dd/mm/aaaa)</b><br><input '.$w_Disabled.' accesskey="D" type="text" name="w_data" class="sti" SIZE="10" MAXLENGTH="10" VALUE="'.$w_data.'" onKeyDown="FormataData(this,event);"></td>');
           ShowHTML('          </table>');
-          if ($p_portal_session=='') {
+          if ($_SESSION['PORTAL']=='') {
             ShowHTML('      <tr><td align="LEFT"><b><U>A</U>ssinatura Eletrônica:<BR> <INPUT ACCESSKEY="A" class="sti" type="PASSWORD" name="w_assinatura" size="30" maxlength="30" value=""></td></tr>');} 
           }
           ShowHTML('      <tr><td align="center"><hr>');
@@ -1490,7 +1503,7 @@ function Producao(){
             ShowHTML('            <input class="STB" type="submit" name="Botao" value="Atualizar">');
           } 
         }  
-        ShowHTML('            <input class="STB" type="button" onClick="location.href=''.$w_pagina.$par.'&w_chave='.$w_chave.'&P1='.$P1.'&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP='.$TP.'&SG='.$SG.'&O=L';" name="Botao" value="Cancelar">');
+        ShowHTML('            <input class="STB" type="button" onClick="location.href=\''.montaURL_JS($w_dir,$w_pagina.$par.'&w_chave='.$w_chave.'&P1='.$P1.'&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP='.$TP.'&SG='.$SG.'&O=L').'\';" name="Botao" value="Cancelar">');
         ShowHTML('          </td>');
         ShowHTML('      </tr>');
         ShowHTML('    </table>');
@@ -1499,7 +1512,7 @@ function Producao(){
         ShowHTML('</FORM>');
       } else {
         ScriptOpen('JavaScript');
-        ShowHTML(' alert('Opção não disponível');');
+        ShowHTML(' alert(\'Opção não disponível\');');
         //ShowHTML ' history.back(1);'
         ScriptClose();
       } 
@@ -1516,7 +1529,7 @@ function BuscaAreaConhecimento() {
   if ($P1=='') {
     $P1=1;
   }
-  $w_nome=$_REQUEST['w_nome'];
+  $w_nome  =  $_REQUEST['w_nome'];
   ScriptOpen('JavaScript');
   ValidateOpen('Validacao');
   Validate('w_nome','Nome','1','1','4','30','1','1');
@@ -1622,7 +1635,7 @@ function Visualizar() {
   ShowHTML('Curriculum Vitae');
   ShowHTML('</FONT><TR><TD ALIGN="RIGHT"><B><FONT SIZE=2 COLOR="#000000">'.DataHora().'</B>');
   if ($P2==0) {
-    ShowHTML('&nbsp;&nbsp;&nbsp;<IMG ALIGN="CENTER" TITLE="Gerar word" SRC="../images/word.gif" onClick="window.open(''.$w_pagina.'Visualizar&P2=1&SG=CVVISUAL&w_usuario='.$w_usuario.'','VisualCurriculoWord','menubar=yes resizable=yes scrollbars=yes');">');
+    ShowHTML('&nbsp;&nbsp;&nbsp;<IMG ALIGN="CENTER" TITLE="Gerar word" SRC="../images/word.gif" onClick="window.open(''.montaURL_JS($w_dir,$w_pagina.'Visualizar&P2=1&SG=CVVISUAL&w_usuario='.$w_usuario.'','VisualCurriculoWord','menubar=yes resizable=yes scrollbars=yes');">');
   } 
   ShowHTML('</TD></TR>');
   ShowHTML('</FONT></B></TD></TR></TABLE>');
@@ -1648,6 +1661,7 @@ function Grava() {
   $w_nome    ='';
   Cabecalho();
   ShowHTML('</HEAD>');
+  ShowHTML('<BASE HREF="'.$conRootSIW.'">');
   BodyOpen('onLoad=document.focus();');
   AbreSessao();
   switch ($SG) {
@@ -1655,7 +1669,7 @@ function Grava() {
       // Verifica se a Assinatura Eletrônica é válida
       if (verificaAssinaturaEletronica($_SESSION['USERNAME'],strtoupper($_REQUEST['w_assinatura'])) || $w_assinatura=='') {
         // Recupera os dados do currículo a partir da chave
-        $RS = db_getCV_Pessoa::getInstanceOf($dbms,$w_cliente,$ul->Texts.$Item['w_cpf'));
+        $RS = db_getCV_Pessoa::getInstanceOf($dbms,$w_cliente,$_REQUEST['w_cpf']);
         if ($O=='I' && count($RS)>0) {
           ScriptOpen('JavaScript');
           ShowHTML('alert(\'CPF já cadastrado. Acesse seu currículo usando a opção "Seu currículo" no menu principal.\');');
@@ -1663,40 +1677,43 @@ function Grava() {
           ScriptClose();
         } 
         // Se foi feito o upload de um arquivo
-        if ($ul->State==0) {
+        if (UPLOAD_ERR_OK==0) {
           $w_maximo=51200;
-          foreach ($ul->Files as $Field) {
+          foreach ($_FILES as $Chv => $Field) {
             $Items;
-            if ($Field->Length>0) {
+            if (!($Field['error']==UPLOAD_ERR_OK || ($Field['error']==UPLOAD_ERR_NO_FILE)) {
               // Verifica se o tamanho das fotos está compatível com  o limite de 100KB. 
-              if ($Field->Length>$w_maximo) {
+              if ($Field['size'] > 0) {
                 ScriptOpen('JavaScript');
-                ShowHTML('  alert(\'Atenção: o tamanho máximo do arquivo não pode exceder '.$w_maximo/1024.' KBytes!\');');
+                ShowHTML('  alert(\'Atenção: o tamanho máximo do arquivo não pode exceder '.($w_maximo/1024).' KBytes!\');');
                 ShowHTML('  history.back(1);');
                 ScriptClose();
               } 
               // Se já há um nome para o arquivo, mantém 
-              $FS = $CreateObject['Scripting.FileSystemObject')
-              $w_file    = nvl($ul->Texts.$Item['w_atual'),str_replace('.tmp',substr($Field->FileName,(strpos($Field->FileName,'.') ? strpos($Field->FileName,'.')+1 : 0)-1,30),$FS->GetTempName()));
-              $w_tamanho = $Field->Length;
-              $w_tipo    = $Field->ContentType;
-              $w_nome    = $Field->FileName;
-              $Field->SaveAs($conFilePhysical.$w_cliente."'\'".$w_file);
+              $w_file = basename($Field['tmp_name']);
+              if (!(strpos($Field['name'],'.')===false)) {
+                $w_file = $w_file.substr($Field['name'],(strpos($Field['name'],'.')===false));
+              }
+              $w_tamanho = $Field['size'];
+              $w_tipo    = $Field['type'];
+              $w_nome    = $Field['name'];
+              if ($w_file >'') move_uploaded_file($Field['tmp_name'],DiretorioCliente($w_cliente).'/'.$w_file);
             } 
-          } dml_putCVIdent($O,
-          $w_cliente,$ul->Texts.$Item['w_chave'),$ul->Texts.$Item['w_nome'),$ul->Texts.$Item['w_nome_resumido'),$ul->Texts.$Item['w_nascimento'),
-          $ul->Texts.$Item['w_sexo'),$ul->Texts.$Item['w_sq_estado_civil'),$ul->Texts.$Item['w_sq_formacao'),$ul->Texts.$Item['w_cidade'),$ul->Texts.$Item['w_rg_numero'),
-          $ul->Texts.$Item['w_rg_emissor'),$ul->Texts.$Item['w_rg_emissao'),$ul->Texts.$Item['w_cpf'),$ul->Texts.$Item['w_passaporte_numero'));
+          } 
+          dml_putCVIdent::getInstanceOf($dbms,$O,
+          $w_cliente,$_REQUEST['w_chave'),$_REQUEST['w_nome'),$_REQUEST['w_nome_resumido'),$_REQUEST['w_nascimento'),
+          $_REQUEST['w_sexo'),$_REQUEST['w_sq_estado_civil'),$_REQUEST['w_sq_formacao'),$_REQUEST['w_cidade'),$_REQUEST['w_rg_numero'),
+          $_REQUEST['w_rg_emissor'),$_REQUEST['w_rg_emissao'),$_REQUEST['w_cpf'),$_REQUEST['w_passaporte_numero'));
         } else {
           ScriptOpen('JavaScript');
           ShowHTML('  alert(\'ATENÇÃO: ocorreu um erro na transferência do arquivo. Tente novamente!\');');
           ScriptClose();
         } 
         ScriptOpen('JavaScript');
-        if ($p_portal_session>'' && $O=='I') {
-          ShowHTML('  top.location.href=''.$R.'';');
+        if ($_SESSION['PORTAL']>'' && $O=='I') {
+          ShowHTML('  top.location.href=\''.montaURL_JS($w_dir,$R).'\';');
         } else {
-          ShowHTML('  location.href=''.$R.'&w_usuario='.$ul->Texts.$Item['w_chave').'&w_chave='.$ul->Texts.$Item['w_chave').'&P1='.$P1.'&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP='.$TP.'&SG='.$SG.MontaFiltro('UL').'';');
+          ShowHTML('  location.href=\''.montaURL_JS($w_dir,$R.'&w_usuario='.$_REQUEST['w_chave').'&w_chave='.$_REQUEST['w_chave').'&P1='.$P1.'&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP='.$TP.'&SG='.$SG.MontaFiltro('GET')).'\';');
         } 
         ScriptClose();
       } else {
@@ -1710,10 +1727,10 @@ function Grava() {
       // Verifica se a Assinatura Eletrônica é válida
       if (verificaAssinaturaEletronica($_SESSION['USERNAME'],strtoupper($_REQUEST['w_assinatura'])) || $w_assinatura=='') {
         dml_putCVIdioma::getInstanceOf($dbms,$O,$w_usuario,
-        $_REQUEST['w_chave'],$_REQUEST['w_leitura'],$_REQUEST['w_escrita'],
-        $_REQUEST['w_compreensao'],$_REQUEST['w_conversacao']);
+          $_REQUEST['w_chave'],$_REQUEST['w_leitura'],$_REQUEST['w_escrita'],
+          $_REQUEST['w_compreensao'],$_REQUEST['w_conversacao']);
         ScriptOpen('JavaScript');
-        ShowHTML('  location.href=''.$R.'&w_chave='.$_REQUEST['w_chave'].'&P1='.$P1.'&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP='.$TP.'&SG='.$SG.MontaFiltro('GET').'';');
+        ShowHTML('  location.href=\''.montaURL_JS($w_dir,$R.'&w_chave='.$_REQUEST['w_chave'].'&P1='.$P1.'&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP='.$TP.'&SG='.$SG.MontaFiltro('GET')).'\';');
         ScriptClose();
       } else {
         ScriptOpen('JavaScript');
@@ -1724,13 +1741,13 @@ function Grava() {
       break;
     case 'CVEXPPER':
       // Verifica se a Assinatura Eletrônica é válida
-      if (verificaAssinaturaEletronica($_SESSION['USERNAME'],strtoupper($_REQUEST['w_assinatura'])) || $w_assinatura=='') { 
+      if (verificaAssinaturaEletronica($_SESSION['USERNAME'],strtoupper($_REQUEST['w_assinatura'])) || $w_assinatura=='') {
         dml_putCVExperiencia::getInstanceOf($dbms,$O,$w_usuario,
-        $_REQUEST['w_chave'],$_REQUEST['w_sq_area_conhecimento'],$_REQUEST['w_sq_cidade'],$_REQUEST['w_sq_eo_tipo_posto'],
-        $_REQUEST['w_sq_tipo_vinculo'],$_REQUEST['w_empregador'],$_REQUEST['w_entrada'],$_REQUEST['w_saida'],
-        $_REQUEST['w_duracao_mes'],$_REQUEST['w_duracao_ano'],$_REQUEST['w_motivo_saida'],null,$_REQUEST['w_atividades']);
+          $_REQUEST['w_chave'],$_REQUEST['w_sq_area_conhecimento'],$_REQUEST['w_sq_cidade'],$_REQUEST['w_sq_eo_tipo_posto'],
+          $_REQUEST['w_sq_tipo_vinculo'],$_REQUEST['w_empregador'],$_REQUEST['w_entrada'],$_REQUEST['w_saida'],
+          $_REQUEST['w_duracao_mes'],$_REQUEST['w_duracao_ano'],$_REQUEST['w_motivo_saida'],null,$_REQUEST['w_atividades']);
         ScriptOpen('JavaScript');
-        ShowHTML('  location.href=''.$R.'&w_chave='.$_REQUEST['w_chave'].'&P1='.$P1.'&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP='.$TP.'&SG='.$SG.MontaFiltro('GET').'';');
+        ShowHTML('  location.href=\''.montaURL_JS($w_dir,$R.'&w_chave='.$_REQUEST['w_chave'].'&P1='.$P1.'&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP='.$TP.'&SG='.$SG.MontaFiltro('GET')).'\';');
         ScriptClose();
       } else {
         ScriptOpen('JavaScript');
@@ -1741,12 +1758,12 @@ function Grava() {
       break;
     case 'CVCARGOS':
       // Verifica se a Assinatura Eletrônica é válida
-      if (verificaAssinaturaEletronica($_SESSION['USERNAME'],strtoupper($_REQUEST['w_assinatura'])) || $w_assinatura=='') {    
+      if (verificaAssinaturaEletronica($_SESSION['USERNAME'],strtoupper($_REQUEST['w_assinatura'])) || $w_assinatura=='') {
         dml_putCVCargo::getInstanceOf($dbms,$O,$_REQUEST['w_sq_cvpescargo'],
-        $_REQUEST['w_sq_cvpesexp'],$_REQUEST['w_sq_area_conhecimento'],$_REQUEST['w_especialidades'],
-        $_REQUEST['w_inicio'],$_REQUEST['w_fim']);
+          $_REQUEST['w_sq_cvpesexp'],$_REQUEST['w_sq_area_conhecimento'],$_REQUEST['w_especialidades'],
+          $_REQUEST['w_inicio'],$_REQUEST['w_fim']);
         ScriptOpen('JavaScript');
-        ShowHTML('  location.href=''.$R.'&w_sq_cvpesexp='.$_REQUEST['w_sq_cvpesexp'].'&P1='.$P1.'&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP='.$TP.'&SG='.$SG.MontaFiltro('GET').'';');
+        ShowHTML('  location.href=\''.montaURL_JS($w_dir,$R.'&w_sq_cvpesexp='.$_REQUEST['w_sq_cvpesexp'].'&P1='.$P1.'&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP='.$TP.'&SG='.$SG.MontaFiltro('GET')).'\';');
         ScriptClose();
       } else {
         ScriptOpen('JavaScript');
@@ -1759,10 +1776,10 @@ function Grava() {
       // Verifica se a Assinatura Eletrônica é válida
       if (verificaAssinaturaEletronica($_SESSION['USERNAME'],strtoupper($_REQUEST['w_assinatura'])) || $w_assinatura=='') {
         dml_putCVEscola::getInstanceOf($dbms,$O,$w_usuario,
-        $_REQUEST['w_chave'],$_REQUEST['w_sq_area_conhecimento'],$_REQUEST['w_sq_pais'],$_REQUEST['w_sq_formacao'],
-        $_REQUEST['w_nome'],$_REQUEST['w_instituicao'],$_REQUEST['w_inicio'],$_REQUEST['w_fim']);
+          $_REQUEST['w_chave'],$_REQUEST['w_sq_area_conhecimento'],$_REQUEST['w_sq_pais'],$_REQUEST['w_sq_formacao'],
+          $_REQUEST['w_nome'],$_REQUEST['w_instituicao'],$_REQUEST['w_inicio'],$_REQUEST['w_fim']);
         ScriptOpen('JavaScript');
-        ShowHTML('  location.href=''.$R.'&w_chave='.$_REQUEST['w_chave'].'&P1='.$P1.'&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP='.$TP.'&SG='.$SG.MontaFiltro('GET').'';');
+        ShowHTML('  location.href=\''.montaURL_JS($w_dir,$R.'&w_chave='.$_REQUEST['w_chave'].'&P1='.$P1.'&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP='.$TP.'&SG='.$SG.MontaFiltro('GET')).'\';');
         ScriptClose();
       } else {
         ScriptOpen('JavaScript');
@@ -1775,10 +1792,10 @@ function Grava() {
       // Verifica se a Assinatura Eletrônica é válida
       if (verificaAssinaturaEletronica($_SESSION['USERNAME'],strtoupper($_REQUEST['w_assinatura'])) || $w_assinatura=='') {
         dml_putCVCurso::getInstanceOf($dbms,$O,$w_usuario,
-        $_REQUEST['w_chave'],$_REQUEST['w_sq_area_conhecimento'],$_REQUEST['w_sq_formacao'],
-        $_REQUEST['w_nome'],$_REQUEST['w_instituicao'],$_REQUEST['w_carga_horaria'],$_REQUEST['w_conclusao']);
+          $_REQUEST['w_chave'],$_REQUEST['w_sq_area_conhecimento'],$_REQUEST['w_sq_formacao'],
+          $_REQUEST['w_nome'],$_REQUEST['w_instituicao'],$_REQUEST['w_carga_horaria'],$_REQUEST['w_conclusao']);
         ScriptOpen('JavaScript');
-        ShowHTML('  location.href=''.$R.'&w_chave='.$_REQUEST['w_chave'].'&P1='.$P1.'&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP='.$TP.'&SG='.$SG.MontaFiltro('GET').'';');
+        ShowHTML('  location.href=\''.montaURL_JS($w_dir,$R.'&w_chave='.$_REQUEST['w_chave'].'&P1='.$P1.'&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP='.$TP.'&SG='.$SG.MontaFiltro('GET')).'\';');
         ScriptClose();
       } else {
         ScriptOpen('JavaScript');
@@ -1791,10 +1808,10 @@ function Grava() {
       // Verifica se a Assinatura Eletrônica é válida
       if (verificaAssinaturaEletronica($_SESSION['USERNAME'],strtoupper($_REQUEST['w_assinatura'])) || $w_assinatura=='') {
         dml_putCVProducao::getInstanceOf($dbms,$O,$w_usuario,
-        $_REQUEST['w_chave'],$_REQUEST['w_sq_area_conhecimento'],$_REQUEST['w_sq_formacao'],
-        $_REQUEST['w_nome'],$_REQUEST['w_meio'],$_REQUEST['w_data']);
+          $_REQUEST['w_chave'],$_REQUEST['w_sq_area_conhecimento'],$_REQUEST['w_sq_formacao'],
+          $_REQUEST['w_nome'],$_REQUEST['w_meio'],$_REQUEST['w_data']);
         ScriptOpen('JavaScript');
-        ShowHTML('  location.href=''.$R.'&w_chave='.$_REQUEST['w_chave'].'&P1='.$P1.'&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP='.$TP.'&SG='.$SG.MontaFiltro('GET').'';');
+        ShowHTML('  location.href=\''.montaURL_JS($w_dir,$R.'&w_chave='.$_REQUEST['w_chave'].'&P1='.$P1.'&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP='.$TP.'&SG='.$SG.MontaFiltro('GET')).'\';');
         ScriptClose();
       } else {
         ScriptOpen('JavaScript');
@@ -1817,30 +1834,28 @@ function Grava() {
 
 function Main() {
   extract($GLOBALS);
-switch ($par) {
-  case 'INICIAL':               Inicial();              break;
-  case 'IDENTIFICACAO':         Identificacao();        break;
-  case 'IDIOMAS':               Idiomas();              break;
-  case 'ESCOLARIDADE':          Escolaridade();         break;
-  case 'CURSOS':                $Extensao;              break;
-  case 'EXPPROF':               Experiencia();          break;
-  case 'DESPESA':               $Despesa;               break;
-  case 'PRODUCAO':              $Producao;              break;
-  case 'CARGOS':                Cargos();               break;
-  case 'VISUALIZAR':            $Visualizar;            break;
-  case 'BUSCAAREACONHECIMENTO': $BuscaAreaConhecimento; break;
-  case 'GRAVA':                 $Grava;                 break;
-  default:
-    Cabecalho();
-    ShowHTML('<BASE HREF="'.$conRootSIW.'">');
-    BodyOpen('onLoad=document.focus();');
-    ShowHTML('<B><FONT COLOR="#000000">'.$w_TP.'</FONT></B>');
-    ShowHTML('<HR>');
-    ShowHTML('<div align=center><center><br><br><br><br><br><br><br><br><br><br><img src="images/icone/underc.gif" align="center"> <b>Esta opção está sendo desenvolvida.</b><br><br><br><br><br><br><br><br><br><br></center></div>');
-    Rodape();
-  break;
+  switch ($par) {
+    case 'INICIAL':               Inicial();              break;
+    case 'IDENTIFICACAO':         Identificacao();        break;
+    case 'IDIOMAS':               Idiomas();              break;
+    case 'ESCOLARIDADE':          Escolaridade();         break;
+    case 'CURSOS':                $Extensao;              break;
+    case 'EXPPROF':               Experiencia();          break;
+    case 'DESPESA':               $Despesa;               break;
+    case 'PRODUCAO':              $Producao;              break;
+    case 'CARGOS':                Cargos();               break;
+    case 'VISUALIZAR':            $Visualizar;            break;
+    case 'BUSCAAREACONHECIMENTO': $BuscaAreaConhecimento; break;
+    case 'GRAVA':                 $Grava;                 break;
+    default:
+      Cabecalho();
+      ShowHTML('<BASE HREF="'.$conRootSIW.'">');
+      BodyOpen('onLoad=document.focus();');
+      ShowHTML('<B><FONT COLOR="#000000">'.$w_TP.'</FONT></B>');
+      ShowHTML('<HR>');
+      ShowHTML('<div align=center><center><br><br><br><br><br><br><br><br><br><br><img src="images/icone/underc.gif" align="center"> <b>Esta opção está sendo desenvolvida.</b><br><br><br><br><br><br><br><br><br><br></center></div>');
+      Rodape();
+    break;
   } 
 } 
 ?>
-
-

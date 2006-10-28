@@ -620,13 +620,13 @@ function Gerencial() {
           $w_linha += 1;
         } 
         if (f($row,'concluida')=='N') {
-          if (f($row,'fim')<time()) {
-            $t_atraso    += 1;
-            $t_totatraso += 1;
-          } elseif (f($row,'aviso_prox_conc')=='S' && (f($row,'aviso')<=time())) {
-            $t_aviso    += 1;
-            $t_totaviso += 1;
-          } 
+          if (f($row,'fim') < addDays(time(),-1)) {
+            $t_atraso    = $t_atraso + 1;
+            $t_totatraso = $t_totatraso + 1;
+          } elseif (f($row,'aviso_prox_conc') == 'S' && (f($row,'aviso') <= addDays(time(),-1))) {
+            $t_aviso    = $t_aviso+1;
+            $t_totaviso = $t_totaviso+1;
+          }
           if ($cDbl[f($row,'or_tramite')]==1) {
             $t_cad      += 1;
             $t_totcad   += 1;
@@ -730,7 +730,7 @@ function Gerencial() {
     ShowHTML('    <tr><td align="center" colspan="3" height="1" bgcolor="#000000">');
     ShowHTML('    <tr><td align="center" colspan="3">');
     ShowHTML('          <input class="STB" type="submit" name="Botao" value="Aplicar filtro">');
-    ShowHTML('            <input class="STB" type="button" onClick="location.href=\''.$w_pagina.$par.'&P1='.$P1.'&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP='.$TP.'&SG='.$SG.'\';" name="Botao" value="Remover filtro">');
+    ShowHTML('            <input class="STB" type="button" onClick="location.href=\''.montaURL_JS($w_dir,$w_pagina.$par.'&P1='.$P1.'&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP='.$TP.'&SG='.$SG).'\';" name="Botao" value="Remover filtro">');
     ShowHTML('          </td>');
     ShowHTML('      </tr>');
     ShowHTML('    </table>');

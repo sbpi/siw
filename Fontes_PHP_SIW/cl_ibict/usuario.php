@@ -342,6 +342,7 @@ function Grava() {
  // global $w_Disabled;
   Cabecalho();
   ShowHTML('</HEAD>');
+  ShowHTML('<BASE HREF="'.$conRootSIW.'">');
   BodyOpen('onLoad=document.focus();');
   // Verifica se a Assinatura Eletrônica é válida
   if ($O !=='') { // Identifica, a partir do tamanho da variável w_username, se é pessoa física, jurídica ou estrangeiro

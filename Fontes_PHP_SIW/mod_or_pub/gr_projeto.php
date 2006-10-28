@@ -263,6 +263,15 @@ function Gerencial() {
       ShowHTML('     theForm.p_ini_i.focus();');
       ShowHTML('     return false;');
       ShowHTML('  }');
+      ShowHTML('  var i; ');
+      ShowHTML('  var w_erro=true; ');
+      ShowHTML('  for (i=0; i < theForm["p_fase[]"].length; i++) {');
+      ShowHTML('    if (theForm["p_fase[]"][i].checked) w_erro=false;');
+      ShowHTML('  }');
+      ShowHTML('  if (w_erro) {');
+      ShowHTML('    alert(\'Você deve informar pelo menos uma fase!\'); ');
+      ShowHTML('    return false;');
+      ShowHTML('  }');
       CompData('p_ini_i','Recebimento inicial','<=','p_ini_f','Recebimento final');
       Validate('p_fim_i','Conclusão inicial','DATA','','10','10','','0123456789/');
       Validate('p_fim_f','Conclusão final','DATA','','10','10','','0123456789/');
@@ -728,7 +737,7 @@ function Gerencial() {
     SelecaoFaseCheck('Recuperar fases:','S',null,$p_fase,$P2,'p_fase[]',null,null);
     ShowHTML('      <tr><td align="center" colspan="2" height="1" bgcolor="#000000">');
     ShowHTML('      <tr><td align="center" colspan="2">');
-    ShowHTML('            <input class="STB" type="submit" name="Botao" value="Exibir" onClick="javascript:document.Form.O.value=\'L\';">');
+    ShowHTML('            <input class="STB" type="submit" name="Botao" value="Exibir" onClick="document.Form.target=\'\'; javascript:document.Form.O.value=\'L\';">');
     ShowHTML('            <input class="STB" type="submit" name="Botao" value="Gerar Word" onClick="javascript:document.Form.O.value=\'W\'; document.Form.target=\'Word\'">');
     ShowHTML('          </td>');
     ShowHTML('      </tr>');
@@ -800,13 +809,6 @@ function ImprimeLinha($l_solic,$l_cad,$l_tram,$l_conc,$l_atraso,$l_aviso,$l_valo
 // -------------------------------------------------------------------------
 function Main() {
   extract($GLOBALS);
-  // Verifica se o usuário tem lotação e localização
-  if ((strlen($_REQUEST['LOTACAO'.'_session'].'')==0 || strlen($_REQUEST['LOCALIZACAO'.'_session'].'')==0) && $_REQUEST['LogOn'.'_session']=='Sim') {
-    ScriptOpen('JavaScript');
-    ShowHTML(' alert(\'Você não tem lotação ou localização definida. Entre em contato com o RH!\');');
-    ShowHTML(' top.location.href=\'default.php\'; ');
-    ScriptClose();
- } 
   switch($par) {
     case 'GERENCIAL':      Gerencial();      break;
     default:

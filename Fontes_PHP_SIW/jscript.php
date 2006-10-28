@@ -707,7 +707,7 @@ function Validate($VariableName,$DisplayName,$DataType,$ValueRequired,$MinimumLe
     "    if (checkStr.length != 0) {"."\r\n".
     "       if (!checkbranco(checkStr))"."\r\n".
     "       {"."\r\n".
-    "    	   if (checkStr.length != 10) err=1"."\r\n".
+    "    	   if (checkStr.length != 5) err=1"."\r\n".
     "       	dia = checkStr.substring(0, 2);"."\r\n".
     "       	barra1 = checkStr.substring(2, 3);"."\r\n".
     "       	mes = checkStr.substring(3, 5);"."\r\n".

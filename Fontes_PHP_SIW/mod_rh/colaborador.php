@@ -304,8 +304,8 @@ function Inicial() {
     ShowHTML('      <tr><td align="center" colspan="3" height="1" bgcolor="#000000">');
     ShowHTML('      <tr><td align="center" colspan="3">');
     ShowHTML('            <input class="stb" type="submit" name="Botao" value="Aplicar filtro">');
-    ShowHTML('            <input class="stb" type="button" onClick="location.href=\''.$w_pagina.$par.'&R='.$w_pagina.$par.'&O=I&w_cliente='.$w_cliente.'&P1='.$P1.'&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP='.$TP.'&SG='.$SG.'\';" name="Botao" value="Incluir">');
-    ShowHTML('            <input class="stb" type="button" onClick="location.href=\''.$w_pagina.$par.'&w_cliente='.$w_cliente.'&P1='.$P1.'&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP='.$TP.'&SG='.$SG.'\';" name="Botao" value="Limpar campos">');
+    ShowHTML('            <input class="stb" type="button" onClick="location.href=\''.montaURL_JS($w_dir,$w_pagina.$par.'&R='.$w_pagina.$par.'&O=I&w_cliente='.$w_cliente.'&P1='.$P1.'&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP='.$TP.'&SG='.$SG).'\';" name="Botao" value="Incluir">');
+    ShowHTML('            <input class="stb" type="button" onClick="location.href=\''.montaURL_JS($w_dir,$w_pagina.$par.'&w_cliente='.$w_cliente.'&P1='.$P1.'&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP='.$TP.'&SG='.$SG).'\';" name="Botao" value="Limpar campos">');
     ShowHTML('          </td>');
     ShowHTML('      </tr>');
     ShowHTML('    </table>');
@@ -330,7 +330,7 @@ function Inicial() {
     ShowHTML('        <tr><td colspan=4><font size=2>Informe o CPF e clique no botão "Selecionar" para continuar.</font></TD>');
     ShowHTML('        <tr><td colspan=4><b><u>C</u>PF:<br><INPUT ACCESSKEY="C" TYPE="text" class="sti" NAME="w_cpf" VALUE="'.$w_cpf.'" SIZE="14" MaxLength="14" onKeyDown="FormataCPF(this, event);">');
     ShowHTML('            <INPUT class="stb" TYPE="submit" NAME="Botao" VALUE="Selecionar" onClick="Botao.value=this.value; w_botao.value=Botao.value;document.Form.action=\''.$w_dir.'cv.php?par=Identificacao\';document.Form.SG.value=\'CVIDENT\';document.Form.P1.value=\'1\';">');
-    ShowHTML('            <INPUT class="stb" TYPE="button" NAME="Botao" VALUE="Cancelar" onClick="location.href=\''.$w_pagina.$par.'&R='.$w_pagina.$par.'&O=P&w_cliente='.$w_cliente.'&P1='.$P1.'&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP='.$TP.'&SG='.$SG.'\';">');
+    ShowHTML('            <INPUT class="stb" TYPE="button" NAME="Botao" VALUE="Cancelar" onClick="location.href=\''.montaURL_JS($w_dir,$w_pagina.$par.'&R='.$w_pagina.$par.'&O=P&w_cliente='.$w_cliente.'&P1='.$P1.'&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP='.$TP.'&SG='.$SG).'\';">');
     ShowHTML('        <tr><td colspan=4><font size=2>Se a pessoa não tem CPF e o sistema ainda não gerou um código para ela, clique no botão abaixo. Menores, indígenas e estrangeiros sem CPF, que ainda não tenham seu código gerado pelo sistema enquadram-se nesta situação. Se o sistema já gerou um código para a pessoa, informe-o no campo CPF, acima.</font></TD>');
     ShowHTML('        <tr><td colspan=4><INPUT class="stb" TYPE="submit" NAME="Botao" VALUE="Pessoa sem CPF nem código gerado pelo sistema" onClick="Botao.value=this.value; w_botao.value=Botao.value;document.Form.action=\''.$w_dir.'cv.php?par=Identificacao\';document.Form.SG.value=\'CVIDENT\';document.Form.P1.value=\'1\';">');
     ShowHTML('        <tr><td colspan=4><p>&nbsp</p>');
@@ -433,7 +433,7 @@ function Inicial() {
     if ($w_erro=='') {
       ShowHTML('            <input class="stb" type="submit" name="Botao" value="Excluir">');
     } 
-    ShowHTML('            <input class="stb" type="button" onClick="location.href=\''.$w_pagina.$par.'&R='.$w_pagina.$par.'&O=L&w_cliente='.$w_cliente.'&P1='.$P1.'&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP='.$TP.'&SG='.$SG.'\';" name="Botao" value="Cancelar">');
+    ShowHTML('            <input class="stb" type="button" onClick="location.href=\''.montaURL_JS($w_dir,$w_pagina.$par.'&R='.$w_pagina.$par.'&O=L&w_cliente='.$w_cliente.'&P1='.$P1.'&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP='.$TP.'&SG='.$SG).'\';" name="Botao" value="Cancelar">');
     ShowHTML('          </td>');
     ShowHTML('      </tr>');
     ShowHTML('    </table>');
@@ -464,23 +464,23 @@ function Documentacao() {
   // Verifica se há necessidade de recarregar os dados da tela a partir
   // da própria tela (se for recarga da tela) ou do banco de dados (se não for inclusão)
   if ($w_troca>'') {
-  // Se for recarga da página
-  $w_ctps_numero        = $_REQUEST['w_ctps_numero'];
-  $w_ctps_serie         = $_REQUEST['w_ctps_serie'];
-  $w_ctps_emissor       = $_REQUEST['w_ctps_emissor'];
-  $w_ctps_emissao       = $_REQUEST['w_ctps_emissao'];
-  $w_pis_pasep          = $_REQUEST['w_pis_pasep'];
-  $w_pispasep_numero    = $_REQUEST['w_pispasep_numero'];
-  $w_pispasep_cadastr   = $_REQUEST['w_pispasep_cadastr'];
-  $w_te_numero          = $_REQUEST['w_te_numero'];
-  $w_te_zona            = $_REQUEST['w_te_zona'];
-  $w_te_secao           = $_REQUEST['w_te_secao'];
-  $w_reservista_numero  = $_REQUEST['w_reservista_numero'];
-  $w_reservista_csm     = $_REQUEST['w_reservista_csm'];
-  $w_tipo_sangue        = $_REQUEST['w_tipo_sangue'];
-  $w_doador_sangue      = $_REQUEST['w_doador_sangue'];
-  $w_doador_orgaos      = $_REQUEST['w_doador_orgao'];
-  $w_observacoes        = $_REQUEST['w_observacoes'];
+    // Se for recarga da página
+    $w_ctps_numero        = $_REQUEST['w_ctps_numero'];
+    $w_ctps_serie         = $_REQUEST['w_ctps_serie'];
+    $w_ctps_emissor       = $_REQUEST['w_ctps_emissor'];
+    $w_ctps_emissao       = $_REQUEST['w_ctps_emissao'];
+    $w_pis_pasep          = $_REQUEST['w_pis_pasep'];
+    $w_pispasep_numero    = $_REQUEST['w_pispasep_numero'];
+    $w_pispasep_cadastr   = $_REQUEST['w_pispasep_cadastr'];
+    $w_te_numero          = $_REQUEST['w_te_numero'];
+    $w_te_zona            = $_REQUEST['w_te_zona'];
+    $w_te_secao           = $_REQUEST['w_te_secao'];
+    $w_reservista_numero  = $_REQUEST['w_reservista_numero'];
+    $w_reservista_csm     = $_REQUEST['w_reservista_csm'];
+    $w_tipo_sangue        = $_REQUEST['w_tipo_sangue'];
+    $w_doador_sangue      = $_REQUEST['w_doador_sangue'];
+    $w_doador_orgaos      = $_REQUEST['w_doador_orgao'];
+    $w_observacoes        = $_REQUEST['w_observacoes'];
   } else {
     // Recupera os dados do colaborador a partir do código da pessoa
     $RS = db_getGPColaborador::getInstanceOf($dbms,$w_cliente,$w_usuario,null,null,null,null,null,null,null,null,null,null,null,null,null,null);                     
@@ -840,7 +840,7 @@ function Contrato() {
     } else {
       ShowHTML('            <input class="stb" type="submit" name="Botao" value="Atualizar">');
     } 
-    ShowHTML('            <input class="stb" type="button" onClick="location.href=\''.$w_pagina.$par.'&w_usuario='.$w_usuario.'&P1='.$P1.'&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP='.$TP.'&SG='.$SG.'&O=L\';" name="Botao" value="Cancelar">');
+    ShowHTML('            <input class="stb" type="button" onClick="location.href=\''.montaURL_JS($w_dir,$w_pagina.$par.'&w_usuario='.$w_usuario.'&P1='.$P1.'&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP='.$TP.'&SG='.$SG.'&O=L').'\';" name="Botao" value="Cancelar">');
     ShowHTML('          </td>');
     ShowHTML('      </tr>');
     ShowHTML('    </table>');
@@ -863,7 +863,7 @@ function Contrato() {
     ShowHTML('      <tr valign="top"><td><b><U>A</U>ssinatura Eletrônica:<BR> <INPUT ACCESSKEY="A" class="sti" type="PASSWORD" name="w_assinatura" size="30" maxlength="30" value=""></td></tr>');
     ShowHTML('      <tr><td align="center"><hr>');
     ShowHTML('          <input class="stb" type="submit" name="Botao" value="Encerrar contrato">');
-    ShowHTML('          <input class="stb" type="button" onClick="location.href=\''.$w_pagina.$par.'&w_usuario='.$w_usuario.'&P1='.$P1.'&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP='.$TP.'&SG='.$SG.'&O=L\';" name="Botao" value="Cancelar">');
+    ShowHTML('          <input class="stb" type="button" onClick="location.href=\''.montaURL_JS($w_dir,$w_pagina.$par.'&w_usuario='.$w_usuario.'&P1='.$P1.'&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP='.$TP.'&SG='.$SG.'&O=L').'\';" name="Botao" value="Cancelar">');
     ShowHTML('        </td>');
     ShowHTML('      </tr>');
     ShowHTML('    </table>');
@@ -893,6 +893,8 @@ function Contrato() {
 function Grava() {
   extract($GLOBALS);
   Cabecalho();
+  ShowHTML('</HEAD>');  
+  ShowHTML('<BASE HREF="'.$conRootSIW.'">');
   BodyOpen('onLoad=document.focus();');
   AbreSessao();
   switch ($SG) {
@@ -902,7 +904,7 @@ function Grava() {
         dml_putGPColaborador::getInstanceOf($dbms,$O,$w_cliente,$_REQUEST['w_sq_pessoa'],null,null,null,
             null,null,null,null,null,null,null,null,null,null,null,null,null);
         ScriptOpen('JavaScript');
-        ShowHTML('  location.href=\''.$R.'&O=P&P1='.$P1.'&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP='.$TP.'&SG='.$SG.MontaFiltro('GET').'\';');
+        ShowHTML('  location.href=\''.montaURL_JS($w_dir,$R.'&O=P&P1='.$P1.'&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP='.$TP.'&SG='.$SG.MontaFiltro('GET')).'\';');
         ScriptClose();
       } else {
         ScriptOpen('JavaScript');
@@ -920,7 +922,7 @@ function Grava() {
         $_REQUEST['w_reservista_csm'],$_REQUEST['w_tipo_sangue'],$_REQUEST['w_doador_sangue'],$_REQUEST['w_doador_orgaos'],
         $_REQUEST['w_observacoes']);                               
         ScriptOpen('JavaScript');
-        ShowHTML('  location.href=\''.$R.'&O=P&w_usuario='.$w_usuario.'&P1='.$P1.'&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP='.$TP.'&SG='.$SG.MontaFiltro('GET').'\';');
+        ShowHTML('  location.href=\''.$montaURL_JS($w_dir,R.'&O=P&w_usuario='.$w_usuario.'&P1='.$P1.'&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP='.$TP.'&SG='.$SG.MontaFiltro('GET')).'\';');
         ScriptClose();
       } else {
         ScriptOpen('JavaScript');
@@ -978,7 +980,7 @@ function Grava() {
           } 
         } 
         ScriptOpen('JavaScript');
-        ShowHTML('  location.href=\''.$R.'&O=L&w_usuario='.$w_usuario.'&P1='.$P1.'&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP='.$TP.'&SG='.$SG.MontaFiltro('GET').'\';');
+        ShowHTML('  location.href=\''.montaURL_JS($w_dir,$R.'&O=L&w_usuario='.$w_usuario.'&P1='.$P1.'&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP='.$TP.'&SG='.$SG.MontaFiltro('GET')).'\';');
         ScriptClose();
       } else {
         ScriptOpen('JavaScript');

@@ -21,8 +21,14 @@ function selecaoEtapa($label,$accesskey,$hint,$chave,$chaveAux,$chaveAux2,$campo
   foreach($RST as $rowT) {
     if ($restricao=='Grupo' && (f($rowT,'vincula_atividade')=='N' || f($rowT,'perc_conclusao')>=100)) { 
       ShowHTML('          <option value="">'.f($rowT,'ordem').'. '.f($rowT,'titulo')); 
+    } elseif ($restricao=='CONTRATO' && (f($rowT,'vincula_contrato')=='N' || f($rowT,'perc_conclusao')>=100)) { 
+      ShowHTML('          <option value="">'.f($rowT,'ordem').'. '.f($rowT,'titulo')); 
     } else { 
-      if (nvl(f($rowT,'sq_projeto_etapa'),0)==nvl($chave,0)) { ShowHTML('          <option value="'.f($rowT,'sq_projeto_etapa').'" SELECTED>'.f($rowT,'ordem').'. '.f($rowT,'titulo')); } else { ShowHTML('          <option value="'.f($rowT,'sq_projeto_etapa').'">'.f($rowT,'ordem').'. '.f($rowT,'titulo')); } 
+      if (nvl(f($rowT,'sq_projeto_etapa'),0)==nvl($chave,0)) { 
+        ShowHTML('          <option value="'.f($rowT,'sq_projeto_etapa').'" SELECTED>'.f($rowT,'ordem').'. '.f($rowT,'titulo')); 
+      } else { 
+        ShowHTML('          <option value="'.f($rowT,'sq_projeto_etapa').'">'.f($rowT,'ordem').'. '.f($rowT,'titulo')); 
+      } 
     }
     if ($restricao=='Pesquisa') {
       $RST1 = db_getSolicEtapa::getInstanceOf($dbms, $chaveAux, f($rowT,'sq_projeto_etapa'), 'LSTNIVEL', nvl($chaveAux2,0));
@@ -33,8 +39,14 @@ function selecaoEtapa($label,$accesskey,$hint,$chave,$chaveAux,$chaveAux2,$campo
     foreach($RST1 as $rowT1) {
       if ($restricao=='Grupo' && (f($rowT1,'vincula_atividade')=='N' || f($rowT1,'perc_conclusao')>=100)) { 
         ShowHTML('          <option value="">'.f($rowT,'ordem').'.'.f($rowT1,'ordem').'. '.f($rowT1,'titulo')); 
+      } elseif ($restricao=='CONTRATO' && (f($rowT1,'vincula_contrato')=='N' || f($rowT1,'perc_conclusao')>=100)) { 
+        ShowHTML('          <option value="">'.f($rowT,'ordem').'.'.f($rowT1,'ordem').'. '.f($rowT1,'titulo')); 
       } else { 
-        if (nvl(f($rowT1,'sq_projeto_etapa'),0)==nvl($chave,0)) { ShowHTML('          <option value="'.f($rowT1,'sq_projeto_etapa').'" SELECTED>'.f($rowT1,'ordem').'. '.f($rowT1,'titulo')); } else { ShowHTML('          <option value="'.f($rowT1,'sq_projeto_etapa').'">'.f($rowT,'ordem').'.'.f($rowT1,'ordem').'. '.f($rowT1,'titulo')); } 
+        if (nvl(f($rowT1,'sq_projeto_etapa'),0)==nvl($chave,0)) { 
+          ShowHTML('          <option value="'.f($rowT1,'sq_projeto_etapa').'" SELECTED>'.f($rowT,'ordem').'.'.f($rowT1,'ordem').'. '.f($rowT1,'titulo')); 
+        } else { 
+          ShowHTML('          <option value="'.f($rowT1,'sq_projeto_etapa').'">'.f($rowT,'ordem').'.'.f($rowT1,'ordem').'. '.f($rowT1,'titulo')); 
+        } 
       }
       if ($restricao=='Pesquisa') {
         $RST2 = db_getSolicEtapa::getInstanceOf($dbms, $chaveAux, f($rowT1,'sq_projeto_etapa'), 'LSTNIVEL', nvl($chaveAux2,0));
@@ -45,8 +57,14 @@ function selecaoEtapa($label,$accesskey,$hint,$chave,$chaveAux,$chaveAux2,$campo
       foreach($RST2 as $rowT2) {
         if ($restricao=='Grupo' && (f($rowT2,'vincula_atividade')=='N' || f($rowT2,'perc_conclusao')>=100)) { 
           ShowHTML('          <option value="">'.f($rowT,'ordem').'.'.f($rowT1,'ordem').'.'.f($rowT2,'ordem').'. '.f($rowT2,'titulo')); 
+        } elseif ($restricao=='CONTRATO' && (f($rowT2,'vincula_contrato')=='N' || f($rowT2,'perc_conclusao')>=100)) {
+          ShowHTML('          <option value="">'.f($rowT,'ordem').'.'.f($rowT1,'ordem').'.'.f($rowT2,'ordem').'. '.f($rowT2,'titulo'));         
         } else { 
-          if (nvl(f($rowT2,'sq_projeto_etapa'),0)==nvl($chave,0)) { ShowHTML('          <option value="'.f($rowT2,'sq_projeto_etapa').'" SELECTED>'.f($rowT2,'ordem').'. '.f($rowT2,'titulo')); } else { ShowHTML('          <option value="'.f($rowT2,'sq_projeto_etapa').'">'.f($rowT,'ordem').'.'.f($rowT1,'ordem').'.'.f($rowT2,'ordem').'. '.f($rowT2,'titulo')); } 
+          if (nvl(f($rowT2,'sq_projeto_etapa'),0)==nvl($chave,0)) { 
+            ShowHTML('          <option value="'.f($rowT2,'sq_projeto_etapa').'" SELECTED>'.f($rowT,'ordem').'.'.f($rowT1,'ordem').'.'.f($rowT2,'ordem').'. '.f($rowT2,'titulo')); 
+          } else { 
+            ShowHTML('          <option value="'.f($rowT2,'sq_projeto_etapa').'">'.f($rowT,'ordem').'.'.f($rowT1,'ordem').'.'.f($rowT2,'ordem').'. '.f($rowT2,'titulo'));
+          } 
         }
         if ($restricao=='Pesquisa') {
           $RST3 = db_getSolicEtapa::getInstanceOf($dbms, $chaveAux, f($rowT2,'sq_projeto_etapa'), 'LSTNIVEL', nvl($chaveAux2,0));
@@ -57,8 +75,14 @@ function selecaoEtapa($label,$accesskey,$hint,$chave,$chaveAux,$chaveAux2,$campo
         foreach($RST3 as $rowT3) {
           if ($restricao=='Grupo' && (f($rowT3,'vincula_atividade')=='N' || f($rowT3,'perc_conclusao')>=100)) { 
             ShowHTML('          <option value="">'.f($rowT,'ordem').'.'.f($rowT1,'ordem').'.'.f($rowT2,'ordem').'.'.f($rowT3,'ordem').'. '.f($rowT3,'titulo')); 
+          } elseif ($restricao=='CONTRATO' && (f($rowT3,'vincula_contrato')=='N' || f($rowT3,'perc_conclusao')>=100)) {
+            ShowHTML('          <option value="">'.f($rowT,'ordem').'.'.f($rowT1,'ordem').'.'.f($rowT2,'ordem').'.'.f($rowT3,'ordem').'. '.f($rowT3,'titulo')); 
           } else { 
-            if (nvl(f($rowT3,'sq_projeto_etapa'),0)==nvl($chave,0)) { ShowHTML('          <option value="'.f($rowT3,'sq_projeto_etapa').'" SELECTED>'.f($rowT3,'ordem').'. '.f($rowT3,'titulo')); } else { ShowHTML('          <option value="'.f($rowT3,'sq_projeto_etapa').'">'.f($rowT,'ordem').'.'.f($rowT1,'ordem').'.'.f($rowT2,'ordem').'.'.f($rowT3,'ordem').'. '.f($rowT3,'titulo')); } 
+            if (nvl(f($rowT3,'sq_projeto_etapa'),0)==nvl($chave,0)) { 
+              ShowHTML('          <option value="'.f($rowT3,'sq_projeto_etapa').'" SELECTED>'.f($rowT,'ordem').'.'.f($rowT1,'ordem').'.'.f($rowT2,'ordem').'.'.f($rowT3,'ordem').'. '.f($rowT3,'titulo'));
+            } else { 
+              ShowHTML('          <option value="'.f($rowT3,'sq_projeto_etapa').'">'.f($rowT,'ordem').'.'.f($rowT1,'ordem').'.'.f($rowT2,'ordem').'.'.f($rowT3,'ordem').'. '.f($rowT3,'titulo'));
+            }
           }
           if ($restricao=='Pesquisa') {
             $RST4 = db_getSolicEtapa::getInstanceOf($dbms, $chaveAux, f($rowT3,'sq_projeto_etapa'), 'LSTNIVEL', nvl($chaveAux2,0));
@@ -69,8 +93,14 @@ function selecaoEtapa($label,$accesskey,$hint,$chave,$chaveAux,$chaveAux2,$campo
           foreach($RST4 as $rowT4) {
             if ($restricao=='Grupo' && (f($rowT4,'vincula_atividade')=='N' || f($rowT4,'perc_conclusao')>=100)) { 
               ShowHTML('          <option value="">'.f($rowT,'ordem').'.'.f($rowT1,'ordem').'.'.f($rowT2,'ordem').'.'.f($rowT3,'ordem').'.'.f($rowT4,'ordem').'. '.f($rowT4,'titulo')); 
+            } elseif ($restricao=='CONTRATO' && (f($rowT4,'vincula_contrato')=='N' || f($rowT4,'perc_conclusao')>=100)) {            
+              ShowHTML('          <option value="">'.f($rowT,'ordem').'.'.f($rowT1,'ordem').'.'.f($rowT2,'ordem').'.'.f($rowT3,'ordem').'.'.f($rowT4,'ordem').'. '.f($rowT4,'titulo')); 
             } else { 
-              if (nvl(f($rowT4,'sq_projeto_etapa'),0)==nvl($chave,0)) { ShowHTML('          <option value="'.f($rowT4,'sq_projeto_etapa').'" SELECTED>'.f($rowT4,'ordem').'. '.f($rowT4,'titulo')); } else { ShowHTML('          <option value="'.f($rowT4,'sq_projeto_etapa').'">'.f($rowT,'ordem').'.'.f($rowT1,'ordem').'.'.f($rowT2,'ordem').'.'.f($rowT3,'ordem').'.'.f($rowT4,'titulo')); } 
+              if (nvl(f($rowT4,'sq_projeto_etapa'),0)==nvl($chave,0)) {
+                ShowHTML('          <option value="'.f($rowT4,'sq_projeto_etapa').'" SELECTED>'.f($rowT,'ordem').'.'.f($rowT1,'ordem').'.'.f($rowT2,'ordem').'.'.f($rowT3,'ordem').'.'.f($rowT4,'titulo'));
+              } else { 
+                ShowHTML('          <option value="'.f($rowT4,'sq_projeto_etapa').'">'.f($rowT,'ordem').'.'.f($rowT1,'ordem').'.'.f($rowT2,'ordem').'.'.f($rowT3,'ordem').'.'.f($rowT4,'titulo'));
+              }
             }
           }
         }

@@ -569,9 +569,9 @@ function Inicial() {
     ShowHTML('            <input class="STB" type="submit" name="Botao" value="Aplicar filtro">');
     if ($O=='C') {
       // Se for cópia
-      ShowHTML('            <input class="STB" type="button" onClick="location.href=\''.$w_pagina.$par.'&P1='.$P1.'&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP='.$TP.'&SG='.$SG.'\';" name="Botao" value="Abandonar cópia">');
+      ShowHTML('            <input class="STB" type="button" onClick="location.href=\''.montaURL_JS($w_dir,$w_pagina.$par.'&P1='.$P1.'&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP='.$TP.'&SG='.$SG).'\';" name="Botao" value="Abandonar cópia">');
     } else {
-      ShowHTML('            <input class="STB" type="button" onClick="location.href=\''.$w_pagina.$par.'&P1='.$P1.'&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP='.$TP.'&SG='.$SG.'\';" name="Botao" value="Remover filtro">');
+      ShowHTML('            <input class="STB" type="button" onClick="location.href=\''.montaURL_JS($w_dir,$w_pagina.$par.'&P1='.$P1.'&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP='.$TP.'&SG='.$SG).'\';" name="Botao" value="Remover filtro">');
     } 
     ShowHTML('          </td>');
     ShowHTML('      </tr>');
@@ -741,7 +741,7 @@ function Geral() {
     if (f($RS_Menu,'justificativa')=='S') {
       Validate('w_justificativa','Observações','1','',5,2000,'1','1');
     } 
-    //Validate 'w_dias', 'Dias de alerta', '1', '', 1, 2, '', '0123456789'
+    //Validate 'w_dias', 'Dias de alerta', '1', '', 1, 3, '', '0123456789'
     //ShowHTML '  if (theForm.w_aviso[0].checked) {'
     //ShowHTML '     if (theForm.w_dias.value == ") {'
     //ShowHTML '        alert('Informe a partir de quantos dias antes da data limite você deseja ser avisado de sua proximidade!');'
@@ -875,7 +875,7 @@ function Geral() {
     //ShowHTML '      <tr><td><table border=''0'' width=''100'''>'
     //ShowHTML '          <tr>'
     //MontaRadioNS '<b>Emite alerta?</b>', w_aviso, 'w_aviso'
-    //ShowHTML '              <td valign=''top''><b>Quantos <U>d</U>ias antes da data limite?<br><INPUT ACCESSKEY=''D'' ' & w_Disabled & ' class=''STI'' type=''text'' name=''w_dias'' size=''2'' maxlength=''2'' value=''' & w_dias & ''' title=''Número de dias para emissão do alerta de proximidade da data limite para conclusão da tarefa.''></td>'
+    //ShowHTML '              <td valign=''top''><b>Quantos <U>d</U>ias antes da data limite?<br><INPUT ACCESSKEY=''D'' ' & w_Disabled & ' class=''STI'' type=''text'' name=''w_dias'' size=''3'' maxlength=''3'' value=''' & w_dias & ''' title=''Número de dias para emissão do alerta de proximidade da data limite para conclusão da tarefa.''></td>'
     //ShowHTML '          </table>'
     //ShowHTML '      <tr><td align=''center'' colspan=''3'' height=''1'' bgcolor=''#000000''></TD></TR>' 
     // Verifica se poderá ser feito o envio da solicitação, a partir do resultado da validação
@@ -883,7 +883,7 @@ function Geral() {
     ShowHTML('            <input class="STB" type="submit" name="Botao" value="Gravar">'); 
     if ($O=='I') {
       $RS = db_getMenuData::getInstanceOf($dbms,$w_menu);
-      ShowHTML('            <input class="STB" type="button" onClick="location.href=\''.$R.'&w_copia='.$w_copia.'&O=L&SG='.f($RS,'sigla').'&P1='.$P1.'&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP='.$TP.MontaFiltro('GET').'\';" name="Botao" value="Cancelar">');
+      ShowHTML('            <input class="STB" type="button" onClick="location.href=\''.montaURL_JS($w_dir,$R.'&w_copia='.$w_copia.'&O=L&SG='.f($RS,'sigla').'&P1='.$P1.'&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP='.$TP.MontaFiltro('GET')).'\';" name="Botao" value="Cancelar">');
     } 
     ShowHTML('          </td>');
     ShowHTML('      </tr>');
@@ -1032,7 +1032,7 @@ function Anexos() {
         ShowHTML('            <input class="STB" type="submit" name="Botao" value="Atualizar">');
       } 
     } 
-    ShowHTML('            <input class="STB" type="button" onClick="location.href=\''.$w_pagina.$par.'&w_chave='.$w_chave.'&P1='.$P1.'&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP='.$TP.'&SG='.$SG.'&O=L\';" name="Botao" value="Cancelar">');
+    ShowHTML('            <input class="STB" type="button" onClick="location.href=\''.montaURL_JS($w_dir,$w_pagina.$par.'&w_chave='.$w_chave.'&P1='.$P1.'&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP='.$TP.'&SG='.$SG.'&O=L').'\';" name="Botao" value="Cancelar">');
     ShowHTML('          </td>');
     ShowHTML('      </tr>');
     ShowHTML('    </table>');
@@ -1131,7 +1131,6 @@ function Interessados() {
         ShowHTML('          <A class="HL" HREF="'.$w_dir.$w_pagina.'GRAVA&R='.$w_pagina.$par.'&O=E&w_chave='.$w_chave.'&w_chave_aux='.f($RS,'sq_pessoa').'&P1='.$P1.'&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP='.$TP.'&SG='.$SG.'" onClick="return confirm(\'Confirma a exclusão do registro?\');">Excluir</A>&nbsp');
         ShowHTML('        </td>');
         ShowHTML('      </tr>');
-        $RS->MoveNext;
       } 
     } 
     ShowHTML('      </center>');
@@ -1139,9 +1138,7 @@ function Interessados() {
     ShowHTML('  </td>');
     ShowHTML('</tr>');
   } elseif (!(strpos('IAEV',$O)===false)) {
-    if (!(strpos('EV',$O)===false)) {
-      $w_Disabled=' DISABLED ';
-    } 
+    if (!(strpos('EV',$O)===false)) $w_Disabled=' DISABLED ';
     AbreForm('Form',$w_dir.$w_pagina.'Grava','POST','return(Validacao(this));',null,$P1,$P2,$P3,$P4,$TP,$SG,$R,$O);
     ShowHTML('<INPUT type="hidden" name="w_chave" value="'.$w_chave.'">');
     ShowHTML('<INPUT type="hidden" name="w_troca" value="">');
@@ -1149,7 +1146,7 @@ function Interessados() {
     ShowHTML('    <table width="97%" border="0">');
     ShowHTML('      <tr><td valign="top" colspan="2"><table border=0 width="100%" cellspacing=0><tr valign="top">');
     if ($O=='I') {
-      SelecaoPessoa('<u>P</u>essoa:','N','Selecione o interessado na relação.',$w_chave_aux,null,'w_chave_aux','USUARIOS');
+      SelecaoPessoa('<u>P</u>essoa:','N','Selecione o interessado na relação.',$w_chave_aux,$w_chave,'w_chave_aux','INTERES');
     } else {
       ShowHTML('<INPUT type="hidden" name="w_chave_aux" value="'.$w_chave_aux.'">');
       ShowHTML('      <tr><td valign="top"><b>Pessoa:</b><br>'.$w_nome.'</td>');
@@ -1169,7 +1166,7 @@ function Interessados() {
         ShowHTML('            <input class="STB" type="submit" name="Botao" value="Atualizar">');
       } 
     } 
-    ShowHTML('            <input class="STB" type="button" onClick="location.href=\''.$w_pagina.$par.'&w_chave='.$w_chave.'&P1='.$P1.'&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP='.$TP.'&SG='.$SG.'&O=L\';" name="Botao" value="Cancelar">');
+    ShowHTML('            <input class="STB" type="button" onClick="location.href=\''.montaURL_JS($w_dir,$w_pagina.$par.'&w_chave='.$w_chave.'&P1='.$P1.'&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP='.$TP.'&SG='.$SG.'&O=L').'\';" name="Botao" value="Cancelar">');
     ShowHTML('          </td>');
     ShowHTML('      </tr>');
     ShowHTML('    </table>');
@@ -1296,7 +1293,7 @@ function Areas() {
         ShowHTML('            <input class="STB" type="submit" name="Botao" value="Atualizar">');
       } 
     } 
-    ShowHTML('            <input class="STB" type="button" onClick="location.href=\''.$w_pagina.$par.'&w_chave='.$w_chave.'&P1='.$P1.'&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP='.$TP.'&SG='.$SG.'&O=L\';" name="Botao" value="Cancelar">');
+    ShowHTML('            <input class="STB" type="button" onClick="location.href=\''.montaURL_JS($w_dir,$w_pagina.$par.'&w_chave='.$w_chave.'&P1='.$P1.'&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP='.$TP.'&SG='.$SG.'&O=L').'\';" name="Botao" value="Cancelar">');
     ShowHTML('          </td>');
     ShowHTML('      </tr>');
     ShowHTML('    </table>');
@@ -1508,7 +1505,7 @@ function Encaminhamento() {
     // Se não for cadastramento
     // Volta para a listagem
     $RS = db_getMenuData::getInstanceOf($dbms,$w_menu);
-    ShowHTML('      <input class="STB" type="button" onClick="location.href=\''.str_replace($w_dir,'',f($RS,'link')).'&O=L&w_chave='.$_REQUEST['w_chave'].'&P1='.$P1.'&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP='.$TP.'&SG='.f($RS,'sigla').MontaFiltro('GET').'\';" name="Botao" value="Abandonar">');
+    ShowHTML('      <input class="STB" type="button" onClick="location.href=\''.montaURL_JS($w_dir,f($RS,'link').'&O=L&w_chave='.$_REQUEST['w_chave'].'&P1='.$P1.'&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP='.$TP.'&SG='.f($RS,'sigla').MontaFiltro('GET')).'\';" name="Botao" value="Abandonar">');
   } 
   ShowHTML('      </td>');
   ShowHTML('    </tr>');
@@ -1817,8 +1814,22 @@ function SolicMail($p_solic,$p_tipo) {
   if ((strpos($w_destinatarios,f($RS,'email').'; ')===false)) $w_destinatarios=$w_destinatarios.f($RS,'email').'; '; 
   // Recupera o e-mail do titular e do substituto pelo setor responsável
   $RS = db_getUorgResp::getInstanceOf($dbms,f($RSM,'sq_unidade'));
+  foreach($RS as $row){$RS=$row; break;}
   if ((strpos($w_destinatarios,f($RS,'email_titular').'; ')===false) && Nvl(f($RS,'email_titular'),'nulo')!='nulo')       $w_destinatarios=$w_destinatarios.f($RS,'email_titular').'; ';
   if ((strpos($w_destinatarios,f($RS,'email_substituto').'; ')===false) && Nvl(f($RS,'email_substituto'),'nulo')!='nulo') $w_destinatarios=$w_destinatarios.f($RS,'email_substituto').'; ';
+  // Recuperar o e-mail dos interessados
+  $RS = db_getSolicInter::getInstanceOf($dbms,$p_solic,null,'LISTA');
+  foreach($RS as $row) {
+    if ((strpos($w_destinatarios,f($row,'email').'; ')===false)    && Nvl(f($row,'email'),'nulo')!='nulo' && f($row,'envia_email') =='S')    $w_destinatarios=$w_destinatarios.f($row,'email').'; ';
+  }
+  // Recuperar o e-mail do titular e substituto das áreas envolvidas
+  $RS = db_getSolicAreas::getInstanceOf($dbms,$p_solic,null,'LISTA');
+  foreach($RS as $row) {
+    $RS1 = db_getUorgResp::getInstanceOf($dbms,f($row,'sq_unidade'));
+    foreach($RS1 as $row1){$RS1=$row1; break;}
+    if ((strpos($w_destinatarios,f($RS1,'email_titular').'; ')===false)    && Nvl(f($RS1,'email_titular'),'nulo')!='nulo')    $w_destinatarios=$w_destinatarios.f($RS1,'email_titular').'; ';
+    if ((strpos($w_destinatarios,f($RS1,'email_substituto').'; ')===false) && Nvl(f($RS1,'email_substituto'),'nulo')!='nulo') $w_destinatarios=$w_destinatarios.f($RS1,'email_substituto').'; ';    
+  }  
   // Prepara os dados necessários ao envio
   $RS = db_getCustomerData::getInstanceOf($dbms,$_SESSION['w_cliente']);
   if ($p_tipo==1 || $p_tipo==3) {
@@ -1886,14 +1897,13 @@ function Grava() {
           // Envia e-mail comunicando a inclusão
           // Recupera os dados para montagem correta do menu
           $RS1 = db_getMenuData::getInstanceOf($dbms,$w_menu);
-          ShowHTML('  parent.menu.location=\'../menu.php?par=ExibeDocs&O=A&w_chave='.$w_chave_nova.'&w_documento=Nr. '.$w_chave_nova.'&R='.$R.'&SG='.f($RS1,'sigla').'&TP='.$TP.MontaFiltro('GET').'\';');
-          ShowHTML('  parent.menu.location=\'../menu.php?par=ExibeDocs&O=A&w_chave='.$w_chave_nova.'&w_documento=Nr. '.$w_chave_nova.'&R='.$R.'&SG='.f($RS1,'sigla').'&TP='.$TP.MontaFiltro('GET').'\';');
+          ShowHTML('  parent.menu.location=\''.montaURL_JS(null,$conRootSIW.'menu.php?par=ExibeDocs&O=A&w_chave='.$w_chave_nova.'&w_documento=Nr. '.$w_chave_nova.'&R='.$R.'&SG='.f($RS1,'sigla').'&TP='.$TP.MontaFiltro('GET')).'\';');
         } elseif ($O=='E') {
-          ShowHTML('  location.href=\''.$R.'&O=L&R='.$R.'&SG=ORPCAD&w_menu='.$w_menu.'&P1='.$P1.'&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP='.$TP.'&p_proponente='.$_REQUEST['p_proponente'].MontaFiltro('GET').'\';');
+          ShowHTML('  location.href=\''.montaURL_JS($w_dir,$R.'&O=L&R='.$R.'&SG=ORPCAD&w_menu='.$w_menu.'&P1='.$P1.'&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP='.$TP.'&p_proponente='.$_REQUEST['p_proponente'].MontaFiltro('GET')).'\';');
         } else {
           // Aqui deve ser usada a variável de sessão para evitar erro na recuperação do link
           $RS1 = db_getLinkData::getInstanceOf($dbms,$w_cliente,$SG);
-          ShowHTML('  location.href=\''.str_replace($w_dir,'',f($RS1,'link')).'&O='.$O.'&w_chave='.$_REQUEST['w_chave'].'&P1='.$P1.'&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP='.$TP.'&SG='.$SG.MontaFiltro('GET').'\';');                        
+          ShowHTML('  location.href=\''.montaURL_JS($w_dir,f($RS1,'link').'&O='.$O.'&w_chave='.$_REQUEST['w_chave'].'&P1='.$P1.'&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP='.$TP.'&SG='.$SG.MontaFiltro('GET')).'\';');
         } 
         ScriptClose();
       } else {
@@ -1910,7 +1920,7 @@ function Grava() {
         ScriptOpen('JavaScript');
         // Recupera a sigla do serviço pai, para fazer a chamada ao menu
         $RS = db_getLinkData::getInstanceOf($dbms,$w_cliente,$SG);
-        ShowHTML('  location.href=\''.str_replace($w_dir,'',f($RS,'link')).'&O=L&w_chave='.$_REQUEST['w_chave'].'&P1='.$P1.'&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP='.$TP.'&SG='.$SG.'\';');
+        ShowHTML('  location.href=\''.montaURL_JS($w_dir,f($RS,'link').'&O=L&w_chave='.$_REQUEST['w_chave'].'&P1='.$P1.'&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP='.$TP.'&SG='.$SG).'\';');
         ScriptClose();
       } else {
         ScriptOpen('JavaScript');
@@ -1938,7 +1948,7 @@ function Grava() {
         ScriptOpen('JavaScript');
         // Recupera a sigla do serviço pai, para fazer a chamada ao menu
         $RS = db_getLinkData::getInstanceOf($dbms,$w_cliente,$SG);
-        ShowHTML('  location.href=\''.str_replace($w_dir,'',f($RS,'link')).'&O=L&w_chave='.$_REQUEST['w_chave'].'&P1='.$P1.'&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP='.$TP.'&SG='.$SG.'\';');
+        ShowHTML('  location.href=\''.montaURL_JS($w_dir,f($RS,'link').'&O=L&w_chave='.$_REQUEST['w_chave'].'&P1='.$P1.'&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP='.$TP.'&SG='.$SG).'\';');
         ScriptClose();
       } else {
         ScriptOpen('JavaScript');
@@ -1953,7 +1963,7 @@ function Grava() {
         if (UPLOAD_ERR_OK==0) {
           $w_maximo = $_REQUEST['w_upload_maximo'];
           foreach ($_FILES as $Chv => $Field) {
-            if ($Field['error'] > 0) {
+            if (!($Field['error']==UPLOAD_ERR_OK || $Field['error']==UPLOAD_ERR_NO_FILE)) {
               // Verifica se o tamanho das fotos está compatível com  o limite de 100KB. 
               ScriptOpen('JavaScript');
               ShowHTML('  alert(\'Atenção: o tamanho máximo do arquivo não pode exceder '.($w_maximo/1024).' KBytes!\');');
@@ -1961,7 +1971,7 @@ function Grava() {
               ScriptClose();
               exit();
             }
-            if ($Field['size'] >= 0) {
+            if ($Field['size'] > 0) {
               // Verifica se o tamanho das fotos está compatível com  o limite de 100KB. 
               if ($Field['size'] > $w_maximo) {
                 ScriptOpen('JavaScript');
@@ -2012,7 +2022,7 @@ function Grava() {
         ScriptOpen('JavaScript');
         // Recupera a sigla do serviço pai, para fazer a chamada ao menu 
         $RS = db_getLinkData::getInstanceOf($dbms,$w_cliente,$SG);
-        ShowHTML('  location.href=\''.str_replace($w_dir,'',f($RS,'link')).'&O=L&w_chave='.$_REQUEST['w_chave'].'&P1='.$P1.'&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP='.$TP.'&SG='.$SG.'\';');
+        ShowHTML('  location.href=\''.montaURL_JS($w_dir,f($RS,'link').'&O=L&w_chave='.$_REQUEST['w_chave'].'&P1='.$P1.'&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP='.$TP.'&SG='.$SG).'\';');
         ScriptClose();
       } else {
         ScriptOpen('JavaScript');
@@ -2030,7 +2040,7 @@ function Grava() {
           if (UPLOAD_ERR_OK==0) {
             $w_maximo = $_REQUEST['w_upload_maximo'];
             foreach ($_FILES as $Chv => $Field) {
-              if ($Field['error'] > 0) {
+              if (!($Field['error']==UPLOAD_ERR_OK || $Field['error']==UPLOAD_ERR_NO_FILE)) {
                 // Verifica se o tamanho das fotos está compatível com  o limite de 100KB. 
                 ScriptOpen('JavaScript');
                 ShowHTML('  alert(\'Atenção: o tamanho máximo do arquivo não pode exceder '.($w_maximo/1024).' KBytes!\');');
@@ -2038,7 +2048,7 @@ function Grava() {
                 ScriptClose();
                 exit();
               }
-              if ($Field['size'] >= 0) {
+              if ($Field['size'] > 0) {
                 // Verifica se o tamanho das fotos está compatível com  o limite de 100KB. 
                 if ($Field['size'] > $w_maximo) {
                   ScriptOpen('JavaScript');
@@ -2069,7 +2079,7 @@ function Grava() {
           ScriptOpen('JavaScript');
           // Volta para a listagem 
           $RS = db_getMenuData::getInstanceOf($dbms,$w_menu);
-          ShowHTML('  location.href=\''.str_replace($w_dir,'',f($RS,'link')).'&O=L&w_chave='.$_REQUEST['w_chave'].'&P1='.$P1.'&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP='.RemoveTP($TP).'&SG='.f($RS,'sigla').MontaFiltro('GET').'\';');
+          ShowHTML('  location.href=\''.montaURL_JS($w_dir,f($RS,'link').'&O=L&w_chave='.$_REQUEST['w_chave'].'&P1='.$P1.'&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP='.RemoveTP($TP).'&SG='.f($RS,'sigla').MontaFiltro('GET')).'\';');
           ScriptClose();
         } else {
           dml_putDemandaEnvio::getInstanceOf($dbms,$_REQUEST['w_menu'],$_REQUEST['w_chave'],$w_usuario,$_REQUEST['w_tramite'],
@@ -2082,13 +2092,13 @@ function Grava() {
             // Recupera os dados para montagem correta do menu
             $RS = db_getMenuData::getInstanceOf($dbms,$w_menu);
             ScriptOpen('JavaScript');
-            ShowHTML('  parent.menu.location=\'../menu.php?par=ExibeDocs&O=L&R='.$R.'&SG='.f($RS,'sigla').'&TP='.RemoveTP(RemoveTP($TP)).MontaFiltro('GET').'\';');
+            ShowHTML('  parent.menu.location=\''.montaURL_JS(null,$conRootSIW.'menu.php?par=ExibeDocs&O=L&R='.$R.'&SG='.f($RS,'sigla').'&TP='.RemoveTP(RemoveTP($TP)).MontaFiltro('GET')).'\';');
             ScriptClose();
           } else {
             ScriptOpen('JavaScript');
             // Volta para a listagem 
             $RS = db_getMenuData::getInstanceOf($dbms,$_REQUEST['w_menu']);
-            ShowHTML('  location.href=\''.str_replace($w_dir,'',f($RS,'link')).'&O=L&w_chave='.$_REQUEST['w_chave'].'&P1='.$P1.'&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP='.RemoveTP($TP).'&SG='.f($RS,'sigla').MontaFiltro('GET').'\';');
+            ShowHTML('  location.href=\''.montaURL_JS($w_dir,f($RS,'link').'&O=L&w_chave='.$_REQUEST['w_chave'].'&P1='.$P1.'&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP='.RemoveTP($TP).'&SG='.f($RS,'sigla').MontaFiltro('GET')).'\';');
             ScriptClose();
           } 
         } 
@@ -2113,7 +2123,7 @@ function Grava() {
           if (UPLOAD_ERR_OK==0) {
             $w_maximo = $_REQUEST['w_upload_maximo'];
             foreach ($_FILES as $Chv => $Field) {
-              if ($Field['error'] > 0) {
+              if (!($Field['error']==UPLOAD_ERR_OK || $Field['error']==UPLOAD_ERR_NO_FILE)) {
                 // Verifica se o tamanho das fotos está compatível com  o limite de 100KB. 
                 ScriptOpen('JavaScript');
                 ShowHTML('  alert(\'Atenção: o tamanho máximo do arquivo não pode exceder '.($w_maximo/1024).' KBytes!\');');
@@ -2121,7 +2131,7 @@ function Grava() {
                 ScriptClose();
                 exit();
               }
-              if ($Field['size'] >= 0) {
+              if ($Field['size'] > 0) {
                 // Verifica se o tamanho das fotos está compatível com  o limite de 100KB. 
                 if ($Field['size'] > $w_maximo) {
                   ScriptOpen('JavaScript');
@@ -2156,8 +2166,7 @@ function Grava() {
           ScriptOpen('JavaScript');
           // Volta para a listagem
           $RS = db_getMenuData::getInstanceOf($dbms,$w_menu);
-         // ShowHTML('  location.href=\''.str_replace($w_dir,'',f($RS,'link')).'&O=L&w_chave='.$_REQUEST['w_chave'].'&P1='.$P1.'&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP='.$TP.'&SG='.f($RS,'sigla').MontaFiltro('UPLOAD').'\';');
-          ShowHTML('  location.href=\''.str_replace($w_dir,'',f($RS,'link')).'&O=L&w_chave='.$_REQUEST['w_chave'].'&P1='.$P1.'&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP='.RemoveTP($TP).'&SG='.f($RS,'sigla').MontaFiltro('GET').'\';');
+          ShowHTML('  location.href=\''.montaURL_JS($w_dir,f($RS,'link').'&O=L&w_chave='.$_REQUEST['w_chave'].'&P1='.$P1.'&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP='.RemoveTP($TP).'&SG='.f($RS,'sigla').MontaFiltro('GET')).'\';');
      
           ScriptClose();
         } 
@@ -2180,14 +2189,7 @@ function Grava() {
 // Rotina principal
 // -------------------------------------------------------------------------
 function Main() {
-   extract($GLOBALS);
-  // Verifica se o usuário tem lotação e localização
-  if ((strlen($LOTACAO_session.'')==0 || strlen($LOCALIZACAO_session.'')==0) && $_REQUEST['LogOn'.'_session']=='Sim') {
-    ScriptOpen('JavaScript');
-    ShowHTML(' alert(\'Você não tem lotação ou localização definida. Entre em contato com o RH!\'); ');
-    ShowHTML(' top.location.href=\'default.php\'; ');
-    $ScriptClose;
-  } 
+  extract($GLOBALS);
   switch ($par){
     case 'INICIAL':     Inicial();        break;
     case 'GERAL':       Geral();          break;

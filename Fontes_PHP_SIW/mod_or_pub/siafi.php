@@ -321,6 +321,7 @@ function Grava() {
   extract($GLOBALS);
   Cabecalho();
   ShowHTML('</HEAD>');
+  ShowHTML('<BASE HREF="'.$conRootSIW.'">');  
   BodyOpen(null);
   switch ($SG) {
     case 'ORIMPSIAFI':
@@ -329,7 +330,7 @@ function Grava() {
         if (UPLOAD_ERR_OK==0) {
           $w_maximo = $_REQUEST['w_upload_maximo'];
           foreach ($_FILES as $Chv => $Field) {
-            if ($Field['error'] > 0) {
+            if (!($Field['error']==UPLOAD_ERR_OK || $Field['error']==UPLOAD_ERR_NO_FILE)) {
               // Verifica se o tamanho das fotos está compatível com  o limite de 100KB. 
               ScriptOpen('JavaScript');
               ShowHTML('  alert(\'Atenção: o tamanho máximo do arquivo não pode exceder '.($w_maximo/1024).' KBytes!\');');
@@ -337,7 +338,7 @@ function Grava() {
               ScriptClose();
               exit();
             }
-            if ($Field['size'] >= 0) {
+            if ($Field['size'] > 0) {
               // Verifica se o tamanho das fotos está compatível com  o limite de 100KB. 
               if ($Field['size'] > $w_maximo) {
                 ScriptOpen('JavaScript');
@@ -434,7 +435,7 @@ function Grava() {
                 $w_arquivo_registro,$w_caminho_registro,$w_tamanho_registro,$w_tipo_registro,
                 $w_registros,$w_importados,$w_rejeitados,$w_situacao,$w_nome_recebido,$w_arquivo_registro);
           ScriptOpen('JavaScript');
-          ShowHTML('  location.href=\''.$R.'&w_chave='.$_REQUEST['w_chave'].'&P1='.$P1.'&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP='.$TP.'&SG='.$SG.MontaFiltro('GET').'\';');
+          ShowHTML('  location.href=\''.montaURL_JS($w_dir,$R.'&w_chave='.$_REQUEST['w_chave'].'&P1='.$P1.'&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP='.$TP.'&SG='.$SG.MontaFiltro('GET')).'\';');
           ScriptClose();
         } else {
           ScriptOpen('JavaScript');

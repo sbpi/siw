@@ -17,15 +17,20 @@ include_once($w_dir_volta.'classes/sp/db_getNatureza_IS.php');
 include_once($w_dir_volta.'classes/sp/db_getProjeto_IS.php');
 include_once($w_dir_volta.'classes/sp/db_getIsUnidade_IS.php');
 include_once($w_dir_volta.'classes/sp/db_getIsUnidadeLimite_IS.php');
+include_once($w_dir_volta.'classes/sp/db_getOpcaoEstrat_IS.php');
+include_once($w_dir_volta.'classes/sp/db_getMacroObjetivo_IS.php');
 include_once($w_dir_volta.'classes/sp/db_verificaAssinatura.php');
 include_once($w_dir_volta.'classes/sp/dml_putHorizonte_IS.php');
 include_once($w_dir_volta.'classes/sp/dml_putNatureza_IS.php');
 include_once($w_dir_volta.'classes/sp/dml_putProjeto_IS.php');
 include_once($w_dir_volta.'classes/sp/dml_putIsUnidade_IS.php');
 include_once($w_dir_volta.'classes/sp/dml_putIsUnidadeLimite_IS.php');
+include_once($w_dir_volta.'classes/sp/dml_putOpcaoEstrat_IS.php');
+include_once($w_dir_volta.'classes/sp/dml_putMacroObjetivo_IS.php');
 include_once($w_dir_volta.'funcoes/selecaoOrdenaRel.php');
 include_once($w_dir_volta.'funcoes/selecaoAno.php');
 include_once($w_dir_volta.'funcoes/selecaoUnidade.php');
+include_once($w_dir_volta.'funcoes/selecaoOpcaoEstrat.php');
 
 // =========================================================================
 //  /is_tabelas.php
@@ -620,7 +625,7 @@ function Unidade() {
         ShowHTML('          <A class="HL" HREF="'.$w_dir.$w_pagina.$par.'&R='.$w_pagina.$par.'&O=A&w_chave='.f($row,'chave').'&P1='.$P1.'&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP='.$TP.'&SG='.$SG.'">Alterar</A>&nbsp');
         ShowHTML('          <A class="HL" HREF="'.$w_dir.$w_pagina.$par.'&R='.$w_pagina.$par.'&O=E&w_chave='.f($row,'chave').'&P1='.$P1.'&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP='.$TP.'&SG='.$SG.'">Excluir</A>&nbsp');
         if (f($row,'planejamento')=='S') {
-          ShowHTML('          <A class="hl" HREF="javascript:document.focus();" onClick="window.open(\''.$w_pagina.'Limites&R='.$w_pagina.$par.'&O=L&w_chave='.f($row,'chave').'&P1='.$P1.'&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP='.$TP.'&SG=ISUNILIMITE\',\'Gestao\',\'width=630,height=500,top=30,left=30,status=yes,resizable=yes,scrollbars=yes,toolbar=yes\');" title="Configura limites orçamentários anuais para a unidade.">Limites</A>&nbsp');
+          ShowHTML('          <A class="hl" HREF="javascript:document.focus();" onClick="window.open(\''.montaURL_JS($w_dir,$w_pagina.'Limites&R='.$w_pagina.$par.'&O=L&w_chave='.f($row,'chave').'&P1='.$P1.'&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP='.$TP.'&SG=ISUNILIMITE').'\',\'Gestao\',\'width=630,height=500,top=30,left=30,status=yes,resizable=yes,scrollbars=yes,toolbar=yes\');" title="Configura limites orçamentários anuais para a unidade.">Limites</A>&nbsp');
         } 
         ShowHTML('        </td>');
         ShowHTML('      </tr>');
@@ -862,6 +867,286 @@ function SelecionarAno() {
   Rodape();
 } 
 // =========================================================================
+// Manter Tabela básica "Opção Estratégica"
+// -------------------------------------------------------------------------
+function OpcaoEstrategica() {
+  extract($GLOBALS);
+  global $w_Disabled;
+  $w_chave     = $_REQUEST['w_chave'];
+  $w_chave_aux = $_REQUEST['w_chave_aux'];
+  if ($w_troca>'') {
+    // Se for recarga da página
+    $w_chave     = $_REQUEST['w_chave'];
+    $w_nome      = $_REQUEST['w_nome'];
+    $w_ativo     = $_REQUEST['w_ativo'];
+  } elseif ($O=='L') {
+    // Recupera todos os registros para a listagem
+    $RS = db_getOpcaoEstrat_IS::getInstanceOf($dbms,null,null,null);
+    $RS = SortArray($RS,'nome','asc');
+  } elseif (!(strpos('AEV',$O)===false) && $w_troca=='') {
+    // Recupera os dados chave informada
+    $RS = db_getOpcaoEstrat_IS::getInstanceOf($dbms,$w_chave,null,null);
+    foreach ($RS as $row) {$RS = $row; break;}
+    $w_chave    = f($RS,'chave');
+    $w_nome     = f($RS,'nome');
+    $w_ativo    = f($RS,'ativo');
+  } 
+  Cabecalho();
+  ShowHTML('<HEAD>');
+  if (!(strpos('IAEP',$O)===false)) {
+    ScriptOpen('JavaScript');
+    ValidateOpen('Validacao');
+    if (!(strpos('IA',$O)===false)) {
+     // Validate('w_chave','Código','1','1','2','10','1','1');      
+      Validate('w_nome','Nome','1','1','4','30','1','1');
+      Validate('w_assinatura','Assinatura Eletrônica','1','1','6','30','1','1');
+    } elseif ($O=='E') {
+      Validate('w_assinatura','Assinatura Eletrônica','1','1','6','30','1','1');
+      ShowHTML('  if (confirm(\'Confirma a exclusão deste registro?\')) ');
+      ShowHTML('     { return (true); }; ');
+      ShowHTML('     { return (false); }; ');
+    } 
+    ShowHTML('  theForm.Botao[0].disabled=true;');
+    ShowHTML('  theForm.Botao[1].disabled=true;');
+    ValidateClose();
+    ScriptClose();
+  } 
+  ShowHTML('</HEAD>');
+  ShowHTML('<BASE HREF="'.$conRootSIW.'">');
+  if ($w_troca>'') {
+    BodyOpen('onLoad=\'document.Form.'.$w_troca.'.focus()\';');
+  } elseif (!(strpos('IA',$O)===false)) {
+    BodyOpen('onLoad=\'document.Form.w_chave.focus()\';');
+  } elseif ($O=='E') {
+    BodyOpen('onLoad=\'document.Form.w_assinatura.focus()\';');
+  } else {
+    BodyOpen('onLoad=\'document.focus()\';');
+  } 
+  ShowHTML('<B><FONT COLOR="#000000">'.$w_TP.'</FONT></B>');
+  ShowHTML('<HR>');
+  ShowHTML('<div align=center><center>');
+  ShowHTML('<table border="0" cellpadding="0" cellspacing="0" width="100%">');
+  if ($O=='L') {
+    // Exibe a quantidade de registros apresentados na listagem e o cabeçalho da tabela de listagem
+    ShowHTML('<tr><td><a accesskey="I" class="SS" href="'.$w_dir.$w_pagina.$par.'&R='.$w_pagina.$par.'&O=I&P1='.$P1.'&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP='.$TP.'&SG='.$SG.'"><u>I</u>ncluir</a>&nbsp;');
+    ShowHTML('    <td align="right"><b>Registros existentes: '.count($RS));
+    ShowHTML('<tr><td align="center" colspan=4>');
+    ShowHTML('    <TABLE WIDTH="100%" bgcolor="'.$conTableBgColor.'" BORDER="'.$conTableBorder.'" CELLSPACING="'.$conTableCellSpacing.'" CELLPADDING="'.$conTableCellPadding.'" BorderColorDark="'.$conTableBorderColorDark.'" BorderColorLight="'.$conTableBorderColorLight.'">');
+    ShowHTML('        <tr bgcolor="'.$conTrBgColor.'" align="center">');  
+    ShowHTML('          <td><b>Código</td>');
+    ShowHTML('          <td><b>Nome</td>');
+    ShowHTML('          <td><b>Ativo</td>');
+    ShowHTML('          <td><b>Operações</td>');
+    ShowHTML('        </tr>');
+    if (count($RS)<=0) { 
+      // Se não foram selecionados registros, exibe mensagem
+      ShowHTML('      <tr bgcolor="'.$conTrBgColor.'"><td colspan=4 align="center"><b>Não foram encontrados registros.</b></td></tr>');
+    } else {
+      // Lista os registros selecionados para listagem
+      foreach ($RS as $row) {
+        $w_cor = ($w_cor==$conTrBgColor || $w_cor=='') ? $w_cor=$conTrAlternateBgColor : $w_cor=$conTrBgColor;
+        ShowHTML('      <tr bgcolor="'.$w_cor.'" valign="top">');
+        ShowHTML('        <td>'.f($row,'chave').'</td>');
+        ShowHTML('        <td>'.f($row,'nome').'</td>');
+        ShowHTML('        <td align="center">'.f($row,'ativo').'</td>');
+        ShowHTML('        <td align="top" nowrap>');
+        ShowHTML('          <A class="HL" HREF="'.$w_dir.$w_pagina.$par.'&R='.$w_pagina.$par.'&O=A&w_chave='.f($row,'chave').'&w_chave_aux='.f($row,'chave').'&P1='.$P1.'&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP='.$TP.'&SG='.$SG.'">Alterar</A>&nbsp');
+        ShowHTML('          <A class="HL" HREF="'.$w_dir.$w_pagina.$par.'&R='.$w_pagina.$par.'&O=E&w_chave='.f($row,'chave').'&P1='.$P1.'&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP='.$TP.'&SG='.$SG.'">Excluir</A>&nbsp');
+        ShowHTML('        </td>');
+        ShowHTML('      </tr>');
+      } 
+    } 
+    ShowHTML('      </center>');
+    ShowHTML('    </table>');
+    ShowHTML('  </td>');
+    ShowHTML('</tr>');
+  } elseif (!(strpos('IAEV',$O)===false)) {
+    if (!(strpos('EV',$O)===false)) $w_Disabled=' DISABLED ';
+    AbreForm('Form',$w_dir.$w_pagina.'Grava','POST','return(Validacao(this));',null,$P1,$P2,$P3,$P4,$TP,$SG,$R,$O);
+    if ($O=='E') ShowHTML('<INPUT type="hidden" name="w_chave" value="'.$w_chave.'">');
+    ShowHTML('<INPUT type="hidden" name="w_chave_aux" value="'.$w_chave_aux.'">');
+    ShowHTML('<INPUT type="hidden" name="w_troca" value="">');
+    ShowHTML('<tr bgcolor="'.$conTrBgColor.'"><td align="center">');
+    ShowHTML('    <table width="97%" border="0">');
+    ShowHTML('      <tr><td><table border=0 width="100%" cellspacing=0 cellpadding=0><tr valign="top">');
+    ShowHTML('           <td colspan=4><b><u>C</u>ódigo:</b><br><input '.$w_Disabled.' accesskey="C" type="text" name="w_chave" class="sti" SIZE="2" MAXLENGTH="2" VALUE="'.$w_chave.'"></td>');
+    ShowHTML('           <tr><td colspan=3><b><u>N</u>ome:</b><br><input '.$w_Disabled.' accesskey="N" type="text" name="w_nome" class="sti" SIZE="30" MAXLENGTH="30" VALUE="'.$w_nome.'"></td>');
+    ShowHTML('        <tr valign="top">');
+    MontaRadioSN('<b>Ativo?</b>',$w_ativo,'w_ativo');
+    ShowHTML('           </table>');
+    ShowHTML('      <tr><td align="LEFT"><b><U>A</U>ssinatura Eletrônica:<BR> <INPUT ACCESSKEY="A" class="sti" type="PASSWORD" name="w_assinatura" size="30" maxlength="30" value=""></td></tr>');
+    ShowHTML('      <tr><td align="center"><hr>');
+    if ($O=='E') {
+    ShowHTML('   <input class="STB" type="submit" name="Botao" value="Excluir">');
+    } else {
+      if ($O=='I') {
+        ShowHTML('            <input class="STB" type="submit" name="Botao" value="Gravar">');
+      } else {
+        ShowHTML('            <input class="STB" type="submit" name="Botao" value="Atualizar">');
+      } 
+    } 
+    ShowHTML('            <input class="STB" type="button" onClick="history.back(1);" name="Botao" value="Cancelar">');
+    ShowHTML('          </td>');
+    ShowHTML('      </tr>');
+    ShowHTML('    </table>');
+    ShowHTML('    </TD>');
+    ShowHTML('</tr>');
+    ShowHTML('</FORM>');
+  } else {
+    ScriptOpen('JavaScript');
+    ShowHTML(' alert(\'Opção não disponível\');');
+    ScriptClose();
+  } 
+  ShowHTML('</table>');
+  ShowHTML('</center>');
+  Rodape();
+} 
+// =========================================================================
+// Manter Tabela básica "Macro Objetivo"
+// -------------------------------------------------------------------------
+function MacroObjetivo() {
+  extract($GLOBALS);
+  global $w_Disabled;
+  $w_chave      = $_REQUEST['w_chave'];
+  $w_chave_aux  = $_REQUEST['w_chave_aux'];  
+  if ($w_troca>'') {
+    // Se for recarga da página
+    $w_chave      = $_REQUEST['w_chave'];
+    $w_opcao      = $_REQUEST['w_opcao'];
+    $w_nome       = $_REQUEST['w_nome'];
+    $w_ativo      = $_REQUEST['w_ativo'];
+    $w_chave_aux  = $_REQUEST['w_chave_aux'];
+  } elseif ($O=='L') {
+    // Recupera todos os registros para a listagem
+    $RS = db_getMacroObjetivo_IS::getInstanceOf($dbms,null,null,null,null);
+    $RS = SortArray($RS,'nome','asc');
+  } elseif (!(strpos('AEV',$O)===false) && $w_troca=='') {
+    // Recupera os dados chave informada
+    $RS = db_getMacroObjetivo_IS::getInstanceOf($dbms,$w_chave,$w_opcao,null,null);
+    foreach ($RS as $row) {$RS = $row; break;}
+    $w_chave    = f($RS,'chave');
+    $w_opcao    = f($RS,'cd_opcao');   
+    $w_nome     = f($RS,'nome');
+    $w_ativo    = f($RS,'ativo');
+  } 
+  Cabecalho();
+  ShowHTML('<HEAD>');
+  if (!(strpos('IAEP',$O)===false)) {
+    ScriptOpen('JavaScript');
+    ValidateOpen('Validacao');
+    if (!(strpos('IA',$O)===false)) {   
+      Validate('w_nome','Nome','1','1','4','30','1','1');
+      Validate('w_assinatura','Assinatura Eletrônica','1','1','6','30','1','1');
+    } elseif ($O=='E') {
+      Validate('w_assinatura','Assinatura Eletrônica','1','1','6','30','1','1');
+      ShowHTML('  if (confirm(\'Confirma a exclusão deste registro?\')) ');
+      ShowHTML('     { return (true); }; ');
+      ShowHTML('     { return (false); }; ');
+    } 
+    ShowHTML('  theForm.Botao[0].disabled=true;');
+    ShowHTML('  theForm.Botao[1].disabled=true;');
+    ValidateClose();
+    ScriptClose();
+  } 
+  ShowHTML('</HEAD>');
+  ShowHTML('<BASE HREF="'.$conRootSIW.'">');
+  if ($w_troca>'') {
+    BodyOpen('onLoad=\'document.Form.'.$w_troca.'.focus()\';');
+  } elseif (!(strpos('I',$O)===false)) {
+    BodyOpen('onLoad=\'document.Form.w_chave.focus()\';');
+  } elseif (!(strpos('A',$O)===false)) {
+    BodyOpen('onLoad=\'document.Form.w_chave.focus()\';');  
+  } elseif ($O=='E') {
+    BodyOpen('onLoad=\'document.Form.w_assinatura.focus()\';');
+  } else {
+    BodyOpen('onLoad=\'document.focus()\';');
+  } 
+  ShowHTML('<B><FONT COLOR="#000000">'.$w_TP.'</FONT></B>');
+  ShowHTML('<HR>');
+  ShowHTML('<div align=center><center>');
+  ShowHTML('<table border="0" cellpadding="0" cellspacing="0" width="100%">');
+  if ($O=='L') {
+    // Exibe a quantidade de registros apresentados na listagem e o cabeçalho da tabela de listagem
+    ShowHTML('<tr><td><a accesskey="I" class="SS" href="'.$w_dir.$w_pagina.$par.'&R='.$w_pagina.$par.'&O=I&P1='.$P1.'&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP='.$TP.'&SG='.$SG.'"><u>I</u>ncluir</a>&nbsp;');
+    ShowHTML('    <td align="right"><b>Registros existentes: '.count($RS));
+    ShowHTML('<tr><td align="center" colspan=3>');
+    ShowHTML('    <TABLE WIDTH="100%" bgcolor="'.$conTableBgColor.'" BORDER="'.$conTableBorder.'" CELLSPACING="'.$conTableCellSpacing.'" CELLPADDING="'.$conTableCellPadding.'" BorderColorDark="'.$conTableBorderColorDark.'" BorderColorLight="'.$conTableBorderColorLight.'">');
+    ShowHTML('        <tr bgcolor="'.$conTrBgColor.'" align="center">');   
+    ShowHTML('          <td><b>Código</td>');
+    ShowHTML('          <td><b>Estratégia</td>');    
+    ShowHTML('          <td><b>Nome</td>');
+    ShowHTML('          <td><b>Ativo</td>');
+    ShowHTML('          <td><b>Operações</td>');
+    ShowHTML('        </tr>');
+    if (count($RS)<=0) { 
+      // Se não foram selecionados registros, exibe mensagem
+      ShowHTML('      <tr bgcolor="'.$conTrBgColor.'"><td colspan=4 align="center"><b>Não foram encontrados registros.</b></td></tr>');
+    } else {
+      // Lista os registros selecionados para listagem
+      foreach ($RS as $row) {
+        $w_cor = ($w_cor==$conTrBgColor || $w_cor=='') ? $w_cor=$conTrAlternateBgColor : $w_cor=$conTrBgColor;
+        ShowHTML('      <tr bgcolor="'.$w_cor.'" valign="top">');
+        ShowHTML('        <td>'.f($row,'chave').'</td>');
+        ShowHTML('        <td>'.f($row,'cd_opcao').'</td>');        
+        ShowHTML('        <td>'.f($row,'nome').'</td>');
+        ShowHTML('        <td align="center">'.f($row,'ativo').'</td>');
+        ShowHTML('        <td align="top" nowrap>');
+        ShowHTML('          <A class="HL" HREF="'.$w_dir.$w_pagina.$par.'&R='.$w_pagina.$par.'&O=A&w_chave='.f($row,'chave').'&w_chave_aux='.f($row,'chave').'&P1='.$P1.'&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP='.$TP.'&SG='.$SG.'">Alterar</A>&nbsp');
+        ShowHTML('          <A class="HL" HREF="'.$w_dir.$w_pagina.$par.'&R='.$w_pagina.$par.'&O=E&w_chave='.f($row,'chave').'&P1='.$P1.'&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP='.$TP.'&SG='.$SG.'">Excluir</A>&nbsp');
+        ShowHTML('        </td>');
+        ShowHTML('      </tr>');
+      } 
+    } 
+    ShowHTML('      </center>');
+    ShowHTML('    </table>');
+    ShowHTML('  </td>');
+    ShowHTML('</tr>');
+  } elseif (!(strpos('IAEV',$O)===false)) {
+    if (!(strpos('EV',$O)===false)) $w_Disabled=' DISABLED ';
+    AbreForm('Form',$w_dir.$w_pagina.'Grava','POST','return(Validacao(this));',null,$P1,$P2,$P3,$P4,$TP,$SG,$R,$O);
+    if ($O=='E') ShowHTML('<INPUT type="hidden" name="w_chave" value="'.$w_chave.'">');
+    ShowHTML('<INPUT type="hidden" name="w_chave_aux" value="'.$w_chave_aux.'">');
+    ShowHTML('<INPUT type="hidden" name="w_troca" value="">');
+    ShowHTML('<tr bgcolor="'.$conTrBgColor.'"><td align="center">');
+    ShowHTML('    <table width="97%" border="0">');
+    ShowHTML('      <tr><td><table border=0 width="100%" cellspacing=0 cellpadding=0><tr valign="top">');
+    ShowHTML('      <tr><td><table border="0" width="100%" cellspacing=0 cellpadding=0><tr valign="top">');
+    ShowHTML('           <td colspan=4><b><u>C</u>ódigo:</b><br><input '.$w_Disabled.' accesskey="C" type="text" name="w_chave" class="sti" SIZE="2" MAXLENGTH="2" VALUE="'.$w_chave.'"></td>');
+    ShowHTML('      </tr>');
+    SelecaoOpcaoEstrat('<u>O</u>pção estratégica:','O',null,$w_opcao,null,'w_opcao','ATIVO',null);
+    ShowHTML('           </table>');
+    ShowHTML('           <tr><td colspan=3><b><u>N</u>ome:</b><br><input '.$w_Disabled.' accesskey="N" type="text" name="w_nome" class="sti" SIZE="30" MAXLENGTH="30" VALUE="'.$w_nome.'"></td>');
+    ShowHTML('        <tr valign="top">');
+    MontaRadioSN('<b>Ativo?</b>',$w_ativo,'w_ativo');
+    ShowHTML('           </table>');
+    ShowHTML('      <tr><td align="LEFT"><b><U>A</U>ssinatura Eletrônica:<BR> <INPUT ACCESSKEY="A" class="sti" type="PASSWORD" name="w_assinatura" size="30" maxlength="30" value=""></td></tr>');
+    ShowHTML('      <tr><td align="center"><hr>');
+    if ($O=='E') {
+    ShowHTML('   <input class="STB" type="submit" name="Botao" value="Excluir">');
+    } else {
+      if ($O=='I') {
+        ShowHTML('            <input class="STB" type="submit" name="Botao" value="Gravar">');
+      } else {
+        ShowHTML('            <input class="STB" type="submit" name="Botao" value="Atualizar">');
+      } 
+    } 
+    ShowHTML('            <input class="STB" type="button" onClick="history.back(1);" name="Botao" value="Cancelar">');
+    ShowHTML('          </td>');
+    ShowHTML('      </tr>');
+    ShowHTML('    </table>');
+    ShowHTML('    </TD>');
+    ShowHTML('</tr>');
+    ShowHTML('</FORM>');
+  } else {
+    ScriptOpen('JavaScript');
+    ShowHTML(' alert(\'Opção não disponível\');');
+    ScriptClose();
+  } 
+  ShowHTML('</table>');
+  ShowHTML('</center>');
+  Rodape();
+} 
+// =========================================================================
 // Procedimento que executa as operações de BD
 // -------------------------------------------------------------------------
 function Grava() {
@@ -869,6 +1154,7 @@ function Grava() {
   global $w_Disabled;
   Cabecalho();
   ShowHTML('</HEAD>');
+  ShowHTML('<BASE HREF="'.$conRootSIW.'">');
   BodyOpen('onLoad=document.focus();');
   switch ($SG) {
     case 'ISNATUREZA':
@@ -876,7 +1162,7 @@ function Grava() {
       if (verificaAssinaturaEletronica($_SESSION['USERNAME'],strtoupper($_REQUEST['w_assinatura'])) || $w_assinatura=='') {
         dml_putNatureza_IS::getInstanceOf($dbms,$O,Nvl($_REQUEST['w_chave'],''),$w_cliente,$_REQUEST['w_nome'],$_REQUEST['w_ativo']);
         ScriptOpen('JavaScript');
-        ShowHTML('  location.href=\''.$R.'&w_chave='.$_REQUEST['w_chave'].'&P1='.$P1.'&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP='.$TP.'&SG='.$SG.MontaFiltro('GET').'\';');
+        ShowHTML('  location.href=\''.montaURL_JS($w_dir,$R.'&w_chave='.$_REQUEST['w_chave'].'&P1='.$P1.'&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP='.$TP.'&SG='.$SG.MontaFiltro('GET')).'\';');
         ScriptClose();
       } else {
         ScriptOpen('JavaScript');
@@ -890,7 +1176,7 @@ function Grava() {
       if (verificaAssinaturaEletronica($_SESSION['USERNAME'],strtoupper($_REQUEST['w_assinatura'])) || $w_assinatura=='') {
         dml_putHorizonte_IS::getInstanceOf($dbms,$O,Nvl($_REQUEST['w_chave'],''),$w_cliente,$_REQUEST['w_nome'],$_REQUEST['w_ativo']);
         ScriptOpen('JavaScript');
-        ShowHTML('  location.href=\''.$R.'&w_chave='.$_REQUEST['w_chave'].'&P1='.$P1.'&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP='.$TP.'&SG='.$SG.MontaFiltro('GET').'\';');
+        ShowHTML('  location.href=\''.montaURL_JS($w_dir,$R.'&w_chave='.$_REQUEST['w_chave'].'&P1='.$P1.'&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP='.$TP.'&SG='.$SG.MontaFiltro('GET')).'\';');
         ScriptClose();
       } else {
         ScriptOpen('JavaScript');
@@ -905,7 +1191,7 @@ function Grava() {
         dml_putProjeto_IS::getInstanceOf($dbms,$O,Nvl($_REQUEST['w_chave'],''),$w_cliente,$_REQUEST['w_codigo'],$_REQUEST['w_nome'],
           $_REQUEST['w_responsavel'],$_REQUEST['w_telefone'],$_REQUEST['w_email'],$_REQUEST['w_ordem'],$_REQUEST['w_ativo'],$_REQUEST['w_padrao']);
         ScriptOpen('JavaScript');
-        ShowHTML('  location.href=\''.$R.'&w_chave='.$_REQUEST['w_chave'].'&P1='.$P1.'&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP='.$TP.'&SG='.$SG.MontaFiltro('GET').'\';');
+        ShowHTML('  location.href=\''.montaURL_JS($w_dir,$R.'&w_chave='.$_REQUEST['w_chave'].'&P1='.$P1.'&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP='.$TP.'&SG='.$SG.MontaFiltro('GET')).'\';');
         ScriptClose();
       } else {
         ScriptOpen('JavaScript');
@@ -922,7 +1208,7 @@ function Grava() {
           if (count($RS)==0) {
             dml_putIsUnidade_IS::getInstanceOf($dbms,$O,Nvl($_REQUEST['w_chave'],''),$_REQUEST['w_administrativa'],$_REQUEST['w_planejamento']);
             ScriptOpen('JavaScript');
-            ShowHTML('  location.href=\''.$R.'&w_chave=&P1='.$P1.'&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP='.$TP.'&SG='.$SG.MontaFiltro('GET').'\';');
+            ShowHTML('  location.href=\''.montaURL_JS($w_dir,$R.'&w_chave=&P1='.$P1.'&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP='.$TP.'&SG='.$SG.MontaFiltro('GET')).'\';');
             ScriptClose();
           } else {
             ScriptOpen('JavaScript');
@@ -933,7 +1219,7 @@ function Grava() {
         } else {
           dml_putIsUnidade_IS::getInstanceOf($dbms,$O,Nvl($_REQUEST['w_chave'],''),$_REQUEST['w_administrativa'],$_REQUEST['w_planejamento']);
           ScriptOpen('JavaScript');
-          ShowHTML('  location.href=\''.$R.'&w_chave=&P1='.$P1.'&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP='.$TP.'&SG='.$SG.MontaFiltro('GET').'\';');
+          ShowHTML('  location.href=\''.montaURL_JS($w_dir,$R.'&w_chave=&P1='.$P1.'&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP='.$TP.'&SG='.$SG.MontaFiltro('GET')).'\';');
           ScriptClose();
         }
       } else {
@@ -952,7 +1238,7 @@ function Grava() {
           if (count($RS)==0) {
             dml_putIsUnidadeLimite_IS::getInstanceOf($dbms,$O,Nvl($_REQUEST['w_chave'],''),$_REQUEST['w_ano'],$_REQUEST['w_limite']);
             ScriptOpen('JavaScript');
-            ShowHTML('  location.href=\''.$R.'&w_chave='.$_REQUEST['w_chave'].'&P1='.$P1.'&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP='.$TP.'&SG='.$SG.MontaFiltro('GET').'\';');
+            ShowHTML('  location.href=\''.montaURL_JS($w_dir,$R.'&w_chave='.$_REQUEST['w_chave'].'&P1='.$P1.'&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP='.$TP.'&SG='.$SG.MontaFiltro('GET')).'\';');
             ScriptClose();
           } else {
             ScriptOpen('JavaScript');
@@ -963,7 +1249,7 @@ function Grava() {
         } else {
           dml_putIsUnidadeLimite_IS::getInstanceOf($dbms,$O,Nvl($_REQUEST['w_chave'],''),$_REQUEST['w_ano'],$_REQUEST['w_limite']);
           ScriptOpen('JavaScript');
-          ShowHTML('  location.href=\''.$R.'&w_chave='.$_REQUEST['w_chave'].'&P1='.$P1.'&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP='.$TP.'&SG='.$SG.MontaFiltro('GET').'\';');
+          ShowHTML('  location.href=\''.montaURL_JS($w_dir,$R.'&w_chave='.$_REQUEST['w_chave'].'&P1='.$P1.'&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP='.$TP.'&SG='.$SG.MontaFiltro('GET')).'\';');
           ScriptClose();
         }
       }else {
@@ -973,9 +1259,70 @@ function Grava() {
        ScriptClose();
       } 
       break;
+    case 'ISOPCAO':
+      // Verifica se a Assinatura Eletrônica é válida
+      if (verificaAssinaturaEletronica($_SESSION['USERNAME'],strtoupper($_REQUEST['w_assinatura'])) || $w_assinatura=='') {
+        if ($O=='I' && $_REQUEST['w_chave']>'') {
+          $RS = db_getOpcaoEstrat_IS::getInstanceOf($dbms,$_REQUEST['w_chave'],null,null);
+          foreach ($RS as $row) {$RS = $row; break;}          
+          if (f($RS,'chave')==$_REQUEST['w_chave']) {
+          //if (count($RS)>0) {
+            ScriptOpen('JavaScript');
+            ShowHTML('  alert(\'Código já cadastrado!\');');
+            ShowHTML('  history.back(1);');
+            ScriptClose();
+          }
+        } elseif ($O=='E') {
+          // Se for operação de exclusão, verifica se é necessário excluir os arquivos físicos
+          $RS = db_getMacroObjetivo_IS::getInstanceOf($dbms,null,$_REQUEST['w_chave'],null,null);
+          // Mais de um registro de log significa que deve ser cancelada, e não excluída.
+          // Nessa situação, não é necessário excluir os arquivos.
+          foreach ($RS as $row) {$RS = $row; break;}
+          if (f($RS,'cd_opcao')==$_REQUEST['w_chave']) {
+            ScriptOpen('JavaScript');
+            ShowHTML('  alert(\'ATENÇÃO: Opção Estratégica vinculada um Macro Projeto!\');');
+            ShowHTML('  history.back(1);');
+            ScriptClose();
+          } 
+        }     
+        dml_putOpcaoEstrat_IS::getInstanceOf($dbms,$O,Nvl($_REQUEST['w_chave'],''),$_REQUEST['w_nome'],$_REQUEST['w_ativo'],Nvl($_REQUEST['w_chave_aux'],''));
+        ScriptOpen('JavaScript');
+        ShowHTML('  location.href=\''.montaURL_JS($w_dir,$R.'&w_chave='.$_REQUEST['w_chave'].'&P1='.$P1.'&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP='.$TP.'&SG='.$SG.MontaFiltro('GET')).'\';');
+        ScriptClose();
+      } else {
+        ScriptOpen('JavaScript');
+        ShowHTML('  alert(\'Assinatura Eletrônica inválida!\');');
+        ShowHTML('  history.back(1);');
+        ScriptClose();
+      } 
+      break;
+    case 'ISMACRO':
+      // Verifica se a Assinatura Eletrônica é válida
+      if (verificaAssinaturaEletronica($_SESSION['USERNAME'],strtoupper($_REQUEST['w_assinatura'])) || $w_assinatura=='') {
+        if ($O=='I' && $_REQUEST['w_chave']>'') {
+          $RS = db_getMacroObjetivo_IS::getInstanceOf($dbms,$_REQUEST['w_chave'],null,null,null);
+          foreach ($RS as $row) {$RS = $row; break;}
+          if (f($RS,'chave')==$_REQUEST['w_chave']) {
+            ScriptOpen('JavaScript');
+            ShowHTML('  alert(\'Código já cadastrado!\');');
+            ShowHTML('  history.back(1);');
+            ScriptClose();
+          }
+        }
+        dml_putMacroObjetivo_IS::getInstanceOf($dbms,$O,Nvl($_REQUEST['w_chave'],''),Nvl($_REQUEST['w_opcao'],''),$_REQUEST['w_nome'],$_REQUEST['w_ativo'],Nvl($_REQUEST['w_chave_aux'],''));
+        ScriptOpen('JavaScript');
+        ShowHTML('  location.href=\''.montaURL_JS($w_dir,$R.'&w_chave='.$_REQUEST['w_chave'].'&P1='.$P1.'&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP='.$TP.'&SG='.$SG.MontaFiltro('GET')).'\';');
+        ScriptClose();
+      } else {
+        ScriptOpen('JavaScript');
+        ShowHTML('  alert(\'Assinatura Eletrônica inválida!\');');
+        ShowHTML('  history.back(1);');
+        ScriptClose();
+      } 
+      break;      
     case 'ISANO':   $_SESSION['ANO']=$_REQUEST['w_ano_escolhido'];
       ScriptOpen('JavaScript');
-      ShowHTML('  parent.menu.location=\'../menu.php?par=ExibeDocs\';');
+      ShowHTML('  parent.menu.location=\''.montaURL_JS(null,$conRootSIW.'menu.php?par=ExibeDocs').'\';');
       ScriptClose();
       break;
     default:
@@ -994,13 +1341,15 @@ function Main() {
   extract($GLOBALS);
   global $w_Disabled;
   switch ($par) {
-    case 'NATUREZA':         Natureza();        break;
-    case 'HORIZONTE':        Horizonte();       break;
-    case 'PROJETOS':         Projetos();        break;
-    case 'UNIDADE':          Unidade();         break;
-    case 'LIMITES':          Limites();         break;
-    case 'SELECIONARANO':    SelecionarAno();   break;
-    case 'GRAVA':            Grava();           break;
+    case 'NATUREZA':           Natureza();          break;
+    case 'HORIZONTE':          Horizonte();         break;
+    case 'PROJETOS':           Projetos();          break;
+    case 'UNIDADE':            Unidade();           break;
+    case 'LIMITES':            Limites();           break;
+    case 'SELECIONARANO':      SelecionarAno();     break;
+    case 'OPCAOESTRATEGICA':   OpcaoEstrategica();  break;
+    case 'MACROOBJETIVO':      MacroObjetivo();     break;
+    case 'GRAVA':              Grava();             break;
     default:
     Cabecalho();
     ShowHTML('<BASE HREF="'.$conRootSIW.'">');

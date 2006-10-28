@@ -112,7 +112,6 @@ function ExibeDocs() {
   $j    = 1;
   $k    = 1;
   $l    = 1;
-
   if ($SG=='' || ($SG > '' && $O == 'L')) {
 
     $RS = db_getLinkDataUser::getInstanceOf($dbms, $p_cliente, $sq_pessoa, 'IS NULL');

@@ -77,7 +77,7 @@ function VisualViagem($l_chave,$l_O,$l_usuario,$l_P1,$l_P4) {
       } 
     } 
     // Vinculações a atividades
-    $RS1 = db_getPD_Vinculacao::getInstanceOf($dbms,$w_chave,null,null);
+    $RS1 = db_getPD_Vinculacao::getInstanceOf($dbms,$l_chave,null,null);
     $RS1 = SortArray($RS1,'inicio','asc');
     if (count($RS1)>0) {
       $w_html .= chr(13).'      <tr><td valign="top" colspan="2" align="center" bgcolor="#D0D0D0" style="border: 2px solid rgb(0,0,0);"><b>Vinculações</td>';

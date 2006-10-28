@@ -34,6 +34,7 @@ include_once('classes/sp/db_getSolicEtpRec.php');
 include_once('classes/sp/db_getSolicRecurso.php');
 include_once('classes/sp/db_getEtapaOrder.php');
 include_once('classes/sp/db_getSolicLog.php');
+include_once('classes/sp/db_getSolicData_IS.php');
 include_once('funcoes/selecaoTipoRecurso.php');
 include_once('funcoes/selecaoCC.php');
 include_once('funcoes/selecaoPessoa.php');
@@ -50,6 +51,7 @@ include_once('funcoes/selecaoEtapa.php');
 include_once('funcoes/selecaoTipoVisao.php');
 include_once('funcoes/selecaoSolicResp.php');
 include_once('funcoes/selecaoAcordo.php');
+include_once('funcoes/selecaoAcao.php');
 include_once('classes/sp/db_verificaAssinatura.php');
 include_once('classes/sp/dml_putProjetoGeral.php');
 include_once('classes/sp/dml_putSolicArquivo.php');
@@ -493,7 +495,8 @@ function Inicial() {
                     Nvl(f($row,'titular'),0)        == $w_usuario || 
                     Nvl(f($row,'substituto'),0)     == $w_usuario || 
                     Nvl(f($row,'tit_exec'),0)       == $w_usuario || 
-                    Nvl(f($row,'subst_exec'),0)     == $w_usuario)
+                    Nvl(f($row,'subst_exec'),0)     == $w_usuario || 
+                    Nvl(f($row,'resp_etapa'),0) >  0)
                   ShowHTML('          <A class="HL" HREF="'.$w_pagina.'AtualizaEtapa&R='.$w_pagina.$par.'&O=L&w_chave='.f($row,'sq_siw_solicitacao').'&w_tipo=Volta&P1='.$P1.'&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP='.$TP.'&SG='.$SG.MontaFiltro('GET').'" title="Atualiza as etapas do projeto." target="Etapas">Etapas</A>&nbsp');
                 // Coloca as operações dependendo do trâmite
                 if (f($row,'sg_tramite')=='EA') {
@@ -607,8 +610,8 @@ function Inicial() {
       ShowHTML('          <td valign="top"><b>A<U>s</U>sunto:<br><INPUT ACCESSKEY="N" '.$w_Disabled.' class="STI" type="text" name="p_assunto" size="25" maxlength="90" value="'.$p_assunto.'"></td>');
       ShowHTML('          <td valign="top" colspan=2><b>Pala<U>v</U>ras-chave:<br><INPUT ACCESSKEY="N" '.$w_Disabled.' class="STI" type="text" name="p_palavra" size="25" maxlength="90" value="'.$p_palavra.'"></td>');
       ShowHTML('      <tr>');
-      ShowHTML('          <td valign="top"><b>Data de re<u>c</u>ebimento entre:</b><br><input '.$w_Disabled.' accesskey="C" type="text" name="p_ini_i" class="STI" SIZE="10" MAXLENGTH="10" VALUE="'.$p_ini_i.'" onKeyDown="FormataData(this,event);"> e <input '.$w_Disabled.' accesskey="C" type="text" name="p_ini_f" class="STI" SIZE="10" MAXLENGTH="10" VALUE="'.$p_ini_f.'" onKeyDown="FormataData(this,event);"></td>');
-      ShowHTML('          <td valign="top"><b>Limi<u>t</u>e para conclusão entre:</b><br><input '.$w_Disabled.' accesskey="T" type="text" name="p_fim_i" class="STI" SIZE="10" MAXLENGTH="10" VALUE="'.$p_fim_i.'" onKeyDown="FormataData(this,event);"> e <input '.$w_Disabled.' accesskey="T" type="text" name="p_fim_f" class="STI" SIZE="10" MAXLENGTH="10" VALUE="'.$p_fim_f.'" onKeyDown="FormataData(this,event);"></td>');
+      ShowHTML('          <td valign="top"><b>Iní<u>c</u>io previsto entre:</b><br><input '.$w_Disabled.' accesskey="C" type="text" name="p_ini_i" class="STI" SIZE="10" MAXLENGTH="10" VALUE="'.$p_ini_i.'" onKeyDown="FormataData(this,event);"> e <input '.$w_Disabled.' accesskey="C" type="text" name="p_ini_f" class="STI" SIZE="10" MAXLENGTH="10" VALUE="'.$p_ini_f.'" onKeyDown="FormataData(this,event);"></td>');
+      ShowHTML('          <td valign="top"><b><u>T</u>érmino previsto entre:</b><br><input '.$w_Disabled.' accesskey="T" type="text" name="p_fim_i" class="STI" SIZE="10" MAXLENGTH="10" VALUE="'.$p_fim_i.'" onKeyDown="FormataData(this,event);"> e <input '.$w_Disabled.' accesskey="T" type="text" name="p_fim_f" class="STI" SIZE="10" MAXLENGTH="10" VALUE="'.$p_fim_f.'" onKeyDown="FormataData(this,event);"></td>');
       if ($O!='C') { // Se não for cópia
         ShowHTML('      <tr>');
         ShowHTML('          <td valign="top"><b>Exibe somente projetos em atraso?</b><br>');
@@ -619,12 +622,12 @@ function Inicial() {
     } 
     ShowHTML('      <tr>');
     ShowHTML('          <td valign="top"><b><U>O</U>rdenação por:<br><SELECT ACCESSKEY="O" '.$w_Disabled.' class="STS" name="p_ordena" size="1">');
-    if ($p_ordena=='ASSUNTO')           ShowHTML('          <option value="assunto" SELECTED>Assunto<option value="inicio">Data de recebimento<option value="">Data limite para conclusão<option value="nm_tramite">Fase atual<option value="prioridade">Prioridade<option value="proponente">Proponente externo');
-    elseif ($p_ordena=='INICIO')        ShowHTML('          <option value="assunto">Assunto<option value="inicio" SELECTED>Data de recebimento<option value="">Data limite para conclusão<option value="nm_tramite">Fase atual<option value="prioridade">Prioridade<option value="proponente">Proponente externo');
-    elseif ($p_ordena=='NM_TRAMITE')    ShowHTML('          <option value="assunto">Assunto<option value="inicio">Data de recebimento<option value="">Data limite para conclusão<option value="nm_tramite" SELECTED>Fase atual<option value="prioridade">Prioridade<option value="proponente">Proponente externo');
-    elseif ($p_ordena=='PRIORIDADE')    ShowHTML('          <option value="assunto">Assunto<option value="inicio">Data de recebimento<option value="">Data limite para conclusão<option value="nm_tramite">Fase atual<option value="prioridade" SELECTED>Prioridade<option value="proponente">Proponente externo');
-    elseif ($p_ordena=='PROPONENTE')    ShowHTML('          <option value="assunto">Assunto<option value="inicio">Data de recebimento<option value="">Data limite para conclusão<option value="nm_tramite">Fase atual<option value="prioridade">Prioridade<option value="proponente" SELECTED>Proponente externo');
-    else                                ShowHTML('          <option value="assunto">Assunto<option value="inicio">Data de recebimento<option value="" SELECTED>Data limite para conclusão<option value="nm_tramite">Fase atual<option value="prioridade">Prioridade<option value="proponente">Proponente externo');
+    if ($p_ordena=='ASSUNTO')           ShowHTML('          <option value="assunto" SELECTED>Assunto<option value="inicio">Início previsto<option value="">Data Término previsto<option value="nm_tramite">Fase atual<option value="prioridade">Prioridade<option value="proponente">Proponente externo');
+    elseif ($p_ordena=='INICIO')        ShowHTML('          <option value="assunto">Assunto<option value="inicio" SELECTED>Início previsto<option value="">Data Término previsto<option value="nm_tramite">Fase atual<option value="prioridade">Prioridade<option value="proponente">Proponente externo');
+    elseif ($p_ordena=='NM_TRAMITE')    ShowHTML('          <option value="assunto">Assunto<option value="inicio">Início previsto<option value="">Data Término previsto<option value="nm_tramite" SELECTED>Fase atual<option value="prioridade">Prioridade<option value="proponente">Proponente externo');
+    elseif ($p_ordena=='PRIORIDADE')    ShowHTML('          <option value="assunto">Assunto<option value="inicio">Início previsto<option value="">Data Término previsto<option value="nm_tramite">Fase atual<option value="prioridade" SELECTED>Prioridade<option value="proponente">Proponente externo');
+    elseif ($p_ordena=='PROPONENTE')    ShowHTML('          <option value="assunto">Assunto<option value="inicio">Início previsto<option value="">Data Término previsto<option value="nm_tramite">Fase atual<option value="prioridade">Prioridade<option value="proponente" SELECTED>Proponente externo');
+    else                                ShowHTML('          <option value="assunto">Assunto<option value="inicio">Início previsto<option value="" SELECTED>Data Término previsto<option value="nm_tramite">Fase atual<option value="prioridade">Prioridade<option value="proponente">Proponente externo');
     ShowHTML('          </select></td>');
     ShowHTML('          <td valign="top"><b><U>L</U>inhas por página:<br><INPUT ACCESSKEY="L" '.$w_Disabled.' class="STI" type="text" name="P4" size="4" maxlength="4" value="'.$P4.'"></td></tr>');
     ShowHTML('      <tr><td align="center" colspan="2" height="1" bgcolor="#000000">');
@@ -671,11 +674,15 @@ function Geral() {
   $RS = db_getSiwCliModLis::getInstanceOf($dbms,$w_cliente,null,'PD');
   if (count($RS)>0) $w_viagem='S'; else $w_viagem='N'; 
 
+  $RS = db_getSiwCliModLis::getInstanceOf($dbms,$w_cliente,null,'IS');
+  if (count($RS)>0) $w_acao='S'; else $w_acao='N'; 
+
   // Verifica se há necessidade de recarregar os dados da tela a partir
   // da própria tela (se for recarga da tela) ou do banco de dados (se não for inclusão)
   if ($w_troca > '') {
     // Se for recarga da página
     $w_solic_pai                = $_REQUEST['w_solic_pai'];
+    $w_chave_pai                = $_REQUEST['w_chave_pai'];    
     $w_proponente               = $_REQUEST['w_proponente'];
     $w_sq_unidade_resp          = $_REQUEST['w_sq_unidade_resp'];
     $w_titulo                   = $_REQUEST['w_titulo'];
@@ -691,7 +698,6 @@ function Geral() {
     $w_vincula_contrato         = $_REQUEST['w_vincula_contrato'];
     $w_vincula_viagem           = $_REQUEST['w_vincula_viagem'];
     $w_chave                    = $_REQUEST['w_chave'];
-    $w_chave_pai                = $_REQUEST['w_chave_pai'];
     $w_chave_aux                = $_REQUEST['w_chave_aux'];
     $w_sq_menu                  = $_REQUEST['w_sq_menu'];
     $w_sq_unidade               = $_REQUEST['w_sq_unidade'];
@@ -724,6 +730,7 @@ function Geral() {
       }
       if (count($RS)>0) {
         $w_solic_pai            = f($RS,'sq_solic_pai');
+        $w_chave_pai            = f($RS,'sq_solic_pai');        
         $w_proponente           = f($RS,'proponente');
         $w_sq_unidade_resp      = f($RS,'sq_unidade_resp');
         $w_titulo               = f($RS,'titulo');
@@ -738,7 +745,6 @@ function Geral() {
         $w_custo_real           = f($RS,'custo_real');
         $w_vincula_contrato     = f($RS,'vincula_contrato');
         $w_vincula_viagem       = f($RS,'vincula_viagem');
-        $w_chave_pai            = f($RS,'sq_solic_pai');
         $w_chave_aux            = null;
         $w_sq_menu              = f($RS,'sq_menu');
         $w_sq_unidade           = f($RS,'sq_unidade');
@@ -779,17 +785,21 @@ function Geral() {
     Validate('w_titulo','titulo','1',1,5,100,'1','1');
     
     // Trata as possíveis vinculações do projeto
-    if (f($RS_Menu,'solicita_cc')=='S' || $w_acordo=='S') {
-      if ($w_acordo=='N') {
+    if (f($RS_Menu,'solicita_cc')=='S' || $w_acordo=='S' || $w_acao=='S') {
+      if ($w_acordo=='N' && Nvl($w_acao,'N')=='N') {
         // Se puder vincular apenas a uma classificação, verifica se ela foi informada
         Validate('w_sqcc','Classificação','SELECT',1,1,18,'','0123456789');
-      } elseif (f($RS_Menu,'solicita_cc')=='N') {
+      } elseif (f($RS_Menu,'solicita_cc')=='N' && Nvl($w_acao,'N')=='N') {
         // Se puder vincular apenas a um acordo, verifica se ela foi informado
         ShowHTML('if (theForm.w_solic_pai!=undefined) {');
         Validate('w_solic_pai','Acordo','SELECT',1,1,18,'','0123456789');
         ShowHTML('}');
-      } else {
-        // Se puder vincular a uma classificação ou a um acordo, verifica se um deles foi informado
+      } elseif (f($RS_Menu,'solicita_cc')=='N' && Nvl($w_acordo,'N')=='N') {
+        // Se puder vincular apenas a uma acao, verifica se ela foi informado
+        ShowHTML('if (theForm.w_chave_pai!=undefined) {');
+        Validate('w_chave_pai','Ação','SELECT',1,1,18,'','0123456789');
+        ShowHTML('}');        
+      } elseif (f($RS_Menu,'solicita_cc')=='S' && $w_acordo=='S' && Nvl($w_acao,'N')=='N') {
         ShowHTML('if (theForm.w_solic_pai!=undefined) {');
         ShowHTML('  if (theForm.w_sqcc.selectedIndex==0 && theForm.w_solic_pai.selectedIndex==0) {');
         ShowHTML('    alert(\'Você deve indicar uma classificação ou um acordo!\');');
@@ -807,20 +817,61 @@ function Geral() {
         ShowHTML('     return false;');
         ShowHTML('  }');
         ShowHTML('}');
+      } elseif (f($RS_Menu,'solicita_cc')=='S' && $w_acao=='S' && Nvl($w_acordo,'N')=='N') {
+        ShowHTML('if (theForm.w_chave_pai!=undefined) {');
+        ShowHTML('  if (theForm.w_sqcc.selectedIndex==0 && theForm.w_chave_pai.selectedIndex==0) {');
+        ShowHTML('    alert(\'Você deve indicar uma classificação ou uma ação!\');');
+        ShowHTML('    theForm.w_sqcc.focus();');
+        ShowHTML('    return false;');
+        ShowHTML('  } else if (theForm.w_sqcc.selectedIndex!=0 && theForm.w_chave_pai.selectedIndex!=0) {');
+        ShowHTML('    alert(\'Não é possível indicar uma classificação e uma ação, simultaneamente. Escolha apenas um deles!\');');
+        ShowHTML('    theForm.w_sqcc.focus();');
+        ShowHTML('    return false;');
+        ShowHTML('  }');
+        ShowHTML('} else {');
+        ShowHTML('  if (theForm.w_sqcc.selectedIndex == 0) {');
+        ShowHTML('     alert(\'Informe uma classificação!\');');
+        ShowHTML('     theForm.w_sqcc.focus();');
+        ShowHTML('     return false;');
+        ShowHTML('  }');
+        ShowHTML('}');
+      } else {
+        // Se puder vincular a uma classificação ou a um acordo, verifica se um deles foi informado
+        ShowHTML('if (theForm.w_solic_pai!=undefined) {');
+        ShowHTML('  if (theForm.w_sqcc.selectedIndex==0 && theForm.w_solic_pai.selectedIndex==0 && theForm.w_chave_pai.selectedIndex==0) {');
+        ShowHTML('    alert(\'Você deve indicar uma classificação, ou um acordo ou uma ação!\');');
+        ShowHTML('    theForm.w_sqcc.focus();');
+        ShowHTML('    return false;');
+        ShowHTML('  } else if (theForm.w_sqcc.selectedIndex!=0 && theForm.w_solic_pai.selectedIndex!=0 && theForm.w_chave_pai.selectedIndex!=0) {');
+        ShowHTML('    alert(\'Não é possível indicar uma classificação, um acordo e uma ação, simultaneamente. Escolha apenas um deles!\');');
+        ShowHTML('    theForm.w_sqcc.focus();');
+        ShowHTML('    return false;');
+        ShowHTML('  }');
+        ShowHTML('} else {');
+        ShowHTML('  if (theForm.w_sqcc.selectedIndex==0 && theForm.w_chave_pai.selectedIndex==0) {');
+        ShowHTML('    alert(\'Você deve indicar uma classificação ou uma ação!\');');
+        ShowHTML('    theForm.w_sqcc.focus();');
+        ShowHTML('    return false;');
+        ShowHTML('  } else if (theForm.w_sqcc.selectedIndex!=0 && theForm.w_chave_pai.selectedIndex!=0) {');
+        ShowHTML('    alert(\'Não é possível indicar uma classificação e uma ação, simultaneamente. Escolha apenas um deles!\');');
+        ShowHTML('    theForm.w_sqcc.focus();');
+        ShowHTML('    return false;');
+        ShowHTML('  }');
+        ShowHTML('}');
       } 
     }
     Validate('w_solicitante','Responsável','HIDDEN',1,1,18,'','0123456789');
     Validate('w_sq_unidade_resp','Setor responsável','HIDDEN',1,1,18,'','0123456789');
     Validate('w_prioridade','Prioridade','SELECT',1,1,1,'','0123456789');
     switch (f($RS_Menu,'data_hora')) {
-      case 1: Validate('w_fim','Limite para conclusão','DATA',1,10,10,'','0123456789/'); break;
-      case 2: Validate('w_fim','Limite para conclusão','DATAHORA',1,17,17,'','0123456789/'); break;
-      case 3: Validate('w_inicio','Data de recebimento','DATA',1,10,10,'','0123456789/');
-              Validate('w_fim','Limite para conclusão','DATA',1,10,10,'','0123456789/');
-              CompData('w_inicio','Data de recebimento','<=','w_fim','Limite para conclusão'); break;
-      case 4: Validate('w_inicio','Data de recebimento','DATAHORA',1,17,17,'','0123456789/,: ');
-              Validate('w_fim','Limite para conclusão','DATAHORA',1,17,17,'','0123456789/,: ');
-              CompData('w_inicio','Data de recebimento','<=','w_fim','Limite para conclusão'); break;
+      case 1: Validate('w_fim','Término previsto','DATA',1,10,10,'','0123456789/'); break;
+      case 2: Validate('w_fim','Término previsto','DATAHORA',1,17,17,'','0123456789/'); break;
+      case 3: Validate('w_inicio','Início previsto','DATA',1,10,10,'','0123456789/');
+              Validate('w_fim','Término previsto','DATA',1,10,10,'','0123456789/');
+              CompData('w_inicio','Início previsto','<=','w_fim','Término previsto'); break;
+      case 4: Validate('w_inicio','Início previsto','DATAHORA',1,17,17,'','0123456789/,: ');
+              Validate('w_fim','Término previsto','DATAHORA',1,17,17,'','0123456789/,: ');
+              CompData('w_inicio','Início previsto','<=','w_fim','Término previsto'); break;
     } 
     Validate('w_valor','Orçamento disponível','VALOR','1',4,18,'','0123456789.,');
     Validate('w_palavra_chave','Palavras-chave','','',2,90,'1','1');
@@ -829,8 +880,8 @@ function Geral() {
     Validate('w_uf','Estado','SELECT',1,1,3,'1','1');
     Validate('w_cidade','Cidade','SELECT',1,1,18,'','0123456789');
     if (f($RS_Menu,'descricao')=='S') Validate('w_descricao','Resultados do projeto','1',1,5,2000,'1','1');
-    if (f($RS_Menu,'justificativa')=='S') Validate('w_justificativa','Recomendações superiores','1',1,5,2000,'1','1');
-    Validate('w_dias','Dias de alerta','1','',1,2,'','0123456789');
+    if (f($RS_Menu,'justificativa')=='S') Validate('w_justificativa','Observações','1',1,5,2000,'1','1');
+    Validate('w_dias','Dias de alerta','1','',1,3,'','0123456789');
     ShowHTML('  if (theForm.w_aviso[0].checked) {');
     ShowHTML('     if (theForm.w_dias.value == \'\') {');
     ShowHTML('        alert(\'Informe a partir de quantos dias antes da data limite você deseja ser avisado de sua proximidade!\');');
@@ -886,8 +937,13 @@ function Geral() {
       } 
       if ($w_acordo=='S') {
         // Recupera os dados da opção "Contratos de receita"
+        ShowHTML('          <tr>');
         $RS = db_getLinkData::getInstanceOf($dbms,$w_cliente,'GCRCAD');
         SelecaoAcordo('<u>A</u>cordo:','A', null, $w_cliente, $w_solic_pai, f($RS,'sq_menu'),'w_solic_pai',f($RS_Menu,'sq_menu'),null);
+      } 
+      if ($w_acao=='S') {
+        ShowHTML('          <tr>');
+        SelecaoAcao('Açã<u>o</u>:','O','Selecione um dos itens relacionados.',$w_cliente,$_SESSION['ANO'],null,null,null,null,'w_chave_pai','ACAO',null,$w_chave_pai);
       } 
       ShowHTML('          </td></tr></table></td></tr>');
     }
@@ -897,23 +953,23 @@ function Geral() {
     SelecaoPrioridade('<u>P</u>rioridade:','P','Informe a prioridade deste projeto.',$w_prioridade,null,'w_prioridade',null,null);
     ShowHTML('          <tr valign="top">');
     switch (f($RS_Menu,'data_hora')) {
-      case 1: ShowHTML('              <td valign="top"><b>Limi<u>t</u>e para conclusão:</b><br><input '.$w_Disabled.' accesskey="T" type="text" name="w_fim" class="STI" SIZE="10" MAXLENGTH="10" VALUE="'.$w_fim.'" onKeyDown="FormataData(this,event);" title="Data limite para que a execução do projeto esteja concluído."></td>'); break;
-      case 2: ShowHTML('              <td valign="top"><b>Limi<u>t</u>e para conclusão:</b><br><input '.$w_Disabled.' accesskey="T" type="text" name="w_fim" class="STI" SIZE="17" MAXLENGTH="17" VALUE="'.$w_fim.'" onKeyDown="FormataDataHora(this,event);" title="Data/hora limite para que a execução do projeto esteja concluído."></td>'); break;
-      case 3: ShowHTML('              <td valign="top"><b>Data de re<u>c</u>ebimento:</b><br><input '.$w_Disabled.' accesskey="C" type="text" name="w_inicio" class="STI" SIZE="10" MAXLENGTH="10" VALUE="'.Nvl($w_inicio,FormataDataEdicao(time())).'" onKeyDown="FormataData(this,event);" title="Data de recebimento da solicitação."></td>');
-              ShowHTML('              <td valign="top"><b>Limi<u>t</u>e para conclusão:</b><br><input '.$w_Disabled.' accesskey="T" type="text" name="w_fim" class="STI" SIZE="10" MAXLENGTH="10" VALUE="'.$w_fim.'" onKeyDown="FormataData(this,event);" title="Data limite para que a execução do projeto esteja concluído."></td>'); break;
-      case 4: ShowHTML('              <td valign="top"><b>Data de re<u>c</u>ebimento:</b><br><input '.$w_Disabled.' accesskey="C" type="text" name="w_inicio" class="STI" SIZE="17" MAXLENGTH="17" VALUE="'.$w_inicio.'" onKeyDown="FormataDataHora(this,event);" title="Data/hora de recebimento da solicitação."></td>');
-              ShowHTML('              <td valign="top"><b>Limi<u>t</u>e para conclusão:</b><br><input '.$w_Disabled.' accesskey="T" type="text" name="w_fim" class="STI" SIZE="17" MAXLENGTH="17" VALUE="'.$w_fim.'" onKeyDown="FormataDataHora(this,event);" title="Data/hora limite para que a execução do projeto esteja concluído."></td>'); break;
+      case 1: ShowHTML('              <td valign="top"><b><u>T</u>érmino previsto:</b><br><input '.$w_Disabled.' accesskey="T" type="text" name="w_fim" class="STI" SIZE="10" MAXLENGTH="10" VALUE="'.$w_fim.'" onKeyDown="FormataData(this,event);" title="Data limite para que a execução do projeto esteja concluído."></td>'); break;
+      case 2: ShowHTML('              <td valign="top"><b><u>T</u>érmino previsto:</b><br><input '.$w_Disabled.' accesskey="T" type="text" name="w_fim" class="STI" SIZE="17" MAXLENGTH="17" VALUE="'.$w_fim.'" onKeyDown="FormataDataHora(this,event);" title="Data/hora limite para que a execução do projeto esteja concluído."></td>'); break;
+      case 3: ShowHTML('              <td valign="top"><b>Iní<u>c</u>io previsto:</b><br><input '.$w_Disabled.' accesskey="C" type="text" name="w_inicio" class="STI" SIZE="10" MAXLENGTH="10" VALUE="'.Nvl($w_inicio,FormataDataEdicao(time())).'" onKeyDown="FormataData(this,event);" title="Início previsto da solicitação."></td>');
+              ShowHTML('              <td valign="top"><b><u>T</u>érmino previsto:</b><br><input '.$w_Disabled.' accesskey="T" type="text" name="w_fim" class="STI" SIZE="10" MAXLENGTH="10" VALUE="'.$w_fim.'" onKeyDown="FormataData(this,event);" title="Data limite para que a execução do projeto esteja concluído."></td>'); break;
+      case 4: ShowHTML('              <td valign="top"><b>Iní<u>c</u>io previsto:</b><br><input '.$w_Disabled.' accesskey="C" type="text" name="w_inicio" class="STI" SIZE="17" MAXLENGTH="17" VALUE="'.$w_inicio.'" onKeyDown="FormataDataHora(this,event);" title="Data/hora de início previsto do projeto."></td>');
+              ShowHTML('              <td valign="top"><b><u>T</u>érmino previsto:</b><br><input '.$w_Disabled.' accesskey="T" type="text" name="w_fim" class="STI" SIZE="17" MAXLENGTH="17" VALUE="'.$w_fim.'" onKeyDown="FormataDataHora(this,event);" title="Data/hora limite para que a execução do projeto esteja concluído."></td>'); break;
     } 
     ShowHTML('              <td><b>O<u>r</u>çamento disponível:</b><br><input '.$w_Disabled.' accesskey="O" type="text" name="w_valor" class="STI" SIZE="18" MAXLENGTH="18" VALUE="'.$w_valor.'" onKeyDown="FormataValor(this,18,2,event);" title="Informe o orçamento disponível para execução do projeto, ou zero se não for o caso."></td>');
     ShowHTML('          </table>');
     ShowHTML('      <tr><td><b>Pa<u>l</u>avras-chave:<br><INPUT ACCESSKEY="L" '.$w_Disabled.' class="STI" type="text" name="w_palavra_chave" size="90" maxlength="90" value="'.$w_palavra_chave.'" title="Se desejar, informe palavras-chave adicionais aos campos informados e que permitam a identificação deste projeto."></td>');
+    ShowHTML('      <tr><td><b>Nome do proponent<u>e</u> externo:<br><INPUT ACCESSKEY="E" '.$w_Disabled.' class="STI" type="text" name="w_proponente" size="90" maxlength="90" value="'.$w_proponente.'" title="Proponente externo do projeto. Preencha apenas se houver."></td>');
     ShowHTML('      <tr><td align="center" height="2" bgcolor="#000000"></td></tr>');
     ShowHTML('      <tr><td align="center" height="1" bgcolor="#000000"></td></tr>');
-    ShowHTML('      <tr><td align="center" bgcolor="#D0D0D0"><b>Identificação do proponente</td></td></tr>');
+    ShowHTML('      <tr><td valign="top" align="center" bgcolor="#D0D0D0"><b>Local da execução</td></td></tr>');
     ShowHTML('      <tr><td align="center" height="1" bgcolor="#000000"></td></tr>');
-    ShowHTML('      <tr><td>Os dados deste bloco identificam o proponente externo e sua localização, sendo utilizados para consultas gerenciais por distribuição geográfica.</td></tr>');
+    ShowHTML('      <tr><td>Os dados deste bloco identificam o local onde o projeto será executado, sendo utilizados para consultas gerenciais por distribuição geográfica.</td></tr>');
     ShowHTML('      <tr><td align="center" height="1" bgcolor="#000000"></td></tr>');
-    ShowHTML('      <tr><td><b>Nome do proponent<u>e</u> externo:<br><INPUT ACCESSKEY="E" '.$w_Disabled.' class="STI" type="text" name="w_proponente" size="90" maxlength="90" value="'.$w_proponente.'" title="Proponente externo do projeto. Preencha apenas se houver."></td>');
     ShowHTML('      <tr><td><table border=0 width="100%" cellspacing=0>');
     ShowHTML('      <tr valign="top">');
     SelecaoPais('<u>P</u>aís:','P',null,$w_pais,null,'w_pais',null,'onChange="document.Form.action=\''.$w_pagina.$par.'\'; document.Form.w_troca.value=\'w_uf\'; document.Form.submit();"');
@@ -928,7 +984,7 @@ function Geral() {
       ShowHTML('      <tr><td>Os dados deste bloco visam orientar os executores do projeto.</td></tr>');
       ShowHTML('      <tr><td align="center" height="1" bgcolor="#000000"></td></tr>');
       if (f($RS_Menu,'descricao')=='S')     ShowHTML('      <tr><td><b>Res<u>u</u>ltados do projeto:</b><br><textarea '.$w_Disabled.' accesskey="U" name="w_descricao" class="STI" ROWS=5 cols=75 title="Descreva os resultados esperados após a execução do projeto.">'.$w_descricao.'</TEXTAREA></td>');
-      if (f($RS_Menu,'justificativa')=='S') ShowHTML('      <tr><td><b><u>R</u>ecomendações superiores:</b><br><textarea '.$w_Disabled.' accesskey="R" name="w_justificativa" class="STI" ROWS=5 cols=75 title="Relacione as recomendações a serem seguidas na execução do projeto.">'.$w_justificativa.'</TEXTAREA></td>');
+      if (f($RS_Menu,'justificativa')=='S') ShowHTML('      <tr><td><b>Obse<u>r</u>vações:</b><br><textarea '.$w_Disabled.' accesskey="R" name="w_justificativa" class="STI" ROWS=5 cols=75 title="Relacione recomendações e observações a serem seguidas na execução do projeto.">'.$w_justificativa.'</TEXTAREA></td>');
       if ($w_acordo=='S' || $w_viagem=='S') {
         ShowHTML('      <tr><td><table border=0 width="100%" cellspacing=0><tr valign="top">');
         if ($w_acordo=='S') MontaRadioNS('<b>Permite a vinculação de contratos?</b>',Nvl($w_vincula_contrato,'N'),'w_vincula_contrato');
@@ -940,12 +996,12 @@ function Geral() {
     ShowHTML('      <tr><td align="center" height="1" bgcolor="#000000"></td></tr>');
     ShowHTML('      <tr><td valign="top" align="center" bgcolor="#D0D0D0"><b>Alerta de atraso</td></td></tr>');
     ShowHTML('      <tr><td align="center" height="1" bgcolor="#000000"></td></tr>');
-    ShowHTML('      <tr><td>Os dados abaixo indicam como deve ser tratada a proximidade da data limite para conclusão do projeto.</td></tr>');
+    ShowHTML('      <tr><td>Os dados abaixo indicam como deve ser tratada a proximidade da data Término previsto do projeto.</td></tr>');
     ShowHTML('      <tr><td align="center" height="1" bgcolor="#000000"></td></tr>');
     ShowHTML('      <tr><td><table border="0" width="100%">');
     ShowHTML('          <tr valign="top">');
     MontaRadioNS('<b>Emite alerta?</b>',$w_aviso,'w_aviso');
-    ShowHTML('              <td><b>Quantos <U>d</U>ias antes da data limite?<br><INPUT ACCESSKEY="D" '.$w_Disabled.' class="STI" type="text" name="w_dias" size="2" maxlength="2" value="'.$w_dias.'" title="Número de dias para emissão do alerta de proximidade da data limite para conclusão do projeto."></td>');
+    ShowHTML('              <td><b>Quantos <U>d</U>ias antes da data limite?<br><INPUT ACCESSKEY="D" '.$w_Disabled.' class="STI" type="text" name="w_dias" size="3" maxlength="3" value="'.$w_dias.'" title="Número de dias para emissão do alerta de proximidade da data Término previsto do projeto."></td>');
     ShowHTML('          </table>');
     ShowHTML('      <tr><td align="center" height="1" bgcolor="#000000"></TD></TR>');
     // Verifica se poderá ser feito o envio da solicitação, a partir do resultado da validação
@@ -1524,8 +1580,7 @@ function AtualizaEtapa() {
             Nvl(f($row,'sub_exec'),0)   == $w_usuario || 
             Nvl(f($row,'titular'),0)    == $w_usuario || 
             Nvl(f($row,'substituto'),0) == $w_usuario || 
-            Nvl(f($row,'solicitante'),0)== $w_usuario || 
-            Nvl(f($row,'executor'),0)   == $w_usuario || 
+            Nvl(f($row,'solicitante'),0)== $w_usuario ||  
             Nvl(f($row,'sq_pessoa'),0)  == $w_usuario) {
           ShowHtml(EtapaLinha($w_chave,f($row,'sq_projeto_etapa'),f($row,'titulo'),f($row,'nm_resp'),f($row,'sg_setor'),f($row,'inicio_previsto'),f($row,'fim_previsto'),f($row,'perc_conclusao'),f($row,'qt_ativ'),'<b>',$w_fase,'ETAPA',f($row,'sq_pessoa'),f($row,'sq_unidade'),f($row,'pj_vincula_contrato'),f($row,'qt_contr')));
         } else {
@@ -1540,7 +1595,6 @@ function AtualizaEtapa() {
               Nvl(f($row1,'titular'),0)     == $w_usuario || 
               Nvl(f($row1,'substituto'),0)  == $w_usuario || 
               Nvl(f($row1,'solicitante'),0) == $w_usuario || 
-              Nvl(f($row1,'executor'),0)    == $w_usuario || 
               Nvl(f($row1,'sq_pessoa'),0)   == $w_usuario) {
             ShowHtml(EtapaLinha($w_chave,f($row1,'sq_projeto_etapa'),f($row1,'titulo'),f($row1,'nm_resp'),f($row1,'sg_setor'),f($row1,'inicio_previsto'),f($row1,'fim_previsto'),f($row1,'perc_conclusao'),f($row1,'qt_ativ'),null,$w_fase,'ETAPA',f($row1,'sq_pessoa'),f($row1,'sq_unidade'),f($row1,'pj_vincula_contrato'),f($row1,'qt_contr')));
           } else {
@@ -1555,7 +1609,6 @@ function AtualizaEtapa() {
                 Nvl(f($row2,'titular'),0)       == $w_usuario || 
                 Nvl(f($row2,'substituto'),0)    == $w_usuario || 
                 Nvl(f($row2,'solicitante'),0)   == $w_usuario || 
-                Nvl(f($row2,'executor'),0)      == $w_usuario || 
                 Nvl(f($row2,'sq_pessoa'),0)     == $w_usuario) {
               ShowHtml(EtapaLinha($w_chave,f($row2,'sq_projeto_etapa'),f($row2,'titulo'),f($row2,'nm_resp'),f($row2,'sg_setor'),f($row2,'inicio_previsto'),f($row2,'fim_previsto'),f($row2,'perc_conclusao'),f($row2,'qt_ativ'),null,$w_fase,'ETAPA',f($row2,'sq_pessoa'),f($row2,'sq_unidade'),f($row2,'pj_vincula_contrato'),f($row2,'qt_contr')));
             } else {
@@ -1570,7 +1623,6 @@ function AtualizaEtapa() {
                   Nvl(f($row3,'titular'),0)     == $w_usuario || 
                   Nvl(f($row3,'substituto'),0)  == $w_usuario || 
                   Nvl(f($row3,'solicitante'),0) == $w_usuario || 
-                  Nvl(f($row3,'executor'),0)    == $w_usuario || 
                   Nvl(f($row3,'sq_pessoa'),0)   == $w_usuario) {
                 ShowHtml(EtapaLinha($w_chave,f($row3,'sq_projeto_etapa'),f($row3,'titulo'),f($row3,'nm_resp'),f($row3,'sg_setor'),f($row3,'inicio_previsto'),f($row3,'fim_previsto'),f($row3,'perc_conclusao'),f($row3,'qt_ativ'),null,$w_fase,'ETAPA',f($row3,'sq_pessoa'),f($row3,'sq_unidade'),f($row3,'pj_vincula_contrato'),f($row3,'qt_contr')));
               } else {
@@ -1584,8 +1636,7 @@ function AtualizaEtapa() {
                     Nvl(f($row4,'sub_exec'),0)      == $w_usuario || 
                     Nvl(f($row4,'titular'),0)       == $w_usuario || 
                     Nvl(f($row4,'substituto'),0)    == $w_usuario || 
-                    Nvl(f($row4,'solicitante'),0)   == $w_usuario || 
-                    Nvl(f($row4,'executor'),0)      == $w_usuario || 
+                    Nvl(f($row4,'solicitante'),0)   == $w_usuario ||
                     Nvl(f($row4,'sq_pessoa'),0)     == $w_usuario) {
                   ShowHtml(EtapaLinha($w_chave,f($row4,'sq_projeto_etapa'),f($row4,'titulo'),f($row4,'nm_resp'),f($row4,'sg_setor'),f($row4,'inicio_previsto'),f($row4,'fim_previsto'),f($row4,'perc_conclusao'),f($row4,'qt_ativ'),null,$w_fase,'ETAPA',f($row4,'sq_pessoa'),f($row4,'sq_unidade'),f($row4,'pj_vincula_contrato'),f($row4,'qt_contr')));
                 } else {
@@ -2427,17 +2478,17 @@ function Concluir() {
     FormataValor();
     ValidateOpen('Validacao');
     switch (f($RS_Menu,'data_hora')) {
-      case 1: Validate('w_fim_real','Término da execução','DATA',1,10,10,'','0123456789/'); break;
-      case 2: Validate('w_fim_real','Término da execução','DATAHORA',1,17,17,'','0123456789/'); break;
+      case 1: Validate('w_fim_real','Término previsto','DATA',1,10,10,'','0123456789/'); break;
+      case 2: Validate('w_fim_real','Término previsto','DATAHORA',1,17,17,'','0123456789/'); break;
       case 3: 
-        Validate('w_inicio_real','Início da execução','DATA',1,10,10,'','0123456789/');
-        Validate('w_fim_real','Término da execução','DATA',1,10,10,'','0123456789/');
-        CompData('w_inicio_real','Início da execução','<=','w_fim_real','Término da execução');
-        CompData('w_fim_real','Término da execução','<=',FormataDataEdicao(time()),'data atual'); break;
+        Validate('w_inicio_real','Início previsto','DATA',1,10,10,'','0123456789/');
+        Validate('w_fim_real','Término previsto','DATA',1,10,10,'','0123456789/');
+        CompData('w_inicio_real','Início previsto','<=','w_fim_real','Término previsto');
+        CompData('w_fim_real','Término previsto','<=',FormataDataEdicao(time()),'data atual'); break;
       case 4: 
-        Validate('w_inicio_real','Início da execução','DATAHORA',1,17,17,'','0123456789/,: ');
-        Validate('w_fim_real','Término da execução','DATAHORA',1,17,17,'','0123456789/,: ');
-        CompData('w_inicio_real','Início da execução','<=','w_fim_real','Término da execução'); break;
+        Validate('w_inicio_real','Início previsto','DATAHORA',1,17,17,'','0123456789/,: ');
+        Validate('w_fim_real','Término previsto','DATAHORA',1,17,17,'','0123456789/,: ');
+        CompData('w_inicio_real','Início previsto','<=','w_fim_real','Término previsto'); break;
     } 
     Validate('w_custo_real','Custo real','VALOR','1',4,18,'','0123456789.,');
     Validate('w_nota_conclusao','Nota de conclusão','','1','1','2000','1','1');
@@ -2487,12 +2538,12 @@ function Concluir() {
   $RS = db_getSolicData::getInstanceOf($dbms,$w_chave,'PJGERAL');
   ShowHTML('<INPUT type="hidden" name="w_tramite" value="'.f($RS,'sq_siw_tramite').'">');
   switch (f($RS_Menu,'data_hora')) {
-    case 1: ShowHTML('              <td valign="top"><b><u>T</u>érmino da execução:</b><br><input '.$w_Disabled.' accesskey="T" type="text" name="w_fim_real" class="STI" SIZE="10" MAXLENGTH="10" VALUE="'.$w_fim_real.'" onKeyDown="FormataData(this,event);" title="Informe a data de término da execução do projeto."></td>'); break;
-    case 2: ShowHTML('              <td valign="top"><b><u>T</u>érmino da execução:</b><br><input '.$w_Disabled.' accesskey="T" type="text" name="w_fim_real" class="STI" SIZE="17" MAXLENGTH="17" VALUE="'.$w_fim_real.'" onKeyDown="FormataDataHora(this,event);" title="Informe a data/hora de término da execução do projeto."></td>'); break;
-    case 3: ShowHTML('              <td valign="top"><b>Iní<u>c</u>io da execução:</b><br><input '.$w_Disabled.' accesskey="C" type="text" name="w_inicio_real" class="STI" SIZE="10" MAXLENGTH="10" VALUE="'.$w_inicio_real.'" onKeyDown="FormataData(this,event);" title="Informe a data/hora de início da execução do projeto."></td>');
-            ShowHTML('              <td valign="top"><b><u>T</u>érmino da execução:</b><br><input '.$w_Disabled.' accesskey="T" type="text" name="w_fim_real" class="STI" SIZE="10" MAXLENGTH="10" VALUE="'.$w_fim_real.'" onKeyDown="FormataData(this,event);" title="Informe a data de término da execução do projeto."></td>'); break;
-    case 4: ShowHTML('              <td valign="top"><b>Iní<u>c</u>io da execução:</b><br><input '.$w_Disabled.' accesskey="C" type="text" name="w_inicio_real" class="STI" SIZE="17" MAXLENGTH="17" VALUE="'.$w_inicio_real.'" onKeyDown="FormataDataHora(this,event);" title="Informe a data/hora de início da execução do projeto."></td>');
-            ShowHTML('              <td valign="top"><b><u>T</u>érmino da execução:</b><br><input '.$w_Disabled.' accesskey="T" type="text" name="w_fim_real" class="STI" SIZE="17" MAXLENGTH="17" VALUE="'.$w_fim_real.'" onKeyDown="FormataDataHora(this,event);" title="Informe a data de término da execução do projeto."></td>'); break;
+    case 1: ShowHTML('              <td valign="top"><b><u>T</u>érmino previsto:</b><br><input '.$w_Disabled.' accesskey="T" type="text" name="w_fim_real" class="STI" SIZE="10" MAXLENGTH="10" VALUE="'.$w_fim_real.'" onKeyDown="FormataData(this,event);" title="Informe a data de término previsto do projeto."></td>'); break;
+    case 2: ShowHTML('              <td valign="top"><b><u>T</u>érmino previsto:</b><br><input '.$w_Disabled.' accesskey="T" type="text" name="w_fim_real" class="STI" SIZE="17" MAXLENGTH="17" VALUE="'.$w_fim_real.'" onKeyDown="FormataDataHora(this,event);" title="Informe a data/hora de término previsto do projeto."></td>'); break;
+    case 3: ShowHTML('              <td valign="top"><b>Iní<u>c</u>io previsto:</b><br><input '.$w_Disabled.' accesskey="C" type="text" name="w_inicio_real" class="STI" SIZE="10" MAXLENGTH="10" VALUE="'.$w_inicio_real.'" onKeyDown="FormataData(this,event);" title="Informe a data/hora de início previsto do projeto."></td>');
+            ShowHTML('              <td valign="top"><b><u>T</u>érmino previsto:</b><br><input '.$w_Disabled.' accesskey="T" type="text" name="w_fim_real" class="STI" SIZE="10" MAXLENGTH="10" VALUE="'.$w_fim_real.'" onKeyDown="FormataData(this,event);" title="Informe a data de término previsto do projeto."></td>'); break;
+    case 4: ShowHTML('              <td valign="top"><b>Iní<u>c</u>io previsto:</b><br><input '.$w_Disabled.' accesskey="C" type="text" name="w_inicio_real" class="STI" SIZE="17" MAXLENGTH="17" VALUE="'.$w_inicio_real.'" onKeyDown="FormataDataHora(this,event);" title="Informe a data/hora de início previsto do projeto."></td>');
+            ShowHTML('              <td valign="top"><b><u>T</u>érmino previsto:</b><br><input '.$w_Disabled.' accesskey="T" type="text" name="w_fim_real" class="STI" SIZE="17" MAXLENGTH="17" VALUE="'.$w_fim_real.'" onKeyDown="FormataDataHora(this,event);" title="Informe a data de término previsto do projeto."></td>'); break;
   } 
   ShowHTML('              <td valign="top"><b>Custo <u>r</u>eal:</b><br><input '.$w_Disabled.' accesskey="O" type="text" name="w_custo_real" class="STI" SIZE="18" MAXLENGTH="18" VALUE="'.$w_custo_real.'" onKeyDown="FormataValor(this,18,2,event);" title="Informe o orçamento disponível para execução do projeto, ou zero se não for o caso."></td>');
   ShowHTML('          </table>');
@@ -2545,7 +2596,7 @@ function EtapaLinha($l_chave,$l_chave_aux,$l_titulo,$l_resp,$l_setor,$l_inicio,$
   if ($l_ativ > 0) $l_html = $l_html.chr(13).'        <td align="center" title="Número de atividades ligadas a esta estapa. Clique sobre o número para exibir APENAS as atividades que você tem acesso."><a class="HL" href="javascript:lista(\''.$l_chave.'\',\''.$l_chave_aux.'\');" onMouseOver="window.status=\'Exibe APENAS as atividades que você tem acesso.\'; return true;" onMouseOut="window.status=\'\'; return true;">'.$l_ativ.'</a></td>';
   else             $l_html = $l_html.chr(13).'        <td align="center">'.$l_ativ.'</td>';
   if($l_vincula_contrato=='S') {
-    if ($l_contr > 0) $l_html = $l_html.chr(13).'        <td align="center" title="Número de contratos ligados a esta etapa. Clique sobre o número para exibir APENAS os contratos que você tem acesso."><a class="HL" href="javascript:lista(\''.$l_chave.'\',\''.$l_chave_aux.'\');" onMouseOver="window.status=\'Exibe APENAS as atividades que você tem acesso.\'; return true;" onMouseOut="window.status=\'\'; return true;">'.$l_contr.'</a></td>';
+    if ($l_contr > 0) $l_html = $l_html.chr(13).'        <td align="center" title="Número de contratos ligados a esta etapa. Clique sobre o número para exibir APENAS os contratos que você tem acesso."><a class="HL" href="javascript:listac(\''.$l_chave.'\',\''.$l_chave_aux.'\');" onMouseOver="window.status=\'Exibe APENAS as atividades que você tem acesso.\'; return true;" onMouseOut="window.status=\'\'; return true;">'.$l_contr.'</a></td>';
     else              $l_html = $l_html.chr(13).'        <td align="center">'.$l_contr.'</td>';    
   }
   if ($l_oper == 'S') {
@@ -2736,8 +2787,8 @@ function SolicMail($p_solic,$p_tipo) {
   $w_html .= $crlf.'          <td>Responsável:<br><b>'.f($RSM,'nm_sol').'</b></td>';
   $w_html .= $crlf.'          <td>Unidade responsável:<br><b>'.f($RSM,'nm_unidade_resp').'</b></td>';
   $w_html .= $crlf.'          <tr valign="top">';
-  $w_html .= $crlf.'          <td>Data de recebimento:<br><b>'.FormataDataEdicao(f($RSM,'inicio')).' </b></td>';
-  $w_html .= $crlf.'          <td>Limite para conclusão:<br><b>'.FormataDataEdicao(f($RSM,'fim')).' </b></td>';
+  $w_html .= $crlf.'          <td>Início previsto:<br><b>'.FormataDataEdicao(f($RSM,'inicio')).' </b></td>';
+  $w_html .= $crlf.'          <td>Término previsto:<br><b>'.FormataDataEdicao(f($RSM,'fim')).' </b></td>';
   $w_html .= $crlf.'          <td>Prioridade:<br><b>'.RetornaPrioridade(f($RSM,'prioridade')).' </b></td>';
   $w_html .= $crlf.'          </table>';
   // Informações adicionais
@@ -2749,8 +2800,8 @@ function SolicMail($p_solic,$p_tipo) {
     $w_html .= $crlf.'      <tr><td valign="top" colspan="2" align="center" bgcolor="#D0D0D0" style="border: 2px solid rgb(0,0,0);"><b>DADOS DA CONCLUSÃO</td>';
     $w_html .= $crlf.'      <tr><td valign="top" colspan="2"><table border=0 width="100%" cellspacing=0>';
     $w_html .= $crlf.'          <tr valign="top">';
-    $w_html .= $crlf.'          <td>Início da execução:<br><b>'.FormataDataEdicao(f($RSM,'inicio_real')).' </b></td>';
-    $w_html .= $crlf.'          <td>Término da execução:<br><b>'.FormataDataEdicao(f($RSM,'fim_real')).' </b></td>';
+    $w_html .= $crlf.'          <td>Início previsto:<br><b>'.FormataDataEdicao(f($RSM,'inicio_real')).' </b></td>';
+    $w_html .= $crlf.'          <td>Término previsto:<br><b>'.FormataDataEdicao(f($RSM,'fim_real')).' </b></td>';
     $w_html .= $crlf.'          </table>';
     $w_html .= $crlf.'      <tr><td valign="top">Nota de conclusão:<br><b>'.CRLF2BR(f($RSM,'nota_conclusao')).' </b></td>';
   } 
@@ -2797,8 +2848,22 @@ function SolicMail($p_solic,$p_tipo) {
   if (strpos($w_destinatarios,f($RS,'email').'; ')===false) $w_destinatarios=$w_destinatarios.f($RS,'email').'; ';
   // Recupera o e-mail do titular e do substituto pelo setor responsável
   $RS = db_getUorgResp::getInstanceOf($dbms,f($RSM,'sq_unidade'));
+  foreach($RS as $row){$RS=$row; break;}
   if ((strpos($w_destinatarios,f($RS,'email_titular').'; ')===false)    && Nvl(f($RS,'email_titular'),'nulo')!='nulo')    $w_destinatarios=$w_destinatarios.f($RS,'email_titular').'; ';
   if ((strpos($w_destinatarios,f($RS,'email_substituto').'; ')===false) && Nvl(f($RS,'email_substituto'),'nulo')!='nulo') $w_destinatarios=$w_destinatarios.f($RS,'email_substituto').'; ';
+  // Recuperar o e-mail dos interessados
+  $RS = db_getSolicInter::getInstanceOf($dbms,$p_solic,null,'LISTA');
+  foreach($RS as $row) {
+    if ((strpos($w_destinatarios,f($row,'email').'; ')===false) && Nvl(f($row,'email'),'nulo')!='nulo' && f($row,'envia_email') =='S')    $w_destinatarios=$w_destinatarios.f($row,'email').'; ';
+  }
+  // Recuperar o e-mail do titular e substituto das áreas envolvidas
+  $RS = db_getSolicAreas::getInstanceOf($dbms,$p_solic,null,'LISTA');
+  foreach($RS as $row) {
+    $RS1 = db_getUorgResp::getInstanceOf($dbms,f($row,'sq_unidade'));
+    foreach($RS1 as $row1){$RS1=$row1; break;}
+    if ((strpos($w_destinatarios,f($RS1,'email_titular').'; ')===false)    && Nvl(f($RS1,'email_titular'),'nulo')!='nulo')    $w_destinatarios=$w_destinatarios.f($RS1,'email_titular').'; ';
+    if ((strpos($w_destinatarios,f($RS1,'email_substituto').'; ')===false) && Nvl(f($RS1,'email_substituto'),'nulo')!='nulo') $w_destinatarios=$w_destinatarios.f($RS1,'email_substituto').'; ';    
+  }
   // Prepara os dados necessários ao envio
   $RS = db_getCustomerData::getInstanceOf($dbms,$_SESSION['P_CLIENTE']);
   if ($p_tipo == 1 || $p_tipo == 3) {
@@ -2847,7 +2912,7 @@ function Grava() {
       } 
       dml_putProjetoGeral::getInstanceOf($dbms,$O,$_REQUEST['w_chave'],$_REQUEST['w_menu'],$_SESSION['LOTACAO'],
           $_REQUEST['w_solicitante'],$_REQUEST['w_proponente'],$_SESSION['SQ_PESSOA'],null,$_REQUEST['w_sqcc'],
-          $_REQUEST['w_solic_pai'],$_REQUEST['w_descricao'],$_REQUEST['w_justificativa'],$_REQUEST['w_inicio'],
+          Nvl($_REQUEST['w_solic_pai'],$_REQUEST['w_chave_pai']),$_REQUEST['w_descricao'],$_REQUEST['w_justificativa'],$_REQUEST['w_inicio'],
           $_REQUEST['w_fim'],$_REQUEST['w_valor'],$_REQUEST['w_data_hora'],$_REQUEST['w_sq_unidade_resp'],
           $_REQUEST['w_titulo'],$_REQUEST['w_prioridade'],$_REQUEST['w_aviso'],$_REQUEST['w_dias'],$_REQUEST['w_cidade'],
           $_REQUEST['w_palavra_chave'],$_REQUEST['w_vincula_contrato'],$_REQUEST['w_vincula_viagem'],null,null,
@@ -2861,7 +2926,7 @@ function Grava() {
         ShowHTML('  parent.menu.location=\'menu.php?par=ExibeDocs&O=A&w_chave='.$w_chave_nova.'&w_documento=Nr. '.$w_chave_nova.'&R='.$R.'&SG='.f($RS1,'sigla').'&TP='.$TP.MontaFiltro('GET').'\';');
       }elseif ($O=='E') {
         ScriptOpen('JavaScript');
-        if(substr($SG,0,3)=='PJB')  ShowHTML('  location.href=\''.$R.'&O=L&R='.$R.'&SG=PJCAD&w_menu='.$w_menu.'&P1='.$P1.'&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP='.$TP.MontaFiltro('GET').'\';');
+        if(substr($SG,0,3)!='PJB')  ShowHTML('  location.href=\''.$R.'&O=L&R='.$R.'&SG=PJCAD&w_menu='.$w_menu.'&P1='.$P1.'&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP='.$TP.MontaFiltro('GET').'\';');
         else                        ShowHTML('  location.href=\''.$R.'&O=L&R='.$R.'&SG=PJCADBOLSA&w_menu='.$w_menu.'&P1='.$P1.'&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP='.$TP.MontaFiltro('GET').'\';');
       } else {
         // Aqui deve ser usada a variável de sessão para evitar erro na recuperação do link
@@ -2997,7 +3062,7 @@ function Grava() {
       if (UPLOAD_ERR_OK==0) {
         $w_maximo = $_REQUEST['w_upload_maximo'];
         foreach ($_FILES as $Chv => $Field) {
-          if ($Field['error'] > 0) {
+          if (!($Field['error']==UPLOAD_ERR_OK || $Field['error']==UPLOAD_ERR_NO_FILE)) {
             // Verifica se o tamanho das fotos está compatível com  o limite de 100KB. 
             ScriptOpen('JavaScript');
             ShowHTML('  alert(\'Atenção: o tamanho máximo do arquivo não pode exceder '.($w_maximo/1024).' KBytes!\');');
@@ -3005,7 +3070,7 @@ function Grava() {
             ScriptClose();
             exit();
           }
-          if ($Field['size'] >= 0) {
+          if ($Field['size'] > 0) {
             // Verifica se o tamanho das fotos está compatível com  o limite de 100KB. 
             if ($Field['size'] > $w_maximo) {
               ScriptOpen('JavaScript');
@@ -3073,7 +3138,7 @@ function Grava() {
         if (UPLOAD_ERR_OK==0) {
           $w_maximo = $_REQUEST['w_upload_maximo'];
           foreach ($_FILES as $Chv => $Field) {
-            if ($Field['error'] > 0) {
+            if (!($Field['error']==UPLOAD_ERR_OK || $Field['error']==UPLOAD_ERR_NO_FILE)) {
               // Verifica se o tamanho das fotos está compatível com  o limite de 100KB. 
               ScriptOpen('JavaScript');
               ShowHTML('  alert(\'Atenção: o tamanho máximo do arquivo não pode exceder '.($w_maximo/1024).' KBytes!\');');
@@ -3081,7 +3146,7 @@ function Grava() {
               ScriptClose();
               exit();
             }
-            if ($Field['size'] >= 0) {
+            if ($Field['size'] > 0) {
               // Verifica se o tamanho das fotos está compatível com  o limite de 100KB. 
               if ($Field['size'] > $w_maximo) {
                 ScriptOpen('JavaScript');

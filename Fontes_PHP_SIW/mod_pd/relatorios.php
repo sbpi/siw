@@ -208,7 +208,7 @@ function Rel_Limite() {
     } 
 
     if ($p_projeto>'') {
-      $RS1 = db_getProgramaPPA_IS::getInstanceOf($dbms,$p_projeto,$w_cliente,$w_ano,null,null);
+      $RS1 = db_getProgramaPPA_IS::getInstanceOf($dbms,$p_projeto,$w_cliente,$w_ano,null,null,null,null);
       foreach($RS1 as $row1) { $RS1 = $row1; break; }
       ShowHTML('    <td width="7%"><font size="1"><b>Programa:</b></font></td><td nowrap><font size="1">'.$p_projeto.' - '.f($RS1,'ds_programa').'</font></td></tr>');
     } else {
@@ -216,7 +216,7 @@ function Rel_Limite() {
     } 
 
     if ($p_atividade>'') {
-      $RS1 = db_getAcaoPPA_IS::getInstanceOf($dbms,$w_cliente,$w_ano,$p_projeto,substr($p_atividade,4,4),null,null,null,null,null);
+      $RS1 = db_getAcaoPPA_IS::getInstanceOf($dbms,$w_cliente,$w_ano,$p_projeto,substr($p_atividade,4,4),null,null,null,null,null,null,null);
       foreach($RS1 as $row1) { $RS1 = $row1; break; }
       ShowHTML('<tr valign="top"><td><font size="1"><b>Ação:</b></font></td><td><font size="1">'.substr($p_atividade,4,4).' - '.f($RS1,'descricao_acao').'</font></td>');
     } else {
@@ -274,14 +274,14 @@ function Rel_Limite() {
           } 
 
           if ($p_projeto>'') {
-            $RS1 = db_getProgramaPPA_IS::getInstanceOf($dbms,$p_projeto,$w_cliente,$w_ano,null,null);
+            $RS1 = db_getProgramaPPA_IS::getInstanceOf($dbms,$p_projeto,$w_cliente,$w_ano,null,null,null,null);
             ShowHTML('    <td width="7%"><font size="1"><b>Programa:</b></font></td><td nowrap><font size="1">'.$p_projeto.' - '.f($RS1,'ds_programa').'</font></td></tr>');
           } else {
             ShowHTML('    <td width="7%"><font size="1"><b>Programa:</b></font></td><td><font size="1">Todos</font></td></tr>');
           } 
 
           if ($p_atividade>'') {
-            $RS1 = db_getAcaoPPA_IS::getInstanceOf($dbms,$w_cliente,$w_ano,$p_projeto,substr($p_atividade,4,4),null,null,null,null,null);
+            $RS1 = db_getAcaoPPA_IS::getInstanceOf($dbms,$w_cliente,$w_ano,$p_projeto,substr($p_atividade,4,4),null,null,null,null,null,null,null);
             ShowHTML('<tr valign="top"><td><font size="1"><b>Ação:</b></font></td><td><font size="1">'.substr($p_atividade,4,4).' - '.f($RS1,'descricao_acao').'</font></td>');
           } else {
             ShowHTML('<tr valign="top"><td><font size="1"><b>Ação:</b></font></td><td><font size="1">Todas</font></td>');
@@ -385,7 +385,7 @@ function Rel_Limite() {
             } 
 
             if ($p_projeto>'') {
-              $RS1 = db_getProgramaPPA_IS::getInstanceOf($dbms,$p_projeto,$w_cliente,$w_ano,null,null);
+              $RS1 = db_getProgramaPPA_IS::getInstanceOf($dbms,$p_projeto,$w_cliente,$w_ano,null,null,null,null);
               foreach($RS1 as $row1) { $RS1 = $row1; break; }
               ShowHTML('    <td width="7%"><font size="1"><b>Programa:</b></font></td><td nowrap><font size="1">'.$p_projeto.' - '.f($RS1,'ds_programa').'</font></td></tr>');
             } else {
@@ -393,7 +393,7 @@ function Rel_Limite() {
             } 
 
             if ($p_atividade>'') {
-              $RS1 = db_getAcaoPPA_IS::getInstanceOf($dbms,$w_cliente,$w_ano,$p_projeto,substr($p_atividade,4,4),null,null,null,null,null);
+              $RS1 = db_getAcaoPPA_IS::getInstanceOf($dbms,$w_cliente,$w_ano,$p_projeto,substr($p_atividade,4,4),null,null,null,null,null,null,null);
               foreach($RS1 as $row1) { $RS1 = $row1; break; }
               ShowHTML('<tr valign="top"><td><font size="1"><b>Ação:</b></font></td><td><font size="1">'.substr($p_atividade,4,4).' - '.f($RS1,'descricao_acao').'</font></td>');
             } else {

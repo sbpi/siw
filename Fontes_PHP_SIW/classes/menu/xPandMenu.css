@@ -150,12 +150,12 @@ BODY
 }
 .STS
 {
-    BORDER-RIGHT: medium none;
-    BORDER-TOP: medium none;
-    MARGIN-TOP: 1px;
+    BORDER-RIGHT: thin solid;
+    BORDER-TOP: thin solid;
     FONT-SIZE: 8pt;
-    BORDER-LEFT: medium none;
-    BORDER-BOTTOM: medium none
+    BORDER-LEFT: thin solid;
+    BORDER-BOTTOM: thin solid;
+    BACKGROUND-COLOR: #f5f5f5
 }
 .STR
 {

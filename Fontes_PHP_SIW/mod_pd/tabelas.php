@@ -484,7 +484,7 @@ function Unidade() {
         ShowHTML('          <A class="HL" HREF="'.$w_dir.$w_pagina.$par.'&R='.$w_pagina.$par.'&O=A&w_chave='.f($row,'sq_unidade').'&P1='.$P1.'&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP='.$TP.'&SG='.$SG.'">Alterar</A>&nbsp');
         ShowHTML('          <A class="HL" HREF="'.$w_dir.$w_pagina.$par.'&R='.$w_pagina.$par.'&O=E&w_chave='.f($row,'sq_unidade').'&P1='.$P1.'&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP='.$TP.'&SG='.$SG.'">Excluir</A>&nbsp');
         if ($w_limite_unidade=='S') {
-          ShowHTML('          <a class="HL" href="javascript:location.href=this.location.href" onclick="window.open(\''.$w_pagina.'LIMUNIDADE&R='.$w_pagina.$par.'&O=L&w_chave='.f($row,'sq_unidade').'&P1='.$P1.'&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP='.$TP.'&SG=PDUNIDLIM\',\'Limites\',\'toolbar=no,width=780,height=350,top=30,left=10,scrollbars=yes,resizable=yes\');">Limites</a>');
+          ShowHTML('          <a class="HL" href="javascript:location.href=this.location.href" onclick="window.open(\''.montaURL_JS(null,$conRootSIW.$w_dir.$w_pagina.'LIMUNIDADE&R='.$w_pagina.$par.'&O=L&w_chave='.f($row,'sq_unidade').'&P1='.$P1.'&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP='.$TP.'&SG=PDUNIDLIM').'\',\'Limites\',\'toolbar=no,width=780,height=350,top=30,left=10,scrollbars=yes,resizable=yes\');">Limites</a>');
         }
         ShowHTML('        </td>');
         ShowHTML('      </tr>');
@@ -859,7 +859,7 @@ function Grava() {
           $_REQUEST['w_chave'],$_REQUEST['w_nome'],$_REQUEST['w_aereo'],$_REQUEST['w_rodoviario'],
           $_REQUEST['w_aquaviario'],$_REQUEST['w_padrao'],$_REQUEST['w_ativo']);
       ScriptOpen('JavaScript');
-      ShowHTML('  location.href=\''.$R.'&O=L&P1='.$P1.'&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP='.$TP.'&SG='.$SG.MontaFiltro('GET').'\';');
+      ShowHTML('  location.href=\''.montaURL_JS($w_dir,$R.'&O=L&P1='.$P1.'&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP='.$TP.'&SG='.$SG.MontaFiltro('GET')).'\';');
       ScriptClose();
     } else {
       ScriptOpen('JavaScript');
@@ -876,7 +876,7 @@ function Grava() {
           $_REQUEST['w_limite_unidade']);
 
       ScriptOpen('JavaScript');
-      ShowHTML('  location.href=\''.$R.'&O='.$O.'&P1='.$P1.'&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP='.$TP.'&SG='.$SG.MontaFiltro('GET').'\';');
+      ShowHTML('  location.href=\''.montaURL_JS($w_dir,$R.'&O='.$O.'&P1='.$P1.'&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP='.$TP.'&SG='.$SG.MontaFiltro('GET')).'\';');
       ScriptClose();
     } else {
       ScriptOpen('JavaScript');
@@ -892,7 +892,7 @@ function Grava() {
         if (count($RS)==0) {
           dml_putPDUnidade::getInstanceOf($dbms,$O,$_REQUEST['w_chave'],$_REQUEST['w_ativo']);
           ScriptOpen('JavaScript');
-          ShowHTML('  location.href=\''.$R.'&P1='.$P1.'&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP='.$TP.'&SG='.$SG.MontaFiltro('GET').'\';');
+          ShowHTML('  location.href=\''.montaURL_JS($w_dir,$R.'&P1='.$P1.'&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP='.$TP.'&SG='.$SG.MontaFiltro('GET')).'\';');
           ScriptClose();
         } else {
           ScriptOpen('JavaScript');
@@ -903,7 +903,7 @@ function Grava() {
       } else {
         dml_putPDUnidade::getInstanceOf($dbms,$O,$_REQUEST['w_chave'],$_REQUEST['w_ativo']);
         ScriptOpen('JavaScript');
-        ShowHTML('  location.href=\''.$R.'&P1='.$P1.'&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP='.$TP.'&SG='.$SG.MontaFiltro('GET').'\';');
+        ShowHTML('  location.href=\''.montaURL_JS($w_dir,$R.'&P1='.$P1.'&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP='.$TP.'&SG='.$SG.MontaFiltro('GET')).'\';');
         ScriptClose();
       } 
     } else {
@@ -920,7 +920,7 @@ function Grava() {
         if (count($RS)==0) {
           dml_putPDUnidLimite::getInstanceOf($dbms,$O,$_REQUEST['w_chave'],$_REQUEST['w_limite_passagem'],$_REQUEST['w_limite_diaria'],$_REQUEST['w_ano']);
           ScriptOpen('JavaScript');
-          ShowHTML('  location.href=\''.$R.'&w_chave='.$_REQUEST['w_chave'].'&P1='.$P1.'&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP='.$TP.'&SG='.$SG.MontaFiltro('GET').'\';');
+          ShowHTML('  location.href=\''.montaURL_JS($w_dir,$R.'&w_chave='.$_REQUEST['w_chave'].'&P1='.$P1.'&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP='.$TP.'&SG='.$SG.MontaFiltro('GET')).'\';');
           ScriptClose();
         } else {
           ScriptOpen('JavaScript');
@@ -931,7 +931,7 @@ function Grava() {
       } else {
         dml_putPDUnidLimite::getInstanceOf($dbms,$O,$_REQUEST['w_chave'],$_REQUEST['w_limite_passagem'],$_REQUEST['w_limite_diaria'],$_REQUEST['w_ano']);
         ScriptOpen('JavaScript');
-        ShowHTML('  location.href=\''.$R.'&w_chave='.$_REQUEST['w_chave'].'&P1='.$P1.'&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP='.$TP.'&SG='.$SG.MontaFiltro('GET').'\';');
+        ShowHTML('  location.href=\''.montaURL_JS($w_dir,$R.'&w_chave='.$_REQUEST['w_chave'].'&P1='.$P1.'&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP='.$TP.'&SG='.$SG.MontaFiltro('GET')).'\';');
         ScriptClose();
       } 
     } else {
@@ -955,7 +955,7 @@ function Grava() {
       } 
       dml_putPDUsuario::getInstanceOf($dbms,$O,$w_cliente,$_REQUEST['w_chave']);
       ScriptOpen('JavaScript');
-      ShowHTML('  location.href=\''.$R.'&w_chave=&P1='.$P1.'&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP='.$TP.'&SG='.$SG.MontaFiltro('GET').'\';');
+      ShowHTML('  location.href=\''.montaURL_JS($w_dir,$R.'&w_chave=&P1='.$P1.'&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP='.$TP.'&SG='.$SG.MontaFiltro('GET')).'\';');
       ScriptClose();
     } else {
       ScriptOpen('JavaScript');

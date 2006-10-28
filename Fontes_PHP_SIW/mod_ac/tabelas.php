@@ -326,8 +326,8 @@ function TipoAcordo() {
     if ($O!='I' && $O!='A') $w_Disabled='disabled';
     // Se for inclusão de nova opção, permite a herança dos dados de outra, já existente.
     if ($O=='I') {
-      ShowHTML('      <tr><td><a accesskey="H" class="SS" href="javascript:location.href=this.location.href;" onClick="window.open(\''.$w_pagina.$par.'&R='.$w_dir.$w_pagina.$par.'&O=H&w_cliente='.$w_cliente.'&P1='.$P1.'&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP='.$TP.'&SG='.$SG.'&w_sq_tipo_acordo='.$w_sq_tipo_acordo.'\',\'heranca\',\'top=70 left=100 width=500 height=200 toolbar=no status=yes\');"><u>H</u>erdar dados</a>&nbsp;');
-      ShowHTML('      <tr><td height="1" bgcolor="#000000">');
+      ShowHTML('      <tr><td><a accesskey="H" class="SS" href="javascript:location.href=this.location.href;" onClick="window.open(\''.montaURL_JS($w_dir,montaURL_JS(null,$conRootSIW.$w_dir.$w_pagina.$par.'&R='.$w_dir.$w_pagina.$par.'&O=H&w_cliente='.$w_cliente.'&P1='.$P1.'&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP='.$TP.'&SG='.$SG.'&w_sq_tipo_acordo='.$w_sq_tipo_acordo).'\',\'heranca').'\',\'top=70,left=100,width=500,height=200,toolbar=no,status=no\');"><u>H</u>erdar dados</a>&nbsp;');
+      ShowHTML('      <tr><td height="1" bgcolor="#000000"></td></tr>');
     } 
     AbreForm('Form',$w_dir.$w_pagina.'Grava','POST','return(Validacao(this));',null,$P1,$P2,$P3,$P4,$TP,$SG,$w_pagina.$par,$O);
     ShowHTML('<INPUT type="hidden" name="w_cliente" value="'.$w_cliente.'">');
@@ -336,9 +336,7 @@ function TipoAcordo() {
     ShowHTML('      <tr><td valign="top"><table width="100%" border=0><tr valign="top">');
     ShowHTML('          <td><b><u>N</u>ome:<br><INPUT ACCESSKEY="D" TYPE="TEXT" class="sti" NAME="w_nome" SIZE=40 MAXLENGTH=60 VALUE="'.$w_nome.'" '.$w_Disabled.' TITLE="Nome do tipo de acordo."></td>');
     SelecaoTipoAcordo('<u>S</u>ubordinação:','S','Se esta opção estiver subordinada a outra já existente, informe qual.',$w_sq_tipo_acordo_pai,$w_sq_tipo_acordo,$w_cliente,'w_sq_tipo_acordo_pai','SUBORDINACAO',null);
-    ShowHTML('          </table>');
-    ShowHTML('      <tr><td valign="top"><table width="100%" border=0><tr valign="top">');
-    ShowHTML('          <td valign="top"><b>S<u>i</u>gla:<br><INPUT ACCESSKEY="S" TYPE="TEXT" class="sti" NAME="w_sigla" SIZE=10 MAXLENGTH=10 VALUE="'.$w_sigla.'" '.$w_Disabled.' TITLE="Informe a sigla desejada para o tipo de acordo."></td>');
+    ShowHTML('      <tr><td valign="top"><b>S<u>i</u>gla:<br><INPUT ACCESSKEY="S" TYPE="TEXT" class="sti" NAME="w_sigla" SIZE=10 MAXLENGTH=10 VALUE="'.$w_sigla.'" '.$w_Disabled.' TITLE="Informe a sigla desejada para o tipo de acordo."></td>');
     ShowHTML('          <td valign="top" TITLE="Informe "Sim" se este tipo de acordo aplicar-se a pessoas fisicas."><b>Pessoa física?</b><br>');
     if ($w_pessoa_fisica=='S' || $w_pessoa_fisica=='') {
       ShowHTML('                 <input '.$w_Disabled.' class="str" type="radio" name="w_pessoa_fisica" value="S" checked> Sim <input '.$w_Disabled.' class="str" type="radio" name="w_pessoa_fisica" value="N"> Não');
@@ -382,9 +380,9 @@ function TipoAcordo() {
     } 
     ShowHTML('      </td></tr>');
     ShowHTML('      <tr><td><b><U>A</U>ssinatura Eletrônica:<br><INPUT ACCESSKEY="A" class="sti" type="PASSWORD" name="w_assinatura" size="30" maxlength="30" value=""></td>');
-    ShowHTML('      <tr><td align="center" colspan="3" height="1" bgcolor="#000000">');
+    ShowHTML('      <tr><td align="center" colspan="3" height="1" bgcolor="#000000"></td></tr>');
     ShowHTML('      <tr><td align="center"  colspan="3"><input class="stb" type="submit" name="Botao" value="Gravar">&nbsp;');
-    ShowHTML('            <input class="stb" type="button" onClick="location.href=\''.$R.'&O=L&w_cliente='.$w_cliente.'&P1='.$P1.'&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP='.$TP.'&SG='.$SG.'\';" name="Botao" value="Cancelar">');
+    ShowHTML('            <input class="stb" type="button" onClick="location.href=\''.montaURL_JS($w_dir,$R.'&O=L&w_cliente='.$w_cliente.'&P1='.$P1.'&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP='.$TP.'&SG='.$SG).'\';" name="Botao" value="Cancelar">');
     ShowHTML('</FORM>');
     ShowHTML('  </table>');
   } elseif ($O=='H') {
@@ -510,7 +508,7 @@ function FormaPagamento(){
         ShowHTML('          <A class="hl" HREF="'.$w_dir.$w_pagina.$par.'&R='.$w_pagina.$par.'&O=A&w_chave='.f($row,'chave').'&P1='.$P1.'&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP='.$TP.'&SG='.$SG.MontaFiltro('GET').'" Title="Nome">Alterar </A>&nbsp');
         ShowHTML('          <A class="hl" HREF="'.$w_dir.$w_pagina.$par.'&R='.$w_pagina.$par.'&O=E&w_chave='.f($row,'chave').'&P1='.$P1.'&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP='.$TP.'&SG='.$SG.'">Excluir </A>&nbsp');
         //ShowHTML('          <A class="hl" HREF="'.$w_dir.$w_pagina.$par.'&R='.$w_pagina.$par.'&O=T&w_chave='.f($row,'chave').'&P1='.$P1.'&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP='.$TP.' &SG='.$SG.'" target="vinculacao">Vinculações</A>&nbsp');
-        ShowHTML('          <A class="hl" HREF="'.$w_dir.$w_pagina.$par.'&R='.$w_pagina.$par.'&TP='.$TP.'&SG='.$SG.'" onClick="window.open(\'tabelas.php?par=FORMAPAG&R='.$w_pagina.$par.'&O=T&w_chave='.f($row,'chave').'&P1='.$P1.'&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP='.$TP.'&SG=FORMAPAG'.MontaFiltro('GET').'\',\'Vinculacoes\',\'width=730,height=500,top=30,left=30,status=yes,resizable=yes,scrollbars=yes,toolbar=yes\');">Vinculações</A>&nbsp'); 
+        ShowHTML('          <A class="hl" HREF="'.$w_dir.$w_pagina.$par.'&R='.$w_pagina.$par.'&TP='.$TP.'&SG='.$SG.'" onClick="window.open(\''.montaURL_JS($w_dir,'tabelas.php?par=FORMAPAG&R='.$w_pagina.$par.'&O=T&w_chave='.f($row,'chave').'&P1='.$P1.'&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP='.$TP.'&SG=FORMAPAG'.MontaFiltro('GET').'\',\'Vinculacoes').'\',\'width=730,height=500,top=30,left=30,status=yes,resizable=yes,scrollbars=yes,toolbar=yes\');">Vinculações</A>&nbsp'); 
         ShowHTML('        </td>');
         ShowHTML('      </tr>');
       } 
@@ -629,6 +627,7 @@ function Grava() {
 
   Cabecalho();
   ShowHTML('</HEAD>');
+  ShowHTML('<BASE HREF="'.$conRootSIW.'">');
   BodyOpen('onLoad=document.focus();');
   switch ($SG) {
     case 'TIPOACORDO':
@@ -640,7 +639,7 @@ function Grava() {
             $_REQUEST['w_prazo_indeterminado'],$_REQUEST['w_pessoa_juridica'],$_REQUEST['w_pessoa_fisica'],
             $_REQUEST['w_ativo']);
         ScriptOpen('JavaScript');
-        ShowHTML('  location.href=\''.$R.'&O=L&P1='.$P1.'&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP='.$TP.'&SG='.$SG.'\';');
+        ShowHTML('  location.href=\''.montaURL_JS($w_dir,$R.'&O=L&P1='.$P1.'&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP='.$TP.'&SG='.$SG).'\';');
         ScriptClose();
       } else {
         ScriptOpen('JavaScript');
@@ -656,7 +655,7 @@ function Grava() {
           dml_putFormaPagamento::getInstanceOf($dbms,$O,Nvl($_REQUEST['w_chave'],''),$_REQUEST['w_cliente'],$_REQUEST['w_nome'],
                $_REQUEST['w_sigla'],$_REQUEST['w_ativo']);
           ScriptOpen('JavaScript');
-          ShowHTML('  location.href=\''.$R.'&O=L&P1='.$P1.'&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP='.$TP.'&SG='.$SG.'\';');
+          ShowHTML('  location.href=\''.montaURL_JS($w_dir,$R.'&O=L&P1='.$P1.'&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP='.$TP.'&SG='.$SG).'\';');
           ScriptClose();
         } else {                  
            // Elimina todas as permissões existentes para depois incluir

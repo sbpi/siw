@@ -1535,7 +1535,7 @@ function Rel_Sintetico_IP() {
       ShowHTML('Iniciativa Prioritária');
       ShowHTML('</FONT><TR><TD WIDTH="50%" ALIGN="RIGHT"><B><font COLOR="#000000">'.DataHora().'</B>');
       ShowHTML('&nbsp;&nbsp;<IMG ALIGN="CENTER" TITLE="Imprimir" SRC="images/impressora.jpg" onClick="window.print();">');
-      ShowHTML('&nbsp;&nbsp;<IMG BORDER=0 ALIGN="CENTER" TITLE="Gerar word" SRC="images/word.gif" onClick="window.open(\''.$w_pagina.$par.'&R='.$w_pagina.$par.'&O=L&w_chave='.$w_chave.'&w_tipo_rel=word&P1='.$P1.'&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP='.$TP.'&SG='.$SG.MontaFiltro('GET').'\',\'VisualRelPPAWord\',\'menubar=yes resizable=yes scrollbars=yes\');">');
+      ShowHTML('&nbsp;&nbsp;<IMG BORDER=0 ALIGN="CENTER" TITLE="Gerar word" SRC="images/word.gif" onClick="window.open(\''.montaURL_JS($w_dir,$w_pagina.$par.'&R='.$w_pagina.$par.'&O=L&w_chave='.$w_chave.'&w_tipo_rel=word&P1='.$P1.'&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP='.$TP.'&SG='.$SG.MontaFiltro('GET')).'\',\'VisualRelPPAWord\',\'menubar=yes resizable=yes scrollbars=yes\');">');
       ShowHTML('</TD></TR>');
       ShowHTML('</FONT></B></TD></TR></TABLE>');
     } else {
@@ -1731,7 +1731,7 @@ function Rel_Sintetico_IP() {
                 if ($w_tipo_rel=='WORD') {
                   ShowHTML('      <td>'.f($RS3,'titulo').'</td>');
                 } else {
-                  ShowHTML('      <td><A class="HL" HREF="#" onClick="window.open(\'projeto.php?par=AtualizaEtapa&O=V&w_chave='.f($RS2,'sq_siw_solicitacao').'&w_chave_aux='.f($RS3,'sq_projeto_etapa').'&w_tipo=Volta&P1=10&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP='.$TP.'&SG='.$SG.'\',\'Meta','width=600, height=350, top=50, left=50, toolbar=no, scrollbars=yes, resizable=yes, status=no\'); return false;" title="Clique para exibir os dados!">'.f($RS3,'titulo').'</A></td>');
+                  ShowHTML('      <td><A class="HL" HREF="#" onClick="window.open(\''.montaURL_JS($w_dir,'projeto.php?par=AtualizaEtapa&O=V&w_chave='.f($RS2,'sq_siw_solicitacao').'&w_chave_aux='.f($RS3,'sq_projeto_etapa').'&w_tipo=Volta&P1=10&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP='.$TP.'&SG='.$SG).'\',\'Meta','width=600, height=350, top=50, left=50, toolbar=no, scrollbars=yes, resizable=yes, status=no\'); return false;" title="Clique para exibir os dados!">'.f($RS3,'titulo').'</A></td>');
                 } 
                 ShowHTML('      <td nowrap align="center">'.Nvl(f($RS3,'unidade_medida'),'---').'</td>');
                 ShowHTML('      <td nowrap align="right" >'.number_format(f($RS3,'quantidade'),0,',','.').'</td>');
@@ -1757,7 +1757,7 @@ function Rel_Sintetico_IP() {
                     if ($w_tipo_rel=='WORD') {
                       ShowHTML('      <td>'.f($row3,'titulo').'</td>');
                     } else {
-                      ShowHTML('      <td><A class="HL" HREF="#" onClick="window.open(\'projeto.php?par=AtualizaEtapa&O=V&w_chave='.f($RS2,'sq_siw_solicitacao').'&w_chave_aux='.f($row3,'sq_projeto_etapa').'&w_tipo=Volta&P1=10&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP='.$TP.'&SG='.$SG.'\',\'Meta','width=600, height=350, top=50, left=50, toolbar=no, scrollbars=yes, resizable=yes, status=no\'); return false;" title="Clique para exibir os dados!">'.f($row3,'titulo').'</A></td>');
+                      ShowHTML('      <td><A class="HL" HREF="#" onClick="window.open(\''.montaURL_JS($w_dir,'projeto.php?par=AtualizaEtapa&O=V&w_chave='.f($RS2,'sq_siw_solicitacao').'&w_chave_aux='.f($row3,'sq_projeto_etapa').'&w_tipo=Volta&P1=10&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP='.$TP.'&SG='.$SG).'\',\'Meta','width=600, height=350, top=50, left=50, toolbar=no, scrollbars=yes, resizable=yes, status=no\'); return false;" title="Clique para exibir os dados!">'.f($row3,'titulo').'</A></td>');
                     } 
                     ShowHTML('      <td nowrap align="center">'.Nvl(f($row3,'unidade_medida'),'---').'</td>');
                     ShowHTML('      <td nowrap align="right" >'.number_format(f($row3,'quantidade'),0,',','.').'</td>');
@@ -1929,7 +1929,7 @@ function Rel_Sintetico_PPA() {
       ShowHTML('Ações do PPA');
       ShowHTML('</FONT><TR><TD WIDTH="50%" ALIGN="RIGHT"><B><font COLOR="#000000">'.DataHora().'</B>');
       ShowHTML('&nbsp;&nbsp;<IMG ALIGN="CENTER" TITLE="Imprimir" SRC="images/impressora.jpg" onClick="window.print();">');
-      ShowHTML('&nbsp;&nbsp;<IMG BORDER=0 ALIGN="CENTER" TITLE="Gerar word" SRC="images/word.gif" onClick="window.open(\''.$w_pagina.$par.'&R='.$w_pagina.$par.'&O=L&w_chave='.$w_chave.'&w_tipo_rel=word&P1='.$P1.'&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP='.$TP.'&SG='.$SG.MontaFiltro('GET').'\',\'VisualRelPPAWord\',\'menubar=yes resizable=yes scrollbars=yes\');">');
+      ShowHTML('&nbsp;&nbsp;<IMG BORDER=0 ALIGN="CENTER" TITLE="Gerar word" SRC="images/word.gif" onClick="window.open(\''.montaURL_JS($w_dir,$w_pagina.$par.'&R='.$w_pagina.$par.'&O=L&w_chave='.$w_chave.'&w_tipo_rel=word&P1='.$P1.'&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP='.$TP.'&SG='.$SG.MontaFiltro('GET')).'\',\'VisualRelPPAWord\',\'menubar=yes resizable=yes scrollbars=yes\');">');
       ShowHTML('</TD></TR>');
       ShowHTML('</FONT></B></TD></TR></TABLE>');
     } else {
@@ -2116,7 +2116,7 @@ function Rel_Sintetico_PPA() {
                   if ($w_tipo_rel=='WORD') {
                     ShowHTML('<td>'.f($row3,'titulo').'</td>');
                   } else {
-                    ShowHTML('<td><A class="HL" HREF="#" onClick="window.open(\'projeto.php?par=AtualizaEtapa&O=V&w_chave='.f($RS2,'sq_siw_solicitacao').'&w_chave_aux='.f($row3,'sq_projeto_etapa').'&w_tipo=Volta&P1=10&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP='.$TP.'&SG='.$SG.'\',\'Meta\',\'width=600, height=350, top=50, left=50, toolbar=no, scrollbars=yes, resizable=yes, status=no\'); return false;" title="Clique para exibir os dados!">'.f($row3,'titulo').'</A></td>');
+                    ShowHTML('<td><A class="HL" HREF="#" onClick="window.open(\''.montaURL_JS($w_dir,'projeto.php?par=AtualizaEtapa&O=V&w_chave='.f($RS2,'sq_siw_solicitacao').'&w_chave_aux='.f($row3,'sq_projeto_etapa').'&w_tipo=Volta&P1=10&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP='.$TP.'&SG='.$SG).'\',\'Meta'.'\',\'width=600, height=350, top=50, left=50, toolbar=no, scrollbars=yes, resizable=yes, status=no\'); return false;" title="Clique para exibir os dados!">'.f($row3,'titulo').'</A></td>');
                   } 
                   ShowHTML('      <td nowrap align="center">'.Nvl(f($row3,'unidade_medida'),'---').'</td>');
                   ShowHTML('      <td nowrap align="right">'.f($row3,'quantidade').'</td>');
@@ -2247,6 +2247,7 @@ function Grava() {
   global $w_Disabled;
   Cabecalho();
   ShowHTML('</HEAD>');
+  ShowHTML('<BASE HREF="'.$conRootSIW.'">');  
   BodyOpen('onLoad=document.focus();');
   switch ($SG) {
     case 'ORTBINIC':
@@ -2257,7 +2258,7 @@ function Grava() {
         $_REQUEST['w_responsavel'],$_REQUEST['w_telefone'],$_REQUEST['w_email'],
         $_REQUEST['w_ordem'],$_REQUEST['w_ativo'],$_REQUEST['w_padrao']);
         ScriptOpen('JavaScript');
-        ShowHTML('  location.href=\''.$R.'&w_chave='.$_REQUEST['w_chave'].'&P1='.$P1.'&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP='.$TP.'&SG='.$SG.MontaFiltro('GET').'\';');
+        ShowHTML('  location.href=\''.montaURL_JS($w_dir,$R.'&w_chave='.$_REQUEST['w_chave'].'&P1='.$P1.'&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP='.$TP.'&SG='.$SG.MontaFiltro('GET')).'\';');
         ScriptClose();
       } else {
         ScriptOpen('JavaScript');
@@ -2280,7 +2281,7 @@ function Grava() {
        
         
         ScriptOpen('JavaScript');
-        ShowHTML('  location.href=\''.$R.'&w_chave='.$_REQUEST['w_chave'].'&P1='.$P1.'&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP='.$TP.'&SG='.$SG.MontaFiltro('GET').'\';');
+        ShowHTML('  location.href=\''.montaURL_JS($w_dir,$R.'&w_chave='.$_REQUEST['w_chave'].'&P1='.$P1.'&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP='.$TP.'&SG='.$SG.MontaFiltro('GET')).'\';');
         ScriptClose();
       } else {
         ScriptOpen('JavaScript');
@@ -2312,7 +2313,7 @@ function EtapaLinha($l_chave,$l_chave_aux,$l_titulo,$l_word,$l_programada,$l_uni
   } else {
     $l_html=$l_html.chr(13).'           <img src="'.$conImgOkNormal.'" border=0 width=15 height=15 align="center">';
   } if ($l_word!='WORD') {
-    $l_html=$l_html.chr(13).'<A class="HL" HREF="#" onClick="window.open(\'projeto.php?par=AtualizaEtapa&O=V&w_chave='.$l_chave.'&w_chave_aux='.$l_chave_aux.'&w_tipo=Volta&P1=10&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP='.$TP.'&SG='.$SG.'\',\'Meta\',\'width=600, height=350, top=50, left=50, toolbar=no, scrollbars=yes, resizable=yes, status=no\'); return false;" title="Clique para exibir os dados!">'.$l_titulo.'</A>';
+    $l_html=$l_html.chr(13).'<A class="HL" HREF="#" onClick="window.open(\''.montaURL_JS($w_dir,'projeto.php?par=AtualizaEtapa&O=V&w_chave='.$l_chave.'&w_chave_aux='.$l_chave_aux.'&w_tipo=Volta&P1=10&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP='.$TP.'&SG='.$SG).'\',\'Meta\',\'width=600, height=350, top=50, left=50, toolbar=no, scrollbars=yes, resizable=yes, status=no\'); return false;" title="Clique para exibir os dados!">'.$l_titulo.'</A>';
   } else {
     $l_html=$l_html.chr(13).'        '.$l_titulo.'</td>';
   } 

@@ -10,9 +10,10 @@ include_once($w_dir_volta.'classes/db/DatabaseQueriesFactory.php');
 */
 
 class db_getSolicMeta_IS {
-   function getInstanceOf($dbms, $p_chave, $p_chave_aux, $p_restricao, $p_ano, $p_unidade, $p_cd_programa, $p_cd_acao, $p_preenchida, $p_meta_ppa, $p_exequivel) {
+   function getInstanceOf($dbms, $p_cliente, $p_chave, $p_chave_aux, $p_restricao, $p_ano, $p_unidade, $p_cd_programa, $p_cd_acao, $p_preenchida, $p_meta_ppa, $p_exequivel) {
      extract($GLOBALS,EXTR_PREFIX_SAME,'strchema'); $sql=$strschema_is.'SP_GETSOLICMETA_IS';
-     $params=array('p_chave'                     =>array(tvl($p_chave),                                    B_INTEGER,        32),
+     $params=array('p_cliente'                   =>array($p_cliente,                                       B_INTEGER,        32),
+                   'p_chave'                     =>array(tvl($p_chave),                                    B_INTEGER,        32),
                    'p_chave_aux'                 =>array(tvl($p_chave_aux),                                B_INTEGER,        32),
                    'p_restricao'                 =>array($p_restricao,                                     B_VARCHAR,        20),
                    'p_ano'                       =>array(tvl($p_ano),                                      B_INTEGER,        32),

@@ -112,7 +112,7 @@ function VisualPrograma($l_chave,$O,$l_usuario,$P1,$P4,$l_identificacao,$l_respo
     // Ações do programa
     // Recupera todos os registros para a listagem
     $l_html.=chr(13).'      <tr><td colspan="2"><br><font size="2"><b>AÇÕES DO PROGRAMA<hr NOSHADE color=#000000 SIZE=1></b></font></td></tr>';
-    $RS1 = db_getAcaoPPA_IS::getInstanceOf($dbms,$w_cliente,$w_ano,f($RS,'cd_programa'),null,null,null,null,null,null);
+    $RS1 = db_getAcaoPPA_IS::getInstanceOf($dbms,$w_cliente,$w_ano,f($RS,'cd_programa'),null,null,null,null,null,null,null,null);
     $RS1 = SortArray($RS1,'chave','asc');
     if (count($RS1)>0) {
       // Se não foram selecionados registros, exibe mensagem  
@@ -472,7 +472,7 @@ function VisualPrograma($l_chave,$O,$l_usuario,$P1,$P4,$l_identificacao,$l_respo
     if (strtoupper($l_acao)==strtoupper('sim')) {
       // Recupera todos os registros para a listagem
       $l_html.=chr(13).'      <tr><td colspan="2"><br><font size="2"><b>AÇÕES DO PROGRAMA<hr NOSHADE color=#000000 SIZE=1></b></font></td></tr>';
-      $RS1 = db_getAcaoPPA_IS::getInstanceOf($dbms,$w_cliente,$w_ano,f($RS,'cd_programa'),null,null,null,null,null,null);
+      $RS1 = db_getAcaoPPA_IS::getInstanceOf($dbms,$w_cliente,$w_ano,f($RS,'cd_programa'),null,null,null,null,null,null,null,null);
       $RS1 = SortArray($RS1,'chave','asc');
       if (count($RS1)>0) {
         // Se não foram selecionados registros, exibe mensagem  

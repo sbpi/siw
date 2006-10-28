@@ -260,7 +260,7 @@ function Inicial(){
     ShowHTML('    <table width="99%" border="0">');
     ShowHTML('      <tr><td align="center"><hr>');
     ShowHTML('            <input class="STB" type="submit" name="Botao" value="Exibir">');
-    ShowHTML('            <input class="STB" type="button" onClick="location.href=\''.$w_Pagina.$par.'&R='.$R.'&P1='.$P1.'&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP='.$TP.'&O=P&SG='.$SG.'\';" name="Botao" value="Limpar campos">');
+    ShowHTML('            <input class="STB" type="button" onClick="location.href=\''.montaURL_JS($w_dir,$w_Pagina.$par.'&R='.$R.'&P1='.$P1.'&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP='.$TP.'&O=P&SG='.$SG).'\';" name="Botao" value="Limpar campos">');
     ShowHTML('          </td>');
     ShowHTML('      </tr>');
     ShowHTML('    </table>');

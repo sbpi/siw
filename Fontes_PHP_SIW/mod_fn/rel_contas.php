@@ -14,7 +14,7 @@ include_once($w_dir_volta.'classes/sp/db_getLancamento.php');
 include_once($w_dir_volta.'classes/sp/db_getBenef.php');
 include_once($w_dir_volta.'funcoes/selecaoOrdenaRel.php');
 // =========================================================================
-//  /Rel_contas.php
+//  /rel_contas.php
 // ------------------------------------------------------------------------
 // Nome     : Billy Jones Leal dos Santos
 // Descricao: Diversos tipos de relatórios para fazer o acompanhamento gerencial 
@@ -383,7 +383,7 @@ function Inicial() {
     ShowHTML('    <table width="99%" border="0">');
     ShowHTML('      <tr><td align="center"><hr>');
     ShowHTML('            <input class="STB" type="submit" name="Botao" value="Exibir">');
-    ShowHTML('            <input class="STB" type="button" onClick="location.href=\''.$w_Pagina.$par.'&R='.$R.'&P1='.$P1.'&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP='.$TP.'&O=P&SG='.$SG.'\';" name="Botao" value="Limpar campos">');
+    ShowHTML('            <input class="STB" type="button" onClick="location.href=\''.montaURL_JS($w_dir,$w_Pagina.$par.'&R='.$R.'&P1='.$P1.'&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP='.$TP.'&O=P&SG='.$SG).'\';" name="Botao" value="Limpar campos">');
     ShowHTML('          </td>');
     ShowHTML('      </tr>');
     ShowHTML('    </table>');

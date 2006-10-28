@@ -10,6 +10,7 @@ include_once($w_dir_volta.'classes/sp/db_getLinkSubMenu.php');
 include_once($w_dir_volta.'classes/sp/db_getLinkData.php');
 include_once($w_dir_volta.'classes/sp/db_getMenuData.php');
 include_once($w_dir_volta.'classes/sp/db_getMenuCode.php');
+include_once($w_dir_volta.'classes/sp/db_getSolicList.php');
 include_once($w_dir_volta.'classes/sp/db_getSolicList_IS.php');
 include_once($w_dir_volta.'classes/sp/db_getSolicMeta_IS.php');
 include_once($w_dir_volta.'classes/sp/db_getCustomerData.php');
@@ -22,6 +23,7 @@ include_once($w_dir_volta.'classes/sp/db_getRestricao_IS.php');
 include_once($w_dir_volta.'classes/sp/db_getSolicInter.php');
 include_once($w_dir_volta.'classes/sp/db_getSolicAnexo.php');
 include_once($w_dir_volta.'classes/sp/db_getSolicLog.php');
+include_once($w_dir_volta.'classes/sp/db_getUorgData.php');
 include_once($w_dir_volta.'funcoes/selecaoUnidade.php');
 include_once($w_dir_volta.'funcoes/selecaoUnidade_IS.php');
 include_once($w_dir_volta.'funcoes/selecaoProgramaPPA.php');
@@ -29,6 +31,8 @@ include_once($w_dir_volta.'funcoes/selecaoAcaoPPA.php');
 include_once($w_dir_volta.'funcoes/selecaoPrioridade.php');
 include_once($w_dir_volta.'funcoes/selecaoIsProjeto.php');
 include_once($w_dir_volta.'funcoes/selecaoAcao.php');
+include_once($w_dir_volta.'funcoes/selecaoOpcaoEstrat.php');
+include_once($w_dir_volta.'funcoes/selecaoMacroObjetivo.php');
 include_once('visualprograma.php');
 include_once('visualacao.php');
 include_once('visualtarefa.php');
@@ -74,7 +78,7 @@ $w_assinatura   = strtoupper($_REQUEST['w_assinatura']);
 $w_pagina       = 'relatorios.php?par=';
 $w_Disabled     = 'ENABLED';
 $w_dir          = 'mod_is/';
-if ($O=='') $O="P";
+if ($O=='') $O='P';
 switch ($O) {
   case 'I': $w_TP=$TP.' - Inclusão';    break;
   case 'A': $w_TP=$TP.' - Alteração';   break;
@@ -109,6 +113,458 @@ if (f($RS_Menu,'ultimo_nivel')=='S') {
 Main();
 FechaSessao($dbms);
 exit;
+
+// =========================================================================
+// Relatório gerencial do planejamento estratégico
+// -------------------------------------------------------------------------
+function Gerencial() {
+  extract($GLOBALS);
+  $w_imagem = $conRootSIW.'images/icone/GotoTop.gif';
+  $w_img_link = '<img src="'.$conRootSIW.'images/Folder/hlp.gif" border=0 width=15 height=15>';
+  $p_sq_unidade = strtoupper(trim($_REQUEST['p_sq_unidade']));
+  $p_cd_programa= strtoupper(trim($_REQUEST['p_cd_programa']));
+  $p_cd_acao    = strtoupper(trim($_REQUEST['p_acao']));
+  $w_tipo_rel   = strtoupper(trim($_REQUEST['w_tipo_rel']));
+  $p_preenchida = strtoupper(trim($_REQUEST['p_preenchida']));
+  $p_meta_ppa   = strtoupper(trim($_REQUEST['p_meta_ppa']));
+  $p_exequivel  = strtoupper(trim($_REQUEST['p_exequivel']));
+
+  if ($O=='L') {
+    // Recupera o logo do cliente a ser usado nas listagens
+    $RS = db_getCustomerData::getInstanceOf($dbms,$w_cliente);
+    if (f($RS,'logo')>'')   $w_logo='/img/logo'.substr(f($RS,'logo'),(strpos(f($RS,'logo'),'.') ? strpos(f($RS,'logo'),'.')+1 : 0)-1,30);
+    $RS = db_getSolicMeta_IS::getInstanceOf($dbms,$w_cliente,null,null,'GERENCIAL',$w_ano,$p_sq_unidade,$p_cd_programa,$p_cd_acao,$p_preenchida,$p_meta_ppa,$p_exequivel,null,null);
+  } 
+
+  Cabecalho();
+  ShowHTML('<HEAD>');
+  ShowHTML('<TITLE>Planejamento Estratégico - Exercício '.$w_ano.'</TITLE>');
+  if ($O=='L') {
+    ShowHTML('  <!-- CSS FILE for my tree-view menu -->');
+    ShowHTML('  <link rel="stylesheet" type="text/css" href="'.$conRootSIW.'classes/menu/xPandMenu.css">');
+    ShowHTML('  <!-- JS FILE for my tree-view menu -->');
+    ShowHTML('  <script src="'.$conRootSIW.'classes/menu/xPandMenu.js"></script>');
+  } else {
+    ScriptOpen('JavaScript');
+    ValidateOpen('Validacao');
+    Validate('p_sq_unidade','Responsável','HIDDEN','','2','60','1','1');
+    Validate('p_cd_programa','Programa','HIDDEN','','1','18','1','1');
+    Validate('p_cd_acao','Ação','HIDDEN','','1','18','1','1');
+    Validate('w_tipo_rel','Tipo de Relatório','SELECT','','1','30','1','1');
+    Validate('p_preenchida','Situação Atual da Meta','SELECT','','1','1','1','1');
+    Validate('p_meta_ppa','Tipo da Meta','SELECT','','1','1','1','1');
+    Validate('p_exequivel','Execução da Meta','SELECT','','1','1','1','1');
+    ValidateClose();
+    ScriptClose();
+  } 
+  ShowHTML('</HEAD>');
+  ShowHTML('<BASE HREF="'.$conRootSIW.'">');
+  if ($O=='L') {
+    BodyOpenClean(null);
+    ShowHTML('<BASE HREF="'.$conRootSIW.'">');
+    ShowHTML('<div align="center">');
+    ShowHTML('<table width="95%" border="0" cellspacing="3">');
+    ShowHTML('<tr><td colspan="2">');
+    ShowHTML('<TABLE WIDTH="100%" BORDER=0><TR><TD ROWSPAN=2><IMG ALIGN="LEFT" src="'.LinkArquivo(null,$w_cliente,$w_logo,null,null,null,'EMBED').'"></TD><TD ALIGN="RIGHT" NOWRAP><B><FONT SIZE=4 COLOR="#000000">');
+    ShowHTML('PLANEJAMENTO ESTRATÉGICO<br>Exercício '.$w_ano);
+    ShowHTML('</FONT></B></TD></TR></TABLE>');
+  } else {
+    BodyOpen('onLoad=\'document.Form.p_cd_programa.focus()\';');
+    ShowHTML('<B><FONT COLOR="#000000">'.$w_TP.'</FONT></B>');
+    ShowHTML('<div align=center><center>');
+    ShowHTML('<table border="0" cellpadding="0" cellspacing="0" width="100%">');
+    ShowHTML('<HR>');
+  } 
+
+  if ($O=='L') {
+    // Exibe a quantidade de registros apresentados na listagem e o cabeçalho da tabela de listagem
+    ShowHTML('<tr><td colspan="2"><div align="center"><hr NOSHADE color=#000000 size=2></div></td></tr>');
+    ShowHTML('<tr><td colspan="2"><div align="center">');
+    ShowHTML('<table border="0" width="100%">');
+    if ($p_sq_unidade>'') {
+      $RS1 = db_getUorgData::getInstanceOf($dbms,$p_sq_unidade);
+      ShowHTML('<tr><td width="15%"><b>Área de planejamento:</b></td><td>'.f($RS1,'nome').' - '.f($RS1,'sigla').'</td>');
+    } else {
+      ShowHTML('<tr><td width="15%"><b>Área de planejamento:</b></td><td>Todas</td>');
+    } 
+    if ($p_cd_programa>'') {
+      $RS1 = db_getProgramaPPA_IS::getInstanceOf($dbms,$p_cd_programa,$w_cliente,$w_ano,null,null,null,null);
+      foreach($RS1 as $row1){$RS1=$row1; break;}
+      ShowHTML('    <td width="7%"><b>Programa:</b></td><td nowrap>'.$p_cd_programa.' - '.f($RS1,'ds_programa').'</td></tr>');
+    } else {
+      ShowHTML('    <td width="7%"><b>Programa:</b></td><td>Todos</td></tr>');
+    } 
+    if ($p_cd_acao>'') {
+      $RS1 = db_getAcaoPPA_IS::getInstanceOf($dbms,$w_cliente,$w_ano,$p_cd_programa,substr($p_cd_acao,4,4),null,null,null,null,null,null,null);
+      foreach($RS1 as $row1){$RS1=$row1; break;}
+      ShowHTML('<tr valign="top"><td><b>Ação:</b></td><td>'.substr($p_cd_acao,4,4).' - '.f($RS1,'descricao_acao').'</td>');
+    } else {
+      ShowHTML('<tr valign="top"><td><b>Ação:</b></td><td>Todas</td>');
+    } 
+    if ($p_preenchida>'') {
+      if ($p_preenchida=='S') ShowHTML('    <td><b>Indicador será cumprido:</b></td><td>Sim</td></tr>');
+      else                    ShowHTML('    <td><b>Indicador será cumprido:</b></td><td>Não</td></tr>');
+    } else {
+      ShowHTML('    <td><b>Indicador será cumprido:</b></td><td>Tanto faz</td></tr>');
+    } 
+    if ($p_exequivel>'') {
+      if ($p_exequivel=='S') ShowHTML('    <td><b>Meta será cumprida:</b></td><td>Sim</td></tr>');
+      else                   ShowHTML('    <td><b>Meta será cumprida:</b></td><td>Não</td></tr>');
+    } else {
+      ShowHTML('    <td><b>Meta será cumprida:</b></td><td>Tanto faz</td></tr>');
+    } 
+    if ($p_meta_ppa>'') {
+      if ($p_meta_ppa=='S') ShowHTML('    <td><b>Exibir planejamento cadastrado:</b></td><td>Sim</td>');  
+      else                  ShowHTML('    <td><b>Exibir planejamento cadastrado:</b></td><td>Não</td>');
+    } else {
+      ShowHTML('    <td><b>Exibir planejamento cadastrado:</b></td><td>Tanto faz</td>');
+    }
+    ShowHTML('</ul></td></tr></table>');
+    ShowHTML('</div></td></tr>');
+    ShowHTML('<tr><td colspan="2"><div align="center"><hr NOSHADE color=#000000 size=2></div></td></tr>');
+    ShowHTML('<tr><td colspan="2">');
+  
+    if (count($RS)<=0) {
+      $w_linha += 1;
+      ShowHTML('    <tr><td colspan="13"><div align="center"><b>Não foram encontrados registros</b></div></td></tr>');
+    } else {
+      // Inclusão do arquivo da classe
+      include_once($w_dir_volta.'classes/menu/xPandMenu.php');
+
+      $i    = 0;
+      $j    = 0;
+      $k    = 0;
+      $l    = 0;
+      $m    = 0;
+      $n    = 0;
+      $o    = 0;
+
+      // Listagem do planejamento de acordo com o filtro selecionado na tela de filtragem
+      $w_opcao_atual = '';
+      $w_macro_atual = '';
+      $w_prog_atual  = '';
+      $w_ind_atual   = '';
+      $w_acao_atual  = '';
+      $w_meta_atual  = '';
+
+      foreach($RS as $row) {
+        
+        if ($i==0) {
+          // Instanciando a classe menu
+          $root = new XMenu();
+        }
+
+        //Inicio da montagem da lista das ações e metas de acordo com o filtro
+        if (f($row,'cd_opcao')!=$w_opcao_atual) {
+          $i += 1;
+          eval('$node'.i.' = &$root->addItem(new XNode(\'Estratégia \'.f($row,\'cd_opcao\').\' - \'.f($row,\'nm_opcao\'),false));');
+          $w_opcao_atual = f($row,'cd_opcao');
+          $j = 0;
+          $k = 0;
+          $l = 0;
+          $m = 0;
+          $n = 0;
+          $o = 0;
+          $w_macro_atual = '';
+          $w_prog_atual  = '';
+          $w_acao_atual  = '';
+        } 
+        if (f($row,'cd_macro')!=$w_macro_atual) {
+          $j += 1;
+          eval('$node'.i.'_'.j.' = &$node'.i.'->addItem(new XNode(\'Objetivo \'.f($row,\'cd_macro\').\' - \'.f($row,\'nm_macro\'),false));');
+          $k = 0;
+          $l = 0;
+          $m = 0;
+          $n = 0;
+          $o = 0;
+          $w_macro_atual = f($row,'cd_macro');
+          $w_prog_atual  = '';
+          $w_acao_atual  = '';
+        }
+        if (f($row,'cd_programa')!=$w_prog_atual) {
+          $k += 1;
+          if (nvl(f($row,'sq_programa'),'')=='') {
+            $link = ''; 
+            eval('$node'.i.'_'.j.'_'.k.' = &$node'.i.'_'.j.'->addItem(new XNode($link.\' Programa \'.f($row,\'cd_programa\').\' - \'.f($row,\'nm_programa\'),false));');
+          } else {
+            $link = '<A class="HL" HREF="'.$w_dir.'programa.php?par=Visual&O=L&w_chave='.f($row,'sq_programa').'&w_tipo=&P1=2&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP='.$TP.'&SG='.$SG.'" TARGET="VisualAcao" title="Exibe as informações do programa.">'.$w_img_link.'</a>';
+            eval('$node'.i.'_'.j.'_'.k.' = &$node'.i.'_'.j.'->addItem(new XNode($link.\' Programa \'.f($row,\'cd_programa\').\' - \'.f($row,\'nm_programa\'),false,null,null));');
+          }
+          $l = 0;
+          $m = 0;
+          $n = 0;
+          $o = 0;
+          $w_prog_atual = f($row,'cd_programa');
+          $w_acao_atual  = '';
+          $RS1 = db_getSolicIndic_IS::getInstanceOf($dbms,f($row,'sq_programa'),null,'LISTA',null,null);
+          $RS1 = SortArray($RS1,'ordem','asc');
+          if (count($RS1)>0) {
+            $w_indicador   = '        <table border=1 width="100%" cellpadding=0>'.$crlf.
+                             '          <tr bgcolor="'.$conTrBgColor.'" align="center">'.$crlf.
+                             '            <td width="45%"><b>Indicador</td>'.$crlf.
+                             '            <td width="5%"><b>PPA</td>'.$crlf.
+                             '            <td width="10%"><b>Índice<br>referência</td>'.$crlf.
+                             '            <td width="10%"><b>Índice<br>programado</td>'.$crlf.
+                             '            <td width="10%"><b>Índice<br>apurado</td>'.$crlf.
+                             '            <td width="10%"><b>Data<br>apuracao</td>'.$crlf.
+                             '            <td width="10%"><b>Unidade<br>medida</td>'.$crlf.
+                             '          </tr>'.$crlf;
+            foreach($RS1 as $row1) {
+              $w_indicador .= Indicadorlinha(f($row1,'sq_siw_solicitacao'),f($row1,'sq_indicador'),f($row1,'titulo'),f($row1,'valor_referencia'),f($row1,'quantidade'),f($row1,'valor_apurado'),f($row1,'apuracao_indice'),f($row1,'nm_unidade_medida'),null,'<b>','N','PROJETO',f($row1,'cd_indicador'),f($row1,'exequivel'));
+            } 
+            $w_indicador   .= '        </table>'.$crlf;
+            $l += 1;
+            if (count($RS1)==1) {
+              eval('$node'.i.'_'.j.'_'.k.'_'.l.' = &$node'.i.'_'.j.'_'.k.'->addItem(new XNode(\'Indicador\',false,$w_imagem,$w_imagem));');
+            } else {
+              eval('$node'.i.'_'.j.'_'.k.'_'.l.' = &$node'.i.'_'.j.'_'.k.'->addItem(new XNode(\'Indicadores\',false,$w_imagem,$w_imagem));');
+            }
+            eval('$node'.i.'_'.j.'_'.k.'_'.l.'_1 = &$node'.i.'_'.j.'_'.k.'_'.l.'->addItem(new XNode($w_indicador,false,null,null,null));');
+          } 
+        } 
+        if (f($row,'cd_acao')!=$w_acao_atual) {
+          $l += 1;
+          $m = 0;
+          $n = 0;
+          $o = 0;
+          if (nvl(f($row,'sq_acao'),'')=='') $link = ''; else $link = '<A class="HL" HREF="'.$w_dir.'acao.php?par=Visual&O=L&w_chave='.f($row,'sq_acao').'&w_tipo=&P1='.$P1.'&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP='.$TP.'&SG='.$SG.'" TARGET="VisualAcao" title="Exibe as informações da ação.">'.$w_img_link.'</a>';
+          eval('$node'.i.'_'.j.'_'.k.'_'.l.' = &$node'.i.'_'.j.'_'.k.'->addItem(new XNode($link.\' Ação \'.f($row,\'cd_acao\').\' - \'.f($row,\'nm_acao\'),false, null, null));');
+          $w_acao_atual = f($row,'cd_acao');
+          // Recupera as metas
+          $RS3 = db_getSolicMeta_IS::getInstanceOf($dbms,$w_cliente,f($row,'sq_acao'),null,'LISTA',null,null,null,null,null,null,null,null,null);
+          $RS3 = SortArray($RS3,'ordem','asc');
+          if (count($RS3)>0) {
+            $w_meta = '        <table border=1 width="100%" cellpadding=0>'.$crlf.
+                      '          <tr bgcolor="'.$conTrBgColor.'" align="center">'.$crlf.
+                      '            <td width="50%"><b>Produto</td>'.$crlf.
+                      '            <td width="10%"><b>Meta PPA</td>'.$crlf.
+                      '            <td width="10%"><b>Fim previsto</td>'.$crlf.
+                      '            <td width="10%"><b>Unidade<br>medida</td>'.$crlf.
+                      '            <td width="10%"><b>Quantitativo<br>programado</td>'.$crlf.
+                      '            <td width="10%"><b>% Realizado</td>'.$crlf.
+                      '          </tr>'.$crlf;
+            $w_cor='';
+            foreach($RS3 as $row3) {
+              $w_meta .= MetaLinha(f($row,'sq_acao'),f($row3,'sq_meta'),f($row3,'titulo'),$w_tipo_rel,f($row3,'programada'),f($row3,'unidade_medida'),f($row3,'quantidade'),f($row3,'fim_previsto'),f($row3,'perc_conclusao'),'S','PROJETO',Nvl(f($row3,'cd_subacao'),''),f($row3,'exequivel'));
+            } 
+            $w_meta .= '        </table>'.$crlf;
+            $m += 1;
+            if (count($RS3)==1) {
+              eval('$node'.i.'_'.j.'_'.k.'_'.l.'_'.m.' = &$node'.i.'_'.j.'_'.k.'_'.l.'->addItem(new XNode(\'Meta\',false,$w_imagem,$w_imagem));');
+            } else {
+              eval('$node'.i.'_'.j.'_'.k.'_'.l.'_'.m.' = &$node'.i.'_'.j.'_'.k.'_'.l.'->addItem(new XNode(\'Metas\',false,$w_imagem,$w_imagem));');
+            }
+            eval('$node'.i.'_'.j.'_'.k.'_'.l.'_'.m.'_1 = &$node'.i.'_'.j.'_'.k.'_'.l.'_'.m.'->addItem(new XNode($w_meta,false,null,null,null));');
+          }
+
+          // Recupera as tarefas
+          $RS1 = db_getLinkData::getInstanceOf($dbms,$w_cliente,'ISTCAD');
+          $RS3 = db_getSolicList_IS::getInstanceOf($dbms,f($RS1,'sq_menu'),$w_usuario,f($RS1,'sigla'),4,
+                    null,null,null,null,null,null,null,$p_prioridade,null,null,null,null,
+                    null,null,null,null,null,null,null,null,null,nvl(f($row,'sq_acao'),0),null,
+                    null,null,null,null,$w_ano);
+          //$RS3 = SortArray($RS3,'phpdt_fim','asc','prioridade','asc');
+          if (count($RS3)>0) {
+            $w_meta = '        <table border=1 width="100%" cellpadding=0>'.$crlf.
+                      '          <tr bgcolor="'.$conTrBgColor.'" align="center">'.$crlf.
+                      '            <td><b>Código</td>'.$crlf.
+                      '            <td><b>Tarefa</td>'.$crlf.
+                      '            <td><b>Responsável</td>'.$crlf.
+                      '            <td><b>Parcerias</td>'.$crlf.
+                      '            <td><b>Fim previsto</td>'.$crlf.
+                      '            <td><b>Programado</td>'.$crlf.
+                      '            <td><b>Executado</td>'.$crlf.
+                      '            <td><b>Fase atual</td>'.$crlf.
+                      '            <td><b>Prioridade</td>'.$crlf;
+                      '          </tr>'.$crlf;
+            foreach($RS3 as $row3) {
+              //If w_cor = conTrBgColor or w_cor = '' Then w_cor = conTrAlternateBgColor Else w_cor = conTrBgColor End If
+              $w_cor=$conTrBgColor;
+              $w_meta .= '          <tr bgcolor="'.$w_cor.'" valign="top">'.$crlf.
+                         '            <td nowrap>'.$crlf;
+              if (f($row3,'concluida')=='N') {
+                if (f($row3,'fim')<addDays(time(),-1)) $w_meta .= '           <img src="'.$conImgAtraso.'" border=0 width=15 heigth=15 align="center">';
+                elseif (f($row3,'aviso_prox_conc')=='S' && (f($row3,'aviso')<=addDays(time(),-1))) $w_meta .= '           <img src="'.$conImgAviso.'" border=0 width=15 height=15 align="center">';
+                else                                   $w_meta .= '           <img src="'.$conImgNormal.'" border=0 width=15 height=15 align="center">';
+              } else {
+                if (f($row3,'fim')<Nvl(f($row3,'fim_real'),f($row3,'fim'))) $w_meta .= '           <img src="'.$conImgOkAtraso.'" border=0 width=15 heigth=15 align="center">';
+                else                                                        $w_meta .= '           <img src="'.$conImgOkNormal.'" border=0 width=15 height=15 align="center">';
+              } 
+              $w_meta .= '        <A class="HL" HREF="'.$w_dir.'tarefas.php?par=Visual&R='.$w_pagina.$par.'&O=L&w_chave='.f($row3,'sq_siw_solicitacao').'&w_tipo=&P1='.$P1.'&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP='.$TP.'&SG='.$SG.MontaFiltro('GET').'" TARGET="VisualTarefa" title="Exibe as informações desta tarefa.">'.f($row3,'sq_siw_solicitacao').'&nbsp;</a>'.$crlf.
+                         '        <td>'.f($row3,'titulo').'</td>'.$crlf.
+                         '        <td>'.f($row3,'nm_solic').'</td>'.$crlf.
+                         '        <td>'.Nvl(f($row3,'proponente'),'---').'</td>'.$crlf.
+                         '        <td align="center">&nbsp;'.Nvl(FormataDataEdicao(f($row3,'fim')),'-').'</td>'.$crlf.
+                         '        <td align="right">'.number_format(f($row3,'valor'),2,',','.').'&nbsp;</td>'.$crlf.
+                         '        <td align="right">'.number_format(f($row3,'custo_real'),2,',','.').'&nbsp;</td>'.$crlf.
+                         '        <td nowrap>'.f($row3,'nm_tramite').'</td>'.$crlf.
+                         '        <td nowrap>'.RetornaPrioridade(f($row3,'prioridade')).'</td>'.$crlf.
+                         '        </td>'.$crlf.
+                         '      </tr>'.$crlf;
+            } 
+            $w_meta .= '        </table>'.$crlf;
+            $m += 1;
+            if (count($RS3)==1) {
+              eval('$node'.i.'_'.j.'_'.k.'_'.l.'_'.m.' = &$node'.i.'_'.j.'_'.k.'_'.l.'->addItem(new XNode(\'Tarefa\',false,$w_imagem,$w_imagem));');
+            } else {
+              eval('$node'.i.'_'.j.'_'.k.'_'.l.'_'.m.' = &$node'.i.'_'.j.'_'.k.'_'.l.'->addItem(new XNode(\'Tarefas\',false,$w_imagem,$w_imagem));');
+            }
+            eval('$node'.i.'_'.j.'_'.k.'_'.l.'_'.m.'_1 = &$node'.i.'_'.j.'_'.k.'_'.l.'_'.m.'->addItem(new XNode($w_meta,false,null,null,null));');
+          } 
+
+          // Recupera os projetos
+          $RS1 = db_getLinkData::getInstanceOf($dbms,$w_cliente,'PJCAD');
+          $RS3 = db_getSolicList::getInstanceOf($dbms,f($RS1,'sq_menu'),$w_usuario,'PJCAD',4,
+                  null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,
+                  null,null,null,null,null,null,null,nvl(f($row,'sq_acao'),0), null);
+
+          //$RS3 = SortArray($RS3,'phpdt_fim','asc','prioridade','asc');
+          if (count($RS3)>0) {
+            $w_meta = '        <table border=1 width="100%" cellpadding=0>'.$crlf.
+                      '          <tr bgcolor="'.$conTrBgColor.'" align="center">'.$crlf.
+                      '            <td><b>Código</td>'.$crlf.
+                      '            <td><b>Projeto</td>'.$crlf.
+                      '            <td><b>Responsável</td>'.$crlf.
+                      '            <td><b>Conclusão</td>'.$crlf.
+                      '            <td><b>$ Previsto</td>'.$crlf.
+                      '            <td><b>$ Executado</td>'.$crlf.
+                      '            <td><b>Prioridade</td>'.$crlf;
+                      '          </tr>'.$crlf;
+            foreach($RS3 as $row3) {
+              //If w_cor = conTrBgColor or w_cor = '' Then w_cor = conTrAlternateBgColor Else w_cor = conTrBgColor End If
+              $w_cor=$conTrBgColor;
+              $w_meta .= '          <tr bgcolor="'.$w_cor.'" valign="top">'.$crlf.
+                         '            <td nowrap>'.$crlf;
+              if (f($row3,'concluida')=='N') {
+                if (f($row3,'fim')<addDays(time(),-1)) $w_meta .= '           <img src="'.$conImgAtraso.'" border=0 width=15 heigth=15 align="center">';
+                elseif (f($row3,'aviso_prox_conc')=='S' && (f($row3,'aviso')<=addDays(time(),-1))) $w_meta .= '           <img src="'.$conImgAviso.'" border=0 width=15 height=15 align="center">';
+                else                                   $w_meta .= '           <img src="'.$conImgNormal.'" border=0 width=15 height=15 align="center">';
+              } else {
+                if (f($row3,'fim')<Nvl(f($row3,'fim_real'),f($row3,'fim'))) $w_meta .= '           <img src="'.$conImgOkAtraso.'" border=0 width=15 heigth=15 align="center">';
+                else                                                        $w_meta .= '           <img src="'.$conImgOkNormal.'" border=0 width=15 height=15 align="center">';
+              } 
+              $w_meta .= '        <A class="HL" HREF="projeto.php?par=Visual&R='.$w_pagina.$par.'&O=L&w_chave='.f($row3,'sq_siw_solicitacao').'&w_tipo=&P1='.$P1.'&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP='.$TP.'&SG='.$SG.MontaFiltro('GET').'" TARGET="VisualTarefa" title="Exibe as informações desta tarefa.">'.f($row3,'sq_siw_solicitacao').'&nbsp;</a>'.$crlf.
+                         '        <td>'.f($row3,'titulo').'</td>'.$crlf.
+                         '        <td>'.f($row3,'nm_solic').'</td>'.$crlf.
+                         '        <td align="center">&nbsp;'.Nvl(FormataDataEdicao(f($row3,'fim')),'-').'</td>'.$crlf.
+                         '        <td align="right">'.number_format(f($row3,'valor'),2,',','.').'&nbsp;</td>'.$crlf.
+                         '        <td align="right">'.number_format(f($row3,'custo_real'),2,',','.').'&nbsp;</td>'.$crlf.
+                         '        <td nowrap>'.RetornaPrioridade(f($row3,'prioridade')).'</td>'.$crlf.
+                         '        </td>'.$crlf.
+                         '      </tr>'.$crlf;
+            } 
+            $w_meta .= '        </table>'.$crlf;
+            $m += 1;
+            if (count($RS3)==1) {
+              eval('$node'.i.'_'.j.'_'.k.'_'.l.'_'.m.' = &$node'.i.'_'.j.'_'.k.'_'.l.'->addItem(new XNode(\'Projeto\',false,$w_imagem,$w_imagem));');
+            } else {
+              eval('$node'.i.'_'.j.'_'.k.'_'.l.'_'.m.' = &$node'.i.'_'.j.'_'.k.'_'.l.'->addItem(new XNode(\'Projetos\',false,$w_imagem,$w_imagem));');
+            }
+            eval('$node'.i.'_'.j.'_'.k.'_'.l.'_'.m.'_1 = &$node'.i.'_'.j.'_'.k.'_'.l.'_'.m.'->addItem(new XNode($w_meta,false,null,null,null));');
+          } 
+        } 
+      } 
+    } 
+    if ($i>0) $menu_html_code = $root->generateTree();
+    ShowHTML($menu_html_code);
+    ShowHTML('</tr>');
+  } elseif ($O=='P') {
+    AbreForm('Form',$w_dir.$w_pagina.$par,'POST','return(Validacao(this));','Acao',$P1,$P2,$P3,$P4,$TP,$SG,$R,'L');
+    ShowHTML('<INPUT type="hidden" name="w_chave" value="'.$w_chave.'">');
+    ShowHTML('<INPUT type="hidden" name="w_troca" value="">');
+    ShowHTML('<INPUT type="hidden" name="p_opcao_ant" value="'.$p_opcao_ant.'">');    
+    ShowHTML('<tr><td align="center">');
+    ShowHTML('    <table width="97%" border="0">');
+    ShowHTML('      <tr bgcolor="'.$conTrBgColor.'">');
+    SelecaoUnidade('Á<U>r</U>ea planejamento:','R',null,$p_sq_unidade,null,'p_sq_unidade',null,null);
+    ShowHTML('      <tr bgcolor="'.$conTrBgColor.'">');
+    SelecaoProgramaPPA('<u>P</u>rograma PPA:','P',null,$w_cliente,$w_ano,$p_cd_programa,'p_cd_programa','RELATORIO','onchange="document.Form.action=\''.$w_dir.$w_pagina.$par.'\'; document.Form.w_troca.value=\'p_cd_acao\'; document.Form.target=\'\'; document.Form.O.value=\'P\'; document.Form.submit();"',$w_menu,null,null);
+    ShowHTML('      <tr bgcolor="'.$conTrBgColor.'">');
+    SelecaoAcaoPPA('<u>A</u>ção PPA:','A',null,$w_cliente,$w_ano,$p_cd_programa,null,null,null,'p_cd_acao',null,null,null,$w_menu,null,null);
+    ShowHTML('      <tr bgcolor="'.$conTrBgColor.'">');
+    ShowHTML('        <td><b><u>T</u>ipo de relatório:</b><br><SELECT ACCESSKEY="T" CLASS="STS" NAME="w_tipo_rel" '.$w_Disabled.'>');
+    if (nvl($w_tipo_rel,'-')=='Word') {
+      ShowHTML('          <option value="">Consulta na Tela');
+      ShowHTML('          <option value="Word" SELECTED>Documento Word');
+    } else {
+      ShowHTML('          <option value="" SELECTED>Consulta na Tela');
+      ShowHTML('          <option value="Word">Documento Word');
+    } 
+    ShowHTML('          </select></td><tr>');
+    ShowHTML('    </table></td></tr>');
+    ShowHTML('<tr><td align="center">');
+    ShowHTML('    <table width="97%" border="0">');
+    ShowHTML('      <tr bgcolor="'.$conTrAlternateBgColor.'"><td colspan="2"><b>OPÇÕES DE CONSULTA</b></td></tr>');
+    ShowHTML('      <tr><td width="25%" bgcolor="'.$conTrBgColor.'"><b>Execução do <u>i</u>ndicador:</b>');
+    ShowHTML('          <td bgcolor="'.$conTrBgColor.'"><SELECT ACCESSKEY="I" CLASS="STS" NAME="p_preenchida">');
+    if (nvl($p_preenchida,'-')!='S' || nvl($p_preenchida,'-')!='N') {
+      ShowHTML('          <option value="" SELECTED>Todos');
+      ShowHTML('          <option value="S">Indicadores que serão cumpridos');
+      ShowHTML('          <option value="N">Indicadores que não serão cumpridos');
+    } elseif (nvl($p_preenchida,'-')=='S') {
+      ShowHTML('          <option value="">Todos');
+      ShowHTML('          <option value="S" SELECTED>Indicadores que serão cumpridos');
+      ShowHTML('          <option value="N">Indicadores que não serão cumpridos');
+    } elseif (nvl($p_preenchida,'-')=='N') {
+      ShowHTML('          <option value="">Todos');
+      ShowHTML('          <option value="S">Indicadores que serão cumpridos');
+      ShowHTML('          <option value="N" SELECTED>Indicadores que não serão cumpridos');
+    } 
+    ShowHTML('          </select></td></tr>');
+    ShowHTML('      <tr><td bgcolor="'.$conTrBgColor.'"><b><u>E</u>xecução da Meta:</b>');
+    ShowHTML('          <td bgcolor="'.$conTrBgColor.'"><SELECT ACCESSKEY="E" CLASS="STS" NAME="p_exequivel">');
+    if (nvl($p_exequivel,'-')!='S' || nvl($p_exequivel,'-')!='N') {
+      ShowHTML('          <option value="" SELECTED>Todas');
+      ShowHTML('          <option value="S">Metas que serão cumpridas');
+      ShowHTML('          <option value="N">Metas que não serão cumpridas');
+    } elseif (nvl($p_exequivel,'-')=='S') {
+      ShowHTML('          <option value="">Todas');
+      ShowHTML('          <option value="S" SELECTED>Metas que serão cumpridas');
+      ShowHTML('          <option value="N">Metas que não serão cumpridas');
+    } elseif (nvl($p_exequivel,'-')=='N') {
+      ShowHTML('          <option value="">Todas');
+      ShowHTML('          <option value="S">Metas que serão cumpridas');
+      ShowHTML('          <option value="N" SELECTED>Metas que não serão cumpridas');
+    } 
+    ShowHTML('          </select></td></tr>');
+    ShowHTML('      <tr><td bgcolor="'.$conTrBgColor.'"><b>Exi<u>b</u>ir:</b>');
+    ShowHTML('          <td bgcolor="'.$conTrBgColor.'"><SELECT ACCESSKEY="B" CLASS="STS" NAME="p_meta_ppa">');
+    if (nvl($p_meta_ppa,'-')!='S' || nvl($p_meta_ppa,'-')!='N') {
+      ShowHTML('          <option value="" SELECTED>Todo o planejamento');
+      ShowHTML('          <option value="S">Apenas programas e ações cadastrados');
+      ShowHTML('          <option value="N">Apenas programas e ações não cadastrados');
+    } elseif (nvl($p_meta_ppa,'-')=='S') {
+      ShowHTML('          <option value="">Todo o planejamento');
+      ShowHTML('          <option value="S" SELECTED>Apenas programas e ações cadastrados');
+      ShowHTML('          <option value="N">Apenas programas e ações não cadastrados');
+    } elseif (nvl($p_meta_ppa,'-')=='N') {
+      ShowHTML('          <option value="">Todo o planejamento');
+      ShowHTML('          <option value="S">Apenas programas e ações cadastrados');
+      ShowHTML('          <option value="N" SELECTED>Apenas programas e ações não cadastrados');
+    } 
+    ShowHTML('          </select></td></tr>');
+    ShowHTML('    </table></td></tr>');
+    ShowHTML('    <table width="100%" border="0">');
+    ShowHTML('      <tr><td align="center"><hr>');
+    ShowHTML('            <input class="STB" type="submit" name="Botao" value="Exibir">');
+    ShowHTML('          </td>');
+    ShowHTML('      </tr>');
+    ShowHTML('    </table>');
+    ShowHTML('    </TD>');
+    ShowHTML('</tr>');
+    ShowHTML('</FORM>');
+  } else {
+    ScriptOpen('JavaScript');
+    ShowHTML(' alert(\'Opção não disponível\');');
+    ShowHTML(' history.back(1);');
+    ScriptClose();
+  } 
+  ShowHTML('</table>');
+  ShowHTML('</DIV>');
+  ShowHTML('</BODY>');
+  ShowHTML('</HTML>');
+} 
+
 // =========================================================================
 // Relatório da tabela do PPA
 // -------------------------------------------------------------------------
@@ -125,17 +581,25 @@ function Rel_PPA() {
   $p_selecionada_mp     = strtoupper(trim($_REQUEST['p_selecionada_mp']));
   $p_selecionada_se     = strtoupper(trim($_REQUEST['p_selecionada_se']));
   $p_tarefas_atraso     = strtoupper(trim($_REQUEST['p_tarefas_atraso']));
-  $p_campos             = explodeArray($_REQUEST['p_campos']);
+  if(is_array($_REQUEST['p_campos'])) $p_campos = explodeArray($_REQUEST['p_campos']);
+  else                                $p_campos = $_REQUEST['p_campos'];
   $p_tarefas            = $_REQUEST['p_tarefas'];
   $p_metas              = $_REQUEST['p_metas'];
+  $p_opcao              = $_REQUEST['p_opcao'];
+  $p_opcao_ant          = $_REQUEST['p_opcao'];
+  if($_REQUEST['p_opcao_ant']!=$_REQUEST['p_opcao']) {
+    $p_macro     = '';
+  } else {
+    $p_macro              = $_REQUEST['p_macro'];
+  }
   $p_ordena             = $_REQUEST['p_ordena'];
   if ($O=='L') {
     // Recupera o logo do cliente a ser usado nas listagens
     $RS = db_getCustomerData::getInstanceOf($dbms,$w_cliente);
     if (f($RS,'logo')>'') $w_logo='/img/logo'.substr(f($RS,'logo'),(strpos(f($RS,'logo'),'.') ? strpos(f($RS,'logo'),'.')+1 : 0)-1,30);
     // Recupera todos os registros para a listagem
-    if ($p_cd_programa>'' && $p_codigo=='') $RS = db_getAcaoPPA_IS::getInstanceOf($dbms,$w_cliente,$w_ano,$p_cd_programa,null,null,null,null,null,null);
-    else                                    $RS = db_getAcaoPPA_IS::getInstanceOf($dbms,$w_cliente,$w_ano,substr($p_codigo,0,4),substr($p_codigo,4,4),null,substr($p_codigo,12,17),null,null,null);
+    if ($p_cd_programa>'' && $p_codigo=='') $RS = db_getAcaoPPA_IS::getInstanceOf($dbms,$w_cliente,$w_ano,$p_cd_programa,null,null,null,null,null,null,$p_macro,$p_opcao);
+    else                                    $RS = db_getAcaoPPA_IS::getInstanceOf($dbms,$w_cliente,$w_ano,substr($p_codigo,0,4),substr($p_codigo,4,4),null,substr($p_codigo,12,17),null,null,null,$p_macro,$p_opcao);
     if (Nvl($p_ordena,'')>'') {
       $lista = explode(',',str_replace(' ',',',$p_ordena));
       $RS = SortArray($RS,$lista[0],$lista[1]);
@@ -391,7 +855,7 @@ function Rel_PPA() {
               ShowHTML('      <tr bgcolor="'.$conTrBgColor.'"><td colspan='.$w_col_word.' align="center"><b>Não foram encontrados registros(metas).</b></td></tr>');
               $w_linha += 1;
             } else {
-              $RS3 = db_getSolicMeta_IS::getInstanceOf($dbms,f($RS2,'sq_siw_solicitacao'),null,'LISTA',null,null,null,null,null,null,null,null,null);
+              $RS3 = db_getSolicMeta_IS::getInstanceOf($dbms,$w_cliente,f($RS2,'sq_siw_solicitacao'),null,'LISTA',null,null,null,null,null,null,null,null,null);
               $RS3 = SortArray($RS3,'ordem','asc');
               if (count($RS3)<=0) {
                 // Se não foram selecionados registros, exibe mensagem
@@ -544,12 +1008,17 @@ function Rel_PPA() {
     AbreForm('Form',$w_dir.$w_pagina.$par,'POST','return(Validacao(this));','Acao',$P1,$P2,$P3,$P4,$TP,$SG,$R,'L');
     ShowHTML('<INPUT type="hidden" name="w_chave" value="'.$w_chave.'">');
     ShowHTML('<INPUT type="hidden" name="w_troca" value="">');
+    ShowHTML('<INPUT type="hidden" name="p_opcao_ant" value="'.$p_opcao_ant.'">');
     ShowHTML('<tr bgcolor="'.$conTrBgColor.'"><td align="center">');
     ShowHTML('    <table width="97%" border="0">');
     ShowHTML('      <tr>');
-    SelecaoProgramaPPA('<u>P</u>rograma PPA:','P',null,$w_cliente,$w_ano,$p_cd_programa,'p_cd_programa',null,'onchange="document.Form.action=\''.$w_dir.$w_pagina.$par.'\'; document.Form.w_troca.value=\'p_cd_programa\'; document.Form.target=\'\'; document.Form.O.value=\'P\'; document.Form.submit();"',$w_menu);
+    SelecaoOpcaoEstrat('<u>O</u>pção estratégica:','O',null,$p_opcao,null,'p_opcao','ATIVO','onchange="document.Form.action=\''.$w_dir.$w_pagina.$par.'\'; document.Form.w_troca.value=\'p_macro\'; document.Form.target=\'\'; document.Form.O.value=\'P\'; document.Form.submit();"');
     ShowHTML('      <tr>');
-    SelecaoAcaoPPA('<u>A</u>ção PPA:','A',null,$w_cliente,$w_ano,$p_cd_programa,null,null,null,'p_codigo',null,null,null,$w_menu);
+    SelecaoMacroObjetivo('<u>M</u>acro objetivo:','M',null,$p_macro,$p_opcao,'p_macro','ATIVO','onchange="document.Form.action=\''.$w_dir.$w_pagina.$par.'\'; document.Form.w_troca.value=\'p_cd_programa\'; document.Form.target=\'\'; document.Form.O.value=\'P\'; document.Form.submit();"');
+    ShowHTML('      <tr>');
+    SelecaoProgramaPPA('<u>P</u>rograma PPA:','P',null,$w_cliente,$w_ano,$p_cd_programa,'p_cd_programa','RELATORIO','onchange="document.Form.action=\''.$w_dir.$w_pagina.$par.'\'; document.Form.w_troca.value=\'p_codigo\'; document.Form.target=\'\'; document.Form.O.value=\'P\'; document.Form.submit();"',$w_menu,$p_macro,$p_opcao);
+    ShowHTML('      <tr>');
+    SelecaoAcaoPPA('<u>A</u>ção PPA:','A',null,$w_cliente,$w_ano,$p_cd_programa,null,null,null,'p_codigo',null,null,null,$w_menu,$p_macro,$p_opcao);
     ShowHTML('      <tr><td colspan=3><table border=0 width="100%" cellspacing=0 cellpadding=0><tr valign="top">');
     SelecaoPrioridade('<u>P</u>rioridade das tarefas:','P','Informe a prioridade da tarefa.',$p_prioridade,null,'p_prioridade',null,null);
     ShowHTML('          <td><b>Exibir somente tarefas em atraso?</b><br><input '.$w_Disabled.' type="radio" name="p_tarefas_atraso" value="S"> Sim <input '.$w_Disabled.' type="radio" name="p_tarefas_atraso" value="" checked> Não');
@@ -619,7 +1088,8 @@ function Rel_Projeto(){
   $p_selecao_mp     = strtoupper(trim($_REQUEST['p_selecao_mp']));
   $p_selecao_se     = strtoupper(trim($_REQUEST['p_selecao_se']));
   $p_tarefas_atraso = strtoupper(trim($_REQUEST['p_tarefas_atraso']));
-  $p_campos         = explodeArray($_REQUEST['p_campos']);
+  if(is_array($_REQUEST['p_campos'])) $p_campos = explodeArray($_REQUEST['p_campos']);
+  else                                $p_campos = $_REQUEST['p_campos'];
   $p_tarefas        = $_REQUEST['p_tarefas'];
   $p_metas          = $_REQUEST['p_metas'];
   $p_siw_solic      = $_REQUEST['p_siw_solic'];
@@ -806,7 +1276,7 @@ function Rel_Projeto(){
               $w_linha += 1;
             } else {
               foreach($RS2 as $row2){$RS2=$row2; break;}
-              $RS3 = db_getSolicMeta_IS::getInstanceOf($dbms,f($RS2,'sq_siw_solicitacao'),null,'LSTNULL',null,null,null,null,null,null,null,null,null);
+              $RS3 = db_getSolicMeta_IS::getInstanceOf($dbms,$w_cliente,f($RS2,'sq_siw_solicitacao'),null,'LSTNULL',null,null,null,null,null,null,null,null,null);
               $RS3 = SortArray($RS3,'ordem','asc');
               if (count($RS3)<=0) {
                 // Se não foram selecionados registros, exibe mensagem
@@ -1017,14 +1487,22 @@ function Rel_Programa() {
   $p_sq_unidade_resp= $_REQUEST['p_sq_unidade_resp'];
   $p_selecao_mp     = $_REQUEST['p_selecao_mp'];
   $p_selecao_se     = $_REQUEST['p_selecao_se'];
-  $p_campos         = explodeArray($_REQUEST['p_campos']);
+  if(is_array($_REQUEST['p_campos'])) $p_campos = explodeArray($_REQUEST['p_campos']);
+  else                                $p_campos = $_REQUEST['p_campos'];
   $p_indicador      = $_REQUEST['p_indicador'];
+  $p_opcao          = $_REQUEST['p_opcao'];
+  $p_opcao_ant      = $_REQUEST['p_opcao'];
+  if($_REQUEST['p_opcao_ant']!=$_REQUEST['p_opcao']) {
+    $p_macro        = '';
+  } else {
+    $p_macro        = $_REQUEST['p_macro'];
+  }  
   if ($O=='L') {
     // Recupera o logo do cliente a ser usado nas listagens
     $RS = db_getCustomerData::getInstanceOf($dbms,$w_cliente);
     if (f($RS,'logo')>'') $w_logo='/img/logo'.substr(f($RS,'logo'),(strpos(f($RS,'logo'),'.') ? strpos(f($RS,'logo'),'.')+1 : 0)-1,30);
     // Recupera todos os registros para a listagem
-    $RS = db_getProgramaPPA_IS::getInstanceOf($dbms,$p_cd_programa,$w_cliente,$w_ano,null,null);
+    $RS = db_getProgramaPPA_IS::getInstanceOf($dbms,$p_cd_programa,$w_cliente,$w_ano,null,null,$p_macro,$p_opcao);
     if (Nvl($p_ordena,'')>'') {
       $lista = explode(',',str_replace(' ',',',$p_ordena));
       $RS = SortArray($RS,$lista[0],$lista[1]);
@@ -1203,13 +1681,13 @@ function Rel_Programa() {
               $w_linha += 1;
             } else {
               ShowHTML('        <tr bgcolor="'.$conTrBgColor.'" align="center">');
-              ShowHTML('          <td><b>Indicador</td>');
-              ShowHTML('          <td><b>PPA</td>');
-              ShowHTML('          <td><b>Indice<br>referência</td>');
-              ShowHTML('          <td><b>Indice<br>programado</td>');
-              ShowHTML('          <td><b>Indice<br>apurado</td>');
-              ShowHTML('          <td><b>Data<br>apuracao</td>');
-              ShowHTML('          <td><b>Unidade<br>medida</td>');
+              ShowHTML('          <td width="45%"><b>Indicador</td>');
+              ShowHTML('          <td width="5%"><b>PPA</td>');
+              ShowHTML('          <td width="10%"><b>Índice<br>referência</td>');
+              ShowHTML('          <td width="10%"><b>Índice<br>programado</td>');
+              ShowHTML('          <td width="10%"><b>Índice<br>apurado</td>');
+              ShowHTML('          <td width="10%"><b>Data<br>apuracao</td>');
+              ShowHTML('          <td width="10%"><b>Unidade<br>medida</td>');
               ShowHTML('        </tr>');
               $w_linha += 1;
               foreach($RS3 as $row3) {
@@ -1256,10 +1734,15 @@ function Rel_Programa() {
     AbreForm('Form',$w_dir.$w_pagina.$par,'POST','return(Validacao(this));','Programa',$P1,$P2,$P3,$P4,$TP,$SG,$R,'L');
     ShowHTML('<INPUT type="hidden" name="w_chave" value="'.$w_chave.'">');
     ShowHTML('<INPUT type="hidden" name="w_troca" value="">');
+    ShowHTML('<INPUT type="hidden" name="p_opcao_ant" value="'.$p_opcao_ant.'">');
     ShowHTML('<tr bgcolor="'.$conTrBgColor.'"><td align="center">');
     ShowHTML('    <table width="97%" border="0">');
     ShowHTML('      <tr>');
-    SelecaoProgramaPPA('<u>P</u>rograma PPA:','P',null,$w_cliente,$w_ano,$p_cd_programa,'p_cd_programa',null,null,$w_menu);
+    SelecaoOpcaoEstrat('<u>O</u>pção estratégica:','O',null,$p_opcao,null,'p_opcao','ATIVO','onchange="document.Form.action=\''.$w_dir.$w_pagina.$par.'\'; document.Form.w_troca.value=\'p_macro\'; document.Form.target=\'\'; document.Form.O.value=\'P\'; document.Form.submit();"');
+    ShowHTML('      <tr>');
+    SelecaoMacroObjetivo('<u>M</u>acro objetivo:','M',null,$p_macro,$p_opcao,'p_macro','ATIVO','onchange="document.Form.action=\''.$w_dir.$w_pagina.$par.'\'; document.Form.w_troca.value=\'p_cd_programa\'; document.Form.target=\'\'; document.Form.O.value=\'P\'; document.Form.submit();"');
+    ShowHTML('      <tr>');
+    SelecaoProgramaPPA('<u>P</u>rograma PPA:','P',null,$w_cliente,$w_ano,$p_cd_programa,'p_cd_programa','RELATORIO',null,$w_menu,$p_macro,$p_opcao);
     ShowHTML('      <tr><td colspan=3><table border=0 width="100%" cellspacing=0 cellpadding=0><tr valign="top">');
     ShowHTML('          <td><b>Selecionada pela SPI/MP?</b><br>');
     if ($p_selecao_mp=='S')     ShowHTML('              <input '.$w_Disabled.' type="radio" name="p_selecao_mp" value="S" checked> Sim <input '.$w_Disabled.' type="radio" name="'.$p_selecao_mp.'" value="N"> Não <input '.$w_Disabled.' type="radio" name="p_selecao_mp" value=""> Independe');
@@ -1462,7 +1945,7 @@ function Rel_Sintetico_PR() {
           $w_teste_acoes=1;
           $w_visao=0;
           if ($w_visao<2) {
-            $RS3 = db_getSolicMeta_IS::getInstanceOf($dbms,f($RS2,'sq_siw_solicitacao'),null,'LSTNULL',null,null,null,null,null,null,$p_exequivel,$p_programada,$p_fim_previsto);
+            $RS3 = db_getSolicMeta_IS::getInstanceOf($dbms,$w_cliente,f($RS2,'sq_siw_solicitacao'),null,'LSTNULL',null,null,null,null,null,null,$p_exequivel,$p_programada,$p_fim_previsto);
             $RS3 = SortArray($RS3,'ordem','asc');
             if (count($RS3)>0) {
               $w_teste_metas=1;
@@ -1508,7 +1991,7 @@ function Rel_Sintetico_PR() {
                   }
                   $i=1;
                   if ($w_tipo_rel=='WORD')  ShowHTML('      <td>'.f($row3,'titulo').'</td>');
-                  else                      ShowHTML('      <td><A class="HL" HREF="#" onClick="window.open(\'acao.php?par=AtualizaMeta&O=V&w_chave='.f($RS2,'sq_siw_solicitacao').'&w_chave_aux='.f($row3,'sq_meta').'&w_tipo=Volta&P1=10&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP='.$TP.'&SG='.$SG.'\',\'Meta\',\'width=600, height=350, top=50, left=50, toolbar=no, scrollbars=yes, resizable=yes, status=no\'); return false;" title="Clique para exibir os dados!">'.f($row3,'titulo').'</A></td>');
+                  else                      ShowHTML('      <td><A class="HL" HREF="#" onClick="window.open(\''.montaURL_JS($w_dir,'acao.php?par=AtualizaMeta&O=V&w_chave='.f($RS2,'sq_siw_solicitacao').'&w_chave_aux='.f($row3,'sq_meta').'&w_tipo=Volta&P1=10&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP='.$TP.'&SG='.$SG).'\',\'Meta\',\'width=600, height=350, top=50, left=50, toolbar=no, scrollbars=yes, resizable=yes, status=no\'); return false;" title="Clique para exibir os dados!">'.f($row3,'titulo').'</A></td>');
                   ShowHTML('      <td nowrap align="center">'.Nvl(f($row3,'unidade_medida'),'---').'</td>');
                   ShowHTML('      <td nowrap align="right" >'.number_format(Nvl(f($row3,'quantidade'),0),2,',','.').'</td>');
                   $RS4 = db_getMetaMensal_IS::getInstanceOf($dbms,f($row3,'sq_meta'));
@@ -1635,13 +2118,20 @@ function Rel_Sintetico_PPA() {
   $p_fim_previsto   = strtoupper(trim($_REQUEST['p_fim_previsto']));
   $p_atraso         = strtoupper(trim($_REQUEST['p_atraso']));
   $p_tarefas_atraso = strtoupper(trim($_REQUEST['p_tarefas_atraso']));
+  $p_opcao          = $_REQUEST['p_opcao'];
+  $p_opcao_ant      = $_REQUEST['p_opcao'];
+  if($_REQUEST['p_opcao_ant']!=$_REQUEST['p_opcao']) {
+    $p_macro        = '';
+  } else {
+    $p_macro        = $_REQUEST['p_macro'];
+  }
   $w_cont=0;
   if ($O=='L') {
     // Recupera o logo do cliente a ser usado nas listagens
     $RS = db_getCustomerData::getInstanceOf($dbms,$w_cliente);
     if (f($RS,'logo')>'') $w_logo='/img/logo'.substr(f($RS,'logo'),(strpos(f($RS,'logo'),'.') ? strpos(f($RS,'logo'),'.')+1 : 0)-1,30);
-    if ($p_cd_programa>'' && $p_codigo=='') $RS = db_getAcaoPPA_IS::getInstanceOf($dbms,$w_cliente,$w_ano,$p_cd_programa,null,null,null,null,null,null);
-    else                                    $RS = db_getAcaoPPA_IS::getInstanceOf($dbms,$w_cliente,$w_ano,substr($p_codigo,0,4),substr($p_codigo,4,4),null,substr($p_codigo,12,17),null,null,null);
+    if ($p_cd_programa>'' && $p_codigo=='') $RS = db_getAcaoPPA_IS::getInstanceOf($dbms,$w_cliente,$w_ano,$p_cd_programa,null,null,null,null,null,null,$p_macro,$p_opcao);
+    else                                    $RS = db_getAcaoPPA_IS::getInstanceOf($dbms,$w_cliente,$w_ano,substr($p_codigo,0,4),substr($p_codigo,4,4),null,substr($p_codigo,12,17),null,null,null,$p_macro,$p_opcao);
     $RS = SortArray($RS,'cd_programa','asc','cd_acao','asc','cd_unidade','asc');
   } 
   if ($w_tipo_rel=='WORD') {
@@ -1804,7 +2294,7 @@ function Rel_Sintetico_PPA() {
           $w_teste_acoes=1;
           $w_visao=0;
           if ($w_visao<2) {
-            $RS3 = db_getSolicMeta_IS::getInstanceOf($dbms,f($RS2,'sq_siw_solicitacao'),null,'LSTNULL',null,null,null,null,null,$p_programada,$p_exequivel,null,$p_fim_previsto);
+            $RS3 = db_getSolicMeta_IS::getInstanceOf($dbms,$w_cliente,f($RS2,'sq_siw_solicitacao'),null,'LSTNULL',null,null,null,null,null,$p_programada,$p_exequivel,null,$p_fim_previsto);
             $RS3 = SortArray($RS3,'ordem','asc');
             if (count($RS3)>0) {
               $w_teste_metas=1;
@@ -1859,7 +2349,7 @@ function Rel_Sintetico_PPA() {
                 }
                 $i=1;
                 if ($w_tipo_rel=='WORD')  ShowHTML('<td>'.f($row3,'titulo').'</td>');
-                else                      ShowHTML('<td><A class="HL" HREF="#" onClick="window.open(\'acao.php?par=AtualizaMeta&O=V&w_chave='.f($RS2,'sq_siw_solicitacao').'&w_chave_aux='.f($row3,'sq_meta').'&w_tipo=Volta&P1=10&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP='.$TP.'&SG='.$SG.'\',\'Meta\',\'width=600, height=350, top=50, left=50, toolbar=no, scrollbars=yes, resizable=yes, status=no\'); return false;" title="Clique para exibir os dados!">'.f($row3,'titulo').'</A></td>');
+                else                      ShowHTML('<td><A class="HL" HREF="#" onClick="window.open(\''.montaURL_JS($w_dir,'acao.php?par=AtualizaMeta&O=V&w_chave='.f($RS2,'sq_siw_solicitacao').'&w_chave_aux='.f($row3,'sq_meta').'&w_tipo=Volta&P1=10&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP='.$TP.'&SG='.$SG).'\',\'Meta\',\'width=600, height=350, top=50, left=50, toolbar=no, scrollbars=yes, resizable=yes, status=no\'); return false;" title="Clique para exibir os dados!">'.f($row3,'titulo').'</A></td>');
                 ShowHTML('      <td nowrap align="center">'.Nvl(f($row3,'unidade_medida'),'---').'</td>');
                 ShowHTML('      <td nowrap align="right" >'.f($row3,'quantidade').'</td>');
                 $RS4 = db_getMetaMensal_IS::getInstanceOf($dbms,f($row3,'sq_meta'));
@@ -1924,12 +2414,17 @@ function Rel_Sintetico_PPA() {
     AbreForm('Form',$w_dir.$w_pagina.$par,'POST','return(Validacao(this));','Acao',$P1,$P2,$P3,$P4,$TP,$SG,$R,'L');
     ShowHTML('<INPUT type="hidden" name="w_chave" value="'.$w_chave.'">');
     ShowHTML('<INPUT type="hidden" name="w_troca" value="">');
+    ShowHTML('<INPUT type="hidden" name="p_opcao_ant" value="'.$p_opcao_ant.'">');    
     ShowHTML('<tr bgcolor="'.$conTrBgColor.'"><td align="center">');
     ShowHTML('    <table width="97%" border="0">');
     ShowHTML('      <tr>');
-    SelecaoProgramaPPA('<u>P</u>rograma PPA:','P',null,$w_cliente,$w_ano,$p_cd_programa,'p_cd_programa',null,'onchange="document.Form.action=\''.$w_dir.$w_pagina.$par.'\'; document.Form.w_troca.value=\'p_cd_programa\'; document.Form.target=\'\'; document.Form.O.value=\'P\'; document.Form.submit();"',$w_menu);
+    SelecaoOpcaoEstrat('<u>O</u>pção estratégica:','O',null,$p_opcao,null,'p_opcao','ATIVO','onchange="document.Form.action=\''.$w_dir.$w_pagina.$par.'\'; document.Form.w_troca.value=\'p_macro\'; document.Form.target=\'\'; document.Form.O.value=\'P\'; document.Form.submit();"');
     ShowHTML('      <tr>');
-    SelecaoAcaoPPA('<u>A</u>ção PPA:','A',null,$w_cliente,$w_ano,$p_cd_programa,null,null,null,'p_codigo',null,null,null,$w_menu);
+    SelecaoMacroObjetivo('<u>M</u>acro objetivo:','M',null,$p_macro,$p_opcao,'p_macro','ATIVO','onchange="document.Form.action=\''.$w_dir.$w_pagina.$par.'\'; document.Form.w_troca.value=\'p_cd_programa\'; document.Form.target=\'\'; document.Form.O.value=\'P\'; document.Form.submit();"');
+    ShowHTML('      <tr>');
+    SelecaoProgramaPPA('<u>P</u>rograma PPA:','P',null,$w_cliente,$w_ano,$p_cd_programa,'p_cd_programa','RELATORIO','onchange="document.Form.action=\''.$w_dir.$w_pagina.$par.'\'; document.Form.w_troca.value=\'p_codigo\'; document.Form.target=\'\'; document.Form.O.value=\'P\'; document.Form.submit();"',$w_menu,$p_macro,$p_opcao);
+    ShowHTML('      <tr>');
+    SelecaoAcaoPPA('<u>A</u>ção PPA:','A',null,$w_cliente,$w_ano,$p_cd_programa,null,null,null,'p_codigo',null,null,null,$w_menu,$p_macro,$p_opcao);
     ShowHTML('      <tr>');
     SelecaoPrioridade('<u>P</u>rioridade das tarefas:','P','Informe a prioridade da tarefa.',$p_prioridade,null,'p_prioridade',null,null);
     ShowHTML('      <tr><td colspan=3><table border=0 width="100%" cellspacing=0 cellpadding=0><tr valign="top">');
@@ -1983,12 +2478,19 @@ function Rel_Sintetico_Prog() {
   $p_loa            = strtoupper(trim($_REQUEST['p_loa']));
   $p_exequivel      = strtoupper(trim($_REQUEST['p_exequivel']));
   $p_atraso         = strtoupper(trim($_REQUEST['p_atraso']));
+  $p_opcao          = $_REQUEST['p_opcao'];
+  $p_opcao_ant      = $_REQUEST['p_opcao'];
+  if($_REQUEST['p_opcao_ant']!=$_REQUEST['p_opcao']) {
+    $p_macro        = '';
+  } else {
+    $p_macro        = $_REQUEST['p_macro'];
+  }  
   $w_cont=0;
   if ($O=='L') {
     // Recupera o logo do cliente a ser usado nas listagens
     $RS = db_getCustomerData::getInstanceOf($dbms,$w_cliente);
     if (f($RS,'logo')>'') $w_logo='/img/logo'.substr(f($RS,'logo'),(strpos(f($RS,'logo'),'.') ? strpos(f($RS,'logo'),'.')+1 : 0)-1,30);
-    $RS = db_getProgramaPPA_IS::getInstanceOf($dbms,$p_cd_programa,$w_cliente,$w_ano,null,null);
+    $RS = db_getProgramaPPA_IS::getInstanceOf($dbms,$p_cd_programa,$w_cliente,$w_ano,null,null,$p_macro,$p_opcao);
     $RS = SortArray($RS,'ds_programa','asc');
   } 
   if ($w_tipo_rel=='WORD') {
@@ -2155,7 +2657,7 @@ function Rel_Sintetico_Prog() {
                 if($i==1) ShowHTML('<tr><td colspan="2">&nbsp;');
                 $i=1;
                 if ($w_tipo_rel=='WORD')  ShowHTML('<td>'.f($row3,'titulo').'</td>');
-                else                      ShowHTML('<td><A class="HL" HREF="#" onClick="window.open(\'programa.php?par=AtualizaIndicador&O=V&w_chave='.f($RS2,'sq_siw_solicitacao').'&w_chave_aux='.f($row3,'sq_indicador').'&w_tipo=Volta&P1=10&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP='.$TP.'&SG='.$SG.'\',\'Meta\',\'width=600, height=350, top=50, left=50, toolbar=no, scrollbars=yes, resizable=yes, status=no\'); return false;" title="Clique para exibir os dados!">'.f($row3,'titulo').'</A></td>');
+                else                      ShowHTML('<td><A class="HL" HREF="#" onClick="window.open(\''.montaURL_JS($w_dir,'programa.php?par=AtualizaIndicador&O=V&w_chave='.f($RS2,'sq_siw_solicitacao').'&w_chave_aux='.f($row3,'sq_indicador').'&w_tipo=Volta&P1=10&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP='.$TP.'&SG='.$SG).'\',\'Meta\',\'width=600, height=350, top=50, left=50, toolbar=no, scrollbars=yes, resizable=yes, status=no\'); return false;" title="Clique para exibir os dados!">'.f($row3,'titulo').'</A></td>');
                 ShowHTML('      <td nowrap align="right">'.number_format(Nvl(f($row3,'valor_referencia'),0),2,',','.').'</td>');
                 ShowHTML('      <td nowrap align="left" >'.Nvl(f($row3,'nm_unidade_medida'),'---').'</td>');
                 ShowHTML('      <td nowrap align="right" >'.number_format(Nvl(f($row3,'quantidade'),0),2,',','.').'</td>');
@@ -2194,10 +2696,15 @@ function Rel_Sintetico_Prog() {
     AbreForm('Form',$w_dir.$w_pagina.$par,'POST','return(Validacao(this));','Programa',$P1,$P2,$P3,$P4,$TP,$SG,$R,'L');
     ShowHTML('<INPUT type="hidden" name="w_chave" value="'.$w_chave.'">');
     ShowHTML('<INPUT type="hidden" name="w_troca" value="">');
+    ShowHTML('<INPUT type="hidden" name="p_opcao_ant" value="'.$p_opcao_ant.'">');
     ShowHTML('<tr bgcolor="'.$conTrBgColor.'"><td align="center">');
     ShowHTML('    <table width="97%" border="0">');
     ShowHTML('      <tr>');
-    SelecaoProgramaPPA('<u>P</u>rograma PPA:','P',null,$w_cliente,$w_ano,$p_cd_programa,'p_cd_programa',null,null,$w_menu);
+    SelecaoOpcaoEstrat('<u>O</u>pção estratégica:','O',null,$p_opcao,null,'p_opcao','ATIVO','onchange="document.Form.action=\''.$w_dir.$w_pagina.$par.'\'; document.Form.w_troca.value=\'p_macro\'; document.Form.target=\'\'; document.Form.O.value=\'P\'; document.Form.submit();"');
+    ShowHTML('      <tr>');
+    SelecaoMacroObjetivo('<u>M</u>acro objetivo:','M',null,$p_macro,$p_opcao,'p_macro','ATIVO','onchange="document.Form.action=\''.$w_dir.$w_pagina.$par.'\'; document.Form.w_troca.value=\'p_cd_programa\'; document.Form.target=\'\'; document.Form.O.value=\'P\'; document.Form.submit();"');
+    ShowHTML('      <tr>');
+    SelecaoProgramaPPA('<u>P</u>rograma PPA:','P',null,$w_cliente,$w_ano,$p_cd_programa,'p_cd_programa','RELATORIO',null,$w_menu,$p_macro,$p_opcao);
     ShowHTML('      <tr><td colspan=3><table border=0 width="100%" cellspacing=0 cellpadding=0><tr valign="top">');
     ShowHTML('          <td><b>Selecionada SPI/MP?</b><br>');
     ShowHTML('              <input '.$w_Disabled.' type="radio" name="p_selecao_mp" value="S"> Sim <input '.$w_Disabled.' type="radio" name="p_selecao_mp" value="N"> Não <input '.$w_Disabled.' type="radio" name="p_selecao_mp" value="" checked> Independe');
@@ -2260,7 +2767,7 @@ function Rel_Gerencial_Acao() {
     } 
     ShowHTML('</TD></TR>');
     ShowHTML('</FONT></B></TD></TR></TABLE>');
-    $RS = db_getAcaoPPA_IS::getInstanceOf($dbms,$w_cliente,$w_ano,substr($p_codigo,0,4),substr($p_codigo,4,4),null,substr($p_codigo,12,17),null,null,null);
+    $RS = db_getAcaoPPA_IS::getInstanceOf($dbms,$w_cliente,$w_ano,substr($p_codigo,0,4),substr($p_codigo,4,4),null,substr($p_codigo,12,17),null,null,null,null,null);
     foreach ($RS as $row){$RS=$row; break;}
     if (Nvl(f($RS,'sq_siw_solicitacao'),'')=='') {
       ScriptOpen('JavaScript');
@@ -2294,7 +2801,7 @@ function Rel_Gerencial_Acao() {
     ShowHTML('<tr bgcolor="'.$conTrBgColor.'"><td align="center">');
     ShowHTML('    <table width="97%" border="0">');
     ShowHTML('      <tr>');
-    SelecaoAcaoPPA('<u>A</u>ção PPA:','A',null,$w_cliente,$w_ano,null,null,null,null,'p_codigo',null,null,null,$w_menu);
+    SelecaoAcaoPPA('<u>A</u>ção PPA:','A',null,$w_cliente,$w_ano,null,null,null,null,'p_codigo',null,null,null,$w_menu,null,null);
     ShowHTML('          </table>');
     ShowHTML('    <table width="90%" border="0">');
     ShowHTML('      <tr><td align="center"><hr>');
@@ -2344,7 +2851,7 @@ function Rel_Gerencial_Prog() {
     } 
     ShowHTML('</TD></TR>');
     ShowHTML('</FONT></B></TD></TR></TABLE>');
-    $RS = db_getProgramaPPA_IS::getInstanceOf($dbms,$p_cd_programa,$w_cliente,$w_ano,null,null);
+    $RS = db_getProgramaPPA_IS::getInstanceOf($dbms,$p_cd_programa,$w_cliente,$w_ano,null,null,null,null);
     foreach ($RS as $row){$RS=$row; break;}
     if (Nvl(f($RS,'sq_siw_solicitacao'),'')=='') {
       ScriptOpen('JavaScript');
@@ -2378,7 +2885,7 @@ function Rel_Gerencial_Prog() {
     ShowHTML('<tr bgcolor="'.$conTrBgColor.'"><td align="center">');
     ShowHTML('    <table width="97%" border="0">');
     ShowHTML('      <tr>');
-    SelecaoProgramaPPA('<u>P</u>rograma PPA:','P',null,$w_cliente,$w_ano,$p_cd_programa,'p_cd_programa',null,null,$w_menu);
+    SelecaoProgramaPPA('<u>P</u>rograma PPA:','P',null,$w_cliente,$w_ano,$p_cd_programa,'p_cd_programa',null,null,$w_menu,null,null);
     ShowHTML('          </table>');
     ShowHTML('    <table width="90%" border="0">');
     ShowHTML('      <tr><td align="center"><hr>');
@@ -2477,6 +2984,7 @@ function Rel_Gerencial_Tarefa() {
   ShowHTML('</center>');
   if ($w_tipo!='WORD') Rodape();
 } 
+
 // =========================================================================
 // Relatório para acompanhamento das metas das Ações do PPA
 // -------------------------------------------------------------------------
@@ -2507,7 +3015,7 @@ function Rel_Metas() {
     $RS = db_getCustomerData::getInstanceOf($dbms,$w_cliente);
     if (f($RS,'logo')>'')   $w_logo='/img/logo'.substr(f($RS,'logo'),(strpos(f($RS,'logo'),'.') ? strpos(f($RS,'logo'),'.')+1 : 0)-1,30);
   } 
-  $RS = db_getSolicMeta_IS::getInstanceOf($dbms,null,null,'LSTNULL',$w_ano,$p_sq_unidade,$p_cd_programa,$p_cd_acao,$p_preenchida,$p_meta_ppa,$p_exequivel,null,null);
+  $RS = db_getSolicMeta_IS::getInstanceOf($dbms,$w_cliente,null,null,'LSTNULL',$w_ano,$p_sq_unidade,$p_cd_programa,$p_cd_acao,$p_preenchida,$p_meta_ppa,$p_exequivel,null,null);
   $RS = SortArray($RS,'cd_programa','asc','cd_acao','asc','cd_unidade','asc','cd_subacao','asc');
   foreach($RS as $row){$RS=$row; break;}
   if ($w_tipo_rel=='WORD') {
@@ -2519,7 +3027,7 @@ function Rel_Metas() {
     ShowHTML('<table width="95%" border="0" cellspacing="3">');
     ShowHTML('<tr><td colspan="2">');
     ShowHTML('<TABLE WIDTH="100%" BORDER=0><TR><TD ROWSPAN=2><IMG ALIGN="LEFT" src="'.LinkArquivo(null,$w_cliente,$w_logo,null,null,null,'WORD').'"></TD><TD ALIGN="RIGHT" NOWRAP><B><FONT SIZE=4 COLOR="#000000">');
-    ShowHTML('RELATÓRIO DE CONFERÊNCIA DAS METAS NO SISPLAM <br> Exercício '.$w_ano);
+    ShowHTML('RELATÓRIO DE CONFERÊNCIA DAS METAS <br> Exercício '.$w_ano);
     ShowHTML('</FONT></TD></TR></TABLE>');
   } else {
     Cabecalho();
@@ -2547,7 +3055,7 @@ function Rel_Metas() {
       ShowHTML('<table width="95%" border="0" cellspacing="3">');
       ShowHTML('<tr><td colspan="2">');
       ShowHTML('<TABLE WIDTH="100%" BORDER=0><TR><TD ROWSPAN=2><IMG ALIGN="LEFT" src="'.LinkArquivo(null,$w_cliente,$w_logo,null,null,null,'EMBED').'"></TD><TD ALIGN="RIGHT" NOWRAP><B><FONT SIZE=4 COLOR="#000000">');
-      ShowHTML('RELATÓRIO DE CONFERÊNCIA DAS METAS NO SISPLAM <br> Exercício '.$w_ano);
+      ShowHTML('RELATÓRIO DE CONFERÊNCIA DAS METAS<br> Exercício '.$w_ano);
       ShowHTML('</FONT></B></TD></TR></TABLE>');
     } else {
       BodyOpen('onLoad=\'document.Form.p_cd_programa.focus()\';');
@@ -2569,14 +3077,14 @@ function Rel_Metas() {
       ShowHTML('<tr><td width="15%"><b>Área de planejamento:</b></td><td>Todas</td>');
     } 
     if ($p_cd_programa>'') {
-      $RS1 = db_getProgramaPPA_IS::getInstanceOf($dbms,$p_cd_programa,$w_cliente,$w_ano,null,null);
+      $RS1 = db_getProgramaPPA_IS::getInstanceOf($dbms,$p_cd_programa,$w_cliente,$w_ano,null,null,null,null);
       foreach($RS1 as $row1){$RS1=$row1; break;}
       ShowHTML('    <td width="7%"><b>Programa:</b></td><td nowrap>'.$p_cd_programa.' - '.f($RS1,'ds_programa').'</td></tr>');
     } else {
       ShowHTML('    <td width="7%"><b>Programa:</b></td><td>Todos</td></tr>');
     } 
     if ($p_cd_acao>'') {
-      $RS1 = db_getAcaoPPA_IS::getInstanceOf($dbms,$w_cliente,$w_ano,$p_cd_programa,substr($p_cd_acao,4,4),null,null,null,null,null);
+      $RS1 = db_getAcaoPPA_IS::getInstanceOf($dbms,$w_cliente,$w_ano,$p_cd_programa,substr($p_cd_acao,4,4),null,null,null,null,null,null,null);
       foreach($RS1 as $row1){$RS1=$row1; break;}
       ShowHTML('<tr valign="top"><td><b>Ação:</b></td><td>'.substr($p_cd_acao,4,4).' - '.f($RS1,'descricao_acao').'</td>');
     } else {
@@ -2632,7 +3140,7 @@ function Rel_Metas() {
       ShowHTML('    <tr><td colspan="13"><div align="center"><b>Não foram encontrados registros</b></div></td></tr>');
     } else {
       // Listagem das metas de acordo com o filtro selecionado na tela de filtragem
-      $RS = db_getSolicMeta_IS::getInstanceOf($dbms,null,null,'LSTNULL',$w_ano,$p_sq_unidade,$p_cd_programa,$p_cd_acao,$p_preenchida,$p_meta_ppa,$p_exequivel,null,null);
+      $RS = db_getSolicMeta_IS::getInstanceOf($dbms,$w_cliente,null,null,'LSTNULL',$w_ano,$p_sq_unidade,$p_cd_programa,$p_cd_acao,$p_preenchida,$p_meta_ppa,$p_exequivel,null,null);
       $RS = SortArray($RS,'cd_programa','asc','cd_acao','asc','cd_unidade','asc','cd_subacao','asc');
       foreach($RS as $row) {
         if ($w_linha>19 && $w_tipo_rel=='WORD') {
@@ -2661,14 +3169,14 @@ function Rel_Metas() {
             ShowHTML('<tr><td width="15%"><b>Área de planejamento:</b></td><td>Todas</td>');
           } 
           if ($p_cd_programa>'') {
-            $RS1 = db_getProgramaPPA_IS::getInstanceOf($dbms,$p_cd_programa,$w_cliente,$w_ano,null,null);
+            $RS1 = db_getProgramaPPA_IS::getInstanceOf($dbms,$p_cd_programa,$w_cliente,$w_ano,null,null,null,null);
             foreach($RS1 as $row1){$RS1=$row1; break;}
             ShowHTML('    <td width="7%"><b>Programa:</b></td><td nowrap>'.$p_cd_programa.' - '.f($RS1,'ds_programa').'</td></tr>');
           } else {
             ShowHTML('    <td width="7%"><b>Programa:</b></td><td>Todos</td></tr>');
           } 
           if ($p_cd_acao>'') {
-            $RS1 = db_getAcaoPPA_IS::getInstanceOf($dbms,$w_cliente,$w_ano,$p_cd_programa,substr($p_cd_acao,4,4),null,null,null,null,null);
+            $RS1 = db_getAcaoPPA_IS::getInstanceOf($dbms,$w_cliente,$w_ano,$p_cd_programa,substr($p_cd_acao,4,4),null,null,null,null,null,null,null);
             foreach($RS1 as $row1){$RS1=$row1; break;}
             ShowHTML('<tr valign="top"><td><b>Ação:</b></td><td>'.substr($p_cd_acao,4,4).' - '.f($RS1,'descricao_acao').'</td>');
           } else {
@@ -2746,7 +3254,7 @@ function Rel_Metas() {
           ShowHTML('      <td><b>&nbsp;</td>');
         } 
         if ($w_tipo_rel=='WORD') ShowHTML('<td>'.f($row,'titulo').'</td>');
-        else                     ShowHTML('<td><A class="HL" HREF="#" onClick="window.open(\'acao.php?par=AtualizaMeta&O=V&w_chave='.f($row,'sq_siw_solicitacao').'&w_chave_aux='.f($row,'sq_meta').'&w_tipo=Volta&P1=10&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP='.$TP.'&SG='.$SG.'\',\'Meta\',\'width=600, height=350, top=50, left=50, toolbar=no, scrollbars=yes, resizable=yes, status=no\'); return false;" title="Clique para exibir os dados!">'.f($row,'titulo').'</A></td>');
+        else                     ShowHTML('<td><A class="HL" HREF="#" onClick="window.open(\''.montaURL_JS($w_dir,'acao.php?par=AtualizaMeta&O=V&w_chave='.f($row,'sq_siw_solicitacao').'&w_chave_aux='.f($row,'sq_meta').'&w_tipo=Volta&P1=10&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP='.$TP.'&SG='.$SG).'\',\'Meta\',\'width=600, height=350, top=50, left=50, toolbar=no, scrollbars=yes, resizable=yes, status=no\'); return false;" title="Clique para exibir os dados!">'.f($row,'titulo').'</A></td>');
         if (Nvl(f($row,'cd_subacao'),'')>'') {
           $w_total_ppa=$w_total_ppa+1;
           ShowHTML('   <td><div align="center">Sim</div></td>');
@@ -2899,14 +3407,15 @@ function Rel_Metas() {
     AbreForm('Form',$w_dir.$w_pagina.$par,'POST','return(Validacao(this));','Acao',$P1,$P2,$P3,$P4,$TP,$SG,$R,'L');
     ShowHTML('<INPUT type="hidden" name="w_chave" value="'.$w_chave.'">');
     ShowHTML('<INPUT type="hidden" name="w_troca" value="">');
+    ShowHTML('<INPUT type="hidden" name="p_opcao_ant" value="'.$p_opcao_ant.'">');    
     ShowHTML('<tr><td align="center">');
     ShowHTML('    <table width="97%" border="0">');
     ShowHTML('      <tr bgcolor="'.$conTrBgColor.'">');
-    SelecaoUnidade('Á<U>r</U>ea planejamento:','R',null,$p_sq_unidade,null,'p_sq_unidade',null,'onchange="document.Form.action=\''.$w_dir.$w_pagina.$par.'\'; document.Form.w_troca.value=\'p_sq_unidade\'; document.Form.target=\'\'; document.Form.O.value=\'P\'; document.Form.submit();"');
+    SelecaoUnidade('Á<U>r</U>ea planejamento:','R',null,$p_sq_unidade,null,'p_sq_unidade',null,null);
     ShowHTML('      <tr bgcolor="'.$conTrBgColor.'">');
-    SelecaoProgramaPPA('<u>P</u>rograma PPA:','P',null,$w_cliente,$w_ano,$p_cd_programa,'p_cd_programa','RELATORIO','onchange="document.Form.action=\''.$w_dir.$w_pagina.$par.'\'; document.Form.w_troca.value=\'p_cd_programa\'; document.Form.target=\'\'; document.Form.O.value=\'P\'; document.Form.submit();"',$w_menu);
+    SelecaoProgramaPPA('<u>P</u>rograma PPA:','P',null,$w_cliente,$w_ano,$p_cd_programa,'p_cd_programa','RELATORIO','onchange="document.Form.action=\''.$w_dir.$w_pagina.$par.'\'; document.Form.w_troca.value=\'p_cd_acao\'; document.Form.target=\'\'; document.Form.O.value=\'P\'; document.Form.submit();"',$w_menu,null,null);
     ShowHTML('      <tr bgcolor="'.$conTrBgColor.'">');
-    SelecaoAcaoPPA('<u>A</u>ção PPA:','A',null,$w_cliente,$w_ano,$p_cd_programa,null,null,null,'p_cd_acao',null,null,null,$w_menu);
+    SelecaoAcaoPPA('<u>A</u>ção PPA:','A',null,$w_cliente,$w_ano,$p_cd_programa,null,null,null,'p_cd_acao',null,null,null,$w_menu,null,null);
     ShowHTML('      <tr bgcolor="'.$conTrBgColor.'">');
     ShowHTML('        <td><b><u>T</u>ipo de relatório:</b><br><SELECT ACCESSKEY="T" CLASS="STS" NAME="w_tipo_rel" '.$w_Disabled.'>');
     if (nvl($w_tipo_rel,'-')=='Word') {
@@ -2990,6 +3499,7 @@ function Rel_Metas() {
   ShowHTML('</BODY>');
   ShowHTML('</HTML>');
 } 
+
 // =========================================================================
 // Relatório detalhado das tarefas
 // -------------------------------------------------------------------------
@@ -3083,14 +3593,14 @@ function Rel_Det_Tarefa() {
       ShowHTML('<tr><td width="15%"><b>Área de planejamento:</b></td><td>Todas</td>');
     } 
     if ($p_cd_programa>'') {
-      $RS1 = db_getProgramaPPA_IS::getInstanceOf($dbms,$p_cd_programa,$w_cliente,$w_ano,null,null);
+      $RS1 = db_getProgramaPPA_IS::getInstanceOf($dbms,$p_cd_programa,$w_cliente,$w_ano,null,null,null,null);
       foreach($RS1 as $row1){$RS1=$row1; break;}
       ShowHTML('    <td width="7%"><b>Programa:</b></td><td nowrap>'.$p_cd_programa.' - '.f($RS1,'ds_programa').'</td></tr>');
     } else {
       ShowHTML('    <td width="7%"><b>Programa:</b></td><td>Todos</td></tr>');
     } 
     if ($p_cd_acao>'') {
-      $RS1 = db_getAcaoPPA_IS::getInstanceOf($dbms,$w_cliente,$w_ano,$p_cd_programa,substr($p_cd_acao,4,4),null,null,null,null,null);
+      $RS1 = db_getAcaoPPA_IS::getInstanceOf($dbms,$w_cliente,$w_ano,$p_cd_programa,substr($p_cd_acao,4,4),null,null,null,null,null,null,null);
       foreach($RS1 as $row1){$RS1=$row1; break;}
       ShowHTML('<tr valign="top"><td><b>Ação:</b></td><td>'.substr($p_cd_acao,4,4).' - '.f($RS1,'descricao_acao').'</td>');
     } else {
@@ -3159,9 +3669,9 @@ function Rel_Det_Tarefa() {
     ShowHTML('      <tr bgcolor="'.$conTrBgColor.'">');
     SelecaoUnidade('Á<U>r</U>ea planejamento:','R',null,$p_sq_unidade,null,'p_sq_unidade',null,'onchange="document.Form.action=\''.$w_dir.$w_pagina.$par.'\'; document.Form.w_troca.value=\'p_sq_unidade\'; document.Form.target=\'\'; document.Form.O.value=\'P\'; document.Form.submit();"');
     ShowHTML('      <tr bgcolor="'.$conTrBgColor.'">');
-    SelecaoProgramaPPA('<u>P</u>rograma PPA:','P',null,$w_cliente,$w_ano,$p_cd_programa,'p_cd_programa','RELATORIO','onchange="document.Form.action=\''.$w_dir.$w_pagina.$par.'\'; document.Form.w_troca.value=\'p_cd_programa\'; document.Form.target=\'\'; document.Form.O.value=\'P\'; document.Form.submit();"',$w_menu);
+    SelecaoProgramaPPA('<u>P</u>rograma PPA:','P',null,$w_cliente,$w_ano,$p_cd_programa,'p_cd_programa','RELATORIO','onchange="document.Form.action=\''.$w_dir.$w_pagina.$par.'\'; document.Form.w_troca.value=\'p_cd_programa\'; document.Form.target=\'\'; document.Form.O.value=\'P\'; document.Form.submit();"',$w_menu,null,null);
     ShowHTML('      <tr bgcolor="'.$conTrBgColor.'">');
-    SelecaoAcaoPPA('<u>A</u>ção PPA:','A',null,$w_cliente,$w_ano,$p_cd_programa,null,null,null,'p_cd_acao',null,null,null,$w_menu);
+    SelecaoAcaoPPA('<u>A</u>ção PPA:','A',null,$w_cliente,$w_ano,$p_cd_programa,null,null,null,'p_cd_acao',null,null,null,$w_menu,null,null);
     ShowHTML('      <tr bgcolor="'.$conTrBgColor.'">');
     ShowHTML('        <td><b><u>T</u>ipo de relatório:</b><br><SELECT ACCESSKEY="T" CLASS="STS" NAME="w_tipo_rel" '.$w_Disabled.'>');
     if (nvl($w_tipo_rel,'-')=='Word') {
@@ -3317,14 +3827,14 @@ function Rel_Det_Acao() {
       ShowHTML('<tr><td width="15%"><b>Área de planejamento:</b></td><td>Todas</td>');
     } 
     if ($p_cd_programa>'') {
-      $RS1 = db_getProgramaPPA_IS::getInstanceOf($dbms,$p_cd_programa,$w_cliente,$w_ano,null,null);
+      $RS1 = db_getProgramaPPA_IS::getInstanceOf($dbms,$p_cd_programa,$w_cliente,$w_ano,null,null,null,null);
       foreach($RS1 as $row1){$RS1=$row1; break;}
       ShowHTML('    <td width="7%"><b>Programa:</b></td><td nowrap>'.$p_cd_programa.' - '.f($RS1,'ds_programa').'</td></tr>');
     } else {
       ShowHTML('    <td width="7%"><b>Programa:</b></td><td>Todos</td></tr>');
     }
     if ($p_cd_acao>'') {
-      $RS1 = db_getAcaoPPA_IS::getInstanceOf($dbms,$w_cliente,$w_ano,$p_cd_programa,substr($p_cd_acao,4,4),null,null,null,null,null);
+      $RS1 = db_getAcaoPPA_IS::getInstanceOf($dbms,$w_cliente,$w_ano,$p_cd_programa,substr($p_cd_acao,4,4),null,null,null,null,null,null,null);
       foreach($RS1 as $row1){$RS1=$row1; break;}
       ShowHTML('<tr valign="top"><td><b>Ação:</b></td><td>'.substr($p_cd_acao,4,4).' - '.f($RS1,'descricao_acao').'</td>');
     } else {
@@ -3391,9 +3901,9 @@ function Rel_Det_Acao() {
     ShowHTML('      <tr bgcolor="'.$conTrBgColor.'">');
     SelecaoUnidade('Á<U>r</U>ea planejamento:','R',null,$p_sq_unidade,null,'p_sq_unidade',null,'onchange="document.Form.action=\''.$w_dir.$w_pagina.$par.'\'; document.Form.w_troca.value=\'p_sq_unidade\'; document.Form.target=\'\'; document.Form.O.value=\'P\'; document.Form.submit();"');
     ShowHTML('      <tr bgcolor="'.$conTrBgColor.'">');
-    SelecaoProgramaPPA('<u>P</u>rograma PPA:','P',null,$w_cliente,$w_ano,$p_cd_programa,'p_cd_programa','RELATORIO','onchange="document.Form.action=\''.$w_dir.$w_pagina.$par.'\'; document.Form.w_troca.value=\'p_cd_programa\'; document.Form.target=\'\'; document.Form.O.value=\'P\'; document.Form.submit();"',$w_menu);
+    SelecaoProgramaPPA('<u>P</u>rograma PPA:','P',null,$w_cliente,$w_ano,$p_cd_programa,'p_cd_programa','RELATORIO','onchange="document.Form.action=\''.$w_dir.$w_pagina.$par.'\'; document.Form.w_troca.value=\'p_cd_programa\'; document.Form.target=\'\'; document.Form.O.value=\'P\'; document.Form.submit();"',$w_menu,null,null);
     ShowHTML('      <tr bgcolor="'.$conTrBgColor.'">');
-    SelecaoAcaoPPA('<u>A</u>ção PPA:','A',null,$w_cliente,$w_ano,$p_cd_programa,null,null,null,'p_cd_acao',null,null,null,$w_menu);
+    SelecaoAcaoPPA('<u>A</u>ção PPA:','A',null,$w_cliente,$w_ano,$p_cd_programa,null,null,null,'p_cd_acao',null,null,null,$w_menu,null,null);
     ShowHTML('      <tr bgcolor="'.$conTrBgColor.'">');
     ShowHTML('        <td><b><u>T</u>ipo de relatório:</b><br><SELECT ACCESSKEY="T" CLASS="STS" NAME="w_tipo_rel" '.$w_Disabled.'>');
     if (nvl($w_tipo_rel,'-')=='Word') {
@@ -3555,7 +4065,7 @@ function Rel_Det_Prog() {
       ShowHTML('<tr><td width="15%"><b>Área de planejamento:</b></td><td>Todas</td>');
     } 
     if ($p_cd_programa>'') {
-      $RS1 = db_getProgramaPPA_IS::getInstanceOf($dbms,$p_cd_programa,$w_cliente,$w_ano,null,null);
+      $RS1 = db_getProgramaPPA_IS::getInstanceOf($dbms,$p_cd_programa,$w_cliente,$w_ano,null,null,null,null);
       foreach($RS1 as $row1){$RS1=$row1; break;}
       ShowHTML('    <td width="7%"><b>Programa:</b></td><td nowrap>'.$p_cd_programa.' - '.f($RS1,'ds_programa').'</td></tr>');
     } else {
@@ -3597,7 +4107,7 @@ function Rel_Det_Prog() {
             ShowHTML('<tr><td width="20%"><b>Área de planejamento:</b></td><td>Todas</td>');
           } 
           if ($p_cd_programa>'') {
-            $RS1 = db_getProgramaPPA_IS::getInstanceOf($dbms,$p_cd_programa,$w_cliente,$w_ano,null,null);
+            $RS1 = db_getProgramaPPA_IS::getInstanceOf($dbms,$p_cd_programa,$w_cliente,$w_ano,null,null,null,null);
             foreach($RS1 as $row1){$RS1=$row1; break;}
             ShowHTML('    <td width="20%"><b>Programa:</b></td><td>'.$p_cd_programa.' - '.f($RS1,'ds_programa').'</td></tr>');
           } else {
@@ -3635,7 +4145,7 @@ function Rel_Det_Prog() {
     ShowHTML('      <tr bgcolor="'.$conTrBgColor.'">');
     SelecaoUnidade('Á<U>r</U>ea planejamento:','R',null,$p_sq_unidade,null,'p_sq_unidade',null,'onchange="document.Form.action=\''.$w_dir.$w_pagina.$par.'\'; document.Form.w_troca.value=\'p_sq_unidade\'; document.Form.target=\'\'; document.Form.O.value=\'P\'; document.Form.submit();"');
     ShowHTML('      <tr bgcolor="'.$conTrBgColor.'">');
-    SelecaoProgramaPPA('<u>P</u>rograma PPA:','P',null,$w_cliente,$w_ano,$p_cd_programa,'p_cd_programa','RELATORIO','onchange="document.Form.action=\''.$w_dir.$w_pagina.$par.'\'; document.Form.w_troca.value=\'p_cd_programa\'; document.Form.target=\'\'; document.Form.O.value=\'P\'; document.Form.submit();"',$w_menu);
+    SelecaoProgramaPPA('<u>P</u>rograma PPA:','P',null,$w_cliente,$w_ano,$p_cd_programa,'p_cd_programa','RELATORIO','onchange="document.Form.action=\''.$w_dir.$w_pagina.$par.'\'; document.Form.w_troca.value=\'p_cd_programa\'; document.Form.target=\'\'; document.Form.O.value=\'P\'; document.Form.submit();"',$w_menu,null,null);
     ShowHTML('      <tr bgcolor="'.$conTrBgColor.'">');
     ShowHTML('        <td><b><u>T</u>ipo de relatório:</b><br><SELECT ACCESSKEY="T" CLASS="STS" NAME="w_tipo_rel" '.$w_Disabled.'>');
     if (nvl($w_tipo_rel,'-')=='Word') {
@@ -3769,14 +4279,14 @@ function Rel_Limite() {
       ShowHTML('<tr><td width="15%"><b>Área de planejamento:</b></td><td>Todas</td>');
     } 
     if ($p_cd_programa>'') {
-      $RS1 = db_getProgramaPPA_IS::getInstanceOf($dbms,$p_cd_programa,$w_cliente,$w_ano,null,null);
+      $RS1 = db_getProgramaPPA_IS::getInstanceOf($dbms,$p_cd_programa,$w_cliente,$w_ano,null,null,null,null);
       foreach($RS1 as $row1){$RS1=$row1; break;}
       ShowHTML('    <td width="7%"><b>Programa:</b></td><td nowrap>'.$p_cd_programa.' - '.f($RS1,'ds_programa').'</td></tr>');
     } else {
       ShowHTML('    <td width="7%"><b>Programa:</b></td><td>Todos</td></tr>');
     } 
     if ($p_cd_acao>'') {
-      $RS1 = db_getAcaoPPA_IS::getInstanceOf($dbms,$w_cliente,$w_ano,$p_cd_programa,substr($p_cd_acao,4,4),null,null,null,null,null);
+      $RS1 = db_getAcaoPPA_IS::getInstanceOf($dbms,$w_cliente,$w_ano,$p_cd_programa,substr($p_cd_acao,4,4),null,null,null,null,null,null,null);
       foreach($RS1 as $row1){$RS1=$row1; break;}
       ShowHTML('<tr valign="top"><td><b>Ação:</b></td><td>'.substr($p_cd_acao,4,4).' - '.f($RS1,'descricao_acao').'</td>');
     } else {
@@ -3825,14 +4335,14 @@ function Rel_Limite() {
             ShowHTML('<tr><td width="15%"><b>Área de planejamento:</b></td><td>Todas</td>');
           } 
           if ($p_cd_programa>'') {
-            $RS1 = db_getProgramaPPA_IS::getInstanceOf($dbms,$p_cd_programa,$w_cliente,$w_ano,null,null);
+            $RS1 = db_getProgramaPPA_IS::getInstanceOf($dbms,$p_cd_programa,$w_cliente,$w_ano,null,null,null,null);
             foreach($RS1 as $row1){$RS1=$row1; break;}
             ShowHTML('    <td width="7%"><b>Programa:</b></td><td nowrap>'.$p_cd_programa.' - '.f($RS1,'ds_programa').'</td></tr>');
           } else {
             ShowHTML('    <td width="7%"><b>Programa:</b></td><td>Todos</td></tr>');
           }
           if ($p_cd_acao>'') {
-            $RS1 = db_getAcaoPPA_IS::getInstanceOf($dbms,$w_cliente,$w_ano,$p_cd_programa,substr($p_cd_acao,4,4),null,null,null,null,null);
+            $RS1 = db_getAcaoPPA_IS::getInstanceOf($dbms,$w_cliente,$w_ano,$p_cd_programa,substr($p_cd_acao,4,4),null,null,null,null,null,null,null);
             foreach($RS1 as $row1){$RS1=$row1; break;}
             ShowHTML('<tr valign="top"><td><b>Ação:</b></td><td>'.substr($p_cd_acao,4,4).' - '.f($RS1,'descricao_acao').'</td>');
           } else {
@@ -3914,14 +4424,14 @@ function Rel_Limite() {
                 ShowHTML('<tr><td width="15%"><b>Área de planejamento:</b></td><td>Todas</td>');
               } 
               if ($p_cd_programa>'') {
-                $RS1 = db_getProgramaPPA_IS::getInstanceOf($dbms,$p_cd_programa,$w_cliente,$w_ano,null,null);
+                $RS1 = db_getProgramaPPA_IS::getInstanceOf($dbms,$p_cd_programa,$w_cliente,$w_ano,null,null,null,null);
                 foreach($RS1 as $row1){$RS1=$row1; break;}
                 ShowHTML('    <td width="7%"><b>Programa:</b></td><td nowrap>'.$p_cd_programa.' - '.f($RS1,'ds_programa').'</td></tr>');
               } else {
                 ShowHTML('    <td width="7%"><b>Programa:</b></td><td>Todos</td></tr>');
               } 
               if ($p_cd_acao>'') {
-                $RS1 = db_getAcaoPPA_IS::getInstanceOf($dbms,$w_cliente,$w_ano,$p_cd_programa,substr($p_cd_acao,4,4),null,null,null,null,null);
+                $RS1 = db_getAcaoPPA_IS::getInstanceOf($dbms,$w_cliente,$w_ano,$p_cd_programa,substr($p_cd_acao,4,4),null,null,null,null,null,null,null);
                 foreach($RS1 as $row1){$RS1=$row1; break;}
                 ShowHTML('<tr valign="top"><td><b>Ação:</b></td><td>'.substr($p_cd_acao,4,4).' - '.f($RS1,'descricao_acao').'</td>');
               } else {
@@ -3992,9 +4502,9 @@ function Rel_Limite() {
     ShowHTML('      <tr bgcolor="'.$conTrBgColor.'">');
     SelecaoUnidade_IS('Á<U>r</U>ea planejamento:','R',null,$p_sq_unidade,null,'p_sq_unidade','onchange="document.Form.action=\''.$w_dir.$w_pagina.$par.'\'; document.Form.w_troca.value=\'p_sq_unidade\'; document.Form.target=\'\'; document.Form.O.value=\'P\'; document.Form.submit();"','PLANEJAMENTO');
     ShowHTML('      <tr bgcolor="'.$conTrBgColor.'">');
-    SelecaoProgramaPPA('<u>P</u>rograma PPA:','P',null,$w_cliente,$w_ano,$p_cd_programa,'p_cd_programa','RELATORIO','onchange="document.Form.action=\''.$w_dir.$w_pagina.$par.'\'; document.Form.w_troca.value=\'p_cd_programa\'; document.Form.target=\'\'; document.Form.O.value=\'P\'; document.Form.submit();"',$w_menu);
+    SelecaoProgramaPPA('<u>P</u>rograma PPA:','P',null,$w_cliente,$w_ano,$p_cd_programa,'p_cd_programa','RELATORIO','onchange="document.Form.action=\''.$w_dir.$w_pagina.$par.'\'; document.Form.w_troca.value=\'p_cd_programa\'; document.Form.target=\'\'; document.Form.O.value=\'P\'; document.Form.submit();"',$w_menu,null,null);
     ShowHTML('      <tr bgcolor="'.$conTrBgColor.'">');
-    SelecaoAcaoPPA('<u>A</u>ção PPA:','A',null,$w_cliente,$w_ano,$p_cd_programa,null,null,null,'p_cd_acao',null,null,null,$w_menu);
+    SelecaoAcaoPPA('<u>A</u>ção PPA:','A',null,$w_cliente,$w_ano,$p_cd_programa,null,null,null,'p_cd_acao',null,null,null,$w_menu,null,null);
     ShowHTML('      <tr bgcolor="'.$conTrBgColor.'">');
     ShowHTML('        <td><b><u>T</u>ipo de relatório:</b><br><SELECT ACCESSKEY="T" CLASS="STS" NAME="w_tipo_rel" '.$w_Disabled.'>');
     if (nvl($w_tipo_rel,'-')=='Word') {
@@ -4035,15 +4545,15 @@ function Rel_Limite() {
 // =========================================================================
 // Gera uma linha de apresentação da tabela de metas
 // -------------------------------------------------------------------------
-function MetaLinha($l_chave,$l_chave_aux,$l_titulo,$l_word,$l_programada,$l_unidade_medida,$l_quantidade,$l_fim,$l_perc,$l_oper,$l_tipo,$l_loa) {
+function MetaLinha($l_chave,$l_chave_aux,$l_titulo,$l_word,$l_programada,$l_unidade_medida,$l_quantidade,$l_fim,$l_perc,$l_oper,$l_tipo,$l_loa,$l_exequivel='S') {
   extract($GLOBALS);
   $w_cor = ($w_cor==$conTrBgColor || $w_cor=='') ? $w_cor=$conTrAlternateBgColor : $w_cor=$conTrBgColor;
   $l_html .=chr(13).'      <tr bgcolor="'.$w_cor.'" valign="top">';
   $l_html .=chr(13).'        <td nowrap '.$l_row.'>';
-  if ($l_fim<addDays(time(),-1) && $l_perc<100) $l_html .=chr(13).'           <img src="'.$conImgAtraso.'" border=0 width=15 height=15 align="center">';
+  if ($l_exequivel=='N' || ($l_fim<addDays(time(),-1) && $l_perc<100)) $l_html .=chr(13).'           <img src="'.$conImgAtraso.'" border=0 width=15 height=15 align="center">';
   elseif ($l_perc<100)                          $l_html .=chr(13).'           <img src="'.$conImgNormal.'" border=0 width=15 height=15 align="center">';
   else                                          $l_html .=chr(13).'           <img src="'.$conImgOkNormal.'" border=0 width=15 height=15 align="center">';
-  if ($l_word!='WORD')  $l_html .=chr(13).'<A class="HL" HREF="#" onClick="window.open(\'acao.php?par=AtualizaMeta&O=V&w_chave='.$l_chave.'&w_chave_aux='.$l_chave_aux.'&w_tipo=Volta&P1=10&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP='.$TP.'&SG='.$SG.'\',\'Meta\',\'width=600, height=350, top=50, left=50, toolbar=no, scrollbars=yes, resizable=yes, status=no\'); return false;" title="Clique para exibir os dados!">'.$l_titulo.'</A>';
+  if ($l_word!='WORD')  $l_html .=chr(13).'<A class="HL" HREF="#" onClick="window.open(\''.montaURL_JS($w_dir,'acao.php?par=AtualizaMeta&O=V&w_chave='.$l_chave.'&w_chave_aux='.$l_chave_aux.'&w_tipo=Volta&P1=10&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP='.$TP.'&SG='.$SG).'\',\'Meta\',\'width=600, height=350, top=50, left=50, toolbar=no, scrollbars=yes, resizable=yes, status=no\'); return false;" title="Clique para exibir os dados!">'.$l_titulo.'</A>';
   else                  $l_html .=chr(13).'        '.$l_titulo.'</td>';
   if ($l_loa>'')    $l_html .=chr(13).'        <td align="center">Sim</b>';
   else              $l_html .=chr(13).'        <td align="center">Não</b>';
@@ -4058,7 +4568,7 @@ function MetaLinha($l_chave,$l_chave_aux,$l_titulo,$l_word,$l_programada,$l_unid
 // =========================================================================
 // Gera uma linha de apresentação da tabela de indicadores
 // -------------------------------------------------------------------------
-function Indicadorlinha($l_chave,$l_chave_aux,$l_titulo,$l_valor_ref,$l_valor_prog,$l_valor_apurado,$l_apuracao_ind,$l_unidade_medida,$l_word,$l_destaque,$l_oper,$l_tipo,$l_loa) {
+function Indicadorlinha($l_chave,$l_chave_aux,$l_titulo,$l_valor_ref,$l_valor_prog,$l_valor_apurado,$l_apuracao_ind,$l_unidade_medida,$l_word,$l_destaque,$l_oper,$l_tipo,$l_loa,$l_exequivel) {
   extract($GLOBALS);
   if ($l_loa>'')    $l_loa='Sim';
   else              $l_loa='Não';
@@ -4066,8 +4576,10 @@ function Indicadorlinha($l_chave,$l_chave_aux,$l_titulo,$l_valor_ref,$l_valor_pr
   $w_cor = ($w_cor==$conTrBgColor || $w_cor=='') ? $w_cor=$conTrAlternateBgColor : $w_cor=$conTrBgColor;
   $l_html .=chr(13).'      <tr bgcolor="'.$w_cor.'" valign="top">';
   $l_html .=chr(13).'        <td '.$l_row.'>';
+  if ($l_exequivel=='S')    $l_html .=chr(13).'           <img src="'.$conImgNormal.'" border=0 width=15 height=15 align="center">';
+  else                      $l_html .=chr(13).'           <img src="'.$conImgAtraso.'" border=0 width=15 height=15 align="center">';
   if (Nvl($l_word,0)==1)    $l_html .=chr(13).'        <td>'.$l_destaque.$l_titulo.'</b>';
-  else                      $l_html .=chr(13).'<A class="HL" HREF="#" onClick="window.open(\'programa.php?par=AtualizaIndicador&O=V&w_chave='.f($row,'sq_siw_solicitacao').'&w_chave_aux='.$l_chave_aux.'&w_tipo=Volta&P1=10&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP='.$TP.'&SG='.$SG.'\',\'Indicador\',\'width=600, height=350, top=50, left=50, toolbar=no, scrollbars=yes, resizable=yes, status=no\'); return false;" title="Clique para exibir os dados!">'.$l_destaque.$l_titulo.'</A>';
+  else                      $l_html .=chr(13).'<A class="HL" HREF="#" onClick="window.open(\''.montaURL_JS($w_dir,'programa.php?par=AtualizaIndicador&O=V&w_chave='.$l_chave.'&w_chave_aux='.$l_chave_aux.'&w_tipo=Volta&P1=10&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP='.$TP.'&SG='.$SG).'\',\'Indicador\',\'width=600, height=350, top=50, left=50, toolbar=no, scrollbars=yes, resizable=yes, status=no\'); return false;" title="Clique para exibir os dados!">'.$l_destaque.$l_titulo.'</A>';
   $l_html .=chr(13).'        <td align="center" '.$l_row.'>'.$l_loa.'</td>';
   $l_html .=chr(13).'        <td nowrap align="right" '.$l_row.'>'.number_format(Nvl($l_valor_ref,0),2,',','.').' </td>';
   $l_html .=chr(13).'        <td nowrap align="right" '.$l_row.'>'.number_format(Nvl($l_valor_prog,0),2,',','.').' </td>';
@@ -4102,6 +4614,7 @@ function Indicadorlinha($l_chave,$l_chave_aux,$l_titulo,$l_valor_ref,$l_valor_pr
 function Main() {
   extract($GLOBALS);
   switch ($par) {
+    case 'GERENCIAL':               Gerencial();            break;
     case 'REL_PPA':                 Rel_PPA();              break;
     case 'REL_PROJETO':             Rel_projeto();          break;
     case 'REL_PROGRAMA':            Rel_Programa();         break;

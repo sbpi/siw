@@ -23,7 +23,7 @@ include_once('validaafastamento.php');
 // ------------------------------------------------------------------------
 
 // Nome     : Billy Jones Leal dos Santos
-// Descricao: Gerenciar tabelas básicas do módulo	de gestão de pessoal
+// Descricao: Gerenciar tabelas básicas do módulo de gestão de pessoal
 // Mail     : billly@sbpi.com.br
 // Criacao  : 02/08/2005 10:00
 // Versao   : 1.0.0.0
@@ -116,7 +116,8 @@ function Afastamento() {
       $w_dias                    = f($RS,'dias');
       $w_observacao              = f($RS,'observacao');
     } 
-  } if (Nvl($w_sq_tipo_afastamento,'')>'' && (!(strpos('IA',$O)===false))) {
+  } 
+  if (Nvl($w_sq_tipo_afastamento,'')>'' && (!(strpos('IA',$O)===false))) {
       $RS1 = db_getGPTipoAfast::getInstanceOf($dbms,$w_cliente,$w_sq_tipo_afastamento,null,null,null,null,'MODALIDADES');
       foreach($RS1 as $row){$RS1=$row; break;}
   } 
@@ -384,7 +385,7 @@ function Afastamento() {
         ShowHTML('            <input class="stb" type="submit" name="Botao" value="Atualizar">');
       } 
     } 
-    ShowHTML('            <input class="stb" type="button" onClick="location.href=\''.$w_pagina.$par.'&P1='.$P1.'&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP='.$TP.'&SG='.$SG.'&O=P'.MontaFiltro('GET').'\';" name="Botao" value="Cancelar">');
+    ShowHTML('            <input class="stb" type="button" onClick="location.href=\''.montaURL_JS($w_dir,$w_pagina.$par.'&P1='.$P1.'&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP='.$TP.'&SG='.$SG.'&O=P'.MontaFiltro('GET')).'\';" name="Botao" value="Cancelar">');
     ShowHTML('          </td>');
     ShowHTML('      </tr>');
     ShowHTML('    </table>');
@@ -403,8 +404,8 @@ function Afastamento() {
     ShowHTML('      <tr><td><b><u>P</u>eríodo de busca:</b><br> De: <input accesskey="P" type="text" name="p_inicio_data" class="STI" SIZE="10" MAXLENGTH="10" VALUE="'.$p_inicio_data.'" onKeyDown="FormataData(this,event);"> a <input accesskey="P" type="text" name="p_fim_data" class="STI" SIZE="10" MAXLENGTH="10" VALUE="'.$p_fim_data.'" onKeyDown="FormataData(this,event);"></td>');
     ShowHTML('      <tr><td align="center" colspan=5><hr>');
     ShowHTML('            <input class="stb" type="submit" name="Botao" value="Aplicar filtro">');
-    ShowHTML('            <input class="stb" type="button" onClick="location.href=\''.$w_pagina.$par.'&P1='.$P1.'&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP='.$TP.'&O=I&SG='.$SG.'\';" name="Botao" value="Incluir">');
-    ShowHTML('            <input class="stb" type="button" onClick="location.href=\''.$w_pagina.$par.'&P1='.$P1.'&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP='.$TP.'&O=P&SG='.$SG.'\';" name="Botao" value="Limpar campos">');
+    ShowHTML('            <input class="stb" type="button" onClick="location.href=\''.montaURL_JS($w_dir,$w_pagina.$par.'&P1='.$P1.'&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP='.$TP.'&O=I&SG='.$SG).'\';" name="Botao" value="Incluir">');
+    ShowHTML('            <input class="stb" type="button" onClick="location.href=\''.montaURL_JS($w_dir,$w_pagina.$par.'&P1='.$P1.'&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP='.$TP.'&O=P&SG='.$SG).'\';" name="Botao" value="Limpar campos">');
     ShowHTML('          </td>');
     ShowHTML('      </tr>');
     ShowHTML('    </table>');
@@ -586,6 +587,8 @@ function TelaColaborador() {
 function Grava() {
   extract($GLOBALS);
   Cabecalho();
+  ShowHTML('</HEAD>');
+  ShowHTML('<BASE HREF="'.$conRootSIW.'">');
   BodyOpen('onLoad=document.focus();');
   AbreSessao();
   switch ($SG) {
@@ -610,7 +613,7 @@ function Grava() {
         $_REQUEST['w_inicio_data'],$_REQUEST['w_inicio_periodo'],$_REQUEST['w_fim_data'],$_REQUEST['w_fim_periodo'],
         $_REQUEST['w_dias'],$_REQUEST['w_observacao']);
         ScriptOpen('JavaScript');
-        ShowHTML('  location.href=\''.$R.'&O=P&P1='.$P1.'&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP='.$TP.'&SG='.$SG.MontaFiltro('GET').'\';');
+        ShowHTML('  location.href=\''.montaURL_JS($w_dir,$R.'&O=P&P1='.$P1.'&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP='.$TP.'&SG='.$SG.MontaFiltro('GET')).'\';');
         ScriptClose();
       } else {
         ScriptOpen('JavaScript');

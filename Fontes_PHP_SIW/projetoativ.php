@@ -32,6 +32,7 @@ include_once('classes/sp/db_getTramiteList.php');
 include_once('classes/sp/db_getSiwCliModLis.php');
 include_once('funcoes/selecaoCC.php');
 include_once('funcoes/selecaoPessoa.php');
+include_once('funcoes/selecaoAtividade.php');
 include_once('funcoes/selecaoUnidade.php');
 include_once('funcoes/selecaoPais.php');
 include_once('funcoes/selecaoRegiao.php');
@@ -744,6 +745,7 @@ function Geral() {
     $w_custo_real       = $_REQUEST['w_custo_real'];
     $w_projeto          = $_REQUEST['w_projeto'];
     $w_atividade        = $_REQUEST['w_atividade'];
+    $w_atividade_pai    = $_REQUEST['w_atividade_pai'];
     $w_chave            = $_REQUEST['w_chave'];
     $w_chave_pai        = $_REQUEST['w_chave_pai'];
     $w_chave_aux        = $_REQUEST['w_chave_aux'];
@@ -791,6 +793,8 @@ function Geral() {
         $w_custo_real       = f($RS,'custo_real');
         $w_projeto          = f($RS,'sq_solic_pai');
         $w_atividade        = f($RS,'sq_projeto_etapa');
+        $w_atividade_pai    = f($RS,'sq_demanda_pai');
+        $w_atividade_pai_nm = $w_chave;
         $w_projeto_ant      = f($RS,'sq_solic_pai');
         $w_atividade_ant    = f($RS,'sq_projeto_etapa');
         $w_chave_pai        = f($RS,'sq_solic_pai');
@@ -869,9 +873,9 @@ function Geral() {
       Validate('w_descricao','Resultados da atividade','1',1,5,2000,'1','1');
     } 
     if (f($RS_Menu,'justificativa')=='S') {
-      Validate('w_justificativa','Recomendações superiores','1',1,5,2000,'1','1');
+      Validate('w_justificativa','Observações','1',1,5,2000,'1','1');
     } 
-    Validate('w_dias','Dias de alerta','1','',1,2,'','0123456789');
+    Validate('w_dias','Dias de alerta','1','',1,3,'','0123456789');
     ShowHTML('  if (theForm.w_aviso[0].checked) {');
     ShowHTML('     if (theForm.w_dias.value == \'\') {');
     ShowHTML('        alert(\'Informe a partir de quantos dias antes da data prevista de término você deseja ser avisado de sua proximidade!\');');
@@ -935,6 +939,9 @@ function Geral() {
     ShowHTML('      <tr>');
     SelecaoEtapa('Eta<u>p</u>a:','P','Se necessário, indique a etapa à qual esta atividade deve ser vinculada.',$w_atividade,$w_projeto,null,'w_atividade','Grupo',null);
     ShowHTML('      </tr>');
+    ShowHTML('      <tr>');
+    SelecaoAtividade('At<U>i</U>vidade pai:','S','Se necessário, selecione a atividade pai.',$w_atividade_pai,$w_projeto,'w_atividade_pai','GDPCAD',null);
+    ShowHTML('      </tr>');
     ShowHTML('      <tr><td valign="top"><b>Detalh<u>a</u>mento:</b><br><textarea '.$w_Disabled.' accesskey="A" name="w_assunto" class="STI" ROWS=5 cols=75 title="Escreva um texto de detalhamento para esta atividade">'.$w_assunto.'</TEXTAREA></td>');
     if (f($RS_Menu,'solicita_cc')=='S') {
       ShowHTML('          <tr>');
@@ -961,13 +968,13 @@ function Geral() {
     ShowHTML('              <td valign="top"><b>O<u>r</u>çamento disponível:</b><br><input '.$w_Disabled.' accesskey="O" type="text" name="w_valor" class="STI" SIZE="18" MAXLENGTH="18" VALUE="'.$w_valor.'" onKeyDown="FormataValor(this,18,2,event);" title="Informe o orçamento disponível para execução da atividade, ou zero se não for o caso."></td>');
     ShowHTML('          </table>');
     ShowHTML('      <tr><td valign="top"><b>Pa<u>l</u>avras-chave:<br><INPUT ACCESSKEY="L" '.$w_Disabled.' class="STI" type="text" name="w_palavra_chave" size="90" maxlength="90" value="'.$w_palavra_chave.'" title="Se desejar, informe palavras-chave adicionais aos campos informados e que permitam a identificação desta atividade."></td>');
+    ShowHTML('      <tr><td valign="top"><b>Nome do proponent<u>e</u> externo:<br><INPUT ACCESSKEY="E" '.$w_Disabled.' class="STI" type="text" name="w_proponente" size="90" maxlength="90" value="'.$w_proponente.'" title="Proponente externo da atividade. Preencha apenas se houver."></td>');
     ShowHTML('      <tr><td align="center" height="2" bgcolor="#000000"></td></tr>');
     ShowHTML('      <tr><td align="center" height="1" bgcolor="#000000"></td></tr>');
-    ShowHTML('      <tr><td valign="top" align="center" bgcolor="#D0D0D0"><b>Identificação do proponente</td></td></tr>');
+    ShowHTML('      <tr><td valign="top" align="center" bgcolor="#D0D0D0"><b>Local da execução</td></td></tr>');
     ShowHTML('      <tr><td align="center" height="1" bgcolor="#000000"></td></tr>');
-    ShowHTML('      <tr><td>Os dados deste bloco identificam o proponente externo e sua localização, sendo utilizados para consultas gerenciais por distribuição geográfica.</td></tr>');
+    ShowHTML('      <tr><td>Os dados deste bloco identificam o local onde a atividade será executada, sendo utilizados para consultas gerenciais por distribuição geográfica.</td></tr>');
     ShowHTML('      <tr><td align="center" height="1" bgcolor="#000000"></td></tr>');
-    ShowHTML('      <tr><td valign="top"><b>Nome do proponent<u>e</u> externo:<br><INPUT ACCESSKEY="E" '.$w_Disabled.' class="STI" type="text" name="w_proponente" size="90" maxlength="90" value="'.$w_proponente.'" title="Proponente externo da atividade. Preencha apenas se houver."></td>');
     ShowHTML('      <tr><td valign="top" colspan="2"><table border=0 width="100%" cellspacing=0>');
     ShowHTML('      <tr>');
     SelecaoPais('<u>P</u>aís:','P',null,$w_pais,null,'w_pais',null,'onChange="document.Form.action=\''.$w_pagina.$par.'\'; document.Form.w_troca.value=\'w_uf\'; document.Form.submit();"');
@@ -985,7 +992,7 @@ function Geral() {
         ShowHTML('      <tr><td valign="top"><b>Res<u>u</u>ltados da atividade:</b><br><textarea '.$w_Disabled.' accesskey="U" name="w_descricao" class="STI" ROWS=5 cols=75 title="Descreva os resultados esperados após a execução da atividade.">'.$w_descricao.'</TEXTAREA></td>');
       } 
       if (f($RS_Menu,'justificativa')=='S') {
-        ShowHTML('      <tr><td valign="top"><b><u>R</u>ecomendações superiores:</b><br><textarea '.$w_Disabled.' accesskey="R" name="w_justificativa" class="STI" ROWS=5 cols=75 title="Relacione as recomendações a serem seguidas na execução da atividade.">'.$w_justificativa.'</TEXTAREA></td>');
+        ShowHTML('      <tr><td valign="top"><b>Obse<u>r</u>vações:</b><br><textarea '.$w_Disabled.' accesskey="R" name="w_justificativa" class="STI" ROWS=5 cols=75 title="Relacione recomendações e observações a serem seguidas na execução da atividade.">'.$w_justificativa.'</TEXTAREA></td>');
       } 
     } 
     ShowHTML('      <tr><td align="center" height="2" bgcolor="#000000"></td></tr>');
@@ -997,7 +1004,7 @@ function Geral() {
     ShowHTML('      <tr><td><table border="0" width="100%">');
     ShowHTML('          <tr>');
     MontaRadioNS('<b>Emite alerta?</b>',$w_aviso,'w_aviso');
-    ShowHTML('              <td valign="top"><b>Quantos <U>d</U>ias antes da data prevista para término?<br><INPUT ACCESSKEY="D" '.$w_Disabled.' class="STI" type="text" name="w_dias" size="2" maxlength="2" value="'.$w_dias.'" title="Número de dias para emissão do alerta de proximidade da previsão de término da atividade."></td>');
+    ShowHTML('              <td valign="top"><b>Quantos <U>d</U>ias antes da data prevista para término?<br><INPUT ACCESSKEY="D" '.$w_Disabled.' class="STI" type="text" name="w_dias" size="3" maxlength="3" value="'.$w_dias.'" title="Número de dias para emissão do alerta de proximidade da previsão de término da atividade."></td>');
     ShowHTML('          </table>');
     ShowHTML('      <tr><td align="center" colspan="3" height="1" bgcolor="#000000"></TD></TR>');
     // Verifica se poderá ser feito o envio da solicitação, a partir do resultado da validação
@@ -1971,9 +1978,22 @@ function SolicMail($p_solic,$p_tipo) {
 
   // Recupera o e-mail do titular e do substituto pelo setor responsável
   $RS = db_getUorgResp::getInstanceOf($dbms,f($RSM,'sq_unidade'));
+  foreach($RS as $row){$RS=$row; break;}
   if ((strpos($w_destinatarios,f($RS,'email_titular').'; ')===false)    && Nvl(f($RS,'email_titular'),'nulo')!='nulo')    $w_destinatarios=$w_destinatarios.f($RS,'email_titular').'; ';
   if ((strpos($w_destinatarios,f($RS,'email_substituto').'; ')===false) && Nvl(f($RS,'email_substituto'),'nulo')!='nulo') $w_destinatarios=$w_destinatarios.f($RS,'email_substituto').'; ';
-
+  // Recuperar o e-mail dos interessados
+  $RS = db_getSolicInter::getInstanceOf($dbms,$p_solic,null,'LISTA');
+  foreach($RS as $row) {
+    if ((strpos($w_destinatarios,f($row,'email').'; ')===false)    && Nvl(f($row,'email'),'nulo')!='nulo' && f($row,'envia_email') =='S')    $w_destinatarios=$w_destinatarios.f($row,'email').'; ';
+  }
+  // Recuperar o e-mail do titular e substituto das áreas envolvidas
+  $RS = db_getSolicAreas::getInstanceOf($dbms,$p_solic,null,'LISTA');
+  foreach($RS as $row) {
+    $RS1 = db_getUorgResp::getInstanceOf($dbms,f($row,'sq_unidade'));
+    foreach($RS1 as $row1){$RS1=$row1; break;}
+    if ((strpos($w_destinatarios,f($RS1,'email_titular').'; ')===false)    && Nvl(f($RS1,'email_titular'),'nulo')!='nulo')    $w_destinatarios=$w_destinatarios.f($RS1,'email_titular').'; ';
+    if ((strpos($w_destinatarios,f($RS1,'email_substituto').'; ')===false) && Nvl(f($RS1,'email_substituto'),'nulo')!='nulo') $w_destinatarios=$w_destinatarios.f($RS1,'email_substituto').'; ';    
+  }  
   // Prepara os dados necessários ao envio
   $RS = db_getCustomerData::getInstanceOf($dbms,$_SESSION['P_CLIENTE']);
   if ($p_tipo==1 || $p_tipo==3) {
@@ -1993,6 +2013,196 @@ function SolicMail($p_solic,$p_tipo) {
     ShowHTML('  alert(\'ATENÇÃO: não foi possível proceder o envio do e-mail.\n'.$w_resultado.'\');');
     ScriptClose();
   } 
+} 
+
+// =========================================================================
+// Rotina de busca de atividades
+// -------------------------------------------------------------------------
+function BuscaAtividade() {
+  extract($GLOBALS);
+  global $w_Disabled;
+
+  $w_ano        = $_REQUEST['w_ano'];
+  $w_nome       = strtoupper($_REQUEST['w_nome']);
+  $w_numero      = strtoupper($_REQUEST['w_numero']);
+  $w_cliente    = $_REQUEST['w_cliente'];
+  $chaveAux     = $_REQUEST['chaveAux'];
+  $restricao    = $_REQUEST['restricao'];
+  $campo        = $_REQUEST['campo'];
+
+  $RS = db_getLinkData::getInstanceOf($dbms,$w_cliente,$restricao);
+
+  $RS = db_getSolicList::getInstanceOf($dbms,f($RS,'sq_menu'),$w_usuario,$restricao,4,
+          null,null,null,null,null,null,null,null,null,null,$w_numero, $w_nome, null, null, null, null, null,
+          null, null, null, null,null, nvl($chaveAux,0),null, null, null);
+  $RS = SortArray($RS,'fim','asc','prioridade','asc');
+
+  Cabecalho();
+  ShowHTML('<TITLE>Seleção de atividade</TITLE>');
+  ShowHTML('<HEAD>');
+  Estrutura_CSS($w_cliente);
+  ScriptOpen('JavaScript');
+  ShowHTML('  function volta(l_nome, l_sigla, l_chave) {');
+  ShowHTML("     opener.Form.".$campo."_nm.value=l_sigla + ' - ' + l_nome.replace('\'','\"');");
+  ShowHTML('     opener.Form.'.$campo.'.value=l_chave;');
+  ShowHTML('     opener.Form.'.$campo.'_nm.focus();');
+  ShowHTML('     window.close();');
+  ShowHTML('     opener.focus();');
+  ShowHTML('   }');
+  if (count($RS)>10 || ($w_nome>'' || $w_numero>'')) {
+    ValidateOpen('Validacao');
+    Validate('w_nome','Nome','1','','4','30','1','1');
+    Validate('w_numero','Sigla','1','','2','20','','1');
+    ShowHTML('  if (theForm.w_nome.value == \'\' && theForm.w_numero.value == \'\') {');
+    ShowHTML('     alert (\'Informe um valor para o nome ou para a sigla!\');');
+    ShowHTML('     theForm.w_nome.focus();');
+    ShowHTML('     return false;');
+    ShowHTML('  }');
+    ShowHTML('  theForm.Botao[0].disabled=true;');
+    ShowHTML('  theForm.Botao[1].disabled=true;');
+    ValidateClose();
+  } 
+  ScriptClose();
+  ShowHTML('</HEAD>');
+  if (count($RS)>10 || ($w_nome>'' || $w_numero>'')) {
+    BodyOpen('onLoad=\'document.Form.w_nome.focus();\'');
+  } else {
+    BodyOpen('onLoad=document.focus();');
+  } 
+  Estrutura_Texto_Abre();
+  ShowHTML('<table border="0" cellpadding="0" cellspacing="0" width="100%">');
+  ShowHTML('<tr bgcolor="'.$conTrBgColor.'"><td>');
+  ShowHTML('    <table width="100%" border="0">');
+  if (count($RS)>10 || ($w_nome>'' || $w_numero>'')) {
+    AbreForm('Form',$w_pagina.'BuscaAtividade','POST','return(Validacao(this))',null,$P1,$P2,$P3,$P4,$TP,$SG,null,null);
+    ShowHTML('<INPUT type="hidden" name="w_cliente" value="'.$w_cliente.'">');
+    ShowHTML('<INPUT type="hidden" name="chaveAux" value="'.$chaveAux.'">');
+    ShowHTML('<INPUT type="hidden" name="restricao" value="'.$restricao.'">');
+    ShowHTML('<INPUT type="hidden" name="campo" value="'.$campo.'">');
+    ShowHTML('<tr bgcolor="'.$conTrBgColor.'"><td><div align="justify"><font size=2><b><ul>Instruções</b>:<li>Informe parte do nome da unidade.<li>Quando a relação for exibida, selecione a unidade desejada clicando sobre a caixa ao seu lado.<li>Após informar o nome da unidade, clique sobre o botão <i>Aplicar filtro</i>. Clicando sobre o botão <i>Cancelar</i>, a procura é cancelada.</ul></div>');
+    ShowHTML('<tr bgcolor="'.$conTrBgColor.'"><td>');
+    ShowHTML('    <table width="100%" border="0">');
+    ShowHTML('      <tr><td valign="top"><b>Parte do detalhame<U>n</U>to:<br><INPUT ACCESSKEY="N" '.$w_Disabled.' class="sti" type="text" name="w_nome" size="50" maxlength="50" value="'.$w_nome.'">');
+    ShowHTML('      <tr><td valign="top"><b>Nú<U>m</U>ero da atividade:<br><INPUT ACCESSKEY="M" '.$w_Disabled.' class="sti" type="text" name="w_numero" size="20" maxlength="20" value="'.$w_numero.'">');
+    ShowHTML('      <tr><td align="center" colspan="3" height="1" bgcolor="#000000">');
+    ShowHTML('      <tr><td align="center" colspan="3">');
+    ShowHTML('            <input class="stb" type="submit" name="Botao" value="Aplicar filtro">');
+    ShowHTML('            <input class="stb" type="button" name="Botao" value="Cancelar" onClick="window.close(); opener.focus();">');
+    ShowHTML('          </td>');
+    ShowHTML('      </tr>');
+    ShowHTML('    </table>');
+    ShowHTML('    </TD>');
+    ShowHTML('</tr>');
+    ShowHTML('</form>');
+    if ($w_nome>'' || $w_numero>'') {
+      ShowHTML('<tr><td align="right"><b>Registros: '.count($RS));
+      ShowHTML('<tr><td align="center" colspan=3>');
+      ShowHTML('    <TABLE WIDTH="100%" bgcolor="'.$conTableBgColor.'" BORDER="'.$conTableBorder.'" CELLSPACING="'.$conTableCellSpacing.'" CELLPADDING="'.$conTableCellPadding.'" BorderColorDark="'.$conTableBorderColorDark.'" BorderColorLight="'.$conTableBorderColorLight.'">');
+      ShowHTML('        <tr bgcolor="'.$conTrBgColor.'" align="center">');
+      ShowHTML('          <td><b>Nº</td>');
+      ShowHTML('          <td><b>Etapa</td>');
+      ShowHTML('          <td><b>Responsável</td>');
+      ShowHTML('          <td><b>Detalhamento</td>');
+      ShowHTML('          <td><b>Fim previsto</td>');
+      ShowHTML('          <td><b>Operações</td>');
+      ShowHTML('        </tr>');
+      if (count($RS)<=0) {
+        ShowHTML('      <tr bgcolor="'.$conTrBgColor.'"><td colspan=10 align="center"><b>Não foram encontrados registros.</b></td></tr>');
+      } else {
+        foreach($RS as $row) {
+          $w_cor = ($w_cor==$conTrBgColor || $w_cor=='') ? $w_cor=$conTrAlternateBgColor : $w_cor=$conTrBgColor;
+          ShowHTML('      <tr bgcolor="'.$w_cor.'" valign="top">');
+          ShowHTML('        <td nowrap>');
+          if (f($row,'concluida')=='N') {
+            if (f($row,'fim')<addDays(time(),-1)) {
+              ShowHTML('           <img src="'.$conImgAtraso.'" border=0 width=15 heigth=15 align="center">');
+            } elseif (f($row,'aviso_prox_conc')=='S' && (f($row,'aviso')<=addDays(time(),-1))) {
+              ShowHTML('           <img src="'.$conImgAviso.'" border=0 width=15 height=15 align="center">');
+            } else {
+              ShowHTML('           <img src="'.$conImgNormal.'" border=0 width=15 height=15 align="center">');
+            } 
+          } else {
+            if (f($row,'sg_tramite')=='CA') {
+              ShowHTML('           <img src="'.$conImgCancel.'" border=0 width=15 height=15 align="center">');            
+            } elseif (f($row,'fim')<Nvl(f($row,'fim_real'),f($row,'fim'))) {
+              ShowHTML('           <img src="'.$conImgOkAtraso.'" border=0 width=15 heigth=15 align="center">');
+            } else {
+              ShowHTML('           <img src="'.$conImgOkNormal.'" border=0 width=15 height=15 align="center">');
+            } 
+          } 
+          ShowHTML('        <A class="HL" HREF="'.$w_pagina.'Visual&R='.$w_pagina.$par.'&O=L&w_chave='.f($row,'sq_siw_solicitacao').'&P1='.$P1.'&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP='.$TP.'&SG='.$SG.MontaFiltro('GET').'" title="Exibe as informações deste registro." target="_blank">'.f($row,'sq_siw_solicitacao').'&nbsp;</a>');
+          if (nvl(f($row,'sq_projeto_etapa'),'nulo')!='nulo') {
+            ShowHTML('        <td>'.ExibeEtapa('V',f($row,'sq_solic_pai'),f($row,'sq_projeto_etapa'),'Volta',10,MontaOrdemEtapa(f($row,'sq_projeto_etapa')).' - '.f($row,'nm_etapa'),$TP,$SG).'</td>');
+          } else {
+            ShowHTML('        <td>---</td>');
+          } 
+          ShowHTML('        <td>'.ExibePessoa(null,$w_cliente,f($row,'solicitante'),$TP,f($row,'nm_solic')).'</td>');
+          if (strlen(Nvl(f($row,'assunto'),'-'))>50) $w_titulo = substr(Nvl(f($row,'assunto'),'-'),0,50).'...'; else $w_titulo = Nvl(f($row,'assunto'),'-');
+          ShowHTML('        <td title="'.htmlspecialchars(f($row,'assunto')).'">'.htmlspecialchars($w_titulo).'</td>');
+          ShowHTML('        <td align="center">&nbsp;'.Nvl(FormataDataEdicao(f($row,'fim')),'-').'</td>');
+          ShowHTML('        <td><a class="ss" href="#" onClick="javascript:volta(\''.$w_titulo.'\', \''.f($row,'sq_siw_solicitacao').'\', '.f($row,'sq_siw_solicitacao').');">Selecionar</a>');
+          ShowHTML('      </tr>');
+        } 
+      } 
+    } 
+  } else {
+    ShowHTML('<tr><td align="right"><b>Registros: '.count($RS));
+    ShowHTML('<tr><td align="center" colspan=3>');
+    ShowHTML('    <TABLE WIDTH="100%" bgcolor="'.$conTableBgColor.'" BORDER="'.$conTableBorder.'" CELLSPACING="'.$conTableCellSpacing.'" CELLPADDING="'.$conTableCellPadding.'" BorderColorDark="'.$conTableBorderColorDark.'" BorderColorLight="'.$conTableBorderColorLight.'">');
+    ShowHTML('        <tr bgcolor="'.$conTrBgColor.'" align="center">');
+    ShowHTML('          <td><b>Nº</td>');
+    ShowHTML('          <td><b>Etapa</td>');
+    ShowHTML('          <td><b>Responsável</td>');
+    ShowHTML('          <td><b>Detalhamento</td>');
+    ShowHTML('          <td><b>Fim previsto</td>');
+    ShowHTML('          <td><b>Operações</td>');
+    ShowHTML('        </tr>');
+    if (count($RS)<=0) {
+      ShowHTML('      <tr bgcolor="'.$conTrBgColor.'"><td colspan=10 align="center"><b>Não foram encontrados registros.</b></td></tr>');
+    } else {
+      foreach($RS as $row) {
+        $w_cor = ($w_cor==$conTrBgColor || $w_cor=='') ? $w_cor=$conTrAlternateBgColor : $w_cor=$conTrBgColor;
+        ShowHTML('      <tr bgcolor="'.$w_cor.'" valign="top">');
+        ShowHTML('        <td nowrap>');
+        if (f($row,'concluida')=='N') {
+          if (f($row,'fim')<addDays(time(),-1)) {
+            ShowHTML('           <img src="'.$conImgAtraso.'" border=0 width=15 heigth=15 align="center">');
+          } elseif (f($row,'aviso_prox_conc')=='S' && (f($row,'aviso')<=addDays(time(),-1))) {
+            ShowHTML('           <img src="'.$conImgAviso.'" border=0 width=15 height=15 align="center">');
+          } else {
+            ShowHTML('           <img src="'.$conImgNormal.'" border=0 width=15 height=15 align="center">');
+          } 
+        } else {
+          if (f($row,'sg_tramite')=='CA') {
+            ShowHTML('           <img src="'.$conImgCancel.'" border=0 width=15 height=15 align="center">');            
+          } elseif (f($row,'fim')<Nvl(f($row,'fim_real'),f($row,'fim'))) {
+            ShowHTML('           <img src="'.$conImgOkAtraso.'" border=0 width=15 heigth=15 align="center">');
+          } else {
+            ShowHTML('           <img src="'.$conImgOkNormal.'" border=0 width=15 height=15 align="center">');
+          } 
+        } 
+        ShowHTML('        <A class="HL" HREF="'.$w_pagina.'Visual&R='.$w_pagina.$par.'&O=L&w_chave='.f($row,'sq_siw_solicitacao').'&P1='.$P1.'&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP='.$TP.'&SG='.$SG.MontaFiltro('GET').'" title="Exibe as informações deste registro." target="_blank">'.f($row,'sq_siw_solicitacao').'&nbsp;</a>');
+        if (nvl(f($row,'sq_projeto_etapa'),'nulo')!='nulo') {
+          ShowHTML('        <td>'.ExibeEtapa('V',f($row,'sq_solic_pai'),f($row,'sq_projeto_etapa'),'Volta',10,MontaOrdemEtapa(f($row,'sq_projeto_etapa')).' - '.f($row,'nm_etapa'),$TP,$SG).'</td>');
+        } else {
+          ShowHTML('        <td>---</td>');
+        } 
+        ShowHTML('        <td>'.ExibePessoa(null,$w_cliente,f($row,'solicitante'),$TP,f($row,'nm_solic')).'</td>');
+        if (strlen(Nvl(f($row,'assunto'),'-'))>50) $w_titulo = substr(Nvl(f($row,'assunto'),'-'),0,50).'...'; else $w_titulo = Nvl(f($row,'assunto'),'-');
+        ShowHTML('        <td title="'.htmlspecialchars(f($row,'assunto')).'">'.htmlspecialchars($w_titulo).'</td>');
+        ShowHTML('        <td align="center">&nbsp;'.Nvl(FormataDataEdicao(f($row,'fim')),'-').'</td>');
+        ShowHTML('        <td><a class="ss" href="#" onClick="javascript:volta(\''.$w_titulo.'\', \''.f($row,'sq_siw_solicitacao').'\', '.f($row,'sq_siw_solicitacao').');">Selecionar</a>');
+        ShowHTML('      </tr>');
+      } 
+    } 
+  } 
+  ShowHTML('    </table>');
+  ShowHTML('    </TD>');
+  ShowHTML('</tr>');
+  ShowHTML('</FORM>');
+  ShowHTML('</table>');
+  ShowHTML('</center>');
+  Estrutura_Texto_Fecha();
 } 
 
 // =========================================================================
@@ -2029,7 +2239,7 @@ function Grava() {
             $_SESSION['SQ_PESSOA'],null,$_REQUEST['w_sqcc'],$_REQUEST['w_descricao'],$_REQUEST['w_justificativa'],'0',$_REQUEST['w_inicio'],$_REQUEST['w_fim'],$_REQUEST['w_valor'],
             $_REQUEST['w_data_hora'], $_REQUEST['w_sq_unidade_resp'], $_REQUEST['w_assunto'], $_REQUEST['w_prioridade'], $_REQUEST['w_aviso'], $_REQUEST['w_dias'],
             $_REQUEST['w_cidade'], $_REQUEST['w_palavra_chave'],null, null, null, null, null, null, null,
-            $_REQUEST['w_projeto'], $_REQUEST['w_atividade'], $_REQUEST['w_projeto_ant'], $_REQUEST['w_atividade_ant'], &$w_chave_nova, $w_copia);
+            $_REQUEST['w_projeto'], $_REQUEST['w_atividade'], $_REQUEST['w_projeto_ant'], $_REQUEST['w_atividade_pai'], &$w_chave_nova, $w_copia);
         if ($O=='I') {
           // Envia e-mail comunicando a inclusão
           SolicMail(Nvl($_REQUEST['w_chave'],$w_chave_nova),1);
@@ -2092,7 +2302,7 @@ function Grava() {
         if (UPLOAD_ERR_OK==0) {
           $w_maximo = $_REQUEST['w_upload_maximo'];
           foreach ($_FILES as $Chv => $Field) {
-            if ($Field['error'] > 0) {
+            if (!($Field['error']==UPLOAD_ERR_OK || $Field['error']==UPLOAD_ERR_NO_FILE)) {
               // Verifica se o tamanho das fotos está compatível com  o limite de 100KB. 
               ScriptOpen('JavaScript');
               ShowHTML('  alert(\'Atenção: o tamanho máximo do arquivo não pode exceder '.($w_maximo/1024).' KBytes!\');');
@@ -2100,7 +2310,7 @@ function Grava() {
               ScriptClose();
               exit();
             }
-            if ($Field['size'] >= 0) {
+            if ($Field['size'] > 0) {
               // Verifica se o tamanho das fotos está compatível com  o limite de 100KB. 
               if ($Field['size'] > $w_maximo) {
                 ScriptOpen('JavaScript');
@@ -2169,7 +2379,7 @@ function Grava() {
           if (UPLOAD_ERR_OK==0) {
             $w_maximo = $_REQUEST['w_upload_maximo'];
             foreach ($_FILES as $Chv => $Field) {
-              if ($Field['error'] > 0) {
+              if (!($Field['error']==UPLOAD_ERR_OK || $Field['error']==UPLOAD_ERR_NO_FILE)) {
                 // Verifica se o tamanho das fotos está compatível com  o limite de 100KB. 
                 ScriptOpen('JavaScript');
                 ShowHTML('  alert(\'Atenção: o tamanho máximo do arquivo não pode exceder '.($w_maximo/1024).' KBytes!\');');
@@ -2177,7 +2387,7 @@ function Grava() {
                 ScriptClose();
                 exit();
               }
-              if ($Field['size'] >= 0) {
+              if ($Field['size'] > 0) {
                 // Verifica se o tamanho das fotos está compatível com  o limite de 100KB. 
                 if ($Field['size'] > $w_maximo) {
                   ScriptOpen('JavaScript');
@@ -2251,7 +2461,7 @@ function Grava() {
           if (UPLOAD_ERR_OK==0) {
             $w_maximo = $_REQUEST['w_upload_maximo'];
             foreach ($_FILES as $Chv => $Field) {
-              if ($Field['error'] > 0) {
+              if (!($Field['error']==UPLOAD_ERR_OK || $Field['error']==UPLOAD_ERR_NO_FILE)) {
                 // Verifica se o tamanho das fotos está compatível com  o limite de 100KB. 
                 ScriptOpen('JavaScript');
                 ShowHTML('  alert(\'Atenção: o tamanho máximo do arquivo não pode exceder '.($w_maximo/1024).' KBytes!\');');
@@ -2259,7 +2469,7 @@ function Grava() {
                 ScriptClose();
                 exit();
               }
-              if ($Field['size'] >= 0) {
+              if ($Field['size'] > 0) {
                 // Verifica se o tamanho das fotos está compatível com  o limite de 100KB. 
                 if ($Field['size'] > $w_maximo) {
                   ScriptOpen('JavaScript');
@@ -2329,6 +2539,7 @@ function Main() {
   case 'TRAMITE':       Tramitacao();     break;
   case 'ANOTACAO':      Anotar();         break;
   case 'CONCLUIR':      Concluir();       break;
+  case 'BUSCAATIVIDADE':BuscaAtividade(); break;
   case 'GRAVA':         Grava();          break;
   default:
     Cabecalho();

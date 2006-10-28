@@ -1,4 +1,4 @@
-    <?
+<?
 // =========================================================================
 // Rotina de visualização dos dados da ação
 // -------------------------------------------------------------------------
@@ -66,12 +66,12 @@ function VisualAcao($l_chave,$O,$l_usuario,$P1,$P4,$l_identificacao,$l_responsav
     $l_html.=chr(13).'       <td>'.Nvl(f($RS1,'nm_tramite'),'-').'</td></tr>';
     // Listagem das metas da ação
     $l_html.=chr(13).'      <tr><td colspan="2"><br><font size="2"><b>METAS FÍSICAS<hr NOSHADE color=#000000 SIZE=1></b></td></tr>';
-    $RS2 = db_getSolicMeta_IS::getInstanceOf($dbms,$l_chave,null,'LSTNULL',null,null,null,null,null,null,null);
+    $RS2 = db_getSolicMeta_IS::getInstanceOf($dbms,$w_cliente,$l_chave,null,'LSTNULL',null,null,null,null,null,null,null);
     $RS2 = SortArray($RS2,'ordem','asc');
     if (count($RS2)>0) {
       $l_cont=1;
       foreach ($RS2 as $row2) {
-        $RS3 = db_getSolicMeta_IS::getInstanceOf($dbms,$l_chave,f($row2,'sq_meta'),'REGISTRO',null,null,null,null,null,null,null);
+        $RS3 = db_getSolicMeta_IS::getInstanceOf($dbms,$w_cliente,$l_chave,f($row2,'sq_meta'),'REGISTRO',null,null,null,null,null,null,null);
         foreach ($RS3 as $row3){$RS3=$row3; break;}
         $l_html.=chr(13).'   <tr><td valigin="top" bgcolor="#f0f0f0"><b>'.$l_cont.') Meta:</b></td>';
         if (Nvl(f($RS3,'descricao_subacao'),'')>'') $l_html.=chr(13).'       <td bgcolor="#f0f0f0"><b>'.f($row2,'titulo').'('.f($RS3,'descricao_subacao').')</b></td></tr>';
@@ -135,7 +135,7 @@ function VisualAcao($l_chave,$O,$l_usuario,$P1,$P4,$l_identificacao,$l_responsav
     } else {
       $l_html.=chr(13).'      <tr><td colspan="2"><div align="center">Nenhuma restrição cadastrada</div></td></tr>';
     } 
-    // Listagem das tarefa na visualização da ação, rotina adquirida apartir da rotina exitente na tarefa.asp para listagem das tarefa     
+    // Listagem das tarefa na visualização da ação, rotina adquirida apartir da rotina exitente na tarefa.php para listagem das tarefa     
     $l_html.=chr(13).'      <tr><td colspan="2"><br><font size="2"><b>TAREFAS<hr NOSHADE color=#000000 SIZE=1></b></td></tr>';
     $RS2 = db_getLinkData::getInstanceOf($dbms,RetornaCliente(),'ISTCAD');
     $RS2 = db_getSolicList_IS::getInstanceOf($dbms,f($RS2,'sq_menu'),RetornaUsuario(),'ISTCAD',4,
@@ -173,7 +173,7 @@ function VisualAcao($l_chave,$O,$l_usuario,$P1,$P4,$l_identificacao,$l_responsav
             $l_html.=chr(13).'          <img src="'.$conImgOkNormal.'" border=0 width=14 height=14 align="center">';
           }
         } 
-        $l_html.=chr(13).'    <A class="HL" HREF="'.$w_dir.'tarefa.asp?par=Visual&R='.$l_pagina.$par.'&O=L&w_chave='.f($row2,'sq_siw_solicitacao').'&w_tipo=&P1='.$P1.'&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP='.$TP.'&SG='.$SG.MontaFiltro('GET').'" title="Exibe as informações deste registro." target="blank">'.f($row2,'sq_siw_solicitacao').'&nbsp;</a>';
+        $l_html.=chr(13).'    <A class="HL" HREF="'.$w_dir.'tarefas.php?par=Visual&R='.$l_pagina.$par.'&O=L&w_chave='.f($row2,'sq_siw_solicitacao').'&w_tipo=&P1='.$P1.'&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP='.$TP.'&SG='.$SG.MontaFiltro('GET').'" title="Exibe as informações deste registro." target="blank">'.f($row2,'sq_siw_solicitacao').'&nbsp;</a>';
         $l_html.=chr(13).'    <td>'.Nvl(f($row2,'titulo'),'-').'</td>';
         $l_html.=chr(13).'    <td>'.ExibePessoa('../',$w_cliente,f($row2,'solicitante'),$TP,f($row2,'nm_solic')).'</td>';
         $l_html.=chr(13).'    <td><div align="center">'.FormataDataEdicao(f($row2,'inicio')).'</div></td>';
@@ -288,7 +288,7 @@ function VisualAcao($l_chave,$O,$l_usuario,$P1,$P4,$l_identificacao,$l_responsav
         $l_html.=chr(13).'       <td>'.ExibePessoa('../',$w_cliente,f($RS1,'solicitante'),$TP,f($RS1,'nm_sol_comp')).'</td></tr>';
       } 
       if (Nvl(f($RS1,'cd_acao'),'')>'') {
-        $RS2 = db_getAcaoPPA_IS::getInstanceOf($dbms,$w_cliente,$w_ano,f($RS1,'cd_ppa_pai'),f($RS1,'cd_acao'),null,f($RS1,'cd_unidade'),null,null,null);
+        $RS2 = db_getAcaoPPA_IS::getInstanceOf($dbms,$w_cliente,$w_ano,f($RS1,'cd_ppa_pai'),f($RS1,'cd_acao'),null,f($RS1,'cd_unidade'),null,null,null,null,null);
         foreach ($RS2 as $row2) {$RS2=$row2; break;}
         $l_html.=chr(13).'   <tr><td><b>Função:</b></td>';
         $l_html.=chr(13).'       <td>'.f($RS2,'ds_funcao').'</td></tr>';
@@ -524,12 +524,12 @@ function VisualAcao($l_chave,$O,$l_usuario,$P1,$P4,$l_identificacao,$l_responsav
     // Listagem das metas da ação
     if (strtoupper($l_meta)==strtoupper('sim')) {
       $l_html.=chr(13).'      <tr><td colspan="2"><br><font size="2"><b>METAS FÍSICAS<hr NOSHADE color=#000000 SIZE=1></b></td></tr>';
-      $RS2 = db_getSolicMeta_IS::getInstanceOf($dbms,$l_chave,null,'LSTNULL',null,null,null,null,null,null,null);
+      $RS2 = db_getSolicMeta_IS::getInstanceOf($dbms,$w_cliente,$l_chave,null,'LSTNULL',null,null,null,null,null,null,null);
       $RS2 = SortArray($RS2,'ordem','asc');
       if (count($RS2)>0) {
         $l_cont=1;
         foreach ($RS2 as $row2) {
-          $RS3 = db_getSolicMeta_IS::getInstanceOf($dbms,$l_chave,f($row2,'sq_meta'),'REGISTRO',null,null,null,null,null,null,null);
+          $RS3 = db_getSolicMeta_IS::getInstanceOf($dbms,$w_cliente,$l_chave,f($row2,'sq_meta'),'REGISTRO',null,null,null,null,null,null,null);
           foreach ($RS3 as $row3){$RS3=$row3; break;}
           $l_html.=chr(13).'   <tr><td valigin="top" bgcolor="#f0f0f0"><b>'.$l_cont.') Meta:</b></td>';
           if (Nvl(f($RS3,'descricao_subacao'),'')>'')    $l_html.=chr(13).'       <td bgcolor="#f0f0f0"><b>'.f($row2,'titulo').'('.f($RS3,'descricao_subacao').')</b></td></tr>';

@@ -226,8 +226,8 @@ function Inicial() {
       if ($p_proponente>'') $w_filtro = $w_filtro.'<tr valign="top"><td align="right">Proponente <td>[<b>'.$p_proponente.'</b>]';
       if ($p_assunto>'')    $w_filtro = $w_filtro.'<tr valign="top"><td align="right">Detalhamento <td>[<b>'.$p_assunto.'</b>]';
       if ($p_palavra>'')    $w_filtro=$w_filtro.'<tr valign="top"><td align="right">Palavras-chave <td>[<b>'.$p_palavra.'</b>]';
-      if ($p_ini_i>'')      $w_filtro=$w_filtro.'<tr valign="top"><td align="right">Data recebimento <td>[<b>'.$p_ini_i.'-'.$p_ini_f.'</b>]';
-      if ($p_fim_i>'')      $w_filtro=$w_filtro.'<tr valign="top"><td align="right">Limite conclusão <td>[<b>'.$p_fim_i.'-'.$p_fim_f.'</b>]';
+      if ($p_ini_i>'')      $w_filtro=$w_filtro.'<tr valign="top"><td align="right">Início previsto <td>[<b>'.$p_ini_i.'-'.$p_ini_f.'</b>]';
+      if ($p_fim_i>'')      $w_filtro=$w_filtro.'<tr valign="top"><td align="right">Término previsto <td>[<b>'.$p_fim_i.'-'.$p_fim_f.'</b>]';
       if ($p_atraso=='S')   $w_filtro=$w_filtro.'<tr valign="top"><td align="right">Situação <td>[<b>Apenas atrasadas</b>]';
       if ($w_filtro>'')     $w_filtro='<div align="left"><table border=0><tr valign="top"><td><b>Filtro:</b><td nowrap><ul>'.$w_filtro.'</ul></tr></table></div>';
     } 
@@ -275,14 +275,14 @@ function Inicial() {
         Validate('p_proponente','Proponente externo','','','2','90','1','');
         Validate('p_assunto','Assunto','','','2','90','1','1');
         Validate('p_palavra','Palavras-chave','','','2','90','1','1');
-        Validate('p_ini_i','Recebimento inicial','DATA','','10','10','','0123456789/');
-        Validate('p_ini_f','Recebimento final','DATA','','10','10','','0123456789/');
+        Validate('p_ini_i','Data de início de','DATA','','10','10','','0123456789/');
+        Validate('p_ini_f','Data de início até','DATA','','10','10','','0123456789/');
         ShowHTML('  if ((theForm.p_ini_i.value != \'\' && theForm.p_ini_f.value == \'\') || (theForm.p_ini_i.value == \'\' && theForm.p_ini_f.value != \'\')) {');
         ShowHTML('     alert (\'Informe ambas as datas de recebimento ou nenhuma delas!\');');
         ShowHTML('     theForm.p_ini_i.focus();');
         ShowHTML('     return false;');
         ShowHTML('  }');
-        CompData('p_ini_i','Recebimento inicial','<=','p_ini_f','Recebimento final');
+        CompData('p_ini_i','Data de início de','<=','p_ini_f','Data de início até');
         Validate('p_fim_i','Conclusão inicial','DATA','','10','10','','0123456789/');
         Validate('p_fim_f','Conclusão final','DATA','','10','10','','0123456789/');
         ShowHTML('  if ((theForm.p_fim_i.value != \'\' && theForm.p_fim_f.value == \'\') || (theForm.p_fim_i.value == \'\' && theForm.p_fim_f.value != \'\')) {');
@@ -599,8 +599,8 @@ function Inicial() {
       ShowHTML('          <td valign="top"><b>A<U>s</U>sunto:<br><INPUT ACCESSKEY="N" '.$w_Disabled.' class="STI" type="text" name="p_assunto" size="25" maxlength="90" value="'.$p_assunto.'"></td>');
       ShowHTML('          <td valign="top" colspan=2><b>Pala<U>v</U>ras-chave:<br><INPUT ACCESSKEY="N" '.$w_Disabled.' class="STI" type="text" name="p_palavra" size="25" maxlength="90" value="'.$p_palavra.'"></td>');
       ShowHTML('      <tr>');
-      ShowHTML('          <td valign="top"><b>Data de re<u>c</u>ebimento entre:</b><br><input '.$w_Disabled.' accesskey="C" type="text" name="p_ini_i" class="STI" SIZE="10" MAXLENGTH="10" VALUE="'.$p_ini_i.'" onKeyDown="FormataData(this,event);"> e <input '.$w_Disabled.' accesskey="C" type="text" name="p_ini_f" class="STI" SIZE="10" MAXLENGTH="10" VALUE="'.$p_ini_f.'" onKeyDown="FormataData(this,event);"></td>');
-      ShowHTML('          <td valign="top"><b>Limi<u>t</u>e para conclusão entre:</b><br><input '.$w_Disabled.' accesskey="T" type="text" name="p_fim_i" class="STI" SIZE="10" MAXLENGTH="10" VALUE="'.$p_fim_i.'" onKeyDown="FormataData(this,event);"> e <input '.$w_Disabled.' accesskey="T" type="text" name="p_fim_f" class="STI" SIZE="10" MAXLENGTH="10" VALUE="'.$p_fim_f.'" onKeyDown="FormataData(this,event);"></td>');
+      ShowHTML('          <td valign="top"><b>Iní<u>c</u>io previsto entre:</b><br><input '.$w_Disabled.' accesskey="C" type="text" name="p_ini_i" class="STI" SIZE="10" MAXLENGTH="10" VALUE="'.$p_ini_i.'" onKeyDown="FormataData(this,event);"> e <input '.$w_Disabled.' accesskey="C" type="text" name="p_ini_f" class="STI" SIZE="10" MAXLENGTH="10" VALUE="'.$p_ini_f.'" onKeyDown="FormataData(this,event);"></td>');
+      ShowHTML('          <td valign="top"><b><u>T</u>érmino previsto entre:</b><br><input '.$w_Disabled.' accesskey="T" type="text" name="p_fim_i" class="STI" SIZE="10" MAXLENGTH="10" VALUE="'.$p_fim_i.'" onKeyDown="FormataData(this,event);"> e <input '.$w_Disabled.' accesskey="T" type="text" name="p_fim_f" class="STI" SIZE="10" MAXLENGTH="10" VALUE="'.$p_fim_f.'" onKeyDown="FormataData(this,event);"></td>');
       if ($O!='C') {
         // Se não for cópia
         ShowHTML('      <tr>');
@@ -616,17 +616,17 @@ function Inicial() {
     ShowHTML('      <tr>');
     ShowHTML('          <td valign="top"><b><U>O</U>rdenação por:<br><SELECT ACCESSKEY="O" '.$w_Disabled.' class="STS" name="p_ordena" size="1">');
     if ($p_Ordena=='ASSUNTO') {
-      ShowHTML('          <option value="assunto" SELECTED>Detalhamento<option value="inicio">Data de recebimento<option value="">Data limite para conclusão<option value="nm_tramite">Fase atual<option value="prioridade">Prioridade<option value="proponente">Proponente externo');
+      ShowHTML('          <option value="assunto" SELECTED>Detalhamento<option value="inicio">Início previsto<option value="">Término previsto<option value="nm_tramite">Fase atual<option value="prioridade">Prioridade<option value="proponente">Proponente externo');
     } elseif ($p_Ordena=='INICIO') {
-      ShowHTML('          <option value="assunto">Detalhamento<option value="inicio" SELECTED>Data de recebimento<option value="">Data limite para conclusão<option value="nm_tramite">Fase atual<option value="prioridade">Prioridade<option value="proponente">Proponente externo');
+      ShowHTML('          <option value="assunto">Detalhamento<option value="inicio" SELECTED>Início previsto<option value="">Término previsto<option value="nm_tramite">Fase atual<option value="prioridade">Prioridade<option value="proponente">Proponente externo');
     } elseif ($p_Ordena=='NM_TRAMITE') {
-      ShowHTML('          <option value="assunto">Detalhamento<option value="inicio">Data de recebimento<option value="">Data limite para conclusão<option value="nm_tramite" SELECTED>Fase atual<option value="prioridade">Prioridade<option value="proponente">Proponente externo');
+      ShowHTML('          <option value="assunto">Detalhamento<option value="inicio">Início previsto<option value="">Término previsto<option value="nm_tramite" SELECTED>Fase atual<option value="prioridade">Prioridade<option value="proponente">Proponente externo');
     } elseif ($p_Ordena=='PRIORIDADE') {
-      ShowHTML('          <option value="assunto">Detalhamento<option value="inicio">Data de recebimento<option value="">Data limite para conclusão<option value="nm_tramite">Fase atual<option value="prioridade" SELECTED>Prioridade<option value="proponente">Proponente externo');
+      ShowHTML('          <option value="assunto">Detalhamento<option value="inicio">Início previsto<option value="">Término previsto<option value="nm_tramite">Fase atual<option value="prioridade" SELECTED>Prioridade<option value="proponente">Proponente externo');
     } elseif ($p_Ordena=='PROPONENTE') {
-      ShowHTML('          <option value="assunto">Detalhamento<option value="inicio">Data de recebimento<option value="">Data limite para conclusão<option value="nm_tramite">Fase atual<option value="prioridade">Prioridade<option value="proponente" SELECTED>Proponente externo');
+      ShowHTML('          <option value="assunto">Detalhamento<option value="inicio">Início previsto<option value="">Término previsto<option value="nm_tramite">Fase atual<option value="prioridade">Prioridade<option value="proponente" SELECTED>Proponente externo');
     } else {
-      ShowHTML('          <option value="assunto">Detalhamento<option value="inicio">Data de recebimento<option value="" SELECTED>Data limite para conclusão<option value="nm_tramite">Fase atual<option value="prioridade">Prioridade<option value="proponente">Proponente externo');
+      ShowHTML('          <option value="assunto">Detalhamento<option value="inicio">Início previsto<option value="" SELECTED>Término previsto<option value="nm_tramite">Fase atual<option value="prioridade">Prioridade<option value="proponente">Proponente externo');
     } 
     ShowHTML('          </select></td>');
     ShowHTML('          <td valign="top"><b><U>L</U>inhas por página:<br><INPUT ACCESSKEY="L" '.$w_Disabled.' class="STI" type="text" name="P4" size="4" maxlength="4" value="'.$P4.'"></td></tr>');
@@ -781,14 +781,14 @@ function Geral() {
       case 1: Validate('w_fim','Limite para conclusão','DATA',1,10,10,'','0123456789/');        break;
       case 2: Validate('w_fim','Limite para conclusão','DATAHORA',1,17,17,'','0123456789/');    break;
       case 3: 
-        Validate('w_inicio','Data de recebimento','DATA',1,10,10,'','0123456789/');       
-        Validate('w_fim','Limite para conclusão','DATA',1,10,10,'','0123456789/');
-        CompData('w_inicio','Data de recebimento','<=','w_fim','Limite para conclusão');
+        Validate('w_inicio','Início previsto','DATA',1,10,10,'','0123456789/');       
+        Validate('w_fim','Término previsto','DATA',1,10,10,'','0123456789/');
+        CompData('w_inicio','Início previsto','<=','w_fim','Término previsto');
         break;
     case 4:
-        Validate('w_inicio','Data de recebimento','DATAHORA',1,17,17,'','0123456789/,: ');
-        Validate('w_fim','Limite para conclusão','DATAHORA',1,17,17,'','0123456789/,: ');
-        CompData('w_inicio','Data de recebimento','<=','w_fim','Limite para conclusão');
+        Validate('w_inicio','Início previsto','DATAHORA',1,17,17,'','0123456789/,: ');
+        Validate('w_fim','Término previsto','DATAHORA',1,17,17,'','0123456789/,: ');
+        CompData('w_inicio','Início previsto','<=','w_fim','Término previsto');
         break;
     } 
     Validate('w_valor','Orçamento disponível','VALOR','1',4,18,'','0123456789.,');
@@ -801,9 +801,9 @@ function Geral() {
       Validate('w_descricao','Resultados da demanda','1',1,5,2000,'1','1');
     } 
     if (f($RS_Menu,'justificativa')=='S') {
-      Validate('w_justificativa','Recomendações superiores','1',1,5,2000,'1','1');
+      Validate('w_justificativa','Observações','1',1,5,2000,'1','1');
     } 
-    Validate('w_dias','Dias de alerta','1','',1,2,'','0123456789');
+    Validate('w_dias','Dias de alerta','1','',1,3,'','0123456789');
     ShowHTML('  if (theForm.w_aviso[0].checked) {');
     ShowHTML('     if (theForm.w_dias.value == \'\') {');
     ShowHTML('        alert(\'Informe a partir de quantos dias antes da data limite você deseja ser avisado de sua proximidade!\');');
@@ -869,27 +869,27 @@ function Geral() {
     SelecaoPrioridade('<u>P</u>rioridade:','P','Informe a prioridade desta demanda.',$w_prioridade,null,'w_prioridade',null,null);
     ShowHTML('          <tr>');
     switch (f($RS_Menu,'data_hora')) {
-      case 1: ShowHTML('              <td valign="top"><b>Limi<u>t</u>e para conclusão:</b><br><input '.$w_Disabled.' accesskey="T" type="text" name="w_fim" class="STI" SIZE="10" MAXLENGTH="10" VALUE="'.$w_fim.'" onKeyDown="FormataData(this,event);" title="Data limite para que a execução da demanda esteja concluída."></td>');           break;
-      case 2: ShowHTML('              <td valign="top"><b>Limi<u>t</u>e para conclusão:</b><br><input '.$w_Disabled.' accesskey="T" type="text" name="w_fim" class="STI" SIZE="17" MAXLENGTH="17" VALUE="'.$w_fim.'" onKeyDown="FormataDataHora(this,event);" title="Data/hora limite para que a execução da demanda esteja concluída."></td>');  break;
+      case 1: ShowHTML('              <td valign="top"><b><u>T</u>érmino previsto:</b><br><input '.$w_Disabled.' accesskey="T" type="text" name="w_fim" class="STI" SIZE="10" MAXLENGTH="10" VALUE="'.$w_fim.'" onKeyDown="FormataData(this,event);" title="Data limite para que a execução da demanda esteja concluída."></td>');           break;
+      case 2: ShowHTML('              <td valign="top"><b><u>T</u>érmino previsto:</b><br><input '.$w_Disabled.' accesskey="T" type="text" name="w_fim" class="STI" SIZE="17" MAXLENGTH="17" VALUE="'.$w_fim.'" onKeyDown="FormataDataHora(this,event);" title="Data/hora limite para que a execução da demanda esteja concluída."></td>');  break;
       case 3: 
-        ShowHTML('              <td valign="top"><b>Data de re<u>c</u>ebimento:</b><br><input '.$w_Disabled.' accesskey="C" type="text" name="w_inicio" class="STI" SIZE="10" MAXLENGTH="10" VALUE="'.Nvl($w_inicio,FormataDataEdicao(time())).'" onKeyDown="FormataData(this,event);" title="Data de recebimento da demanda."></td>'); 
-        ShowHTML('              <td valign="top"><b>Limi<u>t</u>e para conclusão:</b><br><input '.$w_Disabled.' accesskey="T" type="text" name="w_fim" class="STI" SIZE="10" MAXLENGTH="10" VALUE="'.$w_fim.'" onKeyDown="FormataData(this,event);" title="Data limite para que a execução da demanda esteja concluída."></td>');
+        ShowHTML('              <td valign="top"><b>Iní<u>c</u>io previsto:</b><br><input '.$w_Disabled.' accesskey="C" type="text" name="w_inicio" class="STI" SIZE="10" MAXLENGTH="10" VALUE="'.Nvl($w_inicio,FormataDataEdicao(time())).'" onKeyDown="FormataData(this,event);" title="Início previsto da demanda."></td>'); 
+        ShowHTML('              <td valign="top"><b><u>T</u>érmino previsto:</b><br><input '.$w_Disabled.' accesskey="T" type="text" name="w_fim" class="STI" SIZE="10" MAXLENGTH="10" VALUE="'.$w_fim.'" onKeyDown="FormataData(this,event);" title="Data limite para que a execução da demanda esteja concluída."></td>');
         break;
       case 4:
-        ShowHTML('              <td valign="top"><b>Data de re<u>c</u>ebimento:</b><br><input '.$w_Disabled.' accesskey="C" type="text" name="w_inicio" class="STI" SIZE="17" MAXLENGTH="17" VALUE="'.$w_inicio.'" onKeyDown="FormataDataHora(this,event);" title="Data/hora de recebimento da demanda."></td>');
-        ShowHTML('              <td valign="top"><b>Limi<u>t</u>e para conclusão:</b><br><input '.$w_Disabled.' accesskey="T" type="text" name="w_fim" class="STI" SIZE="17" MAXLENGTH="17" VALUE="'.$w_fim.'" onKeyDown="FormataDataHora(this,event);" title="Data/hora limite para que a execução da demanda esteja concluída."></td>');
+        ShowHTML('              <td valign="top"><b>Iní<u>c</u>io previsto:</b><br><input '.$w_Disabled.' accesskey="C" type="text" name="w_inicio" class="STI" SIZE="17" MAXLENGTH="17" VALUE="'.$w_inicio.'" onKeyDown="FormataDataHora(this,event);" title="Data/hora de início previsto da demanda."></td>');
+        ShowHTML('              <td valign="top"><b><u>T</u>érmino previsto:</b><br><input '.$w_Disabled.' accesskey="T" type="text" name="w_fim" class="STI" SIZE="17" MAXLENGTH="17" VALUE="'.$w_fim.'" onKeyDown="FormataDataHora(this,event);" title="Data/hora limite para que a execução da demanda esteja concluída."></td>');
         break;
     } 
     ShowHTML('              <td valign="top"><b>O<u>r</u>çamento disponível:</b><br><input '.$w_Disabled.' accesskey="O" type="text" name="w_valor" class="STI" SIZE="18" MAXLENGTH="18" VALUE="'.$w_valor.'" onKeyDown="FormataValor(this,18,2,event);" title="Informe o orçamento disponível para execução da demanda, ou zero se não for o caso."></td>');
     ShowHTML('          </table>');
     ShowHTML('      <tr><td valign="top"><b>Pa<u>l</u>avras-chave:<br><INPUT ACCESSKEY="L" '.$w_Disabled.' class="STI" type="text" name="w_palavra_chave" size="90" maxlength="90" value="'.$w_palavra_chave.'" title="Se desejar, informe palavras-chave adicionais aos campos informados e que permitam a identificação desta demanda."></td>');
+    ShowHTML('      <tr><td valign="top"><b>Nome do proponent<u>e</u> externo:<br><INPUT ACCESSKEY="E" '.$w_Disabled.' class="STI" type="text" name="w_proponente" size="90" maxlength="90" value="'.$w_proponente.'" title="Proponente externo da demanda. Preencha apenas se houver."></td>');
     ShowHTML('      <tr><td align="center" height="2" bgcolor="#000000"></td></tr>');
     ShowHTML('      <tr><td align="center" height="1" bgcolor="#000000"></td></tr>');
-    ShowHTML('      <tr><td valign="top" align="center" bgcolor="#D0D0D0"><b>Identificação do proponente</td></td></tr>');
+    ShowHTML('      <tr><td valign="top" align="center" bgcolor="#D0D0D0"><b>Local da execução</td></td></tr>');
     ShowHTML('      <tr><td align="center" height="1" bgcolor="#000000"></td></tr>');
-    ShowHTML('      <tr><td>Os dados deste bloco identificam o proponente externo e sua localização, sendo utilizados para consultas gerenciais por distribuição geográfica.</td></tr>');
+    ShowHTML('      <tr><td>Os dados deste bloco identificam o local onde a demanda será executada, sendo utilizados para consultas gerenciais por distribuição geográfica.</td></tr>');
     ShowHTML('      <tr><td align="center" height="1" bgcolor="#000000"></td></tr>');
-    ShowHTML('      <tr><td valign="top"><b>Nome do proponent<u>e</u> externo:<br><INPUT ACCESSKEY="E" '.$w_Disabled.' class="STI" type="text" name="w_proponente" size="90" maxlength="90" value="'.$w_proponente.'" title="Proponente externo da demanda. Preencha apenas se houver."></td>');
     ShowHTML('      <tr><td valign="top" colspan="2"><table border=0 width="100%" cellspacing=0>');
     ShowHTML('      <tr>');
     SelecaoPais('<u>P</u>aís:','P',null,$w_pais,null,'w_pais',null,'onChange="document.Form.action=\''.$w_pagina.$par.'\'; document.Form.w_troca.value=\'w_uf\'; document.Form.submit();"');
@@ -907,19 +907,19 @@ function Geral() {
         ShowHTML('      <tr><td valign="top"><b>Res<u>u</u>ltados da demanda:</b><br><textarea '.$w_Disabled.' accesskey="U" name="w_descricao" class="STI" ROWS=5 cols=75 title="Descreva os resultados esperados após a execução da demanda.">'.$w_descricao.'</TEXTAREA></td>');
       } 
       if (f($RS_Menu,'justificativa')=='S') {
-        ShowHTML('      <tr><td valign="top"><b><u>R</u>ecomendações superiores:</b><br><textarea '.$w_Disabled.' accesskey="R" name="w_justificativa" class="STI" ROWS=5 cols=75 title="Relacione as recomendações a serem seguidas na execução da demanda.">'.$w_justificativa.'</TEXTAREA></td>');
+        ShowHTML('      <tr><td valign="top"><b>Obse<u>r</u>vações:</b><br><textarea '.$w_Disabled.' accesskey="R" name="w_justificativa" class="STI" ROWS=5 cols=75 title="Relacione recomendações e observações a serem seguidas na execução da demanda.">'.$w_justificativa.'</TEXTAREA></td>');
       } 
     } 
     ShowHTML('      <tr><td align="center" height="2" bgcolor="#000000"></td></tr>');
     ShowHTML('      <tr><td align="center" height="1" bgcolor="#000000"></td></tr>');
     ShowHTML('      <tr><td valign="top" align="center" bgcolor="#D0D0D0"><b>Alerta de atraso</td></td></tr>');
     ShowHTML('      <tr><td align="center" height="1" bgcolor="#000000"></td></tr>');
-    ShowHTML('      <tr><td>Os dados abaixo indicam como deve ser tratada a proximidade da data limite para conclusão da demanda.</td></tr>');
+    ShowHTML('      <tr><td>Os dados abaixo indicam como deve ser tratada a proximidade da data de término previsto da demanda.</td></tr>');
     ShowHTML('      <tr><td align="center" height="1" bgcolor="#000000"></td></tr>');
     ShowHTML('      <tr><td><table border="0" width="100%">');
     ShowHTML('          <tr>');
     MontaRadioNS('<b>Emite alerta?</b>',$w_aviso,'w_aviso');
-    ShowHTML('              <td valign="top"><b>Quantos <U>d</U>ias antes da data limite?<br><INPUT ACCESSKEY="D" '.$w_Disabled.' class="STI" type="text" name="w_dias" size="2" maxlength="2" value="'.$w_dias.'" title="Número de dias para emissão do alerta de proximidade da data limite para conclusão da demanda."></td>');
+    ShowHTML('              <td valign="top"><b>Quantos <U>d</U>ias antes da data limite?<br><INPUT ACCESSKEY="D" '.$w_Disabled.' class="STI" type="text" name="w_dias" size="3" maxlength="3" value="'.$w_dias.'" title="Número de dias para emissão do alerta de proximidade da data de término previsto da demanda."></td>');
     ShowHTML('          </table>');
     ShowHTML('      <tr><td align="center" colspan="3" height="1" bgcolor="#000000"></TD></TR>');
     // Verifica se poderá ser feito o envio da solicitação, a partir do resultado da validação
@@ -1689,18 +1689,18 @@ function Concluir() {
     FormataValor();
     ValidateOpen('Validacao');
     switch (f($RS_Menu,'data_hora')) {
-      case 1: Validate('w_fim_real','Término da execução','DATA',1,10,10,'','0123456789/'); break;
-      case 2: Validate('w_fim_real','Término da execução','DATAHORA',1,17,17,'','0123456789/'); break;
+      case 1: Validate('w_fim_real','Término previsto','DATA',1,10,10,'','0123456789/'); break;
+      case 2: Validate('w_fim_real','Término previsto','DATAHORA',1,17,17,'','0123456789/'); break;
       case 3: 
-        Validate('w_inicio_real','Início da execução','DATA',1,10,10,'','0123456789/');
-        Validate('w_fim_real','Término da execução','DATA',1,10,10,'','0123456789/');
-        CompData('w_inicio_real','Início da execução','<=','w_fim_real','Término da execução');
-        CompData('w_fim_real','Término da execução','<=',FormataDataEdicao(time()),'data atual');
+        Validate('w_inicio_real','Início previsto','DATA',1,10,10,'','0123456789/');
+        Validate('w_fim_real','Término previsto','DATA',1,10,10,'','0123456789/');
+        CompData('w_inicio_real','Início previsto','<=','w_fim_real','Término previsto');
+        CompData('w_fim_real','Término previsto','<=',FormataDataEdicao(time()),'data atual');
         break;
       case 4:
-        Validate('w_inicio_real','Início da execução','DATAHORA',1,17,17,'','0123456789/,: ');
-        Validate('w_fim_real','Término da execução','DATAHORA',1,17,17,'','0123456789/,: ');
-        CompData('w_inicio_real','Início da execução','<=','w_fim_real','Término da execução');
+        Validate('w_inicio_real','Início previsto','DATAHORA',1,17,17,'','0123456789/,: ');
+        Validate('w_fim_real','Término previsto','DATAHORA',1,17,17,'','0123456789/,: ');
+        CompData('w_inicio_real','Início previsto','<=','w_fim_real','Término previsto');
         break;
     } 
     Validate('w_custo_real','Custo real','VALOR','1',4,18,'','0123456789.,');
@@ -1750,15 +1750,15 @@ function Concluir() {
   ShowHTML('      <tr><td valign="top" colspan="2"><table border=0 width="100%" cellspacing=0>');
   ShowHTML('          <tr>');
   switch (f($RS_Menu,'data_hora')) {
-    case 1: ShowHTML('              <td valign="top"><b><u>T</u>érmino da execução:</b><br><input '.$w_Disabled.' accesskey="T" type="text" name="w_fim_real" class="STI" SIZE="10" MAXLENGTH="10" VALUE="'.$w_fim_real.'" onKeyDown="FormataData(this,event);" title="Informe a data de término da execução da demanda."></td>');          break;
-    case 2: ShowHTML('              <td valign="top"><b><u>T</u>érmino da execução:</b><br><input '.$w_Disabled.' accesskey="T" type="text" name="w_fim_real" class="STI" SIZE="17" MAXLENGTH="17" VALUE="'.$w_fim_real.'" onKeyDown="FormataDataHora(this,event);" title="Informe a data/hora de término da execução da demanda."></td>'); break;
+    case 1: ShowHTML('              <td valign="top"><b><u>T</u>érmino previsto:</b><br><input '.$w_Disabled.' accesskey="T" type="text" name="w_fim_real" class="STI" SIZE="10" MAXLENGTH="10" VALUE="'.$w_fim_real.'" onKeyDown="FormataData(this,event);" title="Informe a data de término previsto da demanda."></td>');          break;
+    case 2: ShowHTML('              <td valign="top"><b><u>T</u>érmino previsto:</b><br><input '.$w_Disabled.' accesskey="T" type="text" name="w_fim_real" class="STI" SIZE="17" MAXLENGTH="17" VALUE="'.$w_fim_real.'" onKeyDown="FormataDataHora(this,event);" title="Informe a data/hora de término previsto da demanda."></td>'); break;
     case 3:
-      ShowHTML('              <td valign="top"><b>Iní<u>c</u>io da execução:</b><br><input '.$w_Disabled.' accesskey="C" type="text" name="w_inicio_real" class="STI" SIZE="10" MAXLENGTH="10" VALUE="'.$w_inicio_real.'" onKeyDown="FormataData(this,event);" title="Informe a data/hora de início da execução da demanda."></td>');
-      ShowHTML('              <td valign="top"><b><u>T</u>érmino da execução:</b><br><input '.$w_Disabled.' accesskey="T" type="text" name="w_fim_real" class="STI" SIZE="10" MAXLENGTH="10" VALUE="'.$w_fim_real.'" onKeyDown="FormataData(this,event);" title="Informe a data de término da execução da demanda."></td>');
+      ShowHTML('              <td valign="top"><b>Iní<u>c</u>io previsto:</b><br><input '.$w_Disabled.' accesskey="C" type="text" name="w_inicio_real" class="STI" SIZE="10" MAXLENGTH="10" VALUE="'.$w_inicio_real.'" onKeyDown="FormataData(this,event);" title="Informe a data/hora de início previsto da demanda."></td>');
+      ShowHTML('              <td valign="top"><b><u>T</u>érmino previsto:</b><br><input '.$w_Disabled.' accesskey="T" type="text" name="w_fim_real" class="STI" SIZE="10" MAXLENGTH="10" VALUE="'.$w_fim_real.'" onKeyDown="FormataData(this,event);" title="Informe a data de término previsto da demanda."></td>');
       break;
     case 4:
-      ShowHTML('              <td valign="top"><b>Iní<u>c</u>io da execução:</b><br><input '.$w_Disabled.' accesskey="C" type="text" name="w_inicio_real" class="STI" SIZE="17" MAXLENGTH="17" VALUE="'.$w_inicio_real.'" onKeyDown="FormataDataHora(this,event);" title="Informe a data/hora de início da execução da demanda."></td>');
-      ShowHTML('              <td valign="top"><b><u>T</u>érmino da execução:</b><br><input '.$w_Disabled.' accesskey="T" type="text" name="w_fim_real" class="STI" SIZE="17" MAXLENGTH="17" VALUE="'.$w_fim_real.'" onKeyDown="FormataDataHora(this,event);" title="Informe a data de término da execução da demanda."></td>');
+      ShowHTML('              <td valign="top"><b>Iní<u>c</u>io previsto:</b><br><input '.$w_Disabled.' accesskey="C" type="text" name="w_inicio_real" class="STI" SIZE="17" MAXLENGTH="17" VALUE="'.$w_inicio_real.'" onKeyDown="FormataDataHora(this,event);" title="Informe a data/hora de início previsto da demanda."></td>');
+      ShowHTML('              <td valign="top"><b><u>T</u>érmino previsto:</b><br><input '.$w_Disabled.' accesskey="T" type="text" name="w_fim_real" class="STI" SIZE="17" MAXLENGTH="17" VALUE="'.$w_fim_real.'" onKeyDown="FormataDataHora(this,event);" title="Informe a data de término previsto da demanda."></td>');
       break;
   } 
   ShowHTML('              <td valign="top"><b>Custo <u>r</u>eal:</b><br><input '.$w_Disabled.' accesskey="O" type="text" name="w_custo_real" class="STI" SIZE="18" MAXLENGTH="18" VALUE="'.$w_custo_real.'" onKeyDown="FormataValor(this,18,2,event);" title="Informe o orçamento disponível para execução da demanda, ou zero se não for o caso."></td>');
@@ -1828,8 +1828,8 @@ function SolicMail($p_solic,$p_tipo) {
   $w_html.=$crlf.'          <td>Responsável:<br><b>'.f($RSM,'nm_sol').'</b></td>';
   $w_html.=$crlf.'          <td>Unidade responsável:<br><b>'.f($RSM,'nm_unidade_resp').'</b></td>';
   $w_html.=$crlf.'          <tr valign="top">';
-  $w_html.=$crlf.'          <td>Data de recebimento:<br><b>'.FormataDataEdicao(f($RSM,'inicio')).' </b></td>';
-  $w_html.=$crlf.'          <td>Limite para conclusão:<br><b>'.FormataDataEdicao(f($RSM,'fim')).' </b></td>';
+  $w_html.=$crlf.'          <td>Início previsto:<br><b>'.FormataDataEdicao(f($RSM,'inicio')).' </b></td>';
+  $w_html.=$crlf.'          <td>Término previsto:<br><b>'.FormataDataEdicao(f($RSM,'fim')).' </b></td>';
   $w_html.=$crlf.'          <td>Prioridade:<br><b>'.RetornaPrioridade(f($RSM,'prioridade')).' </b></td>';
   $w_html.=$crlf.'          </table>';
   // Informações adicionais
@@ -1843,8 +1843,8 @@ function SolicMail($p_solic,$p_tipo) {
     $w_html.=$crlf.'      <tr><td valign="top" colspan="2" align="center" bgcolor="#D0D0D0" style="border: 2px solid rgb(0,0,0);"><b>DADOS DA CONCLUSÃO</td>';
     $w_html.=$crlf.'      <tr><td valign="top" colspan="2"><table border=0 width="100%" cellspacing=0>';
     $w_html.=$crlf.'          <tr valign="top">';
-    $w_html.=$crlf.'          <td>Início da execução:<br><b>'.FormataDataEdicao(f($RSM,'inicio_real')).' </b></td>';
-    $w_html.=$crlf.'          <td>Término da execução:<br><b>'.FormataDataEdicao(f($RSM,'fim_real')).' </b></td>';
+    $w_html.=$crlf.'          <td>Início previsto:<br><b>'.FormataDataEdicao(f($RSM,'inicio_real')).' </b></td>';
+    $w_html.=$crlf.'          <td>Término previsto:<br><b>'.FormataDataEdicao(f($RSM,'fim_real')).' </b></td>';
     $w_html.=$crlf.'          </table>';
     $w_html.=$crlf.'      <tr><td valign="top">Nota de conclusão:<br><b>'.CRLF2BR(f($RSM,'nota_conclusao')).' </b></td>';
   } 
@@ -1891,9 +1891,22 @@ function SolicMail($p_solic,$p_tipo) {
 
   // Recupera o e-mail do titular e do substituto pelo setor responsável
   $RS = db_getUorgResp::getInstanceOf($dbms,f($RSM,'sq_unidade'));
+  foreach($RS as $row){$RS=$row; break;}
   if ((strpos($w_destinatarios,f($RS,'email_titular').'; ')===false)    && Nvl(f($RS,'email_titular'),'nulo')!='nulo')    $w_destinatarios=$w_destinatarios.f($RS,'email_titular').'; ';
   if ((strpos($w_destinatarios,f($RS,'email_substituto').'; ')===false) && Nvl(f($RS,'email_substituto'),'nulo')!='nulo') $w_destinatarios=$w_destinatarios.f($RS,'email_substituto').'; ';
-
+  // Recuperar o e-mail dos interessados
+  $RS = db_getSolicInter::getInstanceOf($dbms,$p_solic,null,'LISTA');
+  foreach($RS as $row) {
+    if ((strpos($w_destinatarios,f($row,'email').'; ')===false)    && Nvl(f($row,'email'),'nulo')!='nulo' && f($row,'envia_email') =='S')    $w_destinatarios=$w_destinatarios.f($row,'email').'; ';
+  }
+  // Recuperar o e-mail do titular e substituto das áreas envolvidas
+  $RS = db_getSolicAreas::getInstanceOf($dbms,$p_solic,null,'LISTA');
+  foreach($RS as $row) {
+    $RS1 = db_getUorgResp::getInstanceOf($dbms,f($row,'sq_unidade'));
+    foreach($RS1 as $row1){$RS1=$row1; break;}
+    if ((strpos($w_destinatarios,f($RS1,'email_titular').'; ')===false)    && Nvl(f($RS1,'email_titular'),'nulo')!='nulo')    $w_destinatarios=$w_destinatarios.f($RS1,'email_titular').'; ';
+    if ((strpos($w_destinatarios,f($RS1,'email_substituto').'; ')===false) && Nvl(f($RS1,'email_substituto'),'nulo')!='nulo') $w_destinatarios=$w_destinatarios.f($RS1,'email_substituto').'; ';    
+  }  
   // Prepara os dados necessários ao envio
   $RS = db_getCustomerData::getInstanceOf($dbms,$_SESSION['P_CLIENTE']);
   if ($p_tipo==1 || $p_tipo==3) {
@@ -2012,7 +2025,7 @@ function Grava() {
         if (UPLOAD_ERR_OK==0) {
           $w_maximo = $_REQUEST['w_upload_maximo'];
           foreach ($_FILES as $Chv => $Field) {
-            if ($Field['error'] > 0) {
+            if (!($Field['error']==UPLOAD_ERR_OK || $Field['error']==UPLOAD_ERR_NO_FILE)) {
               // Verifica se o tamanho das fotos está compatível com  o limite de 100KB. 
               ScriptOpen('JavaScript');
               ShowHTML('  alert(\'Atenção: o tamanho máximo do arquivo não pode exceder '.($w_maximo/1024).' KBytes!\');');
@@ -2020,7 +2033,7 @@ function Grava() {
               ScriptClose();
               exit();
             }
-            if ($Field['size'] >= 0) {
+            if ($Field['size'] > 0) {
               // Verifica se o tamanho das fotos está compatível com  o limite de 100KB. 
               if ($Field['size'] > $w_maximo) {
                 ScriptOpen('JavaScript');
@@ -2089,7 +2102,7 @@ function Grava() {
           if (UPLOAD_ERR_OK==0) {
             $w_maximo = $_REQUEST['w_upload_maximo'];
             foreach ($_FILES as $Chv => $Field) {
-              if ($Field['error'] > 0) {
+              if (!($Field['error']==UPLOAD_ERR_OK || $Field['error']==UPLOAD_ERR_NO_FILE)) {
                 // Verifica se o tamanho das fotos está compatível com  o limite de 100KB. 
                 ScriptOpen('JavaScript');
                 ShowHTML('  alert(\'Atenção: o tamanho máximo do arquivo não pode exceder '.($w_maximo/1024).' KBytes!\');');
@@ -2097,7 +2110,7 @@ function Grava() {
                 ScriptClose();
                 exit();
               }
-              if ($Field['size'] >= 0) {
+              if ($Field['size'] > 0) {
                 // Verifica se o tamanho das fotos está compatível com  o limite de 100KB. 
                 if ($Field['size'] > $w_maximo) {
                   ScriptOpen('JavaScript');
@@ -2171,7 +2184,7 @@ function Grava() {
           if (UPLOAD_ERR_OK==0) {
             $w_maximo = $_REQUEST['w_upload_maximo'];
             foreach ($_FILES as $Chv => $Field) {
-              if ($Field['error'] > 0) {
+              if (!($Field['error']==UPLOAD_ERR_OK || $Field['error']==UPLOAD_ERR_NO_FILE)) {
                 // Verifica se o tamanho das fotos está compatível com  o limite de 100KB. 
                 ScriptOpen('JavaScript');
                 ShowHTML('  alert(\'Atenção: o tamanho máximo do arquivo não pode exceder '.($w_maximo/1024).' KBytes!\');');
@@ -2179,7 +2192,7 @@ function Grava() {
                 ScriptClose();
                 exit();
               }
-              if ($Field['size'] >= 0) {
+              if ($Field['size'] > 0) {
                 // Verifica se o tamanho das fotos está compatível com  o limite de 100KB. 
                 if ($Field['size'] > $w_maximo) {
                   ScriptOpen('JavaScript');

@@ -14,6 +14,10 @@ function VisualProjeto($l_chave,$operacao,$l_usuario) {
   $RS = db_getSiwCliModLis::getInstanceOf($dbms,$w_cliente,null,'PD');
   if (count($RS)>0) $w_viagem='S'; else $w_viagem='N';
 
+  // Verifica se o cliente tem o módulo planejamento estratégico
+  $RS = db_getSiwCliModLis::getInstanceOf($dbms,$w_cliente,null,'IS');
+  if (count($RS)>0) $w_acao='S'; else $w_acao='N';
+
   // Recupera os dados do projeto
   $RS = db_getSolicData::getInstanceOf($dbms,$l_chave,'PJGERAL');
   // Recupera o tipo de visão do usuário
@@ -62,11 +66,18 @@ function VisualProjeto($l_chave,$operacao,$l_usuario) {
     if (Nvl(f($RS,'sq_cc'),'')>'') $w_html .= chr(13).'      <tr><td colspan=3>Classificação:<b>'.f($RS,'cc_nome').' </b></td>';
 
     // Se o acordo foi informado, exibe.
-    if (Nvl(f($RS,'cd_acordo'),'')>'') $w_html .= chr(13).'      <tr><td colspan=3>Acordo: <b>'.f($RS,'cd_acordo').' ('.f($RS,'sq_acordo').') '.f($RS,'nm_acordo').' </b></td>';
-
+    if (Nvl(f($RS,'cd_acordo'),'')>'') {
+      $w_html .= chr(13).'      <tr><td colspan=3>Acordo: <b>'.f($RS,'cd_acordo').' ('.f($RS,'sq_acordo').') '.f($RS,'nm_acordo').' </b></td>';
+    } else {
+      if (Nvl(f($RS,'sq_solic_pai'),'')>'') {
+        $RS1 = db_getSolicData_IS::getInstanceOf($dbms,f($RS,'sq_solic_pai'),'ISACGERAL');
+        foreach($RS1 as $row1) {$RS1=$row1; break;}
+        $w_html .= chr(13).'      <tr><td colspan=3>Ação: <b>'.f($RS1,'cd_unidade').'.'.f($RS1,'cd_programa').'.'.f($RS1,'cd_acao').' - '.f($RS1,'nm_ppa').'</b></td>';
+      }
+    }
     $w_html .= chr(13).'      <tr><td valign="top" colspan="2"><table border=0 width="100%" cellspacing=0>';
     $w_html .= chr(13).'          <tr valign="top">';
-    $w_html .= chr(13).'            <td>Cidade de origem:<br><b>'.f($RS,'nm_cidade').' ('.f($RS,'co_uf').")</b></td>";
+    $w_html .= chr(13).'            <td>Local de execução:<br><b>'.f($RS,'nm_cidade').' ('.f($RS,'co_uf').")</b></td>";
     $w_html .= chr(13).'          <td colspan=2>Proponente externo:<br><b>'.f($RS,'proponente').' </b></td>';
     $w_html .= chr(13).'          <tr valign="top">';
     $w_html .= chr(13).'          <td>Responsável:<br><b>'.ExibePessoa(null,$w_cliente,f($RS,'solicitante'),$TP,f($RS,'nm_sol')).'</b></td>';
@@ -76,8 +87,8 @@ function VisualProjeto($l_chave,$operacao,$l_usuario) {
     if ($w_tipo_visao==0) $w_html .= chr(13).'          <td>Orçamento disponível:<br><b>'.number_format(f($RS,'valor'),2,',','.').' </b></td>';
 
     $w_html .= chr(13).'          <tr valign="top">';
-    $w_html .= chr(13).'          <td>Data de recebimento:<br><b>'.FormataDataEdicao(f($RS,'inicio')).' </b></td>';
-    $w_html .= chr(13).'          <td>Limite para conclusão:<br><b>'.FormataDataEdicao(f($RS,'fim')).' </b></td>';
+    $w_html .= chr(13).'          <td>Início previsto:<br><b>'.FormataDataEdicao(f($RS,'inicio')).' </b></td>';
+    $w_html .= chr(13).'          <td>Término previsto:<br><b>'.FormataDataEdicao(f($RS,'fim')).' </b></td>';
     $w_html .= chr(13).'          <td>Prioridade:<br><b>'.RetornaPrioridade(f($RS,'prioridade')).' </b></td>';
     if ($w_tipo_visao==0 || $w_tipo_visao==1) {
       // Informações adicionais
@@ -88,7 +99,7 @@ function VisualProjeto($l_chave,$operacao,$l_usuario) {
         }
         if ($w_tipo_visao==0 && Nvl(f($RS,'justificativa'),'') > '') {
           // Se for visão completa
-          $w_html .= chr(13).'      <tr><td colspan=3>Recomendações superiores:<br><b>'.CRLF2BR(f($RS,'justificativa')).' </b></td>';
+          $w_html .= chr(13).'      <tr><td colspan=3>Observações:<br><b>'.CRLF2BR(f($RS,'justificativa')).' </b></td>';
         } 
         if ($w_acordo=='S' || $w_viagem=='S') {
           $w_html .= chr(13).'          <tr valign="top">';
@@ -109,8 +120,8 @@ function VisualProjeto($l_chave,$operacao,$l_usuario) {
       $w_html .= chr(13).'      <tr><td valign="top" colspan="2" align="center" bgcolor="#D0D0D0" style="border: 2px solid rgb(0,0,0);"><b>Dados da conclusão</td>';
       $w_html .= chr(13).'      <tr><td valign="top" colspan="2"><table border=0 width="100%" cellspacing=0>';
       $w_html .= chr(13).'          <tr valign="top">';
-      $w_html .= chr(13).'          <td>Início da execução:<br><b>'.FormataDataEdicao(f($RS,'inicio_real')).' </b></td>';
-      $w_html .= chr(13).'          <td>Término da execução:<br><b>'.FormataDataEdicao(f($RS,'fim_real')).' </b></td>';
+      $w_html .= chr(13).'          <td>Início previsto:<br><b>'.FormataDataEdicao(f($RS,'inicio_real')).' </b></td>';
+      $w_html .= chr(13).'          <td>Término previsto:<br><b>'.FormataDataEdicao(f($RS,'fim_real')).' </b></td>';
       if ($w_tipo_visao==0) $w_html .= chr(13).'          <td>Custo real:<br><b>'.number_format(f($RS,'custo_real'),2,',','.').' </b></td>';
       $w_html .= chr(13).'          </table>';
       if ($w_tipo_visao==0) $w_html .= chr(13).'      <tr><td valign="top">Nota de conclusão:<br><b>'.CRLF2BR(f($RS,'nota_conclusao')).' </b></td>';
@@ -225,9 +236,11 @@ function VisualProjeto($l_chave,$operacao,$l_usuario) {
     $RS = SortArray($RS,'ordem','asc');
     // Recupera o código da opção de menu  a ser usada para listar as atividades
     $w_p2 = '';
+    $w_p3 = '';
     if (count($RS)>0) {
       foreach ($RS as $row) {
         if (Nvl(f($row,'P2'),0) > 0) $w_p2 = f($row,'P2');
+        if (Nvl(f($row,'P3'),0) > 0) $w_p3 = f($row,'P3');
         break;
       } 
       reset($RS);
@@ -242,6 +255,10 @@ function VisualProjeto($l_chave,$operacao,$l_usuario) {
         $w_html .= chr(13).'  function lista (projeto, etapa) {';
         $w_html .= chr(13).'    document.Form.p_projeto.value=projeto;';
         $w_html .= chr(13).'    document.Form.p_atividade.value=etapa;';
+        $RS1 = db_getMenuData::getInstanceOf($dbms,$w_p3);
+        $w_html .= chr(13).'    document.Form.action=\''.f($RS1,'link').'\';';
+        $w_html .= chr(13).'    document.Form.P2.value=\''.w_p2.'\';';
+        $w_html .= chr(13).'    document.Form.SG.value=\''.f($RS1,'sigla').'\';';        
         $w_html .= chr(13).'    document.Form.p_agrega.value=\'GRDMETAPA\';';
         $RS1 = db_getTramiteList::getInstanceOf($dbms,$w_p2,null,null);
         $RS1 = SortArray($RS1,'ordem','asc');
@@ -255,8 +272,31 @@ function VisualProjeto($l_chave,$operacao,$l_usuario) {
         $w_html .= chr(13).'  }';
         $w_html .= chr(13).'</SCRIPT>';
       }
+      // Monta função JAVASCRIPT para fazer a chamada para a lista de contratos
+      if ($w_p3 > '') {
+        $w_html .= chr(13).'<SCRIPT LANGUAGE="JAVASCRIPT">';
+        $w_html .= chr(13).'  function listac (projeto, etapa) {';
+        $w_html .= chr(13).'    document.Form.p_projeto.value=projeto;';
+        $w_html .= chr(13).'    document.Form.p_atividade.value=etapa;';
+        $RS1 = db_getMenuData::getInstanceOf($dbms,$w_p3);
+        $w_html .= chr(13).'    document.Form.action=\''.f($RS1,'link').'\';';
+        $w_html .= chr(13).'    document.Form.P2.value=\''.w_p3.'\';';
+        $w_html .= chr(13).'    document.Form.SG.value=\''.f($RS1,'sigla').'\';';
+        $w_html .= chr(13).'    document.Form.p_agrega.value=\''.substr(f($RS1,'sigla'),0,3).'ETAPA\';';
+        $RS1 = db_getTramiteList::getInstanceOf($dbms,$w_p3,null,null);
+        $RS1 = SortArray($RS1,'ordem','asc');
+        $w_html .= chr(13).'    document.Form.p_fase.value=\'\';';
+        $w_fases='';
+        foreach($RS1 as $row1) {
+          if (f($row1,'sigla')!='CA') $w_fases=$w_fases.','.f($row1,'sq_siw_tramite');
+        } 
+        $w_html .= chr(13).'    document.Form.p_fase.value=\''.substr($w_fases,1,100).'\';';
+        $w_html .= chr(13).'    document.Form.submit();';
+        $w_html .= chr(13).'  }';
+        $w_html .= chr(13).'</SCRIPT>';
+      }      
       $RS1 = db_getMenuData::getInstanceOf($dbms,$w_p2);
-      AbreForm('Form',f($RS1,'link'),'POST','return(Validacao(this));','Atividades',3,$w_p2,1,null,$w_TP,f($RS1,'sigla'),$w_pagina.$par,'L');
+      AbreForm('Form',f($RS1,'link'),'POST','return(Validacao(this));','Lista',3,$w_p2,1,null,$w_TP,f($RS1,'sigla'),$w_pagina.$par,'L');
       $w_html .= chr(13).'<input type="Hidden" name="p_projeto" value="">';
       $w_html .= chr(13).'<input type="Hidden" name="p_atividade" value="">';
       $w_html .= chr(13).'<input type="Hidden" name="p_agrega" value="">';

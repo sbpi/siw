@@ -699,6 +699,7 @@ Fontes_PHP_SIW/classes/sp/db_getLinkDataParents.php -text
 Fontes_PHP_SIW/classes/sp/db_getLinkDataUser.php -text
 Fontes_PHP_SIW/classes/sp/db_getLinkSubMenu.php -text
 Fontes_PHP_SIW/classes/sp/db_getLocalList.php -text
+Fontes_PHP_SIW/classes/sp/db_getMacroObjetivo_IS.php -text
 Fontes_PHP_SIW/classes/sp/db_getMenuCode.php -text
 Fontes_PHP_SIW/classes/sp/db_getMenuData.php -text
 Fontes_PHP_SIW/classes/sp/db_getMenuFormaPag.php -text
@@ -713,6 +714,7 @@ Fontes_PHP_SIW/classes/sp/db_getModData.php -text
 Fontes_PHP_SIW/classes/sp/db_getModList.php -text
 Fontes_PHP_SIW/classes/sp/db_getModMaster.php -text
 Fontes_PHP_SIW/classes/sp/db_getNatureza_IS.php -text
+Fontes_PHP_SIW/classes/sp/db_getOpcaoEstrat_IS.php -text
 Fontes_PHP_SIW/classes/sp/db_getOrImport.php -text
 Fontes_PHP_SIW/classes/sp/db_getOrPrioridade.php -text
 Fontes_PHP_SIW/classes/sp/db_getOrPrioridadeList.php -text
@@ -721,6 +723,7 @@ Fontes_PHP_SIW/classes/sp/db_getPD_Deslocamento.php -text
 Fontes_PHP_SIW/classes/sp/db_getPD_Vinculacao.php -text
 Fontes_PHP_SIW/classes/sp/db_getPPADadoFinanc_IS.php -text
 Fontes_PHP_SIW/classes/sp/db_getPPALocalizador_IS.php -text
+Fontes_PHP_SIW/classes/sp/db_getParametro.php -text
 Fontes_PHP_SIW/classes/sp/db_getPeriodicidade_IS.php -text
 Fontes_PHP_SIW/classes/sp/db_getPersonData.php -text
 Fontes_PHP_SIW/classes/sp/db_getPersonList.php -text
@@ -930,10 +933,12 @@ Fontes_PHP_SIW/classes/sp/dml_putLancamentoDoc.php -text
 Fontes_PHP_SIW/classes/sp/dml_putLancamentoEnvio.php -text
 Fontes_PHP_SIW/classes/sp/dml_putLancamentoOutra[!!-~].php -text
 Fontes_PHP_SIW/classes/sp/dml_putLancamentoOutra.php -text
+Fontes_PHP_SIW/classes/sp/dml_putMacroObjetivo_IS.php -text
 Fontes_PHP_SIW/classes/sp/dml_putMenuRelac.php -text
 Fontes_PHP_SIW/classes/sp/dml_putMetaMensalIni_IS.php -text
 Fontes_PHP_SIW/classes/sp/dml_putMetaMensal_IS.php -text
 Fontes_PHP_SIW/classes/sp/dml_putNatureza_IS.php -text
+Fontes_PHP_SIW/classes/sp/dml_putOpcaoEstrat_IS.php -text
 Fontes_PHP_SIW/classes/sp/dml_putOrImport.php -text
 Fontes_PHP_SIW/classes/sp/dml_putOrPrioridade.php -text
 Fontes_PHP_SIW/classes/sp/dml_putPDDiaria.php -text
@@ -1105,6 +1110,7 @@ Fontes_PHP_SIW/funcoes/selecaoAcordoParcela.php -text
 Fontes_PHP_SIW/funcoes/selecaoAgencia.php -text
 Fontes_PHP_SIW/funcoes/selecaoAno.php -text
 Fontes_PHP_SIW/funcoes/selecaoArquivo.php -text
+Fontes_PHP_SIW/funcoes/selecaoAtividade.php -text
 Fontes_PHP_SIW/funcoes/selecaoBanco.php -text
 Fontes_PHP_SIW/funcoes/selecaoBaseGeografica_IS.php -text
 Fontes_PHP_SIW/funcoes/selecaoCC.php -text
@@ -1138,11 +1144,13 @@ Fontes_PHP_SIW/funcoes/selecaoIdioma.php -text
 Fontes_PHP_SIW/funcoes/selecaoIsProjeto.php -text
 Fontes_PHP_SIW/funcoes/selecaoLocalizacao.php -text
 Fontes_PHP_SIW/funcoes/selecaoLocalizador_IS.php -text
+Fontes_PHP_SIW/funcoes/selecaoMacroObjetivo.php -text
 Fontes_PHP_SIW/funcoes/selecaoMenu.php -text
 Fontes_PHP_SIW/funcoes/selecaoModalidade.php -text
 Fontes_PHP_SIW/funcoes/selecaoModulo.php -text
 Fontes_PHP_SIW/funcoes/selecaoNatureza_IS.php -text
 Fontes_PHP_SIW/funcoes/selecaoObrigatorio.php -text
+Fontes_PHP_SIW/funcoes/selecaoOpcaoEstrat.php -text
 Fontes_PHP_SIW/funcoes/selecaoOrPrioridade.php -text
 Fontes_PHP_SIW/funcoes/selecaoOrdenaRel.php -text
 Fontes_PHP_SIW/funcoes/selecaoPais.php -text
@@ -1207,11 +1215,15 @@ Fontes_PHP_SIW/inputsql.html -text
 Fontes_PHP_SIW/jscript.php -text
 Fontes_PHP_SIW/menu.php -text
 Fontes_PHP_SIW/mod_ac/contratos.php -text
+Fontes_PHP_SIW/mod_ac/convenios.php -text
 Fontes_PHP_SIW/mod_ac/geragrafico.php -text
 Fontes_PHP_SIW/mod_ac/gr_contratos.php -text
+Fontes_PHP_SIW/mod_ac/gr_convenios.php -text
 Fontes_PHP_SIW/mod_ac/tabelas.php -text
 Fontes_PHP_SIW/mod_ac/validaacordo.php -text
+Fontes_PHP_SIW/mod_ac/validaconvenio.php -text
 Fontes_PHP_SIW/mod_ac/visualacordo.php -text
+Fontes_PHP_SIW/mod_ac/visualconvenio.php -text
 Fontes_PHP_SIW/mod_dc/carga_arquivos.php -text
 Fontes_PHP_SIW/mod_dc/dc_consulta.php -text
 Fontes_PHP_SIW/mod_dc/dc_dicionario.php -text
@@ -1234,6 +1246,7 @@ Fontes_PHP_SIW/mod_is/is_tabelas.php -text
 Fontes_PHP_SIW/mod_is/programa.php -text
 Fontes_PHP_SIW/mod_is/relatorios.php -text
 Fontes_PHP_SIW/mod_is/siafi.php -text
+Fontes_PHP_SIW/mod_is/sigplan.php -text
 Fontes_PHP_SIW/mod_is/tarefas.php -text
 Fontes_PHP_SIW/mod_is/visualacao.php -text
 Fontes_PHP_SIW/mod_is/visualprograma.php -text

@@ -20,12 +20,15 @@ include_once($w_dir_volta.'classes/sp/db_verificaAssinatura.php');
 include_once($w_dir_volta.'classes/sp/dml_putCargo.php');
 include_once($w_dir_volta.'classes/sp/dml_putGPModalidade.php');
 include_once($w_dir_volta.'classes/sp/dml_putGPTipoAfast.php');
+include_once($w_dir_volta.'classes/sp/dml_putDataEspecial.php');
 include_once($w_dir_volta.'funcoes/selecaoTipoPosto2.php');
 include_once($w_dir_volta.'funcoes/selecaoTipoData.php');
 include_once($w_dir_volta.'funcoes/selecaoFormacao.php');
 include_once($w_dir_volta.'funcoes/selecaoUnidade.php');
 include_once($w_dir_volta.'funcoes/selecaoAbrangData.php'); 
 include_once($w_dir_volta.'funcoes/selecaoPais.php'); 
+include_once($w_dir_volta.'funcoes/selecaoEstado.php'); 
+include_once($w_dir_volta.'funcoes/selecaoCidade.php'); 
 
 // =========================================================================
 //  /tabelas.php
@@ -60,6 +63,7 @@ $TP           = $_REQUEST['TP'];
 $SG           = strtoupper($_REQUEST['SG']);
 $R            = $_REQUEST['R'];
 $O            = strtoupper($_REQUEST['O']);
+$w_troca      = $_REQUEST['w_troca'];
 $p_ordena     = $_REQUEST['p_ordena'];
 $w_assinatura = strtoupper($_REQUEST['w_assinatura']);
 $w_pagina     = 'tabelas.php?par=';
@@ -217,8 +221,8 @@ function ModalidadeCont() {
           ShowHTML('        <td align="center">'.RetornaSimNao(f($row,'ativo')).'</td>');
         } 
         ShowHTML('        <td align="top" nowrap>');
-        ShowHTML('          <A class="hl" HREF="'.$w_dir.$w_pagina.$par.'&R= '.$w_pagina.$par.'&O=A&w_chave='.f($row,'chave').' &P1='.$P1.'&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP='.$TP.' &SG='.$SG.MontaFiltro('GET').'" Title="Nome">Alterar </A>&nbsp');
-        ShowHTML('          <A class="hl" HREF="'.$w_dir.$w_pagina.$par.'&R= '.$w_pagina.$par.'&O=E&w_chave='.f($row,'chave').' &P1='.$P1.'&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP='.$TP.' &SG='.$SG.'">Excluir </A>&nbsp');
+        ShowHTML('          <A class="hl" HREF="'.$w_dir.$w_pagina.$par.'&R= '.$w_pagina.$par.'&O=A&w_chave='.f($row,'chave').'&P1='.$P1.'&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP='.$TP.' &SG='.$SG.MontaFiltro('GET').'" Title="Nome">Alterar </A>&nbsp');
+        ShowHTML('          <A class="hl" HREF="'.$w_dir.$w_pagina.$par.'&R= '.$w_pagina.$par.'&O=E&w_chave='.f($row,'chave').'&P1='.$P1.'&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP='.$TP.' &SG='.$SG.'">Excluir </A>&nbsp');
         ShowHTML('        </td>');
         ShowHTML('      </tr>');
       } 
@@ -435,8 +439,8 @@ function Tipoafast() {
           ShowHTML('        <td align="center">'.RetornaSimNao(f($row,'ativo')).'</td>');
         } 
         ShowHTML('        <td align="top" nowrap>');
-        ShowHTML('          <A class="hl" HREF="'.$w_dir.$w_pagina.$par.'&R= '.$w_pagina.$par.'&O=A&w_chave='.f($row,'chave').' &P1='.$P1.'&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP='.$TP.' &SG='.$SG.MontaFiltro('GET').'" Title="Nome">Alterar </A>&nbsp');
-        ShowHTML('          <A class="hl" HREF="'.$w_dir.$w_pagina.$par.'&R= '.$w_pagina.$par.'&O=E&w_chave='.f($row,'chave').' &P1='.$P1.'&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP='.$TP.' &SG='.$SG.'">Excluir </A>&nbsp');
+        ShowHTML('          <A class="hl" HREF="'.$w_dir.$w_pagina.$par.'&R= '.$w_pagina.$par.'&O=A&w_chave='.f($row,'chave').'&P1='.$P1.'&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP='.$TP.' &SG='.$SG.MontaFiltro('GET').'" Title="Nome">Alterar </A>&nbsp');
+        ShowHTML('          <A class="hl" HREF="'.$w_dir.$w_pagina.$par.'&R= '.$w_pagina.$par.'&O=E&w_chave='.f($row,'chave').'&P1='.$P1.'&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP='.$TP.' &SG='.$SG.'">Excluir </A>&nbsp');
         ShowHTML('        </td>');
         ShowHTML('      </tr>');
       } 
@@ -547,7 +551,7 @@ function Tipoafast() {
 function DataEspecial() {
   extract($GLOBALS);
   global $w_Disabled;
-  $w_chave=$_REQUEST['w_chave'];
+  $w_chave = $_REQUEST['w_chave'];
   if ($w_troca>'') {
     $w_sq_pais        = $_REQUEST['w_sq_pais'];
     $w_co_uf          = $_REQUEST['w_co_uf'];
@@ -577,6 +581,7 @@ function DataEspecial() {
     }
   } elseif (!(strpos('AEV',$O)===false) && $w_troca=='') {
     $RS = db_getDataEspecial::getInstanceOf($dbms,$w_cliente,$w_chave,null,null,null,null,null);
+    foreach($RS as $row) { $RS = $row; break; }
     $w_chave         = f($RS,'chave');
     $w_sq_pais       = f($RS,'sq_pais');
     $w_co_uf         = f($RS,'co_uf');
@@ -694,8 +699,8 @@ function DataEspecial() {
             ShowHTML('        <td align="center">'.RetornaSimNao(f($row,'ativo')).'</td>');
           } 
           ShowHTML('        <td align="top" nowrap>');
-          ShowHTML('          <A class="hl" HREF="'.$w_dir.$w_pagina.$par.'&R= '.$w_pagina.$par.'&O=A&w_chave='.f($row,'chave').' &P1='.$P1.'&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP='.$TP.' &SG='.$SG.MontaFiltro('GET').'" Title="Nome">Alterar </A>&nbsp');
-          ShowHTML('          <A class="hl" HREF="'.$w_dir.$w_pagina.$par.'&R= '.$w_pagina.$par.'&O=E&w_chave='.f($row,'chave').' &P1='.$P1.'&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP='.$TP.' &SG='.$SG.'">Excluir </A>&nbsp');
+          ShowHTML('          <A class="hl" HREF="'.$w_dir.$w_pagina.$par.'&R= '.$w_pagina.$par.'&O=A&w_chave='.f($row,'chave').'&P1='.$P1.'&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP='.$TP.' &SG='.$SG.MontaFiltro('GET').'" Title="Nome">Alterar </A>&nbsp');
+          ShowHTML('          <A class="hl" HREF="'.$w_dir.$w_pagina.$par.'&R= '.$w_pagina.$par.'&O=E&w_chave='.f($row,'chave').'&P1='.$P1.'&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP='.$TP.' &SG='.$SG.'">Excluir </A>&nbsp');
           ShowHTML('        </td>');
           ShowHTML('      </tr>');
         } 
@@ -730,7 +735,7 @@ function DataEspecial() {
       } 
       ShowHTML('          <td><b><u>D</u>escrição:</b><br><input '.$w_Disabled.' accesskey="D" type="text" name="w_nome" class="sti" SIZE="30" MAXLENGTH="60" VALUE="'.$w_nome.'"></td>');
       ShowHTML('      <tr>');
-      if ($O!='E' && (strpos('IE',$w_tipo) ? strpos('IE',$w_tipo)+1 : 0)==0) {
+      if ($O!='E' && (strpos('IE',$w_tipo)===false)) {
          $w_abrangencia    = 'N';
          $w_Disabled       = 'DISABLED';
          SelecaoAbrangData('<u>A</u>brangência:','A',null,$w_abrangencia,null,'w_abrangencia',null,'onchange="document.Form.action=\''.$w_dir.$w_pagina.$par.'\'; document.Form.w_troca.value=\'w_abrangencia\'; document.Form.submit();"');
@@ -738,7 +743,7 @@ function DataEspecial() {
          ShowHTML('<INPUT type="hidden" name="w_abrangencia" value="'.$w_abrangencia.'">');
       } else {
         SelecaoAbrangData('<u>A</u>brangência:','A',null,$w_abrangencia,null,'w_abrangencia',null,'onchange="document.Form.action=\''.$w_dir.$w_pagina.$par.'\'; document.Form.w_troca.value=\'w_abrangencia\'; document.Form.submit();"');
-      } if ((strpos('IO',$w_abrangencia) ? strpos('IO',$w_abrangencia)+1 : 0)==0) {
+      } if (strpos('IO',$w_abrangencia)===false) {
         if ($w_abrangencia=='N') {
           SelecaoPais('<u>P</u>aís:','P',null,$w_sq_pais,null,'w_sq_pais',null,null);
         } elseif ($w_abrangencia=='E') {
@@ -773,7 +778,7 @@ function DataEspecial() {
           ShowHTML('            <input class="stb" type="submit" name="Botao" value="Atualizar">');
       } 
     }
-    ShowHTML('            <input class="stb" type="button" onClick="location.href=\''.$w_pagina.$par.'&P1='.$P1.'&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP='.$TP.'&SG='.$SG.'&O=L\';" name="Botao" value="Cancelar">');
+    ShowHTML('            <input class="stb" type="button" onClick="location.href=\''.montaURL_JS($w_dir,$w_pagina.$par.'&P1='.$P1.'&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP='.$TP.'&SG='.$SG.'&O=L').'\';" name="Botao" value="Cancelar">');
     ShowHTML('          </td>');
     ShowHTML('      </tr>');
     ShowHTML('    </table>');
@@ -1039,8 +1044,8 @@ function Cargo() {
           ShowHTML('        <td align="center">'.RetornaSimNao(f($row,'ativo')).'</td>');
         } 
         ShowHTML('        <td align="top" nowrap>');
-        ShowHTML('          <A class="hl" HREF="'.$w_dir.$w_pagina.$par.'&R= '.$w_pagina.$par.'&O=A&w_chave='.f($row,'chave').' &P1='.$P1.'&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP='.$TP.' &SG='.$SG.MontaFiltro('GET').'" Title="Nome">Alterar </A>&nbsp');
-        ShowHTML('          <A class="hl" HREF="'.$w_dir.$w_pagina.$par.'&R= '.$w_pagina.$par.'&O=E&w_chave='.f($row,'chave').' &P1='.$P1.'&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP='.$TP.' &SG='.$SG.'">Excluir </A>&nbsp');
+        ShowHTML('          <A class="hl" HREF="'.$w_dir.$w_pagina.$par.'&R= '.$w_pagina.$par.'&O=A&w_chave='.f($row,'chave').'&P1='.$P1.'&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP='.$TP.' &SG='.$SG.MontaFiltro('GET').'" Title="Nome">Alterar </A>&nbsp');
+        ShowHTML('          <A class="hl" HREF="'.$w_dir.$w_pagina.$par.'&R= '.$w_pagina.$par.'&O=E&w_chave='.f($row,'chave').'&P1='.$P1.'&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP='.$TP.' &SG='.$SG.'">Excluir </A>&nbsp');
         ShowHTML('        </td>');
         ShowHTML('      </tr>');
       } 
@@ -1127,6 +1132,7 @@ function Grava() {
   extract($GLOBALS);
   Cabecalho();
   ShowHTML('</HEAD>');
+  ShowHTML('<BASE HREF="'.$conRootSIW.'">');  
   BodyOpen('onLoad=document.focus();');
   switch ($SG) {
     case 'GPMODALCON':
@@ -1155,7 +1161,7 @@ function Grava() {
         $_REQUEST['w_ativo']);
                                 
         ScriptOpen('JavaScript');
-        ShowHTML('  location.href=\''.$R.'&w_chave='.$_REQUEST['w_chave'].'&P1='.$P1.'&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP='.$TP.'&SG='.$SG.MontaFiltro('GET').'\';');
+        ShowHTML('  location.href=\''.montaURL_JS($w_dir,$R.'&w_chave='.$_REQUEST['w_chave'].'&P1='.$P1.'&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP='.$TP.'&SG='.$SG.MontaFiltro('GET')).'\';');
         ScriptClose();
       } else {
         ScriptOpen('JavaScript');
@@ -1191,7 +1197,7 @@ function Grava() {
         
         //($dbms, $operacao, $p_chave, $p_cliente, $p_nome, $p_sigla, $p_limite_dias, $p_sexo, $p_percentual_pagamento, $p_contagem_dias, $p_periodo, $p_sobrepoe_ferias, $p_ativo, $p_fase) {
         
-        ShowHTML('  location.href=\''.$R.'&w_chave='.$_REQUEST['w_chave'].'&P1='.$P1.'&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP='.$TP.'&SG='.$SG.MontaFiltro('GET').'\';');
+        ShowHTML('  location.href=\''.montaURL_JS($w_dir,$R.'&w_chave='.$_REQUEST['w_chave'].'&P1='.$P1.'&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP='.$TP.'&SG='.$SG.MontaFiltro('GET')).'\';');
         ScriptClose();
         } else {
         ScriptOpen('JavaScript');
@@ -1301,7 +1307,7 @@ function Grava() {
           $_REQUEST['w_ativo']);
         } 
         ScriptOpen('JavaScript');
-        ShowHTML('  location.href=\''.$R.'&w_chave='.$_REQUEST['w_chave'].'&P1='.$P1.'&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP='.$TP.'&SG='.$SG.MontaFiltro('GET').'\';');
+        ShowHTML('  location.href=\''.montaURL_JS($w_dir,$R.'&w_chave='.$_REQUEST['w_chave'].'&P1='.$P1.'&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP='.$TP.'&SG='.$SG.MontaFiltro('GET')).'\';');
         ScriptClose();
       } else {
         ScriptOpen('JavaScript');
@@ -1317,7 +1323,7 @@ function Grava() {
         $_REQUEST['w_rescisao_destino'],$_REQUEST['w_feriado_legenda'],$_REQUEST['w_feriado_nome'],$_REQUEST['w_ferias_legenda'],$_REQUEST['w_ferias_nome'],
         $_REQUEST['w_viagem_legenda'],$_REQUEST['w_viagem_nome']);
         ScriptOpen('JavaScript');
-        ShowHTML('  location.href=\''.$R.'&P1='.$P1.'&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP='.$TP.'&SG='.$SG.MontaFiltro('GET').'\';');
+        ShowHTML('  location.href=\''.montaURL_JS($w_dir,$R.'&P1='.$P1.'&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP='.$TP.'&SG='.$SG.MontaFiltro('GET')).'\';');
         ScriptClose();
       } else {
         ScriptOpen('JavaScript');
@@ -1350,7 +1356,7 @@ function Grava() {
         $_REQUEST['w_descricao'],$_REQUEST['w_atividades'],$_REQUEST['w_competencias'],$_REQUEST['w_salario_piso'],$_REQUEST['w_salario_teto'],
         $_REQUEST['w_ativo']);
         ScriptOpen('JavaScript');
-        ShowHTML('  location.href=\''.$R.'&w_chave='.$_REQUEST['w_chave'].'&P1='.$P1.'&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP='.$TP.'&SG='.$SG.MontaFiltro('GET').'\';');
+        ShowHTML('  location.href=\''.montaURL_JS($w_dir,$R.'&w_chave='.$_REQUEST['w_chave'].'&P1='.$P1.'&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP='.$TP.'&SG='.$SG.MontaFiltro('GET')).'\';');
         ScriptClose();
       } else {
         ScriptOpen('JavaScript');

@@ -784,7 +784,7 @@ function BuscaUnidade() {
     AbreForm('Form',$w_pagina.'BuscaUnidade','POST','return(Validacao(this))',null,$P1,$P2,$P3,$P4,$TP,$SG,null,null);
     ShowHTML('<INPUT type="hidden" name="w_cliente" value="'.$w_cliente.'">');
     ShowHTML('<INPUT type="hidden" name="chaveaux" value="'.$chaveaux.'">');
-    ShowHTML('<INPUT type="hidden" name="retricao" value="'.$restricao.'">');
+    ShowHTML('<INPUT type="hidden" name="restricao" value="'.$restricao.'">');
     ShowHTML('<INPUT type="hidden" name="campo" value="'.$campo.'">');
     ShowHTML('<tr bgcolor="'.$conTrBgColor.'"><td><div align="justify"><font size=2><b><ul>Instruções</b>:<li>Informe parte do nome da unidade.<li>Quando a relação for exibida, selecione a unidade desejada clicando sobre a caixa ao seu lado.<li>Após informar o nome da unidade, clique sobre o botão <i>Aplicar filtro</i>. Clicando sobre o botão <i>Cancelar</i>, a procura é cancelada.</ul></div>');
     ShowHTML('<tr bgcolor="'.$conTrBgColor.'"><td>');

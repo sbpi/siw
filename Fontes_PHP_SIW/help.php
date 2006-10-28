@@ -241,7 +241,7 @@ function Help() {
                       ShowHTML('             <blockquote>');
                     } 
                     $w_cont4 = $w_cont4+1;
-                    ShowHTML('             <DT><BR><b>'.$w_cont1.'.'.$w_cont2.'.'.$w_cont3.'.'.$w_cont4.'. '.f($row1,'nome').'</b>');
+                    ShowHTML('             <DT><BR><b>'.$w_cont1.'.'.$w_cont2.'.'.$w_cont3.'.'.$w_cont4.'. '.f($row3,'nome').'</b>');
                     ShowHTML('             <DD>Finalidade: '.ExibeTexto(f($row3,'finalidade')));
 
                     if (f($row3,'tramite') == 'S') ShowHTML('        <DD><BR>Como funciona: '.ExibeTexto(f($row3,'como_funciona')));

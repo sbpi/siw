@@ -103,6 +103,28 @@ function LinkArquivo ($p_classe, $p_cliente, $p_arquivo, $p_target, $p_hint, $p_
 }
 
 // =========================================================================
+// Gera um link para JavaScript, em função do navegador
+// -------------------------------------------------------------------------
+function montaURL_JS ($p_dir, $p_link) {
+
+  // Monta a chamada base
+  $l_link = $p_link;
+  // Se for MS-IE, não agrega o diretório.
+  if (strpos(strtoupper($_SERVER['HTTP_USER_AGENT']),'MSIE')===false) {
+     // Altera a chamada padrão, dispensando a sessão
+     if (strpos($p_link,$p_dir)===false) {
+       $l_link = $p_dir.$p_link;
+     }
+  } else {
+     if (strpos($p_link,$p_dir)!==false) {
+       $l_link = str_replace($p_dir,'',$p_link);
+     }
+  }
+  // Retorno ao chamador
+  return $l_link;
+}
+
+// =========================================================================
 // Declaração inicial para páginas OLE com Word
 // -------------------------------------------------------------------------
 function headerWord($p_orientation='LANDSCAPE') {
@@ -188,7 +210,10 @@ function LinkOrdena($p_label,$p_campo) {
       if (strtoupper($chv)=="P_ORDENA") {
         $l_ordena=strtoupper($vlr);
       } else {
-        $l_string=$l_string.'&'.$chv."=".$vlr;
+        if(is_array($vlr))
+          $l_string=$l_string.'&'.$chv."=".explodeArray($vlr);
+        else
+          $l_string=$l_string.'&'.$chv."=".$vlr;
       }
     }
   }
@@ -197,7 +222,10 @@ function LinkOrdena($p_label,$p_campo) {
       if (strtoupper($chv)=="P_ORDENA") {
         $l_ordena=strtoupper($vlr);
       } else {
-        $l_string=$l_string.'&'.$chv."=".$vlr;
+        if(is_array($vlr))
+          $l_string=$l_string.'&'.$chv."=".explodeArray($vlr);
+        else
+          $l_string=$l_string.'&'.$chv."=".$vlr;
       }
     }
   }
@@ -421,10 +449,11 @@ function ExibeVariaveis() {
 // Montagem da URL com os dados de uma pessoa
 // -------------------------------------------------------------------------
 function ExibePessoa($p_dir,$p_cliente,$p_pessoa,$p_tp,$p_nome) {
+  extract($GLOBALS,EXTR_PREFIX_SAME,'l_');
   if (Nvl($p_nome,'')=='') {
     $l_string='---';
   } else {
-    $l_string=$l_string.'<A class="hl" HREF="#" onClick="window.open(\''.$p_dir.'seguranca.php?par=TELAUSUARIO&w_cliente='.$p_cliente.'&w_sq_pessoa='.$p_pessoa.'&P1='.$P1.'&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP='.$p_tp.'&SG='.'\',\'Pessoa\',\'width=780,height=300,top=10,left=10,toolbar=no,scrollbars=yes,resizable=yes,status=no\'); return false;" title="Clique para exibir os dados desta pessoa!">'.$p_nome.'</A>';
+    $l_string=$l_string.'<A class="hl" HREF="#" onClick="window.open(\''.montaURL_JS(null,$conRootSIW.'seguranca.php?par=TELAUSUARIO&w_cliente='.$p_cliente.'&w_sq_pessoa='.$p_pessoa.'&P1='.$P1.'&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP='.$p_tp.'&SG=').'\',\'Pessoa\',\'width=780,height=300,top=10,left=10,toolbar=no,scrollbars=yes,resizable=yes,status=no\'); return false;" title="Clique para exibir os dados desta pessoa!">'.$p_nome.'</A>';
   }
   return $l_string;
 }
@@ -433,10 +462,11 @@ function ExibePessoa($p_dir,$p_cliente,$p_pessoa,$p_tp,$p_nome) {
 // Montagem da URL com os dados de uma pessoa
 // -------------------------------------------------------------------------
 function ExibeUnidade($p_dir,$p_cliente,$p_unidade,$p_sq_unidade,$p_tp) {
+  extract($GLOBALS,EXTR_PREFIX_SAME,'l_');
   if (Nvl($p_unidade,'')=='') {
     $l_string='---';
   } else {
-    $l_string=$l_string.'<A class="hl" HREF="#" onClick="window.open(\''.$p_dir.'seguranca.php?par=TELAUNIDADE&w_cliente='.$p_cliente.'&w_sq_unidade='.$p_sq_unidade.'&P1='.$P1.'&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP='.$p_tp.'&SG='.'\',\'Unidade\',\'width=780,height=300,top=10,left=10,toolbar=no,scrollbars=yes,resizable=yes,status=no\'); return false;" title="Clique para exibir os dados desta unidade!">'.$p_unidade.'</A>';
+    $l_string=$l_string.'<A class="hl" HREF="#" onClick="window.open(\''.montaURL_JS(null,$conRootSIW.'seguranca.php?par=TELAUNIDADE&w_cliente='.$p_cliente.'&w_sq_unidade='.$p_sq_unidade.'&P1='.$P1.'&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP='.$p_tp.'&SG=').'\',\'Unidade\',\'width=780,height=300,top=10,left=10,toolbar=no,scrollbars=yes,resizable=yes,status=no\'); return false;" title="Clique para exibir os dados desta unidade!">'.$p_unidade.'</A>';
   }
   return $l_string;
 }

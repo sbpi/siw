@@ -52,7 +52,7 @@ class dml_putXMLAcao_PPA {
                    'p_valor_total'               =>array(toNumber(tvl(str_replace('.',',',$p_valor_total))),B_NUMERIC,     18,2),
                    'p_valor_ano_ant'             =>array(toNumber(tvl(str_replace('.',',',$p_valor_ano_ant))),B_NUMERIC,   18,2),
                    'p_qtd_ano_ant'               =>array(toNumber(tvl(str_replace('.',',',$p_qtd_ano_ant))),B_NUMERIC,     18,4),
-                   'p_valor_ano_cor'             =>array(toNumber(tvl(str_replace('.',',',$p_valor_ano_cor)),B_NUMERIC,    18,2),
+                   'p_valor_ano_cor'             =>array(toNumber(tvl(str_replace('.',',',$p_valor_ano_cor))),B_NUMERIC,    18,2),
                    'p_qtd_ano_cor'               =>array(toNumber(tvl(str_replace('.',',',$p_qtd_ano_cor))),B_NUMERIC,     18,4),
                    'p_ordem_pri'                 =>array(tvl($p_ordem_pri),                                B_INTEGER,        32),
                    'p_observacao'                =>array(tvl($p_observacao),                               B_VARCHAR,      4000),

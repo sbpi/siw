@@ -19,7 +19,10 @@ include_once($w_dir_volta.'classes/sp/db_getStateData.php');
 include_once($w_dir_volta.'classes/sp/db_getCityData.php');
 include_once($w_dir_volta.'classes/sp/db_getSolicList.php');
 include_once($w_dir_volta.'classes/sp/db_getTramiteList.php');
+include_once($w_dir_volta.'classes/sp/db_getEtapaDataParents.php');
 include_once($w_dir_volta.'classes/sp/db_getSolicData.php');
+include_once($w_dir_volta.'classes/sp/db_getSolicEtapa.php');
+include_once($w_dir_volta.'classes/sp/db_getCustomerData.php');
 include_once($w_dir_volta.'funcoes/selecaoCC.php');
 include_once($w_dir_volta.'funcoes/selecaoPessoa.php');
 include_once($w_dir_volta.'funcoes/selecaoUnidade.php');
@@ -29,6 +32,7 @@ include_once($w_dir_volta.'funcoes/selecaoEstado.php');
 include_once($w_dir_volta.'funcoes/selecaoCidade.php');
 include_once($w_dir_volta.'funcoes/selecaoFaseCheck.php');
 include_once($w_dir_volta.'funcoes/selecaoProjeto.php');
+include_once($w_dir_volta.'funcoes/selecaoEtapa.php');
 // =========================================================================
 //  /gr_contratos.php
 // ------------------------------------------------------------------------
@@ -105,6 +109,8 @@ $p_palavra      = strtoupper($_REQUEST['p_palavra']);
 $p_prazo        = strtoupper($_REQUEST['p_prazo']);
 $p_fase         = explodeArray($_REQUEST['p_fase']);
 $p_sqcc         = strtoupper($_REQUEST['p_sqcc']);
+$p_empenho      = strtoupper($_REQUEST['p_empenho']);
+$p_processo     = strtoupper($_REQUEST['p_processo']);
 $p_agrega       = strtoupper($_REQUEST['p_agrega']);
 $p_tamanho      = strtoupper($_REQUEST['p_tamanho']);
 // Recupera a configuração do serviço
@@ -112,6 +118,10 @@ $RS_Menu = db_getMenuData::getInstanceOf($dbms,$w_menu);
 
 // Recupera a configuração do serviço de origem
 $RS_Menu_Origem = db_getMenuData::getInstanceOf($dbms,$P2);
+
+// Carrega o segmento do cliente
+$RS = db_getCustomerData::getInstanceOf($dbms,$w_cliente); 
+$w_segmento = f($RS,'segmento');
 
 Main();
 FechaSessao($dbms);
@@ -126,7 +136,11 @@ function Gerencial() {
     if ($p_projeto>'') {
       $RS = db_getSolicData::getInstanceOf($dbms,$p_projeto,'PJGERAL');
       $w_filtro=$w_filtro.'<tr valign="top"><td align="right"><font size=1>Projeto <td><font size=1>[<b><A class="HL" HREF="projeto.php?par=Visual&O=L&w_chave='.$p_projeto.'&w_tipo=Volta&P1='.$P1.'&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP='.$TP.'&SG='.$SG.'" title="Exibe as informações do projeto.">'.f($RS,'titulo').'</a></b>]';
-    } 
+    }
+    if ($p_atividade>'') {
+      $RS = db_getSolicEtapa::getInstanceOf($dbms,$p_projeto,$p_atividade,'REGISTRO',null);
+      $w_filtro = $w_filtro.'<tr valign="top"><td align="right">Etapa <td>[<b>'.f($RS,'titulo').'</b>]';
+    }     
     if ($p_sqcc>'') {
       $RS = db_getCCData::getInstanceOf($dbms,$p_sqcc);
       $w_filtro=$w_filtro.'<tr valign="top"><td align="right"><font size=1>Classificação <td><font size=1>[<b>'.f($RS,'nome').'</b>]';
@@ -167,34 +181,37 @@ function Gerencial() {
       $RS = db_getCityData::getInstanceOf($dbms,$p_cidade);
       $w_filtro=$w_filtro.'<tr valign="top"><td align="right"><font size=1>Cidade <td><font size=1>[<b>'.f($RS,'nome').'</b>]';
     } 
-    if ($p_prioridade>'')
-      $w_filtro=$w_filtro.'<tr valign="top"><td align="right"><font size=1>Prioridade <td><font size=1>[<b>'.RetornaPrioridade($p_prioridade).'</b>]';
-    if ($p_proponente>'')
-      $w_filtro=$w_filtro.'<tr valign="top"><td align="right"><font size=1>Outra parte <td><font size=1>[<b>'.$p_proponente.'</b>]';
-    if ($p_objeto>'')
-      $w_filtro=$w_filtro.'<tr valign="top"><td align="right"><font size=1>Objeto <td><font size=1>[<b>'.$p_objeto.'</b>]';
-    if ($p_palavra>'')
-      $w_filtro=$w_filtro.'<tr valign="top"><td align="right"><font size=1>Código interno <td><font size=1>[<b>'.$p_palavra.'</b>]';
-    if ($p_ini_i>'')
-      $w_filtro=$w_filtro.'<tr valign="top"><td align="right"><font size=1>Início vigência <td><font size=1>[<b>'.$p_ini_i.'-'.$p_ini_f.'</b>]';
-    if ($p_fim_i>'')
-      $w_filtro=$w_filtro.'<tr valign="top"><td align="right"><font size=1>Término vigência <td><font size=1>[<b>'.$p_fim_i.'-'.$p_fim_f.'</b>]';
-    if ($p_atraso>'')
-      $w_filtro=$w_filtro.'<tr valign="top"><td align="right"><font size=1>Código externo <td><font size=1>[<b>'.$p_atraso.'</b>]';
-    if ($w_filtro>'')
-      $w_filtro='<table border=0><tr valign="top"><td><font size=1><b>Filtro:</b><td nowrap><font size=1><ul>'.$w_filtro.'</ul></tr></table>';
+    if ($p_prioridade>'')   $w_filtro=$w_filtro.'<tr valign="top"><td align="right"><font size=1>Prioridade <td><font size=1>[<b>'.RetornaPrioridade($p_prioridade).'</b>]';
+    if ($p_proponente>'')   {
+      if (substr(f($RS_Menu_Origem,'sigla'),0,3)=='GCB')    $w_filtro=$w_filtro.'<tr valign="top"><td align="right"><font size=1>Bolsista <td><font size=1>[<b>'.$p_proponente.'</b>]';
+      else                                                  $w_filtro=$w_filtro.'<tr valign="top"><td align="right"><font size=1>Outra parte <td><font size=1>[<b>'.$p_proponente.'</b>]';
+    }
+    if ($p_objeto>'')       $w_filtro=$w_filtro.'<tr valign="top"><td align="right"><font size=1>Objeto <td><font size=1>[<b>'.$p_objeto.'</b>]';
+    if ($p_palavra>'')      $w_filtro=$w_filtro.'<tr valign="top"><td align="right"><font size=1>Código interno <td><font size=1>[<b>'.$p_palavra.'</b>]';
+    if ($p_ini_i>'')        $w_filtro=$w_filtro.'<tr valign="top"><td align="right"><font size=1>Início vigência <td><font size=1>[<b>'.$p_ini_i.'-'.$p_ini_f.'</b>]';
+    if ($p_fim_i>'')        $w_filtro=$w_filtro.'<tr valign="top"><td align="right"><font size=1>Término vigência <td><font size=1>[<b>'.$p_fim_i.'-'.$p_fim_f.'</b>]';
+    if ($p_atraso>'')       $w_filtro=$w_filtro.'<tr valign="top"><td align="right"><font size=1>Código externo <td><font size=1>[<b>'.$p_atraso.'</b>]';
+    if ($p_empenho>'')      $w_filtro=$w_filtro.'<tr valign="top"><td align="right"><font size=1>Número do empenho<td><font size=1>[<b>'.$p_empenho.'</b>]';
+    if ($p_processo>'')     $w_filtro=$w_filtro.'<tr valign="top"><td align="right"><font size=1>Número do processo<td><font size=1>[<b>'.$p_processo.'</b>]';
+    if ($w_filtro>'')       $w_filtro='<table border=0><tr valign="top"><td><font size=1><b>Filtro:</b><td nowrap><font size=1><ul>'.$w_filtro.'</ul></tr></table>';
     $RS1 = db_getSolicList::getInstanceOf($dbms,$P2,$w_usuario,$p_agrega,4,
         $p_ini_i,$p_ini_f,$p_fim_i,$p_fim_f,$p_atraso,$p_solicitante,
         $p_unidade,$p_prioridade,$p_ativo,$p_proponente, 
         $p_chave, $p_objeto, $p_pais, $p_regiao, $p_uf, $p_cidade, $p_usu_resp, 
-        $p_uorg_resp, $p_palavra, $p_prazo, $p_fase, $p_sqcc, $p_projeto, $p_atividade, null, null);
+        $p_uorg_resp, $p_palavra, $p_prazo, $p_fase, $p_sqcc, $p_projeto, $p_atividade, 
+        null, null, $p_empenho, $p_processo);
     switch ($p_agrega) {
       case substr(f($RS_Menu,'sigla'),0,3).'PROJ':
         $w_TP=$TP.' - Por projeto';
         $RS1 = SortArray($RS1,'nm_projeto','asc');
         break;
+      case substr(f($RS_Menu,'sigla'),0,3).'ETAPA':
+        $w_TP = $TP.' - Por etapa de projeto';
+        $RS1 = SortArray($RS1,'cd_ordem','asc');
+        break;        
       case substr(f($RS_Menu,'sigla'),0,3).'PROP':
-        $w_TP=$TP.' - Pela outra parte';
+        if (substr(f($RS_Menu_Origem,'sigla'),0,3)=='GCB')  $w_TP=$TP.' - Pelo bolista';
+        else                                                $w_TP=$TP.' - Pela outra parte';
         $RS1 = SortArray($RS1,'nm_outra_parte_resumido_ind','asc');
         break;
       case substr(f($RS_Menu,'sigla'),0,3).'RESP':
@@ -234,10 +251,12 @@ function Gerencial() {
       FormataData();
       ValidateOpen('Validacao');
       Validate('p_chave','Número do contrato','','','1','18','','0123456789');
-      Validate('p_proponente','Outra parte','','','2','90','1','');
+      if (substr(f($RS_Menu_Origem,'sigla'),0,3)=='GCB')    Validate('p_proponente','Bolsista','','','2','90','1','');
+      else                                                  Validate('p_proponente','Outra parte','','','2','90','1','');
       Validate('p_palavra','Código interno','','','3','90','1','1');
       Validate('p_atraso','Código externo','','','1','90','1','1');
-      Validate('p_objeto','Objeto','','','2','90','1','1');
+      if (substr(f($RS_Menu_Origem,'sigla'),0,3)=='GCB')    Validate('p_objeto','Plano de trabalho','','','2','90','1','1');
+      else                                                  Validate('p_objeto','Objeto','','','2','90','1','1');
       Validate('p_prazo','Dias para a data limite','','','1','2','','0123456789');
       Validate('p_ini_i','Recebimento inicial','DATA','','10','10','','0123456789/');
       Validate('p_ini_f','Recebimento final','DATA','','10','10','','0123456789/');
@@ -245,6 +264,15 @@ function Gerencial() {
       ShowHTML('     alert (\'Informe ambas as datas de recebimento ou nenhuma delas!\');');
       ShowHTML('     theForm.p_ini_i.focus();');
       ShowHTML('     return false;');
+      ShowHTML('  }');
+      ShowHTML('  var i; ');
+      ShowHTML('  var w_erro=true; ');
+      ShowHTML('  for (i=0; i < theForm["p_fase[]"].length; i++) {');
+      ShowHTML('    if (theForm["p_fase[]"][i].checked) w_erro=false;');
+      ShowHTML('  }');
+      ShowHTML('  if (w_erro) {');
+      ShowHTML('    alert(\'Você deve informar pelo menos uma fase!\'); ');
+      ShowHTML('    return false;');
       ShowHTML('  }');
       CompData('p_ini_i','Recebimento inicial','<=','p_ini_f','Recebimento final');
       Validate('p_fim_i','Conclusão inicial','DATA','','10','10','','0123456789/');
@@ -255,6 +283,11 @@ function Gerencial() {
       ShowHTML('     return false;');
       ShowHTML('  }');
       CompData('p_fim_i','Conclusão inicial','<=','p_fim_f','Conclusão final');
+      ShowHTML('  if (theForm.p_agrega[theForm.p_agrega.selectedIndex].value==\''.substr(f($RS_Menu,'sigla'),0,3).'ETAPA\' && theForm.p_projeto.selectedIndex==0) {');
+      ShowHTML('     alert (\'A agregação por etapa exige a seleção de um projeto!\');');
+      ShowHTML('     theForm.p_projeto.focus();');
+      ShowHTML('     return false;');
+      ShowHTML('  }');      
       ValidateClose();
       ScriptClose();
     } else {
@@ -303,57 +336,25 @@ function Gerencial() {
         ShowHTML('  function lista (chave_aux, filtro, cad, exec, conc, atraso) {');
         ShowHTML('    if (filtro != -1) {');
         switch ($p_agrega) {
-          case substr(f($RS_Menu,'sigla'),0,3).'ETAPA':
-            ShowHTML('      document.Form.p_atividade.value=filtro;');
-            break;
-          case substr(f($RS_Menu,'sigla'),0,3).'PROJ':
-            ShowHTML('      document.Form.p_projeto.value=filtro;');
-            break;
-          case substr(f($RS_Menu,'sigla'),0,3).'PROP':
-            ShowHTML('      document.Form.p_proponente.value=filtro;');
-            break;
-          case substr(f($RS_Menu,'sigla'),0,3).'RESP':
-            ShowHTML('      document.Form.p_solicitante.value=filtro;');
-            break;
-          case substr(f($RS_Menu,'sigla'),0,3).'RESPATU':
-            ShowHTML('      document.Form.p_usu_resp.value=filtro;');
-            break;
-          case substr(f($RS_Menu,'sigla'),0,3).'CC':
-          ShowHTML('      document.Form.p_sqcc.value=filtro;');
-            break;
-          case substr(f($RS_Menu,'sigla'),0,3).'SETOR':
-          ShowHTML('      document.Form.p_unidade.value=filtro;');
-            break;
-          case substr(f($RS_Menu,'sigla'),0,3).'LOCAL':
-          ShowHTML('      document.Form.p_uf.value=filtro;');
-            break;
+          case substr(f($RS_Menu,'sigla'),0,3).'ETAPA':     ShowHTML('      document.Form.p_atividade.value=filtro;');      break;
+          case substr(f($RS_Menu,'sigla'),0,3).'PROJ':      ShowHTML('      document.Form.p_projeto.value=filtro;');        break;
+          case substr(f($RS_Menu,'sigla'),0,3).'PROP':      ShowHTML('      document.Form.p_proponente.value=filtro;');     break;
+          case substr(f($RS_Menu,'sigla'),0,3).'RESP':      ShowHTML('      document.Form.p_solicitante.value=filtro;');    break;
+          case substr(f($RS_Menu,'sigla'),0,3).'RESPATU':   ShowHTML('      document.Form.p_usu_resp.value=filtro;');       break;
+          case substr(f($RS_Menu,'sigla'),0,3).'CC':        ShowHTML('      document.Form.p_sqcc.value=filtro;');           break;
+          case substr(f($RS_Menu,'sigla'),0,3).'SETOR':     ShowHTML('      document.Form.p_unidade.value=filtro;');        break;
+          case substr(f($RS_Menu,'sigla'),0,3).'LOCAL':     ShowHTML('      document.Form.p_uf.value=filtro;');             break;
         } 
         ShowHTML('    }');
         switch ($p_agrega) {
-          case substr(f($RS_Menu,'sigla'),0,3).'ETAPA':
-            ShowHTML('    else document.Form.p_atividade.value=\''.$_REQUEST['p_atividade'].'\';');
-            break;
-          case substr(f($RS_Menu,'sigla'),0,3).'PROJ':
-            ShowHTML('    else document.Form.p_projeto.value=\''.$_REQUEST['p_projeto'].'\';');
-            break;
-          case substr(f($RS_Menu,'sigla'),0,3).'PROP':
-            ShowHTML('    else document.Form.p_proponente.value=\''.$_REQUEST['p_proponente'].'\';');
-            break;
-          case substr(f($RS_Menu,'sigla'),0,3).'RESP':
-            ShowHTML('    else document.Form.p_solicitante.value=\''.$_REQUEST['p_solicitante'].'\';');
-            break;
-          case substr(f($RS_Menu,'sigla'),0,3).'RESPATU':
-            ShowHTML('    else document.Form.p_usu_resp.value=\''.$_REQUEST['p_usu_resp'].'\';');
-            break;
-          case substr(f($RS_Menu,'sigla'),0,3).'CC':
-            ShowHTML('    else document.Form.p_sqcc.value=\''.$_REQUEST['p_sqcc'].'\';');
-            break;
-          case           substr(f($RS_Menu,'sigla'),0,3).'SETOR':
-            ShowHTML('    else document.Form.p_unidade.value=\''.$_REQUEST['p_unidade'].'\';');
-            break;
-          case substr(f($RS_Menu,'sigla'),0,3).'LOCAL':
-            ShowHTML('    else { document.Form.p_uf.value=\''.$_REQUEST['p_uf'].'\';}');
-            break;
+          case substr(f($RS_Menu,'sigla'),0,3).'ETAPA':     ShowHTML('    else document.Form.p_atividade.value=\''.$_REQUEST['p_atividade'].'\';');     break;
+          case substr(f($RS_Menu,'sigla'),0,3).'PROJ':      ShowHTML('    else document.Form.p_projeto.value=\''.$_REQUEST['p_projeto'].'\';');         break;
+          case substr(f($RS_Menu,'sigla'),0,3).'PROP':      ShowHTML('    else document.Form.p_proponente.value=\''.$_REQUEST['p_proponente'].'\';');   break;
+          case substr(f($RS_Menu,'sigla'),0,3).'RESP':      ShowHTML('    else document.Form.p_solicitante.value=\''.$_REQUEST['p_solicitante'].'\';'); break;
+          case substr(f($RS_Menu,'sigla'),0,3).'RESPATU':   ShowHTML('    else document.Form.p_usu_resp.value=\''.$_REQUEST['p_usu_resp'].'\';');       break;
+          case substr(f($RS_Menu,'sigla'),0,3).'CC':        ShowHTML('    else document.Form.p_sqcc.value=\''.$_REQUEST['p_sqcc'].'\';');               break;
+          case substr(f($RS_Menu,'sigla'),0,3).'SETOR':     ShowHTML('    else document.Form.p_unidade.value=\''.$_REQUEST['p_unidade'].'\';');         break;
+          case substr(f($RS_Menu,'sigla'),0,3).'LOCAL':     ShowHTML('    else { document.Form.p_uf.value=\''.$_REQUEST['p_uf'].'\';}');                break;
         } 
         $RS2 = db_getTramiteList::getInstanceOf($dbms,$P2,null,null);
         $RS2 = SortArray($RS2,'ordem','asc');
@@ -635,40 +636,24 @@ function Gerencial() {
           ShowHTML('<table border="0" cellpadding="0" cellspacing="0" width="100%">');
           ImprimeCabecalho();
           switch ($p_agrega) {
-            case substr(f($RS_Menu,'sigla'),0,3).'ETAPA':
-              ShowHTML('      <tr bgcolor="'.$w_cor.'" valign="top"><td><font size=1><b>'.f($row1,'nm_etapa'));
-              break;
-            case substr(f($RS_Menu,'sigla'),0,3).'PROJ':
-              ShowHTML('      <tr bgcolor="'.$w_cor.'" valign="top"><td><font size=1><b>'.f($row1,'nm_projeto'));
-              break;
-            case substr(f($RS_Menu,'sigla'),0,3).'PROP':
-              ShowHTML('      <tr bgcolor="'.$w_cor.'" valign="top"><td><font size=1><b>'.f($row1,'nm_outra_parte_resumido'));
-              break;
-            case substr(f($RS_Menu,'sigla'),0,3).'RESP':
-              ShowHTML('      <tr bgcolor="'.$w_cor.'" valign="top"><td><font size=1><b>'.f($row1,'nm_solic'));
-              break;
-            case substr(f($RS_Menu,'sigla'),0,3).'RESPATU':
-              ShowHTML('      <tr bgcolor="'.$w_cor.'" valign="top"><td><font size=1><b>'.f($row1,'nm_exec'));
-              break;
-            case substr(f($RS_Menu,'sigla'),0,3).'CC':
-              ShowHTML('      <tr bgcolor="'.$w_cor.'" valign="top"><td><font size=1><b>'.f($row1,'sg_cc'));
-              break;
-            case substr(f($RS_Menu,'sigla'),0,3).'SETOR':
-              ShowHTML('      <tr bgcolor="'.$w_cor.'" valign="top"><td><font size=1><b>'.f($row1,'nm_unidade_resp'));
-              break;
-            case substr(f($RS_Menu,'sigla'),0,3).'LOCAL':
-              ShowHTML('      <tr bgcolor="'.$w_cor.'" valign="top"><td><font size=1><b>'.f($row1,'co_uf'));
-              break;
+            case substr(f($RS_Menu,'sigla'),0,3).'ETAPA':   ShowHTML('      <tr bgcolor="'.$w_cor.'" valign="top"><td><font size=1><b>'.f($row1,'nm_etapa'));                   break;
+            case substr(f($RS_Menu,'sigla'),0,3).'PROJ':    ShowHTML('      <tr bgcolor="'.$w_cor.'" valign="top"><td><font size=1><b>'.f($row1,'nm_projeto'));                 break;
+            case substr(f($RS_Menu,'sigla'),0,3).'PROP':    ShowHTML('      <tr bgcolor="'.$w_cor.'" valign="top"><td><font size=1><b>'.f($row1,'nm_outra_parte_resumido'));    break;
+            case substr(f($RS_Menu,'sigla'),0,3).'RESP':    ShowHTML('      <tr bgcolor="'.$w_cor.'" valign="top"><td><font size=1><b>'.f($row1,'nm_solic'));                   break;
+            case substr(f($RS_Menu,'sigla'),0,3).'RESPATU': ShowHTML('      <tr bgcolor="'.$w_cor.'" valign="top"><td><font size=1><b>'.f($row1,'nm_exec'));                    break;
+            case substr(f($RS_Menu,'sigla'),0,3).'CC':      ShowHTML('      <tr bgcolor="'.$w_cor.'" valign="top"><td><font size=1><b>'.f($row1,'sg_cc'));                      break;
+            case substr(f($RS_Menu,'sigla'),0,3).'SETOR':   ShowHTML('      <tr bgcolor="'.$w_cor.'" valign="top"><td><font size=1><b>'.f($row1,'nm_unidade_resp'));            break;
+            case substr(f($RS_Menu,'sigla'),0,3).'LOCAL':   ShowHTML('      <tr bgcolor="'.$w_cor.'" valign="top"><td><font size=1><b>'.f($row1,'co_uf'));                      break;
           } 
           $w_linha=$w_linha+1;
         }
         if (Nvl(f($row1,'conclusao'),'')=='') {
-          if (f($row1,'fim')<time()) {
-            $t_atraso=$t_atraso+1;
-            $t_totatraso=$t_totatraso+1;
-          } elseif (f($row1,'aviso_prox_conc')=='S' && (f($row1,'aviso')<=time())) {
-            $t_aviso=$t_aviso+1;
-            $t_totaviso=$t_totaviso+1;
+          if (f($row1,'fim') < addDays(time(),-1)) {
+            $t_atraso    = $t_atraso + 1;
+            $t_totatraso = $t_totatraso + 1;
+          } elseif (f($row1,'aviso_prox_conc') == 'S' && (f($row1,'aviso') <= addDays(time(),-1))) {
+            $t_aviso    = $t_aviso+1;
+            $t_totaviso = $t_totaviso+1;
           }
           if (f($row1,'or_tramite')==1) {
             $t_cad=$t_cad+1;
@@ -712,6 +697,7 @@ function Gerencial() {
         ShowHTML('<tr><td align="center"><IMG SRC="'.$conPHP4.$w_dir.'geragrafico.php?p_genero=M&p_objeto='.f($RS_Menu,'nome').'&p_tipo='.$SG.'&p_grafico=Pizza&p_tot='.$t_totsolic.'&p_cad='.$t_totcad.'&p_tram='.$t_tottram.'&p_conc='.$t_totconc.'&p_atraso='.$t_totatraso.'&p_aviso='.$t_totaviso.'&p_acima='.$t_totacima.'">');
     } 
   } elseif ($O=='P') {
+    // Carrega o segmento do cliente
     ShowHTML('<tr bgcolor="'.$conTrBgColor.'"><td><div align="justify"><font size=2>Informe nos campos abaixo os valores que deseja filtrar e clique sobre o botão <i>Aplicar filtro</i>. Clicando sobre o botão <i>Remover filtro</i>, o filtro existente será apagado.</div><hr>');
     ShowHTML('<tr bgcolor="'.$conTrBgColor.'"><td align="center">');
     AbreForm('Form',$w_dir.$w_pagina.$par,'POST','return(Validacao(this));',null,$P1,$P2,$P3,null,$TP,$SG,$R,'L');
@@ -726,12 +712,19 @@ function Gerencial() {
       else
         ShowHTML('          <option value="'.substr(f($RS_Menu,'sigla'),0,3).'CC'.'">Classificação');
     } 
-    if ($p_agrega==substr(f($RS_Menu,'sigla'),0,3).'RESPATU')                                                   ShowHTML('          <option value="'.substr(f($RS_Menu,'sigla'),0,3).'RESPATU" selected>Executor');         else ShowHTML('          <option value="'.substr(f($RS_Menu,'sigla'),0,3).'RESPATU">Executor');
-    if (Nvl($p_agrega,substr(f($RS_Menu,'sigla'),0,3).'PROP')==substr(f($RS_Menu,'sigla'),0,3).'PROP')          ShowHTML('          <option value="'.substr(f($RS_Menu,'sigla'),0,3).'PROP" selected>Outra parte');         else ShowHTML('          <option value="'.substr(f($RS_Menu,'sigla'),0,3).'PROP">Outra parte');
-    if (substr(f($RS_Menu_Origem,'sigla'),0,3)!='GCA') { if ($p_agrega==substr(f($RS_Menu,'sigla'),0,3).'PROJ') ShowHTML('          <option value="'.substr(f($RS_Menu,'sigla'),0,3).'PROJ" selected>projeto');             else ShowHTML('          <option value="'.substr(f($RS_Menu,'sigla'),0,3).'PROJ">Projeto'); }
-    if ($p_agrega==substr(f($RS_Menu,'sigla'),0,3).'RESP')                                                      ShowHTML('          <option value="'.substr(f($RS_Menu,'sigla'),0,3).'RESP" selected>Responsável');         else ShowHTML('          <option value="'.substr(f($RS_Menu,'sigla'),0,3).'RESP">Responsável');
-    if ($p_agrega==substr(f($RS_Menu,'sigla'),0,3).'SETOR')                                                     ShowHTML('          <option value="'.substr(f($RS_Menu,'sigla'),0,3).'SETOR" selected>Setor responsável');  else ShowHTML('          <option value="'.substr(f($RS_Menu,'sigla'),0,3).'SETOR">Setor responsável');
-    if ($p_agrega==substr(f($RS_Menu,'sigla'),0,3).'LOCAL')                                                     ShowHTML('          <option value="'.substr(f($RS_Menu,'sigla'),0,3).'LOCAL" selected>UF');                 else ShowHTML('          <option value="'.substr(f($RS_Menu,'sigla'),0,3).'LOCAL">UF');
+    if ($p_agrega==substr(f($RS_Menu,'sigla'),0,3).'RESPATU')                                                    ShowHTML('          <option value="'.substr(f($RS_Menu,'sigla'),0,3).'RESPATU" selected>Executor');         else ShowHTML('          <option value="'.substr(f($RS_Menu,'sigla'),0,3).'RESPATU">Executor');
+    if (Nvl($p_agrega,substr(f($RS_Menu,'sigla'),0,3).'PROP')==substr(f($RS_Menu,'sigla'),0,3).'PROP') {
+      if (substr(f($RS_Menu_Origem,'sigla'),0,3)=='GCB')    ShowHTML('          <option value="'.substr(f($RS_Menu,'sigla'),0,3).'PROP" selected>Bolsista');
+      else                                                  ShowHTML('          <option value="'.substr(f($RS_Menu,'sigla'),0,3).'PROP" selected>Outra parte');
+    } else { 
+      if (substr(f($RS_Menu_Origem,'sigla'),0,3)=='GCB')    ShowHTML('          <option value="'.substr(f($RS_Menu,'sigla'),0,3).'PROP">Bolsista');
+      else                                                  ShowHTML('          <option value="'.substr(f($RS_Menu,'sigla'),0,3).'PROP">Outra parte');
+    }
+    if (substr(f($RS_Menu_Origem,'sigla'),0,3)!='GCA') { if ($p_agrega==substr(f($RS_Menu,'sigla'),0,3).'PROJ')  ShowHTML('          <option value="'.substr(f($RS_Menu,'sigla'),0,3).'PROJ" selected>projeto');             else ShowHTML('          <option value="'.substr(f($RS_Menu,'sigla'),0,3).'PROJ">Projeto'); }
+    if (substr(f($RS_Menu_Origem,'sigla'),0,3)=='GCB') { if ($p_agrega==substr(f($RS_Menu,'sigla'),0,3).'ETAPA') ShowHTML('          <option value="'.substr(f($RS_Menu,'sigla'),0,3).'ETAPA" selected>Modalidade de bolsa');   else ShowHTML('          <option value="'.substr(f($RS_Menu,'sigla'),0,3).'ETAPA">Modalidade de bolsa'); }
+    if ($p_agrega==substr(f($RS_Menu,'sigla'),0,3).'RESP')                                                       ShowHTML('          <option value="'.substr(f($RS_Menu,'sigla'),0,3).'RESP" selected>Responsável');         else ShowHTML('          <option value="'.substr(f($RS_Menu,'sigla'),0,3).'RESP">Responsável');
+    if ($p_agrega==substr(f($RS_Menu,'sigla'),0,3).'SETOR')                                                      ShowHTML('          <option value="'.substr(f($RS_Menu,'sigla'),0,3).'SETOR" selected>Setor responsável');  else ShowHTML('          <option value="'.substr(f($RS_Menu,'sigla'),0,3).'SETOR">Setor responsável');
+    if ($p_agrega==substr(f($RS_Menu,'sigla'),0,3).'LOCAL')                                                      ShowHTML('          <option value="'.substr(f($RS_Menu,'sigla'),0,3).'LOCAL" selected>UF');                 else ShowHTML('          <option value="'.substr(f($RS_Menu,'sigla'),0,3).'LOCAL">UF');
     ShowHTML('          </select></td>');
     MontaRadioSN('<b>Inibe exibição do gráfico?</b>',$p_tipo,'p_tipo');
     MontaRadioNS('<b>Limita tamanho do objeto?</b>',$p_tamanho,'p_tamanho');
@@ -741,9 +734,19 @@ function Gerencial() {
     if (substr(f($RS_Menu_Origem,'sigla'),0,3)!='GCA') {
         // Se a opção for ligada ao módulo de projetos, permite a seleção do projeto  e da etapa
       ShowHTML('      <tr><td colspan=2><table border=0 width="90%" cellspacing=0><tr valign="top">');
-      $RS = db_getLinkData::getInstanceOf($dbms,$w_cliente,'PJCAD');
-      SelecaoProjeto('Pro<u>j</u>eto:','J','Selecione o projeto do contrato na relação.',$p_projeto,$w_usuario,f($RS,'sq_menu'),'p_projeto','PJLIST',null);
+      if (substr(f($RS_Menu_Origem,'sigla'),0,3)=='GCB') {
+        $RS = db_getLinkData::getInstanceOf($dbms,$w_cliente,'PJCADBOLSA');
+        $w_atributo = 'onChange="document.Form.action=\''.$w_dir.$w_pagina.$par.'\'; document.Form.O.value=\''.$O.'\'; document.Form.w_troca.value=\'p_atividade\'; document.Form.submit();"';
+      } else {
+        $RS = db_getLinkData::getInstanceOf($dbms,$w_cliente,'PJCAD');
+      }
+      SelecaoProjeto('Pro<u>j</u>eto:','J','Selecione o projeto do contrato na relação.',$p_projeto,$w_usuario,f($RS,'sq_menu'),'p_projeto','PJLIST',$w_atributo);
       ShowHTML('      </tr>');
+      if (substr(f($RS_Menu_Origem,'sigla'),0,3)=='GCB') {
+        ShowHTML('      <tr>');
+        SelecaoEtapa('<u>T</u>ema e modalidade:','T','Se necessário, indique a modalidade à qual este contrato deve ser vinculada.',$p_atividade,$p_projeto,null,'p_atividade',null,null);
+        ShowHTML('      </tr>');
+      }
       ShowHTML('          </table>');
     }
     ShowHTML('<INPUT type="hidden" name="w_troca" value="">');
@@ -758,6 +761,11 @@ function Gerencial() {
     ShowHTML('      <tr valign="top">');
     ShowHTML('          <td><font size="1"><b>Có<U>d</U>igo interno:<br><INPUT ACCESSKEY="D" '.$w_Disabled.' class="sti" type="text" name="p_palavra" size="18" maxlength="18" value="'.$p_palavra.'"></td>');
     ShowHTML('          <td><font size="1"><b>Có<U>d</U>igo externo:<br><INPUT ACCESSKEY="D" '.$w_Disabled.' class="sti" type="text" name="p_atraso" size="18" maxlength="18" value="'.$p_atraso.'"></td>');
+    ShowHTML('      <tr valign="top">');
+    if($w_segmento=='Público') {
+      if (substr(f($RS_Menu_Origem,'sigla'),0,3)!='GCA') ShowHTML('          <td><font size="1"><b><U>N</U>úmero do empenho:<br><INPUT ACCESSKEY="D" '.$w_Disabled.' class="sti" type="text" name="p_empenho" size="18" maxlength="18" value="'.$p_empenho.'"></td>');
+      ShowHTML('          <td><font size="1"><b><U>N</U>úmero do processo:<br><INPUT ACCESSKEY="D" '.$w_Disabled.' class="sti" type="text" name="p_processo" size="18" maxlength="18" value="'.$p_processo.'"></td>');
+    }
     ShowHTML('      <tr valign="top">');
     SelecaoPessoa('Respo<u>n</u>sável:','N','Selecione o responsável na relação.',$p_solicitante,null,'p_solicitante','USUARIOS');
     SelecaoUnidade('<U>S</U>etor responsável:','S',null,$p_unidade,null,'p_unidade',null,null);
@@ -780,7 +788,7 @@ function Gerencial() {
     SelecaoFaseCheck('Recuperar fases:','S',null,$p_fase,$P2,'p_fase[]',null,null);
     ShowHTML('      <tr><td align="center" colspan="2" height="1" bgcolor="#000000">');
     ShowHTML('      <tr><td align="center" colspan="2">');
-    ShowHTML('            <input class="STB" type="submit" name="Botao" value="Exibir" onClick="javascript:document.Form.O.value=\'L\';">');
+    ShowHTML('            <input class="STB" type="submit" name="Botao" value="Exibir" onClick="document.Form.target=\'\'; javascript:document.Form.O.value=\'L\';">');
     ShowHTML('            <input class="STB" type="submit" name="Botao" value="Gerar Word" onClick="javascript:document.Form.O.value=\'W\'; document.Form.target=\'Word\'">');
     ShowHTML('          </td>');
     ShowHTML('      </tr>');
@@ -811,37 +819,22 @@ function ImprimeCabecalho() {
   ShowHTML('    <TABLE WIDTH="100%" bgcolor="'.$conTableBgColor.'" BORDER="'.$conTableBorder.'" CELLSPACING="'.$conTableCellSpacing.'" CELLPADDING="'.$conTableCellPadding.'" BorderColorDark="'.$conTableBorderColorDark.'" BorderColorLight="'.$conTableBorderColorLight.'">');
   ShowHTML('        <tr bgcolor="#DCDCDC" align="center">');
   switch ($p_agrega) {
-    case substr(f($RS_Menu,'sigla'),0,3).'ETAPA':
-      ShowHTML('          <td><font size="1"><b>Etapa</font></td>');
-      break;
-    case substr(f($RS_Menu,'sigla'),0,3).'PROJ':
-      ShowHTML('          <td><font size="1"><b>Projeto</font></td>');
-      break;
-    case substr(f($RS_Menu,'sigla'),0,3).'PROP':
-      ShowHTML('          <td><font size="1"><b>Proponente</font></td>');
-      break;
-    case substr(f($RS_Menu,'sigla'),0,3).'RESP':
-      ShowHTML('          <td><font size="1"><b>Responsável</font></td>');
-      break;
-    case substr(f($RS_Menu,'sigla'),0,3).'RESPATU':
-      ShowHTML('          <td><font size="1"><b>Executor</font></td>');
-      break;
-    case substr(f($RS_Menu,'sigla'),0,3).'CC':
-      ShowHTML('          <td><font size="1"><b>Classificação</font></td>');
-      break;
-    case substr(f($RS_Menu,'sigla'),0,3).'SETOR':
-      ShowHTML('          <td><font size="1"><b>Setor responsável</font></td>');
-      break;
-    case substr(f($RS_Menu,'sigla'),0,3).'LOCAL':
-      ShowHTML('          <td><font size="1"><b>UF</font></td>');
-      break;
+    case substr(f($RS_Menu,'sigla'),0,3).'ETAPA':       ShowHTML('          <td><font size="1"><b>Etapa</font></td>');              break;
+    case substr(f($RS_Menu,'sigla'),0,3).'PROJ':        ShowHTML('          <td><font size="1"><b>Projeto</font></td>');            break;
+    case substr(f($RS_Menu,'sigla'),0,3).'PROP':        ShowHTML('          <td><font size="1"><b>Proponente</font></td>');         break;
+    case substr(f($RS_Menu,'sigla'),0,3).'RESP':        ShowHTML('          <td><font size="1"><b>Responsável</font></td>');        break;
+    case substr(f($RS_Menu,'sigla'),0,3).'RESPATU':     ShowHTML('          <td><font size="1"><b>Executor</font></td>');           break;
+    case substr(f($RS_Menu,'sigla'),0,3).'CC':          ShowHTML('          <td><font size="1"><b>Classificação</font></td>');      break;
+    case substr(f($RS_Menu,'sigla'),0,3).'SETOR':       ShowHTML('          <td><font size="1"><b>Setor responsável</font></td>');  break;
+    case substr(f($RS_Menu,'sigla'),0,3).'LOCAL':       ShowHTML('          <td><font size="1"><b>UF</font></td>');                 break;
   } 
   ShowHTML('          <td><font size="1"><b>Total</font></td>');
   ShowHTML('          <td><font size="1"><b>Cad.</font></td>');
   ShowHTML('          <td><font size="1"><b>Exec.</font></td>');
   ShowHTML('          <td><font size="1"><b>Conc.</font></td>');
   ShowHTML('          <td><font size="1"><b>Aviso</font></td>');
-  if ($_SESSION['INTERNO']=='S') {
+
+  if ($_SESSION['INTERNO']=='S' && substr(f($RS_Menu_Origem,'sigla'),0,3)!='GCA') {
     ShowHTML('          <td><font size="1"><b>$ Prev.</font></td>');
     ShowHTML('          <td><font size="1"><b>$ Real</font></td>');
     ShowHTML('          <td><font size="1"><b>Real > Previsto</font></td>');
@@ -858,7 +851,7 @@ function ImprimeLinha($l_solic,$l_cad,$l_tram,$l_conc,$l_atraso,$l_aviso,$l_valo
   if ($l_tram>0 && $O=='L')  ShowHTML('          <td align="right"><a class="hl" href="javascript:lista('.$l_chave_aux.', \''.$l_chave.'\', -1, 0, -1, -1);" onMouseOver="window.status=\'Exibe os contratos.\'; return true" onMouseOut="window.status=\'\'; return true"><font size="1">'.number_format($l_tram,0,',','.').'</a>&nbsp;</font></td>');       else ShowHTML('          <td align="right"><font size="1">'.number_format($l_tram,0,',','.').'&nbsp;</font></td>');
   if ($l_conc>0 && $O=='L')  ShowHTML('          <td align="right"><a class="hl" href="javascript:lista('.$l_chave_aux.', \''.$l_chave.'\', -1, -1, 0, -1);" onMouseOver="window.status=\'Exibe os contratos.\'; return true" onMouseOut="window.status=\'\'; return true"><font size="1">'.number_format($l_conc,0,',','.').'</a>&nbsp;</font></td>');       else ShowHTML('          <td align="right"><font size="1">'.number_format($l_conc,0,',','.').'&nbsp;</font></td>');
   if ($l_aviso>0 && $O=='L') ShowHTML('          <td align="right"><font size="1" color="red"><b>'.number_format($l_aviso,0,',','.').'&nbsp;</font></td>'); else ShowHTML('          <td align="right"><font size="1"><b>'.$l_aviso.'&nbsp;</font></td>');
-  if ($_SESSION['INTERNO']=='S') {
+  if ($_SESSION['INTERNO']=='S' && substr(f($RS_Menu_Origem,'sigla'),0,3)!='GCA') {
     ShowHTML('          <td align="right"><font size="1">'.number_format($l_valor,2,',','.').'&nbsp;</font></td>');
     ShowHTML('          <td align="right"><font size="1">'.number_format($l_custo,2,',','.').'&nbsp;</font></td>');
     if ($l_acima>0) ShowHTML('          <td align="right"><font size="1" color="red"><b>'.number_format($l_acima,0,',','.').'&nbsp;</font></td>'); else ShowHTML('          <td align="right"><font size="1"><b>'.$l_acima.'&nbsp;</font></td>');

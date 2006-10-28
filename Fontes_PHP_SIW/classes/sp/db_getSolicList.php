@@ -14,7 +14,7 @@ class db_getSolicList {
         $p_unidade, $p_prioridade, $p_ativo, $p_proponente, 
         $p_chave, $p_assunto, $p_pais, $p_regiao, $p_uf, $p_cidade, $p_usu_resp, 
         $p_uorg_resp, $p_palavra, $p_prazo, $p_fase, $p_sqcc, $p_projeto, $p_atividade, 
-        $p_acao_ppa, $p_orprior) {
+        $p_acao_ppa, $p_orprior, $p_empenho=null, $p_processo=null) {
      //$l_fase = '';
      //for ($i=0; $i<=count($p_fase)-1; $i=$i+1) {
      //  $l_fase = $l_fase.','.$p_fase[$i];
@@ -51,6 +51,8 @@ class db_getSolicList {
                    'p_atividade'                 =>array(tvl($p_atividade),                                B_INTEGER,        32),
                    'p_acao_ppa'                  =>array(tvl($p_acao_ppa),                                 B_INTEGER,        32),
                    'p_orprior'                   =>array(tvl($p_orprior),                                  B_INTEGER,        32),
+                   'p_empenho'                   =>array(tvl($p_empenho),                                  B_VARCHAR,        30),
+                   'p_processo'                  =>array(tvl($p_processo),                                 B_VARCHAR,        30),                                      
                    'p_result'                    =>array(null,                                             B_CURSOR,         -1)
                   );
      $l_rs = DatabaseQueriesFactory::getInstanceOf($sql, $dbms, $params, DB_TYPE);

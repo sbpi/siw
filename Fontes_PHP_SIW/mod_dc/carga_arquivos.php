@@ -254,7 +254,7 @@ function Inicial() {
       if (!testFile(&$l_erro, $w_raiz, true, true)) {
         ScriptOpen('JavaScript');
         ShowHTML('  alert(\'ATENÇÃO: diretório '.$l_erro.'!\');');
-        ShowHTML('  location.href=\''.$R.'&O='.$O.'&SG='.$SG.'&P1='.$P1.'&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP='.$TP.MontaFiltro('GET').'\';');
+        ShowHTML('  location.href=\''.montaURL_JS($w_dir,$R.'&O='.$O.'&SG='.$SG.'&P1='.$P1.'&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP='.$TP.MontaFiltro('GET')).'\';');
         ScriptClose();
         exit();
       }

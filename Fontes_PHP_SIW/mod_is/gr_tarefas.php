@@ -199,6 +199,15 @@ function Gerencial() {
       ShowHTML('     theForm.p_ini_i.focus();');
       ShowHTML('     return false;');
       ShowHTML('  }');
+      ShowHTML('  var i; ');
+      ShowHTML('  var w_erro=true; ');
+      ShowHTML('  for (i=0; i < theForm["p_fase[]"].length; i++) {');
+      ShowHTML('    if (theForm["p_fase[]"][i].checked) w_erro=false;');
+      ShowHTML('  }');
+      ShowHTML('  if (w_erro) {');
+      ShowHTML('    alert(\'Você deve informar pelo menos uma fase!\'); ');
+      ShowHTML('    return false;');
+      ShowHTML('  }');      
       CompData('p_ini_i','Recebimento inicial','<=','p_ini_f','Recebimento final');
       Validate('p_fim_i','Conclusão inicial','DATA','','10','10','','0123456789/');
       Validate('p_fim_f','Conclusão final','DATA','','10','10','','0123456789/');
@@ -505,13 +514,13 @@ function Gerencial() {
           $w_linha+=1;
         } 
         if (f($row1,'concluida')=='N') {
-          if (f($row1,'fim')<addDays(time(),-1)) {
-            $t_atraso       = $t_atraso + 1;
-            $t_totatraso    = $t_totatraso + 1;
-          } elseif (f($row1,'aviso_prox_conc')=='S' && (f($row1,'aviso')<=addDays(time(),-1))) {
-            $t_aviso        = $t_aviso + 1;
-            $t_totaviso     = $t_totaviso + 1;
-          } 
+          if (f($row1,'fim') < addDays(time(),-1)) {
+            $t_atraso    = $t_atraso + 1;
+            $t_totatraso = $t_totatraso + 1;
+          } elseif (f($row1,'aviso_prox_conc') == 'S' && (f($row1,'aviso') <= addDays(time(),-1))) {
+            $t_aviso    = $t_aviso+1;
+            $t_totaviso = $t_totaviso+1;
+          }
           if (f($row1,'or_tramite')==1) {
             $t_cad      = $t_cad + 1;
             $t_totcad   = $t_totcad + 1;
@@ -609,7 +618,7 @@ function Gerencial() {
     SelecaoFaseCheck('Recuperar fases:','S',null,$p_fase,$P2,'p_fase[]',null,null);
     ShowHTML('      <tr><td align="center" colspan="2" height="1" bgcolor="#000000">');
     ShowHTML('      <tr><td align="center" colspan="2">');
-    ShowHTML('            <input class="STB" type="submit" name="Botao" value="Exibir" onClick="javascript:document.Form.O.value=\'L\';">');
+    ShowHTML('            <input class="STB" type="submit" name="Botao" value="Exibir" onClick="document.Form.target=\'\'; javascript:document.Form.O.value=\'L\';">');
     ShowHTML('            <input class="STB" type="submit" name="Botao" value="Gerar Word" onClick="javascript:document.Form.O.value=\'W\'; document.Form.target=\'Word\'">');
     ShowHTML('          </td>');
     ShowHTML('      </tr>');

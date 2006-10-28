@@ -57,6 +57,12 @@ function VisualDemanda($w_chave,$operacao,$w_usuario) {
       $w_html.=chr(13).'      <tr><td valign="top">Etapa: <b>'.MontaOrdemEtapa(f($RS,'sq_projeto_etapa')).'. '.f($RS,'nm_etapa').' </b></td>';
     } 
 
+    if (nvl(f($RS,'sq_demanda_pai'),'')>'') {
+      // Recupera os dados da demanda
+      $RS1 = db_getSolicData::getInstanceOf($dbms,f($RS,'sq_demanda_pai'),'GDGERAL');
+      $w_html.=chr(13).'      <tr><td valign="top">Atividade pai: <b><A class="HL" HREF="'.$w_pagina.'Visual&R='.$w_pagina.$par.'&O=L&w_chave='.f($RS1,'sq_siw_solicitacao').'&P1='.$P1.'&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP='.$TP.'&SG='.$SG.MontaFiltro('GET').'" title="Exibe as informações deste registro." target="_blank">'.f($RS1,'sq_siw_solicitacao').'</a> - '.f($RS1,'assunto').' </b></td>';
+    } 
+
     $w_html.=chr(13).'      <tr><td>Detalhamento: <b>'.$w_chave.'<br>'.CRLF2BR(f($RS,'assunto')).'</b></td></tr>';
 
     // Identificação da demanda
@@ -69,7 +75,7 @@ function VisualDemanda($w_chave,$operacao,$w_usuario) {
 
     $w_html.=chr(13).'      <tr><td valign="top" colspan="2"><table border=0 width="100%" cellspacing=0>';
     $w_html.=chr(13).'          <tr valign="top">';
-    $w_html.=chr(13).'          <td>Cidade de origem:<br><b>'.f($RS,'nm_cidade').' ('.f($RS,'co_uf').')</b></td>';
+    $w_html.=chr(13).'          <td>Local de execução:<br><b>'.f($RS,'nm_cidade').' ('.f($RS,'co_uf').')</b></td>';
     if (Nvl(f($RS,'proponente'),'')>'') {
       $w_html.=chr(13).'          <td colspan=2>Proponente externo:<br><b>'.f($RS,'proponente').' </b></td>';
     } else {
@@ -93,6 +99,61 @@ function VisualDemanda($w_chave,$operacao,$w_usuario) {
     $w_html.=chr(13).'          <td colspan=3>Palavras-chave:<br><b>'.f($RS,'palavra_chave').' </b></td>';
     $w_html.=chr(13).'          </table>';
 
+    $RSQuery = db_getSolicList::getInstanceOf($dbms,f($RS,'sq_menu'),$w_usuario,f($RS,'sigla'),4,
+            null,null,null,null,null,null,null,null,null,null,null, null, null, null, null, null, null,
+            null, null, null, null,null, null, null, f($RS,'sq_siw_solicitacao'), null);
+    $RSQuery = SortArray($RSQuery,'fim','asc','prioridade','asc');
+    if (count($RSQuery)>0) {
+      $w_html.=chr(13).'      <tr><td valign="top" colspan="2" align="center" bgcolor="#D0D0D0" style="border: 2px solid rgb(0,0,0);"><b>Atividades subordinadas</td>';
+      $w_html.=chr(13).'      <tr><td><table border=0 with="100%" cellpadding=0 cellspacing=0>';
+      $w_html.=chr(13).'        <tr><td align="right"><b>Registros: '.count($RSQuery);
+      $w_html.=chr(13).'        <tr><td align="center" colspan=3>';
+      $w_html.=chr(13).'          <TABLE WIDTH="100%" bgcolor="'.$conTableBgColor.'" BORDER="'.$conTableBorder.'" CELLSPACING="'.$conTableCellSpacing.'" CELLPADDING="'.$conTableCellPadding.'" BorderColorDark="'.$conTableBorderColorDark.'" BorderColorLight="'.$conTableBorderColorLight.'">';
+      $w_html.=chr(13).'            <tr bgcolor="'.$conTrBgColor.'" align="center">';
+      $w_html.=chr(13).'              <td><b>Nº</td>';
+      $w_html.=chr(13).'              <td><b>Etapa</td>';
+      $w_html.=chr(13).'              <td><b>Responsável</td>';
+      $w_html.=chr(13).'              <td><b>Detalhamento</td>';
+      $w_html.=chr(13).'              <td><b>Fim previsto</td>';
+      $w_html.=chr(13).'              <td><b>Fase atual</td>';
+      $w_html.=chr(13).'            </tr>';
+      foreach($RSQuery as $row) {
+        $w_cor = ($w_cor==$conTrBgColor || $w_cor=='') ? $w_cor=$conTrAlternateBgColor : $w_cor=$conTrBgColor;
+        $w_html.=chr(13).'        <tr bgcolor="'.$w_cor.'" valign="top">';
+        $w_html.=chr(13).'          <td nowrap>';
+        if (f($row,'concluida')=='N') {
+          if (f($row,'fim')<addDays(time(),-1)) {
+            $w_html.=chr(13).'             <img src="'.$conImgAtraso.'" border=0 width=15 heigth=15 align="center">';
+          } elseif (f($row,'aviso_prox_conc')=='S' && (f($row,'aviso')<=addDays(time(),-1))) {
+            $w_html.=chr(13).'             <img src="'.$conImgAviso.'" border=0 width=15 height=15 align="center">';
+          } else {
+            $w_html.=chr(13).'             <img src="'.$conImgNormal.'" border=0 width=15 height=15 align="center">';
+          } 
+        } else {
+          if (f($row,'sg_tramite')=='CA') {
+            $w_html.=chr(13).'             <img src="'.$conImgCancel.'" border=0 width=15 height=15 align="center">';            
+          } elseif (f($row,'fim')<Nvl(f($row,'fim_real'),f($row,'fim'))) {
+            $w_html.=chr(13).'             <img src="'.$conImgOkAtraso.'" border=0 width=15 heigth=15 align="center">';
+          } else {
+            $w_html.=chr(13).'             <img src="'.$conImgOkNormal.'" border=0 width=15 height=15 align="center">';
+          } 
+        } 
+        $w_html.=chr(13).'          <A class="HL" HREF="'.$w_pagina.'Visual&R='.$w_pagina.$par.'&O=L&w_chave='.f($row,'sq_siw_solicitacao').'&P1='.$P1.'&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP='.$TP.'&SG='.$SG.MontaFiltro('GET').'" title="Exibe as informações deste registro." target="_blank">'.f($row,'sq_siw_solicitacao').'&nbsp;</a>';
+        if (nvl(f($row,'sq_projeto_etapa'),'nulo')!='nulo') {
+          $w_html.=chr(13).'            <td>'.ExibeEtapa('V',f($row,'sq_solic_pai'),f($row,'sq_projeto_etapa'),'Volta',10,MontaOrdemEtapa(f($row,'sq_projeto_etapa')).' - '.f($row,'nm_etapa'),$TP,$SG).'</td>';
+        } else {
+          $w_html.=chr(13).'            <td>---</td>';
+        } 
+        $w_html.=chr(13).'          <td>'.ExibePessoa(null,$w_cliente,f($row,'solicitante'),$TP,f($row,'nm_solic')).'</td>';
+        if (strlen(Nvl(f($row,'assunto'),'-'))>50) $w_titulo = substr(Nvl(f($row,'assunto'),'-'),0,50).'...'; else $w_titulo = Nvl(f($row,'assunto'),'-');
+        $w_html.=chr(13).'          <td title="'.htmlspecialchars(f($row,'assunto')).'">'.htmlspecialchars($w_titulo).'</td>';
+        $w_html.=chr(13).'          <td align="center">&nbsp;'.Nvl(FormataDataEdicao(f($row,'fim')),'-').'</td>';
+        $w_html.=chr(13).'          <td>'.f($row,'nm_tramite').'</td>';
+        $w_html.=chr(13).'        </tr>';
+        $w_html.=chr(13).'      </table>';
+      } 
+    }
+
     if ($w_tipo_visao==0 || $w_tipo_visao==1) {
       // Informações adicionais
       if (Nvl(f($RS,'descricao'),'')>'' || Nvl(f($RS,'justificativa'),'')>'') {
@@ -100,7 +161,7 @@ function VisualDemanda($w_chave,$operacao,$w_usuario) {
         if (Nvl(f($RS,'descricao'),'')>'') $w_html.=chr(13).'      <tr><td valign="top">Resultados da demanda:<br><b>'.CRLF2BR(f($RS,'descricao')).' </b></td>';
         if ($w_tipo_visao==0 && Nvl(f($RS,'justificativa'),'')>'') {
           // Se for visão completa
-          $w_html.=chr(13).'      <tr><td valign="top">Recomendações superiores:<br><b>'.CRLF2BR(f($RS,'justificativa')).' </b></td>';
+          $w_html.=chr(13).'      <tr><td valign="top">Observações:<br><b>'.CRLF2BR(f($RS,'justificativa')).' </b></td>';
         } 
       } 
     } 
@@ -110,8 +171,8 @@ function VisualDemanda($w_chave,$operacao,$w_usuario) {
       $w_html.=chr(13).'      <tr><td valign="top" colspan="2" align="center" bgcolor="#D0D0D0" style="border: 2px solid rgb(0,0,0);"><b>Dados da conclusão</td>';
       $w_html.=chr(13).'      <tr><td valign="top" colspan="2"><table border=0 width="100%" cellspacing=0>';
       $w_html.=chr(13).'          <tr valign="top">';
-      $w_html.=chr(13).'          <td>Início da execução:<br><b>'.FormataDataEdicao(f($RS,'inicio_real')).' </b></td>';
-      $w_html.=chr(13).'          <td>Término da execução:<br><b>'.FormataDataEdicao(f($RS,'fim_real')).' </b></td>';
+      $w_html.=chr(13).'          <td>Início previsto:<br><b>'.FormataDataEdicao(f($RS,'inicio_real')).' </b></td>';
+      $w_html.=chr(13).'          <td>Término previsto:<br><b>'.FormataDataEdicao(f($RS,'fim_real')).' </b></td>';
       if ($w_tipo_visao==0) {
         $w_html.=chr(13).'          <td>Custo real:<br><b>'.number_format(f($RS,'custo_real'),2,',','.').' </b></td>';
       } 
