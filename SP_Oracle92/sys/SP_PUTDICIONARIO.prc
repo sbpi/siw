@@ -6,12 +6,12 @@ create or replace procedure SP_PUTDICIONARIO
   
   cursor c_tabela is
     select f.sq_tabela chave, e.sq_tabela_tipo, c.sq_usuario, d.sq_sistema, a.table_name nome,
-           case when f.sq_tabela is null 
-                then case when b.comments is null
+           case when b.comments is null
+                then case when f.sq_tabela is null 
                           then 'A ser inserido' 
-                          else b.comments
+                          else f.descricao
                      end
-                else f.descricao
+                else b.comments
            end descricao
       from all_tables                       a
            inner      join all_tab_comments b on (a.owner          = b.owner and
@@ -37,15 +37,12 @@ create or replace procedure SP_PUTDICIONARIO
     select e.sq_coluna chave, a.sq_tabela, b.sq_dado_tipo, t2.column_name nome, t2.column_id ordem, 
            t2.data_length tamanho, t2.data_precision precisao, t2.data_scale escala, 
            case t2.nullable when 'Y' then 'N' else 'S' end obrigatorio,
-           case nvl(e.descricao, 'A ser inserido.') when 'A ser inserido.'
-                then case when t3.comments is null
-                     then case when e.descricao is null 
+           case when t3.comments is null
+                then case when e.descricao is null 
                           then 'A ser inserido.' 
                           else e.descricao 
                           end
-                     else t3.comments
-                     end
-                else e.descricao
+                else t3.comments
            end descricao
       from all_tables                         t1
            inner        join all_tab_columns  t2 on (t2.OWNER       = t1.owner and
