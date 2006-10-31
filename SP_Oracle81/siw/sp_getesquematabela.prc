@@ -10,7 +10,8 @@ begin
              b.nome nm_tabela, c.qtd_coluna, d.campo_externo, d.ordem or_coluna,
              d.mascara_data, d.valor_default,
              e.nome cl_nome, e.obrigatorio cl_obrigatorio, e.tamanho cl_tamanho,
-             decode(e.sq_dado_tipo,1,'B_VARCHAR',2,'B_INTEGER',3,'B_DATE',4,'B_VARCHAR',6,'B_VARCHAR') nm_tipo
+             decode(e.sq_dado_tipo,1,'B_VARCHAR',2,decode(nvl(e.precisao,0),0,'B_INTEGER','B_NUMERIC'),3,'B_DATE',4,'B_VARCHAR',6,'B_VARCHAR') nm_tipo,
+             e.precisao, e.escala
         from dc_esquema_tabela                     a,
              dc_tabela           b,
              (select x.sq_esquema_tabela, count(*) qtd_coluna
