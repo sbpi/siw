@@ -20,4 +20,3 @@ begin
   End If;
 End SP_GetSolicRecurso;
 /
-
