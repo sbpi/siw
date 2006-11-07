@@ -425,7 +425,10 @@ begin
                 n.sq_cc,              n.nome nm_cc,                  n.sigla sg_cc,
                 o.nome_resumido nm_solic, o.nome_resumido||' ('||o2.sigla||')' nm_resp,
                 p.nome_resumido nm_exec,
-                q.titulo nm_projeto
+                q.titulo nm_projeto,
+                decode(nvl(m2.sq_siw_solicitacao,0),0,q.titulo,m2.titulo) nm_projeto,
+                decode(nvl(m2.sq_siw_solicitacao,0),0,q.sq_siw_solicitacao,m2.sq_siw_solicitacao) sq_projeto,
+                decode(nvl(m3.sq_siw_solicitacao,0),0,q1.qtd_rubrica,m3.qtd_rubrica)qtd_rubrica
            from siw_menu                                       a,
                 eo_unidade                a2,
                 eo_unidade_resp           a3,
@@ -454,7 +457,17 @@ begin
                 eo_unidade_resp      e2,
                 co_cidade            f ,
                 ac_acordo            m ,
+                siw_solicitacao      m1,
+                pj_projeto           m2,
+                (select sq_siw_solicitacao, count(sq_projeto_rubrica) qtd_rubrica
+                   from pj_rubrica
+                  group by sq_siw_solicitacao
+                )                    m3,
                 pj_projeto           q ,
+                (select sq_siw_solicitacao, count(sq_projeto_rubrica) qtd_rubrica
+                   from pj_rubrica
+                  group by sq_siw_solicitacao
+                )                    q1,
                 ct_cc                n ,
                 co_pessoa            o ,
                 sg_autenticacao      o1,
@@ -500,7 +513,11 @@ begin
                 )
             and (b.sq_cidade_origem         = f.sq_cidade)
             and (b.sq_solic_pai             = m.sq_siw_solicitacao (+))
+            and (m.sq_siw_solicitacao       = m1.sq_siw_solicitacao (+))
+            and (m1.sq_solic_pai            = m2.sq_siw_solicitacao (+))
+            and (m2.sq_siw_solicitacao      = m3.sq_siw_solicitacao (+))
             and (b.sq_solic_pai             = q.sq_siw_solicitacao (+))
+            and (q.sq_siw_solicitacao       = q1.sq_siw_solicitacao (+))
             and (b.sq_cc                    = n.sq_cc (+))
             and (b.solicitante              = o.sq_pessoa (+))
             and (o.sq_pessoa                = o1.sq_pessoa)

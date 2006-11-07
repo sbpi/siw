@@ -1796,6 +1796,7 @@ SP_Oracle81/siw/sp_getkindperslist.prc -text
 SP_Oracle81/siw/sp_getknowarea.prc -text
 SP_Oracle81/siw/sp_getlancamento.prc -text
 SP_Oracle81/siw/sp_getlancamentodoc.prc -text
+SP_Oracle81/siw/sp_getlancamentoitem.prc -text
 SP_Oracle81/siw/sp_getlancamentolog.prc -text
 SP_Oracle81/siw/sp_getlcanexo.prc -text
 SP_Oracle81/siw/sp_getlccriterio.prc -text
@@ -1981,6 +1982,7 @@ SP_Oracle81/siw/sp_putindice.prc -text
 SP_Oracle81/siw/sp_putinformar.prc -text
 SP_Oracle81/siw/sp_putlancamentodoc.prc -text
 SP_Oracle81/siw/sp_putlancamentoenvio.prc -text
+SP_Oracle81/siw/sp_putlancamentoitem.prc -text
 SP_Oracle81/siw/sp_putlcarquivo.prc -text
 SP_Oracle81/siw/sp_putlccriterio.prc -text
 SP_Oracle81/siw/sp_putlcfinalidade.prc -text
@@ -2160,6 +2162,7 @@ SP_Oracle81/siw/sq_viagem.seq -text
 SP_Oracle81/siw/sqlexpert_plan1.tab -text
 SP_Oracle81/siw/tg_ac_acordo_in_up.trg -text
 SP_Oracle81/siw/tg_co_pessoa_in_up.trg -text
+SP_Oracle81/siw/tg_fn_documento_item_in_up.trg -text
 SP_Oracle81/siw/tg_fn_lancamento_doc_ex.trg -text
 SP_Oracle81/siw/tg_fn_lancamento_doc_in_up.trg -text
 SP_Oracle81/siw/tg_fn_lancamento_in.trg -text
@@ -2948,6 +2951,7 @@ SP_Oracle92/siw/sp_getkindperslist.prc -text
 SP_Oracle92/siw/sp_getknowarea.prc -text
 SP_Oracle92/siw/sp_getlancamento.prc -text
 SP_Oracle92/siw/sp_getlancamentodoc.prc -text
+SP_Oracle92/siw/sp_getlancamentoitem.prc -text
 SP_Oracle92/siw/sp_getlancamentolog.prc -text
 SP_Oracle92/siw/sp_getlcanexo.prc -text
 SP_Oracle92/siw/sp_getlccriterio.prc -text
@@ -3135,6 +3139,7 @@ SP_Oracle92/siw/sp_putindice.prc -text
 SP_Oracle92/siw/sp_putinformar.prc -text
 SP_Oracle92/siw/sp_putlancamentodoc.prc -text
 SP_Oracle92/siw/sp_putlancamentoenvio.prc -text
+SP_Oracle92/siw/sp_putlancamentoitem.prc -text
 SP_Oracle92/siw/sp_putlcarquivo.prc -text
 SP_Oracle92/siw/sp_putlccriterio.prc -text
 SP_Oracle92/siw/sp_putlcfinalidade.prc -text
@@ -3314,6 +3319,7 @@ SP_Oracle92/siw/sq_viagem.seq -text
 SP_Oracle92/siw/sqlexpert_plan1.tab -text
 SP_Oracle92/siw/tg_ac_acordo_in_up.trg -text
 SP_Oracle92/siw/tg_co_pessoa_in_up.trg -text
+SP_Oracle92/siw/tg_fn_documento_item_in_up.trg -text
 SP_Oracle92/siw/tg_fn_lancamento_doc_ex.trg -text
 SP_Oracle92/siw/tg_fn_lancamento_doc_in_up.trg -text
 SP_Oracle92/siw/tg_fn_lancamento_in.trg -text
