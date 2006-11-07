@@ -3162,6 +3162,7 @@ SP_Oracle92/siw/sp_putprojetoinfo.prc -text
 SP_Oracle92/siw/sp_putprojetointer.prc -text
 SP_Oracle92/siw/sp_putprojetooutras.prc -text
 SP_Oracle92/siw/sp_putprojetorec.prc -text
+SP_Oracle92/siw/sp_putprojetorubrica.prc -text
 SP_Oracle92/siw/sp_putramalusuario.prc -text
 SP_Oracle92/siw/sp_putrelacionamento.prc -text
 SP_Oracle92/siw/sp_putrespacao.prc -text
