@@ -8,7 +8,7 @@ create or replace procedure SP_GetSolicRubrica
 begin
    open p_result for 
       select a.sq_projeto_rubrica, a.sq_cc, a.codigo, a.nome, a.descricao, a.ativo,
-             a.valor_inicial, a.total_entradas, a.total_saidas, a.saldo_atual
+             a.valor_inicial, a.entrada_prevista, a.entrada_real, a.saida_prevista, a.saida_real
         from pj_rubrica            a
        where (p_chave     is null or (p_chave     is not null and a.sq_siw_solicitacao = p_chave))
          and (p_chave_aux is null or (p_chave_aux is not null and a.sq_projeto_rubrica = p_chave_aux))
