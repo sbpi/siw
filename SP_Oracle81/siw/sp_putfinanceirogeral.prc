@@ -22,6 +22,7 @@ create or replace procedure SP_PutFinanceiroGeral
     p_sq_tipo_pessoa      in number   default null,
     p_forma_atual         in number   default null,
     p_vencimento_atual    in date     default null,
+    p_tipo_rubrica        in number   default null,    
     p_chave_nova          out         number,
     p_codigo_interno      in out      varchar2
    ) is
@@ -62,12 +63,12 @@ begin
       Insert into fn_lancamento
          ( sq_siw_solicitacao,   cliente,           sq_acordo_parcela,   sq_forma_pagamento,
            sq_tipo_lancamento,   sq_tipo_pessoa,    emissao,             vencimento,
-           observacao,           aviso_prox_conc,   dias_aviso
+           observacao,           aviso_prox_conc,   dias_aviso,          tipo
          )
       values (
            w_chave,              p_cliente,         p_sq_acordo_parcela, p_sq_forma_pagamento,
            p_sq_tipo_lancamento, p_sq_tipo_pessoa,  sysdate,             p_vencimento,
-           p_observacao,         p_aviso,           p_dias
+           p_observacao,         p_aviso,           p_dias,              p_tipo_rubrica
       );
 
       -- Insere log da solicitação
@@ -113,7 +114,8 @@ begin
           observacao         = trim(p_observacao),
           aviso_prox_conc    = p_aviso,
           dias_aviso         = p_dias,
-          sq_forma_pagamento = p_sq_forma_pagamento 
+          sq_forma_pagamento = p_sq_forma_pagamento,
+          tipo               = p_tipo_rubrica
       where sq_siw_solicitacao = p_chave;
       
       If Nvl(p_forma_atual, p_sq_forma_pagamento) <> p_sq_forma_pagamento Then
