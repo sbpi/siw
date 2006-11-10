@@ -9,19 +9,23 @@ create or replace procedure SP_PutLancamentoDoc
     p_valor               in number   default null,
     p_patrimonio          in varchar2 default null,
     p_retencao            in varchar2 default null,
-    p_tributo             in varchar2 default null
+    p_tributo             in varchar2 default null,
+    p_chave_nova          out         number
    ) is
    
    w_cont       number(4) := 1;
    w_reg        ac_acordo%rowtype;
+   w_chave_aux  number(18) := Nvl(p_chave_aux,0);
 begin
    If p_operacao = 'I' Then -- Inclusão
+      -- Recupera a próxima chave
+      select sq_lancamento_doc.nextval into w_chave_aux from dual;   
       insert into fn_lancamento_doc
         (sq_lancamento_doc,         sq_siw_solicitacao, sq_tipo_documento,   numero,           data, 
          serie,                     valor,              patrimonio,          calcula_retencao, calcula_tributo
         )
       values
-        (sq_lancamento_doc.nextval, p_chave,            p_sq_tipo_documento, p_numero,         p_data, 
+        (w_chave_aux,               p_chave,            p_sq_tipo_documento, p_numero,         p_data, 
          p_serie,                   p_valor,            p_patrimonio,        p_retencao,       p_tributo
         );
    Elsif p_operacao = 'A' Then -- Alteração
@@ -51,6 +55,7 @@ begin
         where a.sq_siw_solicitacao = p_chave
       )
    where sq_siw_solicitacao = p_chave;
+   -- Devolve a chave
+   p_chave_nova := w_chave_aux;
 end SP_PutLancamentoDoc;
 /
-
