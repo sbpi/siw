@@ -40,6 +40,8 @@ begin
              calcula_tributo   = p_tributo
        where sq_lancamento_doc = p_chave_aux;
    Elsif p_operacao = 'E' Then -- Exclusão
+      delete fn_documento_item where sq_lancamento_doc = p_chave_aux;
+      delete fn_lancamento_rubrica where sq_lancamento_doc = p_chave_aux;
       delete fn_lancamento_doc where sq_lancamento_doc = p_chave_aux;
    End If;
       

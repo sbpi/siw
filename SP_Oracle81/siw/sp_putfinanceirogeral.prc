@@ -173,6 +173,8 @@ begin
          delete siw_arquivo       where sq_siw_arquivo     in (w_arq);
          
          -- Remove os registros vinculados à demanda
+         delete fn_documento_item where sq_lancamento_doc in (select sq_lancamento_doc from fn_lancamento_doc where sq_siw_solicitacao = p_chave);
+         delete fn_lancamento_rubrica where sq_lancamento_doc in (select sq_lancamento_doc from fn_lancamento_doc where sq_siw_solicitacao = p_chave);
          delete fn_lancamento_log where sq_siw_solicitacao = p_chave;
          delete fn_lancamento_doc where sq_siw_solicitacao = p_chave;
 
