@@ -8,18 +8,74 @@ create or replace procedure SP_GetSolicRubrica
     p_result    out sys_refcursor
    ) is
 begin
-   open p_result for 
-      select a.sq_projeto_rubrica, a.sq_cc, a.codigo, a.nome, a.descricao, a.ativo,
-             a.valor_inicial, a.entrada_prevista, a.entrada_real, a.saida_prevista, a.saida_real,
-             case a.ativo when 'S' then 'Sim' else 'Não' end nm_ativo,
-             case a.aplicacao_financeira when 'S' then 'Sim' else 'Não' end nm_aplicacao_financeira,
-             b.nome nm_cc, a.aplicacao_financeira
-        from pj_rubrica       a
-             inner join ct_cc b on (a.sq_cc = b.sq_cc)
-       where (p_chave                is null or (p_chave                is not null and a.sq_siw_solicitacao   = p_chave))
-         and (p_chave_aux            is null or (p_chave_aux            is not null and a.sq_projeto_rubrica   = p_chave_aux))
-         and (p_ativo                is null or (p_ativo                is not null and a.ativo                = p_ativo))
-         and (p_sq_rubrica_destino   is null or (p_sq_rubrica_destino   is not null and a.sq_projeto_rubrica   <> p_sq_rubrica_destino))
-         and (p_aplicacao_financeira is null or (p_aplicacao_financeira is not null and a.aplicacao_financeira = p_aplicacao_financeira));
+   If p_restricao is null Then
+      open p_result for 
+         select a.sq_projeto_rubrica, a.sq_cc, a.codigo, a.nome, a.descricao, a.ativo,
+                a.valor_inicial, a.entrada_prevista, a.entrada_real, (a.entrada_prevista - a.entrada_real) entrada_pendente,
+                a.saida_prevista, a.saida_real, (a.saida_prevista-a.saida_real) saida_pendente,
+                case a.ativo when 'S' then 'Sim' else 'Não' end nm_ativo,
+                case a.aplicacao_financeira when 'S' then 'Sim' else 'Não' end nm_aplicacao_financeira,
+                b.nome nm_cc, a.aplicacao_financeira
+           from pj_rubrica       a
+                inner join ct_cc b on (a.sq_cc = b.sq_cc)
+          where (p_chave                is null or (p_chave                is not null and a.sq_siw_solicitacao   = p_chave))
+            and (p_chave_aux            is null or (p_chave_aux            is not null and a.sq_projeto_rubrica   = p_chave_aux))
+            and (p_ativo                is null or (p_ativo                is not null and a.ativo                = p_ativo))
+            and (p_sq_rubrica_destino   is null or (p_sq_rubrica_destino   is not null and a.sq_projeto_rubrica   <> p_sq_rubrica_destino))
+            and (p_aplicacao_financeira is null or (p_aplicacao_financeira is not null and a.aplicacao_financeira = p_aplicacao_financeira));
+   Elsif p_restricao = 'FICHA' Then
+     open p_result for    
+        select sum(a.valor) valor, 
+               c.vencimento, c.codigo_interno cd_lancamento, c.sq_siw_solicitacao sq_lancamento, c.tipo tipo_rubrica,
+               to_char(c.vencimento, 'DD/MM/YYYY, HH24:MI:SS') phpdt_vencimento,
+               d.descricao nm_lancamento, e.sigla sg_lancamento_menu,
+               case c.tipo when 5 then e.nome when 4 then 'Entradas' when 3 then 'Atualização de aplicação' when 2 then 'Transferência entre rubricas' when 1 then 'Dotação inicial' end operacao,
+               f.nome nm_rubrica, f.codigo codigo_rubrica,
+               g.titulo nm_projeto, g.sq_siw_solicitacao sq_projeto, i.codigo_interno cd_acordo, i.sq_siw_solicitacao sq_acordo,
+               l.nome nm_label, l.sigla sg, m.sigla sg_tramite
+          from fn_lancamento_rubrica                 a
+               inner          join fn_lancamento_doc b on (a.sq_lancamento_doc  = b.sq_lancamento_doc)
+                 inner        join fn_lancamento     c on (b.sq_siw_solicitacao = c.sq_siw_solicitacao)
+                   inner      join siw_solicitacao   d on (c.sq_siw_solicitacao = d.sq_siw_solicitacao)
+                     inner    join siw_menu          e on (d.sq_menu            = e.sq_menu)
+                     inner    join siw_tramite       m on (d.sq_siw_tramite     = m.sq_siw_tramite)
+               inner          join pj_rubrica        f on (a.sq_rubrica_origem  = f.sq_projeto_rubrica)
+                 inner        join pj_projeto        g on (f.sq_siw_solicitacao = g.sq_siw_solicitacao)
+                   left       join siw_solicitacao   h on (g.sq_siw_solicitacao = h.sq_siw_solicitacao)
+                     left     join ac_acordo         i on (h.sq_solic_pai       = i.sq_siw_solicitacao)
+                       left   join siw_solicitacao   j on (i.sq_siw_solicitacao = j.sq_siw_solicitacao)
+                         left join siw_menu          l on (j.sq_menu            = l.sq_menu)
+         where a.sq_rubrica_origem = p_chave_aux
+           and m.sigla             <> 'CA'
+         group by c.vencimento, c.codigo_interno, c.sq_siw_solicitacao, c.tipo, e.nome, g.titulo, g.sq_siw_solicitacao,
+                  i.codigo_interno, i.sq_siw_solicitacao, f.nome, f.codigo, d.descricao, l.nome, l.sigla, m.sigla,
+                  e.sigla
+     UNION
+        select sum(a.valor_total) valor, 
+               c.vencimento, c.codigo_interno cd_lancamento, c.sq_siw_solicitacao sq_lancamento, c.tipo tipo_rubrica,
+               to_char(c.vencimento, 'DD/MM/YYYY, HH24:MI:SS') phpdt_vencimento,
+               d.descricao nm_lancamento,  e.sigla sg_lancamento_menu,
+               case c.tipo when 5 then e.nome when 4 then 'Entradas' when 3 then 'Atualização de aplicação' when 2 then 'Transferência entre rubricas' when 1 then 'Dotação inicial' end operacao,
+               f.nome nm_rubrica, f.codigo codigo_rubrica,
+               g.titulo nm_projeto, g.sq_siw_solicitacao sq_projeto, i.codigo_interno cd_acordo, i.sq_siw_solicitacao sq_acordo,
+               l.nome nm_label, l.sigla sg, m.sigla sg_tramite
+          from fn_documento_item                     a
+               inner          join fn_lancamento_doc b on (a.sq_lancamento_doc  = b.sq_lancamento_doc)
+                 inner        join fn_lancamento     c on (b.sq_siw_solicitacao = c.sq_siw_solicitacao)
+                   inner      join siw_solicitacao   d on (c.sq_siw_solicitacao = d.sq_siw_solicitacao)
+                     inner    join siw_menu          e on (d.sq_menu            = e.sq_menu)
+                     inner    join siw_tramite       m on (d.sq_siw_tramite     = m.sq_siw_tramite)                     
+               inner          join pj_rubrica        f on (a.sq_projeto_rubrica = f.sq_projeto_rubrica)
+                 inner        join pj_projeto        g on (f.sq_siw_solicitacao = g.sq_siw_solicitacao)
+                   left       join siw_solicitacao   h on (g.sq_siw_solicitacao = h.sq_siw_solicitacao)
+                     left     join ac_acordo         i on (h.sq_solic_pai       = i.sq_siw_solicitacao)
+                       left   join siw_solicitacao   j on (i.sq_siw_solicitacao = j.sq_siw_solicitacao)
+                         left join siw_menu          l on (j.sq_menu            = l.sq_menu)
+         where a.sq_projeto_rubrica = p_chave_aux
+           and m.sigla             <> 'CA'
+         group by c.vencimento, c.codigo_interno, c.sq_siw_solicitacao, c.tipo, e.nome, g.titulo, g.sq_siw_solicitacao,
+                  i.codigo_interno, i.sq_siw_solicitacao, f.nome, f.codigo, d.descricao, l.nome, l.sigla, m.sigla,
+                  e.sigla;
+   End If;  
 End SP_GetSolicRubrica;
 /

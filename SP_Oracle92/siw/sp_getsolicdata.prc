@@ -246,7 +246,8 @@ begin
                 n.sq_cc,              n.nome nm_cc,                  n.sigla sg_cc,
                 o.nome_resumido nm_solic, o.nome_resumido||' ('||o2.sigla||')' nm_resp,
                 p.nome_resumido nm_exec,
-                i.sq_projeto_etapa,   i1.titulo nm_etapa
+                i.sq_projeto_etapa,   i1.titulo nm_etapa,
+                nvl(m1.qtd_rubrica,0) qtd_rubrica
            from siw_menu                                       a 
                 inner        join eo_unidade                a2 on (a.sq_unid_executora        = a2.sq_unidade)
                   left       join eo_unidade_resp           a3 on (a2.sq_unidade              = a3.sq_unidade and
@@ -279,6 +280,11 @@ begin
                                                                   )
                    inner          join co_cidade            f  on (b.sq_cidade_origem         = f.sq_cidade)
                    left           join pj_projeto           m  on (b.sq_solic_pai             = m.sq_siw_solicitacao)
+                     left         join (select sq_siw_solicitacao, count(sq_projeto_rubrica) qtd_rubrica
+                                          from pj_rubrica
+                                        group by sq_siw_solicitacao
+                                       )                    m1 on (m.sq_siw_solicitacao       = m1.sq_siw_solicitacao)
+                   
                    left           join ct_cc                n  on (b.sq_cc                    = n.sq_cc)
                    left           join co_pessoa            o  on (b.solicitante              = o.sq_pessoa)
                      inner        join sg_autenticacao      o1 on (o.sq_pessoa                = o1.sq_pessoa)
@@ -334,7 +340,7 @@ begin
                 d.informacoes,        d.codigo_deposito,
                 d.valor_imposto,      d.valor_retencao,              d.valor_liquido,
                 d.tipo tipo_rubrica,
-                case d.tipo when 1 then 'Dotação incial' when 2 then 'Transferência entre rubricas' when 3 then 'Atualização de aplicação' when 4 then 'Entradas' end nm_tipo_rubrica,
+                case d.tipo when 1 then 'Dotação incial' when 2 then 'Transferência entre rubricas' when 3 then 'Atualização de aplicação' when 4 then 'Entradas' when 5 then 'Saídas' end nm_tipo_rubrica,
                 d1.receita,           d1.despesa,                    d1.nome nm_tipo_lancamento,
                 d2.nome nm_pessoa, d2.nome_resumido nm_pessoa_resumido,
                 Nvl(d3.valor,0) valor_doc,
