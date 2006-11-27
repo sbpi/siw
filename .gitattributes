@@ -691,7 +691,10 @@ Fontes_PHP_SIW/classes/sp/db_getKindPersonList.php -text
 Fontes_PHP_SIW/classes/sp/db_getKnowArea.php -text
 Fontes_PHP_SIW/classes/sp/db_getLancamento.php -text
 Fontes_PHP_SIW/classes/sp/db_getLancamentoDoc.php -text
+Fontes_PHP_SIW/classes/sp/db_getLancamentoItem.php -text
 Fontes_PHP_SIW/classes/sp/db_getLancamentoLog.php -text
+Fontes_PHP_SIW/classes/sp/db_getLancamentoProjeto.php -text
+Fontes_PHP_SIW/classes/sp/db_getLancamentoRubrica.php -text
 Fontes_PHP_SIW/classes/sp/db_getLinkData.php -text
 Fontes_PHP_SIW/classes/sp/db_getLinkDataHelp.php -text
 Fontes_PHP_SIW/classes/sp/db_getLinkDataParent.php -text
@@ -778,6 +781,7 @@ Fontes_PHP_SIW/classes/sp/db_getSolicMeta_IS.php -text
 Fontes_PHP_SIW/classes/sp/db_getSolicRecurso.php -text
 Fontes_PHP_SIW/classes/sp/db_getSolicResp.php -text
 Fontes_PHP_SIW/classes/sp/db_getSolicResp_IS.php -text
+Fontes_PHP_SIW/classes/sp/db_getSolicRubrica.php -text
 Fontes_PHP_SIW/classes/sp/db_getSolicViagem.php -text
 Fontes_PHP_SIW/classes/sp/db_getStateData.php -text
 Fontes_PHP_SIW/classes/sp/db_getStateList.php -text
@@ -931,8 +935,10 @@ Fontes_PHP_SIW/classes/sp/dml_putIsUnidadeLimite_IS.php -text
 Fontes_PHP_SIW/classes/sp/dml_putIsUnidade_IS.php -text
 Fontes_PHP_SIW/classes/sp/dml_putLancamentoDoc.php -text
 Fontes_PHP_SIW/classes/sp/dml_putLancamentoEnvio.php -text
+Fontes_PHP_SIW/classes/sp/dml_putLancamentoItem.php -text
 Fontes_PHP_SIW/classes/sp/dml_putLancamentoOutra[!!-~].php -text
 Fontes_PHP_SIW/classes/sp/dml_putLancamentoOutra.php -text
+Fontes_PHP_SIW/classes/sp/dml_putLancamentoRubrica.php -text
 Fontes_PHP_SIW/classes/sp/dml_putMacroObjetivo_IS.php -text
 Fontes_PHP_SIW/classes/sp/dml_putMenuRelac.php -text
 Fontes_PHP_SIW/classes/sp/dml_putMetaMensalIni_IS.php -text
@@ -965,6 +971,7 @@ Fontes_PHP_SIW/classes/sp/dml_putProjetoInfo.php -text
 Fontes_PHP_SIW/classes/sp/dml_putProjetoInter.php -text
 Fontes_PHP_SIW/classes/sp/dml_putProjetoOutras.php -text
 Fontes_PHP_SIW/classes/sp/dml_putProjetoRec.php -text
+Fontes_PHP_SIW/classes/sp/dml_putProjetoRubrica.php -text
 Fontes_PHP_SIW/classes/sp/dml_putProjeto_IS.php -text
 Fontes_PHP_SIW/classes/sp/dml_putRelacionamento[!!-~].php -text
 Fontes_PHP_SIW/classes/sp/dml_putRelacionamento.php -text
@@ -986,7 +993,9 @@ Fontes_PHP_SIW/classes/sp/dml_putSiwCliMod.php -text
 Fontes_PHP_SIW/classes/sp/dml_putSiwCliente.php -text
 Fontes_PHP_SIW/classes/sp/dml_putSiwUsuario.php -text
 Fontes_PHP_SIW/classes/sp/dml_putSolicArquivo.php -text
+Fontes_PHP_SIW/classes/sp/dml_putSolicEnvio.php -text
 Fontes_PHP_SIW/classes/sp/dml_putSolicEtpRec.php -text
+Fontes_PHP_SIW/classes/sp/dml_putSolicGeral.php -text
 Fontes_PHP_SIW/classes/sp/dml_putStoredProcedure[!!-~].php -text
 Fontes_PHP_SIW/classes/sp/dml_putStoredProcedure.php -text
 Fontes_PHP_SIW/classes/sp/dml_putTTCentral.php -text
@@ -1162,6 +1171,7 @@ Fontes_PHP_SIW/funcoes/selecaoProgramaIS.php -text
 Fontes_PHP_SIW/funcoes/selecaoProgramaPPA.php -text
 Fontes_PHP_SIW/funcoes/selecaoProjeto.php -text
 Fontes_PHP_SIW/funcoes/selecaoRegiao.php -text
+Fontes_PHP_SIW/funcoes/selecaoRubrica.php -text
 Fontes_PHP_SIW/funcoes/selecaoSP.php -text
 Fontes_PHP_SIW/funcoes/selecaoSegMercado.php -text
 Fontes_PHP_SIW/funcoes/selecaoSegModulo.php -text
@@ -1192,6 +1202,7 @@ Fontes_PHP_SIW/funcoes/selecaoTipoPessoa.php -text
 Fontes_PHP_SIW/funcoes/selecaoTipoPosto.php -text
 Fontes_PHP_SIW/funcoes/selecaoTipoPosto2.php -text
 Fontes_PHP_SIW/funcoes/selecaoTipoRecurso.php -text
+Fontes_PHP_SIW/funcoes/selecaoTipoRubrica.php -text
 Fontes_PHP_SIW/funcoes/selecaoTipoSP.php -text
 Fontes_PHP_SIW/funcoes/selecaoTipoTabela.php -text
 Fontes_PHP_SIW/funcoes/selecaoTipoUnidade.php -text
@@ -1230,6 +1241,7 @@ Fontes_PHP_SIW/mod_dc/dc_dicionario.php -text
 Fontes_PHP_SIW/mod_dc/dc_tabelas.php -text
 Fontes_PHP_SIW/mod_dc/etl.php -text
 Fontes_PHP_SIW/mod_dc/etl_txt.php -text
+Fontes_PHP_SIW/mod_fn/gr_lancamento.php -text
 Fontes_PHP_SIW/mod_fn/lancamento.php -text
 Fontes_PHP_SIW/mod_fn/rel_contas.php -text
 Fontes_PHP_SIW/mod_fn/rel_fluxo.php -text
@@ -1280,6 +1292,9 @@ Fontes_PHP_SIW/mod_rh_pub/visualcurriculo.php -text
 Fontes_PHP_SIW/mod_rh_pub/visualcurriculoword.php -text
 Fontes_PHP_SIW/mod_sf/sicof.php -text
 Fontes_PHP_SIW/mod_sg/relatorios.php -text
+Fontes_PHP_SIW/mod_sr/geral.php -text
+Fontes_PHP_SIW/mod_sr/validageral.php -text
+Fontes_PHP_SIW/mod_sr/visualgeral.php -text
 Fontes_PHP_SIW/mod_tt/consulta.php -text
 Fontes_PHP_SIW/mod_tt/tabelas.php -text
 Fontes_PHP_SIW/mod_tt/visuallistatel.php -text

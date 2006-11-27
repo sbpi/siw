@@ -264,7 +264,12 @@ function Documento(){
   if ($O=='') $O='L';
   if ($O=='L') {
     $RS = db_getTipoDocumento::getInstanceOf($dbms,null,$w_cliente);
-    $RS = SortArray($RS,'nome','asc');
+    if ($p_ordena>'') {
+      $lista = explode(',',str_replace(' ',',',$p_ordena));
+      $RS = SortArray($RS,$lista[0],$lista[1],'receita','desc');
+    } else {
+      $RS = SortArray($RS,'receita','desc','nome','asc');
+    }
   } elseif (!(strpos('AEV',$O)===false && $w_troca=='')) {
     $RS = db_getTipoDocumento::getInstanceOf($dbms,$w_chave,$w_cliente);
     foreach ($RS as $row) {$RS = $row; break;}
@@ -414,7 +419,12 @@ function Lancamento() {
   if ($O=='') $O='L';
   if ($O=='L') {
     $RS = db_getTipoLancamento::getInstanceOf($dbms,null,$w_cliente,null);
-    $RS = SortArray($RS,'receita','desc','nome','asc');
+    if ($p_ordena>'') {
+      $lista = explode(',',str_replace(' ',',',$p_ordena));
+      $RS = SortArray($RS,$lista[0],$lista[1],'receita','desc');
+    } else {
+      $RS = SortArray($RS,'receita','desc','nome','asc');
+    }
   } elseif (!(strpos('AEV',$O)===false) && $w_troca=='') {
     $RS = db_getTipoLancamento::getInstanceOf($dbms,$w_chave,$w_cliente,null);
     foreach ($RS as $row) {$RS=$row; break;}
@@ -473,6 +483,7 @@ function Lancamento() {
     ShowHTML('          <td><font size="1"><b>'.LinkOrdena('Nome','nome').'</font></td>');
     ShowHTML('          <td><font size="1"><b>'.LinkOrdena('Descrição','descricao').'</font></td>');
     ShowHTML('          <td><font size="1"><b>'.LinkOrdena('Receita','nm_receita').'</font></td>');
+    ShowHTML('          <td><font size="1"><b>'.LinkOrdena('Despesa','nm_despesa').'</font></td>');
     ShowHTML('          <td><font size="1"><b>'.LinkOrdena('Ativo','nm_ativo').'</font></td>');
     ShowHTML('          <td><font size="1"><b> Operações </font></td>');
     ShowHTML('        </tr>');
@@ -487,6 +498,7 @@ function Lancamento() {
         ShowHTML('        <td align="left"><font size="1">'.f($row,'nome').'</td>');
         ShowHTML('        <td align="left"><font size="1">'.f($row,'descricao').'</td>');
         ShowHTML('        <td align="center"><font size="1">'.f($row,'nm_receita').'</td>');
+        ShowHTML('        <td align="center"><font size="1">'.f($row,'nm_despesa').'</td>');
         ShowHTML('        <td align="center"><font size="1">'.f($row,'nm_ativo').'</td>');
         ShowHTML('        <td align="top" nowrap><font size="1">');
         ShowHTML('          <A class="hl" HREF="'.$w_dir.$w_pagina.$par.'&R= '.$w_pagina.$par.'&O=A&w_chave='.f($row,'chave').' &P1='.$P1.'&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP='.$TP.' &SG='.$SG.MontaFiltro('GET').'" Title="Nome">Alterar </A>&nbsp');

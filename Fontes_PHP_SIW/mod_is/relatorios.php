@@ -612,7 +612,7 @@ function Rel_PPA() {
     $w_pag=1;
     $w_linha=5;
     ShowHTML('<BASE HREF="'.$conRootSIW.'">');
-    ShowHTML('<TABLE WIDTH="100%" BORDER=0><TR><TD ROWSPAN=2><IMG ALIGN="LEFT" src="'.LinkArquivo(null,$w_cliente,$w_logo,null,null,null,'WORD').'"><TD ALIGN="RIGHT" NOWRAP><B><FONT SIZE=4 COLOR="#000000">');
+    ShowHTML('<TABLE WIDTH="100%" BORDER=0><TR><TD ROWSPAN=2><IMG ALIGN="LEFT" src="'.LinkArquivo(null,$w_cliente,$w_logo,null,null,null,'EMBED').'"><TD ALIGN="RIGHT" NOWRAP><B><FONT SIZE=4 COLOR="#000000">');
     ShowHTML('Relatório Analítico - Ações PPA 2004 - 2007 Exercício '.$w_ano);
     ShowHTML('</FONT><TR><TD WIDTH="50%" ALIGN="RIGHT"><B><font COLOR="#000000">'.DataHora().'</B>');
     ShowHTML('<TR><TD COLSPAN="2" ALIGN="RIGHT"><B><FONT SIZE=2 COLOR="#000000">Página: '.$w_pag.'</B></TD></TR>');

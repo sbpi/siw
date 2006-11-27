@@ -384,7 +384,7 @@ function VisualAcordo($l_chave,$l_O,$l_usuario,$l_P1,$l_P4) {
         $w_html.=chr(13).'        <td align="center" nowrap><font size="1"><A class="hl" HREF="mod_fn/lancamento.php?par=Visual&O=L&w_chave='.f($row,'sq_lancamento').'&w_tipo=&P1=2&P2='.$P2.'&P3='.$P3.'&P4='.$l_P4.'&TP='.$TP.'&SG=FN'.substr($SG,2,1).'CONT" title="Exibe as informações do lançamento." target="Lancamento">'.f($row,'cd_lancamento').'</a></td>';
         $w_html.=chr(13).'        <td align="center"><font size="1">'.FormataDataEdicao(f($row,'dt_lancamento')).'</td>';
         $w_html.=chr(13).'        <td align="right"><font size="1">'.number_format(f($row,'vl_lancamento'),2,',','.').'</td>';
-        $w_real=$w_real+f($row,'vl_lancamento');
+        if (Nvl(f($row,'quitacao'),'nulo') <> 'nulo') $w_real += f($row,'vl_lancamento');
       } else {
         $w_html.=chr(13).'        <td align="center"><font size="1">---</td>';
         $w_html.=chr(13).'        <td align="center"><font size="1">---</td>';
@@ -392,7 +392,7 @@ function VisualAcordo($l_chave,$l_O,$l_usuario,$l_P1,$l_P4) {
       } 
       $w_html.=chr(13).'        <td align="center"><font size="1">'.Nvl(FormataDataEdicao(f($row,'quitacao')),'---').'</td>';
       $w_html.=chr(13).'      </tr>';
-      $w_total=$w_total+f($row,'valor');
+      $w_total += f($row,'valor');
     } 
     if ($w_total>0 || $w_real>0) {
       $w_cor = ($w_cor==$conTrBgColor || $w_cor=='') ? $w_cor=$conTrAlternateBgColor : $w_cor=$conTrBgColor;
@@ -404,7 +404,7 @@ function VisualAcordo($l_chave,$l_O,$l_usuario,$l_P1,$l_P4) {
       } else {
         $w_html.=chr(13).'        <td colspan=2>&nbsp;</td>';
       } 
-      $w_html.=chr(13).'        <td align="right"><font size="1"><b>Realizado</b></td>';
+      $w_html.=chr(13).'        <td align="right"><font size="1"><b>Liquidado</b></td>';
       $w_html.=chr(13).'        <td align="right"><font size="1"><b>'.number_format($w_real,2,',','.').'</b></td>';
       $w_html.=chr(13).'        <td>&nbsp;</td>';
       $w_html.=chr(13).'      </tr>';

@@ -752,8 +752,8 @@ function Historico() {
     ShowHTML('              <textarea '.$w_Disabled.' name="w_fato_relevante_vida" class="sti" rows=3 cols=90>'.$w_fato_relevante_vida.'</textarea>');
     ShowHTML('      <tr>');
     MontaRadioSN('<b>Você é ou foi Funcionário Público?</b>',$w_servidor_publico,'w_servidor_publico');
-    ShowHTML('              de <input '.$w_Disabled.' type="text" name="w_servico_publico_inicio" class="sti" SIZE=10 MAXLENGTH=10 VALUE="'.$w_servico_publico_inicio.'" onKeyPress="FormataData(this, event)">');
-    ShowHTML('              a <input '.$w_Disabled.' type="text" name="w_servico_publico_fim" class="sti" SIZE=10 MAXLENGTH=10 VALUE="'.$w_servico_publico_fim.'" onKeyPress="FormataData(this, event)"> (dd/mm/aaaa)');
+    ShowHTML('              de <input '.$w_Disabled.' type="text" name="w_servico_publico_inicio" class="sti" SIZE=10 MAXLENGTH=10 VALUE="'.$w_servico_publico_inicio.'" onKeyDown="FormataData(this, event)">');
+    ShowHTML('              a <input '.$w_Disabled.' type="text" name="w_servico_publico_fim" class="sti" SIZE=10 MAXLENGTH=10 VALUE="'.$w_servico_publico_fim.'" onKeyDown="FormataData(this, event)"> (dd/mm/aaaa)');
     ShowHTML('      <tr><td valign="top"><b>Informe alguma sociedade profissional ou atividades ligadas a assuntos cívicos, públicos ou internacionais das quais você faz parte:</b><br>');
     ShowHTML('              <textarea '.$w_Disabled.' name="w_atividades_civicas" class="sti" rows=3 cols=90>'.$w_atividades_civicas.'</textarea>');
     if ($_SESSION['PORTAL']=='') {
@@ -1952,7 +1952,7 @@ function BuscaAreaConhecimento() {
       ShowHTML('        </tr>');
       ShowHTML('      <tr bgcolor="'.$conTrBgColor.'"><td><ul>');
       foreach ($RS as $row) {
-        ShowHTML('        <li><a class="SS" href="#" onClick="opener.Form.w_nm_area.value=\''.f($row,'nome').'('.f($row,'codigo_cnpq').')\'; opener.Form.w_sq_area_conhecimento.value=\''.f($row,'sq_area_conhecimento').'\'; window.close(); opener.focus();">'.f($row,'nome').' ('.f($row,'codigo_cnpq').')</a>');
+        ShowHTML('        <li><a class="SS" href="#" onClick="opener.document.Form.w_nm_area.value=\''.f($row,'nome').'('.f($row,'codigo_cnpq').')\'; opener.document.Form.w_sq_area_conhecimento.value=\''.f($row,'sq_area_conhecimento').'\'; window.close(); opener.focus();">'.f($row,'nome').' ('.f($row,'codigo_cnpq').')</a>');
       } 
       ShowHTML('      </ul></tr>');
       ShowHTML('      </center>');

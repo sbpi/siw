@@ -10,7 +10,7 @@ include_once($w_dir_volta.'classes/db/DatabaseQueriesFactory.php');
 */
 
 class dml_putEsquemaTabela {
-   function getInstanceOf($dbms, $operacao, $p_chave, $p_sq_esquema, $p_sq_tabela, $p_ordem, $p_elemento, $p_remove_registro) {
+   function getInstanceOf($dbms, $operacao, $p_chave, $p_sq_esquema, $p_sq_tabela, $p_ordem, $p_elemento, $p_remove_registro='N') {
      extract($GLOBALS,EXTR_PREFIX_SAME,'strchema'); $sql=$strschema.'SP_PUTESQUEMATABELA';
      $params=array('p_operacao'                  =>array(tvl($operacao),                                   B_VARCHAR,        10),
                    'p_chave'                     =>array(tvl($p_chave),                                    B_INTEGER,        32),

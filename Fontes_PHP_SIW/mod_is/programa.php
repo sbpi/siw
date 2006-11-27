@@ -892,7 +892,7 @@ function RecursoProgramado() {
     CompValor('w_valor','Recurso programado','>','0,00','zero');
     Validate('w_assinatura','Assinatura Eletrônica','1','1','6','30','1','1');
   } elseif ($O=='P') {
-    Validate('w_chave','Programa PPA','SELECT','1',1,18,'','0123456789');
+    Validate('w_chave','Programa','SELECT','1',1,18,'','0123456789');
   } 
   ValidateClose();
   ScriptClose();
@@ -1080,7 +1080,7 @@ function RecursoProgramado() {
     ShowHTML('<INPUT type="hidden" name="w_cliente" value="'.$w_cliente.'">');
     ShowHTML('<tr bgcolor="'.$conTrBgColor.'"><td align="center">');
     ShowHTML('    <table width="97%" border="0">');
-    SelecaoProgramaIS('Programa <u>P</u>PA:','P',null,$w_cliente,$w_ano,$w_chave,'w_chave','CADASTRADOS',null);
+    SelecaoProgramaIS('<u>P</u>rograma:','P',null,$w_cliente,$w_ano,$w_chave,'w_chave','CADASTRADOS',null);
     ShowHTML('      <tr><td align="center">');
     ShowHTML('            <input class="STB" type="submit" name="Botao" value="Aplicar filtro">');
     ShowHTML('          </td>');
@@ -3468,7 +3468,8 @@ function BuscaPrograma() {
   $ChaveAux     = $_REQUEST['ChaveAux'];
   $restricao    = $_REQUEST['restricao'];
   $campo        = $_REQUEST['campo'];
-  $RS = db_getProgramaPPA_IS::getInstanceOf($RS,$ChaveAux,$w_cliente,$w_ano,$restricao,$w_nome,null,null);
+  if($restricao=='RELATORIO') $restricao = '';
+  $RS = db_getProgramaPPA_IS::getInstanceOf($dbms,$ChaveAux,$w_cliente,$w_ano,$restricao,$w_nome,null,null);
   $RS = SortArray($RS,'ds_programa','asc');
   Cabecalho();
   ShowHTML('<TITLE>Seleção de programas do PPA</TITLE>');
@@ -3476,8 +3477,8 @@ function BuscaPrograma() {
   Estrutura_CSS(w_cliente);
   ScriptOpen('JavaScript');
   ShowHTML('  function volta(l_chave) {');
-  ShowHTML('     opener.Form.'.$campo.'.value=l_chave;');
-  ShowHTML('     opener.Form.'.$campo.'.focus();');
+  ShowHTML('     opener.document.Form.'.$campo.'.value=l_chave;');
+  ShowHTML('     opener.document.Form.'.$campo.'.focus();');
   ShowHTML('     window.close();');
   ShowHTML('     opener.focus();');
   ShowHTML('   }');

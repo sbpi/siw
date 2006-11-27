@@ -8,8 +8,11 @@ function VisualLancamento($v_chave,$l_O,$w_usuario,$l_P1,$l_P4) {
   $w_html='';
   // Recupera os dados do lançamento
   $RS = db_getSolicData::getInstanceOf($dbms,$v_chave,substr($SG,0,3).'GERAL');
-  $w_tramite    =f($RS,'sq_siw_tramite');
-  $w_SG         =f($RS,'sigla');
+  $w_tramite      = f($RS,'sq_siw_tramite');
+  $w_SG           = f($RS,'sigla');
+  $w_tipo_rubrica = f($RS,'tipo_rubrica');
+  $w_qtd_rubrica  = nvl(f($RS,'qtd_rubrica'),0);
+  $w_sq_projeto   = nvl(f($RS,'sq_projeto'),0);
   // Recupera o tipo de visão do usuário
   if (Nvl(f($RS,'solicitante'),0)   == $w_usuario || 
       Nvl(f($RS,'executor'),0)      == $w_usuario || 
@@ -40,15 +43,20 @@ function VisualLancamento($v_chave,$l_O,$w_usuario,$l_P1,$l_P4) {
         $w_html.=chr(13).'      <tr><td>Contrato: <b>'.f($RS,'cd_acordo').' ('.f($RS,'sq_solic_pai').') </b></td>';
     } 
     if (Nvl(f($RS,'nm_projeto'),'') > '') {
-      if (!($l_P1==4 || $l_P4==1))
-        $w_html.=chr(13).'      <tr><td>Projeto: <b><A class="hl" HREF="projeto.php?par=Visual&O=L&w_chave='.f($RS,'sq_solic_pai').'&P1=2&P2='.$P2.'&P3='.$P3.'&P4='.$l_P4.'&TP='.$TP.'&SG='.$SG.'" title="Exibe as informações do projeto." target="Projeto">'.f($RS,'nm_projeto').'</a></b></td>';
-      else
+      if (!($l_P1==4 || $l_P4==1)){
+        $w_html.=chr(13).'      <tr><td>Projeto: <b><A class="hl" HREF="projeto.php?par=Visual&O=L&w_chave='.f($RS,'sq_projeto').'&P1=2&P2='.$P2.'&P3='.$P3.'&P4='.$l_P4.'&TP='.$TP.'&SG='.$SG.'" title="Exibe as informações do projeto." target="Projeto">'.f($RS,'nm_projeto').'</a></b></td>';   
+      }else{
         $w_html.=chr(13).'      <tr><td>Projeto: <b>'.f($RS,'nm_projeto').'  ('.f($RS,'sq_solic_pai').')</b></td>';
+    }
     } 
     // Se a classificação foi informada, exibe.
     if (Nvl(f($RS,'sq_cc'),'')>'')
       $w_html.=chr(13).'      <tr><td>Classificação: <b>'.f($RS,'nm_cc').' </b>';
+    $w_html.=chr(13).'      <tr><td><table border=0 width="100%" cellspacing=0>';
     $w_html.=chr(13).'      <tr><td>Tipo de lançamento: <b>'.f($RS,'nm_tipo_lancamento').' </b></td>';
+    if (Nvl(f($RS,'tipo_rubrica'),'')>'')
+      $w_html.=chr(13).'        <td>Tipo de movimentação: <b>'.f($RS,'nm_tipo_rubrica').' </b></td>';
+    $w_html.=chr(13).'          </table>';
     $w_html.=chr(13).'      <tr><td>Finalidade: <b>'.CRLF2BR(f($RS,'descricao')).'</b></td></tr>';
     if (!($l_P1==4 || $l_P4==1))
       $w_html.=chr(13).'      <tr><td>Unidade responsável: <b>'.ExibeUnidade($w_dir_volta,$w_cliente,f($RS,'nm_unidade_resp'),f($RS,'sq_unidade'),$TP).'</b></td>';
@@ -207,30 +215,57 @@ function VisualLancamento($v_chave,$l_O,$w_usuario,$l_P1,$l_P4) {
     $w_html.=chr(13).'          <td><b>Data</td>';
     $w_html.=chr(13).'          <td><b>Série</td>';
     $w_html.=chr(13).'          <td><b>Valor</td>';
-    $w_html.=chr(13).'          <td><b>Patrimônio</td>';
+    if((Nvl($w_tipo_rubrica,'')>'') && (Nvl($w_tipo_rubrica,0)==5))
+      $w_html.=chr(13).'          <td><b>Patrimônio</td>';
     $w_html.=chr(13).'          </tr>';
     $w_cor=$w_TrBgColor;
     $w_total=0;
     foreach ($RS as $row) {
       $w_cor = ($w_cor==$conTrBgColor || $w_cor=='') ? $w_cor=$conTrAlternateBgColor : $w_cor=$conTrBgColor;  $w_html.=chr(13).'      <tr valign="top" bgcolor="'.$w_cor.'">';
-      $RS2 = db_getImpostoDoc::getInstanceOf($dbms,$w_cliente,$v_chave,f($RS,'sq_lancamento_doc'),$w_SG);
+      $RS2 = db_getImpostoDoc::getInstanceOf($dbms,$w_cliente,$v_chave,f($row,'sq_lancamento_doc'),$w_SG);
       $RS2 = SortArray($RS2,'calculo','asc','esfera','asc','nm_imposto','asc');
-      if (count($RS2)<=0) {
-        $w_html.=chr(13).'        <td>'.f($row,'nm_tipo_documento').'</td>';
-        $w_html.=chr(13).'        <td align="center">'.f($row,'numero').'</td>';
-        $w_html.=chr(13).'        <td align="center">'.FormataDataEdicao(f($row,'data')).'</td>';
-        $w_html.=chr(13).'        <td align="center">'.Nvl(f($row,'serie'),'---').'</td>';
-        $w_html.=chr(13).'        <td align="right">'.number_format(f($row,'valor'),2,',','.').'&nbsp;&nbsp;</td>';
-        $w_html.=chr(13).'        <td align="center">'.f($row,'nm_patrimonio').'</td>';
-        $w_html.=chr(13).'      </tr>';
+      if(Nvl($w_tipo_rubrica,'')>'' && Nvl($w_tipo_rubrica,0)<>5) {
+        $RS3 = db_getLancamentoRubrica::getInstanceOf($dbms,null,f($row,'sq_lancamento_doc'),null,null);
+        $RS3 = SortArray($RS3,'cd_rubrica_origem','asc');
       } else {
-        $w_html.=chr(13).'        <td rowspan=2>'.f($row,'nm_tipo_documento').'</td>';
-        $w_html.=chr(13).'        <td align="center">'.f($row,'numero').'</td>';
-        $w_html.=chr(13).'        <td align="center">'.FormataDataEdicao(f($row,'data')).'</td>';
-        $w_html.=chr(13).'        <td align="center">'.Nvl(f($row,'serie'),'---').'</td>';
-        $w_html.=chr(13).'        <td rowspan=2 align="right">'.number_format(f($row,'valor'),2,',','.').'&nbsp;&nbsp;</td>';
-        $w_html.=chr(13).'        <td rowspan=2 align="center">'.f($row,'nm_patrimonio').'</td>';
-        $w_html.=chr(13).'      </tr>';
+        $RS3 = db_getLancamentoItem::getInstanceOf($dbms,null,f($row,'sq_lancamento_doc'),null,null,null);
+        $RS3 = SortArray($RS3,'codigo_rubrica','asc');
+      }
+      if (count($RS2)<=0) {
+        //$w_html.=chr(13).'          <tr bgcolor="'.$w_TrBgColor.'" align="center" valign="top">';
+        if (count($RS3)>0)  $w_html.=chr(13).'            <td rowspan=2>'.f($row,'nm_tipo_documento').'</td>';
+        else                $w_html.=chr(13).'            <td>'.f($row,'nm_tipo_documento').'</td>';
+        $w_html.=chr(13).'            <td>'.f($row,'numero').'</td>';
+        $w_html.=chr(13).'            <td>'.FormataDataEdicao(f($row,'data')).'</td>';
+        $w_html.=chr(13).'            <td>'.Nvl(f($row,'serie'),'---').'</td>';
+        $w_html.=chr(13).'            <td align="right">'.number_format(f($row,'valor'),2,',','.').'&nbsp;&nbsp;</td>';
+        if(Nvl($w_tipo_rubrica,'')>'' && Nvl($w_tipo_rubrica,0)==5)
+          $w_html.=chr(13).'            <td>'.f($row,'nm_patrimonio').'</td>';
+        $w_html.=chr(13).'          </tr>';
+        if (count($RS3)>0)   {
+          if(Nvl($w_tipo_rubrica,'')>'' && Nvl($w_tipo_rubrica,0)<>5) {
+             $w_html.=chr(13).'              <tr bgcolor="'.$w_TrBgColor.'" align="center"><td colspan=4 align="center">';
+             $w_html.=chr(13).documentorubrica($RS3,$w_tipo_rubrica);
+          } else {
+             $w_html.=chr(13).'              <tr bgcolor="'.$w_TrBgColor.'" align="center"><td colspan=5 align="center">';
+             $w_html.=chr(13).rubricalinha($RS3);            
+          }
+        }
+      } else {
+        if (count($RS3)>0) {
+           $w_html.=chr(13).'            <td rowspan=3>'.f($row,'nm_tipo_documento').'</td>';
+           $w_html.=chr(13).'              <tr bgcolor="'.$w_TrBgColor.'" align="center"><td colspan=5 align="center">';
+           $w_html.=chr(13).rubricalinha($RS3);
+        } else {
+          $w_html.=chr(13).'            <td rowspan=2>'.f($row,'nm_tipo_documento').'</td>';
+        }
+        //$w_html.=chr(13).'          <tr bgcolor="'.$w_TrBgColor.'" align="center" valign="top">';
+        $w_html.=chr(13).'            <td>'.f($row,'numero').'</td>';
+        $w_html.=chr(13).'            <td>'.FormataDataEdicao(f($row,'data')).'</td>';
+        $w_html.=chr(13).'            <td>'.Nvl(f($row,'serie'),'---').'</td>';
+        $w_html.=chr(13).'            <td rowspan=2 align="right">'.number_format(f($row,'valor'),2,',','.').'&nbsp;&nbsp;</td>';
+        $w_html.=chr(13).'            <td rowspan=2>'.f($row,'nm_patrimonio').'</td>';
+        $w_html.=chr(13).'          </tr>';
         $w_html.=chr(13).'      <tr bgcolor="'.$w_cor.'" align="center"><td colspan=3 align="center">';
         $w_html.=chr(13).'          <table border=1 width="100%">';
         $w_html.=chr(13).'          <tr valign="top" align="center" bgcolor="'.$w_cor.'" >';
@@ -284,15 +319,57 @@ function VisualLancamento($v_chave,$l_O,$w_usuario,$l_P1,$l_P4) {
         $w_html.=chr(13).'          </table>';
       } 
       $w_total=$w_total+f($row,'valor');
+      
     } 
     if ($w_total>0) $w_cor = ($w_cor==$conTrBgColor || $w_cor=='') ? $w_cor=$conTrAlternateBgColor : $w_cor=$conTrBgColor;
     $w_html.=chr(13).'      <tr bgcolor="'.$w_cor.'" valign="top">';
-    $w_html.=chr(13).'        <td align="center" colspan=4><b>Total</b></td>';
-    $w_html.=chr(13).'        <td align="right"><b>'.number_format($w_total,2,',','.').'</b>&nbsp;&nbsp;</td>';
-    $w_html.=chr(13).'        <td align="right">&nbsp;</td>';
+    if(Nvl($w_tipo_rubrica,'')>'' && Nvl($w_tipo_rubrica,0)<>5) 
+      $w_html.=chr(13).'        <td align="right" colspan=3><b>Total</b></td>';
+    else
+      $w_html.=chr(13).'        <td align="right" colspan=4><b>Total</b></td>';
+    $w_html.=chr(13).'          <td align="right"><b>'.number_format($w_total,2,',','.').'</b>&nbsp;&nbsp;</td>';
+    $w_html.=chr(13).'          <td align="right">&nbsp;</td>';
     $w_html.=chr(13).'      </tr>';
     $w_html.=chr(13).'         </table></td></tr>';
   } 
+  // Rubricas
+  if($w_qtd_rubrica>0) {
+    $RS = db_getLancamentoItem::getInstanceOf($dbms,null,null,$v_chave,$w_sq_projeto,'RUBRICA');
+    $RS = SortArray($RS,'rubrica','asc');
+    if (count($RS)>0) {
+      $w_html.=chr(13).'      <tr><td align="center" bgcolor="#D0D0D0" style="border: 2px solid rgb(0,0,0);"><b>Rubricas e valores</td>';
+      $w_html.=chr(13).'      <tr><td align="center">';
+      $w_html.=chr(13).'        <TABLE WIDTH="100%" bgcolor="'.$conTableBgColor.'" BORDER="'.$conTableBorder.'" CELLSPACING="'.$conTableCellSpacing.'" CELLPADDING="'.$conTableCellPadding.'" BorderColorDark="'.$conTableBorderColorDark.'" BorderColorLight="'.$conTableBorderColorLight.'">';
+      $w_html.=chr(13).'          <tr bgcolor="'.$w_TrBgColor.'" align="center">';
+      $w_html.=chr(13).'          <td><b>Rubrica</td>';
+      $w_html.=chr(13).'          <td><b>Valor total</td>';
+      $w_html.=chr(13).'          </tr>';
+      $w_cor=$w_TrBgColor;
+      $w_total = 0;
+      foreach($RS as $row) {
+        $w_cor = ($w_cor==$conTrBgColor || $w_cor=='') ? $w_cor=$conTrAlternateBgColor : $w_cor=$conTrBgColor;
+        $w_html.=chr(13).'      <tr valign="top" bgcolor="'.$w_cor.'">';
+        $w_html.=chr(13).'        <td align="left"><A class="hl" HREF="javascript:location.href=this.location.href;" onClick="window.open(\''.montaURL_JS(null,$conRootSIW.'mod_fn/lancamento.php?par=Ficharubrica&O=L&w_sq_projeto_rubrica='.f($row,'sq_projeto_rubrica').'&w_tipo=&P1='.$P1.'&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP='.$TP.' - Extrato Rubrica'.'&SG='.$SG.MontaFiltro('GET')).'\',\'Ficha1\',\'toolbar=no,width=780,height=530,top=30,left=10,scrollbars=yes\');" title="Exibe as informações deste registro.">'.f($row,'rubrica').'</A>&nbsp</td>';
+        if(Nvl($w_tipo_rubrica,'')>'' && Nvl($w_tipo_rubrica,0)<>5)
+          $w_html.=chr(13).'        <td align="right">'.number_format(Nvl(f($row,'valor_rubrica'),0),2,',','.').'&nbsp;&nbsp;</td>';
+        else
+          $w_html.=chr(13).'        <td align="right">'.number_format(Nvl(f($row,'valor_total'),0),2,',','.').'&nbsp;&nbsp;</td>';
+        $w_html.=chr(13).'      </tr>';
+        if(Nvl($w_tipo_rubrica,'')>'' && Nvl($w_tipo_rubrica,0)<>5)
+          $w_total += nvl(f($row,'valor_rubrica'),0);
+        else
+          $w_total += nvl(f($row,'valor_total'),0);
+      } 
+      if ($w_total>0) {
+        $w_cor = ($w_cor==$conTrBgColor || $w_cor=='') ? $w_cor=$conTrAlternateBgColor : $w_cor=$conTrBgColor;
+        $w_html.=chr(13).'      <tr bgcolor="'.$w_cor.'" valign="top">';
+        $w_html.=chr(13).'        <td align="right"><b>Total</b></td>';
+        $w_html.=chr(13).'        <td align="right"><b>'.number_format($w_total,2,',','.').'</b>&nbsp;&nbsp;</td>';
+        $w_html.=chr(13).'      </tr>';
+      }      
+      $w_html.=chr(13).'         </table></td></tr>';
+    }
+  }    
   // Arquivos vinculados
   $RS = db_getSolicAnexo::getInstanceOf($dbms,$v_chave,null,$w_cliente);
   $RS = SortArray($RS,'nome','asc');
@@ -388,4 +465,40 @@ function VisualLancamento($v_chave,$l_O,$w_usuario,$l_P1,$l_P4) {
   $w_html.=chr(13).'</table>';
   return $w_html;
 } 
+function rubricalinha($v_RS3){
+  extract($GLOBALS);
+  $v_html=chr(13).'    <TABLE WIDTH="100%" bgcolor="'.$conTableBgColor.'" BORDER="'.$conTableBorder.'" CELLSPACING="'.$conTableCellSpacing.'" CELLPADDING="'.$conTableCellPadding.'" BorderColorDark="'.$conTableBorderColorDark.'" BorderColorLight="'.$conTableBorderColorLight.'">';
+  $v_html.=chr(13).'        <tr bgcolor="'.$conTrBgColor.'" align="center">';
+  $v_html.=chr(13).'          <td width="6%"><b>Ordem</td>';
+  $v_html.=chr(13).'          <td width="12%"><b>Rubrica</td>';
+  $v_html.=chr(13).'          <td width="45%"><b>Descrição</td>';
+  $v_html.=chr(13).'          <td width="7%"><b>Qtd</td>';
+  $v_html.=chr(13).'          <td width="15%"><b>$ Unit</td>';
+  $v_html.=chr(13).'          <td width="15%"><b>$ Total</td>';
+  $v_html.=chr(13).'        </tr>';
+  foreach($v_RS3 as $row) {
+    $v_cor = ($v_cor==$conTrBgColor || $v_cor=='') ? $v_cor=$conTrAlternateBgColor : $v_cor=$conTrBgColor;
+    $v_html.=chr(13).'      <tr bgcolor="'.$v_cor.'" valign="top">';
+    $v_html.=chr(13).'        <td align="center">'.f($row,'ordem').'</td>';
+    if(nvl(f($row,'codigo_rubrica'),'')>'')
+      $v_html.=chr(13).'        <td align="center"><A class="hl" HREF="javascript:location.href=this.location.href;" onClick="window.open(\''.montaURL_JS(null,$conRootSIW.'mod_fn/lancamento.php?par=Ficharubrica&O=L&w_sq_projeto_rubrica='.f($row,'sq_projeto_rubrica').'&w_tipo=&P1='.$P1.'&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP='.$TP.' - Extrato Rubrica'.'&SG='.$SG.MontaFiltro('GET')).'\',\'Ficha2\',\'toolbar=no,width=780,height=530,top=30,left=10,scrollbars=yes\');" title="Exibe as informações deste registro.">'.f($row,'codigo_rubrica').'</A>&nbsp</td>';
+    else
+      $v_html.=chr(13).'        <td align="center">???</td>';
+    $v_html.=chr(13).'        <td>'.f($row,'descricao').'</td>';
+    $v_html.=chr(13).'        <td align="right">'.number_format(f($row,'quantidade'),2,',','.').'</td>';
+    $v_html.=chr(13).'        <td align="right">'.number_format(f($row,'valor_unitario'),2,',','.').'&nbsp;&nbsp;</td>';
+    $v_html.=chr(13).'        <td align="right">'.number_format(f($row,'valor_total'),2,',','.').'&nbsp;&nbsp;</td>';
+    $v_html.=chr(13).'      </tr>';
+    $w_total += f($row,'valor_total');
+  } 
+  if ($w_total>0) {
+    $w_cor = ($w_cor==$conTrBgColor || $w_cor=='') ? $w_cor=$conTrAlternateBgColor : $w_cor=$conTrBgColor;
+    $v_html.=chr(13).'      <tr bgcolor="'.$w_cor.'" valign="top">';
+    $v_html.=chr(13).'        <td align="right" colspan=5><b>Total</b></td>';
+    $v_html.=chr(13).'        <td align="right"><b>'.number_format($w_total,2,',','.').'</b>&nbsp;&nbsp;</td>';
+    $v_html.=chr(13).'      </tr>';
+  }
+  $v_html.=chr(13).'    </table>';
+  return $v_html;
+}
 ?>

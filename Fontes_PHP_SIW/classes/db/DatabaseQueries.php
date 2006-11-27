@@ -281,9 +281,7 @@ class OraDatabaseQueries extends DatabaseQueries {
           $this->temp = oci_fetch_array($this->result, OCI_BOTH+OCI_RETURN_NULLS); 
           if (isset($this->column_datatype)) {
             foreach ($this->column_datatype as $key => $val) {
-              if (substr($key,0,6)=='phpdt_') {
-                $this->temp[$key] = toDate($this->temp[$key]); 
-              } elseif (nvl($this->temp[$key],'')>'') { 
+              if (nvl($this->temp[$key],'')>'') { 
                 if ($val=='DATE') {
                   $tmp = formatDateTime($this->temp[$key]);
                   $this->temp[$key] = mktime(0,0,0,substr($tmp,3,2),substr($tmp,0,2),substr($tmp,6,4)); 

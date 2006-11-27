@@ -1608,7 +1608,7 @@ function Trigger() {
         $w_cor = ($w_cor==$conTrBgColor || $w_cor=='') ? $w_cor=$conTrAlternateBgColor : $w_cor=$conTrBgColor;
         ShowHTML('      <tr bgcolor="'.$w_cor.'" valign="top">');
         ShowHTML('        <td title="'.f($row,'nm_sistema').'">'.f($row,'sg_sistema').'</td>');
-        ShowHTML('        <td><A class="HL" HREF="'.$w_dir.'dc_consulta.php?par=TRIGGER&R='.$w_pagina.$par.'&O=L&w_chave='.f($row,'sq_sistema').'&w_sq_trigger='.f($row,'chave').'&P1='.$P1.'&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP='.$TP.'&SG='.$SG.MontaFiltro('GET').'"  Title="TRIGGERS" target="'.f($row,'nm_trigger').'">'.strtolower(f($row,'nm_trigger')).'</A></tr>');
+        ShowHTML('        <td><A class="HL" HREF="'.$w_dir.'dc_consulta.php?par=TRIGGER&R='.$w_pagina.$par.'&O=L&w_chave='.f($row,'sq_sistema').'&w_sq_trigger='.f($row,'chave').'&P1='.$P1.'&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP='.$TP.'&SG='.$SG.MontaFiltro('GET').'"  Title="TRIGGERS" target="'.f($row,'nm_trigger').'">'.strtolower(f($row,'nm_trigger')).'</A></td>');
         ShowHTML('        <td><A class="HL" HREF="'.$w_dir.'dc_consulta.php?par=TABELA&R='.$w_pagina.$par.'&O=NIVEL2&w_chave='.f($row,'sq_sistema').'&w_sq_tabela='.f($row,'sq_tabela').'&P1='.$P1.'&P2='.$P2.'&P3=1&P4='.$P4.'&TP='.$TP.'&SG='.$SG.MontaFiltro('GET').'"  Title="Tabela" target="'.f($row,'nm_tabela').'">'.strtolower(f($row,'nm_usuario').'.'.f($row,'nm_tabela')).'</A></td>');
         ShowHTML('        <td>'.Nvl(f($row,'eventos'),'---').'</td>');
         ShowHTML('        <td>'.f($row,'ds_trigger').'</td>');

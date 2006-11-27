@@ -233,6 +233,7 @@ function Gerencial() {
     HeaderWord(null);
     $w_pag=1;
     $w_linha=0.00;
+    ShowHTML('<BASE HREF="'.$conRootSIW.'">');
     CabecalhoWord($w_cliente,$w_TP,$w_pag);
     if ($w_filtro>'') ShowHTML($w_filtro);    
   } else {

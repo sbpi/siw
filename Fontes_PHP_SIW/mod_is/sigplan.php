@@ -15,6 +15,8 @@ include_once($w_dir_volta.'classes/sp/db_getEsquema.php');
 include_once($w_dir_volta.'classes/sp/db_getEsquemaTabela.php');
 include_once($w_dir_volta.'classes/sp/db_getEsquemaAtributo.php');
 include_once($w_dir_volta.'classes/sp/db_getCustomerData.php');
+include_once($w_dir_volta.'classes/sp/db_getTabela.php');
+include_once($w_dir_volta.'classes/sp/db_getColuna.php');
 include_once($w_dir_volta.'classes/sp/db_verificaAssinatura.php');
 include_once($w_dir_volta.'classes/sp/dml_putXMLAcao_PPA.php');
 include_once($w_dir_volta.'classes/sp/dml_putXMLAcao_SIG.php');
@@ -59,9 +61,14 @@ include_once($w_dir_volta.'classes/sp/dml_putXMLUnidade_Medida_SIG.php');
 include_once($w_dir_volta.'classes/sp/dml_putXMLUnidade_PPA.php');
 include_once($w_dir_volta.'classes/sp/dml_putXMLUnidade_SIG.php');
 include_once($w_dir_volta.'classes/sp/dml_putDcOcorrencia.php');
+include_once($w_dir_volta.'classes/sp/dml_putEsquema.php');
+include_once($w_dir_volta.'classes/sp/dml_putEsquemaTabela.php');
+include_once($w_dir_volta.'classes/sp/dml_putEsquemaAtributo.php');
 include_once($w_dir_volta.'funcoes/formataDataXML.php');
 include_once($w_dir_volta.'funcoes/selecaoFormato.php');
-
+include_once($w_dir_volta.'funcoes/selecaoSistema.php');
+include_once($w_dir_volta.'funcoes/selecaoUsuario.php');
+include_once($w_dir_volta.'funcoes/selecaoTipoTabela.php');
 // =========================================================================
 //  /sigplan.php
 // ------------------------------------------------------------------------
@@ -282,7 +289,7 @@ function Inicial() {
         ShowHTML('          <A class="hl" HREF="'.$w_dir.$w_pagina.$par.'&R='.$w_pagina.$par.'&O=A&w_sq_esquema='.f($row,'sq_esquema').'&P1='.$P1.'&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP='.$TP.'&SG='.$SG.MontaFiltro('GET').'" title="Altera as informações do esquema">Alterar</A>&nbsp');
         if (Nvl(f($row,'sq_ocorrencia'),'')>'') ShowHTML('          <A class="hl" onClick="alert(\'Este esquema possui ocorrências, para desabilita-lo, inative-o!\');"title="Exclui o esquema">Excluir</A>&nbsp');
         else                                    ShowHTML('          <A class="hl" HREF="'.$w_dir.$w_pagina.$par.'&R='.$w_pagina.$par.'&O=E&w_sq_esquema='.f($row,'sq_esquema').'&P1='.$P1.'&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP='.$TP.'&SG='.$SG.MontaFiltro('GET').'" title="Exclui o esquema">Excluir</A>&nbsp');
-        ShowHTML('          <A class="hl" HREF="javascript:location.href=this.location.href;" onClick="window.open(\''.montaURL_JS($w_dir,$w_pagina.'Tabela&R='.$w_dir.$w_pagina.'Tabela&O=L&w_sq_esquema='.f($row,'sq_esquema').'&P1='.$P1.'&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP='.$TP.' - Tabelas&SG=ISSIGTAB&w_menu='.$w_menu.MontaFiltro('GET')).'\',\'Tabelas\',\'toolbar=no,width=780,height=530,top=30,left=10,scrollbars=yes\');" title="Relaciona as tabelas que compõem o esquema">Tabelas</A>&nbsp');
+        ShowHTML('          <A class="hl" HREF="javascript:location.href=this.location.href;" onClick="window.open(\''.montaURL_JS(null,$conRootSIW.$w_dir.$w_pagina.'Tabela&R='.$w_dir.$w_pagina.'Tabela&O=L&w_sq_esquema='.f($row,'sq_esquema').'&P1='.$P1.'&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP='.$TP.' - Tabelas&SG=ISSIGTAB&w_menu='.$w_menu.MontaFiltro('GET')).'\',\'Tabelas\',\'toolbar=no,width=780,height=530,top=30,left=10,scrollbars=yes\');" title="Relaciona as tabelas que compõem o esquema">Tabelas</A>&nbsp');
         if (Nvl(f($row,'qtd_tabela'),0)>0)    {
           if ($P1==1)   ShowHTML('          <A class="hl" HREF="'.$w_dir.$w_pagina.'IMPORTACAO&R='.$w_pagina.$par.'&O=I&w_sq_esquema='.f($row,'sq_esquema').'&P1='.$P1.'&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP='.$TP.'&SG='.$SG.'&w_menu='.$w_menu.MontaFiltro('GET').'" title="Importa a partir da definição do esquema">Importar</A>&nbsp');
           else          ShowHTML('          <A class="hl" HREF="'.$w_dir.$w_pagina.'EXPORTACAO&R='.$w_pagina.$par.'&O=I&w_sq_esquema='.f($row,'sq_esquema').'&P1='.$P1.'&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP='.$TP.'&SG='.$SG.'&w_menu='.$w_menu.MontaFiltro('GET').'" title="Exporta a partir da definição do esquema" onClick="return(confirm(\'Confirma geração do arquivo de exportação?\'))">Exportar</A>&nbsp');
@@ -576,12 +583,12 @@ function Tabela() {
     //Rotina de escolha e gravação de tabelas para o esquema
     AbreForm('Form',$w_dir.$w_pagina.'Grava','POST','return(Validacao(this));',null,$P1,$P2,$P3,$P4,$TP,$SG,$R,$O);
     ShowHTML('<INPUT type="hidden" name="w_sq_esquema" value="'.$w_sq_esquema.'">');
-    ShowHTML('<INPUT type="hidden" name="w_sq_tabela" value="">');
-    ShowHTML('<INPUT type="hidden" name="w_ordem" value="">');
-    ShowHTML('<INPUT type="hidden" name="w_elemento" value="">');
+    ShowHTML('<INPUT type="hidden" name="w_sq_tabela[]" value="">');
+    ShowHTML('<INPUT type="hidden" name="w_ordem[]" value="">');
+    ShowHTML('<INPUT type="hidden" name="w_elemento[]" value="">');
     ShowHTML('<INPUT type="hidden" name="w_menu" value="'.$w_menu.'">');
     ShowHTML('<tr><td><font size="1">');
-    ShowHTML('                         <a accesskey="F" class="SS" href="'.$w_dir.$w_pagina.$par.'&R='.$w_pagina.$par.'&O=I&P1='.$P1.'&P2='.$P2.'&P4='.$P4.'&TP='.$TP.'&SG='.$SG.MontaFiltro('GET').'"><u><font color="#BC5100">F</u>iltrar (Ativo)</font></a></font>');
+    ShowHTML('                         <a accesskey="F" class="SS" href="'.$w_dir.$w_pagina.$par.'&R='.$w_pagina.$par.'&O=P&P1='.$P1.'&P2='.$P2.'&P4='.$P4.'&TP='.$TP.'&SG='.$SG.'&w_sq_esquema='.$w_sq_esquema.MontaFiltro('GET').'"><u><font color="#BC5100">F</u>iltrar (Ativo)</font></a></font>');
     ShowHTML('    <td align="right"><font size="1"><b>Registros existentes: '.count($RS));
     ShowHTML('<tr><td align="center" colspan=3>');
     ShowHTML('    <TABLE WIDTH="100%" bgcolor="'.$conTableBgColor.'" BORDER="'.$conTableBorder.'" CELLSPACING="'.$conTableCellSpacing.'" CELLPADDING="'.$conTableCellPadding.'" BorderColorDark="'.$conTableBorderColorDark.'" BorderColorLight="'.$conTableBorderColorLight.'">');
@@ -605,12 +612,12 @@ function Tabela() {
         $w_cont += 1;
         $w_cor = ($w_cor==$conTrBgColor || $w_cor=='') ? $w_cor=$conTrAlternateBgColor : $w_cor=$conTrBgColor;
         ShowHTML('      <tr bgcolor="'.$w_cor.'" valign="top">');
-        ShowHTML('        <td align="center"><input type="checkbox" name="w_sq_tabela" value="'.f($row,'chave').'" onClick="valor('.$w_cont.');">');
+        ShowHTML('        <td align="center"><input type="checkbox" name="w_sq_tabela[]" value="'.f($row,'chave').'" onClick="valor('.$w_cont.');">');
         ShowHTML('        <td><font size="1">'.f($row,'sg_sistema').'</td>');
         ShowHTML('        <td><font size="1">'.strtolower(f($row,'nm_usuario').'.'.f($row,'nome')).'</td>');
         ShowHTML('        <td><font size="1">'.f($row,'descricao').'</td>');
-        ShowHTML('        <td><font size="1"><input disabled type="text" name="w_elemento" class="sti" SIZE="20" MAXLENGTH="50" VALUE="'.$w_elemento.'"></td>');
-        ShowHTML('        <td><font size="1"><input disabled type="text" name="w_ordem" class="sti" SIZE="4" MAXLENGTH="4" VALUE="'.$w_ordem.'"></td>');
+        ShowHTML('        <td><font size="1"><input disabled type="text" name="w_elemento[]" class="sti" SIZE="20" MAXLENGTH="50" VALUE="'.$w_elemento.'"></td>');
+        ShowHTML('        <td><font size="1"><input disabled type="text" name="w_ordem[]" class="sti" SIZE="4" MAXLENGTH="4" VALUE="'.$w_ordem.'"></td>');
         ShowHTML('      </tr>');
       } 
     } 
@@ -623,9 +630,9 @@ function Tabela() {
     ShowHTML('</FORM>');
     ShowHTML('<tr><td align="center" colspan=3>');
     if ($R>'') {
-      MontaBarra($w_dir.$w_pagina.$par.'&R='.$R.'&O='.$O.'&P1='.$P1.'&P2='.$P2.'&TP='.$TP.'&SG='.$SG.'&w_chave='.$w_chave,ceil(count($RS)/$P4),$P3,$P4,count($RS));
+      MontaBarra($w_dir.$w_pagina.$par.'&R='.$R.'&w_sq_esquema='.$w_sq_esquema.'&O='.$O.'&P1='.$P1.'&P2='.$P2.'&TP='.$TP.'&SG='.$SG.'&w_chave='.$w_chave,ceil(count($RS)/$P4),$P3,$P4,count($RS));
     } else {
-      MontaBarra($w_dir.$w_pagina.$par.'&R='.$w_pagina.$par.'&O='.$O.'&P1='.$P1.'&P2='.$P2.'&TP='.$TP.'&SG='.$SG.'&w_chave='.$w_chave,ceil(count($RS)/$P4),$P3,$P4,count($RS));
+      MontaBarra($w_dir.$w_pagina.$par.'&R='.$w_pagina.$par.'&w_sq_esquema='.$w_sq_esquema.'&O='.$O.'&P1='.$P1.'&P2='.$P2.'&TP='.$TP.'&SG='.$SG.'&w_chave='.$w_chave,ceil(count($RS)/$P4),$P3,$P4,count($RS));
     } 
     ShowHTML('</tr>');
   } elseif (!(strpos('A',$O)===false)) {
@@ -771,7 +778,7 @@ function Mapeamento() {
   ShowHTML('          <td><font size="1">Tipo: <b>'.f($RS1,'nm_tipo').'</b></td>');
   ShowHTML('          <td><font size="1">Formato: <b>'.f($RS1,'nm_formato').'</b></td>');
   ShowHTML('          <td><font size="1">Ativo: <b>'.f($RS1,'nm_ativo').'</b></td>');
-  $RS1 = db_getEsquemaTabela($dbms,null,$w_sq_esquema,$w_sq_esquema_tabela);
+  $RS1 = db_getEsquemaTabela::getInstanceOf($dbms,null,$w_sq_esquema,$w_sq_esquema_tabela);
   foreach($RS1 as $row1){$RS1=$row1; break;}
   ShowHTML('      <tr><td colspan="3"><font size="1">Tabela: <b>'.Nvl(f($RS1,'nm_tabela'),'---').'</font></b></td>');
   ShowHTML('    </TABLE>');
@@ -785,9 +792,9 @@ function Mapeamento() {
     ShowHTML('<INPUT type="hidden" name="w_menu" value="'.$w_menu.'">');
     ShowHTML('<INPUT type="hidden" name="w_sq_esquema" value="'.$w_sq_esquema.'">');
     ShowHTML('<INPUT type="hidden" name="w_sq_esquema_tabela" value="'.$w_sq_esquema_tabela.'">');
-    ShowHTML('<INPUT type="hidden" name="w_sq_coluna" value="">');
-    ShowHTML('<INPUT type="hidden" name="w_ordem" value="">');
-    ShowHTML('<INPUT type="hidden" name="w_campo_externo" value="">');
+    ShowHTML('<INPUT type="hidden" name="w_sq_coluna[]" value="">');
+    ShowHTML('<INPUT type="hidden" name="w_ordem[]" value="">');
+    ShowHTML('<INPUT type="hidden" name="w_campo_externo[]" value="">');
     ShowHTML('<tr><td><font size="1">');
     ShowHTML('    <td align="right"><font size="1"><b>Registros existentes: '.count($RS));
     ShowHTML('<tr><td align="center" colspan=3>');
@@ -803,7 +810,7 @@ function Mapeamento() {
     ShowHTML('          <td><font size="1"><b>Ordem</b></font></td>');
     if (count($RS)<=0) {
       // Se não foram selecionados registros, exibe mensagem
-      ShowHTML('      <tr bgcolor="'.$conTrBgColor.'"><td colspan=6 align="center"><font size="1"><b>Não foram encontrados registros.</b></td></tr>');
+      ShowHTML('      <tr bgcolor="'.$conTrBgColor.'"><td colspan=7 align="center"><font size="1"><b>Não foram encontrados registros.</b></td></tr>');
     } else {
       // Lista os registros selecionados para listagem
       $w_disabled='disabled';
@@ -812,15 +819,15 @@ function Mapeamento() {
         $w_cont += 1;
         $w_cor = ($w_cor==$conTrBgColor || $w_cor=='') ? $w_cor=$conTrAlternateBgColor : $w_cor=$conTrBgColor;
         ShowHTML('      <tr bgcolor="'.$w_cor.'" valign="top">');
-        $RS1 = db_getEsquemaAtributo($dbms,null,$w_sq_esquema_tabela,null,f($row,'chave'));
+        $RS1 = db_getEsquemaAtributo::getInstanceOf($dbms,null,$w_sq_esquema_tabela,null,f($row,'chave'));
         if (count($RS1)>0) {
           foreach($RS1 as $row1){$RS1=$row1; break;}
-          ShowHTML('        <td align="center"><input type="checkbox" name="w_sq_coluna" value="'.f($row,'chave').'" onClick="valor('.$w_cont.');" CHECKED>');
+          ShowHTML('        <td align="center"><input type="checkbox" name="w_sq_coluna[]" value="'.f($row,'chave').'" onClick="valor('.$w_cont.');" CHECKED>');
           $w_ordem          = f($RS1,'ordem');
           $w_campo_externo  = f($RS1,'campo_externo');
           $w_disabled       = '';
         } else {
-          ShowHTML('        <td align="center"><input type="checkbox" name="w_sq_coluna" value="'.f($row,'chave').'" onClick="valor('.$w_cont.');">');
+          ShowHTML('        <td align="center"><input type="checkbox" name="w_sq_coluna[]" value="'.f($row,'chave').'" onClick="valor('.$w_cont.');">');
         } 
         ShowHTML('        <td><font size="1">'.f($row,'nm_coluna').'</td>');
         ShowHTML('        <td><font size="1">'.Nvl(f($row,'descricao'),'---').'</td>');
@@ -829,8 +836,8 @@ function Mapeamento() {
         else                                                ShowHTML(f($row,'tamanho'));
         ShowHTML(')</td>');
         ShowHTML('        <td align="center"><font size="1">'.f($row,'obrigatorio').'</td>');
-        ShowHTML('        <td><font size="1"><input '.$w_disabled.' type="text" name="w_campo_externo" class="sti" SIZE="20" MAXLENGTH="30" VALUE="'.$w_campo_externo.'"></td>');
-        ShowHTML('        <td><font size="1"><input '.$w_disabled.' type="text" name="w_ordem" class="sti" SIZE="4" MAXLENGTH="4" VALUE="'.$w_ordem.'"></td>');
+        ShowHTML('        <td><font size="1"><input '.$w_disabled.' type="text" name="w_campo_externo[]" class="sti" SIZE="20" MAXLENGTH="30" VALUE="'.$w_campo_externo.'"></td>');
+        ShowHTML('        <td><font size="1"><input '.$w_disabled.' type="text" name="w_ordem[]" class="sti" SIZE="4" MAXLENGTH="4" VALUE="'.$w_ordem.'"></td>');
         ShowHTML('      </tr>');
         $w_ordem            = '';
         $w_campo_externo    = '';
@@ -907,7 +914,7 @@ function Importacao() {
   if ($O=='L') {
   } elseif (!(strpos('I',$O)===false)) {
     if (f($RS,'formato')!='W') {
-      ShowHTML('<FORM action="'.$w_dir.$w_pagina.'Grava&SG=IMparQ&O='.$O.'&w_menu='.$w_menu.'&UploadID='.$UploadID.'" name="Form" onSubmit="return(Validacao(this));" enctype="multipart/form-data" method="POST">');
+      ShowHTML('<FORM action="'.$w_dir.$w_pagina.'Grava&SG=IMparQ&O='.$O.'&w_menu='.$w_menu.'" name="Form" onSubmit="return(Validacao(this));" enctype="multipart/form-data" method="POST">');
       ShowHTML('<INPUT type="hidden" name="P1" value="'.$P1.'">');
       ShowHTML('<INPUT type="hidden" name="P2" value="'.$P2.'">');
       ShowHTML('<INPUT type="hidden" name="P3" value="'.$P3.'">');
@@ -978,6 +985,7 @@ function Exportacao() {
 
   // Recupera os dados do esquema selecionado
   $RS = db_getEsquema::getInstanceOf($dbms,$w_cliente,null,$w_sq_esquema,null,null,null,null,null,null,null,null);
+  foreach ($RS as $row) { $RS = $row; break; }
   // Recupera cada uma das tabelas referenciadas pelo esquema
   $RS1 = db_getEsquemaTabela::getInstanceOf($dbms,null,$w_sq_esquema,null);
   $RS1 = SortArray($RS1,'ordem','asc','nm_tabela','asc','or_coluna','asc');
@@ -993,8 +1001,6 @@ function Exportacao() {
   } else {
     $w_where = ' where cliente = '.$w_cliente.$crlf.
                '   and ano     = '.RetornaAno();
-    $w_where = ' where cliente = 362'.$crlf.
-               '   and ano     = 2005';
     $w_atual    = '';
     $w_cont     = 0;
     $j          = 0;
@@ -1034,14 +1040,14 @@ function Exportacao() {
     // Configura o nome dos arquivo recebido e do arquivo registro
     $w_arquivo_processamento = f($RS,'nome').'.xml';
     $F1 = fopen($w_caminho.$w_arquivo_processamento, 'w');
-    fwrite($F1,'<?xml version="1.0" encoding="Unicode"?>');
-    fwrite($F1,'<'.f($RS,'no_raiz').' xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns="http://www.sigplan.gov.br/xml/">');
+    fwrite($F1,utf8_encode('<?xml version="1.0" encoding="UTF-8"?>').$crlf);
+    fwrite($F1,utf8_encode('<'.f($RS,'no_raiz').' xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns="http://www.sigplan.gov.br/xml/">').$crlf);
     // Processa cada um dos esquemas recuperados
     for ($j=1; $j<=$w_cont; $j=$j+1) {
       $RS2 = DatabaseQueriesFactory::getInstanceOf($w_sql[$j], $dbms, null, DB_TYPE);
       if(!$RS2->executeQuery()) die("Cannot query"); else $RS2 = $RS2->getResultData();
       foreach($RS2 as $row2) {
-        fwrite($F1,'  <'.$w_elemento[$j].'>');
+        fwrite($F1,utf8_encode('  <'.$w_elemento[$j].'>').$crlf);
         // Processa cada um dos atributos recuperados
         for ($k=1; $k<=$i[$j]; $k=$k+1) {
           // Se o valor do banco for nulo, exporta tag fechada; 
@@ -1057,7 +1063,7 @@ function Exportacao() {
               // caso contrário, verifica o número de decimais e exporta o valor 
               // com nenhuma ou com 4 decimais, usando o ponto como separador de decimais
               if (nvl(f($row2,$w_campo[$j][$k]),0)!=0) {
-                $w_valor = str_replace('.','',str_replace(',','.',FormatNumber(f($row2,$w_campo[$j][$k]),$w_coluna[$w_campo[$j][$k]]['escala'])));
+                $w_valor = str_replace(',','.',str_replace('.','',FormatNumber(f($row2,$w_campo[$j][$k]),$w_coluna[$w_campo[$j][$k]]['escala'])));
               } else {
                 $w_valor = '0';
               } 
@@ -1066,13 +1072,13 @@ function Exportacao() {
             } else {
               $w_valor = f($row2,$w_campo[$j][$k]);
             } 
-            fwrite($F1,'<'.$w_atributo[$j][$k].'>'.$w_valor.'</'.$w_atributo[$j][$k].'>');
+            fwrite($F1,'    <'.$w_atributo[$j][$k].'>'.utf8_encode(htmlspecialchars($w_valor)).'</'.$w_atributo[$j][$k].'>'.$crlf);
           } 
         } 
-        fwrite($F1,'  </'.$w_elemento[$j].'>');
+        fwrite($F1,utf8_encode('  </'.$w_elemento[$j].'>').$crlf);
       }
     } 
-    fwrite($F1,'</'.f($RS,'no_raiz').'>');
+    fwrite($F1,utf8_encode('</'.f($RS,'no_raiz').'>').$crlf);
     fclose($F1);
     // Grava o resultado da importação no banco de dados
     //dml_putDcOcorrencia O, _
@@ -1098,6 +1104,7 @@ function Grava() {
   extract($GLOBALS);
   Cabecalho();
   ShowHTML('</HEAD>');
+  ShowHTML('<BASE HREF="'.$conRootSIW.'">');
   BodyOpenClean(null);
   switch ($SG) {
     case 'IMPARQ':
@@ -1129,7 +1136,7 @@ function Grava() {
               $w_tipo_recebido          = $Field['type'];
               $w_nome_recebido          = $Field['name'];
               if ($w_arquivo_processamento>'') move_uploaded_file($Field['tmp_name'],DiretorioCliente($w_cliente).'/'.$w_arquivo_processamento);
-              $w_arquivo_rejeicao       = str_replace(substr($w_arquivo_processamento,strpos($w_arquivo_processamento,'.'),30),'',$w_arquivo_processamento).'r'.substr($w_caminho_recebido,strpos($w_arquivo_processamento,'.'),30);
+              $w_arquivo_rejeicao       = basename($w_arquivo_processamento).'r';
             } 
           } // Gera o arquivo registro da importação
           $F1 = fopen($w_caminho.$w_arquivo_rejeicao, 'w');      
@@ -1160,73 +1167,81 @@ function Grava() {
                 foreach($RS2 as $row2) {
                   $w_cont += 1;
                   $w_atributo[$w_cont] = f($row2,'campo_externo');
-                } 
+                }
                 $w_limite = $w_cont;
                 if ($w_atual!=f($row1,'nm_tabela')) {
-                  $w_name = $xml->xpath(f($row1,'elemento'));
-                  foreach ($xml->xpath(f($row1,'elemento')) as $w_elemento) {
-                    $w_cont = 1;
-                    $w_reg  += 1;
+                  $w_campos = $xml->xpath(f($row1,'elemento'));
+                  foreach ($xml->xpath(f($row1,'elemento')) as $w_dados) {
+                    $w_val = array_map(trim,array_map(utf8_decode,get_object_vars($w_dados)));
+                    $w_reg += 1;
                     for ($w_cont=1; $w_cont<=$w_limite; $w_cont+=1) {
-                      // Recupera cada um dos campos referenciados pelo elemento
-                      if (strtoupper($w_elemento->$w_atributo[$w_cont])=='TRUE')       $w_param[$w_cont]='S';
-                      elseif (strtoupper($w_elemento->$w_atributo[$w_cont])=='FALSE')  $w_param[$w_cont]='N';
-                      else                                                             $w_param[$w_cont]=$w_elemento->$w_atributo[$w_cont];
+                      if (!is_object($w_val[$w_atributo[$w_cont]])) {
+                        if (is_object($w_val[$w_atributo[$w_cont]])) { $w_param[$w_cont] = get_object_vars($w_val[$w_atributo[$w_cont]]); }  
+                        // Recupera cada um dos campos referenciados pelo elemento
+                        if (strtoupper($w_val[$w_atributo[$w_cont]])    =='TRUE')  $w_param[$w_cont]='S';
+                        elseif (strtoupper($w_val[$w_atributo[$w_cont]])=='FALSE') $w_param[$w_cont]='N';
+                        else                                                       $w_param[$w_cont]=$w_val[$w_atributo[$w_cont]];
+                      }
                     }
                     $w_resultado='';
                     switch (f($row1,'nm_tabela')) {
-                      case 'IS_PPA_ESFERA':         dml_putXMLEsfera::getInstanceOf($dbms,&$w_resultado,$w_param[1],$w_param[2],'S'); if($w_resultado>'')RegistraErro(); break;
-                      case 'IS_PPA_PERIODICIDADE':  dml_putXMLPeriodicidade_PPA::getInstanceOf($dbms,&$w_resultado,$w_param[1],$w_param[2],'S'); if($w_resultado>'')RegistraErro(); break;
-                      case 'IS_PPA_UNIDADE_MEDIDA': dml_putXMLUnidade_Medida_PPA::getInstanceOf($dbms,&$w_resultado,$w_param[1],$w_param[2],'S'); if($w_resultado>'')RegistraErro(); break;
-                      case 'IS_PPA_ORGAO':          dml_putXMLOrgao_PPA::getInstanceOf($dbms,&$w_resultado,$w_param[1],$w_param[2],$w_param[3],$w_param[4],'S'); if($w_resultado>'')RegistraErro(); break;
-                      case 'IS_PPA_ORGAO_SIORG':    dml_putXMLOrgao_Siorg_PPA::getInstanceOf($dbms,&$w_resultado,$w_param[1],$w_param[2],$w_param[3],$w_param[4],$w_param[5],'S'); if($w_resultado>'')RegistraErro(); break;
-                      case 'IS_PPA_UNIDADE':        dml_putXMLUnidade_PPA::getInstanceOf($dbms,&$w_resultado,$w_param[1],$w_param[2],$w_param[3],$w_param[4],$w_param[5]); if($w_resultado>'')RegistraErro(); break;
-                      case 'IS_PPA_TIPO_ACAO':      dml_putXMLTipo_Acao_PPA::getInstanceOf($dbms,&$w_resultado,$w_param[1],$w_param[2],'S'); if($w_resultado>'')RegistraErro(); break;
-                      case 'IS_PPA_TIPO_DESPESA':   dml_putXMLTipo_Despesa::getInstanceOf($dbms,&$w_resultado,$w_param[1],$w_param[2],'S'); if($w_resultado>'')RegistraErro(); break;
-                      case 'IS_TIPO_ATUALIZACAO':   dml_putXMLTipo_Atualizacao::getInstanceOf($dbms,&$w_resultado,$w_param[1],$w_param[2],'S'); if($w_resultado>'')RegistraErro(); break;
-                      case 'IS_PPA_TIPO_PROGRAMA':  dml_putXMLTipo_Programa_PPA::getInstanceOf($dbms,&$w_resultado,$w_param[1],$w_param[2],'S'); if($w_resultado>'')RegistraErro(); break;
-                      case 'IS_TIPO_INCLUSAO_ACAO': dml_putXMLTipo_Inclusao_Acao::getInstanceOf($dbms,&$w_resultado,$w_param[1],$w_param[2],'S'); if($w_resultado>'')RegistraErro(); break;
-                      case 'IS_PPA_NATUREZA':       dml_putXMLNatureza::getInstanceOf($dbms,&$w_resultado,$w_param[1],$w_param[2],$w_param[3],'S'); if($w_resultado>'')RegistraErro(); break;
-                      case 'IS_PPA_FUNCAO':         dml_putXMLFuncao::getInstanceOf($dbms,&$w_resultado,$w_param[1],$w_param[2],'S'); if($w_resultado>'')RegistraErro(); break;
-                      case 'IS_PPA_SUBFUNCAO':      dml_putXMLSubFuncao::getInstanceOf($dbms,&$w_resultado,$w_param[1],$w_param[2],$w_param[3]); if($w_resultado>'')RegistraErro(); break;
-                      case 'IS_PPA_FONTE':          dml_putXMLFonte_PPA::getInstanceOf($dbms,&$w_resultado,$w_param[1],$w_param[2],$w_param[3],$w_param[4]); if($w_resultado>'')RegistraErro(); break;
-                      case 'IS_REGIAO':             dml_putXMLREGIAO::getInstanceOf($dbms,&$w_resultado,$w_param[1],$w_param[2],$w_param[3],$w_param[4]); if($w_resultado>'')RegistraErro(); break;
-                      case 'IS_MUNICIPIO':          dml_putXMLMunicipio::getInstanceOf($dbms,&$w_resultado,$w_param[1],$w_param[2],$w_param[3]); if($w_resultado>'')RegistraErro(); break;
-                      case 'IS_PPA_PRODUTO':        dml_putXMLProduto_PPA::getInstanceOf($dbms,&$w_resultado,$w_param[1],$w_param[2],'S'); if($w_resultado>'')RegistraErro(); break;
-                      case 'IS_PPA_PROGRAMA':       dml_putXMLPrograma_PPA::getInstanceOf($dbms,&$w_resultado,$w_cliente,$w_ano,$w_param[1],$w_param[2],$w_param[3],$w_param[4],$w_param[5],$w_param[6],$w_param[7],$w_param[8],$w_param[9],$w_param[10],$w_param[11],$w_param[12],$w_param[13],$w_param[14],$w_param[15],$w_param[16],$w_param[17],$w_param[18]); break;
-                      case 'IS_PPA_INDICADOR':      dml_putXMLIndicador_PPA::getInstanceOf($dbms,&$w_resultado,$w_cliente,$w_ano,$w_param[1],$w_param[2],$w_param[3],$w_param[4],$w_param[5],$w_param[6],$w_param[7],$w_param[8],$w_param[9],$w_param[10],$w_param[11],$w_param[12],$w_param[13],$w_param[14],$w_param[15],$w_param[16],$w_param[17],$w_param[18],$w_param[19],$w_param[20],$w_param[21],$w_param[22],$w_param[23],$w_param[24],$w_param[25],$w_param[26]); break;
-                      case 'IS_PPA_ACAO':           dml_putXMLAcao_PPA::getInstanceOf($dbms,&$w_resultado,$w_cliente,$w_ano,$w_param[1],$w_param[2],$w_param[3],$w_param[4],$w_param[5],$w_param[6],$w_param[7],$w_param[8],$w_param[9],$w_param[10],$w_param[11],$w_param[12],$w_param[13],$w_param[14],$w_param[15],$w_param[16],$w_param[17],$w_param[18],$w_param[19],$w_param[20],$w_param[21],$w_param[22],$w_param[23],$w_param[24],$w_param[25],$w_param[26],$w_param[27],$w_param[28],$w_param[29],$w_param[30],$w_param[31],$w_param[32],$w_param[33],$w_param[34],$w_param[35],$w_param[36],$w_param[37],$w_param[38],$w_param[39],$w_param[40],$w_param[41],$w_param[42],$w_param[43],$w_param[44],$w_param[45]); break;
-                      case 'IS_PPA_LOCALIZADOR':    dml_putXMLLocalizador_PPA::getInstanceOf($dbms,&$w_resultado,$w_cliente,$w_ano,$w_param[1],$w_param[2],$w_param[3],$w_param[4],$w_param[5],$w_param[6],$w_param[7],$w_param[8],$w_param[9],$w_param[10],$w_param[11],$w_param[12],$w_param[13],$w_param[14],$w_param[15],$w_param[16],$w_param[17],$w_param[18],$w_param[19],$w_param[20],$w_param[21],$w_param[22]); break;
-                      case 'IS_PPA_DADO_FISICO':    dml_putXMLDadoFisico_PPA::getInstanceOf($dbms,&$w_resultado,$w_cliente,$w_ano,$w_param[1],$w_param[2],$w_param[3],$w_param[4],$w_param[5],$w_param[6],$w_param[7],$w_param[8],$w_param[9],$w_param[10],$w_param[11]); if($w_resultado>'')RegistraErro(); break;
-                      case 'IS_PPA_DADO_FINANCEIRO':dml_putXMLDadoFinanceiro_PPA::getInstanceOf($dbms,&$w_resultado,$w_cliente,$w_ano,$w_param[1],$w_param[2],$w_param[3],$w_param[4],$w_param[5],$w_param[6],$w_param[7],$w_param[8],$w_param[9],$w_param[10],$w_param[11],$w_param[12],$w_param[13]); break;
-                      case 'IS_SIG_BASE_GEOGRAFICA':dml_putXMLBase_Geografica::getInstanceOf($dbms,&$w_resultado,$w_param[1],$w_param[2],'S'); if($w_resultado>'')RegistraErro(); break;
-                      case 'IS_SIG_FONTE':          dml_putXMLFonte_SIG::getInstanceOf($dbms,&$w_resultado,$w_param[1],$w_param[2],$w_param[3],$w_param[4],$w_param[5],'S'); if($w_resultado>'')RegistraErro(); break;
-                      case 'IS_SIG_OPCAO_ESTRAT':   dml_putXMLOpcao_Estrat::getInstanceOf($dbms,&$w_resultado,$w_param[1],$w_param[2],'S'); if($w_resultado>'')RegistraErro(); break;
-                      case 'IS_SIG_PERIODICIDADE':  dml_putXMLPeriodicidade::getInstanceOf($dbms,&$w_resultado,$w_param[1],$w_param[2],'S'); if($w_resultado>'')RegistraErro(); break;
-                      case 'IS_SIG_PRODUTO':        dml_putXMLProduto_SIG::getInstanceOf($dbms,&$w_resultado,$w_param[1],$w_param[2],'S'); if($w_resultado>'')RegistraErro(); break;
-                      case 'IS_SIG_TIPO_ACAO':      dml_putXMLTipo_Acao::getInstanceOf($dbms,&$w_resultado,$w_param[1],$w_param[2],'S'); if($w_resultado>'')RegistraErro(); break;
-                      case 'IS_SIG_TIPO_ORGAO':     dml_putXMLTipo_Orgao_SIG::getInstanceOf($dbms,&$w_resultado,$w_param[1],$w_param[2],'S'); if($w_resultado>'')RegistraErro(); break;
-                      case 'IS_SIG_TIPO_PROGRAMA':  dml_putXMLTipo_Programa::getInstanceOf($dbms,&$w_resultado,$w_param[1],$w_param[2],'S'); if($w_resultado>'')RegistraErro(); break;
-                      case 'IS_SIG_TIPO_RESTRICAO': dml_putXMLTipo_Restricao::getInstanceOf($dbms,&$w_resultado,$w_param[1],$w_param[2],'S'); if($w_resultado>'')RegistraErro(); break;
-                      case 'IS_SIG_TIPO_SITUACAO':  dml_putXMLTipo_Situacao::getInstanceOf($dbms,&$w_resultado,$w_param[1],$w_param[2],$w_param[3],'S'); if($w_resultado>'')RegistraErro(); break;
-                      case 'IS_SIG_UNIDADE_MEDIDA': dml_putXMLUnidade_Medida_SIG::getInstanceOf($dbms,&$w_resultado,$w_param[1],$w_param[2],$w_param[3],'S'); if($w_resultado>'')RegistraErro(); break;
-                      case 'IS_SIG_MACRO_OBJETIVO': dml_putXMLMacro_Objetivo::getInstanceOf($dbms,&$w_resultado,$w_param[1],$w_param[2],$w_param[3],'S'); if($w_resultado>'')RegistraErro(); break;
-                      case 'IS_SIG_ORGAO':          dml_putXMLOrgao_SIG::getInstanceOf($dbms,&$w_resultado,$w_param[1],$w_param[2],$w_param[3],$w_param[4],'---','S'); if($w_resultado>'')RegistraErro(); break;
-                      case 'IS_SIG_UNIDADE':        dml_putXMLUnidade_SIG::getInstanceOf($dbms,&$w_resultado,$w_param[1],$w_param[2],$w_param[3],$w_param[4],$w_param[5],$w_param[6]); if($w_resultado>'')RegistraErro(); break;
-                      case 'IS_SIG_PROGRAMA':       dml_putXMLPrograma_SIG::getInstanceOf($dbms,&$w_resultado,$w_cliente,$w_param[1],$w_param[2],$w_param[3],$w_param[4],$w_param[5],$w_param[6],$w_param[7],$w_param[8],$w_param[9],$w_param[10],$w_param[11],$w_param[12],$w_param[13],$w_param[14],$w_param[15],$w_param[16],$w_param[17],$w_param[18],$w_param[19],$w_param[20],$w_param[21],$w_param[22],$w_param[23],$w_param[24],$w_param[25],$w_param[26],$w_param[27],$w_param[28],$w_param[29],$w_param[30],$w_param[31]);  if($w_resultado>'')$w_erro = $w_erro + RegistraErro($F1,$w_name,$w_resultado); break;
-                      case 'IS_SIG_INDICADOR':      dml_putXMLIndicador_SIG::getInstanceOf($dbms,&$w_resultado,$w_cliente,$w_param[1],$w_param[2],$w_param[3],$w_param[4],$w_param[5],$w_param[6],$w_param[7],$w_param[8],$w_param[9],$w_param[10],$w_param[11],$w_param[12],$w_param[13],$w_param[14],$w_param[15],$w_param[16],$w_param[17],$w_param[18],$w_param[19],$w_param[20],$w_param[21],$w_param[22],$w_param[23],$w_param[24],$w_param[25]); break;
-                      case 'IS_SIG_ACAO':           if ($w_param[38]=='N') dml_putXMLAcao_SIG::getInstanceOf($dbms,&$w_resultado,$w_cliente,$w_param[1],$w_param[2],$w_param[3],$w_param[4],$w_param[5],$w_param[6],substr($w_param[7],2),$w_param[8],$w_param[9],$w_param[10],$w_param[11],$w_param[12],$w_param[13],$w_param[14],$w_param[15],$w_param[16],$w_param[17],$w_param[18],$w_param[19],$w_param[20],$w_param[21],$w_param[22],$w_param[23],$w_param[24],$w_param[25],$w_param[26],$w_param[27],$w_param[28],$w_param[29],$w_param[30],$w_param[31],$w_param[32],$w_param[33],$w_param[34],$w_param[35],$w_param[36],$w_param[37],$w_param[38],$w_param[39],$w_param[40],$w_param[41],$w_param[42],$w_param[13],$w_param[44]); break;
-                      case 'IS_SIG_DADO_FISICO':    dml_putXMLDadoFisico_SIG::getInstanceOf($dbms,&$w_resultado,$w_cliente,$w_param[1],$w_param[2],$w_param[3],$w_param[4],$w_param[5],$w_param[6],$w_param[7],$w_param[8],$w_param[9],$w_param[10],$w_param[11],$w_param[12],$w_param[13],$w_param[14],$w_param[15],$w_param[16],$w_param[17],$w_param[18],$w_param[19],$w_param[20],$w_param[21],$w_param[22],$w_param[23],$w_param[24],$w_param[25],$w_param[26],$w_param[27],$w_param[28],$w_param[29],$w_param[30],$w_param[31],$w_param[32],$w_param[33],$w_param[34],$w_param[35],$w_param[36],$w_param[37],$w_param[38],$w_param[39],$w_param[40],$w_param[41],$w_param[42],$w_param[43],$w_param[44],$w_param[45],$w_param[46],$w_param[47]); break;
-                      case 'IS_SIG_DADO_FINANCEIRO':dml_putXMLDadoFinanceiro_SIG::getInstanceOf($dbms,&$w_resultado,$w_cliente,$w_param[1],$w_param[2],$w_param[3],$w_param[4],$w_param[5],$w_param[6],$w_param[7],$w_param[8],$w_param[9],$w_param[10],$w_param[11],$w_param[12],$w_param[13],$w_param[14],$w_param[15],$w_param[16],$w_param[17],$w_param[18],$w_param[19],$w_param[20],$w_param[21],$w_param[22],$w_param[23],$w_param[24],$w_param[25],$w_param[26],$w_param[27],$w_param[28],$w_param[29],$w_param[30],$w_param[31],$w_param[32],$w_param[33],$w_param[34],$w_param[35],$w_param[36],$w_param[37],$w_param[38],$w_param[39],$w_param[40],$w_param[41],$w_param[42],$w_param[43],$w_param[44],$w_param[45],$w_param[46],$w_param[47],$w_param[48]); break;
+                      case 'IS_PPA_ESFERA':         dml_putXMLEsfera::getInstanceOf($dbms,&$w_resultado,$w_param[1],$w_param[2],'S'); if($w_resultado>'')$w_erro = $w_erro + RegistraErro($F1,$w_atributo,$w_param,$w_resultado); break;
+                      case 'IS_PPA_PERIODICIDADE':  dml_putXMLPeriodicidade_PPA::getInstanceOf($dbms,&$w_resultado,$w_param[1],$w_param[2],'S'); if($w_resultado>'')$w_erro = $w_erro + RegistraErro($F1,$w_atributo,$w_param,$w_resultado); break;
+                      case 'IS_PPA_UNIDADE_MEDIDA': dml_putXMLUnidade_Medida_PPA::getInstanceOf($dbms,&$w_resultado,$w_param[1],$w_param[2],'S'); if($w_resultado>'')$w_erro = $w_erro + RegistraErro($F1,$w_atributo,$w_param,$w_resultado); break;
+                      case 'IS_PPA_ORGAO':          dml_putXMLOrgao_PPA::getInstanceOf($dbms,&$w_resultado,$w_param[1],$w_param[2],$w_param[3],$w_param[4],'S'); if($w_resultado>'')$w_erro = $w_erro + RegistraErro($F1,$w_atributo,$w_param,$w_resultado); break;
+                      case 'IS_PPA_ORGAO_SIORG':    dml_putXMLOrgao_Siorg_PPA::getInstanceOf($dbms,&$w_resultado,$w_param[1],$w_param[2],$w_param[3],$w_param[4],$w_param[5],'S'); if($w_resultado>'')$w_erro = $w_erro + RegistraErro($F1,$w_atributo,$w_param,$w_resultado); break;
+                      case 'IS_PPA_UNIDADE':        dml_putXMLUnidade_PPA::getInstanceOf($dbms,&$w_resultado,$w_param[1],$w_param[2],$w_param[3],$w_param[4],$w_param[5]); if($w_resultado>'')$w_erro = $w_erro + RegistraErro($F1,$w_atributo,$w_param,$w_resultado); break;
+                      case 'IS_PPA_TIPO_ACAO':      dml_putXMLTipo_Acao_PPA::getInstanceOf($dbms,&$w_resultado,$w_param[1],$w_param[2],'S'); if($w_resultado>'')$w_erro = $w_erro + RegistraErro($F1,$w_atributo,$w_param,$w_resultado); break;
+                      case 'IS_PPA_TIPO_DESPESA':   dml_putXMLTipo_Despesa::getInstanceOf($dbms,&$w_resultado,$w_param[1],$w_param[2],'S'); if($w_resultado>'')$w_erro = $w_erro + RegistraErro($F1,$w_atributo,$w_param,$w_resultado); break;
+                      case 'IS_TIPO_ATUALIZACAO':   dml_putXMLTipo_Atualizacao::getInstanceOf($dbms,&$w_resultado,$w_param[1],$w_param[2],'S'); if($w_resultado>'')$w_erro = $w_erro + RegistraErro($F1,$w_atributo,$w_param,$w_resultado); break;
+                      case 'IS_PPA_TIPO_PROGRAMA':  dml_putXMLTipo_Programa_PPA::getInstanceOf($dbms,&$w_resultado,$w_param[1],$w_param[2],'S'); if($w_resultado>'')$w_erro = $w_erro + RegistraErro($F1,$w_atributo,$w_param,$w_resultado); break;
+                      case 'IS_TIPO_INCLUSAO_ACAO': dml_putXMLTipo_Inclusao_Acao::getInstanceOf($dbms,&$w_resultado,$w_param[1],$w_param[2],'S'); if($w_resultado>'')$w_erro = $w_erro + RegistraErro($F1,$w_atributo,$w_param,$w_resultado); break;
+                      case 'IS_PPA_NATUREZA':       dml_putXMLNatureza::getInstanceOf($dbms,&$w_resultado,$w_param[1],$w_param[2],$w_param[3],'S'); if($w_resultado>'')$w_erro = $w_erro + RegistraErro($F1,$w_atributo,$w_param,$w_resultado); break;
+                      case 'IS_PPA_FUNCAO':         dml_putXMLFuncao::getInstanceOf($dbms,&$w_resultado,$w_param[1],$w_param[2],'S'); if($w_resultado>'')$w_erro = $w_erro + RegistraErro($F1,$w_atributo,$w_param,$w_resultado); break;
+                      case 'IS_PPA_SUBFUNCAO':      dml_putXMLSubFuncao::getInstanceOf($dbms,&$w_resultado,$w_param[1],$w_param[2],$w_param[3]); if($w_resultado>'')$w_erro = $w_erro + RegistraErro($F1,$w_atributo,$w_param,$w_resultado); break;
+                      case 'IS_PPA_FONTE':          dml_putXMLFonte_PPA::getInstanceOf($dbms,&$w_resultado,$w_param[1],$w_param[2],$w_param[3],$w_param[4]); if($w_resultado>'')$w_erro = $w_erro + RegistraErro($F1,$w_atributo,$w_param,$w_resultado); break;
+                      case 'IS_REGIAO':             dml_putXMLREGIAO::getInstanceOf($dbms,&$w_resultado,$w_param[1],$w_param[2],$w_param[3],$w_param[4]); if($w_resultado>'')$w_erro = $w_erro + RegistraErro($F1,$w_atributo,$w_param,$w_resultado); break;
+                      case 'IS_MUNICIPIO':          dml_putXMLMunicipio::getInstanceOf($dbms,&$w_resultado,$w_param[1],$w_param[2],$w_param[3]); if($w_resultado>'')$w_erro = $w_erro + RegistraErro($F1,$w_atributo,$w_param,$w_resultado); break;
+                      case 'IS_PPA_PRODUTO':        dml_putXMLProduto_PPA::getInstanceOf($dbms,&$w_resultado,$w_param[1],$w_param[2],'S'); if($w_resultado>'')$w_erro = $w_erro + RegistraErro($F1,$w_atributo,$w_param,$w_resultado); break;
+                      case 'IS_PPA_PROGRAMA':       dml_putXMLPrograma_PPA::getInstanceOf($dbms,&$w_resultado,$w_cliente,$w_ano,$w_param[1],$w_param[2],$w_param[3],$w_param[4],$w_param[5],$w_param[6],$w_param[7],$w_param[8],$w_param[9],$w_param[10],$w_param[11],$w_param[12],$w_param[13],$w_param[14],$w_param[15],$w_param[16],$w_param[17],$w_param[18]); if($w_resultado>'')$w_erro = $w_erro + RegistraErro($F1,$w_atributo,$w_param,$w_resultado); break;
+                      case 'IS_PPA_INDICADOR':      dml_putXMLIndicador_PPA::getInstanceOf($dbms,&$w_resultado,$w_cliente,$w_ano,$w_param[1],$w_param[2],$w_param[3],$w_param[4],$w_param[5],$w_param[6],$w_param[7],$w_param[8],$w_param[9],$w_param[10],$w_param[11],$w_param[12],$w_param[13],$w_param[14],$w_param[15],$w_param[16],$w_param[17],$w_param[18],$w_param[19],$w_param[20],$w_param[21],$w_param[22],$w_param[23],$w_param[24],$w_param[25],$w_param[26]); if($w_resultado>'')$w_erro = $w_erro + RegistraErro($F1,$w_atributo,$w_param,$w_resultado); break;
+                      case 'IS_PPA_ACAO':           dml_putXMLAcao_PPA::getInstanceOf($dbms,&$w_resultado,$w_cliente,$w_ano,$w_param[1],$w_param[2],$w_param[3],$w_param[4],$w_param[5],$w_param[6],$w_param[7],$w_param[8],$w_param[9],$w_param[10],$w_param[11],$w_param[12],$w_param[13],$w_param[14],$w_param[15],$w_param[16],$w_param[17],$w_param[18],$w_param[19],$w_param[20],$w_param[21],$w_param[22],$w_param[23],$w_param[24],$w_param[25],$w_param[26],$w_param[27],$w_param[28],$w_param[29],$w_param[30],$w_param[31],$w_param[32],$w_param[33],$w_param[34],$w_param[35],$w_param[36],$w_param[37],$w_param[38],$w_param[39],$w_param[40],$w_param[41],$w_param[42],$w_param[43],$w_param[44],$w_param[45]); if($w_resultado>'')$w_erro = $w_erro + RegistraErro($F1,$w_atributo,$w_param,$w_resultado); break;
+                      case 'IS_PPA_LOCALIZADOR':    dml_putXMLLocalizador_PPA::getInstanceOf($dbms,&$w_resultado,$w_cliente,$w_ano,$w_param[1],$w_param[2],$w_param[3],$w_param[4],$w_param[5],$w_param[6],$w_param[7],$w_param[8],$w_param[9],$w_param[10],$w_param[11],$w_param[12],$w_param[13],$w_param[14],$w_param[15],$w_param[16],$w_param[17],$w_param[18],$w_param[19],$w_param[20],$w_param[21],$w_param[22]); if($w_resultado>'')$w_erro = $w_erro + RegistraErro($F1,$w_atributo,$w_param,$w_resultado); break;
+                      case 'IS_PPA_DADO_FISICO':    dml_putXMLDadoFisico_PPA::getInstanceOf($dbms,&$w_resultado,$w_cliente,$w_ano,$w_param[1],$w_param[2],$w_param[3],$w_param[4],$w_param[5],$w_param[6],$w_param[7],$w_param[8],$w_param[9],$w_param[10],$w_param[11]); if($w_resultado>'')$w_erro = $w_erro + RegistraErro($F1,$w_atributo,$w_param,$w_resultado); break;
+                      case 'IS_PPA_DADO_FINANCEIRO':dml_putXMLDadoFinanceiro_PPA::getInstanceOf($dbms,&$w_resultado,$w_cliente,$w_ano,$w_param[1],$w_param[2],$w_param[3],$w_param[4],$w_param[5],$w_param[6],$w_param[7],$w_param[8],$w_param[9],$w_param[10],$w_param[11],$w_param[12],$w_param[13]); if($w_resultado>'')$w_erro = $w_erro + RegistraErro($F1,$w_atributo,$w_param,$w_resultado); break;
+                      case 'IS_SIG_BASE_GEOGRAFICA':dml_putXMLBase_Geografica::getInstanceOf($dbms,&$w_resultado,$w_param[1],$w_param[2],'S'); if($w_resultado>'')$w_erro = $w_erro + RegistraErro($F1,$w_atributo,$w_param,$w_resultado); break;
+                      case 'IS_SIG_FONTE':          dml_putXMLFonte_SIG::getInstanceOf($dbms,&$w_resultado,$w_param[1],$w_param[2],$w_param[3],$w_param[4],$w_param[5],'S'); if($w_resultado>'')$w_erro = $w_erro + RegistraErro($F1,$w_atributo,$w_param,$w_resultado); break;
+                      case 'IS_SIG_OPCAO_ESTRAT':   dml_putXMLOpcao_Estrat::getInstanceOf($dbms,&$w_resultado,$w_param[1],$w_param[2],'S'); if($w_resultado>'')$w_erro = $w_erro + RegistraErro($F1,$w_atributo,$w_param,$w_resultado); break;
+                      case 'IS_SIG_PERIODICIDADE':  dml_putXMLPeriodicidade::getInstanceOf($dbms,&$w_resultado,$w_param[1],$w_param[2],'S'); if($w_resultado>'')$w_erro = $w_erro + RegistraErro($F1,$w_atributo,$w_param,$w_resultado); break;
+                      case 'IS_SIG_PRODUTO':        dml_putXMLProduto_SIG::getInstanceOf($dbms,&$w_resultado,$w_param[1],$w_param[2],'S'); if($w_resultado>'')$w_erro = $w_erro + RegistraErro($F1,$w_atributo,$w_param,$w_resultado); break;
+                      case 'IS_SIG_TIPO_ACAO':      dml_putXMLTipo_Acao::getInstanceOf($dbms,&$w_resultado,$w_param[1],$w_param[2],'S'); if($w_resultado>'')$w_erro = $w_erro + RegistraErro($F1,$w_atributo,$w_param,$w_resultado); break;
+                      case 'IS_SIG_TIPO_ORGAO':     dml_putXMLTipo_Orgao_SIG::getInstanceOf($dbms,&$w_resultado,$w_param[1],$w_param[2],'S'); if($w_resultado>'')$w_erro = $w_erro + RegistraErro($F1,$w_atributo,$w_param,$w_resultado); break;
+                      case 'IS_SIG_TIPO_PROGRAMA':  dml_putXMLTipo_Programa::getInstanceOf($dbms,&$w_resultado,$w_param[1],$w_param[2],'S'); if($w_resultado>'')$w_erro = $w_erro + RegistraErro($F1,$w_atributo,$w_param,$w_resultado); break;
+                      case 'IS_SIG_TIPO_RESTRICAO': dml_putXMLTipo_Restricao::getInstanceOf($dbms,&$w_resultado,$w_param[1],$w_param[2],'S'); if($w_resultado>'')$w_erro = $w_erro + RegistraErro($F1,$w_atributo,$w_param,$w_resultado); break;
+                      case 'IS_SIG_TIPO_SITUACAO':  dml_putXMLTipo_Situacao::getInstanceOf($dbms,&$w_resultado,$w_param[1],$w_param[2],$w_param[3],'S'); if($w_resultado>'')$w_erro = $w_erro + RegistraErro($F1,$w_atributo,$w_param,$w_resultado); break;
+                      case 'IS_SIG_UNIDADE_MEDIDA': dml_putXMLUnidade_Medida_SIG::getInstanceOf($dbms,&$w_resultado,$w_param[1],$w_param[2],$w_param[3],'S'); if($w_resultado>'')$w_erro = $w_erro + RegistraErro($F1,$w_atributo,$w_param,$w_resultado); break;
+                      case 'IS_SIG_MACRO_OBJETIVO': dml_putXMLMacro_Objetivo::getInstanceOf($dbms,&$w_resultado,$w_param[1],$w_param[2],$w_param[3],'S'); if($w_resultado>'')$w_erro = $w_erro + RegistraErro($F1,$w_atributo,$w_param,$w_resultado); break;
+                      case 'IS_SIG_ORGAO':          dml_putXMLOrgao_SIG::getInstanceOf($dbms,&$w_resultado,$w_param[1],$w_param[2],$w_param[3],$w_param[4],'---','S'); if($w_resultado>'')$w_erro = $w_erro + RegistraErro($F1,$w_atributo,$w_param,$w_resultado); break;
+                      case 'IS_SIG_UNIDADE':        dml_putXMLUnidade_SIG::getInstanceOf($dbms,&$w_resultado,$w_param[1],$w_param[2],$w_param[3],$w_param[4],$w_param[5],$w_param[6]); if($w_resultado>'')$w_erro = $w_erro + RegistraErro($F1,$w_atributo,$w_param,$w_resultado); break;
+                      case 'IS_SIG_PROGRAMA':       dml_putXMLPrograma_SIG::getInstanceOf($dbms,&$w_resultado,$w_cliente,$w_param[1],$w_param[2],$w_param[3],$w_param[4],$w_param[5],$w_param[6],$w_param[7],$w_param[8],$w_param[9],$w_param[10],$w_param[11],$w_param[12],$w_param[13],$w_param[14],$w_param[15],$w_param[16],$w_param[17],$w_param[18],$w_param[19],$w_param[20],$w_param[21],$w_param[22],$w_param[23],$w_param[24],$w_param[25],$w_param[26],$w_param[27],$w_param[28],$w_param[29],$w_param[30],$w_param[31],$w_param[32]);  if($w_resultado>'')$w_erro = $w_erro + RegistraErro($F1,$w_atributo,$w_param,$w_resultado); break;
+                      case 'IS_SIG_INDICADOR':      dml_putXMLIndicador_SIG::getInstanceOf($dbms,&$w_resultado,$w_cliente,$w_param[1],$w_param[2],$w_param[3],$w_param[4],$w_param[5],$w_param[6],$w_param[7],$w_param[8],$w_param[9],$w_param[10],$w_param[11],$w_param[12],$w_param[13],$w_param[14],$w_param[15],$w_param[16],$w_param[17],$w_param[18],$w_param[19],$w_param[20],$w_param[21],$w_param[22],$w_param[23],$w_param[24],$w_param[25]); if($w_resultado>'')$w_erro = $w_erro + RegistraErro($F1,$w_atributo,$w_param,$w_resultado); break;
+                      case 'IS_SIG_ACAO':           
+                        // Só carrega ações que não sejam RAP (Restos a pagar)
+                        if ($w_param[38]=='N')  dml_putXMLAcao_SIG::getInstanceOf($dbms,&$w_resultado,$w_cliente,$w_param[1],$w_param[2],$w_param[3],$w_param[4],$w_param[5],$w_param[6],substr($w_param[7],2),$w_param[8],$w_param[9],$w_param[10],$w_param[11],$w_param[12],$w_param[13],$w_param[14],$w_param[15],$w_param[16],$w_param[17],$w_param[18],$w_param[19],$w_param[20],$w_param[21],$w_param[22],$w_param[23],$w_param[24],$w_param[25],$w_param[26],$w_param[27],$w_param[28],$w_param[29],$w_param[30],$w_param[31],$w_param[32],$w_param[33],$w_param[34],$w_param[35],$w_param[36],$w_param[37],$w_param[38],$w_param[39],$w_param[40],$w_param[41],$w_param[42],$w_param[43],$w_param[44]);
+                        else                    $w_reg -= 1;
+                        if($w_resultado>'')     $w_erro = $w_erro + RegistraErro($F1,$w_atributo,$w_param,$w_resultado); 
+                      break;
+                      case 'IS_SIG_DADO_FISICO':    dml_putXMLDadoFisico_SIG::getInstanceOf($dbms,&$w_resultado,$w_cliente,$w_param[1],$w_param[2],$w_param[3],$w_param[4],$w_param[5],$w_param[6],$w_param[7],$w_param[8],$w_param[9],$w_param[10],$w_param[11],$w_param[12],$w_param[13],$w_param[14],$w_param[15],$w_param[16],$w_param[17],$w_param[18],$w_param[19],$w_param[20],$w_param[21],$w_param[22],$w_param[23],$w_param[24],$w_param[25],$w_param[26],$w_param[27],$w_param[28],$w_param[29],$w_param[30],$w_param[31],$w_param[32],$w_param[33],$w_param[34],$w_param[35],$w_param[36],$w_param[37],$w_param[38],$w_param[39],$w_param[40],$w_param[41],$w_param[42],$w_param[43],$w_param[44],$w_param[45],$w_param[46],$w_param[47]); if($w_resultado>'')$w_erro = $w_erro + RegistraErro($F1,$w_atributo,$w_param,$w_resultado); break;
+                      case 'IS_SIG_DADO_FINANCEIRO':dml_putXMLDadoFinanceiro_SIG::getInstanceOf($dbms,&$w_resultado,$w_cliente,$w_param[1],$w_param[2],$w_param[3],$w_param[4],$w_param[5],$w_param[6],$w_param[7],$w_param[8],$w_param[9],$w_param[10],$w_param[11],$w_param[12],$w_param[13],$w_param[14],$w_param[15],$w_param[16],$w_param[17],$w_param[18],$w_param[19],$w_param[20],$w_param[21],$w_param[22],$w_param[23],$w_param[24],$w_param[25],$w_param[26],$w_param[27],$w_param[28],$w_param[29],$w_param[30],$w_param[31],$w_param[32],$w_param[33],$w_param[34],$w_param[35],$w_param[36],$w_param[37],$w_param[38],$w_param[39],$w_param[40],$w_param[41],$w_param[42],$w_param[43],$w_param[44],$w_param[45],$w_param[46],$w_param[47],$w_param[48]); if($w_resultado>'')$w_erro = $w_erro + RegistraErro($F1,$w_atributo,$w_param,$w_resultado); break;
                     } 
                   } 
                 }   
                 $w_atual = f($row1,'nm_tabela');
               } 
             } 
-            fwrite($F1,'     Registros lidos: '.$w_reg);
-            fwrite($F1,'   Registros aceitos: '.($w_reg-$w_erro));
-            fwrite($F1,'Registros rejeitados: '.$w_erro);
+            fwrite($F1,'     Registros lidos: '.$w_reg.$crlf);
+            fwrite($F1,'   Registros aceitos: '.($w_reg-$w_erro).$crlf);
+            fwrite($F1,'Registros rejeitados: '.$w_erro.$crlf);
             fclose($F1);
             $w_arquivo_registro   = 'Arquivoregistro'.substr($w_arquivo_rejeicao,(strpos($w_arquivo_rejeicao,'.') ? strpos($w_arquivo_rejeicao,'.')+1 : 0)-1,30);
             $w_tamanho_registro   = filesize($w_caminho.$w_arquivo_rejeicao);
@@ -1250,7 +1265,7 @@ function Grava() {
           ScriptClose();
         } 
         ScriptOpen('JavaScript');
-        ShowHTML('  location.href=\''.montaURL_JS(null,$R.'&w_chave='.$_REQUEST['w_chave'].'&P1='.$P1.'&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP='.$TP.'&SG='.'ISSIGIMP'.MontaFiltro('UL')).'\';');
+        ShowHTML('  location.href=\''.montaURL_JS($w_dir,$R.'&w_chave='.$_REQUEST['w_chave'].'&P1='.$P1.'&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP='.$TP.'&SG='.'ISSIGIMP'.MontaFiltro('UL')).'\';');
         ScriptClose();
       } else {
         ScriptOpen('JavaScript');
@@ -1264,7 +1279,7 @@ function Grava() {
       if (verificaAssinaturaEletronica($_SESSION['USERNAME'],strtoupper($_REQUEST['w_assinatura'])) || $w_assinatura=='') {
         dml_putEsquema::getInstanceOf($dbms,$O,$w_cliente,$_REQUEST['w_sq_esquema'],$w_sq_modulo,$_REQUEST['w_nome'],$_REQUEST['w_descricao'],$_REQUEST['w_tipo'],
           $_REQUEST['w_ativo'],$_REQUEST['w_formato'],$_REQUEST['w_ws_servidor'],$_REQUEST['w_ws_url'],
-          $_REQUEST['w_ws_acao'],$_REQUEST['w_ws_mensagem'],$_REQUEST['w_no_raiz']);
+          $_REQUEST['w_ws_acao'],$_REQUEST['w_ws_mensagem'],$_REQUEST['w_no_raiz'],null,null,null,null,0,null,null,null,null,null,null,null);
         ScriptOpen('JavaScript');
         ShowHTML('  location.href=\''.montaURL_JS($w_dir,$R.'&O=L&w_sq_esquema='.$_REQUEST['w_sq_esquema'].'&P1='.$P1.'&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP='.$TP.'&SG='.$SG.MontaFiltro('GET')).'\';');
         ScriptClose();
@@ -1296,11 +1311,12 @@ function Grava() {
       if (verificaAssinaturaEletronica($_SESSION['USERNAME'],strtoupper($_REQUEST['w_assinatura'])) || $w_assinatura=='') {
         if ($O=='I') {
           for ($i=0; $i<=count($_POST['w_sq_tabela'])-1; $i=$i+1) {
-            if ($_POST['w_sq_tabela'][$i]>'') dml_putEsquemaTabela::getInstanceOf($dbms,$O,null,$_REQUEST['w_sq_esquema'],$_POST['w_sq_tabela'][$i],$_POST['w_ordem'][$i],$_POST['w_elemento'][$i]);
+            if ($_REQUEST['w_sq_tabela'][$i]>'') dml_putEsquemaTabela::getInstanceOf($dbms,$O,null,$_REQUEST['w_sq_esquema'],$_REQUEST['w_sq_tabela'][$i],$_REQUEST['w_ordem'][$i],$_REQUEST['w_elemento'][$i]);
           } 
         } elseif ($O=='A') {
           dml_putEsquemaTabela::getInstanceOf($dbms,$O,$_REQUEST['w_sq_esquema_tabela'],$_REQUEST['w_sq_esquema'],null,$_REQUEST['w_ordem'],$_REQUEST['w_elemento']);
         } elseif ($O=='E') {
+          dml_putEsquemaAtributo::getInstanceOf($dbms,$O,null,$_REQUEST['w_sq_esquema_tabela'],null,null,null);
           dml_putEsquemaTabela::getInstanceOf($dbms,$O,$_REQUEST['w_sq_esquema_tabela'],null,null,null,null);
         } 
         ScriptOpen('JavaScript');
@@ -1319,11 +1335,11 @@ function Grava() {
         dml_putEsquemaAtributo::getInstanceOf($dbms,'E',null,$_REQUEST['w_sq_esquema_tabela'],null,null,null);
         if ($O=='I') {
           for ($i=0; $i<=count($_POST['w_sq_coluna'])-1; $i=$i+1) {
-            if ($_POST['w_sq_coluna'][$i]>'') dml_putEsquemaAtributo::getInstanceOf($dbms,$O,null,$_REQUEST['w_sq_esquema_tabela'],$_POST['w_sq_coluna'][$i],$_POST['w_ordem'][$i],$_POST['w_campo_externo'][$i]);
+            if ($_REQUEST['w_sq_coluna'][$i]>'') dml_putEsquemaAtributo::getInstanceOf($dbms,$O,null,$_REQUEST['w_sq_esquema_tabela'],$_REQUEST['w_sq_coluna'][$i],$_REQUEST['w_ordem'][$i],$_REQUEST['w_campo_externo'][$i]);
           } 
         } 
         ScriptOpen('JavaScript');
-        ShowHTML('  location.href=\''.montaURL_JS($w_dir,$w_pagina.'Tabela'.'&O=L&w_sq_esquema='.$_REQUEST['w_sq_esquema'].'&w_sq_esquema_tabela='.$_REQUEST['w_sq_esquema_tabela'].'&P1='.$P1.'&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP='.$TP.'&SG='.'ISSIGIMP'.MontaFiltro('GET')).'\';');
+        ShowHTML('  location.href=\''.montaURL_JS($w_dir,$w_pagina.'Tabela'.'&O=L&w_sq_esquema='.$_REQUEST['w_sq_esquema'].'&P1='.$P1.'&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP='.$TP.'&SG='.'ISSIGTAB'.'&w_menu='.$w_menu.MontaFiltro('GET')).'\';');
         ScriptClose();
       } else {
         ScriptOpen('JavaScript');
@@ -1343,18 +1359,15 @@ function Grava() {
 // =========================================================================
 // Rotina de registro dos erros
 // -------------------------------------------------------------------------
-function RegistraErro($F1,$w_campo,$w_resultado) {
+function RegistraErro($F1,$w_atributo,$w_param,$w_resultado) {
   extract($GLOBALS);
-  $j=0;
-  foreach ($w_campo as $i) {
-    if ($i>'') fwrite($F1,$i.': ['.$w_param[$j].']');
-    $j=$j+1;
+  for($j=1;$j<count($w_atributo);$j+=1) {
+    if($w_atributo[$j]>'')fwrite($F1,$w_atributo[$j].':['.$w_param[$j].']'.$crlf);
   } 
-  $w_erro += 1;
-  fwrite($F1,$w_resultado);
-  fwrite($F1,'------------------------------------------------------------------------');
+  fwrite($F1,$w_resultado.$crlf);
+  fwrite($F1,'------------------------------------------------------------------------'.$crlf);
   $i = null;
-  return $w_erro;
+  return 1;
 } 
 // =========================================================================
 // Rotina principal

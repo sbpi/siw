@@ -105,7 +105,7 @@ function VisualDemanda($w_chave,$operacao,$w_usuario) {
     $RSQuery = SortArray($RSQuery,'fim','asc','prioridade','asc');
     if (count($RSQuery)>0) {
       $w_html.=chr(13).'      <tr><td valign="top" colspan="2" align="center" bgcolor="#D0D0D0" style="border: 2px solid rgb(0,0,0);"><b>Atividades subordinadas</td>';
-      $w_html.=chr(13).'      <tr><td><table border=0 with="100%" cellpadding=0 cellspacing=0>';
+      $w_html.=chr(13).'      <tr><td valign="top" colspan="2"><table border=0 width="100%" cellspacing=0>';
       $w_html.=chr(13).'        <tr><td align="right"><b>Registros: '.count($RSQuery);
       $w_html.=chr(13).'        <tr><td align="center" colspan=3>';
       $w_html.=chr(13).'          <TABLE WIDTH="100%" bgcolor="'.$conTableBgColor.'" BORDER="'.$conTableBorder.'" CELLSPACING="'.$conTableCellSpacing.'" CELLPADDING="'.$conTableCellPadding.'" BorderColorDark="'.$conTableBorderColorDark.'" BorderColorLight="'.$conTableBorderColorLight.'">';
@@ -150,6 +150,7 @@ function VisualDemanda($w_chave,$operacao,$w_usuario) {
         $w_html.=chr(13).'          <td align="center">&nbsp;'.Nvl(FormataDataEdicao(f($row,'fim')),'-').'</td>';
         $w_html.=chr(13).'          <td>'.f($row,'nm_tramite').'</td>';
         $w_html.=chr(13).'        </tr>';
+      $w_html.=chr(13).'          </table>';
         $w_html.=chr(13).'      </table>';
       } 
     }

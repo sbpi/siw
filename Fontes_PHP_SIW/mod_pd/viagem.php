@@ -4718,7 +4718,7 @@ function Grava() {
               // Volta para a listagem 
               ScriptOpen('JavaScript');
               $RS = db_getMenuData::getInstanceOf($dbms,$_REQUEST['w_menu']);
-              ShowHTML('  location.href=\''.montaURL_JS($w_dir,f($RS,'link')).'&O=L&w_chave='.$_REQUEST['w_chave'].'&P1='.$P1.'&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP='.RemoveTP($TP).'&SG='.f($RS,'sigla').MontaFiltro('GET')).'\';');
+              ShowHTML('  location.href=\''.montaURL_JS($w_dir,f($RS,'link').'&O=L&w_chave='.$_REQUEST['w_chave'].'&P1='.$P1.'&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP='.RemoveTP($TP).'&SG='.f($RS,'sigla').MontaFiltro('GET')).'\';');
               ScriptClose();
             } 
           } 
@@ -4747,7 +4747,7 @@ function Grava() {
           ScriptOpen('JavaScript');
           // Volta para a listagem
           $RS = db_getMenuData::getInstanceOf($dbms,$w_menu);
-          ShowHTML('  location.href=\''.montaURL_JS($w_dir,f($RS,'link')).'&O=L&w_chave='.$_REQUEST['w_chave'].'&P1='.$P1.'&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP='.$TP.'&SG='.f($RS,'sigla').MontaFiltro('UPLOAD')).'\';');
+          ShowHTML('  location.href=\''.montaURL_JS($w_dir,f($RS,'link').'&O=L&w_chave='.$_REQUEST['w_chave'].'&P1='.$P1.'&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP='.$TP.'&SG='.f($RS,'sigla').MontaFiltro('UPLOAD')).'\';');
           ScriptClose();
         } 
       } else {

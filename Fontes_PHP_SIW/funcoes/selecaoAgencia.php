@@ -7,6 +7,7 @@ function selecaoAgencia($label,$accesskey,$hint,$chave,$chaveAux,$campo,$restric
   extract($GLOBALS);
 
   $RS = db_getBankHouseList::getInstanceOf($dbms, $chaveAux, null, 'padrao desc, codigo asc', null);
+  $RS = SortArray($RS,'padrao','desc','codigo','asc');
 
   if (!isset($hint)) {
     ShowHTML('          <td valign="top"><font size="1"><b>'.$label.'</b><br><SELECT ACCESSKEY="'.$accesskey.'" CLASS="sts" NAME="'.$campo.'" '.$w_Disabled.' '.$atributo.'>');

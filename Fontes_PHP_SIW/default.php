@@ -96,7 +96,7 @@ function Valida() {
        if ($w_erro==2) { ShowHTML('  alert(\'Senha inválida!\');'); }
        else
           if ($w_erro==3) { ShowHTML('  alert(\'Usuário com acesso bloqueado pelo gestor de segurança!\');'); }
-    ShowHTML('  history.back(1);');
+    ShowHTML('  location.href=\''.$_SERVER['HTTP_REFERER'].'\';');
     ScriptClose();
   } else {
     // Recupera informações do cliente, relativas ao envio de e-mail
@@ -199,7 +199,7 @@ function Valida() {
          ShowHTML('  alert(\'Sua senha foi recriada e enviada para '.$_SESSION['EMAIL'].'!\');');
       }
 
-      ShowHTML('  history.back(1);');
+      ShowHTML('  location.href=\''.$_SERVER['HTTP_REFERER'].'\';');
       ScriptClose();
     }
     DesconectaBD();

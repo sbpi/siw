@@ -2043,9 +2043,9 @@ function BuscaAtividade() {
   Estrutura_CSS($w_cliente);
   ScriptOpen('JavaScript');
   ShowHTML('  function volta(l_nome, l_sigla, l_chave) {');
-  ShowHTML("     opener.Form.".$campo."_nm.value=l_sigla + ' - ' + l_nome.replace('\'','\"');");
-  ShowHTML('     opener.Form.'.$campo.'.value=l_chave;');
-  ShowHTML('     opener.Form.'.$campo.'_nm.focus();');
+  ShowHTML("     opener.document.Form.".$campo."_nm.value=l_sigla + ' - ' + l_nome.replace('\'','\"');");
+  ShowHTML('     opener.document.Form.'.$campo.'.value=l_chave;');
+  ShowHTML('     opener.document.Form.'.$campo.'_nm.focus();');
   ShowHTML('     window.close();');
   ShowHTML('     opener.focus();');
   ShowHTML('   }');

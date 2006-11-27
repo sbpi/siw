@@ -1677,6 +1677,76 @@ function TelaUsuario() {
     ShowHTML('  </td>');
     ShowHTML('</tr>');
     ShowHTML('</table>');
+  } elseif (nvl(f($RS,'nome_vinculo'),'nulo')=='nulo') {
+    ShowHTML('<TITLE>Pessoa sem vínculo</TITLE>');
+    ShowHTML('</HEAD>');
+    BodyOpen('onLoad=document.focus();');
+    $TP='Dados pessoa externa';
+    Estrutura_Texto_Abre();
+    ShowHTML('<table border="0" width="100%">');
+    ShowHTML('<tr bgcolor="'.$conTrBgColor.'"><td>');
+    ShowHTML('    <table width="99%" border="0">');
+    // Outra parte
+    $RS1 = db_getBenef::getInstanceOf($dbms, $w_cliente, $l_sq_pessoa, null, null, null, null, null, null);
+    if (count($RS1)<=0) {
+      ShowHTML('      <tr><td colspan=2><font size=2><b>Outra parte não informada');
+    } else {
+      foreach ($RS1 as $row1) {
+        ShowHTML('      <tr><td align="center" colspan="2" height="1" bgcolor="#000000"></td>');
+        ShowHTML('      <tr><td colspan="2" align="center" bgcolor="#D0D0D0"><b>ATENÇÃO: Vínculo não informado</td>');
+        ShowHTML('      <tr><td align="center" colspan="2" height="1" bgcolor="#000000"></td>');
+        ShowHTML('      <tr><td>Nome:<br><font size=2><b>'.f($row1,'nm_pessoa').' ('.$l_sq_pessoa.')');
+        ShowHTML('          <td>Nome resumido:<br><font size=2><b>'.f($row1,'nome_resumido'));
+        if (nvl(f($row1,'email'),'nulo')!='nulo') {
+          ShowHTML('      <tr><td>e-Mail:<b><br><a class="hl" href="mailto:'.f($row1,'email').'">'.f($row1,'email').'</a></td>');
+        } else {
+          ShowHTML('      <tr><td>e-Mail:<b><br>---</td>');
+        } 
+        if (f($row1,'sq_tipo_pessoa')==1) {
+          ShowHTML('          <td colspan="2">Sexo:<b><br>'.f($row1,'nm_sexo').'</td>');
+          ShowHTML('      <tr><td align="center" colspan="2" height="2" bgcolor="#000000">');
+          ShowHTML('      <tr><td align="center" colspan="2" height="1" bgcolor="#000000">');
+          ShowHTML('      <tr><td colspan="2" align="center" bgcolor="#D0D0D0"><b>Endereço comercial, Telefones e e-Mail</td>');
+          ShowHTML('      <tr><td align="center" colspan="2" height="1" bgcolor="#000000">');
+          ShowHTML('      <tr><td align="center" colspan="2" height="2" bgcolor="#000000">');
+        } else {
+          ShowHTML('      <tr><td align="center" colspan="2" height="2" bgcolor="#000000">');
+          ShowHTML('      <tr><td align="center" colspan="2" height="1" bgcolor="#000000">');
+          ShowHTML('      <tr><td colspan="2" align="center" bgcolor="#D0D0D0"><b>Endereço principal, Telefones e e-Mail</td>');
+          ShowHTML('      <tr><td align="center" colspan="2" height="1" bgcolor="#000000">');
+          ShowHTML('      <tr><td align="center" colspan="2" height="2" bgcolor="#000000">');
+        } 
+        ShowHTML('      <tr><td colspan="2"><table border=0 width="100%" cellspacing=0>');
+        ShowHTML('          <tr valign="top">');
+        if (nvl(f($row1,'ddd'),'')>'') {
+          ShowHTML('          <td>Telefone:<b><br>('.f($row1,'ddd').') '.f($row1,'nr_telefone').'</td>');
+        } else {
+          ShowHTML('          <td>Telefone:<b><br>---</td>');
+        } 
+        ShowHTML('          <td>Fax:<b><br>'.nvl(f($row1,'nr_fax'),'---').'</td>');
+        ShowHTML('          <td>Celular:<b><br>'.nvl(f($row1,'nr_celular'),'---').'</td>');
+        ShowHTML('          <tr valign="top">');
+        ShowHTML('          <td>Endereço:<b><br>'.nvl(f($row1,'logradouro'),'---').'</td>');
+        ShowHTML('          <td>Complemento:<b><br>'.nvl(f($row1,'complemento'),'---').'</td>');
+        ShowHTML('          <td>Bairro:<b><br>'.nvl(f($row1,'bairro'),'---').'</td>');
+        ShowHTML('          <tr valign="top">');
+        if (nvl(f($row1,'pd_pais'),'')>'') {
+          if (f($row1,'pd_pais')=='S') {
+            ShowHTML('          <td>Cidade:<b><br>'.f($row1,'nm_cidade').'-'.f($row1,'co_uf').'</td>');
+          } else {
+            ShowHTML('          <td>Cidade:<b><br>'.f($row1,'nm_cidade').'-'.f($row1,'nm_pais').'</td>');
+          } 
+        } else {
+          ShowHTML('          <td>Cidade:<b><br>---</td>');
+        } 
+        ShowHTML('          <td>CEP:<b><br>'.nvl(f($row1,'cep'),'---').'</td>');
+        ShowHTML('          </table>');
+      }
+    } 
+
+    ShowHTML('  </td>');
+    ShowHTML('</tr>');
+    ShowHTML('</table>');
   } elseif (!(strpos("Cliente,Fornecedor",f($RS,'nome_vinculo'))===false)) {
     ShowHTML('<TITLE>Pessoa externa</TITLE>');
     ShowHTML('</HEAD>');
@@ -1692,6 +1762,9 @@ function TelaUsuario() {
       ShowHTML('      <tr><td colspan=2><font size=2><b>Outra parte não informada');
     } else {
       foreach ($RS1 as $row1) {
+        ShowHTML('      <tr><td align="center" colspan="2" height="1" bgcolor="#000000"></td>');
+        ShowHTML('      <tr><td colspan="2" bgcolor="#D0D0D0"><font size=2><b>'.f($RS,'nome_vinculo').'</td>');
+        ShowHTML('      <tr><td align="center" colspan="2" height="1" bgcolor="#000000"></td>');
         ShowHTML('      <tr><td>Nome:<br><font size=2><b>'.f($row1,'nm_pessoa'));
         ShowHTML('          <td>Nome resumido:<br><font size=2><b>'.f($row1,'nome_resumido'));
         if (nvl(f($row1,'email'),'nulo')!='nulo') {

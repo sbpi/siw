@@ -90,6 +90,8 @@ function VisualProjeto($l_chave,$operacao,$l_usuario) {
     $w_html .= chr(13).'          <td>Início previsto:<br><b>'.FormataDataEdicao(f($RS,'inicio')).' </b></td>';
     $w_html .= chr(13).'          <td>Término previsto:<br><b>'.FormataDataEdicao(f($RS,'fim')).' </b></td>';
     $w_html .= chr(13).'          <td>Prioridade:<br><b>'.RetornaPrioridade(f($RS,'prioridade')).' </b></td>';
+    
+    
     if ($w_tipo_visao==0 || $w_tipo_visao==1) {
       // Informações adicionais
       if (Nvl(f($RS,'descricao'),'') > '' || Nvl(f($RS,'justificativa'),'') > '' || $w_acordo == 'S' || $w_viagem=='S') {
@@ -126,7 +128,7 @@ function VisualProjeto($l_chave,$operacao,$l_usuario) {
       $w_html .= chr(13).'          </table>';
       if ($w_tipo_visao==0) $w_html .= chr(13).'      <tr><td valign="top">Nota de conclusão:<br><b>'.CRLF2BR(f($RS,'nota_conclusao')).' </b></td>';
     }
-  }
+  } 
   // Se for listagem, exibe os outros dados dependendo do tipo de visão  do usuário
   if (($operacao=='L' && $w_tipo_visao!=2) || ($operacao=='T' && $w_tipo_visao!=2)) {
     if (f($RS,'aviso_prox_conc')=='S') {
@@ -137,6 +139,69 @@ function VisualProjeto($l_chave,$operacao,$l_usuario) {
       $w_html .= chr(13).'          <td valign="top">Dias:<br><b>'.f($RS,'dias_aviso').' </b></td>';
       $w_html .= chr(13).'          </table>';
     } 
+    // Rubricas do projeto
+    $RS = db_getSolicRubrica::getInstanceOf($dbms,$l_chave,null,null,null,null,null);
+    $RS = SortArray($RS,'codigo','asc');
+    if (count($RS)>0) {
+      $w_html .= chr(13).'      <tr><td valign="top" colspan="2" align="center" bgcolor="#D0D0D0" style="border: 2px solid rgb(0,0,0);"><b>Rubricas</td>';
+      $w_html .= chr(13).'      <tr><td align="center" colspan="2">';
+      $w_html .= chr(13).'        <TABLE WIDTH="100%" bgcolor="'.$conTableBgColor.'" BORDER="'.$conTableBorder.'" CELLSPACING="'.$conTableCellSpacing.'" CELLPADDING="'.$conTableCellPadding.'" BorderColorDark="'.$conTableBorderColorDark.'" BorderColorLight="'.$conTableBorderColorLight.'">';
+      $w_html .= chr(13).'          <tr bgcolor="'.$conTrBgColor.'" align="center">';
+      $w_html .= chr(13).'            <td rowspan="2"><b>Código</td>';
+      $w_html .= chr(13).'            <td rowspan="2"><b>Nome</td>';
+      $w_html .= chr(13).'            <td rowspan="2"><b>Valor Inicial</td>';
+      $w_html .= chr(13).'            <td colspan="3"><b>Entrada</td>';
+      $w_html .= chr(13).'            <td colspan="3"><b>Saída</td>';
+      $w_html .= chr(13).'          </tr>';
+      $w_html .= chr(13).'          <tr bgcolor="'.$conTrBgColor.'" align="center">';
+      $w_html .= chr(13).'            <td><b>Prevista</td>';
+      $w_html .= chr(13).'            <td><b>Real</td>';
+      $w_html .= chr(13).'            <td><b>Pendente</td>';
+      $w_html .= chr(13).'            <td><b>Prevista</td>';
+      $w_html .= chr(13).'            <td><b>Real</td>';
+      $w_html .= chr(13).'            <td><b>Pendente</td>';
+      $w_html .= chr(13).'          </tr>';      
+      $w_cor=$conTrBgColor;
+      $w_valor_inicial    = 0;
+      $w_entrada_prevista = 0;
+      $w_entrada_real     = 0;
+      $w_entrada_pendente = 0;
+      $w_saida_prevista   = 0;
+      $w_saida_real       = 0;
+      $w_saida_pendente   = 0;
+      foreach ($RS as $row) {
+        $w_cor = ($w_cor==$conTrBgColor || $w_cor=='') ? $w_cor=$conTrAlternateBgColor : $w_cor=$conTrBgColor; 
+        $w_html .= chr(13).'      <tr valign="top" bgcolor="'.$w_cor.'">';
+        $w_html .= chr(13).'          <td align="center"><A class="hl" HREF="javascript:location.href=this.location.href;" onClick="window.open(\''.montaURL_JS(null,$conRootSIW.'mod_fn/lancamento.php?par=Ficharubrica&O=L&w_sq_projeto_rubrica='.f($row,'sq_projeto_rubrica').'&w_tipo=&P1='.$P1.'&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP='.$TP.' - Extrato Rubrica'.'&SG='.$SG.MontaFiltro('GET')).'\',\'Ficha3\',\'toolbar=no,width=780,height=530,top=30,left=10,scrollbars=yes\');" title="Exibe as informações deste registro.">'.f($row,'codigo').'</A>&nbsp';
+        $w_html .= chr(13).'          <td>'.f($row,'nome').' </td>';
+        $w_html .= chr(13).'          <td align="right">'.number_format(f($row,'valor_inicial'),2,',','.').' </td>';
+        $w_html .= chr(13).'          <td align="right">'.number_format(f($row,'entrada_prevista'),2,',','.').' </td>';
+        $w_html .= chr(13).'          <td align="right">'.number_format(f($row,'entrada_real'),2,',','.').' </td>';
+        $w_html .= chr(13).'          <td align="right">'.number_format(f($row,'entrada_pendente'),2,',','.').' </td>';
+        $w_html .= chr(13).'          <td align="right">'.number_format(f($row,'saida_prevista'),2,',','.').' </td>';
+        $w_html .= chr(13).'          <td align="right">'.number_format(f($row,'saida_real'),2,',','.').' </td>';
+        $w_html .= chr(13).'          <td align="right">'.number_format(f($row,'saida_pendente'),2,',','.').' </td>';
+        $w_html .= chr(13).'      </tr>';
+        $w_valor_inicial    += f($row,'valor_inicial');
+        $w_entrada_prevista += f($row,'entrada_prevista');
+        $w_entrada_real     += f($row,'entrada_real');
+        $w_entrada_pendente += f($row,'entrada_pendente');
+        $w_saida_prevista   += f($row,'saida_prevista');
+        $w_saida_real       += f($row,'saida_real');
+        $w_saida_pendente   += f($row,'saida_pendente');
+      } 
+      $w_html .= chr(13).'      <tr valign="top" bgcolor="'.$w_cor.'">';
+      $w_html .= chr(13).'          <td align="right" colspan="2"><b>Total</td>';
+      $w_html .= chr(13).'          <td align="right"><b>'.number_format($w_valor_inicial,2,',','.').' </b></td>';
+      $w_html .= chr(13).'          <td align="right"><b>'.number_format($w_entrada_prevista,2,',','.').' </b></td>';
+      $w_html .= chr(13).'          <td align="right"><b>'.number_format($w_entrada_real,2,',','.').' </b></td>';
+      $w_html .= chr(13).'          <td align="right"><b>'.number_format($w_entrada_pendente,2,',','.').' </b></td>';
+      $w_html .= chr(13).'          <td align="right"><b>'.number_format($w_saida_prevista,2,',','.').' </b></td>';
+      $w_html .= chr(13).'          <td align="right"><b>'.number_format($w_saida_real,2,',','.').' </b></td>';
+      $w_html .= chr(13).'          <td align="right"><b>'.number_format($w_saida_pendente,2,',','.').' </b></td>';
+      $w_html .= chr(13).'      </tr>';
+      $w_html .= chr(13).'         </table></td></tr>';
+    }     
     // Interessados na execução do projeto
     $RS = db_getSolicInter::getInstanceOf($dbms,$l_chave,null,'LISTA');
     $RS = SortArray($RS,'nome','asc');

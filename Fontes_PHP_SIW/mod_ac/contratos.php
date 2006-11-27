@@ -398,7 +398,7 @@ function Inicial() {
     if (substr($SG,0,3)!='GCA') {
       ShowHTML('          <td rowspan=2><b>'.LinkOrdena('$ Previsto','valor').'</font></td>');
       if (!(strpos(strtoupper($R),'GR_')===false)) {
-        ShowHTML('          <td rowspan=2><b>'.LinkOrdena('$ Real','valor_atual').'</font></td>');
+        ShowHTML('          <td rowspan=2><b>'.LinkOrdena('$ Liquidado','valor_atual').'</font></td>');
       }  
     }
     if ($P1!=1) {
@@ -1044,7 +1044,7 @@ function Geral() {
     } else {
       ShowHTML('      <tr><td>Classifique o acordo perante uma das opções exibidas na lista.</font></td></tr>');
       ShowHTML('      <tr><td align="center" height="1" bgcolor="#000000"></td></tr>');
-    } 
+    }
     if (f($RS_Menu,'solicita_cc')=='S') {
       ShowHTML('          <tr>');
       SelecaoCC('C<u>l</u>assificação:','L','Selecione um dos itens relacionados.',$w_sqcc,null,'w_sqcc','SIWSOLIC');

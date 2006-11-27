@@ -699,6 +699,55 @@ function Validate($VariableName,$DisplayName,$DataType,$ValueRequired,$MinimumLe
     "       theForm.".$VariableName.".focus();"."\r\n".
     "       return (false);"."\r\n".
     "    }"."\r\n";
+  } elseif (strtoupper($DataType)=="DATAHORA") {
+    print
+    "    var checkStr = theForm.".$VariableName.".value;"."\r\n".
+    "    var err=0;"."\r\n".
+    "    var psj=0;"."\r\n".
+    "    if (checkStr.length != 0) {"."\r\n".
+    "       if (!checkbranco(checkStr))"."\r\n".
+    "       {"."\r\n".
+    "    	   if (checkStr.length != 17) err=1"."\r\n".
+    "       	dia = checkStr.substr(0, 2);"."\r\n".
+    "       	barra1 = checkStr.substr(2, 1);"."\r\n".
+    "       	mes = checkStr.substr(3, 2);"."\r\n".
+    "       	barra2 = checkStr.substr(5, 1);"."\r\n".
+    "	        ano = checkStr.substr(6, 4);"."\r\n".
+    "	        hora = checkStr.substr(12, 2);"."\r\n".
+    "	        minuto = checkStr.substr(15, 2);"."\r\n".
+    "    	    //verificações básicas"."\r\n".
+    "    	    if (mes<1 || mes>12) err = 1;"."\r\n".
+    "    	    if (barra1 != '/') err = 1;"."\r\n".
+    "    	    if (dia<1 || dia>31) err = 1;"."\r\n".
+    "    	    if (barra2 != '/') err = 1;"."\r\n".
+    "    	    if (ano<1900 || ano>2900) err = 1;"."\r\n".
+    "    	    if (hora<0 || hora>23) err = 1;"."\r\n".
+    "    	    if (minuto<0 || minuto>59) err = 1;"."\r\n".
+    "    	    //verificações avançadas"."\r\n".
+    "    	    // mês com 30 dias"."\r\n".
+    "    	    if (mes==4 || mes==6 || mes==9 || mes==11){"."\r\n".
+    "    		   if (dia==31) err=1;"."\r\n".
+    "    	    }"."\r\n".
+    "    	    // fevereiro e ano bissexto"."\r\n".
+    "    	    if (mes==2){"."\r\n".
+    "    		    var g=parseInt(ano/4);"."\r\n".
+    "    		    if (isNaN(g)) {"."\r\n".
+    "    			    err=1;"."\r\n".
+    "    		    }"."\r\n".
+    "    		    if (dia>29) err=1;"."\r\n".
+    "    		    if (dia==29 && ((ano/4)!=parseInt(ano/4))) err=1;"."\r\n".
+    "    	    }"."\r\n".
+    "       }"."\r\n".
+    "       else"."\r\n".
+    "       {"."\r\n".
+    "    	   err=1;"."\r\n".
+    "       }"."\r\n".
+    "    }"."\r\n".
+    "    if (err==1){"."\r\n".
+    "       alert('Campo ".$DisplayName." inválido.');"."\r\n".
+    "       theForm.".$VariableName.".focus();"."\r\n".
+    "       return (false);"."\r\n".
+    "    }"."\r\n";
   } elseif (strtoupper($DataType)=="DATADM") {
     print
     "    var checkStr = theForm.".$VariableName.".value;"."\r\n".

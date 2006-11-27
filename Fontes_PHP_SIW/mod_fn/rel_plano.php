@@ -106,6 +106,7 @@ function Inicial() {
     HeaderWord();
     $w_pag=1;
     $w_linha=5;
+    ShowHTML('<BASE HREF="'.$conRootSIW.'">');
     if (substr($SG,2,1)=='R') {
       CabecalhoWord($w_cliente,'Contas a receber',$w_pag);
     } elseif (substr($SG,2,1)=='D') {

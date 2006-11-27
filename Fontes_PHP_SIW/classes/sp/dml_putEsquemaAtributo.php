@@ -10,7 +10,7 @@ include_once($w_dir_volta.'classes/db/DatabaseQueriesFactory.php');
 */
 
 class dml_putEsquemaAtributo {
-   function getInstanceOf($dbms, $operacao, $p_chave, $p_sq_esquema_tabela, $p_sq_coluna, $p_ordem, $p_campo_externo, $p_mascara_data, $p_valor_default) {
+   function getInstanceOf($dbms, $operacao, $p_chave, $p_sq_esquema_tabela, $p_sq_coluna, $p_ordem, $p_campo_externo, $p_mascara_data=null, $p_valor_default=null) {
      extract($GLOBALS,EXTR_PREFIX_SAME,'strchema'); $sql=$strschema.'SP_PUTESQUEMAATRIBUTO';
      $params=array('p_operacao'                  =>array(tvl($operacao),                                   B_VARCHAR,        10),
                    'p_chave'                     =>array(tvl($p_chave),                                    B_INTEGER,        32),

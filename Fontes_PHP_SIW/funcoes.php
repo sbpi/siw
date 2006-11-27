@@ -1,6 +1,6 @@
 <?
 setlocale(LC_ALL, 'pt_BR');
-date_default_timezone_set('America/Sao_Paulo');
+//date_default_timezone_set('America/Sao_Paulo');
 //$locale_info = localeconv();
 //echo "<pre>\n";
 //echo "--------------------------------------------\n";
@@ -520,28 +520,16 @@ function MontaOrdemEtapa($l_chave) {
 // Converte CFLF para <BR>
 // -------------------------------------------------------------------------
 function CRLF2BR($expressao) { 
+  $result = '';
   if (Nvl($expressao,'')=='') { 
     return ''; 
   } else { 
-    if (false!==strpos($expressao,'\n\r')) {
-      return str_replace('\n\r','<br>',$expressao); 
-    } elseif (false!==strpos($expressao,'\r\n')) {
-      return str_replace('\r\n','<br>',$expressao); 
-    } elseif (false!==strpos($expressao,'\r')) {
-      return str_replace('\r','<br>',$expressao); 
-    } elseif (false!==strpos($expressao,'\n')) {
-      return str_replace('\n','<br>',$expressao); 
-    } elseif (false!==strpos($expressao,chr(10).chr(13))) {
-      return str_replace(chr(10).chr(13),'<br>',$expressao); 
-    } elseif (false!==strpos($expressao,chr(13).chr(10))) {
-      return str_replace(chr(13).chr(10),'<br>',$expressao); 
-    } elseif (false!==strpos($expressao,chr(13))) {
-      return str_replace(chr(13),'<br>',$expressao); 
-    } elseif (false!==strpos($expressao,chr(10))) {
-      return str_replace(chr(10),'<br>',$expressao); 
-    } else {
-      return $expressao; 
-    }
+    $result = $expressao;
+    if (false!==strpos($result,chr(10).chr(13))) $result = str_replace(chr(10).chr(13),'<br>',$result); 
+    if (false!==strpos($result,chr(13).chr(10))) $result = str_replace(chr(13).chr(10),'<br>',$result); 
+    if (false!==strpos($result,chr(13)))         $result = str_replace(chr(13),'<br>',$result); 
+    if (false!==strpos($result,chr(10)))         $result = str_replace(chr(10),'<br>',$result); 
+    return str_replace('<br><br>','<br>',$result); 
   } 
 }
 
@@ -553,7 +541,7 @@ function Nvl($expressao,$valor) { if ((!isset($expressao)) || $expressao==='') {
 // =========================================================================
 // Retorna valores nulos se chegar cadeia vazia
 // -------------------------------------------------------------------------
-function Tvl($expressao) { if (!isset($expressao) || $expressao==='') { return  null; } else { return $expressao; } }
+function Tvl($expressao) { if (!isset($expressao) || $expressao==='' || $expressao===false) { return  null; } else { return $expressao; } }
 
 // =========================================================================
 // Retorna valores nulos se chegar cadeia vazia

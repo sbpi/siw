@@ -450,8 +450,8 @@ function BuscaColaborador() {
   Estrutura_CSS($w_cliente);
   ScriptOpen('JavaScript');
   ShowHTML('  function volta(l_chave) {');
-  ShowHTML('     opener.Form.'.$campo.'.value=l_chave;');
-  ShowHTML('     opener.Form.'.$campo.'.focus();');
+  ShowHTML('     opener.document.Form.'.$campo.'.value=l_chave;');
+  ShowHTML('     opener.document.Form.'.$campo.'.focus();');
   ShowHTML('     window.close();');
   ShowHTML('     opener.focus();');
   ShowHTML('   }');

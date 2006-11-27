@@ -104,6 +104,7 @@ function Inicial(){
     HeaderWord();
     $w_pag=1;
     $w_linha=5;
+    ShowHTML('<BASE HREF="'.$conRootSIW.'">');
     if (!(strpos($SG,'FLUXOPR')===false)) {
       CabecalhoWord($w_cliente,'Fluxo de Caixa Previsto',$w_pag);
     } elseif (!(strpos($SG,'FLUXORE')===false)) {

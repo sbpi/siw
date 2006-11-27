@@ -65,7 +65,8 @@ class dml_putXMLAcao_PPA {
      error_reporting(0); 
      if(!$l_rs->executeQuery()) { 
        error_reporting($l_error_reporting); 
-       TrataErro($sql, $l_rs->getError(), $params, __FILE__, __LINE__, __CLASS__); 
+       $Err = $l_rs->getError();
+       $p_resultado = $Err['message'];
      } else {
        error_reporting($l_error_reporting); 
        return true;

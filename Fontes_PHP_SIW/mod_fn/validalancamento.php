@@ -49,12 +49,52 @@ function ValidaLancamento($p_cliente,$l_chave,$p_sg1,$p_sg2,$p_sg3,$p_sg4,$p_tra
   } 
   // 2 - Verifica se o valor do lançamento é igual à soma dos valores dos documentos
   $l_rs1 = db_getLancamentoDoc::getInstanceOf($dbms,$l_chave,null,'LISTA');
-  if (count($l_rs1)<=0) $l_existe_rs1=0; else $l_existe_rs1=count($l_rs1);
+  if (count($l_rs1)<=0) {
+    $l_existe_rs1=0;
+  } else { 
+    $l_existe_rs1=count($l_rs1);    
+    foreach($l_rs1 as $l_row) {
+      if((nvl(f($l_rs_solic,'tipo_rubrica'),'')>'')&&(nvl(f($l_rs_solic,'tipo_rubrica'),0)<>5)) {
+        $l_rs2 = db_getLancamentoRubrica::getInstanceOf($dbms,null,f($l_row,'sq_lancamento_doc'),null,null);
+        if (count($l_rs2)<=0) $l_existe_rs2=0; else $l_existe_rs2=count($l_rs2);
+        if($l_existe_rs2>0) {
+          $l_valor_rubrica=0;
+          foreach($l_rs2 as $l_row2) {
+            $l_valor_rubrica += f($l_row2,'valor'); 
+          }
+          if (((f($l_row,'valor')!=$l_valor_rubrica) && count($l_rs2)!=0) && Nvl(f($l_rs_tramite,'ordem'),'---')<='3') {
+            $l_erro=$l_erro.'<li>'.f($l_row,'nm_tipo_documento').' - '.f($l_row,'numero').': Soma dos valores das rubricas(<b>R$ '.number_format(Nvl($l_valor_rubrica,0),2,',','.').'</b>) difere do valor do documento(<b>R$ '.number_format(Nvl(f($l_row,'valor'),0),2,',','.').'</b>).';
+            $l_tipo=0;
+          }          
+        }
+      } else {
+        $l_rs2 = db_getLancamentoItem::getInstanceOf($dbms,null,f($l_row,'sq_lancamento_doc'),null,null,null);
+        if (count($l_rs2)<=0) $l_existe_rs2=0; else $l_existe_rs2=count($l_rs2);
+        if (((f($l_row,'valor')!=f($l_row,'total_item')) && count($l_rs2)!=0) && Nvl(f($l_rs_tramite,'ordem'),'---')<='3') {
+          $l_erro=$l_erro.'<li>'.f($l_row,'nm_tipo_documento').' - '.f($l_row,'numero').': Soma dos valores dos itens(<b>R$ '.number_format(Nvl(f($l_row,'total_item'),0),2,',','.').'</b>) difere do valor do documento(<b>R$ '.number_format(Nvl(f($l_row,'valor'),0),2,',','.').'</b>).';
+          $l_tipo=0;
+        }
+      }
+    }
+  }
   if (((f($l_rs_solic,'valor')!=f($l_rs_solic,'valor_doc')) && count($l_rs1)!=0) && Nvl(f($l_rs_tramite,'ordem'),'---')<='2') {
     $l_erro=$l_erro.'<li>O valor do lançamento (<b>R$ '.number_format(Nvl(f($l_rs_solic,'valor'),0),2,',','.').'</b>) difere da soma dos valores dos documentos (<b>R$ '.number_format(Nvl(f($l_rs_solic,'valor_doc'),0),2,',','.').'</b>).';
     $l_tipo=0;
-  } 
-
+  }
+  if (nvl(f($l_rs_solic,'sq_projeto'),'')>'' && nvl(f($l_rs_solic,'tipo_rubrica'),'')<>1) {
+    $l_rs_rubrica = db_getSolicRubrica::getInstanceOf($dbms,f($l_rs_solic,'sq_projeto'),null,null,null,null,null);
+    if (count($l_rs_rubrica)>0) {
+      $l_rs_menu = db_getLinkData::getInstanceOf($dbms,$w_cliente,'FNREVENT');
+      $l_rs_tipo = db_getLancamentoProjeto::getInstanceOf($dbms,f($l_rs_solic,'sq_projeto'),f($l_rs_menu,'sq_menu'),null);
+      foreach($l_rs_tipo as $l_row){$l_rs_tipo=$l_row; break;}
+      if (count($l_rs_tipo)>0) {
+        if (f($l_rs_tipo,'sg_tramite')<>'AT') {
+          $l_erro=$l_erro.'<li>Para a execução de novos lançamentos para o projeto <b>'.f($l_rs_solic,'nm_projeto').'</b>, o lançamento de dotação inicial deve estar liquidado.';
+          $l_tipo=0;        
+        }
+      }
+    }
+  }  
   if (count($l_rs_tramite)>0) {
     // Recupera os dados da pessoa
     $l_rs1 = db_getBenef::getInstanceOf($dbms,$p_cliente,Nvl(f($l_rs_solic,'pessoa'),0),null,null,null,null,null,null);
@@ -107,13 +147,26 @@ function ValidaLancamento($p_cliente,$l_chave,$p_sg1,$p_sg2,$p_sg3,$p_sg4,$p_tra
           $l_erro=$l_erro.'<li>Não foram informados documentos para o lançamento. Informe pelo menos um.';
           $l_tipo=0;
         } else {
+          if ($l_existe_rs2==0) {
+            // 7 - Verifica se foi informado pelo menos um item no documento
+            $l_erro=$l_erro.'<li>Não foram informados itens para o documento. Informe pelo menos um.';
+            $l_tipo=0;
+          } 
           // 6 - Verifica se o valor do lançamento é igual à soma dos valores dos documentos
           if (f($l_rs_solic,'valor')!=f($l_rs_solic,'valor_doc')) {
             $l_erro=$l_erro.'<li>O valor do lançamento (<b>R$ '.number_format(Nvl(f($l_rs_solic,'valor'),0),2,',','.').'</b>) difere da soma dos valores dos documentos (<b>R$ '.number_format(Nvl(f($l_rs_solic,'valor_doc'),0),2,',','.').'</b>).';
             $l_tipo=1;
           } 
         }
-      } 
+      } elseif ((Nvl(f($l_rs_tramite,'sigla'),'---')=='AT')&&(Nvl(f($l_rs_solic,'tipo_rubrica'),0)==1)) {
+        // Verifica se o tipo de movimentação é dotação inicial e se for nao pode haver retorno 
+        // para fases anteriores se houver outros lancamentos ativos.
+        $l_rs1 = db_getLancamentoProjeto::getInstanceOf($dbms,f($l_rs_solic,'sq_projeto'),f($l_rs_solic,'sq_menu'),'LANCAMENTOS');
+        if(count($l_rs1)>0) {
+          $l_erro=$l_erro.'<li>O envio deste lançamento só pode ser feito após o cancelamento de todos os outros lançamentos deste projeto.';
+          $l_tipo=0;
+        }
+      }
     } 
   } 
   $l_erro=$l_tipo.$l_erro;
