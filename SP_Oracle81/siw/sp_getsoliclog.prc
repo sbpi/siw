@@ -303,6 +303,32 @@ begin
                and b.sq_siw_solic_log   is null
                and b.sq_siw_solicitacao = p_chave;
       End If;
+   Elsif w_modulo = 'SR' Then -- Se for o módulo de recursos logísticos
+      If p_restricao = 'LISTA' Then
+         -- Recupera os encaminhamentos de uma demanda
+         open p_result for 
+            select a.sq_siw_solic_log, a.sq_siw_tramite,a.data, a.observacao,
+                   c.nome_resumido responsavel,
+                   c.sq_pessoa,
+                   f.nome fase, 
+                   e.nome tramite,
+                   k.sq_siw_arquivo, k.caminho, k.tipo, k.tamanho, 
+                   to_char(a.data, 'DD/MM/YYYY, HH24:MI:SS') phpdt_data
+              from siw_solic_log     a,
+                   co_pessoa         c,
+                   siw_tramite       e,
+                   siw_solicitacao   g,
+                   siw_tramite       f,
+                   siw_solic_log_arq j,
+                   siw_arquivo       k
+             where a.sq_siw_solicitacao  = p_chave
+               and (a.sq_pessoa          = c.sq_pessoa)
+               and (a.sq_siw_tramite     = e.sq_siw_tramite)
+               and (a.sq_siw_solicitacao = g.sq_siw_solicitacao)
+               and (g.sq_siw_tramite     = f.sq_siw_tramite)
+               and (a.sq_siw_solic_log   = j.sq_siw_solic_log (+))
+               and (j.sq_siw_arquivo     = k.sq_siw_arquivo (+));
+      End If;
    End If;
 End SP_GetSolicLog;
 /

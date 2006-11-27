@@ -35,7 +35,7 @@ begin
                  c.sq_pessoa      = p_cliente
                 )
             and (c.sq_modulo      = b.sq_modulo)
-            and e.ativo = 'S'
+            and (e.ativo = 'S' or (e.sigla = 'AT' and d.solicitante = p_usuario and c.consulta_opiniao = 'S' and d.opiniao is null))
             and (d.sq_siw_solicitacao = f.sq_siw_solicitacao)
             and ((c.destinatario = 'S' and d.executor = p_usuario) or (c.destinatario = 'N' and f.acesso > 15))
             and 'CI'    <> Nvl(e.sigla,'nulo')

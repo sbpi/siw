@@ -32,7 +32,7 @@ begin
                                                      c.sq_pessoa      = p_cliente
                                                     ) 
                     inner join siw_modulo      b on (c.sq_modulo      = b.sq_modulo)
-          where e.ativo = 'S' 
+          where (e.ativo = 'S' or (e.sigla = 'AT' and d.solicitante = p_usuario and c.consulta_opiniao = 'S' and d.opiniao is null))
             and ((c.destinatario = 'S' and d.executor = p_usuario) or (c.destinatario = 'N' and f.acesso > 15))
             and 'CI'    <> Nvl(e.sigla,'nulo')
             and (c.controla_ano = 'N' or (c.controla_ano = 'S' and d.ano = p_ano))

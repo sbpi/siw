@@ -82,8 +82,7 @@ begin
                 a.sq_unid_executora,  a.finalidade,                  a.arquivo_proced,
                 a.emite_os,           a.consulta_opiniao,            a.envia_email,
                 a.exibe_relatorio,    a.vinculacao,                  a.data_hora,
-                a.data_hora,          a.envia_dia_util,              a.descricao,
-                a.justificativa,
+                a.envia_dia_util,     a.descricao,                   a.justificativa,
                 a1.nome nm_modulo,    a1.sigla sg_modulo,            a1.objetivo_geral,
                 a2.sq_tipo_unidade tp_exec, a2.nome nm_unidade_exec, a2.informal informal_exec,
                 a2.vinculada vinc_exec,a2.adm_central adm_exec,
@@ -92,7 +91,7 @@ begin
                 b.cadastrador,        b.executor,                    b.descricao,
                 b.justificativa,      b.inicio,                      b.fim,
                 b.inclusao,           b.ultima_alteracao,            b.conclusao,
-                b.valor,              b.data_hora,                   b.opiniao,
+                b.valor,              b.opiniao,
                 b.sq_solic_pai,       b.sq_unidade,                  b.sq_cidade_origem,
                 b.palavra_chave,
                 b1.sq_siw_tramite,    b1.nome nm_tramite,            b1.ordem or_tramite,
@@ -238,8 +237,7 @@ begin
                 a.sq_unid_executora,  a.finalidade,                  a.arquivo_proced,
                 a.emite_os,           a.consulta_opiniao,            a.envia_email,
                 a.exibe_relatorio,    a.vinculacao,                  a.data_hora,
-                a.data_hora,          a.envia_dia_util,              a.descricao,
-                a.justificativa,
+                a.envia_dia_util,     a.descricao,                   a.justificativa,
                 a1.nome nm_modulo,    a1.sigla sg_modulo,            a1.objetivo_geral,
                 a2.sq_tipo_unidade tp_exec, a2.nome nm_unidade_exec, a2.informal informal_exec,
                 a2.vinculada vinc_exec,a2.adm_central adm_exec,
@@ -248,7 +246,7 @@ begin
                 b.cadastrador,        b.executor,                    b.descricao,
                 b.justificativa,      b.inicio,                      b.fim,
                 b.inclusao,           b.ultima_alteracao,            b.conclusao,
-                b.valor,              b.data_hora,                   b.opiniao,
+                b.valor,              b.opiniao,
                 b.sq_solic_pai,       b.sq_unidade,                  b.sq_cidade_origem,
                 b.palavra_chave,
                 b1.sq_siw_tramite,    b1.nome nm_tramite,            b1.ordem or_tramite,
@@ -400,8 +398,7 @@ begin
                 a.sq_unid_executora,  a.finalidade,                  a.arquivo_proced,
                 a.emite_os,           a.consulta_opiniao,            a.envia_email,
                 a.exibe_relatorio,    a.vinculacao,                  a.data_hora,
-                a.data_hora,          a.envia_dia_util,              a.descricao,
-                a.justificativa,
+                a.envia_dia_util,     a.descricao,                   a.justificativa,
                 a1.nome nm_modulo,    a1.sigla sg_modulo,            a1.objetivo_geral,
                 a2.sq_tipo_unidade tp_exec, a2.nome nm_unidade_exec, a2.informal informal_exec,
                 a2.vinculada vinc_exec,a2.adm_central adm_exec,
@@ -410,7 +407,7 @@ begin
                 b.cadastrador,        b.executor,                    b.descricao,
                 b.justificativa,      b.inicio,                      b.fim,
                 b.inclusao,           b.ultima_alteracao,            b.conclusao,
-                b.valor,              b.data_hora,                   b.opiniao,
+                b.valor,              b.opiniao,
                 b.sq_solic_pai,       b.sq_unidade,                  b.sq_cidade_origem,
                 b.palavra_chave,
                 b1.sq_siw_tramite,    b1.nome nm_tramite,            b1.ordem or_tramite,
@@ -462,9 +459,13 @@ begin
                 (select x.sq_siw_solicitacao, sum(z.valor) valor
                    from ac_acordo_parcela x,
                         fn_lancamento     y,
-                        siw_solicitacao   z
+                        siw_solicitacao   z,
+                        siw_tramite       w
                   where (x.sq_acordo_parcela  = y.sq_acordo_parcela)
                     and (y.sq_siw_solicitacao = z.sq_siw_solicitacao)
+                    and (z.sq_siw_tramite     = w.sq_siw_tramite and
+                         nvl(w.sigla,'---')   <> 'CA'
+                        )
                     and x.quitacao            is not null
                  group by x.sq_siw_solicitacao
                 )                         d8,
@@ -615,19 +616,19 @@ begin
                 a.sq_unid_executora,  a.finalidade,                  a.arquivo_proced,
                 a.emite_os,           a.consulta_opiniao,            a.envia_email,
                 a.exibe_relatorio,    a.vinculacao,                  a.data_hora,
-                a.data_hora,          a.envia_dia_util,              a.descricao,
-                a.justificativa,
+                a.envia_dia_util,     a.descricao,                   a.justificativa,
                 a1.nome nm_modulo,    a1.sigla sg_modulo,            a1.objetivo_geral,
-                a2.sq_tipo_unidade tp_exec, a2.nome nm_unidade_exec,       a2.informal informal_exec,
+                a2.sq_tipo_unidade tp_exec, a2.nome nm_unidade_exec, a2.informal informal_exec,
                 a2.vinculada vinc_exec,a2.adm_central adm_exec,
                 a3.sq_pessoa tit_exec,a4.sq_pessoa subst_exec,
                 b.sq_siw_solicitacao, b.sq_siw_tramite,              b.solicitante,
                 b.cadastrador,        b.executor,                    b.descricao,
                 b.justificativa,      b.inicio,                      b.fim,
                 b.inclusao,           b.ultima_alteracao,            b.conclusao,
-                b.data_hora,          b.opiniao,                     b.sq_solic_pai,
+                b.opiniao,                     b.sq_solic_pai,
                 b.sq_unidade,         b.sq_cidade_origem,            b.palavra_chave,
                 b.valor,
+                decode(nvl(b1.sigla,'--'), 'AT', b.valor, 0) valor_atual,
                 b1.sq_siw_tramite,    b1.nome nm_tramite,            b1.ordem or_tramite,
                 b1.sigla sg_tramite,  b1.ativo,
                 c.sq_tipo_unidade,    c.nome nm_unidade_exec,        c.informal,
@@ -639,6 +640,7 @@ begin
                 d.valor_retencao,     d.valor_liquido,               d.aviso_prox_conc,
                 d.dias_aviso,         d.sq_tipo_pessoa,
                 d2.nome nm_pessoa,    d2.nome_resumido nm_pessoa_resumido,
+                d2.nome_resumido_ind nm_pessoa_resumido_ind,
                 Nvl(d3.valor,0) valor_doc,
                 d4.sq_pessoa_conta,   d4.operacao,                   d4.numero nr_conta,
                 d5.sq_agencia,        d5.codigo cd_agencia,          d5.nome nm_agencia,
@@ -780,6 +782,19 @@ begin
                  (p_tipo         = 4     and InStr(l_resp_unid,''''||b.sq_unidade||'''') > 0) or
                  (p_tipo         = 5) or
                  (p_tipo         = 6     and b1.ativo          = 'S' and b2.acesso > 0)
+                )
+            and ((instr(p_restricao,'PROJ')    = 0 and
+                  instr(p_restricao,'ETAPA')   = 0 and
+                  instr(p_restricao,'PROP')    = 0 and
+                  instr(p_restricao,'RESPATU') = 0 and
+                  substr(p_restricao,4,2)      <>'CC'
+                 ) or 
+                 ((instr(p_restricao,'PROJ')    > 0    and q.sq_siw_solicitacao is not null) or
+                  --(instr(p_restricao,'ETAPA')   > 0    and MontaOrdem(q.sq_projeto_etapa)  is not null) or                 
+                  (instr(p_restricao,'PROP')    > 0    and d.pessoa       is not null) or
+                  (instr(p_restricao,'RESPATU') > 0    and b.executor     is not null) or
+                  (substr(p_restricao,4,2)      ='CC'  and b.sq_cc        is not null)
+                 )
                 );
    Elsif substr(p_restricao,1,2) = 'PD' or Substr(p_restricao,1,4) = 'GRPD' Then
       -- Recupera as viagens que o usuário pode ver
@@ -792,17 +807,16 @@ begin
                 a.sq_unid_executora,  a.finalidade,                  a.arquivo_proced,
                 a.emite_os,           a.consulta_opiniao,            a.envia_email,
                 a.exibe_relatorio,    a.vinculacao,                  a.data_hora,
-                a.data_hora,          a.envia_dia_util,              a.descricao,
-                a.justificativa,
+                a.envia_dia_util,     a.descricao,                   a.justificativa,
                 a1.nome nm_modulo,    a1.sigla sg_modulo,            a1.objetivo_geral,
-                a2.sq_tipo_unidade tp_exec, a2.nome nm_unidade_exec,       a2.informal informal_exec,
+                a2.sq_tipo_unidade tp_exec, a2.nome nm_unidade_exec, a2.informal informal_exec,
                 a2.vinculada vinc_exec,a2.adm_central adm_exec,
                 a3.sq_pessoa tit_exec,a4.sq_pessoa subst_exec,
                 b.sq_siw_solicitacao, b.sq_siw_tramite,              b.solicitante,
                 b.cadastrador,        b.executor,                    b.descricao,
                 b.justificativa,      b.inicio,                      b.fim,
                 b.inclusao,           b.ultima_alteracao,            b.conclusao,
-                b.data_hora,          b.opiniao,                     b.sq_solic_pai,
+                b.opiniao,            b.sq_solic_pai,
                 b.sq_unidade,         b.sq_cidade_origem,            b.palavra_chave,
                 b.valor,              b.fim-d.dias_aviso aviso,
                 b1.sq_siw_tramite,    b1.nome nm_tramite,            b1.ordem or_tramite,
@@ -944,6 +958,127 @@ begin
             and (Nvl(p_atraso,'N') = 'N'  or (p_atraso      = 'S'       and d.concluida          = 'N' and b.fim+1-sysdate<0))            
             and ((p_tipo         = 1     and Nvl(b1.sigla,'-') = 'CI'   and b.cadastrador        = p_pessoa) or
                  (p_tipo         = 2     and b1.ativo = 'S' and Nvl(b1.sigla,'-') <> 'CI' and b.executor = p_pessoa and b.conclusao is null) or
+                 (p_tipo         = 2     and b1.ativo = 'S' and Nvl(b1.sigla,'-') <> 'CI' and b2.acesso > 15) or
+                 (p_tipo         = 3     and b2.acesso > 0) or
+                 (p_tipo         = 3     and InStr(l_resp_unid,''''||b.sq_unidade||'''') > 0) or
+                 (p_tipo         = 4     and Nvl(b1.sigla,'-') <> 'CA') or
+                 (p_tipo         = 5) or
+                 (p_tipo         = 6     and b1.ativo          = 'S' and b2.acesso > 0)
+                );
+   Elsif Substr(p_restricao,1,2) = 'SR' or Substr(p_restricao,1,4) = 'GRSR' Then
+      -- Recupera as demandas que o usuário pode ver
+      open p_result for 
+         select a.sq_menu,            a.sq_modulo,                   a.nome,
+                a.tramite,            a.ultimo_nivel,                a.p1,
+                a.p2,                 a.p3,                          a.p4,
+                a.sigla,              a.descentralizado,             a.externo,
+                a.acesso_geral,       a.como_funciona,               a.acompanha_fases,
+                a.sq_unid_executora,  a.finalidade,                  a.arquivo_proced,
+                a.emite_os,           a.consulta_opiniao,            a.envia_email,
+                a.exibe_relatorio,    a.vinculacao,                  a.data_hora,
+                a.envia_dia_util,     a.descricao,                   a.justificativa,
+                a1.nome nm_modulo,    a1.sigla sg_modulo,            a1.objetivo_geral,
+                a2.sq_tipo_unidade tp_exec, a2.nome nm_unidade_exec, a2.informal informal_exec,
+                a2.vinculada vinc_exec,a2.adm_central adm_exec,
+                a3.sq_pessoa tit_exec,a4.sq_pessoa subst_exec,
+                b.sq_siw_solicitacao, b.sq_siw_tramite,              b.solicitante,
+                b.cadastrador,        b.executor,                    b.descricao,
+                b.justificativa,      b.inicio,                      b.fim,
+                b.inclusao,           b.ultima_alteracao,            b.conclusao,
+                b.valor,              b.opiniao,
+                b.sq_solic_pai,       b.sq_unidade,                  b.sq_cidade_origem,
+                b.palavra_chave,
+                to_char(b.inclusao,'dd/mm/yyyy, hh24:mi:ss') phpdt_inclusao,
+                to_char(b.inicio,'dd/mm/yyyy, hh24:mi:ss') phpdt_inicio,
+                to_char(b.fim,'dd/mm/yyyy, hh24:mi:ss') phpdt_fim,
+                b1.sq_siw_tramite,    b1.nome nm_tramite,            b1.ordem or_tramite,
+                b1.sigla sg_tramite,  b1.ativo,
+                b3.nome nm_opiniao,
+                c.sq_tipo_unidade,    c.nome nm_unidade_exec,        c.informal,
+                c.vinculada,          c.adm_central,
+                e.sq_tipo_unidade,    e.nome nm_unidade_resp,        e.informal informal_resp,
+                e.vinculada vinc_resp,e.adm_central adm_resp,        e.sigla sg_unidade_resp,
+                e1.sq_pessoa titular, e2.sq_pessoa substituto,
+                f.sq_pais,            f.sq_regiao,                   f.co_uf,
+                n.sq_cc,              n.nome nm_cc,                  n.sigla sg_cc,
+                o.nome_resumido nm_solic, o.nome_resumido||' ('||o2.sigla||')' nm_resp,
+                o.nome_resumido_ind nm_solic_ind,
+                p.nome_resumido nm_exec, p.nome_resumido_ind nm_exec_ind
+           from siw_menu             a,
+                eo_unidade           a2,
+                eo_unidade_resp      a3,
+                eo_unidade_resp      a4,
+                siw_modulo           a1,
+                eo_unidade           c,
+                siw_solicitacao      b, 
+                siw_tramite          b1,
+                siw_opiniao          b3,
+                (select sq_siw_solicitacao, acesso(sq_siw_solicitacao, p_pessoa) acesso
+                   from siw_solicitacao
+                )                    b2,
+                eo_unidade           e,
+                eo_unidade_resp      e1,
+                eo_unidade_resp      e2,
+                co_cidade            f,
+                ct_cc                n,
+                co_pessoa            o,
+                sg_autenticacao      o1,
+                eo_unidade           o2,
+                co_pessoa            p,
+                (select sq_siw_solicitacao, max(sq_siw_solic_log) chave 
+                   from siw_solic_log
+                 group by sq_siw_solicitacao
+                )               j
+          where (a.sq_unid_executora        = a2.sq_unidade)
+            and (a2.sq_unidade              = a3.sq_unidade (+) and
+                 a3.tipo_respons (+)        = 'T'               and
+                 a3.fim (+)                 is null
+                )
+            and (a2.sq_unidade              = a4.sq_unidade (+) and
+                 a4.tipo_respons  (+)       = 'S'           and
+                 a4.fim (+)                 is null
+                )
+            and (a.sq_modulo                = a1.sq_modulo)
+            and (a.sq_unid_executora        = c.sq_unidade (+))
+            and (a.sq_menu                  = b.sq_menu)
+            and (b.sq_siw_tramite           = b1.sq_siw_tramite)
+            and (b.opiniao                  = b3.sq_siw_opiniao (+))
+            and (b.sq_siw_solicitacao       = b2.sq_siw_solicitacao)
+            and (b.sq_unidade               = e.sq_unidade)
+            and (e.sq_unidade               = e1.sq_unidade (+) and
+                 e1.tipo_respons (+)        = 'T'           and
+                 e1.fim (+)                 is null)
+            and (e.sq_unidade               = e2.sq_unidade (+) and
+                 e2.tipo_respons (+)        = 'S'           and
+                 e2.fim  (+)                is null)
+            and (b.sq_cidade_origem         = f.sq_cidade)
+            and (b.sq_cc                    = n.sq_cc (+))
+            and (b.solicitante              = o.sq_pessoa)
+            and (o.sq_pessoa                = o1.sq_pessoa)
+            and (o1.sq_unidade              = o2.sq_unidade)
+            and (b.executor                 = p.sq_pessoa (+))
+            and (b.sq_siw_solicitacao       = j.sq_siw_solicitacao)
+            and a.sq_menu         = decode(p_menu, 0, a.sq_menu, p_menu)
+            and a1.sigla          = substr(p_restricao,1,2)
+            and (p_chave          is null or (p_chave       is not null and b.sq_siw_solicitacao = p_chave))
+            and (p_pais           is null or (p_pais        is not null and f.sq_pais            = p_pais))
+            and (p_regiao         is null or (p_regiao      is not null and f.sq_regiao          = p_regiao))
+            and (p_uf             is null or (p_uf          is not null and f.co_uf              = p_uf))
+            and (p_cidade         is null or (p_cidade      is not null and f.sq_cidade          = p_cidade))
+            and (p_usu_resp       is null or (p_usu_resp    is not null and (b.executor          = p_usu_resp or 0 < (select count(*) from gd_demanda_log where destinatario = p_usu_resp and sq_siw_solicitacao = b.sq_siw_solicitacao))))
+            and (p_uorg_resp      is null or (p_uorg_resp   is not null and a.sq_unid_executora  = p_uorg_resp))
+            and (p_sqcc           is null or (p_sqcc        is not null and b.sq_cc              = p_sqcc))
+            and (p_assunto        is null or (p_assunto     is not null and acentos(b.descricao,null) like '%'||acentos(p_assunto,null)||'%'))
+            and (p_prioridade     is null or (p_prioridade  is not null and b.conclusao          is not null and b.opiniao is not null and b.opiniao = p_prioridade))
+            and (p_fase           is null or (p_fase        is not null and InStr(x_fase,b.sq_siw_tramite) > 0))
+            and (p_prazo          is null or (p_prazo       is not null and b.conclusao          is null and b.fim-sysdate+1 <=p_prazo))
+            and (p_ini_i          is null or (p_ini_i       is not null and (trunc(b.inicio)     between p_ini_i and p_ini_f)))
+            and (p_fim_i          is null or (p_fim_i       is not null and (trunc(b.fim)        between p_fim_i and p_fim_f)))
+            and (Nvl(p_atraso,'N') = 'N'  or (p_atraso      = 'S'       and b.conclusao          is null and b.fim-sysdate<0))
+            and (p_unidade        is null or (p_unidade     is not null and b.sq_unidade         = p_unidade))
+            and (p_solicitante    is null or (p_solicitante is not null and b.solicitante        = p_solicitante))
+            and ((p_tipo         = 1     and Nvl(b1.sigla,'-') = 'CI'   and b.cadastrador        = p_pessoa) or
+                 (p_tipo         = 2     and Nvl(b1.sigla,'-') = 'AT'   and b.solicitante        = p_pessoa and a.consulta_opiniao = 'S' and b.opiniao is null) or
                  (p_tipo         = 2     and b1.ativo = 'S' and Nvl(b1.sigla,'-') <> 'CI' and b2.acesso > 15) or
                  (p_tipo         = 3     and b2.acesso > 0) or
                  (p_tipo         = 3     and InStr(l_resp_unid,''''||b.sq_unidade||'''') > 0) or

@@ -51,7 +51,9 @@ create or replace procedure SP_PutAcordoGeral
    w_inicio_vigencia_original  date;
    w_meses_parcela_original    number(4);
    w_data                      date;
-
+   w_sigla                     varchar2(20);
+   w_vincula_projeto           varchar2(1) := 'N';
+   
    cursor c_arquivos is
       select sq_siw_arquivo from siw_solic_arquivo where sq_siw_solicitacao = p_chave;
    
@@ -81,18 +83,25 @@ begin
           and a.sigla   = 'CI'
       );
       
+
+      -- Verifica se é convênio ou contrato de receita. Se for, o padrão é permitir a vinculação de projeto.
+      select sigla into w_sigla from siw_menu where sq_menu = p_menu;
+      if substr(w_sigla,1,3) = 'GCC' or substr(w_sigla,1,3) = 'GCR' then w_vincula_projeto := 'S'; end if;
+      
       -- Insere registro em AC_ACORDO
       Insert into ac_acordo
          ( sq_siw_solicitacao,  cliente,           sq_tipo_acordo,       inicio,
            fim,                 valor_inicial,     objeto,               aviso_prox_conc,     
            dias_aviso,          sq_tipo_pessoa,    sq_forma_pagamento,   empenho,
-           processo,            assinatura,        publicacao,           codigo_interno
+           processo,            assinatura,        publicacao,           codigo_interno,
+           vincula_projeto
          )
       (select
            w_chave,             p_cliente,         p_sq_tipo_acordo,     p_inicio,
            p_fim,               p_valor,           p_objeto,             p_aviso,
            p_dias,              p_sq_tipo_pessoa,  p_sq_forma_pagamento, p_numero_empenho,
-           p_numero_processo,   p_assinatura,      p_publicacao,         p_codigo
+           p_numero_processo,   p_assinatura,      p_publicacao,         p_codigo,
+           w_vincula_projeto
         from dual
       );
 

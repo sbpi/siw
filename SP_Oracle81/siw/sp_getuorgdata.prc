@@ -11,11 +11,13 @@ begin
              a.nome, a.sigla, a.ordem,
              a.informal, a.vinculada, a.adm_central, a.Unidade_Gestora,
              a.codigo, a.ativo, a.sq_tipo_unidade, a.Unidade_Pagadora, a.email,
-             b.nome nm_tipo_unidade
-        from eo_unidade                 a,
-             eo_tipo_unidade b
-       where (a.sq_tipo_unidade = b.sq_tipo_unidade)
-         and sq_unidade = p_sq_unidade;
+             b.nome nm_tipo_unidade,
+             c.sq_cidade
+        from eo_unidade         a,
+             eo_tipo_unidade    b,
+             co_pessoa_endereco c
+       where (a.sq_tipo_unidade    = b.sq_tipo_unidade)
+         and (a.sq_pessoa_endereco = c.sq_pessoa_endereco)
+         and sq_unidade            = p_sq_unidade;
 end SP_GetUorgData;
 /
-

@@ -1,7 +1,8 @@
 create or replace procedure SP_GetMenuList
    (p_cliente   in  number,
     p_operacao  in  varchar2,
-    p_chave     in  number default null,
+    p_chave     in  number   default null,
+    p_modulo    in  varchar2 default null,
     p_result    out siw.sys_refcursor
    ) is
 begin
@@ -22,13 +23,14 @@ begin
       -- Recupera os links vinculados a serviços
       open p_result for
         select a.sq_menu,
-               decode(a.sq_modulo,null,a.nome,a.nome||' ('||b.nome||')') nome,
+               decode(a.sq_modulo,null,a.nome,decode(p_modulo,null,a.nome||' ('||b.nome||')',a.nome)) nome,
                a.acesso_geral, a.ultimo_nivel, a.tramite
           from siw_menu              a,
                siw_modulo b
          where (a.sq_modulo = b.sq_modulo)
            and a.sq_pessoa = p_cliente
            and a.tramite   = 'S'
+           and b.sigla     = decode(p_modulo,null,b.sigla,p_modulo)
         order by acentos(a.nome);
    Elsif upper(p_operacao) = 'XVINC' Then
       -- Recupera os links vinculados a serviços
