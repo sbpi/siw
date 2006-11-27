@@ -54,6 +54,9 @@ $conPageSize	= 30;
 
 //---------------------------Configuração do ambiente do sistema
 
+// Define se o serviço de envio automático de e-mails deve ser ativado (true) fou não (false)
+$conEnviaMail   = true;
+
 $crlf           = chr(13).chr(10);
 $conSgSistema   = 'SIW';
 $conDefaultPath = 'http://www.sbpi.com.br';
