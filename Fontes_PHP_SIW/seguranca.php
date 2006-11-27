@@ -1084,7 +1084,7 @@ function Menu() {
     ShowHTML('          <OPTION VALUE="">---');
     // Recupera as opções existentes
 
-    $RS = db_getMenuList::getInstanceOf($dbms, $w_cliente, $O, $null);
+    $RS = db_getMenuList::getInstanceOf($dbms, $w_cliente, $O, null, null);
     foreach($RS as $row) {
       ShowHTML('          <OPTION VALUE='.f($row,'sq_menu').'>'.f($row,'nome'));
     } 
@@ -1461,7 +1461,7 @@ function Visao() {
     ShowHTML('<tr bgcolor="'.$conTrBgColor.'"><td align="center">');
     ShowHTML('    <table width="90%" border="0">');
     ShowHTML('      <tr valign="top">');
-    selecaoServico('<U>S</U>erviço:', 'S', null, $w_sq_menu, null, 'w_sq_menu', null, 'onChange="document.Form.action=\''.$w_pagina.$par.'\'; document.Form.O.value=\''.$O.'\'; document.Form.w_troca.value=\'w_sq_menu\'; document.Form.submit();"');
+    selecaoServico('<U>S</U>erviço:', 'S', null, $w_sq_menu, null, null, 'w_sq_menu', null, 'onChange="document.Form.action=\''.$w_pagina.$par.'\'; document.Form.O.value=\''.$O.'\'; document.Form.w_troca.value=\'w_sq_menu\'; document.Form.submit();"');
     ShowHTML('         <td><b>Classificações</b>:<br>');
     // Apresenta a seleção de centros de custo apenas se tiver sido escolhido o serviço
     $w_ContOut=0;

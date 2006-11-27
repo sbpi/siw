@@ -561,7 +561,7 @@ function Vinculacao() {
     ShowHTML('<tr bgcolor="'.$conTrBgColor.'"><td align="center">');
     ShowHTML('    <table width="90%" border="0">');
     ShowHTML('      <tr valign="top">');
-    selecaoServico('<U>S</U>erviço:', 'S', null, $w_sq_menu_fornec, $w_sq_menu, 'w_sq_menu_fornec', null, 'onChange="document.Form.action=\''.$w_pagina.$par.'\'; document.Form.O.value=\''.$O.'\'; document.Form.w_troca.value=\'w_sq_menu_fornec\'; document.Form.submit();"');
+    selecaoServico('<U>S</U>erviço:', 'S', null, $w_sq_menu_fornec, $w_sq_menu, null, 'w_sq_menu_fornec', null, 'onChange="document.Form.action=\''.$w_pagina.$par.'\'; document.Form.O.value=\''.$O.'\'; document.Form.w_troca.value=\'w_sq_menu_fornec\'; document.Form.submit();"');
     SelecaoFaseCheck('<u>T</u>râmites','T',null,$w_sq_tramite,$w_sq_menu_fornec,'w_sq_tramite[]','MENURELAC',null);
     ShowHTML('      <tr><td colspan=2><b><U>A</U>ssinatura Eletrônica:<br><INPUT ACCESSKEY="A" class="sti" type="PASSWORD" name="w_assinatura" size="30" maxlength="30" value=""></td>');
     ShowHTML('      </table>');

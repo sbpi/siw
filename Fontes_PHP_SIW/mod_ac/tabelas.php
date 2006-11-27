@@ -19,7 +19,6 @@ include_once($w_dir_volta.'classes/sp/dml_putAgreeType.php');
 include_once($w_dir_volta.'classes/sp/dml_putFormaPagamento.php');
 include_once($w_dir_volta.'classes/sp/dml_putFormaPagamentoVinc.php');
 include_once($w_dir_volta.'funcoes/selecaoTipoAcordo.php');
-include_once($w_dir_volta.'funcoes/selecaoServico.php');
 
 // =========================================================================
 //  /tabelas.php

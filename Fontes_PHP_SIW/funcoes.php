@@ -1,6 +1,6 @@
 <?
 setlocale(LC_ALL, 'pt_BR');
-//date_default_timezone_set('America/Sao_Paulo');
+date_default_timezone_set('America/Sao_Paulo');
 //$locale_info = localeconv();
 //echo "<pre>\n";
 //echo "--------------------------------------------\n";
@@ -904,14 +904,16 @@ function EnviaMail($w_subject,$w_mensagem,$w_recipients,$w_attachments = null) {
   }
 
   //send your e-mail
-  if (!$_mail->Send()) {
-    if (strtoupper(substr(PHP_OS,0,3)=='WIN') || strtoupper(substr(PHP_OS,0,5)=='LINUX')) {
-      return 'ERRO: ocorreu algum erro no envio da mensagem. Verifique as configurações de SMTP';
+  if ($conEnviaMail) {
+    if (!$_mail->Send()) {
+      if (strtoupper(substr(PHP_OS,0,3)=='WIN') || strtoupper(substr(PHP_OS,0,5)=='LINUX')) {
+        return 'ERRO: ocorreu algum erro no envio da mensagem. Verifique as configurações de SMTP';
+      } else {
+        return null;
+      }
     } else {
-      return null;
+       return null;
     }
-  } else {
-     return null;
   }
 }
 

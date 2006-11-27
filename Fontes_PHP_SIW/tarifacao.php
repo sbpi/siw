@@ -29,7 +29,6 @@ include_once('funcoes/selecaoUnidade.php');
 include_once('funcoes/selecaoEstado.php');
 include_once('funcoes/selecaoModulo.php');
 include_once('funcoes/selecaoEndereco.php');
-include_once('funcoes/selecaoServico.php');
 include_once('funcoes/selecaoMenu.php');
 include_once('funcoes/selecaoCC.php');
 include_once('funcoes/selecaoPessoa.php');
