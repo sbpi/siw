@@ -2028,6 +2028,7 @@ SP_Oracle81/siw/sp_putlcsituacao.prc -text
 SP_Oracle81/siw/sp_putlcunidade.prc -text
 SP_Oracle81/siw/sp_putlcunidadefornec.prc -text
 SP_Oracle81/siw/sp_putmenurelac.prc -text
+SP_Oracle81/siw/sp_putopiniao.prc -text
 SP_Oracle81/siw/sp_putorimport.prc -text
 SP_Oracle81/siw/sp_putorprioridade.prc -text
 SP_Oracle81/siw/sp_putprocedure.prc -text
@@ -3197,6 +3198,7 @@ SP_Oracle92/siw/sp_putlcsituacao.prc -text
 SP_Oracle92/siw/sp_putlcunidade.prc -text
 SP_Oracle92/siw/sp_putlcunidadefornec.prc -text
 SP_Oracle92/siw/sp_putmenurelac.prc -text
+SP_Oracle92/siw/sp_putopiniao.prc -text
 SP_Oracle92/siw/sp_putorimport.prc -text
 SP_Oracle92/siw/sp_putorprioridade.prc -text
 SP_Oracle92/siw/sp_putprocedure.prc -text
