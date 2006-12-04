@@ -13,6 +13,7 @@ begin
            from siw_opiniao   a
       where a.cliente     = p_cliente
         and ((p_chave     is null) or (p_chave     is not null and a.sq_siw_opiniao = p_chave))
+        and ((p_sigla     is null) or (p_sigla     is not null and a.sigla          = p_sigla))
         and ((p_nome      is null) or (p_nome      is not null and a.nome = p_nome));
 
    End If;

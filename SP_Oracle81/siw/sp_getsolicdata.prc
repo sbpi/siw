@@ -659,6 +659,91 @@ begin
             and (j.chave                    = k.sq_siw_solic_log (+))
             and (k.destinatario             = l.sq_pessoa (+))
             and b.sq_siw_solicitacao = p_chave;
+   Elsif substr(p_restricao,1,2) = 'SR' Then
+      -- Recupera as demandas que o usuário pode ver
+      open p_result for 
+         select a.sq_menu,            a.sq_modulo,                   a.nome,
+                a.tramite,            a.ultimo_nivel,                a.p1,
+                a.p2,                 a.p3,                          a.p4,
+                a.sigla,              a.descentralizado,             a.externo,
+                a.acesso_geral,       a.como_funciona,               a.acompanha_fases,
+                a.sq_unid_executora,  a.finalidade,                  a.arquivo_proced,
+                a.emite_os,           a.consulta_opiniao,            a.envia_email,
+                a.exibe_relatorio,    a.vinculacao,                  a.data_hora,
+                a.envia_dia_util,     a.descricao,                   a.justificativa,
+                a1.nome nm_modulo,    a1.sigla sg_modulo,            a1.objetivo_geral,
+                a2.sq_tipo_unidade tp_exec, a2.nome nm_unidade_exec, a2.informal informal_exec,
+                a2.vinculada vinc_exec,a2.adm_central adm_exec,
+                a3.sq_pessoa tit_exec,a4.sq_pessoa subst_exec,
+                b.sq_siw_solicitacao, b.sq_siw_tramite,              b.solicitante,
+                b.cadastrador,        b.executor,                    b.descricao,
+                b.justificativa,      b.inicio,                      b.fim,
+                b.inclusao,           b.ultima_alteracao,            b.conclusao,
+                b.valor,              b.opiniao,
+                b.sq_solic_pai,       b.sq_unidade,                  b.sq_cidade_origem,
+                b.palavra_chave,      b.observacao,
+                b.motivo_insatisfacao,
+                to_char(b.inclusao,'dd/mm/yyyy, hh24:mi:ss')  phpdt_inclusao,
+                to_char(b.inicio,'dd/mm/yyyy, hh24:mi:ss')    phpdt_inicio,
+                to_char(b.fim,'dd/mm/yyyy, hh24:mi:ss')       phpdt_fim,
+                to_char(b.conclusao,'dd/mm/yyyy, hh24:mi:ss') phpdt_conclusao,
+                b1.sq_siw_tramite,    b1.nome nm_tramite,            b1.ordem or_tramite,
+                b1.sigla sg_tramite,  b1.ativo,
+                b2.nome  nm_opiniao,
+                c.sq_tipo_unidade,    c.nome nm_unidade_exec,        c.informal,
+                c.vinculada,          c.adm_central,
+                e.sq_tipo_unidade,    e.nome nm_unidade_solic,        e.informal informal_solic,
+                e.vinculada vinc_solic,e.adm_central adm_solic,
+                e1.sq_pessoa titular, e2.sq_pessoa substituto,
+                f.nome_resumido nm_sol,
+                g.sq_cc,              g.nome cc_nome,                g.sigla cc_sigla,
+                h.sq_pais,            h.sq_regiao,                   h.co_uf,
+                h.nome nm_cidade,
+                i.nome_resumido nm_exec
+           from siw_menu             a,
+                eo_unidade           a2,
+                eo_unidade_resp      a3,
+                eo_unidade_resp      a4, 
+                siw_modulo           a1, 
+                siw_solicitacao      b,  
+                siw_tramite          b1, 
+                siw_opiniao          b2,
+                eo_unidade           e,  
+                eo_unidade_resp      e1, 
+                eo_unidade_resp      e2, 
+                co_pessoa            f,  
+                co_pessoa            i,  
+                co_cidade            h,  
+                ct_cc                g,  
+                eo_unidade           c
+          where (a.sq_unid_executora   = a2.sq_unidade)
+            and (a2.sq_unidade         = a3.sq_unidade (+) and
+                 a3.tipo_respons  (+)  = 'T'               and
+                 a3.fim   (+)          is null
+                )
+            and (a2.sq_unidade         = a4.sq_unidade (+) and
+                 a4.tipo_respons (+)   = 'S'               and
+                 a4.fim (+)            is null
+                )
+            and (a.sq_modulo           = a1.sq_modulo)
+            and (a.sq_menu             = b.sq_menu)
+            and (b.sq_siw_tramite      = b1.sq_siw_tramite)
+            and (b.opiniao             = b2.sq_siw_opiniao (+))
+            and (b.sq_unidade          = e.sq_unidade)
+            and (e.sq_unidade          = e1.sq_unidade (+) and
+                 e1.tipo_respons (+)   = 'T'           and
+                 e1.fim (+)            is null
+                )
+            and (e.sq_unidade          = e2.sq_unidade (+) and
+                 e2.tipo_respons  (+)  = 'S'           and
+                 e2.fim (+)            is null
+                )
+            and (b.solicitante         = f.sq_pessoa)
+            and (b.executor            = i.sq_pessoa (+))
+            and (b.sq_cidade_origem    = h.sq_cidade)
+            and (b.sq_cc               = g.sq_cc (+))
+            and (a.sq_unid_executora   = c.sq_unidade (+))
+            and b.sq_siw_solicitacao   = p_chave;
    End If;
 end SP_GetSolicData;
 /
