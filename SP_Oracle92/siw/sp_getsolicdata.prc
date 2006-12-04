@@ -135,7 +135,8 @@ begin
                 l.codigo cd_pri,      l.nome nm_pri,                 l.responsavel resp_pri,
                 l.telefone fone_pri,  l.email mail_pri,              l.ordem ord_pri,
                 l.ativo ativo_pri,    l.padrao padrao_pri,
-                m.sq_acordo,          m.cd_acordo,                   m.nm_acordo
+                m.sq_acordo,          m.cd_acordo,                   m.nm_acordo,
+                n.sq_menu sq_menu_pai
            from siw_menu                                        a 
                 inner        join eo_unidade                a2 on (a.sq_unid_executora        = a2.sq_unidade)
                   left       join eo_unidade_resp           a3 on (a2.sq_unidade              = a3.sq_unidade and
@@ -180,6 +181,7 @@ begin
                                                 join   siw_solicitacao y on (x.sq_siw_solicitacao = y.sq_siw_solicitacao)
                                                   join ct_cc           z on (y.sq_cc              = z.sq_cc)
                                         )                    m  on (b.sq_solic_pai        = m.sq_acordo)
+                left               join siw_solicitacao      n  on (b.sq_solic_pai        = n.sq_siw_solicitacao)
           where b.sq_siw_solicitacao       = p_chave;
    Elsif substr(p_restricao,1,2) = 'GC' Then
       -- Recupera os acordos que o usuário pode ver

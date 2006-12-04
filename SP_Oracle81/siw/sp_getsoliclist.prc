@@ -443,7 +443,8 @@ begin
                 n.sq_cc,              n.nome nm_cc,                  n.sigla sg_cc,
                 o.nome_resumido nm_solic, o.nome_resumido||' ('||o2.sigla||')' nm_resp,
                 p.nome_resumido nm_exec,
-                q.sq_projeto_etapa, q.titulo nm_etapa, MontaOrdem(q.sq_projeto_etapa) cd_ordem
+                q.sq_projeto_etapa, q.titulo nm_etapa, MontaOrdem(q.sq_projeto_etapa) cd_ordem,
+                d2.nome_resumido||' - '||decode(n.sq_cc,'',m.titulo,n.nome)||' ('||to_char(d.inicio,'dd/mm/yyyy')||'-'||to_char(d.fim,'dd/mm/yyyy')||')' as titulo
            from siw_menu                  a,
                 eo_unidade                a2,
                 eo_unidade_resp           a3,
