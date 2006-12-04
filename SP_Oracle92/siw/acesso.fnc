@@ -113,7 +113,14 @@ begin
  select a.acesso_geral, a.sq_menu, a.sq_modulo, a.sigla, a.destinatario,
         b.sq_pessoa, b.sq_unidade, b.gestor_seguranca, b.gestor_sistema, b.ativo usuario_ativo,
         a.sq_unid_executora, a.consulta_opiniao, a.acompanha_fases, a.envia_email, a.exibe_relatorio, a.vinculacao, 
-        d.sq_siw_tramite, d.solicitante, d.cadastrador, d.sq_unidade, d.executor, d.opiniao, d.sq_cc,
+        d.sq_siw_tramite, d.solicitante, d.cadastrador, d.sq_unidade, d.executor, d.opiniao, 
+        case when d.sq_cc is not null 
+             then d.sq_cc
+             else case when i.sq_cc is not null
+                       then i.sq_cc
+                       else j.sq_cc
+                  end
+        end sq_cc,
         e.ordem, e.sigla, e.ativo, e.chefia_imediata,
         Nvl(f.sq_pessoa,-1), Nvl(g.sq_pessoa,-1),
         h.sq_pessoa_endereco, d.executor
@@ -124,19 +131,21 @@ begin
         w_ordem, w_sigla_situacao, w_ativo, w_chefia_imediata,
         w_sq_pessoa_titular, w_sq_pessoa_substituto,
         w_sq_endereco_unidade, w_executor
-   from sg_autenticacao                           b,
-        siw_solicitacao                           d
-           inner      join siw_menu               a on (a.sq_menu                = d.sq_menu)
-           inner      join siw_tramite            e on (d.sq_siw_tramite         = e.sq_siw_tramite)
-           inner      join eo_unidade             h on (d.sq_unidade             = h.sq_unidade)
-           left outer join eo_unidade_resp        f on (d.sq_unidade             = f.sq_unidade and
-                                                        f.tipo_respons           = 'T'          and
-                                                        f.fim                    is null
-                                                       )
-           left outer join eo_unidade_resp        g on (d.sq_unidade             = g.sq_unidade and
-                                                        g.tipo_respons           = 'S'          and
-                                                        g.fim                    is null
-                                                       )
+   from sg_autenticacao                       b,
+        siw_solicitacao                       d
+           inner  join siw_menu               a on (a.sq_menu                = d.sq_menu)
+           inner  join siw_tramite            e on (d.sq_siw_tramite         = e.sq_siw_tramite)
+           inner  join eo_unidade             h on (d.sq_unidade             = h.sq_unidade)
+           left   join eo_unidade_resp        f on (d.sq_unidade             = f.sq_unidade and
+                                                    f.tipo_respons           = 'T'          and
+                                                    f.fim                    is null
+                                                   )
+           left   join eo_unidade_resp        g on (d.sq_unidade             = g.sq_unidade and
+                                                    g.tipo_respons           = 'S'          and
+                                                    g.fim                    is null
+                                                   )
+           left   join siw_solicitacao        i on (d.sq_solic_pai           = i.sq_siw_solicitacao)
+             left join siw_solicitacao        j on (i.sq_solic_pai           = j.sq_siw_solicitacao)
   where d.sq_siw_solicitacao     = p_solicitacao
     and b.sq_pessoa              = p_usuario;
   

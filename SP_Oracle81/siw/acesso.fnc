@@ -113,7 +113,8 @@ begin
  select a.acesso_geral, a.sq_menu, a.sq_modulo, a.sigla, a.destinatario,
         b.sq_pessoa, b.sq_unidade, b.gestor_seguranca, b.gestor_sistema, b.ativo usuario_ativo,
         a.sq_unid_executora, a.consulta_opiniao, a.acompanha_fases, a.envia_email, a.exibe_relatorio, a.vinculacao,
-        d.sq_siw_tramite, d.solicitante, d.cadastrador, d.sq_unidade, d.executor, d.opiniao, d.sq_cc,
+        d.sq_siw_tramite, d.solicitante, d.cadastrador, d.sq_unidade, d.executor, d.opiniao, 
+        decode(d.sq_cc,null,decode(i.sq_cc,null,j.sq_cc,i.sq_cc),d.sq_cc),
         e.ordem, e.sigla, e.ativo, e.chefia_imediata,
         Nvl(f.sq_pessoa,-1), Nvl(g.sq_pessoa,-1),
         h.sq_pessoa_endereco, d.executor
@@ -124,13 +125,15 @@ begin
         w_ordem, w_sigla_situacao, w_ativo, w_chefia_imediata,
         w_sq_pessoa_titular, w_sq_pessoa_substituto,
         w_sq_endereco_unidade, w_executor
-   from sg_autenticacao                           b,
-        siw_solicitacao                           d,
+   from sg_autenticacao           b,
+        siw_solicitacao           d,
            siw_menu               a,
            siw_tramite            e,
            eo_unidade             h,
            eo_unidade_resp        f,
-           eo_unidade_resp        g
+           eo_unidade_resp        g,
+           siw_solicitacao        i,
+           siw_solicitacao        j
   where (a.sq_menu                = d.sq_menu)
     and (d.sq_siw_tramite         = e.sq_siw_tramite)
     and (d.sq_unidade             = h.sq_unidade)
@@ -142,6 +145,8 @@ begin
          g.tipo_respons (+)       = 'S'          and
          g.fim (+)                is null
         )
+    and (d.sq_solic_pai           = i.sq_siw_solicitacao (+))
+    and (i.sq_solic_pai           = j.sq_siw_solicitacao (+))
     and d.sq_siw_solicitacao     = p_solicitacao
     and b.sq_pessoa              = p_usuario;
 
