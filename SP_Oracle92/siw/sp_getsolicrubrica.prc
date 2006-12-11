@@ -32,7 +32,8 @@ begin
                case c.tipo when 5 then e.nome when 4 then 'Entradas' when 3 then 'Atualização de aplicação' when 2 then 'Transferência entre rubricas' when 1 then 'Dotação inicial' end operacao,
                f.nome nm_rubrica, f.codigo codigo_rubrica,
                g.titulo nm_projeto, g.sq_siw_solicitacao sq_projeto, i.codigo_interno cd_acordo, i.sq_siw_solicitacao sq_acordo,
-               l.nome nm_label, l.sigla sg, m.sigla sg_tramite
+               l.nome nm_label, l.sigla sg, m.sigla sg_tramite,
+               n.nome nm_cc
           from fn_lancamento_rubrica                 a
                inner          join fn_lancamento_doc b on (a.sq_lancamento_doc  = b.sq_lancamento_doc)
                  inner        join fn_lancamento     c on (b.sq_siw_solicitacao = c.sq_siw_solicitacao)
@@ -45,11 +46,12 @@ begin
                      left     join ac_acordo         i on (h.sq_solic_pai       = i.sq_siw_solicitacao)
                        left   join siw_solicitacao   j on (i.sq_siw_solicitacao = j.sq_siw_solicitacao)
                          left join siw_menu          l on (j.sq_menu            = l.sq_menu)
+               inner          join ct_cc             n on (n.sq_cc              = f.sq_cc)
          where a.sq_rubrica_origem = p_chave_aux
            and m.sigla             <> 'CA'
          group by c.vencimento, c.codigo_interno, c.sq_siw_solicitacao, c.tipo, e.nome, g.titulo, g.sq_siw_solicitacao,
                   i.codigo_interno, i.sq_siw_solicitacao, f.nome, f.codigo, d.descricao, l.nome, l.sigla, m.sigla,
-                  e.sigla
+                  e.sigla, n.nome
      UNION
         select sum(a.valor_total) valor, 
                c.vencimento, c.codigo_interno cd_lancamento, c.sq_siw_solicitacao sq_lancamento, c.tipo tipo_rubrica,
@@ -58,7 +60,8 @@ begin
                case c.tipo when 5 then e.nome when 4 then 'Entradas' when 3 then 'Atualização de aplicação' when 2 then 'Transferência entre rubricas' when 1 then 'Dotação inicial' end operacao,
                f.nome nm_rubrica, f.codigo codigo_rubrica,
                g.titulo nm_projeto, g.sq_siw_solicitacao sq_projeto, i.codigo_interno cd_acordo, i.sq_siw_solicitacao sq_acordo,
-               l.nome nm_label, l.sigla sg, m.sigla sg_tramite
+               l.nome nm_label, l.sigla sg, m.sigla sg_tramite,
+               n.nome nm_cc
           from fn_documento_item                     a
                inner          join fn_lancamento_doc b on (a.sq_lancamento_doc  = b.sq_lancamento_doc)
                  inner        join fn_lancamento     c on (b.sq_siw_solicitacao = c.sq_siw_solicitacao)
@@ -71,11 +74,12 @@ begin
                      left     join ac_acordo         i on (h.sq_solic_pai       = i.sq_siw_solicitacao)
                        left   join siw_solicitacao   j on (i.sq_siw_solicitacao = j.sq_siw_solicitacao)
                          left join siw_menu          l on (j.sq_menu            = l.sq_menu)
+               inner          join ct_cc             n on (f.sq_cc              = n.sq_cc)
          where a.sq_projeto_rubrica = p_chave_aux
            and m.sigla             <> 'CA'
          group by c.vencimento, c.codigo_interno, c.sq_siw_solicitacao, c.tipo, e.nome, g.titulo, g.sq_siw_solicitacao,
                   i.codigo_interno, i.sq_siw_solicitacao, f.nome, f.codigo, d.descricao, l.nome, l.sigla, m.sigla,
-                  e.sigla;
+                  e.sigla, n.nome;
    End If;  
 End SP_GetSolicRubrica;
 /

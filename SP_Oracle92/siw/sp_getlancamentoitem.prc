@@ -22,7 +22,7 @@ begin
       open p_result for 
          select sum(b.valor_total) valor_total, nvl(d.nome,e.nome) nm_rubrica, nvl(d.codigo,e.codigo) codigo_rubrica,
                 case nvl(nvl(d.codigo,e.codigo),'nulo') when 'nulo' then 'Não informado' else nvl(d.codigo,e.codigo)||' - '||nvl(d.nome,e.nome) end rubrica,
-                sum(c.valor) valor_rubrica
+                sum(c.valor) valor_rubrica, nvl(d.sq_projeto_rubrica,e.sq_projeto_rubrica) sq_projeto_rubrica
            from fn_lancamento_doc                       a
                 left outer join   fn_documento_item     b on (a.sq_lancamento_doc  = b.sq_lancamento_doc)
                   left outer join pj_rubrica            e on (b.sq_projeto_rubrica = e.sq_projeto_rubrica)
