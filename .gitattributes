@@ -2009,6 +2009,7 @@ SP_Oracle81/siw/sp_putetapamensal.prc -text
 SP_Oracle81/siw/sp_puteventotrigger.prc -text
 SP_Oracle81/siw/sp_putfinanceiroconc.prc -text
 SP_Oracle81/siw/sp_putfinanceirogeral.prc -text
+SP_Oracle81/siw/sp_putgrupoveiculo.prc -text
 SP_Oracle81/siw/sp_putimposto.prc -text
 SP_Oracle81/siw/sp_putindice.prc -text
 SP_Oracle81/siw/sp_putinformar.prc -text
@@ -3180,6 +3181,7 @@ SP_Oracle92/siw/sp_putetapamensal.prc -text
 SP_Oracle92/siw/sp_puteventotrigger.prc -text
 SP_Oracle92/siw/sp_putfinanceiroconc.prc -text
 SP_Oracle92/siw/sp_putfinanceirogeral.prc -text
+SP_Oracle92/siw/sp_putgrupoveiculo.prc -text
 SP_Oracle92/siw/sp_putimposto.prc -text
 SP_Oracle92/siw/sp_putindice.prc -text
 SP_Oracle92/siw/sp_putinformar.prc -text
