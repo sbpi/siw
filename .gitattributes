@@ -1745,6 +1745,7 @@ SP_Oracle81/siw/siw_tipo_apoio.tab -text
 SP_Oracle81/siw/siw_tramite.tab -text
 SP_Oracle81/siw/siw_tramite_atrib.tab -text
 SP_Oracle81/siw/sp_get10percentdays.prc -text
+SP_Oracle81/siw/sp_getGrupoVeiculo.prc -text
 SP_Oracle81/siw/sp_getacaoppa.prc -text
 SP_Oracle81/siw/sp_getacordoparcela.prc -text
 SP_Oracle81/siw/sp_getacordorep.prc -text
@@ -2913,6 +2914,7 @@ SP_Oracle92/siw/siw_tipo_apoio.tab -text
 SP_Oracle92/siw/siw_tramite.tab -text
 SP_Oracle92/siw/siw_tramite_atrib.tab -text
 SP_Oracle92/siw/sp_get10percentdays.prc -text
+SP_Oracle92/siw/sp_getGrupoVeiculo.prc -text
 SP_Oracle92/siw/sp_getacaoppa.prc -text
 SP_Oracle92/siw/sp_getacordoparcela.prc -text
 SP_Oracle92/siw/sp_getacordorep.prc -text
