@@ -25,7 +25,7 @@ create or replace procedure sp_PutXMLIndicador_PPA
     p_apurado_ano_6  in varchar2 default null,                    
     p_apurado_ref    in varchar2 default null,
     p_apurado_final  in varchar2 default null,
-    p_apuracao       in date     default null,
+    p_apuracao       in varchar2 default null,
     p_observacao     in varchar2 default null
    ) is
    w_cont     number(4);
@@ -54,7 +54,7 @@ begin
               p_base_geo, p_nome, p_fonte, p_formula, p_valor_ano_1, p_valor_ano_2, p_valor_ano_3,
               p_valor_ano_4, p_valor_ano_5, p_valor_ano_6, p_valor_ref, p_valor_final, p_apurado_ano_1,
               p_apurado_ano_2, p_apurado_ano_3, p_apurado_ano_4, p_apurado_ano_5, p_apurado_ano_6,
-              p_apurado_ref, p_apurado_final, p_apuracao, p_observacao, sysdate, sysdate);
+              p_apurado_ref, p_apurado_final, to_date(p_apuracao,'yyyy-mm-dd hh24:mi:ss'), p_observacao, sysdate, sysdate);
    Else
       -- Altera registro
       update is_ppa_indicador set
@@ -80,7 +80,7 @@ begin
          apurado_ano_6      = p_apurado_ano_6,
          apurado_referencia = p_apurado_ref,
          apurado_final      = p_apurado_final,
-         apuracao           = p_apuracao,
+         apuracao           =  to_date(p_apuracao,'yyyy-mm-dd hh24:mi:ss'),
          observacao         = p_observacao,
          flag_alteracao     = sysdate
        where cd_indicador     = p_chave

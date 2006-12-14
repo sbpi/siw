@@ -139,7 +139,8 @@ begin
          and a.ano            = p_ano;
       -- Altera registro
       update is_sig_acao set
-         cd_regiao               = p_cd_regiao, 
+         cd_regiao               = p_cd_regiao,
+         cd_acao_ppa             = p_cd_acao_ppa,
          cd_tipo_acao            = p_tipo_acao,
          cd_produto              = p_cd_produto, 
          cd_unidade_medida       = p_unidade_med,         
