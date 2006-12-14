@@ -8,7 +8,7 @@ function selecaoProjeto($label,$accesskey,$hint,$chave,$chaveAux,$chaveAux2,$cam
   extract($GLOBALS);
 
   if (is_numeric($restricao)) {
-    $RS1 = db_getMenuRelac::getInstanceOf($dbms, $restricao, null);
+    $RS1 = db_getMenuRelac::getInstanceOf($dbms, $restricao, null, null, null, null);
   } else {
    $RS1 = array(0);
   }

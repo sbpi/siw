@@ -1887,25 +1887,25 @@ function SolicMail($p_solic,$p_tipo) {
 
   // Recupera o e-mail do responsável
   $RS = db_getPersonData::getInstanceOf($dbms,$w_cliente,f($RSM,'solicitante'),null,null);
-  if (strpos($w_destinatarios,f($RS,'email').'; ')===false) $w_destinatarios=$w_destinatarios.f($RS,'email').'; ';
+  if (strpos($w_destinatarios,f($RS,'email').'; ')===false) $w_destinatarios .= f($RS,'email').'; ';
 
   // Recupera o e-mail do titular e do substituto pelo setor responsável
   $RS = db_getUorgResp::getInstanceOf($dbms,f($RSM,'sq_unidade'));
   foreach($RS as $row){$RS=$row; break;}
-  if ((strpos($w_destinatarios,f($RS,'email_titular').'; ')===false)    && Nvl(f($RS,'email_titular'),'nulo')!='nulo')    $w_destinatarios=$w_destinatarios.f($RS,'email_titular').'; ';
-  if ((strpos($w_destinatarios,f($RS,'email_substituto').'; ')===false) && Nvl(f($RS,'email_substituto'),'nulo')!='nulo') $w_destinatarios=$w_destinatarios.f($RS,'email_substituto').'; ';
+  if ((strpos($w_destinatarios,f($RS,'email_titular').'; ')===false)    && Nvl(f($RS,'email_titular'),'nulo')!='nulo')    $w_destinatarios .= f($RS,'email_titular').'; ';
+  if ((strpos($w_destinatarios,f($RS,'email_substituto').'; ')===false) && Nvl(f($RS,'email_substituto'),'nulo')!='nulo') $w_destinatarios .= f($RS,'email_substituto').'; ';
   // Recuperar o e-mail dos interessados
   $RS = db_getSolicInter::getInstanceOf($dbms,$p_solic,null,'LISTA');
   foreach($RS as $row) {
-    if ((strpos($w_destinatarios,f($row,'email').'; ')===false)    && Nvl(f($row,'email'),'nulo')!='nulo' && f($row,'envia_email') =='S')    $w_destinatarios=$w_destinatarios.f($row,'email').'; ';
+    if ((strpos($w_destinatarios,f($row,'email').'; ')===false)    && Nvl(f($row,'email'),'nulo')!='nulo' && f($row,'envia_email') =='S')    $w_destinatarios .= f($row,'email').'; ';
   }
   // Recuperar o e-mail do titular e substituto das áreas envolvidas
   $RS = db_getSolicAreas::getInstanceOf($dbms,$p_solic,null,'LISTA');
   foreach($RS as $row) {
     $RS1 = db_getUorgResp::getInstanceOf($dbms,f($row,'sq_unidade'));
     foreach($RS1 as $row1){$RS1=$row1; break;}
-    if ((strpos($w_destinatarios,f($RS1,'email_titular').'; ')===false)    && Nvl(f($RS1,'email_titular'),'nulo')!='nulo')    $w_destinatarios=$w_destinatarios.f($RS1,'email_titular').'; ';
-    if ((strpos($w_destinatarios,f($RS1,'email_substituto').'; ')===false) && Nvl(f($RS1,'email_substituto'),'nulo')!='nulo') $w_destinatarios=$w_destinatarios.f($RS1,'email_substituto').'; ';    
+    if ((strpos($w_destinatarios,f($RS1,'email_titular').'; ')===false)    && Nvl(f($RS1,'email_titular'),'nulo')!='nulo')    $w_destinatarios .= f($RS1,'email_titular').'; ';
+    if ((strpos($w_destinatarios,f($RS1,'email_substituto').'; ')===false) && Nvl(f($RS1,'email_substituto'),'nulo')!='nulo') $w_destinatarios .= f($RS1,'email_substituto').'; ';    
   }  
   // Prepara os dados necessários ao envio
   $RS = db_getCustomerData::getInstanceOf($dbms,$_SESSION['P_CLIENTE']);

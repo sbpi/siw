@@ -430,7 +430,7 @@ function VisualViagem($l_chave,$l_O,$l_usuario,$l_P1,$l_P4) {
             // Recupera os responsáveis pelo tramite
             $RS1 = db_getTramiteResp::getInstanceOf($dbms,$l_chave,null,null);
             $w_html .= chr(13).'      <tr bgcolor="'.$w_TrBgColor.'" valign="top">';
-            $w_html .= chr(13).'        <td colspan=6>Responsáveis pelo tramite: <b>';
+            $w_html .= chr(13).'        <td colspan=6>Responsáveis pelo trâmite: <b>';
             if (count($RS1)>0) {
               $j = 0;
               foreach($RS1 as $row1) {

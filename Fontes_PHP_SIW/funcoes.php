@@ -1,6 +1,6 @@
 <?
 setlocale(LC_ALL, 'pt_BR');
-date_default_timezone_set('America/Sao_Paulo');
+//date_default_timezone_set('America/Sao_Paulo');
 //$locale_info = localeconv();
 //echo "<pre>\n";
 //echo "--------------------------------------------\n";
@@ -960,7 +960,6 @@ return $function_ret;
 // -------------------------------------------------------------------------
 function TrataErro($sp, $Err, $params, $file, $line, $object) {
   extract($GLOBALS);
-
   if (!(strpos($Err['message'],'ORA-02292')===false) || !(strpos($Err['message'],'ORA-02292')===false) ) {
      // REGISTRO TEM FILHOS
      ScriptOpen('JavaScript');

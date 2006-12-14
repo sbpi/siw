@@ -2734,7 +2734,7 @@ function Visual() {
     ShowHTML('<center><B>Clique <a class="HL" href="javascript:history.go(-1);">aqui</a> para voltar à tela anterior</b></center>');
   } 
   // Chama a rotina de visualização dos dados da atividade, na opção 'Listagem'
-  ShowHTML(VisualConvenio($w_chave,'L',$w_usuario,$P1,$P4));
+  ShowHTML(VisualConvenio($w_chave,'L',$w_usuario,'4',$P4));
   if ($w_tipo>'' && $w_tipo!='WORD') {
     ShowHTML('<center><B>Clique <a class="HL" href="javascript:history.go(-1);">aqui</a> para voltar à tela anterior</b></center>');
   } 

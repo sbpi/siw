@@ -48,6 +48,7 @@ include_once($w_dir_volta.'classes/sp/dml_putXMLPrograma_SIG.php');
 include_once($w_dir_volta.'classes/sp/dml_putXMLRegiao.php');
 include_once($w_dir_volta.'classes/sp/dml_putXMLSubfuncao.php');
 include_once($w_dir_volta.'classes/sp/dml_putXMLTipo_Acao.php');
+include_once($w_dir_volta.'classes/sp/dml_putXMLTipo_Acao_PPA.php');
 include_once($w_dir_volta.'classes/sp/dml_putXMLTipo_Atualizacao.php');
 include_once($w_dir_volta.'classes/sp/dml_putXMLTipo_Despesa.php');
 include_once($w_dir_volta.'classes/sp/dml_putXMLTipo_Inclusao_Acao.php');
@@ -60,6 +61,7 @@ include_once($w_dir_volta.'classes/sp/dml_putXMLUnidade_Medida_PPA.php');
 include_once($w_dir_volta.'classes/sp/dml_putXMLUnidade_Medida_SIG.php');
 include_once($w_dir_volta.'classes/sp/dml_putXMLUnidade_PPA.php');
 include_once($w_dir_volta.'classes/sp/dml_putXMLUnidade_SIG.php');
+include_once($w_dir_volta.'classes/sp/dml_putXMLRestricaoAcao_SIG.php');
 include_once($w_dir_volta.'classes/sp/dml_putDcOcorrencia.php');
 include_once($w_dir_volta.'classes/sp/dml_putEsquema.php');
 include_once($w_dir_volta.'classes/sp/dml_putEsquemaTabela.php');
@@ -143,6 +145,7 @@ $w_menu     = RetornaMenu($w_cliente,$SG);
 $w_ano      = RetornaAno();
 $w_caminho  = $conFilePhysical.$w_cliente.'/';
 $RS = db_getSiwCliModLis::getInstanceOf($dbms,$w_cliente,null,'IS');
+foreach($RS as $row){$RS=$row; break;}
 $w_sq_modulo = f($RS,'sq_modulo');
 // Verifica se o documento tem sub-menu. Se tiver, agrega no HREF uma chamada para montagem do mesmo.
 $RS = db_getLinkSubMenu::getInstanceOf($dbms,$_SESSION['P_CLIENTE'],$SG);
@@ -1040,8 +1043,9 @@ function Exportacao() {
     // Configura o nome dos arquivo recebido e do arquivo registro
     $w_arquivo_processamento = f($RS,'nome').'.xml';
     $F1 = fopen($w_caminho.$w_arquivo_processamento, 'w');
-    fwrite($F1,utf8_encode('<?xml version="1.0" encoding="UTF-8"?>').$crlf);
-    fwrite($F1,utf8_encode('<'.f($RS,'no_raiz').' xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns="http://www.sigplan.gov.br/xml/">').$crlf);
+    fwrite($F1,utf8_encode('<?xml version="1.0" encoding="utf-8"?>').$crlf);
+    //fwrite($F1,utf8_encode('<'.f($RS,'no_raiz').' xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns="http://www.sigplan.gov.br/xml/">').$crlf);
+    fwrite($F1,utf8_encode('<'.f($RS,'no_raiz').'>').$crlf);
     // Processa cada um dos esquemas recuperados
     for ($j=1; $j<=$w_cont; $j=$j+1) {
       $RS2 = DatabaseQueriesFactory::getInstanceOf($w_sql[$j], $dbms, null, DB_TYPE);
@@ -1142,6 +1146,17 @@ function Grava() {
           $F1 = fopen($w_caminho.$w_arquivo_rejeicao, 'w');      
           //Abre o arquivo recebido para gerar o arquivo registro
           if (file_exists($w_caminho.$w_arquivo_processamento)) {
+            
+            // Carrega o conteúdo do arquivo origem em uma variável local
+            $handle = fopen ($w_caminho.$w_arquivo_processamento, 'r');
+            $conteudo = fread ($handle, filesize ($w_caminho.$w_arquivo_processamento));
+            fclose ($handle);
+            
+            // Reescreve o arquivo, removendo caracteres 26 (hexa 1A)
+            $handle = fopen ($w_caminho.$w_arquivo_processamento, 'w');
+            fwrite($handle, str_replace('&#x1A;','-',$conteudo));
+            fclose ($handle);
+
             $xml = simplexml_load_file($w_caminho.$w_arquivo_processamento);
             // Recupera os dados do esquema a ser importado
             $RS = db_getEsquema::getInstanceOf($dbms,$w_cliente,null,$_REQUEST['w_sq_esquema'],$w_sq_modulo,null,null,null,null,null,null,null);
@@ -1227,12 +1242,13 @@ function Grava() {
                       case 'IS_SIG_INDICADOR':      dml_putXMLIndicador_SIG::getInstanceOf($dbms,&$w_resultado,$w_cliente,$w_param[1],$w_param[2],$w_param[3],$w_param[4],$w_param[5],$w_param[6],$w_param[7],$w_param[8],$w_param[9],$w_param[10],$w_param[11],$w_param[12],$w_param[13],$w_param[14],$w_param[15],$w_param[16],$w_param[17],$w_param[18],$w_param[19],$w_param[20],$w_param[21],$w_param[22],$w_param[23],$w_param[24],$w_param[25]); if($w_resultado>'')$w_erro = $w_erro + RegistraErro($F1,$w_atributo,$w_param,$w_resultado); break;
                       case 'IS_SIG_ACAO':           
                         // Só carrega ações que não sejam RAP (Restos a pagar)
-                        if ($w_param[38]=='N')  dml_putXMLAcao_SIG::getInstanceOf($dbms,&$w_resultado,$w_cliente,$w_param[1],$w_param[2],$w_param[3],$w_param[4],$w_param[5],$w_param[6],substr($w_param[7],2),$w_param[8],$w_param[9],$w_param[10],$w_param[11],$w_param[12],$w_param[13],$w_param[14],$w_param[15],$w_param[16],$w_param[17],$w_param[18],$w_param[19],$w_param[20],$w_param[21],$w_param[22],$w_param[23],$w_param[24],$w_param[25],$w_param[26],$w_param[27],$w_param[28],$w_param[29],$w_param[30],$w_param[31],$w_param[32],$w_param[33],$w_param[34],$w_param[35],$w_param[36],$w_param[37],$w_param[38],$w_param[39],$w_param[40],$w_param[41],$w_param[42],$w_param[43],$w_param[44]);
+                        if ($w_param[38]=='N')  dml_putXMLAcao_SIG::getInstanceOf($dbms,&$w_resultado,$w_cliente,$w_param[1],$w_param[2],$w_param[3],$w_param[4],$w_param[5],$w_param[6],$w_param[7],$w_param[8],$w_param[9],$w_param[10],$w_param[11],$w_param[12],$w_param[13],$w_param[14],$w_param[15],$w_param[16],$w_param[17],$w_param[18],$w_param[19],$w_param[20],$w_param[21],$w_param[22],$w_param[23],$w_param[24],$w_param[25],$w_param[26],$w_param[27],$w_param[28],$w_param[29],$w_param[30],$w_param[31],$w_param[32],$w_param[33],$w_param[34],$w_param[35],$w_param[36],$w_param[37],$w_param[38],$w_param[39],$w_param[40],$w_param[41],$w_param[42],$w_param[43],$w_param[44]);
                         else                    $w_reg -= 1;
                         if($w_resultado>'')     $w_erro = $w_erro + RegistraErro($F1,$w_atributo,$w_param,$w_resultado); 
                       break;
                       case 'IS_SIG_DADO_FISICO':    dml_putXMLDadoFisico_SIG::getInstanceOf($dbms,&$w_resultado,$w_cliente,$w_param[1],$w_param[2],$w_param[3],$w_param[4],$w_param[5],$w_param[6],$w_param[7],$w_param[8],$w_param[9],$w_param[10],$w_param[11],$w_param[12],$w_param[13],$w_param[14],$w_param[15],$w_param[16],$w_param[17],$w_param[18],$w_param[19],$w_param[20],$w_param[21],$w_param[22],$w_param[23],$w_param[24],$w_param[25],$w_param[26],$w_param[27],$w_param[28],$w_param[29],$w_param[30],$w_param[31],$w_param[32],$w_param[33],$w_param[34],$w_param[35],$w_param[36],$w_param[37],$w_param[38],$w_param[39],$w_param[40],$w_param[41],$w_param[42],$w_param[43],$w_param[44],$w_param[45],$w_param[46],$w_param[47]); if($w_resultado>'')$w_erro = $w_erro + RegistraErro($F1,$w_atributo,$w_param,$w_resultado); break;
                       case 'IS_SIG_DADO_FINANCEIRO':dml_putXMLDadoFinanceiro_SIG::getInstanceOf($dbms,&$w_resultado,$w_cliente,$w_param[1],$w_param[2],$w_param[3],$w_param[4],$w_param[5],$w_param[6],$w_param[7],$w_param[8],$w_param[9],$w_param[10],$w_param[11],$w_param[12],$w_param[13],$w_param[14],$w_param[15],$w_param[16],$w_param[17],$w_param[18],$w_param[19],$w_param[20],$w_param[21],$w_param[22],$w_param[23],$w_param[24],$w_param[25],$w_param[26],$w_param[27],$w_param[28],$w_param[29],$w_param[30],$w_param[31],$w_param[32],$w_param[33],$w_param[34],$w_param[35],$w_param[36],$w_param[37],$w_param[38],$w_param[39],$w_param[40],$w_param[41],$w_param[42],$w_param[43],$w_param[44],$w_param[45],$w_param[46],$w_param[47],$w_param[48]); if($w_resultado>'')$w_erro = $w_erro + RegistraErro($F1,$w_atributo,$w_param,$w_resultado); break;
+                      case 'IS_SIG_RESTRICAO_ACAO': dml_putXMLRestricaoAcao_SIG::getInstanceOf($dbms,&$w_resultado,$w_cliente,$w_param[1],$w_param[2],$w_param[3],$w_param[4],$w_param[5],$w_param[6],$w_param[7],$w_param[8],$w_param[9],$w_param[10],$w_param[11],$w_param[12],$w_param[13],$w_param[14],$w_param[15]); if($w_resultado>'')$w_erro = $w_erro + RegistraErro($F1,$w_atributo,$w_param,$w_resultado); break;
                     } 
                   } 
                 }   
@@ -1361,7 +1377,7 @@ function Grava() {
 // -------------------------------------------------------------------------
 function RegistraErro($F1,$w_atributo,$w_param,$w_resultado) {
   extract($GLOBALS);
-  for($j=1;$j<count($w_atributo);$j+=1) {
+  for($j=1;$j<count($w_atributo)+1;$j+=1) {
     if($w_atributo[$j]>'')fwrite($F1,$w_atributo[$j].':['.$w_param[$j].']'.$crlf);
   } 
   fwrite($F1,$w_resultado.$crlf);

@@ -7,6 +7,7 @@ function VisualGeral($l_chave,$O,$l_usuario,$l_sg,$P4) {
   $l_html='';
   // Recupera os dados da tarefa
   $RS1 = db_getSolicData::getInstanceof($dbms,$l_chave,$l_sg);
+  $w_ativo      = f($RS1,'ativo');
   $l_html.=chr(13).'    <table border=0 width="100%">';
   $l_html.=chr(13).'      <tr><td colspan="2"><hr NOSHADE color=#000000 size=4></td></tr>';
   $l_html.=chr(13).'      <tr><td colspan="2"  bgcolor="#f0f0f0"><div align=justify><font size="2"><b>SERVIÇO: '.f($RS1,'nome').' - SOLICITAÇÃO: '.f($RS1,'sq_siw_solicitacao').'</b></font></td></tr>';
@@ -35,8 +36,16 @@ function VisualGeral($l_chave,$O,$l_usuario,$l_sg,$P4) {
     $l_html.=chr(13).'       <td>'.Nvl(substr(FormataDataEdicao(f($RS1,'phpdt_fim'),3),0,-3),'-').'</font></td></tr>';
     break;
   }
-  $l_html.=chr(13).'   <tr><td width="20%"><b>Detalhamento:</b></font></td>';
-  $l_html.=chr(13).'       <td>'.Nvl(f($RS1,'descricao'),'-').'</font></td></tr>';
+  if (Nvl(f($RS1,'descricao'),'')!='') {
+    $l_html.=chr(13).'   <tr valign="top">';
+    $l_html.=chr(13).'       <td width="20%"><b>Detalhamento:</b></font></td>';
+    $l_html.=chr(13).'       <td>'.crlf2br(Nvl(f($RS1,'descricao'),'-')).'</font></td></tr>';
+  }
+  if (Nvl(f($RS1,'justificativa'),'')!='') {
+    $l_html.=chr(13).'   <tr valign="top">';
+    $l_html.=chr(13).'       <td width="20%"><b>Justificativa:</b></font></td>';
+    $l_html.=chr(13).'       <td>'.Nvl(f($RS1,'justificativa'),'-').'</font></td></tr>';
+  }
   if ($P4==1) {
     $l_html.=chr(13).'   <tr><td colspan="2"><br><font size="2"><b>SOLICITANTE<hr NOSHADE color=#000000 SIZE=1></b></font></td></tr>';
     $l_html.=chr(13).'   <tr><td><b>Unidade solicitante:</b></font></td>';
@@ -61,6 +70,9 @@ function VisualGeral($l_chave,$O,$l_usuario,$l_sg,$P4) {
     $l_html.=chr(13).'      <tr><td colspan="2"><br><font size="2"><b>DADOS DA CONCLUSÃO<hr NOSHADE color=#000000 SIZE=1></b></font></td></tr>';
     $l_html.=chr(13).'   <tr valign="top"><td><b>Data de conclusão:</b></font></td><td>'.FormataDataEdicao(substr(f($RS1,'phpdt_conclusao'),0,-3),3).'</font></td></tr>';
     $l_html.=chr(13).'   <tr valign="top"><td><b>Opinião emitida pelo solicitante:</b></font></td><td>'.nvl(f($RS1,'nm_opiniao'),'---').'</font></td></tr>';
+    if (nvl(f($RS1,'motivo_insatisfacao'),'')!='') {
+      $l_html.=chr(13).'   <tr valign="top"><td><b>Motivo(s) da insatisfação:</b></font></td><td>'.crlf2br(nvl(f($RS1,'motivo_insatisfacao'),'---')).'</font></td></tr>';
+    }
     $l_html.=chr(13).'   <tr valign="top"><td><b>Valor do atendimento:</b></font></td><td>'.FormatNumber(f($RS1,'valor'),2).'</font></td></tr>';
     $l_html.=chr(13).'   <tr><td><b>Responsável pelo atendimento:</b></font></td>';
     $l_html.=chr(13).'       <td>'.ExibePessoa('../',$w_cliente,f($RS1,'executor'),$TP,f($RS1,'nm_exec')).'</font></td></tr>';
@@ -87,6 +99,28 @@ function VisualGeral($l_chave,$O,$l_usuario,$l_sg,$P4) {
       $l_html.=chr(13).'      <tr valign="top">';
       if ($i==0) {
         $l_html.=chr(13).'     <td colspan=4>Fase atual: <b>'.f($row1,'fase').'</b></td></tr>';
+        if ($w_ativo=='S') {
+          // Recupera os responsáveis pelo tramite
+          $RS2 = db_getTramiteResp::getInstanceOf($dbms,$l_chave,null,null);
+          $l_html .= chr(13).'      <tr bgcolor="'.$w_TrBgColor.'" valign="top">';
+          $l_html .= chr(13).'        <td colspan=4>Responsáveis pelo trâmite: <b>';
+          if (count($RS2)>0) {
+            $j = 0;
+            foreach($RS2 as $row2) {
+              if ($j==0) {
+                $w_tramite_resp = f($row2,'nome_resumido');
+                $l_html .= chr(13).ExibePessoa($w_dir_volta,$w_cliente,f($row2,'sq_pessoa'),$TP,f($row2,'nome_resumido'));
+                $j = 1;
+              } else {
+                if (strpos($w_tramite_resp,f($row,'nome_resumido'))===false) {
+                  $l_html .= chr(13).', '.ExibePessoa($w_dir_volta,$w_cliente,f($row2,'sq_pessoa'),$TP,f($row2,'nome_resumido'));
+                }
+                $w_tramite_resp .= f($row2,'nome_resumido');
+              }
+            } 
+          } 
+          $l_html .= chr(13).'</b></td>';
+        } 
         $l_html.=chr(13).'      <tr valign="top">';
         $i=1;
       }

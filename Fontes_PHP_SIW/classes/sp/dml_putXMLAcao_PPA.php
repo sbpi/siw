@@ -15,7 +15,7 @@ class dml_putXMLAcao_PPA {
      $params=array('p_cliente'                   =>array(tvl($p_cliente),                                  B_INTEGER,        32),
                    'p_ano'                       =>array(tvl($p_ano),                                      B_INTEGER,        32),
                    'p_cd_programa'               =>array(tvl($p_cd_programa),                              B_VARCHAR,         4),
-                   'p_chave'                     =>array(tvl($p_chave),                                    B_VARCHAR,         5),
+                   'p_chave'                     =>array(tvl($p_chave),                                    B_VARCHAR,         7),
                    'p_cd_acao'                   =>array(tvl($p_cd_acao),                                  B_VARCHAR,         4),
                    'p_unidade'                   =>array(tvl($p_unidade),                                  B_VARCHAR,         5),
                    'p_tipo_unid'                 =>array(tvl($p_tipo_unid),                                B_VARCHAR,         1),

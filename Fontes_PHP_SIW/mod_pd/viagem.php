@@ -4378,7 +4378,9 @@ function SolicMail($p_solic,$p_tipo) {
       $w_html .= $crlf.'      <tr><td valign="top" colspan="2" align="center" bgcolor="#D0D0D0" style="border: 2px solid rgb(0,0,0);"><b>ÚLTIMO ENCAMINHAMENTO</td>';
       $w_html .= $crlf.'      <tr><td valign="top" colspan="2"><table border=0 width="100%" cellspacing=0>';
       $w_html .= $crlf.'          <tr><td>De:<br><b>'.f($RS,'responsavel').'</b></td>';
-      $w_html .= $crlf.'          <tr><td>Despacho:<br><b>'.CRLF2BR(Nvl(f($RS,'despacho'),'---')).' </b></td>';
+      if (Nvl(f($RS,'despacho'),'')!='') {
+        $w_html.=$crlf.'          <tr><td>Despacho:<br><b>'.CRLF2BR(f($RS,'despacho')).' </b></td>';
+      }
       $w_html .= $crlf.'          </table>';
     }
   } 
@@ -4412,19 +4414,19 @@ function SolicMail($p_solic,$p_tipo) {
     // Tramitação
     $w_assunto='Tramitação - '.$w_nome;
   } 
-  // Configura os destinatário da mensagem
+  // Configura os destinatários da mensagem
   $RS = db_getTramiteResp::getInstanceOf($dbms,$p_solic,null,null);
   if (!count($RS)<=0) {
     foreach($RS as $row) {
-      if (strpos($w_destinatarios,f($row,'email').'; ')===false) $w_destinatarios=$w_destinatarios.f($row,'email').'; ';
+      if (strpos($w_destinatarios,f($row,'email').'; ')===false) $w_destinatarios .= f($row,'email').'; ';
     } 
   } 
   // Recupera o e-mail do responsável
   $RS = db_getPersonData::getInstanceOf($dbms,$w_cliente,f($RSM,'solicitante'),null,null);
-  if (strpos($w_destinatarios,f($RS,'email').'; ')===false) $w_destinatarios=$w_destinatarios.f($RS,'email').'; ';
+  if (strpos($w_destinatarios,f($RS,'email').'; ')===false) $w_destinatarios .= f($RS,'email').'; ';
   // Recupera o e-mail do proposto
   $RS = db_getPersonData::getInstanceOf($dbms,$w_cliente,f($RSM,'sq_prop'),null,null);
-  if (strpos($w_destinatarios,f($RS,'email').'; ')===false) $w_destinatarios=$w_destinatarios.f($RS,'email').'; ';
+  if (strpos($w_destinatarios,f($RS,'email').'; ')===false) $w_destinatarios .= f($RS,'email').'; ';
 
   // Executa o envio do e-mail
   if ($w_destinatarios>'') $w_resultado = EnviaMail($w_assunto,$w_html,$w_destinatarios,$w_anexos);

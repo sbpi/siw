@@ -538,7 +538,7 @@ function Rel_Perm_Usuarios() {
     ShowHTML('    <table width="97%" border="0">');
     ShowHTML('      <tr>');
     selecaoModulo('<u>M</u>ódulo:', 'M', null, $p_modulo, $w_cliente, 'p_modulo', null, null);
-    selecaoServico('<U>S</U>erviço:', 'S', null, $p_servico, null, null, 'p_servico', null, null);
+    selecaoServico('<U>S</U>erviço:', 'S', null, $p_servico, null, null, 'p_servico', null, null, null, null, null);
     ShowHTML('      <tr>');
     SelecaoAcaoPPA('<u>A</u>ção PPA:','A',null,$w_cliente,$w_ano,$p_modulo,null,null,null,'p_servico',null,null,null,$w_menu,null,null);
     ShowHTML('      <tr><td colspan=3><table border=0 width="100%" cellspacing=0 cellpadding=0><tr valign="top">');

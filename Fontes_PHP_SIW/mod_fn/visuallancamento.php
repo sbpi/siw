@@ -229,7 +229,7 @@ function VisualLancamento($v_chave,$l_O,$w_usuario,$l_P1,$l_P4) {
         $RS3 = SortArray($RS3,'cd_rubrica_origem','asc');
       } else {
         $RS3 = db_getLancamentoItem::getInstanceOf($dbms,null,f($row,'sq_lancamento_doc'),null,null,null);
-        $RS3 = SortArray($RS3,'codigo_rubrica','asc');
+        $RS3 = SortArray($RS3,'codigo_rubrica','asc','ordem','asc');
       }
       if (count($RS2)<=0) {
         //$w_html.=chr(13).'          <tr bgcolor="'.$w_TrBgColor.'" align="center" valign="top">';

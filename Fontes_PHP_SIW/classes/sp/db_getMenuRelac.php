@@ -9,11 +9,14 @@ extract($GLOBALS); include_once($w_dir_volta."classes/db/DatabaseQueriesFactory.
 */
 
 class db_getMenuRelac {
-   function getInstanceOf($dbms, $p_menu, $p_tramite) {
+   function getInstanceOf($dbms, $p_menu, $p_acordo, $p_acao, $p_viagem, $p_restricao) {
      extract($GLOBALS,EXTR_PREFIX_SAME,'strchema'); $sql=$strschema.'SP_GETMENURELAC';
-     $params=array("p_menu"     =>array($p_menu,        B_INTEGER,   32),
-                   "p_tramite"  =>array($p_tramite,     B_INTEGER,   32),
-                   "p_result"   =>array(null,           B_CURSOR,    -1)
+     $params=array("p_menu"         =>array($p_menu,        B_INTEGER,   32),
+                   "p_acordo"       =>array($p_acordo,      B_VARCHAR,    1),
+                   "p_acao"         =>array($p_acao,        B_VARCHAR,    1),
+                   "p_viagem"       =>array($p_viagem,      B_VARCHAR,    1),
+                   "p_restricao"    =>array($p_restricao,   B_VARCHAR,   20),                   
+                   "p_result"       =>array(null,           B_CURSOR,    -1)
                   );
      $l_rs = DatabaseQueriesFactory::getInstanceOf($sql, $dbms, $params, DB_TYPE);
      $l_error_reporting = error_reporting(); error_reporting(0); if(!$l_rs->executeQuery()) { error_reporting($l_error_reporting); TrataErro($sql, $l_rs->getError(), $params, __FILE__, __LINE__, __CLASS__); }

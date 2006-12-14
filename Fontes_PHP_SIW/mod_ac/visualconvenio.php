@@ -8,7 +8,8 @@ function VisualConvenio($l_chave,$l_O,$l_usuario,$l_P1,$l_P4) {
   $w_html='';
   // Carrega o segmento do cliente
   $RS = db_getCustomerData::getInstanceOf($dbms,$w_cliente); 
-  $w_segmento = f($RS,'segmento');
+  $w_segmento     = f($RS,'segmento');
+  $w_nome_cliente = f($RS,'nome_resumido');
   // Recupera os dados do acordo
   $RS = db_getSolicData::getInstanceOf($dbms,$l_chave,substr($SG,0,3).'GERAL');
   $w_tramite        = f($RS,'sq_siw_tramite');
@@ -46,7 +47,8 @@ function VisualConvenio($l_chave,$l_O,$l_usuario,$l_P1,$l_P4) {
     $w_html.=chr(13).'      <tr><td colspan=2><font size=1>Objeto: <b>'.f($RS,'codigo_interno').' ('.$l_chave.')<br>'.CRLF2BR(f($RS,'objeto')).'</b></font></td></tr>';
     // Identificação do convenio
     $w_html.=chr(13).'      <tr><td valign="top" colspan="2" align="center" bgcolor="#D0D0D0" style="border: 2px solid rgb(0,0,0);"><font size="1"><b>Identificação</td>';
-    $w_html.=chr(13).'      <tr><td valign="top" colspan="2"><font size="1">Tipo:<br><b>'.f($RS,'nm_tipo_acordo').' </b></td>';
+    $w_html.=chr(13).'      <tr><td valign="top"><font size="1">Tipo:<br><b>'.f($RS,'nm_tipo_acordo').' </b></td>';
+    $w_html.=chr(13).'          <td valign="top"><font size="1">Executor:<br><b>'.$w_nome_cliente.' </b></td>';
     $w_html.=chr(13).'      <tr><td valign="top" colspan="2"><table border=0 width="100%" cellspacing=0>';
     $w_html.=chr(13).'          <tr valign="top">';
     $w_html.=chr(13).'          <td><font size="1">Cidade de origem:<br><b>'.f($RS,'nm_cidade').' ('.f($RS,'co_uf').')</b></td>';
@@ -67,8 +69,8 @@ function VisualConvenio($l_chave,$l_O,$l_usuario,$l_P1,$l_P4) {
       $w_html.=chr(13).'          <td><font size="1">Número do empenho:<br><b>'.Nvl(f($RS,'empenho'),'---').' </b></td>';
       $w_html.=chr(13).'          <td><font size="1">Número do processo:<br><b>'.Nvl(f($RS,'processo'),'---').' </b></td>';
       $w_html.=chr(13).'          <tr valign="top">';
-      $w_html.=chr(13).'          <td><font size="1">Assinatura:<br><b>'.FormataDataEdicao(f($RS,'inicio')).' </b></td>';
-      $w_html.=chr(13).'          <td><font size="1">Publicação D.O.:<br><b>'.FormataDataEdicao(f($RS,'fim')).' </b></td>';    
+      $w_html.=chr(13).'          <td><font size="1">Assinatura:<br><b>'.FormataDataEdicao(f($RS,'assinatura')).' </b></td>';
+      $w_html.=chr(13).'          <td><font size="1">Publicação D.O.:<br><b>'.FormataDataEdicao(f($RS,'publicacao')).' </b></td>';    
     }
     $w_html.=chr(13).'          <tr valign="top">';
     $w_html.=chr(13).'          <td><font size="1">Início vigência:<br><b>'.FormataDataEdicao(f($RS,'inicio')).' </b></td>';

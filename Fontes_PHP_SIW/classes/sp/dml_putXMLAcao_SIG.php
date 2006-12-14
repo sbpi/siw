@@ -19,7 +19,7 @@ class dml_putXMLAcao_SIG {
                    'p_cd_subacao'                =>array(tvl($p_cd_subacao),                               B_VARCHAR,         4),
                    'p_cd_localizador'            =>array(tvl($p_cd_localizador),                           B_VARCHAR,         4),
                    'p_cd_regiao'                 =>array(tvl($p_cd_regiao),                                B_VARCHAR,         2),
-                   'p_cd_acao_ppa'               =>array(tvl($p_cd_acao_ppa),                              B_VARCHAR,         5),
+                   'p_cd_acao_ppa'               =>array(tvl($p_cd_acao_ppa),                              B_VARCHAR,         7),
                    'p_tipo_acao'                 =>array(tvl($p_tipo_acao),                                B_INTEGER,        32),
                    'p_cd_produto'                =>array(tvl($p_cd_produto),                               B_INTEGER,        32),
                    'p_unidade_med'               =>array(tvl($p_unidade_med),                              B_INTEGER,        32),

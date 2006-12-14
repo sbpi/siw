@@ -8,7 +8,7 @@ include_once($w_dir_volta.'classes/sp/db_getMenuRelac.php');
 // -------------------------------------------------------------------------
 function selecaoAcordo($label,$accesskey,$hint,$cliente,$chave,$chaveAux,$campo,$restricao,$atributo) {
   extract($GLOBALS);
-  $RS1 = db_getMenuRelac::getInstanceOf($dbms, $restricao, null);
+  $RS1 = db_getMenuRelac::getInstanceOf($dbms, $restricao, null, null, null, null);
   if (count($RS1)>0) {
     $RS = db_getSolicList::getInstanceOf($dbms,$chaveAux,$w_usuario,$restricao,3,
             null,null,null,null,null,null,

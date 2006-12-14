@@ -4,7 +4,6 @@
 // -------------------------------------------------------------------------
 function VisualAcordo($l_chave,$l_O,$l_usuario,$l_P1,$l_P4) {
   extract($GLOBALS);
-
   if ($l_P4==1) $w_TrBgColor=''; else $w_TrBgColor=$conTrBgColor;
   $w_html='';
   
@@ -78,10 +77,11 @@ function VisualAcordo($l_chave,$l_O,$l_usuario,$l_P1,$l_P4) {
     if($w_segmento=='Público') {
       $w_html.=chr(13).'          <tr valign="top">';
       if (substr($SG,0,3)!='GCA' && substr($SG,0,3)!='GCB')   $w_html.=chr(13).'          <td><font size="1">Número do empenho:<br><b>'.Nvl(f($RS,'empenho'),'---').' </b></td>';
-      $w_html.=chr(13).'          <td><font size="1">Número do processo:<br><b>'.Nvl(f($RS,'processo'),'---').' </b></td>';
+      if (substr($SG,0,3)=='GCA') $w_html.=chr(13).'          <td><font size="1">Número do processo:<br><b>'.Nvl(f($RS,'processo'),'---').' </b></td>';
+      if (substr($SG,0,3)=='GCB') $w_html.=chr(13).'          <td><font size="1">Número do empenho (modalidade/nível/mensalidade):<br><b>'.Nvl(f($RS,'processo'),'---').' </b></td>';
       $w_html.=chr(13).'          <tr valign="top">';
-      $w_html.=chr(13).'          <td><font size="1">Assinatura:<br><b>'.FormataDataEdicao(f($RS,'inicio')).' </b></td>';
-      if (substr($SG,0,3)!='GCB') $w_html.=chr(13).'          <td><font size="1">Publicação D.O.:<br><b>'.FormataDataEdicao(f($RS,'fim')).' </b></td>';    
+      $w_html.=chr(13).'          <td><font size="1">Assinatura:<br><b>'.FormataDataEdicao(f($RS,'assinatura')).' </b></td>';
+      if (substr($SG,0,3)!='GCB') $w_html.=chr(13).'          <td><font size="1">Publicação D.O.:<br><b>'.FormataDataEdicao(f($RS,'publicacao')).' </b></td>';    
     }
     $w_html.=chr(13).'          <tr valign="top">';
     $w_html.=chr(13).'          <td><font size="1">Início vigência:<br><b>'.FormataDataEdicao(f($RS,'inicio')).' </b></td>';
@@ -459,7 +459,6 @@ function VisualAcordo($l_chave,$l_O,$l_usuario,$l_P1,$l_P4) {
     $w_html.=chr(13).'  <ul>'.substr($w_erro,1,1000).'</ul>';
     $w_html.=chr(13).'  </font></td></tr>';
   } 
-
   if ($l_P1==4 && ($l_O=='L' || $l_O=='V' || $l_O=='T')) {
     // Encaminhamentos
     $RS = db_getSolicLog::getInstanceOf($dbms,$l_chave,null,'LISTA');

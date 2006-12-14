@@ -1,7 +1,7 @@
 <?
 session_start();
-$w_dir_volta = '/var/www/html/siw/';
-include_once($w_dir_volta.'constants.inc');
+include_once('../constants.inc');
+$w_dir_volta = $conDiretorio;
 include_once($w_dir_volta.'funcoes.php');
 include_once($w_dir_volta.'classes/db/abreSessao.php');
 include_once($w_dir_volta.'classes/sp/dml_putDcOcorrencia.php');

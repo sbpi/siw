@@ -39,8 +39,16 @@ function VisualOS($l_chave,$l_sg) {
     $l_html.=chr(13).'       <td><font size="2"><b><b>'.Nvl(substr(FormataDataEdicao(f($RS1,'phpdt_fim'),3),0,-3),'-').'</b></font></td></tr>';
     break;
   }
-  $l_html.=chr(13).'   <tr><td width="20%">Detalhamento:</td>';
-  $l_html.=chr(13).'       <td><b>'.Nvl(f($RS1,'descricao'),'-').'</b></td></tr>';
+  if (Nvl(f($RS1,'descricao'),'')!='') {
+    $l_html.=chr(13).'   <tr valign="top">';
+    $l_html.=chr(13).'       <td width="20%">Detalhamento:</td>';
+    $l_html.=chr(13).'       <td><b>'.crlf2br(Nvl(f($RS1,'descricao'),'-')).'</b></td></tr>';
+  }
+  if (Nvl(f($RS1,'justificativa'),'')!='') {
+    $l_html.=chr(13).'   <tr valign="top">';
+    $l_html.=chr(13).'       <td width="20%">Justificativa:</td>';
+    $l_html.=chr(13).'       <td><b>'.crlf2br(Nvl(f($RS1,'justificativa'),'-')).'</b></td></tr>';
+  }
 
   // Campos para informar os dados do atendimento
   $l_html.=chr(13).'      <tr><td colspan="2"><br><font size="2"><b>DADOS DO ATENDIMENTO<hr NOSHADE color=#000000 SIZE=1></b></font></td></tr>';

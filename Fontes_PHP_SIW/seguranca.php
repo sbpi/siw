@@ -1461,7 +1461,7 @@ function Visao() {
     ShowHTML('<tr bgcolor="'.$conTrBgColor.'"><td align="center">');
     ShowHTML('    <table width="90%" border="0">');
     ShowHTML('      <tr valign="top">');
-    selecaoServico('<U>S</U>erviço:', 'S', null, $w_sq_menu, null, null, 'w_sq_menu', null, 'onChange="document.Form.action=\''.$w_pagina.$par.'\'; document.Form.O.value=\''.$O.'\'; document.Form.w_troca.value=\'w_sq_menu\'; document.Form.submit();"');
+    selecaoServico('<U>S</U>erviço:', 'S', null, $w_sq_menu, null, null, 'w_sq_menu', null, 'onChange="document.Form.action=\''.$w_pagina.$par.'\'; document.Form.O.value=\''.$O.'\'; document.Form.w_troca.value=\'w_sq_menu\'; document.Form.submit();"', null, null, null);
     ShowHTML('         <td><b>Classificações</b>:<br>');
     // Apresenta a seleção de centros de custo apenas se tiver sido escolhido o serviço
     $w_ContOut=0;

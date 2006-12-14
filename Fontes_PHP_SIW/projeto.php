@@ -54,6 +54,8 @@ include_once('funcoes/selecaoSolicResp.php');
 include_once('funcoes/selecaoAcordo.php');
 include_once('funcoes/selecaoAcao.php');
 include_once('funcoes/selecaoCC.php');
+include_once('funcoes/selecaoServico.php');
+include_once('funcoes/selecaoSolic.php');
 include_once('classes/sp/db_verificaAssinatura.php');
 include_once('classes/sp/dml_putProjetoGeral.php');
 include_once('classes/sp/dml_putSolicArquivo.php');
@@ -679,7 +681,6 @@ function Geral() {
 
   $RS = db_getSiwCliModLis::getInstanceOf($dbms,$w_cliente,null,'IS');
   if (count($RS)>0) $w_acao='S'; else $w_acao='N'; 
-
   // Verifica se há necessidade de recarregar os dados da tela a partir
   // da própria tela (se for recarga da tela) ou do banco de dados (se não for inclusão)
   if ($w_troca > '') {
@@ -723,6 +724,7 @@ function Geral() {
     $w_cidade                   = $_REQUEST['w_cidade'];
     $w_palavra_chave            = $_REQUEST['w_palavra_chave'];
     $w_sqcc                     = $_REQUEST['w_sqcc'];
+    $w_sq_menu_relac            = $_REQUEST['w_sq_menu_relac'];
   } else {
     if (!(strpos('AEV',$O)===false) || $w_copia>'') {
       // Recupera os dados do projeto
@@ -770,9 +772,12 @@ function Geral() {
         $w_uf                   = f($RS,'co_uf');
         $w_cidade               = f($RS,'sq_cidade_origem');
         $w_palavra_chave        = f($RS,'palavra_chave');
+        $w_sq_menu_relac        = f($RS,'sq_menu_pai');
       } 
     } 
-  } 
+  }
+  if(nvl($w_sq_menu_relac,0)>0)
+    $RS_Relac = db_getMenuData::getInstanceOf($dbms,$w_sq_menu_relac);
   cabecalho();
   ShowHTML('<HEAD>');
   // Monta o código JavaScript necessário para validação de campos e preenchimento automático de máscara,
@@ -786,82 +791,34 @@ function Geral() {
   if ($O=='I' || $O=='A') {
     ShowHTML('  if (theForm.Botao.value == "Troca") { return true; }');
     Validate('w_titulo','titulo','1',1,5,100,'1','1');
-    
     // Trata as possíveis vinculações do projeto
-    if (f($RS_Menu,'solicita_cc')=='S' || $w_acordo=='S' || $w_acao=='S') {
-      if ($w_acordo=='N' && Nvl($w_acao,'N')=='N') {
-        // Se puder vincular apenas a uma classificação, verifica se ela foi informada
-        Validate('w_sqcc','Classificação','SELECT',1,1,18,'','0123456789');
-      } elseif (f($RS_Menu,'solicita_cc')=='N' && Nvl($w_acao,'N')=='N') {
-        // Se puder vincular apenas a um acordo, verifica se ela foi informado
-        ShowHTML('if (theForm.w_solic_pai!=undefined) {');
-        Validate('w_solic_pai','Acordo','SELECT',1,1,18,'','0123456789');
-        ShowHTML('}');
-      } elseif (f($RS_Menu,'solicita_cc')=='N' && Nvl($w_acordo,'N')=='N') {
-        // Se puder vincular apenas a uma acao, verifica se ela foi informado
-        ShowHTML('if (theForm.w_chave_pai!=undefined) {');
-        Validate('w_chave_pai','Ação','SELECT',1,1,18,'','0123456789');
-        ShowHTML('}');        
-      } elseif (f($RS_Menu,'solicita_cc')=='S' && $w_acordo=='S' && Nvl($w_acao,'N')=='N') {
-        ShowHTML('if (theForm.w_solic_pai!=undefined) {');
-        ShowHTML('  if (theForm.w_sqcc.selectedIndex==0 && theForm.w_solic_pai.selectedIndex==0) {');
-        ShowHTML('    alert(\'Você deve indicar uma classificação ou um acordo!\');');
-        ShowHTML('    theForm.w_sqcc.focus();');
-        ShowHTML('    return false;');
-        ShowHTML('  } else if (theForm.w_sqcc.selectedIndex!=0 && theForm.w_solic_pai.selectedIndex!=0) {');
-        ShowHTML('    alert(\'Não é possível indicar uma classificação e um acordo, simultaneamente. Escolha apenas um deles!\');');
-        ShowHTML('    theForm.w_sqcc.focus();');
+    if (f($RS_Menu,'solicita_cc')=='S') {
+      if(nvl($w_sq_menu_relac,0)>0) {
+        ShowHTML('  if (theForm.w_solic_pai.selectedIndex==0) {');
+        ShowHTML('    alert(\'Você deve indicar o documento de vinculação!\');');
+        ShowHTML('    theForm.w_solic_pai.focus();');
         ShowHTML('    return false;');
         ShowHTML('  }');
-        ShowHTML('} else {');
-        ShowHTML('  if (theForm.w_sqcc.selectedIndex == 0) {');
-        ShowHTML('     alert(\'Informe uma classificação!\');');
-        ShowHTML('     theForm.w_sqcc.focus();');
-        ShowHTML('     return false;');
-        ShowHTML('  }');
-        ShowHTML('}');
-      } elseif (f($RS_Menu,'solicita_cc')=='S' && $w_acao=='S' && Nvl($w_acordo,'N')=='N') {
-        ShowHTML('if (theForm.w_chave_pai!=undefined) {');
-        ShowHTML('  if (theForm.w_sqcc.selectedIndex==0 && theForm.w_chave_pai.selectedIndex==0) {');
-        ShowHTML('    alert(\'Você deve indicar uma classificação ou uma ação!\');');
-        ShowHTML('    theForm.w_sqcc.focus();');
-        ShowHTML('    return false;');
-        ShowHTML('  } else if (theForm.w_sqcc.selectedIndex!=0 && theForm.w_chave_pai.selectedIndex!=0) {');
-        ShowHTML('    alert(\'Não é possível indicar uma classificação e uma ação, simultaneamente. Escolha apenas um deles!\');');
-        ShowHTML('    theForm.w_sqcc.focus();');
-        ShowHTML('    return false;');
-        ShowHTML('  }');
-        ShowHTML('} else {');
-        ShowHTML('  if (theForm.w_sqcc.selectedIndex == 0) {');
-        ShowHTML('     alert(\'Informe uma classificação!\');');
-        ShowHTML('     theForm.w_sqcc.focus();');
-        ShowHTML('     return false;');
-        ShowHTML('  }');
-        ShowHTML('}');
       } else {
-        // Se puder vincular a uma classificação ou a um acordo, verifica se um deles foi informado
-        ShowHTML('if (theForm.w_solic_pai!=undefined) {');
-        ShowHTML('  if (theForm.w_sqcc.selectedIndex==0 && theForm.w_solic_pai.selectedIndex==0 && theForm.w_chave_pai.selectedIndex==0) {');
-        ShowHTML('    alert(\'Você deve indicar uma classificação, ou um acordo ou uma ação!\');');
+        ShowHTML('  if (theForm.w_sqcc.selectedIndex==0 && theForm.w_sq_menu_relac.selectedIndex==0) {');
+        ShowHTML('    alert(\'Você deve indicar uma classificação ou vincular a um documento!\');');
         ShowHTML('    theForm.w_sqcc.focus();');
         ShowHTML('    return false;');
-        ShowHTML('  } else if (theForm.w_sqcc.selectedIndex!=0 && theForm.w_solic_pai.selectedIndex!=0 && theForm.w_chave_pai.selectedIndex!=0) {');
-        ShowHTML('    alert(\'Não é possível indicar uma classificação, um acordo e uma ação, simultaneamente. Escolha apenas um deles!\');');
-        ShowHTML('    theForm.w_sqcc.focus();');
-        ShowHTML('    return false;');
-        ShowHTML('  }');
-        ShowHTML('} else {');
-        ShowHTML('  if (theForm.w_sqcc.selectedIndex==0 && theForm.w_chave_pai.selectedIndex==0) {');
-        ShowHTML('    alert(\'Você deve indicar uma classificação ou uma ação!\');');
-        ShowHTML('    theForm.w_sqcc.focus();');
-        ShowHTML('    return false;');
-        ShowHTML('  } else if (theForm.w_sqcc.selectedIndex!=0 && theForm.w_chave_pai.selectedIndex!=0) {');
-        ShowHTML('    alert(\'Não é possível indicar uma classificação e uma ação, simultaneamente. Escolha apenas um deles!\');');
+        ShowHTML('  } else if (theForm.w_sqcc.selectedIndex!=0 && theForm.w_sq_menu_relac.selectedIndex!=0) {');
+        ShowHTML('    alert(\'Não é possível indicar uma classificação e uma vinculação simultaneamente. Escolha apenas um deles!\');');
         ShowHTML('    theForm.w_sqcc.focus();');
         ShowHTML('    return false;');
         ShowHTML('  }');
-        ShowHTML('}');
-      } 
+      }
+    } else {
+      // Se puder vincular a uma classificação ou a um acordo, verifica se um deles foi informado
+      ShowHTML('if (theForm.w_solic_pai!=undefined) {');
+      ShowHTML('  if (theForm.w_solic_pai.selectedIndex==0) {');
+      ShowHTML('    alert(\'Você deve indicar o documento!\');');
+      ShowHTML('    theForm.w_solic_pai.focus();');
+      ShowHTML('    return false;');
+      ShowHTML('  }');
+      ShowHTML('}');
     }
     Validate('w_solicitante','Responsável','HIDDEN',1,1,18,'','0123456789');
     Validate('w_sq_unidade_resp','Setor responsável','HIDDEN',1,1,18,'','0123456789');
@@ -934,30 +891,18 @@ function Geral() {
     ShowHTML('      <tr><td align="center" height="1" bgcolor="#000000"></td></tr>');
     ShowHTML('      <tr><td valign="top"><b><u>T</u>ítulo:</b><br><INPUT ACCESSKEY="T" '.$w_Disabled.' class="STI" type="text" name="w_titulo" size="90" maxlength="100" value="'.$w_titulo.'" title="Informe um título para o projeto."></td>');
     // Verifica a que objetos o projeto pode ser vinculado
-    if (f($RS_Menu,'solicita_cc')=='S' || $w_acordo=='S' || $w_acao=='S') {
-      ShowHTML('          <tr><td><table border=0 colspan=0 cellspan=0 width="100%"><tr valign="top">');
-      if (f($RS_Menu,'solicita_cc')=='S') {
-        if (f($RS_Menu,'solicita_cc')=='S') {
-          SelecaoCC('C<u>l</u>assificação:','L','Selecione um dos itens relacionados.',$w_sqcc,null,'w_sqcc','SIWSOLIC');
-        } 
-      }
-      if ($w_acordo=='S') {
-        // Recupera os dados da opção "Contratos de receita"
-        ShowHTML('          <tr>');
-        $RS = db_getLinkData::getInstanceOf($dbms,$w_cliente,'GCRCAD');
-        if (count($RS)==0) {
-          $RS = db_getLinkData::getInstanceOf($dbms,$w_cliente,'GCCCAD');
-        }
-        if (count($RS)!=0) {
-          SelecaoAcordo('<u>A</u>cordo:','A', null, $w_cliente, $w_solic_pai, f($RS,'sq_menu'),'w_solic_pai',f($RS_Menu,'sq_menu'),null);
-        }
-      } 
-      if ($w_acao=='S') {
-        ShowHTML('          <tr>');
-        SelecaoAcao('Açã<u>o</u>:','O','Selecione um dos itens relacionados.',$w_cliente,$_SESSION['ANO'],null,null,null,null,'w_chave_pai','ACAO',null,$w_chave_pai);
-      } 
-      ShowHTML('          </td></tr></table></td></tr>');
+    ShowHTML('          <tr><td><table border=0 colspan=0 cellspan=0 width="100%">');
+    if (f($RS_Menu,'solicita_cc')=='S') {
+      ShowHTML('          <tr valign="top">');
+      SelecaoCC('C<u>l</u>assificação:','L','Selecione um dos itens relacionados.',$w_sqcc,null,'w_sqcc','SIWSOLIC');
     }
+    ShowHTML('          <tr valign="top">');
+    selecaoServico('<U>V</U>incular a:', 'S', null, $w_sq_menu_relac, $w_menu, null, 'w_sq_menu_relac', 'MENURELAC', 'onChange="document.Form.action=\''.$w_pagina.$par.'\'; document.Form.O.value=\''.$O.'\'; document.Form.w_troca.value=\'w_sq_menu_relac\'; document.Form.submit();"', $w_acordo, $w_acao, $w_viagem);
+    if(Nvl($w_sq_menu_relac,0)>0) {
+      ShowHTML('          <tr valign="top">');
+      SelecaoSolic('Documento',null,null,$w_cliente,$w_solic_pai,$w_sq_menu_relac,f($RS_Menu,'sq_menu'),'w_solic_pai',f($RS_Relac,'sigla'),null);
+    }
+    ShowHTML('          </td></tr></table></td></tr>');
     ShowHTML('      <tr><td><table border=0 width="100%" cellspacing=0>');
     SelecaoPessoa('Respo<u>n</u>sável:','N','Selecione o responsável pelo projeto na relação.',$w_solicitante,null,'w_solicitante','USUARIOS');
     SelecaoUnidade('<U>S</U>etor responsável:','S','Selecione o setor responsável pela execução do projeto',$w_sq_unidade_resp,null,'w_sq_unidade_resp',null,null);
@@ -1273,7 +1218,7 @@ function Rubrica() {
       foreach ($RS1 as $row) {
         $w_cor = ($w_cor==$conTrBgColor || $w_cor=='') ? $w_cor=$conTrAlternateBgColor : $w_cor=$conTrBgColor;
         ShowHTML('      <tr bgcolor="'.$w_cor.'" valign="top">');
-        ShowHTML('        <td align="center">'.f($row,'codigo').'</td>');
+        ShowHTML('        <td>'.f($row,'codigo').'</td>');
         ShowHTML('        <td>'.f($row,'nome').'</td>');
         ShowHTML('        <td align="center">'.f($row,'nm_aplicacao_financeira').'</td>');
         ShowHTML('        <td align="center">'.f($row,'nm_ativo').'</td>');
@@ -3079,7 +3024,7 @@ function Grava() {
         // Recupera os dados para montagem correta do menu
         $RS1 = db_getMenuData::getInstanceOf($dbms,$w_menu);
         ScriptOpen('JavaScript');
-        ShowHTML('  parent.menu.location=\'menu.php?par=ExibeDocs&O=A&w_chave='.$w_chave_nova.'&w_documento=Nr. '.$w_chave_nova.'&R='.$R.'&SG='.f($RS1,'sigla').'&TP='.$TP.MontaFiltro('GET').'\';');
+        ShowHTML('  parent.menu.location=\'menu.php?par=ExibeDocs&O=A&w_chave='.$w_chave_nova.'&w_documento=Nr. '.$w_chave_nova.'&w_menu='.$w_menu.'&R='.$R.'&SG='.f($RS1,'sigla').'&TP='.$TP.MontaFiltro('GET').'\';');
       }elseif ($O=='E') {
         ScriptOpen('JavaScript');
         if(substr($SG,0,3)!='PJB')  ShowHTML('  location.href=\''.$R.'&O=L&R='.$R.'&SG=PJCAD&w_menu='.$w_menu.'&P1='.$P1.'&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP='.$TP.MontaFiltro('GET').'\';');
@@ -3088,7 +3033,7 @@ function Grava() {
         // Aqui deve ser usada a variável de sessão para evitar erro na recuperação do link
         $RS1 = db_getLinkData::getInstanceOf($dbms,$_SESSION['P_CLIENTE'],$SG);
         ScriptOpen('JavaScript');
-        ShowHTML('  location.href=\''.f($RS1,'link').'&O='.$O.'&w_chave='.$_REQUEST['w_chave'].'&P1='.$P1.'&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP='.$TP.'&SG='.$SG.MontaFiltro('GET').'\';');
+        ShowHTML('  location.href=\''.f($RS1,'link').'&O='.$O.'&w_chave='.$_REQUEST['w_chave'].'&w_menu='.$w_menu.'&P1='.$P1.'&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP='.$TP.'&SG='.$SG.MontaFiltro('GET').'\';');
       } 
       ScriptClose();
     } else {

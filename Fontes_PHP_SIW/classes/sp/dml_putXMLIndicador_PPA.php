@@ -38,7 +38,7 @@ class dml_putXMLIndicador_PPA {
                    'p_apurado_ano_6'             =>array(tvl($p_apurado_ano_6),                            B_VARCHAR,         1),
                    'p_apurado_ref'               =>array(tvl($p_apurado_ref),                              B_VARCHAR,         1),
                    'p_apurado_final'             =>array(tvl($p_apurado_final),                            B_VARCHAR,         1),
-                   'p_apuracao'                  =>array(tvl($p_apuracao),                                 B_DATE,           32),
+                   'p_apuracao'                  =>array(tvl(str_replace('T',' ',$p_apuracao)),            B_VARCHAR,         20),
                    'p_observacao'                =>array(tvl($p_observacao),                               B_VARCHAR,      4000)
                   );
      $l_rs = DatabaseQueriesFactory::getInstanceOf($sql, $dbms, $params, DB_TYPE);

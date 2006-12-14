@@ -214,7 +214,7 @@ function Inicial() {
         $w_filtro .= '<tr valign="top"><td align="right">Cidade <td>[<b>'.f($RS,'nome').'</b>]';
       } 
       if ($p_prioridade>'') {
-        $RS = db_getOpiniao::getInstanceOf($dbms,$p_prioridade,$w_cliente,null);
+        $RS = db_getOpiniao::getInstanceOf($dbms,$p_prioridade,$w_cliente,null, null, null);
         foreach ($RS as $row) { $RS = $row; break; }
         $w_filtro .= '<tr valign="top"><td align="right">Opinião <td>[<b>'.f($RS,'nome').'</b>]';
       }
@@ -350,7 +350,7 @@ function Inicial() {
       ShowHTML('        <tr bgcolor="'.$conTrBgColor.'" align="center">');
       if ($P1==3) {
         ShowHTML('          <td rowspan=2><b>'.LinkOrdena('Serviço','nome').'</td>');
-        ShowHTML('          <td colspan=2><b>Data</td>');
+        ShowHTML('          <td colspan=3><b>Data</td>');
       } elseif (f($RS_Menu,'data_hora')==1 || f($RS_Menu,'data_hora')==2) {
         ShowHTML('          <td colspan=2><b>Data</td>');
       } else {
@@ -367,22 +367,23 @@ function Inicial() {
       } 
       ShowHTML('          <td rowspan=2><b>Operações</td>');
       ShowHTML('        <tr bgcolor="'.$conTrBgColor.'" align="center">');
-      if (f($RS_Menu,'data_hora')==1 || f($RS_Menu,'data_hora')==2 || ($P1==3)) {
+      if (f($RS_Menu,'data_hora')==1 || f($RS_Menu,'data_hora')==2 || $P1==3) {
         ShowHTML('          <td><b>'.LinkOrdena('Programada','phpdt_fim').'</td>');
       } else {
         ShowHTML('          <td><b>'.LinkOrdena('Início','phpdt_inicio').'</td>');
         ShowHTML('          <td><b>'.LinkOrdena('Término','phpdt_fim').'</td>');
       }
       ShowHTML('          <td><b>'.LinkOrdena('Inclusão','phpdt_inclusao').'</td>');
+      if ($P1==3) ShowHTML('          <td><b>'.LinkOrdena('Conclusão','phpdt_conclusao').'</td>');
     } else {
       ShowHTML('        <tr bgcolor="'.$conTrBgColor.'" align="center">');
       if ($P1==3) {
         ShowHTML('          <td rowspan=2><b>Serviço</td>');
         ShowHTML('          <td colspan=2><b>Data</td>');
       } elseif (f($RS_Menu,'data_hora')==1 || f($RS_Menu,'data_hora')==2) {
-        ShowHTML('          <td colspan=2><b>Data</td>');
+        if ($P1==3) ShowHTML('          <td colspan=3><b>Data</td>'); else ShowHTML('          <td colspan=2><b>Data</td>');
       } else {
-        ShowHTML('          <td colspan=3><b>Data</td>');
+        if ($P1==3) ShowHTML('          <td colspan=4><b>Data</td>'); else ShowHTML('          <td colspan=3><b>Data</td>');
       }
       ShowHTML('          <td rowspan=2><b>Nº</td>');
       ShowHTML('          <td rowspan=2><b>Solicitante</td>');
@@ -401,6 +402,7 @@ function Inicial() {
         ShowHTML('          <td><b>Fim</td>');
       }
       ShowHTML('          <td><b>Inclusão</td>');
+      if ($P1==3) ShowHTML('          <td><b>Conclusão</td>');
     } 
     ShowHTML('        </tr>');
     if (count($RS)<=0) {
@@ -411,9 +413,7 @@ function Inicial() {
       foreach($RS1 as $row) {
         $w_cor = ($w_cor==$conTrBgColor || $w_cor=='') ? $w_cor=$conTrAlternateBgColor : $w_cor=$conTrBgColor;
         ShowHTML('      <tr bgcolor="'.$w_cor.'" valign="top">');
-        if ($P1==3) {
-          ShowHTML('        <td>'.f($row,'nome').'</td>');
-        }
+        if ($P1==3) ShowHTML('        <td>'.f($row,'nome').'</td>');
         switch (f($row,'data_hora')) {
         case 1 :
           ShowHTML('        <td align="center">'.Nvl(FormataDataEdicao(f($row,'phpdt_fim')),'-').'</td>');
@@ -431,6 +431,7 @@ function Inicial() {
           break;
         }
         ShowHTML('        <td align="center">'.Nvl(substr(FormataDataEdicao(f($row,'phpdt_inclusao'),3),0,-3),'-').'</td>');
+        if ($P1==3) ShowHTML('        <td align="center">'.Nvl(substr(FormataDataEdicao(f($row,'phpdt_conclusao'),3),0,-3),'---').'</td>');
         ShowHTML('        <td nowrap>');
         if ($w_tipo!='WORD') {
           if (nvl(f($row,'conclusao'),'')=='') {
@@ -517,7 +518,7 @@ function Inicial() {
             } 
           } else {
             if (RetornaGestor(f($row,'sq_siw_solicitacao'),$w_usuario)=='S') {
-              ShowHTML('          <A class="HL" HREF="'.$w_dir.$w_pagina.'envio&R='.$w_pagina.$par.'&O=V&w_chave='.f($row,'sq_siw_solicitacao').'&w_tipo=Volta&P1='.$P1.'&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP='.$TP.'&SG='.$SG.MontaFiltro('GET').'" title="Envia a solicitação para outro trâmite.">Enviar</A>&nbsp');
+              ShowHTML('          <A class="HL" HREF="'.$w_dir.$w_pagina.'envio&R='.$w_pagina.$par.'&O=V&w_chave='.f($row,'sq_siw_solicitacao').'&w_tipo=Volta&P1='.$P1.'&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP='.$TP.'&SG='.f($row,'sigla').MontaFiltro('GET').'" title="Envia a solicitação para outro trâmite.">Enviar</A>&nbsp');
             } else {
               ShowHTML('          ---&nbsp');
             } 
@@ -531,7 +532,7 @@ function Inicial() {
         // Coloca o valor parcial apenas se a listagem ocupar mais de uma página
         if (ceil(count($RS)/$P4)>1) { 
           ShowHTML('        <tr bgcolor="'.$conTrBgColor.'">');
-          ShowHTML('          <td colspan="'.(($P1==3) ? 5 : 4).'" align="right"><b>Total desta página&nbsp;</td>');
+          ShowHTML('          <td colspan="'.(($P1==3) ? 6 : 4).'" align="right"><b>Total desta página&nbsp;</td>');
           ShowHTML('          <td align="right"><b>'.number_format($w_parcial,2,',','.').'</td>');
           ShowHTML('          <td colspan=2>&nbsp;</td>');
           ShowHTML('        </tr>');
@@ -546,7 +547,7 @@ function Inicial() {
             } 
           } 
           ShowHTML('        <tr bgcolor="'.$conTrBgColor.'">');
-          ShowHTML('          <td colspan="'.(($P1==3) ? 5 : 4).'" align="right"><b>Total da listagem&nbsp;</td>');
+          ShowHTML('          <td colspan="'.(($P1==3) ? 6 : 4).'" align="right"><b>Total da listagem&nbsp;</td>');
           ShowHTML('          <td align="right"><b>'.number_format($w_total,2,',','.').'</td>');
           ShowHTML('          <td colspan=2>&nbsp;</td>');
           ShowHTML('        </tr>');
@@ -585,7 +586,7 @@ function Inicial() {
       // Se não for cadastramento ou se for cópia
       if ($P1==3) {
         ShowHTML('      <tr valign="top">');
-        selecaoServico('<U>S</U>erviço:', 'S', null, $p_sq_menu, null, 'SR', 'p_sq_menu', null, null);
+        selecaoServico('<U>S</U>erviço:', 'S', null, $p_sq_menu, null, 'SR', 'p_sq_menu', null, null, null, null, null);
       }
       ShowHTML('      <tr valign="top">');
       ShowHTML('          <td valign="top"><b>Número <U>d</U>a solicitação:<br><INPUT ACCESSKEY="D" '.$w_Disabled.' class="STI" type="text" name="p_chave" size="18" maxlength="18" value="'.$p_chave.'"></td>');
@@ -1029,6 +1030,7 @@ function Encaminhamento() {
   // Recupera a sigla do trâmite desejado, para verificar a lista de possíveis destinatários.
   $RS = db_getTramiteData::getInstanceOf($dbms,$w_tramite);
   $w_sg_tramite = f($RS,'sigla');
+  $w_ativo      = f($RS,'ativo');
 
   if ($w_sg_tramite!='CI') {
     //Verifica a fase anterior para a caixa de seleção da fase.
@@ -1047,7 +1049,7 @@ function Encaminhamento() {
     ScriptOpen('JavaScript');
     ValidateOpen('Validacao');
     if ($w_sg_tramite!='CI') {
-      if (substr(Nvl($w_erro,'nulo'),0,1)=='0' || $w_sg_tramite=='EE') {
+      if (substr(Nvl($w_erro,'nulo'),0,1)=='0' || $w_sg_tramite=='EE' || $w_ativo=='N') {
         Validate('w_despacho','Despacho','1','1','1','2000','1','1');
       } else {
         Validate('w_despacho','Despacho','','','1','2000','1','1');
@@ -1090,7 +1092,7 @@ function Encaminhamento() {
   // Chama a rotina de visualização dos dados da solicitação, na opção 'Listagem'
   ShowHTML(VisualGeral($w_chave,'V',$w_usuario,$SG,null));
   ShowHTML('<HR>');
-  if (Nvl($w_erro,'')=='' || $w_sg_tramite=='EE' || (substr(Nvl($w_erro,'nulo'),0,1)=='2' && $w_sg_tramite=='CI') || (Nvl($w_erro,'')>'' && RetornaGestor($w_chave,$w_usuario)=='S')) {
+  if (Nvl($w_erro,'')=='' || $w_sg_tramite=='EE' || $w_ativo=='N' || (substr(Nvl($w_erro,'nulo'),0,1)=='2' && $w_sg_tramite=='CI') || (Nvl($w_erro,'')>'' && RetornaGestor($w_chave,$w_usuario)=='S')) {
     AbreForm('Form',$w_dir.$w_pagina.'Grava','POST','return(Validacao(this));',null,$P1,$P2,$P3,$P4,$TP,$SG,$R,$O);
     ShowHTML(MontaFiltro('POST'));
     ShowHTML('<INPUT type="hidden" name="w_chave" value="'.$w_chave.'">');
@@ -1111,7 +1113,7 @@ function Encaminhamento() {
       }
     } else {
       ShowHTML('    <tr><td><b>Tipo do Encaminhamento</b><br>');
-      if (substr(Nvl($w_erro,'nulo'),0,1)=='0' || $w_sg_tramite=='EE') {
+      if (substr(Nvl($w_erro,'nulo'),0,1)=='0' || $w_sg_tramite=='EE' || $w_ativo=='N') {
         ShowHTML('              <input DISABLED class="STR" type="radio" name="w_envio" value="N"> Enviar para a próxima fase <br><input DISABLED class="STR" class="STR" type="radio" name="w_envio" value="S" checked> Devolver para a fase anterior');
         ShowHTML('<INPUT type="hidden" name="w_envio" value="S">');
       } else {
@@ -1124,7 +1126,7 @@ function Encaminhamento() {
       ShowHTML('    <tr>');
       SelecaoFase('<u>F</u>ase: (válido apenas se for devolução)','F','Se deseja devolver a PCD, selecione a fase para a qual deseja devolvê-la.',$w_novo_tramite,$w_novo_tramite,'w_novo_tramite','DEVOLUCAO',null);
       ShowHTML('    <tr><td><b>D<u>e</u>spacho (informar apenas se for devolução):</b><br><textarea '.$w_Disabled.' accesskey="E" name="w_despacho" class="STI" ROWS=5 cols=75 title="Informe o que o destinatário deve fazer quando receber a PCD.">'.$w_despacho.'</TEXTAREA></td>');
-      if (!(substr(Nvl($w_erro,'nulo'),0,1)=='0' || $w_sg_tramite=='EE')) {
+      if (!(substr(Nvl($w_erro,'nulo'),0,1)=='0' || $w_sg_tramite=='EE' || $w_ativo=='N')) {
         if (substr(Nvl($w_erro,'nulo'),0,1)=='1' || substr(Nvl($w_erro,'nulo'),0,1)=='2') {
           if (addDays($w_inicio,-$w_prazo)<addDays(time(),-1)) {
             ShowHTML('    <tr><td><b><u>J</u>ustificativa para não cumprimento do prazo regulamentar de '.$w_prazo.' dias:</b><br><textarea '.$w_Disabled.' accesskey="J" name="w_justificativa" class="STI" ROWS=5 cols=75 title="Se o início da viagem for anterior a '.FormataDataEdicao(addDays(time(),$w_prazo)).', justifique o motivo do não cumprimento do prazo regulamentar para o pedido.">'.$w_justificativa.'</TEXTAREA></td>');
@@ -1174,13 +1176,23 @@ function Opiniao() {
   ValidateOpen('Validacao');
   ShowHTML('  var i; ');
   ShowHTML('  var w_erro=true; ');
+  ShowHTML('  var w_indice; ');
   ShowHTML('  for (i=0; i < theForm.w_opiniao.length; i++) {');
-  ShowHTML('    if (theForm.w_opiniao[i].checked) w_erro=false;');
+  ShowHTML('    if (theForm.w_opiniao[i].checked) { w_erro=false; w_indice = i; }');
   ShowHTML('  }');
   ShowHTML('  if (w_erro) {');
   ShowHTML('    alert(\'Você deve selecionar uma das opiniões!\'); ');
   ShowHTML('    return false;');
   ShowHTML('  }');
+  ShowHTML('  if (theForm.w_opiniao[w_indice].value==\'IN\' && theForm.w_motivo.value==\'\') {');
+  ShowHTML('    alert(\'Você deve informar o motivo da insatisfação!\'); ');
+  ShowHTML('    return false;');
+  ShowHTML('  }');
+  ShowHTML('  if (theForm.w_opiniao[w_indice].value!=\'IN\' && theForm.w_motivo.value!=\'\') {');
+  ShowHTML('    alert(\'O campo motivo deve ser informado apenas se você ficou insatisfeito com o atendimento!\'); ');
+  ShowHTML('    return false;');
+  ShowHTML('  }');
+  Validate('w_motivo','Motivo da insatisfação','1','','6','1000','1','1');
   Validate('w_assinatura','Assinatura Eletrônica','1','1','6','30','1','1');
   ShowHTML('  theForm.Botao[0].disabled=true;');
   ShowHTML('  theForm.Botao[1].disabled=true;');
@@ -1205,6 +1217,7 @@ function Opiniao() {
   ShowHTML('    <tr><td>');
   ShowHTML('      <p align="justify"><font size="2">É importante para as áreas executoras saber sua opinião sobre o atendimento desta solicitação. Selecione uma das alternativas abaixo, informe sua assinatura e clique no botão <i>Gravar</i>.</font></p>');
   selecaoOpiniao(null,null,null,null,$w_cliente,'w_opiniao',null,'CHECKBOX');
+  ShowHTML('      <tr><td><b><u>M</u>otivo da insatisfação: (apenas se ficou insatisfeito com o atendimento)</b><br><textarea '.$w_Disabled.' accesskey="M" name="w_motivo" class="STI" ROWS=5 cols=75 title="Descreva os motivos pelos quais você ficou insatisfeito com o atendimento.">'.$w_motivo.'</TEXTAREA></td>');
   ShowHTML('      <br>');
   ShowHTML('    </td></tr>');
   ShowHTML('    <tr><td><b><U>A</U>ssinatura Eletrônica:<BR> <INPUT ACCESSKEY="A" class="STI" type="PASSWORD" name="w_assinatura" size="30" maxlength="30" value=""></td></tr>');
@@ -1410,6 +1423,9 @@ function SolicMail($p_solic,$p_tipo) {
   extract($GLOBALS);
   global $w_Disabled;
 
+  // Recupera os dados da solicitação
+  $RSM = db_getSolicData::getInstanceOf($dbms,$p_solic,$SG);
+
   $l_solic          = $p_solic;
   $w_destinatarios  = '';
   $w_resultado      = '';
@@ -1418,80 +1434,101 @@ function SolicMail($p_solic,$p_tipo) {
   $w_html.='<table border="0" cellpadding="0" cellspacing="0" width="100%">'.$crlf;
   $w_html.='<tr bgcolor="'.$conTrBgColor.'"><td align="center">'.$crlf;
   $w_html.='    <table width="97%" border="0">'.$crlf;
+  $w_nome='Serviço: '.f($RSM,'nome').' - Solicitação '.f($RSM,'sq_siw_solicitacao');
   if ($p_tipo==1) {
     $w_html.='      <tr valign="top"><td align="center"><font size=2><b>INCLUSÃO DE SOLICITAÇÃO</b><br><br><td></tr>'.$crlf;
   } elseif ($p_tipo==2) {
     $w_html.='      <tr valign="top"><td align="center"><font size=2><b>TRAMITAÇÃO DE SOLICITAÇÃO</b><br><br><td></tr>'.$crlf;
   } elseif ($p_tipo==3) {
     $w_html.='      <tr valign="top"><td align="center"><font size=2><b>CONCLUSÃO DE SOLICITAÇÃO</b><br><br><td></tr>'.$crlf;
+  } elseif ($p_tipo==4) {
+    $w_html.='      <tr valign="top"><td align="center"><font size=2><b>COMUNICADO DE INSATISFAÇÃO</b><br><br><td></tr>'.$crlf;
   } 
-  $w_html.='      <tr valign="top"><td><font size=2><b><font color="#BC3131">ATENÇÃO: Esta é uma mensagem de envio automático. Não responda esta mensagem.</b><br><br><td></tr>'.$crlf;
-  // Recupera os dados da solicitação
-  $RSM = db_getSolicData::getInstanceOf($dbms,$p_solic,$SG);
-  $w_nome='Demanda '.f($RSM,'sq_siw_solicitacao');
+  $w_html.='      <tr valign="top"><td align="center"><font size=2><b>'.strtoupper($w_nome).'</b><br><br><td></tr>'.$crlf;
+  if ($p_tipo==2) {
+    // Tramitação
+    $w_html.='      <tr valign="top"><td><font size=2><b><font color="#BC3131">ATENÇÃO: Esta solicitação precisa da sua intervenção para ser atendida. Acesse o sistema e verifique o bloco de ocorrências e anotações.</b><br><br><td></tr>'.$crlf;
+  } elseif ($p_tipo==3) {
+    // Conclusão
+    $w_html.='      <tr valign="top"><td><font size=2><b><font color="#BC3131">ATENÇÃO: Esta solicitação foi concluída. Acesse o sistema e, na mesa de trabalho, informe sua opinião sobre o atendimento.</b><br><br><td></tr>'.$crlf;
+  } elseif ($p_tipo==4) {
+    // Insatisfação
+    $w_html.='      <tr valign="top"><td><font size=2><b><font color="#BC3131">ATENÇÃO: O solicitante declarou-se insatisfeito com o atendimento. Verifique abaixo os motivos apontados.</b><br><br><td></tr>'.$crlf;
+  } 
+  $w_nome='Serviço: '.f($RSM,'nome').' - Solicitação '.f($RSM,'sq_siw_solicitacao');
   $w_html.=$crlf.'<tr bgcolor="'.$conTrBgColor.'"><td align="center">';
   $w_html.=$crlf.'    <table width="99%" border="0">';
-  $w_html.=$crlf.'      <tr><td>Detalhamento: <b>'.$p_solic.'<br>'.CRLF2BR(f($RSM,'descricao')).'</b></td></tr>';
   // Identificação da solicitação
-  $w_html.=$crlf.'      <tr><td valign="top" colspan="2" align="center" bgcolor="#D0D0D0" style="border: 2px solid rgb(0,0,0);"><b>EXTRATO DA SOLICITAÇÃO</td>';
-  // Se a classificação foi informada, exibe.
-  if (nvl(f($RSM,'sq_cc'),'')>'') {
-    $w_html.=$crlf.'      <tr><td valign="top">Classificação:<br><b>'.f($RSM,'cc_nome').' </b></td>';
-  } 
-  $w_html.=$crlf.'      <tr><td valign="top" colspan="2"><table border=0 width="100%" cellspacing=0>';
+  $w_html.=$crlf.'      <tr><td colspan="2" align="center" bgcolor="#D0D0D0" style="border: 2px solid rgb(0,0,0);"><b>EXTRATO DA SOLICITAÇÃO</td>';
+  $w_html.=$crlf.'      <tr><td colspan="2"><table border=0 width="100%" cellspacing=0>';
   $w_html.=$crlf.'          <tr valign="top">';
-  $w_html.=$crlf.'          <td>Responsável:<br><b>'.f($RSM,'nm_sol').'</b></td>';
-  $w_html.=$crlf.'          <td>Unidade responsável:<br><b>'.f($RSM,'nm_unidade_resp').'</b></td>';
+  $w_html.=$crlf.'          <td>Solicitante:<br><b>'.f($RSM,'nm_sol').'</b></td>';
+  $w_html.=$crlf.'          <td>Unidade solicitante:<br><b>'.f($RSM,'nm_unidade_solic').'</b></td>';
+
+  // Exibe as informações da data, conforme definição para o serviço.
   $w_html.=$crlf.'          <tr valign="top">';
-  $w_html.=$crlf.'          <td>Início:<br><b>'.FormataDataEdicao(f($RSM,'inicio')).' </b></td>';
-  $w_html.=$crlf.'          <td>Término:<br><b>'.FormataDataEdicao(f($RSM,'fim')).' </b></td>';
-  $w_html.=$crlf.'          <td>Prioridade:<br><b>'.RetornaPrioridade(f($RSM,'prioridade')).' </b></td>';
-  $w_html.=$crlf.'          </table>';
-  // Informações adicionais
-  if (Nvl(f($RSM,'descricao'),'')>'') {
-    $w_html.=$crlf.'      <tr><td valign="top">Resultados da solicitação:<br><b>'.CRLF2BR(f($RSM,'descricao')).' </b></td>';
+  switch (f($RS_Menu,'data_hora')) {
+  case 1 :
+    $w_html.=$crlf.'          <td>Data programada:<br><b>'.Nvl(FormataDataEdicao(f($RSM,'phpdt_fim')),'-').' </b></td>';
+    break;
+  case 2 :
+    $w_html.=$crlf.'          <td>Data programada:<br><b>'.Nvl(substr(FormataDataEdicao(f($RSM,'phpdt_fim'),3),0,-3),'-').' </b></td>';
+    break;
+  case 3 :
+    $w_html.=$crlf.'          <td>Início:<br><b>'.Nvl(FormataDataEdicao(f($RSM,'phpdt_inicio')),'-').' </b></td>';
+    $w_html.=$crlf.'          <td>Término:<br><b>'.Nvl(FormataDataEdicao(f($RSM,'phpdt_fim')),'-').' </b></td>';
+    break;
+  case 4 :
+    $w_html.=$crlf.'          <td>Início:<br><b>'.Nvl(substr(FormataDataEdicao(f($RSM,'phpdt_inicio'),3),0,-3),'-').' </b></td>';
+    $w_html.=$crlf.'          <td>Término:<br><b>'.Nvl(substr(FormataDataEdicao(f($RSM,'phpdt_fim'),3),0,-3),'-').' </b></td>';
+    break;
   }
-  $w_html.=$crlf.'    </table>';
-  $w_html.=$crlf.'</tr>';
-  // Dados da conclusão da solicitação, se ela estiver nessa situação
-  if (nvl(f($RSM,'conclusao'),'')!='') {
-    $w_html.=$crlf.'      <tr><td valign="top" colspan="2" align="center" bgcolor="#D0D0D0" style="border: 2px solid rgb(0,0,0);"><b>DADOS DA CONCLUSÃO</td>';
-    $w_html.=$crlf.'      <tr><td valign="top" colspan="2"><table border=0 width="100%" cellspacing=0>';
-    $w_html.=$crlf.'          <tr valign="top">';
-    $w_html.=$crlf.'          <td>Início:<br><b>'.FormataDataEdicao(f($RSM,'inicio')).' </b></td>';
-    $w_html.=$crlf.'          <td>Término:<br><b>'.FormataDataEdicao(f($RSM,'fim')).' </b></td>';
-    $w_html.=$crlf.'          </table>';
-  } 
+  
+  // Se o serviço pede descrição, exibe.
+  if (f($RS_Menu,'descricao')=='S') {
+    $w_html.=$crlf.'      <tr><td colspan="2">Detalhamento: <b><br>'.CRLF2BR(f($RSM,'descricao')).'</b></td></tr>';
+  }
+
+  // Se o serviço pede justificativa, exibe.
+  if (f($RS_Menu,'justificativa')=='S') {
+    $w_html.=$crlf.'      <tr><td colspan="2">Justificativa: <b><br>'.CRLF2BR(f($RSM,'justificativa')).'</b></td></tr>';
+  }
+
+  // Se o serviço pede justificativa, exibe.
+  if ($p_tipo==4) {
+    $w_html.=$crlf.'      <tr><td colspan="2">Motivo(s) da insatisfação: <b><br>'.CRLF2BR(f($RSM,'motivo_insatisfacao')).'</b></td></tr>';
+  }
+
+  $w_html.=$crlf.'      </table>';
+  $w_html.=$crlf.'      </tr>';
+
   //Recupera o último log
   $RS = db_getSolicLog::getInstanceOf($dbms,$p_solic,null,'LISTA');
   $RS = SortArray($RS,'phpdt_data','desc');
   foreach ($RS as $row) { $RS = $row; break; }
   $w_data_encaminhamento = f($RS,'phpdt_data');
-  // Exibe dados do encaminhamento apenas se for tramitação. Se for conclusão, apenas recupera o momento de registro.
-  if ($p_tipo==2) {
-    $w_html.=$crlf.'      <tr><td valign="top" colspan="2" align="center" bgcolor="#D0D0D0" style="border: 2px solid rgb(0,0,0);"><b>ÚLTIMO ENCAMINHAMENTO</td>';
-    $w_html.=$crlf.'      <tr><td valign="top" colspan="2"><table border=0 width="100%" cellspacing=0>';
-    $w_html.=$crlf.'          <tr valign="top">';
-    $w_html.=$crlf.'          <td>De:<br><b>'.f($RS,'responsavel').'</b></td>';
-    $w_html.=$crlf.'          <td>Para:<br><b>'.f($RS,'destinatario').'</b></td>';
-    $w_html.=$crlf.'          <tr valign="top"><td colspan=2>Despacho:<br><b>'.CRLF2BR(Nvl(f($RS,'despacho'),'---')).' </b></td>';
-    $w_html.=$crlf.'          </table>';
-    // Se for tramitação, configura o destinatário da tramitação como destinatário da mensagem
-    $RS = db_getPersonData::getInstanceOf($dbms,$w_cliente,f($RS,'sq_pessoa_destinatario'),null,null);
-    $w_destinatarios = f($RS,'email').'; ';
-  } 
+  // Exibe dados da ocorrência
+  $w_html.=$crlf.'      <tr><td valign="top" colspan="2" align="center" bgcolor="#D0D0D0" style="border: 2px solid rgb(0,0,0);"><b>ÚLTIMO ENCAMINHAMENTO</td>';
+  $w_html.=$crlf.'      <tr><td valign="top" colspan="2"><table border=0 width="100%" cellspacing=0>';
+  $w_html.=$crlf.'          <tr valign="top">';
+  $w_html.=$crlf.'          <td>Responsável: <b>'.f($RS,'responsavel').'</b></td>';
+  $w_html.=$crlf.'          <tr><td>Ocorrência:<ul>';
+  if ($p_tipo==3) {
+    $w_html.=$crlf.'            <li><b>Comunicado de conclusão</b>';
+  } elseif ($p_tipo==4) {
+    $w_html.=$crlf.'            <li><b>Comunicado de insatisfação</b>';
+  } else {
+    $w_html.=$crlf.'            <li><b>'.CRLF2BR(f($RS,'observacao')).' </b>';
+  }
+  $w_html.=$crlf.'            <li>Responsável: <b>'.$_SESSION['NOME'].'</b></li>'.$crlf;
+  $w_html.=$crlf.'            <li>Data: <b>'.date('d/m/Y, H:i:s',$w_data_encaminhamento).'</b></li>'.$crlf;
+  $w_html.=$crlf.'            <li>IP de origem: <b>'.$_SERVER['REMOTE_ADDR'].'</b></li>'.$crlf;
+  $w_html.=$crlf.'            </ul>'.$crlf;
+  $w_html.=$crlf.'          </table>';
   $w_html.=$crlf.'      <tr><td valign="top" colspan="2" align="center" bgcolor="#D0D0D0" style="border: 2px solid rgb(0,0,0);"><b>OUTRAS INFORMAÇÕES</td>';
   $RS = db_getCustomerSite::getInstanceOf($dbms,$_SESSION['P_CLIENTE']);
   $w_html.='      <tr valign="top"><td>'.$crlf;
   $w_html.='         Para acessar o sistema use o endereço: <b><a class="SS" href="'.f($RS,'logradouro').'" target="_blank">'.f($RS,'Logradouro').'</a></b></li>'.$crlf;
-  $w_html.='      </td></tr>'.$crlf;
-  $w_html.='      <tr valign="top"><td>'.$crlf;
-  $w_html.='         Dados da ocorrência:<br>'.$crlf;
-  $w_html.='         <ul>'.$crlf;
-  $w_html.='         <li>Responsável: <b>'.$_SESSION['NOME'].'</b></li>'.$crlf;
-  $w_html.='         <li>Data: <b>'.date('d/m/Y, H:i:s',$w_data_encaminhamento).'</b></li>'.$crlf;
-  $w_html.='         <li>IP de origem: <b>'.$_SERVER['REMOTE_ADDR'].'</b></li>'.$crlf;
-  $w_html.='         </ul>'.$crlf;
   $w_html.='      </td></tr>'.$crlf;
   $w_html.='    </table>'.$crlf;
   $w_html.='</td></tr>'.$crlf;
@@ -1499,15 +1536,32 @@ function SolicMail($p_solic,$p_tipo) {
   $w_html.='</BODY>'.$crlf;
   $w_html.='</HTML>'.$crlf;
 
-  // Recupera o e-mail do responsável
-  $RS = db_getPersonData::getInstanceOf($dbms,$w_cliente,f($RSM,'solicitante'),null,null);
-  if (strpos($w_destinatarios,f($RS,'email').'; ')===false) $w_destinatarios=$w_destinatarios.f($RS,'email').'; ';
+  // Configura os destinatários da mensagem
+  if ($p_tipo==2) {
+    // Se for tramitação, envia e-mail para os responsáveis pelo seu cumprimento
+    $RS = db_getTramiteResp::getInstanceOf($dbms,$p_solic,null,null);
+    if (!count($RS)<=0) {
+      foreach($RS as $row) {
+        if (strpos($w_destinatarios,f($row,'email').'; ')===false) $w_destinatarios .= f($row,'email').'; ';
+      } 
+    } 
+  } elseif ($p_tipo==3) {
+    // Se for conclusão, envia e-mail ao solicitante comunicando a necessidade de informar sua opinião
+    $RS = db_getPersonData::getInstanceOf($dbms,$w_cliente,f($RSM,'solicitante'),null,null);
+    if (strpos($w_destinatarios,f($RS,'email').'; ')===false) $w_destinatarios .= f($RS,'email').'; ';
+  } elseif ($p_tipo==4) {
+    // Se for comunicado de insatisfação, envia e-mail para os responsáveis pelo cumprimento do trâmite "Em execução".
+    $RS = db_getTramiteList::getInstanceOf($dbms,f($RSM,'sq_siw_tramite'),'ANTERIOR',null);
+    foreach($RS as $row) { $RS = $row; break; }
+    $RS = db_getTramiteResp::getInstanceOf($dbms,$p_solic,f($RS,'sq_siw_tramite'),null);
+    if (!count($RS)<=0) {
+      foreach($RS as $row) {
+        if (strpos($w_destinatarios,f($row,'email').'; ')===false) $w_destinatarios .= f($row,'email').'; ';
+      } 
+    } 
+  }
 
-  // Recupera o e-mail do titular e do substituto pelo setor responsável
-  $RS = db_getUorgResp::getInstanceOf($dbms,f($RSM,'sq_unidade'));
-  foreach($RS as $row){$RS=$row; break;}
-  if ((strpos($w_destinatarios,f($RS,'email_titular').'; ')===false)    && Nvl(f($RS,'email_titular'),'nulo')!='nulo')    $w_destinatarios=$w_destinatarios.f($RS,'email_titular').'; ';
-  if ((strpos($w_destinatarios,f($RS,'email_substituto').'; ')===false) && Nvl(f($RS,'email_substituto'),'nulo')!='nulo') $w_destinatarios=$w_destinatarios.f($RS,'email_substituto').'; ';
+
   // Prepara os dados necessários ao envio
   $RS = db_getCustomerData::getInstanceOf($dbms,$_SESSION['P_CLIENTE']);
   if ($p_tipo==1 || $p_tipo==3) {
@@ -1516,6 +1570,9 @@ function SolicMail($p_solic,$p_tipo) {
   } elseif ($p_tipo==2) {
     // Tramitação
     $w_assunto='Tramitação - '.$w_nome;
+  } elseif ($p_tipo==4) {
+    // Comunicado de insatisfação
+    $w_assunto='Comunicado de insatisfação - '.$w_nome;
   } 
   if ($w_destinatarios>'') {
     // Executa o envio do e-mail
@@ -1582,8 +1639,15 @@ function Grava() {
         ShowHTML('  alert(\'ATENÇÃO: Outro usuário já emitiu opinião sobre este atendimento!\');');
         ScriptClose();
       } else {
+        // Recupera a chave da opinião emitida
+        $RS = db_getOpiniao::getInstanceOf($dbms,null,$w_cliente,null,$_REQUEST['w_opiniao'],$restricao);
+        foreach($RS as $row) { $RS = $row; break; }
+
         // Grava a opinião do solicitante
-        dml_putSolicOpiniao::getInstanceOf($dbms,$_REQUEST['w_chave'],$_REQUEST['w_opiniao']);
+        dml_putSolicOpiniao::getInstanceOf($dbms,$_REQUEST['w_chave'],f($RS,'chave'),$_REQUEST['w_motivo']);
+        
+        // Se o solicitante ficou insatisfeito, envia e-mail para a área responsável pelo atendimento.
+        if ($_REQUEST['w_opiniao']=='IN') SolicMail($_REQUEST['w_chave'],4);
       }
       ScriptOpen('JavaScript');
       ShowHTML('  location.href=\''.montaURL_JS($w_dir,$R.'&O=L&R='.$R.'&SG='.$SG.'&w_menu='.$w_menu.'&P1='.$P1.'&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP='.$TP.MontaFiltro('GET')).'\';');
@@ -1684,6 +1748,9 @@ function Grava() {
             dml_putSolicEnvio::getInstanceOf($dbms,$_REQUEST['w_menu'],$_REQUEST['w_chave'],$w_usuario,$_REQUEST['w_tramite'],$_REQUEST['w_novo_tramite'],
               $_REQUEST['w_envio'],$_REQUEST['w_despacho'],null,null,null,null);
           } 
+          // Envia mail avisando sobre a tramitação da solicitação
+          SolicMail($_REQUEST['w_chave'],2);
+          
           // Volta para a listagem 
           ScriptOpen('JavaScript');
           $RS = db_getMenuData::getInstanceOf($dbms,$_REQUEST['w_menu']);

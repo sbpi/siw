@@ -503,7 +503,7 @@ function Vinculacao() {
   ShowHTML('</TABLE>');
   ShowHTML('  <tr><td>&nbsp;');
   if ($O=='L') {
-    $RS = db_getMenuRelac::getInstanceOf($dbms, $w_sq_menu, null);
+    $RS = db_getMenuRelac::getInstanceOf($dbms, $w_sq_menu, null, null, null, null);
     ShowHTML('<tr><td>');
     ShowHTML('    <a accesskey="I" class="ss" href="'.$w_pagina.$par.'&R='.$w_pagina.$par.'&O=I&P1='.$P1.'&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP='.$TP.'&SG='.$SG.'&w_sq_menu='.$w_sq_menu.'"><u>I</u>ncluir</a>&nbsp;');
     ShowHTML('    <a class="ss" href="#" onClick="opener.focus(); window.close();">Fechar</a>&nbsp;');
@@ -561,7 +561,7 @@ function Vinculacao() {
     ShowHTML('<tr bgcolor="'.$conTrBgColor.'"><td align="center">');
     ShowHTML('    <table width="90%" border="0">');
     ShowHTML('      <tr valign="top">');
-    selecaoServico('<U>S</U>erviço:', 'S', null, $w_sq_menu_fornec, $w_sq_menu, null, 'w_sq_menu_fornec', null, 'onChange="document.Form.action=\''.$w_pagina.$par.'\'; document.Form.O.value=\''.$O.'\'; document.Form.w_troca.value=\'w_sq_menu_fornec\'; document.Form.submit();"');
+    selecaoServico('<U>S</U>erviço:', 'S', null, $w_sq_menu_fornec, $w_sq_menu, null, 'w_sq_menu_fornec', null, 'onChange="document.Form.action=\''.$w_pagina.$par.'\'; document.Form.O.value=\''.$O.'\'; document.Form.w_troca.value=\'w_sq_menu_fornec\'; document.Form.submit();"', null, null, null);
     SelecaoFaseCheck('<u>T</u>râmites','T',null,$w_sq_tramite,$w_sq_menu_fornec,'w_sq_tramite[]','MENURELAC',null);
     ShowHTML('      <tr><td colspan=2><b><U>A</U>ssinatura Eletrônica:<br><INPUT ACCESSKEY="A" class="sti" type="PASSWORD" name="w_assinatura" size="30" maxlength="30" value=""></td>');
     ShowHTML('      </table>');
