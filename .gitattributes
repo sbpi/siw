@@ -2939,6 +2939,9 @@ SP_Oracle92/siw/siw_tramite.tab -text
 SP_Oracle92/siw/siw_tramite_atrib.tab -text
 SP_Oracle92/siw/sp_get10percentdays.prc -text
 SP_Oracle92/siw/sp_getAbastecimento.prc -text
+SP_Oracle92/siw/sp_getConvOutraParte.prc -text
+SP_Oracle92/siw/sp_getConvOutroRep.prc -text
+SP_Oracle92/siw/sp_getConvPreposto.prc -text
 SP_Oracle92/siw/sp_getGrupoVeiculo.prc -text
 SP_Oracle92/siw/sp_getTipoVeiculo.prc -text
 SP_Oracle92/siw/sp_getVeiculo.prc -text
@@ -3140,6 +3143,10 @@ SP_Oracle92/siw/sp_getusuariotabs.prc -text
 SP_Oracle92/siw/sp_getviagembenef.prc -text
 SP_Oracle92/siw/sp_getvinckinddata.prc -text
 SP_Oracle92/siw/sp_getvinckindlist.prc -text
+SP_Oracle92/siw/sp_putConvDadosBancario.prc -text
+SP_Oracle92/siw/sp_putConvOutraParte.prc -text
+SP_Oracle92/siw/sp_putConvOutroRep.prc -text
+SP_Oracle92/siw/sp_putConvPreposto.prc -text
 SP_Oracle92/siw/sp_putFormaPagamento.prc -text
 SP_Oracle92/siw/sp_putFormaPagamentoVinc.prc -text
 SP_Oracle92/siw/sp_putPDUnidLimite.prc -text
