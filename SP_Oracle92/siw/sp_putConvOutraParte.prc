@@ -35,22 +35,29 @@ create or replace procedure SP_PutConvOutraParte
      p_pessoa_atual                 in number    default null
    ) is
    
-   w_sg_modulo       varchar2(10);
-   w_existe          number(4);
-   w_chave_pessoa    number(18) := Nvl(p_sq_pessoa,0);
-   w_tipo_fone       number(18);
-   w_chave_fone      number(18);
-   w_tipo_endereco   number(18);
-   w_chave_endereco  number(18);
-   w_chave_conta     number(18);
-   w_sq_tipo_pessoa  number(18);
-   w_forma_pagamento varchar2(10);
-   w_sq_tipo_vinculo number(18);
+   w_sg_modulo          varchar2(10);
+   w_existe             number(4);
+   w_chave_pessoa       number(18) := Nvl(p_sq_pessoa,0);
+   w_tipo_fone          number(18);
+   w_chave_fone         number(18);
+   w_tipo_endereco      number(18);
+   w_chave_endereco     number(18);
+   w_chave_conta        number(18);
+   w_sq_tipo_pessoa     number(18);
+   w_sq_tipo_vinculo    number(18);
+   w_sq_siw_solicitacao number(18);
+   w_outra_parte        number(18);
 begin
    If p_operacao = 'E' Then 
-   -- Exclui registro
+      -- Exclui registro
+      select sq_siw_solicitacao, outra_parte into w_sq_siw_solicitacao, w_outra_parte
+        from ac_acordo_outra_parte 
+       where sq_acordo_outra_parte = p_sq_acordo_outra_parte;
+      
       delete ac_acordo_outra_parte  where sq_acordo_outra_parte = p_sq_acordo_outra_parte;
-  
+      update ac_acordo set outra_parte = null         
+       where sq_siw_solicitacao = w_sq_siw_solicitacao 
+         and outra_parte        = w_outra_parte;
   Else
      -- Verifica se é pessoa física ou jurídica e carrega a chave da tabela CO_TIPO_PESSOA
       If p_cnpj is not null Then 
@@ -353,73 +360,14 @@ begin
          End If;
       End If;
       
-      If p_sq_agencia is not null and p_nr_conta is not null Then
-         -- Se foi informado o banco, grava
-         select count(*) into w_existe
-           from co_pessoa_conta a
-          where a.sq_pessoa  = w_chave_pessoa
-            and a.ativo      = 'S'
-            and a.padrao     = 'S';
-        
-         If w_existe = 0 Then
-            insert into co_pessoa_conta
-              (sq_pessoa_conta,                  sq_pessoa,      sq_agencia,  operacao, 
-               numero,                           ativo,          padrao,      tipo_conta
-              )
-            values
-              (sq_pessoa_conta_bancaria.nextval, w_chave_pessoa, p_sq_agencia, p_op_conta, 
-               p_nr_conta,                       'S',            'S',          '1'
-              );
-         Else
-            select sq_pessoa_conta into w_chave_conta
-              from co_pessoa_conta a
-             where a.sq_pessoa  = w_chave_pessoa
-               and a.ativo      = 'S'
-               and a.padrao     = 'S';
-               
-            update co_pessoa_conta
-               set sq_agencia = p_sq_agencia,
-                   operacao   = p_op_conta,
-                   numero     = p_nr_conta
-             where sq_pessoa_conta = w_chave_conta;
-         End If;
-      End If;
-      
-   
       -- Insere registro
-         insert into ac_acordo_outra_parte
-            (sq_acordo_outra_parte        , sq_siw_solicitacao,    outra_parte,   tipo)
-         values
-            (sq_acordo_outra_parte.nextval, p_chave           , w_chave_pessoa,  p_tipo);
-
-  
-      If Nvl(p_pessoa_atual, w_chave_pessoa) <> w_chave_pessoa Then
-         update ac_acordo set preposto = null where sq_siw_solicitacao = p_chave;
-        delete ac_acordo_representante where sq_siw_solicitacao = p_chave;
-      End If;
-      
-      If w_forma_pagamento in ('CREDITO','DEPOSITO') Then
-          update ac_acordo 
-            set sq_agencia     = p_sq_agencia,
-                operacao_conta = p_op_conta,
-                numero_conta   = p_nr_conta
-         where sq_siw_solicitacao = p_chave;
-      Elsif w_forma_pagamento = 'ORDEM' Then
-         update ac_acordo 
-            set sq_agencia     = p_sq_agencia
-         where sq_siw_solicitacao = p_chave;
-      Elsif w_forma_pagamento = 'EXTERIOR' Then
-         update ac_acordo 
-            set sq_pais_estrang  = p_sq_pais_estrang,
-                aba_code         = p_aba_code,
-                swift_code       = p_swift_code,
-                endereco_estrang = p_endereco_estrang,
-                banco_estrang    = p_banco_estrang,
-                agencia_estrang  = p_agencia_estrang,
-                numero_conta     = p_nr_conta,
-                cidade_estrang   = p_cidade_estrang,
-                informacoes      = p_informacoes
-         where sq_siw_solicitacao = p_chave;
+      insert into ac_acordo_outra_parte
+         (sq_acordo_outra_parte        , sq_siw_solicitacao,    outra_parte,   tipo)
+      values
+         (sq_acordo_outra_parte.nextval, p_chave           , w_chave_pessoa,  p_tipo);
+      select nvl(outra_parte,0) into w_existe from ac_acordo where sq_siw_solicitacao = p_chave;
+      If w_existe = 0 and p_tipo = 1 Then
+        update ac_acordo set outra_parte = w_chave_pessoa;
       End If;
    End If;  
 end SP_PutConvOutraParte;
