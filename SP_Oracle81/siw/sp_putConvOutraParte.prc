@@ -117,9 +117,10 @@ begin
       
       -- Se foi informado o e-mail, grava. Caso contrário, remove.
       select count(*) into w_existe
-        from co_pessoa_endereco          a
-             inner join co_tipo_endereco b on (a.sq_tipo_endereco = b.sq_tipo_endereco)
-       where a.sq_pessoa      = w_chave_pessoa
+        from co_pessoa_endereco   a,
+             co_tipo_endereco     b 
+       where (a.sq_tipo_endereco = b.sq_tipo_endereco)
+         and a.sq_pessoa      = w_chave_pessoa
          and b.sq_tipo_pessoa = w_sq_tipo_pessoa
          and b.email          = 'S'
          and b.ativo          = 'S'
@@ -127,9 +128,10 @@ begin
     
       If w_existe > 0 Then
          select sq_pessoa_endereco into w_chave_endereco
-           from co_pessoa_endereco          a
-                inner join co_tipo_endereco b on (a.sq_tipo_endereco = b.sq_tipo_endereco)
-          where a.sq_pessoa      = w_chave_pessoa
+           from co_pessoa_endereco  a,
+                co_tipo_endereco    b  
+          where (a.sq_tipo_endereco = b.sq_tipo_endereco)
+            and a.sq_pessoa      = w_chave_pessoa
             and b.sq_tipo_pessoa = w_sq_tipo_pessoa
             and b.email          = 'S'
             and b.ativo          = 'S'
@@ -167,9 +169,10 @@ begin
       If p_logradouro is not null Then
          -- Grava o endereco
          select count(*) into w_existe
-           from co_pessoa_endereco          a
-                inner join co_tipo_endereco b on (a.sq_tipo_endereco = b.sq_tipo_endereco)
-          where a.sq_pessoa      = w_chave_pessoa
+           from co_pessoa_endereco  a,
+                co_tipo_endereco    b 
+          where (a.sq_tipo_endereco = b.sq_tipo_endereco) 
+            and a.sq_pessoa      = w_chave_pessoa
             and b.sq_tipo_pessoa = w_sq_tipo_pessoa
             and b.nome           = 'Comercial'
             and b.ativo          = 'S'
@@ -192,9 +195,10 @@ begin
                  );
          Else
             select sq_pessoa_endereco into w_chave_endereco
-              from co_pessoa_endereco          a
-                   inner join co_tipo_endereco b on (a.sq_tipo_endereco = b.sq_tipo_endereco)
-             where a.sq_pessoa      = w_chave_pessoa
+              from co_pessoa_endereco  a,
+                   co_tipo_endereco    b 
+             where (a.sq_tipo_endereco = b.sq_tipo_endereco)
+               and a.sq_pessoa      = w_chave_pessoa
                and b.sq_tipo_pessoa = w_sq_tipo_pessoa
                and b.nome           = 'Comercial'
                and b.ativo          = 'S'
@@ -213,9 +217,10 @@ begin
       If p_nr_telefone is not null Then
          -- Grava o telefone
          select count(*) into w_existe
-           from co_pessoa_telefone          a
-                inner join co_tipo_telefone b on (a.sq_tipo_telefone = b.sq_tipo_telefone)
-          where a.sq_pessoa      = w_chave_pessoa
+           from co_pessoa_telefone   a,
+                co_tipo_telefone     b  
+          where (a.sq_tipo_telefone = b.sq_tipo_telefone)
+            and a.sq_pessoa      = w_chave_pessoa
             and b.sq_tipo_pessoa = w_sq_tipo_pessoa
             and b.nome           = 'Comercial'
             and b.ativo          = 'S'
@@ -240,9 +245,10 @@ begin
               );
          Else
             select sq_pessoa_telefone into w_chave_fone
-              from co_pessoa_telefone          a
-                   inner join co_tipo_telefone b on (a.sq_tipo_telefone = b.sq_tipo_telefone)
-             where a.sq_pessoa      = w_chave_pessoa
+              from co_pessoa_telefone   a,
+                   co_tipo_telefone     b 
+             where (a.sq_tipo_telefone = b.sq_tipo_telefone)
+               and a.sq_pessoa      = w_chave_pessoa
                and b.sq_tipo_pessoa = w_sq_tipo_pessoa
                and b.nome           = 'Comercial'
                and b.ativo          = 'S'
@@ -258,9 +264,10 @@ begin
    
       -- Se foi informado o fax, grava. Caso contrário remove.
       select count(*) into w_existe
-        from co_pessoa_telefone          a
-             inner join co_tipo_telefone b on (a.sq_tipo_telefone = b.sq_tipo_telefone)
-       where a.sq_pessoa      = w_chave_pessoa
+        from co_pessoa_telefone  a,
+             co_tipo_telefone    b  
+       where (a.sq_tipo_telefone = b.sq_tipo_telefone)
+         and a.sq_pessoa      = w_chave_pessoa
          and b.sq_tipo_pessoa = w_sq_tipo_pessoa
          and b.nome           = 'Fax'
          and b.ativo          = 'S'
@@ -268,9 +275,10 @@ begin
       
       If w_existe > 0 Then
          select sq_pessoa_telefone into w_chave_fone
-           from co_pessoa_telefone          a
-                inner join co_tipo_telefone b on (a.sq_tipo_telefone = b.sq_tipo_telefone)
-          where a.sq_pessoa      = w_chave_pessoa
+           from co_pessoa_telefone  a,
+                co_tipo_telefone    b  
+          where (a.sq_tipo_telefone = b.sq_tipo_telefone)
+            and a.sq_pessoa      = w_chave_pessoa
             and b.sq_tipo_pessoa = w_sq_tipo_pessoa
             and b.nome           = 'Fax'
             and b.ativo          = 'S'
@@ -310,9 +318,10 @@ begin
    
       -- Se foi informado o celular, grava. Caso contrário, remove.
       select count(*) into w_existe
-        from co_pessoa_telefone          a
-             inner join co_tipo_telefone b on (a.sq_tipo_telefone = b.sq_tipo_telefone)
-       where a.sq_pessoa      = w_chave_pessoa
+        from co_pessoa_telefone   a,
+             co_tipo_telefone     b  
+       where (a.sq_tipo_telefone = b.sq_tipo_telefone)
+         and a.sq_pessoa      = w_chave_pessoa
          and b.sq_tipo_pessoa = w_sq_tipo_pessoa
          and b.nome           = 'Celular'
          and b.ativo          = 'S'
@@ -320,9 +329,10 @@ begin
    
       If w_existe > 0 Then
          select sq_pessoa_telefone into w_chave_fone
-           from co_pessoa_telefone          a
-                inner join co_tipo_telefone b on (a.sq_tipo_telefone = b.sq_tipo_telefone)
-          where a.sq_pessoa      = w_chave_pessoa
+           from co_pessoa_telefone a,
+                co_tipo_telefone   b  
+          where (a.sq_tipo_telefone = b.sq_tipo_telefone)
+            and a.sq_pessoa      = w_chave_pessoa
             and b.sq_tipo_pessoa = w_sq_tipo_pessoa
             and b.nome           = 'Celular'
             and b.ativo          = 'S'
