@@ -53,7 +53,7 @@ begin
                          )                  i on (a.sq_pessoa = i.sq_pessoa)        
     where a.sq_siw_solicitacao = p_chave
        and (p_sq_pessoa    is null or (p_sq_pessoa   is not null and a.sq_pessoa             = p_sq_pessoa))
-       and (p_chave_aux    is null or (p_chave_aux   is not null and a.sq_acordo_outra_parte = p_chave_aux ));
+       and (p_chave_aux    is null or (p_chave_aux   is not null and a.sq_acordo_outra_parte = p_chave_aux));
    
 end SP_GetConvOutroRep;
 /
