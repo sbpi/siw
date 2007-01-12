@@ -15,7 +15,7 @@ create or replace procedure SP_PutConvPreposto
    ) is
    
    w_sg_modulo       varchar2(10);
-   w_existe          number(4);
+   w_existe          number(18);
    w_chave_pessoa    number(18) := Nvl(p_sq_pessoa,0);
    w_sq_tipo_pessoa  number(18);
    w_sq_tipo_vinculo number(18);
