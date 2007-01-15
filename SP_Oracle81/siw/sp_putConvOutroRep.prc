@@ -20,7 +20,7 @@ create or replace procedure SP_PutConvOutroRep
    ) is
    
    w_sg_modulo       varchar2(10);
-   w_existe          number(4);
+   w_existe          number(18);
    w_chave_pessoa    number(18) := Nvl(p_sq_pessoa,0);
    w_cidade          number(18);
    w_tipo_fone       number(18);
