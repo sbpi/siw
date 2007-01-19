@@ -53,11 +53,24 @@ begin
       select sq_siw_solicitacao, outra_parte into w_sq_siw_solicitacao, w_outra_parte
         from ac_acordo_outra_parte 
        where sq_acordo_outra_parte = p_sq_acordo_outra_parte;
-      
-      delete ac_acordo_outra_parte  where sq_acordo_outra_parte = p_sq_acordo_outra_parte;
       update ac_acordo set outra_parte = null         
-       where sq_siw_solicitacao = w_sq_siw_solicitacao 
+       where sq_siw_solicitacao = w_sq_siw_solicitacao
          and outra_parte        = w_outra_parte;
+      delete ac_acordo_outra_parte  where sq_acordo_outra_parte = p_sq_acordo_outra_parte;
+      select count(*) into w_existe
+        from ac_acordo_outra_parte
+       where tipo = 2
+         and sq_siw_solicitacao = w_sq_siw_solicitacao;
+      If w_existe > 0 Then
+         select nvl(outra_parte,0) into w_outra_parte
+           from ac_acordo_outra_parte
+          where sq_siw_solicitacao = w_sq_siw_solicitacao
+            and tipo = 2;
+         If w_outra_parte > 0 Then
+            update ac_acordo set outra_parte = w_outra_parte         
+            where sq_siw_solicitacao = w_sq_siw_solicitacao;
+         End If; 
+      End If;
   Else
      -- Verifica se é pessoa física ou jurídica e carrega a chave da tabela CO_TIPO_PESSOA
       If p_cnpj is not null Then 
@@ -366,7 +379,7 @@ begin
       values
          (sq_acordo_outra_parte.nextval, p_chave           , w_chave_pessoa,  p_tipo);
       select nvl(outra_parte,0) into w_existe from ac_acordo where sq_siw_solicitacao = p_chave;
-      If w_existe = 0 and p_tipo = 1 Then
+      If w_existe = 0 and p_tipo = 2 Then
         update ac_acordo set outra_parte = w_chave_pessoa
         where sq_siw_solicitacao = p_chave;
       End If;
