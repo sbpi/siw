@@ -270,7 +270,7 @@ begin
                 d.banco_estrang,      d.agencia_estrang,             d.cidade_estrang,
                 d.inicio,             d.informacoes,                 d.codigo_deposito,
                 d.empenho,            d.processo,                    d.assinatura,
-                d.publicacao,                
+                d.publicacao,         d.titulo,             
                 d1.nome nm_tipo_acordo,d1.sigla sg_acordo,           d1.modalidade cd_modalidade,
                 d1.prazo_indeterm,    d1.pessoa_fisica,              d1.pessoa_juridica,
                 d2.nome nm_outra_parte, d2.nome_resumido nm_outra_parte_resumido,

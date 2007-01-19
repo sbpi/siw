@@ -8,7 +8,7 @@ begin
   -- Recupera os tipos de contrato do cliente
   open p_result for 
     select a.sq_acordo_outra_parte, a.sq_siw_solicitacao, a.outra_parte,b.cnpj, c.nome nm_pessoa, c.nome_resumido,
-           case a.tipo when 1 then 'conc/contr/parc' when 2 then 'convenente' when 3 then 'executor/contratado'end nm_tipo
+           case a.tipo when 1 then 'concedente/contratante/parceiro' when 2 then 'convenente' when 3 then 'executor/contratado'end nm_tipo
        from ac_acordo_outra_parte a 
         inner join co_pessoa_juridica b on (a.outra_parte = b.sq_pessoa)
         inner join co_pessoa c          on (a.outra_parte = c.sq_pessoa)

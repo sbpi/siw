@@ -8,7 +8,7 @@ begin
   -- Recupera os tipos de contrato do cliente
   open p_result for 
     select a.sq_acordo_outra_parte, a.sq_siw_solicitacao, a.outra_parte,b.cnpj, c.nome nm_pessoa, c.nome_resumido,
-           decode(a.tipo,1,'conc/contr/parc',2,'convenente',3,'executor/contratado') nm_tipo
+           decode(a.tipo,1,'concedente/contratante/parceiro',2,'convenente',3,'executor/contratado') nm_tipo
        from ac_acordo_outra_parte a, 
             co_pessoa_juridica b, 
             co_pessoa c          
