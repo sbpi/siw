@@ -968,7 +968,8 @@ begin
                                then e.titulo
                                else null
                           end
-                end titulo
+                end titulo,
+                nvl(f.existe,0) qtd_projeto
            from siw_menu                   a
                 inner join siw_modulo      a1 on (a.sq_modulo          = a1.sq_modulo)
                 inner join siw_menu_relac  a2 on (a.sq_menu            = a2.servico_cliente and
@@ -990,6 +991,13 @@ begin
                                        left join ct_cc           z on y.sq_cc              = z.sq_cc
                                        left join pj_projeto      k on y.sq_solic_pai       = k.sq_siw_solicitacao
                              )             e  on (b.sq_siw_solicitacao = e.sq_siw_solicitacao)
+                left    join (select x1.sq_solic_pai, count(*) existe
+                                 from siw_solicitacao            x1
+                                      inner join siw_menu        y1 on (x1.sq_menu = y1.sq_menu and
+                                                                        y1.sigla   = 'PJCAD')
+                               group by x1.sq_solic_pai
+                              )            f on (b.sq_siw_solicitacao = f.sq_solic_pai)
+                             
           where a.sq_menu        = p_restricao
             and b.sq_menu        = nvl(p_menu, b.sq_menu)
             and ((a1.sigla = 'DM' and b3.sigla = 'AC' and e.vincula_demanda  = 'S') or

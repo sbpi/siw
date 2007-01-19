@@ -1132,7 +1132,7 @@ begin
       -- Recupera as solicitações que o usuário pode ver
       open p_result for
          select b.sq_siw_solicitacao,
-                decode(d.sq_siw_solicitacao,null,decode(e.sq_siw_solicitacao,null,null,e.titulo),d.titulo) titulo
+                decode(d.sq_siw_solicitacao,null,decode(e.sq_siw_solicitacao,null,null,e.titulo),d.titulo) titulo, nvl(f.existe,0) qtd_projeto
            from siw_menu        a,
                 siw_modulo      a1,
                 siw_menu_relac  a2,
@@ -1152,7 +1152,15 @@ begin
                     and x.sq_siw_solicitacao = y.sq_siw_solicitacao
                     and y.sq_cc              = z.sq_cc (+)
                     and y.sq_solic_pai       = k.sq_siw_solicitacao (+)
-                )               e
+                )               e,
+                (select x1.sq_solic_pai, count(*) existe
+                   from siw_solicitacao x1,
+                        siw_menu        y1 
+                  where x1.sq_menu            = y1.sq_menu
+                    and y1.sigla              = 'PJCAD'             
+                   group by x1.sq_solic_pai
+                )               f           
+                                                
           where (a.sq_modulo          = a1.sq_modulo)
             and (a.sq_menu            = a2.servico_cliente and
                  a2.servico_cliente   = p_restricao)
@@ -1163,6 +1171,7 @@ begin
             and (b2.sq_modulo         = b3.sq_modulo)
             and (b.sq_siw_solicitacao = d.sq_siw_solicitacao (+))
             and (b.sq_siw_solicitacao = e.sq_siw_solicitacao (+))
+            and (b.sq_siw_solicitacao = f.sq_solic_pai(+))
             and a.sq_menu        = p_restricao
             and b.sq_menu        = nvl(p_menu, b.sq_menu)
             and ((a1.sigla = 'DM' and b3.sigla = 'AC' and e.vincula_demanda  = 'S') or
