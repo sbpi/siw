@@ -73,7 +73,7 @@ begin
          select outra_parte into w_outra_parte1 from ac_acordo where sq_siw_solicitacao = p_chave;
          select outra_parte into w_outra_parte2 from ac_acordo_outra_parte where sq_acordo_outra_parte = p_sq_acordo_outra_parte;
          If w_outra_parte1 = w_outra_parte2 Then
-           update ac_acordo set preposto = w_chave_pessoa;
+           update ac_acordo set preposto = w_chave_pessoa where sq_siw_solicitacao = p_chave;
          End If;
       End If;      
    Elsif  l_operacao = 'A' Then 
