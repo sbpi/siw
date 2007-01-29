@@ -1132,7 +1132,8 @@ begin
       -- Recupera as solicitações que o usuário pode ver
       open p_result for
          select b.sq_siw_solicitacao,
-                decode(d.sq_siw_solicitacao,null,decode(e.sq_siw_solicitacao,null,null,e.titulo),d.titulo) titulo, nvl(f.existe,0) qtd_projeto
+                decode(d.sq_siw_solicitacao,null,decode(e.sq_siw_solicitacao,null,null,e.titulo),d.titulo) titulo, 
+                nvl(f.existe,0) qtd_projeto
            from siw_menu        a,
                 siw_modulo      a1,
                 siw_menu_relac  a2,

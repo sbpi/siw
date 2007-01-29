@@ -365,8 +365,8 @@ begin
          delete pj_projeto_envolv  where sq_siw_solicitacao = p_chave;
          delete pj_projeto_interes where sq_siw_solicitacao = p_chave;
          delete pj_recurso_etapa   where sq_projeto_etapa in (select sq_projeto_etapa from pj_projeto_etapa where sq_siw_solicitacao = p_chave);
-         delete pj_projeto_etapa   where sq_siw_solicitacao = p_chave;
          delete pj_rubrica         where sq_siw_solicitacao = p_chave;
+         delete pj_projeto_etapa   where sq_siw_solicitacao = p_chave;
          delete pj_projeto_recurso where sq_siw_solicitacao = p_chave;
 
          -- Remove o registro na tabela de projetos

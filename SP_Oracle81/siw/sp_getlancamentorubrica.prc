@@ -9,7 +9,7 @@ begin
    open p_result for
       select a.sq_lancamento_rubrica, a.sq_rubrica_origem, a.sq_rubrica_destino,
              a.sq_lancamento_doc, a.valor,
-             b.nome nm_rubrica_origem, b.codigo cd_rubrica_origem,
+             b.nome nm_rubrica_origem, b.codigo cd_rubrica_origem, b.sq_projeto_rubrica,
              c.nome nm_rubrica_destino, c.codigo cd_rubrica_destino
         from fn_lancamento_rubrica a, 
              pj_rubrica b, 

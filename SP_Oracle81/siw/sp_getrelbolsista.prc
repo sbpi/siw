@@ -34,18 +34,18 @@ begin
                 siw_solicitacao    i,
                 siw_tramite        j
           where (a.sq_siw_solicitacao = b.sq_siw_solicitacao)
-            and (a.sq_siw_solicitacao = c.sq_siw_solicitacao and
-                 c.sq_etapa_pai       is null)
+            and (a.sq_siw_solicitacao = c.sq_siw_solicitacao 
+            and  c.sq_etapa_pai       is null)
             and (c.sq_pessoa          = l.sq_pessoa)
             and (c.sq_projeto_etapa   = d.sq_etapa_pai)
             and (d.sq_projeto_etapa   = e.sq_projeto_etapa)
             and (e.sq_siw_solicitacao = f.sq_siw_solicitacao)
-            and (f.sq_siw_solicitacao = g.sq_siw_solicitacao and
-                 g.vencimento         between a.inicio and a.fim)
+            and (f.sq_siw_solicitacao = g.sq_siw_solicitacao 
+            and  g.vencimento         between a.inicio and a.fim)
             and (f.outra_parte        = h.sq_pessoa)
             and (f.sq_siw_solicitacao = i.sq_siw_solicitacao)
-            and (i.sq_siw_tramite     = j.sq_siw_tramite and
-                 'CA'                 <> nvl(j.sigla,'--'))
+            and (i.sq_siw_tramite     = j.sq_siw_tramite 
+            and  'CA'                 <> nvl(j.sigla,'--'))
             and a.sq_siw_solicitacao = p_chave
             and (p_bolsista          is null or (p_bolsista          is not null and f.outra_parte      = p_bolsista))
             and (p_tema              is null or (p_tema              is not null and c.sq_projeto_etapa = p_tema))
@@ -80,18 +80,18 @@ begin
                 siw_solicitacao    i,
                 siw_tramite        j
           where (a.sq_siw_solicitacao = b.sq_siw_solicitacao)
-            and (a.sq_siw_solicitacao = c.sq_siw_solicitacao and
-                 c.sq_etapa_pai       is null)
+            and (a.sq_siw_solicitacao = c.sq_siw_solicitacao 
+            and  c.sq_etapa_pai       is null)
             and (c.sq_pessoa          = l.sq_pessoa)
             and (c.sq_projeto_etapa   = d.sq_etapa_pai)
-            and (d.sq_projeto_etapa   = e.sq_projeto_etapa    (+))
-            and (e.sq_siw_solicitacao = f.sq_siw_solicitacao  (+))
-            and (f.sq_siw_solicitacao = g.sq_siw_solicitacao  (+)
+            and (d.sq_projeto_etapa   = e.sq_projeto_etapa   (+))
+            and (e.sq_siw_solicitacao = f.sq_siw_solicitacao (+))
+            and (f.sq_siw_solicitacao = g.sq_siw_solicitacao (+) 
             and  g.vencimento (+)     between a.inicio and a.fim)
-            and (f.outra_parte        = h.sq_pessoa           (+))
-            and (f.sq_siw_solicitacao = i.sq_siw_solicitacao  (+))
-            and (i.sq_siw_tramite     = j.sq_siw_tramite      (+)
-            and  'CA'                 <> nvl(j.sigla,'--')    (+))
+            and (f.outra_parte        = h.sq_pessoa          (+))
+            and (f.sq_siw_solicitacao = i.sq_siw_solicitacao (+))
+            and (i.sq_siw_tramite     = j.sq_siw_tramite     (+) 
+            and  'CA'                 <> nvl(j.sigla,'--')   (+))
             and a.sq_siw_solicitacao = p_chave
             and (p_bolsista          is null or (p_bolsista          is not null and f.outra_parte      = p_bolsista))
             and (p_tema              is null or (p_tema              is not null and c.sq_projeto_etapa = p_tema))
@@ -119,18 +119,18 @@ begin
                 siw_solicitacao    i,
                 siw_tramite        j
           where (a.sq_siw_solicitacao = b.sq_siw_solicitacao)
-            and (a.sq_siw_solicitacao = c.sq_siw_solicitacao and
-                 c.sq_etapa_pai       is null)
+            and (a.sq_siw_solicitacao = c.sq_siw_solicitacao 
+            and  c.sq_etapa_pai       is null)
             and (c.sq_pessoa          = l.sq_pessoa)
             and (c.sq_projeto_etapa   = d.sq_etapa_pai)
-            and (d.sq_projeto_etapa   = e.sq_projeto_etapa    (+))
-            and (e.sq_siw_solicitacao = f.sq_siw_solicitacao  (+))
-            and (f.sq_siw_solicitacao = g.sq_siw_solicitacao  (+)
+            and (d.sq_projeto_etapa   = e.sq_projeto_etapa   (+))
+            and (e.sq_siw_solicitacao = f.sq_siw_solicitacao (+))
+            and (f.sq_siw_solicitacao = g.sq_siw_solicitacao (+) 
             and  g.vencimento (+)     between a.inicio and a.fim)
-            and (f.outra_parte        = h.sq_pessoa           (+))
-            and (f.sq_siw_solicitacao = i.sq_siw_solicitacao  (+))
-            and (i.sq_siw_tramite     = j.sq_siw_tramite      (+)
-            and  'CA'                 <> nvl(j.sigla,'--')    (+))
+            and (f.outra_parte        = h.sq_pessoa          (+))
+            and (f.sq_siw_solicitacao = i.sq_siw_solicitacao (+))
+            and (i.sq_siw_tramite     = j.sq_siw_tramite     (+) 
+            and  'CA'                 <> nvl(j.sigla,'--')   (+))
             and a.sq_siw_solicitacao = p_chave
             and (f.sq_siw_solicitacao is null or (f.sq_siw_solicitacao is not null and g.sq_acordo_parcela is not null))
           order by g.vencimento, d.ordem;

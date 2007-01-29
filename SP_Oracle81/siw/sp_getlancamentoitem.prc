@@ -24,7 +24,7 @@ begin
       open p_result for 
          select sum(b.valor_total) valor_total, nvl(d.nome,e.nome) nm_rubrica, nvl(d.codigo,e.codigo) codigo_rubrica,
                 decode(nvl(nvl(d.codigo,e.codigo),'nulo'),'nulo','Não informado',nvl(d.codigo,e.codigo)||' - '||nvl(d.nome,e.nome)) rubrica,
-                sum(c.valor) valor_rubrica, d.sq_projeto_rubrica
+                sum(c.valor) valor_rubrica, nvl(d.sq_projeto_rubrica,e.sq_projeto_rubrica) sq_projeto_rubrica
            from fn_lancamento_doc     a,
                 fn_documento_item     b,
                 pj_rubrica            e,

@@ -34,12 +34,17 @@ begin
       -- Exclui registro
       delete ac_acordo_outra_rep  
        where sq_pessoa             = w_chave_pessoa 
-         and sq_acordo_outra_parte = p_sq_acordo_outra_parte;   
-
-       delete ac_acordo_representante
-       where sq_pessoa          = w_chave_pessoa 
-         and sq_siw_solicitacao = p_chave;           
-
+         and sq_acordo_outra_parte = p_sq_acordo_outra_parte;
+      
+      select count(*) into w_existe 
+        from ac_acordo_outra_rep 
+       where sq_pessoa = w_chave_pessoa
+         and sq_siw_solicitacao = p_chave;
+      If w_existe = 0 Then 
+         delete ac_acordo_representante
+          where sq_pessoa          = w_chave_pessoa 
+            and sq_siw_solicitacao = p_chave;
+      End If;
    Else
       -- Recupera a chave da tabela CO_TIPO_PESSOA para pessoa física
       select sq_tipo_pessoa into w_sq_tipo_pessoa from co_tipo_pessoa where nome = 'Física';
@@ -330,10 +335,16 @@ begin
       End If;
       if l_operacao = 'I' Then  
          -- Insere registro em Representante
-         insert into ac_acordo_representante
-            (sq_pessoa      , sq_siw_solicitacao)
-         values
-            ( w_chave_pessoa, p_chave );    
+         select count(*) into w_existe 
+           from ac_acordo_representante
+          where sq_pessoa = w_chave_pessoa
+            and sq_siw_solicitacao = p_chave;
+         If w_existe = 0 Then
+            insert into ac_acordo_representante
+               (sq_pessoa      , sq_siw_solicitacao)
+            values
+               ( w_chave_pessoa, p_chave );
+         End If;
          -- Insere registro em Outra representante
          insert into ac_acordo_outra_rep
             (sq_acordo_outra_parte  ,        sq_pessoa, sq_siw_solicitacao)

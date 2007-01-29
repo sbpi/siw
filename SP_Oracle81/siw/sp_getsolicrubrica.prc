@@ -33,7 +33,8 @@ begin
                decode(c.tipo,5,e.nome,4,'Entradas',3,'Atualização de aplicação',2,'Transferência entre rubricas',1,'Dotação inicial') operacao,
                f.nome nm_rubrica, f.codigo codigo_rubrica,
                g.titulo nm_projeto, g.sq_siw_solicitacao sq_projeto, i.codigo_interno cd_acordo, i.sq_siw_solicitacao sq_acordo,
-               l.nome nm_label, l.sigla sg, m.sigla sg_tramite
+               l.nome nm_label, l.sigla sg, m.sigla sg_tramite,
+               n.nome nm_cc
           from fn_lancamento_rubrica a,
                fn_lancamento_doc     b,
                fn_lancamento         c,
@@ -45,7 +46,8 @@ begin
                siw_solicitacao       h,
                ac_acordo             i,
                siw_solicitacao       j,
-               siw_menu              l
+               siw_menu              l,
+               ct_cc                 n
          where (a.sq_lancamento_doc  = b.sq_lancamento_doc)
            and (b.sq_siw_solicitacao = c.sq_siw_solicitacao)
            and (c.sq_siw_solicitacao = d.sq_siw_solicitacao)
@@ -57,11 +59,12 @@ begin
            and (h.sq_solic_pai       = i.sq_siw_solicitacao (+))
            and (i.sq_siw_solicitacao = j.sq_siw_solicitacao (+))
            and (j.sq_menu            = l.sq_menu            (+))
+           and (n.sq_cc              = f.sq_cc)
            and a.sq_rubrica_origem = p_chave_aux
            and m.sigla             <> 'CA'
          group by c.vencimento, c.codigo_interno, c.sq_siw_solicitacao, c.tipo, e.nome, g.titulo, g.sq_siw_solicitacao,
                   i.codigo_interno, i.sq_siw_solicitacao, f.nome, f.codigo, d.descricao, l.nome, l.sigla, m.sigla,
-                  e.sigla
+                  e.sigla, n.nome
      UNION
         select sum(a.valor_total) valor, 
                c.vencimento, c.codigo_interno cd_lancamento, c.sq_siw_solicitacao sq_lancamento, c.tipo tipo_rubrica,
@@ -70,7 +73,8 @@ begin
                decode(c.tipo,5,e.nome,4,'Entradas',3,'Atualização de aplicação',2,'Transferência entre rubricas',1,'Dotação inicial') operacao,
                f.nome nm_rubrica, f.codigo codigo_rubrica,
                g.titulo nm_projeto, g.sq_siw_solicitacao sq_projeto, i.codigo_interno cd_acordo, i.sq_siw_solicitacao sq_acordo,
-               l.nome nm_label, l.sigla sg, m.sigla sg_tramite
+               l.nome nm_label, l.sigla sg, m.sigla sg_tramite,
+               n.nome nm_cc
           from fn_documento_item a,
                fn_lancamento_doc b,
                fn_lancamento     c,
@@ -82,7 +86,8 @@ begin
                siw_solicitacao   h,
                ac_acordo         i,
                siw_solicitacao   j,
-               siw_menu          l
+               siw_menu          l,
+               ct_cc             n
          where a.sq_projeto_rubrica  = p_chave_aux
            and (a.sq_lancamento_doc  = b.sq_lancamento_doc)
            and (b.sq_siw_solicitacao = c.sq_siw_solicitacao)
@@ -95,10 +100,11 @@ begin
            and (i.sq_siw_solicitacao = j.sq_siw_solicitacao (+))
            and (j.sq_menu            = l.sq_menu            (+))
            and (d.sq_menu            = e.sq_menu)
-           and m.sigla             <> 'CA'
+           and  m.sigla             <> 'CA'
+           and (f.sq_cc              = n.sq_cc)               
          group by c.vencimento, c.codigo_interno, c.sq_siw_solicitacao, c.tipo, e.nome, g.titulo, g.sq_siw_solicitacao,
                   i.codigo_interno, i.sq_siw_solicitacao, f.nome, f.codigo, d.descricao, l.nome, l.sigla, m.sigla,
-                  e.sigla;
+                  e.sigla, n.nome;
    End If;  
 End SP_GetSolicRubrica;
 /
