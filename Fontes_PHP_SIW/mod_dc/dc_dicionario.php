@@ -214,7 +214,7 @@ function Arquivos() {
   } elseif ($O=='E') {
     BodyOpen('onLoad=\'document.Form.w_assinatura.focus()\';');
   } else {
-    BodyOpen('onLoad=\'document.focus()\';');
+    BodyOpen('onLoad=\'this.focus()\';');
   } 
   ShowHTML('<B><FONT COLOR="#000000">'.$w_TP.'</FONT></B>');
   ShowHTML('<HR>');
@@ -438,7 +438,7 @@ function Colunas() {
   } elseif ($O=='E') {
     BodyOpen('onLoad=\'document.Form.w_assinatura.focus()\';');
   } else {
-    BodyOpen('onLoad=\'document.focus()\';');
+    BodyOpen('onLoad=\'this.focus()\';');
   } 
   ShowHTML('<B><FONT COLOR="#000000">'.$w_TP.'</FONT></B>');
   ShowHTML('<HR>');
@@ -652,7 +652,7 @@ function Procedure() {
   } elseif ($O=='E') {
     BodyOpen('onLoad=\'document.Form.w_assinatura.focus()\';');
   } else {
-    BodyOpen('onLoad=\'document.focus()\';');
+    BodyOpen('onLoad=\'this.focus()\';');
   } 
   ShowHTML('<B><FONT COLOR="#000000">'.$w_TP.'</FONT></B>');
   ShowHTML('<HR>');
@@ -853,7 +853,7 @@ function Relacionamento() {
   } elseif ($O=='E') {
     BodyOpen('onLoad=\'document.Form.w_assinatura.focus()\';');
   } else {
-    BodyOpen('onLoad=\'document.focus()\';');
+    BodyOpen('onLoad=\'this.focus()\';');
   } 
   ShowHTML('<B><FONT COLOR="#000000">'.$w_TP.'</FONT></B>');
   ShowHTML('<HR>');
@@ -1035,7 +1035,7 @@ function Sistema() {
   } elseif ($O=='E') {
     BodyOpen('onLoad=\'document.Form.w_assinatura.focus()\';');
   } else {
-    BodyOpen('onLoad=\'document.focus()\';');
+    BodyOpen('onLoad=\'this.focus()\';');
   } 
   ShowHTML('<B><FONT COLOR="#000000">'.$w_TP.'</FONT></B>');
   ShowHTML('<HR>');
@@ -1189,7 +1189,7 @@ function StoredProcedure() {
   } elseif ($O=='E') {
     BodyOpen('onLoad=\'document.Form.w_assinatura.focus()\';');
   } else {
-    BodyOpen('onLoad=\'document.focus()\';');
+    BodyOpen('onLoad=\'this.focus()\';');
   } 
   ShowHTML('<B><FONT COLOR="#000000">'.$w_TP.'</FONT></B>');
   ShowHTML('<HR>');
@@ -1383,7 +1383,7 @@ function Tabela() {
   }elseif ($O=='E'){
     BodyOpen('onLoad=\'document.Form.w_assinatura.focus()\';');
   } else {
-    BodyOpen('onLoad=\'document.focus()\';');
+    BodyOpen('onLoad=\'this.focus()\';');
   } 
   ShowHTML('<B><FONT COLOR="#000000">'.$w_TP.'</FONT></B>');
   ShowHTML('<HR>');
@@ -1575,7 +1575,7 @@ function Trigger() {
   } elseif ($O=='E') {
     BodyOpen('onLoad=\'document.Form.w_assinatura.focus()\';');
   } else {
-    BodyOpen('onLoad=\'document.focus()\';');
+    BodyOpen('onLoad=\'this.focus()\';');
   } 
   ShowHTML('<B><FONT COLOR="#000000">'.$w_TP.'</FONT></B>');
   ShowHTML('<HR>');
@@ -1754,7 +1754,7 @@ function Usuario() {
   } elseif ($O=='E') {
     BodyOpen('onLoad=\'document.Form.w_assinatura.focus()\';');
   } else {
-    BodyOpen('onLoad=\'document.focus()\';');
+    BodyOpen('onLoad=\'this.focus()\';');
   } 
   ShowHTML('<B><FONT COLOR="#000000">'.$w_TP.'</FONT></B>');
   ShowHTML('<HR>');
@@ -1914,7 +1914,7 @@ function Indice() {
   } elseif ($O=='E') {
     BodyOpen('onLoad=\'document.Form.w_assinatura.focus()\';');
   } else {
-    BodyOpen('onLoad=\'document.focus()\';');
+    BodyOpen('onLoad=\'this.focus()\';');
   } 
   ShowHTML('<B><FONT COLOR="#000000">'.$w_TP.'</FONT></B>');
   ShowHTML('<HR>');
@@ -2068,7 +2068,7 @@ function Evento() {
   ScriptClose();
   ShowHTML('<BASE HREF="'.$conRootSIW.'">');
   ShowHTML('</HEAD>');
-  BodyOpen('onLoad=document.focus();');
+  BodyOpen('onLoad=this.focus();');
   ShowHTML('<B><FONT COLOR="#000000">'.$w_TP.'</FONT></B>');
   ShowHTML('<HR>');
   ShowHTML('<div align=center><center>');
@@ -2170,7 +2170,7 @@ function SPTabs() {
   } elseif ($O=='E') {
     BodyOpen('onLoad=\'document.Form.w_assinatura.focus()\';');
   } else {
-    BodyOpen('onLoad=\'document.focus()\';');
+    BodyOpen('onLoad=\'this.focus()\';');
   } 
   ShowHTML('<B><FONT COLOR="#000000">'.$w_TP.'</FONT></B>');
   ShowHTML('<HR>');
@@ -2328,7 +2328,7 @@ function SPSP() {
   } elseif ($O=='E') {
     BodyOpen('onLoad=\'document.Form.w_assinatura.focus()\';');
   } else {
-    BodyOpen('onLoad=\'document.focus()\';');
+    BodyOpen('onLoad=\'this.focus()\';');
   } 
   ShowHTML('<B><FONT COLOR="#000000">'.$w_TP.'</FONT></B>');
   ShowHTML('<HR>');
@@ -2508,7 +2508,7 @@ function SPParam() {
   ShowHTML('<BASE HREF="'.$conRootSIW.'">');
   if ($O=='I')     BodyOpen('onLoad=\'document.Form.w_sq_dado_tipo.focus()\';');
   elseif ($O=='E') BodyOpen('onLoad=\'document.Form.w_assinatura.focus()\';');
-  else             BodyOpen('onLoad=\'document.focus()\';');
+  else             BodyOpen('onLoad=\'this.focus()\';');
   ShowHTML('<HR>');
   ShowHTML('<div align=center><center>');
   ShowHTML('<table border="0" cellpadding="0" cellspacing="0" width="100%">');
@@ -2634,7 +2634,7 @@ function Grava() {
   Cabecalho();
   ShowHTML('</HEAD>');
   ShowHTML('<BASE HREF="'.$conRootSIW.'">');  
-  BodyOpen('onLoad=document.focus();');
+  BodyOpen('onLoad=this.focus();');
   switch ($SG) {
     case 'DCCDSIST':
       // Verifica se a Assinatura Eletrônica é válida
@@ -2657,7 +2657,7 @@ function Grava() {
         if ($O=='V') {
           Cabecalho();
           ShowHTML('<BASE HREF="'.$conRootSIW.'">');
-          BodyOpenClean('onLoad=document.focus();');
+          BodyOpenClean('onLoad=this.focus();');
           ShowHTML('<B><FONT COLOR="#000000">'.$w_TP.'</FONT></B>');
           ShowHTML('<HR>');
           flush();
@@ -2903,7 +2903,7 @@ function Main() {
     default:
       cabecalho();
       ShowHTML('<BASE HREF="'.$conRootSIW.'">');      
-      BodyOpen('onLoad=document.focus();');
+      BodyOpen('onLoad=this.focus();');
       Estrutura_Topo_Limpo();
       Estrutura_Menu();
       Estrutura_Corpo_Abre();

@@ -135,7 +135,7 @@ function Unidade() {
       BodyOpen('onLoad=\'document.Form.w_nome.focus()\';');
     } 
   } else {
-    BodyOpen('onLoad=document.focus();');
+    BodyOpen('onLoad=this.focus();');
   } 
   Estrutura_Topo_Limpo();
   Estrutura_Menu();
@@ -470,7 +470,7 @@ function Localizacao() {
       BodyOpen('onLoad=\'document.Form.w_sq_pessoa_endereco.focus()\';');
     }  
   } else {
-    BodyOpen('onLoad=document.focus();');
+    BodyOpen('onLoad=this.focus();');
   } 
   Estrutura_Texto_Abre();
   ShowHTML('<table border="0" cellpadding="0" cellspacing="0" width="100%">');
@@ -643,7 +643,7 @@ function Responsavel() {
       BodyOpen('onLoad=\'document.Form.w_sq_pessoa.focus()\';');
     } 
   } else {
-    BodyOpen('onLoad=document.focus();');
+    BodyOpen('onLoad=this.focus();');
   } 
   Estrutura_Texto_Abre();
   ShowHTML('<table border="0" cellpadding="0" cellspacing="0" width="100%">');
@@ -774,7 +774,7 @@ function BuscaUnidade() {
   if (count($RS)>100 || ($w_nome>'' || $w_sigla>'')) {
     BodyOpen('onLoad=\'document.Form.w_nome.focus();\'');
   } else {
-    BodyOpen('onLoad=document.focus();');
+    BodyOpen('onLoad=this.focus();');
   } 
   Estrutura_Texto_Abre();
   ShowHTML('<table border="0" cellpadding="0" cellspacing="0" width="100%">');
@@ -881,7 +881,7 @@ function Grava() {
   extract($GLOBALS);
   Cabecalho();
   ShowHTML('</HEAD>');
-  BodyOpen('onLoad=document.focus();');
+  BodyOpen('onLoad=this.focus();');
   switch ($SG) {
     case 'EOUORG':
       // Verifica se a Assinatura Eletrônica é válida
@@ -952,7 +952,7 @@ function Main() {
   case 'GRAVA':          Grava();            break;
   default: 
     Cabecalho();
-    BodyOpen('onLoad=document.focus();');
+    BodyOpen('onLoad=this.focus();');
     Estrutura_Topo_Limpo();
     Estrutura_Menu();
     Estrutura_Corpo_Abre();

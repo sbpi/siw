@@ -67,7 +67,9 @@ function VisualProjeto($l_chave,$operacao,$l_usuario) {
 
     // Se o acordo foi informado, exibe.
     if (Nvl(f($RS,'cd_acordo'),'')>'') {
-      $w_html .= chr(13).'      <tr><td colspan=3>Acordo: <b>'.f($RS,'cd_acordo').' ('.f($RS,'sq_acordo').') '.f($RS,'nm_acordo').' </b></td>';
+      $w_html.=chr(13).'      <tr><td colspan=3><font size=1>Acordo: <b><A class="hl" HREF="mod_ac/convenios.php?par=Visual&O=L&w_chave='.f($RS,'sq_acordo').'&w_tipo=Volta&P1=2&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP='.$TP.'&SG=GCCCAD" title="Exibe as informações do acordo." target="blank">'.f($RS,'cd_acordo').' ('.f($RS,'sq_acordo').') '.f($RS,'nm_acordo').'</a></b></font></td>';   
+    } elseif (Nvl(f($RS,'sq_programa'),'')>'') {
+      $w_html.=chr(13).'      <tr><td colspan=3><font size=1>Programa: <b><A class="hl" HREF="mod_pe/programa.php?par=Visual&O=L&w_chave='.f($RS,'sq_acordo').'&w_tipo=Volta&P1=2&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP='.$TP.'&SG=GCCCAD" title="Exibe as informações do acordo." target="blank">'.f($RS,'cd_programa').' - '.f($RS,'nm_programa').'</a></b></font></td>';   
     } else {
       if (Nvl(f($RS,'sq_solic_pai'),'')>'') {
         $RS1 = db_getSolicData_IS::getInstanceOf($dbms,f($RS,'sq_solic_pai'),'ISACGERAL');
@@ -146,20 +148,20 @@ function VisualProjeto($l_chave,$operacao,$l_usuario) {
       $w_html .= chr(13).'      <tr><td valign="top" colspan="2" align="center" bgcolor="#D0D0D0" style="border: 2px solid rgb(0,0,0);"><b>Rubricas</td>';
       $w_html .= chr(13).'      <tr><td align="center" colspan="2">';
       $w_html .= chr(13).'        <TABLE WIDTH="100%" bgcolor="'.$conTableBgColor.'" BORDER="'.$conTableBorder.'" CELLSPACING="'.$conTableCellSpacing.'" CELLPADDING="'.$conTableCellPadding.'" BorderColorDark="'.$conTableBorderColorDark.'" BorderColorLight="'.$conTableBorderColorLight.'">';
-      $w_html .= chr(13).'          <tr bgcolor="'.$conTrBgColor.'" align="center">';
+      $w_html .= chr(13).'          <tr bgcolor="'.$conTrAlternateBgColor.'" align="center">';
       $w_html .= chr(13).'            <td rowspan="2"><b>Código</td>';
       $w_html .= chr(13).'            <td rowspan="2"><b>Nome</td>';
       $w_html .= chr(13).'            <td rowspan="2"><b>Valor Inicial</td>';
-      $w_html .= chr(13).'            <td colspan="3"><b>Entrada</td>';
-      $w_html .= chr(13).'            <td colspan="3"><b>Saída</td>';
+      $w_html .= chr(13).'            <td colspan="3" bgcolor="'.$conTrBgColorLightBlue1.'"><b>Entrada</td>';
+      $w_html .= chr(13).'            <td colspan="3" bgcolor="'.$conTrBgColorLightRed1.'"><b>Saída</td>';
       $w_html .= chr(13).'          </tr>';
-      $w_html .= chr(13).'          <tr bgcolor="'.$conTrBgColor.'" align="center">';
-      $w_html .= chr(13).'            <td><b>Prevista</td>';
-      $w_html .= chr(13).'            <td><b>Real</td>';
-      $w_html .= chr(13).'            <td><b>Pendente</td>';
-      $w_html .= chr(13).'            <td><b>Prevista</td>';
-      $w_html .= chr(13).'            <td><b>Real</td>';
-      $w_html .= chr(13).'            <td><b>Pendente</td>';
+      $w_html .= chr(13).'          <tr bgcolor="'.$conTrAlternateBgColor.'" align="center">';
+      $w_html .= chr(13).'            <td bgcolor="'.$conTrBgColorLightBlue1.'"><b>Prevista</td>';
+      $w_html .= chr(13).'            <td bgcolor="'.$conTrBgColorLightBlue1.'"><b>Real</td>';
+      $w_html .= chr(13).'            <td bgcolor="'.$conTrBgColorLightBlue1.'"><b>Pendente</td>';
+      $w_html .= chr(13).'            <td bgcolor="'.$conTrBgColorLightRed1.'"><b>Prevista</td>';
+      $w_html .= chr(13).'            <td bgcolor="'.$conTrBgColorLightRed1.'"><b>Real</td>';
+      $w_html .= chr(13).'            <td bgcolor="'.$conTrBgColorLightRed1.'"><b>Pendente</td>';
       $w_html .= chr(13).'          </tr>';      
       $w_cor=$conTrBgColor;
       $w_valor_inicial    = 0;
@@ -170,17 +172,25 @@ function VisualProjeto($l_chave,$operacao,$l_usuario) {
       $w_saida_real       = 0;
       $w_saida_pendente   = 0;
       foreach ($RS as $row) {
-        $w_cor = ($w_cor==$conTrBgColor || $w_cor=='') ? $w_cor=$conTrAlternateBgColor : $w_cor=$conTrBgColor; 
+        if ($w_cor==$conTrBgColor || $w_cor=='')  {
+          $w_cor      = $conTrAlternateBgColor;
+          $w_cor_blue = $conTrBgColorLightBlue1;
+          $w_cor_red  = $conTrBgColorLightRed1;
+        } else {
+          $w_cor      = $conTrBgColor;
+          $w_cor_blue = $conTrBgColorLightBlue2;
+          $w_cor_red  = $conTrBgColorLightRed2;
+        }
         $w_html .= chr(13).'      <tr valign="top" bgcolor="'.$w_cor.'">';
         $w_html .= chr(13).'          <td><A class="hl" HREF="javascript:location.href=this.location.href;" onClick="window.open(\''.montaURL_JS(null,$conRootSIW.'mod_fn/lancamento.php?par=Ficharubrica&O=L&w_sq_projeto_rubrica='.f($row,'sq_projeto_rubrica').'&w_tipo=&P1='.$P1.'&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP='.$TP.' - Extrato Rubrica'.'&SG='.$SG.MontaFiltro('GET')).'\',\'Ficha3\',\'toolbar=no,width=780,height=530,top=30,left=10,scrollbars=yes\');" title="Exibe as informações deste registro.">'.f($row,'codigo').'</A>&nbsp';
         $w_html .= chr(13).'          <td>'.f($row,'nome').' </td>';
         $w_html .= chr(13).'          <td align="right">'.number_format(f($row,'valor_inicial'),2,',','.').' </td>';
-        $w_html .= chr(13).'          <td align="right">'.number_format(f($row,'entrada_prevista'),2,',','.').' </td>';
-        $w_html .= chr(13).'          <td align="right">'.number_format(f($row,'entrada_real'),2,',','.').' </td>';
-        $w_html .= chr(13).'          <td align="right">'.number_format(f($row,'entrada_pendente'),2,',','.').' </td>';
-        $w_html .= chr(13).'          <td align="right">'.number_format(f($row,'saida_prevista'),2,',','.').' </td>';
-        $w_html .= chr(13).'          <td align="right">'.number_format(f($row,'saida_real'),2,',','.').' </td>';
-        $w_html .= chr(13).'          <td align="right">'.number_format(f($row,'saida_pendente'),2,',','.').' </td>';
+        $w_html .= chr(13).'          <td align="right" bgcolor="'.$w_cor_blue.'">'.number_format(f($row,'entrada_prevista'),2,',','.').' </td>';
+        $w_html .= chr(13).'          <td align="right" bgcolor="'.$w_cor_blue.'">'.number_format(f($row,'entrada_real'),2,',','.').' </td>';
+        $w_html .= chr(13).'          <td align="right" bgcolor="'.$w_cor_blue.'">'.number_format(f($row,'entrada_pendente'),2,',','.').' </td>';
+        $w_html .= chr(13).'          <td align="right" bgcolor="'.$w_cor_red.'">'.number_format(f($row,'saida_prevista'),2,',','.').' </td>';
+        $w_html .= chr(13).'          <td align="right" bgcolor="'.$w_cor_red.'">'.number_format(f($row,'saida_real'),2,',','.').' </td>';
+        $w_html .= chr(13).'          <td align="right" bgcolor="'.$w_cor_red.'">'.number_format(f($row,'saida_pendente'),2,',','.').' </td>';
         $w_html .= chr(13).'      </tr>';
         $w_valor_inicial    += f($row,'valor_inicial');
         $w_entrada_prevista += f($row,'entrada_prevista');
@@ -193,12 +203,12 @@ function VisualProjeto($l_chave,$operacao,$l_usuario) {
       $w_html .= chr(13).'      <tr valign="top" bgcolor="'.$w_cor.'">';
       $w_html .= chr(13).'          <td align="right" colspan="2"><b>Total</td>';
       $w_html .= chr(13).'          <td align="right"><b>'.number_format($w_valor_inicial,2,',','.').' </b></td>';
-      $w_html .= chr(13).'          <td align="right"><b>'.number_format($w_entrada_prevista,2,',','.').' </b></td>';
-      $w_html .= chr(13).'          <td align="right"><b>'.number_format($w_entrada_real,2,',','.').' </b></td>';
-      $w_html .= chr(13).'          <td align="right"><b>'.number_format($w_entrada_pendente,2,',','.').' </b></td>';
-      $w_html .= chr(13).'          <td align="right"><b>'.number_format($w_saida_prevista,2,',','.').' </b></td>';
-      $w_html .= chr(13).'          <td align="right"><b>'.number_format($w_saida_real,2,',','.').' </b></td>';
-      $w_html .= chr(13).'          <td align="right"><b>'.number_format($w_saida_pendente,2,',','.').' </b></td>';
+      $w_html .= chr(13).'          <td align="right" bgcolor="'.$conTrBgColorLightBlue1.'"><b>'.number_format($w_entrada_prevista,2,',','.').' </b></td>';
+      $w_html .= chr(13).'          <td align="right" bgcolor="'.$conTrBgColorLightBlue1.'"><b>'.number_format($w_entrada_real,2,',','.').' </b></td>';
+      $w_html .= chr(13).'          <td align="right" bgcolor="'.$conTrBgColorLightBlue1.'"><b>'.number_format($w_entrada_pendente,2,',','.').' </b></td>';
+      $w_html .= chr(13).'          <td align="right" bgcolor="'.$conTrBgColorLightRed1.'"><b>'.number_format($w_saida_prevista,2,',','.').' </b></td>';
+      $w_html .= chr(13).'          <td align="right" bgcolor="'.$conTrBgColorLightRed1.'"><b>'.number_format($w_saida_real,2,',','.').' </b></td>';
+      $w_html .= chr(13).'          <td align="right" bgcolor="'.$conTrBgColorLightRed1.'"><b>'.number_format($w_saida_pendente,2,',','.').' </b></td>';
       $w_html .= chr(13).'      </tr>';
       $w_html .= chr(13).'         </table></td></tr>';
     }     
@@ -306,7 +316,6 @@ function VisualProjeto($l_chave,$operacao,$l_usuario) {
       foreach ($RS as $row) {
         if (Nvl(f($row,'P2'),0) > 0) $w_p2 = f($row,'P2');
         if (Nvl(f($row,'P3'),0) > 0) $w_p3 = f($row,'P3');
-        break;
       } 
       reset($RS);
     } 
@@ -320,9 +329,9 @@ function VisualProjeto($l_chave,$operacao,$l_usuario) {
         $w_html .= chr(13).'  function lista (projeto, etapa) {';
         $w_html .= chr(13).'    document.Form.p_projeto.value=projeto;';
         $w_html .= chr(13).'    document.Form.p_atividade.value=etapa;';
-        $RS1 = db_getMenuData::getInstanceOf($dbms,$w_p3);
+        $RS1 = db_getMenuData::getInstanceOf($dbms,$w_p2);
         $w_html .= chr(13).'    document.Form.action=\''.f($RS1,'link').'\';';
-        $w_html .= chr(13).'    document.Form.P2.value=\''.w_p2.'\';';
+        $w_html .= chr(13).'    document.Form.P2.value=\''.$w_p2.'\';';
         $w_html .= chr(13).'    document.Form.SG.value=\''.f($RS1,'sigla').'\';';        
         $w_html .= chr(13).'    document.Form.p_agrega.value=\'GRDMETAPA\';';
         $RS1 = db_getTramiteList::getInstanceOf($dbms,$w_p2,null,null);
@@ -345,7 +354,7 @@ function VisualProjeto($l_chave,$operacao,$l_usuario) {
         $w_html .= chr(13).'    document.Form.p_atividade.value=etapa;';
         $RS1 = db_getMenuData::getInstanceOf($dbms,$w_p3);
         $w_html .= chr(13).'    document.Form.action=\''.f($RS1,'link').'\';';
-        $w_html .= chr(13).'    document.Form.P2.value=\''.w_p3.'\';';
+        $w_html .= chr(13).'    document.Form.P2.value=\''.$w_p3.'\';';
         $w_html .= chr(13).'    document.Form.SG.value=\''.f($RS1,'sigla').'\';';
         $w_html .= chr(13).'    document.Form.p_agrega.value=\''.substr(f($RS1,'sigla'),0,3).'ETAPA\';';
         $RS1 = db_getTramiteList::getInstanceOf($dbms,$w_p3,null,null);
@@ -361,7 +370,7 @@ function VisualProjeto($l_chave,$operacao,$l_usuario) {
         $w_html .= chr(13).'</SCRIPT>';
       }      
       $RS1 = db_getMenuData::getInstanceOf($dbms,$w_p2);
-      AbreForm('Form',f($RS1,'link'),'POST','return(Validacao(this));','Lista',3,$w_p2,1,null,$w_TP,f($RS1,'sigla'),$w_pagina.$par,'L');
+      AbreForm('Form',f($RS1,'link'),'POST','return(Validacao(this));','Lista',3,$w_p2,1,null,RemoveTP($w_TP),f($RS1,'sigla'),$w_pagina.$par,'L');
       $w_html .= chr(13).'<input type="Hidden" name="p_projeto" value="">';
       $w_html .= chr(13).'<input type="Hidden" name="p_atividade" value="">';
       $w_html .= chr(13).'<input type="Hidden" name="p_agrega" value="">';

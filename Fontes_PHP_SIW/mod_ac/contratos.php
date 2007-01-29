@@ -140,6 +140,7 @@ $w_menu     = RetornaMenu($w_cliente,$SG);
 
 $w_copia        = $_REQUEST['w_copia'];
 $p_projeto      = strtoupper($_REQUEST['p_projeto']);
+$p_atividade    = strtoupper($_REQUEST['p_atividade']);
 $p_ativo        = strtoupper($_REQUEST['p_ativo']);
 $p_solicitante  = strtoupper($_REQUEST['p_solicitante']);
 $p_prioridade   = strtoupper($_REQUEST['p_prioridade']);
@@ -165,7 +166,6 @@ $p_fase         = explodeArray($_REQUEST['p_fase']);
 $p_sqcc         = strtoupper($_REQUEST['p_sqcc']);
 $p_empenho      = strtoupper($_REQUEST['p_empenho']);
 $p_processo     = strtoupper($_REQUEST['p_processo']);
-
 // Verifica se o documento tem sub-menu. Se tiver, agrega no HREF uma chamada para montagem do mesmo.
 $RS = db_getLinkSubMenu::getInstanceOf($dbms,$_SESSION['P_CLIENTE'],$SG);
 if (count($RS)>0) {
@@ -342,7 +342,7 @@ function Inicial() {
   } elseif (!(strpos('CP',$O)===false)) {
     BodyOpenClean('onLoad=\'document.Form.p_projeto.focus()\';');
   } else {
-    BodyOpenClean('onLoad=document.focus();');
+    BodyOpenClean('onLoad=this.focus();');
   } 
   Estrutura_Topo_Limpo();
   Estrutura_Menu();
@@ -736,6 +736,7 @@ function Geral() {
     $w_palavra_chave        = $_REQUEST['w_palavra_chave'];
     $w_sqcc                 = $_REQUEST['w_sqcc'];
     $w_codigo_interno       = $_REQUEST['w_codigo_interno'];
+    $w_titulo               = $_REQUEST['w_titulo'];    
     $w_numero_empenho       = $_REQUEST['w_numero_empenho'];
     $w_numero_processo      = $_REQUEST['w_numero_processo'];
     $w_data_assinatura      = $_REQUEST['w_data_assinatura'];
@@ -750,6 +751,7 @@ function Geral() {
       } 
       if (count($RS)>0) {
         $w_codigo_interno       = f($RS,'codigo_interno');
+        $w_titulo               = f($RS,'titulo');        
         $w_sq_unidade_resp      = f($RS,'sq_unidade');
         $w_objeto               = f($RS,'objeto');
         $w_aviso                = f($RS,'aviso_prox_conc');
@@ -820,6 +822,7 @@ function Geral() {
   ValidateOpen('Validacao');
   if ($O=='I' || $O=='A') {
     if($w_numeracao_automatica=='N') Validate('w_codigo_interno','Código interno','1',1,1,60,'1','1');
+    Validate('w_titulo','Título','1',1,5,100,'1','1'); 
     Validate('w_sq_tipo_acordo','Modalidade de contratação','SELECT',1,1,18,'','0123456789');
     if (substr($SG,0,3)!='GCB') Validate('w_objeto','Objeto','1',1,5,2000,'1','1');
     else                        Validate('w_objeto','Plano de trabalho','1',1,5,2000,'1','1');
@@ -837,7 +840,7 @@ function Geral() {
     }
     if($w_segmento=='Público') {
      if (substr($SG,0,3)!='GCA' && substr($SG,0,3)!='GCB') Validate('w_numero_empenho','Número do empenho','1',1,1,30,'1','1');
-     Validate('w_numero_processo','Número do processo','1',1,1,30,'1','1');
+    // Validate('w_numero_processo','Número do processo','1',1,1,30,'1','1');
      Validate('w_data_assinatura','Assinatura','DATA',1,10,10,'','0123456789/');
      if (substr($SG,0,3)!='GCB') Validate('w_data_publicacao','Publicação','DATA',1,10,10,'','0123456789/'); 
     }
@@ -921,7 +924,7 @@ function Geral() {
   if ($w_troca>'') {
     BodyOpenClean('onLoad=\'document.Form.'.$w_troca.'.focus()\';');
   } elseif (!(strpos('EV',$O)===false)) {
-    BodyOpenClean('onLoad=\'document.focus()\';');
+    BodyOpenClean('onLoad=\'this.focus()\';');
   } else {
     if($w_numeracao_automatica=='N')    BodyOpenClean('onLoad=\'document.Form.w_codigo_interno.focus()\';');
     else                                BodyOpenClean('onLoad=\'document.Form.w_sq_tipo_acordo.focus()\';');
@@ -957,6 +960,7 @@ function Geral() {
       ShowHTML('      <tr>');
       ShowHTML('          <td colspan=2><b><U>C</U>ódigo interno:<br><INPUT ACCESSKEY="C" '.$w_Disabled.' class="STI" type="text" name="w_codigo_interno" size="18" maxlength="60" value="'.$w_codigo_interno.'"></td>');
     }
+    ShowHTML('      <tr><td valign="top"><b><u>T</u>ítulo:</b><br><INPUT ACCESSKEY="T" '.$w_Disabled.' class="STI" type="text" name="w_titulo" size="90" maxlength="100" value="'.$w_titulo.'" title="Informe um título para o convênio."></td>');   
     ShowHTML('      <tr>');
     SelecaoTipoAcordo('<u>T</u>ipo:','T','Selecione na lista o tipo adequado.',$w_sq_tipo_acordo,null,$w_cliente,'w_sq_tipo_acordo',$SG,'onChange="document.Form.action=\''.$w_dir.$w_pagina.$par.'\'; document.Form.w_troca.value=\'w_objeto\'; document.Form.submit();"');
     ShowHTML('      </tr>');
@@ -1196,7 +1200,7 @@ function Termo() {
   if ($w_troca>'') {
     BodyOpenClean('onLoad=\'document.Form.'.$w_troca.'.focus()\';');
   } elseif (!(strpos('EV',$O)===false)) {
-    BodyOpenClean('onLoad=\'document.focus()\';');
+    BodyOpenClean('onLoad=\'this.focus()\';');
   } else {
     BodyOpenClean('onLoad=\'document.Form.w_atividades.focus()\';');
   } 
@@ -1282,7 +1286,6 @@ function Termo() {
 function OutraParte() {
   extract($GLOBALS);
   global $w_Disabled;
-ECHO NVL($O,'NULO');
   if ($O=='') $O = 'P';
   $w_erro           = '';
   $w_troca          = $_REQUEST['w_troca'];
@@ -1470,7 +1473,7 @@ ECHO NVL($O,'NULO');
     Validate('w_nr_telefone','Telefone','1',1,7,25,'1','1');
     Validate('w_nr_fax','Fax','1','',7,25,'1','1');
     Validate('w_nr_celular','Celular','1','',7,25,'1','1');
-    Validate('w_logradouro','Logradouro','1',1,4,60,'1','1');
+    Validate('w_logradouro','Endereço','1',1,4,60,'1','1');
     Validate('w_complemento','Complemento','1','',2,20,'1','1');
     Validate('w_bairro','Bairro','1','',2,30,'1','1');
     Validate('w_sq_pais','País','SELECT',1,1,10,'1','1');
@@ -1484,16 +1487,16 @@ ECHO NVL($O,'NULO');
     Validate('w_email','E-Mail','1','',4,60,'1','1');
     if (substr($SG,0,3)!='GCR') {
       if (!(strpos('CREDITO,DEPOSITO',$w_forma_pagamento)===false)) {
-        if (substr($SG,0,3)=='GCD') {
+        if (substr($SG,0,3)=='GCD'||(substr($SG,0,3)=='GCC')||(substr($SG,0,3)=='GCB')) {
           Validate('w_sq_banco','Banco','SELECT',1,1,10,'1','1');
           Validate('w_sq_agencia','Agencia','SELECT',1,1,10,'1','1');
           Validate('w_operacao','Operação','1','',1,6,'','0123456789');
-          Validate('w_nr_conta','Número da conta','1','1',2,30,'ZXAzxa','0123456789-');
-        } elseif (substr($SG,0,3)=='GCP') {
+          Validate('w_nr_conta','Número da conta','1','1',2,30,'ZXAzxa','0123456789-.');
+        } elseif ((substr($SG,0,3)=='GCP')) {
           Validate('w_sq_banco','Banco','SELECT',1,'',10,'1','1');
           Validate('w_sq_agencia','Agencia','SELECT',1,'',10,'1','1');
           Validate('w_operacao','Operação','1','',1,6,'','0123456789');
-          Validate('w_nr_conta','Número da conta','1','',2,30,'ZXAzxa','0123456789-');
+          Validate('w_nr_conta','Número da conta','1','',2,30,'ZXAzxa','0123456789-.');
           ShowHTML('  if (!(theForm.w_sq_banco.selectedIndex == 0 && theForm.w_sq_agencia.selectedIndex == 0 && theForm.w_nr_conta == \'\')) {');
           ShowHTML('     if (theForm.w_sq_banco.selectedIndex == 0 || theForm.w_sq_agencia.selectedIndex == 0 || theForm.w_nr_conta == \'\') {');
           ShowHTML('        alert(\'Informe todos os dados bancários ou nenhum deles!\');');
@@ -1501,7 +1504,7 @@ ECHO NVL($O,'NULO');
           ShowHTML('        return false;');
           ShowHTML('     }');
           ShowHTML('  }');
-        } 
+        }  
       } elseif ($w_forma_pagamento=='ORDEM') {
         Validate('w_sq_banco','Banco','SELECT',1,1,10,'1','1');
         Validate('w_sq_agencia','Agencia','SELECT',1,1,10,'1','1');
@@ -1533,7 +1536,7 @@ ECHO NVL($O,'NULO');
     // Se o beneficiário ainda não foi selecionado
     if (!(strpos($_REQUEST['Botao'],'Procurar')===false)) {
       // Se está sendo feita busca por nome
-      BodyOpenClean('onLoad=\'document.focus()\';');
+      BodyOpenClean('onLoad=\'this.focus()\';');
     } else {
       if ($w_sq_tipo_pessoa==1) {
         BodyOpenClean('onLoad=\'document.Form.w_cpf.focus()\';');
@@ -1804,7 +1807,7 @@ function Preposto() {
   if ($w_sq_tipo_pessoa==1) {
     Cabecalho();
     ShowHTML('<BASE HREF="'.$conRootSIW.'">');
-    BodyOpenClean('onLoad=\'document.focus()\';');
+    BodyOpenClean('onLoad=\'this.focus()\';');
     $Estrutura_Topo_Limpo;
     Estrutura_Menu();
     Estrutura_Corpo_Abre();
@@ -1899,7 +1902,7 @@ function Preposto() {
     // Se o beneficiário ainda não foi selecionado
     if (!(strpos($_REQUEST['Botao'],'Procurar')===false)) {
       // Se está sendo feita busca por nome
-      BodyOpenClean('onLoad=\'document.focus()\';');
+      BodyOpenClean('onLoad=\'this.focus()\';');
     } else {
       BodyOpenClean('onLoad=\'document.Form.w_cpf.focus()\';');
     } 
@@ -2045,7 +2048,7 @@ function Representante() {
   if ($w_sq_tipo_pessoa==1) {
     Cabecalho();
     ShowHTML('<BASE HREF="'.$conRootSIW.'">');
-    BodyOpenClean('onLoad=\'document.focus()\';');
+    BodyOpenClean('onLoad=\'this.focus()\';');
     Estrutura_Topo_Limpo();
     Estrutura_Menu();
     Estrutura_Corpo_Abre();
@@ -2060,7 +2063,7 @@ function Representante() {
   } elseif (nvl($w_outra_parte,'')=='') {
     Cabecalho();
     ShowHTML('<BASE HREF="'.$conRootSIW.'">');
-    BodyOpenClean('onLoad=\'document.focus()\';');
+    BodyOpenClean('onLoad=\'this.focus()\';');
     Estrutura_Topo_Limpo();
     Estrutura_Menu();
     Estrutura_Corpo_Abre();
@@ -2161,9 +2164,16 @@ function Representante() {
       Validate('w_nome','Nome','1',1,5,60,'1','1');
       Validate('w_nome_resumido','Nome resumido','1',1,2,15,'1','1');
       Validate('w_sexo','Sexo','SELECT',1,1,1,'MF','');
+      ShowHTML('  if (!(theForm.w_rg_numero.value == \'\' && theForm.w_rg_emissao.value == \'\' && theForm.w_rg_emissor.value == \'\')) {');
+      ShowHTML('    if (theForm.w_rg_numero.value == \'\' || theForm.w_rg_emissao.value == \'\' || theForm.w_rg_emissor.value == \'\') {');
+      ShowHTML('      alert(\'Informe todos os dados da identidade ou nenhum deles!\');');
+      ShowHTML('        document.Form.w_rg_numero.focus();');
+      ShowHTML('        return false;');
+      ShowHTML('    }');
       Validate('w_rg_numero','Identidade','1',1,2,30,'1','1');
-      Validate('w_rg_emissao','Data de emissão','','',10,10,'','0123456789/');
+      Validate('w_rg_emissao','Data de emissão','DATA',1,10,10,'','0123456789/');
       Validate('w_rg_emissor','Órgão expedidor','1',1,2,30,'1','1');
+      ShowHTML('  }');
       Validate('w_ddd','DDD','1','1',3,4,'','0123456789');
       Validate('w_nr_telefone','Telefone','1',1,7,25,'1','1');
       Validate('w_nr_fax','Fax','1','',7,25,'1','1');
@@ -2181,7 +2191,7 @@ function Representante() {
     // Se o beneficiário ainda não foi selecionado
     if (!(strpos($_REQUEST['Botao'],'Procurar')===false)) {
       // Se está sendo feita busca por nome
-      BodyOpenClean('onLoad=\'document.focus()\';');
+      BodyOpenClean('onLoad=\'this.focus()\';');
     } else {
       BodyOpenClean('onLoad=\'document.Form.w_cpf.focus()\';');
     } 
@@ -2190,7 +2200,7 @@ function Representante() {
   } elseif (!(strpos('IA',$O)===false)) {
     BodyOpenClean('onLoad=\'document.Form.w_nome.focus()\';');
   } else {
-    BodyOpenClean('onLoad=\'document.focus()\';');
+    BodyOpenClean('onLoad=\'this.focus()\';');
   } 
   Estrutura_Topo_Limpo();
   Estrutura_Menu();
@@ -2529,7 +2539,7 @@ function Parcelas() {
   } elseif ($O=='I' || $O=='A') {
     BodyOpenClean('onLoad=\'document.Form.w_ordem.focus()\';');
   } else {
-    BodyOpenClean('onLoad=\'document.focus()\';');
+    BodyOpenClean('onLoad=\'this.focus()\';');
   } 
   Estrutura_Topo_Limpo();
   Estrutura_Menu();
@@ -2751,7 +2761,7 @@ function Anexo() {
   } elseif ($O=='A') {
     BodyOpenClean('onLoad=\'document.Form.w_descricao.focus()\';');
   } else {
-    BodyOpenClean('onLoad=\'document.focus()\';');
+    BodyOpenClean('onLoad=\'this.focus()\';');
   } 
   ShowHTML('<B><FONT COLOR="#000000">'.$w_TP.'</font></B>');
   ShowHTML('<HR>');
@@ -2876,7 +2886,7 @@ function Visual() {
   ShowHTML('<TITLE>'.$conSgSistema.' - '.$w_TP.'</TITLE>');
   ShowHTML('</HEAD>');
   ShowHTML('<BASE HREF="'.$conRootSIW.'">');
-  BodyOpenClean('onLoad=\'document.focus()\'; ');
+  BodyOpenClean('onLoad=\'this.focus()\'; ');
   if ($w_tipo!='WORD') {
     ShowHTML('<TABLE WIDTH="100%" BORDER=0><TR><TD ROWSPAN=2><IMG ALIGN="LEFT" SRC="'.LinkArquivo(null,$w_cliente,$w_logo,null,null,null,'EMBED').'"><TD ALIGN="RIGHT"><B><FONT SIZE=4 COLOR="#000000">');
     ShowHTML($w_TP);
@@ -3508,7 +3518,7 @@ function Grava() {
   Cabecalho();
   ShowHTML('</HEAD>');
   ShowHTML('<BASE HREF="'.$conRootSIW.'">');
-  BodyOpenClean('onLoad=document.focus();');
+  BodyOpenClean('onLoad=this.focus();');
   if (!(strpos($SG,'GERAL')===false)) {
     // Verifica se a Assinatura Eletrônica é válida
     if (verificaAssinaturaEletronica($_SESSION['USERNAME'],strtoupper($_REQUEST['w_assinatura'])) || $w_assinatura=='') {
@@ -3531,7 +3541,7 @@ function Grava() {
           $_REQUEST['w_aviso'], $_REQUEST['w_dias'], $_REQUEST['w_cidade'],  $_REQUEST['w_projeto'], 
           $_REQUEST['w_sq_tipo_acordo'], $_REQUEST['w_objeto'], $_REQUEST['w_sq_tipo_pessoa'], 
           $_REQUEST['w_sq_forma_pagamento'], $_REQUEST['w_forma_atual'], $_REQUEST['w_inicio_atual'], $_REQUEST['w_etapa'],
-          $_REQUEST['w_codigo_interno'], $_REQUEST['w_numero_empenho'], $_REQUEST['w_numero_processo'], $_REQUEST['w_data_assinatura'],
+          $_REQUEST['w_codigo_interno'], $_REQUEST['w_titulo'], $_REQUEST['w_numero_empenho'], $_REQUEST['w_numero_processo'], $_REQUEST['w_data_assinatura'],
           $_REQUEST['w_data_publicacao'],
           &$w_chave_nova, $w_copia, &$w_codigo);
 
@@ -3879,7 +3889,7 @@ function Main() {
   default:
     Cabecalho();
     ShowHTML('<BASE HREF="'.$conRootSIW.'">');
-    BodyOpen('onLoad=document.focus();');
+    BodyOpen('onLoad=this.focus();');
     Estrutura_Topo_Limpo();
     Estrutura_Menu();
     Estrutura_Corpo_Abre();

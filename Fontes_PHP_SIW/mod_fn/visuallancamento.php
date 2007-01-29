@@ -65,7 +65,7 @@ function VisualLancamento($v_chave,$l_O,$w_usuario,$l_P1,$l_P4) {
     $w_html.=chr(13).'      <tr><td><table border=0 width="100%" cellspacing=0>';
     $w_html.=chr(13).'          <tr valign="top">';
     $w_html.=chr(13).'          <td>Forma de pagamento:<br><b>'.f($RS,'nm_forma_pagamento').' </b></td>';
-    $w_html.=chr(13).'          <td>Vencimento:<br><b>'.FormataDataEdicao(f($RS,'vencimento')).' </b></td>';
+    $w_html.=chr(13).'          <td>Data prevista:<br><b>'.FormataDataEdicao(f($RS,'vencimento')).' </b></td>';
     $w_html.=chr(13).'          <td>Valor:<br><b>'.number_format(Nvl(f($RS,'valor'),0),2,',','.').' </b></td>';
     $w_html.=chr(13).'          </table>';
     // Dados da conclusão do projeto, se ela estiver nessa situação
@@ -99,7 +99,7 @@ function VisualLancamento($v_chave,$l_O,$w_usuario,$l_P1,$l_P4) {
         $w_html.=chr(13).'          <td>Data de nascimento:<b><br>'.FormataDataEdicao(f($RS_Query,'nascimento')).'</td>';
         $w_html.=chr(13).'          <tr valign="top">';
         $w_html.=chr(13).'          <td>Identidade:<b><br>'.f($RS_Query,'rg_numero').'</td>';
-        $w_html.=chr(13).'          <td>Data de emissão:<b><br>'.Nvl(f($RS_Query,'rg_emissao'),'---').'</td>';
+        $w_html.=chr(13).'          <td>Data de emissão:<b><br>'.FormataDataEdicao(Nvl(f($RS_Query,'rg_emissao'),'---')).'</td>';
         $w_html.=chr(13).'          <td>Órgão emissor:<b><br>'.f($RS_Query,'rg_emissor').'</td>';
         $w_html.=chr(13).'          <tr valign="top">';
         $w_html.=chr(13).'          <td>Passaporte:<b><br>'.Nvl(f($RS_Query,'passaporte_numero'),'---').'</td>';

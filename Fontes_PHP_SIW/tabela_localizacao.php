@@ -175,7 +175,7 @@ function Cidade() {
   } elseif ($O=='P') {
     BodyOpen('onLoad=\'document.Form.p_sq_pais.focus()\';');
   } else {
-    BodyOpen('onLoad=document.focus();');
+    BodyOpen('onLoad=this.focus();');
   } 
   ShowHTML('<B><FONT COLOR="#000000">'.$w_TP.'</B>');
   ShowHTML('<HR>');
@@ -410,7 +410,7 @@ function Estado() {
   } elseif ($O=='P') {
     BodyOpen('onLoad=\'document.Form.p_sq_pais.focus()\';');
   } else {
-    BodyOpen('onLoad=document.focus();');
+    BodyOpen('onLoad=this.focus();');
   } 
   ShowHTML('<B><FONT COLOR="#000000">'.$w_TP.'</B>');
   ShowHTML('<HR>');
@@ -631,7 +631,7 @@ function Regiao() {
   } elseif ($O=='P') {
     BodyOpen('onLoad=\'document.Form.p_nome.focus()\';');
   } else {
-    BodyOpen('onLoad=document.focus();');
+    BodyOpen('onLoad=this.focus();');
   } 
   ShowHTML('<B><FONT COLOR="#000000">'.$w_TP.'</B>');
   ShowHTML('<HR>');
@@ -823,7 +823,7 @@ function Pais() {
   } elseif ($O=='P') {
     BodyOpen('onLoad=\'document.Form.p_nome.focus()\';');
   } else {
-    BodyOpen('onLoad=document.focus();');
+    BodyOpen('onLoad=this.focus();');
   } 
   ShowHTML('<B><FONT COLOR="#000000">'.$w_TP.'</B>');
   ShowHTML('<HR>');
@@ -966,7 +966,7 @@ function Grava() {
 
   Cabecalho();
   ShowHTML('</HEAD>');
-  BodyOpen('onLoad=document.focus();');
+  BodyOpen('onLoad=this.focus();');
 
   switch ($SG) {
     case 'COCIDADE':
@@ -1115,7 +1115,7 @@ function Main() {
   case 'GRAVA':     Grava();    break;
   default:
     Cabecalho();
-    BodyOpen('onLoad=document.focus();');
+    BodyOpen('onLoad=this.focus();');
     Estrutura_Topo_Limpo();
     Estrutura_Menu();
     Estrutura_Corpo_Abre();

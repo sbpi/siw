@@ -170,7 +170,7 @@ function TipoEndereco() {
   } elseif (!(strpos('P',$O)===false)) {
     BodyOpen('onLoad=\'document.Form.p_nome.focus()\';');
   } else {
-    BodyOpen('onLoad=document.focus();');
+    BodyOpen('onLoad=this.focus();');
   } 
   ShowHTML('<B><FONT COLOR="#000000">'.$w_TP.'</B>');
   ShowHTML('<HR>');
@@ -362,7 +362,7 @@ function TipoTelefone() {
   } elseif ($O=='P') {
     BodyOpen('onLoad=\'document.Form.p_nome.focus()\';');
   } else {
-    BodyOpen('onLoad=document.focus();');
+    BodyOpen('onLoad=this.focus();');
   } 
   ShowHTML('<B><FONT COLOR="#000000">'.$w_TP.'</B>');
   ShowHTML('<HR>');
@@ -542,7 +542,7 @@ function TipoPessoa() {
   } elseif ($O=='P') {
     BodyOpen('onLoad=\'document.Form.p_nome.focus()\';');
   } else {
-    BodyOpen('onLoad=document.focus();');
+    BodyOpen('onLoad=this.focus();');
   } 
 
   ShowHTML('<B><FONT COLOR="#000000">'.$w_TP.'</B>');
@@ -727,7 +727,7 @@ function Deficiencia() {
   } elseif ($O=='P') {
     BodyOpen('onLoad=\'document.Form.p_nome.focus()\';');
   } else {
-    BodyOpen('onLoad=document.focus();');
+    BodyOpen('onLoad=this.focus();');
   } 
   ShowHTML('<B><FONT COLOR="#000000">'.$w_TP.'</B>');
   ShowHTML('<HR>');
@@ -905,7 +905,7 @@ function GrupoDeficiencia() {
   } elseif ($O=='P') {
     BodyOpen('onLoad=\'document.Form.p_nome.focus()\';');
   } else {
-    BodyOpen('onLoad=document.focus();');
+    BodyOpen('onLoad=this.focus();');
   } 
   ShowHTML('<B><FONT COLOR="#000000">'.$w_TP.'</B>');
   ShowHTML('<HR>');
@@ -1072,7 +1072,7 @@ function Idioma() {
   } elseif ($O=='P') {
     BodyOpen('onLoad=\'document.Form.p_nome.focus()\';');
   } else {
-    BodyOpen('onLoad=document.focus();');
+    BodyOpen('onLoad=this.focus();');
   } 
   ShowHTML('<B><FONT COLOR="#000000">'.$w_TP.'</B>');
   ShowHTML('<HR>');
@@ -1244,7 +1244,7 @@ function Etnia() {
   } elseif ($O=='P') {
     BodyOpen('onLoad=\'document.Form.p_nome.focus()\';');
   } else {
-    BodyOpen('onLoad=document.focus();');
+    BodyOpen('onLoad=this.focus();');
   } 
   ShowHTML('<B><FONT COLOR="#000000">'.$w_TP.'</B>');
   ShowHTML('<HR>');
@@ -1415,7 +1415,7 @@ function Formacao() {
   } elseif ($O=='P') {
     BodyOpen('onLoad=\'document.Form.p_nome.focus()\';');
   } else {
-    BodyOpen('onLoad=document.focus();');
+    BodyOpen('onLoad=this.focus();');
   } 
   ShowHTML('<B><FONT COLOR="#000000">'.$w_TP.'</B>');
   ShowHTML('<HR>');
@@ -1543,7 +1543,7 @@ function Grava() {
 
   Cabecalho();
   ShowHTML('</HEAD>');
-  BodyOpen('onLoad=document.focus();');
+  BodyOpen('onLoad=this.focus();');
 
   switch ($SG) {
     case 'COTPENDER':
@@ -1714,7 +1714,7 @@ function Main() {
   case 'GRAVA':         Grava();            break;
   default:
     Cabecalho();
-    BodyOpen('onLoad=document.focus();');
+    BodyOpen('onLoad=this.focus();');
     Estrutura_Topo_Limpo();
     Estrutura_Menu();
     Estrutura_Corpo_Abre();

@@ -194,7 +194,7 @@ function TipoAcordo() {
   } elseif ($O=='H') {
     BodyOpen('onLoad=document.Form.w_heranca.focus();');
   } elseif ($O=='L') {
-    BodyOpen('onLoad=document.focus();');
+    BodyOpen('onLoad=this.focus();');
   } else {
     BodyOpen('onLoad=document.Form.w_assinatura.focus();');
   } 
@@ -573,7 +573,7 @@ function FormaPagamento(){
     ShowHTML('</TABLE>');
     ShowHTML('  <tr><td>&nbsp;');
     ShowHTML('      <tr><td><b>Vincular:</b><br>');
-    $RS1 = db_getMenuList::getInstanceOf($dbms, $w_cliente, 'X', $chaveAux);
+    $RS1 = db_getMenuList::getInstanceOf($dbms, $w_cliente, 'X', $chaveAux,null);
     $RS1 = SortArray($RS1,'nome','asc');
     ShowHTML('      <tr><td><table width="100%" border="0">');
     ShowHTML('        <tr>');
@@ -629,7 +629,7 @@ function Grava() {
   Cabecalho();
   ShowHTML('</HEAD>');
   ShowHTML('<BASE HREF="'.$conRootSIW.'">');
-  BodyOpen('onLoad=document.focus();');
+  BodyOpen('onLoad=this.focus();');
   switch ($SG) {
     case 'TIPOACORDO':
       // Verifica se a Assinatura Eletrônica é válida
@@ -695,7 +695,7 @@ function Main() {
   default:
     Cabecalho();
     ShowHTML('<BASE HREF="'.$conRootSIW.'">');
-    BodyOpen('onLoad=document.focus();');
+    BodyOpen('onLoad=this.focus();');
     Estrutura_Topo_Limpo();
     Estrutura_Menu();
     Estrutura_Corpo_Abre();

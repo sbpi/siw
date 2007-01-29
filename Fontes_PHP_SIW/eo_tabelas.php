@@ -139,7 +139,7 @@ function AreaAtuacao(){
   } elseif (!(strpos('P',$O)===false)) {
     BodyOpen('onLoad=\'document.Form.p_nome.focus()\';');
   } else {
-    BodyOpen('onLoad=document.focus();');
+    BodyOpen('onLoad=this.focus();');
   } 
   Estrutura_Topo_Limpo();
   Estrutura_Menu();
@@ -328,7 +328,7 @@ function TipoUnidade() {
   } elseif (!(strpos('P',$O)===false)) {
     BodyOpen('onLoad=\'document.Form.p_nome.focus()\';');
   } else {
-    BodyOpen('onLoad=document.focus();');
+    BodyOpen('onLoad=this.focus();');
   } 
   Estrutura_Topo_Limpo();
   Estrutura_Menu();
@@ -508,7 +508,7 @@ function TipoPosto() {
       BodyOpen('onLoad=\'document.Form.w_nome.focus()\';');
     } 
   } else {
-    BodyOpen('onLoad=document.focus();');
+    BodyOpen('onLoad=this.focus();');
   } 
   Estrutura_Topo_Limpo();
   Estrutura_Menu();
@@ -610,7 +610,7 @@ function Grava() {
 
   Cabecalho();
   ShowHTML('</HEAD>');
-  BodyOpen('onLoad=document.focus();');
+  BodyOpen('onLoad=this.focus();');
   switch ($SG) {
     case 'EOTPUNID':
       $p_nome   = strtoupper($_REQUEST['p_nome']);
@@ -688,7 +688,7 @@ function Main() {
   case 'GRAVA':     Grava();        break;
   default:
     Cabecalho();
-    BodyOpen('onLoad=document.focus();');
+    BodyOpen('onLoad=this.focus();');
     Estrutura_Topo_Limpo();
     Estrutura_Menu();
     Estrutura_Corpo_Abre();

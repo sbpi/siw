@@ -102,7 +102,7 @@ function Help() {
   ShowHTML('<HEAD>');
   ShowHTML('<TITLE>'.$w_TP.'</TITLE>');
   ShowHTML('</HEAD>');
-  BodyOpenClean('onLoad=document.focus();');
+  BodyOpenClean('onLoad=this.focus();');
   if ($O=="L") {
     ShowHTML('<B><FONT COLOR="#000000">'.$w_TP.'</font></B>');
     ShowHTML('<HR>');
@@ -331,7 +331,7 @@ function Menu() {
   ShowHTML('<HEAD>');
   ShowHTML('<TITLE>'.$w_TP.'</TITLE>');
   ShowHTML('</HEAD>');
-  BodyOpen('onLoad=document.focus();');
+  BodyOpen('onLoad=this.focus();');
   ShowHTML('<B><FONT COLOR="#000000">'.$w_TP.'</font></B>');
   ShowHTML('<HR>');
   ShowHTML('<div align=center><center>');
@@ -388,7 +388,7 @@ function Main() {
   case 'MENU':      Menu(); break;
   default:
     Cabecalho();
-    BodyOpen('onLoad=document.focus();');
+    BodyOpen('onLoad=this.focus();');
     Estrutura_Topo_Limpo();
     Estrutura_Menu();
     Estrutura_Corpo_Abre();

@@ -29,6 +29,5 @@ function selecaoFaseCheck($label,$accesskey,$hint,$chave,$chaveAux,$campo,$restr
          { ShowHTML('          <BR><input type="CHECKBOX" name="'.$campo.'" value="'.f($row,'sq_siw_tramite').'" >'.f($row,'nome')); }
     }
   }
-  ShowHTML('          </select>');
 }
 ?>

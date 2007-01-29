@@ -343,7 +343,7 @@ function Grava() {
   Cabecalho();
   ShowHTML('</HEAD>');
   ShowHTML('<BASE HREF="'.$conRootSIW.'">');
-  BodyOpen('onLoad=document.focus();');
+  BodyOpen('onLoad=this.focus();');
   // Verifica se a Assinatura Eletrônica é válida
   if ($O !=='') { // Identifica, a partir do tamanho da variável w_username, se é pessoa física, jurídica ou estrangeiro
     dml_putUsuarioTemp::getInstanceOf($dbms,$O,
@@ -371,7 +371,7 @@ function Main() {
   case "GRAVA":         Grava();        break;
   default:
     Cabecalho();
-    BodyOpen('onLoad=document.focus();');
+    BodyOpen('onLoad=this.focus();');
     Estrutura_Topo_Limpo();
     Estrutura_Menu();
     Estrutura_Corpo_Abre();

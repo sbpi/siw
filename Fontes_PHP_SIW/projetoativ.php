@@ -331,7 +331,7 @@ function Inicial() {
   } elseif (!(strpos('CP',$O)===false)) {
     BodyOpenClean('onLoad=\'document.Form.p_projeto.focus()\';');
   } else {
-    BodyOpenClean('onLoad=document.focus();');
+    BodyOpenClean('onLoad=this.focus();');
   } 
   Estrutura_Topo_Limpo();
   Estrutura_Menu();
@@ -893,7 +893,7 @@ function Geral() {
   if ($w_troca>'') {
     BodyOpenClean('onLoad=\'document.Form.'.$w_troca.'.focus()\';');
   } elseif (!(strpos('EV',$O)===false)) {
-    BodyOpenClean('onLoad=\'document.focus()\';');
+    BodyOpenClean('onLoad=\'this.focus()\';');
   } else {
     BodyOpenClean('onLoad=\'document.Form.w_projeto.focus()\';');
   } 
@@ -1084,7 +1084,7 @@ function Anexos() {
   } elseif ($O=='A') {
     BodyOpenClean('onLoad=\'document.Form.w_descricao.focus()\';');
   } else {
-    BodyOpenClean('onLoad=\'document.focus()\';');
+    BodyOpenClean('onLoad=\'this.focus()\';');
   } 
   ShowHTML('<B><FONT COLOR="#000000">'.$w_TP.'</font></B>');
   ShowHTML('<HR>');
@@ -1232,7 +1232,7 @@ function Interessados() {
   } elseif ($O=='I') {
     BodyOpenClean('onLoad=\'document.Form.w_chave_aux.focus()\';');
   } else {
-    BodyOpenClean('onLoad=\'document.focus()\';');
+    BodyOpenClean('onLoad=\'this.focus()\';');
   } 
   ShowHTML('<B><FONT COLOR="#000000">'.$w_TP.'</font></B>');
   ShowHTML('<HR>');
@@ -1367,7 +1367,7 @@ function Areas() {
   if ($w_troca>'') {
     BodyOpenClean('onLoad=\'document.Form.'.$w_troca.'.focus()\';');
   } else {
-    BodyOpenClean('onLoad=\'document.focus()\';');
+    BodyOpenClean('onLoad=\'this.focus()\';');
   } 
   ShowHTML('<B><FONT COLOR="#000000">'.$w_TP.'</font></B>');
   ShowHTML('<HR>');
@@ -1468,7 +1468,7 @@ function Visual() {
   ShowHTML('<HEAD>');
   ShowHTML('<TITLE>'.$conSgSistema.' - Visualização de atividade</TITLE>');
   ShowHTML('</HEAD>');
-  BodyOpenClean('onLoad=\'document.focus()\'; ');
+  BodyOpenClean('onLoad=\'this.focus()\'; ');
   ShowHTML('<TABLE WIDTH="100%" BORDER=0><TR><TD ROWSPAN=2><IMG ALIGN="LEFT" SRC="'.LinkArquivo(null,$w_cliente,$w_logo,null,null,null,'EMBED').'"><TD ALIGN="RIGHT"><B><FONT SIZE=4 COLOR="#000000">');
   ShowHTML('Visualização de Atividade');
   ShowHTML('<TR><TD ALIGN="RIGHT"><B><FONT SIZE=2 COLOR="#000000">'.DataHora().'</font></B></TD></TR>');
@@ -2067,7 +2067,7 @@ function BuscaAtividade() {
   if (count($RS)>10 || ($w_nome>'' || $w_numero>'')) {
     BodyOpen('onLoad=\'document.Form.w_nome.focus();\'');
   } else {
-    BodyOpen('onLoad=document.focus();');
+    BodyOpen('onLoad=this.focus();');
   } 
   Estrutura_Texto_Abre();
   ShowHTML('<table border="0" cellpadding="0" cellspacing="0" width="100%">');
@@ -2217,7 +2217,7 @@ function Grava() {
   $w_nome    = '';
   Cabecalho();
   ShowHTML('</HEAD>');
-  BodyOpenClean('onLoad=document.focus();');
+  BodyOpenClean('onLoad=this.focus();');
   switch ($SG) {
     case 'GDPGERAL':
       // Verifica se a Assinatura Eletrônica é válida
@@ -2543,7 +2543,7 @@ function Main() {
   case 'GRAVA':         Grava();          break;
   default:
     Cabecalho();
-    BodyOpen('onLoad=document.focus();');
+    BodyOpen('onLoad=this.focus();');
     Estrutura_Topo_Limpo();
     Estrutura_Menu();
     Estrutura_Corpo_Abre();

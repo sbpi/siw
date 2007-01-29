@@ -139,7 +139,7 @@ function Imposto() {
   } elseif ($O=='I' || $O=='A') {
     BodyOpen('onLoad=document.Form.w_nome.focus();');
   } elseif ($O=='L') {
-    BodyOpen('onLoad=document.focus();');
+    BodyOpen('onLoad=this.focus();');
   } else {
     BodyOpen('onLoad=document.Form.w_assinatura.focus();');
   } 
@@ -302,7 +302,7 @@ function Documento(){
   } elseif ($O=='I' || $O=='A') {
     BodyOpen('onLoad=document.Form.w_nome.focus();');
   } elseif ($O=='L') {
-    BodyOpen('onLoad=document.focus();');
+    BodyOpen('onLoad=this.focus();');
   } else {
     BodyOpen('onLoad=document.Form.w_assinatura.focus();');
   } 
@@ -465,7 +465,7 @@ function Lancamento() {
   } elseif ($O=='I' || $O=='A') {
     BodyOpen('onLoad=document.Form.w_nome.focus();');
   } elseif ($O=='L') {
-    BodyOpen('onLoad=document.focus();');
+    BodyOpen('onLoad=this.focus();');
   } else {
     BodyOpen('onLoad=document.Form.w_assinatura.focus();');
   } 
@@ -576,7 +576,7 @@ function Grava() {
   Cabecalho();
   ShowHTML('</HEAD>');
   ShowHTML('<BASE HREF="'.$conRootSIW.'">');  
-  BodyOpen('onLoad=document.focus();');
+  BodyOpen('onLoad=this.focus();');
   switch ($SG) {
     case 'FNIMPOSTO':
       // Verifica se a Assinatura Eletrônica é válida
@@ -645,7 +645,7 @@ function Main() {
     default:
       cabecalho();
       ShowHTML('<BASE HREF="'.$conRootSIW.'">');      
-      BodyOpen('onLoad=document.focus();');
+      BodyOpen('onLoad=this.focus();');
       Estrutura_Topo_Limpo();
       Estrutura_Menu();
       Estrutura_Corpo_Abre();

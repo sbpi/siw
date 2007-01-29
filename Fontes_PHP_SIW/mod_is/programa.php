@@ -720,7 +720,7 @@ function Geral() {
   if ($w_troca>'') {
     BodyOpen('onLoad=\'document.Form.'.$w_troca.'.focus()\';');
   } elseif (!(strpos('EV',$O)===false)) {
-    BodyOpen('onLoad=\'document.focus()\';');
+    BodyOpen('onLoad=\'this.focus()\';');
   } else {
     BodyOpen('onLoad=\'document.Form.w_titulo.focus()\';');
   } 
@@ -3901,7 +3901,7 @@ function Main() {
     default:
       cabecalho();
       ShowHTML('<BASE HREF="'.$conRootSIW.'">');      
-      BodyOpen('onLoad=document.focus();');
+      BodyOpen('onLoad=this.focus();');
       Estrutura_Topo_Limpo();
       Estrutura_Menu();
       Estrutura_Corpo_Abre();

@@ -52,7 +52,48 @@ function ScriptOpen($Language) { print chr(13).chr(10).'<SCRIPT LANGUAGE="'.$Lan
 function ScriptClose() { print "--></SCRIPT>"."\r\n"; }
 
 // Abre a função de validação de formulários
-function ValidateOpen($FunctionName) { print "function ".$FunctionName." (theForm)"."\r\n"."{"."\r\n"; }
+function ValidateOpen($FunctionName) { 
+  ShowHTML('function Trim(TRIM_VALUE){ ');
+  ShowHTML('  if(TRIM_VALUE.length < 1){ return""; }');
+  ShowHTML('  TRIM_VALUE = RTrim(TRIM_VALUE);');
+  ShowHTML('  TRIM_VALUE = LTrim(TRIM_VALUE);');
+  ShowHTML('  if(TRIM_VALUE==""){ return ""; } else { return TRIM_VALUE; }');
+  ShowHTML('}');
+  ShowHTML('');
+  ShowHTML('function RTrim(VALUE){');
+  ShowHTML('  var w_space = String.fromCharCode(32);');
+  ShowHTML('  var v_length = VALUE.length;');
+  ShowHTML('  var strTemp = "";');
+  ShowHTML('  if(v_length < 0){ return""; }');
+  ShowHTML('  var iTemp = v_length -1;');
+  ShowHTML('  while(iTemp > -1){ ');
+  ShowHTML('    if(VALUE.charAt(iTemp) != w_space){');
+  ShowHTML('      strTemp = VALUE.substring(0,iTemp +1);');
+  ShowHTML('      break;');
+  ShowHTML('    }');
+  ShowHTML('    iTemp = iTemp-1;');
+  ShowHTML('  }');
+  ShowHTML('  return strTemp;');
+  ShowHTML('}');
+  ShowHTML('');
+  ShowHTML('function LTrim(VALUE){');
+  ShowHTML('  var w_space = String.fromCharCode(32);');
+  ShowHTML('  if(v_length < 1){ return""; }');
+  ShowHTML('  var v_length = VALUE.length;');
+  ShowHTML('  var strTemp = "";');
+  ShowHTML('  var iTemp = 0;');
+  ShowHTML('  while(iTemp < v_length){');
+  ShowHTML('    if(VALUE.charAt(iTemp) != w_space){');
+  ShowHTML('      strTemp = VALUE.substring(iTemp,v_length);');
+  ShowHTML('      break;');
+  ShowHTML('    }');
+  ShowHTML('    iTemp = iTemp + 1;');
+  ShowHTML('  }');
+  ShowHTML('  return strTemp;');
+  ShowHTML('}');
+  ShowHTML('');
+  ShowHTML('function '.$FunctionName.' (theForm) {'); 
+}
 
 // Encerra a função de validação de formulários
 function ValidateClose() {
@@ -497,7 +538,10 @@ function FormataDataMA() {
 function Validate($VariableName,$DisplayName,$DataType,$ValueRequired,$MinimumLength,$MaximumLength,$AllowLetters,$AllowDigits) {
   if ($ValueRequired>"") {
     if (strtoupper($DataType)=="SELECT") { print "  if (theForm.".$VariableName.".selectedIndex == 0)"."\r\n"; }
-    else { print "  if (theForm.".$VariableName.".value == '')"."\r\n"; }
+    else { 
+      print "  theForm.".$VariableName.".value = Trim(theForm.".$VariableName.".value);"."\r\n"; 
+      print "  if (theForm.".$VariableName.".value == '')"."\r\n"; 
+    }
 
     print "  {"."\r\n";
     print "    alert('Favor informar um valor para o campo ".$DisplayName."');"."\r\n";
@@ -530,7 +574,7 @@ function Validate($VariableName,$DisplayName,$DataType,$ValueRequired,$MinimumLe
   if ($AllowLetters>"" || $AllowDigits>"") {
     $checkOK="";
     if ($AllowLetters>"") {
-      if ($AllowLetters=='1') { $checkOK='ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyzÀÁÂÃÇÈÉÊÌÍÎÒÓÔÕÙÚÛÜÀÈÌÒÙÂÊÎÔÛàáâãçéêíîóôõúûüàèìòìâêîôû0123456789-,.()-:;[]{}*&%$#@!/ºª?<>|+=_\\"\\\' '; }
+      if ($AllowLetters=='1') { $checkOK='ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyzÀÁÂÃÇÈÉÊÌÍÎÒÓÔÕÙÚÛÜÀÈÌÒÙÂÊÎÔÛàáâãçéêíîóôõúûüàèìòìâêîôû0123456789-–,.()-:;[]{}*&%$#@!/ºª?<>|+=_\\“”"\\\' '; }
       else { $checkOK=$checkOK.$AllowLetters; }
     }
 

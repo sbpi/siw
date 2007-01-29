@@ -194,7 +194,7 @@ function centralTel() {
   } elseif ($O=='E') {
     BodyOpen('onLoad="document.Form.w_assinatura.focus()";');
   } else {
-    BodyOpen('onLoad="document.focus()";');
+    BodyOpen('onLoad="this.focus()";');
   } 
   ShowHTML('<B><FONT COLOR="#000000">'.$w_TP.'</FONT></B>');
   ShowHTML('<HR>');
@@ -368,7 +368,7 @@ function Troncos() {
   if ($O=='E') {
     BodyOpen('onLoad=\'document.Form.w_assinatura.focus()\';');
   } else {
-    BodyOpen('onLoad=\'document.focus()\';');
+    BodyOpen('onLoad=\'this.focus()\';');
   } 
   ShowHTML('<B><FONT COLOR="#000000">'.$w_TP.'</FONT></B>');
   ShowHTML('<HR>');
@@ -543,7 +543,7 @@ function Ramais() {
   } elseif ($O=='E') {
     BodyOpen('onLoad="document.Form.w_assinatura.focus()";');
   } else {
-    BodyOpen('onLoad="document.focus()";');
+    BodyOpen('onLoad="this.focus()";');
   } 
   ShowHTML('<B><FONT COLOR="#000000">'.$w_TP.'</FONT></B>');
   ShowHTML('<HR>');
@@ -674,7 +674,7 @@ function UsuarioCentral() {
   } elseif ($O=='E') {
     BodyOpen('onLoad="document.Form.w_assinatura.focus()";');
   } else {
-    BodyOpen('onLoad="document.focus()";');
+    BodyOpen('onLoad="this.focus()";');
   }
   ShowHTML('<B><FONT COLOR="#000000">'.$w_TP.'</FONT></B>');
   ShowHTML('<HR>');
@@ -848,7 +848,7 @@ function RamalUsr() {
   } elseif ($O=='F') {
     BodyOpen('onLoad="document.Form.w_fim.focus()";');
   } else {
-    BodyOpen('onLoad="document.focus()";');
+    BodyOpen('onLoad="this.focus()";');
   } 
   ShowHTML('<B><FONT COLOR="#000000">'.$w_TP.'</FONT></B>');
   ShowHTML('<HR>');
@@ -1073,7 +1073,7 @@ function prefixo() {
   } elseif ($O=='P') {
     BodyOpen('onLoad="document.Form.p_prefixo.focus()";');
   } else {
-    BodyOpen('onLoad="document.focus()";');
+    BodyOpen('onLoad="this.focus()";');
   } 
   ShowHTML('<B><FONT COLOR="#000000">'.$w_TP.'</FONT></B>');
   ShowHTML('<HR>');
@@ -1230,7 +1230,7 @@ function Grava() {
   extract($GLOBALS);
   Cabecalho();
   ShowHTML('</HEAD>');
-  BodyOpen('onLoad=document.focus();');
+  BodyOpen('onLoad=this.focus();');
   ShowHTML('<BASE HREF="'.$conRootSIW.'">');
   switch ($SG) {
     case 'TTCENTRAL':
@@ -1348,7 +1348,7 @@ function Main() {
   case 'GRAVA':             Grava();            break;
   default:
     Cabecalho();
-    BodyOpen('onLoad=document.focus();');
+    BodyOpen('onLoad=this.focus();');
     Estrutura_Topo_Limpo();
     Estrutura_Menu();
     Estrutura_Corpo_Abre();

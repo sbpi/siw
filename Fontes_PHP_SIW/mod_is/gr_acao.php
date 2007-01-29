@@ -662,7 +662,7 @@ function Main() {
     default:
       cabecalho();
       ShowHTML('<BASE HREF="'.$conRootSIW.'">');      
-      BodyOpen('onLoad=document.focus();');
+      BodyOpen('onLoad=this.focus();');
       Estrutura_Topo_Limpo();
       Estrutura_Menu();
       Estrutura_Corpo_Abre();

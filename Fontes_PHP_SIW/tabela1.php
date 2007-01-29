@@ -146,7 +146,7 @@ function TipoVinculo() {
   } elseif (!(strpos('P',$O)===false)) {
     BodyOpen('onLoad=\'document.Form.p_nome.focus()\';');
   } else {
-    BodyOpen('onLoad=document.focus();');
+    BodyOpen('onLoad=this.focus();');
   } 
 
   Estrutura_Topo_Limpo();
@@ -556,7 +556,7 @@ function Grava() {
 
   Cabecalho();
   ShowHTML('</HEAD>');
-  BodyOpen('onLoad=document.focus();');
+  BodyOpen('onLoad=this.focus();');
 
   AbreSessao();
   switch ($SG) {
@@ -626,7 +626,7 @@ function Main() {
   case 'GRAVA':         Grava();        break;
   default:
     Cabecalho();
-    BodyOpen('onLoad=document.focus();');
+    BodyOpen('onLoad=this.focus();');
     Estrutura_Topo_Limpo();
     Estrutura_Menu();
     Estrutura_Corpo_Abre();

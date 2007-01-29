@@ -151,7 +151,7 @@ function Natureza() {
   } elseif ($O=='E') {
     BodyOpen('onLoad=\'document.Form.w_assinatura.focus()\';');
   } else {
-    BodyOpen('onLoad=\'document.focus()\';');
+    BodyOpen('onLoad=\'this.focus()\';');
   } 
   ShowHTML('<B><FONT COLOR="#000000">'.$w_TP.'</FONT></B>');
   ShowHTML('<HR>');
@@ -281,7 +281,7 @@ function Horizonte() {
   } elseif ($O=='E') {
     BodyOpen('onLoad=\'document.Form.w_assinatura.focus()\';');
   } else {
-    BodyOpen('onLoad=\'document.focus()\';');
+    BodyOpen('onLoad=\'this.focus()\';');
   } 
   ShowHTML('<B><FONT COLOR="#000000">'.$w_TP.'</FONT></B>');
   ShowHTML('<HR>');
@@ -429,7 +429,7 @@ function Projetos() {
   } elseif ($O=='E') {
     BodyOpen('onLoad=\'document.Form.w_assinatura.focus()\';');
   } else {
-    BodyOpen('onLoad=\'document.focus()\';');
+    BodyOpen('onLoad=\'this.focus()\';');
   } 
   ShowHTML('<B><FONT COLOR="#000000">'.$w_TP.'</FONT></B>');
   ShowHTML('<HR>');
@@ -588,7 +588,7 @@ function Unidade() {
   if ($w_troca>'') {
     BodyOpen('onLoad=\'document.Form.'.$w_troca.'.focus()\';');
   } elseif (!(strpos('A',$O)===false)) {
-    BodyOpen('onLoad=\'document.focus()\';');
+    BodyOpen('onLoad=\'this.focus()\';');
   } elseif ($O=='E') {
     BodyOpen('onLoad=\'document.Form.w_assinatura.focus()\';');
   } else {
@@ -625,7 +625,7 @@ function Unidade() {
         ShowHTML('          <A class="HL" HREF="'.$w_dir.$w_pagina.$par.'&R='.$w_pagina.$par.'&O=A&w_chave='.f($row,'chave').'&P1='.$P1.'&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP='.$TP.'&SG='.$SG.'">Alterar</A>&nbsp');
         ShowHTML('          <A class="HL" HREF="'.$w_dir.$w_pagina.$par.'&R='.$w_pagina.$par.'&O=E&w_chave='.f($row,'chave').'&P1='.$P1.'&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP='.$TP.'&SG='.$SG.'">Excluir</A>&nbsp');
         if (f($row,'planejamento')=='S') {
-          ShowHTML('          <A class="hl" HREF="javascript:document.focus();" onClick="window.open(\''.montaURL_JS($w_dir,$w_pagina.'Limites&R='.$w_pagina.$par.'&O=L&w_chave='.f($row,'chave').'&P1='.$P1.'&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP='.$TP.'&SG=ISUNILIMITE').'\',\'Gestao\',\'width=630,height=500,top=30,left=30,status=yes,resizable=yes,scrollbars=yes,toolbar=yes\');" title="Configura limites orçamentários anuais para a unidade.">Limites</A>&nbsp');
+          ShowHTML('          <A class="hl" HREF="javascript:this.focus();" onClick="window.open(\''.montaURL_JS($w_dir,$w_pagina.'Limites&R='.$w_pagina.$par.'&O=L&w_chave='.f($row,'chave').'&P1='.$P1.'&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP='.$TP.'&SG=ISUNILIMITE').'\',\'Gestao\',\'width=630,height=500,top=30,left=30,status=yes,resizable=yes,scrollbars=yes,toolbar=yes\');" title="Configura limites orçamentários anuais para a unidade.">Limites</A>&nbsp');
         } 
         ShowHTML('        </td>');
         ShowHTML('      </tr>');
@@ -742,11 +742,11 @@ function Limites() {
   if ($w_troca>'') {
     BodyOpen('onLoad=\'document.Form.'.$w_troca.'.focus()\';');
   } elseif (!(strpos('A',$O)===false)) {
-    BodyOpen('onLoad=\'document.focus()\';');
+    BodyOpen('onLoad=\'this.focus()\';');
   } elseif ($O=='E') {
     BodyOpen('onLoad=\'document.Form.w_assinatura.focus()\';');
   } else {
-    BodyOpen('onLoad=\'document.focus()\';');
+    BodyOpen('onLoad=\'this.focus()\';');
   } 
   ShowHTML('<B><FONT COLOR="#000000">'.$w_TP.'</FONT></B>');
   ShowHTML('<HR>');
@@ -920,7 +920,7 @@ function OpcaoEstrategica() {
   } elseif ($O=='E') {
     BodyOpen('onLoad=\'document.Form.w_assinatura.focus()\';');
   } else {
-    BodyOpen('onLoad=\'document.focus()\';');
+    BodyOpen('onLoad=\'this.focus()\';');
   } 
   ShowHTML('<B><FONT COLOR="#000000">'.$w_TP.'</FONT></B>');
   ShowHTML('<HR>');
@@ -1059,7 +1059,7 @@ function MacroObjetivo() {
   } elseif ($O=='E') {
     BodyOpen('onLoad=\'document.Form.w_assinatura.focus()\';');
   } else {
-    BodyOpen('onLoad=\'document.focus()\';');
+    BodyOpen('onLoad=\'this.focus()\';');
   } 
   ShowHTML('<B><FONT COLOR="#000000">'.$w_TP.'</FONT></B>');
   ShowHTML('<HR>');
@@ -1155,7 +1155,7 @@ function Grava() {
   Cabecalho();
   ShowHTML('</HEAD>');
   ShowHTML('<BASE HREF="'.$conRootSIW.'">');
-  BodyOpen('onLoad=document.focus();');
+  BodyOpen('onLoad=this.focus();');
   switch ($SG) {
     case 'ISNATUREZA':
       // Verifica se a Assinatura Eletrônica é válida
@@ -1353,7 +1353,7 @@ function Main() {
     default:
     Cabecalho();
     ShowHTML('<BASE HREF="'.$conRootSIW.'">');
-    BodyOpen('onLoad=document.focus();');
+    BodyOpen('onLoad=this.focus();');
     ShowHTML('<B><FONT COLOR="#000000">'.$w_TP.'</FONT></B>');
     ShowHTML('<HR>');
     ShowHTML('<div align=center><center><br><br><br><br><br><br><br><br><br><br><img src="images/icone/underc.gif" align="center"> <b>Esta opção está sendo desenvolvida.</b><br><br><br><br><br><br><br><br><br><br></center></div>');

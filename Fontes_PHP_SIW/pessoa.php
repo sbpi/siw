@@ -270,7 +270,7 @@ function Benef() {
     // Se o beneficiário ainda não foi selecionado
     if (isset($_REQUEST['Botao']) && (!(strpos($_REQUEST['botao'],'Procurar'))===false)) {
       // Se está sendo feita busca por nome
-      if ($w_troca!='w_sq_localizacao') { BodyOpen('onLoad=\'document.focus()\';'); }
+      if ($w_troca!='w_sq_localizacao') { BodyOpen('onLoad=\'this.focus()\';'); }
     } else {
       BodyOpen('onLoad=\'document.Form.w_username.focus()\';');
     }
@@ -601,7 +601,7 @@ function Grava() {
   extract($GLOBALS);
   Cabecalho();
   ShowHTML('</HEAD>');
-  BodyOpen('onLoad=document.focus();');
+  BodyOpen('onLoad=this.focus();');
   // Verifica se a Assinatura Eletrônica é válida
   if (VerificaAssinaturaEletronica($_SESSION['USERNAME'],strtoupper($_REQUEST['w_assinatura'])) || $w_assinatura=='') {
     if ($SG=='SGUSU' || $SG=='CLUSUARIO') { // Identifica, a partir do tamanho da variável w_username, se é pessoa física, jurídica ou estrangeiro
@@ -731,7 +731,7 @@ function Main() {
   case "GRAVA":         Grava();        break;
   default:
     Cabecalho();
-    BodyOpen('onLoad=document.focus();');
+    BodyOpen('onLoad=this.focus();');
     Estrutura_Topo_Limpo();
     Estrutura_Menu();
     Estrutura_Corpo_Abre();

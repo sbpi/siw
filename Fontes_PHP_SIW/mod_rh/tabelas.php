@@ -16,6 +16,7 @@ include_once($w_dir_volta.'classes/sp/db_getGPTipoAfast.php');
 include_once($w_dir_volta.'classes/sp/db_getGPModalidade.php');
 include_once($w_dir_volta.'classes/sp/db_getCountryData.php');
 include_once($w_dir_volta.'classes/sp/db_getStateData.php');
+include_once($w_dir_volta.'classes/sp/db_getCityData.php');
 include_once($w_dir_volta.'classes/sp/db_verificaAssinatura.php');
 include_once($w_dir_volta.'classes/sp/dml_putCargo.php');
 include_once($w_dir_volta.'classes/sp/dml_putGPModalidade.php');
@@ -165,7 +166,7 @@ function ModalidadeCont() {
   } elseif ($O=='I' || $O=='A'){
     BodyOpen('onLoad=document.Form.w_sigla.focus();');
   } elseif ($O=='L') {
-    BodyOpen('onLoad=document.focus();');
+    BodyOpen('onLoad=this.focus();');
   } else {
     BodyOpen('onLoad=document.Form.w_assinatura.focus();');
   } 
@@ -396,7 +397,7 @@ function Tipoafast() {
   } elseif ($O=='I' || $O=='A') {
     BodyOpen('onLoad=document.Form.w_sigla.focus();');
   } elseif ($O=='L'){
-    BodyOpen('onLoad=document.focus();');
+    BodyOpen('onLoad=this.focus();');
   } else {
     BodyOpen('onLoad=document.Form.w_assinatura.focus();');
   } 
@@ -577,7 +578,7 @@ function DataEspecial() {
       $lista = explode(',',str_replace(' ',',',$p_ordena));
       $RS = SortArray($RS,$lista[0],$lista[1]);
     } else {
-      $RS = SortArray($RS,'data_especial','asc');
+      $RS = SortArray($RS,'data_formatada','asc');
     }
   } elseif (!(strpos('AEV',$O)===false) && $w_troca=='') {
     $RS = db_getDataEspecial::getInstanceOf($dbms,$w_cliente,$w_chave,null,null,null,null,null);
@@ -629,7 +630,7 @@ function DataEspecial() {
     } elseif ($O=='I' || $O=='A') {
       BodyOpen('onLoad=document.Form.w_tipo.focus();');
     } elseif ($O=='L'){
-      BodyOpen('onLoad=document.focus();');
+      BodyOpen('onLoad=this.focus();');
     } else {
       BodyOpen('onLoad=document.Form.w_assinatura.focus();');
     } 
@@ -1005,7 +1006,7 @@ function Cargo() {
   } elseif ($O=='I' || $O=='A') {
     BodyOpen('onLoad=document.Form.w_sq_tipo.focus();');
   } elseif ($O=='L') {
-    BodyOpen('onLoad=document.focus();');
+    BodyOpen('onLoad=this.focus();');
   } else{
     BodyOpen('onLoad=document.Form.w_assinatura.focus();');
   } 
@@ -1133,7 +1134,7 @@ function Grava() {
   Cabecalho();
   ShowHTML('</HEAD>');
   ShowHTML('<BASE HREF="'.$conRootSIW.'">');  
-  BodyOpen('onLoad=document.focus();');
+  BodyOpen('onLoad=this.focus();');
   switch ($SG) {
     case 'GPMODALCON':
       // Verifica se a Assinatura Eletrônica é válida
@@ -1388,7 +1389,7 @@ function Main() {
     default:
     Cabecalho();
     ShowHTML('<BASE HREF="'.$conRootSIW.'">');
-    BodyOpen('onLoad=document.focus();');
+    BodyOpen('onLoad=this.focus();');
     ShowHTML('<B><FONT COLOR="#000000">'.$w_TP.'</FONT></B>');
     ShowHTML('<HR>');
     ShowHTML('<div align=center><center><br><br><br><br><br><br><br><br><br><br><img src="images/icone/underc.gif" align="center"> <b>Esta opção está sendo desenvolvida.</b><br><br><br><br><br><br><br><br><br><br></center></div>');

@@ -55,10 +55,20 @@ function selecaoSolic($label,$accesskey,$hint,$cliente,$chave,$chaveAux,$chaveAu
         ShowHTML('          <td valign="top" TITLE="'.$hint.'"><font size="1"><b>'.$label.'</b><br><SELECT ACCESSKEY="'.$accesskey.'" CLASS="STS" NAME="'.$campo.'" '.$w_Disabled.' '.$atributo.'>');
       ShowHTML('          <option value="">---');
       foreach ($l_RS as $l_row) {
-        if (nvl(f($l_row,'sq_siw_solicitacao'),0)==nvl($chave,0))
-          ShowHTML('          <option value="'.f($l_row,'sq_siw_solicitacao').'" SELECTED>'.f($l_row,'titulo'));
-        else
-          ShowHTML('          <option value="'.f($l_row,'sq_siw_solicitacao').'">'.f($l_row,'titulo'));
+        $l_RS1 = db_getMenuData::getInstanceOf($dbms,$chaveAux);
+        if (f($l_RS1,'sigla')==='GCCCAD') {
+          if (nvl(f($l_row,'sq_siw_solicitacao'),0)==nvl($chave,0)){
+            ShowHTML('          <option value="'.f($l_row,'sq_siw_solicitacao').'" SELECTED>'.f($l_row,'titulo'));
+          } else {
+            if (nvl(f($l_row,'qtd_projeto'),0)==0)
+              ShowHTML('          <option value="'.f($l_row,'sq_siw_solicitacao').'">'.f($l_row,'titulo'));
+          }          
+        } else {
+          if (nvl(f($l_row,'sq_siw_solicitacao'),0)==nvl($chave,0))
+            ShowHTML('          <option value="'.f($l_row,'sq_siw_solicitacao').'" SELECTED>'.f($l_row,'titulo'));
+          else
+            ShowHTML('          <option value="'.f($l_row,'sq_siw_solicitacao').'">'.f($l_row,'titulo'));      
+        }
       } 
       ShowHTML('          </select>');
     }

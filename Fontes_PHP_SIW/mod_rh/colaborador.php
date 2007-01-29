@@ -196,7 +196,7 @@ function Inicial() {
   } elseif (!(strpos('I',$O)===false)) {
     BodyOpen('onLoad=\'document.Form.w_cpf.focus()\';');
   } else {
-    BodyOpen('onLoad=document.focus();');
+    BodyOpen('onLoad=this.focus();');
   } 
   Estrutura_Topo_Limpo();
   Estrutura_Menu();
@@ -705,7 +705,7 @@ function Contrato() {
   } else if ($O=='E'){
     BodyOpen('onLoad=document.Form.w_dt_fim.focus();');
   } else {
-    BodyOpen('onLoad=document.focus();');
+    BodyOpen('onLoad=this.focus();');
   } 
   Estrutura_Topo_Limpo();
   Estrutura_Menu();
@@ -895,7 +895,7 @@ function Grava() {
   Cabecalho();
   ShowHTML('</HEAD>');  
   ShowHTML('<BASE HREF="'.$conRootSIW.'">');
-  BodyOpen('onLoad=document.focus();');
+  BodyOpen('onLoad=this.focus();');
   AbreSessao();
   switch ($SG) {
     case 'COINICIAL':
@@ -1011,7 +1011,7 @@ function Main() {
   default:
     Cabecalho();
     ShowHTML('<BASE HREF="'.$conRootSIW.'">');
-    BodyOpen('onLoad=document.focus();');
+    BodyOpen('onLoad=this.focus();');
     ShowHTML('<B><FONT COLOR="#000000">'.$w_TP.'</font></B>');
     ShowHTML('<HR>');
     ShowHTML('<div align=center><center><br><br><br><br><br><br><br><br><br><br><img src="images/icone/underc.gif" align="center"> <b>Esta opção está sendo desenvolvida.</b><br><br><br><br><br><br><br><br><br><br></center></div>');

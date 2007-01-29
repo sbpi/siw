@@ -156,18 +156,18 @@ function CentroCusto() {
     ScriptClose();
   } 
   ShowHTML('<style> ');
-  ShowHTML(' .lh{text-decoration:none;font:Arial;color="#FF0000"} ');
+  ShowHTML(' .lh{text-decoration:none;font=Arial;color="#FF0000"} ');
   ShowHTML(' .lh:HOVER{text-decoration: underline;} ');
   ShowHTML('</style> ');
   ShowHTML('</HEAD>');
-  if ($w_Troca>'') {
+  if ($w_troca>'') {
     BodyOpen('onLoad=document.Form.'.$w_troca.'.focus();');
   } elseif ($O=='I' || $O=='A') {
     BodyOpen('onLoad=document.Form.w_nome.focus();');
   } elseif ($O=='H') {
     BodyOpen('onLoad=document.Form.w_heranca.focus();');
   } elseif ($O=='L') {
-    BodyOpen('onLoad=document.focus();');
+    BodyOpen('onLoad=this.focus();');
   } else {
     BodyOpen('onLoad=document.Form.w_assinatura.focus();');
   } 
@@ -473,7 +473,7 @@ function Agencia() {
   } elseif ($O=='P') {
     BodyOpen('onLoad=\'document.Form.p_sq_banco.focus()\';');
   } else {
-    BodyOpen('onLoad=document.focus();');
+    BodyOpen('onLoad=this.focus();');
   } 
   Estrutura_Topo_Limpo();
   Estrutura_Menu();
@@ -686,7 +686,7 @@ function Banco() {
   } elseif ($O=='P') {
     BodyOpen('onLoad=\'document.Form.p_codigo.focus()\';');
   } else {
-    BodyOpen('onLoad=document.focus();');
+    BodyOpen('onLoad=this.focus();');
   } 
   Estrutura_Topo_Limpo();
   Estrutura_Menu();
@@ -833,7 +833,7 @@ function Grava() {
 
   Cabecalho();
   ShowHTML('</HEAD>');
-  BodyOpen('onLoad=document.focus();');
+  BodyOpen('onLoad=this.focus();');
 
   switch ($SG) {
     case 'CT_CC':
@@ -910,7 +910,7 @@ function Main() {
   case 'GRAVA':       Grava();        break;
   default:
     Cabecalho();
-    BodyOpen('onLoad=document.focus();');
+    BodyOpen('onLoad=this.focus();');
     Estrutura_Topo_Limpo();
     Estrutura_Menu();
     Estrutura_Corpo_Abre();

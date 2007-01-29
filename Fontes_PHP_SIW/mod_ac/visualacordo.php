@@ -54,6 +54,7 @@ function VisualAcordo($l_chave,$l_O,$l_usuario,$l_P1,$l_P4) {
     if (!($l_P1==4 || $l_P4==1)) {
       $w_html.=chr(13).'       <td align="right"><font size="1"><b><A class="hl" HREF="'.$w_dir.$w_pagina.'visual&O=T&w_chave='.f($RS,'sq_siw_solicitacao').'&w_tipo=volta&P1=4&P2='.$P2.'&P3='.$P3.'&P4='.$l_P4.'&TP='.$TP.'&SG='.$SG.'" title="Exibe todas as informações.">Exibir todas as informações</a></td>';
     } 
+    $w_html.=chr(13).'      <tr><td colspan=2><font size=1>Título: <b>'.f($RS,'titulo').'</b></font></td></tr>';
     if (substr($SG,0,3)=='GCB') $w_html.=chr(13).'      <tr><td colspan=2><font size=1>Plano de trabalho: <b>'.f($RS,'codigo_interno').' ('.$l_chave.')<br>'.CRLF2BR(f($RS,'objeto')).'</b></font></td></tr>';
     else                        $w_html.=chr(13).'      <tr><td colspan=2><font size=1>Objeto: <b>'.f($RS,'codigo_interno').' ('.$l_chave.')<br>'.CRLF2BR(f($RS,'objeto')).'</b></font></td></tr>';
     // Identificação do acordo
@@ -156,10 +157,10 @@ function VisualAcordo($l_chave,$l_O,$l_usuario,$l_P1,$l_P4) {
             $w_html.=chr(13).'      <tr><td colspan="2"><table border=0 width="100%" cellspacing=0>';
             $w_html.=chr(13).'          <tr valign="top">';
             $w_html.=chr(13).'          <td><font size="1">Sexo:<b><br>'.f($row,'nm_sexo').'</td>';
-            $w_html.=chr(13).'          <td><font size="1">Data de nascimento:<b><br>'.FormataDataEdicao(f($row,'nascimento')).'</td>';
+            $w_html.=chr(13).'          <td><font size="1">Data de nascimento:<b><br>'.FormataDataEdicao(Nvl(f($row,'nascimento'),'---')).'</td>';
             $w_html.=chr(13).'          <tr valign="top">';
             $w_html.=chr(13).'          <td><font size="1">Identidade:<b><br>'.f($row,'rg_numero').'</td>';
-            $w_html.=chr(13).'          <td><font size="1">Data de emissão:<b><br>'.Nvl(f($row,'rg_emissao'),'---').'</td>';
+            $w_html.=chr(13).'          <td><font size="1">Data de emissão:<b><br>'.FormataDataEdicao(Nvl(f($row,'rg_emissao'),'---')).'</td>';
             $w_html.=chr(13).'          <td><font size="1">Órgão emissor:<b><br>'.f($row,'rg_emissor').'</td>';
             $w_html.=chr(13).'          <tr valign="top">';
             $w_html.=chr(13).'          <td><font size="1">Passaporte:<b><br>'.Nvl(f($row,'passaporte_numero'),'---').'</td>';

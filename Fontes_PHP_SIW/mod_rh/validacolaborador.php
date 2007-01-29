@@ -26,7 +26,7 @@ function ValidaColaborador($p_cliente,$p_sq_pessoa,$p_sq_contrato_colaborador,$p
   // Esta primeira parte verifica o afastamento
   //-----------------------------------------------------------------------------------
   // Verifica se há afastamento cadastrado para este colaborador
-  $l_rs_afast = db_getAfastamento::getInstanceOf($dbms,$p_cliente,null,null,$p_sq_contrato_colaborador,$p_encerramento,$p_encerramento,null,null,null,null);
+  $l_rs_afast = db_getAfastamento::getInstanceOf($dbms,$p_cliente,null,null,null,$p_sq_contrato_colaborador,$p_encerramento,$p_encerramento,null,null,null,null);
   if ((count($l_rs_afast)>0)) {
     foreach ($l_rs_afast as $row) {
       $l_cont+=1;

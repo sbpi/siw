@@ -162,7 +162,7 @@ function ConsultaDoc() {
   if ($O=="P") {
     BodyOpen('onLoad=\'document.Form.p_beneficiario.focus();\'');
   } else {
-    BodyOpen('onLoad=\'document.focus();\'');
+    BodyOpen('onLoad=\'this.focus();\'');
   } 
 
 
@@ -484,7 +484,7 @@ function Main() {
     default:
       Cabecalho();
       ShowHTML('<BASE HREF="'.$conRootSIW.'">');
-      BodyOpen('onLoad=document.focus();');
+      BodyOpen('onLoad=this.focus();');
       ShowHTML('<B><FONT COLOR="#000000">'.$w_TP.'</font></B>');
       ShowHTML('<HR>');
       ShowHTML('<div align=center><center><br><br><br><br><br><br><br><br><br><br><img src="images/icone/underc.gif" align="center"> <b>Esta opção está sendo desenvolvida.</b><br><br><br><br><br><br><br><br><br><br></center></div>');

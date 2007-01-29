@@ -307,7 +307,7 @@ function Gerencial() {
         BodyOpenClean('onLoad=\'document.Form.p_agrega.focus()\';');
       } 
     } else {
-      BodyOpenClean('onLoad=document.focus();');
+      BodyOpenClean('onLoad=this.focus();');
     } 
     if ($O=='L') {
       ShowHTML('<B><FONT COLOR="#000000">'.$w_TP.'</FONT></B>');
@@ -867,7 +867,7 @@ function Main() {
     default:
     Cabecalho();
     ShowHTML('<BASE HREF="'.$conRootSIW.'">');    
-    BodyOpen('onLoad=document.focus();');
+    BodyOpen('onLoad=this.focus();');
     Estrutura_Topo_Limpo();
     Estrutura_Menu();
     Estrutura_Corpo_Abre();

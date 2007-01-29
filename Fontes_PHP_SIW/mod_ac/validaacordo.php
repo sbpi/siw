@@ -2,6 +2,7 @@
 // =========================================================================
 // Rotina de validação dos dados do acordo
 // -------------------------------------------------------------------------
+
 function ValidaAcordo($l_cliente,$l_chave,$l_sg1,$l_sg2,$l_sg3,$l_sg4,$l_tramite) {
   extract($GLOBALS);
   // Se não encontrar erro, esta função retorna cadeia fazia.
@@ -22,7 +23,6 @@ function ValidaAcordo($l_cliente,$l_chave,$l_sg1,$l_sg2,$l_sg3,$l_sg4,$l_tramite
   //-----------------------------------------------------------------------------------
   // Recupera os dados da solicitação
   $l_rs_solic = db_getSolicData::getInstanceOf($dbms,$l_chave,$l_sg1);
-
   // Se a solicitação informada não existir, abandona a execução
   if (count($l_rs_solic)==0) {
     return '0<li>Não existe registro no banco de dados com o número informado.';
@@ -83,7 +83,8 @@ function ValidaAcordo($l_cliente,$l_chave,$l_sg1,$l_sg2,$l_sg3,$l_sg4,$l_tramite
   // Validações para a outra parte e preposto
       // Verifica se foi indicada a outra parte
       if ($l_existe_rs1==0) {
-        $l_erro.='<li>A outra parte não foi informada';
+        if (substr($l_sg1,0,3)!='GCB')$l_erro.='<li>A outra parte não foi informada'; 
+        else                          $l_erro.='<li>O bolsista não foi informado';
         $l_tipo=0;
       } else {
         // Validação do preposto

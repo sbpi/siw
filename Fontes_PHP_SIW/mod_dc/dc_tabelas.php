@@ -147,7 +147,7 @@ function Eventos() {
   elseif ($O=='E')
     BodyOpen('onLoad=\'document.Form.w_assinatura.focus()\';');
   else 
-    BodyOpen('onLoad=\'document.focus()\';');
+    BodyOpen('onLoad=\'this.focus()\';');
   ShowHTML('<B><FONT COLOR="#000000">'.$w_TP.'</FONT></B>');
   ShowHTML('<HR>');
   ShowHTML('<div align=center><center>');
@@ -267,7 +267,7 @@ function TipoDado() {
   elseif ($O=='E') 
     BodyOpen('onLoad=\'document.Form.w_assinatura.focus()\';');
   else 
-    BodyOpen('onLoad=\'document.focus()\';');
+    BodyOpen('onLoad=\'this.focus()\';');
   ShowHTML('<B><FONT COLOR="#000000">'.$w_TP.'</FONT></B>');
   ShowHTML('<HR>');
   ShowHTML('<div align=center><center>');
@@ -390,7 +390,7 @@ function TipoIndice() {
   elseif ($O=='E')
     BodyOpen('onLoad=\'document.Form.w_assinatura.focus()\';');
   else
-    BodyOpen('onLoad=\'document.focus()\';');
+    BodyOpen('onLoad=\'this.focus()\';');
   ShowHTML('<B><FONT COLOR="#000000">'.$w_TP.'</FONT></B>');
   ShowHTML('<HR>');
   ShowHTML('<div align=center><center>');
@@ -515,7 +515,7 @@ function TipoSP() {
   elseif ($O=='E')
     BodyOpen('onLoad=\'document.Form.w_assinatura.focus()\';');
   else
-    BodyOpen('onLoad=\'document.focus()\';');
+    BodyOpen('onLoad=\'this.focus()\';');
   ShowHTML('<B><FONT COLOR="#000000">'.$w_TP.'</FONT></B>');
   ShowHTML('<HR>');
   ShowHTML('<div align=center><center>');
@@ -639,7 +639,7 @@ function tipotabela() {
   elseif ($O=='E')  
     BodyOpen('onLoad=\'document.Form.w_assinatura.focus()\';');
   else
-    BodyOpen('onLoad=\'document.focus()\';');
+    BodyOpen('onLoad=\'this.focus()\';');
   ShowHTML('<B><FONT COLOR="#000000">'.$w_TP.'</FONT></B>');
   ShowHTML('<HR>');
   ShowHTML('<div align=center><center>');
@@ -719,7 +719,7 @@ function Grava() {
   extract($GLOBALS);
   Cabecalho();
   ShowHTML('</HEAD>');
-  BodyOpen('onLoad=document.focus();');
+  BodyOpen('onLoad=this.focus();');
   ShowHTML('<BASE HREF="'.$conRootSIW.'">');  
   switch ($SG) {
     case 'DCTPDADO':
@@ -815,7 +815,7 @@ function Main() {
     default:
       cabecalho();
       ShowHTML('<BASE HREF="'.$conRootSIW.'">');      
-      BodyOpen('onLoad=document.focus();');
+      BodyOpen('onLoad=this.focus();');
       Estrutura_Topo_Limpo();
       Estrutura_Menu();
       Estrutura_Corpo_Abre();

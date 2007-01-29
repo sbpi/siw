@@ -212,7 +212,7 @@ function LigacaoParticular(){
     } elseif (!(strpos('R',$O)===false)){
       BodyOpen('onload="document.Form.p_inicio.focus()";');
     } else {
-      BodyOpen('onLoad="document.focus()";');
+      BodyOpen('onLoad="this.focus()";');
     }  
     ShowHTML('<B><FONT color="#000000">'.$w_TP.'</FONT></B>');
     ShowHTML('<HR>');
@@ -334,7 +334,7 @@ function listaTelefonica(){
   ShowHTML('</HEAD>');
   ShowHTML('<BASE href="'.$conRootSIW.'">');
   if ($P2==0) {
-    BodyOpen('onLoad=\'document.focus();\'');
+    BodyOpen('onLoad=\'this.focus();\'');
   } 
   ShowHTML('<TABLE WIDTH="100%" BORDER=0><tr>');
   if ($P2==0){
@@ -376,7 +376,7 @@ function ResumoLigacaoParticular(){
   ShowHTML('</HEAD>');
   ShowHTML('<BASE href="'.$conRootSIW.'">');
   if ($P2==0) {
-    BodyOpen('onLoad=\'document.focus();\'');
+    BodyOpen('onLoad=\'this.focus();\'');
   } 
   ShowHTML('<TABLE WIDTH="100%" BORDER=0><tr>');
   if ($P2==0) {
@@ -418,7 +418,7 @@ function Main(){
   default: 
   Cabecalho();    
   ShowHTML('<BASE href="'.$conRootSIW.'">');
-  BodyOpen('onLoad=document.focus();');
+  BodyOpen('onLoad=this.focus();');
   ShowHTML('<B><FONT color="#000000">'.$w_TP.'</FONT></B>');
   ShowHTML('<HR>');
   ShowHTML('<div align=center><center><br><br><br><br><br><br><br><br><br><br><img src="images/icone/underc.gif" align="center"> <b>Esta opção está sendo desenvolvida.</b><br><br><br><br><br><br><br><br><br><br></center></div>');

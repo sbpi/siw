@@ -166,7 +166,7 @@ function Inicial() {
   } elseif ($O=='P') {
     BodyOpen('onLoad=\'document.Form.p_pais.focus()\';');
   } else {
-    BodyOpen('onLoad=document.focus();');
+    BodyOpen('onLoad=this.focus();');
   } 
   Estrutura_Topo_Limpo();
   Estrutura_Menu();
@@ -405,14 +405,14 @@ function Geral() {
     // Se o beneficiário ainda não foi selecionado
     if (!(strpos($_REQUEST['botao'],'Procurar')===false)) {
       // Se está sendo feita busca por nome
-      BodyOpen('onLoad=\'document.focus()\';');
+      BodyOpen('onLoad=\'this.focus()\';');
     } else {
       BodyOpen('onLoad=\'document.Form.w_cgccpf.focus()\';');
     } 
   } elseif ($w_troca>'') {
     BodyOpen('onLoad=\'document.Form.'.$w_troca.'.focus()\';');
   } elseif (!(strpos('EV',$O)===false)) {
-    BodyOpen('onLoad=\'document.focus()\';');
+    BodyOpen('onLoad=\'this.focus()\';');
   } else {
     BodyOpen('onLoad=\'document.Form.w_nome.focus()\';');
   } 
@@ -636,7 +636,7 @@ function Enderecos() {
   if ($w_troca>'') {
     BodyOpen('onLoad=\'document.Form.'.$w_troca.'.focus()\';');
   } elseif ($O=='L') {
-    BodyOpen('onLoad=\'document.focus()\';');
+    BodyOpen('onLoad=\'this.focus()\';');
   } else {
     BodyOpen('onLoad=\'document.Form.w_logradouro.focus()\';');
   } 
@@ -841,7 +841,7 @@ function Telefones() {
   } elseif (!(strpos('IAE',$O)===false)) {
     BodyOpen('onLoad=\'document.Form.w_ddd.focus()\';');
   } else {
-    BodyOpen('onLoad=\'document.focus()\';'); 
+    BodyOpen('onLoad=\'this.focus()\';'); 
   } 
   Estrutura_Topo_Limpo();
   Estrutura_Menu();
@@ -1041,7 +1041,7 @@ function ContasBancarias() {
   } elseif ($O=='I') {
     BodyOpen('onLoad=\'document.Form.w_banco.focus()\';');
   } else {
-    BodyOpen('onLoad=\'document.focus()\';');
+    BodyOpen('onLoad=\'this.focus()\';');
   } 
   Estrutura_Topo_Limpo();
   Estrutura_Menu();
@@ -1238,7 +1238,7 @@ function Modulos() {
   } elseif (!(strpos('AE',$O)===false)) {
     BodyOpen('onLoad=\'document.Form.w_assinatura.focus()\';');
   } else {
-    BodyOpen('onLoad=\'document.focus()\';');
+    BodyOpen('onLoad=\'this.focus()\';');
   } 
   Estrutura_Topo_Limpo();
   Estrutura_Menu();
@@ -1415,7 +1415,7 @@ function Configuracao() {
   if ($w_troca>'') {
     BodyOpen('onLoad=\'document.Form.'.$w_troca.'.focus()\';');
   } elseif (!(strpos('EV',$O)===false)) {
-    BodyOpen('onLoad=\'document.focus()\';');
+    BodyOpen('onLoad=\'this.focus()\';');
   } else {
     BodyOpen('onLoad=\'document.Form.w_smtp_server.focus()\';');
   } 
@@ -1553,7 +1553,7 @@ function Visual() {
   Estrutura_CSS($w_cliente);
   ShowHTML('<TITLE>Cliente</TITLE>');
   ShowHTML('</HEAD>');
-  BodyOpen('onLoad=\'document.focus()\'; ');
+  BodyOpen('onLoad=\'this.focus()\'; ');
   ShowHTML('<TABLE WIDTH="100%" BORDER=0><TR><TD ROWSPAN=2><IMG ALIGN="LEFT" src="'.LinkArquivo(null,$w_sq_pessoa,$w_logo,null,null,null,'EMBED').'">');
   ShowHTML('<TD ALIGN="RIGHT"><B><FONT SIZE=5 COLOR="#000000">CLIENTE</FONT>');
   ShowHTML('<TR><TD ALIGN="RIGHT"><B><FONT SIZE=2 COLOR="#000000">'.DataHora().'</FONT></B></TD></TR>');
@@ -1579,7 +1579,7 @@ function Grava() {
 
   Cabecalho();
   ShowHTML('</HEAD>');
-  BodyOpen('onLoad=document.focus();');
+  BodyOpen('onLoad=this.focus();');
 
   switch ($SG) {
     case 'CLGERAL':
@@ -1861,7 +1861,7 @@ function Main() {
   case 'GRAVA':         Grava();            break;
   default:
     Cabecalho();
-    BodyOpen('onLoad=document.focus();');
+    BodyOpen('onLoad=this.focus();');
     Estrutura_Topo_Limpo();
     Estrutura_Menu();
     Estrutura_Corpo_Abre();

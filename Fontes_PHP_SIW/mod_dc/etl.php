@@ -1761,7 +1761,7 @@ function Grava() {
 
        Cabecalho();
        ShowHTML('<BASE HREF="'.$conRootSIW.'">');
-       BodyOpenClean('onLoad=document.focus();');
+       BodyOpenClean('onLoad=this.focus();');
        ShowHTML('<B><FONT COLOR="#000000">'.$w_TP.'</FONT></B>');
        ShowHTML('<HR>');
        flush();
@@ -1998,7 +1998,7 @@ function Main() {
     default:
       cabecalho();
       ShowHTML('<BASE HREF="'.$conRootSIW.'">');      
-      BodyOpen('onLoad=document.focus();');
+      BodyOpen('onLoad=this.focus();');
       Estrutura_Topo_Limpo();
       Estrutura_Menu();
       Estrutura_Corpo_Abre();

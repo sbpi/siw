@@ -127,7 +127,7 @@ function Informar(){
   // Se for a tela de pesquisa do módulo gerencial, configura a busca inicial para os últimos trinta dias
   if ($O =='P' && $P1 == 3){
     if ($p_inicio==''){
-      $p_inicio = FormataDataEdicao(addDays(time(),-30));
+      $p_inicio = FormataDataEdicao(addDays(time(),-90));
       $p_fim    = FormataDataEdicao(time());
     } 
   } 
@@ -259,7 +259,7 @@ function Informar(){
   } elseif (!(strpos('PR',$O)===false)){
     BodyOpen('onload=document.Form.p_sq_cc.focus();');
   } else {
-    BodyOpen('onload=document.focus();');
+    BodyOpen('onload=this.focus();');
   }
   ShowHTML('<B><FONT COLOR="#000000">'.$w_TP.'</font></B>');
   ShowHTML('<HR>');
@@ -893,7 +893,7 @@ function Grava() {
 
   Cabecalho();
   ShowHTML('</HEAD>');
-  BodyOpen('onLoad=document.focus();');
+  BodyOpen('onLoad=this.focus();');
   switch ($SG) {
     case 'LIGACAO':
       // Verifica se a Assinatura Eletrônica é válida
@@ -931,7 +931,7 @@ function Main(){
     case 'GRAVA'   : Grava();     break;
     default:
     Cabecalho();
-    BodyOpen('onload=document.focus();');
+    BodyOpen('onload=this.focus();');
     ShowHTML('<B><FONT COLOR="#000000">'.$w_TP.'</font></B>');
     ShowHTML('<HR>');
     ShowHTML('<div align=center><center><br><br><br><br><br><br><br><br><br><br><img src="images/icone/underc.gif" align="center"> <b>Esta opção está sendo desenvolvida.</b><br><br><br><br><br><br><br><br><br><br></center></div>');

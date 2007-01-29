@@ -1,5 +1,5 @@
 <?
-include_once($w_dir_volta.'classes/sp/db_getLancamentoProjeto.php');
+//include_once($w_dir_volta.'classes/sp/db_getLancamentoProjeto.php');
 // =========================================================================
 // Montagem da seleção de tipo de conclusão
 // -------------------------------------------------------------------------

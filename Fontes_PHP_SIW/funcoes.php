@@ -74,7 +74,7 @@ function SortArray() {
 // -------------------------------------------------------------------------
 function exibeCalendario ($form, $campo) {
   extract($GLOBALS);
-  return '   <a class="ss" href="#" onClick="window.open(\''.$w_dir_volta.'calendario.php?nmForm='.$form.'&nmCampo='.$campo.'&vData=\'+document.'.$form.'.'.$campo.'.value,\'dp\',\'toolbar=0,location=0,directories=0,status=0,menubar=0,scrollbars=0,resizable=0,width=250,height=250,left=500,top=200\'); return false;" title="Visualizar calendário"><img src="images/icone/GotoTop.gif" border=0 align=top height=13 width=15></a>';
+  return '   <a class="ss" href="#" onClick="window.open(\''.$conRootSIW.'calendario.php?nmForm='.$form.'&nmCampo='.$campo.'&vData=\'+document.'.$form.'.'.$campo.'.value,\'dp\',\'toolbar=0,location=0,directories=0,status=0,menubar=0,scrollbars=0,resizable=0,width=250,height=250,left=500,top=200\'); return false;" title="Visualizar calendário"><img src="images/icone/GotoTop.gif" border=0 align=top height=13 width=15></a>';
 }
 
 // =========================================================================
@@ -177,7 +177,7 @@ function headerWord($p_orientation='LANDSCAPE') {
   ShowHTML('</style> ');
   ShowHTML('</head> ');
   ShowHTML('<BASE HREF="'.$conRootSIW.'">');
-  BodyOpen('onLoad=document.focus();');
+  BodyOpen('onLoad=this.focus();');
   ShowHTML('<div class=Section1> ');
 }
 
@@ -211,9 +211,9 @@ function LinkOrdena($p_label,$p_campo) {
         $l_ordena=strtoupper($vlr);
       } else {
         if(is_array($vlr))
-          $l_string=$l_string.'&'.$chv."=".explodeArray($vlr);
+          $l_string .= '&'.$chv."=".explodeArray($vlr);
         else
-          $l_string=$l_string.'&'.$chv."=".$vlr;
+          $l_string .= '&'.$chv."=".$vlr;
       }
     }
   }
@@ -223,22 +223,22 @@ function LinkOrdena($p_label,$p_campo) {
         $l_ordena=strtoupper($vlr);
       } else {
         if(is_array($vlr))
-          $l_string=$l_string.'&'.$chv."=".explodeArray($vlr);
+          $l_string .= '&'.$chv."=".explodeArray($vlr);
         else
-          $l_string=$l_string.'&'.$chv."=".$vlr;
+          $l_string .= '&'.$chv."=".$vlr;
       }
     }
   }
   if (strtoupper($p_campo)==str_replace(' DESC','',str_replace(' ASC','',strtoupper($l_ordena)))) {
     if (strpos(strtoupper($l_ordena),' DESC') !== false) {
-      $l_string=$l_string.'&p_ordena='.$p_campo.' asc&';
+      $l_string .= '&p_ordena='.$p_campo.' asc&';
       $l_img='&nbsp;<img src="images/down.gif" width=8 height=8 border=0 align="absmiddle">';
     } else {
-      $l_string=$l_string.'&p_ordena='.$p_campo.' desc&';
+      $l_string .= '&p_ordena='.$p_campo.' desc&';
       $l_img='&nbsp;<img src="images/up.gif" width=8 height=8 border=0 align="absmiddle">';
     }
   } else {
-    $l_string=$l_string.'&p_ordena='.$p_campo.' asc&';
+    $l_string .= '&p_ordena='.$p_campo.' asc&';
   }
   return '<a class="ss" href="'.$w_dir.$w_pagina.$par.'&R='.$R.'&O='.$O.'&P1='.$P1.'&P2='.$P2.'&P3=1'.'&P4='.$P4.'&TP='.$TP.'&SG='.$SG.$l_string.'" title="Ordena a listagem por esta coluna.">'.$p_label.'</a>'.$l_img;
 }
@@ -379,16 +379,16 @@ function MontaFiltro($p_method) {
       if (substr($l_Item,0,2)=='p_' && $l_valor>'') {
         if (strtoupper($p_method)=='GET') {
           if (is_array($_POST[$l_Item])) {
-            $l_string=$l_string.'&'.$l_Item.'='.explodeArray($_POST[$l_Item]);
+            $l_string .= '&'.$l_Item.'='.explodeArray($_POST[$l_Item]);
           } else {
-            $l_string=$l_string.'&'.$l_Item.'='.$l_valor;
+            $l_string .= '&'.$l_Item.'='.$l_valor;
           }
         }
         elseif (strtoupper($p_method)=='POST') {
           if (is_array($_POST[$l_Item])) {
-            $l_string=$l_string.'<INPUT TYPE="HIDDEN" NAME="'.$l_Item.'" VALUE="'.explodeArray($_POST[$l_Item]).'">';
+            $l_string .= '<INPUT TYPE="HIDDEN" NAME="'.$l_Item.'" VALUE="'.explodeArray($_POST[$l_Item]).'">';
           } else {
-            $l_string=$l_string.'<INPUT TYPE="HIDDEN" NAME="'.$l_Item.'" VALUE="'.$l_valor.'">';
+            $l_string .= '<INPUT TYPE="HIDDEN" NAME="'.$l_Item.'" VALUE="'.$l_valor.'">';
           }
         }
       }
@@ -397,16 +397,16 @@ function MontaFiltro($p_method) {
       if (substr($l_Item,0,2)=='p_' && $l_valor>'') {
         if (strtoupper($p_method)=='GET') {
           if (is_array($_GET[$l_Item])) {
-            $l_string=$l_string.'&'.$l_Item.'='.explodeArray($_GET[$l_Item]);
+            $l_string .= '&'.$l_Item.'='.explodeArray($_GET[$l_Item]);
           } else {
-            $l_string=$l_string.'&'.$l_Item.'='.$l_valor;
+            $l_string .= '&'.$l_Item.'='.$l_valor;
           }
         }
         elseif (strtoupper($p_method)=='POST') {
           if (is_array($_GET[$l_Item])) {
-            $l_string=$l_string.'<INPUT TYPE="HIDDEN" NAME="'.$l_Item.'" VALUE="'.explodeArray($_GET[$l_Item]).'">';
+            $l_string .= '<INPUT TYPE="HIDDEN" NAME="'.$l_Item.'" VALUE="'.explodeArray($_GET[$l_Item]).'">';
           } else {
-            $l_string=$l_string.'<INPUT TYPE="HIDDEN" NAME="'.$l_Item.'" VALUE="'.$l_valor.'">';
+            $l_string .= '<INPUT TYPE="HIDDEN" NAME="'.$l_Item.'" VALUE="'.$l_valor.'">';
           }
         }
       }
@@ -414,7 +414,29 @@ function MontaFiltro($p_method) {
   }
   return $l_string;
 }
-
+// =========================================================================
+// Montagem de formulário para retorno à página anterior, recebendo o nome do campo
+// a ser dado focus no formulário original
+// -------------------------------------------------------------------------
+function RetornaFormulario($l_troca) {
+  extract($GLOBALS);
+  $l_string='';
+  AbreForm('RetornaDados',$w_dir.$_POST['R'],'POST',null,null,$_POST['P1'],$_POST['P2'],$_POST['P3'],$_POST['P4'],$_POST['TP'],$_POST['SG'],$_POST['R'],$_POST['O']);
+  foreach ($_POST as $l_Item => $l_valor) {
+    if ($l_Item!='w_troca' && $l_Item!='w_assinatura' && $l_Item!='R' && $l_Item!='R' && $l_Item!='P1' && $l_Item!='P2' && $l_Item!='P3' && $l_Item!='P4' && $l_Item!='TP' && $l_Item!='O') {
+      if (is_array($_POST[$l_Item])) {
+        ShowHTML('<INPUT TYPE="HIDDEN" NAME="'.$l_Item.'" VALUE="'.explodeArray($_POST[$l_Item]).'">');
+      } else {
+        ShowHTML('<INPUT TYPE="HIDDEN" NAME="'.$l_Item.'" VALUE="'.$l_valor.'">');
+      }
+    }
+  }
+  ShowHTML('<INPUT TYPE="HIDDEN" NAME="w_troca" VALUE="'.$l_troca.'">');
+  ShowHTML('</FORM>');
+  ScriptOpen('JavaScript');
+  ShowHTML('  document.forms["RetornaDados"].submit();');
+  ScriptClose();
+}
 // =========================================================================
 // Exibe o conteúdo da querystring, do formulário e das variáveis de sessão
 // -------------------------------------------------------------------------
@@ -441,6 +463,11 @@ function ExibeVariaveis() {
     }
   }
   ShowHTML('</DT>');
+  ShowHTML('<DT><font face="Verdana" size=1><b>Variáveis do servidor</b></font>:');
+  foreach($_SERVER as $chv => $vlr) {
+    ShowHTML('<DD><FONT FACE="courier" size=1>'.$chv.' => ['.$vlr.']</font><br>');
+  }
+  ShowHTML('</DT>');
   $w_item=null;
   exit();
 }
@@ -453,20 +480,33 @@ function ExibePessoa($p_dir,$p_cliente,$p_pessoa,$p_tp,$p_nome) {
   if (Nvl($p_nome,'')=='') {
     $l_string='---';
   } else {
-    $l_string=$l_string.'<A class="hl" HREF="#" onClick="window.open(\''.montaURL_JS(null,$conRootSIW.'seguranca.php?par=TELAUSUARIO&w_cliente='.$p_cliente.'&w_sq_pessoa='.$p_pessoa.'&P1='.$P1.'&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP='.$p_tp.'&SG=').'\',\'Pessoa\',\'width=780,height=300,top=10,left=10,toolbar=no,scrollbars=yes,resizable=yes,status=no\'); return false;" title="Clique para exibir os dados desta pessoa!">'.$p_nome.'</A>';
+    $l_string .= '<A class="hl" HREF="#" onClick="window.open(\''.montaURL_JS(null,$conRootSIW.'seguranca.php?par=TELAUSUARIO&w_cliente='.$p_cliente.'&w_sq_pessoa='.$p_pessoa.'&P1='.$P1.'&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP='.$p_tp.'&SG=').'\',\'Pessoa\',\'width=780,height=300,top=10,left=10,toolbar=no,scrollbars=yes,resizable=yes,status=no\'); return false;" title="Clique para exibir os dados desta pessoa!">'.$p_nome.'</A>';
   }
   return $l_string;
 }
 
 // =========================================================================
-// Montagem da URL com os dados de uma pessoa
+// Montagem da URL com os dados de uma unidade
 // -------------------------------------------------------------------------
 function ExibeUnidade($p_dir,$p_cliente,$p_unidade,$p_sq_unidade,$p_tp) {
   extract($GLOBALS,EXTR_PREFIX_SAME,'l_');
   if (Nvl($p_unidade,'')=='') {
     $l_string='---';
   } else {
-    $l_string=$l_string.'<A class="hl" HREF="#" onClick="window.open(\''.montaURL_JS(null,$conRootSIW.'seguranca.php?par=TELAUNIDADE&w_cliente='.$p_cliente.'&w_sq_unidade='.$p_sq_unidade.'&P1='.$P1.'&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP='.$p_tp.'&SG=').'\',\'Unidade\',\'width=780,height=300,top=10,left=10,toolbar=no,scrollbars=yes,resizable=yes,status=no\'); return false;" title="Clique para exibir os dados desta unidade!">'.$p_unidade.'</A>';
+    $l_string .= '<A class="hl" HREF="#" onClick="window.open(\''.montaURL_JS(null,$conRootSIW.'seguranca.php?par=TELAUNIDADE&w_cliente='.$p_cliente.'&w_sq_unidade='.$p_sq_unidade.'&P1='.$P1.'&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP='.$p_tp.'&SG=').'\',\'Unidade\',\'width=780,height=300,top=10,left=10,toolbar=no,scrollbars=yes,resizable=yes,status=no\'); return false;" title="Clique para exibir os dados desta unidade!">'.$p_unidade.'</A>';
+  }
+  return $l_string;
+}
+
+// =========================================================================
+// Montagem da URL com os dados de um recurso
+// -------------------------------------------------------------------------
+function ExibeRecurso($p_dir,$p_cliente,$p_nome,$p_chave,$p_tp) {
+  extract($GLOBALS,EXTR_PREFIX_SAME,'l_');
+  if (Nvl($p_chave,'')=='') {
+    $l_string='---';
+  } else {
+    $l_string .= '<A class="hl" HREF="#" onClick="window.open(\''.montaURL_JS('mod_pe/','recurso.php?par=TELARECURSO&w_cliente='.$p_cliente.'&w_chave='.$p_chave.'&P1='.$P1.'&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP='.$p_tp.'&SG=').'\',\'Telarecurso\',\'width=785,height=570,top=10,left=10,toolbar=no,scrollbars=yes,resizable=yes,status=no\'); return false;" title="Clique para exibir os dados desta unidade!">'.$p_nome.'</A>';
   }
   return $l_string;
 }
@@ -478,7 +518,7 @@ function ExibeEtapa($O,$p_chave,$p_chave_aux,$p_tipo,$p_P1,$p_etapa,$p_tp,$p_sg)
   if (Nvl($p_etapa,'')=='') {
     $l_string="---";
   } else {
-    $l_string=$l_string.'<A class="hl" HREF="#" onClick="window.open(\'projeto.php?par=AtualizaEtapa&w_chave='.$p_chave.'&O='.$O.'&w_chave_aux='.$p_chave_aux.'&w_tipo='.$p_tipo.'&P1='.$p_P1.'&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP='.$p_tp.'&SG='.$p_sg.'\',\'Etapa\',\'width=780,height=350,top=50,left=10,toolbar=no,scrollbars=yes,resizable=yes,status=no\'); return false;" title="Clique para exibir os dados!">'.$p_etapa.'</A>';
+    $l_string .= '<A class="hl" HREF="#" onClick="window.open(\'projeto.php?par=AtualizaEtapa&w_chave='.$p_chave.'&O='.$O.'&w_chave_aux='.$p_chave_aux.'&w_tipo='.$p_tipo.'&P1='.$p_P1.'&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP='.$p_tp.'&SG='.$p_sg.'\',\'Etapa\',\'width=780,height=350,top=50,left=10,toolbar=no,scrollbars=yes,resizable=yes,status=no\'); return false;" title="Clique para exibir os dados!">'.$p_etapa.'</A>';
   }
   return $l_string;
 }
@@ -491,7 +531,7 @@ function MontaFiltroUpload($p_Form) {
   $l_string='';
   foreach ($p_Form as $l_Item) {
     if (substr($l_item,0,2)=="p_" && $l_item->value>'') {
-      $l_string=$l_string."&".$l_Item."=".$l_item->value;
+      $l_string .= "&".$l_Item."=".$l_item->value;
     }
   }
   return $l_string;
@@ -681,7 +721,7 @@ function FormataTempo($p_segundos) {
 // =========================================================================
 // Função que formata valores com separadores de milhar e decimais
 // -------------------------------------------------------------------------
-function FormatNumber($p_valor, $p_decimais) {
+function FormatNumber($p_valor, $p_decimais=2) {
   return number_format($p_valor,$p_decimais,',','.');
 }
 
@@ -967,13 +1007,13 @@ function TrataErro($sp, $Err, $params, $file, $line, $object) {
      ShowHTML(' history.back(1);');
      ScriptClose();
   }
-  elseif (!(strpos($Err['message'],'ORA-02291')===false) || !(strpos($Err['message'],'ORA-02291')===false)) {
+  //elseif (!(strpos($Err['message'],'ORA-02291')===false) || !(strpos($Err['message'],'ORA-02291')===false)) {
      // REGISTRO NÃO ENCONTRADO
-     ScriptOpen('JavaScript');
-     ShowHTML(' alert("Registro não encontrado.");');
-     ShowHTML(' history.back(1);');
-     ScriptClose();
-  }
+  //   ScriptOpen('JavaScript');
+  //   ShowHTML(' alert("Registro não encontrado.");');
+  //   ShowHTML(' history.back(1);');
+  //   ScriptClose();
+ // }
   elseif (!(strpos($Err['message'],'ORA-0000x1')===false)) {
      // REGISTRO JÁ EXISTENTE
     ScriptOpen('JavaScript');
@@ -1543,6 +1583,183 @@ function diaSemana($l_data) {
   } else {
     return null;
   }
+}
+// =========================================================================
+// Função que traduz os meses do ano de inglês para português
+// -------------------------------------------------------------------------
+function mesAno($l_data) {
+  if (nvl($l_data,'')>'') {
+    switch (strtoupper($l_data)) {
+      case 'JANUARY':   return 'Janeiro';            break;
+      case 'FEBRUARY':  return 'Fevereiro';          break;
+      case 'MARCH':     return 'Março';              break;
+      case 'APRIL':     return 'Abril';              break;
+      case 'MAY':       return 'Maio';               break;
+      case 'JUNE':      return 'Junho';              break;
+      case 'JULY':      return 'Julho';              break;
+      case 'AUGUST':    return 'Agosto';             break;
+      case 'SEPTEMBER': return 'Setembro';           break;
+      case 'OCTOBER':   return 'Outubro';            break;
+      case 'NOVEMBER':  return 'Novembro';           break;
+      case 'DECEMBER':  return 'Dezembro';           break;
+    }
+  } else {
+    return null;
+  }
+}
+
+// =========================================================================
+// Monta string html para montagem de calendário do mês informado
+// -------------------------------------------------------------------------
+function montaCalendario($p_base, $p_mes, $p_datas, $p_cores) {
+  extract($GLOBALS,EXTR_PREFIX_SAME,'ex_');
+  // Atribui nomes dos meses
+  $l_meses[1] = 'Janeiro';  $l_meses[2] = 'Fevereiro'; $l_meses[3] = 'Março';      $l_meses[4] = 'Abril';
+  $l_meses[5] = 'Maio';     $l_meses[6] = 'Junho';     $l_meses[7] = 'Julho';      $l_meses[8] = 'Agosto';
+  $l_meses[9] = 'Setembro'; $l_meses[10] = 'Outubro';  $l_meses[11] = 'Novembro';  $l_meses[12] = 'Dezembro';
+
+  // Atribui quantidade de dias em cada mês
+  $l_qtd[1] = 31; $l_qtd[2] = 28; $l_qtd[3] = 31; $l_qtd[4] = 30;  $l_qtd[5] = 31;  $l_qtd[6] = 30;
+  $l_qtd[7] = 31; $l_qtd[8] = 31; $l_qtd[9] = 30; $l_qtd[10] = 31; $l_qtd[11] = 30; $l_qtd[12] = 31;
+
+  // Atribui sigla para cada dia da semana
+  $l_dias[1]  = 'D'; $l_dias[2]  = 'S'; $l_dias[3]  = 'T'; $l_dias[4]  = 'Q';
+  $l_dias[5]  = 'Q'; $l_dias[6]  = 'S'; $l_dias[7]  = 'S';
+
+  // Recupera o mês e o ano desejado para montagem do calendário
+  $l_mes = substr($p_mes,0,2);
+  $l_ano = substr($p_mes,2,4);
+   
+  // Define cor de fundo padrão para as células de sábado e domingo
+  $l_cor_padrao = '#DAEABD';
+
+  // Recupera as datas especiais do ano informado e carrega no array de calendário base
+  foreach ($p_base as $row_ano) {
+    $l_data   = FormataDataEdicao(f($row_ano,'data_formatada'));
+    $x_datas[$l_data] = f($row_ano,'nome').' '.f($row_ano,'nm_expediente');
+    $x_cores[$l_data] = $l_cor_padrao;
+  } 
+
+  // Define em que dia da semana o mês inicia
+  $l_inicio = date('w',toDate('01/'.$l_mes.'/'.$l_ano));
+
+  // Trata o mês de fevereiro anos bissextos
+  if (fMod($l_ano,4)==0) $l_qtd[2] = 29;
+   
+  $l_html  = '<table border=0 cellspacing=1 cellpadding=1>'.$crlf;
+  $l_html .= '  <tr><td colspan=7 align="center" bgcolor="'.$l_cor_padrao.'"><b>'.$l_meses[intVal($l_mes)].'/'.$l_ano.'</td></tr>'.$crlf;
+  $l_html .= '  <tr align="center">'.$crlf;
+
+  // Monta a linha com a sigla para os dias das semanas
+  for ($i = 1; $i <= 7; $i++) $l_html .= '    <td bgcolor="'.$l_cor_padrao.'"><b>'.$l_dias[$i].'</td>'.$crlf;
+  $l_html .= '  </tr>'.$crlf;
+   
+  // Carrega os dias do mês num array que será usado para montagem do calendário, colocando
+  // o dia ou um espaço em branco, dependendo do início e do fim do mês
+  for ($i = 1; $i <= ($l_inicio); $i++) $l_celulas[$i] = '&nbsp;';
+  for ($i = ($l_qtd[intVal($l_mes)]+1); $i <= 42; $i++) $l_celulas[$i] = '&nbsp;';
+  for ($i = 1; $i <= ($l_qtd[intVal($l_mes)]); $i++) $l_celulas[($i + $l_inicio)] = $i;
+  // Monta o calendário, usando o array $l_celulas
+  $l_html .= '  <tr align="center">'.$crlf ;
+  for ($i=1; $i<=42; $i++) {
+    $l_data = 'x';
+    // Se a célula contiver um dia do mês, formata data para busca nos arrays
+    if ($l_celulas[$i]!='&nbsp;') $l_data = substr(100+$l_celulas[$i],1,2).'/'.$l_mes.'/'.$l_ano;
+    
+    // Trata a borda da célula para datas especiais
+    $l_borda      = '';
+    $l_ocorrencia = '';
+    if (isset($x_datas[$l_data])) {
+      $l_borda      = ' style="border: 1px solid rgb(0,0,0);"';
+      $l_ocorrencia .= $x_datas[$l_data].'\r\n';
+    }
+    if (isset($p_datas[$l_data])) {
+      if ((fMod($i,7)==0) || (fMod($i-1,7)==0) || isset($x_datas[$l_data])) {
+        if ($p_datas[$l_data]['dia_util']=='N') $l_ocorrencia .= substr(str_replace($crlf,' ',$p_datas[$l_data]['valor']),0,80).'\r\n';
+      } else {
+        $l_ocorrencia .= substr(str_replace($crlf,' ',$p_datas[$l_data]['valor']),0,80).'\r\n';
+      }
+    }
+          
+    // Trata a cor de fundo da célula
+    $l_cor = '';
+    if ($i==1 ||($l_celulas[$i]!='&nbsp;' && ((fMod($i,7)==0) || (fMod($i-1,7)==0)))) { 
+      // Verifica se a ocorrência deve prevalecer sobre sábados e domingos
+      if ($p_cores[$l_data]['dia_util']=='N') {
+        $l_cor = ' bgcolor="'.$p_cores[$l_data]['valor'].'"';
+      } else {
+        $l_cor = ' bgcolor="'.$l_cor_padrao.'"';
+      }
+    } elseif ($l_celulas[$i]!='&nbsp;') { 
+      if (isset($p_cores[$l_data]['valor'])) {
+        if (isset($x_datas[$l_data])) {
+         if ($p_cores[$l_data]['dia_util']=='N') $l_cor = ' bgcolor="'.$p_cores[$l_data]['valor'].'"';
+        } else {
+          $l_cor = ' bgcolor="'.$p_cores[$l_data]['valor'].'"';
+        }
+      }
+    }
+   
+    // Trata a data de hoje
+    if ($l_data==formataDataEdicao(time())) {
+      if ($l_data==formataDataEdicao(time())) $l_ocorrencia = 'HOJE\r\n'.$l_ocorrencia;
+      $l_borda = ' style="border: 2px solid rgb(0,0,0);"';
+    }
+          
+    if ($l_ocorrencia!='') $l_ocorrencia = ' onClick="javascript:alert(\''.$l_ocorrencia.'\')"';
+
+    // Coloca uma célula do calendário
+    $l_html .= '    <td'.$l_cor.$l_borda.$l_ocorrencia.'>'.$l_celulas[$i].'</td>'.$crlf;
+         
+    // Trata a quebra de linha ao final de cada semana
+    if (fMod($i,7)==0) {
+      $l_html .= '  </tr>'.$crlf;
+      // Interrompe a montagem do calendário na última linha que contém datas
+      if ($i>$l_qtd[intVal($l_mes)] && $l_celulas[$i+1]=='&nbsp;') {
+        break;
+      } else { 
+        $l_html .= '  <tr align="center">'.$crlf;
+      }
+    }
+     
+  }
+  $l_html .= '</table>'.$crlf;
+   
+  // Devolve o calendário montado
+  return $l_html;
+}
+
+// =========================================================================
+// Função para retornar um array com todos os dias de um período
+// Recebe o início e o fim do período no formato data
+// Todos os elementos do array recebem o valor definido em p_valor
+// -------------------------------------------------------------------------
+function retornaArrayDias($p_inicio, $p_fim, $p_array, $p_valor, $p_dia_util=null) {
+  $l_inicio = date(Ymd,$p_inicio);
+  $l_fim    = date(Ymd,$p_fim);
+  // Atribui quantidade de dias em cada mês
+  $l_qtd[1] = 31; $l_qtd[2] = 28; $l_qtd[3] = 31; $l_qtd[4] = 30;  $l_qtd[5] = 31;  $l_qtd[6] = 30;
+  $l_qtd[7] = 31; $l_qtd[8] = 31; $l_qtd[9] = 30; $l_qtd[10] = 31; $l_qtd[11] = 30; $l_qtd[12] = 31;
+
+  // Trata o mês de fevereiro anos bissextos
+  if (fMod($l_ano,4)==0) $l_qtd[2] = 29;
+
+  for ($i=$l_inicio; $i<=$l_fim; $i++) {
+    $l_ano = substr($i,0,4);
+    $l_mes = substr($i,4,2);
+    $l_dia = substr($i,6,2);
+    if (intVal($l_dia)>$l_qtd[intVal($l_mes)]) {
+      if (intVal($l_mes)==12) {
+        $i = ($l_ano+1).'0101';
+      } else {
+        $i = $l_ano.substr((100+intVal($l_mes)+1),1,2).'01';
+      }
+    }
+    $p_array[substr($i,6,2).'/'.substr($i,4,2).'/'.substr($i,0,4)]['valor']=$p_valor;
+    $p_array[substr($i,6,2).'/'.substr($i,4,2).'/'.substr($i,0,4)]['dia_util']=$p_dia_util;
+  }
+  
+  return true;
 }
 
 // =========================================================================

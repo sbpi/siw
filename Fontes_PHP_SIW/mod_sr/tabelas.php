@@ -150,7 +150,7 @@ function Abastecimento() {
   } elseif ($O=='A') {
     BodyOpen('onLoad=document.Form.w_data.focus();');    
   } elseif ($O=='L') {
-    BodyOpen('onLoad=document.focus();');
+    BodyOpen('onLoad=this.focus();');
   } else{
     BodyOpen('onLoad=document.Form.w_assinatura.focus();');
   } 
@@ -312,7 +312,7 @@ function Grupo() {
   } elseif ($O=='I' || $O=='A') {
     BodyOpen('onLoad=document.Form.w_nome.focus();');
   } elseif ($O=='L') {
-    BodyOpen('onLoad=document.focus();');
+    BodyOpen('onLoad=this.focus();');
   } else{
     BodyOpen('onLoad=document.Form.w_assinatura.focus();');
   } 
@@ -471,7 +471,7 @@ function Opiniao() {
   } elseif ($O=='I' || $O=='A') {
     BodyOpen('onLoad=document.Form.w_nome.focus();');
   } elseif ($O=='L') {
-    BodyOpen('onLoad=document.focus();');
+    BodyOpen('onLoad=this.focus();');
   } else{
     BodyOpen('onLoad=document.Form.w_assinatura.focus();');
   } 
@@ -631,7 +631,7 @@ function TipoVeiculo() {
   } elseif ($O=='I' || $O=='A') {
     BodyOpen('onLoad=document.Form.w_chave_aux.focus();');
   } elseif ($O=='L') {
-    BodyOpen('onLoad=document.focus();');
+    BodyOpen('onLoad=this.focus();');
   } else{
     BodyOpen('onLoad=document.Form.w_assinatura.focus();');
   } 
@@ -812,7 +812,7 @@ function Veiculo() {
   } elseif ($O=='I' || $O=='A') {
     BodyOpen('onLoad=document.Form.w_chave_aux.focus();');
   } elseif ($O=='L') {
-    BodyOpen('onLoad=document.focus();');
+    BodyOpen('onLoad=this.focus();');
   } else{
     BodyOpen('onLoad=document.Form.w_assinatura.focus();');
   } 
@@ -934,7 +934,7 @@ function Grava() {
   Cabecalho();
   ShowHTML('</HEAD>');
   ShowHTML('<BASE HREF="'.$conRootSIW.'">');  
-  BodyOpen('onLoad=document.focus();');
+  BodyOpen('onLoad=this.focus();');
   switch ($SG) {
     case 'SRABAST':
       // Verifica se a Assinatura Eletrônica é válida
@@ -1125,7 +1125,7 @@ function Main() {
     default:
     Cabecalho();
     ShowHTML('<BASE HREF="'.$conRootSIW.'">');
-    BodyOpen('onLoad=document.focus();');
+    BodyOpen('onLoad=this.focus();');
     ShowHTML('<B><FONT COLOR="#000000">'.$w_TP.'</FONT></B>');
     ShowHTML('<HR>');
     ShowHTML('<div align=center><center><br><br><br><br><br><br><br><br><br><br><img src="images/icone/underc.gif" align="center"> <b>Esta opção está sendo desenvolvida.</b><br><br><br><br><br><br><br><br><br><br></center></div>');

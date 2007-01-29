@@ -164,7 +164,7 @@ function Usuarios() {
   elseif ($O=='A') BodyOpen('onLoad=\'document.Form.w_nome.focus();\'');
   elseif ($O=='E') BodyOpen('onLoad=\'document.Form.w_assinatura.focus()\';');
   elseif ($O=='P') BodyOpen('onLoad=\'document.Form.p_localizacao.focus()\';');
-  else    BodyOpen('onLoad=document.focus();');
+  else    BodyOpen('onLoad=this.focus();');
 
   Estrutura_Topo_Limpo();
   Estrutura_Menu();
@@ -594,7 +594,7 @@ function Menu() {
   elseif ($O=='I' || $O=='A') BodyOpen('onLoad=document.Form.w_descricao.focus();');
   elseif ($O=='H')            BodyOpen('onLoad=document.Form.w_heranca.focus();');
   elseif ($O=='P')            BodyOpen('onLoad=document.Form.p_sq_endereco_unidade.focus();');
-  elseif ($O=='L')            BodyOpen('onLoad=document.focus();');
+  elseif ($O=='L')            BodyOpen('onLoad=this.focus();');
   else                        BodyOpen('onLoad=document.Form.w_assinatura.focus();');
 
   if ($O!='H') {
@@ -638,7 +638,7 @@ function Menu() {
           ShowHTML('       <A class="'.$w_classe.'" HREF="#'.f($row,'sq_menu').'" onClick="window.open(\'seguranca1.php?par=Endereco&R='.$w_pagina.$par.'&O=L&w_sq_menu='.f($row,'sq_menu').'&TP='.$TP.' - Endereços'.'&SG=ENDERECO\',\'endereco\',\'top=10,left=10,width=780,height=500,toolbar=no,status=no,scrollbars=yes,resizable=yes\');" title="Indica quais endereços terão esta opção no menu. A princípio, todas as opções do menu aparecem para os usuários de todos os endereços.">Endereços</A>&nbsp');
           if (f($row,'tramite')=='S') {
             ShowHTML('       <A class="'.$w_classe.'" HREF="#'.f($row,'sq_menu').'" onClick="window.open(\'seguranca1.php?par=Tramite&R='.$w_pagina.$par.'&O=L&w_sq_menu='.f($row,'sq_menu').'&w_cliente='.$w_cliente.'&P1='.$P1.'&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP='.$TP.' - Trâmites'.'&SG=SIWTRAMITE'.MontaFiltro('GET').'\',\'Tramite\',\'toolbar=no,width=780,height=530,top=30,left=10,scrollbars=yes\');" title="Configura os trâmites vinculados a esta opção.">Trâmites</A>&nbsp');
-            ShowHTML('       <A class="'.$w_classe.'" HREF="#'.f($row,'sq_menu').'" onClick="window.open(\'menu.php?par=Vinculucao&R='.$w_pagina.$par.'&O=L&w_sq_menu='.f($row,'sq_menu').'&w_cliente='.$w_cliente.'&P1='.$P1.'&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP='.$TP.' - Vinculações'.'&SG=SIWMENURELAC'.MontaFiltro('GET').'\',\'Vinculacao\',\'toolbar=no,width=780,height=530,top=30,left=10,scrollbars=yes\');" title="Configura os serviços e seus repectivos trâmites, que estão ligados esse serviço.">Vinculações</A>&nbsp');
+            ShowHTML('       <A class="'.$w_classe.'" HREF="#'.f($row,'sq_menu').'" onClick="window.open(\'menu.php?par=Vinculucao&R='.$w_pagina.$par.'&O=L&w_sq_menu='.f($row,'sq_menu').'&w_cliente='.$w_cliente.'&P1='.$P1.'&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP='.$TP.' - Vinculações'.'&SG=SIWMENURELAC'.MontaFiltro('GET').'\',\'Vinculacao\',\'toolbar=no,width=780,height=530,top=30,left=10,scrollbars=yes\');" title="Configura os serviços e seus repectivos trâmites, aos quais esse serviço poderá ser vinculado.">Vinculações</A>&nbsp');
           } else {
             ShowHTML('       <A class="'.$w_classe.'" HREF="#'.f($row,'sq_menu').'" onClick="window.open(\'seguranca1.php?par=AcessoMenu&R='.$w_pagina.$par.'&O=L&w_cliente='.$w_cliente.'&w_sq_menu='.f($row,'sq_menu').'&P1='.$P1.'&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP='.$TP.' - Acessos'.'&SG=ACESSOMENU\',\'AcessoMenu\',\'toolbar=no,width=780,height=530,top=30,left=10,scrollbars=yes\');" title="Configura as permissões de acesso.">Acessos</A>&nbsp');          } 
         } 
@@ -1194,7 +1194,7 @@ function Acessos() {
   ShowHTML('</HEAD>');
   if ($O=='I')      BodyOpen('onLoad=document.Form.w_sq_modulo.focus();');
   elseif ($O=='E')  BodyOpen('onLoad=document.Form.w_assinatura.focus();');
-  else              BodyOpen('onLoad=document.focus();');
+  else              BodyOpen('onLoad=this.focus();');
 
   Estrutura_Topo_Limpo();
   Estrutura_Menu();
@@ -1367,7 +1367,7 @@ function Visao() {
   ShowHTML('</HEAD>');
   if ($O=='I')      BodyOpen('onLoad=document.Form.w_sq_menu.focus();');
   elseif ($O=='E')  BodyOpen('onLoad=document.Form.w_assinatura.focus();');
-  else              BodyOpen('onLoad=document.focus();');
+  else              BodyOpen('onLoad=this.focus();');
 
   Estrutura_Topo_Limpo();
   Estrutura_Menu();
@@ -1448,7 +1448,7 @@ function Visao() {
     ShowHTML('      <tr><td align="center" colspan="2" height="1" bgcolor="#000000">');
     ShowHTML('      <tr><td colspan="2" align="center" bgcolor="#D0D0D0"><b>Visão por serviço</td>');
     ShowHTML('      <tr><td align="center" colspan="2" height="1" bgcolor="#000000">');
-    ShowHTML('      <tr><td align="justify" colspan="2"><font size=2>Informe o serviço e as classificações nas quais o usuário deve ter visão geral.</font></td></tr>');
+    ShowHTML('      <tr><td align="justify" colspan="2"><font size=2>Informe o serviço e os trâmites aos quais esse serviço poderá ser vinculado.</font></td></tr>');
     ShowHTML('      <tr><td align="center" colspan="2" height="2" bgcolor="#000000">');
     ShowHTML('      <tr><td colspan="2"><font size=2><b>');
     AbreForm('Form',$w_pagina.'Grava', 'POST', 'return(Validacao(this));', null,$P1,$P2,$P3,$P4,$TP,$SG,$R,$O);
@@ -1637,7 +1637,7 @@ function TelaUsuario() {
   if (f($RS,'interno')=='S') {
     ShowHTML('<TITLE>Usuário</TITLE>');
     ShowHTML('</HEAD>');
-    BodyOpen('onLoad=document.focus();');
+    BodyOpen('onLoad=this.focus();');
     $w_TP = 'Usuário - Visualização de dados';
     Estrutura_Texto_Abre();
     ShowHTML('<table border="0" width="100%">');
@@ -1680,7 +1680,7 @@ function TelaUsuario() {
   } elseif (nvl(f($RS,'nome_vinculo'),'nulo')=='nulo') {
     ShowHTML('<TITLE>Pessoa sem vínculo</TITLE>');
     ShowHTML('</HEAD>');
-    BodyOpen('onLoad=document.focus();');
+    BodyOpen('onLoad=this.focus();');
     $TP='Dados pessoa externa';
     Estrutura_Texto_Abre();
     ShowHTML('<table border="0" width="100%">');
@@ -1750,7 +1750,7 @@ function TelaUsuario() {
   } elseif (!(strpos("Cliente,Fornecedor",f($RS,'nome_vinculo'))===false)) {
     ShowHTML('<TITLE>Pessoa externa</TITLE>');
     ShowHTML('</HEAD>');
-    BodyOpen('onLoad=document.focus();');
+    BodyOpen('onLoad=this.focus();');
     $TP='Dados pessoa externa';
     Estrutura_Texto_Abre();
     ShowHTML('<table border="0" width="100%">');
@@ -1823,9 +1823,8 @@ function TelaUsuario() {
 } 
 
 // =========================================================================
-// Rotina de tela de exibição do usuário
+// Rotina de tela de exibição da unidade
 // -------------------------------------------------------------------------
-
 function TelaUnidade() {
   extract($GLOBALS);
   global $w_Disabled, $w_TP;
@@ -1842,7 +1841,7 @@ function TelaUnidade() {
   ValidateClose();
   ScriptClose();
   ShowHTML('</HEAD>');
-  BodyOpen('onLoad=document.focus();');
+  BodyOpen('onLoad=this.focus();');
   $w_TP = 'Unidade - Visualização de dados';
   Estrutura_Texto_Abre();
   ShowHTML('<table border="0" width="100%">');
@@ -1954,7 +1953,7 @@ function Grava() {
   extract($GLOBALS);
   Cabecalho();
   ShowHTML('</HEAD>');
-  BodyOpen('onLoad=document.focus();');
+  BodyOpen('onLoad=this.focus();');
   switch ($SG) {
     case "MENU":
       $p_sq_endereco_unidade = strtoupper($_REQUEST['p_sq_endereco_unidade']);
@@ -2035,7 +2034,7 @@ function Main() {
   case 'GRAVA':         Grava();        break;
   default:
     Cabecalho();
-    BodyOpen('onLoad=document.focus();');
+    BodyOpen('onLoad=this.focus();');
     Estrutura_Topo_Limpo();
     Estrutura_Menu();
     Estrutura_Corpo_Abre();

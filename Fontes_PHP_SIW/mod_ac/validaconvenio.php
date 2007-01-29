@@ -15,24 +15,31 @@ function ValidaConvenio($l_cliente,$l_chave,$l_sg1,$l_sg2,$l_sg3,$l_sg4,$l_trami
   // l_rs1 até l_rs4 são recordsets que podem ser usados para armazenar dados de blocos
   // de dados específicos da solicitação que está sendo validada.
   //-----------------------------------------------------------------------------------
+
   //-----------------------------------------------------------------------------------
   // Esta primeira parte carrega recordsets com os diferentes blocos de dados que
   // compõem a solicitação
   //-----------------------------------------------------------------------------------
   // Recupera os dados da solicitação
   $l_rs_solic = db_getSolicData::getInstanceOf($dbms,$l_chave,$l_sg1);
+
   // Se a solicitação informada não existir, abandona a execução
   if (count($l_rs_solic)==0) {
     return '0<li>Não existe registro no banco de dados com o número informado.';
   } 
+
   // Verifica se o cliente tem o módulo de acordos contratado
   $l_rs_modulo = db_getSiwCliModLis::getInstanceOf($dbms,$l_cliente,null,'AC');
   if (count($l_rs_modulo)>0) $l_acordo='S'; else $l_acordo='N';
+ 
   $l_erro='';
   $l_tipo='';
+  $l_lista='';
+ 
   // Recupera o trâmite atual da solicitação
   $l_rs_tramite = db_getTramiteData::getInstanceOf($dbms,f($l_rs_solic,'sq_siw_tramite'));
-  // Recupera os dados da outra parte
+
+// Recupera os dados da outra parte
   $l_rs1 = db_getBenef::getInstanceOf($dbms,$l_cliente,Nvl(f($l_rs_solic,'outra_parte'),0),null,null,null,null,null,null);
   if (($l_rs1==0)) {
     $l_existe_rs1=0; 
@@ -43,6 +50,7 @@ function ValidaConvenio($l_cliente,$l_chave,$l_sg1,$l_sg2,$l_sg3,$l_sg4,$l_trami
       break;
     }
   }
+
   // Recupera os dados do preposto
   $l_rs2 = db_getBenef::getInstanceOf($dbms,$l_cliente,Nvl(f($l_rs_solic,'preposto'),0),null,null,null,null,null,null);
   if (count($l_rs2)==0) {
@@ -54,6 +62,7 @@ function ValidaConvenio($l_cliente,$l_chave,$l_sg1,$l_sg2,$l_sg3,$l_sg4,$l_trami
       break;
     }
   }
+   
   // Recupera os dados das parcelas
   $l_rs3 = db_getAcordoParcela::getInstanceOf($dbms,$l_chave,null,null,null,null,null,null,null,null);
   if (count($l_rs3)==0) {
@@ -61,66 +70,42 @@ function ValidaConvenio($l_cliente,$l_chave,$l_sg1,$l_sg2,$l_sg3,$l_sg4,$l_trami
   } else {
     $l_existe_rs3=count($l_rs3);
   }
+     
+  // Recupera os dados da outra parte
+  $l_rs_conv = db_getConvOutraParte::getInstanceOf($dbms,null,$l_chave,null,null);
+  if (($l_rs_conv==0)) {
+    $l_existe_rs_conv=0; 
+  } else {
+    $l_existe_rs_conv=count($l_rs_conv);
+    foreach($l_rs_conv as $row) {
+      // Recupera os dados do preposto
+      $l_rs_conv2 = db_getConvPreposto::getInstanceOf($dbms,$l_chave,f($row,'sq_acordo_outra_parte'),null);
+      if (count($l_rs_conv2)==0) {    
+        $l_existe_rs_conv2=0;
+        $l_erro.='<li> O preposto da outra parte <b>('.f($row,'nome_resumido').')</b> não foi infomado.';
+        $l_tipo = 0;
+      } else {
+        $l_existe_rs_conv2=count($l_rs_conv2);
+      }
+    }
+  }
   //-----------------------------------------------------------------------------------
   // O bloco abaixo faz as validações na solicitação que não são possíveis de fazer
   // através do JavaScript por envolver mais de uma tela
   //-----------------------------------------------------------------------------------
+  
   //-----------------------------------------------------------------------------
   // Verificações de integridade de dados da solicitação, feitas sempre que houver
   // um encaminhamento.
   //-----------------------------------------------------------------------------
+
   // Validações para a outra parte e preposto
   // Verifica se foi indicada a outra parte
-  if ($l_existe_rs1==0) {
-    $l_erro.='<li>A outra parte não foi informada';
-    $l_tipo=0;
-  } else {
-    // Validação do preposto
-    // Não há preposto para contratos com pessoa física
-    if (Nvl(f($l_rs_solic,'sq_tipo_pessoa'),0)==1) {
-      // Se outra parte for pessoa física, não pode ter preposto
-      if ($l_existe_rs2>0) {
-        $l_erro.='<li>Quando a outra parte é pessoa física não pode haver preposto.';
+      // Verifica se foi indicada a outra parte
+      if ($l_existe_rs1==0) {
+        $l_erro.='<li>A outra parte do tipo convente não foi informada';
         $l_tipo=0;
       } 
-    } else {
-      // Validaçao para pessoa jurídica
-      if (!(Nvl(f($l_rs_solic,'sq_tipo_pessoa'),0)==Nvl(f($l_rs1,'sq_tipo_pessoa'),0))) {
-        // A outra parte deve ser do tipo informado na tela de dados gerais
-        $l_erro.='<li>A outra parte não é do tipo informado na tela de dados gerais.';
-        $l_tipo=0; 
-      } 
-      // Se outra parte for pessoa jurídica, deve ter preposto
-      if ($l_existe_rs2==0) {
-        $l_erro.='<li>O preposto não foi informado.';
-        $l_tipo=0;
-      } else {
-        if (!(Nvl(f($l_rs2,'sq_tipo_pessoa'),0)==1)) {
-          // O preposto deve ser pessoa física
-          $l_erro.='<li>O preposto deve ser pessoa física.';
-          $l_tipo=0;
-        } 
-      } 
-    } 
-  }
-  // Verifica os dados bancários
-  $l_erro_banco = 0;
-  if (!(strpos('CREDITO,DEPOSITO',f($l_rs_solic,'sg_forma_pagamento'))===false)) {
-    if (nvl(f($l_rs_solic,'sq_agencia'),'')=='' || nvl(f($l_rs_solic,'numero_conta'),'')=='') $l_erro_banco = 1;
-  } elseif (f($l_rs_solic,'sg_forma_pagamento')=='ORDEM') {
-    if (nvl(f($l_rs_solic,'sq_agencia'),'')=='') $l_erro_banco = 1;
-  } elseif (f($l_rs_solic,'sg_forma_pagamento')=='EXTERIOR') {
-    if (nvl(f($l_rs_solic,'banco_estrang'),'')=='' || 
-        nvl(f($l_rs_solic,'agencia_estrang'),'')=='' ||
-        nvl(f($l_rs_solic,'numero_conta'),'')=='' ||
-        nvl(f($l_rs_solic,'cidade_estrang'),'')=='' ||
-        nvl(f($l_rs_solic,'sq_pais_estrang'),'')==''
-       ) $l_erro_banco = 1;
-  } 
-  if ($l_erro_banco==1) {
-    $l_erro=$l_erro.'<li>Dados bancários incompletos. Acesse a opção "Outra parte", confira os dados e grave a tela.';
-    $l_tipo=0;
-  }
   // Verifica as parcelas
   if ($l_existe_rs3==0) {
     $l_erro.='<li>É obrigatório informar pelo menos uma parcela';

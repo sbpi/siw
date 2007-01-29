@@ -189,7 +189,7 @@ function Inicial() {
     // Se o diretório raiz de busca
     if (!(strpos($_REQUEST['botao'],'Procurar')===false)) {
       // Se está sendo feita busca por nome
-      BodyOpen('onLoad=\'document.focus()\';');
+      BodyOpen('onLoad=\'this.focus()\';');
     } else {
       BodyOpen('onLoad=\'document.Form.w_raiz.focus()\';');
     } 
@@ -425,7 +425,7 @@ function Grava() {
   Cabecalho();
   ShowHTML('</HEAD>');
   ShowHTML('<BASE HREF="'.$conRootSIW.'">');
-  BodyOpen('onLoad=document.focus();');
+  BodyOpen('onLoad=this.focus();');
   switch ($SG) {
     case 'DCINICIAL':
       // Verifica se a Assinatura Eletrônica é válida
@@ -714,7 +714,7 @@ function Main() {
   default:
     Cabecalho();
     ShowHTML('<BASE HREF="'.$conRootSIW.'">');
-    BodyOpen('onLoad=document.focus();');
+    BodyOpen('onLoad=this.focus();');
     Estrutura_Topo_Limpo();
     Estrutura_Menu();
     Estrutura_Corpo_Abre();

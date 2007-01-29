@@ -813,7 +813,7 @@ function Main() {
     case 'GERENCIAL':      Gerencial();      break;
     default:
       Cabecalho();
-      BodyOpen('onLoad=document.focus();');
+      BodyOpen('onLoad=this.focus();');
       ShowHTML('<B><FONT COLOR="#000000">'.$w_TP.'</FONT></B>');
       ShowHTML('<HR>');
       ShowHTML('<div align=center><center><br><br><br><br><br><br><br><br><br><br><img src="images/icone/underc.gif" align="center"> <b>Esta opção está sendo desenvolvida.</b><br><br><br><br><br><br><br><br><br><br></center></div>');

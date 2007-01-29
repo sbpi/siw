@@ -160,7 +160,7 @@ function SegmentoVinc() {
   } elseif ($O=='P') {
     BodyOpen('onLoad=\'document.Form.p_nome.focus()\';');
   } else {
-    BodyOpen('onLoad=document.focus();');
+    BodyOpen('onLoad=this.focus();');
   } 
   ShowHTML('<B><FONT COLOR="#000000">'.$w_TP.'</B>');
   ShowHTML('<HR>');
@@ -345,7 +345,7 @@ function SegmentoMenu() {
   } elseif ($O=='P') {
     BodyOpen('onLoad=\'document.Form.p_nome.focus()\';');
   } else {
-    BodyOpen('onLoad=document.focus();');
+    BodyOpen('onLoad=this.focus();');
   } 
   ShowHTML('<B><FONT COLOR="#000000">'.$w_TP.'</B>');
   ShowHTML('<HR>');
@@ -526,7 +526,7 @@ function SegmentoModulo() {
   } elseif ($O=='P') {
     BodyOpen('onLoad=\'document.Form.p_objetivo_especifico.focus()\';');
   } else {
-    BodyOpen('onLoad=document.focus();');
+    BodyOpen('onLoad=this.focus();');
   } 
   ShowHTML('<B><FONT COLOR="#000000">'.$w_TP.'</B>');
   ShowHTML('<HR>');
@@ -700,7 +700,7 @@ function Modulos() {
   } elseif ($O=='P') {
     BodyOpen('onLoad=\'document.Form.p_nome.focus()\';');
   } else {
-    BodyOpen('onLoad=document.focus();');
+    BodyOpen('onLoad=this.focus();');
   } 
   ShowHTML('<B><FONT COLOR="#000000">'.$w_TP.'</B>');
   ShowHTML('<HR>');
@@ -846,7 +846,7 @@ function Segmento() {
   } elseif ($O=='P') {
     BodyOpen('onLoad=\'document.Form.p_nome.focus()\';');
   } else {
-    BodyOpen('onLoad=document.focus();');
+    BodyOpen('onLoad=this.focus();');
   } 
   ShowHTML('<B><FONT COLOR="#000000">'.$w_TP.'</B>');
   ShowHTML('<HR>');
@@ -968,7 +968,7 @@ function Grava() {
 
   Cabecalho();
   ShowHTML('</HEAD>');
-  BodyOpen('onLoad=document.focus();');
+  BodyOpen('onLoad=this.focus();');
 
   switch ($SG) {
     case 'SEGVINC':
@@ -1052,7 +1052,7 @@ function Main() {
   case 'GRAVA':        Grava();          break;
   default: 
     Cabecalho();
-    BodyOpen('onLoad=document.focus();');
+    BodyOpen('onLoad=this.focus();');
     Estrutura_Topo_Limpo();
     Estrutura_Menu();
     Estrutura_Corpo_Abre();

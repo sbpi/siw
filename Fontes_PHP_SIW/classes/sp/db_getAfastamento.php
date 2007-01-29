@@ -10,10 +10,11 @@ include_once($w_dir_volta.'classes/db/DatabaseQueriesFactory.php');
 */
 
 class db_getAfastamento {
-   function getInstanceOf($dbms, $p_cliente, $p_chave, $p_sq_tipo_afastamento, $p_sq_contrato_colaborador, $p_inicio_data, $p_fim_data, $p_periodo_inicio, $p_periodo_fim, $p_chave_aux, $p_restricao) {
+   function getInstanceOf($dbms, $p_cliente, $p_pessoa, $p_chave, $p_sq_tipo_afastamento, $p_sq_contrato_colaborador, $p_inicio_data, $p_fim_data, $p_periodo_inicio, $p_periodo_fim, $p_chave_aux, $p_restricao) {
      extract($GLOBALS,EXTR_PREFIX_SAME,'strchema');
      $sql=$strschema.'SP_GETAFASTAMENTO';
      $params=array('p_cliente'                   =>array($p_cliente,                                       B_INTEGER,        32),
+                   'p_pessoa'                    =>array(tvl($p_pessoa),                                   B_INTEGER,        32),
                    'p_chave'                     =>array(tvl($p_chave),                                    B_INTEGER,        32),
                    'p_sq_tipo_afastamento'       =>array(tvl($p_sq_tipo_afastamento),                      B_INTEGER,        32),
                    'p_sq_contrato_colaborador'   =>array(tvl($p_sq_contrato_colaborador),                  B_INTEGER,        32),

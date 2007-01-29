@@ -5,7 +5,7 @@
 function selecaoAno($label,$accesskey,$hint,$chave,$chaveAux,$campo,$restricao,$atributo) {
   extract($GLOBALS);
 
-  $l_cont=strftime('%Y',(time()))-1;
+  $l_cont=strftime('%Y',(time()))-2;
   if (!isset($hint)) {
     ShowHTML('          <td valign="top"><font size="1"><b>'.$label.'</b><br><SELECT ACCESSKEY="'.$accesskey.'" class="STS" NAME="'.$campo.'" '.$w_Disabled.' '.$atributo.'>');
   } else {

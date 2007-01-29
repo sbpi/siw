@@ -32,6 +32,5 @@ function selecaoMenu($label,$accesskey,$hint,$chave,$chaveAux,$campo,$restricao,
     }
   }
   ShowHTML('          </select>');
-  return $function_ret;
 }
 ?>

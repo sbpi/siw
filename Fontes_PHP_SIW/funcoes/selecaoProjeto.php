@@ -4,7 +4,7 @@ include_once($w_dir_volta.'classes/sp/db_getMenuRelac.php');
 // =========================================================================
 // Montagem da seleção de projetos
 // -------------------------------------------------------------------------
-function selecaoProjeto($label,$accesskey,$hint,$chave,$chaveAux,$chaveAux2,$campo,$restricao,$atributo) {
+function selecaoProjeto($label,$accesskey,$hint,$chave,$chaveAux,$chaveAux2,$campo,$restricao,$atributo,$formato=1) {
   extract($GLOBALS);
 
   if (is_numeric($restricao)) {
@@ -13,7 +13,7 @@ function selecaoProjeto($label,$accesskey,$hint,$chave,$chaveAux,$chaveAux2,$cam
    $RS1 = array(0);
   }
   if (count($RS1)>0) {
-    $RS = db_getSolicList::getInstanceOf($dbms, $chaveAux2, $chaveAux, $restricao, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null);
+    $RS = db_getSolicList::getInstanceOf($dbms, $chaveAux2, $chaveAux, $restricao, 4, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null);
     $RS = SortArray($RS,'titulo','asc');
 
     if (!isset($hint)) {
@@ -24,9 +24,11 @@ function selecaoProjeto($label,$accesskey,$hint,$chave,$chaveAux,$chaveAux2,$cam
     ShowHTML('          <option value="">---');
     foreach($RS as $row) {
       if (nvl(f($row,'sq_siw_solicitacao'),0)==nvl($chave,0)) {
-        ShowHTML('          <option value="'.f($row,'sq_siw_solicitacao').'" SELECTED>'.f($row,'titulo'));
+        if($formato==1) ShowHTML('          <option value="'.f($row,'sq_siw_solicitacao').'" SELECTED>'.f($row,'titulo'));
+        else            ShowHTML('          <option value="'.f($row,'sq_siw_solicitacao').'" SELECTED>'.f($row,'titulo').' ('.FormataDataEdicao(f($row,'inicio')).' - '.FormataDataEdicao(f($row,'fim')).')');
       } else {
-        ShowHTML('          <option value="'.f($row,'sq_siw_solicitacao').'">'.f($row,'titulo'));
+        if($formato==1) ShowHTML('          <option value="'.f($row,'sq_siw_solicitacao').'">'.f($row,'titulo'));
+        else            ShowHTML('          <option value="'.f($row,'sq_siw_solicitacao').'">'.f($row,'titulo').' ('.FormataDataEdicao(f($row,'inicio')).' - '.FormataDataEdicao(f($row,'fim')).')');
       }
     }
     ShowHTML('          </select>');

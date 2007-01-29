@@ -19,6 +19,7 @@ include_once('classes/sp/db_getSolicList.php');
 include_once('classes/sp/db_getTramiteList.php');
 include_once('classes/sp/db_getSiwCliModLis.php');
 include_once('classes/sp/db_getSolicData.php');
+include_once('classes/sp/db_getCustomerData.php');
 include_once('funcoes/selecaoCC.php');
 include_once('funcoes/selecaoPessoa.php');
 include_once('funcoes/selecaoUnidade.php');
@@ -30,6 +31,7 @@ include_once('funcoes/selecaoPrioridade.php');
 include_once('funcoes/selecaoFaseCheck.php');
 include_once('funcoes/selecaoServico.php');
 include_once('funcoes/selecaoSolic.php');
+include_once('funcoes/selecaoProjeto.php');
 // =========================================================================
 //  /GR_Projeto.php
 // ------------------------------------------------------------------------
@@ -313,7 +315,7 @@ function Gerencial() {
         BodyOpen('onLoad=\'document.Form.p_agrega.focus()\';');
       } 
     } else {
-      BodyOpenClean('onLoad=document.focus();');
+      BodyOpenClean('onLoad=this.focus();');
     } 
     if ($O=='L') {
       ShowHTML('<B><FONT COLOR="#000000">'.$w_TP.'</FONT></B>');
@@ -862,10 +864,10 @@ function Main() {
   extract($GLOBALS);
 
   switch ($par) {
-  case 'GERENCIAL':   Gerencial(); break;
+  case 'GERENCIAL':         Gerencial();        break;
   default:
     Cabecalho();
-    BodyOpen('onLoad=document.focus();');
+    BodyOpen('onLoad=this.focus();');
     Estrutura_Topo_Limpo();
     Estrutura_Menu();
     Estrutura_Corpo_Abre();

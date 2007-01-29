@@ -179,7 +179,7 @@ function Rel_Limite() {
     ShowHTML('</HEAD>');
     ShowHTML('<BASE HREF="'.$conRootSIW.'">');
     if ($O=='L') {
-      BodyOpenClean('onLoad=\'document.focus()\';');
+      BodyOpenClean('onLoad=\'this.focus()\';');
       ShowHTML('<BASE HREF="'.$conRootSIW.'">');
       ShowHTML('<div align="center">');
       ShowHTML('<table width="95%" border="0" cellspacing="3">');
@@ -539,7 +539,7 @@ function Main() {
   default:
     Cabecalho();
     ShowHTML('<BASE HREF="'.$conRootSIW.'">');
-    BodyOpen('onLoad=document.focus();');
+    BodyOpen('onLoad=this.focus();');
     Estrutura_Topo_Limpo();
     Estrutura_Menu();
     Estrutura_Corpo_Abre();

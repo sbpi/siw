@@ -180,8 +180,7 @@ else $RS_Menu = db_getMenuData::getInstanceOf($dbms,$w_menu);
 if (f($RS_Menu,'ultimo_nivel') == 'S') {
   // Se for sub-menu, pega a configuração do pai
   $RS_Menu = db_getMenuData::getInstanceOf($dbms,f($RS_Menu,'sq_menu_pai'));
-}
-
+} 
 Main();
 FechaSessao($dbms);
 exit;
@@ -331,7 +330,7 @@ function Inicial() {
       BodyOpenClean('onLoad=\'document.Form.p_ordena.focus()\';');
     } 
   } else {
-    BodyOpenClean('onLoad=document.focus();');
+    BodyOpenClean('onLoad=this.focus();');
   } 
   Estrutura_Topo_Limpo();
   Estrutura_Menu();
@@ -857,7 +856,7 @@ function Geral() {
   ScriptClose();
   ShowHTML('</HEAD>');
   if ($w_troca > '') BodyOpenClean('onLoad=\'document.Form.'.$w_troca.'.focus()\';');
-  elseif (!(strpos('EV',$O)===false))BodyOpenClean('onLoad=\'document.focus()\';');
+  elseif (!(strpos('EV',$O)===false))BodyOpenClean('onLoad=\'this.focus()\';');
   else  BodyOpenClean('onLoad=\'document.Form.w_titulo.focus()\';'); 
   ShowHTML('<B><FONT COLOR="#000000">'.$w_TP.'</font></B>');
   ShowHTML('<HR>');
@@ -1036,7 +1035,7 @@ function Anexos() {
   } elseif ($O=='A') {
     BodyOpenClean('onLoad=\'document.Form.w_descricao.focus()\';');
   } else {
-    BodyOpenClean('onLoad=\'document.focus()\';');
+    BodyOpenClean('onLoad=\'this.focus()\';');
   } 
   ShowHTML('<B><FONT COLOR="#000000">'.$w_TP.'</font></B>');
   ShowHTML('<HR>');
@@ -1191,7 +1190,7 @@ function Rubrica() {
   } 
   ShowHTML('</HEAD>');
   if ($w_troca > '') BodyOpenClean('onLoad=\'document.Form.'.$w_troca.'.focus()\';');
-  elseif ($O=='L' || $O=='E') BodyOpenClean('onLoad=\'document.focus()\';');
+  elseif ($O=='L' || $O=='E') BodyOpenClean('onLoad=\'this.focus()\';');
   else BodyOpen('onLoad=\'document.Form.w_sq_cc.focus()\';');
   ShowHTML('<B><FONT COLOR="#000000">'.$w_TP.'</font></B>');
   ShowHTML('<HR>');
@@ -1359,7 +1358,7 @@ function Etapas() {
   } 
   ShowHTML('</HEAD>');
   if ($w_troca > '') BodyOpenClean('onLoad=\'document.Form.'.$w_troca.'.focus()\';');
-  elseif ($O=='L' || $O=='E') BodyOpenClean('onLoad=\'document.focus()\';');
+  elseif ($O=='L' || $O=='E') BodyOpenClean('onLoad=\'this.focus()\';');
   else BodyOpen('onLoad=\'document.Form.w_titulo.focus()\';');
   ShowHTML('<B><FONT COLOR="#000000">'.$w_TP.'</font></B>');
   ShowHTML('<HR>');
@@ -1394,29 +1393,65 @@ function Etapas() {
       // Se não foram selecionados registros, exibe mensagem
       ShowHTML('      <tr bgcolor="'.$conTrBgColor.'"><td colspan=9 align="center"><b>Não foram encontrados registros.</b></td></tr>');
     } else {
+      // Etapas do projeto
+      // Recupera todos os registros para a listagem
+      $RS1 = db_getSolicEtapa::getInstanceOf($dbms,$w_chave,null,'LISTA',null);
+      $RS1 = SortArray($RS1,'ordem','asc');
       // Recupera o código da opção de menu  a ser usada para listar as atividades
       $w_p2 = '';
-      foreach ($RS as $row) {
-        if (Nvl(f($row,'P2'),0) > 0) $w_p2 = f($row,'P2');
-        break;
-      } 
-      reset($RS);
-      ShowHTML('<SCRIPT LANGUAGE="JAVASCRIPT">');
-      ShowHTML('  function lista (projeto, etapa) {');
-      ShowHTML('    document.Form.p_projeto.value=projeto;');
-      ShowHTML('    document.Form.p_atividade.value=etapa;');
-      ShowHTML('    document.Form.p_agrega.value=\'GRDMETAPA\';');
-      $RS1 = db_getTramiteList::getInstanceOf($dbms,$w_p2,null,null);
-      $RS1 = SortArray($RS1,'ordem','asc');
-      ShowHTML('    document.Form.p_fase.value=\'\';');
-      $w_fases = '';
+      $w_p3 = '';
       foreach ($RS1 as $row1) {
-        if (f($row1,'sigla')!='CA') $w_fases = $w_fases.','.f($row1,'sq_siw_tramite');
+        if (Nvl(f($row1,'P2'),0) > 0) $w_p2 = f($row1,'P2');
+        if (Nvl(f($row1,'P3'),0) > 0) $w_p3 = f($row1,'P3');
       } 
-      ShowHTML('    document.Form.p_fase.value=\''.substr($w_fases,1,100).'\';');
-      ShowHTML('    document.Form.submit();');
-      ShowHTML('  }');
-      ShowHTML('</SCRIPT>');
+      reset($RS1);
+      // Se não foram selecionados registros, exibe mensagem
+      // Monta função JAVASCRIPT para fazer a chamada para a lista de atividades
+      if ($w_p2 > '') {
+        ShowHTML('<SCRIPT LANGUAGE="JAVASCRIPT">');
+        ShowHTML('  function lista (projeto, etapa) {');
+        ShowHTML('    document.Form.p_projeto.value=projeto;');
+        ShowHTML('    document.Form.p_atividade.value=etapa;');
+        $RS1 = db_getMenuData::getInstanceOf($dbms,$w_p3);
+        ShowHTML('    document.Form.action=\''.f($RS1,'link').'\';');
+        ShowHTML('    document.Form.P2.value=\''.w_p2.'\';');
+        ShowHTML('    document.Form.SG.value=\''.f($RS1,'sigla').'\';');
+        ShowHTML('    document.Form.p_agrega.value=\'GRDMETAPA\';');
+        $RS1 = db_getTramiteList::getInstanceOf($dbms,$w_p2,null,null);
+        $RS1 = SortArray($RS1,'ordem','asc');
+        ShowHTML('    document.Form.p_fase.value=\'\';');
+        $w_fases='';
+        foreach($RS1 as $row1) {
+          if (f($row1,'sigla')!='CA') $w_fases=$w_fases.','.f($row1,'sq_siw_tramite');
+        } 
+        ShowHTML('    document.Form.p_fase.value=\''.substr($w_fases,1,100).'\';');
+        ShowHTML('    document.Form.submit();');
+        ShowHTML('  }');
+        ShowHTML('</SCRIPT>');
+      }
+      // Monta função JAVASCRIPT para fazer a chamada para a lista de contratos
+      if ($w_p3 > '') {
+        ShowHTML('<SCRIPT LANGUAGE="JAVASCRIPT">');
+        ShowHTML('  function listac (projeto, etapa) {');
+        ShowHTML('    document.Form.p_projeto.value=projeto;');
+        ShowHTML('    document.Form.p_atividade.value=etapa;');
+        $RS1 = db_getMenuData::getInstanceOf($dbms,$w_p3);
+        ShowHTML('    document.Form.action=\''.f($RS1,'link').'\';');
+        ShowHTML('    document.Form.P2.value=\''.w_p3.'\';');
+        ShowHTML('    document.Form.SG.value=\''.f($RS1,'sigla').'\';');
+        ShowHTML('    document.Form.p_agrega.value=\''.substr(f($RS1,'sigla'),0,3).'ETAPA\';');
+        $RS1 = db_getTramiteList::getInstanceOf($dbms,$w_p3,null,null);
+        $RS1 = SortArray($RS1,'ordem','asc');
+        ShowHTML('    document.Form.p_fase.value=\'\';');
+        $w_fases='';
+        foreach($RS1 as $row1) {
+          if (f($row1,'sigla')!='CA') $w_fases=$w_fases.','.f($row1,'sq_siw_tramite');
+        } 
+        ShowHTML('    document.Form.p_fase.value=\''.substr($w_fases,1,100).'\';');
+        ShowHTML('    document.Form.submit();');
+        ShowHTML('  }');
+        ShowHTML('</SCRIPT>');
+      }      
       $RS1 = db_getMenuData::getInstanceOf($dbms,$w_p2);
       AbreForm('Form',f($RS1,'link'),'POST','return(Validacao(this));','Atividades',3,$w_p2,1,null,$w_TP,f($RS1,'sigla'),$w_pagina.$par,'L');
       ShowHTML(MontaFiltro('POST'));
@@ -1616,7 +1651,7 @@ function AtualizaEtapa() {
   ShowHTML('</HEAD>');
   if ($w_troca > '') BodyOpenClean('onLoad=\'document.Form.'.$w_troca.'.focus()\';');
   elseif ($O=='I' || $O=='A') BodyOpenClean('onLoad=\'document.Form.w_perc_conclusao.focus()\';');
-  else BodyOpenClean('onLoad=\'document.focus()\';');
+  else BodyOpenClean('onLoad=\'this.focus()\';');
   ShowHTML('<B><FONT COLOR="#000000">'.substr($w_TP,0,(strpos($w_TP,'-')-1)).'- Etapas'.'</font></B>');
   ShowHTML('<HR>');
   ShowHTML('<div align=center><center>');
@@ -1635,8 +1670,9 @@ function AtualizaEtapa() {
     ShowHTML('          <td rowspan=2><b>Setor</td>');
     ShowHTML('          <td colspan=2><b>Execução</td>');
     ShowHTML('          <td rowspan=2><b>Conc.</td>');
-    ShowHTML('          <td rowspan=2><b>Ativ.</td>');
-    ShowHTML('          <td rowspan=2><b>Contr.</td>');    
+    ShowHTML('          <td rowspan=2><b>Ativ.</td>');   
+    $RS = db_getSolicData::getInstanceOf($dbms,$w_chave,'PJGERAL');
+    if (f($RS,'vincula_contrato')==S)  ShowHTML('          <td rowspan=2><b>Contr.</td>');    
     ShowHTML('          <td rowspan=2><b>Operações</td>');
     ShowHTML('        </tr>');
     ShowHTML('        <tr bgcolor="'.$conTrBgColor.'" align="center">');
@@ -1869,7 +1905,7 @@ function Recursos() {
   ShowHTML('</HEAD>');
   if ($w_troca > '') BodyOpenClean('onLoad=\'document.Form.'.$w_troca.'.focus()\';');
   elseif ($O=='I' || $O=='A') BodyOpenClean('onLoad=\'document.Form.w_nome.focus()\';');
-  else BodyOpenClean('onLoad=\'document.focus()\';'); 
+  else BodyOpenClean('onLoad=\'this.focus()\';'); 
   ShowHTML('<B><FONT COLOR="#000000">'.$w_TP.'</font></B>');
   ShowHTML('<HR>'); 
   ShowHTML('<div align=center><center>');
@@ -1968,7 +2004,7 @@ function EtapaRecursos() {
   ScriptClose();
   ShowHTML('</HEAD>');
   $RS = db_getSolicEtapa::getInstanceOf($dbms,$w_chave,$w_chave_aux,'REGISTRO',null);
-  BodyOpenClean('onLoad=document.focus();');
+  BodyOpenClean('onLoad=this.focus();');
   ShowHTML('<B><FONT COLOR="#000000">'.$w_TP.'</font></B>');
   ShowHTML('<HR>');
   ShowHTML('<div align=center><center>');
@@ -2079,7 +2115,7 @@ function Interessados() {
   ShowHTML('</HEAD>');
   if ($w_troca > '') BodyOpenClean('onLoad=\'document.Form.'.$w_troca.'.focus()\';');
   elseif ($O=='I')   BodyOpenClean('onLoad=\'document.Form.w_chave_aux.focus()\';');
-  else                BodyOpenClean('onLoad=\'document.focus()\';');
+  else                BodyOpenClean('onLoad=\'this.focus()\';');
   ShowHTML('<B><FONT COLOR="#000000">'.$w_TP.'</font></B>');
   ShowHTML('<HR>');
   ShowHTML('<div align=center><center>');
@@ -2205,7 +2241,7 @@ function Areas() {
   } 
   ShowHTML('</HEAD>');
   if ($w_troca > '') BodyOpenClean('onLoad=\'document.Form.'.$w_troca.'.focus()\';');
-  else               BodyOpenClean('onLoad=\'document.focus()\';'); 
+  else               BodyOpenClean('onLoad=\'this.focus()\';'); 
   ShowHTML('<B><FONT COLOR="#000000">'.$w_TP.'</font></B>');
   ShowHTML('<HR>');
   ShowHTML('<div align=center><center>');
@@ -2674,7 +2710,7 @@ function EtapaLinha($l_chave,$l_chave_aux,$l_titulo,$l_resp,$l_setor,$l_inicio,$
   $l_recurso = '';
   $RS_Query = db_getSolicEtpRec::getInstanceOf($dbms,$l_chave_aux,null,'EXISTE');
   if (count($RS_Query) > 0) {
-    $l_recurso = $l_recurso.chr(13).'      <tr bgcolor=w_cor valign="top"><td colspan=7>Recurso(s): ';
+    $l_recurso = $l_recurso.chr(13).'      <tr bgcolor=w_cor valign="top"><td colspan=8>Recurso(s): ';
     foreach($RS_Query as $row) {
       $l_recurso = $l_recurso.chr(13).f($row,'nome').'; ';
     } 
@@ -2697,7 +2733,7 @@ function EtapaLinha($l_chave,$l_chave_aux,$l_titulo,$l_resp,$l_setor,$l_inicio,$
   if ($l_ativ > 0) $l_html = $l_html.chr(13).'        <td align="center" title="Número de atividades ligadas a esta estapa. Clique sobre o número para exibir APENAS as atividades que você tem acesso."><a class="HL" href="javascript:lista(\''.$l_chave.'\',\''.$l_chave_aux.'\');" onMouseOver="window.status=\'Exibe APENAS as atividades que você tem acesso.\'; return true;" onMouseOut="window.status=\'\'; return true;">'.$l_ativ.'</a></td>';
   else             $l_html = $l_html.chr(13).'        <td align="center">'.$l_ativ.'</td>';
   if($l_vincula_contrato=='S') {
-    if ($l_contr > 0) $l_html = $l_html.chr(13).'        <td align="center" title="Número de contratos ligados a esta etapa. Clique sobre o número para exibir APENAS os contratos que você tem acesso."><a class="HL" href="javascript:listac(\''.$l_chave.'\',\''.$l_chave_aux.'\');" onMouseOver="window.status=\'Exibe APENAS as atividades que você tem acesso.\'; return true;" onMouseOut="window.status=\'\'; return true;">'.$l_contr.'</a></td>';
+    if ($l_contr > 0) $l_html = $l_html.chr(13).'        <td align="center" title="Número de contratos ligados a esta etapa. Clique sobre o número para exibir APENAS os contratos que você tem acesso."><a class="HL" href="javascript:listac(\''.$l_chave.'\',\''.$l_chave_aux.'\');" onMouseOver="window.status=\'Exibe APENAS os contratos que você tem acesso.\'; return true;" onMouseOut="window.status=\'\'; return true;">'.$l_contr.'</a></td>';
     else              $l_html = $l_html.chr(13).'        <td align="center">'.$l_contr.'</td>';    
   }
   if ($l_oper == 'S') {
@@ -2995,7 +3031,7 @@ function Grava() {
   $w_nome       ='';
   cabecalho();
   ShowHTML('</HEAD>');
-  BodyOpenClean('onLoad=document.focus();');
+  BodyOpenClean('onLoad=this.focus();');
   if($SG=='PJGERAL' || $SG=='PJBGERAL') {
     // Verifica se a Assinatura Eletrônica é válida
     if (verificaAssinaturaEletronica($_SESSION['USERNAME'],strtoupper($_REQUEST['w_assinatura'])) || $w_assinatura=='') {
@@ -3400,7 +3436,7 @@ function Main() {
     case 'GRAVA':           Grava();             break;
     default:
       cabecalho();
-      BodyOpen('onLoad=document.focus();');
+      BodyOpen('onLoad=this.focus();');
       Estrutura_Topo_Limpo();
       Estrutura_Menu();
       Estrutura_Corpo_Abre();

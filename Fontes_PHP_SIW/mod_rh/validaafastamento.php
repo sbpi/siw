@@ -24,7 +24,7 @@ function ValidaAfastamento($l_cliente,$l_chave,$l_sq_contrato_colaborador,$l_dt_
   $l_erro = '';
 
   // Verifica se há afastamento cadastrado no periodo informado
-  $l_rs_afast = db_getAfastamento::getInstanceOf($dbms,$l_cliente,null,null,$l_sq_contrato_colaborador,$l_dt_ini,$l_dt_fim,null,null,$l_chave,null);
+  $l_rs_afast = db_getAfastamento::getInstanceOf($dbms,$l_cliente,null,null,null,$l_sq_contrato_colaborador,$l_dt_ini,$l_dt_fim,null,null,$l_chave,null);
   if ((count($l_rs_afast)>0)) {
     foreach ($l_rs_afast as $row) {
       $l_erro = $l_erro.'<li>No período informado, existe <b>'.f($row,'nm_tipo_afastamento').' ('.FormataDataEdicao(f($row,'inicio_data')).'-'.f($row,'inicio_periodo').' a '.FormataDataEdicao(f($row,'fim_data')).'-'.f($row,'fim_periodo').')</b>.</li>';

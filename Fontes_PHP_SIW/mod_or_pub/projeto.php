@@ -335,7 +335,7 @@ function Inicial() {
       BodyOpen('onLoad=\'document.Form.p_ordena.focus()\';');
     }  
   } else {
-    BodyOpen('onLoad=document.focus();');
+    BodyOpen('onLoad=this.focus();');
   } 
   ShowHTML('<B><FONT COLOR="#000000">'.$w_TP.'</FONT></B>');
   ShowHTML('<HR>');
@@ -1047,7 +1047,7 @@ function InfoAdic(){
   if ($w_troca>'') {
     BodyOpen('onLoad=\'document.Form.\'.$w_troca.\'.focus()\';');
   } elseif (!(strpos('EV',$O)===false)) {
-    BodyOpen('onLoad=\'document.focus()\';');
+    BodyOpen('onLoad=\'this.focus()\';');
   } else {
     BodyOpen('onLoad=\'document.Form.w_descricao.focus()\';');
   } 
@@ -1258,7 +1258,7 @@ function Financiamento() {
   } elseif ($O=='I') {
     BodyOpen('onLoad=\'document.Form.w_sq_acao_ppa.focus()\';');
   } else {
-    BodyOpen('onLoad=\'document.focus()\';');
+    BodyOpen('onLoad=\'this.focus()\';');
   } 
   ShowHTML('<B><FONT COLOR="#000000">'.$w_TP.'</FONT></B>');
   ShowHTML('<HR>');
@@ -1407,7 +1407,7 @@ function Responsaveis() {
   } 
   ShowHTML('</HEAD>');
   ShowHTML('<BASE HREF="'.$conRootSIW.'">');
-  BodyOpen('onLoad=\'document.focus()\';');
+  BodyOpen('onLoad=\'this.focus()\';');
   ShowHTML('<B><FONT COLOR="#000000">'.$w_TP.'</FONT></B>');
   ShowHTML('<HR>');
   ShowHTML('<div align=center><center>');
@@ -1603,7 +1603,7 @@ function Etapas() {
   ShowHTML('<BASE HREF="'.$conRootSIW.'">');
   if ($w_troca>'')     BodyOpen('onLoad=\'document.Form.'.$w_troca.'.focus()\';');
   elseif ($O=='I')     BodyOpen('onLoad=\'document.Form.w_titulo.focus()\';');
-  else                 BodyOpen('onLoad=\'document.focus()\';');  
+  else                 BodyOpen('onLoad=\'this.focus()\';');  
   ShowHTML('<B><FONT COLOR="#000000">'.$w_TP.'</FONT></B>');
   ShowHTML('<HR>');
   ShowHTML('<div align=center><center>');
@@ -2202,7 +2202,7 @@ function Recursos() {
   } elseif ($O=='I' || $O=='A') {
     BodyOpen('onLoad=\'document.Form.w_nome.focus()\';');
   } else {
-    BodyOpen('onLoad=\'document.focus()\';');
+    BodyOpen('onLoad=\'this.focus()\';');
   } 
   ShowHTML('<B><FONT COLOR="#000000">'.$w_TP.'</FONT></B>');
   ShowHTML('<HR>');
@@ -2317,7 +2317,7 @@ function EtapaRecursos() {
   ScriptClose();
   ShowHTML('</HEAD>');
   ShowHTML('<BASE HREF="'.$conRootSIW.'">');
-  BodyOpen('onLoad=document.focus();');
+  BodyOpen('onLoad=this.focus();');
   ShowHTML('<B><FONT COLOR="#000000">'.$w_TP.'</FONT></B>');
   ShowHTML('<HR>');
   ShowHTML('<div align=center><center>');
@@ -2431,7 +2431,7 @@ function Interessados() {
   } elseif ($O=='I') {
     BodyOpen('onLoad=\'document.Form.w_chave_aux.focus()\';');
   } else {
-    BodyOpen('onLoad=\'document.focus()\';');
+    BodyOpen('onLoad=\'this.focus()\';');
   } 
   ShowHTML('<B><FONT COLOR="#000000">'.$w_TP.'</FONT></B>');
   ShowHTML('<HR>');
@@ -2587,7 +2587,7 @@ function Areas() {
   if ($w_troca>'') {
     BodyOpen('onLoad=\'document.Form.'.$w_troca.'.focus()\';');
   } else {
-    BodyOpen('onLoad=\'document.focus()\';');
+    BodyOpen('onLoad=\'this.focus()\';');
   } 
   ShowHTML('<B><FONT COLOR="#000000">'.$w_TP.'</FONT></B>');
   ShowHTML('<HR>');
@@ -2691,7 +2691,7 @@ function Visual() {
   ShowHTML('</HEAD>');
   ShowHTML('<BASE HREF="'.$conRootSIW.'">');
   if ($w_tipo!='WORD') {
-    BodyOpenClean('onLoad=\'document.focus()\'; ');
+    BodyOpenClean('onLoad=\'this.focus()\'; ');
   } 
   ShowHTML('<TABLE WIDTH="100%" BORDER=0><TR><TD ROWSPAN=2><IMG ALIGN="LEFT" src="'.LinkArquivo(null,$w_cliente,$w_logo,null,null,null,'EMBED').'"><TD ALIGN="RIGHT"><B><FONT SIZE=4 COLOR="#000000">');
   if ($P1==1) {
@@ -3872,7 +3872,7 @@ function Main() {
     default:
       Cabecalho();
       ShowHTML('<BASE HREF="'.$conRootSIW.'">');
-      BodyOpen('onLoad=document.focus();');
+      BodyOpen('onLoad=this.focus();');
       ShowHTML('<B><FONT COLOR="#000000">'.$w_TP.'</FONT></B>');
       ShowHTML('<HR>');
       ShowHTML('<div align=center><center><br><br><br><br><br><br><br><br><br><br><img src="images/icone/underc.gif" align="center"> <b>Esta opção está sendo desenvolvida.</b><br><br><br><br><br><br><br><br><br><br></center></div>');

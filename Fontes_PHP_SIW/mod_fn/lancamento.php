@@ -339,7 +339,7 @@ function Inicial() {
     ShowHTML('          <td><b>'.LinkOrdena('Pessoa','nm_pessoa_resumido').'</td>');
     if (!(strpos($SG,'CONT')===false))  ShowHTML('          <td><b>'.LinkOrdena('Contrato','cd_acordo').'</td>');
     else                                ShowHTML('          <td><b>'.'Classif./Projeto'.'</td>');
-    ShowHTML('          <td><b>'.LinkOrdena('Vencimento','vencimento').'</td>');
+    ShowHTML('          <td><b>'.LinkOrdena('Data','vencimento').'</td>');
     ShowHTML('          <td><b>'.LinkOrdena('Valor','valor').'</td>');
     ShowHTML('          <td><b>'.LinkOrdena('Fase','nm_tramite').'</td>');
     if ($_SESSION['INTERNO']=='S') ShowHTML('          <td><b>Operações</td>');
@@ -690,23 +690,25 @@ function Geral() {
     Validate('w_valor','Valor total do documento','VALOR','1',4,18,'','0123456789.,');
     Validate('w_chave_pai','Projeto','SELECT','',1,18,'','0123456789');
     Validate('w_sqcc','Classificação','SELECT','',1,18,'','0123456789');
-    ShowHTML('  if (theForm.w_chave_pai.selectedIndex > 0 && theForm.w_sqcc.selectedIndex > 0) {');
-    ShowHTML('     alert(\'Informe um projeto ou uma classificação. Você não pode escolher ambos!\');');
-    ShowHTML('     theForm.w_chave_pai.focus();');
-    ShowHTML('     return false;');
-    ShowHTML('  }');
-    ShowHTML('  if (theForm.w_chave_pai.selectedIndex == 0 && theForm.w_sqcc.selectedIndex == 0) {');
-    ShowHTML('     alert(\'Informe um projeto ou uma classificação!\');');
-    ShowHTML('     theForm.w_chave_pai.focus();');
-    ShowHTML('     return false;');
-    ShowHTML('  }');
+    if (!(($w_chave_pai >'') && (Nvl($w_tipo_rubrica,0)==1))) {
+      ShowHTML('  if (theForm.w_chave_pai.selectedIndex > 0 && theForm.w_sqcc.selectedIndex > 0) {');
+      ShowHTML('     alert(\'Informe um projeto ou uma classificação. Você não pode escolher ambos!\');');
+      ShowHTML('     theForm.w_chave_pai.focus();');
+      ShowHTML('     return false;');
+      ShowHTML('  }');
+      ShowHTML('  if (theForm.w_chave_pai.selectedIndex == 0 && theForm.w_sqcc.selectedIndex == 0) {');
+      ShowHTML('     alert(\'Informe um projeto ou uma classificação!\');');
+      ShowHTML('     theForm.w_chave_pai.focus();');
+      ShowHTML('     return false;');
+      ShowHTML('  }');
+    }
   } 
   ValidateClose();
   ScriptClose();
   ShowHTML('</HEAD>');
   ShowHTML('<BASE HREF="'.$conRootSIW.'">');
   if ($w_troca>'')                    BodyOpen('onLoad=\'document.Form.'.$w_troca.'.focus()\';');
-  elseif (!(strpos('EV',$O)===false)) BodyOpen('onLoad=\'document.focus()\';');
+  elseif (!(strpos('EV',$O)===false)) BodyOpen('onLoad=\'this.focus()\';');
   else                                BodyOpen('onLoad=\'document.Form.w_sq_tipo_lancamento.focus()\';');
   Estrutura_Topo_Limpo();
   Estrutura_Menu();
@@ -741,6 +743,7 @@ function Geral() {
     ShowHTML('<INPUT type="hidden" name="w_sq_acordo_parcela" value="'.$w_sq_acordo_parcela.'">');
     ShowHTML('<INPUT type="hidden" name="w_aviso" value="S">');
     ShowHTML('<INPUT type="hidden" name="w_dias" value="3">');
+    ShowHTML('<INPUT type="hidden" name="w_codigo_interno" value="'.$w_codigo_interno.'">');
     if (!(strpos('CONT',substr($SG,3))===false)) {
       ShowHTML('<INPUT type="hidden" name="w_descricao" value="'.$w_descricao.'">');
       ShowHTML('<INPUT type="hidden" name="w_tipo_pessoa" value="'.$w_tipo_pessoa.'">');
@@ -769,7 +772,7 @@ function Geral() {
     if (substr($SG,0,3)=='FNR')     SelecaoFormaPagamento('<u>F</u>orma de recebimento:','F','Selecione na lista a forma de recebimento para este lançamento.',$w_sq_forma_pagamento,$SG,'w_sq_forma_pagamento',null);
     elseif (substr($SG,0,3)=='FND') SelecaoFormaPagamento('<u>F</u>orma de pagamento:','F','Selecione na lista a forma de pagamento para este lançamento.',$w_sq_forma_pagamento,$SG,'w_sq_forma_pagamento',null);
     ShowHTML('          <td><b><u>V</u>alor:</b><br><input '.$w_Disabled.' accesskey="V" type="text" name="w_valor" class="sti" SIZE="18" MAXLENGTH="18" VALUE="'.$w_valor.'" onKeyDown="FormataValor(this,18,2,event);" title="Informe o valor total do documento."></td>');
-    ShowHTML('              <td><b>Ven<u>c</u>imento:</b><br><input '.$w_Disabled.' accesskey="C" type="text" name="w_vencimento" class="sti" SIZE="10" MAXLENGTH="10" VALUE="'.Nvl($w_vencimento,FormataDataEdicao(time())).'" onKeyDown="FormataData(this,event);"></td>');
+    ShowHTML('              <td><b><u>D</u>ata prevista:</b><br><input '.$w_Disabled.' accesskey="C" type="text" name="w_vencimento" class="sti" SIZE="10" MAXLENGTH="10" VALUE="'.Nvl($w_vencimento,FormataDataEdicao(time())).'" onKeyDown="FormataData(this,event);"></td>');
     ShowHTML('          </table>');
     if ((strpos('CONT',substr($SG,3))===false)) {
       ShowHTML('      <tr><td align="center" height="2" bgcolor="#000000"></td></tr>');
@@ -781,29 +784,42 @@ function Geral() {
       // Recupera dados da opção Projetos
       ShowHTML('      <tr>');
       ShowHTML('    <table width="100%" border="0">');
-      $RS = db_getLinkData::getInstanceOf($dbms,$w_cliente,'PJCAD');
-      SelecaoProjeto('Pr<u>o</u>jeto:','P','Selecione o projeto ao qual o lançamento está vinculado.',$w_chave_pai,$w_usuario,f($RS,'sq_menu'),'w_chave_pai','PJLISTCAD','onChange="document.Form.action=\''.$w_dir.$w_pagina.$par.'\'; document.Form.O.value=\''.$O.'\'; document.Form.w_troca.value=\'w_chave_pai\'; document.Form.submit();"');
-      if ($w_chave_pai >'') {
-        $RS = db_getSolicRubrica::getInstanceOf($dbms,$w_chave_pai,null,null,null,null,null);
-        if (count($RS)>0) {
-          if (substr($SG,0,3)=='FNR') {
-            $RS2 = db_getLancamentoDoc::getInstanceOf($dbms,nvl($w_chave,0),null,'LISTA');
-            if(count($RS2)>0) {
-              ShowHTML('<INPUT type="hidden" name="w_tipo_rubrica" value="'.$w_tipo_rubrica.'">');
-              ShowHTML('      <td><b>Tipo de movimentação: </b><br>'.$w_nm_tipo_rubrica.'</td>');
+      if (($w_chave_pai >'') && (Nvl($w_tipo_rubrica,0)==1)) {
+        $RS = db_getSolicData::getInstanceOf($dbms,$w_chave_pai,'PJGERAL');
+        ShowHTML('<INPUT type="hidden" name="w_chave_pai" value="'.$w_chave_pai.'">');
+        ShowHTML('  <tr><td><b>Projeto: </b><br>'.f($RS,'titulo').'</td>');
+        ShowHTML('<INPUT type="hidden" name="w_tipo_rubrica" value="'.$w_tipo_rubrica.'">');
+        ShowHTML('      <td><b>Tipo de movimentação: </b><br>'.$w_nm_tipo_rubrica.'</td>');
+      } else {
+        $RS = db_getLinkData::getInstanceOf($dbms,$w_cliente,'PJCAD');
+        SelecaoProjeto('Pr<u>o</u>jeto:','P','Selecione o projeto ao qual o lançamento está vinculado.',$w_chave_pai,$w_usuario,f($RS,'sq_menu'),'w_chave_pai','PJLISTCAD','onChange="document.Form.action=\''.$w_dir.$w_pagina.$par.'\'; document.Form.O.value=\''.$O.'\'; document.Form.w_troca.value=\'w_chave_pai\'; document.Form.submit();"');
+        if ($w_chave_pai >'') {
+          $RS = db_getSolicRubrica::getInstanceOf($dbms,$w_chave_pai,null,null,null,null,null);
+          if (count($RS)>0) {
+            if (substr($SG,0,3)=='FNR') {
+              $RS2 = db_getLancamentoDoc::getInstanceOf($dbms,nvl($w_chave,0),null,'LISTA');
+              if(count($RS2)>0) {
+                ShowHTML('<INPUT type="hidden" name="w_tipo_rubrica" value="'.$w_tipo_rubrica.'">');
+                ShowHTML('      <td><b>Tipo de movimentação: </b><br>'.$w_nm_tipo_rubrica.'</td>');
+              } else {
+                if (Nvl($w_tipo_rubrica,0)==1) {
+                  ShowHTML('<INPUT type="hidden" name="w_tipo_rubrica" value="'.$w_tipo_rubrica.'">');
+                  ShowHTML('      <td><b>Tipo de movimentação: </b><br>'.$w_nm_tipo_rubrica.'</td>');
+                } else {   
+                  SelecaoTipoRubrica('<u>T</u>ipo de movimentação:','M','Selecione na lista o tipo de movimentação.',$w_tipo_rubrica,$w_chave_pai,'w_tipo_rubrica',$SG,null);
+                }
+              }
             } else {
-              SelecaoTipoRubrica('<u>T</u>ipo de movimentação:','M','Selecione na lista o tipo de movimentação.',$w_tipo_rubrica,$w_chave_pai,'w_tipo_rubrica',$SG,null);
+              ShowHTML('<INPUT type="hidden" name="w_tipo_rubrica" value="5">');
             }
-          } else {
-            ShowHTML('<INPUT type="hidden" name="w_tipo_rubrica" value="5">');
           }
         }
-      }        
-      if (f($RS_Menu,'solicita_cc')=='S') {
-        ShowHTML('          <tr rowspan=2>');
-        SelecaoCC('C<u>l</u>assificação:','L','Selecione um dos itens relacionados.',$w_sqcc,null,'w_sqcc','SIWSOLIC');
-        ShowHTML('          </tr>');
-      } 
+        if (f($RS_Menu,'solicita_cc')=='S') {
+          ShowHTML('          <tr rowspan=2>');
+          SelecaoCC('C<u>l</u>assificação:','L','Selecione um dos itens relacionados.',$w_sqcc,null,'w_sqcc','SIWSOLIC');
+          ShowHTML('          </tr>');
+        }         
+      }
     } 
     ShowHTML('      <tr><td align="center" colspan="3" height="1" bgcolor="#000000"></TD></TR>');
     // Verifica se poderá ser feito o envio da solicitação, a partir do resultado da validação
@@ -1068,7 +1084,7 @@ function OutraParte() {
     // Se o beneficiário ainda não foi selecionado
     if (!(strpos($_REQUEST['botao'],'Procurar')===false)) {
       // Se está sendo feita busca por nome
-      BodyOpen('onLoad=\'document.focus()\';');
+      BodyOpen('onLoad=\'this.focus()\';');
     } else {
       if ($w_tipo_pessoa==1) BodyOpen('onLoad=\'document.Form.w_cpf.focus()\';');
       else                   BodyOpen('onLoad=\'document.Form.w_cnpj.focus()\';');
@@ -1677,7 +1693,7 @@ function RubricaDoc() {
   } elseif ($O=='I') {
     BodyOpen('onLoad=\'document.Form.w_sq_tipo_documento.focus()\';');
   } else {
-    BodyOpen('onLoad=\'document.focus()\';');
+    BodyOpen('onLoad=\'this.focus()\';');
   } 
   Estrutura_Texto_Abre();
   ShowHTML('<table border="0" cellpadding="0" cellspacing="0" width="100%">');
@@ -1854,7 +1870,7 @@ function Itens() {
   $w_chave              = $_REQUEST['w_chave'];
   $w_sq_lancamento_doc  = $_REQUEST['w_sq_lancamento_doc'];
   $w_sq_documento_item  = $_REQUEST['w_sq_documento_item'];
-  // Recupera os dados do lançamento
+  // Recupera os dados do lançamento/
   $RS1 = db_getSolicData::getInstanceOf($dbms,$w_chave,f($RS_Menu,'sigla'));
   if ($w_troca>'') {
     // Se for recarga da página
@@ -1886,7 +1902,9 @@ function Itens() {
     FormataValor();
     ValidateOpen('Validacao');
     if (!(strpos('IA',$O)===false)) {
-      if(nvl(f($RS1,'qtd_rubrica'),0)>0) Validate('w_sq_projeto_rubrica','Rubrica do projeto', '1', '1', '1', '18', '', '0123456789');
+      if (!(strpos(f($RS_Menu,'sigla'),'EVENT')===false)) {  
+        if(nvl(f($RS1,'qtd_rubrica'),0)>0) Validate('w_sq_projeto_rubrica','Rubrica do projeto', '1', '1', '1', '18', '', '0123456789');
+      }
       Validate('w_descricao','Descrição', '1', '1', '1', '500', '1', '1');
       Validate('w_ordem','Ordem','1','1','1','18','','1');
       Validate('w_quantidade','Quantidade','1','1','1','18','','1');
@@ -1902,10 +1920,14 @@ function Itens() {
   if ($w_troca>'') {
     BodyOpen('onLoad=\'document.Form.'.$w_troca.'.focus()\';');
   } elseif ($O=='I') {
-    if(nvl(f($RS1,'qtd_rubrica'),0)>0)  BodyOpen('onLoad=\'document.Form.w_sq_projeto_rubrica.focus()\';');
-    else                                BodyOpen('onLoad=\'document.Form.w_descricao.focus()\';');
+    if (!(strpos(f($RS_Menu,'sigla'),'EVENT')===false)) {  
+      if(nvl(f($RS1,'qtd_rubrica'),0)>0)  BodyOpen('onLoad=\'document.Form.w_sq_projeto_rubrica.focus()\';');
+      else                                BodyOpen('onLoad=\'document.Form.w_descricao.focus()\';');
+    } else {
+      BodyOpen('onLoad=\'document.Form.w_descricao.focus()\';');
+    }
   } else {
-    BodyOpen('onLoad=\'document.focus()\';');
+    BodyOpen('onLoad=\'this.focus()\';');
   } 
   Estrutura_Texto_Abre();
   ShowHTML('<table border="0" cellpadding="0" cellspacing="0" width="100%">');
@@ -1941,7 +1963,9 @@ function Itens() {
     ShowHTML('    <TABLE WIDTH="100%" bgcolor="'.$conTableBgColor.'" BORDER="'.$conTableBorder.'" CELLSPACING="'.$conTableCellSpacing.'" CELLPADDING="'.$conTableCellPadding.'" BorderColorDark="'.$conTableBorderColorDark.'" BorderColorLight="'.$conTableBorderColorLight.'">');
     ShowHTML('        <tr bgcolor="'.$conTrBgColor.'" align="center">');
     ShowHTML('          <td><b>Ordem</td>');
-    ShowHTML('          <td><b>Rubrica</td>');
+    if (!(strpos(f($RS_Menu,'sigla'),'EVENT')===false)) {    
+      if(nvl(f($RS1,'qtd_rubrica'),0)>0) ShowHTML('          <td><b>Rubrica</td>');
+    }
     ShowHTML('          <td><b>Descrição</td>');
     ShowHTML('          <td><b>Quantidade</td>');
     ShowHTML('          <td><b>Valor unitario</td>');
@@ -1958,7 +1982,9 @@ function Itens() {
         $w_cor = ($w_cor==$conTrBgColor || $w_cor=='') ? $w_cor=$conTrAlternateBgColor : $w_cor=$conTrBgColor;
         ShowHTML('      <tr bgcolor="'.$w_cor.'" valign="top">');
         ShowHTML('        <td align="center">'.f($row,'ordem').'</td>');
-        ShowHTML('        <td align="left">'.nvl(f($row,'codigo_rubrica'),'---').'</td>');
+        if (!(strpos(f($RS_Menu,'sigla'),'EVENT')===false)) {  
+           if(nvl(f($RS1,'qtd_rubrica'),0)>0) ShowHTML('        <td align="left">'.nvl(f($row,'codigo_rubrica'),'---').'</td>');
+        }
         ShowHTML('        <td align="left">'.f($row,'descricao').'</td>');
         ShowHTML('        <td align="right">'.number_format(f($row,'quantidade'),2,',','.').'</td>');
         ShowHTML('        <td align="right">'.number_format(f($row,'valor_unitario'),2,',','.').'&nbsp;&nbsp;</td>');
@@ -1994,7 +2020,9 @@ function Itens() {
     ShowHTML('<tr bgcolor="'.$conTrBgColor.'"><td>');
     ShowHTML('    <table width="97%" border="0">');
     ShowHTML('      <tr><td><table border=0 width="100%" cellspacing=0><tr valign="top">');
-    if(nvl(f($RS1,'qtd_rubrica'),0)>0) SelecaoRubrica('<u>R</u>ubrica:','R', 'Selecione a rubrica do projeto.', $w_sq_projeto_rubrica,f($RS1,'sq_projeto'),null,'w_sq_projeto_rubrica','RUBRICAS',null);
+    if (!(strpos(f($RS_Menu,'sigla'),'EVENT')===false)) {
+      if(nvl(f($RS1,'qtd_rubrica'),0)>0) SelecaoRubrica('<u>R</u>ubrica:','R', 'Selecione a rubrica do projeto.', $w_sq_projeto_rubrica,f($RS1,'sq_projeto'),null,'w_sq_projeto_rubrica','RUBRICAS',null);
+    }
     ShowHTML('      <tr><td colspan=3><b><u>D</u>escrição:</b><br><textarea '.$w_Disabled.' accesskey="D" name="w_descricao" class="STI" ROWS=5 cols=75 title="Escreva um texto de descrição para este item do documento.">'.$w_descricao.'</TEXTAREA></td>');
     ShowHTML('      <tr><td><b><u>O</u>rdem:<br><input accesskey="Q" type="text" name="w_ordem" class="STI" SIZE="4" MAXLENGTH="18" VALUE="'.$w_ordem.'" '.$w_Disabled.'"></td>');
     ShowHTML('          <td><b><u>Q</u>uantidade:<br><input accesskey="Q" type="text" name="w_quantidade" class="STI" SIZE="18" MAXLENGTH="18" VALUE="'.$w_quantidade.'" '.$w_Disabled.' onKeyDown="FormataValor(this,18,2,event);"></td>');
@@ -2199,7 +2227,7 @@ function BuscaParcela() {
   } elseif ($O=='P') {
       BodyOpen('onLoad=\'document.Form.p_sq_acordo.focus()\';');
   } else {
-    BodyOpen('onLoad=\'document.focus()\';');
+    BodyOpen('onLoad=\'this.focus()\';');
   } 
   ShowHTML('<B><FONT COLOR="#000000">'.$w_TP.'</FONT></B>');
   ShowHTML('<HR>');
@@ -3082,7 +3110,7 @@ function Grava() {
   Cabecalho();
   ShowHTML('</HEAD>');
   ShowHTML('<BASE HREF="'.$conRootSIW.'">');
-  BodyOpen('onLoad=document.focus();');
+  BodyOpen('onLoad=this.focus();');
   if (!(strpos($SG,'EVENT')===false)) {
     // Verifica se a Assinatura Eletrônica é válida
     if (verificaAssinaturaEletronica($_SESSION['USERNAME'],strtoupper($_REQUEST['w_assinatura'])) || $w_assinatura=='') {
@@ -3381,7 +3409,7 @@ function Main() {
     default:
       cabecalho();
       ShowHTML('<BASE HREF="'.$conRootSIW.'">');      
-      BodyOpen('onLoad=document.focus();');
+      BodyOpen('onLoad=this.focus();');
       Estrutura_Topo_Limpo();
       Estrutura_Menu();
       Estrutura_Corpo_Abre();

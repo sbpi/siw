@@ -463,7 +463,7 @@ function Vinculacao() {
   Cabecalho();
   ShowHTML('<HEAD>');
   Estrutura_CSS($w_cliente);
-  ShowHTML('<TITLE>'.$conSgSistema.' - Configuração das configurações</TITLE>');
+  ShowHTML('<TITLE>'.$conSgSistema.' - Configuração de vinculações</TITLE>');
   ScriptOpen('JavaScript');
   ValidateOpen('Validacao');
   if (!(strpos('IAE',$O)===false)) {
@@ -544,14 +544,14 @@ function Vinculacao() {
     ShowHTML('  </table>');
   } else {
     if($O=='A')$w_Disabled='DISABLED';
-    $RS = DB_GetMenuRelac::getInstanceOf($dbms, $w_sq_menu, null);
+    $RS = db_getMenuRelac::getInstanceOf($dbms, $w_sq_menu, null, null, null, null);
     $i=0;
     foreach($RS as $row) {
       if ($i==0) $w_sq_tramite = f($row,'sq_siw_tramite');
       else       $w_sq_tramite .= ','.f($row,'sq_siw_tramite');
       $i=1;
     }
-    ShowHTML('      <tr><td align="justify" colspan="2"><font size=2>Informe o serviço e os trâmites nas quais esse serviço deve ter vinculação.</font></td></tr>');
+    ShowHTML('      <tr><td align="justify" colspan="2"><font size=2>Informe os serviços e os trâmites aos quais esse serviço poderá ser vinculado.</font></td></tr>');
     ShowHTML('      <tr><td align="center" colspan="2" height="2" bgcolor="#000000">');
     ShowHTML('      <tr><td colspan="2"><font size=2><b>');
     AbreForm('Form',$w_pagina.'Grava', 'POST', 'return(Validacao(this));', null,$P1,$P2,$P3,$P4,$TP,$SG,$R,$O);
@@ -599,7 +599,7 @@ function Grava() {
 
   Cabecalho();
   ShowHTML('</HEAD>');
-  BodyOpen('onLoad=document.focus();');
+  BodyOpen('onLoad=this.focus();');
 
   switch ($SG) {
   case 'SGSENHA':
@@ -687,7 +687,7 @@ function Main() {
   case 'VINCULACAO':    Vinculacao(); break;
   default:
     Cabecalho();
-    BodyOpen('onLoad=document.focus();');
+    BodyOpen('onLoad=this.focus();');
     Estrutura_Topo_Limpo();
     Estrutura_Menu();
     Estrutura_Corpo_Abre();

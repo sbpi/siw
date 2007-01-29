@@ -41,7 +41,7 @@ if ($p_cliente_session==6601) {
 
 </head>
 <BASE HREF="<? echo $w_url; ?>/">
-<body onLoad="document.focus()">
+<body onLoad="this.focus()">
 
 <FORM NAME="frmCalendario">
 <applet code=ccalendar.class name=ccalendar MAYSCRIPT archive="/<? echo $w_caminho; ?>/cp_calendar/ccalendar.jar" width=235 height=190 id="cal" VIEWASTEXT>

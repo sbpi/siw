@@ -193,7 +193,7 @@ function AcessoTramite() {
   if ($O=='I') {
     BodyOpen('onLoad=\'document.Form.p_nome.focus()\';');
   } else {
-    BodyOpen('onLoad=document.focus();');
+    BodyOpen('onLoad=this.focus();');
   } 
 
   Estrutura_Texto_Abre();
@@ -392,7 +392,7 @@ function Tramite() {
     if ($O=='E')                BodyOpen('onLoad=\'document.Form.w_assinatura.focus()\';');
     elseif ($O=='A' || $O=='I') BodyOpen('onLoad=\'document.Form.w_nome.focus()\';');
   }  else {
-    BodyOpen('onLoad=document.focus();');
+    BodyOpen('onLoad=this.focus();');
   } 
   Estrutura_Texto_Abre();
   ShowHTML('<table border="0" cellpadding="0" cellspacing="0" width="100%">');
@@ -606,7 +606,7 @@ function AcessoMenu() {
   if ($O=='I' && $p_nome=='') {
     BodyOpen('onLoad=\'document.Form.p_nome.focus()\';');
   } else {
-    BodyOpen('onLoad=document.focus();');
+    BodyOpen('onLoad=this.focus();');
   } 
   Estrutura_Texto_Abre();
   ShowHTML('<table border="0" cellpadding="0" cellspacing="0" width="100%">');
@@ -829,7 +829,7 @@ function AcessoMenuPerfil() {
   ShowHTML(' .lh:HOVER{text-decoration: underline;} ');
   ShowHTML('</style> ');
   ShowHTML('</HEAD>');
-  BodyOpen('onLoad=document.focus();');
+  BodyOpen('onLoad=this.focus();');
   Estrutura_Texto_Abre();
   ShowHTML('<table border="0" cellpadding="0" cellspacing="0" width="100%">');
   ShowHTML('<tr><td colspan=3 bgcolor="#FAEBD7"><table border=1 width="100%"><tr><td>');
@@ -919,7 +919,7 @@ function Endereco() {
   ValidateClose();
   ScriptClose();
   ShowHTML('</HEAD>');
-  BodyOpen('onLoad=document.focus();');
+  BodyOpen('onLoad=this.focus();');
   ShowHTML('<B><FONT COLOR="#000000">'.$w_TP.'</FONT></B>');
   ShowHTML('<HR>');
   ShowHTML('<div align=center><center>');
@@ -979,7 +979,7 @@ function Grava() {
 
   Cabecalho();
   ShowHTML('</HEAD>');
-  BodyOpen('onLoad=document.focus();');
+  BodyOpen('onLoad=this.focus();');
   AbreSessao();
   switch ($SG) {
     case 'ACESSOTRAMITE':
@@ -1108,7 +1108,7 @@ function Main() {
   case 'GRAVA':               Grava();            break;
   default:
     Cabecalho();
-    BodyOpen('onLoad=document.focus();');
+    BodyOpen('onLoad=this.focus();');
     Estrutura_Topo_Limpo();
     Estrutura_Menu();
     Estrutura_Corpo_Abre();

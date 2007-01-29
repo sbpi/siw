@@ -26,6 +26,10 @@ $conTrBgColor			= '#EFEFEF';
 $conTrTotalBgColor		= '#55BBFF';
 $conTrAlternateBgColor		= '#E0E0E0';
 $conTrRelatorioBgColor		= '#E1F2FF';
+$conTrBgColorLightBlue1		= '#77AAFF';
+$conTrBgColorLightRed1		= '#FF9999';
+$conTrBgColorLightBlue2		= '#AADDFF';
+$conTrBgColorLightRed2		= '#FFCCCC';
 
 //---------------------------Definições de fontes
 

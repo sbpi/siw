@@ -96,7 +96,7 @@ function Afastamento() {
     $w_observacao               = $_REQUEST['w_observacao'];
   } else {
     if ($O=='L') {
-      $RS = db_getAfastamento::getInstanceOf($dbms,$w_cliente,null,$_REQUEST['p_sq_tipo_afastamento'],$_REQUEST['p_sq_contrato_colaborador'],$_REQUEST['p_inicio_data'],$_REQUEST['p_fim_data'],null,null,null,null);
+      $RS = db_getAfastamento::getInstanceOf($dbms,$w_cliente,null,null,$_REQUEST['p_sq_tipo_afastamento'],$_REQUEST['p_sq_contrato_colaborador'],$_REQUEST['p_inicio_data'],$_REQUEST['p_fim_data'],null,null,null,null);
       if (Nvl($p_ordena,'') > '') {
         $lista = explode(',',str_replace(' ',',',$p_ordena));
         $RS = SortArray($RS,$lista[0],$lista[1]);
@@ -104,7 +104,7 @@ function Afastamento() {
         $RS = SortArray($RS,'nome','asc'); 
       }    
     } elseif (!(strpos('AEV',$O)===false)) {
-      $RS = db_getAfastamento::getInstanceOf($dbms,$w_cliente,$w_chave,null,null,null,null,null,null,null,null);
+      $RS = db_getAfastamento::getInstanceOf($dbms,$w_cliente,null,$w_chave,null,null,null,null,null,null,null,null);
       foreach ($RS as $row) {$RS = $row; break;}
       $w_chave                   = f($RS,'chave');
       $w_sq_tipo_afastamento     = f($RS,'sq_tipo_afastamento');
@@ -239,7 +239,7 @@ function Afastamento() {
   } elseif (!(strpos('P',$O)===false)) {
     BodyOpen('onLoad=document.Form.p_sq_tipo_afastamento.focus();');
   } elseif ($O=='L'){
-    BodyOpen('onLoad=document.focus();');
+    BodyOpen('onLoad=this.focus();');
   } else {
     BodyOpen('onLoad=document.Form.w_assinatura.focus();');
   } 
@@ -540,7 +540,7 @@ function TelaColaborador() {
   ShowHTML('<TITLE>Colaborador</TITLE>');
   ShowHTML('</HEAD>');
   ShowHTML('<BASE HREF="'.$conRootSIW.'">');
-  BodyOpen('onLoad=document.focus();');
+  BodyOpen('onLoad=this.focus();');
   $TP = 'Dados coloborador';
   Estrutura_Texto_Abre();
   ShowHTML('<table border="0" width="100%">');
@@ -589,7 +589,7 @@ function Grava() {
   Cabecalho();
   ShowHTML('</HEAD>');
   ShowHTML('<BASE HREF="'.$conRootSIW.'">');
-  BodyOpen('onLoad=document.focus();');
+  BodyOpen('onLoad=this.focus();');
   AbreSessao();
   switch ($SG) {
     case 'GPAFAST':
@@ -643,7 +643,7 @@ function Main() {
   default:
     Cabecalho();
     ShowHTML('<BASE HREF="'.$conRootSIW.'">');
-    BodyOpen('onLoad=document.focus();');
+    BodyOpen('onLoad=this.focus();');
     ShowHTML('<B><FONT COLOR="#000000">'.$w_TP.'</FONT></B>');
     ShowHTML('<HR>');
 echo nvl($par,'NULO');

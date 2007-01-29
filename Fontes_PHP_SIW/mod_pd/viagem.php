@@ -341,7 +341,7 @@ function Inicial() {
   } elseif ($P1==2) {
     BodyOpen(null);
   } else {
-    BodyOpen('onLoad=document.focus();');
+    BodyOpen('onLoad=this.focus();');
   } 
   ShowHTML('<B><FONT COLOR="#000000">'.$w_TP.'</font></B>');
   ShowHTML('<HR>');
@@ -808,9 +808,9 @@ function Geral() {
   ShowHTML('</HEAD>');
   ShowHTML('<BASE HREF="'.$conRootSIW.'">');
   if ($w_troca>'') {
-    BodyOpen('onLoad=\'document.focus()\';');
+    BodyOpen('onLoad=\'this.focus()\';');
   } elseif (!(strpos('EV',$O)===false)) {
-    BodyOpen('onLoad=\'document.focus()\';');
+    BodyOpen('onLoad=\'this.focus()\';');
   } else {
     BodyOpen('onLoad=\'document.Form.w_descricao.focus()\';');
   } 
@@ -1177,7 +1177,7 @@ function OutraParte() {
     // Se o beneficiário ainda não foi selecionado
     if (!(strpos($_REQUEST['botao'],'Procurar')===false)) {
       // Se está sendo feita busca por nome
-      BodyOpenClean('onLoad=\'document.focus()\';');
+      BodyOpenClean('onLoad=\'this.focus()\';');
     } else {
       BodyOpenClean('onLoad=\'document.Form.w_cpf.focus()\';');
     } 
@@ -1482,7 +1482,7 @@ function Trechos() {
   } elseif ($O=='I' || $O=='A') {
     BodyOpenClean('onLoad=\'document.Form.w_pais_orig.focus()\';');
   } else {
-    BodyOpenClean('onLoad=\'document.focus()\';');
+    BodyOpenClean('onLoad=\'this.focus()\';');
   } 
   Estrutura_Topo_Limpo();
   Estrutura_Menu();
@@ -1662,7 +1662,7 @@ function Vinculacao() {
   } elseif ($O=='I' && Nvl($p_assunto,'')=='') {
     BodyOpenClean('onLoad=\'document.Form.p_assunto.focus()\';');
   } else {
-    BodyOpenClean('onLoad=\'document.focus()\';');
+    BodyOpenClean('onLoad=\'this.focus()\';');
   } 
   Estrutura_Topo_Limpo();
   Estrutura_Menu();
@@ -2025,7 +2025,7 @@ function DadosFinanceiros() {
   ScriptClose();
   ShowHTML('</HEAD>');
   ShowHTML('<BASE HREF="'.$conRootSIW.'">');
-  BodyOpen('onLoad=\'document.focus()\';');
+  BodyOpen('onLoad=\'this.focus()\';');
   ShowHTML('<B><FONT COLOR="#000000">'.$w_TP.'</font></B>');
   ShowHTML('<HR>');
   ShowHTML('<div align=center><center>');
@@ -2165,7 +2165,7 @@ function Visual() {
   ShowHTML('<TITLE>'.$conSgSistema.' - Visualização de PCD</TITLE>');
   ShowHTML('</HEAD>');
   ShowHTML('<BASE HREF="'.$conRootSIW.'">');
-  BodyOpenClean('onLoad=\'document.focus()\'; ');
+  BodyOpenClean('onLoad=\'this.focus()\'; ');
   if ($w_tipo!='WORD') {
     ShowHTML('<TABLE WIDTH="100%" BORDER=0><TR><TD ROWSPAN=2><IMG ALIGN="LEFT" src="'.LinkArquivo(null,$w_cliente,$w_logo,null,null,null,'EMBED').'"><TD ALIGN="RIGHT"><B><FONT SIZE=4 COLOR="#000000">');
     ShowHTML('Visualização de PCD');
@@ -2354,7 +2354,7 @@ function Encaminhamento() {
   if ($w_troca>'') {
     BodyOpen('onLoad=\'document.Form.'.$w_troca.'.focus()\';');
   } else {
-    BodyOpen('onLoad=\'document.focus()\';');
+    BodyOpen('onLoad=\'this.focus()\';');
   } 
   ShowHTML('<B><FONT COLOR="#000000">'.$w_TP.'</font></B>');
   ShowHTML('<HR>');
@@ -3663,7 +3663,7 @@ function InformarPassagens() {
   ScriptClose();
   ShowHTML('</HEAD>');
   ShowHTML('<BASE HREF="'.$conRootSIW.'">');
-  BodyOpen('onLoad=\'document.focus()\';');
+  BodyOpen('onLoad=\'this.focus()\';');
   ShowHTML('<B><FONT COLOR="#000000">'.$w_TP.'</font></B>');
   ShowHTML('<HR>');
   ShowHTML('<div align=center><center>');
@@ -4460,7 +4460,7 @@ function Grava() {
   Cabecalho();
   ShowHTML('</HEAD>');
   ShowHTML('<BASE HREF="'.$conRootSIW.'">');
-  BodyOpen('onLoad=document.focus();');
+  BodyOpen('onLoad=this.focus();');
   switch ($SG) {
     case 'PDIDENT':
       // Verifica se a Assinatura Eletrônica é válida
@@ -4793,7 +4793,7 @@ function Main() {
   default:
     Cabecalho();
     ShowHTML('<BASE HREF="'.$conRootSIW.'">');
-    BodyOpen('onLoad=document.focus();');
+    BodyOpen('onLoad=this.focus();');
     Estrutura_Topo_Limpo();
     Estrutura_Menu();
     Estrutura_Corpo_Abre();

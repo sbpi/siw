@@ -9,19 +9,20 @@ extract($GLOBALS); include_once($w_dir_volta.'classes/db/DatabaseQueriesFactory.
 */
 
 class db_getConvOutraParte {
-   function getInstanceOf($dbms, $p_chave, $p_chave_aux, $p_outra_parte, $p_tipo) {
+   function getInstanceOf($dbms, $p_sq_acordo_outra_parte, $p_chave, $p_chave_aux, $p_tipo) {
      extract($GLOBALS,EXTR_PREFIX_SAME,'strchema'); $sql=$strschema.'SP_GETCONVOUTRAPARTE';
-     $params=array('p_chave'                     =>array($l_chave,                                         B_INTEGER,        32),
-                   'p_chave_aux'                 =>array($l_chave_aux,                                     B_INTEGER,        32),
-                   'p_outra_parte'               =>array($l_outra_parte,                                   B_INTEGER,        32),
-                   'p_tipo'                      =>array($l_tipo,                                          B_INTEGER,         1),
+     $params=array('p_sq_acordo_outra_parte'     =>array(tvl($p_sq_acordo_outra_parte),                    B_INTEGER,        32),
+                   'p_chave'                     =>array($p_chave,                                         B_INTEGER,        32),
+                   'p_chave_aux'                 =>array(tvl($p_chave_aux),                                B_INTEGER,        32),
+                   'p_tipo'                      =>array(tvl($p_tipo),                                     B_INTEGER,        32),
                    'p_result'                    =>array(null,                                             B_CURSOR,         -1)
                   );
      $l_rs = DatabaseQueriesFactory::getInstanceOf($sql, $dbms, $params, DB_TYPE);
-     $l_error_reporting = error_reporting(); error_reporting(0); if(!$l_rs->executeQuery()) { error_reporting($l_error_reporting); TrataErro($sql, $l_rs->getError(), $params, __FILE__, __LINE__, __CLASS__); }
+     $l_error_reporting = error_reporting(); error_reporting(0); 
+     if(!$l_rs->executeQuery()) { error_reporting($l_error_reporting); TrataErro($sql, $l_rs->getError(), $params, __FILE__, __LINE__, __CLASS__); }
      else {
        error_reporting($l_error_reporting); 
-        if ($l_rs = $l_rs->getResultArray()) {
+        if ($l_rs = $l_rs->getResultData()) {
           return $l_rs;
         } else {
           return array();
