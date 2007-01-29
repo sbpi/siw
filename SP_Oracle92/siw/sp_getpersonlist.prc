@@ -109,25 +109,29 @@ begin
         select a.sq_pessoa, b.cpf, a.nome, a.nome_resumido, a.nome_indice, a.nome_resumido_ind,
                c.username,
                f.sigla sg_unidade, f.nome nm_unidade, g.nome nm_local
-          from co_pessoa                           a
-                left outer join co_pessoa_fisica   b on (a.sq_pessoa          = b.sq_pessoa)
-                inner      join sg_autenticacao    c on (a.sq_pessoa          = c.sq_pessoa)
-                  inner    join eo_unidade         f on (c.sq_unidade         = f.sq_unidade)
-                  inner    join eo_localizacao     g on (c.sq_localizacao     = g.sq_localizacao)
-                inner      join co_tipo_vinculo    d on (a.sq_tipo_vinculo    = d.sq_tipo_vinculo)
-                inner      join co_tipo_pessoa     e on (a.sq_tipo_pessoa     = e.sq_tipo_pessoa)
-                left       join pj_projeto_interes h on (a.sq_pessoa          = h.sq_pessoa and
-                                                         h.sq_siw_solicitacao = p_chave
-                                                        )
-                left       join gd_demanda_interes i on (a.sq_pessoa          = i.sq_pessoa and
-                                                         i.sq_siw_solicitacao = p_chave
-                                                        )
+          from co_pessoa                                    a
+                left outer join co_pessoa_fisica            b on (a.sq_pessoa          = b.sq_pessoa)
+                inner      join sg_autenticacao             c on (a.sq_pessoa          = c.sq_pessoa)
+                  inner    join eo_unidade                  f on (c.sq_unidade         = f.sq_unidade)
+                  inner    join eo_localizacao              g on (c.sq_localizacao     = g.sq_localizacao)
+                inner      join co_tipo_vinculo             d on (a.sq_tipo_vinculo    = d.sq_tipo_vinculo)
+                inner      join co_tipo_pessoa              e on (a.sq_tipo_pessoa     = e.sq_tipo_pessoa)
+                left       join pj_projeto_interes          h on (a.sq_pessoa          = h.sq_pessoa and
+                                                                  h.sq_siw_solicitacao = p_chave
+                                                                 )
+                left       join gd_demanda_interes          i on (a.sq_pessoa          = i.sq_pessoa and
+                                                                  i.sq_siw_solicitacao = p_chave
+                                                                 )
+                left       join siw_solicitacao_interessado j on (a.sq_pessoa          = j.sq_pessoa and
+                                                                  j.sq_siw_solicitacao = p_chave
+                                                                 )
          where c.ativo          = 'S'
            and d.interno        = 'S'
            and e.ativo          = 'S'
            and e.nome           = 'Física'
            and h.sq_pessoa      is null
            and i.sq_pessoa      is null
+           and j.sq_pessoa      is null
            and a.sq_pessoa_pai  = p_cliente 
            and (p_nome       is null or (p_nome       is not null and ((a.nome_indice like '%'||upper(acentos(p_nome))||'%')
                                                                    or   a.nome_resumido_ind like '%'||upper(acentos(p_nome))||'%')))

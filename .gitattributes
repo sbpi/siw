@@ -3282,6 +3282,7 @@ SP_Oracle92/siw/sp_putsiwusuario.prc -text
 SP_Oracle92/siw/sp_putsolicapoio.prc -text
 SP_Oracle92/siw/sp_putsolicarquivo.prc -text
 SP_Oracle92/siw/sp_putsolicetprec.prc -text
+SP_Oracle92/siw/sp_putsolicinter.prc -text
 SP_Oracle92/siw/sp_putspparametro.prc -text
 SP_Oracle92/siw/sp_putspsp.prc -text
 SP_Oracle92/siw/sp_putsptabs.prc -text

@@ -60,6 +60,31 @@ begin
                and a.sq_siw_solicitacao = p_chave
                and a.sq_pessoa          = p_chave_aux;
       End If;
+   Elsif w_modulo = 'PE' Then -- Se for o módulo de planejamento estratégico
+      If p_restricao = 'LISTA' Then
+         -- Recupera as demandas que o usuário pode ver
+         open p_result for 
+            select a.*, 
+                   b.nome, b.nome_resumido, b.nome_indice, b.nome_resumido_ind,
+                   c.email,
+                   d.sigla lotacao,
+                   e.nome nm_tipo_interessado
+              from siw_solicitacao_interessado       a
+                   inner   join co_pessoa            b on (a.sq_pessoa           = b.sq_pessoa)
+                   inner   join sg_autenticacao      c on (a.sq_pessoa           = c.sq_pessoa)
+                     inner join eo_unidade           d on (c.sq_unidade          = d.sq_unidade)
+                   inner   join siw_tipo_interessado e on (a.sq_tipo_interessado = e.sq_tipo_interessado)
+             where a.sq_siw_solicitacao = p_chave;
+      Elsif p_restricao = 'REGISTRO' Then
+         -- Recupera as demandas que o usuário pode ver
+         open p_result for 
+            select a.*, 
+                   b.nome, b.nome_resumido, b.nome_indice, b.nome_resumido_ind
+              from siw_solicitacao_interessado a
+                   inner join co_pessoa        b on (a.sq_pessoa = b.sq_pessoa)
+             where a.sq_siw_solicitacao = p_chave
+               and a.sq_pessoa          = p_chave_aux;
+      End If;   
    End If;
 End SP_GetSolicInter;
 /
