@@ -20,8 +20,9 @@ begin
                 end data_formatada,
                 case a.expediente
                      when 'S' then ' (Exp. normal)'
-                     when 'M' then ' (Apenas tarde)'
-                     when 'T' then ' (Apenas manhã)'
+                     when 'M' then ' (Exp. apenas manhã)'
+                     when 'T' then ' (Exp. apenas tarde)'
+                     when 'N' then ' (Sem expediente)'
                 end nm_expediente
            from eo_data_especial  a
           where a.cliente = p_cliente

@@ -23,7 +23,9 @@ begin
       open p_result for
         select a.sq_menu,
                case when a.sq_modulo is null or p_modulo is not null then a.nome else a.nome||' ('||b.nome||')' end nome,
-               a.acesso_geral, a.ultimo_nivel, a.tramite
+               a.nome as nm_servico,
+               a.acesso_geral, a.ultimo_nivel, a.tramite, 
+               b.sigla sg_modulo, b.nome nm_modulo
           from siw_menu              a
                inner join siw_modulo b on (a.sq_modulo = b.sq_modulo)
          where a.sq_pessoa = p_cliente

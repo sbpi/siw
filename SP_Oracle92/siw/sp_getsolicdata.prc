@@ -136,7 +136,8 @@ begin
                 l.telefone fone_pri,  l.email mail_pri,              l.ordem ord_pri,
                 l.ativo ativo_pri,    l.padrao padrao_pri,
                 m.sq_acordo,          m.cd_acordo,                   m.nm_acordo,
-                n.sq_menu sq_menu_pai
+                n.sq_menu sq_menu_pai,
+                o.sq_siw_solicitacao sq_programa, o.codigo_interno cd_programa, o.titulo nm_programa
            from siw_menu                                        a 
                 inner        join eo_unidade                a2 on (a.sq_unid_executora        = a2.sq_unidade)
                   left       join eo_unidade_resp           a3 on (a2.sq_unidade              = a3.sq_unidade and
@@ -182,6 +183,7 @@ begin
                                                   join ct_cc           z on (y.sq_cc              = z.sq_cc)
                                         )                    m  on (b.sq_solic_pai        = m.sq_acordo)
                 left               join siw_solicitacao      n  on (b.sq_solic_pai        = n.sq_siw_solicitacao)
+                left               join pe_programa          o  on (b.sq_solic_pai        = o.sq_siw_solicitacao)
           where b.sq_siw_solicitacao       = p_chave;
    Elsif substr(p_restricao,1,2) = 'GC' Then
       -- Recupera os acordos que o usuário pode ver
@@ -598,6 +600,108 @@ begin
                   inner      join co_cidade            h  on (b.sq_cidade_origem    = h.sq_cidade)
                   left       join ct_cc                g  on (b.sq_cc               = g.sq_cc)
                 left         join eo_unidade           c  on (a.sq_unid_executora   = c.sq_unidade)
+          where b.sq_siw_solicitacao       = p_chave;
+   Elsif substr(p_restricao,1,4) = 'PEPR' Then
+      -- Recupera os programas que o usuário pode ver
+      open p_result for 
+         select a.sq_menu,            a.sq_modulo,                   a.nome,
+                a.tramite,            a.ultimo_nivel,                a.p1,
+                a.p2,                 a.p3,                          a.p4,
+                a.sigla,              a.descentralizado,             a.externo,
+                a.acesso_geral,       a.como_funciona,               a.acompanha_fases,
+                a.sq_unid_executora,  a.finalidade,                  a.arquivo_proced,
+                a.emite_os,           a.consulta_opiniao,            a.envia_email,
+                a.exibe_relatorio,    a.vinculacao,                  a.data_hora,
+                a.envia_dia_util,     a.descricao,                   a.justificativa,
+                a1.nome nm_modulo,    a1.sigla sg_modulo,            a1.objetivo_geral,
+                a2.sq_tipo_unidade tp_exec, a2.nome nm_unidade_exec, a2.informal informal_exec,
+                a2.vinculada vinc_exec,a2.adm_central adm_exec,
+                a3.sq_pessoa tit_exec,a4.sq_pessoa subst_exec,
+                b.sq_siw_solicitacao, b.sq_siw_tramite,              b.solicitante,
+                b.cadastrador,        b.executor,                    b.descricao,
+                b.justificativa,      b.inicio,                      b.fim,
+                b.inclusao,           b.ultima_alteracao,            b.conclusao,
+                b.valor,              b.opiniao,
+                b.sq_solic_pai,       b.sq_unidade,                  b.sq_cidade_origem,
+                b.palavra_chave,      b.observacao,
+                b1.sq_siw_tramite,    b1.nome nm_tramite,            b1.ordem or_tramite,
+                b1.sigla sg_tramite,  b1.ativo,
+                b2.sq_peobjetivo,     b2.sq_plano,                   b2.nome nm_objetivo, 
+                b2.sigla sg_objetivo, b2.descricao ds_objetivo,      b2.ativo st_objetivo,
+                b3.sq_plano_pai,      b3.titulo nm_plano,            b3.missao, 
+                b3.valores,           b3.visao_presente,             b3.visao_futuro, 
+                b3.inicio inicio_plano,b3.fim vim_plano,             b3.ativo st_plano,
+                b4.sq_unidade sq_unidade_adm, b4.nome nm_unidade_adm, b4.sigla sg_unidade_adm,
+                b5.sq_pessoa tit_adm, b6.sq_pessoa subst_adm,
+                c.sq_tipo_unidade,    c.nome nm_unidade_exec,        c.informal,
+                c.vinculada,          c.adm_central,
+                d.sq_siw_solicitacao sq_programa,
+                d.sq_pehorizonte,     d.sq_penatureza,               d.codigo_interno cd_programa,
+                d.titulo,             d.publico_alvo,                d.estrategia, 
+                d.ln_programa,        d.situacao_atual,              d.exequivel, 
+                d.justificativa_inexequivel,                         d.outras_medidas, 
+                d.inicio_real,        d.fim_real,                    d.custo_real, 
+                d.nota_conclusao,     d.aviso_prox_conc,             d.dias_aviso,
+                d1.nome nm_horizonte, d1.ativo st_horizonte, 
+                d7.nome nm_natureza, d7.ativo st_natureza,
+                b.fim-d.dias_aviso aviso,
+                e.sq_unidade sq_unidade_resp,
+                e.sq_tipo_unidade,    e.nome nm_unidade_resp,        e.informal informal_resp,
+                e.vinculada vinc_resp,e.adm_central adm_resp,        e.sigla sg_unidade_resp,
+                e1.sq_pessoa titular, e2.sq_pessoa substituto,
+                f.sq_pais,            f.sq_regiao,                   f.co_uf,
+                n.sq_cc,              n.nome nm_cc,                  n.sigla sg_cc,
+                o.nome_resumido nm_solic, o.nome_resumido||' ('||o2.sigla||')' nm_resp,
+                p.nome_resumido nm_exec
+           from siw_menu                                       a 
+                   inner        join eo_unidade                a2 on (a.sq_unid_executora        = a2.sq_unidade)
+                     left       join eo_unidade_resp           a3 on (a2.sq_unidade              = a3.sq_unidade and
+                                                                      a3.tipo_respons            = 'T'           and
+                                                                      a3.fim                     is null
+                                                                     )
+                     left       join eo_unidade_resp           a4 on (a2.sq_unidade              = a4.sq_unidade and
+                                                                      a4.tipo_respons            = 'S'           and
+                                                                      a4.fim                     is null
+                                                                     )
+                   inner             join siw_modulo           a1 on (a.sq_modulo                = a1.sq_modulo)
+                   inner             join siw_solicitacao      b  on (a.sq_menu                  = b.sq_menu)
+                      inner          join siw_tramite          b1 on (b.sq_siw_tramite           = b1.sq_siw_tramite)
+                      inner          join pe_objetivo          b2 on (b.sq_peobjetivo            = b2.sq_peobjetivo)
+                        inner        join pe_plano             b3 on (b2.sq_plano                = b3.sq_plano)
+                      inner          join eo_unidade           b4 on (b.sq_unidade               = b4.sq_unidade)
+                        left         join eo_unidade_resp      b5 on (b4.sq_unidade              = b5.sq_unidade and
+                                                                      b5.tipo_respons            = 'T'           and
+                                                                      b5.fim                     is null
+                                                                     )
+                        left         join eo_unidade_resp      b6 on (b4.sq_unidade              = b6.sq_unidade and
+                                                                      b6.tipo_respons            = 'S'           and
+                                                                      b6.fim                     is null
+                                                                     )
+                      inner          join pe_programa          d  on (b.sq_siw_solicitacao       = d.sq_siw_solicitacao)
+                        inner        join pe_horizonte         d1 on (d.sq_pehorizonte           = d1.sq_pehorizonte)
+                        inner        join pe_natureza          d7 on (d.sq_penatureza            = d7.sq_penatureza)
+                        inner        join eo_unidade           e  on (d.sq_unidade_resp          = e.sq_unidade)
+                          left       join eo_unidade_resp      e1 on (e.sq_unidade               = e1.sq_unidade and
+                                                                      e1.tipo_respons            = 'T'           and
+                                                                      e1.fim                     is null
+                                                                     )
+                          left       join eo_unidade_resp      e2 on (e.sq_unidade               = e2.sq_unidade and
+                                                                      e2.tipo_respons            = 'S'           and
+                                                                      e2.fim                     is null
+                                                                     )
+                      inner          join co_cidade            f  on (b.sq_cidade_origem         = f.sq_cidade)
+                      left           join ct_cc                n  on (b.sq_cc                    = n.sq_cc)
+                      left           join co_pessoa            o  on (b.solicitante              = o.sq_pessoa)
+                        left         join sg_autenticacao      o1 on (o.sq_pessoa                = o1.sq_pessoa)
+                          left       join eo_unidade           o2 on (o1.sq_unidade              = o2.sq_unidade)
+                      left           join co_pessoa            p  on (b.executor                 = p.sq_pessoa)
+                   left              join eo_unidade           c  on (a.sq_unid_executora        = c.sq_unidade)
+                   inner             join (select sq_siw_solicitacao, max(sq_siw_solic_log) chave 
+                                             from siw_solic_log
+                                           group by sq_siw_solicitacao
+                                          )                    j  on (b.sq_siw_solicitacao       = j.sq_siw_solicitacao)
+                     left            join pe_programa_log      k  on (j.chave                    = k.sq_siw_solic_log)
+                       left          join sg_autenticacao      l  on (j.k.destinatario           = l.sq_pessoa)
           where b.sq_siw_solicitacao       = p_chave;
    End If;
 end SP_GetSolicData;

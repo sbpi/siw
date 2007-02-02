@@ -12,10 +12,13 @@ begin
              a.informal, a.vinculada, a.adm_central, a.Unidade_Gestora,
              a.codigo, a.ativo, a.sq_tipo_unidade, a.Unidade_Pagadora, a.email,
              b.nome nm_tipo_unidade,
-             c.sq_cidade
-        from eo_unidade                    a
-             inner join eo_tipo_unidade    b on (a.sq_tipo_unidade    = b.sq_tipo_unidade)
-             left  join co_pessoa_endereco c on (a.sq_pessoa_endereco = c.sq_pessoa_endereco)
+             c.sq_cidade,
+             d.nome||'-'||d.co_uf as nm_cidade
+        from eo_unidade                       a
+             inner    join eo_tipo_unidade    b on (a.sq_tipo_unidade    = b.sq_tipo_unidade)
+             left     join co_pessoa_endereco c on (a.sq_pessoa_endereco = c.sq_pessoa_endereco)
+               left   join co_cidade          d on (c.sq_cidade          = d.sq_cidade)
+                 left join co_pais            e on (d.sq_pais            = e.sq_pais)
        where sq_unidade = p_sq_unidade;
 end SP_GetUorgData;
 /

@@ -1,5 +1,6 @@
 create or replace procedure SP_GetAfastamento
    (p_cliente                  in number,
+    p_pessoa                   in number    default null,
     p_chave                    in number    default null,
     p_sq_tipo_afastamento      in number    default null,
     p_sq_contrato_colaborador  in number    default null,
@@ -24,8 +25,11 @@ begin
       open p_result for 
          select a.sq_afastamento chave, a.sq_tipo_afastamento, a.sq_contrato_colaborador, a.inicio_data,
                 a.inicio_periodo, a.fim_data, a.fim_periodo, a.dias, a.observacao, 
-                b.nome nm_tipo_afastamento, e.sq_unidade,
-                e.sigla||' ('||d.nome||' - R.'||d.ramal||')' local, f.nome_resumido, f.sq_pessoa
+                case inicio_periodo when 'M' then 'Manhã' else 'Tarde' end as nm_inicio_periodo,
+                case fim_periodo when 'M' then 'Manhã' else 'Tarde' end as nm_fim_periodo,
+                b.nome nm_tipo_afastamento, 
+                e.sq_unidade, e.sigla||' ('||d.nome||' - R.'||d.ramal||')' local, 
+                f.nome_resumido, f.sq_pessoa
            from gp_afastamento                     a
                 inner join gp_tipo_afastamento     b on (a.sq_tipo_afastamento     = b.sq_tipo_afastamento)
                 inner join gp_contrato_colaborador c on (a.sq_contrato_colaborador = c.sq_contrato_colaborador)
@@ -34,6 +38,7 @@ begin
                   inner join co_pessoa             f on (c.sq_pessoa               = f.sq_pessoa and
                                                          c.cliente                 = f.sq_pessoa_pai)
           where a.cliente = p_cliente
+            and ((p_pessoa                  is null) or (p_pessoa                  is not null and f.sq_pessoa               = p_pessoa))
             and ((p_chave                   is null) or (p_chave                   is not null and a.sq_afastamento          = p_chave))
             and ((p_chave_aux               is null) or (p_chave_aux               is not null and a.sq_afastamento          <> p_chave_aux))
             and ((p_sq_tipo_afastamento     is null) or (p_sq_tipo_afastamento     is not null and a.sq_tipo_afastamento     = p_sq_tipo_afastamento))
