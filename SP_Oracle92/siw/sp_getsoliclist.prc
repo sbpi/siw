@@ -493,13 +493,6 @@ begin
                 )
             and (p_empenho        is null or (p_empenho     is not null and upper(d.empenho)     = upper(p_empenho)))
             and (p_processo       is null or (p_processo    is not null and upper(d.processo)    = upper(p_processo)))
-            and ((substr(p_restricao,1,3)     = 'GCR' and d1.modalidade = 'F') or
-                 (substr(p_restricao,1,3)     = 'GCA' and d1.modalidade = 'I') or
-                 (substr(p_restricao,1,3)     = 'GCB' and d1.modalidade = 'E') or
-                 (substr(p_restricao,1,3)     = 'GCC' and d1.modalidade = 'I') or
-                 (substr(p_restricao,1,3)     = 'GCD' and d1.modalidade not in ('F','I')) or
-                 (substr(p_restricao,1,3)     = 'GCP' and d1.modalidade = 'I')
-                )
             and ((p_tipo         = 1     and Nvl(b1.sigla,'-') = 'CI'   and b.cadastrador        = p_pessoa) or
                  (p_tipo         = 2     and b1.ativo = 'S' and Nvl(b1.sigla,'-') <> 'CI' and b.executor = p_pessoa and b.conclusao is null) or
                  --(p_tipo         = 2     and b1.ativo = 'S' and Nvl(b1.sigla,'-') <> 'CI' and b2.acesso > 15) or
@@ -657,9 +650,6 @@ begin
             and (p_proponente     is null or (p_proponente  is not null and (acentos(d2.nome,null)          like '%'||acentos(p_proponente,null)||'%') or 
                                                                             (acentos(d2.nome_resumido,null) like '%'||acentos(p_proponente,null)||'%')
                                              )
-                )
-            and ((substr(p_restricao,1,3) = 'FNR' and d1.receita = 'S') or
-                 (substr(p_restricao,1,3) = 'FND' and d1.despesa = 'S')
                 )
             and ((p_tipo         = 1     and Nvl(b1.sigla,'-') = 'CI'   and b.cadastrador        = p_pessoa) or
                  (p_tipo         = 2     and b1.ativo = 'S' and Nvl(b1.sigla,'-') <> 'CI' and b.executor = p_pessoa and b.conclusao is null) or
