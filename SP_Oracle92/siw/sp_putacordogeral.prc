@@ -357,10 +357,10 @@ begin
          If w_existe = 0 Then
             w_sequencial := 1;
          Else
-            select Nvl(max(to_number(replace(replace(replace(a.codigo_interno,'/'||w_ano,''),Nvl(w_reg.prefixo,''),''),Nvl(w_reg.sufixo,''),''))),0)+1
+            select nvl(max(replace(translate(a.codigo_interno,'0123456789ABCDEFGHIJKLMNOPQRSTUVWXZ-:. ','0123456789'),'/2006','')),0)+1
               into w_sequencial
               from ac_acordo a
-             where to_char(a.inicio,'yyyy') = to_char(p_inicio,'yyyy')
+             where instr(a.codigo_interno,'/'||to_char(p_inicio,'yyyy')) > 0
                and a.cliente                = p_cliente;
          End If;
          

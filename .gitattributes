@@ -2817,6 +2817,7 @@ SP_Oracle92/siw/TG_FN_DOCUMENTO_ITEM.trg -text
 SP_Oracle92/siw/TG_FN_LANCAMENTO_IN_UP.trg -text
 SP_Oracle92/siw/TG_FN_LANCAMENTO_RUBRICA.trg -text
 SP_Oracle92/siw/TG_GP_AFASTAMENTO.trg -text
+SP_Oracle92/siw/TG_PA_ASUNTO_IN_UP.trg -text
 SP_Oracle92/siw/TG_PD_MISSAO_IN_UP.trg -text
 SP_Oracle92/siw/TG_PE_RECURSO_DISP_EX.trg -text
 SP_Oracle92/siw/TG_PE_RECURSO_DISP_UP.trg -text
@@ -3012,9 +3013,14 @@ SP_Oracle92/siw/sp_getConvOutroRep.prc -text
 SP_Oracle92/siw/sp_getConvPreposto.prc -text
 SP_Oracle92/siw/sp_getGrupoVeiculo.prc -text
 SP_Oracle92/siw/sp_getIndicador.prc -text
+SP_Oracle92/siw/sp_getIndicador_Aferidor.prc -text
 SP_Oracle92/siw/sp_getRecurso.prc -text
 SP_Oracle92/siw/sp_getRecurso_Disp.prc -text
 SP_Oracle92/siw/sp_getRecurso_Indisp.prc -text
+SP_Oracle92/siw/sp_getSolicIndicador.prc -text
+SP_Oracle92/siw/sp_getSolicMeta.prc -text
+SP_Oracle92/siw/sp_getSolicRecursos.prc -text
+SP_Oracle92/siw/sp_getTipoIndicador.prc -text
 SP_Oracle92/siw/sp_getTipoInteressado.prc -text
 SP_Oracle92/siw/sp_getTipoRecurso.prc -text
 SP_Oracle92/siw/sp_getTipoVeiculo.prc -text
@@ -3232,6 +3238,8 @@ SP_Oracle92/siw/sp_putConvPreposto.prc -text
 SP_Oracle92/siw/sp_putFormaPagamento.prc -text
 SP_Oracle92/siw/sp_putFormaPagamentoVinc.prc -text
 SP_Oracle92/siw/sp_putIndicador.prc -text
+SP_Oracle92/siw/sp_putIndicador_Afericao.prc -text
+SP_Oracle92/siw/sp_putIndicador_Aferidor.prc -text
 SP_Oracle92/siw/sp_putPDUnidLimite.prc -text
 SP_Oracle92/siw/sp_putPlanoEstrategico.prc -text
 SP_Oracle92/siw/sp_putPlano_Menu.prc -text
@@ -3242,6 +3250,8 @@ SP_Oracle92/siw/sp_putRecurso.prc -text
 SP_Oracle92/siw/sp_putRecurso_Disp.prc -text
 SP_Oracle92/siw/sp_putRecurso_Indisp.prc -text
 SP_Oracle92/siw/sp_putRecurso_Menu.prc -text
+SP_Oracle92/siw/sp_putSolicIndicador.prc -text
+SP_Oracle92/siw/sp_putTipoIndicador.prc -text
 SP_Oracle92/siw/sp_putTipoInteressado.prc -text
 SP_Oracle92/siw/sp_putTipoRecurso.prc -text
 SP_Oracle92/siw/sp_putUnidadeMedida.prc -text

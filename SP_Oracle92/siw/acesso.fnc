@@ -208,7 +208,7 @@ begin
       select 1 from pd_missao a where a.sq_siw_solicitacao = p_solicitacao and a.sq_pessoa = p_usuario
     );
     If w_existe > 0 Then
-       Result := + 2;
+       Result := Result + 2;
     End If;
     
     -- recupera o código e a lotação do solicitante, para verificar, mais abaixo,

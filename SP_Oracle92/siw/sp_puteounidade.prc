@@ -11,14 +11,15 @@ create or replace procedure SP_PutEOUnidade
     p_email                    in  varchar2 default null,
     p_codigo                   in  varchar2 default null,
     p_cliente                  in  number,
-    p_nome                     in  varchar2,
-    p_sigla                    in  varchar2,
-    p_informal                 in  varchar2,
-    p_vinculada                in  varchar2,
-    p_adm_central              in  varchar2,
-    p_unidade_gestora          in  varchar2,
-    p_unidade_pagadora         in  varchar2,
-    p_ativo                    in  varchar2 
+    p_nome                     in  varchar2 default null,
+    p_sigla                    in  varchar2 default null,
+    p_informal                 in  varchar2 default null,
+    p_vinculada                in  varchar2 default null,
+    p_adm_central              in  varchar2 default null,
+    p_unidade_gestora          in  varchar2 default null,
+    p_unidade_pagadora         in  varchar2 default null,
+    p_externo                  in varchar2 default null,
+    p_ativo                    in  varchar2 default null
    ) is
 begin
    If p_operacao = 'I' Then
@@ -26,7 +27,7 @@ begin
      insert into eo_unidade 
             (sq_unidade, sq_tipo_unidade, sq_area_atuacao, sq_unidade_gestora, sq_unidade_pai,
              sq_unid_pagadora, sq_pessoa_endereco, ordem, email, codigo, sq_pessoa, nome, 
-             sigla, informal, vinculada, adm_central, unidade_gestora, unidade_pagadora, ativo
+             sigla, informal, vinculada, adm_central, unidade_gestora, unidade_pagadora, externo,ativo
             )
      (select Nvl(p_Chave,sq_unidade.nextval),
                  p_sq_tipo_unidade,
@@ -46,6 +47,7 @@ begin
                  p_adm_central,
                  p_unidade_gestora,
                  p_unidade_pagadora,
+                 p_externo,
                  p_ativo
             from dual
          );
@@ -68,6 +70,7 @@ begin
          adm_central          = p_adm_central,
          unidade_gestora      = p_unidade_gestora,
          unidade_pagadora     = p_unidade_pagadora,
+         externo              = p_externo,
          ativo                = p_ativo
       where sq_unidade   = p_chave;
    Elsif p_operacao = 'E' Then
@@ -76,4 +79,3 @@ begin
    End If;
 end SP_PutEOUnidade;
 /
-

@@ -28,6 +28,7 @@ begin
                 left outer join lc_unidade         e on (a.sq_unidade         = e.sq_unidade)
                 left outer join pe_unidade         g on (a.sq_unidade         = g.sq_unidade)
           where b.sq_pessoa            = p_cliente
+            and a.externo              = 'N'
             and (p_chave               is null or (p_chave is not null and a.sq_unidade = p_chave))
             and (p_nome                is null or (p_nome  is not null and acentos(a.nome)  like '%'||acentos(p_nome)||'%'))
             and (p_sigla               is null or (p_sigla is not null and acentos(a.sigla) like '%'||acentos(p_sigla)||'%'))
@@ -65,7 +66,7 @@ begin
                    c.sq_pessoa_endereco, c.logradouro,
                    f.nome nm_cidade, f.co_uf
               from pd_unidade                        a
-                   inner     join eo_unidade         b on (a.sq_unidade = b.sq_unidade)
+                   inner     join eo_unidade         b on (a.sq_unidade         = b.sq_unidade)
                      inner   join co_pessoa_endereco c on (b.sq_pessoa_endereco = c.sq_pessoa_endereco)
                        inner join co_cidade          f on (c.sq_cidade          = f.sq_cidade)
              where c.sq_pessoa = p_cliente 
@@ -115,6 +116,7 @@ begin
                    left outer join co_pessoa          d on (c.sq_pessoa          = d.sq_pessoa)
                    left outer join lc_unidade         e on (a.sq_unidade         = e.sq_unidade)
               where b.sq_pessoa            = p_cliente
+                and a.externo              = 'N'
                 and (p_nome                is null or (p_nome  is not null and acentos(a.nome)  like '%'||acentos(p_nome)||'%'))
                 and (p_sigla               is null or (p_sigla is not null and acentos(a.sigla) like '%'||acentos(p_sigla)||'%'))
                 and a.ativo                = 'S' 
@@ -185,6 +187,7 @@ begin
                    left outer join co_pessoa          d on (c.sq_pessoa          = d.sq_pessoa)
                    left outer join lc_unidade         e on (a.sq_unidade         = e.sq_unidade)
              where b.sq_pessoa            = p_cliente
+               and a.externo              = 'N'
                and (p_nome                is null or (p_nome  is not null and acentos(a.nome)  like '%'||acentos(p_nome)||'%'))
                and (p_sigla               is null or (p_sigla is not null and acentos(a.sigla) like '%'||acentos(p_sigla)||'%'))
                and a.informal             = 'N' 

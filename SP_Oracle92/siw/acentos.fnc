@@ -6,7 +6,7 @@ Tipo diferente de 1 ou nulo => Retira caracteres acentuados e converte para minú
                                para ordenação no SELECT
 */
 
-   nome varchar2(8000) := Valor;
+   nome varchar2(8000) := trim(Valor);
 
 BEGIN
 
@@ -19,4 +19,3 @@ BEGIN
    RETURN nome ;
 END;
 /
-

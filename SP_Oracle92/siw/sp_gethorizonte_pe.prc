@@ -7,7 +7,8 @@ create or replace procedure sp_GetHorizonte_PE
 begin
    -- Recupera os tipos de arquivos
    open p_result for 
-      select a.sq_pehorizonte chave, a.cliente, a.nome, a.ativo
+      select a.sq_pehorizonte chave, a.cliente, a.nome, a.ativo, 
+             case a.ativo when 'S' then 'Sim' else 'Não' end as nm_ativo
         from pe_horizonte a
        where ((p_chave   is null) or (p_chave   is not null and a.sq_pehorizonte = p_chave))
          and ((p_cliente is null) or (p_cliente is not null and a.cliente      = p_cliente))

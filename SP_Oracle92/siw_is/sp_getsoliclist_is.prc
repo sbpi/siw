@@ -200,7 +200,8 @@ begin
                  (p_tipo         = 2     and Nvl(b1.sigla,'-') <> 'CI'  and b.executor           = p_pessoa and d.concluida = 'N') or
                  (p_tipo         = 2     and Instr('CI,AT,CA', Nvl(b1.sigla,'-')) = 0 and b2.acesso > 15) or
                  (p_tipo         = 3)    or
-                 (p_tipo         = 4     and Nvl(b1.sigla,'-') <> 'CA')
+                 (p_tipo         = 4     and Nvl(b1.sigla,'-') <> 'CA') or
+                 (p_tipo         = 6     and b1.ativo          = 'S' and b2.acesso > 0)
                 )
             and ((p_restricao <> 'GRISTPROP'    and p_restricao <> 'GRISTRESPATU') or 
                  ((p_restricao = 'GRISTPROP'    and d.proponente  is not null)   or 
@@ -348,7 +349,8 @@ begin
                  (p_tipo         = 2     and Nvl(b1.sigla,'-') <> 'CI'  and b.executor           = p_pessoa and d.concluida = 'N') or
                  (p_tipo         = 2     and Instr('CI,AT,CA', Nvl(b1.sigla,'-')) = 0 and b2.acesso > 15) or
                  (p_tipo         = 3) or
-                 (p_tipo         = 4     and Nvl(b1.sigla,'-') <> 'CA')
+                 (p_tipo         = 4     and Nvl(b1.sigla,'-') <> 'CA') or
+                 (p_tipo         = 6     and b1.ativo          = 'S' and b2.acesso > 0)
                 )
             and ((p_restricao <> 'GRISAPROP'    and p_restricao <> 'GRISARESPATU') or 
                  ((p_restricao = 'GRISAPROP'    and d.proponente  is not null)   or 
@@ -478,7 +480,8 @@ begin
                  (p_tipo         = 2     and Nvl(b1.sigla,'-') <> 'CI'  and b.executor           = p_pessoa and d.concluida = 'N') or
                  (p_tipo         = 2     and Instr('CI,AT,CA', Nvl(b1.sigla,'-')) = 0 and b2.acesso > 15) or
                  (p_tipo         = 3)    or
-                 (p_tipo         = 4     and Nvl(b1.sigla,'-') <> 'CA')                 
+                 (p_tipo         = 4     and Nvl(b1.sigla,'-') <> 'CA') or
+                 (p_tipo         = 6     and b1.ativo          = 'S' and b2.acesso > 0)
                 )
             and ((p_restricao <> 'GRISPPROP'    and p_restricao <> 'GRISPRESPATU') or 
                  ((p_restricao = 'GRISPPROP'    and d.proponente  is not null)   or 
@@ -656,6 +659,7 @@ begin
                  (p_tipo         = 3     and InStr(l_resp_unid,''''||b.sq_unidade||'''') > 0) or
                  (p_tipo         = 4     and Nvl(b1.sigla,'-') <> 'CA') or
                  (p_tipo         = 5) or
+                 (p_tipo         = 6     and b1.ativo          = 'S' and b2.acesso > 0) or
                  (p_tipo         = 6     and b1.ativo          = 'S' and b2.acesso > 0)
                 );
    Elsif substr(p_restricao,1,2) = 'PD' or Substr(p_restricao,1,4) = 'GRPD' Then

@@ -10,11 +10,22 @@ begin
              a.como_funciona, a.acompanha_fases, a.sq_unid_executora, a.finalidade, a.arquivo_proced, a.emite_os, 
              a.consulta_opiniao, a.envia_email, a.exibe_relatorio, a.vinculacao, a.data_hora, a.envia_dia_util, a.descricao, 
              a.justificativa, a.destinatario, a.controla_ano, a.libera_edicao,
-             b.solicita_cc, b.envia_mail mail_tramite, c.sigla sg_modulo, e.sq_cidade
+             case coalesce(b.qtd,0) when 0 then 'N' else 'S' end as solicita_cc, 
+             case coalesce(f.qtd,0) when 0 then 'N' else 'S' end as mail_tramite, 
+             c.sigla sg_modulo, c.nome nm_modulo, e.sq_cidade
       from siw_menu                               a
-             left outer   join siw_tramite        b on (a.sq_menu            = b.sq_menu and 
-                                                        b.sigla = 'CI'
-                                                       )
+             left outer   join (select x.sq_menu, count(sq_siw_tramite) qtd
+                                  from siw_tramite x
+                                 where x.solicita_cc = 'S'
+                                   and 'CI'          = coalesce(x.sigla,'--')
+                                group by x.sq_menu
+                               )                  b on (a.sq_menu  = b.sq_menu)
+             left outer   join (select x.sq_menu, count(sq_siw_tramite) qtd
+                                  from siw_tramite x
+                                 where x.envia_mail = 'S'
+                                   and 'CI'          = coalesce(x.sigla,'--')
+                                group by x.sq_menu
+                               )                  f on (a.sq_menu  = f.sq_menu)
              left outer   join eo_unidade         d on (a.sq_unid_executora  = d.sq_unidade)
                left outer join co_pessoa_endereco e on (d.sq_pessoa_endereco = e.sq_pessoa_endereco)
              inner        join siw_modulo         c on (a.sq_modulo          = c.sq_modulo)

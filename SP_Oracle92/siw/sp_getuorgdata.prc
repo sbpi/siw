@@ -11,6 +11,7 @@ begin
              a.nome, a.sigla, a.ordem,
              a.informal, a.vinculada, a.adm_central, a.Unidade_Gestora,
              a.codigo, a.ativo, a.sq_tipo_unidade, a.Unidade_Pagadora, a.email,
+             a.externo,
              b.nome nm_tipo_unidade,
              c.sq_cidade,
              d.nome||'-'||d.co_uf as nm_cidade

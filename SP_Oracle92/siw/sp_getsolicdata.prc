@@ -102,6 +102,11 @@ begin
                 b.palavra_chave,      ceil(months_between(b.fim,b.inicio)) meses_projeto,
                 b1.sq_siw_tramite,    b1.nome nm_tramite,            b1.ordem or_tramite,
                 b1.sigla sg_tramite,  b1.ativo,
+                b2.sq_peobjetivo,     b2.sq_plano,                   b2.nome nm_objetivo, 
+                b2.sigla sg_objetivo, b2.descricao ds_objetivo,      b2.ativo st_objetivo,
+                b3.sq_plano_pai,      b3.titulo nm_plano,            b3.missao, 
+                b3.valores,           b3.visao_presente,             b3.visao_futuro, 
+                b3.inicio inicio_plano,b3.fim vim_plano,             b3.ativo st_plano,
                 c.sq_tipo_unidade,    c.nome nm_unidade_exec,        c.informal,
                 c.vinculada,          c.adm_central,
                 d.sq_unidade_resp,    d.titulo,                      d.prioridade,
@@ -139,6 +144,7 @@ begin
                 l.telefone fone_pri,  l.email mail_pri,              l.ordem ord_pri,
                 l.ativo ativo_pri,    l.padrao padrao_pri,
                 m.sq_acordo,          m.cd_acordo,                   m.nm_acordo,
+                m.sigla sg_acordo,
                 n.sq_menu sq_menu_pai,
                 o.sq_siw_solicitacao sq_programa, o.codigo_interno cd_programa, o.titulo nm_programa
            from siw_menu                                        a 
@@ -154,6 +160,8 @@ begin
                 inner              join siw_modulo           a1 on (a.sq_modulo           = a1.sq_modulo)
                 inner              join siw_solicitacao      b  on (a.sq_menu             = b.sq_menu)
                   inner            join siw_tramite          b1 on (b.sq_siw_tramite      = b1.sq_siw_tramite)
+                  left             join pe_objetivo          b2 on (b.sq_peobjetivo            = b2.sq_peobjetivo)
+                    left           join pe_plano             b3 on (b2.sq_plano                = b3.sq_plano)
                   inner            join pj_projeto           d  on (b.sq_siw_solicitacao  = d.sq_siw_solicitacao)
                       left         join co_pessoa            d1 on (d.outra_parte         = d1.sq_pessoa)
                       left         join co_cidade            d2 on (d.sq_cidade           = d2.sq_cidade)
@@ -179,11 +187,13 @@ begin
                   left             join ct_cc                g  on (b.sq_cc               = g.sq_cc)
                 left               join eo_unidade           c  on (a.sq_unid_executora   = c.sq_unidade)
                 left               join (select x.sq_siw_solicitacao sq_acordo, x.codigo_interno cd_acordo,
-                                                w.nome_resumido||' - '||z.nome||' ('||to_char(x.inicio,'dd/mm/yyyy')||'-'||to_char(x.fim,'dd/mm/yyyy')||')' as nm_acordo
+                                                w.nome_resumido||' - '||z.nome||' ('||to_char(x.inicio,'dd/mm/yyyy')||'-'||to_char(x.fim,'dd/mm/yyyy')||')' as nm_acordo,
+                                                v.sigla
                                            from ac_acordo              x
                                                 join   co_pessoa       w on (x.outra_parte        = w.sq_pessoa)
                                                 join   siw_solicitacao y on (x.sq_siw_solicitacao = y.sq_siw_solicitacao)
                                                   join ct_cc           z on (y.sq_cc              = z.sq_cc)
+                                                  join siw_menu        v on (y.sq_menu            = v.sq_menu)
                                         )                    m  on (b.sq_solic_pai        = m.sq_acordo)
                 left               join siw_solicitacao      n  on (b.sq_solic_pai        = n.sq_siw_solicitacao)
                 left               join pe_programa          o  on (b.sq_solic_pai        = o.sq_siw_solicitacao)
