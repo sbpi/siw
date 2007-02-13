@@ -7,9 +7,9 @@ create or replace procedure SP_GetUorgList
     p_ano       in number   default null,
     p_result    out sys_refcursor) is
 begin
-   If p_restricao is null or p_restricao = 'LICITACAO' or p_restricao = 'ATIVO' or p_restricao = 'CODIGO' or
-      p_restricao = 'CODIGONULL' 
-      or p_restricao = 'MOD_PE' or p_restricao = 'RECURSO' or p_restricao = 'PLANEJAMENTO' or p_restricao = 'EXECUCAO' Then
+   If p_restricao is null or p_restricao = 'LICITACAO' or p_restricao = 'ATIVO' or p_restricao = 'CODIGO' 
+      or p_restricao = 'CODIGONULL' or p_restricao = 'MOD_PE' or p_restricao = 'RECURSO' or p_restricao = 'PLANEJAMENTO' 
+      or p_restricao = 'EXECUCAO' or p_restricao = 'MOD_PA' Then
       -- Recupera as unidades organizacionais do cliente
       open p_result for 
          select a.sq_unidade,a.sq_unidade_pai, a.nome, a.sigla, a.informal, a.adm_central, a.vinculada, 
@@ -27,6 +27,7 @@ begin
                 left outer join co_pessoa          d on (c.sq_pessoa          = d.sq_pessoa)
                 left outer join lc_unidade         e on (a.sq_unidade         = e.sq_unidade)
                 left outer join pe_unidade         g on (a.sq_unidade         = g.sq_unidade)
+                left outer join pa_unidade         h on (a.sq_unidade         = h.sq_unidade)
           where b.sq_pessoa            = p_cliente
             and a.externo              = 'N'
             and (p_chave               is null or (p_chave is not null and a.sq_unidade = p_chave))
@@ -37,6 +38,7 @@ begin
                                                or (p_restricao = 'CODIGO'       and (a.informal = 'N' and a.sq_unidade_pai is null))
                                                or (p_restricao = 'CODIGONULL'   and (a.informal = 'N' and a.codigo <> '00'))
                                                or (p_restricao = 'MOD_PE'       and (g.sq_unidade is not null))
+                                               or (p_restricao = 'MOD_PA'       and (h.sq_unidade is not null))
                                                or (p_restricao = 'RECURSO'      and (g.sq_unidade is not null and g.gestao_recursos = 'S'))
                                                or (p_restricao = 'PLANEJAMENTO' and (g.sq_unidade is not null and g.planejamento    = 'S'))
                                                or (p_restricao = 'EXECUCAO'     and (g.sq_unidade is not null and g.execucao        = 'S'))
