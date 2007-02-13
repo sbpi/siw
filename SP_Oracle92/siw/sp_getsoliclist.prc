@@ -94,7 +94,7 @@ begin
                 b.valor,              b.opiniao,
                 b.sq_solic_pai,       b.sq_unidade,                  b.sq_cidade_origem,
                 b.palavra_chave,
-                b1.nome nm_tramite,   b1.ordem or_tramite,
+                b1.sq_siw_tramite,    b1.nome nm_tramite,            b1.ordem or_tramite,
                 b1.sigla sg_tramite,  b1.ativo,
                 c.sq_tipo_unidade,    c.nome nm_unidade_exec,        c.informal,
                 c.vinculada,          c.adm_central,
@@ -226,7 +226,7 @@ begin
                 b.valor,              b.opiniao,
                 b.sq_solic_pai,       b.sq_unidade,                  b.sq_cidade_origem,
                 b.palavra_chave,
-                b1.nome nm_tramite,   b1.ordem or_tramite,
+                b1.sq_siw_tramite,    b1.nome nm_tramite,            b1.ordem or_tramite,
                 b1.sigla sg_tramite,  b1.ativo,
                 c.sq_tipo_unidade,    c.nome nm_unidade_exec,        c.informal,
                 c.vinculada,          c.adm_central,
@@ -364,7 +364,7 @@ begin
                 b.valor,              b.opiniao,
                 b.sq_solic_pai,       b.sq_unidade,                  b.sq_cidade_origem,
                 b.palavra_chave,
-                b1.nome nm_tramite,   b1.ordem or_tramite,
+                b1.sq_siw_tramite,    b1.nome nm_tramite,            b1.ordem or_tramite,
                 b1.sigla sg_tramite,  b1.ativo,
                 c.sq_tipo_unidade,    c.nome nm_unidade_exec,        c.informal,
                 c.vinculada,          c.adm_central,
@@ -491,7 +491,6 @@ begin
                                                                             (acentos(d2.nome_resumido,null) like '%'||acentos(p_proponente,null)||'%')
                                              )
                 )
-            and (p_sq_orprior     is null or (p_sq_orprior  is not null and d.sq_tipo_acordo     = p_sq_orprior))
             and (p_empenho        is null or (p_empenho     is not null and upper(d.empenho)     = upper(p_empenho)))
             and (p_processo       is null or (p_processo    is not null and upper(d.processo)    = upper(p_processo)))
             and ((p_tipo         = 1     and Nvl(b1.sigla,'-') = 'CI'   and b.cadastrador        = p_pessoa) or
@@ -541,7 +540,7 @@ begin
                 b.sq_unidade,         b.sq_cidade_origem,            b.palavra_chave,
                 b.valor,
                 case coalesce(b1.sigla,'--') when 'AT' then b.valor else 0 end valor_atual,
-                b1.nome nm_tramite,   b1.ordem or_tramite,
+                b1.sq_siw_tramite,    b1.nome nm_tramite,            b1.ordem or_tramite,
                 b1.sigla sg_tramite,  b1.ativo,
                 c.sq_tipo_unidade,    c.nome nm_unidade_exec,        c.informal,
                 c.vinculada,          c.adm_central,
@@ -552,7 +551,6 @@ begin
                 d.valor_retencao,     d.valor_liquido,               d.aviso_prox_conc,
                 d.dias_aviso,         d.sq_tipo_pessoa,              d.tipo tipo_rubrica,
                 case d.tipo when 1 then 'Dotação incial' when 2 then 'Transferência entre rubricas' when 3 then 'Atualização de aplicação' when 4 then 'Entradas' else 'Normal' end nm_tipo_rubrica,
-                d1.nome nm_tipo_lancamento,
                 d2.nome nm_pessoa,    d2.nome_resumido nm_pessoa_resumido,
                 d2.nome_resumido_ind nm_pessoa_resumido_ind,
                 Nvl(d3.valor,0) valor_doc,
@@ -621,8 +619,8 @@ begin
                       left           join pj_projeto           q  on (b.sq_solic_pai             = q.sq_siw_solicitacao)
                       left           join ct_cc                n  on (b.sq_cc                    = n.sq_cc)
                       left           join co_pessoa            o  on (b.solicitante              = o.sq_pessoa)
-                        left         join sg_autenticacao      o1 on (o.sq_pessoa                = o1.sq_pessoa)
-                          left       join eo_unidade           o2 on (o1.sq_unidade              = o2.sq_unidade)
+                        inner        join sg_autenticacao      o1 on (o.sq_pessoa                = o1.sq_pessoa)
+                          inner      join eo_unidade           o2 on (o1.sq_unidade              = o2.sq_unidade)
                       left           join co_pessoa            p  on (b.executor                 = p.sq_pessoa)
                    left              join eo_unidade           c  on (a.sq_unid_executora        = c.sq_unidade)
                    inner             join (select sq_siw_solicitacao, max(sq_siw_solic_log) chave 
@@ -653,7 +651,6 @@ begin
                                                                             (acentos(d2.nome_resumido,null) like '%'||acentos(p_proponente,null)||'%')
                                              )
                 )
-            and (p_sq_orprior     is null or (p_sq_orprior  is not null and d.sq_tipo_lancamento = p_sq_orprior))
             and ((p_tipo         = 1     and Nvl(b1.sigla,'-') = 'CI'   and b.cadastrador        = p_pessoa) or
                  (p_tipo         = 2     and b1.ativo = 'S' and Nvl(b1.sigla,'-') <> 'CI' and b.executor = p_pessoa and b.conclusao is null) or
                  --(p_tipo         = 2     and b1.ativo = 'S' and Nvl(b1.sigla,'-') <> 'CI' and b2.acesso > 15) or
@@ -700,7 +697,7 @@ begin
                 b.opiniao,            b.sq_solic_pai,
                 b.sq_unidade,         b.sq_cidade_origem,            b.palavra_chave,
                 b.valor,              b.fim-d.dias_aviso aviso,
-                b1.nome nm_tramite,   b1.ordem or_tramite,
+                b1.sq_siw_tramite,    b1.nome nm_tramite,            b1.ordem or_tramite,
                 b1.sigla sg_tramite,  b1.ativo,
                 c.sq_tipo_unidade,    c.nome nm_unidade_exec,        c.informal,
                 c.vinculada,          c.adm_central,
@@ -807,7 +804,7 @@ begin
             and (p_ini_i          is null or (p_ini_i       is not null and ((b.inicio           between p_ini_i  and p_ini_f) or
                                                                              (b.fim              between p_ini_i  and p_ini_f) or
                                                                              (p_ini_i            between b.inicio and b.fim)   or
-                                                                             (p_ini_f            between b.inicio and b.fim)
+                                                                             (p_fim_i            between b.inicio and b.fim)
                                                                             )
                                              )
                 )
@@ -849,7 +846,7 @@ begin
                 to_char(b.inicio,'dd/mm/yyyy, hh24:mi:ss')    phpdt_inicio,
                 to_char(b.fim,'dd/mm/yyyy, hh24:mi:ss')       phpdt_fim,
                 to_char(b.conclusao,'dd/mm/yyyy, hh24:mi:ss') phpdt_conclusao,
-                b1.nome nm_tramite,   b1.ordem or_tramite,
+                b1.sq_siw_tramite,    b1.nome nm_tramite,            b1.ordem or_tramite,
                 b1.sigla sg_tramite,  b1.ativo,
                 b3.nome nm_opiniao,
                 c.sq_tipo_unidade,    c.nome nm_unidade_exec,        c.informal,
@@ -948,7 +945,7 @@ begin
                 b.valor,              b.opiniao,
                 b.sq_solic_pai,       b.sq_unidade,                  b.sq_cidade_origem,
                 b.palavra_chave,
-                b1.nome nm_tramite,   b1.ordem or_tramite,
+                b1.sq_siw_tramite,    b1.nome nm_tramite,            b1.ordem or_tramite,
                 b1.sigla sg_tramite,  b1.ativo,
                 b2.sq_peobjetivo,     b2.sq_plano,                   b2.nome nm_objetivo, 
                 b2.sigla sg_objetivo, b2.descricao ds_objetivo,      b2.ativo st_objetivo,
@@ -984,8 +981,8 @@ begin
                    inner             join siw_modulo           a1 on (a.sq_modulo                = a1.sq_modulo)
                    inner             join siw_solicitacao      b  on (a.sq_menu                  = b.sq_menu)
                       inner          join siw_tramite          b1 on (b.sq_siw_tramite           = b1.sq_siw_tramite)
-                      left           join pe_objetivo          b2 on (b.sq_peobjetivo            = b2.sq_peobjetivo)
-                        left         join pe_plano             b3 on (b2.sq_plano                = b3.sq_plano)
+                      inner          join pe_objetivo          b2 on (b.sq_peobjetivo            = b2.sq_peobjetivo)
+                        inner        join pe_plano             b3 on (b2.sq_plano                = b3.sq_plano)
                       inner          join (select sq_siw_solicitacao, acesso(sq_siw_solicitacao, p_pessoa) acesso
                                              from siw_solicitacao
                                           )                    b2 on (b.sq_siw_solicitacao       = b2.sq_siw_solicitacao)
@@ -1079,19 +1076,18 @@ begin
                 b.palavra_chave,
                 b1.sq_siw_tramite,    b1.nome nm_tramite,            b1.ordem or_tramite,
                 b1.sigla sg_tramite,  b1.ativo,
-                b2.sq_peobjetivo,     b2.sq_plano,                   b2.nome nm_objetivo, 
-                b2.sigla sg_objetivo, b2.descricao ds_objetivo,      b2.ativo st_objetivo,
-                b3.sq_plano_pai,      b3.titulo nm_plano,            b3.missao, 
-                b3.valores,           b3.visao_presente,             b3.visao_futuro, 
-                b3.inicio inicio_plano,b3.fim vim_plano,             b3.ativo st_plano,
                 c.sq_tipo_unidade,    c.nome nm_unidade_exec,        c.informal,
                 c.vinculada,          c.adm_central,
-                d.codigo_interno cd_programa, d.titulo,              d.ln_programa,
-                d.exequivel,          d.inicio_real,                 d.fim_real,
-                d.custo_real, 
-                d1.nome nm_horizonte, d1.ativo st_horizonte, 
-                d7.nome nm_natureza, d7.ativo st_natureza,
-                b.fim-d.dias_aviso aviso,
+                d.numero_original,    d.numero_documento,            d.ano,
+                d.prefixo,            d.digito,                      d.interno,
+                d.sq_especie_documento, d.sq_natureza_documento,     d.unidade_autuacao,
+                d.data_autuacao,      d.pessoa_origem,               d.pessoa_posse,
+                d.copia,              d.circular,                    d.numero_copia,
+                d.volumes,            d.total_interessados,
+                d1.nome nm_natureza,  d1.sigla sg_natureza,          d1.descricao ds_natureza,
+                d1.ativo st_natureza,
+                d7.nome nm_especie,   d7.sigla sg_natureza,          d7.ativo st_natureza,
+                b.fim-k.dias_aviso aviso,
                 e.sq_unidade sq_unidade_resp,
                 e.sq_tipo_unidade,    e.nome nm_unidade_resp,        e.informal informal_resp,
                 e.vinculada vinc_resp,e.adm_central adm_resp,        e.sigla sg_unidade_resp,
@@ -1113,14 +1109,13 @@ begin
                    inner             join siw_modulo           a1 on (a.sq_modulo                = a1.sq_modulo)
                    inner             join siw_solicitacao      b  on (a.sq_menu                  = b.sq_menu)
                       inner          join siw_tramite          b1 on (b.sq_siw_tramite           = b1.sq_siw_tramite)
-                      inner          join pa_documento         b2 on (b.sq_siw_solicitacao       = b2.sq_siw_solicitacao)
                       inner          join (select sq_siw_solicitacao, acesso(sq_siw_solicitacao, p_pessoa) acesso
                                              from siw_solicitacao
                                           )                    b2 on (b.sq_siw_solicitacao       = b2.sq_siw_solicitacao)
-                      inner          join pe_programa          d  on (b.sq_siw_solicitacao       = d.sq_siw_solicitacao)
-                        inner        join pe_horizonte         d1 on (d.sq_pehorizonte           = d1.sq_pehorizonte)
-                        inner        join pe_natureza          d7 on (d.sq_penatureza            = d7.sq_penatureza)
-                        inner        join eo_unidade           e  on (d.sq_unidade_resp          = e.sq_unidade)
+                      inner          join pa_documento          d on (b.sq_siw_solicitacao       = d.sq_siw_solicitacao)
+                       inner        join pa_natureza_documento d1 on (d.sq_natureza_documento    = d1.sq_natureza_documento)
+                        inner        join pa_especie_documento d7 on (d.sq_especie_documento     = d7.sq_especie_documento)
+                        inner        join eo_unidade           e  on (d.unidade_autuacao         = e.sq_unidade)
                           left       join eo_unidade_resp      e1 on (e.sq_unidade               = e1.sq_unidade and
                                                                       e1.tipo_respons            = 'T'           and
                                                                       e1.fim                     is null
@@ -1140,8 +1135,8 @@ begin
                                              from siw_solic_log
                                            group by sq_siw_solicitacao
                                           )                    j  on (b.sq_siw_solicitacao       = j.sq_siw_solicitacao)
-                     left            join pe_programa_log      k  on (j.chave                    = k.sq_siw_solic_log)
-                       left          join sg_autenticacao      l  on (j.k.destinatario           = l.sq_pessoa)
+                     left            join pa_documento_log     k  on (j.chave                    = k.sq_siw_solic_log)
+                       left          join sg_autenticacao      l  on (k.recebedor                = l.sq_pessoa)
           where a.sq_menu        = p_menu
             and (p_chave          is null or (p_chave       is not null and b.sq_siw_solicitacao = p_chave))
             and (p_pais           is null or (p_pais        is not null and f.sq_pais            = p_pais))
@@ -1153,14 +1148,14 @@ begin
             and (p_projeto        is null or (p_projeto     is not null and b.sq_solic_pai       = p_projeto))
             --and (p_atividade      is null or (p_atividade   is not null and i.sq_projeto_etapa   = p_atividade))
             and (p_uf             is null or (p_uf          is not null and f.co_uf              = p_uf))
-            and (p_assunto        is null or (p_assunto     is not null and acentos(d.titulo,null) like '%'||acentos(p_assunto,null)||'%'))
+            --and (p_assunto        is null or (p_assunto     is not null and acentos(d.titulo,null) like '%'||acentos(p_assunto,null)||'%'))
             and (p_fase           is null or (p_fase        is not null and InStr(x_fase,''''||b.sq_siw_tramite||'''') > 0))
             and (p_prazo          is null or (p_prazo       is not null and b.conclusao          is null and b.fim-sysdate+1 <=p_prazo))
             and (p_ini_i          is null or (p_ini_i       is not null and b.inicio             between p_ini_i and p_ini_f))
             and (p_fim_i          is null or (p_fim_i       is not null and b.fim                between p_fim_i and p_fim_f))
             and (p_unidade        is null or (p_unidade     is not null and b.sq_unidade         = p_unidade))
             and (p_solicitante    is null or (p_solicitante is not null and b.solicitante        = p_solicitante))
-            and (p_palavra        is null or (p_palavra     is not null and d.codigo_interno     like '%'||p_palavra||'%'))
+            and (p_palavra        is null or (p_palavra     is not null and d.numero_documento   like '%'||p_palavra||'%'))
             and ((p_tipo         = 1     and Nvl(b1.sigla,'-') = 'CI'   and b.cadastrador        = p_pessoa) or
                  (p_tipo         = 2     and b1.ativo = 'S' and Nvl(b1.sigla,'-') <> 'CI' and b.executor = p_pessoa and b.conclusao is null) or
                  --(p_tipo         = 2     and b1.ativo = 'S' and Nvl(b1.sigla,'-') <> 'CI' and b2.acesso > 15) or
@@ -1245,10 +1240,10 @@ begin
                 left    join pj_projeto    d  on (b.sq_siw_solicitacao = d.sq_siw_solicitacao)
                 left    join (select x.sq_siw_solicitacao, x.codigo_interno, x.vincula_demanda, 
                                      x.vincula_projeto, x.vincula_viagem,
-                                     case when x.titulo is not null then x.titulo else w.nome_resumido||' - '||case when z.sq_cc is not null then z.nome else k.titulo end end||' ('||to_char(x.inicio,'dd/mm/yyyy')||'-'||to_char(x.fim,'dd/mm/yyyy')||')' as titulo
+                                     w.nome_resumido||' - '||case when z.sq_cc is not null then z.nome else k.titulo end||' ('||to_char(x.inicio,'dd/mm/yyyy')||'-'||to_char(x.fim,'dd/mm/yyyy')||')' as titulo
                                 from ac_acordo                   x
-                                     left join   co_pessoa       w on x.outra_parte        = w.sq_pessoa
-                                     inner join  siw_solicitacao y on x.sq_siw_solicitacao = y.sq_siw_solicitacao
+                                     join        co_pessoa       w on x.outra_parte        = w.sq_pessoa
+                                     join        siw_solicitacao y on x.sq_siw_solicitacao = y.sq_siw_solicitacao
                                        left join ct_cc           z on y.sq_cc              = z.sq_cc
                                        left join pj_projeto      k on y.sq_solic_pai       = k.sq_siw_solicitacao
                              )             e  on (b.sq_siw_solicitacao = e.sq_siw_solicitacao)

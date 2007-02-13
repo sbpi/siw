@@ -50,7 +50,7 @@ begin
           where a.cliente     = p_cliente
             and b.sq_assunto_pai is null
             and (p_chave            is null or (p_chave            is not null and a.sq_assunto = p_chave))
-            and (p_descricao        is null or (p_descricao        is not null and a.descricao like '%'||p_descricao||'%'))
+            and (p_descricao        is null or (p_descricao        is not null and acentos(a.descricao) like '%'||acentos(p_descricao)||'%'))
             and (p_corrente_guarda  is null or (p_corrente_guarda  is not null and a.fase_corrente_guarda = p_corrente_guarda))
             and (p_intermed_guarda  is null or (p_intermed_guarda  is not null and a.fase_intermed_guarda = p_intermed_guarda))
             and (p_final_guarda     is null or (p_final_guarda     is not null and a.fase_final_guarda = p_final_guarda))
