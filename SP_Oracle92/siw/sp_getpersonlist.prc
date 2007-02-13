@@ -86,7 +86,7 @@ begin
                                                                    or    a.nome_resumido_ind like '%'||upper(acentos(p_nome))||'%')))
             and (p_sg_unidade is null or (p_sg_unidade is not null and acentos(d.sigla) like '%'||acentos(p_sg_unidade)||'%'))
             and (p_codigo     is null or (p_codigo     is not null and b.codigo = p_codigo))
-            and (p_filhos     in null or (p_filhos     in not null and a.tipo_pessoa = p_filhos)
+            and (p_filhos     is null or (p_filhos     is not null and a.sq_tipo_pessoa = p_filhos))
          order by a.nome_indice;         
    Elsif p_restricao = 'INTERNOS' Then
       -- Recupera as pessoas internas à organização

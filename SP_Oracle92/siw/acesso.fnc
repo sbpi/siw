@@ -47,7 +47,6 @@ create or replace function Acesso
   w_gestor_sistema         sg_autenticacao.gestor_sistema%type;
   w_sq_unidade_executora   siw_menu.sq_unid_executora%type;        -- Unidade executora do serviço
   w_consulta_opiniao       siw_menu.consulta_opiniao%type;
-  w_acompanha_fases        siw_menu.acompanha_fases%type;
   w_envia_email            siw_menu.envia_email%type;
   w_exibe_relatorio        siw_menu.exibe_relatorio%type;
   w_vinculacao             siw_menu.vinculacao%type;
@@ -112,7 +111,7 @@ begin
  -- Recupera as informações da opção à qual a solicitação pertence
  select a.acesso_geral, a.sq_menu, a.sq_modulo, a.sigla, a.destinatario,
         b.sq_pessoa, b.sq_unidade, b.gestor_seguranca, b.gestor_sistema, b.ativo usuario_ativo,
-        a.sq_unid_executora, a.consulta_opiniao, a.acompanha_fases, a.envia_email, a.exibe_relatorio, a.vinculacao, 
+        a.sq_unid_executora, a.consulta_opiniao, a.envia_email, a.exibe_relatorio, a.vinculacao, 
         d.sq_siw_tramite, d.solicitante, d.cadastrador, d.sq_unidade, d.executor, d.opiniao, 
         case when d.sq_cc is not null 
              then d.sq_cc
@@ -126,7 +125,7 @@ begin
         h.sq_pessoa_endereco, d.executor
    into w_acesso_geral, w_sq_servico, w_modulo, w_sigla, w_destinatario,
         w_username, w_sq_unidade_lotacao, w_gestor_seguranca, w_gestor_sistema, w_usuario_ativo,
-        w_sq_unidade_executora, w_consulta_opiniao, w_acompanha_fases, w_envia_email, w_exibe_relatorio, w_vinculacao,
+        w_sq_unidade_executora, w_consulta_opiniao, w_envia_email, w_exibe_relatorio, w_vinculacao,
         w_sq_siw_tramite, w_solicitante, w_cadastrador, w_unidade_solicitante, w_sq_pessoa_executor, w_opiniao_solicitante, w_sq_cc,
         w_ordem, w_sigla_situacao, w_ativo, w_chefia_imediata,
         w_sq_pessoa_titular, w_sq_pessoa_substituto,

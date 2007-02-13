@@ -7,7 +7,7 @@ begin
    open p_result for
       select a.sq_menu, a.sq_modulo, a.sq_pessoa, a.sq_menu_pai, a.nome, a.link, a.tramite, a.ordem, a.ultimo_nivel, 
              a.p1, a.p2, a.p3, a.p4, a.sigla, a.imagem, a.descentralizado, a.externo, a.target, a.ativo, a.acesso_geral, 
-             a.como_funciona, a.acompanha_fases, a.sq_unid_executora, a.finalidade, a.arquivo_proced, a.emite_os, 
+             a.como_funciona, a.sq_unid_executora, a.finalidade, a.arquivo_proced, a.emite_os, 
              a.consulta_opiniao, a.envia_email, a.exibe_relatorio, a.vinculacao, a.data_hora, a.envia_dia_util, a.descricao, 
              a.justificativa, a.destinatario, a.controla_ano, a.libera_edicao,
              case coalesce(b.qtd,0) when 0 then 'N' else 'S' end as solicita_cc, 
