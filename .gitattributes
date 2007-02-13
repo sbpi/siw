@@ -3252,6 +3252,8 @@ SP_Oracle92/siw/sp_putRecurso_Disp.prc -text
 SP_Oracle92/siw/sp_putRecurso_Indisp.prc -text
 SP_Oracle92/siw/sp_putRecurso_Menu.prc -text
 SP_Oracle92/siw/sp_putSolicIndicador.prc -text
+SP_Oracle92/siw/sp_putSolicRecAlocacao.prc -text
+SP_Oracle92/siw/sp_putSolicRecurso.prc -text
 SP_Oracle92/siw/sp_putTipoIndicador.prc -text
 SP_Oracle92/siw/sp_putTipoInteressado.prc -text
 SP_Oracle92/siw/sp_putTipoRecurso.prc -text

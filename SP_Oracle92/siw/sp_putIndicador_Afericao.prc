@@ -23,7 +23,7 @@ begin
    If p_pais is not null and p_uf is not null and p_regiao is null Then
      select sq_regiao into w_regiao from co_uf where sq_pais = p_pais and co_uf = p_uf;
    Else
-     w_regiao := null;
+     w_regiao := p_regiao;
    End If;
    
    If p_operacao = 'I' or p_operacao = 'C' Then

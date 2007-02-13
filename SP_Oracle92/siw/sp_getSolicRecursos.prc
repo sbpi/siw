@@ -32,9 +32,15 @@ begin
                 a4.nome nm_tramite,    a4.ordem or_tramite,            a4.sigla sg_tramite,
                 a4.ativo st_tramite,
                 a5.nome_resumido as nm_solic,                          a5.nome_resumido_ind as nm_solic_ind,
-                b.nome as nm_recurso,  b.codigo as cd_recurso, 
+                b.nome as nm_recurso,  b.codigo as cd_recurso,         b.unidade_gestora,
+                b.disponibilidade_tipo,
+                case b.disponibilidade_tipo when 1 then 'Prazo indefinido, controle apenas do limite diário de unidades'
+                                            when 2 then 'Prazo definido, com controle do limite de unidades no período e no dia'
+                                            when 3 then 'Prazo definido, controle apenas do limite diário de unidades'
+                end as nm_disponibilidade_tipo,
                 c.nome as nm_unidade,  c.sigla as sg_unidade,
                 d.sq_tipo_recurso,     d.nome as nm_tipo_recurso,      d.sigla as sg_tipo_recurso,
+                montanometiporecurso(b.sq_tipo_recurso) as nm_tipo_completo,
                 e.nome as nm_unidade_medida,                           e.sigla as sg_unidade_medida,
                 coalesce(f.alocacao,0) as alocacao,
                 i.nome_resumido as nm_solicitante,
@@ -49,14 +55,9 @@ begin
                   inner   join (select sq_siw_solicitacao, acesso(sq_siw_solicitacao, p_usuario) acesso
                                   from siw_solicitacao
                                )                  a6 on (a1.sq_siw_solicitacao = a6.sq_siw_solicitacao)
-                inner     join eo_recurso         b  on (a.sq_recurso          = b.sq_recurso)
-                  inner   join eo_unidade         c  on (b.unidade_gestora     = c.sq_unidade)
-                  inner   join eo_tipo_recurso    d  on (b.sq_tipo_recurso     = d.sq_tipo_recurso)
-                  inner   join co_unidade_medida  e  on (b.sq_unidade_medida   = e.sq_unidade_medida)
-                  left    join (select y.sq_solic_recurso, x.sq_recurso, sum(y.unidades_solicitadas) alocacao
+                left      join (select x.sq_siw_solicitacao, sum(y.unidades_solicitadas) alocacao
                                   from siw_solic_recurso                     x
                                        inner join siw_solic_recurso_alocacao y on (x.sq_solic_recurso = y.sq_solic_recurso and
-                                                                                   trunc(sysdate)     between y.inicio and y.fim and
                                                                                    (p_ref_i           is null or
                                                                                     (p_ref_i          is not null and
                                                                                      y.inicio         between p_ref_i and p_ref_f or
@@ -66,12 +67,14 @@ begin
                                                                                     )
                                                                                    )
                                                                                   )
-                                group by y.sq_solic_recurso, x.sq_recurso
-                               )                  f  on (b.sq_recurso          = f.sq_recurso and
-                                                         a.sq_solic_recurso    = f.sq_solic_recurso
-                                                        )
+                                group by x.sq_siw_solicitacao
+                               )                  f  on (a1.sq_siw_solicitacao = f.sq_siw_solicitacao)
+                inner     join eo_recurso         b  on (a.sq_recurso          = b.sq_recurso)
+                  inner   join eo_unidade         c  on (b.unidade_gestora     = c.sq_unidade)
+                  inner   join eo_tipo_recurso    d  on (b.sq_tipo_recurso     = d.sq_tipo_recurso)
+                  inner   join co_unidade_medida  e  on (b.sq_unidade_medida   = e.sq_unidade_medida)
                   inner   join co_pessoa          i  on (a.solicitante         = i.sq_pessoa)
-                  inner   join co_pessoa          j  on (a.autorizador         = j.sq_pessoa)
+                  left    join co_pessoa          j  on (a.autorizador         = j.sq_pessoa)
                   inner   join eo_unidade         k  on (a1.sq_unidade         = k.sq_unidade)
                     left  join eo_unidade_resp    k1 on (k.sq_unidade          = k1.sq_unidade and
                                                          k1.tipo_respons       = 'T'           and
@@ -91,7 +94,66 @@ begin
             and (p_gestora       is null or (p_gestora       is not null and b.unidade_gestora    = p_gestora))
             and (p_ativo         is null or (p_ativo         is not null and b.ativo              = p_ativo))
             and (p_tipo          is null or (p_tipo          is not null and b.sq_tipo_recurso    = p_tipo))
-            and (p_ref_i         is null or (p_ref_i         is not null and f.sq_solic_recurso   is not null));
+            and (p_ref_i         is null or (p_ref_i         is not null and f.sq_siw_solicitacao is not null));
+   Elsif p_restricao = 'EXISTEREC' Then
+      -- Verifica se o recurso já está alocado na solicitação
+      open p_result for 
+         select count(a.sq_solic_recurso) as existe
+           from siw_solic_recurso                      a
+                inner  join siw_solicitacao            b on (a.sq_siw_solicitacao  = b.sq_siw_solicitacao)
+                inner  join siw_solic_recurso_alocacao c on (a.sq_solic_recurso    = c.sq_solic_recurso)
+          where a.sq_siw_solicitacao = p_chave
+            and a.sq_recurso         = p_recurso
+            and a.sq_solic_recurso   <> coalesce(p_chave_aux,0);
+   Elsif p_restricao = 'EXISTEPER' Then
+      -- Verifica se há alguma alocação no mesmo período
+      open p_result for 
+         select count(a.sq_solic_recurso_alocacao) as existe
+           from siw_solic_recurso_alocacao a
+          where a.sq_solic_recurso          = p_chave
+            and a.sq_solic_recurso_alocacao <> coalesce(p_chave_aux,0)
+            and (a.inicio                   between p_ref_i and p_ref_f or
+                 a.fim                      between p_ref_i and p_ref_f or
+                 p_ref_i                    between a.inicio and a.fim or
+                 p_ref_f                    between a.inicio and a.fim
+                );
+   Elsif p_restricao = 'SOLICPER' Then
+      -- Retorna os períodos de alocação do recurso, inseridos em uma solicitação, a partir da chave da alocação
+      open p_result for 
+         select a.sq_solic_recurso_alocacao as chave_aux, a.sq_solic_recurso as chave, a.inicio, a.fim, 
+                a.unidades_solicitadas, a.unidades_autorizadas
+           from siw_solic_recurso_alocacao   a
+                inner join siw_solic_recurso b on (a.sq_solic_recurso = b.sq_solic_recurso)
+          where a.sq_solic_recurso   = p_chave -- Nesta restriçao p_chave é a chave de SIW_SOLIC_RECURSO
+            and (p_chave_aux         is null or (p_chave_aux is not null and a.sq_solic_recurso_alocacao = p_chave_aux));
+   Elsif p_restricao = 'ALOCACAO' Then
+      -- Retorna os períodos de alocação do recurso, inseridos em uma solicitação, a partir da chave da solicitação ou do recurso
+      open p_result for 
+         select a.sq_solic_recurso_alocacao as chave_aux, a.sq_solic_recurso as chave, a.inicio, a.fim, 
+                a.unidades_solicitadas, a.unidades_autorizadas,
+                case b.autorizado when 'S' then 'Sim' else 'Não' end as nm_autorizado
+           from siw_solic_recurso_alocacao   a
+                inner join siw_solic_recurso b on (a.sq_solic_recurso = b.sq_solic_recurso)
+          where (p_chave             is null or (p_chave     is not null and b.sq_siw_solicitacao = p_chave))
+            and (p_chave_aux         is null or (p_chave_aux is not null and b.sq_recurso         = p_chave_aux))
+            and (p_chave is not null or p_chave_aux is not null);
+   Elsif p_restricao = 'RECDISP' Then
+      -- Verifica se o recurso está disponível em todo o período informado
+      open p_result for 
+         select count(d.sq_recurso_disponivel) as existe
+           from eo_recurso                          c
+                inner join eo_recurso_disponivel    d on (c.sq_recurso       = d.sq_recurso)
+                inner  join eo_recurso_indisponivel e on (c.sq_recurso       = e.sq_recurso and
+                                                          not (p_ref_i       between e.inicio and e.fim or
+                                                               p_ref_f       between e.inicio and e.fim or
+                                                               e.inicio      between p_ref_i  and p_ref_f or
+                                                               e.fim         between p_ref_i and p_ref_f
+                                                              )
+                                                         )
+          where c.sq_recurso              = p_chave
+            and (c.disponibilidade_tipo   = 1 or
+                 (c.disponibilidade_tipo  > 1 and p_ref_i between d.inicio and d.fim and p_ref_f between d.inicio and d.fim)
+                );
    End If;
 end sp_getSolicRecursos;
 /

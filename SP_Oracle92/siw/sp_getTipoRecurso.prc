@@ -67,13 +67,22 @@ begin
                               from eo_tipo_recurso 
                             group by sq_tipo_pai
                            )    b on (a.sq_tipo_recurso = b.sq_tipo_pai)
+                left  join (select z.sq_tipo_recurso, count(x.sq_menu) as qtd
+                              from eo_recurso_menu              x
+                                   inner   join eo_recurso      y on (x.sq_recurso      = y.sq_recurso)
+                                     inner join eo_tipo_recurso z on (y.sq_tipo_recurso = z.sq_tipo_recurso)
+                             where z.cliente = p_cliente
+                               and x.sq_menu = coalesce(p_chave_pai,x.sq_menu)
+                            group by z.sq_tipo_recurso
+                           )    c on (a.sq_tipo_recurso = c.sq_tipo_recurso)
           where a.cliente     = p_cliente
             and b.sq_tipo_pai is null
-            and (p_chave      is null or (p_chave   is not null and a.sq_tipo_recurso = p_chave))
-            and (p_nome       is null or (p_nome    is not null and a.nome = p_nome))
-            and (p_gestora    is null or (p_gestora is not null and a.unidade_gestora = p_gestora))
-            and (p_sigla      is null or (p_sigla   is not null and a.sigla = upper(p_sigla)))
-            and (p_ativo      is null or (p_ativo   is not null and a.ativo = p_ativo))
+            and (p_chave      is null or (p_chave     is not null and a.sq_tipo_recurso = p_chave))
+            and (p_chave_pai  is null or (p_chave_pai is not null and coalesce(c.qtd,0) > 0))
+            and (p_nome       is null or (p_nome      is not null and a.nome = p_nome))
+            and (p_gestora    is null or (p_gestora   is not null and a.unidade_gestora = p_gestora))
+            and (p_sigla      is null or (p_sigla     is not null and a.sigla = upper(p_sigla)))
+            and (p_ativo      is null or (p_ativo     is not null and a.ativo = p_ativo))
          connect by prior a.sq_tipo_pai = a.sq_tipo_recurso
          order by 5;
    Elsif upper(p_restricao) = 'PAI' Then

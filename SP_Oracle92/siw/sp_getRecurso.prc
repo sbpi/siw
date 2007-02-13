@@ -10,7 +10,7 @@ create or replace procedure sp_getRecurso
     p_restricao    in varchar2  default null,
     p_result       out sys_refcursor) is
 begin
-   If p_restricao is null Then
+   If p_restricao is null or p_restricao = 'ALOCACAO' Then
       -- Recupera recursos
       open p_result for 
          select a.sq_recurso as chave, a.cliente, a.sq_tipo_recurso, a.sq_unidade_medida, a.unidade_gestora, a.nome, a.codigo, a.descricao, 
@@ -30,8 +30,8 @@ begin
                 inner     join eo_unidade         b  on (a.unidade_gestora     = b.sq_unidade)
                   inner   join co_pessoa_endereco b1 on (b.sq_pessoa_endereco  = b1.sq_pessoa_endereco)
                     inner join co_cidade          b2 on (b1.sq_cidade          = b2.sq_cidade)
-                inner     join eo_tipo_recurso    c  on (a.sq_tipo_recurso   = c.sq_tipo_recurso)
-                inner     join co_unidade_medida  d  on (a.sq_unidade_medida = d.sq_unidade_medida)
+                inner     join eo_tipo_recurso    c  on (a.sq_tipo_recurso     = c.sq_tipo_recurso)
+                inner     join co_unidade_medida  d  on (a.sq_unidade_medida   = d.sq_unidade_medida)
                 left      join (select x.sq_recurso, sum(y.unidades_solicitadas) alocacao
                                   from siw_solic_recurso                     x
                                        inner join siw_solic_recurso_alocacao y on (x.sq_solic_recurso = y.sq_solic_recurso and
@@ -39,7 +39,7 @@ begin
                                                                                   )
                                 group by x.sq_recurso
                                )                  e  on (a.sq_recurso        = e.sq_recurso)
-                    left  join (select x.sq_recurso, count(y.sq_recurso) disponivel
+                left      join (select x.sq_recurso, count(y.sq_recurso) disponivel
                                   from eo_recurso                         x
                                        inner join eo_recurso_disponivel   y on (x.sq_recurso   = y.sq_recurso and
                                                                                 (1               = x.disponibilidade_tipo or
@@ -55,13 +55,24 @@ begin
                                    and z.sq_recurso is null
                                 group by x.sq_recurso
                                )                  f  on (a.sq_recurso        = f.sq_recurso)
+                left      join (select y.sq_recurso, count(x.sq_menu) as qtd
+                                  from eo_recurso_menu              x
+                                       inner   join eo_recurso      y on (x.sq_recurso      = y.sq_recurso)
+                                 where y.cliente = p_cliente
+                                   and x.sq_menu = coalesce(p_gestora,x.sq_menu)
+                                group by y.sq_recurso
+                               )                  g on (a.sq_recurso           = g.sq_recurso)
           where a.cliente        = p_cliente
             and ((p_chave        is null) or (p_chave        is not null and a.sq_recurso      = p_chave))
             and ((p_tipo_recurso is null) or (p_tipo_recurso is not null and a.sq_tipo_recurso = p_tipo_recurso))
-            and ((p_gestora      is null) or (p_gestora      is not null and a.unidade_gestora   = p_gestora))
             and ((p_codigo       is null) or (p_codigo       is not null and a.codigo            = p_codigo))
             and ((p_nome         is null) or (p_nome         is not null and a.nome              = p_nome))
-            and ((p_ativo        is null) or (p_ativo        is not null and a.ativo             = p_ativo));
+            and ((p_ativo        is null) or (p_ativo        is not null and a.ativo             = p_ativo))
+            and ((p_restricao    is null  and
+                  (p_gestora     is null or (p_gestora      is not null and a.unidade_gestora   = p_gestora))
+                 ) or
+                 (p_restricao    is not null and coalesce(g.qtd,0) > 0) -- Restrição para trazer apenas os recursos disponíveis para o serviço
+                );
    Elsif upper(p_restricao) = 'MENU' Then
       -- Recupera os serviços que podem alocar o recurso
       open p_result for
