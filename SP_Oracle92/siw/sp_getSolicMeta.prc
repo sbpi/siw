@@ -21,8 +21,8 @@ create or replace procedure sp_getSolicMeta
     p_restricao      in  varchar2 default null,
     p_result         out sys_refcursor) is
 begin
-   If p_restricao is null Then
-      -- Recupera as indicadors de planejamento
+   If p_restricao is null or p_restricao = 'EXISTEMETA' Then
+      -- Recupera as metas ligadas a uma solicitação
       open p_result for 
          select a.sq_solic_meta as chave_aux,                          a.sq_siw_solicitacao as chave, 
                 a.sq_pessoa,           a.sq_unidade,                   a.titulo,
@@ -112,7 +112,8 @@ begin
                                                                       p_ref_f             between a.inicio and a.fim
                                                                      )
                                         )
-                );
+                )
+            and (p_restricao is null or (p_restricao = 'EXISTEMETA' and a.sq_solic_meta <> coalesce(p_chave_aux,0)));
    End If;
 end sp_getSolicMeta;
 /

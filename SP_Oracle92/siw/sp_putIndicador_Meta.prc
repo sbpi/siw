@@ -37,13 +37,13 @@ begin
         (sq_solic_meta,     sq_siw_solicitacao,  sq_eoindicador,    sq_pessoa,    titulo,       descricao,     ordem,          inicio,       fim, 
          base_geografica,   sq_pais,             sq_regiao,         co_uf,        sq_cidade,    quantidade,    cumulativa,     cadastrador,  sq_unidade)
       values
-        (w_chave_aux,       p_chave,             p_indicador,       p_usuario,    p_titulo,     p_descricao,   p_ordem,        p_inicio,     p_fim, 
+        (w_chave_aux,       p_chave,             p_indicador,       p_pessoa,     p_titulo,     p_descricao,   p_ordem,        p_inicio,     p_fim, 
          p_base,            p_pais,              w_regiao,          p_uf,         p_cidade,     p_quantidade,  p_cumulativa,   p_pessoa,     p_unidade);
    Elsif p_operacao = 'A' Then 
       -- Altera registro
       update siw_solic_meta
          set sq_eoindicador    = p_indicador,
-             sq_pessoa         = p_usuario,
+             sq_pessoa         = p_pessoa,
              titulo            = p_titulo,     
              descricao         = p_descricao,
              ordem             = p_ordem,

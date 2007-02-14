@@ -163,8 +163,11 @@ begin
            and i.sq_pessoa      is null
            and j.sq_pessoa      is null
            and a.sq_pessoa_pai  = p_cliente 
-           and (p_nome       is null or (p_nome       is not null and ((a.nome_indice like '%'||upper(acentos(p_nome))||'%')
-                                                                   or   a.nome_resumido_ind like '%'||upper(acentos(p_nome))||'%')))
+           and (p_nome       is null or (p_nome       is not null and (a.nome_indice       like '%'||upper(acentos(p_nome))||'%' or
+                                                                       a.nome_resumido_ind like '%'||upper(acentos(p_nome))||'%'
+                                                                      )
+                                        )
+               )
            and (p_sg_unidade is null or (p_sg_unidade is not null and acentos(f.sigla) like '%'||acentos(p_sg_unidade)||'%'))           
       order by a.nome_indice;
    Elsif p_restricao = 'TTCENTRAL' Then
