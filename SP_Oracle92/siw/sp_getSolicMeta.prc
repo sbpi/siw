@@ -89,7 +89,11 @@ begin
                                                        )
           where b.cliente    = p_cliente 
             and (p_chave     is null or (p_chave     is not null and a.sq_siw_solicitacao = p_chave))
-            and (p_chave_aux is null or (p_chave_aux is not null and a.sq_solic_meta      = p_chave_aux))
+            and (p_chave_aux is null or (p_chave_aux is not null and ((p_restricao is null and a.sq_solic_meta = p_chave_aux) or 
+                                                                      (p_restricao = 'EXISTEMETA' and a.sq_solic_meta <> coalesce(p_chave_aux,0))
+                                                                     )
+                                        )
+                )
             and (p_pessoa    is null or (p_pessoa    is not null and a.sq_pessoa          = p_pessoa))
             and (p_indicador is null or (p_indicador is not null and a.sq_eoindicador     = p_indicador))
             and (p_unidade   is null or (p_unidade   is not null and a.sq_unidade         = p_unidade))
@@ -112,8 +116,7 @@ begin
                                                                       p_ref_f             between a.inicio and a.fim
                                                                      )
                                         )
-                )
-            and (p_restricao is null or (p_restricao = 'EXISTEMETA' and a.sq_solic_meta <> coalesce(p_chave_aux,0)));
+                );
    End If;
 end sp_getSolicMeta;
 /
