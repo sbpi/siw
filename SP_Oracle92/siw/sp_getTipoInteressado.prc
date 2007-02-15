@@ -1,5 +1,6 @@
 create or replace procedure sp_getTipoInteressado
-   (p_servico   in number   default null,
+   (p_cliente   in number,
+    p_servico   in number   default null,
     p_chave     in number   default null,
     p_nome      in varchar2 default null,
     p_sigla     in varchar2 default null,
@@ -17,7 +18,8 @@ begin
            from siw_tipo_interessado    a
                 inner   join siw_menu   b on (a.sq_menu   = b.sq_menu)
                   inner join siw_modulo c on (b.sq_modulo = c.sq_modulo)
-          where (p_servico           is null or (p_servico is not null and a.sq_menu = p_servico))
+          where b.sq_pessoa          = p_cliente
+            and (p_servico           is null or (p_servico is not null and a.sq_menu = p_servico))
             and (p_chave             is null or (p_chave is not null and a.sq_tipo_interessado = p_chave))
             and (p_nome              is null or (p_nome is not null and a.nome = p_nome))
             and (p_sigla             is null or (p_sigla is not null and a.sigla = upper(p_sigla)))
@@ -44,9 +46,12 @@ begin
          select a.sq_tipo_interessado as chave, a.sq_menu, a.nome,
                 a.ordem, a.sigla, a.descricao, a.ativo, 
                 case a.ativo when 'S' then 'Sim' else 'Não' end as nm_ativo
-           from siw_tipo_interessado                   a
-                inner join siw_solicitacao_interessado b on (a.sq_tipo_interessado = b.sq_tipo_interessado)
-          where a.sq_menu              = p_servico
+           from siw_tipo_interessado                       a
+                inner     join siw_solicitacao_interessado b on (a.sq_tipo_interessado = b.sq_tipo_interessado)
+                  inner   join siw_solicitacao             c on (b.sq_siw_solicitacao  = c.sq_siw_solicitacao)
+                    inner join siw_menu                    d on (c.sq_menu             = d.sq_menu)
+          where d.sq_pessoa            = p_cliente
+            and a.sq_menu              = p_servico
             and a.sq_tipo_interessado  = p_chave
          order by a.ordem, a.nome;
    End If;
