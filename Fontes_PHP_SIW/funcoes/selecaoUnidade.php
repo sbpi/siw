@@ -42,7 +42,7 @@ function selecaoUnidade($label,$accesskey,$hint,$chave,$chaveAux,$campo,$restric
       ShowHTML('          <input READONLY ACCESSKEY="'.$accesskey.'" CLASS="sti" type="text" name="'.$campo.'_nm'.'" SIZE="60" VALUE="'.$w_nm_unidade.'" '.$atributo.'>');
     }
 
-    ShowHTML('              <a class="ss" href="#" onClick="window.open(\''.str_replace('/files','',$w_dir_volta).'eo.php?par=BuscaUnidade&TP='.$TP.'&w_ano='.$w_ano.'&w_cliente='.$w_cliente.'&chaveAux='.$chaveAux.'&restricao='.$restricao.'&campo='.$campo.'\',\'Unidade\',\'top=10,left=10,width=780,height=550,toolbar=yes,status=yes,resizable=yes,scrollbars=yes\'); return false;" title="Clique aqui para selecionar a unidade."><img src="images/Folder/Explorer.gif" border=0 align=top height=15 width=15></a>');
+    ShowHTML('              <a class="ss" href="#" onClick="window.open(\''.$conRootSIW.'eo.php?par=BuscaUnidade&TP='.$TP.'&w_ano='.$w_ano.'&w_cliente='.$w_cliente.'&chaveAux='.$chaveAux.'&restricao='.$restricao.'&campo='.$campo.'\',\'Unidade\',\'top=10,left=10,width=780,height=550,toolbar=yes,status=yes,resizable=yes,scrollbars=yes\'); return false;" title="Clique aqui para selecionar a unidade."><img src="images/Folder/Explorer.gif" border=0 align=top height=15 width=15></a>');
     ShowHTML('              <a class="ss" href="#" onClick="document.Form.'.$campo.'_nm.value=\'\'; document.Form.'.$campo.'.value=\'\'; return false;" title="Clique aqui para apagar o valor deste campo."><img src="images/Folder/Recyfull.gif" border=0 align=top height=15 width=15></a>');
   }
 }

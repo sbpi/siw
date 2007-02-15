@@ -1,5 +1,4 @@
 <?
-echo ok;
 // =========================================================================
 // Rotina de visualização dos dados da ação
 // -------------------------------------------------------------------------
@@ -42,34 +41,47 @@ function VisualProjeto($l_chave,$O,$w_usuario,$P1,$P4) {
   if ($P1==1 || $P1==2) {
     $l_html .=chr(13).'<div align=center><center>';
     $l_html .=chr(13).'  <table border="0" cellpadding="0" cellspacing="0" width="100%">';
-    $l_html .=chr(13).'    <tr bgcolor="'.$conTrBgColor.'"><td align="center" colspan="2">';
+    $l_html .=chr(13).'    <tr><td align="center" colspan="2">';
     $l_html .=chr(13).'      <table width="100%" border="0">';
     if ($P4!=1) $l_html .=chr(13).'      <tr><td align="right" colspan="3"><b><A class="HL" HREF="'.$w_dir.'projeto.php?par=Visual&O=L&w_chave='.f($RS,'sq_siw_solicitacao').'&w_tipo=volta&P1=&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP='.$TP.'&SG='.$SG.'" title="Exibe as informações da ação.">Exibir todas as informações</a></td></tr>';
     // Se a iniciativa prioritária for informada, exibe.
-    if ( nvl(f($RS,'sq_orprioridade'),'')>'') $l_html .=chr(13).' <tr><td valign="top" colspan="3">Iniciativa prioritária:<br><b>'.f($RS,'nm_pri').'</b></td></tr>';
+    if ( nvl(f($RS,'sq_orprioridade'),'')>'') {
+      $l_html .=chr(13).' <tr><td width="30%"><b>Iniciativa prioritária:</b></td>';
+      $l_html .=chr(13).'        <td>'.f($RS,'nm_pri').'</td></tr>';
+    }
     // Se a ação no PPA for informada, exibe.
     if (nvl(f($RS,'sq_acao_ppa'),'')>'') {
-      $l_html .=chr(13).'      <tr><td valign="top" colspan="3">Programa PPA:<br><b>'.f($RS,'nm_ppa_pai').'</b></td></tr>';
-      $l_html .=chr(13).'      <tr><td valign="top" colspan="3">Cód:<br><b>'.f($RS,'cd_ppa_pai').'</b></td></tr>';
-      $l_html .=chr(13).'      <tr bgcolor="#D0D0D0"><td valign="top" colspan="3">Ação PPA:<br><b>'.f($RS,'nm_ppa').' </b></td></tr>';
-      $l_html .=chr(13).'      <tr><td valign="top" colspan="1">Cód:<br><b>'.f($RS,'cd_ppa').'</b></td>';
+      $l_html .=chr(13).'      <tr><td valign="top"><b>Programa PPA:</b></td>';
+      $l_html .=chr(13).'        <td>'.f($RS,'nm_ppa_pai').'</td></tr>';
+      $l_html .=chr(13).'      <tr><td valign="top"><b>Cód:</b></td>';
+      $l_html .=chr(13).'        <td>'.f($RS,'cd_ppa_pai').'</td></tr>';
+      $l_html .=chr(13).'      <tr bgcolor="#D0D0D0"><td valign="top"><b>Ação PPA:</b></td>';
+      $l_html .=chr(13).'        <td>'.f($RS,'nm_ppa').' </td></tr>';
+      $l_html .=chr(13).'      <tr><td valign="top"><b>Cód:</b></td>';
+      $l_html .=chr(13).'        <td>'.f($RS,'cd_ppa').'</td></tr>';
     } else {
-      $l_html .=chr(13).'      <tr><td valign="top" colspan="1">Ação:<br><b>'.f($RS,'titulo').'</b></td>';
+      $l_html .=chr(13).'      <tr><td valign="top"><b>Ação:</b></td>';
+      $l_html .=chr(13).'        <td>'.f($RS,'titulo').'</td></tr>';
     } 
     if ($w_tipo_visao==0) {
       // Se for visão completa
-      $l_html .=chr(13).'          <td valign="top" colspan="2">Recurso programado:<br><b>'.number_format(f($RS,'valor'),2,',','.').' </b></td></tr>';
+      $l_html .=chr(13).'      <tr><td valign="top"><b>Recurso programado:</b></td>';
+      $l_html .=chr(13).'        <td>'.number_format(f($RS,'valor'),2,',','.').'</td></tr>';
     } 
     $RS1 = db_getPersonData::getInstanceOf($dbms,$w_cliente,f($RS,'Solicitante'),null,null);
     if ($P4==1) {
-      $l_html .=chr(13).'         <tr><td valign="top">Responsável monitoramento:<br><b>'.f($RS,'nm_sol').'</b></td>';
-      $l_html .=chr(13).'             <td valign="top">E-mail:<br><b>'.f($RS1,'email').'</b></td></tr>';
+      $l_html .=chr(13).'      <tr><td valign="top"><b>Responsável monitoramento:</b></td>';
+      $l_html .=chr(13).'        <td>'.f($RS,'nm_sol').'</td></tr>';
+      $l_html .=chr(13).'      <tr><td valign="top"><b>E-mail:</b></td>';
+      $l_html .=chr(13).'        <td>'.f($RS1,'email').'</td></tr>';
     } else {
-      $l_html .=chr(13).'         <tr><td valign="top">Responsável monitoramento:<br><b>'.ExibePessoa('../',$w_cliente,f($RS,'solicitante'),$TP,f($RS,'nm_sol')).'</b></td>';
-      $l_html .=chr(13).'             <td valign="top">E-mail:<br><b><A class="HL" HREF="mailto:'.f($RS1,'email').'">'.f($RS1,'email').'</a></b></td>';
+      $l_html .=chr(13).'      <tr><td valign="top"><b>Responsável monitoramento:</b></td>';
+      $l_html .=chr(13).'        <td>'.ExibePessoa('../',$w_cliente,f($RS,'solicitante'),$TP,f($RS,'nm_sol')).'</td></tr>';
+      $l_html .=chr(13).'      <tr><td valign="top"><b>E-mail:</b></td>';
+      $l_html .=chr(13).'        <td><A class="HL" HREF="mailto:'.f($RS1,'email').'">'.f($RS1,'email').'</a></td></tr>';
     } 
-    $l_html .=chr(13).'                <td valign="top">Telefone:<br><b>'.Nvl(f($RS1,'telefone'),'---').' </b></td>';
-    $l_html .=chr(13).'            </tr>';
+    $l_html .=chr(13).'        <tr><td valign="top"><b>Telefone:</b></td>';
+    $l_html .=chr(13).'          <td>'.Nvl(f($RS1,'telefone'),'---').' </td></tr>';
     $l_html .=chr(13).'         </table></td></tr>';
     if ($w_tipo_visao==0 || $w_tipo_visao==1) {
       // Metas da ação
@@ -78,24 +90,24 @@ function VisualProjeto($l_chave,$O,$w_usuario,$P1,$P4) {
       $RS1 = SortArray($RS1,'ordem','asc');
       if (count($RS1)>0) {
         // Se não foram selecionados registros, exibe mensagem
-        $l_html .=chr(13).'      <tr><td valign="top" colspan="2" align="left" bgcolor="#D0D0D0" style="border: 2px solid rgb(0,0,0);"><font size="2"><b>&nbsp;Metas Cadastradas</td></tr>';
+        $l_html .=chr(13).'      <tr><td colspan="2"><br><font size="2"><b>METAS CADASTRADAS<hr NOSHADE color=#000000 SIZE=1></b></font></td></tr>';  
         $l_html .=chr(13).'      <tr><td align="center" colspan="2">';
-        $l_html .=chr(13).'       <TABLE WIDTH="100%" bgcolor="'.$conTableBgColor.'" BORDER="'.$conTableBorder.'" CELLSPACING="'.$conTableCellSpacing.'" CELLPADDING="'.$conTableCellPadding.'" BorderColorDark="'.$conTableBorderColorDark.'" BorderColorLight="'.$conTableBorderColorLight.'">';
-        foreach ($RS1 as $row1){
-          $l_html .=chr(13).'         <tr bgcolor="'.$conTrBgColor.'" align="center">';
-          $l_html .=chr(13).'           <td rowspan="2"><b>Produto</td>';
-          $l_html .=chr(13).'           <td rowspan="2"><b>Unidade medida</td>';
-          $l_html .=chr(13).'           <td rowspan="2"><b>LOA</td>';
-          $l_html .=chr(13).'           <td rowspan="2"><b>Cumulativa</td>';
-          $l_html .=chr(13).'           <td rowspan="2"><b>Será cumprida</td>';
-          $l_html .=chr(13).'           <td rowspan="1" colspan="3"><b>Quantitativo</td>';
+        $l_html .=chr(13).'        <table width=100%  border="1" bordercolor="#00000">';
+        foreach ($RS1 as $row1){ 
+          $l_html .=chr(13).'          <tr align="center">';
+          $l_html .=chr(13).'           <td rowspan="2" bgColor="#f0f0f0"><div><b>Produto</b></div></td>';
+          $l_html .=chr(13).'           <td rowspan="2" bgColor="#f0f0f0"><div><b>Unidade medida</b></div></td>';
+          $l_html .=chr(13).'           <td rowspan="2" bgColor="#f0f0f0"><div><b>LOA</b></div></td>';
+          $l_html .=chr(13).'           <td rowspan="2" bgColor="#f0f0f0"><div><b>Cumulativa</b></div></td>';
+          $l_html .=chr(13).'           <td rowspan="2" bgColor="#f0f0f0"><div><b>Será cumprida</b></div></td>';
+          $l_html .=chr(13).'           <td rowspan="1" colspan="3" bgColor="#f0f0f0"><div><b>Quantitativo</b></div></td>';
           $l_html .=chr(13).'         </tr>';
-          $l_html .=chr(13).'         <tr bgcolor="'.$conTrBgColor.'" align="center">';
-          $l_html .=chr(13).'           <td><b>Programado</td>';
-          $l_html .=chr(13).'           <td><b>Realizado</td>';
-          $l_html .=chr(13).'           <td><b>% Realizado</td>';
+          $l_html .=chr(13).'         <tr align="center">';
+          $l_html .=chr(13).'           <td bgColor="#f0f0f0"><div><b>Programado</b></div></td>';
+          $l_html .=chr(13).'           <td bgColor="#f0f0f0"><div><b>Realizado</b></div></td>';
+          $l_html .=chr(13).'           <td bgColor="#f0f0f0"><div><b>% Realizado</b></div></td>';
           $l_html .=chr(13).'         </tr>';
-          $l_html .=chr(13).'         <tr bgcolor="'.$conTrAlternateBgColor.'" valign="top">';
+          $l_html .=chr(13).'         <tr valign="top">';
           $l_html .=chr(13).'           <td nowrap>';
           if ((f($row1,'fim_previsto')<time()) && (Nvl(f($row1,'perc_conclusao'),0)<100))    $l_html .=chr(13).'           <img src="'.$conImgAtraso.'" border=0 width=15 height=15 align="center">';
           elseif (Nvl(f($row1,'perc_conclusao'),0)<100)   $l_html .=chr(13).'           <img src="'.$conImgNormal.'" border=0 width=15 height=15 align="center">';
@@ -123,21 +135,21 @@ function VisualProjeto($l_chave,$O,$w_usuario,$P1,$P4) {
       //Financiamento
       $RS1 = db_getFinancAcaoPPA::getInstanceOf($dbms,$l_chave,$w_cliente,null);
       if (f($RS,'cd_ppa')>'') {
-        $l_html .=chr(13).'      <tr><td valign="top" colspan="2" align="left" bgcolor="#D0D0D0" style="border: 2px solid rgb(0,0,0);"><font size="2"><b>&nbsp;Financiamento</b>';
+        $l_html .=chr(13).'      <tr><td colspan="2"><br><font size="2"><b>FINANCIAMENTO</b>';
         $RS2 = db_getOrImport::getInstanceOf($dbms,null,$w_cliente,null,null,null,null,null);
         $RS2 = SortArray($RS2,'phpdt_data_arquivo','desc');
         foreach($RS2 as $row2){$RS2=$row2; break;}
-        $l_html .=chr(13).'          <font size="2">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Fonte: SIAFI&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Atualização: '.FormataDataEdicao(f($RS2,'phpdt_data_arquivo'),3).'</td></tr>';
+        $l_html .=chr(13).'          <font size="2"> &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Fonte: SIAFI&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Atualização: '.FormataDataEdicao(f($RS2,'phpdt_data_arquivo'),3).'<hr NOSHADE color=#000000 SIZE=1></b>';  
         $l_html .=chr(13).'      <tr><td align="center" colspan="2">';
-        $l_html .=chr(13).'        <TABLE WIDTH="100%" bgcolor="'.$conTableBgColor.'" BORDER="'.$conTableBorder.'" CELLSPACING="'.$conTableCellSpacing.'" CELLPADDING="'.$conTableCellPadding.'" BorderColorDark="'.$conTableBorderColorDark.'" BorderColorLight="'.$conTableBorderColorLight.'">';
-        $l_html .=chr(13).'          <tr bgcolor="'.$conTrBgColor.'" align="center">';
-        $l_html .=chr(13).'            <td><b>Cód. Prog.</td>';
-        $l_html .=chr(13).'            <td><b>Cód. Ação</td>';
-        $l_html .=chr(13).'            <td><b>Aprovado</td>';
-        $l_html .=chr(13).'            <td><b>Empenhado</td>';
-        $l_html .=chr(13).'            <td><b>Saldo</td>';
-        $l_html .=chr(13).'            <td><b>Liquidado</td>';
-        $l_html .=chr(13).'            <td><b>A Liquidar</td>';
+        $l_html.=chr(13).'        <table width=100%  border="1" bordercolor="#00000">';
+        $l_html.=chr(13).'          <tr align="center">';
+        $l_html .=chr(13).'            <td bgColor="#f0f0f0"><div><b>Cód. Prog.</b></div></td>';
+        $l_html .=chr(13).'            <td bgColor="#f0f0f0"><div><b>Cód. Ação</b></div></td>';
+        $l_html .=chr(13).'            <td bgColor="#f0f0f0"><div><b>Aprovado</b></div></td>';
+        $l_html .=chr(13).'            <td bgColor="#f0f0f0"><div><b>Empenhado</b></div></td>';
+        $l_html .=chr(13).'            <td bgColor="#f0f0f0"><div><b>Saldo</b></div></td>';
+        $l_html .=chr(13).'            <td bgColor="#f0f0f0"><div><b>Liquidado</b></div></td>';
+        $l_html .=chr(13).'            <td bgColor="#f0f0f0"><div><b>A Liquidar</b></div></td>';
         $l_html .=chr(13).'          </tr>';
         $l_html .=chr(13).'      <tr valign="top">';
         $l_html .=chr(13).'        <td>'.f($RS,'cd_ppa_pai').'</td>';
@@ -159,7 +171,7 @@ function VisualProjeto($l_chave,$O,$w_usuario,$P1,$P4) {
             $l_html .=chr(13).'        <td align="right">'.number_format(f($row1,'liquidado'),2,',','.').'</td>';
             $l_html .=chr(13).'        <td align="right">'.number_format((Nvl(f($row1,'empenhado'),0.00)-Nvl(f($row1,'liquidado'),0.00)),2,',','.').'</td>';
             $l_html .=chr(13).'      </tr>';
-            $l_html .=chr(13).'      <tr valign="top" bgcolor="'.$conTrAlternateBgColor.'">';
+            $l_html .=chr(13).'      <tr valign="top">';
             $l_html .=chr(13).'        <td colspan=7><DD><b>Observação:</b> '.Nvl(f($row1,'observacao'),'---').'</DD></td>';
             $l_html .=chr(13).'      </tr>';
           } 
@@ -171,15 +183,15 @@ function VisualProjeto($l_chave,$O,$w_usuario,$P1,$P4) {
         $RS2 = SortArray($RS2,'data_arquivo','desc');
         $l_html .=chr(13).'          <font size="2">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Fonte: SIAFI&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Atualização: '.Nvl(FormataDataEdicao(f($RS2,'data_arquivo')),'-').'</td></tr>';
         $l_html .=chr(13).'      <tr><td align="center" colspan="2">';
-        $l_html .=chr(13).'        <TABLE WIDTH="100%" bgcolor="'.$conTableBgColor.'" BORDER="'.$conTableBorder.'" CELLSPACING="'.$conTableCellSpacing.'" CELLPADDING="'.$conTableCellPadding.'" BorderColorDark="'.$conTableBorderColorDark.'" BorderColorLight="'.$conTableBorderColorLight.'">';
-        $l_html .=chr(13).'          <tr bgcolor="'.$conTrBgColor.'" align="center">';
-        $l_html .=chr(13).'            <td><b>Cód. Prog.</td>';
-        $l_html .=chr(13).'            <td><b>Cód. Ação</td>';
-        $l_html .=chr(13).'            <td><b>Aprovado</td>';
-        $l_html .=chr(13).'            <td><b>Empenhado</td>';
-        $l_html .=chr(13).'            <td><b>Saldo</td>';
-        $l_html .=chr(13).'            <td><b>Liquidado</td>';
-        $l_html .=chr(13).'            <td><b>A Liquidar</td>';
+        $l_html.=chr(13).'        <table width=100%  border="1" bordercolor="#00000">';
+        $l_html.=chr(13).'          <tr align="center">';
+        $l_html .=chr(13).'            <td bgColor="#f0f0f0"><div><b>Cód. Prog.</b></div></td>';
+        $l_html .=chr(13).'            <td bgColor="#f0f0f0"><div><b>Cód. Ação</b></div></td>';
+        $l_html .=chr(13).'            <td bgColor="#f0f0f0"><div><b>Aprovado</b></div></td>';
+        $l_html .=chr(13).'            <td bgColor="#f0f0f0"><div><b>Empenhado</b></div></td>';
+        $l_html .=chr(13).'            <td bgColor="#f0f0f0"><div><b>Saldo</b></div></td>';
+        $l_html .=chr(13).'            <td bgColor="#f0f0f0"><div><b>Liquidado</b></div></td>';
+        $l_html .=chr(13).'            <td bgColor="#f0f0f0"><div><b>A Liquidar</b></div></td>';
         $l_html .=chr(13).'          </tr>';
         foreach($RS1 as $row1) {
           $l_html .=chr(13).'      <tr valign="top">';
@@ -191,7 +203,7 @@ function VisualProjeto($l_chave,$O,$w_usuario,$P1,$P4) {
           $l_html .=chr(13).'        <td align="right">'.number_format(f($row1,'liquidado'),2,',','.').'</td>';
           $l_html .=chr(13).'        <td align="right">'.number_format((Nvl(f($row1,'empenhado'),0.00)-Nvl(f($row1,'liquidado'),0.00)),2,',','.').'</td>';
           $l_html .=chr(13).'      </tr>';
-          $l_html .=chr(13).'      <tr valign="top" bgcolor="'.$conTrAlternateBgColor.'">';
+          $l_html .=chr(13).'      <tr valign="top">';
           $l_html .=chr(13).'        <td colspan=7><DD><b>Observação:</b> '.Nvl(f($row1,'observacao'),'---').'</DD></td>';
           $l_html .=chr(13).'      </tr>';
         }
@@ -206,23 +218,22 @@ function VisualProjeto($l_chave,$O,$w_usuario,$P1,$P4) {
             null,null,null,null,null,$l_chave,null,null,null);
       $RS = SortArray($RS,'ordem','asc','fim','asc','prioridade','asc');
       if (count($RS)>0) {
-        $l_html .=chr(13).'      <tr><td valign="top" colspan="2" align="left" bgcolor="#D0D0D0" style="border: 2px solid rgb(0,0,0);"><font size="2"><b>&nbsp;Tarefas Cadastradas</td></tr>';
+        $l_html .=chr(13).'      <tr><td colspan="2"><br><font size="2"><b>TAREFAS CADASTRADAS<hr NOSHADE color=#000000 SIZE=1></b></font></td></tr>';  
         $l_html .=chr(13).'      <tr><td align="center" colspan="2">';
-        $l_html .=chr(13).'        <TABLE WIDTH="100%" bgcolor="'.$conTableBgColor.'" BORDER="'.$conTableBorder.'" CELLSPACING="'.$conTableCellSpacing.'" CELLPADDING="'.$conTableCellPadding.'" BorderColorDark="'.$conTableBorderColorDark.'" BorderColorLight="'.$conTableBorderColorLight.'">';
-        $l_html .=chr(13).'          <tr bgcolor="'.$conTrBgColor.'" align="center">';
-        $l_html .=chr(13).'            <td nowrap><b>Nº</td>';
-        $l_html .=chr(13).'            <td><b>Detalhamento</td>';
-        $l_html .=chr(13).'            <td><b>Responsável</td>';
-        $l_html .=chr(13).'            <td><b>Parcerias</td>';
-        $l_html .=chr(13).'            <td nowrap><b>Fim<br>previsto</td>';
-        $l_html .=chr(13).'            <td nowrap><b>Programado<br>R$ 1,00</td>';
-        $l_html .=chr(13).'            <td nowrap><b>Executado<br>R$ 1,00</td>';
-        $l_html .=chr(13).'            <td nowrap><b>Fase atual</td>';
-        $l_html .=chr(13).'            <td nowrap><b>Prioridade</td>';
+        $l_html .=chr(13).'        <table width=100%  border="1" bordercolor="#00000">';
+        $l_html .=chr(13).'          <tr align="center">';
+        $l_html .=chr(13).'            <td nowrap bgColor="#f0f0f0"><div><b>Nº</b></div></td>';
+        $l_html .=chr(13).'            <td bgColor="#f0f0f0"><div><b>Detalhamento</b></div></td>';
+        $l_html .=chr(13).'            <td bgColor="#f0f0f0"><div><b>Responsável</b></div></td>';
+        $l_html .=chr(13).'            <td bgColor="#f0f0f0"><div><b>Parcerias</b></div></td>';;
+        $l_html .=chr(13).'            <td nowrap bgColor="#f0f0f0"><div><b>Fim<br>previsto</b></div></td>';
+        $l_html .=chr(13).'            <td nowrap bgColor="#f0f0f0"><div><b>Programado<br>R$ 1,00</b></div></td>';
+        $l_html .=chr(13).'            <td nowrap bgColor="#f0f0f0"><div><b>Executado<br>R$ 1,00</b></div></td>';
+        $l_html .=chr(13).'            <td nowrap bgColor="#f0f0f0"><div><b>Fase atual</b></div></td>';
+        $l_html .=chr(13).'            <td nowrap bgColor="#f0f0f0"><div><b>Prioridade</b></div></td>';
         $l_html .=chr(13).'          </tr>';
         foreach($RS as $row) {
-          $w_cor = ($w_cor==$conTrBgColor || $w_cor=='') ? $w_cor=$conTrAlternateBgColor : $w_cor=$conTrBgColor;
-          $l_html .=chr(13).'       <tr bgcolor="'.$w_cor.'" valign="top">';
+          $l_html .=chr(13).'       <tr valign="top">';
           $l_html .=chr(13).'         <td nowrap>';
           if (f($row,'concluida')=='N') {
             if (f($row,'fim')<addDays(time(),-1)) {
@@ -263,102 +274,136 @@ function VisualProjeto($l_chave,$O,$w_usuario,$P1,$P4) {
       // Se for listagem dos dados
       $l_html .=chr(13).'<div align=center><center>';
       $l_html .=chr(13).'<table border="0" cellpadding="0" cellspacing="0" width="100%">';
-      $l_html .=chr(13).'<tr bgcolor="'.$conTrBgColor.'"><td align="center">';
+      $l_html .=chr(13).'<tr><td align="center">';
       $l_html .=chr(13).'    <table width="99%" border="0">';
-      $l_html .=chr(13).'      <tr><td><font size=2>Ação: <b>'.f($RS,'titulo').'</b></font></td></tr>';
+      $l_html .=chr(13).'      <tr><td colspan="2"><hr NOSHADE color=#000000 size=4></td></tr>';
+      $l_html .=chr(13).'      <tr><td colspan="2" bgcolor="#f0f0f0"><font size=2>Ação: <b>'.f($RS,'titulo').'</b></font></td></tr>';
+      $l_html .=chr(13).'      <tr><td colspan="2"><hr NOSHADE color=#000000 size=4></td></tr>';
       // Identificação da ação
-      $l_html .=chr(13).'      <tr><td valign="top" colspan="2" align="center" bgcolor="#D0D0D0" style="border: 2px solid rgb(0,0,0);"><b>Identificação</td>';
+      $l_html.=chr(13).'       <tr><td colspan="2"><br><font size="2"><b>IDENTIFICAÇÃO<hr NOSHADE color=#000000 SIZE=1></b></font></td></tr>';  
+
       // Se a classificação foi informada, exibe.
-      if (nvl(f($RS,'sq_cc'),'')>'') $l_html .=chr(13).'      <tr><td valign="top">Classificação:<br><b>'.f($RS,'cc_nome').' </b></td>';
+      if (nvl(f($RS,'sq_cc'),'')>''){ 
+        $l_html .=chr(13).'      <tr><td width="30%">Classificação:</b></td>';
+        $l_html .=chr(13).'        <td>'.f($RS,'cc_nome').' </td></tr>';
+      }
       // Se a iniciativa prioritária for informada, exibe.
       if (nvl(f($RS,'sq_orprioridade'),'')>'') {
-        $l_html .=chr(13).'      <tr><td valign="top">Iniciativa prioritária:<br><b>'.f($RS,'nm_pri');
+        $l_html .=chr(13).'      <tr><td width="30%"><b>Iniciativa prioritária:</b></td>';
+        $l_html .=chr(13).'        <td>'.f($RS,'nm_pri').'</td></tr>';
         if (nvl(f($RS,'cd_pri'),'')>'') {
           $l_html .=chr(13).' ('.f($RS,'cd_pri').')';
         } 
         if (nvl(f($RS,'resp_pri'),'')>'') {
-          $l_html .=chr(13).'      <tr><td valign="top" colspan="2"><table border=0 width="100%" cellspacing=0>';
-          $l_html .=chr(13).'      <tr><td valign="top">Responsável iniciativa prioritária:<br><b>'.f($RS,'resp_pri').' </b></td>';
-          if (nvl(f($RS,'fone_pri'),'')>'') $l_html .=chr(13).'          <td>Telefone:<br><b>'.f($RS,'fone_pri').' </b></td>'; 
+//          $l_html .=chr(13).'      <tr><td valign="top" colspan="2">';
+          $l_html .=chr(13).'      <tr><td valign="top"><b>Responsável iniciativa prioritária:</b></td>';
+          $l_html .=chr(13).'        <td>'.f($RS,'resp_pri').' </td></tr>';
+          if (nvl(f($RS,'fone_pri'),'')>''){
+            $l_html .=chr(13).'    <tr><td><b>Telefone:</b></td>';
+            $l_html .=chr(13).'      <td>'.f($RS,'fone_pri').' </td></tr>';
+          }
         }  
         if (nvl(f($RS,'mail_ppa_pai'),'')>'') {
-           $l_html .=chr(13).'          <td>Email:<br><b>'.f($RS,'mail_pri').' </b></td>';
+           $l_html .=chr(13).'      <tr><td><b><b>Email:</b></td>';
+           $l_html .=chr(13).'        <td>'.f($RS,'mail_pri').' </td></tr>';
         } 
-        $l_html .=chr(13).'          </table>';
       } 
       $l_html .=chr(13).'          </b></td>';
       // Se a ação no PPA for informada, exibe.
       if (nvl(f($RS,'sq_acao_ppa'),'')>'') {
-        $l_html .=chr(13).'      <tr><td valign="top">Programa PPA:<br><b>'.f($RS,'nm_ppa_pai').' ('.f($RS,'cd_ppa_pai').')'.' </b></td>';
+        $l_html .=chr(13).'      <tr><td valign="top"><b>Programa PPA:</b></td>';
+        $l_html .=chr(13).'        <td>'.f($RS,'nm_ppa_pai').' ('.f($RS,'cd_ppa_pai').')'.' </td></tr>';
         if (nvl(f($RS,'resp_ppa_pai'),'')>'') {
           $l_html .=chr(13).'      <tr><td valign="top" colspan="2"><table border=0 width="100%" cellspacing=0>';
-          $l_html .=chr(13).'      <tr><td valign="top">Gerente executivo:<br><b>'.f($RS,'resp_ppa_pai').' </b></td>';
+          $l_html .=chr(13).'      <tr><td valign="top"><b>Gerente executivo:</b></td>';
+          $l_html .=chr(13).'        <td>'.f($RS,'resp_ppa_pai').' </td></tr>';
           if (nvl(f($RS,'fone_ppa_pai'),'')>'') {
-            $l_html .=chr(13).'          <td>Telefone:<br><b>'.f($RS,'fone_ppa_pai').' </b></td>';
+            $l_html .=chr(13).'    <tr><td><b>Telefone:</b></td>';
+            $l_html .=chr(13).'        <td>'.f($RS,'fone_ppa_pai').' </td></tr>';
           } 
           if (nvl(f($RS,'mail_ppa_pai'),'')>'') {
-            $l_html .=chr(13).'          <td>Email:<br><b>'.f($RS,'mail_ppa_pai').' </b></td>';
+            $l_html .=chr(13).'    <tr><td><b>Email:</b></td>';
+            $l_html .=chr(13).'        <td>'.f($RS,'mail_ppa_pai').' </td></tr>';
           } 
           $l_html .=chr(13).'          </table>';
         } 
-        $l_html .=chr(13).'      <tr><td valign="top">Ação PPA:<br><b>'.f($RS,'nm_ppa').' ('.f($RS,'cd_ppa').')'.' </b></td>';
-        $l_html .=chr(13).'      <tr><td valign="top" colspan="2"><table border=0 width="100%" cellspacing=0>';
-        $l_html .=chr(13).'          <tr valign="top">';
+        $l_html .=chr(13).'      <tr><td valign="top"><b>Ação PPA:</b></td>';
+        $l_html .=chr(13).'        <td>'.f($RS,'nm_ppa').' ('.f($RS,'cd_ppa').')'.' </b></td>';
+        $l_html .=chr(13).'      <tr><td valign="top" colspan="2">';
         if (f($RS,'mpog_ppa')=='S') {
-          $l_html .=chr(13).'          <td>Selecionada MP:<br><b>Sim</b></td>';
+          $l_html .=chr(13).'    <tr><td><b>Selecionada MP:</b></td>';
+          $l_html .=chr(13).'        <td>Sim</td></tr>';
         } else {
-          $l_html .=chr(13).'          <td>Selecionada MP:<br><b>Não</b></td>';
+          $l_html .=chr(13).'    <tr><td><b>Selecionada MP:</b></td>';
+          $l_html .=chr(13).'        <td>Não</td></tr>';
         } 
         if (f($RS,'relev_ppa')=='S') {
-          $l_html .=chr(13).'          <td>Selecionada SE/MS:<br><b>Sim</b></td>';
+          $l_html .=chr(13).'    <tr><td><b>Selecionada SE/MS:</b></td>';
+          $l_html .=chr(13).'        <td>Sim</td></tr>';
         } else {
-          $l_html .=chr(13).'          <td>Selecionada SE/MS:<br><b>Não</b></td>';
+          $l_html .=chr(13).'    <tr><td><b>Selecionada SE/MS:</b></td>';
+          $l_html .=chr(13).'        <td>Não</td></tr>';
         } 
-        $l_html .=chr(13).'          </table>';
         if (nvl(f($RS,'resp_ppa'),'')>'') {
-          $l_html .=chr(13).'      <tr><td valign="top" colspan="2"><table border=0 width="100%" cellspacing=0>';
-          $l_html .=chr(13).'      <tr><td valign="top">Coordenador:<br><b>'.f($RS,'resp_ppa').' </b></td>';
+          $l_html .=chr(13).'      <tr><td valign="top" colspan="2">';
+          $l_html .=chr(13).'      <tr><td valign="top">Coordenador:</b></td>';
+          $l_html .=chr(13).'          <td>'.f($RS,'resp_ppa').' </b></td>';
           if (nvl(f($RS,'fone_ppa'),'')>'') {
-            $l_html .=chr(13).'          <td>Telefone:<br><b>'.f($RS,'fone_ppa').' </b></td>';
+            $l_html .=chr(13).'    <tr><td><b>Telefone:</b></td>';
+            $l_html .=chr(13).'        <td>'.f($RS,'fone_ppa').' </td></tr>';
           } 
           if (nvl(f($RS,'mail_ppa'),'')>'') {
-            $l_html .=chr(13).'          <td>Email:<br><b>'.f($RS,'mail_ppa').' </b></td>';
+            $l_html .=chr(13).'    <tr><td><b>Email:</b></td>';
+            $l_html .=chr(13).'        <td>'.f($RS,'mail_ppa').' </td></tr>';
           } 
-          $l_html .=chr(13).'          </table>';
         } 
       } 
-      $l_html .=chr(13).'      <tr><td valign="top" colspan="2"><table border=0 width="100%" cellspacing=0>';
+      $l_html .=chr(13).'      <tr><td valign="top" colspan="2">';//<table border=0 width="100%" cellspacing=0>';
       //w_html = w_html & VbCrLf & '          <tr valign=''top''>'
       //w_html = w_html & VbCrLf & '          <td colspan=3>Abrangência da ação:(Quando Brasília-DF, impacto nacional. Quando a capital de um estado, impacto estadual.)<br><b>' & RS('nm_cidade') & ' (' & RS('co_uf') & ')</b></td>'
       $l_html .=chr(13).'          <tr valign="top">';
-      $l_html .=chr(13).'          <td>Responsável monitoramento:<br><b>'.ExibePessoa('../',$w_cliente,f($RS,'solicitante'),$TP,f($RS,'nm_sol')).'</b></td>';
-      $l_html .=chr(13).'          <td>Setor responsável monitoramento:<br><b>'.f($RS,'nm_unidade_resp').' </b></td>';
+      $l_html .=chr(13).'            <td><b>Responsável monitoramento:</b></td>';
+      $l_html .=chr(13).'            <td>'.ExibePessoa('../',$w_cliente,f($RS,'solicitante'),$TP,f($RS,'nm_sol')).'</td></tr>';
+      $l_html .=chr(13).'          <tr><td><b>Setor responsável monitoramento:</b></td>';
+      $l_html .=chr(13).'            <td>'.f($RS,'nm_unidade_resp').' </td></tr>';
       if ($w_tipo_visao==0) {
         // Se for visão completa
-        $l_html .=chr(13).'          <td>Recurso programado:<br><b>'.number_format(f($RS,'valor'),2,',','.').' </b></td>';
+        $l_html .=chr(13).'          <td><b>Recurso programado:</b></td>';
+        $l_html .=chr(13).'          <td>'.number_format(f($RS,'valor'),2,',','.').' </td></tr>';
       } 
-      $l_html .=chr(13).'          <tr valign="top">';
-      $l_html .=chr(13).'          <td>Início previsto:<br><b>'.FormataDataEdicao(f($RS,'inicio')).' </b></td>';
-      $l_html .=chr(13).'          <td>Fim previsto:<br><b>'.FormataDataEdicao(f($RS,'fim')).' </b></td>';
+      $l_html .=chr(13).'        <tr><td><b>Início previsto:</b></td>';
+      $l_html .=chr(13).'          <td>'.FormataDataEdicao(f($RS,'inicio')).' </td></tr>';
+      $l_html .=chr(13).'        <tr><td><b>Fim previsto:</b></td>';
+      $l_html .=chr(13).'          <td>'.FormataDataEdicao(f($RS,'fim')).' </td></tr>';
       //w_html = w_html & VbCrLf & '          <td>Prioridade:<br><b>' & RetornaPrioridade(RS('prioridade')) & ' </b></td>'
-      $l_html .=chr(13).'          <tr valign="top"><td>Parcerias externas:<br><b>'.CRLF2BR(Nvl(f($RS,'proponente'),'---')).' </b></td>';
-      $l_html .=chr(13).'          <tr valign="top"><td>Parcerias internas:<br><b>'.CRLF2BR(Nvl(f($RS,'palavra_chave'),'---')).' </b></td>';
-      $l_html .=chr(13).'          </table>';
+      $l_html .=chr(13).'        <tr valign="top"><td><b>Parcerias externas:</b></td>';
+      $l_html .=chr(13).'          <td>'.CRLF2BR(Nvl(f($RS,'proponente'),'---')).' </td></tr>';
+      $l_html .=chr(13).'        <tr valign="top"><td><b>Parcerias internas:</b></td>';
+      $l_html .=chr(13).'          <td>'.CRLF2BR(Nvl(f($RS,'palavra_chave'),'---')).' </td></tr>';
+//      $l_html .=chr(13).'          </table>';
       if ($w_tipo_visao==0 || $w_tipo_visao==1) {
         // Informações adicionais
-        $l_html .=chr(13).'      <tr><td valign="top" colspan="2" align="center" bgcolor="#D0D0D0" style="border: 2px solid rgb(0,0,0);"><b>Informações adicionais</td>';
-        $l_html .=chr(13).'      <tr><td valign="top">Situação problema:<br><b>'.CRLF2BR(Nvl(f($RS,'problema'),'---')).' </b></td>';
-        $l_html .=chr(13).'      <tr><td valign="top">Objetivo da ação:<br><b>'.CRLF2BR(Nvl(f($RS,'objetivo'),'---')).' </b></td>';
-        $l_html .=chr(13).'      <tr><td valign="top">Descrição da ação:<br><b>'.CRLF2BR(Nvl(f($RS,'ds_acao'),'---')).' </b></td>';
-        $l_html .=chr(13).'      <tr><td valign="top">Público alvo:<br><b>'.CRLF2BR(Nvl(f($RS,'publico_alvo'),'---')).' </b></td>';
+        $l_html .=chr(13).'       <tr><td colspan="2"><br><font size="2"><b>INFORMAÇÕES ADICIONAIS<hr NOSHADE color=#000000 SIZE=1></b></font></td></tr>';  
+        $l_html .=chr(13).'      <tr><td valign="top"><b>Situação problema:</b></td>';
+        $l_html .=chr(13).'        <td>'.CRLF2BR(Nvl(f($RS,'problema'),'---')).' </td></tr>';
+        $l_html .=chr(13).'      <tr><td valign="top"><b>Objetivo da ação:</b></td>';
+        $l_html .=chr(13).'        <td>'.CRLF2BR(Nvl(f($RS,'objetivo'),'---')).' </b></td>';
+        $l_html .=chr(13).'      <tr><td valign="top"><b>Descrição da ação:</b></td>';
+        $l_html .=chr(13).'        <td>'.CRLF2BR(Nvl(f($RS,'ds_acao'),'---')).' </td></tr>';
+        $l_html .=chr(13).'      <tr><td valign="top"><b>Público alvo:</b></td>';
+        $l_html .=chr(13).'        <td>'.CRLF2BR(Nvl(f($RS,'publico_alvo'),'---')).' </td></tr>';
         if (Nvl(f($RS,'descricao'),'')>'') {
-          $l_html .=chr(13).'      <tr><td valign="top">Resultados da ação:<br><b>'.CRLF2BR(f($RS,'descricao')).' </b></td>';
+          $l_html .=chr(13).'      <tr><td valign="top"><b>Resultados da ação:</b></td>';
+        $l_html .=chr(13).'        <td>'.CRLF2BR(f($RS,'descricao')).' </td></tr>';
         } 
-        $l_html .=chr(13).'      <tr><td valign="top">Estratégia de implantação:<br><b>'.CRLF2BR(Nvl(f($RS,'estrategia'),'---')).' </b></td>';
-        $l_html .=chr(13).'      <tr><td valign="top">Indicadores de desempenho:<br><b>'.CRLF2BR(Nvl(f($RS,'indicadores'),'---')).' </b></td>';
+        $l_html .=chr(13).'      <tr><td valign="top"><b>Estratégia de implantação:</b></td>';
+        $l_html .=chr(13).'        <td>'.CRLF2BR(Nvl(f($RS,'estrategia'),'---')).' </td></tr>';
+        $l_html .=chr(13).'      <tr><td valign="top"><b>Indicadores de desempenho:</b></td>';
+        $l_html .=chr(13).'        <td>'.CRLF2BR(Nvl(f($RS,'indicadores'),'---')).' </td></tr>';
         if ($w_tipo_visao==0 && Nvl(f($RS,'justificativa'),'')>'') {   
           // Se for visão completa
-          $l_html .=chr(13).'      <tr><td valign="top">Observações:<br><b>'.CRLF2BR(f($RS,'justificativa')).' </b></td>';
+          $l_html .=chr(13).'      <tr><td valign="top"><b>Observações:</b></td>';
+          $l_html .=chr(13).'        <td>'.CRLF2BR(f($RS,'justificativa')).' </td></tr>';
         } 
       } 
       if ($w_tipo_visao==0 || $w_tipo_visao==1) {
@@ -370,36 +415,35 @@ function VisualProjeto($l_chave,$O,$w_usuario,$P1,$P4) {
           foreach($RS1 as $row1) {
             if (Nvl(f($row1,'Existe'),0)>0) {
               if ($i==0) {
-                $l_html .=chr(13).'      <tr><td valign="top" colspan="2" align="center" bgcolor="#D0D0D0" style="border: 2px solid rgb(0,0,0);"><b>Outras iniciativas</td>';
+                $l_html .=chr(13).'      <tr><td colspan="2"><br><font size="2"><b>OUTRAS INICIATIVAS<hr NOSHADE color=#000000 SIZE=1></b></font></td></tr>';  
                 $l_html .=chr(13).'      <tr><td align="center" colspan="2">';
-                $l_html .=chr(13).'        <TABLE WIDTH="100%" bgcolor="'.$conTableBgColor.'" BORDER="'.$conTableBorder.'" CELLSPACING="'.$conTableCellSpacing.'" CELLPADDING="'.$conTableCellPadding.'" BorderColorDark="'.$conTableBorderColorDark.'" BorderColorLight="'.$conTableBorderColorLight.'">';
-                $l_html .=chr(13).'          <tr bgcolor="'.$conTrBgColor.'" align="center">';
-                $l_html .=chr(13).'            <td><b>Nome</td>';
+                $l_html.=chr(13).'         <table width=100%  border="1" bordercolor="#00000">'; 
+                $l_html .=chr(13).'          <tr align="center">';
+                $l_html .=chr(13).'            <td bgColor="#f0f0f0"><div><b>Nome</b></div></td>';
                 $l_html .=chr(13).'          </tr>';
               }
               $i=1;                
-              $w_cor = ($w_cor==$conTrBgColor || $w_cor=='') ? $w_cor=$conTrAlternateBgColor : $w_cor=$conTrBgColor;
-              $l_html .=chr(13).'      <tr valign="top" bgcolor="'.$w_cor.'">';
+              $l_html .=chr(13).'      <tr valign="top">';
               $l_html .=chr(13).'        <td><ul><li>'.f($row1,'nome').'</td>';
               $l_html .=chr(13).'      </tr>';
             } 
           } 
-          $l_html .=chr(13).'         </table></td></tr>';
         } 
       } 
       // Dados da conclusão da ação, se ela estiver nessa situação
       if (f($RS,'concluida')=='S' && Nvl(f($RS,'data_conclusao'),'')>'') {
-        $l_html .=chr(13).'      <tr><td valign="top" colspan="2" align="center" bgcolor="#D0D0D0" style="border: 2px solid rgb(0,0,0);"><b>Dados da conclusão</td>';
-        $l_html .=chr(13).'      <tr><td valign="top" colspan="2"><table border=0 width="100%" cellspacing=0>';
-        $l_html .=chr(13).'          <tr valign="top">';
-        $l_html .=chr(13).'          <td>Início da execução:<br><b>'.FormataDataEdicao(f($RS,'inicio_real')).' </b></td>';
-        $l_html .=chr(13).'          <td>Término da execução:<br><b>'.FormataDataEdicao(f($RS,'fim_real')).' </b></td>';
+        $l_html .=chr(13).'      <tr><td colspan="2"><br><font size="2"><b>DADOS DA CONCLUSÃO<hr NOSHADE color=#000000 SIZE=1></b></font></td></tr>';  
+        $l_html .=chr(13).'      <tr><td><b>Início da execução:</b></td>';
+        $l_html .=chr(13).'        <td>'.FormataDataEdicao(f($RS,'inicio_real')).' </td></tr>';
+        $l_html .=chr(13).'      <tr><td><b>Término da execução:</b></td>';
+        $l_html .=chr(13).'        <td>'.FormataDataEdicao(f($RS,'fim_real')).' </td></tr>';
         if ($w_tipo_visao==0) {
-          $l_html .=chr(13).'          <td>Recurso executado:<br><b>'.number_format(f($RS,'custo_real'),2,',','.').' </b></td>';
+          $l_html .=chr(13).'    <tr><td><b>Recurso executado:</b></td>';
+          $l_html .=chr(13).'      <td>'.number_format(f($RS,'custo_real'),2,',','.').' </td></tr>';
         } 
-        $l_html .=chr(13).'          </table>';
         if ($w_tipo_visao==0) {
-          $l_html .=chr(13).'      <tr><td valign="top">Nota de conclusão:<br><b>'.CRLF2BR(f($RS,'nota_conclusao')).' </b></td>';
+          $l_html .=chr(13).'     <tr><td valign="top"><b>Nota de conclusão:</b></td>';
+          $l_html .=chr(13).'        <td>'.CRLF2BR(f($RS,'nota_conclusao')).' </td></tr>';
         } 
       } 
     } 
@@ -407,13 +451,13 @@ function VisualProjeto($l_chave,$O,$w_usuario,$P1,$P4) {
       //Financiamento
       $RS1 = db_getFinancAcaoPPA::getInstanceOf($dbms,$l_chave,RetornaCliente(),null);
       if (f($RS,'cd_ppa')>'') {
-        $l_html .=chr(13).'      <tr><td valign="top" colspan="2" align="center" bgcolor="#D0D0D0" style="border: 2px solid rgb(0,0,0);"><b>Financiamento</td>';
+        $l_html .=chr(13).'       <tr><td colspan="2"><br><font size="2"><b>FINANCIAMENTO<hr NOSHADE color=#000000 SIZE=1></b></font></td></tr>';  
         $l_html .=chr(13).'      <tr><td align="center" colspan="2">';
-        $l_html .=chr(13).'        <TABLE WIDTH="100%" bgcolor="'.$conTableBgColor.'" BORDER="'.$conTableBorder.'" CELLSPACING="'.$conTableCellSpacing.'" CELLPADDING="'.$conTableCellPadding.'" BorderColorDark="'.$conTableBorderColorDark.'" BorderColorLight="'.$conTableBorderColorLight.'">';
-        $l_html .=chr(13).'          <tr bgcolor="'.$conTrBgColor.'" align="center">';
-        $l_html .=chr(13).'            <td><b>Código</td>';
-        $l_html .=chr(13).'            <td><b>Nome</td>';
-        $l_html .=chr(13).'            <td><b>Dotação autorizada</td>';
+        $l_html.=chr(13).'        <table width=100%  border="1" bordercolor="#00000">';    
+        $l_html.=chr(13).'          <tr align="center">';
+        $l_html .=chr(13).'            <td bgColor="#f0f0f0"><div><b>Código</b></div></td>';
+        $l_html .=chr(13).'            <td bgColor="#f0f0f0"><div><b>Nome</b></div></td>';
+        $l_html .=chr(13).'            <td bgColor="#f0f0f0"><div><b>Dotação autorizada</b></div></td>';
         $l_html .=chr(13).'          </tr>';
         $l_html .=chr(13).'      <tr valign="top">';
         $l_html .=chr(13).'        <td>'.f($RS,'cd_ppa_pai').'.'.f($RS,'cd_ppa').'</td>';
@@ -427,24 +471,23 @@ function VisualProjeto($l_chave,$O,$w_usuario,$P1,$P4) {
             $l_html .=chr(13).'        <td>'.f($row1,'nome').'</td>';
             $l_html .=chr(13).'        <td align="right">'.number_format(f($row1,'aprovado'),2,',','.').'</td>';
             $l_html .=chr(13).'      </tr>';
-            $l_html .=chr(13).'      <tr valign="top" bgcolor="'.$conTrAlternateBgColor.'">';
+            $l_html .=chr(13).'      <tr valign="top">';
             $l_html .=chr(13).'        <td colspan=3><DD><b>Observação:</b> '.Nvl(f($row1,'observacao'),'---').'</DD></td>';
             $l_html .=chr(13).'      </tr>';
           } 
         } 
         $l_html .=chr(13).'         </table></td></tr>';
       } elseif (count($RS1)>0) {
-        $l_html .=chr(13).'      <tr><td valign="top" colspan="2" align="center" bgcolor="#D0D0D0" style="border: 2px solid rgb(0,0,0);"><b>Financiamento</td>';
+        $l_html .=chr(13).'      <tr><td colspan="2"><br><font size="2"><b>FINANCIAMENTO<hr NOSHADE color=#000000 SIZE=1></b></font></td></tr>';  
         $l_html .=chr(13).'      <tr><td align="center" colspan="2">';
-        $l_html .=chr(13).'        <TABLE WIDTH="100%" bgcolor="'.$conTableBgColor.'" BORDER="'.$conTableBorder.'" CELLSPACING="'.$conTableCellSpacing.'" CELLPADDING="'.$conTableCellPadding.'" BorderColorDark="'.$conTableBorderColorDark.'" BorderColorLight="'.$conTableBorderColorLight.'">';
-        $l_html .=chr(13).'          <tr bgcolor="'.$conTrBgColor.'" align="center">';
-        $l_html .=chr(13).'            <td><b>Código</td>';
-        $l_html .=chr(13).'            <td><b>Nome</td>';
-        $l_html .=chr(13).'            <td><b>Aprovado</td>';
+        $l_html.=chr(13).'        <table width=100%  border="1" bordercolor="#00000">';    
+        $l_html.=chr(13).'          <tr align="center">';        
+          $l_html .=chr(13).'         <td bgColor="#f0f0f0"><div><b>Código</b></div></td>';
+        $l_html .=chr(13).'           <td bgColor="#f0f0f0"><div><b>Nome</b></div></td>';
+       $l_html .=chr(13).'            <td bgColor="#f0f0f0"><div><b>Aprovado</b></div></td>';
         $l_html .=chr(13).'          </tr>';
         foreach ($RS1 as $row1) {
-          $w_cor = ($w_cor==$conTrBgColor || $w_cor=='') ? $w_cor=$conTrAlternateBgColor : $w_cor=$conTrBgColor;
-          $l_html .=chr(13).'      <tr valign="top" bgcolor="'.$w_cor.'">';
+          $l_html .=chr(13).'      <tr valign="top">';
           $l_html .=chr(13).'        <td>'.f($row1,'cd_ppa_pai').'.'.f($row1,'cd_ppa').'</td>';
           $l_html .=chr(13).'        <td>'.f($row1,'nome').'</td>';
           $l_html .=chr(13).'        <td align="right">'.number_format(f($row1,'aprovado'),2,',','.').'</td>';
@@ -460,9 +503,8 @@ function VisualProjeto($l_chave,$O,$w_usuario,$P1,$P4) {
     if ($O=='L' && $w_tipo_visao!=2) {
       if (f($RS,'aviso_prox_conc')=='S') {
         // Configuração dos alertas de proximidade da data limite para conclusão da demanda
-        $l_html .=chr(13).'      <tr><td valign="top" colspan="2" align="center" bgcolor="#D0D0D0" style="border: 2px solid rgb(0,0,0);"><b>Alerta</td>';
-        $l_html .=chr(13).'      <tr><td align="center" height="1" bgcolor="#000000"></td></tr>';
-        $l_html .=chr(13).'      <tr><td>Será enviado aviso a partir de <b>'.f($RS,'dias_aviso').'</b> dias antes de <b>'.FormataDataEdicao(f($RS,'fim')).'</b></td></tr>';
+        $l_html .=chr(13).'      <tr><td colspan="2"><br><font size="2"><b>ALERTA<hr NOSHADE color=#000000 SIZE=1></b></font></td></tr>';  
+        $l_html .=chr(13).'      <tr><td colspan="2">Será enviado aviso a partir de <b>'.f($RS,'dias_aviso').'</b> dias antes de <b>'.FormataDataEdicao(f($RS,'fim')).'</b></td></tr>';
         //w_html = w_html & VbCrLf & '      <tr><td valign=''top'' colspan=''2''><table border=0 width=''100''' cellspacing=0>'
         //w_html = w_html & VbCrLf & '          <td valign=''top''>Emite aviso:<br><b>' & Replace(Replace(RS('aviso_prox_conc'),'S','Sim'),'N','Não') & ' </b></td>'
         //w_html = w_html & VbCrLf & '          <td valign=''top''>Dias:<br><b>' & RS('dias_aviso') & ' </b></td>'
@@ -473,7 +515,7 @@ function VisualProjeto($l_chave,$O,$w_usuario,$P1,$P4) {
       $RS = SortArray($RS,'nome_resumido','asc');
       if (count($RS)>0) {
         $TP=RemoveTP($TP).' - Interessados';
-        $l_html .=chr(13).'      <tr><td valign="top" colspan="2" align="center" bgcolor="#D0D0D0" style="border: 2px solid rgb(0,0,0);"><b>Interessados na execução</b></center></td>';
+        $l_html .=chr(13).'      <tr><td colspan="2"><br><font size="2"><b>INTERESSADOS NA EXECUÇÃO<hr NOSHADE color=#000000 SIZE=1></b></font></td></tr>';  
         $l_html .=chr(13).'      <tr><td valign="top" colspan="2" align="center"><b><center><B>Clique <a class="HL" HREF="'.$w_dir.'projeto.php?par=interess&R='.$w_Pagina.$par.'&O=L&w_chave='.$l_chave.'&P1=4&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP='.$TP.'&SG='.$SG.'" target="blank">aqui</a> para visualizar os Interessados na execução</b></center></td>';
         //w_html = w_html & VbCrLf & '      <tr><td align=''center'' colspan=''2''>'
         //w_html = w_html & VbCrLf & '        <TABLE WIDTH=''100''' bgcolor=''' & conTableBgColor & ''' BORDER=''' & conTableBorder & ''' CELLSPACING=''' & conTableCellSpacing & ''' CELLPADDING=''' & conTableCellPadding & ''' BorderColorDark=''' & conTableBorderColorDark & ''' BorderColorLight=''' & conTableBorderColorLight & '''>'
@@ -497,16 +539,15 @@ function VisualProjeto($l_chave,$O,$w_usuario,$P1,$P4) {
       $RS = db_getSolicAreas::getInstanceOf($dbms,$l_chave,null,'LISTA');
       $RS = SortArray($RS,'nome','asc');
       if (count($RS)>0) {
-        $l_html .=chr(13).'      <tr><td valign="top" colspan="2" align="center" bgcolor="#D0D0D0" style="border: 2px solid rgb(0,0,0);"><b>Áreas/Instituições envolvidas</td>';
+        $l_html .=chr(13).'      <tr><td colspan="2"><br><font size="2"><b>ÁREAS/INSTITUIÇÕES ENVOLVIDAS<hr NOSHADE color=#000000 SIZE=1></b></font></td></tr>';  
         $l_html .=chr(13).'      <tr><td align="center" colspan="2">';
-        $l_html .=chr(13).'        <TABLE WIDTH="100%" bgcolor="'.$conTableBgColor.'" BORDER="'.$conTableBorder.'" CELLSPACING="'.$conTableCellSpacing.'" CELLPADDING="'.$conTableCellPadding.'" BorderColorDark="'.$conTableBorderColorDark.'" BorderColorLight="'.$conTableBorderColorLight.'">';
-        $l_html .=chr(13).'          <tr bgcolor="'.$conTrBgColor.'" align="center">';
-        $l_html .=chr(13).'            <td><b>Nome</td>';
-        $l_html .=chr(13).'            <td><b>Papel</td>';
+        $l_html.=chr(13).'         <table width=100%  border="1" bordercolor="#00000">'; 
+        $l_html .=chr(13).'          <tr align="center">';
+        $l_html .=chr(13).'            <td bgColor="#f0f0f0"><div><b>Nome</b></div></td>';
+        $l_html .=chr(13).'            <td bgColor="#f0f0f0"><div><b>Papel</b></div></td>';
         $l_html .=chr(13).'          </tr>';
         foreach($RS as $row) {
-          $w_cor = ($w_cor==$conTrBgColor || $w_cor=='') ? $w_cor=$conTrAlternateBgColor : $w_cor=$conTrBgColor;
-          $l_html .=chr(13).'      <tr valign="top" bgcolor="'.$w_cor.'">';
+          $l_html .=chr(13).'      <tr valign="top">';
           $l_html .=chr(13).'        <td>'.f($row,'nome').'</td>';
           $l_html .=chr(13).'        <td>'.f($row,'papel').'</td>';
           $l_html .=chr(13).'      </tr>';
@@ -554,16 +595,16 @@ function VisualProjeto($l_chave,$O,$w_usuario,$P1,$P4) {
           $l_html .=chr(13).'<input type="Hidden" name="p_agrega" value="">';
           $l_html .=chr(13).'<input type="Hidden" name="p_fase" value="">';
         } 
-        $l_html .=chr(13).'      <tr><td valign="top" colspan="2" align="center" bgcolor="#D0D0D0" style="border: 2px solid rgb(0,0,0);"><b>Metas físicas</td>';
+        $l_html .=chr(13).'      <tr><td colspan="2"><br><font size="2"><b>METAS FÍSICAS<hr NOSHADE color=#000000 SIZE=1></b></font></td></tr>';  
         $l_html .=chr(13).'      <tr><td align="center" colspan="2">';
-        $l_html .=chr(13).'        <TABLE WIDTH="100%" bgcolor="'.$conTableBgColor.'" BORDER="'.$conTableBorder.'" CELLSPACING="'.$conTableCellSpacing.'" CELLPADDING="'.$conTableCellPadding.'" BorderColorDark="'.$conTableBorderColorDark.'" BorderColorLight="'.$conTableBorderColorLight.'">';
-        $l_html .=chr(13).'          <tr bgcolor="'.$conTrBgColor.'" align="center">';
-        $l_html .=chr(13).'          <td><b>Metas</td>';
+        $l_html.=chr(13).'        <table width=100%  border="1" bordercolor="#00000">';    
+        $l_html.=chr(13).'          <tr align="center">';
+        $l_html .=chr(13).'          <td bgColor="#f0f0f0"><div><b>Metas</b></div></td>';
         //w_html = w_html & VbCrLf & '          <td><b>Produto</font></td>'
         //w_html = w_html & VbCrLf & '          <td rowspan=2><b>Responsável</td>'
         //w_html = w_html & VbCrLf & '          <td rowspan=2><b>Setor</td>'
-        $l_html .=chr(13).'          <td><b>Execução até</td>';
-        $l_html .=chr(13).'          <td><b>Conc.</td>';
+        $l_html .=chr(13).'          <td bgColor="#f0f0f0"><div><b>Execução até</b></div></td>';
+        $l_html .=chr(13).'          <td bgColor="#f0f0f0"><div><b>Conc.</b></div></td>';
         //w_html = w_html & VbCrLf & '          <td rowspan=2><b>Ativ.</td>'
         $l_html .=chr(13).'          </tr>';
         //w_html = w_html & VbCrLf & '          <tr bgcolor=''' & conTrBgColor & ''' align=''center''>'
@@ -609,19 +650,20 @@ function VisualProjeto($l_chave,$O,$w_usuario,$P1,$P4) {
               null,null,null,null,null,$l_chave,null,null,null);
       $RS = SortArray($RS,'ordem','asc','phpdt_fim','asc','prioridade','asc');
       if (count($RS)>0) {
-        $l_html .=chr(13).'      <tr><td valign="top" colspan="2" align="center" bgcolor="#D0D0D0" style="border: 2px solid rgb(0,0,0);"><b>Tarefas</td>';
+        $l_html .=chr(13).'      <tr><td colspan="2"><br><font size="2"><b>TAREFAS<hr NOSHADE color=#000000 SIZE=1></b></font></td></tr>';  
         $l_html .=chr(13).'      <tr><td align="center" colspan="2">';
-        $l_html .=chr(13).'        <TABLE WIDTH="100%" bgcolor="'.$conTableBgColor.'" BORDER="'.$conTableBorder.'" CELLSPACING="'.$conTableCellSpacing.'" CELLPADDING="'.$conTableCellPadding.'" BorderColorDark="'.$conTableBorderColorDark.'" BorderColorLight="'.$conTableBorderColorLight.'">';
-        $l_html .=chr(13).'          <tr bgcolor="'.$conTrBgColor.'" align="center">';
-        $l_html .=chr(13).'            <td><b>Nº</td>';
-        $l_html .=chr(13).'            <td><b>Responsável</td>';
-        $l_html .=chr(13).'            <td><b>Detalhamento</td>';
-        $l_html .=chr(13).'            <td><b>Fim previsto</td>';
-        $l_html .=chr(13).'            <td><b>Fase atual</td>';
+     //   $l_html .=chr(13).'        <TABLE WIDTH="100%" bgcolor="'.$conTableBgColor.'" BORDER="'.$conTableBorder.'" CELLSPACING="'.$conTableCellSpacing.'" CELLPADDING="'.$conTableCellPadding.'" BorderColorDark="'.$conTableBorderColorDark.'" BorderColorLight="'.$conTableBorderColorLight.'">';
+       $l_html.=chr(13).'        <table width=100%  border="1" bordercolor="#00000">'; 
+        $l_html .=chr(13).'          <tr align="center">';
+        $l_html .=chr(13).'            <td bgColor="#f0f0f0"><div><b>Nº</b></div></td>';
+        $l_html .=chr(13).'            <td bgColor="#f0f0f0"><div><b>Responsável</b></div></td>';
+        $l_html .=chr(13).'            <td bgColor="#f0f0f0"><div><b>Detalhamento</b></div></td>';
+        $l_html .=chr(13).'            <td bgColor="#f0f0f0"><div><b>Fim previsto</b></div></td>';
+        $l_html .=chr(13).'            <td bgColor="#f0f0f0"><div><b>Fase atual</b></div></td>';
         $l_html .=chr(13).'          </tr>';
         foreach($RS as $row) {
-          $w_cor = ($w_cor==$conTrBgColor || $w_cor=='') ? $w_cor=$conTrAlternateBgColor : $w_cor=$conTrBgColor;$l_html .=chr(13).'       <tr valign="top" bgcolor="'.$w_cor.'">';
-          $l_html .=chr(13).'       <tr bgcolor="'.$w_cor.'" valign="top">';
+//          $w_cor = ($w_cor==$conTrBgColor || $w_cor=='') ? $w_cor=$conTrAlternateBgColor : $w_cor=$conTrBgColor;$l_html .=chr(13).'       <tr valign="top" bgcolor="'.$w_cor.'">';
+          $l_html .=chr(13).'       <tr valign="top">';
           $l_html .=chr(13).'         <td nowrap>';
           if (f($row,'concluida')=='N') {
             if (f($row,'fim')<time()) {
@@ -647,25 +689,24 @@ function VisualProjeto($l_chave,$O,$w_usuario,$P1,$P4) {
             $l_html .=chr(13).'      <td>'.$w_titulo.'</td>';
           } 
           $l_html .=chr(13).'         <td align="center">&nbsp;'.Nvl(FormatDateTime(f($RS,'fim'),2,',','.'),'-').'</td>';
-          $l_html .=chr(13).'         <td nowrap>'.f($RS,'nm_tramite').'</td>';
+          $l_html .=chr(13).'         <td align="center"  nowrap>'.Nvl(f($RS,'nm_tramite'),'-').'</td>';
         } 
-        $l_html .=chr(13).'         </table></td></tr>';
+  //      $l_html .=chr(13).'         </table></td></tr>';
       } 
       // Recursos envolvidos na execução da ação
       $RS = db_getSolicRecurso::getInstanceOf($dbms,$l_chave,null,'LISTA');
       $RS = SortArray($RS,'tipo','asc','nome','asc');
       if (count($RS)>0) {
-        $l_html .=chr(13).'      <tr><td valign="top" colspan="2" align="center" bgcolor="#D0D0D0" style="border: 2px solid rgb(0,0,0);"><b>Recursos</td>';
+        $l_html .=chr(13).'      <tr><td colspan="2"><br><font size="2"><b>RECURSOS<hr NOSHADE color=#000000 SIZE=1></b></font></td></tr>';  
         $l_html .=chr(13).'      <tr><td align="center" colspan="2">';
-        $l_html .=chr(13).'        <TABLE WIDTH="100%" bgcolor="'.$conTableBgColor.'" BORDER="'.$conTableBorder.'" CELLSPACING="'.$conTableCellSpacing.'" CELLPADDING="'.$conTableCellPadding.'" BorderColorDark="'.$conTableBorderColorDark.'" BorderColorLight="'.$conTableBorderColorLight.'">';
-        $l_html .=chr(13).'          <tr bgcolor="'.$conTrBgColor.'" align="center">';
-        $l_html .=chr(13).'            <td><b>Tipo</td>';
-        $l_html .=chr(13).'            <td><b>Nome</td>';
-        $l_html .=chr(13).'            <td><b>Finalidade</td>';
+        $l_html.=chr(13).'         <table width=100%  border="1" bordercolor="#00000">'; 
+        $l_html .=chr(13).'          <tr align="center">';
+        $l_html .=chr(13).'            <td bgColor="#f0f0f0"><div><b>Tipo</b></div></td>';
+        $l_html .=chr(13).'            <td bgColor="#f0f0f0"><div><b>Nome</b></div></td>';
+        $l_html .=chr(13).'            <td bgColor="#f0f0f0"><div><b>Finalidade</b></div></td>';
         $l_html .=chr(13).'          </tr>';
         foreach($RS as $row) {
-          $w_cor = ($w_cor==$conTrBgColor || $w_cor=='') ? $w_cor=$conTrAlternateBgColor : $w_cor=$conTrBgColor;
-          $l_html .=chr(13).'      <tr valign="top" bgcolor="'.$w_cor.'">';
+          $l_html .=chr(13).'      <tr valign="top" ">';
           $l_html .=chr(13).'        <td>'.RetornaTipoRecurso(f($row,'tipo')).'</td>';
           $l_html .=chr(13).'        <td>'.f($row,'nome').'</td>';
           $l_html .=chr(13).'        <td>'.CRLF2BR(Nvl(f($row,'finalidade'),'---')).'</td>';
@@ -681,19 +722,18 @@ function VisualProjeto($l_chave,$O,$w_usuario,$P1,$P4) {
         $RS = db_getSolicAnexo::getInstanceOf($dbms,$l_chave,null,$w_cliente);
         $RS = SortArray($RS,'nome','asc');
         if (count($RS)>0) {
-          $l_html .=chr(13).'      <tr><td valign="top" colspan="2" align="center" bgcolor="#D0D0D0" style="border: 2px solid rgb(0,0,0);"><b>Arquivos anexos</td>';
+          $l_html .=chr(13).'      <tr><td colspan="2"><br><font size="2"><b>ARQUIVOS ANEXOS<hr NOSHADE color=#000000 SIZE=1></b></font></td></tr>';  
           $l_html .=chr(13).'      <tr><td align="center" colspan="2">';
-          $l_html .=chr(13).'        <TABLE WIDTH="100%" bgcolor="'.$conTableBgColor.'" BORDER="'.$conTableBorder.'" CELLSPACING="'.$conTableCellSpacing.'" CELLPADDING="'.$conTableCellPadding.'" BorderColorDark="'.$conTableBorderColorDark.'" BorderColorLight="'.$conTableBorderColorLight.'">';
-          $l_html .=chr(13).'          <tr bgcolor="'.$conTrBgColor.'" align="center">';
-          $l_html .=chr(13).'          <td><b>Título</td>';
-          $l_html .=chr(13).'          <td><b>Descrição</td>';
-          $l_html .=chr(13).'          <td><b>Tipo</td>';
-          $l_html .=chr(13).'          <td><b>KB</td>';
+          $l_html.=chr(13).'         <table width=100%  border="1" bordercolor="#00000">'; 
+          $l_html .=chr(13).'          <tr align="center">';
+          $l_html .=chr(13).'            <td bgColor="#f0f0f0"><div><b>Título</b></div></td>';
+          $l_html .=chr(13).'            <td bgColor="#f0f0f0"><div><b>Descrição</b></div></td>';
+          $l_html .=chr(13).'            <td bgColor="#f0f0f0"><div><b>Tipo</b></div></td>';
+          $l_html .=chr(13).'            <td bgColor="#f0f0f0"><div><b>KB</b></div></td>';
           $l_html .=chr(13).'          </tr>';
           $w_cor=$conTrBgColor;
           foreach($RS as $row) {
-            $w_cor = ($w_cor==$conTrBgColor || $w_cor=='') ? $w_cor=$conTrAlternateBgColor : $w_cor=$conTrBgColor;
-            $l_html .=chr(13).'      <tr valign="top" bgcolor="'.$w_cor.'">';
+            $l_html .=chr(13).'      <tr valign="top">';
             $l_html .=chr(13).'        <td>'.LinkArquivo('HL',$w_cliente,f($row,'chave_aux'),'_blank','Clique para exibir o arquivo em outra janela.',f($row,'nome'),null).'</td>';
             $l_html .=chr(13).'        <td>'.Nvl(f($row,'descricao'),'---').'</td>';
             $l_html .=chr(13).'        <td>'.f($row,'tipo').'</td>';
@@ -706,25 +746,24 @@ function VisualProjeto($l_chave,$O,$w_usuario,$P1,$P4) {
       // Encaminhamentos
       $RS = db_getSolicLog::getInstanceOf($dbms,$l_chave,null,'LISTA');
       $RS = SortArray($RS,'phpdt_data','desc','sq_siw_solic_log','desc');
-      $l_html .=chr(13).'      <tr><td valign="top" colspan="2" align="center" bgcolor="#D0D0D0" style="border: 2px solid rgb(0,0,0);"><b>Ocorrências e Anotações</td>';
-      $l_html .=chr(13).'      <tr><td align="center" colspan="2">';
-      $l_html .=chr(13).'        <TABLE WIDTH="100%" bgcolor="'.$conTableBgColor.'" BORDER="'.$conTableBorder.'" CELLSPACING="'.$conTableCellSpacing.'" CELLPADDING="'.$conTableCellPadding.'" BorderColorDark="'.$conTableBorderColorDark.'" BorderColorLight="'.$conTableBorderColorLight.'">';
-      $l_html .=chr(13).'          <tr bgcolor="'.$conTrBgColor.'" align="center">';
-      $l_html .=chr(13).'            <td><b>Data</td>';
-      $l_html .=chr(13).'            <td><b>Despacho/Observação</td>';
-      $l_html .=chr(13).'            <td><b>Responsável</td>';
-      $l_html .=chr(13).'            <td><b>Fase / Destinatário</td>';
+      $l_html .=chr(13).'     <tr><td colspan="2"><br><font size="2"><b>OCORRÊNCIA E ANOTAÇÕES<hr NOSHADE color=#000000 SIZE=1></b></font></td></tr>';  
+      $l_html.=chr(13).'      <tr><td colspan="2"><div align="center">';
+      $l_html.=chr(13).'        <table width=100%  border="1" bordercolor="#00000">';    
+      $l_html.=chr(13).'          <tr align="center">';
+      $l_html .=chr(13).'            <td bgColor="#f0f0f0"><div><b>Data</b></div></td>';
+      $l_html .=chr(13).'            <td bgColor="#f0f0f0"><div><b>Despacho/Observação</b></div></td>';
+      $l_html .=chr(13).'            <td bgColor="#f0f0f0"><div><b>Responsável</b></div></td>';
+      $l_html .=chr(13).'            <td bgColor="#f0f0f0"><div><b>Fase / Destinatário</b></div></td>';
       $l_html .=chr(13).'          </tr>';
       if (count($RS)<=0) {
-        $l_html .=chr(13).'      <tr bgcolor="'.$conTrBgColor.'"><td colspan=6 align="center"><b>Não foram encontrados encaminhamentos.</b></td></tr>';
+        $l_html .=chr(13).'      <tr><td colspan=6 align="center"><b>Não foram encontrados encaminhamentos.</b></td></tr>';
       } else {
-        $l_html .=chr(13).'      <tr bgcolor="'.$conTrBgColor.'" valign="top">';
+        $l_html .=chr(13).'      <tr valign="top">';
         $i=0;
         foreach($RS as $row) {
           if($i==0) $l_html .=chr(13).'        <td colspan=6>Fase atual: <b>'.f($row,'fase').'</b></td>';
           $i=1;
-          $w_cor = ($w_cor==$conTrBgColor || $w_cor=='') ? $w_cor=$conTrAlternateBgColor : $w_cor=$conTrBgColor;
-          $l_html .=chr(13).'      <tr valign="top" bgcolor="'.$w_cor.'">';
+          $l_html .=chr(13).'      <tr valign="top">';
           //$l_html .=chr(13).'        <td nowrap>>'.$FormatDateTime(f($row,'data'),2,',','.').', '.$FormatDateTime(f($row,'data'),4,',','.').'</td>';
           $l_html .=chr(13).'        <td nowrap>'.FormataDataEdicao(f($row,'phpdt_data'),3).'</td>';
           

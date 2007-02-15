@@ -16,13 +16,17 @@ include_once($w_dir_volta.'classes/sp/db_getUnidade_PE.php');
 include_once($w_dir_volta.'classes/sp/db_getRecurso.php');
 include_once($w_dir_volta.'classes/sp/db_getRecurso_Disp.php');
 include_once($w_dir_volta.'classes/sp/db_getRecurso_Indisp.php');
+include_once($w_dir_volta.'classes/sp/db_getSolicRecursos.php');
 include_once($w_dir_volta.'classes/sp/db_verificaAssinatura.php');
 include_once($w_dir_volta.'classes/sp/dml_putRecurso.php');
 include_once($w_dir_volta.'classes/sp/dml_putRecurso_Disp.php');
 include_once($w_dir_volta.'classes/sp/dml_putRecurso_Indisp.php');
 include_once($w_dir_volta.'classes/sp/dml_putRecurso_Menu.php');
+include_once($w_dir_volta.'classes/sp/dml_putSolicRecurso.php');
+include_once($w_dir_volta.'classes/sp/dml_putSolicRecAlocacao.php');
 include_once($w_dir_volta.'funcoes/selecaoUnidade.php');
 include_once($w_dir_volta.'funcoes/selecaoTipoRecurso_PE.php');
+include_once($w_dir_volta.'funcoes/selecaoRecurso.php');
 include_once($w_dir_volta.'funcoes/selecaoUnidadeMedida.php');
 include_once($w_dir_volta.'funcoes/selecaoDispRecurso.php');
 
@@ -78,7 +82,9 @@ $p_nome         = $_REQUEST['p_nome'];
 $p_ativo        = $_REQUEST['p_ativo'];
 $p_ordena       = $_REQUEST['p_ordena'];
 
-if ($O=='') $O='L';
+if ($SG=='RECSOLIC') {
+  if ($O!='I' && $_REQUEST['w_chave_aux']=='') $O='L';
+} elseif ($O=='') $O='L';
 
 switch ($O) {
   case 'I': $w_TP=$TP.' - Inclusão';        break;
@@ -98,6 +104,14 @@ $w_cliente  = RetornaCliente();
 $w_usuario  = RetornaUsuario();
 $w_menu     = RetornaMenu($w_cliente,$SG);
 $w_ano      = RetornaAno();
+
+// Recupera as informações da opçao de menu;
+$RS_Menu = db_getMenuData::getInstanceOf($dbms,$w_menu);
+// Se for sub-menu, pega a configuração do pai
+if (f($RS_Menu,'ultimo_nivel') == 'S') {
+  $RS_Menu = db_getMenuData::getInstanceOf($dbms,f($RS_Menu,'sq_menu_pai'));
+} 
+
 Main();
 FechaSessao($dbms);
 exit;
@@ -175,7 +189,7 @@ function Inicial() {
     ScriptClose();
   } 
   ShowHTML('</HEAD>');
-  ShowHTML('<BASE HREF="'.$conRootSIW.'">');
+  ShowHTML('<font size=0 color="'.$conBodyBgColor.'">.</font><BASE HREF="'.$conRootSIW.'">');
   if ($w_troca>'') {
     BodyOpen('onLoad=document.Form.'.$w_troca.'.focus();');
   } elseif (!(strpos('CIA',$O)===false)) {
@@ -248,8 +262,8 @@ function Inicial() {
         ShowHTML('          <A class="hl" HREF="'.$w_dir.$w_pagina.$par.'&R='.$w_pagina.$par.'&O=A&w_chave='.f($row,'chave').'&P1='.$P1.'&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP='.$TP.' &SG='.$SG.MontaFiltro('GET').'" Title="Altera os dados deste registro.">Alterar</A>&nbsp');
         ShowHTML('          <A class="hl" HREF="'.$w_dir.$w_pagina.$par.'&R='.$w_pagina.$par.'&O=E&w_chave='.f($row,'chave').'&P1='.$P1.'&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP='.$TP.' &SG='.$SG.'" Title="Exclui deste registro.">Excluir</A>&nbsp');
         ShowHTML('          <A class="hl" HREF="'.$w_dir.$w_pagina.$par.'&R='.$w_pagina.$par.'&O=C&w_chave='.f($row,'chave').'&P1='.$P1.'&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP='.$TP.' &SG='.$SG.MontaFiltro('GET').'" Title="Inclui um novo recurso a partir dos dados deste registro.">Copiar</A>&nbsp');
-        ShowHTML('          <A class="hl" HREF="javascript:this.focus();" onClick="window.open(\''.montaURL_JS($w_dir,$w_pagina.'Disponivel&R='.$w_pagina.$par.'&O=L&w_chave='.f($row,'chave').'&P1='.$P1.'&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP='.$TP.' - Disponibilidade&SG=PERECDISP').'\',\'Recurso\',\'width=730,height=550,top=30,left=30,status=yes,resizable=yes,scrollbars=yes,toolbar=yes\');" title="Define a disponibilidade do recurso.">Disp</A>&nbsp');
-        ShowHTML('          <A class="hl" HREF="javascript:this.focus();" onClick="window.open(\''.montaURL_JS($w_dir,$w_pagina.'Indisponivel&R='.$w_pagina.$par.'&O=L&w_chave='.f($row,'chave').'&P1='.$P1.'&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP='.$TP.' - Indisponibilidade&SG=PERECINDISP').'\',\'Recurso\',\'width=730,height=550,top=30,left=30,status=yes,resizable=yes,scrollbars=yes,toolbar=yes\');" title="Define a indisponibilidade do recurso.">Indisp</A>&nbsp');
+        ShowHTML('          <A class="hl" HREF="javascript:this.status.value;" onClick="window.open(\''.montaURL_JS($w_dir,$w_pagina.'Disponivel&R='.$w_pagina.$par.'&O=L&w_chave='.f($row,'chave').'&P1='.$P1.'&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP='.$TP.' - Disponibilidade&SG=PERECDISP').'\',\'Recurso\',\'width=730,height=550,top=30,left=30,status=yes,resizable=yes,scrollbars=yes,toolbar=yes\');" title="Define a disponibilidade do recurso.">Disp</A>&nbsp');
+        ShowHTML('          <A class="hl" HREF="javascript:this.status.value;" onClick="window.open(\''.montaURL_JS($w_dir,$w_pagina.'Indisponivel&R='.$w_pagina.$par.'&O=L&w_chave='.f($row,'chave').'&P1='.$P1.'&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP='.$TP.' - Indisponibilidade&SG=PERECINDISP').'\',\'Recurso\',\'width=730,height=550,top=30,left=30,status=yes,resizable=yes,scrollbars=yes,toolbar=yes\');" title="Define a indisponibilidade do recurso.">Indisp</A>&nbsp');
         ShowHTML('          <A class="hl" HREF="'.$w_dir.$w_pagina.$par.'&R='.$w_pagina.$par.'&O=M&w_chave='.f($row,'chave').'&P1='.$P1.'&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP='.$TP.' &SG='.$SG.MontaFiltro('GET').'" Title="Configura os serviços que podem alocar recursos.">Serviços</A>&nbsp');
         ShowHTML('        </td>');
         ShowHTML('      </tr>');
@@ -477,7 +491,7 @@ function Disponivel() {
     ScriptClose();
   } 
   ShowHTML('</HEAD>');
-  ShowHTML('<BASE HREF="'.$conRootSIW.'">');
+  ShowHTML('<font size=0 color="'.$conBodyBgColor.'">.</font><BASE HREF="'.$conRootSIW.'">');
   if ($w_troca>'') {
     BodyOpen('onLoad=document.Form.'.$w_troca.'.focus();');
   } elseif (!(strpos('CIA',$O)===false)) {
@@ -726,7 +740,7 @@ function Indisponivel() {
     ScriptClose();
   } 
   ShowHTML('</HEAD>');
-  ShowHTML('<BASE HREF="'.$conRootSIW.'">');
+  ShowHTML('<font size=0 color="'.$conBodyBgColor.'">.</font><BASE HREF="'.$conRootSIW.'">');
   if ($w_troca>'') {
     BodyOpen('onLoad=document.Form.'.$w_troca.'.focus();');
   } elseif (!(strpos('CIA',$O)===false)) {
@@ -857,196 +871,640 @@ function TelaRecurso() {
 
   $w_chave = $_REQUEST['w_chave'];
 
-  // Recupera os dados do recurso
-  $RS = db_getRecurso::getInstanceOf($dbms,$w_cliente,$w_usuario,$w_chave,null,null,null,null,null,null);
-  foreach ($RS as $row) { $RS = $row; break; }
-  $w_tipo = f($RS,'disponibilidade_tipo');
-
-  // Recupera os dados da unidade gestora
-  $RS_Unidade = db_getUorgData::getInstanceOf($dbms,f($RS,'unidade_gestora'));
-
   Cabecalho();
   ShowHTML('<HEAD>');
   Estrutura_CSS($w_cliente);
   ShowHTML('<TITLE>Recurso</TITLE>');
-  ScriptOpen('JavaScript');
-  ValidateOpen('Validacao');
-  ValidateClose();
-  ScriptClose();
   ShowHTML('</HEAD>');
   BodyOpen('onLoad=this.focus();');
   $w_TP = 'Recurso - Visualização de dados';
   Estrutura_Texto_Abre();
-  ShowHTML('<TABLE WIDTH="100%" bgcolor='.$conTableBgColor.' BORDER=0 CELLSPACING=0 CELLPADDING=0 BorderColorDark='.$conTableBorderColorDark.' BorderColorLight='.$conTableBorderColorLight.'>');
-  ShowHTML('<tr bgcolor="'.$conTrBgColor.'"><td>');
-  ShowHTML('    <table width="100%" border="1" cellspacing=0>');
-  ShowHTML('      <tr<td colspan=3><font size=2><b>'.f($RS,'nome').'</b></td>');
-  ShowHTML('      <tr valign="top">');
-  ShowHTML('          <td>Código:<br><b>'.nvl(f($RS,'codigo'),'---').' </b></td>');
-  ShowHTML('          <td colspan=2>Recurso ativo?<br><b>'.f($RS,'nm_ativo').' </b></td>');
-  ShowHTML('      <tr valign="top">');
-  ShowHTML('          <td>Unidade gestora:<br>'.ExibeUnidade($w_dir_volta,$w_cliente,f($RS,'nm_unidade'),f($RS,'unidade_gestora'),$TP).'</td>');
-  ShowHTML('          <td>Tipo: <br><b>'.f($RS,'nm_tipo_recurso').'</b></td>');
-  ShowHTML('          <td>Unidade de alocação: <br><b>'.f($RS,'sg_unidade_medida').' ('.f($RS,'nm_unidade_medida').')</b></td>');
-  ShowHTML('      <tr><td colspan=3>Disponibilidade: <br><b>'.f($RS,'nm_disponibilidade_tipo').'</b></td>');
-  ShowHTML('      <tr><td colspan=3>Descrição: <br><b>'.nvl(crlf2br(f($RS,'descricao')),'---').'</b></td>');
-  ShowHTML('      <tr><td colspan=3>Finalidade: <br><b>'.nvl(crlf2br(f($RS,'finalidade')),'---').'</b></td>');
+  ShowHTML(visualRecurso($w_chave));
+  Estrutura_Texto_Fecha();
+} 
+// =========================================================================
+// Monta string com os dados do recurso
+// -------------------------------------------------------------------------
+function visualRecurso($l_chave,$l_navega=true) {
+  extract($GLOBALS);
+
+  // Recupera os dados do recurso
+  $l_rs = db_getRecurso::getInstanceOf($dbms,$w_cliente,$w_usuario,$l_chave,null,null,null,null,null,null);
+  foreach ($l_rs as $row) { $l_rs = $row; break; }
+  $w_tipo = f($l_rs,'disponibilidade_tipo');
+
+  // Recupera os dados da unidade gestora
+  $l_rs_Unidade = db_getUorgData::getInstanceOf($dbms,f($l_rs,'unidade_gestora'));
+
+  $l_html = '<TABLE WIDTH="100%" bgcolor='.$conTableBgColor.' BORDER=0 CELLSPACING=0 CELLPADDING=0 BorderColorDark='.$conTableBorderColorDark.' BorderColorLight='.$conTableBorderColorLight.'>';
+  $l_html .= chr(13).'<tr bgcolor="'.$conTrBgColor.'"><td>';
+  $l_html .= chr(13).'    <table width="100%" border="1" cellspacing=0>';
+  $l_html .= chr(13).'      <tr<td colspan=3><font size=2><b>'.f($l_rs,'nome').'</b></td>';
+  $l_html .= chr(13).'      <tr valign="top">';
+  $l_html .= chr(13).'          <td>Código:<br><b>'.nvl(f($l_rs,'codigo'),'---').' </b></td>';
+  $l_html .= chr(13).'          <td colspan=2>Recurso ativo?<br><b>'.f($l_rs,'nm_ativo').' </b></td>';
+  $l_html .= chr(13).'      <tr valign="top">';
+  $l_html .= chr(13).'          <td>Unidade gestora:<br>'.ExibeUnidade($w_dir_volta,$w_cliente,f($l_rs,'nm_unidade'),f($l_rs,'unidade_gestora'),$TP).'</td>';
+  $l_html .= chr(13).'          <td>Tipo: <br><b>'.f($l_rs,'nm_tipo_recurso').'</b></td>';
+  $l_html .= chr(13).'          <td>Unidade de alocação: <br><b>'.f($l_rs,'sg_unidade_medida').' ('.f($l_rs,'nm_unidade_medida').')</b></td>';
+  $l_html .= chr(13).'      <tr><td colspan=3>Disponibilidade: <br><b>'.f($l_rs,'nm_disponibilidade_tipo').'</b></td>';
+  $l_html .= chr(13).'      <tr><td colspan=3>Descrição: <br><b>'.nvl(crlf2br(f($l_rs,'descricao')),'---').'</b></td>';
+  $l_html .= chr(13).'      <tr><td colspan=3>Finalidade: <br><b>'.nvl(crlf2br(f($l_rs,'finalidade')),'---').'</b></td>';
   
   // Exibe os serviços que podem alocar este recurso
-  ShowHTML('      <tr><td align="center" colspan="3" bgcolor="#D0D0D0"><b>Serviços que podem alocar este recurso</td>');
-  $RS = db_getRecurso::getInstanceOf($dbms,$w_cliente,$w_usuario,$w_chave,null,null,null,null,null,'MENU');
-  $RS = SortArray($RS,'nome','asc','nm_modulo','asc'); 
+  $l_html .= chr(13).'      <tr><td align="center" colspan="3" bgcolor="#D0D0D0"><b>Serviços que podem alocar este recurso</td>';
+  $l_rs = db_getRecurso::getInstanceOf($dbms,$w_cliente,$w_usuario,$l_chave,null,null,null,null,null,'MENU');
+  $l_rs = SortArray($l_rs,'nome','asc','nm_modulo','asc'); 
   $w_cont = 0;
-  ShowHTML('      <tr><td colspan=3>');
-  foreach ($RS as $row) {
+  $l_html .= chr(13).'      <tr><td colspan=3>';
+  foreach ($l_rs as $row) {
     if (nvl(f($row,'sq_recurso'),'nulo')!='nulo') {
       $w_cont = 1;
-      ShowHTML('          '.f($row,'nome').' ('.f($row,'nm_modulo').')<br>');
+      $l_html .= chr(13).'          '.f($row,'nome').' ('.f($row,'nm_modulo').')<br>';
     }
   }
   if ($w_cont==0) {
-    ShowHTML('      <center><b>Nenhum registro encontrado</b></center>');
+    $l_html .= chr(13).'      <center><b>Nenhum registro encontrado</b></center>';
   } 
-  ShowHTML('          </td>');
+  $l_html .= chr(13).'          </td>';
 
   // Recupera as datas especiais da organização
   include_once($w_dir_volta.'classes/sp/db_getDataEspecial.php');
-  $RS_Ano = db_getDataEspecial::getInstanceOf($dbms,$w_cliente,null,$w_ano,'S',null,null,null);
-  $RS_Ano = SortArray($RS_Ano,'data_formatada','asc');
+  $l_rs_Ano = db_getDataEspecial::getInstanceOf($dbms,$w_cliente,null,$w_ano,'S',null,null,null);
+  $l_rs_Ano = SortArray($l_rs_Ano,'data_formatada','asc');
 
   if ($w_tipo!=1) {
     // Recupera os períodos de disponibilidade do recurso, se ele tiver controle de períodos
-    $RS_Disp = db_getRecurso_Disp::getInstanceOf($dbms,$w_cliente,$w_chave,null,'01/01/'.$w_ano,'31/12/'.$w_ano,'REGISTROS');
-    $RS_Disp = SortArray($RS_Disp,'inicio','desc','fim','desc');
+    $l_rs_Disp = db_getRecurso_Disp::getInstanceOf($dbms,$w_cliente,$l_chave,null,'01/01/'.$w_ano,'31/12/'.$w_ano,'REGISTROS');
+    $l_rs_Disp = SortArray($l_rs_Disp,'inicio','desc','fim','desc');
     // Cria arrays com cada dia do período, definindo o texto e a cor de fundo para exibição no calendário
-    foreach($RS_Disp as $row) retornaArrayDias(f($row,'inicio'), f($row,'fim'), &$w_datas, 'Recurso disponível neste dia', f($row,'dia_util'));
-    foreach($RS_Disp as $row) retornaArrayDias(f($row,'inicio'), f($row,'fim'), &$w_cores, $conTrBgColorLightBlue2, f($row,'dia_util'));
+    foreach($l_rs_Disp as $row) retornaArrayDias(f($row,'inicio'), f($row,'fim'), &$w_datas, 'Recurso disponível neste dia', f($row,'dia_util'));
+    foreach($l_rs_Disp as $row) retornaArrayDias(f($row,'inicio'), f($row,'fim'), &$w_cores, $conTrBgColorLightBlue2, f($row,'dia_util'));
   }
 
   // Recupera os períodos de disponibilidade do recurso, se ele tiver controle de períodos
-  $RS_Indisp = db_getRecurso_Indisp::getInstanceOf($dbms,$w_cliente,$w_chave,null,'01/01/'.$w_ano,'31/12/'.$w_ano,'REGISTROS');
-  $RS_Indisp = SortArray($RS_Indisp,'inicio','desc','fim','desc');
+  $l_rs_Indisp = db_getRecurso_Indisp::getInstanceOf($dbms,$w_cliente,$l_chave,null,'01/01/'.$w_ano,'31/12/'.$w_ano,'REGISTROS');
+  $l_rs_Indisp = SortArray($l_rs_Indisp,'inicio','desc','fim','desc');
   // Cria arrays com cada dia do período, definindo o texto e a cor de fundo para exibição no calendário
-  foreach($RS_Indisp as $row) retornaArrayDias(f($row,'inicio'), f($row,'fim'), &$w_datas, f($row,'justificativa'), f($row,'dia_util'));
-  foreach($RS_Indisp as $row) retornaArrayDias(f($row,'inicio'), f($row,'fim'), &$w_cores, $conTrBgColorLightRed1, f($row,'dia_util'));
+  foreach($l_rs_Indisp as $row) retornaArrayDias(f($row,'inicio'), f($row,'fim'), &$w_datas, f($row,'justificativa'), f($row,'dia_util'));
+  foreach($l_rs_Indisp as $row) retornaArrayDias(f($row,'inicio'), f($row,'fim'), &$w_cores, $conTrBgColorLightRed1, f($row,'dia_util'));
+
+  $l_rs_Aloc = db_getSolicRecursos::getInstanceOf($dbms,$w_cliente,$w_usuario,null,$l_chave,null,null,null,null,null,null,null,null,null,'ALOCACAO');
+  $l_rs_Aloc = SortArray($l_rs_Aloc,'inicio','desc','fim','desc');
+  // Cria arrays com cada dia do período, definindo o texto e a cor de fundo para exibição no calendário
+  foreach($l_rs_Aloc as $row) retornaArrayDias(f($row,'inicio'), f($row,'fim'), &$w_datas, 'Alocado', 'S');
+  foreach($l_rs_Aloc as $row) retornaArrayDias(f($row,'inicio'), f($row,'fim'), &$w_cores, 'yellow', 'S');
 
   // Exibe o cronograma do recurso
-  ShowHTML('      <tr valign="top">');
-  ShowHTML('        <td bgcolor="#D0D0D0"><A class="hl" HREF="'.$w_pagina.$par.'&R='.$w_pagina.$par.'&O=A&w_chave='.$w_chave.'&w_ano='.($w_ano-1).'&P1='.$P1.'&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP='.$TP.' &SG='.$SG.MontaFiltro('GET').'" Title="Exibe calendário do ano anterior."><<< '.($w_ano-1).'</A>');
-  ShowHTML('        <td align="center" bgcolor="#D0D0D0"><b>Calendário do recurso (Unidade gestora localizada em '.f($RS_Unidade,'nm_cidade').')</td>');
-  ShowHTML('        <td align="right" bgcolor="#D0D0D0"><A class="hl" HREF="'.$w_pagina.$par.'&R='.$w_pagina.$par.'&O=A&w_chave='.$w_chave.'&w_ano='.($w_ano+1).'&P1='.$P1.'&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP='.$TP.' &SG='.$SG.MontaFiltro('GET').'" Title="Exibe calendário do ano seguinte.">'.($w_ano+1).' >>></A>');
-  ShowHTML('      <tr><td colspan=3>');
-  ShowHTML('        <table border="1" align="center" bgcolor='.$conTableBgColor.' CELLSPACING=0 CELLPADDING=0 BorderColorDark='.$conTableBorderColorDark.' BorderColorLight='.$conTableBorderColorLight.'>');
-  ShowHTML('          <tr valign="top">');
-  ShowHTML('            <td>'.montaCalendario($RS_Ano,'01'.$w_ano,$w_datas,$w_cores).' </td>');
-  ShowHTML('            <td>'.montaCalendario($RS_Ano,'02'.$w_ano,$w_datas,$w_cores).' </td>');
-  ShowHTML('            <td>'.montaCalendario($RS_Ano,'03'.$w_ano,$w_datas,$w_cores).' </td>');
-  ShowHTML('            <td>'.montaCalendario($RS_Ano,'04'.$w_ano,$w_datas,$w_cores).' </td>');
-  ShowHTML('            <td>'.montaCalendario($RS_Ano,'05'.$w_ano,$w_datas,$w_cores).' </td>');
-  ShowHTML('            <td>'.montaCalendario($RS_Ano,'06'.$w_ano,$w_datas,$w_cores).' </td>');
-  ShowHTML('          <tr valign="top">');
-  ShowHTML('            <td>'.montaCalendario($RS_Ano,'07'.$w_ano,$w_datas,$w_cores).' </td>');
-  ShowHTML('            <td>'.montaCalendario($RS_Ano,'08'.$w_ano,$w_datas,$w_cores).' </td>');
-  ShowHTML('            <td>'.montaCalendario($RS_Ano,'09'.$w_ano,$w_datas,$w_cores).' </td>');
-  ShowHTML('            <td>'.montaCalendario($RS_Ano,'10'.$w_ano,$w_datas,$w_cores).' </td>');
-  ShowHTML('            <td>'.montaCalendario($RS_Ano,'11'.$w_ano,$w_datas,$w_cores).' </td>');
-  ShowHTML('            <td>'.montaCalendario($RS_Ano,'12'.$w_ano,$w_datas,$w_cores).' </td>');
-  ShowHTML('          <tr><td colspan=6 bgcolor="'.$conTrBgColor.'">');
-  ShowHTML('            <b>Observações:<ul>');
-  ShowHTML('            <li>Clique sobre o dia em destaque para ver detalhes.');
+  $l_html .= chr(13).'      <tr valign="top">';
+  if ($l_navega) $l_html .= chr(13).'        <td bgcolor="#D0D0D0"><A class="hl" HREF="'.$w_pagina.$par.'&R='.$w_pagina.$par.'&O=A&w_chave='.$l_chave.'&w_ano='.($w_ano-1).'&P1='.$P1.'&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP='.$TP.' &SG='.$SG.MontaFiltro('GET').'" Title="Exibe calendário do ano anterior."><<< '.($w_ano-1).'</A>';
+  else $l_html .= chr(13).'        <td bgcolor="#D0D0D0">&nbsp;';
+  $l_html .= chr(13).'        <td align="center" bgcolor="#D0D0D0"><b>Calendário do recurso (Unidade gestora localizada em '.f($l_rs_Unidade,'nm_cidade').')</td>';
+  if ($l_navega) $l_html .= chr(13).'        <td align="right" bgcolor="#D0D0D0"><A class="hl" HREF="'.$w_pagina.$par.'&R='.$w_pagina.$par.'&O=A&w_chave='.$l_chave.'&w_ano='.($w_ano+1).'&P1='.$P1.'&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP='.$TP.' &SG='.$SG.MontaFiltro('GET').'" Title="Exibe calendário do ano seguinte.">'.($w_ano+1).' >>></A>';
+  else $l_html .= chr(13).'        <td bgcolor="#D0D0D0">&nbsp;';
+  $l_html .= chr(13).'      <tr><td colspan=3>';
+  $l_html .= chr(13).'        <table border="1" align="center" bgcolor='.$conTableBgColor.' CELLSPACING=0 CELLPADDING=0 BorderColorDark='.$conTableBorderColorDark.' BorderColorLight='.$conTableBorderColorLight.'>';
+  $l_html .= chr(13).'          <tr valign="top">';
+  $l_html .= chr(13).'            <td>'.montaCalendario($l_rs_Ano,'01'.$w_ano,$w_datas,$w_cores).' </td>';
+  $l_html .= chr(13).'            <td>'.montaCalendario($l_rs_Ano,'02'.$w_ano,$w_datas,$w_cores).' </td>';
+  $l_html .= chr(13).'            <td>'.montaCalendario($l_rs_Ano,'03'.$w_ano,$w_datas,$w_cores).' </td>';
+  $l_html .= chr(13).'            <td>'.montaCalendario($l_rs_Ano,'04'.$w_ano,$w_datas,$w_cores).' </td>';
+  $l_html .= chr(13).'            <td>'.montaCalendario($l_rs_Ano,'05'.$w_ano,$w_datas,$w_cores).' </td>';
+  $l_html .= chr(13).'            <td>'.montaCalendario($l_rs_Ano,'06'.$w_ano,$w_datas,$w_cores).' </td>';
+  $l_html .= chr(13).'          <tr valign="top">';
+  $l_html .= chr(13).'            <td>'.montaCalendario($l_rs_Ano,'07'.$w_ano,$w_datas,$w_cores).' </td>';
+  $l_html .= chr(13).'            <td>'.montaCalendario($l_rs_Ano,'08'.$w_ano,$w_datas,$w_cores).' </td>';
+  $l_html .= chr(13).'            <td>'.montaCalendario($l_rs_Ano,'09'.$w_ano,$w_datas,$w_cores).' </td>';
+  $l_html .= chr(13).'            <td>'.montaCalendario($l_rs_Ano,'10'.$w_ano,$w_datas,$w_cores).' </td>';
+  $l_html .= chr(13).'            <td>'.montaCalendario($l_rs_Ano,'11'.$w_ano,$w_datas,$w_cores).' </td>';
+  $l_html .= chr(13).'            <td>'.montaCalendario($l_rs_Ano,'12'.$w_ano,$w_datas,$w_cores).' </td>';
+  $l_html .= chr(13).'          <tr><td colspan=6 bgcolor="'.$conTrBgColor.'">';
+  $l_html .= chr(13).'            <b>Observações:<ul>';
+  $l_html .= chr(13).'            <li>Clique sobre o dia em destaque para ver detalhes.';
   if ($w_tipo==1) {
-    ShowHTML('            <li>Recurso sem controle de períodos. As datas destacadas em vermelho indicam a indisponibilidade do recurso.');
+    $l_html .= chr(13).'            <li>Recurso sem controle de períodos. As datas destacadas em vermelho indicam a indisponibilidade do recurso.';
   } else {
-    ShowHTML('            <li>As datas destacadas em azul indicam a disponibilidade do recurso.');
-    ShowHTML('            <li>As datas destacadas em vermelho indicam a indisponibilidade do recurso.');
+    $l_html .= chr(13).'            <li>As datas destacadas em azul indicam a disponibilidade do recurso.';
+    $l_html .= chr(13).'            <li>As datas destacadas em vermelho indicam a indisponibilidade do recurso.';
   }
-  ShowHTML('            </ul>');
+  if (count($l_rs_Aloc)>0) {
+    $l_html .= chr(13).'            <li>As datas destacadas em amarelo indicam a alocaçao do recurso.';
+  }
+  $l_html .= chr(13).'            </ul>';
 
   // Exibe informações complementares sobre o calendário
-  ShowHTML('          <tr valign="top" bgcolor="'.$conTrBgColor.'">');
+  $l_html .= chr(13).'          <tr valign="top" bgcolor="'.$conTrBgColor.'">';
   // Exibe descritivo das datas especiais
-  if ($w_tipo==1) ShowHTML('            <td colspan=2 align="center">'); else ShowHTML('            <td colspan=2 rowspan=2 align="center">');
-  ShowHTML('              <table width="100%" border="0" cellspacing=1>');
-  ShowHTML('                <tr valign="top"><td align="center"><b>Data<td><b>Ocorrência');
-  reset($RS_Ano);
-  foreach($RS_Ano as $row_ano) {
-    ShowHTML('                <tr valign="top">');
-    ShowHTML('                  <td align="center">'.date(d.'/'.m,f($row_ano,'data_formatada')));
-    ShowHTML('                  <td>'.f($row_ano,'nome'));
+  if ($w_tipo==1) $l_html .= chr(13).'            <td colspan=2 align="center">'; else $l_html .= chr(13).'            <td colspan=2 rowspan=2 align="center">';
+  $l_html .= chr(13).'              <table width="100%" border="0" cellspacing=1>';
+  $l_html .= chr(13).'                <tr valign="top"><td align="center"><b>Data<td><b>Ocorrência';
+  reset($l_rs_Ano);
+  foreach($l_rs_Ano as $row_ano) {
+    $l_html .= chr(13).'                <tr valign="top">';
+    $l_html .= chr(13).'                  <td align="center">'.date(d.'/'.m,f($row_ano,'data_formatada'));
+    $l_html .= chr(13).'                  <td>'.f($row_ano,'nome');
   }
-  ShowHTML('              </table>');
+  $l_html .= chr(13).'              </table>';
   // Exibe descritivo dos períodos de disponibilidade e de indisponibilidade
   if ($w_tipo!=1) {
-    ShowHTML('            <td colspan=4 align="center">');
+    $l_html .= chr(13).'            <td colspan=4 align="center">';
     // Se o recurso tiver controle por períodos, mostra sua disponibilidade
-    ShowHTML('              <b>DISPONIBILIDADES</b>');
-    ShowHTML('              <table width="100%" border="1" cellspacing=0>');
-    ShowHTML('                <tr align="center" valign="middle">');
+    $l_html .= chr(13).'              <b>DISPONIBILIDADES</b>';
+    $l_html .= chr(13).'              <table width="100%" border="1" cellspacing=0>';
+    $l_html .= chr(13).'                <tr align="center" valign="middle">';
     if ($w_tipo!=1) {
-      ShowHTML('                  <td><b>Início</td>');
-      ShowHTML('                  <td><b>Término</td>');
+      $l_html .= chr(13).'                  <td><b>Início</td>';
+      $l_html .= chr(13).'                  <td><b>Término</td>';
     }
-    ShowHTML('                  <td><b>Alocação</td>');
+    $l_html .= chr(13).'                  <td><b>Alocação</td>';
     if ($w_tipo==2) {
-      ShowHTML('                  <td><b>Unidades do período</td>');
+      $l_html .= chr(13).'                  <td><b>Unidades do período</td>';
     }
-    ShowHTML('                  <td><b>Limite diário</td>');
+    $l_html .= chr(13).'                  <td><b>Limite diário</td>';
     if ($w_tipo==1) {
-      ShowHTML('                  <td><b>Valor mensal</td>');
+      $l_html .= chr(13).'                  <td><b>Valor mensal</td>';
     } elseif ($w_tipo==3) {
-      ShowHTML('                  <td><b>Valor no período</td>');
+      $l_html .= chr(13).'                  <td><b>Valor no período</td>';
     } else {
-      ShowHTML('                  <td><b>Valor da unidade</td>');
+      $l_html .= chr(13).'                  <td><b>Valor da unidade</td>';
     }
-    reset($RS_Disp);
+    reset($l_rs_Disp);
     $w_cor = $w_cor=$conTrBgColor;
-    if (count($RS_Disp)==0) {
-      ShowHTML('                <tr bgcolor="'.$w_cor.'" valign="top"><td colspan=6 align="center"><b>Não foram encontrados registros.');
+    if (count($l_rs_Disp)==0) {
+      $l_html .= chr(13).'                <tr bgcolor="'.$w_cor.'" valign="top"><td colspan=6 align="center"><b>Não foram encontrados registros.';
     } else {
-      foreach($RS_Disp as $row_ano) {
+      foreach($l_rs_Disp as $row_ano) {
         $w_cor = ($w_cor==$conTrBgColor || $w_cor=='') ? $w_cor=$conTrAlternateBgColor : $w_cor=$conTrBgColor;
-        ShowHTML('                <tr bgcolor="'.$w_cor.'" valign="top">');
+        $l_html .= chr(13).'                <tr bgcolor="'.$w_cor.'" valign="top">';
         if ($w_tipo!=1) {
-          ShowHTML('                  <td align="center">'.formataDataEdicao(f($row_ano,'inicio')).'</td>');
-          ShowHTML('                  <td align="center">'.formataDataEdicao(f($row_ano,'fim')).'</td>');
+          $l_html .= chr(13).'                  <td align="center">'.formataDataEdicao(f($row_ano,'inicio')).'</td>';
+          $l_html .= chr(13).'                  <td align="center">'.formataDataEdicao(f($row_ano,'fim')).'</td>';
         }
-        ShowHTML('                  <td>'.f($row_ano,'nm_dia_util').'</td>');
+        $l_html .= chr(13).'                  <td>'.f($row_ano,'nm_dia_util').'</td>';
         if ($w_tipo==2) {
-          ShowHTML('                  <td align="right">'.formatNumber(f($row_ano,'unidades'),1).'</td>');
+          $l_html .= chr(13).'                  <td align="right">'.formatNumber(f($row_ano,'unidades'),1).'</td>';
         }
-        ShowHTML('                  <td align="right">'.formatNumber(f($row_ano,'limite_diario'),1).'</td>');
-        ShowHTML('                  <td align="right">'.formatNumber(f($row_ano,'valor')).'</td>');
-        ShowHTML('                  </td>');
-        ShowHTML('                </tr>');
+        $l_html .= chr(13).'                  <td align="right">'.formatNumber(f($row_ano,'limite_diario'),1).'</td>';
+        $l_html .= chr(13).'                  <td align="right">'.formatNumber(f($row_ano,'valor')).'</td>';
+        $l_html .= chr(13).'                  </td>';
+        $l_html .= chr(13).'                </tr>';
       }
     }
-    ShowHTML('              </table>');
+    $l_html .= chr(13).'              </table>';
   }
-  if ($w_tipo!=1) ShowHTML('            <tr valign="top" bgcolor="'.$conTrBgColor.'">');
-  ShowHTML('              <td colspan=4 align="center">');
+
+  if ($w_tipo!=1) $l_html .= chr(13).'            <tr valign="top" bgcolor="'.$conTrBgColor.'">';
   // Mostra os períodos de indisponibilidade
-  ShowHTML('              <b>INDISPONIBILIDADES</b>');
-  ShowHTML('              <table width="100%" border="1" cellspacing=0>');
-  ShowHTML('                <tr align="center" valign="top"><td><b>Início<td><b>Término<td><b>Justificativa');
-  reset($RS_Indisp);
+  $l_html .= chr(13).'              <td colspan=4 align="center">';
+  $l_html .= chr(13).'              <b>INDISPONIBILIDADES</b>';
+  $l_html .= chr(13).'              <table width="100%" border="1" cellspacing=0>';
+  $l_html .= chr(13).'                <tr align="center" valign="top"><td><b>Início<td><b>Término<td><b>Justificativa';
+  reset($l_rs_Indisp);
   $w_cor = $w_cor=$conTrBgColor;
-  if (count($RS_Indisp)==0) {
-    ShowHTML('                <tr bgcolor="'.$w_cor.'" valign="top"><td colspan=3 align="center"><b>Não foram encontrados registros.');
+  if (count($l_rs_Indisp)==0) {
+    $l_html .= chr(13).'                <tr bgcolor="'.$w_cor.'" valign="top"><td colspan=3 align="center"><b>Não foram encontrados registros.';
   } else {
-    foreach($RS_Indisp as $row_ano) {
+    foreach($l_rs_Indisp as $row_ano) {
       $w_cor = ($w_cor==$conTrBgColor || $w_cor=='') ? $w_cor=$conTrAlternateBgColor : $w_cor=$conTrBgColor;
-      ShowHTML('              <tr bgcolor="'.$w_cor.'" valign="top">');
-      ShowHTML('                  <td align="center">'.formataDataEdicao(f($row_ano,'inicio')));
-      ShowHTML('                  <td align="center">'.formataDataEdicao(f($row_ano,'fim')));
-      ShowHTML('                  <td>'.crlf2br(f($row_ano,'justificativa')));
+      $l_html .= chr(13).'              <tr bgcolor="'.$w_cor.'" valign="top">';
+      $l_html .= chr(13).'                  <td align="center">'.formataDataEdicao(f($row_ano,'inicio'));
+      $l_html .= chr(13).'                  <td align="center">'.formataDataEdicao(f($row_ano,'fim'));
+      $l_html .= chr(13).'                  <td>'.crlf2br(f($row_ano,'justificativa'));
     }
   }
-  ShowHTML('              </table>');
+  $l_html .= chr(13).'              </table>';
 
-  ShowHTML('        </table>');
+  // Mostra os períodos de alocação
+  $l_html .= chr(13).'              <BR><b>ALOCAÇÕES</b>';
+  $l_html .= chr(13).'              <table width="100%" border="1" cellspacing=0>';
+  $l_html .= chr(13).'                <tr align="center" valign="top">';
+  $l_html .= chr(13).'                  <td><b>Início';
+  $l_html .= chr(13).'                  <td><b>Término';
+  $l_html .= chr(13).'                  <td><b>Unidades diárias';
+  $l_html .= chr(13).'                  <td><b>Autorizada';
+  reset($l_rs_Aloc);
+  $w_cor = $w_cor=$conTrBgColor;
+  if (count($l_rs_Indisp)==0) {
+    $l_html .= chr(13).'                <tr bgcolor="'.$w_cor.'" valign="top"><td colspan=3 align="center"><b>Não foram encontrados registros.';
+  } else {
+    foreach($l_rs_Aloc as $row_ano) {
+      $w_cor = ($w_cor==$conTrBgColor || $w_cor=='') ? $w_cor=$conTrAlternateBgColor : $w_cor=$conTrBgColor;
+      $l_html .= chr(13).'              <tr bgcolor="'.$w_cor.'" valign="top">';
+      $l_html .= chr(13).'                  <td align="center">'.formataDataEdicao(f($row_ano,'inicio'));
+      $l_html .= chr(13).'                  <td align="center">'.formataDataEdicao(f($row_ano,'fim'));
+      $l_html .= chr(13).'                  <td align="center">'.formatNumber(f($row_ano,'unidades_solicitadas'),1);
+      $l_html .= chr(13).'                  <td align="center">'.f($row_ano,'nm_autorizado');
+    }
+  }
+  $l_html .= chr(13).'              </table>';
 
+  $l_html .= chr(13).'        </table>';
+  $l_html .= chr(13).'</table>';
+
+  return $l_html;
+} 
+// =========================================================================
+// Rotina de vinculação de recursos a solicitações
+// -------------------------------------------------------------------------
+function Solic() {
+  extract($GLOBALS);
+  Global $w_Disabled;
+  $w_chave           = $_REQUEST['w_chave'];
+  $w_chave_aux       = $_REQUEST['w_chave_aux'];
+
+  if ($w_troca>'' && $O <> 'E') {
+    $w_tipo_recurso    = $_REQUEST['w_tipo_recurso'];
+    $w_recurso         = $_REQUEST['w_recurso'];
+    $w_justificativa   = $_REQUEST['w_justificativa'];
+    $w_inicio          = $_REQUEST['w_inicio'];
+    $w_fim             = $_REQUEST['w_fim'];
+    $w_unidades        = $_REQUEST['w_unidades'];
+  } elseif ($O=='L') {
+    $RS = db_getSolicRecursos::getInstanceOf($dbms,$w_cliente,$w_usuario,$w_chave,null,null,null,null,null,null,null,null,null,null,null);
+    if (Nvl($p_ordena,'') > '') {
+      $lista = explode(',',str_replace(' ',',',$p_ordena));
+      $RS = SortArray($RS,$lista[0],$lista[1]);
+    } else {
+      $RS = SortArray($RS,'nm_tipo_recurso','asc','nm_recurso','asc'); 
+    }
+  } elseif (!(strpos('MCAEV',$O)===false)) {
+    $RS = db_getSolicRecursos::getInstanceOf($dbms,$w_cliente,$w_usuario,$w_chave,$w_chave_aux,null,null,null,null,null,null,null,null,null,null);
+    foreach ($RS as $row) {$RS = $row; break;}
+    $w_tipo_recurso    = f($RS,'sq_tipo_recurso');
+    $w_recurso         = f($RS,'sq_recurso');
+    $w_justificativa   = f($RS,'justificativa');
+  } 
+  
+  Cabecalho();
+  ShowHTML('<HEAD>');
+  ShowHTML('<TITLE>'.$conSgSistema.' - Recursos</TITLE>');
+  Estrutura_CSS($w_cliente);
+  if (!(strpos('MCIAE',$O)===false)) {
+    ScriptOpen('JavaScript');
+    CheckBranco();
+    FormataData();
+    FormataValor();
+    modulo();
+    ValidateOpen('Validacao');
+    if (!(strpos('CIA',$O)===false)) {
+      Validate('w_tipo_recurso','Tipo do recurso','SELECT','1','1','18','','1');
+      Validate('w_recurso','Recurso','SELECT','1','1','18','','1');
+      Validate('w_justificativa','Descricao','',1,1,2000,'1','1');
+      if ($O=='I') {
+        Validate('w_inicio','Início da alocação','DATA',1,10,10,'','0123456789/');
+        Validate('w_fim','Término da alocação','DATA',1,10,10,'','0123456789/');
+        CompData('w_inicio','Início da alocação','<=','w_fim','Término da alocação');
+        Validate('w_unidades','Unidades alocadas no período','VALOR','1',3,18,'','0123456789,.');
+      }
+      Validate('w_assinatura','Assinatura Eletrônica','1','1','6','30','1','1');
+    } elseif ($O=='E') {
+      Validate('w_assinatura','Assinatura Eletrônica','1','1','6','30','1','1');
+      ShowHTML('  if (confirm(\'Confirma a exclusão deste registro?\'));');
+      ShowHTML('     { return (true); }; ');
+      ShowHTML('     { return (false); }; ');
+    } elseif ($O=='M') {
+      Validate('w_assinatura','Assinatura Eletrônica','1','1','6','30','1','1');
+    }
+    ShowHTML('  theForm.Botao[0].disabled=true;');
+    ShowHTML('  theForm.Botao[1].disabled=true;');
+    ValidateClose();
+    ScriptClose();
+  } 
+  ShowHTML('</HEAD>');
+  ShowHTML('<font size=0 color="'.$conBodyBgColor.'">.</font><BASE HREF="'.$conRootSIW.'">');
+  if ($w_troca>'') {
+    BodyOpen('onLoad=document.Form.'.$w_troca.'.focus();');
+  } elseif (!(strpos('CIA',$O)===false)) {
+    BodyOpen('onLoad=document.Form.w_tipo_recurso.focus();');
+  } elseif ($O=='L'){
+    BodyOpen('onLoad=this.focus();');
+  } else {
+    BodyOpen('onLoad=document.Form.w_assinatura.focus();');
+  } 
+  Estrutura_Topo_Limpo();
+  Estrutura_Menu();
+  Estrutura_Corpo_Abre();
+  Estrutura_Texto_Abre();
+  ShowHTML('<table border="0" cellpadding="0" cellspacing="0" width="100%">');
+  if ($O=='L') {
+    ShowHTML('<tr><td colspan=3 bgcolor="'.$conTrBgColorLightBlue2.'"" style="border: 2px solid rgb(0,0,0);">Orientação:<ul>');
+    ShowHTML('  <li>Insira cada um dos recursos necessários e indique os períodos de alocação.');
+    ShowHTML('  <li>Cada recurso pode ser alocado em mais de um período.');
+    ShowHTML('  <li>Os períodos de alocaçao devem estar contidos em períodos de disponibilidade do recurso.');
+    ShowHTML('  <li>O gestor do recurso fará a análise dos períodos desejados antes de autorizá-los.');
+    ShowHTML('  </ul></b></font></td>');
+    ShowHTML('<tr><td><font size="2"><a accesskey="I" class="ss" href="'.$w_dir.$w_pagina.$par.'&R='.$w_pagina.$par.'&O=I&w_chave='.$w_chave.'&P1='.$P1.'&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP='.$TP.'&SG='.$SG.'"><u>I</u>ncluir</a>&nbsp;');
+    ShowHTML('    <td align="right"><b>Registros existentes: '.count($RS));
+    ShowHTML('<tr><td align="center" colspan=3>');
+    ShowHTML('    <TABLE WIDTH="100%" bgcolor="'.$conTableBgColor.'" BORDER="'.$conTableBorder.'" CELLSPACING="'.$conTableCellSpacing.'" CELLPADDING="'.$conTableCellPadding.'" BorderColorDark="'.$conTableBorderColorDark.'" BorderColorLight="'.$conTableBorderColorLight.'">');
+    ShowHTML('        <tr bgcolor="'.$conTrBgColor.'" align="center">');
+    ShowHTML('          <td><b>'.LinkOrdena('Recurso','nm_recurso').'</td>');
+    ShowHTML('          <td><b>'.LinkOrdena('Código','cd_recurso').'</td>');
+    ShowHTML('          <td><b>'.LinkOrdena('Tipo','nm_tipo_recurso').'</td>');
+    ShowHTML('          <td><b>'.LinkOrdena('Un.','sg_unidade_medida').'</td>');
+    ShowHTML('          <td><b>'.LinkOrdena('Gestor','nm_unidade').'</td>');
+    ShowHTML('          <td><b> Operações </td>');
+    ShowHTML('        </tr>');
+    if (count($RS)<=0) {
+      // Se não foram selecionados registros, exibe mensagem
+      ShowHTML('      <tr bgcolor="'.$conTrBgColor.'"><td colspan=8 align="center"><b>Não foram encontrados registros.</b></td></tr>');
+    } else {
+      // Lista os registros selecionados para listagem
+      $RS1 = array_slice($RS, (($P3-1)*$P4), $P4);
+      foreach($RS1 as $row){ 
+        $w_cor = ($w_cor==$conTrBgColor || $w_cor=='') ? $w_cor=$conTrAlternateBgColor : $w_cor=$conTrBgColor;
+        ShowHTML('      <tr bgcolor="'.$w_cor.'" valign="top">');
+        ShowHTML('        <td>'.ExibeRecurso($w_dir_volta,$w_cliente,f($row,'nm_recurso'),f($row,'sq_recurso'),$TP).'</td>');
+        ShowHTML('        <td>'.nvl(f($row,'cd_recurso'),'---').'</td>');
+        ShowHTML('        <td>'.f($row,'nm_tipo_completo').'</td>');
+        ShowHTML('        <td align="center" title="'.f($row,'nm_unidade_medida').'">'.f($row,'sg_unidade_medida').'</td>');
+        ShowHTML('        <td>'.ExibeUnidade($w_dir_volta,$w_cliente,f($row,'nm_unidade'),f($row,'unidade_gestora'),$TP).'</td>');
+        ShowHTML('        <td align="top" nowrap>');
+        ShowHTML('          <A class="hl" HREF="'.$w_dir.$w_pagina.$par.'&R='.$w_pagina.$par.'&O=A&w_chave='.f($row,'chave').'&w_chave_aux='.f($row,'chave_aux').'&P1='.$P1.'&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP='.$TP.' &SG='.$SG.MontaFiltro('GET').'" Title="Altera os dados deste registro.">Alterar</A>&nbsp');
+        ShowHTML('          <A class="hl" HREF="'.$w_dir.$w_pagina.$par.'&R='.$w_pagina.$par.'&O=E&w_chave='.f($row,'chave').'&w_chave_aux='.f($row,'chave_aux').'&P1='.$P1.'&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP='.$TP.' &SG='.$SG.'" Title="Exclui deste registro.">Excluir</A>&nbsp');
+        ShowHTML('          <A class="hl" HREF="javascript:this.status.value;" onClick="window.open(\''.montaURL_JS($w_dir,$w_pagina.'SolicPeriodo&R='.$w_pagina.$par.'&O=L&w_chave='.f($row,'chave_aux').'&P1='.$P1.'&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP='.$TP.' - Disponibilidade&SG=SOLICPER').'\',\'Recurso\',\'width=785,height=570,top=10,left=10,toolbar=no,scrollbars=yes,resizable=yes,status=no\');" title="Define a disponibilidade do recurso.">Períodos</A>&nbsp');
+        ShowHTML('        </td>');
+        ShowHTML('      </tr>');
+      } 
+    } 
+    ShowHTML('      </center>');
+    ShowHTML('    </table>');
+    ShowHTML('  </td>');
+    ShowHTML('<tr><td align="center" colspan=3>');
+    if ($R>'') {
+      MontaBarra($w_dir.$w_pagina.$par.'&R='.$R.'&O='.$O.'&P1='.$P1.'&P2='.$P2.'&TP='.$TP.'&SG='.$SG.'&w_chave='.$w_chave,$RS->PageCount,$P3,$P4,count($RS));
+    } else {
+      MontaBarra($w_dir.$w_pagina.$par.'&R='.$w_pagina.$par.'&O='.$O.'&P1='.$P1.'&P2='.$P2.'&TP='.$TP.'&SG='.$SG.'&w_chave='.$w_chave,$RS->PageCount,$P3,$P4,count($RS));
+    } 
+    ShowHTML('</tr>');
+    //Aqui começa a manipulação de registros
+  } elseif (!(strpos('CIAEV',$O)===false)) {
+    if ($O=='I' || $O=='C') {
+      ShowHTML('      <tr><td colspan=3 bgcolor="#D0D0D0" style="border: 2px solid rgb(0,0,0);"><b><font color="#BC3131">ATENÇÃO: <ul>');
+      if ($O=='C') {
+        ShowHTML('        <li>Dados importados de outro registro. Altere os dados necessários antes de executar a inclusão.');
+      }
+      ShowHTML('        <li>Para agilizar o processo de registro dos recursos, a tela de inclusão permite a inserção do primeiro período de alocação. Se for necessário, insira os demais a partir da listagem.');
+      ShowHTML('        <li>O recurso deve estar disponível em TODO o período desejado. Se necessário, insira mais de um período para resolver indisponibilidades.');
+      ShowHTML('        <li>O gestor do recurso fará a análise dos períodos desejados antes de autorizá-los.');
+      ShowHTML('        </ul></b></font>.</td>');
+    } 
+    if (!(strpos('EV',$O)===false)) $w_Disabled=' DISABLED '; 
+    AbreForm('Form',$w_dir.$w_pagina.'Grava','POST','return(Validacao(this));',null,$P1,$P2,$P3,$P4,$TP,$SG,$w_pagina.$par,$O);
+    ShowHTML('<INPUT type="hidden" name="w_chave" value="'.$w_chave.'">');
+    ShowHTML('<INPUT type="hidden" name="w_chave_aux" value="'.$w_chave_aux.'">');
+    ShowHTML('<INPUT type="hidden" name="w_copia" value="'.$w_chave.'">');
+    ShowHTML('<INPUT type="hidden" name="w_cliente" value="'.$w_cliente.'">');
+    ShowHTML('<INPUT type="hidden" name="w_troca" value="">');
+    ShowHTML('<INPUT type="hidden" name="w_tipo" value="1">');
+    ShowHTML('<tr bgcolor="'.$conTrBgColor.'"><td>');
+    ShowHTML('    <table width="97%" border="0"><tr>');
+    ShowHTML('      <tr valign="top">');
+    selecaoTipoRecurso_PE('T<U>i</U>po do recurso:','I',null,$w_tipo_recurso,f($RS_Menu,'sq_menu'),'w_tipo_recurso','FOLHA','onChange="document.Form.action=\''.$w_dir.$w_pagina.$par.'\'; document.Form.w_troca.value=\'w_recurso\'; document.Form.submit();"');
+    selecaoRecurso('<U>R</U>ecurso:','R',null,$w_recurso,nvl($w_tipo_recurso,0),f($RS_Menu,'sq_menu'),'w_recurso','ALOCACAO','onChange="document.Form.action=\''.$w_dir.$w_pagina.$par.'\'; document.Form.w_troca.value=\'w_recurso\'; document.Form.submit();"');
+    ShowHTML('      <tr><td colspan=3><b><U>J</U>ustificativa para alocaçao do recurso:<br><TEXTAREA ACCESSKEY="D" class="sti" name="w_justificativa" rows=5 cols=80." '.$w_Disabled.'>'.$w_justificativa.'</textarea></td>');
+    if ($O=='I') {
+      ShowHTML('      <tr valign="top">');
+      ShowHTML('          <td><b>Período desejado para alocação do recurso:</b><br>');
+      ShowHTML('            <input '.$w_Disabled.' type="text" name="w_inicio" class="STI" SIZE="10" MAXLENGTH="10" VALUE="'.$w_inicio.'" onKeyDown="FormataData(this,event);">'.ExibeCalendario('Form','w_inicio',$w_dir_volta).' a ');
+      ShowHTML('            <input '.$w_Disabled.' accesskey="T" type="text" name="w_fim" class="STI" SIZE="10" MAXLENGTH="10" VALUE="'.$w_fim.'" onKeyDown="FormataData(this,event);">'.ExibeCalendario('Form','w_fim',$w_dir_volta));
+      ShowHTML('          <td title="Informe quantas unidades por dia deseja alocar do recurso."><b><u>U</u>nidades diárias</b> (use uma casa decimal):</b><br><input '.$w_Disabled.' accesskey="U" type="text" name="w_unidades" class="STI" SIZE="18" MAXLENGTH="18" VALUE="'.$w_unidades.'" onKeyDown="FormataValor(this,18,1,event);"></td>');
+    }
+    ShowHTML('      <tr><td colspan=3><b><U>A</U>ssinatura Eletrônica:<BR> <INPUT ACCESSKEY="A" class="sti" type="PASSWORD" name="w_assinatura" size="30" maxlength="30" value=""></td></tr>');
+    ShowHTML('      <tr><td align="center" colspan=5><hr>');
+    if ($O=='E') {
+      ShowHTML('   <input class="stb" type="submit" name="Botao" value="Excluir">');
+    } else {
+      if ($O=='I' || $O=='C') {
+      ShowHTML('            <input class="stb" type="submit" name="Botao" value="Incluir">');
+      } else {
+        ShowHTML('            <input class="stb" type="submit" name="Botao" value="Atualizar">');
+      } 
+    } 
+    ShowHTML('            <input class="stb" type="button" onClick="location.href=\''.montaURL_JS($w_dir,$R.'&O=L&w_chave='.$w_chave.'&P1='.$P1.'&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP='.$TP.'&SG='.$SG).'\';" name="Botao" value="Cancelar">');
+    ShowHTML('          </td>');
+    ShowHTML('      </tr>');
+    ShowHTML('    </table>');
+    ShowHTML('    </TD>');
+    ShowHTML('</tr>');
+    ShowHTML('</FORM>');
+    if (nvl($w_recurso,'nulo')!='nulo') {
+      ShowHTML('<table border=1><tr><td bgcolor="#FAEBD7">');
+      ShowHTML(visualRecurso($w_recurso,false));
+      ShowHTML('</TABLE><BR>');
+    }
+  } else {
+    ScriptOpen('JavaScript');
+    ShowHTML(' alert(\'Opção não disponível\');');
+    ShowHTML(' history.back(1);');
+    ScriptClose();
+  } 
+  ShowHTML('    </table>');
+  ShowHTML('    </TD>');
+  ShowHTML('</tr>');
   ShowHTML('</table>');
-  Estrutura_Texto_Fecha();
+  ShowHTML('</center>');
+} 
+// =========================================================================
+// Rotina de cadastramento da disponibilidade do recurso
+// -------------------------------------------------------------------------
+function SolicPeriodo() {
+  extract($GLOBALS);
+  Global $w_Disabled;
+  $w_chave           = $_REQUEST['w_chave'];
+  $w_chave_aux       = $_REQUEST['w_chave_aux'];
+
+  // Recupera os dados do recurso para exibição no cabeçalho
+  $RS = db_getSolicRecursos::getInstanceOf($dbms,$w_cliente,$w_usuario,null,$w_chave,null,null,null,null,null,null,null,null,null,null);
+  foreach ($RS as $row) { $RS = $row; break; }
+  $w_recurso          = f($RS,'sq_recurso');
+  $w_nome             = f($RS,'nm_recurso');
+  $w_nome_disp        = f($RS,'nm_disponibilidade_tipo');
+  $w_tipo_disp        = intVal(f($RS,'disponibilidade_tipo'));
+  $w_codigo           = f($RS,'cd_recurso');
+  $w_unidade_medida   = f($RS,'sg_unidade_medida').' ('.f($RS,'nm_unidade_medida').')';
+
+  if ($w_troca>'' && $O <> 'E') {
+    $w_inicio        = $_REQUEST['w_inicio'];
+    $w_fim           = $_REQUEST['w_fim'];
+    $w_unidades      = $_REQUEST['w_unidades'];
+  } elseif ($O=='L') {
+    $RS = db_getSolicRecursos::getInstanceOf($dbms,$w_cliente,$w_usuario,$w_chave,null,null,null,null,null,null,null,null,null,null,'SOLICPER');
+    if (Nvl($p_ordena,'') > '') {
+      $lista = explode(',',str_replace(' ',',',$p_ordena));
+      $RS = SortArray($RS,$lista[0],$lista[1],'inicio','desc','fim','desc');
+    } else {
+      $RS = SortArray($RS,'inicio','desc','fim','desc'); 
+    }
+  } elseif (!(strpos('CAEV',$O)===false)) {
+    $RS = db_getSolicRecursos::getInstanceOf($dbms,$w_cliente,$w_usuario,$w_chave,$w_chave_aux,null,null,null,null,null,null,null,null,null,'SOLICPER');
+    foreach ($RS as $row) {$RS = $row; break;}
+    $w_inicio        = formataDataEdicao(f($RS,'inicio'));
+    $w_fim           = formataDataEdicao(f($RS,'fim'));
+    $w_unidades      = formatNumber(f($RS,'unidades_solicitadas'),1);
+  } 
+  
+  Cabecalho();
+  ShowHTML('<HEAD>');
+  ShowHTML('<TITLE>'.$conSgSistema.' - Disponibilidade</TITLE>');
+  Estrutura_CSS($w_cliente);
+  if (!(strpos('CIAE',$O)===false)) {
+    ScriptOpen('JavaScript');
+    CheckBranco();
+    FormataData();
+    FormataValor();
+    ValidateOpen('Validacao');
+    if (!(strpos('CIA',$O)===false)) {
+      Validate('w_inicio','Início da alocação','DATA',1,10,10,'','0123456789/');
+      Validate('w_fim','Término da alocação','DATA',1,10,10,'','0123456789/');
+      CompData('w_inicio','Início da alocação','<=','w_fim','Término da alocação');
+      Validate('w_unidades','Unidades alocadas no período','VALOR','1',3,18,'','0123456789,.');
+      Validate('w_assinatura','Assinatura Eletrônica','1','1','6','30','1','1');
+    } elseif ($O=='E') {
+      Validate('w_assinatura','Assinatura Eletrônica','1','1','6','30','1','1');
+      ShowHTML('  if (confirm(\'Confirma a exclusão deste registro?\'));');
+      ShowHTML('     { return (true); }; ');
+      ShowHTML('     { return (false); }; ');
+    } 
+    ShowHTML('  theForm.Botao[0].disabled=true;');
+    ShowHTML('  theForm.Botao[1].disabled=true;');
+    ValidateClose();
+    ScriptClose();
+  } 
+  ShowHTML('</HEAD>');
+  ShowHTML('<font size=0 color="'.$conBodyBgColor.'">.</font><BASE HREF="'.$conRootSIW.'">');
+  if ($w_troca>'') {
+    BodyOpen('onLoad=document.Form.'.$w_troca.'.focus();');
+  } elseif (!(strpos('CIA',$O)===false)) {
+    BodyOpen('onLoad=document.Form.w_inicio.focus();');
+  } elseif ($O=='L'){
+    BodyOpen('onLoad=this.focus();');
+  } else {
+    BodyOpen('onLoad=document.Form.w_assinatura.focus();');
+  } 
+  Estrutura_Topo_Limpo();
+  Estrutura_Menu();
+  Estrutura_Corpo_Abre();
+  Estrutura_Texto_Abre();
+  ShowHTML('<table border=1 width="100%"><tr><td bgcolor="#FAEBD7">');
+  ShowHTML('    <TABLE WIDTH="100%" CELLSPACING="'.$conTableCellSpacing.'" CELLPADDING="'.$conTableCellPadding.'" BorderColorDark="'.$conTableBorderColorDark.'" BorderColorLight="'.$conTableBorderColorLight.'">');
+  ShowHTML('        <tr><td colspan=3><font size="1">Recurso:<br><b><font size=1 class="hl">'.$w_nome.'</font></b></td>');
+  ShowHTML('        <tr valign="top">');
+  ShowHTML('          <td><font size="1">Disponibilidade:<br><b><font size=1 class="hl">'.$w_nome_disp.'</font></b></td>');
+  ShowHTML('          <td><font size="1">Código:<br><b><font size=1 class="hl">'.nvl($w_codigo,'---').'</font></b></td>');
+  ShowHTML('          <td><font size="1">Unidade de alocação:<br><b><font size=1 class="hl">'.$w_unidade_medida.'</font></b></td>');
+  ShowHTML('    </TABLE>');
+  ShowHTML('</TABLE><BR>');
+  ShowHTML('<table border="0" cellpadding="0" cellspacing="0" width="100%">');
+  if ($O=='L') {
+    ShowHTML('<tr><td colspan=3 bgcolor="'.$conTrBgColorLightBlue2.'"" style="border: 2px solid rgb(0,0,0);">Orientação:<ul>');
+    ShowHTML('  <li>Insira cada um dos períodos desejados para alocação do recurso.');
+    ShowHTML('  <li>Os períodos de alocaçao devem estar contidos em períodos de disponibilidade do recurso.');
+    ShowHTML('  <li>O gestor do recurso fará a análise dos períodos desejados antes de autorizá-los.');
+    ShowHTML('  </ul></b></font></td>');
+    ShowHTML('<tr><td>');
+    ShowHTML('        <a accesskey="I" class="ss" href="'.$w_dir.$w_pagina.$par.'&R='.$w_pagina.$par.'&O=I&w_chave='.$w_chave.'&P1='.$P1.'&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP='.$TP.'&SG='.$SG.'"><u>I</u>ncluir</a>&nbsp;');
+    ShowHTML('        <a accesskey="F" class="ss" href="#" onClick="window.close(); opener.location.reload(); opener.focus();"><u>F</u>echar</a>&nbsp;');
+    ShowHTML('    <td align="right"><b>Registros existentes: '.count($RS));
+    ShowHTML('<tr><td align="center" colspan=3>');
+    ShowHTML('    <TABLE WIDTH="100%" bgcolor="'.$conTableBgColor.'" BORDER="'.$conTableBorder.'" CELLSPACING="'.$conTableCellSpacing.'" CELLPADDING="'.$conTableCellPadding.'" BorderColorDark="'.$conTableBorderColorDark.'" BorderColorLight="'.$conTableBorderColorLight.'">');
+    ShowHTML('        <tr bgcolor="'.$conTrBgColor.'" align="center" valign="middle">');
+    ShowHTML('          <td><b>'.LinkOrdena('Início','inicio').'</td>');
+    ShowHTML('          <td><b>'.LinkOrdena('Término','fim').'</td>');
+    ShowHTML('          <td><b>'.LinkOrdena('Unidades','valor').'</td>');
+    ShowHTML('          <td><b> Operações </td>');
+    ShowHTML('        </tr>');
+    if (count($RS)<=0) {
+      // Se não foram selecionados registros, exibe mensagem
+    ShowHTML('      <tr bgcolor="'.$conTrBgColor.'"><td colspan=8 align="center"><b>Não foram encontrados registros.</b></td></tr>');
+    } else {
+      // Lista os registros selecionados para listagem
+      $RS1 = array_slice($RS, (($P3-1)*$P4), $P4);
+      foreach($RS1 as $row){ 
+        $w_cor = ($w_cor==$conTrBgColor || $w_cor=='') ? $w_cor=$conTrAlternateBgColor : $w_cor=$conTrBgColor;
+        ShowHTML('      <tr bgcolor="'.$w_cor.'" valign="top">');
+        ShowHTML('        <td align="center">'.formataDataEdicao(f($row,'inicio')).'</td>');
+        ShowHTML('        <td align="center">'.formataDataEdicao(f($row,'fim')).'</td>');
+        ShowHTML('        <td align="right">'.formatNumber(f($row,'unidades_solicitadas'),1).'</td>');
+        ShowHTML('        <td align="top" nowrap>');
+        ShowHTML('          <A class="hl" HREF="'.$w_dir.$w_pagina.$par.'&R='.$w_pagina.$par.'&O=A&w_chave='.f($row,'chave').'&w_chave_aux='.f($row,'chave_aux').'&P1='.$P1.'&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP='.$TP.' &SG='.$SG.MontaFiltro('GET').'" Title="Altera os dados deste registro.">Alterar</A>&nbsp');
+        ShowHTML('          <A class="hl" HREF="'.$w_dir.$w_pagina.$par.'&R='.$w_pagina.$par.'&O=E&w_chave='.f($row,'chave').'&w_chave_aux='.f($row,'chave_aux').'&P1='.$P1.'&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP='.$TP.' &SG='.$SG.'" Title="Exclui deste registro.">Excluir</A>&nbsp');
+        ShowHTML('        </td>');
+        ShowHTML('      </tr>');
+      } 
+    } 
+    ShowHTML('      </center>');
+    ShowHTML('    </table>');
+    ShowHTML('  </td>');
+    ShowHTML('<tr><td align="center" colspan=3>');
+    if ($R>'') {
+      MontaBarra($w_dir.$w_pagina.$par.'&R='.$R.'&O='.$O.'&P1='.$P1.'&P2='.$P2.'&TP='.$TP.'&SG='.$SG.'&w_chave='.$w_chave,$RS->PageCount,$P3,$P4,count($RS));
+    } else {
+      MontaBarra($w_dir.$w_pagina.$par.'&R='.$w_pagina.$par.'&O='.$O.'&P1='.$P1.'&P2='.$P2.'&TP='.$TP.'&SG='.$SG.'&w_chave='.$w_chave,$RS->PageCount,$P3,$P4,count($RS));
+    } 
+    ShowHTML('</tr>');
+    //Aqui começa a manipulação de registros
+  } elseif (!(strpos('CIAEV',$O)===false)) {
+    if ($O!='E') {
+      ShowHTML('      <tr><td colspan=3 bgcolor="#D0D0D0" style="border: 2px solid rgb(0,0,0);"><b><font color="#BC3131">ATENÇÃO: <ul>');
+      if ($O=='C') {
+        ShowHTML('        <li>Dados importados de outro registro. Altere os dados necessários antes de executar a inclusão.');
+      }
+      ShowHTML('        <li>O recurso deve estar disponível em TODO o período desejado. Se necessário, insira mais de um período para resolver indisponibilidades.');
+      ShowHTML('        <li>Consulte abaixo os períodos de disponibilidade do recurso.');
+      ShowHTML('        <li>O gestor do recurso fará a análise dos períodos desejados antes de autorizá-los.');
+      ShowHTML('        </ul></b></font>.</td>');
+    } 
+    if (!(strpos('EV',$O)===false)) $w_Disabled=' DISABLED '; 
+    AbreForm('Form',$w_dir.$w_pagina.'Grava','POST','return(Validacao(this));',null,$P1,$P2,$P3,$P4,$TP,$SG,$w_pagina.$par,$O);
+    ShowHTML('<INPUT type="hidden" name="w_chave" value="'.$w_chave.'">');
+    // Se for cópia, não coloca a chave do registro para procurar corretamente sobreposição de períodos
+    ShowHTML('<INPUT type="hidden" name="w_chave_aux" value="'.$w_chave_aux.'">');
+    ShowHTML('<INPUT type="hidden" name="w_recurso" value="'.$w_recurso.'">');
+    ShowHTML('<INPUT type="hidden" name="w_cliente" value="'.$w_cliente.'">');
+    ShowHTML('<INPUT type="hidden" name="w_troca" value="">');
+    ShowHTML('<tr bgcolor="'.$conTrBgColor.'"><td>');
+    ShowHTML('    <table width="100%" border="0"><tr>');
+    ShowHTML('      <tr valign="top">');
+    ShowHTML('          <td><b>Período desejado para alocação do recurso:</b><br>');
+    ShowHTML('            <input '.$w_Disabled.' type="text" name="w_inicio" class="STI" SIZE="10" MAXLENGTH="10" VALUE="'.$w_inicio.'" onKeyDown="FormataData(this,event);">'.ExibeCalendario('Form','w_inicio',$w_dir_volta).' a ');
+    ShowHTML('            <input '.$w_Disabled.' accesskey="T" type="text" name="w_fim" class="STI" SIZE="10" MAXLENGTH="10" VALUE="'.$w_fim.'" onKeyDown="FormataData(this,event);">'.ExibeCalendario('Form','w_fim',$w_dir_volta));
+    ShowHTML('          <td title="Informe quantas unidades por dia deseja alocar do recurso."><b><u>U</u>nidades diárias</b> (use uma casa decimal):</b><br><input '.$w_Disabled.' accesskey="U" type="text" name="w_unidades" class="STI" SIZE="18" MAXLENGTH="18" VALUE="'.$w_unidades.'" onKeyDown="FormataValor(this,18,1,event);"></td>');
+    ShowHTML('      <tr><td colspan=3><b><U>A</U>ssinatura Eletrônica:<BR> <INPUT ACCESSKEY="A" class="sti" type="PASSWORD" name="w_assinatura" size="30" maxlength="30" value=""></td></tr>');
+    ShowHTML('      <tr><td align="center" colspan=5><hr>');
+    if ($O=='E') {
+      ShowHTML('   <input class="stb" type="submit" name="Botao" value="Excluir">');
+    } else {
+      if ($O=='I' || $O=='C') {
+      ShowHTML('            <input class="stb" type="submit" name="Botao" value="Incluir">');
+      } else {
+        ShowHTML('            <input class="stb" type="submit" name="Botao" value="Atualizar">');
+      } 
+    } 
+    ShowHTML('            <input class="stb" type="button" onClick="location.href=\''.montaURL_JS($w_dir,$R.'&O=L&w_chave='.$w_chave.'&w_cliente='.$w_cliente.'&P1='.$P1.'&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP='.$TP.'&SG='.$SG).'\';" name="Botao" value="Cancelar">');
+    ShowHTML('          </td>');
+    ShowHTML('      </tr>');
+    ShowHTML('    </table>');
+    ShowHTML('    </TD>');
+    ShowHTML('</tr>');
+    ShowHTML('</FORM>');
+    if (!(strpos('IA',$O)===false)) {
+      ShowHTML('    </table>');
+      ShowHTML('<br><table border=1><tr><td bgcolor="#FAEBD7">');
+      ShowHTML(visualRecurso($w_recurso,false));
+      ShowHTML('</TABLE><BR>');
+    }
+  } else {
+    ScriptOpen('JavaScript');
+    ShowHTML(' alert(\'Opção não disponível\');');
+    ShowHTML(' history.back(1);');
+    ScriptClose();
+  } 
+  ShowHTML('    </table>');
+  ShowHTML('    </TD>');
+  ShowHTML('</tr>');
+  ShowHTML('</table>');
+  ShowHTML('</center>');
 } 
 // =========================================================================
 // Procedimento que executa as operações de BD
@@ -1056,7 +1514,7 @@ function Grava() {
   global $w_Disabled;
   Cabecalho();
   ShowHTML('</HEAD>');
-  ShowHTML('<BASE HREF="'.$conRootSIW.'">');
+  ShowHTML('<font size=0 color="'.$conBodyBgColor.'">.</font><BASE HREF="'.$conRootSIW.'">');
   BodyOpen('onLoad=this.focus();');
   switch ($SG) {
     case 'PERECURSO':
@@ -1158,7 +1616,7 @@ function Grava() {
         retornaFormulario('w_assinatura');
       } 
       break;
-  case 'PERECINDISP':
+    case 'PERECINDISP':
       // Verifica se a Assinatura Eletrônica é válida
       if (verificaAssinaturaEletronica($_SESSION['USERNAME'],strtoupper($_REQUEST['w_assinatura'])) || $w_assinatura=='') {
         if ($O=='C' || $O=='I' || $O=='A') {
@@ -1207,6 +1665,105 @@ function Grava() {
         retornaFormulario('w_assinatura');
       } 
       break;
+    case 'RECSOLIC':
+      // Verifica se a Assinatura Eletrônica é válida
+      if (verificaAssinaturaEletronica($_SESSION['USERNAME'],strtoupper($_REQUEST['w_assinatura'])) || $w_assinatura=='') {
+        if ($O!='E') {
+          // Evita que o mesmo recurso seja gravado duas vezes
+          $RS = db_getSolicRecursos::getInstanceOf($dbms,$w_cliente,$w_usuario, $_REQUEST['w_chave'],$_REQUEST['w_chave_aux'],
+              null, null, null, null, $_REQUEST['w_recurso'], null, null, null, null,'EXISTEREC');
+          foreach ($RS as $row) { $RS = $row; break; }
+          if (f($RS,'existe')>0) {
+            ScriptOpen('JavaScript');
+            ShowHTML('  alert(\'Recurso já cadastrado!\');');
+            ScriptClose(); 
+            retornaFormulario('w_inicio');
+            break;
+          } 
+
+          if (nvl($_REQUEST['w_inicio'],'nulo')!='nulo') {
+            // Evita sobreposição de períodos para o recurso
+            $RS = db_getSolicRecursos::getInstanceOf($dbms,$w_cliente,$w_usuario, $_REQUEST['w_chave'],$_REQUEST['w_chave_aux'],
+                null, null, null, null, $_REQUEST['w_recurso'], null, null, $_REQUEST['w_inicio'],$_REQUEST['w_fim'],'EXISTEPER');
+            foreach ($RS as $row) { $RS = $row; break; }
+            if (f($RS,'existe')>0) {
+              ScriptOpen('JavaScript');
+              ShowHTML('  alert(\'Não é permitida a sobreposição dos períodos de alocação!\');');
+              ScriptClose(); 
+              retornaFormulario('w_inicio');
+              break;
+            } 
+
+            // Verifica a disponibilidade do recurso no período informado
+            $RS = db_getSolicRecursos::getInstanceOf($dbms,$w_cliente,$w_usuario, $_REQUEST['w_recurso'],null,null, null, 
+                null, null, $_REQUEST['w_recurso'], null, null, $_REQUEST['w_inicio'],$_REQUEST['w_fim'],'RECDISP');
+            foreach ($RS as $row) { $RS = $row; break; }
+            if (f($RS,'existe')==0) {
+              ScriptOpen('JavaScript');
+              ShowHTML('  alert(\'Recurso indisponível em alguma parte do período informado!\nVerifique o mapa de disponibilidade do recurso.\');');
+              ScriptClose(); 
+              retornaFormulario('w_inicio');
+              break;
+            } 
+          }
+        } 
+        // Grava o cabeçalho da alocação
+        dml_putSolicRecurso::getInstanceOf($dbms,$O,$w_usuario, $_REQUEST['w_chave'],$_REQUEST['w_chave_aux'],
+                $_REQUEST['w_tipo'],$_REQUEST['w_recurso'],$_REQUEST['w_justificativa'],
+                $_REQUEST['w_inicio'],$_REQUEST['w_fim'],$_REQUEST['w_unidades']);
+
+        ScriptOpen('JavaScript');
+        ShowHTML('  location.href=\''.montaURL_JS($w_dir,$R.'&w_chave='.$_REQUEST['w_chave'].'&P1='.$P1.'&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP='.$TP.'&SG='.$SG.MontaFiltro('GET')).'\';');
+        ScriptClose();
+        } else {
+        ScriptOpen('JavaScript');
+        ShowHTML('  alert(\'Assinatura Eletrônica inválida!\');');
+        ScriptClose();
+        retornaFormulario('w_assinatura');
+      } 
+      break;
+    case 'SOLICPER':
+      // Verifica se a Assinatura Eletrônica é válida
+      if (verificaAssinaturaEletronica($_SESSION['USERNAME'],strtoupper($_REQUEST['w_assinatura'])) || $w_assinatura=='') {
+        if ($O!='E') {
+          // Evita sobreposição de períodos para o recurso
+          $RS = db_getSolicRecursos::getInstanceOf($dbms,$w_cliente,$w_usuario, $_REQUEST['w_chave'],$_REQUEST['w_chave_aux'],
+              null, null, null, null, $_REQUEST['w_recurso'], null, null, $_REQUEST['w_inicio'],$_REQUEST['w_fim'],'EXISTEPER');
+          foreach ($RS as $row) { $RS = $row; break; }
+          if (f($RS,'existe')>0) {
+            ScriptOpen('JavaScript');
+            ShowHTML('  alert(\'Não é permitida a sobreposição dos períodos de alocação!\');');
+            ScriptClose(); 
+            retornaFormulario('w_inicio');
+            break;
+          } 
+
+          // Verifica a disponibilidade do recurso no período informado
+          $RS = db_getSolicRecursos::getInstanceOf($dbms,$w_cliente,$w_usuario, $_REQUEST['w_recurso'],null, null, null, 
+              null, null, $_REQUEST['w_recurso'], null, null, $_REQUEST['w_inicio'],$_REQUEST['w_fim'],'RECDISP');
+          foreach ($RS as $row) { $RS = $row; break; }
+          if (f($RS,'existe')==0) {
+            ScriptOpen('JavaScript');
+            ShowHTML('  alert(\'Recurso indisponível em alguma parte do período informado!\nVerifique o mapa de disponibilidade do recurso.\');');
+            ScriptClose(); 
+            retornaFormulario('w_inicio');
+            break;
+          } 
+        } 
+        // Grava o cabeçalho da alocação
+        dml_putSolicRecAlocacao::getInstanceOf($dbms,$O,$w_usuario, $_REQUEST['w_chave'],$_REQUEST['w_chave_aux'],
+                $_REQUEST['w_inicio'],$_REQUEST['w_fim'],$_REQUEST['w_unidades']);
+
+        ScriptOpen('JavaScript');
+        ShowHTML('  location.href=\''.montaURL_JS($w_dir,$R.'&w_chave='.$_REQUEST['w_chave'].'&P1='.$P1.'&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP='.$TP.'&SG='.$SG.MontaFiltro('GET')).'\';');
+        ScriptClose();
+        } else {
+        ScriptOpen('JavaScript');
+        ShowHTML('  alert(\'Assinatura Eletrônica inválida!\');');
+        ScriptClose();
+        retornaFormulario('w_assinatura');
+      } 
+      break;
     default:
       exibevariaveis();
       ScriptOpen('JavaScript');
@@ -1227,10 +1784,12 @@ function Main() {
     case 'DISPONIVEL':         Disponivel();        break;
     case 'INDISPONIVEL':       Indisponivel();      break;
     case 'TELARECURSO':        TelaRecurso();       break;
+    case 'SOLIC':              Solic();             break;
+    case 'SOLICPERIODO':       SolicPeriodo();      break;
     case 'GRAVA':              Grava();             break;
     default:
     Cabecalho();
-    ShowHTML('<BASE HREF="'.$conRootSIW.'">');
+    ShowHTML('<font size=0 color="'.$conBodyBgColor.'">.</font><BASE HREF="'.$conRootSIW.'">');
     BodyOpen('onLoad=this.focus();');
     ShowHTML('<B><FONT COLOR="#000000">'.$w_TP.'</FONT></B>');
     ShowHTML('<HR>');

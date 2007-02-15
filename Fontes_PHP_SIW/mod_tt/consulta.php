@@ -206,7 +206,7 @@ function LigacaoParticular(){
     ValidateClose();
     ScriptClose();
     ShowHTML('</HEAD>');
-    ShowHTML('<BASE HREF="'.$conRootSIW.'">');
+    ShowHTML('<font size=0 color="'.$conBodyBgColor.'">.</font><BASE HREF="'.$conRootSIW.'">');
     if ($w_troca>''){
       BodyOpen('onload="document.Form.'.$w_troca.'.focus()";');
     } elseif (!(strpos('R',$O)===false)){
@@ -332,7 +332,7 @@ function listaTelefonica(){
   ShowHTML('<meta http-equiv="Refresh" content="300; URL='.$w_dir_volta.MontaURL('MESA').'">');
   ShowHTML('<TITLE>Lista Telefônica</TITLE>');
   ShowHTML('</HEAD>');
-  ShowHTML('<BASE href="'.$conRootSIW.'">');
+  ShowHTML('<font size=0 color="'.$conBodyBgColor.'">.</font><BASE HREF="'.$conRootSIW.'">');
   if ($P2==0) {
     BodyOpen('onLoad=\'this.focus();\'');
   } 
@@ -374,7 +374,7 @@ function ResumoLigacaoParticular(){
   ShowHTML('<HEAD>');
   ShowHTML('<TITLE>Lista Telefônica</TITLE>');
   ShowHTML('</HEAD>');
-  ShowHTML('<BASE href="'.$conRootSIW.'">');
+  ShowHTML('<font size=0 color="'.$conBodyBgColor.'">.</font><BASE HREF="'.$conRootSIW.'">');
   if ($P2==0) {
     BodyOpen('onLoad=\'this.focus();\'');
   } 
@@ -417,7 +417,7 @@ function Main(){
   case 'RESUMPART':   ResumoLigacaoParticular();  break;
   default: 
   Cabecalho();    
-  ShowHTML('<BASE href="'.$conRootSIW.'">');
+  ShowHTML('<font size=0 color="'.$conBodyBgColor.'">.</font><BASE HREF="'.$conRootSIW.'">');
   BodyOpen('onLoad=this.focus();');
   ShowHTML('<B><FONT color="#000000">'.$w_TP.'</FONT></B>');
   ShowHTML('<HR>');

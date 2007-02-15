@@ -1,5 +1,6 @@
 <?
 setlocale(LC_ALL, 'pt_BR');
+mb_language('en');
 //date_default_timezone_set('America/Sao_Paulo');
 //$locale_info = localeconv();
 //echo "<pre>\n";
@@ -109,6 +110,7 @@ function montaURL_JS ($p_dir, $p_link) {
 
   // Monta a chamada base
   $l_link = $p_link;
+/*
   // Se for MS-IE, não agrega o diretório.
   if (strpos(strtoupper($_SERVER['HTTP_USER_AGENT']),'MSIE')===false) {
      // Altera a chamada padrão, dispensando a sessão
@@ -116,10 +118,11 @@ function montaURL_JS ($p_dir, $p_link) {
        $l_link = $p_dir.$p_link;
      }
   } else {
+*/
      if (strpos($p_link,$p_dir)!==false) {
        $l_link = str_replace($p_dir,'',$p_link);
      }
-  }
+//  }
   // Retorno ao chamador
   return $l_link;
 }
@@ -176,7 +179,7 @@ function headerWord($p_orientation='LANDSCAPE') {
   ShowHTML('--> ');
   ShowHTML('</style> ');
   ShowHTML('</head> ');
-  ShowHTML('<BASE HREF="'.$conRootSIW.'">');
+  ShowHTML('<font size=0 color="'.$conBodyBgColor.'">.</font><BASE HREF="'.$conRootSIW.'">');
   BodyOpen('onLoad=this.focus();');
   ShowHTML('<div class=Section1> ');
 }
@@ -331,6 +334,21 @@ function RetornaTipoRecurso($l_chave) {
   }
 }
 // =========================================================================
+// Retorna o nome da base geográfica a partir do código
+// -------------------------------------------------------------------------
+function retornaBaseGeografica($l_chave) {
+  extract($GLOBALS);
+
+  switch ($l_chave) {
+    case 1: return 'Nacional';       break;
+    case 2: return 'Regional';       break;
+    case 3: return 'Estadual';       break;
+    case 4: return 'Municipal';      break;
+    case 5: return 'Organizacional'; break;
+    default:return 'Erro';           break;
+  }
+}
+// =========================================================================
 // Funçao para retornar o tipo da data
 // -------------------------------------------------------------------------
 function RetornaTipoData ($l_chave) {
@@ -421,9 +439,9 @@ function MontaFiltro($p_method) {
 function RetornaFormulario($l_troca) {
   extract($GLOBALS);
   $l_string='';
-  AbreForm('RetornaDados',$w_dir.$_POST['R'],'POST',null,null,$_POST['P1'],$_POST['P2'],$_POST['P3'],$_POST['P4'],$_POST['TP'],$_POST['SG'],$_POST['R'],$_POST['O']);
+  AbreForm('RetornaDados',nvl($w_dir.$_POST['R'],$_SERVER['HTTP_REFERER']),'POST',null,null,$_POST['P1'],$_POST['P2'],$_POST['P3'],$_POST['P4'],$_POST['TP'],$_POST['SG'],$_POST['R'],$_POST['O']);
   foreach ($_POST as $l_Item => $l_valor) {
-    if ($l_Item!='w_troca' && $l_Item!='w_assinatura' && $l_Item!='R' && $l_Item!='R' && $l_Item!='P1' && $l_Item!='P2' && $l_Item!='P3' && $l_Item!='P4' && $l_Item!='TP' && $l_Item!='O') {
+    if ($l_Item!='w_troca' && $l_Item!='w_assinatura' && $l_Item!='Password' && $l_Item!='R' && $l_Item!='R' && $l_Item!='P1' && $l_Item!='P2' && $l_Item!='P3' && $l_Item!='P4' && $l_Item!='TP' && $l_Item!='O') {
       if (is_array($_POST[$l_Item])) {
         ShowHTML('<INPUT TYPE="HIDDEN" NAME="'.$l_Item.'" VALUE="'.explodeArray($_POST[$l_Item]).'">');
       } else {
@@ -506,7 +524,7 @@ function ExibeRecurso($p_dir,$p_cliente,$p_nome,$p_chave,$p_tp) {
   if (Nvl($p_chave,'')=='') {
     $l_string='---';
   } else {
-    $l_string .= '<A class="hl" HREF="#" onClick="window.open(\''.montaURL_JS('mod_pe/','recurso.php?par=TELARECURSO&w_cliente='.$p_cliente.'&w_chave='.$p_chave.'&P1='.$P1.'&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP='.$p_tp.'&SG=').'\',\'Telarecurso\',\'width=785,height=570,top=10,left=10,toolbar=no,scrollbars=yes,resizable=yes,status=no\'); return false;" title="Clique para exibir os dados desta unidade!">'.$p_nome.'</A>';
+    $l_string .= '<A class="hl" HREF="#" onClick="window.open(\''.$conRootSIW.'mod_pe/recurso.php?par=TELARECURSO&w_cliente='.$p_cliente.'&w_chave='.$p_chave.'&P1='.$P1.'&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP='.$p_tp.'&SG='.'\',\'Telarecurso\',\'width=785,height=570,top=10,left=10,toolbar=no,scrollbars=yes,resizable=yes,status=no\'); return false;" title="Clique para exibir os dados desta unidade!">'.$p_nome.'</A>';
   }
   return $l_string;
 }
@@ -774,6 +792,7 @@ function RetornaMenu($p_cliente,$p_sigla) {
   if ($_REQUEST['w_menu']>'') {
     return $_REQUEST['w_menu'];
   } else {
+     include_once($w_dir_volta.'classes/sp/db_getMenuCode.php');
      $RS = db_getMenuCode::getInstanceOf($dbms, $p_cliente, $p_sigla);
      return f($RS,'SQ_MENU');
   }
@@ -812,6 +831,22 @@ function RetornaGestor($p_solicitacao,$p_usuario) {
   extract($GLOBALS);
   $l_acesso = db_getGestor::getInstanceOf($dbms,$p_solicitacao, $p_usuario);
   return $l_acesso;
+}
+
+// =========================================================================
+// Função que retorna S/N indicando se o usuário informado é gestor do módulo 
+// a opção do menu pertence
+// -------------------------------------------------------------------------
+function RetornaModMaster($p_cliente, $p_usuario, $p_menu) {
+  include_once($w_dir_volta.'classes/sp/db_getModMaster.php');
+  extract($GLOBALS);
+  $l_RS = db_getModMaster::getInstanceOf($dbms,$p_cliente, $p_usuario, $p_menu);
+  if (count($l_RS)==0) {
+    return 'N';
+  } else {
+    foreach($l_RS as $l_row) {$l_RS = $l_row; break;}
+    return f($l_RS,'gestor_modulo');
+  }
 }
 
 // =========================================================================
@@ -1215,11 +1250,8 @@ function Estrutura_Texto_Abre() {
 // Encerramento do texto do corpo
 // -------------------------------------------------------------------------
 function Estrutura_Texto_Fecha() {
-  extract($GLOBALS);
-  if ($_SESSION['P_CLIENTE']==6761) {
-     ShowHTML('    </center>');
-     ShowHTML('    </DIV>');
-  }
+  ShowHTML('    </center>');
+  ShowHTML('    </DIV>');
 }
 
 // =========================================================================
@@ -1465,10 +1497,10 @@ function FormataDataEdicao($w_dt_grade, $w_formato=1) {
   if (nvl($w_dt_grade,'')>'') {
     if (is_numeric($w_dt_grade)) {
       switch ($w_formato){
-        case 1: return date('d/m/Y',$w_dt_grade);                         break;
+        case 1: return date('d/m/y',$w_dt_grade);                         break;
         case 2: return date('H:i:s',$w_dt_grade);                         break;
-        case 3: return date('d/m/Y, H:i:s',$w_dt_grade);                  break;
-        case 4: return diaSemana(date('l, d/m/Y, H:i:s',$w_dt_grade));    break;
+        case 3: return date('d/m/y, H:i:s',$w_dt_grade);                  break;
+        case 4: return diaSemana(date('l, d/m/y, H:i:s',$w_dt_grade));    break;
       }
     } else {
       return $w_dt_grade;
@@ -1479,7 +1511,7 @@ function FormataDataEdicao($w_dt_grade, $w_formato=1) {
 }
 
 // =========================================================================
-// Função que retorna o primeiro dia da data informada
+// Função que retorna datetime com o primeiro dia da data informada no formato datetime
 // -------------------------------------------------------------------------
 function first_day($w_valor) {
   extract($GLOBALS);
@@ -1491,9 +1523,9 @@ function first_day($w_valor) {
 } 
 
 // =========================================================================
-// Função que retorna o último dia da data informada
+// Função que retorna datetime com o último dia da data informada no formato datetime
 // -------------------------------------------------------------------------
-function Last_Day($w_valor) {
+function last_day($w_valor) {
   extract($GLOBALS);
 
   $l_valor  = FormataDataEdicao($w_valor);
@@ -1587,21 +1619,38 @@ function diaSemana($l_data) {
 // =========================================================================
 // Função que traduz os meses do ano de inglês para português
 // -------------------------------------------------------------------------
-function mesAno($l_data) {
+function mesAno($l_data, $l_formato=null) {
   if (nvl($l_data,'')>'') {
-    switch (strtoupper($l_data)) {
-      case 'JANUARY':   return 'Janeiro';            break;
-      case 'FEBRUARY':  return 'Fevereiro';          break;
-      case 'MARCH':     return 'Março';              break;
-      case 'APRIL':     return 'Abril';              break;
-      case 'MAY':       return 'Maio';               break;
-      case 'JUNE':      return 'Junho';              break;
-      case 'JULY':      return 'Julho';              break;
-      case 'AUGUST':    return 'Agosto';             break;
-      case 'SEPTEMBER': return 'Setembro';           break;
-      case 'OCTOBER':   return 'Outubro';            break;
-      case 'NOVEMBER':  return 'Novembro';           break;
-      case 'DECEMBER':  return 'Dezembro';           break;
+    if (nvl($l_formato,'nulo')=='nulo') {
+      switch (strtoupper($l_data)) {
+        case 'JANUARY':   return 'Janeiro';   break;
+        case 'FEBRUARY':  return 'Fevereiro'; break;
+        case 'MARCH':     return 'Março';     break;
+        case 'APRIL':     return 'Abril';     break;
+        case 'MAY':       return 'Maio';      break;
+        case 'JUNE':      return 'Junho';     break;
+        case 'JULY':      return 'Julho';     break;
+        case 'AUGUST':    return 'Agosto';    break;
+        case 'SEPTEMBER': return 'Setembro';  break;
+        case 'OCTOBER':   return 'Outubro';   break;
+        case 'NOVEMBER':  return 'Novembro';  break;
+        case 'DECEMBER':  return 'Dezembro';  break;
+      }
+    } else {
+      switch (strtoupper($l_data)) {
+        case 'JANUARY':   return 'Jan'; break;
+        case 'FEBRUARY':  return 'Fev'; break;
+        case 'MARCH':     return 'Mar'; break;
+        case 'APRIL':     return 'Abr'; break;
+        case 'MAY':       return 'Mai'; break;
+        case 'JUNE':      return 'Jun'; break;
+        case 'JULY':      return 'Jul'; break;
+        case 'AUGUST':    return 'Ago'; break;
+        case 'SEPTEMBER': return 'Set'; break;
+        case 'OCTOBER':   return 'Out'; break;
+        case 'NOVEMBER':  return 'Nov'; break;
+        case 'DECEMBER':  return 'Dez'; break;
+      }
     }
   } else {
     return null;
@@ -1760,6 +1809,36 @@ function retornaArrayDias($p_inicio, $p_fim, $p_array, $p_valor, $p_dia_util=nul
   }
   
   return true;
+}
+
+// =========================================================================
+// Função para retornar array com o tipo do nome e o nome mais adequado para um período de datas
+// Recebe o início e o fim do período no formato data
+// Devolve array com dois índices: 
+//    [TIPO] pode valer ANO, MES_ANO, DIA, OUT
+//    [VALOR] tipo=ANO retorna o ano do início informado
+//            tipo=MES retorna o nome_mes/ano
+//            tipo=DIA retorna datetime do início informado
+//            tipo=OUT retorna nulo
+// -------------------------------------------------------------------------
+function retornaNomePeriodo($p_inicio, $p_fim) {
+  if (date(dm,$p_inicio)=='0101' && date(dm,$p_fim)=='3112' && date(Y,$p_inicio)==date(Y,$p_fim)) {
+    // se o período compreende totalmente um único ano, devolve o ano
+    $p_array['TIPO'] = 'ANO';
+    $p_array['VALOR'] = date(Y,$p_inicio);
+  } elseif (date(d,$p_inicio)=='01' && last_day($p_inicio)==$p_fim) {
+    // se o período compreende um único dia, devolve o dia
+    $p_array['TIPO'] = 'MES';
+    $p_array['VALOR'] = mesAno(date(F,$p_inicio),'resumido').'/'.date(y,$p_inicio);
+  } elseif ($p_inicio==$p_fim) {
+    // se o período compreende um único dia, devolve o dia
+    $p_array['TIPO'] = 'DIA';
+    $p_array['VALOR'] = $p_inicio;
+  } else {
+    $p_array['TIPO'] = 'OUT';
+    $p_array['VALOR'] = null;
+  }
+  return $p_array;
 }
 
 // =========================================================================

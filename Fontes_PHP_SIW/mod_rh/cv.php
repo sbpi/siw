@@ -172,7 +172,7 @@ function Inicial() {
   ValidateClose();
   ScriptClose();
   ShowHTML('</HEAD>');
-  ShowHTML('<BASE HREF="'.$conRootSIW.'">');
+  ShowHTML('<font size=0 color="'.$conBodyBgColor.'">.</font><BASE HREF="'.$conRootSIW.'">');
   if ($w_troca >'') {
     // Se for recarga da página
     BodyOpen('onLoad=\'document.Form.\'.$w_troca.\'.focus();\'');
@@ -461,7 +461,7 @@ function Identificacao() {
   ValidateClose();
   ScriptClose();
   ShowHTML('</HEAD>');
-  ShowHTML('<BASE HREF="'.$conRootSIW.'">');
+  ShowHTML('<font size=0 color="'.$conBodyBgColor.'">.</font><BASE HREF="'.$conRootSIW.'">');
   if ($w_troca >'') {
     BodyOpen('onLoad=\'document.Form.'.$w_troca.'.focus()\';');
   } else {
@@ -529,7 +529,7 @@ function Identificacao() {
     ShowHTML('        <tr><td colspan=3 align="center" height="1" bgcolor="#000000"></td></tr>');
     ShowHTML('        <tr valign="top">');
     SelecaoPais('<u>P</u>aís:','P','Selecione o país de nascimento e aguarde a tela carregar os estados.',$w_pais,null,'w_pais',null,'onChange="document.Form.action=\''.$w_dir.$w_pagina.$par.'&SG='.$SG.'&O='.$O.'\'; document.Form.w_troca.value=\'w_uf\'; document.Form.submit();"');
-    SelecaoEstado('E<u>s</u>tado:','S','Selecione o estado de nascimento e aguarde a tela carregar as cidades.',$w_uf,$w_pais,'N','w_uf',null,'onChange="document.Form.action=\''.$w_dir.$w_pagina.$par.'&SG='.$SG.'&O='.$O.'\'; document.Form.w_troca.value=\'w_cidade\'; document.Form.submit();"');
+    SelecaoEstado('E<u>s</u>tado:','S','Selecione o estado de nascimento e aguarde a tela carregar as cidades.',$w_uf,$w_pais,null,'w_uf',null,'onChange="document.Form.action=\''.$w_dir.$w_pagina.$par.'&SG='.$SG.'&O='.$O.'\'; document.Form.w_troca.value=\'w_cidade\'; document.Form.submit();"');
     SelecaoCidade('<u>C</u>idade:','C','Selecine a cidade de nascimento.',$w_cidade,$w_pais,$w_uf,'w_cidade',null,null);
     ShowHTML('        <tr><td colspan=3 align="center" height="2" bgcolor="#000000"></td></tr>');
     ShowHTML('        <tr><td colspan=3 align="center" height="1" bgcolor="#000000"></td></tr>');
@@ -716,7 +716,7 @@ function Historico() {
   ValidateClose();
   ScriptClose();
   ShowHTML('</HEAD>');
-  ShowHTML('<BASE HREF="'.$conRootSIW.'">');
+  ShowHTML('<font size=0 color="'.$conBodyBgColor.'">.</font><BASE HREF="'.$conRootSIW.'">');
   if ($w_troca>'') {
     BodyOpen('onLoad=\'document.Form.'.$w_troca.'.focus()\';');
   } else {
@@ -836,7 +836,7 @@ function Idiomas() {
     ScriptClose();
   } 
   ShowHTML('</HEAD>'); 
-  ShowHTML('<BASE HREF="'.$conRootSIW.'">');
+  ShowHTML('<font size=0 color="'.$conBodyBgColor.'">.</font><BASE HREF="'.$conRootSIW.'">');
   if ($w_troca>'') {
     BodyOpen('onLoad=\'document.Form.'.$w_troca.'.focus()\';');
   } elseif ($O=='I') {
@@ -1058,7 +1058,7 @@ function Experiencia() {
     ScriptClose();
   } 
   ShowHTML('</HEAD>');
-  ShowHTML('<BASE HREF="'.$conRootSIW.'">');
+  ShowHTML('<font size=0 color="'.$conBodyBgColor.'">.</font><BASE HREF="'.$conRootSIW.'">');
   if ($O=='L') {
     BodyOpen(null);
   } elseif ($w_troca >'') {
@@ -1142,7 +1142,7 @@ function Experiencia() {
     ShowHTML('         <table border=0 width="100%" cellspacing=0>');
     ShowHTML('           <tr valign="top">');
     SelecaoPais('<u>P</u>aís:','P','Selecione o país da experiência profissional e aguarde a tela carregar os estados.',$w_sq_pais,null,'w_sq_pais',null,'onChange="document.Form.action=\''.$w_dir.$w_pagina.$par.'\'; document.Form.w_troca.value=\'w_co_uf\'; document.Form.submit();"');
-    SelecaoEstado('E<u>s</u>tado:','S','Selecione o estado da experiência profissional e aguarde a tela carregar as cidades.',$w_co_uf,$w_sq_pais,'N','w_co_uf',null,'onChange="document.Form.action=\''.$w_dir.$w_pagina.$par.'\'; document.Form.w_troca.value=\'w_sq_cidade\'; document.Form.submit();"');
+    SelecaoEstado('E<u>s</u>tado:','S','Selecione o estado da experiência profissional e aguarde a tela carregar as cidades.',$w_co_uf,$w_sq_pais,null,'w_co_uf',null,'onChange="document.Form.action=\''.$w_dir.$w_pagina.$par.'\'; document.Form.w_troca.value=\'w_sq_cidade\'; document.Form.submit();"');
     SelecaoCidade('<u>C</u>idade:','C','Selecine a cidade de nascimento.',$w_sq_cidade,$w_sq_pais,$w_co_uf,'w_sq_cidade',null,null);
     ShowHTML('         </table></td></tr>');
     ShowHTML('      <tr valign="top">');
@@ -1253,7 +1253,7 @@ function Cargos() {
     ScriptClose();
   } 
   ShowHTML('</HEAD>');
-  ShowHTML('<BASE HREF="'.$conRootSIW.'">');
+  ShowHTML('<font size=0 color="'.$conBodyBgColor.'">.</font><BASE HREF="'.$conRootSIW.'">');
   if (!(strpos('IA',$O)===false)) {
     BodyOpen('onLoad=\'document.Form.w_especialidades.focus()\';');
   } else {
@@ -1426,7 +1426,7 @@ function Escolaridade() {
     ScriptClose();
   } 
   ShowHTML('</HEAD>');
-  ShowHTML('<BASE HREF="'.$conRootSIW.'">');
+  ShowHTML('<font size=0 color="'.$conBodyBgColor.'">.</font><BASE HREF="'.$conRootSIW.'">');
   if ($w_troca >'') {
     BodyOpen('onLoad=\'document.Form.'.$w_troca.'.focus()\';');
   } elseif ($O=='I') {
@@ -1603,7 +1603,7 @@ function Extensao() {
     ScriptClose();
   } 
   ShowHTML('</HEAD>');
-  ShowHTML('<BASE HREF="'.$conRootSIW.'">');
+  ShowHTML('<font size=0 color="'.$conBodyBgColor.'">.</font><BASE HREF="'.$conRootSIW.'">');
   if ($w_troca >'') {
     BodyOpen('onLoad=\'document.Form.'.$w_troca.'.focus()\';');
   } elseif ($O=='I') {
@@ -1774,7 +1774,7 @@ function Producao() {
     ScriptClose();
   } 
   ShowHTML('</HEAD>');
-  ShowHTML('<BASE HREF="'.$conRootSIW.'">');
+  ShowHTML('<font size=0 color="'.$conBodyBgColor.'">.</font><BASE HREF="'.$conRootSIW.'">');
   if ($w_troca >'') {
     BodyOpen('onLoad=\'document.Form.'.$w_troca.'.focus()\';');
   } elseif ($O=='I') {
@@ -1899,7 +1899,7 @@ function BuscaAreaConhecimento() {
   ValidateClose();
   ScriptClose();
   ShowHTML('</HEAD>');
-  ShowHTML('<BASE HREF="'.$conRootSIW.'">');
+  ShowHTML('<font size=0 color="'.$conBodyBgColor.'">.</font><BASE HREF="'.$conRootSIW.'">');
   BodyOpen('onLoad=\'document.Form.w_nome.focus()\';');
   if ($P1==1) {
     ShowHTML('<B><FONT COLOR="#000000">'.RemoveTP($w_TP).' - Procura Área do Conhecimento</FONT></B>');
@@ -1983,7 +1983,7 @@ function Visualizar() {
   ShowHTML('<HEAD>');
   ShowHTML('<TITLE>Curriculum Vitae</TITLE>');
   ShowHTML('</HEAD>');
-  ShowHTML('<BASE HREF="'.$conRootSIW.'">');
+  ShowHTML('<font size=0 color="'.$conBodyBgColor.'">.</font><BASE HREF="'.$conRootSIW.'">');
   if ($P2==0) {
     BodyOpen('onLoad=\'this.focus()\'; ');
   } 
@@ -2020,7 +2020,7 @@ function Grava() {
   $w_nome='';
   Cabecalho();
   ShowHTML('</HEAD>');
-  ShowHTML('<BASE HREF="'.$conRootSIW.'">');
+  ShowHTML('<font size=0 color="'.$conBodyBgColor.'">.</font><BASE HREF="'.$conRootSIW.'">');
   BodyOpen('onLoad=this.focus();');
   switch ($SG) {
     case 'CVIDENT':
@@ -2259,7 +2259,7 @@ function Main() {
     case 'GRAVA':                    Grava();                   break;
     default:
       Cabecalho();
-      ShowHTML('<BASE HREF="'.$conRootSIW.'">');
+      ShowHTML('<font size=0 color="'.$conBodyBgColor.'">.</font><BASE HREF="'.$conRootSIW.'">');
       BodyOpen('onLoad=this.focus();');
       ShowHTML('<B><FONT COLOR="#000000">'.$w_TP.'</FONT></B>');
       ShowHTML('<HR>');

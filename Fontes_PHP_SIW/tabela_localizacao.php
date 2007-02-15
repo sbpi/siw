@@ -247,7 +247,7 @@ function Cidade() {
     ShowHTML('      <tr align="left"><td valign="top"><table width="100%" cellpadding=0 cellspacing=0><tr><td>');
     ShowHTML('      <tr>');
     selecaoPais('<u>P</u>aís:','P','Selecione o país na relação.',$w_sq_pais,null,'w_sq_pais',null,'onChange="document.Form.action=\''.$w_pagina.$par.'\'; document.Form.O.value=\''.$O.'\'; document.Form.w_troca.value=\'w_co_uf\'; document.Form.submit();"');
-    selecaoEstado('<u>U</u>F:','U','Selecione a UF na relação.',$w_co_uf,$w_sq_pais,'N','w_co_uf',null,null);
+    selecaoEstado('<u>U</u>F:','U','Selecione a UF na relação.',$w_co_uf,$w_sq_pais,null,'w_co_uf',null,null);
     ShowHTML('      </tr></table></td></tr>');
     ShowHTML('      <tr><td valign="top"><b><U>N</U>ome:<br><INPUT ACCESSKEY="N" '.$w_Disabled.' class="STI" type="text" name="w_nome" size="60" maxlength="60" value="'.$w_nome.'"></td></tr>');
     ShowHTML('      <tr align="left"><td valign="top"><table width="100%" cellpadding=0 cellspacing=0><tr><td>');
@@ -284,7 +284,7 @@ function Cidade() {
     ShowHTML('      <tr align="left"><td valign="top"><table width="100%" cellpadding=0 cellspacing=0><tr><td>');
     ShowHTML('<tr>');
     selecaoPais('<u>P</u>aís:','P',null,$p_sq_pais,null,'p_sq_pais',null,'onChange="document.Form.O.value=\'P\'; document.Form.w_troca.value=\'p_co_uf\'; document.Form.submit();"');
-    selecaoEstado('<u>U</u>F:','U',null,$p_co_uf,$p_sq_pais,'N','p_co_uf',null,null);
+    selecaoEstado('<u>U</u>F:','U',null,$p_co_uf,$p_sq_pais,null,'p_co_uf',null,null);
     ShowHTML('      </tr></table></td></tr>');
     ShowHTML('      <tr><td valign="top"><b><U>N</U>ome:<br><INPUT ACCESSKEY="N" '.$w_Disabled.' class="STI" type="text" name="p_nome" size="50" maxlength="50" value="'.$p_nome.'"></td>');
     ShowHTML('      <tr><td valign="top"><b><U>O</U>rdenação por:<br><SELECT ACCESSKEY="O" '.$w_Disabled.' class="STS" name="p_ordena" size="1">');

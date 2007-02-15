@@ -139,7 +139,7 @@ function Eventos() {
     ScriptClose();
   } 
   ShowHTML('</HEAD>');
-  ShowHTML('<BASE HREF="'.$conRootSIW.'">');
+  ShowHTML('<font size=0 color="'.$conBodyBgColor.'">.</font><BASE HREF="'.$conRootSIW.'">');
   if ($w_troca>'') 
     BodyOpen('onLoad=\'document.Form.'.$w_troca.'.focus()\';');
   elseif(!(strpos('IA',$O)===false))
@@ -259,7 +259,7 @@ function TipoDado() {
     ScriptClose();
   } 
   ShowHTML('</HEAD>');
-  ShowHTML('<BASE HREF="'.$conRootSIW.'">');
+  ShowHTML('<font size=0 color="'.$conBodyBgColor.'">.</font><BASE HREF="'.$conRootSIW.'">');
   if ($w_troca>'')
     BodyOpen('onLoad=\'document.Form.'.$w_troca.'.focus()\';');
   elseif(!(strpos('IA',$O)===false))
@@ -382,7 +382,7 @@ function TipoIndice() {
     ScriptClose();
   } 
   ShowHTML('</HEAD>');
-  ShowHTML('<BASE HREF="'.$conRootSIW.'">');
+  ShowHTML('<font size=0 color="'.$conBodyBgColor.'">.</font><BASE HREF="'.$conRootSIW.'">');
   if ($w_troca>'')
     BodyOpen('onLoad=\'document.Form.'.$w_troca.'.focus()\';');
   elseif(!(strpos('IA',$O)===false))
@@ -507,7 +507,7 @@ function TipoSP() {
     ScriptClose();
   } 
   ShowHTML('</HEAD>');
-  ShowHTML('<BASE HREF="'.$conRootSIW.'">');
+  ShowHTML('<font size=0 color="'.$conBodyBgColor.'">.</font><BASE HREF="'.$conRootSIW.'">');
   if ($w_troca>'')
     BodyOpen('onLoad=\'document.Form.'.$w_troca.'.focus()\';');
   elseif(!(strpos('IA',$O)===false))
@@ -631,7 +631,7 @@ function tipotabela() {
     ScriptClose();
   } 
   ShowHTML('</HEAD>');
-  ShowHTML('<BASE HREF="'.$conRootSIW.'">');
+  ShowHTML('<font size=0 color="'.$conBodyBgColor.'">.</font><BASE HREF="'.$conRootSIW.'">');
   if ($w_troca>'')
     BodyOpen('onLoad=\'document.Form.'.$w_troca.'.focus()\';');
   elseif(!(strpos('IA',$O)===false))
@@ -720,7 +720,7 @@ function Grava() {
   Cabecalho();
   ShowHTML('</HEAD>');
   BodyOpen('onLoad=this.focus();');
-  ShowHTML('<BASE HREF="'.$conRootSIW.'">');  
+  ShowHTML('<font size=0 color="'.$conBodyBgColor.'">.</font><BASE HREF="'.$conRootSIW.'">');  
   switch ($SG) {
     case 'DCTPDADO':
       // Verifica se a Assinatura Eletrônica é válida
@@ -814,7 +814,7 @@ function Main() {
     case 'GRAVA':       Grava();        break;
     default:
       cabecalho();
-      ShowHTML('<BASE HREF="'.$conRootSIW.'">');      
+      ShowHTML('<font size=0 color="'.$conBodyBgColor.'">.</font><BASE HREF="'.$conRootSIW.'">');      
       BodyOpen('onLoad=this.focus();');
       Estrutura_Topo_Limpo();
       Estrutura_Menu();

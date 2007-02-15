@@ -120,7 +120,7 @@ function Usuario() {
     $RS = db_getUsuario::getInstanceOf($dbms,$w_cliente,$w_sq_usuario,$w_chave);
     $RS = SortArray($RS,'chave','asc');
     Cabecalho();
-    ShowHTML('<BASE HREF="'.$conRootSIW.'">');
+    ShowHTML('<font size=0 color="'.$conBodyBgColor.'">.</font><BASE HREF="'.$conRootSIW.'">');
     BodyOpen('onLoad=\'this.focus()\';');
     ShowHTML('<B><FONT COLOR="#000000">'.$w_TP.'</FONT></B>');
     ShowHTML('<HR>');
@@ -251,7 +251,7 @@ function Tabela() {
     $RS = db_getTabela::getInstanceOf($dbms,$w_cliente,null,null,$w_chave,$w_sq_usuario,null,null,null);
     $RS = SortArray($RS,'nm_usuario','asc','nome','asc');
     Cabecalho();
-    ShowHTML('<BASE HREF="'.$conRootSIW.'">');
+    ShowHTML('<font size=0 color="'.$conBodyBgColor.'">.</font><BASE HREF="'.$conRootSIW.'">');
     BodyOpen('onLoad=\'this.focus()\';');
     ShowHTML('<B><FONT COLOR="#000000">'.$w_TP.'</FONT></B>');
     ShowHTML('<HR>');
@@ -305,7 +305,7 @@ function Tabela() {
     ShowHTML('<HEAD>');
     ShowHTML('<TITLE>'.$conSgSistema.' - Dicionário</TITLE>');
     ShowHTML('</HEAD>');
-    ShowHTML('<BASE HREF="'.$conRootSIW.'">');
+    ShowHTML('<font size=0 color="'.$conBodyBgColor.'">.</font><BASE HREF="'.$conRootSIW.'">');
     BodyOpen('onLoad=\'this.focus()\';');
     ShowHTML('<B><FONT COLOR="#000000">'.$w_TP.'</FONT></B>');
     ShowHTML('<HR>');
@@ -454,7 +454,7 @@ function Trigger() {
     $RS = db_getTrigger::getInstanceOf($dbms,$w_cliente,$w_sq_trigger,$w_sq_tabela,$w_sq_usuario,$w_chave);
     $RS = SortArray($RS,'nm_usuario','asc','nm_trigger','asc','nm_tabela','asc');
     Cabecalho();
-    ShowHTML('<BASE HREF="'.$conRootSIW.'">');
+    ShowHTML('<font size=0 color="'.$conBodyBgColor.'">.</font><BASE HREF="'.$conRootSIW.'">');
     BodyOpen('onLoad=\'this.focus()\';');
     ShowHTML('<B><FONT COLOR="#000000">'.$w_TP.'</FONT></B>');
     ShowHTML('<HR>');
@@ -507,7 +507,7 @@ function StoredProcedure() {
     $RS = db_getStoredProcedure::getInstanceOf($dbms,$w_cliente,null,null,null,$w_sq_usuario,$w_chave,null,null);
     $RS = SortArray($RS,'nm_usuario','asc','nm_sp_tipo','asc','nm_sp','asc');
     Cabecalho();
-    ShowHTML('<BASE HREF="'.$conRootSIW.'">');
+    ShowHTML('<font size=0 color="'.$conBodyBgColor.'">.</font><BASE HREF="'.$conRootSIW.'">');
     BodyOpen('onLoad=\'this.focus()\';');
     ShowHTML('<B><FONT COLOR="#000000">'.$w_TP.'</FONT></B>');
     ShowHTML('<HR>');
@@ -553,7 +553,7 @@ function StoredProcedure() {
     ShowHTML('<HEAD>');
     ShowHTML('<TITLE>'.$conSgSistema.' - Dicionário</TITLE>');
     ShowHTML('</HEAD>');
-    ShowHTML('<BASE HREF="'.$conRootSIW.'">');
+    ShowHTML('<font size=0 color="'.$conBodyBgColor.'">.</font><BASE HREF="'.$conRootSIW.'">');
     BodyOpen('onLoad=\'this.focus()\';');
     ShowHTML('<B><FONT COLOR="#000000">'.$w_TP.'</FONT></B>');
     ShowHTML('<HR>');
@@ -578,7 +578,7 @@ function StoredProcedure() {
     $w_cor='';
     $RS = db_getSpParametro::getInstanceOf($dbms,$w_sq_sp,null,null);
     $RS = SortArray($RS,'ord_sp_param','asc');
-    ShowHTML('<BASE HREF="'.$conRootSIW.'">');
+    ShowHTML('<font size=0 color="'.$conBodyBgColor.'">.</font><BASE HREF="'.$conRootSIW.'">');
     ShowHTML('<HR>');
     ShowHTML('<tr><td align="center" colspan=3>');
     ShowHTML('<div align=center><center>');
@@ -610,7 +610,7 @@ function StoredProcedure() {
     $w_cor='';
     $RS = db_getSpTabs::getInstanceOf($dbms,$w_sq_sp,null);
     $RS = SortArray($RS,'chave','asc');
-    ShowHTML('<BASE HREF="'.$conRootSIW.'">');
+    ShowHTML('<font size=0 color="'.$conBodyBgColor.'">.</font><BASE HREF="'.$conRootSIW.'">');
     ShowHTML('<HR>');
     ShowHTML('<tr><td align="center" colspan=3>');
     ShowHTML('<div align=center><center>');
@@ -638,7 +638,7 @@ function StoredProcedure() {
     $w_cor='';
     $RS = db_getSpSP::getInstanceOf($dbms,$w_sq_sp,$w_chave_aux);
     $RS = SortArray($RS,'nm_usuario_pai','asc','nm_pai','asc','nm_usuario_filha','asc','nm_filha','asc');
-    ShowHTML('<BASE HREF="'.$conRootSIW.'">');
+    ShowHTML('<font size=0 color="'.$conBodyBgColor.'">.</font><BASE HREF="'.$conRootSIW.'">');
     ShowHTML('<HR>');
     ShowHTML('<tr><td align="center" colspan=3>');
     ShowHTML('<div align=center><center>');
@@ -677,7 +677,7 @@ function StoredProcedure() {
     $w_cor='';
     $RS = db_getProcSp::getInstanceOf($dbms,null,$w_sq_sp);
     $RS = SortArray($RS,'chave','asc');
-    ShowHTML('<BASE HREF="'.$conRootSIW.'">');
+    ShowHTML('<font size=0 color="'.$conBodyBgColor.'">.</font><BASE HREF="'.$conRootSIW.'">');
     ShowHTML('<HR>');
     ShowHTML('<tr><td align="center" colspan=3>');
     ShowHTML('<div align=center><center>');
@@ -723,7 +723,7 @@ function Indice() {
   if ($O=='L') {
     $RS = db_getIndice::getInstanceOf($dbms,$w_cliente,$w_sq_indice,null,$w_sq_usuario,$w_chave,null,$w_sq_tabela);
     $RS = SortArray($RS,'nm_indice','asc','nm_usuario','asc','nm_tabela','asc');
-    ShowHTML('<BASE HREF="'.$conRootSIW.'">');
+    ShowHTML('<font size=0 color="'.$conBodyBgColor.'">.</font><BASE HREF="'.$conRootSIW.'">');
     BodyOpen('onLoad=\'this.focus()\';');
     ShowHTML('<B><FONT COLOR="#000000">'.$w_TP.'</FONT></B>');
     ShowHTML('<HR>');
@@ -783,7 +783,7 @@ function Coluna() {
     $RS = db_getColuna::getInstanceOf($dbms,$w_cliente,null,$w_sq_tabela,null,$w_chave,$w_sq_usuario,null,null);
     $RS = SortArray($RS,'nm_usuario','asc','nm_coluna','asc','nm_tabela','asc');
     Cabecalho();
-    ShowHTML('<BASE HREF="'.$conRootSIW.'">');
+    ShowHTML('<font size=0 color="'.$conBodyBgColor.'">.</font><BASE HREF="'.$conRootSIW.'">');
     BodyOpen('onLoad=\'this.focus()\';');
     ShowHTML('<B><FONT COLOR="#000000">'.$w_TP.'</FONT></B>');
     ShowHTML('<HR>');
@@ -845,7 +845,7 @@ function Coluna() {
     ShowHTML('<HEAD>');
     ShowHTML('<TITLE>'.$conSgSistema.' - Dicionário</TITLE>');
     ShowHTML('</HEAD>');
-    ShowHTML('<BASE HREF="'.$conRootSIW.'">');
+    ShowHTML('<font size=0 color="'.$conBodyBgColor.'">.</font><BASE HREF="'.$conRootSIW.'">');
     BodyOpen('onLoad=\'this.focus()\';');
     ShowHTML('<B><FONT COLOR="#000000">'.$w_TP.'</FONT></B>');
     ShowHTML('<HR>');
@@ -865,7 +865,7 @@ function Coluna() {
     }
     $w_cor='';
     $RS = db_getIndiceCols::getInstanceOf($dbms,null,$w_sq_coluna);
-    ShowHTML('<BASE HREF="'.$conRootSIW.'">');
+    ShowHTML('<font size=0 color="'.$conBodyBgColor.'">.</font><BASE HREF="'.$conRootSIW.'">');
     ShowHTML('<HR>');
     ShowHTML('<table border="0" cellpadding="0" cellspacing="0" width="100%" align="center">');
     ShowHTML('<tr><td><B>Índices ('.count($RS).')</B></td>');
@@ -911,7 +911,7 @@ function Arquivo() {
     $RS = db_getArquivo::getInstanceOf($dbms,$w_cliente,null,null,$w_chave,null,null,null);
     $RS = SortArray($RS,'chave','asc');
     Cabecalho();
-    ShowHTML('<BASE HREF="'.$conRootSIW.'">');
+    ShowHTML('<font size=0 color="'.$conBodyBgColor.'">.</font><BASE HREF="'.$conRootSIW.'">');
     BodyOpen('onLoad=\'this.focus()\';');
     ShowHTML('<B><FONT COLOR="#000000">'.$w_TP.'</FONT></B>');
     ShowHTML('<HR>');
@@ -964,7 +964,7 @@ function Arquivo() {
     ShowHTML('<HEAD>');
     ShowHTML('<TITLE>'.$conSgSistema.' - Dicionário</TITLE>');
     ShowHTML('</HEAD>');
-    ShowHTML('<BASE HREF="'.$conRootSIW.'">');
+    ShowHTML('<font size=0 color="'.$conBodyBgColor.'">.</font><BASE HREF="'.$conRootSIW.'">');
     BodyOpen('onLoad=\'this.focus()\';');
     ShowHTML('<B><FONT COLOR="#000000">'.$w_TP.'</FONT></B>');
     ShowHTML('<HR>');
@@ -986,7 +986,7 @@ function Arquivo() {
     Rodape();
     $w_cor='';
     $RS = db_getProcedure::getInstanceOf($dbms,$w_cliente,null,$w_sq_arquivo,$w_chave,null,null);
-    ShowHTML('<BASE HREF="'.$conRootSIW.'">');
+    ShowHTML('<font size=0 color="'.$conBodyBgColor.'">.</font><BASE HREF="'.$conRootSIW.'">');
     ShowHTML('<HR>');
     ShowHTML('<tr><td align="center" colspan=3>');
     ShowHTML('<div align=center><center>');
@@ -1031,7 +1031,7 @@ function Procedure() {
     $RS = db_getProcedure::getInstanceOf($dbms,$w_cliente,null,$w_sq_arquivo,$w_chave,null,null);
     $RS = SortArray($RS,'chave','asc');
     Cabecalho();
-    ShowHTML('<BASE HREF="'.$conRootSIW.'">');
+    ShowHTML('<font size=0 color="'.$conBodyBgColor.'">.</font><BASE HREF="'.$conRootSIW.'">');
     BodyOpen('onLoad=\'this.focus()\';');
     ShowHTML('<B><FONT COLOR="#000000">'.$w_TP.'</FONT></B>');
     ShowHTML('<HR>');
@@ -1082,7 +1082,7 @@ function Procedure() {
     ShowHTML('<HEAD>');
     ShowHTML('<TITLE>'.$conSgSistema.' - Dicionário</TITLE>');
     ShowHTML('</HEAD>');
-    ShowHTML('<BASE HREF="'.$conRootSIW.'">');
+    ShowHTML('<font size=0 color="'.$conBodyBgColor.'">.</font><BASE HREF="'.$conRootSIW.'">');
     BodyOpen('onLoad=\'this.focus()\';');
     ShowHTML('<B><FONT COLOR="#000000">'.$w_TP.'</FONT></B>');
     ShowHTML('<HR>');
@@ -1105,7 +1105,7 @@ function Procedure() {
     $RS = db_getProcSP::getInstanceOf($dbms,$w_sq_procedure,null);
     $RS = SortArray($RS,'chave','asc');
     Cabecalho();
-    ShowHTML('<BASE HREF="'.$conRootSIW.'">');
+    ShowHTML('<font size=0 color="'.$conBodyBgColor.'">.</font><BASE HREF="'.$conRootSIW.'">');
     ShowHTML('<HR>');
     ShowHTML('<div align=center><center>');
     ShowHTML('<td><B>Procedures</B></td>');
@@ -1134,7 +1134,7 @@ function Procedure() {
     $RS = db_getProcTabs::getInstanceOf($dbms,$w_sq_procedure,null);
     $RS = SortArray($RS,'chave','asc');
     Cabecalho();
-    ShowHTML('<BASE HREF="'.$conRootSIW.'">');
+    ShowHTML('<font size=0 color="'.$conBodyBgColor.'">.</font><BASE HREF="'.$conRootSIW.'">');
     ShowHTML('<HR>');
     ShowHTML('<div align=center><center>');
     ShowHTML('<td><B>Tabelas</B></td>');
@@ -1163,7 +1163,7 @@ function Procedure() {
     $RS = db_getProcedure::getInstanceOf($dbms,$w_cliente,$w_sq_procedure,$w_sq_arquivo,$w_chave,null,null);
     $RS = SortArray($RS,'chave','asc');
     Cabecalho();
-    ShowHTML('<BASE HREF="'.$conRootSIW.'">');
+    ShowHTML('<font size=0 color="'.$conBodyBgColor.'">.</font><BASE HREF="'.$conRootSIW.'">');
     ShowHTML('<HR>');
     ShowHTML('<div align=center><center>');
     ShowHTML('<td><B>Arquivos</B></td>');
@@ -1215,7 +1215,7 @@ function Relacionamento() {
     ShowHTML('<HEAD>');
     ShowHTML('<TITLE>'.$conSgSistema.' - Dicionário</TITLE>');
     ShowHTML('</HEAD>');
-    ShowHTML('<BASE HREF="'.$conRootSIW.'">');
+    ShowHTML('<font size=0 color="'.$conBodyBgColor.'">.</font><BASE HREF="'.$conRootSIW.'">');
     BodyOpen('onLoad=\'this.focus()\';');
     ShowHTML('<B><FONT COLOR="#000000">'.$w_TP.'</FONT></B>');
     ShowHTML('<HR>');
@@ -1238,7 +1238,7 @@ function Relacionamento() {
     $RS = db_getRelacCols::getInstanceOf($dbms,$w_sq_relacionamento,null);
     $RS = SortArray($RS,'nm_relacionamento','asc');
     Cabecalho();
-    ShowHTML('<BASE HREF="'.$conRootSIW.'">');
+    ShowHTML('<font size=0 color="'.$conBodyBgColor.'">.</font><BASE HREF="'.$conRootSIW.'">');
     ShowHTML('<HR>');
     ShowHTML('<div align=center><center>');
     ShowHTML('<td><B>Relacionamentos</B></td>');
@@ -1507,7 +1507,7 @@ function Main() {
     case 'PROCEDURE':       Procedure();        break;
     default:
       cabecalho();
-      ShowHTML('<BASE HREF="'.$conRootSIW.'">');      
+      ShowHTML('<font size=0 color="'.$conBodyBgColor.'">.</font><BASE HREF="'.$conRootSIW.'">');      
       BodyOpen('onLoad=this.focus();');
       Estrutura_Topo_Limpo();
       Estrutura_Menu();

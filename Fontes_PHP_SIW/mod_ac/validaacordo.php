@@ -27,14 +27,30 @@ function ValidaAcordo($l_cliente,$l_chave,$l_sg1,$l_sg2,$l_sg3,$l_sg4,$l_tramite
   if (count($l_rs_solic)==0) {
     return '0<li>Não existe registro no banco de dados com o número informado.';
   } 
-
+  $l_erro='';
+  $l_tipo='';  
+  if (f($l_rs_solic,'ativo')=='S') {
+    if (substr(f($l_rs_solic,'sigla'),0,3)=='GCR' && f($l_rs_solic,'cd_modalidade')!='F') {
+      $l_erro=$l_erro.'<li>Para contrato de receita, o tipo deve ser de fornecimento.';
+      $l_tipo=0;
+    } elseif (substr(f($l_rs_solic,'sigla'),0,3)=='GCA' && f($l_rs_solic,'cd_modalidade')!='I') {
+      $l_erro=$l_erro.'<li>Para ACT, o tipo deve ser de parceria institucional.';
+      $l_tipo=0;
+    } elseif (substr(f($l_rs_solic,'sigla'),0,3)=='GCB' && f($l_rs_solic,'cd_modalidade')!='E') {
+      $l_erro=$l_erro.'<li>Para contrato de bolsista, o tipo deve ser de emprego.';
+      $l_tipo=0;
+    } elseif (substr(f($l_rs_solic,'sigla'),0,3)=='GCD' && (f($l_rs_solic,'cd_modalidade')=='F'&&f($l_rs_solic,'cd_modalidade')=='I')) {
+      $l_erro=$l_erro.'<li>Para contrato de despesa, o tipo não pode ser de fornecimento e não pode ser de parceria institucional.';
+      $l_tipo=0;      
+    } elseif (substr(f($l_rs_solic,'sigla'),0,3)=='GCP' && f($l_rs_solic,'cd_modalidade')!='I') {
+      $l_erro=$l_erro.'<li>Para contrato de parceria, o tipo deve ser de parceria institucional.';
+      $l_tipo=0;      
+    }    
+  }
   // Verifica se o cliente tem o módulo de acordos contratado
   $l_rs_modulo = db_getSiwCliModLis::getInstanceOf($dbms,$l_cliente,null,'AC');
   if (count($l_rs_modulo)>0) $l_acordo='S'; else $l_acordo='N';
-
-  $l_erro='';
-  $l_tipo='';
-
+  
   // Recupera o trâmite atual da solicitação
   $l_rs_tramite = db_getTramiteData::getInstanceOf($dbms,f($l_rs_solic,'sq_siw_tramite'));
 
@@ -162,10 +178,8 @@ function ValidaAcordo($l_cliente,$l_chave,$l_sg1,$l_sg2,$l_sg3,$l_sg4,$l_tramite
           $l_erro=$l_erro; 
         } 
       } 
-
   // Configura a variável de retorno com o tipo de erro e a mensagem
   $l_erro = $l_tipo.$l_erro;
-
   //-----------------------------------------------------------------------------------
   // Após as verificações feitas, devolve cadeia vazia se não encontrou erros, ou string
   // para ser usada com a tag <UL>.

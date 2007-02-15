@@ -11,7 +11,7 @@ extract($GLOBALS); include_once($w_dir_volta.'classes/db/DatabaseQueriesFactory.
 class dml_EOUnidade {
    function getInstanceOf($dbms, $operacao, $chave, $sq_tipo_unidade, $sq_area_atuacao, $sq_unidade_gestora, $sq_unidade_pai, 
         $sq_unidade_pagadora, $sq_pessoa_endereco, $ordem, $email, $codigo, $cliente, $nome, $sigla, $informal, $vinculada, 
-        $adm_central, $unidade_gestora, $unidade_pagadora, $ativo) {
+        $adm_central, $unidade_gestora, $unidade_pagadora, $externo, $ativo) {
      extract($GLOBALS,EXTR_PREFIX_SAME,'strchema'); $sql=$strschema.'SP_PUTEOUNIDADE';
      $params=array('p_operacao'                  =>array($operacao,                                        B_VARCHAR,         1),
                    'p_chave'                     =>array(tvl($chave),                                      B_INTEGER,        32),
@@ -32,6 +32,7 @@ class dml_EOUnidade {
                    'p_adm_central'               =>array($adm_central,                                     B_VARCHAR,         1),
                    'p_unidade_gestora'           =>array($unidade_gestora,                                 B_VARCHAR,         1),
                    'p_unidade_pagadora'          =>array($unidade_pagadora,                                B_VARCHAR,         1),
+                   'p_externo'                   =>array($externo,                                         B_VARCHAR,         1),
                    'p_ativo'                     =>array($ativo,                                           B_VARCHAR,         1)
                   );
      $l_rs = DatabaseQueriesFactory::getInstanceOf($sql, $dbms, $params, DB_TYPE);

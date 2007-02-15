@@ -184,7 +184,7 @@ function Inicial() {
   ValidateClose();
   ScriptClose();
   ShowHTML('</HEAD>');
-  ShowHTML('<BASE HREF="'.$conRootSIW.'">');
+  ShowHTML('<font size=0 color="'.$conBodyBgColor.'">.</font><BASE HREF="'.$conRootSIW.'">');
   if ($w_raiz=='' || !(strpos($_REQUEST['botao'],'Procurar')===false)) {
     // Se o diretório raiz de busca
     if (!(strpos($_REQUEST['botao'],'Procurar')===false)) {
@@ -424,7 +424,7 @@ function Grava() {
   $w_opcao      = nvl($_REQUEST['w_opcao'],'N');
   Cabecalho();
   ShowHTML('</HEAD>');
-  ShowHTML('<BASE HREF="'.$conRootSIW.'">');
+  ShowHTML('<font size=0 color="'.$conBodyBgColor.'">.</font><BASE HREF="'.$conRootSIW.'">');
   BodyOpen('onLoad=this.focus();');
   switch ($SG) {
     case 'DCINICIAL':
@@ -713,7 +713,7 @@ function Main() {
   case 'GRAVA':             Grava(); break; 
   default:
     Cabecalho();
-    ShowHTML('<BASE HREF="'.$conRootSIW.'">');
+    ShowHTML('<font size=0 color="'.$conBodyBgColor.'">.</font><BASE HREF="'.$conRootSIW.'">');
     BodyOpen('onLoad=this.focus();');
     Estrutura_Topo_Limpo();
     Estrutura_Menu();

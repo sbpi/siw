@@ -265,7 +265,7 @@ function Usuarios() {
     ShowHTML('      <tr><td><b><U>N</U>ome:<br><INPUT ACCESSKEY="N" '.$w_Disabled.' class="sti" type="text" name="p_nome" size="50" maxlength="50" value="'.$p_nome.'"></td>');
     ShowHTML('      <tr>');
     $RS1 = db_getCustomerData::getInstanceOf($dbms, $w_cliente);
-    selecaoEstado('E<u>s</u>tado:','S',null,$p_uf,f($RS1,'sq_pais'),'N','p_uf',null,null);
+    selecaoEstado('E<u>s</u>tado:','S',null,$p_uf,f($RS1,'sq_pais'),null,'N','p_uf',null,null);
     $RS1->Close;
     ShowHTML('      <tr><td><table border=0 width="100%" cellpadding=0 cellspacing=0><tr valign="top">');
     ShowHTML('          <td><b>Usuários:</b><br>');
@@ -398,7 +398,7 @@ function Menu() {
         $w_pede_descricao       = f($RS,'descricao');
         $w_pede_justificativa   = f($RS,'justificativa');
         $w_sigla                = f($RS,'sigla');
-      } elseif ($w_troca>'') {
+      } elseif ($w_troca>'' && $O!='E') {
         $w_sq_menu_pai          = $_REQUEST['w_sq_menu_pai'];
         $w_sq_servico           = $_REQUEST['w_sq_servico'];
         $w_descricao            = $_REQUEST['w_descricao'];
@@ -1976,8 +1976,8 @@ function Grava() {
       } else {
         ScriptOpen('JavaScript');
         ShowHTML('  alert(\'Assinatura Eletrônica inválida!\');');
-        ShowHTML('  history.back(1);');
         ScriptClose();
+        retornaFormulario('w_assinatura');
       } 
       break;
     case "ACESSOS":

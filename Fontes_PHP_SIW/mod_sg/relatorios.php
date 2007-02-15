@@ -136,7 +136,7 @@ function Rel_Perm_Usuarios() {
     HeaderWord(null);
     $w_pag=1;
     $w_linha=5;
-    ShowHTML('<BASE HREF="'.$conRootSIW.'">');
+    ShowHTML('<font size=0 color="'.$conBodyBgColor.'">.</font><BASE HREF="'.$conRootSIW.'">');
     ShowHTML('<TABLE WIDTH="100%" BORDER=0><TR><TD ROWSPAN=2><IMG ALIGN="LEFT" src="'.LinkArquivo(null,$w_cliente,$w_logo,null,null,null,'WORD').'"><TD ALIGN="RIGHT" NOWRAP><B><FONT SIZE=4 COLOR="#000000">');
     ShowHTML('Relatório Analítico - Ações PPA 2004 - 2007 Exercício '.$w_ano);
     ShowHTML('</FONT><TR><TD WIDTH="50%" ALIGN="RIGHT"><B><font COLOR="#000000">'.DataHora().'</B>');
@@ -184,7 +184,7 @@ function Rel_Perm_Usuarios() {
       ScriptClose();
     } 
     ShowHTML('</HEAD>');
-    ShowHTML('<BASE HREF="'.$conRootSIW.'">');
+    ShowHTML('<font size=0 color="'.$conBodyBgColor.'">.</font><BASE HREF="'.$conRootSIW.'">');
     if ($O=='L') {
       BodyOpenClean(null);
       ShowHTML('<TABLE WIDTH="100%" BORDER=0><TR><TD ROWSPAN=2><IMG ALIGN="LEFT" src="'.LinkArquivo(null,$w_cliente,$w_logo,null,null,null,'EMBED').'"><TD ALIGN="RIGHT" NOWRAP><B><FONT SIZE=4 COLOR="#000000">');
@@ -631,7 +631,7 @@ function Rel_Projeto(){
     HeaderWord(null);
     $w_pag=1;
     $w_linha=5;
-    ShowHTML('<BASE HREF="'.$conRootSIW.'">');
+    ShowHTML('<font size=0 color="'.$conBodyBgColor.'">.</font><BASE HREF="'.$conRootSIW.'">');
     ShowHTML('<TABLE WIDTH="100%" BORDER=0><TR><TD ROWSPAN=2><IMG ALIGN="LEFT" src="'.LinkArquivo(null,$w_cliente,$w_logo,null,null,null,'WORD').'"><TD ALIGN="RIGHT" NOWRAP><B><FONT SIZE=4 COLOR="#000000">');
     ShowHTML('Relatório Analítico - Planos interno '.$w_ano);
     ShowHTML('</FONT><TR><TD WIDTH="50%" ALIGN="RIGHT"><B><font COLOR="#000000">'.DataHora().'</B>');
@@ -679,7 +679,7 @@ function Rel_Projeto(){
       ScriptClose();
     } 
     ShowHTML('</HEAD>');
-    ShowHTML('<BASE HREF="'.$conRootSIW.'">');
+    ShowHTML('<font size=0 color="'.$conBodyBgColor.'">.</font><BASE HREF="'.$conRootSIW.'">');
     if ($O=='L') {
       BodyOpenClean(null);
       ShowHTML('<TABLE WIDTH="100%" BORDER=0><TR><TD ROWSPAN=2><IMG ALIGN="LEFT" src="'.LinkArquivo(null,$w_cliente,$w_logo,null,null,null,'EMBED').'"><TD ALIGN="RIGHT" NOWRAP><B><FONT SIZE=4 COLOR="#000000">');
@@ -1117,7 +1117,7 @@ function Rel_Programa() {
     HeaderWord(null);
     $w_pag=1;
     $w_linha=5;
-    ShowHTML('<BASE HREF="'.$conRootSIW.'">');
+    ShowHTML('<font size=0 color="'.$conBodyBgColor.'">.</font><BASE HREF="'.$conRootSIW.'">');
     ShowHTML('<TABLE WIDTH="100%" BORDER=0><TR><TD ROWSPAN=2><IMG ALIGN="LEFT" src="'.LinkArquivo(null,$w_cliente,$w_logo,null,null,null,'WORD').'"><TD ALIGN="RIGHT" NOWRAP><B><FONT SIZE=4 COLOR="#000000">');
     ShowHTML('Relatório Analítico - Programas PPA 2004 - 2007 Exercício '.$w_ano);
     ShowHTML('</FONT><TR><TD WIDTH="50%" ALIGN="RIGHT"><B><font COLOR="#000000">'.DataHora().'</B>');
@@ -1155,7 +1155,7 @@ function Rel_Programa() {
       ScriptClose();
     } 
     ShowHTML('</HEAD>');
-    ShowHTML('<BASE HREF="'.$conRootSIW.'">');
+    ShowHTML('<font size=0 color="'.$conBodyBgColor.'">.</font><BASE HREF="'.$conRootSIW.'">');
     if ($O=='L') {
       BodyOpenClean(null);
       ShowHTML('<TABLE WIDTH="100%" BORDER=0><TR><TD ROWSPAN=2><IMG ALIGN="LEFT" src="'.LinkArquivo(null,$w_cliente,$w_logo,null,null,null,'EMBED').'"><TD ALIGN="RIGHT" NOWRAP><B><FONT SIZE=4 COLOR="#000000">');
@@ -1418,7 +1418,7 @@ function Rel_Sintetico_PR() {
     HeaderWord(null);
     $w_pag=1;
     $w_linha=8;
-    ShowHTML('<BASE HREF="'.$conRootSIW.'">');
+    ShowHTML('<font size=0 color="'.$conBodyBgColor.'">.</font><BASE HREF="'.$conRootSIW.'">');
     ShowHTML('<TABLE WIDTH="100%" BORDER=0><TR><TD ROWSPAN=2><IMG ALIGN="LEFT" src="'.LinkArquivo(null,$w_cliente,$w_logo,null,null,null,'WORD').'"><TD ALIGN="RIGHT" NOWRAP><B><FONT SIZE=4 COLOR="#000000">');
     ShowHTML('Relatório Sintético - Planos '.$w_ano);
     ShowHTML('</FONT><TR><TD WIDTH="50%" ALIGN="RIGHT"><B><font COLOR="#000000">'.DataHora().'</B>');
@@ -1438,7 +1438,7 @@ function Rel_Sintetico_PR() {
       ScriptClose();
     } 
     ShowHTML('</HEAD>');
-    ShowHTML('<BASE HREF="'.$conRootSIW.'">');
+    ShowHTML('<font size=0 color="'.$conBodyBgColor.'">.</font><BASE HREF="'.$conRootSIW.'">');
     if ($O=='L') {
       BodyOpenClean(null);
       ShowHTML('<TABLE WIDTH="100%" BORDER=0><TR><TD ROWSPAN=2><IMG ALIGN="LEFT" src="'.LinkArquivo(null,$w_cliente,$w_logo,null,null,null,'EMBED').'"><TD ALIGN="RIGHT" NOWRAP><B><FONT SIZE=4 COLOR="#000000">');
@@ -1728,7 +1728,7 @@ function Rel_Sintetico_PPA() {
     HeaderWord(null);
     $w_pag=1;
     $w_linha=8;
-    ShowHTML('<BASE HREF="'.$conRootSIW.'">');
+    ShowHTML('<font size=0 color="'.$conBodyBgColor.'">.</font><BASE HREF="'.$conRootSIW.'">');
     ShowHTML('<TABLE WIDTH="100%" BORDER=0><TR><TD ROWSPAN=2><IMG ALIGN="LEFT" src="'.LinkArquivo(null,$w_cliente,$w_logo,null,null,null,'WORD').'"><TD ALIGN="RIGHT" NOWRAP><B><FONT SIZE=4 COLOR="#000000">');
     ShowHTML('Relatório Sintético - Ações PPA 2004 - 2007 Exercício '.$w_ano);
     ShowHTML('</FONT><TR><TD WIDTH="50%" ALIGN="RIGHT"><B><font COLOR="#000000">'.DataHora().'</B>');
@@ -1748,7 +1748,7 @@ function Rel_Sintetico_PPA() {
       ScriptClose();
     } 
     ShowHTML('</HEAD>');
-    ShowHTML('<BASE HREF="'.$conRootSIW.'">');
+    ShowHTML('<font size=0 color="'.$conBodyBgColor.'">.</font><BASE HREF="'.$conRootSIW.'">');
     if ($O=='L') {
       BodyOpenClean(null);
       ShowHTML('<TABLE WIDTH="100%" BORDER=0><TR><TD ROWSPAN=2><IMG ALIGN="LEFT" src="'.LinkArquivo(null,$w_cliente,$w_logo,null,null,null,'EMBED').'"><TD ALIGN="RIGHT" NOWRAP><B><FONT SIZE=4 COLOR="#000000">');
@@ -2075,7 +2075,7 @@ function Rel_Sintetico_Prog() {
     HeaderWord(null);
     $w_pag=1;
     $w_linha=8;
-    ShowHTML('<BASE HREF="'.$conRootSIW.'">');
+    ShowHTML('<font size=0 color="'.$conBodyBgColor.'">.</font><BASE HREF="'.$conRootSIW.'">');
     ShowHTML('<TABLE WIDTH="100%" BORDER=0><TR><TD ROWSPAN=2><IMG ALIGN="LEFT" src="'.LinkArquivo(null,$w_cliente,$w_logo,null,null,null,'WORD').'"><TD ALIGN="RIGHT" NOWRAP><B><FONT SIZE=4 COLOR="#000000">');
     ShowHTML('Relatório Sintético - Programas PPA 2004 - 2007 Exercício '.$w_ano);
     ShowHTML('</FONT><TR><TD WIDTH="50%" ALIGN="RIGHT"><B><font COLOR="#000000">'.DataHora().'</B>');
@@ -2094,7 +2094,7 @@ function Rel_Sintetico_Prog() {
       ScriptClose();
     } 
     ShowHTML('</HEAD>');
-    ShowHTML('<BASE HREF="'.$conRootSIW.'">');
+    ShowHTML('<font size=0 color="'.$conBodyBgColor.'">.</font><BASE HREF="'.$conRootSIW.'">');
     if ($O=='L') {
       BodyOpenClean(null);
       ShowHTML('<TABLE WIDTH="100%" BORDER=0><TR><TD ROWSPAN=2><IMG ALIGN="LEFT" src="'.LinkArquivo(null,$w_cliente,$w_logo,null,null,null,'EMBED').'"><TD ALIGN="RIGHT" NOWRAP><B><FONT SIZE=4 COLOR="#000000">');
@@ -2327,7 +2327,7 @@ function Rel_Gerencial_Acao() {
     ShowHTML('<HEAD>');
     ShowHTML('<TITLE>Plano Gerencial - Ações PPA 2004 - 2007 Exercício '.$w_ano.'</TITLE>');
     ShowHTML('</HEAD>');
-    ShowHTML('<BASE HREF="'.$conRootSIW.'">');
+    ShowHTML('<font size=0 color="'.$conBodyBgColor.'">.</font><BASE HREF="'.$conRootSIW.'">');
     if ($w_tipo!='WORD') BodyOpenClean(null);
     ShowHTML('<TABLE WIDTH="100%" BORDER=0><TR><TD ROWSPAN=2><IMG ALIGN="LEFT" src="'.LinkArquivo(null,$w_cliente,$w_logo,null,null,null,'WORD').'"><TD ALIGN="RIGHT"><B><FONT SIZE=4 COLOR="#000000">');
     if ($P1==1)     ShowHTML('Relatório Geral por Ação');
@@ -2364,7 +2364,7 @@ function Rel_Gerencial_Acao() {
     ValidateClose();
     ScriptClose();
     ShowHTML('</HEAD>');
-    ShowHTML('<BASE HREF="'.$conRootSIW.'">');
+    ShowHTML('<font size=0 color="'.$conBodyBgColor.'">.</font><BASE HREF="'.$conRootSIW.'">');
     BodyOpen('onLoad=\'document.Form.p_servico.focus()\';');
     ShowHTML('<B><FONT COLOR="#000000">'.$w_TP.'</FONT></B>');
     ShowHTML('<HR>');
@@ -2411,7 +2411,7 @@ function Rel_Gerencial_Prog() {
     ShowHTML('<HEAD>');
     ShowHTML('<TITLE>Plano Gerencial - Programas PPA 2004 - 2007 Exercício '.$w_ano.'</TITLE>');
     ShowHTML('</HEAD>');
-    ShowHTML('<BASE HREF="'.$conRootSIW.'">');
+    ShowHTML('<font size=0 color="'.$conBodyBgColor.'">.</font><BASE HREF="'.$conRootSIW.'">');
     if ($w_tipo!='WORD') BodyOpenClean(null);
     ShowHTML('<TABLE WIDTH="100%" BORDER=0><TR><TD ROWSPAN=2><IMG ALIGN="LEFT" src="'.LinkArquivo(null,$w_cliente,$w_logo,null,null,null,'WORD').'"><TD ALIGN="RIGHT" NOWRAP><B><FONT SIZE=4 COLOR="#000000">');
     if ($P1==1)     ShowHTML('Relatório Geral por Programa');
@@ -2448,7 +2448,7 @@ function Rel_Gerencial_Prog() {
     ValidateClose();
     ScriptClose();
     ShowHTML('</HEAD>');
-    ShowHTML('<BASE HREF="'.$conRootSIW.'">');
+    ShowHTML('<font size=0 color="'.$conBodyBgColor.'">.</font><BASE HREF="'.$conRootSIW.'">');
     BodyOpen('onLoad=\'document.Form.p_modulo.focus()\';');
     ShowHTML('<B><FONT COLOR="#000000">'.$w_TP.'</FONT></B>');
     ShowHTML('<HR>');
@@ -2496,7 +2496,7 @@ function Rel_Gerencial_Tarefa() {
     ShowHTML('<HEAD>');
     ShowHTML('<TITLE>'.$conSgSistema.' - Visualização de Tarefa</TITLE>');
     ShowHTML('</HEAD>');
-    ShowHTML('<BASE HREF="'.$conRootSIW.'">');
+    ShowHTML('<font size=0 color="'.$conBodyBgColor.'">.</font><BASE HREF="'.$conRootSIW.'">');
     if ($w_tipo!='WORD') BodyOpenClean(null);
     ShowHTML('<TABLE WIDTH="100%" BORDER=0><TR><TD ROWSPAN=2><IMG ALIGN="LEFT" src="'.LinkArquivo(null,$w_cliente,$w_logo,null,null,null,'WORD').'"><TD ALIGN="RIGHT"><B><FONT SIZE=4 COLOR="#000000">');
     ShowHTML('Visualização de Tarefa');
@@ -2522,7 +2522,7 @@ function Rel_Gerencial_Tarefa() {
     ValidateClose();
     ScriptClose();
     ShowHTML('</HEAD>');
-    ShowHTML('<BASE HREF="'.$conRootSIW.'">');
+    ShowHTML('<font size=0 color="'.$conBodyBgColor.'">.</font><BASE HREF="'.$conRootSIW.'">');
     if ($w_troca>'')    BodyOpen('onLoad=\'document.Form.'.$w_troca.'.focus()\';');
     else                BodyOpen('onLoad=\'document.Form.p_acao.focus()\';');
     ShowHTML('<B><FONT COLOR="#000000">'.$w_TP.'</FONT></B>');
@@ -2594,7 +2594,7 @@ function Rel_Metas() {
     HeaderWord(null);
     $w_pag=1;
     $w_linha=8;
-    ShowHTML('<BASE HREF="'.$conRootSIW.'">');
+    ShowHTML('<font size=0 color="'.$conBodyBgColor.'">.</font><BASE HREF="'.$conRootSIW.'">');
     ShowHTML('<div align="center">');
     ShowHTML('<table width="95%" border="0" cellspacing="3">');
     ShowHTML('<tr><td colspan="2">');
@@ -2619,10 +2619,10 @@ function Rel_Metas() {
       ScriptClose();
     } 
     ShowHTML('</HEAD>');
-    ShowHTML('<BASE HREF="'.$conRootSIW.'">');
+    ShowHTML('<font size=0 color="'.$conBodyBgColor.'">.</font><BASE HREF="'.$conRootSIW.'">');
     if ($O=='L') {
       BodyOpenClean(null);
-      ShowHTML('<BASE HREF="'.$conRootSIW.'">');
+      ShowHTML('<font size=0 color="'.$conBodyBgColor.'">.</font><BASE HREF="'.$conRootSIW.'">');
       ShowHTML('<div align="center">');
       ShowHTML('<table width="95%" border="0" cellspacing="3">');
       ShowHTML('<tr><td colspan="2">');
@@ -3100,7 +3100,7 @@ function Rel_Det_Tarefa() {
     HeaderWord(null);
     $w_pag=1;
     $w_linha=8;
-    ShowHTML('<BASE HREF="'.$conRootSIW.'">');
+    ShowHTML('<font size=0 color="'.$conBodyBgColor.'">.</font><BASE HREF="'.$conRootSIW.'">');
     ShowHTML('<div align="center">');
     ShowHTML('<table width="95%" border="0" cellspacing="3">');
     ShowHTML('<tr><td colspan="2">');
@@ -3134,10 +3134,10 @@ function Rel_Det_Tarefa() {
       ScriptClose();
     } 
     ShowHTML('</HEAD>');
-    ShowHTML('<BASE HREF="'.$conRootSIW.'">');
+    ShowHTML('<font size=0 color="'.$conBodyBgColor.'">.</font><BASE HREF="'.$conRootSIW.'">');
     if ($O=='L') {
       BodyOpenClean(null);
-      ShowHTML('<BASE HREF="'.$conRootSIW.'">');
+      ShowHTML('<font size=0 color="'.$conBodyBgColor.'">.</font><BASE HREF="'.$conRootSIW.'">');
       ShowHTML('<div align="center">');
       ShowHTML('<table width="95%" border="0" cellspacing="3">');
       ShowHTML('<tr><td colspan="2">');
@@ -3322,7 +3322,7 @@ function Rel_Det_Acao() {
     HeaderWord(null);
     $w_pag=1;
     $w_linha=8;
-    ShowHTML('<BASE HREF="'.$conRootSIW.'">');
+    ShowHTML('<font size=0 color="'.$conBodyBgColor.'">.</font><BASE HREF="'.$conRootSIW.'">');
     ShowHTML('<div align="center">');
     ShowHTML('<table width="95%" border="0" cellspacing="3">');
     ShowHTML('<tr><td colspan="2">');
@@ -3368,10 +3368,10 @@ function Rel_Det_Acao() {
       ScriptClose();
     } 
     ShowHTML('</HEAD>');
-    ShowHTML('<BASE HREF="'.$conRootSIW.'">');
+    ShowHTML('<font size=0 color="'.$conBodyBgColor.'">.</font><BASE HREF="'.$conRootSIW.'">');
     if ($O=='L') {
       BodyOpenClean(null);
-      ShowHTML('<BASE HREF="'.$conRootSIW.'">');
+      ShowHTML('<font size=0 color="'.$conBodyBgColor.'">.</font><BASE HREF="'.$conRootSIW.'">');
       ShowHTML('<div align="center">');
       ShowHTML('<table width="95%" border="0" cellspacing="3">');
       ShowHTML('<tr><td colspan="2">');
@@ -3561,7 +3561,7 @@ function Rel_Det_Prog() {
     HeaderWord(null);
     $w_pag=1;
     $w_linha=8;
-    ShowHTML('<BASE HREF="'.$conRootSIW.'">');
+    ShowHTML('<font size=0 color="'.$conBodyBgColor.'">.</font><BASE HREF="'.$conRootSIW.'">');
     ShowHTML('<div align="center">');
     ShowHTML('<table width="95%" border="0" cellspacing="3">');
     ShowHTML('<tr><td colspan="2">');
@@ -3606,10 +3606,10 @@ function Rel_Det_Prog() {
       ScriptClose();
     } 
     ShowHTML('</HEAD>');
-    ShowHTML('<BASE HREF="'.$conRootSIW.'">');
+    ShowHTML('<font size=0 color="'.$conBodyBgColor.'">.</font><BASE HREF="'.$conRootSIW.'">');
     if ($O=='L') {
       BodyOpenClean(null);
-      ShowHTML('<BASE HREF="'.$conRootSIW.'">');
+      ShowHTML('<font size=0 color="'.$conBodyBgColor.'">.</font><BASE HREF="'.$conRootSIW.'">');
       ShowHTML('<div align="center">');
       ShowHTML('<table width="95%" border="0" cellspacing="3">');
       ShowHTML('<tr><td colspan="2">');
@@ -3799,7 +3799,7 @@ function Rel_Limite() {
     HeaderWord(null);
     $w_pag=1;
     $w_linha=8;
-    ShowHTML('<BASE HREF="'.$conRootSIW.'">');
+    ShowHTML('<font size=0 color="'.$conBodyBgColor.'">.</font><BASE HREF="'.$conRootSIW.'">');
     ShowHTML('<div align="center">');
     ShowHTML('<table width="95%" border="0" cellspacing="3">');
     ShowHTML('<tr><td colspan="2">');
@@ -3820,10 +3820,10 @@ function Rel_Limite() {
       ScriptClose();
     } 
     ShowHTML('</HEAD>');
-    ShowHTML('<BASE HREF="'.$conRootSIW.'">');
+    ShowHTML('<font size=0 color="'.$conBodyBgColor.'">.</font><BASE HREF="'.$conRootSIW.'">');
     if ($O=='L') {
       BodyOpenClean(null);
-      ShowHTML('<BASE HREF="'.$conRootSIW.'">');
+      ShowHTML('<font size=0 color="'.$conBodyBgColor.'">.</font><BASE HREF="'.$conRootSIW.'">');
       ShowHTML('<div align="center">');
       ShowHTML('<table width="95%" border="0" cellspacing="3">');
       ShowHTML('<tr><td colspan="2">');
@@ -4198,7 +4198,7 @@ function Main() {
     case 'REL_LIMITE':              Rel_Limite();           break;
     default:
       cabecalho();
-      ShowHTML('<BASE HREF="'.$conRootSIW.'">');      
+      ShowHTML('<font size=0 color="'.$conBodyBgColor.'">.</font><BASE HREF="'.$conRootSIW.'">');      
       BodyOpen('onLoad=this.focus();');
       Estrutura_Topo_Limpo();
       Estrutura_Menu();

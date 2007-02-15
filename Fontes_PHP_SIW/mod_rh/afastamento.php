@@ -231,7 +231,7 @@ function Afastamento() {
     ScriptClose();
   } 
   ShowHTML('</HEAD>');
-  ShowHTML('<BASE HREF="'.$conRootSIW.'">');
+  ShowHTML('<font size=0 color="'.$conBodyBgColor.'">.</font><BASE HREF="'.$conRootSIW.'">');
   if ($w_troca>'') {
     BodyOpen('onLoad=document.Form.'.$w_troca.'.focus();');
   } elseif (!(strpos('IA',$O)===false)) {
@@ -462,7 +462,7 @@ function BuscaColaborador() {
   ValidateClose();
   ScriptClose();
   ShowHTML('</HEAD>');
-  ShowHTML('<BASE HREF="'.$conRootSIW.'">');
+  ShowHTML('<font size=0 color="'.$conBodyBgColor.'">.</font><BASE HREF="'.$conRootSIW.'">');
   BodyOpen('onLoad=\'document.Form.w_nome.focus();\'');
   Estrutura_Texto_Abre();
   ShowHTML('<table border="0" cellpadding="0" cellspacing="0" width="100%">');
@@ -539,42 +539,49 @@ function TelaColaborador() {
   Estrutura_CSS($w_cliente);
   ShowHTML('<TITLE>Colaborador</TITLE>');
   ShowHTML('</HEAD>');
-  ShowHTML('<BASE HREF="'.$conRootSIW.'">');
+  ShowHTML('<font size=0 color="'.$conBodyBgColor.'">.</font><BASE HREF="'.$conRootSIW.'">');
   BodyOpen('onLoad=this.focus();');
   $TP = 'Dados coloborador';
   Estrutura_Texto_Abre();
   ShowHTML('<table border="0" width="100%">');
-  ShowHTML('<tr bgcolor="'.$conTrBgColor.'"><td>');
+  ShowHTML('<tr><td>');
   ShowHTML('    <table width="99%" border="0">');
-  ShowHTML('      <tr valign="top">');
-  ShowHTML('          <td>Nome:<br><font size=2><b>'.f($RS,'nome').' </b></td>');
-  ShowHTML('          <td>Nome resumido:<br><font size=2><b>'.f($RS,'nome_resumido').'</b></td>');
+  ShowHTML('      <tr><td><b>Nome:</b></td>');
+  ShowHTML('        <td><font size=2>'.f($RS,'nome').' </td></tr>');
+  ShowHTML('      <tr><td><b>Nome resumido:</td>');
+  ShowHTML('        <td><font size=2>'.f($RS,'nome_resumido').'</td></tr>');
   if (Nvl(f($RS,'email'),'')>'') {
-    ShowHTML('      <tr><td colspan=2>e-Mail:<br><b><A class="hl" HREF="mailto:'.f($RS,'email').'">'.f($RS,'email').'</a></b></td>');
+    ShowHTML('    <tr><td><b>e-Mail:</b></td>');
+    ShowHTML('      <td><A class="hl" HREF="mailto:'.f($RS,'email').'">'.f($RS,'email').'</a></td></tr>');
   } else {
-    ShowHTML('      <tr><td colspan=2>e-Mail:<br><b>---</b></td>');
+    ShowHTML('    <tr><td><b>e-Mail:</b></td>');
+    ShowHTML('      <td>---</td></tr>');
   } 
-  ShowHTML('      <tr><td align="center" colspan="2" height="2" bgcolor="#000000">');
-  ShowHTML('      <tr><td align="center" colspan="2" height="1" bgcolor="#000000">');
-  ShowHTML('      <tr><td colspan="2" align="center" bgcolor="#D0D0D0"><b>Lotação</td>');
-  ShowHTML('      <tr><td align="center" colspan="2" height="1" bgcolor="#000000">');
-  ShowHTML('      <tr><td align="center" colspan="2" height="2" bgcolor="#000000">');
-  ShowHTML('      <tr><td>Unidade:<br><b>'.f($RS,'unidade').' ('.f($RS,'sigla').')</b></td>');
+  ShowHTML('      <tr><td colspan="2"><br><font size="2"><b>LOTAÇÃO<hr NOSHADE color=#000000 SIZE=1></b></font></td></tr>');
+
+  ShowHTML('      <tr><td><b>Unidade:</b></td>');
+  ShowHTML('        <td>'.f($RS,'unidade').' ('.f($RS,'sigla').')</td></tr>');
   if (Nvl(f($RS,'email_unidade'),'')>'') {
-    ShowHTML('          <td>e-Mail da unidade:<br><b><A class="hl" HREF="mailto:'.f($RS,'email_unidade').'">'.f($RS,'email_unidade').'</a></b></td>');
+    ShowHTML('    <tr><td><b>e-Mail da unidade:</b></td>');
+    ShowHTML('      <td><A class="hl" HREF="mailto:'.f($RS,'email_unidade').'">'.f($RS,'email_unidade').'</a></b></td>');
   } else {
-    ShowHTML('          <td>e-Mail da unidade:<br><b>---</b></td>');
+    ShowHTML('    <tr><td><b>e-Mail da unidade:</b></td>');
+    ShowHTML('      <td>---</td></tr>');
   } 
-  ShowHTML('      <tr><td colspan="2">Localização:<br><b>'.f($RS,'localizacao').' </b></td>');
-  ShowHTML('      <tr valign="top">');
-  ShowHTML('          <td>Endereço:<br><b>'.f($RS,'endereco').'</b></td>');
-  ShowHTML('          <td>Cidade:<br><b>'.f($RS,'cidade').'</b></td>');
-  ShowHTML('      <tr><td colspan="2"><table border=0 width="100%" cellspacing=0><tr valign="top">');
-  ShowHTML('          <td>Telefone:<br><b>'.Nvl(f($RS,'telefone'),'---').' </b></td>');
-  ShowHTML('          <td>Ramal:<br><b>'.Nvl(f($RS,'ramal'),'---').'</b></td>');
-  ShowHTML('          <td>Telefone 2:<br><b>'.Nvl(f($RS,'telefone2'),'---').'</b></td>');
-  ShowHTML('          <td>Fax:<br><b>'.Nvl(f($RS,'fax'),'---').'</b></td>');
-  ShowHTML('          </table>');
+  ShowHTML('      <tr><td><b>Localização:</b></td>');
+  ShowHTML('        <td>'.f($RS,'localizacao').' </td></tr>');
+  ShowHTML('      <tr><td><b>Endereço:</b></td>');
+  ShowHTML('        <td>'.f($RS,'endereco').'</td></tr>');
+  ShowHTML('      <tr><td><b>Cidade:</b></td>');
+  ShowHTML('        <td>'.f($RS,'cidade').'</td></tr>');
+  ShowHTML('      <tr><td><b>Telefone:</b></td>');
+  ShowHTML('        <td>'.Nvl(f($RS,'telefone'),'---').' </td></tr>');
+  ShowHTML('      <tr><td><b>Ramal:</b></td>');
+  ShowHTML('        <td>'.Nvl(f($RS,'ramal'),'---').'</td></tr>');
+  ShowHTML('      <tr><td><b>Telefone 2:</b></td>');
+  ShowHTML('        <td>'.Nvl(f($RS,'telefone2'),'---').'</td></tr>');
+  ShowHTML('      <tr><td><b>Fax:</b></td>');
+  ShowHTML('        <td>'.Nvl(f($RS,'fax'),'---').'</td></tr>');
   ShowHTML('  </td>');
   ShowHTML('</tr>');
   ShowHTML('</table>');
@@ -588,7 +595,7 @@ function Grava() {
   extract($GLOBALS);
   Cabecalho();
   ShowHTML('</HEAD>');
-  ShowHTML('<BASE HREF="'.$conRootSIW.'">');
+  ShowHTML('<font size=0 color="'.$conBodyBgColor.'">.</font><BASE HREF="'.$conRootSIW.'">');
   BodyOpen('onLoad=this.focus();');
   AbreSessao();
   switch ($SG) {
@@ -642,7 +649,7 @@ function Main() {
     case 'GRAVA':              Grava();             break;
   default:
     Cabecalho();
-    ShowHTML('<BASE HREF="'.$conRootSIW.'">');
+    ShowHTML('<font size=0 color="'.$conBodyBgColor.'">.</font><BASE HREF="'.$conRootSIW.'">');
     BodyOpen('onLoad=this.focus();');
     ShowHTML('<B><FONT COLOR="#000000">'.$w_TP.'</FONT></B>');
     ShowHTML('<HR>');

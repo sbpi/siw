@@ -1,7 +1,7 @@
 <?
 extract($GLOBALS); include_once($w_dir_volta.'classes/db/DatabaseQueriesFactory.php');
 /**
-* class dml_putProjetoGeral
+* class dml_putProgramaGeral
 *
 * { Description :- 
 *    Mantém a tabela principal de Programas

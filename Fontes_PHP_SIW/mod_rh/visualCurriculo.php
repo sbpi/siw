@@ -13,48 +13,63 @@ function visualCurriculo($p_cliente,$p_usuario,$O,$p_formato=0) {
       $html = '<div align=center><center><br><br><br><br><br><br><br><br><br><br><img src="images/icone/underc.gif" align="center"> <b>Curriculum não informado.</b><br><br><br><br><br><br><br><br><br><br></center></div>';
     } else {
       $w_nome   = f($RS,'nome');
-      $html = '<div align=center><center>';
-      $html.= chr(13).'<table border="0" cellpadding="0" cellspacing="0" width="100%">';
-      $html.= chr(13).'<tr bgcolor="'.$conTrBgColor.'"><td align="center">';
-      $html.= chr(13).'    <table width="99%" border="0">';
-      $html.= chr(13).'      <tr><td align="center" colspan="3"><font size=5><b>'.f($RS,'nome').'</b></font></td></tr>';
-      $html.= chr(13).'      <tr><td valign="top" colspan="3" align="center" bgcolor="#D0D0D0" style="border: 2px solid rgb(0,0,0);"><b>Identificação</td>';
-      $html.= chr(13).'      <tr valign="top">';
-      $html.= chr(13).'          <td>Nome:<br><b>'.f($RS,'nome').' </b></td>';
-      $html.= chr(13).'          <td>Nome resumido:<br><b>'.f($RS,'nome_resumido').' </b></td>';
-      $html.= chr(13).'          <td>Data nascimento:<br><b>'.FormataDataEdicao(f($RS,'nascimento')).' </b></td>';
-      $html.= chr(13).'      <tr valign="top">';
-      $html.= chr(13).'          <td>Sexo:<br><b>'.f($RS,'nm_sexo').' </b></td>';
-      $html.= chr(13).'          <td>Estado civil:<br><b>'.f($RS,'nm_estado_civil').' </b></td>';
+      $html ='<div align=center><center>';
+      $html.=chr(13).'<table border="0" cellpadding="0" cellspacing="0" width="100%">';
+      $html.=chr(13).'<tr><td align="center">';
+      $html.=chr(13).'    <table width="99%" border="0">';
+      $html.=chr(13).'      <tr><td align="center" colspan="3"><font size=4><b>'.f($RS,'nome').'</b></font></td></tr>';
+      $html.=chr(13).'      <table width="99%" border="0">';
+      $html.=chr(13).'      <tr><td colspan="3"><br><font size="2"><b>IDENTIFICACÃO<hr NOSHADE color=#000000 SIZE=1></b></font></td></tr>'; 
+      $html.=chr(13).'      <tr><td><b>Nome:</b></td>';
+      $html.=chr(13).'        <td>'.f($RS,'nome').' </td>';
       if (nvl(f($RS,'sq_siw_arquivo'),'nulo')!='nulo') {
         if ($p_formato==0) {
-          $html.=chr(13).'          <td rowspan=3>'.LinkArquivo('HL',$w_cliente,f($RS,'sq_siw_arquivo'),'_blank',null,'<img title="clique para ver em tamanho original." border=1 width=100 length=80 src="'.LinkArquivo(null,$w_cliente,f($RS,'sq_siw_arquivo'),null,null,null,'EMBED').'">',null).'</td>';
+          $html.=chr(13).'          <td rowspan=8>'.LinkArquivo('HL',$w_cliente,f($RS,'sq_siw_arquivo'),'_blank',null,'<img title="clique para ver em tamanho original." border=1 width=100 length=80 src="'.LinkArquivo(null,$w_cliente,f($RS,'sq_siw_arquivo'),null,null,null,'EMBED').'">',null).'</td>';
         } else {
-          $html.=chr(13).'          <td rowspan=3><img border=1 width=100 length=80 src="'.$conFileVirtual.$p_cliente.'/'.f($RS,'sq_siw_arquivo').'"></td>';
+          $html.=chr(13).'          <td rowspan=8><img border=1 width=100 length=80 src="'.$conFileVirtual.$p_cliente.'/'.f($RS,'sq_siw_arquivo').'"></td>';
         } 
       }
+      $html.=chr(13).'      <tr><td><b>Nome resumido:</b></td>';
+      $html.=chr(13).'        <td>'.f($RS,'nome_resumido').' </td></tr>';
+      $html.=chr(13).'      <tr><td><b>Data nascimento:</b></td>';
+      $html.=chr(13).'        <td>'.FormataDataEdicao(f($RS,'nascimento')).' </td></tr>';
+      $html.=chr(13).'      <tr><td><b>Sexo:</b></td>';
+      $html.=chr(13).'        <td>'.f($RS,'nm_sexo').' </td></tr>';
+      $html.=chr(13).'      <tr><td><b>Estado civil:</b></td>';
+      $html.=chr(13).'        <td>'.f($RS,'nm_estado_civil').'</td></tr>';
+      $html.=chr(13).'      <tr><td><b>Formação acadêmica:</b></td>';
+      $html.=chr(13).'        <td>'.f($RS,'nm_formacao').' </td></tr>';
+      $html.=chr(13).'      <tr><td><b>Etnia:</b></td>';
+      $html.=chr(13).'        <td>'.f($RS,'nm_etnia').' </td></tr>';
+      $html.=chr(13).'      <tr><td><b>Deficiência:</b></td>';
+      $html.=chr(13).'        <td>'.Nvl(f($RS,'nm_deficiencia'),'---').' </td></tr>';    
+      $html.=chr(13).'      <tr><td colspan="3"><br><font size="2"><b>LOCAL DE NASCIMENTO<hr NOSHADE color=#000000 SIZE=1></b></font></td></tr>';
       $html.=chr(13).'      <tr valign="top">';
-      $html.=chr(13).'          <td>Formação acadêmica:<br><b>'.f($RS,'nm_formacao').' </b></td>';
-      $html.=chr(13).'          <td>Etnia:<br><b>'.f($RS,'nm_etnia').' </b></td>';
-      $html.=chr(13).'      <tr><td colspan=2>Deficiência:<br><b>'.Nvl(f($RS,'nm_deficiencia'),'---').' </b></td>';
-      $html.=chr(13).'      <tr><td valign="top" colspan="3" align="center" bgcolor="#D0D0D0" style="border: 2px solid rgb(0,0,0);"><b>Local de nascimento</td>';
+      $html.=chr(13).'          <td><b>País:</b></td>';
+      $html.=chr(13).'        <td>'.f($RS,'nm_pais_nascimento').' </td></tr>';
+      $html.=chr(13).'          <td><b>Estado:</b></td>';
+      $html.=chr(13).'        <td>'.f($RS,'nm_uf_nascimento').' </td></tr>';
+      $html.=chr(13).'          <td><b>Cidade:</b></td>';
+      $html.=chr(13).'        <td>'.f($RS,'nm_cidade_nascimento').' </td></tr>';
+      $html.=chr(13).'      <tr><td colspan="3"><br><font size="2"><b>DOCUMENTAÇÃO<hr NOSHADE color=#000000 SIZE=1></b></font></td></tr>';
       $html.=chr(13).'      <tr valign="top">';
-      $html.=chr(13).'          <td>País:<br><b>'.f($RS,'nm_pais_nascimento').' </b></td>';
-      $html.=chr(13).'          <td>Estado:<br><b>'.f($RS,'nm_uf_nascimento').' </b></td>';
-      $html.=chr(13).'          <td>Cidade:<br><b>'.f($RS,'nm_cidade_nascimento').' </b></td>';
-      $html.=chr(13).'      <tr><td valign="top" colspan="3" align="center" bgcolor="#D0D0D0" style="border: 2px solid rgb(0,0,0);"><b>Documentação</td>';
+      $html.=chr(13).'          <td><b>Identidade:</b></td>';
+          $html.=chr(13).'      <td>'.f($RS,'rg_numero').' </td></tr>';
+      $html.=chr(13).'          <td><b>Emissor:</b></td>';
+          $html.=chr(13).'      <td>'.f($RS,'rg_emissor').' </td></tr>';
+      $html.=chr(13).'          <td><b>Data de emissão:</b></td>';
+          $html.=chr(13).'      <td>'.FormataDataEdicao(f($RS,'rg_emissao')).' </td></tr>';
       $html.=chr(13).'      <tr valign="top">';
-      $html.=chr(13).'          <td>Identidade:<br><b>'.f($RS,'rg_numero').' </b></td>';
-      $html.=chr(13).'          <td>Emissor:<br><b>'.f($RS,'rg_emissor').' </b></td>';
-      $html.=chr(13).'          <td>Data de emissão:<br><b>'.FormataDataEdicao(f($RS,'rg_emissao')).' </b></td>';
-      $html.=chr(13).'      <tr valign="top">';
-      $html.=chr(13).'          <td>CPF:<br><b>'.f($RS,'cpf').'</b></td>';
-      $html.=chr(13).'          <td>Passaporte:<br><b>'.Nvl(f($RS,'passaporte_numero'),'---').' </b></td>';
-      $html.=chr(13).'          <td valign="top">País emissor:<br><b>'.Nvl(f($RS,'nm_pais_passaporte'),'---').' </b></td>';
-      $html.=chr(13).'          </table>';
+      $html.=chr(13).'          <td><b>CPF:</b></td>';
+          $html.=chr(13).'      <td>'.f($RS,'cpf').'</td></tr>';
+      $html.=chr(13).'          <td><b>Passaporte:</b></td>';
+          $html.=chr(13).'      <td>'.Nvl(f($RS,'passaporte_numero'),'---').' </td></tr>';
+      $html.=chr(13).'          <td valign="top"><b>País emissor:</b></td>';
+          $html.=chr(13).'      <td>'.Nvl(f($RS,'nm_pais_passaporte'),'---').' </td></tr>';
+     //$html.=chr(13).'          </table>';
       // Histórico Pessoal
-      $html.=chr(13).'      <tr><td valign="top" colspan="2" align="center" bgcolor="#D0D0D0" style="border: 2px solid rgb(0,0,0);"><b>Histórico Pessoal</td>';
-      $html.=chr(13).'      <tr><td valign="top" colspan="2"><TABLE WIDTH="100%" bgcolor="'.$conTableBgColor.'" BORDER="'.$conTableBorder.'" CELLSPACING="'.$conTableCellSpacing.'" CELLPADDING="'.$conTableCellPadding.'" BorderColorDark="'.$conTableBorderColorDark.'" BorderColorLight="'.$conTableBorderColorLight.'">';
+      $html.=chr(13).'      <tr><td colspan="3"><br><font size="2"><b>HISTÓRICO PESSOAL<hr NOSHADE color=#000000 SIZE=1></b></font></td></tr>';
+      $html.=chr(13).'      <tr><td valign="top" colspan="3"><TABLE WIDTH="100%">';
       $html.=chr(13).'      <tr><td valign="top" width="80%">Você já fixou residência permanente legal em país estrangeiro?</td><td valign="top"><b>'.f($RS,'nm_residencia').' </b></td>';
       $html.=chr(13).'      <tr><td valign="top">Você já tomou alguma medida para mudar de nacionalidade?</td><td valign="top"><b>'.f($RS,'nm_mudanca');
       if (f($RS,'mudanca_nacionalidade')=='S') {
@@ -79,25 +94,23 @@ function visualCurriculo($p_cliente,$p_usuario,$O,$p_formato=0) {
       $RS = db_getFoneList::getInstanceOf($dbms,$p_usuario,null,null,null);
       $RS = SortArray($RS,'tipo_telefone','asc','numero','asc');
       $html.=chr(13).'      <tr><td valign="top" colspan="3">&nbsp;</td>';
-      $html.=chr(13).'      <tr><td valign="top" colspan="3" align="center" bgcolor="#D0D0D0" style="border: 2px solid rgb(0,0,0);"><b>Telefones</td>';
+      $html.=chr(13).'      <tr><td colspan="3"><br><font size="2"><b>TELEFONES<hr NOSHADE color=#000000 SIZE=1></b></font></td></tr>';
       $html.=chr(13).'<tr><td align="center" colspan=3>';
-      $html.=chr(13).'    <TABLE WIDTH="100%" bgcolor="'.$conTableBgColor.'" BORDER="'.$conTableBorder.'" CELLSPACING="'.$conTableCellSpacing.'" CELLPADDING="'.$conTableCellPadding.'" BorderColorDark="'.$conTableBorderColorDark.'" BorderColorLight="'.$conTableBorderColorLight.'">';
-      $html.=chr(13).'        <tr bgcolor="'.$conTrBgColor.'" align="center">';
-      $html.=chr(13).'          <td><b>Tipo</td>';
-      $html.=chr(13).'          <td><b>DDD</td>';
-      $html.=chr(13).'          <td><b>Número</td>';
-      $html.=chr(13).'          <td><b>Padrão</td>';
+      $html.=chr(13).'    <table width=100%  border="1" bordercolor="#00000">';
+      $html.=chr(13).'        <tr align="center">';
+      $html.=chr(13).'          <td bgColor="#f0f0f0"><div><b>Tipo</b></div></td>';
+      $html.=chr(13).'          <td bgColor="#f0f0f0"><div><b>DDD</b></div></td>';
+      $html.=chr(13).'          <td bgColor="#f0f0f0"><div><b>Número</b></div></td>';
+      $html.=chr(13).'          <td bgColor="#f0f0f0"><div><b>Padrão</b></div></td>';
       $html.=chr(13).'        </tr>';
       if (count($RS)<=0) {
         // Se não foram selecionados registros, exibe mensagem
-        $html.=chr(13).'      <tr bgcolor="'.$conTrBgColor.'"><td colspan=6 align="center"><b>Não foram encontrados registros.</b></td></tr>';
+        $html.=chr(13).'      <tr><td colspan=6 align="center"><b>Não foram encontrados registros.</b></td></tr>';
       } else {
         // Lista os registros selecionados para listagem
         $w_cor=$conTrBgColor;
         foreach ($RS as $row) {
-          $w_cor = ($w_cor==$conTrBgColor || $w_cor=='') ? $w_cor=$conTrAlternateBgColor : $w_cor=$conTrBgColor; 
-          ShowHTML('      <tr bgcolor="'.$w_cor.'" valign="top">');
-          $html.=chr(13).'      <tr bgcolor="'.$w_cor.'" valign="top">';
+          $html.=chr(13).'      <tr valign="top">';
           $html.=chr(13).'        <td>'.f($row,'tipo_telefone').'</td>';
           $html.=chr(13).'        <td align="center">'.f($row,'ddd').'</td>';
           $html.=chr(13).'        <td>'.f($row,'numero').'</td>';
@@ -113,19 +126,19 @@ function visualCurriculo($p_cliente,$p_usuario,$O,$p_formato=0) {
       $RS = db_getAddressList::getInstanceOf($dbms,$p_usuario,null,'EMAILINTERNET',null);
       $RS = SortArray($RS,'tipo_endereco','asc', 'endereco','asc');
       $html.=chr(13).'      <tr><td valign="top" colspan="3">&nbsp;</td>';
-      $html.=chr(13).'      <tr><td valign="top" colspan="2" align="center" bgcolor="#D0D0D0" style="border: 2px solid rgb(0,0,0);"><b>Endereços de e-Mail e Internet</td>';
-      $html.=chr(13).'      <tr><td align="center" colspan="2">';
-      $html.=chr(13).'        <TABLE WIDTH="100%" bgcolor="'.$conTableBgColor.'" BORDER="'.$conTableBorder.'" CELLSPACING="'.$conTableCellSpacing.'" CELLPADDING="'.$conTableCellPadding.'" BorderColorDark="'.$conTableBorderColorDark.'" BorderColorLight="'.$conTableBorderColorLight.'">';
-      $html.=chr(13).'          <tr bgcolor="'.$conTrBgColor.'" align="center">';
-      $html.=chr(13).'            <td><b>Endereço</td>';
-      $html.=chr(13).'            <td><b>Padrão</td>';
+      $html.=chr(13).'      <tr><td colspan="3"><br><font size="2"><b>ENDEREÇO DE E-MAIL E INTERNET<hr NOSHADE color=#000000 SIZE=1></b></font></td></tr>'; 
+      $html.=chr(13).'      <tr><td align="center" colspan="3">';
+      $html.=chr(13).'    <table width=100%  border="1" bordercolor="#00000">';
+      $html.=chr(13).'          <tr align="center">';
+      $html.=chr(13).'            <td bgColor="#f0f0f0"><div><b>Endereço</b></div></td>';
+      $html.=chr(13).'            <td bgColor="#f0f0f0"><div><b>Padrão</b></div></td>';
       $html.=chr(13).'          </tr>';
       if (count($RS)<=0) {
-        $html.=chr(13).'      <tr bgcolor="'.$conTrBgColor.'"><td colspan=2 align="center"><b>Não foi informado nenhum endereço de e-Mail ou Internet.</b></td></tr>';
+        $html.=chr(13).'      <tr><td colspan=2 align="center"><b>Não foi informado nenhum endereço de e-Mail ou Internet.</b></td></tr>';
       } else {
         $w_cor = ($w_cor==$conTrBgColor || $w_cor=='') ? $w_cor=$conTrAlternateBgColor : $w_cor=$conTrBgColor;  
         foreach ($RS as $row) {
-          $html.=chr(13).'      <tr bgcolor="'.$w_cor.'" valign="top">';
+          $html.=chr(13).'      <tr valign="top">';
             if (f($row,'email')=='S') {
               $html.=chr(13).'        <td><a href="mailto:'.f($row,'logradouro').'">'.f($row,'logradouro').'</a></td>';
             } else {
@@ -140,49 +153,53 @@ function visualCurriculo($p_cliente,$p_usuario,$O,$p_formato=0) {
       $html.=chr(13).'      <tr><td valign="top" colspan="3">&nbsp;</td>';
       $RS = db_getAddressList::getInstanceOf($dbms,$p_usuario,null,'FISICO',null);
       $RS = SortArray($RS,'endereco','asc');
-      $html.=chr(13).'      <tr><td valign="top" colspan="2" align="center" bgcolor="#D0D0D0" style="border: 2px solid rgb(0,0,0);"><b>Endereços Físicos</td>';
+      $html.=chr(13).'      <tr><td colspan="3"><br><font size="2"><b>ENDEREÇO FÍSICOS<hr NOSHADE color=#000000 SIZE=1></b></font></td></tr>'; 
       if (count($RS)<=0) {
-          $html.=chr(13).'      <tr bgcolor="'.$conTrBgColor.'"><td valign="top" colspan="2" align="center"><b>Não foi encontrado nenhum endereço.</b></td></tr>';
+          $html.=chr(13).'  <tr bgcolor="'.$conTrBgColor.'"><td valign="top" colspan="2" align="center"><b>Não foi encontrado nenhum endereço.</b></td></tr>';
       } else {
-        $html.=chr(13).'      <tr><td align="center" colspan="2"><TABLE WIDTH="100%" BORDER="0" CELLSPACING="0" CELLPADDING="0">';
+        $html.=chr(13).'    <tr><td align="center" colspan="3"><TABLE WIDTH="100%" BORDER="0" CELLSPACING="0" CELLPADDING="0">';
         foreach($RS as $row) {
-          $html.=chr(13).'          <tr><td colspan=4><b>'.f($row,'tipo_endereco').'</td>';
-          $html.=chr(13).'          <tr><td width="5%"><td colspan=3>Logradouro:<br><b>'.f($row,'logradouro').'</td></tr>';
-          $html.=chr(13).'          <tr valign="top"><td>';
-          $html.=chr(13).'              <td valign="top">Complemento:<br><b>'.Nvl(f($row,'complemento'),'---').' </b></td>';
-          $html.=chr(13).'              <td valign="top">Bairro:<br><b>'.f($row,'bairro').' </b></td>';
-          $html.=chr(13).'              <td valign="top">CEP:<br><b>'.f($row,'cep').' </b></td>';
-          $html.=chr(13).'          <tr valign="top"><td>';
-          $html.=chr(13).'              <td valign="top" colspan=2>Cidade:<br><b>'.f($row,'cidade').' </b></td>';
-          $html.=chr(13).'              <td valign="top">País:<br><b>'.f($row,'nm_pais').' </b></td>';
-          $html.=chr(13).'          <tr><td><td colspan=3>Padrão?<br><b>'.retornaSimNao(f($row,'padrao')).'</td></tr>';
-          $html.=chr(13).'          <tr><td colspan="4"><hr>';
+          $html.=chr(13).'  <tr><td colspan=5><b>'.f($row,'tipo_endereco').'</td>';
+          $html.=chr(13).'    <tr><td width="5%">&nbsp<td colspan=3 width="25%"><b>Logradouro:</b></td>';
+          $html.=chr(13).'      <td>'.f($row,'logradouro').'</td></tr>';
+          $html.=chr(13).'    <tr><td><td colspan=3><b>Complemento:</b></td>';
+          $html.=chr(13).'      <td>'.Nvl(f($row,'complemento'),'---').' </td></tr>';
+          $html.=chr(13).'    <tr><td><td colspan=3><b>Bairro:</b></td>';
+          $html.=chr(13).'      <td>'.f($row,'bairro').' </td></tr>';
+          $html.=chr(13).'    <tr><td><td colspan=3><b>CEP:</b></td>';
+          $html.=chr(13).'      <td>'.f($row,'cep').' </td></tr>';
+          $html.=chr(13).'    <tr><td><td colspan=3><b>Cidade:</b></td>';
+          $html.=chr(13).'      <td>'.f($row,'cidade').' </td></tr>';
+          $html.=chr(13).'    <tr><td><td colspan=3><b>País:</b></td>';
+          $html.=chr(13).'      <td>'.f($row,'nm_pais').' </td></tr>';
+          $html.=chr(13).'    <tr><td><td colspan=3><b>Padrão?</b></td>';
+          $html.=chr(13).'      <td>'.retornaSimNao(f($row,'padrao')).'</td></tr>';
+          $html.=chr(13).'          <tr><td colspan="5"><hr>';
         } 
         $html.=chr(13).'          </table></td></tr>';
       } 
       // Escolaridade
       $RS = db_getCVAcadForm::getInstanceOf($dbms,$p_usuario,null,'ACADEMICA');
       $RS = SortArray($RS,'ordem','desc', 'inicio','desc');
-      $html.=chr(13).'      <tr><td valign="top" colspan="3" align="center" bgcolor="#D0D0D0" style="border: 2px solid rgb(0,0,0);"><b>Escolaridade</td>';
+      $html.=chr(13).'      <tr><td colspan="3"><br><font size="2"><b>ESCOLARIDADE<hr NOSHADE color=#000000 SIZE=1></b></font></td></tr>'; 
       $html.=chr(13).'<tr><td align="center" colspan=3>';
-      $html.=chr(13).'    <TABLE WIDTH="100%" bgcolor="'.$conTableBgColor.'" BORDER="'.$conTableBorder.'" CELLSPACING="'.$conTableCellSpacing.'" CELLPADDING="'.$conTableCellPadding.'" BorderColorDark="'.$conTableBorderColorDark.'" BorderColorLight="'.$conTableBorderColorLight.'">';
-      $html.=chr(13).'        <tr bgcolor="'.$conTrBgColor.'" align="center">';
-      $html.=chr(13).'          <td><b>Nível</td>';
-      $html.=chr(13).'          <td><b>Área</td>';
-      $html.=chr(13).'          <td><b>Instituição</td>';
-      $html.=chr(13).'          <td><b>Curso</td>';
-      $html.=chr(13).'          <td><b>Início</td>';
-      $html.=chr(13).'          <td><b>Término</td>';
+      $html.=chr(13).'    <table width=100%  border="1" bordercolor="#00000">';
+      $html.=chr(13).'        <tr align="center">';
+      $html.=chr(13).'          <td bgColor="#f0f0f0"><div><b>Nível</b></div></td>';
+      $html.=chr(13).'          <td bgColor="#f0f0f0"><div><b>Área</b></div></td>';
+      $html.=chr(13).'          <td bgColor="#f0f0f0"><div><b>Instituição</b></div></td>';
+      $html.=chr(13).'          <td bgColor="#f0f0f0"><div><b>Curso</b></div></td>';
+      $html.=chr(13).'          <td bgColor="#f0f0f0"><div><b>Início</b></div></td>';
+      $html.=chr(13).'          <td bgColor="#f0f0f0"><div><b>Término</b></div></td>';
       $html.=chr(13).'        </tr>';
       if (count($RS)<=0) {
         // Se não foram selecionados registros, exibe mensagem
-        $html.=chr(13).'      <tr bgcolor="'.$conTrBgColor.'"><td colspan=6 align="center"><b>Não foram encontrados registros.</b></td></tr>';
+        $html.=chr(13).'      <tr><td colspan=6 align="center"><b>Não foram encontrados registros.</b></td></tr>';
       } else {
         // Lista os registros selecionados para listagem
         $w_cor = $conTrBgColor;
         foreach($RS as $row) {
-            $w_cor = ($w_cor==$conTrBgColor || $w_cor=='') ? $w_cor=$conTrAlternateBgColor : $w_cor=$conTrBgColor;  
-          $html.=chr(13).'      <tr bgcolor="'.$w_cor.'" valign="top">';
+          $html.=chr(13).'      <tr valign="top">';
           $html.=chr(13).'        <td>'.f($row,'nm_formacao').'</td>';
           $html.=chr(13).'        <td>'.Nvl(f($row,'nm_area'),'---').'</td>';
           $html.=chr(13).'        <td>'.Nvl(f($row,'instituicao'),'---').'</td>';
@@ -200,26 +217,25 @@ function visualCurriculo($p_cliente,$p_usuario,$O,$p_formato=0) {
       $RS = db_getCVAcadForm::getInstanceOf($dbms,$p_usuario,null,'CURSO');
       $RS = SortArray($RS,'ordem','desc','carga_horaria','desc');
       $html.=chr(13).'      <tr><td valign="top" colspan="3">&nbsp;</td>';
-      $html.=chr(13).'      <tr><td valign="top" colspan="3" align="center" bgcolor="#D0D0D0" style="border: 2px solid rgb(0,0,0);"><b>Extensão acadêmica</td>';
+      $html.=chr(13).'      <tr><td colspan="3"><br><font size="2"><b>EXTENSÃO ACADÊMICA<hr NOSHADE color=#000000 SIZE=1></b></font></td></tr>'; 
       $html.=chr(13).'<tr><td align="center" colspan=3>';
-      $html.=chr(13).'    <TABLE WIDTH="100%" bgcolor="'.$conTableBgColor.'" BORDER="'.$conTableBorder.'" CELLSPACING="'.$conTableCellSpacing.'" CELLPADDING="'.$conTableCellPadding.'" BorderColorDark="'.$conTableBorderColorDark.'" BorderColorLight="'.$conTableBorderColorLight.'">';
-      $html.=chr(13).'        <tr bgcolor="'.$conTrBgColor.'" align="center">';
-      $html.=chr(13).'          <td><b>Nível</td>';
-      $html.=chr(13).'          <td><b>Área</td>';
-      $html.=chr(13).'          <td><b>Instituição</td>';
-      $html.=chr(13).'          <td><b>Curso</td>';
-      $html.=chr(13).'          <td><b>C.H.</td>';
-      $html.=chr(13).'          <td><b>Conclusão</td>';
+      $html.=chr(13).'    <table width=100%  border="1" bordercolor="#00000">';
+      $html.=chr(13).'        <tr align="center">';
+      $html.=chr(13).'          <td bgColor="#f0f0f0"><div><b>Nível</b></div></td>';
+      $html.=chr(13).'          <td bgColor="#f0f0f0"><div><b>Área</b></div></td>';
+      $html.=chr(13).'          <td bgColor="#f0f0f0"><div><b>Instituição</b></div></td>';
+      $html.=chr(13).'          <td bgColor="#f0f0f0"><div><b>Curso</b></div></td>';
+      $html.=chr(13).'          <td bgColor="#f0f0f0"><div><b>C.H.</b></div></td>';
+      $html.=chr(13).'          <td bgColor="#f0f0f0"><div><b>Conclusão</b></div></td>';
       $html.=chr(13).'        </tr>';
       if (count($RS)<=0) {
         // Se não foram selecionados registros, exibe mensagem
-        $html.=chr(13).'      <tr bgcolor="'.$conTrBgColor.'"><td colspan=6 align="center"><b>Não foram encontrados registros.</b></td></tr>';
+        $html.=chr(13).'      <tr><td colspan=6 align="center"><b>Não foram encontrados registros.</b></td></tr>';
       } else {
         // Lista os registros selecionados para listagem
         $w_cor=$conTrBgColor;
         foreach ($RS as $row){
-          $w_cor = ($w_cor==$conTrBgColor || $w_cor=='') ? $w_cor=$conTrAlternateBgColor : $w_cor=$conTrBgColor; 
-          $html.=chr(13).'      <tr bgcolor="'.$w_cor.'" valign="top">';
+          $html.=chr(13).'      <tr valign="top">';
           $html.=chr(13).'        <td>'.f($row,'nm_formacao').'</td>';
           $html.=chr(13).'        <td>'.f($row,'nm_area').'</td>';
           $html.=chr(13).'        <td>'.f($row,'instituicao').'</td>';
@@ -237,25 +253,24 @@ function visualCurriculo($p_cliente,$p_usuario,$O,$p_formato=0) {
       $RS = db_getCVAcadForm::getInstanceOf($dbms,$p_usuario,null,'PRODUCAO');
       $RS = SortArray($RS,'ordem','desc','data','desc');
       $html.=chr(13).'      <tr><td valign="top" colspan="3">&nbsp;</td>';
-      $html.=chr(13).'      <tr><td valign="top" colspan="3" align="center" bgcolor="#D0D0D0" style="border: 2px solid rgb(0,0,0);"><b>Produção técnica</td>';
+      $html.=chr(13).'      <tr><td colspan="3"><br><font size="2"><b>PRODUÇÃO TÉCNICA<hr NOSHADE color=#000000 SIZE=1></b></font></td></tr>'; 
       $html.=chr(13).'<tr><td align="center" colspan=3>';
-      $html.=chr(13).'    <TABLE WIDTH="100%" bgcolor="'.$conTableBgColor.'" BORDER="'.$conTableBorder.'" CELLSPACING="'.$conTableCellSpacing.'" CELLPADDING="'.$conTableCellPadding.'" BorderColorDark="'.$conTableBorderColorDark.'" BorderColorLight="'.$conTableBorderColorLight.'">';
-      $html.=chr(13).'        <tr bgcolor="'.$conTrBgColor.'" align="center">';
-      $html.=chr(13).'          <td><b>Tipo</td>';
-      $html.=chr(13).'          <td><b>Área</td>';
-      $html.=chr(13).'          <td><b>Nome</td>';
-      $html.=chr(13).'          <td><b>Meio</td>';
-      $html.=chr(13).'          <td><b>Data</td>';
+      $html.=chr(13).'    <table width=100%  border="1" bordercolor="#00000">';
+      $html.=chr(13).'        <tr align="center">';
+      $html.=chr(13).'          <td bgColor="#f0f0f0"><div><b>Tipo</b></div></td>';
+      $html.=chr(13).'          <td bgColor="#f0f0f0"><div><b>Área</b></div></td>';
+      $html.=chr(13).'          <td bgColor="#f0f0f0"><div><b>Nome</b></div></td>';
+      $html.=chr(13).'          <td bgColor="#f0f0f0"><div><b>Meio</b></div></td>';
+      $html.=chr(13).'          <td bgColor="#f0f0f0"><div><b>Data</b></div></td>';
       $html.=chr(13).'        </tr>';
       if (count($RS)<=0) {
         // Se não foram selecionados registros, exibe mensagem
-        $html.=chr(13).'      <tr bgcolor="'.$conTrBgColor.'"><td colspan=6 align="center"><b>Não foram encontrados registros.</b></td></tr>';
+        $html.=chr(13).'      <tr><td colspan=6 align="center"><b>Não foram encontrados registros.</b></td></tr>';
       } else {
         // Lista os registros selecionados para listagem
         $w_cor=$conTrBgColor;
         foreach($RS as $row) {
-          $w_cor = ($w_cor==$conTrBgColor || $w_cor=='') ? $w_cor=$conTrAlternateBgColor : $w_cor=$conTrBgColor; 
-          $html.=chr(13).'      <tr bgcolor="'.$w_cor.'" valign="top">';
+          $html.=chr(13).'      <tr valign="top">';
           $html.=chr(13).'        <td>'.f($row,'nm_formacao').'</td>';
           $html.=chr(13).'        <td>'.f($row,'nm_area').'</td>';
           $html.=chr(13).'        <td>'.f($row,'nome').'</td>';
@@ -272,25 +287,24 @@ function visualCurriculo($p_cliente,$p_usuario,$O,$p_formato=0) {
       $RS = db_getCVIdioma::getInstanceOf($dbms,$p_usuario,null);
       $RS = SortArray($RS,'nome','acs');
       $html.=chr(13).'      <tr><td valign="top" colspan="3">&nbsp;</td>';
-      $html.=chr(13).'      <tr><td valign="top" colspan="3" align="center" bgcolor="#D0D0D0" style="border: 2px solid rgb(0,0,0);"><b>Idiomas</td>';
+      $html.=chr(13).'      <tr><td colspan="3"><br><font size="2"><b>IDIOMAS<hr NOSHADE color=#000000 SIZE=1></b></font></td></tr>'; 
       $html.=chr(13).'<tr><td align="center" colspan=3>';
-      $html.=chr(13).'    <TABLE WIDTH="100%" bgcolor="'.$conTableBgColor.'" BORDER="'.$conTableBorder.'" CELLSPACING="'.$conTableCellSpacing.'" CELLPADDING="'.$conTableCellPadding.'" BorderColorDark="'.$conTableBorderColorDark.'" BorderColorLight="'.$conTableBorderColorLight.'">';
-      $html.=chr(13).'        <tr bgcolor="'.$conTrBgColor.'" align="center">';
-      $html.=chr(13).'          <td><b>Idioma</td>';
-      $html.=chr(13).'          <td><b>Leitura</td>';
-      $html.=chr(13).'          <td><b>Escrita</td>';
-      $html.=chr(13).'          <td><b>Conversação</td>';
-      $html.=chr(13).'          <td><b>Compreensão</td>';
+      $html.=chr(13).'    <table width=100%  border="1" bordercolor="#00000">';
+      $html.=chr(13).'        <tr align="center">';
+      $html.=chr(13).'          <td bgColor="#f0f0f0"><div><b>Idioma</b></div></td>';
+      $html.=chr(13).'          <td bgColor="#f0f0f0"><div><b>Leitura</b></div></td>';
+      $html.=chr(13).'          <td bgColor="#f0f0f0"><div><b>Escrita</b></div></td>';
+      $html.=chr(13).'          <td bgColor="#f0f0f0"><div><b>Conversação</b></div></td>';
+      $html.=chr(13).'          <td bgColor="#f0f0f0"><div><b>Compreensão</b></div></td>';
       $html.=chr(13).'        </tr>';
       if (count($RS)<=0) {
         // Se não foram selecionados registros, exibe mensagem
-        $html.=chr(13).'      <tr bgcolor="'.$conTrBgColor.'"><td colspan=6 align="center"><b>Não foram encontrados registros.</b></td></tr>';
+        $html.=chr(13).'      <tr><td colspan=6 align="center"><b>Não foram encontrados registros.</b></td></tr>';
       } else {
         // Lista os registros selecionados para listagem
         $w_cor = $conTrBgColor;
         foreach($RS as $row) {
-          $w_cor = ($w_cor==$conTrBgColor || $w_cor=='') ? $w_cor=$conTrAlternateBgColor : $w_cor=$conTrBgColor;  
-          $html.=chr(13).'      <tr bgcolor="'.$w_cor.'" valign="top">';
+          $html.=chr(13).'      <tr valign="top">';
           $html.=chr(13).'        <td>'.f($row,'nome').'</td>';
           $html.=chr(13).'        <td align="center">'.f($row,'nm_leitura').'</td>';
           $html.=chr(13).'        <td align="center">'.f($row,'nm_escrita').'</td>';
@@ -307,27 +321,26 @@ function visualCurriculo($p_cliente,$p_usuario,$O,$p_formato=0) {
       $RS = db_getContaBancoList::getInstanceOf($dbms,$p_usuario,null,null);
       $RS = SortArray($RS,'tipo_conta','asc','banco','asc','numero','asc');
       $html.=chr(13).'      <tr><td valign="top" colspan="3">&nbsp;</td>';
-      $html.=chr(13).'      <tr><td valign="top" colspan="3" align="center" bgcolor="#D0D0D0" style="border: 2px solid rgb(0,0,0);"><b>Contas bancárias</td>';
+      $html.=chr(13).'      <tr><td colspan="3"><br><font size="2"><b>CONTAS BANCÁRIAS<hr NOSHADE color=#000000 SIZE=1></b></font></td></tr>'; 
       $html.=chr(13).'<tr><td align="center" colspan=3>';
-      $html.=chr(13).'    <TABLE WIDTH="100%" bgcolor="'.$conTableBgColor.'" BORDER="'.$conTableBorder.'" CELLSPACING="'.$conTableCellSpacing.'" CELLPADDING="'.$conTableCellPadding.'" BorderColorDark="'.$conTableBorderColorDark.'" BorderColorLight="'.$conTableBorderColorLight.'">';
-      $html.=chr(13).'        <tr bgcolor="'.$conTrBgColor.'" align="center">';
-      $html.=chr(13).'          <td><b>Tipo</td>';
-      $html.=chr(13).'          <td><b>Banco</td>';
-      $html.=chr(13).'          <td><b>Agência</td>';
-      $html.=chr(13).'          <td><b>Operação</td>';
-      $html.=chr(13).'          <td><b>Conta</td>';
-      $html.=chr(13).'          <td><b>Ativo</td>';
-      $html.=chr(13).'          <td><b>Padrão</td>';
+      $html.=chr(13).'    <table width=100%  border="1" bordercolor="#00000">';
+      $html.=chr(13).'        <tr align="center">';
+      $html.=chr(13).'          <td bgColor="#f0f0f0"><div><b>Tipo</b></div></td>';
+      $html.=chr(13).'          <td bgColor="#f0f0f0"><div><b>Banco</b></div></td>';
+      $html.=chr(13).'          <td bgColor="#f0f0f0"><div><b>Agência</b></div></td>';
+      $html.=chr(13).'          <td bgColor="#f0f0f0"><div><b>Operação</b></div></td>';
+      $html.=chr(13).'          <td bgColor="#f0f0f0"><div><b>Conta</b></div></td>';
+      $html.=chr(13).'          <td bgColor="#f0f0f0"><div><b>Ativo</b></div></td>';
+      $html.=chr(13).'          <td bgColor="#f0f0f0"><div><b>Padrão</b></div></td>';
       $html.=chr(13).'        </tr>';
       if (count($RS)<=0) {
         // Se não foram selecionados registros, exibe mensagem
-        $html.=chr(13).'      <tr bgcolor="'.$conTrBgColor.'"><td colspan=7 align="center"><b>Não foram encontrados registros.</b></td></tr>';
+        $html.=chr(13).'      <tr><td colspan=7 align="center"><b>Não foram encontrados registros.</b></td></tr>';
       } else {
         // Lista os registros selecionados para listagem
         $w_cor=$conTrBgColor;
         foreach ($RS as $row) {
-          $w_cor = ($w_cor==$conTrBgColor || $w_cor=='') ? $w_cor=$conTrAlternateBgColor : $w_cor=$conTrBgColor; 
-          $html.=chr(13).'      <tr bgcolor="'.$w_cor.'" valign="top">';
+          $html.=chr(13).'      <tr valign="top">';
           $html.=chr(13).'        <td>'.f($row,'tipo_conta').'</td>';
           $html.=chr(13).'        <td>'.f($row,'banco').'</td>';
           $html.=chr(13).'        <td>'.f($row,'agencia').'</td>';
@@ -344,7 +357,7 @@ function visualCurriculo($p_cliente,$p_usuario,$O,$p_formato=0) {
       $html.=chr(13).'</tr>';
       // Experiencia profissional
       $html.=chr(13).'      <tr><td valign="top" colspan="3">&nbsp;</td>';
-      $html.=chr(13).'      <tr><td valign="top" colspan="3" align="center" bgcolor="#D0D0D0" style="border: 2px solid rgb(0,0,0);"><b>Experiência Profissional</td>';
+      $html.=chr(13).'      <tr><td colspan="3"><br><font size="2"><b>EXPERIÊNCIA PROFISSIONAL<hr NOSHADE color=#000000 SIZE=1></b></font></td></tr>'; 
       $RS = db_getCVAcadForm::getInstanceOf($dbms,$p_usuario,null,'EXPERIENCIA');
       $RS = SortArray($RS,'entrada','desc');
       $html.=chr(13).'      <tr><td align="center" colspan="3">';
@@ -354,22 +367,28 @@ function visualCurriculo($p_cliente,$p_usuario,$O,$p_formato=0) {
       } else {
         foreach ($RS as $row) {
           $html.=chr(13).'          <tr> ';
-          $html.=chr(13).'          <tr><td valign="top">Empregador:<br><b>'.f($row,'empregador').'</b></td>';
-          $html.=chr(13).'              <td valign="top">Área de conhecimento:<br><b>'.f($row,'nm_area').'</b></td></tr>';
+          $html.=chr(13).'          <tr><td width="30%"><b>Empregador:</b></td>';
+          $html.=chr(13).'            <td>'.f($row,'empregador').'</td></tr>';
+          $html.=chr(13).'              <td valign="top"><b>Área de conhecimento:</b></td>';
+          $html.=chr(13).'            <td>'.f($row,'nm_area').'</td></tr>';
+          $html.=chr(13).'          <tr><td valign="top"><b>Entrada: </b></td>';
+          $html.=chr(13).'            <td>'.FormataDataEdicao(f($row,'entrada')).'</td></tr>';
+          $html.=chr(13).'              <td valign="top"><b>Saida: </b></td>';
+          $html.=chr(13).'            <td>'.Nvl(FormataDataEdicao(f($row,'saida')),'---').'</td></tr>';
+          $html.=chr(13).'              <td valign="top"><b>Último salário mensal: </b></td>';
+          $html.=chr(13).'            <td>'.number_format(Nvl(f($row,'ultimo_salario'),0),2,',','.').'</td></tr>';
+          $html.=chr(13).'          <tr><td valign="top"><b>Motivo saída: </b></td>';
+          $html.=chr(13).'            <td>'.Nvl(f($row,'motivo_saida'),'---').'</td></tr>';
+          $html.=chr(13).'          <tr><td valign="top"><b>País: </b></td>';
+          $html.=chr(13).'            <td>'.f($row,'nm_pais').'</td></tr>';
+          $html.=chr(13).'              <td valign="top"><b>Estado: </b></td>';
+          $html.=chr(13).'            <td>'.f($row,'nm_estado').'</td></tr>';
+          $html.=chr(13).'              <td valign="top"><b>Cidade: </b></td>';
+          $html.=chr(13).'            <td>'.f($row,'nm_cidade').'</b></td></tr>';
           $html.=chr(13).'          <tr> ';
-          $html.=chr(13).'          <tr><td valign="top">Entrada: <br><b>'.FormataDataEdicao(f($row,'entrada')).'</b></td>';
-          $html.=chr(13).'              <td valign="top">Saida: <br><b>'.Nvl(FormataDataEdicao(f($row,'saida')),'---').'</b></td>';
-          $html.=chr(13).'              <td valign="top">Último salário mensal: <br><b>'.number_format(Nvl(f($row,'ultimo_salario'),0),2,',','.').'</b></td></tr>';
+          $html.=chr(13).'          <tr><td valign="top" colspan=3><b>Principal atividade desempenhada: <br></b>'.f($row,'ds_tipo_posto').'</td></tr>';
           $html.=chr(13).'          <tr> ';
-          $html.=chr(13).'          <tr><td valign="top">Motivo saída: <br><b>'.Nvl(f($row,'motivo_saida'),'---').'</b></td></tr>';
-          $html.=chr(13).'          <tr> ';
-          $html.=chr(13).'          <tr><td valign="top">País: <br><b>'.f($row,'nm_pais').'</b></td>';
-          $html.=chr(13).'              <td valign="top">Estado: <br><b>'.f($row,'nm_estado').'</b></td>';
-          $html.=chr(13).'              <td valign="top">Cidade: <br><b>'.f($row,'nm_cidade').'</b></td></tr>';
-          $html.=chr(13).'          <tr> ';
-          $html.=chr(13).'          <tr><td valign="top" colspan=3>Principal atividade desempenhada: <br><b>'.f($row,'ds_tipo_posto').'</b></td></tr>';
-          $html.=chr(13).'          <tr> ';
-          $html.=chr(13).'          <tr><td valign="top" colspan=3>Atividades desempenhadas: <br><b>'.f($row,'atividades').'</b></td></tr>';
+          $html.=chr(13).'          <tr><td valign="top" colspan=3><b>Atividades desempenhadas: <br></b>'.f($row,'atividades').'</td></tr>';
           // Cargos da experiência profissional
           $RS = db_getCVAcadForm::getInstanceOf($dbms,$RS1,f($RS,'sq_cvpesexp'),null,'CARGO');
           if (!count($RS)<=0){
@@ -399,7 +418,7 @@ function visualCurriculo($p_cliente,$p_usuario,$O,$p_formato=0) {
       // Se for formato Word, exibe declaração
       if ($p_formato!=0) {
         $html.=chr(13).'      <tr><td valign="top" colspan="3">&nbsp;</td>';
-        $html.=chr(13).'      <tr><td valign="top" colspan="3" align="center" bgcolor="#D0D0D0" style="border: 2px solid rgb(0,0,0);"><b>Declaração</td>';
+        $html.=chr(13).'      <tr><td colspan="3"><br><font size="2"><b>DECLARAÇÃO<hr NOSHADE color=#000000 SIZE=1></b></font></td></tr>'; 
         $html.=chr(13).'      <tr><td valign="top" colspan="3"><font size="3"><blockquote><p align="justify"><br>Eu, <b>'.$w_nome.'</b>, declaro que as informações aqui constantes estão atualizadas, são verdadeiras e passíveis de comprovação.</p><p><br></p><p align="center">'.substr(DataHora(),0,-10).'</p></blockquote></td>';
       }
       $html.=chr(13).'</table>';

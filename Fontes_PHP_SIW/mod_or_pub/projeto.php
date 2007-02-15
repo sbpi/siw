@@ -317,7 +317,7 @@ function Inicial() {
   ValidateClose();
   ScriptClose();
   ShowHTML('</HEAD>');
-  ShowHTML('<BASE HREF="'.$conRootSIW.'">');
+  ShowHTML('<font size=0 color="'.$conBodyBgColor.'">.</font><BASE HREF="'.$conRootSIW.'">');
   if ($w_troca>'') {
     // Se for recarga da página
     BodyOpen('onLoad=\'document.Form.'.$w_troca.'.focus();\'');
@@ -471,7 +471,7 @@ function Inicial() {
               ShowHTML('          <A class="HL" HREF="'.$w_dir.$w_pagina.$par.'&R='.$w_pagina.$par.'&O=A&w_chave='.f($row,'sq_siw_solicitacao').'&P1='.$P1.'&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP='.$TP.'&SG='.$SG.MontaFiltro('GET').'" title="Altera as informações cadastrais da ação">Alterar</A>&nbsp');
             } 
               ShowHTML('          <A class="HL" HREF="'.$w_dir.$w_pagina.'Excluir&R='.$w_pagina.$par.'&O=E&w_chave='.f($row,'sq_siw_solicitacao').'&w_tipo=Volta&P1='.$P1.'&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP='.$TP.'&SG='.$SG.MontaFiltro('GET').'" title="Exclusão da ação.">Excluir</A>&nbsp');
-          } elseif ($P1==2) {
+          } elseif ($P1==2 || $P1==6) {
             // Se for execução
             if ($w_usuario==f($row,'executor')) {
               if (Nvl(f($row,'solicitante'),0)==$w_usuario || 
@@ -483,17 +483,20 @@ function Inicial() {
                 ShowHTML('          <A class="HL" HREF="'.$w_dir.$w_pagina.'AtualizaEtapa&R='.$w_pagina.$par.'&O=L&w_chave='.f($row,'sq_siw_solicitacao').'&w_tipo=Volta&P1='.$P1.'&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP='.$TP.'&SG='.$SG.MontaFiltro('GET').'" title="Atualiza as metas físicas da ação." target="Metas">Metas</A>&nbsp');
               } 
               // Coloca as operações dependendo do trâmite
-              if (f($row,'sg_tramite')=='EA') {
+              if (f($row,'sg_tramite')=='EA' || f($row,'sg_tramite')=='EE') {
                 ShowHTML('          <A class="HL" HREF="'.$w_dir.$w_pagina.'Anotacao&R='.$w_pagina.$par.'&O=V&w_chave='.f($row,'sq_siw_solicitacao').'&w_tipo=Volta&P1='.$P1.'&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP='.$TP.'&SG='.$SG.MontaFiltro('GET').'" title="Registra anotações para a ação, sem enviá-la.">Anotar</A>&nbsp');
-                ShowHTML('          <A class="HL" HREF="'.$w_dir.$w_pagina.'Envio&R='.$w_pagina.$par.'&O=V&w_chave='.f($row,'sq_siw_solicitacao').'&w_tipo=Volta&P1='.$P1.'&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP='.$TP.'&SG='.$SG.MontaFiltro('GET').'" title="Envia a ação para outro responsável.">Enviar</A>&nbsp');
-              } elseif (f($row,'sg_tramite')=='EE') {
-                ShowHTML('          <A class="HL" HREF="'.$w_dir.$w_pagina.'Anotacao&R='.$w_pagina.$par.'&O=V&w_chave='.f($row,'sq_siw_solicitacao').'&w_tipo=Volta&P1='.$P1.'&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP='.$TP.'&SG='.$SG.MontaFiltro('GET').'" title="Registra anotações para a ação, sem enviá-la.">Anotar</A>&nbsp');
-                ShowHTML('          <A class="HL" HREF="'.$w_dir.$w_pagina.'Envio&R='.$w_pagina.$par.'&O=V&w_chave='.f($row,'sq_siw_solicitacao').'&w_tipo=Volta&P1='.$P1.'&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP='.$TP.'&SG='.$SG.MontaFiltro('GET').'" title="Envia a ação para outro responsável.">Enviar</A>&nbsp');
+              } 
+              ShowHTML('          <A class="HL" HREF="'.$w_dir.$w_pagina.'Envio&R='.$w_pagina.$par.'&O=V&w_chave='.f($row,'sq_siw_solicitacao').'&w_tipo=Volta&P1='.$P1.'&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP='.$TP.'&SG='.$SG.MontaFiltro('GET').'" title="Envia a ação para outro responsável.">Enviar</A>&nbsp');
+              if (f($row,'sg_tramite')=='EE') {
                 ShowHTML('          <A class="HL" HREF="'.$w_dir.$w_pagina.'Concluir&R='.$w_pagina.$par.'&O=V&w_chave='.f($row,'sq_siw_solicitacao').'&w_tipo=Volta&P1='.$P1.'&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP='.$TP.'&SG='.$SG.MontaFiltro('GET').'" title="Conclui a execução da ação.">Concluir</A>&nbsp');
               } 
             } else  {
               ShowHTML('          <A class="HL" HREF="'.$w_dir.$w_pagina.'AtualizaEtapa&R='.$w_pagina.$par.'&O=L&w_chave='.f($row,'sq_siw_solicitacao').'&w_tipo=Volta&P1='.$P1.'&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP='.$TP.'&SG='.$SG.MontaFiltro('GET').'" title="Atualiza as metas físicas da ação." target="Metas">Metas</A>&nbsp');
-              ShowHTML('          <A class="HL" HREF="'.$w_dir.$w_pagina.'Envio&R='.$w_pagina.$par.'&O=V&w_chave='.f($row,'sq_siw_solicitacao').'&w_tipo=Volta&P1='.$P1.'&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP='.$TP.'&SG='.$SG.MontaFiltro('GET').'" title="Envia a ação para outro responsável.">Enviar</A>&nbsp');
+              if (RetornaGestor(f($row,'sq_siw_solicitacao'),$w_usuario)=='S') {
+                ShowHTML('          <A class="HL" HREF="'.$w_dir.$w_pagina.'Envio&R='.$w_pagina.$par.'&O=V&w_chave='.f($row,'sq_siw_solicitacao').'&w_tipo=Volta&P1='.$P1.'&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP='.$TP.'&SG='.$SG.MontaFiltro('GET').'" title="Envia a ação para outro responsável.">Enviar</A>&nbsp');
+              } else {
+                ShowHTML('          ---&nbsp');
+              }
             } 
           } 
         } else {
@@ -598,7 +601,7 @@ function Inicial() {
       // SelecaoPais('<u>P</u>aís:','P',null,$p_pais,null,'p_pais',null,'onChange="document.Form.action=\''.$w_dir.$w_pagina.$par.'\'; document.Form.O.value=\''.$O.'\'; document.Form.w_troca.value=\'p_regiao\'; document.Form.submit();"');
       // SelecaoRegiao('<u>R</u>egião:','R',null,$p_regiao,$p_pais,'p_regiao',null,'onChange="document.Form.action=\''.$w_dir.$w_pagina.$par.'\'; document.Form.O.value=\''.$O.'\'; document.Form.w_troca.value=\'p_uf\'; document.Form.submit();"');
       // ShowHTML('      <tr>');
-      // SelecaoEstado('E<u>s</u>tado:','S',null,$p_uf,$p_pais,'N','p_uf',null,'onChange="document.Form.action=\''.$w_dir.$w_pagina.$par.'\'; document.Form.O.value=\''.$O.'\'; document.Form.w_troca.value=\'p_cidade\'; document.Form.submit();"');
+      // SelecaoEstado('E<u>s</u>tado:','S',null,$p_uf,$p_pais,$p_regiao,'p_uf',null,'onChange="document.Form.action=\''.$w_dir.$w_pagina.$par.'\'; document.Form.O.value=\''.$O.'\'; document.Form.w_troca.value=\'p_cidade\'; document.Form.submit();"');
       // SelecaoCidade('<u>C</u>idade:','C',null,$p_cidade,$p_pais,$p_uf,'p_cidade',null,null);
       ShowHTML('      <tr>');
       //SelecaoPrioridade('<u>P</u>rioridade:','P','Informe a prioridade desta ação.',$p_prioridade,null,'p_prioridade',null,null);
@@ -826,7 +829,7 @@ function Geral() {
   ValidateClose();
   ScriptClose();
   ShowHTML('</HEAD>');
-  ShowHTML('<BASE HREF="'.$conRootSIW.'">');
+  ShowHTML('<font size=0 color="'.$conBodyBgColor.'">.</font><BASE HREF="'.$conRootSIW.'">');
   if ($w_troca>'') {
     if($O=='A') BodyOpen(null);
     else        BodyOpen('onLoad=\'document.Form.'.$w_troca.'.focus()\';');
@@ -1043,7 +1046,7 @@ function InfoAdic(){
   ValidateClose();
   ScriptClose();
   ShowHTML('</HEAD>');
-  ShowHTML('<BASE HREF="'.$conRootSIW.'">');
+  ShowHTML('<font size=0 color="'.$conBodyBgColor.'">.</font><BASE HREF="'.$conRootSIW.'">');
   if ($w_troca>'') {
     BodyOpen('onLoad=\'document.Form.\'.$w_troca.\'.focus()\';');
   } elseif (!(strpos('EV',$O)===false)) {
@@ -1161,7 +1164,7 @@ function Iniciativas() {
   ValidateClose();
   ScriptClose();
   ShowHTML('</HEAD>');
-  ShowHTML('<BASE HREF="'.$conRootSIW.'">');
+  ShowHTML('<font size=0 color="'.$conBodyBgColor.'">.</font><BASE HREF="'.$conRootSIW.'">');
   BodyOpen('onLoad=\'document.Form.focus()\';');
   ShowHTML('<B><FONT COLOR="#000000">'.$w_TP.'</FONT></B>');
   ShowHTML('<HR>');
@@ -1252,7 +1255,7 @@ function Financiamento() {
     ScriptClose();
   } 
   ShowHTML('</HEAD>');
-  ShowHTML('<BASE HREF="'.$conRootSIW.'">');
+  ShowHTML('<font size=0 color="'.$conBodyBgColor.'">.</font><BASE HREF="'.$conRootSIW.'">');
   if ($w_troca>'') {
     BodyOpen('onLoad=\'document.Form.\'.$w_troca.\'.focus()\';');
   } elseif ($O=='I') {
@@ -1406,7 +1409,7 @@ function Responsaveis() {
     ScriptClose();
   } 
   ShowHTML('</HEAD>');
-  ShowHTML('<BASE HREF="'.$conRootSIW.'">');
+  ShowHTML('<font size=0 color="'.$conBodyBgColor.'">.</font><BASE HREF="'.$conRootSIW.'">');
   BodyOpen('onLoad=\'this.focus()\';');
   ShowHTML('<B><FONT COLOR="#000000">'.$w_TP.'</FONT></B>');
   ShowHTML('<HR>');
@@ -1569,6 +1572,24 @@ function Etapas() {
     $w_sq_pessoa  = f($RS,'solicitante');
     $w_sq_unidade = f($RS,'sq_unidade_resp');
   } 
+
+  if (nvl($w_chave_pai,'nulo')!='nulo') {
+    // Recupera o número de ordem das outras opções irmãs à selecionada
+    $RS = db_getEtapaOrder::getInstanceOf($dbms,$w_chave,$w_chave_pai);
+    $RS = SortArray($RS,'ordena','asc');
+    if (!count($RS)<=0) {
+      $w_texto = '<b>Dados da etapa superior e das etapas irmãs:</b>:<br>'.
+                 '<table border=1 bgcolor="#FAEBD7">'.
+                 '<tr valign="top" align=center><td><b>Ordem<td><b>Descrição<td><b>Início<td><b>Fim';
+      foreach ($RS as $row) {
+        $w_texto .= '<tr valign=top><td align=center>'.f($row,'ordem').'<td>'.f($row,'titulo').'<td>'.formataDataEdicao(f($row,'inicio_previsto')).'<td>'.formataDataEdicao(f($row,'fim_previsto'));
+      } 
+      $w_texto .= '</table>';
+    } else {
+      $w_texto='Não há outros números de ordem subordinados a esta etapa.';
+    } 
+  }
+
   Cabecalho();
   ShowHTML('<HEAD>');
   if (!(strpos('IAEP',$O)===false)) {
@@ -1600,7 +1621,7 @@ function Etapas() {
     ScriptClose();
   } 
   ShowHTML('</HEAD>');
-  ShowHTML('<BASE HREF="'.$conRootSIW.'">');
+  ShowHTML('<font size=0 color="'.$conBodyBgColor.'">.</font><BASE HREF="'.$conRootSIW.'">');
   if ($w_troca>'')     BodyOpen('onLoad=\'document.Form.'.$w_troca.'.focus()\';');
   elseif ($O=='I')     BodyOpen('onLoad=\'document.Form.w_titulo.focus()\';');
   else                 BodyOpen('onLoad=\'this.focus()\';');  
@@ -1696,20 +1717,6 @@ function Etapas() {
   //SelecaoEtapa 'Me<u>t</u>a superior:', 'T', 'Se necessário, indique a meta superior a esta.', w_chave_pai, w_chave, w_chave_aux, 'w_chave_pai', 'Pesquisa', null
   //ShowHTML '      </tr>'
   ShowHTML('      <tr><td valign="top" colspan="2"><table border=0 width="100%" cellspacing=0><tr valign="top">');
-  // Recupera o número de ordem das outras opções irmãs à selecionada
-  $RS = db_getEtapaOrder::getInstanceOf($dbms,$w_chave,$w_chave_pai);
-  if (count($RS)>0) {
-    $w_texto='<b>Nºs de ordem em uso para esta subordinação:</b><br>'.
-    '<table border=1 width=100% cellpadding=0 cellspacing=0>'.
-    '<tr><td align=center><b>Ordem'.
-    '    <td><b>Descrição';
-    foreach ($RS as $row) {
-      $w_texto = $w_texto.'<tr><td valign=top align=center>'.f($row,'ordem').'<td valign=top>'.f($row,'titulo');
-    } 
-    $w_texto = $w_texto.'</table>';
-  } else {
-    $w_texto = 'Não há outros números de ordem subordinados a esta etapa.';
-  } 
   ShowHTML('              <td align="left"><b><u>O</u>rdem:<br><INPUT ACCESSKEY="O" TYPE="TEXT" CLASS="STI" NAME="w_ordem" SIZE=3 MAXLENGTH=3 VALUE="'.$w_ordem.'" '.$w_Disabled.' title="'.str_replace($crlf,'<BR>',$w_texto).'"></td>');
   ShowHTML('              <td><b>Previsão iní<u>c</u>io:</b><br><input '.$w_Disabled.' accesskey="C" type="text" name="w_inicio" class="STI" SIZE="10" MAXLENGTH="10" VALUE="'.FormataDataEdicao(Nvl($w_inicio,time())).'" onKeyDown="FormataData(this,event);" title="Data prevista para início da meta."></td>');
   ShowHTML('              <td><b>Previsão <u>t</u>érmino:</b><br><input '.$w_Disabled.' accesskey="T" type="text" name="w_fim" class="STI" SIZE="10" MAXLENGTH="10" VALUE="'.FormataDataEdicao($w_fim).'" onKeyDown="FormataData(this,event);" title="Data prevista para término da meta."></td>');
@@ -1761,7 +1768,7 @@ function AtualizaEtapa() {
   $w_chave_aux  = $_REQUEST['w_chave_aux'];
   $w_tipo       = strtoupper(trim($_REQUEST['w_tipo']));
   $RS = db_getSolicData::getInstanceOf($dbms,$w_chave,'ORGERAL');
-  $w_cabecalho = '      <tr><td valign="top" colspan="3" align="center" bgcolor="#D0D0D0" style="border: 2px solid rgb(0,0,0);"><font  size="2"><b>Ação: '.f($RS,'titulo').' ('.$w_chave.')</td></tr>';
+  $w_cabecalho = f($RS,'titulo').' ('.$w_chave.')';
   // Configura uma variável para testar se as etapas podem ser atualizadas.
   // Ações concluídas ou canceladas não podem ter permitir a atualização.
   if (Nvl(f($RS,'sg_tramite'),'--')=='EE') $w_fase='S'; else $w_fase='N'; 
@@ -1903,7 +1910,7 @@ function AtualizaEtapa() {
     ScriptClose();
   } 
   ShowHTML('</HEAD>');
-  ShowHTML('<BASE HREF="'.$conRootSIW.'">');
+  ShowHTML('<font size=0 color="'.$conBodyBgColor.'">.</font><BASE HREF="'.$conRootSIW.'">');
   if ($w_troca>'') {
     BodyOpen('onLoad=\'document.Form.'.$w_troca.'.focus()\';');
   } elseif ($O=='I' || $O=='A') {
@@ -1915,7 +1922,11 @@ function AtualizaEtapa() {
   //ShowHTML '<HR>'
   ShowHTML('<div align=center><center>');
   ShowHTML('  <table border="0" cellpadding="0" cellspacing="0" width="100%">');
-  ShowHTML($w_cabecalho);
+  ShowHTML('      <tr><td colspan="2"><hr NOSHADE color=#000000 size=4></td></tr>');
+  ShowHTML('      <tr><td colspan="2"  bgcolor="#f0f0f0"><div align=justify><font size="2"><b>PROJETO: '.$w_cabecalho.'</b></font></div></td></tr>');
+  ShowHTML('      <tr><td colspan="2"><hr NOSHADE color=#000000 size=4></td></tr>');
+
+  
   if ($w_tipo!='WORD' && $O=='V') {
     ShowHTML('<tr><td align="right"colspan="2">');
     ShowHTML('&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<IMG ALIGN="CENTER" TITLE="Imprimir" SRC="images/impressora.jpg" onClick="window.print();">');
@@ -2196,7 +2207,7 @@ function Recursos() {
     ScriptClose();
   } 
   ShowHTML('</HEAD>');
-  ShowHTML('<BASE HREF="'.$conRootSIW.'">');
+  ShowHTML('<font size=0 color="'.$conBodyBgColor.'">.</font><BASE HREF="'.$conRootSIW.'">');
   if ($w_troca>'') {
     BodyOpen('onLoad=\'document.Form.'.$w_troca.'.focus()\';');
   } elseif ($O=='I' || $O=='A') {
@@ -2316,7 +2327,7 @@ function EtapaRecursos() {
   ValidateClose();
   ScriptClose();
   ShowHTML('</HEAD>');
-  ShowHTML('<BASE HREF="'.$conRootSIW.'">');
+  ShowHTML('<font size=0 color="'.$conBodyBgColor.'">.</font><BASE HREF="'.$conRootSIW.'">');
   BodyOpen('onLoad=this.focus();');
   ShowHTML('<B><FONT COLOR="#000000">'.$w_TP.'</FONT></B>');
   ShowHTML('<HR>');
@@ -2425,7 +2436,7 @@ function Interessados() {
     ScriptClose();
   } 
   ShowHTML('</HEAD>');
-  ShowHTML('<BASE HREF="'.$conRootSIW.'">');
+  ShowHTML('<font size=0 color="'.$conBodyBgColor.'">.</font><BASE HREF="'.$conRootSIW.'">');
   if ($w_troca>'') {
     BodyOpen('onLoad=\'document.Form.'.$w_troca.'.focus()\';');
   } elseif ($O=='I') {
@@ -2583,7 +2594,7 @@ function Areas() {
     ScriptClose();
   } 
   ShowHTML('</HEAD>');
-  ShowHTML('<BASE HREF="'.$conRootSIW.'">');
+  ShowHTML('<font size=0 color="'.$conBodyBgColor.'">.</font><BASE HREF="'.$conRootSIW.'">');
   if ($w_troca>'') {
     BodyOpen('onLoad=\'document.Form.'.$w_troca.'.focus()\';');
   } else {
@@ -2689,7 +2700,7 @@ function Visual() {
   ShowHTML('<HEAD>');
   ShowHTML('<TITLE>'.$conSgSistema.' - Visualização de Ação</TITLE>');
   ShowHTML('</HEAD>');
-  ShowHTML('<BASE HREF="'.$conRootSIW.'">');
+  ShowHTML('<font size=0 color="'.$conBodyBgColor.'">.</font><BASE HREF="'.$conRootSIW.'">');
   if ($w_tipo!='WORD') {
     BodyOpenClean('onLoad=\'this.focus()\'; ');
   } 
@@ -2708,14 +2719,14 @@ function Visual() {
   } 
   ShowHTML('</TD></TR>');
   ShowHTML('</FONT></B></TD></TR></TABLE>');
-  ShowHTML('<HR>');
+  //ShowHTML('<HR>');
   if ($w_tipo>'' && $w_tipo!='WORD') {
-    ShowHTML('<center><B>Clique <a class="HL" href="javascript:history.back(1);">aqui</a> para voltar à tela anterior</b></center>');
+    ShowHTML('<center><B><font size=1>Clique <a class="HL" href="javascript:history.back(1);">aqui</a> para voltar à tela anterior</b></font></center>');
   } 
   // Chama a rotina de visualização dos dados da ação, na opção 'Listagem'
   ShowHTML(VisualProjeto($w_chave,'L',$w_usuario,$P1,$P4));
   if ($w_tipo>'' && $w_tipo!='WORD') {
-    ShowHTML('<center><B>Clique <a class="HL" href="javascript:history.back(1);">aqui</a> para voltar à tela anterior</b></center>');
+    ShowHTML('<center><B><font size=1>Clique <a class="HL" href="javascript:history.back(1);">aqui</a> para voltar à tela anterior</b></font></center>');
   } 
   if ($w_tipo!='WORD') {
     Rodape();
@@ -2751,7 +2762,7 @@ function Excluir() {
     ScriptClose();
   } 
   ShowHTML('</HEAD>');
-  ShowHTML('<BASE HREF="'.$conRootSIW.'">');
+  ShowHTML('<font size=0 color="'.$conBodyBgColor.'">.</font><BASE HREF="'.$conRootSIW.'">');
   if ($w_troca>'') {
     BodyOpen('onLoad=\'document.Form.'.$w_troca.'.focus()\';');
   } else {
@@ -2830,7 +2841,7 @@ function Anexos() {
     ScriptClose();
   } 
   ShowHTML('</HEAD>');
-  ShowHTML('<BASE HREF="'.$conRootSIW.'">');
+  ShowHTML('<font size=0 color="'.$conBodyBgColor.'">.</font><BASE HREF="'.$conRootSIW.'">');
   if ($w_troca>'') {
     BodyOpen('onLoad=\'document.Form.'.$w_troca.'.focus()\';');
   } elseif ($O=='I') {
@@ -2975,7 +2986,7 @@ function Encaminhamento() {
     ScriptClose();
   } 
   ShowHTML('</HEAD>');
-  ShowHTML('<BASE HREF="'.$conRootSIW.'">');
+  ShowHTML('<font size=0 color="'.$conBodyBgColor.'">.</font><BASE HREF="'.$conRootSIW.'">');
   if ($w_troca>'') {
     BodyOpen('onLoad=\'document.Form.'.$w_troca.'.focus()\';');
   } else {
@@ -3062,7 +3073,7 @@ function Anotar() {
     ScriptClose();
   } 
   ShowHTML('</HEAD>');
-  ShowHTML('<BASE HREF="'.$conRootSIW.'">');
+  ShowHTML('<font size=0 color="'.$conBodyBgColor.'">.</font><BASE HREF="'.$conRootSIW.'">');
   if ($w_troca>'') {
     BodyOpen('onLoad=\'document.Form.'.$w_troca.'.focus()\';');
   } else {
@@ -3153,7 +3164,7 @@ function Concluir() {
     ScriptClose();
   } 
   ShowHTML('</HEAD>');
-  ShowHTML('<BASE HREF="'.$conRootSIW.'">');
+  ShowHTML('<font size=0 color="'.$conBodyBgColor.'">.</font><BASE HREF="'.$conRootSIW.'">');
   if ($w_troca>'') {
     BodyOpen('onLoad=\'document.Form.'.$w_troca.'.focus()\';');
   } else {
@@ -3239,8 +3250,8 @@ function EtapaLinha($l_chave,$l_chave_aux,$l_titulo,$l_resp,$l_setor,$l_inicio,$
   } else {
     $l_row='';
   }
-  $w_cor = ($w_cor==$conTrBgColor || $w_cor=='') ? $w_cor=$conTrAlternateBgColor : $w_cor=$conTrBgColor;
-  $l_html.=chr(13).'      <tr bgcolor="'.$w_cor.'" valign="top">';
+//  $w_cor = ($w_cor==$conTrBgColor || $w_cor=='') ? $w_cor=$conTrAlternateBgColor : $w_cor=$conTrBgColor;
+  $l_html.=chr(13).'      <tr valign="top">';
   $l_html.=chr(13).'        <td nowrap '.$l_row.'>';
   if ($l_fim<time() && $l_perc<100) {
     $l_html.=chr(13).'           <img src="'.$conImgAtraso.'" border=0 width=15 height=15 align="center">';
@@ -3298,7 +3309,7 @@ function SolicMail($p_solic,$p_tipo) {
   $w_html = '<HTML>'.$crlf;
   $w_html.=BodyOpenMail().$crlf;
   $w_html.='<table border="0" cellpadding="0" cellspacing="0" width="100%">'.$crlf;
-  $w_html.='<tr bgcolor="'.$conTrBgColor.'"><td align="center">'.$crlf;
+  $w_html.='<tr><td align="center">'.$crlf;
   $w_html.='    <table width="97%" border="0">'.$crlf;
   if ($p_tipo==1)     $w_html.='      <tr valign="top"><td align="center"><b>INCLUSÃO DE AÇÃO</b><br><br><td></tr>'.$crlf;
   elseif ($p_tipo==2) $w_html.='      <tr valign="top"><td align="center"><b>TRAMITAÇÃO DE AÇÃO</b><br><br><td></tr>'.$crlf;
@@ -3307,34 +3318,42 @@ function SolicMail($p_solic,$p_tipo) {
   // Recupera os dados da ação
   $RSM = db_getSolicData::getInstanceOf($dbms,$p_solic,'PJGERAL');
   $w_nome = 'Ação '.f($RSM,'titulo');
-  $w_html.=$crlf.'<tr bgcolor="'.$conTrBgColor.'"><td align="center">';
+  $w_html.=$crlf.'<tr><td align="center">';
   $w_html.=$crlf.'    <table width="99%" border="0">';
-  $w_html.=$crlf.'      <tr><td>Ação: <b>'.f($RSM,'titulo').'</b></td>';
+  $w_html.=$crlf.'      <tr><td colspan="2"><hr NOSHADE color=#000000 size=4></td></tr>';
+  $w_html.=$crlf.'      <tr><td colspan="2"  bgcolor="#f0f0f0"><div align=justify><font size="2"><b>AÇÃO: '.f($RSM,'titulo').' ('.f($RSM,'sq_siw_solicitacao').')</b></font></div></td></tr>';
+  $w_html.=$crlf.'      <tr><td colspan="2"><hr NOSHADE color=#000000 size=4></td></tr>';
+  //$w_html.=$crlf.'      <tr><td>Ação: <b>'.f($RSM,'titulo').'</b></td>';
   // Identificação da ação
-  $w_html.=$crlf.'      <tr><td valign="top" colspan="2" align="center" bgcolor="#D0D0D0" style="border: 2px solid rgb(0,0,0);"><b>EXTRATO DA AÇÃO</td>';
+  $w_html .= $crlf.'      <tr><td colspan="2"><br><font size="2"><b>EXTRATO DA AÇÃO<hr NOSHADE color=#000000 SIZE=1></b></font></td></tr>';  
   // Se a classificação foi informada, exibe.
-  if (nvl(f($RSM,'sq_cc'),'')>'')  $w_html.=$crlf.'      <tr><td valign="top">Classificação:<br><b>'.f($RSM,'cc_nome').' </b></td>';
-  $w_html.=$crlf.'      <tr><td valign="top" colspan="2"><table border=0 width="100%" cellspacing=0>';
-  $w_html.=$crlf.'          <tr valign="top">';
-  $w_html.=$crlf.'          <td>Responsável pelo monitoramento:<br><b>'.f($RSM,'nm_sol').'</b></td>';
-  $w_html.=$crlf.'          <td>Unidade responsável pelo monitoramento:<br><b>'.f($RSM,'nm_unidade_resp').'</b></td>';
-  $w_html.=$crlf.'          <tr valign="top">';
-  $w_html.=$crlf.'          <td>Data de recebimento:<br><b>'.FormataDataEdicao(f($RSM,'inicio')).' </b></td>';
-  $w_html.=$crlf.'          <td>Limite para conclusão:<br><b>'.FormataDataEdicao(f($RSM,'fim')).' </b></td>';
-  $w_html.=$crlf.'          </table>';
+  if (nvl(f($RSM,'sq_cc'),'')>'') {  
+    $w_html.=$crlf.'      <tr><td width="30%">Classificação:</b></td>';
+    $w_html.=$crlf.'          <td>'.f($RSM,'cc_nome').' </td></tr>';
+  }
+  $w_html.=$crlf.'        <tr><td width="30%"><b>Responsável pelo monitoramento:</b></td>';
+  $w_html.=$crlf.'          <td>'.f($RSM,'nm_sol').'</td></tr>';
+  $w_html.=$crlf.'        <tr><td><b>Unidade responsável pelo monitoramento:</b></td>';
+  $w_html.=$crlf.'          <td>'.f($RSM,'nm_unidade_resp').'</td></tr>';
+  $w_html.=$crlf.'        <tr><td><b>Data de recebimento:</b></td>';
+  $w_html.=$crlf.'          <td>'.FormataDataEdicao(f($RSM,'inicio')).' </td></tr>';
+  $w_html.=$crlf.'        <tr><td><b>Limite para conclusão:</b></td>';
+  $w_html.=$crlf.'          <td>'.FormataDataEdicao(f($RSM,'fim')).' </td></tr>';
   // Informações adicionais
-  if (Nvl(f($RSM,'descricao'),'')>'') $w_html.=$crlf.'      <tr><td valign="top">Resultados da ação:<br><b>'.CRLF2BR(f($RSM,'descricao')).' </b></td>';  
-  $w_html.=$crlf.'    </table>';
+  if (Nvl(f($RSM,'descricao'),'')>'') {
+    $w_html.=$crlf.'      <tr><td><b>Resultados da ação:</b></td>';
+    $w_html.=$crlf.'        <td>'.CRLF2BR(f($RSM,'descricao')).' </td></tr>';  
+  }
   $w_html.=$crlf.'</tr>';
   // Dados da conclusão da ação, se ela estiver nessa situação
   if (f($RSM,'concluida')=='S' && Nvl(f($RSM,'data_conclusao'),'')>'') {
-    $w_html.=$crlf.'      <tr><td valign="top" colspan="2" align="center" bgcolor="#D0D0D0" style="border: 2px solid rgb(0,0,0);"><b>DADOS DA CONCLUSÃO</td>';
-    $w_html.=$crlf.'      <tr><td valign="top" colspan="2"><table border=0 width="100%" cellspacing=0>';
-    $w_html.=$crlf.'          <tr valign="top">';
-    $w_html.=$crlf.'          <td>Início da execução:<br><b>'.FormataDataEdicao(f($RSM,'inicio_real')).' </b></td>';
-    $w_html.=$crlf.'          <td>Término da execução:<br><b>'.FormataDataEdicao(f($RSM,'fim_real')).' </b></td>';
-    $w_html.=$crlf.'          </table>';
-    $w_html.=$crlf.'      <tr><td valign="top">Nota de conclusão:<br><b>'.CRLF2BR(f($RSM,'nota_conclusao')).' </b></td>';
+    $w_html.=$crlf.'      <tr><td colspan="2"><br><font size="2"><b>DADOS DA CONCLUSÃO<hr NOSHADE color=#000000 SIZE=1></b></font></td></tr>';  
+    $w_html.=$crlf.'      <tr><td><b>Início da execução:</b></td>';
+    $w_html.=$crlf.'        <td>'.FormataDataEdicao(f($RSM,'inicio_real')).' </td></tr>';
+    $w_html.=$crlf.'      <tr><td><b>Término da execução:</b></td>';
+    $w_html.=$crlf.'        <td>'.FormataDataEdicao(f($RSM,'fim_real')).' </td></tr>';
+    $w_html.=$crlf.'      <tr><td><b>Nota de conclusão:</b></td>';
+    $w_html.=$crlf.'        <td>'.CRLF2BR(f($RSM,'nota_conclusao')).' </td></tr>';
   } 
   if ($p_tipo==2) {
     // Se for tramitação
@@ -3342,23 +3361,24 @@ function SolicMail($p_solic,$p_tipo) {
     $RS = db_getSolicLog::getInstanceOf($dbms,$p_solic,null,'LISTA');
     $RS = SortArray($RS,'phpdt_data','desc');
     foreach($RS as $row){$RS=$row; break;}
-    $w_html.=$crlf.'      <tr><td valign="top" colspan="2" align="center" bgcolor="#D0D0D0" style="border: 2px solid rgb(0,0,0);"><b>ÚLTIMO ENCAMINHAMENTO</td>';
-    $w_html.=$crlf.'      <tr><td valign="top" colspan="2"><table border=0 width="100%" cellspacing=0>';
-    $w_html.=$crlf.'          <tr valign="top">';
-    $w_html.=$crlf.'          <td>De:<br><b>'.f($RS,'responsavel').'</b></td>';
-    $w_html.=$crlf.'          <td>Para:<br><b>'.f($RS,'destinatario').'</b></td>';
-    $w_html.=$crlf.'          <tr valign="top"><td colspan=2>Despacho:<br><b>'.CRLF2BR(Nvl(f($RS,'despacho'),'---')).' </b></td>'; 
-    $w_html.=$crlf.'          </table>';
+    $w_html.=$crlf.'      <tr><td colspan="2"><br><font size="2"><b>ÚLTIMO ENCAMINHAMENTO<hr NOSHADE color=#000000 SIZE=1></b></font></td></tr>';  
+    $w_html.=$crlf.'      <tr><td><b>De: </b></td>';
+    $w_html.=$crlf.'        <td>'.f($RS,'responsavel').'</td></tr>'; 
+    $w_html.=$crlf.'      <tr><td><b>Para: </b></td>';
+    $w_html.=$crlf.'        <td>'.f($RS,'destinatario').'</td></tr>'; 
+    $w_html.=$crlf.'       <tr valign="top"><td><b>Despacho:</b></td>';
+    $w_html.=$crlf.'        <td>'.CRLF2BR(Nvl(f($RS,'despacho'),'---')).' </td></tr>'; 
+
     // Configura o destinatário da tramitação como destinatário da mensagem
     $RS1 = db_getPersonData::getInstanceOf($dbms,$w_cliente,f($RS,'sq_pessoa_destinatario'),null,null);
     $w_destinatarios = f($RS1,'email').'; ';
   } 
-  $w_html.=$crlf.'      <tr><td valign="top" colspan="2" align="center" bgcolor="#D0D0D0" style="border: 2px solid rgb(0,0,0);"><b>OUTRAS INFORMAÇÕES</td>'; 
+  $w_html.=$crlf.'      <tr><td colspan="2"><br><font size="2"><b>OUTRAS INFOMAÇÕES<hr NOSHADE color=#000000 SIZE=1></b></font></td></tr>';  
   $RS = db_getCustomerSite::getInstanceOf($dbms,$w_cliente);
-  $w_html.='      <tr valign="top"><td>'.$crlf;
+  $w_html.='      <tr valign="top"><td colspan="2">'.$crlf;
   $w_html.='         Para acessar o sistema use o endereço: <b><a class="SS" href="'.f($RS,'logradouro').'" target="_blank">'.f($RS,'Logradouro').'</a></b></li>'.$crlf;
   $w_html.='      </td></tr>'.$crlf;
-  $w_html.='      <tr valign="top"><td>'.$crlf;
+  $w_html.='      <tr valign="top"><td colspan="2">'.$crlf;
   $w_html.='         Dados da ocorrência:<br>'.$crlf;
   $w_html.='         <ul>'.$crlf;
   $w_html.='         <li>Responsável: <b>'.$_SESSION['NOME'].'</b></li>'.$crlf;
@@ -3423,7 +3443,7 @@ function Grava() {
   $w_nome       ='';
   Cabecalho();
   ShowHTML('</HEAD>');
-  ShowHTML('<BASE HREF="'.$conRootSIW.'">');
+  ShowHTML('<font size=0 color="'.$conBodyBgColor.'">.</font><BASE HREF="'.$conRootSIW.'">');
   BodyOpen(null);
   switch ($SG) {
     case 'ORGERAL':
@@ -3457,7 +3477,7 @@ function Grava() {
         } 
         dml_putProjetoGeral::getInstanceOf($dbms,$O,
             $_REQUEST['w_chave'],$_REQUEST['w_menu'],$_SESSION['LOTACAO'],$_REQUEST['w_solicitante'],$_REQUEST['w_proponente'],
-            $_SESSION['SQ_PESSOA'],null,$_REQUEST['w_sqcc'],null,$_REQUEST['w_descricao'],$_REQUEST['w_justificativa'],$_REQUEST['w_inicio'],
+            $_SESSION['SQ_PESSOA'],null,null,$_REQUEST['w_sqcc'],null,$_REQUEST['w_descricao'],$_REQUEST['w_justificativa'],$_REQUEST['w_inicio'],
             $_REQUEST['w_fim'],$_REQUEST['w_valor'],$_REQUEST['w_data_hora'],$_REQUEST['w_sq_unidade_resp'],$_REQUEST['w_titulo'],$_REQUEST['w_prioridade'],
             $_REQUEST['w_aviso'],$w_dias,$_REQUEST['w_cidade'],$_REQUEST['w_palavra_chave'],null,null,$_REQUEST['w_sq_acao_ppa'],$_REQUEST['w_sq_orprioridade'],
             $_REQUEST['w_selecionada_mpog'],$_REQUEST['w_selecionada_relevante'],null,&$w_chave_nova,$w_copia);
@@ -3871,7 +3891,7 @@ function Main() {
     case 'GRAVA':         Grava();             break;
     default:
       Cabecalho();
-      ShowHTML('<BASE HREF="'.$conRootSIW.'">');
+      ShowHTML('<font size=0 color="'.$conBodyBgColor.'">.</font><BASE HREF="'.$conRootSIW.'">');
       BodyOpen('onLoad=this.focus();');
       ShowHTML('<B><FONT COLOR="#000000">'.$w_TP.'</FONT></B>');
       ShowHTML('<HR>');

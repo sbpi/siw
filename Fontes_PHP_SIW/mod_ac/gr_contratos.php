@@ -23,6 +23,7 @@ include_once($w_dir_volta.'classes/sp/db_getEtapaDataParents.php');
 include_once($w_dir_volta.'classes/sp/db_getSolicData.php');
 include_once($w_dir_volta.'classes/sp/db_getSolicEtapa.php');
 include_once($w_dir_volta.'classes/sp/db_getCustomerData.php');
+include_once($w_dir_volta.'funcoes/selecaoTipoAcordo.php');
 include_once($w_dir_volta.'funcoes/selecaoCC.php');
 include_once($w_dir_volta.'funcoes/selecaoPessoa.php');
 include_once($w_dir_volta.'funcoes/selecaoUnidade.php');
@@ -109,6 +110,7 @@ $p_palavra      = strtoupper($_REQUEST['p_palavra']);
 $p_prazo        = strtoupper($_REQUEST['p_prazo']);
 $p_fase         = explodeArray($_REQUEST['p_fase']);
 $p_sqcc         = strtoupper($_REQUEST['p_sqcc']);
+$p_sq_orprior   = $_REQUEST['p_sq_orprior'];
 $p_empenho      = strtoupper($_REQUEST['p_empenho']);
 $p_processo     = strtoupper($_REQUEST['p_processo']);
 $p_agrega       = strtoupper($_REQUEST['p_agrega']);
@@ -161,6 +163,11 @@ function Gerencial() {
       $RS = db_getPersonData::getInstanceOf($dbms,$w_cliente,$p_usu_resp,null,null);
       $w_filtro=$w_filtro.'<tr valign="top"><td align="right"><font size=1>Executor <td><font size=1>[<b>'.f($RS,'nome_resumido').'</b>]';
     } 
+    if ($p_sq_orprior>''){
+      $RS = db_getAgreeType::getInstanceOf($dbms,$p_sq_orprior,null,$w_cliente,'ALTERA');
+      foreach($RS as $row) {$RS = $row; break; }
+      $w_filtro .= '<tr valign="top"><td align="right">Tipo do acordo <td>[<b>'.f($RS,'nome').'</b>]';
+    } 
     if ($p_uorg_resp>'') {
       $RS = db_getUorgData::getInstanceOf($dbms,$p_uorg_resp);
       $w_filtro=$w_filtro.'<tr valign="top"><td align="right"><font size=1>Unidade atual <td><font size=1>[<b>'.f($RS,'nome').'</b>]';
@@ -199,8 +206,12 @@ function Gerencial() {
         $p_unidade,$p_prioridade,$p_ativo,$p_proponente, 
         $p_chave, $p_objeto, $p_pais, $p_regiao, $p_uf, $p_cidade, $p_usu_resp, 
         $p_uorg_resp, $p_palavra, $p_prazo, $p_fase, $p_sqcc, $p_projeto, $p_atividade, 
-        null, null, $p_empenho, $p_processo);
+        null, $p_sq_orprior, $p_empenho, $p_processo);
     switch ($p_agrega) {
+      case substr(f($RS_Menu,'sigla'),0,3).'TIPO':
+        $w_TP=$TP.' - Por tipo do acordo';
+        $RS1 = SortArray($RS1,'nm_tipo_acordo','asc');
+        break;
       case substr(f($RS_Menu,'sigla'),0,3).'PROJ':
         $w_TP=$TP.' - Por projeto';
         $RS1 = SortArray($RS1,'nm_projeto','asc');
@@ -240,7 +251,7 @@ function Gerencial() {
     HeaderWord(null);
     $w_pag=1;
     $w_linha=0.00;
-    ShowHTML('<BASE HREF="'.$conRootSIW.'">');
+    ShowHTML('<font size=0 color="'.$conBodyBgColor.'">.</font><BASE HREF="'.$conRootSIW.'">');
     CabecalhoWord($w_cliente,$w_TP,$w_pag);
     if ($w_filtro>'') ShowHTML($w_filtro);    
   } else {
@@ -294,7 +305,7 @@ function Gerencial() {
     } else {
       ShowHTML('<TITLE>'.$w_TP.'</TITLE>');
     } 
-    ShowHTML('<BASE HREF="'.$conRootSIW.'">');
+    ShowHTML('<font size=0 color="'.$conBodyBgColor.'">.</font><BASE HREF="'.$conRootSIW.'">');
     ShowHTML('</HEAD>');
     if ($w_troca>'') {
       // Se for recarga da página
@@ -338,6 +349,7 @@ function Gerencial() {
         ShowHTML('    if (filtro != -1) {');
         switch ($p_agrega) {
           case substr(f($RS_Menu,'sigla'),0,3).'ETAPA':     ShowHTML('      document.Form.p_atividade.value=filtro;');      break;
+          case substr(f($RS_Menu,'sigla'),0,3).'TIPO':      ShowHTML('      document.Form.p_sq_orprior.value=filtro;');     break;
           case substr(f($RS_Menu,'sigla'),0,3).'PROJ':      ShowHTML('      document.Form.p_projeto.value=filtro;');        break;
           case substr(f($RS_Menu,'sigla'),0,3).'PROP':      ShowHTML('      document.Form.p_proponente.value=filtro;');     break;
           case substr(f($RS_Menu,'sigla'),0,3).'RESP':      ShowHTML('      document.Form.p_solicitante.value=filtro;');    break;
@@ -349,6 +361,7 @@ function Gerencial() {
         ShowHTML('    }');
         switch ($p_agrega) {
           case substr(f($RS_Menu,'sigla'),0,3).'ETAPA':     ShowHTML('    else document.Form.p_atividade.value=\''.$_REQUEST['p_atividade'].'\';');     break;
+          case substr(f($RS_Menu,'sigla'),0,3).'TIPO':      ShowHTML('    else document.Form.p_sq_orprior.value=\''.$_REQUEST['p_sq_orprior'].'\';');   break;
           case substr(f($RS_Menu,'sigla'),0,3).'PROJ':      ShowHTML('    else document.Form.p_projeto.value=\''.$_REQUEST['p_projeto'].'\';');         break;
           case substr(f($RS_Menu,'sigla'),0,3).'PROP':      ShowHTML('    else document.Form.p_proponente.value=\''.$_REQUEST['p_proponente'].'\';');   break;
           case substr(f($RS_Menu,'sigla'),0,3).'RESP':      ShowHTML('    else document.Form.p_solicitante.value=\''.$_REQUEST['p_solicitante'].'\';'); break;
@@ -381,6 +394,7 @@ function Gerencial() {
         ShowHTML(MontaFiltro('POST'));
         switch ($p_agrega) {
           case substr(f($RS_Menu,'sigla'),0,3).'ETAPA':     if ($_REQUEST['p_atividade']=='')       ShowHTML('<input type="Hidden" name="p_atividade" value="">');  break;
+          case substr(f($RS_Menu,'sigla'),0,3).'TIPO':      if ($_REQUEST['p_sq_orprior']=='')      ShowHTML('<input type="Hidden" name="p_sq_orprior" value="">'); break;
           case substr(f($RS_Menu,'sigla'),0,3).'PROJ':      if ($_REQUEST['p_projeto']=='')         ShowHTML('<input type="Hidden" name="p_projeto" value="">');    break;
           case substr(f($RS_Menu,'sigla'),0,3).'PROP':      if ($_REQUEST['p_proponente']=='')      ShowHTML('<input type="Hidden" name="p_proponente" value="">'); break;
           case substr(f($RS_Menu,'sigla'),0,3).'RESP':      if ($_REQUEST['p_solicitante']=='')     ShowHTML('<input type="Hidden" name="p_solicitante" value="">');break;
@@ -424,6 +438,32 @@ function Gerencial() {
               } 
               $w_nm_quebra=f($row1,'nm_etapa');
               $w_chave=f($row1,'sq_projeto_etapa');
+              $w_chave_aux=-1;
+              $w_qt_quebra=0.00;
+              $t_solic=0.00;
+              $t_cad=0.00;
+              $t_tram=0.00;
+              $t_conc=0.00;
+              $t_atraso=0.00;
+              $t_aviso=0.00;
+              $t_valor=0.00;
+              $t_acima=0.00;
+              $t_custo=0.00;
+              $w_linha=$w_linha+1;
+            } 
+            break;
+          case substr(f($RS_Menu,'sigla'),0,3).'TIPO':
+            if ($w_nm_quebra!=f($row1,'nm_tipo_acordo')) {
+              if ($w_qt_quebra>0) {
+                ImprimeLinha($t_solic,$t_cad,$t_tram,$t_conc,$t_atraso,$t_aviso,$t_valor,$t_custo,$t_acima,$w_chave,$w_chave_aux);
+                $w_linha=$w_linha+2;
+              } 
+              if ($O!='W' || ($O=='W' && $w_linha<=25)) {
+                // Se for geração de MS-Word, coloca a nova quebra somente se não estourou o limite
+                ShowHTML('      <tr bgcolor="'.$w_cor.'" valign="top"><td><font size=1><b>'.f($row1,'nm_tipo_acordo'));
+              } 
+              $w_nm_quebra=f($row1,'nm_tipo_acordo');
+              $w_chave=f($row1,'sq_tipo_acordo');
               $w_chave_aux=-1;
               $w_qt_quebra=0.00;
               $t_solic=0.00;
@@ -638,6 +678,7 @@ function Gerencial() {
           ImprimeCabecalho();
           switch ($p_agrega) {
             case substr(f($RS_Menu,'sigla'),0,3).'ETAPA':   ShowHTML('      <tr bgcolor="'.$w_cor.'" valign="top"><td><font size=1><b>'.f($row1,'nm_etapa'));                   break;
+            case substr(f($RS_Menu,'sigla'),0,3).'TIPO':    ShowHTML('      <tr bgcolor="'.$w_cor.'" valign="top"><td><font size=1><b>'.f($row1,'nm_tipo_acordo'));             break;
             case substr(f($RS_Menu,'sigla'),0,3).'PROJ':    ShowHTML('      <tr bgcolor="'.$w_cor.'" valign="top"><td><font size=1><b>'.f($row1,'nm_projeto'));                 break;
             case substr(f($RS_Menu,'sigla'),0,3).'PROP':    ShowHTML('      <tr bgcolor="'.$w_cor.'" valign="top"><td><font size=1><b>'.f($row1,'nm_outra_parte_resumido'));    break;
             case substr(f($RS_Menu,'sigla'),0,3).'RESP':    ShowHTML('      <tr bgcolor="'.$w_cor.'" valign="top"><td><font size=1><b>'.f($row1,'nm_solic'));                   break;
@@ -721,11 +762,12 @@ function Gerencial() {
       if (substr(f($RS_Menu_Origem,'sigla'),0,3)=='GCB')    ShowHTML('          <option value="'.substr(f($RS_Menu,'sigla'),0,3).'PROP">Bolsista');
       else                                                  ShowHTML('          <option value="'.substr(f($RS_Menu,'sigla'),0,3).'PROP">Outra parte');
     }
-    if (substr(f($RS_Menu_Origem,'sigla'),0,3)!='GCA') { if ($p_agrega==substr(f($RS_Menu,'sigla'),0,3).'PROJ')  ShowHTML('          <option value="'.substr(f($RS_Menu,'sigla'),0,3).'PROJ" selected>projeto');             else ShowHTML('          <option value="'.substr(f($RS_Menu,'sigla'),0,3).'PROJ">Projeto'); }
-    if (substr(f($RS_Menu_Origem,'sigla'),0,3)=='GCB') { if ($p_agrega==substr(f($RS_Menu,'sigla'),0,3).'ETAPA') ShowHTML('          <option value="'.substr(f($RS_Menu,'sigla'),0,3).'ETAPA" selected>Modalidade de bolsa');   else ShowHTML('          <option value="'.substr(f($RS_Menu,'sigla'),0,3).'ETAPA">Modalidade de bolsa'); }
-    if ($p_agrega==substr(f($RS_Menu,'sigla'),0,3).'RESP')                                                       ShowHTML('          <option value="'.substr(f($RS_Menu,'sigla'),0,3).'RESP" selected>Responsável');         else ShowHTML('          <option value="'.substr(f($RS_Menu,'sigla'),0,3).'RESP">Responsável');
-    if ($p_agrega==substr(f($RS_Menu,'sigla'),0,3).'SETOR')                                                      ShowHTML('          <option value="'.substr(f($RS_Menu,'sigla'),0,3).'SETOR" selected>Setor responsável');  else ShowHTML('          <option value="'.substr(f($RS_Menu,'sigla'),0,3).'SETOR">Setor responsável');
-    if ($p_agrega==substr(f($RS_Menu,'sigla'),0,3).'LOCAL')                                                      ShowHTML('          <option value="'.substr(f($RS_Menu,'sigla'),0,3).'LOCAL" selected>UF');                 else ShowHTML('          <option value="'.substr(f($RS_Menu,'sigla'),0,3).'LOCAL">UF');
+    if (substr(f($RS_Menu_Origem,'sigla'),0,3)!='GCA') { if ($p_agrega==substr(f($RS_Menu,'sigla'),0,3).'PROJ')  ShowHTML('          <option value="'.substr(f($RS_Menu,'sigla'),0,3).'PROJ" selected>projeto');              else ShowHTML('          <option value="'.substr(f($RS_Menu,'sigla'),0,3).'PROJ">Projeto'); }
+    if (substr(f($RS_Menu_Origem,'sigla'),0,3)=='GCB') { if ($p_agrega==substr(f($RS_Menu,'sigla'),0,3).'ETAPA') ShowHTML('          <option value="'.substr(f($RS_Menu,'sigla'),0,3).'ETAPA" selected>Modalidade de bolsa'); else ShowHTML('          <option value="'.substr(f($RS_Menu,'sigla'),0,3).'ETAPA">Modalidade de bolsa'); }
+    if ($p_agrega==substr(f($RS_Menu,'sigla'),0,3).'RESP')                                                       ShowHTML('          <option value="'.substr(f($RS_Menu,'sigla'),0,3).'RESP" selected>Responsável');          else ShowHTML('          <option value="'.substr(f($RS_Menu,'sigla'),0,3).'RESP">Responsável');
+    if ($p_agrega==substr(f($RS_Menu,'sigla'),0,3).'SETOR')                                                      ShowHTML('          <option value="'.substr(f($RS_Menu,'sigla'),0,3).'SETOR" selected>Setor responsável');   else ShowHTML('          <option value="'.substr(f($RS_Menu,'sigla'),0,3).'SETOR">Setor responsável');
+    if ($p_agrega==substr(f($RS_Menu,'sigla'),0,3).'TIPO')                                                       ShowHTML('          <option value="'.substr(f($RS_Menu,'sigla'),0,3).'TIPO" selected>Tipo de acordo');       else ShowHTML('          <option value="'.substr(f($RS_Menu,'sigla'),0,3).'TIPO">Tipo de acordo');
+    if ($p_agrega==substr(f($RS_Menu,'sigla'),0,3).'LOCAL')                                                      ShowHTML('          <option value="'.substr(f($RS_Menu,'sigla'),0,3).'LOCAL" selected>UF');                  else ShowHTML('          <option value="'.substr(f($RS_Menu,'sigla'),0,3).'LOCAL">UF');
     ShowHTML('          </select></td>');
     MontaRadioSN('<b>Inibe exibição do gráfico?</b>',$p_tipo,'p_tipo');
     MontaRadioNS('<b>Limita tamanho do objeto?</b>',$p_tamanho,'p_tamanho');
@@ -751,10 +793,10 @@ function Gerencial() {
       ShowHTML('          </table>');
     }
     ShowHTML('<INPUT type="hidden" name="w_troca" value="">');
+    ShowHTML('      <tr valign="top">');
+    SelecaoTipoAcordo('<u>T</u>ipo:','T','Selecione na lista o tipo adequado.',$p_sq_orprior,null,$w_cliente,'p_sq_orprior',substr(f($RS_Menu_Origem,'sigla'),0,3).'GERAL',null);
     if (f($RS_Menu,'solicita_cc')=='S') {
-      ShowHTML('      <tr><td colspan=2><table border=0 width="90%" cellspacing=0><tr valign="top">');
       SelecaoCC('C<u>l</u>assificação:','C','Selecione um dos itens relacionados.',$p_sqcc,null,'p_sqcc','SIWSOLIC');
-      ShowHTML('          </table>');
     } 
     ShowHTML('      <tr valign="top">');
     ShowHTML('          <td><font size="1"><b>Número do c<U>o</U>ntrato:<br><INPUT ACCESSKEY="O" '.$w_Disabled.' class="sti" type="text" name="p_chave" size="18" maxlength="18" value="'.$p_chave.'"></td>');
@@ -777,7 +819,7 @@ function Gerencial() {
     SelecaoPais('<u>P</u>aís:','P',null,$p_pais,null,'p_pais',null,'onChange="document.Form.action=\''.$w_dir.$w_pagina.$par.'\'; document.Form.O.value=\''.$O.'\'; document.Form.target=\'\'; document.Form.w_troca.value=\'p_regiao\'; document.Form.submit();"');
     SelecaoRegiao('<u>R</u>egião:','R',null,$p_regiao,$p_pais,'p_regiao',null,'onChange="document.Form.action=\''.$w_dir.$w_pagina.$par.'\'; document.Form.O.value=\''.$O.'\'; document.Form.target=\'\'; document.Form.w_troca.value=\'p_uf\'; document.Form.submit();"');
     ShowHTML('      <tr>');
-    SelecaoEstado('E<u>s</u>tado:','S',null,$p_uf,$p_pais,'N','p_uf',null,'onChange="document.Form.action=\''.$w_dir.$w_pagina.$par.'\'; document.Form.O.value=\''.$O.'\'; document.Form.target=\'\'; document.Form.w_troca.value=\'p_cidade\'; document.Form.submit();"');
+    SelecaoEstado('E<u>s</u>tado:','S',null,$p_uf,$p_pais,$p_regiao,'p_uf',null,'onChange="document.Form.action=\''.$w_dir.$w_pagina.$par.'\'; document.Form.O.value=\''.$O.'\'; document.Form.target=\'\'; document.Form.w_troca.value=\'p_cidade\'; document.Form.submit();"');
     SelecaoCidade('<u>C</u>idade:','C',null,$p_cidade,$p_pais,$p_uf,'p_cidade',null,null);
     ShowHTML('      <tr valign="top">');
     ShowHTML('          <td><font size="1"><b>O<U>b</U>jeto:<br><INPUT ACCESSKEY="B" '.$w_Disabled.' class="sti" type="text" name="p_objeto" size="25" maxlength="90" value="'.$p_objeto.'"></td>');
@@ -821,6 +863,7 @@ function ImprimeCabecalho() {
   ShowHTML('        <tr bgcolor="#DCDCDC" align="center">');
   switch ($p_agrega) {
     case substr(f($RS_Menu,'sigla'),0,3).'ETAPA':       ShowHTML('          <td><font size="1"><b>Etapa</font></td>');              break;
+    case substr(f($RS_Menu,'sigla'),0,3).'TIPO':        ShowHTML('          <td><font size="1"><b>Tipo de acordo</font></td>');     break;
     case substr(f($RS_Menu,'sigla'),0,3).'PROJ':        ShowHTML('          <td><font size="1"><b>Projeto</font></td>');            break;
     case substr(f($RS_Menu,'sigla'),0,3).'PROP':        ShowHTML('          <td><font size="1"><b>Proponente</font></td>');         break;
     case substr(f($RS_Menu,'sigla'),0,3).'RESP':        ShowHTML('          <td><font size="1"><b>Responsável</font></td>');        break;
@@ -868,7 +911,7 @@ function Main() {
     case 'GERENCIAL': Gerencial(); break;
     default:
     Cabecalho();
-    ShowHTML('<BASE HREF="'.$conRootSIW.'">');    
+    ShowHTML('<font size=0 color="'.$conBodyBgColor.'">.</font><BASE HREF="'.$conRootSIW.'">');    
     BodyOpen('onLoad=this.focus();');
     Estrutura_Topo_Limpo();
     Estrutura_Menu();

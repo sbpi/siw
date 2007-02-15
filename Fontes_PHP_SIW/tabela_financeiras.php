@@ -860,6 +860,17 @@ function Grava() {
       $p_ordena = strtoupper($_REQUEST['p_ordena']);
       // Verifica se a Assinatura Eletrônica é válida
       if (VerificaAssinaturaEletronica($_SESSION['USERNAME'],strtoupper($_REQUEST['w_assinatura'])) || $w_assinatura=='') {
+        if ($O=='I' || $O=='A') {
+          // Verifica se já existe o código do banco informado
+          $RS = db_getBankList::getInstanceOf($dbms,$_REQUEST['w_codigo'],null,null);
+          if (count($RS)>0) {
+            ScriptOpen('JavaScript');
+            ShowHTML('  alert(\'O código já existe!\');');
+            ScriptClose();
+            RetornaFormulario('w_codigo');
+            exit();
+          }
+        }    
         dml_CoBanco::getInstanceOf($dbms,$O,
             $_REQUEST['w_sq_banco'],$_REQUEST['w_nome'],$_REQUEST['w_codigo'],
             $_REQUEST['w_padrao'],$_REQUEST['w_ativo']);

@@ -266,7 +266,7 @@ function Inicial() {
   ValidateClose();
   ScriptClose();
   ShowHTML('</HEAD>');
-  ShowHTML('<BASE HREF="'.$conRootSIW.'">');
+  ShowHTML('<font size=0 color="'.$conBodyBgColor.'">.</font><BASE HREF="'.$conRootSIW.'">');
   if ($w_troca>'') {
     // Se for recarga da página
     BodyOpen('onLoad=\'document.Form.'.$w_troca.'.focus()\';');
@@ -409,7 +409,7 @@ function Inicial() {
             else               ShowHTML('          <A class="HL" HREF="'.$w_dir.$w_pagina.$par.'&R='.$w_pagina.$par.'&O=A&w_chave='.f($row,'sq_siw_solicitacao').'&P1='.$P1.'&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP='.$TP.'&SG='.$SG.MontaFiltro('GET').'" title="Altera as informações cadastrais do programa">Alterar</A>&nbsp');
             ShowHTML('          <A class="HL" HREF="'.$w_dir.$w_pagina.'Excluir&R='.$w_pagina.$par.'&O=E&w_chave='.f($row,'sq_siw_solicitacao').'&w_tipo=Volta&P1='.$P1.'&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP='.$TP.'&SG='.$SG.MontaFiltro('GET').'" title="Exclusão de programa.">Excluir</A>&nbsp');
             ShowHTML('          <A class="HL" HREF="'.$w_dir.$w_pagina.'Envio&R='.$w_pagina.$par.'&O=V&w_chave='.f($row,'sq_siw_solicitacao').'&w_tipo=Volta&P1='.$P1.'&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP='.$TP.'&SG='.$SG.MontaFiltro('GET').'" title="Encaminhamento do programa.">Enviar</A>&nbsp');
-          } elseif ($P1==2) {
+          } elseif ($P1==2 || $P1==6) {
             // Se for execução
             if ($w_usuario==f($row,'executor')) {
               if (Nvl(f($row,'solicitante'),0) == $w_usuario || 
@@ -433,7 +433,11 @@ function Inicial() {
             } else {
               ShowHTML('          <A class="HL" HREF="'.$w_dir.$w_pagina.'Indicador&R='.$w_pagina.$par.'&O=L&w_chave='.f($row,'sq_siw_solicitacao').'&w_tipo=Volta&P1='.$P1.'&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP='.$TP.'&SG='.'ISPRINDIC'.MontaFiltro('GET').'" title="Indicadores do programa." target="Indicadores">Ind</A>&nbsp');
               ShowHTML('          <A class="HL" HREF="'.$w_dir.$w_pagina.'Restricao&R='.$w_pagina.$par.'&O=L&w_chave='.f($row,'sq_siw_solicitacao').'&w_tipo=Volta&P1='.$P1.'&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP='.$TP.'&SG='.'ISPRRESTR'.MontaFiltro('GET').'" title="Restricoes do programa." target="Restricoes">Rest</A>&nbsp');
-              ShowHTML('          <A class="HL" HREF="'.$w_dir.$w_pagina.'Envio&R='.$w_pagina.$par.'&O=V&w_chave='.f($row,'sq_siw_solicitacao').'&w_tipo=Volta&P1='.$P1.'&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP='.$TP.'&SG='.$SG.MontaFiltro('GET').'" title="Envia a ação para outro responsável.">Enviar</A>&nbsp');
+              if (RetornaGestor(f($row,'sq_siw_solicitacao'),$w_usuario)=='S') {
+                ShowHTML('          <A class="HL" HREF="'.$w_dir.$w_pagina.'Envio&R='.$w_pagina.$par.'&O=V&w_chave='.f($row,'sq_siw_solicitacao').'&w_tipo=Volta&P1='.$P1.'&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP='.$TP.'&SG='.$SG.MontaFiltro('GET').'" title="Envia a ação para outro responsável.">Enviar</A>&nbsp');
+              } else {
+                ShowHTML('          ---&nbsp');
+              }
             } 
           } 
         } else {
@@ -716,7 +720,7 @@ function Geral() {
   ValidateClose();
   ScriptClose();
   ShowHTML('</HEAD>');
-  ShowHTML('<BASE HREF="'.$conRootSIW.'">');
+  ShowHTML('<font size=0 color="'.$conBodyBgColor.'">.</font><BASE HREF="'.$conRootSIW.'">');
   if ($w_troca>'') {
     BodyOpen('onLoad=\'document.Form.'.$w_troca.'.focus()\';');
   } elseif (!(strpos('EV',$O)===false)) {
@@ -897,7 +901,7 @@ function RecursoProgramado() {
   ValidateClose();
   ScriptClose();
   ShowHTML('</HEAD>');
-  ShowHTML('<BASE HREF="'.$conRootSIW.'">');
+  ShowHTML('<font size=0 color="'.$conBodyBgColor.'">.</font><BASE HREF="'.$conRootSIW.'">');
   if (!(strpos('A',$O)===false)) {
     BodyOpen('onLoad=\'document.Form.w_valor.focus()\';');
   } else {
@@ -952,42 +956,64 @@ function RecursoProgramado() {
     //Passagem da cidade padrão como brasília, pelo retidara do impacto geográfico da tela
     $RS1 = db_getCustomerData::getInstanceOf($dbms,$w_cliente);
     ShowHTML('<INPUT type="hidden" name="w_cidade" value="'.f($RS1,'sq_cidade_padrao').'">');
-    ShowHTML('<tr bgcolor="'.$conTrBgColor.'"><td align="center">');
+    ShowHTML('<tr><td align="center">');
     ShowHTML('    <table width="97%" border="0">');
     ShowHTML('<table border="0" cellpadding="0" cellspacing="0" width="100%">');
-    ShowHTML('<tr bgcolor="'.$conTrBgColor.'"><td align="center">');
+    ShowHTML('<tr><td align="center">');
     ShowHTML('    <table width="99%" border="0">');
     ShowHTML('      <tr><td><font size=2>Programa: <b>'.f($RS,'titulo').'</b></font></td></tr>');
     // Identificação da ação
-    ShowHTML('      <tr><td valign="top" colspan="2" align="center" bgcolor="#D0D0D0" style="border: 2px solid rgb(0,0,0);"><b>Identificação</td>');
-    ShowHTML('      <tr><td valign="top" colspan="2">Programa PPA:<br><b>'.f($RS,'ds_programa').' ('.f($RS,'cd_programa').')'.' </b></td>');
-    ShowHTML('      <tr><td valign="top" colspan="2"><table border=0 width="100%" cellspacing=0>');
-    ShowHTML('      <tr><td>Unidade Administrativa:<br><b>'.ExibeUnidade('../',$w_cliente,f($RS,'nm_unidade_adm'),f($RS,'sq_unidade_adm'),$TP).'</b></td>');
-    ShowHTML('          <td>Unidade Orçamentária:<br><b>'.f($RS,'nm_orgao').' </b></td>');
-    ShowHTML('          <tr valign="top">');
-    if (f($RS,'mpog_ppa')=='S')  ShowHTML('          <td>Selecionada SPI/MP:<br><b>Sim</b></td>');
-    else                         ShowHTML('          <td>Selecionada SPI/MP:<br><b>Não</b></td>');
-    if (f($RS,'relev_ppa')=='S') ShowHTML('          <td>Selecionada SE/SEPPIR:<br><b>Sim</b></td>');
-    else                         ShowHTML('          <td>Selecionada SE/SEPPIR:<br><b>Não</b></td>');
-    ShowHTML('        <tr valign="top">');
-    ShowHTML('          <td>Responsável monitoramento:<br><b>'.ExibePessoa('../',$w_cliente,f($RS,'solicitante'),$TP,f($RS,'nm_sol')).'</b></td>');
-    ShowHTML('             <td>Área planejamento:<br><b>'.ExibeUnidade('../',$w_cliente,f($RS,'nm_unidade_resp'),f($RS,'sq_unidade'),$TP).'</b></td>');
-    ShowHTML('        <tr valign="top">');
-    ShowHTML('          <td>Natureza:<br><b>'.f($RS,'nm_natureza').' </b></td>');
-    ShowHTML('          <td>Horizonte:<br><b>'.f($RS,'nm_horizonte').' </b></td>');
-    ShowHTML('          <tr valign="top">');
-    ShowHTML('          <td>Tipo do programa:<br><b>'.f($RS,'nm_tipo_programa').' </b></td>');
-    if (Nvl(f($RS,'ln_programa'),'---')=='---') ShowHTML('          <td>Endereço na internet:<br><b>'.Nvl(f($RS,'ln_programa'),'---').'</b></td>');
-    else                                        ShowHTML('          <td>Endereço na internet:<br><a href="'.Nvl(f($RS,'ln_programa'),'---').'" target="blank"><b>'.Nvl(f($RS,'ln_programa'),'---').'</b></a></td>');
+    ShowHTML('      <tr><td colspan="2"><br><font size="2"><b>IDENTIFICAÇÃO<hr NOSHADE color=#000000 SIZE=1></b></font></td></tr>');
+    ShowHTML('      <tr><td valign="top"><b>Programa PPA:</b></td>');
+    ShowHTML('        <td>'.f($RS,'ds_programa').' ('.f($RS,'cd_programa').')'.' </td></tr>');
+    ShowHTML('      <tr><td valign="top"><table border=0 width="100%" cellspacing=0>');
+    ShowHTML('      <tr><td><b>Unidade Administrativa:</b></td>');
+    ShowHTML('        <td>'.ExibeUnidade('../',$w_cliente,f($RS,'nm_unidade_adm'),f($RS,'sq_unidade_adm'),$TP).'</td></tr>');
+    ShowHTML('      <tr><td><b>Unidade Orçamentária:</b></td>');
+    ShowHTML('        <td>'.f($RS,'nm_orgao').' </td></tr>');
+    if (f($RS,'mpog_ppa')=='S') {
+      ShowHTML('    <tr><td><b>Selecionada SPI/MP:</b></td>');
+      ShowHTML('      <td>Sim</td></tr>');
+    } else {                         
+      ShowHTML('    <tr><td><b>Selecionada SPI/MP:</b></td>');
+      ShowHTML('      <td>Não</td></tr>');
+    }
+    if (f($RS,'relev_ppa')=='S') {
+      ShowHTML('    <tr><td><b>Selecionada SE/SEPPIR:</b></td>');
+      ShowHTML('      <td>Sim</td></tr>');
+    } else {                        
+      ShowHTML('    <tr><td><b>Selecionada SE/SEPPIR:</b></td>');
+      ShowHTML('      <td>Não</td></tr>');
+    }
+    ShowHTML('      <tr><td><b>Responsável monitoramento:</b></td>');
+    ShowHTML('        <td>'.ExibePessoa('../',$w_cliente,f($RS,'solicitante'),$TP,f($RS,'nm_sol')).'</td></tr>');
+    ShowHTML('      <tr><td><b>Área planejamento:</b></td>');
+    ShowHTML('        <td>'.ExibeUnidade('../',$w_cliente,f($RS,'nm_unidade_resp'),f($RS,'sq_unidade'),$TP).'</td></tr>');
+    ShowHTML('      <tr><td><b>Natureza:</b></td>');
+    ShowHTML('        <td>'.f($RS,'nm_natureza').' </td></tr>');
+    ShowHTML('      <tr><td><b>Horizonte:</b></td>');
+    ShowHTML('        <td>'.f($RS,'nm_horizonte').' </td></tr>');
+    ShowHTML('      <tr><td><b>Tipo do programa:</b></td>');
+    ShowHTML('        <td>'.f($RS,'nm_tipo_programa').' </td></tr>');
+    if (Nvl(f($RS,'ln_programa'),'---')=='---'){
+      ShowHTML('    <tr><td>Endereço na internet:</b></td>');
+      ShowHTML('      <td>'.Nvl(f($RS,'ln_programa'),'---').'</td></tr>');
+    } else {                                        
+      ShowHTML('    <tr><td>Endereço na internet:</b></td>');
+      ShowHTML('      <td><a href="'.Nvl(f($RS,'ln_programa'),'---').'" target="blank"><b>'.Nvl(f($RS,'ln_programa'),'---').'</a></td></tr>');
+    }
     ShowHTML('          </table>');
-    ShowHTML('        <tr><td valign="top" colspan="2"><table border=0 width="100%" cellspacing=0>');
-    ShowHTML('        <tr valign="top">');
-    ShowHTML('          <td>Recurso programado:<br><b>'.number_format(f($RS,'valor'),2,',','.').' </b></td>');
-    ShowHTML('          <td>Início previsto:<br><b>'.FormataDataEdicao(f($RS,'inicio')).' </b></td>');
-    ShowHTML('          <td>Fim previsto:<br><b>'.FormataDataEdicao(f($RS,'fim')).' </b></td>');
-    ShowHTML('          </table>');
-    ShowHTML('          <tr valign="top"><td colspan="2">Parcerias externas:<br><b>'.CRLF2BR(Nvl(f($RS,'proponente'),'---')).' </b></td>');
-    ShowHTML('          <tr valign="top"><td colspan="2">Parcerias internas:<br><b>'.CRLF2BR(Nvl(f($RS,'palavra_chave'),'---')).' </b></td>');
+    ShowHTML('        <tr><td valign="top" colspan="2">');
+    ShowHTML('      <tr><td>Recurso programado:</b></td>');
+    ShowHTML('        <td>'.number_format(f($RS,'valor'),2,',','.').' </td></tr>');
+    ShowHTML('      <tr><td>Início previsto:</b></td>');
+    ShowHTML('        <td>'.FormataDataEdicao(f($RS,'inicio')).' </td></tr>');
+    ShowHTML('      <tr><td>Fim previsto:</b></td>');
+    ShowHTML('        <td>'.FormataDataEdicao(f($RS,'fim')).' </td></tr>');
+    ShowHTML('          <tr valign="top"><td>Parcerias externas:</b></td>');
+    ShowHTML('            <td>'.CRLF2BR(Nvl(f($RS,'proponente'),'---')).' </td></tr>');
+    ShowHTML('          <tr valign="top"><td>Parcerias internas:</b></td>');
+    ShowHTML('            <td>'.CRLF2BR(Nvl(f($RS,'palavra_chave'),'---')).' </td></tr>');
     // Responsaveis
     if (f($RS,'nm_gerente_programa')>'' || f($RS,'nm_gerente_executivo')>'' || f($RS,'nm_gerente_adjunto')>'') {
       ShowHTML('      <tr><td valign="top" colspan="2" align="center" bgcolor="#D0D0D0" style="border: 2px solid rgb(0,0,0);"><b>Responsáveis</td>');
@@ -1009,7 +1035,7 @@ function RecursoProgramado() {
       } 
       ShowHTML('          </table>');
     } 
-    ShowHTML('<tr><td valign="top" colspan="2" align="center" bgcolor="#D0D0D0" style="border: 2px solid rgb(0,0,0);"><b>Programação financeira</td>');
+    ShowHTML('<tr><td colspan="2"><br><font size="2"><b>PROGRAMAÇÃO FINANCEIRA<hr NOSHADE color=#000000 SIZE=1></b></font></td></tr>');
     $RS1 = db_getPPADadoFinanc_IS::getInstanceOf($dbms,$w_cd_programa, null,$w_ano,$w_cliente,'VALORFONTE');
     if (count($RS1)<=0) {
       ShowHTML('<tr><td valign="top"><DD><b>Não existe nenhum valor para este programa.</b></DD></td>');
@@ -1022,19 +1048,19 @@ function RecursoProgramado() {
           ShowHTML('<tr><td valign="top">Tipo de orçamento:<br><b>'.f($row,'nm_orcamento').'</b></td>');
           ShowHTML('<tr><td valign="top">Valor por fonte:</td>');
           ShowHTML('<tr><td align="center" colspan="2">');
-          ShowHTML('<TABLE WIDTH="100%" bgcolor="'.$conTableBgColor.'" BORDER="'.$conTableBorder.'" CELLSPACING="'.$conTableCellSpacing.'" CELLPADDING="'.$conTableCellPadding.'" BorderColorDark="'.$conTableBorderColorDark.'" BorderColorLight="'.$conTableBorderColorLight.'">');
-          ShowHTML('<tr bgcolor="'.$conTrBgColor.'" align="center">');
-          ShowHTML('<td><b>Fonte</td>');
-          ShowHTML('<td><b>2004*</td>');
-          ShowHTML('<td><b>2005**</td>');
-          ShowHTML('<td><b>2006</td>');
-          ShowHTML('<td><b>2007</td>');
-          ShowHTML('<td><b>2008</td>');
-          ShowHTML('<td><b>Total</td>');
+//          ShowHTML('<TABLE WIDTH="100%" bgcolor="'.$conTableBgColor.'" BORDER="'.$conTableBorder.'" CELLSPACING="'.$conTableCellSpacing.'" CELLPADDING="'.$conTableCellPadding.'" BorderColorDark="'.$conTableBorderColorDark.'" BorderColorLight="'.$conTableBorderColorLight.'">');
+          ShowHTML('         <table width=100%  border="1" bordercolor="#00000">');
+          ShowHTML('<tr align="center">');
+          ShowHTML('<td bgColor="#f0f0f0"><div><b>Fonte</b></div></td>');
+          ShowHTML('<td bgColor="#f0f0f0"><div><b>2004*</b></div></td>');
+          ShowHTML('<td bgColor="#f0f0f0"><div><b>2005**</b></div></td>');
+          ShowHTML('<td bgColor="#f0f0f0"><div><b>2006</b></div></td>');
+          ShowHTML('<td bgColor="#f0f0f0"><div><b>2007</b></div></td>');
+          ShowHTML('<td bgColor="#f0f0f0"><div><b>2008</b></div></td>');
+          ShowHTML('<td bgColor="#f0f0f0"><div><b>>Total</b></div></td>');
           ShowHTML('</tr>');
         }
-        $w_cor = ($w_cor==$conTrBgColor || $w_cor=='') ? $w_cor=$conTrAlternateBgColor : $w_cor=$conTrBgColor;
-        ShowHTML('<tr bgcolor="'.$w_cor.'"valign="top">');
+        ShowHTML('<tr "valign="top">');
         ShowHTML('<td>'.f($row,'nm_fonte').'</td>');
         ShowHTML('<td align=" center">'.number_format(Nvl(f($row,'valor_ano_1'),0.00),2,',','.').'</td>');
         ShowHTML('<td align=" center">'.number_format(Nvl(f($row,'valor_ano_2'),0.00),2,',','.').'</td>');
@@ -1050,7 +1076,6 @@ function RecursoProgramado() {
       if (count($RS1)<=0) {
         ShowHTML('<td valign="top" colspan=6><DD><b>Nao existe nenhum valor para este programa</b></DD></td>');
       } else {
-        $w_cor = ($w_cor==$conTrBgColor || $w_cor=='') ? $w_cor=$conTrAlternateBgColor : $w_cor=$conTrBgColor;
         ShowHTML('<td align=" center"><b>'.number_format(Nvl(f($RS1,'valor_ano_1'),0.00),2,',','.').'</td>');
         ShowHTML('<td align=" center"><b>'.number_format(Nvl(f($RS1,'valor_ano_2'),0.00),2,',','.').'</td>');
         ShowHTML('<td align=" center"><b>'.number_format(Nvl(f($RS1,'valor_ano_3'),0.00),2,',','.').'</td>');
@@ -1078,7 +1103,7 @@ function RecursoProgramado() {
   } elseif ($O=='P') {
     AbreForm('Form',$w_dir.$w_pagina.$par,'POST','return(Validacao(this));',null,$P1,$P2,$P3,$P4,$TP,$SG,$R,'A');
     ShowHTML('<INPUT type="hidden" name="w_cliente" value="'.$w_cliente.'">');
-    ShowHTML('<tr bgcolor="'.$conTrBgColor.'"><td align="center">');
+    ShowHTML('<tr><td align="center">');
     ShowHTML('    <table width="97%" border="0">');
     SelecaoProgramaIS('<u>P</u>rograma:','P',null,$w_cliente,$w_ano,$w_chave,'w_chave','CADASTRADOS',null);
     ShowHTML('      <tr><td align="center">');
@@ -1165,7 +1190,7 @@ function Responsaveis() {
     ScriptClose();
   } 
   ShowHTML('</HEAD>');
-  ShowHTML('<BASE HREF="'.$conRootSIW.'">');
+  ShowHTML('<font size=0 color="'.$conBodyBgColor.'">.</font><BASE HREF="'.$conRootSIW.'">');
   if ($O=='A') {
     BodyOpen('onLoad=\'document.Form.w_nm_gerente_programa.focus()\';');
   } else {
@@ -1307,7 +1332,7 @@ function ProgramacaoQualitativa() {
   ValidateClose();
   ScriptClose();
   ShowHTML('</HEAD>');
-  ShowHTML('<BASE HREF="'.$conRootSIW.'">');
+  ShowHTML('<font size=0 color="'.$conBodyBgColor.'">.</font><BASE HREF="'.$conRootSIW.'">');
   if ($w_troca>'') {
     BodyOpen('onLoad=\'document.Form.'.$w_troca.'.focus()\';');
   } elseif (!(strpos('EV',$O)===false)) {
@@ -1542,7 +1567,7 @@ function Indicadores() {
     ScriptClose();
   } 
   ShowHTML('</HEAD>');
-  ShowHTML('<BASE HREF="'.$conRootSIW.'">');
+  ShowHTML('<font size=0 color="'.$conBodyBgColor.'">.</font><BASE HREF="'.$conRootSIW.'">');
   if ($w_troca>'') {
     BodyOpen('onLoad=\'document.Form.'.$w_troca.'.focus()\';');
   } elseif ($O=='I') {
@@ -1900,7 +1925,7 @@ function AtualizaIndicador() {
     ScriptClose();
   } 
   ShowHTML('</HEAD>');
-  ShowHTML('<BASE HREF="'.$conRootSIW.'">');
+  ShowHTML('<font size=0 color="'.$conBodyBgColor.'">.</font><BASE HREF="'.$conRootSIW.'">');
   if ($w_troca>'') {
     BodyOpen('onLoad=\'document.Form.'.$w_troca.'.focus()\';');
   } elseif ($O=='I' || $O=='A') {
@@ -2150,7 +2175,7 @@ function Restricoes() {
     ScriptClose();
   } 
   ShowHTML('</HEAD>');
-  ShowHTML('<BASE HREF="'.$conRootSIW.'">');
+  ShowHTML('<font size=0 color="'.$conBodyBgColor.'">.</font><BASE HREF="'.$conRootSIW.'">');
   if ($w_troca>'') {
     BodyOpen('onLoad=\'document.Form.'.$w_troca.'.focus()\';');
   } elseif ($O=='I') {
@@ -2320,7 +2345,7 @@ function Interessados() {
     ScriptClose();
   } 
   ShowHTML('</HEAD>');
-  ShowHTML('<BASE HREF="'.$conRootSIW.'">');
+  ShowHTML('<font size=0 color="'.$conBodyBgColor.'">.</font><BASE HREF="'.$conRootSIW.'">');
   if ($w_troca>'') {
     BodyOpen('onLoad=\'document.Form.'.$w_troca.'.focus()\';');
   } elseif ($O=='I') {
@@ -2462,7 +2487,7 @@ function Anexos() {
     ScriptClose();
   } 
   ShowHTML('</HEAD>');
-  ShowHTML('<BASE HREF="'.$conRootSIW.'">');
+  ShowHTML('<font size=0 color="'.$conBodyBgColor.'">.</font><BASE HREF="'.$conRootSIW.'">');
   if ($w_troca>'') {
     BodyOpen('onLoad=\'document.Form.'.$w_troca.'.focus()\';');
   } elseif ($O=='I') {
@@ -2615,7 +2640,7 @@ function Iniciativas() {
   ValidateClose();
   ScriptClose();
   ShowHTML('</HEAD>');
-  ShowHTML('<BASE HREF="'.$conRootSIW.'">');
+  ShowHTML('<font size=0 color="'.$conBodyBgColor.'">.</font><BASE HREF="'.$conRootSIW.'">');
   BodyOpen(null);
   ShowHTML('<B><FONT COLOR="#000000">'.$w_TP.'</FONT></B>');
   ShowHTML('<HR>');
@@ -2700,7 +2725,7 @@ function Financiamento() {
     ScriptClose();
   } 
   ShowHTML('</HEAD>');
-  ShowHTML('<BASE HREF="'.$conRootSIW.'">');
+  ShowHTML('<font size=0 color="'.$conBodyBgColor.'">.</font><BASE HREF="'.$conRootSIW.'">');
   if ($w_troca>'') {
     BodyOpen('onLoad=\'document.Form.'.$w_troca.'.focus()\';');
   } elseif ($O=='I') {
@@ -2807,7 +2832,7 @@ function Visual1() {
   ShowHTML('<HEAD>');
   ShowHTML('<TITLE>'.$conSgSistema.' - Visualização de Ação</TITLE>');
   ShowHTML('</HEAD>');
-  ShowHTML('<BASE HREF="'.$conRootSIW.'">');
+  ShowHTML('<font size=0 color="'.$conBodyBgColor.'">.</font><BASE HREF="'.$conRootSIW.'">');
   if ($w_tipo!='WORD') BodyOpenClean(null);
   ShowHTML('<TABLE WIDTH="100%" BORDER=0><TR><TD ROWSPAN=2><IMG ALIGN="LEFT" src="'.LinkArquivo(null,$w_cliente,$w_logo,null,null,null,'EMBED').'"><TD ALIGN="RIGHT"><B><FONT SIZE=4 COLOR="#000000">');
   if ($P1==1)       ShowHTML('Relatório Geral por Programa');
@@ -2841,7 +2866,7 @@ function Visual() {
   ShowHTML('<HEAD>');
   ShowHTML('<TITLE>'.$conSgSistema.' - Visualização do Programa</TITLE>');
   ShowHTML('</HEAD>');
-  ShowHTML('<BASE HREF="'.$conRootSIW.'">');
+  ShowHTML('<font size=0 color="'.$conBodyBgColor.'">.</font><BASE HREF="'.$conRootSIW.'">');
   if ($w_tipo!='WORD') BodyOpenClean(null);
   ShowHTML('<div align="center">');
   ShowHTML('<table width="95%" border="0" cellspacing="3">');
@@ -2890,7 +2915,7 @@ function Excluir() {
     ScriptClose();
   } 
   ShowHTML('</HEAD>');
-  ShowHTML('<BASE HREF="'.$conRootSIW.'">');
+  ShowHTML('<font size=0 color="'.$conBodyBgColor.'">.</font><BASE HREF="'.$conRootSIW.'">');
   if ($w_troca>'') {
     BodyOpen('onLoad=\'document.Form.'.$w_troca.'.focus()\';');
   } else {
@@ -2973,7 +2998,7 @@ function Encaminhamento() {
     ScriptClose();
   } 
   ShowHTML('</HEAD>');
-  ShowHTML('<BASE HREF="'.$conRootSIW.'">');
+  ShowHTML('<font size=0 color="'.$conBodyBgColor.'">.</font><BASE HREF="'.$conRootSIW.'">');
   if ($w_troca>'') {
     BodyOpen('onLoad=\'document.Form.'.$w_troca.'.focus()\';');
   } else {
@@ -3061,7 +3086,7 @@ function Anotar() {
     ScriptClose();
   } 
   ShowHTML('</HEAD>');
-  ShowHTML('<BASE HREF="'.$conRootSIW.'">');
+  ShowHTML('<font size=0 color="'.$conBodyBgColor.'">.</font><BASE HREF="'.$conRootSIW.'">');
   if ($w_troca>'') {
     BodyOpen('onLoad=\'document.Form.'.$w_troca.'.focus()\';'); 
   } else {
@@ -3146,7 +3171,7 @@ function Concluir() {
     ScriptClose();
   } 
   ShowHTML('</HEAD>');
-  ShowHTML('<BASE HREF="'.$conRootSIW.'">');
+  ShowHTML('<font size=0 color="'.$conBodyBgColor.'">.</font><BASE HREF="'.$conRootSIW.'">');
   if ($w_troca>'') {
     BodyOpen('onLoad=\'document.Form.'.$w_troca.'.focus()\';');
   } else {
@@ -3495,7 +3520,7 @@ function BuscaPrograma() {
   ValidateClose();
   ScriptClose();
   ShowHTML('</HEAD>');
-  ShowHTML('<BASE HREF="'.$conRootSIW.'">');
+  ShowHTML('<font size=0 color="'.$conBodyBgColor.'">.</font><BASE HREF="'.$conRootSIW.'">');
   BodyOpen('onLoad=\'document.Form.w_nome.focus()\';');
   Estrutura_Texto_Abre();
   ShowHTML('<table border="0" cellpadding="0" cellspacing="0" width="100%">');
@@ -3569,7 +3594,7 @@ function Grava() {
   $w_nome       = '';
   Cabecalho();
   ShowHTML('</HEAD>');
-  ShowHTML('<BASE HREF="'.$conRootSIW.'">');
+  ShowHTML('<font size=0 color="'.$conBodyBgColor.'">.</font><BASE HREF="'.$conRootSIW.'">');
   BodyOpen(null);
   if ($SG=='ISPRGERAL' || $SG=='VLRPGERAL') {
     // Verifica se a Assinatura Eletrônica é válida
@@ -3900,7 +3925,7 @@ function Main() {
     case 'GRAVA':               Grava();                        break;
     default:
       cabecalho();
-      ShowHTML('<BASE HREF="'.$conRootSIW.'">');      
+      ShowHTML('<font size=0 color="'.$conBodyBgColor.'">.</font><BASE HREF="'.$conRootSIW.'">');      
       BodyOpen('onLoad=this.focus();');
       Estrutura_Topo_Limpo();
       Estrutura_Menu();

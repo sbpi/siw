@@ -231,7 +231,7 @@ function Inicial() {
     ShowHTML('      <tr><td valign="top" colspan="2"><table border=0 width="100%" cellspacing=0>');
     ShowHTML('      <tr>');
     selecaoPais('<u>P</u>aís:','P',null,$p_pais,null,'p_pais',null,'onChange="document.Form.action=\''.$w_pagina.$par.'\'; document.Form.O.value=\'P\'; document.Form.w_troca.value=\'p_uf\'; document.Form.submit();"');
-    selecaoEstado('E<u>s</u>tado:','S',null,$p_uf,$p_pais,'N','p_uf',null,'onChange="document.Form.action=\''.$w_pagina.$par.'\'; document.Form.O.value=\'P\'; document.Form.w_troca.value=\'p_cidade\'; document.Form.submit();"');
+    selecaoEstado('E<u>s</u>tado:','S',null,$p_uf,$p_pais,null,'p_uf',null,'onChange="document.Form.action=\''.$w_pagina.$par.'\'; document.Form.O.value=\'P\'; document.Form.w_troca.value=\'p_cidade\'; document.Form.submit();"');
     selecaoCidade('<u>C</u>idade:','C',null,$p_cidade,$p_pais,$p_uf,'p_cidade',null,null);
     ShowHTML('          </table>');
     ShowHTML('      <tr><td valign="top"><b><U>N</U>ome:<br><INPUT ACCESSKEY="N" '.$w_Disabled.' class="sti" type="text" name="p_nome" size="50" maxlength="50" value="'.$p_nome.'"></td>');
@@ -485,7 +485,7 @@ function Geral() {
       ShowHTML('      <tr><td valign="top" colspan="2"><table border=0 width="100%" cellspacing=0>');
       ShowHTML('      <tr>');
       selecaoPais('<u>P</u>aís:','P','Informe o valor padrão para o campo "País".',$w_pais,null,'w_pais',null,'onChange="document.Form.action=\''.$w_pagina.$par.'\'; document.Form.w_troca.value=\'w_uf\'; document.Form.submit();"');
-      selecaoEstado('E<u>s</u>tado:','S','Informe o valor padrão para o campo "Estado"',$w_uf,$w_pais,'N','w_uf',null,'onChange="document.Form.action=\''.$w_pagina.$par.'\'; document.Form.w_troca.value=\'w_cidade\'; document.Form.submit();"');
+      selecaoEstado('E<u>s</u>tado:','S','Informe o valor padrão para o campo "Estado"',$w_uf,$w_pais,null,'w_uf',null,'onChange="document.Form.action=\''.$w_pagina.$par.'\'; document.Form.w_troca.value=\'w_cidade\'; document.Form.submit();"');
       selecaoCidade('<u>C</u>idade:','C','Informe o valor padrão para o campo "Cidade"',$w_cidade,$w_pais,$w_uf,'w_cidade',null,null);
       ShowHTML('          </table>');
       ShowHTML('      <tr><td valign="top" colspan="2"><table border=0 width="100%" cellspacing=0>');
@@ -708,7 +708,7 @@ function Enderecos() {
     ShowHTML('      <tr><td valign="top" colspan="2"><table border=0 width="100%" cellspacing=0>');
     ShowHTML('      <tr>');
     selecaoPais('<u>P</u>aís:','P','Selecione na lista o país onde o endereço localiza-se.',$w_pais,null,'w_pais',null,'onChange="document.Form.action=\''.$w_pagina.$par.'\'; document.Form.w_troca.value=\'w_uf\'; document.Form.submit();"');
-    selecaoEstado('E<u>s</u>tado:','S','Selecione na lista o estado deste endereço.',$w_uf,$w_pais,'N','w_uf',null,'onChange="document.Form.action=\''.$w_pagina.$par.'\'; document.Form.w_troca.value=\'w_cidade\'; document.Form.submit();"');
+    selecaoEstado('E<u>s</u>tado:','S','Selecione na lista o estado deste endereço.',$w_uf,$w_pais,null,'w_uf',null,'onChange="document.Form.action=\''.$w_pagina.$par.'\'; document.Form.w_troca.value=\'w_cidade\'; document.Form.submit();"');
     selecaoCidade('<u>C</u>idade:','C','Selecione na lista a cidade deste endereço.',$w_cidade,$w_pais,$w_uf,'w_cidade',null,null);
     ShowHTML('          <tr><td valign="top" title="O cliente pode ter vários endereços, mas apenas um pode ser o principal. Marque "Sim" se for o caso deste endereço."><b>Padrão:</b><br>');
     if ($w_padrao=='' || $w_padrao=='N') {
@@ -912,7 +912,7 @@ function Telefones() {
     ShowHTML('      <tr><td valign="top" colspan="2"><table border=0 width="100%" cellspacing=0>');
     ShowHTML('      <tr>');
     selecaoPais('<u>P</u>aís:','P','Selecione na lista o país onde o endereço localiza-se.',$w_pais,null,'w_pais',null,'onChange="document.Form.action=\''.$w_pagina.$par.'\'; document.Form.w_troca.value=\'w_uf\'; document.Form.submit();"');
-    selecaoEstado('E<u>s</u>tado:','S','Selecione na lista o estado deste endereço.',$w_uf,$w_pais,'N','w_uf',null,'onChange="document.Form.action=\''.$w_pagina.$par.'\'; document.Form.w_troca.value=\'w_cidade\'; document.Form.submit();"');
+    selecaoEstado('E<u>s</u>tado:','S','Selecione na lista o estado deste endereço.',$w_uf,$w_pais,null,'w_uf',null,'onChange="document.Form.action=\''.$w_pagina.$par.'\'; document.Form.w_troca.value=\'w_cidade\'; document.Form.submit();"');
     selecaoCidade('<u>C</u>idade:','C','Selecione na lista a cidade deste endereço.',$w_cidade,$w_pais,$w_uf,'w_cidade',null,null);
     ShowHTML('          </table>');
     ShowHTML('      <tr><td valign="top" colspan="2"><table border=0 width="100%" cellspacing=0>');

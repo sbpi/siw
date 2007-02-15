@@ -17,6 +17,9 @@ function selecaoServico($label,$accesskey,$hint,$chave,$chaveAux,$modulo,$campo,
      ShowHTML('          <td valign="top" title="'.$hint.'"><font size="1"><b>'.$label.'</b><br><SELECT ACCESSKEY="'.$accesskey.'" CLASS="sts" NAME="'.$campo.'" '.$w_Disabled.' '.$atributo.'>');
   }
   ShowHTML('          <option value="">---');
+  if (f($RS_Menu,'solicita_cc')=='S') {
+    if (nvl($chave,'')=='CLASSIF') ShowHTML('          <option value="CLASSIF" SELECTED>Classificação');   else ShowHTML('          <option value="CLASSIF">Classificação');
+  }
   foreach($RS as $row) {
     if (nvl(f($row,'sq_menu'),0)==nvl($chave,0)) {
        ShowHTML('          <option value="'.f($row,'sq_menu').'" SELECTED>'.f($row,'nome'));

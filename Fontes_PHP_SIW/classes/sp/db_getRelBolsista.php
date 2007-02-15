@@ -10,13 +10,15 @@ include_once($w_dir_volta.'classes/db/DatabaseQueriesFactory.php');
 */
 
 class db_getRelBolsista  {
-   function getInstanceOf($dbms, $p_chave, $p_bolsista, $p_tema, $p_nivel, $p_contrato, $p_restricao) {
+   function getInstanceOf($dbms, $p_chave, $p_bolsista, $p_tema, $p_nivel, $p_contrato, $p_mes, $p_ano, $p_restricao) {
      extract($GLOBALS,EXTR_PREFIX_SAME,'strchema'); $sql=$strschema.'SP_GETRELBOLSISTA';
      $params=array('p_chave'                     =>array($p_chave,                                         B_INTEGER,        32),
                    'p_bolsista'                  =>array($p_bolsista,                                      B_INTEGER,        32),
                    'p_tema'                      =>array($p_tema,                                          B_INTEGER,        32),
                    'p_nivel'                     =>array($p_nivel,                                         B_INTEGER,        32),
                    'p_contrato'                  =>array($p_contrato,                                      B_INTEGER,        32),
+                   'p_mes'                       =>array(tvl($p_mes),                                      B_VARCHAR,        10),
+                   'p_ano'                       =>array(tvl($p_ano),                                      B_VARCHAR,        10),
                    'p_restricao'                 =>array(tvl($p_restricao),                                B_VARCHAR,        30),
                    'p_result'                    =>array(null,                                             B_CURSOR,         -1)
                   );

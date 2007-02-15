@@ -8,7 +8,10 @@ include_once($w_dir_volta.'classes/sp/db_getMenuRelac.php');
 // -------------------------------------------------------------------------
 function selecaoSolic($label,$accesskey,$hint,$cliente,$chave,$chaveAux,$chaveAux2,$campo,$restricao,$atributo) {
   extract($GLOBALS);
-  if(substr($restricao,0,2)=='IS') {
+  if ($chaveAux=='CLASSIF') {
+    include_once($w_dir_volta.'funcoes/selecaoCC.php');
+    SelecaoCC($label,$accesskey,$hint,$chave,null,$campo,$restricao);
+  } elseif(substr($restricao,0,2)=='IS') {
     $l_RS = db_getAcao_IS::getInstanceOf($dbms,null,null,null,$_SESSION['ANO'],$w_cliente,'ACAO',null);
     $l_RS = SortArray($l_RS,'titulo','asc');
     if (!isset($hint))
@@ -53,23 +56,42 @@ function selecaoSolic($label,$accesskey,$hint,$cliente,$chave,$chaveAux,$chaveAu
         ShowHTML('          <td valign="top"><font size="1"><b>'.$label.'</b><br><SELECT ACCESSKEY="'.$accesskey.'" CLASS="STS" NAME="'.$campo.'" '.$w_Disabled.' '.$atributo.'>');
       else
         ShowHTML('          <td valign="top" TITLE="'.$hint.'"><font size="1"><b>'.$label.'</b><br><SELECT ACCESSKEY="'.$accesskey.'" CLASS="STS" NAME="'.$campo.'" '.$w_Disabled.' '.$atributo.'>');
-      ShowHTML('          <option value="">---');
+      
+      $l_cont = 0;
+      $l_RS1 = db_getMenuData::getInstanceOf($dbms,$chaveAux);
+      $l_sigla = f($l_RS1,'sigla');
       foreach ($l_RS as $l_row) {
-        $l_RS1 = db_getMenuData::getInstanceOf($dbms,$chaveAux);
-        if (f($l_RS1,'sigla')==='GCCCAD') {
+        if ($l_sigla==='GCCCAD') {
           if (nvl(f($l_row,'sq_siw_solicitacao'),0)==nvl($chave,0)){
+            if ($l_cont==0) {
+              ShowHTML('          <option value="">---');
+              $l_cont += 1;
+            }
             ShowHTML('          <option value="'.f($l_row,'sq_siw_solicitacao').'" SELECTED>'.f($l_row,'titulo'));
           } else {
-            if (nvl(f($l_row,'qtd_projeto'),0)==0)
+            if (nvl(f($l_row,'qtd_projeto'),0)==0) {
+              if ($l_cont==0) {
+                ShowHTML('          <option value="">---');
+                $l_cont += 1;
+              }
               ShowHTML('          <option value="'.f($l_row,'sq_siw_solicitacao').'">'.f($l_row,'titulo'));
+            }
           }          
         } else {
+          if ($l_cont==0) {
+            ShowHTML('          <option value="">---');
+            $l_cont += 1;
+          }
           if (nvl(f($l_row,'sq_siw_solicitacao'),0)==nvl($chave,0))
             ShowHTML('          <option value="'.f($l_row,'sq_siw_solicitacao').'" SELECTED>'.f($l_row,'titulo'));
           else
             ShowHTML('          <option value="'.f($l_row,'sq_siw_solicitacao').'">'.f($l_row,'titulo'));      
         }
       } 
+      if ($l_cont==0) {
+        ShowHTML('          <option value="">Não há documentos disponíveis para vinculação.');
+        $l_cont += 1;
+      }
       ShowHTML('          </select>');
     }
   }

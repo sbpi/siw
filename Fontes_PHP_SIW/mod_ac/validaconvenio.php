@@ -27,14 +27,18 @@ function ValidaConvenio($l_cliente,$l_chave,$l_sg1,$l_sg2,$l_sg3,$l_sg4,$l_trami
   if (count($l_rs_solic)==0) {
     return '0<li>Não existe registro no banco de dados com o número informado.';
   } 
-
+  $l_erro='';
+  $l_tipo='';
+  $l_lista=''; 
+  if (f($l_rs_solic,'ativo')=='S') {
+    if (substr(f($l_rs_solic,'sigla'),0,3)=='GCC' && f($l_rs_solic,'cd_modalidade')!='I') {
+      $l_erro=$l_erro.'<li>Para convênio, o tipo deve ser de parceria institucional.';
+      $l_tipo=0;
+    }
+  }
   // Verifica se o cliente tem o módulo de acordos contratado
   $l_rs_modulo = db_getSiwCliModLis::getInstanceOf($dbms,$l_cliente,null,'AC');
   if (count($l_rs_modulo)>0) $l_acordo='S'; else $l_acordo='N';
- 
-  $l_erro='';
-  $l_tipo='';
-  $l_lista='';
  
   // Recupera o trâmite atual da solicitação
   $l_rs_tramite = db_getTramiteData::getInstanceOf($dbms,f($l_rs_solic,'sq_siw_tramite'));

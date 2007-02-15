@@ -332,7 +332,7 @@ function Inicial() {
   ValidateClose();
   ScriptClose();
   ShowHTML('</HEAD>');
-  ShowHTML('<BASE HREF="'.$conRootSIW.'">');
+  ShowHTML('<font size=0 color="'.$conBodyBgColor.'">.</font><BASE HREF="'.$conRootSIW.'">');
   if ($w_Troca>'') {
     // Se for recarga da página
     BodyOpen('onLoad=\'document.Form.'.$w_Troca.'.focus();\'');
@@ -443,7 +443,7 @@ function Inicial() {
           } 
         } 
         ShowHTML('        <td align="top" nowrap>');
-        if ($P1!=3 && $P1!=5) {
+        if ($P1!=3 && $P1!=5 && $P1!=6) {
           // Se não for acompanhamento
           if ($w_copia>'') {
             // Se for listagem para cópia
@@ -565,7 +565,7 @@ function Inicial() {
       SelecaoPais('Pa<u>í</u>s destino:','I',null,$p_pais,null,'p_pais',null,'onChange="document.Form.action=\''.$w_dir.$w_pagina.$par.'\'; document.Form.O.value=\''.$O.'\'; document.Form.w_troca.value=\'p_regiao\'; document.Form.submit();"');
       SelecaoRegiao('<u>R</u>egião destino:','R',null,$p_regiao,$p_pais,'p_regiao',null,'onChange="document.Form.action=\''.$w_dir.$w_pagina.$par.'\'; document.Form.O.value=\''.$O.'\'; document.Form.w_troca.value=\'p_uf\'; document.Form.submit();"');
       ShowHTML('   <tr>');
-      SelecaoEstado('E<u>s</u>tado destino:','S',null,$p_uf,$p_pais,'N','p_uf',null,'onChange="document.Form.action=\''.$w_dir.$w_pagina.$par.'\'; document.Form.O.value=\''.$O.'\'; document.Form.w_troca.value=\'p_cidade\'; document.Form.submit();"');
+      SelecaoEstado('E<u>s</u>tado destino:','S',null,$p_uf,$p_pais,$p_regiao,'p_uf',null,'onChange="document.Form.action=\''.$w_dir.$w_pagina.$par.'\'; document.Form.O.value=\''.$O.'\'; document.Form.w_troca.value=\'p_cidade\'; document.Form.submit();"');
       SelecaoCidade('<u>C</u>idade destino:','C',null,$p_cidade,$p_pais,$p_uf,'p_cidade',null,null);
       ShowHTML('   <tr>');
       SelecaoTipoPCD('Ti<u>p</u>o:','P',null,$p_ativo,'p_ativo',null,null);
@@ -806,7 +806,7 @@ function Geral() {
   ValidateClose();
   ScriptClose();
   ShowHTML('</HEAD>');
-  ShowHTML('<BASE HREF="'.$conRootSIW.'">');
+  ShowHTML('<font size=0 color="'.$conBodyBgColor.'">.</font><BASE HREF="'.$conRootSIW.'">');
   if ($w_troca>'') {
     BodyOpen('onLoad=\'this.focus()\';');
   } elseif (!(strpos('EV',$O)===false)) {
@@ -973,10 +973,10 @@ function OutraParte() {
   $w_pessoa_atual   = $_REQUEST['w_pessoa_atual'];
 
   $RS = db_getSolicData::getInstanceOf($dbms,$w_chave,$SG);
-  if ($w_sq_pessoa=='' && (strpos($_REQUEST['botao'],'Selecionar')===false)) {
+  if ($w_sq_pessoa=='' && (strpos($_REQUEST['Botao'],'Selecionar')===false)) {
     $w_sq_pessoa    = f($RS,'sq_prop');
     $w_pessoa_atual = f($RS,'sq_prop');
-  } elseif (strpos($_REQUEST['botao'],'Selecionar')===false) {
+  } elseif (strpos($_REQUEST['Botao'],'Selecionar')===false) {
     $w_sq_banco         = f($RS,'sq_banco');
     $w_sq_agencia       = f($RS,'sq_agencia');
     $w_operacao         = f($RS,'operacao_conta');
@@ -1049,7 +1049,7 @@ function OutraParte() {
     $w_cnpj                 = $_REQUEST['w_cnpj'];
     $w_inscricao_estadual   = $_REQUEST['w_inscricao_estadual'];
   } else {
-    if ((strpos($_REQUEST['botao'],'Alterar')===false) && (strpos($_REQUEST['botao'],'Procurar')===false) && ($O=='A' || $w_sq_pessoa>'' || $w_cpf>'' || $w_cnpj>'')) {
+    if ((strpos($_REQUEST['Botao'],'Alterar')===false) && (strpos($_REQUEST['Botao'],'Procurar')===false) && ($O=='A' || $w_sq_pessoa>'' || $w_cpf>'' || $w_cnpj>'')) {
       // Recupera os dados do beneficiário em co_pessoa
       $RS = db_getBenef::getInstanceOf($dbms,$w_cliente,$w_sq_pessoa,$w_cpf,$w_cnpj,null,null,null,null);
       if (!count($RS)<=0) {
@@ -1112,7 +1112,7 @@ function OutraParte() {
   CheckBranco();
   FormataData();
   ValidateOpen('Validacao');
-  if (($w_cpf=='' && $w_cnpj=='') || !(strpos($_REQUEST['botao'],'Procurar')===false) || !(strpos($_REQUEST['botao'],'Alterar')===false)) {
+  if (($w_cpf=='' && $w_cnpj=='') || !(strpos($_REQUEST['Botao'],'Procurar')===false) || !(strpos($_REQUEST['Botao'],'Alterar')===false)) {
     // Se o beneficiário ainda não foi selecionado
     ShowHTML('  if (theForm.Botao.value == "Procurar") {');
     Validate('w_nome','Nome','','1','4','20','1','');
@@ -1172,10 +1172,10 @@ function OutraParte() {
   ValidateClose();
   ScriptClose();
   ShowHTML('</HEAD>');
-  ShowHTML('<BASE HREF="'.$conRootSIW.'">');
-  if (($w_cpf=='' && $w_cnpj=='') || !(strpos($_REQUEST['botao'],'Alterar')===false) || !(strpos($_REQUEST['botao'],'Procurar')===false)) {
+  ShowHTML('<font size=0 color="'.$conBodyBgColor.'">.</font><BASE HREF="'.$conRootSIW.'">');
+  if (($w_cpf=='' && $w_cnpj=='') || !(strpos($_REQUEST['Botao'],'Alterar')===false) || !(strpos($_REQUEST['Botao'],'Procurar')===false)) {
     // Se o beneficiário ainda não foi selecionado
-    if (!(strpos($_REQUEST['botao'],'Procurar')===false)) {
+    if (!(strpos($_REQUEST['Botao'],'Procurar')===false)) {
       // Se está sendo feita busca por nome
       BodyOpenClean('onLoad=\'this.focus()\';');
     } else {
@@ -1192,7 +1192,7 @@ function OutraParte() {
   Estrutura_Texto_Abre();
   ShowHTML('<table align="center" border="0" cellpadding="0" cellspacing="0" width="100%">');
   if (!(strpos('IA',$O)===false)) {
-    if (($w_cpf=='' && $w_cnpj=='') || !(strpos($_REQUEST['botao'],'Alterar')===false) || !(strpos($_REQUEST['botao'],'Procurar')===false)) {
+    if (($w_cpf=='' && $w_cnpj=='') || !(strpos($_REQUEST['Botao'],'Alterar')===false) || !(strpos($_REQUEST['Botao'],'Procurar')===false)) {
       // Se o beneficiário ainda não foi selecionado
       ShowHTML('<FORM action="'.$w_dir.$w_pagina.$par.'" method="POST" name="Form" onSubmit="return(Validacao(this));">');
     } else {
@@ -1211,9 +1211,9 @@ function OutraParte() {
     ShowHTML('<INPUT type="hidden" name="w_chave_aux" value="'.$w_cliente.'">');
     ShowHTML('<INPUT type="hidden" name="w_sq_pessoa" value="'.$w_sq_pessoa.'">');
     ShowHTML('<INPUT type="hidden" name="w_pessoa_atual" value="'.$w_pessoa_atual.'">');
-    if (($w_cpf=='' && $w_cnpj=='') || !(strpos($_REQUEST['botao'],'Alterar')===false) || !(strpos($_REQUEST['botao'],'Procurar')===false)) {
+    if (($w_cpf=='' && $w_cnpj=='') || !(strpos($_REQUEST['Botao'],'Alterar')===false) || !(strpos($_REQUEST['Botao'],'Procurar')===false)) {
       $w_nome=$_REQUEST['w_nome'];
-      if (!(strpos($_REQUEST['botao'],'Alterar')===false)) {
+      if (!(strpos($_REQUEST['Botao'],'Alterar')===false)) {
         $w_cpf  = '';
         $w_cnpj = '';
         $w_nome = '';
@@ -1231,7 +1231,6 @@ function OutraParte() {
       ShowHTML('      </table>');
       if ($w_nome>'') {
         $RS = db_getBenef::getInstanceOf($dbms,$w_cliente,null,null,null,$w_nome,1,null,null);
-        foreach($RS as $row) { $RS = $row; break; }
         ShowHTML('<tr><td colspan=3>');
         ShowHTML('    <TABLE WIDTH="100%" bgcolor="'.$conTableBgColor.'" BORDER="'.$conTableBorder.'" CELLSPACING="'.$conTableCellSpacing.'" CELLPADDING="'.$conTableCellPadding.'" BorderColorDark="'.$conTableBorderColorDark.'" BorderColorLight="'.$conTableBorderColorLight.'">');
         ShowHTML('        <tr bgcolor="'.$conTrBgColor.'" align="center">');
@@ -1476,7 +1475,7 @@ function Trechos() {
   ValidateClose();
   ScriptClose();
   ShowHTML('</HEAD>');
-  ShowHTML('<BASE HREF="'.$conRootSIW.'">');
+  ShowHTML('<font size=0 color="'.$conBodyBgColor.'">.</font><BASE HREF="'.$conRootSIW.'">');
   if ($w_troca>'') {
     BodyOpenClean('onLoad=\'document.Form.'.$w_troca.'.focus()\';');
   } elseif ($O=='I' || $O=='A') {
@@ -1532,7 +1531,7 @@ function Trechos() {
     ShowHTML('      <tr><td colspan="5" align="center" height="1" bgcolor="#000000"></td></tr>');
     ShowHTML('      <tr valign="top">');
     SelecaoPais('<u>P</u>aís:','P',null,$w_pais_orig,null,'w_pais_orig',null,'onChange="document.Form.action=\''.$w_dir.$w_pagina.$par.'\'; document.Form.w_troca.value=\'w_uf_orig\'; document.Form.submit();"');
-    SelecaoEstado('E<u>s</u>tado:','S',null,$w_uf_orig,$w_pais_orig,'N','w_uf_orig',null,'onChange="document.Form.action=\''.$w_dir.$w_pagina.$par.'\'; document.Form.w_troca.value=\'w_cidade_orig\'; document.Form.submit();"');
+    SelecaoEstado('E<u>s</u>tado:','S',null,$w_uf_orig,$w_pais_orig,null,'w_uf_orig',null,'onChange="document.Form.action=\''.$w_dir.$w_pagina.$par.'\'; document.Form.w_troca.value=\'w_cidade_orig\'; document.Form.submit();"');
     SelecaoCidade('<u>C</u>idade:','C',null,$w_cidade_orig,$w_pais_orig,$w_uf_orig,'w_cidade_orig',null,null);
     ShowHTML('          <td><b><u>S</u>aída:</b><br><input '.$w_Disabled.' accesskey="S" type="text" name="w_data_saida" class="sti" SIZE="10" MAXLENGTH="10" VALUE="'.$w_data_saida.'" onKeyDown="FormataData(this,event);"> '.ExibeCalendario('Form','w_data_saida').'</td>');
     ShowHTML('          <td><b><u>H</u>ora local:</b><br><input '.$w_Disabled.' accesskey="H" type="text" name="w_hora_saida" class="sti" SIZE="5" MAXLENGTH="5" VALUE="'.$w_hora_saida.'" onKeyDown="FormataHora(this,event);"></td>');
@@ -1542,7 +1541,7 @@ function Trechos() {
     ShowHTML('      <tr><td colspan="5" align="center" height="1" bgcolor="#000000"></td></tr>');
     ShowHTML('      <tr valign="top">');
     SelecaoPais('<u>P</u>aís:','P',null,$w_pais_dest,null,'w_pais_dest',null,'onChange="document.Form.action=\''.$w_dir.$w_pagina.$par.'\'; document.Form.w_troca.value=\'w_uf_dest\'; document.Form.submit();"');
-    SelecaoEstado('E<u>s</u>tado:','S',null,$w_uf_dest,$w_pais_dest,'N','w_uf_dest',null,'onChange="document.Form.action=\''.$w_dir.$w_pagina.$par.'\'; document.Form.w_troca.value=\'w_cidade_dest\'; document.Form.submit();"');
+    SelecaoEstado('E<u>s</u>tado:','S',null,$w_uf_dest,$w_pais_dest,null,'w_uf_dest',null,'onChange="document.Form.action=\''.$w_dir.$w_pagina.$par.'\'; document.Form.w_troca.value=\'w_cidade_dest\'; document.Form.submit();"');
     SelecaoCidade('<u>C</u>idade:','C',null,$w_cidade_dest,$w_pais_dest,$w_uf_dest,'w_cidade_dest',null,null);
     ShowHTML('          <td><b><u>C</u>hegada:</b><br><input '.$w_Disabled.' accesskey="C" type="text" name="w_data_chegada" class="sti" SIZE="10" MAXLENGTH="10" VALUE="'.$w_data_chegada.'" onKeyDown="FormataData(this,event);" onFocus="if (document.Form.w_data_chegada.value==\'\') { document.Form.w_data_chegada.value = document.Form.w_data_saida.value; }"> '.ExibeCalendario('Form','w_data_chegada').'</td>');
     ShowHTML('          <td><b><u>H</u>ora local:</b><br><input '.$w_Disabled.' accesskey="H" type="text" name="w_hora_chegada" class="sti" SIZE="5" MAXLENGTH="5" VALUE="'.$w_hora_chegada.'" onKeyDown="FormataHora(this,event);"></td>');
@@ -1656,7 +1655,7 @@ function Vinculacao() {
   } 
   ScriptClose();
   ShowHTML('</HEAD>');
-  ShowHTML('<BASE HREF="'.$conRootSIW.'">');
+  ShowHTML('<font size=0 color="'.$conBodyBgColor.'">.</font><BASE HREF="'.$conRootSIW.'">');
   if ($w_troca>'') {
     BodyOpenClean('onLoad=\'document.Form.'.$w_troca.'.focus()\';');
   } elseif ($O=='I' && Nvl($p_assunto,'')=='') {
@@ -1772,7 +1771,7 @@ function Vinculacao() {
     ShowHTML('          <td valign="top"><font size="1"><b>Propo<U>n</U>ente externo:<br><INPUT ACCESSKEY="N" '.$w_Disabled.' class="STI" type="text" name="p_proponente" size="25" maxlength="90" value="'.$p_proponente.'"></td>');
     ShowHTML('      <tr>');
     SelecaoPais('<u>P</u>aís:','P',null,$p_pais,null,'p_pais',null,'onChange="document.Form.action=\''.$w_dir.$w_pagina.$par.'\'; document.Form.O.value=\''.$O.'\'; document.Form.target=\'\'; document.Form.w_troca.value=\'p_uf\'; document.Form.submit();"');
-    SelecaoEstado('E<u>s</u>tado:','S',null,$p_uf,$p_pais,'N','p_uf',null,'onChange="document.Form.action=\''.$w_dir.$w_pagina.$par.'\'; document.Form.O.value=\''.$O.'\'; document.Form.target=\'\'; document.Form.w_troca.value=\'p_cidade\'; document.Form.submit();"');
+    SelecaoEstado('E<u>s</u>tado:','S',null,$p_uf,$p_pais,null,'p_uf',null,'onChange="document.Form.action=\''.$w_dir.$w_pagina.$par.'\'; document.Form.O.value=\''.$O.'\'; document.Form.target=\'\'; document.Form.w_troca.value=\'p_cidade\'; document.Form.submit();"');
     SelecaoCidade('<u>C</u>idade:','C',null,$p_cidade,$p_pais,$p_uf,'p_cidade',null,null);
     ShowHTML('      <tr>');
     ShowHTML('          <td valign="top"><font size="1"><b>Conclusão en<u>t</u>re:</b><br><input '.$w_Disabled.' accesskey="T" type="text" name="p_fim_i" class="STI" SIZE="10" MAXLENGTH="10" VALUE="'.$p_fim_i.'" onKeyDown="FormataData(this,event);">'.ExibeCalendario('Form','p_fim_i').' e <input '.$w_Disabled.' accesskey="T" type="text" name="p_fim_f" class="STI" SIZE="10" MAXLENGTH="10" VALUE="'.$p_fim_f.'" onKeyDown="FormataData(this,event);">'.ExibeCalendario('Form','p_fim_f').'</td>');
@@ -2024,7 +2023,7 @@ function DadosFinanceiros() {
   ValidateClose();
   ScriptClose();
   ShowHTML('</HEAD>');
-  ShowHTML('<BASE HREF="'.$conRootSIW.'">');
+  ShowHTML('<font size=0 color="'.$conBodyBgColor.'">.</font><BASE HREF="'.$conRootSIW.'">');
   BodyOpen('onLoad=\'this.focus()\';');
   ShowHTML('<B><FONT COLOR="#000000">'.$w_TP.'</font></B>');
   ShowHTML('<HR>');
@@ -2164,7 +2163,7 @@ function Visual() {
   ShowHTML('<HEAD>');
   ShowHTML('<TITLE>'.$conSgSistema.' - Visualização de PCD</TITLE>');
   ShowHTML('</HEAD>');
-  ShowHTML('<BASE HREF="'.$conRootSIW.'">');
+  ShowHTML('<font size=0 color="'.$conBodyBgColor.'">.</font><BASE HREF="'.$conRootSIW.'">');
   BodyOpenClean('onLoad=\'this.focus()\'; ');
   if ($w_tipo!='WORD') {
     ShowHTML('<TABLE WIDTH="100%" BORDER=0><TR><TD ROWSPAN=2><IMG ALIGN="LEFT" src="'.LinkArquivo(null,$w_cliente,$w_logo,null,null,null,'EMBED').'"><TD ALIGN="RIGHT"><B><FONT SIZE=4 COLOR="#000000">');
@@ -2222,7 +2221,7 @@ function Excluir() {
     ScriptClose();
   } 
   ShowHTML('</HEAD>');
-  ShowHTML('<BASE HREF="'.$conRootSIW.'">');
+  ShowHTML('<font size=0 color="'.$conBodyBgColor.'">.</font><BASE HREF="'.$conRootSIW.'">');
   if ($w_troca>'') {
     BodyOpen('onLoad=\'document.Form.'.$w_troca.'.focus()\';');
   } else {
@@ -2350,7 +2349,7 @@ function Encaminhamento() {
     ScriptClose();
   } 
   ShowHTML('</HEAD>');
-  ShowHTML('<BASE HREF="'.$conRootSIW.'">');
+  ShowHTML('<font size=0 color="'.$conBodyBgColor.'">.</font><BASE HREF="'.$conRootSIW.'">');
   if ($w_troca>'') {
     BodyOpen('onLoad=\'document.Form.'.$w_troca.'.focus()\';');
   } else {
@@ -2467,7 +2466,7 @@ function Anotar() {
     ScriptClose();
   } 
   ShowHTML('</HEAD>');
-  ShowHTML('<BASE HREF="'.$conRootSIW.'">');
+  ShowHTML('<font size=0 color="'.$conBodyBgColor.'">.</font><BASE HREF="'.$conRootSIW.'">');
   if ($w_troca>'') {
     BodyOpen('onLoad=\'document.Form.'.$w_troca.'.focus()\';');
   } else {
@@ -2563,7 +2562,7 @@ function Concluir() {
     ScriptClose();
   } 
   ShowHTML('</HEAD>');
-  ShowHTML('<BASE HREF="'.$conRootSIW.'">');
+  ShowHTML('<font size=0 color="'.$conBodyBgColor.'">.</font><BASE HREF="'.$conRootSIW.'">');
   BodyOpen('onLoad=\'document.Form.w_assinatura.focus()\';');
   ShowHTML('<B><FONT COLOR="#000000">'.$w_TP.'</font></B>');
   ShowHTML('<HR>');
@@ -3662,7 +3661,7 @@ function InformarPassagens() {
   ValidateClose();
   ScriptClose();
   ShowHTML('</HEAD>');
-  ShowHTML('<BASE HREF="'.$conRootSIW.'">');
+  ShowHTML('<font size=0 color="'.$conBodyBgColor.'">.</font><BASE HREF="'.$conRootSIW.'">');
   BodyOpen('onLoad=\'this.focus()\';');
   ShowHTML('<B><FONT COLOR="#000000">'.$w_TP.'</font></B>');
   ShowHTML('<HR>');
@@ -4459,7 +4458,7 @@ function Grava() {
   $w_nome       = '';
   Cabecalho();
   ShowHTML('</HEAD>');
-  ShowHTML('<BASE HREF="'.$conRootSIW.'">');
+  ShowHTML('<font size=0 color="'.$conBodyBgColor.'">.</font><BASE HREF="'.$conRootSIW.'">');
   BodyOpen('onLoad=this.focus();');
   switch ($SG) {
     case 'PDIDENT':
@@ -4792,7 +4791,7 @@ function Main() {
   case 'GRAVA':             Grava(); break; 
   default:
     Cabecalho();
-    ShowHTML('<BASE HREF="'.$conRootSIW.'">');
+    ShowHTML('<font size=0 color="'.$conBodyBgColor.'">.</font><BASE HREF="'.$conRootSIW.'">');
     BodyOpen('onLoad=this.focus();');
     Estrutura_Topo_Limpo();
     Estrutura_Menu();

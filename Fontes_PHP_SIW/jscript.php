@@ -248,8 +248,8 @@ function CompValor ($Valor1, $DisplayName1, $Operator, $Valor2, $DisplayName2) {
   }
   print "  if (V1.length != 0 && V2.length != 0) { "."\r\n";
   print "     V1 = V1.toString().replace(/\\$|\\./g,''); "."\r\n";
-  print "     V2 = V2.toString().replace(/\\$|\\./g,''); "."\r\n";
   print "     V1 = V1.toString().replace(',','.'); "."\r\n";
+  print "     V2 = V2.toString().replace(/\\$|\\./g,''); "."\r\n";
   print "     V2 = V2.toString().replace(',','.'); "."\r\n";
   print "     if (isNaN(V1)) { "."\r\n";
   print "        alert('" . $DisplayName1 . " não é um valor válido!.'); "."\r\n";

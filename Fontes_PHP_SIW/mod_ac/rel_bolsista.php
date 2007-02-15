@@ -15,8 +15,10 @@ include_once($w_dir_volta.'classes/sp/db_getSolicData.php');
 include_once($w_dir_volta.'classes/sp/db_getRelBolsista.php');
 include_once($w_dir_volta.'classes/sp/db_getCustomerData.php');
 include_once($w_dir_volta.'funcoes/selecaoProjeto.php');
+include_once($w_dir_volta.'funcoes/selecaoAno.php');
+include_once($w_dir_volta.'funcoes/selecaoMes.php');
 // =========================================================================
-//  /GR_Projeto.php
+//  /rel_bolsista.php
 // ------------------------------------------------------------------------
 // Nome     : Celso Miguel Lago Filho
 // Descricao: Relatório para contrato de bolsistas
@@ -97,6 +99,8 @@ function Rel_Bolsista() {
   extract($GLOBALS);
   $p_chave  = $_REQUEST['p_chave'];
   $p_tipo   = $_REQUEST['p_tipo'];
+  $p_mes    = strval($_REQUEST['p_mes']);
+  $p_ano    = $_REQUEST['p_ano'];
   if (nvl($p_chave,'')>'') {
     $RS1 = db_getSolicData::getInstanceOf($dbms,$p_chave,'PJGERAL');
     $w_inicio     = f($RS1,'inicio');
@@ -119,19 +123,22 @@ function Rel_Bolsista() {
     if (f($RS,'logo')>'')   $w_logo='/img/logo'.substr(f($RS,'logo'),(strpos(f($RS,'logo'),'.') ? strpos(f($RS,'logo'),'.')+1 : 0)-1,30);
   } 
   if($p_tipo=='F') {
-    $RS = db_getRelBolsista::getInstanceOf($dbms,$p_chave,null,null,null,null,null);
+    $RS = db_getRelBolsista::getInstanceOf($dbms,$p_chave,null,null,null,null,null,null,null);
     $RS = SortArray($RS,'or_tema','asc','or_nivel','asc','nm_bolsista','asc','phpdt_vencimento','asc');
   } elseif($p_tipo=='T') {
-    $RS = db_getRelBolsista::getInstanceOf($dbms,$p_chave,null,null,null,null,'TEMA');
+    $RS = db_getRelBolsista::getInstanceOf($dbms,$p_chave,null,null,null,null,null,null,'TEMA');
     $RS = SortArray($RS,'or_tema','asc','or_nivel','asc','nm_bolsista','asc','phpdt_vencimento','asc');
   } elseif($p_tipo=='M') {
-    $RS = db_getRelBolsista::getInstanceOf($dbms,$p_chave,null,null,null,null,'MENSAL');
+    $RS = db_getRelBolsista::getInstanceOf($dbms,$p_chave,null,null,null,null,null,null,'MENSAL');
+  } elseif($p_tipo=='R') {
+    $RS = db_getRelBolsista::getInstanceOf($dbms,$p_chave,null,null,null,null,$p_mes,$p_ano,'RESUMO1');
+    $RS = SortArray($RS,'or_tema','asc','or_nivel','asc','nm_bolsista','asc','phpdt_vencimento','asc');
   }
   if ($w_tipo_rel=='WORD') {
     HeaderWord(null);
     $w_pag=1;
     $w_linha=8;
-    ShowHTML('<BASE HREF="'.$conRootSIW.'">');
+    ShowHTML('<font size=0 color="'.$conBodyBgColor.'">.</font><BASE HREF="'.$conRootSIW.'">');
     ShowHTML('<div align="center">');
     ShowHTML('<table width="100%" border="0" cellspacing="3">');
     ShowHTML('<tr><td colspan="2">');
@@ -153,14 +160,21 @@ function Rel_Bolsista() {
       ValidateOpen('Validacao');
       Validate('p_chave','Projeto de bolsista','SELECT','1','1','30','1','1');
       Validate('p_tipo','Tipo do relatório','SELECT','1','1','1','1','1');
+      ShowHTML('  if (theForm.p_tipo.value != \'R\' && (theForm.p_mes.value != \'\' || theForm.p_ano.value != \'\')) {');
+      ShowHTML('     alert (\'Para informar o mês e\\\ou ano, somente no relatorio do tipo resumo geral!\');');
+      ShowHTML('     return false;');
+      ShowHTML('  } else if (theForm.p_tipo.value == \'R\' && (theForm.p_mes.value == \'\' || theForm.p_ano.value == \'\')) {');
+      ShowHTML('     alert (\'No relatório do tipo resumo geral, é obrigatório informar o mês e o ano!\');');
+      ShowHTML('     return false;');
+      ShowHTML('  }');
       ValidateClose();
       ScriptClose();
     } 
     ShowHTML('</HEAD>');
-    ShowHTML('<BASE HREF="'.$conRootSIW.'">');
+    ShowHTML('<font size=0 color="'.$conBodyBgColor.'">.</font><BASE HREF="'.$conRootSIW.'">');
     if ($O=='L') {
       BodyOpenClean(null);
-      ShowHTML('<BASE HREF="'.$conRootSIW.'">');
+      ShowHTML('<font size=0 color="'.$conBodyBgColor.'">.</font><BASE HREF="'.$conRootSIW.'">');
       ShowHTML('<div align="center">');
       ShowHTML('<table width="100%" border="0" cellspacing="3">');
       ShowHTML('<tr><td colspan="2">');
@@ -183,6 +197,7 @@ function Rel_Bolsista() {
     $w_reg = 0;
     ShowHTML('</ul></td></tr></table>');
     ShowHTML('</div></td></tr>');
+    //Relatório financeiro
     if($p_tipo=='F') {
       ShowHTML('<tr><td colspan="2"><div align="center"><font size="3"><b>QUADRO DEMONSTRATIVO GERAL</b></font></div></td></tr>');
       ShowHTML('<tr><td colspan="2">');
@@ -323,7 +338,7 @@ function Rel_Bolsista() {
 
             // Recupera e acumula os valores mensais do bolsista
             // Acumula também valores totais para uso no final da impressão
-            $RS1 = db_getRelBolsista::getInstanceOf($dbms,$p_chave,f($row,'outra_parte'),null,null,null,null);
+            $RS1 = db_getRelBolsista::getInstanceOf($dbms,$p_chave,f($row,'outra_parte'),null,null,null,null,null,null);
             $RS1 = SortArray($RS1,'phpdt_vencimento','asc');
             unset($w_valor);
             foreach($RS1 as $row1) {
@@ -480,6 +495,7 @@ function Rel_Bolsista() {
       ShowHTML('          <td nowrap><b>Cota Total</b>');
       for($i=1;$i<=$w_meses;$i++) ShowHTML('          <td align="right">'.formatNumber($w_cota_mes * $i,2));
       ShowHTML('          <td align="right">&nbsp;');
+    //Relatório por tema
     } elseif ($p_tipo=='T') {
       ShowHTML('<tr><td colspan="2"><div align="center"><font size="3"><b>QUADRO DEMONSTRATIVO POR TEMA</b></font></div></td></tr>');
       $w_tema_atual     = 0;
@@ -684,6 +700,7 @@ function Rel_Bolsista() {
         ShowHTML('          <td colspan="2">&nbsp;</td>');      
         ShowHTML('    </table></td></tr>');
       }
+    //Relatório mensal
     } elseif ($p_tipo=='M') {
       ShowHTML('<tr><td colspan="2"><div align="center"><font size="3"><b>QUADRO DEMONSTRATIVO POR MÊS</b></font></div></td></tr>');
       $w_linha        = 1;
@@ -831,6 +848,92 @@ function Rel_Bolsista() {
         ShowHTML('          <td colspan="2">&nbsp;</td>');      
         ShowHTML('    </table></td></tr>');
       }
+    //Relatório de resumo geral
+    } elseif ($p_tipo=='R') {
+      ShowHTML('<tr><td colspan="2"><div align="center"><font size="3"><b>QUADRO DEMONSTRATIVO POR TEMA</b></font></div></td></tr>');
+      ShowHTML('<tr><td colspan="2"><div align="center"><hr NOSHADE color=#000000 size=2></div></td></tr>');
+      ShowHTML('<tr><td colspan="2"><div align="center"><font size="3"><b>RESUMO GERAL ('.mesAno(date('F',toDate('01/'.$p_mes.'/'.$p_ano))).'/'.$p_ano.')</b></font></div></td></tr>');
+      ShowHTML('<tr><td colspan="2"><div align="center"><hr NOSHADE color=#000000 size=2></div></td></tr>');
+      if (count($RS)<=0) {
+        ShowHTML('<tr><td colspan="2">&nbsp;</td></tr>');
+        ShowHTML('<tr><td colspan="2">&nbsp;</td></tr>');
+        ShowHTML('<tr><td colspan="2">&nbsp;</td></tr>');
+        ShowHTML('<tr><td colspan="2"><div align="center"><hr NOSHADE color=#000000 size=2></div></td></tr>');
+        ShowHTML('<tr><td colspan="2"><div align="center"><font size="2" color="red"><b>Não foram encontrados registros</b></font></div></td></tr>');
+        ShowHTML('<tr><td colspan="2"><div align="center"><hr NOSHADE color=#000000 size=2></div></td></tr>');        
+      } else {
+        $w_cont            = 1;
+        $w_linha           = 0;
+        $w_tema_atual      = 0;
+        $w_vr_total_bev    = 0;
+        $w_vr_total_dtiev  = 0;
+        $w_qtd_total_bev   = 0;
+        $w_qtd_total_dtiev = 0;
+        foreach($RS as $row) {
+          if($w_cont==1) {
+            ShowHTML('<tr><td colspan="2"><div align="center"><font size="2"><b>Coordenador geral: '.f($row,'nm_projeto_resp').'</b></font></div></td></tr>');
+            ShowHTML('<tr><td colspan="2"><div align="center"><hr NOSHADE color=#000000 size=2></div></td></tr>');
+          }
+          $w_relatorio[f($row,'or_tema')][1] = 'TEMA '.f($row,'or_tema');
+          $w_relatorio[f($row,'or_tema')][2] += f($row,'valor_parcela');
+          if(nvl(f($row,'sq_acordo'),'')>'') $w_relatorio[f($row,'or_tema')][3] += 1;
+          if (!(strpos('BEV',f($row,'nm_nivel'))===false)) {
+            $w_vr_total_bev    += f($row,'valor_parcela');
+            if(nvl(f($row,'sq_acordo'),'')>'') $w_qtd_total_bev   += 1; 
+          } else {
+            $w_vr_total_dtiev  += f($row,'valor_parcela');
+            if(nvl(f($row,'sq_acordo'),'')>'') $w_qtd_total_dtiev += 1;             
+          }
+          if($w_tema_atual!=f($row,'sq_tema')) $w_linha += 1;
+          $w_tema_atual = f($row,'sq_tema');
+          $w_cont += 1;
+        }
+        $w_relatorio[($w_linha+1)][1] = 'TOTAL BEV';
+        $w_relatorio[($w_linha+1)][2] = $w_vr_total_bev;
+        $w_relatorio[($w_linha+1)][3] = $w_qtd_total_bev;
+        $w_relatorio[($w_linha+2)][1] = 'TOTAL DTI/EV';
+        $w_relatorio[($w_linha+2)][2] = $w_vr_total_dtiev;
+        $w_relatorio[($w_linha+2)][3] = $w_qtd_total_dtiev;
+        $w_relatorio[($w_linha+3)][1] = 'TOTAL GERAL';
+        $w_relatorio[($w_linha+3)][2] = ($w_vr_total_bev + $w_vr_total_dtiev);
+        $w_relatorio[($w_linha+3)][3] = ($w_qtd_total_bev + $w_qtd_total_dtiev);
+        $RS = db_getRelBolsista::getInstanceOf($dbms,$p_chave,null,null,null,null,$p_mes,$p_ano,'RESUMO1');
+        $w_linha       = 1;
+        $w_nivel_atual = 0;
+        foreach($RS as $row) {
+          $w_relatorio[f($row,'or_nivel')][4] = f($row,'nm_nivel');
+          $w_relatorio[f($row,'or_nivel')][5] = (f($row,'valor_nivel')/f($row,'meses_nivel'));
+          if(nvl(f($row,'sq_acordo'),'')>'')  $w_relatorio[f($row,'or_nivel')][6] += 1;
+          $w_relatorio[f($row,'or_nivel')][7] += f($row,'valor_parcela');
+        }
+        ShowHTML('<tr><td colspan="2">');        
+        ShowHTML('      <table border="1" bordercolor="#00000" width="100%">');
+        ShowHTML('        <tr valign="top">');
+        ShowHTML('          <td align="center" bgcolor="'.$conTrAlternateBgColor.'"><b>Temas</b></td>');
+        ShowHTML('          <td align="center" bgcolor="'.$conTrAlternateBgColor.'"><b>Valor R$</b></td>');
+        ShowHTML('          <td align="center" bgcolor="'.$conTrAlternateBgColor.'"><b>Nº de bolsistas</b></td>');
+        ShowHTML('          <td align="center" bgcolor="'.$conTrAlternateBgColor.'"><b>Mod./Nível</b></td>');
+        ShowHTML('          <td align="center" bgcolor="'.$conTrAlternateBgColor.'"><b>Valor R$</b></td>');
+        ShowHTML('          <td align="center" bgcolor="'.$conTrAlternateBgColor.'"><b>Nº</b></td>');
+        ShowHTML('          <td align="center" bgcolor="'.$conTrAlternateBgColor.'"><b>Gasto R$</b></td>');
+        foreach($w_relatorio as $rel) {
+          ShowHTML('        <tr valign="top">');
+          if ((!(strpos('TOTAL BEV',$rel[1])===false))||(!(strpos('TOTAL DTI/EV',$rel[1])===false))||(!(strpos('TOTAL GERAL',$rel[1])===false))) {
+            ShowHTML('          <td bgcolor="'.$conTrAlternateBgColor.'"><b>'.nvl($rel[1],'&nbsp;').'</b></td>');
+            ShowHTML('          <td bgcolor="'.$conTrAlternateBgColor.'" align="right">'.formatNumber(nvl($rel[2],0),2).'</td>');
+            ShowHTML('          <td bgcolor="'.$conTrAlternateBgColor.'" align="center">'.nvl($rel[3],0).'</td>');
+          } else {
+            ShowHTML('          <td><b>'.nvl($rel[1],'&nbsp;').'</b></td>');
+            ShowHTML('          <td align="right">'.formatNumber(nvl($rel[2],0),2).'</td>');
+            ShowHTML('          <td align="center">'.nvl($rel[3],0).'</td>');
+          }
+          ShowHTML('          <td><b>'.nvl($rel[4],'&nbsp;').'</b></td>');
+          ShowHTML('          <td align="right">'.formatNumber(nvl($rel[5],0),2).'</td>');
+          ShowHTML('          <td align="center">'.nvl($rel[6],0).'</td>');
+          ShowHTML('          <td align="right">'.formatNumber(nvl($rel[7],0),2).'</td>');
+        }
+        ShowHTML('    </table></td></tr>');
+      }      
     }
     ShowHTML('    </table>');
     ShowHTML('  </div></td>');
@@ -849,7 +952,14 @@ function Rel_Bolsista() {
     ShowHTML('          <option value="F">Financeiro');
     ShowHTML('          <option value="T">Por tema');
     ShowHTML('          <option value="M">Mensal');
-    ShowHTML('        </select>');    
+    ShowHTML('          <option value="R">Resumo geral');
+    ShowHTML('        </select>');
+    ShowHTML('      <tr bgcolor="'.$conTrBgColor.'">');
+    ShowHTML('        <td valign="top">');
+    ShowHTML('          <table width="100%" border="0">');
+    SelecaoMes('<u>M</u>ês:','M','Selecione o mês para o relatório de resumo geral.',null,null,'p_mes',null,null);
+    SelecaoAno('<u>A</u>no:','A','Selecione o ano para o relatório de resumo geral.',$w_ano,null,'p_ano',null,null);
+    ShowHTML('          </table></td></tr>');
     ShowHTML('    </table></td></tr>');
     ShowHTML('    <table width="100%" border="0">');
     ShowHTML('      <tr><td align="center"><hr>');

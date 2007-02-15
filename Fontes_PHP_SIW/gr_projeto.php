@@ -262,11 +262,19 @@ function Gerencial() {
       FormataData();
       ValidateOpen('Validacao');
       if(nvl($p_sq_menu_relac,'')>'') {
-        ShowHTML('  if (theForm.p_solic_pai.selectedIndex==0) {');
-        ShowHTML('    alert(\'Você deve indicar o documento!\');');
-        ShowHTML('    theForm.p_solic_pai.focus();');
-        ShowHTML('    return false;');
-        ShowHTML('  }');
+        if ($p_sq_menu_relac=='CLASSIF') {
+          ShowHTML('  if (theForm.p_sqcc.selectedIndex==0) {');
+          ShowHTML('    alert(\'Você deve indicar a classificação!\');');
+          ShowHTML('    theForm.p_sqcc.focus();');
+          ShowHTML('    return false;');
+          ShowHTML('  }');
+        } else {
+          ShowHTML('  if (theForm.p_solic_pai.selectedIndex==0) {');
+          ShowHTML('    alert(\'Você deve indicar o documento!\');');
+          ShowHTML('    theForm.p_solic_pai.focus();');
+          ShowHTML('    return false;');
+          ShowHTML('  }');
+        }
       }
       Validate('p_chave','Número do projeto','','','1','18','','0123456789');
       Validate('p_prazo','Dias para a data limite','','','1','2','','0123456789');
@@ -740,15 +748,15 @@ function Gerencial() {
     ShowHTML('         </tr>');
     ShowHTML('         <tr><td valign="top" colspan="2" align="center" bgcolor="#D0D0D0" style="border: 2px solid rgb(0,0,0);"><b>Critérios de Busca</td>');
     ShowHTML('          <tr><td><table border=0 colspan=0 cellspan=0 width="100%">');
-    if (f($RS_Menu,'solicita_cc')=='S') {
-      ShowHTML('          <tr valign="top">');
-      SelecaoCC('C<u>l</u>assificação:','L','Selecione um dos itens relacionados.',$p_sqcc,null,'p_sqcc','SIWSOLIC');
-    }
     ShowHTML('          <tr valign="top">');
-    selecaoServico('<U>R</U>estringir a:', 'S', null, $p_sq_menu_relac, $w_menu, null, 'p_sq_menu_relac', 'MENURELAC', 'onChange="document.Form.action=\''.$w_pagina.$par.'\'; document.Form.O.value=\''.$O.'\'; document.Form.w_troca.value=\'p_sq_menu_relac\'; document.Form.submit();"', $w_acordo, $w_acao, $w_viagem);
-    if(Nvl($p_sq_menu_relac,0)>0) {
+    selecaoServico('<U>R</U>estringir a:', 'S', null, $p_sq_menu_relac, $P2, null, 'p_sq_menu_relac', 'MENURELAC', 'onChange="document.Form.action=\''.$w_pagina.$par.'\'; document.Form.O.value=\''.$O.'\'; document.Form.w_troca.value=\'p_sq_menu_relac\'; document.Form.submit();"', $w_acordo, $w_acao, $w_viagem);
+    if(Nvl($p_sq_menu_relac,'')!='') {
       ShowHTML('          <tr valign="top">');
-      SelecaoSolic('Documento',null,null,$w_cliente,$p_solic_pai,$p_sq_menu_relac,f($RS_Menu,'sq_menu'),'p_solic_pai',f($RS_Relac,'sigla'),null);
+      if ($p_sq_menu_relac=='CLASSIF') {
+        SelecaoSolic('Classificação',null,null,$w_cliente,$p_sqcc,$p_sq_menu_relac,null,'p_sqcc','SIWSOLIC',null);
+      } else {
+        SelecaoSolic('Documento',null,null,$w_cliente,$p_solic_pai,$p_sq_menu_relac,f($RS_Menu,'sq_menu'),'p_solic_pai',f($RS_Relac,'sigla'),null);
+      }
     }
     ShowHTML('          </td></tr></table></td></tr>');    
     ShowHTML('      <tr valign="top">');
@@ -764,7 +772,7 @@ function Gerencial() {
     SelecaoPais('<u>P</u>aís:','P',null,$p_pais,null,'p_pais',null,'onChange="document.Form.action=\''.$w_pagina.$par.'\'; document.Form.O.value=\''.$O.'\'; document.Form.target=\'\'; document.Form.w_troca.value=\'p_regiao\'; document.Form.submit();"');
     SelecaoRegiao('<u>R</u>egião:','R',null,$p_regiao,$p_pais,'p_regiao',null,'onChange="document.Form.action=\''.$w_pagina.$par.'\'; document.Form.O.value=\''.$O.'\'; document.Form.target=\'\'; document.Form.w_troca.value=\'p_uf\'; document.Form.submit();"');
     ShowHTML('      <tr>');
-    SelecaoEstado('E<u>s</u>tado:','S',null,$p_uf,$p_pais,'N','p_uf',null,'onChange="document.Form.action=\''.$w_pagina.$par.'\'; document.Form.O.value=\''.$O.'\'; document.Form.target=\'\'; document.Form.w_troca.value=\'p_cidade\'; document.Form.submit();"');
+    SelecaoEstado('E<u>s</u>tado:','S',null,$p_uf,$p_pais,$p_regiao,'p_uf',null,'onChange="document.Form.action=\''.$w_pagina.$par.'\'; document.Form.O.value=\''.$O.'\'; document.Form.target=\'\'; document.Form.w_troca.value=\'p_cidade\'; document.Form.submit();"');
     SelecaoCidade('C<u>i</u>dade:','I',null,$p_cidade,$p_pais,$p_uf,'p_cidade',null,null);
     ShowHTML('      <tr>');
     SelecaoPrioridade('Prioridad<u>e</u>:','E','Informe a prioridade deste projeto.',$p_prioridade,null,'p_prioridade',null,null);

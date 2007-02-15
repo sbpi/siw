@@ -189,7 +189,7 @@ function Gerencial() {
     HeaderWord(null);
     $w_pag=1;
     $w_linha=0;
-    ShowHTML('<BASE HREF="'.$conRootSIW.'">');
+    ShowHTML('<font size=0 color="'.$conBodyBgColor.'">.</font><BASE HREF="'.$conRootSIW.'">');
     CabecalhoWord($w_cliente,$w_TP,$w_pag);
     if ($w_filtro>'') ShowHTML($w_filtro);
   } else {
@@ -234,7 +234,7 @@ function Gerencial() {
       ShowHTML('<TITLE>'.$w_TP.'</TITLE>');
     } 
     ShowHTML('</HEAD>');
-    ShowHTML('<BASE HREF="'.$conRootSIW.'">');
+    ShowHTML('<font size=0 color="'.$conBodyBgColor.'">.</font><BASE HREF="'.$conRootSIW.'">');
     if ($w_troca>'') {
       // Se for recarga da página
       BodyOpen('onLoad=\'document.Form.'.$w_troca.'.focus()\';');
@@ -304,7 +304,7 @@ function Gerencial() {
         ShowHTML('    document.Form.submit();');
         ShowHTML('  }');
         ShowHTML('</SCRIPT>');
-        ShowHTML('<BASE HREF="'.$conRootSIW.'">');
+        ShowHTML('<font size=0 color="'.$conBodyBgColor.'">.</font><BASE HREF="'.$conRootSIW.'">');
         $RS2 = db_getMenuData::getInstanceOf($dbms,$P2);
         AbreForm('Form',f($RS2,'link'),'POST','return(Validacao(this));','Lista',3,$P2,f($RS2,'P3'),null,$w_TP,f($RS2,'sigla'),$w_dir.$w_pagina.$par,'L');
         ShowHTML(MontaFiltro('POST'));
@@ -661,7 +661,7 @@ function Main() {
     case 'GERENCIAL':   Gerencial();    break;
     default:
       cabecalho();
-      ShowHTML('<BASE HREF="'.$conRootSIW.'">');      
+      ShowHTML('<font size=0 color="'.$conBodyBgColor.'">.</font><BASE HREF="'.$conRootSIW.'">');      
       BodyOpen('onLoad=this.focus();');
       Estrutura_Topo_Limpo();
       Estrutura_Menu();

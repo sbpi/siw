@@ -66,6 +66,7 @@ $w_assinatura   = strtoupper($_REQUEST['w_assinatura']);
 $w_pagina       = 'eo.php?par=';
 $w_Disabled     = 'ENABLED';
 $w_dir_volta    = '';
+$w_troca        = $_REQUEST['w_troca'];
 
 if ($O=='') $O='L';
 
@@ -338,6 +339,7 @@ function Unidade() {
       $w_sq_pessoa_endereco     = f($RS,'sq_pessoa_endereco');
       $w_sq_tipo_unidade        = f($RS,'sq_tipo_unidade');
       $w_unidade_gestora        = f($RS,'unidade_gestora');
+      $w_externo                = f($RS,'externo');
       $w_ativo                  = f($RS,'ativo');
       $w_codigo                 = f($RS,'codigo');
       $w_unidade_pagadora       = f($RS,'unidade_pagadora');
@@ -378,6 +380,7 @@ function Unidade() {
     ShowHTML('      <tr align="left">');
     MontaRadioNS('<b>Unidade Gestora:</b>',$w_unidade_gestora,'w_unidade_gestora');
     MontaRadioNS('<b>Unidade Pagadora:</b>',$w_unidade_pagadora,'w_unidade_pagadora');
+    MontaRadioNS('<b>Externa:</b>',$w_externo,'w_externo');
     ShowHTML('      </tr></table></td></tr>');
     MontaRadioSN('<b>Ativo:</b>',$w_ativo,'w_ativo');
     ShowHTML('      <tr><td valign="top"><b><U>A</U>ssinatura Eletrônica:<br><INPUT ACCESSKEY="A" class="sti" type="PASSWORD" name="w_assinatura" size="30" maxlength="30" value=""></td>');
@@ -891,15 +894,15 @@ function Grava() {
             $_REQUEST['w_sq_unidade_pai'],$_REQUEST['w_sq_unidade_pagadora'],$_REQUEST['w_sq_pessoa_endereco'],
             $_REQUEST['w_ordem'],$_REQUEST['w_email'],$_REQUEST['w_codigo'],$w_cliente,$_REQUEST['w_nome'],
             $_REQUEST['w_sigla'],$_REQUEST['w_informal'],$_REQUEST['w_vinculada'],$_REQUEST['w_adm_central'],
-            $_REQUEST['w_unidade_gestora'],$_REQUEST['w_unidade_pagadora'],$_REQUEST['w_ativo']);
+            $_REQUEST['w_unidade_gestora'],$_REQUEST['w_unidade_pagadora'],$_REQUEST['w_externo'],$_REQUEST['w_ativo']);
             ScriptOpen('JavaScript');
             ShowHTML('  location.href=\''.$R.'&O=L&P1='.$P1.'&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP='.$TP.'&SG='.$SG.'\';');
             ScriptClose();
           } else {
             ScriptOpen('JavaScript');
             ShowHTML('  alert(\'Assinatura Eletrônica inválida!\');');
-            ShowHTML('  history.back(1);');
             ScriptClose();
+            retornaFormulario('w_assinatura');
           } 
           break;
     case 'LUORG':

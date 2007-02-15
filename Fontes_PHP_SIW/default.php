@@ -96,7 +96,15 @@ function Valida() {
        if ($w_erro==2) { ShowHTML('  alert(\'Senha inválida!\');'); }
        else
           if ($w_erro==3) { ShowHTML('  alert(\'Usuário com acesso bloqueado pelo gestor de segurança!\');'); }
-    ShowHTML('  location.href=\''.$_SERVER['HTTP_REFERER'].'\';');
+    // Se for SBPI e senha inválida, devolve a username, dispensando sua redigitação.
+    if ($_SESSION['P_CLIENTE']==1 && $w_erro=2) {
+      $w_retorno = $_SERVER['HTTP_REFERER'];
+      $w_pos = strpos($w_retorno,'?');
+      if ($w_pos!==false) $w_retorno = substr($w_retorno,0,$w_pos);
+      ShowHTML('  location.href=\''.$w_retorno.'?Login='.$wNoUsuario.'\';');
+    } else {
+       ShowHTML('  location.href=\''.$_SERVER['HTTP_REFERER'].'\';');
+    }
     ScriptClose();
   } else {
     // Recupera informações do cliente, relativas ao envio de e-mail
@@ -209,9 +217,10 @@ function Valida() {
 // =========================================================================
 // Rotina de criação da tela de logon
 // -------------------------------------------------------------------------
-function LogOn()
-{
+function LogOn() {
   extract($GLOBALS);
+
+  $w_username = $_REQUEST['Login'];
   ShowHTML('<HTML>');
   ShowHTML('<HEAD>');
   ShowHTML('<link rel="shortcut icon" href="'.$conRootSIW.'favicon.ico" type="image/ico" />');
@@ -245,7 +254,12 @@ function LogOn()
   ShowHTML(' .cButton {font-size: 8pt; color: #FFFFFF; border: 1px solid #000000; background-color: #669966; }');
   ShowHTML('</style>');
   ShowHTML('</HEAD>');
-  ShowHTML('<body topmargin=0 leftmargin=10 onLoad=\'document.Form.Login1.focus();\'>');
+  // Se receber a username, dá foco na senha
+  if (nvl($w_username,'nulo')=='nulo') {
+    ShowHTML('<body topmargin=0 leftmargin=10 onLoad=\'document.Form.Login1.focus();\'>');
+  } else {
+    ShowHTML('<body topmargin=0 leftmargin=10 onLoad=\'document.Form.Password1.focus();\'>');
+  }
   ShowHTML('<form method="post" action="default.php" onsubmit="return(Validacao(this));" name="Form"> ');
   ShowHTML('<INPUT TYPE="HIDDEN" NAME="Login" VALUE=""> ');
   ShowHTML('<INPUT TYPE="HIDDEN" NAME="Password" VALUE=""> ');
@@ -256,7 +270,7 @@ function LogOn()
   ShowHTML('  <tr><td valign="middle" width="100%" height="100%">');
   ShowHTML('      <table width="100%" height="100%" border="0" cellpadding=0 cellspacing=0> ');
   ShowHTML('        <tr><td bgcolor="#003300" width="100%" height="100%" valign="middle"><font size="2" color="#FFFFFF">&nbsp;');
-  ShowHTML('            Usuário: <input class="cText" name="Login1" size="14" maxlength="14" onkeyDown="FormataCPF(this,event)">');
+  ShowHTML('            Usuário: <input class="cText" name="Login1" size="14" maxlength="14" value="'.$w_username.'" onkeyDown="FormataCPF(this,event)">');
   ShowHTML('            Senha: <input class="cText" type="Password" name="Password1" size="19">');
   ShowHTML('            <input class="cButton" type="submit" value="OK" name="Botao" onClick="document.Form.par.value=\'Log\';"> ');
   ShowHTML('            <input class="cButton" type="submit" value="Lembrar senha" name="Botao" onClick="document.Form.par.value=\'Senha\';" title="Informe seu CPF e clique aqui para receber por e-mail sua senha e assinatura eletrônica!"> ');

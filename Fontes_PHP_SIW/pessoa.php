@@ -127,7 +127,7 @@ function Benef() {
   $w_username       = $_REQUEST['w_username'];
   // Verifica se há necessidade de recarregar os dados da tela a partir
   // da própria tela (se for recarga da tela) ou do banco de dados (se não for inclusão)
-  if ($w_troca>'') {
+  if ($w_troca>'' && $O!='E') {
     // Se for recarga da página
     $w_username             = $_REQUEST['w_username'];
     $w_nome                 = $_REQUEST['w_nome'];
@@ -295,7 +295,7 @@ function Benef() {
       // Se o beneficiário ainda não foi selecionado
       AbreForm('Form',$w_pagina.$par,'POST','return(Validacao(this))',null,$P1,$P2,$P3,$P4,$TP,$SG,$R,$O);
     } else {
-      AbreForm('Form',$w_pagina.'Grava','POST','return(Validacao(this))',null,$P1,$P2,$P3,$P4,$TP,$SG,$R,$O);
+      AbreForm('Form',$w_pagina.'Grava','POST','return(Validacao(this))',null,$P1,$P2,$P3,$P4,$TP,$SG,$w_pagina.$par,$O);
     } 
     ShowHTML('<INPUT type="hidden" name="w_troca" value="">');
     ShowHTML('<INPUT type="hidden" name="w_sq_solicitacao" value="'.$w_sq_solicitacao.'">');
@@ -371,7 +371,7 @@ function Benef() {
         ShowHTML('      <tr><td valign="top" colspan="2"><table border=0 width="100%" cellspacing=0>');
         ShowHTML('      <tr>');
         selecaoPais('<u>P</u>aís:','P',null,$w_pais,null,'w_pais',null,'onChange="document.Form.action=\''.$w_pagina.$par.'\'; document.Form.w_troca.value=\'w_uf\'; document.Form.submit();"');
-        selecaoEstado('E<u>s</u>tado:','S',null,$w_uf,$w_pais,'N','w_uf',null,'onChange=\'document.Form.action=\''.$w_pagina.$par.'\'; document.Form.w_troca.value=\'w_cidade\'; document.Form.submit();"');
+        selecaoEstado('E<u>s</u>tado:','S',null,$w_uf,$w_pais,null,'w_uf',null,'onChange=\'document.Form.action=\''.$w_pagina.$par.'\'; document.Form.w_troca.value=\'w_cidade\'; document.Form.submit();"');
         selecaoCidade('<u>C</u>idade:','C',null,$w_cidade,$w_pais,$w_uf,'w_cidade',null,null);
         ShowHTML('          </table>');
         ShowHTML('          <tr><td valign="top"><font size="1"><b>C<u>E</u>P:</b><br><input '.$w_Disabled.' accesskey="E" type="text" name="w_cep" class="sti" SIZE="10" MAXLENGTH="10" VALUE="'.$w_cep.'" onKeyDown="FormataCEP(this,event);"></td>');
@@ -455,10 +455,8 @@ function Benef() {
       ShowHTML('      <tr><td align="center" colspan="3">');
       if ($O=='E') { 
         ShowHTML('            <input class="stb" type="submit" name="Botao" value="Excluir">');
-        ShowHTML('            <input class="stb" type="button" onClick="location.href=\''.$R.'&w_cliente='.$_REQUEST['w_cliente'].'&P1='.$P1.'&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP='.$TP.'&SG='.$SG.MontaFiltro('GET').'\';" name="Botao" value="Cancelar">');
       } elseif ($O=='T') {
         ShowHTML('            <input class="stb" type="submit" name="Botao" value="Desbloquear Acesso" onClick="return(confirm(\'Confirma a ativação do acesso ao sistema para este usuário?\'));">');
-        ShowHTML('            <input class="stb" type="button" onClick="location.href=\''.$R.'&w_cliente='.$_REQUEST['w_cliente'].'&P1='.$P1.'&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP='.$TP.'&SG='.$SG.MontaFiltro('GET').'\';" name="Botao" value="Cancelar">');
       } elseif ($O=='D') {
         if ($SG=='SGUSU' || $SG=='CLUSUARIO') { // Tela de usuários do SG
           ShowHTML('            <input class="stb" type="submit" name="Botao" value="Bloquear Acesso" onClick="return(confirm(\'Confirma bloqueio do acesso ao sistema para este usuário?\'));">');
@@ -467,11 +465,11 @@ function Benef() {
         } else {
           ShowHTML('            <input class="stb" type="submit" name="Botao" value="Excluir">');
         } 
-        ShowHTML('            <input class="stb" type="button" onClick="location.href=\''.$R.'&w_cliente='.$_REQUEST['w_cliente'].'&P1='.$P1.'&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP='.$TP.'&SG='.$SG.MontaFiltro('GET').'\';" name="Botao" value="Cancelar">');
       } else {
         ShowHTML('            <input class="stb" type="submit" name="Botao" value="Gravar">');
-        ShowHTML('            <input class="stb" type="button" onClick="location.href=\''.$R.'&w_cliente='.$_REQUEST['w_cliente'].'&P1='.$P1.'&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP='.$TP.'&SG='.$SG.MontaFiltro('GET').'\';" name="Botao" value="Cancelar">');
       } 
+      $RS = db_getLinkData::getInstanceOf($dbms,$w_cliente,'SGUSU');
+      ShowHTML('            <input class="stb" type="button" onClick="location.href=\''.f($RS,'link').'&w_cliente='.$_REQUEST['w_cliente'].'&P1='.f($RS,'P1').'&P2='.f($RS,'P1').'&P3='.$P3.'&P4='.$P4.'&TP='.$TP.'&SG='.f($RS,'sigla').MontaFiltro('GET').'\';" name="Botao" value="Cancelar">');
       ShowHTML('          </td>');
       ShowHTML('      </tr>');
       ShowHTML('    </table>');
@@ -716,8 +714,8 @@ function Grava() {
   } else {
     ScriptOpen('JavaScript');
     ShowHTML('  alert(\'Assinatura Eletrônica inválida!\');');
-    ShowHTML('  history.back(1);');
     ScriptClose();
+    retornaFormulario('w_assinatura');
   } 
 } 
 // =========================================================================

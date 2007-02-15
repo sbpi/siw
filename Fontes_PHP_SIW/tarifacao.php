@@ -26,7 +26,6 @@ include_once('classes/sp/db_verificaAssinatura.php');
 include_once('classes/sp/db_putCall.php');
 include_once('funcoes/selecaoLocalizacao.php');
 include_once('funcoes/selecaoUnidade.php');
-include_once('funcoes/selecaoEstado.php');
 include_once('funcoes/selecaoModulo.php');
 include_once('funcoes/selecaoEndereco.php');
 include_once('funcoes/selecaoMenu.php');

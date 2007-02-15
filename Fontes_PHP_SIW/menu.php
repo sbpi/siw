@@ -84,11 +84,7 @@ function Frames() {
   ShowHTML('  </HEAD> ');
   ShowHTML('    <FRAMESET COLS="20%,80%"> ');
   ShowHTML('     <FRAME SRC="menu.php?par=ExibeDocs" SCROLLING="AUTO" FRAMEBORDER="0" FRAMESPACING=0 NAME="menu"> ');
-  if ($_SESSION['P_CLIENTE']=='' || $_SESSION['P_CLIENTE']==1) {
-    ShowHTML('     <FRAME SRC="branco.htm" FRAMEBORDER="0" SCROLLING="AUTO"  FRAMEBORDER="0" FRAMESPACING=0 NAME="content"> ');
-  } else {
-    ShowHTML('     <FRAME SRC="" SCROLLING="AUTO" FRAMEBORDER="0" NAME="content"> ');
-  }
+  ShowHTML('     <FRAME SRC="branco.htm" SCROLLING="AUTO" FRAMEBORDER="0" FRAMESPACING=0 NAME="content"> ');
   ShowHTML('    <NOFRAMES> ');
   ShowHTML('     <BODY BGCOLOR="#FFFFFF" BACKGROUND="images/bg.jpg" BGPROPERTIES="FIXED"> ');
   ShowHTML('      <P>Seu navegador não aceita <I>frames</I>. Atualize-o, preferencialmente, para o Microsoft Internet Explorer 5.5 ou superior.</P> ');
@@ -611,8 +607,8 @@ function Grava() {
     } else {
        ScriptOpen('JavaScript');
        ShowHTML('  alert(\'Senha de Acesso atual inválida!\');');
-       ShowHTML('  history.back(1);');
        ScriptClose();
+       retornaFormulario('w_atual');
     } break;
   case 'SGASSINAT':
     if (VerificaAssinaturaEletronica($_SESSION['USERNAME'],strtoupper($_REQUEST['w_atual']))) {
@@ -623,8 +619,8 @@ function Grava() {
     } else {
        ScriptOpen('JavaScript');
        ShowHTML('  alert(\'Assinatura Eletrônica atual inválida!\');');
-       ShowHTML('  history.back(1);');
        ScriptClose();
+       retornaFormulario('w_atual');
     } break;
   case "SIWMENURELAC":
     // Verifica se a Assinatura Eletrônica é válida
@@ -640,8 +636,8 @@ function Grava() {
     } else {
       ScriptOpen('JavaScript');
       ShowHTML('  alert(\'Assinatura Eletrônica inválida!\');');
-      ShowHTML('  history.back(1);');
       ScriptClose();
+     retornaFormulario('w_assinatura');
     } break;
   default:
     ScriptOpen('JavaScript');

@@ -11,7 +11,8 @@ include_once($w_dir_volta.'classes/db/DatabaseQueriesFactory.php');
 
 class dml_putIndicador {
    function getInstanceOf($dbms, $operacao, $p_cliente, $p_chave, $p_nome, $p_sigla, $p_tipo_indicador, $p_unidade_medida,
-            $p_descricao, $p_forma_afericao, $p_fonte_comprovacao, $p_ciclo_afericao, $p_ativo) {
+            $p_descricao, $p_forma_afericao, $p_fonte_comprovacao, $p_ciclo_afericao, $p_vincula_meta, $p_exibe_mesa, 
+            $p_ativo) {
      extract($GLOBALS,EXTR_PREFIX_SAME,'strchema'); $sql=$strschema_PE.'SP_PUTINDICADOR';
      $params=array('p_operacao'                  =>array($operacao,                                   B_VARCHAR,         1),
                    'p_cliente'                   =>array(tvl($p_cliente),                             B_INTEGER,        32),
@@ -24,6 +25,8 @@ class dml_putIndicador {
                    'p_forma_afericao'            =>array(tvl($p_forma_afericao),                      B_VARCHAR,      2000),
                    'p_fonte_comprovacao'         =>array(tvl($p_fonte_comprovacao),                   B_VARCHAR,      2000),
                    'p_ciclo_afericao'            =>array(tvl($p_ciclo_afericao),                      B_VARCHAR,      2000),
+                   'p_vincula_meta'              =>array(tvl($p_vincula_meta),                        B_VARCHAR,         1),
+                   'p_exibe_mesa'                =>array(tvl($p_exibe_mesa),                          B_VARCHAR,         1),
                    'p_ativo'                     =>array(tvl($p_ativo),                               B_VARCHAR,         1)
                   );
      $l_rs = DatabaseQueriesFactory::getInstanceOf($sql, $dbms, $params, DB_TYPE);
