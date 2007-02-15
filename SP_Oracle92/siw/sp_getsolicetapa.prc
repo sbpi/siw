@@ -21,7 +21,11 @@ begin
    ElsIf p_restricao = 'LISTA' Then
       -- Recupera todas as etapas de um projeto
       open p_result for 
-         select a.*, b.sq_pessoa titular, c.sq_pessoa substituto, 
+         select a.sq_projeto_etapa, a.sq_siw_solicitacao, a.sq_etapa_pai, a.ordem, a.titulo, a.descricao, a.inicio_previsto, a.fim_previsto, 
+                a.inicio_real, a.fim_real, a.perc_conclusao, a.orcamento, a.sq_unidade, a.sq_pessoa, a.vincula_atividade, a.sq_pessoa_atualizacao, 
+                a.ultima_atualizacao, a.situacao_atual, a.unidade_medida, a.quantidade, a.cumulativa, a.programada, a.exequivel, 
+                a.justificativa_inexequivel, a.outras_medidas, a.vincula_contrato,
+                b.sq_pessoa titular, c.sq_pessoa substituto, 
                 k.sq_pessoa tit_exec, l.sq_pessoa sub_exec,
                 d.nome_resumido||' ('||f.sigla||')' nm_resp, g.sigla sg_setor,
                 nvl(h.qt_ativ,0) qt_ativ, h.sq_menu p2,
@@ -70,7 +74,11 @@ begin
    ElsIf p_restricao = 'LSTNULL' Then
       -- Recupera as etapas principais de um projeto
       open p_result for 
-         select a.*, b.sq_pessoa titular, c.sq_pessoa substituto, i.executor, i.solicitante,
+         select a.sq_projeto_etapa, a.sq_siw_solicitacao, a.sq_etapa_pai, a.ordem, a.titulo, a.descricao, a.inicio_previsto, a.fim_previsto, 
+                a.inicio_real, a.fim_real, a.perc_conclusao, a.orcamento, a.sq_unidade, a.sq_pessoa, a.vincula_atividade, a.sq_pessoa_atualizacao, 
+                a.ultima_atualizacao, a.situacao_atual, a.unidade_medida, a.quantidade, a.cumulativa, a.programada, a.exequivel, 
+                a.justificativa_inexequivel, a.outras_medidas, a.vincula_contrato,
+                b.sq_pessoa titular, c.sq_pessoa substituto, i.executor, i.solicitante,
                 case a.programada when 'S' then 'Sim' else 'Não' end nm_programada,
                 case a.cumulativa when 'S' then 'Sim' else 'Não' end nm_cumulativa,  
                 case a.exequivel  when 'S' then 'Sim' else 'Não' end nm_exequivel,    
@@ -124,7 +132,11 @@ begin
    ElsIf p_restricao = 'LSTNIVEL' Then
       -- Recupera as etapas vinculadas a uma etapa do projeto
       open p_result for 
-         select a.*, b.sq_pessoa titular, c.sq_pessoa substituto, i.executor, i.solicitante,
+         select a.sq_projeto_etapa, a.sq_siw_solicitacao, a.sq_etapa_pai, a.ordem, a.titulo, a.descricao, a.inicio_previsto, a.fim_previsto, 
+                a.inicio_real, a.fim_real, a.perc_conclusao, a.orcamento, a.sq_unidade, a.sq_pessoa, a.vincula_atividade, a.sq_pessoa_atualizacao, 
+                a.ultima_atualizacao, a.situacao_atual, a.unidade_medida, a.quantidade, a.cumulativa, a.programada, a.exequivel, 
+                a.justificativa_inexequivel, a.outras_medidas, a.vincula_contrato,
+                b.sq_pessoa titular, c.sq_pessoa substituto, i.executor, i.solicitante,
                 k.sq_pessoa tit_exec, l.sq_pessoa sub_exec,
                 d.nome_resumido||' ('||f.sigla||')' nm_resp, g.sigla sg_setor,
                 nvl(h.qt_ativ,0) qt_ativ, h.sq_menu p2,
@@ -175,7 +187,11 @@ begin
    Elsif p_restricao = 'REGISTRO' Then
       -- Recupera os dados de uma etapa de projeto
       open p_result for 
-         select a.*, b.sq_pessoa titular, c.sq_pessoa substituto, 
+         select a.sq_projeto_etapa, a.sq_siw_solicitacao, a.sq_etapa_pai, a.ordem, a.titulo, a.descricao, a.inicio_previsto, a.fim_previsto, 
+                a.inicio_real, a.fim_real, a.perc_conclusao, a.orcamento, a.sq_unidade, a.sq_pessoa, a.vincula_atividade, a.sq_pessoa_atualizacao, 
+                a.ultima_atualizacao, a.situacao_atual, a.unidade_medida, a.quantidade, a.cumulativa, a.programada, a.exequivel, 
+                a.justificativa_inexequivel, a.outras_medidas, a.vincula_contrato,
+                b.sq_pessoa titular, c.sq_pessoa substituto, 
                 case a.programada when 'S' then 'Sim' else 'Não' end nm_programada,
                 case a.cumulativa when 'S' then 'Sim' else 'Não' end nm_cumulativa,                
                 d.nome_resumido||' ('||f.sigla||')' nm_resp, g.sigla sg_setor,
@@ -215,7 +231,10 @@ begin
    Elsif p_restricao = 'FILHOS' Then
       -- Recupera as etapas subordinadas a outra do mesmo projeto
       open p_result for 
-         select a.*
+         select a.sq_projeto_etapa, a.sq_siw_solicitacao, a.sq_etapa_pai, a.ordem, a.titulo, a.descricao, a.inicio_previsto, a.fim_previsto, 
+                a.inicio_real, a.fim_real, a.perc_conclusao, a.orcamento, a.sq_unidade, a.sq_pessoa, a.vincula_atividade, a.sq_pessoa_atualizacao, 
+                a.ultima_atualizacao, a.situacao_atual, a.unidade_medida, a.quantidade, a.cumulativa, a.programada, a.exequivel, 
+                a.justificativa_inexequivel, a.outras_medidas, a.vincula_contrato
            from pj_projeto_etapa   a
           where a.sq_etapa_pai       = p_chave
             and a.sq_projeto_etapa   = p_chave_aux;
