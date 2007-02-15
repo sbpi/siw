@@ -1,7 +1,7 @@
 create or replace procedure sp_putProgramaGeral
-   (p_operacao            in  varchar2,
-    p_chave               in  number   default null,
-    p_copia               in  number   default null,
+   (p_operacao            in varchar2,
+    p_chave               in number    default null,
+    p_copia               in number    default null,
     p_menu                in number,
     p_objetivo            in number    default null,
     p_codigo              in varchar2  default null,
@@ -118,6 +118,7 @@ begin
           codigo_interno   = p_codigo,
           sq_unidade_resp  = p_unid_resp,
           titulo           = trim(p_titulo),
+          ln_programa      = p_ln_programa,
           aviso_prox_conc  = p_aviso,
           dias_aviso       = p_dias
       where sq_siw_solicitacao = p_chave;
