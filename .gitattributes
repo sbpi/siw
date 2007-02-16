@@ -3291,7 +3291,9 @@ SP_Oracle92/siw/sp_putIndicador_Meta.prc -text
 SP_Oracle92/siw/sp_putPDUnidLimite.prc -text
 SP_Oracle92/siw/sp_putPlanoEstrategico.prc -text
 SP_Oracle92/siw/sp_putPlano_Menu.prc -text
+SP_Oracle92/siw/sp_putProgramaConc.prc -text
 SP_Oracle92/siw/sp_putProgramaDescritivo.prc -text
+SP_Oracle92/siw/sp_putProgramaEnvio.prc -text
 SP_Oracle92/siw/sp_putProgramaGeral.prc -text
 SP_Oracle92/siw/sp_putProgramaQualit.prc -text
 SP_Oracle92/siw/sp_putRecurso.prc -text

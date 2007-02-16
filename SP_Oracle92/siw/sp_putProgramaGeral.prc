@@ -109,6 +109,7 @@ begin
           solicitante      = p_solicitante,
           inicio           = p_inicio,
           fim              = p_fim,
+          valor            = p_valor,
           ultima_alteracao = sysdate,
           palavra_chave    = p_parcerias
       where sq_siw_solicitacao = p_chave;
