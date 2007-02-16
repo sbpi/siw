@@ -55,7 +55,7 @@ begin
                  (p_restricao is not null and p_restricao = 'AFERIDOR' and
                   (0          < b1.qtd or
                    0          < (select w.qtd + x.qtd
-                                  from  (select 1 as qtd from sg_autenticacao where sq_pessoa = p_usuario and gestor_sistema = 'S') w,
+                                  from  (select count(sq_pessoa) as qtd from sg_autenticacao where sq_pessoa = p_usuario and gestor_sistema = 'S') w,
                                         (select count(a.sq_pessoa) as qtd 
                                            from sg_pessoa_modulo        a 
                                                 inner   join siw_modulo b on (a.sq_modulo = b.sq_modulo)
@@ -186,7 +186,7 @@ begin
                                                           )
                   left   join co_cidade             f  on (b.sq_cidade         = f.sq_cidade)
                   inner  join co_pessoa             g  on (b.cadastrador       = g.sq_pessoa),
-                  (select 1 as qtd from sg_autenticacao where sq_pessoa = p_usuario and gestor_sistema = 'S') b2,
+                  (select count(sq_pessoa) as qtd from sg_autenticacao where sq_pessoa = p_usuario and gestor_sistema = 'S') b2,
                   (select count(a.sq_pessoa) as qtd 
                      from sg_pessoa_modulo a 
                           inner   join siw_modulo b on (a.sq_modulo = b.sq_modulo)
@@ -217,8 +217,8 @@ begin
                                                                       (p_ref_f             between referencia_inicio and referencia_fim)
                                         )
                 )
-            and (p_restricao <> 'EDICAO' or (p_restricao = 'EDICAO' and (b1.sq_eoindicador_aferidor is not null or coalesce(b2.qtd,0) > 0 or coalesce(b3.qtd,0) > 0)))
-            and (p_restricao <> 'INCLUSAO' or
+            and (instr('EDICAO,INCLUSAO',p_restricao)=0 or
+                 (p_restricao = 'EDICAO' and (b1.sq_eoindicador_aferidor is not null or coalesce(b2.qtd,0) > 0 or coalesce(b3.qtd,0) > 0)) OR
                  (p_restricao = 'INCLUSAO' and
                   b.sq_eoindicador_afericao = (select x.sq_eoindicador_afericao
                                                  from eo_indicador_afericao x
