@@ -189,7 +189,7 @@ function Inicial() {
     ScriptClose();
   } 
   ShowHTML('</HEAD>');
-  ShowHTML('<font size=0 color="'.$conBodyBgColor.'">.</font><BASE HREF="'.$conRootSIW.'">');
+  ShowHTML('<BASE HREF="'.$conRootSIW.'">');
   if ($w_troca>'') {
     BodyOpen('onLoad=document.Form.'.$w_troca.'.focus();');
   } elseif (!(strpos('CIA',$O)===false)) {
@@ -491,7 +491,7 @@ function Disponivel() {
     ScriptClose();
   } 
   ShowHTML('</HEAD>');
-  ShowHTML('<font size=0 color="'.$conBodyBgColor.'">.</font><BASE HREF="'.$conRootSIW.'">');
+  ShowHTML('<BASE HREF="'.$conRootSIW.'">');
   if ($w_troca>'') {
     BodyOpen('onLoad=document.Form.'.$w_troca.'.focus();');
   } elseif (!(strpos('CIA',$O)===false)) {
@@ -740,7 +740,7 @@ function Indisponivel() {
     ScriptClose();
   } 
   ShowHTML('</HEAD>');
-  ShowHTML('<font size=0 color="'.$conBodyBgColor.'">.</font><BASE HREF="'.$conRootSIW.'">');
+  ShowHTML('<BASE HREF="'.$conRootSIW.'">');
   if ($w_troca>'') {
     BodyOpen('onLoad=document.Form.'.$w_troca.'.focus();');
   } elseif (!(strpos('CIA',$O)===false)) {
@@ -1171,7 +1171,7 @@ function Solic() {
     ScriptClose();
   } 
   ShowHTML('</HEAD>');
-  ShowHTML('<font size=0 color="'.$conBodyBgColor.'">.</font><BASE HREF="'.$conRootSIW.'">');
+  ShowHTML('<BASE HREF="'.$conRootSIW.'">');
   if ($w_troca>'') {
     BodyOpen('onLoad=document.Form.'.$w_troca.'.focus();');
   } elseif (!(strpos('CIA',$O)===false)) {
@@ -1372,7 +1372,7 @@ function SolicPeriodo() {
     ScriptClose();
   } 
   ShowHTML('</HEAD>');
-  ShowHTML('<font size=0 color="'.$conBodyBgColor.'">.</font><BASE HREF="'.$conRootSIW.'">');
+  ShowHTML('<BASE HREF="'.$conRootSIW.'">');
   if ($w_troca>'') {
     BodyOpen('onLoad=document.Form.'.$w_troca.'.focus();');
   } elseif (!(strpos('CIA',$O)===false)) {
@@ -1514,7 +1514,7 @@ function Grava() {
   global $w_Disabled;
   Cabecalho();
   ShowHTML('</HEAD>');
-  ShowHTML('<font size=0 color="'.$conBodyBgColor.'">.</font><BASE HREF="'.$conRootSIW.'">');
+  ShowHTML('<BASE HREF="'.$conRootSIW.'">');
   BodyOpen('onLoad=this.focus();');
   switch ($SG) {
     case 'PERECURSO':
@@ -1789,7 +1789,7 @@ function Main() {
     case 'GRAVA':              Grava();             break;
     default:
     Cabecalho();
-    ShowHTML('<font size=0 color="'.$conBodyBgColor.'">.</font><BASE HREF="'.$conRootSIW.'">');
+    ShowHTML('<BASE HREF="'.$conRootSIW.'">');
     BodyOpen('onLoad=this.focus();');
     ShowHTML('<B><FONT COLOR="#000000">'.$w_TP.'</FONT></B>');
     ShowHTML('<HR>');

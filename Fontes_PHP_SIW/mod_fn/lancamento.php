@@ -307,7 +307,7 @@ function Inicial() {
     ScriptClose();
     ShowHTML('</HEAD>');
   }
-  ShowHTML('<font size=0 color="'.$conBodyBgColor.'">.</font><BASE HREF="'.$conRootSIW.'">');
+  ShowHTML('<BASE HREF="'.$conRootSIW.'">');
   if ($w_troca>'') BodyOpen('onLoad=\'document.Form.'.$w_troca.'.focus();\'');
   elseif ($O=='I') BodyOpen('onLoad=\'document.Form.w_smtp_server.focus();\'');
   elseif ($O=='A') BodyOpen('onLoad=\'document.Form.w_nome.focus();\'');
@@ -717,7 +717,7 @@ function Geral() {
   ValidateClose();
   ScriptClose();
   ShowHTML('</HEAD>');
-  ShowHTML('<font size=0 color="'.$conBodyBgColor.'">.</font><BASE HREF="'.$conRootSIW.'">');
+  ShowHTML('<BASE HREF="'.$conRootSIW.'">');
   if ($w_troca>'')                    BodyOpen('onLoad=\'document.Form.'.$w_troca.'.focus()\';');
   elseif (!(strpos('EV',$O)===false)) BodyOpen('onLoad=\'this.focus()\';');
   else                                BodyOpen('onLoad=\'document.Form.w_sq_tipo_lancamento.focus()\';');
@@ -783,7 +783,7 @@ function Geral() {
     if (substr($SG,0,3)=='FNR')     SelecaoFormaPagamento('<u>F</u>orma de recebimento:','F','Selecione na lista a forma de recebimento para este lançamento.',$w_sq_forma_pagamento,$SG,'w_sq_forma_pagamento',null);
     elseif (substr($SG,0,3)=='FND') SelecaoFormaPagamento('<u>F</u>orma de pagamento:','F','Selecione na lista a forma de pagamento para este lançamento.',$w_sq_forma_pagamento,$SG,'w_sq_forma_pagamento',null);
     ShowHTML('          <td><b><u>V</u>alor:</b><br><input '.$w_Disabled.' accesskey="V" type="text" name="w_valor" class="sti" SIZE="18" MAXLENGTH="18" VALUE="'.$w_valor.'" onKeyDown="FormataValor(this,18,2,event);" title="Informe o valor total do documento."></td>');
-    ShowHTML('              <td><b><u>D</u>ata prevista:</b><br><input '.$w_Disabled.' accesskey="C" type="text" name="w_vencimento" class="sti" SIZE="10" MAXLENGTH="10" VALUE="'.Nvl($w_vencimento,FormataDataEdicao(time())).'" onKeyDown="FormataData(this,event);"></td>');
+    ShowHTML('              <td><b><u>D</u>ata prevista:</b><br><input '.$w_Disabled.' accesskey="C" type="text" name="w_vencimento" class="sti" SIZE="10" MAXLENGTH="10" VALUE="'.Nvl($w_vencimento,FormataDataEdicao(time())).'" onKeyDown="FormataData(this,event);">'.ExibeCalendario('Form','w_vencimento').'</td>');
     ShowHTML('          </table>');
     if ((strpos('CONT',substr($SG,3))===false)) {
       ShowHTML('      <tr><td align="center" height="2" bgcolor="#000000"></td></tr>');
@@ -1090,7 +1090,7 @@ function OutraParte() {
   ValidateClose();
   ScriptClose();
   ShowHTML('</HEAD>');
-  ShowHTML('<font size=0 color="'.$conBodyBgColor.'">.</font><BASE HREF="'.$conRootSIW.'">');
+  ShowHTML('<BASE HREF="'.$conRootSIW.'">');
   if (($w_cpf=='' && $w_cnpj=='') || !(strpos($_REQUEST['botao'],'Alterar')===false) || !(strpos($_REQUEST['botao'],'Procurar')===false)) {
     // Se o beneficiário ainda não foi selecionado
     if (!(strpos($_REQUEST['botao'],'Procurar')===false)) {
@@ -1424,7 +1424,7 @@ function Documentos() {
     ScriptClose();
   } 
   ShowHTML('</HEAD>');
-  ShowHTML('<font size=0 color="'.$conBodyBgColor.'">.</font><BASE HREF="'.$conRootSIW.'">');
+  ShowHTML('<BASE HREF="'.$conRootSIW.'">');
   if ($w_troca>'') {
     BodyOpen('onLoad=\'document.Form.'.$w_troca.'.focus()\';');
   } elseif ($O=='I') {
@@ -1509,7 +1509,7 @@ function Documentos() {
     ShowHTML('      <tr><td><table border=0 width="100%" cellspacing=0><tr valign="top">');
     SelecaoTipoDocumento('<u>T</u>ipo:','T', 'Selecione o tipo de documento.', $w_sq_tipo_documento,$w_cliente,'w_sq_tipo_documento',null,'onChange="document.Form.action=\''.$w_dir.$w_pagina.$par.'\'; document.Form.O.value=\''.$O.'\'; document.Form.w_troca.value=\'w_numero\'; document.Form.submit();"');
     ShowHTML('          <td><b><u>N</u>úmero:</b><br><input '.$w_Disabled.' accesskey="N" type="text" name="w_numero" class="sti" SIZE="15" MAXLENGTH="30" VALUE="'.$w_numero.'" title="Informe o número do documento."></td>');
-    ShowHTML('          <td><b><u>D</u>ata:</b><br><input '.$w_Disabled.' accesskey="D" type="text" name="w_data" class="sti" SIZE="10" MAXLENGTH="10" VALUE="'.$w_data.'" onKeyDown="FormataData(this,event);" title="Informe a data do documento."></td>');
+    ShowHTML('          <td><b><u>D</u>ata:</b><br><input '.$w_Disabled.' accesskey="D" type="text" name="w_data" class="sti" SIZE="10" MAXLENGTH="10" VALUE="'.$w_data.'" onKeyDown="FormataData(this,event);" title="Informe a data do documento.">'.ExibeCalendario('Form','w_data').'</td>');
     if (Nvl($w_tipo,'-')=='NF') {
       ShowHTML('          <td><b><u>S</u>érie:</b><br><input '.$w_Disabled.' accesskey="S" type="text" name="w_serie" class="sti" SIZE="10" MAXLENGTH="10" VALUE="'.$w_serie.'" title="Informado apenas se o documento for NOTA FISCAL. Informe a série ou, se não tiver, digite ÚNICA."></td>');
     } 
@@ -1698,7 +1698,7 @@ function RubricaDoc() {
     ScriptClose();
   } 
   ShowHTML('</HEAD>');
-  ShowHTML('<font size=0 color="'.$conBodyBgColor.'">.</font><BASE HREF="'.$conRootSIW.'">');
+  ShowHTML('<BASE HREF="'.$conRootSIW.'">');
   if ($w_troca>'') {
     BodyOpen('onLoad=\'document.Form.'.$w_troca.'.focus()\';');
   } elseif ($O=='I') {
@@ -1927,7 +1927,7 @@ function Itens() {
     ScriptClose();
   } 
   ShowHTML('</HEAD>');
-  ShowHTML('<font size=0 color="'.$conBodyBgColor.'">.</font><BASE HREF="'.$conRootSIW.'">');
+  ShowHTML('<BASE HREF="'.$conRootSIW.'">');
   if ($w_troca>'') {
     BodyOpen('onLoad=\'document.Form.'.$w_troca.'.focus()\';');
   } elseif ($O=='I') {
@@ -2232,7 +2232,7 @@ function BuscaParcela() {
     ScriptClose();
   } 
   ShowHTML('</HEAD>');
-  ShowHTML('<font size=0 color="'.$conBodyBgColor.'">.</font><BASE HREF="'.$conRootSIW.'">');
+  ShowHTML('<BASE HREF="'.$conRootSIW.'">');
   if ($w_troca>'') {
     BodyOpen('onLoad=\'document.Form.'.$w_troca.'.focus()\';');
   } elseif ($O=='P') {
@@ -2258,7 +2258,7 @@ function BuscaParcela() {
     SelecaoAcordo('<u>A</u>cordo:','A', null, $w_cliente, $p_sq_acordo, null,'p_sq_acordo',f($RS_Menu,'sq_menu'),'onChange="document.Form.action=\''.$w_dir.$w_pagina.$par.'\'; document.Form.O.value=\''.$O.'\'; document.Form.w_troca.value=\'p_sq_acordo_parcela\'; document.Form.submit();"');
     SelecaoAcordoParcela('<u>P</u>arcela:','P', null, $w_cliente, $p_sq_acordo_parcela, Nvl($p_sq_acordo,0), 'p_sq_acordo_parcela', 'CADASTRO', null);
     ShowHTML('      <tr><td valign="top"><b><u>O</u>utra parte:</b><br><input '.$w_disabled.' accesskey="O" type="text" name="p_outra_parte" class="sti" SIZE="30" MAXLENGTH="60" VALUE="'.$p_outra_parte.'"></td>');
-    ShowHTML('      <tr><td valign="top"><b>Parcelas com <u>v</u>encimento entre:</b><br><input '.$w_Disabled.' accesskey="V" type="text" name="p_inicio" class="sti" SIZE="10" MAXLENGTH="10" VALUE="'.$p_inicio.'" onKeyDown="FormataData(this,event);"> e <input '.$w_Disabled.' accesskey="C" type="text" name="p_fim" class="sti" SIZE="10" MAXLENGTH="10" VALUE="'.$p_fim.'" onKeyDown="FormataData(this,event);"></td>');
+    ShowHTML('      <tr><td valign="top"><b>Parcelas com <u>v</u>encimento entre:</b><br><input '.$w_Disabled.' accesskey="V" type="text" name="p_inicio" class="sti" SIZE="10" MAXLENGTH="10" VALUE="'.$p_inicio.'" onKeyDown="FormataData(this,event);">'.ExibeCalendario('Form','p_inicio').' e <input '.$w_Disabled.' accesskey="C" type="text" name="p_fim" class="sti" SIZE="10" MAXLENGTH="10" VALUE="'.$p_fim.'" onKeyDown="FormataData(this,event);">'.ExibeCalendario('Form','p_fim').'</td>');
     ShowHTML('          <td valign="top"><b><U>L</U>inhas por página:<br><INPUT ACCESSKEY="L" '.$w_Disabled.' class="sti" type="text" name="P4" size="4" maxlength="4" value="'.$P4.'"></td></tr>');
     ShowHTML('      <tr><td align="center" colspan="3" height="1" bgcolor="#000000">');
     ShowHTML('      <tr><td align="center" colspan="3">');
@@ -2402,7 +2402,7 @@ function Visual() {
     ShowHTML('<HEAD>');
     ShowHTML('<TITLE>'.$conSgSistema.' - Visualização de '.f($RS_Menu,'nome').'</TITLE>');
     ShowHTML('</HEAD>');
-    ShowHTML('<font size=0 color="'.$conBodyBgColor.'">.</font><BASE HREF="'.$conRootSIW.'">');
+    ShowHTML('<BASE HREF="'.$conRootSIW.'">');
     BodyOpenClean(null); 
     ShowHTML('<TABLE WIDTH="100%" BORDER=0><TR><TD ROWSPAN=2><IMG ALIGN="LEFT" src="'.LinkArquivo(null,$w_cliente,$w_logo,null,null,null,'EMBED').'"><TD ALIGN="RIGHT"><B><FONT SIZE=4 COLOR="#000000">');
     ShowHTML('Visualização de '.f($RS_Menu,'nome'));
@@ -2453,7 +2453,7 @@ function Excluir() {
     ScriptClose();
   } 
   ShowHTML('</HEAD>');
-  ShowHTML('<font size=0 color="'.$conBodyBgColor.'">.</font><BASE HREF="'.$conRootSIW.'">');
+  ShowHTML('<BASE HREF="'.$conRootSIW.'">');
   if ($w_troca>'') {
     BodyOpen('onLoad=\'document.Form.'.$w_troca.'.focus()\';');
   } else {
@@ -2549,7 +2549,7 @@ function Encaminhamento() {
     ScriptClose();
   } 
   ShowHTML('</HEAD>');
-  ShowHTML('<font size=0 color="'.$conBodyBgColor.'">.</font><BASE HREF="'.$conRootSIW.'">');
+  ShowHTML('<BASE HREF="'.$conRootSIW.'">');
   if ($w_troca>'') {
     BodyOpen('onLoad=\'document.Form.'.$w_troca.'.focus()\';');
   } else {
@@ -2654,7 +2654,7 @@ function Anotar() {
     ScriptClose();
   } 
   ShowHTML('</HEAD>');
-  ShowHTML('<font size=0 color="'.$conBodyBgColor.'">.</font><BASE HREF="'.$conRootSIW.'">');
+  ShowHTML('<BASE HREF="'.$conRootSIW.'">');
   if ($w_troca>'')
     BodyOpen('onLoad=\'document.Form.'.$w_troca.'.focus()\';');
   else
@@ -2755,7 +2755,7 @@ function Concluir() {
     ScriptClose();
   } 
   ShowHTML('</HEAD>');
-  ShowHTML('<font size=0 color="'.$conBodyBgColor.'">.</font><BASE HREF="'.$conRootSIW.'">');
+  ShowHTML('<BASE HREF="'.$conRootSIW.'">');
   if ($w_troca>'') {
     BodyOpen('onLoad=\'document.Form.'.$w_troca.'.focus()\';');
   } elseif ($w_erro>'' && substr(Nvl($w_erro,'-'),0,1)=='0') {
@@ -2870,7 +2870,7 @@ function FichaRubrica() {
   ShowHTML('<HEAD>');
   Estrutura_CSS($w_cliente);
   ShowHTML('</HEAD>');
-  ShowHTML('<font size=0 color="'.$conBodyBgColor.'">.</font><BASE HREF="'.$conRootSIW.'">');
+  ShowHTML('<BASE HREF="'.$conRootSIW.'">');
   BodyOpen(null);
   Estrutura_Texto_Abre();
   ShowHTML('<table border="0" cellpadding="0" cellspacing="0" width="100%">');
@@ -3119,7 +3119,7 @@ function Grava() {
   $w_nome       = '';
   Cabecalho();
   ShowHTML('</HEAD>');
-  ShowHTML('<font size=0 color="'.$conBodyBgColor.'">.</font><BASE HREF="'.$conRootSIW.'">');
+  ShowHTML('<BASE HREF="'.$conRootSIW.'">');
   BodyOpen('onLoad=this.focus();');
   if (!(strpos($SG,'EVENT')===false)) {
     // Verifica se a Assinatura Eletrônica é válida
@@ -3418,7 +3418,7 @@ function Main() {
     case 'GRAVA':           Grava();            break;
     default:
       cabecalho();
-      ShowHTML('<font size=0 color="'.$conBodyBgColor.'">.</font><BASE HREF="'.$conRootSIW.'">');      
+      ShowHTML('<BASE HREF="'.$conRootSIW.'">');      
       BodyOpen('onLoad=this.focus();');
       Estrutura_Topo_Limpo();
       Estrutura_Menu();

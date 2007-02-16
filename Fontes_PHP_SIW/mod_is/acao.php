@@ -278,7 +278,7 @@ function Inicial() {
   ValidateClose();
   ScriptClose();
   ShowHTML('</HEAD>');
-  ShowHTML('<font size=0 color="'.$conBodyBgColor.'">.</font><BASE HREF="'.$conRootSIW.'">');
+  ShowHTML('<BASE HREF="'.$conRootSIW.'">');
   if ($w_troca>'') {
     // Se for recarga da página
     BodyOpen('onLoad=\'document.Form.'.$w_troca.'.focus()\';');
@@ -746,7 +746,7 @@ function Geral() {
   ValidateClose();
   ScriptClose();
   ShowHTML('</HEAD>');
-  ShowHTML('<font size=0 color="'.$conBodyBgColor.'">.</font><BASE HREF="'.$conRootSIW.'">');
+  ShowHTML('<BASE HREF="'.$conRootSIW.'">');
   if ($w_troca>'') {
     BodyOpen('onLoad=\'document.Form.'.$w_troca.'.focus()\';');
   } elseif (!(strpos('EV',$O)===false)) {
@@ -928,7 +928,7 @@ function RecursoProgramado() {
   ValidateClose();
   ScriptClose();
   ShowHTML('</HEAD>');
-  ShowHTML('<font size=0 color="'.$conBodyBgColor.'">.</font><BASE HREF="'.$conRootSIW.'">');
+  ShowHTML('<BASE HREF="'.$conRootSIW.'">');
   if (!(strpos('A',$O)===false)) {
     BodyOpen('onLoad=\'document.Form.w_valor.focus()\';');
   } else {
@@ -1277,7 +1277,7 @@ function Responsaveis() {
     ScriptClose();
   } 
   ShowHTML('</HEAD>');
-  ShowHTML('<font size=0 color="'.$conBodyBgColor.'">.</font><BASE HREF="'.$conRootSIW.'">');
+  ShowHTML('<BASE HREF="'.$conRootSIW.'">');
   if ($O=='A') {
     BodyOpen('onLoad=\'document.Form.w_responsavel.focus()\';');
   } else {
@@ -1436,7 +1436,7 @@ function ProgramacaoQualitativa() {
   ValidateClose();
   ScriptClose();
   ShowHTML('</HEAD>');
-  ShowHTML('<font size=0 color="'.$conBodyBgColor.'">.</font><BASE HREF="'.$conRootSIW.'">');
+  ShowHTML('<BASE HREF="'.$conRootSIW.'">');
   if ($w_troca>'') {
     BodyOpen('onLoad=\'document.Form.'.$w_troca.'.focus()\';');
   } elseif (!(strpos('EV',$O)===false)) {
@@ -1659,7 +1659,7 @@ function Metas() {
     ScriptClose();
   } 
   ShowHTML('</HEAD>');
-  ShowHTML('<font size=0 color="'.$conBodyBgColor.'">.</font><BASE HREF="'.$conRootSIW.'">');
+  ShowHTML('<BASE HREF="'.$conRootSIW.'">');
   if ($w_troca>'') {
     BodyOpen('onLoad=\'document.Form.'.$w_troca.'.focus()\';');
   } elseif ($O=='I') {
@@ -2037,7 +2037,7 @@ function AtualizaMeta() {
     ScriptClose();
   } 
   ShowHTML('</HEAD>');
-  ShowHTML('<font size=0 color="'.$conBodyBgColor.'">.</font><BASE HREF="'.$conRootSIW.'">');
+  ShowHTML('<BASE HREF="'.$conRootSIW.'">');
   if ($w_troca>'') {
     BodyOpen('onLoad=\'document.Form.'.$w_troca.'.focus()\';');
   } elseif ($O=='I' || $O=='A') {
@@ -2371,7 +2371,7 @@ function Financiamento() {
     ScriptClose();
   } 
   ShowHTML('</HEAD>');
-  ShowHTML('<font size=0 color="'.$conBodyBgColor.'">.</font><BASE HREF="'.$conRootSIW.'">');
+  ShowHTML('<BASE HREF="'.$conRootSIW.'">');
   if ($w_troca>'') {
     BodyOpen('onLoad=\'document.Form.'.$w_troca.'.focus()\';');
   } elseif ($O=='I') {
@@ -2670,7 +2670,7 @@ function Restricoes() {
     ScriptClose();
   } 
   ShowHTML('</HEAD>');
-  ShowHTML('<font size=0 color="'.$conBodyBgColor.'">.</font><BASE HREF="'.$conRootSIW.'">');
+  ShowHTML('<BASE HREF="'.$conRootSIW.'">');
   if ($w_troca>'') {
     BodyOpen('onLoad=\'document.Form.'.$w_troca.'.focus()\';');
   } elseif ($O=='I') {
@@ -2858,7 +2858,7 @@ function Interessados() {
     ScriptClose();
   } 
   ShowHTML('</HEAD>');
-  ShowHTML('<font size=0 color="'.$conBodyBgColor.'">.</font><BASE HREF="'.$conRootSIW.'">');
+  ShowHTML('<BASE HREF="'.$conRootSIW.'">');
   if ($w_troca>'') {
     BodyOpen('onLoad=\'document.Form.'.$w_troca.'.focus()\';');
   } elseif ($O=='I') {
@@ -3001,7 +3001,7 @@ function Anexos() {
     ScriptClose();
   } 
   ShowHTML('</HEAD>');
-  ShowHTML('<font size=0 color="'.$conBodyBgColor.'">.</font><BASE HREF="'.$conRootSIW.'">');
+  ShowHTML('<BASE HREF="'.$conRootSIW.'">');
   if ($w_troca>'') {
     BodyOpen('onLoad=\'document.Form.'.$w_troca.'.focus()\';');
   } elseif ($O=='I') {
@@ -3118,7 +3118,7 @@ function VisualNovo() {
   ShowHTML('<HEAD>');
   ShowHTML('<TITLE>'.$conSgSistema.' - Visualização de Ação</TITLE>');
   ShowHTML('</HEAD>');
-  ShowHTML('<font size=0 color="'.$conBodyBgColor.'">.</font><BASE HREF="'.$conRootSIW.'">');
+  ShowHTML('<BASE HREF="'.$conRootSIW.'">');
   if ($w_tipo!='WORD') BodyOpenClean(null);
   ShowHTML('<TABLE WIDTH="100%" BORDER=0><TR><TD ROWSPAN=2><IMG ALIGN="LEFT" src="'.LinkArquivo(null,$w_cliente,$w_logo,null,null,null,'EMBED').'"><TD ALIGN="RIGHT"><B><FONT SIZE=4 COLOR="#000000">');
   if ($P1==1) {
@@ -3156,7 +3156,7 @@ function Visual() {
   ShowHTML('<HEAD>');
   ShowHTML('<TITLE>'.$conSgSistema.' - Ações - Exercício '.$w_ano.'</TITLE>');
   ShowHTML('</HEAD>');
-  ShowHTML('<font size=0 color="'.$conBodyBgColor.'">.</font><BASE HREF="'.$conRootSIW.'">');
+  ShowHTML('<BASE HREF="'.$conRootSIW.'">');
   if ($w_tipo!='WORD') BodyOpenClean(null);
   ShowHTML('<div align="center">');
   ShowHTML('<table width="95%" border="0" cellspacing="3">');
@@ -3213,7 +3213,7 @@ function Excluir() {
     ScriptClose();
   } 
   ShowHTML('</HEAD>');
-  ShowHTML('<font size=0 color="'.$conBodyBgColor.'">.</font><BASE HREF="'.$conRootSIW.'">');
+  ShowHTML('<BASE HREF="'.$conRootSIW.'">');
   if ($w_troca>'') {
     BodyOpen('onLoad=\'document.Form.'.$w_troca.'.focus()\';');
   } else {
@@ -3292,7 +3292,7 @@ function Encaminhamento() {
     ScriptClose();
   } 
   ShowHTML('</HEAD>');
-  ShowHTML('<font size=0 color="'.$conBodyBgColor.'">.</font><BASE HREF="'.$conRootSIW.'">');
+  ShowHTML('<BASE HREF="'.$conRootSIW.'">');
   if ($w_troca>'') {
     BodyOpen('onLoad=\'document.Form.'.$w_troca.'.focus()\';');
   } else {
@@ -3377,7 +3377,7 @@ function Anotar() {
     ScriptClose();
   } 
   ShowHTML('</HEAD>');
-  ShowHTML('<font size=0 color="'.$conBodyBgColor.'">.</font><BASE HREF="'.$conRootSIW.'">');
+  ShowHTML('<BASE HREF="'.$conRootSIW.'">');
   if ($w_troca>'') {
     BodyOpen('onLoad=\'document.Form.'.$w_troca.'.focus()\';');
   } else {
@@ -3461,7 +3461,7 @@ function Concluir() {
     ScriptClose();
   } 
   ShowHTML('</HEAD>');
-  ShowHTML('<font size=0 color="'.$conBodyBgColor.'">.</font><BASE HREF="'.$conRootSIW.'">');
+  ShowHTML('<BASE HREF="'.$conRootSIW.'">');
   if ($w_troca>'') {
     BodyOpen('onLoad=\'document.Form.'.$w_troca.'.focus()\';');
   } else {
@@ -3854,7 +3854,7 @@ function BuscaAcao() {
   ValidateClose();
   ScriptClose();
   ShowHTML('</HEAD>');
-  ShowHTML('<font size=0 color="'.$conBodyBgColor.'">.</font><BASE HREF="'.$conRootSIW.'">');
+  ShowHTML('<BASE HREF="'.$conRootSIW.'">');
   BodyOpen('onLoad=\'document.Form.w_nome.focus()\';');
   Estrutura_Texto_Abre();
   ShowHTML('<table border="0" cellpadding="0" cellspacing="0" width="100%">');
@@ -3932,7 +3932,7 @@ function Grava() {
   $w_nome   ='';
   Cabecalho();
   ShowHTML('</HEAD>');
-  ShowHTML('<font size=0 color="'.$conBodyBgColor.'">.</font><BASE HREF="'.$conRootSIW.'">');
+  ShowHTML('<BASE HREF="'.$conRootSIW.'">');
   BodyOpen('onLoad=this.focus();');
   if ($SG=='ISACGERAL' || $SG=='VLRAGERAL') {
     // Verifica se a Assinatura Eletrônica é válida
@@ -4328,7 +4328,7 @@ function Main() {
     case 'GRAVA':       Grava();                    break;
     default:
       cabecalho();
-      ShowHTML('<font size=0 color="'.$conBodyBgColor.'">.</font><BASE HREF="'.$conRootSIW.'">');      
+      ShowHTML('<BASE HREF="'.$conRootSIW.'">');      
       BodyOpen('onLoad=this.focus();');
       Estrutura_Topo_Limpo();
       Estrutura_Menu();

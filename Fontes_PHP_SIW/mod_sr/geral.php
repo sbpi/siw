@@ -286,7 +286,7 @@ function Inicial() {
     ScriptClose();
     ShowHTML('</HEAD>');
   }
-  ShowHTML('<font size=0 color="'.$conBodyBgColor.'">.</font><BASE HREF="'.$conRootSIW.'">');
+  ShowHTML('<BASE HREF="'.$conRootSIW.'">');
   if ($w_troca>'') {
     // Se for recarga da página
     BodyOpenClean('onLoad=\'document.Form.'.$w_troca.'.focus();\'');
@@ -781,7 +781,7 @@ function Geral() {
   ValidateClose();
   ScriptClose();
   ShowHTML('</HEAD>');
-  ShowHTML('<font size=0 color="'.$conBodyBgColor.'">.</font><BASE HREF="'.$conRootSIW.'">');
+  ShowHTML('<BASE HREF="'.$conRootSIW.'">');
   if ($w_troca>'') {
     BodyOpenClean('onLoad=\'document.Form.'.$w_troca.'.focus()\';');
   } else {
@@ -888,7 +888,7 @@ function Visual() {
   ShowHTML('<HEAD>');
   ShowHTML('<TITLE>'.$conSgSistema.' - Visualização de solicitação</TITLE>');
   ShowHTML('</HEAD>');
-  ShowHTML('<font size=0 color="'.$conBodyBgColor.'">.</font><BASE HREF="'.$conRootSIW.'">');
+  ShowHTML('<BASE HREF="'.$conRootSIW.'">');
   BodyOpenClean('onLoad=\'this.focus()\'; ');
   ShowHTML('<TABLE WIDTH="100%" BORDER=0><TR><TD ROWSPAN=2><IMG ALIGN="LEFT" SRC="'.LinkArquivo(null,$w_cliente,$w_logo,null,null,null,'EMBED').'"><TD ALIGN="RIGHT"><B><FONT SIZE=4 COLOR="#000000">');
   ShowHTML('Visualização de Solicitação');
@@ -925,7 +925,7 @@ function EmiteOS() {
   ShowHTML('<HEAD>');
   ShowHTML('<TITLE>'.$conSgSistema.' - Ordem de Serviço</TITLE>');
   ShowHTML('</HEAD>');
-  ShowHTML('<font size=0 color="'.$conBodyBgColor.'">.</font><BASE HREF="'.$conRootSIW.'">');
+  ShowHTML('<BASE HREF="'.$conRootSIW.'">');
   BodyOpenClean('onLoad=\'this.focus()\'; ');
   ShowHTML('<TABLE WIDTH="100%" BORDER=0><TR><TD ROWSPAN=2><IMG ALIGN="LEFT" SRC="'.LinkArquivo(null,$w_cliente,$w_logo,null,null,null,'EMBED').'"><TD ALIGN="RIGHT"><B><FONT SIZE=4 COLOR="#000000">');
   ShowHTML('ORDEM DE SERVIÇO');
@@ -968,7 +968,7 @@ function Excluir() {
     ScriptClose();
   } 
   ShowHTML('</HEAD>');
-  ShowHTML('<font size=0 color="'.$conBodyBgColor.'">.</font><BASE HREF="'.$conRootSIW.'">');
+  ShowHTML('<BASE HREF="'.$conRootSIW.'">');
   if ($w_troca>'') {
     BodyOpenClean('onLoad=\'document.Form.'.$w_troca.'.focus()\';');
   } else {
@@ -1081,7 +1081,7 @@ function Encaminhamento() {
     ScriptClose();
   } 
   ShowHTML('</HEAD>');
-  ShowHTML('<font size=0 color="'.$conBodyBgColor.'">.</font><BASE HREF="'.$conRootSIW.'">');
+  ShowHTML('<BASE HREF="'.$conRootSIW.'">');
   if ($w_troca>'') {
     BodyOpen('onLoad=\'document.Form.'.$w_troca.'.focus()\';');
   } elseif ($P1==1) {
@@ -1203,7 +1203,7 @@ function Opiniao() {
   ValidateClose();
   ScriptClose();
   ShowHTML('</HEAD>');
-  ShowHTML('<font size=0 color="'.$conBodyBgColor.'">.</font><BASE HREF="'.$conRootSIW.'">');
+  ShowHTML('<BASE HREF="'.$conRootSIW.'">');
   BodyOpen('onLoad=\'document.Form.w_assinatura.focus()\';');
   ShowHTML('<B><FONT COLOR="#000000">'.$w_TP.'</font></B>');
   ShowHTML('<HR>');
@@ -1273,7 +1273,7 @@ function Anotar() {
     ScriptClose();
   } 
   ShowHTML('</HEAD>'); 
-  ShowHTML('<font size=0 color="'.$conBodyBgColor.'">.</font><BASE HREF="'.$conRootSIW.'">');
+  ShowHTML('<BASE HREF="'.$conRootSIW.'">');
   if ($w_troca>'') {
     BodyOpenClean('onLoad=\'document.Form.'.$w_troca.'.focus()\';');
   } else {
@@ -1360,7 +1360,7 @@ function Concluir() {
   ValidateClose();
   ScriptClose();
   ShowHTML('</HEAD>');
-  ShowHTML('<font size=0 color="'.$conBodyBgColor.'">.</font><BASE HREF="'.$conRootSIW.'">');
+  ShowHTML('<BASE HREF="'.$conRootSIW.'">');
   if ($w_troca>'') {
     BodyOpenClean('onLoad=\'document.Form.'.$w_troca.'.focus()\';');
   } else {
@@ -1602,7 +1602,7 @@ function Grava() {
   $w_nome    = '';
   Cabecalho();
   ShowHTML('</HEAD>');
-  ShowHTML('<font size=0 color="'.$conBodyBgColor.'">.</font><BASE HREF="'.$conRootSIW.'">');
+  ShowHTML('<BASE HREF="'.$conRootSIW.'">');
   BodyOpenClean('onLoad=this.focus();');
   if (!(strpos('IAE',$O)===false)) {
     // Verifica se a Assinatura Eletrônica é válida
@@ -1858,7 +1858,7 @@ function Main() {
   case 'GRAVA':         Grava();          break;
   default:
     Cabecalho();
-    ShowHTML('<font size=0 color="'.$conBodyBgColor.'">.</font><BASE HREF="'.$conRootSIW.'">');
+    ShowHTML('<BASE HREF="'.$conRootSIW.'">');
     BodyOpen('onLoad=this.focus();');
     Estrutura_Topo_Limpo();
     Estrutura_Menu();

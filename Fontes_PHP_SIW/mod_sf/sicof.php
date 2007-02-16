@@ -158,7 +158,7 @@ function ConsultaDoc() {
 
 
   ShowHTML('</HEAD>');
-  ShowHTML('<font size=0 color="'.$conBodyBgColor.'">.</font><BASE HREF="'.$conRootSIW.'">');
+  ShowHTML('<BASE HREF="'.$conRootSIW.'">');
   if ($O=="P") {
     BodyOpen('onLoad=\'document.Form.p_beneficiario.focus();\'');
   } else {
@@ -483,7 +483,7 @@ function Main() {
     case "CONSULTA": ConsultaDoc(); break;
     default:
       Cabecalho();
-      ShowHTML('<font size=0 color="'.$conBodyBgColor.'">.</font><BASE HREF="'.$conRootSIW.'">');
+      ShowHTML('<BASE HREF="'.$conRootSIW.'">');
       BodyOpen('onLoad=this.focus();');
       ShowHTML('<B><FONT COLOR="#000000">'.$w_TP.'</font></B>');
       ShowHTML('<HR>');

@@ -251,7 +251,7 @@ function Gerencial() {
     HeaderWord(null);
     $w_pag=1;
     $w_linha=0.00;
-    ShowHTML('<font size=0 color="'.$conBodyBgColor.'">.</font><BASE HREF="'.$conRootSIW.'">');
+    ShowHTML('<BASE HREF="'.$conRootSIW.'">');
     CabecalhoWord($w_cliente,$w_TP,$w_pag);
     if ($w_filtro>'') ShowHTML($w_filtro);    
   } else {
@@ -305,7 +305,7 @@ function Gerencial() {
     } else {
       ShowHTML('<TITLE>'.$w_TP.'</TITLE>');
     } 
-    ShowHTML('<font size=0 color="'.$conBodyBgColor.'">.</font><BASE HREF="'.$conRootSIW.'">');
+    ShowHTML('<BASE HREF="'.$conRootSIW.'">');
     ShowHTML('</HEAD>');
     if ($w_troca>'') {
       // Se for recarga da página
@@ -911,7 +911,7 @@ function Main() {
     case 'GERENCIAL': Gerencial(); break;
     default:
     Cabecalho();
-    ShowHTML('<font size=0 color="'.$conBodyBgColor.'">.</font><BASE HREF="'.$conRootSIW.'">');    
+    ShowHTML('<BASE HREF="'.$conRootSIW.'">');    
     BodyOpen('onLoad=this.focus();');
     Estrutura_Topo_Limpo();
     Estrutura_Menu();

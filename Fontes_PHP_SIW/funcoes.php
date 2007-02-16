@@ -110,19 +110,13 @@ function montaURL_JS ($p_dir, $p_link) {
 
   // Monta a chamada base
   $l_link = $p_link;
-/*
   // Se for MS-IE, não agrega o diretório.
   if (strpos(strtoupper($_SERVER['HTTP_USER_AGENT']),'MSIE')===false) {
-     // Altera a chamada padrão, dispensando a sessão
-     if (strpos($p_link,$p_dir)===false) {
-       $l_link = $p_dir.$p_link;
-     }
+    // Altera a chamada padrão, dispensando a sessão
+    if (strpos($p_link,$p_dir)===false) $l_link = $p_dir.$p_link;
   } else {
-*/
-     if (strpos($p_link,$p_dir)!==false) {
-       $l_link = str_replace($p_dir,'',$p_link);
-     }
-//  }
+    if (strpos($p_link,$p_dir)!==false) $l_link = str_replace($p_dir,'',$p_link);
+  }
   // Retorno ao chamador
   return $l_link;
 }
@@ -179,7 +173,7 @@ function headerWord($p_orientation='LANDSCAPE') {
   ShowHTML('--> ');
   ShowHTML('</style> ');
   ShowHTML('</head> ');
-  ShowHTML('<font size=0 color="'.$conBodyBgColor.'">.</font><BASE HREF="'.$conRootSIW.'">');
+  ShowHTML('<BASE HREF="'.$conRootSIW.'">');
   BodyOpen('onLoad=this.focus();');
   ShowHTML('<div class=Section1> ');
 }
@@ -433,23 +427,33 @@ function MontaFiltro($p_method) {
   return $l_string;
 }
 // =========================================================================
-// Montagem de formulário para retorno à página anterior, recebendo o nome do campo
+// Montagem de formulário para retorno à página anterior
+// rerecebendo o nome do campo
 // a ser dado focus no formulário original
 // -------------------------------------------------------------------------
-function RetornaFormulario($l_troca) {
+function RetornaFormulario($l_troca=null,$l_sg=null,$l_menu=null,$l_o=null,$l_dir=null,$l_pagina=null,$l_par=null,$l_p1=null,$l_p2=null,$l_p3=null,$l_p4=null,$l_tp=null,$l_r=null) {
   extract($GLOBALS);
-  $l_string='';
-  AbreForm('RetornaDados',nvl($w_dir.$_POST['R'],$_SERVER['HTTP_REFERER']),'POST',null,null,$_POST['P1'],$_POST['P2'],$_POST['P3'],$_POST['P4'],$_POST['TP'],$_POST['SG'],$_POST['R'],$_POST['O']);
+  $l_form = '';
+  // Os parâmetros informados prevalecem sobre os valores default
+  if (nvl($l_pagina,'')!='') {
+    $l_form .= AbreForm('RetornaDados',$l_dir.$l_pagina.'?par='.$l_par,'POST',null,null,nvl($l_p1,$_POST['P1']),nvl($l_p2,$_POST['P2']),nvl($l_p3,$_POST['P3']),nvl($l_p4,$_POST['P4']),nvl($l_tp,$_POST['TP']),nvl($l_sg,$_POST['SG']),nvl($l_r,$_POST['R']),nvl($l_o,$_POST['O']),'texto');
+  } else {
+    $l_form .= AbreForm('RetornaDados',nvl($w_dir.$_POST['R'],$_SERVER['HTTP_REFERER']),'POST',null,null,nvl($l_p1,$_POST['P1']),nvl($l_p2,$_POST['P2']),nvl($l_p3,$_POST['P3']),nvl($l_p4,$_POST['P4']),nvl($l_tp,$_POST['TP']),nvl($l_sg,$_POST['SG']),nvl($l_r,$_POST['R']),nvl($l_o,$_POST['O']),'texto');
+  }
+  if (nvl($l_troca,'')!='') $l_form .= chr(13).'<INPUT TYPE="HIDDEN" NAME="w_troca" VALUE="'.$l_troca.'">';
+  if (nvl($l_menu,'')!='')  $l_form .= chr(13).'<INPUT TYPE="HIDDEN" NAME="w_menu" VALUE="'.$l_menu.'">';
   foreach ($_POST as $l_Item => $l_valor) {
-    if ($l_Item!='w_troca' && $l_Item!='w_assinatura' && $l_Item!='Password' && $l_Item!='R' && $l_Item!='R' && $l_Item!='P1' && $l_Item!='P2' && $l_Item!='P3' && $l_Item!='P4' && $l_Item!='TP' && $l_Item!='O') {
-      if (is_array($_POST[$l_Item])) {
-        ShowHTML('<INPUT TYPE="HIDDEN" NAME="'.$l_Item.'" VALUE="'.explodeArray($_POST[$l_Item]).'">');
-      } else {
-        ShowHTML('<INPUT TYPE="HIDDEN" NAME="'.$l_Item.'" VALUE="'.$l_valor.'">');
+    if (strpos($l_form,'NAME="'.$l_Item.'"')===false) {
+      if ($l_Item!='w_troca' && $l_Item!='w_assinatura' && $l_Item!='Password' && $l_Item!='R' && $l_Item!='R' && $l_Item!='P1' && $l_Item!='P2' && $l_Item!='P3' && $l_Item!='P4' && $l_Item!='TP' && $l_Item!='O') {
+        if (is_array($_POST[$l_Item])) {
+          $l_form .= chr(13).'<INPUT TYPE="HIDDEN" NAME="'.$l_Item.'" VALUE="'.explodeArray($_POST[$l_Item]).'">';
+        } else {
+          $l_form .= chr(13).'<INPUT TYPE="HIDDEN" NAME="'.$l_Item.'" VALUE="'.$l_valor.'">';
+        }
       }
     }
   }
-  ShowHTML('<INPUT TYPE="HIDDEN" NAME="w_troca" VALUE="'.$l_troca.'">');
+  ShowHTML($l_form);
   ShowHTML('</FORM>');
   ScriptOpen('JavaScript');
   ShowHTML('  document.forms["RetornaDados"].submit();');
@@ -524,7 +528,20 @@ function ExibeRecurso($p_dir,$p_cliente,$p_nome,$p_chave,$p_tp) {
   if (Nvl($p_chave,'')=='') {
     $l_string='---';
   } else {
-    $l_string .= '<A class="hl" HREF="#" onClick="window.open(\''.$conRootSIW.'mod_pe/recurso.php?par=TELARECURSO&w_cliente='.$p_cliente.'&w_chave='.$p_chave.'&P1='.$P1.'&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP='.$p_tp.'&SG='.'\',\'Telarecurso\',\'width=785,height=570,top=10,left=10,toolbar=no,scrollbars=yes,resizable=yes,status=no\'); return false;" title="Clique para exibir os dados desta unidade!">'.$p_nome.'</A>';
+    $l_string .= '<A class="hl" HREF="#" onClick="window.open(\''.$conRootSIW.'mod_pe/recurso.php?par=TELARECURSO&w_cliente='.$p_cliente.'&w_chave='.$p_chave.'&P1='.$P1.'&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP='.$p_tp.'&SG='.'\',\'Telarecurso\',\'width=785,height=570,top=10,left=10,toolbar=no,scrollbars=yes,resizable=yes,status=no\'); return false;" title="Clique para exibir os dados deste recurso!">'.$p_nome.'</A>';
+  }
+  return $l_string;
+}
+
+// =========================================================================
+// Montagem da URL com os dados de um recurso
+// -------------------------------------------------------------------------
+function ExibeIndicador($p_dir,$p_cliente,$p_nome,$p_dados,$p_tp) {
+  extract($GLOBALS,EXTR_PREFIX_SAME,'l_');
+  if (Nvl($p_dados,'')=='') {
+    $l_string='---';
+  } else {
+    $l_string .= '<A class="hl" HREF="#" onClick="window.open(\''.$conRootSIW.'mod_pe/indicador.php?par=FramesAfericao&R='.$w_pagina.$par.'&O=L'.$p_dados.'&P1='.$l_p1.'&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP='.$TP.'&SG='.$SG.'\',\'TelaIndicador\',\'width=785,height=570,top=10,left=10,toolbar=no,scrollbars=yes,resizable=yes,status=no\'); return false;" title="Clique para exibir os dados deste indicador!">'.$p_nome.'</A>';
   }
   return $l_string;
 }
@@ -654,24 +671,26 @@ function MontaURL($p_sigla) {
 // =========================================================================
 // Montagem de cabeçalho padrão de formulário
 // -------------------------------------------------------------------------
-function AbreForm($p_Name,$p_Action,$p_Method,$p_onSubmit,$p_Target,$p_P1,$p_P2,$p_P3,$p_P4,$p_TP,$p_SG,$p_R,$p_O) {
+function AbreForm($p_Name,$p_Action,$p_Method,$p_onSubmit,$p_Target,$p_P1,$p_P2,$p_P3,$p_P4,$p_TP,$p_SG,$p_R,$p_O, $p_retorno=null) {
+  $l_html = '';
   if (!isset($p_Target)) {
-     ShowHTML('<FORM action="'.$p_Action.'" method="'.$p_Method.'" name="'.$p_Name.'" onSubmit="'.$p_onSubmit.'">');
+     $l_html .= '<FORM action="'.$p_Action.'" method="'.$p_Method.'" NAME="'.$p_Name.'" onSubmit="'.$p_onSubmit.'">';
   } else {
-     ShowHTML('<FORM action="'.$p_Action.'" method="'.$p_Method.'" name="'.$p_Name.'" onSubmit="'.$p_onSubmit.'" target="'.$p_Target.'">');
+     $l_html .= '<FORM action="'.$p_Action.'" method="'.$p_Method.'" NAME="'.$p_Name.'" onSubmit="'.$p_onSubmit.'" target="'.$p_Target.'">';
   }
-
-  ShowHTML('<INPUT type="hidden" name="P1" value="'.$p_P1.'">');
-  ShowHTML('<INPUT type="hidden" name="P2" value="'.$p_P2.'">');
-  ShowHTML('<INPUT type="hidden" name="P3" value="'.$p_P3.'">');
+  $l_html .= chr(13).'<INPUT TYPE="hidden" NAME="P1" VALUE="'.$p_P1.'">';
+  $l_html .= chr(13).'<INPUT TYPE="hidden" NAME="P2" VALUE="'.$p_P2.'">';
+  $l_html .= chr(13).'<INPUT TYPE="hidden" NAME="P3" VALUE="'.$p_P3.'">';
   if (!!isset($p_P4)) {
-     ShowHTML('<INPUT type="hidden" name="P4" value="'.$p_P4.'">');
+     $l_html .= chr(13).'<INPUT TYPE="hidden" NAME="P4" VALUE="'.$p_P4.'">';
   }
 
-  ShowHTML('<INPUT type="hidden" name="TP" value="'.$p_TP.'">');
-  ShowHTML('<INPUT type="hidden" name="SG" value="'.$p_SG.'">');
-  ShowHTML('<INPUT type="hidden" name="R"  value="'.$p_R.'">');
-  ShowHTML('<INPUT type="hidden" name="O"  value="'.$p_O.'">');
+  $l_html .= chr(13).'<INPUT TYPE="hidden" NAME="TP" VALUE="'.$p_TP.'">';
+  $l_html .= chr(13).'<INPUT TYPE="hidden" NAME="SG" VALUE="'.$p_SG.'">';
+  $l_html .= chr(13).'<INPUT TYPE="hidden" NAME="R"  VALUE="'.$p_R.'">';
+  $l_html .= chr(13).'<INPUT TYPE="hidden" NAME="O"  VALUE="'.$p_O.'">';
+  
+  if (nvl($p_retorno,'')=='') ShowHtml($l_html); else return $l_html;
 }
 
 // =========================================================================
@@ -1497,9 +1516,9 @@ function FormataDataEdicao($w_dt_grade, $w_formato=1) {
   if (nvl($w_dt_grade,'')>'') {
     if (is_numeric($w_dt_grade)) {
       switch ($w_formato){
-        case 1: return date('d/m/y',$w_dt_grade);                         break;
+        case 1: return date('d/m/Y',$w_dt_grade);                         break;
         case 2: return date('H:i:s',$w_dt_grade);                         break;
-        case 3: return date('d/m/y, H:i:s',$w_dt_grade);                  break;
+        case 3: return date('d/m/Y, H:i:s',$w_dt_grade);                  break;
         case 4: return diaSemana(date('l, d/m/y, H:i:s',$w_dt_grade));    break;
       }
     } else {

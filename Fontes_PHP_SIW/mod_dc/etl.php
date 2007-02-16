@@ -238,7 +238,7 @@ function Inicial() {
     ScriptClose();
   } 
   ShowHTML('</HEAD>');
-  ShowHTML('<font size=0 color="'.$conBodyBgColor.'">.</font><BASE HREF="'.$conRootSIW.'">');
+  ShowHTML('<BASE HREF="'.$conRootSIW.'">');
   if ($w_troca>'') {
     BodyOpen('onLoad=\'document.Form.'.$w_troca.'.focus()\';');
   } elseif (!(strpos('IA',$O)===false)) {
@@ -567,7 +567,7 @@ function Tabela() {
     ScriptClose();
   } 
   ShowHTML('</HEAD>');
-  ShowHTML('<font size=0 color="'.$conBodyBgColor.'">.</font><BASE HREF="'.$conRootSIW.'">');
+  ShowHTML('<BASE HREF="'.$conRootSIW.'">');
   if ($w_troca>'') {
     BodyOpen('onLoad=\'document.Form.'.$w_troca.'.focus()\';');
   } elseif (!(strpos('P',$O)===false)) {
@@ -903,7 +903,7 @@ function Mapeamento() {
     ScriptClose();
   } 
   ShowHTML('</HEAD>');
-  ShowHTML('<font size=0 color="'.$conBodyBgColor.'">.</font><BASE HREF="'.$conRootSIW.'">');
+  ShowHTML('<BASE HREF="'.$conRootSIW.'">');
   if ($w_troca>'') {
     BodyOpen('onLoad=\'document.Form.'.$w_troca.'.focus()\';');
   } else {
@@ -1059,7 +1059,7 @@ function Importacao() {
     ScriptClose();
   }
   ShowHTML('</HEAD>');
-  ShowHTML('<font size=0 color="'.$conBodyBgColor.'">.</font><BASE HREF="'.$conRootSIW.'">');
+  ShowHTML('<BASE HREF="'.$conRootSIW.'">');
   if ($w_troca>'') {
     BodyOpen('onLoad=\'document.Form.'.$w_troca.'.focus()\';');
   } elseif (!(strpos('I',$O)===false)) {
@@ -1193,7 +1193,7 @@ function Registro() {
     ScriptClose();
   } 
   ShowHTML('</HEAD>');
-  ShowHTML('<font size=0 color="'.$conBodyBgColor.'">.</font><BASE HREF="'.$conRootSIW.'">');
+  ShowHTML('<BASE HREF="'.$conRootSIW.'">');
   if ($w_troca>'') {
     BodyOpen('onLoad=\'document.Form.'.$w_troca.'.focus()\';');
   } else {
@@ -1377,7 +1377,7 @@ function Script() {
     ScriptClose();
   } 
   ShowHTML('</HEAD>');
-  ShowHTML('<font size=0 color="'.$conBodyBgColor.'">.</font><BASE HREF="'.$conRootSIW.'">');
+  ShowHTML('<BASE HREF="'.$conRootSIW.'">');
   if ($w_troca>'') {
     BodyOpen('onLoad=\'document.Form.'.$w_troca.'.focus()\';');
   } elseif ($O=='I') {
@@ -1508,7 +1508,7 @@ function Help() {
     $l_gerundio   = 'exportando';
     $l_substantivo = 'exportação';
   }
-  ShowHTML('<font size=0 color="'.$conBodyBgColor.'">.</font><BASE HREF="'.$conRootSIW.'">');
+  ShowHTML('<BASE HREF="'.$conRootSIW.'">');
   BodyOpen(null);
   ShowHTML('<B><FONT COLOR="#000000">'.$w_TP.'</FONT></B>');
   ShowHTML('<HR>');
@@ -1588,7 +1588,7 @@ function Grava() {
   extract($GLOBALS);
   Cabecalho();
   ShowHTML('</HEAD>');
-  ShowHTML('<font size=0 color="'.$conBodyBgColor.'">.</font><BASE HREF="'.$conRootSIW.'">');  
+  ShowHTML('<BASE HREF="'.$conRootSIW.'">');  
   BodyOpenClean(null);
   switch ($SG) {
     case 'TIMPORT':
@@ -1760,7 +1760,7 @@ function Grava() {
        $w_nm_esquema = $_REQUEST['w_nm_esquema'];
 
        Cabecalho();
-       ShowHTML('<font size=0 color="'.$conBodyBgColor.'">.</font><BASE HREF="'.$conRootSIW.'">');
+       ShowHTML('<BASE HREF="'.$conRootSIW.'">');
        BodyOpenClean('onLoad=this.focus();');
        ShowHTML('<B><FONT COLOR="#000000">'.$w_TP.'</FONT></B>');
        ShowHTML('<HR>');
@@ -1997,7 +1997,7 @@ function Main() {
     case 'HELP':        Help();         break;    
     default:
       cabecalho();
-      ShowHTML('<font size=0 color="'.$conBodyBgColor.'">.</font><BASE HREF="'.$conRootSIW.'">');      
+      ShowHTML('<BASE HREF="'.$conRootSIW.'">');      
       BodyOpen('onLoad=this.focus();');
       Estrutura_Topo_Limpo();
       Estrutura_Menu();

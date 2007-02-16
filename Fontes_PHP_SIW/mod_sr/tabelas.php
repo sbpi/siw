@@ -142,7 +142,7 @@ function Abastecimento() {
     ScriptClose();
   } 
   ShowHTML('</HEAD>');
-  ShowHTML('<font size=0 color="'.$conBodyBgColor.'">.</font><BASE HREF="'.$conRootSIW.'">');
+  ShowHTML('<BASE HREF="'.$conRootSIW.'">');
   if ($w_troca>'') {
     BodyOpen('onLoad=document.Form.'.$w_troca.'.focus();');
   } elseif ($O=='I') {
@@ -217,7 +217,7 @@ function Abastecimento() {
     ShowHTML('    <table width="97%" border="0">');
     ShowHTML('         <tr><td colspan=2><table width="100%" border="0">');
     SelecaoVeiculo('<u>V</u>eículo:','V','Selecione o veículo',$w_cliente,$w_chave_aux,null,'w_chave_aux',null);
-    ShowHTML('      <td><b><u>D</u>ata:</b><br><input '.$w_Disabled.' accesskey="D" type="text" name="w_data" class="STI" SIZE="10" MAXLENGTH="10" VALUE="'.$w_data.'"onKeyDown="FormataData(this,event);" title="Data do abastecimento."></td>');
+    ShowHTML('      <td><b><u>D</u>ata:</b><br><input '.$w_Disabled.' accesskey="D" type="text" name="w_data" class="STI" SIZE="10" MAXLENGTH="10" VALUE="'.$w_data.'"onKeyDown="FormataData(this,event);" title="Data do abastecimento.">'.ExibeCalendario('Form','w_data').'</td>');
     ShowHTML('      <td><b><u>H</u>odômetro:</b><br><input '.$w_Disabled.' accesskey="H" type="text" name="w_hodometro" class="STI" SIZE="7" MAXLENGTH="7" VALUE="'.$w_hodometro.'"></td>');
     ShowHTML('      <tr><td ><b><u>L</u>itros:</b><br><input '.$w_Disabled.' accesskey="L" type="text" name="w_litros" class="STI" SIZE="18" MAXLENGTH="18" VALUE="'.number_format($w_litros,2,',','.').'"onKeyDown="FormataValor(this,18,2,event);" title="Informe a quantidade de litro do abastecimento do veículo."></td>');
     ShowHTML('      <td><b><u>V</u>alor:</b><br><input '.$w_Disabled.' accesskey="V" type="text" name="w_valor" class="STI" SIZE="18" MAXLENGTH="18" VALUE="'.number_format($w_valor,2,',','.').'"onKeyDown="FormataValor(this,18,2,event);" title="Informe o valor do abastecimento do veículo."></td>');
@@ -306,7 +306,7 @@ function Grupo() {
     ScriptClose();
   } 
   ShowHTML('</HEAD>');
-  ShowHTML('<font size=0 color="'.$conBodyBgColor.'">.</font><BASE HREF="'.$conRootSIW.'">');
+  ShowHTML('<BASE HREF="'.$conRootSIW.'">');
   if ($w_troca>'') {
     BodyOpen('onLoad=document.Form.'.$w_troca.'.focus();');
   } elseif ($O=='I' || $O=='A') {
@@ -465,7 +465,7 @@ function Opiniao() {
     ScriptClose();
   } 
   ShowHTML('</HEAD>');
-  ShowHTML('<font size=0 color="'.$conBodyBgColor.'">.</font><BASE HREF="'.$conRootSIW.'">');
+  ShowHTML('<BASE HREF="'.$conRootSIW.'">');
   if ($w_troca>'') {
     BodyOpen('onLoad=document.Form.'.$w_troca.'.focus();');
   } elseif ($O=='I' || $O=='A') {
@@ -625,7 +625,7 @@ function TipoVeiculo() {
     ScriptClose();
   } 
   ShowHTML('</HEAD>');
-  ShowHTML('<font size=0 color="'.$conBodyBgColor.'">.</font><BASE HREF="'.$conRootSIW.'">');
+  ShowHTML('<BASE HREF="'.$conRootSIW.'">');
   if ($w_troca>'') {
     BodyOpen('onLoad=document.Form.'.$w_troca.'.focus();');
   } elseif ($O=='I' || $O=='A') {
@@ -806,7 +806,7 @@ function Veiculo() {
     ScriptClose();
   } 
   ShowHTML('</HEAD>');
-  ShowHTML('<font size=0 color="'.$conBodyBgColor.'">.</font><BASE HREF="'.$conRootSIW.'">');
+  ShowHTML('<BASE HREF="'.$conRootSIW.'">');
   if ($w_troca>'') {
     BodyOpen('onLoad=document.Form.'.$w_troca.'.focus();');
   } elseif ($O=='I' || $O=='A') {
@@ -933,7 +933,7 @@ function Grava() {
   extract($GLOBALS);
   Cabecalho();
   ShowHTML('</HEAD>');
-  ShowHTML('<font size=0 color="'.$conBodyBgColor.'">.</font><BASE HREF="'.$conRootSIW.'">');  
+  ShowHTML('<BASE HREF="'.$conRootSIW.'">');  
   BodyOpen('onLoad=this.focus();');
   switch ($SG) {
     case 'SRABAST':
@@ -1124,7 +1124,7 @@ function Main() {
     case 'GRAVA':             Grava();            break;
     default:
     Cabecalho();
-    ShowHTML('<font size=0 color="'.$conBodyBgColor.'">.</font><BASE HREF="'.$conRootSIW.'">');
+    ShowHTML('<BASE HREF="'.$conRootSIW.'">');
     BodyOpen('onLoad=this.focus();');
     ShowHTML('<B><FONT COLOR="#000000">'.$w_TP.'</FONT></B>');
     ShowHTML('<HR>');

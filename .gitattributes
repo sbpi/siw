@@ -1015,6 +1015,8 @@ Fontes_PHP_SIW/classes/sp/dml_putPlano_Menu.php -text
 Fontes_PHP_SIW/classes/sp/dml_putProcedure[!!-~].php -text
 Fontes_PHP_SIW/classes/sp/dml_putProcedure.php -text
 Fontes_PHP_SIW/classes/sp/dml_putProgQualitativa_IS.php -text
+Fontes_PHP_SIW/classes/sp/dml_putProgramaConc.php -text
+Fontes_PHP_SIW/classes/sp/dml_putProgramaEnvio.php -text
 Fontes_PHP_SIW/classes/sp/dml_putProgramaGeral.php -text
 Fontes_PHP_SIW/classes/sp/dml_putProgramaQualit.php -text
 Fontes_PHP_SIW/classes/sp/dml_putProjetoAreas.php -text

@@ -10,9 +10,10 @@ include_once($w_dir_volta.'classes/db/DatabaseQueriesFactory.php');
 */
 
 class db_getTipoInteressado {
-   function getInstanceOf($dbms, $p_servico, $p_chave, $p_nome, $p_sigla, $p_ativo, $p_restricao) {
+   function getInstanceOf($dbms, $p_cliente, $p_servico, $p_chave, $p_nome, $p_sigla, $p_ativo, $p_restricao) {
      extract($GLOBALS,EXTR_PREFIX_SAME,'strchema'); $sql=$strschema_PE.'SP_GETTIPOINTERESSADO';
-     $params=array('p_servico'                   =>array(tvl($p_servico),                                  B_INTEGER,        32),
+     $params=array('p_cliente'                   =>array(tvl($p_cliente),                                  B_INTEGER,        32),
+                   'p_servico'                   =>array(tvl($p_servico),                                  B_INTEGER,        32),
                    'p_chave'                     =>array(tvl($p_chave),                                    B_INTEGER,        32),
                    'p_nome'                      =>array(tvl($p_nome),                                     B_VARCHAR,        60),
                    'p_sigla'                     =>array(tvl($p_sigla),                                    B_VARCHAR,        15),

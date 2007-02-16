@@ -155,7 +155,7 @@ function Rel_Limite() {
     HeaderWord(null);
     $w_pag   = 1;
     $w_linha = 8;
-    ShowHTML('<font size=0 color="'.$conBodyBgColor.'">.</font><BASE HREF="'.$conRootSIW.'">');
+    ShowHTML('<BASE HREF="'.$conRootSIW.'">');
     ShowHTML('<div align="center">');
     ShowHTML('<table width="95%" border="0" cellspacing="3">');
     ShowHTML('<tr><td colspan="2">');
@@ -177,10 +177,10 @@ function Rel_Limite() {
     } 
 
     ShowHTML('</HEAD>');
-    ShowHTML('<font size=0 color="'.$conBodyBgColor.'">.</font><BASE HREF="'.$conRootSIW.'">');
+    ShowHTML('<BASE HREF="'.$conRootSIW.'">');
     if ($O=='L') {
       BodyOpenClean('onLoad=\'this.focus()\';');
-      ShowHTML('<font size=0 color="'.$conBodyBgColor.'">.</font><BASE HREF="'.$conRootSIW.'">');
+      ShowHTML('<BASE HREF="'.$conRootSIW.'">');
       ShowHTML('<div align="center">');
       ShowHTML('<table width="95%" border="0" cellspacing="3">');
       ShowHTML('<tr><td colspan="2">');
@@ -538,7 +538,7 @@ function Main() {
   case 'REL_LIMITE':    Rel_Limite();   break;
   default:
     Cabecalho();
-    ShowHTML('<font size=0 color="'.$conBodyBgColor.'">.</font><BASE HREF="'.$conRootSIW.'">');
+    ShowHTML('<BASE HREF="'.$conRootSIW.'">');
     BodyOpen('onLoad=this.focus();');
     Estrutura_Topo_Limpo();
     Estrutura_Menu();

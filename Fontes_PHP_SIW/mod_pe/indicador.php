@@ -186,7 +186,7 @@ function Inicial() {
     ScriptClose();
   } 
   ShowHTML('</HEAD>');
-  ShowHTML('<font size=0 color="'.$conBodyBgColor.'">.</font><BASE HREF="'.$conRootSIW.'">');
+  ShowHTML('<BASE HREF="'.$conRootSIW.'">');
   if ($w_troca>'') {
     BodyOpen('onLoad=\'document.Form.'.$w_troca.'.focus()\';');
   } elseif ((strpos('IA',$O)!==false)) {
@@ -330,6 +330,40 @@ function VisualAfericao() {
   $p_uf             = $_REQUEST['p_uf'];
   $p_cidade         = $_REQUEST['p_cidade'];
 
+  if (nvl($p_tipo_indicador,'nulo')!=nulo) {
+    // Se há apenas um indicador com aferição, seleciona automaticamente.
+    $RS = db_getIndicador::getInstanceOf($dbms,$w_cliente,$usuario,null,null,null,null,$p_tipo_indicador,'S',null,null,null,null,null,null,null,null,null,'VS'.$p_volta);
+    if (count($RS)==1) { foreach($RS as $row) { $RS = $row; break; } $p_indicador = f($RS,'chave'); $w_troca = 'p_base'; }
+  }
+  if (nvl($p_indicador,'nulo')!='nulo') {
+    // Se há apenas uma base geográfica do indicador com aferição, seleciona automaticamente.
+    $RS = db_getIndicador::getInstanceOf($dbms,$w_cliente,$usuario,$p_indicador,null,null,null,null,'S',null,null,null,null,null,null,null,null,null,'VISUALBASE');
+    if (count($RS)==1) { foreach($RS as $row) { $RS = $row; break; } $p_base = f($RS,'chave'); $w_troca = ''; }
+  }
+  if (nvl($p_base,'nulo')!='nulo') {
+    // Se não for base organizacional.
+    if ($p_base!=5) {
+      // Se há apenas um país na base geográfica do indicador com aferição, seleciona automaticamente.
+      $RS = db_getCountryList::getInstanceOf($dbms, 'INDICADOR', $w_cliente, 'S', null);
+      if (count($RS)==1) { foreach($RS as $row) { $RS = $row; break; } $p_pais = f($RS,'sq_pais'); $w_troca = ''; }
+  
+      // Trata a recuperação automática de região, estado e cidade.
+      if ($p_base>1 && nvl($p_pais,'')!='') {
+        $RS = db_getRegionList::getInstanceOf($dbms, $p_pais, 'INDICADOR', $w_cliente);
+        if (count($RS)==1) { foreach($RS as $row) { $RS = $row; break; } $p_regiao = f($RS,'sq_regiao'); $w_troca = ''; }
+      }
+      if ($p_base>2 && (nvl($p_pais,'')!='' || nvl($p_regiao,'')!='')) {
+        $RS = db_getStateList::getInstanceOf($dbms, $p_pais, $p_regiao, 'S', $w_cliente);
+        if (count($RS)==1) { foreach($RS as $row) { $RS = $row; break; } $p_uf = f($RS,'co_uf'); $w_troca = ''; }
+        if ($p_base==4) {
+          $RS = db_getCityList::getInstanceOf($dbms, $p_pais, $p_uf, $w_cliente, 'INDICADOR');
+          if (count($RS)==1) { foreach($RS as $row) { $RS = $row; break; } $p_cidade = f($RS,'sq_cidade'); $w_troca = ''; }
+        }
+      }
+    }
+  }
+
+  // Recupera os nomes 
   if ($p_pesquisa!='LIVRE') {
     if (nvl($p_tipo_indicador,'nulo')!=nulo) {
       $RS = db_getTipoIndicador::getInstanceOf($dbms,$w_cliente,$p_tipo_indicador,null,null,'REGISTROS');
@@ -343,6 +377,7 @@ function VisualAfericao() {
     }
     $w_nm_base_geografica = retornaBaseGeografica($p_base);
   }
+
   Cabecalho();
   ShowHTML('<HEAD>');
   ShowHTML('<TITLE>'.$conSgSistema.' - Aferidores</TITLE>');
@@ -367,7 +402,7 @@ function VisualAfericao() {
   ValidateClose();
   ScriptClose();
   ShowHTML('</HEAD>');
-  ShowHTML('<font size=0 color="'.$conBodyBgColor.'">.</font><BASE HREF="'.$conRootSIW.'">');
+  ShowHTML('<BASE HREF="'.$conRootSIW.'">');
   if ($w_troca>'') {
     BodyOpen('onLoad=document.Form.'.$w_troca.'.focus();');
   } else {
@@ -435,6 +470,11 @@ function VisualAfericao() {
     }
   }
   ShowHTML('    </FORM>');
+  if (nvl($p_tipo_indicador,'nulo')!='nulo' && nvl($p_indicador,'nulo')!='nulo' && nvl($p_base,'nulo')!='nulo') {
+    ScriptOpen('JavaScript');
+    ShowHTML('  document.Form.submit();');
+    ScriptClose();
+  }
   ShowHTML('    </TABLE>');
   ShowHTML('</TABLE><BR>');
   ShowHTML('<table border="0" cellpadding="0" cellspacing="0" width="100%">');
@@ -464,7 +504,7 @@ function VisualDados() {
 
   Cabecalho();
   ShowHTML('<HEAD>');
-  ShowHTML('<font size=0 color="'.$conBodyBgColor.'">.</font><BASE HREF="'.$conRootSIW.'">');
+  ShowHTML('<BASE HREF="'.$conRootSIW.'">');
   ShowHTML('</HEAD>');
   BodyOpen(null);
   ShowHTML('<table border="0" cellpadding="0" cellspacing="0" width="100%">');
@@ -496,10 +536,10 @@ function VisualDados() {
     ShowHTML('          <td rowspan=2>'.linkOrdena('Valor aferido','valor').'</td>');
     ShowHTML('          <td width="1%" nowrap rowspan=2><b>U.M.</b></td>');
     ShowHTML('          <td rowspan=2><b>Fonte</b></td>');
-    ShowHTML('          <td colspan=2><b>Registro</td>');
+    ShowHTML('          <td colspan=2><b>Dados da aferição</td>');
     ShowHTML('        </tr>');
     ShowHTML('        <tr bgcolor="'.$conTrBgColor.'" align="center">');
-    ShowHTML('          <td>'.linkOrdena('Resposável','nm_cadastrador').'</td>');
+    ShowHTML('          <td>'.linkOrdena('Responsável','nm_cadastrador').'</td>');
     ShowHTML('          <td align="center">'.linkOrdena('Data','inclusao').'</td>');
     ShowHTML('        </tr>');
     if (count($RS)<=0) {
@@ -669,7 +709,7 @@ function Aferidor() {
     ScriptClose();
   } 
   ShowHTML('</HEAD>');
-  ShowHTML('<font size=0 color="'.$conBodyBgColor.'">.</font><BASE HREF="'.$conRootSIW.'">');
+  ShowHTML('<BASE HREF="'.$conRootSIW.'">');
   if ($w_troca>'') {
     BodyOpen('onLoad=document.Form.'.$w_troca.'.focus();');
   } elseif (!(strpos('CIA',$O)===false)) {
@@ -823,7 +863,7 @@ function AferidorPerm() {
   ShowHTML('<TITLE>'.$conSgSistema.' - Aferidores</TITLE>');
   Estrutura_CSS($w_cliente);
   ShowHTML('</HEAD>');
-  ShowHTML('<font size=0 color="'.$conBodyBgColor.'">.</font><BASE HREF="'.$conRootSIW.'">');
+  ShowHTML('<BASE HREF="'.$conRootSIW.'">');
   BodyOpen('onLoad="javascript:this.focus();"');
   Estrutura_Topo_Limpo();
   Estrutura_Menu();
@@ -961,7 +1001,7 @@ function Afericao() {
 
   Cabecalho();
   ShowHTML('<HEAD>');
-  ShowHTML('<font size=0 color="'.$conBodyBgColor.'">.</font><BASE HREF="'.$conRootSIW.'">');
+  ShowHTML('<BASE HREF="'.$conRootSIW.'">');
   if (!(strpos('IAEP',$O)===false)) {
     ScriptOpen('JavaScript');
     CheckBranco();
@@ -1216,7 +1256,7 @@ function Solic() {
   } 
   ScriptClose();
   ShowHTML('</HEAD>');
-  ShowHTML('<font size=0 color="'.$conBodyBgColor.'">.</font><BASE HREF="'.$conRootSIW.'">');
+  ShowHTML('<BASE HREF="'.$conRootSIW.'">');
   if ($w_troca>'') {
     BodyOpenClean('onLoad=\'document.Form.'.$w_troca.'.focus()\';');
   } elseif ($O=='I' && Nvl($p_nome,'')=='') {
@@ -1281,7 +1321,7 @@ function Solic() {
       AbreForm('Form1',$w_dir.$w_pagina.'GRAVA','POST','return(Validacao1(this));',null,$P1,$P2,$P3,$P4,$TP,$SG,$R,$O);
       ShowHTML('<INPUT type="hidden" name="w_troca" value="">');
       ShowHTML('<INPUT type="hidden" name="w_chave" value="'.$w_chave.'">');
-      ShowHTML('<INPUT type="hidden" name="w_indicador" value="'.$w_indicador.'">');
+      ShowHTML('<INPUT type="hidden" name="w_indicador[]" value="">');
       ShowHTML('<INPUT type="hidden" name="w_operacao" value="">');
       ShowHTML(MontaFiltro('POST'));
       // Recupera os registros
@@ -1406,7 +1446,7 @@ function Meta() {
 
   Cabecalho();
   ShowHTML('<HEAD>');
-  ShowHTML('<font size=0 color="'.$conBodyBgColor.'">.</font><BASE HREF="'.$conRootSIW.'">');
+  ShowHTML('<BASE HREF="'.$conRootSIW.'">');
   if (!(strpos('IAEP',$O)===false)) {
     ScriptOpen('JavaScript');
     CheckBranco();
@@ -1525,8 +1565,8 @@ function Meta() {
     ShowHTML('      <tr><td colspan="3"><b><u>D</u>escrição:</b><br><textarea '.$w_Disabled.' accesskey="D" name="w_descricao" class="STI" ROWS=5 cols=75 title="Descrição da meta.">'.$w_descricao.'</TEXTAREA></td>');
     ShowHTML('      <tr valign="top">');
     ShowHTML('              <td align="left"><b><u>O</u>rdem:<br><INPUT ACCESSKEY="O" TYPE="TEXT" CLASS="STI" NAME="w_ordem" SIZE=3 MAXLENGTH=3 VALUE="'.$w_ordem.'" '.$w_Disabled.' title="Confira abaixo os outros números de ordem desse nível."></td>');
-    ShowHTML('              <td><b>Previsão iní<u>c</u>io:</b><br><input '.$w_Disabled.' accesskey="C" type="text" name="w_inicio" class="STI" SIZE="10" MAXLENGTH="10" VALUE="'.FormataDataEdicao(Nvl($w_inicio,time())).'" onKeyDown="FormataData(this,event);" title="Data prevista para início da etapa."></td>');
-    ShowHTML('              <td><b>Previsão <u>t</u>érmino:</b><br><input '.$w_Disabled.' accesskey="T" type="text" name="w_fim" class="STI" SIZE="10" MAXLENGTH="10" VALUE="'.FormataDataEdicao($w_fim).'" onKeyDown="FormataData(this,event);" title="Data prevista para término da etapa."></td>');
+    ShowHTML('              <td><b>Previsão iní<u>c</u>io:</b><br><input '.$w_Disabled.' accesskey="C" type="text" name="w_inicio" class="STI" SIZE="10" MAXLENGTH="10" VALUE="'.FormataDataEdicao(Nvl($w_inicio,time())).'" onKeyDown="FormataData(this,event);" title="Data prevista para início da etapa.">'.ExibeCalendario('Form','w_inicio').'</td>');
+    ShowHTML('              <td><b>Previsão <u>t</u>érmino:</b><br><input '.$w_Disabled.' accesskey="T" type="text" name="w_fim" class="STI" SIZE="10" MAXLENGTH="10" VALUE="'.FormataDataEdicao($w_fim).'" onKeyDown="FormataData(this,event);" title="Data prevista para término da etapa.">'.ExibeCalendario('Form','w_fim').'</td>');
     ShowHTML('      <tr valign="top">');
     selecaoIndicador('<U>I</U>ndicador:','I','Selecione o indicador',$w_indicador,$w_usuario,null,'w_indicador',null,'onChange="document.Form.action=\''.$w_dir.$w_pagina.$par.'\'; document.Form.w_troca.value=\'w_base\'; document.Form.submit();"');
     selecaoBaseGeografica('<U>B</U>ase geográfica:','B','Selecione a base geográfica da aferiçao',$w_base,null,null,'w_base',null,'onChange="document.Form.action=\''.$w_dir.$w_pagina.$par.'\'; document.Form.w_troca.value=\'w_quantidade\'; document.Form.submit();"');
@@ -1587,7 +1627,7 @@ function Grava() {
   global $w_Disabled;
   Cabecalho();
   ShowHTML('</HEAD>');
-  ShowHTML('<font size=0 color="'.$conBodyBgColor.'">.</font><BASE HREF="'.$conRootSIW.'">');
+  ShowHTML('<BASE HREF="'.$conRootSIW.'">');
   BodyOpen('onLoad=this.focus();');
   switch ($SG) {
     case 'PEINDIC':

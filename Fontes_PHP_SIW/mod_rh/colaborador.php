@@ -187,7 +187,7 @@ function Inicial() {
   ValidateClose();
   ScriptClose();
   ShowHTML('</HEAD>');
-  ShowHTML('<font size=0 color="'.$conBodyBgColor.'">.</font><BASE HREF="'.$conRootSIW.'">');
+  ShowHTML('<BASE HREF="'.$conRootSIW.'">');
   if ($w_troca>'') {
     // Se for recarga da página
     BodyOpen('onLoad=\'document.Form.'.$w_troca.'.focus();\'');
@@ -300,7 +300,7 @@ function Inicial() {
       } 
     } 
     ShowHTML('       </table></td></tr>');
-    ShowHTML('      <tr><td><b><u>P</u>eríodo de busca:</b><br> De: <input accesskey="P" type="text" name="p_dt_ini" class="STI" SIZE="10" MAXLENGTH="10" VALUE="'.$p_dt_ini.'" onKeyDown="FormataData(this,event);"> a <input accesskey="P" type="text" name="p_dt_fim" class="STI" SIZE="10" MAXLENGTH="10" VALUE="'.$p_dt_fim.'" onKeyDown="FormataData(this,event);"></td>');
+    ShowHTML('      <tr><td><b><u>P</u>eríodo de busca:</b><br> De: <input accesskey="P" type="text" name="p_dt_ini" class="STI" SIZE="10" MAXLENGTH="10" VALUE="'.$p_dt_ini.'" onKeyDown="FormataData(this,event);">'.ExibeCalendario('Form','p_dt_ini').' a <input accesskey="P" type="text" name="p_dt_fim" class="STI" SIZE="10" MAXLENGTH="10" VALUE="'.$p_dt_fim.'" onKeyDown="FormataData(this,event);">'.ExibeCalendario('Form','p_dt_fim').'</td>');
     ShowHTML('      <tr><td align="center" colspan="3" height="1" bgcolor="#000000">');
     ShowHTML('      <tr><td align="center" colspan="3">');
     ShowHTML('            <input class="stb" type="submit" name="Botao" value="Aplicar filtro">');
@@ -556,7 +556,7 @@ function Documentacao() {
   ValidateClose();
   ScriptClose();
   ShowHTML('</HEAD>');
-  ShowHTML('<font size=0 color="'.$conBodyBgColor.'">.</font><BASE HREF="'.$conRootSIW.'">');
+  ShowHTML('<BASE HREF="'.$conRootSIW.'">');
   if ($w_troca>'') {
     BodyOpen('onLoad=\'document.Form.'.$w_troca.'.focus()\';');
   } else {
@@ -697,7 +697,7 @@ function Contrato() {
     ScriptClose();
   } 
   ShowHTML('</HEAD>');
-  ShowHTML('<font size=0 color="'.$conBodyBgColor.'">.</font><BASE HREF="'.$conRootSIW.'">');
+  ShowHTML('<BASE HREF="'.$conRootSIW.'">');
   if ($w_troca>'') {
     BodyOpen('onLoad=document.Form.'.$w_troca.'.focus();');
   } elseif ($O=='I' || $O=='A') {
@@ -894,7 +894,7 @@ function Grava() {
   extract($GLOBALS);
   Cabecalho();
   ShowHTML('</HEAD>');  
-  ShowHTML('<font size=0 color="'.$conBodyBgColor.'">.</font><BASE HREF="'.$conRootSIW.'">');
+  ShowHTML('<BASE HREF="'.$conRootSIW.'">');
   BodyOpen('onLoad=this.focus();');
   AbreSessao();
   switch ($SG) {
@@ -1010,7 +1010,7 @@ function Main() {
     case 'GRAVA':             Grava();            break;
   default:
     Cabecalho();
-    ShowHTML('<font size=0 color="'.$conBodyBgColor.'">.</font><BASE HREF="'.$conRootSIW.'">');
+    ShowHTML('<BASE HREF="'.$conRootSIW.'">');
     BodyOpen('onLoad=this.focus();');
     ShowHTML('<B><FONT COLOR="#000000">'.$w_TP.'</font></B>');
     ShowHTML('<HR>');

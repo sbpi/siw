@@ -231,7 +231,7 @@ function Afastamento() {
     ScriptClose();
   } 
   ShowHTML('</HEAD>');
-  ShowHTML('<font size=0 color="'.$conBodyBgColor.'">.</font><BASE HREF="'.$conRootSIW.'">');
+  ShowHTML('<BASE HREF="'.$conRootSIW.'">');
   if ($w_troca>'') {
     BodyOpen('onLoad=document.Form.'.$w_troca.'.focus();');
   } elseif (!(strpos('IA',$O)===false)) {
@@ -401,7 +401,7 @@ function Afastamento() {
     SelecaoTipoAfastamento('<u>T</u>ipo do afastamento:','T',null,$p_sq_tipo_afastamento,null,'p_sq_tipo_afastamento','AFASTAMENTO',null);
     ShowHTML('      <tr>');
     SelecaoColaborador('<u>C</u>olaborador:','C',null,$p_sq_contrato_colaborador,null,'p_sq_contrato_colaborador','AFASTAMENTO',null);
-    ShowHTML('      <tr><td><b><u>P</u>eríodo de busca:</b><br> De: <input accesskey="P" type="text" name="p_inicio_data" class="STI" SIZE="10" MAXLENGTH="10" VALUE="'.$p_inicio_data.'" onKeyDown="FormataData(this,event);"> a <input accesskey="P" type="text" name="p_fim_data" class="STI" SIZE="10" MAXLENGTH="10" VALUE="'.$p_fim_data.'" onKeyDown="FormataData(this,event);"></td>');
+    ShowHTML('      <tr><td><b><u>P</u>eríodo de busca:</b><br> De: <input accesskey="P" type="text" name="p_inicio_data" class="STI" SIZE="10" MAXLENGTH="10" VALUE="'.$p_inicio_data.'" onKeyDown="FormataData(this,event);">'.ExibeCalendario('Form','p_inicio_data').' a <input accesskey="P" type="text" name="p_fim_data" class="STI" SIZE="10" MAXLENGTH="10" VALUE="'.$p_fim_data.'" onKeyDown="FormataData(this,event);">'.ExibeCalendario('Form','p_fim_data').'</td>');
     ShowHTML('      <tr><td align="center" colspan=5><hr>');
     ShowHTML('            <input class="stb" type="submit" name="Botao" value="Aplicar filtro">');
     ShowHTML('            <input class="stb" type="button" onClick="location.href=\''.montaURL_JS($w_dir,$w_pagina.$par.'&P1='.$P1.'&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP='.$TP.'&O=I&SG='.$SG).'\';" name="Botao" value="Incluir">');
@@ -462,7 +462,7 @@ function BuscaColaborador() {
   ValidateClose();
   ScriptClose();
   ShowHTML('</HEAD>');
-  ShowHTML('<font size=0 color="'.$conBodyBgColor.'">.</font><BASE HREF="'.$conRootSIW.'">');
+  ShowHTML('<BASE HREF="'.$conRootSIW.'">');
   BodyOpen('onLoad=\'document.Form.w_nome.focus();\'');
   Estrutura_Texto_Abre();
   ShowHTML('<table border="0" cellpadding="0" cellspacing="0" width="100%">');
@@ -539,7 +539,7 @@ function TelaColaborador() {
   Estrutura_CSS($w_cliente);
   ShowHTML('<TITLE>Colaborador</TITLE>');
   ShowHTML('</HEAD>');
-  ShowHTML('<font size=0 color="'.$conBodyBgColor.'">.</font><BASE HREF="'.$conRootSIW.'">');
+  ShowHTML('<BASE HREF="'.$conRootSIW.'">');
   BodyOpen('onLoad=this.focus();');
   $TP = 'Dados coloborador';
   Estrutura_Texto_Abre();
@@ -595,7 +595,7 @@ function Grava() {
   extract($GLOBALS);
   Cabecalho();
   ShowHTML('</HEAD>');
-  ShowHTML('<font size=0 color="'.$conBodyBgColor.'">.</font><BASE HREF="'.$conRootSIW.'">');
+  ShowHTML('<BASE HREF="'.$conRootSIW.'">');
   BodyOpen('onLoad=this.focus();');
   AbreSessao();
   switch ($SG) {
@@ -649,7 +649,7 @@ function Main() {
     case 'GRAVA':              Grava();             break;
   default:
     Cabecalho();
-    ShowHTML('<font size=0 color="'.$conBodyBgColor.'">.</font><BASE HREF="'.$conRootSIW.'">');
+    ShowHTML('<BASE HREF="'.$conRootSIW.'">');
     BodyOpen('onLoad=this.focus();');
     ShowHTML('<B><FONT COLOR="#000000">'.$w_TP.'</FONT></B>');
     ShowHTML('<HR>');

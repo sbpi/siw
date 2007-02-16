@@ -6,7 +6,7 @@ include_once($w_dir_volta.'classes/sp/db_getTipoInteressado.php');
 function selecaoTipoInteressado($label,$accesskey,$hint,$chave,$chaveAux,$campo,$restricao) {
   extract($GLOBALS);
 
-  $RS = db_getTipoInteressado::getInstanceOf($dbms,$chaveAux,null,null,null,null, 'REGISTROS');
+  $RS = db_getTipoInteressado::getInstanceOf($dbms,$w_cliente,$chaveAux,null,null,null,null, 'REGISTROS');
   $RS = SortArray($RS,'nm_servico','asc','ordem','asc','nome','asc');
   if (!isset($hint)) {
     ShowHTML('          <td valign="top"><font size="1"><b>'.$label.'</b><br><SELECT ACCESSKEY="'.$accesskey.'" CLASS="sts" NAME="'.$campo.'" '.$w_Disabled.'>');

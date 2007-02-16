@@ -145,7 +145,7 @@ function Inicial() {
     ScriptClose();
   } 
   ShowHTML('</HEAD>');
-  ShowHTML('<font size=0 color="'.$conBodyBgColor.'">.</font><BASE HREF="'.$conRootSIW.'">');
+  ShowHTML('<BASE HREF="'.$conRootSIW.'">');
   if ($w_troca>'')                      BodyOpen('onLoad=\'document.Form.'.$w_troca.'.focus()\';');
   elseif (!(strpos('I',$O)===false))    BodyOpen('onLoad=\'document.Form.w_data_arquivo.focus()\';');
   else                                  BodyOpen('onLoad=\'this.focus()\';');
@@ -246,7 +246,7 @@ function Inicial() {
 function Help() {
   extract($GLOBALS);
   Cabecalho();
-  ShowHTML('<font size=0 color="'.$conBodyBgColor.'">.</font><BASE HREF="'.$conRootSIW.'">');
+  ShowHTML('<BASE HREF="'.$conRootSIW.'">');
   BodyOpen(null);
   ShowHTML('<B><FONT COLOR="#000000">'.$w_TP.'</FONT></B>');
   ShowHTML('<HR>');
@@ -321,7 +321,7 @@ function Grava() {
   extract($GLOBALS);
   Cabecalho();
   ShowHTML('</HEAD>');
-  ShowHTML('<font size=0 color="'.$conBodyBgColor.'">.</font><BASE HREF="'.$conRootSIW.'">');  
+  ShowHTML('<BASE HREF="'.$conRootSIW.'">');  
   BodyOpen(null);
   switch ($SG) {
     case 'ISIMPSIAFI':
@@ -468,7 +468,7 @@ function Main() {
   case 'GRAVA':   Grava();    break;
   default:
     Cabecalho();
-    ShowHTML('<font size=0 color="'.$conBodyBgColor.'">.</font><BASE HREF="'.$conRootSIW.'">');
+    ShowHTML('<BASE HREF="'.$conRootSIW.'">');
     BodyOpen('onLoad=this.focus();');
     Estrutura_Topo_Limpo();
     Estrutura_Menu();

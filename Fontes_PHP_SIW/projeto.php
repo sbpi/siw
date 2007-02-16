@@ -935,19 +935,17 @@ function Geral() {
     SelecaoEstado('E<u>s</u>tado:','S',null,$w_uf,$w_pais,null,'w_uf',null,'onChange="document.Form.action=\''.$w_pagina.$par.'\'; document.Form.w_troca.value=\'w_cidade\'; document.Form.submit();"');
     SelecaoCidade('<u>C</u>idade:','C',null,$w_cidade,$w_pais,$w_uf,'w_cidade',null,null);
     ShowHTML('          </table>');
-    if (f($RS_Menu,'descricao')=='S' || f($RS_Menu,'justificativa')=='S' || $w_acordo=='S' || $w_viagem=='S') {
+    if ($w_acordo=='S' || $w_viagem=='S') {
       ShowHTML('      <tr><td align="center" height="2" bgcolor="#000000"></td></tr>');
       ShowHTML('      <tr><td align="center" height="1" bgcolor="#000000"></td></tr>');
       ShowHTML('      <tr><td valign="top" align="center" bgcolor="#D0D0D0"><b>Informações adicionais</td></td></tr>');
       ShowHTML('      <tr><td align="center" height="1" bgcolor="#000000"></td></tr>');
       ShowHTML('      <tr><td>Os dados deste bloco visam orientar os executores do projeto.</td></tr>');
       ShowHTML('      <tr><td align="center" height="1" bgcolor="#000000"></td></tr>');
-      if ($w_acordo=='S' || $w_viagem=='S') {
-        ShowHTML('      <tr><td><table border=0 width="100%" cellspacing=0><tr valign="top">');
-        if ($w_acordo=='S') MontaRadioNS('<b>Permite a vinculação de contratos?</b>',Nvl($w_vincula_contrato,'N'),'w_vincula_contrato');
-        if ($w_viagem=='S') MontaRadioNS('<b>Permite a vinculação de viagens?</b>',Nvl($w_vincula_viagem,'N'),'w_vincula_viagem');
-        ShowHTML('          </table>');
-      } 
+      ShowHTML('      <tr><td><table border=0 width="100%" cellspacing=0><tr valign="top">');
+      if ($w_acordo=='S') MontaRadioNS('<b>Permite a vinculação de contratos?</b>',Nvl($w_vincula_contrato,'N'),'w_vincula_contrato');
+      if ($w_viagem=='S') MontaRadioNS('<b>Permite a vinculação de viagens?</b>',Nvl($w_vincula_viagem,'N'),'w_vincula_viagem');
+      ShowHTML('          </table>');
     } 
     ShowHTML('      <tr><td align="center" height="2" bgcolor="#000000"></td></tr>');
     ShowHTML('      <tr><td align="center" height="1" bgcolor="#000000"></td></tr>');
@@ -2503,13 +2501,12 @@ function Visual() {
   } 
   cabecalho();
   ShowHTML('<HEAD>');
-  ShowHTML('<TITLE>'.$conSgSistema.' - Visualização de projeto</TITLE>');
+  ShowHTML('<TITLE>'.$conSgSistema.' - Visualização de '.f($RS_Menu,'nome').'</TITLE>');
   ShowHTML('</HEAD>');
   BodyOpenClean(null);
-  ShowHTML('<TABLE WIDTH="100%" BORDER=0><TR><TD ROWSPAN=2><IMG ALIGN="LEFT" SRC="'.LinkArquivo(null,$w_cliente,$w_logo,null,null,null,'EMBED').'"><TD ALIGN="RIGHT"><B><FONT SIZE=4 COLOR="#000000">Visualização de Projeto</font>');
+  ShowHTML('<TABLE WIDTH="100%" BORDER=0><TR><TD ROWSPAN=2><IMG ALIGN="LEFT" SRC="'.LinkArquivo(null,$w_cliente,$w_logo,null,null,null,'EMBED').'"><TD ALIGN="RIGHT"><B><FONT SIZE=4 COLOR="#000000">Visualização de '.f($RS_Menu,'nome').'</font>');
   ShowHTML('<TR><TD ALIGN="RIGHT"><B><font COLOR="#000000">'.DataHora().'</B></TD></TR>');
   ShowHTML('</B></TD></TR></TABLE>');
-  //ShowHTML('<HR>');
   if ($w_tipo > '') ShowHTML('<center><font size="1"><B>Clique <a class="HL" href="javascript:history.back(1);">aqui</a> para voltar à tela anterior</b></center>');
   // Chama a rotina de visualização dos dados do projeto, na opção 'Listagem'
   ShowHTML(VisualProjeto($w_chave,$O,$w_usuario));

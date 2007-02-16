@@ -113,16 +113,16 @@ function VisualAcordo($l_chave,$l_O,$l_usuario,$l_P1,$l_P4) {
       }
       $w_html.=chr(13).'          <tr valign="top">';
       $w_html.=chr(13).'          <td><font size="1"><b>Assinatura:</b></td>';
-      $w_html.=chr(13).'          <td>'.FormataDataEdicao(f($RS,'assinatura')).'</td></tr>';
+      $w_html.=chr(13).'          <td>'.Nvl(FormataDataEdicao(f($RS,'assinatura')),'---').'</td></tr>';
       if (substr($w_sigla,0,3)!='GCB') { 
         $w_html.=chr(13).'          <td><font size="1"><b>Publicação D.O.:</b></td>';
-        $w_html.=chr(13).'          <td>'.FormataDataEdicao(f($RS,'publicacao')).'</td></tr>';
+        $w_html.=chr(13).'          <td>'.Nvl(FormataDataEdicao(f($RS,'publicacao')),'---').'</td></tr>';
       }
     }
     $w_html.=chr(13).'          <tr><td><font size="1"><b>Início vigência:</b></td>';
-    $w_html.=chr(13).'              <td>'.FormataDataEdicao(f($RS,'inicio')).'</td></tr>';
+    $w_html.=chr(13).'              <td>'.Nvl(FormataDataEdicao(f($RS,'inicio')),'---').'</td></tr>';
     $w_html.=chr(13).'          <tr><td><font size="1"><b>Término vigência:</b></td>';
-    $w_html.=chr(13).'              <td>'.FormataDataEdicao(f($RS,'fim')).'</td></tr>';
+    $w_html.=chr(13).'              <td>'.Nvl(FormataDataEdicao(f($RS,'fim')),'---').'</td></tr>';
     if ($w_tipo_visao==0 || $w_tipo_visao==1) {
       // Informações adicionais
       if (Nvl(f($RS,'descricao'),'')>'' || Nvl(f($RS,'justificativa'),'')>'') {

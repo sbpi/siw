@@ -187,7 +187,7 @@ function Plano() {
     ScriptClose();
   } 
   ShowHTML('</HEAD>');
-  ShowHTML('<font size=0 color="'.$conBodyBgColor.'">.</font><BASE HREF="'.$conRootSIW.'">');
+  ShowHTML('<BASE HREF="'.$conRootSIW.'">');
   if ($w_troca>'') {
     BodyOpen('onLoad=document.Form.'.$w_troca.'.focus();');
   } elseif ($O=='I' || $O=='A') {
@@ -402,8 +402,8 @@ function Plano() {
     ShowHTML('      <tr><td><b>Visão do <U>P</U>resente:<br><TEXTAREA ACCESSKEY="P" class="sti" name="w_visao_presente" rows=5 cols=80 title="Descreva a realidade atual, detalhando o que se deseja mudar." '.$w_Disabled.'>'.$w_visao_presente.'</textarea></td>');
     ShowHTML('      <tr><td><b>Visão do <U>F</U>uturo:<br><TEXTAREA ACCESSKEY="F" class="sti" name="w_visao_futuro" rows=5 cols=80 title="Descreva a realidade que se deseja atingir." '.$w_Disabled.'>'.$w_visao_futuro.'</textarea></td>');
     ShowHTML('      <tr><td><table width="100%" border=0><tr valign="top">');
-    ShowHTML('          <td><b>Iní<u>c</u>io:</b><br><input '.$w_Disabled.' accesskey="C" type="text" name="w_inicio" class="sti" SIZE="10" MAXLENGTH="10" VALUE="'.Nvl($w_inicio,FormataDataEdicao(time())).'" onKeyDown="FormataData(this,event);"></td>');
-    ShowHTML('          <td><b>F<u>i</u>m:</b><br><input '.$w_Disabled.' accesskey="I" type="text" name="w_fim" class="sti" SIZE="10" MAXLENGTH="10" VALUE="'.$w_fim.'" onKeyDown="FormataData(this,event);"></td>');
+    ShowHTML('          <td><b>Iní<u>c</u>io:</b><br><input '.$w_Disabled.' accesskey="C" type="text" name="w_inicio" class="sti" SIZE="10" MAXLENGTH="10" VALUE="'.Nvl($w_inicio,FormataDataEdicao(time())).'" onKeyDown="FormataData(this,event);">'.ExibeCalendario('Form','w_inicio').'</td>');
+    ShowHTML('          <td><b>F<u>i</u>m:</b><br><input '.$w_Disabled.' accesskey="I" type="text" name="w_fim" class="sti" SIZE="10" MAXLENGTH="10" VALUE="'.$w_fim.'" onKeyDown="FormataData(this,event);">'.ExibeCalendario('Form','w_fim').'</td>');
     ShowHTML('          </table>');
     if ($O=='I') {
       ShowHTML('      <tr align="left">');
@@ -559,7 +559,7 @@ function Natureza() {
     ScriptClose();
   } 
   ShowHTML('</HEAD>');
-  ShowHTML('<font size=0 color="'.$conBodyBgColor.'">.</font><BASE HREF="'.$conRootSIW.'">');
+  ShowHTML('<BASE HREF="'.$conRootSIW.'">');
   if ($w_troca>'') {
     BodyOpen('onLoad=\'document.Form.'.$w_troca.'.focus()\';');
   } elseif (!(strpos('IA',$O)===false)) {
@@ -689,7 +689,7 @@ function Horizonte() {
     ScriptClose();
   } 
   ShowHTML('</HEAD>');
-  ShowHTML('<font size=0 color="'.$conBodyBgColor.'">.</font><BASE HREF="'.$conRootSIW.'">');
+  ShowHTML('<BASE HREF="'.$conRootSIW.'">');
   if ($w_troca>'') {
     BodyOpen('onLoad=\'document.Form.'.$w_troca.'.focus()\';');
   } elseif (!(strpos('IA',$O)===false)) {
@@ -858,7 +858,7 @@ function Objetivo(){
     ScriptClose();
   } 
   ShowHTML('</HEAD>');
-  ShowHTML('<font size=0 color="'.$conBodyBgColor.'">.</font><BASE HREF="'.$conRootSIW.'">');
+  ShowHTML('<BASE HREF="'.$conRootSIW.'">');
   if ($w_troca>'')                BodyOpen('onLoad=\'document.Form.'.$w_troca.'.focus();\'');
   elseif ($O=='I' || $O=='A')     BodyOpen('onLoad=\'document.Form.w_nome.focus();\'');
   elseif ($O=='T')                BodyOpen('onLoad=\'document.Form.w_plano.focus();\'');
@@ -1041,7 +1041,7 @@ function Arquivo() {
     ScriptClose();
   } 
   ShowHTML('</HEAD>');
-  ShowHTML('<font size=0 color="'.$conBodyBgColor.'">.</font><BASE HREF="'.$conRootSIW.'">');
+  ShowHTML('<BASE HREF="'.$conRootSIW.'">');
   if ($w_troca>'') {
     BodyOpenClean('onLoad=\'document.Form.'.$w_troca.'.focus()\';');
   } elseif ($O=='I') {
@@ -1170,7 +1170,7 @@ function TipoInter() {
     $w_descricao       = $_REQUEST['w_descricao'];
     $w_ativo           = $_REQUEST['w_ativo']; 
   } elseif ($O=='L') {
-    $RS = db_getTipoInteressado::getInstanceOf($dbms,$w_servico,null,null,null,null, 'REGISTROS');
+    $RS = db_getTipoInteressado::getInstanceOf($dbms,$w_cliente,$w_servico,null,null,null,null, 'REGISTROS');
     if (Nvl($p_ordena,'') > '') {
       $lista = explode(',',str_replace(' ',',',$p_ordena));
       $RS = SortArray($RS,$lista[0],$lista[1]);
@@ -1178,7 +1178,7 @@ function TipoInter() {
       $RS = SortArray($RS,'nm_servico','asc','ordem','asc','nome','asc'); 
     }
   } elseif (!(strpos('AEV',$O)===false)) {
-    $RS = db_getTipoInteressado::getInstanceOf($dbms,$w_servico,$w_chave,null,null,null,'REGISTROS');
+    $RS = db_getTipoInteressado::getInstanceOf($dbms,$w_cliente,$w_servico,$w_chave,null,null,null,'REGISTROS');
     foreach ($RS as $row) {$RS = $row; break;}
     $w_servico          = f($RS,'sq_menu');
     $w_chave            = f($RS,'chave');
@@ -1217,7 +1217,7 @@ function TipoInter() {
     ScriptClose();
   } 
   ShowHTML('</HEAD>');
-  ShowHTML('<font size=0 color="'.$conBodyBgColor.'">.</font><BASE HREF="'.$conRootSIW.'">');
+  ShowHTML('<BASE HREF="'.$conRootSIW.'">');
   if ($w_troca>'') {
     BodyOpen('onLoad=document.Form.'.$w_troca.'.focus();');
   } elseif ($O=='I' || $O=='A') {
@@ -1387,7 +1387,7 @@ function TipoRecurso() {
     ScriptClose();
   } 
   ShowHTML('</HEAD>');
-  ShowHTML('<font size=0 color="'.$conBodyBgColor.'">.</font><BASE HREF="'.$conRootSIW.'">');
+  ShowHTML('<BASE HREF="'.$conRootSIW.'">');
   if ($w_troca>'') {
     BodyOpen('onLoad=document.Form.'.$w_troca.'.focus();');
   } elseif ($O=='C' || $O=='I' || $O=='A') {
@@ -1631,7 +1631,7 @@ function TipoIndicador() {
     ScriptClose();
   } 
   ShowHTML('</HEAD>');
-  ShowHTML('<font size=0 color="'.$conBodyBgColor.'">.</font><BASE HREF="'.$conRootSIW.'">');
+  ShowHTML('<BASE HREF="'.$conRootSIW.'">');
   if ($w_troca>'') {
     BodyOpen('onLoad=\'document.Form.'.$w_troca.'.focus()\';');
   } elseif (!(strpos('IA',$O)===false)) {
@@ -1772,7 +1772,7 @@ function UnidadeMedida() {
     ScriptClose();
   } 
   ShowHTML('</HEAD>');
-  ShowHTML('<font size=0 color="'.$conBodyBgColor.'">.</font><BASE HREF="'.$conRootSIW.'">');
+  ShowHTML('<BASE HREF="'.$conRootSIW.'">');
   if ($w_troca>'') {
     BodyOpen('onLoad=document.Form.'.$w_troca.'.focus();');
   } elseif ($O=='I' || $O=='A') {
@@ -1927,7 +1927,7 @@ function Unidade() {
     ScriptClose();
   } 
   ShowHTML('</HEAD>');
-  ShowHTML('<font size=0 color="'.$conBodyBgColor.'">.</font><BASE HREF="'.$conRootSIW.'">');
+  ShowHTML('<BASE HREF="'.$conRootSIW.'">');
   if ($w_troca>'') {
     BodyOpen('onLoad=\'document.Form.'.$w_troca.'.focus()\';');
   } elseif (!(strpos('A',$O)===false)) {
@@ -2048,7 +2048,7 @@ function Grava() {
   global $w_Disabled;
   Cabecalho();
   ShowHTML('</HEAD>');
-  ShowHTML('<font size=0 color="'.$conBodyBgColor.'">.</font><BASE HREF="'.$conRootSIW.'">');
+  ShowHTML('<BASE HREF="'.$conRootSIW.'">');
   BodyOpen('onLoad=this.focus();');
   switch ($SG) {
     case 'PEPLANO':
@@ -2242,7 +2242,7 @@ function Grava() {
       if (verificaAssinaturaEletronica($_SESSION['USERNAME'],strtoupper($_REQUEST['w_assinatura'])) || $w_assinatura=='') {
         if ($O=='I' || $O=='A') {
           // Testa a existência do nome
-          $RS = db_getTipoInteressado::getInstanceOf($dbms,Nvl($_REQUEST['w_servico'],''),Nvl($_REQUEST['w_chave'],''),Nvl($_REQUEST['w_nome'],''),null,null,'EXISTE');
+          $RS = db_getTipoInteressado::getInstanceOf($dbms,$w_cliente,Nvl($_REQUEST['w_servico'],''),Nvl($_REQUEST['w_chave'],''),Nvl($_REQUEST['w_nome'],''),null,null,'EXISTE');
           if (count($RS)>0) {
             ScriptOpen('JavaScript');
             ShowHTML('  alert(\'Já existe tipo de interessado com este nome!\');');
@@ -2252,7 +2252,7 @@ function Grava() {
           } 
 
           // Testa a existência do sigla
-          $RS = db_getTipoInteressado::getInstanceOf($dbms,Nvl($_REQUEST['w_servico'],''),Nvl($_REQUEST['w_chave'],''),null,Nvl($_REQUEST['w_sigla'],''),null,'EXISTE');
+          $RS = db_getTipoInteressado::getInstanceOf($dbms,$w_cliente,Nvl($_REQUEST['w_servico'],''),Nvl($_REQUEST['w_chave'],''),null,Nvl($_REQUEST['w_sigla'],''),null,'EXISTE');
           if (count($RS)>0) {
             ScriptOpen('JavaScript');
             ShowHTML('  alert(\'Já existe tipo de interessado com esta sigla!\');');
@@ -2261,7 +2261,7 @@ function Grava() {
             break;
           } 
         } elseif ($O=='E') {
-          $RS = db_getTipoInteressado::getInstanceOf($dbms,Nvl($_REQUEST['w_servico'],''),Nvl($_REQUEST['w_chave'],''),null,null,null,'VINCULADO');
+          $RS = db_getTipoInteressado::getInstanceOf($dbms,$w_cliente,Nvl($_REQUEST['w_servico'],''),Nvl($_REQUEST['w_chave'],''),null,null,null,'VINCULADO');
           if (count($RS)>0) {
             ScriptOpen('JavaScript');
             ShowHTML('  alert(\'Não é possível excluir este tipo. Ele está ligado a algum interessado de programa!\');');
@@ -2464,7 +2464,7 @@ function Main() {
     case 'GRAVA':              Grava();             break;
     default:
     Cabecalho();
-    ShowHTML('<font size=0 color="'.$conBodyBgColor.'">.</font><BASE HREF="'.$conRootSIW.'">');
+    ShowHTML('<BASE HREF="'.$conRootSIW.'">');
     BodyOpen('onLoad=this.focus();');
     ShowHTML('<B><FONT COLOR="#000000">'.$w_TP.'</FONT></B>');
     ShowHTML('<HR>');

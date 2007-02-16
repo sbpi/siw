@@ -195,7 +195,7 @@ function Inicial() {
         if ($w_tipo=='WORD') {
           $w_filtro = $w_filtro.'<tr valign="top"><td align="right">Projeto <td>[<b>'.f($RS,'titulo').'</b>]';
         } else {
-          $w_filtro = $w_filtro.'<tr valign="top"><td align="right">Projeto <td>[<b><A class="HL" HREF="projeto.php?par=Visual&O=L&w_chave='.$p_projeto.'&w_tipo=Volta&P1='.$P1.'&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP='.$TP.'&SG='.$SG.'" title="Exibe as informações do projeto.">'.f($RS,'titulo').'</a></b>]';
+          $w_filtro = $w_filtro.'<tr valign="top"><td align="right">Projeto <td>[<b><A class="HL" HREF="projeto.php?par=Visual&O=L&w_chave='.$p_projeto.'&w_menu='.f($RS,'sq_menu').'&w_tipo=Volta&P1='.f($RS,'p1').'&P2='.f($RS,'p2').'&P3='.$P3.'&P4='.$P4.'&TP='.$TP.'&SG='.f($RS,'sigla').'" title="Exibe as informações do projeto.">'.f($RS,'titulo').'</a></b>]';
         }
       } 
       if ($p_atividade>'') {
@@ -850,7 +850,7 @@ function Geral() {
     if (f($RS_Menu,'solicita_cc')=='S') {
       Validate('w_sqcc','Classificação','SELECT',1,1,18,'','0123456789');
     } 
-    Validate('w_solicitante','Solicitante','HIDDEN',1,1,18,'','0123456789');
+    Validate('w_solicitante','Responsável','HIDDEN',1,1,18,'','0123456789');
     Validate('w_sq_unidade_resp','Setor responsável','HIDDEN',1,1,18,'','0123456789');
     Validate('w_prioridade','Prioridade','SELECT',1,1,1,'','0123456789');
     switch (f($RS_Menu,'data_hora')) {
@@ -958,15 +958,15 @@ function Geral() {
     SelecaoPrioridade('<u>P</u>rioridade:','P','Informe a prioridade desta atividade.',$w_prioridade,null,'w_prioridade',null,null);
     ShowHTML('          <tr>');
     switch (f($RS_Menu,'data_hora')) {
-      case 1: ShowHTML('              <td valign="top"><b>Limi<u>t</u>e para conclusão:</b><br><input '.$w_Disabled.' accesskey="T" type="text" name="w_fim" class="STI" SIZE="10" MAXLENGTH="10" VALUE="'.$w_fim.'" onKeyDown="FormataData(this,event);" title="Data prevista para que a execução da atividade esteja concluída."></td>');           break;
-      case 2: ShowHTML('              <td valign="top"><b>Limi<u>t</u>e para conclusão:</b><br><input '.$w_Disabled.' accesskey="T" type="text" name="w_fim" class="STI" SIZE="17" MAXLENGTH="17" VALUE="'.$w_fim.'" onKeyDown="FormataDataHora(this,event);" title="Data/hora prevista para que a execução da atividade esteja concluída."></td>');  break;
+      case 1: ShowHTML('              <td valign="top"><b>Limi<u>t</u>e para conclusão:</b><br><input '.$w_Disabled.' accesskey="T" type="text" name="w_fim" class="STI" SIZE="10" MAXLENGTH="10" VALUE="'.$w_fim.'" onKeyDown="FormataData(this,event);" title="Data prevista para que a execução da atividade esteja concluída.">'.ExibeCalendario('Form','w_fim').'</td>');           break;
+      case 2: ShowHTML('              <td valign="top"><b>Limi<u>t</u>e para conclusão:</b><br><input '.$w_Disabled.' accesskey="T" type="text" name="w_fim" class="STI" SIZE="17" MAXLENGTH="17" VALUE="'.$w_fim.'" onKeyDown="FormataDataHora(this,event);" title="Data/hora prevista para que a execução da atividade esteja concluída.">'.ExibeCalendario('Form','w_fim').'</td>');  break;
       case 3: 
-        ShowHTML('              <td valign="top"><b>Iní<u>c</u>io previsto:</b><br><input '.$w_Disabled.' accesskey="C" type="text" name="w_inicio" class="STI" SIZE="10" MAXLENGTH="10" VALUE="'.Nvl($w_inicio,FormataDataEdicao(time())).'" onKeyDown="FormataData(this,event);" title="Início previsto da solicitação."></td>'); 
-        ShowHTML('              <td valign="top"><b><u>T</u>érmino previsto:</b><br><input '.$w_Disabled.' accesskey="T" type="text" name="w_fim" class="STI" SIZE="10" MAXLENGTH="10" VALUE="'.$w_fim.'" onKeyDown="FormataData(this,event);" title="Data prevista para que a execução da atividade esteja concluída."></td>');
+        ShowHTML('              <td valign="top"><b>Iní<u>c</u>io previsto:</b><br><input '.$w_Disabled.' accesskey="C" type="text" name="w_inicio" class="STI" SIZE="10" MAXLENGTH="10" VALUE="'.Nvl($w_inicio,FormataDataEdicao(time())).'" onKeyDown="FormataData(this,event);" title="Início previsto da solicitação.">'.ExibeCalendario('Form','w_inicio').'</td>'); 
+        ShowHTML('              <td valign="top"><b><u>T</u>érmino previsto:</b><br><input '.$w_Disabled.' accesskey="T" type="text" name="w_fim" class="STI" SIZE="10" MAXLENGTH="10" VALUE="'.$w_fim.'" onKeyDown="FormataData(this,event);" title="Data prevista para que a execução da atividade esteja concluída.">'.ExibeCalendario('Form','w_fim').'</td>');
         break;
       case 4:
-        ShowHTML('              <td valign="top"><b>Iní<u>c</u>io previsto:</b><br><input '.$w_Disabled.' accesskey="C" type="text" name="w_inicio" class="STI" SIZE="17" MAXLENGTH="17" VALUE="'.$w_inicio.'" onKeyDown="FormataDataHora(this,event);" title="Data/hora de início de execução da solicitação."></td>');
-        ShowHTML('              <td valign="top"><b>T</u>érmino previsto:</b><br><input '.$w_Disabled.' accesskey="T" type="text" name="w_fim" class="STI" SIZE="17" MAXLENGTH="17" VALUE="'.$w_fim.'" onKeyDown="FormataDataHora(this,event);" title="Data/hora prevista para que a execução da atividade esteja concluída."></td>');
+        ShowHTML('              <td valign="top"><b>Iní<u>c</u>io previsto:</b><br><input '.$w_Disabled.' accesskey="C" type="text" name="w_inicio" class="STI" SIZE="17" MAXLENGTH="17" VALUE="'.$w_inicio.'" onKeyDown="FormataDataHora(this,event);" title="Data/hora de início de execução da solicitação.">'.ExibeCalendario('Form','w_inicio').'</td>');
+        ShowHTML('              <td valign="top"><b>T</u>érmino previsto:</b><br><input '.$w_Disabled.' accesskey="T" type="text" name="w_fim" class="STI" SIZE="17" MAXLENGTH="17" VALUE="'.$w_fim.'" onKeyDown="FormataDataHora(this,event);" title="Data/hora prevista para que a execução da atividade esteja concluída.">'.ExibeCalendario('Form','w_fim').'</td>');
         break;
     } 
     ShowHTML('              <td valign="top"><b>O<u>r</u>çamento disponível:</b><br><input '.$w_Disabled.' accesskey="O" type="text" name="w_valor" class="STI" SIZE="18" MAXLENGTH="18" VALUE="'.$w_valor.'" onKeyDown="FormataValor(this,18,2,event);" title="Informe o orçamento disponível para execução da atividade, ou zero se não for o caso."></td>');
@@ -1470,11 +1470,11 @@ function Visual() {
   } 
   cabecalho();
   ShowHTML('<HEAD>');
-  ShowHTML('<TITLE>'.$conSgSistema.' - Visualização de atividade</TITLE>');
+  ShowHTML('<TITLE>'.$conSgSistema.' - Visualização de '.f($RS_Menu,'nome').'</TITLE>');
   ShowHTML('</HEAD>');
   BodyOpenClean('onLoad=\'this.focus()\'; ');
   ShowHTML('<TABLE WIDTH="100%" BORDER=0><TR><TD ROWSPAN=2><IMG ALIGN="LEFT" SRC="'.LinkArquivo(null,$w_cliente,$w_logo,null,null,null,'EMBED').'"><TD ALIGN="RIGHT"><B><FONT SIZE=4 COLOR="#000000">');
-  ShowHTML('Visualização de Atividade');
+  ShowHTML('Visualização de '.f($RS_Menu,'nome'));
   ShowHTML('<TR><TD ALIGN="RIGHT"><B><FONT SIZE=2 COLOR="#000000">'.DataHora().'</font></B></TD></TR>');
   ShowHTML('</B></TD></TR></TABLE>');
 //  ShowHTML('<HR>');

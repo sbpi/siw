@@ -106,7 +106,7 @@ function Inicial() {
     HeaderWord();
     $w_pag=1;
     $w_linha=5;
-    ShowHTML('<font size=0 color="'.$conBodyBgColor.'">.</font><BASE HREF="'.$conRootSIW.'">');
+    ShowHTML('<BASE HREF="'.$conRootSIW.'">');
     if (substr($SG,2,1)=='R') {
       CabecalhoWord($w_cliente,'Contas a receber',$w_pag);
     } elseif (substr($SG,2,1)=='D') {
@@ -140,7 +140,7 @@ function Inicial() {
       ScriptClose();
     } 
     ShowHTML('</HEAD>');
-    ShowHTML('<font size=0 color="'.$conBodyBgColor.'">.</font><BASE HREF="'.$conRootSIW.'">');
+    ShowHTML('<BASE HREF="'.$conRootSIW.'">');
     if ($O=='L') {
       BodyOpenClean('onLoad=\'this.focus()\';');
       ShowHTML('<TABLE WIDTH="100%" BORDER=0><TR><TD ROWSPAN=2><IMG ALIGN="LEFT" src="'.LinkArquivo(null,$w_cliente,$w_logo,null,null,null,'EMBED').'"><TD ALIGN="RIGHT"><B><FONT SIZE=4 COLOR="#000000">');
@@ -414,7 +414,7 @@ function Main() {
     case 'INICIAL': Inicial();  break;
     default:
       cabecalho();
-      ShowHTML('<font size=0 color="'.$conBodyBgColor.'">.</font><BASE HREF="'.$conRootSIW.'">');      
+      ShowHTML('<BASE HREF="'.$conRootSIW.'">');      
       BodyOpen('onLoad=this.focus();');
       Estrutura_Topo_Limpo();
       Estrutura_Menu();
