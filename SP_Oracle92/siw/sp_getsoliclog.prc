@@ -14,7 +14,7 @@ begin
             inner join siw_modulo c on (b.sq_modulo = c.sq_modulo)
     where a.sq_siw_solicitacao = p_chave;
       
-   If w_modulo = 'DM' or w_opcao = 'ORPCAD' or w_opcao = 'ISTCAD' Then -- Se for o módulo de demandas
+   If w_modulo = 'DM' or w_opcao = 'GDPCAD' or w_opcao = 'ORPCAD' or w_opcao = 'ISTCAD' Then -- Se for o módulo de demandas
       If p_restricao = 'LISTA' Then
          -- Recupera os encaminhamentos de uma demanda
          open p_result for 

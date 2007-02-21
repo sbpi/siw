@@ -10,7 +10,7 @@ begin
    If p_restricao is null Then
       -- Recupera as espécies do documento
       open p_result for 
-         select a.sq_especie_documento chave, a.cliente, a.nome, a.sigla, a.ativo,
+         select a.sq_especie_documento as chave, a.cliente, a.nome, a.sigla, a.ativo,
                 case a.ativo when 'S' then 'Sim' else 'Não' end as nm_ativo
            from pa_especie_documento a
           where ((p_chave   is null) or (p_chave   is not null and a.sq_especie_documento = p_chave))
@@ -21,7 +21,7 @@ begin
    ElsIf p_restricao = 'EXISTE' Then
       -- Verifica se há outro registro com a mesma descrição ou sigla
       open p_result for 
-         select a.sq_especie_documento chave, a.cliente, a.nome, a.sigla, a.ativo,
+         select a.sq_especie_documento as chave, a.cliente, a.nome, a.sigla, a.ativo,
                 case a.ativo when 'S' then 'Sim' else 'Não' end as nm_ativo
            from pa_especie_documento a
           where a.sq_especie_documento <> coalesce(p_chave,0)
@@ -32,7 +32,7 @@ begin
    Elsif p_restricao = 'VINCULACAO' Then
       -- Verifica se o registro já esta vinculado
       open p_result for 
-         select count(*) existe
+         select count(a.sq_especie_documento) as existe
            from pa_especie_documento    a
                 inner join pa_documento b on (a.sq_especie_documento = b.sq_especie_documento)
           where a.sq_especie_documento = p_chave;
