@@ -34,6 +34,7 @@ create or replace procedure sp_putDocumentoGeral
    w_log_esp number(18);
    w_ativ    number(18);
    i         number(10) := 0;
+   w_cidade  number(18) := p_cidade;
 
    type tb_recurso_pai is table of number(10) index by binary_integer;
    w_recurso_pai tb_recurso_pai;
@@ -46,6 +47,14 @@ create or replace procedure sp_putDocumentoGeral
    cursor c_arquivos is
       select sq_siw_arquivo from siw_solic_arquivo where sq_siw_solicitacao = p_chave;
 begin
+   -- Se for origem intena recupera a unidade da cidade
+   If p_interno = 'S' and (p_operacao = 'I' or p_operacao = 'A') Then 
+      select sq_cidade into w_cidade
+        from eo_unidade                    a 
+             inner join co_pessoa_endereco b on (a.sq_pessoa_endereco = b.sq_pessoa_endereco)
+       where a.sq_unidade = p_unidade;
+   End If;
+       
    If p_operacao = 'I' Then -- Inclusão
       -- Recupera o código do cliente
       select sq_pessoa into w_cliente from siw_menu where sq_menu = p_menu;
@@ -63,7 +72,7 @@ begin
          w_Chave,            p_menu,           a.sq_siw_tramite,    p_solicitante,
          p_cadastrador,      p_descricao,      p_inicio,            p_fim,
          sysdate,            sysdate,          1,                   p_unidade,
-         p_solic_pai,        p_cidade
+         p_solic_pai,        w_cidade
          from siw_tramite a
         where a.sq_menu = p_menu
           and a.sigla   = 'CI'
@@ -116,7 +125,7 @@ begin
           fim              = p_fim,
           sq_unidade       = p_unidade,
           ultima_alteracao = sysdate,
-          sq_cidade_origem = p_cidade
+          sq_cidade_origem = w_cidade
       where sq_siw_solicitacao = p_chave;
       
       -- Atualiza a tabela de documentos
