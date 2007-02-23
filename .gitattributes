@@ -3057,6 +3057,7 @@ SP_Oracle92/siw/sp_getAssunto_PA.prc -text
 SP_Oracle92/siw/sp_getConvOutraParte.prc -text
 SP_Oracle92/siw/sp_getConvOutroRep.prc -text
 SP_Oracle92/siw/sp_getConvPreposto.prc -text
+SP_Oracle92/siw/sp_getDocumentoAssunto.prc -text
 SP_Oracle92/siw/sp_getDocumentoInter.prc -text
 SP_Oracle92/siw/sp_getGrupoVeiculo.prc -text
 SP_Oracle92/siw/sp_getIndicador.prc -text
@@ -3767,7 +3768,6 @@ SP_Oracle92/siw_is/sq_isprojeto.seq -text
 SP_Oracle92/siw_is/sq_meta.seq -text
 SP_Oracle92/siw_is/sq_natureza.seq -text
 SP_Oracle92/siw_is/sq_restricao.seq -text
-SP_Oracle92/sp_getDocumentoAssunto.prc -text
 SP_Oracle92/sys/SP_PUTDICIONARIO.prc -text
 SP_PostgreSQL_8-0/siw/Acesso.sql -text
 SP_PostgreSQL_8-0/siw/Marcado.sql -text
