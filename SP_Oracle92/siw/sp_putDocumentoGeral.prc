@@ -98,7 +98,7 @@ begin
       (select 
           sq_siw_solic_log.nextval,  w_chave,            p_cadastrador,
           a.sq_siw_tramite,          sysdate,            'N',
-          'Cadastramento inicial'
+          a.nome
          from siw_tramite a
         where a.sq_menu = p_menu
           and a.sigla   = 'CI'
