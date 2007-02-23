@@ -40,7 +40,7 @@ begin
       else
           Result := D1||D2;
       end if;
-  else  -- Trata CNPJ
+  elsif length(checkSTR) <= 12 then -- Trata CNPJ
       for i in 1..12 loop
           if i < 5 
              then soma := soma + (substr(checkStr,i,1)*(6-i));
@@ -67,8 +67,26 @@ begin
       else
           Result := D1||D2;
       end if;  
+  else -- Trata número de processo
+      for i in 1..15 loop soma := soma + (substr(checkStr,i,1)*(17-i)); end loop;
+      D1 := 11-Mod(Soma,11);
+      if D1 > 9 then D1 := D1 - 10; end if;
+      soma := 0;
+      if p_tipo is not null then checkStr := substr(checkStr,1,16)||D1; end if;
+      for i in 1..16  loop
+          soma := soma + (substr(checkStr,i,1)*(18-i));
+      end loop;
+      D2 := 11-Mod(Soma,11);
+      if D2 > 9 then D2 := D2 - 10; end if;
+      if p_tipo is null then
+          if D1||D2 = substr(checkStr,16,2)
+             then Result := 'OK';
+             else Result := 'ER';
+          end if;
+      else
+          Result := D1||D2;
+      end if;
   end if;
   return(Result);
 end ValidaCNPJCPF;
 /
-
