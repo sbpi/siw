@@ -37,6 +37,7 @@ begin
             and (p_final_guarda     is null or (p_final_guarda     is not null and a.fase_final_guarda = p_final_guarda))
             and (p_destinacao_final is null or (p_destinacao_final is not null and a.destinacao_final = p_destinacao_final))
             and (p_ativo            is null or (p_ativo            is not null and a.ativo = p_ativo))
+            and (p_codigo           is null or (p_codigo           is not null and a.codigo like '%'||p_codigo||'%'))
             and (p_restricao        is null or (p_restricao        <> 'SUBGRUPO' or (p_restricao = 'SUBGRUPO' and a.tipo <> '4 - Subgrupo')));
    Elsif upper(p_restricao) = 'FOLHA' Then
      -- Recupera apenas os registros sem filhos
@@ -55,7 +56,8 @@ begin
             and (p_final_guarda     is null or (p_final_guarda     is not null and a.fase_final_guarda = p_final_guarda))
             and (p_destinacao_final is null or (p_destinacao_final is not null and a.destinacao_final = p_destinacao_final))
             and (p_ativo            is null or (p_ativo            is not null and a.ativo = p_ativo))
-            and (p_descricao        is null or (p_descricao is not null and acentos(a.descricao) like '%'||acentos(p_descricao)||'%'))
+            and (p_codigo           is null or (p_codigo           is not null and a.codigo like '%'||p_codigo||'%'))
+            and (p_descricao        is null or (p_descricao        is not null and acentos(a.descricao) like '%'||acentos(p_descricao)||'%'))
          connect by prior a.sq_assunto_pai = a.sq_assunto
          order by 5;
    Elsif p_restricao = 'EXISTE' Then

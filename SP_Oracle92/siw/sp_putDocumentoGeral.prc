@@ -35,6 +35,7 @@ create or replace procedure sp_putDocumentoGeral
    w_ativ    number(18);
    i         number(10) := 0;
    w_cidade  number(18) := p_cidade;
+   w_cont    number(18);
 
    type tb_recurso_pai is table of number(10) index by binary_integer;
    w_recurso_pai tb_recurso_pai;
@@ -144,8 +145,24 @@ begin
           unidade_autuacao      = p_unid_autua
        where sq_siw_solicitacao = p_chave;
 
-      -- Atualiza o assunto principal do documento
-      update pa_documento_assunto set sq_assunto = p_assunto where sq_siw_solicitacao = p_chave and principal = 'S';
+      -- Verifica se houve alteração do assunto principal
+      select count(a.sq_assunto) into w_cont from pa_documento_assunto a where sq_siw_solicitacao = p_chave and principal = 'S' and sq_assunto = p_assunto;
+      
+      -- Se houve, ajusta os registros
+      if w_cont = 0 then
+         -- Apaga o registro existente
+         delete pa_documento_assunto a where sq_siw_solicitacao = p_chave and principal = 'S';
+         
+         -- Verifica se o novo assunto já está vinculado ao documento
+         select count(a.sq_assunto) into w_cont from pa_documento_assunto a where sq_siw_solicitacao = p_chave and principal = 'N' and sq_assunto = p_assunto;
+
+         -- Se estiver, coloca o assunto como principal, senão, insere registro com o novo assunto principal
+         if w_cont > 0 then
+            update pa_documento_assunto set principal = 'S' where sq_siw_solicitacao = p_chave and sq_assunto = p_assunto;
+         else 
+            insert into pa_documento_assunto (sq_siw_solicitacao, sq_assunto, principal) values (p_chave, p_assunto, 'S');
+         end if;
+      end if;
 
    Elsif p_operacao = 'E' Then -- Exclusão
       -- Verifica a quantidade de logs da solicitação
