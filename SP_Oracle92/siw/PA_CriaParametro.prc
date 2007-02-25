@@ -6,9 +6,13 @@ create or replace procedure PA_CriaParametro
    w_sequencial number(18) := 0;
    w_reg        pa_parametro%rowtype;
    w_unid       pa_unidade%rowtype;
+   w_unid_pai   number(18);
 begin
-  -- Recupera os dados da unidade informada
-  select * into w_unid from pa_unidade where sq_unidade = p_unidade;
+  -- Recupera os dados da unidade pai
+  select coalesce(sq_unidade_pai,sq_unidade) into w_unid_pai from pa_unidade where sq_unidade = p_unidade;
+
+  -- Recupera os dados da unidade numeradora
+  select * into w_unid from pa_unidade where sq_unidade = w_unid_pai;
 
   -- Recupera os parâmetros do cliente informado
   select * into w_reg from pa_parametro where cliente = w_unid.cliente;
@@ -26,7 +30,7 @@ begin
   Update pa_parametro Set ano_corrente = w_ano Where cliente = w_unid.cliente;
 
   -- Atualiza a tabela de unidades
-  Update pa_unidade Set numero_documento = w_sequencial Where sq_unidade = p_unidade;
+  Update pa_unidade Set numero_documento = w_sequencial Where sq_unidade = w_unid_pai;
 
   --  Retorna o sequencial a ser usado no lançamento
   p_numero_doc := w_unid.prefixo||'.'||substr(1000000+w_sequencial,2,6)||'/'||w_ano;

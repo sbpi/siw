@@ -745,15 +745,12 @@ begin
                 case b5.padrao when 'S' then b4.nome||'-'||b4.co_uf else b4.nome||' ('||b5.nome||')' end as nm_cidade,
                 d.numero_original,    d.numero_documento,            d.ano,
                 d.prefixo,            d.digito,                      d.interno,
-                d.prefixo||'.'||substr(1000000+d.numero_documento,2,6)||'/'||d.ano||'-'||d.digito as protocolo,
+                d.prefixo||'.'||substr(1000000+d.numero_documento,2,6)||'/'||d.ano||'-'||substr(100+d.digito,2,2) as protocolo,
                 d.sq_especie_documento, d.sq_natureza_documento,     d.unidade_autuacao,
                 d.data_autuacao,      d.pessoa_origem,               d.processo,
                 d.circular,           d.copias,                      d.volumes,
                 d.data_recebimento,
-                case when d.pessoa_origem is null
-                     then b3.nome
-                     else d2.nome_resumido
-                end as nm_origem,
+                case when d.pessoa_origem is null then b3.nome else d2.nome end as nm_origem,
                 d1.nome nm_natureza,  d1.sigla sg_natureza,          d1.descricao ds_natureza,
                 d2.sq_pessoa as pessoa_origem,                       d2.nome_resumido as nm_pessoa_origem,
                 d2.nome as nm_pessoa,
@@ -767,6 +764,9 @@ begin
                 case d8.sigla when 'ANOS' then d5.fase_intermed_anos||' '||d8.descricao when 'NAPL' then '---' else d8.descricao end as guarda_intermed,
                 case d9.sigla when 'ANOS' then d5.fase_final_anos   ||' '||d9.descricao when 'NAPL' then '---' else d9.descricao end as guarda_final,
                 da.descricao as destinacao_final,
+                db.codigo as cd_assunto_pai, db.descricao as ds_assunto_pai,
+                dc.codigo as cd_assunto_avo, dc.descricao as ds_assunto_avo,
+                dd.codigo as cd_assunto_bis, dd.descricao as ds_assunto_bis,
                 b.fim-k.dias_aviso aviso,
                 e.sq_unidade sq_unidade_resp,
                 e.sq_tipo_unidade,    e.nome nm_unidade_resp,        e.informal informal_resp,
@@ -804,6 +804,9 @@ begin
                             inner    join pa_tipo_guarda        d8 on (d5.fase_intermed_guarda    = d8.sq_tipo_guarda)
                             inner    join pa_tipo_guarda        d9 on (d5.fase_final_guarda       = d9.sq_tipo_guarda)
                             inner    join pa_tipo_guarda        da on (d5.destinacao_final        = da.sq_tipo_guarda)
+                            left     join pa_assunto            db on (d5.sq_assunto_pai          = db.sq_assunto)
+                              left   join pa_assunto            dc on (db.sq_assunto_pai          = dc.sq_assunto)
+                                left join pa_assunto            dd on (dc.sq_assunto_pai          = dd.sq_assunto)
                         inner        join pa_especie_documento  d7 on (d.sq_especie_documento     = d7.sq_especie_documento)
                         inner        join eo_unidade            e  on (d.unidade_autuacao         = e.sq_unidade)
                           left       join eo_unidade_resp       e1 on (e.sq_unidade               = e1.sq_unidade and

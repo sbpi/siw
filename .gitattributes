@@ -3298,6 +3298,7 @@ SP_Oracle92/siw/sp_putIndicador_Afericao.prc -text
 SP_Oracle92/siw/sp_putIndicador_Aferidor.prc -text
 SP_Oracle92/siw/sp_putIndicador_Meta.prc -text
 SP_Oracle92/siw/sp_putPDUnidLimite.prc -text
+SP_Oracle92/siw/sp_putPessoa.prc -text
 SP_Oracle92/siw/sp_putPlanoEstrategico.prc -text
 SP_Oracle92/siw/sp_putPlano_Menu.prc -text
 SP_Oracle92/siw/sp_putProgramaConc.prc -text

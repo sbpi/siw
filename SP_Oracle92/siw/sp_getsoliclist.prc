@@ -1086,11 +1086,8 @@ begin
                 d.interno,            d.data_autuacao,               d.pessoa_origem,
                 d.processo,           d.circular,                    d.copias,
                 d.volumes,
-                d.prefixo||'.'||substr(1000000+d.numero_documento,2,6)||'/'||d.ano||'-'||d.digito as protocolo,
-                case when d.pessoa_origem is null
-                     then b3.nome
-                     else d2.nome_resumido
-                end as nm_origem,
+                d.prefixo||'.'||substr(1000000+d.numero_documento,2,6)||'/'||d.ano||'-'||substr(100+d.digito,2,2) as protocolo,
+                case when d.pessoa_origem is null then b3.nome else d2.nome end as nm_origem,
                 d1.nome nm_natureza,  d1.sigla sg_natureza,          d1.descricao ds_natureza,
                 d1.ativo st_natureza,
                 d2.sq_pessoa as pessoa_origem,                       d2.nome_resumido as nm_pessoa_origem,

@@ -22,16 +22,27 @@ begin
                 b.descricao ds_corrente_guarda, b.sigla sg_corrente_guarda,
                 c.descricao ds_intermed_guarda, c.sigla sg_intermed_guarda,
                 d.descricao ds_final_guarda, d.sigla sg_final_guarda,
-                e.descricao ds_destinacao_final, e.sigla sg_destinacao_final
-           from pa_assunto                a
-                inner join pa_tipo_guarda b on (a.fase_corrente_guarda = b.sq_tipo_guarda)
-                inner join pa_tipo_guarda c on (a.fase_intermed_guarda = c.sq_tipo_guarda)
-                inner join pa_tipo_guarda d on (a.fase_final_guarda    = d.sq_tipo_guarda)
-                inner join pa_tipo_guarda e on (a.destinacao_final     = e.sq_tipo_guarda)
+                e.descricao ds_destinacao_final, e.sigla sg_destinacao_final,
+                f.codigo as cd_assunto_pai, f.descricao as ds_assunto_pai,
+                g.codigo as cd_assunto_avo, g.descricao as ds_assunto_avo,
+                h.codigo as cd_assunto_bis, h.descricao as ds_assunto_bis
+           from pa_assunto                    a
+                inner     join pa_tipo_guarda b on (a.fase_corrente_guarda = b.sq_tipo_guarda)
+                inner     join pa_tipo_guarda c on (a.fase_intermed_guarda = c.sq_tipo_guarda)
+                inner     join pa_tipo_guarda d on (a.fase_final_guarda    = d.sq_tipo_guarda)
+                inner     join pa_tipo_guarda e on (a.destinacao_final     = e.sq_tipo_guarda)
+                left      join pa_assunto     f on (a.sq_assunto_pai       = f.sq_assunto)
+                  left    join pa_assunto     g on (f.sq_assunto_pai       = g.sq_assunto)
+                    left  join pa_assunto     h on (g.sq_assunto_pai       = h.sq_assunto)
           where a.cliente           = p_cliente
             and (p_chave            is null or (p_chave            is not null and a.sq_assunto     = p_chave))
             and (p_chave_pai        is null or (p_chave_pai        is not null and a.sq_assunto_pai = p_chave_pai))
-            and (p_descricao        is null or (p_descricao        is not null and a.descricao like '%'||p_descricao||'%'))
+            and (p_descricao        is null or (p_descricao        is not null and (acentos(a.descricao)    like '%'||acentos(p_descricao)||'%' or
+                                                                                    acentos(a.detalhamento) like '%'||acentos(p_descricao)||'%' or
+                                                                                    acentos(a.observacao)   like '%'||acentos(p_descricao)||'%'
+                                                                                   )
+                                               )
+                )
             and (p_corrente_guarda  is null or (p_corrente_guarda  is not null and a.fase_corrente_guarda = p_corrente_guarda))
             and (p_intermed_guarda  is null or (p_intermed_guarda  is not null and a.fase_intermed_guarda = p_intermed_guarda))
             and (p_final_guarda     is null or (p_final_guarda     is not null and a.fase_final_guarda = p_final_guarda))
@@ -74,6 +85,37 @@ begin
             and (p_final_guarda     is null or (p_final_guarda     is not null and a.fase_final_guarda = p_final_guarda))
             and (p_destinacao_final is null or (p_destinacao_final is not null and a.destinacao_final = p_destinacao_final))
             and (p_ativo            is null or (p_ativo            is not null and a.ativo = p_ativo));
+   Elsif p_restricao = 'BUSCA' Then
+      -- Recupera os assuntos existentes
+      open p_result for 
+         select a.sq_assunto, a.sq_assunto as chave, a.cliente, a.sq_assunto_pai, a.codigo, a.tipo, a.descricao, a.detalhamento,
+                a.observacao, a.fase_corrente_guarda, a.fase_corrente_anos, a.fase_intermed_guarda,
+                a.fase_intermed_anos, a.fase_final_guarda, a.fase_final_anos, a.destinacao_final, a.ativo,
+                case a.ativo when 'S' then 'Sim' else 'Não' end as nm_ativo,
+                b.descricao ds_corrente_guarda, b.sigla sg_corrente_guarda,
+                c.descricao ds_intermed_guarda, c.sigla sg_intermed_guarda,
+                d.descricao ds_final_guarda, d.sigla sg_final_guarda,
+                e.descricao ds_destinacao_final, e.sigla sg_destinacao_final,
+                f.codigo as cd_assunto_pai, f.descricao as ds_assunto_pai,
+                g.codigo as cd_assunto_avo, g.descricao as ds_assunto_avo,
+                h.codigo as cd_assunto_bis, h.descricao as ds_assunto_bis
+           from pa_assunto                    a
+                inner     join pa_tipo_guarda b on (a.fase_corrente_guarda = b.sq_tipo_guarda)
+                inner     join pa_tipo_guarda c on (a.fase_intermed_guarda = c.sq_tipo_guarda)
+                inner     join pa_tipo_guarda d on (a.fase_final_guarda    = d.sq_tipo_guarda)
+                inner     join pa_tipo_guarda e on (a.destinacao_final     = e.sq_tipo_guarda)
+                left      join pa_assunto     f on (a.sq_assunto_pai       = f.sq_assunto)
+                  left    join pa_assunto     g on (f.sq_assunto_pai       = g.sq_assunto)
+                    left  join pa_assunto     h on (g.sq_assunto_pai       = h.sq_assunto)
+          where a.cliente           = p_cliente
+            and (p_descricao        is null or (p_descricao        is not null and (acentos(a.descricao)    like '%'||acentos(p_descricao)||'%' or
+                                                                                    acentos(a.detalhamento) like '%'||acentos(p_descricao)||'%' or
+                                                                                    acentos(a.observacao)   like '%'||acentos(p_descricao)||'%'
+                                                                                   )
+                                               )
+                )
+            and (p_ativo            is null or (p_ativo            is not null and a.ativo = p_ativo))
+            and (p_codigo           is null or (p_codigo           is not null and a.codigo like '%'||p_codigo||'%'));
    Elsif p_restricao = 'VINCULADO' Then
       -- Verifica se o registro está vinculado a um documento
       open p_result for 

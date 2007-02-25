@@ -24,12 +24,19 @@ begin
             h.sq_cidade, h.nome nm_cidade, h.co_uf, h.sq_pais,
             m.padrao pd_pais, m.nome nm_pais,
             i.email,
-            Nvl(j.cpf,n.username) cpf, j.nascimento, j.rg_numero, j.rg_emissao, j.rg_emissor, j.passaporte_numero,
+            coalesce(j.cpf,n.username) cpf, j.nascimento, j.rg_numero, j.rg_emissao, j.rg_emissor, j.passaporte_numero,
             j.sq_pais_passaporte, j.sexo,
             k.cnpj, k.inscricao_estadual,
             o.nome nm_pais_passaporte,
             case sexo when 'F' then 'Feminino' else 'Masculino' end nm_sexo,
-            p.sigla||'/'||q.sigla nm_unidade_benef            
+            p.sigla||'/'||q.sigla nm_unidade_benef,
+            case when k.cnpj is not null 
+                 then k.cnpj
+                 else case when j.cpf is not null 
+                           then j.cpf
+                           else n.username
+                      end
+            end as identificador_primario
        from co_pessoa                           a
             left outer join  co_tipo_pessoa     c on (a.sq_tipo_pessoa  = c.sq_tipo_pessoa)
             left outer join  co_tipo_vinculo    d on (a.sq_tipo_vinculo = d.sq_tipo_vinculo)
@@ -101,7 +108,11 @@ begin
       where (a.sq_pessoa_pai      = p_cliente or (a.sq_pessoa = p_cliente and Nvl(a.sq_pessoa_pai,1) = 1))
         and (p_sq_pessoa          is null     or (p_sq_pessoa          is not null and a.sq_pessoa          = p_sq_pessoa))
         and (p_tipo_pessoa        is null     or (p_tipo_pessoa        is not null and a.sq_tipo_pessoa     = p_tipo_pessoa))
-        and (p_nome               is null     or (p_nome               is not null and (a.nome_indice       like(upper(acentos('%'||p_nome||'%')))) or (a.nome_resumido_ind like(upper(acentos('%'||p_nome||'%')))) ))
+        and (p_nome               is null     or (p_nome               is not null and (a.nome_indice       like '%'||upper(acentos(p_nome))||'%' or 
+                                                                                        a.nome_resumido_ind like '%'||upper(acentos(p_nome))||'%'
+                                                                                       )
+                                                 )
+            )
         and (p_cpf                is null     or (p_cpf                is not null and (j.cpf               = p_cpf or n.username = p_cpf)))
         and (p_cnpj               is null     or (p_cnpj               is not null and k.cnpj               = p_cnpj))
         and (p_passaporte_numero  is null     or (p_passaporte_numero  is not null and j.passaporte_numero  = p_passaporte_numero))
