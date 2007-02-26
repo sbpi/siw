@@ -212,11 +212,24 @@ begin
     
     -- recupera o código e a lotação do solicitante, para verificar, mais abaixo,
     -- se o usuário é chefe dele
-    select a.solicitante, b.sq_unidade
-      into w_solicitante, w_unidade_beneficiario
+    select count(b.sq_pessoa) into w_existe
       from siw_solicitacao a, sg_autenticacao b
      where a.solicitante        = b.sq_pessoa
        and a.sq_siw_solicitacao = p_solicitacao;
+
+    if w_existe > 0 then
+       select a.solicitante, b.sq_unidade
+         into w_solicitante, w_unidade_beneficiario
+         from siw_solicitacao a, sg_autenticacao b
+        where a.solicitante        = b.sq_pessoa
+          and a.sq_siw_solicitacao = p_solicitacao;
+    else
+       select a.solicitante, b.sq_unidade
+         into w_solicitante, w_unidade_beneficiario
+         from siw_solicitacao a, sg_autenticacao b
+        where a.cadastrador        = b.sq_pessoa
+          and a.sq_siw_solicitacao = p_solicitacao;
+    end if;
  End If;
  
  -- Se o serviço for vinculado à unidade

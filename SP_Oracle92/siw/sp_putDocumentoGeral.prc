@@ -8,6 +8,7 @@ create or replace procedure sp_putDocumentoGeral
     p_solicitante         in  number   default null,
     p_cadastrador         in  number   default null,
     p_solic_pai           in  number   default null,
+    p_codigo              in varchar2  default null,
     p_processo            in  varchar2 default null,
     p_circular            in  varchar2 default null,
     p_especie_documento   in  number   default null,
@@ -19,32 +20,23 @@ create or replace procedure sp_putDocumentoGeral
     p_fim                 in  date     default null,
     p_data_recebimento    in  date     default null,
     p_interno             in  varchar2 default null,
-    p_tipo_pessoa         in  varchar2 default null,
     p_pessoa_origem       in  number   default null,
+    p_pessoa_interes      in  number   default null,
     p_cidade              in  number   default null,
     p_assunto             in  number   default null,
     p_descricao           in  varchar2 default null,
-    p_chave_nova          out number
+    p_chave_nova          out number,
+    p_codigo_interno      in out varchar2
    ) is
    w_cliente number(18);
    w_arq     varchar2(4000) := ', ';
    w_chave   number(18);
-   w_chave1  number(18);
    w_log_sol number(18);
    w_log_esp number(18);
    w_ativ    number(18);
-   i         number(10) := 0;
    w_cidade  number(18) := p_cidade;
    w_cont    number(18);
 
-   type tb_recurso_pai is table of number(10) index by binary_integer;
-   w_recurso_pai tb_recurso_pai;
-    
-   type rec_etapa is record (
-       sq_chave_destino       number(10) := null,
-       sq_chave_origem        number(10) := null,
-       sq_chave_pai_origem    number(10) := null
-      );
    cursor c_arquivos is
       select sq_siw_arquivo from siw_solic_arquivo where sq_siw_solicitacao = p_chave;
 begin
@@ -87,6 +79,11 @@ begin
         (w_chave,               w_cliente,       p_solic_pai,      p_processo, p_circular,       p_doc_original,    p_interno, p_especie_documento, 
          p_natureza_documento,  p_pessoa_origem, p_copias,         p_volumes,  p_unid_autua,     p_data_recebimento);
       
+      -- Insere o interessado da tela principal na tabela de interessados
+      If p_pessoa_interes is not null Then
+         insert into pa_documento_interessado (sq_siw_solicitacao, sq_pessoa, principal) values (w_chave, p_pessoa_interes, 'S');
+      End If;
+
       -- Insere o assunto da tela principal na tabela de assuntos
       insert into pa_documento_assunto (sq_siw_solicitacao, sq_assunto, principal) values (w_chave, p_assunto, 'S');
 
@@ -105,6 +102,15 @@ begin
           and a.sigla   = 'CI'
       );
            
+      If p_codigo is null Then
+         -- Recupera o código interno  do acordo, gerado por trigger
+         select prefixo||'.'||substr(1000000+numero_documento,2,6)||'/'||ano||'-'||substr(100+digito,2,2) into p_codigo_interno 
+           from pa_documento 
+          where sq_siw_solicitacao = w_chave;
+      Else
+         p_codigo_interno := p_codigo;
+      End If;
+
       -- Se o projeto foi copiado de outra, grava os dados complementares
       If p_copia is not null Then
          -- Insere registro na tabela de interessados
@@ -144,6 +150,30 @@ begin
           volumes               = p_volumes,
           unidade_autuacao      = p_unid_autua
        where sq_siw_solicitacao = p_chave;
+
+      If p_pessoa_interes is null Then
+        -- Apaga o registro existente
+        delete pa_documento_interessado a where sq_siw_solicitacao = p_chave;
+      Else
+         -- Verifica se houve alteração do interessado principal
+         select count(a.sq_pessoa) into w_cont from pa_documento_interessado a where sq_siw_solicitacao = p_chave and principal = 'S' and sq_pessoa = p_pessoa_interes;
+      
+         -- Se houve, ajusta os registros
+         if w_cont = 0 then
+            -- Apaga o registro existente
+            delete pa_documento_interessado a where sq_siw_solicitacao = p_chave and principal = 'S';
+         
+            -- Verifica se o novo interessado já está vinculado ao documento
+            select count(a.sq_pessoa) into w_cont from pa_documento_interessado a where sq_siw_solicitacao = p_chave and principal = 'N' and sq_pessoa = p_pessoa_interes;
+
+            -- Se estiver, coloca o interessado como principal, senão, insere registro com o novo interessado principal
+            if w_cont > 0 then
+               update pa_documento_interessado set principal = 'S' where sq_siw_solicitacao = p_chave and sq_pessoa = p_pessoa_interes;
+            else 
+               insert into pa_documento_interessado (sq_siw_solicitacao, sq_pessoa, principal) values (p_chave, p_pessoa_interes, 'S');
+            end if;
+         end if;
+      End If;
 
       -- Verifica se houve alteração do assunto principal
       select count(a.sq_assunto) into w_cont from pa_documento_assunto a where sq_siw_solicitacao = p_chave and principal = 'S' and sq_assunto = p_assunto;

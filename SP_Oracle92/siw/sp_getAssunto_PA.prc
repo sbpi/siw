@@ -108,6 +108,7 @@ begin
                   left    join pa_assunto     g on (f.sq_assunto_pai       = g.sq_assunto)
                     left  join pa_assunto     h on (g.sq_assunto_pai       = h.sq_assunto)
           where a.cliente           = p_cliente
+            and a.tipo              = '4 - Subgrupo'
             and (p_descricao        is null or (p_descricao        is not null and (acentos(a.descricao)    like '%'||acentos(p_descricao)||'%' or
                                                                                     acentos(a.detalhamento) like '%'||acentos(p_descricao)||'%' or
                                                                                     acentos(a.observacao)   like '%'||acentos(p_descricao)||'%'
