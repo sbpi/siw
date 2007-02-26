@@ -13,7 +13,8 @@ function SelecaoTipoRubrica ($label,$accesskey,$hint,$chave,$chaveAux,$campo,$re
     ShowHTML('          <td valign="top" title="'.$hint.'"><font size="1"><b>'.$label.'</b><br><SELECT ACCESSKEY="'.$accesskey.'" CLASS="sts" NAME="'.$campo.'" '.$w_Disabled.' '.$atributo.'>');
   } 
   ShowHTML('          <option value="">---'); 
-  if(count($l_RS1)==0) {
+  // Se não existir outro lançamento financeiro, trata o atual como sendo dotação inicial
+  if(count($l_RS1)<2) {
     if (nvl($chave,0)==1) ShowHTML('          <option value="1" SELECTED>Dotação Inicial');                else ShowHTML('          <option value="1">Dotação inicial');
   } else {
     if (nvl($chave,0)==2) ShowHTML('          <option value="2" SELECTED>Transferências entre rubricas');  else ShowHTML('          <option value="2">Transferências entre rubricas');

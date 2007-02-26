@@ -112,14 +112,24 @@ function TipoAcordo() {
   extract($GLOBALS);
   global $w_Disabled;
   $w_imagem         = 'images/Folder/SheetLittle.gif';
-  //  $w_troca          = $_REQUEST['w_troca'];
   $w_heranca        = $_REQUEST['w_heranca'];
   $w_sq_tipo_acordo = $_REQUEST['w_sq_tipo_acordo'];
   Cabecalho();
   ShowHTML('<HEAD>');
   ShowHTML('<TITLE>'.$conSgSistema.' - Tipos de Acordo</TITLE>');
   Estrutura_CSS($w_cliente);
-  if ($O!='L') {
+  if ($w_troca>'' && $O!='E') {
+    // Se for recarga da página
+    $w_sq_tipo_acordo_pai   = $_REQUEST['w_sq_tipo_acordo_pai'];
+    $w_nome                 = $_REQUEST['w_nome'];
+    $w_pessoa_fisica        = $_REQUEST['w_pessoa_fisica'];
+    $w_cliente              = $_REQUEST['w_cliente'];
+    $w_sigla                = $_REQUEST['w_sigla'];
+    $w_ativo                = $_REQUEST['w_ativo'];
+    $w_pessoa_fisica        = $_REQUEST['w_pessoa_fisica'];
+    $w_prazo_indeterminado  = $_REQUEST['w_prazo_indeterminado'];
+    $w_modalidade           = $_REQUEST['w_modalidade'];
+  } elseif ($O!='L') {
     ScriptOpen('JavaScript');
     ValidateOpen('Validacao');
     if ($O!='P' && $O!='H') {
@@ -437,7 +447,13 @@ function FormaPagamento(){
   ShowHTML('<TITLE>'.$conSgSistema.' - Listagem das formas de pagamentos</TITLE>');
   Estrutura_CSS($w_cliente);
   if ($O=='') $O='L';
-  if ($O=='L') {
+  if ($w_troca>'' && $O!='E') {
+    // Se for recarga da página
+    $w_chave    = $_REQUEST['w_chave'];
+    $w_nome     = $_REQUEST['w_nome'];
+    $w_sigla    = $_REQUEST['w_sigla'];
+    $w_ativo    = $_REQUEST['w_ativo'];
+  } elseif ($O=='L') {
     $RS = db_getFormaPagamento::getInstanceOf($dbms,$w_cliente,null,null,'REGISTRO',null,null);
     if (Nvl($p_ordena,'') > '') {
       $lista = explode(',',str_replace(' ',',',$p_ordena));
@@ -508,7 +524,6 @@ function FormaPagamento(){
         ShowHTML('        <td>');
         ShowHTML('          <A class="hl" HREF="'.$w_dir.$w_pagina.$par.'&R='.$w_pagina.$par.'&O=A&w_chave='.f($row,'chave').'&P1='.$P1.'&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP='.$TP.'&SG='.$SG.MontaFiltro('GET').'" Title="Nome">Alterar </A>&nbsp');
         ShowHTML('          <A class="hl" HREF="'.$w_dir.$w_pagina.$par.'&R='.$w_pagina.$par.'&O=E&w_chave='.f($row,'chave').'&P1='.$P1.'&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP='.$TP.'&SG='.$SG.'">Excluir </A>&nbsp');
-        //ShowHTML('          <A class="hl" HREF="'.$w_dir.$w_pagina.$par.'&R='.$w_pagina.$par.'&O=T&w_chave='.f($row,'chave').'&P1='.$P1.'&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP='.$TP.' &SG='.$SG.'" target="vinculacao">Vinculações</A>&nbsp');
         ShowHTML('          <A class="hl" HREF="'.$w_dir.$w_pagina.$par.'&R='.$w_pagina.$par.'&TP='.$TP.'&SG='.$SG.'" onClick="window.open(\''.montaURL_JS($w_dir,'tabelas.php?par=FORMAPAG&R='.$w_pagina.$par.'&O=T&w_chave='.f($row,'chave').'&P1='.$P1.'&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP='.$TP.'&SG=FORMAPAG'.MontaFiltro('GET').'\',\'Vinculacoes').'\',\'width=730,height=500,top=30,left=30,status=yes,resizable=yes,scrollbars=yes,toolbar=yes\');">Vinculações</A>&nbsp'); 
         ShowHTML('        </td>');
         ShowHTML('      </tr>');
@@ -545,7 +560,7 @@ function FormaPagamento(){
         ShowHTML('            <input class="stb" type="submit" name="Botao" value="Atualizar">');
       } 
     } 
-    ShowHTML('            <input class="stb" type="button" onClick="history.back(1);" name="Botao" value="Cancelar">');
+    ShowHTML('            <input class="STB" type="button" onClick="location.href=\''.montaURL_JS($w_dir,f($RS_Menu,'link').'&O=L&w_chave='.$_REQUEST['w_chave'].'&P1='.$P1.'&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP='.$TP.'&SG='.f($RS_Menu,'sigla').MontaFiltro('GET')).'\';" name="Botao" value="Abandonar">');
     ShowHTML('          </td>');
     ShowHTML('      </tr>');
     ShowHTML('    </table>');
@@ -625,7 +640,6 @@ function FormaPagamento(){
 // -------------------------------------------------------------------------
 function Grava() {
   extract($GLOBALS);
-
   Cabecalho();
   ShowHTML('</HEAD>');
   ShowHTML('<BASE HREF="'.$conRootSIW.'">');
@@ -645,8 +659,8 @@ function Grava() {
       } else {
         ScriptOpen('JavaScript');
         ShowHTML('  alert(\'Assinatura Eletrônica inválida!\');');
-        ShowHTML('  history.back(1);');
         ScriptClose();
+        RetornaFormulario('w_assinatura');
       } 
       break;
     case 'FORMAPAG':
@@ -671,8 +685,8 @@ function Grava() {
       } else {
         ScriptOpen('JavaScript');
         ShowHTML('  alert(\'Assinatura Eletrônica inválida!\');');
-        ShowHTML('  history.back(1);');
         ScriptClose();
+        RetornaFormulario('w_assinatura');
       } 
       break;
     default:

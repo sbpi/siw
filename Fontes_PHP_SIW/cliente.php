@@ -154,9 +154,9 @@ function Inicial() {
   ValidateClose();
   ScriptClose();
   ShowHTML('</HEAD>');
-  if ($w_Troca>'') {
+  if ($w_troca>'') {
     // Se for recarga da página
-    BodyOpen('onLoad=\'document.Form.'.$w_Troca.'.focus();\'');
+    BodyOpen('onLoad=\'document.Form.'.$w_troca.'.focus();\'');
   } elseif ($O=='I') {
     BodyOpen('onLoad=\'document.Form.w_smtp_server.focus();\'');
   } elseif ($O=='A') {
@@ -577,8 +577,7 @@ function Enderecos() {
     $w_sq_tipo_endereco     = $_REQUEST['w_sq_tipo_endereco'];
     $w_sq_pessoa_endereco   = $_REQUEST['w_sq_pessoa_endereco'];
     $w_nome                 = $_REQUEST['w_nome'];
-  } 
-  if ($O=='L') {
+  } elseif ($O=='L') {
     // Recupera todos os endereços do cliente, independente do tipo
     $RS = db_getAddressList::getInstanceOf($dbms,$w_sq_pessoa,null,null,null);
     $RS = SortArray($RS,'padrao','desc','tipo_endereco','asc','endereco','asc');
@@ -699,18 +698,18 @@ function Enderecos() {
     ShowHTML('<INPUT type="hidden" name="w_sq_pessoa_endereco" value="'.$w_sq_pessoa_endereco.'">');
     ShowHTML('<tr bgcolor="'.$conTrBgColor.'"><td>');
     ShowHTML('    <table width="97%" border="0">');
-    ShowHTML('      <tr><td valign="top"><b><u>L</u>ogradouro:</b><br><input '.$w_Disabled.' accesskey="L" type="text" name="w_logradouro" class="sti" SIZE="60" MAXLENGTH="60" VALUE="'.$w_logradouro.'" title="Informe o logradouro de funcionamento do cliente."></td>');
-    ShowHTML('      <tr><td valign="top" colspan="2"><table border=0 width="100%" cellspacing=0>');
-    ShowHTML('          <tr><td valign="top"><b><u>C</u>omplemento:</b><br><input '.$w_Disabled.' accesskey="C" type="text" name="w_complemento" class="sti" SIZE="20" MAXLENGTH="20" VALUE="'.$w_complemento.'" title="Se necessário, informe o complemento do logradouro de funcionamento do cliente."></td>');
-    ShowHTML('              <td valign="top"><b><u>B</u>airro:</b><br><input '.$w_Disabled.' accesskey="B" type="text" name="w_bairro" class="sti" SIZE="30" MAXLENGTH="30" VALUE="'.$w_bairro.'" title="Informe o bairro onde este endereço localiza-se."></td>');
-    ShowHTML('              <td valign="top"><b>C<u>e</u>p:</b><br><input '.$w_Disabled.' accesskey="e" type="text" name="w_cep" class="sti" SIZE="9" MAXLENGTH="9" VALUE="'.$w_cep.'" onKeyDown="FormataCEP(this,event)" title="Informe o CEP deste endereço."></td>');
-    ShowHTML('          </table>');
-    ShowHTML('      <tr><td valign="top" colspan="2"><table border=0 width="100%" cellspacing=0>');
-    ShowHTML('      <tr>');
+    ShowHTML('      <tr><td><b><u>L</u>ogradouro:</b><br><input '.$w_Disabled.' accesskey="L" type="text" name="w_logradouro" class="sti" SIZE="60" MAXLENGTH="60" VALUE="'.$w_logradouro.'" title="Informe o logradouro de funcionamento do cliente."></td>');
+    ShowHTML('      <tr><td colspan="2"><table border=0 width="100%" cellspacing=0>');
+    ShowHTML('      <tr valign="top">');
+    ShowHTML('          <td><b><u>C</u>omplemento:</b><br><input '.$w_Disabled.' accesskey="C" type="text" name="w_complemento" class="sti" SIZE="20" MAXLENGTH="20" VALUE="'.$w_complemento.'" title="Se necessário, informe o complemento do logradouro de funcionamento do cliente."></td>');
+    ShowHTML('          <td><b><u>B</u>airro:</b><br><input '.$w_Disabled.' accesskey="B" type="text" name="w_bairro" class="sti" SIZE="30" MAXLENGTH="30" VALUE="'.$w_bairro.'" title="Informe o bairro onde este endereço localiza-se."></td>');
+    ShowHTML('          <td><b>C<u>e</u>p:</b><br><input '.$w_Disabled.' accesskey="e" type="text" name="w_cep" class="sti" SIZE="9" MAXLENGTH="9" VALUE="'.$w_cep.'" onKeyDown="FormataCEP(this,event)" title="Informe o CEP deste endereço."></td>');
+    ShowHTML('      <tr valign="top">');
     selecaoPais('<u>P</u>aís:','P','Selecione na lista o país onde o endereço localiza-se.',$w_pais,null,'w_pais',null,'onChange="document.Form.action=\''.$w_pagina.$par.'\'; document.Form.w_troca.value=\'w_uf\'; document.Form.submit();"');
     selecaoEstado('E<u>s</u>tado:','S','Selecione na lista o estado deste endereço.',$w_uf,$w_pais,null,'w_uf',null,'onChange="document.Form.action=\''.$w_pagina.$par.'\'; document.Form.w_troca.value=\'w_cidade\'; document.Form.submit();"');
     selecaoCidade('<u>C</u>idade:','C','Selecione na lista a cidade deste endereço.',$w_cidade,$w_pais,$w_uf,'w_cidade',null,null);
-    ShowHTML('          <tr><td valign="top" title="O cliente pode ter vários endereços, mas apenas um pode ser o principal. Marque "Sim" se for o caso deste endereço."><b>Padrão:</b><br>');
+    ShowHTML('      <tr valign="top">');
+    ShowHTML('          <td title="O cliente pode ter vários endereços, mas apenas um pode ser o principal. Marque "Sim" se for o caso deste endereço."><b>Padrão:</b><br>');
     if ($w_padrao=='' || $w_padrao=='N') {
       ShowHTML('              <input '.$w_Disabled.' class="str" type="radio" name="w_padrao" VALUE="N" checked>Não <input '.$w_Disabled.' class="str" type="radio" name="w_padrao" VALUE="S">Sim');
     } else {
@@ -904,19 +903,17 @@ function Telefones() {
     ShowHTML('<INPUT type="hidden" name="w_sq_pessoa_telefone" value="'.$w_sq_pessoa_telefone.'">');
     ShowHTML('<tr bgcolor="'.$conTrBgColor.'"><td align="center">');
     ShowHTML('    <table width="97%" border="0">');
-    ShowHTML('      <tr><td valign="top" colspan="2"><table border=0 width="100%" cellspacing=0>');
-    ShowHTML('          <tr><td valign="top"><b><u>D</u>DD:</b><br><input '.$w_Disabled.' accesskey="D" type="text" name="w_ddd" class="sti" SIZE="4" MAXLENGTH="4" VALUE="'.$w_ddd.'" title="Informe o DDD deste número."></td>');
-    ShowHTML('              <td valign="top"><b><u>N</u>úmero:</b><br><input '.$w_Disabled.' accesskey="N" type="text" name="w_numero" class="sti" SIZE="25" MAXLENGTH="25" VALUE="'.$w_numero.'" title="Informe o número do telefone."></td>');
+    ShowHTML('      <tr><td colspan="2"><table border=0 width="100%" cellspacing=0>');
+    ShowHTML('        <tr valign="top">');
+    ShowHTML('          <td valign="top"><b><u>D</u>DD:</b><br><input '.$w_Disabled.' accesskey="D" type="text" name="w_ddd" class="sti" SIZE="4" MAXLENGTH="4" VALUE="'.$w_ddd.'" title="Informe o DDD deste número."></td>');
+    ShowHTML('          <td valign="top"><b><u>N</u>úmero:</b><br><input '.$w_Disabled.' accesskey="N" type="text" name="w_numero" class="sti" SIZE="25" MAXLENGTH="25" VALUE="'.$w_numero.'" title="Informe o número do telefone."></td>');
     selecaoTipoFone('<u>T</u>ipo:','T','Selecione na lista o tipo deste telefone.',$w_sq_tipo_telefone,$w_tipo_pessoa,'w_sq_tipo_telefone',null,null);
-    ShowHTML('          </table>');
-    ShowHTML('      <tr><td valign="top" colspan="2"><table border=0 width="100%" cellspacing=0>');
-    ShowHTML('      <tr>');
+    ShowHTML('        <tr valign="top">');
     selecaoPais('<u>P</u>aís:','P','Selecione na lista o país onde o endereço localiza-se.',$w_pais,null,'w_pais',null,'onChange="document.Form.action=\''.$w_pagina.$par.'\'; document.Form.w_troca.value=\'w_uf\'; document.Form.submit();"');
     selecaoEstado('E<u>s</u>tado:','S','Selecione na lista o estado deste endereço.',$w_uf,$w_pais,null,'w_uf',null,'onChange="document.Form.action=\''.$w_pagina.$par.'\'; document.Form.w_troca.value=\'w_cidade\'; document.Form.submit();"');
     selecaoCidade('<u>C</u>idade:','C','Selecione na lista a cidade deste endereço.',$w_cidade,$w_pais,$w_uf,'w_cidade',null,null);
-    ShowHTML('          </table>');
-    ShowHTML('      <tr><td valign="top" colspan="2"><table border=0 width="100%" cellspacing=0>');
-    ShowHTML('          <tr><td valign="top" title="O cliente pode ter vários telefones, mas apenas um pode ser o principal. Marque "Sim" se for o caso deste endereço."><b>Padrão:</b><br>');
+    ShowHTML('      <tr valign="top">');
+    ShowHTML('          <td title="O cliente pode ter vários telefones, mas apenas um pode ser o principal. Marque "Sim" se for o caso deste endereço."><b>Padrão:</b><br>');
     if ($w_padrao=='' || $w_padrao=='N') {
       ShowHTML('              <input '.$w_Disabled.' class="str" type="radio" name="w_padrao" VALUE="N" checked>Não <input '.$w_Disabled.' class="str" type="radio" name="w_padrao" VALUE="S">Sim');
     } else {
@@ -985,7 +982,15 @@ function ContasBancarias() {
 
   $w_sq_pessoa_conta=$_REQUEST['w_sq_pessoa_conta'];
 
-  if ($O=='L') {
+  if ($w_troca>'') {
+    $w_banco        = $_REQUEST['w_banco'];
+    $w_agencia      = $_REQUEST['w_agencia'];
+    $w_numero_conta = $_REQUEST['w_numero_conta'];
+    $w_operacao     = $_REQUEST['w_operacao'];
+    $w_tipo_conta   = $_REQUEST['w_tipo_conta'];
+    $w_ativo        = $_REQUEST['w_ativo'];
+    $w_padrao       = $_REQUEST['w_padrao'];
+  } elseif ($O=='L') {
     // Recupera as contas bancárias do cliente
     $RS = db_getContaBancoList::getInstanceOf($dbms,$w_sq_pessoa,null,null);
     $RS = SortArray($RS,'tipo_conta','asc','banco','asc','numero','asc');
@@ -999,14 +1004,6 @@ function ContasBancarias() {
     $w_tipo_conta   = f($RS,'tipo_conta');
     $w_ativo        = f($RS,'ativo');
     $w_padrao       = f($RS,'padrao');
-  } elseif ($w_Troca>'') {
-    $w_banco        = $_REQUEST['w_banco'];
-    $w_agencia      = $_REQUEST['w_agencia'];
-    $w_numero_conta = $_REQUEST['w_numero_conta'];
-    $w_operacao     = $_REQUEST['w_operacao'];
-    $w_tipo_conta   = $_REQUEST['w_tipo_conta'];
-    $w_ativo        = $_REQUEST['w_ativo'];
-    $w_padrao       = $_REQUEST['w_padrao'];
   } 
 
   Cabecalho();
@@ -1190,7 +1187,7 @@ function Modulos() {
 
   $w_sq_modulo = $_REQUEST['w_sq_modulo'];
 
-  if ($w_Troca>'') {
+  if ($w_troca>'') {
     $w_sq_modulo = $_REQUEST['w_sq_modulo'];
   } elseif ($O=='L') {
     // Recupera os módulos contratados pelo cliente
@@ -1603,8 +1600,8 @@ function Grava() {
       } else {
         ScriptOpen('JavaScript');
         ShowHTML('  alert(\'Assinatura Eletrônica inválida!\');');
-        ShowHTML('  history.back(1);');
         ScriptClose();
+        retornaFormulario('w_assinatura');
       } 
       break;
     case 'CLIENTE':
@@ -1624,8 +1621,8 @@ function Grava() {
       } else {
         ScriptOpen('JavaScript');
         ShowHTML('  alert(\'Assinatura Eletrônica inválida!\');');
-        ShowHTML('  history.back(1);');
         ScriptClose();
+        retornaFormulario('w_assinatura');
       } 
       break;
     case 'CLENDER':
@@ -1657,8 +1654,8 @@ function Grava() {
       } else {
         ScriptOpen('JavaScript');
         ShowHTML('  alert(\'Assinatura Eletrônica inválida!\');');
-        ShowHTML('  history.back(1);');
         ScriptClose();
+        retornaFormulario('w_assinatura');
       } 
       break;
     case 'CLFONE':
@@ -1690,8 +1687,8 @@ function Grava() {
       } else {
         ScriptOpen('JavaScript');
         ShowHTML('  alert(\'Assinatura Eletrônica inválida!\');');
-        ShowHTML('  history.back(1);');
         ScriptClose();
+        retornaFormulario('w_assinatura');
       } 
       break;
     case 'CLCONTA':
@@ -1735,8 +1732,8 @@ function Grava() {
       } else {
         ScriptOpen('JavaScript');
         ShowHTML('  alert(\'Assinatura Eletrônica inválida!\');');
-        ShowHTML('  history.back(1);');
         ScriptClose();
+        retornaFormulario('w_assinatura');
       } 
       break;
     case 'CLMODULO':
@@ -1749,8 +1746,8 @@ function Grava() {
       } else {
         ScriptOpen('JavaScript');
         ShowHTML('  alert(\'Assinatura Eletrônica inválida!\');');
-        ShowHTML('  history.back(1);');
         ScriptClose();
+        retornaFormulario('w_assinatura');
       } 
       break;
     case 'CLCONFIG':
@@ -1830,8 +1827,8 @@ function Grava() {
       } else {
         ScriptOpen('JavaScript');
         ShowHTML('  alert(\'Assinatura Eletrônica inválida!\');');
-        ShowHTML('  history.back(1);');
         ScriptClose();
+        retornaFormulario('w_assinatura');
       } 
       break;
     default:

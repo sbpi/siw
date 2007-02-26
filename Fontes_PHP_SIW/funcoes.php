@@ -106,19 +106,11 @@ function LinkArquivo ($p_classe, $p_cliente, $p_arquivo, $p_target, $p_hint, $p_
 // =========================================================================
 // Gera um link para JavaScript, em função do navegador
 // -------------------------------------------------------------------------
-function montaURL_JS ($p_dir, $p_link) {
-
-  // Monta a chamada base
-  $l_link = $p_link;
-  // Se for MS-IE, não agrega o diretório.
-  if (strpos(strtoupper($_SERVER['HTTP_USER_AGENT']),'MSIE')===false) {
-    // Altera a chamada padrão, dispensando a sessão
-    if (strpos($p_link,$p_dir)===false) $l_link = $p_dir.$p_link;
-  } else {
-    if (strpos($p_link,$p_dir)!==false) $l_link = str_replace($p_dir,'',$p_link);
-  }
-  // Retorno ao chamador
-  return $l_link;
+function montaURL_JS ($p_dir, $p_link) { 
+  extract($GLOBALS);
+  $l_link = str_replace($conRootSIW,'',$p_link);
+  if (nvl($p_dir,'')!='') $l_link = str_replace($p_dir,'',$l_link);
+  return $conRootSIW.$p_dir.$l_link;
 }
 
 // =========================================================================
@@ -442,9 +434,20 @@ function RetornaFormulario($l_troca=null,$l_sg=null,$l_menu=null,$l_o=null,$l_di
   }
   if (nvl($l_troca,'')!='') $l_form .= chr(13).'<INPUT TYPE="HIDDEN" NAME="w_troca" VALUE="'.$l_troca.'">';
   if (nvl($l_menu,'')!='')  $l_form .= chr(13).'<INPUT TYPE="HIDDEN" NAME="w_menu" VALUE="'.$l_menu.'">';
+  if (nvl($w_dir.$_POST['R'],'')!='') {
+    foreach ($_GET as $l_Item => $l_valor) {
+      if ($l_Item!='par') {
+        if (is_array($_GET[$l_Item])) {
+          $l_form .= chr(13).'<INPUT TYPE="HIDDEN" NAME="'.$l_Item.'" VALUE="'.explodeArray($_GET[$l_Item]).'">';
+        } else {
+          $l_form .= chr(13).'<INPUT TYPE="HIDDEN" NAME="'.$l_Item.'" VALUE="'.$l_valor.'">';
+        }
+      }
+    }
+  }
   foreach ($_POST as $l_Item => $l_valor) {
     if (strpos($l_form,'NAME="'.$l_Item.'"')===false) {
-      if ($l_Item!='w_troca' && $l_Item!='w_assinatura' && $l_Item!='Password' && $l_Item!='R' && $l_Item!='R' && $l_Item!='P1' && $l_Item!='P2' && $l_Item!='P3' && $l_Item!='P4' && $l_Item!='TP' && $l_Item!='O') {
+      if ($l_Item!='w_troca' && $l_Item!='w_assinatura' && $l_Item!='Password' && $l_Item!='R' && $l_Item!='P1' && $l_Item!='P2' && $l_Item!='P3' && $l_Item!='P4' && $l_Item!='TP' && $l_Item!='O') {
         if (is_array($_POST[$l_Item])) {
           $l_form .= chr(13).'<INPUT TYPE="HIDDEN" NAME="'.$l_Item.'" VALUE="'.explodeArray($_POST[$l_Item]).'">';
         } else {
@@ -678,17 +681,14 @@ function AbreForm($p_Name,$p_Action,$p_Method,$p_onSubmit,$p_Target,$p_P1,$p_P2,
   } else {
      $l_html .= '<FORM action="'.$p_Action.'" method="'.$p_Method.'" NAME="'.$p_Name.'" onSubmit="'.$p_onSubmit.'" target="'.$p_Target.'">';
   }
-  $l_html .= chr(13).'<INPUT TYPE="hidden" NAME="P1" VALUE="'.$p_P1.'">';
-  $l_html .= chr(13).'<INPUT TYPE="hidden" NAME="P2" VALUE="'.$p_P2.'">';
-  $l_html .= chr(13).'<INPUT TYPE="hidden" NAME="P3" VALUE="'.$p_P3.'">';
-  if (!!isset($p_P4)) {
-     $l_html .= chr(13).'<INPUT TYPE="hidden" NAME="P4" VALUE="'.$p_P4.'">';
-  }
-
-  $l_html .= chr(13).'<INPUT TYPE="hidden" NAME="TP" VALUE="'.$p_TP.'">';
-  $l_html .= chr(13).'<INPUT TYPE="hidden" NAME="SG" VALUE="'.$p_SG.'">';
-  $l_html .= chr(13).'<INPUT TYPE="hidden" NAME="R"  VALUE="'.$p_R.'">';
-  $l_html .= chr(13).'<INPUT TYPE="hidden" NAME="O"  VALUE="'.$p_O.'">';
+  if (nvl($p_P1,'')!='') $l_html .= chr(13).'<INPUT TYPE="hidden" NAME="P1" VALUE="'.$p_P1.'">';
+  if (nvl($p_P2,'')!='') $l_html .= chr(13).'<INPUT TYPE="hidden" NAME="P2" VALUE="'.$p_P2.'">';
+  if (nvl($p_P3,'')!='') $l_html .= chr(13).'<INPUT TYPE="hidden" NAME="P3" VALUE="'.$p_P3.'">';
+  if (nvl($p_P4,'')!='') $l_html .= chr(13).'<INPUT TYPE="hidden" NAME="P4" VALUE="'.$p_P4.'">';
+  if (nvl($p_TP,'')!='') $l_html .= chr(13).'<INPUT TYPE="hidden" NAME="TP" VALUE="'.$p_TP.'">';
+  if (nvl($p_SG,'')!='') $l_html .= chr(13).'<INPUT TYPE="hidden" NAME="SG" VALUE="'.$p_SG.'">';
+  if (nvl($p_R,'')!='')  $l_html .= chr(13).'<INPUT TYPE="hidden" NAME="R"  VALUE="'.$p_R.'">';
+  if (nvl($p_O,'')!='')  $l_html .= chr(13).'<INPUT TYPE="hidden" NAME="O"  VALUE="'.$p_O.'">';
   
   if (nvl($p_retorno,'')=='') ShowHtml($l_html); else return $l_html;
 }
@@ -972,9 +972,9 @@ function EnviaMail($w_subject,$w_mensagem,$w_recipients,$w_attachments = null) {
   $_mail = new cPHPezMail();
   $l_server = nvl($_SERVER['SERVER_NAME'],$_SERVER['HOSTNAME']);
   if (false!==strpos($l_server,'.')) {
-    $_mail->SetFrom('siw@'.substr(strstr($l_server,'.'),1), 'Solução Integrada Web');
+    $_mail->SetFrom(strtolower($conSgSistema).'@'.substr(strstr($l_server,'.'),1), $conSgSistema);
   } else {
-    $_mail->SetFrom('siw@'.$l_server, 'Solução Integrada Web');
+    $_mail->SetFrom(strtolower($conSgSistema).'@'.$l_server, $conSgSistema);
   }
 
   $l_recipients = explode(';',$w_recipients);
@@ -1145,7 +1145,7 @@ function TrataErro($sp, $Err, $params, $file, $line, $object) {
     $w_html .= chr(10).'</FONT></TD></TR></TABLE><BLOCKQUOTE>';
     $w_html .= '</body></html>';
 
-    $w_resultado = EnviaMail('ERRO SIW',$w_html,'desenv@sbpi.com.br');
+    $w_resultado = EnviaMail('ERRO '.$conSgSistema,$w_html,'desenv@sbpi.com.br');
     if ($w_resultado>'') {
        ShowHTML('<SCRIPT LANGUAGE="JAVASCRIPT">');
        ShowHTML('   alert("Não foi possível enviar o e-mail comunicando sobre o erro. Favor copiar esta página e enviá-la por e-mail aos gestores do sistema.");');
@@ -1210,9 +1210,9 @@ function Estrutura_Topo() {
 function Estrutura_CSS($l_cliente) {
   extract($GLOBALS);
   if ($l_cliente==6761) {
-    ShowHTML('<LINK  media=screen href="/siw/files/'.$l_cliente.'/css/estilo.css" type=text/css rel=stylesheet>');
-    ShowHTML('<LINK media=print href="/siw/files/'.$l_cliente.'/css/print.css" type=text/css rel=stylesheet>');
-    ShowHTML('<SCRIPT language=javascript src="/siw/files/'.$l_cliente.'/js/scripts.js" type=text/javascript> ');
+    ShowHTML('<LINK  media=screen href="'.$conFileVirtual.$l_cliente.'/css/estilo.css" type=text/css rel=stylesheet>');
+    ShowHTML('<LINK media=print href="'.$conFileVirtual.$l_cliente.'/css/print.css" type=text/css rel=stylesheet>');
+    ShowHTML('<SCRIPT language=javascript src="'.$conFileVirtual.$l_cliente.'/js/scripts.js" type=text/javascript> ');
     ShowHTML('</SCRIPT>');
   }
 }
@@ -1370,7 +1370,7 @@ function Estrutura_Menu() {
      ShowHTML('    </DIV>');
      ShowHTML('');
      ShowHTML('    <DIV id=menutxt>');
-     ShowHTML('      <SCRIPT src="/siw/files/'.$w_cliente.'/js/newcssmenu.js" type=text/javascript></SCRIPT>');
+     ShowHTML('      <SCRIPT src="'.$conFileVirtual.$w_cliente.'/js/newcssmenu.js" type=text/javascript></SCRIPT>');
      ShowHTML('      ');
      ShowHTML('      <DIV id=menutexto>');
      ShowHTML('        <DIV id=mainMenu>');
@@ -1390,7 +1390,7 @@ function Estrutura_Menu() {
            $l_titulo=$l_titulo.' - '.f(row1,'nome');
            if (f(row1,'filho')>0) {
               $l_cont1=$l_cont1+1;
-              ShowHTML('              <LI><A href="#"><IMG height=12 alt=">" src="/siw/files/'.$w_cliente.'/img/arrows.gif" width=8> '.f(row1,'nome').'</A> ');
+              ShowHTML('              <LI><A href="#"><IMG height=12 alt=">" src="'.$conFileVirtual.$w_cliente.'/img/arrows.gif" width=8> '.f(row1,'nome').'</A> ');
               ShowHTML('              <UL class=menu id=menu'.$l_cont.'_'.$l_cont1.'>');
               $l_cont2=0;
               $l_RS2 = db_getLinkDataUser::getInstanceOf($dbms,$_SESSION['P_CLIENTE'], $_SESSION['SQ_PESSOA'], f(row1,'sq_menu'));
@@ -1398,7 +1398,7 @@ function Estrutura_Menu() {
                 $l_titulo=$l_titulo.' - '.f(row2,'nome');
                 if (f(row2,'filho')>0) {
                    $l_cont2=$l_cont2+1;
-                   ShowHTML('                <LI><A href="#"><IMG height=12 alt=">" src="/siw/files/'.$w_cliente.'/img/arrows.gif" width=8> '.f(row2,'nome').'</A> ');
+                   ShowHTML('                <LI><A href="#"><IMG height=12 alt=">" src="'.$conFileVirtual.$w_cliente.'/img/arrows.gif" width=8> '.f(row2,'nome').'</A> ');
                    ShowHTML('                <UL class=menu id=menu'.$l_cont.'_'.$l_cont1.'_'.$l_cont2.'>');
                    $l_RS3 = db_getLinkDataUser::getInstanceOf($dbms,$_SESSION['P_CLIENTE'], $_SESSION['SQ_PESSOA'], f(row2,'sq_menu'));
                    foreach($l_RS3 as $row3) {
@@ -1863,12 +1863,19 @@ function retornaNomePeriodo($p_inicio, $p_fim) {
 // =========================================================================
 // Função para retornar a strig 'Sim' ou 'Não'
 // -------------------------------------------------------------------------
-function retornaSimNao($chave) {
+function retornaSimNao($chave,$formato=null) {
   extract($GLOBALS);
-  switch ($chave) {
-    case 'S': return 'Sim';  break;
-    case 'N': return 'Não';  break;
-    default:  return 'Não';
+  if(strtoupper($formato)=='IMAGEM') {
+    switch ($chave) {
+      case 'S': return '<img src="'.$conImgOkNormal.'" border=0 width=15 height=15 align="center">';  break;
+      default:  return '&nbsp;';
+    }
+  } else {
+    switch ($chave) {
+      case 'S': return 'Sim';  break;
+      case 'N': return 'Não';  break;
+      default:  return 'Não';
+    }
   }
 }
 

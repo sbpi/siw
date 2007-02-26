@@ -78,20 +78,17 @@ function Imposto() {
   extract($GLOBALS);
   global $w_Disabled;
   $w_chave          = $_REQUEST['w_chave'];
-  $w_nome           = $_REQUEST['w_nome'];
-  $w_descricao      = $_REQUEST['w_descricao'];
-  $w_sigla          = $_REQUEST['w_sigla'];
-  $w_esfera         = $_REQUEST['w_esfera'];
-  $w_calculo        = $_REQUEST['w_calculo'];
-  $w_dia_pagamento  = $_REQUEST['w_dia_pagamento'];
-  $w_ativo          = $_REQUEST['w_ativo'];
-  Cabecalho();
-  ShowHTML('<HEAD>');
-  ShowHTML('<TITLE>'.$conSgSistema.' - Listagem de impostos</TITLE>');
-  if ($P1==2) ShowHTML('<meta http-equiv="Refresh" content="300; URL='.str_replace($w_dir,'',MontaURL('MESA')).'">');
-  Estrutura_CSS($w_cliente);
   if ($O=='') $O='L';
-  if ($O=='L') {
+  if ($w_troca>'' && $O!='E')  {
+    // Se for recarga da página
+    $w_nome           = $_REQUEST['w_nome'];
+    $w_descricao      = $_REQUEST['w_descricao'];
+    $w_sigla          = $_REQUEST['w_sigla'];
+    $w_esfera         = $_REQUEST['w_esfera'];
+    $w_calculo        = $_REQUEST['w_calculo'];
+    $w_dia_pagamento  = $_REQUEST['w_dia_pagamento'];
+    $w_ativo          = $_REQUEST['w_ativo'];
+  } elseif ($O=='L') {
     $RS = db_getImposto::getInstanceOf($dbms,null,$w_cliente);
     if ($p_ordena>'') { 
       $lista = explode(',',str_replace(' ',',',$p_ordena));
@@ -106,11 +103,16 @@ function Imposto() {
     $w_nome         = f($RS,'nome');
     $w_descricao    = f($RS,'descricao');
     $w_sigla        = f($RS,'sigla');
-    $w_esfera       = f($RS,'nm_esfera');
+    $w_esfera       = f($RS,'esfera');
     $w_calculo      = f($RS,'nm_calculo');
     $w_dia_pagamento= f($RS,'dia_pagamento');
     $w_ativo        = f($RS,'nm_ativo');
   } 
+  Cabecalho();
+  ShowHTML('<HEAD>');
+  ShowHTML('<TITLE>'.$conSgSistema.' - Listagem de impostos</TITLE>');
+  if ($P1==2) ShowHTML('<meta http-equiv="Refresh" content="300; URL='.str_replace($w_dir,'',MontaURL('MESA')).'">');
+  Estrutura_CSS($w_cliente);
   if (!(strpos('IAE',$O)===false)) {
     ScriptOpen('JavaScript');
     modulo();
@@ -221,7 +223,7 @@ function Imposto() {
         ShowHTML('            <input class="stb" type="submit" name="Botao" value="Atualizar">');
       }  
     } 
-    ShowHTML('            <input class="stb" type="button" onClick="history.back(1);" name="Botao" value="Cancelar">');
+    ShowHTML('            <input class="stb" type="button" onClick="location.href=\''.$w_pagina.$par.'&P1='.$P1.'&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP='.$TP.'&SG='.$SG.'&p_nome='.$p_nome.'&p_ativo='.$p_ativo.'&p_ordena='.$p_ordena.'\';" name="Botao" value="Cancelar">');
     ShowHTML('          </td>');
     ShowHTML('      </tr>');
     ShowHTML('    </table>');
@@ -590,8 +592,8 @@ function Grava() {
       } else {
         ScriptOpen('JavaScript');
         ShowHTML('  alert(\'Assinatura Eletrônica inválida!\');');
-        ShowHTML('  history.back(1);');
         ScriptClose();
+        RetornaFormulario('w_assinatura');
       } 
       break;
     case 'FNTPDOC':
@@ -605,8 +607,8 @@ function Grava() {
       } else {
         ScriptOpen('JavaScript');
         ShowHTML('  alert(\'Assinatura Eletrônica inválida!\');');
-        ShowHTML('  history.back(1);');
         ScriptClose();
+        RetornaFormulario('w_assinatura');
       } 
       break;
     case 'FNTPLANC':
@@ -620,8 +622,8 @@ function Grava() {
       } else {
         ScriptOpen('JavaScript');
         ShowHTML('  alert(\'Assinatura Eletrônica inválida!\');');
-        ShowHTML('  history.back(1);');
         ScriptClose();
+        RetornaFormulario('w_assinatura');
       } 
       break;
     default:

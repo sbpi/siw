@@ -1,10 +1,10 @@
 <?
-include_once($w_dir_volta.'classes/sp/db_getCountryList.php');
 // =========================================================================
 // Montagem da seleção de país
 // -------------------------------------------------------------------------
 function selecaoPais($label,$accesskey,$hint,$chave,$chaveAux,$campo,$restricao,$atributo) {
   extract($GLOBALS);
+  include_once($w_dir_volta.'classes/sp/db_getCountryList.php');
   if ($restricao=='INDICADOR') $RS = db_getCountryList::getInstanceOf($dbms, $restricao, $chaveAux, 'S', null);
   else $RS = db_getCountryList::getInstanceOf($dbms, $restricao, $chaveAux, null, null);
   $RS = SortArray($RS,'padrao','desc','nome','asc');

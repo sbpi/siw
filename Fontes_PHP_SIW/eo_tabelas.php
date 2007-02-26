@@ -60,6 +60,7 @@ $w_assinatura   = strtoupper($_REQUEST['w_assinatura']);
 $w_pagina       = 'eo_tabelas.php?par=';
 $w_Disabled     = 'ENABLED';
 $w_dir_volta    = '';
+$w_troca        = $_REQUEST['w_troca'];
 
 if ($O=='') $O='L';
 
@@ -94,7 +95,10 @@ function AreaAtuacao(){
   $p_ordena = strtoupper($_REQUEST['p_ordena']);
   $RS = db_getMenuData::getInstanceOf($dbms,$w_menu);
   $w_libera_edicao = f($RS,'libera_edicao');
-  if ($O=='L') {
+  if ($w_troca>'' && $O!='E') {
+    $w_nome   = $_REQUEST['w_nome'];
+    $w_ativo  = $_REQUEST['w_ativo'];
+  } elseif ($O=='L') {
     $RS = db_getEOAAtuac::getInstanceOf($dbms,$w_cliente,$p_nome,$p_ativo);
     if ($p_ordena>'') { 
       $RS = SortArray($RS,$p_ordena,'asc');
@@ -130,7 +134,9 @@ function AreaAtuacao(){
   ValidateClose();
   ScriptClose();
   ShowHTML('</HEAD>');
-  if (!(strpos('IAE',$O)===false)) {
+  if ($w_troca>'') {
+    BodyOpen('onLoad=\'document.Form.'.$w_troca.'.focus()\';');
+  } elseif (!(strpos('IAE',$O)===false)) {
     if ($O=='E') {
       BodyOpen('onLoad=\'document.Form.w_assinatura.focus()\';');
     } else {
@@ -282,7 +288,10 @@ function TipoUnidade() {
   $RS = db_getMenuData::getInstanceOf($dbms,$w_menu);
   $w_libera_edicao=f($RS,'libera_edicao');
 
-  if ($O=='L') {
+  if ($w_troca>'' && $O!='E') {
+    $w_nome     = $_REQUEST['w_nome'];
+    $w_ativo    = $_REQUEST['w_ativo'];
+  } elseif ($O=='L') {
     $RS = db_getUnitTypeList::getInstanceOf($dbms,$w_cliente,$p_nome,$p_ativo);
     if ($p_ordena>'') { 
       $RS = SortArray($RS,$p_ordena,'asc');
@@ -319,7 +328,9 @@ function TipoUnidade() {
     ScriptClose();
   } 
   ShowHTML('</HEAD>');
-  if (!(strpos('IAE',$O)===false)) {
+  if ($w_troca>'') {
+    BodyOpen('onLoad=\'document.Form.'.$w_troca.'.focus()\';');
+  } elseif (!(strpos('IAE',$O)===false)) {
     if ($O=='E') {
       BodyOpen('onLoad=\'document.Form.w_assinatura.focus()\';');
     } else {
@@ -465,7 +476,13 @@ function TipoPosto() {
   extract($GLOBALS);
   global $w_Disabled;
   $w_chave=$_REQUEST['w_chave'];
-  if ($O=='L') {
+  if ($w_troca>'' && $O!='E') {
+    $w_nome      = $_REQUEST['w_nome'];
+    $w_sigla     = $_REQUEST['w_sigla'];
+    $w_descricao = $_REQUEST['w_descricao'];
+    $w_padrao    = $_REQUEST['w_padrao'];
+    $w_ativo     = $_REQUEST['w_ativo'];
+  } elseif ($O=='L') {
     $RS = db_getTipoPostoList::getInstanceOf($dbms,$w_cliente,null,null);
   } elseif ($O=='A' || $O=='E') {
     $RS = db_getTipoPostoList::getInstanceOf($dbms,$w_cliente,$w_chave,null);
@@ -501,7 +518,9 @@ function TipoPosto() {
     ScriptClose();
   } 
   ShowHTML('</HEAD>');
-  if (!(strpos('IAE',$O)===false)) { 
+  if ($w_troca>'') {
+    BodyOpen('onLoad=\'document.Form.'.$w_troca.'.focus()\';');
+  } elseif (!(strpos('IAE',$O)===false)) { 
     if ($O=='E') {
       BodyOpen('onLoad=\'document.Form.w_assinatura.focus()\';');
     } else {
@@ -627,8 +646,8 @@ function Grava() {
       } else {
         ScriptOpen('JavaScript');
         ShowHTML('  alert(\'Assinatura Eletrônica inválida!\');');
-        ShowHTML('  history.back(1);');
         ScriptClose();
+        RetornaFormulario('w_assinatura');
       } 
       break;
     case 'EOAREAATU':
@@ -646,8 +665,8 @@ function Grava() {
       } else {
         ScriptOpen('JavaScript');
         ShowHTML('  alert(\'Assinatura Eletrônica inválida!\');');
-        ShowHTML('  history.back(1);');
         ScriptClose();
+        RetornaFormulario('w_assinatura');
       } 
       break;
     case 'EOTPPOSTO':
@@ -662,8 +681,8 @@ function Grava() {
       } else {
         ScriptOpen('JavaScript');
         ShowHTML('  alert(\'Assinatura Eletrônica inválida!\');');
-        ShowHTML('  history.back(1);');
         ScriptClose();
+        RetornaFormulario('w_assinatura');
       } 
       break;
     default:

@@ -182,7 +182,8 @@ function TipoDespacho() {
       ShowHTML('      <tr bgcolor="'.$conTrBgColor.'"><td colspan=4 align="center"><b>Não foram encontrados registros.</b></td></tr>');
     } else {
       // Lista os registros selecionados para listagem
-      foreach ($RS as $row) {
+      $RS1 = array_slice($RS, (($P3-1)*$P4), $P4);
+      foreach ($RS1 as $row) {
         $w_cor = ($w_cor==$conTrBgColor || $w_cor=='') ? $w_cor=$conTrAlternateBgColor : $w_cor=$conTrBgColor;
         ShowHTML('      <tr bgcolor="'.$w_cor.'" valign="top">');
         ShowHTML('        <td>'.f($row,'nome').'</td>');
@@ -198,6 +199,9 @@ function TipoDespacho() {
     ShowHTML('      </center>');
     ShowHTML('    </table>');
     ShowHTML('  </td>');
+    ShowHTML('</tr>');
+    ShowHTML('<tr><td align="center" colspan=3>');
+    MontaBarra($w_dir.$w_pagina.$par.'&R='.$w_pagina.$par.'&O='.$O.'&P1='.$P1.'&P2='.$P2.'&TP='.$TP.'&SG='.$SG.MontaFiltro('GET'),ceil(count($RS)/$P4),$P3,$P4,count($RS));
     ShowHTML('</tr>');
   } elseif (!(strpos('IAEV',$O)===false)) {
     if (!(strpos('EV',$O)===false)) $w_Disabled=' DISABLED ';
@@ -317,7 +321,8 @@ function EspecieDocumento() {
       ShowHTML('      <tr bgcolor="'.$conTrBgColor.'"><td colspan=4 align="center"><b>Não foram encontrados registros.</b></td></tr>');
     } else {
       // Lista os registros selecionados para listagem
-      foreach ($RS as $row) {
+      $RS1 = array_slice($RS, (($P3-1)*$P4), $P4);
+      foreach ($RS1 as $row) {
         $w_cor = ($w_cor==$conTrBgColor || $w_cor=='') ? $w_cor=$conTrAlternateBgColor : $w_cor=$conTrBgColor;
         ShowHTML('      <tr bgcolor="'.$w_cor.'" valign="top">');
         ShowHTML('        <td>'.f($row,'nome').'</td>');
@@ -333,6 +338,9 @@ function EspecieDocumento() {
     ShowHTML('      </center>');
     ShowHTML('    </table>');
     ShowHTML('  </td>');
+    ShowHTML('</tr>');
+    ShowHTML('<tr><td align="center" colspan=3>');
+    MontaBarra($w_dir.$w_pagina.$par.'&R='.$w_pagina.$par.'&O='.$O.'&P1='.$P1.'&P2='.$P2.'&TP='.$TP.'&SG='.$SG.MontaFiltro('GET'),ceil(count($RS)/$P4),$P3,$P4,count($RS));
     ShowHTML('</tr>');
   } elseif (!(strpos('IAEV',$O)===false)) {
     if (!(strpos('EV',$O)===false)) {
@@ -386,6 +394,7 @@ function Unidade() {
 
   if ($w_troca>'' && $O!='E') {
     // Se for recarga da página
+    $w_unidade_pai        = $_REQUEST['w_unidade_pai'];
     $w_nome               = $_REQUEST['w_nome'];
     $w_sigla              = $_REQUEST['w_sigla'];
     $w_registra_documento = $_REQUEST['w_registra_documento'];
@@ -400,11 +409,12 @@ function Unidade() {
   } elseif ($O=='L') {
     // Recupera todos os registros para a listagem
     $RS = db_getUnidade_PA::getInstanceOf($dbms,$w_cliente,null,null,null);
-    $RS = SortArray($RS,'nome','asc');
+    $RS = SortArray($RS,'ordena','asc');
   } elseif (!(strpos('AEV',$O)===false)) {
     // Recupera os dados do endereço informado
     $RS = db_getUnidade_PA::getInstanceOf($dbms,$w_cliente,$w_chave,null,null);
     foreach ($RS as $row) {$RS = $row; break;}
+    $w_unidade_pai        = f($RS,'sq_unidade_pai');
     $w_nome               = f($RS,'nome');
     $w_sigla              = f($RS,'sigla');
     $w_registra_documento = f($RS,'registra_documento');
@@ -423,15 +433,22 @@ function Unidade() {
     ScriptOpen('JavaScript');
     FormataCNPJ();
     ValidateOpen('Validacao');
-    if (!(strpos('IA',$O)===false)) {
+    if (strpos('IA',$O)!==false) {
       if ($O=='I') {
-        Validate('w_chave','Unidade','1','1','1','50','1','1');
+        Validate('w_chave','Unidade','SELECT','1','1','18','','1');
       } 
-      Validate('w_prefixo','Prefixo','1','1','1','5','1','1');
-      Validate('w_nr_documento','Número de criação do documento','1','1','1','10','','1');
-      Validate('w_nr_tramite','Número da guia de remessa','1','','1','5','','1');
-      Validate('w_nr_transferencia','Número da guia de transferência','1','','1','5','','1');
-      Validate('w_nr_eliminacao','Número da guia de eliminação','1','','1','5','','1');
+      ShowHTML('  if (theForm.w_chave.value==theForm.w_unidade_pai[theForm.w_unidade_pai.selectedIndex].value) {');
+      ShowHTML('     alert(\'Não é permitido subordinar uma unidade a si mesma!\'); ');
+      ShowHTML('     theForm.w_unidade_pai.focus(); ');
+      ShowHTML('     return false; ');
+      ShowHTML('  }; ');
+      if (nvl($w_unidade_pai,'')=='') {
+        Validate('w_prefixo','Prefixo','1','1','5','5','1','1');
+        Validate('w_nr_documento','Número de criação do documento','1','1','1','10','','1');
+        Validate('w_nr_tramite','Número da guia de remessa','1','','1','5','','1');
+        Validate('w_nr_transferencia','Número da guia de transferência','1','','1','5','','1');
+        Validate('w_nr_eliminacao','Número da guia de eliminação','1','','1','5','','1');
+      }
       Validate('w_assinatura','Assinatura Eletrônica','1','1','6','30','1','1');
     } elseif ($O=='E') {
       Validate('w_assinatura','Assinatura Eletrônica','1','1','6','30','1','1');
@@ -448,8 +465,10 @@ function Unidade() {
   ShowHTML('<BASE HREF="'.$conRootSIW.'">');
   if ($w_troca>'') {
     BodyOpen('onLoad=\'document.Form.'.$w_troca.'.focus()\';');
-  } elseif (!(strpos('A',$O)===false)) {
-    BodyOpen('onLoad=\'document.Form.w_descricao.focus()\';');
+  } elseif (strpos('I',$O)!==false) {
+    BodyOpen('onLoad=\'document.Form.w_chave.focus()\';');
+  } elseif (strpos('A',$O)!==false) {
+    BodyOpen('onLoad=\'document.Form.w_unidade_pai.focus()\';');
   } elseif ($O=='E') {
     BodyOpen('onLoad=\'document.Form.w_assinatura.focus()\';');
   } else {
@@ -466,27 +485,48 @@ function Unidade() {
     ShowHTML('<tr><td align="center" colspan=3>');
     ShowHTML('    <TABLE WIDTH="100%" bgcolor="'.$conTableBgColor.'" BORDER="'.$conTableBorder.'" CELLSPACING="'.$conTableCellSpacing.'" CELLPADDING="'.$conTableCellPadding.'" BorderColorDark="'.$conTableBorderColorDark.'" BorderColorLight="'.$conTableBorderColorLight.'">');
     ShowHTML('        <tr bgcolor="'.$conTrBgColor.'" align="center">');
-    ShowHTML('          <td><b>Unidade</td>');
-    ShowHTML('          <td><b>Registra documentos</td>');
-    ShowHTML('          <td><b>Autua processos</td>');
+    ShowHTML('          <td colspan=2 rowspan=2><b>Unidade</td>');
+    ShowHTML('          <td colspan=5><b>Numeração automática</td>');
+    ShowHTML('          <td rowspan=2><b>Registra<br>documentos</td>');
+    ShowHTML('          <td rowspan=2><b>Autua<br>processos</td>');
+    ShowHTML('          <td rowspan=2><b>Arquivo<br>setorial</td>');
+    ShowHTML('          <td rowspan=2><b>Ativo</td>');
+    ShowHTML('          <td rowspan=2><b>Operações</td>');
+    ShowHTML('        </tr>');
+    ShowHTML('        <tr bgcolor="'.$conTrBgColor.'" align="center">');
     ShowHTML('          <td><b>Prefixo</td>');
-    ShowHTML('          <td><b>Arquivo setorial</td>');
-    ShowHTML('          <td><b>Ativo</td>');
-    ShowHTML('          <td><b>Operações</td>');
+    ShowHTML('          <td><b>Doc.</td>');
+    ShowHTML('          <td><b>Remessa</td>');
+    ShowHTML('          <td><b>Transf.</td>');
+    ShowHTML('          <td><b>Elim.</td>');
     ShowHTML('        </tr>');
     if (count($RS)<=0) {
       // Se não foram selecionados registros, exibe mensagem
       ShowHTML('      <tr bgcolor="'.$conTrBgColor.'"><td colspan=7 align="center"><b>Não foram encontrados registros.</b></td></tr>');
     } else {
       // Lista os registros selecionados para listagem
-      foreach ($RS as $row) {
+      $RS1 = array_slice($RS, (($P3-1)*$P4), $P4);
+      foreach ($RS1 as $row) {
         $w_cor = ($w_cor==$conTrBgColor || $w_cor=='') ? $w_cor=$conTrAlternateBgColor : $w_cor=$conTrBgColor;
         ShowHTML('      <tr bgcolor="'.$w_cor.'" valign="top">');
-        ShowHTML('        <td>'.f($row,'nome').' ('.f($row,'sigla').')</td>');
-        ShowHTML('        <td align="center">'.f($row,'nm_registra_documento').'</td>');
-        ShowHTML('        <td align="center">'.f($row,'nm_autua_processo').'</td>');
-        ShowHTML('        <td>'.f($row,'prefixo').'</td>');
-        ShowHTML('        <td align="center">'.f($row,'nm_arquivo_setorial').'</td>');
+        if (nvl(f($row,'sq_unidade_pai'),'')=='') {
+          ShowHTML('        <td colspan=2>'.f($row,'nome').' ('.f($row,'sigla').')</td>');
+          ShowHTML('        <td align="center">'.f($row,'prefixo').'</td>');
+          ShowHTML('        <td align="right">'.f($row,'numero_documento').'</td>');
+          ShowHTML('        <td align="right">'.f($row,'numero_tramite').'</td>');
+          ShowHTML('        <td align="right">'.f($row,'numero_transferencia').'</td>');
+          ShowHTML('        <td align="right">'.f($row,'numero_eliminacao').'</td>');
+        } else {
+          ShowHTML('        <td width="1%">&rarr;<td>'.f($row,'nome').' ('.f($row,'sigla').')</td>');
+          ShowHTML('        <td align="center">"</td>');
+          ShowHTML('        <td align="right">"</td>');
+          ShowHTML('        <td align="right">"</td>');
+          ShowHTML('        <td align="right">"</td>');
+          ShowHTML('        <td align="right">"</td>');
+        }
+        ShowHTML('        <td align="center">'.retornaSimNao(f($row,'registra_documento'),'IMAGEM').'</td>');
+        ShowHTML('        <td align="center">'.retornaSimNao(f($row,'autua_processo'),'IMAGEM').'</td>');
+        ShowHTML('        <td align="center">'.retornaSimNao(f($row,'arquivo_setorial'),'IMAGEM').'</td>');
         ShowHTML('        <td align="center">'.f($row,'nm_ativo').'</td>');
         ShowHTML('        <td align="top" nowrap>');
         ShowHTML('          <A class="HL" HREF="'.$w_dir.$w_pagina.$par.'&R='.$w_pagina.$par.'&O=A&w_chave='.f($row,'chave').'&P1='.$P1.'&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP='.$TP.'&SG='.$SG.'">Alterar</A>&nbsp');
@@ -498,6 +538,9 @@ function Unidade() {
     ShowHTML('      </center>');
     ShowHTML('    </table>');
     ShowHTML('  </td>');
+    ShowHTML('</tr>');
+    ShowHTML('<tr><td align="center" colspan=3>');
+    MontaBarra($w_dir.$w_pagina.$par.'&R='.$w_pagina.$par.'&O='.$O.'&P1='.$P1.'&P2='.$P2.'&TP='.$TP.'&SG='.$SG.MontaFiltro('GET'),ceil(count($RS)/$P4),$P3,$P4,count($RS));
     ShowHTML('</tr>');
   } elseif (!(strpos('IAEV',$O)===false)) {
     if (!(strpos('EV',$O)===false)) {
@@ -512,31 +555,44 @@ function Unidade() {
     } 
     ShowHTML('<tr bgcolor="'.$conTrBgColor.'"><td align="center">');
     ShowHTML('    <table width="97%" border="0">');
-    ShowHTML('      <tr><td><table border="0" width="100%" cellspacing=0 cellpadding=0><tr valign="top">');
+    ShowHTML('      <tr><td colspan=3><table border="0" width="100%" cellspacing=0 cellpadding=0><tr valign="top">');
     if ($O=='I') {
       SelecaoUnidade('<U>U</U>nidade:','U',null,$w_chave,null,'w_chave',null,null);
     } else {
-      ShowHTML('        <tr><td>Unidade:<br><b>'.$w_nome.' ('.$w_sigla.')</b><br><br>');
+      ShowHTML('           <td>Unidade:<br><b>'.$w_nome.' ('.$w_sigla.')</b><br><br>');
     } 
     ShowHTML('           </table>');
-    ShowHTML('      <tr>');
-    MontaRadioSN('<b>Registra documentos</b>?',$w_registra_documento,'w_registra_documento');
-    MontaRadioNS('<b>Autua processos</b>?',$w_autua_processo,'w_autua_processo');
-    ShowHTML('      <tr>');
-    ShowHTML('           <td colspan=2><b><u>P</u>refixo:</b><br><input '.$w_Disabled.' accesskey="P" type="text" name="w_prefixo" class="sti" SIZE="5" MAXLENGTH="5" VALUE="'.$w_prefixo.'"></td>');
-    ShowHTML('      <tr>');
-    ShowHTML('           <td><b>Número de criação do <u>d</u>ocumento:</b><br><input '.$w_Disabled.' accesskey="D" type="text" name="w_nr_documento" class="sti" SIZE="10" MAXLENGTH="10" VALUE="'.$w_nr_documento.'"></td>');
-    ShowHTML('           <td><b>Número da guia de <u>r</u>emessa:</b><br><input '.$w_Disabled.' accesskey="R" type="text" name="w_nr_tramite" class="sti" SIZE="5" MAXLENGTH="5" VALUE="'.$w_nr_tramite.'"></td>');
-    ShowHTML('      <tr>');
-    ShowHTML('           <td><b>Número da guia de <u>t</u>ransferência:</b><br><input '.$w_Disabled.' accesskey="T" type="text" name="w_nr_transferencia" class="sti" SIZE="5" MAXLENGTH="5" VALUE="'.$w_nr_transferencia.'"></td>');    
-    ShowHTML('           <td><b>Número da guia de <u>e</u>eliminação:</b><br><input '.$w_Disabled.' accesskey="E" type="text" name="w_nr_eliminacao" class="sti" SIZE="5" MAXLENGTH="5" VALUE="'.$w_nr_eliminacao.'"></td>');    
-    ShowHTML('      <tr>');
-    MontaRadioNS('<b>Arquivo setorial</b>?',$w_arquivo_setorial,'w_arquivo_setorial');
-    MontaRadioSN('<b>Ativo</b>?',$w_ativo,'w_ativo');
-    ShowHTML('      <tr><td><table border="0" width="100%" cellspacing=0 cellpadding=0><tr valign="top">');
+    ShowHTML('      <tr><td colspan=3><table border="0" width="100%" cellspacing=0 cellpadding=0><tr valign="top">');
+    SelecaoUnidade('<U>U</U>nidade pai:','U','Deixe em branco apenas se a unidade for numeradora.',$w_unidade_pai,null,'w_unidade_pai','MOD_PA_PAI','onChange="document.Form.action=\''.$w_dir.$w_pagina.$par.'\'; document.Form.O.value=\''.$O.'\'; document.Form.w_troca.value=\'w_unidade_pai\'; document.Form.submit();"');
     ShowHTML('           </table>');
+    ShowHTML('      <tr valign="top">');
+    // Apenas unidades de nível zero (sem pai) podem ter controle automático de numeração
+    if (nvl($w_unidade_pai,'')=='') {
+      ShowHTML('<INPUT type="hidden" name="w_registra_documento" value="S">');
+      ShowHTML('<INPUT type="hidden" name="w_autua_processo" value="S">');
+      ShowHTML('<INPUT type="hidden" name="w_arquivo_setorial" value="S">');
+      ShowHTML('           <td><b>Registra documentos</b>?<br><b>Sim</b><br><br>');
+      ShowHTML('           <td><b>Autua processos</b>?<br><b>Sim</b><br><br>');
+      ShowHTML('           <td><b>Arquivo setorial</b>?<br><b>Sim</b><br><br>');
+      ShowHTML('      <tr><td align="center" colspan="3" height="1" bgcolor="#000000">');
+      ShowHTML('      <tr><td colspan="3"><b>DADOS PARA NUMERAÇÃO AUTOMÁTICA</b></td>');
+      ShowHTML('      <tr valign="top">');
+      ShowHTML('        <td title="Informe um número com 5 posições."><b><u>P</u>refixo:</b><br><input '.$w_Disabled.' accesskey="P" type="text" name="w_prefixo" class="sti" SIZE="5" MAXLENGTH="5" VALUE="'.$w_prefixo.'"></td>');
+      ShowHTML('        <td title="Último número utilizado para numeração de documentos, ou zero se não existir nenhum."><b>Número para <u>d</u>ocumentos:</b><br><input '.$w_Disabled.' accesskey="D" type="text" name="w_nr_documento" class="sti" SIZE="10" MAXLENGTH="10" VALUE="'.$w_nr_documento.'"></td>');
+      ShowHTML('        <td title="Último número utilizado para numeração de guias de remessa de documentos e processos, ou zero se não existir nenhum."><b>Número para guias de <u>r</u>emessa:</b><br><input '.$w_Disabled.' accesskey="R" type="text" name="w_nr_tramite" class="sti" SIZE="5" MAXLENGTH="5" VALUE="'.$w_nr_tramite.'"></td>');
+      ShowHTML('      <tr valign="top">');
+      ShowHTML('        <td></td>');    
+      ShowHTML('        <td title="Último número utilizado para guias de transferência para o arquivo setorial/central, ou zero se não existir nenhum."><b>Número para guias de <u>t</u>ransferência:</b><br><input '.$w_Disabled.' accesskey="T" type="text" name="w_nr_transferencia" class="sti" SIZE="5" MAXLENGTH="5" VALUE="'.$w_nr_transferencia.'"></td>');    
+      ShowHTML('        <td title="Último número utilizado para guias de eliminação, ou zero se não existir nenhum."><b>Número para guias de <u>e</u>liminação:</b><br><input '.$w_Disabled.' accesskey="E" type="text" name="w_nr_eliminacao" class="sti" SIZE="5" MAXLENGTH="5" VALUE="'.$w_nr_eliminacao.'"></td>');    
+    } else {
+      MontaRadioSN('<b>Registra documentos</b>?',$w_registra_documento,'w_registra_documento');
+      MontaRadioNS('<b>Autua processos</b>?',$w_autua_processo,'w_autua_processo');
+      MontaRadioNS('<b>Arquivo setorial</b>?',$w_arquivo_setorial,'w_arquivo_setorial');
+    }
+    ShowHTML('      <tr valign="top">');
+    MontaRadioSN('<b>Ativo</b>?',$w_ativo,'w_ativo');
     ShowHTML('      <tr><td align="LEFT"><b><U>A</U>ssinatura Eletrônica:<BR> <INPUT ACCESSKEY="A" class="sti" type="PASSWORD" name="w_assinatura" size="30" maxlength="30" value=""></td></tr>');
-    ShowHTML('      <tr><td colspan="2" align="center"><hr>');
+    ShowHTML('      <tr><td colspan="3" align="center"><hr>');
     if ($O=='E') {
       ShowHTML('   <input class="STB" type="submit" name="Botao" value="Excluir">');
     } else {
@@ -644,7 +700,8 @@ function NaturezaDoc() {
       ShowHTML('      <tr bgcolor="'.$conTrBgColor.'"><td colspan=4 align="center"><b>Não foram encontrados registros.</b></td></tr>');
     } else {
       // Lista os registros selecionados para listagem
-      foreach ($RS as $row) {
+      $RS1 = array_slice($RS, (($P3-1)*$P4), $P4);
+      foreach ($RS1 as $row) {
         $w_cor = ($w_cor==$conTrBgColor || $w_cor=='') ? $w_cor=$conTrAlternateBgColor : $w_cor=$conTrBgColor;
         ShowHTML('      <tr bgcolor="'.$w_cor.'" valign="top">');
         ShowHTML('        <td>'.f($row,'nome').'</td>');
@@ -660,6 +717,9 @@ function NaturezaDoc() {
     ShowHTML('      </center>');
     ShowHTML('    </table>');
     ShowHTML('  </td>');
+    ShowHTML('</tr>');
+    ShowHTML('<tr><td align="center" colspan=3>');
+    MontaBarra($w_dir.$w_pagina.$par.'&R='.$w_pagina.$par.'&O='.$O.'&P1='.$P1.'&P2='.$P2.'&TP='.$TP.'&SG='.$SG.MontaFiltro('GET'),ceil(count($RS)/$P4),$P3,$P4,count($RS));
     ShowHTML('</tr>');
   } elseif (!(strpos('IAEV',$O)===false)) {
     if (!(strpos('EV',$O)===false)) $w_Disabled=' DISABLED ';
@@ -790,7 +850,8 @@ function TipoGuarda() {
       ShowHTML('      <tr bgcolor="'.$conTrBgColor.'"><td colspan=7 align="center"><b>Não foram encontrados registros.</b></td></tr>');
     } else {
       // Lista os registros selecionados para listagem
-      foreach ($RS as $row) {
+      $RS1 = array_slice($RS, (($P3-1)*$P4), $P4);
+      foreach ($RS1 as $row) {
         $w_cor = ($w_cor==$conTrBgColor || $w_cor=='') ? $w_cor=$conTrAlternateBgColor : $w_cor=$conTrBgColor;
         ShowHTML('      <tr bgcolor="'.$w_cor.'" valign="top">');
         ShowHTML('        <td>'.f($row,'sigla').'</td>');
@@ -809,6 +870,9 @@ function TipoGuarda() {
     ShowHTML('      </center>');
     ShowHTML('    </table>');
     ShowHTML('  </td>');
+    ShowHTML('</tr>');
+    ShowHTML('<tr><td align="center" colspan=3>');
+    MontaBarra($w_dir.$w_pagina.$par.'&R='.$w_pagina.$par.'&O='.$O.'&P1='.$P1.'&P2='.$P2.'&TP='.$TP.'&SG='.$SG.MontaFiltro('GET'),ceil(count($RS)/$P4),$P3,$P4,count($RS));
     ShowHTML('</tr>');
   } elseif (!(strpos('IAEV',$O)===false)) {
     if (!(strpos('EV',$O)===false)) $w_Disabled=' DISABLED ';
@@ -992,8 +1056,8 @@ function Assunto() {
     ValidateClose();
     ScriptClose();
   } 
-  ShowHTML('</HEAD>');
   ShowHTML('<BASE HREF="'.$conRootSIW.'">');  
+  ShowHTML('</HEAD>');
   if ($w_troca>'') {
     BodyOpen('onLoad=document.Form.'.$w_troca.'.focus();');
   } elseif ($O=='C' || $O=='I' || $O=='A') {
@@ -1008,22 +1072,18 @@ function Assunto() {
   Estrutura_Corpo_Abre();
   Estrutura_Texto_Abre();
   ShowHTML('<table border="0" cellpadding="0" cellspacing="0" width="100%">');
-  ShowHTML('<tr bgcolor="'.$conTrBgColor.'"><td>');
-  ShowHTML('    <table width="99%" border="0">');
   if ($O=='L') {
     // Exibe a quantidade de registros apresentados na listagem e o cabeçalho da tabela de listagem
+    ShowHTML('<tr><td><table width="99%" border="0">');
     ShowHTML('<tr><td><a accesskey="I" class="SS" href="'.$w_dir.$w_pagina.$par.'&R='.$w_pagina.$par.'&O=I&w_chave='.$w_chave.'&P1='.$P1.'&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP='.$TP.'&SG='.$SG.'"><u>I</u>ncluir</a>&nbsp;');
     ShowHTML('    <td align="right"><b>Registros existentes: '.count($RS));
-    ShowHTML('<tr><td align="center" colspan=3>');
+    ShowHTML('<tr bgcolor="'.$conTrBgColor.'"><td align="center" colspan=3>');
     ShowHTML('    <TABLE WIDTH="100%" bgcolor="'.$conTableBgColor.'" BORDER="'.$conTableBorder.'" CELLSPACING="'.$conTableCellSpacing.'" CELLPADDING="'.$conTableCellPadding.'" BorderColorDark="'.$conTableBorderColorDark.'" BorderColorLight="'.$conTableBorderColorLight.'">');
     ShowHTML('        <tr bgcolor="'.$conTrBgColor.'" align="center">');
     ShowHTML('          <td><b>Código</td>');
     ShowHTML('          <td><b>Descrição</td>');
-    ShowHTML('          <td>&nbsp;</td>');    
     ShowHTML('          <td><b>Corrente</td>');
-    ShowHTML('          <td>&nbsp;</td>');    
     ShowHTML('          <td><b>Intermediária</td>');
-    ShowHTML('          <td>&nbsp;</td>');    
     ShowHTML('          <td><b>Final</td>');
     ShowHTML('          <td><b>Destinação final</td>');
     ShowHTML('          <td><b>Ativo</td>');
@@ -1070,14 +1130,15 @@ function Assunto() {
     ShowHTML('  </td>');
     ShowHTML('</tr>');
   } elseif (!(strpos('IAEV',$O)===false)) {
+    ShowHTML('<tr><td><table width="99%" border="0" bgcolor="'.$conTrBgColor.'">');
     if (!(strpos('EV',$O)===false)) $w_Disabled=' DISABLED ';
     AbreForm('Form',$w_dir.$w_pagina.'Grava','POST','return(Validacao(this));',null,$P1,$P2,$P3,$P4,$TP,$SG,$R,$O);
     ShowHTML('<INPUT type="hidden" name="w_chave" value="'.$w_chave.'">');
     ShowHTML('<INPUT type="hidden" name="w_troca" value="">');
     ShowHTML('  <tr valign="top">');
-    ShowHTML('      <tr>');
+    ShowHTML('      <tr><td colspan=2><table border=0 cellpadding=0 cellspacing=0><tr><td>');
     SelecaoAssunto('Assun<u>t</u>o pai:','T',null,$w_chave_pai,null,'w_chave_pai',null,'SUBGRUPO',null);
-    ShowHTML('      </tr>');
+    ShowHTML('      </table><tr><td>');
     ShowHTML('      <tr><td colspan="2"><b><u>C</u>ódigo:</b><br><input '.$w_Disabled.' accesskey="C" type="text" name="w_codigo" class="STI" SIZE="10" MAXLENGTH="10" VALUE="'.$w_codigo.'" title="Informe o código do assunto."></td>');
     ShowHTML('      <tr><td colspan="2"><b><u>D</u>escrição:</b><br><textarea '.$w_Disabled.' accesskey="D" name="w_descricao" class="STI" ROWS=5 cols=75 title="Descreva o assunto.">'.$w_descricao.'</TEXTAREA></td>');
     ShowHTML('      <tr><td colspan="2"><b>D<u>e</u>talhamento:</b><br><textarea '.$w_Disabled.' accesskey="E" name="w_detalhamento" class="STI" ROWS=5 cols=75 title="Detalhe o assunto.">'.$w_detalhamento.'</TEXTAREA></td>');
@@ -1122,14 +1183,11 @@ function AssuntoLinha($l_chave,$l_codigo,$l_descricao,$l_ds_corrente,$l_sg_corre
   $l_html=$l_html.chr(13).'       <tr bgcolor="'.$l_cor.'" valign="top">';
   $l_html=$l_html.chr(13).'        <td>'.$l_codigo.'</b>';
   $l_html=$l_html.chr(13).'        <td>'.$l_descricao.'</b>';
-  $l_html=$l_html.chr(13).'        <td align="right">'.(($l_sg_corrente!='ANOS')?'':$l_corrente_ano).'</td>';  
-  $l_html=$l_html.chr(13).'        <td title="'.$l_ds_corrente.'">'.$l_sg_corrente.'</b>';
-  $l_html=$l_html.chr(13).'        <td align="right">'.(($l_sg_intermed!='ANOS')?'':$l_intermed_ano).'</td>';
-  $l_html=$l_html.chr(13).'        <td title="'.$l_ds_intermed.'">'.$l_sg_intermed.'</b>';
-  $l_html=$l_html.chr(13).'        <td align="right">'.(($l_sg_final!='ANOS')?'':$l_final_ano).'</td>';  
-  $l_html=$l_html.chr(13).'        <td title="'.$l_ds_final.'">'.$l_sg_final.'</b>';
-  $l_html=$l_html.chr(13).'        <td title="'.$l_ds_destinacao.'">'.$l_sg_destinacao.'</b>';
-  $l_html=$l_html.chr(13).'        <td>'.$l_ativo.'</b>';
+  $l_html=$l_html.chr(13).'        <td nowrap align="center" title="'.$l_ds_corrente.'">'.(($l_sg_corrente=='ANOS')? $l_corrente_ano.' '.$l_sg_corrente:$l_sg_corrente).'</td>';  
+  $l_html=$l_html.chr(13).'        <td nowrap align="center" title="'.$l_ds_intermed.'">'.(($l_sg_intermed=='ANOS')? $l_intermed_ano.' '.$l_sg_intermed:$l_sg_intermed).'</td>';
+  $l_html=$l_html.chr(13).'        <td nowrap align="center" title="'.$l_ds_final.'">'.(($l_sg_final=='ANOS')   ? $l_final_ano.' '.$l_sg_final:$l_sg_final).'</td>';  
+  $l_html=$l_html.chr(13).'        <td nowrap align="center" title="'.$l_ds_destinacao.'">'.$l_sg_destinacao.'</b>';
+  $l_html=$l_html.chr(13).'        <td align="center">'.$l_ativo.'</b>';
   if ($l_oper == 'S') {
     $l_html=$l_html.chr(13).'        <td nowrap>';
     $l_html=$l_html.chr(13).'          <A class="HL" HREF="'.$w_dir.$w_pagina.$par.'&R='.$w_pagina.$par.'&O=A&w_chave='.$l_chave.'&P1='.$P1.'&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP='.$TP.'&SG='.$SG.'">Alterar</A>&nbsp';
@@ -1239,30 +1297,35 @@ function Grava() {
       break;
     case 'PAUNIDADE':
       // Verifica se a Assinatura Eletrônica é válida
-    if (verificaAssinaturaEletronica($_SESSION['USERNAME'],strtoupper($_REQUEST['w_assinatura'])) || $w_assinatura=='') {
-        if ($O=='I') {
-          $RS = db_getUnidade_PA::getInstanceOf($dbms,$w_cliente,$_REQUEST['w_chave'],null,null,null);
-          if (count($RS)==0) {
-            dml_putUnidade_PA::getInstanceOf($dbms,$O,$w_cliente,Nvl($_REQUEST['w_chave'],''),$_REQUEST['w_registra_documento'],
-                $_REQUEST['w_autua_processo'],$_REQUEST['w_prefixo'],$_REQUEST['w_nr_documento'],$_REQUEST['w_nr_tramite'],$_REQUEST['w_nr_transferencia'],
-                $_REQUEST['w_nr_eliminacao'],$_REQUEST['w_arquivo_setorial'],$_REQUEST['w_ativo']);
-            ScriptOpen('JavaScript');
-            ShowHTML('  location.href=\''.montaURL_JS($w_dir,$R.'&w_chave=&P1='.$P1.'&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP='.$TP.'&SG='.$SG.MontaFiltro('GET')).'\';');
-            ScriptClose();
-          } else {
-            ScriptOpen('JavaScript');
-            ShowHTML('  alert(\'Unidade já cadastrada!\');');
-            ScriptClose();
-            RetornaFormulario('w_assinatura');
-          } 
-        } else {
-          dml_putUnidade_PA::getInstanceOf($dbms,$O,$w_cliente,Nvl($_REQUEST['w_chave'],''),$_REQUEST['w_registra_documento'],
-              $_REQUEST['w_autua_processo'],$_REQUEST['w_prefixo'],$_REQUEST['w_nr_documento'],$_REQUEST['w_nr_tramite'],$_REQUEST['w_nr_transferencia'],
-              $_REQUEST['w_nr_eliminacao'],$_REQUEST['w_arquivo_setorial'],$_REQUEST['w_ativo']);
-          ScriptOpen('JavaScript');
-          ShowHTML('  location.href=\''.montaURL_JS($w_dir,$R.'&w_chave=&P1='.$P1.'&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP='.$TP.'&SG='.$SG.MontaFiltro('GET')).'\';');
-          ScriptClose();
+      if (verificaAssinaturaEletronica($_SESSION['USERNAME'],strtoupper($_REQUEST['w_assinatura'])) || $w_assinatura=='') {
+        if ($O=='I' || $O=='A') {
+          if ($O=='I') {
+            $RS = db_getUnidade_PA::getInstanceOf($dbms,$w_cliente,$_REQUEST['w_chave'],null,null);
+            if (count($RS)>0) {
+              ScriptOpen('JavaScript');
+              ShowHTML('  alert(\'Unidade já cadastrada!\');');
+              ScriptClose();
+              RetornaFormulario('w_chave');
+              exit();
+            }
+          }
+          if (nvl($_REQUEST['w_unidade_pai'],'')=='') {
+            $RS = db_getUnidade_PA::getInstanceOf($dbms,$w_cliente,$_REQUEST['w_chave'],null,$_REQUEST['w_prefixo']);
+            if (count($RS)>0) {
+              ScriptOpen('JavaScript');
+              ShowHTML('  alert(\'Não é possivel definir o mesmo prefixo para duas unidades!\');');
+              ScriptClose();
+              RetornaFormulario('w_prefixo');
+              exit();
+            }
+          }
         }
+        dml_putUnidade_PA::getInstanceOf($dbms,$O,$w_cliente,Nvl($_REQUEST['w_chave'],''),$_REQUEST['w_unidade_pai'],$_REQUEST['w_registra_documento'],
+            $_REQUEST['w_autua_processo'],$_REQUEST['w_prefixo'],$_REQUEST['w_nr_documento'],$_REQUEST['w_nr_tramite'],$_REQUEST['w_nr_transferencia'],
+            $_REQUEST['w_nr_eliminacao'],$_REQUEST['w_arquivo_setorial'],$_REQUEST['w_ativo']);
+        ScriptOpen('JavaScript');
+        ShowHTML('  location.href=\''.montaURL_JS($w_dir,$R.'&w_chave=&P1='.$P1.'&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP='.$TP.'&SG='.$SG.MontaFiltro('GET')).'\';');
+        ScriptClose();
       } else {
         ScriptOpen('JavaScript');
         ShowHTML('  alert(\'Assinatura Eletrônica inválida!\');');

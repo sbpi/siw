@@ -9,14 +9,8 @@ function selecaoCalculo($label,$accesskey,$hint,$chave,$chaveAux,$cliente,$campo
   else
     ShowHTML('          <td valign="top" title="'.$hint.'"><b>'.$label.'</b><br><SELECT ACCESSKEY="'.$accesskey.'" CLASS="sts" NAME="'.$campo.'" '.$w_Disabled.' '.$atributo.'>');
   ShowHTML('          <option value="">---');
-  if ($chaveAux=='Nominal')  
-    ShowHTML(' <option value=0 SELECTED>Nominal');  
-  else 
-    ShowHTML(' <option value=0>Nominal');
-  if ($chaveAux=='Retenção') 
-    ShowHTML(' <option value=1 SELECTED>Retencao'); 
-  else 
-    ShowHTML(' <option value=1>Retencao');
+  if ($chaveAux==0) ShowHTML(' <option value=0 SELECTED>Nominal');  else ShowHTML(' <option value=0>Nominal');
+  if ($chaveAux==1) ShowHTML(' <option value=1 SELECTED>Retenção'); else ShowHTML(' <option value=1>Retenção');
 ShowHTML('          </select>');
 }  
 ?>

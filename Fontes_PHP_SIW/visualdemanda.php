@@ -190,9 +190,9 @@ function VisualDemanda($l_chave,$operacao,$w_usuario) {
     } 
 
     // Recursos
-    $RS = db_getSolicRecursos::getInstanceOf($dbms,$w_cliente,$w_usuario,$l_chave,null,null,null,null,null,null,null,null,null,null,null);
-    $RS = SortArray($RS,'nm_tipo_recurso','asc','nm_recurso','asc'); 
-    if (count($RS)>0 && $l_nome_menu['RECSOLIC']!='') {
+    $RS1 = db_getSolicRecursos::getInstanceOf($dbms,$w_cliente,$w_usuario,$l_chave,null,null,null,null,null,null,null,null,null,null,null);
+    $RS1 = SortArray($RS1,'nm_tipo_recurso','asc','nm_recurso','asc'); 
+    if (count($RS1)>0 && $l_nome_menu['RECSOLIC']!='') {
       $l_html .= chr(13).'      <tr><td colspan="2"><br><font size="2"><b>'.$l_nome_menu['RECSOLIC'].'<hr NOSHADE color=#000000 SIZE=1></b></font></td></tr>';
       $l_html .= chr(13).'      <tr><td align="center" colspan="2">';
       $l_html .= chr(13).'          <table width=100%  border="1" bordercolor="#00000">';     
@@ -203,7 +203,7 @@ function VisualDemanda($l_chave,$operacao,$w_usuario) {
       $l_html .= chr(13).'            <td width="1%" nowrap><b>U.M.</b></td>';
       $l_html .= chr(13).'          </tr>';
       $w_cor=$conTrBgColor;
-      foreach ($RS as $row) {
+      foreach ($RS1 as $row) {
         $l_html .= chr(13).'      <tr>';
         $l_html .= chr(13).'        <td>'.f($row,'nm_tipo_completo').'</td>';
         $l_html .= chr(13).'        <td>'.nvl(f($row,'codigo'),'---').'</td>';
@@ -300,10 +300,10 @@ function VisualDemanda($l_chave,$operacao,$w_usuario) {
     } 
 
     // Interessados na execução da demanda (formato antigo)
-    $RS = db_getSolicInter::getInstanceOf($dbms,$l_chave,null,'LISTA');
-    $RS = SortArray($RS,'nome','asc');
-    if (count($RS)>0 && $l_nome_menu['INTERES']!='') {
-      foreach ($RS as $row) {
+    $RS1 = db_getSolicInter::getInstanceOf($dbms,$l_chave,null,'LISTA');
+    $RS1 = SortArray($RS1,'nome','asc');
+    if (count($RS1)>0 && $l_nome_menu['INTERES']!='') {
+      foreach ($RS1 as $row) {
         if ($l_cont==0) {
           $l_html.=chr(13).'        <tr><td colspan="2"><br><font size="2"><b>'.$l_nome_menu['INTERES'].'<hr NOSHADE color=#000000 SIZE=1></b></font></td></tr>';
           $l_html .= chr(13).'      <tr><td align="center" colspan="2">';
@@ -325,9 +325,9 @@ function VisualDemanda($l_chave,$operacao,$w_usuario) {
     } 
 
     // Áreas envolvidas na execução da demanda
-    $RS = db_getSolicAreas::getInstanceOf($dbms,$l_chave,null,'LISTA');
-    $RS = SortArray($RS,'nome','asc');
-    if (count($RS)>0 && $l_nome_menu['AREAS']!='') {
+    $RS1 = db_getSolicAreas::getInstanceOf($dbms,$l_chave,null,'LISTA');
+    $RS1 = SortArray($RS1,'nome','asc');
+    if (count($RS1)>0 && $l_nome_menu['AREAS']!='') {
       $l_html.=chr(13).'      <tr><td colspan="2"><br><font size="2"><b>'.$l_nome_menu['AREAS'].'<hr NOSHADE color=#000000 SIZE=1></b></font></td></tr>';  
       $l_html.=chr(13).'      <tr><td colspan="2"><div align="center">';
       $l_html.=chr(13).'        <table width=100%  border="1" bordercolor="#00000">';
@@ -336,7 +336,7 @@ function VisualDemanda($l_chave,$operacao,$w_usuario) {
       $l_html.=chr(13).'            <td bgColor="#f0f0f0"><div><b>Papel</b></div></td>';
       $l_html.=chr(13).'          </tr>';
       $w_cor=$conTrBgColor;
-      foreach($RS as $row) {
+      foreach($RS1 as $row) {
         $l_html.=chr(13).'      <tr valign="top">';
         $l_html.=chr(13).'        <td>'.f($row,'nome').'</td>';
         $l_html.=chr(13).'        <td>'.f($row,'papel').'</td>';
@@ -349,9 +349,9 @@ function VisualDemanda($l_chave,$operacao,$w_usuario) {
   if ($operacao=='L' || $operacao=='V') {
     // Se for listagem dos dados
     // Arquivos vinculados
-    $RS = db_getSolicAnexo::getInstanceOf($dbms,$l_chave,null,$w_cliente);
-    $RS = SortArray($RS,'nome','asc');
-    if (count($RS)>0 && $l_nome_menu['ANEXO']!='') {
+    $RS1 = db_getSolicAnexo::getInstanceOf($dbms,$l_chave,null,$w_cliente);
+    $RS1 = SortArray($RS1,'nome','asc');
+    if (count($RS1)>0 && $l_nome_menu['ANEXO']!='') {
       $l_html.=chr(13).'      <tr><td colspan="2"><br><font size="2"><b>'.$l_nome_menu['ANEXO'].'<hr NOSHADE color=#000000 SIZE=1></b></font></td></tr>';  
       $l_html.=chr(13).'      <tr><td colspan="2"><div align="center">';
       $l_html.=chr(13).'        <table width=100%  border="1" bordercolor="#00000">';
@@ -362,7 +362,7 @@ function VisualDemanda($l_chave,$operacao,$w_usuario) {
       $l_html.=chr(13).'            <td bgColor="#f0f0f0"><div><b>KB</b></div></td>';
       $l_html.=chr(13).'          </tr>';
       $w_cor=$conTrBgColor;
-      foreach($RS as $row) {
+      foreach($RS1 as $row) {
         $l_html.=chr(13).'      <tr valign="top">';
         $l_html.=chr(13).'        <td>'.LinkArquivo('HL',$w_cliente,f($row,'chave_aux'),'_blank','Clique para exibir o arquivo em outra janela.',f($row,'nome'),null).'</td>';
         $l_html.=chr(13).'        <td>'.Nvl(f($row,'descricao'),'---').'</td>';
@@ -404,9 +404,9 @@ function VisualDemanda($l_chave,$operacao,$w_usuario) {
           $l_html.=chr(13).'      <td><font size="1">'.CRLF2BR(Nvl(f($row,'despacho'),'---')).'</td>';
         } 
         $l_html.=chr(13).'        <td nowrap><font size="1">'.ExibePessoa($w_dir_volta,$w_cliente,f($row,'sq_pessoa'),$TP,f($row,'responsavel')).'</td>';
-        if (nvl(f($row,'sq_acordo_log'),'')>'' && nvl(f($row,'destinatario'),'')>'') {
+        if (nvl(f($row,'sq_demanda_log'),'')>'' && nvl(f($row,'destinatario'),'')>'') {
           $l_html.=chr(13).'      <td nowrap><font size="1">'.ExibePessoa($w_dir_volta,$w_cliente,f($row,'sq_pessoa_destinatario'),$TP,f($row,'destinatario')).'</td>';
-        } elseif (nvl(f($row,'sq_acordo_log'),'')>'' && nvl(f($row,'destinatario'),'')=='') {
+        } elseif (nvl(f($row,'sq_demanda_log'),'')>'' && nvl(f($row,'destinatario'),'')=='') {
           $l_html.=chr(13).'      <td nowrap><font size="1">Anotação</td>';
        } else {
           $l_html.=chr(13).'      <td nowrap><font size="1">'.Nvl(f($row,'tramite'),'---').'</td>';

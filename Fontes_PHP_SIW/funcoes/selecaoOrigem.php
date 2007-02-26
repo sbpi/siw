@@ -10,12 +10,15 @@ function selecaoOrigem($label,$accesskey,$hint,$chave,$chaveAux,$campo,$restrica
     ShowHTML('          <td valign="top" title="'.$hint.'"><b>'.$label.'</b><br><SELECT ACCESSKEY="'.$accesskey.'" CLASS="STS" NAME="'.$campo.'" '.$w_Disabled.' '.$atributo.'>');
   } 
   ShowHTML('          <option value="">---');
-  if (nvl($chave,0)=='S') {
+  if ($chave=='S') {
     ShowHTML('          <option value="S" SELECTED>Interna');
     ShowHTML('          <option value="N">Externa');
-  } else {
+  } elseif ($chave=='N') {
     ShowHTML('          <option value="S">Interna');
     ShowHTML('          <option value="N" SELECTED>Externa');
+  } else {
+    ShowHTML('          <option value="S">Interna');
+    ShowHTML('          <option value="N">Externa');
   } 
   ShowHTML('          </select>');  
 }

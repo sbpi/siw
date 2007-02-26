@@ -696,13 +696,13 @@ function Responsavel() {
     ShowHTML('      <tr><td valign="top" colspan=3><font color="#FF0000"><b>ATENÇÃO: antes de alterar o titular ou o substituto da unidade, informe a data de término da responsabilidade do ocupante atual, grave e entre novamente na opção de alteração.</b></td></tr>');
     ShowHTML('      <tr>');
     SelecaoUsuUnid('<u>T</u>itular:','T',null,$w_sq_pessoa,null,'w_sq_pessoa',$O);
-    ShowHTML('          <td valign="top"><b>A partir <U>d</U>e:<br><INPUT TYPE="TEXT" ACCESSKEY="D" '.$w_Disabled.' class="sti" name="w_inicio_titular" size="10" maxlength="10" value="'.FormataDataEdicao($w_inicio_titular).'" onKeyDown="FormataData(this,event);">');
-    ShowHTML('          <td valign="top"><b>A<U>t</U>é:<br><INPUT TYPE="TEXT" ACCESSKEY="T" '.$w_Disabled.' class="sti" name="w_fim_titular" size="10" maxlength="10" value="'.$w_fim_titular.'" onKeyDown="FormataData(this,event);">');
+    ShowHTML('          <td valign="top"><b>A partir <U>d</U>e:<br><INPUT TYPE="TEXT" ACCESSKEY="D" '.$w_Disabled.' class="sti" name="w_inicio_titular" size="10" maxlength="10" value="'.FormataDataEdicao($w_inicio_titular).'" onKeyDown="FormataData(this,event);">'.ExibeCalendario('Form','w_inicio_titular').'');
+    ShowHTML('          <td valign="top"><b>A<U>t</U>é:<br><INPUT TYPE="TEXT" ACCESSKEY="T" '.$w_Disabled.' class="sti" name="w_fim_titular" size="10" maxlength="10" value="'.$w_fim_titular.'" onKeyDown="FormataData(this,event);">'.ExibeCalendario('Form','w_fim_titular').'');
     ShowHTML('      </tr>');
     ShowHTML('      <tr>');
     SelecaoUsuUnid('<u>S</u>ubstituto:','S',null,$w_sq_pessoa_substituto,null,'w_sq_pessoa_substituto',$O);
-    ShowHTML('          <td valign="top"><b>A partir <U>d</U>e:<br><INPUT TYPE="TEXT" ACCESSKEY="D" '.$w_Disabled.' class="sti" name="w_inicio_substituto" size="10" maxlength="10" value="'.FormataDataEdicao($w_inicio_substituto).'" onKeyDown="FormataData(this,event);">');
-    ShowHTML('          <td valign="top"><b>A<U>t</U>é:<br><INPUT TYPE="TEXT" ACCESSKEY="T" '.$w_Disabled.' class="sti" name="w_fim_substituto" size="10" maxlength="10" value="'.$w_fim_substituto.'" onKeyDown="FormataData(this,event);">');
+    ShowHTML('          <td valign="top"><b>A partir <U>d</U>e:<br><INPUT TYPE="TEXT" ACCESSKEY="D" '.$w_Disabled.' class="sti" name="w_inicio_substituto" size="10" maxlength="10" value="'.FormataDataEdicao($w_inicio_substituto).'" onKeyDown="FormataData(this,event);">'.ExibeCalendario('Form','w_inicio_substituto').'');
+    ShowHTML('          <td valign="top"><b>A<U>t</U>é:<br><INPUT TYPE="TEXT" ACCESSKEY="T" '.$w_Disabled.' class="sti" name="w_fim_substituto" size="10" maxlength="10" value="'.$w_fim_substituto.'" onKeyDown="FormataData(this,event);">'.ExibeCalendario('Form','w_fim_substituto').'');
     ShowHTML('      <tr><td valign="top" colspan=3><b><U>A</U>ssinatura Eletrônica:<br><INPUT ACCESSKEY="A" class="sti" type="PASSWORD" name="w_assinatura" size="30" maxlength="30" value=""></td>');
     ShowHTML('      <tr><td align="center" colspan="3" height="1" bgcolor="#000000">');
     ShowHTML('      <tr><td align="center" colspan="3">');

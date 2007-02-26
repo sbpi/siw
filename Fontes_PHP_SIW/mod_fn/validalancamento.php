@@ -63,7 +63,7 @@ function ValidaLancamento($p_cliente,$l_chave,$p_sg1,$p_sg2,$p_sg3,$p_sg4,$p_tra
   } else { 
     $l_existe_rs1=count($l_rs1);    
     foreach($l_rs1 as $l_row) {
-      if((nvl(f($l_rs_solic,'tipo_rubrica'),'')>'')&&(nvl(f($l_rs_solic,'tipo_rubrica'),0)<>5)) {
+      if((nvl(f($l_rs_solic,'tipo_rubrica'),'')!='')&&(nvl(f($l_rs_solic,'tipo_rubrica'),0)<>5)) {
         $l_rs2 = db_getLancamentoRubrica::getInstanceOf($dbms,null,f($l_row,'sq_lancamento_doc'),null,null);
         if (count($l_rs2)<=0) $l_existe_rs2=0; else $l_existe_rs2=count($l_rs2);
         if($l_existe_rs2>0) {
@@ -76,7 +76,7 @@ function ValidaLancamento($p_cliente,$l_chave,$p_sg1,$p_sg2,$p_sg3,$p_sg4,$p_tra
             $l_tipo=0;
           }          
         }
-      } else {
+      } elseif (nvl(f($l_rs_solic,'tipo_rubrica'),'')!='') {
         $l_rs2 = db_getLancamentoItem::getInstanceOf($dbms,null,f($l_row,'sq_lancamento_doc'),null,null,null);
         if (count($l_rs2)<=0) $l_existe_rs2=0; else $l_existe_rs2=count($l_rs2);
         if (((f($l_row,'valor')!=f($l_row,'total_item')) && count($l_rs2)!=0) && Nvl(f($l_rs_tramite,'ordem'),'---')<='3') {
@@ -156,7 +156,7 @@ function ValidaLancamento($p_cliente,$l_chave,$p_sg1,$p_sg2,$p_sg3,$p_sg4,$p_tra
           $l_erro=$l_erro.'<li>Não foram informados documentos para o lançamento. Informe pelo menos um.';
           $l_tipo=0;
         } else {
-          if ($l_existe_rs2==0) {
+          if ($l_existe_rs2==0 && (nvl(f($l_rs_solic,'tipo_rubrica'),'')!='')) {
             // 7 - Verifica se foi informado pelo menos um item no documento
             $l_erro=$l_erro.'<li>Não foram informados itens para o documento. Informe pelo menos um.';
             $l_tipo=0;

@@ -909,8 +909,8 @@ function Grava() {
       } else {
         ScriptOpen('JavaScript');
         ShowHTML('  alert(\'Assinatura Eletrônica inválida!\');');
-        ShowHTML('  history.back(1);');
         ScriptClose();
+        retornaFormulario('w_assinatura');
       } 
       break;
     case 'CODOCUM':
@@ -927,8 +927,8 @@ function Grava() {
       } else {
         ScriptOpen('JavaScript');
         ShowHTML('  alert(\'Assinatura Eletrônica inválida!\');');
-        ShowHTML('  history.back(1);');
         ScriptClose();
+        retornaFormulario('w_assinatura');
       } 
       break;
     case 'COCONTR':
@@ -937,8 +937,8 @@ function Grava() {
         if (Nvl($_REQUEST['w_ativo'],0)>0 && Nvl($_REQUEST['w_dt_fim'],'')=='') {
           ScriptOpen('JavaScript');
           ShowHTML('alert(\'Já existe contrato ativo para este colaborador, não sendo possível uma nova inclusão\');');
-          ShowHTML('history.back(1);');
           ScriptClose();
+          retornaFormulario('w_dt_fim');
           exit;
         } else {
           if ($O=='E') {
@@ -958,8 +958,8 @@ function Grava() {
             if(count($RS)>0) {
               ScriptOpen('JavaScript');
               ShowHTML('alert(\'Já existe contrato cadastrado para o período informado!\');');
-              ShowHTML('history.back(1);');
               ScriptClose();
+              retornaFormulario('w_dt_ini');
               exit;
             }
           }
@@ -985,8 +985,8 @@ function Grava() {
       } else {
         ScriptOpen('JavaScript');
         ShowHTML('  alert(\'Assinatura Eletrônica inválida!\');');
-        ShowHTML('  history.back(1);');
         ScriptClose();
+        retornaFormulario('w_assinatura');
       } 
       break;
     default:

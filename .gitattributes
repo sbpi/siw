@@ -649,6 +649,8 @@ Fontes_PHP_SIW/classes/sp/db_getDeficiencyGroupData.php -text
 Fontes_PHP_SIW/classes/sp/db_getDeficiencyList.php -text
 Fontes_PHP_SIW/classes/sp/db_getDeskTop.php -text
 Fontes_PHP_SIW/classes/sp/db_getDeskTop_TT.php -text
+Fontes_PHP_SIW/classes/sp/db_getDocumentoAssunto.php -text
+Fontes_PHP_SIW/classes/sp/db_getDocumentoInter.php -text
 Fontes_PHP_SIW/classes/sp/db_getEoAAtuac.php -text
 Fontes_PHP_SIW/classes/sp/db_getEoAAtuacData.php -text
 Fontes_PHP_SIW/classes/sp/db_getEoUnitPaiList.php -text
@@ -947,6 +949,9 @@ Fontes_PHP_SIW/classes/sp/dml_putDemandaEnvio.php -text
 Fontes_PHP_SIW/classes/sp/dml_putDemandaGeral.php -text
 Fontes_PHP_SIW/classes/sp/dml_putDemandaInter.php -text
 Fontes_PHP_SIW/classes/sp/dml_putDicionario.php -text
+Fontes_PHP_SIW/classes/sp/dml_putDocumentoAssunto.php -text
+Fontes_PHP_SIW/classes/sp/dml_putDocumentoGeral.php -text
+Fontes_PHP_SIW/classes/sp/dml_putDocumentoInter.php -text
 Fontes_PHP_SIW/classes/sp/dml_putEoAAtuac.php -text
 Fontes_PHP_SIW/classes/sp/dml_putEoTipoPosto.php -text
 Fontes_PHP_SIW/classes/sp/dml_putEoTipoUni.php -text
@@ -1010,6 +1015,7 @@ Fontes_PHP_SIW/classes/sp/dml_putPD_Atividade.php -text
 Fontes_PHP_SIW/classes/sp/dml_putPD_Deslocamento.php -text
 Fontes_PHP_SIW/classes/sp/dml_putPD_Diaria.php -text
 Fontes_PHP_SIW/classes/sp/dml_putPD_Missao.php -text
+Fontes_PHP_SIW/classes/sp/dml_putPessoa.php -text
 Fontes_PHP_SIW/classes/sp/dml_putPlanoEstrategico.php -text
 Fontes_PHP_SIW/classes/sp/dml_putPlano_Menu.php -text
 Fontes_PHP_SIW/classes/sp/dml_putProcedure[!!-~].php -text
@@ -1200,6 +1206,7 @@ Fontes_PHP_SIW/funcoes/selecaoAgencia.php -text
 Fontes_PHP_SIW/funcoes/selecaoAno.php -text
 Fontes_PHP_SIW/funcoes/selecaoArquivo.php -text
 Fontes_PHP_SIW/funcoes/selecaoAssunto.php -text
+Fontes_PHP_SIW/funcoes/selecaoAssuntoRadio.php -text
 Fontes_PHP_SIW/funcoes/selecaoAtividade.php -text
 Fontes_PHP_SIW/funcoes/selecaoBanco.php -text
 Fontes_PHP_SIW/funcoes/selecaoBaseGeografica.php -text
@@ -1383,6 +1390,7 @@ Fontes_PHP_SIW/mod_or_pub/visualdemanda.php -text
 Fontes_PHP_SIW/mod_or_pub/visualprojeto.php -text
 Fontes_PHP_SIW/mod_pa/documento.php -text
 Fontes_PHP_SIW/mod_pa/tabelas.php -text
+Fontes_PHP_SIW/mod_pa/visualdocumento.php -text
 Fontes_PHP_SIW/mod_pd/funcoes.php -text
 Fontes_PHP_SIW/mod_pd/geragrafico.php -text
 Fontes_PHP_SIW/mod_pd/gr_viagem.php -text

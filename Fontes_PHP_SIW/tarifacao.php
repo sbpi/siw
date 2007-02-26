@@ -130,15 +130,16 @@ function Informar(){
       $p_fim    = FormataDataEdicao(time());
     } 
   } 
-  if ($w_troca>'') {
-    $w_sq_ligacao           = $_REQUEST['w_sq_ligacao'];
-    $w_sq_cc                = $_REQUEST['w_sq_cc'];
-    $w_assunto              = $_REQUEST['w_assunto'];
-    $w_ativo                = $_REQUEST['w_ativo'];
-    $w_imagem               = $_REQUEST['w_imagem'];
-    $w_fax                  = $_REQUEST['w_fax'];
-    $w_trabalho             = $_REQUEST['w_trabalho'];
-    $w_outra_parte_contato  = $_REQUEST['w_outra_parte_contato'];
+  if ($w_troca>'' && $O!='E') {
+    $w_sq_ligacao            = $_REQUEST['w_sq_ligacao'];
+    $w_sq_cc                 = $_REQUEST['w_sq_cc'];
+    $w_assunto               = $_REQUEST['w_assunto'];
+    $w_ativo                 = $_REQUEST['w_ativo'];
+    $w_imagem                = $_REQUEST['w_imagem'];
+    $w_fax                   = $_REQUEST['w_fax'];
+    $w_trabalho              = $_REQUEST['w_trabalho'];
+    $w_outra_parte_contato   = $_REQUEST['w_outra_parte_contato'];
+    $w_sq_central_telefonica = $_REQUEST['w_sq_central_telefonica'];
   } elseif ($O=='L'){
     $RS = db_getCall::getInstanceOf($dbms,null,$w_usuario,$P1,null,$p_sq_cc,$p_outra_parte_contato,$p_numero,$p_inicio,$p_fim,$p_ativo);
     if ($p_ordena==''){ 
@@ -147,35 +148,33 @@ function Informar(){
       $lista = explode(',',str_replace(' ',',',strtolower($_REQUEST['p_ordena'])));
       if ($P1==3) $RS = SortArray($RS,$lista[0],$lista[1],'phpdt_ordem','desc'); else $RS = SortArray($RS,$lista[0],$lista[1],'phpdt_ordem','asc'); 
     }
-  } else {
-    if ($O=='I' || $O=='A' || $O=='E'){
-      // Recupera os dados da ligação
-      $RS = db_getCall::getInstanceOf($dbms,$w_sq_ligacao,$w_usuario,$P1,'REGISTRO',$p_sq_cc,$p_outra_parte_contato,$p_numero,$p_inicio,$p_fim,$p_ativo);
-      foreach($RS as $row) {
-        $w_sq_cc                  = nvl(f($row,'sq_cc'),0);
-        $w_assunto                = f($row,'assunto');
-        $w_imagem                 = f($row,'imagem');
-        $w_fax                    = f($row,'fax');
-        $w_trabalho               = f($row,'trabalho');
-        $w_outra_parte_contato    = f($row,'outra_parte_cont');
-        $w_responsavel            = f($row,'responsavel');
-        $w_sq_central_telefonica  = nvl(f($row,'sq_central_fone'),0);
-      }
-      if ($O=='A'){
-        $w_titulo='Selecione a pessoa responsável pela ligação e informe alguma observação para orientá-lo.';
-      } elseif (nvl($w_trabalho,'')=='') {
-        $RS = db_getCall::getInstanceOf($dbms,null,$w_usuario,$P1,'HERANCA',$p_sq_cc,$p_outra_parte_contato,f($row,'numero'),$p_inicio,$p_fim,$p_ativo);
-        if (count($RS) >= 0){
-          foreach ($RS as $row) {
-            $w_sq_cc                  = nvl(f($row,'sq_cc'),0);
-            $w_assunto                = f($row,'assunto');
-            $w_imagem                 = f($row,'imagem');
-            $w_fax                    = f($row,'fax');
-            $w_trabalho               = f($row,'trabalho');
-            $w_outra_parte_contato    = f($row,'outra_parte_cont');
-            $w_titulo='ATENÇÃO: Dados importados da última ligação informada! Você pode editá-los ou mantê-los como estão.<br>Não se esqueça de gravá-los para efetivar as informações.';
-          }
-        } 
+  } elseif ($O=='I' || $O=='A' || $O=='E'){
+    // Recupera os dados da ligação
+    $RS = db_getCall::getInstanceOf($dbms,$w_sq_ligacao,$w_usuario,$P1,'REGISTRO',$p_sq_cc,$p_outra_parte_contato,$p_numero,$p_inicio,$p_fim,$p_ativo);
+    foreach($RS as $row) {
+      $w_sq_cc                  = nvl(f($row,'sq_cc'),0);
+      $w_assunto                = f($row,'assunto');
+      $w_imagem                 = f($row,'imagem');
+      $w_fax                    = f($row,'fax');
+      $w_trabalho               = f($row,'trabalho');
+      $w_outra_parte_contato    = f($row,'outra_parte_cont');
+      $w_responsavel            = f($row,'responsavel');
+      $w_sq_central_telefonica  = nvl(f($row,'sq_central_fone'),0);
+    }
+    if ($O=='A'){
+      $w_titulo='Selecione a pessoa responsável pela ligação e informe alguma observação para orientá-lo.';
+    } elseif (nvl($w_trabalho,'')=='') {
+      $RS = db_getCall::getInstanceOf($dbms,null,$w_usuario,$P1,'HERANCA',$p_sq_cc,$p_outra_parte_contato,f($row,'numero'),$p_inicio,$p_fim,$p_ativo);
+      if (count($RS) >= 0){
+        foreach ($RS as $row) {
+          $w_sq_cc                  = nvl(f($row,'sq_cc'),0);
+          $w_assunto                = f($row,'assunto');
+          $w_imagem                 = f($row,'imagem');
+          $w_fax                    = f($row,'fax');
+          $w_trabalho               = f($row,'trabalho');
+          $w_outra_parte_contato    = f($row,'outra_parte_cont');
+          $w_titulo='ATENÇÃO: Dados importados da última ligação informada! Você pode editá-los ou mantê-los como estão.<br>Não se esqueça de gravá-los para efetivar as informações.';
+        }
       } 
     } 
   }
@@ -408,24 +407,11 @@ function Informar(){
       }
       ShowHTML('    </TABLE>');
       ShowHTML('</table>');
-      ShowHTML('<FORM action="'.$w_pagina.'Grava" method="POST" name="Form" onSubmit="return(Validacao(this));">');
-      ShowHTML('<INPUT type="hidden" name="P1" value="'.$P1.'">');
-      ShowHTML('<INPUT type="hidden" name="P2" value="'.$P2.'">');
-      ShowHTML('<INPUT type="hidden" name="P3" value="'.$P3.'">');
-      ShowHTML('<INPUT type="hidden" name="P4" value="'.$P4.'">');
-      ShowHTML('<INPUT type="hidden" name="TP" value="'.$TP.'">');
-      ShowHTML('<INPUT type="hidden" name="SG" value="'.$SG.'">');
-      ShowHTML('<INPUT type="hidden" name="R" value="'.$R.'">');
-      ShowHTML('<INPUT type="hidden" name="O" value="'.$O.'">');
-      ShowHTML('<INPUT type="hidden" name="w_troca" value="">');
-      ShowHTML('<INPUT type="hidden" name="p_sq_cc" value="'.$p_sq_cc.'">');
-      ShowHTML('<INPUT type="hidden" name="p_outra_parte_contato" value="'.$p_outra_parte_contato.'">');
-      ShowHTML('<INPUT type="hidden" name="p_numero" value="'.$p_numero.'">');
-      ShowHTML('<INPUT type="hidden" name="p_inicio" value="'.$p_inicio.'">');
-      ShowHTML('<INPUT type="hidden" name="p_fim" value="'.$p_fim.'">');
-      ShowHTML('<INPUT type="hidden" name="p_ativo" value="'.$p_ativo.'">');
-      ShowHTML('<INPUT type="hidden" name="p_ordena" value="'.$p_ordena.'">');
+      AbreForm('Form',$w_dir.$w_pagina.'Grava','POST','return(Validacao(this));',null,$P1,$P2,$P3,$P4,$TP,$SG,$R,$O);
+      ShowHTML(MontaFiltro('POST'));
       ShowHTML('<INPUT type="hidden" name="w_sq_ligacao" value="'.$w_sq_ligacao.'">');
+      ShowHTML('<INPUT type="hidden" name="w_sq_central_telefonica" value="'.$w_sq_central_telefonica.'">');
+      ShowHTML('<INPUT type="hidden" name="w_troca" value="">');
       ShowHTML('<tr bgcolor="'.$conTrBgColor.'"><td align="center">');
       ShowHTML('    <table width="95%" border="0">');
       ShowHTML('      <tr><td align="center"><font color="#FF0000"><b>'.$w_titulo.'</b></td></tr>');
@@ -906,8 +892,8 @@ function Grava() {
       } else {
         ScriptOpen('JavaScript');
         ShowHTML('  alert(\'Assinatura Eletrônica inválida!\');');
-        ShowHTML('  history.back(1);');
         ScriptClose();
+        retornaFormulario('w_assinatura');
       } 
       break;
     default:
