@@ -22,7 +22,8 @@ begin
          -- Recupera os parametros do modulo de contratos
          open p_result for
             select a.cliente, a.despacho_arqcentral, a.despacho_emprestimo, a.despacho_devolucao,
-                   a.arquivo_central, a.limite_interessados, a.ano_corrente
+                   a.arquivo_central, a.limite_interessados, a.ano_corrente, a.despacho_autuar,
+                   a.despacho_arqsetorial, a.despacho_anexar, a.despacho_apensar, a.despacho_eliminar
               from pa_parametro  a
              where a.cliente = p_cliente;             
       End If;
