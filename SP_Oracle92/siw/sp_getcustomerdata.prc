@@ -5,13 +5,13 @@ create or replace procedure SP_GetCustomerData
 begin
    open p_result for 
       select a.*,
-             b.co_uf, b.sq_pais, b.nome cidade,
-             c.codigo, c.nome agencia,
+             b.co_uf, b.sq_pais, b.nome as cidade,
+             c.codigo, c.nome as agencia,
              d.nome, d.nome_resumido, d.sq_tipo_vinculo,
              e.cnpj, e.inscricao_estadual, e.inicio_atividade, e.sede,
-             g.nome pais,
-             h.sq_segmento, h.nome segmento,
-             i.sq_banco, i.nome banco
+             g.nome as pais,
+             h.sq_segmento, h.nome as segmento,
+             i.sq_banco, i.nome as banco
         from siw_cliente                     a
              inner   join co_cidade          b on (a.sq_cidade_padrao  = b.sq_cidade)
                inner join co_pais            g on (b.sq_pais           = g.sq_pais)
@@ -24,4 +24,3 @@ begin
        where a.sq_pessoa         = p_cliente;
 end SP_GetCustomerData;
 /
-

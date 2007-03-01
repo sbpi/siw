@@ -13,9 +13,6 @@ create or replace procedure SP_PutViagemEnvio
    w_tramite       number(18);
    w_sg_tramite    varchar2(2);
 begin
-   -- Recupera a próxima chave
-   select sq_siw_solic_log.nextval into w_chave from dual;
-   
    -- Recupera o trâmite para o qual está sendo enviada a solicitação
    If p_devolucao = 'N' Then
       select sq_siw_tramite, sigla into w_tramite, w_sg_tramite

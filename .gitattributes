@@ -2871,6 +2871,7 @@ SP_Oracle92/siw/TG_FN_LANCAMENTO_RUBRICA.trg -text
 SP_Oracle92/siw/TG_GP_AFASTAMENTO.trg -text
 SP_Oracle92/siw/TG_PA_ASUNTO_IN_UP.trg -text
 SP_Oracle92/siw/TG_PA_DOCUMENTO_IN_UP.trg -text
+SP_Oracle92/siw/TG_PA_DOCUMENTO_LOG_IN_UP.trg -text
 SP_Oracle92/siw/TG_PD_MISSAO_IN_UP.trg -text
 SP_Oracle92/siw/TG_PE_RECURSO_DISP_EX.trg -text
 SP_Oracle92/siw/TG_PE_RECURSO_DISP_UP.trg -text
@@ -3070,6 +3071,7 @@ SP_Oracle92/siw/sp_getDocumentoInter.prc -text
 SP_Oracle92/siw/sp_getGrupoVeiculo.prc -text
 SP_Oracle92/siw/sp_getIndicador.prc -text
 SP_Oracle92/siw/sp_getIndicador_Aferidor.prc -text
+SP_Oracle92/siw/sp_getProtocolo.prc -text
 SP_Oracle92/siw/sp_getRecurso.prc -text
 SP_Oracle92/siw/sp_getRecurso_Disp.prc -text
 SP_Oracle92/siw/sp_getRecurso_Indisp.prc -text
@@ -3297,8 +3299,10 @@ SP_Oracle92/siw/sp_putConvOutraParte.prc -text
 SP_Oracle92/siw/sp_putConvOutroRep.prc -text
 SP_Oracle92/siw/sp_putConvPreposto.prc -text
 SP_Oracle92/siw/sp_putDocumentoAssunto.prc -text
+SP_Oracle92/siw/sp_putDocumentoEnvio.prc -text
 SP_Oracle92/siw/sp_putDocumentoGeral.prc -text
 SP_Oracle92/siw/sp_putDocumentoInter.prc -text
+SP_Oracle92/siw/sp_putDocumentoReceb.prc -text
 SP_Oracle92/siw/sp_putFormaPagamento.prc -text
 SP_Oracle92/siw/sp_putFormaPagamentoVinc.prc -text
 SP_Oracle92/siw/sp_putIndicador.prc -text
