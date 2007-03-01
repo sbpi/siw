@@ -584,6 +584,7 @@ Fontes_PHP_SIW/classes/menu/readme.txt -text
 Fontes_PHP_SIW/classes/menu/xPandMenu.css -text
 Fontes_PHP_SIW/classes/menu/xPandMenu.js -text
 Fontes_PHP_SIW/classes/menu/xPandMenu.php -text
+Fontes_PHP_SIW/classes/menu/xPandPrint.css -text
 Fontes_PHP_SIW/classes/sp/DatabaseQueries.php -text
 Fontes_PHP_SIW/classes/sp/db_VerificaDataEspecial.php -text
 Fontes_PHP_SIW/classes/sp/db_get10PercentDays.php -text
@@ -756,6 +757,7 @@ Fontes_PHP_SIW/classes/sp/db_getProcedure.php -text
 Fontes_PHP_SIW/classes/sp/db_getProgramaPPA_IS.php -text
 Fontes_PHP_SIW/classes/sp/db_getPrograma_IS.php -text
 Fontes_PHP_SIW/classes/sp/db_getProjeto_IS.php -text
+Fontes_PHP_SIW/classes/sp/db_getProtocolo.php -text
 Fontes_PHP_SIW/classes/sp/db_getRamalUsuarioAtivo.php -text
 Fontes_PHP_SIW/classes/sp/db_getRecurso.php -text
 Fontes_PHP_SIW/classes/sp/db_getRecurso_Disp.php -text
@@ -950,8 +952,10 @@ Fontes_PHP_SIW/classes/sp/dml_putDemandaGeral.php -text
 Fontes_PHP_SIW/classes/sp/dml_putDemandaInter.php -text
 Fontes_PHP_SIW/classes/sp/dml_putDicionario.php -text
 Fontes_PHP_SIW/classes/sp/dml_putDocumentoAssunto.php -text
+Fontes_PHP_SIW/classes/sp/dml_putDocumentoEnvio.php -text
 Fontes_PHP_SIW/classes/sp/dml_putDocumentoGeral.php -text
 Fontes_PHP_SIW/classes/sp/dml_putDocumentoInter.php -text
+Fontes_PHP_SIW/classes/sp/dml_putDocumentoReceb.php -text
 Fontes_PHP_SIW/classes/sp/dml_putEoAAtuac.php -text
 Fontes_PHP_SIW/classes/sp/dml_putEoTipoPosto.php -text
 Fontes_PHP_SIW/classes/sp/dml_putEoTipoUni.php -text
@@ -1389,7 +1393,10 @@ Fontes_PHP_SIW/mod_or_pub/siafi.php -text
 Fontes_PHP_SIW/mod_or_pub/visualdemanda.php -text
 Fontes_PHP_SIW/mod_or_pub/visualprojeto.php -text
 Fontes_PHP_SIW/mod_pa/documento.php -text
+Fontes_PHP_SIW/mod_pa/processo.php -text
+Fontes_PHP_SIW/mod_pa/relatorio.php -text
 Fontes_PHP_SIW/mod_pa/tabelas.php -text
+Fontes_PHP_SIW/mod_pa/visualGR.php -text
 Fontes_PHP_SIW/mod_pa/visualdocumento.php -text
 Fontes_PHP_SIW/mod_pd/funcoes.php -text
 Fontes_PHP_SIW/mod_pd/geragrafico.php -text

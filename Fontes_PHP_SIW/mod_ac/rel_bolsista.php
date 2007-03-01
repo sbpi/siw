@@ -557,7 +557,11 @@ function Rel_Bolsista() {
               $w_coluna            = 1;
             }
             $w_relatorio[f($row,'sq_tema')][$w_linha][1]  = f($row,'nm_nivel');
-            $w_relatorio[f($row,'sq_tema')][$w_linha][2]  = (f($row,'valor_nivel')/f($row,'meses_nivel'));
+            if (nvl(f($row,'meses_nivel'),0)!=0) {
+              $w_relatorio[f($row,'sq_tema')][$w_linha][2]  = (f($row,'valor_nivel')/f($row,'meses_nivel'));
+            } else {
+              $w_relatorio[f($row,'sq_tema')][$w_linha][2]  = 0;
+            }
             if($w_nivel_atual!=0) {
               $w_relatorio[$w_tema_atual][$w_linha_ant][3]      = $w_qtd_contrato;
               $w_relatorio[$w_tema_atual][$w_linha_ant][4]      = ($w_qtd_contrato*$w_valor);
@@ -580,7 +584,11 @@ function Rel_Bolsista() {
           $w_nivel_atual    = f($row,'sq_nivel');
           $w_contrato_atual = f($row,'sq_acordo');
           $w_valor          = nvl(f($row,'valor_parcela'),0);
-          $w_cota_mensal    = (f($row,'valor_projeto')/f($row,'meses_projeto'));
+          if (nvl(f($row,'meses_projeto'),0)!=0) {
+            $w_cota_mensal    = (f($row,'valor_projeto')/f($row,'meses_projeto'));
+          } else {
+            $w_cota_mensal    = 0;
+          }
           $w_linha_ant      = $w_linha;
           $w_valor_projeto  = f($row,'valor_projeto');
           $w_fim_projeto    = f($row,'fim_projeto');
@@ -718,7 +726,11 @@ function Rel_Bolsista() {
           if((nvl($w_mes_atual,'')!='')&&($w_mes_atual!=date('Ym',f($row,'vencimento')))) {
             $w_relatorio[$w_mes_atual][0]['mes'] = mesAno(date('F',toDate('01'.'/'.substr($w_mes_atual,4,2).'/'.substr($w_mes_atual,0,4)))).'/'.substr($w_mes_atual,0,4);
             $w_relatorio[$w_mes_atual][1][5] = 'Cota mensal';
-            $w_relatorio[$w_mes_atual][1][6] = (f($row,'valor_projeto')/f($row,'meses_projeto'));
+            if (nvl(f($row,'meses_projeto'),0)!=0) {
+              $w_relatorio[$w_mes_atual][1][6] = (f($row,'valor_projeto')/f($row,'meses_projeto'));
+            } else {
+              $w_relatorio[$w_mes_atual][1][6] = 0;
+            }
             $w_relatorio[$w_mes_atual][2][5] = 'Gasto mensal';
             $w_relatorio[$w_mes_atual][2][6] = $w_gasto_mensal;
             $w_relatorio[$w_mes_atual][3][5] = 'Saldo mensal';
@@ -742,10 +754,18 @@ function Rel_Bolsista() {
           }
           if (nvl(f($row,'vencimento'),'nulo')!='nulo') {
             $w_relatorio[date('Ym',f($row,'vencimento'))][f($row,'or_nivel')][1] = f($row,'nm_nivel');
-            $w_relatorio[date('Ym',f($row,'vencimento'))][f($row,'or_nivel')][2] = (f($row,'valor_nivel')/f($row,'meses_nivel'));
+            if (nvl(f($row,'meses_nivel'),0)!=0) {
+              $w_relatorio[date('Ym',f($row,'vencimento'))][f($row,'or_nivel')][2] = (f($row,'valor_nivel')/f($row,'meses_nivel'));
+            } else {
+              $w_relatorio[date('Ym',f($row,'vencimento'))][f($row,'or_nivel')][2] = 0;
+            }
             $w_relatorio[date('Ym',f($row,'vencimento'))][f($row,'or_nivel')][3] += 1;
             $w_qtd_contrato = $w_relatorio[date('Ym',f($row,'vencimento'))][f($row,'or_nivel')][3];
-            $w_relatorio[date('Ym',f($row,'vencimento'))][f($row,'or_nivel')][4] = ($w_qtd_contrato*(f($row,'valor_nivel')/f($row,'meses_nivel')));
+            if (nvl(f($row,'meses_nivel'),0)!=0) {
+              $w_relatorio[date('Ym',f($row,'vencimento'))][f($row,'or_nivel')][4] = ($w_qtd_contrato*(f($row,'valor_nivel')/f($row,'meses_nivel')));
+            } else {
+              $w_relatorio[date('Ym',f($row,'vencimento'))][f($row,'or_nivel')][4] = 0;
+            }
           } else {
             $w_mes_inicio = date('Ym',$w_inicio);
             $w_mes_fim    = date('Ym',$w_fim);
@@ -755,7 +775,11 @@ function Rel_Bolsista() {
               if ($l_mes > 12) $i = ($l_ano+1).'01';
               if (!isset($w_relatorio[$i][f($row,'or_nivel')][1])) {
                 $w_relatorio[$i][f($row,'or_nivel')][1] = f($row,'nm_nivel');
-                $w_relatorio[$i][f($row,'or_nivel')][2] = (f($row,'valor_nivel')/f($row,'meses_nivel'));
+                if (nvl(f($row,'meses_nivel'),0)!=0) {
+                  $w_relatorio[$i][f($row,'or_nivel')][2] = (f($row,'valor_nivel')/f($row,'meses_nivel'));
+                } else {
+                  $w_relatorio[$i][f($row,'or_nivel')][2] = 0;
+                }
                 $w_relatorio[$i][f($row,'or_nivel')][3] = 0;
                 $w_relatorio[$i][f($row,'or_nivel')][4] = 0;
               }
@@ -902,7 +926,11 @@ function Rel_Bolsista() {
         $w_nivel_atual = 0;
         foreach($RS as $row) {
           $w_relatorio[f($row,'or_nivel')][4] = f($row,'nm_nivel');
-          $w_relatorio[f($row,'or_nivel')][5] = (f($row,'valor_nivel')/f($row,'meses_nivel'));
+          if (nvl(f($row,'meses_nivel'),0)!=0) {
+            $w_relatorio[f($row,'or_nivel')][5] = (f($row,'valor_nivel')/f($row,'meses_nivel'));
+          } else {
+            $w_relatorio[f($row,'or_nivel')][5] = 0;
+          }
           if(nvl(f($row,'sq_acordo'),'')>'')  $w_relatorio[f($row,'or_nivel')][6] += 1;
           $w_relatorio[f($row,'or_nivel')][7] += f($row,'valor_parcela');
         }

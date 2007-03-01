@@ -684,13 +684,18 @@ function CadastraPessoa() {
   ShowHTML('     theForm.w_sq_pais.focus();');
   ShowHTML('     return false;');
   ShowHTML('  }');
+  Validate('w_assinatura','Assinatura Eletrônica','1','1','6','30','1','1');
   ShowHTML('  theForm.Botao[0].disabled=true;');
   ShowHTML('  theForm.Botao[1].disabled=true;');
   ValidateClose();
   ScriptClose();
   ShowHTML('</HEAD>');
   ShowHTML('<BASE HREF="'.$conRootSIW.'">');
-  BodyOpenClean('onLoad=\'document.Form.w_nome.focus()\';');
+  if (nvl($w_troca,'')!='') {
+    BodyOpenClean('onLoad=\'document.Form.'.$w_troca.'.focus()\';');
+  } else {
+    BodyOpenClean('onLoad=\'document.Form.w_nome.focus()\';');
+  }
   Estrutura_Topo_Limpo();
   Estrutura_Menu();
   Estrutura_Corpo_Abre();
@@ -764,6 +769,7 @@ function CadastraPessoa() {
     } 
     ShowHTML('              <td colspan=3 title="Se informar um e-mail institucional, informe-o neste campo."><b>e-<u>M</u>ail:</b><br><input '.$w_Disabled.' accesskey="M" type="text" name="w_email" class="sti" SIZE="50" MAXLENGTH="60" VALUE="'.$w_email.'"></td>');
     ShowHTML('          </table>');
+    ShowHTML('      <tr><td colspan=3><b><U>A</U>ssinatura Eletrônica:<BR> <INPUT ACCESSKEY="A" class="STI" type="PASSWORD" name="w_assinatura" size="30" maxlength="30" value=""></td></tr>');
     ShowHTML('      <tr><td align="center" colspan="3" height="1" bgcolor="#000000"></TD></TR>');
     ShowHTML('      <tr><td align="center" colspan="3">');
     ShowHTML('            <input class="stb" type="submit" name="Botao" value="Gravar" onClick="Botao.value=this.value;">');
@@ -807,7 +813,7 @@ function BuscaUsuario() {
   Estrutura_CSS($w_cliente);
   ScriptOpen('JavaScript');
   ShowHTML('  function volta(l_nome, l_chave) {');
-  ShowHTML("     opener.document.Form.".$campo."_nm.value=l_nome;");
+  ShowHTML('     opener.document.Form.'.$campo.'_nm.value=l_nome;');
   ShowHTML('     opener.document.Form.'.$campo.'.value=l_chave;');
   ShowHTML('     opener.document.Form.'.$campo.'_nm.focus();');
   ShowHTML('     window.close();');
@@ -909,9 +915,9 @@ function BuscaPessoa() {
   Estrutura_CSS($w_cliente);
   ScriptOpen('JavaScript');
   ShowHTML('  function volta(l_nome, l_chave) {');
-  ShowHTML("     opener.document.Form.".$p_campo."_nm.value=l_nome;");
+  ShowHTML('     opener.document.Form.'.$p_campo.'_nm.value=l_nome;');
   ShowHTML('     opener.document.Form.'.$p_campo.'.value=l_chave;');
-  ShowHTML('     opener.document.Form.'.$p_campo.'.focus();');
+  ShowHTML('     opener.document.Form.'.$p_campo.'_nm.focus();');
   ShowHTML('     window.close();');
   ShowHTML('     opener.focus();');
   ShowHTML('   }');
@@ -937,7 +943,6 @@ function BuscaPessoa() {
   ValidateClose();
   ScriptClose();
   ShowHTML('</HEAD>');
-  ShowHTML('<BASE HREF="//'.$_SERVER['server_name'].'/siw/">');
   BodyOpen('onLoad=\'document.Form.p_nome.focus();\'');
   Estrutura_Texto_Abre();
   ShowHTML('<table border="0" cellpadding="0" cellspacing="0" width="100%">');

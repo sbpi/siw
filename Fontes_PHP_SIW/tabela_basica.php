@@ -79,7 +79,7 @@ $w_assinatura   = strtoupper($_REQUEST['w_assinatura']);
 $w_pagina       = 'tabela_basica.php?par=';
 $w_Disabled     = 'ENABLED';
 $w_dir_volta    = '';
-$w_troca        = strtoupper($_REQUEST['w_troca']);
+$w_troca        = $_REQUEST['w_troca'];
 
 if ($O=='') $O='L';
 
@@ -118,8 +118,15 @@ function TipoEndereco() {
   $w_libera_edicao = f($RS,'libera_edicao');
 
   if ($O=='') $O='L';
-
-  if (!(strpos('LP',$O)===false)) {
+  if ($w_troca>'' && $O!='E')  {
+    // Se for recarga da página
+    $w_nome                 = $_REQUEST['w_nome'];
+    $w_sq_tipo_pessoa       = $_REQUEST['w_sq_tipo_pessoa'];
+    $w_email                = $_REQUEST['w_email'];
+    $w_internet             = $_REQUEST['w_internet'];
+    $w_ativo                = $_REQUEST['w_ativo'];
+    $w_padrao               = $_REQUEST['w_padrao'];
+  } elseif (!(strpos('LP',$O)===false)) {
     $RS = db_getAdressTypeList::getInstanceOf($dbms,null,$p_nome,$p_ativo);
     if ($p_ordena>'') { 
       $RS = SortArray($RS,substr($p_ordena,0,strpos($p_ordena,' ')),substr($p_ordena,strpos($p_ordena,' ')+1));
@@ -161,7 +168,9 @@ function TipoEndereco() {
     ScriptClose();
   } 
   ShowHTML('</HEAD>');
-  if (!(strpos('IAE',$O)===false)) {
+  if ($w_troca>'') {
+    BodyOpen('onLoad=document.Form.'.$w_troca.'.focus();');
+  } elseif (!(strpos('IAE',$O)===false)) {
     if ($O=='E') {
       BodyOpen('onLoad=\'document.Form.w_assinatura.focus()\';');
     } else {
@@ -313,7 +322,13 @@ function TipoTelefone() {
   $w_sq_tipo_telefone=$_REQUEST['w_sq_tipo_telefone'];
 
   if ($O=='') $O='L';
-  if (!(strpos('LP',$O)===false)) {
+  if ($w_troca>'' && $O!='E')  {
+    // Se for recarga da página
+    $w_nome                 = $_REQUEST['w_nome'];
+    $w_sq_tipo_pessoa       = $_REQUEST['w_sq_tipo_pessoa'];
+    $w_ativo                = $_REQUEST['w_ativo'];
+    $w_padrao               = $_REQUEST['w_padrao'];
+  } elseif (!(strpos('LP',$O)===false)) {
     $RS = db_getFoneTypeList::getInstanceOf($dbms,null,$p_nome,$p_ativo);
     if ($p_ordena>'') { 
       $RS = SortArray($RS,substr($p_ordena,0,strpos($p_ordena,' ')),substr($p_ordena,strpos($p_ordena,' ')+1));
@@ -353,7 +368,9 @@ function TipoTelefone() {
     ScriptClose();
   } 
   ShowHTML('</HEAD>');
-  if (!(strpos('IAE',$O)===false)) {
+  if ($w_troca>'') {
+    BodyOpen('onLoad=document.Form.'.$w_troca.'.focus();');
+  } elseif (!(strpos('IAE',$O)===false)) {
     if ($O=='E') {
       BodyOpen('onLoad=\'document.Form.w_assinatura.focus()\';');
     } else {
@@ -493,8 +510,12 @@ function TipoPessoa() {
   $w_libera_edicao=f($RS,'libera_edicao');
 
   if ($O=='') $O='L';
-
-  if (!(strpos('LP',$O)===false)) {
+  if ($w_troca>'' && $O!='E')  {
+    // Se for recarga da página
+    $w_nome                 = $_REQUEST['w_nome'];
+    $w_ativo                = $_REQUEST['w_ativo'];
+    $w_padrao               = $_REQUEST['w_padrao'];
+  } elseif (!(strpos('LP',$O)===false)) {
     $RS = db_getUserTypeList::getInstanceOf($dbms,$p_nome,$p_ativo);
     if ($p_ordena>'') { 
       $RS = SortArray($RS,substr($p_ordena,0,strpos($p_ordena,' ')),substr($p_ordena,strpos($p_ordena,' ')+1));
@@ -533,7 +554,9 @@ function TipoPessoa() {
   } 
 
   ShowHTML('</HEAD>');
-  if (!(strpos('IAE',$O)===false)) {
+  if ($w_troca>'') {
+    BodyOpen('onLoad=document.Form.'.$w_troca.'.focus();');
+  } elseif (!(strpos('IAE',$O)===false)) {
     if ($O=='E') {
       BodyOpen('onLoad=\'document.Form.w_assinatura.focus()\';');
     } else {
@@ -674,8 +697,14 @@ function Deficiencia() {
   $w_sq_deficiencia = $_REQUEST['w_sq_deficiencia'];
 
   if ($O=='') $O='L';
-
-  if (!(strpos('LP',$O)===false)) {
+  if ($w_troca>'' && $O!='E')  {
+    // Se for recarga da página
+    $w_nome                 = $_REQUEST['w_nome'];
+    $w_codigo               = $_REQUEST['w_codigo'];
+    $w_descricao            = $_REQUEST['w_descricao'];
+    $w_sq_grupo_deficiencia = $_REQUEST['w_sq_grupo_deficiencia'];
+    $w_ativo                = $_REQUEST['w_ativo'];
+  } elseif (!(strpos('LP',$O)===false)) {
     $RS = db_getDeficiencyList::getInstanceOf($dbms,$p_nome,$p_ativo);
     if ($p_ordena>'') { 
       $RS = SortArray($RS,substr($p_ordena,0,strpos($p_ordena,' ')),substr($p_ordena,strpos($p_ordena,' ')+1));
@@ -718,7 +747,9 @@ function Deficiencia() {
     ScriptClose();
   } 
   ShowHTML('</HEAD>');
-  if (!(strpos('IAE',$O)===false)) {
+  if ($w_troca>'') {
+    BodyOpen('onLoad=document.Form.'.$w_troca.'.focus();');
+  } elseif (!(strpos('IAE',$O)===false)) {
     if ($O=='E') {
       BodyOpen('onLoad=\'document.Form.w_assinatura.focus()\';');
     } else {
@@ -858,8 +889,11 @@ function GrupoDeficiencia() {
   $w_sq_grupo_deficiencia   = $_REQUEST['w_sq_grupo_deficiencia'];
 
   if ($O=='') $O='L';
-
-  if (!(strpos('LP',$O)===false)) {
+  if ($w_troca>'' && $O!='E')  {
+    // Se for recarga da página
+    $w_nome                 = $_REQUEST['w_nome'];
+    $w_ativo                = $_REQUEST['w_ativo'];
+  } elseif (!(strpos('LP',$O)===false)) {
     $RS = db_getDeficGroupList::getInstanceOf($dbms,$p_nome,$p_ativo);
     if ($p_ordena>'') { 
       $RS = SortArray($RS,substr($p_ordena,0,strpos($p_ordena,' ')),substr($p_ordena,strpos($p_ordena,' ')+1));
@@ -896,7 +930,9 @@ function GrupoDeficiencia() {
     ScriptClose();
   } 
   ShowHTML('</HEAD>');
-  if (!(strpos('IAE',$O)===false)) {
+  if ($w_troca>'') {
+    BodyOpen('onLoad=document.Form.'.$w_troca.'.focus();');
+  } elseif (!(strpos('IAE',$O)===false)) {
     if ($O=='E') {
       BodyOpen('onLoad=\'document.Form.w_assinatura.focus()\';');
     } else {
@@ -1024,8 +1060,12 @@ function Idioma() {
   $w_sq_idioma  = $_REQUEST['w_sq_idioma'];
 
   if ($O=='') $O='L';
-
-  if (!(strpos('LP',$O)===false)) {
+  if ($w_troca>'' && $O!='E')  {
+    // Se for recarga da página
+    $w_nome           = $_REQUEST['w_nome'];
+    $w_ativo          = $_REQUEST['w_ativo'];
+    $w_padrao         = $_REQUEST['w_padrao'];
+  } elseif (!(strpos('LP',$O)===false)) {
     $RS = db_getIdiomList::getInstanceOf($dbms,$p_nome,$p_ativo);
     if ($p_ordena>'') { 
       $RS = SortArray($RS,substr($p_ordena,0,strpos($p_ordena,' ')),substr($p_ordena,strpos($p_ordena,' ')+1));
@@ -1190,13 +1230,15 @@ function Etnia() {
   extract($GLOBALS);
   global $w_Disabled;
 
-  $p_nome       = trim(strtoupper($_REQUEST['p_nome']));
-  $p_ativo      = trim($_REQUEST['p_ativo']);
   $w_sq_etnia   = $_REQUEST['w_sq_etnia'];
 
   if ($O=='') $O='L';
-
-  if (!(strpos('LP',$O)===false)) {
+  if ($w_troca>'' && $O!='E')  {
+    // Se for recarga da página
+    $w_nome           = $_REQUEST['w_nome'];
+    $w_ativo          = $_REQUEST['w_ativo'];
+    $w_codigo_siape   = $_REQUEST['w_codigo_siape'];
+  } elseif (!(strpos('LP',$O)===false)) {
     $RS = db_getEtniaList::getInstanceOf($dbms,$p_nome,$p_ativo);
     if ($p_ordena>'') { 
       $RS = SortArray($RS,substr($p_ordena,0,strpos($p_ordena,' ')),substr($p_ordena,strpos($p_ordena,' ')+1));
@@ -1235,7 +1277,9 @@ function Etnia() {
     ScriptClose();
   }  
   ShowHTML('</HEAD>');
-  if (!(strpos('IAE',$O)===false)) {
+  if ($w_troca>'') {
+    BodyOpen('onLoad=document.Form.'.$w_troca.'.focus();');
+  } elseif (!(strpos('IAE',$O)===false)) {
     if ($O=='E') {
       BodyOpen('onLoad=\'document.Form.w_assinatura.focus()\';');
     } else {
@@ -1369,8 +1413,13 @@ function Formacao() {
   $w_sq_formacao    = $_REQUEST['w_sq_formacao'];
 
   if ($O=='') $O='L';
-
-  if (!(strpos('LP',$O)===false)) {
+  if ($w_troca>'' && $O!='E')  {
+    // Se for recarga da página
+    $w_nome      = $_REQUEST['w_nome'];
+    $w_ativo     = $_REQUEST['w_ativo'];
+    $w_ativo     = $_REQUEST['w_ativo'];
+    $w_ordem     = $_REQUEST['w_ordem'];
+  } elseif (!(strpos('LP',$O)===false)) {
     $RS = db_getFormationList::getInstanceOf($dbms,null,$p_nome,$p_ativo);
     if ($p_ordena>'') { 
       $RS = SortArray($RS,substr($p_ordena,0,strpos($p_ordena,' ')),substr($p_ordena,strpos($p_ordena,' ')+1));
@@ -1410,7 +1459,9 @@ function Formacao() {
     ScriptClose();
   } 
   ShowHTML('</HEAD>');
-  if ($O=='E') {
+  if ($w_troca>'') {
+    BodyOpen('onLoad=document.Form.'.$w_troca.'.focus();');
+  } elseif ($O=='E') {
     BodyOpen('onLoad=\'document.Form.w_assinatura.focus()\';');
   } elseif ($O=='P') {
     BodyOpen('onLoad=\'document.Form.p_nome.focus()\';');
@@ -1559,8 +1610,8 @@ function Grava() {
       } else {
         ScriptOpen('JavaScript');
         ShowHTML('  alert(\'Assinatura Eletrônica inválida!\');');
-        ShowHTML('  history.back(1);');
         ScriptClose();
+        RetornaFormulario('w_assinatura');
       } 
       break;
     case 'COTPFONE':
@@ -1575,8 +1626,8 @@ function Grava() {
       } else {
         ScriptOpen('JavaScript');
         ShowHTML('  alert(\'Assinatura Eletrônica inválida!\');');
-        ShowHTML('  history.back(1);');
         ScriptClose();
+        RetornaFormulario('w_assinatura');
       } 
       break;
     case 'COTPPESSOA':
@@ -1591,8 +1642,8 @@ function Grava() {
       } else {
         ScriptOpen('JavaScript');
         ShowHTML('  alert(\'Assinatura Eletrônica inválida!\');');
-        ShowHTML('  history.back(1);');
         ScriptClose();
+        RetornaFormulario('w_assinatura');
       } 
       break;
     case 'COTPDEF': 
@@ -1607,8 +1658,8 @@ function Grava() {
       } else {
         ScriptOpen('JavaScript');
         ShowHTML('  alert(\'Assinatura Eletrônica inválida!\');');
-        ShowHTML('  history.back(1);');
         ScriptClose();
+        RetornaFormulario('w_assinatura');
       } 
       break;
     case 'COGRDEF':
@@ -1623,8 +1674,8 @@ function Grava() {
       } else {
         ScriptOpen('JavaScript');
         ShowHTML('  alert(\'Assinatura Eletrônica inválida!\');');
-        ShowHTML('  history.back(1);');
         ScriptClose();
+        RetornaFormulario('w_assinatura');
       } 
       break;
     case 'COIDIOMA':
@@ -1654,8 +1705,8 @@ function Grava() {
       } else {
         ScriptOpen('JavaScript');
         ShowHTML('  alert(\'Assinatura Eletrônica inválida!\');');
-        ShowHTML('  history.back(1);');
         ScriptClose();
+        RetornaFormulario('w_assinatura');
       } 
       break;
     case 'COETNIA':
@@ -1670,8 +1721,8 @@ function Grava() {
       } else {
         ScriptOpen('JavaScript');
         ShowHTML('  alert(\'Assinatura Eletrônica inválida!\');');
-        ShowHTML('  history.back(1);');
         ScriptClose();
+        RetornaFormulario('w_assinatura');
       } 
       break;
     case 'COFORM':
@@ -1685,9 +1736,10 @@ function Grava() {
         ScriptClose();
       } else {
         ScriptOpen('JavaScript');
-        ShowHTML('  alert(\'ATENÇÃO: Só pode haver um valor padrão para idioma Favor verificar.!\');');
-        ShowHTML('  history.back(1);');
+//        ShowHTML('  alert(\'ATENÇÃO: Só pode haver um valor padrão para idioma Favor verificar.!\');');
+        ShowHTML('  alert(\'Assinatura Eletrônica inválida!\');');
         ScriptClose();
+        RetornaFormulario('w_assinatura');
       } 
       break;
   } 

@@ -958,7 +958,9 @@ function Experiencia() {
       ShowHTML('location.href=\''.montaURL_JS($w_dir,'cv.php?par=Identificacao&w_usuario='.$w_chave.'&P1='.$P1.'&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP='.$TP.'&SG='.$SG.MontaFiltro('GET')).'\';');
       ScriptClose();
     } 
-  } if ($w_troca >'') {
+  } 
+  if ($w_troca>'' && $O!='E')  {
+    // Se for recarga da página
     $w_sq_area_conhecimento   = $_REQUEST['w_sq_area_conhecimento'];
     $w_nm_area                = $_REQUEST['w_nm_area'];
     $w_sq_pais                = $_REQUEST['w_sq_pais'];
@@ -1362,12 +1364,14 @@ function Escolaridade() {
       ShowHTML('location.href=\''.montaURL_JS($w_dir,'cv.php?par=Identificacao&w_usuario='.$w_chave.'&P1='.$P1.'&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP='.$TP.'&SG='.$SG.MontaFiltro('GET')).'\';');
       ScriptClose();
     } 
-  } if ($w_troca >'') {
+  }   
+  if ($w_troca>'' && $O!='E')  {
     // Se for recarga da página
     $w_sq_area_conhecimento = $_REQUEST['w_sq_area_conhecimento'];
     $w_sq_pais              = $_REQUEST['w_sq_pais'];
     $w_sq_formacao          = $_REQUEST['w_sq_formacao'];
     $w_nome                 = $_REQUEST['w_nome'];
+    $w_nm_area              = $_REQUEST['w_nm_area'];
     $w_instituicao          = $_REQUEST['w_instituicao'];
     $w_inicio               = $_REQUEST['w_inicio'];
     $w_fim                  = $_REQUEST['w_fim'];
@@ -1401,11 +1405,11 @@ function Escolaridade() {
     ValidateOpen('Validacao');
     if (!(strpos('IA',$O)===false)) {
       Validate('w_sq_formacao','Formação','SELECT','1','1','10','','1');
-      Validate('w_nm_area','Área do conhecimento','','','1','92','1','1');
       ShowHTML('  if (theForm.w_sq_formacao.selectedIndex > 3 && (theForm.w_sq_area_conhecimento.value==\'\' || theForm.w_nome.value==\'\')) { ');
       ShowHTML('     alert(\'Se formação acadêmica for graduação ou acima, informe a área do conhecimento e o nome do curso\'); ');
       ShowHTML('     return false; ');
       ShowHTML('  } ');
+      Validate('w_nm_area','Área do conhecimento','','','1','92','1','1');
       Validate('w_nome','Nome','1','','3','80','1','1');
       Validate('w_instituicao','Instituição','1','1','1','100','1','1');
       Validate('w_inicio','Início','DATAMA','1','7','7','','0123456789/');
@@ -1501,8 +1505,8 @@ function Escolaridade() {
     ShowHTML('      <tr><td valign="top"><b><u>N</u>ome curso:</b><br><input '.$w_Disabled.' accesskey="N" type="text" name="w_nome" class="sti" SIZE="80" MAXLENGTH="80" VALUE="'.$w_nome.'"></td>');
     ShowHTML('      <tr><td valign="top"><b><u>I</u>nstituição:</b><br><input '.$w_Disabled.' accesskey="I" type="text" name="w_instituicao" class="sti" SIZE="80" MAXLENGTH="100" VALUE="'.$w_instituicao.'"></td>');
     ShowHTML('      <tr><td valign="top" colspan="2"><table border=0 width="100%" cellspacing=0>');
-    ShowHTML('          <tr><td valign="top"><b>Íni<u>c</u>io: (mm/aaaa)</b><br><input '.$w_Disabled.' accesskey="c" type="text" name="w_inicio" class="sti" SIZE="7" MAXLENGTH="7" VALUE="'.$w_inicio.'" onKeyDown="FormataDataMA(this,event);"></td>');
-    ShowHTML('              <td valign="top"><b>Fi<u>m</u>: (mm/aaaa)</b><br><input '.$w_Disabled.' accesskey="M" type="text" name="w_fim" class="sti" SIZE="7" MAXLENGTH="7" VALUE="'.$w_fim.'" onKeyDown="FormataDataMA(this,event);"></td>');
+    ShowHTML('          <tr><td valign="top"><b>Íni<u>c</u>io: (mm/aaaa)</b><br><input '.$w_Disabled.' accesskey="c" type="text" name="w_inicio" class="sti" SIZE="7" MAXLENGTH="7" VALUE="'.$w_inicio.'" onKeyDown="FormataDataMA(this,event);">'.ExibeCalendario('Form','w_inicio').'</td>');
+    ShowHTML('              <td valign="top"><b>Fi<u>m</u>: (mm/aaaa)</b><br><input '.$w_Disabled.' accesskey="M" type="text" name="w_fim" class="sti" SIZE="7" MAXLENGTH="7" VALUE="'.$w_fim.'" onKeyDown="FormataDataMA(this,event);">'.ExibeCalendario('Form','w_fim').'</td>');
     SelecaoPais('<u>P</u>aís de conclusão:','P','Selecione o país onde concluiu esta formação.',Nvl($w_sq_pais,2),null,'w_sq_pais',null,null);
     ShowHTML('          </table>');
     if ($_SESSION['PORTAL']=='') {
@@ -1550,11 +1554,13 @@ function Extensao() {
       ShowHTML('location.href=\''.montaURL_JS($w_dir,'cv.php?par=Identificacao&w_usuario='.$w_chave.'&P1='.$P1.'&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP='.$TP.'&SG='.$SG.MontaFiltro('GET')).'\';');
       ScriptClose();
     } 
-  } if ($w_troca >'') {
+  } 
+  if ($w_troca>'' && $O!='E')  {
     // Se for recarga da página
     $w_sq_area_conhecimento = $_REQUEST['w_sq_area_conhecimento'];
     $w_sq_formacao          = $_REQUEST['w_sq_formacao'];
     $w_nome                 = $_REQUEST['w_nome'];
+    $w_nm_area              = $_REQUEST['w_nm_area'];    
     $w_instituicao          = $_REQUEST['w_instituicao'];
     $w_carga_horaria        = $_REQUEST['w_carga_horaria'];
     $w_conclusao            = $_REQUEST['w_conclusao'];
@@ -2106,10 +2112,10 @@ function Grava() {
         } 
         ScriptClose();
       } else {
-      ScriptOpen('JavaScript');
-      ShowHTML('  alert(\'Assinatura Eletrônica inválida!\');');
-      ShowHTML('  history.back(1);');
-      ScriptClose();
+        ScriptOpen('JavaScript');
+        ShowHTML('  alert(\'Assinatura Eletrônica inválida!\');');
+        ScriptClose();
+        RetornaFormulario('w_assinatura');
       } 
       break;
     case 'CVHIST':
@@ -2161,8 +2167,8 @@ function Grava() {
       } else {
         ScriptOpen('JavaScript');
         ShowHTML('  alert(\'Assinatura Eletrônica inválida!\');');
-        ShowHTML('  history.back(1);');
         ScriptClose();
+        RetornaFormulario('w_assinatura');
       } 
       break;
     case 'CVCARGOS':
@@ -2193,8 +2199,8 @@ function Grava() {
       } else {
         ScriptOpen('JavaScript');
         ShowHTML('  alert(\'Assinatura Eletrônica inválida!\');');
-        ShowHTML('  history.back(1);');
         ScriptClose();
+        RetornaFormulario('w_assinatura');
       } 
       break;
     case 'CVCURSO':
@@ -2209,8 +2215,8 @@ function Grava() {
       } else {
         ScriptOpen('JavaScript');
         ShowHTML('  alert(\'Assinatura Eletrônica inválida!\');');
-        ShowHTML('  history.back(1);');
         ScriptClose();
+        RetornaFormulario('w_assinatura');
       } 
       break;
     case 'CVTECNICA':

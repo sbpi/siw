@@ -97,7 +97,15 @@ function Abastecimento() {
   }
   Estrutura_CSS($w_cliente);
   if ($O=='') $O='L';
-  if ($O=='L') {
+  if ($w_troca>'' && $O!='E') {
+    // Se for recarga da página
+    $w_chave_aux          = $_REQUEST['w_chave_aux'];    
+    $w_data               = FormataDataEdicao($_REQUEST['w_data']);
+    $w_hodometro          = $_REQUEST['w_hodometro'];       
+    $w_litros             = $_REQUEST['w_litros'];
+    $w_valor              = $_REQUEST['w_valor']; 
+    $w_local              = $_REQUEST['w_local'];    
+  } elseif ($O=='L') {
     $RS = db_getAbastecimento::getInstanceOf($dbms, null, $w_chave_aux, $w_cliente);
     if (Nvl($p_ordena,'') > '') {
       $lista = explode(',',str_replace(' ',',',$p_ordena));
@@ -235,7 +243,7 @@ function Abastecimento() {
         ShowHTML('            <input class="stb" type="submit" name="Botao" value="Atualizar">');
       } 
     } 
-    ShowHTML('            <input class="stb" type="button" onClick="history.back(1);" name="Botao" value="Cancelar">');
+    ShowHTML('            <input class="stb" type="button" onClick="location.href=\''.$w_pagina.$par.'&P1='.$P1.'&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP='.$TP.'&SG='.$SG.'&p_nome='.$p_nome.'&p_ativo='.$p_ativo.'&p_ordena='.$p_ordena.'\';" name="Botao" value="Cancelar">');
     ShowHTML('          </td>');
     ShowHTML('      </tr>');
     ShowHTML('    </table>');
@@ -268,7 +276,13 @@ function Grupo() {
   }
   Estrutura_CSS($w_cliente);
   if ($O=='') $O='L';
-  if ($O=='L') {
+  if ($w_troca>'' && $O!='E') {
+    // Se for recarga da página
+    $w_nome         = $_REQUEST['w_nome'];
+    $w_sigla        = $_REQUEST['w_sigla'];
+    $w_descricao    = $_REQUEST['w_descricao']; 
+    $w_ativo        = $_REQUEST['w_ativo'];    
+  } elseif ($O=='L') {
     $RS = db_getGrupoVeiculo::getInstanceOf($dbms, null, $w_cliente, null, null,null);
     if (Nvl($p_ordena,'') > '') {
       $lista = explode(',',str_replace(' ',',',$p_ordena));
@@ -393,7 +407,7 @@ function Grupo() {
         ShowHTML('            <input class="stb" type="submit" name="Botao" value="Atualizar">');
       } 
     } 
-    ShowHTML('            <input class="stb" type="button" onClick="history.back(1);" name="Botao" value="Cancelar">');
+    ShowHTML('            <input class="stb" type="button" onClick="location.href=\''.$w_pagina.$par.'&P1='.$P1.'&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP='.$TP.'&SG='.$SG.'&p_nome='.$p_nome.'&p_ativo='.$p_ativo.'&p_ordena='.$p_ordena.'\';" name="Botao" value="Cancelar">');
     ShowHTML('          </td>');
     ShowHTML('      </tr>');
     ShowHTML('    </table>');
@@ -427,7 +441,14 @@ function Opiniao() {
   }
   Estrutura_CSS($w_cliente);
   if ($O=='') $O='L';
-  if ($O=='L') {
+  if ($w_troca>'' && $O!='E') {
+    // Se for recarga da página  
+    $w_cliente      = $_REQUEST['w_cliente'];
+    $w_chave        = $_REQUEST['w_chave'];
+    $w_nome         = $_REQUEST['w_nome'];
+    $w_sigla        = $_REQUEST['w_sigla']; 
+    $w_ordem        = $_REQUEST['w_ordem'];  
+  } elseif ($O=='L') {
     $RS = db_getOpiniao::getInstanceOf($dbms, null, $w_cliente, null, null, null);
     if (Nvl($p_ordena,'') > '') {
       $lista = explode(',',str_replace(' ',',',$p_ordena));
@@ -551,7 +572,7 @@ function Opiniao() {
         ShowHTML('            <input class="stb" type="submit" name="Botao" value="Atualizar">');
       } 
     } 
-    ShowHTML('            <input class="stb" type="button" onClick="history.back(1);" name="Botao" value="Cancelar">');
+    ShowHTML('            <input class="stb" type="button" onClick="location.href=\''.$w_pagina.$par.'&P1='.$P1.'&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP='.$TP.'&SG='.$SG.'&p_nome='.$p_nome.'&p_ativo='.$p_ativo.'&p_ordena='.$p_ordena.'\';" name="Botao" value="Cancelar">');
     ShowHTML('          </td>');
     ShowHTML('      </tr>');
     ShowHTML('    </table>');
@@ -585,7 +606,14 @@ function TipoVeiculo() {
   }
   Estrutura_CSS($w_cliente);
   if ($O=='') $O='L';
-  if ($O=='L') {
+  if ($w_troca>'' && $O!='E') {
+    // Se for recarga da página
+    $w_chave_aux          = $_REQUEST['w_chave_aux'];    
+    $w_nome               = $_REQUEST['w_nome'];
+    $w_sigla              = $_REQUEST['w_sigla'];
+    $w_descricao          = $_REQUEST['w_descricao']; 
+    $w_ativo              = $_REQUEST['w_ativo'];  
+  } elseif ($O=='L') {
     $RS = db_getTipoVeiculo::getInstanceOf($dbms, null, $w_cliente, null, null, null,null);
     if (Nvl($p_ordena,'') > '') {
       $lista = explode(',',str_replace(' ',',',$p_ordena));
@@ -714,7 +742,7 @@ function TipoVeiculo() {
         ShowHTML('            <input class="stb" type="submit" name="Botao" value="Atualizar">');
       } 
     } 
-    ShowHTML('            <input class="stb" type="button" onClick="history.back(1);" name="Botao" value="Cancelar">');
+    ShowHTML('            <input class="stb" type="button" onClick="location.href=\''.$w_pagina.$par.'&P1='.$P1.'&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP='.$TP.'&SG='.$SG.'&p_nome='.$p_nome.'&p_ativo='.$p_ativo.'&p_ordena='.$p_ordena.'\';" name="Botao" value="Cancelar">');
     ShowHTML('          </td>');
     ShowHTML('      </tr>');
     ShowHTML('    </table>');
@@ -747,7 +775,22 @@ function Veiculo() {
   }
   Estrutura_CSS($w_cliente);
   if ($O=='') $O='L';
-  if ($O=='L') {
+  if ($w_troca>'' && $O!='E') {
+    $w_chave_aux          = $_REQUEST['w_chave_aux'];
+    $w_placa              = $_REQUEST['w_placa'];
+    $w_marca              = $_REQUEST['w_marca'];
+    $w_modelo             = $_REQUEST['w_modelo'];
+    $w_combustivel        = $_REQUEST['w_combustivel'];
+    $w_tipo               = $_REQUEST['w_tipo'];    
+    $w_potencia           = $_REQUEST['w_potencia'];
+    $w_cilindrada         = $_REQUEST['w_cilindrada'];
+    $w_ano_modelo         = $_REQUEST['w_ano_modelo']; 
+    $w_ano_fabricacao     = $_REQUEST['w_ano_fabricacao'];                        
+    $w_renavam            = $_REQUEST['w_renavam']; 
+    $w_chassi             = $_REQUEST['w_chassi'];                 
+    $w_alugado            = $_REQUEST['w_alugado'];
+    $w_ativo              = $_REQUEST['w_ativo'];    
+  } elseif ($O=='L') {
     $RS = db_getVeiculo::getInstanceOf($dbms, null, null, $w_cliente, null, null, null);
     if (Nvl($p_ordena,'') > '') {
       $lista = explode(',',str_replace(' ',',',$p_ordena));
@@ -907,7 +950,7 @@ function Veiculo() {
         ShowHTML('            <input class="stb" type="submit" name="Botao" value="Atualizar">');
       } 
     } 
-    ShowHTML('            <input class="stb" type="button" onClick="history.back(1);" name="Botao" value="Cancelar">');
+    ShowHTML('            <input class="stb" type="button" onClick="location.href=\''.$w_pagina.$par.'&P1='.$P1.'&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP='.$TP.'&SG='.$SG.'&p_nome='.$p_nome.'&p_ativo='.$p_ativo.'&p_ordena='.$p_ordena.'\';" name="Botao" value="Cancelar">');
     ShowHTML('          </td>');
     ShowHTML('      </tr>');
     ShowHTML('    </table>');
@@ -947,8 +990,8 @@ function Grava() {
       } else {
         ScriptOpen('JavaScript');
         ShowHTML('  alert(\'Assinatura Eletrônica inválida!\');');
-        ShowHTML('  history.back(1);');
         ScriptClose();
+        RetornaFormulario('w_assinatura');
       } 
       break;        
     case 'SRGRUPO':
@@ -982,8 +1025,8 @@ function Grava() {
       } else {
         ScriptOpen('JavaScript');
         ShowHTML('  alert(\'Assinatura Eletrônica inválida!\');');
-        ShowHTML('  history.back(1);');
         ScriptClose();
+        RetornaFormulario('w_assinatura');
       } 
       break;
     case 'SROPINIAO':
@@ -1026,8 +1069,8 @@ function Grava() {
       } else {
         ScriptOpen('JavaScript');
         ShowHTML('  alert(\'Assinatura Eletrônica inválida!\');');
-        ShowHTML('  history.back(1);');
         ScriptClose();
+        RetornaFormulario('w_assinatura');
       } 
       break;
     case 'SRTIPOVEI':
@@ -1061,8 +1104,8 @@ function Grava() {
       } else {
         ScriptOpen('JavaScript');
         ShowHTML('  alert(\'Assinatura Eletrônica inválida!\');');
-        ShowHTML('  history.back(1);');
         ScriptClose();
+        RetornaFormulario('w_assinatura');
       } 
       break;    
     case 'SRVEICULO':
@@ -1097,8 +1140,8 @@ function Grava() {
       } else {
         ScriptOpen('JavaScript');
         ShowHTML('  alert(\'Assinatura Eletrônica inválida!\');');
-        ShowHTML('  history.back(1);');
         ScriptClose();
+        RetornaFormulario('w_assinatura');
       } 
       break;  
        

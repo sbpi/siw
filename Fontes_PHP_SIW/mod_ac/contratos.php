@@ -833,7 +833,7 @@ function Geral() {
   if ($O=='I' || $O=='A') {
     if($w_numeracao_automatica=='N') Validate('w_codigo_interno','Código interno','1',1,1,60,'1','1');
     Validate('w_titulo','Título','1',1,5,100,'1','1'); 
-    Validate('w_sq_tipo_acordo','Modalidade de contratação','SELECT',1,1,18,'','0123456789');
+    Validate('w_sq_tipo_acordo','Tipo','SELECT',1,1,18,'','0123456789');
     if (substr($SG,0,3)!='GCB') Validate('w_objeto','Objeto','1',1,5,2000,'1','1');
     else                        Validate('w_objeto','Plano de trabalho','1',1,5,2000,'1','1');
     if ($w_pessoa_fisica=='S' && $w_pessoa_juridica=='S') {

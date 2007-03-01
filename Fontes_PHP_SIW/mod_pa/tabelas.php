@@ -933,19 +933,28 @@ function Parametro() {
   $w_despacho_arqcentral   = f($RS,'despacho_arqcentral');
   $w_despacho_emprestimo   = f($RS,'despacho_emprestimo');
   $w_despacho_devolucao    = f($RS,'despacho_devolucao');
+  $w_despacho_autuar       = f($RS,'despacho_autuar');
+  $w_despacho_arqsetorial  = f($RS,'despacho_arqsetorial');
+  $w_despacho_anexar       = f($RS,'despacho_anexar');
+  $w_despacho_apensar      = f($RS,'despacho_apensar');
+  $w_despacho_eliminar     = f($RS,'despacho_eliminar');
   $w_arquivo_central       = f($RS,'arquivo_central');
-  $w_limite_interessado    = f($RS,'limite_interessados');
+  $w_limite_interessados   = f($RS,'limite_interessados');  
   $w_ano_corrente          = f($RS,'ano_corrente');
-
   Cabecalho();
   ShowHTML('<HEAD>');
   ScriptOpen('JavaScript');
   ValidateOpen('Validacao');
+  Validate('w_despacho_arqsetorial','Despacho para arquivo setorial','SELECT','1','1','18','','1');
   Validate('w_despacho_arqcentral','Despacho para arquivo central','SELECT','1','1','18','','1');
   Validate('w_despacho_emprestimo','Despacho para emprestimo','SELECT','1','1','18','','1');
   Validate('w_despacho_devolucao','Despacho para devolução','SELECT','1','1','18','','1');
+  Validate('w_despacho_eliminar','Despacho para eliminar','SELECT','1','1','18','','1');
+  Validate('w_despacho_autuar','Despacho para autuar','SELECT','1','1','18','','1');
+  Validate('w_despacho_anexar','Despacho para anexar','SELECT','1','1','18','','1');
+  Validate('w_despacho_apensar','Despacho para apensar','SELECT','1','1','18','','1');
   Validate('w_arquivo_central','Unidade do arquivo central','SELECT','1','1','18','','1');
-  Validate('w_limite_interessado','Limite de interessados','1','1','1','18','','1');
+  Validate('w_limite_interessados','Limite de interessados','1','1','1','18','','1');
   Validate('w_ano_corrente','Ano corrente','1','1','4','4','','1');
   ShowHTML('  if ((theForm.w_despacho_arqcentral.value==theForm.w_despacho_emprestimo.value)||(theForm.w_despacho_arqcentral.value==theForm.w_despacho_devolucao.value)||(theForm.w_despacho_devolucao.value==theForm.w_despacho_emprestimo.value)) {');
   ShowHTML('    alert(\'Nenhum dos despachos podem ser iguais!\');');
@@ -958,23 +967,31 @@ function Parametro() {
   ScriptClose();
   ShowHTML('</HEAD>');
   ShowHTML('<BASE HREF="'.$conRootSIW.'">');  
-  BodyOpen('onLoad=\'document.Form.w_despacho_arqcentral.focus()\';');
+  BodyOpen('onLoad=\'document.Form.w_despacho_arqsetorial.focus()\';');
   ShowHTML('<B><FONT COLOR="#000000">'.str_replace('Listagem','Alteração',$w_TP).'</FONT></B>');
   ShowHTML('<HR>');
   ShowHTML('<div align=center><center>');
   ShowHTML('<table border="0" cellpadding="0" cellspacing="0" width="100%">');
-
   AbreForm('Form',$w_dir.$w_pagina.'Grava','POST','return(Validacao(this));',null,$P1,$P2,$P3,$P4,$TP,$SG,$w_pagina.$par,$O);
   ShowHTML('<tr bgcolor="'.$conTrBgColor.'"><td align="center">');
   ShowHTML('    <table width="97%" border="0">');
   ShowHTML('      <tr valign="top">');
+  SelecaoTipoDespacho('Despacho para arqu<U>i</U>vo setorial:','I',null,$w_cliente,$w_despacho_arqsetorial,null,'w_despacho_arqsetorial',null,null);
   SelecaoTipoDespacho('Despacho para ar<U>q</U>uivo central:','A',null,$w_cliente,$w_despacho_arqcentral,null,'w_despacho_arqcentral',null,null);
+  ShowHTML('      <tr valign="top">');
   SelecaoTipoDespacho('Despacho para <U>e</U>mpréstimo:','E',null,$w_cliente,$w_despacho_emprestimo,null,'w_despacho_emprestimo',null,null);
-  ShowHTML('      <tr valign="top">');
   SelecaoTipoDespacho('Despacho para <U>d</U>evolução:','D',null,$w_cliente,$w_despacho_devolucao,null,'w_despacho_devolucao',null,null);
-  SelecaoUnidade('<U>A</U>rquivo central:','A',null,$w_arquivo_central,null,'w_arquivo_central','MOD_PA',null);
   ShowHTML('      <tr valign="top">');
-  ShowHTML('        <td><b><U>L</U>imite de interessados:<br><INPUT ACCESSKEY="L" '.$w_Disabled.' class="sti" type="text" name="w_limite_interessado" size="4" maxlength="18" value="'.$w_limite_interessado.'"></td>');
+  SelecaoTipoDespacho('Despacho para elimi<U>n</U>ar:','N',null,$w_cliente,$w_despacho_eliminar,null,'w_despacho_eliminar',null,null);
+  SelecaoTipoDespacho('Despacho para a<U>u</U>tuar:','U',null,$w_cliente,$w_despacho_autuar,null,'w_despacho_autuar',null,null);
+  ShowHTML('      <tr valign="top">');
+  SelecaoTipoDespacho('Despacho para ane<U>x</U>ar:','X',null,$w_cliente,$w_despacho_anexar,null,'w_despacho_anexar',null,null);
+  SelecaoTipoDespacho('Despacho para apen<U>s</U>ar:','S',null,$w_cliente,$w_despacho_apensar,null,'w_despacho_apensar',null,null);
+  ShowHTML('      <tr valign="top"><td colspan="2"><table width="97%" border="0">');
+  SelecaoUnidade('<U>A</U>rquivo central:','A',null,$w_arquivo_central,null,'w_arquivo_central','MOD_PA',null);
+  ShowHTML('          </table>');
+  ShowHTML('      <tr valign="top">');
+  ShowHTML('        <td><b><U>L</U>imite de interessados:<br><INPUT ACCESSKEY="L" '.$w_Disabled.' class="sti" type="text" name="w_limite_interessados" size="4" maxlength="18" value="'.$w_limite_interessados.'"></td>');
   ShowHTML('        <td><b>Ano <U>c</U>orrente:<br><INPUT ACCESSKEY="C" '.$w_Disabled.' class="sti" type="text" name="w_ano_corrente" size="4" maxlength="18" value="'.$w_ano_corrente.'"></td>');
   ShowHTML('      <tr valign="top"><td colspan="2"><b><U>A</U>ssinatura Eletrônica:<br><INPUT ACCESSKEY="A" class="sti" type="PASSWORD" name="w_assinatura" size="30" maxlength="30" value=""></td>');
   ShowHTML('      <tr><td align="center" colspan="2"><hr>');
@@ -1427,7 +1444,8 @@ function Grava() {
       // Verifica se a Assinatura Eletrônica é válida
       if (verificaAssinaturaEletronica($_SESSION['USERNAME'],strtoupper($_REQUEST['w_assinatura'])) || $w_assinatura=='') {
         dml_putPAParametro::getInstanceOf($dbms,$w_cliente,$_REQUEST['w_despacho_arqcentral'],$_REQUEST['w_despacho_emprestimo'],$_REQUEST['w_despacho_devolucao'],
-            $_REQUEST['w_arquivo_central'],$_REQUEST['w_limite_interessado'],$_REQUEST['w_ano_corrente']);
+            $_REQUEST['w_despacho_autuar'],$_REQUEST['w_despacho_arqsetorial'],$_REQUEST['w_despacho_anexar'],$_REQUEST['w_despacho_apensar'],$_REQUEST['w_despacho_eliminar'],
+            $_REQUEST['w_arquivo_central'],$_REQUEST['w_limite_interessados'],$_REQUEST['w_ano_corrente']);
         ScriptOpen('JavaScript');
         ShowHTML('  location.href=\''.montaURL_JS($w_dir,$R.'&w_chave='.$_REQUEST['w_chave'].'&P1='.$P1.'&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP='.$TP.'&SG='.$SG.MontaFiltro('GET')).'\';');
         ScriptClose();

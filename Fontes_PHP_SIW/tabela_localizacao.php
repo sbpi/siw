@@ -108,8 +108,7 @@ function Cidade() {
   $p_ordena     = strtolower($_REQUEST['p_ordena']);
 
   if ($p_sq_pais.$p_co_uf.$p_nome=='') $O='P';
-
-  if ($w_troca>'') {
+  if ($w_troca>'' && $O!='E')  {
     $w_sq_cidade    = $_REQUEST['w_sq_cidade'];
     $w_sq_pais      = $_REQUEST['w_sq_pais'];
     $w_co_uf        = $_REQUEST['w_co_uf'];
@@ -338,8 +337,7 @@ function Estado() {
   $w_libera_edicao = f($RS,'libera_edicao');
 
   if ($p_sq_pais=='') $O='P';
-
-  if ($w_troca>'') {
+  if ($w_troca>'' && $O!='E')  {
     $w_co_uf        = $_REQUEST['w_co_uf'];
     $w_sq_pais      = $_REQUEST['w_sq_pais'];
     $w_sq_regiao    = $_REQUEST['w_sq_regiao'];
@@ -579,8 +577,12 @@ function Regiao() {
 
   $RS = db_getMenuData::getInstanceOf($dbms,$w_menu);
   $w_libera_edicao = f($RS,'libera_edicao');
-
-  if ($O=='L') {
+  if ($w_troca>'' && $O!='E')  {
+    $w_nome         = $_REQUEST['w_nome'];
+    $w_ordem        = $_REQUEST['w_ordem'];
+    $w_sigla        = $_REQUEST['sigla'];
+    $w_sq_pais      = $_REQUEST['sq_pais'];
+  } elseif ($O=='L') {
     $RS = db_getRegionList::getInstanceOf($dbms,$p_sq_pais,'N',$p_nome);
     if ($p_ordena>'') { 
       $RS = SortArray($RS,$p_ordena,'asc');
@@ -622,7 +624,9 @@ function Regiao() {
     ScriptClose();
   }  
   ShowHTML('</HEAD>');
-  if (!(strpos('IAE',$O)===false)) {
+  if ($w_troca>'') {
+    BodyOpen('onLoad=document.Form.'.$w_troca.'.focus();');
+  } elseif (!(strpos('IAE',$O)===false)) {
     if ($O=='E') {
       BodyOpen('onLoad=\'document.Form.w_assinatura.focus()\';');
     } else {
@@ -770,8 +774,13 @@ function Pais() {
 
   $RS = db_getMenuData::getInstanceOf($dbms,$w_menu);
   $w_libera_edicao = f($RS,'libera_edicao');
-  
-  if ($O=='L') {
+  if ($w_troca>'' && $O!='E')  {
+    $w_nome         = $_REQUEST['w_nome'];
+    $w_ddi          = $_REQUEST['ddi'];
+    $w_sigla        = $_REQUEST['sigla'];
+    $w_ativo        = $_REQUEST['ativo'];
+    $w_padrao       = $_REQUEST['padrao'];
+  } elseif ($O=='L') {
     $RS = db_getCountryList::getInstanceOf($dbms,null,$p_nome,$p_ativo,$p_sigla);
     if ($p_ordena>'') { 
       $RS = SortArray($RS,$p_ordena,'asc','nome','asc');
@@ -814,7 +823,9 @@ function Pais() {
     ScriptClose();
   } 
   ShowHTML('</HEAD>');
-  if (!(strpos('IAE',$O)===false)) {
+  if ($w_troca>'') {
+    BodyOpen('onLoad=document.Form.'.$w_troca.'.focus();');
+  } elseif (!(strpos('IAE',$O)===false)) {
     if ($O=='E') {
       BodyOpen('onLoad=\'document.Form.w_assinatura.focus()\';');
     } else {
@@ -1001,8 +1012,8 @@ function Grava() {
       } else {
         ScriptOpen('JavaScript');
         ShowHTML('  alert(\'Assinatura Eletrônica inválida!\');');
-        ShowHTML('  history.back(1);');
         ScriptClose();
+        RetornaFormulario('w_assinatura');
       } 
       break;
     case 'COPAIS':
@@ -1036,8 +1047,8 @@ function Grava() {
       } else {
         ScriptOpen('JavaScript');
         ShowHTML('  alert(\'Assinatura Eletrônica inválida!\');');
-        ShowHTML('  history.back(1);');
         ScriptClose();
+        RetornaFormulario('w_assinatura');
       } 
       break;
     case 'COREGIAO': 
@@ -1056,8 +1067,8 @@ function Grava() {
       } else {
         ScriptOpen('JavaScript');
         ShowHTML('  alert(\'Assinatura Eletrônica inválida!\');');
-        ShowHTML('  history.back(1);');
         ScriptClose();
+        RetornaFormulario('w_assinatura');
       } 
       break;
     case 'COUF':
@@ -1092,8 +1103,8 @@ function Grava() {
       } else {
         ScriptOpen('JavaScript');
         ShowHTML('  alert(\'Assinatura Eletrônica inválida!\');');
-        ShowHTML('  history.back(1);');
         ScriptClose();
+        RetornaFormulario('w_assinatura');
       } 
       break;
   } 

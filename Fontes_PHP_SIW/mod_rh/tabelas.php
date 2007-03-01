@@ -96,14 +96,6 @@ function ModalidadeCont() {
   extract($GLOBALS);
   Global $w_Disabled;
   $w_chave      = $_REQUEST['w_chave'];
-  $w_nome       = $_REQUEST['w_nome'];
-  $w_descricao  = $_REQUEST['w_descricao'];
-  $w_sigla      = $_REQUEST['w_sigla'];
-  $w_ferias     = $_REQUEST['w_ferias'];
-  $w_username   = $_REQUEST['w_username'];
-  $w_passagem   = $_REQUEST['w_passagem'];
-  $w_diaria     = $_REQUEST['w_diaria'];
-  $w_ativo      = $_REQUEST['w_ativo'];
   Cabecalho();
   ShowHTML('<HEAD>');
   ShowHTML('<TITLE>'.$conSgSistema.' - Listagem de modalidades de contratação</TITLE>');
@@ -112,7 +104,16 @@ function ModalidadeCont() {
   }
   Estrutura_CSS($w_cliente);
   if ($O=='') $O='L';
-  if ($O=='L') {
+  if ($w_troca>'' && $O!='E') { 
+    $w_nome       = $_REQUEST['w_nome'];
+    $w_descricao  = $_REQUEST['w_descricao'];
+    $w_sigla      = $_REQUEST['w_sigla'];
+    $w_ferias     = $_REQUEST['w_ferias'];
+    $w_username   = $_REQUEST['w_username'];
+    $w_passagem   = $_REQUEST['w_passagem'];
+    $w_diaria     = $_REQUEST['w_diaria'];
+    $w_ativo      = $_REQUEST['w_ativo'];
+  } elseif ($O=='L') {
     $RS = db_getGPModalidade::getInstanceOf($dbms,$w_cliente,null,$w_sigla,$w_nome,$w_ativo,null,null);
     if (Nvl($p_ordena,'') > '') {
       $lista = explode(',',str_replace(' ',',',$p_ordena));
@@ -284,7 +285,7 @@ function ModalidadeCont() {
         ShowHTML('            <input class="stb" type="submit" name="Botao" value="Atualizar">');
       } 
     } 
-    ShowHTML('            <input class="stb" type="button" onClick="history.back(1);" name="Botao" value="Cancelar">');
+    ShowHTML('            <input class="stb" type="button" onClick="location.href=\''.$w_pagina.$par.'&P1='.$P1.'&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP='.$TP.'&SG='.$SG.'&p_nome='.$p_nome.'&p_ativo='.$p_ativo.'&p_ordena='.$p_ordena.'\';" name="Botao" value="Cancelar">');
     ShowHTML('          </td>');
     ShowHTML('      </tr>');
     ShowHTML('    </table>');
@@ -316,15 +317,6 @@ function Tipoafast() {
   extract($GLOBALS);
   Global $w_Disabled;
   $w_chave           = $_REQUEST['w_chave'];
-  $w_nome            = $_REQUEST['w_nome'];
-  $w_sigla           = $_REQUEST['w_sigla'];
-  $w_limite_dias     = $_REQUEST['w_limite_dias'];
-  $w_perc_pag        = $_REQUEST['w_perc_pag'];
-  $w_sexo            = $_REQUEST['w_sexo'];
-  $w_contagem_dias   = $_REQUEST['w_contagem_dias'];
-  $w_periodo         = $_REQUEST['w_periodo'];
-  $w_sobrepoe_ferias = $_REQUEST['w_sobrepoe_ferias'];
-  $w_ativo           = $_REQUEST['w_ativo']; 
   Cabecalho();
   ShowHTML('<HEAD>');
   ShowHTML('<TITLE>'.$conSgSistema.' - Listagem dos tipos de afastamento</TITLE>');
@@ -332,9 +324,18 @@ function Tipoafast() {
     ShowHTML('<meta http-equiv="Refresh" content="300; URL='.str_replace($w_dir,'',MontaURL('MESA')).'">'); 
   }  
   Estrutura_CSS($w_cliente);
-  if ($O=='') {
-    $O='L';
-  } if ($O=='L') {
+  if ($O=='') $O='L';
+  if ($w_troca>'' && $O!='E') { 
+    $w_nome            = $_REQUEST['w_nome'];
+    $w_sigla           = $_REQUEST['w_sigla'];
+    $w_limite_dias     = $_REQUEST['w_limite_dias'];
+    $w_perc_pag        = $_REQUEST['w_perc_pag'];
+    $w_sexo            = $_REQUEST['w_sexo'];
+    $w_contagem_dias   = $_REQUEST['w_contagem_dias'];
+    $w_periodo         = $_REQUEST['w_periodo'];
+    $w_sobrepoe_ferias = $_REQUEST['w_sobrepoe_ferias'];
+    $w_ativo           = $_REQUEST['w_ativo']; 
+  } elseif ($O=='L') {
     $RS = db_getGPTipoAfast::getInstanceOf($dbms,$w_cliente,null,$w_sigla,$w_nome,$w_ativo,null,null);
     if (Nvl($p_ordena,'') > '') {
       $lista = explode(',',str_replace(' ',',',$p_ordena));
@@ -527,7 +528,7 @@ function Tipoafast() {
         ShowHTML('            <input class="stb" type="submit" name="Botao" value="Atualizar">');
       } 
     } 
-    ShowHTML('            <input class="stb" type="button" onClick="history.back(1);" name="Botao" value="Cancelar">');
+    ShowHTML('            <input class="stb" type="button" onClick="location.href=\''.$w_pagina.$par.'&P1='.$P1.'&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP='.$TP.'&SG='.$SG.'&p_nome='.$p_nome.'&p_ativo='.$p_ativo.'&p_ordena='.$p_ordena.'\';" name="Botao" value="Cancelar">');
     ShowHTML('          </td>');
     ShowHTML('      </tr>');
     ShowHTML('    </table>');
@@ -553,7 +554,15 @@ function DataEspecial() {
   extract($GLOBALS);
   global $w_Disabled;
   $w_chave = $_REQUEST['w_chave'];
-  if ($w_troca>'') {
+  Cabecalho();
+  ShowHTML('<HEAD>');
+  ShowHTML('<TITLE>'.$conSgSistema.' - Listagem das datas especiais</TITLE>');
+  if ($P1==2) {
+    ShowHTML('<meta http-equiv="Refresh" content="300; URL='.str_replace($w_dir,'',MontaURL('MESA')).'">');
+  }
+  Estrutura_CSS($w_cliente);
+  if ($O=='') $O='L';
+  if ($w_troca>'' && $O!='E') { 
     $w_sq_pais        = $_REQUEST['w_sq_pais'];
     $w_co_uf          = $_REQUEST['w_co_uf'];
     $w_sq_cidade      = $_REQUEST['w_sq_cidade'];
@@ -563,16 +572,7 @@ function DataEspecial() {
     $w_abrangencia    = $_REQUEST['w_abrangencia'];
     $w_expediente     = $_REQUEST['w_expediente'];
     $w_ativo          = $_REQUEST['w_ativo'];
-  } 
-  Cabecalho();
-  ShowHTML('<HEAD>');
-  ShowHTML('<TITLE>'.$conSgSistema.' - Listagem das datas especiais</TITLE>');
-  if ($P1==2) {
-    ShowHTML('<meta http-equiv="Refresh" content="300; URL='.str_replace($w_dir,'',MontaURL('MESA')).'">');
-  }
-  Estrutura_CSS($w_cliente);
-  if ($O=='') $O='L';
-  if ($O=='L') {
+  } elseif ($O=='L') {
     $RS = db_getDataEspecial::getInstanceOf($dbms,$w_cliente,null,null,null,null,null,null);
     if (Nvl($p_ordena,'') > '') {
       $lista = explode(',',str_replace(' ',',',$p_ordena));
@@ -779,7 +779,7 @@ function DataEspecial() {
           ShowHTML('            <input class="stb" type="submit" name="Botao" value="Atualizar">');
       } 
     }
-    ShowHTML('            <input class="stb" type="button" onClick="location.href=\''.montaURL_JS($w_dir,$w_pagina.$par.'&P1='.$P1.'&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP='.$TP.'&SG='.$SG.'&O=L').'\';" name="Botao" value="Cancelar">');
+    ShowHTML('            <input class="stb" type="button" onClick="location.href=\''.$w_pagina.$par.'&P1='.$P1.'&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP='.$TP.'&SG='.$SG.'&p_nome='.$p_nome.'&p_ativo='.$p_ativo.'&p_ordena='.$p_ordena.'\';" name="Botao" value="Cancelar">');
     ShowHTML('          </td>');
     ShowHTML('      </tr>');
     ShowHTML('    </table>');
@@ -806,7 +806,7 @@ function Parametros() {
   Global $w_Disabled;
   // Verifica se há necessidade de recarregar os dados da tela a partir
   // da própria tela (se for recarga da tela) ou do banco de dados (se não for inclusão)
-  if ($w_troca>'') {
+  if ($w_troca>'' && $O!='E') {  
     // Se for recarga da página
     $w_sq_unidade_gestao    = $_REQUEST['w_sq_unidade_gestao'];
     $w_admissao_texto       = $_REQUEST['w_admissao_texto'];
@@ -923,15 +923,7 @@ function Cargo() {
   extract($GLOBALS);
   Global $w_Disabled;
   $w_chave          = $_REQUEST['w_chave'];
-  $w_sq_tipo        = $_REQUEST['w_sq_tipo'];
-  $w_sq_formacao    = $_REQUEST['w_sq_formacao'];
-  $w_nome           = $_REQUEST['w_nome'];
-  $w_descricao      = $_REQUEST['w_descricao'];
-  $w_atividades     = $_REQUEST['w_atividades'];
-  $w_competencias   = $_REQUEST['w_competencias'];
-  $w_salario_piso   = $_REQUEST['w_salario_piso'];
-  $w_salario_teto   = $_REQUEST['w_salario_teto'];
-  $w_ativo          = $_REQUEST['w_ativo'];
+
   ShowHTML('<HEAD>');
   ShowHTML('<TITLE>'.$conSgSistema.' - Listagem dos tipos de afastamento</TITLE>');
   if ($P1==2) {
@@ -939,7 +931,17 @@ function Cargo() {
   }
   Estrutura_CSS($w_cliente);
   if ($O=='') $O='L';
-  if ($O=='L') {
+  if ($w_troca>'' && $O!='E') {  
+    $w_sq_tipo        = $_REQUEST['w_sq_tipo'];
+    $w_sq_formacao    = $_REQUEST['w_sq_formacao'];
+    $w_nome           = $_REQUEST['w_nome'];
+    $w_descricao      = $_REQUEST['w_descricao'];
+    $w_atividades     = $_REQUEST['w_atividades'];
+    $w_competencias   = $_REQUEST['w_competencias'];
+    $w_salario_piso   = $_REQUEST['w_salario_piso'];
+    $w_salario_teto   = $_REQUEST['w_salario_teto'];
+    $w_ativo          = $_REQUEST['w_ativo'];
+  } elseif ($O=='L') {
     $RS = db_getCargo::getInstanceOf($dbms,$w_cliente,null,$w_sq_tipo,$w_nome,$w_sq_formacao,$w_ativo,null);
     if (Nvl($p_ordena,'') > '') {
       $lista = explode(',',str_replace(' ',',',$p_ordena));
@@ -1107,7 +1109,7 @@ function Cargo() {
         ShowHTML('            <input class="stb" type="submit" name="Botao" value="Atualizar">');
       } 
     } 
-    ShowHTML('            <input class="stb" type="button" onClick="history.back(1);" name="Botao" value="Cancelar">');
+    ShowHTML('            <input class="stb" type="button" onClick="location.href=\''.$w_pagina.$par.'&P1='.$P1.'&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP='.$TP.'&SG='.$SG.'&p_nome='.$p_nome.'&p_ativo='.$p_ativo.'&p_ordena='.$p_ordena.'\';" name="Botao" value="Cancelar">');
     ShowHTML('          </td>');
     ShowHTML('      </tr>');
     ShowHTML('    </table>');
@@ -1167,8 +1169,8 @@ function Grava() {
       } else {
         ScriptOpen('JavaScript');
         ShowHTML('  alert(\'Assinatura Eletrônica inválida!\');');
-        ShowHTML('  history.back(1);');
         ScriptClose();
+        RetornaFormulario('w_assinatura');
       } 
       break;
     case 'GPTPAFAST':
@@ -1203,8 +1205,8 @@ function Grava() {
         } else {
         ScriptOpen('JavaScript');
         ShowHTML('  alert(\'Assinatura Eletrônica inválida!\');');
-        ShowHTML('  history.back(1);');
         ScriptClose();
+        RetornaFormulario('w_assinatura');
       } 
       break;
     case 'EODTESP':
@@ -1313,8 +1315,8 @@ function Grava() {
       } else {
         ScriptOpen('JavaScript');
         ShowHTML('  alert(\'Assinatura Eletrônica inválida!\');');
-        ShowHTML('  history.back(1);');
         ScriptClose();
+        RetornaFormulario('w_assinatura');
       } 
       break;
     case 'GPPARAM':
@@ -1329,8 +1331,8 @@ function Grava() {
       } else {
         ScriptOpen('JavaScript');
         ShowHTML('  alert(\'Assinatura Eletrônica inválida!\');');
-        ShowHTML('  history.back(1);');
         ScriptClose();
+        RetornaFormulario('w_assinatura');
       } 
       break;
     case 'EOTIPPOS':
@@ -1362,8 +1364,8 @@ function Grava() {
       } else {
         ScriptOpen('JavaScript');
         ShowHTML('  alert(\'Assinatura Eletrônica inválida!\');');
-        ShowHTML('  history.back(1);');
         ScriptClose();
+        RetornaFormulario('w_assinatura');
       } 
       break;
     default:

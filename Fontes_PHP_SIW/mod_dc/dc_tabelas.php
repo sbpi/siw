@@ -101,7 +101,7 @@ exit;
 function Eventos() {
   extract($GLOBALS);
   $w_chave = $_REQUEST['w_chave'];
-  if ($w_troca>'') {
+  if ($w_troca>'' && $O!='E')  {
     // Se for recarga da página
     $w_nome      = $_REQUEST['w_nome'];
     $w_descricao = $_REQUEST['w_descricao'];
@@ -200,7 +200,7 @@ function Eventos() {
       if ($O=='I') ShowHTML('            <input class="STB" type="submit" name="Botao" value="Incluir">');
       else         ShowHTML('            <input class="STB" type="submit" name="Botao" value="Atualizar">');
     } 
-    ShowHTML('            <input class="STB" type="button" onClick="history.back(1);" name="Botao" value="Cancelar">');
+    ShowHTML('            <input class="stb" type="button" onClick="location.href=\''.$w_pagina.$par.'&P1='.$P1.'&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP='.$TP.'&SG='.$SG.'&p_nome='.$p_nome.'&p_ativo='.$p_ativo.'&p_ordena='.$p_ordena.'\';" name="Botao" value="Cancelar">');
     ShowHTML('          </td>');
     ShowHTML('      </tr>');
     ShowHTML('    </table>');
@@ -222,7 +222,7 @@ function Eventos() {
 function TipoDado() {
   extract($GLOBALS);
   $w_chave  =$_REQUEST['w_chave'];
-  if ($w_troca>'') {
+  if ($w_troca>'' && $O!='E')  {
     // Se for recarga da página
     $w_nome      = $_REQUEST['w_nome'];
     $w_descricao = $_REQUEST['w_descricao'];
@@ -321,7 +321,7 @@ function TipoDado() {
       if ($O=='I') ShowHTML('            <input class="STB" type="submit" name="Botao" value="Incluir">');
       else         ShowHTML('            <input class="STB" type="submit" name="Botao" value="Atualizar">');
     } 
-    ShowHTML('            <input class="STB" type="button" onClick="history.back(1);" name="Botao" value="Cancelar">');
+    ShowHTML('            <input class="stb" type="button" onClick="location.href=\''.$w_pagina.$par.'&P1='.$P1.'&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP='.$TP.'&SG='.$SG.'&p_nome='.$p_nome.'&p_ativo='.$p_ativo.'&p_ordena='.$p_ordena.'\';" name="Botao" value="Cancelar">');
     ShowHTML('          </td>');
     ShowHTML('      </tr>');
     ShowHTML('    </table>');
@@ -344,7 +344,7 @@ function TipoDado() {
 function TipoIndice() {
   extract($GLOBALS);
   $w_chave = $_REQUEST['w_chave'];
-  if ($w_troca>'') {
+  if ($w_troca>'' && $O!='E')  {
     // Se for recarga da página
     $w_nome      = $_REQUEST['w_nome'];
     $w_descricao = $_REQUEST['w_descricao'];
@@ -446,7 +446,7 @@ function TipoIndice() {
       if ($O=='I') ShowHTML('            <input class="STB" type="submit" name="Botao" value="Incluir">');
       else         ShowHTML('            <input class="STB" type="submit" name="Botao" value="Atualizar">');
     } 
-    ShowHTML('            <input class="STB" type="button" onClick="history.back(1);" name="Botao" value="Cancelar">');
+    ShowHTML('            <input class="stb" type="button" onClick="location.href=\''.$w_pagina.$par.'&P1='.$P1.'&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP='.$TP.'&SG='.$SG.'&p_nome='.$p_nome.'&p_ativo='.$p_ativo.'&p_ordena='.$p_ordena.'\';" name="Botao" value="Cancelar">');
     ShowHTML('          </td>');
     ShowHTML('      </tr>');
     ShowHTML('    </table>');
@@ -469,7 +469,7 @@ function TipoIndice() {
 function TipoSP() {
   extract($GLOBALS);
   $w_chave = $_REQUEST['w_chave'];
-  if ($w_troca>'') {
+  if ($w_troca>'' && $O!='E')  {
     // Se for recarga da página
     $w_nome      = $_REQUEST['w_nome'];
     $w_descricao = $_REQUEST['w_descricao'];
@@ -571,7 +571,7 @@ function TipoSP() {
       if ($O=='I') ShowHTML('            <input class="STB" type="submit" name="Botao" value="Incluir">');
       else         ShowHTML('            <input class="STB" type="submit" name="Botao" value="Atualizar">');
     } 
-    ShowHTML('            <input class="STB" type="button" onClick="history.back(1);" name="Botao" value="Cancelar">');
+    ShowHTML('            <input class="stb" type="button" onClick="location.href=\''.$w_pagina.$par.'&P1='.$P1.'&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP='.$TP.'&SG='.$SG.'&p_nome='.$p_nome.'&p_ativo='.$p_ativo.'&p_ordena='.$p_ordena.'\';" name="Botao" value="Cancelar">');
     ShowHTML('          </td>');
     ShowHTML('      </tr>');
     ShowHTML('    </table>');
@@ -594,7 +594,7 @@ function TipoSP() {
 function tipotabela() {
   extract($GLOBALS);
   $w_chave = $_REQUEST['w_chave'];
-  if ($w_troca>'') {
+  if ($w_troca>'' && $O!='E')  {
     // Se for recarga da página
     $w_nome      = $_REQUEST['w_nome'];
     $w_descricao = $_REQUEST['w_descricao'];
@@ -695,7 +695,7 @@ function tipotabela() {
       if ($O=='I') ShowHTML('            <input class="STB" type="submit" name="Botao" value="Incluir">');
       else         ShowHTML('            <input class="STB" type="submit" name="Botao" value="Atualizar">');
     } 
-    ShowHTML('            <input class="STB" type="button" onClick="history.back(1);" name="Botao" value="Cancelar">');
+    ShowHTML('            <input class="stb" type="button" onClick="location.href=\''.$w_pagina.$par.'&P1='.$P1.'&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP='.$TP.'&SG='.$SG.'&p_nome='.$p_nome.'&p_ativo='.$p_ativo.'&p_ordena='.$p_ordena.'\';" name="Botao" value="Cancelar">');
     ShowHTML('          </td>');
     ShowHTML('      </tr>');
     ShowHTML('    </table>');
@@ -732,8 +732,8 @@ function Grava() {
       } else {
         ScriptOpen('JavaScript');
         ShowHTML('  alert(\'Assinatura Eletrônica inválida!\');');
-        ShowHTML('  history.back(1);');
         ScriptClose();
+        RetornaFormulario('w_assinatura');
       } 
       break;
     case 'DCEVENTO':
@@ -746,8 +746,8 @@ function Grava() {
       }  else {
         ScriptOpen('JavaScript');
         ShowHTML('  alert(\'Assinatura Eletrônica inválida!\');');
-        ShowHTML('  history.back(1);');
         ScriptClose();
+        RetornaFormulario('w_assinatura');
       }
       break;
     case 'DCTPINDICE':
@@ -760,8 +760,8 @@ function Grava() {
       } else {
         ScriptOpen('JavaScript');
         ShowHTML('  alert(\'Assinatura Eletrônica inválida!\');');
-        ShowHTML('  history.back(1);');
         ScriptClose();
+        RetornaFormulario('w_assinatura');
       }
       break;
     case 'DCTPSP':
@@ -774,8 +774,8 @@ function Grava() {
       } else {
         ScriptOpen('JavaScript');
         ShowHTML('  alert(\'Assinatura Eletrônica inválida!\');');
-        ShowHTML('  history.back(1);');
         ScriptClose();
+        RetornaFormulario('w_assinatura');
       } 
       break;
     case 'DCTPTABELA':
@@ -788,8 +788,8 @@ function Grava() {
       } else {
         ScriptOpen('JavaScript');
         ShowHTML('  alert(\'Assinatura Eletrônica inválida!\');');
-        ShowHTML('  history.back(1);');
         ScriptClose();
+        RetornaFormulario('w_assinatura');
       } 
       break;
     default:

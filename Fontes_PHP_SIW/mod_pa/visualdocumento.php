@@ -4,20 +4,28 @@
 // -------------------------------------------------------------------------
 function VisualDocumento($l_chave,$l_o,$l_usuario,$l_p1,$l_formato,$l_identificacao,$l_assunto_princ,$l_orcamentaria,$l_indicador,$l_recurso,$l_interessado,$l_anexo,$l_meta,$l_ocorrencia,$l_consulta) {
   extract($GLOBALS);
-  include_once($w_dir_volta.'classes/sp/db_getSolicRecursos.php');
-  include_once($w_dir_volta.'classes/sp/db_getSolicMeta.php');
-  include_once($w_dir_volta.'classes/sp/db_getSolicIndicador.php');
+
+  //Recupera as informações do sub-menu
+  $RS = db_getLinkSubMenu::getInstanceOf($dbms, $w_cliente, f($RS_Menu,'sigla'));
+  foreach ($RS as $row) {
+    if     (strpos(f($row,'sigla'),'ANEXO')!==false)    $l_nome_menu['ANEXO'] = strtoupper(f($row,'nome'));
+    elseif (strpos(f($row,'sigla'),'GERAL')!==false)    $l_nome_menu['GERAL'] = strtoupper(f($row,'nome'));
+    elseif (strpos(f($row,'sigla'),'INTERES')!==false)  $l_nome_menu['INTERES'] = strtoupper(f($row,'nome'));
+    elseif (strpos(f($row,'sigla'),'ASS')!==false)      $l_nome_menu['ASSUNTO'] = strtoupper(f($row,'nome'));
+    else $l_nome_menu[f($row,'sigla')] = strtoupper(f($row,'nome'));
+  }
+
   $l_html='';
   // Recupera os dados do documento
   $RS = db_getSolicData::getInstanceOf($dbms,$l_chave,'PADCAD');
 
+  $l_html.=chr(13).'    <table width="100%" border="0" cellspacing="3">';
   if ($O!='T' && $O!='V') $l_html.=chr(13).'      <tr><td align="right" colspan="2"><br><b><A class="HL" HREF="'.$w_dir.'documento.php?par=Visual&O=T&w_chave='.f($RS,'sq_siw_solicitacao').'&w_tipo=volta&P1=&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP='.$TP.'&SG='.$SG.'" title="Exibe as informações do documento.">Exibir todas as informações</a></td></tr>';
   $l_html.=chr(13).'      <tr><td colspan="2"><hr NOSHADE color=#000000 size=4></td></tr>';
   $l_html.=chr(13).'      <tr><td colspan="2"  bgcolor="#f0f0f0" align=justify><font size="2"><b>PROTOCOLO: '.f($RS,'protocolo').'</b></font></td></tr>';
   $l_html.=chr(13).'      <tr><td colspan="2"><hr NOSHADE color=#000000 size=4></td></tr>';
   // Identificação do documento
   if ($l_identificacao=='S') {
-    $l_html.=chr(13).'      <tr><td colspan="2"><br><font size="2"><b>DOCUMENTO DE ORIGEM<hr NOSHADE color=#000000 SIZE=1></b></font></td></tr>';
     if (f($RS,'interno')=='S') {
       if ($l_formato=='WORD') {
         $l_html.=chr(13).'   <tr><td width="30%"><b>Unidade:</b></td>';
@@ -28,7 +36,9 @@ function VisualDocumento($l_chave,$l_o,$l_usuario,$l_p1,$l_formato,$l_identifica
       } 
     } else {
       $l_html.=chr(13).'   <tr><td><b>Pessoa:</b></td>';
-      $l_html.=chr(13).'       <td>'.f($RS,'nm_pessoa').'</td></tr>';
+      $l_html.=chr(13).'       <td>'.f($RS,'nm_pessoa_origem').'</td></tr>';
+      $l_html.=chr(13).'   <tr><td><b>Interessado principal:</b></td>';
+      $l_html.=chr(13).'       <td>'.f($RS,'nm_pessoa_interes').'</td></tr>';
     }
     $l_html.=chr(13).'   <tr><td><b>Cidade:</b></td>';
     $l_html.=chr(13).'       <td>'.f($RS,'nm_cidade').'</td></tr>';
@@ -38,50 +48,60 @@ function VisualDocumento($l_chave,$l_o,$l_usuario,$l_p1,$l_formato,$l_identifica
     $l_html.=chr(13).'       <td>'.f($RS,'numero_original').'</td></tr>';
     $l_html.=chr(13).'   <tr><td><b>Data do documento:</b></td>';
     $l_html.=chr(13).'       <td>'.formataDataEdicao(f($RS,'inicio')).'</td></tr>';
+    if (nvl(f($RS,'copias'),'')!='') {
+      $l_html.=chr(13).'   <tr><td><b>Nº de cópias:</b></td>';
+      $l_html.=chr(13).'       <td>'.formatNumber(f($RS,'copias'),0).'</td></tr>';
+    }
+    if (nvl(f($RS,'volumes'),'')!='') {
+      $l_html.=chr(13).'   <tr><td><b>Nº de volumes:</b></td>';
+      $l_html.=chr(13).'       <td>'.formatNumber(f($RS,'volumes'),0).'</td></tr>';
+    }
     $l_html.=chr(13).'   <tr><td><b>Natureza:</b></td>';
-    $l_html.=chr(13).'       <td>'.nvl(f($RS,'nm_natureza'),'---').'</td></tr>';
+    $l_html.=chr(13).'       <td>'.f($RS,'nm_natureza').'</td></tr>';
     $l_html.=chr(13).'   <tr><td><b>Data de recebimento:</b></td>';
     $l_html.=chr(13).'       <td>'.formataDataEdicao(f($RS,'data_recebimento')).'</td></tr>';
     $l_html.=chr(13).'   <tr><td><b>Data limite para conclusão:</b></td>';
     $l_html.=chr(13).'       <td>'.nvl(formataDataEdicao(f($RS,'fim')),'---').'</td></tr>';
-  } 
-
-  // Assunto principal
-  if ($l_assunto_princ=='S') {
-    $l_html.=chr(13).'   <tr><td colspan="2"><br><font size="2"><b>ASSUNTO PRINCIPAL<hr NOSHADE color=#000000 SIZE=1></b></font></td></tr>';
-    $l_html.=chr(13).'   <tr><td valign="top"><b>Código:</b></td>';
-    $l_html.=chr(13).'       <td align="justify">'.crlf2br(Nvl(f($RS,'cd_assunto'),'---')).'</td></tr>';
-    $l_html.=chr(13).'   <tr><td valign="top"><b>Descrição:</b></td>';
-    $l_html.=chr(13).'       <td align="justify">'.f($RS,'ds_assunto');
-    if (nvl(f($RS,'ds_assunto_pai'),'')!='') { 
-      $l_html.=chr(13).'<br>';
-      if (nvl(f($RS,'ds_assunto_bis'),'')!='') $l_html.=chr(13).strtolower(f($RS,'ds_assunto_bis')).' &rarr; ';
-      if (nvl(f($RS,'ds_assunto_avo'),'')!='') $l_html.=chr(13).strtolower(f($RS,'ds_assunto_avo')).' &rarr; ';
-      if (nvl(f($RS,'ds_assunto_pai'),'')!='') $l_html.=chr(13).strtolower(f($RS,'ds_assunto_pai'));
-    }
-    $l_html.=chr(13).'       </td></tr>';
-    $l_html.=chr(13).'   <tr><td valign="top"><b>Detalhamento:</b></td>';
-    $l_html.=chr(13).'       <td align="justify">'.crlf2br(Nvl(f($RS,'dst_assunto'),'---')).'</td></tr>';
-    $l_html.=chr(13).'   <tr><td valign="top"><b>Observação:</b></td>';
-    $l_html.=chr(13).'       <td align="justify">'.crlf2br(Nvl(f($RS,'ob_assunto'),'---')).'</td></tr>';
-    $l_html.=chr(13).'   <tr><td valign="top"><b>Complemento:</b></td>';
+    $l_html.=chr(13).'   <tr><td valign="top"><b>Assunto:</b></td>';
+    $l_html.=chr(13).'       <td align="justify">'.f($RS,'cd_assunto').'-'.f($RS,'ds_assunto').'</td></tr>';
+    $l_html.=chr(13).'   <tr><td valign="top"><b>Complemento do assunto:</b></td>';
     $l_html.=chr(13).'       <td align="justify">'.crlf2br(Nvl(f($RS,'descricao'),'---')).'</td></tr>';
-    $l_html.=chr(13).'   <tr><td valign="top"><b>Prazos de guarda:</b></td>';
-    $l_html.=chr(13).'       <td align="justify"><table border=1>';
-    $l_html.=chr(13).'         <tr valign="top"><td align="center"><b>Fase corrente<td align="center"><b>Fase intermediária<td align="center"><b>Destinação final';
-    $l_html.=chr(13).'         <tr valign="top">';
-    $l_html.=chr(13).'           '.((strpos(strtoupper(f($RS,'guarda_corrente')),'ANOS')===false) ? '<td>' : '<td align="center">').f($RS,'guarda_corrente').'</td>';
-    $l_html.=chr(13).'           '.((strpos(strtoupper(f($RS,'guarda_intermed')),'ANOS')===false) ? '<td>' : '<td align="center">').f($RS,'guarda_intermed').'</td>';
-    $l_html.=chr(13).'           '.((strpos(strtoupper(f($RS,'guarda_final')),'ANOS')===false)    ? '<td>' : '<td align="center">').f($RS,'guarda_final').'</td>';
-    $l_html.=chr(13).'         </table>';
   } 
 
   if ($O=='T') {
+    // Assunto principal
+    if ($l_assunto_princ=='S') {
+      $l_html.=chr(13).'   <tr><td colspan="2"><br><font size="2"><b>ASSUNTO PRINCIPAL<hr NOSHADE color=#000000 SIZE=1></b></font></td></tr>';
+      $l_html.=chr(13).'   <tr><td valign="top"><b>Código:</b></td>';
+      $l_html.=chr(13).'       <td align="justify">'.crlf2br(Nvl(f($RS,'cd_assunto'),'---')).'</td></tr>';
+      $l_html.=chr(13).'   <tr><td valign="top"><b>Descrição:</b></td>';
+      $l_html.=chr(13).'       <td align="justify">'.f($RS,'ds_assunto');
+      if (nvl(f($RS,'ds_assunto_pai'),'')!='') { 
+        $l_html.=chr(13).'<br>';
+        if (nvl(f($RS,'ds_assunto_bis'),'')!='') $l_html.=chr(13).strtolower(f($RS,'ds_assunto_bis')).' &rarr; ';
+        if (nvl(f($RS,'ds_assunto_avo'),'')!='') $l_html.=chr(13).strtolower(f($RS,'ds_assunto_avo')).' &rarr; ';
+        if (nvl(f($RS,'ds_assunto_pai'),'')!='') $l_html.=chr(13).strtolower(f($RS,'ds_assunto_pai'));
+      }
+      $l_html.=chr(13).'       </td></tr>';
+      $l_html.=chr(13).'   <tr><td valign="top"><b>Detalhamento:</b></td>';
+      $l_html.=chr(13).'       <td align="justify">'.crlf2br(Nvl(f($RS,'dst_assunto'),'---')).'</td></tr>';
+      $l_html.=chr(13).'   <tr><td valign="top"><b>Observação:</b></td>';
+      $l_html.=chr(13).'       <td align="justify">'.crlf2br(Nvl(f($RS,'ob_assunto'),'---')).'</td></tr>';
+      $l_html.=chr(13).'   <tr><td valign="top"><b>Prazos de guarda:</b></td>';
+      $l_html.=chr(13).'       <td align="justify"><table border=1>';
+      $l_html.=chr(13).'         <tr valign="top"><td align="center"><b>Fase corrente<td align="center"><b>Fase intermediária<td align="center"><b>Destinação final';
+      $l_html.=chr(13).'         <tr valign="top">';
+      $l_html.=chr(13).'           '.((strpos(strtoupper(f($RS,'guarda_corrente')),'ANOS')===false) ? '<td>' : '<td align="center">').f($RS,'guarda_corrente').'</td>';
+      $l_html.=chr(13).'           '.((strpos(strtoupper(f($RS,'guarda_intermed')),'ANOS')===false) ? '<td>' : '<td align="center">').f($RS,'guarda_intermed').'</td>';
+      $l_html.=chr(13).'           '.((strpos(strtoupper(f($RS,'guarda_final')),'ANOS')===false)    ? '<td>' : '<td align="center">').f($RS,'guarda_final').'</td>';
+      $l_html.=chr(13).'         </table>';
+    } 
+
     // Assuntos complementares
     $RS1 = db_getDocumentoAssunto::getInstanceOf($dbms,$l_chave,null,'N',null);
     $RS1 = SortArray($RS1,'principal','desc','nome','asc');
     if (count($RS1)>0 && $l_interessado=='S') {
-      $l_html.=chr(13).'      <tr><td colspan="2"><br><font size="2"><b>ASSUNTOS COMPLEMENTARES<hr NOSHADE color=#000000 SIZE=1></b></font></td></tr>';
+      $l_html.=chr(13).'      <tr><td colspan="2"><br><font size="2"><b>'.$l_nome_menu['ASSUNTO'].'<hr NOSHADE color=#000000 SIZE=1></b></font></td></tr>';
       $l_html.=chr(13).'   <tr><td colspan="2" align="center">';
       $l_html.=chr(13).'     <table width=100%  border="1" bordercolor="#00000">';
       $l_html.=chr(13).'       <tr valign="top">';
@@ -109,10 +129,10 @@ function VisualDocumento($l_chave,$l_o,$l_usuario,$l_p1,$l_formato,$l_identifica
     } 
 
     // Interessados na execução do documento
-    $RS1 = db_getDocumentoInter::getInstanceOf($dbms,$l_chave,null,null,null);
+    $RS1 = db_getDocumentoInter::getInstanceOf($dbms,$l_chave,null,'N',null);
     $RS1 = SortArray($RS1,'principal','desc','nome','asc');
     if (count($RS1)>0 && $l_interessado=='S') {
-      $l_html.=chr(13).'      <tr><td colspan="2"><br><font size="2"><b>INTERESSADOS<hr NOSHADE color=#000000 SIZE=1></b></font></td></tr>';
+      $l_html.=chr(13).'      <tr><td colspan="2"><br><font size="2"><b>'.$l_nome_menu['INTERES'].'<hr NOSHADE color=#000000 SIZE=1></b></font></td></tr>';
       $l_html.=chr(13).'   <tr><td colspan="2" align="center">';
       $l_html.=chr(13).'     <table width=100%  border="1" bordercolor="#00000">';
       $l_html.=chr(13).'       <tr valign="top">';
@@ -141,7 +161,7 @@ function VisualDocumento($l_chave,$l_o,$l_usuario,$l_p1,$l_formato,$l_identifica
     $RS1 = db_getSolicAnexo::getInstanceOf($dbms,$l_chave,null,$w_cliente);
     $RS1 = SortArray($RS1,'nome','asc');
     if (count($RS1)>0 && $l_anexo=='S') {
-      $l_html.=chr(13).'      <tr><td colspan="2"><br><font size="2"><b>ANEXOS<hr NOSHADE color=#000000 SIZE=1></b></font></td></tr>';
+      $l_html.=chr(13).'      <tr><td colspan="2"><br><font size="2"><b>'.$l_nome_menu['ANEXO'].'<hr NOSHADE color=#000000 SIZE=1></b></font></td></tr>';
       $l_html.=chr(13).'   <tr><td colspan="2" align="center">';
       $l_html.=chr(13).'     <table width=100%  border="1" bordercolor="#00000">';
       $l_html.=chr(13).'       <tr><td bgColor="#f0f0f0" align="center"><b>Título</b></td>';
@@ -171,8 +191,8 @@ function VisualDocumento($l_chave,$l_o,$l_usuario,$l_p1,$l_formato,$l_identifica
       $l_html.=chr(13).'     <table width=100%  border="1" bordercolor="#00000">';
       $l_html.=chr(13).'       <tr><td bgColor="#f0f0f0" align="center"><b>Data</b></td>';
       $l_html.=chr(13).'         <td bgColor="#f0f0f0" align="center"><b>Ocorrência/Anotação</b></td>';
-      $l_html.=chr(13).'         <td bgColor="#f0f0f0" align="center"><b>Responsável</b></td>';
-      $l_html.=chr(13).'         <td bgColor="#f0f0f0" align="center"><b>Fase/Destinatário</b></td>';
+      $l_html.=chr(13).'         <td bgColor="#f0f0f0" align="center"><b>Origem</b></td>';
+      $l_html.=chr(13).'         <td bgColor="#f0f0f0" align="center"><b>Fase/Destino</b></td>';
       $l_html.=chr(13).'       </tr>';
       $i=0;
       foreach($RS as $row) {
@@ -183,10 +203,11 @@ function VisualDocumento($l_chave,$l_o,$l_usuario,$l_p1,$l_formato,$l_identifica
         $l_html.=chr(13).'    <tr valign="top">';
         $l_html.=chr(13).'      <td nowrap>'.FormataDataEdicao(f($row,'phpdt_data'),3).'</td>';
         $l_html.=chr(13).'      <td>'.CRLF2BR(Nvl(f($row,'despacho'),'---')).'</td>';
-        if ($l_formato=='WORD') $l_html.=chr(13).'      <td nowrap>'.f($row,'responsavel').'</td>';
-        else                    $l_html.=chr(13).'      <td nowrap>'.ExibePessoa('../',$w_cliente,f($row,'sq_pessoa'),$TP,f($row,'responsavel')).'</td>';
-        if ((Nvl(f($row,'sq_projeto_log'),'')>'') && (Nvl(f($row,'destinatario'),'')>''))         $l_html.=chr(13).'        <td nowrap>'.ExibePessoa('../',$w_cliente,f($row,'sq_pessoa_destinatario'),$TP,f($row,'destinatario')).'</td>';
-        elseif ((Nvl(f($row,'sq_projeto_log'),'')>'')  && (Nvl(f($row,'destinatario'),'')==''))   $l_html.=chr(13).'        <td nowrap>Anotação</td>';
+
+        if (Nvl(f($row,'sq_documento_log'),'')=='') $l_html.=chr(13).'        <td nowrap>'.f($row,'nm_registro').'</td>';
+        else $l_html.=chr(13).'        <td nowrap>'.f($row,'nm_origem').'</td>';
+
+        if (Nvl(f($row,'sq_documento_log'),'')!='') $l_html.=chr(13).'        <td nowrap>'.f($row,'destinatario').'</td>';
         else $l_html.=chr(13).'        <td nowrap>'.Nvl(f($row,'tramite'),'---').'</td>';
         $l_html.=chr(13).'      </tr>';
       } 
@@ -204,5 +225,6 @@ function VisualDocumento($l_chave,$l_o,$l_usuario,$l_p1,$l_formato,$l_identifica
     $l_html.=chr(13).'   <tr><td><b>Data da consulta:</b></td>';
     $l_html.=chr(13).'       <td>'.FormataDataEdicao(time(),3).'</td></tr>';
   } 
+  $l_html.=chr(13).'    </table>';
   return $l_html;
 } ?>

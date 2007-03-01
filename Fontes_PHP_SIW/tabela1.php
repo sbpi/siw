@@ -57,7 +57,7 @@ $R          = $_REQUEST['R'];
 $O          = strtoupper($_REQUEST['O']);
 
 $w_assinatura   = strtoupper($_REQUEST['w_assinatura']);
-
+$w_troca        = $_REQUEST['w_troca'];
 $w_pagina       = 'tabela1.php?par=';
 $w_Disabled     = 'ENABLED';
 $w_dir_volta    = '';
@@ -97,8 +97,15 @@ function TipoVinculo() {
 
   $RS = db_getMenuData::getInstanceOf($dbms,$w_menu);
   $w_libera_edicao = f($RS,'libera_edicao');
-
-  if (!(strpos('LP',$O)===false)) {
+  if ($w_troca>'' && $O!='E')  {
+    // Se for recarga da página
+    $w_nome             = $_REQUEST['w_nome'];
+    $w_sq_tipo_pessoa   = $_REQUEST['w_sq_tipo_pessoa'];
+    $w_interno          = $_REQUEST['w_interno'];
+    $w_contratado       = $_REQUEST['w_contratado'];
+    $w_ativo            = $_REQUEST['w_ativo'];
+    $w_padrao           = $_REQUEST['w_padrao'];
+  } elseif (!(strpos('LP',$O)===false)) {
     $RS = db_getVincKindList::getInstanceOf($dbms,$w_cliente,$p_ativo,null,$p_nome,null);
     $RS = SortArray($RS,'sq_tipo_pessoa','asc','padrao','desc','nome','asc');
   } elseif (($O=='A' || $O=='E')) {
@@ -137,7 +144,9 @@ function TipoVinculo() {
   } 
 
   ShowHTML('</HEAD>');
-  if (!(strpos('IAE',$O)===false)) {
+  if ($w_troca>'') {
+    BodyOpen('onLoad=document.Form.'.$w_troca.'.focus();');
+  } elseif (!(strpos('IAE',$O)===false)) {
     if ($O=='E') {
       BodyOpen('onLoad=\'document.Form.w_assinatura.focus()\';');
     } else {
@@ -305,14 +314,21 @@ function TipoVinculo() {
 function ParSeguranca() {
   extract($GLOBALS);
   global $w_Disabled;
-
-  $RS = db_getCustomerData::getInstanceOf($dbms,$w_cliente);
-  $w_tamanho_minimo_senha   = f($RS,'tamanho_min_senha');
-  $w_tamanho_maximo_senha   = f($RS,'tamanho_max_senha');
-  $w_maximo_tentativas      = f($RS,'maximo_tentativas');
-  $w_dias_vigencia_senha    = f($RS,'dias_vig_senha');
-  $w_dias_aviso_expiracao   = f($RS,'dias_aviso_expir');
-
+  if ($w_troca>'' && $O!='E')  {
+    // Se for recarga da página
+    $w_tamanho_minimo_senha   = $_REQUEST['w_tamanho_minimo_senha'];
+    $w_tamanho_maximo_senha   = $_REQUEST['w_tamanho_maximo_senha'];
+    $w_maximo_tentativas      = $_REQUEST['w_maximo_tentativas'];
+    $w_dias_vigencia_senha    = $_REQUEST['w_dias_vigencia_senha'];
+    $w_dias_aviso_expiracao   = $_REQUEST['w_dias_aviso_expiracao'];
+  } else {
+    $RS = db_getCustomerData::getInstanceOf($dbms,$w_cliente);
+    $w_tamanho_minimo_senha   = f($RS,'tamanho_min_senha');
+    $w_tamanho_maximo_senha   = f($RS,'tamanho_max_senha');
+    $w_maximo_tentativas      = f($RS,'maximo_tentativas');
+    $w_dias_vigencia_senha    = f($RS,'dias_vig_senha');
+    $w_dias_aviso_expiracao   = f($RS,'dias_aviso_expir');
+  }
   Cabecalho();
   ShowHTML('<HEAD>');
   ScriptOpen('JavaScript');
@@ -326,7 +342,17 @@ function ParSeguranca() {
   ShowHTML('  theForm.Botao.disabled=true;');
   ValidateClose();
   ScriptClose();
+  
   ShowHTML('</HEAD>');
+  if ($w_troca>'') {
+    BodyOpen('onLoad=document.Form.'.$w_troca.'.focus();');
+  } elseif (!(strpos('IAE',$O)===false)) {
+    if ($O=='E') {
+      BodyOpen('onLoad=\'document.Form.w_assinatura.focus()\';');
+    } else {
+      BodyOpen('onLoad=\'document.Form.w_tamanho_minimo_senha.focus()\';');
+    } 
+  } 
   BodyOpen('onLoad=\'document.Form.w_tamanho_minimo_senha.focus()\';');
   ShowHTML('<B><FONT COLOR="#000000">'.str_replace('Listagem','Alteração',$w_TP).'</FONT></B>');
   ShowHTML('<HR>');
@@ -573,8 +599,8 @@ function Grava() {
       } else {
         ScriptOpen('JavaScript');
         ShowHTML('  alert(\'Assinatura Eletrônica inválida!\');');
-        ShowHTML('  history.back(1);');
         ScriptClose();
+        RetornaFormulario('w_assinatura');
       } 
 
       break;
@@ -591,8 +617,8 @@ function Grava() {
       } else {
         ScriptOpen('JavaScript');
         ShowHTML('  alert(\'Assinatura Eletrônica inválida!\');');
-        ShowHTML('  history.back(1);');
         ScriptClose();
+        RetornaFormulario('w_assinatura');
       } 
       break;
     case 'INTEGR':

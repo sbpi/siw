@@ -1088,7 +1088,7 @@ function Termo() {
     ShowHTML('  if (theForm.Botao.value == "Troca") { return true; }');
     Validate('w_atividades','Atividades','1',1,5,2000,'1','1');
     Validate('w_produtos','Produtos','1',1,5,2000,'1','1');
-    Validate('w_codigo_externo','Nº do convênio','1','',2,60,'1','1');
+    Validate('w_codigo_externo','convênio','1','',2,60,'1','1');
   } 
   ValidateClose();
   ScriptClose();
@@ -1133,7 +1133,7 @@ function Termo() {
     ShowHTML('      <tr><td align="center" height="1" bgcolor="#000000"></td></tr>');
     ShowHTML('      <tr><td>Os dados deste bloco permitem a identificação pela outra parte e configuram as possibilidades de vinculação com outros tipos de documento.</td></tr>');
     ShowHTML('      <tr><td align="center" height="1" bgcolor="#000000"></td></tr>');
-    ShowHTML('      <tr><td><b><u>N</u>º do convênio para a outra parte:</b><br><INPUT ACCESSKEY="C" '.$w_Disabled.' class="sti" type="text" name="w_codigo_externo" size="60" maxlength="60" value="'.$w_codigo_externo.'" title="Informe, se desejar, o código pelo qual este acordo é reconhecido pela outra parte."></td>');
+    ShowHTML('      <tr><td><b><u>C</u>ódigo do convênio para a outra parte:</b><br><INPUT ACCESSKEY="C" '.$w_Disabled.' class="sti" type="text" name="w_codigo_externo" size="60" maxlength="60" value="'.$w_codigo_externo.'" title="Informe, se desejar, o código pelo qual este acordo é reconhecido pela outra parte."></td>');
     if (Nvl($w_cd_modalidade,'')=='F' || Nvl($w_cd_modalidade,'')=='I') {
       ShowHTML('          <tr><td><table border=0 width="100%" cellspacing=0 cellpadding=0><tr valign="top">');
       MontaRadioNS('<b>Pemite vinculação de projetos?</b>',$w_vincula_projeto,'w_vincula_projeto');

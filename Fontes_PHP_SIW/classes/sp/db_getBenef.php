@@ -16,7 +16,7 @@ class db_getBenef {
                    "p_sq_pessoa"            =>array($p_sq_pessoa,           B_NUMERIC,     32),
                    "p_cpf"                  =>array($p_cpf,                 B_VARCHAR,     14),
                    "p_cnpj"                 =>array($p_cnpj,                B_VARCHAR,     18),
-                   "p_nome"                 =>array($p_nome,                B_VARCHAR,     20),
+                   "p_nome"                 =>array($p_nome,                B_VARCHAR,     80),
                    "p_tipo_pessoa"          =>array($p_tipo_pessoa,         B_NUMERIC,     32),
                    "p_passaporte_numero"    =>array($p_passaporte_numero,   B_VARCHAR,     20),
                    "p_sq_pais_passaporte"   =>array($p_sq_pais_passaporte,  B_NUMERIC,     32),

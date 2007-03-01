@@ -476,6 +476,25 @@ function FormataCNPJ() {
   print "} "."\r\n";
 }
 
+function FormataProtocolo() {
+  print "function FormataProtocolo (campo,teclapres) { "."\r\n";
+  print "	var tecla = teclapres.keyCode; "."\r\n";
+  print "	vr = campo.value; "."\r\n";
+  print "	vr = vr.replace( '-', '' ); "."\r\n";
+  print "	vr = vr.replace( '/', '' ); "."\r\n";
+  print "	vr = vr.replace( '.', '' ); "."\r\n";
+  print "	tam = vr.length; "."\r\n";
+  print "	if (tam < 14 && tecla != 8){ tam = vr.length + 1 ; } "."\r\n";
+  print "	if (tecla == 8 ){	tam = tam - 1 ; } "."\r\n";
+  print "	if ( tecla == 8 || tecla >= 48 && tecla <= 57 || tecla >= 96 && tecla <= 105 ){ "."\r\n";
+  print "	  if (tam <= 5 ) campo.value = vr ; "."\r\n";
+  print "	  else if (tam <= 11) campo.value = vr.substr(0,5)+'.'+ vr.substr(5,tam ); "."\r\n";
+  print "	  else if (tam <= 15) campo.value = vr.substr(0,5)+'.'+ vr.substr(5,6   )+'/'+vr.substr(11,tam); "."\r\n";
+  print "	  else if (tam <= 16) campo.value = vr.substr(0,5)+'.'+ vr.substr(5,6   )+'/'+vr.substr(11,4  )+'-'+vr.substr(15,tam); "."\r\n";
+  print "	} "."\r\n";
+  print "} "."\r\n";
+}
+
 function FormataCEP() {
   print "function FormataCEP (campo,teclapres) { "."\r\n";
   print "	var tecla = teclapres.keyCode; "."\r\n";

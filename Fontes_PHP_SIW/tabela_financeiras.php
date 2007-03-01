@@ -64,7 +64,7 @@ $w_assinatura   = strtoupper($_REQUEST['w_assinatura']);
 $w_pagina       = 'tabela_financeiras.php?par=';
 $w_Disabled     = 'ENABLED';
 $w_dir_volta    = '';
-$w_troca        = strtoupper($_REQUEST['w_troca']);
+$w_troca        = $_REQUEST['w_troca'];
 
 if ($O=='') $O='L';
 
@@ -108,8 +108,17 @@ function CentroCusto() {
   Cabecalho();
   ShowHTML('<HEAD>');
   Estrutura_CSS($w_cliente);
-
-  if ($O!='L') {
+  if ($w_troca>'' && $O!='E') {
+    // Se for recarga da página
+    $w_sq_cc_pai    = $_REQUEST['w_sq_cc_pai'];
+    $w_nome         = $_REQUEST['w_nome'];
+    $w_descricao    = $_REQUEST['w_descricao'];
+    $w_receita      = $_REQUEST['w_receita'];
+    $w_cliente      = $_REQUEST['w_cliente'];
+    $w_sigla        = $_REQUEST['w_sigla'];
+    $w_ativo        = $_REQUEST['w_ativo'];
+    $w_regular      = $_REQUEST['w_regular'];
+  } elseif ($O!='L') {
     ScriptOpen('JavaScript');
     ValidateOpen('Validacao');
     if ($O!='P' && $O!='H') {
@@ -400,18 +409,14 @@ function CentroCusto() {
 function Agencia() {
   extract($GLOBALS);
   global $w_Disabled;
-
   $p_sq_banco = strtoupper($_REQUEST['p_sq_banco']);
-  $p_nome     = strtoupper($_REQUEST['p_nome']);
-  $p_ativo    = strtoupper($_REQUEST['p_ativo']);
-  $p_ordena   = strtolower($_REQUEST['p_ordena']);
 
   $RS = db_getMenuData::getInstanceOf($dbms,$w_menu);
   $w_libera_edicao = f($RS,'libera_edicao');
 
   if ($p_sq_banco=='') $O='P';
 
-  if ($w_troca>'') {
+  if ($w_troca>'' && $O!='E') {
     $w_sq_agencia   = $_REQUEST['w_sq_agencia'];
     $w_sq_banco     = $_REQUEST['w_sq_banco'];
     $w_codigo       = $_REQUEST['w_codigo'];
@@ -626,16 +631,17 @@ function Agencia() {
 function Banco() {
   extract($GLOBALS);
   global $w_Disabled;
-
-  $p_nome   = strtoupper($_REQUEST['p_nome']);
-  $p_ativo  = strtoupper($_REQUEST['p_ativo']);
-  $p_codigo = strtoupper($_REQUEST['p_codigo']);
-  $p_ordena = strtolower($_REQUEST['p_ordena']);
-
   $RS = db_getMenuData::getInstanceOf($dbms,$w_menu);
   $w_libera_edicao = f($RS,'libera_edicao');
-
-  if ($O=='L') {
+  $w_sq_banco      = $_REQUEST['w_sq_banco'];
+  
+  if ($w_troca>'' && $O!='E') {
+    // Se for recarga da página
+    $w_codigo  = $_REQUEST['w_codigo'];
+    $w_nome    = $_REQUEST['w_nome'];
+    $w_padrao  = $_REQUEST['w_padrao'];
+    $w_ativo   = $_REQUEST['w_ativo'];
+  } elseif ($O=='L') {
     $RS = db_getBankList::getInstanceOf($dbms,$p_codigo,$p_nome,$p_ativo);
     if ($p_ordena>'') { 
       $RS = SortArray($RS,$p_ordena,'asc','nome','asc');
@@ -677,16 +683,16 @@ function Banco() {
     ScriptClose();
   } 
   ShowHTML('</HEAD>');
-  if (!(strpos('IAE',$O)===false)) {
-    if ($O=='E') {
-      BodyOpen('onLoad=\'document.Form.w_assinatura.focus()\';');
-    } else{
-      BodyOpen('onLoad=\'document.Form.w_codigo.focus()\';');
-    } 
-  } elseif ($O=='P') {
-    BodyOpen('onLoad=\'document.Form.p_codigo.focus()\';');
-  } else {
+  if ($w_troca>'') {
+    BodyOpen('onLoad=document.Form.'.$w_troca.'.focus();');
+  } elseif ($O=='I' || $O=='A') {
+    BodyOpen('onLoad=document.Form.w_codigo.focus();');
+  } elseif ($O=='H') {
+    BodyOpen('onLoad=document.Form.w_heranca.focus();');
+  } elseif ($O=='L') {
     BodyOpen('onLoad=this.focus();');
+  } else {
+    BodyOpen('onLoad=document.Form.w_assinatura.focus();');
   } 
   Estrutura_Topo_Limpo();
   Estrutura_Menu();
@@ -849,8 +855,8 @@ function Grava() {
       } else {
         ScriptOpen('JavaScript');
         ShowHTML('  alert(\'Assinatura Eletrônica inválida!\');');
-        ShowHTML('  history.back(1);');
         ScriptClose();
+        RetornaFormulario('w_assinatura');
       } 
       break;
     case 'COBANCO':
@@ -870,7 +876,7 @@ function Grava() {
             RetornaFormulario('w_codigo');
             exit();
           }
-        }    
+        }  
         dml_CoBanco::getInstanceOf($dbms,$O,
             $_REQUEST['w_sq_banco'],$_REQUEST['w_nome'],$_REQUEST['w_codigo'],
             $_REQUEST['w_padrao'],$_REQUEST['w_ativo']);
@@ -880,8 +886,8 @@ function Grava() {
       } else {
         ScriptOpen('JavaScript');
         ShowHTML('  alert(\'Assinatura Eletrônica inválida!\');');
-        ShowHTML('  history.back(1);');
         ScriptClose();
+        RetornaFormulario('w_assinatura');
       } 
       break;
     case 'COAGENCIA': 
@@ -900,8 +906,8 @@ function Grava() {
       } else {
         ScriptOpen('JavaScript');
         ShowHTML('  alert(\'Assinatura Eletrônica inválida!\');');
-        ShowHTML('  history.back(1);');
         ScriptClose();
+        RetornaFormulario('w_assinatura');
       } 
       break;
     } 

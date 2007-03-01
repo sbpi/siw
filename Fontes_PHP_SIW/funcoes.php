@@ -1,7 +1,7 @@
 <?
 setlocale(LC_ALL, 'pt_BR');
 mb_language('en');
-//date_default_timezone_set('America/Sao_Paulo');
+date_default_timezone_set('America/Sao_Paulo');
 //$locale_info = localeconv();
 //echo "<pre>\n";
 //echo "--------------------------------------------\n";
@@ -147,7 +147,7 @@ function headerWord($p_orientation='LANDSCAPE') {
   ShowHTML('@page Section1 ');
   if (strtoupper(Nvl($p_orientation,'LANDSCAPE'))=='PORTRAIT') {
      ShowHTML('    {size:8.5in 11.0in; ');
-     ShowHTML('    mso-page-orientation:landscape; ');
+     ShowHTML('    mso-page-orientation:portrait; ');
      ShowHTML('    margin:2.0cm 2.0cm 2.0cm 2.0cm; ');
      ShowHTML('    mso-header-margin:35.4pt; ');
      ShowHTML('    mso-footer-margin:35.4pt; ');
@@ -1927,6 +1927,18 @@ function BodyOpenMail($cProperties=null) {
   extract($GLOBALS);
   $l_html='';
   $l_html=$l_html.'<link rel="stylesheet" type="text/css" href="'.$conRootSIW.'classes/menu/xPandMenu.css">'.chr(13);
+  $l_html=$l_html.'<body Text="'.$conBodyText.'" Link="'.$conBodyLink.'" Alink="'.$conBodyALink.'" '.
+    'Vlink="'.$conBodyVLink.'" Bgcolor="'.$conBodyBgcolor.'" Background="'.$conBodyBackground.'" '.
+    'Bgproperties="'.$conBodyBgproperties.'" Topmargin="'.$conBodyTopmargin.'" '.
+    'Leftmargin="'.$conBodyLeftmargin.'" '.$cProperties.'> '.chr(13);
+  return $l_html;
+}
+
+// Cria a tag Body
+function BodyOpenWord($cProperties=null) {
+  extract($GLOBALS);
+  $l_html='';
+  $l_html=$l_html.'<link rel="stylesheet" type="text/css" href="'.$conRootSIW.'classes/menu/xPandPrint.css">'.chr(13);
   $l_html=$l_html.'<body Text="'.$conBodyText.'" Link="'.$conBodyLink.'" Alink="'.$conBodyALink.'" '.
     'Vlink="'.$conBodyVLink.'" Bgcolor="'.$conBodyBgcolor.'" Background="'.$conBodyBackground.'" '.
     'Bgproperties="'.$conBodyBgproperties.'" Topmargin="'.$conBodyTopmargin.'" '.
