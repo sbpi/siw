@@ -19,11 +19,11 @@ begin
               from ac_parametro  a
              where a.cliente = p_cliente;
       Elsif  p_modulo = 'PA' Then
-         -- Recupera os parametros do modulo de contratos
+         -- Recupera os parametros do modulo de protocolo e arquivo
          open p_result for
             select a.cliente, a.despacho_arqcentral, a.despacho_emprestimo, a.despacho_devolucao,
-                   a.arquivo_central, a.limite_interessados, a.ano_corrente, a.despacho_autuar,
-                   a.despacho_arqsetorial, a.despacho_anexar, a.despacho_apensar, a.despacho_eliminar
+                   a.despacho_autuar, a.despacho_arqsetorial, a.despacho_anexar, a.despacho_apensar,
+                   a.despacho_eliminar, a.arquivo_central, a.limite_interessados, a.ano_corrente
               from pa_parametro  a
              where a.cliente = p_cliente;             
       End If;
