@@ -1151,6 +1151,7 @@ function Grava() {
             ShowHTML('  alert(\'Já existe pessoa cadastrada com o CPF informado!\\nVerifique os dados.\');');
             ScriptClose();
             retornaFormulario('w_cpf');
+            exit;
           }
           // Verifica se já existe pessoa física com o mesmo nome. Se existir, é obrigatório informar o CPF.
           $RS = db_getBenef::getInstanceOf($dbms,$w_cliente,$w_pessoa,null,null,nvl($_REQUEST['w_nome'],'0'),$_REQUEST['w_tipo_pessoa'],null,null);
@@ -1177,7 +1178,9 @@ function Grava() {
             ShowHTML('  alert(\'Já existe pessoa jurídica cadastrada com o CNPJ informado!\\nVerifique os dados.\');');
             ScriptClose();
             retornaFormulario('w_cnpj');
+            exit;
           }
+          
           // Verifica se já existe pessoa jurídica com o mesmo nome. Se existir, é obrigatório informar o CNPJ.
           $RS = db_getBenef::getInstanceOf($dbms,$w_cliente,$w_pessoa,null,null,nvl($_REQUEST['w_nome'],'0'),$_REQUEST['w_tipo_pessoa'],null,null);
           if (count($RS)>0) {

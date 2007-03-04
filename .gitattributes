@@ -649,6 +649,7 @@ Fontes_PHP_SIW/classes/sp/db_getDeficiencyData.php -text
 Fontes_PHP_SIW/classes/sp/db_getDeficiencyGroupData.php -text
 Fontes_PHP_SIW/classes/sp/db_getDeficiencyList.php -text
 Fontes_PHP_SIW/classes/sp/db_getDeskTop.php -text
+Fontes_PHP_SIW/classes/sp/db_getDeskTop_Recurso.php -text
 Fontes_PHP_SIW/classes/sp/db_getDeskTop_TT.php -text
 Fontes_PHP_SIW/classes/sp/db_getDocumentoAssunto.php -text
 Fontes_PHP_SIW/classes/sp/db_getDocumentoInter.php -text

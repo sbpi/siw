@@ -11,6 +11,7 @@ include_once($w_dir_volta.'classes/sp/db_getSiwCliModLis.php');
 include_once($w_dir_volta.'classes/sp/db_getCustomerData.php');
 include_once($w_dir_volta.'classes/sp/db_getPersonData.php');
 include_once($w_dir_volta.'classes/sp/db_getDeskTop_TT.php');
+include_once($w_dir_volta.'classes/sp/db_getDeskTop_Recurso.php');
 include_once($w_dir_volta.'classes/sp/db_getDeskTop.php');
 include_once($w_dir_volta.'classes/sp/db_getIndicador.php');
 include_once($w_dir_volta.'classes/sp/db_getSolicList.php');
@@ -143,30 +144,45 @@ function Mesa() {
       ShowHTML('          <td rowspan=2><b>Serviço</td>');
       ShowHTML('          <td colspan=2><b>Em andamento</td>');
       ShowHTML('        <tr bgcolor='.$conTrBgColor.' align="center">');
-      ShowHTML('          <td><b>Geral</td>');
-      ShowHTML('          <td><b>Comigo</td>');
+      ShowHTML('          <td><b>Consultar</td>');
+      ShowHTML('          <td><b>Intervir</td>');
     } else {
       ShowHTML('          <td><b>Módulo</td>');
       ShowHTML('          <td><b>Serviço</td>');
       ShowHTML('          <td><b>Em andamento</td>');
     }
     ShowHTML('        </tr>');
-    if (!($w_workflow.$w_telefonia.$w_demandas.$w_agenda=='')) {
-      if ($w_telefonia>'') {
-        $RS = db_getDeskTop_TT::getInstanceOf($dbms, $w_usuario);
-        foreach ($RS as $row) $w_telefonia_qtd=f($row,'existe');
-        $w_cor = ($w_cor==$conTrBgColor || $w_cor=='') ? $w_cor=$conTrAlternateBgColor : $w_cor=$conTrBgColor;
-        if ($w_telefonia_qtd>0) $w_negrito='<b>'; else $w_negrito='';
-        ShowHTML('      <tr bgcolor="'.$w_cor.'">');
-        ShowHTML('        <td>'.$w_telefonia.'</td>');
-        ShowHTML('        <td>Ligações</td>');
-        if ($_SESSION['INTERNO']=='S') {
-          ShowHTML('        <td align="right">---&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</td>');
-        }
-        ShowHTML('        <td align="right"><A class="HL" HREF="tarifacao.php?par=Informar&R='.$w_pagina.$par.'&O=L&P1=1&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP='.$TP.'- Ligações&SG=LIGACAO">'.$w_telefonia_qtd.'</A>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;');
-        ShowHTML('        </td>');
-        ShowHTML('      </tr>');
+
+    $RS = db_getDeskTop_Recurso::getInstanceOf($dbms, $w_cliente, $w_usuario);
+    foreach ($RS as $row) {
+      $w_cor = ($w_cor==$conTrBgColor || $w_cor=='') ? $w_cor=$conTrAlternateBgColor : $w_cor=$conTrBgColor;
+      ShowHTML('      <tr bgcolor="'.$w_cor.'">');
+      ShowHTML('        <td colspan=2 align="right"><b>'.f($row,'nm_opcao').'&nbsp;&nbsp;&nbsp;&nbsp;</b></td>');
+      ShowHTML('        <td align="right"><A class="HL" HREF="'.f($row,'link').'&R='.$w_pagina.$par.'&O=L&P1='.f($row,'p1').'&P2='.f($row,'p2').'&P3='.f($row,'p3').'&P4='.f($row,'p4').'&TP='.f($row,'nm_opcao').'&SG='.f($row,'sigla').'&p_volta=mesa&p_acesso=T">'.f($row,'qt_visao').'</A>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;');
+      if (f($row,'qt_gestao')>0) {
+        ShowHTML('        <td align="right"><A class="HL" HREF="'.f($row,'link').'&R='.$w_pagina.$par.'&O=L&P1='.f($row,'p1').'&P2='.f($row,'p2').'&P3='.f($row,'p3').'&P4='.f($row,'p4').'&TP='.f($row,'nm_opcao').'&SG='.f($row,'sigla').'&p_volta=mesa&p_acesso=I">'.f($row,'qt_gestao').'</A>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;');
+      } else {
+        ShowHTML('        <td align="right">&nbsp;</td>');
       }
+      ShowHTML('        </td>');
+      ShowHTML('      </tr>');
+    }
+
+    // Verifica se é necessário colocar as ligações telefônicas
+    if ($w_telefonia>'') {
+      $RS = db_getDeskTop_TT::getInstanceOf($dbms, $w_usuario);
+      foreach ($RS as $row) $w_telefonia_qtd=f($row,'existe');
+      $w_cor = ($w_cor==$conTrBgColor || $w_cor=='') ? $w_cor=$conTrAlternateBgColor : $w_cor=$conTrBgColor;
+      if ($w_telefonia_qtd>0) $w_negrito='<b>'; else $w_negrito='';
+      ShowHTML('      <tr bgcolor="'.$w_cor.'">');
+      ShowHTML('        <td>'.$w_telefonia.'</td>');
+      ShowHTML('        <td>Ligações</td>');
+      if ($_SESSION['INTERNO']=='S') {
+        ShowHTML('        <td align="right">---&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</td>');
+      }
+      ShowHTML('        <td align="right"><A class="HL" HREF="tarifacao.php?par=Informar&R='.$w_pagina.$par.'&O=L&P1=1&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP='.$TP.'- Ligações&SG=LIGACAO">'.$w_telefonia_qtd.'</A>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;');
+      ShowHTML('        </td>');
+      ShowHTML('      </tr>');
     }
 
     // Monta a mesa de trabalho para os outros serviços do SIW

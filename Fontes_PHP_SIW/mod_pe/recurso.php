@@ -81,6 +81,7 @@ $p_codigo       = $_REQUEST['p_codigo'];
 $p_nome         = $_REQUEST['p_nome'];
 $p_ativo        = $_REQUEST['p_ativo'];
 $p_ordena       = $_REQUEST['p_ordena'];
+$p_volta        = strtoupper($_REQUEST['p_volta']);
 
 if ($SG=='RECSOLIC') {
   if ($O!='I' && $_REQUEST['w_chave_aux']=='') $O='L';
@@ -123,6 +124,11 @@ function Inicial() {
   extract($GLOBALS);
   Global $w_Disabled;
   $w_chave           = $_REQUEST['w_chave'];
+  $p_acesso          = $_REQUEST['p_acesso'];
+  
+  // Configuração do nível de acesso
+  $w_restricao = 'EDICAOT';
+  if ($p_acesso=='I') $w_restricao = 'EDICAOP';
 
   if ($w_troca>'' && $O <> 'E') {
     $w_tipo_recurso    = $_REQUEST['w_tipo_recurso'];
@@ -136,7 +142,7 @@ function Inicial() {
     $w_ativo           = $_REQUEST['w_ativo'];
     $w_servico         = explodeArray($_REQUEST['w_servico']);
   } elseif ($O=='L') {
-    $RS = db_getRecurso::getInstanceOf($dbms,$w_cliente,$w_usuario,null,null,null,null,null,null,null);
+    $RS = db_getRecurso::getInstanceOf($dbms,$w_cliente,$w_usuario,null,null,null,null,null,null,$w_restricao);
     if (Nvl($p_ordena,'') > '') {
       $lista = explode(',',str_replace(' ',',',$p_ordena));
       $RS = SortArray($RS,$lista[0],$lista[1]);
@@ -223,6 +229,10 @@ function Inicial() {
   }
   ShowHTML('<table border="0" cellpadding="0" cellspacing="0" width="100%">');
   if ($O=='L') {
+    if ($p_volta=='MESA') {
+      $RS_Volta = db_getLinkData::getInstanceOf($dbms,$w_cliente,$p_volta);
+      ShowHTML('<tr><td align="right" colspan=3><a class="SS" href="'.$conRootSIW.f($RS_Volta,'link').'&P1='.f($RS_Volta,'p1').'&P2='.f($RS_Volta,'p2').'&P3='.f($RS_Volta,'p3').'&P4='.f($RS_Volta,'p4').'&TP=<img src='.f($RS_Volta,'imagem').' BORDER=0>'.f($RS_Volta,'nome').'&SG='.f($RS_Volta,'sigla').'" target="content">Voltar para '.f($RS_Volta,'nome').'</a>');
+    } 
     ShowHTML('<tr><td><font size="2"><a accesskey="I" class="ss" href="'.$w_dir.$w_pagina.$par.'&R='.$w_pagina.$par.'&O=I&P1='.$P1.'&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP='.$TP.'&SG='.$SG.'"><u>I</u>ncluir</a>&nbsp;');
     ShowHTML('    <td align="right"><b>Registros existentes: '.count($RS));
     ShowHTML('<tr><td align="center" colspan=3>');
@@ -260,7 +270,7 @@ function Inicial() {
         ShowHTML('        <td>'.ExibeUnidade($w_dir_volta,$w_cliente,f($row,'nm_unidade'),f($row,'unidade_gestora'),$TP).'</td>');
         ShowHTML('        <td align="top" nowrap>');
         ShowHTML('          <A class="hl" HREF="'.$w_dir.$w_pagina.$par.'&R='.$w_pagina.$par.'&O=A&w_chave='.f($row,'chave').'&P1='.$P1.'&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP='.$TP.' &SG='.$SG.MontaFiltro('GET').'" Title="Altera os dados deste registro.">Alterar</A>&nbsp');
-        ShowHTML('          <A class="hl" HREF="'.$w_dir.$w_pagina.$par.'&R='.$w_pagina.$par.'&O=E&w_chave='.f($row,'chave').'&P1='.$P1.'&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP='.$TP.' &SG='.$SG.'" Title="Exclui deste registro.">Excluir</A>&nbsp');
+        ShowHTML('          <A class="hl" HREF="'.$w_dir.$w_pagina.$par.'&R='.$w_pagina.$par.'&O=E&w_chave='.f($row,'chave').'&P1='.$P1.'&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP='.$TP.' &SG='.$SG.MontaFiltro('GET').'" Title="Exclui deste registro.">Excluir</A>&nbsp');
         ShowHTML('          <A class="hl" HREF="'.$w_dir.$w_pagina.$par.'&R='.$w_pagina.$par.'&O=C&w_chave='.f($row,'chave').'&P1='.$P1.'&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP='.$TP.' &SG='.$SG.MontaFiltro('GET').'" Title="Inclui um novo recurso a partir dos dados deste registro.">Copiar</A>&nbsp');
         ShowHTML('          <A class="hl" HREF="javascript:this.status.value;" onClick="window.open(\''.montaURL_JS($w_dir,$w_pagina.'Disponivel&R='.$w_pagina.$par.'&O=L&w_chave='.f($row,'chave').'&P1='.$P1.'&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP='.$TP.' - Disponibilidade&SG=PERECDISP').'\',\'Recurso\',\'width=730,height=550,top=30,left=30,status=yes,resizable=yes,scrollbars=yes,toolbar=yes\');" title="Define a disponibilidade do recurso.">Disp</A>&nbsp');
         ShowHTML('          <A class="hl" HREF="javascript:this.status.value;" onClick="window.open(\''.montaURL_JS($w_dir,$w_pagina.'Indisponivel&R='.$w_pagina.$par.'&O=L&w_chave='.f($row,'chave').'&P1='.$P1.'&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP='.$TP.' - Indisponibilidade&SG=PERECINDISP').'\',\'Recurso\',\'width=730,height=550,top=30,left=30,status=yes,resizable=yes,scrollbars=yes,toolbar=yes\');" title="Define a indisponibilidade do recurso.">Indisp</A>&nbsp');
@@ -292,8 +302,9 @@ function Inicial() {
     if ($O=='C') {
       ShowHTML('      <tr><td colspan=3 align="center" bgcolor="#D0D0D0" style="border: 2px solid rgb(0,0,0);"><b><font color="#BC3131">ATENÇÃO: Dados importados de outro registro. Altere os dados necessários antes de executar a inclusão.<br>O novo recurso herdará o cronograma de disponibilidade e de indisponibilidade do recurso origem, bem como as vinculações com opções do menu.</b></font>.</td>');
     } 
-    if (!(strpos('EV',$O)===false)) $w_Disabled=' DISABLED '; 
+    if (strpos('EV',$O)!==false) $w_Disabled=' DISABLED '; 
     AbreForm('Form',$w_dir.$w_pagina.'Grava','POST','return(Validacao(this));',null,$P1,$P2,$P3,$P4,$TP,$SG,$w_pagina.$par,$O);
+    ShowHTML(montaFiltro('POST'));
     if ($O!='C') ShowHTML('<INPUT type="hidden" name="w_chave" value="'.$w_chave.'">');
     ShowHTML('<INPUT type="hidden" name="w_copia" value="'.$w_chave.'">');
     ShowHTML('<INPUT type="hidden" name="w_cliente" value="'.$w_cliente.'">');
@@ -336,7 +347,7 @@ function Inicial() {
         ShowHTML('            <input class="stb" type="submit" name="Botao" value="Atualizar">');
       } 
     } 
-    ShowHTML('            <input class="stb" type="button" onClick="location.href=\''.montaURL_JS($w_dir,$R.'&O=L&w_cliente='.$w_cliente.'&P1='.$P1.'&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP='.$TP.'&SG='.$SG).'\';" name="Botao" value="Cancelar">');
+    ShowHTML('            <input class="stb" type="button" onClick="location.href=\''.montaURL_JS($w_dir,$R.'&O=L&w_cliente='.$w_cliente.'&P1='.$P1.'&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP='.$TP.'&SG='.$SG.montaFiltro('GET')).'\';" name="Botao" value="Cancelar">');
     ShowHTML('          </td>');
     ShowHTML('      </tr>');
     ShowHTML('    </table>');
@@ -350,6 +361,7 @@ function Inicial() {
 
     ShowHTML('<tr><td colspan=3 bgcolor="'.$conTrBgColorLightBlue2.'"" style="border: 2px solid rgb(0,0,0);">Orientação:<ul><li>Marque os serviços que poderão alocar este recurso.<li>Desmarque os serviços que não poderão alocar este recurso.</ul></b></font></td>');
     AbreForm('Form',$w_dir.$w_pagina.'Grava','POST','return(Validacao(this));',null,$P1,$P2,$P3,$P4,$TP,'PERECMENU',$w_pagina.$par,$O);
+    ShowHTML(montaFiltro('POST'));
     ShowHTML('<INPUT type="hidden" name="w_chave" value="'.$w_chave.'">');
     ShowHTML('<INPUT type="hidden" name="w_cliente" value="'.$w_cliente.'">');
     ShowHTML('<INPUT type="hidden" name="w_troca" value="">');
@@ -394,7 +406,7 @@ function Inicial() {
         ShowHTML('            <input class="stb" type="submit" name="Botao" value="Atualizar">');
       } 
     } 
-    ShowHTML('            <input class="stb" type="button" onClick="location.href=\''.montaURL_JS($w_dir,$R.'&O=L&w_cliente='.$w_cliente.'&P1='.$P1.'&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP='.$TP.'&SG='.$SG).'\';" name="Botao" value="Cancelar">');
+    ShowHTML('            <input class="stb" type="button" onClick="location.href=\''.montaURL_JS($w_dir,$R.'&O=L&w_cliente='.$w_cliente.'&P1='.$P1.'&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP='.$TP.'&SG='.$SG.montaFiltro('GET')).'\';" name="Botao" value="Cancelar">');
     ShowHTML('          </td>');
     ShowHTML('      </tr>');
     ShowHTML('    </table>');
