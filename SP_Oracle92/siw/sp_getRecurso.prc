@@ -10,7 +10,7 @@ create or replace procedure sp_getRecurso
     p_restricao    in varchar2  default null,
     p_result       out sys_refcursor) is
 begin
-   If p_restricao is null or p_restricao = 'ALOCACAO' Then
+   If p_restricao is null or p_restricao = 'ALOCACAO' or p_restricao = 'EDICAOT' or p_restricao = 'EDICAOP' Then
       -- Recupera recursos
       open p_result for 
          select a.sq_recurso as chave, a.cliente, a.sq_tipo_recurso, a.sq_unidade_medida, a.unidade_gestora, a.nome, a.codigo, a.descricao, 
@@ -25,7 +25,8 @@ begin
                 c.nome as nm_tipo_recurso, c.sigla as sg_tipo_recurso,
                 d.nome as nm_unidade_medida, d.sigla as sg_unidade_medida,
                 coalesce(e.alocacao,0) alocacao,
-                coalesce(f.disponivel,0) disponivel
+                coalesce(f.disponivel,0) disponivel,
+                acesso_recurso(a.sq_recurso, p_usuario) acesso
            from eo_recurso                        a
                 inner     join eo_unidade         b  on (a.unidade_gestora     = b.sq_unidade)
                   inner   join co_pessoa_endereco b1 on (b.sq_pessoa_endereco  = b1.sq_pessoa_endereco)
@@ -71,7 +72,11 @@ begin
             and ((p_restricao    is null  and
                   (p_gestora     is null or (p_gestora      is not null and a.unidade_gestora   = p_gestora))
                  ) or
-                 (p_restricao    is not null and coalesce(g.qtd,0) > 0) -- Restrição para trazer apenas os recursos disponíveis para o serviço
+                 (p_restricao    is not null and ((instr(p_restricao,'EDICAO') = 0 and coalesce(g.qtd,0) > 0) or -- Restrição para trazer apenas os recursos disponíveis para o serviço
+                                                  (p_restricao =  'EDICAOT' and acesso_recurso(a.sq_recurso, p_usuario) > 0) or
+                                                  (p_restricao =  'EDICAOP' and acesso_recurso(a.sq_recurso, p_usuario) = 4)
+                                                 )
+                 )
                 );
    Elsif upper(p_restricao) = 'MENU' Then
       -- Recupera os serviços que podem alocar o recurso

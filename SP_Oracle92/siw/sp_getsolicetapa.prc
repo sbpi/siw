@@ -77,7 +77,7 @@ begin
          select a.sq_projeto_etapa, a.sq_siw_solicitacao, a.sq_etapa_pai, a.ordem, a.titulo, a.descricao, a.inicio_previsto, a.fim_previsto, 
                 a.inicio_real, a.fim_real, a.perc_conclusao, a.orcamento, a.sq_unidade, a.sq_pessoa, a.vincula_atividade, a.sq_pessoa_atualizacao, 
                 a.ultima_atualizacao, a.situacao_atual, a.unidade_medida, a.quantidade, a.cumulativa, a.programada, a.exequivel, 
-                a.justificativa_inexequivel, a.outras_medidas, a.vincula_contrato,
+                a.justificativa_inexequivel, a.outras_medidas, a.vincula_contrato, a.pacote_trabalho,
                 b.sq_pessoa titular, c.sq_pessoa substituto, i.executor, i.solicitante,
                 case a.programada when 'S' then 'Sim' else 'Não' end nm_programada,
                 case a.cumulativa when 'S' then 'Sim' else 'Não' end nm_cumulativa,  
@@ -127,7 +127,7 @@ begin
                                      group by x.sq_projeto_etapa, y.sq_menu
                                 )                   n on (n.sq_projeto_etapa = a.sq_projeto_etapa)
           where a.sq_siw_solicitacao = p_chave
-            and (p_chave_aux2 is null or (p_chave_aux2 is not null and a.sq_projeto_etapa <> p_chave_aux2))
+            and (p_chave_aux2 is null or (p_chave_aux2 is not null and a.sq_projeto_etapa <> p_chave_aux2 and a.pacote_trabalho = 'N'))
             and a.sq_etapa_pai       is null;
    ElsIf p_restricao = 'LSTNIVEL' Then
       -- Recupera as etapas vinculadas a uma etapa do projeto
@@ -135,7 +135,7 @@ begin
          select a.sq_projeto_etapa, a.sq_siw_solicitacao, a.sq_etapa_pai, a.ordem, a.titulo, a.descricao, a.inicio_previsto, a.fim_previsto, 
                 a.inicio_real, a.fim_real, a.perc_conclusao, a.orcamento, a.sq_unidade, a.sq_pessoa, a.vincula_atividade, a.sq_pessoa_atualizacao, 
                 a.ultima_atualizacao, a.situacao_atual, a.unidade_medida, a.quantidade, a.cumulativa, a.programada, a.exequivel, 
-                a.justificativa_inexequivel, a.outras_medidas, a.vincula_contrato,
+                a.justificativa_inexequivel, a.outras_medidas, a.vincula_contrato, a.pacote_trabalho,
                 b.sq_pessoa titular, c.sq_pessoa substituto, i.executor, i.solicitante,
                 k.sq_pessoa tit_exec, l.sq_pessoa sub_exec,
                 d.nome_resumido||' ('||f.sigla||')' nm_resp, g.sigla sg_setor,
@@ -183,20 +183,32 @@ begin
                                 )                   n on (n.sq_projeto_etapa = a.sq_projeto_etapa)                                
           where a.sq_siw_solicitacao = p_chave
             and a.sq_etapa_pai       = p_chave_aux
-            and (p_chave_aux2 is null or (p_chave_aux2 is not null and a.sq_projeto_etapa <> p_chave_aux2));
+            and (p_chave_aux2 is null or (p_chave_aux2 is not null and a.sq_projeto_etapa <> p_chave_aux2 and a.pacote_trabalho = 'N'));
    Elsif p_restricao = 'REGISTRO' Then
       -- Recupera os dados de uma etapa de projeto
       open p_result for 
          select a.sq_projeto_etapa, a.sq_siw_solicitacao, a.sq_etapa_pai, a.ordem, a.titulo, a.descricao, a.inicio_previsto, a.fim_previsto, 
                 a.inicio_real, a.fim_real, a.perc_conclusao, a.orcamento, a.sq_unidade, a.sq_pessoa, a.vincula_atividade, a.sq_pessoa_atualizacao, 
                 a.ultima_atualizacao, a.situacao_atual, a.unidade_medida, a.quantidade, a.cumulativa, a.programada, a.exequivel, 
-                a.justificativa_inexequivel, a.outras_medidas, a.vincula_contrato,
+                a.justificativa_inexequivel, a.outras_medidas, a.vincula_contrato, a.pacote_trabalho, a.base_geografica,
                 b.sq_pessoa titular, c.sq_pessoa substituto, 
                 case a.programada when 'S' then 'Sim' else 'Não' end nm_programada,
                 case a.cumulativa when 'S' then 'Sim' else 'Não' end nm_cumulativa,                
                 d.nome_resumido||' ('||f.sigla||')' nm_resp, g.sigla sg_setor,
-                nvl(h.qt_ativ,0) qt_ativ, h.sq_menu p2, nvl(n.qt_contr,0) qt_contr, n.sq_menu p3,
-                to_char(a.ultima_atualizacao, 'DD/MM/YYYY, HH24:MI:SS') phpdt_data
+                nvl(h.qt_ativ,0) qt_ativ, h.sq_menu p2, coalesce(i.qt_filhos,0) as qt_filhos, 
+                nvl(n.qt_contr,0) qt_contr, n.sq_menu p3,
+                to_char(a.ultima_atualizacao, 'DD/MM/YYYY, HH24:MI:SS') phpdt_data,
+                case base_geografica
+                     when 1 then case o.padrao when 'S' then 'Nacional'              else 'Nacional - '||o.nome end
+                     when 2 then case o.padrao when 'S' then 'Regional - '||p.nome   else 'Regional - '||o.nome||' - '||p.nome  end
+                     when 3 then case o.padrao when 'S' then 'Estadual - '||q.co_uf  else 'Estadual - '||o.nome||' - '||q.co_uf end
+                     when 4 then case o.padrao when 'S' then 'Municipal - '||r.nome||'-'||q.co_uf  else 'Municipal - '||r.nome||' ('||o.nome||')' end
+                     when 5 then 'Organizacional'
+                end as nm_base_geografica,
+                o.sq_pais, o.nome as nm_pais,
+                p.sq_regiao, p.nome as nm_regiao,
+                q.co_uf,
+                r.sq_cidade, r.nome as nm_cidade
            from pj_projeto_etapa                a
                 left outer join eo_unidade_resp b on (a.sq_unidade       = b.sq_unidade and
                                                       b.tipo_respons     = 'T'          and
@@ -218,6 +230,11 @@ begin
                                                                               )
                                      group by x.sq_projeto_etapa, y.sq_menu
                                 )               h on (h.sq_projeto_etapa = a.sq_projeto_etapa)
+                left outer     join (select x.sq_projeto_etapa, count(y.sq_projeto_etapa) qt_filhos
+                                       from pj_projeto_etapa            x
+                                            inner join pj_projeto_etapa y on (x.sq_projeto_etapa = y.sq_etapa_pai)
+                                     group by x.sq_projeto_etapa
+                                )               i on (i.sq_projeto_etapa = a.sq_projeto_etapa)
                 left outer     join (select x.sq_projeto_etapa, y.sq_menu, count(*) qt_contr
                                        from pj_etapa_contrato            x
                                             inner   join siw_solicitacao y on (x.sq_siw_solicitacao = y.sq_siw_solicitacao)
@@ -225,7 +242,13 @@ begin
                                                                                Nvl(z.sigla,'-')     <> 'CA'
                                                                               )
                                      group by x.sq_projeto_etapa, y.sq_menu
-                                )                   n on (n.sq_projeto_etapa = a.sq_projeto_etapa)
+                                )               n on (n.sq_projeto_etapa = a.sq_projeto_etapa)
+                left   join co_pais             o  on (a.sq_pais           = o.sq_pais)
+                left   join co_regiao           p  on (a.sq_regiao         = p.sq_regiao)
+                left   join co_uf               q  on (a.sq_pais           = q.sq_pais and
+                                                       a.co_uf             = q.co_uf
+                                                      )
+                left   join co_cidade           r  on (a.sq_cidade         = r.sq_cidade)
           where a.sq_siw_solicitacao = p_chave
             and a.sq_projeto_etapa   = p_chave_aux;
    Elsif p_restricao = 'FILHOS' Then

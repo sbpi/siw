@@ -3,12 +3,12 @@ create or replace function Acesso
    p_usuario      in number
   ) return number is
 /**********************************************************************************
-* Nome      : SolicitacaoAcesso
-* Finalidade: Verificar se o usuário têm acesso a uma solicitacao, de acordo com os parâmetros informados
+* Nome      : Acesso
+* Finalidade: Verificar se o usuário tem acesso a uma solicitacao, de acordo com os parâmetros informados
 * Autor     : Alexandre Vinhadelli Papadópolis
 * Data      :  14/10/2003, 10:35
 * Parâmetros:
-*    p_solicitacao : chave primária de SR_SOLICITACAO
+*    p_solicitacao : chave primária de SIW_SOLICITACAO
 *    p_usuario   : chave de acesso do usuário
 * Retorno: campo do tipo bit
 *   16: Se a solicitação deve aparecer na mesa de trabalho do usuário

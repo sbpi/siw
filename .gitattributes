@@ -2897,6 +2897,7 @@ SP_Oracle92/siw/ac_tipo_acordo.tab -text
 SP_Oracle92/siw/acentos.fnc -text
 SP_Oracle92/siw/acesso.fnc -text
 SP_Oracle92/siw/acesso_lc.fnc -text
+SP_Oracle92/siw/acesso_recurso.fnc -text
 SP_Oracle92/siw/co_agencia.tab -text
 SP_Oracle92/siw/co_area_conhecimento.tab -text
 SP_Oracle92/siw/co_banco.tab -text
@@ -3073,6 +3074,7 @@ SP_Oracle92/siw/sp_getAssunto_PA.prc -text
 SP_Oracle92/siw/sp_getConvOutraParte.prc -text
 SP_Oracle92/siw/sp_getConvOutroRep.prc -text
 SP_Oracle92/siw/sp_getConvPreposto.prc -text
+SP_Oracle92/siw/sp_getDesktop_Recurso.prc -text
 SP_Oracle92/siw/sp_getDocumentoAssunto.prc -text
 SP_Oracle92/siw/sp_getDocumentoInter.prc -text
 SP_Oracle92/siw/sp_getGrupoVeiculo.prc -text
