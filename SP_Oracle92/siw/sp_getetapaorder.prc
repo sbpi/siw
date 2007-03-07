@@ -7,7 +7,7 @@ create or replace procedure Sp_GetEtapaOrder
 begin
    -- Recupera o número de ordem das outras opções irmãs à informada
    open p_result for
-      select a.sq_projeto_etapa, a.ordem, a.titulo, a.inicio_previsto, a.fim_previsto, a.orcamento,
+      select a.sq_projeto_etapa, a.ordem, a.titulo, a.inicio_previsto, a.fim_previsto, a.orcamento, a.peso,
              case coalesce(a.sq_etapa_pai,0) when coalesce(p_chave_pai,0) then a.ordem else 0 end as ordena,
              coalesce(b.orcamento, c.valor) as saldo_pai,
              coalesce((select sum(x.orcamento) 

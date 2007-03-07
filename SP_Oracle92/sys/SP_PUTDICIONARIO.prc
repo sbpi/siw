@@ -477,7 +477,7 @@ begin
      If crec.chave is null Then
         insert into siw.dc_sp_param 
                (sq_sp_param, sq_stored_proc, sq_dado_tipo, nome,   descricao,   tipo, 
-                ordem,       tamanho,        precisao,     escala, obrigatorio, padrao
+                ordem,       tamanho,        precisao,     escala, obrigatorio, valor_padrao
                )
         values (siw.Sq_Sp_Param.nextval, 
                 crec.sq_stored_proc,

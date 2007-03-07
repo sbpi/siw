@@ -24,7 +24,8 @@ create or replace procedure SP_PutProjetoEtapa
     p_pais                in number    default null,
     p_regiao              in number    default null,
     p_uf                  in varchar2  default null,
-    p_cidade              in number    default null
+    p_cidade              in number    default null,
+    p_peso                in number    default null
    ) is
    w_chave    number(18);
 begin
@@ -40,7 +41,7 @@ begin
            vincula_atividade,   vincula_contrato,   sq_pessoa_atualizacao,   ultima_atualizacao,
            programada,          cumulativa,         quantidade,              unidade_medida,
            pacote_trabalho,     base_geografica,    sq_pais,                 sq_regiao,
-           co_uf,               sq_cidade)
+           co_uf,               sq_cidade,          peso)
       Values
          ( w_chave,             p_chave,            p_chave_pai,             p_ordem,
            p_titulo,            p_descricao,        p_inicio,                p_fim,
@@ -48,7 +49,7 @@ begin
            p_vincula_atividade, p_vincula_contrato, p_usuario,               sysdate,            
            p_programada,        p_cumulativa,       p_quantidade,            p_unidade_medida,
            p_pacote,            p_base,             p_pais,                  p_regiao,
-           p_uf,                p_cidade);
+           p_uf,                p_cidade,           p_peso);
    Elsif p_operacao = 'A' Then -- Alteração
       -- Atualiza a tabela de etapas do projeto
       Update pj_projeto_etapa set
@@ -75,7 +76,8 @@ begin
           sq_pais               = p_pais,
           sq_regiao             = p_regiao,
           co_uf                 = p_uf,
-          sq_cidade             = p_cidade
+          sq_cidade             = p_cidade,
+          peso                  = p_peso
       where sq_siw_solicitacao = p_chave
         and sq_projeto_etapa   = p_chave_aux;
    Elsif p_operacao = 'E' Then -- Exclusão
@@ -87,5 +89,9 @@ begin
        where sq_siw_solicitacao = p_chave
         and sq_projeto_etapa   = p_chave_aux;
    End If;
+   
+   -- Recalcula os percentuais de execução dos pais da etapa
+   sp_calculaPercEtapa(p_chave_aux);
+   
 end SP_PutProjetoEtapa;
 /

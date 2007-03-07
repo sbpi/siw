@@ -20,6 +20,9 @@ begin
        ultima_atualizacao    = sysdate
    where sq_siw_solicitacao = p_chave
      and sq_projeto_etapa   = p_chave_aux;
+
+   -- Recalcula os percentuais de execução dos pais da etapa
+   sp_calculaPercEtapa(p_chave_aux);
+
 end SP_PutAtualizaEtapa;
 /
-

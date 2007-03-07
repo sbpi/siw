@@ -12,7 +12,7 @@ class dml_putProjetoEtapa {
    function getInstanceOf($dbms, $operacao, $p_chave, $p_chave_aux, $p_chave_pai, $p_titulo, $p_descricao, $p_ordem, 
         $p_inicio, $p_fim, $p_perc_conclusao, $p_orcamento, $p_sq_pessoa, $p_sq_unidade, $p_vincula_atividade, 
         $p_vincula_contrato, $p_usuario, $p_programada, $p_cumulativa, $p_quantidade, $p_unidade_medida,
-        $p_pacote, $p_base, $p_pais, $p_regiao, $p_uf, $p_cidade) {
+        $p_pacote, $p_base, $p_pais, $p_regiao, $p_uf, $p_cidade, $p_peso) {
      extract($GLOBALS,EXTR_PREFIX_SAME,'strchema'); $sql=$strschema.'SP_PUTPROJETOETAPA';
      $params=array('p_operacao'             =>array($operacao,                            B_VARCHAR,         1),
                    'p_chave'                =>array(tvl($p_chave),                        B_INTEGER,        32),
@@ -39,7 +39,8 @@ class dml_putProjetoEtapa {
                    'p_pais'                 =>array(tvl($p_pais),                         B_INTEGER,        32),
                    'p_regiao'               =>array(tvl($p_regiao),                       B_INTEGER,        32),
                    'p_uf'                   =>array(tvl($p_uf),                           B_VARCHAR,         2),
-                   'p_cidade'               =>array(tvl($p_cidade),                       B_INTEGER,        32)
+                   'p_cidade'               =>array(tvl($p_cidade),                       B_INTEGER,        32),
+                   'p_peso'                 =>array(tvl($p_peso),                         B_INTEGER,         2)
                   );
      $l_rs = DatabaseQueriesFactory::getInstanceOf($sql, $dbms, $params, DB_TYPE);
      $l_error_reporting = error_reporting(); 
