@@ -91,7 +91,7 @@ begin
    End If;
    
    -- Recalcula os percentuais de execução dos pais da etapa
-   sp_calculaPercEtapa(p_chave_aux);
+   sp_calculaPercEtapa(coalesce(p_chave_aux,w_chave));
    
 end SP_PutProjetoEtapa;
 /
