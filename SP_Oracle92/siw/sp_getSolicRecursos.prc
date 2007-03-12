@@ -131,9 +131,24 @@ begin
       open p_result for 
          select a.sq_solic_recurso_alocacao as chave_aux, a.sq_solic_recurso as chave, a.inicio, a.fim, 
                 a.unidades_solicitadas, a.unidades_autorizadas,
-                case b.autorizado when 'S' then 'Sim' else 'Não' end as nm_autorizado
-           from siw_solic_recurso_alocacao   a
-                inner join siw_solic_recurso b on (a.sq_solic_recurso = b.sq_solic_recurso)
+                case b.autorizado when 'S' then 'Sim' else 'Não' end as nm_autorizado,
+                d.nome as nm_servico,
+                case when e.sq_siw_solicitacao is not null 
+                     then e.codigo_interno
+                     else case when f.sq_siw_solicitacao is not null
+                               then f.codigo_interno
+                               else trim(to_char(c.sq_siw_solicitacao))
+                          end
+                end as cd_servico
+           from siw_solic_recurso_alocacao       a
+                inner     join siw_solic_recurso b on (a.sq_solic_recurso   = b.sq_solic_recurso)
+                  inner   join siw_solicitacao   c on (b.sq_siw_solicitacao = c.sq_siw_solicitacao)
+                    inner join siw_menu          d on (c.sq_menu            = d.sq_menu)
+                    inner join siw_tramite       g on (c.sq_siw_tramite     = g.sq_siw_tramite and
+                                                       'CA'                 <> coalesce(g.sigla,'--')
+                                                      )
+                  left    join pe_programa       e on (b.sq_siw_solicitacao = e.sq_siw_solicitacao)
+                  left    join ac_acordo         f on (b.sq_siw_solicitacao = f.sq_siw_solicitacao)
           where (p_chave             is null or (p_chave     is not null and b.sq_siw_solicitacao = p_chave))
             and (p_chave_aux         is null or (p_chave_aux is not null and b.sq_recurso         = p_chave_aux))
             and (p_chave is not null or p_chave_aux is not null);
