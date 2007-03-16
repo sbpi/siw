@@ -47,11 +47,6 @@ begin
                  inner          join siw_tramite        j on (a.sq_siw_tramite     = j.sq_siw_tramite and
                                                               0                    <> InStr(p_fase,Nvl(j.sigla,'-'))
                                                              )
-                 inner          join (select sq_siw_solicitacao, acesso(sq_siw_solicitacao, p_usuario) acesso
-                                        from siw_solicitacao
-                                     )                  k on (a.sq_siw_solicitacao = k.sq_siw_solicitacao and
-                                                              0                    < k.acesso
-                                                             )
                  inner          join ac_acordo_parcela  c on (b.sq_siw_solicitacao = c.sq_siw_solicitacao)
                    left outer   join (select x.sq_acordo_parcela, z.sigla sg_tramite
                                         from fn_lancamento                x
@@ -77,6 +72,7 @@ begin
                                                                                )
                                      )                  f on (e.sq_acordo_parcela  = f.sq_acordo_parcela)
          where d.sq_acordo_parcela is null
+           and (p_menu        is null or (p_menu        is not null and a.sq_menu            = p_menu))
            and (p_chave       is null or (p_chave       is not null and a.sq_siw_solicitacao = p_chave))
            and (p_chave_aux   is null or (p_chave_aux   is not null and c.sq_acordo_parcela  = p_chave_aux))
            and (p_outra_parte is null or (p_outra_parte is not null and (acentos(g.nome,null) like '%'||acentos(p_outra_parte,null)||'%' or acentos(g.nome_resumido,null) like '%'||acentos(p_outra_parte,null)||'%')))

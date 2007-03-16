@@ -28,6 +28,7 @@ create or replace procedure SP_PutProjetoEtapa
     p_peso                in number    default null
    ) is
    w_chave    number(18);
+   w_pai      number(18);
 begin
    If p_operacao = 'I' Then -- Inclusão
       -- Recupera a próxima chave
@@ -35,7 +36,7 @@ begin
       
       -- Insere registro na tabela de etapas do projeto
       Insert Into pj_projeto_etapa 
-         ( sq_projeto_etapa, sq_siw_solicitacao, sq_etapa_pai,               ordem, 
+         ( sq_projeto_etapa,    sq_siw_solicitacao, sq_etapa_pai,            ordem, 
            titulo,              descricao,          inicio_previsto,         fim_previsto, 
            perc_conclusao,      orcamento,          sq_pessoa,               sq_unidade,
            vincula_atividade,   vincula_contrato,   sq_pessoa_atualizacao,   ultima_atualizacao,
@@ -50,7 +51,14 @@ begin
            p_programada,        p_cumulativa,       p_quantidade,            p_unidade_medida,
            p_pacote,            p_base,             p_pais,                  p_regiao,
            p_uf,                p_cidade,           p_peso);
+
+      -- Recalcula os percentuais de execução dos pais da etapa
+      sp_calculaPercEtapa(w_chave, null);
+   
    Elsif p_operacao = 'A' Then -- Alteração
+      -- Recupera a etapa pai
+      select sq_etapa_pai into w_pai from pj_projeto_etapa where sq_projeto_etapa = p_chave_aux;
+
       -- Atualiza a tabela de etapas do projeto
       Update pj_projeto_etapa set
           sq_etapa_pai          = p_chave_pai,
@@ -59,7 +67,7 @@ begin
           descricao             = p_descricao,
           inicio_previsto       = p_inicio,
           fim_previsto          = p_fim,
-          perc_conclusao        = p_perc_conclusao,
+          perc_conclusao        = coalesce(p_perc_conclusao,perc_conclusao),
           orcamento             = p_orcamento,
           sq_pessoa             = p_sq_pessoa,
           sq_unidade            = p_sq_unidade,
@@ -80,18 +88,32 @@ begin
           peso                  = p_peso
       where sq_siw_solicitacao = p_chave
         and sq_projeto_etapa   = p_chave_aux;
+
+      -- Se houve alteração da subordinação, recalcula para o pai anterior
+      If w_pai <> p_chave_pai Then
+         -- Recalcula os percentuais de execução dos pais anteriores da etapa
+         sp_calculaPercEtapa(null, w_pai);
+      End If;
+      
+      -- Recalcula os percentuais de execução dos pais da etapa
+      sp_calculaPercEtapa(p_chave_aux, null);
+   
    Elsif p_operacao = 'E' Then -- Exclusão
       -- Remove os registros de acompanhamento da execução
       delete pj_etapa_mensal a where a.sq_projeto_etapa = p_chave_aux;
+
+      -- Recupera a etapa pai
+      select sq_etapa_pai into w_pai from pj_projeto_etapa where sq_projeto_etapa = p_chave_aux;
 
       -- Remove o registro na tabela de etapas do projeto
       delete pj_projeto_etapa
        where sq_siw_solicitacao = p_chave
         and sq_projeto_etapa   = p_chave_aux;
-   End If;
+
+      -- Recalcula os percentuais de execução dos pais da etapa
+      If w_pai is not null Then sp_calculaPercEtapa(null, w_pai); End If;
    
-   -- Recalcula os percentuais de execução dos pais da etapa
-   sp_calculaPercEtapa(coalesce(p_chave_aux,w_chave));
+   End If;
    
 end SP_PutProjetoEtapa;
 /

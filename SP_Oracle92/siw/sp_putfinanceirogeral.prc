@@ -218,7 +218,7 @@ begin
             select Nvl(max(to_number(replace(replace(replace(a.codigo_interno,'/'||w_ano,''),Nvl(w_reg.prefixo,''),''),Nvl(w_reg.sufixo,''),''))),0)+1
               into w_sequencial
               from fn_lancamento a
-             where to_char(a.vencimento,'yyyy') = to_char(p_vencimento,'yyyy')
+             where codigo_interno like '%/'||to_char(p_vencimento,'yyyy')
                and a.cliente                = p_cliente;
          End If;
          
