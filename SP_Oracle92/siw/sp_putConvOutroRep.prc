@@ -16,7 +16,8 @@ create or replace procedure SP_PutConvOutroRep
      p_nr_telefone            in varchar2  default null,
      p_nr_fax                 in varchar2  default null,
      p_nr_celular             in varchar2  default null,
-     p_email                  in varchar2  default null
+     p_email                  in varchar2  default null,
+     p_cargo                  in varchar2  default null
    ) is
    
    w_sg_modulo       varchar2(10);
@@ -326,7 +327,7 @@ begin
             delete co_pessoa_telefone where sq_pessoa_telefone = w_chave_fone;
          End If;
       End If;
-      if l_operacao = 'I' Then  
+      If l_operacao = 'I' Then
          -- Insere registro em Representante
          select count(*) into w_existe 
            from ac_acordo_representante
@@ -340,9 +341,15 @@ begin
          End If;
          -- Insere registro em Outra representante
          insert into ac_acordo_outra_rep
-            (sq_acordo_outra_parte  ,        sq_pessoa, sq_siw_solicitacao)
+            (sq_acordo_outra_parte  ,        sq_pessoa, sq_siw_solicitacao, cargo)
          values
-            (p_sq_acordo_outra_parte, w_chave_pessoa, p_chave );
+            (p_sq_acordo_outra_parte, w_chave_pessoa, p_chave, p_cargo);
+      ElsIf l_operacao = 'A' Then
+         update ac_acordo_outra_rep 
+            set cargo = p_cargo
+          where sq_acordo_outra_parte = p_sq_acordo_outra_parte
+            and sq_pessoa             = w_chave_pessoa
+            and sq_siw_solicitacao    = p_chave;
       End If;
    End If;
 

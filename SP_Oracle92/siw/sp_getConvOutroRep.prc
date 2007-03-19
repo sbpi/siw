@@ -6,7 +6,7 @@ create or replace procedure SP_GetConvOutroRep
 begin
   -- Recupera os tipos de contrato do cliente
   open p_result for 
-    select  a.sq_acordo_outra_parte, a.sq_pessoa, a.sq_siw_solicitacao, 
+    select  a.sq_acordo_outra_parte, a.sq_pessoa, a.sq_siw_solicitacao, a.cargo,
             d.nome nm_pessoa, d.nome_resumido, c.cpf,
             b.sq_pessoa_fax, b.nr_fax,
             f.sq_pessoa_telefone, f.ddd, f.nr_telefone,
