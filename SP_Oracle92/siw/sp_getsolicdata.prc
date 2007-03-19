@@ -353,7 +353,7 @@ begin
                 d.banco_estrang,      d.agencia_estrang,             d.cidade_estrang,
                 d.informacoes,        d.codigo_deposito,
                 d.valor_imposto,      d.valor_retencao,              d.valor_liquido,
-                d.tipo tipo_rubrica,
+                d.tipo tipo_rubrica,  d.processo,
                 case d.tipo when 1 then 'Dotação incial' when 2 then 'Transferência entre rubricas' when 3 then 'Atualização de aplicação' when 4 then 'Entradas' when 5 then 'Saídas' end nm_tipo_rubrica,
                 d1.receita,           d1.despesa,                    d1.nome nm_tipo_lancamento,
                 d2.nome nm_pessoa, d2.nome_resumido nm_pessoa_resumido,
