@@ -376,7 +376,8 @@ begin
                 d.dia_vencimento,     d.vincula_projeto,             d.vincula_demanda,
                 d.vincula_viagem,     d.aviso_prox_conc,             d.dias_aviso,
                 d.empenho,            d.processo,                    d.assinatura,
-                d.publicacao,
+                d.publicacao,         d.titulo,
+                case when d.titulo is null then 'Não informado ('||d2.nome_resumido||')' else d.titulo end as nm_acordo,
                 d1.nome nm_tipo_acordo,d1.sigla sg_acordo,           d1.modalidade cd_modalidade,
                 d2.nome nm_outra_parte, d2.nome_resumido nm_outra_parte_resumido,
                 d2.nome_resumido_ind nm_outra_parte_resumido_ind,
@@ -489,7 +490,11 @@ begin
             and (p_unidade        is null or (p_unidade     is not null and b.sq_unidade         = p_unidade))
             and (p_solicitante    is null or (p_solicitante is not null and b.solicitante        = p_solicitante))
             and (p_palavra        is null or (p_palavra     is not null and d.codigo_interno     like '%'||p_palavra||'%'))
-            and (p_atraso         is null or (p_atraso      is not null and d.codigo_externo     like '%'||p_atraso||'%'))
+            and (p_atraso         is null or (p_atraso      is not null and (d.titulo is not null and acentos(d.titulo)   like '%'||acentos(p_atraso)||'%' or
+                                                                             d.titulo is     null and d2.nome_resumido_ind||')'=substr(p_atraso,instr(p_atraso,'(')+1)
+                                                                            )
+                                             )
+                )
             and (p_proponente     is null or (p_proponente  is not null and (acentos(d2.nome,null)          like '%'||acentos(p_proponente,null)||'%') or 
                                                                             (acentos(d2.nome_resumido,null) like '%'||acentos(p_proponente,null)||'%')
                                              )
