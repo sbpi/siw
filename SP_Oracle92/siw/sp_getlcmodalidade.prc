@@ -3,6 +3,7 @@ create or replace procedure SP_GetLcModalidade
     p_cliente     in  number,
     p_nome        in  varchar2 default null,
     p_sigla       in  varchar2 default null,
+    p_ativo       in  varchar2 default null,    
     p_restricao   in  varchar2 default null,
     p_result      out sys_refcursor) is
 begin
@@ -26,7 +27,10 @@ begin
              case a.padrao when 'S' then 'Sim' else 'Não' end nm_padrao
         from lc_modalidade a
        where a.cliente = p_cliente 
-         and ((p_chave is null) or (p_chave is not null and a.sq_lcmodalidade = p_chave));
+         and ((p_chave is null) or (p_chave is not null and a.sq_lcmodalidade = p_chave))
+         and ((p_nome  is null) or (p_nome  is not null and a.nome  = p_nome))     
+         and ((p_sigla is null) or (p_sigla is not null and a.sigla = p_sigla))     
+         and ((p_ativo is null) or (p_ativo is not null and a.ativo = p_ativo));         
    End If;
 end SP_GetLcModalidade;
 /
