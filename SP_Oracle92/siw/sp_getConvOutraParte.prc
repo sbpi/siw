@@ -7,7 +7,7 @@ create or replace procedure SP_GetConvOutraParte
 begin
   -- Recupera os tipos de contrato do cliente
   open p_result for 
-    select a.sq_acordo_outra_parte, a.sq_siw_solicitacao, a.outra_parte,
+    select a.sq_acordo_outra_parte, a.sq_siw_solicitacao, a.outra_parte, nvl(c.sq_tipo_pessoa,e.sq_tipo_pessoa) sq_tipo_pessoa,
            b.cnpj, d.cpf, nvl(c.nome,e.nome) nm_pessoa, nvl(c.nome_resumido,e.nome_resumido) nome_resumido,
            case a.tipo when 1 then 'concedente/contratante/parceiro' when 2 then 'convenente' when 3 then 'executor/contratado'end nm_tipo
        from ac_acordo_outra_parte a 

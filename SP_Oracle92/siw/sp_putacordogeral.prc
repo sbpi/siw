@@ -31,6 +31,7 @@ create or replace procedure SP_PutAcordoGeral
     p_numero_processo     in varchar2  default null,
     p_assinatura          in date      default null,
     p_publicacao          in date      default null,
+    p_sq_lcmodalidade     in number    default null,
     p_chave_nova          out number,
     p_codigo_interno      in out varchar2
    ) is
@@ -94,14 +95,14 @@ begin
            fim,                 valor_inicial,     objeto,               aviso_prox_conc,     
            dias_aviso,          sq_tipo_pessoa,    sq_forma_pagamento,   empenho,
            processo,            assinatura,        publicacao,           codigo_interno,
-           vincula_projeto,     titulo
+           vincula_projeto,     titulo,            sq_lcmodalidade
          )
       (select
            w_chave,             p_cliente,         p_sq_tipo_acordo,     p_inicio,
            p_fim,               p_valor,           p_objeto,             p_aviso,
            p_dias,              p_sq_tipo_pessoa,  p_sq_forma_pagamento, p_numero_empenho,
            p_numero_processo,   p_assinatura,      p_publicacao,         p_codigo,
-           w_vincula_projeto,   p_titulo   
+           w_vincula_projeto,   p_titulo,          p_sq_lcmodalidade
         from dual
       );
 
@@ -241,7 +242,8 @@ begin
           processo           = p_numero_processo,
           titulo             = p_titulo,
           assinatura         = p_assinatura,
-          publicacao         = p_publicacao
+          publicacao         = p_publicacao,
+          sq_lcmodalidade    = p_sq_lcmodalidade
       where sq_siw_solicitacao = p_chave;
       
       If p_codigo is not null Then

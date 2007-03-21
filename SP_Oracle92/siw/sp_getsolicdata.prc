@@ -241,7 +241,7 @@ begin
                 d.banco_estrang,      d.agencia_estrang,             d.cidade_estrang,
                 d.inicio,             d.informacoes,                 d.codigo_deposito,
                 d.empenho,            d.processo,                    d.assinatura,
-                d.publicacao,         d.titulo,
+                d.publicacao,         d.titulo,                      d.sq_lcmodalidade,
                 d1.nome nm_tipo_acordo,d1.sigla sg_acordo,           d1.modalidade cd_modalidade,
                 d1.prazo_indeterm,    d1.pessoa_fisica,              d1.pessoa_juridica,  
                 d2.nome nm_outra_parte, d2.nome_resumido nm_outra_parte_resumido,
@@ -251,6 +251,7 @@ begin
                 d6.sq_banco,          d6.codigo cd_banco,            d6.nome nm_banco,
                 d6.exige_operacao,
                 d7.nome nm_pais,
+                d8.nome nm_lcmodalidade,
                 b.fim-d.dias_aviso aviso,
                 e.sq_tipo_unidade,    e.nome nm_unidade_resp,        e.informal informal_resp,
                 e.vinculada vinc_resp,e.adm_central adm_resp,        e.sigla sg_unidade_resp,
@@ -284,6 +285,7 @@ begin
                      left         join co_agencia           d5 on (d.sq_agencia               = d5.sq_agencia)
                        left       join co_banco             d6 on (d5.sq_banco                = d6.sq_banco)
                      left         join co_pais              d7 on (d.sq_pais_estrang          = d7.sq_pais)
+                     left         join lc_modalidade        d8 on (d.sq_lcmodalidade          = d8.sq_lcmodalidade)
                    inner          join eo_unidade           e  on (b.sq_unidade               = e.sq_unidade)
                      left         join eo_unidade_resp      e1 on (e.sq_unidade               = e1.sq_unidade and
                                                                    e1.tipo_respons            = 'T'           and
