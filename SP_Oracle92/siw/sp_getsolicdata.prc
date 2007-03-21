@@ -242,6 +242,10 @@ begin
                 d.inicio,             d.informacoes,                 d.codigo_deposito,
                 d.empenho,            d.processo,                    d.assinatura,
                 d.publicacao,         d.titulo,                      d.sq_lcmodalidade,
+                d.numero_certame,     d.numero_ata,                  d.tipo_reajuste,
+                d.indice_base,        d.sq_eoindicador,              d.limite_variacao,
+                d.classificacao_orcamento,                           d.especificacao_despesa,
+                case d.tipo_reajuste when 0 then 'Não permite' when 1 then 'Com índice' else 'Sem índice' end nm_tipo_reajuste,
                 d1.nome nm_tipo_acordo,d1.sigla sg_acordo,           d1.modalidade cd_modalidade,
                 d1.prazo_indeterm,    d1.pessoa_fisica,              d1.pessoa_juridica,  
                 d2.nome nm_outra_parte, d2.nome_resumido nm_outra_parte_resumido,
@@ -252,6 +256,7 @@ begin
                 d6.exige_operacao,
                 d7.nome nm_pais,
                 d8.nome nm_lcmodalidade,
+                d9.nome nm_eoindicador,
                 b.fim-d.dias_aviso aviso,
                 e.sq_tipo_unidade,    e.nome nm_unidade_resp,        e.informal informal_resp,
                 e.vinculada vinc_resp,e.adm_central adm_resp,        e.sigla sg_unidade_resp,
@@ -286,6 +291,7 @@ begin
                        left       join co_banco             d6 on (d5.sq_banco                = d6.sq_banco)
                      left         join co_pais              d7 on (d.sq_pais_estrang          = d7.sq_pais)
                      left         join lc_modalidade        d8 on (d.sq_lcmodalidade          = d8.sq_lcmodalidade)
+                     left         join eo_indicador         d9 on (d.sq_eoindicador           = d9.sq_eoindicador)
                    inner          join eo_unidade           e  on (b.sq_unidade               = e.sq_unidade)
                      left         join eo_unidade_resp      e1 on (e.sq_unidade               = e1.sq_unidade and
                                                                    e1.tipo_respons            = 'T'           and

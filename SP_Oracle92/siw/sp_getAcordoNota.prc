@@ -14,12 +14,16 @@ begin
       open p_result for     
          select a.sq_acordo_nota, a.sq_siw_solicitacao, a.sq_tipo_documento, a.sq_acordo_outra_parte, 
                 a.sq_acordo_aditivo, a.numero, a.data, a.valor, a.classificacao_orcamento, 
-                a.especificacao_despesa 
-           from ac_acordo_nota                   a  
-                inner join ac_acordo             b on (a.sq_siw_solicitacao    = b.sq_siw_solicitacao)
-                inner join fn_tipo_lancamento    c on (a.sq_tipo_documento     = c.sq_tipo_lancamento)
-                inner join ac_acordo_outra_parte d on (a.sq_acordo_outra_parte = d.sq_acordo_outra_parte)
-                inner join ac_acordo_aditivo     e on (a.sq_acordo_aditivo     = e.sq_acordo_aditivo)
+                a.especificacao_despesa,
+                c.nome nm_tipo_documento,
+                f.nome_resumido nm_outra_parte,
+                e.codigo cd_aditivo
+           from ac_acordo_nota                     a  
+                inner   join ac_acordo             b on (a.sq_siw_solicitacao    = b.sq_siw_solicitacao)
+                inner   join fn_tipo_documento     c on (a.sq_tipo_documento     = c.sq_tipo_documento)
+                left    join ac_acordo_outra_parte d on (a.sq_acordo_outra_parte = d.sq_acordo_outra_parte)
+                  left  join co_pessoa             f on (d.outra_parte           = f.sq_pessoa)
+                left    join ac_acordo_aditivo     e on (a.sq_acordo_aditivo     = e.sq_acordo_aditivo)
           where b.cliente = p_cliente
             and ((p_chave             is null) or (p_chave             is not null and a.sq_acordo_nota     = p_chave))      
             and ((p_chave_aux         is null) or (p_chave_aux         is not null and a.sq_siw_solicitacao = p_chave_aux))
