@@ -3095,9 +3095,11 @@ SP_Oracle92/siw/sp_getRecurso_Indisp.prc -text
 SP_Oracle92/siw/sp_getSolicIndicador.prc -text
 SP_Oracle92/siw/sp_getSolicMeta.prc -text
 SP_Oracle92/siw/sp_getSolicRecursos.prc -text
+SP_Oracle92/siw/sp_getSolicRestricao.prc -text
 SP_Oracle92/siw/sp_getTipoIndicador.prc -text
 SP_Oracle92/siw/sp_getTipoInteressado.prc -text
 SP_Oracle92/siw/sp_getTipoRecurso.prc -text
+SP_Oracle92/siw/sp_getTipoRestricao.prc -text
 SP_Oracle92/siw/sp_getTipoVeiculo.prc -text
 SP_Oracle92/siw/sp_getUnidadeMedida.prc -text
 SP_Oracle92/siw/sp_getUnidade_PE.prc -text
@@ -3343,9 +3345,11 @@ SP_Oracle92/siw/sp_putRecurso_Menu.prc -text
 SP_Oracle92/siw/sp_putSolicIndicador.prc -text
 SP_Oracle92/siw/sp_putSolicRecAlocacao.prc -text
 SP_Oracle92/siw/sp_putSolicRecurso.prc -text
+SP_Oracle92/siw/sp_putSolicRestricao.prc -text
 SP_Oracle92/siw/sp_putTipoIndicador.prc -text
 SP_Oracle92/siw/sp_putTipoInteressado.prc -text
 SP_Oracle92/siw/sp_putTipoRecurso.prc -text
+SP_Oracle92/siw/sp_putTipoRestricao.prc -text
 SP_Oracle92/siw/sp_putUnidadeMedida.prc -text
 SP_Oracle92/siw/sp_putUnidade_PE.prc -text
 SP_Oracle92/siw/sp_putabastecimento.prc -text
