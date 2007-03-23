@@ -3092,6 +3092,7 @@ SP_Oracle92/siw/sp_getProtocolo.prc -text
 SP_Oracle92/siw/sp_getRecurso.prc -text
 SP_Oracle92/siw/sp_getRecurso_Disp.prc -text
 SP_Oracle92/siw/sp_getRecurso_Indisp.prc -text
+SP_Oracle92/siw/sp_getRestricaoEtapa.prc -text
 SP_Oracle92/siw/sp_getSolicIndicador.prc -text
 SP_Oracle92/siw/sp_getSolicMeta.prc -text
 SP_Oracle92/siw/sp_getSolicRecursos.prc -text
@@ -3344,6 +3345,7 @@ SP_Oracle92/siw/sp_putRecurso.prc -text
 SP_Oracle92/siw/sp_putRecurso_Disp.prc -text
 SP_Oracle92/siw/sp_putRecurso_Indisp.prc -text
 SP_Oracle92/siw/sp_putRecurso_Menu.prc -text
+SP_Oracle92/siw/sp_putRestricaoEtapa.prc -text
 SP_Oracle92/siw/sp_putSolicIndicador.prc -text
 SP_Oracle92/siw/sp_putSolicRecAlocacao.prc -text
 SP_Oracle92/siw/sp_putSolicRecurso.prc -text
