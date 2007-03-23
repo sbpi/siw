@@ -17,7 +17,8 @@ create or replace procedure SP_PutAcordoAditivo
     p_supressao                in  varchar2 default null,
     p_observacao               in  varchar2 default null,
     p_valor_reajuste           in  number   default null,
-    p_parcela_reajustada       in  number   default null
+    p_parcela_reajustada       in  number   default null,
+    p_sq_cc                    in  number   default null
    ) is
 begin
    If p_operacao = 'I' Then
@@ -25,11 +26,13 @@ begin
       insert into ac_acordo_aditivo
         (sq_acordo_aditivo, sq_siw_solicitacao, protocolo, codigo, objeto, inicio, fim, 
          duracao, documento_origem, documento_data, variacao_valor, prorrogacao, revisao, 
-         acrescimo, supressao, observacao, valor_reajuste, parcela_reajustada)
-       
-     (select sq_acordo_aditivo.nextval, p_chave_aux, p_protocolo, p_codigo, p_objeto, p_inicio, p_fim, 
-         p_duracao, p_documento_origem, p_documento_data, p_variacao_valor, p_prorrogacao, p_revisao, 
-         p_acrescimo, p_supressao, p_observacao, p_valor_reajuste, p_parcela_reajustada from dual);
+         acrescimo, supressao, observacao, valor_reajuste, parcela_reajustada, sq_cc)
+        
+        (select sq_acordo_aditivo.nextval, p_chave_aux, p_protocolo, p_codigo, p_objeto, p_inicio, p_fim, 
+                p_duracao, p_documento_origem, p_documento_data, p_variacao_valor, p_prorrogacao, p_revisao, 
+                p_acrescimo, p_supressao, p_observacao, p_valor_reajuste, p_parcela_reajustada, p_sq_cc 
+           from dual
+         );
    Elsif p_operacao = 'A' Then
       -- Altera registro
       update ac_acordo_aditivo
@@ -48,7 +51,8 @@ begin
              supressao          = p_supressao,
              observacao         = p_observacao,
              valor_reajuste     = p_valor_reajuste,
-             parcela_reajustada = p_parcela_reajustada
+             parcela_reajustada = p_parcela_reajustada,
+             sq_cc              = p_sq_cc
        where sq_acordo_aditivo = p_chave;
    Elsif p_operacao = 'E' Then
       -- Exclui registro

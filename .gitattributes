@@ -3136,6 +3136,8 @@ SP_Oracle92/siw/sp_getcolunacoluna.prc -text
 SP_Oracle92/siw/sp_getcompanydata.prc -text
 SP_Oracle92/siw/sp_getcountrydata.prc -text
 SP_Oracle92/siw/sp_getcountrylist.prc -text
+SP_Oracle92/siw/sp_getctespecificacao.prc -text
+SP_Oracle92/siw/sp_getctespecificacaotree.prc -text
 SP_Oracle92/siw/sp_getcustomerdata.prc -text
 SP_Oracle92/siw/sp_getcustomersite.prc -text
 SP_Oracle92/siw/sp_getcv.prc -text
@@ -3392,6 +3394,7 @@ SP_Oracle92/siw/sp_putcotpfone.prc -text
 SP_Oracle92/siw/sp_putcotppessoa.prc -text
 SP_Oracle92/siw/sp_putcouf.prc -text
 SP_Oracle92/siw/sp_putctcc.prc -text
+SP_Oracle92/siw/sp_putctespecificacao.prc -text
 SP_Oracle92/siw/sp_putcvcargo.prc -text
 SP_Oracle92/siw/sp_putcvcurso.prc -text
 SP_Oracle92/siw/sp_putcvescola.prc -text

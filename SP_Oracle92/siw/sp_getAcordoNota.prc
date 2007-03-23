@@ -13,8 +13,8 @@ begin
    If p_restricao is null Then
       open p_result for     
          select a.sq_acordo_nota, a.sq_siw_solicitacao, a.sq_tipo_documento, a.sq_acordo_outra_parte, 
-                a.sq_acordo_aditivo, a.numero, a.data, a.valor, a.classificacao_orcamento, 
-                a.especificacao_despesa,
+                a.sq_acordo_aditivo, a.numero, a.data, a.valor, a.sq_lcfonte_recurso, 
+                a.sq_especificacao_despesa,
                 c.nome nm_tipo_documento,
                 f.nome_resumido nm_outra_parte,
                 e.codigo cd_aditivo

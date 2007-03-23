@@ -7,9 +7,13 @@ create or replace procedure SP_PutAcordoDadosAdicionais
     p_limite_variacao     in number   default null,
     p_indice_base         in varchar2 default null,
     p_sq_eoindicador      in number   default null,
-    p_classif_orc         in varchar2 default null,
-    p_espec_despesa       in varchar2 default null,
-    p_sq_lcfonte_recurso  in number   default null
+    p_sq_lcfonte_recurso  in number   default null,
+    p_espec_despesa       in number   default null,
+    p_sq_lcmodalidade     in number    default null,    
+    p_numero_empenho      in varchar2  default null,
+    p_numero_processo     in varchar2  default null,
+    p_assinatura          in date      default null,
+    p_publicacao          in date      default null
    ) is
 begin
    -- Atualiza o registro da demanda com os dados da conclusão.
@@ -20,8 +24,13 @@ begin
       limite_variacao         = p_limite_variacao,
       indice_base             = p_indice_base,
       sq_eoindicador          = p_sq_eoindicador,
-      classificacao_orcamento = p_classif_orc,
-      especificacao_despesa   = p_espec_despesa
+      sq_lcfonte_recurso      = p_sq_lcfonte_recurso,
+      sq_especificacao_despesa = p_espec_despesa,
+      sq_lcmodalidade          = p_sq_lcmodalidade,
+      empenho                  = p_numero_empenho,
+      processo                 = p_numero_processo,
+      assinatura               = p_assinatura,
+      publicacao               = p_publicacao
    Where sq_siw_solicitacao = p_chave;
 end SP_PutAcordoDadosAdicionais;
 /

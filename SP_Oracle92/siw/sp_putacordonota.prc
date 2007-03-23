@@ -8,18 +8,19 @@ create or replace procedure SP_PutAcordoNota
     p_numero                   in  varchar2 default null,
     p_data                     in  date     default null,
     p_valor                    in  number   default null,
-    p_classif_orc              in  varchar2 default null,
-    p_espec_despesa            in  varchar2 default null,
-    p_sq_lcfonte_recurso       in  number   default null
+    p_sq_lcfonte_recurso       in  number   default null,
+    p_espec_despesa            in  number   default null
    ) is
 begin
    If p_operacao = 'I' Then
       -- Insere registro
       insert into ac_acordo_nota
         (sq_acordo_nota, sq_siw_solicitacao, sq_tipo_documento, sq_acordo_outra_parte, 
-         sq_acordo_aditivo, numero, data, valor, classificacao_orcamento, especificacao_despesa)
-     (select sq_acordo_nota.nextval, p_chave_aux, p_sq_tipo_documento, p_sq_acordo_outra_parte, 
-         p_sq_acordo_aditivo, p_numero, p_data, p_valor, p_classif_orc, p_espec_despesa from dual);
+         sq_acordo_aditivo, numero, data, valor, sq_lcfonte_recurso, sq_especificacao_despesa
+        )
+        (select sq_acordo_nota.nextval, p_chave_aux, p_sq_tipo_documento, p_sq_acordo_outra_parte, 
+          p_sq_acordo_aditivo, p_numero, p_data, p_valor, p_sq_lcfonte_recurso, p_espec_despesa from dual
+        );
    Elsif p_operacao = 'A' Then
       -- Altera registro
       update ac_acordo_nota
@@ -29,8 +30,8 @@ begin
              numero                  = p_numero,
              data                    = p_data,
              valor                   = p_valor,
-             classificacao_orcamento = p_classif_orc,
-             especificacao_despesa   = p_espec_despesa
+             sq_lcfonte_recurso      = p_sq_lcfonte_recurso,
+             sq_especificacao_despesa = p_espec_despesa
        where sq_acordo_nota = p_chave;
    Elsif p_operacao = 'E' Then
       -- Exclui registro
