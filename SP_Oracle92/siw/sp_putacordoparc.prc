@@ -10,7 +10,9 @@ create or replace procedure SP_PutAcordoParc
     p_vencimento          in varchar2 default null,
     p_dia_vencimento      in number   default null,
     p_valor_parcela       in varchar2 default null,
-    p_valor_diferente     in number   default null
+    p_valor_diferente     in number   default null,
+    p_per_ini             in date     default null,
+    p_per_fim             in date     default null
    ) is
    
    w_cont       number(4) := 1;
@@ -20,13 +22,17 @@ create or replace procedure SP_PutAcordoParc
    w_valor      number(18,4);
    w_valor_n    number(18,4);
    w_meses      number(4);
+   w_per_ini    date;
+   w_per_fim    date;
    w_reg        ac_acordo%rowtype;
 begin
    If p_operacao = 'I' Then -- Inclusão
       insert into ac_acordo_parcela
-        (sq_acordo_parcela,         sq_siw_solicitacao, ordem,   emissao, vencimento, observacao,   valor)
+        (sq_acordo_parcela,         sq_siw_solicitacao, ordem,   emissao, vencimento, observacao,   valor, 
+         inicio,                    fim)
       values
-        (sq_acordo_parcela.nextval, p_chave,            p_ordem, sysdate, p_data,     p_observacao, p_valor);
+        (sq_acordo_parcela.nextval, p_chave,            p_ordem, sysdate, p_data,     p_observacao, p_valor,
+         p_per_ini,                 p_per_fim);
    Elsif p_operacao = 'G' Then -- Geração parametrizada de parcelas
       -- Remove as parcelas existentes
       delete ac_acordo_parcela where sq_siw_solicitacao = p_chave;
@@ -36,14 +42,18 @@ begin
       
       If p_tipo_geracao = 11 Then -- Se uma parcela, no início do acordo
          insert into ac_acordo_parcela
-           (sq_acordo_parcela,         sq_siw_solicitacao, ordem,   emissao, vencimento,   observacao,   valor)
+           (sq_acordo_parcela,         sq_siw_solicitacao, ordem,   emissao, vencimento,   observacao,   valor, 
+            inicio,                    fim)
          values
-           (sq_acordo_parcela.nextval, p_chave,            1,       sysdate, w_reg.inicio, p_observacao, w_reg.valor_inicial);
+           (sq_acordo_parcela.nextval, p_chave,            1,       sysdate, w_reg.inicio, p_observacao, w_reg.valor_inicial, 
+            w_reg.inicio,              w_reg.fim);
       Elsif p_tipo_geracao = 12 Then -- Se uma parcela, no fim do acordo
          insert into ac_acordo_parcela
-           (sq_acordo_parcela,         sq_siw_solicitacao, ordem,   emissao, vencimento,   observacao,   valor)
+           (sq_acordo_parcela,         sq_siw_solicitacao, ordem,   emissao, vencimento,   observacao,   valor, 
+            inicio,                    fim)
          values
-           (sq_acordo_parcela.nextval, p_chave,            1,       sysdate, w_reg.fim,    p_observacao, w_reg.valor_inicial);
+           (sq_acordo_parcela.nextval, p_chave,            1,       sysdate, w_reg.fim,    p_observacao, w_reg.valor_inicial, 
+            w_reg.inicio,              w_reg.fim);
       Else
          w_meses := round(months_between(w_reg.fim, w_reg.inicio));
          If w_meses = 0 Then
@@ -65,6 +75,10 @@ begin
           
          for w_cont in 1 .. w_meses loop
             If w_cont = 1 Then
+               -- Define o período de realização da primeira parcela
+               w_per_ini := w_reg.inicio;
+               w_per_fim := last_day(w_reg.inicio);
+               
                -- Calcula a data de vencimento da primeira parcela
                If p_vencimento = 'P' Then
                   If p_tipo_geracao = 21 
@@ -86,10 +100,16 @@ begin
 
                -- insere a primeira parcela
                insert into ac_acordo_parcela
-                 (sq_acordo_parcela,         sq_siw_solicitacao, ordem,   emissao, vencimento,   observacao,   valor)
+                 (sq_acordo_parcela,         sq_siw_solicitacao, ordem,   emissao, vencimento,   observacao,   valor,
+                  inicio,                    fim)
                values
-                 (sq_acordo_parcela.nextval, p_chave,            w_cont,  sysdate, w_vencimento, p_observacao, round(w_valor_1,2));
+                 (sq_acordo_parcela.nextval, p_chave,            w_cont,  sysdate, w_vencimento, p_observacao, round(w_valor_1,2),
+                  w_per_ini,                 w_per_fim);
             Elsif w_cont = w_meses Then
+               -- Define o período de realização da ultima parcela
+               w_per_ini := to_date('01'||to_char(w_reg.fim,'mmyyyy'),'ddmmyyyy'); 
+               w_per_fim := w_reg.fim;
+
                -- Calcula a data de vencimento da última parcela
                w_vencimento := add_months(w_vencimento,1);
 
@@ -98,13 +118,19 @@ begin
                
                -- Insere a última parcela
                insert into ac_acordo_parcela
-                 (sq_acordo_parcela,         sq_siw_solicitacao, ordem,   emissao, vencimento,   observacao,   valor)
+                 (sq_acordo_parcela,         sq_siw_solicitacao, ordem,   emissao, vencimento,   observacao,   valor,
+                  inicio,                    fim)
                values
-                 (sq_acordo_parcela.nextval, p_chave,            w_cont,  sysdate, w_vencimento, p_observacao, round(w_valor_n,2));
+                 (sq_acordo_parcela.nextval, p_chave,            w_cont,  sysdate, w_vencimento, p_observacao, round(w_valor_n,2),
+                  w_per_ini,                 w_per_fim);
             Else
                -- Calcula a data de vencimento das parcelas intermediárias
                w_vencimento := add_months(w_vencimento,1);
                
+               -- Define o período de realização da ultima parcela
+               w_per_ini := to_date('01'||to_char(w_vencimento,'mmyyyy'),'ddmmyyyy'); 
+               w_per_fim := last_day(w_vencimento);
+
                If p_vencimento    = 'P' Then w_vencimento := to_date('01'||to_char(w_vencimento,'mmyyyy'),'ddmmyyyy'); 
                Elsif p_vencimento = 'U' Then w_vencimento := last_day(w_vencimento); 
                Else w_vencimento := to_date(w_dia||to_char(w_vencimento,'mmyyyy'),'ddmmyyyy'); 
@@ -115,9 +141,11 @@ begin
                
                
                insert into ac_acordo_parcela
-                 (sq_acordo_parcela,         sq_siw_solicitacao, ordem,   emissao, vencimento,   observacao,   valor)
+                 (sq_acordo_parcela,         sq_siw_solicitacao, ordem,   emissao, vencimento,   observacao,   valor,
+                  inicio,                    fim)
                values
-                 (sq_acordo_parcela.nextval, p_chave,            w_cont,  sysdate, w_vencimento, p_observacao, round(w_valor,2));
+                 (sq_acordo_parcela.nextval, p_chave,            w_cont,  sysdate, w_vencimento, p_observacao, round(w_valor,2),
+                  w_per_ini,                 w_per_fim);
             End If;
          end loop;
       End If;
@@ -127,7 +155,9 @@ begin
              emissao    = sysdate,
              vencimento = p_data,
              observacao = p_observacao,
-             valor = p_valor
+             valor      = p_valor,
+             inicio     = p_per_ini,
+             fim        = p_per_fim
        where sq_acordo_parcela = p_chave_aux;
    Elsif p_operacao = 'E' Then -- Exclusão
       delete ac_acordo_parcela where sq_acordo_parcela = p_chave_aux;

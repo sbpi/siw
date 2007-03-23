@@ -5,15 +5,20 @@ create or replace procedure SP_GetSolicAreas
     p_result    out sys_refcursor) is
 begin
    -- Recupera as demandas que o usuário pode ver
-   open p_result for 
-     select a.*, b.nome, b.informal, b.vinculada, b.adm_central
+   open p_result for
+     select a.sq_unidade, a.sq_siw_solicitacao, a.papel, null as interesse_positivo, null as influencia,
+            null as nm_interesse, null as nm_influencia,
+            b.nome, b.informal, b.vinculada, b.adm_central
        from gd_demanda_envolv   a,
             eo_unidade          b
       where a.sq_unidade         = b.sq_unidade
          and a.sq_siw_solicitacao = p_chave
          and (p_chave_aux is null or (p_chave_aux is not null and a.sq_unidade = p_chave_aux))
      UNION
-     select a.*, b.nome, b.informal, b.vinculada, b.adm_central
+     select a.sq_unidade, a.sq_siw_solicitacao, a.papel, a.interesse_positivo, a.influencia,
+            case interesse_positivo when 'S' then '+' else '-' end as nm_interesse,
+            case influencia when 0 then 'Alta' when 1 then 'Média' else 'Baixa' end as nm_influencia,
+            b.nome, b.informal, b.vinculada, b.adm_central
        from pj_projeto_envolv   a,
             eo_unidade          b
       where a.sq_unidade         = b.sq_unidade

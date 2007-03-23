@@ -3622,11 +3622,13 @@ SP_Oracle92/siw/sq_usuario.seq -text
 SP_Oracle92/siw/sq_usuario_central.seq -text
 SP_Oracle92/siw/sq_viagem.seq -text
 SP_Oracle92/siw/sqlexpert_plan1.tab -text
+SP_Oracle92/siw/tg_ac_acordo_aditivo_in_up.trg -text
 SP_Oracle92/siw/tg_ac_acordo_in_up.trg -text
 SP_Oracle92/siw/tg_co_pessoa_in_up.trg -text
 SP_Oracle92/siw/tg_fn_documento_item_in_up.trg -text
 SP_Oracle92/siw/tg_fn_lancamento_doc_ex.trg -text
 SP_Oracle92/siw/tg_fn_lancamento_doc_in_up.trg -text
+SP_Oracle92/siw/tg_siw_restricao_in_up.trg -text
 SP_Oracle92/siw/triggereventos.fnc -text
 SP_Oracle92/siw/tt_carregaligacao.prc -text
 SP_Oracle92/siw/tt_cc.tab -text
