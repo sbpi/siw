@@ -15,7 +15,7 @@ begin
    If p_restricao is null Then
       open p_result for 
          select a.sq_acordo_parcela, a.sq_siw_solicitacao, a.ordem, a.emissao, a.vencimento, a.quitacao,
-                a.documento_interno, a.documento_externo, a.observacao, a.valor,
+                a.documento_interno, a.documento_externo, a.observacao, a.valor, a.inicio, a.fim,
                 b.sq_siw_solicitacao sq_lancamento, b.codigo_interno cd_lancamento, 
                 b.vencimento dt_lancamento, b.valor vl_lancamento
            from ac_acordo_parcela             a
@@ -35,7 +35,7 @@ begin
         select a.sq_siw_solicitacao, a.sq_solic_pai, a.solicitante, a.sq_unidade, a.sq_cc, 
                b.codigo_interno cd_acordo, b.sq_forma_pagamento, b.sq_tipo_pessoa, b.outra_parte,
                b.objeto,
-               c.sq_acordo_parcela, c.ordem, c.vencimento, c.valor, c.quitacao,
+               c.sq_acordo_parcela, c.ordem, c.vencimento, c.valor, c.quitacao, c.inicio, c.fim,
                g.nome_resumido,
                f.sq_tipo_lancamento,
                case when h.sq_pessoa is null then i.cnpj else h.cpf end cnpjcpf

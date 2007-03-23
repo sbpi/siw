@@ -17,11 +17,12 @@ begin
                 a.ativo,
                 c.nome nm_ct_cc
            from ct_especificacao_despesa               a
-                   inner join ct_especificacao_despesa b on (a.especificacao_pai = b.sq_especificacao_despesa)
+                   left  join ct_especificacao_despesa b on (a.especificacao_pai = b.sq_especificacao_despesa)
                    inner join ct_cc                    c on (a.sq_cc             = c.sq_cc)
           where a.cliente         = p_cliente
-            and (p_ano       is null or (p_ano    is not null and a.ano   = p_ano))
-            and (p_ativo     is null or (p_ativo  is not null and a.ativo = p_ativo))
+            and (p_ano          is null or (p_ano          is not null and a.ano          = p_ano))
+            and (p_ativo        is null or (p_ativo        is not null and a.ativo        = p_ativo))
+            and (p_ultimo_nivel is null or (p_ultimo_nivel is not null and a.ultimo_nivel = p_ultimo_nivel))
          order by 2;
    Elsif p_restricao = 'HERANCA' Then
       -- Recupera os tipos de contrato do cliente
@@ -52,10 +53,10 @@ begin
          select a.sq_especificacao_despesa chave, a.nome
            from ct_especificacao_despesa a
           where a.cliente            = p_cliente
-            and a.especificacao_pai  is null
-            and (p_chave_aux is null or (p_chave_aux is not null and a.sq_especificacao_despesa <> p_chave_aux))
-            and (p_ano       is null or (p_ano       is not null and a.ano   = p_ano))
-            and (p_ativo     is null or (p_ativo     is not null and a.ativo = p_ativo))
+            and (p_chave_aux    is null or (p_chave_aux    is not null and a.sq_especificacao_despesa <> p_chave_aux))
+            and (p_ano          is null or (p_ano          is not null and a.ano          = p_ano))
+            and (p_ativo        is null or (p_ativo        is not null and a.ativo        = p_ativo))
+            and (p_ultimo_nivel is null or (p_ultimo_nivel is not null and a.ultimo_nivel = p_ultimo_nivel))
          order by 2;
    Elsif p_restricao = 'PAI' Then
       -- Recupera os tipos de contrato do cliente que não são subordinados a ninguém

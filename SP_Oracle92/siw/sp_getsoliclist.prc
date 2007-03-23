@@ -376,7 +376,8 @@ begin
                 d.dia_vencimento,     d.vincula_projeto,             d.vincula_demanda,
                 d.vincula_viagem,     d.aviso_prox_conc,             d.dias_aviso,
                 d.empenho,            d.processo,                    d.assinatura,
-                d.publicacao,         d.titulo,
+                d.publicacao,         d.titulo,                      d.sq_lcfonte_recurso,
+                d.sq_especificacao_despesa,
                 case when d.titulo is null then 'Não informado ('||d2.nome_resumido||')' else d.titulo end as nm_acordo,
                 d1.nome nm_tipo_acordo,d1.sigla sg_acordo,           d1.modalidade cd_modalidade,
                 d2.nome nm_outra_parte, d2.nome_resumido nm_outra_parte_resumido,
@@ -388,6 +389,8 @@ begin
                 d6.sq_banco,          d6.codigo cd_banco,            d6.nome nm_banco,
                 d7.sq_forma_pagamento,d7.nome nm_forma_pagamento,    d7.sigla sg_forma_pagamento, 
                 d7.ativo st_forma_pagamento,
+                d9.nome nm_lcfonte_recurso, 
+                d10.nome nm_espec_despesa,
                 b.fim-d.dias_aviso aviso,
                 e.sq_unidade sq_unidade_resp,
                 e.sq_tipo_unidade,    e.nome nm_unidade_resp,        e.informal informal_resp,
@@ -446,6 +449,8 @@ begin
                                                                       d6.ativo                   = 'S'
                                                                      )
                         left         join co_pessoa            d3 on (d.preposto                 = d3.sq_pessoa)
+                        left         join lc_fonte_recurso     d9 on (d.sq_lcfonte_recurso       = d9.sq_lcfonte_recurso)
+                        left         join ct_especificacao_despesa d10 on (d.sq_especificacao_despesa = d10.sq_especificacao_despesa)
                       inner          join eo_unidade           e  on (b.sq_unidade               = e.sq_unidade)
                         left         join eo_unidade_resp      e1 on (e.sq_unidade               = e1.sq_unidade and
                                                                       e1.tipo_respons            = 'T'           and
@@ -515,12 +520,16 @@ begin
                   instr(p_restricao,'ETAPA')   = 0 and
                   instr(p_restricao,'PROP')    = 0 and
                   instr(p_restricao,'RESPATU') = 0 and
+                  instr(p_restricao,'FONTE')   = 0 and
+                  instr(p_restricao,'ESPEC')   = 0 and
                   substr(p_restricao,4,2)      <>'CC'
                  ) or 
                  ((instr(p_restricao,'PROJ')    > 0    and b.sq_solic_pai is not null) or
                   (instr(p_restricao,'ETAPA')   > 0    and MontaOrdem(q.sq_projeto_etapa)  is not null) or                 
                   (instr(p_restricao,'PROP')    > 0    and d.outra_parte  is not null) or
                   (instr(p_restricao,'RESPATU') > 0    and b.executor     is not null) or
+                  (instr(p_restricao,'FONTE')   > 0    and d.sq_lcfonte_recurso is not null) or
+                  (instr(p_restricao,'ESPEC')   > 0    and d.sq_especificacao_despesa is not null) or
                   (substr(p_restricao,4,2)      ='CC'  and b.sq_cc        is not null)
                  )
                 );
