@@ -4,7 +4,7 @@ create or replace procedure sp_getSolicRestricao
     p_pessoa                in  number   default null,
     p_pessoa_atualizacao    in  number   default null,
     p_tipo_restricao        in  number   default null,
-    p_risco                 in  varchar2 default null,
+    p_problema              in  varchar2 default null,
     p_restricao             in  varchar2 default null,
     p_result                out sys_refcursor) is
 begin
@@ -52,7 +52,7 @@ begin
             and (p_pessoa             is null or (p_pessoa              is not null and a.sq_pessoa             = p_pessoa))
             and (p_pessoa_atualizacao is null or (p_pessoa_atualizacao  is not null and a.sq_pessoa_atualizacao = p_pessoa_atualizacao))
             and (p_tipo_restricao     is null or (p_tipo_restricao      is not null and a.sq_tipo_restricao     = p_tipo_restricao))
-            and (p_risco              is null or (p_risco               is not null and a.risco                 = p_risco));
+            and (p_problema           is null or (p_problema            is not null and a.problema              = p_problema));
    End If;
 end sp_getSolicRestricao;
 /
