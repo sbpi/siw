@@ -167,11 +167,11 @@ begin
                       left         join co_cidade            d2 on (d.sq_cidade           = d2.sq_cidade)
                         left       join co_pais              d3 on (d2.sq_pais            = d3.sq_pais)
                     inner          join eo_unidade           e  on (d.sq_unidade_resp     = e.sq_unidade)
-                      left       join eo_unidade_resp        e1 on (e.sq_unidade          = e1.sq_unidade and
+                      left         join eo_unidade_resp      e1 on (e.sq_unidade          = e1.sq_unidade and
                                                                      e1.tipo_respons      = 'T'           and
                                                                      e1.fim               is null
                                                                     )
-                      left       join eo_unidade_resp        e2 on (e.sq_unidade          = e2.sq_unidade and
+                      left         join eo_unidade_resp      e2 on (e.sq_unidade          = e2.sq_unidade and
                                                                      e2.tipo_respons      = 'S'           and
                                                                      e2.fim               is null
                                                                     )

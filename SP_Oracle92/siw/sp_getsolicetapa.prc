@@ -29,7 +29,8 @@ begin
                 k.sq_pessoa tit_exec, l.sq_pessoa sub_exec,
                 d.nome_resumido||' ('||f.sigla||')' nm_resp, g.sigla sg_setor,
                 nvl(h.qt_ativ,0) qt_ativ, h.sq_menu p2,
-                m.vincula_contrato pj_vincula_contrato, nvl(n.qt_contr,0) , n.sq_menu p3
+                m.vincula_contrato pj_vincula_contrato, nvl(n.qt_contr,0) , n.sq_menu p3,
+                SolicRestricao(a.sq_siw_solicitacao, a.sq_projeto_etapa) as restricao
            from pj_projeto_etapa                a
                 inner          join siw_solicitacao i on (a.sq_siw_solicitacao = i.sq_siw_solicitacao)
                   inner        join pj_projeto      m on (a.sq_siw_solicitacao = m.sq_siw_solicitacao)
@@ -71,6 +72,26 @@ begin
                                      group by x.sq_projeto_etapa, y.sq_menu
                                 )                   n on (n.sq_projeto_etapa = a.sq_projeto_etapa)
           where a.sq_siw_solicitacao = p_chave;
+   ElsIf p_restricao = 'QUESTAO' Then
+      -- Recupera todas as etapas de um projeto
+      open p_result for 
+         select a.sq_projeto_etapa, a.sq_siw_solicitacao, a.sq_etapa_pai, a.ordem, a.titulo, a.descricao, a.inicio_previsto, a.fim_previsto, 
+                a.inicio_real, a.fim_real, a.perc_conclusao, a.orcamento, a.sq_unidade, a.sq_pessoa, a.vincula_atividade, a.sq_pessoa_atualizacao, 
+                a.ultima_atualizacao, a.situacao_atual, a.unidade_medida, a.quantidade, a.cumulativa, a.programada, a.exequivel, 
+                a.justificativa_inexequivel, a.outras_medidas, a.vincula_contrato, a.peso, a.pacote_trabalho,
+                d.nome_resumido||' ('||f.sigla||')' nm_resp, g.sigla sg_setor,
+                trim(acentos(a.titulo)) as ordena,
+                (select count(sq_projeto_etapa) as qtd from siw_restricao_etapa where sq_siw_restricao = coalesce(p_chave_aux,0) and sq_projeto_etapa = a.sq_projeto_etapa) as vinculado
+           from pj_projeto_etapa                        a
+                inner          join siw_solicitacao     i on (a.sq_siw_solicitacao = i.sq_siw_solicitacao)
+                  inner        join pj_projeto          m on (a.sq_siw_solicitacao = m.sq_siw_solicitacao)
+                  inner        join siw_menu            j on (i.sq_menu            = j.sq_menu)
+                inner          join co_pessoa           d on (a.sq_pessoa          = d.sq_pessoa)
+                  inner        join sg_autenticacao     e on (d.sq_pessoa          = e.sq_pessoa)
+                    inner      join eo_unidade          f on (e.sq_unidade         = f.sq_unidade)
+                inner          join eo_unidade          g on (a.sq_unidade         = g.sq_unidade)
+          where a.pacote_trabalho    = 'S'
+            and a.sq_siw_solicitacao = p_chave;
    ElsIf p_restricao = 'LSTNULL' Then
       -- Recupera as etapas principais de um projeto
       open p_result for 
@@ -85,7 +106,8 @@ begin
                 k.sq_pessoa tit_exec, l.sq_pessoa sub_exec,
                 d.nome_resumido||' ('||f.sigla||')' nm_resp, g.sigla sg_setor,
                 nvl(h.qt_ativ,0) qt_ativ, h.sq_menu p2,
-                m.vincula_contrato pj_vincula_contrato, nvl(n.qt_contr,0) qt_contr, n.sq_menu p3
+                m.vincula_contrato pj_vincula_contrato, nvl(n.qt_contr,0) qt_contr, n.sq_menu p3,
+                SolicRestricao(a.sq_siw_solicitacao, a.sq_projeto_etapa) as restricao
            from pj_projeto_etapa                a
                 inner          join siw_solicitacao i on (a.sq_siw_solicitacao = i.sq_siw_solicitacao)
                 inner        join pj_projeto      m on (a.sq_siw_solicitacao = m.sq_siw_solicitacao)
@@ -140,7 +162,8 @@ begin
                 k.sq_pessoa tit_exec, l.sq_pessoa sub_exec,
                 d.nome_resumido||' ('||f.sigla||')' nm_resp, g.sigla sg_setor,
                 nvl(h.qt_ativ,0) qt_ativ, h.sq_menu p2,
-                m.vincula_contrato pj_vincula_contrato, nvl(n.qt_contr,0) qt_contr, n.sq_menu p3
+                m.vincula_contrato pj_vincula_contrato, nvl(n.qt_contr,0) qt_contr, n.sq_menu p3,
+                SolicRestricao(a.sq_siw_solicitacao, a.sq_projeto_etapa) as restricao
            from pj_projeto_etapa                a
                 inner          join siw_solicitacao i on (a.sq_siw_solicitacao = i.sq_siw_solicitacao)
                 inner          join pj_projeto      m on (a.sq_siw_solicitacao = m.sq_siw_solicitacao)                

@@ -247,7 +247,8 @@ begin
                 o.nome_resumido nm_solic, o.nome_resumido_ind nm_solic_ind,
                 p.nome_resumido nm_exec,  p.nome_resumido_ind nm_exec_ind,
                 Nvl(q.existe,0) resp_etapa,
-                r.sq_acao_ppa, r.sq_orprioridade
+                r.sq_acao_ppa, r.sq_orprioridade,
+                SolicRestricao(b.sq_siw_solicitacao) as restricao
            from siw_menu                                       a 
                    inner        join eo_unidade                a2 on (a.sq_unid_executora        = a2.sq_unidade)
                      left       join eo_unidade_resp           a3 on (a2.sq_unidade              = a3.sq_unidade and

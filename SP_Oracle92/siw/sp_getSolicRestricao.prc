@@ -17,12 +17,17 @@ begin
                 a.criticidade,         a.estrategia,                   a.acao_resposta,
                 a.data_situacao,       a.situacao_atual,               a.ultima_atualizacao,
                 a.probabilidade,       a.impacto,                      a.fase_atual,
-                case a.risco         when 'S' then 'Sim' else 'Não' end as nm_risco, 
+                case a.risco         when 'S' then 'Sim' else 'Não' end as nm_risco,
+                case a.risco         when 'S' then 'Risco' else 'Problema' end as nm_tipo_restricao,
                 case a.probabilidade when 1 then 'Muito baixa' when 2 then 'Baixa' when 3 then 'Média' when 4 then 'Alta' when 5 then 'Muito alta' end as nm_probabilidade,
                 case a.impacto       when 1 then 'Muito baixo' when 2 then 'Baixo' when 3 then 'Médio' when 4 then 'Alto' when 5 then 'Muito alto' end as nm_impacto,
                 case a.criticidade   when 1 then 'Baixa'       when 2 then 'Média' else 'Alta' end as nm_criticidade,
                 case a.estrategia    when 'A' then 'Aceitar'  when 'E' then 'Evitar'   when 'T' then 'Transferir'   when 'M' then 'Mitigar' end as nm_estrategia,
-                case a.fase_atual    when 'D' then 'Definido' when 'P' then 'Pendente' when 'A' then 'Em andamento' when 'C' then 'Concluído' end as nm_fase_atual,
+                case a.fase_atual    when 'D' then 'Apenas identificado' 
+                                     when 'P' then 'Em análise da estratégia de ação' 
+                                     when 'A' then 'Em acompanhamento da estratégia de ação' 
+                                     when 'C' then 'Resolvido' 
+                end as nm_fase_atual,
                 a1.sq_siw_tramite,     a1.solicitante,                 a1.inicio as ini_solic,
                 a1.fim as fim_solic,   a1.conclusao,
                 a2.sq_menu,            a2.sq_modulo,                   a2.nome,
@@ -31,18 +36,36 @@ begin
                 a3.nome nm_modulo,     a3.sigla sg_modulo,             
                 a4.nome nm_tramite,    a4.ordem or_tramite,            a4.sigla sg_tramite,
                 a4.ativo st_tramite,
+                c.sq_pessoa titular, d.sq_pessoa substituto, 
+                e.sq_pessoa tit_exec, f.sq_pessoa sub_exec,
                 i.nome_resumido as nm_resp,                            i.nome_resumido_ind as nm_resp_ind,
                 j.nome_resumido as nm_atualiz,                         j.nome_resumido_ind as nm_atualiz_ind,
                 b.nome nm_tipo
-           from siw_restricao                     a
-                inner     join siw_solicitacao    a1 on (a.sq_siw_solicitacao    = a1.sq_siw_solicitacao)
-                  inner   join siw_menu           a2 on (a1.sq_menu              = a2.sq_menu)
-                    inner join siw_modulo         a3 on (a2.sq_modulo            = a3.sq_modulo)
-                  inner   join siw_tramite        a4 on (a1.sq_siw_tramite       = a4.sq_siw_tramite)
-                  inner   join co_pessoa          a5 on (a1.solicitante          = a5.sq_pessoa)
-                inner     join siw_tipo_restricao b  on (a.sq_tipo_restricao     = b.sq_tipo_restricao) 
-                inner     join co_pessoa          i  on (a.sq_pessoa             = i.sq_pessoa)
-                inner     join co_pessoa          j  on (a.sq_pessoa_atualizacao = j.sq_pessoa)
+           from siw_restricao                          a
+                inner          join siw_solicitacao    a1 on (a.sq_siw_solicitacao    = a1.sq_siw_solicitacao)
+                  left outer   join eo_unidade_resp    c  on (a1.sq_unidade           = c.sq_unidade and
+                                                              c.tipo_respons          = 'T'          and
+                                                              c.fim                   is null
+                                                             )
+                left outer     join eo_unidade_resp    d  on (a1.sq_unidade            = d.sq_unidade and
+                                                              d.tipo_respons           = 'S'          and
+                                                              d.fim                    is null
+                                                             )
+                  inner        join siw_menu           a2 on (a1.sq_menu              = a2.sq_menu)
+                    left outer join eo_unidade_resp    e  on (a2.sq_unid_executora    = e.sq_unidade and
+                                                              e.tipo_respons          = 'T'          and
+                                                              e.fim                   is null
+                                                             )
+                    left outer join eo_unidade_resp    f  on (a2.sq_unid_executora    = f.sq_unidade and
+                                                              f.tipo_respons          = 'S'          and
+                                                              f.fim                   is null
+                                                             )
+                    inner      join siw_modulo         a3 on (a2.sq_modulo            = a3.sq_modulo)
+                  inner        join siw_tramite        a4 on (a1.sq_siw_tramite       = a4.sq_siw_tramite)
+                  inner        join co_pessoa          a5 on (a1.solicitante          = a5.sq_pessoa)
+                inner          join siw_tipo_restricao b  on (a.sq_tipo_restricao     = b.sq_tipo_restricao) 
+                inner          join co_pessoa          i  on (a.sq_pessoa             = i.sq_pessoa)
+                inner          join co_pessoa          j  on (a.sq_pessoa_atualizacao = j.sq_pessoa)
           where (p_chave     is null or (p_chave     is not null and a.sq_siw_solicitacao = p_chave))
             and (p_chave_aux is null or (p_chave_aux is not null and ((p_restricao is null and a.sq_siw_restricao = p_chave_aux) or 
                                                                       (p_restricao = 'EXISTEMETA' and a.sq_siw_solicitacao <> coalesce(p_chave_aux,0))
