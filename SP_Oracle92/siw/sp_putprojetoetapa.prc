@@ -99,6 +99,8 @@ begin
       sp_calculaPercEtapa(p_chave_aux, null);
    
    Elsif p_operacao = 'E' Then -- Exclusão
+      -- Remove as vinculações de riscos
+      delete siw_restricao_etapa where sq_projeto_etapa = p_chave_aux;         
       -- Remove os registros de acompanhamento da execução
       delete pj_etapa_mensal a where a.sq_projeto_etapa = p_chave_aux;
 

@@ -51,6 +51,8 @@ begin
              ultima_atualizacao    = sysdate
        where sq_siw_restricao  = p_chave_aux;
    Elsif p_operacao = 'E' Then
+      -- Exclui o registro de siw_restricao_etapa
+      delete siw_restricao_etapa where sq_siw_restricao = p_chave_aux;
       -- Recupera o período do registro
       delete siw_restricao where sq_siw_restricao = p_chave_aux;
    End If;

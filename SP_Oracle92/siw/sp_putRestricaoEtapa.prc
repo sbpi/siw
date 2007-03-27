@@ -15,7 +15,9 @@ begin
       );
    Elsif p_operacao = 'E' Then
       -- Exclui registro
-      delete siw_restricao_etapa where sq_siw_restricao = p_chave;
+      delete siw_restricao_etapa 
+       where (p_chave              is null or (p_chave                is not null and sq_siw_restricao  = p_chave))
+         and (p_sq_projeto_etapa   is null or (p_sq_projeto_etapa     is not null and sq_projeto_etapa  = p_sq_projeto_etapa));
    End If;
 end SP_PutRestricaoEtapa;
 /
