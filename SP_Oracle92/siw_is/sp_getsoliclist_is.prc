@@ -39,7 +39,7 @@ create or replace procedure SP_GetSolicList_IS
     
     l_resp_unid  varchar2(10000) :='';
     
-    -- cursor que recupera as unidades nas quais o usuário informado é titular ou substituto
+    -- cursor que recupera as unidades nas quais o usuario informado e titular ou substituto
     cursor c_unidades_resp is
       select distinct sq_unidade
         from siw.eo_unidade a
@@ -62,19 +62,19 @@ begin
       x_fase := substr(x_fase,2,200);
    End If;
    
-   -- Monta uma string com todas as unidades subordinadas à que o usuário é responsável
+   -- Monta uma string com todas as unidades subordinadas a que o usuario e responsavel
    for crec in c_unidades_resp loop
      l_resp_unid := l_resp_unid ||','''||crec.sq_unidade||'''';
    end loop;
    
    If p_restricao = 'ISTCAD' or Substr(p_restricao,1,5) = 'GRIST' Then
-      -- Recupera as tarefas que o usuário pode ver
+      -- Recupera as tarefas que o usuario pode ver
       open p_result for 
          select a.sq_menu,            a.sq_modulo,                   a.nome,
                 a.tramite,            a.ultimo_nivel,                a.p1,
                 a.p2,                 a.p3,                          a.p4,
                 a.sigla,              a.descentralizado,             a.externo,
-                a.acesso_geral,       a.como_funciona,               a.acompanha_fases,
+                a.acesso_geral,       a.como_funciona,
                 a.sq_unid_executora,  a.finalidade,                  a.arquivo_proced,
                 a.emite_os,           a.consulta_opiniao,            a.envia_email,
                 a.exibe_relatorio,    a.vinculacao,                  a.data_hora,
@@ -99,7 +99,7 @@ begin
                 d.aviso_prox_conc,    d.dias_aviso,                  d.inicio_real,
                 d.fim_real,           d.concluida,                   d.data_conclusao,
                 d.nota_conclusao,     d.custo_real,                  d.proponente,
-                case d.prioridade when 0 then 'Alta' when 1 then 'Média' else 'Normal' end nm_prioridade,
+                case d.prioridade when 0 then 'Alta' when 1 then 'Media' else 'Normal' end nm_prioridade,
                 d.ordem,
                 d1.titulo,            d1.nm_responsavel,             d1.fn_responsavel,
                 d1.em_responsavel,
@@ -170,7 +170,7 @@ begin
                                           )                    j  on (b.sq_siw_solicitacao       = j.sq_siw_solicitacao)
                      left outer      join siw.gd_demanda_log       k  on (j.chave                    = k.sq_siw_solic_log)
                        left outer    join siw.sg_autenticacao      l  on (k.destinatario             = l.sq_pessoa)
-                       left outer    join is_acao                  r on (b.sq_siw_solicitacao        = r.sq_siw_solicitacao)
+                       left outer    join is_acao                  r on (b.sq_solic_pai              = r.sq_siw_solicitacao)
           where a.sq_menu        = p_menu
             and (p_chave          is null or (p_chave       is not null and b.sq_siw_solicitacao = p_chave))
             and (p_pais           is null or (p_pais        is not null and f.sq_pais            = p_pais))
@@ -200,8 +200,7 @@ begin
                  (p_tipo         = 2     and Nvl(b1.sigla,'-') <> 'CI'  and b.executor           = p_pessoa and d.concluida = 'N') or
                  (p_tipo         = 2     and Instr('CI,AT,CA', Nvl(b1.sigla,'-')) = 0 and b2.acesso > 15) or
                  (p_tipo         = 3)    or
-                 (p_tipo         = 4     and Nvl(b1.sigla,'-') <> 'CA') or
-                 (p_tipo         = 6     and b1.ativo          = 'S' and b2.acesso > 0)
+                 (p_tipo         = 4     and Nvl(b1.sigla,'-') <> 'CA')
                 )
             and ((p_restricao <> 'GRISTPROP'    and p_restricao <> 'GRISTRESPATU') or 
                  ((p_restricao = 'GRISTPROP'    and d.proponente  is not null)   or 
@@ -209,13 +208,13 @@ begin
                  )
                 );                
    Elsif p_restricao = 'ISACAD' or Substr(p_restricao,1,5) = 'GRISA' Then
-      -- Recupera as ações que o usuário pode ver
+      -- Recupera as ac?es que o usuario pode ver
       open p_result for 
          select a.sq_menu,            a.sq_modulo,                   a.nome,
                 a.tramite,            a.ultimo_nivel,                a.p1,
                 a.p2,                 a.p3,                          a.p4,
                 a.sigla,              a.descentralizado,             a.externo,
-                a.acesso_geral,       a.como_funciona,               a.acompanha_fases,
+                a.acesso_geral,       a.como_funciona,
                 a.sq_unid_executora,  a.finalidade,                  a.arquivo_proced,
                 a.emite_os,           a.consulta_opiniao,            a.envia_email,
                 a.exibe_relatorio,    a.vinculacao,                  a.data_hora,
@@ -240,7 +239,7 @@ begin
                 d.aviso_prox_conc,    d.dias_aviso,                  d.inicio_real,
                 d.fim_real,           d.concluida,                   d.data_conclusao,
                 d.nota_conclusao,     d.custo_real,                  d.proponente,
-                case d.prioridade when 0 then 'Alta' when 1 then 'Média' else 'Normal' end nm_prioridade,
+                case d.prioridade when 0 then 'Alta' when 1 then 'Media' else 'Normal' end nm_prioridade,
                 b.fim-d.dias_aviso aviso,
                 e.sq_tipo_unidade,    e.nome nm_unidade_resp,        e.informal informal_resp,
                 e.vinculada vinc_resp,e.adm_central adm_resp,
@@ -349,8 +348,7 @@ begin
                  (p_tipo         = 2     and Nvl(b1.sigla,'-') <> 'CI'  and b.executor           = p_pessoa and d.concluida = 'N') or
                  (p_tipo         = 2     and Instr('CI,AT,CA', Nvl(b1.sigla,'-')) = 0 and b2.acesso > 15) or
                  (p_tipo         = 3) or
-                 (p_tipo         = 4     and Nvl(b1.sigla,'-') <> 'CA') or
-                 (p_tipo         = 6     and b1.ativo          = 'S' and b2.acesso > 0)
+                 (p_tipo         = 4     and Nvl(b1.sigla,'-') <> 'CA')
                 )
             and ((p_restricao <> 'GRISAPROP'    and p_restricao <> 'GRISARESPATU') or 
                  ((p_restricao = 'GRISAPROP'    and d.proponente  is not null)   or 
@@ -358,13 +356,13 @@ begin
                  )
                 );
    Elsif p_restricao = 'ISPCAD' or Substr(p_restricao,1,5) = 'GRISP' Then
-      -- Recupera as demandas que o usuário pode ver
+      -- Recupera as demandas que o usuario pode ver
       open p_result for 
          select a.sq_menu,            a.sq_modulo,                   a.nome,
                 a.tramite,            a.ultimo_nivel,                a.p1,
                 a.p2,                 a.p3,                          a.p4,
                 a.sigla,              a.descentralizado,             a.externo,
-                a.acesso_geral,       a.como_funciona,               a.acompanha_fases,
+                a.acesso_geral,       a.como_funciona,
                 a.sq_unid_executora,  a.finalidade,                  a.arquivo_proced,
                 a.emite_os,           a.consulta_opiniao,            a.envia_email,
                 a.exibe_relatorio,    a.vinculacao,                  a.data_hora,
@@ -389,7 +387,7 @@ begin
                 d.aviso_prox_conc,    d.dias_aviso,                  d.inicio_real,
                 d.fim_real,           d.concluida,                   d.data_conclusao,
                 d.nota_conclusao,     d.custo_real,                  d.proponente,
-                case d.prioridade when 0 then 'Alta' when 1 then 'Média' else 'Normal' end nm_prioridade,
+                case d.prioridade when 0 then 'Alta' when 1 then 'Media' else 'Normal' end nm_prioridade,
                 b.fim-d.dias_aviso aviso,
                 e.sq_tipo_unidade,    e.nome nm_unidade_resp,        e.informal informal_resp,
                 e.vinculada vinc_resp,e.adm_central adm_resp,
@@ -480,8 +478,7 @@ begin
                  (p_tipo         = 2     and Nvl(b1.sigla,'-') <> 'CI'  and b.executor           = p_pessoa and d.concluida = 'N') or
                  (p_tipo         = 2     and Instr('CI,AT,CA', Nvl(b1.sigla,'-')) = 0 and b2.acesso > 15) or
                  (p_tipo         = 3)    or
-                 (p_tipo         = 4     and Nvl(b1.sigla,'-') <> 'CA') or
-                 (p_tipo         = 6     and b1.ativo          = 'S' and b2.acesso > 0)
+                 (p_tipo         = 4     and Nvl(b1.sigla,'-') <> 'CA')                 
                 )
             and ((p_restricao <> 'GRISPPROP'    and p_restricao <> 'GRISPRESPATU') or 
                  ((p_restricao = 'GRISPPROP'    and d.proponente  is not null)   or 
@@ -507,13 +504,13 @@ begin
           where Nvl(b1.sigla,'-') <> 'CA'
             and (p_chave is null or (p_chave is not null and e.sq_solic_missao = p_chave));                
    Elsif p_restricao = 'GRPDACAO' Then
-      -- Recupera as viagens que o usuário pode ver
+      -- Recupera as viagens que o usuario pode ver
       open p_result for
          select a.sq_menu,            a.sq_modulo,                   a.nome,
                 a.tramite,            a.ultimo_nivel,                a.p1,
                 a.p2,                 a.p3,                          a.p4,
                 a.sigla,              a.descentralizado,             a.externo,
-                a.acesso_geral,       a.como_funciona,               a.acompanha_fases,
+                a.acesso_geral,       a.como_funciona,
                 a.sq_unid_executora,  a.finalidade,                  a.arquivo_proced,
                 a.emite_os,           a.consulta_opiniao,            a.envia_email,
                 a.exibe_relatorio,    a.vinculacao,                  a.data_hora,
@@ -538,10 +535,10 @@ begin
                 d.aviso_prox_conc,    d.dias_aviso,                  d.inicio_real,
                 d.fim_real,           d.concluida,                   d.data_conclusao,
                 d.nota_conclusao,     d.custo_real,                  d.proponente,
-                decode(d.prioridade,0,'Alta',1,'Média','Normal') nm_prioridade,
+                decode(d.prioridade,0,'Alta',1,'Media','Normal') nm_prioridade,
                 d.ordem,
                 d1.sq_pessoa sq_prop, d1.tipo tp_missao,             d1.codigo_interno,
-                decode(d1.tipo,'I','Inicial','P','Prorrogação','Complemento') nm_tp_missao,
+                decode(d1.tipo,'I','Inicial','P','Prorrogac?o','Complemento') nm_tp_missao,
                 d1.valor_adicional,   d1.desconto_alimentacao,       d1.desconto_transporte,
                 d2.nome nm_prop,      d2.nome_resumido nm_prop_res,
                 d3.sq_tipo_vinculo,   d3.nome nm_tipo_vinculo,
@@ -659,17 +656,16 @@ begin
                  (p_tipo         = 3     and InStr(l_resp_unid,''''||b.sq_unidade||'''') > 0) or
                  (p_tipo         = 4     and Nvl(b1.sigla,'-') <> 'CA') or
                  (p_tipo         = 5) or
-                 (p_tipo         = 6     and b1.ativo          = 'S' and b2.acesso > 0) or
                  (p_tipo         = 6     and b1.ativo          = 'S' and b2.acesso > 0)
                 );
    Elsif substr(p_restricao,1,2) = 'PD' or Substr(p_restricao,1,4) = 'GRPD' Then
-      -- Recupera as viagens que o usuário pode ver
+      -- Recupera as viagens que o usuario pode ver
       open p_result for
          select a.sq_menu,            a.sq_modulo,                   a.nome,
                 a.tramite,            a.ultimo_nivel,                a.p1,
                 a.p2,                 a.p3,                          a.p4,
                 a.sigla,              a.descentralizado,             a.externo,
-                a.acesso_geral,       a.como_funciona,               a.acompanha_fases,
+                a.acesso_geral,       a.como_funciona,
                 a.sq_unid_executora,  a.finalidade,                  a.arquivo_proced,
                 a.emite_os,           a.consulta_opiniao,            a.envia_email,
                 a.exibe_relatorio,    a.vinculacao,                  a.data_hora,
@@ -694,10 +690,10 @@ begin
                 d.aviso_prox_conc,    d.dias_aviso,                  d.inicio_real,
                 d.fim_real,           d.concluida,                   d.data_conclusao,
                 d.nota_conclusao,     d.custo_real,                  d.proponente,
-                decode(d.prioridade,0,'Alta',1,'Média','Normal') nm_prioridade,
+                decode(d.prioridade,0,'Alta',1,'Media','Normal') nm_prioridade,
                 d.ordem,
                 d1.sq_pessoa sq_prop, d1.tipo tp_missao,             d1.codigo_interno,
-                decode(d1.tipo,'I','Inicial','P','Prorrogação','Complemento') nm_tp_missao,
+                decode(d1.tipo,'I','Inicial','P','Prorrogac?o','Complemento') nm_tp_missao,
                 d1.valor_adicional,   d1.desconto_alimentacao,       d1.desconto_transporte,
                 d2.nome nm_prop,      d2.nome_resumido nm_prop_res,
                 d3.sq_tipo_vinculo,   d3.nome nm_tipo_vinculo,
@@ -803,7 +799,7 @@ begin
                  (p_tipo         = 6     and b1.ativo          = 'S' and b2.acesso > 0)
                 );
    Elsif p_restricao = 'PJEXEC' or p_restricao = 'OREXEC' Then
-      -- Recupera as demandas que o usuário pode ver
+      -- Recupera as demandas que o usuario pode ver
       open p_result for 
          select b.sq_siw_solicitacao, d.titulo
            from siw.siw_solicitacao               b
@@ -813,7 +809,7 @@ begin
             and Nvl(b1.sigla,'-') = 'EE' 
             and siw.acesso(b.sq_siw_solicitacao,p_pessoa) > 15;
    Elsif p_restricao = 'PJLIST' or p_restricao = 'ORLIST' Then
-      -- Recupera os projetos que não estão na fase de cadastramento
+      -- Recupera os projetos que n?o est?o na fase de cadastramento
       open p_result for 
          select b.sq_siw_solicitacao, d.titulo
            from siw.siw_solicitacao               b
@@ -825,7 +821,7 @@ begin
                  InStr(l_resp_unid,''''||b.sq_unidade||'''') > 0
                 );
    Elsif p_restricao = 'PJLISTCAD' or p_restricao = 'ORLISTCAD' Then
-      -- Recupera as demandas que o usuário pode ver
+      -- Recupera as demandas que o usuario pode ver
       open p_result for 
          select b.sq_siw_solicitacao, d.titulo
            from siw.siw_solicitacao               b

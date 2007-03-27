@@ -7,13 +7,13 @@ begin
    or p_restricao = 'ISACRESP'  or p_restricao = 'ISACVISUAL' or p_restricao = 'ISACPROFIN'
    or p_restricao = 'ISMETA'    or p_restricao = 'ISACINTERE' or p_restricao = 'ISACANEXO'
    or p_restricao = 'VLRAGERAL' Then   
-      -- Recupera as ações que o usuário pode ver
+      -- Recupera as ac?es que o usuario pode ver
       open p_result for 
          select a.sq_menu,            a.sq_modulo,                   a.nome,
                 a.tramite,            a.ultimo_nivel,                a.p1,
                 a.p2,                 a.p3,                          a.p4,
                 a.sigla,              a.descentralizado,             a.externo,
-                a.acesso_geral,       a.como_funciona,               a.acompanha_fases,
+                a.acesso_geral,       a.como_funciona,
                 a.sq_unid_executora,  a.finalidade,                  a.arquivo_proced,
                 a.emite_os,           a.consulta_opiniao,            a.envia_email,
                 a.exibe_relatorio,    a.vinculacao,                  a.data_hora,
@@ -131,13 +131,13 @@ begin
    Elsif p_restricao = 'ISPRGERAL'  or p_restricao = 'ISPRRESP'  or  p_restricao = 'ISPRVISUAL' or
          p_restricao = 'ISPRPROQUA' or p_restricao = 'ISPRINDIC' or  p_restricao = 'ISPRRESTR'  or
          p_restricao = 'ISPRINTERE' or p_restricao = 'ISPRANEXO' or  p_restricao = 'VLRPGERAL' Then
-      -- Recupera as ações que o usuário pode ver
+      -- Recupera as ac?es que o usuario pode ver
       open p_result for 
          select a.sq_menu,            a.sq_modulo,                   a.nome,
                 a.tramite,            a.ultimo_nivel,                a.p1,
                 a.p2,                 a.p3,                          a.p4,
                 a.sigla,              a.descentralizado,             a.externo,
-                a.acesso_geral,       a.como_funciona,               a.acompanha_fases,
+                a.acesso_geral,       a.como_funciona,
                 a.sq_unid_executora,  a.finalidade,                  a.arquivo_proced,
                 a.emite_os,           a.consulta_opiniao,            a.envia_email,
                 a.exibe_relatorio,    a.vinculacao,                  a.data_hora,
@@ -233,13 +233,13 @@ begin
                 left outer         join siw.eo_unidade           c  on (a.sq_unid_executora   = c.sq_unidade)
           where b.sq_siw_solicitacao       = p_chave;
    ElsIf p_restricao = 'ISTAGERAL' or p_restricao = 'ISTARESP' or p_restricao = 'VLRTGERAL' Then
-      -- Recupera as tarefas que o usuário pode ver
+      -- Recupera as tarefas que o usuario pode ver
       open p_result for 
          select a.sq_menu,            a.sq_modulo,                   a.nome,
                 a.tramite,            a.ultimo_nivel,                a.p1,
                 a.p2,                 a.p3,                          a.p4,
                 a.sigla,              a.descentralizado,             a.externo,
-                a.acesso_geral,       a.como_funciona,               a.acompanha_fases,
+                a.acesso_geral,       a.como_funciona,
                 a.sq_unid_executora,  a.finalidade,                  a.arquivo_proced,
                 a.emite_os,           a.consulta_opiniao,            a.envia_email,
                 a.exibe_relatorio,    a.vinculacao,                  a.data_hora,

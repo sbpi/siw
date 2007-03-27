@@ -43,7 +43,9 @@ begin
                 g.sq_cc,              g.nome cc_nome,                g.sigla cc_sigla,
                 h.sq_pais,            h.sq_regiao,                   h.co_uf,
                 h.nome nm_cidade,
-                i.sq_projeto_etapa,   j.titulo nm_etapa,             k.titulo nm_projeto
+                i.sq_projeto_etapa,   j.titulo nm_etapa,             k.titulo nm_projeto,
+                l.sq_siw_restricao,   l.descricao as ds_restricao,
+                case l.risco when 'S' then 'Risco' else 'Problema' end as nm_tipo_restricao
            from siw_menu             a
                 inner        join eo_unidade                a2 on (a.sq_unid_executora   = a2.sq_unidade)
                   left       join eo_unidade_resp           a3 on (a2.sq_unidade         = a3.sq_unidade and
@@ -70,10 +72,11 @@ begin
                   inner      join co_pessoa                 f  on (b.solicitante         = f.sq_pessoa)
                   inner      join co_cidade                 h  on (b.sq_cidade_origem    = h.sq_cidade)
                   left       join ct_cc                     g  on (b.sq_cc               = g.sq_cc)
+                  left       join siw_restricao             l  on (d.sq_siw_restricao    = l.sq_siw_restricao)
                 left         join eo_unidade                c  on (a.sq_unid_executora   = c.sq_unidade)
                 left         join pj_etapa_demanda          i  on (b.sq_siw_solicitacao  = i.sq_siw_solicitacao)
                   left       join pj_projeto_etapa          j  on (i.sq_projeto_etapa    = j.sq_projeto_etapa)
-                left       join pj_projeto                  k  on (b.sq_solic_pai        = k.sq_siw_solicitacao)
+                left         join pj_projeto                k  on (b.sq_solic_pai        = k.sq_siw_solicitacao)
           where b.sq_siw_solicitacao       = p_chave;
    Elsif p_restricao = 'PJGERAL'  or p_restricao = 'ORGERAL'  or p_restricao = 'ORINFO'   or
          p_restricao = 'ORRESP'   or p_restricao = 'OROUTRAS' or p_restricao = 'ORVISUAL' or

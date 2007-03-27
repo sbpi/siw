@@ -34,6 +34,7 @@ create or replace procedure SP_PutDemandaGeral
     p_atividade           in number    default null,
     p_projeto_ant         in number    default null,
     p_atividade_ant       in number    default null,
+    p_restricao           in number    default null,
     p_chave_nova          out number
    ) is
    w_arq     varchar2(4000) := ', ';
@@ -73,13 +74,13 @@ begin
          ( sq_siw_solicitacao,  sq_unidade_resp, assunto,           prioridade,
            aviso_prox_conc,     dias_aviso,      inicio_real,       fim_real,
            concluida,           data_conclusao,  nota_conclusao,    custo_real,
-           proponente,          ordem,           sq_demanda_pai
+           proponente,          ordem,           sq_demanda_pai,    sq_siw_restricao
          )
       (select
            w_chave,             p_unid_resp,     p_assunto,         p_prioridade,
            p_aviso,             p_dias,          null,              null,
            'N',                 null,            null,              0,
-           p_proponente,        p_ordem,         p_atividade_ant
+           p_proponente,        p_ordem,         p_atividade_ant,   p_restricao
         from dual
       );
 
@@ -144,6 +145,7 @@ begin
       -- Atualiza a tabela de demandas
       Update gd_demanda set
           sq_demanda_pai   = p_atividade_ant,
+          sq_siw_restricao = p_restricao,
           sq_unidade_resp  = p_unid_resp,
           proponente       = p_proponente,
           assunto          = trim(p_assunto),
