@@ -17,8 +17,10 @@ begin
                 a.ativo,
                 c.nome nm_ct_cc
            from ct_especificacao_despesa               a
-                   left  join ct_especificacao_despesa b on (a.especificacao_pai = b.sq_especificacao_despesa)
-                   inner join ct_cc                    c on (a.sq_cc             = c.sq_cc)
+                   left      join ct_especificacao_despesa b on (a.especificacao_pai = b.sq_especificacao_despesa)
+                     left    join ct_especificacao_despesa d on (b.especificacao_pai = d.sq_especificacao_despesa)
+                       left  join ct_especificacao_despesa e on (d.especificacao_pai = e.sq_especificacao_despesa)
+                   inner     join ct_cc                    c on (a.sq_cc             = c.sq_cc)
           where a.cliente         = p_cliente
             and (p_ano          is null or (p_ano          is not null and a.ano          = p_ano))
             and (p_ativo        is null or (p_ativo        is not null and a.ativo        = p_ativo))
@@ -94,6 +96,12 @@ begin
             and (p_ano       is null or (p_ano    is not null and a.ano   = p_ano))
             and (p_ativo     is null or (p_ativo  is not null and a.ativo = p_ativo))           
          order by a.nome;
+   Elsif p_restricao = 'ANOS' Then
+      -- Recupera os anos existentes
+      open p_result for 
+        select distinct ano
+          from ct_especificacao_despesa a
+         where cliente = p_cliente;
    End If;
 end SP_GetCTEspecificacao;
 /

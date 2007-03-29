@@ -47,6 +47,7 @@ create or replace procedure SP_PutConvOutraParte
    w_sq_tipo_vinculo    number(18);
    w_sq_siw_solicitacao number(18);
    w_outra_parte        number(18);
+   w_preposto           number(18);
 begin
    If p_operacao = 'E' Then 
       -- Exclui registro
@@ -59,17 +60,21 @@ begin
       delete ac_acordo_outra_parte  where sq_acordo_outra_parte = p_sq_acordo_outra_parte;
       select count(*) into w_existe
         from ac_acordo_outra_parte
-       where tipo = 2
-         and sq_siw_solicitacao = w_sq_siw_solicitacao;
+       where sq_siw_solicitacao = w_sq_siw_solicitacao;
       If w_existe > 0 Then
-         select nvl(outra_parte,0) into w_outra_parte
-           from ac_acordo_outra_parte
-          where sq_siw_solicitacao = w_sq_siw_solicitacao
-            and tipo = 2;
+         select nvl(a.outra_parte,0), nvl(b.sq_pessoa,0) into w_outra_parte, w_preposto
+           from ac_acordo_outra_parte        a
+                left join ac_acordo_preposto b on (a.sq_acordo_outra_parte = b.sq_acordo_outra_parte)
+          where a.sq_siw_solicitacao = w_sq_siw_solicitacao
+            and rownum = 1;
          If w_outra_parte > 0 Then
             update ac_acordo set outra_parte = w_outra_parte         
             where sq_siw_solicitacao = w_sq_siw_solicitacao;
-         End If; 
+         End If;
+         If w_preposto > 0 Then
+            update ac_acordo set preposto = w_preposto         
+            where sq_siw_solicitacao = w_sq_siw_solicitacao;         
+         End If;
       End If;
   Else
      -- Verifica se é pessoa física ou jurídica e carrega a chave da tabela CO_TIPO_PESSOA
