@@ -77,7 +77,7 @@ begin
             and (p_tipo_restricao     is null or (p_tipo_restricao      is not null and a.sq_tipo_restricao     = p_tipo_restricao))
             and (p_problema           is null or (p_problema            is not null and a.problema              = p_problema));
    
-      ElsIf p_restricao = 'ETAPA' Then
+   ElsIf p_restricao = 'ETAPA' Then
       -- Recupera todas as questões ligadas a uma etapa
       open p_result for 
          select a.sq_siw_restricao    as chave_aux,                    a.sq_siw_solicitacao as chave, 
@@ -98,16 +98,46 @@ begin
                                      when 'C' then 'Resolvido' 
                 end as nm_fase_atual,
                 d.nome nm_tipo,
-                e.nome_resumido as nm_resp 
+                e.nome_resumido as nm_resp, 
+                nvl(h.qt_ativ,0) qt_ativ, h.sq_menu p2
            from siw_restricao                   a
                 inner join siw_restricao_etapa  b on (a.sq_siw_restricao   = b.sq_siw_restricao)
                 inner join pj_projeto_etapa     c on (a.sq_siw_solicitacao = c.sq_siw_solicitacao)
+                   left outer  join (select x.sq_siw_restricao, y.sq_menu, count(*) qt_ativ
+                                       from gd_demanda             x
+                                            inner   join siw_solicitacao y on (x.sq_siw_solicitacao = y.sq_siw_solicitacao)
+                                            inner   join siw_tramite     z on (y.sq_siw_tramite     = z.sq_siw_tramite and
+                                                                               Nvl(z.sigla,'-')     <> 'CA'
+                                                                               )
+                     group by x.sq_siw_restricao, y.sq_menu
+                                )                   h on (h.sq_siw_restricao = a.sq_siw_restricao)
+
                 inner join siw_tipo_restricao   d on (a.sq_tipo_restricao  = d.sq_tipo_restricao) 
                 inner join co_pessoa            e on (a.sq_pessoa          = e.sq_pessoa)
+
+
+
+
            where c.pacote_trabalho    = 'S' 
             and  a.sq_siw_solicitacao = p_chave
             and  b.sq_projeto_etapa   = p_chave_aux
-            and  c.sq_projeto_etapa   = p_chave_aux;   
+            and  c.sq_projeto_etapa   = p_chave_aux;  
+            
+   ElsIf p_restricao = 'TAREFA' Then
+      -- Recupera as tarefas de uma restricao
+       open p_result for            
+          select a.sq_siw_solicitacao, a.assunto,
+                      c.nome_resumido||'('||d.sigla||')' as nm_resp, 
+               d.sigla as sg_unidade_resp,
+               e.inicio, e.fim, f.nome as nm_tramite
+           from gd_demanda                 a 
+                inner join siw_restricao        b on (a.sq_siw_restricao   = b.sq_siw_restricao)
+                inner join co_pessoa            c on (b.sq_pessoa          = c.sq_pessoa)
+                inner join eo_unidade           d on (a.sq_unidade_resp    = d.sq_unidade)
+                inner join siw_solicitacao      e on (a.sq_siw_solicitacao = e.sq_siw_solicitacao)
+                inner join siw_tramite          f on (e.sq_siw_tramite     = f.sq_siw_tramite)
+           where a.sq_siw_restricao = p_chave;
+               
    End If;
 end sp_getSolicRestricao;
 /
