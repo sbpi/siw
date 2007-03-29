@@ -76,6 +76,38 @@ begin
             and (p_pessoa_atualizacao is null or (p_pessoa_atualizacao  is not null and a.sq_pessoa_atualizacao = p_pessoa_atualizacao))
             and (p_tipo_restricao     is null or (p_tipo_restricao      is not null and a.sq_tipo_restricao     = p_tipo_restricao))
             and (p_problema           is null or (p_problema            is not null and a.problema              = p_problema));
+   
+      ElsIf p_restricao = 'ETAPA' Then
+      -- Recupera todas as questões ligadas a uma etapa
+      open p_result for 
+         select a.sq_siw_restricao    as chave_aux,                    a.sq_siw_solicitacao as chave, 
+                a.sq_pessoa,           a.sq_pessoa_atualizacao,        a.sq_tipo_restricao,
+                a.risco,               a.problema,                     a.descricao,           
+                a.criticidade,         a.estrategia,                   a.acao_resposta,
+                a.data_situacao,       a.situacao_atual,               a.ultima_atualizacao,
+                a.probabilidade,       a.impacto,                      a.fase_atual,
+                case a.risco         when 'S' then 'Sim' else 'Não' end as nm_risco,
+                case a.risco         when 'S' then 'Risco' else 'Problema' end as nm_tipo_restricao,
+                case a.probabilidade when 1 then 'Muito baixa' when 2 then 'Baixa' when 3 then 'Média' when 4 then 'Alta' when 5 then 'Muito alta' end as nm_probabilidade,
+                case a.impacto       when 1 then 'Muito baixo' when 2 then 'Baixo' when 3 then 'Médio' when 4 then 'Alto' when 5 then 'Muito alto' end as nm_impacto,
+                case a.criticidade   when 1 then 'Baixa'       when 2 then 'Média' else 'Alta' end as nm_criticidade,
+                case a.estrategia    when 'A' then 'Aceitar'  when 'E' then 'Evitar'   when 'T' then 'Transferir'   when 'M' then 'Mitigar' end as nm_estrategia,
+                case a.fase_atual    when 'D' then 'Apenas identificado' 
+                                     when 'P' then 'Em análise da estratégia de ação' 
+                                     when 'A' then 'Em acompanhamento da estratégia de ação' 
+                                     when 'C' then 'Resolvido' 
+                end as nm_fase_atual,
+                d.nome nm_tipo,
+                e.nome_resumido as nm_resp 
+           from siw_restricao                   a
+                inner join siw_restricao_etapa  b on (a.sq_siw_restricao   = b.sq_siw_restricao)
+                inner join pj_projeto_etapa     c on (a.sq_siw_solicitacao = c.sq_siw_solicitacao)
+                inner join siw_tipo_restricao   d on (a.sq_tipo_restricao  = d.sq_tipo_restricao) 
+                inner join co_pessoa            e on (a.sq_pessoa          = e.sq_pessoa)
+           where c.pacote_trabalho    = 'S' 
+            and  a.sq_siw_solicitacao = p_chave
+            and  b.sq_projeto_etapa   = p_chave_aux
+            and  c.sq_projeto_etapa   = p_chave_aux;   
    End If;
 end sp_getSolicRestricao;
 /

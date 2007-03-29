@@ -80,18 +80,26 @@ begin
                 a.ultima_atualizacao, a.situacao_atual, a.unidade_medida, a.quantidade, a.cumulativa, a.programada, a.exequivel, 
                 a.justificativa_inexequivel, a.outras_medidas, a.vincula_contrato, a.peso, a.pacote_trabalho,
                 d.nome_resumido||' ('||f.sigla||')' nm_resp, g.sigla sg_setor,
-                trim(acentos(a.titulo)) as ordena,
+                trim(acentos(a.titulo)) as ordena,                
+                case k.fase_atual    when 'D' then 'Apenas identificado' 
+                                     when 'P' then 'Em análise da estratégia de ação' 
+                                     when 'A' then 'Em acompanhamento da estratégia de ação' 
+                                     when 'C' then 'Resolvido' 
+                end as nm_fase_atual,
                 (select count(sq_projeto_etapa) as qtd from siw_restricao_etapa where sq_siw_restricao = coalesce(p_chave_aux,0) and sq_projeto_etapa = a.sq_projeto_etapa) as vinculado
-           from pj_projeto_etapa                        a
-                inner          join siw_solicitacao     i on (a.sq_siw_solicitacao = i.sq_siw_solicitacao)
-                  inner        join pj_projeto          m on (a.sq_siw_solicitacao = m.sq_siw_solicitacao)
-                  inner        join siw_menu            j on (i.sq_menu            = j.sq_menu)
-                inner          join co_pessoa           d on (a.sq_pessoa          = d.sq_pessoa)
-                  inner        join sg_autenticacao     e on (d.sq_pessoa          = e.sq_pessoa)
-                    inner      join eo_unidade          f on (e.sq_unidade         = f.sq_unidade)
-                inner          join eo_unidade          g on (a.sq_unidade         = g.sq_unidade)
-          where a.pacote_trabalho    = 'S'
-            and a.sq_siw_solicitacao = p_chave;
+           from pj_projeto_etapa                         a
+                inner          join siw_solicitacao      i on (a.sq_siw_solicitacao = i.sq_siw_solicitacao)
+                  inner        join pj_projeto           m on (a.sq_siw_solicitacao = m.sq_siw_solicitacao)
+                  inner        join siw_menu             j on (i.sq_menu            = j.sq_menu)
+                inner          join co_pessoa            d on (a.sq_pessoa          = d.sq_pessoa)
+                  inner        join sg_autenticacao      e on (d.sq_pessoa          = e.sq_pessoa)
+                    inner      join eo_unidade           f on (e.sq_unidade         = f.sq_unidade)
+                inner          join eo_unidade           g on (a.sq_unidade         = g.sq_unidade)
+                left          join siw_restricao         k on (i.sq_siw_solicitacao = k.sq_siw_restricao)
+           where a.pacote_trabalho    = 'S'
+            and a.sq_siw_solicitacao = p_chave
+            and (p_chave_aux2 is null or (p_chave_aux2 is not null and a.sq_projeto_etapa = p_chave_aux2));
+
    ElsIf p_restricao = 'LSTNULL' Then
       -- Recupera as etapas principais de um projeto
       open p_result for 
