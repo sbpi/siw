@@ -22,6 +22,8 @@ create or replace procedure SP_PutAcordoParc
    w_valor      number(18,4);
    w_valor_n    number(18,4);
    w_meses      number(4);
+   w_dias_1     number(5);
+   w_dias_n     number(5);
    w_per_ini    date;
    w_per_fim    date;
    w_reg        ac_acordo%rowtype;
@@ -55,14 +57,35 @@ begin
            (sq_acordo_parcela.nextval, p_chave,            1,       sysdate, w_reg.fim,    p_observacao, w_reg.valor_inicial, 
             w_reg.inicio,              w_reg.fim);
       Else
-         w_meses := round(months_between(w_reg.fim, w_reg.inicio));
+         -- Define o número de meses da vigência
+         w_meses := round(months_between(last_day(w_reg.fim), to_date('01/'||to_char(w_reg.inicio,'mm/yyyy'),'dd/mm/yyyy')));
          If w_meses = 0 Then
             w_meses := 1;
          End If;
-         If p_valor_parcela = 'I' Then
+         
+         If p_valor_parcela = 'I' or p_valor_parcela = 'C' Then
             w_valor   := w_reg.valor_inicial / w_meses;
             w_valor_1 := w_valor;
             w_valor_n := w_valor;
+            
+            -- Aplica proporcionalidade na primeira e última parcelas
+            If p_valor_parcela = 'C' Then
+               -- Calcula o valor proporcional do primeiro mês, considerando o mínimo de 1 dia
+               w_dias_1 := to_date('30/'||to_char(w_reg.inicio,'mm/yyyy'),'dd/mm/yyyy') - w_reg.inicio;
+               If w_dias_1 <= 0 Then w_dias_1 := 1; End If;
+               w_valor_1 := round((w_dias_1/30) * w_valor,2);
+
+               If (w_meses - 2) < 1 Then
+                  w_valor_n := (w_reg.valor_inicial - w_valor_1);
+               Else
+                  -- Calcula o valor proporcional do último mês, considerando o máximo de 30 dias
+                  w_dias_n := w_reg.fim - to_date('01/'||to_char(w_reg.fim,'mm/yyyy'),'dd/mm/yyyy');
+                  If w_dias_n > 30 Then w_dias_n := 30; End If;
+                  w_valor_n := round((w_dias_n/30) * w_valor,2);
+
+                  w_valor := (w_reg.valor_inicial - w_valor_1 - w_valor_n) / (w_meses - 2);
+               End If;
+            End If;
          Elsif p_valor_parcela = 'P' Then
             w_valor_1 := p_valor_diferente;
             w_valor   := trunc((w_reg.valor_inicial-w_valor_1) / (w_meses-1),2);
