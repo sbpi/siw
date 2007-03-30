@@ -129,13 +129,14 @@ begin
           select a.sq_siw_solicitacao, a.assunto,
                       c.nome_resumido||'('||d.sigla||')' as nm_resp, 
                d.sigla as sg_unidade_resp,
-               e.inicio, e.fim, f.nome as nm_tramite
+               e.inicio, e.fim, e.sq_menu,
+               f.nome as nm_tramite
            from gd_demanda                 a 
                 inner join siw_restricao        b on (a.sq_siw_restricao   = b.sq_siw_restricao)
                 inner join co_pessoa            c on (b.sq_pessoa          = c.sq_pessoa)
                 inner join eo_unidade           d on (a.sq_unidade_resp    = d.sq_unidade)
                 inner join siw_solicitacao      e on (a.sq_siw_solicitacao = e.sq_siw_solicitacao)
-                inner join siw_tramite          f on (e.sq_siw_tramite     = f.sq_siw_tramite)
+                inner join siw_tramite          f on (e.sq_siw_tramite     = f.sq_siw_tramite)             
            where a.sq_siw_restricao = p_chave;
                
    End If;
