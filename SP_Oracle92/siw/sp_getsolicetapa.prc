@@ -111,8 +111,8 @@ begin
                 SolicRestricao(a.sq_siw_solicitacao, a.sq_projeto_etapa) as restricao
          from pj_projeto_etapa                  a
               inner    join siw_restricao_etapa b  on (a.sq_projeto_etapa = b.sq_projeto_etapa)
-                inner join siw_restricao        b1 on (b.sq_siw_restricao = b1.sq_siw_restricao and
-                                                       b1.fase_atual      <> 'C'
+                inner join siw_restricao        b1 on (b.sq_siw_restricao = b1.sq_siw_restricao 
+                                                      -- and b1.fase_atual      <> 'C'
                                                       )
               inner  join co_pessoa             c  on (a.sq_pessoa        = c.sq_pessoa)
               inner  join eo_unidade            d  on (a.sq_unidade       = d.sq_unidade)
