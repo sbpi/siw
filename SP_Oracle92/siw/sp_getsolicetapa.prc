@@ -100,18 +100,22 @@ begin
             and a.sq_siw_solicitacao = p_chave
             and (p_chave_aux2 is null or (p_chave_aux2 is not null and a.sq_projeto_etapa = p_chave_aux2));
 
-   ElsIf p_restricao = 'ETAPA' Then
+   ElsIf p_restricao = 'ETAPA' or p_restricao = 'PACOTES' Then
       -- Recupera todas as etapas de uma questão
       open p_result for 
          select a.sq_projeto_etapa, a.ordem, a.titulo, a.sq_pessoa, a.inicio_previsto, a.fim_previsto, 
-              a.inicio_real, a.fim_real, a.orcamento, a.perc_conclusao,
+              a.inicio_real, a.fim_real, a.orcamento, a.perc_conclusao, a.pacote_trabalho, a.sq_unidade, 
               c.nome_resumido||'('||d.sigla||')' as nm_resp, 
-              d.sigla as sg_setor, a.ordem;
-              nvl(e.qt_ativ,0) qt_ativ, e.sq_menu p2 
-         from pj_projeto_etapa                a
-              inner  join siw_restricao_etapa b on (a.sq_projeto_etapa = b.sq_projeto_etapa)
-              inner  join co_pessoa           c on (a.sq_pessoa        = c.sq_pessoa)
-              inner  join eo_unidade          d on (a.sq_unidade       = d.sq_unidade)
+              d.sigla as sg_setor, a.ordem,
+              nvl(e.qt_ativ,0) qt_ativ, e.sq_menu p2,
+                SolicRestricao(a.sq_siw_solicitacao, a.sq_projeto_etapa) as restricao
+         from pj_projeto_etapa                  a
+              inner    join siw_restricao_etapa b  on (a.sq_projeto_etapa = b.sq_projeto_etapa)
+                inner join siw_restricao        b1 on (b.sq_siw_restricao = b1.sq_siw_restricao and
+                                                       b1.fase_atual      <> 'C'
+                                                      )
+              inner  join co_pessoa             c  on (a.sq_pessoa        = c.sq_pessoa)
+              inner  join eo_unidade            d  on (a.sq_unidade       = d.sq_unidade)
                 left join (select x.sq_projeto_etapa, y.sq_menu, count(*) qt_ativ
                                         from pj_etapa_demanda             x
                                              inner   join siw_solicitacao y on (x.sq_siw_solicitacao = y.sq_siw_solicitacao)
@@ -119,9 +123,9 @@ begin
                                                                                 Nvl(z.sigla,'-')     <> 'CA'
                                                                                )
                                       group by x.sq_projeto_etapa, y.sq_menu
-                                 )                   e on (a.sq_projeto_etapa = e.sq_projeto_etapa)
-        where b.sq_siw_restricao = p_chave;
-            
+                                 )              e  on (a.sq_projeto_etapa = e.sq_projeto_etapa)
+        where b.sq_siw_restricao = p_chave
+          and (p_restricao = 'ETAPA' or (p_restricao = 'PACOTES' and a.pacote_trabalho = 'S'));
    ElsIf p_restricao = 'LSTNULL' Then
       -- Recupera as etapas principais de um projeto
       open p_result for 

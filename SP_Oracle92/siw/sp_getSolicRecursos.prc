@@ -157,13 +157,13 @@ begin
       open p_result for 
          select count(d.sq_recurso_disponivel) as existe
            from eo_recurso                          c
-                inner join eo_recurso_disponivel    d on (c.sq_recurso       = d.sq_recurso)
-                inner  join eo_recurso_indisponivel e on (c.sq_recurso       = e.sq_recurso and
-                                                          not (p_ref_i       between e.inicio and e.fim or
-                                                               p_ref_f       between e.inicio and e.fim or
-                                                               e.inicio      between p_ref_i  and p_ref_f or
-                                                               e.fim         between p_ref_i and p_ref_f
-                                                              )
+                inner join eo_recurso_disponivel    d on (c.sq_recurso   = d.sq_recurso)
+                inner  join eo_recurso_indisponivel e on (c.sq_recurso   = e.sq_recurso and
+                                                          (p_ref_i      between e.inicio and e.fim or
+                                                           p_ref_f      between e.inicio and e.fim or
+                                                           e.inicio      between p_ref_i and p_ref_f or
+                                                           e.fim         between p_ref_i and p_ref_f
+                                                          )
                                                          )
           where c.sq_recurso              = p_chave
             and (c.disponibilidade_tipo   = 1 or

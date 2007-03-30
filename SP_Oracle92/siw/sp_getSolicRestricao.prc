@@ -98,28 +98,27 @@ begin
                                      when 'C' then 'Resolvido' 
                 end as nm_fase_atual,
                 d.nome nm_tipo,
-                e.nome_resumido as nm_resp, 
+                e.nome_resumido||'('||e2.sigla||')' as nm_resp, 
                 nvl(h.qt_ativ,0) qt_ativ, h.sq_menu p2
-           from siw_restricao                   a
-                inner join siw_restricao_etapa  b on (a.sq_siw_restricao   = b.sq_siw_restricao)
-                inner join pj_projeto_etapa     c on (a.sq_siw_solicitacao = c.sq_siw_solicitacao)
-                   left outer  join (select x.sq_siw_restricao, y.sq_menu, count(*) qt_ativ
-                                       from gd_demanda             x
-                                            inner   join siw_solicitacao y on (x.sq_siw_solicitacao = y.sq_siw_solicitacao)
-                                            inner   join siw_tramite     z on (y.sq_siw_tramite     = z.sq_siw_tramite and
-                                                                               Nvl(z.sigla,'-')     <> 'CA'
-                                                                               )
-                     group by x.sq_siw_restricao, y.sq_menu
-                                )                   h on (h.sq_siw_restricao = a.sq_siw_restricao)
+           from siw_restricao                      a
+                inner     join siw_restricao_etapa b  on (a.sq_siw_restricao   = b.sq_siw_restricao)
+                inner     join pj_projeto_etapa    c  on (a.sq_siw_solicitacao = c.sq_siw_solicitacao and
+                                                          b.sq_projeto_etapa   = c.sq_projeto_etapa
+                                                         )
+                   left   join (select x.sq_siw_restricao, y.sq_menu, count(*) qt_ativ
+                                  from gd_demanda                   x
+                                       inner   join siw_solicitacao y on (x.sq_siw_solicitacao  = y.sq_siw_solicitacao)
+                                       inner   join siw_tramite     z on (y.sq_siw_tramite      = z.sq_siw_tramite and
+                                                                          coalesce(z.sigla,'-') <> 'CA'
+                                                                         )
+                                group by x.sq_siw_restricao, y.sq_menu
+                               )                   h  on (h.sq_siw_restricao   = a.sq_siw_restricao)
 
-                inner join siw_tipo_restricao   d on (a.sq_tipo_restricao  = d.sq_tipo_restricao) 
-                inner join co_pessoa            e on (a.sq_pessoa          = e.sq_pessoa)
-
-
-
-
-           where c.pacote_trabalho    = 'S' 
-            and  a.sq_siw_solicitacao = p_chave
+                inner     join siw_tipo_restricao  d  on (a.sq_tipo_restricao  = d.sq_tipo_restricao) 
+                inner     join co_pessoa           e  on (a.sq_pessoa          = e.sq_pessoa)
+                  inner   join sg_autenticacao     e1 on (e.sq_pessoa          = e1.sq_pessoa)
+                    inner join eo_unidade          e2 on (e1.sq_unidade        = e2.sq_unidade)
+           where a.sq_siw_solicitacao = p_chave
             and  b.sq_projeto_etapa   = p_chave_aux
             and  c.sq_projeto_etapa   = p_chave_aux;  
             
@@ -127,18 +126,24 @@ begin
       -- Recupera as tarefas de uma restricao
        open p_result for            
           select a.sq_siw_solicitacao, a.assunto,
-                      c.nome_resumido||'('||d.sigla||')' as nm_resp, 
-               d.sigla as sg_unidade_resp,
-               e.inicio, e.fim, e.sq_menu,
-               f.nome as nm_tramite
-           from gd_demanda                 a 
-                inner join siw_restricao        b on (a.sq_siw_restricao   = b.sq_siw_restricao)
-                inner join co_pessoa            c on (b.sq_pessoa          = c.sq_pessoa)
-                inner join eo_unidade           d on (a.sq_unidade_resp    = d.sq_unidade)
-                inner join siw_solicitacao      e on (a.sq_siw_solicitacao = e.sq_siw_solicitacao)
-                inner join siw_tramite          f on (e.sq_siw_tramite     = f.sq_siw_tramite)             
+                 b.sq_pessoa,
+                 c.nome_resumido||'('||d.sigla||')' as nm_resp_questao, 
+                 d.sigla as sg_unidade_resp_questao,
+                 e.solicitante, e.inicio, e.fim, a.inicio_real, a.fim_real, e.sq_menu,
+                 e1.nome_resumido||'('||e3.sigla||')' as nm_resp_tarefa, 
+                 e3.sigla as sg_unidade_resp_tarefa,
+                 f.nome as nm_tramite
+            from gd_demanda                       a 
+                 inner       join siw_restricao   b  on (a.sq_siw_restricao   = b.sq_siw_restricao)
+                   inner     join co_pessoa       c  on (b.sq_pessoa          = c.sq_pessoa)
+                     inner   join sg_autenticacao c1 on (c.sq_pessoa          = c1.sq_pessoa)
+                       inner join eo_unidade      d  on (c1.sq_unidade        = d.sq_unidade)
+                 inner       join siw_solicitacao e  on (a.sq_siw_solicitacao = e.sq_siw_solicitacao)
+                   inner     join co_pessoa       e1 on (e.solicitante        = e1.sq_pessoa)
+                     inner   join sg_autenticacao e2 on (e1.sq_pessoa         = e2.sq_pessoa)
+                       inner join eo_unidade      e3 on (e2.sq_unidade        = e3.sq_unidade)
+                 inner       join siw_tramite     f  on (e.sq_siw_tramite     = f.sq_siw_tramite)             
            where a.sq_siw_restricao = p_chave;
-               
    End If;
 end sp_getSolicRestricao;
 /

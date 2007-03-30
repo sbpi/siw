@@ -184,8 +184,8 @@ begin
             and (p_unidade        is null or (p_unidade     is not null and d.sq_unidade_resp      = p_unidade))
             and (p_prioridade     is null or (p_prioridade  is not null and d.prioridade           = p_prioridade))
             and (p_solicitante    is null or (p_solicitante is not null and b.solicitante          = p_solicitante))
-            and (p_sq_acao_ppa    is null or (p_sq_acao_ppa     is not null and d.sq_demanda_pai   = p_sq_acao_ppa))
-            and (p_sq_orprior     is null or (p_sq_orprior      is not null and d.sq_siw_restricao = p_sq_orprior))            
+            and (p_sq_acao_ppa    is null or (p_sq_acao_ppa is not null and d.sq_demanda_pai       = p_sq_acao_ppa))
+            and (p_sq_orprior     is null or (p_sq_orprior  is not null and d.sq_siw_restricao     = p_sq_orprior))            
             and ((p_tipo         = 1     and Nvl(b1.sigla,'-') = 'CI'   and b.cadastrador          = p_pessoa) or
                  (p_tipo         = 2     and Nvl(b1.sigla,'-') <> 'CI'  and b.executor             = p_pessoa and d.concluida = 'N') or
                  --(p_tipo         = 2     and b1.ativo = 'S' and Nvl(b1.sigla,'-') <> 'CI' and b2.acesso > 15) or
