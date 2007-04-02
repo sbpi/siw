@@ -9,32 +9,34 @@ begin
    If substr(p_restricao,1,3) = 'PRO' Then
       open p_result for 
          select a.sq_projeto_etapa, a.ordem, a.titulo nm_etapa, a.sq_pessoa, h.nome_resumido nm_resp_etapa, a.fim_previsto, a.situacao_atual,
-                a.perc_conclusao, a.fim_real, a.sq_unidade,
-                e.sq_siw_solicitacao, f.assunto nm_tarefa, g.solicitante, i.nome_resumido nm_resp_tarefa, g.inicio, f.fim_real,
+                a.perc_conclusao, a.fim_real fim_real_etapa, a.sq_unidade, a.inicio_previsto, a.inicio_real inicio_real_etapa,
+                e.sq_siw_solicitacao, f.assunto nm_tarefa, g.solicitante, i.nome_resumido nm_resp_tarefa, g.inicio, g.fim, f.inicio_real, f.fim_real,
                 b.sq_siw_solicitacao sq_projeto, b.titulo nm_projeto, c.inicio dt_projeto
            from pj_projeto_etapa               a
                 left     join co_pessoa        h on (a.sq_pessoa          = h.sq_pessoa)
                 left     join pj_projeto       b on (a.sq_siw_solicitacao = b.sq_siw_solicitacao)
                 left     join siw_solicitacao  c on (a.sq_siw_solicitacao = c.sq_siw_solicitacao)
                   left   join siw_menu         d on (c.sq_menu            = d.sq_menu)
+                  left   join siw_tramite      j on (c.sq_siw_tramite     = j.sq_siw_tramite)
                 left     join pj_etapa_demanda e on (a.sq_projeto_etapa   = e.sq_projeto_etapa)
                   left   join gd_demanda       f on (e.sq_siw_solicitacao = f.sq_siw_solicitacao)
                   left   join siw_solicitacao  g on (e.sq_siw_solicitacao = g.sq_siw_solicitacao)
                     left join co_pessoa        i on (g.solicitante        = i.sq_pessoa)
           where a.pacote_trabalho = 'S'
             and d.sq_pessoa       = p_cliente
+            and j.sigla           <> 'CA'
             and (p_chave     is null or (p_chave       is not null and a.sq_siw_solicitacao   = p_chave))
             and ((p_restricao <> 'PROPREV'   and p_restricao <> 'PROREPORT' and p_restricao <> 'PROENTR') or
-                 ((p_restricao = 'PROPREV'   and (((a.fim_previsto between p_inicio and p_fim) and a.fim_real is null)
-                    or ((g.fim     between p_inicio and p_fim) and f.fim_real is null)
+                 ((p_restricao = 'PROPREV'   and (((a.fim_previsto between p_inicio and p_fim) and a.perc_conclusao < 100 )
+                    or ((g.fim     between p_inicio and p_fim) and a.fim_real is null)
                                                  )
                   ) or
                   (p_restricao = 'PROREPORT' and ((a.fim_real between p_inicio and p_fim)
                     or (f.fim_real between p_inicio and p_fim)
                                                  )
                   ) or
-                  (p_restricao = 'PROENTR'   and (((a.fim_previsto > p_fim)
-                     or (a.inicio_previsto < p_inicio and f.fim_real is null)
+                  (p_restricao = 'PROENTR'   and ((((a.fim_previsto > p_fim) or (a.fim_previsto < p_inicio and a.perc_conclusao < 100))
+                     or (a.inicio_previsto < p_inicio and a.perc_conclusao < 100)
                                                   ) or ((g.fim > p_fim)
                      or (g.inicio < p_inicio and f.fim_real is null)
                                                        )
@@ -47,18 +49,21 @@ begin
          select a.sq_projeto_etapa, a.ordem, a.titulo nm_etapa, a.sq_pessoa, h.nome_resumido nm_resp_etapa, a.fim_previsto, a.situacao_atual,
                 a.perc_conclusao, a.fim_real,
                 e.sq_siw_solicitacao, f.assunto nm_tarefa, g.solicitante, i.nome_resumido nm_resp_tarefa, g.inicio, f.fim_real,
-                b.titulo nm_projeto, c.inicio dt_projeto, c.sq_siw_solicitacao sq_projeto
+                b.titulo nm_projeto, c.inicio dt_projeto, c.sq_siw_solicitacao sq_projeto,
+                calculaigc(c.sq_siw_solicitacao) as igc, calculaide(c.sq_siw_solicitacao, p_fim) as ide                
            from pj_projeto_etapa               a
                 left     join co_pessoa        h on (a.sq_pessoa          = h.sq_pessoa)
                 left     join pj_projeto       b on (a.sq_siw_solicitacao = b.sq_siw_solicitacao)
                 left     join siw_solicitacao  c on (a.sq_siw_solicitacao = c.sq_siw_solicitacao)
                   left   join siw_menu         d on (c.sq_menu            = d.sq_menu)
+                  left   join siw_tramite      j on (c.sq_siw_tramite     = j.sq_siw_tramite)
                 left     join pj_etapa_demanda e on (a.sq_projeto_etapa   = e.sq_projeto_etapa)
                   left   join gd_demanda       f on (e.sq_siw_solicitacao = f.sq_siw_solicitacao)
                   left   join siw_solicitacao  g on (e.sq_siw_solicitacao = g.sq_siw_solicitacao)
                     left join co_pessoa        i on (g.solicitante        = i.sq_pessoa)
           where a.pacote_trabalho = 'S'
             and d.sq_pessoa       = p_cliente
+            and j.sigla           <> 'CA'
             and (p_chave     is null or (p_chave       is not null and a.sq_siw_solicitacao   = p_chave))
             and (p_inicio    is null or (p_inicio between c.inicio and c.fim and p_fim between c.inicio and c.fim));
   End If;
