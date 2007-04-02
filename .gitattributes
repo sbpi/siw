@@ -2818,6 +2818,8 @@ SP_Oracle92/fbaj/sp_getalberlist.prc -text
 SP_Oracle92/fbaj/sp_putalbcad.prc -text
 SP_Oracle92/fbaj/sq_alberguista.seq -text
 SP_Oracle92/fbaj/subname.fnc -text
+SP_Oracle92/siw/CalculaIDE.fnc -text
+SP_Oracle92/siw/CalculaIGC.fnc -text
 SP_Oracle92/siw/GetCodigo.fnc -text
 SP_Oracle92/siw/LIMPA_BASE.prc -text
 SP_Oracle92/siw/MontaNomeMenu.fnc -text

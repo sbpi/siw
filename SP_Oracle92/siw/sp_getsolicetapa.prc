@@ -71,7 +71,8 @@ begin
                                                                               )
                                      group by x.sq_projeto_etapa, y.sq_menu
                                 )                   n on (n.sq_projeto_etapa = a.sq_projeto_etapa)
-          where a.sq_siw_solicitacao = p_chave;
+          where a.sq_siw_solicitacao = p_chave
+            and (p_chave_aux2 is null or (p_chave_aux2 is not null and a.pacote_trabalho = 'S' and a.sq_projeto_etapa in (select sq_projeto_etapa from pj_projeto_etapa connect by prior sq_projeto_etapa = sq_etapa_pai start with sq_projeto_etapa = p_chave_aux2)));
    ElsIf p_restricao = 'QUESTAO' Then
       -- Recupera todas as etapas de um projeto
       open p_result for 
@@ -141,7 +142,8 @@ begin
                 d.nome_resumido||' ('||f.sigla||')' nm_resp, g.sigla sg_setor,
                 nvl(h.qt_ativ,0) qt_ativ, h.sq_menu p2,
                 m.vincula_contrato pj_vincula_contrato, nvl(n.qt_contr,0) qt_contr, n.sq_menu p3,
-                SolicRestricao(a.sq_siw_solicitacao, a.sq_projeto_etapa) as restricao
+                SolicRestricao(a.sq_siw_solicitacao, a.sq_projeto_etapa) as restricao,
+                acentos(a.titulo) as ac_titulo
            from pj_projeto_etapa                a
                 inner          join siw_solicitacao i on (a.sq_siw_solicitacao = i.sq_siw_solicitacao)
                 inner        join pj_projeto      m on (a.sq_siw_solicitacao = m.sq_siw_solicitacao)
@@ -197,7 +199,8 @@ begin
                 d.nome_resumido||' ('||f.sigla||')' nm_resp, g.sigla sg_setor,
                 nvl(h.qt_ativ,0) qt_ativ, h.sq_menu p2,
                 m.vincula_contrato pj_vincula_contrato, nvl(n.qt_contr,0) qt_contr, n.sq_menu p3,
-                SolicRestricao(a.sq_siw_solicitacao, a.sq_projeto_etapa) as restricao
+                SolicRestricao(a.sq_siw_solicitacao, a.sq_projeto_etapa) as restricao,
+                acentos(a.titulo) as ac_titulo
            from pj_projeto_etapa                a
                 inner          join siw_solicitacao i on (a.sq_siw_solicitacao = i.sq_siw_solicitacao)
                 inner          join pj_projeto      m on (a.sq_siw_solicitacao = m.sq_siw_solicitacao)                

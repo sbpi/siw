@@ -149,7 +149,8 @@ begin
                 m.sq_acordo,          m.cd_acordo,                   m.nm_acordo,
                 m.sigla sg_acordo,
                 n.sq_menu sq_menu_pai,
-                o.sq_siw_solicitacao sq_programa, o.codigo_interno cd_programa, o.titulo nm_programa
+                o.sq_siw_solicitacao sq_programa, o.codigo_interno cd_programa, o.titulo nm_programa,
+                acentos(d.titulo) as ac_titulo
            from siw_menu                                     a 
                 inner        join eo_unidade                 a2 on (a.sq_unid_executora   = a2.sq_unidade)
                   left       join eo_unidade_resp            a3 on (a2.sq_unidade         = a3.sq_unidade and
