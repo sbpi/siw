@@ -3246,6 +3246,7 @@ SP_Oracle92/siw/sp_getregionlist.prc -text
 SP_Oracle92/siw/sp_getrelaccols.prc -text
 SP_Oracle92/siw/sp_getrelacionamento.prc -text
 SP_Oracle92/siw/sp_getrelbolsista.prc -text
+SP_Oracle92/siw/sp_getrelprogresso.prc -text
 SP_Oracle92/siw/sp_getsegdata.prc -text
 SP_Oracle92/siw/sp_getseglist.prc -text
 SP_Oracle92/siw/sp_getsegmoddata.prc -text
