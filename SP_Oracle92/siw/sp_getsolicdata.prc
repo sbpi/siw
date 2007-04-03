@@ -124,6 +124,7 @@ begin
                 d2.sq_pais pais_evento,d2.co_uf uf_evento,
                 d1.nome nm_prop,      d1.nome_resumido nm_prop_res,
                 case upper(d3.nome) when 'BRASIL' then d2.nome||'-'||d2.co_uf||' ('||d3.nome||')' else d2.nome||' ('||d3.nome||')' end nm_cidade_evento,
+                d4.inicio_etapa,      d4.fim_etapa,
                 e.sq_tipo_unidade,    e.nome nm_unidade_resp,        e.informal informal_resp,
                 e.vinculada vinc_resp,e.adm_central adm_resp,        e.sq_unidade,
                 e1.sq_pessoa titular, e2.sq_pessoa substituto,
@@ -170,6 +171,10 @@ begin
                       left         join co_pessoa            d1 on (d.outra_parte         = d1.sq_pessoa)
                       left         join co_cidade            d2 on (d.sq_cidade           = d2.sq_cidade)
                         left       join co_pais              d3 on (d2.sq_pais            = d3.sq_pais)
+                        left       join (select sq_siw_solicitacao, min(inicio_previsto) as inicio_etapa, max(fim_previsto) as fim_etapa
+                                           from pj_projeto_etapa
+                                          group by sq_siw_solicitacao
+                                        )                    d4 on (d.sq_siw_solicitacao = d4.sq_siw_solicitacao)
                     inner          join eo_unidade           e  on (d.sq_unidade_resp     = e.sq_unidade)
                       left         join eo_unidade_resp      e1 on (e.sq_unidade          = e1.sq_unidade and
                                                                      e1.tipo_respons      = 'T'           and
