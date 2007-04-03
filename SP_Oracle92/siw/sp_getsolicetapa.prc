@@ -104,10 +104,11 @@ begin
    ElsIf p_restricao = 'ETAPA' or p_restricao = 'PACOTES' Then
       -- Recupera todas as etapas de uma questão
       open p_result for 
-         select a.sq_projeto_etapa, a.ordem, a.titulo, a.sq_pessoa, a.inicio_previsto, a.fim_previsto, 
+         select a.sq_projeto_etapa, a.titulo, a.sq_pessoa, a.inicio_previsto, a.fim_previsto, 
               a.inicio_real, a.fim_real, a.orcamento, a.perc_conclusao, a.pacote_trabalho, a.sq_unidade, 
+              a.ordem, a.sq_etapa_pai,
               c.nome_resumido||'('||d.sigla||')' as nm_resp, 
-              d.sigla as sg_setor, a.ordem,
+              d.sigla as sg_setor,
               nvl(e.qt_ativ,0) qt_ativ, e.sq_menu p2,
                 SolicRestricao(a.sq_siw_solicitacao, a.sq_projeto_etapa) as restricao
          from pj_projeto_etapa                  a
