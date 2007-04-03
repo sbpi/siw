@@ -16,7 +16,7 @@ function selecaoTipoInteressado($label,$accesskey,$hint,$chave,$chaveAux,$campo,
   ShowHTML('          <option value="">---');
   foreach($RS as $row) {
     if (nvl(f($row,'chave'),0)==nvl($chave,0)) {
-      ShowHTML('          <option value="'.f($row,'').'" SELECTED>'.f($row,'nome'));
+      ShowHTML('          <option value="'.f($row,'chave').'" SELECTED>'.f($row,'nome'));
     } else {
       ShowHTML('          <option value="'.f($row,'chave').'">'.f($row,'nome'));
     }

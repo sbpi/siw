@@ -197,7 +197,7 @@ function Gerencial() {
     if ($p_palavra>'')      $w_filtro=$w_filtro.'<tr valign="top"><td align="right"><font size=1>Código interno <td><font size=1>[<b>'.$p_palavra.'</b>]';
     if ($p_ini_i>'')        $w_filtro=$w_filtro.'<tr valign="top"><td align="right"><font size=1>Início vigência <td><font size=1>[<b>'.$p_ini_i.'-'.$p_ini_f.'</b>]';
     if ($p_fim_i>'')        $w_filtro=$w_filtro.'<tr valign="top"><td align="right"><font size=1>Término vigência <td><font size=1>[<b>'.$p_fim_i.'-'.$p_fim_f.'</b>]';
-    if ($p_atraso>'')       $w_filtro=$w_filtro.'<tr valign="top"><td align="right"><font size=1>Código externo <td><font size=1>[<b>'.$p_atraso.'</b>]';
+    if ($p_atraso>'')       $w_filtro=$w_filtro.'<tr valign="top"><td align="right"><font size=1>Título <td><font size=1>[<b>'.$p_atraso.'</b>]';
     if ($p_empenho>'')      $w_filtro=$w_filtro.'<tr valign="top"><td align="right"><font size=1>Número do empenho<td><font size=1>[<b>'.$p_empenho.'</b>]';
     if ($p_processo>'')     $w_filtro=$w_filtro.'<tr valign="top"><td align="right"><font size=1>Número do processo<td><font size=1>[<b>'.$p_processo.'</b>]';
     if ($w_filtro>'')       $w_filtro='<table border=0><tr valign="top"><td><font size=1><b>Filtro:</b><td nowrap><font size=1><ul>'.$w_filtro.'</ul></tr></table>';
@@ -241,10 +241,22 @@ function Gerencial() {
         $w_TP=$TP.' - Por setor responsável';
         $RS1 = SortArray($RS1,'nm_unidade_resp','asc');
         break;
+      case substr(f($RS_Menu,'sigla'),0,3).'TITULO':
+        $w_TP=$TP.' - Pelo título';
+        $RS1 = SortArray($RS1,'nm_acordo','asc');
+        break;
       case substr(f($RS_Menu,'sigla'),0,3).'LOCAL':
         $w_TP=$TP.' - Por UF';
         $RS1 = SortArray($RS1,'co_uf','asc');
         break;
+      case substr(f($RS_Menu,'sigla'),0,3).'ESPEC':
+        $w_TP=$TP.' - Por especificação de despesa';
+        $RS1 = SortArray($RS1,'nm_espec_despesa','asc');
+        break;
+      case substr(f($RS_Menu,'sigla'),0,3).'FONTE':
+        $w_TP=$TP.' - Por fonte de recurso';
+        $RS1 = SortArray($RS1,'nm_lcfonte_recurso','asc');
+        break;        
     } 
   } 
   if ($O=='W') {
@@ -265,10 +277,10 @@ function Gerencial() {
       Validate('p_chave','Número do contrato','','','1','18','','0123456789');
       if (substr(f($RS_Menu_Origem,'sigla'),0,3)=='GCB')    Validate('p_proponente','Bolsista','','','2','90','1','');
       else                                                  Validate('p_proponente','Outra parte','','','2','90','1','');
-      Validate('p_palavra','Código interno','','','3','90','1','1');
-      Validate('p_atraso','Código externo','','','1','90','1','1');
+      Validate('p_atraso','Título','','','1','90','1','1');
       if (substr(f($RS_Menu_Origem,'sigla'),0,3)=='GCB')    Validate('p_objeto','Plano de trabalho','','','2','90','1','1');
       else                                                  Validate('p_objeto','Objeto','','','2','90','1','1');
+      Validate('p_palavra','Código interno','','','3','90','1','1');
       Validate('p_prazo','Dias para a data limite','','','1','2','','0123456789');
       Validate('p_ini_i','Recebimento inicial','DATA','','10','10','','0123456789/');
       Validate('p_ini_f','Recebimento final','DATA','','10','10','','0123456789/');
@@ -356,6 +368,7 @@ function Gerencial() {
           case substr(f($RS_Menu,'sigla'),0,3).'RESPATU':   ShowHTML('      document.Form.p_usu_resp.value=filtro;');       break;
           case substr(f($RS_Menu,'sigla'),0,3).'CC':        ShowHTML('      document.Form.p_sqcc.value=filtro;');           break;
           case substr(f($RS_Menu,'sigla'),0,3).'SETOR':     ShowHTML('      document.Form.p_unidade.value=filtro;');        break;
+          case substr(f($RS_Menu,'sigla'),0,3).'TITULO':    ShowHTML('      document.Form.p_atraso.value=filtro;');         break;
           case substr(f($RS_Menu,'sigla'),0,3).'LOCAL':     ShowHTML('      document.Form.p_uf.value=filtro;');             break;
         } 
         ShowHTML('    }');
@@ -368,6 +381,7 @@ function Gerencial() {
           case substr(f($RS_Menu,'sigla'),0,3).'RESPATU':   ShowHTML('    else document.Form.p_usu_resp.value=\''.$_REQUEST['p_usu_resp'].'\';');       break;
           case substr(f($RS_Menu,'sigla'),0,3).'CC':        ShowHTML('    else document.Form.p_sqcc.value=\''.$_REQUEST['p_sqcc'].'\';');               break;
           case substr(f($RS_Menu,'sigla'),0,3).'SETOR':     ShowHTML('    else document.Form.p_unidade.value=\''.$_REQUEST['p_unidade'].'\';');         break;
+          case substr(f($RS_Menu,'sigla'),0,3).'TITULO':    ShowHTML('    else document.Form.p_atraso.value=\''.$_REQUEST['p_atraso'].'\';');           break;
           case substr(f($RS_Menu,'sigla'),0,3).'LOCAL':     ShowHTML('    else { document.Form.p_uf.value=\''.$_REQUEST['p_uf'].'\';}');                break;
         } 
         $RS2 = db_getTramiteList::getInstanceOf($dbms,$P2,null,null);
@@ -401,6 +415,7 @@ function Gerencial() {
           case substr(f($RS_Menu,'sigla'),0,3).'RESPATU':   if ($_REQUEST['p_usu_resp']=='')        ShowHTML('<input type="Hidden" name="p_usu_resp" value="">');   break;
           case substr(f($RS_Menu,'sigla'),0,3).'CC':        if ($_REQUEST['p_sqcc']=='')            ShowHTML('<input type="Hidden" name="p_sqcc" value="">');       break;
           case substr(f($RS_Menu,'sigla'),0,3).'SETOR':     if ($_REQUEST['p_unidade']=='')         ShowHTML('<input type="Hidden" name="p_unidade" value="">');    break;
+          case substr(f($RS_Menu,'sigla'),0,3).'TITULO':    if ($_REQUEST['p_atraso']=='')          ShowHTML('<input type="Hidden" name="p_atraso" value="">');     break;
           case substr(f($RS_Menu,'sigla'),0,3).'LOCAL':     if ($_REQUEST['p_uf']=='')              ShowHTML('<input type="Hidden" name="p_uf" value="">');         break;
         } 
       } 
@@ -430,7 +445,7 @@ function Gerencial() {
             if ($w_nm_quebra!=f($row1,'nm_etapa')) {
               if ($w_qt_quebra>0) {
                 ImprimeLinha($t_solic,$t_cad,$t_tram,$t_conc,$t_atraso,$t_aviso,$t_valor,$t_custo,$t_acima,$w_chave,$w_chave_aux);
-                $w_linha=$w_linha+2;
+                $w_linha += 2;
               } 
               if ($O!='W' || ($O=='W' && $w_linha<=25)) {
                 // Se for geração de MS-Word, coloca a nova quebra somente se não estourou o limite
@@ -449,14 +464,14 @@ function Gerencial() {
               $t_valor=0.00;
               $t_acima=0.00;
               $t_custo=0.00;
-              $w_linha=$w_linha+1;
+              $w_linha += 1;
             } 
             break;
           case substr(f($RS_Menu,'sigla'),0,3).'TIPO':
             if ($w_nm_quebra!=f($row1,'nm_tipo_acordo')) {
               if ($w_qt_quebra>0) {
                 ImprimeLinha($t_solic,$t_cad,$t_tram,$t_conc,$t_atraso,$t_aviso,$t_valor,$t_custo,$t_acima,$w_chave,$w_chave_aux);
-                $w_linha=$w_linha+2;
+                $w_linha += 2;
               } 
               if ($O!='W' || ($O=='W' && $w_linha<=25)) {
                 // Se for geração de MS-Word, coloca a nova quebra somente se não estourou o limite
@@ -475,14 +490,14 @@ function Gerencial() {
               $t_valor=0.00;
               $t_acima=0.00;
               $t_custo=0.00;
-              $w_linha=$w_linha+1;
+              $w_linha += 1;
             } 
             break;
           case substr(f($RS_Menu,'sigla'),0,3).'PROJ':
             if ($w_nm_quebra!=f($row1,'nm_projeto')) {
               if ($w_qt_quebra>0) {
                 ImprimeLinha($t_solic,$t_cad,$t_tram,$t_conc,$t_atraso,$t_aviso,$t_valor,$t_custo,$t_acima,$w_chave,$w_chave_aux);
-                $w_linha=$w_linha+2;
+                $w_linha += 2;
               } 
               if ($O!='W' || ($O=='W' && $w_linha<=25)) {
                 // Se for geração de MS-Word, coloca a nova quebra somente se não estourou o limite
@@ -501,14 +516,14 @@ function Gerencial() {
               $t_valor=0.00;
               $t_acima=0.00;
               $t_custo=0.00;
-              $w_linha=$w_linha+1;
+              $w_linha += 1;
             } 
             break;
           case substr(f($RS_Menu,'sigla'),0,3).'PROP':
             if ($w_nm_quebra!=f($row1,'nm_outra_parte_resumido')) {
               if ($w_qt_quebra>0) {
                 ImprimeLinha($t_solic,$t_cad,$t_tram,$t_conc,$t_atraso,$t_aviso,$t_valor,$t_custo,$t_acima,$w_chave,$w_chave_aux);
-                $w_linha=$w_linha+2;
+                $w_linha += 2;
               } 
               if ($O!='W' || ($O=='W' && $w_linha<=25)) {
                 // Se for geração de MS-Word, coloca a nova quebra somente se não estourou o limite
@@ -527,14 +542,14 @@ function Gerencial() {
               $t_valor=0.00;
               $t_acima=0.00;
               $t_custo=0.00;
-              $w_linha=$w_linha+1;
+              $w_linha += 1;
             } 
             break;
           case substr(f($RS_Menu,'sigla'),0,3).'RESP':
             if ($w_nm_quebra!=f($row1,'nm_solic')) {
               if ($w_qt_quebra>0) {
                 ImprimeLinha($t_solic,$t_cad,$t_tram,$t_conc,$t_atraso,$t_aviso,$t_valor,$t_custo,$t_acima,$w_chave,$w_chave_aux);
-                $w_linha=$w_linha+2;
+                $w_linha += 2;
               } 
               if ($O!='W' || ($O=='W' && $w_linha<=25)) {
                 // Se for geração de MS-Word, coloca a nova quebra somente se não estourou o limite
@@ -553,14 +568,14 @@ function Gerencial() {
               $t_valor=0.00;
               $t_acima=0.00;
               $t_custo=0.00;
-              $w_linha=$w_linha+1;
+              $w_linha += 1;
             } 
             break;
           case substr(f($RS_Menu,'sigla'),0,3).'RESPATU':
             if ($w_nm_quebra!=f($row1,'nm_exec')) {
               if ($w_qt_quebra>0) {
                 ImprimeLinha($t_solic,$t_cad,$t_tram,$t_conc,$t_atraso,$t_aviso,$t_valor,$t_custo,$t_acima,$w_chave,$w_chave_aux);
-                $w_linha=$w_linha+2;
+                $w_linha += 2;
               } 
               if ($O!='W' || ($O=='W' && $w_linha<=25)) {
                 // Se for geração de MS-Word, coloca a nova quebra somente se não estourou o limite
@@ -579,14 +594,14 @@ function Gerencial() {
               $t_valor=0.00;
               $t_acima=0.00;
               $t_custo=0.00;
-              $w_linha=$w_linha+1;
+              $w_linha += 1;
             } 
             break;
           case substr(f($RS_Menu,'sigla'),0,3).'CC':
             if ($w_nm_quebra!=f($row1,'sg_cc')) {
               if ($w_qt_quebra>0) {
                 ImprimeLinha($t_solic,$t_cad,$t_tram,$t_conc,$t_atraso,$t_aviso,$t_valor,$t_custo,$t_acima,$w_chave,$w_chave_aux);
-                $w_linha=$w_linha+2;
+                $w_linha += 2;
               } 
               if ($O!='W' || ($O=='W' && $w_linha<=25)) {
                 // Se for geração de MS-Word, coloca a nova quebra somente se não estourou o limite
@@ -605,14 +620,14 @@ function Gerencial() {
               $t_valor=0.00;
               $t_acima=0.00;
               $t_custo=0.00;
-              $w_linha=$w_linha+1;
+              $w_linha += 1;
             } 
             break;
           case substr(f($RS_Menu,'sigla'),0,3).'SETOR':
             if ($w_nm_quebra!=f($row1,'nm_unidade_resp')) {
               if ($w_qt_quebra>0) {
                 ImprimeLinha($t_solic,$t_cad,$t_tram,$t_conc,$t_atraso,$t_aviso,$t_valor,$t_custo,$t_acima,$w_chave,$w_chave_aux);
-                $w_linha=$w_linha+2;
+                $w_linha += 2;
               }
               if ($O!='W' || ($O=='W' && $w_linha<=25)) {
                 // Se for geração de MS-Word, coloca a nova quebra somente se não estourou o limite
@@ -631,14 +646,40 @@ function Gerencial() {
               $t_valor=0.00;
               $t_acima=0.00;
               $t_custo=0.00;
-              $w_linha=$w_linha+1;
+              $w_linha += 1;
+            } 
+            break;
+          case substr(f($RS_Menu,'sigla'),0,3).'TITULO':
+            if ($w_nm_quebra!=f($row1,'nm_acordo')) {
+              if ($w_qt_quebra>0) {
+                ImprimeLinha($t_solic,$t_cad,$t_tram,$t_conc,$t_atraso,$t_aviso,$t_valor,$t_custo,$t_acima,$w_chave,$w_chave_aux);
+                $w_linha += 2;
+              }
+              if ($O!='W' || ($O=='W' && $w_linha<=25)) {
+                // Se for geração de MS-Word, coloca a nova quebra somente se não estourou o limite
+                ShowHTML('      <tr bgcolor="'.$w_cor.'" valign="top"><td><font size=1><b>'.f($row1,'nm_acordo'));
+              }
+              $w_nm_quebra=f($row1,'nm_acordo');
+              $w_chave=f($row1,'nm_acordo');
+              $w_chave_aux=-1;
+              $w_qt_quebra=0.00;
+              $t_solic=0.00;
+              $t_cad=0.00;
+              $t_tram=0.00;
+              $t_conc=0.00;
+              $t_atraso=0.00;
+              $t_aviso=0.00;
+              $t_valor=0.00;
+              $t_acima=0.00;
+              $t_custo=0.00;
+              $w_linha += 1;
             } 
             break;
           case substr(f($RS_Menu,'sigla'),0,3).'LOCAL':
             if ($w_nm_quebra!=f($row1,'co_uf')) {
               if ($w_qt_quebra>0) {
                 ImprimeLinha($t_solic,$t_cad,$t_tram,$t_conc,$t_atraso,$t_aviso,$t_valor,$t_custo,$t_acima,$w_chave,$w_chave_aux);
-                $w_linha=$w_linha+2;
+                $w_linha += 2;
               }
               if ($O!='W' || ($O=='W' && $w_linha<=25)) {
                 // Se for geração de MS-Word, coloca a nova quebra somente se não estourou o limite
@@ -657,9 +698,61 @@ function Gerencial() {
               $t_valor=0.00;
               $t_acima=0.00;
               $t_custo=0.00;
-              $w_linha=$w_linha+1;
+              $w_linha += 1;
             } 
             break;
+          case substr(f($RS_Menu,'sigla'),0,3).'ESPEC':
+            if ($w_nm_quebra!=f($row1,'nm_espec_despesa')) {
+              if ($w_qt_quebra>0) {
+                ImprimeLinha($t_solic,$t_cad,$t_tram,$t_conc,$t_atraso,$t_aviso,$t_valor,$t_custo,$t_acima,$w_chave,$w_chave_aux);
+                $w_linha += 2;
+              } 
+              if ($O!='W' || ($O=='W' && $w_linha<=25)) {
+                // Se for geração de MS-Word, coloca a nova quebra somente se não estourou o limite
+                ShowHTML('      <tr bgcolor="'.$w_cor.'" valign="top"><td><font size=1><b>'.f($row1,'nm_espec_despesa'));
+              } 
+              $w_nm_quebra=f($row1,'nm_espec_despesa');
+              $w_chave=f($row1,'sq_especificacao_despesa');
+              $w_chave_aux=-1;
+              $w_qt_quebra=0.00;
+              $t_solic=0.00;
+              $t_cad=0.00;
+              $t_tram=0.00;
+              $t_conc=0.00;
+              $t_atraso=0.00;
+              $t_aviso=0.00;
+              $t_valor=0.00;
+              $t_acima=0.00;
+              $t_custo=0.00;
+              $w_linha += 1;
+            } 
+            break;
+          case substr(f($RS_Menu,'sigla'),0,3).'FONTE':
+            if ($w_nm_quebra!=f($row1,'nm_lcfonte_recurso')) {
+              if ($w_qt_quebra>0) {
+                ImprimeLinha($t_solic,$t_cad,$t_tram,$t_conc,$t_atraso,$t_aviso,$t_valor,$t_custo,$t_acima,$w_chave,$w_chave_aux);
+                $w_linha += 2;
+              } 
+              if ($O!='W' || ($O=='W' && $w_linha<=25)) {
+                // Se for geração de MS-Word, coloca a nova quebra somente se não estourou o limite
+                ShowHTML('      <tr bgcolor="'.$w_cor.'" valign="top"><td><font size=1><b>'.f($row1,'nm_lcfonte_recurso'));
+              } 
+              $w_nm_quebra=f($row1,'nm_lcfonte_recurso');
+              $w_chave=f($row1,'sq_lcfonte_recurso');
+              $w_chave_aux=-1;
+              $w_qt_quebra=0.00;
+              $t_solic=0.00;
+              $t_cad=0.00;
+              $t_tram=0.00;
+              $t_conc=0.00;
+              $t_atraso=0.00;
+              $t_aviso=0.00;
+              $t_valor=0.00;
+              $t_acima=0.00;
+              $t_custo=0.00;
+              $w_linha += 1;
+            } 
+            break;            
         } 
         if ($O=='W' && $w_linha>25) {
           // Se for geração de MS-Word, quebra a página
@@ -685,40 +778,41 @@ function Gerencial() {
             case substr(f($RS_Menu,'sigla'),0,3).'RESPATU': ShowHTML('      <tr bgcolor="'.$w_cor.'" valign="top"><td><font size=1><b>'.f($row1,'nm_exec'));                    break;
             case substr(f($RS_Menu,'sigla'),0,3).'CC':      ShowHTML('      <tr bgcolor="'.$w_cor.'" valign="top"><td><font size=1><b>'.f($row1,'sg_cc'));                      break;
             case substr(f($RS_Menu,'sigla'),0,3).'SETOR':   ShowHTML('      <tr bgcolor="'.$w_cor.'" valign="top"><td><font size=1><b>'.f($row1,'nm_unidade_resp'));            break;
+            case substr(f($RS_Menu,'sigla'),0,3).'TITULO':  ShowHTML('      <tr bgcolor="'.$w_cor.'" valign="top"><td><font size=1><b>'.f($row1,'nm_acordo'));                  break;
             case substr(f($RS_Menu,'sigla'),0,3).'LOCAL':   ShowHTML('      <tr bgcolor="'.$w_cor.'" valign="top"><td><font size=1><b>'.f($row1,'co_uf'));                      break;
+            case substr(f($RS_Menu,'sigla'),0,3).'FONTE':   ShowHTML('      <tr bgcolor="'.$w_cor.'" valign="top"><td><font size=1><b>'.f($row1,'nm_lcfonte_recurso'));         break;
+            case substr(f($RS_Menu,'sigla'),0,3).'ESPEC':   ShowHTML('      <tr bgcolor="'.$w_cor.'" valign="top"><td><font size=1><b>'.f($row1,'nm_espec_despesa'));           break;
           } 
-          $w_linha=$w_linha+1;
+          $w_linha += 1;
         }
         if (Nvl(f($row1,'conclusao'),'')=='') {
           if (f($row1,'fim') < addDays(time(),-1)) {
-            $t_atraso    = $t_atraso + 1;
-            $t_totatraso = $t_totatraso + 1;
+            $t_atraso    += 1;
+            $t_totatraso += 1;
           } elseif (f($row1,'aviso_prox_conc') == 'S' && (f($row1,'aviso') <= addDays(time(),-1))) {
-            $t_aviso    = $t_aviso+1;
-            $t_totaviso = $t_totaviso+1;
+            $t_aviso     += 1;
+            $t_totaviso  += 1;
           }
           if (f($row1,'or_tramite')==1) {
-            $t_cad=$t_cad+1;
-            $t_totcad=$t_totcad+1;
+            $t_cad += 1;
+            $t_totcad += 1;
           } else {
-            $t_tram=$t_tram+1;
-            $t_tottram=$t_tottram+1;
+            $t_tram += 1;
+            $t_tottram += 1;
           }
         } else {
-          $t_conc=$t_conc+1;
-          $t_totconc=$t_totconc+1;
-          if (f($row1,'valor')<Nvl(f($row1,'valor_atual'),0)) {
-            $t_acima=$t_acima+1;
-            $t_totacima=$t_totacima+1;
-          }
+          $t_conc += 1;
+          $t_totconc += 1;
         }
-        $t_solic=$t_solic+1;
-        $t_valor=$t_valor+Nvl(f($row1,'valor'),0);
-        $t_custo=$t_custo+Nvl(f($row1,'valor_atual'),0);
-        $t_totvalor=$t_totvalor+Nvl(f($row1,'valor'),0);
-        $t_totcusto=$t_totcusto+Nvl(f($row1,'valor_atual'),0);
-        $t_totsolic=$t_totsolic+1;
-        $w_qt_quebra=$w_qt_quebra+1;
+        $t_acima        += f($row1,'valor') - Nvl(f($row1,'valor_atual'),0);
+        $t_totacima     += f($row1,'valor') - Nvl(f($row1,'valor_atual'),0);
+        $t_solic        += 1;
+        $t_valor        += Nvl(f($row1,'valor'),0);
+        $t_custo        += Nvl(f($row1,'valor_atual'),0);
+        $t_totvalor     += Nvl(f($row1,'valor'),0);
+        $t_totcusto     += Nvl(f($row1,'valor_atual'),0);
+        $t_totsolic     += 1;
+        $w_qt_quebra    += 1;
       } 
       ImprimeLinha($t_solic,$t_cad,$t_tram,$t_conc,$t_atraso,$t_aviso,$t_valor,$t_custo,$t_acima,$w_chave,$w_chave_aux);
       ShowHTML('      <tr bgcolor="#DCDCDC" valign="top" align="right">');
@@ -762,12 +856,15 @@ function Gerencial() {
       if (substr(f($RS_Menu_Origem,'sigla'),0,3)=='GCB')    ShowHTML('          <option value="'.substr(f($RS_Menu,'sigla'),0,3).'PROP">Bolsista');
       else                                                  ShowHTML('          <option value="'.substr(f($RS_Menu,'sigla'),0,3).'PROP">Outra parte');
     }
-    if (substr(f($RS_Menu_Origem,'sigla'),0,3)!='GCA') { if ($p_agrega==substr(f($RS_Menu,'sigla'),0,3).'PROJ')  ShowHTML('          <option value="'.substr(f($RS_Menu,'sigla'),0,3).'PROJ" selected>projeto');              else ShowHTML('          <option value="'.substr(f($RS_Menu,'sigla'),0,3).'PROJ">Projeto'); }
-    if (substr(f($RS_Menu_Origem,'sigla'),0,3)=='GCB') { if ($p_agrega==substr(f($RS_Menu,'sigla'),0,3).'ETAPA') ShowHTML('          <option value="'.substr(f($RS_Menu,'sigla'),0,3).'ETAPA" selected>Modalidade de bolsa'); else ShowHTML('          <option value="'.substr(f($RS_Menu,'sigla'),0,3).'ETAPA">Modalidade de bolsa'); }
-    if ($p_agrega==substr(f($RS_Menu,'sigla'),0,3).'RESP')                                                       ShowHTML('          <option value="'.substr(f($RS_Menu,'sigla'),0,3).'RESP" selected>Responsável');          else ShowHTML('          <option value="'.substr(f($RS_Menu,'sigla'),0,3).'RESP">Responsável');
-    if ($p_agrega==substr(f($RS_Menu,'sigla'),0,3).'SETOR')                                                      ShowHTML('          <option value="'.substr(f($RS_Menu,'sigla'),0,3).'SETOR" selected>Setor responsável');   else ShowHTML('          <option value="'.substr(f($RS_Menu,'sigla'),0,3).'SETOR">Setor responsável');
-    if ($p_agrega==substr(f($RS_Menu,'sigla'),0,3).'TIPO')                                                       ShowHTML('          <option value="'.substr(f($RS_Menu,'sigla'),0,3).'TIPO" selected>Tipo de acordo');       else ShowHTML('          <option value="'.substr(f($RS_Menu,'sigla'),0,3).'TIPO">Tipo de acordo');
-    if ($p_agrega==substr(f($RS_Menu,'sigla'),0,3).'LOCAL')                                                      ShowHTML('          <option value="'.substr(f($RS_Menu,'sigla'),0,3).'LOCAL" selected>UF');                  else ShowHTML('          <option value="'.substr(f($RS_Menu,'sigla'),0,3).'LOCAL">UF');
+    if (substr(f($RS_Menu_Origem,'sigla'),0,3)!='GCA') { if ($p_agrega==substr(f($RS_Menu,'sigla'),0,3).'PROJ')  ShowHTML('          <option value="'.substr(f($RS_Menu,'sigla'),0,3).'PROJ" selected>projeto');                   else ShowHTML('          <option value="'.substr(f($RS_Menu,'sigla'),0,3).'PROJ">Projeto'); }
+    if (substr(f($RS_Menu_Origem,'sigla'),0,3)=='GCB') { if ($p_agrega==substr(f($RS_Menu,'sigla'),0,3).'ETAPA') ShowHTML('          <option value="'.substr(f($RS_Menu,'sigla'),0,3).'ETAPA" selected>Modalidade de bolsa');      else ShowHTML('          <option value="'.substr(f($RS_Menu,'sigla'),0,3).'ETAPA">Modalidade de bolsa'); }
+    if ($p_agrega==substr(f($RS_Menu,'sigla'),0,3).'RESP')                                                       ShowHTML('          <option value="'.substr(f($RS_Menu,'sigla'),0,3).'RESP" selected>Responsável');               else ShowHTML('          <option value="'.substr(f($RS_Menu,'sigla'),0,3).'RESP">Responsável');
+    if ($p_agrega==substr(f($RS_Menu,'sigla'),0,3).'SETOR')                                                      ShowHTML('          <option value="'.substr(f($RS_Menu,'sigla'),0,3).'SETOR" selected>Setor responsável');        else ShowHTML('          <option value="'.substr(f($RS_Menu,'sigla'),0,3).'SETOR">Setor responsável');
+    if ($p_agrega==substr(f($RS_Menu,'sigla'),0,3).'TIPO')                                                       ShowHTML('          <option value="'.substr(f($RS_Menu,'sigla'),0,3).'TIPO" selected>Tipo de acordo');            else ShowHTML('          <option value="'.substr(f($RS_Menu,'sigla'),0,3).'TIPO">Tipo de acordo');
+    if ($p_agrega==substr(f($RS_Menu,'sigla'),0,3).'TITULO')                                                     ShowHTML('          <option value="'.substr(f($RS_Menu,'sigla'),0,3).'TITULO" selected>Título');                  else ShowHTML('          <option value="'.substr(f($RS_Menu,'sigla'),0,3).'TITULO">Título');
+    if ($p_agrega==substr(f($RS_Menu,'sigla'),0,3).'LOCAL')                                                      ShowHTML('          <option value="'.substr(f($RS_Menu,'sigla'),0,3).'LOCAL" selected>UF');                       else ShowHTML('          <option value="'.substr(f($RS_Menu,'sigla'),0,3).'LOCAL">UF');
+    if ($p_agrega==substr(f($RS_Menu,'sigla'),0,3).'FONTE')                                                      ShowHTML('          <option value="'.substr(f($RS_Menu,'sigla'),0,3).'FONTE" selected>Fonte de recurso');         else ShowHTML('          <option value="'.substr(f($RS_Menu,'sigla'),0,3).'FONTE">Fonte de recurso');
+    if ($p_agrega==substr(f($RS_Menu,'sigla'),0,3).'ESPEC')                                                      ShowHTML('          <option value="'.substr(f($RS_Menu,'sigla'),0,3).'ESPEC" selected>Especificação de despesa'); else ShowHTML('          <option value="'.substr(f($RS_Menu,'sigla'),0,3).'ESPEC">Especificação de despesa');
     ShowHTML('          </select></td>');
     MontaRadioSN('<b>Inibe exibição do gráfico?</b>',$p_tipo,'p_tipo');
     MontaRadioNS('<b>Limita tamanho do objeto?</b>',$p_tamanho,'p_tamanho');
@@ -802,13 +899,19 @@ function Gerencial() {
     ShowHTML('          <td><font size="1"><b>Número do c<U>o</U>ntrato:<br><INPUT ACCESSKEY="O" '.$w_Disabled.' class="sti" type="text" name="p_chave" size="18" maxlength="18" value="'.$p_chave.'"></td>');
     ShowHTML('          <td><font size="1"><b>O<U>u</U>tra parte:<br><INPUT ACCESSKEY="U" '.$w_Disabled.' class="STI" type="text" name="p_proponente" size="25" maxlength="90" value="'.$p_proponente.'"></td>');
     ShowHTML('      <tr valign="top">');
+    ShowHTML('          <td><font size="1"><b><U>T</U>ítulo:<br><INPUT ACCESSKEY="D" '.$w_Disabled.' class="sti" type="text" name="p_atraso" size="25" maxlength="90" value="'.$p_atraso.'"></td>');
+    ShowHTML('          <td><font size="1"><b>O<U>b</U>jeto:<br><INPUT ACCESSKEY="B" '.$w_Disabled.' class="sti" type="text" name="p_objeto" size="25" maxlength="90" value="'.$p_objeto.'"></td>');
+    ShowHTML('      <tr valign="top">');
     ShowHTML('          <td><font size="1"><b>Có<U>d</U>igo interno:<br><INPUT ACCESSKEY="D" '.$w_Disabled.' class="sti" type="text" name="p_palavra" size="18" maxlength="18" value="'.$p_palavra.'"></td>');
-    ShowHTML('          <td><font size="1"><b>Có<U>d</U>igo externo:<br><INPUT ACCESSKEY="D" '.$w_Disabled.' class="sti" type="text" name="p_atraso" size="18" maxlength="18" value="'.$p_atraso.'"></td>');
+    ShowHTML('          <td><font size="1"><b>Dias para <U>t</U>érmino da vigência:<br><INPUT ACCESSKEY="T" '.$w_Disabled.' class="sti" type="text" name="p_prazo" size="2" maxlength="2" value="'.$p_prazo.'"></td>');
     ShowHTML('      <tr valign="top">');
     if($w_segmento=='Público') {
       if (substr(f($RS_Menu_Origem,'sigla'),0,3)!='GCA') ShowHTML('          <td><font size="1"><b><U>N</U>úmero do empenho:<br><INPUT ACCESSKEY="D" '.$w_Disabled.' class="sti" type="text" name="p_empenho" size="18" maxlength="18" value="'.$p_empenho.'"></td>');
       ShowHTML('          <td><font size="1"><b><U>N</U>úmero do processo:<br><INPUT ACCESSKEY="D" '.$w_Disabled.' class="sti" type="text" name="p_processo" size="18" maxlength="18" value="'.$p_processo.'"></td>');
     }
+    ShowHTML('      <tr valign="top">');
+    ShowHTML('          <td><font size="1"><b>Iní<u>c</u>io vigência entre:</b><br><input '.$w_Disabled.' accesskey="C" type="text" name="p_ini_i" class="sti" SIZE="10" MAXLENGTH="10" VALUE="'.$p_ini_i.'" onKeyDown="FormataData(this,event);">'.ExibeCalendario('Form','p_ini_i').' e <input '.$w_Disabled.' accesskey="C" type="text" name="p_ini_f" class="sti" SIZE="10" MAXLENGTH="10" VALUE="'.$p_ini_f.'" onKeyDown="FormataData(this,event);">'.ExibeCalendario('Form','p_ini_f').'</td>');
+    ShowHTML('          <td><font size="1"><b>Fi<u>m</u> vigência entre:</b><br><input '.$w_Disabled.' accesskey="T" type="text" name="p_fim_i" class="sti" SIZE="10" MAXLENGTH="10" VALUE="'.$p_fim_i.'" onKeyDown="FormataData(this,event);">'.ExibeCalendario('Form','p_fim_i').' e <input '.$w_Disabled.' accesskey="T" type="text" name="p_fim_f" class="sti" SIZE="10" MAXLENGTH="10" VALUE="'.$p_fim_f.'" onKeyDown="FormataData(this,event);">'.ExibeCalendario('Form','p_fim_f').'</td>');
     ShowHTML('      <tr valign="top">');
     SelecaoPessoa('Respo<u>n</u>sável:','N','Selecione o responsável na relação.',$p_solicitante,null,'p_solicitante','USUARIOS');
     SelecaoUnidade('<U>S</U>etor responsável:','S',null,$p_unidade,null,'p_unidade',null,null);
@@ -821,12 +924,6 @@ function Gerencial() {
     ShowHTML('      <tr>');
     SelecaoEstado('E<u>s</u>tado:','S',null,$p_uf,$p_pais,$p_regiao,'p_uf',null,'onChange="document.Form.action=\''.$w_dir.$w_pagina.$par.'\'; document.Form.O.value=\''.$O.'\'; document.Form.target=\'\'; document.Form.w_troca.value=\'p_cidade\'; document.Form.submit();"');
     SelecaoCidade('<u>C</u>idade:','C',null,$p_cidade,$p_pais,$p_uf,'p_cidade',null,null);
-    ShowHTML('      <tr valign="top">');
-    ShowHTML('          <td><font size="1"><b>O<U>b</U>jeto:<br><INPUT ACCESSKEY="B" '.$w_Disabled.' class="sti" type="text" name="p_objeto" size="25" maxlength="90" value="'.$p_objeto.'"></td>');
-    ShowHTML('          <td><font size="1"><b>Dias para <U>t</U>érmino da vigência:<br><INPUT ACCESSKEY="T" '.$w_Disabled.' class="sti" type="text" name="p_prazo" size="2" maxlength="2" value="'.$p_prazo.'"></td>');
-    ShowHTML('      <tr valign="top">');
-    ShowHTML('          <td><font size="1"><b>Iní<u>c</u>io vigência entre:</b><br><input '.$w_Disabled.' accesskey="C" type="text" name="p_ini_i" class="sti" SIZE="10" MAXLENGTH="10" VALUE="'.$p_ini_i.'" onKeyDown="FormataData(this,event);">'.ExibeCalendario('Form','p_ini_i').' e <input '.$w_Disabled.' accesskey="C" type="text" name="p_ini_f" class="sti" SIZE="10" MAXLENGTH="10" VALUE="'.$p_ini_f.'" onKeyDown="FormataData(this,event);">'.ExibeCalendario('Form','p_ini_f').'</td>');
-    ShowHTML('          <td><font size="1"><b>Fi<u>m</u> vigência entre:</b><br><input '.$w_Disabled.' accesskey="T" type="text" name="p_fim_i" class="sti" SIZE="10" MAXLENGTH="10" VALUE="'.$p_fim_i.'" onKeyDown="FormataData(this,event);">'.ExibeCalendario('Form','p_fim_i').' e <input '.$w_Disabled.' accesskey="T" type="text" name="p_fim_f" class="sti" SIZE="10" MAXLENGTH="10" VALUE="'.$p_fim_f.'" onKeyDown="FormataData(this,event);">'.ExibeCalendario('Form','p_fim_f').'</td>');
     ShowHTML('      <tr valign="top">');
     SelecaoFaseCheck('Recuperar fases:','S',null,$p_fase,$P2,'p_fase[]',null,null);
     ShowHTML('      <tr><td align="center" colspan="2" height="1" bgcolor="#000000">');
@@ -862,15 +959,18 @@ function ImprimeCabecalho() {
   ShowHTML('    <TABLE WIDTH="100%" bgcolor="'.$conTableBgColor.'" BORDER="'.$conTableBorder.'" CELLSPACING="'.$conTableCellSpacing.'" CELLPADDING="'.$conTableCellPadding.'" BorderColorDark="'.$conTableBorderColorDark.'" BorderColorLight="'.$conTableBorderColorLight.'">');
   ShowHTML('        <tr bgcolor="#DCDCDC" align="center">');
   switch ($p_agrega) {
-    case substr(f($RS_Menu,'sigla'),0,3).'ETAPA':       ShowHTML('          <td><font size="1"><b>Etapa</font></td>');              break;
-    case substr(f($RS_Menu,'sigla'),0,3).'TIPO':        ShowHTML('          <td><font size="1"><b>Tipo de acordo</font></td>');     break;
-    case substr(f($RS_Menu,'sigla'),0,3).'PROJ':        ShowHTML('          <td><font size="1"><b>Projeto</font></td>');            break;
-    case substr(f($RS_Menu,'sigla'),0,3).'PROP':        ShowHTML('          <td><font size="1"><b>Proponente</font></td>');         break;
-    case substr(f($RS_Menu,'sigla'),0,3).'RESP':        ShowHTML('          <td><font size="1"><b>Responsável</font></td>');        break;
-    case substr(f($RS_Menu,'sigla'),0,3).'RESPATU':     ShowHTML('          <td><font size="1"><b>Executor</font></td>');           break;
-    case substr(f($RS_Menu,'sigla'),0,3).'CC':          ShowHTML('          <td><font size="1"><b>Classificação</font></td>');      break;
-    case substr(f($RS_Menu,'sigla'),0,3).'SETOR':       ShowHTML('          <td><font size="1"><b>Setor responsável</font></td>');  break;
-    case substr(f($RS_Menu,'sigla'),0,3).'LOCAL':       ShowHTML('          <td><font size="1"><b>UF</font></td>');                 break;
+    case substr(f($RS_Menu,'sigla'),0,3).'ETAPA':       ShowHTML('          <td><font size="1"><b>Etapa</font></td>');                      break;
+    case substr(f($RS_Menu,'sigla'),0,3).'TIPO':        ShowHTML('          <td><font size="1"><b>Tipo de acordo</font></td>');             break;
+    case substr(f($RS_Menu,'sigla'),0,3).'PROJ':        ShowHTML('          <td><font size="1"><b>Projeto</font></td>');                    break;
+    case substr(f($RS_Menu,'sigla'),0,3).'PROP':        ShowHTML('          <td><font size="1"><b>Outra parte</font></td>');                break;
+    case substr(f($RS_Menu,'sigla'),0,3).'RESP':        ShowHTML('          <td><font size="1"><b>Responsável</font></td>');                break;
+    case substr(f($RS_Menu,'sigla'),0,3).'RESPATU':     ShowHTML('          <td><font size="1"><b>Executor</font></td>');                   break;
+    case substr(f($RS_Menu,'sigla'),0,3).'CC':          ShowHTML('          <td><font size="1"><b>Classificação</font></td>');              break;
+    case substr(f($RS_Menu,'sigla'),0,3).'SETOR':       ShowHTML('          <td><font size="1"><b>Setor responsável</font></td>');          break;
+    case substr(f($RS_Menu,'sigla'),0,3).'TITULO':      ShowHTML('          <td><font size="1"><b>Título</font></td>');                     break;
+    case substr(f($RS_Menu,'sigla'),0,3).'LOCAL':       ShowHTML('          <td><font size="1"><b>UF</font></td>');                         break;
+    case substr(f($RS_Menu,'sigla'),0,3).'FONTE':       ShowHTML('          <td><font size="1"><b>Fonte de recurso</font></td>');           break;
+    case substr(f($RS_Menu,'sigla'),0,3).'ESPEC':       ShowHTML('          <td><font size="1"><b>Especificação de despesa</font></td>');   break;
   } 
   ShowHTML('          <td><font size="1"><b>Total</font></td>');
   ShowHTML('          <td><font size="1"><b>Cad.</font></td>');
@@ -881,7 +981,7 @@ function ImprimeCabecalho() {
   if ($_SESSION['INTERNO']=='S' && substr(f($RS_Menu_Origem,'sigla'),0,3)!='GCA') {
     ShowHTML('          <td><font size="1"><b>$ Prev.</font></td>');
     ShowHTML('          <td><font size="1"><b>$ Real</font></td>');
-    ShowHTML('          <td><font size="1"><b>Real > Previsto</font></td>');
+    ShowHTML('          <td><font size="1"><b>$ Pendente</font></td>');
   } 
   ShowHTML('        </tr>');
 } 
@@ -898,7 +998,7 @@ function ImprimeLinha($l_solic,$l_cad,$l_tram,$l_conc,$l_atraso,$l_aviso,$l_valo
   if ($_SESSION['INTERNO']=='S' && substr(f($RS_Menu_Origem,'sigla'),0,3)!='GCA') {
     ShowHTML('          <td align="right"><font size="1">'.number_format($l_valor,2,',','.').'&nbsp;</font></td>');
     ShowHTML('          <td align="right"><font size="1">'.number_format($l_custo,2,',','.').'&nbsp;</font></td>');
-    if ($l_acima>0) ShowHTML('          <td align="right"><font size="1" color="red"><b>'.number_format($l_acima,0,',','.').'&nbsp;</font></td>'); else ShowHTML('          <td align="right"><font size="1"><b>'.$l_acima.'&nbsp;</font></td>');
+    ShowHTML('          <td align="right"><font size="1" '.(($l_acima>0) ? 'color="red"' : '').'><b>'.number_format($l_acima,2,',','.').'&nbsp;</font></td>');
   } 
   ShowHTML('        </tr>');
 } 

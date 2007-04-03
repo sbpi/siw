@@ -1,5 +1,5 @@
 <?
-include_once($w_dir_volta.'classes/sp/db_getTipoIndicador.php');
+include_once($w_dir_volta.'classes/sp/db_getIndicador.php');
 // =========================================================================
 // Montagem da seleção de indicadores
 // -------------------------------------------------------------------------

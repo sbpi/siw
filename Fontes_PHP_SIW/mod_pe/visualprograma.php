@@ -8,6 +8,7 @@ function VisualPrograma($l_chave,$l_o,$l_usuario,$l_p1,$l_formato,$l_identificac
   include_once($w_dir_volta.'classes/sp/db_getSolicMeta.php');
   include_once($w_dir_volta.'classes/sp/db_getSolicIndicador.php');
   $l_html='';
+  
   // Recupera os dados do programa
   $RS = db_getSolicData::getInstanceOf($dbms,$l_chave,'PEPRGERAL');
 
@@ -55,7 +56,6 @@ function VisualPrograma($l_chave,$l_o,$l_usuario,$l_p1,$l_formato,$l_identificac
     $l_html.=chr(13).'   <tr><td><b>Fase Atual do Programa:</b></td>';
     $l_html.=chr(13).'       <td>'.Nvl(f($RS,'nm_tramite'),'-').'</td></tr>';
   } 
-
   if ($O=='T') {
     // Descritivo
     if ($l_qualitativa=='S') {
@@ -166,7 +166,7 @@ function VisualPrograma($l_chave,$l_o,$l_usuario,$l_p1,$l_formato,$l_identificac
         $l_html .= chr(13).'        <td>'.f($row,'nm_tipo_completo').'</td>';
         $l_html .= chr(13).'        <td>'.nvl(f($row,'codigo'),'---').'</td>';
         if ($l_formato=='WORD') $l_html .= chr(13).'        <td>'.f($row,'nm_recurso').'</td>';
-        else                    $l_html .= chr(13).'        <td>'.ExibeRecurso($w_dir_volta,$w_cliente,f($row,'nm_recurso'),f($row,'sq_recurso'),$TP).'</td>';
+        else                    $l_html .= chr(13).'        <td>'.ExibeRecurso($w_dir_volta,$w_cliente,f($row,'nm_recurso'),f($row,'sq_recurso'),$TP,$l_chave).'</td>';
         $l_html .= chr(13).'        <td align="center" nowrap>'.f($row,'nm_unidade_medida').'</td>';        
         $l_html .= chr(13).'      </tr>';
       } 
@@ -243,5 +243,6 @@ function VisualPrograma($l_chave,$l_o,$l_usuario,$l_p1,$l_formato,$l_identificac
     $l_html.=chr(13).'   <tr><td><b>Data da consulta:</b></td>';
     $l_html.=chr(13).'       <td>'.FormataDataEdicao(time(),3).'</td></tr>';
   } 
+  $l_html .= chr(13).'</table>';  
   return $l_html;
 } ?>

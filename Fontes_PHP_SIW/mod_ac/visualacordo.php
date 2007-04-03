@@ -97,28 +97,6 @@ function VisualAcordo($l_chave,$l_O,$l_usuario,$l_P1,$l_P4) {
       $w_html.=chr(13).'          <tr><td valign="top"><font size="1"><b>Valor:</b></td>';
       $w_html.=chr(13).'              <td>'.number_format(f($RS,'valor'),2,',','.').' </td></tr>';
     } 
-    if($w_segmento=='Público') {
-      $w_html.=chr(13).'          <tr valign="top">';
-      if (substr($w_sigla,0,3)!='GCA' && substr($w_sigla,0,3)!='GCB'){   
-        $w_html.=chr(13).'          <td><font size="1"><b>Número do empenho:</b></td>';
-        $w_html.=chr(13).'          <td>'.Nvl(f($RS,'empenho'),'---').'</td></tr>';
-      }
-      if (substr($w_sigla,0,3)=='GCA') { 
-        $w_html.=chr(13).'          <td><font size="1"><b>Número do processo:</b></td>';
-        $w_html.=chr(13).'           <td>'.Nvl(f($RS,'processo'),'---').'</td></tr>';
-      }
-      if (substr($w_sigla,0,3)=='GCB'){ 
-        $w_html.=chr(13).'          <td><font size="1"><b>Número do empenho (modalidade/nível/mensalidade):</b></td>';
-        $w_html.=chr(13).'          <td>'.Nvl(f($RS,'processo'),'---').'</td></tr>';
-      }
-      $w_html.=chr(13).'          <tr valign="top">';
-      $w_html.=chr(13).'          <td><font size="1"><b>Assinatura:</b></td>';
-      $w_html.=chr(13).'          <td>'.Nvl(FormataDataEdicao(f($RS,'assinatura')),'---').'</td></tr>';
-      if (substr($w_sigla,0,3)!='GCB') { 
-        $w_html.=chr(13).'          <td><font size="1"><b>Publicação D.O.:</b></td>';
-        $w_html.=chr(13).'          <td>'.Nvl(FormataDataEdicao(f($RS,'publicacao')),'---').'</td></tr>';
-      }
-    }
     $w_html.=chr(13).'          <tr><td><font size="1"><b>Início vigência:</b></td>';
     $w_html.=chr(13).'              <td>'.Nvl(FormataDataEdicao(f($RS,'inicio')),'---').'</td></tr>';
     $w_html.=chr(13).'          <tr><td><font size="1"><b>Término vigência:</b></td>';
@@ -154,6 +132,82 @@ function VisualAcordo($l_chave,$l_O,$l_usuario,$l_P1,$l_P4) {
         $w_html.=chr(13).'          <td>'.nvl(CRLF2BR(f($RS,'observacao')),'---').'</td></tr>';
       } 
     } 
+    // Notas de empenho
+    if($w_segmento=='Público' || substr($w_sigla,0,3)=='GCD') {
+      $RS1 = db_getAcordoNota::getInstanceOf($dbms,$w_cliente,null,$l_chave,null,null,null,null,null);
+      $RS1 = SortArray($RS1,'cd_aditivo','desc', 'data','desc');
+      $w_html.=chr(13).'      <tr><td colspan="2"><br><font size="2"><b>NOTAS DE EMPENHO<hr NOSHADE color=#000000 SIZE=1></b></font></td></tr>';   
+      $w_html.=chr(13).'      <tr><td colspan="2"><div align="center">';
+      $w_html.=chr(13).'        <table width=100%  border="1" bordercolor="#00000">';
+      $w_html.=chr(13).'        <tr bgcolor="'.$conTrBgColor.'" align="center">';
+      $w_html.=chr(13).'          <td><b>Aditivo</td>';
+      $w_html.=chr(13).'          <td><b>Número</td>';
+      $w_html.=chr(13).'          <td><b>Data</td>';
+      $w_html.=chr(13).'          <td><b>Tipo documento</td>';
+      $w_html.=chr(13).'          <td><b>Outra parte</td>';
+      $w_html.=chr(13).'          <td><b>Valor</td>';
+      $w_html.=chr(13).'        </tr>';
+      if (count($RS)<=0) {
+        // Se não foram selecionados registros, exibe mensagem 
+        $w_html.=chr(13).'      <tr bgcolor="'.$conTrBgColor.'"><td colspan=6 align="center"><b>Não foram encontrados registros.</b></td></tr>';
+      } else {
+        // Lista os registros selecionados para listagem 
+        foreach($RS1 as $row) {
+          $w_html.=chr(13).'      <trvalign="top">';
+          $w_html.=chr(13).'        <td>'.nvl(f($row,'cd_aditivo'),'---').'</td>';
+          $w_html.=chr(13).'        <td>'.Nvl(f($row,'numero'),'---').'</td>';
+          $w_html.=chr(13).'        <td align="center">'.Nvl(FormataDataEdicao(f($row,'data')),'---').'</td>';
+          $w_html.=chr(13).'        <td>'.f($row,'nm_tipo_documento').'</td>';
+          $w_html.=chr(13).'        <td>'.nvl(f($row,'nm_outra_parte'),'---').'</td>';
+          $w_html.=chr(13).'        <td align="right">'.Nvl(formatNumber(f($row,'valor'),2),'---').'</td>';
+          $w_html.=chr(13).'      </tr>';
+        } 
+      } 
+      $w_html.=chr(13).'      </center>';
+      $w_html.=chr(13).'    </table>';
+      $w_html.=chr(13).'  </td>';
+      $w_html.=chr(13).'</tr>';
+    }
+    // Aditivos
+    if($w_segmento=='Público' || substr($w_sigla,0,3)=='GCD') {
+      $RS1 = db_getAcordoAditivo::getInstanceOf($dbms,$w_cliente,null,$l_chave,null,null,null,null,null);
+      $RS1 = SortArray($RS1,'codigo','desc');
+      $w_html.=chr(13).'      <tr><td colspan="2"><br><font size="2"><b>ADITIVOS<hr NOSHADE color=#000000 SIZE=1></b></font></td></tr>';   
+      $w_html.=chr(13).'      <tr><td colspan="2"><div align="center">';
+      $w_html.=chr(13).'        <table width=100%  border="1" bordercolor="#00000">';
+      $w_html.=chr(13).'        <tr bgcolor="'.$conTrBgColor.'" align="center">';
+      $w_html.=chr(13).'          <td><b>Código</td>';
+      $w_html.=chr(13).'          <td><b>Início</td>';
+      $w_html.=chr(13).'          <td><b>Fim</td>';
+      $w_html.=chr(13).'          <td><b>Prorrogação</td>';
+      $w_html.=chr(13).'          <td><b>Revisão</td>';
+      $w_html.=chr(13).'          <td><b>Acréscimo</td>';
+      $w_html.=chr(13).'          <td><b>Supressão</td>';
+      $w_html.=chr(13).'          <td><b>Valor reajuste</td>';
+      $w_html.=chr(13).'        </tr>';
+      if (count($RS)<=0) {
+        // Se não foram selecionados registros, exibe mensagem 
+        $w_html.=chr(13).'      <tr bgcolor="'.$conTrBgColor.'"><td colspan=9 align="center"><b>Não foram encontrados registros.</b></td></tr>';
+      } else {
+        // Lista os registros selecionados para listagem 
+        foreach($RS1 as $row) {
+          $w_html.=chr(13).'      <tr valign="top">';
+          $w_html.=chr(13).'        <td>'.Nvl(f($row,'codigo'),'---').'</td>';
+          $w_html.=chr(13).'        <td align="center">'.Nvl(FormataDataEdicao(f($row,'inicio')),'---').'</td>';
+          $w_html.=chr(13).'        <td align="center">'.Nvl(FormataDataEdicao(f($row,'fim')),'---').'</td>';
+          $w_html.=chr(13).'        <td align="center">'.f($row,'nm_prorrogacao').'</td>';
+          $w_html.=chr(13).'        <td align="center">'.f($row,'nm_revisao').'</td>';
+          $w_html.=chr(13).'        <td align="center">'.f($row,'nm_acrescimo').'</td>';
+          $w_html.=chr(13).'        <td align="center">'.f($row,'nm_supressao').'</td>';
+          $w_html.=chr(13).'        <td align="right">'.Nvl(formatNumber(f($row,'valor_reajuste'),2),'---').'</td>';
+          $w_html.=chr(13).'      </tr>';
+        } 
+      } 
+      $w_html.=chr(13).'      </center>';
+      $w_html.=chr(13).'    </table>';
+      $w_html.=chr(13).'  </td>';
+      $w_html.=chr(13).'</tr>';
+    }
     // Exibe ficha completa
     if ($l_P1==4) {
       // Termo de referência
@@ -183,52 +237,96 @@ function VisualAcordo($l_chave,$l_O,$l_usuario,$l_P1,$l_P4) {
         $w_html.=chr(13).'        <td>'.f($RS,'nm_vincula_demanda').'</td></tr>';
         $w_html.=chr(13).'       <tr><td><font size="1"><b>Pemite vinculação de viagens?</b></td>';
         $w_html.=chr(13).'        <td>'.f($RS,'nm_vincula_viagem').'</td></tr>';
-      } 
+      }
+      // Dados Adicionais
+      if($w_segmento=='Público' || substr($w_sigla,0,3)=='GCD') {
+        $w_html.=chr(13).'      <tr><td colspan="2"><br><font size="2"><b>DADOS ADICIONAIS<hr NOSHADE color=#000000 SIZE=1></b></font></td></tr>';
+        $w_html.=chr(13).'      <tr><td ><font size="1"><b>Número do certame:</b></td>';
+        $w_html.=chr(13).'        <td>'.nvl(CRLF2BR(f($RS,'numero_certame')),'---').'</td></tr>';
+        $w_html.=chr(13).'      <tr><td ><font size="1"><b>Número da ata:</b></td>';
+        $w_html.=chr(13).'        <td>'.nvl(CRLF2BR(f($RS,'numero_ata')),'---').'</td></tr>';
+        $w_html.=chr(13).'      <tr><td><font size="1"><b>Tipo de reajuste:</b></td>';
+        $w_html.=chr(13).'        <td>'.nvl(CRLF2BR(f($RS,'nm_tipo_reajuste')),'---').'</td></tr>';
+        $w_html.=chr(13).'      <tr><td><font size="1"><b>Limite variação:</b></td>';
+        $w_html.=chr(13).'        <td>'.nvl(CRLF2BR(formatNumber(f($RS,'limite_variacao'))),'---').'</td></tr>';
+        if(nvl(f($RS,'tipo_reajuste'),'')==1) {
+          $w_html.=chr(13).'      <tr><td><font size="1"><b>Índice base:</b></td>';
+          $w_html.=chr(13).'        <td>'.nvl(CRLF2BR(f($RS,'indice_base')),'---').'</td></tr>';
+          $w_html.=chr(13).'      <tr><td ><font size="1"><b>Indicador:</b></td>';
+          $w_html.=chr(13).'        <td>'.nvl(CRLF2BR(f($RS,'nm_eoindicador')),'---').'</td></tr>';
+        }
+        $w_html.=chr(13).'      <tr><td><font size="1"><b>Fonte de recurso:</b></td>';
+        $w_html.=chr(13).'        <td>'.nvl(CRLF2BR(f($RS,'nm_lcfonte_recurso')),'---').'</td></tr>';
+        $w_html.=chr(13).'      <tr><td><font size="1"><b>Especificação de despesa:</b></td>';
+        $w_html.=chr(13).'        <td>'.nvl(CRLF2BR(f($RS,'nm_espec_despesa')),'---').'</td></tr>';
+        if (substr($w_sigla,0,3)=='GCD') {
+          $w_html.=chr(13).'          <tr valign="top">';
+          $w_html.=chr(13).'          <td><font size="1"><b>Modalidade:</b></td>';
+          $w_html.=chr(13).'          <td>'.Nvl(f($RS,'nm_lcmodalidade'),'---').'</td></tr>';
+        }
+        if (substr($w_sigla,0,3)!='GCA' && substr($w_sigla,0,3)!='GCB'){   
+          $w_html.=chr(13).'          <tr valign="top">';
+          $w_html.=chr(13).'          <td><font size="1"><b>Número do empenho:</b></td>';
+          $w_html.=chr(13).'          <td>'.Nvl(f($RS,'empenho'),'---').'</td></tr>';
+        }
+        if (substr($w_sigla,0,3)=='GCA' || substr($w_sigla,0,3)=='GCD') { 
+          $w_html.=chr(13).'          <tr valign="top">';
+          $w_html.=chr(13).'          <td><font size="1"><b>Número do processo:</b></td>';
+          $w_html.=chr(13).'           <td>'.Nvl(f($RS,'processo'),'---').'</td></tr>';
+        }
+        if (substr($w_sigla,0,3)=='GCB'){ 
+          $w_html.=chr(13).'          <tr valign="top">';
+          $w_html.=chr(13).'          <td><font size="1"><b>Número do empenho (modalidade/nível/mensalidade):</b></td>';
+          $w_html.=chr(13).'          <td>'.Nvl(f($RS,'processo'),'---').'</td></tr>';
+        }
+        $w_html.=chr(13).'          <tr valign="top">';
+        $w_html.=chr(13).'          <td><font size="1"><b>Assinatura:</b></td>';
+        $w_html.=chr(13).'          <td>'.Nvl(FormataDataEdicao(f($RS,'assinatura')),'---').'</td></tr>';
+        if (substr($w_sigla,0,3)!='GCB') { 
+          $w_html.=chr(13).'          <td><font size="1"><b>Publicação D.O.:</b></td>';
+          $w_html.=chr(13).'          <td>'.Nvl(FormataDataEdicao(f($RS,'publicacao')),'---').'</td></tr>';
+        }        
+      }
     } 
-
     // Outra parte
-    $RSQuery = db_getBenef::getInstanceOf($dbms,$w_cliente,Nvl(f($RS,'outra_parte'),0),null,null,null,Nvl(f($RS,'sq_tipo_pessoa'),0),null,null);
-    if (substr($w_sigla,0,3)=='GCB')     $w_html.=chr(13).'      <tr><td colspan="2"><br><font size="2"><b>BOLSISTA<hr NOSHADE color=#000000 SIZE=1></b></font></td></tr>';
+    if (substr($w_sigla,0,3)=='GCB')$w_html.=chr(13).'      <tr><td colspan="2"><br><font size="2"><b>BOLSISTA<hr NOSHADE color=#000000 SIZE=1></b></font></td></tr>';
     else                            $w_html.=chr(13).'      <tr><td colspan="2"><br><font size="2"><b>OUTRA PARTE<hr NOSHADE color=#000000 SIZE=1></b></font></td></tr>';
-
+    $RSQuery = db_getConvOutraParte::getInstanceOf($dbms,null,$l_chave,null,null);
     if (count($RSQuery)==0) {
-      if (substr($w_sigla,0,3)=='GCB')   $w_html.=chr(13).'      <tr><td colspan=2 align="center"><font size=1>Bolsista não informado';
-      else                          $w_html.=chr(13).'      <tr><td colspan=2 align="center"><font size=1>Outra parte não informada';
+      if (Nvl(f($RS,'sq_tipo_pessoa'),0)==1)
+        $w_html.=chr(13).'      <tr><td colspan=2 align="center"><font size=1>Bolsita não informado';
+      else
+        $w_html.=chr(13).'      <tr><td colspan=2 align="center"><font size=1>Outra parte não informada';
     } else {
-      foreach($RSQuery as $row) {
-        if (substr($w_sigla,0,3)=='GCB')  $w_html.=chr(13).'      <tr><td><font size=1><b>Bolsista:</b></td>';     
-        else                         $w_html.=chr(13).'      <tr><td><font size=1><b>Outra parte:</b></td>';
-        $w_html.=chr(13).'                <td><b>'.f($row,'nm_pessoa').' ('.f($row,'nome_resumido').')</td></tr>';
-        if (Nvl(f($RS,'sq_tipo_pessoa'),0)==1) {
-          $w_html.=chr(13).'      <tr><td><font size=1><b>CPF:</b></td>';     
-          $w_html.=chr(13).'          <td>'.f($row,'cpf').'</td></tr>';
-        } else {
-          $w_html.=chr(13).'      <tr><td><font size=1><b>CNPJ:</b></td>';     
-          $w_html.=chr(13).'          <td>'.f($row,'cnpj').'</td></tr>';
-        } 
-        // Exibe ficha completa
+      foreach($RSQuery as $row) { 
+        $w_html.=chr(13).'      <tr><td colspan=2 bgColor="#f0f0f0"style="border: 1px solid rgb(0,0,0);" ><b>';
+        $w_html.=chr(13).'          '.f($row,'nm_pessoa').' ('.f($row,'nome_resumido').')';
+        if (Nvl(f($RS,'sq_tipo_pessoa'),0)==1) $w_html.=chr(13).'          - '.f($row,'cpf').'</b>';
+        else                                   $w_html.=chr(13).'          - '.f($row,'cnpj').'</b>';
         if ($l_P1==4) {
-          if (f($RS,'sq_tipo_pessoa')==1) {
+          $RSQuery1 = db_getBenef::getInstanceOf($dbms,$w_cliente,Nvl(f($row,'outra_parte'),0),null,null,null,Nvl(f($row,'sq_tipo_pessoa'),0),null,null);
+          foreach($RSQuery1 as $row1){$RSQuery1=$row1; break;}
+          if (f($RSQuery1,'sq_tipo_pessoa')==1) {
             $w_html.=chr(13).'      <tr><td colspan="2">';
             $w_html.=chr(13).'          <tr><td><font size="1"><b>Sexo:</b></td>'; 
-            $w_html.=chr(13).'              <td>'.f($row,'nm_sexo').'</td></tr>';
+            $w_html.=chr(13).'              <td>'.f($RSQuery1,'nm_sexo').'</td></tr>';
             $w_html.=chr(13).'          <tr><td><font size="1"><b>Data de nascimento:</b></td>'; 
-            $w_html.=chr(13).'              <td>'.FormataDataEdicao(Nvl(f($row,'nascimento'),'---')).'</td></tr>';
+            $w_html.=chr(13).'              <td>'.FormataDataEdicao(Nvl(f($RSQuery1,'nascimento'),'---')).'</td></tr>';
             $w_html.=chr(13).'          <tr><td><font size="1"><b>Identidade:</b></td>'; 
-            $w_html.=chr(13).'              <td>'.f($row,'rg_numero').'</td></tr>';
+            $w_html.=chr(13).'              <td>'.f($RSQuery1,'rg_numero').'</td></tr>';
             $w_html.=chr(13).'          <tr><td><font size="1"><b>Data de emissão:</b></td>'; 
-            $w_html.=chr(13).'              <td>'.FormataDataEdicao(Nvl(f($row,'rg_emissao'),'---')).'</td>';
+            $w_html.=chr(13).'              <td>'.FormataDataEdicao(Nvl(f($RSQuery1,'rg_emissao'),'---')).'</td>';
             $w_html.=chr(13).'          <tr><td><font size="1"><b>Órgão emissor:</b></td>'; 
-            $w_html.=chr(13).'              <td>'.f($row,'rg_emissor').'</td></tr>';
+            $w_html.=chr(13).'              <td>'.f($RSQuery1,'rg_emissor').'</td></tr>';
             $w_html.=chr(13).'          <tr><td><font size="1"><b>Passaporte:</b></td>'; 
-            $w_html.=chr(13).'              <td>'.Nvl(f($row,'passaporte_numero'),'---').'</td></tr>';
+            $w_html.=chr(13).'              <td>'.Nvl(f($RSQuery1,'passaporte_numero'),'---').'</td></tr>';
             $w_html.=chr(13).'          <tr><td><font size="1"><b>País emissor:</b></td>'; 
-            $w_html.=chr(13).'              <td>'.Nvl(f($row,'nm_pais_passaporte'),'---').'</td></tr>';
+            $w_html.=chr(13).'              <td>'.Nvl(f($RSQuery1,'nm_pais_passaporte'),'---').'</td></tr>';
           } else {
             $w_html.=chr(13).'      <tr><td><font size="1"><b>Inscrição estadual:</b></td>'; 
-            $w_html.=chr(13).'          <td>'.Nvl(f($row,'inscricao_estadual'),'---').'</td></tr>';
+            $w_html.=chr(13).'          <td>'.Nvl(f($RSQuery1,'inscricao_estadual'),'---').'</td></tr>';
           } 
-          if (f($RS,'sq_tipo_pessoa')==1) {
+          if (f($RSQuery1,'sq_tipo_pessoa')==1) {
             $w_html.=chr(13).'      <tr><td colspan="2" align="center" style="border: 1px solid rgb(0,0,0);"><font size="1"><b>Endereço comercial, Telefones e e-Mail</td>';
           } else {
             $w_html.=chr(13).'      <tr><td colspan="2" align="center" style="border: 1px solid rgb(0,0,0);"><font size="1"><b>Endereço principal, Telefones e e-Mail</td>';
@@ -236,39 +334,39 @@ function VisualAcordo($l_chave,$l_O,$l_usuario,$l_P1,$l_P4) {
           $w_html.=chr(13).'      <tr><td colspan="2">';
           $w_html.=chr(13).'          <tr valign="top">';
           $w_html.=chr(13).'            <td><font size="1"><b>Telefone:</b></td>'; 
-          if (nvl(f($row,'ddd'),'nulo')!='nulo') {
-            $w_html.=chr(13).'            <td>('.f($row,'ddd').') '.f($row,'nr_telefone').'</td></tr>';
+          if (nvl(f($RSQuery1,'ddd'),'nulo')!='nulo') {
+            $w_html.=chr(13).'            <td>('.f($RSQuery1,'ddd').') '.f($RSQuery1,'nr_telefone').'</td></tr>';
           } else {
             $w_html.=chr(13).'            <td>---</td></tr>';
           }
           $w_html.=chr(13).'          <tr><td><font size="1"><b>Fax:</b></td>'; 
-          $w_html.=chr(13).'            <td>'.Nvl(f($row,'nr_fax'),'---').'</td></tr>';
+          $w_html.=chr(13).'            <td>'.Nvl(f($RSQuery1,'nr_fax'),'---').'</td></tr>';
           $w_html.=chr(13).'          <tr><td><font size="1"><b>Celular:</b></td>'; 
-          $w_html.=chr(13).'            <td>'.Nvl(f($row,'nr_celular'),'---').'</td></tr>';
+          $w_html.=chr(13).'            <td>'.Nvl(f($RSQuery1,'nr_celular'),'---').'</td></tr>';
           $w_html.=chr(13).'          <tr valign="top">';
           $w_html.=chr(13).'             <td><font size="1"><b>Endereço:</b></td>'; 
-          $w_html.=chr(13).'            <td>'.f($row,'logradouro').'</td></tr>';
+          $w_html.=chr(13).'            <td>'.f($RSQuery1,'logradouro').'</td></tr>';
           $w_html.=chr(13).'          <tr><td><font size="1"><b>Complemento:</b></td>'; 
-          $w_html.=chr(13).'            <td>'.Nvl(f($row,'complemento'),'---').'</td></tr>';
+          $w_html.=chr(13).'            <td>'.Nvl(f($RSQuery1,'complemento'),'---').'</td></tr>';
           $w_html.=chr(13).'          <tr><td><font size="1"><b>Bairro:</b></td>'; 
-          $w_html.=chr(13).'            <td>'.Nvl(f($row,'bairro'),'---').'</td></tr>';
+          $w_html.=chr(13).'            <td>'.Nvl(f($RSQuery1,'bairro'),'---').'</td></tr>';
           $w_html.=chr(13).'          <tr valign="top">';
-          if (f($row,'pd_pais')=='S') {
+          if (f($RSQuery1,'pd_pais')=='S') {
             $w_html.=chr(13).'          <td><font size="1"><b>Cidade:</b></td>'; 
-            $w_html.=chr(13).'          <td>'.f($row,'nm_cidade').'-'.f($row,'co_uf').'</td></tr>';
+            $w_html.=chr(13).'          <td>'.f($RSQuery1,'nm_cidade').'-'.f($RSQuery1,'co_uf').'</td></tr>';
           } else {
             $w_html.=chr(13).'          <td><font size="1"><b>Cidade:</b></td>'; 
-            $w_html.=chr(13).'          <td>'.f($row,'nm_cidade').'-'.f($row,'nm_pais').'</td></tr>';
+            $w_html.=chr(13).'          <td>'.f($RSQuery1,'nm_cidade').'-'.f($RSQuery1,'nm_pais').'</td></tr>';
           } 
           $w_html.=chr(13).'          <tr><td><font size="1"><b>CEP:</b></td>'; 
-          $w_html.=chr(13).'            <td>'.f($row,'cep').'</td></tr>';
-          if (Nvl(f($row,'email'),'nulo')!='nulo') {
+          $w_html.=chr(13).'            <td>'.f($RSQuery1,'cep').'</td></tr>';
+          if (Nvl(f($RSQuery1,'email'),'nulo')!='nulo') {
             if (!$l_P4==1) {
               $w_html.=chr(13).'              <tr><td><font size="1"><b>e-Mail:</b></td>';
-              $w_html.=chr(13).'                <td><a class="hl" href="mailto:'.f($row,'email').'">'.f($row,'email').'</td></tr>';
+              $w_html.=chr(13).'                <td><a class="hl" href="mailto:'.f($RSQuery1,'email').'">'.f($RSQuery1,'email').'</td></tr>';
             } else {
               $w_html.=chr(13).'              <tr><td><font size="1"><b>e-Mail:</b></td>';
-              $w_html.=chr(13).'                <td>'.f($row,'email').'</td></tr>';
+              $w_html.=chr(13).'                <td>'.f($RSQuery1,'email').'</td></tr>';
             } 
           } else {
             $w_html.=chr(13).'              <tr><td><font size="1"><b>e-Mail:</b></td>';
@@ -288,15 +386,13 @@ function VisualAcordo($l_chave,$l_O,$l_usuario,$l_P1,$l_P4) {
             $w_html.=chr(13).'      <td>'.f($RS,'nm_forma_pagamento').'</td></tr>';
           } 
           if (substr($w_sigla,0,3)!='GCR') {
-            $w_html.=chr(13).'      <tr><td colspan="2">';//<table border=0 width="100%" cellspacing=0>';
             if (!(strpos('CREDITO,DEPOSITO',f($RS,'sg_forma_pagamento'))===false)) {
               if (Nvl(f($RS,'cd_banco'),'')>'') {
                 $w_html.=chr(13).'          <tr><td><font size="1"><b>Banco:</b></td>';
                 $w_html.=chr(13).'                <td>'.f($RS,'cd_banco').' - '.f($RS,'nm_banco').'</td></tr>';
                 $w_html.=chr(13).'          <tr><td><font size="1"><b>Agência:</b></td>';
                 $w_html.=chr(13).'              <td>'.f($RS,'cd_agencia').' - '.f($RS,'nm_agencia').'</td></tr>';
-                $w_html.=chr(13).'          <tr><td><font size="1"><b>Operação:</b></td>';
-                $w_html.=chr(13).'              <td>'.Nvl(f($RS,'operacao_conta'),'---').'</td>';
+                if (f($RS,'exige_operacao')=='S') $w_html.=chr(13).'          <tr><td><font size="1"><b>Operação:</b></td><td>'.Nvl(f($RS,'operacao_conta'),'---').'</td>';
                 $w_html.=chr(13).'          <tr><td><font size="1"><b>Número da conta:</b></td>';
                 $w_html.=chr(13).'              <td>'.Nvl(f($RS,'numero_conta'),'---').'</td></tr>';
               } else {
@@ -304,8 +400,7 @@ function VisualAcordo($l_chave,$l_O,$l_usuario,$l_P1,$l_P4) {
                 $w_html.=chr(13).'              <td>---</td></tr>';
                 $w_html.=chr(13).'          <tr><td><font size="1"><b>Agência:</b></td>';
                 $w_html.=chr(13).'              <td>---</td></tr>';
-                $w_html.=chr(13).'          <tr><td><font size="1"><b>Operação:</b></td>';
-                $w_html.=chr(13).'              <td>---</td></tr>';
+                if (f($RS,'exige_operacao')=='S') $w_html.=chr(13).'          <tr><td><font size="1"><b>Operação:</b></td><td>---</td></tr>';
                 $w_html.=chr(13).'          <tr><td><font size="1"><b>Número da conta:</b></td>';
                 $w_html.=chr(13).'              <td>---</td></tr>';
               } 
@@ -333,89 +428,94 @@ function VisualAcordo($l_chave,$l_O,$l_usuario,$l_P1,$l_P4) {
             } 
           } 
         } 
-        break;
+        // Preposto
+        if (Nvl(f($RS,'sq_tipo_pessoa'),0)==2 && $l_P1==4) {
+          if ($w_tipo_visao!=2) {
+            $RSQuery1 = db_getConvPreposto::getInstanceOf($dbms,$l_chave,f($row,'sq_acordo_outra_parte'),null);            
+            $w_html.=chr(13).'      <tr><td colspan="2"><font size="1"><b>Preposto</td>';
+            if (count($RSQuery1)==0) {
+              $w_html.=chr(13).'      <tr><td colspan=2><font size=1>Preposto não informado';
+            } else {
+              $w_html.=chr(13).'      <tr><td colspan="2"><div align="center">';
+              $w_html.=chr(13).'        <table width=100%  border="1" bordercolor="#00000">';              
+              $w_html.=chr(13).'          <tr><td bgColor="#f0f0f0"><div align="center"><b>Nome</b></div></td>';
+              $w_html.=chr(13).'            <td bgColor="#f0f0f0"><div align="center"><b>CPF</b></div></td>';
+              $w_html.=chr(13).'            <td bgColor="#f0f0f0"><div align="center"><b>Sexo</b></div></td>';
+              $w_html.=chr(13).'            <td bgColor="#f0f0f0"><div align="center"><b>Identidade</b></div></td>';
+              $w_html.=chr(13).'            <td bgColor="#f0f0f0"><div align="center"><b>Orgão emissão</b></div></td>';
+              $w_html.=chr(13).'            <td bgColor="#f0f0f0"><div align="center"><b>E-mail</b></div></td>';
+              $w_html.=chr(13).'            <td bgColor="#f0f0f0"><div align="center"><b>Cargo</b></div></td>';
+              foreach($RSQuery1 as $row1) {
+                $w_cor = ($w_cor==$conTrBgColor || $w_cor=='') ? $w_cor=$conTrAlternateBgColor : $w_cor=$conTrBgColor;
+                $w_html.=chr(13).'      <tr>';
+                $w_html.=chr(13).'        <td ><font size="1">'.f($row1,'nm_pessoa').'</td>';
+                $w_html.=chr(13).'        <td align="center"><font size="1">'.f($row1,'cpf').'</td>';
+                $w_html.=chr(13).'        <td><font size="1">'.f($row1,'nm_sexo').'</td>';
+                $w_html.=chr(13).'        <td><font size="1">'.Nvl(f($row1,'rg_numero'),'---').'</td>';
+                $w_html.=chr(13).'        <td><font size="1">'.Nvl(f($row1,'rg_emissor'),'---').'</td>';
+                if (Nvl(f($row1,'email'),'nulo')!='nulo') {
+                  if (!$l_P4==1) {
+                    $w_html.=chr(13).'        <td><font size="1"><a class="hl" href="mailto:'.f($row1,'email').'">'.f($row1,'email').'</a></td>';
+                  } else {
+                    $w_html.=chr(13).'        <td><font size="1">'.f($row1,'email').'</td>';
+                  } 
+                } else {
+                  $w_html.=chr(13).'        <td><font size="1">---</td>';
+                } 
+                $w_html.=chr(13).'        <td><font size="1">'.Nvl(f($row1,'cargo'),'---').'</td>';
+              }
+              $w_html.=chr(13).'        </table></td></tr>';              
+            }
+          }
+          // Representantes
+          //$RSQuery = db_getAcordoRep::getInstanceOf($dbms,f($RS,'sq_siw_solicitacao'),$w_cliente,null,null);
+          $RSQuery = db_getConvOutroRep::getInstanceOf($dbms,$l_chave,null,f($row,'sq_acordo_outra_parte'));
+          $RSQuery = SortArray($RSQuery,'nm_pessoa','asc');
+          $w_html.=chr(13).'      <tr><td colspan="2"><font size="1"><b>Representantes</td>';
+          if (count($RSQuery)==0) {
+            $w_html.=chr(13).'      <tr><td colspan=2><font size=1>Representantes não informados';
+          } else {
+            $w_html.=chr(13).'      <tr><td colspan="2"><div align="center">';
+            $w_html.=chr(13).'        <table width=100%  border="1" bordercolor="#00000">';              
+            $w_html.=chr(13).'          <tr><td bgColor="#f0f0f0"><div align="center"><b><b>Nome</b></div></td>';
+            $w_html.=chr(13).'            <td bgColor="#f0f0f0"><div align="center"><b>CPF</b></div></td>';
+            $w_html.=chr(13).'            <td bgColor="#f0f0f0"><div align="center"><b><b>DDD</b></div></td>';
+            $w_html.=chr(13).'            <td bgColor="#f0f0f0"><div align="center"><b><b>Telefone</b></div></td>';
+            $w_html.=chr(13).'            <td bgColor="#f0f0f0"><div align="center"><b><b>Celular</b></div></td>';
+            $w_html.=chr(13).'            <td bgColor="#f0f0f0"><div align="center"><b><b>e-Mail</b></div></td>';
+            $w_html.=chr(13).'            <td bgColor="#f0f0f0"><div align="center"><b><b>Cargo</b></div></td>';
+            $w_html.=chr(13).'          </tr>';
+            $w_cor=$w_TrBgColor;
+            foreach($RSQuery as $row2) {
+              $w_html.=chr(13).'      <tr><td><font size="1">'.f($row2,'nm_pessoa').'</td>';
+              $w_html.=chr(13).'        <td align="center"><font size="1">'.f($row2,'cpf').'</td>';
+              $w_html.=chr(13).'        <td align="center" ><font size="1">'.Nvl(f($row2,'ddd'),'---').'</td>';
+              $w_html.=chr(13).'        <td><font size="1">'.Nvl(f($row2,'nr_telefone'),'---').'</td>';
+              $w_html.=chr(13).'        <td><font size="1">'.Nvl(f($row2,'nr_celular'),'---').'</td>';
+              if (Nvl(f($row2,'email'),'nulo')!='nulo') {
+                if (!$l_P4==1) {
+                  $w_html.=chr(13).'        <td><font size="1"><a class="hl" href="mailto:'.f($row2,'email').'">'.f($row2,'email').'</a></td>';
+                } else {
+                  $w_html.=chr(13).'        <td><font size="1">'.f($row2,'email').'</td>';
+                } 
+              } else {
+                $w_html.=chr(13).'        <td><font size="1">---</td>';
+              } 
+              $w_html.=chr(13).'        <td><font size="1">'.Nvl(f($row2,'cargo'),'---').'</td>';
+            }
+            $w_html.=chr(13).'        </table></td></tr>';      
+          } 
+        }
+        $w_html.=chr(13).'      <tr><td colspan=2 style="border: 1px solid rgb(0,0,0);" ><font size=1>&nbsp;<b>';
       } 
     }
-
-    // Se outra parte for pessoa jurídica
-    if (Nvl(f($RS,'sq_tipo_pessoa'),0)==2 && $l_P1==4) {
-      if ($w_tipo_visao!=2) {
-        // Preposto
-        $RSQuery = db_getBenef::getInstanceOf($dbms,$w_cliente,Nvl(f($RS,'preposto'),0),null,null,null,null,null,null);
-        $w_html.=chr(13).'      <tr><td colspan="2"><br><font size="2"><b>PREPOSTO<hr NOSHADE color=#000000 SIZE=1></b></font></td></tr>';
-        if (count($RSQuery)==0) {
-          $w_html.=chr(13).'      <tr><td colspan=2 align="center"><font size=1>Preposto não informado';
-        } else {
-          foreach($RSQuery as $row) {
-            $w_html.=chr(13).'      <tr><td><font size=1><b>Nome:</b></td>';
-            $w_html.=chr(13).'            <td>'.f($row,'nm_pessoa').' ('.f($row,'nome_resumido').')</td></tr>';
-            $w_html.=chr(13).'      <tr><td><font size=1><b>CPF:</b></td>';
-            $w_html.=chr(13).'            <td>'.f($row,'cpf').'</td></tr>';
-            // Exibe ficha completa
-            if ($l_P1==4) {
-              $w_html.=chr(13).'      <tr><td colspan="2">';//<table border=0 width="100%" cellspacing=0><tr valign="top">';
-              $w_html.=chr(13).'          <tr><td><font size="1"><b>Sexo:</b></td>';
-              $w_html.=chr(13).'            <td>'.f($row,'nm_sexo').'</td></tr>';
-              $w_html.=chr(13).'          <tr><td><font size="1"><b>Identidade:</b></td>';
-              $w_html.=chr(13).'            <td>'.f($row,'rg_numero').'</td></tr>';
-              $w_html.=chr(13).'          <tr><td><font size="1"><b>Data de emissão:</b></td>';
-              $w_html.=chr(13).'            <td>'.Nvl(FormataDataEdicao(f($row,'rg_emissao')),'---').'</td></tr>';
-              $w_html.=chr(13).'          <tr><td><font size="1"><b>Órgão emissor:</b></td>';
-              $w_html.=chr(13).'            <td>'.f($row,'rg_emissor').'</td></tr>';
-            }
-            break;
-          }
-        } 
-      }
-      // Representantes
-      $RSQuery = db_getAcordoRep::getInstanceOf($dbms,f($RS,'sq_siw_solicitacao'),$w_cliente,null,null);
-      $RSQuery = SortArray($RSQuery,'nm_pessoa','asc');
-      $w_html.=chr(13).'      <tr><td colspan="2"><br><font size="2"><b>REPRESENTANTES<hr NOSHADE color=#000000 SIZE=1></b></font></td></tr>';
-      if (count($RSQuery)==0) {
-        $w_html.=chr(13).'      <tr><td colspan=2 align="center"><font size=1>Representantes não informados';
-      } else {
-        $w_html.=chr(13).'      <tr><td colspan="2"><div align="center">';
-        $w_html.=chr(13).'        <table width=100%  border="1" bordercolor="#00000">';
-        $w_html.=chr(13).'          <tr align="center">';
-        if ($w_tipo_visao!=2) $w_html.=chr(13).'            <td bgColor="#f0f0f0"><div><b>CPF</b></div></td>';
-        $w_html.=chr(13).'            <td bgColor="#f0f0f0"><div><b>Nome</b></div></td>';
-        $w_html.=chr(13).'            <td bgColor="#f0f0f0"><div><b>DDD</b></div></td>';
-        $w_html.=chr(13).'            <td bgColor="#f0f0f0"><div><b>Telefone</b></div></td>';
-        $w_html.=chr(13).'            <td bgColor="#f0f0f0"><div><b>Fax</b></div></td>';
-        $w_html.=chr(13).'            <td bgColor="#f0f0f0"><div><b>Celular</b></div></td>';
-        $w_html.=chr(13).'            <td bgColor="#f0f0f0"><div><b>e-Mail</b></div></td>';
-        $w_html.=chr(13).'          </tr>';
-        $w_cor=$w_TrBgColor;
-        foreach($RSQuery as $row) {
-          $w_html.=chr(13).'      <tr valign="top">';
-          if ($w_tipo_visao!=2) $w_html.=chr(13).'        <td align="center"><font size="1">'.f($row,'cpf').'</td>';
-          $w_html.=chr(13).'        <td><font size="1">'.f($row,'nome_resumido').'</td>';
-          $w_html.=chr(13).'        <td align="center"><font size="1">'.Nvl(f($row,'ddd'),'---').'</td>';
-          $w_html.=chr(13).'        <td><font size="1">'.Nvl(f($row,'nr_telefone'),'---').'</td>';
-          $w_html.=chr(13).'        <td><font size="1">'.Nvl(f($row,'nr_fax'),'---').'</td>';
-          $w_html.=chr(13).'        <td><font size="1">'.Nvl(f($row,'nr_celular'),'---').'</td>';
-          if (Nvl(f($row,'email'),'nulo')!='nulo') {
-            if (!$l_P4==1) {
-              $w_html.=chr(13).'        <td><font size="1"><a class="hl" href="mailto:'.f($row,'email').'">'.f($row,'email').'</a></td>';
-            } else {
-              $w_html.=chr(13).'        <td><font size="1">'.f($row,'email').'</td>';
-            } 
-          } else {
-            $w_html.=chr(13).'        <td><font size="1">---</td>';
-          } 
-          $w_html.=chr(13).'      </tr>';
-        } 
-        $w_html.=chr(13).'         </table></td></tr>';
-      } 
     } 
-  } 
-
   // Se for listagem, exibe os outros dados dependendo do tipo de visão  do usuário
   if ($w_tipo_visao!=2 && ($l_O=='L' || $l_O=='T') && $l_P1==4) {
     if (f($RS,'aviso_prox_conc')=='S') {
       // Configuração dos alertas de proximidade da data limite para conclusão do acordo
       $w_html.=chr(13).'      <tr><td colspan="2"><br><font size="2"><b>ALERTAS<hr NOSHADE color=#000000 SIZE=1></b></font></td></tr>';
-      $w_html.=chr(13).'      <tr><td width="30%"><b>Emite aviso:</b></td>';
+      $w_html.=chr(13).'      <tr><td><b>Emite aviso:</b></td>';
       $w_html.=chr(13).'        <td>'.retornaSimNao(f($RS,'aviso_prox_conc')).', a partir de '.formataDataEdicao(f($RS,'aviso')).'.</td></tr>';
     } 
   } 
@@ -430,6 +530,7 @@ function VisualAcordo($l_chave,$l_O,$l_usuario,$l_P1,$l_P4) {
     $w_html.=chr(13).'        <table width=100%  border="1" bordercolor="#00000">';
     $w_html.=chr(13).'          <tr align="center">';
     $w_html.=chr(13).'            <td rowspan=2 bgColor="#f0f0f0"><div><b>Ordem</b></div></td>';
+    $w_html.=chr(13).'            <td rowspan=2 bgColor="#f0f0f0"><div><b>Referência</b></div></td>';
     $w_html.=chr(13).'            <td rowspan=2 bgColor="#f0f0f0"><div><b>Vencimento</b></div></td>';
     $w_html.=chr(13).'            <td rowspan=2 bgColor="#f0f0f0"><div><b>Valor</b></div></td>';
     $w_html.=chr(13).'            <td rowspan=2 bgColor="#f0f0f0"><div><b>Observações</b></div></td>';
@@ -464,9 +565,11 @@ function VisualAcordo($l_chave,$l_O,$l_usuario,$l_P1,$l_P4) {
         } 
       } 
       $w_html.=chr(13).'        '.f($row,'ordem').'</td>';
+      if(nvl(f($row,'inicio'),'')!='') $w_html.=chr(13).'        <td align="center">'.FormataDataEdicao(f($row,'inicio')).' a '.FormataDataEdicao(f($row,'fim')).'</td>';
+      else                             $w_html.=chr(13).'        <td align="center">---</td>';
       $w_html.=chr(13).'        <td align="center"><font size="1">'.FormataDataEdicao(f($row,'vencimento')).'</td>';
       $w_html.=chr(13).'        <td align="right"><font size="1">'.number_format(f($row,'valor'),2,',','.').'</td>';
-      $w_html.=chr(13).'        <td><font size="1">'.Nvl(f($row,'observacao'),'---').'</td>';
+      $w_html.=chr(13).'        <td><font size="1">'.crlf2br(Nvl(f($row,'observacao'),'---')).'</td>';
       if (Nvl(f($row,'cd_lancamento'),'')>'') {
         $w_html.=chr(13).'        <td align="center" nowrap><font size="1"><A class="hl" HREF="mod_fn/lancamento.php?par=Visual&O=L&w_chave='.f($row,'sq_lancamento').'&w_tipo=&P1=2&P2='.$P2.'&P3='.$P3.'&P4='.$l_P4.'&TP='.$TP.'&SG=FN'.substr($SG,2,1).'CONT" title="Exibe as informações do lançamento." target="Lancamento">'.f($row,'cd_lancamento').'</a></td>';
         $w_html.=chr(13).'        <td align="center"><font size="1">'.FormataDataEdicao(f($row,'dt_lancamento')).'</td>';

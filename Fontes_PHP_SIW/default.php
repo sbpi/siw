@@ -126,6 +126,7 @@ function Valida() {
     $_SESSION['LOGON']           = 'Sim';
     $_SESSION['ENDERECO']        = f($RS,'SQ_PESSOA_ENDERECO');
     $_SESSION['ANO']             = Date('Y');
+    session_write_close();
 
     if ($par=='Log') {
       ScriptOpen('JavaScript');

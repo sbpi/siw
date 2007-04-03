@@ -1826,18 +1826,22 @@ function SolicMail($p_solic,$p_tipo) {
   // Identificação da demanda
   $w_html.=$crlf.'      <tr><td valign="top" colspan="2" align="center" bgcolor="#D0D0D0" style="border: 2px solid rgb(0,0,0);"><b>EXTRATO DA DEMANDA</td>';
   // Se a classificação foi informada, exibe.
-  if (nvl(f($RSM,'sq_cc'),'')>'') {
-    $w_html.=$crlf.'      <tr><td valign="top">Classificação:<br><b>'.f($RSM,'cc_nome').' </b></td>';
+  if (nvl(f($RSM,'sq_cc'),'')>'') { 
+    $w_html .= $crlf.'    <tr><td valign="top"><b>Classificação:</b></td>';
+    $w_html .= $crlf.'      <td>'.f($RSM,'cc_nome').' </b></td>';
   } 
-  $w_html.=$crlf.'      <tr><td valign="top" colspan="2"><table border=0 width="100%" cellspacing=0>';
-  $w_html.=$crlf.'          <tr valign="top">';
-  $w_html.=$crlf.'          <td>Responsável:<br><b>'.f($RSM,'nm_sol').'</b></td>';
-  $w_html.=$crlf.'          <td>Unidade responsável:<br><b>'.f($RSM,'nm_unidade_resp').'</b></td>';
-  $w_html.=$crlf.'          <tr valign="top">';
-  $w_html.=$crlf.'          <td>Início previsto:<br><b>'.FormataDataEdicao(f($RSM,'inicio')).' </b></td>';
-  $w_html.=$crlf.'          <td>Término previsto:<br><b>'.FormataDataEdicao(f($RSM,'fim')).' </b></td>';
-  $w_html.=$crlf.'          <td>Prioridade:<br><b>'.RetornaPrioridade(f($RSM,'prioridade')).' </b></td>';
-  $w_html.=$crlf.'          </table>';
+  $w_html .= $crlf.'      <tr><td valign="top" colspan="2">';
+  $w_html .= $crlf.'      <tr><td><b>Responsável:</b></td>';
+  $w_html .= $crlf.'        <td>'.f($RSM,'nm_sol').'</td></tr>';
+  $w_html .= $crlf.'      <tr><td><b>Unidade responsável:</b></td>';
+  $w_html .= $crlf.'        <td>'.f($RSM,'nm_unidade_resp').'</td></tr>';
+  $w_html .= $crlf.'      <tr><td><b>Início previsto:</b></td>';
+  $w_html .= $crlf.'        <td>'.FormataDataEdicao(f($RSM,'inicio')).' </td></tr>';
+  $w_html .= $crlf.'      <tr><td><b>Término previsto:</b></td>';
+  $w_html .= $crlf.'        <td>'.FormataDataEdicao(f($RSM,'fim')).' </td></tr>';
+  $w_html .= $crlf.'      <tr><td><b>Prioridade:</b></td>';
+  $w_html .= $crlf.'        <td>'.RetornaPrioridade(f($RSM,'prioridade')).' </td></tr>';
+
   // Informações adicionais
   if (Nvl(f($RSM,'descricao'),'')>'') {
     $w_html.=$crlf.'      <tr><td valign="top">Resultados da demanda:<br><b>'.CRLF2BR(f($RSM,'descricao')).' </b></td>';

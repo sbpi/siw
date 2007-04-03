@@ -65,6 +65,9 @@ $w_pagina       = 'tabela_financeiras.php?par=';
 $w_Disabled     = 'ENABLED';
 $w_dir_volta    = '';
 $w_troca        = $_REQUEST['w_troca'];
+$p_codigo       = $_REQUEST['p_codigo'];
+$p_nome         = trim(strtoupper($_REQUEST['p_nome']));
+$p_ativo        = $_REQUEST['p_ativo'];
 
 if ($O=='') $O='L';
 
@@ -145,7 +148,7 @@ function CentroCusto() {
         $w_regular      = $_REQUEST['w_regular'];
       } 
       if ($O=='I' || $O=='A') {
-        Validate('w_nome','Nome','1','1','5','60','1','1');
+        Validate('w_nome','Nome','1','1','3','60','1','1');
         Validate('w_descricao','Descrição','1','1','5','500','1','1');
         Validate('w_sigla','Sigla','1','1','2','20','1','1');
       } 
@@ -634,13 +637,15 @@ function Banco() {
   $RS = db_getMenuData::getInstanceOf($dbms,$w_menu);
   $w_libera_edicao = f($RS,'libera_edicao');
   $w_sq_banco      = $_REQUEST['w_sq_banco'];
-  
+
   if ($w_troca>'' && $O!='E') {
     // Se for recarga da página
-    $w_codigo  = $_REQUEST['w_codigo'];
-    $w_nome    = $_REQUEST['w_nome'];
-    $w_padrao  = $_REQUEST['w_padrao'];
-    $w_ativo   = $_REQUEST['w_ativo'];
+    $w_codigo        = $_REQUEST['w_codigo'];
+    $w_codigo_atual  = $_REQUEST['w_codigo_atual'];    
+    $w_nome          = $_REQUEST['w_nome'];
+    $w_padrao        = $_REQUEST['w_padrao'];
+    $w_ativo         = $_REQUEST['w_ativo'];
+    $w_exige         = $_REQUEST['w_exige'];    
   } elseif ($O=='L') {
     $RS = db_getBankList::getInstanceOf($dbms,$p_codigo,$p_nome,$p_ativo);
     if ($p_ordena>'') { 
@@ -651,12 +656,13 @@ function Banco() {
   } elseif ($O=='A' || $O=='E') {
     $w_sq_banco = $_REQUEST['w_sq_banco'];
     $RS = db_getBankData::getInstanceOf($dbms,$w_sq_banco);
-    $w_nome     = f($RS,'nome');
-    $w_padrao   = f($RS,'padrao');
-    $w_codigo   = f($RS,'codigo');
-    $w_ativo    = f($RS,'ativo');
+    $w_nome         = f($RS,'nome');
+    $w_padrao       = f($RS,'padrao');
+    $w_codigo       = f($RS,'codigo');
+    $w_codigo_atual = f($RS,'codigo');    
+    $w_ativo        = f($RS,'ativo');
+    $w_exige        = f($RS,'exige_operacao');    
   } 
-
   Cabecalho();
   ShowHTML('<HEAD>');
   Estrutura_CSS($w_cliente);
@@ -689,7 +695,7 @@ function Banco() {
     BodyOpen('onLoad=document.Form.w_codigo.focus();');
   } elseif ($O=='H') {
     BodyOpen('onLoad=document.Form.w_heranca.focus();');
-  } elseif ($O=='L') {
+  } elseif ($O=='L' || $O=='P') {
     BodyOpen('onLoad=this.focus();');
   } else {
     BodyOpen('onLoad=document.Form.w_assinatura.focus();');
@@ -755,6 +761,7 @@ function Banco() {
     AbreForm('Form',$w_pagina.'Grava','POST','return(Validacao(this));',null,$P1,$P2,$P3,$P4,$TP,$SG,$R,$O);
     ShowHTML(MontaFiltro('POST'));
     ShowHTML('<INPUT type="hidden" name="w_sq_banco" value="'.$w_sq_banco.'">');
+    ShowHTML('<INPUT type="hidden" name="w_codigo_atual" value="'.$w_codigo_atual.'">');
     ShowHTML('<tr bgcolor="'.$conTrBgColor.'"><td>');
     ShowHTML('    <table width="100%" border="0">');
     ShowHTML('      <tr><td valign="top"><b><U>C</U>ódigo:<br><INPUT ACCESSKEY="C" '.$w_Disabled.' class="sti" type="text" name="w_codigo" size="3" maxlength="3" value="'.$w_codigo.'"></td>');
@@ -765,6 +772,9 @@ function Banco() {
     ShowHTML('      <tr align="left">');
     MontaRadioSN('Ativo?',$w_ativo,'w_ativo');
     ShowHTML('      </tr>');
+    ShowHTML('      <tr align="left">');
+    MontaRadioSN('Exige operação?',$w_exige,'w_exige');
+    ShowHTML('      </tr>');    
     ShowHTML('      <tr><td valign="top"><b><U>A</U>ssinatura Eletrônica:<br><INPUT ACCESSKEY="A" class="sti" type="PASSWORD" name="w_assinatura" size="30" maxlength="30" value=""></td>');
     ShowHTML('      <tr><td align="center" colspan="3" height="1" bgcolor="#000000">');
     ShowHTML('      <tr><td align="center" colspan="3">');
@@ -863,23 +873,26 @@ function Grava() {
       $p_nome   = strtoupper($_REQUEST['p_nome']);
       $p_codigo = strtoupper($_REQUEST['p_codigo']);
       $p_ativo  = strtoupper($_REQUEST['p_ativo']);
+      $p_exige  = strtoupper($_REQUEST['p_exige']);      
       $p_ordena = strtoupper($_REQUEST['p_ordena']);
       // Verifica se a Assinatura Eletrônica é válida
       if (VerificaAssinaturaEletronica($_SESSION['USERNAME'],strtoupper($_REQUEST['w_assinatura'])) || $w_assinatura=='') {
-        if ($O=='I' || $O=='A') {
-          // Verifica se já existe o código do banco informado
-          $RS = db_getBankList::getInstanceOf($dbms,$_REQUEST['w_codigo'],null,null);
-          if (count($RS)>0) {
-            ScriptOpen('JavaScript');
-            ShowHTML('  alert(\'O código já existe!\');');
-            ScriptClose();
-            RetornaFormulario('w_codigo');
-            exit();
+        if  ($_REQUEST['w_codigo']!= nvl($_REQUEST['w_codigo_atual'],'')) {
+          if ($O=='I' || $O =='A') {
+            // Verifica se já existe o código do banco informado
+            $RS = db_getBankList::getInstanceOf($dbms,$_REQUEST['w_codigo'],null,null);
+            if (count($RS)>0) {
+              ScriptOpen('JavaScript');
+              ShowHTML('  alert(\'O código já existe!\');');
+              ScriptClose();
+              RetornaFormulario('w_codigo');
+              exit();
+            }
           }
         }  
         dml_CoBanco::getInstanceOf($dbms,$O,
             $_REQUEST['w_sq_banco'],$_REQUEST['w_nome'],$_REQUEST['w_codigo'],
-            $_REQUEST['w_padrao'],$_REQUEST['w_ativo']);
+            $_REQUEST['w_padrao'],$_REQUEST['w_ativo'],$_REQUEST['w_exige']);
         ScriptOpen('JavaScript');
         ShowHTML('  location.href=\''.$R.'&O=L&P1='.$P1.'&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP='.$TP.'&SG='.$SG.MontaFiltro('GET').'\';');
         ScriptClose();

@@ -555,10 +555,12 @@ function FormataDataMA() {
 
 // Abre a tag SCRIPT
 function Validate($VariableName,$DisplayName,$DataType,$ValueRequired,$MinimumLength,$MaximumLength,$AllowLetters,$AllowDigits) {
+  if (strtoupper($DataType)!="SELECT" && strtoupper($DataType)!="HIDDEN") {
+    print "  theForm.".$VariableName.".value = Trim(theForm.".$VariableName.".value);"."\r\n"; 
+  }
   if ($ValueRequired>"") {
     if (strtoupper($DataType)=="SELECT") { print "  if (theForm.".$VariableName.".selectedIndex == 0)"."\r\n"; }
     else { 
-      print "  theForm.".$VariableName.".value = Trim(theForm.".$VariableName.".value);"."\r\n"; 
       print "  if (theForm.".$VariableName.".value == '')"."\r\n"; 
     }
 

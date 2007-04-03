@@ -65,6 +65,13 @@ function VisualLancamento($v_chave,$l_O,$w_usuario,$l_P1,$l_P4) {
     }
     $w_html.=chr(13).'      <tr><td><b>Tipo de lançamento: </b></td>';
     $w_html.=chr(13).'        <td>'.f($RS,'nm_tipo_lancamento').' </td></tr>';
+    // Verifica o segmento do cliente    
+    $RS1 = db_getCustomerData::getInstanceOf($dbms,$w_cliente); 
+    $w_segmento = f($RS1,'segmento');
+    if ($w_segmento=='Público') { 
+      $w_html.=chr(13).'      <tr><td><b>Númenro do processo: </b></td>';
+      $w_html.=chr(13).'        <td>'.nvl(f($RS,'processo'),'---').' </td></tr>';
+    }   
     if (Nvl(f($RS,'tipo_rubrica'),'')>'') {
       $w_html.=chr(13).'      <tr><td><b>Tipo de movimentação: </b></td>';
       $w_html.=chr(13).'        <td>'.f($RS,'nm_tipo_rubrica').' </td></tr>';
@@ -120,7 +127,7 @@ function VisualLancamento($v_chave,$l_O,$w_usuario,$l_P1,$l_P4) {
         $w_html.=chr(13).'          <td><b>Sexo:</b></td>';
         $w_html.=chr(13).'           <td>'.f($RS_Query,'nm_sexo').'</td></tr>';
         $w_html.=chr(13).'          <td><b>Data de nascimento:</b></td>';
-        $w_html.=chr(13).'           <td>'.FormataDataEdicao(f($RS_Query,'nascimento')).'</td></tr>';
+        $w_html.=chr(13).'           <td>'.Nvl(FormataDataEdicao(f($RS_Query,'nascimento')),'---').'</td></tr>';
         $w_html.=chr(13).'          <td><b>Identidade:</b></td>';
         $w_html.=chr(13).'           <td>'.f($RS_Query,'rg_numero').'</td></tr>';
         $w_html.=chr(13).'          <td><b>Data de emissão:</b></td>';
@@ -196,8 +203,7 @@ function VisualLancamento($v_chave,$l_O,$w_usuario,$l_P1,$l_P4) {
             $w_html.=chr(13).'                <td>'.f($RS,'cd_banco').' - '.f($RS,'nm_banco').'</td></tr>';
             $w_html.=chr(13).'          <tr><td><font size="1"><b>Agência:</b></td>';
             $w_html.=chr(13).'              <td>'.f($RS,'cd_agencia').' - '.f($RS,'nm_agencia').'</td></tr>';
-            $w_html.=chr(13).'          <tr><td><font size="1"><b>Operação:</b></td>';
-            $w_html.=chr(13).'              <td>'.Nvl(f($RS,'operacao_conta'),'---').'</td>';
+            if (f($RS,'exige_operacao')=='S') $w_html.=chr(13).'          <tr><td><font size="1"><b>Operação:</b></td><td>'.Nvl(f($RS,'operacao_conta'),'---').'</td>';
             $w_html.=chr(13).'          <tr><td><font size="1"><b>Número da conta:</b></td>';
             $w_html.=chr(13).'              <td>'.Nvl(f($RS,'numero_conta'),'---').'</td></tr>';
           } else {
@@ -205,8 +211,7 @@ function VisualLancamento($v_chave,$l_O,$w_usuario,$l_P1,$l_P4) {
             $w_html.=chr(13).'              <td>---</td></tr>';
             $w_html.=chr(13).'          <tr><td><font size="1"><b>Agência:</b></td>';
             $w_html.=chr(13).'              <td>---</td></tr>';
-            $w_html.=chr(13).'          <tr><td><font size="1"><b>Operação:</b></td>';
-            $w_html.=chr(13).'              <td>---</td></tr>';
+            if (f($RS,'exige_operacao')=='S') $w_html.=chr(13).'          <tr><td><font size="1"><b>Operação:</b></td><td>---</td></tr>';
             $w_html.=chr(13).'          <tr><td><font size="1"><b>Número da conta:</b></td>';
             $w_html.=chr(13).'              <td>---</td></tr>';
           }

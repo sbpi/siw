@@ -14,10 +14,10 @@ class db_getSolicEtapa {
      extract($GLOBALS,EXTR_PREFIX_SAME,'strchema'); $sql=$strschema.'SP_GETSOLICETAPA';
      $params=array('p_chave'                     =>array(tvl($p_chave),                                    B_INTEGER,        32),
                    'p_chave_aux'                 =>array(tvl($p_chave_aux),                                B_INTEGER,        32),
-                   'p_restricao'                 =>array($p_restricao,                                     B_VARCHAR,        20),
+                   'p_restricao'                 =>array($p_restricao,                                     B_VARCHAR,       200),
                    'p_chave_aux2'                =>array(tvl($p_chave_aux2),                               B_INTEGER,        32),
                    'p_result'                    =>array(null,                                             B_CURSOR,         -1)
-                  );
+                  );  
      $l_rs = DatabaseQueriesFactory::getInstanceOf($sql, $dbms, $params, DB_TYPE);
      $l_error_reporting = error_reporting(); 
      error_reporting(0); 

@@ -89,7 +89,7 @@ function selecaoSolic($label,$accesskey,$hint,$cliente,$chave,$chaveAux,$chaveAu
         }
       } 
       if ($l_cont==0) {
-        ShowHTML('          <option value="">Não há documentos disponíveis para vinculação.');
+        ShowHTML('          <option value="">Nenhum registro encontrado.');
         $l_cont += 1;
       }
       ShowHTML('          </select>');

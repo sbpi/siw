@@ -855,7 +855,7 @@ function Interessados() {
     ValidateOpen('Validacao');
     if (!(strpos('IA',$O)===false)) {
       Validate('w_sq_pessoa','Pessoa','SELECT','1','1','18','','1');
-      Validate('w_sq_tipo_interessado','Tipo de interessado','SELECT','1','1','18','','1');
+      Validate('w_sq_tipo_interessado','Tipo de envolvimento','SELECT','1','1','18','','1');
     } 
     ShowHTML('  theForm.Botao[0].disabled=true;');
     ShowHTML('  theForm.Botao[1].disabled=true;');
@@ -1174,10 +1174,8 @@ function Excluir() {
   global $w_Disabled;
   $w_chave      = $_REQUEST['w_chave'];
   $w_chave_aux  = $_REQUEST['w_chave_aux'];
-  if ($w_troca>'') {
-    // Se for recarga da página
-    $w_observacao = $_REQUEST['w_observacao'];
-  } 
+  // Se for recarga da página
+  if ($w_troca>'') $w_observacao = $_REQUEST['w_observacao'];
   Cabecalho();
   ShowHTML('<HEAD>');
   ShowHTML('<meta http-equiv="Refresh" content="300; URL=../'.MontaURL('MESA').'">');
@@ -1197,11 +1195,8 @@ function Excluir() {
   } 
   ShowHTML('</HEAD>');
   ShowHTML('<BASE HREF="'.$conRootSIW.'">');
-  if ($w_troca>'') {
-    BodyOpen('onLoad=\'document.Form.'.$w_troca.'.focus()\';');
-  } else {
-    BodyOpen('onLoad=\'document.Form.w_assinatura.focus()\';');
-  }
+  if ($w_troca > '')  BodyOpen('onLoad=\'document.Form.'.$w_troca.'.focus()\';');
+  else               BodyOpen('onLoad=\'document.Form.w_assinatura.focus()\';');
   ShowHTML('<B><FONT COLOR="#000000">'.$w_TP.'</FONT></B>');
   ShowHTML('<HR>');
   ShowHTML('<div align=center><center>');

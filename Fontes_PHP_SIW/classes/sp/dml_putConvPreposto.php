@@ -11,7 +11,7 @@ include_once($w_dir_volta.'classes/db/DatabaseQueriesFactory.php');
 
 class dml_putConvPreposto {
    function getInstanceOf($dbms, $operacao, $p_restricao, $p_chave, $p_sq_acordo_outra_parte, $p_sq_pessoa, $p_chave_aux,  $p_cpf, 
-                          $p_nome, $p_nome_resumido, $p_sexo, $p_rg_numero, $p_rg_emissao, $p_rg_emissor) {
+                          $p_nome, $p_nome_resumido, $p_sexo, $p_rg_numero, $p_rg_emissao, $p_rg_emissor, $p_ddd, $p_nr_telefone, $p_nr_fax, $p_nr_celular, $p_email, $p_cargo) {
      extract($GLOBALS,EXTR_PREFIX_SAME,'strchema'); $sql=$strschema.'SP_PUTCONVPREPOSTO';
      $params=array('p_operacao'                  =>array($operacao,                                        B_VARCHAR,         1),
                    'p_restricao'                 =>array($p_restricao,                                     B_VARCHAR,        10),
@@ -25,7 +25,13 @@ class dml_putConvPreposto {
                    'p_sexo'                      =>array(tvl($p_sexo),                                     B_VARCHAR,         1),
                    'p_rg_numero'                 =>array(tvl($p_rg_numero),                                B_VARCHAR,        30),
                    'p_rg_emissao'                =>array(tvl($p_rg_emissao),                               B_DATE,           32),
-                   'p_rg_emissor'                =>array(tvl($p_rg_emissor),                               B_VARCHAR,        30)
+                   'p_rg_emissor'                =>array(tvl($p_rg_emissor),                               B_VARCHAR,        30),
+                   'p_ddd'                       =>array(tvl($p_ddd),                                      B_VARCHAR,         4),
+                   'p_nr_telefone'               =>array(tvl($p_nr_telefone),                              B_VARCHAR,        25),                   
+                   'p_nr_fax'                    =>array(tvl($p_nr_fax),                                   B_VARCHAR,        25),
+                   'p_nr_celular'                =>array(tvl($p_nr_celular),                               B_VARCHAR,        25),
+                   'p_email'                     =>array(tvl($p_email),                                    B_VARCHAR,        60),
+                   'p_cargo'                     =>array(tvl($p_cargo),                                    B_VARCHAR,        40)
                   );
 
      $l_rs = DatabaseQueriesFactory::getInstanceOf($sql, $dbms, $params, DB_TYPE);

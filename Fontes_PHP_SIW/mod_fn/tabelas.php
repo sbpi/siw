@@ -14,6 +14,8 @@ include_once($w_dir_volta.'classes/sp/db_getImposto.php');
 include_once($w_dir_volta.'classes/sp/db_getTipoDocumento.php');
 include_once($w_dir_volta.'classes/sp/db_verificaAssinatura.php');
 include_once($w_dir_volta.'classes/sp/db_getTipoLancamento.php');
+include_once($w_dir_volta.'classes/sp/db_getFNParametro.php');
+include_once($w_dir_volta.'classes/sp/dml_putFNParametro.php');
 include_once($w_dir_volta.'classes/sp/dml_putImposto.php');
 include_once($w_dir_volta.'classes/sp/dml_putTipoDocumento.php');
 include_once($w_dir_volta.'classes/sp/dml_putTipoLancamento.php');
@@ -572,7 +574,103 @@ function Lancamento() {
   Estrutura_Fecha();
   Estrutura_Fecha();
   Rodape();
+}
+// =========================================================================
+// Rotina dos parâmetros
+// -------------------------------------------------------------------------
+function Parametros() {
+  extract($GLOBALS);
+  global $w_Disabled;
+
+  // Verifica se há necessidade de recarregar os dados da tela a partir
+  // da própria tela (se for recarga da tela) ou do banco de dados (se não for inclusão)
+  if ($w_troca>'') {
+    // Se for recarga da página
+    $w_sequencial        = $_REQUEST['w_sequencial'];
+    $w_sequencial_atual  = $_REQUEST['w_sequencial_atual'];
+    $w_ano_corrente      = $_REQUEST['w_ano_corrente'];
+    $w_prefixo           = $_REQUEST['w_prefixo'];
+    $w_sufixo            = $_REQUEST['w_sufixo'];
+  } else {
+    // Recupera os dados do parâmetro
+    $RS = db_getFNParametro::getInstanceOf($dbms,$w_cliente,null,null);
+    if (count($RS)>0) {
+      foreach($RS as $row) { $RS = $row; break; }
+      $w_sequencial         = f($RS,'sequencial');
+      $w_sequencial_atual   = f($RS,'sequencial');
+      $w_ano_corrente       = f($RS,'ano_corrente');
+      $w_prefixo            = f($RS,'prefixo');
+      $w_sufixo             = f($RS,'sufixo');
+    } 
+  } 
+  Cabecalho();
+  ShowHTML('<HEAD>');
+  Estrutura_CSS($w_cliente);
+  // Monta o código JavaScript necessário para validação de campos e preenchimento automático de máscara,
+  // tratando as particularidades de cada serviço
+  ScriptOpen('JavaScript');
+  ValidateOpen('Validacao');
+  Validate('w_sequencial','Sequencial','1',1,1,18,'','0123456789');
+  CompValor('w_sequencial','Sequencial','>=',$w_sequencial_atual,$w_sequencial_atual);
+  Validate('w_ano_corrente', 'Ano corrente', '1', 1, 4, 4, '', '0123456789');
+  Validate('w_prefixo','Prefixo','1','',1,10,'1','1');
+  Validate('w_sufixo','Sufixo','1','',1,10,'1','1');
+  ShowHTML('  theForm.Botao.disabled=true;');
+  ValidateClose();
+  ScriptClose();
+  ShowHTML('</HEAD>');
+  ShowHTML('<BASE HREF="'.$conRootSIW.'">');
+  if ($w_troca>'') {
+    BodyOpenClean('onLoad=\'document.Form.'.$w_troca.'.focus()\';');
+  } else {
+    BodyOpenClean('onLoad=\'document.Form.w_sequencial.focus()\';');
+  } 
+  Estrutura_Topo_Limpo();
+  Estrutura_Menu();
+  Estrutura_Corpo_Abre();
+  Estrutura_Texto_Abre();
+  ShowHTML('<table border="0" cellpadding="0" cellspacing="0" width="100%">');
+
+  AbreForm('Form',$w_dir.$w_pagina.'Grava','POST','return(Validacao(this));',null,$P1,$P2,$P3,$P4,$TP,$SG,$w_pagina.$par,$O);
+  ShowHTML(MontaFiltro('POST'));
+  ShowHTML('<INPUT type="hidden" name="w_troca" value="">');
+  ShowHTML('<tr bgcolor="'.$conTrBgColor.'"><td>');
+  ShowHTML('    <table width="100%" border="0"><tr><td>');
+  ShowHTML('      <table width="100%" border="0">');
+  ShowHTML('      <tr><td align="center" height="2" bgcolor="#000000"></td></tr>');
+  ShowHTML('      <tr><td align="center" height="1" bgcolor="#000000"></td></tr>');
+  ShowHTML('      <tr><td align="center" bgcolor="#D0D0D0"><font size="1"><b>Parâmetros</td></td></tr>');
+  ShowHTML('      <tr><td align="center" height="1" bgcolor="#000000"></td></tr>');
+  //ShowHTML '      <tr><td><font size=1>Falta definir a explicação.</font></td></tr>'
+  //ShowHTML '      <tr><td align=''center'' height=''1'' bgcolor=''#000000''></td></tr>'
+  ShowHTML('      </table>');
+  ShowHTML('      <table width="100%" border="0">');
+  ShowHTML('      <tr><td><font size="1"><b><u>S</u>equencial:</b><br><input '.$w_Disabled.' accesskey="S" type="text" name="w_sequencial" class="sti" SIZE="10" MAXLENGTH="10" VALUE="'.$w_sequencial.'"></td>');
+  ShowHTML('      <td><b>Ano <U>c</U>orrente:<br><INPUT ACCESSKEY="C" '.$w_Disabled.' class="sti" type="text" name="w_ano_corrente" size="4" maxlength="4" value="'.$w_ano_corrente.'"></td>');
+  ShowHTML('      <tr><td><font size="1"><b><u>P</u>refixo:</b><br><input '.$w_Disabled.' accesskey="P" type="text" name="w_prefixo" class="sti" SIZE="10" MAXLENGTH="10" VALUE="'.$w_prefixo.'"></td>');
+  ShowHTML('          <td><font size="1"><b><u>S</u>ufixo:</b><br><input '.$w_Disabled.' accesskey="S" type="text" name="w_sufixo" class="sti" SIZE="10" MAXLENGTH="10" VALUE="'.$w_sufixo.'"></td>');
+  ShowHTML('      </table>');
+  ShowHTML('      <tr>');
+  ShowHTML('      <tr><td align="center" colspan="3" height="1" bgcolor="#000000"></TD></TR>');
+  // Verifica se poderá ser feito o envio da solicitação, a partir do resultado da validação
+  ShowHTML('      <tr><td align="center" colspan="3">');
+  ShowHTML('            <input class="stb" type="submit" name="Botao" value="Gravar">');
+  ShowHTML('          </td>');
+  ShowHTML('      </tr>');
+  ShowHTML('    </table>');
+  ShowHTML('    </TD>');
+  ShowHTML('</tr>');
+  ShowHTML('</FORM>');
+  ShowHTML('</table>');
+  ShowHTML('</center>');
+  Estrutura_Texto_Fecha();
+  Estrutura_Fecha();
+  Estrutura_Fecha();
+  Estrutura_Fecha();
+  Rodape();
 } 
+
+ 
 // =========================================================================
 // Procedimento que executa as operações de BD
 // -------------------------------------------------------------------------
@@ -630,6 +728,21 @@ function Grava() {
         RetornaFormulario('w_assinatura');
       } 
       break;
+    case 'FNPARAM':
+      // Verifica se a Assinatura Eletrônica é válida
+      if (VerificaAssinaturaEletronica($_SESSION['USERNAME'],strtoupper($_REQUEST['w_assinatura'])) || $w_assinatura=='') {
+        dml_putFNParametro::getInstanceOf($dbms,$w_cliente,
+           $_REQUEST['w_sequencial'],$_REQUEST['w_ano_corrente'],$_REQUEST['w_prefixo'],$_REQUEST['w_sufixo']);     
+        ScriptOpen('JavaScript');
+        ShowHTML('  location.href=\''.montaURL_JS($w_dir,$R.'&O='.$O.'&P1='.$P1.'&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP='.$TP.'&SG='.$SG.MontaFiltro('GET')).'\';');
+        ScriptClose();
+      } else {
+        ScriptOpen('JavaScript');
+        ShowHTML('  alert(\'Assinatura Eletrônica inválida!\');');
+        ScriptClose();
+        RetornaFormulario('w_assinatura');
+      } 
+      break;      
     default:
       ScriptOpen('JavaScript');
       ShowHTML('  alert(\'Bloco de dados não encontrado: '.$SG.'\');');
@@ -647,6 +760,7 @@ function Main() {
     case 'IMPOSTO':     Imposto();      break;
     case 'DOCUMENTO':   Documento();    break;
     case 'LANCAMENTO':  Lancamento();   break;
+    case 'PARAMETROS':  Parametros();   break;    
     case 'GRAVA':       Grava();        break;
     default:
       cabecalho();

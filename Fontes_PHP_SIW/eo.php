@@ -525,7 +525,7 @@ function Localizacao() {
     ShowHTML('      </tr>');
     ShowHTML('      <tr><td valign="top"><b><U>L</U>ocalização:<br><INPUT ACCESSKEY="L" '.$w_Disabled.' class="sti" type="text" name="w_nome" size="30" maxlength="30" value="'.$w_nome.'"></td>');
     ShowHTML('      <tr><td valign="top"><table width="100%" cellpadding=0 cellspacing=0><tr valign="top">');
-    ShowHTML('          <td><b><U>T</U>elefone:<br><INPUT ACCESSKEY="T" '.$w_Disabled.' class="sti" name="w_telefone" size="12" maxlength="12" value="'.$w_telefone.'"></INPUT></td>');
+    ShowHTML('          <td><b><U>T</U>elefone:<br><INPUT ACCESSKEY="T" '.$w_Disabled.' class="sti" name="w_telefone" size="12" maxlength="12" value="'.$w_telefone.'"> '.consultaTelefone($w_cliente).'</INPUT></td>');
     ShowHTML('          <td><b><U>R</U>amal:<br><INPUT ACCESSKEY="R" '.$w_Disabled.' class="sti" name="w_ramal" size="6" maxlength="6" value="'.$w_ramal.'"></INPUT></td>');
     ShowHTML('          <td><b><U>F</U>ax:<br><INPUT ACCESSKEY="F" '.$w_Disabled.' class="sti" type="text" name="w_fax" size="12" maxlength="12" value="'.$w_fax.'"></td>');
     ShowHTML('          <td><b>T<U>e</U>lefone 2:<br><INPUT ACCESSKEY="E" '.$w_Disabled.' class="sti" name="w_telefone2" size="12" maxlength="12" value="'.$w_telefone2.'"></INPUT></td>');
@@ -889,6 +889,26 @@ function Grava() {
     case 'EOUORG':
       // Verifica se a Assinatura Eletrônica é válida
       if (VerificaAssinaturaEletronica($_SESSION['USERNAME'],strtoupper($_REQUEST['w_assinatura'])) || $w_assinatura=='') {
+        if ($O=='E'){
+          $RS = db_getUorgResp::getInstanceOf($dbms,$_REQUEST['w_sq_unidade']);
+          foreach ($RS as $row) {
+            if (f($row,'nm_titular')!=''){
+              ScriptOpen('JavaScript');
+              ShowHTML('  alert(\'Existe responsável casdastrado na unidade!\');');
+              ShowHTML('  history.back(1);');
+              ScriptClose();
+              exit();
+            }
+          }
+          $RS= db_getaddressList::getInstanceOf($dbms,$_REQUEST['w_cliente'],$_REQUEST['w_sq_unidade'],'LISTALOCALIZACAO',null);
+          if (count($RS)>0){
+            ScriptOpen('JavaScript');
+            ShowHTML('  alert(\'Existe endereço casdastrado na unidade!\');');
+            ShowHTML('  history.back(1);');
+            ScriptClose();
+            exit();
+          }
+        }  
         dml_EoUnidade::getInstanceOf($dbms, $O,
             $_REQUEST['w_sq_unidade'],$_REQUEST['w_sq_tipo_unidade'],$_REQUEST['w_sq_area_atuacao'],$_REQUEST['w_sq_unidade_gestora'],
             $_REQUEST['w_sq_unidade_pai'],$_REQUEST['w_sq_unidade_pagadora'],$_REQUEST['w_sq_pessoa_endereco'],

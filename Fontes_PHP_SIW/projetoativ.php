@@ -45,6 +45,7 @@ include_once('funcoes/selecaoProjeto.php');
 include_once('funcoes/selecaoEtapa.php');
 include_once('funcoes/selecaoTipoVisao.php');
 include_once('funcoes/selecaoSolicResp.php');
+include_once('funcoes/selecaoSolicRestricao.php');
 include_once('classes/sp/db_verificaAssinatura.php');
 include_once('classes/sp/dml_putDemandaGeral.php');
 include_once('classes/sp/dml_putSolicArquivo.php');
@@ -774,6 +775,7 @@ function Geral() {
     $w_cidade           = $_REQUEST['w_cidade'];
     $w_palavra_chave    = $_REQUEST['w_palavra_chave'];
     $w_sqcc             = $_REQUEST['w_sqcc'];
+    $w_restricao        = $_REQUEST['w_restricao'];
   } else {
     if (!(strpos('AEV',$O)===false) || $w_copia>'') {
       // Recupera os dados da atividade
@@ -824,6 +826,7 @@ function Geral() {
         $w_uf               = f($RS,'co_uf');
         $w_cidade           = f($RS,'sq_cidade_origem');
         $w_palavra_chave    = f($RS,'palavra_chave');
+        $w_restricao        = f($RS,'sq_siw_restricao');
       } 
     } 
   } 
@@ -843,6 +846,12 @@ function Geral() {
     Validate('w_atividade','Etapa','SELECT','',1,18,'','0123456789');
     ShowHTML('  if (theForm.w_atividade[theForm.w_atividade.selectedIndex].value==\'\' && theForm.w_atividade.selectedIndex != 0) {');
     ShowHTML('     alert(\'A etapa selecionada não permite vinculação de '.f($RS_Menu,'nome').'.\n Ela pode estar com  100% de conclusão ou ser usada apenas para agrupamento de outras etapas.\');');
+    ShowHTML('     theForm.w_atividade.focus();');
+    ShowHTML('     return false;');
+    ShowHTML('  }');
+    Validate('w_restricao','Questão','SELECT','',1,18,'','0123456789');
+    ShowHTML('  if (theForm.w_atividade.selectedIndex != 0 && theForm.w_restricao.selectedIndex != 0) {');
+    ShowHTML('     alert(\'Selecione a etapa ou a questão (problema/risco). Não é permitida a vinculação a ambos.\');');
     ShowHTML('     theForm.w_atividade.focus();');
     ShowHTML('     return false;');
     ShowHTML('  }');
@@ -942,6 +951,9 @@ function Geral() {
     ShowHTML('      </tr>');
     ShowHTML('      <tr>');
     SelecaoEtapa('Eta<u>p</u>a:','P','Se necessário, indique a etapa desejada para vinculação.',$w_atividade,$w_projeto,null,'w_atividade','Grupo',null);
+    ShowHTML('      </tr>');
+    ShowHTML('      <tr>');
+    SelecaoSolicRestricao('<u>Q</u>uestão:','D','Se esta tarefa fizer parte da estratégia de ação de uma questão, indique qual.',$w_restricao,nvl($w_projeto,0),null,'w_restricao',null);
     ShowHTML('      </tr>');
     ShowHTML('      <tr>');
     SelecaoAtividade('<U>T</U>arefa pai:','S','Se necessário, selecione a tarefa pai.',$w_atividade_pai,$w_projeto,'w_atividade_pai','GDPCAD',null);
@@ -2037,21 +2049,20 @@ function BuscaAtividade() {
 
   $w_ano        = $_REQUEST['w_ano'];
   $w_nome       = strtoupper($_REQUEST['w_nome']);
-  $w_numero      = strtoupper($_REQUEST['w_numero']);
+  $w_numero     = strtoupper($_REQUEST['w_numero']);
   $w_cliente    = $_REQUEST['w_cliente'];
   $chaveAux     = $_REQUEST['chaveAux'];
-  $restricao    = $_REQUEST['restricao'];
   $campo        = $_REQUEST['campo'];
 
-  $RS = db_getLinkData::getInstanceOf($dbms,$w_cliente,$restricao);
+  $RS = db_getLinkData::getInstanceOf($dbms,$w_cliente,$SG);
 
-  $RS = db_getSolicList::getInstanceOf($dbms,f($RS,'sq_menu'),$w_usuario,$restricao,4,
+  $RS = db_getSolicList::getInstanceOf($dbms,f($RS,'sq_menu'),$w_usuario,$SG,4,
           null,null,null,null,null,null,null,null,null,null,$w_numero, $w_nome, null, null, null, null, null,
           null, null, null, null,null, nvl($chaveAux,0),null, null, null);
   $RS = SortArray($RS,'fim','asc','prioridade','asc');
 
   Cabecalho();
-  ShowHTML('<TITLE>Seleção de ',f($RS_Menu,'nome').'</TITLE>');
+  ShowHTML('<TITLE>Seleção de '.f($RS_Menu,'nome').'</TITLE>');
   ShowHTML('<HEAD>');
   Estrutura_CSS($w_cliente);
   ScriptOpen('JavaScript');
@@ -2088,9 +2099,9 @@ function BuscaAtividade() {
   ShowHTML('    <table width="100%" border="0">');
   if (count($RS)>10 || ($w_nome>'' || $w_numero>'')) {
     AbreForm('Form',$w_pagina.'BuscaAtividade','POST','return(Validacao(this))',null,$P1,$P2,$P3,$P4,$TP,$SG,null,null);
+    ShowHTML('<INPUT type="hidden" name="w_menu" value="'.$w_menu.'">');
     ShowHTML('<INPUT type="hidden" name="w_cliente" value="'.$w_cliente.'">');
     ShowHTML('<INPUT type="hidden" name="chaveAux" value="'.$chaveAux.'">');
-    ShowHTML('<INPUT type="hidden" name="restricao" value="'.$restricao.'">');
     ShowHTML('<INPUT type="hidden" name="campo" value="'.$campo.'">');
     ShowHTML('<tr bgcolor="'.$conTrBgColor.'"><td><div align="justify"><font size=2><b><ul>Instruções</b>:<li>Informe parte do nome da unidade.<li>Quando a relação for exibida, selecione a unidade desejada clicando sobre a caixa ao seu lado.<li>Após informar o nome da unidade, clique sobre o botão <i>Aplicar filtro</i>. Clicando sobre o botão <i>Cancelar</i>, a procura é cancelada.</ul></div>');
     ShowHTML('<tr bgcolor="'.$conTrBgColor.'"><td>');
@@ -2252,7 +2263,8 @@ function Grava() {
             $_SESSION['SQ_PESSOA'],null,$_REQUEST['w_sqcc'],$_REQUEST['w_descricao'],$_REQUEST['w_justificativa'],'0',$_REQUEST['w_inicio'],$_REQUEST['w_fim'],$_REQUEST['w_valor'],
             $_REQUEST['w_data_hora'], $_REQUEST['w_sq_unidade_resp'], $_REQUEST['w_assunto'], $_REQUEST['w_prioridade'], $_REQUEST['w_aviso'], $_REQUEST['w_dias'],
             $_REQUEST['w_cidade'], $_REQUEST['w_palavra_chave'],null, null, null, null, null, null, null,
-            $_REQUEST['w_projeto'], $_REQUEST['w_atividade'], $_REQUEST['w_projeto_ant'], $_REQUEST['w_atividade_pai'], &$w_chave_nova, $w_copia);
+            $_REQUEST['w_projeto'], $_REQUEST['w_atividade'], $_REQUEST['w_projeto_ant'], $_REQUEST['w_atividade_pai'], $_REQUEST['w_restricao'], 
+            &$w_chave_nova, $w_copia);
         if ($O=='I') {
           // Envia e-mail comunicando a inclusão
           SolicMail(Nvl($_REQUEST['w_chave'],$w_chave_nova),1);

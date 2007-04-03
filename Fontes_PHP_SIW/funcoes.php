@@ -498,6 +498,25 @@ function ExibeVariaveis() {
 }
 
 // =========================================================================
+// Montagem da URL para consulta ao módulo de telefonia
+// -------------------------------------------------------------------------
+function consultaTelefone($p_cliente) {
+  extract($GLOBALS,EXTR_PREFIX_SAME,'l_');
+  
+  // Verifica se o cliente tem o módulo de telefonia contratado
+  include_once($w_dir_volta.'classes/sp/db_getSiwCliModLis.php');
+  $l_rs_ac = db_getSiwCliModLis::getInstanceOf($dbms, $p_cliente, null, 'TT');
+  $l_mod_tt = false;
+  $l_string = '';
+  foreach ($l_rs_ac as $row) { 
+    $l_mod_tt = true;
+    $l_string = '<a href="'.$conRootSIW.montaUrl('LIGACAO').'" target="telefone" title="Procurar na base de ligações telefônicas."><img src="'.$conRootSIW.'/images/icone/fone_1.gif" border=0></a>';
+    break; 
+  }
+  return $l_string;
+}
+
+// =========================================================================
 // Montagem da URL com os dados de uma pessoa
 // -------------------------------------------------------------------------
 function ExibePessoa($p_dir,$p_cliente,$p_pessoa,$p_tp,$p_nome) {
@@ -506,6 +525,19 @@ function ExibePessoa($p_dir,$p_cliente,$p_pessoa,$p_tp,$p_nome) {
     $l_string='---';
   } else {
     $l_string .= '<A class="hl" HREF="#" onClick="window.open(\''.montaURL_JS(null,$conRootSIW.'seguranca.php?par=TELAUSUARIO&w_cliente='.$p_cliente.'&w_sq_pessoa='.$p_pessoa.'&P1='.$P1.'&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP='.$p_tp.'&SG=').'\',\'Pessoa\',\'width=780,height=300,top=10,left=10,toolbar=no,scrollbars=yes,resizable=yes,status=no\'); return false;" title="Clique para exibir os dados desta pessoa!">'.$p_nome.'</A>';
+  }
+  return $l_string;
+}
+
+// =========================================================================
+// Montagem da URL com os dados de uma pessoa
+// -------------------------------------------------------------------------
+function VisualIndicador($p_dir,$p_cliente,$p_sigla,$p_tp,$p_nome) {
+  extract($GLOBALS,EXTR_PREFIX_SAME,'l_');
+  if (Nvl($p_nome,'')=='') {
+    $l_string='---';
+  } else {
+    $l_string .= '<A class="hl" HREF="#" onClick="window.open(\''.$conRootSIW.'mod_pe/indicador.php?par=TELAINDICADOR&w_cliente='.$p_cliente.'&w_sigla='.$p_sigla.'&P1='.$P1.'&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP='.$p_tp.'&SG='.'\',\'Indicador\',\'width=780,height=300,top=10,left=10,toolbar=no,scrollbars=yes,resizable=yes,status=no\'); return false;" title="Clique para exibir os dados deste de indicador!">'.$p_nome.'</A>';
   }
   return $l_string;
 }
@@ -526,12 +558,26 @@ function ExibeUnidade($p_dir,$p_cliente,$p_unidade,$p_sq_unidade,$p_tp) {
 // =========================================================================
 // Montagem da URL com os dados de um recurso
 // -------------------------------------------------------------------------
-function ExibeRecurso($p_dir,$p_cliente,$p_nome,$p_chave,$p_tp) {
+function ExibeRecurso($p_dir,$p_cliente,$p_nome,$p_chave,$p_tp,$p_solic) {
   extract($GLOBALS,EXTR_PREFIX_SAME,'l_');
   if (Nvl($p_chave,'')=='') {
     $l_string='---';
   } else {
-    $l_string .= '<A class="hl" HREF="#" onClick="window.open(\''.$conRootSIW.'mod_pe/recurso.php?par=TELARECURSO&w_cliente='.$p_cliente.'&w_chave='.$p_chave.'&P1='.$P1.'&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP='.$p_tp.'&SG='.'\',\'Telarecurso\',\'width=785,height=570,top=10,left=10,toolbar=no,scrollbars=yes,resizable=yes,status=no\'); return false;" title="Clique para exibir os dados deste recurso!">'.$p_nome.'</A>';
+    $l_string .= '<A class="hl" HREF="#" onClick="window.open(\''.$conRootSIW.'mod_pe/recurso.php?par=TELARECURSO&w_cliente='.$p_cliente.'&w_chave='.$p_chave.'&w_solic='.$p_solic.'&P1='.$P1.'&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP='.$p_tp.'&SG='.'\',\'Telarecurso\',\'width=785,height=570,top=10,left=10,toolbar=no,scrollbars=yes,resizable=yes,status=no\'); return false;" title="Clique para exibir os dados deste recurso!">'.$p_nome.'</A>';
+  }
+  return $l_string;
+}
+
+
+// =========================================================================
+// Montagem da URL com os dados de uma restricao
+// -------------------------------------------------------------------------
+function ExibeRestricao($O,$p_dir,$p_cliente,$p_tipo,$p_chave,$p_chave_aux,$p_tp,$p_solic) {
+  extract($GLOBALS,EXTR_PREFIX_SAME,'l_');
+  if (Nvl($p_tipo,'')=='') {
+    $l_string='---';
+  } else {
+    $l_string .= '<A class="hl" HREF="#" onClick="window.open(\''.$conRootSIW.'mod_pr/restricao.php?par=VisualRestricao&w_cliente='.$p_cliente.'&w_chave='.$p_chave.'&w_chave_aux='.$p_chave_aux.'&O='.$O.'&w_solic='.$p_solic.'&P1='.$P1.'&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP='.$p_tp.'&SG='.'\',\'VisualRestriao\',\'width=785,height=570,top=10,left=10,toolbar=no,scrollbars=yes,resizable=yes,status=no\'); return false;" title="Clique para exibir os dados desta restricao!">'.$p_tipo.'</A>';
   }
   return $l_string;
 }
@@ -556,11 +602,29 @@ function ExibeEtapa($O,$p_chave,$p_chave_aux,$p_tipo,$p_P1,$p_etapa,$p_tp,$p_sg)
   if (Nvl($p_etapa,'')=='') {
     $l_string="---";
   } else {
-    $l_string .= '<A class="hl" HREF="#" onClick="window.open(\'projeto.php?par=AtualizaEtapa&w_chave='.$p_chave.'&O='.$O.'&w_chave_aux='.$p_chave_aux.'&w_tipo='.$p_tipo.'&P1='.$p_P1.'&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP='.$p_tp.'&SG='.$p_sg.'\',\'Etapa\',\'width=780,height=350,top=50,left=10,toolbar=no,scrollbars=yes,resizable=yes,status=no\'); return false;" title="Clique para exibir os dados!">'.$p_etapa.'</A>';
+    $l_string .= '<A class="hl" HREF="#" onClick="window.open(\'projeto.php?par=AtualizaEtapa&w_chave='.$p_chave.'&O='.$O.'&w_chave_aux='.$p_chave_aux.'&w_tipo='.$p_tipo.'&P1='.$p_P1.'&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP='.$p_tp.'&SG='.$p_sg.'\',\'Etapa\',\'width=780,height=550,top=50,left=10,toolbar=no,scrollbars=yes,resizable=yes,status=no\'); return false;" title="Clique para exibir os dados!">'.$p_etapa.'</A>';
   }
   return $l_string;
 }
 
+// =========================================================================
+// Exibe imagem da restrição conforme tipo e criticidade
+// -------------------------------------------------------------------------
+function ExibeImagemRestricao($l_tipo) {
+  extract($GLOBALS);
+  $l_string = '';
+  if (Nvl($l_tipo,'N')!='N') {
+    switch ($l_tipo) {
+      case 'S1': $l_string .= '<img title="Problema de baixa criticidade" src="'.$conRootSIW.$conImgProblem.'" border=0 align="center">';   break;
+      case 'S3': $l_string .= '<img title="Problema de moderada criticidade" src="'.$conRootSIW.$conImgProblem.'" border=0 align="center">';   break;
+      case 'S3': $l_string .= '<img title="Problema de alta criticidade" src="'.$conRootSIW.$conImgProblem.'" border=0 align="center">';    break;
+      case 'N1': $l_string .= '<img title="Risco de baixa criticidade" src="'.$conRootSIW.$conImgRiskLow.'" border=0 align="center">';   break;
+      case 'N2': $l_string .= '<img title="Risco de moderada criticidade" src="'.$conRootSIW.$conImgRiskMed.'" border=0 align="center">';   break;
+      case 'N3': $l_string .= '<img title="Risco de alta criticidade" src="'.$conRootSIW.$conImgRiskHig.'" border=0 align="center">';    break;
+    }
+  }
+  return $l_string;
+}
 // =========================================================================
 // Montagem da URL com os parâmetros de filtragem quando o for UPLOAD
 // -------------------------------------------------------------------------
@@ -580,6 +644,7 @@ function MontaFiltroUpload($p_Form) {
 // -------------------------------------------------------------------------
 function MontaOrdemEtapa($l_chave) {
   extract($GLOBALS);
+  include_once($w_dir_volta.'classes/sp/db_getEtapaDataParents.php');
   $RSQuery = db_getEtapaDataParents::getInstanceOf($dbms, $l_chave);
   $w_texto = '';
   $w_contaux = 0;
@@ -589,6 +654,25 @@ function MontaOrdemEtapa($l_chave) {
       $w_texto = f($row,'ordem').'.'.$w_texto;
     } else {
       $w_texto = f($row,'ordem').'.'.$w_texto;
+    }
+  }
+  return substr($w_texto,0,strlen($w_texto)-1);
+}
+
+// =========================================================================
+// Rotina que monta o código da especificacao
+// -------------------------------------------------------------------------
+function MontaOrdemEspec($l_chave) {
+  extract($GLOBALS);
+  $RSQuery = db_getEspecOrdem::getInstanceOf($dbms, $l_chave);
+  $w_texto = '';
+  $w_contaux = 0;
+  foreach($RSQuery as $row) {
+    $w_contaux = $w_contaux+1;
+    if ($w_contaux==1) {
+      $w_texto = f($row,'codigo').'.'.$w_texto;
+    } else {
+      $w_texto = f($row,'codigo').'.'.$w_texto;
     }
   }
   return substr($w_texto,0,strlen($w_texto)-1);
@@ -657,6 +741,7 @@ function testFile($l_erro, $l_raiz, $l_leitura = false, $l_escrita = false) {
 // -------------------------------------------------------------------------
 function MontaURL($p_sigla) {
   extract($GLOBALS);
+  include_once($w_dir_volta.'classes/sp/db_getLinkData.php');
   $RS_MontaURL = db_getLinkData::getInstanceOf($dbms, $_SESSION['P_CLIENTE'], $p_sigla);
   $l_ImagemPadrao='images/Folder/SheetLittle.gif';
   if (count($RS_MontaURL)<=0) return '';
@@ -668,7 +753,6 @@ function MontaURL($p_sigla) {
     }
     return f($RS_MontaURL,'link')."&P1=".f($RS_MontaURL,'p1')."&P2=".f($RS_MontaURL,'p2')."&P3=".f($RS_MontaURL,'p3')."&P4=".f($RS_MontaURL,'p4')."&TP=<img src=".$l_Imagem." BORDER=0>".f($RS_MontaURL,'nome')."&SG=".f($RS_MontaURL,'sigla');
   }
-  return $function_ret;
 }
 
 // =========================================================================

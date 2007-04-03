@@ -10,7 +10,7 @@ include_once($w_dir_volta.'classes/db/DatabaseQueriesFactory.php');
 */
 
 class dml_putAcordoParc {
-   function getInstanceOf($dbms, $operacao, $p_chave, $p_chave_aux, $p_ordem, $p_data, $p_valor, $p_observacao, $p_tipo_geracao, $p_vencimento, $p_dia_vencimento, $p_valor_parcela, $p_valor_diferente) {
+   function getInstanceOf($dbms, $operacao, $p_chave, $p_chave_aux, $p_ordem, $p_data, $p_valor, $p_observacao, $p_tipo_geracao, $p_vencimento, $p_dia_vencimento, $p_valor_parcela, $p_valor_diferente, $p_per_ini, $p_per_fim) {
      extract($GLOBALS,EXTR_PREFIX_SAME,'strchema'); $sql=$strschema.'SP_PUTACORDOPARC';
      $params=array('p_operacao'                  =>array($operacao,                                        B_VARCHAR,         1),
                    'p_chave'                     =>array(tvl($p_chave),                                    B_INTEGER,        32),
@@ -23,7 +23,9 @@ class dml_putAcordoParc {
                    'p_vencimento'                =>array(tvl($p_vencimento),                               B_VARCHAR,         1),
                    'p_dia_vencimento'            =>array(tvl($p_dia_vencimento),                           B_INTEGER,        32),
                    'p_valor_parcela'             =>array(tvl($p_valor_parcela),                            B_VARCHAR,         1),
-                   'p_valor_diferente'           =>array(toNumber(tvl($p_valor_diferente)),                B_NUMERIC,      18,2)
+                   'p_valor_diferente'           =>array(toNumber(tvl($p_valor_diferente)),                B_NUMERIC,      18,2),
+                   'p_per_ini'                   =>array(tvl($p_per_ini),                                  B_DATE,           32),
+                   'p_per_fim'                   =>array(tvl($p_per_fim),                                  B_DATE,           32)
                   );
      $l_rs = DatabaseQueriesFactory::getInstanceOf($sql, $dbms, $params, DB_TYPE);
      $l_error_reporting = error_reporting(); 

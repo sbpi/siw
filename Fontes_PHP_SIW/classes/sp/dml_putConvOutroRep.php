@@ -10,7 +10,7 @@ include_once($w_dir_volta.'classes/db/DatabaseQueriesFactory.php');
 */
 
 class dml_putConvOutroRep {
-   function getInstanceOf($dbms, $operacao, $p_restricao, $p_chave, $p_sq_pessoa, $p_sq_acordo_outra_parte, $p_chave_aux, $p_cpf, $p_nome, $p_nome_resumido, $p_sexo, $p_rg_numero, $p_rg_emissao, $p_rg_emissor, $p_ddd, $p_nr_telefone, $p_nr_fax, $p_nr_celular, $p_email) {
+   function getInstanceOf($dbms, $operacao, $p_restricao, $p_chave, $p_sq_pessoa, $p_sq_acordo_outra_parte, $p_chave_aux, $p_cpf, $p_nome, $p_nome_resumido, $p_sexo, $p_rg_numero, $p_rg_emissao, $p_rg_emissor, $p_ddd, $p_nr_telefone, $p_nr_fax, $p_nr_celular, $p_email, $p_cargo) {
      extract($GLOBALS,EXTR_PREFIX_SAME,'strchema'); $sql=$strschema.'SP_PUTCONVOUTROREP';
      $params=array('p_operacao'                  =>array($operacao,                                        B_VARCHAR,         1),
                    'p_restricao'                 =>array($p_restricao,                                     B_VARCHAR,        10),
@@ -29,7 +29,8 @@ class dml_putConvOutroRep {
                    'p_nr_telefone'               =>array(tvl($p_nr_telefone),                              B_VARCHAR,        25),
                    'p_nr_fax'                    =>array(tvl($p_nr_fax),                                   B_VARCHAR,        25),
                    'p_nr_celular'                =>array(tvl($p_nr_celular),                               B_VARCHAR,        25),
-                   'p_email'                     =>array(tvl($p_email),                                    B_VARCHAR,        60)
+                   'p_email'                     =>array(tvl($p_email),                                    B_VARCHAR,        60),
+                   'p_cargo'                     =>array(tvl($p_cargo),                                    B_VARCHAR,        40)
                   );
                   
      $l_rs = DatabaseQueriesFactory::getInstanceOf($sql, $dbms, $params, DB_TYPE);

@@ -1,0 +1,19 @@
+<?
+// =========================================================================
+// Montagem da seleção de Influencia
+// -------------------------------------------------------------------------
+function SelecaoInfluencia ($label,$accesskey,$hint,$chave,$campo,$restricao,$atributo) {
+  extract($GLOBALS);
+  if (!isset($hint)) {
+    ShowHTML('          <td valign="top"><font size="1"><b>'.$label.'</b><br><SELECT ACCESSKEY="'.$accesskey.'" CLASS="sts" NAME="'.$campo.'" '.$w_Disabled.' '.$atributo.'>');
+  } else {
+    ShowHTML('          <td valign="top" title="'.$hint.'"><font size="1"><b>'.$label.'</b><br><SELECT ACCESSKEY="'.$accesskey.'" CLASS="sts" NAME="'.$campo.'" '.$w_Disabled.' '.$atributo.'>');
+  } 
+  ShowHTML('          <option value="">---'); 
+  // Influências 
+  if (nvl($chave,-1)==0) ShowHTML('          <option value="0" SELECTED>Alta');         else ShowHTML('          <option value="0">Alta');
+  if (nvl($chave,-1)==1) ShowHTML('          <option value="1" SELECTED>Média');        else ShowHTML('          <option value="1">Média');
+  if (nvl($chave,-1)==2) ShowHTML('          <option value="2" SELECTED>Baixa');        else ShowHTML('          <option value="2">Baixa');
+  ShowHTML('          </select>');
+} 
+?>

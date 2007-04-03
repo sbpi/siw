@@ -1622,6 +1622,37 @@ function Meta() {
   ShowHTML('</table>');
   Estrutura_Texto_Fecha();
   Rodape();
+}
+// =========================================================================
+// Rotina de visualizaçao das aferições de indicadores
+// -------------------------------------------------------------------------
+function TelaIndicador() {
+  extract($GLOBALS);
+  global $p_Disabled;
+  $p_sigla          = $_REQUEST['w_sigla'];
+  Cabecalho();
+  ShowHTML('<HEAD>');
+  ShowHTML('<BASE HREF="'.$conRootSIW.'">');
+  ShowHTML('</HEAD>');
+  BodyOpen(null);
+  ShowHTML('<table border="0" cellpadding="0" cellspacing="0" width="100%">');
+  // Recupera os dados do indicador para exibição no cabeçalho
+  $RS = db_getIndicador::getInstanceOf($dbms,$w_cliente,$w_usuario,null,null,null,$p_sigla,null,null,null,null,null,null,null,null,null,null,null,null);
+  foreach ($RS as $row) { $RS = $row; break; }
+  ShowHTML('<table border=1 width="100%" bgcolor="#FAEBD7">');
+  ShowHTML('  <tr valign="top">');
+  ShowHTML('    <td valign="middle"><font size="1"><b><font class="SS">'.strtoupper(f($RS,'nome')).'</font></b></td>');
+  ShowHTML('    <td nowrap>Sigla:<br><b><font size=1 class="hl">'.f($RS,'sigla').'</font></b></td>');
+  ShowHTML('    <td nowrap>Tipo:<br><b><font size=1 class="hl">'.f($RS,'nm_tipo_indicador').'</font></b></td>');
+  ShowHTML('    <td nowrap>Unidade de medida:<br><b><font size=1 class="hl">'.f($RS,'sg_unidade_medida').' ('.f($RS,'nm_unidade_medida').')'.'</font></b></td>');
+  ShowHTML('  <tr><td colspan=4><b>Definição:</b><br>'.nvl(crlf2br(f($RS,'descricao')),'---'));
+  ShowHTML('  <tr><td colspan=4><b>Forma de aferição:</b><br>'.nvl(crlf2br(f($RS,'forma_afericao')),'---'));
+  ShowHTML('  <tr><td colspan=4><b>Fonte de comprovação:</b><br>'.nvl(crlf2br(f($RS,'fonte_comprovacao')),'---'));
+  ShowHTML('  <tr><td colspan=4><b>Ciclo de aferição sugerido:</b><br>'.nvl(crlf2br(f($RS,'ciclo_afericao')),'---'));
+  ShowHTML('    </ul>');
+  ShowHTML('</table>');
+  ShowHTML('</table>');
+  Rodape();
 } 
 // =========================================================================
 // Procedimento que executa as operações de BD
@@ -1823,6 +1854,7 @@ function Main() {
     case 'FRAMESAFERICAO':     FramesAfericao();    break;
     case 'VISUALAFERICAO':     VisualAfericao();    break;
     case 'VISUALDADOS':        VisualDados();       break;
+    case 'TELAINDICADOR':      TelaIndicador();     break;
     case 'AFERIDOR':           Aferidor();          break;
     case 'AFERIDORPERM':       AferidorPerm();      break;
     case 'AFERICAO':           Afericao();          break;

@@ -20,6 +20,7 @@ include_once('classes/sp/db_getContaBancoList.php');
 include_once('classes/sp/db_getContaBancoData.php');
 include_once('classes/sp/db_getBankHouseList.php');
 include_once('classes/sp/db_getSiwCliModLis.php');
+include_once('classes/sp/db_getBankData.php');
 include_once('classes/sp/db_getModData.php');
 include_once('classes/sp/db_getLinkData.php');
 include_once('classes/sp/db_getUserList.php');
@@ -1006,6 +1007,11 @@ function ContasBancarias() {
     $w_padrao       = f($RS,'padrao');
   } 
 
+  // Recupera informação do campo operação do banco selecionado
+  if (nvl($w_sq_banco,'')>'') {
+    $RS_Banco = db_getBankData::getInstanceOf($dbms, $w_sq_banco);
+    $w_exige_operacao = f($RS_Banco,'exige_operacao');
+  }
   Cabecalho();
   ShowHTML('<HEAD>');
   Estrutura_CSS($w_cliente);
@@ -1021,7 +1027,7 @@ function ContasBancarias() {
     if ($O=='I') {
       Validate('w_banco','Banco','SELECT','1','1','10','','1');
       Validate('w_agencia','Agência','1','1','4','4','','0123456789');
-      Validate('w_operacao','Operacao','1','','1','3','1','1');
+      if ($w_exige_operacao=='S') Validate('w_operacao','Operacao','1','1','1','3','1','1');
       Validate('w_numero_conta','Conta corrente','1','1','3','12','','0123456789-XP');
     } 
     if ($_SESSION['P_PORTAL']=='') {
@@ -1102,7 +1108,7 @@ function ContasBancarias() {
     if ($O=='A') {
       ShowHTML('<INPUT type="hidden" name="w_banco" value="'.$w_banco.'">');
       ShowHTML('<INPUT type="hidden" name="w_agencia" value="'.$w_agencia.'">');
-      ShowHTML('<INPUT type="hidden" name="w_operacao" value="'.$w_operacao.'">');
+      if ($w_exige_operacao=='S') ShowHTML('<INPUT type="hidden" name="w_operacao" value="'.$w_operacao.'">');
       ShowHTML('<INPUT type="hidden" name="w_numero_conta" value="'.$w_numero_conta.'">');
     } 
     ShowHTML('<tr bgcolor="'.$conTrBgColor.'"><td align="center">');
@@ -1111,7 +1117,7 @@ function ContasBancarias() {
     ShowHTML('      <tr valign="top">');
     selecaoBanco('<u>B</u>anco:','B','Informe o valor padrão para o campo "Banco".',$w_banco,null,'w_banco',null,null);
     ShowHTML('              <td><b><u>A</u>gência:</b><br><input '.$w_Disabled.' accesskey="B" type="text" name="w_agencia" class="sti" SIZE="4" MAXLENGTH="4" VALUE="'.$w_agencia.'" title="Informe o número da agência, com quatro posições, sem dígito verificador. Preencha com zeros à esquerda, se necessário. Exempo: para agência 3592-0, informe 3592; para agência 206, informe 0206."></td>');
-    ShowHTML('              <td><b><u>O</u>peração:</b><br><input '.$w_Disabled.' accesskey="O" type="text" name="w_operacao" class="sti" SIZE="3" MAXLENGTH="3" VALUE="'.$w_operacao.'" title="Informe um valor apenas se o seu banco trabalhar com o campo Operação."></td>');
+    if ($w_exige_operacao=='S') ShowHTML('              <td><b><u>O</u>peração:</b><br><input '.$w_Disabled.' accesskey="O" type="text" name="w_operacao" class="sti" SIZE="3" MAXLENGTH="3" VALUE="'.$w_operacao.'" title="Informe um valor apenas se o seu banco trabalhar com o campo Operação."></td>');
     ShowHTML('              <td><b><u>C</u>onta corrente:</b><br><input '.$w_Disabled.' accesskey="C" type="text" name="w_numero_conta" class="sti" SIZE="12" MAXLENGTH="12" VALUE="'.$w_numero_conta.'" title="Informe o número da conta corrente. Se a conta tiver dígito verificador (DV), informe-o separado por hífen (-). Exemplo sem DV: 0391039. Exemplos com DV: 9301-3, 91093-X, 01934-P."></td>');
     ShowHTML('          </table>');
     ShowHTML('      <tr><td valign="top" colspan="2"><table border=0 width="100%" cellspacing=0><tr valign="top">');

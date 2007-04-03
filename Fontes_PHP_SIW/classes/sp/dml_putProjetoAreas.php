@@ -9,11 +9,13 @@ extract($GLOBALS); include_once($w_dir_volta.'classes/db/DatabaseQueriesFactory.
 */
 
 class dml_putProjetoAreas {
-   function getInstanceOf($dbms, $operacao, $p_chave, $p_chave_aux, $p_papel) {
+   function getInstanceOf($dbms, $operacao, $p_chave, $p_chave_aux, $p_interesse, $p_influencia, $p_papel) {
      extract($GLOBALS,EXTR_PREFIX_SAME,'strchema'); $sql=$strschema.'SP_PUTPROJETOAREAS';
      $params=array('p_operacao'                  =>array($operacao,                                        B_VARCHAR,         1),
                    'p_chave'                     =>array(tvl($p_chave),                                    B_INTEGER,        32),
                    'p_chave_aux'                 =>array($p_chave_aux,                                     B_INTEGER,        32),
+                   'p_interesse'                 =>array($p_interesse,                                     B_VARCHAR,         1),
+                   'p_influencia'                =>array($p_influencia,                                    B_INTEGER,        32),
                    'p_papel'                     =>array($p_papel,                                         B_VARCHAR,      2000)
                   );
      $l_rs = DatabaseQueriesFactory::getInstanceOf($sql, $dbms, $params, DB_TYPE);

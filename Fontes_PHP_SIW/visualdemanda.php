@@ -79,10 +79,15 @@ function VisualDemanda($l_chave,$operacao,$w_usuario) {
       $l_html.=chr(13).'        <td>'.MontaOrdemEtapa(f($RS,'sq_projeto_etapa')).'. '.f($RS,'nm_etapa').'</td></tr>';
     } 
 
+    if (nvl(f($RS,'ds_restricao'),'')>'') {
+      $l_html.=chr(13).'      <tr><td valign="top"><b>'.f($RS,'nm_tipo_restricao').': </b></td>';
+      $l_html.=chr(13).'        <td>'.f($RS,'ds_restricao').'</td></tr>';
+    } 
+
     if (nvl(f($RS,'sq_demanda_pai'),'')>'') {
       // Recupera os dados da demanda
       $RS1 = db_getSolicData::getInstanceOf($dbms,f($RS,'sq_demanda_pai'),'GDGERAL');
-      $l_html.=chr(13).'      <tr><td valign="top"><b>Atividade pai: </b></td>';
+      $l_html.=chr(13).'      <tr><td valign="top"><b>Tarefa pai: </b></td>';
       $l_html.=chr(13).'        <td><A class="HL" HREF="'.$w_pagina.'Visual&R='.$w_pagina.$par.'&O=L&w_chave='.f($RS1,'sq_siw_solicitacao').'&P1='.$P1.'&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP='.$TP.'&SG='.$SG.MontaFiltro('GET').'" title="Exibe as informações deste registro." target="_blank">'.f($RS1,'sq_siw_solicitacao').'</a> - '.f($RS1,'assunto').' </td></tr>';
     } 
 
@@ -123,7 +128,7 @@ function VisualDemanda($l_chave,$operacao,$w_usuario) {
             null, null, null, null,null, null, null, f($RS,'sq_siw_solicitacao'), null);
     $RSQuery = SortArray($RSQuery,'fim','asc','prioridade','asc');
     if (count($RSQuery)>0) {
-      $l_html.=chr(13).'      <tr><td colspan="2"><br><font size="2"><b>ATIVIDADES SUBORDINADAS<hr NOSHADE color=#000000 SIZE=1></b></font></td></tr>';
+      $l_html.=chr(13).'      <tr><td colspan="2"><br><font size="2"><b>TAREFAS SUBORDINADAS<hr NOSHADE color=#000000 SIZE=1></b></font></td></tr>';
       $l_html.=chr(13).'      <tr><td valign="top" colspan="2"><table border=0 width="100%" cellspacing=0>';
       $l_html.=chr(13).'        <tr><td align="right"><b>Registros: '.count($RSQuery);
       $l_html.=chr(13).'        <tr><td align="center" colspan=3>';
@@ -207,7 +212,7 @@ function VisualDemanda($l_chave,$operacao,$w_usuario) {
         $l_html .= chr(13).'      <tr>';
         $l_html .= chr(13).'        <td>'.f($row,'nm_tipo_completo').'</td>';
         $l_html .= chr(13).'        <td>'.nvl(f($row,'codigo'),'---').'</td>';
-        $l_html .= chr(13).'        <td>'.ExibeRecurso($w_dir_volta,$w_cliente,f($row,'nm_recurso'),f($row,'sq_recurso'),$TP).'</td>';
+        $l_html .= chr(13).'        <td>'.ExibeRecurso($w_dir_volta,$w_cliente,f($row,'nm_recurso'),f($row,'sq_recurso'),$TP,$l_chave).'</td>';
         $l_html .= chr(13).'        <td align="center" nowrap>'.f($row,'nm_unidade_medida').'</td>';        
         $l_html .= chr(13).'      </tr>';
       } 

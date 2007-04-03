@@ -166,12 +166,12 @@ function VisualViagem($l_chave,$l_O,$l_usuario,$l_P1,$l_P4) {
         if (Nvl(f($RS,'cd_banco'),'')>'') {
           $w_html .= chr(13).'          <td>Banco:<b><br>'.f($RS,'cd_banco').' - '.f($RS,'nm_banco').'</td>';
           $w_html .= chr(13).'          <td>Agência:<b><br>'.f($RS,'cd_agencia').' - '.f($RS,'nm_agencia').'</td>';
-          $w_html .= chr(13).'          <td>Operação:<b><br>'.Nvl(f($RS,'operacao_conta'),'---').'</td>';
+          if (f($RS,'exige_operacao')=='S') $w_html .= chr(13).'          <td>Operação:<b><br>'.Nvl(f($RS,'operacao_conta'),'---').'</td>';
           $w_html .= chr(13).'          <td>Número da conta:<b><br>'.Nvl(f($RS,'numero_conta'),'---').'</td>';
         } else {
           $w_html .= chr(13).'          <td>Banco:<b><br>---</td>';
           $w_html .= chr(13).'          <td>Agência:<b><br>---</td>';
-          $w_html .= chr(13).'          <td>Operação:<b><br>---</td>';
+          if (f($RS,'exige_operacao')=='S') $w_html .= chr(13).'          <td>Operação:<b><br>---</td>';
           $w_html .= chr(13).'          <td>Número da conta:<b><br>---</td>';
         } 
       } elseif (f($RS,'sg_forma_pagamento')=='ORDEM') {

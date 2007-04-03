@@ -176,8 +176,7 @@ function VisualConvenio($l_chave,$l_O,$l_usuario,$l_P1,$l_P4) {
           $w_html.=chr(13).'              <td>'.f($RS,'cd_banco').' - '.f($RS,'nm_banco').'</td>';
           $w_html.=chr(13).'          <tr><td><font size="1"><b>Agência:</b></td>';
           $w_html.=chr(13).'              <td>'.f($RS,'cd_agencia').' - '.f($RS,'nm_agencia').'</td>';
-          $w_html.=chr(13).'          <tr><td><font size="1"><b>Operação:</b></td>';
-          $w_html.=chr(13).'              <td>'.Nvl(f($RS,'operacao_conta'),'---').'</td>';
+          if (f($RS,'exige_operacao')=='S') $w_html.=chr(13).'          <tr><td><font size="1"><b>Operação:</b></td><td>'.Nvl(f($RS,'operacao_conta'),'---').'</td>';
           $w_html.=chr(13).'          <tr><td><font size="1"><b>Número da conta:</b></td>';
           $w_html.=chr(13).'              <td>'.Nvl(f($RS,'numero_conta'),'---').'</td>';
         } 

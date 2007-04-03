@@ -755,7 +755,7 @@ function Gerencial() {
       if ($p_sq_menu_relac=='CLASSIF') {
         SelecaoSolic('Classificação',null,null,$w_cliente,$p_sqcc,$p_sq_menu_relac,null,'p_sqcc','SIWSOLIC',null);
       } else {
-        SelecaoSolic('Documento',null,null,$w_cliente,$p_solic_pai,$p_sq_menu_relac,f($RS_Menu,'sq_menu'),'p_solic_pai',f($RS_Relac,'sigla'),null);
+        SelecaoSolic('Vinculação',null,null,$w_cliente,$p_solic_pai,$p_sq_menu_relac,f($RS_Menu,'sq_menu'),'p_solic_pai',f($RS_Relac,'sigla'),null);
       }
     }
     ShowHTML('          </td></tr></table></td></tr>');    

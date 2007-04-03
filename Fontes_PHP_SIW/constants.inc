@@ -42,12 +42,17 @@ $conTituloFontColor	= '#008000';
 
 //---------------------------Definições de imagens
 
+$conImgOkAcima	= 'images/purpleball.gif';
 $conImgOkNormal	= 'images/tickverde.gif';
 $conImgOkAtraso	= 'images/tickvermelho.gif';
 $conImgNormal	= 'images/BallGreen.png';
 $conImgAviso	= 'images/BallYellow.png';
 $conImgAtraso	= 'images/BallRed.png';
 $conImgCancel 	='images/icone/REQUIRED.GIF';
+$conImgProblem  ='images/icone/problem.gif';
+$conImgRiskLow  ='images/icone/risk_low.gif';
+$conImgRiskMed  ='images/icone/risk_medium.gif';
+$conImgRiskHig  ='images/icone/risk_high.gif';
 
 
 //---------------------------Definições de banco

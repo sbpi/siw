@@ -265,7 +265,7 @@ function Inicial() {
         ShowHTML('        </td>');
         ShowHTML('        <td>'.f($row,'nm_tipo_recurso').'</td>');
         ShowHTML('        <td>'.f($row,'codigo').'</td>');
-        ShowHTML('        <td>'.ExibeRecurso($w_dir_volta,$w_cliente,f($row,'nome'),f($row,'chave'),$TP).'</td>');
+        ShowHTML('        <td>'.ExibeRecurso($w_dir_volta,$w_cliente,f($row,'nome'),f($row,'chave'),$TP,null).'</td>');
         ShowHTML('        <td align="center" title="'.f($row,'nm_unidade_medida').'">'.f($row,'sg_unidade_medida').'</td>');
         ShowHTML('        <td>'.ExibeUnidade($w_dir_volta,$w_cliente,f($row,'nm_unidade'),f($row,'unidade_gestora'),$TP).'</td>');
         ShowHTML('        <td align="top" nowrap>');
@@ -882,6 +882,7 @@ function TelaRecurso() {
   global $w_Disabled, $w_TP;
 
   $w_chave = $_REQUEST['w_chave'];
+  $w_solic = $_REQUEST['w_solic'];
 
   Cabecalho();
   ShowHTML('<HEAD>');
@@ -891,13 +892,13 @@ function TelaRecurso() {
   BodyOpen('onLoad=this.focus();');
   $w_TP = 'Recurso - Visualização de dados';
   Estrutura_Texto_Abre();
-  ShowHTML(visualRecurso($w_chave));
+  ShowHTML(visualRecurso($w_chave,false,$w_solic));
   Estrutura_Texto_Fecha();
 } 
 // =========================================================================
 // Monta string com os dados do recurso
 // -------------------------------------------------------------------------
-function visualRecurso($l_chave,$l_navega=true) {
+function visualRecurso($l_chave,$l_navega=true,$l_solic) {
   extract($GLOBALS);
 
   // Recupera os dados do recurso
@@ -961,7 +962,7 @@ function visualRecurso($l_chave,$l_navega=true) {
   foreach($l_rs_Indisp as $row) retornaArrayDias(f($row,'inicio'), f($row,'fim'), &$w_datas, f($row,'justificativa'), f($row,'dia_util'));
   foreach($l_rs_Indisp as $row) retornaArrayDias(f($row,'inicio'), f($row,'fim'), &$w_cores, $conTrBgColorLightRed1, f($row,'dia_util'));
 
-  $l_rs_Aloc = db_getSolicRecursos::getInstanceOf($dbms,$w_cliente,$w_usuario,null,$l_chave,null,null,null,null,null,null,null,null,null,'ALOCACAO');
+  $l_rs_Aloc = db_getSolicRecursos::getInstanceOf($dbms,$w_cliente,$w_usuario,$l_solic,$l_chave,null,null,null,null,null,null,null,null,null,'ALOCACAO');
   $l_rs_Aloc = SortArray($l_rs_Aloc,'inicio','desc','fim','desc');
   // Cria arrays com cada dia do período, definindo o texto e a cor de fundo para exibição no calendário
   foreach($l_rs_Aloc as $row) retornaArrayDias(f($row,'inicio'), f($row,'fim'), &$w_datas, 'Alocado', 'S');
@@ -1090,6 +1091,8 @@ function visualRecurso($l_chave,$l_navega=true) {
   $l_html .= chr(13).'              <BR><b>ALOCAÇÕES</b>';
   $l_html .= chr(13).'              <table width="100%" border="1" cellspacing=0>';
   $l_html .= chr(13).'                <tr align="center" valign="top">';
+  $l_html .= chr(13).'                  <td><b>Serviço';
+  $l_html .= chr(13).'                  <td><b>Código';
   $l_html .= chr(13).'                  <td><b>Início';
   $l_html .= chr(13).'                  <td><b>Término';
   $l_html .= chr(13).'                  <td><b>Unidades diárias';
@@ -1097,11 +1100,13 @@ function visualRecurso($l_chave,$l_navega=true) {
   reset($l_rs_Aloc);
   $w_cor = $w_cor=$conTrBgColor;
   if (count($l_rs_Indisp)==0) {
-    $l_html .= chr(13).'                <tr bgcolor="'.$w_cor.'" valign="top"><td colspan=3 align="center"><b>Não foram encontrados registros.';
+    $l_html .= chr(13).'                <tr bgcolor="'.$w_cor.'" valign="top"><td colspan=6 align="center"><b>Não foram encontrados registros.';
   } else {
     foreach($l_rs_Aloc as $row_ano) {
       $w_cor = ($w_cor==$conTrBgColor || $w_cor=='') ? $w_cor=$conTrAlternateBgColor : $w_cor=$conTrBgColor;
       $l_html .= chr(13).'              <tr bgcolor="'.$w_cor.'" valign="top">';
+      $l_html .= chr(13).'                  <td>'.f($row_ano,'nm_servico');
+      $l_html .= chr(13).'                  <td>'.f($row_ano,'cd_servico');
       $l_html .= chr(13).'                  <td align="center">'.formataDataEdicao(f($row_ano,'inicio'));
       $l_html .= chr(13).'                  <td align="center">'.formataDataEdicao(f($row_ano,'fim'));
       $l_html .= chr(13).'                  <td align="center">'.formatNumber(f($row_ano,'unidades_solicitadas'),1);
@@ -1226,7 +1231,7 @@ function Solic() {
       foreach($RS1 as $row){ 
         $w_cor = ($w_cor==$conTrBgColor || $w_cor=='') ? $w_cor=$conTrAlternateBgColor : $w_cor=$conTrBgColor;
         ShowHTML('      <tr bgcolor="'.$w_cor.'" valign="top">');
-        ShowHTML('        <td>'.ExibeRecurso($w_dir_volta,$w_cliente,f($row,'nm_recurso'),f($row,'sq_recurso'),$TP).'</td>');
+        ShowHTML('        <td>'.ExibeRecurso($w_dir_volta,$w_cliente,f($row,'nm_recurso'),f($row,'sq_recurso'),$TP,f($row,'chave')).'</td>');
         ShowHTML('        <td>'.nvl(f($row,'cd_recurso'),'---').'</td>');
         ShowHTML('        <td>'.f($row,'nm_tipo_completo').'</td>');
         ShowHTML('        <td align="center" title="'.f($row,'nm_unidade_medida').'">'.f($row,'sg_unidade_medida').'</td>');
@@ -1302,7 +1307,8 @@ function Solic() {
     ShowHTML('</FORM>');
     if (nvl($w_recurso,'nulo')!='nulo') {
       ShowHTML('<table border=1><tr><td bgcolor="#FAEBD7">');
-      ShowHTML(visualRecurso($w_recurso,false));
+      // A chamada da rotina de visualização deve passar nulo no parâmetro solicitação para exibir todas as alocações
+      ShowHTML(visualRecurso($w_recurso,false,null));
       ShowHTML('</TABLE><BR>');
     }
   } else {
@@ -1503,7 +1509,7 @@ function SolicPeriodo() {
     if (!(strpos('IA',$O)===false)) {
       ShowHTML('    </table>');
       ShowHTML('<br><table border=1><tr><td bgcolor="#FAEBD7">');
-      ShowHTML(visualRecurso($w_recurso,false));
+      ShowHTML(visualRecurso($w_recurso,false,null));
       ShowHTML('</TABLE><BR>');
     }
   } else {
@@ -1708,9 +1714,9 @@ function Grava() {
 
             // Verifica a disponibilidade do recurso no período informado
             $RS = db_getSolicRecursos::getInstanceOf($dbms,$w_cliente,$w_usuario, $_REQUEST['w_recurso'],null,null, null, 
-                null, null, $_REQUEST['w_recurso'], null, null, $_REQUEST['w_inicio'],$_REQUEST['w_fim'],'RECDISP');
+                null, null, $_REQUEST['w_recurso'], null, null,$_REQUEST['w_inicio'],$_REQUEST['w_fim'],'RECDISP');
             foreach ($RS as $row) { $RS = $row; break; }
-            if (f($RS,'existe')==0) {
+            if (f($RS,'existe')!=0) {
               ScriptOpen('JavaScript');
               ShowHTML('  alert(\'Recurso indisponível em alguma parte do período informado!\nVerifique o mapa de disponibilidade do recurso.\');');
               ScriptClose(); 
@@ -1754,7 +1760,7 @@ function Grava() {
           $RS = db_getSolicRecursos::getInstanceOf($dbms,$w_cliente,$w_usuario, $_REQUEST['w_recurso'],null, null, null, 
               null, null, $_REQUEST['w_recurso'], null, null, $_REQUEST['w_inicio'],$_REQUEST['w_fim'],'RECDISP');
           foreach ($RS as $row) { $RS = $row; break; }
-          if (f($RS,'existe')==0) {
+          if (f($RS,'existe')!=0) {
             ScriptOpen('JavaScript');
             ShowHTML('  alert(\'Recurso indisponível em alguma parte do período informado!\nVerifique o mapa de disponibilidade do recurso.\');');
             ScriptClose(); 
