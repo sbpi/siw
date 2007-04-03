@@ -144,7 +144,7 @@ begin
                 nvl(h.qt_ativ,0) qt_ativ, h.sq_menu p2,
                 m.vincula_contrato pj_vincula_contrato, nvl(n.qt_contr,0) qt_contr, n.sq_menu p3,
                 SolicRestricao(a.sq_siw_solicitacao, a.sq_projeto_etapa) as restricao,
-                acentos(a.titulo) as ac_titulo
+                acentos(a.titulo,1) as ac_titulo
            from pj_projeto_etapa                a
                 inner          join siw_solicitacao i on (a.sq_siw_solicitacao = i.sq_siw_solicitacao)
                 inner        join pj_projeto      m on (a.sq_siw_solicitacao = m.sq_siw_solicitacao)
@@ -201,7 +201,7 @@ begin
                 nvl(h.qt_ativ,0) qt_ativ, h.sq_menu p2,
                 m.vincula_contrato pj_vincula_contrato, nvl(n.qt_contr,0) qt_contr, n.sq_menu p3,
                 SolicRestricao(a.sq_siw_solicitacao, a.sq_projeto_etapa) as restricao,
-                acentos(a.titulo) as ac_titulo
+                acentos(a.titulo,1) as ac_titulo
            from pj_projeto_etapa                a
                 inner          join siw_solicitacao i on (a.sq_siw_solicitacao = i.sq_siw_solicitacao)
                 inner          join pj_projeto      m on (a.sq_siw_solicitacao = m.sq_siw_solicitacao)                
@@ -322,6 +322,16 @@ begin
            from pj_projeto_etapa   a
           where a.sq_etapa_pai       = p_chave
             and a.sq_projeto_etapa   = p_chave_aux;
+   Else
+      -- Recupera as etapas subordinadas a outra do mesmo projeto
+      open p_result for 
+         select a.sq_projeto_etapa, a.sq_siw_solicitacao, a.sq_etapa_pai, a.ordem, a.titulo, a.descricao, a.inicio_previsto, a.fim_previsto, 
+                a.inicio_real, a.fim_real, a.perc_conclusao, a.orcamento, a.sq_unidade, a.sq_pessoa, a.vincula_atividade, a.sq_pessoa_atualizacao, 
+                a.ultima_atualizacao, a.situacao_atual, a.unidade_medida, a.quantidade, a.cumulativa, a.programada, a.exequivel, 
+                a.justificativa_inexequivel, a.outras_medidas, a.vincula_contrato, a.pacote_trabalho, a.peso
+           from pj_projeto_etapa   a
+          where a.sq_siw_solicitacao = p_chave
+            and acentos(a.titulo,1)  = p_restricao;
    End If;
 End SP_GetSolicEtapa;
 /

@@ -125,6 +125,8 @@ begin
                 d1.nome nm_prop,      d1.nome_resumido nm_prop_res,
                 case upper(d3.nome) when 'BRASIL' then d2.nome||'-'||d2.co_uf||' ('||d3.nome||')' else d2.nome||' ('||d3.nome||')' end nm_cidade_evento,
                 d4.inicio_etapa,      d4.fim_etapa,
+                d4.inicio_etapa,      d4.fim_etapa,
+                d5.inicio_etapa_real, d5.fim_etapa_real,
                 e.sq_tipo_unidade,    e.nome nm_unidade_resp,        e.informal informal_resp,
                 e.vinculada vinc_resp,e.adm_central adm_resp,        e.sq_unidade,
                 e1.sq_pessoa titular, e2.sq_pessoa substituto,
@@ -151,7 +153,9 @@ begin
                 m.sigla sg_acordo,
                 n.sq_menu sq_menu_pai,
                 o.sq_siw_solicitacao sq_programa, o.codigo_interno cd_programa, o.titulo nm_programa,
-                acentos(d.titulo) as ac_titulo
+                acentos(d.titulo,1) as ac_titulo,
+                calculaIgc(d.sq_siw_solicitacao) as igc,
+                calculaIde(d.sq_siw_solicitacao) as ide
            from siw_menu                                     a 
                 inner        join eo_unidade                 a2 on (a.sq_unid_executora   = a2.sq_unidade)
                   left       join eo_unidade_resp            a3 on (a2.sq_unidade         = a3.sq_unidade and
@@ -175,6 +179,10 @@ begin
                                            from pj_projeto_etapa
                                           group by sq_siw_solicitacao
                                         )                    d4 on (d.sq_siw_solicitacao = d4.sq_siw_solicitacao)
+                        left       join (select sq_siw_solicitacao, min(inicio_real) as inicio_etapa_real, max(fim_real) as fim_etapa_real
+                                           from pj_projeto_etapa
+                                          group by sq_siw_solicitacao
+                                        )                    d5 on (d.sq_siw_solicitacao = d5.sq_siw_solicitacao)
                     inner          join eo_unidade           e  on (d.sq_unidade_resp     = e.sq_unidade)
                       left         join eo_unidade_resp      e1 on (e.sq_unidade          = e1.sq_unidade and
                                                                      e1.tipo_respons      = 'T'           and

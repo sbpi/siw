@@ -13,7 +13,7 @@ BEGIN
    IF Tipo IS NULL OR Tipo <> 1 THEN
       nome := ltrim(upper(translate(lower((nome)),'γβαΰικνυτσϊόη','aaaaeeiooouuc')));
    ELSE
-      nome := translate(nome,'Ώ ΖΏΏ‘δ’£Ώ','βαγκινυσϊη');
+      nome := translate(nome,'ΐΒΑΓΚΙΝΥΣΪάΗΰβαγκινυσϊόη','AAAAEEIOOUUCaaaaeeioouuc');
    END IF;
 
    RETURN nome ;
