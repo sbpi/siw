@@ -49,6 +49,7 @@ begin
             and (p_nome       is null or (p_nome  is not null and acentos(a.nome)     like '%'||acentos(p_nome)||'%'))
             and (p_ativo      is null or (p_ativo is not null and a.ativo             = p_ativo))
             and (p_tipo       is null or (p_tipo  is not null and a.sq_tipo_indicador = p_tipo))
+            and (p_sigla      is null or (p_sigla is not null and a.sigla             = p_sigla))
             and (p_restricao  is null or 
                  (p_restricao is not null and p_restricao = 'VS'       and b.data is not null) or
                  (p_restricao is not null and p_restricao = 'VSMESA'   and b.data is not null and a.exibe_mesa = 'S') or
