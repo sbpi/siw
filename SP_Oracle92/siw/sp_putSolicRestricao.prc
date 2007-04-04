@@ -35,7 +35,8 @@ begin
    Elsif p_operacao = 'A' Then 
       -- Altera registro
       update siw_restricao
-         set sq_pessoa_atualizacao = p_pessoa_atualizacao,     
+         set sq_pessoa             = p_pessoa, 
+             sq_pessoa_atualizacao = p_pessoa_atualizacao,     
              sq_tipo_restricao     = p_tipo_restricao,
              risco                 = p_risco,
              problema              = p_problema,
