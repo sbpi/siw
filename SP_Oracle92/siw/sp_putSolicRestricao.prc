@@ -30,7 +30,7 @@ begin
                   impacto,          criticidade,      estrategia,   acao_resposta,                 fase_atual,          data_situacao,      situacao_atual,   ultima_atualizacao)
 
       values
-        (w_chave_aux,                 p_chave,          p_pessoa,      p_pessoa_atualizacao,       p_tipo_restricao,            p_risco,          p_problema,         p_descricao,   p_probabilidade, 
+        (w_chave_aux,                 p_chave,          p_pessoa,      p_pessoa_atualizacao,      p_tipo_restricao,            p_risco,          p_problema,         p_descricao,   p_probabilidade, 
         p_impacto,                p_criticidade,     p_estrategia,   p_acao_resposta,             p_fase_atual,        p_data_situacao,    p_situacao_atual,            sysdate);
    Elsif p_operacao = 'A' Then 
       -- Altera registro
