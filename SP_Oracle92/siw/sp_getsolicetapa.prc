@@ -110,7 +110,7 @@ begin
               c.nome_resumido||'('||d.sigla||')' as nm_resp, 
               d.sigla as sg_setor,
               nvl(e.qt_ativ,0) qt_ativ, e.sq_menu p2,
-                SolicRestricao(a.sq_siw_solicitacao, a.sq_projeto_etapa) as restricao
+              SolicRestricao(a.sq_siw_solicitacao, a.sq_projeto_etapa) as restricao
          from pj_projeto_etapa                  a
               inner    join siw_restricao_etapa b  on (a.sq_projeto_etapa = b.sq_projeto_etapa)
                 inner join siw_restricao        b1 on (b.sq_siw_restricao = b1.sq_siw_restricao 
