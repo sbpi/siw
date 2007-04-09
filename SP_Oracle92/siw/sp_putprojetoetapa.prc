@@ -58,7 +58,10 @@ begin
    Elsif p_operacao = 'A' Then -- Alteração
       -- Recupera a etapa pai
       select sq_etapa_pai into w_pai from pj_projeto_etapa where sq_projeto_etapa = p_chave_aux;
-
+      -- Atualiza a tabela de restrições da etapa
+      If p_pacote = 'N' Then
+         delete siw_restricao_etapa where sq_projeto_etapa = p_chave_aux; 
+      end If;    
       -- Atualiza a tabela de etapas do projeto
       Update pj_projeto_etapa set
           sq_etapa_pai          = p_chave_pai,
