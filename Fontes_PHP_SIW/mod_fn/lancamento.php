@@ -2112,7 +2112,7 @@ function BuscaParcela() {
       $w_cidade = Nvl(f($RS_Menu,'sq_cidade'),f($RS,'sq_cidade_padrao'));
     } 
     $RS1 = db_getLinkData::getInstanceOf($dbms,$w_cliente,'GC'.substr($SG,2,1).'CAD');
-    $RS = db_getAcordoParcela::getInstanceOf($dbms,$p_sq_acordo,$p_sq_acordo_parcela,'CADASTRO',$p_outra_parte,$p_inicio,$p_fim,$w_usuario,"'EE', 'ER'",f($RS1,'sq_menu'));
+    $RS = db_getAcordoParcela::getInstanceOf($dbms,$p_sq_acordo,$p_sq_acordo_parcela,'CADASTRO',$p_outra_parte,$p_inicio,$p_fim,$w_usuario,"'EE', 'ER'",f($RS1,'sq_menu'),null);
     $RS = SortArray($RS,'vencimento','asc','nome_resumido','asc');
   } elseif ($O=='A') {
   } 
@@ -3141,10 +3141,6 @@ function Grava() {
           $_REQUEST['w_sq_acordo_parcela'],$_REQUEST['w_observacao'],Nvl($_REQUEST['w_sq_tipo_lancamento'],''),
           Nvl($_REQUEST['w_sq_forma_pagamento'],''),$_REQUEST['w_tipo_pessoa'],$_REQUEST['w_forma_atual'],
           $_REQUEST['w_vencimento_atual'],$_REQUEST['w_tipo_rubrica'],$_REQUEST['w_numero_processo'],&$w_chave_nova,&$w_codigo);
-      if ($O=='I') {
-        //Envia e-mail comunicando a inclusão
-        SolicMail(Nvl($_REQUEST['w_chave'],$w_chave_nova),1);
-      }
       ScriptOpen('JavaScript');
       ShowHTML('  location.href=\''.montaURL_JS($w_dir,f($RS_Menu,'link').'&O=L&w_chave='.$_REQUEST['w_chave'].'&P1='.$P1.'&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP='.$TP.'&SG='.f($RS_Menu,'sigla').MontaFiltro('GET')).'\';');
       ScriptClose();

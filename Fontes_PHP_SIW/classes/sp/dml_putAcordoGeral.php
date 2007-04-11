@@ -13,7 +13,7 @@ class dml_putAcordoGeral {
    function getInstanceOf($dbms, $operacao, $p_cliente, $p_chave, $p_menu, $p_unid_resp, $p_solicitante, $p_cadastrador, $p_sqcc, 
         $p_descricao, $p_justificativa, $p_inicio, $p_fim, $p_valor, $p_data_hora, $p_aviso, $p_dias, $p_cidade, $p_projeto, 
         $p_sq_tipo_acordo, $p_objeto, $p_sq_tipo_pessoa, $p_sq_forma_pagamento, $p_forma_atual, $p_inicio_atual, $p_etapa,
-        $p_codigo, $p_numero_empenho, $p_numero_processo, $p_data_assinatura,  $p_data_publicacao,
+        $p_codigo, $p_titulo, $p_numero_empenho, $p_numero_processo, $p_data_assinatura,  $p_data_publicacao,
         $p_chave_nova, $p_copia, $p_codigo_interno) {
      extract($GLOBALS,EXTR_PREFIX_SAME,'strchema'); $sql=$strschema.'SP_PUTACORDOGERAL';
      $params=array('p_operacao'                  =>array($operacao,                                        B_VARCHAR,         1),
@@ -43,10 +43,11 @@ class dml_putAcordoGeral {
                    'p_inicio_atual'              =>array(tvl($p_inicio_atual),                             B_DATE,           32),
                    'p_etapa'                     =>array(tvl($p_etapa),                                    B_INTEGER,        32),
                    'p_codigo'                    =>array(tvl($p_codigo),                                   B_VARCHAR,        60),
+                   'p_titulo'                    =>array(tvl($p_titulo),                                   B_VARCHAR,        100),
                    'p_numero_empenho'            =>array(tvl($p_numero_empenho),                           B_VARCHAR,        30),
                    'p_numero_processo'           =>array(tvl($p_numero_processo),                          B_VARCHAR,        30),
                    'p_data_assinatura'           =>array(tvl($p_data_assinatura),                          B_DATE,           32),
-                   'p_data_publicacao'           =>array(tvl($p_data_publicacao),                          B_DATE,           32),                                      
+                   'p_data_publicacao'           =>array(tvl($p_data_publicacao),                          B_DATE,           32),
                    'p_chave_nova'                =>array(&$p_chave_nova,                                   B_INTEGER,        32),
                    'p_codigo_interno'            =>array(&$p_codigo_interno,                               B_VARCHAR,        60)
                   );

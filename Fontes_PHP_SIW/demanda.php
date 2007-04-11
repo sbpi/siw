@@ -1974,8 +1974,6 @@ function Grava() {
             $_REQUEST['w_cidade'], $_REQUEST['w_palavra_chave'],null, null, null, null, null, null, null,
             null, null, null, null, &$w_chave_nova, $w_copia);
         if ($O=='I') {
-          // Envia e-mail comunicando a inclusão
-          SolicMail(Nvl($_REQUEST['w_chave'],$w_chave_nova),1);
           // Recupera os dados para montagem correta do menu
           $RS1 = db_getMenuData::getInstanceOf($dbms,$w_menu);
           ScriptOpen('JavaScript');

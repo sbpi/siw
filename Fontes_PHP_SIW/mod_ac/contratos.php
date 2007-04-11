@@ -523,8 +523,8 @@ function Inicial() {
               // Se for execução
               if ($w_usuario==f($row,'executor')) {
                 if($w_segmento=='Público'|| substr($w_sigla,0,3)=='GCD') {
-                  ShowHTML('          <A class="hl" HREF="'.$w_dir.$w_pagina.'Notas&R='.$w_pagina.$par.'&O=L&w_chave='.f($row,'sq_siw_solicitacao').'&w_tipo=&P1='.$P1.'&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP='.$TP.'- Notas de empenho'.'&SG=GCDNOTA'.MontaFiltro('GET').'" target="Notas" title="Registra as notas de empenho do contrato.">NE</A>&nbsp');
-                  ShowHTML('          <A class="hl" HREF="'.$w_dir.$w_pagina.'Aditivos&R='.$w_pagina.$par.'&O=L&w_chave='.f($row,'sq_siw_solicitacao').'&w_tipo=&P1='.$P1.'&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP='.$TP.'- Aditivos'.'&SG=GCDADITIVO'.MontaFiltro('GET').'" target="Aditivos" title="Registra os aditivos do contrato.">Aditivos</A>&nbsp');
+                  ShowHTML('          <A class="hl" HREF="'.$w_dir.$w_pagina.'Notas&R='.$w_pagina.$par.'&O=L&w_chave='.f($row,'sq_siw_solicitacao').'&w_tipo=&P1='.$P1.'&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP='.$TP.'- Notas de empenho'.'&SG=GCDNOTA'.MontaFiltro('GET').'" target="Aditivos" title="Registra as notas de empenho do contrato.">NE</A>&nbsp;');
+                  ShowHTML('          <A class="hl" HREF="'.$w_dir.$w_pagina.'Aditivos&R='.$w_pagina.$par.'&O=L&w_chave='.f($row,'sq_siw_solicitacao').'&w_tipo=&P1='.$P1.'&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP='.$TP.'- Aditivos'.'&SG=GCDADITIVO'.MontaFiltro('GET').'" target="Aditivos" title="Registra os aditivos do contrato.">Aditivos</A>&nbsp;');
                 }
                 ShowHTML('          <A class="hl" HREF="'.$w_dir.$w_pagina.'Anotacao&R='.$w_pagina.$par.'&O=V&w_chave='.f($row,'sq_siw_solicitacao').'&w_tipo=Volta&P1='.$P1.'&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP='.$TP.'&SG='.$SG.MontaFiltro('GET').'" title="Registra anotações, sem enviá-la.">Anotar</A>&nbsp');
                 ShowHTML('          <A class="hl" HREF="'.$w_dir.$w_pagina.'envio&R='.$w_pagina.$par.'&O=V&w_chave='.f($row,'sq_siw_solicitacao').'&w_tipo=Volta&P1='.$P1.'&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP='.$TP.'&SG='.$SG.MontaFiltro('GET').'" title="Envia para outro responsável.">Enviar</A>&nbsp');
@@ -1363,6 +1363,7 @@ function DadosAdicionais() {
         $w_data_assinatura  = FormataDataEdicao(f($RS,'assinatura'));
         $w_data_publicacao  = FormataDataEdicao(f($RS,'publicacao'));
         $w_sq_menu          = f($RS,'sq_menu');
+        $w_sq_cc            = f($RS,'sq_cc');
       } 
     } 
   } 
@@ -1382,22 +1383,20 @@ function DadosAdicionais() {
   CheckBranco();
   FormataValor();
   FormataData();
+  FormataDataMA();
   ValidateOpen('Validacao');
   if ($O=='I' || $O=='A') {
+    if (substr($SG,0,3)=='GCD') Validate('w_sq_lcmodalidade','Modalidade','SELECT','1',1,18,'','0123456789');
     Validate('w_numero_certame','Numero do certame','1','1',1,30,'1','1');
     Validate('w_numero_ata','Numero da ata','1','',1,30,'1','1');
     Validate('w_tipo_reajuste','Tipo de reajuste','SELECT','1',1,18,'','0123456789');
-    if($w_tipo_reajuste!=0) {
-      Validate('w_limite_variacao','Limite de variação','VALOR','1',4,18,'','0123456789.,');
-      CompValor('w_limite_variacao','Limite variação','>',0,'0');
-    }
     if($w_tipo_reajuste==1) {
-      Validate('w_indice_base','Índice base','1','1',1,7,'1','1');
+      Validate('w_indice_base','Índice base','DATAMA','1',1,7,'1','1');
       Validate('w_sq_eoindicador','Índice de reajuste','SELECT','1',1,18,'','0123456789');
     }
+    Validate('w_limite_variacao','Limite de acréscimo/supressão','VALOR','1',4,18,'','0123456789.,');
     Validate('w_sq_lcfonte_recurso','Fonte de recurso','SELECT','1',1,18,'','0123456789');
     Validate('w_espec_despesa','Especificação de despesa','SELECT','1',1,18,'','0123456789');
-    if (substr($SG,0,3)=='GCD') Validate('w_sq_lcmodalidade','Modalidade','SELECT','1',1,18,'','0123456789');
     if (substr($SG,0,3)!='GCA' && substr($SG,0,3)!='GCB') Validate('w_numero_empenho','Número do empenho','1',1,1,30,'1','1');
     if (substr($SG,0,3)=='GCD' || substr($SG,0,3)=='GCA') Validate('w_numero_processo','Número do processo','1','1',1,30,'1','1');
     Validate('w_data_assinatura','Assinatura','DATA',1,10,10,'','0123456789/');
@@ -1433,33 +1432,26 @@ function DadosAdicionais() {
     
     ShowHTML('<tr bgcolor="'.$conTrBgColor.'"><td>');
     ShowHTML('    <table width="100%" border="0">');
-    ShowHTML('      <tr><td colspan="2" align="center" height="2" bgcolor="#000000"></td></tr>');
-    ShowHTML('      <tr><td colspan="2" align="center" height="1" bgcolor="#000000"></td></tr>');
-    ShowHTML('      <tr><td colspan="2" align="center" bgcolor="#D0D0D0"><b></td></td></tr>');
-    ShowHTML('      <tr><td colspan="2" align="center" height="1" bgcolor="#000000"></td></tr>');
-    ShowHTML('      <tr><td colspan="2" align="center" height="1" bgcolor="#000000"></td></tr>');
-    ShowHTML('      <tr><td><b><u>N</u>úmero do certame:</b><br><INPUT ACCESSKEY="N" '.$w_Disabled.' class="sti" type="text" name="w_numero_certame" size="30" maxlength="30" value="'.$w_numero_certame.'" title="Número do certame licitatório que originou o contrato."></td>');
+    ShowHTML('<tr valign="top">');
+    if (substr($SG,0,3)=='GCD') SelecaoLCModalidade('<u>M</u>odalidade:','M','Selecione na lista a modalidade do contrato.',$w_sq_lcmodalidade,null,'w_sq_lcmodalidade',null,null);
+    ShowHTML('          <td><b><u>N</u>úmero do certame:</b><br><INPUT ACCESSKEY="N" '.$w_Disabled.' class="sti" type="text" name="w_numero_certame" size="30" maxlength="30" value="'.$w_numero_certame.'" title="Número do certame licitatório que originou o contrato."></td>');
     ShowHTML('          <td><b>N<u>ú</u>mero da ata:</b><br><INPUT ACCESSKEY="U" '.$w_Disabled.' class="sti" type="text" name="w_numero_ata" size="30" maxlength="30" value="'.$w_numero_ata.'" title="Número da ata de registro de preços que originou o contrato."></td>');
     ShowHTML('<tr valign="top">');
     SelecaoTipoReajuste('<u>T</u>ipo de reajuste:','T','Indica o tipo de reajuste do contrato.',$w_tipo_reajuste,null,'w_tipo_reajuste',null,'onChange="document.Form.action=\''.$w_dir.$w_pagina.$par.'\'; document.Form.O.value=\''.$O.'\'; document.Form.w_troca.value=\'w_sq_lcfonte_recurso\'; document.Form.submit();"');
-    if($w_tipo_reajuste!=0) {
-      ShowHTML('          <td><b><u>L</u>imite de variação:</b><br><input '.$w_Disabled.' accesskey="L" type="text" name="w_limite_variacao" class="STI" SIZE="18" MAXLENGTH="18" VALUE="'.$w_limite_variacao.'" onKeyDown="FormataValor(this,18,2,event);" title="Percentual para indicar o limite de acréscimo ou supressão no valor original."></td>');
-    }
     if($w_tipo_reajuste==1) {
-      ShowHTML('      <tr><td><b>Ín<u>d</u>ice base:</b><br><INPUT ACCESSKEY="N" '.$w_Disabled.' class="sti" type="text" name="w_indice_base" size="7" maxlength="7" value="'.$w_indice_base.'" title="Registra mês e ano (MM/AAAA) do índice origina, quando o acordo permitir reajuste em índices."></td>');
+      ShowHTML('          <td><b>Ín<u>d</u>ice base:</b><br><INPUT ACCESSKEY="N" '.$w_Disabled.' class="sti" type="text" name="w_indice_base" size="7" maxlength="7" value="'.$w_indice_base.'" onKeyDown="FormataDataMA(this,event);" title="Registra mês e ano (MM/AAAA) do índice origina, quando o acordo permitir reajuste em índices."></td>');
       selecaoIndicador('<U>I</U>ndicador:','I','Selecione o indicador',$w_sq_eoindicador,$w_usuario,null,'w_sq_eoindicador',null,null);
     }
+    ShowHTML('      <tr><td><b><u>L</u>imite de acréscimo/supressão (%):</b><br><input '.$w_Disabled.' accesskey="L" type="text" name="w_limite_variacao" class="STI" SIZE="18" MAXLENGTH="18" VALUE="'.$w_limite_variacao.'" onKeyDown="FormataValor(this,18,2,event);" title="Percentual para indicar o limite de acréscimo ou supressão no valor original."></td>');
     ShowHTML('<tr valign="top">');
     selecaoLCFonteRecurso('<U>F</U>onte de recurso:','F','Selecione o a fonte de recurso',$w_sq_lcfonte_recurso,null,'w_sq_lcfonte_recurso',null,null);
-    selecaoCTEspecificacao('<u>E</u>specificação de despesa:','E','Selecione a especificação de despesa.',$w_espec_despesa,$w_espec_despesa,$_SESSION['ANO'],'w_espec_despesa','S',null,null);
-    ShowHTML('<tr valign="top">');
-    if (substr($SG,0,3)=='GCD') SelecaoLCModalidade('<u>M</u>odalidade:','M','Selecione na lista a modalidade do contrato.',$w_sq_lcmodalidade,null,'w_sq_lcmodalidade',null,null);
+    selecaoCTEspecificacao('<u>E</u>specificação de despesa:','E','Selecione a especificação de despesa.',$w_espec_despesa,$w_espec_despesa,$w_sq_cc,$_SESSION['ANO'],'w_espec_despesa','S',null,null);
     ShowHTML('<tr valign="top">');
     if (substr($SG,0,3)!='GCA' && substr($SG,0,3)!='GCB') ShowHTML('          <td><b><U>N</U>úmero do empenho:<br><INPUT ACCESSKEY="N" '.$w_Disabled.' class="STI" type="text" name="w_numero_empenho" size="20" maxlength="30" value="'.$w_numero_empenho.'"></td>');
     if (substr($SG,0,3)=='GCA' || substr($SG,0,3)=='GCD') ShowHTML('          <td><b>N<U>ú</U>mero do processo:<br><INPUT ACCESSKEY="U" '.$w_Disabled.' class="STI" type="text" name="w_numero_processo" size="20" maxlength="30" value="'.$w_numero_processo.'"></td>');
     if (substr($SG,0,3)=='GCB') ShowHTML('          <td><b>N<U>ú</U>mero do empenho (modalidade/nível/mensalidade)<br><INPUT ACCESSKEY="U" '.$w_Disabled.' class="STI" type="text" name="w_numero_processo" size="20" maxlength="30" value="'.$w_numero_processo.'"></td>'); 
     ShowHTML('<tr valign="top">');
-    ShowHTML('          <td><b><u>A</u>ssinatura:</b><br><input '.$w_Disabled.' accesskey="A" type="text" name="w_data_assinatura" class="sti" SIZE="10" MAXLENGTH="10" VALUE="'.$w_data_assinatura.'" onKeyDown="FormataData(this,event);">'.ExibeCalendario('Form','w_data_assinatura').'</td>');
+    ShowHTML('          <td><b><u>A</u>ssinatura do contrato:</b><br><input '.$w_Disabled.' accesskey="A" type="text" name="w_data_assinatura" class="sti" SIZE="10" MAXLENGTH="10" VALUE="'.$w_data_assinatura.'" onKeyDown="FormataData(this,event);">'.ExibeCalendario('Form','w_data_assinatura').'</td>');
     if (substr($SG,0,3)!='GCB') ShowHTML('          <td><b><u>P</u>ublicação D.O.:</b><br><input '.$w_Disabled.' accesskey="P" type="text" name="w_data_publicacao" class="sti" SIZE="10" MAXLENGTH="10" VALUE="'.$w_data_publicacao.'" onKeyDown="FormataData(this,event);">'.ExibeCalendario('Form','w_data_publicacao').'</td>');
     ShowHTML('          </table>');
     ShowHTML('      <tr><td align="center" colspan="3" height="1" bgcolor="#000000"></TD></TR>');
@@ -2391,16 +2383,22 @@ function Parcelas() {
   extract($GLOBALS);
   global $w_Disabled;
 
-  $w_chave      = $_REQUEST['w_chave'];
-  $w_chave_aux  = $_REQUEST['w_chave_aux'];
+  $w_chave             = $_REQUEST['w_chave'];
+  $w_chave_aux         = $_REQUEST['w_chave_aux'];
+  $w_sq_acordo_aditivo = $_REQUEST['w_sq_acordo_aditivo'];
 
   if (!(strpos('LIAG',$O)===false) && $w_troca=='') {
     // Recupera dados para as críticas
     $RS = db_getSolicData::getInstanceOf($dbms,$w_chave,$SG);
-    $w_inicio           = f($RS,'inicio');
-    $w_fim              = f($RS,'fim');
+    if(nvl($w_sq_acordo_aditivo,'')>'') {
+      $w_inicio           = f($RS,'dt_aditivo_inicio');
+      $w_fim              = f($RS,'dt_aditivo_fim');    
+    } else {
+      $w_inicio           = f($RS,'inicio');
+      $w_fim              = f($RS,'fim');
+    }
     $w_prazo_indeterm   = f($RS,'prazo_indeterm');
-    $w_valor_inicial    = f($RS,'valor_inicial');
+    $w_valor_inicial    = f($RS,'valor');
   } 
 
   if ($w_troca>'') {
@@ -2413,16 +2411,21 @@ function Parcelas() {
     $w_per_fim      = $_REQUEST['w_per_fim'];
   } elseif ($O=='L') {
     // Recupera todos os registros para a listagem
-    $RS = db_getAcordoParcela::getInstanceOf($dbms,$w_chave,null,null,null,null,null,null,null,null);
+    $RS = db_getAcordoParcela::getInstanceOf($dbms,$w_chave,null,null,null,null,null,null,null,null,$w_sq_acordo_aditivo);
     $RS = SortArray($RS,'ordem','asc');
   } elseif (!(strpos('AEV',$O)===false) && $w_troca=='') {
     // Recupera dados para as críticas
     $RS = db_getSolicData::getInstanceOf($dbms,$w_chave,$SG);
-    $w_inicio           = f($RS,'inicio');
-    $w_fim              = f($RS,'fim');
+    if(nvl($w_sq_acordo_aditivo,'')>'') {
+      $w_inicio           = f($RS,'dt_aditivo_inicio');
+      $w_fim              = f($RS,'dt_aditivo_fim');    
+    } else {
+      $w_inicio           = f($RS,'inicio');
+      $w_fim              = f($RS,'fim');
+    }
     $w_prazo_indeterm   = f($RS,'prazo_indeterm');
     // Recupera os dados do endereço informado
-    $RS = db_getAcordoParcela::getInstanceOf($dbms,$w_chave,$w_chave_aux,null,null,null,null,null,null,null);
+    $RS = db_getAcordoParcela::getInstanceOf($dbms,$w_chave,$w_chave_aux,null,null,null,null,null,null,null,$w_sq_acordo_aditivo);
     foreach($RS as $row) {
       $w_ordem        = f($row,'ordem');
       $w_data         = FormataDataEdicao(f($row,'vencimento'));
@@ -2571,8 +2574,9 @@ function Parcelas() {
   ShowHTML('<table border="0" cellpadding="0" cellspacing="0" width="100%">');
   if ($O=='L') {
     // Exibe a quantidade de registros apresentados na listagem e o cabeçalho da tabela de listagem
-    ShowHTML('<tr><td><a accesskey="I" class="ss" href="'.$w_dir.$w_pagina.$par.'&R='.$w_pagina.$par.'&O=I&w_chave='.$w_chave.'&P1='.$P1.'&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP='.$TP.'&SG='.$SG.'"><u>I</u>ncluir</a>&nbsp;');
-    ShowHTML('        <a accesskey="G" class="ss" href="'.$w_dir.$w_pagina.$par.'&R='.$w_pagina.$par.'&O=G&w_chave='.$w_chave.'&P1='.$P1.'&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP='.$TP.'&SG='.$SG.'"><u>G</u>erar</a>&nbsp;');
+    ShowHTML('<tr><td><a accesskey="I" class="ss" href="'.$w_dir.$w_pagina.$par.'&R='.$w_pagina.$par.'&O=I&w_chave='.$w_chave.'&w_sq_acordo_aditivo='.$w_sq_acordo_aditivo.'&P1='.$P1.'&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP='.$TP.'&SG='.$SG.'"><u>I</u>ncluir</a>&nbsp;');
+    ShowHTML('        <a accesskey="G" class="ss" href="'.$w_dir.$w_pagina.$par.'&R='.$w_pagina.$par.'&O=G&w_chave='.$w_chave.'&w_sq_acordo_aditivo='.$w_sq_acordo_aditivo.'&P1='.$P1.'&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP='.$TP.'&SG='.$SG.'"><u>G</u>erar</a>&nbsp;');
+    if(nvl($w_sq_acordo_aditivo,'')>'') ShowHTML('                         <a accesskey="F" class="ss" href="javascript:window.close(); opener.location.reload(); opener.focus();"><u>F</u>echar</a>&nbsp;');
     ShowHTML('    <td align="right"><b>Registros existentes: '.count($RS));
     ShowHTML('<tr><td colspan=3>');
     ShowHTML('    <TABLE WIDTH="100%" bgcolor="'.$conTableBgColor.'" BORDER="'.$conTableBorder.'" CELLSPACING="'.$conTableCellSpacing.'" CELLPADDING="'.$conTableCellPadding.'" BorderColorDark="'.$conTableBorderColorDark.'" BorderColorLight="'.$conTableBorderColorLight.'">');
@@ -2616,8 +2620,8 @@ function Parcelas() {
         ShowHTML('        <td align="right">'.number_format(f($row,'valor'),2,',','.').'&nbsp;&nbsp;</td>');
         ShowHTML('        <td>'.crlf2br(nvl(f($row,'observacao'),'---')).'</td>');
         ShowHTML('        <td align="top" nowrap>');
-        ShowHTML('          <A class="hl" HREF="'.$w_dir.$w_pagina.$par.'&R='.$w_pagina.$par.'&O=A&w_chave='.$w_chave.'&w_chave_aux='.f($row,'sq_acordo_parcela').'&P1='.$P1.'&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP='.$TP.'&SG='.$SG.'">Alterar</A>&nbsp');
-        ShowHTML('          <A class="hl" HREF="'.$w_dir.$w_pagina.'GRAVA&R='.$w_pagina.$par.'&O=E&w_chave='.$w_chave.'&w_chave_aux='.f($row,'sq_acordo_parcela').'&P1='.$P1.'&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP='.$TP.'&SG='.$SG.'" onClick="return confirm(\'Confirma a exclusão do registro?\');">Excluir</A>&nbsp');
+        ShowHTML('          <A class="hl" HREF="'.$w_dir.$w_pagina.$par.'&R='.$w_pagina.$par.'&O=A&w_chave='.$w_chave.'&w_chave_aux='.f($row,'sq_acordo_parcela').'&w_sq_acordo_aditivo='.f($row,'sq_acordo_aditivo').'&P1='.$P1.'&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP='.$TP.'&SG='.$SG.'">Alterar</A>&nbsp');
+        ShowHTML('          <A class="hl" HREF="'.$w_dir.$w_pagina.'GRAVA&R='.$w_pagina.$par.'&O=E&w_chave='.$w_chave.'&w_chave_aux='.f($row,'sq_acordo_parcela').'&w_sq_acordo_aditivo='.f($row,'sq_acordo_aditivo').'&P1='.$P1.'&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP='.$TP.'&SG='.$SG.'" onClick="return confirm(\'Confirma a exclusão do registro?\');">Excluir</A>&nbsp');
         ShowHTML('        </td>');
         ShowHTML('      </tr>');
         $w_total += f($row,'valor');
@@ -2644,6 +2648,7 @@ function Parcelas() {
     AbreForm('Form',$w_dir.$w_pagina.'Grava','POST', 'return(Validacao(this));', null,$P1,$P2,$P3,$P4,$TP,$SG,$R,$O);
     ShowHTML('<INPUT type="hidden" name="w_chave" value="'.$w_chave.'">');
     ShowHTML('<INPUT type="hidden" name="w_chave_aux" value="'.$w_chave_aux.'">');
+    ShowHTML('<INPUT type="hidden" name="w_sq_acordo_aditivo" value="'.$w_sq_acordo_aditivo.'">');
     ShowHTML('<INPUT type="hidden" name="w_troca" value="">');
     ShowHTML('<INPUT type="hidden" name="w_inicio" value="'.FormataDataEdicao($w_inicio).'">');
     ShowHTML('<INPUT type="hidden" name="w_fim" value="'.FormataDataEdicao($w_fim).'">');
@@ -2667,7 +2672,7 @@ function Parcelas() {
         ShowHTML('            <input class="stb" type="submit" name="Botao" value="Atualizar">');
       } 
     } 
-    ShowHTML('            <input class="stb" type="button" onClick="location.href=\''.montaURL_JS($w_dir,$w_pagina.$par.'&w_chave='.$w_chave.'&P1='.$P1.'&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP='.$TP.'&SG='.$SG.'&O=L').'\';" name="Botao" value="Cancelar">');
+    ShowHTML('            <input class="stb" type="button" onClick="location.href=\''.montaURL_JS($w_dir,$w_pagina.$par.'&w_chave='.$w_chave.'&w_sq_acordo_aditivo='.$w_sq_acordo_aditivo.'&P1='.$P1.'&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP='.$TP.'&SG='.$SG.'&O=L').'\';" name="Botao" value="Cancelar">');
     ShowHTML('          </td>');
     ShowHTML('      </tr>');
     ShowHTML('    </table>');
@@ -2678,6 +2683,7 @@ function Parcelas() {
     AbreForm('Form',$w_dir.$w_pagina.'Grava','POST', 'return(Validacao(this));', null,$P1,$P2,$P3,$P4,$TP,$SG,$R,$O);
     ShowHTML('<INPUT type="hidden" name="w_chave" value="'.$w_chave.'">');
     ShowHTML('<INPUT type="hidden" name="w_chave_aux" value="'.$w_chave_aux.'">');
+    ShowHTML('<INPUT type="hidden" name="w_sq_acordo_aditivo" value="'.$w_sq_acordo_aditivo.'">');    
     ShowHTML('<INPUT type="hidden" name="w_troca" value="">');
     ShowHTML('<INPUT type="hidden" name="w_inicio" value="'.FormataDataEdicao($w_inicio).'">');
     ShowHTML('<INPUT type="hidden" name="w_fim" value="'.FormataDataEdicao($w_fim).'">');
@@ -2713,7 +2719,7 @@ function Parcelas() {
     ShowHTML('      <tr><td colspan=4><b>Obse<u>r</u>vações gerais a serem gravadas em todas as parcelas:</b><br><textarea '.$w_Disabled.' accesskey="R" name="w_observacao" class="sti" ROWS=5 cols=75 >'.$w_observacao.'</TEXTAREA></td>');
     ShowHTML('      <tr><td align="center"><hr>');
     ShowHTML('            <input class="stb" type="submit" name="Botao" value="Gerar">');
-    ShowHTML('            <input class="stb" type="button" onClick="location.href=\''.montaURL_JS($w_dir,$w_pagina.$par.'&w_chave='.$w_chave.'&P1='.$P1.'&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP='.$TP.'&SG='.$SG.'&O=L').'\';" name="Botao" value="Cancelar">');
+    ShowHTML('            <input class="stb" type="button" onClick="location.href=\''.montaURL_JS($w_dir,$w_pagina.$par.'&w_chave='.$w_chave.'&w_sq_acordo_aditivo='.$w_sq_acordo_aditivo.'&P1='.$P1.'&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP='.$TP.'&SG='.$SG.'&O=L').'\';" name="Botao" value="Cancelar">');
     ShowHTML('          </td>');
     ShowHTML('      </tr>');
     ShowHTML('    </table>');
@@ -3398,6 +3404,13 @@ function Aditivos() {
   $w_chave_aux  = $_REQUEST['w_chave_aux'];
   $w_troca      = $_REQUEST['w_troca'];
   
+  $RS = db_getAcordoAditivo::getInstanceOf($dbms,$w_cliente,$w_chave_aux,$w_chave,null,null,null,null,null,'RETORNAPERIODO');
+  foreach($RS as $row) {$RS=$row; break;}
+  $w_contrato_ini   = f($RS,'inicio');
+  $w_contrato_fim   = f($RS,'fim');
+  $w_aditivo_ini    = Nvl(f($RS,'inicio_aditivo'),f($RS,'inicio'));
+  $w_aditivo_fim    = Nvl(f($RS,'fim_aditivo'),f($RS,'fim'));
+
   if ($w_troca>'') {
     // Se for recarga da página 
     $w_protocolo        = $_REQUEST['w_protocolo'];
@@ -3419,13 +3432,10 @@ function Aditivos() {
     $w_tipo             = $_REQUEST['w_tipo'];
   } elseif ($O=='L') {
     // Recupera todos os registros para a listagem 
-    $RS = db_getAcordoAditivo::getInstanceOf($dbms,$w_cliente,null,$w_chave,$w_protocolo,$w_codigo,$w_inicio,$w_fim,null);
+    $RS = db_getAcordoAditivo::getInstanceOf($dbms,$w_cliente,null,$w_chave,$w_protocolo,$w_codigo,$w_inicio,$w_fim,null,null);
     $RS = SortArray($RS,'codigo','desc');
   } elseif (!(strpos('AEV',$O)===false) && $w_troca=='') {
-    $RS = db_getSolicData::getInstanceOf($dbms,$w_chave,$SG);
-    $w_per_ini   = f($RS,'inicio');
-    $w_per_fim   = f($RS,'fim');
-    $RS = db_getAcordoAditivo::getInstanceOf($dbms,$w_cliente,$w_chave_aux,$w_chave,null,null,null,null,null);
+    $RS = db_getAcordoAditivo::getInstanceOf($dbms,$w_cliente,$w_chave_aux,$w_chave,null,null,null,null,null,null);
     foreach ($RS as $row) {
       $w_chave_aux        = f($row,'sq_acordo_aditivo');
       $w_protocolo        = f($row,'protocolo');
@@ -3465,15 +3475,23 @@ function Aditivos() {
       Validate('w_inicio','Início','DATA','1','10','10','','0123456789/');
       Validate('w_fim','Fim','DATA','1','10','10','','0123456789/');
       CompData('w_inicio','Início','<=','w_fim','Fim');
-      //CompData('w_inicio','Início','>','w_per_fim','Data de fim de vigência do contrato');
+      ShowHTML('if (theForm.w_prorrogacao[0].checked) {');
+      CompData('w_inicio','Início','>','w_aditivo_fim','Data de fim de vigência');
+      CompData('w_fim','Fim','>','w_aditivo_fim','Data de fim de vigência');
+      ShowHTML(' if (theForm.w_inicio.value!='.FormataDataEdicao(addDays($w_aditivo_fim,1)).') {');
+      ShowHTML('    alert (\'A data de inicio de um aditivo de prorrogação deve ser o próximo dia após o fim do contrato ou último aditivo!\n O última data fim é '.FormataDataEdicao($w_aditivo_fim).'\');');
+      ShowHTML('    theForm.w_inicio.focus();');
+      ShowHTML('    return false;');
+      ShowHTML('  }');
+      ShowHTML('}');
       Validate('w_doc_origem','Documento de origem','1','','1','30','1','1');
       Validate('w_doc_data','Data do documento','DATA','','10','10','','0123456789/');
       Validate('w_tipo','Acréscimo/Supressão','SELECT',1,1,18,'1','1');
       if(nvl($w_tipo,'')!='NAOAPLICA') {
-        Validate('w_variacao_valor','% de variação do valor','VALOR','1',4,18,'','0123456789.,');
-        CompValor('w_variacao_valor','% de variação do valor','>',0,'0');
+        Validate('w_variacao_valor','% de acréscimo/supressão','VALOR','1',4,18,'','0123456789.,');
+        CompValor('w_variacao_valor','% de acréscimo/supressão','>',0,'0');
       }
-      Validate('w_valor_reajuste','Valor total do reajuste','VALOR','1',4,18,'','0123456789.,');
+      Validate('w_valor_reajuste','Valor total do reajuste','VALOR','1',4,18,'','0123456789.,-');
       Validate('w_parcela_reajustada','Valor mensal reajustado','VALOR','1',4,18,'','0123456789.,');
       Validate('w_observacao','Observação','1','','1','500','1','1');
     } 
@@ -3542,7 +3560,7 @@ function Aditivos() {
         ShowHTML('        <td align="top" nowrap>');
         ShowHTML('          <A class="HL" HREF="'.$w_dir.$w_pagina.$par.'&R='.$w_pagina.$par.'&O=A&w_chave='.$w_chave.'&w_chave_aux='.f($row,'sq_acordo_aditivo').'&P1='.$P1.'&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP='.$TP.'&SG='.$SG.'">Alterar</A>&nbsp');
         ShowHTML('          <A class="HL" HREF="'.$w_dir.$w_pagina.$par.'&R='.$w_pagina.$par.'&O=E&w_chave='.$w_chave.'&w_chave_aux='.f($row,'sq_acordo_aditivo').'&P1='.$P1.'&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP='.$TP.'&SG='.$SG.'">Excluir</A>&nbsp');
-        if(f($row,'prorrogacao')=='S') ShowHTML('          <A class="HL" HREF="'.$w_dir.$w_pagina.'PARCELAS'.'&R='.$w_pagina.$par.'&O=L&w_chave='.$w_chave.'&w_chave_aux='.f($row,'sq_acordo_aditivo').'&P1='.$P1.'&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP='.$TP.'&SG='.$SG.'">Parcelas</A>&nbsp');
+        ShowHTML('          <A class="HL" HREF="'.$w_dir.$w_pagina.'PARCELAS'.'&R='.$w_pagina.$par.'&O=L&w_chave='.$w_chave.'&w_sq_acordo_aditivo='.f($row,'sq_acordo_aditivo').'&P1='.$P1.'&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP='.$TP.'&SG='.$SG.'" target="Parcelas">Parcelas</A>&nbsp');
         ShowHTML('        </td>');
         ShowHTML('      </tr>');
       } 
@@ -3562,12 +3580,11 @@ function Aditivos() {
     ShowHTML('<INPUT type="hidden" name="R" value="'.$R.'">');
     ShowHTML('<INPUT type="hidden" name="w_chave" value="'.$w_chave.'">');
     ShowHTML('<INPUT type="hidden" name="w_chave_aux" value="'.$w_chave_aux.'">');
-    ShowHTML('<INPUT type="hidden" name="w_per_fim" value="'.FormataDataEdicao($w_per_fim).'">');
+    ShowHTML('<INPUT type="hidden" name="w_aditivo_fim" value="'.FormataDataEdicao($w_aditivo_fim).'">');
     ShowHTML('<INPUT type="hidden" name="w_chave_aux" value="'.$w_chave_aux.'">');
     ShowHTML('<INPUT type="hidden" name="w_troca" value="">');
     ShowHTML('<tr bgcolor="'.$conTrBgColor.'"><td align="center">');
     ShowHTML('    <table width="97%" border="0">');
-    ShowHTML('      <tr bgcolor="'.$conTrBgColor.'"><td><b>ATENÇÃO</b>: a vigência do aditivo deve estar contida depois da vigência, de <b>'.FormataDataEdicao($w_per_ini).'</b> e <b>'.FormataDataEdicao($w_per_fim).'</b>.<br>&nbsp;</td>');
     ShowHTML('<tr bgcolor="'.$conTrBgColor.'">');
     $RS1 = db_getSolicData::getInstanceOf($dbms,$w_chave,substr($SG,0,3).'GERAL');
     if($O=='I') {
@@ -3577,10 +3594,10 @@ function Aditivos() {
     }
     ShowHTML('      <tr><td colspan="3"><b><u>C</u>ódigo:</b><br><input '.$w_Disabled.' accesskey="C" type="text" name="w_codigo" class="STI" SIZE="30" MAXLENGTH="30" VALUE="'.$w_codigo.'" title="Código de identificação do aditivo."></td>');
     ShowHTML('      <tr><td colspan="3"><b><u>O</u>bjeto:</b><br><textarea '.$w_Disabled.' accesskey="O" name="w_objeto" class="STI" ROWS=5 cols=65 title="Objeto do aditamento.">'.$w_objeto.'</TEXTAREA></td>');
-    ShowHTML('      <tr><td><b><u>I</u>nício:</b><br><input '.$w_Disabled.' accesskey="I" type="text" name="w_inicio" class="sti" SIZE="10" MAXLENGTH="10" VALUE="'.$w_inicio.'" onKeyDown="FormataData(this,event);"></td>');
-    ShowHTML('          <td><b><u>F</u>im:</b><br><input '.$w_Disabled.' accesskey="F" type="text" name="w_fim" class="sti" SIZE="10" MAXLENGTH="10" VALUE="'.$w_fim.'" onKeyDown="FormataData(this,event);"></td>');
+    ShowHTML('      <tr><td><b><u>I</u>nício:</b><br><input '.$w_Disabled.' accesskey="I" type="text" name="w_inicio" class="sti" SIZE="10" MAXLENGTH="10" VALUE="'.$w_inicio.'" onKeyDown="FormataData(this,event);">'.ExibeCalendario('Form','w_inicio').'</td>');
+    ShowHTML('          <td><b><u>F</u>im:</b><br><input '.$w_Disabled.' accesskey="F" type="text" name="w_fim" class="sti" SIZE="10" MAXLENGTH="10" VALUE="'.$w_fim.'" onKeyDown="FormataData(this,event);">'.ExibeCalendario('Form','w_fim').'</td>');
     ShowHTML('      <tr><td><b>D<u>o</u>cumento de origem:</b><br><input '.$w_Disabled.' accesskey="O" type="text" name="w_doc_origem" class="STI" SIZE="30" MAXLENGTH="30" VALUE="'.$w_doc_origem.'" title="Registre o tipo e o número do documento que originou o aditivo."></td>');
-    ShowHTML('          <td><b>D<u>a</u>ta do documento:</b><br><input '.$w_Disabled.' accesskey="A" type="text" name="w_doc_data" class="sti" SIZE="10" MAXLENGTH="10" VALUE="'.$w_doc_data.'" onKeyDown="FormataData(this,event);"></td>');
+    ShowHTML('          <td><b>D<u>a</u>ta do documento:</b><br><input '.$w_Disabled.' accesskey="A" type="text" name="w_doc_data" class="sti" SIZE="10" MAXLENGTH="10" VALUE="'.$w_doc_data.'" onKeyDown="FormataData(this,event);">'.ExibeCalendario('Form','w_doc_data').'</td>');
     ShowHTML('          <tr>');
     MontaRadioNS('<b>Prorrogação?</b>',$w_prorrogacao,'w_prorrogacao');
     MontaRadioNS('<b>Revisão?</b>',$w_revisao,'w_revisao');
@@ -3604,7 +3621,7 @@ function Aditivos() {
     } else {
       ShowHTML('<INPUT type="hidden" name="w_tipo" value="NAOAPLICA">');
     }
-    ShowHTML('          <td><b>% de <u>v</u>ariação do valor:</b><br><input '.$w_Disabled.' accesskey="V" type="text" name="w_variacao_valor" class="sti" SIZE="18" MAXLENGTH="18" VALUE="'.$w_variacao_valor.'" onKeyDown="FormataValor(this,18,2,event);" title="Percentual de acréscimo ou supressão do valor anterior."></td>');
+    ShowHTML('          <td><b>% de acré<u>s</u>cimo/supressão:</b><br><input '.$w_Disabled.' accesskey="S" type="text" name="w_variacao_valor" class="sti" SIZE="18" MAXLENGTH="18" VALUE="'.$w_variacao_valor.'" onKeyDown="FormataValor(this,18,2,event);" title="Percentual de acréscimo ou supressão do valor anterior."></td>');
     ShowHTML('      <tr><td><b>Va<u>l</u>or total do reajuste:</b><br><input '.$w_Disabled.' accesskey="L" type="text" name="w_valor_reajuste" class="sti" SIZE="18" MAXLENGTH="18" VALUE="'.$w_valor_reajuste.'" onKeyDown="FormataValor(this,18,2,event);" title="Valor do reajuste a ser aplicado no valor do contrato."></td>');
     ShowHTML('          <td><b>V<u>a</u>lor mensal reajustado:</b><br><input '.$w_Disabled.' accesskey="A" type="text" name="w_parcela_reajustada" class="sti" SIZE="18" MAXLENGTH="18" VALUE="'.$w_parcela_reajustada.'" onKeyDown="FormataValor(this,18,2,event);" title="Novo valor de cada parcela, após o reajuste."></td>');
     ShowHTML('      <tr><td colspan="3"><b>O<u>b</u>servação:</b><br><textarea '.$w_Disabled.' accesskey="B" name="w_observacao" class="STI" ROWS=5 cols=65 title="Observações gerais sobre o aditivo.">'.$w_observacao.'</TEXTAREA></td>');    
@@ -3776,14 +3793,22 @@ function Notas() {
     ShowHTML('      <tr valign="top">');
     SelecaoTipoDocumento('<u>T</u>ipo de documento:','T', 'Selecione o tipo de documento.', $w_sq_tipo_documento,$w_cliente,'w_sq_tipo_documento',null,null);
     SelecaoOutraParte('<u>O</u>utra parte:','O', 'Selecione a outra parte favorecida da nota.', $w_sq_acordo_outra_parte,$w_chave,'w_sq_acordo_outra_parte',null,null);
-    if($P1!=1)SelecaoAditivo('<u>A</u>ditivo:','A', 'Selecione o aditivo.', $w_sq_acordo_aditivo,$w_chave,'w_sq_acordo_aditivo',null,null);
+    if($P1!=1)SelecaoAditivo('<u>A</u>ditivo:','A', 'Selecione o aditivo.', $w_sq_acordo_aditivo,$w_chave,'w_sq_acordo_aditivo',null,'onChange="document.Form.action=\''.$w_dir.$w_pagina.$par.'\'; document.Form.O.value=\''.$O.'\'; document.Form.w_troca.value=\'w_numero\'; document.Form.submit();"');
     else      ShowHTML('<INPUT type="hidden" name="w_sq_acordo_aditivo" value="'.$w_sq_acordo_aditivo.'">');
     ShowHTML('      <tr><td><b><u>N</u>úmero:</b><br><input '.$w_Disabled.' accesskey="N" type="text" name="w_numero" class="STI" SIZE="30" MAXLENGTH="30" VALUE="'.$w_numero.'" title="Numero da nota."></td>');
-    ShowHTML('          <td><b><u>D</u>ata:</b><br><input '.$w_Disabled.' accesskey="D" type="text" name="w_data" class="sti" SIZE="10" MAXLENGTH="10" VALUE="'.$w_data.'" onKeyDown="FormataData(this,event);"></td>');
+    ShowHTML('          <td><b><u>D</u>ata:</b><br><input '.$w_Disabled.' accesskey="D" type="text" name="w_data" class="sti" SIZE="10" MAXLENGTH="10" VALUE="'.$w_data.'" onKeyDown="FormataData(this,event);">'.ExibeCalendario('Form','w_data').'</td>');
     ShowHTML('          <td><b><u>V</u>alor:</b><br><input '.$w_Disabled.' accesskey="V" type="text" name="w_valor" class="sti" SIZE="18" MAXLENGTH="18" VALUE="'.$w_valor.'" onKeyDown="FormataValor(this,18,2,event);" title="Valor da nota."></td>');    
     ShowHTML('      <tr valign="top">');
     selecaoLCFonteRecurso('<U>F</U>onte de recurso:','F','Selecione a fonte de recurso',$w_sq_lcfonte_recurso,null,'w_sq_lcfonte_recurso',null,null);
-    selecaoCTEspecificacao('<u>E</u>specificação de despesa:','E','Selecione a especificação de despesa.',$w_espec_despesa,$w_espec_despesa,$_SESSION['ANO'],'w_espec_despesa','S',null,null);
+    echo nvl($w_sq_acordo_aditivo,'nulo');
+    if(nvl($w_sq_acordo_aditivo,'')>'') {
+      $RS = db_getAcordoAditivo::getInstanceOf($dbms,$w_cliente,$w_sq_acordo_aditivo,null,null,null,null,null,null,null);
+      foreach($RS as $row){$RS=$row; break;}
+      selecaoCTEspecificacao('<u>E</u>specificação de despesa:','E','Selecione a especificação de despesa.',$w_espec_despesa,$w_espec_despesa,f($RS,'sq_cc'),$_SESSION['ANO'],'w_espec_despesa','S',null,null);
+    } else {
+      $RS = db_getSolicData::getInstanceOf($dbms,$w_chave,substr($SG,0,3).'GERAL');
+      selecaoCTEspecificacao('<u>E</u>specificação de despesa:','E','Selecione a especificação de despesa.',$w_espec_despesa,$w_espec_despesa,f($RS,'sq_cc'),$_SESSION['ANO'],'w_espec_despesa','S',null,null);
+    }
     ShowHTML('      <tr><td align="center" colspan="3"><hr>');
     if ($O=='E') {
       ShowHTML('   <input class="STB" type="submit" name="Botao" value="Excluir" onClick="return confirm(\'Confirma a exclusão do registro?\');">');
@@ -3989,12 +4014,10 @@ function Grava() {
           $_REQUEST['w_aviso'], $_REQUEST['w_dias'], $_REQUEST['w_cidade'],  $_REQUEST['w_projeto'], 
           $_REQUEST['w_sq_tipo_acordo'], $_REQUEST['w_objeto'], $_REQUEST['w_sq_tipo_pessoa'], 
           $_REQUEST['w_sq_forma_pagamento'], $_REQUEST['w_forma_atual'], $_REQUEST['w_inicio_atual'], $_REQUEST['w_etapa'],
-          $_REQUEST['w_codigo_interno'], $_REQUEST['w_titulo'],
+          $_REQUEST['w_codigo_interno'],$_REQUEST['w_titulo'], null,null,null,null,
           &$w_chave_nova, $w_copia, &$w_codigo);
 
       if ($O=='I') {
-        //Envia e-mail comunicando a inclusão
-        SolicMail(Nvl($_REQUEST['w_chave'],$w_chave_nova),1);
         // Recupera os dados para montagem correta do menu
         $RS1 = db_getMenuData::getInstanceOf($dbms,$w_menu);
         ScriptOpen('JavaScript');
@@ -4105,7 +4128,7 @@ function Grava() {
       dml_putAcordoParc::getInstanceOf($dbms,$O,$_REQUEST['w_chave'],$_REQUEST['w_chave_aux'],
         $_REQUEST['w_ordem'],$_REQUEST['w_data'],$_REQUEST['w_valor'],$_REQUEST['w_observacao'],
         $_REQUEST['w_tipo_geracao'],$_REQUEST['w_vencimento'],$_REQUEST['w_dia_vencimento'],
-        $_REQUEST['w_valor_parcela'],$_REQUEST['w_valor_diferente'],$_REQUEST['w_per_ini'],$_REQUEST['w_per_fim']);
+        $_REQUEST['w_valor_parcela'],$_REQUEST['w_valor_diferente'],$_REQUEST['w_per_ini'],$_REQUEST['w_per_fim'],$_REQUEST['w_sq_acordo_aditivo']);
 
       ScriptOpen('JavaScript');
       ShowHTML('  location.href=\''.montaURL_JS($w_dir,$R.'&O=L&w_chave='.$_REQUEST['w_chave'].'&P1='.$P1.'&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP='.$TP.'&SG='.$SG.MontaFiltro('GET')).'\';');

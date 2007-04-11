@@ -8,7 +8,7 @@ function selecaoAcordoParcela($label,$accesskey,$hint,$cliente,$chave,$chaveAux,
   extract($GLOBALS);
   $RS1 = db_getLinkData::getInstanceOf($dbms,$w_cliente,'GC'.substr($SG,2,1).'CAD');
   $l_menu = f($RS1,'sq_menu');
-  $RS = db_getAcordoParcela::getInstanceOf($dbms,$chaveAux,null,$restricao,null,null,null,$w_usuario,"'EE','ER'",$l_menu);
+  $RS = db_getAcordoParcela::getInstanceOf($dbms,$chaveAux,null,$restricao,null,null,null,$w_usuario,"'EE','ER'",$l_menu,null);
   $RS = SortArray($RS,'ordem','asc');
   if (!isset($hint))
     ShowHTML('          <td valign="top"><font size="1"><b>'.$label.'</b><br><SELECT ACCESSKEY="'.$accesskey.'" CLASS="STS" NAME="'.$campo.'" '.$w_Disabled.' '.$atributo.'>');

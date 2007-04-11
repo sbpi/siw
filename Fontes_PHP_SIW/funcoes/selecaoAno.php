@@ -5,7 +5,7 @@ include_once($w_dir_volta.'classes/sp/db_getCTEspecificacao.php');
 // -------------------------------------------------------------------------
 function selecaoAno($label,$accesskey,$hint,$chave,$chaveAux,$campo,$restricao,$atributo) {
   extract($GLOBALS);
-  $l_RS = db_getCTEspecificacao::getInstanceOf($dbms,$w_cliente,null,null,null,null,null,'ANOS');
+  $l_RS = db_getCTEspecificacao::getInstanceOf($dbms,$w_cliente,null,null,null,null,null,null,'ANOS');
   $l_cont=strftime('%Y',(time()))-2;
   if (!isset($hint)) {
     ShowHTML('          <td valign="top"><font size="1"><b>'.$label.'</b><br><SELECT ACCESSKEY="'.$accesskey.'" class="STS" NAME="'.$campo.'" '.$w_Disabled.' '.$atributo.'>');

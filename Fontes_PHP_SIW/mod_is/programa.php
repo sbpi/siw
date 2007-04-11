@@ -3630,10 +3630,6 @@ function Grava() {
           null,null,null,null,null,null,null,
           $w_ano,$w_cliente,$_REQUEST['w_cd_programa'],null,null,null,null,$_REQUEST['w_selecao_mp'],$_REQUEST['w_selecao_se'],
           $_REQUEST['w_sq_natureza'],$_REQUEST['w_sq_horizonte'],&$w_chave_nova,$w_copia,$_REQUEST['w_sq_unidade_adm'],$_REQUEST['w_ln_programa']);
-      if ($O=='I') {
-        // Envia e-mail comunicando a inclusão
-        SolicMail(Nvl($_REQUEST['w_chave'],$w_chave_nova),1);
-      } 
       ScriptOpen('JavaScript');
       if ($O=='I') {
         // Exibe mensagem de gravação com sucesso

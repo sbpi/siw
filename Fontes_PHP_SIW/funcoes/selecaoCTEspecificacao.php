@@ -4,9 +4,9 @@ include_once($w_dir_volta.'classes/sp/db_getEspecOrdem.php');
 // =========================================================================
 // Montagem da seleção da especificacao de despesa
 // -------------------------------------------------------------------------
-function selecaoCTEspecificacao($label,$accesskey,$hint,$chave,$pai,$ano,$campo,$ultimo_nivel,$restricao,$atributo) {
+function selecaoCTEspecificacao($label,$accesskey,$hint,$chave,$pai,$sq_ctcc,$ano,$campo,$ultimo_nivel,$restricao,$atributo) {
   extract($GLOBALS);
-  $RS = db_getCTEspecificacao::getInstanceOf($dbms,$w_cliente,$chave,null,$ano,'S',$ultimo_nivel,$restricao);
+  $RS = db_getCTEspecificacao::getInstanceOf($dbms,$w_cliente,$chave,null,$ano,'S',$ultimo_nivel,$sq_ctcc,$restricao);
   if (!isset($hint)) {
     ShowHTML('          <td valign="top"><font size="1"><b>'.$label.'</b><br><SELECT ACCESSKEY="'.$accesskey.'" CLASS="sts" NAME="'.$campo.'" '.$w_Disabled.' '.$atributo.'>');
   } else {

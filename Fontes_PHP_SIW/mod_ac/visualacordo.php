@@ -14,7 +14,7 @@ function VisualAcordo($l_chave,$l_O,$l_usuario,$l_P1,$l_P4) {
   // Recupera os dados do acordo
   $RS = db_getSolicData::getInstanceOf($dbms,$l_chave,substr($SG,0,3).'GERAL');
   $w_tramite        = f($RS,'sq_siw_tramite');
-  $w_valor_inicial  = f($RS,'valor_inicial');
+  $w_valor_inicial  = f($RS,'valor');
   $w_fim            = f($RS,'fim_real');
   $w_sg_tramite     = f($RS,'sg_tramite');
   $w_sigla          = f($RS,'sigla');
@@ -133,7 +133,7 @@ function VisualAcordo($l_chave,$l_O,$l_usuario,$l_P1,$l_P4) {
       } 
     } 
     // Notas de empenho
-    if($w_segmento=='Público' || substr($w_sigla,0,3)=='GCD') {
+    if($w_segmento=='Público' && substr($w_sigla,0,3)=='GCD') {
       $RS1 = db_getAcordoNota::getInstanceOf($dbms,$w_cliente,null,$l_chave,null,null,null,null,null);
       $RS1 = SortArray($RS1,'cd_aditivo','desc', 'data','desc');
       $w_html.=chr(13).'      <tr><td colspan="2"><br><font size="2"><b>NOTAS DE EMPENHO<hr NOSHADE color=#000000 SIZE=1></b></font></td></tr>';   
@@ -169,8 +169,8 @@ function VisualAcordo($l_chave,$l_O,$l_usuario,$l_P1,$l_P4) {
       $w_html.=chr(13).'</tr>';
     }
     // Aditivos
-    if($w_segmento=='Público' || substr($w_sigla,0,3)=='GCD') {
-      $RS1 = db_getAcordoAditivo::getInstanceOf($dbms,$w_cliente,null,$l_chave,null,null,null,null,null);
+    if($w_segmento=='Público' && substr($w_sigla,0,3)=='GCD') {
+      $RS1 = db_getAcordoAditivo::getInstanceOf($dbms,$w_cliente,null,$l_chave,null,null,null,null,null,null);
       $RS1 = SortArray($RS1,'codigo','desc');
       $w_html.=chr(13).'      <tr><td colspan="2"><br><font size="2"><b>ADITIVOS<hr NOSHADE color=#000000 SIZE=1></b></font></td></tr>';   
       $w_html.=chr(13).'      <tr><td colspan="2"><div align="center">';
@@ -239,31 +239,29 @@ function VisualAcordo($l_chave,$l_O,$l_usuario,$l_P1,$l_P4) {
         $w_html.=chr(13).'        <td>'.f($RS,'nm_vincula_viagem').'</td></tr>';
       }
       // Dados Adicionais
-      if($w_segmento=='Público' || substr($w_sigla,0,3)=='GCD') {
+      if($w_segmento=='Público' && substr($w_sigla,0,3)=='GCD') {
         $w_html.=chr(13).'      <tr><td colspan="2"><br><font size="2"><b>DADOS ADICIONAIS<hr NOSHADE color=#000000 SIZE=1></b></font></td></tr>';
+        $w_html.=chr(13).'          <tr valign="top">';
+        $w_html.=chr(13).'          <td><font size="1"><b>Modalidade:</b></td>';
+        $w_html.=chr(13).'          <td>'.Nvl(f($RS,'nm_lcmodalidade'),'---').'</td></tr>';
         $w_html.=chr(13).'      <tr><td ><font size="1"><b>Número do certame:</b></td>';
         $w_html.=chr(13).'        <td>'.nvl(CRLF2BR(f($RS,'numero_certame')),'---').'</td></tr>';
         $w_html.=chr(13).'      <tr><td ><font size="1"><b>Número da ata:</b></td>';
         $w_html.=chr(13).'        <td>'.nvl(CRLF2BR(f($RS,'numero_ata')),'---').'</td></tr>';
         $w_html.=chr(13).'      <tr><td><font size="1"><b>Tipo de reajuste:</b></td>';
         $w_html.=chr(13).'        <td>'.nvl(CRLF2BR(f($RS,'nm_tipo_reajuste')),'---').'</td></tr>';
-        $w_html.=chr(13).'      <tr><td><font size="1"><b>Limite variação:</b></td>';
-        $w_html.=chr(13).'        <td>'.nvl(CRLF2BR(formatNumber(f($RS,'limite_variacao'))),'---').'</td></tr>';
         if(nvl(f($RS,'tipo_reajuste'),'')==1) {
           $w_html.=chr(13).'      <tr><td><font size="1"><b>Índice base:</b></td>';
           $w_html.=chr(13).'        <td>'.nvl(CRLF2BR(f($RS,'indice_base')),'---').'</td></tr>';
           $w_html.=chr(13).'      <tr><td ><font size="1"><b>Indicador:</b></td>';
           $w_html.=chr(13).'        <td>'.nvl(CRLF2BR(f($RS,'nm_eoindicador')),'---').'</td></tr>';
         }
+        $w_html.=chr(13).'      <tr><td><font size="1"><b>Limite acréscimo/supressão:</b></td>';
+        $w_html.=chr(13).'        <td>'.nvl(CRLF2BR(formatNumber(f($RS,'limite_variacao'))),'---').'%</td></tr>';
         $w_html.=chr(13).'      <tr><td><font size="1"><b>Fonte de recurso:</b></td>';
         $w_html.=chr(13).'        <td>'.nvl(CRLF2BR(f($RS,'nm_lcfonte_recurso')),'---').'</td></tr>';
         $w_html.=chr(13).'      <tr><td><font size="1"><b>Especificação de despesa:</b></td>';
         $w_html.=chr(13).'        <td>'.nvl(CRLF2BR(f($RS,'nm_espec_despesa')),'---').'</td></tr>';
-        if (substr($w_sigla,0,3)=='GCD') {
-          $w_html.=chr(13).'          <tr valign="top">';
-          $w_html.=chr(13).'          <td><font size="1"><b>Modalidade:</b></td>';
-          $w_html.=chr(13).'          <td>'.Nvl(f($RS,'nm_lcmodalidade'),'---').'</td></tr>';
-        }
         if (substr($w_sigla,0,3)!='GCA' && substr($w_sigla,0,3)!='GCB'){   
           $w_html.=chr(13).'          <tr valign="top">';
           $w_html.=chr(13).'          <td><font size="1"><b>Número do empenho:</b></td>';
@@ -280,7 +278,7 @@ function VisualAcordo($l_chave,$l_O,$l_usuario,$l_P1,$l_P4) {
           $w_html.=chr(13).'          <td>'.Nvl(f($RS,'processo'),'---').'</td></tr>';
         }
         $w_html.=chr(13).'          <tr valign="top">';
-        $w_html.=chr(13).'          <td><font size="1"><b>Assinatura:</b></td>';
+        $w_html.=chr(13).'          <td><font size="1"><b>Assinatura do contrato:</b></td>';
         $w_html.=chr(13).'          <td>'.Nvl(FormataDataEdicao(f($RS,'assinatura')),'---').'</td></tr>';
         if (substr($w_sigla,0,3)!='GCB') { 
           $w_html.=chr(13).'          <td><font size="1"><b>Publicação D.O.:</b></td>';
@@ -521,7 +519,7 @@ function VisualAcordo($l_chave,$l_O,$l_usuario,$l_P1,$l_P4) {
   } 
 
   // Parcelas
-  $RS = db_getAcordoParcela::getInstanceOf($dbms,$l_chave,null,null,null,null,null,null,null,null);
+  $RS = db_getAcordoParcela::getInstanceOf($dbms,$l_chave,null,null,null,null,null,null,null,null,null);
   $RS = SortArray($RS,'ordem','asc');
   if (count($RS)>0) {
 //  $w_html.=chr(13).'      <tr><td valign="top" colspan="2" align="center" bgcolor="#D0D0D0" style="border: 2px solid rgb(0,0,0);"><font size="1"><b>Parcelas</td>';

@@ -2158,7 +2158,7 @@ function Parcelas() {
     $w_inicio           = f($RS,'inicio');
     $w_fim              = f($RS,'fim');
     $w_prazo_indeterm   = f($RS,'prazo_indeterm');
-    $w_valor_inicial    = f($RS,'valor_inicial');
+    $w_valor_inicial    = f($RS,'valor');
   } 
   if ($w_troca>'') {
     // Se for recarga da página
@@ -2168,7 +2168,7 @@ function Parcelas() {
     $w_valor        = $_REQUEST['w_valor'];
   } elseif ($O=='L') {
     // Recupera todos os registros para a listagem
-    $RS = db_getAcordoParcela::getInstanceOf($dbms,$w_chave,null,null,null,null,null,null,null,null);
+    $RS = db_getAcordoParcela::getInstanceOf($dbms,$w_chave,null,null,null,null,null,null,null,null,null);
     $RS = SortArray($RS,'ordem','asc');
   } elseif (!(strpos('AEV',$O)===false) && $w_troca=='') {
     // Recupera dados para as críticas
@@ -2177,7 +2177,7 @@ function Parcelas() {
     $w_fim              = f($RS,'fim');
     $w_prazo_indeterm   = f($RS,'prazo_indeterm');
     // Recupera os dados do endereço informado
-    $RS = db_getAcordoParcela::getInstanceOf($dbms,$w_chave,$w_chave_aux,null,null,null,null,null,null,null);
+    $RS = db_getAcordoParcela::getInstanceOf($dbms,$w_chave,$w_chave_aux,null,null,null,null,null,null,null,null);
     foreach($RS as $row) {
       $w_ordem        = f($row,'ordem');
       $w_data         = FormataDataEdicao(f($row,'vencimento'));
@@ -3262,8 +3262,6 @@ function Grava() {
           $_REQUEST['w_data_publicacao'],null,
           &$w_chave_nova, $w_copia, &$w_codigo);
       if ($O=='I') {
-        //Envia e-mail comunicando a inclusão
-        SolicMail(Nvl($_REQUEST['w_chave'],$w_chave_nova),1);
         // Recupera os dados para montagem correta do menu
         $RS1 = db_getMenuData::getInstanceOf($dbms,$w_menu);
         ScriptOpen('JavaScript');

@@ -12,7 +12,7 @@ function VisualProjeto($l_chave,$operacao,$l_usuario) {
   include_once($w_dir_volta.'classes/sp/db_getSolicLog.php');
   
   //Recupera as informações do sub-menu
-  $RS = db_getLinkSubMenu::getInstanceOf($dbms, $w_cliente, f($RS_Menu,'sigla'));
+  $RS = db_getLinkSubMenu::getInstanceOf($dbms, $w_cliente, 'PJCAD');
   foreach ($RS as $row) {
     if     (strpos(f($row,'sigla'),'ANEXO')!==false)    $l_nome_menu['ANEXO'] = strtoupper(f($row,'nome'));
     elseif (strpos(f($row,'sigla'),'AREAS')!==false)    $l_nome_menu['AREAS'] = strtoupper(f($row,'nome'));
@@ -295,7 +295,7 @@ function VisualProjeto($l_chave,$operacao,$l_usuario) {
            null,null,null,null,null,null,null,null,null,null,null,null,null,null,
            null,null,null,null,null,null,null,null,$l_chave,null,null,null);
     if (count($RS)>0) {
-      $l_html .= chr(13).'      <tr><td colspan="2"><br><font size="2"><b>ATIVIDADES NÃO LIGADAS A '.$l_nome_menu['ETAPA'].'<hr NOSHADE color=#000000 SIZE=1></b></font></td></tr>';
+      $l_html .= chr(13).'      <tr><td colspan="2"><br><font size="2"><b>TAREFAS SEM VINCULAÇÃO COM '.$l_nome_menu['ETAPA'].'<hr NOSHADE color=#000000 SIZE=1></b></font></td></tr>';
       $l_html .= chr(13).'      <tr><td align="center" colspan="2">';
       $l_html .= chr(13).'          <table width=100%  border="1" bordercolor="#00000">';
       $l_html .= chr(13).'            <tr><td rowspan=2 bgColor="#f0f0f0"><div align="center"><b>Nº</td>';
@@ -303,9 +303,7 @@ function VisualProjeto($l_chave,$operacao,$l_usuario) {
       $l_html .= chr(13).'            <td rowspan=2 bgColor="#f0f0f0"><div align="center"><b>Responsável</td>';
       $l_html .= chr(13).'            <td rowspan=2 bgColor="#f0f0f0"><div align="center"><b>Setor</td>';
       $l_html .= chr(13).'            <td colspan=2 bgColor="#f0f0f0"><div align="center"><b>Execução</td>';
-      $l_html .= chr(13).'            <td rowspan=2 bgColor="#f0f0f0"><div align="center"><b>Orçamento</td>';
-      $l_html .= chr(13).'            <td rowspan=2 bgColor="#f0f0f0"><div align="center"><b>Conc.</td>';
-      $l_html .= chr(13).'            <td rowspan=2 bgColor="#f0f0f0"><div align="center"><b>Tar.</td>';
+      $l_html .= chr(13).'            <td rowspan=2 bgColor="#f0f0f0"><div align="center"><b>Fase atual</td>';
       $l_html .= chr(13).'          </tr>';
       $l_html .= chr(13).'          <tr>';
       $l_html .= chr(13).'            <td bgColor="#f0f0f0"><div align="center"><b>De</td>';
@@ -414,7 +412,7 @@ function VisualProjeto($l_chave,$operacao,$l_usuario) {
   if(count($RS)>0 && $l_nome_menu['ETAPA']!='') {
     $RS1 = db_getSolicData::getInstanceOf($dbms,$l_chave,'PJGERAL');
     $l_html .= chr(13).'      <tr><td colspan=2><br><font size="2"><b>'.$l_nome_menu['ETAPA'].'<hr NOSHADE color=#000000 SIZE=1></b></font></td></tr>';
-    $l_html .= chr(13).'      <tr><td colspan="2">[<A class="HL" HREF="'.$conRootSIW.'mod_pr/graficos.php?par=hier&w_chave='.$l_chave.'" TARGET="EAP" TITLE="Exibe diagrama hierárquico da estrutura analítica do projeto.">DIAGRAMA HIERÁRQUICO</A>] [<A CLASS="HL" HREF="'.$conRootSIW.'mod_pr/graficos.php?par=gantt&w_chave='.$l_chave.'" TARGET="GANTT" TITLE="Exibe gráfico de Gantt do projeto.">GRÁFICO DE GANTT</A>]';
+    $l_html .= chr(13).'      <tr><td colspan="2">[<A class="HL" HREF="'.$conRootSIW.'mod_pr/graficos.php?par=hier&w_chave='.$l_chave.'" TARGET="EAP" TITLE="Exibe diagrama hierárquico da estrutura analítica do projeto.">DIAGRAMA HIERÁRQUICO</A>] [<A CLASS="HL" HREF="'.$conRootSIW.'mod_pr/graficos.php?par=gantt&w_chave='.$l_chave.'" TARGET="GANTT" TITLE="Exibe gráfico de Gantt do projeto.">GRÁFICO DE GANTT</A>] [<A CLASS="HL" HREF="'.$conRootSIW.'mod_pr/relatorios.php?par=Rel_Progresso&p_projeto='.$l_chave.'&p_inicio='.formataDataEdicao(first_Day(time())).'&p_fim='.formataDataEdicao(last_Day(time())).'&O=L&SG=RELPJPROG&TP=Relatório de progresso " TARGET="GANTT" TITLE="Exibe relatório de progresso do mês corrente.">PROGRESSO NO MÊS</A>]';
     $l_html .= chr(13).'      <tr><td align="center" colspan="2">';
     $l_html .= chr(13).'         <table width=100%  border="1" bordercolor="#00000">';
     $l_html .= chr(13).'          <tr><td rowspan=2 bgColor="#f0f0f0"><div align="center"><b>Etapa</b></div></td>';
@@ -425,6 +423,7 @@ function VisualProjeto($l_chave,$operacao,$l_usuario) {
     $l_html .= chr(13).'            <td colspan=2 bgColor="#f0f0f0"><div align="center"><b>Execução real</b></div></td>';
     $l_html .= chr(13).'            <td rowspan=2 bgColor="#f0f0f0"><div align="center"><b>Orçamento</b></div></td>';
     $l_html .= chr(13).'            <td rowspan=2 bgColor="#f0f0f0"><div align="center"><b>Conc.</b></div></td>';
+    $l_html .= chr(13).'            <td rowspan=2 bgColor="#f0f0f0"><div align="center"><b>Peso</b></div></td>';
     $l_html .= chr(13).'            <td rowspan=2 bgColor="#f0f0f0"><div align="center"><b>Tar.</b></div></td>';
     if(f($RS1,'vincula_contrato')=='S') $l_html .= chr(13).'          <td rowspan=2 bgColor="#f0f0f0"><div align="center"><b>Contr.</b></div></td>';
     $l_html .= chr(13).'          </tr>';
@@ -437,27 +436,27 @@ function VisualProjeto($l_chave,$operacao,$l_usuario) {
     //Se for visualização normal, irá visualizar somente as etapas
     if ($operacao=='L' || $operacao=='V') {
       foreach($RS as $row) {
-        $l_html .= chr(13).EtapaLinha($l_chave,f($row,'sq_projeto_etapa'),f($row,'titulo'),f($row,'nm_resp'),f($row,'sg_setor'),f($row,'inicio_previsto'),f($row,'fim_previsto'),f($row,'inicio_real'),f($row,'fim_real'),f($row,'perc_conclusao'),f($row,'qt_ativ'),((f($row,'pacote_trabalho')=='S') ? '<b>' : ''),null,'PROJETO',f($row,'sq_pessoa'),f($row,'sq_unidade'),f($row,'pj_vincula_contrato'),f($row,'qt_contr'),f($row,'orcamento'),0,f($row,'restricao'));
+        $l_html .= chr(13).EtapaLinha($l_chave,f($row,'sq_projeto_etapa'),f($row,'titulo'),f($row,'nm_resp'),f($row,'sg_setor'),f($row,'inicio_previsto'),f($row,'fim_previsto'),f($row,'inicio_real'),f($row,'fim_real'),f($row,'perc_conclusao'),f($row,'qt_ativ'),((f($row,'pacote_trabalho')=='S') ? '<b>' : ''),null,'PROJETO',f($row,'sq_pessoa'),f($row,'sq_unidade'),f($row,'pj_vincula_contrato'),f($row,'qt_contr'),f($row,'orcamento'),0,f($row,'restricao'),f($row,'peso'));
         // Recupera as etapas vinculadas ao nível acima
         $RS1 = db_getSolicEtapa::getInstanceOf($dbms,$l_chave,f($row,'sq_projeto_etapa'),'LSTNIVEL',null);
         $RS1 = SortArray($RS1,'ordem','asc');
         foreach($RS1 as $row1) {
-         $l_html .= chr(13).EtapaLinha($l_chave,f($row1,'sq_projeto_etapa'),f($row1,'titulo'),f($row1,'nm_resp'),f($row1,'sg_setor'),f($row1,'inicio_previsto'),f($row1,'fim_previsto'),f($row1,'inicio_real'),f($row1,'fim_real'),f($row1,'perc_conclusao'),f($row1,'qt_ativ'),((f($row1,'pacote_trabalho')=='S') ? '<b>' : ''),null,'PROJETO',f($row1,'sq_pessoa'),f($row1,'sq_unidade'),f($row1,'pj_vincula_contrato'),f($row1,'qt_contr'),f($row1,'orcamento'),1,f($row1,'restricao'));
+         $l_html .= chr(13).EtapaLinha($l_chave,f($row1,'sq_projeto_etapa'),f($row1,'titulo'),f($row1,'nm_resp'),f($row1,'sg_setor'),f($row1,'inicio_previsto'),f($row1,'fim_previsto'),f($row1,'inicio_real'),f($row1,'fim_real'),f($row1,'perc_conclusao'),f($row1,'qt_ativ'),((f($row1,'pacote_trabalho')=='S') ? '<b>' : ''),null,'PROJETO',f($row1,'sq_pessoa'),f($row1,'sq_unidade'),f($row1,'pj_vincula_contrato'),f($row1,'qt_contr'),f($row1,'orcamento'),1,f($row1,'restricao'),f($row1,'peso'));
            // Recupera as etapas vinculadas ao nível acima
           $RS2 = db_getSolicEtapa::getInstanceOf($dbms,$l_chave,f($row1,'sq_projeto_etapa'),'LSTNIVEL',null);
           $RS2 = SortArray($RS2,'ordem','asc');
           foreach($RS2 as $row2) {
-            $l_html .= chr(13).EtapaLinha($l_chave,f($row2,'sq_projeto_etapa'),f($row2,'titulo'),f($row2,'nm_resp'),f($row2,'sg_setor'),f($row2,'inicio_previsto'),f($row2,'fim_previsto'),f($row2,'inicio_real'),f($row2,'fim_real'),f($row2,'perc_conclusao'),f($row2,'qt_ativ'),((f($row2,'pacote_trabalho')=='S') ? '<b>' : ''),null,'PROJETO',f($row2,'sq_pessoa'),f($row2,'sq_unidade'),f($row2,'pj_vincula_contrato'),f($row2,'qt_contr'),f($row2,'orcamento'),2,f($row2,'restricao'));
+            $l_html .= chr(13).EtapaLinha($l_chave,f($row2,'sq_projeto_etapa'),f($row2,'titulo'),f($row2,'nm_resp'),f($row2,'sg_setor'),f($row2,'inicio_previsto'),f($row2,'fim_previsto'),f($row2,'inicio_real'),f($row2,'fim_real'),f($row2,'perc_conclusao'),f($row2,'qt_ativ'),((f($row2,'pacote_trabalho')=='S') ? '<b>' : ''),null,'PROJETO',f($row2,'sq_pessoa'),f($row2,'sq_unidade'),f($row2,'pj_vincula_contrato'),f($row2,'qt_contr'),f($row2,'orcamento'),2,f($row2,'restricao'),f($row2,'peso'));
             // Recupera as etapas vinculadas ao nível acima
             $RS3 = db_getSolicEtapa::getInstanceOf($dbms,$l_chave,f($row2,'sq_projeto_etapa'),'LSTNIVEL',null);
             $RS3 = SortArray($RS3,'ordem','asc');
             foreach($RS3 as $row3) {
-              $l_html .= chr(13).EtapaLinha($l_chave,f($row3,'sq_projeto_etapa'),f($row3,'titulo'),f($row3,'nm_resp'),f($row3,'sg_setor'),f($row3,'inicio_previsto'),f($row3,'fim_previsto'),f($row3,'inicio_real'),f($row3,'fim_real'),f($row3,'perc_conclusao'),f($row3,'qt_ativ'),((f($row3,'pacote_trabalho')=='S') ? '<b>' : ''),null,'PROJETO',f($row3,'sq_pessoa'),f($row3,'sq_unidade'),f($row3,'pj_vincula_contrato'),f($row3,'qt_contr'),f($row3,'orcamento'),3,f($row3,'restricao'));
+              $l_html .= chr(13).EtapaLinha($l_chave,f($row3,'sq_projeto_etapa'),f($row3,'titulo'),f($row3,'nm_resp'),f($row3,'sg_setor'),f($row3,'inicio_previsto'),f($row3,'fim_previsto'),f($row3,'inicio_real'),f($row3,'fim_real'),f($row3,'perc_conclusao'),f($row3,'qt_ativ'),((f($row3,'pacote_trabalho')=='S') ? '<b>' : ''),null,'PROJETO',f($row3,'sq_pessoa'),f($row3,'sq_unidade'),f($row3,'pj_vincula_contrato'),f($row3,'qt_contr'),f($row3,'orcamento'),3,f($row3,'restricao'),f($row3,'peso'));
               // Recupera as etapas vinculadas ao nível acima
               $RS4 = db_getSolicEtapa::getInstanceOf($dbms,$l_chave,f($row3,'sq_projeto_etapa'),'LSTNIVEL',null);
               $RS4 = SortArray($RS4,'ordem','asc');
               foreach($RS4 as $row4) {
-                $l_html .= chr(13).EtapaLinha($l_chave,f($row4,'sq_projeto_etapa'),f($row4,'titulo'),f($row4,'nm_resp'),f($row4,'sg_setor'),f($row4,'inicio_previsto'),f($row4,'fim_previsto'),f($row4,'inicio_real'),f($row4,'fim_real'),f($row4,'perc_conclusao'),f($row4,'qt_ativ'),((f($row4,'pacote_trabalho')=='S') ? '<b>' : ''),null,'PROJETO',f($row4,'sq_pessoa'),f($row4,'sq_unidade'),f($row4,'pj_vincula_contrato'),f($row4,'qt_contr'),f($row4,'orcamento'),4,f($row4,'restricao'));
+                $l_html .= chr(13).EtapaLinha($l_chave,f($row4,'sq_projeto_etapa'),f($row4,'titulo'),f($row4,'nm_resp'),f($row4,'sg_setor'),f($row4,'inicio_previsto'),f($row4,'fim_previsto'),f($row4,'inicio_real'),f($row4,'fim_real'),f($row4,'perc_conclusao'),f($row4,'qt_ativ'),((f($row4,'pacote_trabalho')=='S') ? '<b>' : ''),null,'PROJETO',f($row4,'sq_pessoa'),f($row4,'sq_unidade'),f($row4,'pj_vincula_contrato'),f($row4,'qt_contr'),f($row4,'orcamento'),4,f($row4,'restricao'),f($row4,'peso'));
               } 
             } 
           } 
@@ -466,27 +465,27 @@ function VisualProjeto($l_chave,$operacao,$l_usuario) {
     } elseif ($w_tipo_visao!=2 && ($operacao=='T')){
       //Se for visualização total, ira visualizar as etapas e as tarefas correspondentes
       foreach($RS as $row) {
-        $l_html .= chr(13).EtapaLinhaAtiv($l_chave,f($row,'sq_projeto_etapa'),f($row,'titulo'),f($row,'nm_resp'),f($row,'sg_setor'),f($row,'inicio_previsto'),f($row,'fim_previsto'),f($row,'inicio_real'),f($row,'fim_real'),f($row,'perc_conclusao'),f($row,'qt_ativ'),((f($row,'pacote_trabalho')=='S') ? '<b>' : ''),null,'PROJETO','RESUMIDO',f($row,'sq_pessoa'),f($row,'sq_unidade'),f($row,'pj_vincula_contrato'),f($row,'qt_contr'),f($row,'orcamento'),0,f($row,'restricao'));
+        $l_html .= chr(13).EtapaLinhaAtiv($l_chave,f($row,'sq_projeto_etapa'),f($row,'titulo'),f($row,'nm_resp'),f($row,'sg_setor'),f($row,'inicio_previsto'),f($row,'fim_previsto'),f($row,'inicio_real'),f($row,'fim_real'),f($row,'perc_conclusao'),f($row,'qt_ativ'),((f($row,'pacote_trabalho')=='S') ? '<b>' : ''),null,'PROJETO','RESUMIDO',f($row,'sq_pessoa'),f($row,'sq_unidade'),f($row,'pj_vincula_contrato'),f($row,'qt_contr'),f($row,'orcamento'),0,f($row,'restricao'),f($row,'peso'));
         // Recupera as etapas vinculadas ao nível acima
         $RS1 = db_getSolicEtapa::getInstanceOf($dbms,$l_chave,f($row,'sq_projeto_etapa'),'LSTNIVEL',null);
         $RS1 = SortArray($RS1,'ordem','asc');
         foreach($RS1 as $row1) {
-          $l_html .= chr(13).EtapaLinhaAtiv($l_chave,f($row1,'sq_projeto_etapa'),f($row1,'titulo'),f($row1,'nm_resp'),f($row1,'sg_setor'),f($row1,'inicio_previsto'),f($row1,'fim_previsto'),f($row1,'inicio_real'),f($row1,'fim_real'),f($row1,'perc_conclusao'),f($row1,'qt_ativ'),((f($row1,'pacote_trabalho')=='S') ? '<b>' : ''),null,'PROJETO','RESUMIDO',f($row1,'sq_pessoa'),f($row1,'sq_unidade'),f($row1,'pj_vincula_contrato'),f($row1,'qt_contr'),f($row1,'orcamento'),1,f($row1,'restricao'));
+          $l_html .= chr(13).EtapaLinhaAtiv($l_chave,f($row1,'sq_projeto_etapa'),f($row1,'titulo'),f($row1,'nm_resp'),f($row1,'sg_setor'),f($row1,'inicio_previsto'),f($row1,'fim_previsto'),f($row1,'inicio_real'),f($row1,'fim_real'),f($row1,'perc_conclusao'),f($row1,'qt_ativ'),((f($row1,'pacote_trabalho')=='S') ? '<b>' : ''),null,'PROJETO','RESUMIDO',f($row1,'sq_pessoa'),f($row1,'sq_unidade'),f($row1,'pj_vincula_contrato'),f($row1,'qt_contr'),f($row1,'orcamento'),1,f($row1,'restricao'),f($row1,'peso'));
           // Recupera as etapas vinculadas ao nível acima
           $RS2 = db_getSolicEtapa::getInstanceOf($dbms,$l_chave,f($row1,'sq_projeto_etapa'),'LSTNIVEL',null);
           $RS2 = SortArray($RS2,'ordem','asc');
           foreach($RS2 as $row2) {
-            $l_html .= chr(13).EtapaLinhaAtiv($l_chave,f($row2,'sq_projeto_etapa'),f($row2,'titulo'),f($row2,'nm_resp'),f($row2,'sg_setor'),f($row2,'inicio_previsto'),f($row2,'fim_previsto'),f($row2,'inicio_real'),f($row2,'fim_real'),f($row2,'perc_conclusao'),f($row2,'qt_ativ'),((f($row2,'pacote_trabalho')=='S') ? '<b>' : ''),null,'PROJETO','RESUMIDO',f($row2,'sq_pessoa'),f($row2,'sq_unidade'),f($row2,'pj_vincula_contrato'),f($row2,'qt_contr'),f($row2,'orcamento'),2,f($row2,'restricao'));
+            $l_html .= chr(13).EtapaLinhaAtiv($l_chave,f($row2,'sq_projeto_etapa'),f($row2,'titulo'),f($row2,'nm_resp'),f($row2,'sg_setor'),f($row2,'inicio_previsto'),f($row2,'fim_previsto'),f($row2,'inicio_real'),f($row2,'fim_real'),f($row2,'perc_conclusao'),f($row2,'qt_ativ'),((f($row2,'pacote_trabalho')=='S') ? '<b>' : ''),null,'PROJETO','RESUMIDO',f($row2,'sq_pessoa'),f($row2,'sq_unidade'),f($row2,'pj_vincula_contrato'),f($row2,'qt_contr'),f($row2,'orcamento'),2,f($row2,'restricao'),f($row2,'peso'));
             // Recupera as etapas vinculadas ao nível acima
             $RS3 = db_getSolicEtapa::getInstanceOf($dbms,$l_chave,f($row2,'sq_projeto_etapa'),'LSTNIVEL',null);
             $RS3 = SortArray($RS3,'ordem','asc');
             foreach($RS3 as $row3) {
-              $l_html .= chr(13).EtapaLinhaAtiv($l_chave,f($row3,'sq_projeto_etapa'),f($row3,'titulo'),f($row3,'nm_resp'),f($row3,'sg_setor'),f($row3,'inicio_previsto'),f($row3,'fim_previsto'),f($row3,'inicio_real'),f($row3,'fim_real'),f($row3,'perc_conclusao'),f($row3,'qt_ativ'),((f($row3,'pacote_trabalho')=='S') ? '<b>' : ''),null,'PROJETO','RESUMIDO',f($row3,'sq_pessoa'),f($row3,'sq_unidade'),f($row3,'pj_vincula_contrato'),f($row3,'qt_contr'),f($row3,'orcamento'),3,f($row3,'restricao'));
+              $l_html .= chr(13).EtapaLinhaAtiv($l_chave,f($row3,'sq_projeto_etapa'),f($row3,'titulo'),f($row3,'nm_resp'),f($row3,'sg_setor'),f($row3,'inicio_previsto'),f($row3,'fim_previsto'),f($row3,'inicio_real'),f($row3,'fim_real'),f($row3,'perc_conclusao'),f($row3,'qt_ativ'),((f($row3,'pacote_trabalho')=='S') ? '<b>' : ''),null,'PROJETO','RESUMIDO',f($row3,'sq_pessoa'),f($row3,'sq_unidade'),f($row3,'pj_vincula_contrato'),f($row3,'qt_contr'),f($row3,'orcamento'),3,f($row3,'restricao'),f($row3,'peso'));
               // Recupera as etapas vinculadas ao nível acima
               $RS4 = db_getSolicEtapa::getInstanceOf($dbms,$l_chave,f($row3,'sq_projeto_etapa'),'LSTNIVEL',null);
               $RS4 = SortArray($RS4,'ordem','asc');
               foreach($RS4 as $row4) {
-                $l_html .= chr(13).EtapaLinhaAtiv($l_chave,f($row4,'sq_projeto_etapa'),f($row4,'titulo'),f($row4,'nm_resp'),f($row4,'sg_setor'),f($row4,'inicio_previsto'),f($row4,'fim_previsto'),f($row4,'inicio_real'),f($row4,'fim_real'),f($row4,'perc_conclusao'),f($row4,'qt_ativ'),((f($row4,'pacote_trabalho')=='S') ? '<b>' : ''),null,'PROJETO','RESUMIDO',f($row4,'sq_pessoa'),f($row4,'sq_unidade'),f($row4,'pj_vincula_contrato'),f($row4,'qt_contr'),f($row4,'orcamento'),4,f($row4,'restricao'));
+                $l_html .= chr(13).EtapaLinhaAtiv($l_chave,f($row4,'sq_projeto_etapa'),f($row4,'titulo'),f($row4,'nm_resp'),f($row4,'sg_setor'),f($row4,'inicio_previsto'),f($row4,'fim_previsto'),f($row4,'inicio_real'),f($row4,'fim_real'),f($row4,'perc_conclusao'),f($row4,'qt_ativ'),((f($row4,'pacote_trabalho')=='S') ? '<b>' : ''),null,'PROJETO','RESUMIDO',f($row4,'sq_pessoa'),f($row4,'sq_unidade'),f($row4,'pj_vincula_contrato'),f($row4,'qt_contr'),f($row4,'orcamento'),4,f($row4,'restricao'),f($row4,'peso'));
               } 
             } 
           } 
@@ -615,7 +614,7 @@ function VisualProjeto($l_chave,$operacao,$l_usuario) {
         $l_html .= chr(13).'          '.f($row,'nm_tipo_restricao').'</td>';
         $l_html .= chr(13).'        <td>'.f($row,'nm_tipo').'</td>';
         $l_html .= chr(13).'        <td>'.ExibeRestricao('V',$w_dir_volta,$w_cliente,f($row,'descricao'),f($row,'chave'),f($row,'chave_aux'),$TP,null).'</td>';
-        $l_html .= chr(13).'        <td>'.f($row,'nm_atualiz').'</td>';
+        $l_html .= chr(13).'        <td>'.f($row,'nm_resp').'</td>';
         $l_html .= chr(13).'        <td>'.f($row,'nm_estrategia').'</td>';
         $l_html .= chr(13).'        <td>'.CRLF2BR(f($row,'acao_resposta')).'</td>';
         $l_html .= chr(13).'        <td>'.CRLF2BR(f($row,'nm_fase_atual')).'</td>';
@@ -705,18 +704,18 @@ function VisualProjeto($l_chave,$operacao,$l_usuario) {
       $l_html.=chr(13).'      <tr><td colspan="2"><br><font size="2"><b>'.$l_nome_menu['AREAS'].'<hr NOSHADE color=#000000 SIZE=1></b></font></td></tr>';
       $l_html .= chr(13).'      <tr><td align="center" colspan="2">';
       $l_html .=chr(13).'          <table width=100%  border="1" bordercolor="#00000">';
-      $l_html .= chr(13).'          <tr><td bgColor="#f0f0f0"><div align="center"><b>Nome</b></div></td>';
+      $l_html .= chr(13).'          <tr><td bgColor="#f0f0f0"><div align="center"><b>Parte interessada</b></div></td>';
       $l_html .= chr(13).'            <td bgColor="#f0f0f0"><div align="center"><b>Interesse</b></div></td>';
       $l_html .= chr(13).'            <td bgColor="#f0f0f0"><div align="center"><b>Influência</b></div></td>';
       $l_html .= chr(13).'            <td bgColor="#f0f0f0"><div align="center"><b>Papel</b></div></td>';
       $l_html .= chr(13).'          </tr>';
       $w_cor=$conTrBgColor;
       foreach ($RS as $row) {
-        $l_html .= chr(13).'      <tr>';
+        $l_html .= chr(13).'      <tr valign="top">';
         $l_html .= chr(13).'        <td>'.f($row,'nome').'</td>';
         $l_html .= chr(13).'        <td align="center">'.Nvl(f($row,'nm_interesse'),'---').'</td>';
-        $l_html .= chr(13).'        <td>'.Nvl(f($row,'nm_influencia'),'---').'</td>';          
-        $l_html .= chr(13).'        <td>'.f($row,'papel').'</td>';
+        $l_html .= chr(13).'        <td align="center">'.Nvl(f($row,'nm_influencia'),'---').'</td>';          
+        $l_html .= chr(13).'        <td>'.crlf2br(f($row,'papel')).'</td>';
         $l_html .= chr(13).'      </tr>';
       } 
       $l_html .= chr(13).'         </table></td></tr>';

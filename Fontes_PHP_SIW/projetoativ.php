@@ -381,13 +381,16 @@ function Inicial() {
     ShowHTML('<tr><td align="center" colspan=3>');
     ShowHTML('    <TABLE WIDTH="100%" bgcolor="'.$conTableBgColor.'" BORDER="'.$conTableBorder.'" CELLSPACING="'.$conTableCellSpacing.'" CELLPADDING="'.$conTableCellPadding.'" BorderColorDark="'.$conTableBorderColorDark.'" BorderColorLight="'.$conTableBorderColorLight.'">');
     ShowHTML('        <tr bgcolor="'.$conTrBgColor.'" align="center">');
+
+    // Configura a posição dos valores. Alterar sempre que houver nova condição para exibir as colunas.
+    $w_colspan = 8;
+    if (nvl($p_projeto,'')!='')     $w_colspan -= 1;
+    if (nvl($p_atividade,'')!='')   $w_colspan -= 1;
+
     if ($w_tipo!='WORD') {
       ShowHTML('          <td><b>'.LinkOrdena('Nº','sq_siw_solicitacao').'</td>');
-      if ($p_projeto>'') {
-        ShowHTML('          <td><b>'.LinkOrdena('Etapa','nm_etapa').'</td>');
-      } else {
-        ShowHTML('          <td><b>'.LinkOrdena('Projeto','nm_projeto').'</td>');
-      } 
+      if (nvl($p_projeto,'')=='')   ShowHTML('          <td><b>'.LinkOrdena('Projeto','nm_projeto').'</td>');
+      if (nvl($p_atividade,'')=='') ShowHTML('          <td><b>'.LinkOrdena('Etapa','cd_ordem').'</td>');
       ShowHTML('          <td><b>'.LinkOrdena('Responsável','nm_solic').'</td>');
       if ($_SESSION['INTERNO']=='S') ShowHTML('          <td><b>'.LinkOrdena('Executor','nm_exec').'</td>');
       if ($P1==1 || $P1==2) {
@@ -404,11 +407,8 @@ function Inicial() {
       if ($_SESSION['INTERNO']=='S') ShowHTML('          <td><b>Operações</td>');
     } else {
       ShowHTML('          <td><b>Nº</td>');
-      if ($p_projeto>'') {
-        ShowHTML('          <td><b>Etapa</td>');
-      } else {
-        ShowHTML('          <td><b>Projeto</td>');
-      } 
+      if (nvl($p_projeto,'')=='')   ShowHTML('          <td><b>Projeto</td>');
+      if (nvl($p_atividade,'')=='') ShowHTML('          <td><b>Etapa</td>');
       ShowHTML('          <td><b>Responsável</td>');
       if ($_SESSION['INTERNO']=='S') ShowHTML('          <td><b>Executor</td>');
       if ($P1==1 || $P1==2) {
@@ -452,15 +452,16 @@ function Inicial() {
             } 
           } 
           ShowHTML('        <A class="HL" HREF="'.$w_pagina.'Visual&R='.$w_pagina.$par.'&O=L&w_chave='.f($row,'sq_siw_solicitacao').'&w_tipo=Volta&P1='.$P1.'&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP='.$TP.'&SG='.$SG.MontaFiltro('GET').'" title="Exibe as informações deste registro.">'.f($row,'sq_siw_solicitacao').'&nbsp;</a>');
-          if ($p_projeto>'') {
-            if (nvl(f($row,'sq_projeto_etapa'),'nulo')!='nulo') {
-              ShowHTML('        <td>'.ExibeEtapa('V',f($row,'sq_solic_pai'),f($row,'sq_projeto_etapa'),'Volta',10,MontaOrdemEtapa(f($row,'sq_projeto_etapa')).' - '.f($row,'nm_etapa'),$TP,$SG).'</td>');
+          if (nvl($p_projeto,'')=='') {
+            ShowHTML('        <td><A class="HL" HREF="projeto.php?par=Visual&O=L&w_chave='.f($row,'sq_solic_pai').'&w_tipo=Volta&P1='.$P1.'&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP='.$TP.'&SG='.$SG.'" title="Exibe as informações do projeto.">'.f($row,'nm_projeto').'</a></td>');
+            ShowHTML('        <td>'.ExibeEtapa('V',f($row,'sq_solic_pai'),f($row,'sq_projeto_etapa'),'Volta',10,f($row,'cd_ordem'),$TP,$SG).'</td>');
+          } elseif (nvl($p_atividade,'')=='') {
+            if (nvl(f($row,'sq_projeto_etapa'),'')!='') {
+              ShowHTML('        <td>'.ExibeEtapa('V',f($row,'sq_solic_pai'),f($row,'sq_projeto_etapa'),'Volta',10,f($row,'cd_ordem').'. '.f($row,'nm_etapa'),$TP,$SG).'</td>');
             } else {
               ShowHTML('        <td>---</td>');
-            } 
-          } else {
-            ShowHTML('        <td><A class="HL" HREF="projeto.php?par=Visual&O=L&w_chave='.f($row,'sq_solic_pai').'&w_tipo=Volta&P1='.$P1.'&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP='.$TP.'&SG='.$SG.'" title="Exibe as informações do projeto.">'.f($row,'nm_projeto').'</a></td>');
-          } 
+            }
+          }
           ShowHTML('        <td>'.ExibePessoa(null,$w_cliente,f($row,'solicitante'),$TP,f($row,'nm_solic')).'</td>');
           if ($_SESSION['INTERNO']=='S') {
             if (Nvl(f($row,'nm_exec'),'---')!='---') {
@@ -471,14 +472,11 @@ function Inicial() {
           } 
         } else {
           ShowHTML('        '.f($row,'sq_siw_solicitacao'));
-          if ($p_projeto>'') {
-            if (nvl(f($row,'sq_projeto_etapa'),'nulo')!='nulo') {
-              ShowHTML('        <td>'.MontaOrdemEtapa(f($row,'sq_projeto_etapa')).' - '.f($row,'nm_etapa').'</td>');
-            } else {
-              ShowHTML('        <td>---</td>');
-            } 
-          } else {
+          if (nvl($p_projeto,'')=='') {
             ShowHTML('        <td>'.f($row,'nm_projeto').'</td>');
+            ShowHTML('        <td>'.f($row,'cd_ordem').'</td>');
+          } elseif (nvl($p_atividade,'')=='') {
+            ShowHTML('        <td>'.f($row,'cd_ordem').'. '.f($row,'nm_etapa').'</td>');
           } 
           ShowHTML('        <td>'.f($row,'nm_solic').'</td>');
           if ($_SESSION['INTERNO']=='S') {
@@ -571,7 +569,7 @@ function Inicial() {
         // Coloca o valor parcial apenas se a listagem ocupar mais de uma página
         if (ceil(count($RS)/$P4)>1) { 
           ShowHTML('        <tr bgcolor="'.$conTrBgColor.'">');
-          ShowHTML('          <td colspan=7 align="right"><b>Total desta página&nbsp;</td>');
+          ShowHTML('          <td colspan='.$w_colspan.' align="right"><b>Total desta página&nbsp;</td>');
           ShowHTML('          <td align="right"><b>'.number_format($w_parcial,2,',','.').'&nbsp;</td>');
           ShowHTML('          <td colspan=2>&nbsp;</td>');
           ShowHTML('        </tr>');
@@ -586,7 +584,7 @@ function Inicial() {
             } 
           } 
           ShowHTML('        <tr bgcolor="'.$conTrBgColor.'">');
-          ShowHTML('          <td colspan=7 align="right"><b>Total da listagem&nbsp;</td>');
+          ShowHTML('          <td colspan='.$w_colspan.' align="right"><b>Total da listagem&nbsp;</td>');
           ShowHTML('          <td align="right"><b>'.number_format($w_total,2,',','.').'&nbsp;</td>');
           ShowHTML('          <td colspan=2>&nbsp;</td>');
           ShowHTML('        </tr>');
@@ -1923,7 +1921,7 @@ function SolicMail($p_solic,$p_tipo) {
   $w_html.=$crlf.'        <td>'.f($RSM,'nm_projeto').'  ('.f($RSM,'sq_solic_pai').')</td></tr>';
   if (nvl(f($RSM,'nm_etapa'),'')>'') {
     $w_html.=$crlf.'    <tr><td valign="top"><b>Etapa: </b></td>';
-    $w_html.=$crlf.'        <td>'.MontaOrdemEtapa(f($RSM,'sq_projeto_etapa')).'. '.f($RSM,'nm_etapa').' </td></tr>';
+    $w_html.=$crlf.'        <td>'.f($RSM,'cd_ordem').'. '.f($RSM,'nm_etapa').' </td></tr>';
   } 
   // Se a classificação foi informada, exibe.
   if (nvl(f($RSM,'sq_cc'),'')>'') {
@@ -2155,11 +2153,11 @@ function BuscaAtividade() {
             } 
           } 
           ShowHTML('        <A class="HL" HREF="'.$w_pagina.'Visual&R='.$w_pagina.$par.'&O=L&w_chave='.f($row,'sq_siw_solicitacao').'&P1='.$P1.'&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP='.$TP.'&SG='.$SG.MontaFiltro('GET').'" title="Exibe as informações deste registro." target="_blank">'.f($row,'sq_siw_solicitacao').'&nbsp;</a>');
-          if (nvl(f($row,'sq_projeto_etapa'),'nulo')!='nulo') {
-            ShowHTML('        <td>'.ExibeEtapa('V',f($row,'sq_solic_pai'),f($row,'sq_projeto_etapa'),'Volta',10,MontaOrdemEtapa(f($row,'sq_projeto_etapa')).' - '.f($row,'nm_etapa'),$TP,$SG).'</td>');
+          if (nvl(f($row,'sq_projeto_etapa'),'')!='') {
+            ShowHTML('        <td>'.ExibeEtapa('V',f($row,'sq_solic_pai'),f($row,'sq_projeto_etapa'),'Volta',10,f($row,'cd_ordem').'. '.f($row,'nm_etapa'),$TP,$SG).'</td>');
           } else {
             ShowHTML('        <td>---</td>');
-          } 
+          }
           ShowHTML('        <td>'.ExibePessoa(null,$w_cliente,f($row,'solicitante'),$TP,f($row,'nm_solic')).'</td>');
           if (strlen(Nvl(f($row,'assunto'),'-'))>50) $w_titulo = substr(Nvl(f($row,'assunto'),'-'),0,50).'...'; else $w_titulo = Nvl(f($row,'assunto'),'-');
           ShowHTML('        <td title="'.htmlspecialchars(f($row,'assunto')).'">'.htmlspecialchars($w_titulo).'</td>');
@@ -2206,11 +2204,11 @@ function BuscaAtividade() {
           } 
         } 
         ShowHTML('        <A class="HL" HREF="'.$w_pagina.'Visual&R='.$w_pagina.$par.'&O=L&w_chave='.f($row,'sq_siw_solicitacao').'&P1='.$P1.'&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP='.$TP.'&SG='.$SG.MontaFiltro('GET').'" title="Exibe as informações deste registro." target="_blank">'.f($row,'sq_siw_solicitacao').'&nbsp;</a>');
-        if (nvl(f($row,'sq_projeto_etapa'),'nulo')!='nulo') {
-          ShowHTML('        <td>'.ExibeEtapa('V',f($row,'sq_solic_pai'),f($row,'sq_projeto_etapa'),'Volta',10,MontaOrdemEtapa(f($row,'sq_projeto_etapa')).' - '.f($row,'nm_etapa'),$TP,$SG).'</td>');
+        if (nvl(f($row,'sq_projeto_etapa'),'')!='') {
+          ShowHTML('        <td>'.ExibeEtapa('V',f($row,'sq_solic_pai'),f($row,'sq_projeto_etapa'),'Volta',10,f($row,'cd_ordem').'. '.f($row,'nm_etapa'),$TP,$SG).'</td>');
         } else {
           ShowHTML('        <td>---</td>');
-        } 
+        }
         ShowHTML('        <td>'.ExibePessoa(null,$w_cliente,f($row,'solicitante'),$TP,f($row,'nm_solic')).'</td>');
         if (strlen(Nvl(f($row,'assunto'),'-'))>50) $w_titulo = substr(Nvl(f($row,'assunto'),'-'),0,50).'...'; else $w_titulo = Nvl(f($row,'assunto'),'-');
         ShowHTML('        <td title="'.htmlspecialchars(f($row,'assunto')).'">'.htmlspecialchars($w_titulo).'</td>');
@@ -2266,8 +2264,6 @@ function Grava() {
             $_REQUEST['w_projeto'], $_REQUEST['w_atividade'], $_REQUEST['w_projeto_ant'], $_REQUEST['w_atividade_pai'], $_REQUEST['w_restricao'], 
             &$w_chave_nova, $w_copia);
         if ($O=='I') {
-          // Envia e-mail comunicando a inclusão
-          SolicMail(Nvl($_REQUEST['w_chave'],$w_chave_nova),1);
           // Recupera os dados para montagem correta do menu
           $RS1 = db_getMenuData::getInstanceOf($dbms,$w_menu);
           ScriptOpen('JavaScript');

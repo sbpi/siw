@@ -15,6 +15,7 @@ include_once($w_dir_volta.'classes/sp/db_getSolicEtpRec.php');
 include_once($w_dir_volta.'classes/sp/db_getEtapaDataParents.php');
 include_once($w_dir_volta.'classes/sp/db_getSolicEtapa.php');
 include_once($w_dir_volta.'classes/sp/db_getSolicRestricao.php');
+include_once($w_dir_volta.'classes/sp/db_getIndicador.php');
 include_once($w_dir_volta.'funcoes/selecaoProjeto.php');
 // =========================================================================
 //  /relatorios.php
@@ -127,7 +128,8 @@ function Rel_Progresso() {
     ShowHTML('</FONT><TR><TD ALIGN="RIGHT"><B><font COLOR="#000000">'.DataHora().'</B>');
     if ($w_tipo!='WORD') {
       ShowHTML('&nbsp;&nbsp;<IMG ALIGN="CENTER" TITLE="Imprimir" SRC="images/impressora.jpg" onClick="window.print();">');
-      //ShowHTML('&nbsp;&nbsp;<a target="ProgWord" href="'.$w_dir.$w_pagina.'Rel_Progresso&R='.$w_pagina.$par.'&O=L&w_tipo=word&P1='.$P1.'&P2='.$P2.'&P3='.$P3.'&P4=1&TP='.$TP.'&SG='.$SG.MontaFiltro('GET').'"><IMG border=0 ALIGN="CENTER" TITLE="Gerar word" SRC="images/word.gif"></a>');
+      ShowHTML('&nbsp;&nbsp;<a target="MetaWord" href="'.$w_dir.$w_pagina.'Rel_Progresso&R='.$w_pagina.$par.'&O=L&w_tipo=word&P1='.$P1.'&P2='.$P2.'&P3='.$P3.'&P4=1&TP='.$TP.'&SG='.$SG.MontaFiltro('GET').'"><IMG border=0 ALIGN="CENTER" TITLE="Gerar word" SRC="images/word.gif"></a>');
+//      ShowHTML('&nbsp;&nbsp;<a target="MetaWord" href="'.$w_dir.$w_pagina.'Visualizar&P2=1&SG=CVVISUAL"><IMG border=0 ALIGN="CENTER" TITLE="Gerar word" SRC="images/word.gif"></a>');
     } 
     ShowHTML('</TD></TR>');
     ShowHTML('</FONT></B></TD></TR></TABLE>');
@@ -135,12 +137,14 @@ function Rel_Progresso() {
     $RS = db_getRelProgresso::getInstanceOf($dbms,$w_cliente,$p_projeto,$p_inicio,$p_fim,'RELATORIO');
     $RS = SortArray($RS,'sq_projeto','asc'); 
     if (count($RS)==0) {
-        
+      ShowHTML('   <tr><td colspan="2"><br><hr NOSHADE color=#000000 size=4></td></tr>');
+      ShowHTML('   <tr><td colspan="2" align="center" bgcolor="#f0f0f0"><font size="2"><b>Nenhum registro encontrado para os parâmetros informados</b></td></tr>');
+      ShowHTML('   <tr><td colspan="2"><hr NOSHADE color=#000000 size=4></td></tr>');
     } else {
       foreach ($RS as $row) {
         if($w_projeto_atual==0 || $w_projeto_atual<>f($row,'sq_projeto')) {
           ShowHTML('   <tr><td colspan="2"><br><hr NOSHADE color=#000000 size=4></td></tr>');
-          ShowHTML('   <tr><td colspan="2"  bgcolor="#f0f0f0"><div align=justify><font size="2"><b>Título do projeto: '.f($row,'nm_projeto').'</b></div></td></tr>');
+          ShowHTML('   <tr><td colspan="2"  bgcolor="#f0f0f0"><div align=justify><font size="2"><b>Projeto: '.f($row,'sq_projeto').' - '.f($row,'nm_projeto').'</b></div></td></tr>');
           ShowHTML('   <tr><td colspan="2"  bgcolor="#f0f0f0"><div align=justify><b>Execução prevista: '.FormataDataEdicao(f($row,'inicio_projeto')).' a '.FormataDataEdicao(f($row,'fim_projeto')).'</b></div></td></tr>');
           ShowHTML('   <tr><td colspan="2"  bgcolor="#f0f0f0"><div align=justify><b>Período de reporte: '.$p_inicio.' a '.$p_fim.'</b></div></td></tr>');
           // IDE
@@ -153,11 +157,13 @@ function Rel_Progresso() {
           ShowHTML('      <tr><td colspan="2"><br><font size="2"><b>Progresso no período<hr NOSHADE color=#000000 SIZE=1></b></td></tr>');
           ShowHTML('      <tr><td align="center" colspan="2">');
           ShowHTML('          <table width=100%  border="1" bordercolor="#00000">');
+          // Entregas previstas
+          ShowHTML('          <tr><td bgColor="#f0f0f0" height="30" colspan="10"><div align="justify"><font size="2"><b>ENTREGAS PREVISTAS</b></font></div></td>');
           $RS1 = db_getRelProgresso::getInstanceOf($dbms,$w_cliente,f($row,'sq_projeto'),$p_inicio,$p_fim,'PROPREV');
-          $RS1 = SortArray($RS1,'sq_projeto_etapa','asc');
-          if(count($RS1)>0) {
-            // Lista os registros selecionados para listagem            
-            ShowHTML('          <tr><td bgColor="#f0f0f0" height="30" colspan="10"><div align="justify"><font size="2"><b>ENTREGAS PREVISTAS</b></font></div></td>');
+          $RS1 = SortArray($RS1,'cd_ordem','asc','fim_previsto','asc','sq_projeto_etapa','asc','fim','asc','nm_tarefa','asc');
+          if(count($RS1)==0) {
+            ShowHTML('          <tr><td colspan="10" height=30 align="center"><b>Nenhuma entrega prevista para o período.</b></font></td>');
+          } else {
             ShowHTML('          <tr>');
             ShowHTML('            <td rowspan=2 bgColor="#f0f0f0"><div align="center"><b>Etapa</b></div></td>');
             ShowHTML('            <td rowspan=2 bgColor="#f0f0f0"><div align="center"><b>Título</b></div></td>');
@@ -165,7 +171,7 @@ function Rel_Progresso() {
             ShowHTML('            <td colspan=2 bgColor="#f0f0f0"><div align="center"><b>Execução prevista</b></div></td>');
             ShowHTML('            <td colspan=2 bgColor="#f0f0f0"><div align="center"><b>Execução real</b></div></td>');
             ShowHTML('            <td rowspan=2 bgColor="#f0f0f0"><div align="center"><b>Percentual de conclusão</b></div></td>');
-            ShowHTML('            <td rowspan=2 bgColor="#f0f0f0"><div align="center"><b>Situação</b></div></td>');
+            ShowHTML('            <td rowspan=2 bgColor="#f0f0f0"><div align="center"><b>Observações</b></div></td>');
             ShowHTML('          </tr>');
             ShowHTML('          <tr>');
             ShowHTML('            <td bgColor="#f0f0f0"><div align="center"><b>De</b></div></td>');
@@ -176,12 +182,12 @@ function Rel_Progresso() {
             $w_sq_projeto_etapa = 0;
             foreach($RS1 as $row1) {
               if($w_sq_projeto_etapa==0 || $w_sq_projeto_etapa!=f($row1,'sq_projeto_etapa')) {
-                ShowHTML('        <tr valign="top"><td nowrap>');
-                if (f($row1,'fim_previsto') < addDays(time(),-1)&& f($row1,'perc_conclusao') < 100)  ShowHTML('           <img src="'.$conImgAtraso.'" border=0 width=15 height=15 align="center">');
-                elseif (f($row1,'perc_conclusao') < 100)                ShowHTML('           <img src="'.$conImgNormal.'" border=0 width=15 height=15 align="center">');
-                else                                  ShowHTML('           <img src="'.$conImgOkNormal.'" border=0 width=15 height=15 align="center">');
-                ShowHTML(' '.ExibeEtapa('V',f($row1,'sq_projeto'),f($row1,'sq_projeto_etapa'),'Volta',10,MontaOrdemEtapa(f($row1,'sq_projeto_etapa')),$TP,$SG).'</td>');
-                ShowHTML('        <td><table border=0 width="100%" cellpadding=0 cellspacing=0><tr valign="top">'.str_repeat('<td width="3%"></td>',(null)).'<td>'.$l_destaque.exibeImagemRestricao(null).' '.f($row1,'nm_etapa').'</b></tr></table>');
+                ShowHTML('        <tr valign="top"><td nowrap>'.exibeImagemRestricao(f($row1,'restricao')));
+                if (f($row1,'fim_previsto') < addDays(time(),-1)&& f($row1,'perc_conclusao') < 100) ShowHTML('           <img src="'.$conImgAtraso.'" border=0 width=15 height=15 align="center">');
+                elseif (f($row1,'perc_conclusao') < 100)                                            ShowHTML('           <img src="'.$conImgNormal.'" border=0 width=15 height=15 align="center">');
+                else                                                                                ShowHTML('           <img src="'.$conImgOkNormal.'" border=0 width=15 height=15 align="center">');
+                ShowHTML(' '.ExibeEtapa('V',f($row1,'sq_projeto'),f($row1,'sq_projeto_etapa'),'Volta',10,f($row1,'cd_ordem'),$TP,$SG).'</td>');
+                ShowHTML('        <td><table border=0 width="100%" cellpadding=0 cellspacing=0><tr valign="top">'.str_repeat('<td width="3%"></td>',(null)).'<td>'.f($row1,'nm_etapa').'</b></tr></table>');
                 ShowHTML('        <td>'.ExibePessoa(null,$w_cliente,f($row1,'sq_pessoa'),$TP,f($row1,'nm_resp_etapa')).'</b>');
                 ShowHTML('        <td align="center" nowrap>'.nvl(formataDataEdicao(f($row1,'inicio_previsto')),'---').'</td>');
                 ShowHTML('        <td align="center" nowrap>'.nvl(formataDataEdicao(f($row1,'fim_previsto')),'---').'</td>');
@@ -190,10 +196,10 @@ function Rel_Progresso() {
                 ShowHTML('        <td nowrap align="right" >'.f($row1,'perc_conclusao').' %</td>');
                 ShowHTML('        <td>'.nvl(CRLF2BR(f($row1,'situacao_atual')),'---').' </td>');
               }
-              if(nvl(f($row1,'sq_tarefa'),'')>'') {
+              if(nvl(f($row1,'sq_tarefa'),'')!='') {
                 ShowHTML('<tr valign="top">');
                 ShowHTML('  <td>');
-                ShowHTML('  <td nowrap>');
+                ShowHTML('  <td>');
                 if (f($row1,'concluida') == 'N') {
                   if (f($row1,'fim') < addDays(time(),-1))                                ShowHTML('   <img src="'.$conImgAtraso.'" border=0 width=15 heigth=15 align="center">');
                   elseif (f($row1,'aviso_prox_conc')=='S' && (f($row1,'aviso') <= addDays(time(),-1))) ShowHTML('   <img src="'.$conImgAviso.'" border=0 width=15 height=15 align="center">');
@@ -204,8 +210,9 @@ function Rel_Progresso() {
                   else                                                       ShowHTML('   <img src="'.$conImgOkNormal.'" border=0 width=15 height=15 align="center">');
                 } 
                 ShowHTML('  <A class="HL" HREF="projetoativ.php?par=Visual&R=projetoativ.php?par=Visual&O=L&w_chave='.f($row1,'sq_tarefa').'&w_tipo=&P1='.$P1.'&P2='.f($row1,'sq_menu').'&P3='.$P3.'&P4='.$P4.'&TP='.$TP.'&SG='.$SG.MontaFiltro('GET').'" title="Exibe as informações deste registro." target="blank">'.f($row1,'sq_tarefa').'</a>');
+                $l_assunto = 'COMPLETO';
                 if (strlen(Nvl(f($row1,'nm_tarefa'),'-'))>50 && strtoupper($l_assunto)!='COMPLETO') ShowHTML(' - '.substr(Nvl(f($row1,'nm_tarefa'),'-'),0,50).'...');
-                else                                                                                ShowHTML(' - '.Nvl(f($row1,'nm_tarefa'),'-'));
+                else                                                                                ShowHTML(' - '.Nvl(crlf2br(f($row1,'nm_tarefa')),'-'));
                 ShowHTML('     <td>'.ExibePessoa(null,$w_cliente,f($row1,'solicitante'),$TP,f($row1,'nm_resp_tarefa')).'</td>');
                 ShowHTML('     <td align="center">'.Nvl(FormataDataEdicao(f($row1,'inicio')),'-').'</td>');
                 ShowHTML('     <td align="center">'.Nvl(FormataDataEdicao(f($row1,'fim')),'-').'</td>');
@@ -216,11 +223,13 @@ function Rel_Progresso() {
               $w_sq_projeto_etapa = f($row1,'sq_projeto_etapa');
             }
           }             
+          // Entregas reportadas
+          ShowHTML('          <tr><td bgColor="#f0f0f0" height="30" colspan="10"><div align="justify"><font size="2"><b>ENTREGAS REPORTADAS</b></font></div></td>');
           $RS2 = db_getRelProgresso::getInstanceOf($dbms,$w_cliente,f($row,'sq_projeto'),$p_inicio,$p_fim,'PROREPORT');
-          $RS2 = SortArray($RS2,'sq_projeto_etapa','asc');
-          if(count($RS2)>0) {
-            ShowHTML('          <tr><td bgColor="#f0f0f0" height="30" colspan="10"><div align="justify"><font size="2"><b>ENTREGAS REPORTADAS</b></font></div></td>');
-            // Lista os registros selecionados para listagem
+          $RS2 = SortArray($RS2,'cd_ordem','asc','fim_previsto','asc','sq_projeto_etapa','asc','fim','asc','nm_tarefa','asc');
+          if(count($RS2)==0) {
+            ShowHTML('          <tr><td colspan="10" height=30 align="center"><b>Nenhuma entrega concluída no período.</b></font></td>');
+          } else {
             ShowHTML('          <tr>');
             ShowHTML('            <td rowspan=2 bgColor="#f0f0f0"><div align="center"><b>Etapa</b></div></td>');
             ShowHTML('            <td rowspan=2 bgColor="#f0f0f0"><div align="center"><b>Título</b></div></td>');
@@ -228,7 +237,7 @@ function Rel_Progresso() {
             ShowHTML('            <td colspan=2 bgColor="#f0f0f0"><div align="center"><b>Execução prevista</b></div></td>');
             ShowHTML('            <td colspan=2 bgColor="#f0f0f0"><div align="center"><b>Execução real</b></div></td>');
             ShowHTML('            <td rowspan=2 bgColor="#f0f0f0"><div align="center"><b>Percentual de conclusão</b></div></td>');
-            ShowHTML('            <td rowspan=2 bgColor="#f0f0f0"><div align="center"><b>Situação</b></div></td>');
+            ShowHTML('            <td rowspan=2 bgColor="#f0f0f0"><div align="center"><b>Observações</b></div></td>');
             ShowHTML('          </tr>');
             ShowHTML('          <tr>');
             ShowHTML('            <td bgColor="#f0f0f0"><div align="center"><b>De</b></div></td>');
@@ -239,12 +248,12 @@ function Rel_Progresso() {
             $w_sq_projeto_etapa = 0;
             foreach($RS2 as $row2) {
               if($w_sq_projeto_etapa==0 || $w_sq_projeto_etapa!=f($row2,'sq_projeto_etapa')) {
-                ShowHTML('        <tr valign="top"><td nowrap>');
+                ShowHTML('        <tr valign="top"><td nowrap>'.exibeImagemRestricao(f($row2,'restricao')));
                 if (f($row2,'fim_previsto') < addDays(time(),-1)&& f($row2,'perc_conclusao') < 100)  ShowHTML('           <img src="'.$conImgAtraso.'" border=0 width=15 height=15 align="center">');
                 elseif (f($row2,'perc_conclusao') < 100)                ShowHTML('           <img src="'.$conImgNormal.'" border=0 width=15 height=15 align="center">');
                 else                                  ShowHTML('           <img src="'.$conImgOkNormal.'" border=0 width=15 height=15 align="center">');
-                ShowHTML(' '.ExibeEtapa('V',f($row2,'sq_projeto'),f($row2,'sq_projeto_etapa'),'Volta',10,MontaOrdemEtapa(f($row2,'sq_projeto_etapa')),$TP,$SG).'</td>');
-                ShowHTML('        <td><table border=0 width="100%" cellpadding=0 cellspacing=0><tr valign="top">'.str_repeat('<td width="3%"></td>',(null)).'<td>'.$l_destaque.exibeImagemRestricao(null).' '.f($row2,'nm_etapa').'</b></tr></table>');
+                ShowHTML(' '.ExibeEtapa('V',f($row2,'sq_projeto'),f($row2,'sq_projeto_etapa'),'Volta',10,f($row2,'cd_ordem'),$TP,$SG).'</td>');
+                ShowHTML('        <td><table border=0 width="100%" cellpadding=0 cellspacing=0><tr valign="top">'.str_repeat('<td width="3%"></td>',(null)).'<td>'.$l_destaque.f($row2,'nm_etapa').'</b></tr></table>');
                 ShowHTML('        <td>'.ExibePessoa(null,$w_cliente,f($row2,'sq_pessoa'),$TP,f($row2,'nm_resp_etapa')).'</b>');
                 ShowHTML('        <td align="center" nowrap>'.nvl(formataDataEdicao(f($row2,'inicio_previsto')),'---').'</td>');
                 ShowHTML('        <td align="center" nowrap>'.nvl(formataDataEdicao(f($row2,'fim_previsto')),'---').'</td>');
@@ -256,7 +265,7 @@ function Rel_Progresso() {
               if(nvl(f($row2,'sq_tarefa'),'')>'') {
                 ShowHTML('<tr valign="top">');
                 ShowHTML('  <td>');
-                ShowHTML('  <td nowrap>');
+                ShowHTML('  <td>');
                 if (f($row2,'concluida') == 'N') {
                   if (f($row2,'fim') < addDays(time(),-1))                                ShowHTML('   <img src="'.$conImgAtraso.'" border=0 width=15 heigth=15 align="center">');
                   elseif (f($row2,'aviso_prox_conc')=='S' && (f($row2,'aviso') <= addDays(time(),-1))) ShowHTML('   <img src="'.$conImgAviso.'" border=0 width=15 height=15 align="center">');
@@ -268,7 +277,7 @@ function Rel_Progresso() {
                 } 
                 ShowHTML('  <A class="HL" HREF="projetoativ.php?par=Visual&R=projetoativ.php?par=Visual&O=L&w_chave='.f($row2,'sq_tarefa').'&w_tipo=&P1='.$P1.'&P2='.f($row2,'sq_menu').'&P3='.$P3.'&P4='.$P4.'&TP='.$TP.'&SG='.$SG.MontaFiltro('GET').'" title="Exibe as informações deste registro." target="blank">'.f($row2,'sq_tarefa').'</a>');
                 if (strlen(Nvl(f($row2,'nm_tarefa'),'-'))>50 && strtoupper($l_assunto)!='COMPLETO') ShowHTML(' - '.substr(Nvl(f($row2,'nm_tarefa'),'-'),0,50).'...');
-                else                                                                                ShowHTML(' - '.Nvl(f($row2,'nm_tarefa'),'-'));
+                else                                                                                ShowHTML(' - '.Nvl(crlf2br(f($row2,'nm_tarefa')),'-'));
                 ShowHTML('     <td>'.ExibePessoa(null,$w_cliente,f($row2,'solicitante'),$TP,f($row2,'nm_resp_tarefa')).'</td>');
                 ShowHTML('     <td align="center">'.Nvl(FormataDataEdicao(f($row2,'inicio')),'-').'</td>');
                 ShowHTML('     <td align="center">'.Nvl(FormataDataEdicao(f($row2,'fim')),'-').'</td>');
@@ -279,35 +288,49 @@ function Rel_Progresso() {
               $w_sq_projeto_etapa = f($row2,'sq_projeto_etapa');
             }
           }
+          // Entregas pendentes e do próximo período
           $RS3 = db_getRelProgresso::getInstanceOf($dbms,$w_cliente,f($row,'sq_projeto'),$p_inicio,$p_fim,'PROENTR');
-          $RS3 = SortArray($RS3,'sq_projeto_etapa','asc');
-          if(count($RS3)>0) {
-            ShowHTML('          <tr><td height="30" bgColor="#f0f0f0" colspan="10"><div align="justify"><font size="2"><b>ENTREGAS PARA O PRÓXIMO PERÍODO</b></font></div></td>');
-            // Lista os registros selecionados para listagem
-            ShowHTML('          <tr>');
-            ShowHTML('            <td rowspan=2 bgColor="#f0f0f0"><div align="center"><b>Etapa</b></div></td>');
-            ShowHTML('            <td rowspan=2 bgColor="#f0f0f0"><div align="center"><b>Título</b></div></td>');
-            ShowHTML('            <td rowspan=2 bgColor="#f0f0f0"><div align="center"><b>Responsável</b></div></td>');
-            ShowHTML('            <td colspan=2 bgColor="#f0f0f0"><div align="center"><b>Execução prevista</b></div></td>');
-            ShowHTML('            <td colspan=2 bgColor="#f0f0f0"><div align="center"><b>Execução real</b></div></td>');
-            ShowHTML('            <td rowspan=2 bgColor="#f0f0f0"><div align="center"><b>Percentual de conclusão</b></div></td>');
-            ShowHTML('            <td rowspan=2 bgColor="#f0f0f0"><div align="center"><b>Situação</b></div></td>');
-            ShowHTML('          </tr>');
-            ShowHTML('          <tr>');
-            ShowHTML('            <td bgColor="#f0f0f0"><div align="center"><b>De</b></div></td>');
-            ShowHTML('            <td bgColor="#f0f0f0"><div align="center"><b>Até</b></div></td>');
-            ShowHTML('            <td bgColor="#f0f0f0"><div align="center"><b>De</b></div></td>');
-            ShowHTML('            <td bgColor="#f0f0f0"><div align="center"><b>Até</b></div></td>');
-            ShowHTML('          </tr>');
+          $RS3 = SortArray($RS3,'cd_ordem','asc','fim_previsto','asc','sq_projeto_etapa','asc','fim','asc','nm_tarefa','asc');
+          if(count($RS3)==0) {
+            ShowHTML('          <tr><td height="30" bgColor="#f0f0f0" colspan="10"><div align="justify"><font size="2"><b>ENTREGAS PENDENTES DE PERÍODOS ANTERIORES E PREVISTAS PARA O PRÓXIMO PERÍODO</b></font></div></td>');
+            ShowHTML('          <tr><td colspan="10" height=30 align="center"><b>Nenhuma entrega pendente de períodos anteriores nem prevista para o próximo período.</b></font></td>');
+          } else {
             $w_sq_projeto_etapa = 0;
+            $i = 0;
             foreach($RS3 as $row3) {
+              if ($i==0) {
+                ShowHTML('          <tr><td height="30" bgColor="#f0f0f0" colspan="10"><div align="justify"><font size="2"><b>ENTREGAS PENDENTES DE PERÍODOS ANTERIORES E PREVISTAS PARA O PRÓXIMO PERÍODO</font><br>(anteriores a '.$p_inicio.' ou previstas no período de '.formataDataEdicao(f($row3,'ini_prox_per')).' a '.formataDataEdicao(f($row3,'fim_prox_per')).')</b></div></td>');
+                ShowHTML('          <tr>');
+                ShowHTML('            <td rowspan=2 bgColor="#f0f0f0"><div align="center"><b>Etapa</b></div></td>');
+                ShowHTML('            <td rowspan=2 bgColor="#f0f0f0"><div align="center"><b>Título</b></div></td>');
+                ShowHTML('            <td rowspan=2 bgColor="#f0f0f0"><div align="center"><b>Responsável</b></div></td>');
+                ShowHTML('            <td colspan=2 bgColor="#f0f0f0"><div align="center"><b>Execução prevista</b></div></td>');
+                ShowHTML('            <td colspan=2 bgColor="#f0f0f0"><div align="center"><b>Execução real</b></div></td>');
+                ShowHTML('            <td rowspan=2 bgColor="#f0f0f0"><div align="center"><b>Percentual de conclusão</b></div></td>');
+                ShowHTML('            <td rowspan=2 bgColor="#f0f0f0"><div align="center"><b>Observações</b></div></td>');
+                ShowHTML('          </tr>');
+                ShowHTML('          <tr>');
+                ShowHTML('            <td bgColor="#f0f0f0"><div align="center"><b>De</b></div></td>');
+                ShowHTML('            <td bgColor="#f0f0f0"><div align="center"><b>Até</b></div></td>');
+                ShowHTML('            <td bgColor="#f0f0f0"><div align="center"><b>De</b></div></td>');
+                ShowHTML('            <td bgColor="#f0f0f0"><div align="center"><b>Até</b></div></td>');
+                ShowHTML('          </tr>');
+                $i = 1;
+              }
               if($w_sq_projeto_etapa==0 || $w_sq_projeto_etapa!=f($row3,'sq_projeto_etapa')) {
-                ShowHTML('        <tr valign="top"><td nowrap>');
+                if (f($row3,'fim_previsto')<toDate($p_inicio)) {
+                  $w_title  = 'title="Previsão de entrega anterior a '.$p_inicio.'."'; 
+                  $w_cor    = 'bgcolor="'.$conTrBgColorLightRed2.'"'; 
+                } else {
+                  $w_title  = ''; 
+                  $w_cor    = '';
+                }
+                ShowHTML('        <tr valign="top" '.$w_cor.' '.$w_title.'><td nowrap>'.exibeImagemRestricao(f($row3,'restricao')));
                 if (f($row3,'fim_previsto') < addDays(time(),-1)&& f($row3,'perc_conclusao') < 100)  ShowHTML('           <img src="'.$conImgAtraso.'" border=0 width=15 height=15 align="center">');
                 elseif (f($row3,'perc_conclusao') < 100)                ShowHTML('           <img src="'.$conImgNormal.'" border=0 width=15 height=15 align="center">');
                 else                                  ShowHTML('           <img src="'.$conImgOkNormal.'" border=0 width=15 height=15 align="center">');
-                ShowHTML(' '.ExibeEtapa('V',f($row3,'sq_projeto'),f($row3,'sq_projeto_etapa'),'Volta',10,MontaOrdemEtapa(f($row3,'sq_projeto_etapa')),$TP,$SG).'</td>');
-                ShowHTML('        <td><table border=0 width="100%" cellpadding=0 cellspacing=0><tr valign="top">'.str_repeat('<td width="3%"></td>',(null)).'<td>'.$l_destaque.exibeImagemRestricao(null).' '.f($row3,'nm_etapa').'</b></tr></table>');
+                ShowHTML(' '.ExibeEtapa('V',f($row3,'sq_projeto'),f($row3,'sq_projeto_etapa'),'Volta',10,f($row3,'cd_ordem'),$TP,$SG).'</td>');
+                ShowHTML('        <td><table border=0 width="100%" cellpadding=0 cellspacing=0><tr valign="top">'.str_repeat('<td width="3%"></td>',(null)).'<td>'.$l_destaque.f($row3,'nm_etapa').'</b></tr></table>');
                 ShowHTML('        <td>'.ExibePessoa(null,$w_cliente,f($row3,'sq_pessoa'),$TP,f($row3,'nm_resp_etapa')).'</b>');
                 ShowHTML('        <td align="center" nowrap>'.nvl(formataDataEdicao(f($row3,'inicio_previsto')),'---').'</td>');
                 ShowHTML('        <td align="center" nowrap>'.nvl(formataDataEdicao(f($row3,'fim_previsto')),'---').'</td>');
@@ -317,9 +340,16 @@ function Rel_Progresso() {
                 ShowHTML('        <td>'.nvl(CRLF2BR(f($row3,'situacao_atual')),'---').' </td>');
               }
               if(nvl(f($row3,'sq_tarefa'),'')>'') {
-                ShowHTML('<tr valign="top">');
+                if (f($row3,'fim')<toDate($p_inicio)) {
+                  $w_title  = 'title="Previsão de entrega anterior a '.$p_inicio.'."'; 
+                  $w_cor    = 'bgcolor="'.$conTrBgColorLightRed2.'"'; 
+                } else {
+                  $w_title  = ''; 
+                  $w_cor    = '';
+                }
+                ShowHTML('        <tr valign="top" '.$w_cor.' '.$w_title.'>');
+                ShowHTML('  <td bgcolor="#FFFFFF">');
                 ShowHTML('  <td>');
-                ShowHTML('  <td nowrap>');
                 if (f($row3,'concluida') == 'N') {
                   if (f($row3,'fim') < addDays(time(),-1))                                ShowHTML('   <img src="'.$conImgAtraso.'" border=0 width=15 heigth=15 align="center">');
                   elseif (f($row3,'aviso_prox_conc')=='S' && (f($row3,'aviso') <= addDays(time(),-1))) ShowHTML('   <img src="'.$conImgAviso.'" border=0 width=15 height=15 align="center">');
@@ -331,7 +361,7 @@ function Rel_Progresso() {
                 } 
                 ShowHTML('  <A class="HL" HREF="projetoativ.php?par=Visual&R=projetoativ.php?par=Visual&O=L&w_chave='.f($row3,'sq_tarefa').'&w_tipo=&P1='.$P1.'&P2='.f($row3,'sq_menu').'&P3='.$P3.'&P4='.$P4.'&TP='.$TP.'&SG='.$SG.MontaFiltro('GET').'" title="Exibe as informações deste registro." target="blank">'.f($row3,'sq_tarefa').'</a>');
                 if (strlen(Nvl(f($row3,'nm_tarefa'),'-'))>50 && strtoupper($l_assunto)!='COMPLETO') ShowHTML(' - '.substr(Nvl(f($row3,'nm_tarefa'),'-'),0,50).'...');
-                else                                                                                ShowHTML(' - '.Nvl(f($row3,'nm_tarefa'),'-'));
+                else                                                                                ShowHTML(' - '.Nvl(crlf2br(f($row3,'nm_tarefa')),'-'));
                 ShowHTML('     <td>'.ExibePessoa(null,$w_cliente,f($row3,'solicitante'),$TP,f($row3,'nm_resp_tarefa')).'</td>');
                 ShowHTML('     <td align="center">'.Nvl(FormataDataEdicao(f($row3,'inicio')),'-').'</td>');
                 ShowHTML('     <td align="center">'.Nvl(FormataDataEdicao(f($row3,'fim')),'-').'</td>');
@@ -343,6 +373,11 @@ function Rel_Progresso() {
             }
           }
           ShowHTML('        </table></td></tr>');
+          if(count($RS3)>0) {
+            ShowHTML('      <tr><td colspan="2"><b>Observação: entregas pendentes destacadas em vermelho.</b></td></tr>');
+          }
+          
+          // Riscos
           $RS1 = db_getSolicRestricao::getInstanceOf($dbms,f($row,'sq_projeto'), null, null, null,null,null,null);
           if (count($RS1)>0) {
             ShowHTML('      <tr><td colspan="2"><br><font size="2"><b>Questões<hr NOSHADE color=#000000 SIZE=1></b></td></tr>');
@@ -401,8 +436,8 @@ function Rel_Progresso() {
     ShowHTML('          </table>');
     ShowHTML('    <table width="97%" border="0">');
     ShowHTML('      <tr valign="top">');
-    ShowHTML('        <td><b><u>P</u>eríodo de reporte:</b><br><input '.$w_Disabled.' accesskey="P" type="text" name="p_inicio" class="sti" SIZE="10" MAXLENGTH="10" VALUE="'.$p_inicio.'" onKeyDown="FormataData(this,event);">'.ExibeCalendario('Form','w_inicio').' a ');
-    ShowHTML('                                                 <input '.$w_Disabled.' accesskey="P" type="text" name="p_fim" class="sti" SIZE="10" MAXLENGTH="10" VALUE="'.$p_fim.'" onKeyDown="FormataData(this,event);">'.ExibeCalendario('Form','w_fim').'</td>');
+    ShowHTML('        <td><b><u>P</u>eríodo de reporte:</b><br><input '.$w_Disabled.' accesskey="P" type="text" name="p_inicio" class="sti" SIZE="10" MAXLENGTH="10" VALUE="'.$p_inicio.'" onKeyDown="FormataData(this,event);">'.ExibeCalendario('Form','p_inicio').' a ');
+    ShowHTML('                                                 <input '.$w_Disabled.' accesskey="P" type="text" name="p_fim" class="sti" SIZE="10" MAXLENGTH="10" VALUE="'.$p_fim.'" onKeyDown="FormataData(this,event);">'.ExibeCalendario('Form','p_fim').'</td>');
     ShowHTML('          </table>');
     ShowHTML('    <table width="90%" border="0">');
     ShowHTML('      <tr><td align="center"><hr>');
@@ -423,74 +458,6 @@ function Rel_Progresso() {
   ShowHTML('</center>');
   if ($w_tipo!='WORD') Rodape();
 } 
-// =========================================================================
-// Gera uma linha de apresentação da tabela de etapas
-// -------------------------------------------------------------------------
-function EtapaLinhaAtiv($l_chave,$l_chave_aux,$l_titulo,$l_resp,$l_sq_resp,$l_inicio,$l_fim,$l_inicio_real,$l_fim_real,$l_perc,$l_situacao) {
-  extract($GLOBALS);
-  global $w_cor;
-  $l_row     = 1;
-  $l_col     = 1;
-
-  // Recupera as atividades que o usuário pode ver
-  $l_rs = db_getLinkData::getInstanceOf($dbms, $w_cliente,'GDPCAD');
-  $RS_Ativ = db_getSolicList::getInstanceOf($dbms,f($l_rs,'sq_menu'),$w_usuario,'GDPCAD',5,
-              null,null,null,null,null,null,
-              null,null,null,null,
-              null,null,null,null,null,null,null,
-              null,null,null,null,null,null,$l_chave_aux,null,null);
-  $l_row += count($RS_Ativ);
-  $l_html .= chr(13).'        <tr valign="top"><td nowrap rowspan='.$l_row.'>';
-  if ($l_fim < addDays(time(),-1)&& $l_perc < 100)  $l_html .= chr(13).'           <img src="'.$conImgAtraso.'" border=0 width=15 height=15 align="center">';
-  elseif ($l_perc < 100)                $l_html .= chr(13).'           <img src="'.$conImgNormal.'" border=0 width=15 height=15 align="center">';
-  else                                  $l_html .= chr(13).'           <img src="'.$conImgOkNormal.'" border=0 width=15 height=15 align="center">';
-  $l_html .= chr(13).' '.ExibeEtapa('V',$l_chave,$l_chave_aux,'Volta',10,MontaOrdemEtapa($l_chave_aux),$TP,$SG).'</td>';
-  $l_html .= chr(13).'        <td><table border=0 width="100%" cellpadding=0 cellspacing=0><tr valign="top">'.str_repeat('<td width="3%"></td>',($l_nivel)).'<td>'.$l_destaque.exibeImagemRestricao($l_restricao).' '.$l_titulo.'</b></tr></table>';
-  $l_html .= chr(13).'        <td>'.ExibePessoa(null,$w_cliente,$l_sq_resp,$TP,$l_resp).'</b>';
-  $l_html .= chr(13).'        <td align="center" nowrap>'.nvl(formataDataEdicao($l_inicio),'---').'</td>';
-  $l_html .= chr(13).'        <td align="center" nowrap>'.nvl(formataDataEdicao($l_fim),'---').'</td>';
-  $l_html .= chr(13).'        <td align="center" nowrap>'.nvl(formataDataEdicao($l_inicio_real),'---').'</td>';
-  $l_html .= chr(13).'        <td align="center" nowrap>'.nvl(formataDataEdicao($l_fim_real),'---').'</td>';
-  $l_html .= chr(13).'        <td nowrap align="right" >'.$l_perc.' %</td>';
-  $l_html .= chr(13).'        <td nowrap>'.nvl($l_situacao,'---').' </td>';
-  //Listagem das tarefas da etapa  
-  if (count($RS_Ativ)>0) {
-    foreach ($RS_Ativ as $row) {
-      $l_ativ .= chr(13).'<tr valign="top">';
-      $l_ativ .= chr(13).'  <td>';
-      if (f($row,'concluida') == 'N') {
-        if (f($row,'fim') < addDays(time(),-1))                                $l_ativ .= chr(13).'   <img src="'.$conImgAtraso.'" border=0 width=15 heigth=15 align="center">';
-        elseif (f($row,'aviso_prox_conc')=='S' && (f($row,'aviso') <= addDays(time(),-1))) $l_ativ .= chr(13).'   <img src="'.$conImgAviso.'" border=0 width=15 height=15 align="center">';
-        else                                                                   $l_ativ .= chr(13).'   <img src="'.$conImgNormal.'" border=0 width=15 height=15 align="center">';
-      } else {
-        if (f($row,'sg_tramite')=='CA') {
-          $l_ativ .= chr(13).'           <img src="'.$conImgCancel.'" border=0 width=15 height=15 align="center">';
-        } elseif (f($row,'fim') < Nvl(f($row,'fim_real'),f($row,'fim'))) $l_ativ .= chr(13).'   <img src="'.$conImgOkAtraso.'" border=0 width=15 heigth=15 align="center">';
-        else                                                       $l_ativ .= chr(13).'   <img src="'.$conImgOkNormal.'" border=0 width=15 height=15 align="center">';
-      } 
-      $l_ativ .= chr(13).'  <A class="HL" HREF="projetoativ.php?par=Visual&R=projetoativ.php?par=Visual&O=L&w_chave='.f($row,'sq_siw_solicitacao').'&w_tipo=&P1='.$P1.'&P2='.f($row,'sq_menu').'&P3='.$P3.'&P4='.$P4.'&TP='.$TP.'&SG='.$SG.MontaFiltro('GET').'" title="Exibe as informações deste registro." target="blank">'.f($row,'sq_siw_solicitacao').'</a>';
-      if (strlen(Nvl(f($row,'assunto'),'-'))>50 && strtoupper($l_assunto)!='COMPLETO') $l_ativ .= ' - '.substr(Nvl(f($row,'assunto'),'-'),0,50).'...';
-      else                                                                             $l_ativ .= ' - '.Nvl(f($row,'assunto'),'-');
-      $l_ativ .= chr(13).'     <td>'.ExibePessoa(null,$w_cliente,f($row,'solicitante'),$TP,f($row,'nm_resp')).'</td>';
-      $l_ativ .= chr(13).'     <td align="center">'.Nvl(FormataDataEdicao(f($row,'inicio')),'-').'</td>';
-      $l_ativ .= chr(13).'     <td align="center">'.Nvl(FormataDataEdicao(f($row,'fim')),'-').'</td>';
-      $l_ativ .= chr(13).'     <td align="center">'.Nvl(FormataDataEdicao(f($row,'inicio_real')),'---').'</td>';
-      $l_ativ .= chr(13).'     <td align="center">'.Nvl(FormataDataEdicao(f($row,'fim_real')),'---').'</td>';
-      if (nvl($l_valor,'')!='') {
-        $l_ativ .= chr(13).'     <td colspan=6 nowrap>'.f($row,'nm_tramite').'</td>';
-      } else {
-        $l_ativ .= chr(13).'     <td colspan=5 nowrap>'.f($row,'nm_tramite').'</td>';
-      }
-    }
-  } 
-  if (count($RS_Ativ) > 0) {
-    $l_ativ    = $l_ativ.chr(13).'            </td></tr>';
-  } 
-  $l_html = $l_html.chr(13).'      </tr>';
-  if ($l_ativ>'')      $l_html = $l_html.chr(13).str_replace('w_cor',$w_cor,$l_ativ);
-  
-  return $l_html;
-}
 // =========================================================================
 // Gera uma linha de apresentação da tabela de questões
 // -------------------------------------------------------------------------
@@ -522,7 +489,7 @@ function QuestoesLinhaAtiv($l_siw_solicitacao, $l_chave, $l_chave_aux, $l_risco,
   }
   $l_html .= chr(13).'    '.$l_tipo_restricao.'</td>';
   $l_html .= chr(13).'     <td>'.$l_tipo.'</td>';
-  $l_html .= chr(13).'     <td>'.$l_descricao.'</td>';
+  $l_html .= chr(13).'     <td>'.CRLF2BR($l_descricao).'</td>';
   $l_html .= chr(13).'     <td>'.ExibePessoa(null,$w_cliente,$l_sq_resp,$TP,$l_resp).'</td>';
   $l_html .= chr(13).'     <td align="center">'.$l_estrategia.'</td>';  
   $l_html .= chr(13).'     <td>'.$l_acao_resposta.'</td>';
@@ -556,7 +523,7 @@ function QuestoesLinhaAtiv($l_siw_solicitacao, $l_chave, $l_chave_aux, $l_risco,
             $l_ativ .= chr(13).'   <img src="'.$conImgOkNormal.'" border=0 width=15 height=15 align="center">';
         } 
         $l_ativ .= chr(13).'  <A class="HL" HREF="projetoativ.php?par=Visual&R=ProjetoAtiv.php?par=Visual&O=L&w_chave='.f($row,'sq_siw_solicitacao').'&w_tipo=&P1='.$P1.'&P2='.f($row,'sq_menu').'&P3='.$P3.'&P4='.$P4.'&TP='.$TP.'&SG='.$SG.MontaFiltro('GET').'" title="Exibe as informações deste registro." target="blank">'.f($row,'sq_siw_solicitacao').'</a>';
-        $l_ativ .= chr(13).'     <td>'.Nvl(f($row,'assunto'),'-');
+        $l_ativ .= chr(13).'     <td>'.CRLF2BR(Nvl(f($row,'assunto'),'---'));
         $l_ativ .= chr(13).'     <td align="center">'.formataDataEdicao(nvl(f($row,'inicio_real'),f($row,'inicio'))).'</td>';
         $l_ativ .= chr(13).'     <td align="center">'.formataDataEdicao(nvl(f($row,'fim_real'),f($row,'fim'))).'</td>';
         $l_ativ .= chr(13).'     <td>'.ExibePessoa(null,$w_cliente,f($row,'solicitante'),$TP,f($row,'nm_resp_tarefa')).'</td>';

@@ -1,24 +1,6 @@
 <?
 session_start();
-session_register('P_CLIENTE');
-session_register('DBMS');
-session_register('ANO');
-session_register('SCHEMA');
-session_register('SCHEMA_IS');
-session_register('LOGON');
-session_register('SMTP_SERVER');
-session_register('SIW_EMAIL_CONTA');
-session_register('SIW_EMAIL_NOME');
-session_register('SIW_EMAIL_SENHA');
-session_register('USERNAME');
-session_register('SQ_PESSOA');
-session_register('NOME');
-session_register('EMAIL');
-session_register('NOME_RESUMIDO');
-session_register('LOTACAO');
-session_register('LOCALIZACAO');
-session_register('INTERNO');
-session_register('ENDERECO');
+$w_dir_volta = '';
 include_once('constants.inc');
 include_once('jscript.php');
 include_once('funcoes.php');
@@ -126,7 +108,6 @@ function Valida() {
     $_SESSION['LOGON']           = 'Sim';
     $_SESSION['ENDERECO']        = f($RS,'SQ_PESSOA_ENDERECO');
     $_SESSION['ANO']             = Date('Y');
-    session_write_close();
 
     if ($par=='Log') {
       ScriptOpen('JavaScript');

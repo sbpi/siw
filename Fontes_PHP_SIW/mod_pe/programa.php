@@ -1111,8 +1111,8 @@ function Visual($w_chave=null,$w_o=null,$w_usuario=null,$w_p1=null,$w_tipo=null,
     $w_meta=null,$w_ocorrencia=null,$w_consulta=null) {
   extract($GLOBALS);
   $w_chave    = nvl($w_chave,$_REQUEST['w_chave']);
-  $w_tipo     = nvl(w_tipo,strtoupper(trim($_REQUEST['w_tipo'])));
-  $w_formato  = nvl(w_formato,strtoupper(trim($_REQUEST['w_formato'])));
+  $w_tipo     = nvl($w_tipo,strtoupper(trim($_REQUEST['w_tipo'])));
+  $w_formato  = nvl($w_formato,strtoupper(trim($_REQUEST['w_formato'])));
   if ($O=='T') {
     $w_identificacao    = strtoupper(nvl($w_identificacao,'S'));
     $w_responsavel      = strtoupper(nvl($w_responsavel,'S'));

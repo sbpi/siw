@@ -517,6 +517,24 @@ function consultaTelefone($p_cliente) {
 }
 
 // =========================================================================
+// Montagem da URL para visualização de uma solicitação
+// -------------------------------------------------------------------------
+function ExibeSolic($l_dir,$l_chave,$l_texto) {
+  extract($GLOBALS,EXTR_PREFIX_SAME,'l_');
+  include_once($w_dir_volta.'classes/sp/db_getSolicData.php');
+  $RS = db_getSolicData::getInstanceOf($dbms,$l_chave);
+  $l_hint = 'Exibe as informações.';
+  if (substr($l_texto,0,2)=='PR') $l_hint = 'Exibe as informações do programa.';
+  elseif (substr($l_texto,0,2)=='PJ') $l_hint = 'Exibe as informações do projeto.';
+  elseif (substr(f($RS,'sigla'),0,3)=='GCD') $l_hint = 'Exibe as informações do contrato.';
+  elseif (substr(f($RS,'sigla'),0,3)=='GCB') $l_hint = 'Exibe as informações do contrato.';
+  elseif (substr(f($RS,'sigla'),0,3)=='GCC') $l_hint = 'Exibe as informações do convênio.';
+  elseif (substr(f($RS,'sigla'),0,3)=='GCA') $l_hint = 'Exibe as informações do acordo.';
+  $l_string = '<A class="hl" HREF="'.$conRootSIW.f($RS,'link').'&O=L&w_chave='.$l_chave.'&P1='.f($RS,'p1').'&P2='.f($RS,'p2').'&P3='.f($RS,'p3').'&P4='.f($RS,'p4').'&TP='.$TP.'&SG='.f($RS,'sigla').'" target="_blank" title="'.$l_hint.'">'.$l_texto.'</a>';
+  return $l_string;
+}
+
+// =========================================================================
 // Montagem da URL com os dados de uma pessoa
 // -------------------------------------------------------------------------
 function ExibePessoa($p_dir,$p_cliente,$p_pessoa,$p_tp,$p_nome) {
@@ -534,10 +552,15 @@ function ExibePessoa($p_dir,$p_cliente,$p_pessoa,$p_tp,$p_nome) {
 // -------------------------------------------------------------------------
 function VisualIndicador($p_dir,$p_cliente,$p_sigla,$p_tp,$p_nome) {
   extract($GLOBALS,EXTR_PREFIX_SAME,'l_');
-  if (Nvl($p_nome,'')=='') {
-    $l_string='---';
+  $l_RS = db_getIndicador::getInstanceOf($dbms,$w_cliente,$w_usuario,null,null,null,$p_sigla,null,null,null,null,null,null,null,null,null,null,null,"EXISTE");
+  if(count($l_RS)>0) {
+    if (Nvl($p_nome,'')=='') {
+      $l_string='---';
+    } else {
+      $l_string .= '<A class="hl" HREF="#" onClick="window.open(\''.$conRootSIW.'mod_pe/indicador.php?par=TELAINDICADOR&w_cliente='.$p_cliente.'&w_sigla='.$p_sigla.'&P1='.$P1.'&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP='.$p_tp.'&SG='.'\',\'Indicador\',\'width=780,height=300,top=10,left=10,toolbar=no,scrollbars=yes,resizable=yes,status=no\'); return false;" title="Clique para exibir os dados deste de indicador!">'.$p_nome.'</A>';
+    }
   } else {
-    $l_string .= '<A class="hl" HREF="#" onClick="window.open(\''.$conRootSIW.'mod_pe/indicador.php?par=TELAINDICADOR&w_cliente='.$p_cliente.'&w_sigla='.$p_sigla.'&P1='.$P1.'&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP='.$p_tp.'&SG='.'\',\'Indicador\',\'width=780,height=300,top=10,left=10,toolbar=no,scrollbars=yes,resizable=yes,status=no\'); return false;" title="Clique para exibir os dados deste de indicador!">'.$p_nome.'</A>';
+    $l_string=$p_sigla;
   }
   return $l_string;
 }
@@ -599,10 +622,11 @@ function ExibeIndicador($p_dir,$p_cliente,$p_nome,$p_dados,$p_tp) {
 // Montagem da URL com os dados da etapa
 // -------------------------------------------------------------------------
 function ExibeEtapa($O,$p_chave,$p_chave_aux,$p_tipo,$p_P1,$p_etapa,$p_tp,$p_sg) {
+  extract($GLOBALS,EXTR_PREFIX_SAME,'l_');
   if (Nvl($p_etapa,'')=='') {
     $l_string="---";
   } else {
-    $l_string .= '<A class="hl" HREF="#" onClick="window.open(\'projeto.php?par=AtualizaEtapa&w_chave='.$p_chave.'&O='.$O.'&w_chave_aux='.$p_chave_aux.'&w_tipo='.$p_tipo.'&P1='.$p_P1.'&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP='.$p_tp.'&SG='.$p_sg.'\',\'Etapa\',\'width=780,height=550,top=50,left=10,toolbar=no,scrollbars=yes,resizable=yes,status=no\'); return false;" title="Clique para exibir os dados!">'.$p_etapa.'</A>';
+    $l_string .= '<A class="hl" HREF="#" onClick="window.open(\''.$conRootSIW.'projeto.php?par=AtualizaEtapa&w_chave='.$p_chave.'&O='.$O.'&w_chave_aux='.$p_chave_aux.'&w_tipo='.$p_tipo.'&P1='.$p_P1.'&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP='.$p_tp.'&SG='.$p_sg.'\',\'Etapa\',\'width=780,height=550,top=50,left=10,toolbar=no,scrollbars=yes,resizable=yes,status=no\'); return false;" title="Clique para exibir os dados!">'.$p_etapa.'</A>';
   }
   return $l_string;
 }
@@ -610,17 +634,27 @@ function ExibeEtapa($O,$p_chave,$p_chave_aux,$p_tipo,$p_P1,$p_etapa,$p_tp,$p_sg)
 // =========================================================================
 // Exibe imagem da restrição conforme tipo e criticidade
 // -------------------------------------------------------------------------
-function ExibeImagemRestricao($l_tipo) {
+function ExibeImagemRestricao($l_tipo,$l_imagem=null) {
   extract($GLOBALS);
   $l_string = '';
-  if (Nvl($l_tipo,'N')!='N') {
-    switch ($l_tipo) {
-      case 'S1': $l_string .= '<img title="Problema de baixa criticidade" src="'.$conRootSIW.$conImgProblem.'" border=0 align="center">';   break;
-      case 'S3': $l_string .= '<img title="Problema de moderada criticidade" src="'.$conRootSIW.$conImgProblem.'" border=0 align="center">';   break;
-      case 'S3': $l_string .= '<img title="Problema de alta criticidade" src="'.$conRootSIW.$conImgProblem.'" border=0 align="center">';    break;
-      case 'N1': $l_string .= '<img title="Risco de baixa criticidade" src="'.$conRootSIW.$conImgRiskLow.'" border=0 align="center">';   break;
-      case 'N2': $l_string .= '<img title="Risco de moderada criticidade" src="'.$conRootSIW.$conImgRiskMed.'" border=0 align="center">';   break;
-      case 'N3': $l_string .= '<img title="Risco de alta criticidade" src="'.$conRootSIW.$conImgRiskHig.'" border=0 align="center">';    break;
+  if ($l_imagem=='P') {
+    if (Nvl($l_tipo,'N')!='N') {
+      switch ($l_tipo) {
+        case 'S1': $l_string .= '<img title="Problema de baixa criticidade" src="'.$conRootSIW.$conImgProblem.'" border=0 align="center">';   break;
+        case 'S2': $l_string .= '<img title="Problema de moderada criticidade" src="'.$conRootSIW.$conImgProblem.'" border=0 align="center">';   break;
+        case 'S3': $l_string .= '<img title="Problema de alta criticidade" src="'.$conRootSIW.$conImgProblem.'" border=0 align="center">';    break;
+      }
+    }
+  } else {
+    if (Nvl($l_tipo,'N')!='N') {
+      switch ($l_tipo) {
+        case 'S1': $l_string .= '<img title="Problema de baixa criticidade" src="'.$conRootSIW.$conImgProblem.'" border=0 align="center">';   break;
+        case 'S2': $l_string .= '<img title="Problema de moderada criticidade" src="'.$conRootSIW.$conImgProblem.'" border=0 align="center">';   break;
+        case 'S3': $l_string .= '<img title="Problema de alta criticidade" src="'.$conRootSIW.$conImgProblem.'" border=0 align="center">';    break;
+        case 'N1': $l_string .= '<img title="Risco de baixa criticidade" src="'.$conRootSIW.$conImgRiskLow.'" border=0 align="center">';   break;
+        case 'N2': $l_string .= '<img title="Risco de moderada criticidade" src="'.$conRootSIW.$conImgRiskMed.'" border=0 align="center">';   break;
+        case 'N3': $l_string .= '<img title="Risco de alta criticidade" src="'.$conRootSIW.$conImgRiskHig.'" border=0 align="center">';    break;
+      }
     }
   }
   return $l_string;
@@ -1604,6 +1638,7 @@ function FormataDataEdicao($w_dt_grade, $w_formato=1) {
         case 2: return date('H:i:s',$w_dt_grade);                         break;
         case 3: return date('d/m/Y, H:i:s',$w_dt_grade);                  break;
         case 4: return diaSemana(date('l, d/m/y, H:i:s',$w_dt_grade));    break;
+        case 5: return date('d/m/y',$w_dt_grade);                         break;
       }
     } else {
       return $w_dt_grade;

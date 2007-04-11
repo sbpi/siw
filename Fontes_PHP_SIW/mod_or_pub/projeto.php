@@ -3478,8 +3478,6 @@ function Grava() {
             $_REQUEST['w_selecionada_mpog'],$_REQUEST['w_selecionada_relevante'],null,&$w_chave_nova,$w_copia);
         ScriptOpen('JavaScript');
         if ($O=='I') {
-          //Envia e-mail comunicando a inclusão
-          SolicMail(Nvl($_REQUEST['w_chave'],$w_chave_nova),1);
           // Recupera os dados para montagem correta do menu
           $RS1 = db_getMenuData::getInstanceOf($dbms,$w_menu);
           ShowHTML('  parent.menu.location=\''.montaURL_JS(null,$conRootSIW.'menu.php?par=ExibeDocs&O=A&w_chave='.$w_chave_nova.'&w_documento=Nr. '.$w_chave_nova.'&R='.$R.'&SG='.f($RS1,'sigla').'&TP='.$TP.MontaFiltro('GET')).'\';');

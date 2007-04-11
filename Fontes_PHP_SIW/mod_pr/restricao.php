@@ -173,6 +173,7 @@ function Restricao() {
     // Recupera os dados do endereço informado
     $RS = db_getSolicRestricao::getInstanceOf($dbms,$w_chave,$w_chave_aux,null,null,null,$w_problema,null);
     foreach ($RS as $row) {$RS = $row; break;}
+    $w_pessoa                = f($RS,'sq_pessoa');
     $w_pessoa_atualizacao    = f($RS,'sq_pessoa_atualizacao');
     $w_tipo_restricao        = f($RS,'sq_tipo_restricao');
     $w_risco                 = f($RS,'sq_risco');
@@ -198,7 +199,7 @@ function Restricao() {
     FormataValor();
     ValidateOpen('Validacao');
     if (!(strpos('IA',$O)===false)) {
-      Validate('w_pessoa_atualizacao','Responsável','SELECT','1','1','18','','1');
+      Validate('w_pessoa','Responsável','SELECT','1','1','18','','1');
       Validate('w_tipo_restricao','Classificação','SELECT','1','1','18','','1');      
       Validate('w_descricao','Descricao','','1','2','2000','1','1');
       if ($w_problema=='N') {
@@ -232,7 +233,7 @@ function Restricao() {
   if ($w_troca>'') {
     BodyOpen('onLoad=\'document.Form.'.$w_troca.'.focus()\';');
   } elseif ((strpos('IA',$O)!==false)) {
-    BodyOpen('onLoad=\'document.Form.w_pessoa_atualizacao.focus()\';');
+    BodyOpen('onLoad=\'document.Form.w_pessoa.focus()\';');
   } else {
     BodyOpenClean(null);
   } 
@@ -319,8 +320,8 @@ function Restricao() {
           }
         }
         ShowHTML('            '.f($row,'nm_tipo'));
-        ShowHTML('        <td>'.ExibeRestricao('V',$w_dir_volta,$w_cliente,f($row,'descricao'),f($row,'chave'),f($row,'chave_aux'),$TP,null).'</td>');
-        ShowHTML('        <td>'.f($row,'nm_atualiz').'</td>');
+        ShowHTML('        <td>'.ExibeRestricao('V',$w_dir_volta,$w_cliente,CRLF2BR(f($row,'descricao')),f($row,'chave'),f($row,'chave_aux'),$TP,null).'</td>');
+        ShowHTML('        <td>'.f($row,'nm_resp').'</td>');
         ShowHTML('        <td align="center">'.f($row,'nm_estrategia').'</td>');        
         ShowHTML('        <td>'.f($row,'acao_resposta').'</td>');
         ShowHTML('        <td>'.f($row,'nm_fase_atual').'</td>');
@@ -358,9 +359,9 @@ function Restricao() {
     }
     ShowHTML('<tr bgcolor="'.$conTrBgColor.'"><td align="center">');
     ShowHTML('    <table width="97%" border="0">');
-    SelecaoPessoa('<u>R</u>esponsável:','N','Selecione o responsável pelo acompanhamento da meta.',$w_pessoa_atualizacao,$w_chave,'w_pessoa_atualizacao','INTERNOS');
+    SelecaoPessoa('<u>R</u>esponsável:','N','Selecione o responsável pelo acompanhamento da questão.',$w_pessoa,$w_chave,'w_pessoa','INTERNOS');
     SelecaoTipoRestricao('<U>C</U>lassificação:','C','Selecione o tipo de classifição.',$w_tipo_restricao,$w_cliente,'w_tipo_restricao',null,null);
-    ShowHTML('      <tr><td colspan="3"><b><u>D</u>escrição:</b><br><textarea '.$w_Disabled.' accesskey="D" name="w_descricao" class="STI" ROWS=5 cols=75 title="Descrição da meta.">'.$w_descricao.'</TEXTAREA></td>');
+    ShowHTML('      <tr><td colspan="3"><b><u>D</u>escrição:</b><br><textarea '.$w_Disabled.' accesskey="D" name="w_descricao" class="STI" ROWS=5 cols=75 title="Descrição da questão.">'.$w_descricao.'</TEXTAREA></td>');
     ShowHTML('      <tr valign="top">');
     if ($w_problema=='N') { 
       SelecaoProbabilidade('<U>P</U>robabilidade:','P','Selecione a probabilidade.',$w_probabilidade,'w_probabilidade',null,null);
@@ -574,11 +575,13 @@ function VisualRestricao() {
   $RS = db_getSolicRestricao::getInstanceOf($dbms,$w_chave,$w_chave_aux,null,null,null,$w_problema,null);
 
   foreach ($RS as $row) {$RS = $row; break;}
-  $w_pessoa_atualizacao    = f($RS,'nm_resp_ind');
+  $w_pessoa                = f($RS,'nm_resp');
+  $w_pessoa_atualizacao    = f($RS,'nm_atualiz');
   $w_tipo_restricao        = f($RS,'sq_tipo_restricao');
   $w_risco                 = f($RS,'sq_risco');
   $w_problema              = f($RS,'problema');
   $w_descricao             = f($RS,'descricao');
+  $w_sigla                 = f($RS,'sigla');
   $w_probabilidade         = f($RS,'nm_probabilidade');
   $w_impacto               = f($RS,'nm_impacto');
   $w_criticidade           = f($RS,'criticidade');
@@ -587,7 +590,7 @@ function VisualRestricao() {
   $w_fase_atual            = f($RS,'nm_fase_atual');
   $w_data_situacao         = formataDataEdicao(f($RS,'data_situacao'));
   $w_situacao_atual        = f($RS,'situacao_atual');
-  $w_ultima_atualizacao    = formataDataEdicao(f($RS,'ultima_atualizacao'));
+  $w_ultima_atualizacao    = f($RS,'phpdt_ultima_atualizacao');
 
   cabecalho();
   ShowHTML('<HEAD>');
@@ -606,11 +609,11 @@ function VisualRestricao() {
 
   ShowHTML('<tr><td align="center" bgcolor="#FAEBD7"><table border=1 width="100%"><tr><td>');
   ShowHTML('    <TABLE WIDTH="100%" CELLSPACING="'.$conTableCellSpacing.'" CELLPADDING="'.$conTableCellPadding.'" BorderColorDark="'.$conTableBorderColorDark.'" BorderColorLight="'.$conTableBorderColorLight.'">');
-  if ($w_problema=='N')    ShowHTML('      <tr><td colspan="3">Risco:<b><br>'.$w_descricao.'</td>');
+  if ($w_problema=='N')    ShowHTML('      <tr><td colspan="3">Risco:<b><br>'.CRLF2BR($w_descricao).'</td>');
   else                     ShowHTML('      <tr><td colspan="3">Problema:<b><br>'.$w_descricao.'</td>');
   ShowHTML('      </tr>');
   ShowHTML('      <tr valign="top">');
-  ShowHTML('              <td>Responsável pela risco:<b><br>'.f($RS,'nm_atualiz').'</td>');
+  ShowHTML('              <td>Responsável pela risco:<b><br>'.$w_pessoa.'</td>');
   $RS = db_getTipoRestricao::getInstanceOf($dbms,$w_tipo_restricao, $w_cliente, null,'S');
   foreach ($RS as $row) {$RS = $row; break;}
   ShowHTML('              <td>classificaçao:<b><br>'.f($RS,'nome').'</td>');
@@ -701,7 +704,7 @@ function VisualRestricao() {
           ShowHTML('   <img src="'.$conImgOkNormal.'" border=0 width=15 height=15 align="center">');
       } 
       ShowHTML('  <A class="HL" HREF="projetoativ.php?par=Visual&R=ProjetoAtiv.php?par=Visual&O=L&w_chave='.f($row,'sq_siw_solicitacao').'&w_tipo=&P1='.$P1.'&P2='.f($row,'sq_menu').'&P3='.$P3.'&P4='.$P4.'&TP='.$TP.'&SG='.$SG.MontaFiltro('GET').'" title="Exibe as informações deste registro." target="blank">'.f($row,'sq_siw_solicitacao').'</a>');
-      ShowHTML('     <td>'.Nvl(f($row,'assunto'),'-'));
+      ShowHTML('     <td>'.CRLF2BR(Nvl(f($row,'assunto'),'---')));
       ShowHTML('     <td>'.ExibePessoa(null,$w_cliente,f($row,'solicitante'),$TP,f($row,'nm_resp_tarefa')).'</td>');
       ShowHTML('     <td align="center">'.Nvl(FormataDataEdicao(f($row,'inicio')),'-').'</td>');
       ShowHTML('     <td align="center">'.Nvl(FormataDataEdicao(  f($row,'fim')),'-').'</td>');
@@ -824,7 +827,7 @@ function Grava() {
             exit();                                    
           }
         }
-        dml_putSolicRestricao::getInstanceOf($dbms,$O,$_REQUEST['w_chave'],Nvl($_REQUEST['w_chave_aux'],''),$w_usuario, $_REQUEST['w_pessoa_atualizacao'],
+        dml_putSolicRestricao::getInstanceOf($dbms,$O,$_REQUEST['w_chave'],Nvl($_REQUEST['w_chave_aux'],''), $_REQUEST['w_pessoa'], $w_usuario,
               $_REQUEST['w_tipo_restricao'], $_REQUEST['w_risco'],$_REQUEST['w_problema'],$_REQUEST['w_descricao'],$_REQUEST['w_probabilidade'],
               $_REQUEST['w_impacto'],Nvl($_REQUEST['w_criticidade'],0),$_REQUEST['w_estrategia'], $_REQUEST['w_acao_resposta'],Nvl($_REQUEST['w_fase_atual'],'D'),$_REQUEST['w_data_situacao'],
               $_REQUEST['w_situacao_atual']); 

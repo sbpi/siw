@@ -17,9 +17,9 @@ function selecaoUnidade($label,$accesskey,$hint,$chave,$chaveAux,$campo,$restric
     ShowHTML('          <option value="">---');
     foreach($RS as $row) {
       if (nvl(f($row,'sq_unidade'),0)==nvl($chave,0)) {
-         ShowHTML('          <option value="'.f($row,'sq_unidade').'" SELECTED>'.f($row,'nome').' ('.f($row,'sigla').')');
+         ShowHTML('          <option value="'.f($row,'sq_unidade').'" SELECTED>'.f($row,'nome').((f($row,'externo')=='S') ? ' (externo)' : ' ('.f($row,'sigla').')'));
       } else {
-         ShowHTML('          <option value="'.f($row,'sq_unidade').'">'.f($row,'nome').' ('.f($row,'sigla').')');
+         ShowHTML('          <option value="'.f($row,'sq_unidade').'">'.f($row,'nome').((f($row,'externo')=='S') ? ' (externo)' : ' ('.f($row,'sigla').')'));
       }
     }
     ShowHTML('          </select>');

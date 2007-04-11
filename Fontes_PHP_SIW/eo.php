@@ -97,14 +97,59 @@ function Unidade() {
   extract($GLOBALS);
   global $w_Disabled;
 
+  $w_sq_unidade = $_REQUEST['w_sq_unidade'];
+
+  // Verifica se a edição dos dados está liberada
   $RS = db_getMenuData::getInstanceOf($dbms, $w_menu);
   $w_libera_edicao = f($RS,'libera_edicao');
+
+  if (nvl($w_troca,'')!='' && $O!='E') {
+    $w_nome                   = $_REQUEST['w_nome'];
+    $w_sigla                  = $_REQUEST['w_sigla'];
+    $w_ordem                  = $_REQUEST['w_ordem'];
+    $w_informal               = $_REQUEST['w_informal'];
+    $w_vinculada              = $_REQUEST['w_vinculada'];
+    $w_adm_central            = $_REQUEST['w_adm_central'];
+    $w_sq_unidade_gestora     = $_REQUEST['w_sq_unidade_gestora'];
+    $w_sq_unidade_pagadora    = $_REQUEST['w_sq_unidade_pagadora'];
+    $w_sq_area_atuacao        = $_REQUEST['w_sq_area_atuacao'];
+    $w_sq_unidade_pai         = $_REQUEST['w_sq_unidade_pai'];
+    $w_sq_pessoa_endereco     = $_REQUEST['w_sq_pessoa_endereco'];
+    $w_sq_tipo_unidade        = $_REQUEST['w_sq_tipo_unidade'];
+    $w_unidade_gestora        = $_REQUEST['w_unidade_gestora'];
+    $w_externo                = $_REQUEST['w_externo'];
+    $w_ativo                  = $_REQUEST['w_ativo'];
+    $w_codigo                 = $_REQUEST['w_codigo'];
+    $w_unidade_pagadora       = $_REQUEST['w_unidade_pagadora'];
+    $w_email                  = $_REQUEST['w_email'];
+  } elseif (strpos('EA',$O)!==false) {
+    $RS = db_getUorgData::getInstanceOf($dbms,$w_sq_unidade);
+    $w_nome                   = f($RS,'nome');
+    $w_sigla                  = f($RS,'sigla');
+    $w_ordem                  = f($RS,'ordem');
+    $w_informal               = f($RS,'informal');
+    $w_vinculada              = f($RS,'vinculada');
+    $w_adm_central            = f($RS,'adm_central');
+    $w_sq_unidade_gestora     = f($RS,'sq_unidade_gestora');
+    $w_sq_unidade_pagadora    = f($RS,'sq_unid_pagadora');
+    $w_sq_area_atuacao        = f($RS,'sq_area_atuacao');
+    $w_sq_unidade_pai         = f($RS,'sq_unidade_pai');
+    $w_sq_pessoa_endereco     = f($RS,'sq_pessoa_endereco');
+    $w_sq_tipo_unidade        = f($RS,'sq_tipo_unidade');
+    $w_unidade_gestora        = f($RS,'unidade_gestora');
+    $w_externo                = f($RS,'externo');
+    $w_ativo                  = f($RS,'ativo');
+    $w_codigo                 = f($RS,'codigo');
+    $w_unidade_pagadora       = f($RS,'unidade_pagadora');
+    $w_email                  = f($RS,'email');
+  } 
+
 
   cabecalho();
   ShowHTML('<HEAD>');
   Estrutura_CSS($w_cliente);
   ShowHTML('  <script src="classes/menu/xPandMenu.js"></script>');
-  if (!(strpos('IAE',$O)===false))   {
+  if (strpos('IAE',$O)!==false)   {
     ScriptOpen('JavaScript');
     ValidateOpen('Validacao');
     if (!(strpos('IA',$O)===false)) {
@@ -129,8 +174,10 @@ function Unidade() {
     ScriptClose();
   } 
   ShowHTML('</HEAD>');
-  if (!(strpos('IAE',$O)===false)) {
-    if ($O=='E') {
+  if (strpos('IAE',$O)!==false) {
+    if (nvl($w_troca,'')!='') {
+      BodyOpen('onLoad=\'document.Form.'.$w_troca.'.focus()\';');
+    } elseif ($O=='E') {
       BodyOpen('onLoad=\'document.Form.w_assinatura.focus()\';');
     } else {
       BodyOpen('onLoad=\'document.Form.w_nome.focus()\';');
@@ -143,7 +190,7 @@ function Unidade() {
   Estrutura_Corpo_Abre();
   Estrutura_Texto_Abre();
   ShowHTML('<table border="0" cellpadding="0" cellspacing="0" width="100%">');
-  if (!(strpos('L',$O)===false)) {
+  if (strpos('L',$O)!==false) {
     $w_imagem=$conRootSIW.'images/ballw.gif';
     ShowHTML('<tr><td>');
     if ($w_libera_edicao=='S') {
@@ -152,7 +199,7 @@ function Unidade() {
     ShowHTML('<tr><td colspan=3>');
     ShowHTML('    <TABLE WIDTH="100%" bgcolor="'.$conTableBgColor.'" BORDER="0" CELLSPACING="'.$conTableCellSpacing.'" CELLPADDING="'.$conTableCellPadding.'" BorderColorDark="'.$conTableBorderColorDark.'" BorderColorLight="'.$conTableBorderColorLight.'">');
     $RS = db_getUorgList::getInstanceOf($dbms,$w_cliente,null,'IS NULL',null,null,null);
-    $RS = SortArray($RS,'ordem','asc');
+    $RS = SortArray($RS,'ordem','asc','nome','asc');
     if (count($RS)<=0) {
       ShowHTML('      <tr bgcolor="'.$conTrBgColor.'"><td align="center"><b>Estrutura organizacional inexistente.</b></td></tr>');
     } else {
@@ -174,7 +221,7 @@ function Unidade() {
         ShowHTML('</li>');
         ShowHTML('   <ul id="Xtree'.$w_ContOut.'" class="Xtree" style="display:true;">');
         $RS1 = db_getUorgList::getInstanceOf($dbms, $w_cliente,f($row,'sq_unidade'),'FILHO',null,null,null);
-        $RS1 = SortArray($RS1,'ordem','asc');
+        $RS1 = SortArray($RS1,'ordem','asc','nome','asc');
         foreach($RS1 as $row1) {
           $w_ContImg += 1;
           $w_ContOut += 1;
@@ -186,9 +233,9 @@ function Unidade() {
           ShowHTML('<a class="Xlink" href="#" onclick="window.open(\''.$w_pagina.'Localizacao&P1='.$P1.'&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP='.$TP.' - Localização&O=L&SG=LUORG&w_sq_unidade='.f($row1,'sq_unidade').'\',\'Local\',\'toolbar=no,width=780,height=350,top=30,left=10,scrollbars=yes,resizable=yes\')">Locais</a>&nbsp');
           ShowHTML('<a class="Xlink" href="#" onclick="window.open(\''.$w_pagina.'Responsavel&P1='.$P1.'&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP='.$TP.' - Responsáveis&O=L&SG=RESPONSAVEL&w_sq_unidade='.f($row1,'sq_unidade').'\',\'Responsaveis\',\'toolbar=no,width=780,height=350,top=30,left=10,scrollbars=yes,resizable=yes\');">Responsáveis</a>&nbsp');
           ShowHTML('   </li>');
-          ShowHTML('      <ul id="Xtree'.$w_ContOut.'" class="Xtree" style="display:none;">');
+          ShowHTML('      <ul id="Xtree'.$w_ContOut.'" class="Xtree" style="display:true;">');
           $RS2 = db_getUorgList::getInstanceOf($dbms,$w_cliente,f($row1,'sq_unidade'),'FILHO',null,null,null);
-          $RS2 = SortArray($RS2,'ordem','asc');
+          $RS2 = SortArray($RS2,'ordem','asc','nome','asc');
           foreach($RS2 as $row2) {
             $w_ContImg += 1;
             $w_ContOut += 1;
@@ -200,9 +247,9 @@ function Unidade() {
             ShowHTML('<a class="Xlink" href="#" onclick="window.open(\''.$w_pagina.'Localizacao&P1='.$P1.'&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP='.$TP.' - Localização&O=L&SG=LUORG&w_sq_unidade='.f($row2,'sq_unidade').'\',\'Local\',\'toolbar=no,width=780,height=350,top=30,left=10,scrollbars=yes,resizable=yes\')">Locais</a>&nbsp');
             ShowHTML('<a class="Xlink" href="#" onclick="window.open(\''.$w_pagina.'Responsavel&P1='.$P1.'&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP='.$TP.' - Responsáveis&O=L&SG=RESPONSAVEL&w_sq_unidade='.f($row2,'sq_unidade').'\',\'Responsaveis\',\'toolbar=no,width=780,height=350,top=30,left=10,scrollbars=yes,resizable=yes\');">Responsáveis</a>&nbsp');
             ShowHTML('         </li>');
-            ShowHTML('            <ul id="Xtree'.$w_ContOut.'" class="Xtree" style="display:none;">');
+            ShowHTML('            <ul id="Xtree'.$w_ContOut.'" class="Xtree" style="display:true;">');
             $RS3 = db_getUorgList::getInstanceOf($dbms,$w_cliente,f($row2,'sq_unidade'),'FILHO',null,null,null);
-            $RS3 = SortArray($RS3,'ordem','asc');
+            $RS3 = SortArray($RS3,'ordem','asc','nome','asc');
             foreach($RS3 as $row3) {
               $w_ContImg += 1;
               $w_ContOut += 1;
@@ -214,9 +261,9 @@ function Unidade() {
               ShowHTML('<a class="Xlink" href="#" onclick="window.open(\''.$w_pagina.'Localizacao&P1='.$P1.'&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP='.$TP.' - Localização&O=L&SG=LUORG&w_sq_unidade='.f($row3,'sq_unidade').'\',\'Local\',\'toolbar=no,width=780,height=350,top=30,left=10,scrollbars=yes,resizable=yes\')">Locais</a>&nbsp');
               ShowHTML('<a class="Xlink" href="#" onclick="window.open(\''.$w_pagina.'Responsavel&P1='.$P1.'&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP='.$TP.' - Responsáveis&O=L&SG=RESPONSAVEL&w_sq_unidade='.f($row3,'sq_unidade').'\',\'Responsaveis\',\'toolbar=no,width=780,height=350,top=30,left=10,scrollbars=yes,resizable=yes\');">Responsáveis</a>&nbsp');
               ShowHTML('            </li>');
-              ShowHTML('               <ul id="Xtree'.$w_ContOut.'" class="Xtree" style="display:none;">');
+              ShowHTML('               <ul id="Xtree'.$w_ContOut.'" class="Xtree" style="display:true;">');
               $RS4 = db_getUorgList::getInstanceOf($dbms,$w_cliente,f($row3,'sq_unidade'),'FILHO',null,null,null);
-              $RS4 = SortArray($RS4,'ordem','asc');
+              $RS4 = SortArray($RS4,'ordem','asc','nome','asc');
               foreach($RS4 as $row4) {
                 $w_ContImg += 1;
                 $w_ContOut += 1;
@@ -228,9 +275,9 @@ function Unidade() {
                 ShowHTML('<a class="Xlink" href="#" onclick="window.open(\''.$w_pagina.'Localizacao&P1='.$P1.'&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP='.$TP.' - Localização&O=L&SG=LUORG&w_sq_unidade='.f($row4,'sq_unidade').'\',\'Local\',\'toolbar=no,width=780,height=350,top=30,left=10,scrollbars=yes,resizable=yes\')">Locais</a>&nbsp');
                 ShowHTML('<a class="Xlink" href="#" onclick="window.open(\''.$w_pagina.'Responsavel&P1='.$P1.'&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP='.$TP.' - Responsáveis&O=L&SG=RESPONSAVEL&w_sq_unidade='.f($row4,'sq_unidade').'\',\'Responsaveis\',\'toolbar=no,width=780,height=350,top=30,left=10,scrollbars=yes,resizable=yes\');">Responsáveis</a>&nbsp');
                 ShowHTML('               </li>');
-                ShowHTML('                  <ul id="Xtree'.$w_ContOut.'" class="Xtree" style="display:none;">');
+                ShowHTML('                  <ul id="Xtree'.$w_ContOut.'" class="Xtree" style="display:true;">');
                 $RS5 = db_getUorgList::getInstanceOf($dbms,$w_cliente,f($row4,'sq_unidade'),'FILHO',null,null,null);
-                $RS5 = SortArray($RS5,'ordem','asc');
+                $RS5 = SortArray($RS5,'ordem','asc','nome','asc');
                 foreach($RS5 as $row5) {
                   $w_ContImg += 1;
                   $w_ContOut += 1;
@@ -242,9 +289,9 @@ function Unidade() {
                   ShowHTML('<a class="Xlink" href="#" onclick="window.open(\''.$w_pagina.'Localizacao&P1='.$P1.'&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP='.$TP.' - Localização&O=L&SG=LUORG&w_sq_unidade='.f($row5,'sq_unidade').'\',\'Local\',\'toolbar=no,width=780,height=350,top=30,left=10,scrollbars=yes,resizable=yes\')">Locais</a>&nbsp');
                   ShowHTML('<a class="Xlink" href="#" onclick="window.open(\''.$w_pagina.'Responsavel&P1='.$P1.'&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP='.$TP.' - Responsáveis&O=L&SG=RESPONSAVEL&w_sq_unidade='.f($row5,'sq_unidade').'\',\'Responsaveis\',\'toolbar=no,width=780,height=350,top=30,left=10,scrollbars=yes,resizable=yes\');">Responsáveis</a>&nbsp');
                   ShowHTML('                  </li>');
-                  ShowHTML('                     <ul id="Xtree'.$w_ContOut.'" class="Xtree" style="display:none;">');
+                  ShowHTML('                     <ul id="Xtree'.$w_ContOut.'" class="Xtree" style="display:true;">');
                   $RS6 = db_getUorgList::getInstanceOf($dbms,$w_cliente,f($row5,'sq_unidade'),'FILHO',null,null,null);
-                  $RS6 = SortArray($RS6,'ordem','asc');
+                  $RS6 = SortArray($RS6,'ordem','asc','nome','asc');
                   foreach($RS6 as $row6) {
                     $w_ContImg += 1;
                     $w_ContOut += 1;
@@ -256,9 +303,9 @@ function Unidade() {
                     ShowHTML('<a class="Xlink" href="#" onclick="window.open(\''.$w_pagina.'Localizacao&P1='.$P1.'&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP='.$TP.' - Localização&O=L&SG=LUORG&w_sq_unidade='.f($row6,'sq_unidade').'\',\'Local\',\'toolbar=no,width=780,height=350,top=30,left=10,scrollbars=yes,resizable=yes\')">Locais</a>&nbsp');
                     ShowHTML('<a class="Xlink" href="#" onclick="window.open(\''.$w_pagina.'Responsavel&P1='.$P1.'&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP='.$TP.' - Responsáveis&O=L&SG=RESPONSAVEL&w_sq_unidade='.f($row6,'sq_unidade').'\',\'Responsaveis\',\'toolbar=no,width=780,height=350,top=30,left=10,scrollbars=yes,resizable=yes\');">Responsáveis</a>&nbsp');
                     ShowHTML('                     </li>');
-                    ShowHTML('                        <ul id="Xtree'.$w_ContOut.'" class="Xtree" style="display:none;">');
+                    ShowHTML('                        <ul id="Xtree'.$w_ContOut.'" class="Xtree" style="display:true;">');
                     $RS7 = db_getUorgList::getInstanceOf($dbms,$w_cliente,f($row6,'sq_unidade'),'FILHO',null,null,null);
-                    $RS7 = SortArray($RS7,'ordem','asc');
+                    $RS7 = SortArray($RS7,'ordem','asc','nome','asc');
                     foreach($RS7 as $row7) {
                       $w_ContImg += 1;
                       $w_ContOut += 1;
@@ -270,9 +317,9 @@ function Unidade() {
                       ShowHTML('<a class="Xlink" href="#" onclick="window.open(\''.$w_pagina.'Localizacao&P1='.$P1.'&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP='.$TP.' - Localização&O=L&SG=LUORG&w_sq_unidade='.f($row7,'sq_unidade').'\',\'Local\',\'toolbar=no,width=780,height=350,top=30,left=10,scrollbars=yes,resizable=yes\')">Locais</a>&nbsp');
                       ShowHTML('<a class="Xlink" href="#" onclick="window.open(\''.$w_pagina.'Responsavel&P1='.$P1.'&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP='.$TP.' - Responsáveis&O=L&SG=RESPONSAVEL&w_sq_unidade='.f($row7,'sq_unidade').'\',\'Responsaveis\',\'toolbar=no,width=780,height=350,top=30,left=10,scrollbars=yes,resizable=yes\');">Responsáveis</a>&nbsp');
                       ShowHTML('                        </li>');
-                      ShowHTML('                           <ul id="Xtree'.$w_ContOut.'" class="Xtree" style="display:none;">');
+                      ShowHTML('                           <ul id="Xtree'.$w_ContOut.'" class="Xtree" style="display:true;">');
                       $RS8 = db_getUorgList::getInstanceOf($dbms,$w_cliente,f($row7,'sq_unidade'),'FILHO',null,null,null);
-                      $RS8 = SortArray($RS8,'ordem','asc');
+                      $RS8 = SortArray($RS8,'ordem','asc','nome','asc');
                       foreach($RS8 as $row8) {
                         $w_ContImg += 1;
                         $w_ContOut += 1;
@@ -284,9 +331,9 @@ function Unidade() {
                         ShowHTML('<a class="Xlink" href="#" onclick="window.open(\''.$w_pagina.'Localizacao&P1='.$P1.'&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP='.$TP.' - Localização&O=L&SG=LUORG&w_sq_unidade='.f($row8,'sq_unidade').'\',\'Local\',\'toolbar=no,width=780,height=350,top=30,left=10,scrollbars=yes,resizable=yes\')">Locais</a>&nbsp');
                         ShowHTML('<a class="Xlink" href="#" onclick="window.open(\''.$w_pagina.'Responsavel&P1='.$P1.'&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP='.$TP.' - Responsáveis&O=L&SG=RESPONSAVEL&w_sq_unidade='.f($row8,'sq_unidade').'\',\'Responsaveis\',\'toolbar=no,width=780,height=350,top=30,left=10,scrollbars=yes,resizable=yes\');">Responsáveis</a>&nbsp');
                         ShowHTML('                           </li>');
-                        ShowHTML('                              <ul id="Xtree'.$w_ContOut.'" class="Xtree" style="display:none;">');
+                        ShowHTML('                              <ul id="Xtree'.$w_ContOut.'" class="Xtree" style="display:true;">');
                         $RS9 = db_getUorgList::getInstanceOf($dbms,$w_cliente,f($row8,'sq_unidade'),'FILHO',null,null,null);
-                        $RS9 = SortArray($RS9,'ordem','asc');
+                        $RS9 = SortArray($RS9,'ordem','asc','nome','asc');
                         foreach($RS9 as $row9) {
                           $w_ContImg += 1;
                           $w_ContOut += 1;
@@ -323,30 +370,9 @@ function Unidade() {
   //INCLUSÃO
   } elseif (!(strpos('EIA',$O)===false)) {
     if ($O=='E') $w_Disabled='DISABLED';
-    if (!(strpos('EA',$O)===false)) {
-      $w_sq_unidade = $_REQUEST['w_sq_unidade'];
-      $RS = db_getUorgData::getInstanceOf($dbms,$w_sq_unidade);
-      $w_nome                   = f($RS,'nome');
-      $w_sigla                  = f($RS,'sigla');
-      $w_ordem                  = f($RS,'ordem');
-      $w_informal               = f($RS,'informal');
-      $w_vinculada              = f($RS,'vinculada');
-      $w_adm_central            = f($RS,'adm_central');
-      $w_sq_unidade_gestora     = f($RS,'sq_unidade_gestora');
-      $w_sq_unidade_pagadora    = f($RS,'sq_unid_pagadora');
-      $w_sq_area_atuacao        = f($RS,'sq_area_atuacao');
-      $w_sq_unidade_pai         = f($RS,'sq_unidade_pai');
-      $w_sq_pessoa_endereco     = f($RS,'sq_pessoa_endereco');
-      $w_sq_tipo_unidade        = f($RS,'sq_tipo_unidade');
-      $w_unidade_gestora        = f($RS,'unidade_gestora');
-      $w_externo                = f($RS,'externo');
-      $w_ativo                  = f($RS,'ativo');
-      $w_codigo                 = f($RS,'codigo');
-      $w_unidade_pagadora       = f($RS,'unidade_pagadora');
-      $w_email                  = f($RS,'email');
-    } 
     AbreForm('Form',$w_pagina.'Grava','POST','return(Validacao(this));',null,$P1,$P2,$P3,$P4,$TP,$SG,$R,$O);
     ShowHTML('<INPUT type="hidden" name="w_sq_unidade" value="'.$w_sq_unidade.'">');
+    ShowHTML('<INPUT type="hidden" name="w_troca" value="">');
     ShowHTML('<tr bgcolor="'.$conTrBgColor.'"><td>');
     ShowHTML('    <table width="90%" border="0">');
     ShowHTML('      <tr><td valign="top"><b><U>N</U>ome:<br><INPUT ACCESSKEY="N" '.$w_Disabled.' class="sti" type="text" name="w_nome" size="50" maxlength="50" value="'.$w_nome.'"></td>');
@@ -416,11 +442,21 @@ function Localizacao() {
   global $w_Disabled;
 
   $w_sq_unidade = $_REQUEST['w_sq_unidade'];
+
   $RS = db_getUorgList::getInstanceOf($dbms,$w_cliente,$w_sq_unidade,null,null,null,null);
-  foreach ($RS as $row) {
-    $w_nome_unidade = f($row,'nome');
-  }
-  if ($O=='L') {
+  foreach ($RS as $row) $w_nome_unidade = f($row,'nome');
+  
+  if (nvl($w_troca,'')!='' && $O!='E') {
+    $w_sq_localizacao       = $_REQUEST['w_sq_localizacao'];
+    $w_sq_pessoa_endereco   = $_REQUEST['w_sq_pessoa_endereco'];
+    $w_sq_unidade           = $_REQUEST['w_sq_unidade'];
+    $w_nome                 = $_REQUEST['w_nome'];
+    $w_fax                  = $_REQUEST['w_fax'];
+    $w_telefone             = $_REQUEST['w_telefone'];
+    $w_ramal                = $_REQUEST['w_ramal'];
+    $w_telefone2            = $_REQUEST['w_telefone2'];
+    $w_ativo                = $_REQUEST['w_ativo'];
+  } elseif ($O=='L') {
     $RS = db_getaddressList::getInstanceOf($dbms,$w_cliente,$w_sq_unidade,'LISTALOCALIZACAO',null);
   } elseif (($O=='A' || $O=='E')) {
     $w_sq_localizacao       = $_REQUEST['w_sq_localizacao'];
@@ -441,7 +477,7 @@ function Localizacao() {
   Cabecalho();
   ShowHTML('<HEAD>');
   Estrutura_CSS($w_cliente);
-  if (!(strpos('IAEP',$O)===false)) {
+  if (strpos('IAEP',$O)!==false) {
     ScriptOpen('JavaScript');
     ValidateOpen('Validacao');
     if (!(strpos('IA',$O)===false)) {
@@ -466,8 +502,10 @@ function Localizacao() {
   } 
   ShowHTML('<TITLE>'.$conSgSistema.' - Localizações</TITLE>');
   ShowHTML('</HEAD>');
-  if (!(strpos('IAE',$O)===false)) {
-    if ($O=='E') {
+  if (strpos('IAE',$O)!==false) {
+    if (nvl($w_troca,'')!='') {
+      BodyOpen('onLoad=\'document.Form.'.$w_troca.'.focus()\';');
+    } elseif ($O=='E') {
       BodyOpen('onLoad=\'document.Form.w_assinatura.focus()\';');
     } else {
       BodyOpen('onLoad=\'document.Form.w_sq_pessoa_endereco.focus()\';');
@@ -513,9 +551,10 @@ function Localizacao() {
     ShowHTML('    </table>');
     ShowHTML('  </td>');
     ShowHTML('</tr>');
-  } elseif (!(strpos('IAE',$O)===false)) {
+  } elseif (strpos('IAE',$O)!==false) {
     if ($O=='E') $w_Disabled='DISABLED';
     AbreForm('Form',$w_pagina.'Grava','POST','return(Validacao(this));',null,$P1,$P2,$P3,$P4,$TP,$SG,$R,$O);
+    ShowHTML('<INPUT type="hidden" name="w_troca" value="">');
     ShowHTML('<INPUT type="hidden" name="w_sq_localizacao" value="'.$w_sq_localizacao.'">');
     ShowHTML('<INPUT type="hidden" name="w_sq_unidade" value="'.$w_sq_unidade.'">');
     ShowHTML('<tr bgcolor="'.$conTrBgColor.'"><td>');
@@ -571,10 +610,14 @@ function Responsavel() {
   $w_sq_unidade = $_REQUEST['w_sq_unidade'];
   $p_sq_pessoa  = $_REQUEST['p_sq_pessoa'];
   $RS = db_getUorgList::getInstanceOf($dbms,$w_cliente,$w_sq_unidade,null,null,null,null);
-  foreach ($RS as $row) {
-    $w_nome_unidade = f($row,'nome');
-  }
-  if ($O=='L') {
+  foreach ($RS as $row) $w_nome_unidade = f($row,'nome');
+
+  if (nvl($w_troca,'')!='' && $O!='E') {
+    $w_sq_pessoa            = $_REQUEST['w_sq_pessoa'];
+    $w_sq_pessoa_substituto = $_REQUEST['w_sq_pessoa_substituto'];
+    $w_inicio_titular       = $_REQUEST['w_inicio_titular'];
+    $w_inicio_substituto    = $_REQUEST['w_inicio_substituto'];
+  } elseif ($O=='L') {
     $RS = db_getUorgResp::getInstanceOf($dbms,$w_sq_unidade);
     foreach ($RS as $row) {
       $w_titular      = f($row,'titular2');
@@ -594,12 +637,12 @@ function Responsavel() {
   Cabecalho();
   ShowHTML('<HEAD>');
   Estrutura_CSS($w_cliente);
-  if (!(strpos('IAEP',$O)===false)) {
+  if (strpos('IAEP',$O)!==false) {
     ScriptOpen('JavaScript');
     CheckBranco();
     FormataData();
     ValidateOpen('Validacao');
-    if (!(strpos('IA',$O)===false)) {
+    if (strpos('IA',$O)!==false) {
       Validate('w_sq_pessoa','Pessoa titular','SELECT','1','1','10','','1');
       Validate('w_inicio_titular','Início titular','DATA','1','10','10','','0123456789/');
       Validate('w_fim_titular','Início titular','DATA','','10','10','','0123456789/');
@@ -639,8 +682,10 @@ function Responsavel() {
   } 
   ShowHTML('<TITLE>'.$conSgSistema.' - Responsáveis</TITLE>');
   ShowHTML('</HEAD>');
-  if (!(strpos('IAE',$O)===false)) {
-    if ($O=='E') {
+  if (strpos('IAE',$O)!==false) {
+    if (nvl($w_troca,'')!='') {
+      BodyOpen('onLoad=\'document.Form.'.$w_troca.'.focus()\';');
+    } elseif ($O=='E') {
       BodyOpen('onLoad=\'document.Form.w_assinatura.focus()\';');
     } else {
       BodyOpen('onLoad=\'document.Form.w_sq_pessoa.focus()\';');
@@ -684,10 +729,11 @@ function Responsavel() {
     ShowHTML('    </table>');
     ShowHTML('  </td>');
     ShowHTML('</tr>');
-  } elseif (!(strpos('IAE',$O)===false)) {
+  } elseif (strpos('IAE',$O)!==false) {
     if ($O=='E') $w_Disabled='DISABLED';
     AbreForm('Form',$w_pagina.'Grava','POST','return(Validacao(this));',null,$P1,$P2,$P3,$P4,$TP,$SG,$R,$O);
     ShowHTML('<FORM action="'.$w_pagina.'Grava" method="POST" name="Form" onSubmit="return(Validacao(this));">');
+    ShowHTML('<INPUT type="hidden" name="w_troca" value="">');
     ShowHTML('<INPUT type="hidden" name="w_titular_ant" value="'.$w_sq_pessoa.'">');
     ShowHTML('<INPUT type="hidden" name="w_substituto_ant" value="'.$w_sq_pessoa_substituto.'">');
     ShowHTML('<INPUT type="hidden" name="w_sq_unidade" value="'.$w_sq_unidade.'">');
@@ -894,18 +940,18 @@ function Grava() {
           foreach ($RS as $row) {
             if (f($row,'nm_titular')!=''){
               ScriptOpen('JavaScript');
-              ShowHTML('  alert(\'Existe responsável casdastrado na unidade!\');');
-              ShowHTML('  history.back(1);');
+              ShowHTML('  alert(\'Existe responsável cadastrado para a unidade!\');');
               ScriptClose();
+              retornaFormulario('w_assinatura');
               exit();
             }
           }
           $RS= db_getaddressList::getInstanceOf($dbms,$_REQUEST['w_cliente'],$_REQUEST['w_sq_unidade'],'LISTALOCALIZACAO',null);
           if (count($RS)>0){
             ScriptOpen('JavaScript');
-            ShowHTML('  alert(\'Existe endereço casdastrado na unidade!\');');
-            ShowHTML('  history.back(1);');
+            ShowHTML('  alert(\'Existe endereço cadastrado para a unidade!\');');
             ScriptClose();
+            retornaFormulario('w_assinatura');
             exit();
           }
         }  
@@ -938,8 +984,8 @@ function Grava() {
       } else {
         ScriptOpen('JavaScript');
         ShowHTML('  alert(\'Assinatura Eletrônica inválida!\');');
-        ShowHTML('  history.back(1);');
         ScriptClose();
+        retornaFormulario('w_assinatura');
       } 
       break;
     case 'RESPONSAVEL':  //CADASTRO DE REPONSÁVEL
@@ -954,9 +1000,9 @@ function Grava() {
       } else {
         ScriptOpen('JavaScript');
         ShowHTML('  alert(\'Assinatura Eletrônica inválida!\');');
-        ShowHTML('  history.back(1);');
         ScriptClose();
       } 
+      retornaFormulario('w_assinatura');
       break;
     } 
 } 

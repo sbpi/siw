@@ -68,7 +68,7 @@ function ValidaConvenio($l_cliente,$l_chave,$l_sg1,$l_sg2,$l_sg3,$l_sg4,$l_trami
   }
    
   // Recupera os dados das parcelas
-  $l_rs3 = db_getAcordoParcela::getInstanceOf($dbms,$l_chave,null,null,null,null,null,null,null,null);
+  $l_rs3 = db_getAcordoParcela::getInstanceOf($dbms,$l_chave,null,null,null,null,null,null,null,null,null);
   if (count($l_rs3)==0) {
     $l_existe_rs3=0; 
   } else {
@@ -118,8 +118,8 @@ function ValidaConvenio($l_cliente,$l_chave,$l_sg1,$l_sg2,$l_sg3,$l_sg4,$l_trami
     // Verifica se a soma das parcelas é igual ao valor total do acordo
     $l_valor_pacelas=0.00;
     foreach($l_rs3 as $row) { $l_valor_parcelas += f($row,'valor'); }
-    if (round(f($l_rs_solic,'valor_inicial')-$l_valor_parcelas,2)!=0) {
-      $l_erro.='<li>Valor do acordo ('.number_format(f($l_rs_solic,'valor_inicial'),2,',','.').') difere da soma das parcelas ('.number_format($l_valor_parcelas,2,',','.').')';
+    if (round(f($l_rs_solic,'valor')-$l_valor_parcelas,2)!=0) {
+      $l_erro.='<li>Valor do acordo ('.number_format(f($l_rs_solic,'valor'),2,',','.').') difere da soma das parcelas ('.number_format($l_valor_parcelas,2,',','.').')';
       $l_tipo=0;
     }
   }

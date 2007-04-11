@@ -331,7 +331,7 @@ function Rel_Bolsista() {
           if (nvl(f($row,'sq_acordo'),'')!=nvl($w_sq_acordo_atual,'')) {
             $w_contrato = 1;
             if ($w_cont!=0) {
-              ShowHTML('   <td align="right">'.formatNumber(f($row1,'valor_inicial'),2).'</td>');
+              ShowHTML('   <td align="right">'.formatNumber(f($row1,'valor'),2).'</td>');
               ShowHTML(' </tr>');
               $w_total_parcela += f($row1,'valor_parcela');
             } 
@@ -390,7 +390,7 @@ function Rel_Bolsista() {
             $w_sq_acordo_atual = nvl(f($row,'sq_acordo'),'');
           }
         } 
-        ShowHTML('   <td align="right">'.number_format(f($row,'valor_inicial'),2,',','.').'</td>');
+        ShowHTML('   <td align="right">'.number_format(f($row,'valor'),2,',','.').'</td>');
         ShowHTML(' </tr>');
         $w_total_parcela += f($row,'valor_parcela');
       } 

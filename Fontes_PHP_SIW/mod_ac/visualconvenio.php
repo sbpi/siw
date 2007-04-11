@@ -13,7 +13,7 @@ function VisualConvenio($l_chave,$l_O,$l_usuario,$l_P1,$l_P4) {
   // Recupera os dados do acordo
   $RS = db_getSolicData::getInstanceOf($dbms,$l_chave,substr($SG,0,3).'GERAL');
   $w_tramite        = f($RS,'sq_siw_tramite');
-  $w_valor_inicial  = f($RS,'valor_inicial');
+  $w_valor_inicial  = f($RS,'valor');
   $w_fim            = f($RS,'fim_real');
   $w_sg_tramite     = f($RS,'sg_tramite');
   // Recupera o tipo de visão do usuário
@@ -49,6 +49,8 @@ function VisualConvenio($l_chave,$l_O,$l_usuario,$l_P1,$l_P4) {
       $w_html.=chr(13).'      <tr valign="top"><td width="30%"><font size="1"><b>Classificação:</b></td>';
       $w_html.=chr(13).'        <td>'.f($RS,'nm_cc').'</b></font></td></tr>';
     } 
+    $w_html.=chr(13).'      <tr><td width="30%"><font size=1><b>Titulo:</b></td>';
+    $w_html.=chr(13).'          <td>'.CRLF2BR(f($RS,'titulo')).'</b></font></td></tr>';
     $w_html.=chr(13).'      <tr><td width="30%"><font size=1><b>Objeto:</b></td>';
     $w_html.=chr(13).'          <td>'.CRLF2BR(f($RS,'objeto')).'</b></font></td></tr>';
     $RS1 = db_getLinkData::getInstanceOf($dbms,$w_cliente,'PJCAD');
@@ -280,7 +282,7 @@ function VisualConvenio($l_chave,$l_O,$l_usuario,$l_P1,$l_P4) {
     } 
   } 
   // Parcelas
-  $RS = db_getAcordoParcela::getInstanceOf($dbms,$l_chave,null,null,null,null,null,null,null,null);
+  $RS = db_getAcordoParcela::getInstanceOf($dbms,$l_chave,null,null,null,null,null,null,null,null,null);
   $RS = SortArray($RS,'ordem','asc');
   if (count($RS)>0) {
     $w_html.=chr(13).'      <tr><td colspan="6"><br><font size="2"><b>PARCELAS<hr NOSHADE color=#000000 SIZE=1></b></font></td></tr>';
@@ -451,7 +453,7 @@ function VisualConvenio($l_chave,$l_O,$l_usuario,$l_P1,$l_P4) {
           $w_html .= chr(13).'      <tr valign="top">';
           $w_html .= chr(13).'          <td><A class="hl" HREF="javascript:location.href=this.location.href;" onClick="window.open(\''.montaURL_JS(null,$conRootSIW.'mod_fn/lancamento.php?par=Ficharubrica&O=L&w_sq_projeto_rubrica='.f($row,'sq_projeto_rubrica').'&w_tipo=&P1='.$P1.'&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP='.$TP.' - Extrato Rubrica'.'&SG='.$SG.MontaFiltro('GET')).'\',\'Ficha3\',\'toolbar=no,width=780,height=530,top=30,left=10,scrollbars=yes\');" title="Exibe as informações deste registro.">'.f($row,'codigo').'</A>&nbsp';
           $w_html .= chr(13).'          <td>'.f($row,'nome').' </td>';
-          $w_html .= chr(13).'          <td align="right">'.number_format(f($row,'valor_inicial'),2,',','.').' </td>';
+          $w_html .= chr(13).'          <td align="right">'.number_format(f($row,'valor'),2,',','.').' </td>';
           $w_html .= chr(13).'          <td align="right" bgcolor="'.$w_cor_blue.'">'.number_format(f($row,'entrada_prevista'),2,',','.').' </td>';
           $w_html .= chr(13).'          <td align="right" bgcolor="'.$w_cor_blue.'">'.number_format(f($row,'entrada_real'),2,',','.').' </td>';
           $w_html .= chr(13).'          <td align="right" bgcolor="'.$w_cor_blue.'">'.number_format(f($row,'entrada_pendente'),2,',','.').' </td>';
@@ -459,7 +461,7 @@ function VisualConvenio($l_chave,$l_O,$l_usuario,$l_P1,$l_P4) {
           $w_html .= chr(13).'          <td align="right" bgcolor="'.$w_cor_red.'">'.number_format(f($row,'saida_real'),2,',','.').' </td>';
           $w_html .= chr(13).'          <td align="right" bgcolor="'.$w_cor_red.'">'.number_format(f($row,'saida_pendente'),2,',','.').' </td>';
           $w_html .= chr(13).'      </tr>';
-          $w_valor_inicial    += f($row,'valor_inicial');
+          $w_valor_inicial    += f($row,'valor');
           $w_entrada_prevista += f($row,'entrada_prevista');
           $w_entrada_real     += f($row,'entrada_real');
           $w_entrada_pendente += f($row,'entrada_pendente');

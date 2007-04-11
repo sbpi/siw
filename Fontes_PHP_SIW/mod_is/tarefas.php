@@ -1755,8 +1755,6 @@ function Grava() {
             $_REQUEST['w_projeto'],$_REQUEST['w_atividade'],$_REQUEST['w_projeto_ant'],$_REQUEST['w_atividade_ant'],&$w_chave_nova,$w_copia);
         ScriptOpen('JavaScript');
         if ($O=='I') {
-          // Envia e-mail comunicando a inclusão
-          SolicMail(Nvl($_REQUEST['w_chave'],''),$w_chave_nova,1);
           // Exibe mensagem de gravação com sucesso
           ShowHTML('  alert(\'Tarefa '.$w_chave_nova.' cadastrada com sucesso!\');');
           // Recupera os dados para montagem correta do menu

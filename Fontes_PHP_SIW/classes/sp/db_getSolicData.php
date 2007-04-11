@@ -9,11 +9,11 @@ extract($GLOBALS); include_once($w_dir_volta.'classes/db/DatabaseQueriesFactory.
 */
 
 class db_getSolicData {
-   function getInstanceOf($dbms, $l_chave, $l_restricao) {
+   function getInstanceOf($dbms, $l_chave, $l_restricao=null) {
      extract($GLOBALS,EXTR_PREFIX_SAME,'strchema'); $sql=$strschema.'SP_GETSOLICDATA';
-     $params=array('p_chave'                     =>array($l_chave,                                         B_INTEGER,        32),
-                   'p_restricao'                 =>array($l_restricao,                                     B_VARCHAR,        20),
-                   'p_result'                    =>array(null,                                             B_CURSOR,         -1)
+     $params=array('p_chave'                     =>array($l_chave,            B_INTEGER,        32),
+                   'p_restricao'                 =>array(tvl($l_restricao),   B_VARCHAR,        20),
+                   'p_result'                    =>array(null,                B_CURSOR,         -1)
                   );
      $l_rs = DatabaseQueriesFactory::getInstanceOf($sql, $dbms, $params, DB_TYPE);
      $l_error_reporting = error_reporting(); error_reporting(0); if(!$l_rs->executeQuery()) { error_reporting($l_error_reporting); TrataErro($sql, $l_rs->getError(), $params, __FILE__, __LINE__, __CLASS__); }

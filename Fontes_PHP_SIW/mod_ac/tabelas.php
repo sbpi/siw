@@ -1088,7 +1088,7 @@ function EspecDespesa() {
       if ($w_heranca>'' || ($O!='I' && $w_troca=='')) {
         // Se for herança, atribui a chave da opção selecionada para w_sq_tipo_acordo
         if ($w_heranca>'') $w_sq_tipo_acordo=$w_heranca;
-        $RS = db_getCTEspecificacao::getInstanceOf($dbms,$w_cliente,$w_chave,null,null,null,null,'ALTERA');
+        $RS = db_getCTEspecificacao::getInstanceOf($dbms,$w_cliente,$w_chave,null,null,null,null,null,'ALTERA');
         foreach($RS as $row) {
           $w_chave_pai    = f($row,'chave_pai');
           $w_sq_cc        = f($row,'sq_cc');
@@ -1100,7 +1100,7 @@ function EspecDespesa() {
           $w_ativo        = f($row,'ativo');
         }
       } elseif ($O=='A') {
-        $RS = db_getCTEspecificacao::getInstanceOf($dbms,$w_cliente,$w_chave,null,null,null,null,'ALTERA');
+        $RS = db_getCTEspecificacao::getInstanceOf($dbms,$w_cliente,$w_chave,null,null,null,null,null,'ALTERA');
         foreach($RS as $row) {
           $w_chave_pai    = f($row,'chave_pai');
           $w_sq_cc        = f($row,'sq_cc');
@@ -1178,7 +1178,7 @@ function EspecDespesa() {
     ShowHTML('</table>');
     ShowHTML('      <tr><td height="1" bgcolor="#000000">');
     ShowHTML('      <tr><td><b>');
-    $RS = db_getCTEspecificacao::getInstanceOf($dbms,$w_cliente,$w_chave,null,$_SESSION['ANO'],null,null,'PAI');
+    $RS = db_getCTEspecificacao::getInstanceOf($dbms,$w_cliente,$w_chave,null,$_SESSION['ANO'],null,null,null,'PAI');
     $RS = SortArray($RS,'nm_ct_cc','asc'); 
     $w_ContOut = 0;
     $w_atual   = 0;
@@ -1203,7 +1203,7 @@ function EspecDespesa() {
         ShowHTML('       <A class="'.$w_classe.'" HREF="'.$w_dir.$w_pagina.$par.'&R='.$w_pagina.$par.'&O=E&w_chave='.f($row,'chave').'&P1='.$P1.'&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP='.$TP.'&SG=CT_ESPEC" title="Exclui a especificação de despesa">Excluir</A>&nbsp');
         ShowHTML('       </div></span>');
         ShowHTML('   <div style="position:relative; left:12;">');
-        $RS1 = db_getCTEspecificacao::getInstanceOf($dbms,$w_cliente,f($row,'chave'),null,$_SESSION['ANO'],null,null,'FILHO');
+        $RS1 = db_getCTEspecificacao::getInstanceOf($dbms,$w_cliente,f($row,'chave'),null,$_SESSION['ANO'],null,null,null,'FILHO');
         foreach($RS1 as $row1) {
           $w_titulo = $w_titulo.' - '.f($row1,'nome');
           if (f($row1,'Filho')>0) {
@@ -1220,7 +1220,7 @@ function EspecDespesa() {
             ShowHTML('       <A class="'.$w_classe.'" HREF="'.$w_dir.$w_pagina.$par.'&R='.$w_pagina.$par.'&O=E&w_chave='.f($row1,'chave').'&P1='.$P1.'&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP='.$TP.'&SG=CT_ESPEC" title="Exclui a especificação de despesa">Excluir</A>&nbsp');
             ShowHTML('       </div></span>');
             ShowHTML('   <div style="position:relative; left:12;">');
-            $RS2 = db_getCTEspecificacao::getInstanceOf($dbms,$w_cliente,f($row1,'chave'),null,$_SESSION['ANO'],null,null,'FILHO');
+            $RS2 = db_getCTEspecificacao::getInstanceOf($dbms,$w_cliente,f($row1,'chave'),null,$_SESSION['ANO'],null,null,null,'FILHO');
             foreach($RS2 as $row2) {
               $w_titulo = $w_titulo.' - '.f($row2,'nome');
               if (f($row2,'Filho')>0) {
@@ -1237,7 +1237,7 @@ function EspecDespesa() {
                 ShowHTML('       <A class="'.$w_classe.'" HREF="'.$w_dir.$w_pagina.$par.'&R='.$w_pagina.$par.'&O=E&w_chave='.f($row2,'chave').'&P1='.$P1.'&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP='.$TP.'&SG=CT_ESPEC" title="Exclui a especificação de despesa">Excluir</A>&nbsp');
                 ShowHTML('       </div></span>');
                 ShowHTML('   <div style="position:relative; left:12;">');
-                $RS3 = db_getCTEspecificacao::getInstanceOf($dbms,$w_cliente,f($row2,'chave'),null,$_SESSION['ANO'],null,null,'FILHO');
+                $RS3 = db_getCTEspecificacao::getInstanceOf($dbms,$w_cliente,f($row2,'chave'),null,$_SESSION['ANO'],null,null,null,'FILHO');
                 foreach($RS3 as $row3) {
                   $w_titulo = $w_titulo.' - '.f($row3,'nome');
                   ShowHTML('<A HREF=#"'.f($row3,'chave').'"></A>');
@@ -1323,11 +1323,11 @@ function EspecDespesa() {
     ShowHTML('<INPUT type="hidden" name="w_chave" value="'.$w_chave.'">');
     ShowHTML('      <tr><td valign="top"><table width="100%" border=0><tr valign="top">');
     // Recupera a lista de opções
-    selecaoCTEspecificacao('<u>S</u>ubordinação:','S','Se esta opção estiver subordinada a outra já existente, informe qual.',$w_chave,$w_chave_pai,$_SESSION['ANO'],'w_chave_pai','N','SUBORDINACAO','onChange="document.Form.action=\''.$w_dir.$w_pagina.$par.'\'; document.Form.O.value=\''.$O.'\'; document.Form.w_troca.value=\'w_codigo\'; document.Form.submit();"');
+    selecaoCTEspecificacao('<u>S</u>ubordinação:','S','Se esta opção estiver subordinada a outra já existente, informe qual.',$w_chave,$w_chave_pai,null,$_SESSION['ANO'],'w_chave_pai','N','SUBORDINACAO','onChange="document.Form.action=\''.$w_dir.$w_pagina.$par.'\'; document.Form.O.value=\''.$O.'\'; document.Form.w_troca.value=\'w_codigo\'; document.Form.submit();"');
     if(nvl($w_chave_pai,'')=='') {
       SelecaoCC('C<u>l</u>assificação:','L','Selecione a classificação desejada.',$w_sq_cc,null,'w_sq_cc','SIWSOLIC');
     } else {
-      $RS = db_getCTEspecificacao::getInstanceOf($dbms, $w_cliente, $w_chave_pai, null,null,null,null,null);
+      $RS = db_getCTEspecificacao::getInstanceOf($dbms, $w_cliente, $w_chave_pai, null,null,null,null,null,null);
       foreach($RS as $row){$RS=$row; break;}
       ShowHTML('<INPUT type="hidden" name="w_sq_cc" value="'.f($row,'sq_cc').'">');
     }
@@ -1363,7 +1363,7 @@ function EspecDespesa() {
     ShowHTML('    <table align="center" border="0">');
     ShowHTML('      <tr><td valign="top"><table border=0 cellspacing=0 cellpadding=0>');
     ShowHTML('      <tr>');
-    selecaoCTEspecificacao('<u>O</u>rigem:','O','Selecione na lista a especificacao de despesa a ser usado como origem de dados.',$w_heranca,null,null,'w_heranca',null,'HERANCA',null);
+    selecaoCTEspecificacao('<u>O</u>rigem:','O','Selecione na lista a especificacao de despesa a ser usado como origem de dados.',$w_heranca,null,null,null,'w_heranca',null,'HERANCA',null);
     ShowHTML('      </tr>');
     ShowHTML('      <tr><td align="center">&nbsp;');
     ShowHTML('      <tr><td align="center" height="1" bgcolor="#000000">');

@@ -144,7 +144,7 @@ function echo_map($l_chave, &$node, $selected) {
 function Gera_Hierarquico($l_gera) {
   extract($GLOBALS);
 
-  $l_xml = '<?xml version="1.0" encoding="utf-8"?>';
+  $l_xml = '<?xml version="1.0" encoding="iso-8859-1"?>';
   $l_xml .= chr(13).'<diagram bgcolor="#f" bgcolor2="#d9e3ed">';
   
   $RS = db_getSolicData::getInstanceOf($dbms,$w_chave,'PJGERAL');
@@ -209,7 +209,7 @@ function Gera_Hierarquico($l_gera) {
               $w_cor_nome = '"#d9e3ed"';
               $w_cor_text = '"#d9e3ed"';
             }
-            $l_xml .= chr(13).'              <node name="'.MontaOrdemEtapa(f($row2,'sq_projeto_etapa')).'. '.f($row2,'ac_titulo').'" connectioncolor="#526e88" align="center" namealign="center" namecolor="#f" bgcolor='.$w_cor_text.' bgcolor2="#f" namebgcolor='.$w_cor_nome.' namebgcolor2="#526e88" bordercolor="#526e88">';
+            $l_xml .= chr(13).'              <node name="'.MontaOrdemEtapa(f($row2,'sq_projeto_etapa')).'. '.f($row2,'ac_titulo').'" fitname="0" connectioncolor="#526e88" align="center" namealign="center" namecolor="#f" bgcolor='.$w_cor_text.' bgcolor2="#f" namebgcolor='.$w_cor_nome.' namebgcolor2="#526e88" bordercolor="#526e88">';
             $l_xml .= chr(13).'                  Ini: '.formataDataEdicao(f($row2,'inicio_previsto')).'\nFim: '.formataDataEdicao(f($row2,'fim_previsto')).'\n'.f($row2,'perc_conclusao').'%';
             // Recupera as etapas de nível 3
             $RS3 = db_getSolicEtapa::getInstanceOf($dbms,$w_chave,f($row2,'sq_projeto_etapa'),'LSTNIVEL',null);
@@ -230,7 +230,7 @@ function Gera_Hierarquico($l_gera) {
                   $w_cor_nome = '"#d9e3ed"';
                   $w_cor_text = '"#d9e3ed"';
                 }
-                $l_xml .= chr(13).'                  <node name="'.MontaOrdemEtapa(f($row3,'sq_projeto_etapa')).'. '.f($row3,'ac_titulo').'" connectioncolor="#526e88" align="center" namealign="center" namecolor="#f" bgcolor='.$w_cor_text.' bgcolor2="#f" namebgcolor='.$w_cor_nome.' namebgcolor2="#526e88" bordercolor="#526e88">';
+                $l_xml .= chr(13).'                  <node name="'.MontaOrdemEtapa(f($row3,'sq_projeto_etapa')).'. '.f($row3,'ac_titulo').'" fitname="0" connectioncolor="#526e88" align="center" namealign="center" namecolor="#f" bgcolor='.$w_cor_text.' bgcolor2="#f" namebgcolor='.$w_cor_nome.' namebgcolor2="#526e88" bordercolor="#526e88">';
                 $l_xml .= chr(13).'                      Ini: '.formataDataEdicao(f($row3,'inicio_previsto')).'\nFim: '.formataDataEdicao(f($row3,'fim_previsto')).'\n'.f($row3,'perc_conclusao').'%';
                 $l_xml .= chr(13).'                  </node>';
               }

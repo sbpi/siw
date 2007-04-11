@@ -1,6 +1,7 @@
 <?
 header('Expires: '.-1500);
 session_start();
+$w_dir_volta = '';
 include_once('constants.inc');
 include_once('jscript.php');
 include_once('funcoes.php');
