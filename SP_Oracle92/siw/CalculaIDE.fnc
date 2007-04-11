@@ -1,9 +1,9 @@
 create or replace function CalculaIDE(p_chave in number, p_data in date default null) return float is
-  Result float := 0;
+  Result float := 100;
   w_existe number(18);
   
   cursor c_dados is
-     select coalesce(realizado.valor/previsto.valor,0) as ide
+     select coalesce(realizado.valor/coalesce(previsto.valor,1),1) as ide
        from (select a.sq_siw_solicitacao, sum(a.peso) as valor
                from pj_projeto_etapa           a
               where a.sq_siw_solicitacao = p_chave

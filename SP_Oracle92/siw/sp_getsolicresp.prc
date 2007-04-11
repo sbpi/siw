@@ -91,6 +91,38 @@ begin
          select distinct b.sq_pessoa, b.nome, b.nome_resumido,
                 c.email, c.ativo ativo_usuario,
                 d.sigla sg_unidade
+           from siw_solicitacao                         a
+                inner         join siw_menu             a1 on (a.sq_menu           = a1.sq_menu)
+                  inner       join co_pessoa            b  on (a1.sq_pessoa        = b.sq_pessoa_pai)
+                    inner     join sg_autenticacao      c  on (b.sq_pessoa         = c.sq_pessoa and
+                                                               c.gestor_sistema    = 'S'
+                                                              )
+                      inner   join eo_unidade           d  on (c.sq_unidade        = d.sq_unidade)
+                    inner     join co_tipo_vinculo      e  on (b.sq_tipo_vinculo   = e.sq_tipo_vinculo and
+                                                               e.nome              <> 'SBPI'
+                                                              )
+          where a.sq_siw_solicitacao = p_chave
+            and c.ativo              = 'S'
+         UNION
+         select distinct b.sq_pessoa, b.nome, b.nome_resumido,
+                c.email, c.ativo ativo_usuario,
+                d.sigla sg_unidade
+           from siw_solicitacao                         a
+                inner         join siw_menu             a1 on (a.sq_menu           = a1.sq_menu)
+                  inner       join sg_pessoa_modulo     a2 on (a1.sq_modulo        = a2.sq_modulo and
+                                                               a1.sq_pessoa        = a2.cliente
+                                                              )
+                    inner     join co_pessoa            b  on (a2.sq_pessoa        = b.sq_pessoa)
+                      inner   join sg_autenticacao      c  on (b.sq_pessoa         = c.sq_pessoa)
+                        inner join eo_unidade           d  on (c.sq_unidade        = d.sq_unidade)
+                inner       join eo_unidade             a3 on (a.sq_unidade        = a3.sq_unidade)
+          where a2.sq_pessoa_endereco = a3.sq_pessoa_endereco
+            and a.sq_siw_solicitacao = p_chave
+            and c.ativo              = 'S'
+         UNION
+         select distinct b.sq_pessoa, b.nome, b.nome_resumido,
+                c.email, c.ativo ativo_usuario,
+                d.sigla sg_unidade
            from siw_solicitacao                     a
                 inner     join co_pessoa            b on (a.solicitante        = b.sq_pessoa)
                   inner   join sg_autenticacao      c on (b.sq_pessoa          = c.sq_pessoa)

@@ -13,7 +13,7 @@ create or replace function SolicRestricao(p_chave in number, p_chave_aux in numb
 begin
   for crec in c_restricoes loop
      If crec.tipo is null  Then Result := 'N';
-     Else                       Result := crec.tipo;
+     Else                  Result := crec.tipo;
      End If;
   end loop;
   

@@ -1,9 +1,20 @@
 create or replace procedure SP_GetSolicData
    (p_chave     in number,
-    p_restricao in varchar2,
+    p_restricao in varchar2 default null,
     p_result    out sys_refcursor) is
 begin
-   If p_restricao = 'GDGERAL' or p_restricao = 'GDPGERAL' or p_restricao = 'GDPCAD' or p_restricao = 'ORPGERAL' Then
+   If p_restricao is null Then
+      open p_result for 
+         select a.sigla, a.p1, a.p2, a.p3, a.p4,
+                a1.link,
+                b.sq_siw_solicitacao
+           from siw_menu                   a
+                inner join siw_menu        a1 on (a.sq_menu = a1.sq_menu_pai and
+                                                  a1.sigla  like '%VISUAL%'
+                                                 )
+                inner join siw_solicitacao b  on (a.sq_menu = b.sq_menu)
+          where b.sq_siw_solicitacao = p_chave;
+   Elsif p_restricao = 'GDGERAL' or p_restricao = 'GDPGERAL' or p_restricao = 'GDPCAD' or p_restricao = 'ORPGERAL' Then
       -- Recupera as demandas que o usuário pode ver
       open p_result for 
          select a.sq_menu,            a.sq_modulo,                   a.nome,

@@ -251,7 +251,17 @@ begin
                 p.nome_resumido nm_exec,  p.nome_resumido_ind nm_exec_ind,
                 Nvl(q.existe,0) resp_etapa,
                 r.sq_acao_ppa, r.sq_orprioridade,
-                SolicRestricao(b.sq_siw_solicitacao) as restricao
+                SolicRestricao(b.sq_siw_solicitacao) as restricao,
+                case when b.sq_solic_pai is not null
+                     then case when s.sq_acordo is not null
+                               then 'AC: '||s.cd_acordo
+                               else case when u.sq_siw_solicitacao is not null
+                                         then 'PR: '||u.codigo_interno
+                                         else null
+                                    end
+                          end
+                     else null
+                end as cd_vinculacao
            from siw_menu                                       a 
                    inner        join eo_unidade                a2 on (a.sq_unid_executora        = a2.sq_unidade)
                      left       join eo_unidade_resp           a3 on (a2.sq_unidade              = a3.sq_unidade and
@@ -301,6 +311,17 @@ begin
                                           )                    j  on (b.sq_siw_solicitacao       = j.sq_siw_solicitacao)
                      left            join pj_projeto_log       k  on (j.chave                    = k.sq_siw_solic_log)
                        left          join sg_autenticacao      l  on (k.destinatario             = l.sq_pessoa)
+                   left              join (select x.sq_siw_solicitacao sq_acordo, v.nome||': '||x.codigo_interno cd_acordo,
+                                                w.nome_resumido||' - '||z.nome||' ('||to_char(x.inicio,'dd/mm/yyyy')||'-'||to_char(x.fim,'dd/mm/yyyy')||')' as nm_acordo,
+                                                v.sigla
+                                           from ac_acordo              x
+                                                join   co_pessoa       w on (x.outra_parte        = w.sq_pessoa)
+                                                join   siw_solicitacao y on (x.sq_siw_solicitacao = y.sq_siw_solicitacao)
+                                                  join ct_cc           z on (y.sq_cc              = z.sq_cc)
+                                                  join siw_menu        v on (y.sq_menu            = v.sq_menu)
+                                        )                      s  on (b.sq_solic_pai             = s.sq_acordo)
+                   left              join siw_solicitacao      t  on (b.sq_solic_pai             = t.sq_siw_solicitacao)
+                   left              join pe_programa          u  on (b.sq_solic_pai             = u.sq_siw_solicitacao)
           where a.sq_menu        = p_menu
             and (p_chave          is null or (p_chave       is not null and b.sq_siw_solicitacao = p_chave))
             and (p_sq_acao_ppa    is null or (p_sq_acao_ppa is not null and (r.sq_acao_ppa       = p_sq_acao_ppa or b.sq_solic_pai = p_sq_acao_ppa)))
@@ -311,7 +332,7 @@ begin
             and (p_usu_resp       is null or (p_usu_resp    is not null and (b.executor          = p_usu_resp or 0 < (select count(*) from pj_projeto_log where destinatario = p_usu_resp and sq_siw_solicitacao = b.sq_siw_solicitacao))))
             and (p_uorg_resp      is null or (p_uorg_resp   is not null and d.concluida          = 'N' and l.sq_unidade = p_uorg_resp))
             and (p_sqcc           is null or (p_sqcc        is not null and b.sq_cc              = p_sqcc))
-            and (p_projeto        is null or (p_projeto     is not null and b.sq_siw_solicitacao = p_projeto))
+            and (p_projeto        is null or (p_projeto     is not null and b.sq_solic_pai       = p_projeto))
             and (p_uf             is null or (p_uf          is not null and f.co_uf              = p_uf))
             and (p_assunto        is null or (p_assunto     is not null and acentos(d.titulo,null) like '%'||acentos(p_assunto,null)||'%'))
             and (p_palavra        is null or (p_palavra     is not null and acentos(b.palavra_chave,null) like '%'||acentos(p_palavra,null)||'%'))

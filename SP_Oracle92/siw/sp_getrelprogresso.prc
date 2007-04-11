@@ -30,8 +30,9 @@ begin
       open p_result for 
          select a.sq_projeto_etapa, a.ordem, a.titulo nm_etapa, a.sq_pessoa, h.nome_resumido nm_resp_etapa, a.fim_previsto, a.situacao_atual,
                 a.perc_conclusao, a.fim_real fim_real_etapa, a.sq_unidade, a.inicio_previsto, a.inicio_real inicio_real_etapa,
+                montaOrdem(a.sq_projeto_etapa) as cd_ordem,
                 b.sq_siw_solicitacao sq_projeto, b.titulo nm_projeto, c.inicio inicio_projeto, c.fim fim_projeto,
-                i.sq_tarefa, i.nm_tarefa, i.solicitante, i.nm_resp_tarefa, i.inicio, i.fim, i.inicio_real, i.fim_real,
+                i.sq_menu, i.sq_tarefa, i.nm_tarefa, i.solicitante, i.nm_resp_tarefa, i.inicio, i.fim, i.inicio_real, i.fim_real,
                 i.concluida, i.aviso_prox_conc, i.aviso, i.sg_tramite, i.nm_tramite, w_inicio as ini_prox_per, w_fim as fim_prox_per,
                 SolicRestricao(a.sq_siw_solicitacao, a.sq_projeto_etapa) as restricao
            from pj_projeto_etapa               a
@@ -41,11 +42,11 @@ begin
                   left   join siw_menu         d on (c.sq_menu            = d.sq_menu)
                   left   join siw_tramite      j on (c.sq_siw_tramite     = j.sq_siw_tramite)
                 left     join pj_etapa_demanda e on (a.sq_projeto_etapa   = e.sq_projeto_etapa)
-                  left   join (select k.sq_siw_solicitacao as sq_tarefa, k.solicitante, k.inicio, k.fim, 
+                  left   join (select k.sq_siw_solicitacao as sq_tarefa, k.solicitante, k.inicio, k.fim, k.sq_menu,
                                       l.assunto nm_tarefa, m.nome_resumido nm_resp_tarefa, l.inicio_real, l.fim_real,
                                       l.concluida, l.aviso_prox_conc, l.dias_aviso aviso,
                                       n.sigla sg_tramite, n.nome nm_tramite
-                                 from siw_solicitacao  k
+                                 from siw_solicitacao             k
                                       inner join gd_demanda       l on (k.sq_siw_solicitacao = l.sq_siw_solicitacao)
                                       inner join co_pessoa        m on (k.solicitante        = m.sq_pessoa)
                                       inner join siw_tramite      n on (k.sq_siw_tramite     = n.sq_siw_tramite and
@@ -55,8 +56,7 @@ begin
                                    or (p_restricao = 'PROPREV'   and k.fim      between w_inicio and w_fim)
                                    or (p_restricao = 'PROENTR'   and l.fim_real is null and (k.fim between w_inicio and w_fim or k.fim < p_inicio))
                               )                i on (e.sq_siw_solicitacao = i.sq_tarefa)
-          where a.pacote_trabalho = 'S'
-            and d.sq_pessoa       = p_cliente
+          where d.sq_pessoa       = p_cliente
             and j.sigla           <> 'CA'
             and (p_chave     is null or (p_chave       is not null and a.sq_siw_solicitacao   = p_chave))
             and (i.sq_tarefa is not null or
@@ -70,8 +70,9 @@ begin
       open p_result for 
          select a.sq_projeto_etapa, a.ordem, a.titulo nm_etapa, a.sq_pessoa, h.nome_resumido nm_resp_etapa, a.fim_previsto, a.situacao_atual,
                 a.perc_conclusao, a.fim_real,
+                montaOrdem(a.sq_projeto_etapa) as cd_ordem,
+                b.sq_siw_solicitacao as sq_projeto, b.titulo nm_projeto, c.inicio inicio_projeto, c.fim fim_projeto, c.sq_siw_solicitacao sq_projeto,
                 e.sq_siw_solicitacao, f.assunto nm_tarefa, g.solicitante, i.nome_resumido nm_resp_tarefa, g.inicio, f.fim_real,
-                b.titulo nm_projeto, c.inicio inicio_projeto, c.fim fim_projeto, c.sq_siw_solicitacao sq_projeto,
                 calculaigc(c.sq_siw_solicitacao) as igc, calculaide(c.sq_siw_solicitacao, w_fim) as ide                
            from pj_projeto_etapa               a
                 left     join co_pessoa        h on (a.sq_pessoa          = h.sq_pessoa)
@@ -83,8 +84,7 @@ begin
                   left   join gd_demanda       f on (e.sq_siw_solicitacao = f.sq_siw_solicitacao)
                   left   join siw_solicitacao  g on (e.sq_siw_solicitacao = g.sq_siw_solicitacao)
                     left join co_pessoa        i on (g.solicitante        = i.sq_pessoa)
-          where a.pacote_trabalho = 'S'
-            and d.sq_pessoa       = p_cliente
+          where d.sq_pessoa       = p_cliente
             and j.sigla           <> 'CA'
             and (p_chave     is null or (p_chave       is not null and a.sq_siw_solicitacao   = p_chave))
             --and (w_inicio    is null or (c.inicio between w_inicio and w_fim and c.fim between w_inicio and w_fim));
