@@ -10,12 +10,13 @@ begin
    If p_restricao is null          or p_restricao = 'LICITACAO'        or p_restricao = 'ATIVO' or 
       p_restricao = 'CODIGO'       or p_restricao = 'CODIGONULL'       or p_restricao = 'MOD_PE' or 
       p_restricao = 'RECURSO'      or p_restricao = 'PLANEJAMENTO'     or p_restricao = 'EXECUCAO' or 
-      p_restricao = 'MOD_PA'       or p_restricao = 'MOD_PA_PAI'
+      p_restricao = 'MOD_PA'       or p_restricao = 'MOD_PA_PAI'       or p_restricao = 'EXTERNO'
    Then
       -- Recupera as unidades organizacionais do cliente
       open p_result for 
          select a.sq_unidade,a.sq_unidade_pai, a.nome, a.sigla, a.informal, a.adm_central, a.vinculada, 
                 a.codigo, a.sq_unidade_pai, a.ordem, Nvl(d.nome,'Informar') responsavel, a.ativo,
+                a.externo,
                 a.sq_unidade_gestora, a.sq_unid_pagadora, a.unidade_gestora, a.unidade_pagadora,
                 b.sq_pessoa_endereco, b.logradouro,
                 e.sq_unidade lc_chave, e.cnpj lc_cnpj, e.padrao lc_padrao, 
@@ -31,13 +32,14 @@ begin
                 left outer join pe_unidade         g on (a.sq_unidade         = g.sq_unidade)
                 left outer join pa_unidade         h on (a.sq_unidade         = h.sq_unidade)
           where b.sq_pessoa            = p_cliente
-            and a.externo              = 'N'
+            and (p_restricao           <> 'EXTERNO' or (p_restricao          = 'EXTERNO' and (a.externo  = 'N' or (a.externo  = 'S' and 0 = (select count(sq_unidade) from eo_unidade where sq_unidade_pai = a.sq_unidade)))))
             and (p_chave               is null or (p_chave is not null and a.sq_unidade = p_chave))
             and (p_nome                is null or (p_nome  is not null and acentos(a.nome)  like '%'||acentos(p_nome)||'%'))
             and (p_sigla               is null or (p_sigla is not null and acentos(a.sigla) like '%'||acentos(p_sigla)||'%'))
             and (p_restricao           is null or (p_restricao is not null and
                                                    ((p_restricao = 'LICITACAO'    and a.ativo    = 'S' and e.ativo = 'S' and e.contrata = 'S') or 
                                                     (p_restricao = 'ATIVO'        and a.ativo    = 'S') or 
+                                                    (p_restricao = 'EXTERNO') or 
                                                     (p_restricao = 'CODIGO'       and a.informal = 'N' and a.sq_unidade_pai is null) or 
                                                     (p_restricao = 'CODIGONULL'   and a.informal = 'N' and a.codigo <> '00') or 
                                                     (p_restricao = 'MOD_PE'       and g.sq_unidade is not null) or 
