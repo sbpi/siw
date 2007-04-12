@@ -101,7 +101,7 @@ begin
            p_fim,               p_valor,           p_objeto,             p_aviso,
            p_dias,              p_sq_tipo_pessoa,  p_sq_forma_pagamento, p_numero_empenho,
            p_numero_processo,   p_assinatura,      p_publicacao,         p_codigo,
-           w_vincula_projeto,   p_titulo   
+           w_vincula_projeto,   p_titulo
         from dual
       );
 
@@ -232,7 +232,6 @@ begin
           inicio             = p_inicio,
           fim                = p_fim,
           duracao            = null,
-          valor_inicial      = p_valor,
           objeto             = trim(p_objeto),
           aviso_prox_conc    = p_aviso,
           dias_aviso         = p_dias,
@@ -271,6 +270,15 @@ begin
       End If;
       delete pj_etapa_contrato where sq_siw_solicitacao = p_chave;
       
+      -- Verifica se já houve alguma tramitação para alteração ou não do valor_inicial
+      select count(a.sq_siw_solic_log) into w_existe
+        from siw_solic_log          a
+             inner join siw_tramite b on (a.sq_siw_tramite = b.sq_siw_tramite)
+       where sq_siw_solicitacao = p_chave 
+         and b.sigla <> 'CI';
+      If w_existe = 0 Then
+         update ac_acordo set valor_inicial = p_valor where sq_siw_solicitacao = p_chave;
+      End If;
       If p_etapa is not null then
          -- Cria a vinculação com os novos dados
          Insert Into pj_etapa_contrato 

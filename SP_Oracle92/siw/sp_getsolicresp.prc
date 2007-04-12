@@ -24,7 +24,7 @@ begin
    If p_restricao = 'GENERICO' Then
       -- Recupera as demandas que o usuário pode ver
       open p_result for 
-         select distinct d.sq_pessoa, d.nome, d.nome_resumido,
+         select distinct d.sq_pessoa, d.nome, d.nome_resumido, d.nome_resumido_ind,
                 e.email, e.ativo ativo_usuario,
                 f.sigla sg_unidade
            from siw_solicitacao                       a
@@ -37,7 +37,7 @@ begin
             and e.ativo              = 'S'
             and (p_fase              is null or (p_fase        is not null and InStr(x_fase,''''||b.sq_siw_tramite||'''') > 0))
          UNION
-         select distinct b.sq_pessoa, b.nome, b.nome_resumido,
+         select distinct b.sq_pessoa, b.nome, b.nome_resumido, b.nome_resumido_ind,
                 c.email, c.ativo ativo_usuario,
                 d.sigla sg_unidade
            from siw_solicitacao                     a
@@ -46,8 +46,8 @@ begin
                     inner join eo_unidade           d on (c.sq_unidade         = d.sq_unidade)
           where a.sq_siw_solicitacao = p_chave
             and c.ativo              = 'S'
-         UNION
-         select distinct c.sq_pessoa, c.nome, c.nome_resumido,
+         UNION 
+         select distinct c.sq_pessoa, c.nome, c.nome_resumido, c.nome_resumido_ind,
                 d.email, d.ativo ativo_usuario,
                 e.sigla sg_unidade
            from siw_solicitacao                       a
@@ -60,7 +60,7 @@ begin
             and b.fim                is null
             and d.ativo              = 'S'
          UNION
-         select distinct c.sq_pessoa, c.nome, c.nome_resumido,
+         select distinct c.sq_pessoa, c.nome, c.nome_resumido, c.nome_resumido_ind,
                 d.email, d.ativo ativo_usuario,
                 e.sigla sg_unidade
            from siw_solicitacao                       a
@@ -75,7 +75,7 @@ begin
    ElsIf p_restricao = 'CADASTRAMENTO' Then
       -- Recupera as demandas que o usuário pode ver
       open p_result for 
-         select distinct d.sq_pessoa, d.nome, d.nome_resumido,
+         select distinct d.sq_pessoa, d.nome, d.nome_resumido, d.nome_resumido_ind,
                 e.email, e.ativo ativo_usuario,
                 f.sigla sg_unidade
            from siw_solicitacao                       a
@@ -88,7 +88,7 @@ begin
             and c.sigla              = 'CI'
             and e.ativo              = 'S'
          UNION
-         select distinct b.sq_pessoa, b.nome, b.nome_resumido,
+         select distinct b.sq_pessoa, b.nome, b.nome_resumido, b.nome_resumido_ind,
                 c.email, c.ativo ativo_usuario,
                 d.sigla sg_unidade
            from siw_solicitacao                         a
@@ -104,7 +104,7 @@ begin
           where a.sq_siw_solicitacao = p_chave
             and c.ativo              = 'S'
          UNION
-         select distinct b.sq_pessoa, b.nome, b.nome_resumido,
+         select distinct b.sq_pessoa, b.nome, b.nome_resumido, b.nome_resumido_ind,
                 c.email, c.ativo ativo_usuario,
                 d.sigla sg_unidade
            from siw_solicitacao                         a
@@ -120,7 +120,7 @@ begin
             and a.sq_siw_solicitacao = p_chave
             and c.ativo              = 'S'
          UNION
-         select distinct b.sq_pessoa, b.nome, b.nome_resumido,
+         select distinct b.sq_pessoa, b.nome, b.nome_resumido, b.nome_resumido_ind,
                 c.email, c.ativo ativo_usuario,
                 d.sigla sg_unidade
            from siw_solicitacao                     a
@@ -130,7 +130,7 @@ begin
           where a.sq_siw_solicitacao = p_chave
             and c.ativo              = 'S'
          UNION
-         select distinct c.sq_pessoa, c.nome, c.nome_resumido,
+         select distinct c.sq_pessoa, c.nome, c.nome_resumido, c.nome_resumido_ind,
                 d.email, d.ativo ativo_usuario,
                 e.sigla sg_unidade
            from siw_solicitacao                       a
@@ -143,7 +143,7 @@ begin
             and b.fim                is null
             and d.ativo              = 'S'
          UNION
-         select distinct c.sq_pessoa, c.nome, c.nome_resumido,
+         select distinct c.sq_pessoa, c.nome, c.nome_resumido, c.nome_resumido_ind,
                 d.email, d.ativo ativo_usuario,
                 e.sigla sg_unidade
            from siw_solicitacao                       a

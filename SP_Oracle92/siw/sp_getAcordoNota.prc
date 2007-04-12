@@ -14,12 +14,14 @@ begin
       open p_result for     
          select a.sq_acordo_nota, a.sq_siw_solicitacao, a.sq_tipo_documento, a.sq_acordo_outra_parte, 
                 a.sq_acordo_aditivo, a.numero, a.data, a.valor, a.sq_lcfonte_recurso, 
-                a.sq_especificacao_despesa,
+                a.sq_especificacao_despesa, a.observacao,
                 c.nome nm_tipo_documento,
                 f.nome_resumido nm_outra_parte,
-                e.codigo cd_aditivo
+                e.codigo cd_aditivo, e.sq_cc cc_aditivo,
+                g.sq_cc cc_acordo
            from ac_acordo_nota                     a  
                 inner   join ac_acordo             b on (a.sq_siw_solicitacao    = b.sq_siw_solicitacao)
+                  inner join siw_solicitacao       g on (b.sq_siw_solicitacao    = g.sq_siw_solicitacao)
                 inner   join fn_tipo_documento     c on (a.sq_tipo_documento     = c.sq_tipo_documento)
                 left    join ac_acordo_outra_parte d on (a.sq_acordo_outra_parte = d.sq_acordo_outra_parte)
                   left  join co_pessoa             f on (d.outra_parte           = f.sq_pessoa)

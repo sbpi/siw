@@ -5,6 +5,7 @@ create or replace procedure SP_GetCTEspecificacao
     p_ano          in varchar2 default null,
     p_ativo        in varchar2 default null,
     p_ultimo_nivel in varchar2 default null,
+    p_ctcc         in number   default null,
     p_restricao    in varchar2 default null,
     p_result       out sys_refcursor) is
 begin
@@ -25,6 +26,7 @@ begin
             and (p_ano          is null or (p_ano          is not null and a.ano          = p_ano))
             and (p_ativo        is null or (p_ativo        is not null and a.ativo        = p_ativo))
             and (p_ultimo_nivel is null or (p_ultimo_nivel is not null and a.ultimo_nivel = p_ultimo_nivel))
+            and (p_ctcc         is null or (p_ctcc         is not null and a.sq_cc        = p_ctcc))
          order by 2;
    Elsif p_restricao = 'HERANCA' Then
       -- Recupera os tipos de contrato do cliente
@@ -59,6 +61,7 @@ begin
             and (p_ano          is null or (p_ano          is not null and a.ano          = p_ano))
             and (p_ativo        is null or (p_ativo        is not null and a.ativo        = p_ativo))
             and (p_ultimo_nivel is null or (p_ultimo_nivel is not null and a.ultimo_nivel = p_ultimo_nivel))
+            and (p_ctcc         is null or (p_ctcc         is not null and a.sq_cc        = p_ctcc))
          order by 2;
    Elsif p_restricao = 'PAI' Then
       -- Recupera os tipos de contrato do cliente que não são subordinados a ninguém

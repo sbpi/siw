@@ -8,6 +8,7 @@ create or replace procedure SP_GetAcordoParcela
     p_usuario     in number   default null,
     p_fase        in varchar2 default null,
     p_menu        in number   default null,
+    p_sq_acordo_aditivo in number default null,
     p_result      out sys_refcursor) is
 begin
    -- Recupera os dados de uma parcela ou as parcelas de um acordo
@@ -28,8 +29,11 @@ begin
                                                                           nvl(z.sigla,'-')     <> 'CA'
                                                                          )
                                 )             b  on (a.sq_acordo_parcela  = b.sq_acordo_parcela)
+                left outer join ac_acordo_aditivo c on (a.sq_acordo_aditivo = c.sq_acordo_aditivo and
+                                                        a.sq_siw_solicitacao = c.sq_siw_solicitacao)
           where (p_chave     is null or (p_chave     is not null and a.sq_siw_solicitacao = p_chave))
-            and (p_chave_aux is null or (p_chave_aux is not null and a.sq_acordo_parcela  = p_chave_aux));
+            and (p_chave_aux is null or (p_chave_aux is not null and a.sq_acordo_parcela  = p_chave_aux))
+            and (p_sq_acordo_aditivo is null or (p_sq_acordo_aditivo is not null and c.sq_acordo_aditivo  = p_sq_acordo_aditivo));            
    Elsif p_restricao = 'CADASTRO' Then
       open p_result for 
         select a.sq_siw_solicitacao, a.sq_solic_pai, a.solicitante, a.sq_unidade, a.sq_cc, 

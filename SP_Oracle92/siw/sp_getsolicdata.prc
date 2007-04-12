@@ -287,6 +287,7 @@ begin
                 d9.nome nm_eoindicador,
                 d10.nome nm_lcfonte_recurso,
                 d11.nome nm_espec_despesa,
+                d12.inicio dt_aditivo_ini, d12.fim dt_aditivo_fim,
                 b.fim-d.dias_aviso aviso,
                 e.sq_tipo_unidade,    e.nome nm_unidade_resp,        e.informal informal_resp,
                 e.vinculada vinc_resp,e.adm_central adm_resp,        e.sigla sg_unidade_resp,
@@ -324,6 +325,7 @@ begin
                      left         join eo_indicador         d9 on (d.sq_eoindicador           = d9.sq_eoindicador)
                      left         join lc_fonte_recurso    d10 on (d.sq_lcfonte_recurso       = d10.sq_lcfonte_recurso)
                      left         join ct_especificacao_despesa d11 on (d.sq_especificacao_despesa = d11.sq_especificacao_despesa)
+                     left         join ac_acordo_aditivo   d12 on (d.sq_siw_solicitacao       = d12.sq_siw_solicitacao)
                    inner          join eo_unidade           e  on (b.sq_unidade               = e.sq_unidade)
                      left         join eo_unidade_resp      e1 on (e.sq_unidade               = e1.sq_unidade and
                                                                    e1.tipo_respons            = 'T'           and

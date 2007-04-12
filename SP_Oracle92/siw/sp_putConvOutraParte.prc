@@ -6,9 +6,17 @@ create or replace procedure SP_PutConvOutraParte
      p_sq_pessoa                    in number    default null,
      p_tipo                         in number    default null,
      p_chave_aux                    in number    default null,
+     p_cpf                          in varchar2  default null,
      p_cnpj                         in varchar2  default null,
      p_nome                         in varchar2  default null,
      p_nome_resumido                in varchar2  default null,
+     p_sexo                         in varchar2  default null,
+     p_nascimento                   in date      default null,
+     p_rg_numero                    in varchar2  default null,
+     p_rg_emissao                   in date      default null,
+     p_rg_emissor                   in varchar2  default null,
+     p_passaporte                   in varchar2  default null,
+     p_sq_pais_passaporte           in number    default null,     
      p_inscricao_estadual           in varchar2  default null,
      p_logradouro                   in varchar2  default null,
      p_complemento                  in varchar2  default null,
@@ -44,6 +52,7 @@ create or replace procedure SP_PutConvOutraParte
    w_chave_endereco     number(18);
    w_chave_conta        number(18);
    w_sq_tipo_pessoa     number(18);
+   w_forma_pagamento    varchar2(10);
    w_sq_tipo_vinculo    number(18);
    w_sq_siw_solicitacao number(18);
    w_outra_parte        number(18);
@@ -76,9 +85,17 @@ begin
             where sq_siw_solicitacao = w_sq_siw_solicitacao;         
          End If;
       End If;
-  Else
-     -- Verifica se é pessoa física ou jurídica e carrega a chave da tabela CO_TIPO_PESSOA
-      If p_cnpj is not null Then 
+   Else
+      -- Verifica se é pessoa física ou jurídica e carrega a chave da tabela CO_TIPO_PESSOA
+      If p_cpf is not null Then 
+         select sq_tipo_pessoa into w_sq_tipo_pessoa from co_tipo_pessoa   where nome = 'Física';
+         select count(*)       into w_existe         from co_pessoa_fisica where cliente = p_chave_aux and cpf = p_cpf;
+         If w_existe > 0 Then
+            select sq_pessoa into w_chave_pessoa from co_pessoa_fisica where cliente = p_chave_aux and cpf = p_cpf;
+         Else
+            w_chave_pessoa := 0;
+         End If;
+      Else          
          select sq_tipo_pessoa into w_sq_tipo_pessoa from co_tipo_pessoa     where nome = 'Jurídica';
          select count(*)       into w_existe         from co_pessoa_juridica where cliente = p_chave_aux and cnpj = p_cnpj;
          If w_existe > 0 Then
@@ -89,9 +106,14 @@ begin
       End If;
       
       If w_chave_pessoa = 0 Then -- Se a chave da pessoa não foi informada, insere
-   
          -- Carrega a chave da tabela CO_TIPO_VINCULO, dependendo do tipo da solicitação
-         select sq_tipo_vinculo into w_sq_tipo_vinculo from co_tipo_vinculo where nome = 'Cliente' and sq_tipo_pessoa = w_sq_tipo_pessoa and cliente = p_chave_aux;
+         If substr(p_restricao,1,3) in ('GCR','FNR') or substr(p_restricao,1,5) = 'PJCAD' Then
+            select sq_tipo_vinculo into w_sq_tipo_vinculo from co_tipo_vinculo where nome = 'Cliente' and sq_tipo_pessoa = w_sq_tipo_pessoa and cliente = p_chave_aux;
+         Elsif substr(p_restricao,1,3) in ('GCD','FND') or substr(p_restricao,1,2) = 'PJ' Then
+            select sq_tipo_vinculo into w_sq_tipo_vinculo from co_tipo_vinculo where nome = 'Fornecedor' and sq_tipo_pessoa = w_sq_tipo_pessoa and cliente = p_chave_aux;
+         Elsif substr(p_restricao,1,3) = 'GCP' Then
+            select sq_tipo_vinculo into w_sq_tipo_vinculo from co_tipo_vinculo where nome = 'Parceiro' and sq_tipo_pessoa = w_sq_tipo_pessoa and cliente = p_chave_aux;
+         End If;
          
          -- recupera a próxima chave da pessoa
          select sq_pessoa.nextval into w_chave_pessoa from dual;
@@ -103,8 +125,13 @@ begin
            (w_chave_pessoa, p_chave_aux,   w_sq_tipo_vinculo, w_sq_tipo_pessoa, p_nome, p_nome_resumido);
    
          -- Grava dados complementares, dependendo do tipo de acordo
-         update co_pessoa set cliente = 'S'    where sq_pessoa = w_chave_pessoa;
-         
+         If substr(p_restricao,1,3) in ('GCR','FNR') or substr(p_restricao,1,5) = 'PJCAD' Then
+            update co_pessoa set cliente = 'S'    where sq_pessoa = w_chave_pessoa;
+         Elsif substr(p_restricao,1,3) in ('GCD','FND') or substr(p_restricao,1,2) = 'PJ' Then
+            update co_pessoa set fornecedor = 'S' where sq_pessoa = w_chave_pessoa;
+         Elsif substr(p_restricao,1,3) = 'GCP' Then
+            update co_pessoa set parceiro = 'S'   where sq_pessoa = w_chave_pessoa;
+         End If;
       Else -- Caso contrário, altera
          update co_pessoa
             set nome          = Nvl(p_nome, nome),
@@ -112,11 +139,41 @@ begin
           where sq_pessoa = w_chave_pessoa;
    
          -- Grava dados complementares, dependendo do tipo de acordo
-         update co_pessoa set cliente = 'S'    where sq_pessoa = w_chave_pessoa;
-         
+         If substr(p_restricao,1,3) in ('GCR','FNR') or substr(p_restricao,1,5) = 'PJCAD' Then
+            update co_pessoa set cliente = 'S'    where sq_pessoa = w_chave_pessoa;
+         Elsif substr(p_restricao,1,3) in ('GCD','FND') or substr(p_restricao,1,2) = 'PJ' Then
+            update co_pessoa set fornecedor = 'S' where sq_pessoa = w_chave_pessoa;
+         Elsif substr(p_restricao,1,3) = 'GCP' Then
+            update co_pessoa set parceiro = 'S'   where sq_pessoa = w_chave_pessoa;
+         End If;         
       End If;
       
-      If p_cnpj is not null then
+      If p_cpf is not null then -- Se for pessoa física
+         -- Verifica se os dados de pessoa física já existem
+         select count(*) into w_existe from co_pessoa_fisica where sq_pessoa = w_chave_pessoa;
+      
+         If w_existe = 0 Then -- Se não existir insere
+            insert into co_pessoa_fisica
+              (sq_pessoa,         nascimento,        rg_numero,            rg_emissor,   rg_emissao,   
+               cpf,               passaporte_numero, sq_pais_passaporte,   sexo,         cliente
+              )
+            values
+              (w_chave_pessoa,    p_nascimento,      p_rg_numero,          p_rg_emissor, p_rg_emissao, 
+               p_cpf,             p_passaporte,      p_sq_pais_passaporte, p_sexo,       p_chave_aux
+              );
+         Else -- Caso contrário, altera
+            update co_pessoa_fisica
+               set nascimento         = Nvl(p_nascimento, nascimento),
+                   rg_numero          = Nvl(p_rg_numero, rg_numero),
+                   rg_emissor         = Nvl(p_rg_emissor, rg_emissor),
+                   rg_emissao         = Nvl(p_rg_emissao, rg_emissao),
+                   cpf                = Nvl(p_cpf, cpf),
+                   passaporte_numero  = Nvl(p_passaporte, passaporte_numero),
+                   sq_pais_passaporte = Nvl(p_sq_pais_passaporte, sq_pais_passaporte),
+                   sexo               = Nvl(p_sexo, sexo)
+             where sq_pessoa = w_chave_pessoa;
+         End If;
+      Else
          -- Verifica se os dados de pessoa jurídica já existem
          select count(*) into w_existe from co_pessoa_juridica where sq_pessoa = w_chave_pessoa;
          
@@ -413,7 +470,100 @@ begin
                 numero_conta   = p_nr_conta
           where sq_siw_solicitacao = p_chave;
       End If;      
-      
+      -- Atualiza a outra parte
+      If w_sg_modulo = 'AC' Then
+         update ac_acordo 
+           set outra_parte      = w_chave_pessoa,
+               sq_agencia       = null,
+               operacao_conta   = null,
+               numero_conta     = null,
+               sq_pais_estrang  = null,
+               aba_code         = null,
+               swift_code       = null,
+               endereco_estrang = null,
+               banco_estrang    = null,
+               agencia_estrang  = null,
+               cidade_estrang   = null,
+               informacoes      = null,
+               codigo_deposito  = null
+         where sq_siw_solicitacao = p_chave;
+         
+         If Nvl(p_pessoa_atual, w_chave_pessoa) <> w_chave_pessoa Then
+            update ac_acordo set preposto = null where sq_siw_solicitacao = p_chave;
+            delete ac_acordo_representante where sq_siw_solicitacao = p_chave;
+         End If;
+        
+         If w_forma_pagamento in ('CREDITO','DEPOSITO') Then
+            update ac_acordo 
+               set sq_agencia     = p_sq_agencia,
+                   operacao_conta = p_op_conta,
+                   numero_conta   = p_nr_conta
+            where sq_siw_solicitacao = p_chave;
+         Elsif w_forma_pagamento = 'ORDEM' Then
+            update ac_acordo 
+               set sq_agencia     = p_sq_agencia
+            where sq_siw_solicitacao = p_chave;
+         Elsif w_forma_pagamento = 'EXTERIOR' Then
+            update ac_acordo 
+               set sq_pais_estrang  = p_sq_pais_estrang,
+                   aba_code         = p_aba_code,
+                   swift_code       = p_swift_code,
+                   endereco_estrang = p_endereco_estrang,
+                   banco_estrang    = p_banco_estrang,
+                   agencia_estrang  = p_agencia_estrang,
+                   numero_conta     = p_nr_conta,
+                   cidade_estrang   = p_cidade_estrang,
+                   informacoes      = p_informacoes
+            where sq_siw_solicitacao = p_chave;
+         End If;
+      elsif w_sg_modulo = 'FN' Then
+         update fn_lancamento
+           set pessoa           = w_chave_pessoa,
+               sq_agencia       = null,
+               operacao_conta   = null,
+               numero_conta     = null,
+               sq_pais_estrang  = null,
+               aba_code         = null,
+               swift_code       = null,
+               endereco_estrang = null,
+               banco_estrang    = null,
+               agencia_estrang  = null,
+               cidade_estrang   = null,
+               informacoes      = null,
+               codigo_deposito  = null
+         where sq_siw_solicitacao = p_chave;
+         
+         If w_forma_pagamento in ('CREDITO','DEPOSITO') Then
+            update fn_lancamento 
+               set sq_agencia     = p_sq_agencia,
+                   operacao_conta = p_op_conta,
+                   numero_conta   = p_nr_conta
+            where sq_siw_solicitacao = p_chave;
+         Elsif w_forma_pagamento = 'ORDEM' Then
+            update fn_lancamento 
+               set sq_agencia     = p_sq_agencia
+            where sq_siw_solicitacao = p_chave;
+         Elsif w_forma_pagamento = 'EXTERIOR' Then
+            update fn_lancamento 
+               set sq_pais_estrang  = p_sq_pais_estrang,
+                   aba_code         = p_aba_code,
+                   swift_code       = p_swift_code,
+                   endereco_estrang = p_endereco_estrang,
+                   banco_estrang    = p_banco_estrang,
+                   agencia_estrang  = p_agencia_estrang,
+                   numero_conta     = p_nr_conta,
+                   cidade_estrang   = p_cidade_estrang,
+                   informacoes      = p_informacoes
+            where sq_siw_solicitacao = p_chave;
+         End If;
+      Elsif w_sg_modulo = 'PR' Then
+        update pj_projeto set outra_parte = w_chave_pessoa where sq_siw_solicitacao = p_chave;
+         If Nvl(p_pessoa_atual, w_chave_pessoa) <> w_chave_pessoa Then
+            update pj_projeto set preposto = null where sq_siw_solicitacao = p_chave;
+            delete pj_projeto_representante where sq_siw_solicitacao = p_chave;
+         End If;
+      End If;
+         
       If p_operacao = 'I' Then
          -- Insere registro
          insert into ac_acordo_outra_parte
