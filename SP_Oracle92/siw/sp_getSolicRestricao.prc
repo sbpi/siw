@@ -127,14 +127,17 @@ begin
       -- Recupera as tarefas de uma restricao
        open p_result for            
           select a.sq_siw_solicitacao, a.assunto,
+                 a2.sigla as sg_servico,
                  b.sq_pessoa,
                  c.nome_resumido||'('||d.sigla||')' as nm_resp_questao, 
                  d.sigla as sg_unidade_resp_questao,
                  e.solicitante, e.inicio, e.fim, a.inicio_real, a.fim_real, e.sq_menu,
                  e1.nome_resumido||'('||e3.sigla||')' as nm_resp_tarefa, 
                  e3.sigla as sg_unidade_resp_tarefa,
-                 f.nome as nm_tramite
-            from gd_demanda                       a 
+                 f.sigla as sg_tramite, f.nome as nm_tramite
+            from gd_demanda                       a
+                 inner       join siw_solicitacao a1 on (a.sq_siw_solicitacao = a1.sq_siw_solicitacao)
+                   inner     join siw_menu        a2 on (a1.sq_menu           = a2.sq_menu)
                  inner       join siw_restricao   b  on (a.sq_siw_restricao   = b.sq_siw_restricao)
                    inner     join co_pessoa       c  on (b.sq_pessoa          = c.sq_pessoa)
                      inner   join sg_autenticacao c1 on (c.sq_pessoa          = c1.sq_pessoa)

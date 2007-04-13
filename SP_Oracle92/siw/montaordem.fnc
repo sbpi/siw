@@ -1,8 +1,8 @@
 create or replace function MontaOrdem(p_chave in number, p_retorno in varchar2 default null) return varchar2 is
-/*------------------------------------------------------
-Se p_retorno é diferente de nulo, monta a ordem usando
-números para permitir a correta ordenação dos registros 
-------------------------------------------------------*/ 
+--------------------------------------------------------
+--Se p_retorno é diferente de nulo, monta a ordem usando
+--números para permitir a correta ordenação dos registros 
+--------------------------------------------------------
   cursor c_ordem is
      select sq_projeto_etapa, sq_etapa_pai, ordem
        from pj_projeto_etapa
