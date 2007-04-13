@@ -262,7 +262,7 @@ function VisualAcordo($l_chave,$l_O,$l_usuario,$l_P1,$l_P4) {
         $w_html.=chr(13).'        <td>'.nvl(CRLF2BR(f($RS,'nm_lcfonte_recurso')),'---').'</td></tr>';
         $w_html.=chr(13).'      <tr><td><font size="1"><b>Especificação de despesa:</b></td>';
         $w_html.=chr(13).'        <td>'.nvl(CRLF2BR(f($RS,'nm_espec_despesa')),'---').'</td></tr>';
-        if (substr($w_sigla,0,3)!='GCA' && substr($w_sigla,0,3)!='GCB'){   
+        if (substr($w_sigla,0,3)!='GCA' && substr($w_sigla,0,3)!='GCB' && substr($w_sigla,0,3)!='GCD'){   
           $w_html.=chr(13).'          <tr valign="top">';
           $w_html.=chr(13).'          <td><font size="1"><b>Número do empenho:</b></td>';
           $w_html.=chr(13).'          <td>'.Nvl(f($RS,'empenho'),'---').'</td></tr>';

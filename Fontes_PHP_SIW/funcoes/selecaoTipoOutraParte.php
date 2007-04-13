@@ -1,12 +1,9 @@
 <?
-//include_once($w_dir_volta.'classes/sp/db_getLancamentoProjeto.php');
 // =========================================================================
 // Montagem da seleção de tipo de conclusão
 // -------------------------------------------------------------------------
 function SelecaoTipoOutraParte ($label,$accesskey,$hint,$chave,$chaveAux,$campo,$restricao) {
   extract($GLOBALS);
-  //$l_RS  = db_getLinkData::getInstanceOf($dbms,$w_cliente,$restricao);
-  //$l_RS1 = db_getLancamentoProjeto::getInstanceOf($dbms,$chaveAux,f($l_RS,'sq_menu'),null);
   if (!isset($hint)) {
     ShowHTML('          <td valign="top"><font size="1"><b>'.$label.'</b><br><SELECT ACCESSKEY="'.$accesskey.'" CLASS="sts" NAME="'.$campo.'" '.$w_Disabled.' '.$atributo.'>');
   } else {
@@ -19,4 +16,3 @@ function SelecaoTipoOutraParte ($label,$accesskey,$hint,$chave,$chaveAux,$campo,
   ShowHTML('          </select>');
 } 
 ?>
-

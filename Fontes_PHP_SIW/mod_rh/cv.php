@@ -2001,7 +2001,7 @@ function Visualizar() {
   ShowHTML('  <TD ALIGN="RIGHT"><B><FONT SIZE=5 COLOR="#000000">Curriculum Vitae</FONT>');
   if ($P2==0) {
     ShowHTML('<TR><TD ALIGN="RIGHT"><B><FONT SIZE=2 COLOR="#000000">'.DataHora().'</B>');
-    ShowHTML('&nbsp;&nbsp;<a target="MetaWord" href="'.$w_dir.$w_pagina.'Visualizar&P2=1&SG=CVVISUAL"><IMG border=0 ALIGN="CENTER" TITLE="Gerar word" SRC="images/word.gif"></a>');
+    ShowHTML('&nbsp;&nbsp;<a href="'.$w_dir.$w_pagina.'Visualizar&P2=1&SG=CVVISUAL"><IMG border=0 ALIGN="CENTER" TITLE="Gerar word" SRC="images/word.gif"></a>');
   } 
   ShowHTML('</TD></TR>');
   ShowHTML('</FONT></B></TD></TR></TABLE>');

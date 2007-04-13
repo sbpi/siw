@@ -44,8 +44,15 @@ function ValidaAcordo($l_cliente,$l_chave,$l_sg1,$l_sg2,$l_sg3,$l_sg4,$l_tramite
       $l_tipo=0;      
     } elseif (substr(f($l_rs_solic,'sigla'),0,3)=='GCP' && f($l_rs_solic,'cd_modalidade')!='I') {
       $l_erro=$l_erro.'<li>Para contrato de parceria, o tipo deve ser de parceria institucional.';
-      $l_tipo=0;      
+      $l_tipo=0;
     }    
+  }
+  if(Nvl(f($l_rs_solic,'sq_tipo_pessoa'),0)==1 && Nvl(f($l_rs_solic,'pessoa_fisica'),'')=='N') {
+      $l_erro=$l_erro.'<li>Tipo do contrato, não perimite a contração de pessoa física.';
+      $l_tipo=0;
+  } elseif (Nvl(f($l_rs_solic,'sq_tipo_pessoa'),0)==2 && Nvl(f($l_rs_solic,'pessoa_juridica'),'')=='N') {
+      $l_erro=$l_erro.'<li>Tipo do contrato, não perimite a contração de pessoa jurídica.';
+      $l_tipo=0;
   }
   // Verifica se o cliente tem o módulo de acordos contratado
   $l_rs_modulo = db_getSiwCliModLis::getInstanceOf($dbms,$l_cliente,null,'AC');

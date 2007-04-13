@@ -343,7 +343,7 @@ function listaTelefonica(){
     ShowHTML('  <td align="right"><B><font size=5 color="#000000">');
     ShowHTML('Lista Telefônica');
     ShowHTML('</FONT><tr><td ALIGN="RIGHT"><B><font size=2 color="#000000">'.DataHora().'</B>');
-    ShowHTML('     &nbsp;&nbsp;<a target="MetaWord" href="'.$w_dir.$w_pagina.$par.'&P2=1&SG='.$SG.MontaFiltro('GET').'"><IMG border=0 ALIGN="CENTER" TITLE="Gerar word" SRC="images/word.gif"></a>');
+    ShowHTML('     &nbsp;&nbsp;<a href="'.$w_dir.$w_pagina.$par.'&P2=1&SG='.$SG.MontaFiltro('GET').'"><IMG border=0 ALIGN="CENTER" TITLE="Gerar word" SRC="images/word.gif"></a>');
   }
   ShowHTML('</td></tr>');
   ShowHTML('</FONT></B></td></tr></TABLE>');
@@ -388,7 +388,7 @@ function ResumoLigacaoParticular(){
     ShowHTML('  <td align="right"><B><font size=5 color="#000000">');
     ShowHTML('Resumo de Ligações Particulares');
     ShowHTML('</FONT><tr><td align="right"><B><font size=2 color="#000000">'.DataHora().'</B>');
-    ShowHTML('     &nbsp;&nbsp;<a target="MetaWord" href="'.$w_dir.$w_pagina.$par.'&P2=1&SG='.$SG.'&w_sq_usuario='.$_REQUEST['w_sq_usuario'].MontaFiltro('GET').'"><IMG border=0 ALIGN="CENTER" TITLE="Emite autorização para desconto em folha" SRC="images/word.gif"></a>');
+    ShowHTML('     &nbsp;&nbsp;<a href="'.$w_dir.$w_pagina.$par.'&P2=1&SG='.$SG.'&w_sq_usuario='.$_REQUEST['w_sq_usuario'].MontaFiltro('GET').'"><IMG border=0 ALIGN="CENTER" TITLE="Emite autorização para desconto em folha" SRC="images/word.gif"></a>');
   } 
   ShowHTML('</td></tr>');
   ShowHTML('</FONT></B></td></tr></TABLE>');

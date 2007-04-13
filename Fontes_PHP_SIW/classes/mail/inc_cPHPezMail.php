@@ -311,6 +311,13 @@ class cPHPezMail
     function Send()
     {
         $sTo = implode(', ', $this->aTo);
+        extract($GLOBALS);
+        include_once($conDiretorio.'classes/sp/db_getCustomerData.php');
+        $RS_Cliente = db_getCustomerData::getInstanceOf($dbms, $_SESSION['P_CLIENTE']);
+        ini_set("SMTP",f($RS_Cliente,'smtp_server'));
+        ini_set("smtp_port","25");
+        ini_set("sendmail_from",f($RS_Cliente,'siw_email_conta'));
+
         $bResponse = mail($sTo, $this->sSubject, $this->_MakeMessage(), $this->_MakeHeader());
         return $bResponse;
     }

@@ -1475,8 +1475,8 @@ function Meta() {
       Validate('w_quantidade','Valor a ser alcançado','VALOR','1',6,18,'','0123456789,.');
       Validate('w_pessoa','Responsável pela meta','SELECT','1','1','10','','1');
       Validate('w_unidade','Setor responsável pela meta','SELECT','1','1','10','','1');
-      Validate('w_assinatura','Assinatura Eletrônica','1','1','6','30','1','1');
-    } elseif ($O=='E') {
+      if ($P1==1) Validate('w_assinatura','Assinatura Eletrônica','1','1','6','30','1','1');
+    } elseif ($O=='E' && $P1==1) {
       Validate('w_assinatura','Assinatura Eletrônica','1','1','6','30','1','1');
       ShowHTML('  if (confirm(\'Confirma a exclusão deste registro?\')) ');
       ShowHTML('     { return (true); }; ');
@@ -1492,7 +1492,7 @@ function Meta() {
     BodyOpen('onLoad=\'document.Form.'.$w_troca.'.focus()\';');
   } elseif ((strpos('IA',$O)!==false)) {
     BodyOpen('onLoad=\'document.Form.w_titulo.focus()\';');
-  } elseif ($O=='E') {
+  } elseif ($O=='E' && $P1==1) {
     BodyOpen('onLoad=\'document.Form.w_assinatura.focus()\';');
   } else {
     BodyOpenClean(null);
@@ -1597,7 +1597,7 @@ function Meta() {
     MontaRadioNS('<b>É cumulativa</b>?',$w_cumulativa,'w_cumulativa');
     SelecaoPessoa('<u>R</u>esponsável:','N','Selecione o responsável pelo acompanhamento da meta.',$w_pessoa,$w_chave,'w_pessoa','INTERNOS');
     SelecaoUnidade('<U>S</U>etor responsável:','S','Selecione o setor responsável pelo acompanhamento da meta.',$w_unidade,null,'w_unidade',null,null);
-    ShowHTML('      <tr><td colspan=3 align="LEFT"><b><U>A</U>ssinatura Eletrônica:<BR> <INPUT ACCESSKEY="A" class="sti" type="PASSWORD" name="w_assinatura" size="30" maxlength="30" value=""></td></tr>');
+    if ($P1==1) ShowHTML('      <tr><td colspan=3 align="LEFT"><b><U>A</U>ssinatura Eletrônica:<BR> <INPUT ACCESSKEY="A" class="sti" type="PASSWORD" name="w_assinatura" size="30" maxlength="30" value=""></td></tr>');
     ShowHTML('      <tr><td align="center" colspan=3><hr>');
     if ($O=='E') {
       ShowHTML('   <input class="STB" type="submit" name="Botao" value="Excluir">');

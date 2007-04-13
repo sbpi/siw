@@ -11,7 +11,7 @@ include_once($w_dir_volta.'classes/db/DatabaseQueriesFactory.php');
 
 class dml_putAcordoNota {
    function getInstanceOf($dbms, $operacao, $p_chave_aux, $p_chave, $p_sq_tipo_documento, $p_sq_acordo_outra_parte, $p_sq_acordo_aditivo, $p_numero, $p_data,
-                          $p_valor, $p_sq_lcfonte_recurso, $p_espec_despesa) {
+                          $p_valor, $p_sq_lcfonte_recurso, $p_espec_despesa, $p_observacao) {
      extract($GLOBALS,EXTR_PREFIX_SAME,'strchema'); $sql=$strschema.'SP_PUTACORDONOTA';
      $params=array('p_operacao'                  =>array($operacao,                                        B_VARCHAR,         1),
                    'p_chave_aux'                 =>array(tvl($p_chave_aux),                                B_INTEGER,        32),
@@ -23,7 +23,8 @@ class dml_putAcordoNota {
                    'p_data'                      =>array(tvl($p_data),                                     B_DATE,           32),
                    'p_valor'                     =>array(toNumber(tvl($p_valor)),                          B_NUMERIC,      18,2),
                    'p_sq_lcfonte_recurso'        =>array(tvl($p_sq_lcfonte_recurso),                       B_INTEGER,        32),
-                   'p_espec_despesa'             =>array(tvl($p_espec_despesa),                            B_INTEGER,        32)
+                   'p_espec_despesa'             =>array(tvl($p_espec_despesa),                            B_INTEGER,        32),
+                   'p_observacao'                =>array(tvl($p_observacao),                               B_VARCHAR,       500)
                    );     
      $l_rs = DatabaseQueriesFactory::getInstanceOf($sql, $dbms, $params, DB_TYPE);
      $l_error_reporting = error_reporting(); 

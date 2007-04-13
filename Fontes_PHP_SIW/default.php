@@ -180,7 +180,7 @@ function Valida() {
 	  // Se ocorreu algum erro, avisa da impossibilidade de envio do e-mail,
       // caso contrário, avisa que o e-mail foi enviado para o usuário.
       if (nvl($w_resultado,'')!='') { 
-         ShowHTML('  alert(\'ATENÇÃO: sua senha NÃO foi recriada pois não foi possível proceder o envio do e-mail\n'.$w_resultado.'\');'); 
+         ShowHTML('  alert(\'ATENÇÃO: sua senha NÃO FOI recriada pois não foi possível proceder o envio do e-mail\n'.$w_resultado.'\');'); 
       } else {
          // Atualiza a senha de acesso e a assinatura eletrônica, igualando as duas
          db_updatePassword::getInstanceOf($dbms,$_SESSION['P_CLIENTE'], $_SESSION['SQ_PESSOA'], $w_senha, 'PASSWORD');

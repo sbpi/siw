@@ -119,6 +119,7 @@ function montaURL_JS ($p_dir, $p_link) {
 function headerWord($p_orientation='LANDSCAPE') {
   extract($GLOBALS);
   header('Content-type: application/msword',false);
+  header('Content-Disposition: attachment; filename=arquivo.doc');
   ShowHTML('<html xmlns:o="urn:schemas-microsoft-com:office:office" ');
   ShowHTML('xmlns:w="urn:schemas-microsoft-com:office:word" ');
   ShowHTML('xmlns="http://www.w3.org/TR/REC-html40"> ');
@@ -139,6 +140,7 @@ function headerWord($p_orientation='LANDSCAPE') {
   ShowHTML('   <w:UseAsianBreakRules/> ');
   ShowHTML('  </w:Compatibility> ');
   ShowHTML('  <w:BrowserLevel>MicrosoftInternetExplorer4</w:BrowserLevel> ');
+  // ShowHTML('  <w:DocumentProtection>forms</w:DocumentProtection> ');
   ShowHTML(' </w:WordDocument> ');
   ShowHTML('</xml><![endif]--> ');
   ShowHTML('<style> ');
@@ -165,9 +167,10 @@ function headerWord($p_orientation='LANDSCAPE') {
   ShowHTML('--> ');
   ShowHTML('</style> ');
   ShowHTML('</head> ');
-  ShowHTML('<BASE HREF="'.$conRootSIW.'">');
   BodyOpen('onLoad=this.focus();');
   ShowHTML('<div class=Section1> ');
+  ShowHTML('<link rel="stylesheet" type="text/css" href="'.$conRootSIW.'classes/menu/xPandMenu.css">');
+  ShowHTML('<BASE HREF="'.$conRootSIW.'">');
 }
 
 // =========================================================================
@@ -180,7 +183,7 @@ function CabecalhoWord($p_cliente,$p_titulo,$p_pagina) {
   ShowHTML('<TABLE WIDTH="100%" BORDER=0>');
   ShowHTML('  <TR>');
   if (nvl($p_pagina,0)>0) $l_colspan = 3; else $l_colspan = 2;
-  ShowHTML('    <TD ROWSPAN='.$l_colspan.'><IMG ALIGN="LEFT" SRC="'.$conFileVirtual.$w_cliente.'/img/'.f($RS,'LOGO').'" width=56 height=67>');
+  ShowHTML('    <TD ROWSPAN='.$l_colspan.'><IMG ALIGN="LEFT" SRC="'.$conFileVirtual.$w_cliente.'/img/'.f($RS,'LOGO').'">');
   ShowHTML('    <TD ALIGN="RIGHT"><B><FONT SIZE=4 COLOR="#000000">'.$p_titulo.'</FONT>');
   ShowHTML('  </TR>');
   ShowHTML('  <TR><TD ALIGN="RIGHT"><B><FONT SIZE=2 COLOR="#000000">'.DataHora().'</B></TD></TR>');
@@ -1087,6 +1090,7 @@ function MascaraBeneficiario($cgccpf) {
 function EnviaMail($w_subject,$w_mensagem,$w_recipients,$w_attachments = null) {
   extract($GLOBALS);
   include_once($conDiretorio.'classes/mail/inc_cPHPezMail.php');
+
   $_mail = new cPHPezMail();
   $l_server = nvl($_SERVER['SERVER_NAME'],$_SERVER['HOSTNAME']);
   if (false!==strpos($l_server,'.')) {
@@ -1114,12 +1118,19 @@ function EnviaMail($w_subject,$w_mensagem,$w_recipients,$w_attachments = null) {
       if (nvl($v,'')!='') $_mail->AddAttachLocalFile($v);
     }
   }
+  
+  // Configura o servidor SMTP, conforme 
+  include_once($conDiretorio.'classes/sp/db_getCustomerData.php');
+  $RS_Cliente = db_getCustomerData::getInstanceOf($dbms, $_SESSION['P_CLIENTE']);
+  ini_set("SMTP",f($RS_Cliente,'smtp_server'));
+  ini_set("sendmail_from",f($RS_Cliente,'siw_email_conta'));
 
   //send your e-mail
   if ($conEnviaMail) {
     if (!$_mail->Send()) {
-      if (strtoupper(substr(PHP_OS,0,3)=='WIN') || strtoupper(substr(PHP_OS,0,5)=='LINUX')) {
-        return 'ERRO: ocorreu algum erro no envio da mensagem. Verifique as configurações de SMTP';
+      // Solaris (SunOS) sempre retorna falso, mesmo enviando a mensagem.
+      if (strtoupper(PHP_OS)!='SUNOS') {
+        return 'ERRO: ocorreu algum erro no envio da mensagem.\\SMTP ['.f($RS_Cliente,'smtp_server').']\nPorta ['.ini_get('smtp_port').']\nConta ['.f($RS_Cliente,'siw_email_conta').']';
       } else {
         return null;
       }

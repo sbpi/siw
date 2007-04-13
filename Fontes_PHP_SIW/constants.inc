@@ -51,8 +51,8 @@ $conImgAtraso	= 'images/BallRed.png';
 $conImgCancel 	='images/icone/REQUIRED.GIF';
 $conImgProblem  ='images/icone/problem.gif';
 $conImgRiskLow  ='images/icone/risk_low.gif';
-$conImgRiskMed  ='images/icone/risk_medium.gif';
-$conImgRiskHig  ='images/icone/risk_high.gif';
+$conImgRiskMed  ='images/icone/risk_low.gif';
+$conImgRiskHig  ='images/icone/risk_medium.gif';
 
 
 //---------------------------Definições de banco

@@ -149,12 +149,21 @@ function Gera_Hierarquico($l_gera) {
   
   $RS = db_getSolicData::getInstanceOf($dbms,$w_chave,'PJGERAL');
   $l_xml .= chr(13).'  <node name="    '.f($RS,'ac_titulo').'    " fitname="1" align="left" namecolor="#f" bgcolor="#d9e3ed" bgcolor2="#f" namebgcolor="#d9e3ed" namebgcolor2="#526e88" bordercolor="#526e88">';
-  $l_xml .= chr(13).'      Periodo: '.formataDataEdicao(f($RS,'inicio')).' a '.formataDataEdicao(f($RS,'fim')).'\nIDE em '.formataDataEdicao(time()).': '.formatNumber(f($RS,'ide'),2).'%'.'\nIGC: '.formatNumber(f($RS,'igc'),2).'%';
+  $l_xml .= chr(13).'     Periodo: '.formataDataEdicao(f($RS,'inicio')).' a '.formataDataEdicao(f($RS,'fim')).'\nIDE em '.formataDataEdicao(time()).': '.formatNumber(f($RS,'ide'),2).'%'.'\nIGC: '.formatNumber(f($RS,'igc'),2).'%';
 
   // Recupera as etapas principais
-  $RS = db_getSolicEtapa::getInstanceOf($dbms,$w_chave,null,'LSTNULL',null);
-  $RS = SortArray($RS,'ordem','asc');
+  $RS = db_getSolicEtapa::getInstanceOf($dbms,$w_chave,null,'ARVORE',null);
+  $w_level = 0;
   foreach($RS as $row) {
+    $l_level = intVal(f($row,'level'));
+    if ($w_level!=$l_level) {
+      if ($w_level > 0 && $w_level>$l_level) {
+        for ($i=1;$i<=($w_level-$l_level+1);$i++) { $l_xml .= chr(13).str_repeat('   ',($w_level-$i+1)).'  </node>'; }
+      }
+      $w_level = $l_level;
+    } else {
+      $l_xml .= chr(13).str_repeat('   ',$w_level).'  </node>';
+    }
     if (f($row,'pacote_trabalho')=='S') {
       if (f($row,'fim_previsto')<time() && f($row,'perc_conclusao')<100) {
         $w_cor_nome = '"#ff0000"';
@@ -167,82 +176,10 @@ function Gera_Hierarquico($l_gera) {
       $w_cor_nome = '"#d9e3ed"';
       $w_cor_text = '"#d9e3ed"';
     }
-    $l_xml .= chr(13).'      <node name="'.MontaOrdemEtapa(f($row,'sq_projeto_etapa')).'. '.f($row,'ac_titulo').'" fitname="0" connectioncolor="#526e88" align="center" namealign="center" namecolor="#f" bgcolor='.$w_cor_text.' bgcolor2="#f" namebgcolor='.$w_cor_nome.' namebgcolor2="#526e88" bordercolor="#526e88">';
-    $l_xml .= chr(13).'          Ini: '.formataDataEdicao(f($row,'inicio_previsto')).'\nFim: '.formataDataEdicao(f($row,'fim_previsto')).'\n'.f($row,'perc_conclusao').'%';
-    // Recupera as etapas de nível 1
-    $RS1 = db_getSolicEtapa::getInstanceOf($dbms,$w_chave,f($row,'sq_projeto_etapa'),'LSTNIVEL',null);
-    $RS1 = SortArray($RS1,'ordem','asc');
-    if (count($RS1)==0) {
-      $l_xml .= chr(13).'      </node>';
-    } else {
-      foreach($RS1 as $row1) {
-        if (f($row1,'pacote_trabalho')=='S') {
-          if (f($row1,'fim_previsto')<time() && f($row1,'perc_conclusao')<100) {
-            $w_cor_nome = '"#ff0000"';
-            $w_cor_text = '"#ff0000"';
-          } else {
-            $w_cor_nome = '"#00ff00"';
-            $w_cor_text = '"#00ff00"';
-          }
-        } else {
-          $w_cor_nome = '"#d9e3ed"';
-          $w_cor_text = '"#d9e3ed"';
-        }
-        $l_xml .= chr(13).'          <node name="'.MontaOrdemEtapa(f($row1,'sq_projeto_etapa')).'. '.f($row1,'ac_titulo').'" fitname="0" connectioncolor="#526e88" align="center" namealign="center" namecolor="#f" bgcolor='.$w_cor_text.' bgcolor2="#f" namebgcolor='.$w_cor_nome.' namebgcolor2="#526e88" bordercolor="#526e88">';
-        $l_xml .= chr(13).'              Ini: '.formataDataEdicao(f($row1,'inicio_previsto')).'\nFim: '.formataDataEdicao(f($row1,'fim_previsto')).'\n'.f($row1,'perc_conclusao').'%';
-        // Recupera as etapas de nível 2
-        $RS2 = db_getSolicEtapa::getInstanceOf($dbms,$w_chave,f($row1,'sq_projeto_etapa'),'LSTNIVEL',null);
-        $RS2 = SortArray($RS2,'ordem','asc');
-        if (count($RS2)==0) {
-          $l_xml .= chr(13).'          </node>';
-        } else {
-          foreach($RS2 as $row2) {
-            if (f($row2,'pacote_trabalho')=='S') {
-              if (f($row2,'fim_previsto')<time() && f($row2,'perc_conclusao')<100) {
-                $w_cor_nome = '"#ff0000"';
-                $w_cor_text = '"#ff0000"';
-              } else {
-                $w_cor_nome = '"#00ff00"';
-                $w_cor_text = '"#00ff00"';
-              }
-            } else {
-              $w_cor_nome = '"#d9e3ed"';
-              $w_cor_text = '"#d9e3ed"';
-            }
-            $l_xml .= chr(13).'              <node name="'.MontaOrdemEtapa(f($row2,'sq_projeto_etapa')).'. '.f($row2,'ac_titulo').'" fitname="0" connectioncolor="#526e88" align="center" namealign="center" namecolor="#f" bgcolor='.$w_cor_text.' bgcolor2="#f" namebgcolor='.$w_cor_nome.' namebgcolor2="#526e88" bordercolor="#526e88">';
-            $l_xml .= chr(13).'                  Ini: '.formataDataEdicao(f($row2,'inicio_previsto')).'\nFim: '.formataDataEdicao(f($row2,'fim_previsto')).'\n'.f($row2,'perc_conclusao').'%';
-            // Recupera as etapas de nível 3
-            $RS3 = db_getSolicEtapa::getInstanceOf($dbms,$w_chave,f($row2,'sq_projeto_etapa'),'LSTNIVEL',null);
-            $RS3 = SortArray($RS3,'ordem','asc');
-            if (count($RS3)==0) {
-              $l_xml .= chr(13).'              </node>';
-            } else {
-              foreach($RS3 as $row3) {
-                if (f($row3,'pacote_trabalho')=='S') {
-                  if (f($row3,'fim_previsto')<time() && f($row3,'perc_conclusao')<100) {
-                    $w_cor_nome = '"#ff0000"';
-                    $w_cor_text = '"#ff0000"';
-                  } else {
-                    $w_cor_nome = '"#00ff00"';
-                    $w_cor_text = '"#00ff00"';
-                  }
-                } else {
-                  $w_cor_nome = '"#d9e3ed"';
-                  $w_cor_text = '"#d9e3ed"';
-                }
-                $l_xml .= chr(13).'                  <node name="'.MontaOrdemEtapa(f($row3,'sq_projeto_etapa')).'. '.f($row3,'ac_titulo').'" fitname="0" connectioncolor="#526e88" align="center" namealign="center" namecolor="#f" bgcolor='.$w_cor_text.' bgcolor2="#f" namebgcolor='.$w_cor_nome.' namebgcolor2="#526e88" bordercolor="#526e88">';
-                $l_xml .= chr(13).'                      Ini: '.formataDataEdicao(f($row3,'inicio_previsto')).'\nFim: '.formataDataEdicao(f($row3,'fim_previsto')).'\n'.f($row3,'perc_conclusao').'%';
-                $l_xml .= chr(13).'                  </node>';
-              }
-              $l_xml .= chr(13).'              </node>';
-            }
-          }
-          $l_xml .= chr(13).'          </node>';
-        }
-      }
-      $l_xml .= chr(13).'      </node>';
-    }
+    $l_xml .= chr(13).str_repeat('   ',$w_level).'  <node name="'.MontaOrdemEtapa(f($row,'sq_projeto_etapa')).'. '.f($row,'ac_titulo').'" fitname="0" connectioncolor="#526e88" align="center" namealign="center" namecolor="#f" bgcolor='.$w_cor_text.' bgcolor2="#f" namebgcolor='.$w_cor_nome.' namebgcolor2="#526e88" bordercolor="#526e88">';
+    $l_xml .= chr(13).str_repeat('   ',$w_level).'     Ini: '.formataDataEdicao(f($row,'inicio_previsto')).'\nFim: '.formataDataEdicao(f($row,'fim_previsto')).'\n'.f($row,'perc_conclusao').'%';
   }
+  for ($i=1;$i<=$w_level;$i++) { $l_xml .= chr(13).str_repeat('   ',($w_level-$i+1)).'  </node>'; }
   $l_xml .= chr(13).'  </node>';
   $l_xml .= chr(13).'</diagram>';
 
@@ -424,20 +361,20 @@ function Gera_Gantt() {
   // use loops to define these variables with database data
 
   // Recupera as etapas principais
-  $RS = db_getSolicEtapa::getInstanceOf($dbms,$w_chave,null,'LSTNULL',null);
-  $RS = SortArray($RS,'ordem','asc');
+  $RS = db_getSolicEtapa::getInstanceOf($dbms,$w_chave,null,'LSTNIVEL',null);
+  $RS = SortArray($RS,'cd_ordem','asc');
   $i = 0;
   $j = 0;
   foreach($RS as $row) {
     // you need to set groups to graphic be created
-    if (strlen(f($row,'titulo')) > 45) $l_titulo = substr(f($row,'titulo'),0,45).'..'; else $l_titulo = f($row,'titulo');
-    $definitions['groups']['group'][$i]['name'] = $l_titulo;
+    if (strlen(f($row,'titulo')) > 40) $l_titulo = substr(f($row,'titulo'),0,40).'..'; else $l_titulo = f($row,'titulo');
+    $definitions['groups']['group'][$i]['name'] = f($row,'cd_ordem').'. '.$l_titulo;
     $definitions['groups']['group'][$i]['start'] = f($row,'inicio_previsto');
     $definitions['groups']['group'][$i]['end'] = addDays(f($row,'fim_previsto'),1);
 
     // Recupera os pacotes de trabalho da etapa
     $RS1 = db_getSolicEtapa::getInstanceOf($dbms,$w_chave,f($row,'sq_projeto_etapa'),'LISTA',f($row,'sq_projeto_etapa'));
-    $RS1 = SortArray($RS1,'inicio_previsto','asc');
+    $RS1 = SortArray($RS1,'cd_ordem','asc');
     foreach($RS1 as $row1) {
       // you need to set a group to every phase(=phase) to show it rigth
       // 'group'][0] -> 0 is the number of the group to associate phases
@@ -445,8 +382,8 @@ function Gera_Gantt() {
       $definitions['groups']['group'][$i]['phase'][$j] = $j;
 
       //you have to set planned phase name even when show only planned adjusted
-      if (strlen(f($row1,'titulo')) > 45) $l_titulo = substr(f($row1,'titulo'),0,45).'..'; else $l_titulo = f($row1,'titulo');
-      $definitions['planned']['phase'][$j]['name'] = $l_titulo;
+      if (strlen(f($row1,'titulo')) > 40) $l_titulo = substr(f($row1,'titulo'),0,40).'..'; else $l_titulo = f($row1,'titulo');
+      $definitions['planned']['phase'][$j]['name'] = f($row1,'cd_ordem').'. '.$l_titulo;
 
       //define the start and end of each phase. Set only what you want/need to show. Not defined values will not draws bars
       $definitions['planned']['phase'][$j]['start'] = f($row1,'inicio_previsto');

@@ -430,7 +430,7 @@ function Pacote() {
   
   // Recupera as etapas que são pacotes de trabalho
   $RS = db_getSolicEtapa::getInstanceOf($dbms,$w_chave,$w_chave_aux,'QUESTAO',null);
-  $RS = SortArray($RS,'ordena','asc'); 
+  $RS = SortArray($RS,'sq_etapa_pai','asc'); 
   Cabecalho();
   ShowHTML('<HEAD>');
   ShowHTML('<TITLE>'.$conSgSistema.'</TITLE>');
@@ -500,11 +500,11 @@ function Pacote() {
       if (f($row,'vinculado')>0) {
         ShowHTML('      <tr valign="top">');
         ShowHTML('          <td><input type="CHECKBOX" name="w_sq_projeto_etapa[]" value="'.f($row,'sq_projeto_etapa').'" CHECKED>');
-        ShowHTML('          '.f($row,'titulo').'</td>');
+        ShowHTML('          '.ExibeEtapa('V',f($row,'sq_siw_solicitacao'),f($row,'sq_projeto_etapa'),'Volta',10,MontaOrdemEtapa(f($row,'sq_projeto_etapa')),$TP,$SG).'. '.f($row,'titulo').'</td>');       
       } else {
         ShowHTML('      <tr valign="top">');
         ShowHTML('          <td><input type="CHECKBOX" name="w_sq_projeto_etapa[]" value="'.f($row,'sq_projeto_etapa').'">'); 
-        ShowHTML('          '.f($row,'titulo').'</td>');       
+        ShowHTML('          '.ExibeEtapa('V',f($row,'sq_siw_solicitacao'),f($row,'sq_projeto_etapa'),'Volta',10,MontaOrdemEtapa(f($row,'sq_projeto_etapa')),$TP,$SG).'. '.f($row,'titulo').'</td>');       
       }
     }
     ShowHTML('      </table>');

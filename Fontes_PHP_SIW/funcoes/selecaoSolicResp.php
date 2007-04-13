@@ -7,7 +7,6 @@ function selecaoSolicResp($label,$accesskey,$hint,$chave,$chaveAux,$tramite,$cha
   extract($GLOBALS);
   $RS = db_getSolicResp::getInstanceOf($dbms, $chaveAux, $tramite, $chaveAux2, $restricao);
   $RS = SortArray($RS,'nome_resumido_ind','asc');
-
   if (!isset($hint)) {
      ShowHTML('          <td valign="top"><font size="1"><b>'.$label.'</b><br><SELECT ACCESSKEY="'.$accesskey.'" CLASS="sts" NAME="'.$campo.'" '.$w_Disabled.'>');
   } else {
