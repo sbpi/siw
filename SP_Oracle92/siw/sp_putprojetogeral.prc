@@ -41,6 +41,9 @@ create or replace procedure SP_PutProjetoGeral
    w_ativ    number(18);
    i         number(10) := 0;
 
+   type tb_risco_pai is table of number(10) index by binary_integer;
+   w_risco_pai tb_risco_pai;
+
    type tb_recurso_pai is table of number(10) index by binary_integer;
    w_recurso_pai tb_recurso_pai;
 
@@ -54,6 +57,15 @@ create or replace procedure SP_PutProjetoGeral
 
    w_etapa     tb_etapa;
    w_etapa_pai tb_etapa_pai;
+
+   cursor c_riscos is
+     select * from siw_restricao where risco = 'S' and sq_siw_solicitacao = p_copia;
+
+   cursor c_etapa_risco is
+      select a.*
+        from siw_restricao_etapa      a
+             inner join siw_restricao b on (a.sq_siw_restricao = b.sq_siw_restricao)
+       where b.sq_siw_solicitacao = p_copia;
 
    cursor c_recursos is
      select * from pj_projeto_recurso where sq_siw_solicitacao = p_copia;
@@ -143,26 +155,60 @@ begin
 
       -- Se o projeto foi copiado de outra, grava os dados complementares
       If p_copia is not null Then
+         -- Complementa as informações da solicitacao
+         update siw_solicitacao set ( descricao, justificativa ) =
+         (select descricao, justificativa
+            from siw_solicitacao
+           where sq_siw_solicitacao = p_copia
+         )
+         where sq_siw_solicitacao = w_chave;
+
+         -- Complementa as informações do projeto
+         update pj_projeto set
+               ( outra_parte,         preposto,        sq_cidade,         limite_passagem, 
+                 objetivo_superior,   exclusoes,       premissas,         restricoes
+               ) =
+         (select outra_parte,         preposto,        sq_cidade,         limite_passagem, 
+                 objetivo_superior,   exclusoes,       premissas,         restricoes
+            from pj_projeto
+           where sq_siw_solicitacao = p_copia
+         )
+         where sq_siw_solicitacao = w_chave;
+
          -- Insere registro na tabela de interessados
-         Insert Into pj_projeto_interes
-            ( sq_pessoa,   sq_siw_solicitacao,   tipo_visao,    envia_email )
-         (Select
-              a.sq_pessoa, w_chave,              a.tipo_visao,  a.envia_email
+         Insert Into pj_projeto_interes ( sq_pessoa,   sq_siw_solicitacao,   tipo_visao,    envia_email )
+         (Select                          a.sq_pessoa, w_chave,              a.tipo_visao,  a.envia_email
            from pj_projeto_interes a
           where a.sq_siw_solicitacao = p_copia
          );
          -- Insere registro na tabela de áreas envolvidas
-         Insert Into pj_projeto_envolv
-            ( sq_unidade,   sq_siw_solicitacao,   papel )
-         (Select
-              a.sq_unidade, w_chave,              a.papel
+         Insert Into pj_projeto_envolv ( sq_unidade,   sq_siw_solicitacao,   papel )
+         (Select                         a.sq_unidade, w_chave,              a.papel
             from pj_projeto_envolv a
            where a.sq_siw_solicitacao = p_copia
           );
 
+          -- Insere os riscos do projeto
+          for crec in c_riscos loop
+             -- recupera a próxima chave do recurso
+             select sq_siw_restricao.nextval into w_chave1 from dual;
+
+             -- Guarda pai do registro original
+             w_risco_pai(crec.sq_siw_restricao) := w_chave1;
+
+             -- insere o recurso
+             insert into siw_restricao
+               (sq_siw_restricao,      sq_siw_solicitacao,      sq_pessoa,           sq_pessoa_atualizacao,      sq_tipo_restricao,      
+                risco,                 problema,                descricao,           probabilidade,              impacto, 
+                criticidade,           estrategia,              acao_resposta,       ultima_atualizacao)
+             values
+               (w_chave1,              w_chave,                 crec.sq_pessoa,      p_cadastrador,              crec.sq_tipo_restricao, 
+                crec.risco,            crec.problema,           crec.descricao,      crec.probabilidade,         crec.impacto, 
+                crec.criticidade,      crec.estrategia,         crec.acao_resposta,  sysdate);
+          end loop;
+
           -- Insere recursos do projeto
           for crec in c_recursos loop
-
              -- recupera a próxima chave do recurso
              select sq_projeto_recurso.nextval into w_chave1 from dual;
 
@@ -178,7 +224,6 @@ begin
 
           -- Insere etapas do projeto
           for crec in c_etapas loop
-
              -- recupera a próxima chave do recurso
              select sq_projeto_etapa.nextval into w_chave1 from dual;
 
@@ -240,6 +285,12 @@ begin
                 ( sq_projeto_etapa,                   sq_projeto_recurso,                     observacao )
              Values
                 ( w_etapa_pai(crec.sq_projeto_etapa), w_recurso_pai(crec.sq_projeto_recurso), crec.observacao );
+          end loop;
+
+          -- Insere o relacionamento entre etapas e riscos
+          for crec in c_etapa_risco loop
+             insert into siw_restricao_etapa (sq_siw_restricao,                   sq_projeto_etapa)
+             values                          (w_risco_pai(crec.sq_siw_restricao), w_etapa_pai(crec.sq_projeto_etapa));
           end loop;
       End If;
    Elsif p_operacao = 'A' Then -- Alteração
@@ -362,28 +413,36 @@ begin
          w_arq := substr(w_arq, 3, length(w_arq));
 
          -- Remove os registros vinculados ao projeto
-         delete siw_solic_arquivo where sq_siw_solicitacao = p_chave;
-         delete siw_arquivo       where sq_siw_arquivo     in (w_arq);
+         delete siw_solic_arquivo           where sq_siw_solicitacao = p_chave;
+         delete siw_arquivo                 where sq_siw_arquivo     in (w_arq);
 
-         delete or_acao_prioridade where sq_siw_solicitacao = p_chave;
-         delete or_acao_financ     where sq_siw_solicitacao = p_chave;
-         delete or_acao            where sq_siw_solicitacao = p_chave;
-         delete pj_projeto_representante where sq_siw_solicitacao = p_chave;
-         delete pj_projeto_envolv  where sq_siw_solicitacao = p_chave;
-         delete pj_projeto_interes where sq_siw_solicitacao = p_chave;
-         delete pj_recurso_etapa   where sq_projeto_etapa in (select sq_projeto_etapa from pj_projeto_etapa where sq_siw_solicitacao = p_chave);
-         delete pj_rubrica         where sq_siw_solicitacao = p_chave;
-         delete pj_projeto_etapa   where sq_siw_solicitacao = p_chave;
-         delete pj_projeto_recurso where sq_siw_solicitacao = p_chave;
+         delete siw_solic_indicador         where sq_siw_solicitacao = p_chave;
+         delete siw_solic_meta              where sq_siw_solicitacao = p_chave;
+         delete siw_solicitacao_interessado where sq_siw_solicitacao = p_chave;
+         delete siw_solic_recurso_alocacao  where sq_solic_recurso in (select sq_solic_recurso from siw_solic_recurso where sq_siw_solicitacao = p_chave);
+         delete siw_solic_recurso           where sq_siw_solicitacao = p_chave;
+         delete siw_restricao_etapa         where sq_siw_restricao in (select sq_siw_restricao from siw_restricao where sq_siw_solicitacao = p_chave);
+         delete siw_restricao               where sq_siw_solicitacao = p_chave;
+
+         delete or_acao_prioridade          where sq_siw_solicitacao = p_chave;
+         delete or_acao_financ              where sq_siw_solicitacao = p_chave;
+         delete or_acao                     where sq_siw_solicitacao = p_chave;
+         delete pj_projeto_representante    where sq_siw_solicitacao = p_chave;
+         delete pj_projeto_envolv           where sq_siw_solicitacao = p_chave;
+         delete pj_projeto_interes          where sq_siw_solicitacao = p_chave;
+         delete pj_recurso_etapa            where sq_projeto_etapa in (select sq_projeto_etapa from pj_projeto_etapa where sq_siw_solicitacao = p_chave);
+         delete pj_rubrica                  where sq_siw_solicitacao = p_chave;
+         delete pj_projeto_etapa            where sq_siw_solicitacao = p_chave;
+         delete pj_projeto_recurso          where sq_siw_solicitacao = p_chave;
 
          -- Remove o registro na tabela de projetos
-         delete pj_projeto where sq_siw_solicitacao = p_chave;
+         delete pj_projeto                  where sq_siw_solicitacao = p_chave;
 
          -- Remove o log da solicitação
-         delete siw_solic_log where sq_siw_solicitacao = p_chave;
+         delete siw_solic_log               where sq_siw_solicitacao = p_chave;
 
          -- Remove o registro na tabela de solicitações
-         delete siw_solicitacao where sq_siw_solicitacao = p_chave;
+         delete siw_solicitacao             where sq_siw_solicitacao = p_chave;
       End If;
    End If;
 

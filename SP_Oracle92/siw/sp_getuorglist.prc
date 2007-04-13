@@ -32,7 +32,9 @@ begin
                 left outer join pe_unidade         g on (a.sq_unidade         = g.sq_unidade)
                 left outer join pa_unidade         h on (a.sq_unidade         = h.sq_unidade)
           where b.sq_pessoa            = p_cliente
-            and (p_restricao           <> 'EXTERNO' or (p_restricao          = 'EXTERNO' and (a.externo  = 'N' or (a.externo  = 'S' and 0 = (select count(sq_unidade) from eo_unidade where sq_unidade_pai = a.sq_unidade)))))
+            and ((p_restricao         <> 'EXTERNO' and a.externo = 'N') or 
+                 (p_restricao          = 'EXTERNO' and (a.externo  = 'N' or (a.externo  = 'S' and 0 = (select count(sq_unidade) from eo_unidade where sq_unidade_pai = a.sq_unidade))))
+                )
             and (p_chave               is null or (p_chave is not null and a.sq_unidade = p_chave))
             and (p_nome                is null or (p_nome  is not null and acentos(a.nome)  like '%'||acentos(p_nome)||'%'))
             and (p_sigla               is null or (p_sigla is not null and acentos(a.sigla) like '%'||acentos(p_sigla)||'%'))

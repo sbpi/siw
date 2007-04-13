@@ -16,6 +16,9 @@ begin
          w_mes    := add_months(w_inicio,1);
          w_inicio := to_date('01/'||to_char(w_mes,'mm/yyyy'),'dd/mm/yyyy');
          w_fim    := last_day(w_mes);
+      Elsif to_char(p_inicio,'dd') = '01' and to_char(p_fim,'dd') = '15' and to_char(p_inicio,'yyyymm') = to_char(p_fim,'yyyymm') Then
+         w_inicio := p_fim + 1;
+         w_fim    := last_day(w_inicio);
       Else
          w_dias   := w_fim - w_inicio + 1;
          w_inicio := w_inicio + w_dias;
@@ -29,7 +32,7 @@ begin
    If substr(p_restricao,1,3) = 'PRO' Then
       open p_result for 
          select a.sq_projeto_etapa, a.ordem, a.titulo nm_etapa, a.sq_pessoa, h.nome_resumido nm_resp_etapa, a.fim_previsto, a.situacao_atual,
-                a.perc_conclusao, a.fim_real fim_real_etapa, a.sq_unidade, a.inicio_previsto, a.inicio_real inicio_real_etapa,
+                a.perc_conclusao, a.fim_real fim_real_etapa, a.sq_unidade, a.inicio_previsto, a.inicio_real inicio_real_etapa, a.pacote_trabalho,
                 montaOrdem(a.sq_projeto_etapa) as cd_ordem,
                 b.sq_siw_solicitacao sq_projeto, b.titulo nm_projeto, c.inicio inicio_projeto, c.fim fim_projeto,
                 i.sq_menu, i.sq_tarefa, i.nm_tarefa, i.solicitante, i.nm_resp_tarefa, i.inicio, i.fim, i.inicio_real, i.fim_real,
@@ -54,17 +57,18 @@ begin
                                                                        )
                                 where (p_restricao = 'PROREPORT' and l.fim_real between w_inicio and w_fim)
                                    or (p_restricao = 'PROPREV'   and k.fim      between w_inicio and w_fim)
-                                   or (p_restricao = 'PROENTR'   and l.fim_real is null and (k.fim between w_inicio and w_fim or k.fim < p_inicio))
+                                   or (p_restricao = 'PROENTR'   and l.fim_real is null and k.fim between w_inicio and w_fim)
+                                   or (p_restricao = 'PROPEND'   and l.fim_real is null and k.fim < p_fim)
                               )                i on (e.sq_siw_solicitacao = i.sq_tarefa)
           where d.sq_pessoa       = p_cliente
             and j.sigla           <> 'CA'
+            and ((i.sq_tarefa is null and a.pacote_trabalho = 'S') or i.sq_tarefa is not null)
             and (p_chave     is null or (p_chave       is not null and a.sq_siw_solicitacao   = p_chave))
             and (i.sq_tarefa is not null or
                  ((p_restricao = 'PROPREV'   and a.fim_previsto between w_inicio and w_fim)) or
                   (p_restricao = 'PROREPORT' and a.fim_real     between w_inicio and w_fim) or
-                  (p_restricao = 'PROENTR'   and a.perc_conclusao < 100 and
-                   (a.fim_previsto between w_inicio and w_fim or a.fim_previsto < p_inicio)
-                  )
+                  (p_restricao = 'PROENTR'   and a.perc_conclusao < 100 and a.fim_previsto between w_inicio and w_fim) or
+                  (p_restricao = 'PROPEND'   and a.perc_conclusao < 100 and a.fim_previsto < p_inicio)
                 );
   ElsIf p_restricao = 'RELATORIO' Then
       open p_result for 
@@ -87,7 +91,6 @@ begin
           where d.sq_pessoa       = p_cliente
             and j.sigla           <> 'CA'
             and (p_chave     is null or (p_chave       is not null and a.sq_siw_solicitacao   = p_chave))
-            --and (w_inicio    is null or (c.inicio between w_inicio and w_fim and c.fim between w_inicio and w_fim));
             and (
                  (
                   ((a.fim_previsto between w_inicio and w_fim) and a.perc_conclusao < 100) or 

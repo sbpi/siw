@@ -25,6 +25,7 @@ begin
                 a.inicio_real, a.fim_real, a.perc_conclusao, a.orcamento, a.sq_unidade, a.sq_pessoa, a.vincula_atividade, a.sq_pessoa_atualizacao, 
                 a.ultima_atualizacao, a.situacao_atual, a.unidade_medida, a.quantidade, a.cumulativa, a.programada, a.exequivel, 
                 a.justificativa_inexequivel, a.outras_medidas, a.vincula_contrato, a.peso, a.pacote_trabalho,
+                montaOrdem(a.sq_projeto_etapa) as cd_ordem,
                 b.sq_pessoa titular, c.sq_pessoa substituto, 
                 k.sq_pessoa tit_exec, l.sq_pessoa sub_exec,
                 d.nome_resumido||' ('||f.sigla||')' nm_resp, g.sigla sg_setor,
@@ -128,66 +129,6 @@ begin
                                  )              e  on (a.sq_projeto_etapa = e.sq_projeto_etapa)
         where b.sq_siw_restricao = p_chave
           and (p_restricao = 'ETAPA' or (p_restricao = 'PACOTES' and a.pacote_trabalho = 'S'));
-   ElsIf p_restricao = 'LSTNULL' Then
-      -- Recupera as etapas principais de um projeto
-      open p_result for 
-         select a.sq_projeto_etapa, a.sq_siw_solicitacao, a.sq_etapa_pai, a.ordem, a.titulo, a.descricao, a.inicio_previsto, a.fim_previsto, 
-                a.inicio_real, a.fim_real, a.perc_conclusao, a.orcamento, a.sq_unidade, a.sq_pessoa, a.vincula_atividade, a.sq_pessoa_atualizacao, 
-                a.ultima_atualizacao, a.situacao_atual, a.unidade_medida, a.quantidade, a.cumulativa, a.programada, a.exequivel, 
-                a.justificativa_inexequivel, a.outras_medidas, a.vincula_contrato, a.pacote_trabalho, a.peso,
-                b.sq_pessoa titular, c.sq_pessoa substituto, i.executor, i.solicitante,
-                case a.programada when 'S' then 'Sim' else 'Não' end nm_programada,
-                case a.cumulativa when 'S' then 'Sim' else 'Não' end nm_cumulativa,  
-                case a.exequivel  when 'S' then 'Sim' else 'Não' end nm_exequivel,    
-                k.sq_pessoa tit_exec, l.sq_pessoa sub_exec,
-                d.nome_resumido||' ('||f.sigla||')' nm_resp, g.sigla sg_setor,
-                nvl(h.qt_ativ,0) qt_ativ, h.sq_menu p2,
-                m.vincula_contrato pj_vincula_contrato, nvl(n.qt_contr,0) qt_contr, n.sq_menu p3,
-                SolicRestricao(a.sq_siw_solicitacao, a.sq_projeto_etapa) as restricao,
-                acentos(a.titulo,1) as ac_titulo
-           from pj_projeto_etapa                a
-                inner          join siw_solicitacao i on (a.sq_siw_solicitacao = i.sq_siw_solicitacao)
-                inner        join pj_projeto      m on (a.sq_siw_solicitacao = m.sq_siw_solicitacao)
-                  inner        join siw_menu        j on (i.sq_menu            = j.sq_menu)
-                    left outer join eo_unidade_resp k on (j.sq_unid_executora  = k.sq_unidade and
-                                                          k.tipo_respons       = 'T'          and
-                                                          k.fim                is null
-                                                         )
-                    left outer join eo_unidade_resp l on (j.sq_unid_executora = l.sq_unidade and
-                                                          l.tipo_respons       = 'S'          and
-                                                          l.fim                is null
-                                                         )
-                left outer     join eo_unidade_resp b on (a.sq_unidade         = b.sq_unidade and
-                                                          b.tipo_respons       = 'T'          and
-                                                          b.fim                is null
-                                                         )
-                left outer     join eo_unidade_resp c on (a.sq_unidade         = c.sq_unidade and
-                                                          c.tipo_respons       = 'S'          and
-                                                          c.fim                is null
-                                                         )
-                inner          join co_pessoa       d on (a.sq_pessoa          = d.sq_pessoa)
-                  inner        join sg_autenticacao e on (d.sq_pessoa          = e.sq_pessoa)
-                    inner      join eo_unidade      f on (e.sq_unidade         = f.sq_unidade)
-                inner          join eo_unidade      g on (a.sq_unidade         = g.sq_unidade)
-                left outer     join (select x.sq_projeto_etapa, y.sq_menu, count(*) qt_ativ
-                                       from pj_etapa_demanda             x
-                                            inner   join siw_solicitacao y on (x.sq_siw_solicitacao = y.sq_siw_solicitacao)
-                                              inner join siw_tramite     z on (y.sq_siw_tramite     = z.sq_siw_tramite and
-                                                                               Nvl(z.sigla,'-')     <> 'CA'
-                                                                              )
-                                     group by x.sq_projeto_etapa, y.sq_menu
-                                )                   h on (h.sq_projeto_etapa = a.sq_projeto_etapa)
-                left outer     join (select x.sq_projeto_etapa, y.sq_menu, count(*) qt_contr
-                                       from pj_etapa_contrato            x
-                                            inner   join siw_solicitacao y on (x.sq_siw_solicitacao = y.sq_siw_solicitacao)
-                                              inner join siw_tramite     z on (y.sq_siw_tramite     = z.sq_siw_tramite and
-                                                                               Nvl(z.sigla,'-')     <> 'CA'
-                                                                              )
-                                     group by x.sq_projeto_etapa, y.sq_menu
-                                )                   n on (n.sq_projeto_etapa = a.sq_projeto_etapa)
-          where a.sq_siw_solicitacao = p_chave
-            and (p_chave_aux2 is null or (p_chave_aux2 is not null and a.sq_projeto_etapa <> p_chave_aux2 and a.pacote_trabalho = 'N'))
-            and a.sq_etapa_pai       is null;
    ElsIf p_restricao = 'LSTNIVEL' Then
       -- Recupera as etapas vinculadas a uma etapa do projeto
       open p_result for 
@@ -195,6 +136,7 @@ begin
                 a.inicio_real, a.fim_real, a.perc_conclusao, a.orcamento, a.sq_unidade, a.sq_pessoa, a.vincula_atividade, a.sq_pessoa_atualizacao, 
                 a.ultima_atualizacao, a.situacao_atual, a.unidade_medida, a.quantidade, a.cumulativa, a.programada, a.exequivel, 
                 a.justificativa_inexequivel, a.outras_medidas, a.vincula_contrato, a.pacote_trabalho, a.peso,
+                montaOrdem(a.sq_projeto_etapa) as cd_ordem,
                 b.sq_pessoa titular, c.sq_pessoa substituto, i.executor, i.solicitante,
                 k.sq_pessoa tit_exec, l.sq_pessoa sub_exec,
                 d.nome_resumido||' ('||f.sigla||')' nm_resp, g.sigla sg_setor,
@@ -243,8 +185,10 @@ begin
                                      group by x.sq_projeto_etapa, y.sq_menu
                                 )                   n on (n.sq_projeto_etapa = a.sq_projeto_etapa)                                
           where a.sq_siw_solicitacao = p_chave
-            and a.sq_etapa_pai       = p_chave_aux
-            and (p_chave_aux2 is null or (p_chave_aux2 is not null and a.sq_projeto_etapa <> p_chave_aux2 and a.pacote_trabalho = 'N'));
+            and ((p_chave_aux        is null and a.sq_etapa_pai is null) or 
+                 (p_chave_aux is not null and a.sq_etapa_pai       = p_chave_aux)
+                )
+            and (p_chave_aux2        is null or (p_chave_aux2 is not null and a.sq_projeto_etapa <> p_chave_aux2 and a.pacote_trabalho = 'N'));
    Elsif p_restricao = 'REGISTRO' Then
       -- Recupera os dados de uma etapa de projeto
       open p_result for 
@@ -312,6 +256,68 @@ begin
                 left   join co_cidade           r  on (a.sq_cidade         = r.sq_cidade)
           where a.sq_siw_solicitacao = p_chave
             and a.sq_projeto_etapa   = p_chave_aux;
+   Elsif p_restricao = 'ARVORE' Then
+      -- Recupera a árvore das etapas
+      open p_result for 
+         select a.sq_projeto_etapa, a.sq_siw_solicitacao, a.sq_etapa_pai, a.ordem, a.titulo, a.descricao, a.inicio_previsto, a.fim_previsto, 
+                a.inicio_real, a.fim_real, a.perc_conclusao, a.orcamento, a.sq_unidade, a.sq_pessoa, a.vincula_atividade, a.sq_pessoa_atualizacao, 
+                a.ultima_atualizacao, a.situacao_atual, a.unidade_medida, a.quantidade, a.cumulativa, a.programada, a.exequivel, 
+                a.justificativa_inexequivel, a.outras_medidas, a.vincula_contrato, a.pacote_trabalho, a.peso,
+                montaOrdem(a.sq_projeto_etapa) as cd_ordem,
+                montaOrdem(a.sq_projeto_etapa, 'ordenacao') as ordenacao,
+                b.sq_pessoa titular, c.sq_pessoa substituto, i.executor, i.solicitante,
+                k.sq_pessoa tit_exec, l.sq_pessoa sub_exec,
+                d.nome_resumido||' ('||f.sigla||')' nm_resp, g.sigla sg_setor,
+                nvl(h.qt_ativ,0) qt_ativ, h.sq_menu p2,
+                m.vincula_contrato pj_vincula_contrato, nvl(n.qt_contr,0) qt_contr, n.sq_menu p3,
+                SolicRestricao(a.sq_siw_solicitacao, a.sq_projeto_etapa) as restricao,
+                acentos(a.titulo,1) as ac_titulo,
+                level
+           from pj_projeto_etapa                a
+                inner          join siw_solicitacao i on (a.sq_siw_solicitacao = i.sq_siw_solicitacao)
+                inner          join pj_projeto      m on (a.sq_siw_solicitacao = m.sq_siw_solicitacao)                
+                  inner        join siw_menu        j on (i.sq_menu            = j.sq_menu)
+                    left outer join eo_unidade_resp k on (j.sq_unid_executora  = k.sq_unidade and
+                                                          k.tipo_respons       = 'T'          and
+                                                          k.fim                is null
+                                                         )
+                    left outer join eo_unidade_resp l on (j.sq_unid_executora = l.sq_unidade and
+                                                          l.tipo_respons       = 'S'          and
+                                                          l.fim                is null
+                                                         )
+                left outer     join eo_unidade_resp b on (a.sq_unidade         = b.sq_unidade and
+                                                          b.tipo_respons       = 'T'          and
+                                                          b.fim                is null
+                                                         )
+                left outer     join eo_unidade_resp c on (a.sq_unidade         = c.sq_unidade and
+                                                          c.tipo_respons       = 'S'          and
+                                                          c.fim                is null
+                                                         )
+                inner          join co_pessoa       d on (a.sq_pessoa          = d.sq_pessoa)
+                  inner        join sg_autenticacao e on (d.sq_pessoa          = e.sq_pessoa)
+                    inner      join eo_unidade      f on (e.sq_unidade         = f.sq_unidade)
+                inner          join eo_unidade      g on (a.sq_unidade         = g.sq_unidade)
+                left outer     join (select x.sq_projeto_etapa, y.sq_menu, count(*) qt_ativ
+                                       from pj_etapa_demanda             x
+                                            inner   join siw_solicitacao y on (x.sq_siw_solicitacao = y.sq_siw_solicitacao)
+                                              inner join siw_tramite     z on (y.sq_siw_tramite     = z.sq_siw_tramite and
+                                                                               Nvl(z.sigla,'-')     <> 'CA'
+                                                                              )
+                                     group by x.sq_projeto_etapa, y.sq_menu
+                                )                   h on (h.sq_projeto_etapa = a.sq_projeto_etapa)
+                left outer     join (select x.sq_projeto_etapa, y.sq_menu, count(*) qt_contr
+                                       from pj_etapa_contrato            x
+                                            inner   join siw_solicitacao y on (x.sq_siw_solicitacao = y.sq_siw_solicitacao)
+                                              inner join siw_tramite     z on (y.sq_siw_tramite     = z.sq_siw_tramite and
+                                                                               Nvl(z.sigla,'-')     <> 'CA'
+                                                                              )
+                                     group by x.sq_projeto_etapa, y.sq_menu
+                                )                   n on (n.sq_projeto_etapa = a.sq_projeto_etapa)                                
+          where a.sq_siw_solicitacao = p_chave
+            and (p_chave_aux2 is null or (p_chave_aux2 is not null and a.sq_projeto_etapa <> p_chave_aux2 and a.pacote_trabalho = 'N'))
+         connect by prior a.sq_projeto_etapa = a.sq_etapa_pai
+         start with coalesce(a.sq_etapa_pai,0) = coalesce(p_chave_aux,0)
+         order by montaOrdem(a.sq_projeto_etapa, 'ordenacao');
    Elsif p_restricao = 'FILHOS' Then
       -- Recupera as etapas subordinadas a outra do mesmo projeto
       open p_result for 
