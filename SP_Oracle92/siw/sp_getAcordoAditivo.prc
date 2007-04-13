@@ -19,8 +19,14 @@ begin
                 a.parcela_reajustada, a.sq_cc,
                 case a.prorrogacao when 'S' then 'Sim' else 'Não' end nm_prorrogacao,
                 case a.revisao     when 'S' then 'Sim' else 'Não' end nm_revisao,
-                case a.acrescimo   when 'S' then 'Sim' else 'Não' end nm_acrescimo,
-                case a.supressao   when 'S' then 'Sim' else 'Não' end nm_supressao,
+                case a.acrescimo
+                     when 'S' then 'Acréscimo'
+                     else case a.supressao
+                               when 'S'
+                               then 'Supressão'
+                               else '---'
+                          end 
+                end nm_tipo,
                 b.cliente
            from ac_acordo_aditivo    a
                 inner join ac_acordo b on (a.sq_siw_solicitacao = b.sq_siw_solicitacao)
@@ -31,13 +37,6 @@ begin
             and ((p_codigo      is null) or (p_codigo       is not null and a.codigo like '%'||p_codigo||'%'))
             and ((p_inicio      is null) or (p_inicio       is not null and a.inicio between p_inicio and p_fim))
             and ((p_prorrogacao is null) or (p_prorrogacao  is not null and a.prorrogacao        = p_prorrogacao));
-   Elsif p_restricao = 'RETORNAPERIODO' Then
-      open p_result for
-         select a.inicio, a.fim, max(b.inicio) inicio_aditivo, max(b.fim) fim_aditivo
-           from ac_acordo a
-                left join ac_acordo_aditivo b on (a.sq_siw_solicitacao = b.sq_siw_solicitacao)
-          where a.sq_siw_solicitacao = p_chave_aux
-          group by a.inicio, a.fim;
    End If;
 end SP_GetAcordoAditivo;
 /
