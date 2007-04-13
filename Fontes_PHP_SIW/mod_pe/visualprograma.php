@@ -230,21 +230,7 @@ function VisualPrograma($l_chave,$l_o,$l_usuario,$l_p1,$l_formato,$l_identificac
         $w_cor = ($w_cor==$conTrBgColor || $w_cor=='') ? $w_cor=$conTrAlternateBgColor : $w_cor=$conTrBgColor;
         $l_html .=chr(13).'      <tr bgcolor="'.$w_cor.'" valign="top">';
         $l_html .=chr(13).'        <td width="1%" nowrap>';
-        if (f($row,'concluida')=='N') {
-          if (f($row,'fim') < addDays(time(),-1))
-            $l_html .=chr(13).'           <img src="'.$conImgAtraso.'" border=0 width=15 heigth=15 align="center">';
-          elseif (f($row,'aviso_prox_conc') == 'S' && (f($row,'aviso') <= addDays(time(),-1)))
-            $l_html .=chr(13).'           <img src="'.$conImgAviso.'" border=0 width=15 height=15 align="center">';
-          else
-            $l_html .=chr(13).'           <img src="'.$conImgNormal.'" border=0 width=15 height=15 align="center">';
-        } else {
-          if (f($row,'sg_tramite')=='CA')
-            $l_html .=chr(13).'           <img src="'.$conImgCancel.'" border=0 width=15 height=15 align="center">';            
-          elseif (f($row,'fim') < Nvl(f($row,'fim_real'),f($row,'fim')))
-            $l_html .=chr(13).'           <img src="'.$conImgOkAtraso.'" border=0 width=15 heigth=15 align="center">';
-          else
-            $l_html .=chr(13).'           <img src="'.$conImgOkNormal.'" border=0 width=15 height=15 align="center">';
-        } 
+        $l_html .=chr(13).ExibeImagemSolic(f($row,'sigla'),f($row,'inicio'),f($row,'fim'),f($row,'inicio_real'),f($row,'fim_real'),f($row,'aviso_prox_conc'),f($row,'aviso'),f($row,'sg_tramite'), null);
         $l_html .=chr(13).'        <A class="HL" HREF="'.$conRootSIW.'projeto.php?par=Visual&R='.$w_pagina.$par.'&O=L&w_chave='.f($row,'sq_siw_solicitacao').'&w_tipo=Volta&P1='.$P1.'&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP='.$TP.'&SG='.$SG.MontaFiltro('GET').'" title="Exibe as informações deste registro.">'.f($row,'sq_siw_solicitacao').'&nbsp;</a>'.exibeImagemRestricao(f($row,'restricao'),'P');
         $l_html .=chr(13).'        <td>'.ExibePessoa($w_dir_volta,$w_cliente,f($row,'solicitante'),$TP,f($row,'nm_solic')).'</td>';
         $l_html .=chr(13).'        <td>'.Nvl(f($row,'titulo'),'-').'</td>';

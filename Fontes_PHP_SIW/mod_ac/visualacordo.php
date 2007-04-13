@@ -70,8 +70,9 @@ function VisualAcordo($l_chave,$l_O,$l_usuario,$l_P1,$l_P4) {
       $w_html.=chr(13).'                       <td>'.f($RS,'nm_cc').'</td></tr>';
     } 
     if (substr($w_sigla,0,3)=='GCB'){ 
-      $w_html.=chr(13).'      <tr><td><b><font size=1>Plano de trabalho: </b></td>';
-      $w_html.=chr(13).'          <td>'.f($RS,'codigo_interno').' ('.$l_chave.')<br>'.CRLF2BR(f($RS,'objeto')).'</b></font></td></tr>';
+      $w_html.=chr(13).'      <tr valign="top">';
+      $w_html.=chr(13).'        <td><b><font size=1>Plano de trabalho: </b></td>';
+      $w_html.=chr(13).'        <td>'.CRLF2BR(f($RS,'objeto')).'</td></tr>';
     } else {                        
       $w_html.=chr(13).'      <tr valign="top">';
       $w_html.=chr(13).'        <td><b><font size=1>Objeto: </b></td>';
@@ -177,13 +178,13 @@ function VisualAcordo($l_chave,$l_O,$l_usuario,$l_P1,$l_P4) {
       $w_html.=chr(13).'        <table width=100%  border="1" bordercolor="#00000">';
       $w_html.=chr(13).'        <tr bgcolor="'.$conTrBgColor.'" align="center">';
       $w_html.=chr(13).'          <td><b>Código</td>';
+      $w_html.=chr(13).'          <td><b>Objeto</td>';
       $w_html.=chr(13).'          <td><b>Início</td>';
       $w_html.=chr(13).'          <td><b>Fim</td>';
       $w_html.=chr(13).'          <td><b>Prorrogação</td>';
-      $w_html.=chr(13).'          <td><b>Revisão</td>';
-      $w_html.=chr(13).'          <td><b>Acréscimo</td>';
-      $w_html.=chr(13).'          <td><b>Supressão</td>';
-      $w_html.=chr(13).'          <td><b>Valor reajuste</td>';
+      $w_html.=chr(13).'          <td><b>Reajuste</td>';
+      $w_html.=chr(13).'          <td><b>Tipo</td>';
+      $w_html.=chr(13).'          <td><b>Total do aditivo</td>';
       $w_html.=chr(13).'        </tr>';
       if (count($RS)<=0) {
         // Se não foram selecionados registros, exibe mensagem 
@@ -192,13 +193,13 @@ function VisualAcordo($l_chave,$l_O,$l_usuario,$l_P1,$l_P4) {
         // Lista os registros selecionados para listagem 
         foreach($RS1 as $row) {
           $w_html.=chr(13).'      <tr valign="top">';
-          $w_html.=chr(13).'        <td>'.Nvl(f($row,'codigo'),'---').'</td>';
-          $w_html.=chr(13).'        <td align="center">'.Nvl(FormataDataEdicao(f($row,'inicio')),'---').'</td>';
-          $w_html.=chr(13).'        <td align="center">'.Nvl(FormataDataEdicao(f($row,'fim')),'---').'</td>';
+          $w_html.=chr(13).'        <td width="1%" nowrap>'.f($row,'codigo').'</td>';
+          $w_html.=chr(13).'        <td>'.f($row,'objeto').'</td>';
+          $w_html.=chr(13).'        <td align="center">'.Nvl(FormataDataEdicao(f($row,'inicio'),5),'---').'</td>';
+          $w_html.=chr(13).'        <td align="center">'.Nvl(FormataDataEdicao(f($row,'fim'),5),'---').'</td>';
           $w_html.=chr(13).'        <td align="center">'.f($row,'nm_prorrogacao').'</td>';
           $w_html.=chr(13).'        <td align="center">'.f($row,'nm_revisao').'</td>';
-          $w_html.=chr(13).'        <td align="center">'.f($row,'nm_acrescimo').'</td>';
-          $w_html.=chr(13).'        <td align="center">'.f($row,'nm_supressao').'</td>';
+          $w_html.=chr(13).'        <td align="center">'.f($row,'nm_tipo').'</td>';
           $w_html.=chr(13).'        <td align="right">'.Nvl(formatNumber(f($row,'valor_reajuste'),2),'---').'</td>';
           $w_html.=chr(13).'      </tr>';
         } 
@@ -262,11 +263,6 @@ function VisualAcordo($l_chave,$l_O,$l_usuario,$l_P1,$l_P4) {
         $w_html.=chr(13).'        <td>'.nvl(CRLF2BR(f($RS,'nm_lcfonte_recurso')),'---').'</td></tr>';
         $w_html.=chr(13).'      <tr><td><font size="1"><b>Especificação de despesa:</b></td>';
         $w_html.=chr(13).'        <td>'.nvl(CRLF2BR(f($RS,'nm_espec_despesa')),'---').'</td></tr>';
-        if (substr($w_sigla,0,3)!='GCA' && substr($w_sigla,0,3)!='GCB' && substr($w_sigla,0,3)!='GCD'){   
-          $w_html.=chr(13).'          <tr valign="top">';
-          $w_html.=chr(13).'          <td><font size="1"><b>Número do empenho:</b></td>';
-          $w_html.=chr(13).'          <td>'.Nvl(f($RS,'empenho'),'---').'</td></tr>';
-        }
         if (substr($w_sigla,0,3)=='GCA' || substr($w_sigla,0,3)=='GCD') { 
           $w_html.=chr(13).'          <tr valign="top">';
           $w_html.=chr(13).'          <td><font size="1"><b>Número do processo:</b></td>';

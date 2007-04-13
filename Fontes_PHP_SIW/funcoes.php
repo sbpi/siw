@@ -140,7 +140,7 @@ function headerWord($p_orientation='LANDSCAPE') {
   ShowHTML('   <w:UseAsianBreakRules/> ');
   ShowHTML('  </w:Compatibility> ');
   ShowHTML('  <w:BrowserLevel>MicrosoftInternetExplorer4</w:BrowserLevel> ');
-  // ShowHTML('  <w:DocumentProtection>forms</w:DocumentProtection> ');
+  //ShowHTML('  <w:DocumentProtection>forms</w:DocumentProtection> ');
   ShowHTML(' </w:WordDocument> ');
   ShowHTML('</xml><![endif]--> ');
   ShowHTML('<style> ');
@@ -660,6 +660,229 @@ function ExibeImagemRestricao($l_tipo,$l_imagem=null) {
       }
     }
   }
+  return $l_string;
+}
+
+// =========================================================================
+// Exibe imagem da solicitação informada
+// -------------------------------------------------------------------------
+function ExibeImagemSolic($l_tipo,$l_inicio,$l_fim,$l_inicio_real,$l_fim_real,$l_aviso,$l_dias_aviso,$l_tramite, $l_perc) {
+  extract($GLOBALS);
+  $l_string = '';
+  $l_imagem = '';
+  $l_title  = '';
+  $l_tipo = strtoupper($l_tipo);
+  if ($l_tipo=='ETAPA') {
+    // Etapas de projeto
+    if ($l_perc<100) {
+      if (nvl($l_inicio_real,'')=='') {
+        if ($l_fim<addDays(time(),-1)) {
+          $l_imagem = $conImgAtraso;
+          $l_title  = 'Execução não iniciada. Fim previsto superado.';
+        } elseif (((time()-$l_inicio)/($l_fim-$l_inicio+1))*100>$l_perc) {
+          $l_imagem = $conImgAviso;
+          $l_title  = 'Execução não iniciada. Percentual de conclusão incompatível com os dias transcorridos.';
+        } else {
+          $l_imagem = $conImgNormal;
+          $l_title  = 'Execução não iniciada. Prazo final dentro do previsto.';
+        } 
+      } else {
+        if ($l_fim<addDays(time(),-1)) {
+          $l_imagem = $conImgStAtraso;
+          $l_title  = 'Em execução. Fim previsto superado.';
+        } elseif (((time()-$l_inicio)/($l_fim-$l_inicio+1))*100>$l_perc) {
+          $l_imagem = $conImgStAviso;
+          $l_title  = 'Em execução. Percentual de conclusão incompatível com os dias transcorridos.';
+        } else {
+          $l_imagem = $conImgStNormal;
+          $l_title  = 'Em execução. Prazo final dentro do previsto.';
+        } 
+      }
+    } else {
+      if ($l_fim<Nvl($l_fim_real,$l_fim)) {
+        $l_imagem = $conImgOkAtraso;
+        $l_title  = 'Execução concluída após a data prevista.';
+      } elseif ($l_fim>Nvl($l_fim_real,$l_fim)) {
+        $l_imagem = $conImgOkAcima;
+        $l_title  = 'Execução concluída antes da data prevista.';
+      } else {
+        $l_imagem = $conImgOkNormal;
+        $l_title  = 'Execução concluída na data prevista.';
+      } 
+    } 
+  } elseif (substr($l_tipo,0,2)=='GC') {
+    // Contratos e convênios
+    if ($l_tramite!='AT' && $l_tramite!='CR') {
+      if ($l_tramite=='CA') {
+        $l_imagem = $conImgCancel;
+        $l_title  = 'Registro cancelado.';
+      } elseif ($l_tramite=='CI') {
+        if ($l_fim<addDays(time(),-1)) {
+          $l_imagem = $conImgAtraso;
+          $l_title  = 'Execução não iniciada. Vigência prevista ultrapassada.';
+        } elseif ($l_aviso=='S' && ($l_dias_aviso<=addDays(time(),-1))) {
+          $l_imagem = $conImgAviso;
+          $l_title  = 'Execução não iniciada. Vigência prevista próxima do término.';
+        } else {
+          $l_imagem = $conImgNormal;
+          $l_title  = 'Execução não iniciada.';
+        } 
+      } elseif ($l_tramite=='ER') {
+        $l_imagem = $conImgStAcima;
+        $l_title  = 'Vigência encerrada, com restos a pagar.';
+      } else {
+        if ($l_fim<addDays(time(),-1)) {
+          $l_imagem = $conImgStAtraso;
+          $l_title  = 'Em execução. Vigência prevista ultrapassada.';
+        } elseif ($l_aviso=='S' && ($l_dias_aviso<=addDays(time(),-1))) {
+          $l_imagem = $conImgStAviso;
+          $l_title  = 'Em execução. Vigência prevista próxima do término.';
+        } else {
+          $l_imagem = $conImgStNormal;
+          $l_title  = 'Em execução.';
+        } 
+      }
+    } else {
+      if ($l_fim<Nvl($l_fim_real,$l_fim)) {
+        $l_imagem = $conImgOkAtraso;
+        $l_title  = 'Vigência superior à prevista.';
+      } elseif ($l_fim>Nvl($l_fim_real,$l_fim)) {
+        $l_imagem = $conImgOkAcima;
+        $l_title  = 'Vigência encerrada antes do previsto.';
+      } else {
+        $l_imagem = $conImgOkNormal;
+        $l_title  = 'Vigência encerrada conforme previsão.';
+      } 
+    } 
+  } elseif (substr($l_tipo,0,2)=='GD') {
+    // Tarefas
+    if ($l_tramite!='AT') {
+      if ($l_tramite=='CA') {
+        $l_imagem = $conImgCancel;
+        $l_title  = 'Registro cancelado.';
+      } elseif ($l_tramite=='CI') {
+        if ($l_fim<addDays(time(),-1)) {
+          $l_imagem = $conImgAtraso;
+          $l_title  = 'Execução não iniciada. Fim previsto superado.';
+        } elseif ($l_aviso=='S' && ($l_dias_aviso<=addDays(time(),-1))) {
+          $l_imagem = $conImgAviso;
+          $l_title  = 'Execução não iniciada. Fim previsto próximo.';
+        } else {
+          $l_imagem = $conImgNormal;
+          $l_title  = 'Execução não iniciada. Prazo final dentro do previsto.';
+        } 
+      } else {
+        if ($l_fim<addDays(time(),-1)) {
+          $l_imagem = $conImgStAtraso;
+          $l_title  = 'Em execução. Fim previsto superado.';
+        } elseif ($l_aviso=='S' && ($l_dias_aviso<=addDays(time(),-1))) {
+          $l_imagem = $conImgStAviso;
+          $l_title  = 'Em execução. Fim previsto próximo.';
+        } else {
+          $l_imagem = $conImgStNormal;
+          $l_title  = 'Em execução. Prazo final dentro do previsto.';
+        } 
+      }
+    } else {
+      if ($l_fim<Nvl($l_fim_real,$l_fim)) {
+        $l_imagem = $conImgOkAtraso;
+        $l_title  = 'Execução concluída após a data prevista.';
+      } elseif ($l_fim>Nvl($l_fim_real,$l_fim)) {
+        $l_imagem = $conImgOkAcima;
+        $l_title  = 'Execução concluída antes da data prevista.';
+      } else {
+        $l_imagem = $conImgOkNormal;
+        $l_title  = 'Execução concluída na data prevista.';
+      } 
+    } 
+  } elseif (substr($l_tipo,0,2)=='PJ') {
+    // Projetos
+    if ($l_tramite!='AT') {
+      if ($l_tramite=='CA') {
+        $l_imagem = $conImgCancel;
+        $l_title  = 'Registro cancelado.';
+      } elseif ($l_tramite=='CI') {
+        if ($l_fim<addDays(time(),-1)) {
+          $l_imagem = $conImgAtraso;
+          $l_title  = 'Execução não iniciada. Fim previsto superado.';
+        } elseif ($l_aviso=='S' && ($l_dias_aviso<=addDays(time(),-1))) {
+          $l_imagem = $conImgAviso;
+          $l_title  = 'Execução não iniciada. Fim previsto próximo.';
+        } else {
+          $l_imagem = $conImgNormal;
+          $l_title  = 'Execução não iniciada. Prazo final dentro do previsto.';
+        } 
+      } else {
+        if ($l_fim<addDays(time(),-1)) {
+          $l_imagem = $conImgStAtraso;
+          $l_title  = 'Em execução. Fim previsto superado.';
+        } elseif ($l_aviso=='S' && ($l_dias_aviso<=addDays(time(),-1))) {
+          $l_imagem = $conImgStAviso;
+          $l_title  = 'Em execução. Fim previsto próximo.';
+        } else {
+          $l_imagem = $conImgStNormal;
+          $l_title  = 'Em execução. Prazo final dentro do previsto.';
+        } 
+      }
+    } else {
+      if ($l_fim<Nvl($l_fim_real,$l_fim)) {
+        $l_imagem = $conImgOkAtraso;
+        $l_title  = 'Execução concluída após a data prevista.';
+      } elseif ($l_fim>Nvl($l_fim_real,$l_fim)) {
+        $l_imagem = $conImgOkAcima;
+        $l_title  = 'Execução concluída antes da data prevista.';
+      } else {
+        $l_imagem = $conImgOkNormal;
+        $l_title  = 'Execução concluída na data prevista.';
+      } 
+    } 
+  } elseif (substr($l_tipo,0,2)=='PE') {
+    // Projetos
+    if ($l_tramite!='AT') {
+      if ($l_tramite=='CA') {
+        $l_imagem = $conImgCancel;
+        $l_title  = 'Registro cancelado.';
+      } elseif ($l_tramite=='CI') {
+        if ($l_fim<addDays(time(),-1)) {
+          $l_imagem = $conImgAtraso;
+          $l_title  = 'Execução não iniciada. Fim previsto superado.';
+        } elseif ($l_aviso=='S' && ($l_dias_aviso<=addDays(time(),-1))) {
+          $l_imagem = $conImgAviso;
+          $l_title  = 'Execução não iniciada. Fim previsto próximo.';
+        } else {
+          $l_imagem = $conImgNormal;
+          $l_title  = 'Execução não iniciada. Prazo final dentro do previsto.';
+        } 
+      } else {
+        if ($l_fim<addDays(time(),-1)) {
+          $l_imagem = $conImgStAtraso;
+          $l_title  = 'Em execução. Fim previsto superado.';
+        } elseif ($l_aviso=='S' && ($l_dias_aviso<=addDays(time(),-1))) {
+          $l_imagem = $conImgStAviso;
+          $l_title  = 'Em execução. Fim previsto próximo.';
+        } else {
+          $l_imagem = $conImgStNormal;
+          $l_title  = 'Em execução. Prazo final dentro do previsto.';
+        } 
+      }
+    } else {
+      if ($l_fim<Nvl($l_fim_real,$l_fim)) {
+        $l_imagem = $conImgOkAtraso;
+        $l_title  = 'Execução concluída após a data prevista.';
+      } elseif ($l_fim>Nvl($l_fim_real,$l_fim)) {
+        $l_imagem = $conImgOkAcima;
+        $l_title  = 'Execução concluída antes da data prevista.';
+      } else {
+        $l_imagem = $conImgOkNormal;
+        $l_title  = 'Execução concluída na data prevista.';
+      } 
+    } 
+  }
+
+  if ($l_imagem!='') {
+    $l_string = '           <img src="'.$l_imagem.'" title="'.$l_title.'" border=0 width=15 heigth=15 align="center">';
+  }
+
   return $l_string;
 }
 // =========================================================================

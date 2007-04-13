@@ -42,9 +42,15 @@ $conTituloFontColor	= '#008000';
 
 //---------------------------Definições de imagens
 
-$conImgOkAcima	= 'images/purpleball.gif';
+$conImgOkAcima	= 'images/tickazul.gif';
 $conImgOkNormal	= 'images/tickverde.gif';
 $conImgOkAtraso	= 'images/tickvermelho.gif';
+
+$conImgStAcima	= 'images/icone/arrow_blue.gif';
+$conImgStNormal	= 'images/icone/arrow_green.gif';
+$conImgStAviso	= 'images/icone/arrow_yellow.gif';
+$conImgStAtraso	= 'images/icone/arrow_red.gif';
+
 $conImgNormal	= 'images/BallGreen.png';
 $conImgAviso	= 'images/BallYellow.png';
 $conImgAtraso	= 'images/BallRed.png';

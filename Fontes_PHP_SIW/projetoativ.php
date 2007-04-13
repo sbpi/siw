@@ -435,23 +435,7 @@ function Inicial() {
         ShowHTML('      <tr bgcolor="'.$w_cor.'" valign="top">');
         ShowHTML('        <td nowrap>');
         if ($w_tipo!='WORD') {
-          if (f($row,'concluida')=='N') {
-            if (f($row,'fim')<addDays(time(),-1)) {
-              ShowHTML('           <img src="'.$conImgAtraso.'" border=0 width=15 heigth=15 align="center">');
-            } elseif (f($row,'aviso_prox_conc')=='S' && (f($row,'aviso')<=addDays(time(),-1))) {
-              ShowHTML('           <img src="'.$conImgAviso.'" border=0 width=15 height=15 align="center">');
-            } else {
-              ShowHTML('           <img src="'.$conImgNormal.'" border=0 width=15 height=15 align="center">');
-            } 
-          } else {
-            if (f($row,'sg_tramite')=='CA') {
-              ShowHTML('           <img src="'.$conImgCancel.'" border=0 width=15 height=15 align="center">');            
-            } elseif (f($row,'fim')<Nvl(f($row,'fim_real'),f($row,'fim'))) {
-              ShowHTML('           <img src="'.$conImgOkAtraso.'" border=0 width=15 heigth=15 align="center">');
-            } else {
-              ShowHTML('           <img src="'.$conImgOkNormal.'" border=0 width=15 height=15 align="center">');
-            } 
-          } 
+          ShowHTML(ExibeImagemSolic(f($row,'sigla'),f($row,'inicio'),f($row,'fim'),f($row,'inicio_real'),f($row,'fim_real'),f($row,'aviso_prox_conc'),f($row,'aviso'),f($row,'sg_tramite'), null));
           ShowHTML('        <A class="HL" HREF="'.$w_pagina.'Visual&R='.$w_pagina.$par.'&O=L&w_chave='.f($row,'sq_siw_solicitacao').'&w_tipo=Volta&P1='.$P1.'&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP='.$TP.'&SG='.$SG.MontaFiltro('GET').'" title="Exibe as informações deste registro.">'.f($row,'sq_siw_solicitacao').'&nbsp;</a>');
           if (nvl($p_projeto,'')=='') {
             ShowHTML('        <td><A class="HL" HREF="projeto.php?par=Visual&O=L&w_chave='.f($row,'sq_solic_pai').'&w_tipo=Volta&P1='.$P1.'&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP='.$TP.'&SG='.$SG.'" title="Exibe as informações do projeto.">'.f($row,'nm_projeto').'</a></td>');
@@ -2077,7 +2061,7 @@ function BuscaAtividade() {
     Validate('w_nome','Nome','1','','4','30','1','1');
     Validate('w_numero','Sigla','1','','2','20','','1');
     ShowHTML('  if (theForm.w_nome.value == \'\' && theForm.w_numero.value == \'\') {');
-    ShowHTML('     alert (\'Informe um valor para o nome ou para a sigla!\');');
+    ShowHTML('     alert (\'É necessário informar pelo menos um dos critérios de busca!\');');
     ShowHTML('     theForm.w_nome.focus();');
     ShowHTML('     return false;');
     ShowHTML('  }');
@@ -2136,23 +2120,7 @@ function BuscaAtividade() {
           $w_cor = ($w_cor==$conTrBgColor || $w_cor=='') ? $w_cor=$conTrAlternateBgColor : $w_cor=$conTrBgColor;
           ShowHTML('      <tr bgcolor="'.$w_cor.'" valign="top">');
           ShowHTML('        <td nowrap>');
-          if (f($row,'concluida')=='N') {
-            if (f($row,'fim')<addDays(time(),-1)) {
-              ShowHTML('           <img src="'.$conImgAtraso.'" border=0 width=15 heigth=15 align="center">');
-            } elseif (f($row,'aviso_prox_conc')=='S' && (f($row,'aviso')<=addDays(time(),-1))) {
-              ShowHTML('           <img src="'.$conImgAviso.'" border=0 width=15 height=15 align="center">');
-            } else {
-              ShowHTML('           <img src="'.$conImgNormal.'" border=0 width=15 height=15 align="center">');
-            } 
-          } else {
-            if (f($row,'sg_tramite')=='CA') {
-              ShowHTML('           <img src="'.$conImgCancel.'" border=0 width=15 height=15 align="center">');            
-            } elseif (f($row,'fim')<Nvl(f($row,'fim_real'),f($row,'fim'))) {
-              ShowHTML('           <img src="'.$conImgOkAtraso.'" border=0 width=15 heigth=15 align="center">');
-            } else {
-              ShowHTML('           <img src="'.$conImgOkNormal.'" border=0 width=15 height=15 align="center">');
-            } 
-          } 
+          ShowHTML(ExibeImagemSolic(f($row,'sigla'),f($row,'inicio'),f($row,'fim'),f($row,'inicio_real'),f($row,'fim_real'),f($row,'aviso_prox_conc'),f($row,'aviso'),f($row,'sg_tramite'), null));
           ShowHTML('        <A class="HL" HREF="'.$w_pagina.'Visual&R='.$w_pagina.$par.'&O=L&w_chave='.f($row,'sq_siw_solicitacao').'&P1='.$P1.'&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP='.$TP.'&SG='.$SG.MontaFiltro('GET').'" title="Exibe as informações deste registro." target="_blank">'.f($row,'sq_siw_solicitacao').'&nbsp;</a>');
           if (nvl(f($row,'sq_projeto_etapa'),'')!='') {
             ShowHTML('        <td>'.ExibeEtapa('V',f($row,'sq_solic_pai'),f($row,'sq_projeto_etapa'),'Volta',10,f($row,'cd_ordem').'. '.f($row,'nm_etapa'),$TP,$SG).'</td>');
@@ -2187,23 +2155,7 @@ function BuscaAtividade() {
         $w_cor = ($w_cor==$conTrBgColor || $w_cor=='') ? $w_cor=$conTrAlternateBgColor : $w_cor=$conTrBgColor;
         ShowHTML('      <tr bgcolor="'.$w_cor.'" valign="top">');
         ShowHTML('        <td nowrap>');
-        if (f($row,'concluida')=='N') {
-          if (f($row,'fim')<addDays(time(),-1)) {
-            ShowHTML('           <img src="'.$conImgAtraso.'" border=0 width=15 heigth=15 align="center">');
-          } elseif (f($row,'aviso_prox_conc')=='S' && (f($row,'aviso')<=addDays(time(),-1))) {
-            ShowHTML('           <img src="'.$conImgAviso.'" border=0 width=15 height=15 align="center">');
-          } else {
-            ShowHTML('           <img src="'.$conImgNormal.'" border=0 width=15 height=15 align="center">');
-          } 
-        } else {
-          if (f($row,'sg_tramite')=='CA') {
-            ShowHTML('           <img src="'.$conImgCancel.'" border=0 width=15 height=15 align="center">');            
-          } elseif (f($row,'fim')<Nvl(f($row,'fim_real'),f($row,'fim'))) {
-            ShowHTML('           <img src="'.$conImgOkAtraso.'" border=0 width=15 heigth=15 align="center">');
-          } else {
-            ShowHTML('           <img src="'.$conImgOkNormal.'" border=0 width=15 height=15 align="center">');
-          } 
-        } 
+        ShowHTML(ExibeImagemSolic(f($row,'sigla'),f($row,'inicio'),f($row,'fim'),f($row,'inicio_real'),f($row,'fim_real'),f($row,'aviso_prox_conc'),f($row,'aviso'),f($row,'sg_tramite'), null));
         ShowHTML('        <A class="HL" HREF="'.$w_pagina.'Visual&R='.$w_pagina.$par.'&O=L&w_chave='.f($row,'sq_siw_solicitacao').'&P1='.$P1.'&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP='.$TP.'&SG='.$SG.MontaFiltro('GET').'" title="Exibe as informações deste registro." target="_blank">'.f($row,'sq_siw_solicitacao').'&nbsp;</a>');
         if (nvl(f($row,'sq_projeto_etapa'),'')!='') {
           ShowHTML('        <td>'.ExibeEtapa('V',f($row,'sq_solic_pai'),f($row,'sq_projeto_etapa'),'Volta',10,f($row,'cd_ordem').'. '.f($row,'nm_etapa'),$TP,$SG).'</td>');

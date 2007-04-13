@@ -144,23 +144,7 @@ function VisualDemanda($l_chave,$operacao,$w_usuario) {
       foreach($RSQuery as $row) {
         $l_html.=chr(13).'        <tr valign="top">';
         $l_html.=chr(13).'          <td nowrap>';
-        if (f($row,'concluida')=='N') {
-          if (f($row,'fim')<addDays(time(),-1)) {
-            $l_html.=chr(13).'             <img src="'.$conImgAtraso.'" border=0 width=15 heigth=15 align="center">';
-          } elseif (f($row,'aviso_prox_conc')=='S' && (f($row,'aviso')<=addDays(time(),-1))) {
-            $l_html.=chr(13).'             <img src="'.$conImgAviso.'" border=0 width=15 height=15 align="center">';
-          } else {
-            $l_html.=chr(13).'             <img src="'.$conImgNormal.'" border=0 width=15 height=15 align="center">';
-          } 
-        } else {
-          if (f($row,'sg_tramite')=='CA') {
-            $l_html.=chr(13).'             <img src="'.$conImgCancel.'" border=0 width=15 height=15 align="center">';            
-          } elseif (f($row,'fim')<Nvl(f($row,'fim_real'),f($row,'fim'))) {
-            $l_html.=chr(13).'             <img src="'.$conImgOkAtraso.'" border=0 width=15 heigth=15 align="center">';
-          } else {
-            $l_html.=chr(13).'             <img src="'.$conImgOkNormal.'" border=0 width=15 height=15 align="center">';
-          } 
-        } 
+        $l_html.=chr(13).ExibeImagemSolic(f($row,'sigla'),f($row,'inicio'),f($row,'fim'),f($row,'inicio_real'),f($row,'fim_real'),f($row,'aviso_prox_conc'),f($row,'aviso'),f($row,'sg_tramite'), null);
         $l_html.=chr(13).'          <A class="HL" HREF="'.$w_pagina.'Visual&R='.$w_pagina.$par.'&O=L&w_chave='.f($row,'sq_siw_solicitacao').'&P1='.$P1.'&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP='.$TP.'&SG='.$SG.MontaFiltro('GET').'" title="Exibe as informações deste registro." target="_blank">'.f($row,'sq_siw_solicitacao').'&nbsp;</a>';
         if (nvl(f($row,'sq_projeto_etapa'),'nulo')!='nulo') {
           $l_html.=chr(13).'            <td>'.ExibeEtapa('V',f($row,'sq_solic_pai'),f($row,'sq_projeto_etapa'),'Volta',10,MontaOrdemEtapa(f($row,'sq_projeto_etapa')).' - '.f($row,'nm_etapa'),$TP,$SG).'</td>';

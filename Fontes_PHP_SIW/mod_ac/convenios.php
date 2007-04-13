@@ -344,20 +344,23 @@ function Inicial() {
   if ($w_filtro>'') ShowHTML($w_filtro);
   ShowHTML('<table border="0" cellpadding="0" cellspacing="0" width="100%">');
   if ($O=='L') {
-    ShowHTML('<tr><td>');
+    ShowHTML('<tr>');
     if ($P1==1 && $w_copia=='') {
       // Se for cadastramento e não for resultado de busca para cópia
-      if ($w_submenu>'') {
-        $RS1 = db_getLinkSubMenu::getInstanceOf($dbms,$w_cliente,$_REQUEST['SG']);
-        foreach($RS1 as $row) {
-          ShowHTML('<tr><td>');
-          if ($w_tipo!='WORD') ShowHTML('    <a accesskey="I" class="ss" href="'.$w_dir.$w_pagina.'Geral&R='.$w_pagina.$par.'&O=I&SG='.f($row,'sigla').'&w_menu='.$w_menu.'&P1='.$P1.'&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP='.$TP.MontaFiltro('GET').'"><u>I</u>ncluir</a>&nbsp;');
-          if ($w_tipo!='WORD') ShowHTML('    <a accesskey="C" class="ss" href="'.$w_dir.$w_pagina.$par.'&R='.$w_pagina.$par.'&O=C&P1='.$P1.'&P2='.$P2.'&P3=1&P4='.$P4.'&TP='.$TP.'&SG='.$SG.MontaFiltro('GET').'"><u>C</u>opiar</a>');
+      if ($w_tipo!='WORD') { 
+        ShowHTML('<tr><td>');        
+        if ($w_submenu>'') {
+          $RS1 = db_getLinkSubMenu::getInstanceOf($dbms,$w_cliente,$_REQUEST['SG']);
+          foreach($RS1 as $row) {
+            ShowHTML('<tr><td>');
+            ShowHTML('    <a accesskey="I" class="ss" href="'.$w_dir.$w_pagina.'Geral&R='.$w_pagina.$par.'&O=I&SG='.f($row,'sigla').'&w_menu='.$w_menu.'&P1='.$P1.'&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP='.$TP.MontaFiltro('GET').'"><u>I</u>ncluir</a>&nbsp;');
+            ShowHTML('    <a accesskey="C" class="ss" href="'.$w_dir.$w_pagina.$par.'&R='.$w_pagina.$par.'&O=C&P1='.$P1.'&P2='.$P2.'&P3=1&P4='.$P4.'&TP='.$TP.'&SG='.$SG.MontaFiltro('GET').'"><u>C</u>opiar</a>');
           break;
-        }
-      } else {
-        if ($w_tipo!='WORD') ShowHTML('<tr><td><a accesskey="I" class="ss" href="'.$w_dir.$w_pagina.$par.'&R='.$w_pagina.$par.'&O=I&P1='.$P1.'&P2='.$P2.'&P3=1&P4='.$P4.'&TP='.$TP.'&SG='.$SG.MontaFiltro('GET').'"><u>I</u>ncluir</a>&nbsp;');
-      } 
+          }
+        } else {
+         ShowHTML('<tr><td><a accesskey="I" class="ss" href="'.$w_dir.$w_pagina.$par.'&R='.$w_pagina.$par.'&O=I&P1='.$P1.'&P2='.$P2.'&P3=1&P4='.$P4.'&TP='.$TP.'&SG='.$SG.MontaFiltro('GET').'"><u>I</u>ncluir</a>&nbsp;');
+        } 
+      }
     } 
     if ((strpos(strtoupper($R),'GR_')===false) && (strpos(strtoupper($R),'ACORDO')===false) && $P1!=6) {
       if ($w_tipo!='WORD') {
@@ -489,8 +492,8 @@ function Inicial() {
           ShowHTML('        <td nowrap>'.f($row,'nm_tramite').'</td>');
         } 
         if ($_SESSION['INTERNO']=='S') {
-          ShowHTML('        <td align="top" nowrap>');
           if ($w_tipo!='WORD'){ 
+            ShowHTML('        <td align="top" nowrap>'); 
             if ($P1!=3) {
               // Se não for acompanhamento
               if ($w_copia>'') {

@@ -430,45 +430,29 @@ function Inicial() {
         ShowHTML('      <tr bgcolor="'.$w_cor.'" valign="top">');
         ShowHTML('        <td nowrap>');
         if ($w_tipo!='WORD') {
-          if (f($row,'concluida')=='N') {
-            if (f($row,'fim') < addDays(time(),-1))
-              ShowHTML('           <img src="'.$conImgAtraso.'" border=0 width=15 heigth=15 align="center">');
-            elseif (f($row,'aviso_prox_conc') == 'S' && (f($row,'aviso') <= addDays(time(),-1)))
-              ShowHTML('           <img src="'.$conImgAviso.'" border=0 width=15 height=15 align="center">');
-            else
-              ShowHTML('           <img src="'.$conImgNormal.'" border=0 width=15 height=15 align="center">');
-          } else {
-            if (f($row,'sg_tramite')=='CA')
-              ShowHTML('           <img src="'.$conImgCancel.'" border=0 width=15 height=15 align="center">');            
-            elseif (f($row,'fim') < Nvl(f($row,'fim_real'),f($row,'fim')))
-              ShowHTML('           <img src="'.$conImgOkAtraso.'" border=0 width=15 heigth=15 align="center">');
-            else
-              ShowHTML('           <img src="'.$conImgOkNormal.'" border=0 width=15 height=15 align="center">');
-          } 
+          ShowHTML(ExibeImagemSolic(f($row,'sigla'),f($row,'inicio'),f($row,'fim'),f($row,'inicio_real'),f($row,'fim_real'),f($row,'aviso_prox_conc'),f($row,'aviso'),f($row,'sg_tramite'), null));
           ShowHTML('        <A class="HL" HREF="'.$w_pagina.'Visual&R='.$w_pagina.$par.'&O=L&w_chave='.f($row,'sq_siw_solicitacao').'&w_tipo=Volta&P1='.$P1.'&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP='.$TP.'&SG='.$SG.MontaFiltro('GET').'" title="Exibe as informações deste registro.">'.f($row,'sq_siw_solicitacao').'&nbsp;</a>'.exibeImagemRestricao(f($row,'restricao'),'P'));
-        // Verifica se foi enviado o parâmetro p_tamanho = N. Se chegou, o assunto deve ser exibido sem corte.
-        // Este parâmetro é enviado pela tela de filtragem das páginas gerenciais
-        if ($_REQUEST['p_tamanho']=='N') {
-          ShowHTML('        <td>'.Nvl(f($row,'titulo'),'-').'</td>');
-        } else {
-          if ($w_tipo!='WORD' && strlen(Nvl(f($row,'titulo'),'-'))>50) $w_titulo=substr(Nvl(f($row,'titulo'),'-'),0,50).'...'; else $w_titulo=Nvl(f($row,'titulo'),'-');
-          if (f($row,'sg_tramite')=='CA') ShowHTML('        <td title="'.htmlspecialchars(f($row,'titulo')).'"><strike>'.htmlspecialchars($w_titulo).'</strike></td>');
-          else                            ShowHTML('        <td title="'.htmlspecialchars(f($row,'titulo')).'">'.htmlspecialchars($w_titulo).'</td>');
-        } 
+          // Verifica se foi enviado o parâmetro p_tamanho = N. Se chegou, o assunto deve ser exibido sem corte.
+          // Este parâmetro é enviado pela tela de filtragem das páginas gerenciais
+          if ($_REQUEST['p_tamanho']=='N') {
+            ShowHTML('        <td>'.Nvl(f($row,'titulo'),'-').'</td>');
+          } else {
+            if ($w_tipo!='WORD' && strlen(Nvl(f($row,'titulo'),'-'))>50) $w_titulo=substr(Nvl(f($row,'titulo'),'-'),0,50).'...'; else $w_titulo=Nvl(f($row,'titulo'),'-');
+            if (f($row,'sg_tramite')=='CA') ShowHTML('        <td title="'.htmlspecialchars(f($row,'titulo')).'"><strike>'.htmlspecialchars($w_titulo).'</strike></td>');
+            else                            ShowHTML('        <td title="'.htmlspecialchars(f($row,'titulo')).'">'.htmlspecialchars($w_titulo).'</td>');
+          } 
           if ($_SESSION['INTERNO']=='S') {
-            /*
-            if (Nvl(f($row,'nm_exec'),'---')>'---') ShowHTML('        <td>'.ExibePessoa(null,$w_cliente,f($row,'executor'),$TP,f($row,'nm_exec')).'</td>');
-            else                                    ShowHTML('        <td>---</td>');
-            */
             if (Nvl(f($row,'cd_vinculacao'),'')!='') ShowHTML('        <td>'.exibeSolic($w_dir,f($row,'sq_solic_pai'),f($row,'cd_vinculacao')).'</td>');
             else                                     ShowHTML('        <td>---</td>');
           } 
           ShowHTML('        <td>'.ExibePessoa(null,$w_cliente,f($row,'solicitante'),$TP,f($row,'nm_solic')).'</td>');
         } else {
+          ShowHTML(ExibeImagemSolic(f($row,'sigla'),f($row,'inicio'),f($row,'fim'),f($row,'inicio_real'),f($row,'fim_real'),f($row,'aviso_prox_conc'),f($row,'aviso'),f($row,'sg_tramite'), null));
           ShowHTML('        '.f($row,'sq_siw_solicitacao'));
+          ShowHTML('        <td>'.Nvl(f($row,'titulo'),'-').'</td>');
           if ($_SESSION['INTERNO']=='S') ShowHTML('        <td>'.f($row,'cd_vinculacao').'</td>');
           ShowHTML('        <td>'.f($row,'nm_solic').'</td>');
-        }
+        }      
         ShowHTML('        <td align="center">&nbsp;'.FormataDataEdicao(f($row,'inicio'),5).'</td>');
         ShowHTML('        <td align="center">&nbsp;'.FormataDataEdicao(f($row,'fim'),5).'</td>');
         // Mostra o valor se o usuário for interno e não for cadastramento nem mesa de trabalho
@@ -2130,22 +2114,9 @@ function AtualizaEtapa() {
       $w_cor=$conTrBgColor;
       foreach ($RS1 as $row) {
         $w_cor = ($w_cor==$conTrBgColor || $w_cor=='') ? $w_cor=$conTrAlternateBgColor : $w_cor=$conTrBgColor;
-        ShowHTML('        <tr bgcolor="'.$w_cor.'" valign="top"><td nowrap>');
-        if (f($row,'concluida')=='N'){
-          if (f($row,'fim')<addDays(time(),-1))
-            ShowHTML('   <img src="'.$conImgAtraso.'" border=0 width=15 heigth=15 align="center">');
-          elseif (f($row,'aviso_prox_conc')=='S' && (f($row,'aviso')<=addDays(time(),-1)))
-            ShowHTML('   <img src="'.$conImgAviso.'" border=0 width=15 height=15 align="center">');
-          else
-            ShowHTML('   <img src="'.$conImgNormal.'" border=0 width=15 height=15 align="center">');
-        } else {
-          if (f($row,'sg_tramite')=='CA') {
-            ShowHTML('           <img src="'.$conImgCancel.'" border=0 width=15 height=15 align="center">'); 
-          } elseif (f($row,'fim')<Nvl(f($row,'fim_real'),f($row,'fim')))
-            ShowHTML('   <img src="'.$conImgOkAtraso.'" border=0 width=15 heigth=15 align="center">');
-          else
-            ShowHTML('   <img src="'.$conImgOkNormal.'" border=0 width=15 height=15 align="center">');
-        } 
+        ShowHTML('    <tr bgColor="'.$w_cor.'">');
+        ShowHTML('     <td nowrap width="1%">');
+        ShowHTML(ExibeImagemSolic(f($row,'sigla'),f($row,'inicio'),f($row,'fim'),f($row,'inicio_real'),f($row,'fim_real'),f($row,'aviso_prox_conc'),f($row,'aviso'),f($row,'sg_tramite'), null));
         ShowHTML('  <A class="HL" HREF="projetoativ.php?par=Visual&R=ProjetoAtiv.php?par=Visual&O=L&w_chave='.f($row,'sq_siw_solicitacao').'&w_tipo=&P1='.$P1.'&P2='.f($RS,'sq_menu').'&P3='.$P3.'&P4='.$P4.'&TP='.$TP.'&SG='.$SG.MontaFiltro('GET').'" title="Exibe as informações deste registro." target="blank">'.f($row,'sq_siw_solicitacao').'</a>');
         ShowHTML('     <td>'.Nvl(f($row,'assunto'),'-'));
         ShowHTML('     <td>'.ExibePessoa(null,$w_cliente,f($row,'solicitante'),$TP,f($row,'nm_resp')).'</td>');
@@ -3049,9 +3020,7 @@ function EtapaLinha($l_chave,$l_chave_aux,$l_titulo,$l_resp,$l_setor,$l_inicio,$
   $w_cor = ($w_cor==$conTrBgColor || $w_cor=='') ? $w_cor=$conTrAlternateBgColor : $w_cor=$conTrBgColor;
   $l_html .= chr(13).'      <tr valign="top" bgcolor="'.$w_cor.'">';
   $l_html .= chr(13).'        <td width="1%" nowrap '.$l_row.'>'; 
-  if ($l_fim < addDays(time(),-1) && $l_perc < 100) $l_html .= chr(13).'           <img src="'.$conImgAtraso.'" border=0 width=15 height=15 align="center">';
-  elseif ($l_perc < 100)                $l_html .= chr(13).'           <img src="'.$conImgNormal.'" border=0 width=15 height=15 align="center">';
-  else                                  $l_html .= chr(13).'           <img src="'.$conImgOkNormal.'" border=0 width=15 height=15 align="center">';
+  $l_html .= chr(13).ExibeImagemSolic('ETAPA',$l_inicio,$l_fim,$l_inicio_real,$l_fim_real,null,null,null,$l_perc);
   $l_html .= chr(13).' '.ExibeEtapa('V',$l_chave,$l_chave_aux,'Volta',10,MontaOrdemEtapa($l_chave_aux),$TP,$SG).$l_img.'</td>';
   if (nvl($l_nivel,0)==0) {
     $l_html .= chr(13).'        <td>'.$l_destaque.$l_titulo.'</b>';
@@ -3142,9 +3111,7 @@ function EtapaLinhaAtiv($l_chave,$l_chave_aux,$l_titulo,$l_resp,$l_setor,$l_inic
   $w_cor = ($w_cor==$conTrBgColor || $w_cor=='') ? $w_cor=$conTrAlternateBgColor : $w_cor=$conTrBgColor;
   $l_html .= chr(13).'      <tr valign="top" bgcolor="'.$w_cor.'">';
   $l_html .= chr(13).'        <td width="1%" nowrap rowspan='.$l_row.'>';
-  if ($l_fim < addDays(time(),-1)&& $l_perc < 100)  $l_html .= chr(13).'           <img src="'.$conImgAtraso.'" border=0 width=15 height=15 align="center">';
-  elseif ($l_perc < 100)                $l_html .= chr(13).'           <img src="'.$conImgNormal.'" border=0 width=15 height=15 align="center">';
-  else                                  $l_html .= chr(13).'           <img src="'.$conImgOkNormal.'" border=0 width=15 height=15 align="center">';
+  $l_html .= chr(13).ExibeImagemSolic('ETAPA',$l_inicio,$l_fim,$l_inicio_real,$l_fim_real,null,null,null,$l_perc);
   $l_html .= chr(13).' '.ExibeEtapa('V',$l_chave,$l_chave_aux,'Volta',10,MontaOrdemEtapa($l_chave_aux),$TP,$SG).$l_img.'</td>';
   if (nvl($l_nivel,0)==0) {
     $l_html .= chr(13).'        <td>'.$l_destaque.$l_titulo.'</b>';
@@ -3186,14 +3153,7 @@ function EtapaLinhaAtiv($l_chave,$l_chave_aux,$l_titulo,$l_resp,$l_setor,$l_inic
     foreach ($RS_Contr as $row) {
       $l_contr1 .= chr(13).'<tr valign="top">';
       $l_contr1 .= chr(13).'  <td>';
-      if (f($row,'concluida') == 'N') {
-        if (f($row,'fim') < addDays(time(),-1))                                $l_contr1 = $l_contr1.chr(13).'   <img src="'.$conImgAtraso.'" border=0 width=15 heigth=15 align="center">';
-        elseif (f($row,'aviso_prox_conc')=='S' && (f($row,'aviso') <= addDays(time(),-1))) $l_contr1 = $l_contr1.chr(13).'   <img src="'.$conImgAviso.'" border=0 width=15 height=15 align="center">';
-        else                                                                   $l_contr1 = $l_contr1.chr(13).'   <img src="'.$conImgNormal.'" border=0 width=15 height=15 align="center">';
-      } else {
-        if (f($row,'fim') < Nvl(f($row,'fim_real'),f($row,'fim'))) $l_contr1 = $l_contr1.chr(13).'   <img src="'.$conImgOkAtraso.'" border=0 width=15 heigth=15 align="center">';
-        else                                                       $l_contr1 = $l_contr1.chr(13).'   <img src="'.$conImgOkNormal.'" border=0 width=15 height=15 align="center">';
-      } 
+      ShowHTML(ExibeImagemSolic(f($row,'sigla'),f($row,'inicio'),f($row,'fim'),f($row,'inicio_real'),f($row,'fim_real'),f($row,'aviso_prox_conc'),f($row,'aviso'),f($row,'sg_tramite'), null));
       $l_contr1 = $l_contr1.chr(13).'  <A class="HL" HREF="'.$conRootSIW.'mod_ac/contratos.php?par=Visual&R=contratos.php?par=Visual&O=L&w_chave='.f($row,'sq_siw_solicitacao').'&w_tipo=&P1='.f($row,'p1').'&P2='.f($row,'p2').'&P3='.f($row,'p3').'&P4='.f($row,'p4').'&TP='.$TP.'&SG='.f($row,'sigla').MontaFiltro('GET').'" title="Exibe as informações deste registro." target="blank">'.f($row,'sq_siw_solicitacao').'</a>';
       $l_contr1 = $l_contr1.chr(13).' - '.Nvl(f($row,'titulo'),'-');
       $l_contr1 .= chr(13).'     <td>'.ExibePessoa(null,$w_cliente,f($row,'solicitante'),$TP,f($row,'nm_resp')).'</td>';
@@ -3214,16 +3174,7 @@ function EtapaLinhaAtiv($l_chave,$l_chave_aux,$l_titulo,$l_resp,$l_setor,$l_inic
     foreach ($RS_Ativ as $row) {
       $l_ativ .= chr(13).'<tr valign="top">';
       $l_ativ .= chr(13).'  <td>';
-      if (f($row,'concluida') == 'N') {
-        if (f($row,'fim') < addDays(time(),-1))                                $l_ativ .= chr(13).'   <img src="'.$conImgAtraso.'" border=0 width=15 heigth=15 align="center">';
-        elseif (f($row,'aviso_prox_conc')=='S' && (f($row,'aviso') <= addDays(time(),-1))) $l_ativ .= chr(13).'   <img src="'.$conImgAviso.'" border=0 width=15 height=15 align="center">';
-        else                                                                   $l_ativ .= chr(13).'   <img src="'.$conImgNormal.'" border=0 width=15 height=15 align="center">';
-      } else {
-        if (f($row,'sg_tramite')=='CA') {
-          $l_ativ .= chr(13).'           <img src="'.$conImgCancel.'" border=0 width=15 height=15 align="center">';
-        } elseif (f($row,'fim') < Nvl(f($row,'fim_real'),f($row,'fim'))) $l_ativ .= chr(13).'   <img src="'.$conImgOkAtraso.'" border=0 width=15 heigth=15 align="center">';
-        else                                                       $l_ativ .= chr(13).'   <img src="'.$conImgOkNormal.'" border=0 width=15 height=15 align="center">';
-      } 
+      $l_ativ .= chr(13).ExibeImagemSolic(f($row,'sigla'),f($row,'inicio'),f($row,'fim'),f($row,'inicio_real'),f($row,'fim_real'),f($row,'aviso_prox_conc'),f($row,'aviso'),f($row,'sg_tramite'), null);
       $l_ativ .= chr(13).'  <A class="HL" HREF="projetoativ.php?par=Visual&R=projetoativ.php?par=Visual&O=L&w_chave='.f($row,'sq_siw_solicitacao').'&w_tipo=&P1='.$P1.'&P2='.f($row,'sq_menu').'&P3='.$P3.'&P4='.$P4.'&TP='.$TP.'&SG='.$SG.MontaFiltro('GET').'" title="Exibe as informações deste registro." target="blank">'.f($row,'sq_siw_solicitacao').'</a>';
       if (strlen(Nvl(f($row,'assunto'),'-'))>50 && strtoupper($l_assunto)!='COMPLETO') $l_ativ .= ' - '.substr(Nvl(f($row,'assunto'),'-'),0,50).'...';
       else                                                                             $l_ativ .= ' - '.Nvl(f($row,'assunto'),'-');
@@ -3294,33 +3245,19 @@ function QuestoesLinhaAtiv($l_siw_solicitacao, $l_chave, $l_chave_aux, $l_risco,
   $l_html .= chr(13).'     <td>'.$l_fase_atual.'</td>';
   $l_html .= chr(13).'   </tr>';
 
-  //Listagem das tarefas da etapa  
+  //Listagem das tarefas da questão
   if (count($RS_Ativ)>0) {
     foreach ($RS_Ativ as $row) {
-        $l_ativ .= chr(13).'      <tr bgcolor="'.$w_cor.'"><td>';
-        if (f($row,'concluida')=='N'){
-          if (f($row,'fim')<addDays(time(),-1))
-            $l_ativ .= chr(13).'   <img src="'.$conImgAtraso.'" border=0 width=15 heigth=15 align="center">';
-          elseif (f($row,'aviso_prox_conc')=='S' && (f($row,'aviso')<=addDays(time(),-1)))
-            $l_ativ .= chr(13).'   <img src="'.$conImgAviso.'" border=0 width=15 height=15 align="center">';
-          else
-            $l_ativ .= chr(13).'   <img src="'.$conImgNormal.'" border=0 width=15 height=15 align="center">';
-        } else {
-          if (f($row,'sg_tramite')=='CA') {
-            $l_ativ .= chr(13).'           <img src="'.$conImgCancel.'" border=0 width=15 height=15 align="center">'; 
-          } elseif (f($row,'fim')<Nvl(f($row,'fim_real'),f($row,'fim')))
-            $l_ativ .= chr(13).'   <img src="'.$conImgOkAtraso.'" border=0 width=15 heigth=15 align="center">';
-          else
-            $l_ativ .= chr(13).'   <img src="'.$conImgOkNormal.'" border=0 width=15 height=15 align="center">';
-        } 
-        $l_ativ .= chr(13).'  <A class="HL" HREF="projetoativ.php?par=Visual&R=ProjetoAtiv.php?par=Visual&O=L&w_chave='.f($row,'sq_siw_solicitacao').'&w_tipo=&P1='.$P1.'&P2='.f($row,'sq_menu').'&P3='.$P3.'&P4='.$P4.'&TP='.$TP.'&SG='.$SG.MontaFiltro('GET').'" title="Exibe as informações deste registro." target="blank">'.f($row,'sq_siw_solicitacao').'</a>';
-        $l_ativ .= chr(13).'     <td>'.Nvl(f($row,'assunto'),'-');
-        $l_ativ .= chr(13).'     <td align="center">'.formataDataEdicao(nvl(f($row,'inicio_real'),f($row,'inicio'))).'</td>';
-        $l_ativ .= chr(13).'     <td align="center">'.formataDataEdicao(nvl(f($row,'fim_real'),f($row,'fim'))).'</td>';
-        $l_ativ .= chr(13).'     <td>'.ExibePessoa(null,$w_cliente,f($row,'solicitante'),$TP,f($row,'nm_resp_tarefa')).'</td>';
-        $l_ativ .= chr(13).'     <td>'.f($row,'nm_tramite').'</td>';
-      } 
-     $l_ativ .= chr(13).'      </td></tr>';
+      $l_ativ .= chr(13).'      <tr bgcolor="'.$w_cor.'"><td>';
+      $l_ativ .= chr(13).ExibeImagemSolic(f($row,'sg_servico'),f($row,'inicio'),f($row,'fim'),f($row,'inicio_real'),f($row,'fim_real'),f($row,'aviso_prox_conc'),f($row,'aviso'),f($row,'sg_tramite'), null);
+      $l_ativ .= chr(13).'  <A class="HL" HREF="projetoativ.php?par=Visual&R=ProjetoAtiv.php?par=Visual&O=L&w_chave='.f($row,'sq_siw_solicitacao').'&w_tipo=&P1='.$P1.'&P2='.f($row,'sq_menu').'&P3='.$P3.'&P4='.$P4.'&TP='.$TP.'&SG='.$SG.MontaFiltro('GET').'" title="Exibe as informações deste registro." target="blank">'.f($row,'sq_siw_solicitacao').'</a>';
+      $l_ativ .= chr(13).'     <td>'.Nvl(f($row,'assunto'),'-');
+      $l_ativ .= chr(13).'     <td align="center">'.formataDataEdicao(nvl(f($row,'inicio_real'),f($row,'inicio'))).'</td>';
+      $l_ativ .= chr(13).'     <td align="center">'.formataDataEdicao(nvl(f($row,'fim_real'),f($row,'fim'))).'</td>';
+      $l_ativ .= chr(13).'     <td>'.ExibePessoa(null,$w_cliente,f($row,'solicitante'),$TP,f($row,'nm_resp_tarefa')).'</td>';
+      $l_ativ .= chr(13).'     <td>'.f($row,'nm_tramite').'</td>';
+    } 
+    $l_ativ .= chr(13).'      </td></tr>';
   } 
   if ($l_qt_ativ > '') {
     $l_ativ    = $l_ativ.chr(13).'            </td></tr>';
@@ -3329,7 +3266,6 @@ function QuestoesLinhaAtiv($l_siw_solicitacao, $l_chave, $l_chave_aux, $l_risco,
   if ($l_ativ>'')      $l_html = $l_html.chr(13).str_replace('w_cor',$w_cor,$l_ativ);
   return $l_html;
 } 
- 
 
 // =========================================================================
 // Rotina de preparação para envio de e-mail relativo a projetos

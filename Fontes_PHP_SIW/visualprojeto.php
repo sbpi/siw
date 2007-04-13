@@ -291,7 +291,8 @@ function VisualProjeto($l_chave,$operacao,$l_usuario) {
  } 
   //Lista das tarefas que não são ligadas a nenhuma etapa
   if ($operacao=='T') {
-    $RS = db_getSolicList::getInstanceOf($dbms,$w_menu,$l_usuario,'GDPCADET',3,
+    $RS = db_getLinkData::getInstanceOf($dbms,$_SESSION['P_CLIENTE'],'GDPCAD');
+    $RS = db_getSolicList::getInstanceOf($dbms,f($RS,'sq_menu'),$l_usuario,'GDPCADET',3,
            null,null,null,null,null,null,null,null,null,null,null,null,null,null,
            null,null,null,null,null,null,null,null,$l_chave,null,null,null);
     if (count($RS)>0) {
@@ -311,21 +312,7 @@ function VisualProjeto($l_chave,$operacao,$l_usuario) {
       $l_html .= chr(13).'          </tr>';
       foreach ($RS as $row) {
         $l_html .= chr(13).'      <tr><td>';
-        if (f($row,'concluida')=='N'){
-          if (f($row,'fim')<addDays(time(),-1))
-            $l_html .= chr(13).'   <img src="'.$conImgAtraso.'" border=0 width=15 heigth=15 align="center">';
-          elseif (f($row,'aviso_prox_conc')=='S' && (f($row,'aviso')<=addDays(time(),-1)))
-            $l_html .= chr(13).'   <img src="'.$conImgAviso.'" border=0 width=15 height=15 align="center">';
-          else
-            $l_html .= chr(13).'   <img src="'.$conImgNormal.'" border=0 width=15 height=15 align="center">';
-        } else {
-          if (f($row,'sg_tramite')=='CA') {
-            ShowHTML('           <img src="'.$conImgCancel.'" border=0 width=15 height=15 align="center">');            
-          } elseif (f($row,'fim')<Nvl(f($row,'fim_real'),f($row,'fim')))
-            $l_html .= chr(13).'   <img src="'.$conImgOkAtraso.'" border=0 width=15 heigth=15 align="center">';
-          else
-            $l_html .= chr(13).'   <img src="'.$conImgOkNormal.'" border=0 width=15 height=15 align="center">';
-        } 
+        $l_html.=chr(13).ExibeImagemSolic(f($row,'sigla'),f($row,'inicio'),f($row,'fim'),f($row,'inicio_real'),f($row,'fim_real'),f($row,'aviso_prox_conc'),f($row,'aviso'),f($row,'sg_tramite'), null);
         $l_html .= chr(13).'  <A class="HL" HREF="projetoativ.php?par=Visual&R=ProjetoAtiv.php?par=Visual&O=L&w_chave='.f($row,'sq_siw_solicitacao').'&w_tipo=&P1='.$P1.'&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP='.$TP.'&SG='.$SG.MontaFiltro('GET').'" title="Exibe as informações deste registro." target="blank">'.f($row,'sq_siw_solicitacao').'</a>';
         $l_html .= chr(13).'     <td>'.Nvl(f($row,'assunto'),'-');
         $l_html .= chr(13).'     <td>'.ExibePessoa(null,$w_cliente,f($row,'solicitante'),$TP,f($row,'nm_resp')).'</td>';

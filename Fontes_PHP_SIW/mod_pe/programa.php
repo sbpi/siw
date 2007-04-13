@@ -156,6 +156,7 @@ exit;
 // -------------------------------------------------------------------------
 function Inicial() {
   extract($GLOBALS);
+  $w_tipo=$_REQUEST['w_tipo'];
   if ($O=='L') {
     if (!(strpos(strtoupper($R),'GR_')===false)) {
       $w_filtro='';
@@ -209,44 +210,48 @@ function Inicial() {
       $RS = SortArray($RS,'phpdt_fim','asc','prioridade','asc');
     }
   }
-  Cabecalho();
-  ShowHTML('<HEAD>');
-  if ($P1==2) ShowHTML('<meta http-equiv="Refresh" content="300; URL=../'.MontaURL('MESA').'">');
-  ShowHTML('<BASE HREF="'.$conRootSIW.'">');
-  ShowHTML('<TITLE>'.$conSgSistema.' - Listagem de ações</TITLE>');
-  ScriptOpen('Javascript');
-  CheckBranco();
-  FormataData();
-  ValidateOpen('Validacao');
-  if (!(strpos('CP',$O)===false)) {
-    if ($P1!=1 || $O=='C') {
-      // Se não for cadastramento ou se for cópia
-      Validate('p_prazo','Dias para a data limite','','','1','2','','0123456789');
-      Validate('p_parcerias','Proponente externo','','','2','90','1','');
-      Validate('p_assunto','Assunto','','','2','90','1','1');
-      Validate('p_internas','Palavras-chave','','','2','90','1','1');
-      Validate('p_ini_i','Recebimento inicial','DATA','','10','10','','0123456789/');
-      Validate('p_ini_f','Recebimento final','DATA','','10','10','','0123456789/');
-      ShowHTML('  if ((theForm.p_ini_i.value != \'\' && theForm.p_ini_f.value == \'\') || (theForm.p_ini_i.value == \'\' && theForm.p_ini_f.value != \'\')) {');
-      ShowHTML('     alert (\'Informe ambas as datas de início ou nenhuma delas!\');');
-      ShowHTML('     theForm.p_ini_i.focus();');
-      ShowHTML('     return false;');
-      ShowHTML('  }');
-      CompData('p_ini_i','Recebimento inicial','<=','p_ini_f','Recebimento final');
-      Validate('p_fim_i','Conclusão inicial','DATA','','10','10','','0123456789/');
-      Validate('p_fim_f','Conclusão final','DATA','','10','10','','0123456789/');
-      ShowHTML('  if ((theForm.p_fim_i.value != \'\' && theForm.p_fim_f.value == \'\') || (theForm.p_fim_i.value == \'\' && theForm.p_fim_f.value != \'\')) {');
-      ShowHTML('     alert (\'Informe ambas as datas de conclusão ou nenhuma delas!\');');
-      ShowHTML('     theForm.p_fim_i.focus();');
-      ShowHTML('     return false;');
-      ShowHTML('  }');
-      CompData('p_fim_i','Conclusão inicial','<=','p_fim_f','Conclusão final');
+  if ($w_tipo=='WORD') {
+    HeaderWord();
+  } else {
+    cabecalho();
+    ShowHTML('<HEAD>');
+    if ($P1==2) ShowHTML('<meta http-equiv="Refresh" content="300; URL=../'.MontaURL('MESA').'">');
+    ShowHTML('<BASE HREF="'.$conRootSIW.'">');
+    ShowHTML('<TITLE>'.$conSgSistema.' - Listagem de ações</TITLE>');
+    ScriptOpen('Javascript');
+    CheckBranco();
+    FormataData();
+    ValidateOpen('Validacao');
+    if (!(strpos('CP',$O)===false)) {
+      if ($P1!=1 || $O=='C') {
+        // Se não for cadastramento ou se for cópia
+        Validate('p_prazo','Dias para a data limite','','','1','2','','0123456789');
+        Validate('p_parcerias','Proponente externo','','','2','90','1','');
+        Validate('p_assunto','Assunto','','','2','90','1','1');
+        Validate('p_internas','Palavras-chave','','','2','90','1','1');
+        Validate('p_ini_i','Recebimento inicial','DATA','','10','10','','0123456789/');
+        Validate('p_ini_f','Recebimento final','DATA','','10','10','','0123456789/');
+        ShowHTML('  if ((theForm.p_ini_i.value != \'\' && theForm.p_ini_f.value == \'\') || (theForm.p_ini_i.value == \'\' && theForm.p_ini_f.value != \'\')) {');
+        ShowHTML('     alert (\'Informe ambas as datas de início ou nenhuma delas!\');');
+        ShowHTML('     theForm.p_ini_i.focus();');
+        ShowHTML('     return false;');
+        ShowHTML('  }');
+        CompData('p_ini_i','Recebimento inicial','<=','p_ini_f','Recebimento final');
+        Validate('p_fim_i','Conclusão inicial','DATA','','10','10','','0123456789/');
+        Validate('p_fim_f','Conclusão final','DATA','','10','10','','0123456789/');
+        ShowHTML('  if ((theForm.p_fim_i.value != \'\' && theForm.p_fim_f.value == \'\') || (theForm.p_fim_i.value == \'\' && theForm.p_fim_f.value != \'\')) {');
+        ShowHTML('     alert (\'Informe ambas as datas de conclusão ou nenhuma delas!\');');
+        ShowHTML('     theForm.p_fim_i.focus();');
+        ShowHTML('     return false;');
+        ShowHTML('  }');
+        CompData('p_fim_i','Conclusão inicial','<=','p_fim_f','Conclusão final');
+      } 
+      Validate('P4','Linhas por página','1','1','1','4','','0123456789');
     } 
-    Validate('P4','Linhas por página','1','1','1','4','','0123456789');
-  } 
-  ValidateClose();
-  ScriptClose();
-  ShowHTML('</HEAD>');
+    ValidateClose();
+    ScriptClose();
+    ShowHTML('</HEAD>');
+  }
   if ($w_troca>'') {
     // Se for recarga da página
     BodyOpen('onLoad=\'document.Form.'.$w_troca.'.focus()\';');
@@ -277,45 +282,72 @@ function Inicial() {
       if ($w_submenu>'') {
         $RS1 = db_getLinkSubMenu::getInstanceOf($dbms,$w_cliente,$SG);
         foreach($RS1 as $row){$RS1=$row; break;}
-        ShowHTML('<tr><td>');
-        ShowHTML('    <a accesskey="I" class="SS" href="'.$w_dir.$w_pagina.'Geral&R='.$w_pagina.$par.'&O=I&SG='.f($RS1,'sigla').'&w_menu='.$w_menu.'&P1='.$P1.'&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP='.$TP.MontaFiltro('GET').'"><u>I</u>ncluir</a>&nbsp;');
+        ShowHTML('<tr>');
+        if ($w_tipo!='WORD') ShowHTML('    <td><a accesskey="I" class="SS" href="'.$w_dir.$w_pagina.'Geral&R='.$w_pagina.$par.'&O=I&SG='.f($RS1,'sigla').'&w_menu='.$w_menu.'&P1='.$P1.'&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP='.$TP.MontaFiltro('GET').'"><u>I</u>ncluir</a>&nbsp;');
         //ShowHTML '    <a accesskey=''C'' class=''SS'' href=''' & w_dir & w_pagina & par & '&R=' & w_pagina & par & '&O=C&P1=' & P1 & '&P2=' & P2 & '&P3=1&P4=' & P4 & '&TP=' & TP & '&SG=' & SG & MontaFiltro('GET') & '''><u>C</u>opiar</a>'
       } else {
-        ShowHTML('<tr><td><a accesskey="I" class="SS" href="'.$w_dir.$w_pagina.$par.'&R='.$w_pagina.$par.'&O=I&P1='.$P1.'&P2='.$P2.'&P3=1&P4='.$P4.'&TP='.$TP.'&SG='.$SG.MontaFiltro('GET').'"><u>I</u>ncluir</a>&nbsp;');
+        if ($w_tipo!='WORD') ShowHTML('<tr><td><a accesskey="I" class="SS" href="'.$w_dir.$w_pagina.$par.'&R='.$w_pagina.$par.'&O=I&P1='.$P1.'&P2='.$P2.'&P3=1&P4='.$P4.'&TP='.$TP.'&SG='.$SG.MontaFiltro('GET').'"><u>I</u>ncluir</a>&nbsp;');
       } 
     } 
     if ((strpos(strtoupper($R),'GR_')===false)) {
-      if ($w_copia>'') {
-        // Se for cópia
-        if (MontaFiltro('GET')>'') ShowHTML('                         <a accesskey="F" class="SS" href="'.$w_dir.$w_pagina.$par.'&R='.$w_pagina.$par.'&O=C&P1='.$P1.'&P2='.$P2.'&P3=1&P4='.$P4.'&TP='.$TP.'&SG='.$SG.MontaFiltro('GET').'"><u><font color="#BC5100">F</u>iltrar (Ativo)</font></a>');
-        else                       ShowHTML('                         <a accesskey="F" class="SS" href="'.$w_dir.$w_pagina.$par.'&R='.$w_pagina.$par.'&O=C&P1='.$P1.'&P2='.$P2.'&P3=1&P4='.$P4.'&TP='.$TP.'&SG='.$SG.MontaFiltro('GET').'"><u>F</u>iltrar (Inativo)</a>');
-      } else {
-        if (MontaFiltro('GET')>'')  ShowHTML('                         <a accesskey="F" class="SS" href="'.$w_dir.$w_pagina.$par.'&R='.$w_pagina.$par.'&O=P&P1='.$P1.'&P2='.$P2.'&P3=1&P4='.$P4.'&TP='.$TP.'&SG='.$SG.MontaFiltro('GET').'"><u><font color="#BC5100">F</u>iltrar (Ativo)</font></a>');
-        else                        ShowHTML('                         <a accesskey="F" class="SS" href="'.$w_dir.$w_pagina.$par.'&R='.$w_pagina.$par.'&O=P&P1='.$P1.'&P2='.$P2.'&P3=1&P4='.$P4.'&TP='.$TP.'&SG='.$SG.MontaFiltro('GET').'"><u>F</u>iltrar (Inativo)</a>');
+      if ($w_tipo!='WORD'){
+        if ($w_copia>'') {
+          // Se for cópia
+          if (MontaFiltro('GET')>'') ShowHTML('                         <td><a accesskey="F" class="SS" href="'.$w_dir.$w_pagina.$par.'&R='.$w_pagina.$par.'&O=C&P1='.$P1.'&P2='.$P2.'&P3=1&P4='.$P4.'&TP='.$TP.'&SG='.$SG.MontaFiltro('GET').'"><u><font color="#BC5100">F</u>iltrar (Ativo)</font></a>');
+          else                       ShowHTML('                         <td><a accesskey="F" class="SS" href="'.$w_dir.$w_pagina.$par.'&R='.$w_pagina.$par.'&O=C&P1='.$P1.'&P2='.$P2.'&P3=1&P4='.$P4.'&TP='.$TP.'&SG='.$SG.MontaFiltro('GET').'"><u>F</u>iltrar (Inativo)</a>');
+        } else {
+          if (MontaFiltro('GET')>'')  ShowHTML('                         <td><a accesskey="F" class="SS" href="'.$w_dir.$w_pagina.$par.'&R='.$w_pagina.$par.'&O=P&P1='.$P1.'&P2='.$P2.'&P3=1&P4='.$P4.'&TP='.$TP.'&SG='.$SG.MontaFiltro('GET').'"><u><font color="#BC5100">F</u>iltrar (Ativo)</font></a>');
+          else                        ShowHTML('                         <td><a accesskey="F" class="SS" href="'.$w_dir.$w_pagina.$par.'&R='.$w_pagina.$par.'&O=P&P1='.$P1.'&P2='.$P2.'&P3=1&P4='.$P4.'&TP='.$TP.'&SG='.$SG.MontaFiltro('GET').'"><u>F</u>iltrar (Inativo)</a>');
+        }
       } 
     } 
-    ShowHTML('    <td align="right"><b>Registros: '.count($RS));
+    ShowHTML('    <td align="right">');
+    if ($w_tipo!='WORD') {
+      ShowHTML('     <IMG ALIGN="CENTER" TITLE="Imprimir" SRC="images/impressora.jpg" onClick="window.print();">');
+      ShowHTML('     &nbsp;&nbsp;<a href="'.$w_dir.$w_pagina.$par.'&O=L&P1='.$P1.'&P2='.$P2.'&P3=1&P4='.count($RS).'&TP='.$TP.'&SG='.$SG.'&w_tipo=WORD'.MontaFiltro('GET').'"><IMG border=0 ALIGN="CENTER" TITLE="Gerar word" SRC="images/word.gif"></a>');
+    } 
+    ShowHTML('    <b>Registros: '.count($RS));
     ShowHTML('<tr><td align="center" colspan=3>');
     ShowHTML('    <TABLE WIDTH="100%" bgcolor="'.$conTableBgColor.'" BORDER="'.$conTableBorder.'" CELLSPACING="'.$conTableCellSpacing.'" CELLPADDING="'.$conTableCellPadding.'" BorderColorDark="'.$conTableBorderColorDark.'" BorderColorLight="'.$conTableBorderColorLight.'">');
     ShowHTML('        <tr bgcolor="'.$conTrBgColor.'" align="center">');
-    ShowHTML('          <td rowspan=2><b>'.LinkOrdena('Programa','cd_programa').'</td>');
-    ShowHTML('          <td rowspan=2><b>'.LinkOrdena('Responsável','nm_solic').'</td>');
-    if ($P1!=2) ShowHTML('          <td rowspan=2><b>'.LinkOrdena('Usuário atual','cd_exec').'</td>');
-    if ($P1==1 || $P1==2) {
-      // Se for cadastramento ou mesa de trabalho
-      ShowHTML('          <td rowspan=2><b>'.LinkOrdena('Título','titulo').'</td>');
-      ShowHTML('          <td colspan=2><b>Execução</td>');
+    if ($w_tipo!='WORD') {
+      ShowHTML('          <td rowspan=2><b>'.LinkOrdena('Programa','cd_programa').'</td>');
+      ShowHTML('          <td rowspan=2><b>'.LinkOrdena('Responsável','nm_solic').'</td>');
+      if ($P1!=2) ShowHTML('          <td rowspan=2><b>'.LinkOrdena('Usuário atual','cd_exec').'</td>');
+      if ($P1==1 || $P1==2) {
+        // Se for cadastramento ou mesa de trabalho
+        ShowHTML('          <td rowspan=2><b>'.LinkOrdena('Título','titulo').'</td>');
+        ShowHTML('          <td colspan=2><b>Execução</td>');
+        } else {
+        ShowHTML('          <td rowspan=2><b>'.LinkOrdena('Título','titulo').'</td>');
+        ShowHTML('          <td colspan=2><b>Execução</td>');
+        ShowHTML('          <td rowspan=2><b>'.LinkOrdena('Fase atual','nm_tramite').'</td>');
+      } 
+      ShowHTML('          <td rowspan=2><b>Operações</td>');
+      ShowHTML('        </tr>');
+      ShowHTML('        <tr bgcolor="'.$conTrBgColor.'" align="center">');
+      ShowHTML('          <td><b>'.LinkOrdena('De','inicio').'</td>');
+      ShowHTML('          <td><b>'.LinkOrdena('Até','fim').'</td>');
+      ShowHTML('        </tr>');
     } else {
-      ShowHTML('          <td rowspan=2><b>'.LinkOrdena('Título','titulo').'</td>');
-      ShowHTML('          <td colspan=2><b>Execução</td>');
-      ShowHTML('          <td rowspan=2><b>'.LinkOrdena('Fase atual','nm_tramite').'</td>');
-    } 
-    ShowHTML('          <td rowspan=2><b>Operações</td>');
-    ShowHTML('        </tr>');
-    ShowHTML('        <tr bgcolor="'.$conTrBgColor.'" align="center">');
-    ShowHTML('          <td><b>'.LinkOrdena('De','inicio').'</td>');
-    ShowHTML('          <td><b>'.LinkOrdena('Até','fim').'</td>');
-    ShowHTML('        </tr>');
+      ShowHTML('          <td rowspan=2><b>Programa</td>');
+      ShowHTML('          <td rowspan=2><b>Responsável</td>');
+      if ($P1!=2) ShowHTML('          <td rowspan=2><b>Usuário atual</td>');
+      if ($P1==1 || $P1==2) {
+        // Se for cadastramento ou mesa de trabalho
+        ShowHTML('          <td rowspan=2><b>Título</td>');
+        ShowHTML('          <td colspan=2><b>Execução</td>');
+      } else {
+        ShowHTML('          <td rowspan=2><b>Título</td>');
+        ShowHTML('          <td colspan=2><b>Execução</td>');
+        ShowHTML('          <td rowspan=2><b>Fase atual</td>');
+      } 
+      ShowHTML('        </tr>');
+      ShowHTML('        <tr bgcolor="'.$conTrBgColor.'" align="center">');
+      ShowHTML('          <td><b>De</td>');
+      ShowHTML('          <td><b>Até</td>');
+      ShowHTML('        </tr>');
+    }  
     if (count($RS)<=0) {
       ShowHTML('      <tr bgcolor="'.$conTrBgColor.'"><td colspan=10 align="center"><font size="2"><b>Não foram encontrados registros.</b></td></tr>');
     } else {
@@ -325,27 +357,20 @@ function Inicial() {
         $w_cor = ($w_cor==$conTrBgColor || $w_cor=='') ? $w_cor=$conTrAlternateBgColor : $w_cor=$conTrBgColor;
         ShowHTML('      <tr bgcolor="'.$w_cor.'" valign="top">');
         ShowHTML('        <td nowrap>');
-        if (nvl(f($row,'conclusao'),'nulo')=='nulo') {
-          if (f($row,'fim')<addDays(time(),-1)) {
-            ShowHTML('           <img src="'.$conImgAtraso.'" border=0 width=15 heigth=15 align="center">');
-          } elseif (f($row,'aviso_prox_conc')=='S' && (f($row,'aviso')<=addDays(time(),-1))) {
-            ShowHTML('           <img src="'.$conImgAviso.'" border=0 width=15 height=15 align="center">');
-          } else {
-            ShowHTML('           <img src="'.$conImgNormal.'" border=0 width=15 height=15 align="center">');
-          } 
+        ShowHTML(ExibeImagemSolic(f($row,'sigla'),f($row,'inicio'),f($row,'fim'),f($row,'inicio_real'),f($row,'fim_real'),f($row,'aviso_prox_conc'),f($row,'aviso'),f($row,'sg_tramite'), null));
+        if ($w_tipo!='WORD') {
+          ShowHTML('        <A class="HL" HREF="'.$w_dir.$w_pagina.'Visual&R='.$w_pagina.$par.'&O=L&w_chave='.f($row,'sq_siw_solicitacao').'&w_tipo=Volta&P1=2&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP='.$TP.'&SG='.$SG.MontaFiltro('GET').'" title="Exibe as informações deste registro.">'.f($row,'cd_programa').'&nbsp;</a>');
+          ShowHTML('        <td>'.ExibePessoa('../',$w_cliente,f($row,'solicitante'),$TP,f($row,'nm_solic')).'</A></td>');
         } else {
-          if (f($row,'fim')<Nvl(f($row,'fim_real'),f($row,'fim'))) {
-            ShowHTML('           <img src="'.$conImgOkAtraso.'" border=0 width=15 heigth=15 align="center">');
-          } else {
-            ShowHTML('           <img src="'.$conImgOkNormal.'" border=0 width=15 height=15 align="center">');
-          } 
-        }
-        ShowHTML('        <A class="HL" HREF="'.$w_dir.$w_pagina.'Visual&R='.$w_pagina.$par.'&O=L&w_chave='.f($row,'sq_siw_solicitacao').'&w_tipo=Volta&P1=2&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP='.$TP.'&SG='.$SG.MontaFiltro('GET').'" title="Exibe as informações deste registro.">'.f($row,'cd_programa').'&nbsp;</a>');
-        ShowHTML('        <td>'.ExibePessoa('../',$w_cliente,f($row,'solicitante'),$TP,f($row,'nm_solic')).'</A></td>');
+          ShowHTML('        '.f($row,'cd_programa').'');
+          ShowHTML('        <td>'.f($row,'nm_solic').'</td>');
+        } 
         if ($P1!=2) {
           // Se for mesa de trabalho, não exibe o executor, pois já é o usuário logado
-          if (Nvl(f($row,'nm_exec'),'---')>'---') ShowHTML('        <td>'.ExibePessoa('../',$w_cliente,f($row,'executor'),$TP,f($row,'nm_exec')).'</td>');
-          else                                    ShowHTML('        <td>---</td>');
+          if (Nvl(f($row,'nm_exec'),'---')>'---') {
+            if ($w_tipo!='WORD') ShowHTML('        <td>'.ExibePessoa('../',$w_cliente,f($row,'executor'),$TP,f($row,'nm_exec')).'</td>');
+            else                 ShowHTML('        <td>'.f($row,'nm_exec').'</td>');
+          } else                                    ShowHTML('        <td>---</td>');
         } 
         // Verifica se foi enviado o parâmetro p_tamanho = N. Se chegou, o assunto deve ser exibido sem corte.
         // Este parâmetro é enviado pela tela de filtragem das páginas gerenciais
@@ -362,50 +387,54 @@ function Inicial() {
         if ($P1!=1 && $P1!=2) {
           ShowHTML('        <td nowrap>'.f($row,'nm_tramite').'</td>');
         } 
-        ShowHTML('        <td align="top" nowrap>');
         if ($P1!=3 && $P1!=5) {
-          // Se não for acompanhamento
-          if ($w_copia>'') {
-            // Se for listagem para cópia
-            $RS1 = db_getLinkSubMenu::getInstanceOf($dbms,$w_cliente,$_REQUEST['SG']);
-            //ShowHTML '          <a accesskey=''I'' class=''HL'' href=''' & w_dir & w_pagina & 'Geral&R=' & w_pagina & par & '&O=I&SG=' & RS1('sigla') & '&w_menu=' & w_menu & '&P1=' & P1 & '&P2=' & P2 & '&P3=' & P3 & '&P4=' & P4 & '&TP=' & TP & '&w_copia=' & RS('sq_siw_solicitacao') & MontaFiltro('GET') & '''>Copiar</a>&nbsp;'
-          } elseif ($P1==1) {
-            // Se for cadastramento
-            if ($w_submenu>'') ShowHTML('          <A class="HL" HREF="menu.php?par=ExibeDocs&O=A&w_chave='.f($row,'sq_siw_solicitacao').'&R='.$w_pagina.$par.'&SG='.$SG.'&TP='.$TP.'&w_documento=Programa '.f($row,'cd_programa').MontaFiltro('GET').'" title="Altera as informações cadastrais do programa" TARGET="menu">Alterar</a>&nbsp;');
-            else               ShowHTML('          <A class="HL" HREF="'.$w_dir.$w_pagina.$par.'&R='.$w_pagina.$par.'&O=A&w_chave='.f($row,'sq_siw_solicitacao').'&P1='.$P1.'&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP='.$TP.'&SG='.$SG.MontaFiltro('GET').'" title="Altera as informações cadastrais do programa">Alterar</A>&nbsp');
-            ShowHTML('          <A class="HL" HREF="'.$w_dir.$w_pagina.'Excluir&R='.$w_pagina.$par.'&O=E&w_chave='.f($row,'sq_siw_solicitacao').'&w_tipo=Volta&P1='.$P1.'&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP='.$TP.'&SG='.$SG.MontaFiltro('GET').'" title="Exclusão de programa.">Excluir</A>&nbsp');
-            ShowHTML('          <A class="HL" HREF="'.$w_dir.$w_pagina.'Envio&R='.$w_pagina.$par.'&O=V&w_chave='.f($row,'sq_siw_solicitacao').'&w_tipo=Volta&P1='.$P1.'&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP='.$TP.'&SG='.$SG.MontaFiltro('GET').'" title="Encaminhamento do programa.">Enviar</A>&nbsp');
-          } elseif ($P1==2 || $P1==6) {
-            // Se for execução
-            if ($w_usuario==f($row,'executor')) {
-              // Coloca as operações dependendo do trâmite
-              if (f($row,'sg_tramite')=='EA') {
-                ShowHTML('          <A class="HL" HREF="'.$w_dir.$w_pagina.'Anotacao&R='.$w_pagina.$par.'&O=V&w_chave='.f($row,'sq_siw_solicitacao').'&w_tipo=Volta&P1='.$P1.'&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP='.$TP.'&SG='.$SG.MontaFiltro('GET').'" title="Registra anotações para a ação, sem enviá-la.">Anotar</A>&nbsp');
-                ShowHTML('          <A class="HL" HREF="'.$w_dir.$w_pagina.'Envio&R='.$w_pagina.$par.'&O=V&w_chave='.f($row,'sq_siw_solicitacao').'&w_tipo=Volta&P1='.$P1.'&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP='.$TP.'&SG='.$SG.MontaFiltro('GET').'" title="Envia a ação para outro responsável.">Enviar</A>&nbsp');
-              } elseif (f($row,'sg_tramite')=='EE') {
-                ShowHTML('          <A class="HL" HREF="'.$w_dir.$w_pagina.'Anotacao&R='.$w_pagina.$par.'&O=V&w_chave='.f($row,'sq_siw_solicitacao').'&w_tipo=Volta&P1='.$P1.'&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP='.$TP.'&SG='.$SG.MontaFiltro('GET').'" title="Registra anotações para a ação, sem enviá-la.">Anotar</A>&nbsp');
-                ShowHTML('          <A class="HL" HREF="'.$w_dir.$w_pagina.'Envio&R='.$w_pagina.$par.'&O=V&w_chave='.f($row,'sq_siw_solicitacao').'&w_tipo=Volta&P1='.$P1.'&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP='.$TP.'&SG='.$SG.MontaFiltro('GET').'" title="Envia a ação para outro responsável.">Enviar</A>&nbsp');
-                ShowHTML('          <A class="HL" HREF="'.$w_dir.$w_pagina.'Concluir&R='.$w_pagina.$par.'&O=V&w_chave='.f($row,'sq_siw_solicitacao').'&w_tipo=Volta&P1='.$P1.'&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP='.$TP.'&SG='.$SG.MontaFiltro('GET').'" title="Conclui a execução da ação.">Concluir</A>&nbsp');
-              } 
-            } else {
-              if (RetornaGestor(f($row,'sq_siw_solicitacao'),$w_usuario)=='S') {
-                ShowHTML('          <A class="HL" HREF="'.$w_dir.$w_pagina.'Envio&R='.$w_pagina.$par.'&O=V&w_chave='.f($row,'sq_siw_solicitacao').'&w_tipo=Volta&P1='.$P1.'&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP='.$TP.'&SG='.$SG.MontaFiltro('GET').'" title="Envia a ação para outro responsável.">Enviar</A>&nbsp');
+          if ($w_tipo!='WORD') {
+            ShowHTML('        <td align="top" nowrap>');
+            // Se não for acompanhamento
+            if ($w_copia>'') {
+              // Se for listagem para cópia
+              $RS1 = db_getLinkSubMenu::getInstanceOf($dbms,$w_cliente,$_REQUEST['SG']);
+              //ShowHTML '          <a accesskey=''I'' class=''HL'' href=''' & w_dir & w_pagina & 'Geral&R=' & w_pagina & par & '&O=I&SG=' & RS1('sigla') & '&w_menu=' & w_menu & '&P1=' & P1 & '&P2=' & P2 & '&P3=' & P3 & '&P4=' & P4 & '&TP=' & TP & '&w_copia=' & RS('sq_siw_solicitacao') & MontaFiltro('GET') & '''>Copiar</a>&nbsp;'
+            } elseif ($P1==1) {
+              // Se for cadastramento
+              if ($w_submenu>'') ShowHTML('          <A class="HL" HREF="menu.php?par=ExibeDocs&O=A&w_chave='.f($row,'sq_siw_solicitacao').'&R='.$w_pagina.$par.'&SG='.$SG.'&TP='.$TP.'&w_documento=Programa '.f($row,'cd_programa').MontaFiltro('GET').'" title="Altera as informações cadastrais do programa" TARGET="menu">Alterar</a>&nbsp;');
+              else               ShowHTML('          <A class="HL" HREF="'.$w_dir.$w_pagina.$par.'&R='.$w_pagina.$par.'&O=A&w_chave='.f($row,'sq_siw_solicitacao').'&P1='.$P1.'&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP='.$TP.'&SG='.$SG.MontaFiltro('GET').'" title="Altera as informações cadastrais do programa">Alterar</A>&nbsp');
+              ShowHTML('          <A class="HL" HREF="'.$w_dir.$w_pagina.'Excluir&R='.$w_pagina.$par.'&O=E&w_chave='.f($row,'sq_siw_solicitacao').'&w_tipo=Volta&P1='.$P1.'&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP='.$TP.'&SG='.$SG.MontaFiltro('GET').'" title="Exclusão de programa.">Excluir</A>&nbsp');
+              ShowHTML('          <A class="HL" HREF="'.$w_dir.$w_pagina.'Envio&R='.$w_pagina.$par.'&O=V&w_chave='.f($row,'sq_siw_solicitacao').'&w_tipo=Volta&P1='.$P1.'&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP='.$TP.'&SG='.$SG.MontaFiltro('GET').'" title="Encaminhamento do programa.">Enviar</A>&nbsp');
+            } elseif ($P1==2 || $P1==6) {
+              // Se for execução
+              if ($w_usuario==f($row,'executor')) {
+                // Coloca as operações dependendo do trâmite
+                if (f($row,'sg_tramite')=='EA') {
+                  ShowHTML('          <A class="HL" HREF="'.$w_dir.$w_pagina.'Anotacao&R='.$w_pagina.$par.'&O=V&w_chave='.f($row,'sq_siw_solicitacao').'&w_tipo=Volta&P1='.$P1.'&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP='.$TP.'&SG='.$SG.MontaFiltro('GET').'" title="Registra anotações para a ação, sem enviá-la.">Anotar</A>&nbsp');
+                  ShowHTML('          <A class="HL" HREF="'.$w_dir.$w_pagina.'Envio&R='.$w_pagina.$par.'&O=V&w_chave='.f($row,'sq_siw_solicitacao').'&w_tipo=Volta&P1='.$P1.'&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP='.$TP.'&SG='.$SG.MontaFiltro('GET').'" title="Envia a ação para outro responsável.">Enviar</A>&nbsp');
+                } elseif (f($row,'sg_tramite')=='EE') {
+                  ShowHTML('          <A class="HL" HREF="'.$w_dir.$w_pagina.'Anotacao&R='.$w_pagina.$par.'&O=V&w_chave='.f($row,'sq_siw_solicitacao').'&w_tipo=Volta&P1='.$P1.'&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP='.$TP.'&SG='.$SG.MontaFiltro('GET').'" title="Registra anotações para a ação, sem enviá-la.">Anotar</A>&nbsp');
+                  ShowHTML('          <A class="HL" HREF="'.$w_dir.$w_pagina.'Envio&R='.$w_pagina.$par.'&O=V&w_chave='.f($row,'sq_siw_solicitacao').'&w_tipo=Volta&P1='.$P1.'&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP='.$TP.'&SG='.$SG.MontaFiltro('GET').'" title="Envia a ação para outro responsável.">Enviar</A>&nbsp');
+                  ShowHTML('          <A class="HL" HREF="'.$w_dir.$w_pagina.'Concluir&R='.$w_pagina.$par.'&O=V&w_chave='.f($row,'sq_siw_solicitacao').'&w_tipo=Volta&P1='.$P1.'&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP='.$TP.'&SG='.$SG.MontaFiltro('GET').'" title="Conclui a execução da ação.">Concluir</A>&nbsp');
+                } 
               } else {
-                ShowHTML('          ---&nbsp');
-              }
+                if (RetornaGestor(f($row,'sq_siw_solicitacao'),$w_usuario)=='S') {
+                  ShowHTML('          <A class="HL" HREF="'.$w_dir.$w_pagina.'Envio&R='.$w_pagina.$par.'&O=V&w_chave='.f($row,'sq_siw_solicitacao').'&w_tipo=Volta&P1='.$P1.'&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP='.$TP.'&SG='.$SG.MontaFiltro('GET').'" title="Envia a ação para outro responsável.">Enviar</A>&nbsp');
+                } else {
+                  ShowHTML('          ---&nbsp');
+                }
+              } 
             } 
-          } 
+          }
         } else {
-          if (Nvl(f($row,'solicitante'),0) == $w_usuario || 
-              Nvl(f($row,'titular'),0)     == $w_usuario || 
-              Nvl(f($row,'substituto'),0)  == $w_usuario || 
-              Nvl(f($row,'tit_exec'),0)    == $w_usuario || 
-              Nvl(f($row,'subst_exec'),0)  == $w_usuario) {
-            // Se o usuário for responsável por uma ação, titular/substituto do setor responsável 
-            // ou titular/substituto da unidade executora,
-            // pode enviar.
-            ShowHTML('          <A class="HL" HREF="'.$w_dir.$w_pagina.'envio&R='.$w_pagina.$par.'&O=V&w_chave='.f($row,'sq_siw_solicitacao').'&w_tipo=Volta&P1='.$P1.'&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP='.$TP.'&SG='.$SG.MontaFiltro('GET').'" title="Envia a ação para outro responsável.">Enviar</A>&nbsp');
-          } 
+          if ($w_tipo!='WORD'){
+            if (Nvl(f($row,'solicitante'),0) == $w_usuario || 
+                Nvl(f($row,'titular'),0)     == $w_usuario || 
+                Nvl(f($row,'substituto'),0)  == $w_usuario || 
+                Nvl(f($row,'tit_exec'),0)    == $w_usuario || 
+                Nvl(f($row,'subst_exec'),0)  == $w_usuario) {
+              // Se o usuário for responsável por uma ação, titular/substituto do setor responsável 
+              // ou titular/substituto da unidade executora,
+              // pode enviar.
+              ShowHTML('          <A class="HL" HREF="'.$w_dir.$w_pagina.'envio&R='.$w_pagina.$par.'&O=V&w_chave='.f($row,'sq_siw_solicitacao').'&w_tipo=Volta&P1='.$P1.'&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP='.$TP.'&SG='.$SG.MontaFiltro('GET').'" title="Envia a ação para outro responsável.">Enviar</A>&nbsp');
+            } 
+          }
         } 
         ShowHTML('        </td>');
         ShowHTML('      </tr>');
@@ -416,10 +445,12 @@ function Inicial() {
     ShowHTML('  </td>');
     ShowHTML('</tr>');
     ShowHTML('<tr><td align="center" colspan=3>');
-    if ($R>'') {
-      MontaBarra($w_dir.$w_pagina.$par.'&R='.$R.'&O='.$O.'&P1='.$P1.'&P2='.$P2.'&TP='.$TP.'&SG='.$SG.'&w_copia='.$w_copia,ceil(count($RS)/$P4),$P3,$P4,count($RS));
-    } else {
-      MontaBarra($w_dir.$w_pagina.$par.'&R='.$w_pagina.$par.'&O='.$O.'&P1='.$P1.'&P2='.$P2.'&TP='.$TP.'&SG='.$SG.'&w_copia='.$w_copia,ceil(count($RS)/$P4),$P3,$P4,count($RS));
+    if ($w_tipo!='WORD'){
+      if ($R>'') {
+        MontaBarra($w_dir.$w_pagina.$par.'&R='.$R.'&O='.$O.'&P1='.$P1.'&P2='.$P2.'&TP='.$TP.'&SG='.$SG.'&w_copia='.$w_copia,ceil(count($RS)/$P4),$P3,$P4,count($RS));
+      } else {
+        MontaBarra($w_dir.$w_pagina.$par.'&R='.$w_pagina.$par.'&O='.$O.'&P1='.$P1.'&P2='.$P2.'&TP='.$TP.'&SG='.$SG.'&w_copia='.$w_copia,ceil(count($RS)/$P4),$P3,$P4,count($RS));
+      }
     } 
     ShowHTML('</tr>');
   } elseif (!(strpos('CP',$O)===false)) {

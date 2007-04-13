@@ -660,9 +660,7 @@ function VisualRestricao() {
     ShowHtml('            <td bgColor="#f0f0f0"><div align="center"><b>Até</b></div></td>');
     ShowHtml('          </tr>');
     //Se for visualização normal, irá visualizar somente as etapas
-    foreach($RS as $row) {
-      ShowHtml(EtapaLinha($w_chave,f($row,'sq_projeto_etapa'),f($row,'titulo'),f($row,'nm_resp'),f($row,'sg_setor'),f($row,'inicio_previsto'),f($row,'fim_previsto'),f($row,'inicio_real'),f($row,'fim_real'),f($row,'perc_conclusao'),f($row,'qt_ativ'),((f($row,'pacote_trabalho')=='S') ? '<b>' : ''),'N','PROJETO',f($row,'sq_pessoa'),f($row,'sq_unidade'),f($row,'pj_vincula_contrato'),f($row,'qt_contr'),f($row,'orcamento'),0,f($row,'restricao')));
-    } 
+    foreach($RS as $row) ShowHtml(EtapaLinha($w_chave,f($row,'sq_projeto_etapa'),f($row,'titulo'),f($row,'nm_resp'),f($row,'sg_setor'),f($row,'inicio_previsto'),f($row,'fim_previsto'),f($row,'inicio_real'),f($row,'fim_real'),f($row,'perc_conclusao'),f($row,'qt_ativ'),((f($row,'pacote_trabalho')=='S') ? '<b>' : ''),'N','PROJETO',f($row,'sq_pessoa'),f($row,'sq_unidade'),f($row,'pj_vincula_contrato'),f($row,'qt_contr'),f($row,'orcamento'),0,f($row,'restricao')));
     ShowHTML('      </tr></table>');
     ShowHTML('    </table>');    
   } 
@@ -688,21 +686,7 @@ function VisualRestricao() {
     foreach ($RS as $row) {
       $w_cor = ($w_cor==$conTrBgColor || $w_cor=='') ? $w_cor=$conTrAlternateBgColor : $w_cor=$conTrBgColor;
       ShowHTML('        <tr bgcolor="'.$w_cor.'" valign="top"><td nowrap>');
-      if (f($row,'concluida')=='N'){
-        if (f($row,'fim')<addDays(time(),-1))
-          ShowHTML('   <img src="'.$conImgAtraso.'" border=0 width=15 heigth=15 align="center">');
-        elseif (f($row,'aviso_prox_conc')=='S' && (f($row,'aviso')<=addDays(time(),-1)))
-          ShowHTML('   <img src="'.$conImgAviso.'" border=0 width=15 height=15 align="center">');
-        else
-          ShowHTML('   <img src="'.$conImgNormal.'" border=0 width=15 height=15 align="center">');
-      } else {
-        if (f($row,'sg_tramite')=='CA') {
-          ShowHTML('           <img src="'.$conImgCancel.'" border=0 width=15 height=15 align="center">'); 
-        } elseif (f($row,'fim')<Nvl(f($row,'fim_real'),f($row,'fim')))
-          ShowHTML('   <img src="'.$conImgOkAtraso.'" border=0 width=15 heigth=15 align="center">');
-        else
-          ShowHTML('   <img src="'.$conImgOkNormal.'" border=0 width=15 height=15 align="center">');
-      } 
+      ShowHTML(ExibeImagemSolic(f($row,'sg_servico'),f($row,'inicio'),f($row,'fim'),f($row,'inicio_real'),f($row,'fim_real'),f($row,'aviso_prox_conc'),f($row,'aviso'),f($row,'sg_tramite'), null));
       ShowHTML('  <A class="HL" HREF="projetoativ.php?par=Visual&R=ProjetoAtiv.php?par=Visual&O=L&w_chave='.f($row,'sq_siw_solicitacao').'&w_tipo=&P1='.$P1.'&P2='.f($row,'sq_menu').'&P3='.$P3.'&P4='.$P4.'&TP='.$TP.'&SG='.$SG.MontaFiltro('GET').'" title="Exibe as informações deste registro." target="blank">'.f($row,'sq_siw_solicitacao').'</a>');
       ShowHTML('     <td>'.CRLF2BR(Nvl(f($row,'assunto'),'---')));
       ShowHTML('     <td>'.ExibePessoa(null,$w_cliente,f($row,'solicitante'),$TP,f($row,'nm_resp_tarefa')).'</td>');
@@ -746,9 +730,7 @@ function EtapaLinha($l_chave,$l_chave_aux,$l_titulo,$l_resp,$l_setor,$l_inicio,$
   $w_cor = ($w_cor==$conTrBgColor || $w_cor=='') ? $w_cor=$conTrAlternateBgColor : $w_cor=$conTrBgColor;
   $l_html .= chr(13).'      <tr valign="top" bgcolor="'.$w_cor.'">';
   $l_html .= chr(13).'        <td width="1%" nowrap rowspan='.$l_row.'>';
-  if ($l_fim < addDays(time(),-1) && $l_perc < 100) $l_html .= chr(13).'           <img src="'.$conImgAtraso.'" border=0 width=15 height=15 align="center">';
-  elseif ($l_perc < 100)                $l_html .= chr(13).'           <img src="'.$conImgNormal.'" border=0 width=15 height=15 align="center">';
-  else                                  $l_html .= chr(13).'           <img src="'.$conImgOkNormal.'" border=0 width=15 height=15 align="center">';
+  $l_html .= chr(13).ExibeImagemSolic('ETAPA',$l_inicio,$l_fim,$l_inicio_real,$l_fim_real,null,null,null,$l_perc);
   $l_html .= chr(13).'' .MontaOrdemEtapa($l_chave_aux).'</td>';
   if (nvl($l_nivel,0)==0) {
     $l_html .= chr(13).'        <td>'.$l_destaque.exibeImagemRestricao($l_restricao).' '.$l_titulo.'</b>';
@@ -770,16 +752,7 @@ function EtapaLinha($l_chave,$l_chave_aux,$l_titulo,$l_resp,$l_setor,$l_inicio,$
     foreach ($RS_Ativ as $row) {
       $l_ativ .= chr(13).'<tr valign="top">';
       $l_ativ .= chr(13).'  <td>';
-      if (f($row,'concluida') == 'N') {
-        if (f($row,'fim') < addDays(time(),-1))                                $l_ativ .= chr(13).'   <img src="'.$conImgAtraso.'" border=0 width=15 heigth=15 align="center">';
-        elseif (f($row,'aviso_prox_conc')=='S' && (f($row,'aviso') <= addDays(time(),-1))) $l_ativ .= chr(13).'   <img src="'.$conImgAviso.'" border=0 width=15 height=15 align="center">';
-        else                                                                   $l_ativ .= chr(13).'   <img src="'.$conImgNormal.'" border=0 width=15 height=15 align="center">';
-      } else {
-        if (f($row,'sg_tramite')=='CA') {
-          $l_ativ .= chr(13).'           <img src="'.$conImgCancel.'" border=0 width=15 height=15 align="center">';
-        } elseif (f($row,'fim') < Nvl(f($row,'fim_real'),f($row,'fim'))) $l_ativ .= chr(13).'   <img src="'.$conImgOkAtraso.'" border=0 width=15 heigth=15 align="center">';
-        else                                                       $l_ativ .= chr(13).'   <img src="'.$conImgOkNormal.'" border=0 width=15 height=15 align="center">';
-      } 
+      $l_ativ .= chr(13).ExibeImagemSolic(f($row,'sigla'),f($row,'inicio'),f($row,'fim'),f($row,'inicio_real'),f($row,'fim_real'),f($row,'aviso_prox_conc'),f($row,'aviso'),f($row,'sg_tramite'), null);
       $l_ativ .= chr(13).'  <A class="HL" HREF="projetoativ.php?par=Visual&R=projetoativ.php?par=Visual&O=L&w_chave='.f($row,'sq_siw_solicitacao').'&w_tipo=&P1='.$P1.'&P2='.f($row,'sq_menu').'&P3='.$P3.'&P4='.$P4.'&TP='.$TP.'&SG='.$SG.MontaFiltro('GET').'" title="Exibe as informações deste registro." target="blank">'.f($row,'sq_siw_solicitacao').'</a>';
       if (strlen(Nvl(f($row,'assunto'),'-'))>50 && strtoupper($l_assunto)!='COMPLETO') $l_ativ .= ' - '.substr(Nvl(f($row,'assunto'),'-'),0,50).'...';
       else                                                                             $l_ativ .= ' - '.Nvl(f($row,'assunto'),'-');
