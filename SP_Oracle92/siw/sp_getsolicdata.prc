@@ -627,6 +627,9 @@ begin
                 b1.sq_siw_tramite,    b1.nome nm_tramite,            b1.ordem or_tramite,
                 b1.sigla sg_tramite,  b1.ativo,
                 b2.nome  nm_opiniao,
+                b3.sq_veiculo,        b3.qtd_pessoas,                b3.carga,
+                b3.hodometro_saida,   b3.hodometro_chegada,          b3.horario_saida,
+                b3.horario_chegada,   b3.destino,                    b3.parcial,
                 c.sq_tipo_unidade,    c.nome nm_unidade_exec,        c.informal,
                 c.vinculada,          c.adm_central,
                 e.sq_tipo_unidade,    e.nome nm_unidade_solic,        e.informal informal_solic,
@@ -651,6 +654,7 @@ begin
                 inner        join siw_solicitacao      b  on (a.sq_menu             = b.sq_menu)
                   inner      join siw_tramite          b1 on (b.sq_siw_tramite      = b1.sq_siw_tramite)
                   left       join siw_opiniao          b2 on (b.opiniao             = b2.sq_siw_opiniao)
+                  inner      join sr_solicitacao_transporte b3 on (b.sq_siw_solicitacao = b3.sq_siw_solicitacao)
                   inner      join eo_unidade           e  on (b.sq_unidade          = e.sq_unidade)
                     left     join eo_unidade_resp      e1 on (e.sq_unidade          = e1.sq_unidade and
                                                               e1.tipo_respons       = 'T'           and

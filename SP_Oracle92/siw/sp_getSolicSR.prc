@@ -97,6 +97,9 @@ begin
                 b1.sq_siw_tramite,    b1.nome nm_tramite,            b1.ordem or_tramite,
                 b1.sigla sg_tramite,  b1.ativo,
                 b3.nome nm_opiniao,
+                b4.sq_veiculo,        b4.qtd_pessoas,                b4.carga, 
+                b4.hodometro_saida,   b4.hodometro_chegada,          b4.horario_saida,
+                b4.hodometro_chegada, b4.destino,                    b4.parcial,
                 c.sq_tipo_unidade,    c.nome nm_unidade_exec,        c.informal,
                 c.vinculada,          c.adm_central,
                 e.sq_tipo_unidade,    e.nome nm_unidade_resp,        e.informal informal_resp,
@@ -107,41 +110,42 @@ begin
                 o.nome_resumido nm_solic, o.nome_resumido||' ('||o2.sigla||')' nm_resp,
                 o.nome_resumido_ind nm_solic_ind,
                 p.nome_resumido nm_exec, p.nome_resumido_ind nm_exec_ind
-           from siw_menu                                  a 
-                   inner        join eo_unidade           a2 on (a.sq_unid_executora        = a2.sq_unidade)
-                     left       join eo_unidade_resp      a3 on (a2.sq_unidade              = a3.sq_unidade and
-                                                                 a3.tipo_respons            = 'T'           and
-                                                                 a3.fim                     is null
-                                                                )
-                     left       join eo_unidade_resp      a4 on (a2.sq_unidade              = a4.sq_unidade and
-                                                                 a4.tipo_respons            = 'S'           and
-                                                                 a4.fim                     is null
-                                                                )
-                   inner        join siw_modulo           a1 on (a.sq_modulo                = a1.sq_modulo)
-                   left         join eo_unidade           c  on (a.sq_unid_executora        = c.sq_unidade)
-                   inner        join siw_solicitacao      b  on (a.sq_menu                  = b.sq_menu)
-                      inner     join siw_tramite          b1 on (b.sq_siw_tramite           = b1.sq_siw_tramite)
-                      left      join siw_opiniao          b3 on (b.opiniao                  = b3.sq_siw_opiniao)
+           from siw_menu                                       a 
+                   inner        join eo_unidade                a2 on (a.sq_unid_executora        = a2.sq_unidade)
+                     left       join eo_unidade_resp           a3 on (a2.sq_unidade              = a3.sq_unidade and
+                                                                      a3.tipo_respons            = 'T'           and
+                                                                      a3.fim                     is null
+                                                                     )
+                     left       join eo_unidade_resp           a4 on (a2.sq_unidade              = a4.sq_unidade and
+                                                                     a4.tipo_respons            = 'S'           and
+                                                                     a4.fim                     is null
+                                                                     )
+                   inner        join siw_modulo                a1 on (a.sq_modulo                = a1.sq_modulo)
+                   left         join eo_unidade                c  on (a.sq_unid_executora        = c.sq_unidade)
+                   inner        join siw_solicitacao           b  on (a.sq_menu                  = b.sq_menu)
+                      inner     join siw_tramite               b1 on (b.sq_siw_tramite           = b1.sq_siw_tramite)
+                      left      join siw_opiniao               b3 on (b.opiniao                  = b3.sq_siw_opiniao)
                       inner     join (select sq_siw_solicitacao, acesso(sq_siw_solicitacao, p_pessoa) acesso
                                         from siw_solicitacao
-                                     )                    b2 on (b.sq_siw_solicitacao       = b2.sq_siw_solicitacao)
-                      inner     join eo_unidade           e  on (b.sq_unidade          = e.sq_unidade)
-                        left    join eo_unidade_resp      e1 on (e.sq_unidade               = e1.sq_unidade and
-                                                                 e1.tipo_respons            = 'T'           and
-                                                                 e1.fim                     is null)
-                        left  join eo_unidade_resp        e2 on (e.sq_unidade               = e2.sq_unidade and
-                                                                 e2.tipo_respons            = 'S'           and
-                                                                 e2.fim                     is null)
-                      inner          join co_cidade       f  on (b.sq_cidade_origem         = f.sq_cidade)
-                      left           join ct_cc           n  on (b.sq_cc                    = n.sq_cc)
-                      inner          join co_pessoa       o  on (b.solicitante              = o.sq_pessoa)
-                        inner        join sg_autenticacao o1 on (o.sq_pessoa                = o1.sq_pessoa)
-                          inner      join eo_unidade      o2 on (o1.sq_unidade              = o2.sq_unidade)
-                      left           join co_pessoa       p  on (b.executor                 = p.sq_pessoa)
+                                     )                         b2 on (b.sq_siw_solicitacao       = b2.sq_siw_solicitacao)
+                      left      join sr_solicitacao_transporte b4 on (b.sq_siw_solicitacao  = b4.sq_siw_solicitacao)
+                      inner     join eo_unidade                e  on (b.sq_unidade          = e.sq_unidade)
+                        left    join eo_unidade_resp           e1 on (e.sq_unidade               = e1.sq_unidade and
+                                                                      e1.tipo_respons            = 'T'           and
+                                                                      e1.fim                     is null)
+                        left  join eo_unidade_resp             e2 on (e.sq_unidade               = e2.sq_unidade and
+                                                                      e2.tipo_respons            = 'S'           and
+                                                                      e2.fim                     is null)
+                      inner          join co_cidade            f  on (b.sq_cidade_origem         = f.sq_cidade)
+                      left           join ct_cc                n  on (b.sq_cc                    = n.sq_cc)
+                      inner          join co_pessoa            o  on (b.solicitante              = o.sq_pessoa)
+                        inner        join sg_autenticacao      o1 on (o.sq_pessoa                = o1.sq_pessoa)
+                          inner      join eo_unidade           o2 on (o1.sq_unidade              = o2.sq_unidade)
+                      left           join co_pessoa            p  on (b.executor                 = p.sq_pessoa)
                    inner             join (select sq_siw_solicitacao, max(sq_siw_solic_log) chave 
                                              from siw_solic_log
                                            group by sq_siw_solicitacao
-                                          )               j  on (b.sq_siw_solicitacao       = j.sq_siw_solicitacao)
+                                          )                    j  on (b.sq_siw_solicitacao       = j.sq_siw_solicitacao)
           where a.sq_menu         = case p_menu when 0 then a.sq_menu else p_menu end
             and a1.sigla          = substr(p_restricao,1,2)
             and (p_chave          is null or (p_chave       is not null and b.sq_siw_solicitacao = p_chave))
