@@ -27,9 +27,11 @@ begin
                                else '---'
                           end 
                 end nm_tipo,
-                b.cliente
-           from ac_acordo_aditivo    a
-                inner join ac_acordo b on (a.sq_siw_solicitacao = b.sq_siw_solicitacao)
+                b.cliente,
+                c.prazo_indeterm
+           from ac_acordo_aditivo           a
+                inner   join ac_acordo      b on (a.sq_siw_solicitacao = b.sq_siw_solicitacao)
+                  inner join ac_tipo_acordo c on (b.sq_tipo_acordo     = c.sq_tipo_acordo)
           where b.cliente = p_cliente
             and ((p_chave       is null) or (p_chave        is not null and a.sq_acordo_aditivo  = p_chave))      
             and ((p_chave_aux   is null) or (p_chave_aux    is not null and a.sq_siw_solicitacao = p_chave_aux))

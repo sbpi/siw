@@ -402,7 +402,7 @@ begin
                 d.vincula_viagem,     d.aviso_prox_conc,             d.dias_aviso,
                 d.empenho,            d.processo,                    d.assinatura,
                 d.publicacao,         d.titulo,                      d.sq_lcfonte_recurso,
-                d.sq_especificacao_despesa,
+                d.limite_variacao,    d.sq_especificacao_despesa,
                 case when d.titulo is null then 'Não informado ('||d2.nome_resumido||')' else d.titulo end as nm_acordo,
                 d1.nome nm_tipo_acordo,d1.sigla sg_acordo,           d1.modalidade cd_modalidade,
                 d2.nome nm_outra_parte, d2.nome_resumido nm_outra_parte_resumido,

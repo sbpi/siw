@@ -231,6 +231,7 @@ begin
           sq_tipo_pessoa     = p_sq_tipo_pessoa,
           inicio             = p_inicio,
           fim                = p_fim,
+          valor_inicial      = p_valor,
           duracao            = null,
           objeto             = trim(p_objeto),
           aviso_prox_conc    = p_aviso,
