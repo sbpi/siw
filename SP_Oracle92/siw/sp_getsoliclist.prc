@@ -402,7 +402,9 @@ begin
                 d.vincula_viagem,     d.aviso_prox_conc,             d.dias_aviso,
                 d.empenho,            d.processo,                    d.assinatura,
                 d.publicacao,         d.titulo,                      d.sq_lcfonte_recurso,
-                d.limite_variacao,    d.sq_especificacao_despesa,
+                d.limite_variacao,    d.sq_especificacao_despesa,    d.indice_base,
+                d.tipo_reajuste,
+                round(months_between(d.fim,d.inicio)) meses_acordo,
                 case when d.titulo is null then 'Não informado ('||d2.nome_resumido||')' else d.titulo end as nm_acordo,
                 case d.tipo_reajuste when 0 then 'Não permite' when 1 then 'Com índice' else 'Sem índice' end nm_tipo_reajuste,
                 d1.nome nm_tipo_acordo,d1.sigla sg_acordo,           d1.modalidade cd_modalidade,
@@ -415,8 +417,9 @@ begin
                 d6.sq_banco,          d6.codigo cd_banco,            d6.nome nm_banco,
                 d7.sq_forma_pagamento,d7.nome nm_forma_pagamento,    d7.sigla sg_forma_pagamento, 
                 d7.ativo st_forma_pagamento,
-                d9.nome nm_lcfonte_recurso, 
-                d10.nome nm_espec_despesa,
+                d9.codigo cd_lcfonte_recurso, d9.nome nm_lcfonte_recurso, 
+                da.codigo cd_espec_despesa, da.nome nm_espec_despesa,
+                db.nome as nm_indicador, db.sigla as sg_indicador,
                 b.fim-d.dias_aviso aviso,
                 e.sq_unidade sq_unidade_resp,
                 e.sq_tipo_unidade,    e.nome nm_unidade_resp,        e.informal informal_resp,
@@ -476,7 +479,8 @@ begin
                                                                      )
                         left         join co_pessoa            d3 on (d.preposto                 = d3.sq_pessoa)
                         left         join lc_fonte_recurso     d9 on (d.sq_lcfonte_recurso       = d9.sq_lcfonte_recurso)
-                        left         join ct_especificacao_despesa d10 on (d.sq_especificacao_despesa = d10.sq_especificacao_despesa)
+                        left         join ct_especificacao_despesa da on (d.sq_especificacao_despesa = da.sq_especificacao_despesa)
+                        left         join eo_indicador             db on (d.sq_eoindicador       = db.sq_eoindicador)
                       inner          join eo_unidade           e  on (b.sq_unidade               = e.sq_unidade)
                         left         join eo_unidade_resp      e1 on (e.sq_unidade               = e1.sq_unidade and
                                                                       e1.tipo_respons            = 'T'           and

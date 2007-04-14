@@ -56,13 +56,7 @@ begin
        w_texto);
        
    -- Atualiza o registro do acordo com os dados da conclusão.
-   Update ac_acordo a set
-      inicio      = p_inicio_real,
-      fim         = p_fim_real,
-      duracao     = null,
-      observacao  = p_nota_conclusao,
-      valor_atual = w_valor
-   Where sq_siw_solicitacao = p_chave;
+   Update ac_acordo a set observacao = p_nota_conclusao Where sq_siw_solicitacao = p_chave;
 
    -- Atualiza a situação da solicitação
    Update siw_solicitacao set
@@ -76,4 +70,3 @@ begin
 
 end SP_PutAcordoConc;
 /
-
