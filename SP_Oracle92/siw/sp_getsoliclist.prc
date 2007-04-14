@@ -404,6 +404,7 @@ begin
                 d.publicacao,         d.titulo,                      d.sq_lcfonte_recurso,
                 d.limite_variacao,    d.sq_especificacao_despesa,
                 case when d.titulo is null then 'Não informado ('||d2.nome_resumido||')' else d.titulo end as nm_acordo,
+                case d.tipo_reajuste when 0 then 'Não permite' when 1 then 'Com índice' else 'Sem índice' end nm_tipo_reajuste,
                 d1.nome nm_tipo_acordo,d1.sigla sg_acordo,           d1.modalidade cd_modalidade,
                 d2.nome nm_outra_parte, d2.nome_resumido nm_outra_parte_resumido,
                 d2.nome_resumido_ind nm_outra_parte_resumido_ind,
