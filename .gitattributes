@@ -3148,6 +3148,7 @@ SP_Oracle92/siw/sp_getSolicIndicador.prc -text
 SP_Oracle92/siw/sp_getSolicMeta.prc -text
 SP_Oracle92/siw/sp_getSolicRecursos.prc -text
 SP_Oracle92/siw/sp_getSolicRestricao.prc -text
+SP_Oracle92/siw/sp_getSolicSR.prc -text
 SP_Oracle92/siw/sp_getTipoIndicador.prc -text
 SP_Oracle92/siw/sp_getTipoInteressado.prc -text
 SP_Oracle92/siw/sp_getTipoRecurso.prc -text
