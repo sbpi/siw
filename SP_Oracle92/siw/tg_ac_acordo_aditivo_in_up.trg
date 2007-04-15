@@ -11,5 +11,8 @@ begin
         :new.duracao := (:new.fim - :new.inicio) + 1;
      End If;
   End If;
+  
+  :new.valor_aditivo   := :new.valor_inicial   + :new.valor_reajuste     + :new.valor_acrescimo;
+  :new.parcela_aditivo := :new.parcela_inicial + :new.parcela_reajustada + :new.parcela_acrescida;
 end TG_AC_ACORDO_ADITIVO_IN_UP;
 /
