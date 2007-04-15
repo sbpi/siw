@@ -16,11 +16,6 @@ create or replace procedure SP_PutSolicTransp
     p_sq_veiculo          in number    default null,
     p_qtd_pessoas         in number    default null,
     p_carga               in varchar2  default null,    
-    p_hodometro_saida     in number    default null,
-    p_hodometro_chegada   in number    default null,
-    p_horario_saida       in varchar2  default null,
-    p_horario_chegada     in varchar2  default null,
-    p_parcial             in varchar2  default null,                   
     p_chave_nova          out number
    ) is
    w_arq     varchar2(4000) := ', ';
@@ -69,11 +64,9 @@ begin
       );
       -- Insere registro em SR_SOLICITACAO_TRANSPORTE
       insert into sr_solicitacao_transporte
-        (sq_siw_solicitacao,   sq_veiculo,          qtd_pessoas,         carga,       hodometro_saida, 
-        hodometro_chegada,     horario_saida,       horario_chegada,     destino,     parcial)
+        (sq_siw_solicitacao,   sq_veiculo,          qtd_pessoas,         carga,       destino)
       values (
-         w_Chave,              p_sq_veiculo,        p_qtd_pessoas,       p_carga,     p_hodometro_saida,   
-         p_hodometro_chegada,  p_horario_saida,     p_horario_chegada,   p_destino,   p_parcial);          
+         w_Chave,              p_sq_veiculo,        p_qtd_pessoas,       p_carga,     p_destino);          
       
       -- Insere log da solicitação
       Insert Into siw_solic_log 
@@ -111,12 +104,7 @@ begin
           destino           = p_destino,
           sq_veiculo        = p_sq_veiculo, 
           qtd_pessoas       = p_qtd_pessoas,
-          carga             = p_carga,
-          hodometro_saida   = p_hodometro_saida,
-          hodometro_chegada = p_hodometro_chegada,
-          horario_saida     = p_horario_saida,
-          horario_chegada   = p_horario_chegada,
-          parcial           = p_parcial
+          carga             = p_carga
       where sq_siw_solicitacao = p_chave;
       
    Elsif p_operacao = 'E' Then -- Exclusão
