@@ -2934,6 +2934,7 @@ SP_Oracle92/siw/TG_FN_DOCUMENTO_ITEM.trg -text
 SP_Oracle92/siw/TG_FN_LANCAMENTO_IN_UP.trg -text
 SP_Oracle92/siw/TG_FN_LANCAMENTO_RUBRICA.trg -text
 SP_Oracle92/siw/TG_GP_AFASTAMENTO.trg -text
+SP_Oracle92/siw/TG_GP_CONTRATO_COLAB_IN_UP.trg -text
 SP_Oracle92/siw/TG_PA_ASUNTO_IN_UP.trg -text
 SP_Oracle92/siw/TG_PA_DOCUMENTO_IN_UP.trg -text
 SP_Oracle92/siw/TG_PA_DOCUMENTO_LOG_IN_UP.trg -text
@@ -2941,7 +2942,9 @@ SP_Oracle92/siw/TG_PD_MISSAO_IN_UP.trg -text
 SP_Oracle92/siw/TG_PE_RECURSO_DISP_EX.trg -text
 SP_Oracle92/siw/TG_PE_RECURSO_DISP_UP.trg -text
 SP_Oracle92/siw/TG_PE_RECURSO_UP.trg -text
+SP_Oracle92/siw/TG_SG_AUTENTICACAO_IN_UP.trg -text
 SP_Oracle92/siw/TG_SIW_SOLIC_UP.trg -text
+SP_Oracle92/siw/TG_SR_VEICULO_IN_UP.trg -text
 SP_Oracle92/siw/VerificaDataEspecial.fnc -text
 SP_Oracle92/siw/VerificaDataMovel.fnc -text
 SP_Oracle92/siw/ac_acordo.tab -text

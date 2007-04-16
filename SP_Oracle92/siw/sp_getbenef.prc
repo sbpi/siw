@@ -29,6 +29,7 @@ begin
             k.cnpj, k.inscricao_estadual,
             o.nome nm_pais_passaporte,
             case sexo when 'F' then 'Feminino' else 'Masculino' end nm_sexo,
+            n.sq_unidade as sq_unidade_benef,
             p.sigla||'/'||q.sigla nm_unidade_benef,
             case when k.cnpj is not null 
                  then k.cnpj

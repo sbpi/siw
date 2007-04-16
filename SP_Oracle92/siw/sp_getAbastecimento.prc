@@ -6,7 +6,9 @@ create or replace procedure SP_GetAbastecimento
 begin
    -- Recupera os grupos de veículos
    open p_result for 
-         select a.sq_abastecimento chave, a.sq_veiculo, a.data, a.hodometro, a.litros, a.valor, a.local, b.modelo, b.placa
+         select a.sq_abastecimento chave, a.sq_veiculo, a.data, a.hodometro, a.litros, a.valor, a.local, 
+                b.marca, b.modelo, b.placa, b.ano_modelo, b.ano_fabricacao, 
+                substr(b.placa,1,3)||'-'||substr(b.placa,4)||' - '||b.marca||' '||b.modelo as nm_veiculo
            from sr_abastecimento   a
               inner join sr_veiculo b on (a.sq_veiculo = b.sq_veiculo)
       where b.cliente = p_cliente

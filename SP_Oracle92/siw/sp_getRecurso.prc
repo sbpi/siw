@@ -15,19 +15,36 @@ begin
       open p_result for 
          select a.sq_recurso as chave, a.cliente, a.sq_tipo_recurso, a.sq_unidade_medida, a.unidade_gestora, a.nome, a.codigo, a.descricao, 
                 a.finalidade, a.disponibilidade_tipo, a.ativo,
+                case a.ativo when 'S' then 'Sim' else 'Não' end nm_ativo,
                 case disponibilidade_tipo when 1 then 'Prazo indefinido, controle apenas do limite diário de unidades'
                                           when 2 then 'Prazo definido, com controle do limite de unidades no período e no dia'
                                           when 3 then 'Prazo definido, controle apenas do limite diário de unidades'
                 end as nm_disponibilidade_tipo,
-                case a.ativo when 'S' then 'Sim' else 'Não' end nm_ativo,
+                case when a1.sq_recurso is not null 
+                     then 'Pessoa'
+                     else case when a2.sq_recurso is not null
+                               then 'Veículo'
+                               else null
+                          end
+                end as tp_vinculo,
+                case when a1.sq_recurso is not null 
+                     then a1.sq_pessoa
+                     else case when a2.sq_recurso is not null
+                               then a2.sq_veiculo
+                               else null
+                          end
+                end as ch_vinculo,
                 b.nome as nm_unidade, b.sigla as sg_unidade,
                 b2.sq_cidade, b2.co_uf, b2.sq_pais,
                 c.nome as nm_tipo_recurso, c.sigla as sg_tipo_recurso,
+                montanometiporecurso(c.sq_tipo_recurso,'PRIMEIRO') as nm_tipo_recurso_pai,
                 d.nome as nm_unidade_medida, d.sigla as sg_unidade_medida,
                 coalesce(e.alocacao,0) alocacao,
                 coalesce(f.disponivel,0) disponivel,
                 acesso_recurso(a.sq_recurso, p_usuario) acesso
            from eo_recurso                        a
+                left      join co_pessoa          a1 on (a.sq_recurso = a1.sq_recurso)
+                left      join sr_veiculo         a2 on (a.sq_recurso = a2.sq_recurso)
                 inner     join eo_unidade         b  on (a.unidade_gestora     = b.sq_unidade)
                   inner   join co_pessoa_endereco b1 on (b.sq_pessoa_endereco  = b1.sq_pessoa_endereco)
                     inner join co_cidade          b2 on (b1.sq_cidade          = b2.sq_cidade)

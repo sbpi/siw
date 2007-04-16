@@ -6,6 +6,9 @@ declare
 begin
   :new.nome_indice          := acentos(:new.nome);
   :new.nome_resumido_ind    := acentos(:new.nome_resumido);
+  
+  If :new.nome <> :old.nome  and :new.sq_recurso is not null Then
+     update eo_recurso set nome = :new.nome where sq_recurso = :new.sq_recurso;
+  End If;
 end TG_CO_PESSOA_IN_UP;
 /
-
