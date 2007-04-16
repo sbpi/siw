@@ -3314,7 +3314,6 @@ SP_Oracle92/siw/sp_getsolicanexo.prc -text
 SP_Oracle92/siw/sp_getsolicapoiolist.prc -text
 SP_Oracle92/siw/sp_getsolicareas.prc -text
 SP_Oracle92/siw/sp_getsolicdata.prc -text
-SP_Oracle92/siw/sp_getsolicdata.~prc -text
 SP_Oracle92/siw/sp_getsolicemail.prc -text
 SP_Oracle92/siw/sp_getsolicetapa.prc -text
 SP_Oracle92/siw/sp_getsolicetprec.prc -text
