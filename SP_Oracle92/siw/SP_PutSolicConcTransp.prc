@@ -2,7 +2,7 @@ create or replace procedure SP_PutSolicConcTransp
    (p_menu                in number,
     p_chave               in number,
     p_pessoa              in number,
-    p_solicitante         in number,
+    p_recebedor           in number,
     p_tramite             in number,
     p_executor            in number    default null,
     p_nota_conclusao      in varchar2  default null,
@@ -39,7 +39,7 @@ begin
    -- Atualiza a situação da solicitação
    Update siw_solicitacao set
       conclusao      = sysdate, 
-      recebedor      = p_solicitante,
+      recebedor      = p_recebedor,
       executor       = p_executor,
       sq_siw_tramite = (select sq_siw_tramite 
                           from siw_tramite 

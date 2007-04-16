@@ -618,7 +618,7 @@ begin
                 b.inclusao,           b.ultima_alteracao,            b.conclusao,
                 b.valor,              b.opiniao,
                 b.sq_solic_pai,       b.sq_unidade,                  b.sq_cidade_origem,
-                b.palavra_chave,      b.observacao,
+                b.palavra_chave,      b.observacao,                  b.recebedor,
                 b.motivo_insatisfacao,
                 to_char(b.inclusao,'dd/mm/yyyy, hh24:mi:ss')  phpdt_inclusao,
                 to_char(b.inicio,'dd/mm/yyyy, hh24:mi:ss')    phpdt_inicio,
@@ -639,7 +639,8 @@ begin
                 g.sq_cc,              g.nome cc_nome,                g.sigla cc_sigla,
                 h.sq_pais,            h.sq_regiao,                   h.co_uf,
                 h.nome nm_cidade,
-                i.nome_resumido nm_exec
+                i.nome_resumido nm_exec,
+                j.nome_resumido nm_recebedor
            from siw_menu                               a
                 inner        join eo_unidade           a2 on (a.sq_unid_executora   = a2.sq_unidade)
                   left       join eo_unidade_resp      a3 on (a2.sq_unidade         = a3.sq_unidade and
@@ -666,6 +667,7 @@ begin
                                                              )
                   inner      join co_pessoa            f  on (b.solicitante         = f.sq_pessoa)
                   left       join co_pessoa            i  on (b.executor            = i.sq_pessoa)
+                  left       join co_pessoa            j  on (b.recebedor           = i.sq_pessoa)                  
                   inner      join co_cidade            h  on (b.sq_cidade_origem    = h.sq_cidade)
                   left       join ct_cc                g  on (b.sq_cc               = g.sq_cc)
                 left         join eo_unidade           c  on (a.sq_unid_executora   = c.sq_unidade)
