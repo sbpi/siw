@@ -254,5 +254,32 @@ begin
       Then p_chave_nova := p_chave;
       Else p_chave_nova := w_chave;
    End If;
+   
+   If p_operacao = 'EXCLUSAO' Then
+      -- Monta string com a chave dos arquivos ligados à solicitação informada
+      for crec in c_arquivos loop
+         w_arq := w_arq || crec.sq_siw_arquivo;
+      end loop;
+      w_arq := substr(w_arq, 3, length(w_arq));
+   
+      delete siw_solic_arquivo where sq_siw_solicitacao = p_chave;
+      delete siw_arquivo       where sq_siw_arquivo     in (w_arq);
+         
+      -- Remove os registros vinculados ao lancamento
+      delete fn_documento_item where sq_lancamento_doc in (select sq_lancamento_doc from fn_lancamento_doc where sq_siw_solicitacao = p_chave);
+      delete fn_lancamento_rubrica where sq_lancamento_doc in (select sq_lancamento_doc from fn_lancamento_doc where sq_siw_solicitacao = p_chave);
+      delete fn_lancamento_log where sq_siw_solicitacao = p_chave;
+      delete fn_lancamento_doc where sq_siw_solicitacao = p_chave;
+         
+      -- Remove o registro na tabela de lncamento
+      delete fn_lancamento     where sq_siw_solicitacao = p_chave;
+            
+      -- Remove o log da solicitação
+      delete siw_solic_log where sq_siw_solicitacao = p_chave;
+
+      -- Remove o registro na tabela de solicitações
+      delete siw_solicitacao where sq_siw_solicitacao = p_chave;
+   
+   End If;
 end SP_PutFinanceiroGeral;
 /

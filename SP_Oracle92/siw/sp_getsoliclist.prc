@@ -401,7 +401,7 @@ begin
                 d.dia_vencimento,     d.vincula_projeto,             d.vincula_demanda,
                 d.vincula_viagem,     d.aviso_prox_conc,             d.dias_aviso,
                 d.empenho,            d.processo,                    d.assinatura,
-                d.publicacao,         d.titulo,                      d.sq_lcfonte_recurso,
+                d.publicacao,         d.sq_lcfonte_recurso,
                 d.limite_variacao,    d.sq_especificacao_despesa,    d.indice_base,
                 d.tipo_reajuste,
                 round(months_between(d.fim,d.inicio)) meses_acordo,
@@ -433,7 +433,7 @@ begin
                 q.sq_projeto_etapa, q.titulo nm_etapa, MontaOrdem(q.sq_projeto_etapa) cd_ordem,
                 case when d.titulo is not null
                      then d.titulo
-                     else d2.nome_resumido||' ('||to_char(d.inicio,'dd/mm/yy')||'-'||to_char(d.fim,'dd/mm/yy')||')' 
+                     else d2.nome_resumido||' ('||to_char(b.inicio,'dd/mm/yy')||'-'||to_char(b.fim,'dd/mm/yy')||')' 
                 end as titulo
            from siw_menu                                       a 
                    inner        join eo_unidade                a2 on (a.sq_unid_executora        = a2.sq_unidade)
@@ -1208,7 +1208,9 @@ begin
                 left    join pj_projeto    d  on (b.sq_siw_solicitacao = d.sq_siw_solicitacao)
                 left    join (select x.sq_siw_solicitacao, x.codigo_interno, x.vincula_demanda, 
                                      x.vincula_projeto, x.vincula_viagem,
-                                     w.nome_resumido||' - '||case when z.sq_cc is not null then z.nome else k.titulo end||' ('||to_char(x.inicio,'dd/mm/yyyy')||'-'||to_char(x.fim,'dd/mm/yyyy')||')' as titulo
+                                     case when x.titulo is not null
+                                          then x.titulo
+                                          else w.nome_resumido||' - '||case when z.sq_cc is not null then z.nome else k.titulo end||' ('||to_char(y.inicio,'dd/mm/yyyy')||'-'||to_char(y.fim,'dd/mm/yyyy')||')' end as titulo
                                 from ac_acordo                   x
                                      join        co_pessoa       w on x.outra_parte        = w.sq_pessoa
                                      join        siw_solicitacao y on x.sq_siw_solicitacao = y.sq_siw_solicitacao

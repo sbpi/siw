@@ -18,8 +18,9 @@ begin
       open p_result for
          select a.sq_acordo_aditivo, a.sq_siw_solicitacao, a.protocolo, a.codigo, a.objeto, 
                 a.inicio, a.fim, a.duracao, a.documento_origem, a.documento_data, a.variacao_valor,
-                a.prorrogacao, a.revisao, a.acrescimo, a.supressao, a.observacao, a.valor_reajuste, 
-                a.parcela_reajustada, a.sq_cc,
+                a.prorrogacao, a.revisao, a.acrescimo, a.supressao, a.observacao, a.valor_reajuste,
+                a.parcela_reajustada, a.sq_cc, a.valor_inicial, a.parcela_inicial, a.valor_acrescimo,
+                a.parcela_acrescida, a.valor_aditivo, a.parcela_aditivo,
                 case a.prorrogacao when 'S' then 'Sim' else 'Não' end nm_prorrogacao,
                 case a.revisao     when 'S' then 'Sim' else 'Não' end nm_revisao,
                 case a.acrescimo
@@ -51,37 +52,55 @@ begin
             and ((p_revisao     is null) or (p_revisao      is not null and a.revisao      = p_revisao))
             and ((p_acrescimo   is null) or (p_acrescimo    is not null and a.acrescimo    = p_acrescimo))
             and ((p_supressao   is null) or (p_supressao    is not null and a.supressao    = p_supressao));
-   Elsif p_restricao = 'VERIFICADATA' Then
+   Elsif p_restricao = 'EXISTE' Then
       open p_result for
-         select a.sq_acordo_aditivo, a.sq_siw_solicitacao, a.protocolo, a.codigo, a.objeto, 
-                a.inicio, a.fim, a.duracao, a.documento_origem, a.documento_data, a.variacao_valor,
-                a.prorrogacao, a.revisao, a.acrescimo, a.supressao, a.observacao, a.valor_reajuste, 
-                a.parcela_reajustada, a.sq_cc,
-                case a.prorrogacao when 'S' then 'Sim' else 'Não' end nm_prorrogacao,
-                case a.revisao     when 'S' then 'Sim' else 'Não' end nm_revisao,
-                case a.acrescimo
-                     when 'S' then 'Acréscimo'
-                     else case a.supressao
-                               when 'S'
-                               then 'Supressão'
-                               else '---'
-                          end 
-                end nm_tipo,
-                b.cliente,
-                c.prazo_indeterm
-           from ac_acordo_aditivo           a
-                inner   join ac_acordo      b on (a.sq_siw_solicitacao = b.sq_siw_solicitacao)
-                  inner join ac_tipo_acordo c on (b.sq_tipo_acordo     = c.sq_tipo_acordo)
-          where b.cliente = p_cliente
-            and ((p_chave       is null) or (p_chave        is not null and a.sq_acordo_aditivo  = p_chave))      
+         select count(a.sq_acordo_aditivo) existe
+           from ac_acordo_aditivo            a
+          where (a.acrescimo = 'S' or a.supressao = 'S')
+            and ((p_chave       is null) or (p_chave        is not null and a.sq_acordo_aditivo  <> p_chave))      
             and ((p_chave_aux   is null) or (p_chave_aux    is not null and a.sq_siw_solicitacao = p_chave_aux))
+            and ((p_prorrogacao is null) or (p_prorrogacao  is not null and a.prorrogacao        = p_prorrogacao))
+            and ((p_revisao     is null) or (p_revisao      is not null and a.revisao            = p_revisao))
             and ((p_inicio      is null) or (p_inicio       is not null and ((a.inicio between p_inicio and p_fim) or
                                                                              (a.fim    between p_inicio and p_fim) or
-                                                                             (p_inicio between a.inicio and b.fim) or
-                                                                             (p_fim    between a.inicio and b.fim)
+                                                                             (p_inicio between a.inicio and a.fim) or
+                                                                             (p_fim    between a.inicio and a.fim)
                                                                             )
                                             )
-                );   
+                );
+   Elsif substr(p_restricao,1,10) = 'LANCAMENTO' Then
+      open p_result for
+         select c.sq_siw_solicitacao, d.sq_menu
+           from ac_acordo_aditivo                  a
+                inner       join ac_acordo_parcela b on (a.sq_siw_solicitacao = b.sq_siw_solicitacao)
+                  inner     join fn_lancamento     c on (b.sq_acordo_parcela  = c.sq_acordo_parcela)
+                    inner   join siw_solicitacao   d on (c.sq_siw_solicitacao = d.sq_siw_solicitacao)
+                      inner join siw_tramite       e on (d.sq_siw_tramite     = e.sq_siw_tramite)
+          where ((substr(p_restricao,11,1)='E' and e.sigla <> 'CA')         or 
+                 (substr(p_restricao,11,1) in ('I','A') and e.sigla = 'AT') or
+                 (substr(p_restricao,11,1)='F' and e.sigla = 'CA')
+                )
+            and ((p_chave_aux   is null) or (p_chave_aux    is not null and a.sq_siw_solicitacao = p_chave_aux))
+            and ((p_inicio      is null) or (p_inicio       is not null and ((c.vencimento between p_inicio and p_fim)
+                                                                            )
+                                            )
+                )
+       UNION
+         select c.sq_siw_solicitacao, d.sq_menu
+           from ac_acordo                          a
+                inner       join ac_acordo_parcela b on (a.sq_siw_solicitacao = b.sq_siw_solicitacao)
+                  inner     join fn_lancamento     c on (b.sq_acordo_parcela  = c.sq_acordo_parcela)
+                    inner   join siw_solicitacao   d on (c.sq_siw_solicitacao = d.sq_siw_solicitacao)
+                      inner join siw_tramite       e on (d.sq_siw_tramite     = e.sq_siw_tramite)
+          where ((substr(p_restricao,11,1)='E' and e.sigla <> 'CA')         or 
+                 (substr(p_restricao,11,1) in ('I','A') and e.sigla = 'AT') or
+                 (substr(p_restricao,11,1)='F' and e.sigla = 'CA')
+                )
+            and ((p_chave_aux   is null) or (p_chave_aux    is not null and a.sq_siw_solicitacao = p_chave_aux))
+            and ((p_inicio      is null) or (p_inicio       is not null and ((c.vencimento between p_inicio and p_fim)
+                                                                            )
+                                            )
+                );
    End If;
 end SP_GetAcordoAditivo;
 /

@@ -16,24 +16,28 @@ create or replace procedure SP_PutAcordoAditivo
     p_acrescimo                in  varchar2 default null,
     p_supressao                in  varchar2 default null,
     p_observacao               in  varchar2 default null,
+    p_valor_inicial            in  number   default null,
+    p_parcela_inicial          in  number   default null,
     p_valor_reajuste           in  number   default null,
     p_parcela_reajustada       in  number   default null,
+    p_valor_acrescimo          in  number   default null,
+    p_parcela_acrescida        in  number   default null,
     p_sq_cc                    in  number   default null
    ) is
    w_inicio      ac_acordo_aditivo.inicio%type := p_inicio;
    w_prorrogacao ac_acordo_aditivo.prorrogacao%type := p_prorrogacao;
-   w_valor       ac_acordo.valor_atual%type := p_valor_reajuste;
+   w_valor       ac_acordo.valor_atual%type := (p_valor_inicial+p_valor_reajuste+p_valor_acrescimo);
 begin
    -- Atualiza o valor do contrato
    If p_operacao = 'I' Then
-      update siw_solicitacao set valor = coalesce(valor,0) + p_valor_reajuste where sq_siw_solicitacao = p_chave_aux;
+      update siw_solicitacao set valor = coalesce(valor,0) + (p_valor_inicial+p_valor_reajuste+p_valor_acrescimo) where sq_siw_solicitacao = p_chave_aux;
    Elsif p_operacao = 'A' or p_operacao = 'E' Then
       -- É necessário recuperar o valor do aditivo que está sendo alterado ou excluído
-      select valor_reajuste into w_valor from ac_acordo_aditivo where sq_acordo_aditivo = p_chave;
+      select valor_aditivo into w_valor from ac_acordo_parcela_acrescida aditivo where sq_acordo_aditivo = p_chave;
 
       If p_operacao = 'A' Then
          update siw_solicitacao set 
-           valor = valor - w_valor + p_valor_reajuste 
+           valor = valor - w_valor + (p_valor_inicial+p_valor_reajuste+p_valor_acrescimo)
          where sq_siw_solicitacao = p_chave_aux;
       Else
          update siw_solicitacao set valor = valor - w_valor where sq_siw_solicitacao = p_chave_aux;
@@ -59,11 +63,13 @@ begin
       insert into ac_acordo_aditivo
         (sq_acordo_aditivo, sq_siw_solicitacao, protocolo, codigo, objeto, inicio, fim, 
          duracao, documento_origem, documento_data, variacao_valor, prorrogacao, revisao, 
-         acrescimo, supressao, observacao, valor_reajuste, parcela_reajustada, sq_cc)
+         acrescimo, supressao, observacao, valor_inicial, parcela_inicial, valor_reajuste, 
+         parcela_reajustada, valor_acrescimo, parcela_acrescida, sq_cc)
         
         (select sq_acordo_aditivo.nextval, p_chave_aux, p_protocolo, p_codigo, p_objeto, p_inicio, p_fim, 
                 p_duracao, p_documento_origem, p_documento_data, p_variacao_valor, p_prorrogacao, p_revisao, 
-                p_acrescimo, p_supressao, p_observacao, p_valor_reajuste, p_parcela_reajustada, p_sq_cc 
+                p_acrescimo, p_supressao, p_observacao, p_valor_inicial, p_parcela_inicial, p_valor_reajuste, 
+                p_parcela_reajustada, p_valor_acrescimo, p_parcela_acrescida, p_sq_cc 
            from dual
          );
    Elsif p_operacao = 'A' Then
@@ -83,12 +89,18 @@ begin
              acrescimo          = p_acrescimo,
              supressao          = p_supressao,
              observacao         = p_observacao,
+             valor_inicial      = p_valor_inicial,
+             parcela_inicial    = p_parcela_inicial,
              valor_reajuste     = p_valor_reajuste,
              parcela_reajustada = p_parcela_reajustada,
+             valor_acrescimo    = p_valor_acrescimo,
+             parcela_acrescida  = p_parcela_acrescida,
              sq_cc              = p_sq_cc
        where sq_acordo_aditivo = p_chave;
    Elsif p_operacao = 'E' Then
       -- Exclui registro
+      delete ac_acordo_parcela where sq_acordo_aditivo = p_chave;
+      delete ac_acordo_nota    where sq_acordo_aditivo = p_chave;
       delete ac_acordo_aditivo where sq_acordo_aditivo = p_chave;
    End If;
 end SP_PutAcordoAditivo;
