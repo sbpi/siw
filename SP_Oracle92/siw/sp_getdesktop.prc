@@ -23,7 +23,7 @@ begin
               inner join siw_modulo w on (v.sq_modulo = w.sq_modulo)
               left  join (select /*+ ordered */ c.sq_menu, count(d.sq_siw_solicitacao) qtd 
                             FROM siw_tramite                    e
-                                 inner     join siw_solicitacao d on (e.sq_siw_tramite = d.sq_siw_tramite and d.conclusao is null)
+                                 inner     join siw_solicitacao d on (e.sq_siw_tramite = d.sq_siw_tramite)
                                    inner   join (select sq_siw_solicitacao, acesso(sq_siw_solicitacao, p_usuario) acesso
                                                    from siw_solicitacao
                                                 )               f on (d.sq_siw_solicitacao = f.sq_siw_solicitacao)
