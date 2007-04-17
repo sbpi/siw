@@ -13,7 +13,10 @@ create or replace procedure SP_PutAcordoParc
     p_valor_parcela       in varchar2 default null,
     p_valor_diferente     in number   default null,
     p_per_ini             in date     default null,
-    p_per_fim             in date     default null
+    p_per_fim             in date     default null,
+    p_valor_inicial       in number   default null,
+    p_valor_excedente     in number   default null,
+    p_valor_reajuste      in number   default null
    ) is
    
    w_cont       number(4) := 1;
@@ -33,11 +36,11 @@ create or replace procedure SP_PutAcordoParc
 begin
    If p_operacao = 'I' Then -- Inclusão
       insert into ac_acordo_parcela
-        (sq_acordo_parcela,         sq_siw_solicitacao, ordem,   emissao, vencimento, observacao,   valor, 
-         inicio,                    fim,                sq_acordo_aditivo)
+        (sq_acordo_parcela,         sq_siw_solicitacao, ordem,     emissao, vencimento,      observacao,        valor, 
+         inicio,                    fim,                sq_acordo_aditivo,  valor_inicial,   valor_excedente,   valor_reajuste)
       values
-        (sq_acordo_parcela.nextval, p_chave,            p_ordem, sysdate, p_data,     p_observacao, p_valor,
-         p_per_ini,                 p_per_fim,          p_aditivo);
+        (sq_acordo_parcela.nextval, p_chave,            p_ordem,   sysdate, p_data,          p_observacao,      p_valor,
+         p_per_ini,                 p_per_fim,          p_aditivo,          p_valor_inicial, p_valor_excedente, p_valor_reajuste);
    Elsif p_operacao = 'G' Then -- Geração parametrizada de parcelas
       If p_aditivo is null Then
          -- Recupera os dados do acordo
@@ -57,18 +60,18 @@ begin
       
       If p_tipo_geracao = 11 Then -- Se uma parcela, no início do acordo
          insert into ac_acordo_parcela
-           (sq_acordo_parcela,         sq_siw_solicitacao, ordem,   emissao, vencimento,   observacao,   valor, 
-            inicio,                    fim,                sq_acordo_aditivo)
+           (sq_acordo_parcela,         sq_siw_solicitacao, ordem,   emissao,  vencimento,   observacao,   valor, 
+            inicio,                    fim,                sq_acordo_aditivo, valor_inicial, valor_excedente, valor_reajuste)
          values
            (sq_acordo_parcela.nextval, p_chave,            1,       sysdate, w_reg.inicio, p_observacao, w_reg.valor_inicial, 
-            w_reg.inicio,              w_reg.fim,          p_aditivo);
+            w_reg.inicio,              w_reg.fim,          p_aditivo, p_valor_inicial, p_valor_excedente, p_valor_reajuste);
       Elsif p_tipo_geracao = 12 Then -- Se uma parcela, no fim do acordo
          insert into ac_acordo_parcela
            (sq_acordo_parcela,         sq_siw_solicitacao, ordem,   emissao, vencimento,   observacao,   valor, 
-            inicio,                    fim,                sq_acordo_aditivo)
+            inicio,                    fim,                sq_acordo_aditivo, valor_inicial, valor_excedente, valor_reajuste)
          values
            (sq_acordo_parcela.nextval, p_chave,            1,       sysdate, w_reg.fim,    p_observacao, w_reg.valor_inicial, 
-            w_reg.inicio,              w_reg.fim,          p_aditivo);
+            w_reg.inicio,              w_reg.fim,          p_aditivo, p_valor_inicial, p_valor_excedente, p_valor_reajuste);
       Else
          -- Define o número de meses da vigência para cálculo do valor mensal e para geração das parcelas
          w_meses      := round(months_between(w_reg.fim, w_reg.inicio));
@@ -141,10 +144,10 @@ begin
                -- insere a primeira parcela
                insert into ac_acordo_parcela
                  (sq_acordo_parcela,         sq_siw_solicitacao, ordem,   emissao, vencimento,   observacao,   valor,
-                  inicio,                    fim,                sq_acordo_aditivo)
+                  inicio,                    fim,                sq_acordo_aditivo, valor_inicial, valor_excedente, valor_reajuste)
                values
                  (sq_acordo_parcela.nextval, p_chave,            w_cont,  sysdate, w_vencimento, p_observacao, round(w_valor_1,2),
-                  w_per_ini,                 w_per_fim,          p_aditivo);
+                  w_per_ini,                 w_per_fim,          p_aditivo, p_valor_inicial, p_valor_excedente, p_valor_reajuste);
             Elsif w_cont = w_meses_parc Then
                -- Define o período de realização da ultima parcela
                w_per_ini := to_date('01'||to_char(w_reg.fim,'mmyyyy'),'ddmmyyyy'); 
@@ -159,10 +162,10 @@ begin
                -- Insere a última parcela
                insert into ac_acordo_parcela
                  (sq_acordo_parcela,         sq_siw_solicitacao, ordem,   emissao, vencimento,   observacao,   valor,
-                  inicio,                    fim,                sq_acordo_aditivo)
+                  inicio,                    fim,                sq_acordo_aditivo, valor_inicial, valor_excedente, valor_reajuste)
                values
                  (sq_acordo_parcela.nextval, p_chave,            w_cont,  sysdate, w_vencimento, p_observacao, round(w_valor_n,2),
-                  w_per_ini,                 w_per_fim,          p_aditivo);
+                  w_per_ini,                 w_per_fim,          p_aditivo, p_valor_inicial, p_valor_excedente, p_valor_reajuste);
             Else
                -- Calcula a data de vencimento das parcelas intermediárias
                w_vencimento := add_months(w_vencimento,1);
@@ -182,10 +185,10 @@ begin
                
                insert into ac_acordo_parcela
                  (sq_acordo_parcela,         sq_siw_solicitacao, ordem,   emissao, vencimento,   observacao,   valor,
-                  inicio,                    fim,                sq_acordo_aditivo)
+                  inicio,                    fim,                sq_acordo_aditivo, valor_inicial, valor_excedente, valor_reajuste)
                values
                  (sq_acordo_parcela.nextval, p_chave,            w_cont,  sysdate, w_vencimento, p_observacao, round(w_valor,2),
-                  w_per_ini,                 w_per_fim,          p_aditivo);
+                  w_per_ini,                 w_per_fim,          p_aditivo, p_valor_inicial, p_valor_excedente, p_valor_reajuste);
             End If;
          end loop;
       End If;

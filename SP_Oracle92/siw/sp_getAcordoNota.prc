@@ -14,7 +14,8 @@ begin
       open p_result for     
          select a.sq_acordo_nota, a.sq_siw_solicitacao, a.sq_tipo_documento, a.sq_acordo_outra_parte, 
                 a.sq_acordo_aditivo, a.numero, a.data, a.valor, a.sq_lcfonte_recurso, 
-                a.sq_especificacao_despesa, a.observacao,
+                a.sq_especificacao_despesa, a.observacao, a.abrange_inicial, a.abrange_acrescimo,
+                a.abrange_reajuste,
                 c.nome nm_tipo_documento,
                 f.nome_resumido nm_outra_parte,
                 e.codigo cd_aditivo, e.sq_cc cc_aditivo,
@@ -33,6 +34,19 @@ begin
             and ((p_sq_acordo_aditivo is null) or (p_sq_acordo_aditivo is not null and a.sq_acordo_aditivo  = p_sq_acordo_aditivo))
             and ((p_numero            is null) or (p_numero            is not null and a.numero             = p_numero))
             and ((p_data              is null) or (p_data              is not null and a.data = p_data));
-      End If;
+   Elsif p_restricao = 'LANCAMENTO' Then
+      open p_result for
+         select c.sq_siw_solicitacao
+           from ac_acordo_nota a
+                inner join ac_parcela_nota b on (a.sq_acordo_nota    = b.sq_acordo_nota)
+                inner join fn_lancamento   c on (b.sq_acordo_parcela = c.sq_acordo_parcela)
+          where ((p_chave is null) or (p_chave  is not null and a.sq_acordo_nota  = p_chave));
+   Elsif p_restricao = 'PARCELA' Then
+      open p_result for
+         select sq_acordo_parcela 
+           from ac_parcela_nota a
+          where a.sq_acordo_nota    = p_chave
+            and a.sq_acordo_parcela = p_chave_aux;
+   End If;
 end SP_GetAcordoNota;
 /

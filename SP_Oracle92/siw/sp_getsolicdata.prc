@@ -289,6 +289,8 @@ begin
                 d10.nome nm_lcfonte_recurso,
                 d11.nome nm_espec_despesa,
                 d12.aditivo,
+                d13.aditivo aditivo_excedente,
+                d14.aditivo aditivo_prorrogacao,
                 b.fim-d.dias_aviso aviso,
                 e.sq_tipo_unidade,    e.nome nm_unidade_resp,        e.informal informal_resp,
                 e.vinculada vinc_resp,e.adm_central adm_resp,        e.sigla sg_unidade_resp,
@@ -334,6 +336,17 @@ begin
                                             or x.supressao   = 'S'
                                         group by x.sq_siw_solicitacao
                                        )                    d12 on (d.sq_siw_solicitacao       = d12.sq_siw_solicitacao)
+                     left         join (select x.sq_siw_solicitacao, count(x.sq_acordo_aditivo) as aditivo
+                                          from ac_acordo_aditivo x
+                                         where x.acrescimo   = 'S'
+                                            or x.supressao   = 'S'
+                                        group by x.sq_siw_solicitacao
+                                       )                    d13 on (d.sq_siw_solicitacao       = d12.sq_siw_solicitacao)                                       
+                     left         join (select x.sq_siw_solicitacao, count(x.sq_acordo_aditivo) as aditivo
+                                          from ac_acordo_aditivo x
+                                         where x.prorrogacao = 'S'
+                                        group by x.sq_siw_solicitacao
+                                       )                    d14 on (d.sq_siw_solicitacao       = d12.sq_siw_solicitacao)
                    inner          join eo_unidade           e  on (b.sq_unidade               = e.sq_unidade)
                      left         join eo_unidade_resp      e1 on (e.sq_unidade               = e1.sq_unidade and
                                                                    e1.tipo_respons            = 'T'           and
