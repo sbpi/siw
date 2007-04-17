@@ -75,7 +75,7 @@ begin
                 a.tramite,            a.ultimo_nivel,                a.p1,
                 a.p2,                 a.p3,                          a.p4,
                 a.sigla,              a.descentralizado,             a.externo,
-                a.acesso_geral,       a.como_funciona,               
+                a.acesso_geral,       a.como_funciona,               a.link,               
                 a.sq_unid_executora,  a.finalidade,                  a.arquivo_proced,
                 a.emite_os,           a.consulta_opiniao,            a.envia_email,
                 a.exibe_relatorio,    a.vinculacao,                  a.data_hora,
@@ -121,7 +121,9 @@ begin
                                                                      a4.tipo_respons            = 'S'           and
                                                                      a4.fim                     is null
                                                                      )
-                   inner        join siw_modulo                a1 on (a.sq_modulo                = a1.sq_modulo)
+                   inner        join siw_modulo                a1 on (a.sq_modulo                = a1.sq_modulo and
+                                                                      a1.sigla                   = 'SR'
+                                                                     )
                    left         join eo_unidade                c  on (a.sq_unid_executora        = c.sq_unidade)
                    inner        join siw_solicitacao           b  on (a.sq_menu                  = b.sq_menu)
                       inner     join siw_tramite               b1 on (b.sq_siw_tramite           = b1.sq_siw_tramite)

@@ -38,7 +38,7 @@ begin
        
    -- Atualiza a situação da solicitação
    Update siw_solicitacao set
-      conclusao      = sysdate, 
+      conclusao      = to_date(p_horario_chegada,'dd/mm/yyyy, hh24:mi'), 
       recebedor      = p_recebedor,
       executor       = p_executor,
       sq_siw_tramite = (select sq_siw_tramite 

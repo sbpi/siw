@@ -55,6 +55,7 @@ begin
                 h.sq_pais,            h.sq_regiao,                   h.co_uf,
                 h.nome nm_cidade,
                 i.sq_projeto_etapa,   j.titulo nm_etapa,             k.titulo nm_projeto,
+                montaordem(j.sq_projeto_etapa) as cd_ordem,
                 l.sq_siw_restricao,   l.descricao as ds_restricao,
                 case l.risco when 'S' then 'Risco' else 'Problema' end as nm_tipo_restricao
            from siw_menu             a
