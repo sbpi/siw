@@ -1,5 +1,6 @@
 create or replace procedure sp_getSolicSR
-   (p_menu         in number,
+   (p_cliente      in number,
+    p_menu         in number,
     p_pessoa       in number,
     p_restricao    in varchar2 default null,
     p_tipo         in number,
@@ -146,7 +147,8 @@ begin
                                              from siw_solic_log
                                            group by sq_siw_solicitacao
                                           )                    j  on (b.sq_siw_solicitacao       = j.sq_siw_solicitacao)
-          where a.sq_menu         = case p_menu when 0 then a.sq_menu else p_menu end
+          where a.sq_pessoa       = p_cliente
+            and a.sq_menu         = case p_menu when 0 then a.sq_menu else p_menu end
             and a1.sigla          = substr(p_restricao,1,2)
             and (p_chave          is null or (p_chave       is not null and b.sq_siw_solicitacao = p_chave))
             and (p_pais           is null or (p_pais        is not null and f.sq_pais            = p_pais))
