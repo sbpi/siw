@@ -27,6 +27,9 @@ create or replace procedure SP_PutAcordoAditivo
    w_inicio      ac_acordo_aditivo.inicio%type := p_inicio;
    w_prorrogacao ac_acordo_aditivo.prorrogacao%type := p_prorrogacao;
    w_valor       ac_acordo.valor_atual%type := (p_valor_inicial+p_valor_reajuste+p_valor_acrescimo);
+   w_inicio_aditivo date;
+   w_fim_aditivo    date;
+   w_chave          number(18);
 begin
    -- Atualiza o valor do contrato
    If p_operacao = 'I' Then
@@ -57,8 +60,9 @@ begin
          update siw_solicitacao set fim = w_inicio-1 where sq_siw_solicitacao = p_chave_aux;
       End If;
    End If;
-   
+         
    If p_operacao = 'I' Then
+      select sq_acordo_aditivo.nextval into w_chave from dual;
       -- Insere registro
       insert into ac_acordo_aditivo
         (       sq_acordo_aditivo,         sq_siw_solicitacao,   protocolo,           codigo,           objeto,            inicio,         fim, 
@@ -66,12 +70,21 @@ begin
                 acrescimo,                 supressao,            observacao,          valor_inicial,    parcela_inicial,   valor_reajuste, 
                 parcela_reajustada,        valor_acrescimo,      parcela_acrescida,   sq_cc)
         
-        (select sq_acordo_aditivo.nextval, p_chave_aux,          p_protocolo,         p_codigo,         p_objeto,          p_inicio,       p_fim, 
+        (select w_chave,                   p_chave_aux,          p_protocolo,         p_codigo,         p_objeto,          p_inicio,       p_fim, 
                 p_duracao,                 p_documento_origem,   p_documento_data,    p_variacao_valor, p_prorrogacao,     p_revisao,         
                 p_acrescimo,               p_supressao,          p_observacao,        p_valor_inicial,  p_parcela_inicial, p_valor_reajuste, 
                 p_parcela_reajustada,      p_valor_acrescimo,    p_parcela_acrescida, p_sq_cc 
            from dual
          );
+      If p_prorrogacao = 'N' Then
+         -- Verifica as datas de inicio e fim de uma aditivc que não é de prorrogacao
+         select min(a.inicio) into w_inicio_aditivo from ac_acordo_parcela a where a.inicio >= p_inicio and a.sq_siw_solicitacao = p_chave_aux;
+         select max(a.fim)    into w_fim_aditivo    from ac_acordo_parcela a where a.fim    <= p_fim    and a.sq_siw_solicitacao = p_chave_aux;
+         update ac_acordo_aditivo 
+            set inicio = w_inicio_aditivo,
+                fim    = w_fim_aditivo
+          where sq_acordo_aditivo = w_chave;
+      End If;         
    Elsif p_operacao = 'A' Then
       -- Altera registro
       update ac_acordo_aditivo
@@ -97,11 +110,21 @@ begin
              parcela_acrescida  = p_parcela_acrescida,
              sq_cc              = p_sq_cc
        where sq_acordo_aditivo = p_chave;
+      If p_prorrogacao = 'N' Then
+         -- Verifica as datas de inicio e fim de uma aditivc que não é de prorrogacao
+         select min(a.inicio) into w_inicio_aditivo from ac_acordo_parcela a where a.inicio >= p_inicio and a.sq_siw_solicitacao = p_chave_aux;
+         select max(a.fim)    into w_fim_aditivo    from ac_acordo_parcela a where a.fim    <= p_fim    and a.sq_siw_solicitacao = p_chave_aux;
+         update ac_acordo_aditivo 
+            set inicio = w_inicio_aditivo,
+                fim    = w_fim_aditivo
+          where sq_acordo_aditivo = p_chave;
+      End If;       
    Elsif p_operacao = 'E' Then
       -- Exclui registro
       delete ac_acordo_parcela where sq_acordo_aditivo = p_chave;
       delete ac_acordo_nota    where sq_acordo_aditivo = p_chave;
       delete ac_acordo_aditivo where sq_acordo_aditivo = p_chave;
    End If;
+   
 end SP_PutAcordoAditivo;
 /

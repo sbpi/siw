@@ -282,6 +282,33 @@ begin
             End If;
          end loop;
       End If;
+   Elsif p_operacao = 'V' Then
+      -- Recupera os dados do aditivo
+      select * into w_aditivo from ac_acordo_aditivo where sq_acordo_aditivo = p_aditivo;
+      w_total := w_aditivo.valor_acrescimo;
+      w_valor := w_aditivo.parcela_acrescida;
+      
+       -- Define o número de meses da vigência para cálculo do valor mensal e para geração das parcelas
+      w_meses      := round(months_between(p_per_fim, p_per_ini));
+      w_meses_parc := round(months_between(last_day(p_per_fim), to_date('01/'||to_char(p_per_ini,'mm/yyyy'),'dd/mm/yyyy')));
+      If w_meses = 0 Then
+         w_meses := 1;
+      End If;
+      
+      -- Calcula o valor proporcional do primeiro mês, considerando o mínimo de 1 dia
+      w_ultimo := 30;
+      If to_char(last_day(p_per_ini),'dd') < 30 Then w_ultimo := to_char(last_day(p_per_ini),'dd'); End If;
+      w_dias_1 := to_date(w_ultimo||'/'||to_char(p_per_ini,'mm/yyyy'),'dd/mm/yyyy') - p_per_ini + 1 + (30-w_ultimo);
+      If w_dias_1 <= 0 Then w_dias_1 := 1; End If;
+      w_valor_1     := round((w_dias_1/30) * w_valor,2);
+      
+      
+      update ac_acordo_parcela
+         set sq_acordo_aditivo = p_aditivo,
+             valor             = valor + w_valor_1,
+             valor_excedente   = valor_excedente + w_valor_1
+       where sq_acordo_parcela = p_chave_aux;
+       
    End If;
 end SP_PutAcordoParc;
 /
