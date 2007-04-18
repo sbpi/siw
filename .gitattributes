@@ -3101,6 +3101,7 @@ SP_Oracle92/siw/plan_table.tab -text
 SP_Oracle92/siw/recompile.sql -text
 SP_Oracle92/siw/reinicializa_sequences.prc -text
 SP_Oracle92/siw/retornaAfericaoIndicador.fnc -text
+SP_Oracle92/siw/retornaExcedenteContrato.fnc -text
 SP_Oracle92/siw/sg_autenticacao.tab -text
 SP_Oracle92/siw/sg_geraclimod.prc -text
 SP_Oracle92/siw/sg_geramenu.prc -text
