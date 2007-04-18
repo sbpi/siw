@@ -109,7 +109,7 @@ function Abastecimento() {
     $RS = db_getAbastecimento::getInstanceOf($dbms, null, $w_chave_aux, $w_cliente);
     if (Nvl($p_ordena,'') > '') {
       $lista = explode(',',str_replace(' ',',',$p_ordena));
-      $RS = SortArray($RS,$lista[0],$lista[1]);
+      $RS = SortArray($RS,$lista[0],$lista[1],'data','desc');
     } else {
       $RS = SortArray($RS,'data','desc'); 
     }
@@ -173,7 +173,9 @@ function Abastecimento() {
     ShowHTML('<tr><td align="center" colspan=3>');
     ShowHTML('    <TABLE WIDTH="100%" bgcolor="'.$conTableBgColor.'" BORDER="'.$conTableBorder.'" CELLSPACING="'.$conTableCellSpacing.'" CELLPADDING="'.$conTableCellPadding.'" BorderColorDark="'.$conTableBorderColorDark.'" BorderColorLight="'.$conTableBorderColorLight.'">');
     ShowHTML('        <tr bgcolor="'.$conTrBgColor.'" align="center">');
-    ShowHTML('          <td><b>'.LinkOrdena('Veiculo','modelo').'</td>');
+    ShowHTML('          <td><b>'.LinkOrdena('Marca','marca').'</td>');
+    ShowHTML('          <td><b>'.LinkOrdena('Modelo','modelo').'</td>');
+    ShowHTML('          <td><b>'.LinkOrdena('Ano','ano_fabricacao').'</td>');
     ShowHTML('          <td><b>'.LinkOrdena('Placa','placa').'</td>');
     ShowHTML('          <td><b>'.LinkOrdena('Data','data').'</td>');    
     ShowHTML('          <td><b>'.LinkOrdena('Litros','litros').'</td>');
@@ -183,22 +185,24 @@ function Abastecimento() {
     ShowHTML('        </tr>');
     if (count($RS)<=0) {
       // Se não foram selecionados registros, exibe mensagem
-      ShowHTML('      <tr bgcolor="'.$conTrBgColor.'"><td colspan=7 align="center"><b>Não foram encontrados registros.</b></td></tr>');
+      ShowHTML('      <tr bgcolor="'.$conTrBgColor.'"><td colspan=9 align="center"><b>Não foram encontrados registros.</b></td></tr>');
     } else {
       // Lista os registros selecionados para listagem
       $RS1 = array_slice($RS,(($P3-1)*$P4),$P4);
       foreach($RS1 as $row) { 
         $w_cor = ($w_cor==$conTrBgColor || $w_cor=='') ? $w_cor=$conTrAlternateBgColor : $w_cor=$conTrBgColor;
         ShowHTML('      <tr bgcolor="'.$w_cor.'" valign="top">');
+        ShowHTML('        <td>'.f($row,'marca').'</td>');
         ShowHTML('        <td>'.f($row,'modelo').'</td>');
-        ShowHTML('        <td>'.f($row,'placa').'</td>');  
+        ShowHTML('        <td align="center">'.f($row,'ano_fabricacao').'/'.f($row,'ano_modelo').'</td>');
+        ShowHTML('        <td>'.substr(f($row,'nm_veiculo'),0,8).'</td>');
         ShowHTML('        <td align="center">'.FormataDataEdicao(f($row,'data')).'</td>');              
         ShowHTML('        <td align="right">'.number_format(f($row,'litros'),2,',','.').'</td>');
         ShowHTML('        <td align="right">'.number_format(f($row,'valor'),2,',','.').'</td>');
         ShowHTML('        <td>'.f($row,'local').'</td>');        
         ShowHTML('        <td align="top" nowrap>');
-        ShowHTML('          <A class="hl" HREF="'.$w_dir.$w_pagina.$par.'&R= '.$w_pagina.$par.'&O=A&w_chave='.f($row,'chave').'&P1='.$P1.'&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP='.$TP.' &SG='.$SG.MontaFiltro('GET').'">Alterar </A>&nbsp');
-        ShowHTML('          <A class="hl" HREF="'.$w_dir.$w_pagina.$par.'&R= '.$w_pagina.$par.'&O=E&w_chave='.f($row,'chave').'&P1='.$P1.'&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP='.$TP.' &SG='.$SG.'">Excluir </A>&nbsp');
+        ShowHTML('          <A class="hl" HREF="'.$w_dir.$w_pagina.$par.'&R='.$w_pagina.$par.'&O=A&w_chave='.f($row,'chave').'&P1='.$P1.'&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP='.$TP.' &SG='.$SG.MontaFiltro('GET').'">Alterar </A>&nbsp');
+        ShowHTML('          <A class="hl" HREF="'.$w_dir.$w_pagina.$par.'&R='.$w_pagina.$par.'&O=E&w_chave='.f($row,'chave').'&P1='.$P1.'&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP='.$TP.' &SG='.$SG.'">Excluir </A>&nbsp');
         ShowHTML('        </td>');
         ShowHTML('      </tr>');
       } 
@@ -243,7 +247,7 @@ function Abastecimento() {
         ShowHTML('            <input class="stb" type="submit" name="Botao" value="Atualizar">');
       } 
     } 
-    ShowHTML('            <input class="stb" type="button" onClick="location.href=\''.$w_pagina.$par.'&P1='.$P1.'&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP='.$TP.'&SG='.$SG.'&p_nome='.$p_nome.'&p_ativo='.$p_ativo.'&p_ordena='.$p_ordena.'\';" name="Botao" value="Cancelar">');
+    ShowHTML('            <input class="stb" type="button" onClick="location.href=\''.montaURL_JS($w_dir,$R.'&O=L&w_cliente='.$w_cliente.'&P1='.$P1.'&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP='.$TP.'&SG='.$SG.montaFiltro('GET')).'\';" name="Botao" value="Cancelar">');
     ShowHTML('          </td>');
     ShowHTML('      </tr>');
     ShowHTML('    </table>');
@@ -290,7 +294,7 @@ function Grupo() {
     } else {
       $RS = SortArray($RS,'nome','asc'); 
     }
-  } elseif (!(strpos('AEV',$O)===false) && $w_troca=='') {
+  } elseif (strpos('AEV',$O)!==false) {
     $RS = db_getGrupoVeiculo::getInstanceOf($dbms, $w_chave, $w_cliente, $w_nome, $w_sigla, null);
     foreach ($RS as $row) {$RS = $row; break;}
     $w_cliente      = f($RS,'cliente');
@@ -359,8 +363,8 @@ function Grupo() {
         ShowHTML('        <td>'.f($row,'sigla').'</td>');
         ShowHTML('        <td align="center">'.f($row,'nm_ativo').'</td>');
         ShowHTML('        <td align="top" nowrap>');
-        ShowHTML('          <A class="hl" HREF="'.$w_dir.$w_pagina.$par.'&R= '.$w_pagina.$par.'&O=A&w_chave='.f($row,'chave').'&w_cliente='.f($row,'cliente').'&P1='.$P1.'&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP='.$TP.' &SG='.$SG.MontaFiltro('GET').'" Title="Nome">Alterar </A>&nbsp');
-        ShowHTML('          <A class="hl" HREF="'.$w_dir.$w_pagina.$par.'&R= '.$w_pagina.$par.'&O=E&w_chave='.f($row,'chave').'&P1='.$P1.'&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP='.$TP.' &SG='.$SG.'">Excluir </A>&nbsp');
+        ShowHTML('          <A class="hl" HREF="'.$w_dir.$w_pagina.$par.'&R='.$w_pagina.$par.'&O=A&w_chave='.f($row,'chave').'&w_cliente='.f($row,'cliente').'&P1='.$P1.'&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP='.$TP.' &SG='.$SG.MontaFiltro('GET').'" Title="Nome">Alterar </A>&nbsp');
+        ShowHTML('          <A class="hl" HREF="'.$w_dir.$w_pagina.$par.'&R='.$w_pagina.$par.'&O=E&w_chave='.f($row,'chave').'&P1='.$P1.'&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP='.$TP.' &SG='.$SG.'">Excluir </A>&nbsp');
         ShowHTML('        </td>');
         ShowHTML('      </tr>');
       } 
@@ -377,9 +381,7 @@ function Grupo() {
     ShowHTML('</tr>');
     //Aqui começa a manipulação de registros
   } elseif (!(strpos('IAEV',$O)===false)) {
-    if (!(strpos('EV',$O)===false)) {
-      $w_Disabled=' DISABLED ';
-    } 
+    if ($O=='E') $w_Disabled=' DISABLED ';
     AbreForm('Form',$w_dir.$w_pagina.'Grava','POST','return(Validacao(this));',null,$P1,$P2,$P3,$P4,$TP,$SG,$w_pagina.$par,$O);
     ShowHTML('<INPUT type="hidden" name="w_chave" value="'.$w_chave.'">');
     ShowHTML('<INPUT type="hidden" name="w_nome_ant"  value="'.$w_nome.'">'); 
@@ -388,9 +390,9 @@ function Grupo() {
     ShowHTML('<tr bgcolor="'.$conTrBgColor.'"><td>');
     ShowHTML('    <table width="97%" border="0">');
     ShowHTML('         <tr><td colspan=2><table width="100%" border="0">');
-    ShowHTML('          <td><b><u>N</u>ome:</b><br><input '.$w_Disabled.' accesskey="N" type="text" name="w_nome" class="STI" SIZE="18" MAXLENGTH="60" VALUE="'.$w_nome.'"></td>');
+    ShowHTML('          <td><b><u>N</u>ome:</b><br><input '.$w_Disabled.' accesskey="N" type="text" name="w_nome" class="STI" SIZE="68" MAXLENGTH="60" VALUE="'.$w_nome.'"></td>');
     ShowHTML('      <tr><td><b><U>D</U>escricao:<br><TEXTAREA ACCESSKEY="D" '.$w_Disabled.' class="sti" name="w_descricao" rows="5" cols=75>'.$w_descricao.'</textarea></td>');
-    ShowHTML('      <tr><td><b><u>S</u>igla:</b><br><input '.$w_Disabled.' accesskey="S" type="text" name="w_sigla" class="STI" SIZE="18" MAXLENGTH="10" VALUE="'.$w_sigla.'"></td>');
+    ShowHTML('      <tr><td><b><u>S</u>igla:</b><br><input '.$w_Disabled.' accesskey="S" type="text" name="w_sigla" class="STI" SIZE="10" MAXLENGTH="10" VALUE="'.$w_sigla.'"></td>');
     ShowHTML('      </tr>');
     ShowHTML('      <tr valign="top">');
     MontaRadioSN('<b>Ativo?</b>',$w_ativo,'w_ativo');
@@ -407,7 +409,7 @@ function Grupo() {
         ShowHTML('            <input class="stb" type="submit" name="Botao" value="Atualizar">');
       } 
     } 
-    ShowHTML('            <input class="stb" type="button" onClick="location.href=\''.$w_pagina.$par.'&P1='.$P1.'&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP='.$TP.'&SG='.$SG.'&p_nome='.$p_nome.'&p_ativo='.$p_ativo.'&p_ordena='.$p_ordena.'\';" name="Botao" value="Cancelar">');
+    ShowHTML('            <input class="stb" type="button" onClick="location.href=\''.montaURL_JS($w_dir,$R.'&O=L&w_cliente='.$w_cliente.'&P1='.$P1.'&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP='.$TP.'&SG='.$SG.montaFiltro('GET')).'\';" name="Botao" value="Cancelar">');
     ShowHTML('          </td>');
     ShowHTML('      </tr>');
     ShowHTML('    </table>');
@@ -456,7 +458,7 @@ function Opiniao() {
     } else {
       $RS = SortArray($RS,'ordem','asc'); 
     }
-  } elseif (!(strpos('AEV',$O)===false) && $w_troca=='') {
+  } elseif (strpos('AEV',$O)!==false) {
     $RS = db_getOpiniao::getInstanceOf($dbms,  $w_chave, $w_cliente, $w_nome, $_sigla, null);
     foreach ($RS as $row) {$RS = $row; break;}
     $w_cliente      = f($RS,'cliente');
@@ -502,6 +504,12 @@ function Opiniao() {
   Estrutura_Texto_Abre();
   ShowHTML('<table border="0" cellpadding="0" cellspacing="0" width="100%">');
   if ($O=='L') {
+    ShowHTML('<tr><td colspan=3 bgcolor="'.$conTrBgColorLightBlue2.'"" style="border: 2px solid rgb(0,0,0);">');
+    ShowHTML('  Orientação:<ul>');
+    ShowHTML('    <li>Insira cada uma das opiniões que estarão disponíveis para os usuários, não sendo permitida a repetição de nomes e siglas.');
+    ShowHTML('    <li>A opinião que tiver a sigla "IN" indicará ao sistema que trata-se de uma insatisfação quanto ao atendimento. Neste caso, exigirá do usuário o motivo da insatisfação e enviará um e-mail comunicando essa opinião.');
+//    ShowHTML('    <li>Se a sigla for IN o usuário deve colocar o motivo da insatisfação.');
+    ShowHTML('    </ul></b></font></td>');    
     ShowHTML('<tr><td><font size="2"><a accesskey="I" class="ss" href="'.$w_dir.$w_pagina.$par.'&R='.$w_pagina.$par.'&O=I&P1='.$P1.'&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP='.$TP.'&SG='.$SG.'"><u>I</u>ncluir</a>&nbsp;');
     ShowHTML('    <td align="right"><b>Registros existentes: '.count($RS));
     ShowHTML('<tr><td align="center" colspan=3>');
@@ -525,8 +533,8 @@ function Opiniao() {
         ShowHTML('        <td align="center">'.f($row,'sigla').'</td>');
         ShowHTML('        <td align="center">'.f($row,'ordem').'</td>');
         ShowHTML('        <td align="top" nowrap>');
-        ShowHTML('          <A class="hl" HREF="'.$w_dir.$w_pagina.$par.'&R= '.$w_pagina.$par.'&O=A&w_chave='.f($row,'chave').'&w_cliente='.f($row,'cliente').'&P1='.$P1.'&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP='.$TP.' &SG='.$SG.MontaFiltro('GET').'" Title="Nome">Alterar </A>&nbsp');
-        ShowHTML('          <A class="hl" HREF="'.$w_dir.$w_pagina.$par.'&R= '.$w_pagina.$par.'&O=E&w_chave='.f($row,'chave').'&P1='.$P1.'&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP='.$TP.' &SG='.$SG.'">Excluir </A>&nbsp');
+        ShowHTML('          <A class="hl" HREF="'.$w_dir.$w_pagina.$par.'&R='.$w_pagina.$par.'&O=A&w_chave='.f($row,'chave').'&w_cliente='.f($row,'cliente').'&P1='.$P1.'&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP='.$TP.' &SG='.$SG.MontaFiltro('GET').'" Title="Nome">Alterar </A>&nbsp');
+        ShowHTML('          <A class="hl" HREF="'.$w_dir.$w_pagina.$par.'&R='.$w_pagina.$par.'&O=E&w_chave='.f($row,'chave').'&P1='.$P1.'&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP='.$TP.' &SG='.$SG.'">Excluir </A>&nbsp');
         ShowHTML('        </td>');
         ShowHTML('      </tr>');
       } 
@@ -621,7 +629,7 @@ function TipoVeiculo() {
     } else {
       $RS = SortArray($RS,'nome','asc'); 
     }
-  } elseif (!(strpos('AEV',$O)===false) && $w_troca=='') {
+  } elseif (strpos('AEV',$O)!==false) {
     $RS = db_getTipoVeiculo::getInstanceOf($dbms, $w_chave, $w_cliente, null, null, null, null);
     foreach ($RS as $row) {$RS = $row; break;}
     $w_cliente            = f($RS,'cliente');
@@ -694,8 +702,8 @@ function TipoVeiculo() {
         ShowHTML('        <td>'.f($row,'sigla').'</td>');
         ShowHTML('        <td align="center">'.f($row,'nm_ativo').'</td>');
         ShowHTML('        <td align="top" nowrap>');
-        ShowHTML('          <A class="hl" HREF="'.$w_dir.$w_pagina.$par.'&R= '.$w_pagina.$par.'&O=A&w_chave='.f($row,'chave').'&P1='.$P1.'&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP='.$TP.' &SG='.$SG.MontaFiltro('GET').'">Alterar </A>&nbsp');
-        ShowHTML('          <A class="hl" HREF="'.$w_dir.$w_pagina.$par.'&R= '.$w_pagina.$par.'&O=E&w_chave='.f($row,'chave').'&P1='.$P1.'&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP='.$TP.' &SG='.$SG.'">Excluir </A>&nbsp');
+        ShowHTML('          <A class="hl" HREF="'.$w_dir.$w_pagina.$par.'&R='.$w_pagina.$par.'&O=A&w_chave='.f($row,'chave').'&P1='.$P1.'&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP='.$TP.' &SG='.$SG.MontaFiltro('GET').'">Alterar </A>&nbsp');
+        ShowHTML('          <A class="hl" HREF="'.$w_dir.$w_pagina.$par.'&R='.$w_pagina.$par.'&O=E&w_chave='.f($row,'chave').'&P1='.$P1.'&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP='.$TP.' &SG='.$SG.'">Excluir </A>&nbsp');
         ShowHTML('        </td>');
         ShowHTML('      </tr>');
       } 
@@ -723,9 +731,9 @@ function TipoVeiculo() {
     ShowHTML('    <table width="97%" border="0">');
     ShowHTML('         <tr><td colspan=2><table width="100%" border="0">');
     SelecaoGrupoVeiculo('<u>G</u>rupo:','G','Selecione o grupo desejado',$w_cliente,$w_chave_aux,null,'w_chave_aux',null);
-    ShowHTML('      <tr><td><b><u>N</u>ome:</b><br><input '.$w_Disabled.' accesskey="N" type="text" name="w_nome" class="STI" SIZE="18" MAXLENGTH="60" VALUE="'.$w_nome.'"></td>');
+    ShowHTML('      <tr><td><b><u>N</u>ome:</b><br><input '.$w_Disabled.' accesskey="N" type="text" name="w_nome" class="STI" SIZE="60" MAXLENGTH="60" VALUE="'.$w_nome.'"></td>');
     ShowHTML('      <tr><td><b><U>D</U>escricao:<br><TEXTAREA ACCESSKEY="D" '.$w_Disabled.' class="sti" name="w_descricao" rows="5" cols=75>'.$w_descricao.'</textarea></td>');
-    ShowHTML('      <tr><td><b><u>S</u>igla:</b><br><input '.$w_Disabled.' accesskey="S" type="text" name="w_sigla" class="STI" SIZE="18" MAXLENGTH="10" VALUE="'.$w_sigla.'"></td>');
+    ShowHTML('      <tr><td><b><u>S</u>igla:</b><br><input '.$w_Disabled.' accesskey="S" type="text" name="w_sigla" class="STI" SIZE="10" MAXLENGTH="10" VALUE="'.$w_sigla.'"></td>');
     ShowHTML('      </tr>');
     ShowHTML('      <tr valign="top">');
     MontaRadioSN('<b>Ativo?</b>',$w_ativo,'w_ativo');
@@ -798,7 +806,7 @@ function Veiculo() {
     } else {
       $RS = SortArray($RS,'modelo','asc'); 
     }
-  } elseif (!(strpos('AEV',$O)===false) && $w_troca=='') {
+  } elseif (strpos('AEV',$O)!==false) {
     $RS = db_getVeiculo::getInstanceOf($dbms, $w_chave, null, $w_cliente, null, null, null);
     foreach ($RS as $row) {$RS = $row; break;}
     $w_cliente            = f($RS,'cliente');
@@ -828,14 +836,14 @@ function Veiculo() {
       Validate('w_placa','Placa','1','1','6','7','1','1');      
       Validate('w_marca','Marca','1','1','2','20','1','1'); 
       Validate('w_modelo','Modelo','1','1','3','20','1','1'); 
-      Validate('w_combustivel','Combustível','1','1','5','8','1','1'); 
-      Validate('w_tipo','Tipo','1','1','4','20','1','1'); 
-      Validate('w_potencia','Potência','1','1','2','6','1','1'); 
-      Validate('w_cilindrada','Cilindrada','1','1','2','6','1','1'); 
-      Validate('w_ano_modelo','Ano Modelo','1','1','2','4','4','1'); 
-      Validate('w_ano_fabricacao','Ano Fabricação','1','1','4','4','1','1'); 
       Validate('w_renavam','Renavam','1','1','2','20','1','1'); 
       Validate('w_chassi','Chassi','1','1','2','20','1','1');                                                                     
+      Validate('w_combustivel','Combustível','1','1','5','8','1','1'); 
+      Validate('w_tipo','Tipo','1','1','4','20','1','1'); 
+      Validate('w_ano_modelo','Ano Modelo','1','1','2','4','4','1'); 
+      Validate('w_ano_fabricacao','Ano Fabricação','1','1','4','4','1','1'); 
+      Validate('w_potencia','Potência','1','1','2','6','1','1'); 
+      Validate('w_cilindrada','Cilindrada','1','1','2','6','1','1'); 
       Validate('w_assinatura','Assinatura Eletrônica','1','1','6','30','1','1');
     } elseif ($O=='E') {
       Validate('w_assinatura','Assinatura Eletrônica','1','1','6','30','1','1');
@@ -870,9 +878,13 @@ function Veiculo() {
     ShowHTML('<tr><td align="center" colspan=3>');
     ShowHTML('    <TABLE WIDTH="100%" bgcolor="'.$conTableBgColor.'" BORDER="'.$conTableBorder.'" CELLSPACING="'.$conTableCellSpacing.'" CELLPADDING="'.$conTableCellPadding.'" BorderColorDark="'.$conTableBorderColorDark.'" BorderColorLight="'.$conTableBorderColorLight.'">');
     ShowHTML('        <tr bgcolor="'.$conTrBgColor.'" align="center">');
-    ShowHTML('          <td><b>'.LinkOrdena('Placa','placa').'</td>');
+    ShowHTML('          <td><b>'.LinkOrdena('Grupo','nm_grupo_veiculo').'</td>');
+    ShowHTML('          <td><b>'.LinkOrdena('Tipo','nm_tipo_veiculo').'</td>');
+    ShowHTML('          <td><b>'.LinkOrdena('Marca','marca').'</td>');
     ShowHTML('          <td><b>'.LinkOrdena('Modelo','modelo').'</td>');
+    ShowHTML('          <td><b>'.LinkOrdena('Ano','ano_fabricacao').'</td>');
     ShowHTML('          <td><b>'.LinkOrdena('Combustivel','combustivel').'</td>');
+    ShowHTML('          <td><b>'.LinkOrdena('Placa','nm_veiculo').'</td>');
     ShowHTML('          <td><b>'.LinkOrdena('Alugado','alugado').'</td>');
     ShowHTML('          <td><b>'.LinkOrdena('Ativo','nm_ativo').'</td>');
     ShowHTML('          <td><b> Operações </td>');
@@ -886,14 +898,18 @@ function Veiculo() {
       foreach($RS1 as $row) { 
         $w_cor = ($w_cor==$conTrBgColor || $w_cor=='') ? $w_cor=$conTrAlternateBgColor : $w_cor=$conTrBgColor;
         ShowHTML('      <tr bgcolor="'.$w_cor.'" valign="top">');
-        ShowHTML('        <td>'.f($row,'placa').'</td>');
-        ShowHTML('        <td>'.f($row,'Modelo').'</td>');        
+        ShowHTML('        <td>'.f($row,'nm_grupo_veiculo').'</td>');
+        ShowHTML('        <td>'.f($row,'nm_tipo_veiculo').'</td>');
+        ShowHTML('        <td>'.f($row,'marca').'</td>');
+        ShowHTML('        <td>'.f($row,'modelo').'</td>');
+        ShowHTML('        <td align="center">'.f($row,'ano_fabricacao').'/'.f($row,'ano_modelo').'</td>');
         ShowHTML('        <td>'.f($row,'combustivel').'</td>');
+        ShowHTML('        <td align="center">'.substr(f($row,'nm_veiculo'),0,8).'</td>');
         ShowHTML('        <td align="center">'.f($row,'nm_alugado').'</td>');
         ShowHTML('        <td align="center">'.f($row,'nm_ativo').'</td>');
         ShowHTML('        <td align="top" nowrap>');
-        ShowHTML('          <A class="hl" HREF="'.$w_dir.$w_pagina.$par.'&R= '.$w_pagina.$par.'&O=A&w_chave='.f($row,'chave').'&P1='.$P1.'&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP='.$TP.' &SG='.$SG.MontaFiltro('GET').'">Alterar </A>&nbsp');
-        ShowHTML('          <A class="hl" HREF="'.$w_dir.$w_pagina.$par.'&R= '.$w_pagina.$par.'&O=E&w_chave='.f($row,'chave').'&P1='.$P1.'&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP='.$TP.' &SG='.$SG.'">Excluir </A>&nbsp');
+        ShowHTML('          <A class="hl" HREF="'.$w_dir.$w_pagina.$par.'&R='.$w_pagina.$par.'&O=A&w_chave='.f($row,'chave').'&P1='.$P1.'&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP='.$TP.' &SG='.$SG.MontaFiltro('GET').'">Alterar </A>&nbsp');
+        ShowHTML('          <A class="hl" HREF="'.$w_dir.$w_pagina.$par.'&R='.$w_pagina.$par.'&O=E&w_chave='.f($row,'chave').'&P1='.$P1.'&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP='.$TP.' &SG='.$SG.'">Excluir </A>&nbsp');
         ShowHTML('        </td>');
         ShowHTML('      </tr>');
       } 
@@ -918,26 +934,27 @@ function Veiculo() {
     ShowHTML('<INPUT type="hidden" name="w_placa_ant" value="'.$w_placa.'">');        
     ShowHTML('<INPUT type="hidden" name="w_troca" value="">');
     ShowHTML('<tr bgcolor="'.$conTrBgColor.'"><td>');
-    ShowHTML('    <table width="97%" border="0">');
-    ShowHTML('         <tr><td colspan=3><table width="100%" border="0">');   
+    ShowHTML('  <table width="97%" border="0">');
+    ShowHTML('    <tr valign="top">');   
     SelecaoTipoVeiculo('<u>T</u>ipo veículo:','T','Selecione o veículo desejado',$w_cliente,$w_chave_aux,null,'w_chave_aux',null);
-    ShowHTML('      <td><b><u>P</u>laca:</b><br><input '.$w_Disabled.' accesskey="P" type="text" name="w_placa" class="STI" SIZE="18" MAXLENGTH="7" VALUE="'.$w_placa.'"></td>');
-    ShowHTML('      <tr><td><b><u>M</u>arca:</b><br><input '.$w_Disabled.' accesskey="M" type="text" name="w_marca" class="STI" SIZE="18" MAXLENGTH="20" VALUE="'.$w_marca.'"></td>');
-    ShowHTML('      <td><b>M<u>o</u>delo:</b><br><input '.$w_Disabled.' accesskey="O" type="text" name="w_modelo" class="STI" SIZE="18" MAXLENGTH="20" VALUE="'.$w_modelo.'"></td>');
-    ShowHTML('      <tr><td><b><u>C</u>ombustível:</b><br><input '.$w_Disabled.' accesskey="C" type="text" name="w_combustivel" class="STI" SIZE="18" MAXLENGTH="8" VALUE="'.$w_combustivel.'"></td>');
-    ShowHTML('      <td><b>Tipo:</b><br><input '.$w_Disabled.' accesskey="T" type="text" name="w_tipo" class="STI" SIZE="18" MAXLENGTH="20" VALUE="'.$w_tipo.'"></td>');
-    ShowHTML('      <tr><td><b>Po<u>t</u>encia:</b><br><input '.$w_Disabled.' accesskey="T" type="text" name="w_potencia" class="STI" SIZE="18" MAXLENGTH="6" VALUE="'.$w_potencia.'"></td>');
-    ShowHTML('      <td><b>C<u>i</u>lindrada:</b><br><input '.$w_Disabled.' accesskey="I" type="text" name="w_cilindrada" class="STI" SIZE="18" MAXLENGTH="6" VALUE="'.$w_cilindrada.'"></td>');
-    ShowHTML('      <tr><td><b><u>A</u>no modelo:</b><br><input '.$w_Disabled.' accesskey="A" type="text" name="w_ano_modelo" class="STI" SIZE="18" MAXLENGTH="4" VALUE="'.$w_ano_modelo.'"></td>'); 
-    ShowHTML('      <td><b>Ano <u>F</u>abricação:</b><br><input '.$w_Disabled.' accesskey="A" type="text" name="w_ano_fabricacao" class="STI" SIZE="18" MAXLENGTH="4" VALUE="'.$w_ano_fabricacao.'"></td>');
-    ShowHTML('      <tr><td><b><u>R</u>enavam:</b><br><input '.$w_Disabled.' accesskey="R" type="text" name="w_renavam" class="STI" SIZE="18" MAXLENGTH="20" VALUE="'.$w_renavam.'"></td>');
-    ShowHTML('      <td><b>Cha<u>s</u>si:</b><br><input '.$w_Disabled.' accesskey="S" type="text" name="w_chassi" class="STI" SIZE="18" MAXLENGTH="20" VALUE="'.$w_chassi.'"></td>');
-    ShowHTML('      <tr valign="top">');
+    ShowHTML('      <td><b><u>P</u>laca:</b><br><input '.$w_Disabled.' accesskey="P" type="text" name="w_placa" class="STI" SIZE="7" MAXLENGTH="7" VALUE="'.$w_placa.'"></td>');
+    ShowHTML('      <td title="Marca do veículo, conforme documento."><b><u>M</u>arca:</b><br><input '.$w_Disabled.' accesskey="M" type="text" name="w_marca" class="STI" SIZE="20" MAXLENGTH="20" VALUE="'.$w_marca.'"></td>');
+    ShowHTML('      <td title="Modelo do veículo, conforme documento."><b>M<u>o</u>delo:</b><br><input '.$w_Disabled.' accesskey="O" type="text" name="w_modelo" class="STI" SIZE="20" MAXLENGTH="20" VALUE="'.$w_modelo.'"></td>');
+    ShowHTML('    <tr valign="top">');   
+    ShowHTML('      <td title="Código RENAVAM, conforme documento do veículo."><b><u>R</u>enavam:</b><br><input '.$w_Disabled.' accesskey="R" type="text" name="w_renavam" class="STI" SIZE="20" MAXLENGTH="20" VALUE="'.$w_renavam.'"></td>');
+    ShowHTML('      <td title="Número do chassi, conforme documento do veículo."><b>Cha<u>s</u>si:</b><br><input '.$w_Disabled.' accesskey="S" type="text" name="w_chassi" class="STI" SIZE="20" MAXLENGTH="20" VALUE="'.$w_chassi.'"></td>');
+    ShowHTML('      <td title="Combustível, conforme documento do veículo."><b><u>C</u>ombustível:</b><br><input '.$w_Disabled.' accesskey="C" type="text" name="w_combustivel" class="STI" SIZE="8" MAXLENGTH="8" VALUE="'.$w_combustivel.'"></td>');
+    ShowHTML('      <td title="Tipo do veículo, conforme documento."><b>Tipo:</b><br><input '.$w_Disabled.' accesskey="T" type="text" name="w_tipo" class="STI" SIZE="20" MAXLENGTH="20" VALUE="'.$w_tipo.'"></td>');
+    ShowHTML('    <tr valign="top">');   
+    ShowHTML('      <td title="Ano do modelo do veiculo, conforme documento."><b><u>A</u>no modelo:</b><br><input '.$w_Disabled.' accesskey="A" type="text" name="w_ano_modelo" class="STI" SIZE="18" MAXLENGTH="4" VALUE="'.$w_ano_modelo.'"></td>'); 
+    ShowHTML('      <td title="Ano de fabricação, conforme documento do veículo."><b>Ano <u>F</u>abricação:</b><br><input '.$w_Disabled.' accesskey="A" type="text" name="w_ano_fabricacao" class="STI" SIZE="18" MAXLENGTH="4" VALUE="'.$w_ano_fabricacao.'"></td>');
+    ShowHTML('      <td title="Potência do veículo, conforme documento."><b>Po<u>t</u>ência:</b><br><input '.$w_Disabled.' accesskey="T" type="text" name="w_potencia" class="STI" SIZE="6" MAXLENGTH="6" VALUE="'.$w_potencia.'"></td>');
+    ShowHTML('      <td title="Cilindrada do veículo, conforme documento."><b>C<u>i</u>lindrada:</b><br><input '.$w_Disabled.' accesskey="I" type="text" name="w_cilindrada" class="STI" SIZE="6" MAXLENGTH="6" VALUE="'.$w_cilindrada.'"></td>');
+    ShowHTML('    <tr valign="top">');
     MontaRadioNS('<b>Alugado?</b>',$w_alugado,'w_alugado');
     ShowHTML('      </tr>');
     ShowHTML('      <tr valign="top">');
     MontaRadioSN('<b>Ativo?</b>',$w_ativo,'w_ativo');
-    ShowHTML('           </table>');
     ShowHTML('      <tr>');
     ShowHTML('      <tr><td colspan=5><b><U>A</U>ssinatura Eletrônica:<BR> <INPUT ACCESSKEY="A" class="sti" type="PASSWORD" name="w_assinatura" size="30" maxlength="30" value=""></td></tr>');
     ShowHTML('      <tr><td colspan=5 align="center"><hr>');
@@ -953,9 +970,7 @@ function Veiculo() {
     ShowHTML('            <input class="stb" type="button" onClick="location.href=\''.$w_pagina.$par.'&P1='.$P1.'&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP='.$TP.'&SG='.$SG.'&p_nome='.$p_nome.'&p_ativo='.$p_ativo.'&p_ordena='.$p_ordena.'\';" name="Botao" value="Cancelar">');
     ShowHTML('          </td>');
     ShowHTML('      </tr>');
-    ShowHTML('    </table>');
-    ShowHTML('    </TD>');
-    ShowHTML('</tr>');
+    ShowHTML('  </table>');
     ShowHTML('</FORM>');
   } else {
     ScriptOpen('JavaScript');
@@ -1002,9 +1017,9 @@ function Grava() {
             $RS = db_getGrupoVeiculo::getInstanceOf($dbms, null, $w_cliente, null, strtoupper($_REQUEST['w_sigla']),'S');
             if (count($RS)>0) {
               ScriptOpen('JavaScript');
-              ShowHTML('  alert(\'Já existe sigla com este nome!\');');
-              ShowHTML('  history.go(-1);');
+              ShowHTML('  alert(\'Já existe grupo de veículo com esta sigla!\');');
               ScriptClose();
+              retornaFormulario('w_nome');
               exit();
             }
           } 
@@ -1013,8 +1028,9 @@ function Grava() {
           if (count($RS)>0) {
             ScriptOpen('JavaScript');
             ShowHTML('  alert(\'Existe tipo de veículo associado a este grupo, não sendo possível sua exclusão!\');');
-            ShowHTML('  history.back(1);');
             ScriptClose(); 
+            retornaFormulario('w_assinatura');
+            exit();
           }  
         }
         dml_putGrupoVeiculo::getInstanceOf($dbms,$O,Nvl($_REQUEST['w_chave'],''),$w_cliente,$_REQUEST['w_nome'],strtoupper($_REQUEST['w_sigla']),
@@ -1048,8 +1064,8 @@ function Grava() {
             if (count($RS)>0) {
               ScriptOpen('JavaScript');
               ShowHTML('  alert(\'Já existe sigla com este nome!\');');
-              ShowHTML('  history.go(-1);');
               ScriptClose();
+              retornaFormulario('w_sigla');
               exit();
             }
           } 

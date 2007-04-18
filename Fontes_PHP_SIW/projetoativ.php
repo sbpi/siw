@@ -1624,7 +1624,7 @@ function Encaminhamento() {
   ShowHTML('<INPUT type="hidden" name="w_menu" value="'.$w_menu.'">');
   ShowHTML('<INPUT type="hidden" name="w_tramite" value="'.$w_tramite.'">');
   ShowHTML('<tr bgcolor="'.$conTrBgColor.'"><td align="center">');
-  ShowHTML('  <table width="97%" border="0">');
+  ShowHTML('  <table width="97%" border="0" bgcolor="'.$conTrBgColor.'">');
   ShowHTML('    <tr><td valign="top" colspan="2"><table border=0 width="100%" cellspacing=0><tr valign="top">');
   if ($P1!=1) {
     // Se não for cadastramento
@@ -1901,7 +1901,6 @@ function SolicMail($p_solic,$p_tipo) {
   $w_html.=$crlf.'      <tr><td colspan="2"  bgcolor="#f0f0f0"><div align=justify><b>Detalhamento: ['.$p_solic.'] '.CRLF2BR(f($RSM,'assunto')).'</b></div></td></tr>';
   $w_html.=$crlf.'      <tr><td colspan="2"><hr NOSHADE color=#000000 size=4></td></tr>';
   // Identificação da tarefa
-  $w_html.=$crlf.'      <tr><td colspan="2"><br><font size="2"><b>EXTRATO<hr NOSHADE color=#000000 SIZE=1></b></font></td></tr>';  
   $w_html.=$crlf.'      <tr><td width="30%"><b>Projeto: </b></td>';
   $w_html.=$crlf.'        <td>'.f($RSM,'nm_projeto').'  ('.f($RSM,'sq_solic_pai').')</td></tr>';
   if (nvl(f($RSM,'nm_etapa'),'')>'') {

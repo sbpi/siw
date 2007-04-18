@@ -826,6 +826,7 @@ Fontes_PHP_SIW/classes/sp/db_getSolicResp.php -text
 Fontes_PHP_SIW/classes/sp/db_getSolicResp_IS.php -text
 Fontes_PHP_SIW/classes/sp/db_getSolicRestricao.php -text
 Fontes_PHP_SIW/classes/sp/db_getSolicRubrica.php -text
+Fontes_PHP_SIW/classes/sp/db_getSolicSR.php -text
 Fontes_PHP_SIW/classes/sp/db_getSolicViagem.php -text
 Fontes_PHP_SIW/classes/sp/db_getStateData.php -text
 Fontes_PHP_SIW/classes/sp/db_getStateList.php -text
@@ -1095,6 +1096,7 @@ Fontes_PHP_SIW/classes/sp/dml_putSiwCliente.php -text
 Fontes_PHP_SIW/classes/sp/dml_putSiwUsuario.php -text
 Fontes_PHP_SIW/classes/sp/dml_putSolicArquivo.php -text
 Fontes_PHP_SIW/classes/sp/dml_putSolicConc.php -text
+Fontes_PHP_SIW/classes/sp/dml_putSolicConcTransp.php -text
 Fontes_PHP_SIW/classes/sp/dml_putSolicEnvio.php -text
 Fontes_PHP_SIW/classes/sp/dml_putSolicEtpRec.php -text
 Fontes_PHP_SIW/classes/sp/dml_putSolicGeral.php -text
@@ -1104,6 +1106,7 @@ Fontes_PHP_SIW/classes/sp/dml_putSolicOpiniao.php -text
 Fontes_PHP_SIW/classes/sp/dml_putSolicRecAlocacao.php -text
 Fontes_PHP_SIW/classes/sp/dml_putSolicRecurso.php -text
 Fontes_PHP_SIW/classes/sp/dml_putSolicRestricao.php -text
+Fontes_PHP_SIW/classes/sp/dml_putSolicTransp.php -text
 Fontes_PHP_SIW/classes/sp/dml_putStoredProcedure[!!-~].php -text
 Fontes_PHP_SIW/classes/sp/dml_putStoredProcedure.php -text
 Fontes_PHP_SIW/classes/sp/dml_putTTCentral.php -text
@@ -1382,6 +1385,7 @@ Fontes_PHP_SIW/funcoes/selecaoUsuUnid.php -text
 Fontes_PHP_SIW/funcoes/selecaoUsuario.php -text
 Fontes_PHP_SIW/funcoes/selecaoVeiculo.php -text
 Fontes_PHP_SIW/funcoes/selecaoVinculo.php -text
+Fontes_PHP_SIW/funcoes/selecaoVinculoRecurso.php -text
 Fontes_PHP_SIW/funcoes_valida.php -text
 Fontes_PHP_SIW/geragrafico.php -text
 Fontes_PHP_SIW/gr_demandaeventual.php -text
@@ -1396,6 +1400,7 @@ Fontes_PHP_SIW/mod_ac/geragrafico.php -text
 Fontes_PHP_SIW/mod_ac/gr_contratos.php -text
 Fontes_PHP_SIW/mod_ac/gr_convenios.php -text
 Fontes_PHP_SIW/mod_ac/rel_bolsista.php -text
+Fontes_PHP_SIW/mod_ac/relatorios.php -text
 Fontes_PHP_SIW/mod_ac/tabelas.php -text
 Fontes_PHP_SIW/mod_ac/validaacordo.php -text
 Fontes_PHP_SIW/mod_ac/validaconvenio.php -text
@@ -1474,11 +1479,16 @@ Fontes_PHP_SIW/mod_rh_pub/visualcurriculoword.php -text
 Fontes_PHP_SIW/mod_sf/sicof.php -text
 Fontes_PHP_SIW/mod_sg/relatorios.php -text
 Fontes_PHP_SIW/mod_sr/geral.php -text
+Fontes_PHP_SIW/mod_sr/geral_conc.php -text
+Fontes_PHP_SIW/mod_sr/geral_gerais.php -text
 Fontes_PHP_SIW/mod_sr/gr_solic.php -text
 Fontes_PHP_SIW/mod_sr/tabelas.php -text
+Fontes_PHP_SIW/mod_sr/transporte_conc.php -text
+Fontes_PHP_SIW/mod_sr/transporte_gerais.php -text
 Fontes_PHP_SIW/mod_sr/validageral.php -text
 Fontes_PHP_SIW/mod_sr/visualgeral.php -text
 Fontes_PHP_SIW/mod_sr/visualos.php -text
+Fontes_PHP_SIW/mod_sr/visualos_transp.php -text
 Fontes_PHP_SIW/mod_tt/consulta.php -text
 Fontes_PHP_SIW/mod_tt/tabelas.php -text
 Fontes_PHP_SIW/mod_tt/visuallistatel.php -text

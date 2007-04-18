@@ -173,7 +173,7 @@ function ValidaAcordo($l_cliente,$l_chave,$l_sg1,$l_sg2,$l_sg3,$l_sg4,$l_tramite
           $l_valor_pacelas=0.00;
           foreach($l_rs3 as $row) { $l_valor_parcelas += f($row,'valor'); }
           if (round(f($l_rs_solic,'valor')-$l_valor_parcelas,2)!=0) {
-            $l_erro.='<li>Valor do acordo ('.number_format(f($l_rs_solic,'valor'),2,',','.').') difere da soma das parcelas ('.number_format($l_valor_parcelas,2,',','.').')';
+            $l_erro.='<li>Valor do acordo ('.formatNumber(f($l_rs_solic,'valor')).') difere da soma das parcelas ('.formatNumber($l_valor_parcelas).')';
             $l_tipo=0;
           }
         }

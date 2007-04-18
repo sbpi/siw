@@ -12,7 +12,7 @@ class dml_putSolicOpiniao {
    function getInstanceOf($dbms, $p_chave, $p_opiniao, $p_motivo) {
      extract($GLOBALS,EXTR_PREFIX_SAME,'strchema'); $sql=$strschema.'SP_PUTSOLICOPINIAO';
      $params=array('p_chave'                     =>array($p_chave,                                         B_INTEGER,        32),
-                   'p_opiniao'                   =>array($p_opiniao,                                       B_INTEGER,         1),
+                   'p_opiniao'                   =>array($p_opiniao,                                       B_INTEGER,        18),
                    'p_motivo'                    =>array($p_motivo,                                        B_VARCHAR,      1000)
                   );
      $l_rs = DatabaseQueriesFactory::getInstanceOf($sql, $dbms, $params, DB_TYPE);

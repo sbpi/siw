@@ -187,7 +187,7 @@ function Rel_Progresso() {
           for ($bloco=1;$bloco<=4;$bloco++) {
             switch ($bloco) {
               case 1 : $w_label = 'ENTREGAS PREVISTAS';                        $w_restricao = 'PROPREV';   $w_mensagem = 'entrega prevista para o período'; break;
-              case 2 : $w_label = 'ENTREGAS REPORTADAS';                       $w_restricao = 'PROREPORT'; $w_mensagem = 'entrega reportada para o período'; break;
+              case 2 : $w_label = 'ENTREGAS REALIZADAS';                       $w_restricao = 'PROREPORT'; $w_mensagem = 'entrega realizada para o período'; break;
               case 3 : $w_label = 'ENTREGAS PENDENTES';                        $w_restricao = 'PROPEND';   $w_mensagem = 'entrega pendente para o período'; break;
               case 4 : $w_label = 'ENTREGAS PREVISTAS PARA O PRÓXIMO PERÍODO ('.formataDataEdicao($w_inicio).' a '.formataDataEdicao($w_fim).')'; $w_restricao = 'PROENTR';   $w_mensagem = 'entrega prevista para o próximo período'; break;
             } 

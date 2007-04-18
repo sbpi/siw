@@ -10,11 +10,9 @@ function VisualGeral($l_chave,$O,$l_usuario,$l_sg,$P4) {
   $w_ativo      = f($RS1,'ativo');
   $l_html.=chr(13).'    <table border=0 width="100%">';
   $l_html.=chr(13).'      <tr><td colspan="2"><hr NOSHADE color=#000000 size=4></td></tr>';
-  $l_html.=chr(13).'      <tr><td colspan="2"  bgcolor="#f0f0f0"><div align=justify><font size="2"><b>SERVIÇO: '.f($RS1,'nome').' - SOLICITAÇÃO: '.f($RS1,'sq_siw_solicitacao').'</b></font></td></tr>';
+  $l_html.=chr(13).'      <tr><td colspan="2"  bgcolor="#f0f0f0"><div align=justify><font size="2"><b>SERVIÇO: '.f($RS1,'nome').' ('.f($RS1,'sq_siw_solicitacao').')</b></font></td></tr>';
   $l_html.=chr(13).'      <tr><td colspan="2"><hr NOSHADE color=#000000 size=4></td></tr>';
-  // Identificação da solicitação
-  $l_html.=chr(13).'   <tr><td colspan="2"><br><font size="2"><b>DADOS DA SOLICITAÇÃO<hr NOSHADE color=#000000 SIZE=1></b></font></td></tr>';
-  switch (f($RS_Menu,'data_hora')) {
+  switch (f($RS1,'data_hora')) {
   case 1 :
     $l_html.=chr(13).'   <tr><td width="20%"><b>Data programada:</b></font></td>';
     $l_html.=chr(13).'       <td>'.Nvl(FormataDataEdicao(f($RS1,'phpdt_fim')),'-').'</font></td></tr>';
@@ -36,47 +34,79 @@ function VisualGeral($l_chave,$O,$l_usuario,$l_sg,$P4) {
     $l_html.=chr(13).'       <td>'.Nvl(substr(FormataDataEdicao(f($RS1,'phpdt_fim'),3),0,-3),'-').'</font></td></tr>';
     break;
   }
+  if ($P4==1) {
+    $l_html.=chr(13).'   <tr><td><b>Solicitante:</b></font></td>';
+    $l_html.=chr(13).'       <td>'.f($RS1,'nm_sol').' ('.f($RS1,'sg_unidade_solic').')</font></td></tr>';
+  } else {
+    $l_html.=chr(13).'   <tr><td><b>Solicitante:</b></font></td>';
+    $l_html.=chr(13).'       <td>'.ExibePessoa('../',$w_cliente,f($RS1,'solicitante'),$TP,f($RS1,'nm_sol')).' ('.ExibeUnidade('../',$w_cliente,f($RS1,'sg_unidade_solic'),f($RS1,'sq_unidade'),$TP).')</font></td></tr>';
+  }
   if (Nvl(f($RS1,'descricao'),'')!='') {
     $l_html.=chr(13).'   <tr valign="top">';
     $l_html.=chr(13).'       <td width="20%"><b>Detalhamento:</b></font></td>';
     $l_html.=chr(13).'       <td>'.crlf2br(Nvl(f($RS1,'descricao'),'-')).'</font></td></tr>';
   }
+  if (Nvl(f($RS1,'sigla'),'')=='SRTRANSP') {
+    $l_html.=chr(13).'   <tr valign="top">';
+    $l_html.=chr(13).'       <td width="20%"><b>Destino:</b></td>';
+    $l_html.=chr(13).'       <td>'.crlf2br(Nvl(f($RS1,'destino'),'-')).'</td></tr>';
+    $l_html.=chr(13).'   <tr valign="top">';
+    $l_html.=chr(13).'       <td width="20%"><b>Qtd. pessoas:</b></td>';
+    $l_html.=chr(13).'       <td>'.Nvl(f($RS1,'qtd_pessoas'),'-').'</td></tr>';
+    $l_html.=chr(13).'   <tr valign="top">';
+    $l_html.=chr(13).'       <td width="20%"><b>Carga:</b></td>';
+    $l_html.=chr(13).'       <td>'.RetornaSimNao(Nvl(f($RS1,'carga'),'-')).'</td></tr>';
+  }  
   if (Nvl(f($RS1,'justificativa'),'')!='') {
     $l_html.=chr(13).'   <tr valign="top">';
     $l_html.=chr(13).'       <td width="20%"><b>Justificativa:</b></font></td>';
     $l_html.=chr(13).'       <td>'.Nvl(f($RS1,'justificativa'),'-').'</font></td></tr>';
   }
-  if ($P4==1) {
-    $l_html.=chr(13).'   <tr><td colspan="2"><br><font size="2"><b>SOLICITANTE<hr NOSHADE color=#000000 SIZE=1></b></font></td></tr>';
-    $l_html.=chr(13).'   <tr><td><b>Unidade solicitante:</b></font></td>';
-    $l_html.=chr(13).'       <td>'.f($RS1,'nm_unidade_solic').'</font></td></tr>';
-    $l_html.=chr(13).'   <tr><td><b>Usuário solicitante:</b></font></td>';
-    $l_html.=chr(13).'       <td>'.f($RS1,'nm_sol').'</font></td></tr>';
-    $l_html.=chr(13).'   <tr><td colspan="2"><br><font size="2"><b>EXECUTOR<hr NOSHADE color=#000000 SIZE=1></b></font></td></tr>';
-    $l_html.=chr(13).'   <tr><td><b>Unidade executora:</b></font></td>';
-    $l_html.=chr(13).'       <td>'.f($RS1,'nm_unidade_exec').'</font></td></tr>';
-  } else {
-    $l_html.=chr(13).'   <tr><td colspan="2"><br><font size="2"><b>SOLICITANTE<hr NOSHADE color=#000000 SIZE=1></b></font></td></tr>';
-    $l_html.=chr(13).'   <tr><td><b>Unidade solicitante:</b></font></td>';
-    $l_html.=chr(13).'       <td>'.ExibeUnidade('../',$w_cliente,f($RS1,'nm_unidade_solic'),f($RS1,'sq_unidade'),$TP).'</font></td></tr>';
-    $l_html.=chr(13).'   <tr><td><b>Usuário solicitante:</b></font></td>';
-    $l_html.=chr(13).'       <td>'.ExibePessoa('../',$w_cliente,f($RS1,'solicitante'),$TP,f($RS1,'nm_sol')).'</font></td></tr>';
-    $l_html.=chr(13).'   <tr><td colspan="2"><br><font size="2"><b>EXECUTOR<hr NOSHADE color=#000000 SIZE=1></b></font></td></tr>';
-    $l_html.=chr(13).'   <tr><td><b>Unidade executora:</b></font></td>';
-    $l_html.=chr(13).'       <td>'.ExibeUnidade('../',$w_cliente,f($RS1,'nm_unidade_exec'),f($RS1,'sq_unid_executora'),$TP).'</font></td></tr>';
-  } 
   // Dados da conclusão da solicitação, se ela estiver nessa situação
   if (nvl(f($RS1,'conclusao'),'')!='') {
     $l_html.=chr(13).'      <tr><td colspan="2"><br><font size="2"><b>DADOS DA CONCLUSÃO<hr NOSHADE color=#000000 SIZE=1></b></font></td></tr>';
     $l_html.=chr(13).'   <tr valign="top"><td><b>Data de conclusão:</b></font></td><td>'.FormataDataEdicao(substr(f($RS1,'phpdt_conclusao'),0,-3),3).'</font></td></tr>';
-    $l_html.=chr(13).'   <tr valign="top"><td><b>Opinião emitida pelo solicitante:</b></font></td><td>'.nvl(f($RS1,'nm_opiniao'),'---').'</font></td></tr>';
+    if ($P4==1) {
+      $l_html.=chr(13).'   <tr><td><b>Unidade executora:</b></font></td>';
+      $l_html.=chr(13).'       <td>'.f($RS1,'nm_unidade_exec').'</font></td></tr>';
+      if (nvl(f($RS1,'executor'),'')!='') {
+        if (Nvl(f($RS1,'sigla'),'')=='SRTRANSP') $l_html.=chr(13).'   <tr><td><b>Motorista:</b></font></td>';
+        else $l_html.=chr(13).'   <tr><td><b>Executor:</b></font></td>';
+        $l_html.=chr(13).'       <td>'.f($RS1,'nm_exec').'</font></td></tr>';
+        if (Nvl(f($RS1,'sigla'),'')=='SRTRANSP') {
+          $l_html.=chr(13).'   <tr><td><b>Veículo:</b></font></td>';
+          $l_html.=chr(13).'       <td>'.f($RS1,'nm_placa').'</font></td></tr>';
+        }
+      }
+    } else {
+      $l_html.=chr(13).'   <tr><td><b>Unidade executora:</b></font></td>';
+      $l_html.=chr(13).'       <td>'.ExibeUnidade('../',$w_cliente,f($RS1,'nm_unidade_exec'),f($RS1,'sq_unid_executora'),$TP).'</font></td></tr>';
+      if (nvl(f($RS1,'executor'),'')!='') {
+        if (Nvl(f($RS1,'sigla'),'')=='SRTRANSP') $l_html.=chr(13).'   <tr><td><b>Motorista:</b></font></td>';
+        else $l_html.=chr(13).'   <tr><td><b>Executor:</b></font></td>';
+        $l_html.=chr(13).'       <td>'.ExibePessoa('../',$w_cliente,f($RS1,'executor'),$TP,f($RS1,'nm_exec')).'</font></td></tr>';
+        if (Nvl(f($RS1,'sigla'),'')=='SRTRANSP') {
+          $l_html.=chr(13).'   <tr><td><b>Veículo:</b></font></td>';
+          $l_html.=chr(13).'       <td>'.f($RS1,'nm_placa').'</font></td></tr>';
+        }
+      }
+    } 
+    if (Nvl(f($RS1,'sigla'),'')=='SRTRANSP') {
+      $l_html.=chr(13).'       <tr valign="top"><td><b>Data do atendimento:</td>';
+      $l_html.=chr(13).'         <td>Saída: '.substr(FormataDataEdicao(f($RS1,'phpdt_horario_saida'),3),0,-3).'<br>Retorno: '.substr(FormataDataEdicao(f($RS1,'phpdt_horario_chegada'),3),0,-3).'<b></font></td></tr>';
+      $l_html.=chr(13).'       <tr valign="top"><td><b>Hodômetro:</td>';
+      $l_html.=chr(13).'         <td>Saída: '.f($RS1,'hodometro_saida').'<br>Retorno:'.f($RS1,'hodometro_chegada').'<b></font></td></tr>';
+      $l_html.=chr(13).'       <tr><td><b>Parcial:</td>';
+      $l_html.=chr(13).'     <td>'.RetornaSimNao(f($RS1,'parcial')).'</b></td></tr>';
+      $l_html.=chr(13).'   <tr><td><b>Passageiro:</b></font></td>';
+      $l_html.=chr(13).'       <td>'.ExibePessoa('../',$w_cliente,f($RS1,'recebedor'),$TP,f($RS1,'nm_recebedor')).'</font></td></tr>';
+    }
+    if (nvl(f($RS1,'nm_opiniao'),'')!='') {
+      $l_html.=chr(13).'   <tr valign="top"><td><b>Opinião:</b></font></td><td>'.nvl(f($RS1,'nm_opiniao'),'---').'</font></td></tr>';
+    }
     if (nvl(f($RS1,'motivo_insatisfacao'),'')!='') {
       $l_html.=chr(13).'   <tr valign="top"><td><b>Motivo(s) da insatisfação:</b></font></td><td>'.crlf2br(nvl(f($RS1,'motivo_insatisfacao'),'---')).'</font></td></tr>';
     }
-    $l_html.=chr(13).'   <tr valign="top"><td><b>Valor do atendimento:</b></font></td><td>'.FormatNumber(f($RS1,'valor'),2).'</font></td></tr>';
-    $l_html.=chr(13).'   <tr><td><b>Responsável pelo atendimento:</b></font></td>';
-    $l_html.=chr(13).'       <td>'.ExibePessoa('../',$w_cliente,f($RS1,'executor'),$TP,f($RS1,'nm_exec')).'</font></td></tr>';
-    $l_html.=chr(13).'   <tr valign="top"><td><b>Observações:</b></font></td><td>'.nvl(crlf2br(f($RS1,'observacao')),'---').'</font></td></tr>';
   } 
   // Encaminhamentos
   $l_html.=chr(13).'      <tr><td colspan="2"><br><font size="2"><b>OCORRÊNCIAS E ANOTAÇÕES<hr NOSHADE color=#000000 SIZE=1></b></td></tr>';

@@ -795,6 +795,47 @@ function ExibeImagemSolic($l_tipo,$l_inicio,$l_fim,$l_inicio_real,$l_fim_real,$l
         $l_title  = 'Execução concluída na data prevista.';
       } 
     } 
+  } elseif (substr($l_tipo,0,2)=='SR') {
+    // Tarefas
+    if ($l_tramite!='AT') {
+      if ($l_tramite=='CA') {
+        $l_imagem = $conImgCancel;
+        $l_title  = 'Registro cancelado.';
+      } elseif ($l_tramite=='CI') {
+        if ($l_fim<time()) {
+          $l_imagem = $conImgAtraso;
+          $l_title  = 'Execução não iniciada. Fim previsto superado.';
+        } elseif ($l_aviso=='S' && ($l_dias_aviso<=time())) {
+          $l_imagem = $conImgAviso;
+          $l_title  = 'Execução não iniciada. Fim previsto próximo.';
+        } else {
+          $l_imagem = $conImgNormal;
+          $l_title  = 'Execução não iniciada. Prazo final dentro do previsto.';
+        } 
+      } else {
+        if ($l_fim<time()) {
+          $l_imagem = $conImgStAtraso;
+          $l_title  = 'Em execução. Fim previsto superado.';
+        } elseif ($l_aviso=='S' && ($l_dias_aviso<=time())) {
+          $l_imagem = $conImgStAviso;
+          $l_title  = 'Em execução. Fim previsto próximo.';
+        } else {
+          $l_imagem = $conImgStNormal;
+          $l_title  = 'Em execução. Prazo final dentro do previsto.';
+        } 
+      }
+    } else {
+      if ($l_fim<Nvl($l_fim_real,$l_fim)) {
+        $l_imagem = $conImgOkAtraso;
+        $l_title  = 'Execução concluída após a data prevista.';
+      } elseif ($l_fim>Nvl($l_fim_real,$l_fim)) {
+        $l_imagem = $conImgOkAcima;
+        $l_title  = 'Execução concluída antes da data prevista.';
+      } else {
+        $l_imagem = $conImgOkNormal;
+        $l_title  = 'Execução concluída na data prevista.';
+      } 
+    } 
   } elseif (substr($l_tipo,0,2)=='PJ') {
     // Projetos
     if ($l_tramite!='AT') {

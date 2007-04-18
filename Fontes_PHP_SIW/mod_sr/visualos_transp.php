@@ -38,26 +38,35 @@ function VisualOS($l_chave,$l_sg) {
   $l_html.=chr(13).'       <td><font size="2"><b>'.f($RS1,'nm_unidade_solic').'</b></font></td></tr>';
   $l_html.=chr(13).'   <tr><td>Usuário solicitante:</font></td>';
   $l_html.=chr(13).'       <td><font size="2"><b>'.f($RS1,'nm_sol').'</b></font></td></tr>';
+  $l_html.=chr(13).'   <tr><td>Destino:</font></td>';
+  $l_html.=chr(13).'       <td><font size="2"><b>'.f($RS1,'destino').'</b></font></td></tr>';
+  $l_html.=chr(13).'   <tr><td>Qtd. pessoas:</font><br>';
+  $l_html.=chr(13).'       <td><font size="1"><b>'.f($RS1,'qtd_pessoas').'</b></font></td>';  
+  $l_html.=chr(13).'   <tr><td>Carga:</font><br>';
+  $l_html.=chr(13).'       <td><font size="1"><b>'.retornaSimNao(f($RS1,'carga')).'</b></font></td></tr>';
   if (Nvl(f($RS1,'descricao'),'')!='') {
     $l_html.=chr(13).'   <tr valign="top">';
     $l_html.=chr(13).'       <td width="20%">Detalhamento:</td>';
-    $l_html.=chr(13).'       <td><b>'.crlf2br(Nvl(f($RS1,'descricao'),'-')).'</b></td></tr>';
-  }
-  if (Nvl(f($RS1,'justificativa'),'')!='') {
-    $l_html.=chr(13).'   <tr valign="top">';
-    $l_html.=chr(13).'       <td width="20%">Justificativa:</td>';
-    $l_html.=chr(13).'       <td><b>'.crlf2br(Nvl(f($RS1,'justificativa'),'-')).'</b></td></tr>';
+    $l_html.=chr(13).'       <td><b>'.crlf2br(Nvl(f($RS1,'descricao'),'---')).'</b></td></tr>';
   }
 
   // Campos para informar os dados do atendimento
   $l_html.=chr(13).'      <tr><td colspan="2"><br><font size="2"><b>DADOS DO ATENDIMENTO<hr NOSHADE color=#000000 SIZE=1></b></font></td></tr>';
   $l_html.=chr(13).'      <table border=0 width="100%" cellpadding=10>';
   $l_html.=chr(13).'        <tr valign="top">';
-  $l_html.=chr(13).'          <td><b>Data e hora de conclusão:</b><br><input type="text" size=30 name="data" readonly></td>';
-  $l_html.=chr(13).'          <td><b>Valor (se houver):</b><br><input type="text" size=30 name="valor" readonly></td>';
-  $l_html.=chr(13).'        <tr><td colspan="2"><b>Responsável pelo atendimento (nome e assinatura):</b><br><input type="text" size=80 name="responsável" readonly></td></tr>';
-  $l_html.=chr(13).'        <tr><td colspan="2"><b>Recebedor (nome e assinatura):</b><br><input type="text" size=80 name="responsável" readonly></td></tr>';
-  $l_html.=chr(13).'        <tr><td colspan="2" align="center"><br><font size="2"><b>ATENÇÃO: descreva no verso desta OS os materiais eventualmente consumidos no atendimento.</b></font></td></tr>';
+  $l_html.=chr(13).'          <td colspan="2"><b>Motorista:</b><br><input type="text" size=80 name="data" readonly></td>';
+  $l_html.=chr(13).'          <td><b>Placa:</b><br><input type="text" size=20 name="data" readonly></td>';
+  $l_html.=chr(13).'        <tr valign="top">';
+  $l_html.=chr(13).'          <td><b>Data/hora de saída:</b><br><input type="text" size=30 name="data" readonly></td>';
+  $l_html.=chr(13).'          <td><b>Hodômetro na saída:</b><br><input type="text" size=30 name="data" readonly></td>';
+  $l_html.=chr(13).'        <tr valign="top">';
+  $l_html.=chr(13).'          <td><b>Data/hora de retorno:</b><br><input type="text" size=30 name="data" readonly></td>';
+  $l_html.=chr(13).'          <td><b>Hodômetro na chegada:</b><br><input type="text" size=30 name="data" readonly></td>';
+  $l_html.=chr(13).'        <tr><td><b>Trecho parcial?</b><br>';
+  $l_html.=chr(13).'        <input type="checkbox" name="parcial" value="S"> <b>SIM';
+  $l_html.=chr(13).'        <input type="checkbox" name="parcial" value="N"> <b>NÃO';
+  $l_html.=chr(13).'        <tr><td colspan="3"><b>Passageiro (nome e assinatura):</b><br><input type="text" size=94 name="data" readonly></td>';
+  $l_html.=chr(13).'        <tr><td colspan="3" align="center"><br><font size="2"><b>ATENÇÃO: descreva no verso desta OS quaisquer observações que julgar relevantes.</b></font></td></tr>';
   $l_html.=chr(13).'      </table>';
   $l_html.=chr(13).'    </table>';
   return $l_html;

@@ -11,7 +11,8 @@ include_once($w_dir_volta.'classes/db/DatabaseQueriesFactory.php');
 
 class dml_putAcordoAditivo {
    function getInstanceOf($dbms, $operacao, $p_chave_aux, $p_chave, $p_protocolo, $p_codigo, $p_objeto, $p_inicio, $p_fim, $p_duracao, $p_doc_origem, $p_doc_data,
-                          $p_variacao_valor, $p_prorrogacao, $p_revisao, $p_acrescimo, $p_supressao, $p_observacao, $p_valor_reajuste, $p_parcela_reajustada, $p_sq_cc) {
+                          $p_variacao_valor, $p_prorrogacao, $p_revisao, $p_acrescimo, $p_supressao, $p_observacao, $p_valor_inicial, $p_parcela_inicial, $p_valor_reajuste, $p_parcela_reajustada, 
+                          $p_valor_acrescimo, $p_parcela_acrescida, $p_sq_cc) {
      extract($GLOBALS,EXTR_PREFIX_SAME,'strchema'); $sql=$strschema.'SP_PUTACORDOADITIVO';
      $params=array('p_operacao'                  =>array($operacao,                                        B_VARCHAR,         1),
                    'p_chave_aux'                 =>array(tvl($p_chave_aux),                                B_INTEGER,        32),
@@ -30,8 +31,12 @@ class dml_putAcordoAditivo {
                    'p_acrescimo'                 =>array(tvl($p_acrescimo),                                B_VARCHAR,         1),
                    'p_supressao'                 =>array(tvl($p_supressao),                                B_VARCHAR,         1),
                    'p_observacao'                =>array(tvl($p_observacao),                               B_VARCHAR,      2000),
+                   'p_valor_inicial'             =>array(toNumber(tvl($p_valor_inicial)),                  B_NUMERIC,      18,2),
+                   'p_parcela_inicial'           =>array(toNumber(tvl($p_parcela_inicial)),                B_NUMERIC,      18,2),
                    'p_valor_reajuste'            =>array(toNumber(tvl($p_valor_reajuste)),                 B_NUMERIC,      18,2),
                    'p_parcela_reajustada'        =>array(toNumber(tvl($p_parcela_reajustada)),             B_NUMERIC,      18,2),
+                   'p_valor_acrescimo'           =>array(toNumber(tvl($p_valor_acrescimo)),                B_NUMERIC,      18,2),
+                   'p_parcela_acrescida'         =>array(toNumber(tvl($p_parcela_acrescida)),              B_NUMERIC,      18,2),
                    'p_sq_cc'                     =>array(tvl($p_sq_cc),                                    B_INTEGER,        32)
                    );     
      $l_rs = DatabaseQueriesFactory::getInstanceOf($sql, $dbms, $params, DB_TYPE);

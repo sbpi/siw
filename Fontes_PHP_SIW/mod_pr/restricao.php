@@ -799,7 +799,17 @@ function Grava() {
             RetornaFormulario('w_titulo');
             exit();                                    
           }
-        }
+        } else {
+          $RS = db_getSolicRestricao::getInstanceOf($dbms,$_REQUEST['w_chave_aux'], null, null, null, null, null, 'TAREFA');
+          if (count($RS)>0) {
+            ScriptOpen('JavaScript');
+            if ($_REQUEST['w_problema']=='N') ShowHTML('  alert(\'Existe tarefa ligada e este risco!\');');
+            else                              ShowHTML('  alert(\'Existe tarefa ligada e este problema!\');');
+            ShowHTML('  location.href=\''.montaURL_JS($w_dir,$R.'&w_chave='.$_REQUEST['w_chave'].'&w_problema='.$_REQUEST['w_problema'].'&P1='.$P1.'&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP='.$TP.'&SG='.$SG.MontaFiltro('GET')).'\';');
+            ScriptClose();
+            exit();                                    
+          }
+        }  
         dml_putSolicRestricao::getInstanceOf($dbms,$O,$_REQUEST['w_chave'],Nvl($_REQUEST['w_chave_aux'],''), $_REQUEST['w_pessoa'], $w_usuario,
               $_REQUEST['w_tipo_restricao'], $_REQUEST['w_risco'],$_REQUEST['w_problema'],$_REQUEST['w_descricao'],$_REQUEST['w_probabilidade'],
               $_REQUEST['w_impacto'],Nvl($_REQUEST['w_criticidade'],0),$_REQUEST['w_estrategia'], $_REQUEST['w_acao_resposta'],Nvl($_REQUEST['w_fase_atual'],'D'),$_REQUEST['w_data_situacao'],

@@ -1,10 +1,11 @@
 <?
-include_once($w_dir_volta.'classes/sp/db_getUorgList.php');
 // =========================================================================
 // Montagem da seleção das unidades organizacionais
 // -------------------------------------------------------------------------
 function selecaoUnidade($label,$accesskey,$hint,$chave,$chaveAux,$campo,$restricao,$atributo) {
   extract($GLOBALS);
+  include_once($w_dir_volta.'classes/sp/db_getUorgList.php');
+  include_once($w_dir_volta.'classes/sp/db_getUorgData.php');
   $RS = db_getUorgList::getInstanceOf($dbms, $w_cliente, $chaveAux, nvl($restricao,'ATIVO'), null, null, $w_ano);
   if (count($RS)<=50) {
     $RS = SortArray($RS,'nome','asc');
@@ -27,11 +28,9 @@ function selecaoUnidade($label,$accesskey,$hint,$chave,$chaveAux,$campo,$restric
     $atributo = str_replace('onChange','onBlur',$atributo);
     ShowHTML('<INPUT type="hidden" name="'.$campo.'" value="'.$chave.'">');
     if ($chave>'') {
-      $RS = db_getUorgList::getInstanceOf($dbms, $w_cliente, $chave, null, null, null, null);
-      foreach ($RS as $row) {
-        $w_nm_unidade=f($row,'nome');
-        $w_sigla=f($row,'sigla');
-      }
+      $RS = db_getUorgData::getInstanceOf($dbms, $chave);
+      $w_nm_unidade = f($RS,'nome');
+      $w_sigla      = f($RS,'sigla');
     }
 
     if (!isset($hint)) {

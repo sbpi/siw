@@ -3,7 +3,7 @@ include_once($w_dir_volta.'classes/sp/db_getVeiculo.php');
 // =========================================================================
 // Montagem da seleção dos grupos de veiculos
 // -------------------------------------------------------------------------
-function selecaoVeiculo($label,$accesskey,$hint,$cliente,$chave,$chaveAux,$campo,$restricao) {
+function selecaoVeiculo($label,$accesskey,$hint,$cliente,$chave,$chaveAux,$campo,$restricao,$atributo=null) {
   extract($GLOBALS);
   $RS = db_getVeiculo::getInstanceOf($dbms, null, null , $w_cliente, null, null, 'S');
   $RS = SortArray($RS,'modelo','asc');
@@ -14,9 +14,9 @@ function selecaoVeiculo($label,$accesskey,$hint,$cliente,$chave,$chaveAux,$campo
   ShowHTML('          <option value="">---');
   foreach ($RS as $row) {
     if (nvl(f($row,'chave'),0)==nvl($chave,0))
-      ShowHTML(' <option value="'.f($row,'chave').'" SELECTED>'.f($row,'modelo').' - '.f($row,'placa'));
+      ShowHTML(' <option value="'.f($row,'chave').'" SELECTED>'.f($row,'nm_veiculo'));
     else
-      ShowHTML(' <option value="'.f($row,'chave').'">'.f($row,'modelo').' - '.f($row,'placa'));
+      ShowHTML(' <option value="'.f($row,'chave').'">'.f($row,'nm_veiculo'));
   }
   ShowHTML('          </select>');
 } 
