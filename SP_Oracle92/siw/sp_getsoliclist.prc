@@ -405,6 +405,7 @@ begin
                 d.publicacao,         d.sq_lcfonte_recurso,
                 d.limite_variacao,    d.sq_especificacao_despesa,    d.indice_base,
                 d.tipo_reajuste,
+                retornaAfericaoIndicador(d.sq_eoindicador,d.indice_base) as vl_indice_base,
                 round(months_between(d.fim,d.inicio)) meses_acordo,
                 case when d.titulo is null then 'Não informado ('||d2.nome_resumido||')' else d.titulo end as nm_acordo,
                 case d.tipo_reajuste when 0 then 'Não permite' when 1 then 'Com índice' else 'Sem índice' end nm_tipo_reajuste,
