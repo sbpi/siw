@@ -16,7 +16,7 @@ begin
                 a.sq_acordo_aditivo, a.numero, a.data, a.valor, a.sq_lcfonte_recurso, 
                 a.sq_especificacao_despesa, a.observacao, a.abrange_inicial, a.abrange_acrescimo,
                 a.abrange_reajuste,
-                c.nome nm_tipo_documento,
+                c.nome nm_tipo_documento, c.sigla sg_tipo_documento,
                 f.nome_resumido nm_outra_parte,
                 e.codigo cd_aditivo, e.sq_cc cc_aditivo,
                 g.sq_cc cc_acordo

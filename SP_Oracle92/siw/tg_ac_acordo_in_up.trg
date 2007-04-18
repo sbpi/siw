@@ -13,8 +13,8 @@ begin
   
   -- Calcula a data fim ou a duração do acordo em dias, dependendo
   -- de qual dos dois foi informado
-  If :new.duracao is not null or :new.fim is not null Then
-     If :new.duracao is not null Then
+  If :new.duracao <> :old.duracao or :new.fim <> :old.fim Then
+     If :new.duracao <> :old.duracao Then
         :new.fim := (:new.inicio + :new.duracao) - 1;
      Else
         :new.duracao := (:new.fim - :new.inicio) + 1;
