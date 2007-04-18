@@ -17,7 +17,7 @@ begin
       open p_result for 
          select a.sq_acordo_parcela, a.sq_siw_solicitacao, a.ordem, a.emissao, a.vencimento, a.quitacao,
                 a.documento_interno, a.documento_externo, a.observacao, a.valor, a.inicio, a.fim,
-                a.sq_acordo_aditivo,
+                a.sq_acordo_aditivo, a.valor_inicial, a.valor_excedente, a.valor_reajuste,
                 b.sq_siw_solicitacao sq_lancamento, b.codigo_interno cd_lancamento, 
                 b.vencimento dt_lancamento, b.valor vl_lancamento, b.sg_tramite fn_tramite,
                 c.prorrogacao, c.acrescimo, c.supressao, c.revisao

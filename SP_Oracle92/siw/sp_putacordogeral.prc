@@ -270,16 +270,7 @@ begin
          where sq_siw_solicitacao = p_chave;
       End If;
       delete pj_etapa_contrato where sq_siw_solicitacao = p_chave;
-      
-      -- Verifica se já houve alguma tramitação para alteração ou não do valor_inicial
-      select count(a.sq_siw_solic_log) into w_existe
-        from siw_solic_log          a
-             inner join siw_tramite b on (a.sq_siw_tramite = b.sq_siw_tramite)
-       where sq_siw_solicitacao = p_chave 
-         and b.sigla <> 'CI';
-      If w_existe = 0 Then
-         update ac_acordo set valor_inicial = p_valor where sq_siw_solicitacao = p_chave;
-      End If;
+
       If p_etapa is not null then
          -- Cria a vinculação com os novos dados
          Insert Into pj_etapa_contrato 

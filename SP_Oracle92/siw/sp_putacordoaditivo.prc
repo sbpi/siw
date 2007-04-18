@@ -33,7 +33,7 @@ begin
       update siw_solicitacao set valor = coalesce(valor,0) + (p_valor_inicial+p_valor_reajuste+p_valor_acrescimo) where sq_siw_solicitacao = p_chave_aux;
    Elsif p_operacao = 'A' or p_operacao = 'E' Then
       -- É necessário recuperar o valor do aditivo que está sendo alterado ou excluído
-      select valor_aditivo into w_valor from ac_acordo_parcela_acrescida aditivo where sq_acordo_aditivo = p_chave;
+      select valor_aditivo into w_valor from ac_acordo_aditivo where sq_acordo_aditivo = p_chave;
 
       If p_operacao = 'A' Then
          update siw_solicitacao set 
@@ -61,15 +61,15 @@ begin
    If p_operacao = 'I' Then
       -- Insere registro
       insert into ac_acordo_aditivo
-        (sq_acordo_aditivo, sq_siw_solicitacao, protocolo, codigo, objeto, inicio, fim, 
-         duracao, documento_origem, documento_data, variacao_valor, prorrogacao, revisao, 
-         acrescimo, supressao, observacao, valor_inicial, parcela_inicial, valor_reajuste, 
-         parcela_reajustada, valor_acrescimo, parcela_acrescida, sq_cc)
+        (       sq_acordo_aditivo,         sq_siw_solicitacao,   protocolo,           codigo,           objeto,            inicio,         fim, 
+                duracao,                   documento_origem,     documento_data,      variacao_valor,   prorrogacao,       revisao, 
+                acrescimo,                 supressao,            observacao,          valor_inicial,    parcela_inicial,   valor_reajuste, 
+                parcela_reajustada,        valor_acrescimo,      parcela_acrescida,   sq_cc)
         
-        (select sq_acordo_aditivo.nextval, p_chave_aux, p_protocolo, p_codigo, p_objeto, p_inicio, p_fim, 
-                p_duracao, p_documento_origem, p_documento_data, p_variacao_valor, p_prorrogacao, p_revisao, 
-                p_acrescimo, p_supressao, p_observacao, p_valor_inicial, p_parcela_inicial, p_valor_reajuste, 
-                p_parcela_reajustada, p_valor_acrescimo, p_parcela_acrescida, p_sq_cc 
+        (select sq_acordo_aditivo.nextval, p_chave_aux,          p_protocolo,         p_codigo,         p_objeto,          p_inicio,       p_fim, 
+                p_duracao,                 p_documento_origem,   p_documento_data,    p_variacao_valor, p_prorrogacao,     p_revisao,         
+                p_acrescimo,               p_supressao,          p_observacao,        p_valor_inicial,  p_parcela_inicial, p_valor_reajuste, 
+                p_parcela_reajustada,      p_valor_acrescimo,    p_parcela_acrescida, p_sq_cc 
            from dual
          );
    Elsif p_operacao = 'A' Then
