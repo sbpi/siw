@@ -275,6 +275,7 @@ begin
                 d.indice_base,        d.sq_eoindicador,              d.limite_variacao,
                 d.sq_lcfonte_recurso, d.sq_especificacao_despesa,
                 retornaAfericaoIndicador(d.sq_eoindicador,d.indice_base) as vl_indice_base,
+                retornaExcedenteContrato(d.sq_siw_solicitacao,b.fim) as limite_usado,
                 case d.tipo_reajuste when 0 then 'Não permite' when 1 then 'Com índice' else 'Sem índice' end nm_tipo_reajuste,
                 d1.nome nm_tipo_acordo,d1.sigla sg_acordo,           d1.modalidade cd_modalidade,
                 d1.prazo_indeterm,    d1.pessoa_fisica,              d1.pessoa_juridica,  

@@ -16,13 +16,15 @@ begin
                 a.sq_acordo_aditivo, a.numero, a.data, a.valor, a.sq_lcfonte_recurso, 
                 a.sq_especificacao_despesa, a.observacao, a.abrange_inicial, a.abrange_acrescimo,
                 a.abrange_reajuste,
+                case a.abrange_inicial   when 'S' then 'IN' else null end as sg_inicial,
+                case a.abrange_acrescimo when 'S' then 'EX' else null end as sg_acrescimo,
+                case a.abrange_reajuste  when 'S' then 'RJ' else null end as sg_reajuste,
                 c.nome nm_tipo_documento, c.sigla sg_tipo_documento,
                 f.nome_resumido nm_outra_parte,
                 e.codigo cd_aditivo, e.sq_cc cc_aditivo,
                 g.sq_cc cc_acordo,
-                case a.abrange_inicial   when 'S' then 'IN' else null end as sg_inicial,
-                case a.abrange_acrescimo when 'S' then 'EX' else null end as sg_acrescimo,
-                case a.abrange_reajuste  when 'S' then 'RJ' else null end as sg_reajuste
+                coalesce(h.vl_liquidado,0) as vl_liquidado,
+                coalesce(h.vl_pago,0) as vl_pago
            from ac_acordo_nota                     a  
                 inner   join ac_acordo             b on (a.sq_siw_solicitacao    = b.sq_siw_solicitacao)
                   inner join siw_solicitacao       g on (b.sq_siw_solicitacao    = g.sq_siw_solicitacao)
@@ -30,6 +32,15 @@ begin
                 left    join ac_acordo_outra_parte d on (a.sq_acordo_outra_parte = d.sq_acordo_outra_parte)
                   left  join co_pessoa             f on (d.outra_parte           = f.sq_pessoa)
                 left    join ac_acordo_aditivo     e on (a.sq_acordo_aditivo     = e.sq_acordo_aditivo)
+                left    join (select distinct x.sq_acordo_nota, z.valor as vl_liquidado,
+                                     case when y.quitacao is null then 0 else z.valor end as vl_pago
+                                 from fn_lancamento_doc            x
+                                      inner   join fn_lancamento   y on (x.sq_siw_solicitacao = y.sq_siw_solicitacao and
+                                                                         y.sq_acordo_parcela  is not null
+                                                                        )
+                                        inner join siw_solicitacao z on (y.sq_siw_solicitacao = z.sq_siw_solicitacao)
+                                where x.sq_acordo_nota is not null
+                              )                    h on (a.sq_acordo_nota     = h.sq_acordo_nota)
           where b.cliente = p_cliente
             and ((p_chave             is null) or (p_chave             is not null and a.sq_acordo_nota     = p_chave))      
             and ((p_chave_aux         is null) or (p_chave_aux         is not null and a.sq_siw_solicitacao = p_chave_aux))
