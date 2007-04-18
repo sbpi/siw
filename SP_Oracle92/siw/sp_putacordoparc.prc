@@ -19,27 +19,37 @@ create or replace procedure SP_PutAcordoParc
     p_valor_reajuste      in number   default null
    ) is
    
-   w_cont       number(4) := 1;
-   w_vencimento date;
-   w_dia        varchar2(2) := substr(100+p_dia_vencimento,2,2);
-   w_valor_1    number(18,4);
-   w_valor      number(18,4);
-   w_valor_n    number(18,4);
-   w_meses      number(4);
-   w_meses_parc number(4);
-   w_dias_1     number(5);
-   w_dias_n     number(5);
-   w_per_ini    date;
-   w_per_fim    date;
-   w_reg        ac_acordo%rowtype;
-   w_aditivo    ac_acordo_aditivo%rowtype;
-   w_inicio     date;
-   w_fim        date;
-   w_total      number(18,4);
-   w_ordem      number(18) := 0;
-   w_inicial    number(18,4) := p_valor_inicial;
-   w_reajuste   number(18,4) := p_valor_reajuste;
-   w_excedente  number(18,4) := p_valor_excedente;
+   w_cont        number(4) := 1;
+   w_vencimento  date;
+   w_dia         varchar2(2) := substr(100+p_dia_vencimento,2,2);
+   w_valor_1     number(18,4);
+   w_valor       number(18,4);
+   w_valor_n     number(18,4);
+   w_meses       number(4);
+   w_meses_parc  number(4);
+   w_dias_1      number(5);
+   w_dias_n      number(5);
+   w_per_ini     date;
+   w_per_fim     date;
+   w_reg         ac_acordo%rowtype;
+   w_aditivo     ac_acordo_aditivo%rowtype;
+   w_inicio      date;
+   w_fim         date;
+   w_total       number(18,4);
+   w_ordem       number(18) := 0;
+   w_inicial     number(18,4) := p_valor_inicial;
+   w_reajuste    number(18,4) := p_valor_reajuste;
+   w_excedente   number(18,4) := p_valor_excedente;
+   w_inicial_1   number(18,4);
+   w_reajuste_1  number(18,4);
+   w_excedente_1 number(18,4);
+   w_inicial_n   number(18,4);
+   w_reajuste_n  number(18,4);
+   w_excedente_n number(18,4);
+   w_total_i     number(18,4);
+   w_total_e     number(18,4);
+   w_total_r     number(18,4);
+   w_ultimo      number(2);
 begin
    If p_operacao = 'I' Then -- Inclusão
       -- O valor de uma parcela de aditivo depende da soma do valor inicial mais reajuste mais excedentes
@@ -111,6 +121,9 @@ begin
             w_fim    := w_aditivo.fim;
             select max(ordem) into w_ordem from ac_acordo_parcela where sq_siw_solicitacao = p_chave;
             w_total    := w_aditivo.valor_aditivo;
+            w_total_i  := w_aditivo.valor_inicial;
+            w_total_e  := w_aditivo.valor_acrescimo;
+            w_total_r  := w_aditivo.valor_reajuste;
          End If;
       End If;
       
@@ -141,25 +154,46 @@ begin
                Then w_valor   := round(w_total / w_meses_parc,2);
                Else w_valor   := round(w_total / w_meses,2);
             End If;
-            w_valor_1 := w_valor;
-            w_valor_n := w_valor;
-            
+            w_valor_1     := w_valor;
+            w_valor_n     := w_valor;
+            w_inicial_1   := w_inicial;
+            w_inicial_n   := w_inicial;
+            w_excedente_1 := w_excedente;
+            w_excedente_n := w_excedente;
+            w_reajuste_1  := w_reajuste;
+            w_reajuste_n  := w_reajuste;
+
             -- Aplica proporcionalidade na primeira e última parcelas
             If p_valor_parcela = 'C' Then
                -- Calcula o valor proporcional do primeiro mês, considerando o mínimo de 1 dia
-               w_dias_1 := to_date('30/'||to_char(w_inicio,'mm/yyyy'),'dd/mm/yyyy') - w_inicio + 1;
+               w_ultimo := 30; 
+               If to_char(last_day(w_inicio),'dd') < 30 Then w_ultimo := to_char(last_day(w_inicio),'dd'); End If;
+               w_dias_1 := to_date(w_ultimo||'/'||to_char(w_inicio,'mm/yyyy'),'dd/mm/yyyy') - w_inicio + 1 + (30-w_ultimo);
                If w_dias_1 <= 0 Then w_dias_1 := 1; End If;
-               w_valor_1 := round((w_dias_1/30) * w_valor,2);
+               w_valor_1     := round((w_dias_1/30) * w_valor,2);
+               w_inicial_1   := round((w_dias_1/30) * w_inicial,2);
+               w_excedente_1 := round((w_dias_1/30) * w_excedente,2);
+               w_reajuste_1  := round((w_dias_1/30) * w_reajuste,2);
+               
 
                If (w_meses - 2) < 1 Then
-                  w_valor_n := (w_total - w_valor_1);
+                  w_valor_n     := (w_total   - w_valor_1);
+                  w_inicial_n   := (w_total_i - w_inicial_1);
+                  w_excedente_n := (w_total_e - w_excedente_1);
+                  w_reajuste_n  := (w_total_r - w_reajuste_1);
                Else
                   -- Calcula o valor proporcional do último mês, considerando o máximo de 30 dias
                   w_dias_n := w_fim - to_date('01/'||to_char(w_fim,'mm/yyyy'),'dd/mm/yyyy') + 1;
                   If w_dias_n > 30 Then w_dias_n := 30; End If;
-                  w_valor_n := round((w_dias_n/30) * w_valor,2);
+                  w_valor_n     := round((w_dias_n/30) * w_valor,2);
+                  w_inicial_n   := round((w_dias_n/30) * w_inicial,2);
+                  w_excedente_n := round((w_dias_n/30) * w_excedente,2);
+                  w_reajuste_n  := round((w_dias_n/30) * w_reajuste,2);
 
-                  w_valor := (w_total - w_valor_1 - w_valor_n) / (w_meses_parc - 2);
+                  w_valor     := (w_total   - w_valor_1     - w_valor_n)     / (w_meses_parc - 2);
+                  w_inicial   := (w_total_i - w_inicial_1   - w_inicial_n)   / (w_meses_parc - 2);
+                  w_excedente := (w_total_e - w_excedente_1 - w_excedente_n) / (w_meses_parc - 2);
+                  w_reajuste  := (w_total_r - w_reajuste_1  - w_reajuste_n)  / (w_meses_parc - 2);
                End If;
             End If;
          Elsif p_valor_parcela = 'P' Then
@@ -199,11 +233,11 @@ begin
 
                -- insere a primeira parcela
                insert into ac_acordo_parcela
-                 (sq_acordo_parcela,         sq_siw_solicitacao, ordem,              emissao,       vencimento,      observacao,    valor, 
-                  inicio,                    fim,                sq_acordo_aditivo,  valor_inicial, valor_excedente, valor_reajuste)
+                 (sq_acordo_parcela,         sq_siw_solicitacao, ordem,              emissao,              vencimento,             observacao,    valor, 
+                  inicio,                    fim,                sq_acordo_aditivo,  valor_inicial,        valor_excedente,        valor_reajuste)
                values
-                 (sq_acordo_parcela.nextval, p_chave,            w_cont+w_ordem,     sysdate,       w_vencimento,    p_observacao, round(w_valor_1,2),
-                  w_per_ini,                 w_per_fim,          p_aditivo,          w_inicial,     w_excedente,     w_reajuste);
+                 (sq_acordo_parcela.nextval, p_chave,            w_cont+w_ordem,     sysdate,              w_vencimento,           p_observacao,  round(w_valor_1,2),
+                  w_per_ini,                 w_per_fim,          p_aditivo,          round(w_inicial_1,2), round(w_excedente_1,2), round(w_reajuste_1,2));
             Elsif w_cont = w_meses_parc Then
                -- Define o período de realização da ultima parcela
                w_per_ini := to_date('01'||to_char(w_fim,'mmyyyy'),'ddmmyyyy'); 
@@ -217,11 +251,11 @@ begin
                
                -- Insere a última parcela
                insert into ac_acordo_parcela
-                 (sq_acordo_parcela,         sq_siw_solicitacao, ordem,              emissao,       vencimento,      observacao,    valor, 
-                  inicio,                    fim,                sq_acordo_aditivo,  valor_inicial, valor_excedente, valor_reajuste)
+                 (sq_acordo_parcela,         sq_siw_solicitacao, ordem,              emissao,              vencimento,             observacao,    valor, 
+                  inicio,                    fim,                sq_acordo_aditivo,  valor_inicial,        valor_excedente,        valor_reajuste)
                values
-                 (sq_acordo_parcela.nextval, p_chave,            w_cont+w_ordem,     sysdate,       w_vencimento,    p_observacao, round(w_valor_n,2),
-                  w_per_ini,                 w_per_fim,          p_aditivo,          w_inicial,     w_excedente,     w_reajuste);
+                 (sq_acordo_parcela.nextval, p_chave,            w_cont+w_ordem,     sysdate,              w_vencimento,           p_observacao,  round(w_valor_n,2),
+                  w_per_ini,                 w_per_fim,          p_aditivo,          round(w_inicial_n,2), round(w_excedente_n,2), round(w_reajuste_n,2));
             Else
                -- Calcula a data de vencimento das parcelas intermediárias
                w_vencimento := add_months(w_vencimento,1);
@@ -240,11 +274,11 @@ begin
                
                
                insert into ac_acordo_parcela
-                 (sq_acordo_parcela,         sq_siw_solicitacao, ordem,              emissao,       vencimento,      observacao,    valor, 
-                  inicio,                    fim,                sq_acordo_aditivo,  valor_inicial, valor_excedente, valor_reajuste)
+                 (sq_acordo_parcela,         sq_siw_solicitacao, ordem,              emissao,            vencimento,           observacao,    valor, 
+                  inicio,                    fim,                sq_acordo_aditivo,  valor_inicial,      valor_excedente,      valor_reajuste)
                values
-                 (sq_acordo_parcela.nextval, p_chave,            w_cont+w_ordem,     sysdate,       w_vencimento,    p_observacao,  round(w_valor,2),
-                  w_per_ini,                 w_per_fim,          p_aditivo,          w_inicial,     w_excedente,     w_reajuste);
+                 (sq_acordo_parcela.nextval, p_chave,            w_cont+w_ordem,     sysdate,            w_vencimento,         p_observacao,  round(w_valor,2),
+                  w_per_ini,                 w_per_fim,          p_aditivo,          round(w_inicial,2), round(w_excedente,2), round(w_reajuste,2));
             End If;
          end loop;
       End If;
