@@ -615,6 +615,7 @@ begin
                 f.sq_pais,            f.sq_regiao,                   f.co_uf,
                 m.codigo_interno cd_acordo, m.objeto obj_acordo,
                 m1.ordem or_parcela,
+                m2.qtd_nota,
                 n.sq_cc,              n.nome nm_cc,                  n.sigla sg_cc,
                 o.nome_resumido nm_solic, o.nome_resumido||' ('||o2.sigla||')' nm_resp,
                 p.nome_resumido nm_exec,
@@ -665,6 +666,10 @@ begin
                       inner          join co_cidade            f  on (b.sq_cidade_origem         = f.sq_cidade)
                       left           join ac_acordo            m  on (b.sq_solic_pai             = m.sq_siw_solicitacao)
                       left           join ac_acordo_parcela    m1 on (d.sq_acordo_parcela        = m1.sq_acordo_parcela)
+                        left         join (select count(y.sq_acordo_nota) qtd_nota, y.sq_acordo_parcela
+                                             from ac_parcela_nota y
+                                            group by y.sq_acordo_parcela
+                                          )                    m2 on (m1.sq_acordo_parcela       = m2.sq_acordo_parcela)
                       left           join pj_projeto           q  on (b.sq_solic_pai             = q.sq_siw_solicitacao)
                       left           join ct_cc                n  on (b.sq_cc                    = n.sq_cc)
                       left           join co_pessoa            o  on (b.solicitante              = o.sq_pessoa)
