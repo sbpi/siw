@@ -132,7 +132,7 @@ begin
          select a.sq_solic_recurso_alocacao as chave_aux, a.sq_solic_recurso as chave, a.inicio, a.fim, 
                 a.unidades_solicitadas, a.unidades_autorizadas,
                 case b.autorizado when 'S' then 'Sim' else 'Não' end as nm_autorizado,
-                d.nome as nm_servico,
+                d.nome as nm_servico, d.sq_menu,
                 case when e.sq_siw_solicitacao is not null 
                      then e.codigo_interno
                      else case when f.sq_siw_solicitacao is not null

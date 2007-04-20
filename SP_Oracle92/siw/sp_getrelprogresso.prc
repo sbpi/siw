@@ -73,21 +73,25 @@ begin
   ElsIf p_restricao = 'RELATORIO' Then
       open p_result for 
          select a.sq_projeto_etapa, a.ordem, a.titulo nm_etapa, a.sq_pessoa, h.nome_resumido nm_resp_etapa, a.fim_previsto, a.situacao_atual,
-                a.perc_conclusao, a.fim_real,
+                a.perc_conclusao, a.fim_real, 
                 montaOrdem(a.sq_projeto_etapa) as cd_ordem,
-                b.sq_siw_solicitacao as sq_projeto, b.titulo nm_projeto, c.inicio inicio_projeto, c.fim fim_projeto, c.sq_siw_solicitacao sq_projeto,
-                e.sq_siw_solicitacao, f.assunto nm_tarefa, g.solicitante, i.nome_resumido nm_resp_tarefa, g.inicio, f.fim_real,
+                b.sq_siw_solicitacao as sq_projeto, b.titulo nm_projeto, 
+                c.inicio inicio_projeto, c.fim fim_projeto, c.sq_siw_solicitacao sq_projeto,
+                c1.nome_resumido nm_resp_projeto, c2.titulo nm_programa,
+                e.sq_siw_solicitacao, f.assunto nm_tarefa, g.solicitante, i.nome_resumido nm_resp_tarefa, i.g.inicio, f.fim_real, i.nome_resumido,
                 calculaigc(c.sq_siw_solicitacao) as igc, calculaide(c.sq_siw_solicitacao, w_fim) as ide                
            from pj_projeto_etapa               a
-                left     join co_pessoa        h on (a.sq_pessoa          = h.sq_pessoa)
-                left     join pj_projeto       b on (a.sq_siw_solicitacao = b.sq_siw_solicitacao)
-                left     join siw_solicitacao  c on (a.sq_siw_solicitacao = c.sq_siw_solicitacao)
-                  left   join siw_menu         d on (c.sq_menu            = d.sq_menu)
-                  left   join siw_tramite      j on (c.sq_siw_tramite     = j.sq_siw_tramite)
-                left     join pj_etapa_demanda e on (a.sq_projeto_etapa   = e.sq_projeto_etapa)
-                  left   join gd_demanda       f on (e.sq_siw_solicitacao = f.sq_siw_solicitacao)
-                  left   join siw_solicitacao  g on (e.sq_siw_solicitacao = g.sq_siw_solicitacao)
-                    left join co_pessoa        i on (g.solicitante        = i.sq_pessoa)
+                left     join co_pessoa        h  on (a.sq_pessoa          = h.sq_pessoa)
+                left     join pj_projeto       b  on (a.sq_siw_solicitacao = b.sq_siw_solicitacao)
+                left     join siw_solicitacao  c  on (a.sq_siw_solicitacao = c.sq_siw_solicitacao)
+                  left   join co_pessoa        c1 on (c.solicitante        = c1.sq_pessoa)
+                left     join pe_programa      c2 on (c.sq_solic_pai       = c2.sq_siw_solicitacao)
+                  left   join siw_menu         d  on (c.sq_menu            = d.sq_menu)
+                  left   join siw_tramite      j  on (c.sq_siw_tramite     = j.sq_siw_tramite)
+                left     join pj_etapa_demanda e  on (a.sq_projeto_etapa   = e.sq_projeto_etapa)
+                  left   join gd_demanda       f  on (e.sq_siw_solicitacao = f.sq_siw_solicitacao)
+                  left   join siw_solicitacao  g  on (e.sq_siw_solicitacao = g.sq_siw_solicitacao)
+                    left join co_pessoa        i  on (g.solicitante        = i.sq_pessoa)
           where d.sq_pessoa       = p_cliente
             and j.sigla           <> 'CA'
             and (p_chave     is null or (p_chave       is not null and a.sq_siw_solicitacao   = p_chave))
