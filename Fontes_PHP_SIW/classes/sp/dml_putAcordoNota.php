@@ -11,7 +11,8 @@ include_once($w_dir_volta.'classes/db/DatabaseQueriesFactory.php');
 
 class dml_putAcordoNota {
    function getInstanceOf($dbms, $operacao, $p_chave_aux, $p_chave, $p_sq_tipo_documento, $p_sq_acordo_outra_parte, $p_sq_acordo_aditivo, $p_numero, $p_data,
-                          $p_valor, $p_sq_lcfonte_recurso, $p_espec_despesa, $p_observacao, $p_abrange_inicial, $p_abrange_acrescimo, $p_abrange_reajuste, $p_sq_acordo_parcela) {
+                          $p_valor, $p_sq_lcfonte_recurso, $p_espec_despesa, $p_observacao, $p_abrange_inicial, $p_abrange_acrescimo, $p_abrange_reajuste, $p_sq_acordo_parcela, 
+                          $p_chave_nova) {
      extract($GLOBALS,EXTR_PREFIX_SAME,'strchema'); $sql=$strschema.'SP_PUTACORDONOTA';
      $params=array('p_operacao'                  =>array($operacao,                                        B_VARCHAR,        30),
                    'p_chave_aux'                 =>array(tvl($p_chave_aux),                                B_INTEGER,        32),
@@ -28,7 +29,8 @@ class dml_putAcordoNota {
                    'p_abrange_inicial'           =>array(tvl($p_abrange_inicial),                          B_VARCHAR,         1),
                    'p_abrange_acrescimo'         =>array(tvl($p_abrange_acrescimo),                        B_VARCHAR,         1),
                    'p_abrange_reajuste'          =>array(tvl($p_abrange_reajuste),                         B_VARCHAR,         1),
-                   'p_sq_acordo_parcela'         =>array(tvl($p_sq_acordo_parcela),                        B_INTEGER,        32)
+                   'p_sq_acordo_parcela'         =>array(tvl($p_sq_acordo_parcela),                        B_INTEGER,        32),
+                   'p_chave_nova'                =>array(&$p_chave_nova,                                   B_INTEGER,        32)
                    );     
      $l_rs = DatabaseQueriesFactory::getInstanceOf($sql, $dbms, $params, DB_TYPE);
      $l_error_reporting = error_reporting(); 

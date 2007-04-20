@@ -136,10 +136,12 @@ $w_Disabled     = 'ENABLED';
 $w_dir          = 'mod_ac/';
 $w_troca        = $_REQUEST['w_troca'];
 
-if (!(strpos($SG,'ANEXO')===false) || !(strpos($SG,'OUTRA')===false) || !(strpos($SG,'DADOS')===false) || !(strpos($SG,'PREPOSTO')===false) || !(strpos($SG,'PARC')===false) || !(strpos($SG,'REPR')===false) || !(strpos($SG,'NOTA')===false)) {
-  if ((strpos('IG',$O)===false) && $_REQUEST['w_chave_aux']=='') $O=nvl($O,'L');
+if (!(strpos($SG,'ANEXO')===false) || !(strpos($SG,'OUTRA')===false) || !(strpos($SG,'DADOS')===false) || !(strpos($SG,'PREPOSTO')===false) || !(strpos($SG,'REPR')===false) || !(strpos($SG,'NOTA')===false)) {
+  if ((strpos('IG',$O)===false) && $_REQUEST['w_chave_aux']=='') $O='L';
 } elseif (!(strpos($SG,'ENVIO')===false)) {
-    $O='V';
+  $O='V';
+} elseif (strpos($SG,'PARC')!==false)  {
+  $O = nvl($O,'L');
 } elseif ($O=='') {
   // Se for acompanhamento, entra na filtragem
   if ($P1==3) $O='P'; else $O='L';
@@ -3949,7 +3951,7 @@ function Notas() {
   } elseif ($O=='L') {
     // Recupera todos os registros para a listagem 
     $RS = db_getAcordoNota::getInstanceOf($dbms,$w_cliente,null,$w_chave,null,null,null,null,null);
-    $RS = SortArray($RS,'cd_aditivo','desc', 'data', 'desc');
+    $RS = SortArray($RS,'phpdt_data','asc');
   } elseif (!(strpos('AEV',$O)===false) && $w_troca=='') {
     // Recupera os dados do endereço informado 
     $RS = db_getAcordoNota::getInstanceOf($dbms,$w_cliente,$w_chave_aux,$w_chave,null,null,null,null,null);
@@ -4106,7 +4108,7 @@ function Notas() {
     if(nvl($w_sq_acordo_aditivo,'')>'') ShowHTML('      <tr><td colspan="3"><br><b>Parcelas do aditivo selecionado:</b>');
     else                                ShowHTML('      <tr><td colspan="3"><br><b>Parcelas do contrato:</b>');
     $RS1 = db_getLinkData::getInstanceOf($dbms,$w_cliente,'GCDCAD');
-    $RS_Parc = db_getAcordoParcela::getInstanceOf($dbms,$w_chave,null,null,null,null,null,null,null,null,$w_sq_acordo_aditivo);
+    $RS_Parc = db_getAcordoParcela::getInstanceOf($dbms,$w_chave,null,'PARCELA',null,null,null,null,null,null,$w_sq_acordo_aditivo);
     $RS_Parc = SortArray($RS_Parc,'ordem','asc');
     ShowHTML('  <tr><td colspan="3">');
     ShowHTML('    <TABLE WIDTH="100%" bgcolor="'.$conTableBgColor.'" BORDER="'.$conTableBorder.'" CELLSPACING="'.$conTableCellSpacing.'" CELLPADDING="'.$conTableCellPadding.'" BorderColorDark="'.$conTableBorderColorDark.'" BorderColorLight="'.$conTableBorderColorLight.'">');
@@ -4424,17 +4426,17 @@ function Grava() {
         }
       }
       dml_putAcordoNota::getInstanceOf($dbms,'EXCLUIPARCELA',
-          $_REQUEST['w_chave_aux'],null,null,null,null,null,null,null,null,null,null,null,null,null,null);
+          $_REQUEST['w_chave_aux'],null,null,null,null,null,null,null,null,null,null,null,null,null,null,null);
       dml_putAcordoNota::getInstanceOf($dbms, $O,
           $_REQUEST['w_chave_aux'],$_REQUEST['w_chave'],$_REQUEST['w_sq_tipo_documento'],
           $_REQUEST['w_sq_acordo_outra_parte'],$_REQUEST['w_sq_acordo_aditivo'],$_REQUEST['w_numero'],$_REQUEST['w_data'],
           $_REQUEST['w_valor'],$_REQUEST['w_sq_lcfonte_recurso'],$_REQUEST['w_espec_despesa'],$_REQUEST['w_observacao'],
-          $_REQUEST['w_abrange_inicial'],$_REQUEST['w_abrange_acrescimo'],$_REQUEST['w_abrange_reajuste'],null);
+          $_REQUEST['w_abrange_inicial'],$_REQUEST['w_abrange_acrescimo'],$_REQUEST['w_abrange_reajuste'],null, &$w_chave_nova);
       for ($i=0; $i<=count($_POST['w_sq_acordo_parcela'])-1; $i=$i+1) {
         if (Nvl($_REQUEST['w_sq_acordo_parcela'][$i],'')>'') {
           dml_putAcordoNota::getInstanceOf($dbms,'PARCELA',
-              $_REQUEST['w_chave_aux'],null,null,null,null,null,null,null,null,null,null,
-              null,null,null,$_REQUEST['w_sq_acordo_parcela'][$i]);
+              $w_chave_nova,null,null,null,null,null,null,null,null,null,null,
+              null,null,null,$_REQUEST['w_sq_acordo_parcela'][$i],null);
         }
       }  
       ScriptOpen('JavaScript');
