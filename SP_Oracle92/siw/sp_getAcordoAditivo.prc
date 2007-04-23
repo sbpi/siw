@@ -108,7 +108,7 @@ begin
                 );
    Elsif p_restricao = 'PARCELAS' Then
       open p_result for
-         select a.sq_acordo_aditivo,d.qtd_parcela
+         select a.sq_acordo_aditivo,d.qtd_parcela, a.prorrogacao, a.acrescimo, a.supressao
            from ac_acordo_aditivo              a
                 inner   join ac_acordo         b on (a.sq_siw_solicitacao = b.sq_siw_solicitacao)
                   inner join ac_tipo_acordo    c on (b.sq_tipo_acordo     = c.sq_tipo_acordo)
@@ -116,8 +116,7 @@ begin
                                 from ac_acordo_parcela x
                                group by x.sq_acordo_aditivo
                              )                 d on (a.sq_acordo_aditivo = d.sq_acordo_aditivo)
-          where ((p_chave_aux   is null) or (p_chave_aux    is not null and a.sq_siw_solicitacao = p_chave_aux))
-            and (a.prorrogacao = 'S' or a.revisao = 'S' or a.acrescimo = 'S' or a.supressao = 'S');
+          where ((p_chave_aux   is null) or (p_chave_aux    is not null and a.sq_siw_solicitacao = p_chave_aux));
    End If;
 end SP_GetAcordoAditivo;
 /

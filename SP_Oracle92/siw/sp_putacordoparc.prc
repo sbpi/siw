@@ -97,6 +97,9 @@ begin
       If p_aditivo is null Then
          -- Remove as parcelas existentes do contrato
          delete ac_acordo_parcela where sq_siw_solicitacao = p_chave;
+         w_total_i  := 0;
+         w_total_e  := 0;
+         w_total_r  := 0;
       Else
          -- Recupera os dados do aditivo
          select * into w_aditivo from ac_acordo_aditivo where sq_acordo_aditivo = p_aditivo;
