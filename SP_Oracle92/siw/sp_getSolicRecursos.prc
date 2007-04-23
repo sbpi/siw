@@ -133,6 +133,7 @@ begin
                 a.unidades_solicitadas, a.unidades_autorizadas,
                 case b.autorizado when 'S' then 'Sim' else 'Não' end as nm_autorizado,
                 d.nome as nm_servico, d.sq_menu,
+                e.sq_siw_solicitacao,
                 case when e.sq_siw_solicitacao is not null 
                      then e.codigo_interno
                      else case when f.sq_siw_solicitacao is not null
