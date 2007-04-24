@@ -108,7 +108,7 @@ begin
                 );
    Elsif p_restricao = 'PARCELAS' Then
       open p_result for
-         select a.sq_acordo_aditivo,d.qtd_parcela, a.prorrogacao, a.acrescimo, a.supressao
+         select a.sq_acordo_aditivo,d.qtd_parcela, a.prorrogacao, a.acrescimo, a.supressao, a.valor_aditivo
            from ac_acordo_aditivo              a
                 inner   join ac_acordo         b on (a.sq_siw_solicitacao = b.sq_siw_solicitacao)
                   inner join ac_tipo_acordo    c on (b.sq_tipo_acordo     = c.sq_tipo_acordo)

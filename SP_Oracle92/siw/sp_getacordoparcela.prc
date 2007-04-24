@@ -13,7 +13,7 @@ create or replace procedure SP_GetAcordoParcela
 begin
    -- Recupera os dados de uma parcela ou as parcelas de um acordo
    -- dependendo dos parâmetros informados
-   If p_restricao is null or p_restricao = 'PERIODO' or p_restricao = 'PARCELA' Then
+   If p_restricao is null or p_restricao = 'PERIODO' Then
       open p_result for 
          select a.sq_acordo_parcela, a.sq_siw_solicitacao, a.ordem, a.emissao, a.vencimento, a.quitacao,
                 a.documento_interno, a.documento_externo, a.observacao, a.valor, a.inicio, a.fim,
@@ -37,10 +37,9 @@ begin
           where (p_chave             is null or (p_chave             is not null and a.sq_siw_solicitacao = p_chave))
             and (p_chave_aux         is null or (p_chave_aux         is not null and a.sq_acordo_parcela  = p_chave_aux))
             and (p_sq_acordo_aditivo is null or (p_sq_acordo_aditivo is not null and c.sq_acordo_aditivo  = p_sq_acordo_aditivo))
-            and ((p_restricao <> 'PERIODO'    and p_restricao <> 'PARCELA' and p_restricao is not null ) or
+            and ((p_restricao <> 'PERIODO'    and p_restricao is not null ) or
                   ((p_restricao = 'PERIODO'   and (a.inicio between p_dt_ini and p_dt_fim) or (a.fim    between p_dt_ini and p_dt_fim)) or
-                   (p_restricao is null       and (p_dt_ini is null or (p_dt_ini is not null and b.vencimento between p_dt_ini and p_dt_fim))) or
-                   (p_restricao = 'PARCELA'   and a.sq_acordo_aditivo is null)
+                   (p_restricao is null       and (p_dt_ini is null or (p_dt_ini is not null and b.vencimento between p_dt_ini and p_dt_fim)))
                   )
                  );
    Elsif p_restricao = 'RELJUR' Then
