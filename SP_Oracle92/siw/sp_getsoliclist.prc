@@ -252,6 +252,7 @@ begin
                 Nvl(q.existe,0) resp_etapa,
                 r.sq_acao_ppa, r.sq_orprioridade,
                 SolicRestricao(b.sq_siw_solicitacao) as restricao,
+                calculaigc(d.sq_siw_solicitacao) as igc, calculaide(d.sq_siw_solicitacao, b.fim)  as ide,    
                 case when b.sq_solic_pai is not null
                      then case when s.sq_acordo is not null
                                then 'AC: '||s.cd_acordo
