@@ -3156,6 +3156,7 @@ SP_Oracle92/siw/sp_getDocumentoInter.prc -text
 SP_Oracle92/siw/sp_getGrupoVeiculo.prc -text
 SP_Oracle92/siw/sp_getIndicador.prc -text
 SP_Oracle92/siw/sp_getIndicador_Aferidor.prc -text
+SP_Oracle92/siw/sp_getPrograma.prc -text
 SP_Oracle92/siw/sp_getProtocolo.prc -text
 SP_Oracle92/siw/sp_getRecurso.prc -text
 SP_Oracle92/siw/sp_getRecurso_Disp.prc -text
