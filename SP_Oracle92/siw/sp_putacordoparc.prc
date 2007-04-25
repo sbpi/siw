@@ -300,16 +300,30 @@ begin
       
       -- Calcula o valor proporcional do primeiro mês, considerando o mínimo de 1 dia
       w_ultimo := 30;
-      If to_char(last_day(p_per_ini),'dd') < 30 Then w_ultimo := to_char(last_day(p_per_ini),'dd'); End If;
+      If to_char(last_day(p_per_ini),'dd') < 30 Then 
+         w_ultimo := to_char(last_day(p_per_ini),'dd'); 
+      End If;
       w_dias_1 := to_date(w_ultimo||'/'||to_char(p_per_ini,'mm/yyyy'),'dd/mm/yyyy') - p_per_ini + 1 + (30-w_ultimo);
-      If w_dias_1 <= 0 Then w_dias_1 := 1; End If;
+      If w_dias_1 <= 0 Then 
+         w_dias_1 := 1; 
+      End If;
       w_valor_1     := round((w_dias_1/30) * w_valor,2);
       
+      If (w_meses - 2) < 1 Then
+         w_valor_n     := (w_total   - w_valor_1);
+      Else
+         -- Calcula o valor proporcional do último mês, considerando o máximo de 30 dias
+         w_dias_n := w_fim - to_date('01/'||to_char(w_fim,'mm/yyyy'),'dd/mm/yyyy') + 1;
+         If w_dias_n > 30 Then w_dias_n := 30; End If;
+         w_valor_n     := round((w_dias_n/30) * w_valor,2);
+         
+         w_valor     := (w_total   - w_valor_1     - w_valor_n)     / (w_meses_parc - 2);
+      End If;
       
       update ac_acordo_parcela
          set sq_acordo_aditivo = p_aditivo,
-             valor             = valor + w_valor_1,
-             valor_excedente   = valor_excedente + w_valor_1
+             valor             = valor + w_valor_n,
+             valor_excedente   = valor_excedente + w_valor_n
        where sq_acordo_parcela = p_chave_aux;
        
    End If;

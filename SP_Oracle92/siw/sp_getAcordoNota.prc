@@ -43,7 +43,7 @@ begin
                                 where x.sq_acordo_nota is not null
                               )                    h on (a.sq_acordo_nota     = h.sq_acordo_nota)
           where b.cliente = p_cliente
-            and ((p_chave             is null) or (p_chave             is not null and a.sq_acordo_nota     = p_chave))      
+            and ((p_chave             is null) or (p_chave             is not null and a.sq_acordo_nota     = p_chave))
             and ((p_chave_aux         is null) or (p_chave_aux         is not null and a.sq_siw_solicitacao = p_chave_aux))
             and ((p_sq_tipo_documento is null) or (p_sq_tipo_documento is not null and a.sq_tipo_documento  = p_sq_tipo_documento))
             and ((p_sq_acordo_aditivo is null) or (p_sq_acordo_aditivo is not null and a.sq_acordo_aditivo  = p_sq_acordo_aditivo))
@@ -58,10 +58,19 @@ begin
           where ((p_chave is null) or (p_chave  is not null and a.sq_acordo_nota  = p_chave));
    Elsif p_restricao = 'PARCELA' Then
       open p_result for
-         select sq_acordo_parcela 
-           from ac_parcela_nota a
-          where a.sq_acordo_nota    = p_chave
-            and a.sq_acordo_parcela = p_chave_aux;
+         select a.sq_acordo_parcela, a.sq_acordo_nota,
+                b.numero, b.abrange_inicial, b.abrange_acrescimo, b.abrange_reajuste, b.data,
+                to_char(b.data, 'DD/MM/YYYY, HH24:MI:SS') phpdt_data,
+                c.valor_inicial inicial_parc, c.valor_excedente excedente_parc, 
+                c.valor_reajuste reajuste_parc,
+                d.valor_inicial inicial_lanc, d.valor_excedente excedente_lanc, 
+                d.valor_reajuste reajuste_lanc
+           from ac_parcela_nota                a
+                inner   join ac_acordo_nota    b on (a.sq_acordo_nota    = b.sq_acordo_nota)
+                inner   join ac_acordo_parcela c on (a.sq_acordo_parcela = c.sq_acordo_parcela)
+                  left  join fn_lancamento_doc d on (b.sq_acordo_nota    = d.sq_acordo_nota)
+          where ((p_chave     is null) or (p_chave     is not null and a.sq_acordo_nota    = p_chave))
+            and ((p_chave_aux is null) or (p_chave_aux is not null and a.sq_acordo_parcela = p_chave_aux));
    End If;
 end SP_GetAcordoNota;
 /

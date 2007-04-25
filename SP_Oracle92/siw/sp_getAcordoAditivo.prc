@@ -28,7 +28,7 @@ begin
                      else case a.supressao
                                when 'S'
                                then 'Supressão'
-                               else '---'
+                               else 'Não se aplica'
                           end 
                 end nm_tipo,
                 b.cliente,
