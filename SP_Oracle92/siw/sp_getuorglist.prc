@@ -34,7 +34,7 @@ begin
           where b.sq_pessoa            = p_cliente
             and (p_restricao           is null or (p_restricao is not null and
                                                    (p_restricao         <> 'EXTERNO' and a.externo = 'N') or 
-                                                   (p_restricao          = 'EXTERNO' and (a.externo  = 'N' or (a.externo  = 'S' and 0 = (select count(sq_unidade) from eo_unidade where sq_unidade_pai = a.sq_unidade))))
+                                                   (p_restricao          = 'EXTERNO' and (a.externo  = 'S' and 0 = (select count(sq_unidade) from eo_unidade where sq_unidade_pai = a.sq_unidade)))
                                                   )
                 )
             and (p_chave               is null or (p_chave is not null and a.sq_unidade = p_chave))
