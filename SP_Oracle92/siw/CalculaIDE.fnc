@@ -1,5 +1,5 @@
 create or replace function CalculaIDE(p_chave in number, p_data in date default null) return float is
-  Result float := 100;
+  Result float := 0;
   w_existe number(18);
   
   cursor c_dados is
@@ -20,7 +20,10 @@ create or replace function CalculaIDE(p_chave in number, p_data in date default 
             ) realizado;
 begin
   -- Verifica se a chave informada existe em siw_solicitacao
-  select count(sq_siw_solicitacao) into w_existe from siw_solicitacao where sq_siw_solicitacao = coalesce(p_chave,0);
+  select count(a.sq_siw_solicitacao) into w_existe 
+    from siw_solicitacao       a
+         inner join pj_projeto b on (a.sq_siw_solicitacao = b.sq_siw_solicitacao)
+   where a.sq_siw_solicitacao = coalesce(p_chave,0);
   
   If w_existe = 0 Then
      Result := 0;

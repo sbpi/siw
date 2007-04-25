@@ -33,6 +33,7 @@ begin
       open p_result for 
          select a.sq_projeto_etapa, a.ordem, a.titulo nm_etapa, a.sq_pessoa, h.nome_resumido nm_resp_etapa, a.fim_previsto, a.situacao_atual,
                 a.perc_conclusao, a.fim_real fim_real_etapa, a.sq_unidade, a.inicio_previsto, a.inicio_real inicio_real_etapa, a.pacote_trabalho,
+                a.peso,
                 montaOrdem(a.sq_projeto_etapa) as cd_ordem,
                 b.sq_siw_solicitacao sq_projeto, b.titulo nm_projeto, c.inicio inicio_projeto, c.fim fim_projeto,
                 i.sq_menu, i.sq_tarefa, i.nm_tarefa, i.solicitante, i.nm_resp_tarefa, i.inicio, i.fim, i.inicio_real, i.fim_real,
@@ -68,7 +69,7 @@ begin
                  ((p_restricao = 'PROPREV'   and a.fim_previsto between w_inicio and w_fim)) or
                   (p_restricao = 'PROREPORT' and a.fim_real     between w_inicio and w_fim) or
                   (p_restricao = 'PROENTR'   and a.perc_conclusao < 100 and a.fim_previsto between w_inicio and w_fim) or
-                  (p_restricao = 'PROPEND'   and a.perc_conclusao < 100 and a.fim_previsto < p_inicio)
+                  (p_restricao = 'PROPEND'   and a.perc_conclusao < 100 and a.fim_previsto < p_fim)
                 );
   ElsIf p_restricao = 'RELATORIO' Then
       open p_result for 
