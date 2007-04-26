@@ -80,15 +80,17 @@ begin
                 montaOrdem(a.sq_projeto_etapa) as cd_ordem,
                 b.sq_siw_solicitacao as sq_projeto, b.titulo nm_projeto, 
                 c.inicio inicio_projeto, c.fim fim_projeto, c.sq_siw_solicitacao sq_projeto,
-                c1.nome_resumido nm_resp_projeto, c2.titulo nm_programa, c3.nome nm_cc, c4.nome nm_objetivo,
+                c1.sq_pessoa resp_projeto, c1.nome_resumido nm_resp_projeto, c2.titulo nm_programa, c3.nome nm_cc, c4.nome nm_objetivo,
                 e.sq_siw_solicitacao, f.assunto nm_tarefa, g.solicitante, i.nome_resumido nm_resp_tarefa, i.g.inicio, f.fim_real, i.nome_resumido,
-                k.titulo nm_plano,
+                k.titulo nm_plano, m1.sq_unidade, m1.nome nm_unidade,
                 calculaigc(c.sq_siw_solicitacao) as igc, calculaide(c.sq_siw_solicitacao, w_fim) as ide                
            from pj_projeto_etapa               a
-                left     join co_pessoa        h  on (a.sq_pessoa          = h.sq_pessoa)
-                left     join pj_projeto       b  on (a.sq_siw_solicitacao = b.sq_siw_solicitacao)
-                left     join siw_solicitacao  c  on (a.sq_siw_solicitacao = c.sq_siw_solicitacao)
-                  left   join co_pessoa        c1 on (c.solicitante        = c1.sq_pessoa)
+                left        join co_pessoa        h  on (a.sq_pessoa          = h.sq_pessoa)
+                left        join pj_projeto       b  on (a.sq_siw_solicitacao = b.sq_siw_solicitacao)
+                left        join siw_solicitacao  c  on (a.sq_siw_solicitacao = c.sq_siw_solicitacao)
+                  left      join co_pessoa        c1 on (c.solicitante        = c1.sq_pessoa)
+                    inner   join sg_autenticacao  m  on (c1.sq_pessoa         = m.sq_pessoa)
+                      inner join eo_unidade       m1 on (m.sq_unidade         = m1.sq_unidade) 
                 left     join pe_programa      c2 on (c.sq_solic_pai       = c2.sq_siw_solicitacao)
                   left   join pe_plano         k  on (c2.sq_pehorizonte    = k.sq_plano)                
                 left     join ct_cc            c3 on (c.sq_cc              = c3.sq_cc)
