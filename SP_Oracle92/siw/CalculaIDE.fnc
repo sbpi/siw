@@ -1,4 +1,4 @@
-create or replace function CalculaIDE(p_chave in number, p_data in date default null) return float is
+create or replace function CalculaIDE(p_chave in number, p_data in date default null, p_inicio in date default null) return float is
   Result float := 0;
   w_existe number(18);
   
@@ -8,14 +8,14 @@ create or replace function CalculaIDE(p_chave in number, p_data in date default 
                from pj_projeto_etapa           a
               where a.sq_siw_solicitacao = p_chave
                 and a.pacote_trabalho    = 'S'
-                and a.fim_previsto       <= coalesce(p_data,sysdate)
+                and a.fim_previsto       between coalesce(p_inicio,a.inicio_previsto) and coalesce(p_data,sysdate)
              group by a.sq_siw_solicitacao
             ) previsto,
             (select a.sq_siw_solicitacao, sum(a.peso) as valor
                from pj_projeto_etapa a
               where a.sq_siw_solicitacao = p_chave
                 and a.pacote_trabalho    = 'S'
-                and a.fim_real           <= coalesce(p_data,sysdate)
+                and a.fim_real           between coalesce(p_inicio,a.inicio_previsto) and coalesce(p_data,sysdate)
              group by a.sq_siw_solicitacao
             ) realizado;
 begin
