@@ -540,6 +540,30 @@ begin
                       and a.fim                is null;
                    If w_existe > 0 Then 
                       Result := Result + 16;
+/*
+                   Else 
+                      -- Verifica se o usuário é responsável por etapa ou questão
+                      select count(*) into w_existe from (
+                        -- Verifica se o usuário é responsável por alguma questão
+                        select 1 from siw_restricao a where a.sq_siw_solicitacao = p_solicitacao and a.sq_pessoa = p_usuario
+                        UNION
+                        -- Verifica se o usuário é responsável por alguma etapa
+                        select 1 from pj_projeto_etapa a where a.sq_siw_solicitacao = p_solicitacao and a.sq_pessoa = p_usuario
+                        UNION
+                        -- Verifica se o usuário é titular ou substituto do setor responsável pela etapa
+                        select 1 
+                          from pj_projeto_etapa             a
+                               inner   join eo_unidade      b on (a.sq_unidade = b.sq_unidade)
+                                 inner join eo_unidade_resp c on (b.sq_unidade = c.sq_unidade and
+                                                                  c.sq_pessoa  = p_usuario and
+                                                                  c.fim        is null
+                                                                 )
+                         where a.sq_siw_solicitacao = p_solicitacao
+                      );
+                      If w_existe > 0 Then
+                         Result := Result + 16;
+                      End If;
+*/
                    End If;
                 End If;
              End If;

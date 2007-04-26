@@ -1,4 +1,4 @@
-create or replace function CalculaIGC(p_chave in number) return float is
+create or replace function CalculaIGE(p_chave in number) return float is
   Result   float;
   w_existe number(18);
 begin
@@ -16,5 +16,5 @@ begin
   End If;
   
   return(Result);
-end CalculaIGC;
+end CalculaIGE;
 /
