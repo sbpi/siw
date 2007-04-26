@@ -116,7 +116,12 @@ begin
         and sq_projeto_etapa   = p_chave_aux;
 
       -- Recalcula os percentuais de execução dos pais da etapa
+      -- e os pesos relativos de cada uma das etapas do projeto
       If w_pai is not null Then sp_calculaPercEtapa(null, w_pai); End If;
+
+    -- Atualiza os pesos das etapas
+    sp_ajustaPesoEtapa(p_chave, null);
+
    
    End If;
    

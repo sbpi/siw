@@ -58,8 +58,7 @@ begin
                                                                        )
                                 where (p_restricao = 'PROREPORT' and l.fim_real between w_inicio and w_fim)
                                    or (p_restricao = 'PROPREV'   and k.fim      between w_inicio and w_fim)
-                                   or (p_restricao = 'PROENTR'   and l.fim_real is null and k.fim between w_inicio and w_fim)
-                                   or (p_restricao = 'PROPEND'   and l.fim_real is null)
+                                   or (p_restricao = 'PROENTR'   and k.fim between w_inicio and w_fim)
                               )                i on (e.sq_siw_solicitacao = i.sq_tarefa)
           where d.sq_pessoa       = p_cliente
             and j.sigla           <> 'CA'
@@ -68,8 +67,11 @@ begin
             and (i.sq_tarefa is not null or
                  ((p_restricao = 'PROPREV'   and a.fim_previsto between w_inicio and w_fim)) or
                   (p_restricao = 'PROREPORT' and a.fim_real     between w_inicio and w_fim) or
-                  (p_restricao = 'PROENTR'   and a.perc_conclusao < 100 and a.fim_previsto between w_inicio and w_fim) or
-                  (p_restricao = 'PROPEND'   and a.perc_conclusao < 100 and a.fim_previsto < p_fim)
+                  (p_restricao = 'PROENTR'   and a.fim_previsto between w_inicio and w_fim) or
+                  (p_restricao = 'PROPEND'   and ((a.fim_real   is null and a.fim_previsto <= w_fim) or
+                                                  (a.fim_real   is not null and a.fim_previsto between w_inicio and w_fim and a.fim_real > w_fim)
+                                                 )
+                  )
                 );
   ElsIf p_restricao = 'RELATORIO' Then
       open p_result for 
