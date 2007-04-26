@@ -127,6 +127,8 @@ function VisualProjeto($l_chave,$operacao,$l_usuario) {
     if ($w_tipo_visao==0) { 
       $l_html .= chr(13).'    <tr><td><b>Orçamento disponível:</b></td>';
       $l_html .= chr(13).'      <td>'.number_format(f($RS,'valor'),2,',','.').' </td></tr>';
+      $l_html .= chr(13).'    <tr><td><b>Palavra chave:</b></td>';
+      $l_html .= chr(13).'      <td>'.nvl(f($RS,'palavra_chave'),'---').' </td></tr>';
     }
     $l_html .= chr(13).'      <tr><td><b>Início previsto:</b></td>';
     $l_html .= chr(13).'        <td>'.FormataDataEdicao(f($RS,'inicio')).' </td></tr>';

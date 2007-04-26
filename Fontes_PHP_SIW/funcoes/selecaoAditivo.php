@@ -6,7 +6,7 @@ include_once($w_dir_volta.'classes/sp/db_getAcordoAditivo.php');
 function selecaoAditivo($label,$accesskey,$hint,$chave,$chaveAux,$campo,$restricao,$atributo) {
   extract($GLOBALS);
   $RS = db_getAcordoAditivo::getInstanceOf($dbms,$w_cliente,null,$chaveAux,null,null,null,null,null,null,null,null,null);
-  $RS = SortArray($RS,'nome','asc');
+  $RS = SortArray($RS,'fim','desc','nome','asc');
   if (!isset($hint))
     ShowHTML('          <td valign="top"><font size="1"><b>'.$label.'</b><br><SELECT ACCESSKEY="'.$accesskey.'" CLASS="STS" NAME="'.$campo.'" '.$w_Disabled.' '.$atributo.'>');
   else

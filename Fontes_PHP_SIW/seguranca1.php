@@ -239,7 +239,7 @@ function AcessoTramite() {
         ShowHTML('        <td valign="top" align="center"><font size="1">'.f($row,'username').'</td>');
         ShowHTML('        <td valign="top"><font size="1">'.f($row,'nome').'</td>');
         ShowHTML('        <td><font size="1">');
-        ShowHTML('          <A class="hl" HREF="'.$w_pagina.'GRAVA&R='.$w_pagina.$par.'&O=E&P1='.$P1.'&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP='.$TP.'&SG='.$SG.'&w_sq_menu='.$w_sq_menu.'&w_sq_pessoa='.f($row,'sq_pessoa').'&w_sq_siw_tramite='.$w_sq_siw_tramite.'&w_sq_pessoa_endereco='.f($row,'sq_pessoa_endereco').'" onClick="return(confirm(\'Confirma exclusão do acesso deste usuário para esta opção?\'));">Excluir</A>&nbsp');
+        ShowHTML('          <A class="hl" HREF="'.$w_pagina.'GRAVA&R='.$w_pagina.$par.'&O=E&P1='.$P1.'&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP='.$TP.'&SG='.$SG.'&w_sq_menu='.$w_sq_menu.'&w_sq_pessoa='.f($row,'sq_pessoa').'&w_sq_siw_tramite='.$w_sq_siw_tramite.'&w_sq_pessoa_endereco='.f($row,'sq_pessoa_endereco').'" onClick="return(confirm(\'Confirma exclusão do acesso deste usuário para esta opção?\'));">EX</A>&nbsp');
         ShowHTML('&nbsp');
         ShowHTML('        </td>');
         ShowHTML('      </tr>');
@@ -432,8 +432,8 @@ function Tramite() {
         ShowHTML('        <td align="center"><font  size="1">'.f($row,'sigla').'</td>');
         ShowHTML('        <td align="center"><font  size="1">'.f($row,'ativo').'</td>');
         ShowHTML('        <td align="top" nowrap><font size="1">');
-        ShowHTML('          <A class="hl" HREF="'.$w_pagina.$par.'&R='.$w_pagina.$par.'&O=A&w_sq_menu='.$w_sq_menu.'&w_sq_siw_tramite='.f($row,'sq_siw_tramite').'&P1='.$P1.'&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP='.$TP.'&SG='.$SG.'">Alterar</A>&nbsp');
-        ShowHTML('          <A class="hl" HREF="'.$w_pagina.$par.'&R='.$w_pagina.$par.'&O=E&w_sq_menu='.$w_sq_menu.'&w_sq_siw_tramite='.f($row,'sq_siw_tramite').'&P1='.$P1.'&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP='.$TP.'&SG='.$SG.'">Excluir</A>&nbsp');
+        ShowHTML('          <A class="hl" HREF="'.$w_pagina.$par.'&R='.$w_pagina.$par.'&O=A&w_sq_menu='.$w_sq_menu.'&w_sq_siw_tramite='.f($row,'sq_siw_tramite').'&P1='.$P1.'&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP='.$TP.'&SG='.$SG.'">AL</A>&nbsp');
+        ShowHTML('          <A class="hl" HREF="'.$w_pagina.$par.'&R='.$w_pagina.$par.'&O=E&w_sq_menu='.$w_sq_menu.'&w_sq_siw_tramite='.f($row,'sq_siw_tramite').'&P1='.$P1.'&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP='.$TP.'&SG='.$SG.'">EX</A>&nbsp');
         // Permite a configuração dos acessos apenas para trâmites ativos
         if (f($row,'ativo')=='S') {
           ShowHTML('          <A class="hl" HREF="#'.f($row,'sq_siw_tramite').'" onClick="window.open(\''.$w_pagina.'AcessoTramite&R='.$w_pagina.$par.'&O=L&w_sq_menu='.$w_sq_menu.'&w_sq_siw_tramite='.f($row,'sq_siw_tramite').'&P1='.$P1.'&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP='.$TP.' - Acessos'.'&SG=ACESSOTRAMITE\',\'AcessoMenu\',\'toolbar=no,width=780,height=530,top=30,left=10,scrollbars=yes\');" title="Configura as permissões de acesso.">Acessos</A>&nbsp');
@@ -648,7 +648,7 @@ function AcessoMenu() {
         ShowHTML('      <tr bgcolor="'.$conTrBgColor.'" valign="top">');
         ShowHTML('        <td valign="top"><font size="1">'.f($row1,'nome').'</td>');
         ShowHTML('        <td><font size="1">');
-        ShowHTML('          <A class="hl" HREF="'.$w_pagina.'GRAVA&R='.$w_pagina.$par.'&O=E&P1='.$P1.'&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP='.$TP.'&SG=ACESSOMENUPERFIL&w_sq_menu='.$w_sq_menu.'&w_sq_tipo_vinculo='.f($row1,'sq_tipo_vinculo').'&w_sq_pessoa_endereco='.f($row1,'sq_pessoa_endereco').'" onClick="return(confirm(\'Confirma exclusão do acesso deste usuário para esta opção?\'));">Excluir</A>&nbsp');
+        ShowHTML('          <A class="hl" HREF="'.$w_pagina.'GRAVA&R='.$w_pagina.$par.'&O=E&P1='.$P1.'&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP='.$TP.'&SG=ACESSOMENUPERFIL&w_sq_menu='.$w_sq_menu.'&w_sq_tipo_vinculo='.f($row1,'sq_tipo_vinculo').'&w_sq_pessoa_endereco='.f($row1,'sq_pessoa_endereco').'" onClick="return(confirm(\'Confirma exclusão do acesso deste usuário para esta opção?\'));">EX</A>&nbsp');
         ShowHTML('&nbsp');
         ShowHTML('        </td>');
         ShowHTML('      </tr>');
@@ -686,7 +686,7 @@ function AcessoMenu() {
         ShowHTML('        <td valign="top" align="center"><font size="1">'.f($row,'username').'</td>');
         ShowHTML('        <td valign="top"><font size="1">'.f($row,'nome').'</td>');
         ShowHTML('        <td><font size="1">');
-        ShowHTML('          <A class="hl" HREF="'.$w_pagina.'GRAVA&R='.$w_pagina.$par.'&O=E&P1='.$P1.'&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP='.$TP.'&SG='.$SG.'&w_sq_menu='.$w_sq_menu.'&w_sq_pessoa='.f($row,'sq_pessoa').'&w_username='.f($row,'username').'&w_sq_pessoa_endereco='.f($row,'sq_pessoa_endereco').'" onClick="return(confirm(\'Confirma exclusão do acesso deste usuário para esta opção?\'));">Excluir</A>&nbsp');
+        ShowHTML('          <A class="hl" HREF="'.$w_pagina.'GRAVA&R='.$w_pagina.$par.'&O=E&P1='.$P1.'&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP='.$TP.'&SG='.$SG.'&w_sq_menu='.$w_sq_menu.'&w_sq_pessoa='.f($row,'sq_pessoa').'&w_username='.f($row,'username').'&w_sq_pessoa_endereco='.f($row,'sq_pessoa_endereco').'" onClick="return(confirm(\'Confirma exclusão do acesso deste usuário para esta opção?\'));">EX</A>&nbsp');
         ShowHTML('&nbsp');
         ShowHTML('        </td>');
         ShowHTML('      </tr>');

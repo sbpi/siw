@@ -47,11 +47,11 @@ function VisualAcordo($l_chave,$l_O,$l_usuario,$l_P1,$l_P4) {
     } 
     $w_html.=chr(13).'      <tr><td colspan="2"><hr NOSHADE color=#000000 size=4></td></tr>';
     if ($w_segmento=='Público' && (substr($w_sigla,0,3)=='GCA' || substr($w_sigla,0,3)=='GCD')) { 
-      if (substr($w_sigla,0,3)=='GCA') $w_html.=chr(13).'      <tr><td colspan="2"  bgcolor="#f0f0f0"><div align=justify><font size="2"><b>PROCESSO: '.nvl(f($RS,'processo'),'---').' ACT: '.f($RS,'codigo_interno').' - '.f($RS,'titulo').' ('.$l_chave.')'.'</b></font></div></td></tr>';
-      else                        $w_html.=chr(13).'      <tr><td colspan="2"  bgcolor="#f0f0f0"><div align=justify><font size="2"><b>PROCESSO: '.nvl(f($RS,'processo'),'---').' CONTRATO: '.f($RS,'codigo_interno').' - '.f($RS,'titulo').' ('.$l_chave.')'.'</b></font></div></td></tr>';      
+      if (substr($w_sigla,0,3)=='GCA') $w_html.=chr(13).'      <tr><td colspan="2" bgcolor="#f0f0f0"><div align=justify><font size="2"><b>PROCESSO: '.nvl(f($RS,'processo'),'---').' ACT: '.f($RS,'codigo_interno').' - '.f($RS,'titulo').' ('.$l_chave.')'.'</b></font></div></td></tr>';
+      else                        $w_html.=chr(13).'      <tr><td bgcolor="#f0f0f0"><font size="2"><b>PROCESSO: '.nvl(f($RS,'processo'),'---').'<td bgcolor="#f0f0f0" align="right"><font size=2><b>CONTRATO: '.f($RS,'codigo_interno').' - '.f($RS,'titulo').' ('.$l_chave.')'.'</b></font></td></tr>';
     } else {
-      if (substr($w_sigla,0,3)=='GCA') $w_html.=chr(13).'      <tr><td colspan="2"  bgcolor="#f0f0f0"><div align=justify><font size="2"><b>ACT: '.f($RS,'codigo_interno').' - '.f($RS,'titulo').' ('.$l_chave.')'.'</b></font></div></td></tr>';
-      else                        $w_html.=chr(13).'      <tr><td colspan="2"  bgcolor="#f0f0f0"><div align=justify><font size="2"><b>CONTRATO: '.f($RS,'codigo_interno').' - '.f($RS,'titulo').' ('.$l_chave.')'.'</b></font></div></td></tr>';
+      if (substr($w_sigla,0,3)=='GCA') $w_html.=chr(13).'      <tr><td colspan="2" bgcolor="#f0f0f0"><div align=justify><font size="2"><b>ACT: '.f($RS,'codigo_interno').' - '.f($RS,'titulo').' ('.$l_chave.')'.'</b></font></div></td></tr>';
+      else                        $w_html.=chr(13).'      <tr><td colspan="2" bgcolor="#f0f0f0"><div align=justify><font size="2"><b>CONTRATO: '.f($RS,'codigo_interno').' - '.f($RS,'titulo').' ('.$l_chave.')'.'</b></font></div></td></tr>';
     }
     $w_html.=chr(13).'      <tr><td colspan="2"><hr NOSHADE color=#000000 size=4></td></tr>';
     // Identificação do acordo

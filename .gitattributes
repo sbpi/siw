@@ -769,6 +769,7 @@ Fontes_PHP_SIW/classes/sp/db_getProcSP.php -text
 Fontes_PHP_SIW/classes/sp/db_getProcTabela.php -text
 Fontes_PHP_SIW/classes/sp/db_getProcTabs.php -text
 Fontes_PHP_SIW/classes/sp/db_getProcedure.php -text
+Fontes_PHP_SIW/classes/sp/db_getPrograma.php -text
 Fontes_PHP_SIW/classes/sp/db_getProgramaPPA_IS.php -text
 Fontes_PHP_SIW/classes/sp/db_getPrograma_IS.php -text
 Fontes_PHP_SIW/classes/sp/db_getProjeto_IS.php -text
@@ -1319,6 +1320,7 @@ Fontes_PHP_SIW/funcoes/selecaoPlanoEstrategico.php -text
 Fontes_PHP_SIW/funcoes/selecaoPlanoSubordination.php -text
 Fontes_PHP_SIW/funcoes/selecaoPrioridade.php -text
 Fontes_PHP_SIW/funcoes/selecaoProbabilidade.php -text
+Fontes_PHP_SIW/funcoes/selecaoPrograma.php -text
 Fontes_PHP_SIW/funcoes/selecaoProgramaIS.php -text
 Fontes_PHP_SIW/funcoes/selecaoProgramaPPA.php -text
 Fontes_PHP_SIW/funcoes/selecaoProjeto.php -text
@@ -1459,6 +1461,7 @@ Fontes_PHP_SIW/mod_pd/visualviagem.php -text
 Fontes_PHP_SIW/mod_pe/indicador.php -text
 Fontes_PHP_SIW/mod_pe/programa.php -text
 Fontes_PHP_SIW/mod_pe/recurso.php -text
+Fontes_PHP_SIW/mod_pe/relatorios.php -text
 Fontes_PHP_SIW/mod_pe/tabelas.php -text
 Fontes_PHP_SIW/mod_pe/visualprograma.php -text
 Fontes_PHP_SIW/mod_pr/graficos.php -text

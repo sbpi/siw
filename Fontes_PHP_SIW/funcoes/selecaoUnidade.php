@@ -7,7 +7,7 @@ function selecaoUnidade($label,$accesskey,$hint,$chave,$chaveAux,$campo,$restric
   include_once($w_dir_volta.'classes/sp/db_getUorgList.php');
   include_once($w_dir_volta.'classes/sp/db_getUorgData.php');
   $RS = db_getUorgList::getInstanceOf($dbms, $w_cliente, $chaveAux, nvl($restricao,'ATIVO'), null, null, $w_ano);
-  if (count($RS)<=50) {
+  if (count($RS)<=100) {
     $RS = SortArray($RS,'nome','asc');
     $atributo = str_replace('onBlur','onChange',$atributo);
     if (!isset($hint)) {

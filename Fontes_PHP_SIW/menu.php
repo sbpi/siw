@@ -523,7 +523,7 @@ function Vinculacao() {
           ShowHTML('        <td>'.f($row,'nm_servico_fornecedor').' ('.f($row,'nm_modulo_fornecedor').')</td>');
           $w_cont=f($row,'nm_servico_fornecedor');
           ShowHTML('        <td>');
-          ShowHTML('          <A class="hl" HREF="'.$w_pagina.$par.'&R='.$w_pagina.$par.'&O=A&P1='.$P1.'&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP='.$TP.'&SG='.$SG.'&w_sq_menu='.$w_sq_menu.'&w_sq_tramite='.f($row,'sq_siw_tramite').'&w_sq_menu_fornec='.f($row,'servico_fornecedor').'">Alterar</A>&nbsp');
+          ShowHTML('          <A class="hl" HREF="'.$w_pagina.$par.'&R='.$w_pagina.$par.'&O=A&P1='.$P1.'&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP='.$TP.'&SG='.$SG.'&w_sq_menu='.$w_sq_menu.'&w_sq_tramite='.f($row,'sq_siw_tramite').'&w_sq_menu_fornec='.f($row,'servico_fornecedor').'">AL</A>&nbsp');
           ShowHTML('&nbsp');
           ShowHTML('        </td>');
         } else {

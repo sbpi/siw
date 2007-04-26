@@ -246,8 +246,8 @@ function centralTel() {
           ShowHTML(' <td align="center"><font size="1">Não</td>');
         } 
         ShowHTML('        <td align="top" nowrap><font size="1">');
-        ShowHTML('          <A class="HL" HREF="'.$w_dir.$w_pagina.$par.'&R='.$w_pagina.$par.'&O=A&w_chave='.f($row,'chave').'&w_sq_pessoa_endereco='.f($row,'sq_pessoa_endereco').'&w_arquivo_bilhetes='.f($row,'arquivo').'&w_recupera_bilhetes='.f($row,'recupera').'&P1='.$P1.'&P2='.$P2.'&P3=1&P4='.$P4.'&TP='.$TP.'&SG='.$SG.MontaFiltro('GET').'" Title="Nome">Alterar</A>&nbsp');
-        ShowHTML('          <A class="HL" HREF="'.$w_dir.$w_pagina.$par.'&R='.$w_pagina.$par.'&O=E&w_chave='.f($row,'chave').'&w_sq_pessoa_endereco='.f($row,'sq_pessoa_endereco').'&w_arquivo_bilhetes='.f($row,'arquivo').'&w_recupera_bilhetes='.f($row,'recupera').'&P1='.$P1.'&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP='.$TP.'&SG='.$SG.'">Excluir</A>&nbsp');
+        ShowHTML('          <A class="HL" HREF="'.$w_dir.$w_pagina.$par.'&R='.$w_pagina.$par.'&O=A&w_chave='.f($row,'chave').'&w_sq_pessoa_endereco='.f($row,'sq_pessoa_endereco').'&w_arquivo_bilhetes='.f($row,'arquivo').'&w_recupera_bilhetes='.f($row,'recupera').'&P1='.$P1.'&P2='.$P2.'&P3=1&P4='.$P4.'&TP='.$TP.'&SG='.$SG.MontaFiltro('GET').'" Title="Nome">AL</A>&nbsp');
+        ShowHTML('          <A class="HL" HREF="'.$w_dir.$w_pagina.$par.'&R='.$w_pagina.$par.'&O=E&w_chave='.f($row,'chave').'&w_sq_pessoa_endereco='.f($row,'sq_pessoa_endereco').'&w_arquivo_bilhetes='.f($row,'arquivo').'&w_recupera_bilhetes='.f($row,'recupera').'&P1='.$P1.'&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP='.$TP.'&SG='.$SG.'">EX</A>&nbsp');
         ShowHTML('          <A class="HL" HREF="'.$w_dir.$w_pagina.'TRONCOS&R='.$w_pagina.$par.'&O=L&w_sq_central_fone='.f($row,'chave').'&P1='.$P1.'&P2='.$P2.'&P3=1&P4='.$P4.'&TP='.$TP.' - Parâmetros&SG='.$SG.MontaFiltro('GET').'" Target="_blank" Title="Visualizar e manipular os trocos desta central  ">Troncos</A>&nbsp');
         ShowHTML('          <A class="HL" HREF="'.$w_dir.$w_pagina.'USUARIOCENTRAL&R='.$w_pagina.$par.'&O=L&w_sq_central_fone='.f($row,'chave').'&P1='.$P1.'&P2='.$P2.'&P3=1&P4='.$P4.'&TP='.$TP.' - Parâmetros&SG='.$SG.MontaFiltro('GET').'" Target="_blank" Title="Visualizar e manipular os usuários desta central">Usuários</A>&nbsp');
         ShowHTML('        </td>');
@@ -429,7 +429,7 @@ function Troncos() {
           ShowHTML('        <td><font size="1">Não                               </font> </td>');
         } 
         ShowHTML('        <td align="top" nowrap><font size="1">');
-        ShowHTML('          <A class="HL" HREF="'.$w_dir.$w_pagina.$par.'&R='.$w_pagina.$par.'&O=A&w_chaveAux='.f($row,'chave').'&w_sq_pessoa_telefone='.f($row,'sq_pessoa_telefone').'&w_codigo='.f($row,'codigo').'&w_ativo='.f($row,'ativo').'&w_chave='.$_REQUEST['w_chave'].'&P1='.$P1.'&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP='.$TP.'&SG='.$SG.MontaFiltro('GET').'">Alterar</A>&nbsp');
+        ShowHTML('          <A class="HL" HREF="'.$w_dir.$w_pagina.$par.'&R='.$w_pagina.$par.'&O=A&w_chaveAux='.f($row,'chave').'&w_sq_pessoa_telefone='.f($row,'sq_pessoa_telefone').'&w_codigo='.f($row,'codigo').'&w_ativo='.f($row,'ativo').'&w_chave='.$_REQUEST['w_chave'].'&P1='.$P1.'&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP='.$TP.'&SG='.$SG.MontaFiltro('GET').'">AL</A>&nbsp');
         ShowHTML('          <A class="HL" HREF="'.$w_dir.$w_pagina.$par.'&R='.$w_pagina.$par.'&O=E&w_chaveAux='.f($row,'chave').'&w_sq_pessoa_telefone='.f($row,'sq_pessoa_telefone').'&w_codigo='.f($row,'codigo').'&w_ativo='.f($row,'ativo').'&P1='.$P1.'&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP='.$TP.'&SG='.$SG.MontaFiltro('GET').'">Exluir</A>&nbsp');
         ShowHTML('        </td>');
         ShowHTML('      </tr>');
@@ -574,8 +574,8 @@ function Ramais() {
         ShowHTML('        <td><font size="1">'.f($row,'logradouro').'                   </td>');
         ShowHTML('        <td><font size="1">'.f($row,'codigo').'                   </td>');
         ShowHTML('        <td align="top" nowrap><font size="1">');
-        ShowHTML('          <A class="HL" HREF="'.$w_dir.$w_pagina.$par.'&R='.$w_pagina.$par.'&O=A&w_chave='.f($row,'chave').'&P1='.$P1.'&P2='.$P2.'&P3=1&P4='.$P4.'&TP='.$TP.'&SG='.$SG.MontaFiltro('GET').'"  Title="Nome">Alterar</A>&nbsp');
-        ShowHTML('          <A class="HL" HREF="'.$w_dir.$w_pagina.$par.'&R='.$w_pagina.$par.'&O=E&w_chave='.f($row,'chave').'&P1='.$P1.'&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP='.$TP.'&SG='.$SG.'">Excluir</A>&nbsp');
+        ShowHTML('          <A class="HL" HREF="'.$w_dir.$w_pagina.$par.'&R='.$w_pagina.$par.'&O=A&w_chave='.f($row,'chave').'&P1='.$P1.'&P2='.$P2.'&P3=1&P4='.$P4.'&TP='.$TP.'&SG='.$SG.MontaFiltro('GET').'"  Title="Nome">AL</A>&nbsp');
+        ShowHTML('          <A class="HL" HREF="'.$w_dir.$w_pagina.$par.'&R='.$w_pagina.$par.'&O=E&w_chave='.f($row,'chave').'&P1='.$P1.'&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP='.$TP.'&SG='.$SG.'">EX</A>&nbsp');
         ShowHTML('          <A class="HL" HREF="'.$w_dir.$w_pagina.'RAMALUSR&R='.$w_pagina.$par.'&O=L&w_chave='.f($row,'chave').'&P1='.$P1.'&P2='.$P2.'&P3=1&P4='.$P4.'&TP='.$TP.' - Parâmetros&SG='.$SG.MontaFiltro('GET').'" Target="_blank" Title="Visualizar e manipular os usuários deste ramal">Usuários</A>&nbsp');
         ShowHTML('        </td>');
         ShowHTML('      </tr>');
@@ -726,8 +726,8 @@ function UsuarioCentral() {
         ShowHTML('        <td align="center"><font size="1">'.f($row,'codigo').'</td>');
         ShowHTML('        <td><font size="1">'.f($row,'nm_usuario').' ('.f($row,'nm_usuario_res').')</td>');
         ShowHTML('        <td align="top" nowrap><font size="1">');
-        ShowHTML('          <A class="HL" HREF="'.$w_dir.$w_pagina.$par.'&R='.$w_pagina.$par.'&O=A&w_chave='.f($row,'sq_usuario_central').'&w_sq_central_fone='.$w_sq_central_fone.'&w_codigo='.f($row,'codigo').'&w_usuario='.f($row,'usuario').'&P1='.$P1.'&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP='.$TP.'&SG='.$SG.MontaFiltro('GET').'">Alterar</A>&nbsp');
-        ShowHTML('          <A class="HL" HREF="'.$w_dir.$w_pagina.$par.'&R='.$w_pagina.$par.'&O=E&w_chave='.f($row,'sq_usuario_central').'&w_sq_central_fone='.$w_sq_central_fone.'&w_codigo='.f($row,'codigo').'&w_usuario='.f($row,'usuario').'&P1='.$P1.'&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP='.$TP.'&SG='.$SG.MontaFiltro('GET').'">Excluir</A>&nbsp');
+        ShowHTML('          <A class="HL" HREF="'.$w_dir.$w_pagina.$par.'&R='.$w_pagina.$par.'&O=A&w_chave='.f($row,'sq_usuario_central').'&w_sq_central_fone='.$w_sq_central_fone.'&w_codigo='.f($row,'codigo').'&w_usuario='.f($row,'usuario').'&P1='.$P1.'&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP='.$TP.'&SG='.$SG.MontaFiltro('GET').'">AL</A>&nbsp');
+        ShowHTML('          <A class="HL" HREF="'.$w_dir.$w_pagina.$par.'&R='.$w_pagina.$par.'&O=E&w_chave='.f($row,'sq_usuario_central').'&w_sq_central_fone='.$w_sq_central_fone.'&w_codigo='.f($row,'codigo').'&w_usuario='.f($row,'usuario').'&P1='.$P1.'&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP='.$TP.'&SG='.$SG.MontaFiltro('GET').'">EX</A>&nbsp');
         ShowHTML('        </td>');
         ShowHTML('      </tr>');
       } 
@@ -903,11 +903,11 @@ function RamalUsr() {
           ShowHTML('      <td align="CENTER"><font size="1"> ---                    </td>');
         } 
         ShowHTML('        <td align="top" nowrap><font size="1">');
-        ShowHTML('          <A class="HL" HREF="'.$w_dir.$w_pagina.$par.'&R='.$w_pagina.$par.'&O=A&w_chave='.$w_chave.'&w_chaveAux='.f($row,'usuario').'&w_inicio='.FormataDataEdicao(f($row,'inicio')).'&w_fim='.FormataDataEdicao(f($row,'fim')).'&P1='.$P1.'&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP='.$TP.'&SG='.$SG.MontaFiltro('GET').'">Alterar</A>&nbsp');
+        ShowHTML('          <A class="HL" HREF="'.$w_dir.$w_pagina.$par.'&R='.$w_pagina.$par.'&O=A&w_chave='.$w_chave.'&w_chaveAux='.f($row,'usuario').'&w_inicio='.FormataDataEdicao(f($row,'inicio')).'&w_fim='.FormataDataEdicao(f($row,'fim')).'&P1='.$P1.'&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP='.$TP.'&SG='.$SG.MontaFiltro('GET').'">AL</A>&nbsp');
         if (Nvl(f($row,'fim'),'')=='') {
           ShowHTML('          <A class="HL" HREF="'.$w_dir.$w_pagina.$par.'&R='.$w_pagina.$par.'&O=F&w_chave='.$w_chave.'&w_chaveAux='.f($row,'usuario').'&w_inicio='.FormataDataEdicao(f($row,'inicio')).'&w_fim='.FormataDataEdicao(f($row,'fim')).'&P1='.$P1.'&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP='.$TP.'&SG='.$SG.MontaFiltro('GET').'">Finalizar</A>&nbsp');
         } 
-        ShowHTML('          <A class="HL" HREF="'.$w_dir.$w_pagina.$par.'&R='.$w_pagina.$par.'&O=E&w_chave='.$w_chave.'&w_chaveAux='.f($row,'usuario').'&w_inicio='.FormataDataEdicao(f($row,'inicio')).'&w_fim='.FormataDataEdicao(f($row,'fim')).'&P1='.$P1.'&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP='.$TP.'&SG='.$SG.MontaFiltro('GET').'">Excluir</A>&nbsp');
+        ShowHTML('          <A class="HL" HREF="'.$w_dir.$w_pagina.$par.'&R='.$w_pagina.$par.'&O=E&w_chave='.$w_chave.'&w_chaveAux='.f($row,'usuario').'&w_inicio='.FormataDataEdicao(f($row,'inicio')).'&w_fim='.FormataDataEdicao(f($row,'fim')).'&P1='.$P1.'&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP='.$TP.'&SG='.$SG.MontaFiltro('GET').'">EX</A>&nbsp');
         ShowHTML('        </td>');
         ShowHTML('      </tr>');
       } 
@@ -1142,8 +1142,8 @@ function prefixo() {
           ShowHTML('      <td><font size="1"> ---                     </td>');
         } 
         ShowHTML('        <td align="top" nowrap><font size="1">');
-        ShowHTML('          <A class="HL" HREF="'.$w_dir.$w_pagina.$par.'&R='.$w_pagina.$par.'&O=A&w_chave='.f($row,'chave').'&P1='.$P1.'&P2='.$P2.'&P3=1&P4='.$P4.'&TP='.$TP.'&SG='.$SG.MontaFiltro('GET').'"  Title="Nome">Alterar</A>&nbsp');
-        ShowHTML('          <A class="HL" HREF="'.$w_dir.$w_pagina.$par.'&R='.$w_pagina.$par.'&O=E&w_chave='.f($row,'chave').'&P1='.$P1.'&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP='.$TP.'&SG='.$SG.'">Excluir</A>&nbsp');
+        ShowHTML('          <A class="HL" HREF="'.$w_dir.$w_pagina.$par.'&R='.$w_pagina.$par.'&O=A&w_chave='.f($row,'chave').'&P1='.$P1.'&P2='.$P2.'&P3=1&P4='.$P4.'&TP='.$TP.'&SG='.$SG.MontaFiltro('GET').'"  Title="Nome">AL</A>&nbsp');
+        ShowHTML('          <A class="HL" HREF="'.$w_dir.$w_pagina.$par.'&R='.$w_pagina.$par.'&O=E&w_chave='.f($row,'chave').'&P1='.$P1.'&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP='.$TP.'&SG='.$SG.'">EX</A>&nbsp');
         ShowHTML('        </td>');
         ShowHTML('      </tr>');
       } 

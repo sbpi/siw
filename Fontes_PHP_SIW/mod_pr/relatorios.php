@@ -148,9 +148,15 @@ function Rel_Progresso() {
       foreach ($RS as $row) {
         if($w_projeto_atual==0 || $w_projeto_atual<>f($row,'sq_projeto')) {
           ShowHTML('   <tr><td colspan="2"><br><hr NOSHADE color=#000000 size=4></td></tr>');
-          ShowHTML('   <tr><td colspan="2"  bgcolor="#f0f0f0"><div align=justify><font size="2"><b>Projeto: '.f($row,'sq_projeto').' - '.f($row,'nm_projeto').'</b></div></td></tr>');
-          ShowHTML('   <tr><td colspan="2"  bgcolor="#f0f0f0"><div align=justify><b>Execução prevista: '.FormataDataEdicao(f($row,'inicio_projeto')).' a '.FormataDataEdicao(f($row,'fim_projeto')).'</b></div></td></tr>');
-          ShowHTML('   <tr><td colspan="2"  bgcolor="#f0f0f0"><div align=justify><b>Período de reporte: '.$p_inicio.' a '.$p_fim.'</b></div></td></tr>');
+          if (nvl(f($row,'nm_plano'),'')!='') ShowHTML('   <tr><td colspan="2" bgcolor="#f0f0f0"><div align=justify><font size="2"><b>Plano Estratégico: '.f($row,'nm_plano').'</b></font></div></td></tr>');
+          if (nvl(f($row,'nm_objetivo'),'')!='') ShowHTML('   <tr><td colspan="2" bgcolor="#f0f0f0"><div align=justify><font size="2"><b>Ojetivo: '.f($row,'nm_objetivo').'</b></font></div></td></tr>');
+          if (nvl(f($row,'nm_programa'),'')!='') ShowHTML('   <tr><td colspan="2" bgcolor="#f0f0f0"><div align=justify><font size="2"><b>Programa: '.f($row,'nm_programa').'</b></font></div></td></tr>');
+          if (nvl(f($row,'nm_cc'),'')!='') ShowHTML('   <tr><td colspan="2" bgcolor="#f0f0f0"><div align=justify><font size="2"><b>Classificação: '.f($row,'nm_cc').'</b></font></div></td></tr>');
+          ShowHTML('   <tr><td colspan="2" bgcolor="#f0f0f0"><div align=justify><font size="2"><b>Projeto: '.f($row,'sq_projeto').' - '.f($row,'nm_projeto').'</b></div></td></tr>');
+          ShowHTML('   <tr><td colspan="2" bgcolor="#f0f0f0"><div align=justify><b>Responsável: '.ExibePessoa(null,$w_cliente,f($row,'resp_projeto'),$TP,f($row,'nm_resp_projeto')).'</b></div></td></tr>');
+          ShowHTML('   <tr><td colspan="2" bgcolor="#f0f0f0"><div align=justify><b>Unidade: '.ExibeUnidade(null,$w_cliente,f($row,'nm_unidade'),f($row,'sq_unidade'),$TP).'</b></div></td></tr>');
+          ShowHTML('   <tr><td colspan="2" bgcolor="#f0f0f0"><div align=justify><b>Execução prevista: '.FormataDataEdicao(f($row,'inicio_projeto')).' a '.FormataDataEdicao(f($row,'fim_projeto')).'</b></div></td></tr>');
+          ShowHTML('   <tr><td colspan="2" bgcolor="#f0f0f0"><div align=justify><b>Período de reporte: '.$p_inicio.' a '.$p_fim.'</b></div></td></tr>');
           
           // Recupera o próximo período
           // O tratamento abaixo deve estar compatível com o da stored procedure sp_getRelProgresso
@@ -168,17 +174,17 @@ function Rel_Progresso() {
           // IDE
           ShowHTML('      <tr><td colspan="2"><br><font size="2"><b>Indicadores<hr NOSHADE color=#000000 SIZE=1></b></td></tr>');
           if ($w_tipo!='WORD') {
-            ShowHTML('   <tr><td width="30%"><b>'.VisualIndicador($w_dir_volta,$w_cliente,'IGC',$TP,'IGC').' em '.date("d/m/Y").':</b></td>');
+            ShowHTML('   <tr><td width="30%"><b>'.VisualIndicador($w_dir_volta,$w_cliente,'IGE',$TP,'IGE').' em '.date("d/m/Y").':</b></td>');
           } else  {
-            ShowHTML('   <tr><td width="30%"><b>IGC em '.date("d/m/Y").':</b></td>');
+            ShowHTML('   <tr><td width="30%"><b>IGE em '.date("d/m/Y").':</b></td>');
           }
-          ShowHTML('       <td><div align="justify"><b>'.formatNumber(f($row,'igc')).'%</b></div></td></tr>');
+          ShowHTML('       <td><div align="justify"><b>'.formatNumber(f($row,'ige')).'%</b></div></td></tr>');
           if ($w_tipo!='WORD') {
             ShowHTML('   <tr><td><b>'.VisualIndicador($w_dir_volta,$w_cliente,'IDE',$TP,'IDE').' em '.FormataDataEdicao($p_fim).':</b></td>');
           } else  { 
             ShowHTML('   <tr><td><b>IDE em '.FormataDataEdicao($p_fim).':</b></td>');
           }
-          ShowHTML('       <td><div align="justify"><b>'.formatNumber(f($row,'ide')).'%</b></div></td></tr>');
+          ShowHTML('       <td><div align="justify"><b>'.ExibeSmile('IDE',f($row,'ide')).' '.formatNumber(f($row,'ide')).'%</b></div></td></tr>');
           //Progresso no periodo
           ShowHTML('      <tr><td colspan="2"><br><font size="2"><b>Progresso no período<hr NOSHADE color=#000000 SIZE=1></b></td></tr>');
           ShowHTML('      <tr><td align="center" colspan="2">');
@@ -204,7 +210,8 @@ function Rel_Progresso() {
               ShowHTML('            <td rowspan=2 bgColor="#f0f0f0"><div align="center"><b>Responsável</b></div></td>');
               ShowHTML('            <td colspan=2 bgColor="#f0f0f0"><div align="center"><b>Execução prevista</b></div></td>');
               ShowHTML('            <td colspan=2 bgColor="#f0f0f0"><div align="center"><b>Execução real</b></div></td>');
-              ShowHTML('            <td rowspan=2 bgColor="#f0f0f0"><div align="center"><b>% conclusão</b></div></td>');
+              ShowHTML('            <td rowspan=2 bgColor="#f0f0f0"><div align="center"><b>Conc.</b></div></td>');
+              ShowHTML('            <td rowspan=2 bgColor="#f0f0f0"><div align="center"><b>Peso</b></div></td>');
               ShowHTML('            <td rowspan=2 bgColor="#f0f0f0"><div align="center"><b>Observações</b></div></td>');
               ShowHTML('          </tr>');
               ShowHTML('          <tr>');
@@ -236,7 +243,8 @@ function Rel_Progresso() {
                   ShowHTML('        <td align="center" nowrap>'.nvl(formataDataEdicao(f($row1,'fim_previsto')),'---').'</td>');
                   ShowHTML('        <td align="center" nowrap>'.nvl(formataDataEdicao(f($row1,'inicio_real_etapa')),'---').'</td>');
                   ShowHTML('        <td align="center" nowrap>'.nvl(formataDataEdicao(f($row1,'fim_real_etapa')),'---').'</td>');
-                  ShowHTML('        <td nowrap align="right" >'.f($row1,'perc_conclusao').' %</td>');
+                  ShowHTML('        <td nowrap align="right">'.f($row1,'perc_conclusao').' %</td>');
+                  ShowHTML('        <td nowrap align="center">'.f($row1,'peso').'</td>');
                   ShowHTML('        <td>'.nvl(CRLF2BR(f($row1,'situacao_atual')),'---').' </td>');
                 }
                 if(nvl(f($row1,'sq_tarefa'),'')!='') {

@@ -149,7 +149,7 @@ function Gera_Hierarquico($l_gera) {
   
   $RS = db_getSolicData::getInstanceOf($dbms,$w_chave,'PJGERAL');
   $l_xml .= chr(13).'  <node name="    '.f($RS,'ac_titulo').'    " fitname="1" align="left" namecolor="#f" bgcolor="#d9e3ed" bgcolor2="#f" namebgcolor="#d9e3ed" namebgcolor2="#526e88" bordercolor="#526e88">';
-  $l_xml .= chr(13).'     Periodo: '.formataDataEdicao(f($RS,'inicio')).' a '.formataDataEdicao(f($RS,'fim')).'\nIDE em '.formataDataEdicao(time()).': '.formatNumber(f($RS,'ide'),2).'%'.'\nIGC: '.formatNumber(f($RS,'igc'),2).'%';
+  $l_xml .= chr(13).'     Periodo: '.formataDataEdicao(f($RS,'inicio')).' a '.formataDataEdicao(f($RS,'fim')).'\nIDE em '.formataDataEdicao(time()).': '.formatNumber(f($RS,'ide'),2).'%'.'\nIGE: '.formatNumber(f($RS,'ige'),2).'%';
 
   // Recupera as etapas principais
   $RS = db_getSolicEtapa::getInstanceOf($dbms,$w_chave,null,'ARVORE',null);

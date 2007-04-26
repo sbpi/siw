@@ -184,7 +184,7 @@ function CabecalhoWord($p_cliente,$p_titulo,$p_pagina) {
   ShowHTML('  <TR>');
   if (nvl($p_pagina,0)>0) $l_colspan = 3; else $l_colspan = 2;
   ShowHTML('    <TD ROWSPAN='.$l_colspan.'><IMG ALIGN="LEFT" SRC="'.$conFileVirtual.$w_cliente.'/img/'.f($RS,'LOGO').'">');
-  ShowHTML('    <TD ALIGN="RIGHT"><B><FONT SIZE=4 COLOR="#000000">'.$p_titulo.'</FONT>');
+  ShowHTML('    <TD ALIGN="RIGHT"><B><FONT SIZE=3 COLOR="#000000">'.$p_titulo.'</FONT>');
   ShowHTML('  </TR>');
   ShowHTML('  <TR><TD ALIGN="RIGHT"><B><FONT SIZE=2 COLOR="#000000">'.DataHora().'</B></TD></TR>');
   if (nvl($p_pagina,0)>0) ShowHTML('  <TR><TD ALIGN="RIGHT"><B><FONT SIZE=2 COLOR="#000000">Página: '.$p_pagina.'</B></TD></TR>');
@@ -659,6 +659,25 @@ function ExibeImagemRestricao($l_tipo,$l_imagem=null) {
         case 'N3': $l_string .= '<img title="Risco de alta criticidade" src="'.$conRootSIW.$conImgRiskHig.'" border=0 align="center">';    break;
       }
     }
+  }
+  return $l_string;
+}
+
+// =========================================================================
+// Exibe imagem do ícone smile
+// -------------------------------------------------------------------------
+function ExibeSmile($l_tipo,$l_andamento) {
+  extract($GLOBALS);
+  $l_tipo       = trim(strtoupper($l_tipo));
+  $l_andamento  = nvl($l_andamento,0);
+  if ($l_tipo=='IDE') {
+    if ($l_andamento < 80 || $l_andamento > 110) $l_string .= '<img title="IDE fora da faixa desejável." src="'.$conRootSIW.$conImgSmAtraso.'" border=0 width="15" height="15" align="center">';
+    elseif ($l_andamento < 90)                   $l_string .= '<img title="IDE próximo da faixa desejável." src="'.$conRootSIW.$conImgSmAviso.'" border=0 width="15" height="15" align="center">';
+    else                                         $l_string .= '<img title="IDE na faixa desejável." src="'.$conRootSIW.$conImgSmNormal.'" border=0 width="15" height="15" align="center">';
+  } elseif ($l_tipo=='IDC') {
+    if ($l_andamento < 80 || $l_andamento > 110) $l_string .= '<img title="IDC fora da faixa desejável." src="'.$conRootSIW.$conImgSmAtraso.'" border=0 width="15" height="15" align="center">';
+    elseif ($l_andamento > 100)                  $l_string .= '<img title="IDC próximo da faixa desejável." src="'.$conRootSIW.$conImgSmAviso.'" border=0 width="15" height="15" align="center">';
+    else                                         $l_string .= '<img title="IDC na faixa desejável." src="'.$conRootSIW.$conImgSmNormal.'" border=0 width="15" height="15" align="center">';
   }
   return $l_string;
 }

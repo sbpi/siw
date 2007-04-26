@@ -213,8 +213,8 @@ function SegmentoVinc() {
         } 
         ShowHTML('        <td align="center">'.nvl(f($row,'ordem'),'-').'</td>');
         ShowHTML('        <td align="top" nowrap>');
-        ShowHTML('          <A class="HL" HREF="'.$w_pagina.$par.'&R='.$w_pagina.$par.'&O=A&w_sq_segmento='.$w_sq_segmento.'&w_sq_segmento_vinculo='.f($row,'sq_seg_vinculo').MontaFiltro('GET').'&P1='.$P1.'&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP='.$TP.'&SG='.$SG.'">Alterar</A>&nbsp');
-        ShowHTML('          <A class="HL" HREF="'.$w_pagina.$par.'&R='.$w_pagina.$par.'&O=E&w_sq_segmento='.$w_sq_segmento.'&w_sq_segmento_vinculo='.f($row,'sq_seg_vinculo').MontaFiltro('GET').'&P1='.$P1.'&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP='.$TP.'&SG='.$SG.'">Excluir</A>&nbsp');
+        ShowHTML('          <A class="HL" HREF="'.$w_pagina.$par.'&R='.$w_pagina.$par.'&O=A&w_sq_segmento='.$w_sq_segmento.'&w_sq_segmento_vinculo='.f($row,'sq_seg_vinculo').MontaFiltro('GET').'&P1='.$P1.'&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP='.$TP.'&SG='.$SG.'">AL</A>&nbsp');
+        ShowHTML('          <A class="HL" HREF="'.$w_pagina.$par.'&R='.$w_pagina.$par.'&O=E&w_sq_segmento='.$w_sq_segmento.'&w_sq_segmento_vinculo='.f($row,'sq_seg_vinculo').MontaFiltro('GET').'&P1='.$P1.'&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP='.$TP.'&SG='.$SG.'">EX</A>&nbsp');
         ShowHTML('        </td>');
         ShowHTML('      </tr>');
       } 
@@ -378,8 +378,8 @@ function SegmentoMenu() {
         ShowHTML('        <td align="center" title="padrao">'.f($row,'comercializar').'</td>');
         ShowHTML('        <td align="center">'.f($row,'ativo').'</td>');
         ShowHTML('        <td align="top" nowrap>');
-        ShowHTML('          <A class="HL" HREF="'.$w_pagina.$par.'&R='.$w_pagina.$par.'&O=A&w_sq_segmento='.$w_sq_segmento.'&w_sq_modulo='.f($row,'sq_modulo').MontaFiltro('GET').'&P1='.$P1.'&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP='.$TP.'&SG='.$SG.'">Alterar</A>&nbsp');
-        ShowHTML('          <A class="HL" HREF="'.$w_pagina.$par.'&R='.$w_pagina.$par.'&O=E&w_sq_segmento='.$w_sq_segmento.'&w_sq_modulo='.f($row,'sq_modulo').MontaFiltro('GET').'&P1='.$P1.'&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP='.$TP.'&SG='.$SG.'">Excluir</A>&nbsp');
+        ShowHTML('          <A class="HL" HREF="'.$w_pagina.$par.'&R='.$w_pagina.$par.'&O=A&w_sq_segmento='.$w_sq_segmento.'&w_sq_modulo='.f($row,'sq_modulo').MontaFiltro('GET').'&P1='.$P1.'&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP='.$TP.'&SG='.$SG.'">AL</A>&nbsp');
+        ShowHTML('          <A class="HL" HREF="'.$w_pagina.$par.'&R='.$w_pagina.$par.'&O=E&w_sq_segmento='.$w_sq_segmento.'&w_sq_modulo='.f($row,'sq_modulo').MontaFiltro('GET').'&P1='.$P1.'&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP='.$TP.'&SG='.$SG.'">EX</A>&nbsp');
         ShowHTML('        </td>');
         ShowHTML('      </tr>');
       } 
@@ -565,8 +565,8 @@ function SegmentoModulo() {
           ShowHTML('        <td align="center">Não</td>');
         } 
         ShowHTML('        <td align="top" nowrap>');
-        ShowHTML('          <A class="HL" HREF="'.$w_pagina.$par.'&R='.$w_pagina.$par.'&O=A&w_sq_segmento='.$w_sq_segmento.'&w_sq_modulo='.f($row,'sq_modulo').'&p_objetivo_especifico='.$p_objetivo_especifico.MontaFiltro('GET').'&P1='.$P1.'&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP='.$TP.'&SG='.$SG.'">Alterar</A>&nbsp');
-        ShowHTML('          <A class="HL" HREF="'.$w_pagina.$par.'&R='.$w_pagina.$par.'&O=E&w_sq_segmento='.$w_sq_segmento.'&w_sq_modulo='.f($row,'sq_modulo').'&p_objetivo_especifico='.$p_objetivo_especifico.MontaFiltro('GET').'&P1='.$P1.'&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP='.$TP.'&SG='.$SG.'">Excluir</A>&nbsp');
+        ShowHTML('          <A class="HL" HREF="'.$w_pagina.$par.'&R='.$w_pagina.$par.'&O=A&w_sq_segmento='.$w_sq_segmento.'&w_sq_modulo='.f($row,'sq_modulo').'&p_objetivo_especifico='.$p_objetivo_especifico.MontaFiltro('GET').'&P1='.$P1.'&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP='.$TP.'&SG='.$SG.'">AL</A>&nbsp');
+        ShowHTML('          <A class="HL" HREF="'.$w_pagina.$par.'&R='.$w_pagina.$par.'&O=E&w_sq_segmento='.$w_sq_segmento.'&w_sq_modulo='.f($row,'sq_modulo').'&p_objetivo_especifico='.$p_objetivo_especifico.MontaFiltro('GET').'&P1='.$P1.'&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP='.$TP.'&SG='.$SG.'">EX</A>&nbsp');
         ShowHTML('        </td>');
         ShowHTML('      </tr>');
       } 
@@ -729,8 +729,8 @@ function Modulos() {
         ShowHTML('        <td align="center">'.f($row,'sigla').'</td>');
         ShowHTML('        <td>'.f($row,'objetivo_geral').'</td>');
         ShowHTML('        <td align="top" nowrap>');
-        ShowHTML('          <A class="HL" HREF="'.$w_pagina.$par.'&R='.$w_pagina.$par.'&O=A&w_sq_modulo='.f($row,'sq_modulo').MontaFiltro('GET').'&P1='.$P1.'&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP='.$TP.'&SG='.$SG.'">Alterar</A>&nbsp');
-        ShowHTML('          <A class="HL" HREF="'.$w_pagina.$par.'&R='.$w_pagina.$par.'&O=E&w_sq_modulo='.f($row,'sq_modulo').MontaFiltro('GET').'&P1='.$P1.'&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP='.$TP.'&SG='.$SG.'">Excluir</A>&nbsp');
+        ShowHTML('          <A class="HL" HREF="'.$w_pagina.$par.'&R='.$w_pagina.$par.'&O=A&w_sq_modulo='.f($row,'sq_modulo').MontaFiltro('GET').'&P1='.$P1.'&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP='.$TP.'&SG='.$SG.'">AL</A>&nbsp');
+        ShowHTML('          <A class="HL" HREF="'.$w_pagina.$par.'&R='.$w_pagina.$par.'&O=E&w_sq_modulo='.f($row,'sq_modulo').MontaFiltro('GET').'&P1='.$P1.'&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP='.$TP.'&SG='.$SG.'">EX</A>&nbsp');
         ShowHTML('        </td>');
         ShowHTML('      </tr>');
       } 
@@ -883,8 +883,8 @@ function Segmento() {
           ShowHTML('        <td align="center">Não</td>');
         } 
         ShowHTML('        <td align="top" nowrap>');
-        ShowHTML('          <A class="HL" HREF="'.$w_pagina.$par.'&R='.$w_pagina.$par.'&O=A&w_sq_segmento='.f($row,'sq_segmento').MontaFiltro('GET').'&P1='.$P1.'&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP='.$TP.'&SG='.$SG.'">Alterar</A>&nbsp');
-        ShowHTML('          <A class="HL" HREF="'.$w_pagina.$par.'&R='.$w_pagina.$par.'&O=E&w_sq_segmento='.f($row,'sq_segmento').MontaFiltro('GET').'&P1='.$P1.'&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP='.$TP.'&SG='.$SG.'">Excluir</A>&nbsp');
+        ShowHTML('          <A class="HL" HREF="'.$w_pagina.$par.'&R='.$w_pagina.$par.'&O=A&w_sq_segmento='.f($row,'sq_segmento').MontaFiltro('GET').'&P1='.$P1.'&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP='.$TP.'&SG='.$SG.'">AL</A>&nbsp');
+        ShowHTML('          <A class="HL" HREF="'.$w_pagina.$par.'&R='.$w_pagina.$par.'&O=E&w_sq_segmento='.f($row,'sq_segmento').MontaFiltro('GET').'&P1='.$P1.'&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP='.$TP.'&SG='.$SG.'">EX</A>&nbsp');
         ShowHTML('          <A class="HL" HREF="#'.f($row,'sq_segmento').'" onClick="window.open(\''.$w_pagina.'SegmentoMod&R='.$w_pagina.$par.'&O=L&w_sq_segmento='.f($row,'sq_segmento').MontaFiltro('GET').'&P1='.$P1.'&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP='.$TP.' - Módulos&SG=SEGMOD\',\'endereco\',\'top=10, left=50, width=700, height=500, toolbar=no, status=no, scrollbars=yes, resizable=yes\');">Módulos</A>&nbsp');
         ShowHTML('          <A class="HL" HREF="#'.f($row,'sq_segmento').'" onClick="window.open(\''.$w_pagina.'SegmentoMenu&R='.$w_pagina.$par.'&O=L&w_sq_segmento='.f($row,'sq_segmento').MontaFiltro('GET').'&P1='.$P1.'&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP='.$TP.' - Menu&SG=SEGMENU\',\'endereco\',\'top=10, left=50, width=700, height=500, toolbar=no, status=no, scrollbars=yes, resizable=yes\');">Menu</A>&nbsp');
         ShowHTML('          <A class="HL" HREF="#'.f($row,'sq_segmento').'" onClick="window.open(\''.$w_pagina.'SegmentoVinc&R='.$w_pagina.$par.'&O=L&w_sq_segmento='.f($row,'sq_segmento').MontaFiltro('GET').'&P1='.$P1.'&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP='.$TP.' - Vínculos&SG=SEGVINC\',\'endereco\',\'top=10, left=50, width=700, height=500, toolbar=no, status=no, scrollbars=yes, resizable=yes\');">Vínculos</A>&nbsp');
