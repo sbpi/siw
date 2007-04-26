@@ -59,6 +59,10 @@ begin
                                 where (p_restricao = 'PROREPORT' and l.fim_real between w_inicio and w_fim)
                                    or (p_restricao = 'PROPREV'   and k.fim      between w_inicio and w_fim)
                                    or (p_restricao = 'PROENTR'   and k.fim between w_inicio and w_fim)
+                                   or (p_restricao = 'PROPEND'   and ((l.fim_real   is null and k.fim <= w_fim) or
+                                                                      (l.fim_real   is not null and k.fim between w_inicio and w_fim and l.fim_real > w_fim)
+                                                                     )
+                                      )
                               )                i on (e.sq_siw_solicitacao = i.sq_tarefa)
           where d.sq_pessoa       = p_cliente
             and j.sigla           <> 'CA'
