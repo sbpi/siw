@@ -88,7 +88,7 @@ begin
                 left     join siw_solicitacao  c  on (a.sq_siw_solicitacao = c.sq_siw_solicitacao)
                   left   join co_pessoa        c1 on (c.solicitante        = c1.sq_pessoa)
                 left     join pe_programa      c2 on (c.sq_solic_pai       = c2.sq_siw_solicitacao)
-                  inner  join pe_plano         k  on (c2.sq_pehorizonte    = k.sq_plano)                
+                  left   join pe_plano         k  on (c2.sq_pehorizonte    = k.sq_plano)                
                 left     join ct_cc            c3 on (c.sq_cc              = c3.sq_cc)
                 left     join pe_objetivo      c4 on (c.sq_peobjetivo      = c4.sq_peobjetivo)   
                   left   join siw_menu         d  on (c.sq_menu            = d.sq_menu)
