@@ -87,44 +87,39 @@ begin
                 c1.sq_pessoa resp_projeto, c1.nome_resumido nm_resp_projeto, c2.titulo nm_programa, c3.nome nm_cc, c4.nome nm_objetivo,
                 e.sq_siw_solicitacao, f.assunto nm_tarefa, g.solicitante, i.nome_resumido nm_resp_tarefa, i.g.inicio, f.fim_real, i.nome_resumido,
                 k.titulo nm_plano, m1.sq_unidade, m1.nome nm_unidade,
-                calculaIGE(c.sq_siw_solicitacao) as ige, calculaide(c.sq_siw_solicitacao, w_fim, w_inicio) as ide                
-           from pj_projeto_etapa               a
+                calculaIGE(c.sq_siw_solicitacao) as ige, 
+                calculaIDE(c.sq_siw_solicitacao, w_fim, w_inicio) as ide                
+           from pj_projeto_etapa                  a
                 left        join co_pessoa        h  on (a.sq_pessoa          = h.sq_pessoa)
                 left        join pj_projeto       b  on (a.sq_siw_solicitacao = b.sq_siw_solicitacao)
                 left        join siw_solicitacao  c  on (a.sq_siw_solicitacao = c.sq_siw_solicitacao)
                   left      join co_pessoa        c1 on (c.solicitante        = c1.sq_pessoa)
                     inner   join sg_autenticacao  m  on (c1.sq_pessoa         = m.sq_pessoa)
                       inner join eo_unidade       m1 on (m.sq_unidade         = m1.sq_unidade) 
-                left     join pe_programa      c2 on (c.sq_solic_pai       = c2.sq_siw_solicitacao)
-                  left   join pe_plano         k  on (c2.sq_pehorizonte    = k.sq_plano)                
-                left     join ct_cc            c3 on (c.sq_cc              = c3.sq_cc)
-                left     join pe_objetivo      c4 on (c.sq_peobjetivo      = c4.sq_peobjetivo)   
-                  left   join siw_menu         d  on (c.sq_menu            = d.sq_menu)
-                  left   join siw_tramite      j  on (c.sq_siw_tramite     = j.sq_siw_tramite)
-                left     join pj_etapa_demanda e  on (a.sq_projeto_etapa   = e.sq_projeto_etapa)
-                  left   join gd_demanda       f  on (e.sq_siw_solicitacao = f.sq_siw_solicitacao)
-                  left   join siw_solicitacao  g  on (e.sq_siw_solicitacao = g.sq_siw_solicitacao)
-                    left join co_pessoa        i  on (g.solicitante        = i.sq_pessoa)
-          where d.sq_pessoa       = p_cliente
-            and j.sigla           <> 'CA'
-            and (p_chave     is null or (p_chave       is not null and a.sq_siw_solicitacao   = p_chave))
-            and (
-                 (
-                  ((a.fim_previsto between w_inicio and w_fim) and a.perc_conclusao < 100) or 
-                  ((g.fim     between w_inicio and w_fim) and a.fim_real is null)
-                 ) or
-                 (
-                  (a.fim_real between w_inicio and w_fim) or 
-                  (f.fim_real between w_inicio and w_fim)
-                 ) or
-                 (
-                  ((a.fim_previsto > w_fim) or (a.fim_previsto < w_inicio and a.perc_conclusao < 100)
-                  ) or 
-                  (a.inicio_previsto < w_inicio and a.perc_conclusao < 100)
-                 ) or 
-                 (
-                  (g.fim > w_fim) or 
-                  (g.inicio < w_inicio and f.fim_real is null)
+                left        join pe_programa      c2 on (c.sq_solic_pai       = c2.sq_siw_solicitacao)
+                  left      join pe_plano         k  on (c2.sq_pehorizonte    = k.sq_plano)                
+                left        join ct_cc            c3 on (c.sq_cc              = c3.sq_cc)
+                left        join pe_objetivo      c4 on (c.sq_peobjetivo      = c4.sq_peobjetivo)   
+                  left      join siw_menu         d  on (c.sq_menu            = d.sq_menu)
+                  left      join siw_tramite      j  on (c.sq_siw_tramite     = j.sq_siw_tramite)
+                left        join pj_etapa_demanda e  on (a.sq_projeto_etapa   = e.sq_projeto_etapa)
+                  left      join gd_demanda       f  on (e.sq_siw_solicitacao = f.sq_siw_solicitacao)
+                  left      join siw_solicitacao  g  on (e.sq_siw_solicitacao = g.sq_siw_solicitacao)
+                    left    join co_pessoa        i  on (g.solicitante        = i.sq_pessoa)
+          where d.sq_pessoa      = p_cliente
+            and j.sigla          <> 'CA'
+            and (p_chave         is null or (p_chave       is not null and a.sq_siw_solicitacao = p_chave))
+            and (p_chave         is not null or 
+                 (p_chave        is null and
+                  (c.inicio      between w_inicio      and w_fim or
+                   c.fim         between w_inicio      and w_fim or
+                   w_inicio      between c.inicio      and c.fim or
+                   w_fim         between c.inicio      and c.fim or
+                   b.inicio_real between w_inicio      and w_fim or
+                   b.fim_real    between w_inicio      and w_fim or
+                   w_inicio      between b.inicio_real and b.fim_real or
+                   w_fim         between b.inicio_real and b.fim_real
+                  )
                  )
                 );            
   End If;

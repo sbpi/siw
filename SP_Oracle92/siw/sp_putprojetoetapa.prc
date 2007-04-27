@@ -55,6 +55,12 @@ begin
       -- Recalcula os percentuais de execução dos pais da etapa
       sp_calculaPercEtapa(w_chave, null);
    
+      -- Atualiza os pesos das etapas
+      sp_ajustaPesoEtapa(w_chave, null);
+
+      -- Atualiza as datas de início e término das etapas superiores
+      sp_ajustaDataEtapa(w_chave);
+
    Elsif p_operacao = 'A' Then -- Alteração
       -- Recupera a etapa pai
       select sq_etapa_pai into w_pai from pj_projeto_etapa where sq_projeto_etapa = p_chave_aux;
@@ -101,6 +107,12 @@ begin
       -- Recalcula os percentuais de execução dos pais da etapa
       sp_calculaPercEtapa(p_chave_aux, null);
    
+      -- Atualiza os pesos das etapas
+      sp_ajustaPesoEtapa(p_chave, null);
+
+      -- Atualiza as datas de início e término das etapas superiores
+      sp_ajustaDataEtapa(p_chave);
+
    Elsif p_operacao = 'E' Then -- Exclusão
       -- Remove as vinculações de riscos
       delete siw_restricao_etapa where sq_projeto_etapa = p_chave_aux;         
@@ -121,6 +133,9 @@ begin
 
     -- Atualiza os pesos das etapas
     sp_ajustaPesoEtapa(p_chave, null);
+
+    -- Atualiza as datas de início e término das etapas superiores
+    sp_ajustaDataEtapa(p_chave);
 
    
    End If;

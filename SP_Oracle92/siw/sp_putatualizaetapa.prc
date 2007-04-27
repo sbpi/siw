@@ -28,5 +28,11 @@ begin
    -- Recalcula os percentuais de execução dos pais da etapa
    sp_calculaPercEtapa(p_chave_aux);
 
+   -- Atualiza os pesos das etapas
+   sp_ajustaPesoEtapa(p_chave, null);
+
+   -- Atualiza as datas de início e término das etapas superiores
+   sp_ajustaDataEtapa(p_chave);
+
 end SP_PutAtualizaEtapa;
 /
