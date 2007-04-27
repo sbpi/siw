@@ -1,7 +1,7 @@
 create or replace procedure SP_GetAcordoAditivo
    (p_cliente     in number   default null,
-    p_chave       in number   default null,
-    p_chave_aux   in number   default null,
+    p_aditivo     in number   default null,
+    p_contrato    in number   default null,
     p_protocolo   in number   default null,
     p_codigo      in varchar2 default null,
     p_inicio      in date     default null,
@@ -41,9 +41,9 @@ begin
                                 from ac_acordo_parcela x
                                group by x.sq_acordo_aditivo
                              )                 d on (a.sq_acordo_aditivo = d.sq_acordo_aditivo)
-          where b.cliente = p_cliente
-            and ((p_chave       is null) or (p_chave        is not null and a.sq_acordo_aditivo  = p_chave))      
-            and ((p_chave_aux   is null) or (p_chave_aux    is not null and a.sq_siw_solicitacao = p_chave_aux))
+          where b.cliente       = p_cliente
+            and ((p_aditivo     is null) or (p_aditivo      is not null and a.sq_acordo_aditivo  = p_aditivo))      
+            and ((p_contrato    is null) or (p_contrato     is not null and a.sq_siw_solicitacao = p_contrato))
             and ((p_protocolo   is null) or (p_protocolo    is not null and a.protocolo          = p_protocolo))
             and ((p_codigo      is null) or (p_codigo       is not null and a.codigo like '%'||p_codigo||'%'))
             and ((p_inicio      is null) or (p_inicio       is not null and ((a.inicio between p_inicio and p_fim) or
@@ -62,8 +62,8 @@ begin
          select count(a.sq_acordo_aditivo) existe
            from ac_acordo_aditivo            a
           where (a.acrescimo = 'S' or a.supressao = 'S')
-            and ((p_chave       is null) or (p_chave        is not null and a.sq_acordo_aditivo  <> p_chave))      
-            and ((p_chave_aux   is null) or (p_chave_aux    is not null and a.sq_siw_solicitacao = p_chave_aux))
+            and ((p_aditivo     is null) or (p_aditivo      is not null and a.sq_acordo_aditivo  <> p_aditivo))      
+            and ((p_contrato    is null) or (p_contrato     is not null and a.sq_siw_solicitacao = p_contrato))
             and ((p_prorrogacao is null) or (p_prorrogacao  is not null and a.prorrogacao        = p_prorrogacao))
             and ((p_revisao     is null) or (p_revisao      is not null and a.revisao            = p_revisao))
             and ((p_inicio      is null) or (p_inicio       is not null and ((a.inicio between p_inicio and p_fim) or
@@ -77,15 +77,16 @@ begin
       open p_result for
          select c.sq_siw_solicitacao, d.sq_menu
            from ac_acordo_aditivo                  a
-                inner       join ac_acordo_parcela b on (a.sq_siw_solicitacao = b.sq_siw_solicitacao)
+                inner       join ac_acordo_parcela b on (a.sq_acordo_aditivo  = b.sq_acordo_aditivo)
                   inner     join fn_lancamento     c on (b.sq_acordo_parcela  = c.sq_acordo_parcela)
                     inner   join siw_solicitacao   d on (c.sq_siw_solicitacao = d.sq_siw_solicitacao)
                       inner join siw_tramite       e on (d.sq_siw_tramite     = e.sq_siw_tramite)
-          where ((substr(p_restricao,11,1)='E' and e.sigla <> 'CA')         or 
-                 (substr(p_restricao,11,1) in ('I','A') and e.sigla = 'AT') or
-                 (substr(p_restricao,11,1)='F' and e.sigla = 'CA')
+          where ((substr(p_restricao,11,1)='E' and coalesce(e.sigla,'-') <> 'CA')         or 
+                 (substr(p_restricao,11,1) in ('I','A') and coalesce(e.sigla,'-') = 'AT') or
+                 (substr(p_restricao,11,1)='F' and coalesce(e.sigla,'-') = 'CA')
                 )
-            and ((p_chave_aux   is null) or (p_chave_aux    is not null and a.sq_siw_solicitacao = p_chave_aux))
+            and ((p_aditivo     is null) or (p_aditivo      is not null and a.sq_acordo_aditivo = p_aditivo))
+            and ((p_contrato    is null) or (p_contrato     is not null and a.sq_siw_solicitacao = p_contrato))
             and ((p_inicio      is null) or (p_inicio       is not null and ((c.vencimento between p_inicio and p_fim)
                                                                             )
                                             )
@@ -97,11 +98,11 @@ begin
                   inner     join fn_lancamento     c on (b.sq_acordo_parcela  = c.sq_acordo_parcela)
                     inner   join siw_solicitacao   d on (c.sq_siw_solicitacao = d.sq_siw_solicitacao)
                       inner join siw_tramite       e on (d.sq_siw_tramite     = e.sq_siw_tramite)
-          where ((substr(p_restricao,11,1)='E' and e.sigla <> 'CA')         or 
-                 (substr(p_restricao,11,1) in ('I','A') and e.sigla = 'AT') or
-                 (substr(p_restricao,11,1)='F' and e.sigla = 'CA')
+          where substr(p_restricao,11,1)<>'E'
+            and ((substr(p_restricao,11,1) in ('I','A') and coalesce(e.sigla,'-') = 'AT') or
+                 (substr(p_restricao,11,1)='F' and coalesce(e.sigla,'-') = 'CA')
                 )
-            and ((p_chave_aux   is null) or (p_chave_aux    is not null and a.sq_siw_solicitacao = p_chave_aux))
+            and ((p_contrato    is null) or (p_contrato     is not null and a.sq_siw_solicitacao = p_contrato))
             and ((p_inicio      is null) or (p_inicio       is not null and ((c.vencimento between p_inicio and p_fim)
                                                                             )
                                             )
@@ -116,7 +117,7 @@ begin
                                 from ac_acordo_parcela x
                                group by x.sq_acordo_aditivo
                              )                 d on (a.sq_acordo_aditivo = d.sq_acordo_aditivo)
-          where ((p_chave_aux   is null) or (p_chave_aux    is not null and a.sq_siw_solicitacao = p_chave_aux));
+          where ((p_contrato   is null) or (p_contrato    is not null and a.sq_siw_solicitacao = p_contrato));
    End If;
 end SP_GetAcordoAditivo;
 /

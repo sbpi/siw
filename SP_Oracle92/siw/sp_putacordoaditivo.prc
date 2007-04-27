@@ -120,10 +120,23 @@ begin
           where sq_acordo_aditivo = p_chave;
       End If;       
    Elsif p_operacao = 'E' Then
-      -- Exclui registro
-      delete ac_acordo_parcela where sq_acordo_aditivo = p_chave;
-      delete ac_acordo_nota    where sq_acordo_aditivo = p_chave;
-      delete ac_acordo_aditivo where sq_acordo_aditivo = p_chave;
+      If w_prorrogacao = 'N' Then
+         -- Atualiza o valor da parcela e remove o vínculo com o aditivo
+         update ac_acordo_parcela set 
+            valor             = valor_inicial + valor_reajuste, 
+            valor_excedente   = 0, 
+            sq_acordo_aditivo = null 
+         where sq_acordo_aditivo = p_chave;
+
+         -- Exclui registro
+         delete ac_acordo_nota    where sq_acordo_aditivo = p_chave;
+         delete ac_acordo_aditivo where sq_acordo_aditivo = p_chave;
+      Else
+         -- Exclui registro
+         delete ac_acordo_parcela where sq_acordo_aditivo = p_chave;
+         delete ac_acordo_nota    where sq_acordo_aditivo = p_chave;
+         delete ac_acordo_aditivo where sq_acordo_aditivo = p_chave;
+      End If;
    End If;
    
 end SP_PutAcordoAditivo;

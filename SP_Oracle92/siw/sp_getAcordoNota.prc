@@ -52,9 +52,13 @@ begin
    Elsif p_restricao = 'LANCAMENTO' Then
       open p_result for
          select c.sq_siw_solicitacao
-           from ac_acordo_nota a
-                inner join ac_parcela_nota b on (a.sq_acordo_nota    = b.sq_acordo_nota)
-                inner join fn_lancamento   c on (b.sq_acordo_parcela = c.sq_acordo_parcela)
+           from ac_acordo_nota                   a
+                inner     join ac_parcela_nota   b on (a.sq_acordo_nota    = b.sq_acordo_nota)
+                inner     join fn_lancamento     c on (b.sq_acordo_parcela = c.sq_acordo_parcela)
+                  inner   join siw_solicitacao   d on (c.sq_siw_solicitacao = d.sq_siw_solicitacao)
+                    inner join siw_tramite       e on (d.sq_siw_tramite     = e.sq_siw_tramite and
+                                                       'CA'                 <> coalesce(e.sigla,'-')
+                                                      )
           where ((p_chave is null) or (p_chave  is not null and a.sq_acordo_nota  = p_chave));
    Elsif p_restricao = 'PARCELA' Then
       open p_result for
