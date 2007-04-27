@@ -3045,7 +3045,7 @@ function EtapaLinha($l_chave,$l_chave_aux,$l_titulo,$l_resp,$l_setor,$l_inicio,$
   $l_html .= chr(13).'        <td align="center" width="1%" nowrap>'.nvl(formataDataEdicao($l_inicio_real,5),'---').'</td>';
   $l_html .= chr(13).'        <td align="center" width="1%" nowrap>'.nvl(formataDataEdicao($l_fim_real,5),'---').'</td>';
   if (nvl($l_valor,'')!='') $l_html .= chr(13).'        <td nowrap align="right" width="1%" nowrap>'.formatNumber($l_valor).'</td>';
-  $l_html .= chr(13).'        <td align="right" width="1%" nowrap>'.$l_perc.' %</td>';
+  $l_html .= chr(13).'        <td align="right" width="1%" nowrap>'.formatNumber($l_perc).' %</td>';
   $l_html .= chr(13).'        <td align="center" width="1%" nowrap>'.$l_peso.'</td>';
   if ($l_ativ > 0) $l_html = $l_html.chr(13).'        <td width="1%" nowrap align="center" title="Número de tarefas ligadas a esta estapa. Clique sobre o número para exibir APENAS as tarefas que você tem acesso."><a class="HL" href="javascript:lista(\''.$l_chave.'\',\''.$l_chave_aux.'\');" onMouseOver="window.status=\'Exibe APENAS as tarefas que você tem acesso.\'; return true;" onMouseOut="window.status=\'\'; return true;">'.$l_ativ.'</a></td>';
   else             $l_html = $l_html.chr(13).'        <td width="1%" nowrap align="center">'.$l_ativ.'</td>';
@@ -3136,7 +3136,7 @@ function EtapaLinhaAtiv($l_chave,$l_chave_aux,$l_titulo,$l_resp,$l_setor,$l_inic
   $l_html .= chr(13).'        <td align="center" width="1%" nowrap>'.nvl(formataDataEdicao($l_inicio_real,5),'---').'</td>';
   $l_html .= chr(13).'        <td align="center" width="1%" nowrap>'.nvl(formataDataEdicao($l_fim_real,5),'---').'</td>';
   if (nvl($l_valor,'')!='') $l_html .= chr(13).'        <td width="1%" nowrap align="right">'.formatNumber($l_valor).'</td>';
-  $l_html .= chr(13).'        <td width="1%" nowrap align="right" >'.$l_perc.' %</td>';
+  $l_html .= chr(13).'        <td width="1%" nowrap align="right" >'.formatNumber($l_perc).' %</td>';
   $l_html .= chr(13).'        <td align="center" width="1%" nowrap>'.$l_peso.'</td>';
   $l_html .= chr(13).'        <td width="1%" nowrap align="center" >'.$l_ativ1.'</td>';
   if ($l_vincula_contrato=='S') $l_html .= chr(13).'        <td align="center" width="1%" nowrap>'.$l_contr.'</td>';
@@ -3291,25 +3291,27 @@ function SolicMail($p_solic,$p_tipo) {
   $l_solic          = $p_solic;
   $w_destinatarios  = '';
   $w_resultado      = ''; 
-  $w_html='<HTML>'.$crlf;
+  
+  
+  $w_html  ='<HTML>'.$crlf;
   $w_html .= BodyOpenMail(null).$crlf;
   $w_html .= '<table border="0" cellpadding="0" cellspacing="0" width="100%">'.$crlf;
   $w_html .= '<tr><td align="center">'.$crlf;
   $w_html .= '    <table width="97%" border="0">'.$crlf;
-  if ($p_tipo==1)       $w_html .= '      <tr valign="top"><td align="center"><b>INCLUSÃO DE '.strtoupper(f($RS_Menu,'nome')).'</b><br><br><td></tr>'.$crlf;
-  elseif ($p_tipo==2)   $w_html .= '      <tr valign="top"><td align="center"><b>TRAMITAÇÃO DE '.strtoupper(f($RS_Menu,'nome')).'</b><br><br><td></tr>'.$crlf;
-  elseif ($p_tipo==3)   $w_html .= '      <tr valign="top"><td align="center"><b>CONCLUSÃO DE '.strtoupper(f($RS_Menu,'nome')).'</b><br><br><td></tr>'.$crlf;
-  $w_html .= '      <tr valign="top"><td><b><font color="#BC3131">ATENÇÃO: Esta é uma mensagem de envio automático. Não responda esta mensagem.</font></b><br><br><td></tr>'.$crlf;
+  if ($p_tipo==1)       $w_html .= '      <tr valign="top"><td align="center"><font size=2><b>INCLUSÃO DE '.strtoupper(f($RS_Menu,'nome')).'</b><br><br><td></tr>'.$crlf;
+  elseif ($p_tipo==2)   $w_html .= '      <tr valign="top"><td align="center"><font size=2><b>TRAMITAÇÃO DE '.strtoupper(f($RS_Menu,'nome')).'</b><br><br><td></tr>'.$crlf;
+  elseif ($p_tipo==3)   $w_html .= '      <tr valign="top"><td align="center"><font size=2><b>CONCLUSÃO DE '.strtoupper(f($RS_Menu,'nome')).'</b><br><br><td></tr>'.$crlf;
+  $w_html .= '      <tr valign="top"><td><b><font size=2 color="#BC3131">ATENÇÃO: Esta é uma mensagem de envio automático. Não responda esta mensagem.</font></b><br><br><td></tr>'.$crlf;
   // Recupera os dados do projeto
   $RSM = db_getSolicData::getInstanceOf($dbms,$p_solic,'PJGERAL');
-  $w_nome ='Projeto '.f($RSM,'titulo').' ('.f($RSM,'sq_siw_solicitacao').')';
+  $w_nome =  f($RSM,'nome').': '.f($RSM,'titulo').' ('.f($RSM,'sq_siw_solicitacao').')';
   $w_html .= $crlf.'<tr><td align="center">';
   $w_html .= $crlf.'    <table width="99%" border="0">';
   $w_html.=chr(13).'      <tr><td colspan="2"><hr NOSHADE color=#000000 size=4></td></tr>';
-  $w_html.=chr(13).'      <tr><td colspan="2"  bgcolor="#f0f0f0"><div align=justify><font size="2"><b>PROJETO: '.f($RSM,'titulo').' ('.f($RSM,'sq_siw_solicitacao').')</b></font></div></td></tr>';
+  $w_html.=chr(13).'      <tr><td colspan="2"  bgcolor="#f0f0f0"><div align=justify><font size="2"><b>'.f($RSM,'nome').': '.f($RSM,'titulo').' ('.f($RSM,'sq_siw_solicitacao').')</b></font></div></td></tr>';
   $w_html.=chr(13).'      <tr><td colspan="2"><hr NOSHADE color=#000000 size=4></td></tr>';
   // Identificação do projeto
-  $w_html .= $crlf.'      <tr><td colspan="2"><br><font size="2"><b>EXTRATO<hr NOSHADE color=#000000 SIZE=1></b></font></td></tr>';  
+  $w_html.=$crlf.'      <tr><td width="30%"><td>';
   // Se a classificação foi informada, exibe.
   if (nvl(f($RSM,'sq_cc'),'')>'') { 
     $w_html .= $crlf.'    <tr><td valign="top"><b>Classificação:</b></td>';
@@ -3364,9 +3366,9 @@ function SolicMail($p_solic,$p_tipo) {
     $RS = db_getPersonData::getInstanceOf($dbms,$w_cliente,f($RS,'sq_pessoa_destinatario'),null,null);
     $w_destinatarios = f($RS,'email').'; ';
   } 
-  $w_html .= $crlf.'      <tr><td colspan="2"><br><font size="2"><b>OUTRAS INFORMAÇÕES<hr NOSHADE color=#000000 SIZE=1></b></font></td></tr>';  
+  $w_html .= $crlf.'      <tr><td colspan="2"><br><font size="2"><b>OUTRAS INFORMAÇÕES<hr NOSHADE color=#000000 SIZE=1></b></font></td></tr>'.$crlf;
   $RS = db_getCustomerSite::getInstanceOf($dbms,$_SESSION['P_CLIENTE']);
-  $w_html .= '      <tr valign="top"><td colspan="2">'.$crlf;
+  $w_html .= '      <tr valign="top"><td colspan="2">';
   $w_html .= '         Para acessar o sistema use o endereço: <b><a class="SS" href="'.f($RS,'logradouro').'" target="_blank">'.f($RS,'Logradouro').'</a></b></li>'.$crlf;
   $w_html .= '      </td></tr>'.$crlf;
   $w_html .= '      <tr valign="top"><td colspan="2">'.$crlf;

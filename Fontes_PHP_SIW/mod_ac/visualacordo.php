@@ -183,7 +183,7 @@ function VisualAcordo($l_chave,$l_O,$l_usuario,$l_P1,$l_P4) {
     // Notas de empenho
     if($w_segmento=='Público' && substr($w_sigla,0,3)=='GCD') {
       $RS1 = db_getAcordoNota::getInstanceOf($dbms,$w_cliente,null,$l_chave,null,null,null,null,null);
-      $RS1 = SortArray($RS1,'cd_aditivo','desc', 'data','desc');
+      $RS1 = SortArray($RS1,'data','desc', 'cd_aditivo','desc');
       $w_html.=chr(13).'      <tr><td colspan="2"><br><font size="2"><b>NOTAS DE EMPENHO<hr NOSHADE color=#000000 SIZE=1></b></font></td></tr>';   
       $w_html.=chr(13).'      <tr><td colspan="2">';
       $w_html.=chr(13).'        <table width=100%  border="1" bordercolor="#00000">';

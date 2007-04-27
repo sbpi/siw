@@ -432,13 +432,13 @@ function VisualAfericao() {
     case 'LIVRE':
       ShowHTML('        <tr valign="middle">');
       selecaoTipoIndicador('<U>T</U>ipo do indicador:','M','Selecione o tipo do indicador',$p_tipo_indicador,null,'p_tipo_indicador','VS'.$p_volta,'onChange="document.Form.target=\'pesquisa\'; document.Form.action=\''.$w_dir.$w_pagina.$par.'\'; document.Form.p_indicador.value=\'\'; document.Form.p_base.value=\'\'; document.Form.w_troca.value=\'p_indicador\'; document.Form.submit();"');
-      selecaoIndicador('<U>I</U>ndicador:','I','Selecione o indicador',$p_indicador,$w_usuario,$p_tipo_indicador,'p_indicador','VS'.$p_volta,'onChange="document.Form.target=\'pesquisa\'; document.Form.action=\''.$w_dir.$w_pagina.$par.'\'; document.Form.p_base.value=\'\'; document.Form.w_troca.value=\'p_base\'; document.Form.submit();"');
+      selecaoIndicador('<U>I</U>ndicador:','I','Selecione o indicador',$p_indicador,null,$w_usuario,$p_tipo_indicador,'p_indicador','VS'.$p_volta,'onChange="document.Form.target=\'pesquisa\'; document.Form.action=\''.$w_dir.$w_pagina.$par.'\'; document.Form.p_base.value=\'\'; document.Form.w_troca.value=\'p_base\'; document.Form.submit();"');
       selecaoBaseGeografica('<U>B</U>ase geográfica:','B','Selecione a base geográfica da aferiçao',$p_base,$w_usuario,$p_indicador,'p_base','VISUALBASE','onChange="document.Form.target=\'pesquisa\'; document.Form.action=\''.$w_dir.$w_pagina.$par.'\'; document.Form.w_troca.value=\'p_base\'; document.Form.submit();"');
       break;
     case 'INDICADOR':
       ShowHTML('<INPUT type="hidden" name="p_tipo_indicador" value="'.$p_tipo_indicador.'">');
       ShowHTML('          <td>Tipo do indicador:<br><b>'.$w_nm_tipo_indicador.'</b>');
-      selecaoIndicador('<U>I</U>ndicador:','I','Selecione o indicador',$p_indicador,$w_usuario,$p_tipo_indicador,'p_indicador','VS'.$p_volta,'onChange="document.Form.target=\'pesquisa\'; document.Form.action=\''.$w_dir.$w_pagina.$par.'\'; document.Form.p_base.value=\'\'; document.Form.w_troca.value=\'p_base\'; document.Form.submit();"');
+      selecaoIndicador('<U>I</U>ndicador:','I','Selecione o indicador',$p_indicador,null,$w_usuario,$p_tipo_indicador,'p_indicador','VS'.$p_volta,'onChange="document.Form.target=\'pesquisa\'; document.Form.action=\''.$w_dir.$w_pagina.$par.'\'; document.Form.p_base.value=\'\'; document.Form.w_troca.value=\'p_base\'; document.Form.submit();"');
       selecaoBaseGeografica('<U>B</U>ase geográfica:','B','Selecione a base geográfica da aferiçao',$p_base,$w_usuario,$p_indicador,'p_base','VISUALBASE','onChange="document.Form.target=\'pesquisa\'; document.Form.action=\''.$w_dir.$w_pagina.$par.'\'; document.Form.w_troca.value=\'p_base\'; document.Form.submit();"');
       break;
     case 'BASE':
@@ -1136,7 +1136,7 @@ function Afericao() {
     ShowHTML('<tr bgcolor="'.$conTrBgColor.'"><td align="center">');
     ShowHTML('    <table width="97%" border="0">');
     ShowHTML('      <tr valign="top">');
-    selecaoIndicador('<U>I</U>ndicador:','I','Selecione o indicador',$w_indicador,$w_usuario,null,'w_indicador','AFERIDOR','onChange="document.Form.action=\''.$w_dir.$w_pagina.$par.'\'; document.Form.w_troca.value=\'w_base\'; document.Form.submit();"');
+    selecaoIndicador('<U>I</U>ndicador:','I','Selecione o indicador',$w_indicador,null,$w_usuario,null,'w_indicador','AFERIDOR','onChange="document.Form.action=\''.$w_dir.$w_pagina.$par.'\'; document.Form.w_troca.value=\'w_base\'; document.Form.submit();"');
     selecaoBaseGeografica('<U>B</U>ase geográfica:','B','Selecione a base geográfica da aferiçao',$w_base,null,null,'w_base',null,'onChange="document.Form.action=\''.$w_dir.$w_pagina.$par.'\'; document.Form.w_troca.value=\'w_afericao\'; document.Form.submit();"');
     ShowHTML('      <tr valign="top">');
     MontaRadioNS('<b>É projeção</b>?',$w_previsao,'w_previsao');
@@ -1274,6 +1274,10 @@ function Solic() {
   Estrutura_Texto_Abre();
   if ($O=='L') {
     ShowHTML('<table align="center" border="0" cellpadding="0" cellspacing="0" width="100%">');
+    ShowHTML('<tr><td colspan=3 bgcolor="'.$conTrBgColorLightBlue2.'"" style="border: 2px solid rgb(0,0,0);">');
+    ShowHTML('  Orientação:<ul>');
+    ShowHTML('  <li>Cadastre todos os indicadores relevantes para o projeto.');
+    ShowHTML('  </ul></b></font></td>');    
     ShowHTML('<tr><td><a accesskey="I" class="SS" href="'.$w_dir.$w_pagina.$par.'&R='.$w_pagina.$par.'&O=I&w_chave='.$w_chave.'&w_indicador='.$w_indicador.'&&P1='.$P1.'&P2='.$P2.'&P3=1&P4='.$P4.'&TP='.$TP.'&SG='.$SG.MontaFiltro('GET').'"><u>I</u>ncluir</a>&nbsp;');
     ShowHTML('    <td align="right"><b>Registros: '.count($RS));
     ShowHTML('<tr><td align="center" colspan=3>');
@@ -1292,7 +1296,11 @@ function Solic() {
         ShowHTML('        <td>'.f($row,'nm_tipo_indicador').'</td>');
         ShowHTML('        <td>'.f($row,'nome').'</td>');
         ShowHTML('        <td align="top" nowrap>');
-        ShowHTML('          <A class="HL" HREF="'.$w_dir.$w_pagina.'Grava&R='.$w_pagina.$par.'&O=E&w_chave='.f($row,'sq_siw_solicitacao').'&w_chave_aux='.f($row,'sq_solic_indicador').'&P1='.$P1.'&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP='.$TP.'&SG='.$SG.MontaFiltro('GET').'" title="Desvinculação do indicador." onClick="return(confirm(\'Confirma desvinculação?\'));">Desvincular</A>&nbsp');
+        if(f($row,'qtd_meta')>0) {
+          ShowHTML('          <A class="hl" HREF="javascript:location.href=this.location.href;" onClick="alert(\'Não é possível desvincular indicador ligado a meta.\')";>Desvincular</A>&nbsp');
+        } else {
+          ShowHTML('          <A class="HL" HREF="'.$w_dir.$w_pagina.'Grava&R='.$w_pagina.$par.'&O=E&w_chave='.f($row,'sq_siw_solicitacao').'&w_chave_aux='.f($row,'sq_solic_indicador').'&P1='.$P1.'&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP='.$TP.'&SG='.$SG.MontaFiltro('GET').'" title="Desvinculação do indicador." onClick="return(confirm(\'Confirma desvinculação?\'));">Desvincular</A>&nbsp');
+        }
         ShowHTML('        </td>');
         ShowHTML('      </tr>');
       } 
@@ -1503,6 +1511,8 @@ function Meta() {
     ShowHTML('<tr><td colspan=3 bgcolor="'.$conTrBgColorLightBlue2.'"" style="border: 2px solid rgb(0,0,0);">');
     ShowHTML('  Orientação:<ul>');
     ShowHTML('    <li>Registre as metas necessárias ao acompanhamento.');
+    ShowHTML('    <li>Antes de cadastrar as metas, informe os indicadores do projeto.');
+    ShowHTML('    <li>Somente indicadores cadastrado no projeto, poderão ser associados as metas.');
     ShowHTML('    <li>Não é permitida a sobreposição de períodos em metas que tenham o mesmo indicador e base geográfica.');
     ShowHTML('    </ul></b></font></td>');
     // Exibe a quantidade de registros apresentados na listagem e o cabeçalho da tabela de listagem
@@ -1572,7 +1582,7 @@ function Meta() {
     ShowHTML('              <td><b>Previsão iní<u>c</u>io:</b><br><input '.$w_Disabled.' accesskey="C" type="text" name="w_inicio" class="STI" SIZE="10" MAXLENGTH="10" VALUE="'.FormataDataEdicao(Nvl($w_inicio,time())).'" onKeyDown="FormataData(this,event);" title="Data prevista para início da etapa.">'.ExibeCalendario('Form','w_inicio').'</td>');
     ShowHTML('              <td><b>Previsão <u>t</u>érmino:</b><br><input '.$w_Disabled.' accesskey="T" type="text" name="w_fim" class="STI" SIZE="10" MAXLENGTH="10" VALUE="'.FormataDataEdicao($w_fim).'" onKeyDown="FormataData(this,event);" title="Data prevista para término da etapa.">'.ExibeCalendario('Form','w_fim').'</td>');
     ShowHTML('      <tr valign="top">');
-    selecaoIndicador('<U>I</U>ndicador:','I','Selecione o indicador',$w_indicador,$w_usuario,null,'w_indicador',null,'onChange="document.Form.action=\''.$w_dir.$w_pagina.$par.'\'; document.Form.w_troca.value=\'w_base\'; document.Form.submit();"');
+    selecaoIndicador('<U>I</U>ndicador:','I','Selecione o indicador',$w_indicador,$w_chave,$w_usuario,null,'w_indicador','META','onChange="document.Form.action=\''.$w_dir.$w_pagina.$par.'\'; document.Form.w_troca.value=\'w_base\'; document.Form.submit();"');
     selecaoBaseGeografica('<U>B</U>ase geográfica:','B','Selecione a base geográfica da aferiçao',$w_base,null,null,'w_base',null,'onChange="document.Form.action=\''.$w_dir.$w_pagina.$par.'\'; document.Form.w_troca.value=\'w_quantidade\'; document.Form.submit();"');
     ShowHTML('      <tr valign="top">');
     if (nvl($w_base,-1)!=5) {

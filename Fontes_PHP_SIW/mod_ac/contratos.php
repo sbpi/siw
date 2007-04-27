@@ -1491,7 +1491,7 @@ function DadosAdicionais() {
     SelecaoTipoReajuste('<u>T</u>ipo de reajuste:','T','Indica o tipo de reajuste do contrato.',$w_tipo_reajuste,null,'w_tipo_reajuste',null,'onChange="document.Form.action=\''.$w_dir.$w_pagina.$par.'\'; document.Form.O.value=\''.$O.'\'; document.Form.w_troca.value=\'w_tipo_reajuste\'; document.Form.submit();"');
     if($w_tipo_reajuste==1) {
       ShowHTML('          <td><b>Ín<u>d</u>ice base:</b><br><INPUT ACCESSKEY="N" '.$w_Disabled.' class="sti" type="text" name="w_indice_base" size="7" maxlength="7" value="'.$w_indice_base.'" onKeyDown="FormataDataMA(this,event);" title="Registra mês e ano (MM/AAAA) do índice origina, quando o acordo permitir reajuste em índices."></td>');
-      selecaoIndicador('<U>I</U>ndicador:','I','Selecione o indicador',$w_sq_eoindicador,$w_usuario,null,'w_sq_eoindicador',null,null);
+      selecaoIndicador('<U>I</U>ndicador:','I','Selecione o indicador',$w_sq_eoindicador,null,$w_usuario,null,'w_sq_eoindicador',null,null);
     }
     ShowHTML('      <tr><td><b><u>L</u>imite de acréscimo/supressão (%):</b><br><input '.$w_Disabled.' accesskey="L" type="text" name="w_limite_variacao" class="STI" SIZE="18" MAXLENGTH="18" VALUE="'.$w_limite_variacao.'" onKeyDown="FormataValor(this,18,2,event);" title="Percentual para indicar o limite de acréscimo ou supressão no valor original."></td>');
     ShowHTML('<tr valign="top">');
@@ -2880,7 +2880,7 @@ function Parcelas() {
         $w_cont+= 1;
         $w_cor = ($w_cor==$conTrBgColor || $w_cor=='') ? $w_cor=$conTrAlternateBgColor : $w_cor=$conTrBgColor;        
         ShowHTML('      <tr bgcolor="'.$w_cor.'" valign="top">');
-        ShowHTML('        <td width="1%" nowrap align="center"><input type="checkbox" name="w_sq_acordo_parcela[]" value="'.f($row,'sq_acordo_parcela').'" DISABLED CHECKED>');
+        ShowHTML('        <td width="1%" nowrap align="center"><input type="checkbox" name="w_sq_acordo_parcela1[]" value="'.f($row,'sq_acordo_parcela').'" DISABLED CHECKED>');
         ShowHTML('<INPUT type="hidden" name="w_sq_acordo_parcela[]" value="'.f($row,'sq_acordo_parcela').'">');
         ShowHTML('<INPUT type="hidden" name="w_inicio[]" value="'.FormataDataEdicao(f($row,'inicio')).'">');
         ShowHTML('<INPUT type="hidden" name="w_fim[]" value="'.FormataDataEdicao(f($row,'fim')).'">');
@@ -3951,7 +3951,7 @@ function Notas() {
   } elseif ($O=='L') {
     // Recupera todos os registros para a listagem 
     $RS = db_getAcordoNota::getInstanceOf($dbms,$w_cliente,null,$w_chave,null,null,null,null,null);
-    $RS = SortArray($RS,'phpdt_data','asc');
+    $RS = SortArray($RS,'data','desc','sq_acordo_aditivo','desc');
   } elseif (!(strpos('AEV',$O)===false) && $w_troca=='') {
     // Recupera os dados do endereço informado 
     $RS = db_getAcordoNota::getInstanceOf($dbms,$w_cliente,$w_chave_aux,$w_chave,null,null,null,null,null);
@@ -4133,8 +4133,8 @@ function Notas() {
         $w_cor = ($w_cor==$conTrBgColor || $w_cor=='') ? $w_cor=$conTrAlternateBgColor : $w_cor=$conTrBgColor;        
         ShowHTML('      <tr bgcolor="'.$w_cor.'" valign="top">');
         $RS = db_getAcordoNota::getInstanceOf($dbms,$w_cliente,$w_chave_aux,f($row,'sq_acordo_parcela'),null,null,null,null,'PARCELA');
-        if(count($RS)>0) ShowHTML('        <td width="1%" '.$w_Disabled.' nowrap align="center"><input type="checkbox" name="w_sq_acordo_parcela[]" value="'.f($row,'sq_acordo_parcela').'" CHECKED>');
-        else             ShowHTML('        <td width="1%" '.$w_Disabled.' nowrap align="center"><input type="checkbox" name="w_sq_acordo_parcela[]" value="'.f($row,'sq_acordo_parcela').'">');
+        if(count($RS)>0) ShowHTML('        <td width="1%" nowrap align="center"><input '.$w_Disabled.' type="checkbox" name="w_sq_acordo_parcela[]" value="'.f($row,'sq_acordo_parcela').'" CHECKED>');
+        else             ShowHTML('        <td width="1%" nowrap align="center"><input '.$w_Disabled.' type="checkbox" name="w_sq_acordo_parcela[]" value="'.f($row,'sq_acordo_parcela').'">');
         ShowHTML('        <td>');
         if (nvl(f($row,'quitacao'),'nulo')=='nulo') {
           if (f($row,'vencimento')<addDays(time(),-1)) {
@@ -4200,12 +4200,9 @@ function Notas() {
 // -------------------------------------------------------------------------
 function SolicMail($p_solic,$p_tipo) {
   extract($GLOBALS);
-  global $w_Disabled;
-
   $l_solic          = $p_solic;
   $w_destinatarios  = '';
   $w_resultado      = '';
-
   // Recupera os dados da tarefa
   $RSM = db_getSolicData::getInstanceOf($dbms,$p_solic,substr($SG,0,3).'GERAL');
   $w_html = '<HTML>'.$crlf;
@@ -4213,44 +4210,41 @@ function SolicMail($p_solic,$p_tipo) {
   $w_html.='<table border="0" cellpadding="0" cellspacing="0" width="100%">'.$crlf;
   $w_html.='<tr><td align="center">'.$crlf;
   $w_html.='    <table width="97%" border="0">'.$crlf;
-  if ($p_tipo==1) {
-    $w_html.='      <tr valign="top"><td align="center"><font size=2><b>INCLUSÃO DE '.strtoupper(f($RSM,'nome')).'</b></font><br><br><td></tr>'.$crlf;
-  } elseif ($p_tipo==2) {
-    $w_html.='      <tr valign="top"><td align="center"><font size=2><b>TRAMITAÇÃO DE '.strtoupper(f($RSM,'nome')).'</b></font><br><br><td></tr>'.$crlf;
-  } elseif ($p_tipo==3) {
-    $w_html.='      <tr valign="top"><td align="center"><font size=2><b>CONCLUSÃO DE '.strtoupper(f($RSM,'nome')).'</b></font><br><br><td></tr>'.$crlf;
-  } 
-  $w_html.='      <tr valign="top"><td><font size=2><b><font color="#BC3131">ATENÇÃO</font>: Esta é uma mensagem de envio automático. Não responda esta mensagem.</b></font><br><br><td></tr>'.$crlf;
+  if ($p_tipo==1)       $w_html.='      <tr valign="top"><td align="center"><font size=2><b>INCLUSÃO DE '.strtoupper(f($RSM,'nome')).'</b></font><br><br><td></tr>'.$crlf;
+  elseif ($p_tipo==2)   $w_html.='      <tr valign="top"><td align="center"><font size=2><b>TRAMITAÇÃO DE '.strtoupper(f($RSM,'nome')).'</b></font><br><br><td></tr>'.$crlf;
+  elseif ($p_tipo==3)   $w_html.='      <tr valign="top"><td align="center"><font size=2><b>CONCLUSÃO DE '.strtoupper(f($RSM,'nome')).'</b></font><br><br><td></tr>'.$crlf;
+  $w_html.='      <tr valign="top"><td><b><font size=2 color="#BC3131">ATENÇÃO: Esta é uma mensagem de envio automático. Não responda esta mensagem.</font></b><br><br><td></tr>'.$crlf;
   $w_nome = f($RSM,'nome').' '.f($RSM,'codigo_interno').' ('.f($RSM,'sq_siw_solicitacao').')';
-  $w_html.=$crlf.'<tr bgcolor="'.$conTrBgColor.'"><td align="center">';
+  $w_html.=$crlf.'<tr><td align="center">';
   $w_html.=$crlf.'    <table width="99%" border="0">';
-  $w_html.=$crlf.'      <tr><td>Objeto: <b>'.f($RSM,'codigo_interno').' ('.f($RSM,'sq_siw_solicitacao').')<br>'.CRLF2BR(f($RSM,'objeto')).'</b></td></tr>';
+  $w_html.=$crlf.'      <tr><td colspan="2"><hr NOSHADE color=#000000 size=4></td></tr>';
+  $w_html.=$crlf.'      <tr><td colspan="2"  bgcolor="#f0f0f0"><div align=justify><font size="2"><b>'.f($RSM,'nome').': '.f($RSM,'codigo_interno').' '.CRLF2BR(f($RSM,'objeto')).' ('.f($RSM,'sq_siw_solicitacao').')</b></font></div></td></tr>';
+  $w_html.=$crlf.'      <tr><td colspan="2"><hr NOSHADE color=#000000 size=4></td></tr>';
   // Identificação do contrato
-  // $w_html.=$crlf.'      <tr><td align="center" bgcolor="#D0D0D0" style="border: 2px solid rgb(0,0,0);"><b>EXTRATO</td>';
-  $w_html.=$crlf.'      <tr><td colspan="2"><br><font size="2"><b>EXTRATO<hr NOSHADE color=#000000 SIZE=1></b></font></td></tr>';  
+  $w_html.=$crlf.'      <tr><td width="30%"><td>';
   if (nvl(f($RSM,'nm_projeto'),'')>'') {
     $w_html.=$crlf.'      <tr><td>Projeto: <br><b>'.f($RSM,'nm_projeto').'  ('.f($RSM,'sq_solic_pai').')</b></td>';
   } 
   // Se a classificação foi informada, exibe.
   if (nvl(f($RSM,'sq_cc'),'')>'') {
-    $w_html.=$crlf.'      <tr><td>Classificação:</b></td>';
+    $w_html.=$crlf.'      <tr><td><b>Classificação:</b></td>';
     $w_html.=$crlf.'        <td>'.f($RSM,'nm_cc').' </b></td>';
   } 
-  $w_html.=$crlf.'        <tr><td>Responsável pelo monitoramento:</b></td>';
+  $w_html.=$crlf.'        <tr><td><b>Responsável pelo monitoramento:</b></td>';
   $w_html.=$crlf.'          <td>'.f($RSM,'nm_solic').'</td></tr>';
-  $w_html.=$crlf.'        <tr><td>Unidade responsável pelo monitoramento:</b></td>';
+  $w_html.=$crlf.'        <tr><td><b>Unidade responsável pelo monitoramento:</b></td>';
   $w_html.=$crlf.'          <td>'.f($RSM,'nm_unidade_resp').'</td></tr>';
-  $w_html.=$crlf.'        <tr><td>Início vigência:</b></td>';
+  $w_html.=$crlf.'        <tr><td><b>Início vigência:</b></td>';
   $w_html.=$crlf.'          <td>'.FormataDataEdicao(f($RSM,'inicio')).' </td></tr>';
-  $w_html.=$crlf.'        <tr><td>Término vigência:</b></td>';
+  $w_html.=$crlf.'        <tr><td><b>Término vigência:</b></td>';
   $w_html.=$crlf.'          <td>'.FormataDataEdicao(f($RSM,'fim')).' </td></tr>';
   // Outra parte
   $RSM1 = db_getBenef::getInstanceOf($dbms,$w_cliente,Nvl(f($RSM,'outra_parte'),0),null,null,null,Nvl(f($RSM,'sq_tipo_pessoa'),0),null,null);
   if (count($RSM1)>0) {
     foreach($RSM1 as $row) {
-      if (substr($SG,0,3)=='GCB')   $w_html.=$crlf.'      <tr><td colspan="2"><br><font size="2"><b>BOLSISTA<hr NOSHADE color=#000000 SIZE=1></b></font></td></tr>';  
-      else                          $w_html.=$crlf.'      <tr><td colspan="2"><br><font size="2"><b>OUTRA PARTE<hr NOSHADE color=#000000 SIZE=1></b></font></td></tr>';  
-      $w_html.=$crlf.'      <tr><td><b>';
+      if (substr($SG,0,3)=='GCB')   $w_html.=$crlf.'      <tr><td colspan="2"><br><font size="2"><b>BOLSISTA<hr NOSHADE color=#000000 SIZE=1></b></font></td></tr>'.$crlf;
+      else                          $w_html.=$crlf.'      <tr><td colspan="2"><br><font size="2"><b>OUTRA PARTE<hr NOSHADE color=#000000 SIZE=1></b></font></td></tr>'.$crlf;
+      $w_html.=$crlf.'      <tr><td colspan=2>';
       $w_html.=$crlf.'          '.f($row,'nm_pessoa').' ('.f($row,'nome_resumido').')';
       if (Nvl(f($RSM,'sq_tipo_pessoa'),0)==1) {
         $w_html.=$crlf.'          - '.f($row,'cpf');
@@ -4259,43 +4253,45 @@ function SolicMail($p_solic,$p_tipo) {
       } 
     }
   } 
-  $w_html.=$crlf.'</tr>';
+//  $w_html.=$crlf.'</tr>';
   //Recupera o último log
   $RS = db_getSolicLog::getInstanceOf($dbms,$p_solic,null,'LISTA');
   $RS = SortArray($RS,'phpdt_data','desc');
   foreach ($RS as $row) { $RS = $row; break; }
   $w_data_encaminhamento = f($RS,'phpdt_data');
-  if ($p_tipo==2) {
-    $w_html.=$crlf.'      <tr><td colspan="2"><b>ÚLTIMO ENCAMINHAMENTO<hr NOSHADE color=#000000 SIZE=1></b></font></td></tr>';  
-    $w_html.=$crlf.'      <tr><td>De:</b></td>';
-    $w_html.=$crlf.'        <td>'.f($RS,'responsavel').'</td></tr>';
-    $w_html.=$crlf.'      <tr><td>Para:</b></td>';
-    $w_html.=$crlf.'        <td>'.f($RS,'destinatario').'</td></tr>';
-    $w_html.=$crlf.'      <tr><td>Despacho:</b></td>';
-    $w_html.=$crlf.'        <td>'.CRLF2BR(Nvl(f($RS,'despacho'),'---')).' </td></tr>';
+  if ($p_tipo == 2) { // Se for tramitação
+    // Encaminhamento
+    $w_html .= $crlf.'      <tr><td colspan="2"><br><font size="2"><b>ÚLTIMO ENCAMINHAMENTO<hr NOSHADE color=#000000 SIZE=1></b></font></td></tr>';  
+    $w_html .= $crlf.'      <tr><td valign="top" colspan="2">';
+    $w_html .= $crlf.'      <tr><td><b>De:</b></td>';
+    $w_html .= $crlf.'        <td>'.f($RS,'responsavel').'</td></tr>';
+    $w_html .= $crlf.'      <tr><td><b>Para:</b></td>';
+    $w_html .= $crlf.'        <td>'.f($RS,'destinatario').'</td></tr>';
+    $w_html .= $crlf.'      <tr><td><b>Despacho:</b></td>';
+    $w_html .= $crlf.'        <td>'.CRLF2BR(Nvl(f($RS,'despacho'),'---')).' </td></tr>';
+
     // Configura o destinatário da tramitação como destinatário da mensagem
     $RS = db_getPersonData::getInstanceOf($dbms,$w_cliente,f($RS,'sq_pessoa_destinatario'),null,null);
-    $w_destinatarios       = f($RS,'email').'; ';
-  } 
-  $w_html.=$crlf.'      <tr><td colspan="2"><b>OUTRAS INFORMAÇÕES<hr NOSHADE color=#000000 SIZE=1></b></font></td></tr>';  
+    $w_destinatarios = f($RS,'email').'; ';
+  }  
+  $w_html .= $crlf.'      <tr><td colspan="2"><br><font size="2"><b>OUTRAS INFORMAÇÕES<hr NOSHADE color=#000000 SIZE=1></b></font></td></tr>'.$crlf;
   $RS = db_getCustomerSite::getInstanceOf($dbms,$_SESSION['P_CLIENTE']);
-  $w_html.='      <tr valign="top"><td>'.$crlf;
-  $w_html.='         Para acessar o sistema use o endereço: <b><a class="ss" href="'.f($RS,'logradouro').'" target="_blank">'.f($RS,'Logradouro').'</a></b></li>'.$crlf;
-  $w_html.='      </td></tr>'.$crlf;
-  $w_html.='      <tr valign="top"><td>'.$crlf;
-  $w_html.='         Dados da ocorrência:<br>'.$crlf;
-  $w_html.='         <ul>'.$crlf;
-  $w_html.='         <li>Responsável: <b>'.$_SESSION['NOME'].'</b></li>'.$crlf;
-  $w_html.='         <li>Data: <b>'.date('d/m/Y, H:i:s',$w_data_encaminhamento).'</b></li>'.$crlf;
-  $w_html.='         <li>IP de origem: <b>'.$_SERVER['REMOTE_ADDR'].'</b></li>'.$crlf;
-  $w_html.='         </ul>'.$crlf;
-  $w_html.='      </td></tr>'.$crlf;
-  $w_html.='    </table>'.$crlf;
-  $w_html.='</td></tr>'.$crlf;
-  $w_html.='</table>'.$crlf;
-  $w_html.='</table>'.$crlf;
-  $w_html.='</BODY>'.$crlf;
-  $w_html.='</HTML>'.$crlf;
+  $w_html .='      <tr valign="top"><td colspan="2">';
+  $w_html .='         Para acessar o sistema use o endereço: <b><a class="ss" href="'.f($RS,'logradouro').'" target="_blank">'.f($RS,'Logradouro').'</a></b></li>'.$crlf;
+  $w_html .='      </td></tr>'.$crlf;
+  $w_html .= '      <tr valign="top"><td colspan="2">'.$crlf;
+  $w_html .='         Dados da ocorrência:<br>'.$crlf;
+  $w_html .='         <ul>'.$crlf;
+  $w_html .='         <li>Responsável: <b>'.$_SESSION['NOME'].'</b></li>'.$crlf;
+  $w_html .='         <li>Data: <b>'.date('d/m/Y, H:i:s',$w_data_encaminhamento).'</b></li>'.$crlf;
+  $w_html .='         <li>IP de origem: <b>'.$_SERVER['REMOTE_ADDR'].'</b></li>'.$crlf;
+  $w_html .='         </ul>'.$crlf;
+  $w_html .='      </td></tr>'.$crlf;
+  $w_html .='    </table>'.$crlf;
+  $w_html .='</td></tr>'.$crlf;
+  $w_html .='</table>'.$crlf;
+  $w_html .='</BODY>'.$crlf;
+  $w_html .='</HTML>'.$crlf;
 
   // Recupera o e-mail do responsável
   $RS = db_getPersonData::getInstanceOf($dbms,$w_cliente,f($RSM,'solicitante'),null,null);

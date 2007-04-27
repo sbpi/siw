@@ -1040,7 +1040,7 @@ function Grava() {
         $w_html = $w_html.'<tr bgcolor="'.$conTrBgColor.'"><td align="center">'.$crlf;
         $w_html = $w_html.'    <table width="97%" border="0">'.$crlf;
         $w_html = $w_html.'      <tr valign="top"><td><font size=2><b><font color="#BC3131">ATENÇÃO</font>: Esta é uma mensagem de envio automático. Não responda esta mensagem.</b></font><br><br><td></tr>'.$crlf;
-        if (!(strpos('IT',$O)===false)) {
+        if (strpos('IT',$O)!==false) {
           if ($O=='I') {
             $w_html = $w_html.'      <tr valign="top"><td align="center"><font size=2><b>CRIAÇÃO DE USUÁRIO</b></font><br><br><td></tr>'.$crlf;
           } elseif ($O=='T') {
@@ -1073,7 +1073,7 @@ function Grava() {
           $w_html = $w_html.'         <li>Acessos bloqueados por expiração do tempo de vida da senha de acesso ou assinaturas eletrônicas, ou por exceder o máximo de erros consecutivos, só podem ser desbloqueados pelo gestor de segurança do sistema.</li>'.$crlf;
           $w_html = $w_html.'         </ol>'.$crlf;
           $w_html = $w_html.'      </font></td></tr>'.$crlf;
-        } elseif (!(strpos("ED",$O)===false)) {
+        } elseif (strpos("ED",$O)!==false) {
           if ($O=='E') {
             $w_html = $w_html.'      <tr valign="top"><td align="center"><font size=2><b>EXCLUSÃO DE USUÁRIO</b></font><br><br><td></tr>'.$crlf;
           } elseif ($O=='D') {
@@ -1106,6 +1106,7 @@ function Grava() {
         $w_html = $w_html.'</BODY>'.$crlf;
         $w_html = $w_html.'</HTML>'.$crlf;
         // Executa a função de envio de e-mail
+        $w_resultado = '';
         if ($O=='I') {
           $w_resultado=EnviaMail('Aviso de criação de usuário',$w_html,$_REQUEST['w_email']);
         } elseif ($O=='E') {
@@ -1120,12 +1121,10 @@ function Grava() {
       $RS = db_getLinkData::getInstanceOf($dbms,$_SESSION['P_CLIENTE'],$SG);
       ScriptOpen('JavaScript');
       if ($SG=='SGUSU' || $SG=='RHUSU' || $SG=='CLUSUARIO') {
-        if (!(strpos('IAD',$O)===false)) {
-          if ($w_resultado>'') {
-            ShowHTML('  alert(\'ATENÇÃO: operação executada mas não foi possível proceder o envio do e-mail.\n'.$w_resultado.'\');');
-          } else {
-            ShowHTML('  alert(\'Operação executada!\');');
-          } 
+        if ($w_resultado>'') {
+          ShowHTML('  alert(\'ATENÇÃO: operação executada mas não foi possível proceder o envio do e-mail.\n'.$w_resultado.'\');');
+        } else {
+          ShowHTML('  alert(\'Operação executada!\');');
         } 
         ShowHTML('  location.href=\''.f($RS,'link').'&O=L&w_cliente='.$_REQUEST['w_cliente'].'&w_sq_solicitacao='.$_REQUEST['w_sq_solicitacao'].'&P1='.$P1.'&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP='.$TP.'&SG='.$SG.MontaFiltro('GET').'\';');
       } else {

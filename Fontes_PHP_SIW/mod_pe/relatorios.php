@@ -23,7 +23,7 @@ include_once($w_dir_volta.'funcoes/selecaoPlanoEstrategico.php');
 //  /relatorios.php
 // ------------------------------------------------------------------------
 // Nome     : Billy Jones Leal dos Santos
-// Descricao: Rrelatórios Executivo 
+// Descricao: Relatórios Executivo de programas e projetos
 // Mail     : billy@sbpi.com.br
 // Criacao  : 23/04/2007 15:00
 // Versao   : 1.0.0.0
@@ -204,7 +204,7 @@ function Rel_Executivo() {
                 ShowHTML('          <tr valign="top" align="center">');
                 ShowHTML('            <td nowrap>');    
                 ShowHTML(ExibeImagemSolic(f($row3,'sigla'),f($row3,'inicio'),f($row3,'fim'),f($row3,'inicio_real'),f($row3,'fim_real'),f($row3,'aviso_prox_conc'),f($row3,'aviso'),f($row3,'sg_tramite'), null));
-                if ($w_tipo!='WORD') ShowHTML('            <A class="HL" HREF="projeto.php?par=Visual&O=L&w_chave='.f($row3,'sq_siw_solicitacao').'&w_tipo=Volta&P1='.$P1.'&P2='.f($row3,'sq_menu').'&P3='.$P3.'&P4='.$P4.'&TP='.$TP.'&SG='.$SG.MontaFiltro('GET').'" title="Exibe as informações deste registro." target="_blank">'.f($row3,'sq_siw_solicitacao').'&nbsp;</a>');
+                if ($w_tipo!='WORD') ShowHTML('            <A class="HL" HREF="projeto.php?par=Visual&O=L&w_chave='.f($row3,'sq_siw_solicitacao').'&P1='.$P1.'&P2='.f($row3,'sq_menu').'&P3='.$P3.'&P4='.$P4.'&TP='.$TP.'&SG='.$SG.MontaFiltro('GET').'" title="Exibe as informações deste registro." target="_blank">'.f($row3,'sq_siw_solicitacao').'&nbsp;</a>');
                 else                 ShowHTML('            '.f($row3,'sq_siw_solicitacao').''); 
                 ShowHTML('            <td align="left">'.f($row3,'titulo').'</td>');
                 if ($w_tipo!='WORD') ShowHTML('            <td align="left">'.ExibePessoa(null,$w_cliente,f($row3,'solicitante'),$TP,f($row3,'nm_solic')).'</td>');

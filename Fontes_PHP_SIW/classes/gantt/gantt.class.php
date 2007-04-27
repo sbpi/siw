@@ -345,12 +345,14 @@ class gantt {
 
         $y = $this->img_height - $this->definitions['legend']['y'];
         $y_ = $this->definitions['legend']['y_'];
-        foreach ($this->planned['phase'] as $cod=>$detail) {
-            if ($this->planned['phase'][$cod]['start']) {
-                $planned++;
-            }
+        $planned = 0;
+        if(count($this->planned['phase'])>0) {
+          foreach ($this->planned['phase'] as $cod=>$detail) {
+              if ($this->planned['phase'][$cod]['start']) {
+                  $planned++;
+              }
+          }
         }
-        //$planned = 0;
         if ($planned > 0) {
             $this->rectangule($x,$y+5,$x2,$y+10,$this->planned['color'],$this->planned['alpha']);
             $this->text($this->definitions['planned']['legend'],$x2+$xdiff,$y,$this->definitions["legend"]['text_color']);

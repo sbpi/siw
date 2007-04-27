@@ -400,7 +400,11 @@ function VisualProjeto($l_chave,$operacao,$l_usuario) {
   if(count($RS)>0 && $l_nome_menu['ETAPA']!='') {
     $RS1 = db_getSolicData::getInstanceOf($dbms,$l_chave,'PJGERAL');
     $l_html .= chr(13).'      <tr><td colspan=2><br><font size="2"><b>'.$l_nome_menu['ETAPA'].'<hr NOSHADE color=#000000 SIZE=1></b></font></td></tr>';
-    $l_html .= chr(13).'      <tr><td colspan="2">[<A class="HL" HREF="'.$conRootSIW.'mod_pr/graficos.php?par=hier&w_chave='.$l_chave.'" TARGET="EAP" TITLE="Exibe diagrama hierárquico da estrutura analítica do projeto.">DIAGRAMA HIERÁRQUICO</A>] [<A CLASS="HL" HREF="'.$conRootSIW.'mod_pr/graficos.php?par=gantt&w_chave='.$l_chave.'" TARGET="GANTT" TITLE="Exibe gráfico de Gantt do projeto.">GRÁFICO DE GANTT</A>] [<A CLASS="HL" HREF="'.$conRootSIW.'mod_pr/relatorios.php?par=Rel_Progresso&p_projeto='.$l_chave.'&p_inicio='.formataDataEdicao(first_Day(time())).'&p_fim='.formataDataEdicao(last_Day(time())).'&O=L&SG=RELPJPROG&TP=Relatório de progresso " TARGET="GANTT" TITLE="Exibe relatório de progresso do mês corrente.">PROGRESSO NO MÊS</A>]';
+    $l_html .= chr(13).'      <tr><td colspan="2">';
+    $l_html .= chr(13).'        [<A class="HL" HREF="'.$conRootSIW.'mod_pr/graficos.php?par=hier&w_chave='.$l_chave.'" TARGET="EAP" TITLE="Exibe diagrama hierárquico da estrutura analítica do projeto.">DIAGRAMA HIERÁRQUICO</A>]';
+    $l_html .= chr(13).'        [<A CLASS="HL" HREF="'.$conRootSIW.'mod_pr/graficos.php?par=gantt&w_chave='.$l_chave.'" TARGET="GANTT" TITLE="Exibe gráfico de Gantt do projeto.">GRÁFICO DE GANTT</A>]';
+    $l_html .= chr(13).'        [<A CLASS="HL" HREF="'.$conRootSIW.'mod_pr/relatorios.php?par=Rel_Progresso&p_projeto='.$l_chave.'&p_inicio='.formataDataEdicao(first_Day(time())).'&p_fim='.formataDataEdicao(last_Day(time())).'&p_indicador=S&p_indicador=S&p_prevista=S&p_realizada=S&p_pendente=S&p_proximo=S&p_questoes=S&O=L&SG=RELPJPROG&TP=Relatório de progresso " TARGET="GANTT" TITLE="Exibe relatório de progresso do mês corrente.">PROGRESSO NO MÊS</A>]';
+
     $l_html .= chr(13).'      <tr><td align="center" colspan="2">';
     $l_html .= chr(13).'         <table width=100%  border="1" bordercolor="#00000">';
     $l_html .= chr(13).'          <tr><td rowspan=2 bgColor="#f0f0f0"><div align="center"><b>Etapa</b></div></td>';
@@ -440,7 +444,7 @@ function VisualProjeto($l_chave,$operacao,$l_usuario) {
 
   if ($operacao=='T') {
     // Indicadores
-    $RS = db_getSolicIndicador::getInstanceOf($dbms,$l_chave,null,null,null);
+    $RS = db_getSolicIndicador::getInstanceOf($dbms,$l_chave,null,null,'VISUAL');
     $RS = SortArray($RS,'nm_tipo_indicador','asc','nome','asc');
     if (count($RS)>0 && $l_nome_menu['INDSOLIC']!='') { 
       $l_html.=chr(13).'      <tr><td colspan="2"><br><font size="2"><b>'.$l_nome_menu['INDSOLIC'].'<hr NOSHADE color=#000000 SIZE=1></b></font></td></tr>';
@@ -480,7 +484,7 @@ function VisualProjeto($l_chave,$operacao,$l_usuario) {
         $l_html .= chr(13).'        <td>'.f($row,'titulo').'</td>';
         $l_html .= chr(13).'        <td align="center">'.date(d.'/'.m.'/'.y,f($row,'inicio')).'</td>';
         $l_html .= chr(13).'        <td align="center">'.date(d.'/'.m.'/'.y,f($row,'fim')).'</td>';
-        $l_html .= chr(13).'        <td>'.f($row,'nm_indicador').'</td>';
+        $l_html .= chr(13).'        <td><A class="HL" HREF="javascript:this.status.value;" onClick="window.open(\''.$conRootSIW.'mod_pe/indicador.php?par=FramesAfericao&R='.$w_pagina.$par.'&O=L&w_troca=p_base&p_tipo_indicador='.f($row,'sq_tipo_indicador').'&p_indicador='.f($row,'sq_eoindicador').'&p_pesquisa=BASE&p_volta=&P1='.$P1.'&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP='.$TP.'&SG='.$SG.'\',\'Afericao\',\'width=730,height=500,top=30,left=30,status=no,resizable=yes,scrollbars=yes,toolbar=no\');" title="Exibe informaçoes sobre o indicador.">'.f($row,'nm_indicador').'</a></td></td>';
         $l_html .= chr(13).'        <td>'.f($row,'nm_base_geografica').'</td>';
         $l_html .= chr(13).'        <td align="right">'.formatNumber(f($row,'quantidade'),4).'</td>';
         $l_html .= chr(13).'        <td align="center">'.f($row,'sg_unidade_medida').'</td>';        

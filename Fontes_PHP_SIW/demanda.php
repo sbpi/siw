@@ -1787,32 +1787,30 @@ function Concluir() {
 // -------------------------------------------------------------------------
 function SolicMail($p_solic,$p_tipo) {
   extract($GLOBALS);
-  global $w_Disabled;
-
   $l_solic          = $p_solic;
   $w_destinatarios  = '';
   $w_resultado      = '';
   $w_html='<HTML>'.$crlf;
   $w_html.=BodyOpenMail(null).$crlf;
   $w_html.='<table border="0" cellpadding="0" cellspacing="0" width="100%">'.$crlf;
-  $w_html.='<tr bgcolor="'.$conTrBgColor.'"><td align="center">'.$crlf;
+  $w_html.='<tr><td align="center">'.$crlf;
   $w_html.='    <table width="97%" border="0">'.$crlf;
-  if ($p_tipo==1) {
-    $w_html.='      <tr valign="top"><td align="center"><font size=2><b>INCLUSÃO DE '.strtoupper(f($RS_Menu,'nome')).'</b><br><br><td></tr>'.$crlf;
-  } elseif ($p_tipo==2) {
-    $w_html.='      <tr valign="top"><td align="center"><font size=2><b>TRAMITAÇÃO DE '.strtoupper(f($RS_Menu,'nome')).'</b><br><br><td></tr>'.$crlf;
-  } elseif ($p_tipo==3) {
-    $w_html.='      <tr valign="top"><td align="center"><font size=2><b>CONCLUSÃO DE '.strtoupper(f($RS_Menu,'nome')).'</b><br><br><td></tr>'.$crlf;
-  } 
+  if ($p_tipo==1)       $w_html.='      <tr valign="top"><td align="center"><font size=2><b>INCLUSÃO DE '.strtoupper(f($RS_Menu,'nome')).'</b><br><br><td></tr>'.$crlf;
+  elseif ($p_tipo==2)   $w_html.='      <tr valign="top"><td align="center"><font size=2><b>TRAMITAÇÃO DE '.strtoupper(f($RS_Menu,'nome')).'</b><br><br><td></tr>'.$crlf;
+  elseif ($p_tipo==3)   $w_html.='      <tr valign="top"><td align="center"><font size=2><b>CONCLUSÃO DE '.strtoupper(f($RS_Menu,'nome')).'</b><br><br><td></tr>'.$crlf;
   $w_html.='      <tr valign="top"><td><font size=2><b><font color="#BC3131">ATENÇÃO: Esta é uma mensagem de envio automático. Não responda esta mensagem.</b><br><br><td></tr>'.$crlf;
   // Recupera os dados da demanda
   $RSM = db_getSolicData::getInstanceOf($dbms,$p_solic,'GDGERAL');
   $w_nome='Demanda '.f($RSM,'sq_siw_solicitacao');
-  $w_html.=$crlf.'<tr bgcolor="'.$conTrBgColor.'"><td align="center">';
+  $w_html.=$crlf.'<tr><td align="center">';
   $w_html.=$crlf.'    <table width="99%" border="0">';
-  $w_html.=$crlf.'      <tr><td>Detalhamento: <b>['.$p_solic.']<br>'.CRLF2BR(f($RSM,'assunto')).'</b></td></tr>';
+  $w_html.=$crlf.'      <tr><td colspan="2"><hr NOSHADE color=#000000 size=4></td></tr>';
+  $w_html.=$crlf.'      <tr><td colspan="2"  bgcolor="#f0f0f0"><div align=justify><font size="2"><b>DEMANDA: '.CRLF2BR(f($RSM,'assunto')).' ('.$p_solic.')</b></font></div></td></tr>';
+  $w_html.=$crlf.'      <tr><td colspan="2"><hr NOSHADE color=#000000 size=4></td></tr>';
+
   // Identificação da demanda
-  $w_html.=$crlf.'      <tr><td valign="top" colspan="2" align="center" bgcolor="#D0D0D0" style="border: 2px solid rgb(0,0,0);"><b>EXTRATO DA DEMANDA</td>';
+  $w_html .= $crlf.'      <tr><td colspan="2"><br><font size="2"><b>EXTRATO<hr NOSHADE color=#000000 SIZE=1></b></font></td></tr>';  
+
   // Se a classificação foi informada, exibe.
   if (nvl(f($RSM,'sq_cc'),'')>'') { 
     $w_html .= $crlf.'    <tr><td valign="top"><b>Classificação:</b></td>';
@@ -1832,9 +1830,10 @@ function SolicMail($p_solic,$p_tipo) {
 
   // Informações adicionais
   if (Nvl(f($RSM,'descricao'),'')>'') {
-    $w_html.=$crlf.'      <tr><td valign="top">Resultados da demanda:<br><b>'.CRLF2BR(f($RSM,'descricao')).' </b></td>';
+    $w_html.=$crlf.'      <tr><td valign="top"><b>Resultados da demanda:</b></td>';
+    $w_html .=$crlf.'        <td>'.CRLF2BR(f($RSM,'descricao')).'</td>';
   }
-  $w_html.=$crlf.'    </table>';
+
   $w_html.=$crlf.'</tr>';
   // Dados da conclusão da demanda, se ela estiver nessa situação
   if (f($RSM,'concluida')=='S' && Nvl(f($RSM,'data_conclusao'),'')>'') {
@@ -1851,22 +1850,24 @@ function SolicMail($p_solic,$p_tipo) {
   $RS = SortArray($RS,'phpdt_data','desc');
   foreach ($RS as $row) { $RS = $row; break; }
   $w_data_encaminhamento = f($RS,'phpdt_data');
-  // Exibe dados do encaminhamento apenas se for tramitação. Se for conclusão, apenas recupera o momento de registro.
-  if ($p_tipo==2) {
-    $w_html.=$crlf.'      <tr><td valign="top" colspan="2" align="center" bgcolor="#D0D0D0" style="border: 2px solid rgb(0,0,0);"><b>ÚLTIMO ENCAMINHAMENTO</td>';
-    $w_html.=$crlf.'      <tr><td valign="top" colspan="2"><table border=0 width="100%" cellspacing=0>';
-    $w_html.=$crlf.'          <tr valign="top">';
-    $w_html.=$crlf.'          <td>De:<br><b>'.f($RS,'responsavel').'</b></td>';
-    $w_html.=$crlf.'          <td>Para:<br><b>'.f($RS,'destinatario').'</b></td>';
-    $w_html.=$crlf.'          <tr valign="top"><td colspan=2>Despacho:<br><b>'.CRLF2BR(Nvl(f($RS,'despacho'),'---')).' </b></td>';
-    $w_html.=$crlf.'          </table>';
-    // Se for tramitação, configura o destinatário da tramitação como destinatário da mensagem
+  if ($p_tipo == 2) { // Se for tramitação
+    // Encaminhamento
+    $w_html .= $crlf.'      <tr><td colspan="2"><br><font size="2"><b>ÚLTIMO ENCAMINHAMENTO<hr NOSHADE color=#000000 SIZE=1></b></font></td></tr>';  
+    $w_html .= $crlf.'      <tr><td valign="top" colspan="2">';
+    $w_html .= $crlf.'      <tr><td><b>De:</b></td>';
+    $w_html .= $crlf.'        <td>'.f($RS,'responsavel').'</td></tr>';
+    $w_html .= $crlf.'      <tr><td><b>Para:</b></td>';
+    $w_html .= $crlf.'        <td>'.f($RS,'destinatario').'</td></tr>';
+    $w_html .= $crlf.'      <tr><td><b>Despacho:</b></td>';
+    $w_html .= $crlf.'        <td>'.CRLF2BR(Nvl(f($RS,'despacho'),'---')).' </td></tr>';
+
+    // Configura o destinatário da tramitação como destinatário da mensagem
     $RS = db_getPersonData::getInstanceOf($dbms,$w_cliente,f($RS,'sq_pessoa_destinatario'),null,null);
     $w_destinatarios = f($RS,'email').'; ';
   } 
-  $w_html.=$crlf.'      <tr><td valign="top" colspan="2" align="center" bgcolor="#D0D0D0" style="border: 2px solid rgb(0,0,0);"><b>OUTRAS INFORMAÇÕES</td>';
+  $w_html.= $crlf.'     <tr><td colspan="2"><br><font size="2"><b>OUTRAS INFORMAÇÕES<hr NOSHADE color=#000000 SIZE=1></b></font></td></tr>';  
   $RS = db_getCustomerSite::getInstanceOf($dbms,$_SESSION['P_CLIENTE']);
-  $w_html.='      <tr valign="top"><td>'.$crlf;
+  $w_html.='      <tr valign="top"><td colspan="2">'.$crlf;
   $w_html.='         Para acessar o sistema use o endereço: <b><a class="SS" href="'.f($RS,'logradouro').'" target="_blank">'.f($RS,'Logradouro').'</a></b></li>'.$crlf;
   $w_html.='      </td></tr>'.$crlf;
   $w_html.='      <tr valign="top"><td>'.$crlf;

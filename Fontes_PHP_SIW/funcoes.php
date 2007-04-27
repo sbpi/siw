@@ -1372,48 +1372,120 @@ function MascaraBeneficiario($cgccpf) {
 // -------------------------------------------------------------------------
 function EnviaMail($w_subject,$w_mensagem,$w_recipients,$w_attachments = null) {
   extract($GLOBALS);
-  include_once($conDiretorio.'classes/mail/inc_cPHPezMail.php');
+  
+  include_once($conDiretorio.'classes/mail/email_message.php');
+  include_once($conDiretorio.'classes/mail/smtp_message.php');
+  include_once($conDiretorio.'classes/mail/smtp.php');
+  include_once($conDiretorio.'classes/sp/db_getCustomerData.php');
 
-  $_mail = new cPHPezMail();
-  $l_server = nvl($_SERVER['SERVER_NAME'],$_SERVER['HOSTNAME']);
-  if (false!==strpos($l_server,'.')) {
-    $_mail->SetFrom(strtolower($conSgSistema).'@'.substr(strstr($l_server,'.'),1), $conSgSistema);
-  } else {
-    $_mail->SetFrom(strtolower($conSgSistema).'@'.$l_server, $conSgSistema);
-  }
+  $RS_Cliente = db_getCustomerData::getInstanceOf($dbms, $_SESSION['P_CLIENTE']);
 
+
+  $subject                  = $w_subject;
+  $from_name                = $conSgSistema;
+  $from_address             = f($RS_Cliente,'siw_email_conta');
+  $reply_name               = $from_name;
+  $reply_address            = $from_address;
+  $reply_address            = $from_address;
+  $error_delivery_name      = $from_name;
+  $error_delivery_address   = $from_address;
+
+  $email_message = new smtp_message_class;
+
+  $email_message->localhost = $_SERVER['HOSTNAME'];
+  $email_message->smtp_host = f($RS_Cliente,'smtp_server');
+  $email_message->smtp_port=25;
+  $email_message->smtp_ssl=0; /* Use SSL to connect to the SMTP server. Gmail requires SSL */
+  $email_message->smtp_direct_delivery=0; /* Deliver directly to the recipients destination SMTP server */
+  $email_message->smtp_user=''; /* authentication user name */
+  $email_message->smtp_realm='';  /* authentication realm or Windows domain when using NTLM authentication */
+  $email_message->smtp_workstation=''; /* authentication workstation name when using NTLM authentication */
+  $email_message->smtp_password=''; /* authentication password */
+  $email_message->smtp_debug=0; /* Output dialog with SMTP server */
+  $email_message->smtp_html_debug=0; /* set this to 1 to make the debug output appear in HTML */
+
+  /* if you need POP3 authetntication before SMTP delivery,
+  * specify the host name here. The smtp_user and smtp_password above
+  * should set to the POP3 user and password*/
+  $email_message->smtp_pop3_auth_host='';
+
+  /* In directly deliver mode, the DNS may return the IP of a sub-domain of
+   * the default domain for domains that do not exist. If that is your
+   * case, set this variable with that sub-domain address. */
+  $email_message->smtp_exclude_address="";
+
+  /* If you use the direct delivery mode and the GetMXRR is not functional,
+   * you need to use a replacement function. */
+  /*
+  $_NAMESERVERS=array();
+  include("rrcompat.php");
+  $email_message->smtp_getmxrr="_getmxrr";
+  */
+
+  if (strpos($w_recipients,';')===false) $w_recipients .= ';';
   $l_recipients = explode(';',$w_recipients);
-  foreach($l_recipients as $k => $v) {
-    if (nvl($v,'')!='') $_mail->AddTo($v, null);
-  }
-
-  $_mail->SetSubject($w_subject);
-
-  $_mail->SetBodyHTML($w_mensagem);
-
-  $_mail->SetCharset('iso-8859-1');
-  $_mail->SetEncodingBit(8);
-
-  //Attach local file
-  if (!is_null($w_attachments)) {
-    $w_anexos = explode(';',$w_attachments);
-    foreach($w_anexos as $k => $v) {
-      if (nvl($v,'')!='') $_mail->AddAttachLocalFile($v);
+  $l_cont = -1;
+  foreach($l_recipients as $k => $v) { 
+    if (nvl($v,'')!='') {
+      if ($l_cont<0) {
+        $email_message->SetEncodedEmailHeader("To",trim($v),trim($v));
+        $l_cont = 1;
+      } else {
+        $l_dest[trim($v)] = trim($v); 
+      }
     }
   }
-  
-  // Configura o servidor SMTP, conforme 
-  include_once($conDiretorio.'classes/sp/db_getCustomerData.php');
-  $RS_Cliente = db_getCustomerData::getInstanceOf($dbms, $_SESSION['P_CLIENTE']);
-  ini_set("SMTP",f($RS_Cliente,'smtp_server'));
-  ini_set("sendmail_from",f($RS_Cliente,'siw_email_conta'));
+  if (is_array($l_dest)) {
+    if (count($l_dest)==1) {
+      $email_message->SetEncodedEmailHeader("Cc",trim($l_dest[0]),trim($l_dest[0]));
+    } else {
+      $email_message->SetMultipleEncodedEmailHeader("Cc",$l_dest);
+    }
+  }
+  $email_message->SetEncodedEmailHeader('From',$from_address,$from_name);
+  $email_message->SetEncodedEmailHeader("Reply-To",$reply_address,$reply_name);
+  // Set the Return-Path header to define the envelope sender address to which bounced messages are delivered.
+  // If you are using Windows, you need to use the smtp_message_class to set the return-path address.
+  if(defined("PHP_OS") && strcmp(substr(PHP_OS,0,3),"WIN")) $email_message->SetHeader("Return-Path",$error_delivery_address);
+  $email_message->SetEncodedEmailHeader('Errors-To','desenv@sbpi.com.br','SBPI Suporte');
+  $email_message->SetEncodedHeader("Subject",$subject);
+  $email_message->AddQuotedPrintableHTMLPart($w_mensagem,'',$html_part);
+
+/*
+  // It is strongly recommended that when you send HTML messages,
+  // also provide an alternative text version of HTML page,
+  // even if it is just to say that the message is in HTML,
+  // because more and more people tend to delete HTML only
+  // messages assuming that HTML messages are spam.
+  $text_message='Esta é uma mensagem no formato HTML. Favor usar um programa capaz de ler mensagens nesse formato';
+  $email_message->CreateQuotedPrintableTextPart($email_message->WrapText($text_message),'',$text_part);
+
+  // The complete HTML parts are gathered in a single multipart/related part.
+  $related_parts=array(
+    $html_part,
+    $image_part,
+    $background_image_part
+  );
+  $email_message->CreateRelatedMultipart($related_parts,$html_parts);
+
+  // Multiple alternative parts are gathered in multipart/alternative parts.
+  // It is important that the fanciest part, in this case the HTML part,
+  // is specified as the last part because that is the way that HTML capable
+  // mail programs will show that part and not the text version part.
+  $alternative_parts=array(
+    $text_part,
+    $html_parts
+  );
+  $email_message->AddAlternativeMultipart($alternative_parts);
+*/
 
   //send your e-mail
   if ($conEnviaMail) {
-    if (!$_mail->Send()) {
+    $error = $email_message->Send();
+    if (strcmp($error,'')) {
       // Solaris (SunOS) sempre retorna falso, mesmo enviando a mensagem.
       if (strtoupper(PHP_OS)!='SUNOS') {
-        return 'ERRO: ocorreu algum erro no envio da mensagem.\\SMTP ['.f($RS_Cliente,'smtp_server').']\nPorta ['.ini_get('smtp_port').']\nConta ['.f($RS_Cliente,'siw_email_conta').']';
+        return 'ERRO: ocorreu algum erro no envio da mensagem.\\SMTP ['.f($RS_Cliente,'smtp_server').']\nPorta ['.ini_get('smtp_port').']\nConta ['.f($RS_Cliente,'siw_email_conta').']\n'.$error;
       } else {
         return null;
       }
