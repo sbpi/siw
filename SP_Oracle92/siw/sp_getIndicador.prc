@@ -19,7 +19,8 @@ create or replace procedure sp_getIndicador
     p_restricao      in  varchar2 default null,
     p_result         out sys_refcursor) is
 begin
-   If p_restricao is null or p_restricao = 'AFERIDOR' or substr(p_restricao,1,2) = 'VS' Then
+   If p_restricao is null or p_restricao = 'AFERIDOR' or substr(p_restricao,1,2) = 'VS' or
+      p_restricao = 'META' Then
       -- Recupera as indicadors de planejamento
       open p_result for 
          select a.sq_eoindicador as chave, a.cliente, a.nome, a.sigla, a.descricao, a.forma_afericao, 
@@ -45,12 +46,14 @@ begin
                 inner join co_unidade_medida c  on (a.sq_unidade_medida = c.sq_unidade_medida)
                 inner join eo_tipo_indicador d  on (a.sq_tipo_indicador = d.sq_tipo_indicador)
           where a.cliente     = p_cliente 
-            and (p_chave      is null or (p_chave is not null and a.sq_eoindicador    = p_chave))
-            and (p_nome       is null or (p_nome  is not null and acentos(a.nome)     like '%'||acentos(p_nome)||'%'))
-            and (p_ativo      is null or (p_ativo is not null and a.ativo             = p_ativo))
-            and (p_tipo       is null or (p_tipo  is not null and a.sq_tipo_indicador = p_tipo))
-            and (p_sigla      is null or (p_sigla is not null and a.sigla             = p_sigla))
+            and (p_chave      is null or (p_chave     is not null and a.sq_eoindicador    = p_chave))
+            and (p_nome       is null or (p_nome      is not null and acentos(a.nome)     like '%'||acentos(p_nome)||'%'))
+            and (p_ativo      is null or (p_ativo     is not null and a.ativo             = p_ativo))
+            and (p_tipo       is null or (p_tipo      is not null and a.sq_tipo_indicador = p_tipo))
+            and (p_sigla      is null or (p_sigla     is not null and a.sigla             = p_sigla))
+            and (p_chave_aux  is null or (p_chave_aux is not null and 0 < (select count(x.sq_solic_indicador) from siw_solic_indicador x where x.sq_siw_solicitacao = p_chave_aux and x.sq_eoindicador = a.sq_eoindicador)))
             and (p_restricao  is null or 
+                 (p_restricao is not null and p_restricao = 'META'     and a.vincula_meta = 'S') or
                  (p_restricao is not null and p_restricao = 'VS'       and b.data is not null) or
                  (p_restricao is not null and p_restricao = 'VSMESA'   and b.data is not null and a.exibe_mesa = 'S') or
                  (p_restricao is not null and p_restricao = 'AFERIDOR' and
