@@ -3158,6 +3158,7 @@ SP_Oracle92/siw/sp_getAssunto_PA.prc -text
 SP_Oracle92/siw/sp_getConvOutraParte.prc -text
 SP_Oracle92/siw/sp_getConvOutroRep.prc -text
 SP_Oracle92/siw/sp_getConvPreposto.prc -text
+SP_Oracle92/siw/sp_getCronograma.prc -text
 SP_Oracle92/siw/sp_getDesktop_Recurso.prc -text
 SP_Oracle92/siw/sp_getDocumentoAssunto.prc -text
 SP_Oracle92/siw/sp_getDocumentoInter.prc -text
@@ -3401,6 +3402,7 @@ SP_Oracle92/siw/sp_putConvDadosBancario.prc -text
 SP_Oracle92/siw/sp_putConvOutraParte.prc -text
 SP_Oracle92/siw/sp_putConvOutroRep.prc -text
 SP_Oracle92/siw/sp_putConvPreposto.prc -text
+SP_Oracle92/siw/sp_putCronograma.prc -text
 SP_Oracle92/siw/sp_putDocumentoAssunto.prc -text
 SP_Oracle92/siw/sp_putDocumentoEnvio.prc -text
 SP_Oracle92/siw/sp_putDocumentoGeral.prc -text
