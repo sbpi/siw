@@ -40,7 +40,7 @@ create or replace procedure SP_PutAcordoParc
    w_fim         date;
    w_total       number(18,4);
    w_ordem       number(18) := 0;
-   w_inicial     number(18,4) := p_valor_inicial;
+   w_inicial     number(18,4) := coalesce(p_valor_inicial,p_valor);
    w_reajuste    number(18,4) := p_valor_reajuste;
    w_excedente   number(18,4) := p_valor_excedente;
    w_inicial_1   number(18,4);
@@ -89,7 +89,19 @@ begin
          valor_reajuste  = w_reajuste
       where sq_acordo_parcela = p_chave_aux;
    Elsif p_operacao = 'E' Then -- Exclusão
-      delete ac_acordo_parcela where sq_acordo_parcela = p_chave_aux;
+      If p_aditivo is not null Then
+         select * into w_aditivo from ac_acordo_aditivo where sq_acordo_aditivo = p_aditivo;
+         If w_aditivo.prorrogacao = 'N' Then
+            update ac_acordo_parcela 
+               set valor           = valor_inicial + valor_reajuste,
+                   valor_excedente = 0
+             where sq_acordo_parcela = p_chave_aux;
+         Else
+            delete ac_acordo_parcela where sq_acordo_parcela = p_chave_aux;
+         End If;
+      Else 
+         delete ac_acordo_parcela where sq_acordo_parcela = p_chave_aux;
+      End If;
    Elsif p_operacao = 'G' Then -- Geração parametrizada de parcelas
        -- Recupera os dados do acordo
        select * into w_reg from ac_acordo where sq_siw_solicitacao = p_chave;
@@ -243,7 +255,7 @@ begin
                   inicio,                    fim,                sq_acordo_aditivo,  valor_inicial,        valor_excedente,        valor_reajuste)
                values
                  (sq_acordo_parcela.nextval, p_chave,            w_cont+w_ordem,     sysdate,              w_vencimento,           p_observacao,  round(w_valor_1,2),
-                  w_per_ini,                 w_per_fim,          p_aditivo,          round(w_inicial_1,2), round(w_excedente_1,2), round(w_reajuste_1,2));
+                  w_per_ini,                 w_per_fim,          p_aditivo,          round(coalesce(w_inicial_1,w_valor_1),2), round(w_excedente_1,2), round(w_reajuste_1,2));
             Elsif w_cont = w_meses_parc Then
                -- Define o período de realização da ultima parcela
                w_per_ini := to_date('01'||to_char(w_fim,'mmyyyy'),'ddmmyyyy'); 
@@ -261,7 +273,7 @@ begin
                   inicio,                    fim,                sq_acordo_aditivo,  valor_inicial,        valor_excedente,        valor_reajuste)
                values
                  (sq_acordo_parcela.nextval, p_chave,            w_cont+w_ordem,     sysdate,              w_vencimento,           p_observacao,  round(w_valor_n,2),
-                  w_per_ini,                 w_per_fim,          p_aditivo,          round(w_inicial_n,2), round(w_excedente_n,2), round(w_reajuste_n,2));
+                  w_per_ini,                 w_per_fim,          p_aditivo,          round(coalesce(w_inicial_1,w_valor_n),2), round(w_excedente_n,2), round(w_reajuste_n,2));
             Else
                -- Calcula a data de vencimento das parcelas intermediárias
                w_vencimento := add_months(w_vencimento,1);
@@ -284,7 +296,7 @@ begin
                   inicio,                    fim,                sq_acordo_aditivo,  valor_inicial,      valor_excedente,      valor_reajuste)
                values
                  (sq_acordo_parcela.nextval, p_chave,            w_cont+w_ordem,     sysdate,            w_vencimento,         p_observacao,  round(w_valor,2),
-                  w_per_ini,                 w_per_fim,          p_aditivo,          round(w_inicial,2), round(w_excedente,2), round(w_reajuste,2));
+                  w_per_ini,                 w_per_fim,          p_aditivo,          round(coalesce(w_inicial_1,w_valor),2), round(w_excedente,2), round(w_reajuste,2));
             End If;
          end loop;
       End If;

@@ -19,7 +19,6 @@ begin
                 case a.abrange_inicial   when 'S' then 'IN' else null end as sg_inicial,
                 case a.abrange_acrescimo when 'S' then 'EX' else null end as sg_acrescimo,
                 case a.abrange_reajuste  when 'S' then 'RJ' else null end as sg_reajuste,
-                to_char(a.data, 'DD/MM/YYYY, HH24:MI:SS') phpdt_data,
                 c.nome nm_tipo_documento, c.sigla sg_tipo_documento,
                 f.nome_resumido nm_outra_parte,
                 e.codigo cd_aditivo, e.sq_cc cc_aditivo,
@@ -64,7 +63,6 @@ begin
       open p_result for
          select a.sq_acordo_parcela, a.sq_acordo_nota,
                 b.numero, b.abrange_inicial, b.abrange_acrescimo, b.abrange_reajuste, b.data,
-                to_char(b.data, 'DD/MM/YYYY, HH24:MI:SS') phpdt_data,
                 c.valor_inicial inicial_parc, c.valor_excedente excedente_parc, 
                 c.valor_reajuste reajuste_parc,
                 d.valor_inicial inicial_lanc, d.valor_excedente excedente_lanc, 
@@ -73,7 +71,7 @@ begin
                 inner   join ac_acordo_nota    b on (a.sq_acordo_nota    = b.sq_acordo_nota)
                 inner   join ac_acordo_parcela c on (a.sq_acordo_parcela = c.sq_acordo_parcela)
                   left  join fn_lancamento_doc d on (b.sq_acordo_nota    = d.sq_acordo_nota)
-          where ((p_chave     is null) or (p_chave     is not null and a.sq_acordo_nota    = p_chave))
+          where a.sq_acordo_nota    = p_chave
             and ((p_chave_aux is null) or (p_chave_aux is not null and a.sq_acordo_parcela = p_chave_aux));
    End If;
 end SP_GetAcordoNota;

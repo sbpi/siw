@@ -129,6 +129,7 @@ begin
          where sq_acordo_aditivo = p_chave;
 
          -- Exclui registro
+         delete ac_parcela_nota   where sq_acordo_nota in (select sq_acordo_nota from ac_acordo_nota where sq_acordo_aditivo = p_chave);
          delete ac_acordo_nota    where sq_acordo_aditivo = p_chave;
          delete ac_acordo_aditivo where sq_acordo_aditivo = p_chave;
       Else
