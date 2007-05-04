@@ -545,7 +545,7 @@ begin
                  (p_tipo         = 3     and b2.acesso > 0) or
                  (p_tipo         = 3     and InStr(l_resp_unid,''''||b.sq_unidade||'''') > 0) or
                  (p_tipo         = 4     and Nvl(b1.sigla,'-') <> 'CA'  and b2.acesso > 0) or
-                 (p_tipo         = 4     and InStr(l_resp_unid,''''||b.sq_unidade||'''') > 0) or
+                 (p_tipo         = 4     and Nvl(b1.sigla,'-') <> 'CA'  and InStr(l_resp_unid,''''||b.sq_unidade||'''') > 0) or
                  (p_tipo         = 5) or
                  (p_tipo         = 6     and b.conclusao is null and b1.ativo = 'S' and b2.acesso > 0)
                 )

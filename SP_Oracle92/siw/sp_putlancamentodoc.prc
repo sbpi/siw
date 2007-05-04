@@ -10,6 +10,7 @@ create or replace procedure SP_PutLancamentoDoc
     p_patrimonio          in varchar2 default null,
     p_retencao            in varchar2 default null,
     p_tributo             in varchar2 default null,
+    p_nota                in number   default null,
     p_chave_nova          out         number
    ) is
    
@@ -22,11 +23,13 @@ begin
       select sq_lancamento_doc.nextval into w_chave_aux from dual;   
       insert into fn_lancamento_doc
         (sq_lancamento_doc,         sq_siw_solicitacao, sq_tipo_documento,   numero,           data, 
-         serie,                     valor,              patrimonio,          calcula_retencao, calcula_tributo
+         serie,                     valor,              patrimonio,          calcula_retencao, calcula_tributo,
+         sq_acordo_nota
         )
       values
         (w_chave_aux,               p_chave,            p_sq_tipo_documento, p_numero,         p_data, 
-         p_serie,                   p_valor,            p_patrimonio,        p_retencao,       p_tributo
+         p_serie,                   p_valor,            p_patrimonio,        p_retencao,       p_tributo,
+         p_nota
         );
    Elsif p_operacao = 'A' Then -- Alteração
       update fn_lancamento_doc
@@ -37,7 +40,8 @@ begin
              valor             = p_valor,
              patrimonio        = p_patrimonio,
              calcula_retencao  = p_retencao,
-             calcula_tributo   = p_tributo
+             calcula_tributo   = p_tributo,
+             sq_acordo_nota    = p_nota
        where sq_lancamento_doc = p_chave_aux;
    Elsif p_operacao = 'E' Then -- Exclusão
       delete fn_documento_item where sq_lancamento_doc = p_chave_aux;

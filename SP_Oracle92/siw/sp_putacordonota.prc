@@ -15,6 +15,8 @@ create or replace procedure SP_PutAcordoNota
     p_abrange_acrescimo        in  varchar2 default null,
     p_abrange_reajuste         in  varchar2 default null,
     p_sq_acordo_parcela        in  number   default null,
+    p_data_cancelamento        in date      default null,
+    p_valor_cancelamento       in number    default null,
     p_chave_nova               out number
    ) is
    w_chave   number(18);
@@ -25,11 +27,12 @@ begin
       insert into ac_acordo_nota
         (sq_acordo_nota, sq_siw_solicitacao, sq_tipo_documento, sq_acordo_outra_parte, 
          sq_acordo_aditivo, numero, data, valor, sq_lcfonte_recurso, sq_especificacao_despesa, observacao,
-         abrange_inicial, abrange_acrescimo, abrange_reajuste
+         abrange_inicial, abrange_acrescimo, abrange_reajuste, data_cancelamento, valor_cancelamento
         )
         (select w_chave, p_chave_aux, p_sq_tipo_documento, p_sq_acordo_outra_parte, 
           p_sq_acordo_aditivo, p_numero, p_data, p_valor, p_sq_lcfonte_recurso, p_espec_despesa, p_observacao,
-          p_abrange_inicial, p_abrange_acrescimo, p_abrange_reajuste from dual
+          p_abrange_inicial, p_abrange_acrescimo, p_abrange_reajuste, p_data_cancelamento, p_valor_cancelamento 
+           from dual
         );
    Elsif p_operacao = 'A' Then
       -- Altera registro
@@ -45,7 +48,9 @@ begin
              observacao               = p_observacao,
              abrange_inicial          = p_abrange_inicial,
              abrange_acrescimo        = p_abrange_acrescimo,
-             abrange_reajuste         = p_abrange_reajuste
+             abrange_reajuste         = p_abrange_reajuste,
+             data_cancelamento        = p_data_cancelamento,
+             valor_cancelamento       = p_valor_cancelamento
        where sq_acordo_nota = p_chave;
    Elsif p_operacao = 'E' Then
       -- Exclui registro

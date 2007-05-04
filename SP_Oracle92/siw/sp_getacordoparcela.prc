@@ -8,12 +8,12 @@ create or replace procedure SP_GetAcordoParcela
     p_usuario     in number   default null,
     p_fase        in varchar2 default null,
     p_menu        in number   default null,
-    p_sq_acordo_aditivo in number default null,
+    p_aditivo     in number default null,
     p_result      out sys_refcursor) is
 begin
    -- Recupera os dados de uma parcela ou as parcelas de um acordo
    -- dependendo dos parâmetros informados
-   If p_restricao is null or p_restricao = 'PERIODO' or p_restricao = 'PARCELA' Then
+   If p_restricao is null or p_restricao = 'PERIODO' or p_restricao = 'PARCELA' or p_restricao = 'NOTA' Then
       open p_result for 
          select a.sq_acordo_parcela, a.sq_siw_solicitacao, a.ordem, a.emissao, a.vencimento, a.quitacao,
                 a.documento_interno, a.documento_externo, a.observacao, a.valor, a.inicio, a.fim,
@@ -34,12 +34,17 @@ begin
                 left     join ac_acordo_aditivo    c on (a.sq_acordo_aditivo = c.sq_acordo_aditivo and
                                                          a.sq_siw_solicitacao = c.sq_siw_solicitacao
                                                         )
+                inner    join ac_acordo            d on (a.sq_siw_solicitacao = d.sq_siw_solicitacao)
           where (p_chave             is null or (p_chave             is not null and a.sq_siw_solicitacao = p_chave))
             and (p_chave_aux         is null or (p_chave_aux         is not null and a.sq_acordo_parcela  = p_chave_aux))
-            and (p_sq_acordo_aditivo is null or (p_sq_acordo_aditivo is not null and c.sq_acordo_aditivo  = p_sq_acordo_aditivo))
-            and ((p_restricao <> 'PERIODO'    and p_restricao <> 'PARCELA' and p_restricao is not null) or
+            and (p_aditivo           is null or (p_aditivo           is not null and c.sq_acordo_aditivo  = p_aditivo))
+            and ((p_restricao <> 'PERIODO'    and p_restricao <> 'PARCELA' and p_restricao <> 'NOTA' and p_restricao is not null) or
                   ((p_restricao = 'PERIODO'   and (a.inicio between p_dt_ini and p_dt_fim) or (a.fim    between p_dt_ini and p_dt_fim)) or
                    (p_restricao is null       and (p_dt_ini is null or (p_dt_ini is not null and b.vencimento between p_dt_ini and p_dt_fim))) or
+                   (p_restricao ='NOTA'       and ((p_aditivo is null     and a.inicio between d.inicio and d.fim) or
+                                                   (p_aditivo is not null and c.sq_acordo_aditivo = p_aditivo)
+                                                  )
+                   ) or
                    (p_restricao = 'PARCELA'   and a.sq_acordo_aditivo is null)
                   )
                  );
@@ -47,13 +52,13 @@ begin
       open p_result for 
          select a.sq_acordo_parcela, a.sq_siw_solicitacao, a.ordem, a.emissao, a.vencimento, a.quitacao,
                 a.documento_interno, a.documento_externo, a.observacao, a.valor, a.inicio, a.fim,
-                a.sq_acordo_aditivo, a.valor_inicial, a.valor_excedente, a.valor_reajuste,
+                a.sq_acordo_aditivo,
                 b.sq_siw_solicitacao sq_lancamento, b.codigo_interno cd_lancamento, 
                 b.vencimento dt_lancamento, b.valor vl_lancamento, b.sg_tramite fn_tramite,
                 b.processo,
                 c.prorrogacao, c.acrescimo, c.supressao, c.revisao,
-                e.data dt_nota,
-                f.sq_acordo_nota
+                e.data dt_nota, e.abrange_inicial, e.abrange_acrescimo, e.abrange_reajuste,
+                f.sq_acordo_nota, f.valor_inicial, f.valor_excedente, f.valor_reajuste
            from ac_acordo_parcela                  a
                 left     join (select x.sq_acordo_parcela, x.sq_siw_solicitacao, y.valor,
                                       x.codigo_interno, x.vencimento, 
@@ -69,7 +74,7 @@ begin
                                                         )
                 left          join ac_parcela_nota d on (a.sq_acordo_parcela  = d.sq_acordo_parcela)
                   left        join ac_acordo_nota  e on (d.sq_acordo_nota     = e.sq_acordo_nota)
-                    left      join (select distinct sq_acordo_nota, z.valor
+                    left      join (select distinct sq_acordo_nota, x.valor_inicial, x.valor_excedente, x.valor_reajuste
                                        from fn_lancamento_doc            x
                                             inner   join fn_lancamento   y on (x.sq_siw_solicitacao = y.sq_siw_solicitacao and
                                                                                y.sq_acordo_parcela  is not null
@@ -79,7 +84,8 @@ begin
                                     )              f on (e.sq_acordo_nota     = f.sq_acordo_nota)
           where (p_chave     is null or (p_chave     is not null and a.sq_siw_solicitacao = p_chave))
             and (p_chave_aux is null or (p_chave_aux is not null and a.sq_acordo_parcela  = p_chave_aux))
-            and (p_sq_acordo_aditivo is null or (p_sq_acordo_aditivo is not null and c.sq_acordo_aditivo  = p_sq_acordo_aditivo));            
+            and (p_aditivo   is null or (p_aditivo   is not null and c.sq_acordo_aditivo  = p_aditivo))
+            and (p_dt_ini    is null or (p_dt_ini    is not null and (a.inicio between p_dt_ini and p_dt_fim) or (a.fim between p_dt_ini and p_dt_fim)));
    Elsif p_restricao = 'CADASTRO' Then
       open p_result for 
         select a.sq_siw_solicitacao, a.sq_solic_pai, a.solicitante, a.sq_unidade, a.sq_cc, 

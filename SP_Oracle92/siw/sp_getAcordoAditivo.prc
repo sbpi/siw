@@ -33,7 +33,8 @@ begin
                 end nm_tipo,
                 b.cliente,
                 c.prazo_indeterm,
-                d.qtd_parcela
+                d.qtd_parcela,
+                AC_RetornaValorAditivo(a.sq_siw_solicitacao, a.sq_acordo_aditivo) as vl_parcela
            from ac_acordo_aditivo              a
                 inner   join ac_acordo         b on (a.sq_siw_solicitacao = b.sq_siw_solicitacao)
                   inner join ac_tipo_acordo    c on (b.sq_tipo_acordo     = c.sq_tipo_acordo)

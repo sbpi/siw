@@ -81,8 +81,9 @@ begin
          select min(a.inicio) into w_inicio_aditivo from ac_acordo_parcela a where a.inicio >= p_inicio and a.sq_siw_solicitacao = p_chave_aux;
          select max(a.fim)    into w_fim_aditivo    from ac_acordo_parcela a where a.fim    <= p_fim    and a.sq_siw_solicitacao = p_chave_aux;
          update ac_acordo_aditivo 
-            set inicio = w_inicio_aditivo,
-                fim    = w_fim_aditivo
+            set inicio  = w_inicio_aditivo,
+                fim     = w_fim_aditivo,
+                duracao = null
           where sq_acordo_aditivo = w_chave;
       End If;         
    Elsif p_operacao = 'A' Then
@@ -110,24 +111,33 @@ begin
              parcela_acrescida  = p_parcela_acrescida,
              sq_cc              = p_sq_cc
        where sq_acordo_aditivo = p_chave;
+       
       If p_prorrogacao = 'N' Then
-         -- Verifica as datas de inicio e fim de uma aditivc que não é de prorrogacao
+         -- Verifica as datas de inicio e fim de um aditivc que não é de prorrogação
          select min(a.inicio) into w_inicio_aditivo from ac_acordo_parcela a where a.inicio >= p_inicio and a.sq_siw_solicitacao = p_chave_aux;
          select max(a.fim)    into w_fim_aditivo    from ac_acordo_parcela a where a.fim    <= p_fim    and a.sq_siw_solicitacao = p_chave_aux;
          update ac_acordo_aditivo 
-            set inicio = w_inicio_aditivo,
-                fim    = w_fim_aditivo
+            set inicio  = w_inicio_aditivo,
+                fim     = w_fim_aditivo,
+                duracao = null
           where sq_acordo_aditivo = p_chave;
       End If;       
    Elsif p_operacao = 'E' Then
       If w_prorrogacao = 'N' Then
          -- Atualiza o valor da parcela e remove o vínculo com o aditivo
-         update ac_acordo_parcela set 
+         update ac_acordo_parcela x set 
             valor             = valor_inicial + valor_reajuste, 
             valor_excedente   = 0, 
-            sq_acordo_aditivo = null 
+            sq_acordo_aditivo = (select b.sq_acordo_aditivo
+                                   from ac_acordo_parcela a
+                                        left join ac_acordo_aditivo b on (a.sq_siw_solicitacao = b.sq_siw_solicitacao and
+                                                                           a.inicio             between b.inicio and b.fim and
+                                                                           b.sq_acordo_aditivo  <> p_chave
+                                                                          )
+                                  where a.sq_acordo_parcela = x.sq_acordo_parcela
+                                )
          where sq_acordo_aditivo = p_chave;
-
+         
          -- Exclui registro
          delete ac_parcela_nota   where sq_acordo_nota in (select sq_acordo_nota from ac_acordo_nota where sq_acordo_aditivo = p_chave);
          delete ac_acordo_nota    where sq_acordo_aditivo = p_chave;
