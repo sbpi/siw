@@ -88,7 +88,8 @@ begin
                                      when 'A' then 'Em acompanhamento da estratégia de ação' 
                                      when 'C' then 'Resolvido' 
                 end as nm_fase_atual,
-                (select count(sq_projeto_etapa) as qtd from siw_restricao_etapa where sq_siw_restricao = coalesce(p_chave_aux,0) and sq_projeto_etapa = a.sq_projeto_etapa) as vinculado
+                (select count(sq_projeto_etapa) as qtd from siw_restricao_etapa where sq_siw_restricao = coalesce(p_chave_aux,0) and sq_projeto_etapa = a.sq_projeto_etapa) as vinculado,
+                (select count(sq_projeto_etapa) as qtd_inter from siw_etapa_interessado where sq_unidade = coalesce(p_chave_aux,0) and sq_projeto_etapa = a.sq_projeto_etapa) as vinculado_inter
 
            from pj_projeto_etapa                         a
                 inner          join siw_solicitacao      i on (a.sq_siw_solicitacao = i.sq_siw_solicitacao)
