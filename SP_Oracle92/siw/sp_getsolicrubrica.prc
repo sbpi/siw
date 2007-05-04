@@ -15,14 +15,20 @@ begin
                 a.saida_prevista, a.saida_real, (a.saida_prevista-a.saida_real) saida_pendente,
                 case a.ativo when 'S' then 'Sim' else 'Não' end nm_ativo,
                 case a.aplicacao_financeira when 'S' then 'Sim' else 'Não' end nm_aplicacao_financeira,
-                b.nome nm_cc, a.aplicacao_financeira
-           from pj_rubrica       a
-                inner join ct_cc b on (a.sq_cc = b.sq_cc)
+                b.nome nm_cc, a.aplicacao_financeira,
+                total_previsto, total_real
+           from pj_rubrica                       a
+                inner join ct_cc                 b on (a.sq_cc = b.sq_cc)
+                left  join (select sum(x.valor_previsto) total_previsto, sum(x.valor_real) total_real, x.sq_projeto_rubrica -- x.sq_acordo_aditivo
+                      from pj_rubrica_cronograma x
+                     group by x.sq_projeto_rubrica
+                            )                    c on (a.sq_projeto_rubrica = c.sq_projeto_rubrica)
           where (p_chave                is null or (p_chave                is not null and a.sq_siw_solicitacao   = p_chave))
             and (p_chave_aux            is null or (p_chave_aux            is not null and a.sq_projeto_rubrica   = p_chave_aux))
             and (p_ativo                is null or (p_ativo                is not null and a.ativo                = p_ativo))
             and (p_sq_rubrica_destino   is null or (p_sq_rubrica_destino   is not null and a.sq_projeto_rubrica   <> p_sq_rubrica_destino))
             and (p_aplicacao_financeira is null or (p_aplicacao_financeira is not null and a.aplicacao_financeira = p_aplicacao_financeira));
+             
    Elsif p_restricao = 'FICHA' Then
      open p_result for    
         select sum(a.valor) valor, 

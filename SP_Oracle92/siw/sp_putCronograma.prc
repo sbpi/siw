@@ -4,8 +4,8 @@ create or replace procedure SP_PutCronograma
     p_chave_aux           in number    default null,
     p_inicio              in date      default null,
     p_fim                 in date      default null,
-    p_valor_real          in number    default null,
-    p_valor_previsto      in number    default null
+    p_valor_previsto      in number    default null,
+    p_valor_real          in number    default null
    ) is
    w_chave    number(18);
    w_pai      number(18);
@@ -20,16 +20,16 @@ begin
            valor_previsto,          valor_real)
       Values
          ( w_chave,                 p_chave,              p_inicio,    p_fim,
-           p_valor_previsto,        p_valor_real);
+           p_valor_previsto,        coalesce(p_valor_real,0));
 
 
    Elsif p_operacao = 'A' Then -- Alteração
       -- Atualiza a tabela de etapas do projeto
       Update pj_rubrica_cronograma set
-          inicio                = p_inicio,
-          fim                   = p_fim,
-          valor_previsto        = p_valor_previsto,
-          valor_real            = p_valor_real
+          inicio                    = p_inicio,
+          fim                       = p_fim,
+          valor_previsto            = p_valor_previsto,
+          valor_real                = coalesce(p_valor_real,0)
       where sq_projeto_rubrica      = p_chave
         and sq_rubrica_cronograma   = p_chave_aux;
 

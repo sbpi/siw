@@ -80,7 +80,7 @@ begin
          select a.sq_projeto_etapa, a.sq_siw_solicitacao, a.sq_etapa_pai, a.ordem, a.titulo, a.descricao, a.inicio_previsto, a.fim_previsto, 
                 a.inicio_real, a.fim_real, a.perc_conclusao, a.orcamento, a.sq_unidade, a.sq_pessoa, a.vincula_atividade, a.sq_pessoa_atualizacao, 
                 a.ultima_atualizacao, a.situacao_atual, a.unidade_medida, a.quantidade, a.cumulativa, a.programada, a.exequivel, 
-                a.justificativa_inexequivel, a.outras_medidas, a.vincula_contrato, a.peso, a.pacote_trabalho,
+                a.justificativa_inexequivel, a.outras_medidas, a.vincula_contrato, a.peso, a.pacote_trabalho, 
                 d.nome_resumido||' ('||f.sigla||')' nm_resp, g.sigla sg_setor,
                 trim(acentos(a.titulo)) as ordena,                
                 case k.fase_atual    when 'D' then 'Apenas identificado' 
@@ -89,6 +89,7 @@ begin
                                      when 'C' then 'Resolvido' 
                 end as nm_fase_atual,
                 (select count(sq_projeto_etapa) as qtd from siw_restricao_etapa where sq_siw_restricao = coalesce(p_chave_aux,0) and sq_projeto_etapa = a.sq_projeto_etapa) as vinculado
+
            from pj_projeto_etapa                         a
                 inner          join siw_solicitacao      i on (a.sq_siw_solicitacao = i.sq_siw_solicitacao)
                   inner        join pj_projeto           m on (a.sq_siw_solicitacao = m.sq_siw_solicitacao)
