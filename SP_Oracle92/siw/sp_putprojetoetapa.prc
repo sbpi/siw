@@ -77,7 +77,7 @@ begin
           inicio_previsto       = p_inicio,
           fim_previsto          = p_fim,
           perc_conclusao        = coalesce(p_perc_conclusao,perc_conclusao),
-          orcamento             = p_orcamento,
+          orcamento             = coalesce(p_orcamento, orcamento),
           sq_pessoa             = p_sq_pessoa,
           sq_unidade            = p_sq_unidade,
           vincula_atividade     = p_vincula_atividade,
