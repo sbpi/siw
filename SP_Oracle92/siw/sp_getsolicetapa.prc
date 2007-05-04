@@ -81,6 +81,7 @@ begin
                 a.inicio_real, a.fim_real, a.perc_conclusao, a.orcamento, a.sq_unidade, a.sq_pessoa, a.vincula_atividade, a.sq_pessoa_atualizacao, 
                 a.ultima_atualizacao, a.situacao_atual, a.unidade_medida, a.quantidade, a.cumulativa, a.programada, a.exequivel, 
                 a.justificativa_inexequivel, a.outras_medidas, a.vincula_contrato, a.peso, a.pacote_trabalho, 
+                montaOrdem(a.sq_projeto_etapa) as cd_ordem, 
                 d.nome_resumido||' ('||f.sigla||')' nm_resp, g.sigla sg_setor,
                 trim(acentos(a.titulo)) as ordena,                
                 case k.fase_atual    when 'D' then 'Apenas identificado' 
@@ -88,18 +89,28 @@ begin
                                      when 'A' then 'Em acompanhamento da estratégia de ação' 
                                      when 'C' then 'Resolvido' 
                 end as nm_fase_atual,
+                l.sigla as sg_unid_resp,
+                nvl(m.qt_ativ,0) qt_ativ,
                 (select count(sq_projeto_etapa) as qtd from siw_restricao_etapa where sq_siw_restricao = coalesce(p_chave_aux,0) and sq_projeto_etapa = a.sq_projeto_etapa) as vinculado,
                 (select count(sq_projeto_etapa) as qtd_inter from siw_etapa_interessado where sq_unidade = coalesce(p_chave_aux,0) and sq_projeto_etapa = a.sq_projeto_etapa) as vinculado_inter
-
            from pj_projeto_etapa                         a
                 inner          join siw_solicitacao      i on (a.sq_siw_solicitacao = i.sq_siw_solicitacao)
                   inner        join pj_projeto           m on (a.sq_siw_solicitacao = m.sq_siw_solicitacao)
                   inner        join siw_menu             j on (i.sq_menu            = j.sq_menu)
+                  inner        join eo_unidade           l on (a.sq_unidade         = l.sq_unidade)
                 inner          join co_pessoa            d on (a.sq_pessoa          = d.sq_pessoa)
                   inner        join sg_autenticacao      e on (d.sq_pessoa          = e.sq_pessoa)
                     inner      join eo_unidade           f on (e.sq_unidade         = f.sq_unidade)
                 inner          join eo_unidade           g on (a.sq_unidade         = g.sq_unidade)
                 left          join siw_restricao         k on (i.sq_siw_solicitacao = k.sq_siw_restricao)
+                left   join (select x.sq_projeto_etapa, y.sq_menu, count(*) qt_ativ
+                              from pj_etapa_demanda             x
+                                   inner   join siw_solicitacao y on (x.sq_siw_solicitacao = y.sq_siw_solicitacao)
+                                     inner join siw_tramite     z on (y.sq_siw_tramite     = z.sq_siw_tramite and
+                                                                      Nvl(z.sigla,'-')     <> 'CA'
+                                                                     )
+                             group by x.sq_projeto_etapa, y.sq_menu
+                            )                            m  on (a.sq_projeto_etapa = m.sq_projeto_etapa)
            where a.pacote_trabalho    = 'S'
             and a.sq_siw_solicitacao = p_chave
             and (p_chave_aux2 is null or (p_chave_aux2 is not null and a.sq_projeto_etapa = p_chave_aux2));
@@ -110,6 +121,7 @@ begin
          select a.sq_projeto_etapa, a.titulo, a.sq_pessoa, a.inicio_previsto, a.fim_previsto, 
               a.inicio_real, a.fim_real, a.orcamento, a.perc_conclusao, a.pacote_trabalho, a.sq_unidade, 
               a.ordem, a.sq_etapa_pai, a.peso,
+              montaOrdem(a.sq_projeto_etapa) as cd_ordem,
               c.nome_resumido||'('||d.sigla||')' as nm_resp, 
               d.sigla as sg_setor,
               nvl(e.qt_ativ,0) qt_ativ, e.sq_menu p2,
@@ -121,14 +133,14 @@ begin
                                                       )
               inner  join co_pessoa             c  on (a.sq_pessoa        = c.sq_pessoa)
               inner  join eo_unidade            d  on (a.sq_unidade       = d.sq_unidade)
-                left join (select x.sq_projeto_etapa, y.sq_menu, count(*) qt_ativ
-                                        from pj_etapa_demanda             x
-                                             inner   join siw_solicitacao y on (x.sq_siw_solicitacao = y.sq_siw_solicitacao)
-                                               inner join siw_tramite     z on (y.sq_siw_tramite     = z.sq_siw_tramite and
-                                                                                Nvl(z.sigla,'-')     <> 'CA'
-                                                                               )
-                                      group by x.sq_projeto_etapa, y.sq_menu
-                                 )              e  on (a.sq_projeto_etapa = e.sq_projeto_etapa)
+              left   join (select x.sq_projeto_etapa, y.sq_menu, count(*) qt_ativ
+                            from pj_etapa_demanda             x
+                                 inner   join siw_solicitacao y on (x.sq_siw_solicitacao = y.sq_siw_solicitacao)
+                                   inner join siw_tramite     z on (y.sq_siw_tramite     = z.sq_siw_tramite and
+                                                                    Nvl(z.sigla,'-')     <> 'CA'
+                                                                   )
+                           group by x.sq_projeto_etapa, y.sq_menu
+                          )                     e  on (a.sq_projeto_etapa = e.sq_projeto_etapa)
         where b.sq_siw_restricao = p_chave
           and (p_restricao = 'ETAPA' or (p_restricao = 'PACOTES' and a.pacote_trabalho = 'S'));
    ElsIf p_restricao = 'LSTNIVEL' Then

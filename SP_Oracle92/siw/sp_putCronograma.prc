@@ -21,23 +21,22 @@ begin
       Values
          ( w_chave,                 p_chave,              p_inicio,    p_fim,
            p_valor_previsto,        coalesce(p_valor_real,0));
-
-
-   Elsif p_operacao = 'A' Then -- Alteração
-      -- Atualiza a tabela de etapas do projeto
+   Elsif p_operacao = 'A' Then 
+      -- Alteração do cronograma quando o projeto está na fase de cadastramento
       Update pj_rubrica_cronograma set
           inicio                    = p_inicio,
           fim                       = p_fim,
           valor_previsto            = p_valor_previsto,
           valor_real                = coalesce(p_valor_real,0)
-      where sq_projeto_rubrica      = p_chave
-        and sq_rubrica_cronograma   = p_chave_aux;
+      where sq_rubrica_cronograma   = p_chave_aux;
+
+   Elsif p_operacao = 'V' Then 
+      -- Alteração do cronograma quando o projeto está na fase de execução
+      Update pj_rubrica_cronograma set valor_real = p_valor_real where sq_rubrica_cronograma = p_chave_aux;
 
    Elsif p_operacao = 'E' Then -- Exclusão
       -- Remove o registro na tabela de cronograma da rubrica
-      delete pj_rubrica_cronograma
-       where sq_projeto_rubrica   = p_chave
-        and sq_rubrica_cronograma = p_chave_aux;
+      delete pj_rubrica_cronograma where sq_rubrica_cronograma = p_chave_aux;
 
    End If;
    

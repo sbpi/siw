@@ -239,8 +239,9 @@ begin
                 d.nota_conclusao,     d.custo_real,                  d.proponente,
                 d.vincula_contrato,   d.vincula_viagem,              d.outra_parte,
                 d.sq_tipo_pessoa,
-                d1.nome nm_prop,      d1.nome_resumido nm_prop_res,
                 case d.prioridade when 0 then 'Alta' when 1 then 'Média' else 'Normal' end nm_prioridade,
+                d1.nome nm_prop,      d1.nome_resumido nm_prop_res,
+                coalesce(d2.orc_previsto,0) as orc_previsto, coalesce(d2.orc_real,0) as orc_real, 
                 b.fim-d.dias_aviso aviso,
                 e.sq_tipo_unidade,    e.nome nm_unidade_resp,        e.informal informal_resp,
                 e.vinculada vinc_resp,e.adm_central adm_resp,
@@ -281,15 +282,21 @@ begin
                                           )                    b2 on (b.sq_siw_solicitacao       = b2.sq_siw_solicitacao)
                       inner          join pj_projeto           d  on (b.sq_siw_solicitacao       = d.sq_siw_solicitacao)
                         left         join co_pessoa            d1 on (d.outra_parte              = d1.sq_pessoa)
+                        left         join (select y.sq_siw_solicitacao, sum(x.valor_previsto) as orc_previsto, sum(x.valor_real) as orc_real
+                                             from pj_rubrica_cronograma x
+                                                  inner join pj_rubrica y on (x.sq_projeto_rubrica = y.sq_projeto_rubrica)
+                                            where y.ativo = 'S'
+                                           group by y.sq_siw_solicitacao
+                                          )                    d2 on (d.sq_siw_solicitacao       = d2.sq_siw_solicitacao)
                         inner        join eo_unidade           e  on (d.sq_unidade_resp          = e.sq_unidade)
-                          left       join eo_unidade_resp e1 on (e.sq_unidade             = e1.sq_unidade and
-                                                                 e1.tipo_respons          = 'T'           and
-                                                                 e1.fim                   is null
-                                                                )
-                          left       join eo_unidade_resp e2 on (e.sq_unidade             = e2.sq_unidade and
-                                                                 e2.tipo_respons          = 'S'           and
-                                                                 e2.fim                   is null
-                                                                )
+                          left       join eo_unidade_resp      e1 on (e.sq_unidade               = e1.sq_unidade and
+                                                                      e1.tipo_respons            = 'T'           and
+                                                                      e1.fim                     is null
+                                                                     )
+                          left       join eo_unidade_resp            e2 on (e.sq_unidade         = e2.sq_unidade and
+                                                                            e2.tipo_respons      = 'S'           and
+                                                                            e2.fim               is null
+                                                                           )
                         left         join or_acao              r  on (d.sq_siw_solicitacao       = r.sq_siw_solicitacao)
                       inner          join co_cidade            f  on (b.sq_cidade_origem         = f.sq_cidade)
                       left           join ct_cc                n  on (b.sq_cc                    = n.sq_cc)
