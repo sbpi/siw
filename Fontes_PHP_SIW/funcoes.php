@@ -551,6 +551,19 @@ function ExibePessoa($p_dir,$p_cliente,$p_pessoa,$p_tp,$p_nome) {
 }
 
 // =========================================================================
+// Montagem da URL com os dados de uma pessoa com os pacontes vinculados
+// -------------------------------------------------------------------------
+function ExibeUnidadePacote($O,$p_cliente,$p_chave,$p_chave_aux,$p_unidade,$p_tp,$p_nome) {
+  extract($GLOBALS,EXTR_PREFIX_SAME,'l_');
+  if (Nvl($p_nome,'')=='') {
+    $l_string='---';
+  } else {
+    $l_string .= '<A class="hl" HREF="#" onClick="window.open(\''.$conRootSIW.'projeto.php?par=InteressadoPacote&w_chave='.$p_chave.'&O='.$O.'&w_chave_aux='.$p_chave_aux.'&w_sq_unidade='.$p_unidade.'&P1='.$p_P1.'&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP='.$p_tp.'&SG='.$p_sg.'\',\'Interessados\',\'width=780,height=550,top=50,left=10,toolbar=no,scrollbars=yes,resizable=yes,status=no\'); return false;" title="Clique para exibir os dados!">'.$p_nome.'</A>';
+  }
+  return $l_string;
+}
+
+// =========================================================================
 // Montagem da URL com os dados de uma pessoa
 // -------------------------------------------------------------------------
 function VisualIndicador($p_dir,$p_cliente,$p_sigla,$p_tp,$p_nome) {
@@ -666,18 +679,32 @@ function ExibeImagemRestricao($l_tipo,$l_imagem=null) {
 // =========================================================================
 // Exibe imagem do ícone smile
 // -------------------------------------------------------------------------
-function ExibeSmile($l_tipo,$l_andamento) {
+function ExibeSmile($l_tipo,$l_andamento,$l_legenda=0) {
   extract($GLOBALS);
   $l_tipo       = trim(strtoupper($l_tipo));
   $l_andamento  = nvl($l_andamento,0);
-  if ($l_tipo=='IDE') {
-    if ($l_andamento < 80 || $l_andamento > 110) $l_string .= '<img title="IDE fora da faixa desejável." src="'.$conRootSIW.$conImgSmAtraso.'" border=0 width="15" height="15" align="center">';
-    elseif ($l_andamento < 90)                   $l_string .= '<img title="IDE próximo da faixa desejável." src="'.$conRootSIW.$conImgSmAviso.'" border=0 width="15" height="15" align="center">';
-    else                                         $l_string .= '<img title="IDE na faixa desejável." src="'.$conRootSIW.$conImgSmNormal.'" border=0 width="15" height="15" align="center">';
-  } elseif ($l_tipo=='IDC') {
-    if ($l_andamento < 80 || $l_andamento > 110) $l_string .= '<img title="IDC fora da faixa desejável." src="'.$conRootSIW.$conImgSmAtraso.'" border=0 width="15" height="15" align="center">';
-    elseif ($l_andamento > 100)                  $l_string .= '<img title="IDC próximo da faixa desejável." src="'.$conRootSIW.$conImgSmAviso.'" border=0 width="15" height="15" align="center">';
-    else                                         $l_string .= '<img title="IDC na faixa desejável." src="'.$conRootSIW.$conImgSmNormal.'" border=0 width="15" height="15" align="center">';
+  if ($l_legenda) {
+    if ($l_tipo=='IDE') {
+      $l_string .= '<tr valign="top">';
+      $l_string .= '<td width="1%" nowrap><img src="'.$conRootSIW.$conImgSmAtraso.'" border=0 width=15 align="center"><td>Fora da faixa desejável (abaixo de 80% ou acima de 110%).';
+      $l_string .= '<td width="1%" nowrap><img src="'.$conRootSIW.$conImgSmAviso.'" border=0 width=15 align="center"><td>Próximo da faixa desejável (de 80% a 89,99%).';
+      $l_string .= '<td width="1%" nowrap><img src="'.$conRootSIW.$conImgSmNormal.'" border=0 width=15 align="center"><td>Na faixa desejável (de 90% a 110%). ';
+    } elseif ($l_tipo=='IDC') {
+      $l_string .= '<tr valign="top">';
+      $l_string .= '<td width="1%" nowrap><img src="'.$conRootSIW.$conImgSmAtraso.'" border=0 width=15 align="center"><td>Fora da faixa desejável (abaixo de 80% ou acima de 110%).';
+      $l_string .= '<td width="1%" nowrap><img src="'.$conRootSIW.$conImgSmAviso.'" border=0 width=15 align="center"><td>Próximo da faixa desejável (de 100,01% a 109,99%).';
+      $l_string .= '<td width="1%" nowrap><img src="'.$conRootSIW.$conImgSmNormal.'" border=0 width=15 align="center"><td>Na faixa desejável (até 100%). ';
+    }
+  } else {
+    if ($l_tipo=='IDE') {
+      if ($l_andamento < 80 || $l_andamento > 110) $l_string .= '<img title="IDE fora da faixa desejável." src="'.$conRootSIW.$conImgSmAtraso.'" border=0 width="15" height="15" align="center">';
+      elseif ($l_andamento < 90)                   $l_string .= '<img title="IDE próximo da faixa desejável." src="'.$conRootSIW.$conImgSmAviso.'" border=0 width="15" height="15" align="center">';
+      else                                         $l_string .= '<img title="IDE na faixa desejável." src="'.$conRootSIW.$conImgSmNormal.'" border=0 width="15" height="15" align="center">';
+    } elseif ($l_tipo=='IDC') {
+      if ($l_andamento < 80 || $l_andamento > 110) $l_string .= '<img title="IDC fora da faixa desejável." src="'.$conRootSIW.$conImgSmAtraso.'" border=0 width="15" height="15" align="center">';
+      elseif ($l_andamento > 100)                  $l_string .= '<img title="IDC próximo da faixa desejável." src="'.$conRootSIW.$conImgSmAviso.'" border=0 width="15" height="15" align="center">';
+      else                                         $l_string .= '<img title="IDC na faixa desejável." src="'.$conRootSIW.$conImgSmNormal.'" border=0 width="15" height="15" align="center">';
+    }
   }
   return $l_string;
 }
@@ -685,262 +712,296 @@ function ExibeSmile($l_tipo,$l_andamento) {
 // =========================================================================
 // Exibe imagem da solicitação informada
 // -------------------------------------------------------------------------
-function ExibeImagemSolic($l_tipo,$l_inicio,$l_fim,$l_inicio_real,$l_fim_real,$l_aviso,$l_dias_aviso,$l_tramite, $l_perc) {
+function ExibeImagemSolic($l_tipo,$l_inicio,$l_fim,$l_inicio_real,$l_fim_real,$l_aviso,$l_dias_aviso,$l_tramite, $l_perc, $l_legenda=0) {
   extract($GLOBALS);
   $l_string = '';
   $l_imagem = '';
   $l_title  = '';
   $l_tipo = strtoupper($l_tipo);
-  if ($l_tipo=='ETAPA') {
-    // Etapas de projeto
-    if ($l_perc<100) {
-      if (nvl($l_inicio_real,'')=='') {
-        if ($l_fim<addDays(time(),-1)) {
-          $l_imagem = $conImgAtraso;
-          $l_title  = 'Execução não iniciada. Fim previsto superado.';
-        } elseif (((time()-$l_inicio)/($l_fim-$l_inicio+1))*100>$l_perc) {
-          $l_imagem = $conImgAviso;
-          $l_title  = 'Execução não iniciada. Percentual de conclusão incompatível com os dias transcorridos.';
+  if ($l_legenda) {
+    if ($l_tipo=='ETAPA') {
+      // Etapas de projeto
+      $l_string .= '<tr valign="top">';
+      $l_string .= '<td width="1%" nowrap><img src="'.$conImgAtraso.'" border=0 width=15 heigth=15 align="center"><td>Execução não iniciada. Fim previsto superado.';
+      $l_string .= '<td width="1%" nowrap><img src="'.$conImgAviso.'" border=0 width=15 heigth=15 align="center"><td>Execução não iniciada. Percentual de conclusão incompatível com os dias transcorridos.';
+      $l_string .= '<td width="1%" nowrap><img src="'.$conImgNormal.'" border=0 width=15 heigth=15 align="center"><td>Execução não iniciada. Prazo final dentro do previsto.';
+      $l_string .= '<tr valign="top">';
+      $l_string .= '<td width="1%" nowrap><img src="'.$conImgStAtraso.'" border=0 width=15 heigth=15 align="center"><td>Em execução. Fim previsto superado.';
+      $l_string .= '<td width="1%" nowrap><img src="'.$conImgStAviso.'" border=0 width=15 heigth=15 align="center"><td>Em execução. Percentual de conclusão incompatível com os dias transcorridos.';
+      $l_string .= '<td width="1%" nowrap><img src="'.$conImgStNormal.'" border=0 width=15 heigth=15 align="center"><td>Em execução. Prazo final dentro do previsto.';
+      $l_string .= '<tr valign="top">';
+      $l_string .= '<td width="1%" nowrap><img src="'.$conImgOkAtraso.'" border=0 width=15 heigth=15 align="center"><td>Execução concluída após a data prevista.';
+      $l_string .= '<td width="1%" nowrap><img src="'.$conImgOkAcima.'" border=0 width=15 heigth=15 align="center"><td>Execução concluída antes da data prevista.';
+      $l_string .= '<td width="1%" nowrap><img src="'.$conImgOkNormal.'" border=0 width=15 heigth=15 align="center"><td>Execução concluída na data prevista.';
+    } elseif (substr($l_tipo,0,2)=='GD' || substr($l_tipo,0,2)=='SR' || substr($l_tipo,0,2)=='PJ') {
+      // Tarefas e demandas eventuais
+      $l_string .= '<tr valign="top">';
+      $l_string .= '<td width="1%" nowrap><img src="'.$conImgCancel.'" border=0 width=15 heigth=15 align="center"><td>Registro cancelado.';
+      $l_string .= '<tr valign="top">';
+      $l_string .= '<td width="1%" nowrap><img src="'.$conImgAtraso.'" border=0 width=15 heigth=15 align="center"><td>Execução não iniciada. Fim previsto superado.';
+      $l_string .= '<td width="1%" nowrap><img src="'.$conImgAviso.'" border=0 width=15 heigth=15 align="center"><td>Execução não iniciada. Fim previsto próximo.';
+      $l_string .= '<td width="1%" nowrap><img src="'.$conImgNormal.'" border=0 width=15 heigth=15 align="center"><td>Execução não iniciada. Prazo final dentro do previsto.';
+      $l_string .= '<tr valign="top">';
+      $l_string .= '<td width="1%" nowrap><img src="'.$conImgStAtraso.'" border=0 width=15 heigth=15 align="center"><td>Em execução. Fim previsto superado.';
+      $l_string .= '<td width="1%" nowrap><img src="'.$conImgStAviso.'" border=0 width=15 heigth=15 align="center"><td>Em execução. Fim previsto próximo.';
+      $l_string .= '<td width="1%" nowrap><img src="'.$conImgStNormal.'" border=0 width=15 heigth=15 align="center"><td>Em execução. Prazo final dentro do previsto.';
+      $l_string .= '<tr valign="top">';
+      $l_string .= '<td width="1%" nowrap><img src="'.$conImgOkAtraso.'" border=0 width=15 heigth=15 align="center"><td>Execução concluída após a data prevista.';
+      $l_string .= '<td width="1%" nowrap><img src="'.$conImgOkAcima.'" border=0 width=15 heigth=15 align="center"><td>Execução concluída antes da data prevista.';
+      $l_string .= '<td width="1%" nowrap><img src="'.$conImgOkNormal.'" border=0 width=15 heigth=15 align="center"><td>Execução concluída na data prevista.';
+    }
+  } else {
+    if ($l_tipo=='ETAPA') {
+      // Etapas de projeto
+      if ($l_perc<100) {
+        if (nvl($l_inicio_real,'')=='') {
+          if ($l_fim<addDays(time(),-1)) {
+            $l_imagem = $conImgAtraso;
+            $l_title  = 'Execução não iniciada. Fim previsto superado.';
+          } elseif (((time()-$l_inicio)/($l_fim-$l_inicio+1))*100>$l_perc) {
+            $l_imagem = $conImgAviso;
+            $l_title  = 'Execução não iniciada. Percentual de conclusão incompatível com os dias transcorridos.';
+          } else {
+            $l_imagem = $conImgNormal;
+            $l_title  = 'Execução não iniciada. Prazo final dentro do previsto.';
+          } 
         } else {
-          $l_imagem = $conImgNormal;
-          $l_title  = 'Execução não iniciada. Prazo final dentro do previsto.';
-        } 
+          if ($l_fim<addDays(time(),-1)) {
+            $l_imagem = $conImgStAtraso;
+            $l_title  = 'Em execução. Fim previsto superado.';
+          } elseif (((time()-$l_inicio)/($l_fim-$l_inicio+1))*100>$l_perc) {
+            $l_imagem = $conImgStAviso;
+            $l_title  = 'Em execução. Percentual de conclusão incompatível com os dias transcorridos.';
+          } else {
+            $l_imagem = $conImgStNormal;
+            $l_title  = 'Em execução. Prazo final dentro do previsto.';
+          } 
+        }
       } else {
-        if ($l_fim<addDays(time(),-1)) {
-          $l_imagem = $conImgStAtraso;
-          $l_title  = 'Em execução. Fim previsto superado.';
-        } elseif (((time()-$l_inicio)/($l_fim-$l_inicio+1))*100>$l_perc) {
-          $l_imagem = $conImgStAviso;
-          $l_title  = 'Em execução. Percentual de conclusão incompatível com os dias transcorridos.';
+        if ($l_fim<Nvl($l_fim_real,$l_fim)) {
+          $l_imagem = $conImgOkAtraso;
+          $l_title  = 'Execução concluída após a data prevista.';
+        } elseif ($l_fim>Nvl($l_fim_real,$l_fim)) {
+          $l_imagem = $conImgOkAcima;
+          $l_title  = 'Execução concluída antes da data prevista.';
         } else {
-          $l_imagem = $conImgStNormal;
-          $l_title  = 'Em execução. Prazo final dentro do previsto.';
+          $l_imagem = $conImgOkNormal;
+          $l_title  = 'Execução concluída na data prevista.';
         } 
-      }
-    } else {
-      if ($l_fim<Nvl($l_fim_real,$l_fim)) {
-        $l_imagem = $conImgOkAtraso;
-        $l_title  = 'Execução concluída após a data prevista.';
-      } elseif ($l_fim>Nvl($l_fim_real,$l_fim)) {
-        $l_imagem = $conImgOkAcima;
-        $l_title  = 'Execução concluída antes da data prevista.';
-      } else {
-        $l_imagem = $conImgOkNormal;
-        $l_title  = 'Execução concluída na data prevista.';
       } 
-    } 
-  } elseif (substr($l_tipo,0,2)=='GC') {
-    // Contratos e convênios
-    if ($l_tramite!='AT' && $l_tramite!='CR') {
-      if ($l_tramite=='CA') {
-        $l_imagem = $conImgCancel;
-        $l_title  = 'Registro cancelado.';
-      } elseif ($l_tramite=='CI') {
-        if ($l_fim<addDays(time(),-1)) {
-          $l_imagem = $conImgAtraso;
-          $l_title  = 'Execução não iniciada. Vigência prevista ultrapassada.';
-        } elseif ($l_aviso=='S' && ($l_dias_aviso<=addDays(time(),-1))) {
-          $l_imagem = $conImgAviso;
-          $l_title  = 'Execução não iniciada. Vigência prevista próxima do término.';
+    } elseif (substr($l_tipo,0,2)=='GC') {
+      // Contratos e convênios
+      if ($l_tramite!='AT' && $l_tramite!='CR') {
+        if ($l_tramite=='CA') {
+          $l_imagem = $conImgCancel;
+          $l_title  = 'Registro cancelado.';
+        } elseif ($l_tramite=='CI') {
+          if ($l_fim<addDays(time(),-1)) {
+            $l_imagem = $conImgAtraso;
+            $l_title  = 'Execução não iniciada. Vigência prevista ultrapassada.';
+          } elseif ($l_aviso=='S' && ($l_dias_aviso<=addDays(time(),-1))) {
+            $l_imagem = $conImgAviso;
+            $l_title  = 'Execução não iniciada. Vigência prevista próxima do término.';
+          } else {
+            $l_imagem = $conImgNormal;
+            $l_title  = 'Execução não iniciada.';
+          } 
+        } elseif ($l_tramite=='ER') {
+          $l_imagem = $conImgStAcima;
+          $l_title  = 'Vigência encerrada, com restos a pagar.';
         } else {
-          $l_imagem = $conImgNormal;
-          $l_title  = 'Execução não iniciada.';
-        } 
-      } elseif ($l_tramite=='ER') {
-        $l_imagem = $conImgStAcima;
-        $l_title  = 'Vigência encerrada, com restos a pagar.';
+          if ($l_fim<addDays(time(),-1)) {
+            $l_imagem = $conImgStAtraso;
+            $l_title  = 'Em execução. Vigência prevista ultrapassada.';
+          } elseif ($l_aviso=='S' && ($l_dias_aviso<=addDays(time(),-1))) {
+            $l_imagem = $conImgStAviso;
+            $l_title  = 'Em execução. Vigência prevista próxima do término.';
+          } else {
+            $l_imagem = $conImgStNormal;
+            $l_title  = 'Em execução.';
+          } 
+        }
       } else {
-        if ($l_fim<addDays(time(),-1)) {
-          $l_imagem = $conImgStAtraso;
-          $l_title  = 'Em execução. Vigência prevista ultrapassada.';
-        } elseif ($l_aviso=='S' && ($l_dias_aviso<=addDays(time(),-1))) {
-          $l_imagem = $conImgStAviso;
-          $l_title  = 'Em execução. Vigência prevista próxima do término.';
+        if ($l_fim<Nvl($l_fim_real,$l_fim)) {
+          $l_imagem = $conImgOkAtraso;
+          $l_title  = 'Vigência superior à prevista.';
+        } elseif ($l_fim>Nvl($l_fim_real,$l_fim)) {
+          $l_imagem = $conImgOkAcima;
+          $l_title  = 'Vigência encerrada antes do previsto.';
         } else {
-          $l_imagem = $conImgStNormal;
-          $l_title  = 'Em execução.';
+          $l_imagem = $conImgOkNormal;
+          $l_title  = 'Vigência encerrada conforme previsão.';
         } 
-      }
-    } else {
-      if ($l_fim<Nvl($l_fim_real,$l_fim)) {
-        $l_imagem = $conImgOkAtraso;
-        $l_title  = 'Vigência superior à prevista.';
-      } elseif ($l_fim>Nvl($l_fim_real,$l_fim)) {
-        $l_imagem = $conImgOkAcima;
-        $l_title  = 'Vigência encerrada antes do previsto.';
-      } else {
-        $l_imagem = $conImgOkNormal;
-        $l_title  = 'Vigência encerrada conforme previsão.';
       } 
-    } 
-  } elseif (substr($l_tipo,0,2)=='GD') {
-    // Tarefas
-    if ($l_tramite!='AT') {
-      if ($l_tramite=='CA') {
-        $l_imagem = $conImgCancel;
-        $l_title  = 'Registro cancelado.';
-      } elseif ($l_tramite=='CI') {
-        if ($l_fim<addDays(time(),-1)) {
-          $l_imagem = $conImgAtraso;
-          $l_title  = 'Execução não iniciada. Fim previsto superado.';
-        } elseif ($l_aviso=='S' && ($l_dias_aviso<=addDays(time(),-1))) {
-          $l_imagem = $conImgAviso;
-          $l_title  = 'Execução não iniciada. Fim previsto próximo.';
+    } elseif (substr($l_tipo,0,2)=='GD') {
+      // Tarefas e demandas eventuais
+      if ($l_tramite!='AT') {
+        if ($l_tramite=='CA') {
+          $l_imagem = $conImgCancel;
+          $l_title  = 'Registro cancelado.';
+        } elseif ($l_tramite=='CI') {
+          if ($l_fim<addDays(time(),-1)) {
+            $l_imagem = $conImgAtraso;
+            $l_title  = 'Execução não iniciada. Fim previsto superado.';
+          } elseif ($l_aviso=='S' && ($l_dias_aviso<=addDays(time(),-1))) {
+            $l_imagem = $conImgAviso;
+            $l_title  = 'Execução não iniciada. Fim previsto próximo.';
+          } else {
+            $l_imagem = $conImgNormal;
+            $l_title  = 'Execução não iniciada. Prazo final dentro do previsto.';
+          } 
         } else {
-          $l_imagem = $conImgNormal;
-          $l_title  = 'Execução não iniciada. Prazo final dentro do previsto.';
-        } 
+          if ($l_fim<addDays(time(),-1)) {
+            $l_imagem = $conImgStAtraso;
+            $l_title  = 'Em execução. Fim previsto superado.';
+          } elseif ($l_aviso=='S' && ($l_dias_aviso<=addDays(time(),-1))) {
+            $l_imagem = $conImgStAviso;
+            $l_title  = 'Em execução. Fim previsto próximo.';
+          } else {
+            $l_imagem = $conImgStNormal;
+            $l_title  = 'Em execução. Prazo final dentro do previsto.';
+          } 
+        }
       } else {
-        if ($l_fim<addDays(time(),-1)) {
-          $l_imagem = $conImgStAtraso;
-          $l_title  = 'Em execução. Fim previsto superado.';
-        } elseif ($l_aviso=='S' && ($l_dias_aviso<=addDays(time(),-1))) {
-          $l_imagem = $conImgStAviso;
-          $l_title  = 'Em execução. Fim previsto próximo.';
+        if ($l_fim<Nvl($l_fim_real,$l_fim)) {
+          $l_imagem = $conImgOkAtraso;
+          $l_title  = 'Execução concluída após a data prevista.';
+        } elseif ($l_fim>Nvl($l_fim_real,$l_fim)) {
+          $l_imagem = $conImgOkAcima;
+          $l_title  = 'Execução concluída antes da data prevista.';
         } else {
-          $l_imagem = $conImgStNormal;
-          $l_title  = 'Em execução. Prazo final dentro do previsto.';
+          $l_imagem = $conImgOkNormal;
+          $l_title  = 'Execução concluída na data prevista.';
         } 
-      }
-    } else {
-      if ($l_fim<Nvl($l_fim_real,$l_fim)) {
-        $l_imagem = $conImgOkAtraso;
-        $l_title  = 'Execução concluída após a data prevista.';
-      } elseif ($l_fim>Nvl($l_fim_real,$l_fim)) {
-        $l_imagem = $conImgOkAcima;
-        $l_title  = 'Execução concluída antes da data prevista.';
-      } else {
-        $l_imagem = $conImgOkNormal;
-        $l_title  = 'Execução concluída na data prevista.';
       } 
-    } 
-  } elseif (substr($l_tipo,0,2)=='SR') {
-    // Tarefas
-    if ($l_tramite!='AT') {
-      if ($l_tramite=='CA') {
-        $l_imagem = $conImgCancel;
-        $l_title  = 'Registro cancelado.';
-      } elseif ($l_tramite=='CI') {
-        if ($l_fim<time()) {
-          $l_imagem = $conImgAtraso;
-          $l_title  = 'Execução não iniciada. Fim previsto superado.';
-        } elseif ($l_aviso=='S' && ($l_dias_aviso<=time())) {
-          $l_imagem = $conImgAviso;
-          $l_title  = 'Execução não iniciada. Fim previsto próximo.';
+    } elseif (substr($l_tipo,0,2)=='SR') {
+      // Tarefas
+      if ($l_tramite!='AT') {
+        if ($l_tramite=='CA') {
+          $l_imagem = $conImgCancel;
+          $l_title  = 'Registro cancelado.';
+        } elseif ($l_tramite=='CI') {
+          if ($l_fim<time()) {
+            $l_imagem = $conImgAtraso;
+            $l_title  = 'Execução não iniciada. Fim previsto superado.';
+          } elseif ($l_aviso=='S' && ($l_dias_aviso<=time())) {
+            $l_imagem = $conImgAviso;
+            $l_title  = 'Execução não iniciada. Fim previsto próximo.';
+          } else {
+            $l_imagem = $conImgNormal;
+            $l_title  = 'Execução não iniciada. Prazo final dentro do previsto.';
+          } 
         } else {
-          $l_imagem = $conImgNormal;
-          $l_title  = 'Execução não iniciada. Prazo final dentro do previsto.';
-        } 
+          if ($l_fim<time()) {
+            $l_imagem = $conImgStAtraso;
+            $l_title  = 'Em execução. Fim previsto superado.';
+          } elseif ($l_aviso=='S' && ($l_dias_aviso<=time())) {
+            $l_imagem = $conImgStAviso;
+            $l_title  = 'Em execução. Fim previsto próximo.';
+          } else {
+            $l_imagem = $conImgStNormal;
+            $l_title  = 'Em execução. Prazo final dentro do previsto.';
+          } 
+        }
       } else {
-        if ($l_fim<time()) {
-          $l_imagem = $conImgStAtraso;
-          $l_title  = 'Em execução. Fim previsto superado.';
-        } elseif ($l_aviso=='S' && ($l_dias_aviso<=time())) {
-          $l_imagem = $conImgStAviso;
-          $l_title  = 'Em execução. Fim previsto próximo.';
+        if ($l_fim<Nvl($l_fim_real,$l_fim)) {
+          $l_imagem = $conImgOkAtraso;
+          $l_title  = 'Execução concluída após a data prevista.';
+        } elseif ($l_fim>Nvl($l_fim_real,$l_fim)) {
+          $l_imagem = $conImgOkAcima;
+          $l_title  = 'Execução concluída antes da data prevista.';
         } else {
-          $l_imagem = $conImgStNormal;
-          $l_title  = 'Em execução. Prazo final dentro do previsto.';
+          $l_imagem = $conImgOkNormal;
+          $l_title  = 'Execução concluída na data prevista.';
         } 
-      }
-    } else {
-      if ($l_fim<Nvl($l_fim_real,$l_fim)) {
-        $l_imagem = $conImgOkAtraso;
-        $l_title  = 'Execução concluída após a data prevista.';
-      } elseif ($l_fim>Nvl($l_fim_real,$l_fim)) {
-        $l_imagem = $conImgOkAcima;
-        $l_title  = 'Execução concluída antes da data prevista.';
-      } else {
-        $l_imagem = $conImgOkNormal;
-        $l_title  = 'Execução concluída na data prevista.';
       } 
-    } 
-  } elseif (substr($l_tipo,0,2)=='PJ') {
-    // Projetos
-    if ($l_tramite!='AT') {
-      if ($l_tramite=='CA') {
-        $l_imagem = $conImgCancel;
-        $l_title  = 'Registro cancelado.';
-      } elseif ($l_tramite=='CI') {
-        if ($l_fim<addDays(time(),-1)) {
-          $l_imagem = $conImgAtraso;
-          $l_title  = 'Execução não iniciada. Fim previsto superado.';
-        } elseif ($l_aviso=='S' && ($l_dias_aviso<=addDays(time(),-1))) {
-          $l_imagem = $conImgAviso;
-          $l_title  = 'Execução não iniciada. Fim previsto próximo.';
+    } elseif (substr($l_tipo,0,2)=='PJ') {
+      // Projetos
+      if ($l_tramite!='AT') {
+        if ($l_tramite=='CA') {
+          $l_imagem = $conImgCancel;
+          $l_title  = 'Registro cancelado.';
+        } elseif ($l_tramite=='CI') {
+          if ($l_fim<addDays(time(),-1)) {
+            $l_imagem = $conImgAtraso;
+            $l_title  = 'Execução não iniciada. Fim previsto superado.';
+          } elseif ($l_aviso=='S' && ($l_dias_aviso<=addDays(time(),-1))) {
+            $l_imagem = $conImgAviso;
+            $l_title  = 'Execução não iniciada. Fim previsto próximo.';
+          } else {
+            $l_imagem = $conImgNormal;
+            $l_title  = 'Execução não iniciada. Prazo final dentro do previsto.';
+          } 
         } else {
-          $l_imagem = $conImgNormal;
-          $l_title  = 'Execução não iniciada. Prazo final dentro do previsto.';
-        } 
+          if ($l_fim<addDays(time(),-1)) {
+            $l_imagem = $conImgStAtraso;
+            $l_title  = 'Em execução. Fim previsto superado.';
+          } elseif ($l_aviso=='S' && ($l_dias_aviso<=addDays(time(),-1))) {
+            $l_imagem = $conImgStAviso;
+            $l_title  = 'Em execução. Fim previsto próximo.';
+          } else {
+            $l_imagem = $conImgStNormal;
+            $l_title  = 'Em execução. Prazo final dentro do previsto.';
+          } 
+        }
       } else {
-        if ($l_fim<addDays(time(),-1)) {
-          $l_imagem = $conImgStAtraso;
-          $l_title  = 'Em execução. Fim previsto superado.';
-        } elseif ($l_aviso=='S' && ($l_dias_aviso<=addDays(time(),-1))) {
-          $l_imagem = $conImgStAviso;
-          $l_title  = 'Em execução. Fim previsto próximo.';
+        if ($l_fim<Nvl($l_fim_real,$l_fim)) {
+          $l_imagem = $conImgOkAtraso;
+          $l_title  = 'Execução concluída após a data prevista.';
+        } elseif ($l_fim>Nvl($l_fim_real,$l_fim)) {
+          $l_imagem = $conImgOkAcima;
+          $l_title  = 'Execução concluída antes da data prevista.';
         } else {
-          $l_imagem = $conImgStNormal;
-          $l_title  = 'Em execução. Prazo final dentro do previsto.';
+          $l_imagem = $conImgOkNormal;
+          $l_title  = 'Execução concluída na data prevista.';
         } 
-      }
-    } else {
-      if ($l_fim<Nvl($l_fim_real,$l_fim)) {
-        $l_imagem = $conImgOkAtraso;
-        $l_title  = 'Execução concluída após a data prevista.';
-      } elseif ($l_fim>Nvl($l_fim_real,$l_fim)) {
-        $l_imagem = $conImgOkAcima;
-        $l_title  = 'Execução concluída antes da data prevista.';
-      } else {
-        $l_imagem = $conImgOkNormal;
-        $l_title  = 'Execução concluída na data prevista.';
       } 
-    } 
-  } elseif (substr($l_tipo,0,2)=='PE') {
-    // Projetos
-    if ($l_tramite!='AT') {
-      if ($l_tramite=='CA') {
-        $l_imagem = $conImgCancel;
-        $l_title  = 'Registro cancelado.';
-      } elseif ($l_tramite=='CI') {
-        if ($l_fim<addDays(time(),-1)) {
-          $l_imagem = $conImgAtraso;
-          $l_title  = 'Execução não iniciada. Fim previsto superado.';
-        } elseif ($l_aviso=='S' && ($l_dias_aviso<=addDays(time(),-1))) {
-          $l_imagem = $conImgAviso;
-          $l_title  = 'Execução não iniciada. Fim previsto próximo.';
+    } elseif (substr($l_tipo,0,2)=='PE') {
+      // Projetos
+      if ($l_tramite!='AT') {
+        if ($l_tramite=='CA') {
+          $l_imagem = $conImgCancel;
+          $l_title  = 'Registro cancelado.';
+        } elseif ($l_tramite=='CI') {
+          if ($l_fim<addDays(time(),-1)) {
+            $l_imagem = $conImgAtraso;
+            $l_title  = 'Execução não iniciada. Fim previsto superado.';
+          } elseif ($l_aviso=='S' && ($l_dias_aviso<=addDays(time(),-1))) {
+            $l_imagem = $conImgAviso;
+            $l_title  = 'Execução não iniciada. Fim previsto próximo.';
+          } else {
+            $l_imagem = $conImgNormal;
+            $l_title  = 'Execução não iniciada. Prazo final dentro do previsto.';
+          } 
         } else {
-          $l_imagem = $conImgNormal;
-          $l_title  = 'Execução não iniciada. Prazo final dentro do previsto.';
-        } 
+          if ($l_fim<addDays(time(),-1)) {
+            $l_imagem = $conImgStAtraso;
+            $l_title  = 'Em execução. Fim previsto superado.';
+          } elseif ($l_aviso=='S' && ($l_dias_aviso<=addDays(time(),-1))) {
+            $l_imagem = $conImgStAviso;
+            $l_title  = 'Em execução. Fim previsto próximo.';
+          } else {
+            $l_imagem = $conImgStNormal;
+            $l_title  = 'Em execução. Prazo final dentro do previsto.';
+          } 
+        }
       } else {
-        if ($l_fim<addDays(time(),-1)) {
-          $l_imagem = $conImgStAtraso;
-          $l_title  = 'Em execução. Fim previsto superado.';
-        } elseif ($l_aviso=='S' && ($l_dias_aviso<=addDays(time(),-1))) {
-          $l_imagem = $conImgStAviso;
-          $l_title  = 'Em execução. Fim previsto próximo.';
+        if ($l_fim<Nvl($l_fim_real,$l_fim)) {
+          $l_imagem = $conImgOkAtraso;
+          $l_title  = 'Execução concluída após a data prevista.';
+        } elseif ($l_fim>Nvl($l_fim_real,$l_fim)) {
+          $l_imagem = $conImgOkAcima;
+          $l_title  = 'Execução concluída antes da data prevista.';
         } else {
-          $l_imagem = $conImgStNormal;
-          $l_title  = 'Em execução. Prazo final dentro do previsto.';
+          $l_imagem = $conImgOkNormal;
+          $l_title  = 'Execução concluída na data prevista.';
         } 
-      }
-    } else {
-      if ($l_fim<Nvl($l_fim_real,$l_fim)) {
-        $l_imagem = $conImgOkAtraso;
-        $l_title  = 'Execução concluída após a data prevista.';
-      } elseif ($l_fim>Nvl($l_fim_real,$l_fim)) {
-        $l_imagem = $conImgOkAcima;
-        $l_title  = 'Execução concluída antes da data prevista.';
-      } else {
-        $l_imagem = $conImgOkNormal;
-        $l_title  = 'Execução concluída na data prevista.';
       } 
-    } 
-  }
-
-  if ($l_imagem!='') {
-    $l_string = '           <img src="'.$l_imagem.'" title="'.$l_title.'" border=0 width=15 heigth=15 align="center">';
+    }
+ 
+    if ($l_imagem!='') {
+      $l_string = '           <img src="'.$l_imagem.'" title="'.$l_title.'" border=0 width=15 heigth=15 align="center">';
+    }
   }
 
   return $l_string;

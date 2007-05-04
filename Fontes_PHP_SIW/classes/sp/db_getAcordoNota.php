@@ -9,7 +9,7 @@ extract($GLOBALS); include_once($w_dir_volta.'classes/db/DatabaseQueriesFactory.
 */
 
 class db_getAcordoNota {
-   function getInstanceOf($dbms, $p_cliente, $p_chave, $p_chave_aux, $p_sq_tipo_documento, $p_sq_acordo_aditivo, $p_numero, $p_data, $p_restricao) {
+   function getInstanceOf($dbms, $p_cliente, $p_chave, $p_chave_aux, $p_sq_tipo_documento, $p_sq_acordo_aditivo, $p_numero, $p_dt_ini, $p_dt_fim, $p_restricao) {
      extract($GLOBALS,EXTR_PREFIX_SAME,'strchema'); $sql=$strschema.'SP_GETACORDONOTA';
      $params=array('p_cliente'                   =>array($p_cliente,                                       B_INTEGER,        32),
                    'p_chave'                     =>array($p_chave,                                         B_INTEGER,        32),
@@ -17,7 +17,8 @@ class db_getAcordoNota {
                    'p_sq_tipo_documento'         =>array(tvl($p_sq_tipo_documento),                        B_INTEGER,        32),
                    'p_sq_acordo_aditivo'         =>array(tvl($p_sq_acordo_aditivo),                        B_INTEGER,        32),
                    'p_numero'                    =>array(tvl($p_numero),                                   B_VARCHAR,        30),
-                   'p_data'                      =>array(tvl($p_data),                                     B_DATE,           32),
+                   'p_dt_ini'                    =>array(tvl($p_dt_ini),                                   B_DATE,           32),
+                   'p_dt_fim'                    =>array(tvl($p_dt_fim),                                   B_DATE,           32),
                    'p_restricao'                 =>array(tvl($p_restricao),                                B_VARCHAR,        30),
                    'p_result'                    =>array(null,                                             B_CURSOR,         -1)
                   );

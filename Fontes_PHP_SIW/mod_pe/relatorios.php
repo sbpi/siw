@@ -104,7 +104,10 @@ function Rel_Executivo() {
   extract($GLOBALS);
   $w_plano    = $_REQUEST['w_plano'];
   $w_programa = $_REQUEST['w_programa'];
-  $w_tipo     = $_REQUEST['w_tipo'];  
+  $p_legenda  = $_REQUEST['p_legenda'];
+  $p_projeto  = $_REQUEST['p_projeto'];
+  $p_inicio   = $_REQUEST['p_inicio'];
+  $p_resumo   = $_REQUEST['p_resumo'];
   if ($O=='L') {
     // Recupera o logo do cliente a ser usado nas listagens
     $RS = db_getCustomerData::getInstanceOf($dbms,$w_cliente);
@@ -151,7 +154,15 @@ function Rel_Executivo() {
       ShowHTML('   <tr><td colspan="2" align="center" bgcolor="#f0f0f0"><font size="2"><b>Nenhum registro encontrado para os parâmetros informados</b></td></tr>');
       ShowHTML('   <tr><td colspan="2"><hr NOSHADE color=#000000 size=4></td></tr>');
     } else {
-      foreach ($RS as $row) {  
+      // Legendas
+      if($p_legenda=='S') {
+        ShowHTML('      <tr><td colspan="2"><table border=0>');
+        ShowHTML('        <tr valign="top"><td colspan=6><font size="2"><b>Legenda dos sinalizadores de projetos:</b>'.ExibeImagemSolic('PJ',null,null,null,null,null,null,null, null,true));
+        ShowHTML('        <tr valign="top"><td colspan=6><br>');
+        ShowHTML('        <tr valign="top"><td colspan=6><font size="2"><b>Legenda dos sinalizadores do IDE:</b>'.ExibeSmile('IDE',null,true));
+        ShowHTML('      </table>');
+      }
+      foreach ($RS as $row) {
         ShowHTML('   <tr><td colspan="2"><br><hr NOSHADE color=#000000 size=4></td></tr>');
         ShowHTML('   <tr><td colspan="2" align="center" bgcolor="#f0f0f0"><font size="2"><b>'.strtoupper(f($row,'titulo')).'</b></td></tr>');
         ShowHTML('   <tr><td colspan="2"><hr NOSHADE color=#000000 size=4></td></tr>');
@@ -162,33 +173,38 @@ function Rel_Executivo() {
         if (count($RS1)==0) {
           ShowHTML('   <tr><td colspan="2" align="center"><font size="1"><b>Nenhum programa cadastrado.</b></td></tr>');
         } else {
-          ShowHTML('      <tr><td align="center" colspan="2">');
-          ShowHTML('        <table width=100%  border="1" bordercolor="#00000">');
+          if ($p_projeto=='S') {
+            ShowHTML('      <tr><td align="center" colspan="2">');
+            ShowHTML('        <table width=100%  border="1" bordercolor="#00000">');
+          }
           $w_proj = 0;
           foreach($RS1 as $row1) {
-            //Programas
-            ShowHTML('        <tr><td colspan="12" height=30 valign="center"><font size="2"><b>PROGRAMA: '.strtoupper(f($row1,'cd_programa')).' - '.strtoupper(f($row1,'titulo')).'</b></td></tr>');
-            ShowHTML('          <tr align="center">');
-            ShowHTML('            <td rowspan=2 bgColor="#f0f0f0"><b>N°</b></td>');
-            ShowHTML('            <td rowspan=2 bgColor="#f0f0f0"><b>Projeto</b></td>');
-            ShowHTML('            <td rowspan=2 bgColor="#f0f0f0"><b>Responsável</b></td>');
-            ShowHTML('            <td colspan=2 bgColor="#f0f0f0"><b>Execução</b></td>');
-            ShowHTML('            <td rowspan=2 bgColor="#f0f0f0"><b>Orçamento</b></td>');
-            ShowHTML('            <td colspan=2 bgColor="#f0f0f0"><b>Execução real</b></td>');
-            if ($w_tipo!='WORD') {
-              ShowHTML('            <td rowspan=2 colspan=2 bgColor="#f0f0f0"><b>'.VisualIndicador($w_dir_volta,$w_cliente,'IDE',$TP,'IDE').'</b></td>');
-              ShowHTML('            <td rowspan=2 bgColor="#f0f0f0"><b>'.VisualIndicador($w_dir_volta,$w_cliente,'IGE',$TP,'IGE').'</b></td>');
-            } else {
-              ShowHTML('            <td rowspan=2 colspan=2 bgColor="#f0f0f0"><b>IDE</b></td>');
-              ShowHTML('            <td rowspan=2 bgColor="#f0f0f0"><b>IGE</b></td>');
+            if ($p_projeto=='S') {
+              //Programas
+              ShowHTML('        <tr><td colspan="12" height=30 valign="center"><font size="2"><b>PROGRAMA: '.strtoupper(f($row1,'cd_programa')).' - '.strtoupper(f($row1,'titulo')).'</b></td></tr>');
+              ShowHTML('          <tr align="center">');
+              ShowHTML('            <td rowspan=2 bgColor="#f0f0f0"><b>N°</b></td>');
+              ShowHTML('            <td rowspan=2 bgColor="#f0f0f0"><b>Projeto</b></td>');
+              ShowHTML('            <td rowspan=2 bgColor="#f0f0f0"><b>Responsável</b></td>');
+              ShowHTML('            <td colspan=3 bgColor="#f0f0f0"><b>Previsto</b></td>');
+              ShowHTML('            <td colspan=3 bgColor="#f0f0f0"><b>Realizado</b></td>');
+              if ($w_tipo!='WORD') {
+                ShowHTML('            <td rowspan=2 colspan=2 bgColor="#f0f0f0"><b>'.VisualIndicador($w_dir_volta,$w_cliente,'IDE',$TP,'IDE').'</b></td>');
+                ShowHTML('            <td rowspan=2 bgColor="#f0f0f0"><b>'.VisualIndicador($w_dir_volta,$w_cliente,'IGE',$TP,'IGE').'</b></td>');
+              } else {
+                ShowHTML('            <td rowspan=2 colspan=2 bgColor="#f0f0f0"><b>IDE</b></td>');
+                ShowHTML('            <td rowspan=2 bgColor="#f0f0f0"><b>IGE</b></td>');
+              }
+              ShowHTML('          </tr>');
+              ShowHTML('          <tr align="center">');
+              ShowHTML('            <td bgColor="#f0f0f0"><b>Início</b></td>');
+              ShowHTML('            <td bgColor="#f0f0f0"><b>Fim</b></td>');
+              ShowHTML('            <td bgColor="#f0f0f0"><b>Orçamento</b></td>');
+              ShowHTML('            <td bgColor="#f0f0f0"><b>Início</b></td>');
+              ShowHTML('            <td bgColor="#f0f0f0"><b>Fim</b></td>');
+              ShowHTML('            <td bgColor="#f0f0f0"><b>Orçamento</b></td>');
+              ShowHTML('          </tr>');
             }
-            ShowHTML('          </tr>');
-            ShowHTML('          <tr align="center">');
-            ShowHTML('            <td bgColor="#f0f0f0"><b>Início</b></td>');
-            ShowHTML('            <td bgColor="#f0f0f0"><b>Fim</b></td>');
-            ShowHTML('            <td bgColor="#f0f0f0"><b>Início</b></td>');
-            ShowHTML('            <td bgColor="#f0f0f0"><b>Fim</b></td>');
-            ShowHTML('          </tr>');
             $RS2 = db_getLinkData::getInstanceOf($dbms,$w_cliente,'PJCAD');
             $RS3 = db_getSolicList::getInstanceOf($dbms,f($RS2,'sq_menu'),$w_usuario,'PJCAD',4,
                 $p_ini_i,$p_ini_f,$p_fim_i,$p_fim_f,$p_atraso,$p_solicitante,
@@ -197,74 +213,84 @@ function Rel_Executivo() {
                 $p_uorg_resp, $p_internas, $p_prazo, $p_fase, $p_sqcc, f($row1,'sq_siw_solicitacao'), $p_atividade, 
                 null, null, $p_empenho, $p_processo);
             if (count($RS3)==0) {
-              ShowHTML('          <tr><td colspan="12" align="center"><b>Nenhum projeto cadastrado neste programa</b></td></tr>');
+              if ($p_projeto=='S') ShowHTML('          <tr><td colspan="12" align="center"><b>Nenhum projeto cadastrado neste programa</b></td></tr>');
             } else {
-              $l_programa[$w_proj] = 0;
+              $l_previsto[$w_proj] = 0;
               foreach($RS3 as $row3) {
-                ShowHTML('          <tr valign="top" align="center">');
-                ShowHTML('            <td nowrap>');    
-                ShowHTML(ExibeImagemSolic(f($row3,'sigla'),f($row3,'inicio'),f($row3,'fim'),f($row3,'inicio_real'),f($row3,'fim_real'),f($row3,'aviso_prox_conc'),f($row3,'aviso'),f($row3,'sg_tramite'), null));
-                if ($w_tipo!='WORD') ShowHTML('            <A class="HL" HREF="projeto.php?par=Visual&O=L&w_chave='.f($row3,'sq_siw_solicitacao').'&P1='.$P1.'&P2='.f($row3,'sq_menu').'&P3='.$P3.'&P4='.$P4.'&TP='.$TP.'&SG='.$SG.MontaFiltro('GET').'" title="Exibe as informações deste registro." target="_blank">'.f($row3,'sq_siw_solicitacao').'&nbsp;</a>');
-                else                 ShowHTML('            '.f($row3,'sq_siw_solicitacao').''); 
-                ShowHTML('            <td align="left">'.f($row3,'titulo').'</td>');
-                if ($w_tipo!='WORD') ShowHTML('            <td align="left">'.ExibePessoa(null,$w_cliente,f($row3,'solicitante'),$TP,f($row3,'nm_solic')).'</td>');
-                else                 ShowHTML('            <td align="left">'.f($row3,'nm_solic').'</td>'); 
-                ShowHTML('            <td>'.Nvl(FormataDataEdicao(f($row3,'inicio')),'-').'</td>');
-                ShowHTML('            <td>'.Nvl(FormataDataEdicao(f($row3,'fim')),'-').'</td>');
-                ShowHTML('            <td align="right">'.formatNumber(f($row3,'valor')).'</td>');
-                ShowHTML('            <td>'.Nvl(FormataDataEdicao(f($row3,'inicio_real')),'---').'</td>');
-                ShowHTML('            <td>'.Nvl(FormataDataEdicao(f($row3,'fim_real')),'---').'</td>');
-                ShowHTML('            <td>'.ExibeSmile('IDE',f($row3,'ide')).'</td>');
-                ShowHTML('            <td align="right">'.formatNumber(f($row3,'ide'),2).'%'.'</td>');
-                ShowHTML('            <td align="right">'.formatNumber(f($row3,'ige'),2).'%'.'</td>');
-                $l_programa[$w_proj] += f($row3,'valor');
+                if ($p_projeto=='S') {
+                  ShowHTML('          <tr valign="top" align="center">');
+                  ShowHTML('            <td nowrap>');    
+                  ShowHTML(ExibeImagemSolic(f($row3,'sigla'),f($row3,'inicio'),f($row3,'fim'),f($row3,'inicio_real'),f($row3,'fim_real'),f($row3,'aviso_prox_conc'),f($row3,'aviso'),f($row3,'sg_tramite'), null));
+                  if ($w_tipo!='WORD') ShowHTML('            <A class="HL" HREF="projeto.php?par=Visual&O=L&w_chave='.f($row3,'sq_siw_solicitacao').'&P1='.$P1.'&P2='.f($row3,'sq_menu').'&P3='.$P3.'&P4='.$P4.'&TP='.$TP.'&SG='.$SG.MontaFiltro('GET').'" title="Exibe as informações deste registro." target="_blank">'.f($row3,'sq_siw_solicitacao').'&nbsp;</a>');
+                  else                 ShowHTML('            '.f($row3,'sq_siw_solicitacao').''); 
+                  ShowHTML('            <td align="left">'.f($row3,'titulo').'</td>');
+                  if ($w_tipo!='WORD') ShowHTML('            <td align="left">'.ExibePessoa(null,$w_cliente,f($row3,'solicitante'),$TP,f($row3,'nm_solic')).'</td>');
+                  else                 ShowHTML('            <td align="left">'.f($row3,'nm_solic').'</td>'); 
+                  ShowHTML('            <td>'.Nvl(FormataDataEdicao(f($row3,'inicio')),'-').'</td>');
+                  ShowHTML('            <td>'.Nvl(FormataDataEdicao(f($row3,'fim')),'-').'</td>');
+                  ShowHTML('            <td align="right">'.formatNumber(f($row3,'orc_previsto')).'</td>');
+                  ShowHTML('            <td>'.Nvl(FormataDataEdicao(f($row3,'inicio_real')),'---').'</td>');
+                  ShowHTML('            <td>'.Nvl(FormataDataEdicao(f($row3,'fim_real')),'---').'</td>');
+                  ShowHTML('            <td align="right">'.formatNumber(f($row3,'orc_real')).'</td>');
+                  ShowHTML('            <td>'.ExibeSmile('IDE',f($row3,'ide')).'</td>');
+                  ShowHTML('            <td align="right">'.formatNumber(f($row3,'ide'),2).'%'.'</td>');
+                  ShowHTML('            <td align="right">'.formatNumber(f($row3,'ige'),2).'%'.'</td>');
+                }
+                $l_previsto[$w_proj] += f($row3,'orc_previsto');
+                $l_realizado[$w_proj] += f($row3,'orc_real');
               } 
-              ShowHTML('<tr valign="top">');
-              ShowHTML('     <td colspan=5 align="right"><b>Total&nbsp;');
-              ShowHTML('     <td align="right"><b>'.formatNumber($l_programa[$w_proj]));
-              ShowHTML('     <td colspan=6>&nbsp;');
-              ShowHTML('</tr>');
+              if ($p_projeto=='S') {
+                ShowHTML('<tr valign="top">');
+                ShowHTML('     <td colspan=5 align="right"><b>Totais:&nbsp;');
+                ShowHTML('     <td align="right"><b>'.formatNumber($l_previsto[$w_proj]));
+                ShowHTML('     <td colspan=2>&nbsp;');
+                ShowHTML('     <td align="right"><b>'.formatNumber($l_realizado[$w_proj]));
+                ShowHTML('     <td colspan=3>&nbsp;');
+                ShowHTML('</tr>');
+              }
               $w_proj += 1;
             }
           }
-          ShowHTML('        </table></td></tr>');
-          ShowHTML('      <tr><td align="center" colspan="2"><br><font size=2><b>QUADRO RESUMO</b></font></td></tr>');
-          ShowHTML('      <tr><td align="center" colspan="2">');
-          ShowHTML('        <table width="70%" border="1" bordercolor="#00000">');
-          ShowHTML('          <tr align="center">');
-          ShowHTML('            <td colspan=2 bgColor="#f0f0f0"><b>Programa</b></td>');
-          ShowHTML('            <td colspan=3 bgColor="#f0f0f0"><b>Orçamento</b></td>');
-          ShowHTML('          </tr>');
-          ShowHTML('          <tr align="center">');
-          ShowHTML('            <td bgColor="#f0f0f0"><b>Sigla</b></td>');
-          ShowHTML('            <td bgColor="#f0f0f0"><b>Nome</b></td>');
-          ShowHTML('            <td bgColor="#f0f0f0"><b>Programa</b></td>');
-          ShowHTML('            <td bgColor="#f0f0f0"><b>Projetos</b></td>');
-          ShowHTML('            <td bgColor="#f0f0f0"><b>Diferença</b></td>');
-          ShowHTML('          </tr>');
-          $w_cont = 0;
-          $w_tot_programa;
-          $w_tot_projetos;
-          foreach($RS1 as $row1) {
-            if ((f($row1,'valor')-nvl($l_programa[$w_cont],0))<0) $w_cor = '<font color="#FF0000">'; else $w_cor='';
+          if($p_resumo=='S') {
+            ShowHTML('        </table></td></tr>');
+            ShowHTML('      <tr><td align="center" colspan="2"><br><font size=2><b>QUADRO RESUMO ORÇAMENTÁRIO</b></font></td></tr>');
+            ShowHTML('      <tr><td align="center" colspan="2">');
+            ShowHTML('        <table width="70%" border="1" bordercolor="#00000">');
+            ShowHTML('          <tr align="center">');
+            ShowHTML('            <td colspan=3 bgColor="#f0f0f0"><b>Programa</b></td>');
+            ShowHTML('            <td colspan=3 bgColor="#f0f0f0"><b>Orçamento Projetos</b></td>');
+            ShowHTML('          </tr>');
+            ShowHTML('          <tr align="center">');
+            ShowHTML('            <td bgColor="#f0f0f0"><b>Sigla</b></td>');
+            ShowHTML('            <td bgColor="#f0f0f0"><b>Nome</b></td>');
+            ShowHTML('            <td bgColor="#f0f0f0"><b>Orçamento</b></td>');
+            ShowHTML('            <td bgColor="#f0f0f0"><b>Previsto</b></td>');
+            ShowHTML('            <td bgColor="#f0f0f0"><b>Realizado</b></td>');
+            ShowHTML('          </tr>');
+            $w_cont = 0;
+            $w_tot_programa;
+            $w_tot_proj_est;
+            foreach($RS1 as $row1) {
+              if ((f($row1,'valor')-nvl($l_previsto[$w_cont],0))<0) $w_cor = '<font color="#FF0000">'; else $w_cor='';
+              ShowHTML('          <tr valign="top">');
+              ShowHTML('            <td>'.strtoupper(f($row1,'cd_programa')));
+              ShowHTML('            <td>'.f($row1,'titulo').'</td>');
+              //ShowHTML('            <td>'.formatNumber($w_proj).'</td>');
+              ShowHTML('            <td align="right">'.formatNumber(f($row1,'valor')).'</td>');
+              ShowHTML('            <td align="right">'.formatNumber(nvl($l_previsto[$w_cont],0)).'</td>');
+              ShowHTML('            <td align="right">'.formatNumber(nvl($l_realizado[$w_cont],0)).'</td>');
+              $w_tot_programa  += f($row1,'valor');
+              $w_tot_proj_est  += nvl($l_previsto[$w_cont],0);
+              $w_tot_proj_real += nvl($l_realizado[$w_cont],0);
+              $w_cont += 1;
+            }
             ShowHTML('          <tr valign="top">');
-            ShowHTML('            <td>'.strtoupper(f($row1,'cd_programa')));
-            ShowHTML('            <td>'.f($row1,'titulo').'</td>');
-            //ShowHTML('            <td>'.formatNumber($w_proj).'</td>');
-            ShowHTML('            <td align="right">'.formatNumber(f($row1,'valor')).'</td>');
-            ShowHTML('            <td align="right">'.formatNumber(nvl($l_programa[$w_cont],0)).'</td>');
-            ShowHTML('            <td align="right">'.$w_cor.formatNumber(f($row1,'valor')-nvl($l_programa[$w_cont],0)).'</td>');
-            $w_tot_programa += f($row1,'valor');
-            $w_tot_projetos += nvl($l_programa[$w_cont],0);
-            $w_cont += 1;
+            ShowHTML('            <td colspan=2 align="right"><b>Totais&nbsp;');
+            ShowHTML('            <td align="right"><b>'.formatNumber($w_tot_programa).'</td>');
+            ShowHTML('            <td align="right"><b>'.formatNumber($w_tot_proj_est).'</td>');
+            ShowHTML('            <td align="right"><b>'.formatNumber($w_tot_proj_real).'</td>');
+            ShowHTML('        </table></td></tr>');
           }
-          ShowHTML('          <tr valign="top">');
-          ShowHTML('            <td colspan=2 align="right"><b>Totais&nbsp;');
-          ShowHTML('            <td align="right"><b>'.formatNumber($w_tot_programa).'</td>');
-          ShowHTML('            <td align="right"><b>'.formatNumber($w_tot_projetos).'</td>');
-          if (($w_tot_programa-$w_tot_projetos)<0) $w_cor = '<font color="#FF0000">'; else $w_cor='';
-          ShowHTML('            <td align="right"><b>'.$w_cor.formatNumber($w_tot_programa-$w_tot_projetos).'</td>');
-          ShowHTML('        </table></td></tr>');
         }
       }
     }
@@ -295,7 +321,11 @@ function Rel_Executivo() {
     selecaoPlanoEstrategico('<u>P</u>lano estratégico:', 'P', 'Selecione o plano que deseja listar.', $w_plano, $w_chave, 'w_plano', 'ULTIMO', 'onChange="document.Form.action=\''.$w_dir.$w_pagina.$par.'\'; document.Form.target=\'\'; document.Form.O.value=\''.$O.'\'; document.Form.w_troca.value=\'w_programa\'; document.Form.submit();"');
     ShowHTML('      <tr>');
     selecaoPrograma('P<u>r</u>ograma:', 'R', 'Se desejar, selecione um dos programas.', $w_programa, nvl($w_plano,0), null, 'w_programa', null, null);
-    ShowHTML('          </table>');
+    ShowHTML('      <tr><td><b>Informações a serem exibidas:');
+    ShowHTML('          <tr><td><INPUT '.$w_Disabled.' type="CHECKBOX" name="p_legenda" value="S" checked> Legenda dos sinalizadores </td>');
+    ShowHTML('          <tr><td><INPUT '.$w_Disabled.' type="CHECKBOX" name="p_projeto" value="S" checked> Relação de projetos </td>');
+    ShowHTML('          <tr><td><INPUT '.$w_Disabled.' type="CHECKBOX" name="p_resumo" value="S" checked> Quadro resumo orçamentário</td>');
+    ShowHTML('    </table>');
     ShowHTML('    <table width="90%" border="0">');
     ShowHTML('      <tr><td align="center"><hr>');
     ShowHTML('            <input class="STB" type="submit" name="Botao" value="Exibir">');

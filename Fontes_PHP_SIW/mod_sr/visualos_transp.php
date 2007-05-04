@@ -55,14 +55,14 @@ function VisualOS($l_chave,$l_sg) {
   $l_html.=chr(13).'      <table border=0 width="100%" cellpadding=10>';
   $l_html.=chr(13).'        <tr valign="top">';
   $l_html.=chr(13).'          <td colspan="2"><b>Motorista:</b><br><input type="text" size=80 name="data" readonly></td>';
-  $l_html.=chr(13).'          <td><b>Placa:</b><br><input type="text" size=20 name="data" readonly></td>';
+  $l_html.=chr(13).'          <td><b>Placa:</b><br><input type="text" size=18 name="data" readonly></td>';
   $l_html.=chr(13).'        <tr valign="top">';
   $l_html.=chr(13).'          <td><b>Data/hora de saída:</b><br><input type="text" size=30 name="data" readonly></td>';
   $l_html.=chr(13).'          <td><b>Hodômetro na saída:</b><br><input type="text" size=30 name="data" readonly></td>';
   $l_html.=chr(13).'        <tr valign="top">';
   $l_html.=chr(13).'          <td><b>Data/hora de retorno:</b><br><input type="text" size=30 name="data" readonly></td>';
   $l_html.=chr(13).'          <td><b>Hodômetro na chegada:</b><br><input type="text" size=30 name="data" readonly></td>';
-  $l_html.=chr(13).'        <tr><td><b>Trecho parcial?</b><br>';
+  $l_html.=chr(13).'        <tr><td colspan="3"><b>Trecho parcial?</b><br>';
   $l_html.=chr(13).'        <input type="checkbox" name="parcial" value="S"> <b>SIM';
   $l_html.=chr(13).'        <input type="checkbox" name="parcial" value="N"> <b>NÃO';
   $l_html.=chr(13).'        <tr><td colspan="3"><b>Passageiro (nome e assinatura):</b><br><input type="text" size=94 name="data" readonly></td>';

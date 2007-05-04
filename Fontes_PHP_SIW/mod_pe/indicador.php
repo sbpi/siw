@@ -1008,6 +1008,7 @@ function Afericao() {
   ShowHTML('<BASE HREF="'.$conRootSIW.'">');
   if (!(strpos('IAEP',$O)===false)) {
     ScriptOpen('JavaScript');
+    SaltaCampo();
     CheckBranco();
     FormataData();
     FormataValor();
@@ -1121,7 +1122,7 @@ function Afericao() {
     } 
     ShowHTML('<p>&nbsp;</p></tr>');
   } elseif (!(strpos('IAEV',$O)===false)) {
-    if (!(strpos('IA',$O)===false)) {
+    if (strpos('IA',$O)!==false) {
       ShowHTML('      <tr><td colspan=3 bgcolor="#D0D0D0" style="border: 2px solid rgb(0,0,0);"><b><font color="#BC3131">');
       ShowHTML('        ATENÇÃO:<ul>');
       ShowHTML('        <li>Se você é gestor do sistema ou gestor do módulo de '.strtolower(f($RS_Menu,'nm_modulo')).', é permitido o registro da aferição de qualquer indicador, em qualquer período de referência.');
@@ -1140,12 +1141,12 @@ function Afericao() {
     selecaoBaseGeografica('<U>B</U>ase geográfica:','B','Selecione a base geográfica da aferiçao',$w_base,null,null,'w_base',null,'onChange="document.Form.action=\''.$w_dir.$w_pagina.$par.'\'; document.Form.w_troca.value=\'w_afericao\'; document.Form.submit();"');
     ShowHTML('      <tr valign="top">');
     MontaRadioNS('<b>É projeção</b>?',$w_previsao,'w_previsao');
-    ShowHTML('          <td title="Informe a data em que foi feita a aferição."><b><u>D</u>ata de aferição:</b><br><input '.$w_Disabled.' accesskey="D" type="text" name="w_afericao" class="STI" SIZE="10" MAXLENGTH="10" VALUE="'.$w_afericao.'" onKeyDown="FormataData(this,event);">'.ExibeCalendario('Form','w_afericao',$w_dir_volta).'</td>');
+    ShowHTML('          <td title="Informe a data em que foi feita a aferição."><b><u>D</u>ata de aferição:</b><br><input '.$w_Disabled.' accesskey="D" type="text" name="w_afericao" class="STI" SIZE="10" MAXLENGTH="10" VALUE="'.$w_afericao.'" onKeyUp="SaltaCampo(this.form.name,this,10,event);" onKeyDown="FormataData(this,event);">'.ExibeCalendario('Form','w_afericao',$w_dir_volta).'</td>');
     ShowHTML('      <tr valign="top">');
     ShowHTML('          <td title="Informe o valor aferido."><b><u>V</u>alor aferido:</b><br><input '.$w_Disabled.' accesskey="U" type="text" name="w_valor" class="STI" SIZE="18" MAXLENGTH="18" VALUE="'.$w_valor.'" onKeyDown="FormataValor(this,18,4,event);"></td>');
     ShowHTML('          <td coslpan=2 title="Informe o período de referência."><b><u>P</u>eríodo de referência:</b><br>');
-    ShowHTML('            <input '.$w_Disabled.' accesskey="P" type="text" name="w_inicio" class="STI" SIZE="10" MAXLENGTH="10" VALUE="'.$w_inicio.'" onKeyDown="FormataData(this,event);">'.ExibeCalendario('Form','w_inicio',$w_dir_volta));
-    ShowHTML('            a <input '.$w_Disabled.' type="text" name="w_fim" class="STI" SIZE="10" MAXLENGTH="10" VALUE="'.$w_fim.'" onKeyDown="FormataData(this,event);">'.ExibeCalendario('Form','w_fim',$w_dir_volta).'</td>');
+    ShowHTML('            <input '.$w_Disabled.' accesskey="P" type="text" name="w_inicio" class="STI" SIZE="10" MAXLENGTH="10" VALUE="'.$w_inicio.'" onKeyUp="SaltaCampo(this.form.name,this,10,event);" onKeyDown="FormataData(this,event);">'.ExibeCalendario('Form','w_inicio',$w_dir_volta));
+    ShowHTML('            a <input '.$w_Disabled.' type="text" name="w_fim" class="STI" SIZE="10" MAXLENGTH="10" VALUE="'.$w_fim.'" onKeyUp="SaltaCampo(this.form.name,this,10,event);" onKeyDown="FormataData(this,event);">'.ExibeCalendario('Form','w_fim',$w_dir_volta).'</td>');
     if (nvl($w_base,-1)!=5) {
       ShowHTML('      <tr valign="top">');
       if ($w_base==1) SelecaoPais('<u>P</u>aís:','P',null,$w_pais,null,'w_pais',null,null);

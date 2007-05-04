@@ -112,17 +112,16 @@ function Modulo() {
   print "  } "."\r\n";
 }
 
-
 // Rotina auxiliar à de verificação de datas
 function CheckBranco() {
   print "  function checkbranco(elemento){ "."\r\n";
   print "    var flagbranco = true "."\r\n";
   print "    //alert( 'elemento = ' + elemento) "."\r\n";
   print "    for (i=0;i < elemento.length;i++){ "."\r\n";
-  print "    	//alert('elemento.charat( ' + i + ') = ' + elemento.charAt(i) ) "."\r\n";
-  print "    	if (elemento.charAt(i) != ' '){ "."\r\n";
-  print "    		flagbranco = false "."\r\n";
-  print "    	} "."\r\n";
+  print "        //alert('elemento.charat( ' + i + ') = ' + elemento.charAt(i) ) "."\r\n";
+  print "        if (elemento.charAt(i) != ' '){ "."\r\n";
+  print "            flagbranco = false "."\r\n";
+  print "        } "."\r\n";
   print "    } "."\r\n";
   print "    //alert('valor de flagbranco = ' + flagbranco) "."\r\n";
   print "    return flagbranco "."\r\n";
@@ -328,19 +327,55 @@ function DecodeDate() {
   print " } "."\r\n";
 }
 
+// Rotina auxiliar à de verificação de datas
+function SaltaCampo() {
+  ShowHTML('function SaltaCampo(form,campo,tammax,event,prox){ ');
+  ShowHTML('  var tecla = event.which; ');
+  ShowHTML('  vr = campo.value; ');
+  ShowHTML('  tam = vr.length; ');
+  ShowHTML('  frm = eval(\'document.\'+form); ');
+  ShowHTML('  prox = eval(\'document.\'+form+\'.\'+prox); ');
+  ShowHTML('  if (tecla != 0 && tecla != 9 && tecla != 16 ){ ');
+  ShowHTML('    if ( tam == tammax ){ ');
+  ShowHTML('      if ( prox ) { ');
+  ShowHTML('        prox.focus(); ');
+  ShowHTML('      } else {');
+  ShowHTML('        var ind_campo = -1; ');
+  ShowHTML('        for (var i=0;i < frm.elements.length;i++) { ');
+  ShowHTML('          if (frm.elements[i].name == campo.name && !frm.elements[i].disabled) {');
+  ShowHTML('            ind_campo = i;');
+  ShowHTML('            break;');
+  ShowHTML('          } ');
+  ShowHTML('        } ');
+  ShowHTML('        var j = ind_campo+1; ');
+  ShowHTML('        var ind_prox = ind_campo; ');
+  ShowHTML('        for (var i=j;i < frm.elements.length;i++) { ');
+  ShowHTML('          tipo = frm.elements[i].type.toLowerCase();');
+  ShowHTML('          if ((tipo==\'text\' || tipo==\'file\' || tipo==\'password\' || tipo==\'select-one\' || tipo==\'select-multiple\' || tipo==\'textarea\') && !frm.elements[i].disabled) {');
+  ShowHTML('            ind_prox = i;');
+  ShowHTML('            break;');
+  ShowHTML('          } ');
+  ShowHTML('        } ');
+  ShowHTML('        frm.elements[ind_prox].focus();');
+  ShowHTML('      } ');
+  ShowHTML('    } ');
+  ShowHTML('  } ');
+  ShowHTML('} ');
+}
+
 function FormataData() {
   print "function FormataData(campo, teclapres) { "."\r\n";
-  print "	var tecla = teclapres.keyCode; "."\r\n";
-  print "	vr = campo.value; "."\r\n";
-  print "	vr = vr.replace( '/', '' ); "."\r\n";
-  print "	vr = vr.replace( '/', '' ); "."\r\n";
-  print "	tam = vr.length + 1; "."\r\n";
-  print "	if (tecla == 8 ) tam = tam - 1 ; "."\r\n";
-  print "	if ( tecla != 9 && tecla != 8 ) { "."\r\n";
-  print "	   if ( tecla == 8 || tecla >= 48 && tecla <= 57 || tecla >= 96 && tecla <= 105 ) { "."\r\n";
-  print "		   if ( tam <= 2 ) campo.value = vr ; "."\r\n";
-  print "		   if ( tam > 2 && tam < 5 ) campo.value = vr.substr( 0, 2 ) + '/' + vr.substr( 2, tam ); "."\r\n";
-  print "		   if ( tam >= 5 && tam <= 10 ) campo.value = vr.substr( 0, 2 ) + '/' + vr.substr( 2, 2 ) + '/' + vr.substr( 4, tam );  "."\r\n";
+  print "    var tecla = teclapres.keyCode; "."\r\n";
+  print "    vr = campo.value; "."\r\n";
+  print "    vr = vr.replace( '/', '' ); "."\r\n";
+  print "    vr = vr.replace( '/', '' ); "."\r\n";
+  print "    tam = vr.length + 1; "."\r\n";
+  print "    if (tecla == 8 ) tam = tam - 1 ; "."\r\n";
+  print "    if ( tecla != 9 && tecla != 8 ) { "."\r\n";
+  print "       if ( tecla == 8 || tecla >= 48 && tecla <= 57 || tecla >= 96 && tecla <= 105 ) { "."\r\n";
+  print "           if ( tam <= 2 ) campo.value = vr ; "."\r\n";
+  print "           if ( tam > 2 && tam < 5 ) campo.value = vr.substr( 0, 2 ) + '/' + vr.substr( 2, tam ); "."\r\n";
+  print "           if ( tam >= 5 && tam <= 10 ) campo.value = vr.substr( 0, 2 ) + '/' + vr.substr( 2, 2 ) + '/' + vr.substr( 4, tam );  "."\r\n";
   print "      } "."\r\n";
   print "   } "."\r\n";
   print "} "."\r\n";
@@ -364,22 +399,22 @@ function FormataHora() {
 
 function FormataMat() {
   print "function FormataMat (campo,teclapres) { "."\r\n";
-  print "	var tecla = teclapres.keyCode; "."\r\n";
-  print "	vr = campo.value; "."\r\n";
-  print "	vr = vr.replace( '-', '' ); "."\r\n";
-  print "	tam = vr.length; "."\r\n";
-  print "	if (tam < 9 && tecla != 7){ tam = vr.length + 1 ; } "."\r\n";
-  print "	if (tecla == 7 ){	tam = tam - 1 ; } "."\r\n";
-  print "	if ( tecla == 7 || tecla >= 48 && tecla <= 57 || tecla >= 96 && tecla <= 105 ){ "."\r\n";
-  print "	 	if ( (tam > 8) && (tam <= 10) ){ "."\r\n";
-  print "	 		campo.value = vr.substr( 0, tam - 1 ) + '-' + vr.substr( tam - 1, tam ) ; } "."\r\n";
-  print "	} "."\r\n";
+  print "    var tecla = teclapres.keyCode; "."\r\n";
+  print "    vr = campo.value; "."\r\n";
+  print "    vr = vr.replace( '-', '' ); "."\r\n";
+  print "    tam = vr.length; "."\r\n";
+  print "    if (tam < 9 && tecla != 7){ tam = vr.length + 1 ; } "."\r\n";
+  print "    if (tecla == 7 ){    tam = tam - 1 ; } "."\r\n";
+  print "    if ( tecla == 7 || tecla >= 48 && tecla <= 57 || tecla >= 96 && tecla <= 105 ){ "."\r\n";
+  print "         if ( (tam > 8) && (tam <= 10) ){ "."\r\n";
+  print "             campo.value = vr.substr( 0, tam - 1 ) + '-' + vr.substr( tam - 1, tam ) ; } "."\r\n";
+  print "    } "."\r\n";
   print "} "."\r\n";
 }
 
 function CriticaNumero() {
   print "function CriticaNumero(campo, teclapres) { "."\r\n";
-  print "	var tecla = teclapres.keyCode; "."\r\n";
+  print "    var tecla = teclapres.keyCode; "."\r\n";
   print "     alert(tecla); "."\r\n";
   print " }"."\r\n";
 }
@@ -398,142 +433,142 @@ function DaysLeft() {
 
 function FormataValor() {
   ShowHTML("function FormataValor(campo, maximo, tammax, teclapres) {");
-  ShowHTML("	var tecla = teclapres.keyCode;");
-  ShowHTML("	ant_vr = campo.value;");
-  ShowHTML("	vr = campo.value;");
-  ShowHTML("	vr = vr.replace( ',', '' );");
-  ShowHTML("	vr = vr.replace( '.', '' );");
-  ShowHTML("	vr = vr.replace( '.', '' );");
-  ShowHTML("	vr = vr.replace( '.', '' );");
-  ShowHTML("	vr = vr.replace( '.', '' );");
-  ShowHTML("	tam = vr.length + 1;");
-  ShowHTML("	if (tam < tammax && tecla != 8){ tam = vr.length + 1 ; }");
-  ShowHTML("	if (tecla == 8 ) { tam = tam - 1 ; }");
-  ShowHTML("	if (tecla == 8 && tam < 1) { vr.value = ''; return true; }");
-  ShowHTML("	if ( tecla == 8 || tecla >= 48 && tecla <= 57 || tecla >= 96 && tecla <= 105 ){");
-  ShowHTML("		if ( tam <= tammax ){ campo.value = vr ; } ");
-  ShowHTML("	 	if ( (tam > tammax) && (tam <= (tammax + 3)) ){");
-  ShowHTML("	 		campo.value = vr.substr( 0, tam - tammax ) + ',' + vr.substr( tam - tammax, tam ) ; }");
-  ShowHTML("	 	if ( (tam >= (tammax+4)) && (tam <= (tammax + 6)) ){");
-  ShowHTML("	 		campo.value = vr.substr( 0, tam - (tammax + 3) ) + '.' + vr.substr( tam - (tammax + 3), 3 ) + ',' + vr.substr( tam - tammax, tam ) ; }");
-  ShowHTML("	 	if ( (tam >= (tammax + 7)) && (tam <= (tammax + 9)) ){");
-  ShowHTML("	 		campo.value = vr.substr( 0, tam - (tammax + 6) ) + '.' + vr.substr( tam - (tammax + 6), 3 ) + '.' + vr.substr( tam - (tammax + 3), 3 ) + ',' + vr.substr( tam - tammax, tam ) ; }");
-  ShowHTML("	 	if ( (tam >= (tammax + 10)) && (tam <= (tammax + 12)) ){");
-  ShowHTML("	 		campo.value = vr.substr( 0, tam - (tammax + 9) ) + '.' + vr.substr( tam - (tammax + 9), 3 ) + '.' + vr.substr( tam - (tammax + 6), 3 ) + '.' + vr.substr( tam - (tammax + 3), 3 ) + ',' + vr.substr( tam - tammax, tam ) ; }");
-  ShowHTML("	 	if ( (tam >= (tammax + 13)) && (tam <= (tammax + 15)) ){");
-  ShowHTML("	 		campo.value = vr.substr( 0, tam - (tammax + 12) ) + '.' + vr.substr( tam - (tammax + 12), 3 ) + '.' + vr.substr( tam - (tammax + 9), 3 ) + '.' + vr.substr( tam - (tammax + 6), 3 ) + '.' + vr.substr( tam - (tammax + 3), 3 ) + ',' + vr.substr( tam - tammax, tam ) ;}");
-  ShowHTML("	  if ( campo.value.length + 1 > maximo ) { campo.value = ant_vr.substr(0, maximo -1); }");
-  ShowHTML("	}");
+  ShowHTML("    var tecla = teclapres.keyCode;");
+  ShowHTML("    ant_vr = campo.value;");
+  ShowHTML("    vr = campo.value;");
+  ShowHTML("    vr = vr.replace( ',', '' );");
+  ShowHTML("    vr = vr.replace( '.', '' );");
+  ShowHTML("    vr = vr.replace( '.', '' );");
+  ShowHTML("    vr = vr.replace( '.', '' );");
+  ShowHTML("    vr = vr.replace( '.', '' );");
+  ShowHTML("    tam = vr.length + 1;");
+  ShowHTML("    if (tam < tammax && tecla != 8){ tam = vr.length + 1 ; }");
+  ShowHTML("    if (tecla == 8 ) { tam = tam - 1 ; }");
+  ShowHTML("    if (tecla == 8 && tam < 1) { vr.value = ''; return true; }");
+  ShowHTML("    if ( tecla == 8 || tecla >= 48 && tecla <= 57 || tecla >= 96 && tecla <= 105 ){");
+  ShowHTML("        if ( tam <= tammax ){ campo.value = vr ; } ");
+  ShowHTML("         if ( (tam > tammax) && (tam <= (tammax + 3)) ){");
+  ShowHTML("             campo.value = vr.substr( 0, tam - tammax ) + ',' + vr.substr( tam - tammax, tam ) ; }");
+  ShowHTML("         if ( (tam >= (tammax+4)) && (tam <= (tammax + 6)) ){");
+  ShowHTML("             campo.value = vr.substr( 0, tam - (tammax + 3) ) + '.' + vr.substr( tam - (tammax + 3), 3 ) + ',' + vr.substr( tam - tammax, tam ) ; }");
+  ShowHTML("         if ( (tam >= (tammax + 7)) && (tam <= (tammax + 9)) ){");
+  ShowHTML("             campo.value = vr.substr( 0, tam - (tammax + 6) ) + '.' + vr.substr( tam - (tammax + 6), 3 ) + '.' + vr.substr( tam - (tammax + 3), 3 ) + ',' + vr.substr( tam - tammax, tam ) ; }");
+  ShowHTML("         if ( (tam >= (tammax + 10)) && (tam <= (tammax + 12)) ){");
+  ShowHTML("             campo.value = vr.substr( 0, tam - (tammax + 9) ) + '.' + vr.substr( tam - (tammax + 9), 3 ) + '.' + vr.substr( tam - (tammax + 6), 3 ) + '.' + vr.substr( tam - (tammax + 3), 3 ) + ',' + vr.substr( tam - tammax, tam ) ; }");
+  ShowHTML("         if ( (tam >= (tammax + 13)) && (tam <= (tammax + 15)) ){");
+  ShowHTML("             campo.value = vr.substr( 0, tam - (tammax + 12) ) + '.' + vr.substr( tam - (tammax + 12), 3 ) + '.' + vr.substr( tam - (tammax + 9), 3 ) + '.' + vr.substr( tam - (tammax + 6), 3 ) + '.' + vr.substr( tam - (tammax + 3), 3 ) + ',' + vr.substr( tam - tammax, tam ) ;}");
+  ShowHTML("      if ( campo.value.length + 1 > maximo ) { campo.value = ant_vr.substr(0, maximo -1); }");
+  ShowHTML("    }");
   ShowHTML("}");
 }
 
 function FormataCPF() {
   print "function FormataCPF (campo,teclapres) { "."\r\n";
-  print "	var tecla = teclapres.keyCode; "."\r\n";
-  print "	vr = campo.value; "."\r\n";
-  print "	vr = vr.replace( '-', '' ); "."\r\n";
-  print "	vr = vr.replace( '.', '' ); "."\r\n";
-  print "	vr = vr.replace( '.', '' ); "."\r\n";
-  print "	tam = vr.length; "."\r\n";
-  print "	if (tam < 11 && tecla != 8){ tam = vr.length + 1 ; } "."\r\n";
-  print "	if (tecla == 8 ){	tam = tam - 1 ; } "."\r\n";
-  print "	if ( tecla == 8 || tecla >= 48 && tecla <= 57 || tecla >= 96 && tecla <= 105 ){ "."\r\n";
-  print "		if ( tam <= 2 ){ "."\r\n";
-  print "	 		campo.value = vr ; } "."\r\n";
-  print "	 	if ( (tam > 2) && (tam <= 5) ){ "."\r\n";
-  print "	 		campo.value = vr.substr( 0, tam - 2 ) + '-' + vr.substr( tam - 2, tam ) ; } "."\r\n";
-  print "	 	if ( (tam >= 6) && (tam <= 8) ){ "."\r\n";
-  print "	 		campo.value = vr.substr( 0, tam - 5 ) + '.' + vr.substr( tam - 5, 3 ) + '-' + vr.substr( tam - 2, tam ) ; } "."\r\n";
-  print "	 	if ( (tam >= 9) && (tam <= 11) ){ "."\r\n";
-  print "	 		campo.value = vr.substr( 0, tam - 8 ) + '.' + vr.substr( tam - 8, 3 ) + '.' + vr.substr( tam - 5, 3 ) + '-' + vr.substr( tam - 2, tam ) ; } "."\r\n";
-  print "	} "."\r\n";
+  print "    var tecla = teclapres.keyCode; "."\r\n";
+  print "    vr = campo.value; "."\r\n";
+  print "    vr = vr.replace( '-', '' ); "."\r\n";
+  print "    vr = vr.replace( '.', '' ); "."\r\n";
+  print "    vr = vr.replace( '.', '' ); "."\r\n";
+  print "    tam = vr.length; "."\r\n";
+  print "    if (tam < 11 && tecla != 8){ tam = vr.length + 1 ; } "."\r\n";
+  print "    if (tecla == 8 ){    tam = tam - 1 ; } "."\r\n";
+  print "    if ( tecla == 8 || tecla >= 48 && tecla <= 57 || tecla >= 96 && tecla <= 105 ){ "."\r\n";
+  print "        if ( tam <= 2 ){ "."\r\n";
+  print "             campo.value = vr ; } "."\r\n";
+  print "         if ( (tam > 2) && (tam <= 5) ){ "."\r\n";
+  print "             campo.value = vr.substr( 0, tam - 2 ) + '-' + vr.substr( tam - 2, tam ) ; } "."\r\n";
+  print "         if ( (tam >= 6) && (tam <= 8) ){ "."\r\n";
+  print "             campo.value = vr.substr( 0, tam - 5 ) + '.' + vr.substr( tam - 5, 3 ) + '-' + vr.substr( tam - 2, tam ) ; } "."\r\n";
+  print "         if ( (tam >= 9) && (tam <= 11) ){ "."\r\n";
+  print "             campo.value = vr.substr( 0, tam - 8 ) + '.' + vr.substr( tam - 8, 3 ) + '.' + vr.substr( tam - 5, 3 ) + '-' + vr.substr( tam - 2, tam ) ; } "."\r\n";
+  print "    } "."\r\n";
   print "} "."\r\n";
 }
 
 function FormataCNPJ() {
   print "function FormataCNPJ (campo,teclapres) { "."\r\n";
-  print "	var tecla = teclapres.keyCode; "."\r\n";
-  print "	vr = campo.value; "."\r\n";
-  print "	vr = vr.replace( '-', '' ); "."\r\n";
-  print "	vr = vr.replace( '/', '' ); "."\r\n";
-  print "	vr = vr.replace( '.', '' ); "."\r\n";
-  print "	vr = vr.replace( '.', '' ); "."\r\n";
-  print "	tam = vr.length; "."\r\n";
-  print "	if (tam < 14 && tecla != 8){ tam = vr.length + 1 ; } "."\r\n";
-  print "	if (tecla == 8 ){	tam = tam - 1 ; } "."\r\n";
-  print "	if ( tecla == 8 || tecla >= 48 && tecla <= 57 || tecla >= 96 && tecla <= 105 ){ "."\r\n";
-  print "		if ( tam <= 2 ){ "."\r\n";
-  print "	 		campo.value = vr ; } "."\r\n";
-  print "	 	if ( (tam > 2) && (tam <= 5) ){ "."\r\n";
-  print "	 		campo.value = vr.substr( 0, 2 ) + '.' + vr.substr( 2, tam ) ; } "."\r\n";
-  print "	 	if ( (tam >= 6) && (tam <= 8) ){ "."\r\n";
-  print "	 		campo.value = vr.substr( 0, 2 ) + '.' + vr.substr( 2, 3 ) + '.' + vr.substr( 5, tam ) ; } "."\r\n";
-  print "	 	if ( (tam >= 9) && (tam <= 12) ){ "."\r\n";
-  print "	 		campo.value = vr.substr( 0, 2 ) + '.' + vr.substr( 2, 3 ) + '.' + vr.substr( 5, 3 ) + '/' + vr.substr( 8, tam ) ; } "."\r\n";
-  print "	 	if ( (tam >= 13) && (tam <= 14) ){ "."\r\n";
-  print "	 		campo.value = vr.substr( 0, 2 ) + '.' + vr.substr( 2, 3 ) + '.' + vr.substr( 5, 3 ) + '/' + vr.substr( 8, 4 ) + '-' + vr.substr( 12, tam ) ; } "."\r\n";
-  print "	} "."\r\n";
+  print "    var tecla = teclapres.keyCode; "."\r\n";
+  print "    vr = campo.value; "."\r\n";
+  print "    vr = vr.replace( '-', '' ); "."\r\n";
+  print "    vr = vr.replace( '/', '' ); "."\r\n";
+  print "    vr = vr.replace( '.', '' ); "."\r\n";
+  print "    vr = vr.replace( '.', '' ); "."\r\n";
+  print "    tam = vr.length; "."\r\n";
+  print "    if (tam < 14 && tecla != 8){ tam = vr.length + 1 ; } "."\r\n";
+  print "    if (tecla == 8 ){    tam = tam - 1 ; } "."\r\n";
+  print "    if ( tecla == 8 || tecla >= 48 && tecla <= 57 || tecla >= 96 && tecla <= 105 ){ "."\r\n";
+  print "        if ( tam <= 2 ){ "."\r\n";
+  print "             campo.value = vr ; } "."\r\n";
+  print "         if ( (tam > 2) && (tam <= 5) ){ "."\r\n";
+  print "             campo.value = vr.substr( 0, 2 ) + '.' + vr.substr( 2, tam ) ; } "."\r\n";
+  print "         if ( (tam >= 6) && (tam <= 8) ){ "."\r\n";
+  print "             campo.value = vr.substr( 0, 2 ) + '.' + vr.substr( 2, 3 ) + '.' + vr.substr( 5, tam ) ; } "."\r\n";
+  print "         if ( (tam >= 9) && (tam <= 12) ){ "."\r\n";
+  print "             campo.value = vr.substr( 0, 2 ) + '.' + vr.substr( 2, 3 ) + '.' + vr.substr( 5, 3 ) + '/' + vr.substr( 8, tam ) ; } "."\r\n";
+  print "         if ( (tam >= 13) && (tam <= 14) ){ "."\r\n";
+  print "             campo.value = vr.substr( 0, 2 ) + '.' + vr.substr( 2, 3 ) + '.' + vr.substr( 5, 3 ) + '/' + vr.substr( 8, 4 ) + '-' + vr.substr( 12, tam ) ; } "."\r\n";
+  print "    } "."\r\n";
   print "} "."\r\n";
 }
 
 function FormataProtocolo() {
   print "function FormataProtocolo (campo,teclapres) { "."\r\n";
-  print "	var tecla = teclapres.keyCode; "."\r\n";
-  print "	vr = campo.value; "."\r\n";
-  print "	vr = vr.replace( '-', '' ); "."\r\n";
-  print "	vr = vr.replace( '/', '' ); "."\r\n";
-  print "	vr = vr.replace( '.', '' ); "."\r\n";
-  print "	tam = vr.length; "."\r\n";
-  print "	if (tam < 14 && tecla != 8){ tam = vr.length + 1 ; } "."\r\n";
-  print "	if (tecla == 8 ){	tam = tam - 1 ; } "."\r\n";
-  print "	if ( tecla == 8 || tecla >= 48 && tecla <= 57 || tecla >= 96 && tecla <= 105 ){ "."\r\n";
-  print "	  if (tam <= 5 ) campo.value = vr ; "."\r\n";
-  print "	  else if (tam <= 11) campo.value = vr.substr(0,5)+'.'+ vr.substr(5,tam ); "."\r\n";
-  print "	  else if (tam <= 15) campo.value = vr.substr(0,5)+'.'+ vr.substr(5,6   )+'/'+vr.substr(11,tam); "."\r\n";
-  print "	  else if (tam <= 16) campo.value = vr.substr(0,5)+'.'+ vr.substr(5,6   )+'/'+vr.substr(11,4  )+'-'+vr.substr(15,tam); "."\r\n";
-  print "	} "."\r\n";
+  print "    var tecla = teclapres.keyCode; "."\r\n";
+  print "    vr = campo.value; "."\r\n";
+  print "    vr = vr.replace( '-', '' ); "."\r\n";
+  print "    vr = vr.replace( '/', '' ); "."\r\n";
+  print "    vr = vr.replace( '.', '' ); "."\r\n";
+  print "    tam = vr.length; "."\r\n";
+  print "    if (tam < 14 && tecla != 8){ tam = vr.length + 1 ; } "."\r\n";
+  print "    if (tecla == 8 ){    tam = tam - 1 ; } "."\r\n";
+  print "    if ( tecla == 8 || tecla >= 48 && tecla <= 57 || tecla >= 96 && tecla <= 105 ){ "."\r\n";
+  print "      if (tam <= 5 ) campo.value = vr ; "."\r\n";
+  print "      else if (tam <= 11) campo.value = vr.substr(0,5)+'.'+ vr.substr(5,tam ); "."\r\n";
+  print "      else if (tam <= 15) campo.value = vr.substr(0,5)+'.'+ vr.substr(5,6   )+'/'+vr.substr(11,tam); "."\r\n";
+  print "      else if (tam <= 16) campo.value = vr.substr(0,5)+'.'+ vr.substr(5,6   )+'/'+vr.substr(11,4  )+'-'+vr.substr(15,tam); "."\r\n";
+  print "    } "."\r\n";
   print "} "."\r\n";
 }
 
 function FormataCEP() {
   print "function FormataCEP (campo,teclapres) { "."\r\n";
-  print "	var tecla = teclapres.keyCode; "."\r\n";
-  print "	vr = campo.value; "."\r\n";
-  print "	vr = vr.replace( '.', '' ); "."\r\n";
-  print "	vr = vr.replace( '-', '' ); "."\r\n";
-  print "	tam = vr.length; "."\r\n";
-  print "	if (tam < 2 && tecla != 8){ tam = vr.length + 1 ; } "."\r\n";
-  print "	if (tecla == 8 ){	tam = tam - 1 ; } "."\r\n";
-  print "	if ( tecla == 8 || tecla >= 48 && tecla <= 57 || tecla >= 96 && tecla <= 105 ){ "."\r\n";
-  print "	 	if ( (tam <= 5) ){ campo.value = vr ; } "."\r\n";
-  print "	 	else { campo.value = vr.substr( 0, 5 )  + '-' + vr.substr( 5, tam ); } "."\r\n";
-  print "	} "."\r\n";
+  print "    var tecla = teclapres.keyCode; "."\r\n";
+  print "    vr = campo.value; "."\r\n";
+  print "    vr = vr.replace( '.', '' ); "."\r\n";
+  print "    vr = vr.replace( '-', '' ); "."\r\n";
+  print "    tam = vr.length; "."\r\n";
+  print "    if (tam < 2 && tecla != 8){ tam = vr.length + 1 ; } "."\r\n";
+  print "    if (tecla == 8 ){    tam = tam - 1 ; } "."\r\n";
+  print "    if ( tecla == 8 || tecla >= 48 && tecla <= 57 || tecla >= 96 && tecla <= 105 ){ "."\r\n";
+  print "         if ( (tam <= 5) ){ campo.value = vr ; } "."\r\n";
+  print "         else { campo.value = vr.substr( 0, 5 )  + '-' + vr.substr( 5, tam ); } "."\r\n";
+  print "    } "."\r\n";
   print "} "."\r\n";
 }
 
 function FormataDataHora() {
   print "function FormataDataHora(campo, teclapres) { "."\r\n";
-  print "	var tecla = teclapres.keyCode; "."\r\n";
-  print "	vr = campo.value; "."\r\n";
-  print "	vr = vr.replace( ':', '' ); "."\r\n";
-  print "	vr = vr.replace( ',', '' ); "."\r\n";
-  print "	vr = vr.replace( ' ', '' ); "."\r\n";
-  print "	vr = vr.replace( '/', '' ); "."\r\n";
-  print "	vr = vr.replace( '/', '' ); "."\r\n";
-  print "	tam = vr.length + 1; "."\r\n";
-  print "	if (tecla == 8 ){	tam = tam - 1 ; } "."\r\n";
-  print "	if ( tecla != 9 && tecla != 8 ){ "."\r\n";
-  print "	if ( tecla == 8 || tecla >= 48 && tecla <= 57 || tecla >= 96 && tecla <= 105 ){ "."\r\n";
-  print "		if ( tam <= 2 ){ "."\r\n";
-  print "	 		campo.value = vr ; } "."\r\n";
-  print "		if ( tam > 2 && tam < 5 ) "."\r\n";
-  print "			campo.value = vr.substr( 0, 2 ) + '/' + vr.substr( 2, tam ); "."\r\n";
-  print "		if ( tam >= 5 && tam < 10 ) "."\r\n";
-  print "			campo.value = vr.substr( 0, 2 ) + '/' + vr.substr( 2, 2 ) + '/' + vr.substr( 4, tam );  "."\r\n";
-  print "		if ( tam >=10 && tam <= 11 ) "."\r\n";
-  print "			campo.value = vr.substr( 0, 2 ) + '/' + vr.substr( 2, 2 ) + '/' + vr.substr( 4, 4 ) + ', ' + vr.substr( 8, tam );  "."\r\n";
-  print "		if ( tam >=12 ) "."\r\n";
-  print "			campo.value = vr.substr( 0, 2 ) + '/' + vr.substr( 2, 2 ) + '/' + vr.substr( 4, 4 ) + ', ' + vr.substr( 8, 2 ) + ':' + vr.substr( 10, tam );  "."\r\n";
+  print "    var tecla = teclapres.keyCode; "."\r\n";
+  print "    vr = campo.value; "."\r\n";
+  print "    vr = vr.replace( ':', '' ); "."\r\n";
+  print "    vr = vr.replace( ',', '' ); "."\r\n";
+  print "    vr = vr.replace( ' ', '' ); "."\r\n";
+  print "    vr = vr.replace( '/', '' ); "."\r\n";
+  print "    vr = vr.replace( '/', '' ); "."\r\n";
+  print "    tam = vr.length + 1; "."\r\n";
+  print "    if (tecla == 8 ){    tam = tam - 1 ; } "."\r\n";
+  print "    if ( tecla != 9 && tecla != 8 ){ "."\r\n";
+  print "    if ( tecla == 8 || tecla >= 48 && tecla <= 57 || tecla >= 96 && tecla <= 105 ){ "."\r\n";
+  print "        if ( tam <= 2 ){ "."\r\n";
+  print "             campo.value = vr ; } "."\r\n";
+  print "        if ( tam > 2 && tam < 5 ) "."\r\n";
+  print "            campo.value = vr.substr( 0, 2 ) + '/' + vr.substr( 2, tam ); "."\r\n";
+  print "        if ( tam >= 5 && tam < 10 ) "."\r\n";
+  print "            campo.value = vr.substr( 0, 2 ) + '/' + vr.substr( 2, 2 ) + '/' + vr.substr( 4, tam );  "."\r\n";
+  print "        if ( tam >=10 && tam <= 11 ) "."\r\n";
+  print "            campo.value = vr.substr( 0, 2 ) + '/' + vr.substr( 2, 2 ) + '/' + vr.substr( 4, 4 ) + ', ' + vr.substr( 8, tam );  "."\r\n";
+  print "        if ( tam >=12 ) "."\r\n";
+  print "            campo.value = vr.substr( 0, 2 ) + '/' + vr.substr( 2, 2 ) + '/' + vr.substr( 4, 4 ) + ', ' + vr.substr( 8, 2 ) + ':' + vr.substr( 10, tam );  "."\r\n";
   print "    } "."\r\n";
   print "  } "."\r\n";
   print "} "."\r\n";
@@ -541,52 +576,53 @@ function FormataDataHora() {
 
 function FormataDataMA() {
   print "function FormataDataMA(campo, teclapres) { "."\r\n";
-  print "	var tecla = teclapres.keyCode; "."\r\n";
-  print "	vr = campo.value; "."\r\n";
-  print "	vr = vr.replace( '/', '' ); "."\r\n";
-  print "	tam = vr.length + 1; "."\r\n";
-  print "	if (tecla == 8 ){	tam = tam - 1 ; } "."\r\n";
-  print "	if ( tecla == 8 || tecla >= 48 && tecla <= 57 || tecla >= 96 && tecla <= 105 ){ "."\r\n";
-  print "		if ( tam <= 2 ) campo.value = vr ;  "."\r\n";
-  print "		if ( tam > 2 ) campo.value = vr.substr( 0, 2 ) + '/' + vr.substr( 2, tam ); "."\r\n";
+  print "    var tecla = teclapres.keyCode; "."\r\n";
+  print "    vr = campo.value; "."\r\n";
+  print "    vr = vr.replace( '/', '' ); "."\r\n";
+  print "    tam = vr.length + 1; "."\r\n";
+  print "    if (tecla == 8 ){    tam = tam - 1 ; } "."\r\n";
+  print "    if ( tecla == 8 || tecla >= 48 && tecla <= 57 || tecla >= 96 && tecla <= 105 ){ "."\r\n";
+  print "        if ( tam <= 2 ) campo.value = vr ;  "."\r\n";
+  print "        if ( tam > 2 ) campo.value = vr.substr( 0, 2 ) + '/' + vr.substr( 2, tam ); "."\r\n";
   print "    } "."\r\n";
   print "} "."\r\n";
 }
 
 // Abre a tag SCRIPT
 function Validate($VariableName,$DisplayName,$DataType,$ValueRequired,$MinimumLength,$MaximumLength,$AllowLetters,$AllowDigits) {
+  if(strpos($VariableName,'[]')===false) $Form = "  theForm."; else $Form = "theForm";
   if (strtoupper($DataType)!="SELECT" && strtoupper($DataType)!="HIDDEN") {
-    print "  theForm.".$VariableName.".value = Trim(theForm.".$VariableName.".value);"."\r\n"; 
+    print "  ".$Form.$VariableName.".value = Trim(".$Form.$VariableName.".value);"."\r\n"; 
   }
   if ($ValueRequired>"") {
-    if (strtoupper($DataType)=="SELECT") { print "  if (theForm.".$VariableName.".selectedIndex == 0)"."\r\n"; }
+    if (strtoupper($DataType)=="SELECT") { print "  if (".$Form.$VariableName.".selectedIndex == 0)"."\r\n"; }
     else { 
-      print "  if (theForm.".$VariableName.".value == '')"."\r\n"; 
+      print "  if (".$Form.$VariableName.".value == '')"."\r\n"; 
     }
 
     print "  {"."\r\n";
     print "    alert('Favor informar um valor para o campo ".$DisplayName."');"."\r\n";
-    if (strtoupper($DataType)!="HIDDEN") { print "    theForm.".$VariableName.".focus();"."\r\n"; }
+    if (strtoupper($DataType)!="HIDDEN") { print "    ".$Form.$VariableName.".focus();"."\r\n"; }
     print "    return (false);"."\r\n";
     print "  }"."\r\n";
     print "\r\n";
   }
 
   if ($MinimumLength>"") {
-    print "  if (theForm.".$VariableName.".value.length < ".$MinimumLength." && theForm.".$VariableName.".value != '')"."\r\n";
+    print "  if (".$Form.$VariableName.".value.length < ".$MinimumLength." && ".$Form.$VariableName.".value != '')"."\r\n";
     print "  {"."\r\n";
     print "    alert('Favor digitar pelo menos ".$MinimumLength." posições no campo ".$DisplayName."');"."\r\n";
-    if (strtoupper($DataType)!="HIDDEN") { print "    theForm.".$VariableName.".focus();"."\r\n"; }
+    if (strtoupper($DataType)!="HIDDEN") { print "    ".$Form.$VariableName.".focus();"."\r\n"; }
     print "    return (false);"."\r\n";
     print "  }"."\r\n";
     print "\r\n";
   }
 
   if ($MaximumLength>"") {
-    print "  if (theForm.".$VariableName.".value.length > ".$MaximumLength." && theForm.".$VariableName.".value != '')"."\r\n";
+    print "  if (".$Form.$VariableName.".value.length > ".$MaximumLength." && ".$Form.$VariableName.".value != '')"."\r\n";
     print "  {"."\r\n";
     print "    alert('Favor digitar no máximo ".$MaximumLength." posições no campo ".$DisplayName."');"."\r\n";
-    if (strtoupper($DataType)!="HIDDEN") { print "    theForm.".$VariableName.".focus();"."\r\n"; }
+    if (strtoupper($DataType)!="HIDDEN") { print "    ".$Form.$VariableName.".focus();"."\r\n"; }
     print "    return (false);"."\r\n";
     print "  }"."\r\n";
     print "\r\n";
@@ -605,7 +641,7 @@ function Validate($VariableName,$DisplayName,$DataType,$ValueRequired,$MinimumLe
     }
 
     print "  var checkOK = '".$checkOK."';"."\r\n";
-    print "  var checkStr = theForm.".$VariableName.".value;"."\r\n";
+    print "  var checkStr = ".$Form.$VariableName.".value;"."\r\n";
     print "  var allValid = true;"."\r\n";
     print "  for (i = 0;  i < checkStr.length;  i++)"."\r\n";
     print "  {"."\r\n";
@@ -633,7 +669,7 @@ function Validate($VariableName,$DisplayName,$DataType,$ValueRequired,$MinimumLe
       }
     } elseif ($AllowLetters=="" && $AllowDigits>"") { print "    alert('Favor digitar apenas números no campo ".$DisplayName.".');"."\r\n"; }
 
-    if (strtoupper($DataType)!="HIDDEN") { print "    theForm.".$VariableName.".focus();"."\r\n"; }
+    if (strtoupper($DataType)!="HIDDEN") { print "   ".$Form.$VariableName.".focus();"."\r\n"; }
     print "    return (false);"."\r\n";
     print "  }"."\r\n";
   }
@@ -645,7 +681,7 @@ function Validate($VariableName,$DisplayName,$DataType,$ValueRequired,$MinimumLe
     "    var soma = 0;"."\r\n".
     "    var D1 = 0;"."\r\n".
     "    var D2 = 0;"."\r\n".
-    "    var checkStr = theForm.".$VariableName.".value;"."\r\n".
+    "    var checkStr = ".$Form.$VariableName.".value;"."\r\n".
     "    checkStr = checkStr.replace('.','');"."\r\n".
     "    checkStr = checkStr.replace('.','');"."\r\n".
     "    checkStr = checkStr.replace('.','');"."\r\n".
@@ -670,7 +706,7 @@ function Validate($VariableName,$DisplayName,$DataType,$ValueRequired,$MinimumLe
     "    else { allValid = false }"."\r\n".
     "    if (!allValid) {"."\r\n".
     "       alert('".$DisplayName." inválido.');"."\r\n".
-    "       theForm.".$VariableName.".focus();"."\r\n".
+    "       ".$Form.$VariableName.".focus();"."\r\n".
     "       return (false);"."\r\n".
     "    }"."\r\n";
   }
@@ -682,7 +718,7 @@ function Validate($VariableName,$DisplayName,$DataType,$ValueRequired,$MinimumLe
     "    var soma = 0;"."\r\n".
     "    var D1 = 0;"."\r\n".
     "    var D2 = 0;"."\r\n".
-    "    var checkStr = theForm.".$VariableName.".value;"."\r\n".
+    "    var checkStr = ".$Form.$VariableName.".value;"."\r\n".
     "    checkStr = checkStr.replace('.','');"."\r\n".
     "    checkStr = checkStr.replace('.','');"."\r\n".
     "    checkStr = checkStr.replace('-','');"."\r\n".
@@ -694,7 +730,7 @@ function Validate($VariableName,$DisplayName,$DataType,$ValueRequired,$MinimumLe
     "    }"."\r\n".
     "    if (igual == 0 && checkStr > '') {"."\r\n".
     "       alert('".$DisplayName." inválido.');"."\r\n".
-    "       theForm.".$VariableName.".focus();"."\r\n".
+    "       ".$Form.$VariableName.".focus();"."\r\n".
     "       return (false);"."\r\n".
     "    }"."\r\n".
     "    D1 = modulo(soma,11);"."\r\n".
@@ -710,174 +746,174 @@ function Validate($VariableName,$DisplayName,$DataType,$ValueRequired,$MinimumLe
     "    else { allValid = false }"."\r\n".
     "    if (!allValid && checkStr > '') {"."\r\n".
     "       alert('".$DisplayName." inválido.');"."\r\n".
-    "       theForm.".$VariableName.".focus();"."\r\n".
+    "       ".$Form.$VariableName.".focus();"."\r\n".
     "       return (false);"."\r\n".
     "    }"."\r\n".
     "    if (igual == 0 && checkStr > '') {"."\r\n".
     "       alert('".$DisplayName." inválido.');"."\r\n".
-    "       theForm.".$VariableName.".focus();"."\r\n".
+    "       ".$Form.$VariableName.".focus();"."\r\n".
     "       return (false);"."\r\n".
     "    }"."\r\n";
   }
   elseif (strtoupper($DataType)=="DATA") {
     print
-    "    var checkStr = theForm.".$VariableName.".value;"."\r\n".
+    "    var checkStr = ".$Form.$VariableName.".value;"."\r\n".
     "    var err=0;"."\r\n".
     "    var psj=0;"."\r\n".
     "    if (checkStr.length != 0) {"."\r\n".
     "       if (!checkbranco(checkStr))"."\r\n".
     "       {"."\r\n".
-    "    	   if (checkStr.length != 10) err=1"."\r\n".
-    "       	dia = checkStr.substring(0, 2);"."\r\n".
-    "       	barra1 = checkStr.substring(2, 3);"."\r\n".
-    "       	mes = checkStr.substring(3, 5);"."\r\n".
-    "       	barra2 = checkStr.substring(5, 6);"."\r\n".
-    "	        ano = checkStr.substring(6, 10);"."\r\n".
-    "    	    //verificações básicas"."\r\n".
-    "    	    if (mes<1 || mes>12) err = 1;"."\r\n".
-    "    	    if (barra1 != '/') err = 1;"."\r\n".
-    "    	    if (dia<1 || dia>31) err = 1;"."\r\n".
-    "    	    if (barra2 != '/') err = 1;"."\r\n".
-    "    	    if (ano<1900 || ano>2900) err = 1;"."\r\n".
-    "    	    //verificações avançadas"."\r\n".
-    "    	    // mês com 30 dias"."\r\n".
-    "    	    if (mes==4 || mes==6 || mes==9 || mes==11){"."\r\n".
-    "    		   if (dia==31) err=1;"."\r\n".
-    "    	    }"."\r\n".
-    "    	    // fevereiro e ano bissexto"."\r\n".
-    "    	    if (mes==2){"."\r\n".
-    "    		    var g=parseInt(ano/4);"."\r\n".
-    "    		    if (isNaN(g)) {"."\r\n".
-    "    			    err=1;"."\r\n".
-    "    		    }"."\r\n".
-    "    		    if (dia>29) err=1;"."\r\n".
-    "    		    if (dia==29 && ((ano/4)!=parseInt(ano/4))) err=1;"."\r\n".
-    "    	    }"."\r\n".
+    "           if (checkStr.length != 10) err=1"."\r\n".
+    "           dia = checkStr.substring(0, 2);"."\r\n".
+    "           barra1 = checkStr.substring(2, 3);"."\r\n".
+    "           mes = checkStr.substring(3, 5);"."\r\n".
+    "           barra2 = checkStr.substring(5, 6);"."\r\n".
+    "            ano = checkStr.substring(6, 10);"."\r\n".
+    "            //verificações básicas"."\r\n".
+    "            if (mes<1 || mes>12) err = 1;"."\r\n".
+    "            if (barra1 != '/') err = 1;"."\r\n".
+    "            if (dia<1 || dia>31) err = 1;"."\r\n".
+    "            if (barra2 != '/') err = 1;"."\r\n".
+    "            if (ano<1900 || ano>2900) err = 1;"."\r\n".
+    "            //verificações avançadas"."\r\n".
+    "            // mês com 30 dias"."\r\n".
+    "            if (mes==4 || mes==6 || mes==9 || mes==11){"."\r\n".
+    "               if (dia==31) err=1;"."\r\n".
+    "            }"."\r\n".
+    "            // fevereiro e ano bissexto"."\r\n".
+    "            if (mes==2){"."\r\n".
+    "                var g=parseInt(ano/4);"."\r\n".
+    "                if (isNaN(g)) {"."\r\n".
+    "                    err=1;"."\r\n".
+    "                }"."\r\n".
+    "                if (dia>29) err=1;"."\r\n".
+    "                if (dia==29 && ((ano/4)!=parseInt(ano/4))) err=1;"."\r\n".
+    "            }"."\r\n".
     "       }"."\r\n".
     "       else"."\r\n".
     "       {"."\r\n".
-    "    	   err=1;"."\r\n".
+    "           err=1;"."\r\n".
     "       }"."\r\n".
     "    }"."\r\n".
     "    if (err==1){"."\r\n".
     "       alert('Campo ".$DisplayName." inválido.');"."\r\n".
-    "       theForm.".$VariableName.".focus();"."\r\n".
+    "       ".$Form.$VariableName.".focus();"."\r\n".
     "       return (false);"."\r\n".
     "    }"."\r\n";
   } elseif (strtoupper($DataType)=="DATAHORA") {
     print
-    "    var checkStr = theForm.".$VariableName.".value;"."\r\n".
+    "    var checkStr = ".$Form.$VariableName.".value;"."\r\n".
     "    var err=0;"."\r\n".
     "    var psj=0;"."\r\n".
     "    if (checkStr.length != 0) {"."\r\n".
     "       if (!checkbranco(checkStr))"."\r\n".
     "       {"."\r\n".
-    "    	   if (checkStr.length != 17) err=1"."\r\n".
-    "       	dia = checkStr.substr(0, 2);"."\r\n".
-    "       	barra1 = checkStr.substr(2, 1);"."\r\n".
-    "       	mes = checkStr.substr(3, 2);"."\r\n".
-    "       	barra2 = checkStr.substr(5, 1);"."\r\n".
-    "	        ano = checkStr.substr(6, 4);"."\r\n".
-    "	        hora = checkStr.substr(12, 2);"."\r\n".
-    "	        minuto = checkStr.substr(15, 2);"."\r\n".
-    "    	    //verificações básicas"."\r\n".
-    "    	    if (mes<1 || mes>12) err = 1;"."\r\n".
-    "    	    if (barra1 != '/') err = 1;"."\r\n".
-    "    	    if (dia<1 || dia>31) err = 1;"."\r\n".
-    "    	    if (barra2 != '/') err = 1;"."\r\n".
-    "    	    if (ano<1900 || ano>2900) err = 1;"."\r\n".
-    "    	    if (hora<0 || hora>23) err = 1;"."\r\n".
-    "    	    if (minuto<0 || minuto>59) err = 1;"."\r\n".
-    "    	    //verificações avançadas"."\r\n".
-    "    	    // mês com 30 dias"."\r\n".
-    "    	    if (mes==4 || mes==6 || mes==9 || mes==11){"."\r\n".
-    "    		   if (dia==31) err=1;"."\r\n".
-    "    	    }"."\r\n".
-    "    	    // fevereiro e ano bissexto"."\r\n".
-    "    	    if (mes==2){"."\r\n".
-    "    		    var g=parseInt(ano/4);"."\r\n".
-    "    		    if (isNaN(g)) {"."\r\n".
-    "    			    err=1;"."\r\n".
-    "    		    }"."\r\n".
-    "    		    if (dia>29) err=1;"."\r\n".
-    "    		    if (dia==29 && ((ano/4)!=parseInt(ano/4))) err=1;"."\r\n".
-    "    	    }"."\r\n".
+    "           if (checkStr.length != 17) err=1"."\r\n".
+    "           dia = checkStr.substr(0, 2);"."\r\n".
+    "           barra1 = checkStr.substr(2, 1);"."\r\n".
+    "           mes = checkStr.substr(3, 2);"."\r\n".
+    "           barra2 = checkStr.substr(5, 1);"."\r\n".
+    "            ano = checkStr.substr(6, 4);"."\r\n".
+    "            hora = checkStr.substr(12, 2);"."\r\n".
+    "            minuto = checkStr.substr(15, 2);"."\r\n".
+    "            //verificações básicas"."\r\n".
+    "            if (mes<1 || mes>12) err = 1;"."\r\n".
+    "            if (barra1 != '/') err = 1;"."\r\n".
+    "            if (dia<1 || dia>31) err = 1;"."\r\n".
+    "            if (barra2 != '/') err = 1;"."\r\n".
+    "            if (ano<1900 || ano>2900) err = 1;"."\r\n".
+    "            if (hora<0 || hora>23) err = 1;"."\r\n".
+    "            if (minuto<0 || minuto>59) err = 1;"."\r\n".
+    "            //verificações avançadas"."\r\n".
+    "            // mês com 30 dias"."\r\n".
+    "            if (mes==4 || mes==6 || mes==9 || mes==11){"."\r\n".
+    "               if (dia==31) err=1;"."\r\n".
+    "            }"."\r\n".
+    "            // fevereiro e ano bissexto"."\r\n".
+    "            if (mes==2){"."\r\n".
+    "                var g=parseInt(ano/4);"."\r\n".
+    "                if (isNaN(g)) {"."\r\n".
+    "                    err=1;"."\r\n".
+    "                }"."\r\n".
+    "                if (dia>29) err=1;"."\r\n".
+    "                if (dia==29 && ((ano/4)!=parseInt(ano/4))) err=1;"."\r\n".
+    "            }"."\r\n".
     "       }"."\r\n".
     "       else"."\r\n".
     "       {"."\r\n".
-    "    	   err=1;"."\r\n".
+    "           err=1;"."\r\n".
     "       }"."\r\n".
     "    }"."\r\n".
     "    if (err==1){"."\r\n".
     "       alert('Campo ".$DisplayName." inválido.');"."\r\n".
-    "       theForm.".$VariableName.".focus();"."\r\n".
+    "       ".$Form.$VariableName.".focus();"."\r\n".
     "       return (false);"."\r\n".
     "    }"."\r\n";
   } elseif (strtoupper($DataType)=="DATADM") {
     print
-    "    var checkStr = theForm.".$VariableName.".value;"."\r\n".
+    "    var checkStr = ".$Form.$VariableName.".value;"."\r\n".
     "    var err=0;"."\r\n".
     "    var psj=0;"."\r\n".
     "    if (checkStr.length != 0) {"."\r\n".
     "       if (!checkbranco(checkStr))"."\r\n".
     "       {"."\r\n".
-    "    	   if (checkStr.length != 5) err=1"."\r\n".
-    "       	dia = checkStr.substring(0, 2);"."\r\n".
-    "       	barra1 = checkStr.substring(2, 3);"."\r\n".
-    "       	mes = checkStr.substring(3, 5);"."\r\n".
-    "    	    //verificações básicas"."\r\n".
-    "    	    if (mes<1 || mes>12) err = 1;"."\r\n".
-    "    	    if (barra1 != '/') err = 1;"."\r\n".
-    "    	    if (dia<1 || dia>31) err = 1;"."\r\n".
-    "    	    //verificações avançadas"."\r\n".
-    "    	    // mês com 30 dias"."\r\n".
-    "    	    if (mes==4 || mes==6 || mes==9 || mes==11){"."\r\n".
-    "    		   if (dia==31) err=1;"."\r\n".
-    "    	    }"."\r\n".
-    "    	    // fevereiro e ano bissexto"."\r\n".
-    "    	    if (mes==2){"."\r\n".
-    "    		    var g=parseInt(ano/4);"."\r\n".
-    "    		    if (isNaN(g)) {"."\r\n".
-    "    			    err=1;"."\r\n".
-    "    		    }"."\r\n".
-    "    		    if (dia>29) err=1;"."\r\n".
-    "    		    if (dia==29 && ((ano/4)!=parseInt(ano/4))) err=1;"."\r\n".
-    "    	    }"."\r\n".
+    "           if (checkStr.length != 5) err=1"."\r\n".
+    "           dia = checkStr.substring(0, 2);"."\r\n".
+    "           barra1 = checkStr.substring(2, 3);"."\r\n".
+    "           mes = checkStr.substring(3, 5);"."\r\n".
+    "            //verificações básicas"."\r\n".
+    "            if (mes<1 || mes>12) err = 1;"."\r\n".
+    "            if (barra1 != '/') err = 1;"."\r\n".
+    "            if (dia<1 || dia>31) err = 1;"."\r\n".
+    "            //verificações avançadas"."\r\n".
+    "            // mês com 30 dias"."\r\n".
+    "            if (mes==4 || mes==6 || mes==9 || mes==11){"."\r\n".
+    "               if (dia==31) err=1;"."\r\n".
+    "            }"."\r\n".
+    "            // fevereiro e ano bissexto"."\r\n".
+    "            if (mes==2){"."\r\n".
+    "                var g=parseInt(ano/4);"."\r\n".
+    "                if (isNaN(g)) {"."\r\n".
+    "                    err=1;"."\r\n".
+    "                }"."\r\n".
+    "                if (dia>29) err=1;"."\r\n".
+    "                if (dia==29 && ((ano/4)!=parseInt(ano/4))) err=1;"."\r\n".
+    "            }"."\r\n".
     "       }"."\r\n".
     "       else"."\r\n".
     "       {"."\r\n".
-    "    	   err=1;"."\r\n".
+    "           err=1;"."\r\n".
     "       }"."\r\n".
     "    }"."\r\n".
     "    if (err==1){"."\r\n".
     "       alert('Campo ".$DisplayName." inválido.');"."\r\n".
-    "       theForm.".$VariableName.".focus();"."\r\n".
+    "       ".$Form.$VariableName.".focus();"."\r\n".
     "       return (false);"."\r\n".
     "    }"."\r\n";
   } elseif (strtoupper($DataType)=="DATAMA") {
     print
-    "var checkStr = theForm.".$VariableName.".value;"."\r\n".
+    "var checkStr = ".$Form.$VariableName.".value;"."\r\n".
     "var err=0;"."\r\n".
     "var psj=0;"."\r\n".
     "if (checkStr.length > 0) {"."\r\n".
     "   if (!checkbranco(checkStr))"."\r\n".
     "   {"."\r\n".
-    "	   if (checkStr.length != 7) err=1"."\r\n".
-    "	     mes = checkStr.substring(0, 2)"."\r\n".
-    "	     barra2 = checkStr.substring(2, 3)"."\r\n".
-    "	     ano = checkStr.substring(3, 7)"."\r\n".
-    "	     if (mes<1 || mes>12) err = 1"."\r\n".
-    "	     if (barra2 != '/') err = 1"."\r\n".
-    "	     if (ano<1900 || ano>2900) err = 1"."\r\n".
+    "       if (checkStr.length != 7) err=1"."\r\n".
+    "         mes = checkStr.substring(0, 2)"."\r\n".
+    "         barra2 = checkStr.substring(2, 3)"."\r\n".
+    "         ano = checkStr.substring(3, 7)"."\r\n".
+    "         if (mes<1 || mes>12) err = 1"."\r\n".
+    "         if (barra2 != '/') err = 1"."\r\n".
+    "         if (ano<1900 || ano>2900) err = 1"."\r\n".
     "   }"."\r\n".
     "   else"."\r\n".
     "   {"."\r\n".
-    "	   err=1"."\r\n".
+    "       err=1"."\r\n".
     "   }"."\r\n".
     "}"."\r\n".
     "if (err==1){"."\r\n".
     "   alert('Campo ".$DisplayName." inválido.');"."\r\n".
-    "   theForm.".$VariableName.".focus();"."\r\n".
+    "   ".$Form.$VariableName.".focus();"."\r\n".
     "   return (false);"."\r\n".
     "}"."\r\n";
   }

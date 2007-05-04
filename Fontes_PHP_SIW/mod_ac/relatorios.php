@@ -16,6 +16,7 @@ include_once($w_dir_volta.'classes/sp/db_getAcordoParcela.php');
 include_once($w_dir_volta.'classes/sp/db_getAcordoAditivo.php');
 include_once($w_dir_volta.'classes/sp/db_getAcordoNota.php');
 include_once($w_dir_volta.'funcoes/selecaoAcordo.php');
+include_once($w_dir_volta.'funcoes/selecaoAno.php');
 // =========================================================================
 //  /relatorios.php
 // ------------------------------------------------------------------------
@@ -99,9 +100,9 @@ exit;
 // -------------------------------------------------------------------------
 function Demonstrativo() {
   extract($GLOBALS);
-  $p_acordo  = $_REQUEST['p_acordo'];
-  $p_inicio  = $_REQUEST['p_inicio'];
-  $p_fim     = $_REQUEST['p_fim'];
+  $w_acordo  = $_REQUEST['w_acordo'];
+  //$p_inicio  = $_REQUEST['p_inicio'];
+  //$p_fim     = $_REQUEST['p_fim'];
   $w_tipo    = $_REQUEST['w_tipo'];
   if ($O=='L') {
     // Recupera o logo do cliente a ser usado nas listagens
@@ -129,15 +130,16 @@ function Demonstrativo() {
       if ($w_tipo!='WORD') {
         ShowHTML('&nbsp;&nbsp;<IMG ALIGN="CENTER" TITLE="Imprimir" SRC="images/impressora.jpg" onClick="window.print();">');
         ShowHTML('&nbsp;&nbsp;<a href="'.$w_dir.$w_pagina.'Demonstrativo&R='.$w_pagina.$par.'&O=L&w_tipo=WORD&P1='.$P1.'&P2='.$P2.'&P3='.$P3.'&P4=1&TP='.$TP.'&SG='.$SG.MontaFiltro('GET').'"><IMG border=0 ALIGN="CENTER" TITLE="Gerar word" SRC="images/word.gif"></a>');
-      } 
+      }
       ShowHTML('</TD></TR>');
       ShowHTML('</FONT></B></TD></TR></TABLE>');
     }
     ShowHTML('<table width="100%" align="center" border="0" cellpadding=0 cellspacing="3">');
+    //ShowHTML('<tr><td colspan="4" align="right"  cellspacing=00><b>Ano</b>: '.$w_ano);
     ShowHTML('<tr><td colspan="4">');
     $w_acordo_atual = 0;
     $RS_Solic = db_getSolicList::getInstanceOf($dbms,f($RS_Menu,'sq_menu'),$w_usuario,f($RS_Menu,'sigla'),4,
-                  null,null,null,null,null,null,null,null,null,null,$p_acordo,null,null,null,null,
+                  null,null,null,null,null,null,null,null,null,null,$w_acordo,null,null,null,null,
                   null, null,null,null,null,null,null,null,null,null,null,null,null);
     if (count($RS_Solic)==0) {
       ShowHTML('   <tr><td colspan="4"><br><hr NOSHADE color=#000000 size=4></td></tr>');
@@ -180,28 +182,44 @@ function Demonstrativo() {
             ShowHTML('   <tr valign="top"><td><b>'.f($row2,'codigo').'</b><td colspan="3">'.FormataDataEdicao(f($row2,'inicio'),5).' a '.FormataDataEdicao(f($row2,'fim'),5).' ('.f($row2,'duracao').' dias) - '.f($row2,'objeto'));
           }  
           if (f($row,'aviso_prox_conc')=='S') ShowHTML('   <tr valign="top"><td><b>DENÚNCIA</b><td colspan="3"> -'.f($row,'dias_aviso').' dias (a partir de '.formataDataEdicao(f($row,'aviso'),5).')');
-          
+          if(nvl($w_acordo,'')>'') {
+            ShowHTML('<tr valign="bottom"><td align="left" colspan="2"><b>Execução do ano '.$w_ano.':</b>');
+            ShowHTML('<td align="right" height="1%" colspan="2"><br>');
+            for ($i=date('Y',f($row,'inicio')); $i<=date('Y',f($row,'fim')); $i++) {
+              if($w_ano!=$i)  ShowHTML('<a class="hl" href="'.$w_dir.$w_pagina.'Demonstrativo&R='.$w_pagina.$par.'&O=L&w_acordo='.$w_acordo.'&w_ano='.$i.'&P1='.$P1.'&P2='.$P2.'&P3='.$P3.'&P4=1&TP='.$TP.'&SG='.$SG.MontaFiltro('GET').'">'.$i.'&nbsp;</a>');
+            }
+            ShowHTML('</td></tr>');
+          }
           //Parcelas
           $w_valor_inicial  = f($row,'valor');
           $w_fim            = f($row,'fim_real');
           $w_sg_tramite     = f($row,'sg_tramite');
-          $RS_Parc = db_getAcordoParcela::getInstanceOf($dbms,f($row,'sq_siw_solicitacao'),null,'RELJUR',null,null,null,null,null,null,null);
+          $RS_Parc = db_getAcordoParcela::getInstanceOf($dbms,f($row,'sq_siw_solicitacao'),null,'RELJUR',null,'01/01/'.$w_ano,'31/12/'.$w_ano,null,null,null,null);
           $RS_Parc = SortArray($RS_Parc,'ordem','asc', 'dt_nota', 'asc');
-          if (count($RS_Parc)>0) {
+          if(count($RS_Parc)==0) {
+            ShowHTML('   <tr><td colspan="4">');
+            ShowHTML('    <table   height="40" width="100%" border="1">');
+            ShowHTML('      <tr valign="middle">');
+            ShowHTML('        <td align="center" bgcolor="#f0f0f0"><font size="2"><b>Nenhuma parcela encontrada para o ano selecionado.</b></td>');
+            ShowHTML('      </tr>');
+            ShowHTML('    </table>');
+            ShowHTML('  </tr>');
+          } else {
             // Recupera informações sobre as notas ligadas ao contrato ou a seus aditivos
-            $RS_Nota = db_getAcordoNota::getInstanceOf($dbms,$w_cliente,null,f($row,'sq_siw_solicitacao'),null,null,null,null,null);
-            $RS_Nota = SortArray($RS_Nota,'cd_aditivo','asc', 'data', 'asc', 'numero', 'asc');
+            $RS_Nota = db_getAcordoNota::getInstanceOf($dbms,$w_cliente,null,f($row,'sq_siw_solicitacao'),null,null,null,'01/01/'.$w_ano,'31/12/'.$w_ano,null);
+            $RS_Nota = SortArray($RS_Nota,'data','asc', 'numero', 'asc');
             if (count($RS_Nota)>0) {
               $i = 0;
               foreach($RS_Nota as $row) {
-                $w_cab[$i] = f($row,'sg_tipo_documento').' '.f($row,'numero');
+                $w_cab[$i] = f($row,'sg_tipo_documento').'<br>'.f($row,'numero');
                 $w_cab1[$i] = '';
                 if (f($row,'abrange_inicial')=='S')   $w_cab1[$i] .= '('.f($row,'sg_inicial').')';
                 if (f($row,'abrange_acrescimo')=='S') $w_cab1[$i] .= '('.f($row,'sg_acrescimo').')';
                 if (f($row,'abrange_reajuste')=='S')  $w_cab1[$i] .= '('.f($row,'sg_reajuste').')';
                 $w_cab1[$i] .= ' '.formatNumber(f($row,'valor'));
                 $w_nota[f($row,'sq_acordo_nota')] = $i;
-                $w_saldo[$i] = f($row,'valor');
+                $w_valor[$i] = f($row,'valor');
+                $w_saldo[$i] = 0;
                 $i += 1;
               }
             }
@@ -209,11 +227,12 @@ function Demonstrativo() {
             $w_total = 0;
             $w_liq   = 0;
             $w_pago  = 0;
-            $i       = 0;
+            $i       = -1;
             $j       = 0;
             $w_atual = '';
             foreach($RS_Parc as $row3) {
               if ($w_atual!=f($row3,'sq_acordo_parcela')) {
+                $i += 1;
                 // 1ª coluna
                 if (Nvl($w_sg_tramite,'-')=='CR' && $w_fim-f($row3,'vencimento')<0) {
                   $w_linha[$i][0] = '           <img src="'.$conImgCancel.'" border=0 width=10 heigth=15 align="center" title="Parcela cancelada!">';
@@ -255,13 +274,15 @@ function Demonstrativo() {
                 $w_total += f($row3,'valor');
                 $j  = 8;
                 $w_atual = f($row3,'sq_acordo_parcela');
-                $w_linha[$i][$j+$w_nota[f($row3,'sq_acordo_nota')]] = f($row3,'vl_lancamento');
-                $i += 1;
+              }
+              if (nvl(f($row3,'sq_acordo_nota'),'')!='') {
+                if (f($row3,'abrange_inicial')=='S')   $w_linha[$i][$j+$w_nota[f($row3,'sq_acordo_nota')]] = f($row3,'valor_inicial');
+                if (f($row3,'abrange_acrescimo')=='S') $w_linha[$i][$j+$w_nota[f($row3,'sq_acordo_nota')]] = f($row3,'valor_excedente');
+                if (f($row3,'abrange_reajuste')=='S')  $w_linha[$i][$j+$w_nota[f($row3,'sq_acordo_nota')]] = f($row3,'valor_reajuste');
               }
             }
-            
             // Imprime tabela de parcelas
-            ShowHTML('      <tr><td colspan="4"><div align="center"><br>');
+            ShowHTML('      <tr><td colspan="4"><div align="center">');
             ShowHTML('        <table width=100%  border="1" bordercolor="#00000" cellpadding="0" cellspacing="0">');
             ShowHTML('          <tr align="center" bgColor="#f0f0f0">');
             ShowHTML('            <td rowspan=2 colspan=4><b>Parcelas</b></td>');
@@ -280,11 +301,11 @@ function Demonstrativo() {
             ShowHTML('            <td><b>Valor</b></td>');
             ShowHTML('            <td><b>Previsto</b></td>');
             ShowHTML('            <td><b>Realizado</b></td>');
-            for ($k=0; $k<count($w_cab1); $k++) ShowHTML('            <td align="right"><b>'.$w_cab1[$k].'</b></td>');
+            for ($k=0; $k<count($w_cab1); $k++) ShowHTML('            <td align="right" nowrap><b>'.$w_cab1[$k].'</b></td>');
             ShowHTML('          </tr>');
-            for ($k=0; $k<$i; $k++) {
+            for ($k=0; $k<=$i; $k++) {
               ShowHTML('        <tr valign="top">');
-              ShowHTML('          <td align="center"><font size="1">'.$w_linha[$k][0]);
+              ShowHTML('          <td align="center" nowrap><font size="1">'.$w_linha[$k][0]);
               ShowHTML('          <td align="center"><font size="1">'.$w_linha[$k][1]);
               ShowHTML('          <td align="center"><font size="1">'.$w_linha[$k][2]);
               ShowHTML('          <td align="right"><font size="1">'.$w_linha[$k][3]);
@@ -295,7 +316,7 @@ function Demonstrativo() {
               for ($l=0; $l<count($w_cab); $l++) {
                 if (nvl($w_linha[$k][8+$l],0)>0) {
                   ShowHTML('          <td align="right"><font size="1">'.formatNumber($w_linha[$k][8+$l]));
-                  $w_saldo[$l] -= $w_linha[$k][8+$l];
+                  $w_saldo[$l] += $w_linha[$k][8+$l];
                 } else {
                   ShowHTML('          <td align="right"><font size="1">&nbsp;');
                 }
@@ -309,11 +330,7 @@ function Demonstrativo() {
             ShowHTML('        <td align="right"><font size="1"><b>Pago&nbsp;</b></td>');
             ShowHTML('        <td align="right"><font size="1"><b>'.formatNumber($w_pago).'</b></td>');
             for ($l=0; $l<count($w_cab); $l++) {
-              if (nvl($w_saldo[$l],0)>0) {
-                ShowHTML('          <td align="right"><font size="1">'.formatNumber($w_saldo[$l]));
-              } else {
-                ShowHTML('          <td align="right"><font size="1">&nbsp;');
-              }
+              ShowHTML('          <td align="right"><font size="1">'.formatNumber(round(($w_valor[$l]-$w_saldo[$l]),2)));
             }
             ShowHTML('      </tr>');
             ShowHTML('         </table></td></tr>');
@@ -334,15 +351,16 @@ function Demonstrativo() {
     CheckBranco();
     FormataData();
     ValidateOpen('Validacao');
-    Validate('p_acordo','Acordo','SELECT','','1','18','1','1');
-    Validate('p_inicio','Data inicial de vigência','DATA','',10,10,'','0123456789/');
-    Validate('p_fim','Data final de vigência','DATA','',10,10,'','0123456789/');
-    CompData('p_inicio','Data inicial do período de reporte','<=','p_fim','Data final do período de reporte');
+    Validate('w_acordo','Acordo','SELECT','','1','18','1','1');
+    Validate('w_ano','Ano','SELECT','1','1','4','1','1');
+    //Validate('p_inicio','Data inicial de vigência','DATA','',10,10,'','0123456789/');
+    //Validate('p_fim','Data final de vigência','DATA','',10,10,'','0123456789/');
+    //CompData('p_inicio','Data inicial do período de reporte','<=','p_fim','Data final do período de reporte');
     ValidateClose();
     ScriptClose();
     ShowHTML('</HEAD>');
     ShowHTML('<BASE HREF="'.$conRootSIW.'">');
-    BodyOpen('onLoad=\'document.Form.p_acordo.focus()\';');
+    BodyOpen('onLoad=\'document.Form.w_acordo.focus()\';');
     ShowHTML('<B><FONT COLOR="#000000">'.$w_TP.'</FONT></B>');
     ShowHTML('<HR>');
     ShowHTML('<div align=center><center>');
@@ -351,12 +369,13 @@ function Demonstrativo() {
     ShowHTML('<tr bgcolor="'.$conTrBgColor.'"><td align="center">');
     ShowHTML('    <table width="97%" border="0">');
     ShowHTML('      <tr valign="top">');
-    SelecaoAcordo(f($RS_Menu,'nome').':',null,null,$w_cliente,$p_acordo,f($RS_Menu,'sq_menu'),'p_acordo',f($RS_Menu,'sigla'),null);    
+    SelecaoAcordo(f($RS_Menu,'nome').':',null,null,$w_cliente,$w_acordo,f($RS_Menu,'sq_menu'),'w_acordo',f($RS_Menu,'sigla'),null);
     ShowHTML('          </table>');
     ShowHTML('    <table width="97%" border="0">');
     ShowHTML('      <tr valign="top">');
-    ShowHTML('        <td><b><u>V</u>igência:</b><br><input '.$w_Disabled.' accesskey="V" type="text" name="p_inicio" class="sti" SIZE="10" MAXLENGTH="10" VALUE="'.$p_inicio.'" onKeyDown="FormataData(this,event);">'.ExibeCalendario('Form','p_inicio').' a ');
-    ShowHTML('                                                 <input '.$w_Disabled.' accesskey="V" type="text" name="p_fim" class="sti" SIZE="10" MAXLENGTH="10" VALUE="'.$p_fim.'" onKeyDown="FormataData(this,event);">'.ExibeCalendario('Form','p_fim').'</td>');
+    SelecaoAno('<u>A</u>no:','A','Selecione o ano para o relatório de resumo geral.',$w_ano,null,'w_ano',null,null,'5');
+    //ShowHTML('        <td><b><u>V</u>igência:</b><br><input '.$w_Disabled.' accesskey="V" type="text" name="p_inicio" class="sti" SIZE="10" MAXLENGTH="10" VALUE="'.$p_inicio.'" onKeyDown="FormataData(this,event);">'.ExibeCalendario('Form','p_inicio').' a ');
+    //ShowHTML('                                                 <input '.$w_Disabled.' accesskey="V" type="text" name="p_fim" class="sti" SIZE="10" MAXLENGTH="10" VALUE="'.$p_fim.'" onKeyDown="FormataData(this,event);">'.ExibeCalendario('Form','p_fim').'</td>');
     ShowHTML('          </table>');
     ShowHTML('    <table width="90%" border="0">');
     ShowHTML('      <tr><td align="center"><hr>');

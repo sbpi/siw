@@ -21,6 +21,7 @@ include_once($w_dir_volta.'classes/sp/db_getSolicAnexo.php');
 include_once($w_dir_volta.'classes/sp/db_getSolicLog.php');
 include_once($w_dir_volta.'classes/sp/db_verificaAssinatura.php');
 include_once($w_dir_volta.'classes/sp/db_getUorgResp.php');
+include_once($w_dir_volta.'classes/sp/db_getSolicEtapa.php');
 include_once($w_dir_volta.'classes/sp/dml_putProgramaGeral.php');
 include_once($w_dir_volta.'classes/sp/dml_putProgramaQualit.php');
 include_once($w_dir_volta.'classes/sp/dml_putSolicInter.php');
@@ -997,7 +998,7 @@ function Interessados() {
   ShowHTML('</table>');
   ShowHTML('</center>');
   Rodape();
-} 
+}
 // ------------------------------------------------------------------------- 
 // Rotina de anexos 
 // ------------------------------------------------------------------------- 

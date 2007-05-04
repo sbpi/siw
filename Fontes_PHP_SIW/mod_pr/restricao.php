@@ -260,7 +260,7 @@ function Restricao() {
       ShowHTML('<tr><td>');
       ShowHTML('  <a accesskey="I" class="SS" href="'.$w_dir.$w_pagina.$par.'&R='.$w_pagina.$par.'&O=I&w_chave='.$w_chave.'&w_problema='.$w_problema.'&P1='.$P1.'&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP='.$TP.'&SG='.$SG.'"><u>I</u>ncluir</a>&nbsp;');
       $RS_Tarefa = db_getLinkData::getInstanceOf($dbms,$w_cliente,'GDPCAD');
-      ShowHTML('        <a class="SS" HREF="javascript:location.href=this.location.href;" onClick="window.open(\''.montaURL_JS(null,$conRootSIW.'projetoativ.php?par=Inicial&R=projetoativ.php?par=Inicial&O=L&p_projeto='.$w_chave.'&p_volta=Lista&P1='.$P1.'&P2='.f($RS_Tarefa,'sq_menu').'&P3='.$P3.'&P4='.$P4.'&TP='.$TP.'- Tarefas').'&SG='.f($RS_Tarefa,'sigla').'\',\'Tarefa\',\'toolbar=no,width=780,height=530,top=30,left=10,scrollbars=yes\');">Tarefas</a>&nbsp');
+      ShowHTML('        <a class="SS" HREF="javascript:location.href=this.location.href;" onClick="window.open(\''.montaURL_JS(null,$conRootSIW.'projetoativ.php?par=Inicial&R=projetoativ.php?par=Inicial&O=L&p_projeto='.$w_chave.'&p_volta=Lista&P1=1&P2='.f($RS_Tarefa,'sq_menu').'&P3='.$P3.'&P4='.$P4.'&TP='.$TP.'- Tarefas').'&SG='.f($RS_Tarefa,'sigla').'\',\'Tarefa\',\'toolbar=no,width=780,height=530,top=30,left=10,scrollbars=yes\');">Tarefas</a>&nbsp');
     } else {
       if ($w_problema=='N') {
         ShowHTML('    <li>A listagem abaixo apresenta os riscos associados ao projeto.');
@@ -639,7 +639,7 @@ function VisualRestricao() {
 
   // Exibe os pacotes associados ao risco/problema
   $RS = db_getSolicEtapa::getInstanceOf($dbms,$w_chave_aux,null,'PACOTES',null);
-  $RS = SortArray($RS,'sq_etapa_pai','desc','ordem','asc');
+  $RS = SortArray($RS,'cd_ordem','asc');
   if (count($RS) > 0) {
     ShowHTML('  <tr><td><table width="100%" border="1">');
     ShowHTML('    <tr><td colspan="10" bgcolor="#D0D0D0"><b>'.count($RS).' pacote(s) de trabalho impactado(s)</b><br>');    

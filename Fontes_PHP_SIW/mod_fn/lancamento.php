@@ -1412,7 +1412,7 @@ function Documentos() {
     $w_tipo                 = $_REQUEST['w_tipo'];
   } elseif ($O=='L') {
     // Recupera todos os registros para a listagem
-    $RS = db_getLancamentoDoc::getInstanceOf($dbms,$w_chave,null,'LISTA');
+    $RS = db_getLancamentoDoc::getInstanceOf($dbms,$w_chave,null,'DOCS');
     $RS = SortArray($RS,'data','asc');
   } elseif (!(strpos('AEV',$O)===false) && $w_troca=='') {
     // Recupera os dados do endereço informado
@@ -2120,14 +2120,13 @@ function Notas() {
   global $w_Disabled;
 
   $w_chave              = $_REQUEST['w_chave'];
-
-  // Recupera as notas da parcela
-  $RS_Solic = db_getSolicData::getInstanceOf($dbms,$w_chave,f($RS_Menu,'sigla'));
   
-  // Recupera os dados do endereço informado
-  $RS_Nota = db_getAcordoNota::getInstanceOf($dbms,$w_cliente,null,f($RS_Solic,'sq_acordo_parcela'),null,null,null,null,'PARCELA');
-  $RS_Nota = SortArray($RS_Nota,'phpdt_data','asc');
+  $RS_Solic = db_getSolicData::getInstanceOf($dbms,$w_chave,f($RS_Menu,'sigla'));
 
+  // Recupera os dados do endereço informado
+  $RS_Lanc = db_getLancamentoDoc::getInstanceOf($dbms,$w_chave,null,'NOTA');
+  $RS_Lanc = SortArray($RS_Lanc,'data','asc');
+   
   Cabecalho();
   ShowHTML('<HEAD>');
   Estrutura_CSS($w_cliente);
@@ -2135,42 +2134,6 @@ function Notas() {
   CheckBranco();
   FormataValor();
   ValidateOpen('Validacao');
-  ShowHTML('  var i; ');  
-  ShowHTML('for (i=1; i < theForm["w_sq_acordo_nota[]"].length; i++) {');
-  ShowHTML('  if (theForm["w_inicial[]"].value==undefined) {');
-  ShowHTML('    if(theForm["w_inicial[]"][i].value==\'\'){');
-  ShowHTML('      alert(\'Para todas as notas, deve-se informar os valores correspondentes!\'); ');
-  ShowHTML('      return false;');
-  ShowHTML('    }');
-  ShowHTML('  } else {');
-  ShowHTML('    if(theForm["w_inicial[]"].value==\'\'){');
-  ShowHTML('      alert(\'Para todas as notas, deve-se informar os valores correspondentes!\'); ');
-  ShowHTML('      return false;');
-  ShowHTML('    }');  
-  ShowHTML('  }');  
-  ShowHTML('  if (theForm["w_excedente[]"].value==undefined) {');
-  ShowHTML('    if(theForm["w_excedente[]"][i].value==\'\'){');
-  ShowHTML('      alert(\'Para todas as notas, deve-se informar os valores correspondentes!\'); ');
-  ShowHTML('      return false;');
-  ShowHTML('    }');
-  ShowHTML('  } else {');
-  ShowHTML('    if(theForm["w_excedente[]"].value==\'\'){');
-  ShowHTML('      alert(\'Para todas as notas, deve-se informar os valores correspondentes!\'); ');
-  ShowHTML('      return false;');
-  ShowHTML('    }');  
-  ShowHTML('  }');  
-  ShowHTML('  if (theForm["w_reajuste[]"].value==undefined) {');
-  ShowHTML('    if(theForm["w_reajuste[]"][i].value==\'\'){');
-  ShowHTML('      alert(\'Para todas as notas, deve-se informar os valores correspondentes!\'); ');
-  ShowHTML('      return false;');
-  ShowHTML('    }');
-  ShowHTML('  } else {');
-  ShowHTML('    if(theForm["w_reajuste[]"].value==\'\'){');
-  ShowHTML('      alert(\'Para todas as notas, deve-se informar os valores correspondentes!\'); ');
-  ShowHTML('      return false;');
-  ShowHTML('    }');  
-  ShowHTML('  }');  
-  ShowHTML('}');
   ShowHTML('theForm.Botao[0].disabled=true;');
   ShowHTML('theForm.Botao[1].disabled=true;');
   ValidateClose();
@@ -2191,30 +2154,63 @@ function Notas() {
   ShowHTML('    </TABLE>');  
   ShowHTML('    </TABLE>');  
   ShowHTML('<tr><td>&nbsp;');
-  AbreForm('Form',$w_dir.$w_pagina.'Grava','POST','return(Validacao(this));',null,$P1,$P2,$P3,$P4,$TP,$SG,$R,$O);
+  AbreForm('Form',$w_dir.$w_pagina.'Grava','POST','return(Validacao(this));',null,$P1,$P2,$P3,$P4,$TP,$SG,'lancamento.php?par=Notas',$O);
   ShowHTML('<INPUT type="hidden" name="w_menu" value="'.$w_menu.'">');
   ShowHTML('<INPUT type="hidden" name="w_chave" value="'.$w_chave.'">');
-  ShowHTML('<INPUT type="hidden" name="w_sq_lancamento_doc" value="'.$w_sq_lancamento_doc.'">');
+  ShowHTML('<INPUT type="hidden" name="w_sq_acordo_nota[]" value="">');
+  ShowHTML('<INPUT type="hidden" name="w_sq_lancamento_doc[]" value="">');
+  ShowHTML('<INPUT type="hidden" name="w_sq_tipo_documento[]" value="">');
+  ShowHTML('<INPUT type="hidden" name="w_numero[]" value="">');
+  ShowHTML('<INPUT type="hidden" name="w_data[]" value="">');
+  ShowHTML('<INPUT type="hidden" name="w_inicial[]" value="">');
+  ShowHTML('<INPUT type="hidden" name="w_excedente[]" value="">');
+  ShowHTML('<INPUT type="hidden" name="w_reajuste[]" value="">');
   ShowHTML('<tr bgcolor="'.$conTrBgColor.'"><td>');
-  ShowHTML('    <table width="100%" border="0">');
-  foreach($RS_Nota as $row) {
-    ShowHTML('      <tr valign="top"><td width="1%" nowrap><b>Nota '.f($row,'numero').':</b></td>');
+  ShowHTML('<table border="1" cellpadding="0" cellspacing="0" width="100%">');
+  ShowHTML('        <tr bgcolor="'.$conTrBgColor.'" align="center">');
+  ShowHTML('          <td rowspan=2><b>Nota</td>');
+  ShowHTML('          <td colspan=2><b>Datas</td>');
+  ShowHTML('          <td colspan=4><b>Valores</td>');
+  ShowHTML('        </tr>');
+  ShowHTML('        <tr bgcolor="'.$conTrBgColor.'" align="center">');
+  ShowHTML('          <td><b>Emissão</td>');
+  ShowHTML('          <td><b>Cancelamento</td>');
+  ShowHTML('          <td width="1%" nowrap><b>Inicial</td>');
+  ShowHTML('          <td width="1%" nowrap><b>Excedente</td>');
+  ShowHTML('          <td width="1%" nowrap><b>Reajuste</td>');
+  ShowHTML('          <td width="1%" nowrap><b>Cancelado</td>');
+  ShowHTML('        </tr>');
+
+  foreach($RS_Lanc as $row) {
     ShowHTML('<INPUT type="hidden" name="w_sq_acordo_nota[]" value="'.f($row,'sq_acordo_nota').'">');
-    $RS1 = db_getLinkData::getInstanceOf($dbms,$w_cliente,'GCDCAD');
-    $RS_Parc = db_getAcordoParcela::getInstanceOf($dbms,$w_chave,null,null,null,null,null,null,null,null,$w_sq_acordo_aditivo);
-    $RS_Parc = SortArray($RS_Parc,'ordem','asc');
-    ShowHTML('          <td><table border=0 width="100%" cellspacing=0><tr valign="top">');
+    ShowHTML('<INPUT type="hidden" name="w_sq_lancamento_doc[]" value="'.f($row,'sq_lancamento_doc').'">');
+    ShowHTML('<INPUT type="hidden" name="w_sq_tipo_documento[]" value="'.f($row,'sq_tipo_documento').'">');
+    ShowHTML('<INPUT type="hidden" name="w_numero[]" value="'.f($row,'numero').'">');
+    ShowHTML('<INPUT type="hidden" name="w_data[]" value="'.FormataDataEdicao(f($row,'data')).'">');
+    ShowHTML('      <tr valign="top"><td align="center">'.f($row,'sg_nota').' '.f($row,'numero_nota').'</td>');
+    ShowHTML('                       <td align="center">'.FormataDataEdicao(f($row,'data_nota'),5).'</td>');
+    ShowHTML('                       <td align="center">'.Nvl(FormataDataEdicao(f($row,'data_cancelamento'),5),'---').'</td>');
     if (f($row,'abrange_inicial')=='S') {
-      ShowHTML('          <tr valign="top"><td width="1%" nowrap><b><u>I</u>nicial:</b><td><input '.$w_Disabled.' accesskey="I" type="text" name="w_inicial[]" class="sti" SIZE="18" MAXLENGTH="18" VALUE="'.FormatNumber(Nvl(f($row,'inicial_lanc'),f($row,'inicial_parc')),2).'" onKeyDown="FormataValor(this,18,2,event);" title="Informe o valor do documento correspondente ao valor original da parcela."></td></tr>');
+      ShowHTML('                     <td align="center"><input '.$w_Disabled.' type="text" name="w_inicial[]" class="sti" SIZE="18" MAXLENGTH="18" VALUE="'.FormatNumber(Nvl(f($row,'valor_inicial'),0),2).'" onKeyDown="FormataValor(this,18,2,event);" title="Informe o valor do documento correspondente ao valor original da parcela."></td>');
+    } else {
+      ShowHTML('<INPUT type="hidden" name="w_inicial[]" value="'.formatNumber(0,2).'">');
+      ShowHTML('          <td align="right">'.formatNumber(0,2).'</td>');
     }
     if (f($row,'abrange_acrescimo')=='S') {
-      ShowHTML('          <tr valign="top"><td width="1%" nowrap><b><u>E</u>xcedente:</b><td><input '.$w_Disabled.' accesskey="E" type="text" name="w_excedente[]" class="sti" SIZE="18" MAXLENGTH="18" VALUE="'.FormatNumber(Nvl(f($row,'excedente_lanc'),f($row,'excedente_parc')),2).'" onKeyDown="FormataValor(this,18,2,event);" title="Informe o valor do documento correspondente ao valor do acrescimo na parcela.">');
+      ShowHTML('                     <td align="center"><input '.$w_Disabled.' type="text" name="w_excedente[]" class="sti" SIZE="18" MAXLENGTH="18" VALUE="'.FormatNumber(Nvl(f($row,'valor_excedente'),0),2).'" onKeyDown="FormataValor(this,18,2,event);" title="Informe o valor do documento correspondente ao valor original da parcela."></td>');
+    } else {
+      ShowHTML('<INPUT type="hidden" name="w_excedente[]" value="'.formatNumber(0,2).'">');
+      ShowHTML('          <td align="right">'.formatNumber(0,2).'</td>');
     }
     if (f($row,'abrange_reajuste')=='S') {
-      ShowHTML('          <tr valign="top"><td width="1%" nowrap><b><u>R</u>eajuste:<td></b><input '.$w_Disabled.' accesskey="R" type="text" name="w_reajuste[]" class="sti" SIZE="18" MAXLENGTH="18" VALUE="'.FormatNumber(Nvl(f($row,'reajuste_lanc'),f($row,'reajuste_parc')),2).'" onKeyDown="FormataValor(this,18,2,event);" title="Informe o valor do documento correspondente ao valor do reajuste da parcela.">');
+      ShowHTML('                     <td align="center"><input '.$w_Disabled.' type="text" name="w_reajuste[]" class="sti" SIZE="18" MAXLENGTH="18" VALUE="'.FormatNumber(Nvl(f($row,'valor_reajuste'),0),2).'" onKeyDown="FormataValor(this,18,2,event);" title="Informe o valor do documento correspondente ao valor original da parcela."></td>');
+    } else {
+      ShowHTML('<INPUT type="hidden" name="w_reajuste[]" value="'.formatNumber(0,2).'">');
+      ShowHTML('          <td align="right">'.formatNumber(0,2).'</td>');
     }
-    ShowHTML('    </table>');
+    ShowHTML('          <td align="right">'.formatNumber(f($row,'valor_cancelamento'),2).'</td>');
   }
+  ShowHTML('</table>');
   ShowHTML('      <tr><td colspan=2 align="center"><hr>');
   ShowHTML('            <input class="stb" type="submit" name="Botao" value="Gravar">');
   ShowHTML('            <input class="STB" type="button" onClick="window.close(); opener.focus();" name="Botao" value="Fechar">');
@@ -2380,10 +2376,12 @@ function BuscaParcela() {
         ShowHTML('      return false;');
         ShowHTML('    }');
         ShowHTML('  }');
-        ShowHTML('  for (i=1; i < theForm["w_sq_acordo_parcela[]"].length; i++) {');
-        ShowHTML('    if((theForm["w_sq_acordo_parcela[]"][i].checked)&&(theForm["w_valor[]"][i].value==\'\')){');
+        ShowHTML('  for (ind=1; ind < theForm["w_sq_acordo_parcela[]"].length; ind++) {');
+        ShowHTML('    if((theForm["w_sq_acordo_parcela[]"][ind].checked)&&(theForm["w_valor[]"][ind].value==\'\')){');
         ShowHTML('      alert(\'Para todas as parcelas selecionadas você deve informar o valor da mesma!\'); ');
         ShowHTML('      return false;');
+        ShowHTML('    } else if(theForm["w_sq_acordo_parcela[]"][ind].checked) {');
+        Validate('["w_valor[]"][ind]','Valor total do documento','VALOR','1',4,18,'','0123456789.,');
         ShowHTML('    }');
         ShowHTML('  }');
       } elseif ($O=='A') {
@@ -3326,7 +3324,26 @@ function Grava() {
     if (verificaAssinaturaEletronica($_SESSION['USERNAME'],strtoupper($_REQUEST['w_assinatura'])) || $w_assinatura=='') {
       dml_putLancamentoDoc::getInstanceOf($dbms,$O,$_REQUEST['w_chave'],$_REQUEST['w_chave_aux'],$_REQUEST['w_sq_tipo_documento'],
         $_REQUEST['w_numero'],$_REQUEST['w_data'],$_REQUEST['w_serie'],$_REQUEST['w_valor'],$_REQUEST['w_patrimonio'],$_REQUEST['w_retencao'],
-        $_REQUEST['w_tributo'],&$w_chave_nova);
+        $_REQUEST['w_tributo'],null,null,null,null,&$w_chave_nova);
+      ScriptOpen('JavaScript');
+      ShowHTML('  location.href=\''.montaURL_JS($w_dir,$R.'&O=L&w_menu='.$_REQUEST['w_menu'].'&w_chave='.$_REQUEST['w_chave'].'&P1='.$P1.'&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP='.$TP.'&SG='.$SG.MontaFiltro('GET')).'\';');
+      ScriptClose();
+    } else {
+      ScriptOpen('JavaScript');
+      ShowHTML('  alert(\'Assinatura Eletrônica inválida!\');');
+      ScriptClose();
+      retornaFormulario('w_assinatura');
+    }
+  } elseif ($SG=='NOTA') {
+    // Verifica se a Assinatura Eletrônica é válida
+    if (verificaAssinaturaEletronica($_SESSION['USERNAME'],strtoupper($_REQUEST['w_assinatura'])) || $w_assinatura=='') {
+      for ($i=0; $i<=count($_POST['w_sq_acordo_nota'])-1; $i=$i+1) {
+        if (Nvl($_REQUEST['w_sq_acordo_nota'][$i],'')>'') {
+          dml_putLancamentoDoc::getInstanceOf($dbms,'A',$_REQUEST['w_chave'],$_REQUEST['w_sq_lancamento_doc'][$i],$_REQUEST['w_sq_tipo_documento'][$i],
+             $_REQUEST['w_numero'][$i],$_REQUEST['w_data'][$i],null,null,
+             'N','N','N',$_REQUEST['w_sq_acordo_nota'][$i],$_REQUEST['w_inicial'][$i],$_REQUEST['w_excedente'][$i],$_REQUEST['w_reajuste'][$i],&$w_chave_nova);
+        } 
+      }
       ScriptOpen('JavaScript');
       ShowHTML('  location.href=\''.montaURL_JS($w_dir,$R.'&O=L&w_menu='.$_REQUEST['w_menu'].'&w_chave='.$_REQUEST['w_chave'].'&P1='.$P1.'&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP='.$TP.'&SG='.$SG.MontaFiltro('GET')).'\';');
       ScriptClose();
@@ -3340,7 +3357,7 @@ function Grava() {
     // Verifica se a Assinatura Eletrônica é válida
     if (verificaAssinaturaEletronica($_SESSION['USERNAME'],strtoupper($_REQUEST['w_assinatura'])) || $w_assinatura=='') {
      dml_putLancamentoDoc::getInstanceOf($dbms,$O,$_REQUEST['w_chave'],$_REQUEST['w_chave_aux'],$_REQUEST['w_sq_tipo_documento'],
-        $_REQUEST['w_numero'],$_REQUEST['w_data'],$_REQUEST['w_serie'],$_REQUEST['w_valor_doc'],'N','N','N',&$w_chave_nova);  
+        $_REQUEST['w_numero'],$_REQUEST['w_data'],$_REQUEST['w_serie'],$_REQUEST['w_valor_doc'],'N','N','N',null,null,null,null&$w_chave_nova);
       dml_putLancamentoRubrica::getInstanceOf($dbms,'E',$w_chave_nova,null,null,null);
       for ($i=0; $i<=count($_POST['w_sq_projeto_rubrica'])-1; $i=$i+1) {
         if (Nvl($_REQUEST['w_sq_projeto_rubrica'][$i],'')>'') {
@@ -3519,6 +3536,12 @@ function Grava() {
                 null,null,null,null,null,null,null,null,null,null,f($RS,'logradouro'),f($RS,'complemento'),f($RS,'bairro'),f($RS,'sq_cidade'),
                 f($RS,'cep'),f($RS,'ddd'),f($RS,'nr_telefone'),f($RS,'nr_fax'),f($RS,'nr_celular'),f($RS,'email'),null,null,null,null,null,null,
                 null,null,null,null,null,null,null);
+            $RS_Nota = db_getAcordoNota::getInstanceOf($dbms,$w_cliente,null,$_REQUEST['w_sq_acordo_parcela'][$i],null,null,null,null,null,'PARCELAS');
+            foreach($RS_Nota as $row1) {
+              dml_putLancamentoDoc::getInstanceOf($dbms,$O,$w_chave_nova,null,f($row1,'sq_tipo_documento'),
+                 f($row1,'numero'),FormataDataEdicao(f($row1,'data')),null,formatNumber(f($row1,'valor_total'),2),
+                 'N','N','N',f($row1,'sq_acordo_nota'),formatNumber(f($row1,'inicial_parc'),2),formatNumber(f($row1,'excedente_parc'),2),formatNumber(f($row,'reajuste_parc'),2),null);
+            }
           }
         } 
       } else {

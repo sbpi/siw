@@ -9,7 +9,8 @@ extract($GLOBALS); include_once($w_dir_volta.'classes/db/DatabaseQueriesFactory.
 */
 
 class dml_putProjetoRubrica {
-   function getInstanceOf($dbms, $operacao, $p_chave, $p_chave_aux, $p_sq_cc, $p_codigo, $p_nome, $p_descricao, $p_ativo, $p_aplicacao_financeira) {
+   function getInstanceOf($dbms, $operacao, $p_chave, $p_chave_aux, $p_sq_cc, $p_codigo, $p_nome, $p_descricao, 
+        $p_ativo, $p_aplicacao_financeira, $p_copia) {
      extract($GLOBALS,EXTR_PREFIX_SAME,'strchema'); $sql=$strschema.'SP_PUTPROJETORUBRICA';
      $params=array('p_operacao'                  =>array($operacao,                                        B_VARCHAR,         1),
                    'p_chave'                     =>array($p_chave,                                         B_INTEGER,        32),
@@ -19,7 +20,8 @@ class dml_putProjetoRubrica {
                    'p_nome'                      =>array(tvl($p_nome),                                     B_VARCHAR,       100),
                    'p_descricao'                 =>array(tvl($p_descricao),                                B_VARCHAR,      2000),
                    'p_ativo'                     =>array(tvl($p_ativo),                                    B_VARCHAR,         1),
-                   'p_aplicacao_financeira'      =>array(tvl($p_aplicacao_financeira),                     B_VARCHAR,         1)
+                   'p_aplicacao_financeira'      =>array(tvl($p_aplicacao_financeira),                     B_VARCHAR,         1),
+                   'p_copia'                     =>array($p_copia,                                         B_INTEGER,        32)
                   );
      $l_rs = DatabaseQueriesFactory::getInstanceOf($sql, $dbms, $params, DB_TYPE);
      $l_error_reporting = error_reporting(); 
