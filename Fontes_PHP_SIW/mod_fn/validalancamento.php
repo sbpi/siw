@@ -57,7 +57,7 @@ function ValidaLancamento($p_cliente,$l_chave,$p_sg1,$p_sg2,$p_sg3,$p_sg4,$p_tra
     }
   }
   // 2 - Verifica se o valor do lançamento é igual à soma dos valores dos documentos
-  $l_rs1 = db_getLancamentoDoc::getInstanceOf($dbms,$l_chave,null,'LISTA');
+  $l_rs1 = db_getLancamentoDoc::getInstanceOf($dbms,$l_chave,null,'DOCS');
   if (count($l_rs1)<=0) {
     $l_existe_rs1=0;
   } else { 
@@ -71,25 +71,38 @@ function ValidaLancamento($p_cliente,$l_chave,$p_sg1,$p_sg2,$p_sg3,$p_sg4,$p_tra
           foreach($l_rs2 as $l_row2) {
             $l_valor_rubrica += f($l_row2,'valor'); 
           }
-          if (((f($l_row,'valor')!=$l_valor_rubrica) && count($l_rs2)!=0) && Nvl(f($l_rs_tramite,'ordem'),'---')<='3') {
-            $l_erro=$l_erro.'<li>'.f($l_row,'nm_tipo_documento').' - '.f($l_row,'numero').': Soma dos valores das rubricas(<b>R$ '.number_format(Nvl($l_valor_rubrica,0),2,',','.').'</b>) difere do valor do documento(<b>R$ '.number_format(Nvl(f($l_row,'valor'),0),2,',','.').'</b>).';
+          if (((f($l_row,'valor')!=$l_valor_rubrica) && count($l_rs2)!=0) && f($l_rs_tramite,'ativo')=='S') {
+            $l_erro=$l_erro.'<li>'.f($l_row,'nm_tipo_documento').' - '.f($l_row,'numero').': Soma dos valores das rubricas(<b>R$ '.formatNumber(Nvl($l_valor_rubrica,0)).'</b>) difere do valor do documento(<b>R$ '.formatNumber(Nvl(f($l_row,'valor'),0)).'</b>).';
             $l_tipo=0;
           }          
         }
       } elseif (nvl(f($l_rs_solic,'tipo_rubrica'),'')!='') {
         $l_rs2 = db_getLancamentoItem::getInstanceOf($dbms,null,f($l_row,'sq_lancamento_doc'),null,null,null);
         if (count($l_rs2)<=0) $l_existe_rs2=0; else $l_existe_rs2=count($l_rs2);
-        if (((f($l_row,'valor')!=f($l_row,'total_item')) && count($l_rs2)!=0) && Nvl(f($l_rs_tramite,'ordem'),'---')<='3') {
-          $l_erro=$l_erro.'<li>'.f($l_row,'nm_tipo_documento').' - '.f($l_row,'numero').': Soma dos valores dos itens(<b>R$ '.number_format(Nvl(f($l_row,'total_item'),0),2,',','.').'</b>) difere do valor do documento(<b>R$ '.number_format(Nvl(f($l_row,'valor'),0),2,',','.').'</b>).';
+        if (((f($l_row,'valor')!=f($l_row,'total_item')) && count($l_rs2)!=0) && f($l_rs_tramite,'ativo')=='S') {
+          $l_erro=$l_erro.'<li>'.f($l_row,'nm_tipo_documento').' - '.f($l_row,'numero').': Soma dos valores dos itens(<b>R$ '.formatNumber(Nvl(f($l_row,'total_item'),0)).'</b>) difere do valor do documento(<b>R$ '.formatNumber(Nvl(f($l_row,'valor'),0)).'</b>).';
           $l_tipo=0;
         }
       }
     }
+    if (f($l_rs_solic,'valor')!=f($l_rs_solic,'valor_doc') && f($l_rs_tramite,'ativo')=='S') {
+      $l_erro=$l_erro.'<li>O valor do lançamento (<b>R$ '.formatNumber(Nvl(f($l_rs_solic,'valor'),0)).'</b>) difere da soma dos valores dos documentos (<b>R$ '.formatNumber(Nvl(f($l_rs_solic,'valor_doc'),0)).'</b>).';
+      $l_tipo=0;
+    }
   }
-  if (((f($l_rs_solic,'valor')!=f($l_rs_solic,'valor_doc')) && count($l_rs1)!=0) && Nvl(f($l_rs_tramite,'ordem'),'---')<='2') {
-    $l_erro=$l_erro.'<li>O valor do lançamento (<b>R$ '.number_format(Nvl(f($l_rs_solic,'valor'),0),2,',','.').'</b>) difere da soma dos valores dos documentos (<b>R$ '.number_format(Nvl(f($l_rs_solic,'valor_doc'),0),2,',','.').'</b>).';
-    $l_tipo=0;
+
+  // 3 - Se o lançamento tem notas, verifica se o valor do lançamento é igual à soma dos valores das notas
+  $l_rs3 = db_getLancamentoDoc::getInstanceOf($dbms,$l_chave,null,'NOTA');
+  if (count($l_rs3)<=0) {
+    $l_existe_rs3=0;
+  } else { 
+    $l_existe_rs3=count($l_rs3);    
+    if (f($l_rs_solic,'valor')!=f($l_rs_solic,'valor_nota') && f($l_rs_tramite,'ativo')=='S') {
+      $l_erro=$l_erro.'<li>O valor do lançamento (<b>R$ '.formatNumber(Nvl(f($l_rs_solic,'valor'),0)).'</b>) difere da soma dos valores das notas (<b>R$ '.formatNumber(Nvl(f($l_rs_solic,'valor_nota'),0)).'</b>).';
+      $l_tipo=0;
+    }
   }
+
   if (nvl(f($l_rs_solic,'sq_projeto'),'')>'' && nvl(f($l_rs_solic,'tipo_rubrica'),'')<>1) {
     $l_rs_rubrica = db_getSolicRubrica::getInstanceOf($dbms,f($l_rs_solic,'sq_projeto'),null,null,null,null,null);
     if (count($l_rs_rubrica)>0) {
@@ -145,11 +158,11 @@ function ValidaLancamento($p_cliente,$l_chave,$p_sg1,$p_sg2,$p_sg3,$p_sg4,$p_tra
 
   // Este bloco faz verificações em solicitações que estão em fases posteriores ao
   // cadastramento inicial
-    if (Nvl(f($l_rs_tramite,'ordem'),0)>2) {
+    if (f($l_rs_tramite,'ordem')>1) {
       $l_erro=$l_erro;
       if (Nvl(f($l_rs_tramite,'sigla'),'---')=='EE') {
         // 4 - Recupera os documentos associados ao lançamento
-        $l_rs1 = db_getLancamentoDoc::getInstanceOf($dbms,$l_chave,null,'LISTA');
+        $l_rs1 = db_getLancamentoDoc::getInstanceOf($dbms,$l_chave,null,'DOCS');
         if (count($l_rs1)<=0) $l_existe_rs1=0; else $l_existe_rs1=count($l_rs1);
         if ($l_existe_rs1==0) {
           // 5 - Verifica se foi informado pelo menos um documento
@@ -160,11 +173,6 @@ function ValidaLancamento($p_cliente,$l_chave,$p_sg1,$p_sg2,$p_sg3,$p_sg4,$p_tra
             // 7 - Verifica se foi informado pelo menos um item no documento
             $l_erro=$l_erro.'<li>Não foram informados itens para o documento. Informe pelo menos um.';
             $l_tipo=0;
-          } 
-          // 6 - Verifica se o valor do lançamento é igual à soma dos valores dos documentos
-          if (f($l_rs_solic,'valor')!=f($l_rs_solic,'valor_doc')) {
-            $l_erro=$l_erro.'<li>O valor do lançamento (<b>R$ '.number_format(Nvl(f($l_rs_solic,'valor'),0),2,',','.').'</b>) difere da soma dos valores dos documentos (<b>R$ '.number_format(Nvl(f($l_rs_solic,'valor_doc'),0),2,',','.').'</b>).';
-            $l_tipo=1;
           } 
         }
       } elseif ((Nvl(f($l_rs_tramite,'sigla'),'---')=='AT')&&(Nvl(f($l_rs_solic,'tipo_rubrica'),0)==1)) {

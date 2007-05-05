@@ -212,14 +212,18 @@ function Demonstrativo() {
               $i = 0;
               foreach($RS_Nota as $row) {
                 $w_cab[$i] = f($row,'sg_tipo_documento').'<br>'.f($row,'numero');
-                $w_cab1[$i] = '';
+                $w_cab1[$i] = '<table border=0 width="100%"><tr valign="top"><td><b>';
                 if (f($row,'abrange_inicial')=='S')   $w_cab1[$i] .= '('.f($row,'sg_inicial').')';
                 if (f($row,'abrange_acrescimo')=='S') $w_cab1[$i] .= '('.f($row,'sg_acrescimo').')';
                 if (f($row,'abrange_reajuste')=='S')  $w_cab1[$i] .= '('.f($row,'sg_reajuste').')';
-                $w_cab1[$i] .= ' '.formatNumber(f($row,'valor'));
+                $w_cab1[$i] .= '<td align="right"><b>'.formatNumber(f($row,'valor')).'</table>';
                 $w_nota[f($row,'sq_acordo_nota')] = $i;
                 $w_valor[$i] = f($row,'valor');
                 $w_saldo[$i] = 0;
+                if (nvl(f($row,'data_cancelamento'),'')!='') {
+                  $w_cancelamento[f($row,'data_cancelamento')][f($row,'sq_acordo_nota')] = f($row,'valor_cancelamento');
+                  ksort($w_cancelamento);
+                }
                 $i += 1;
               }
             }
@@ -233,7 +237,28 @@ function Demonstrativo() {
             foreach($RS_Parc as $row3) {
               if ($w_atual!=f($row3,'sq_acordo_parcela')) {
                 $i += 1;
-                // 1ª coluna
+                if(nvl(f($row3,'inicio'),'')!='') {
+                  if (is_array($w_cancelamento)) {
+                    foreach($w_cancelamento as $k => $v) {
+                      if ($k > f($row3,'inicio') && $k < f($row3,'fim')) {
+                        foreach($v as $k1 => $v1) {
+                          $w_linha[$i][0] = '<img src="'.$conImgCancel.'" border=0 width=10 heigth=15 align="center" title="Cancelamento de valor de nota!">';
+                          $w_linha[$i][1] = 'Cancelamento de valor';
+                          $w_linha[$i][2] = formataDataEdicao($k,5);
+                          $w_linha[$i][3] = '&nbsp;';
+                          $w_linha[$i][4] = '&nbsp;';
+                          $w_linha[$i][5] = '&nbsp;';
+                          $w_linha[$i][6] = '&nbsp;';
+                          $w_linha[$i][7] = '&nbsp;';
+                          $w_linha[$i][8+$w_nota[$k1]] = $w_cancelamento[$k][$k1];
+                        }
+                        $i += 1;
+                        unset($w_cancelamento[$k]);
+                      }
+                    }
+                  }
+                }
+
                 if (Nvl($w_sg_tramite,'-')=='CR' && $w_fim-f($row3,'vencimento')<0) {
                   $w_linha[$i][0] = '           <img src="'.$conImgCancel.'" border=0 width=10 heigth=15 align="center" title="Parcela cancelada!">';
                 } elseif (Nvl(f($row3,'quitacao'),'nulo')=='nulo') {
@@ -254,8 +279,11 @@ function Demonstrativo() {
                 $w_linha[$i][0] .= f($row3,'ordem');
   
                 // Demais colunas
-                if(nvl(f($row3,'inicio'),'')!='') $w_linha[$i][1] = FormataDataEdicao(f($row3,'inicio'),5).' a '.FormataDataEdicao(f($row3,'fim'),5);
-                else                              $w_linha[$i][1] = '---';
+                if(nvl(f($row3,'inicio'),'')!='') {
+                  $w_linha[$i][1] = FormataDataEdicao(f($row3,'inicio'),5).' a '.FormataDataEdicao(f($row3,'fim'),5);
+                } else {
+                  $w_linha[$i][1] = '---';
+                }
                 $w_linha[$i][2] = FormataDataEdicao(f($row3,'vencimento'),5);
                 $w_linha[$i][3] = formatNumber(f($row3,'valor'));
                 if (Nvl(f($row3,'cd_lancamento'),'')>'') {
@@ -279,6 +307,23 @@ function Demonstrativo() {
                 if (f($row3,'abrange_inicial')=='S')   $w_linha[$i][$j+$w_nota[f($row3,'sq_acordo_nota')]] = f($row3,'valor_inicial');
                 if (f($row3,'abrange_acrescimo')=='S') $w_linha[$i][$j+$w_nota[f($row3,'sq_acordo_nota')]] = f($row3,'valor_excedente');
                 if (f($row3,'abrange_reajuste')=='S')  $w_linha[$i][$j+$w_nota[f($row3,'sq_acordo_nota')]] = f($row3,'valor_reajuste');
+              }
+            }
+            if (is_array($w_cancelamento)) {
+              foreach($w_cancelamento as $k => $v) {
+                $i += 1;
+                foreach($v as $k1 => $v1) {
+                  $w_linha[$i][0] = '<img src="'.$conImgCancel.'" border=0 width=10 heigth=15 align="center" title="Cancelamento de valor de nota!">';
+                  $w_linha[$i][1] = 'Cancelamento de valor';
+                  $w_linha[$i][2] = formataDataEdicao($k,5);
+                  $w_linha[$i][3] = '&nbsp;';
+                  $w_linha[$i][4] = '&nbsp;';
+                  $w_linha[$i][5] = '&nbsp;';
+                  $w_linha[$i][6] = '&nbsp;';
+                  $w_linha[$i][7] = '&nbsp;';
+                  $w_linha[$i][8+$w_nota[$k1]] = $w_cancelamento[$k][$k1];
+                }
+                unset($w_cancelamento[$k]);
               }
             }
             // Imprime tabela de parcelas
@@ -315,7 +360,11 @@ function Demonstrativo() {
               ShowHTML('          <td align="center"><font size="1">'.$w_linha[$k][7]);
               for ($l=0; $l<count($w_cab); $l++) {
                 if (nvl($w_linha[$k][8+$l],0)>0) {
-                  ShowHTML('          <td align="right"><font size="1">'.formatNumber($w_linha[$k][8+$l]));
+                  if ($w_linha[$k][3]=='&nbsp;') {
+                    ShowHTML('          <td align="right"><font size="1">('.formatNumber($w_linha[$k][8+$l]).')');
+                  } else {
+                    ShowHTML('          <td align="right"><font size="1">'.formatNumber($w_linha[$k][8+$l]).'&nbsp;');
+                  }
                   $w_saldo[$l] += $w_linha[$k][8+$l];
                 } else {
                   ShowHTML('          <td align="right"><font size="1">&nbsp;');
@@ -330,13 +379,10 @@ function Demonstrativo() {
             ShowHTML('        <td align="right"><font size="1"><b>Pago&nbsp;</b></td>');
             ShowHTML('        <td align="right"><font size="1"><b>'.formatNumber($w_pago).'</b></td>');
             for ($l=0; $l<count($w_cab); $l++) {
-              ShowHTML('          <td align="right"><font size="1">'.formatNumber(round(($w_valor[$l]-$w_saldo[$l]),2)));
+              ShowHTML('          <td align="right"><font size="1"><b>'.formatNumber(round(($w_valor[$l]-$w_saldo[$l]),2)).'&nbsp;');
             }
             ShowHTML('      </tr>');
             ShowHTML('         </table></td></tr>');
-            if (round($w_valor_inicial-$w_total,2)!=0) {
-              ShowHTML('   <tr><td colspan="4"><b>ATENÇÃO: a soma das parcelas difere do valor contratado ou aditivado em '.formatNumber($w_valor_inicial-$w_total).'</b></td>');
-            }
           }         
         }
         $w_acordo_atual = f($row,'sq_siw_solicitacao');

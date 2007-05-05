@@ -590,7 +590,7 @@ function FormataDataMA() {
 
 // Abre a tag SCRIPT
 function Validate($VariableName,$DisplayName,$DataType,$ValueRequired,$MinimumLength,$MaximumLength,$AllowLetters,$AllowDigits) {
-  if(strpos($VariableName,'[]')===false) $Form = "  theForm."; else $Form = "theForm";
+  if(strpos($VariableName,'[')===false) $Form = "  theForm."; else $Form = "theForm";
   if (strtoupper($DataType)!="SELECT" && strtoupper($DataType)!="HIDDEN") {
     print "  ".$Form.$VariableName.".value = Trim(".$Form.$VariableName.".value);"."\r\n"; 
   }
