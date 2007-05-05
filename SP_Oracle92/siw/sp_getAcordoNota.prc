@@ -79,14 +79,15 @@ begin
          select a.sq_acordo_parcela, a.sq_acordo_nota,
                 b.numero, b.abrange_inicial, b.abrange_acrescimo, b.abrange_reajuste, b.data,
                 b.sq_tipo_documento,
+                b.valor,
                 c.valor_inicial inicial_parc, c.valor_excedente excedente_parc, 
                 c.valor_reajuste reajuste_parc,
-                d.valor_inicial inicial_lanc, d.valor_excedente excedente_lanc, 
-                d.valor_reajuste reajuste_lanc
+                (case b.abrange_inicial   when 'S' Then c.valor_inicial   else 0 end + 
+                 case b.abrange_acrescimo when 'S' Then c.valor_excedente else 0 end +
+                 case b.abrange_reajuste  when 'S' Then c.valor_reajuste  else 0 end) as valor_total
            from ac_parcela_nota                a
                 inner   join ac_acordo_nota    b on (a.sq_acordo_nota    = b.sq_acordo_nota)
                 inner   join ac_acordo_parcela c on (a.sq_acordo_parcela = c.sq_acordo_parcela)
-                  left  join fn_lancamento_doc d on (b.sq_acordo_nota    = d.sq_acordo_nota)
           where ((p_chave_aux is null) or (p_chave_aux is not null and a.sq_acordo_parcela = p_chave_aux));
    End If;
 end SP_GetAcordoNota;
