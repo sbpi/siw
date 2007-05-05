@@ -36,8 +36,8 @@ begin
          p_nota,                    p_inicial,          p_excedente,         p_reajuste
         );
    Elsif p_operacao = 'A' Then -- Alteração
-      If p_inicial is not null or p_excedente is not null or p_reajuste is not null Then
-         w_valor := p_inicial + p_excedente + p_reajuste;
+      If w_valor is null Then
+         w_valor := coalesce(p_inicial,0) + coalesce(p_excedente,0) + coalesce(p_reajuste,0);
       End If;
       update fn_lancamento_doc
          set sq_tipo_documento = p_sq_tipo_documento,
@@ -59,18 +59,28 @@ begin
       delete fn_lancamento_doc where sq_lancamento_doc = p_chave_aux;
    End If;
       
-   -- Atualiza os valores acumulados dos impostos em FN_LANCAMENTO
-   update fn_lancamento set (valor_imposto, valor_retencao, valor_liquido) = 
-      (select Nvl(sum(d.valor_normal),0)                         valor_imposto, 
-              Nvl(sum(d.valor_retencao),0)                       valor_retencao, 
-              Nvl(sum(distinct(c.valor)) - sum(d.valor_total),0) valor_liquido
-         from siw_solicitacao                  a
-              inner     join fn_lancamento     b on (a.sq_siw_solicitacao = b.sq_siw_solicitacao)
-                inner   join fn_lancamento_doc c on (b.sq_siw_solicitacao = c.sq_siw_solicitacao)
-                  inner join fn_imposto_doc    d on (c.sq_lancamento_doc  = d.sq_lancamento_doc)
-        where a.sq_siw_solicitacao = p_chave
-      )
-   where sq_siw_solicitacao = p_chave;
+   If p_operacao = 'V' Then
+      update siw_solicitacao set 
+         valor = (select sum(coalesce(valor_inicial,0)) + sum(coalesce(valor_excedente,0)) + sum(coalesce(valor_reajuste,0))
+                    from fn_lancamento_doc
+                   where sq_siw_solicitacao = p_chave
+                     and sq_acordo_nota     is not null
+                 )
+      where sq_siw_solicitacao = p_chave;
+   Else
+      -- Atualiza os valores acumulados dos impostos em FN_LANCAMENTO
+      update fn_lancamento set (valor_imposto, valor_retencao, valor_liquido) = 
+         (select Nvl(sum(d.valor_normal),0)                         valor_imposto, 
+                 Nvl(sum(d.valor_retencao),0)                       valor_retencao, 
+                 Nvl(sum(distinct(c.valor)) - sum(d.valor_total),0) valor_liquido
+            from siw_solicitacao                  a
+                 inner     join fn_lancamento     b on (a.sq_siw_solicitacao = b.sq_siw_solicitacao)
+                   inner   join fn_lancamento_doc c on (b.sq_siw_solicitacao = c.sq_siw_solicitacao)
+                     inner join fn_imposto_doc    d on (c.sq_lancamento_doc  = d.sq_lancamento_doc)
+           where a.sq_siw_solicitacao = p_chave
+         )
+      where sq_siw_solicitacao = p_chave;
+   End If;
    -- Devolve a chave
    p_chave_nova := w_chave_aux;
 end SP_PutLancamentoDoc;

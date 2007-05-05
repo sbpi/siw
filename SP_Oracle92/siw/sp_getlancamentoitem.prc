@@ -29,6 +29,7 @@ begin
                 left outer join   fn_lancamento_rubrica c on (a.sq_lancamento_doc  = c.sq_lancamento_doc)
                   left outer join pj_rubrica            d on (c.sq_rubrica_origem  = d.sq_projeto_rubrica)
           where a.sq_siw_solicitacao = p_chave
+            and a.sq_acordo_nota     is null
           group by d.sq_projeto_rubrica, d.codigo, d.nome, e.sq_projeto_rubrica, e.codigo, e.nome;
 /*         select sum(b.valor_total) valor_total, a.nome nm_rubrica, a.codigo codigo_rubrica,
                 case nvl(a.codigo,'nulo') when 'nulo' then 'Não informado' else a.codigo||' - '||a.nome end rubrica,

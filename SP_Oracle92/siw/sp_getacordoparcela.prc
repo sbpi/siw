@@ -53,35 +53,34 @@ begin
          select a.sq_acordo_parcela, a.sq_siw_solicitacao, a.ordem, a.emissao, a.vencimento, a.quitacao,
                 a.documento_interno, a.documento_externo, a.observacao, a.valor, a.inicio, a.fim,
                 a.sq_acordo_aditivo,
-                b.sq_siw_solicitacao sq_lancamento, b.codigo_interno cd_lancamento, 
-                b.vencimento dt_lancamento, b.valor vl_lancamento, b.sg_tramite fn_tramite,
-                b.processo,
                 c.prorrogacao, c.acrescimo, c.supressao, c.revisao,
                 e.data dt_nota, e.abrange_inicial, e.abrange_acrescimo, e.abrange_reajuste,
+                f.sq_siw_solicitacao as sq_lancamento, f.codigo_interno as cd_lancamento, 
+                f.vencimento as dt_lancamento, f.valor as vl_lancamento, f.sg_tramite as fn_tramite,
+                f.processo,
                 f.sq_acordo_nota, f.valor_inicial, f.valor_excedente, f.valor_reajuste
            from ac_acordo_parcela                  a
-                left     join (select x.sq_acordo_parcela, x.sq_siw_solicitacao, y.valor,
-                                      x.codigo_interno, x.vencimento, 
-                                      z.sigla sg_tramite, x.processo
-                                 from fn_lancamento                x
-                                      inner   join siw_solicitacao y on (x.sq_siw_solicitacao = y.sq_siw_solicitacao)
-                                        inner join siw_tramite     z on (y.sq_siw_tramite     = z.sq_siw_tramite and
-                                                                         nvl(z.sigla,'-')     <> 'CA'
-                                                                        )
-                                  )                b on (a.sq_acordo_parcela = b.sq_acordo_parcela)
                 left     join ac_acordo_aditivo    c on (a.sq_acordo_aditivo = c.sq_acordo_aditivo and
                                                          a.sq_siw_solicitacao = c.sq_siw_solicitacao
                                                         )
                 left          join ac_parcela_nota d on (a.sq_acordo_parcela  = d.sq_acordo_parcela)
                   left        join ac_acordo_nota  e on (d.sq_acordo_nota     = e.sq_acordo_nota)
-                    left      join (select distinct sq_acordo_nota, x.valor_inicial, x.valor_excedente, x.valor_reajuste
-                                       from fn_lancamento_doc            x
-                                            inner   join fn_lancamento   y on (x.sq_siw_solicitacao = y.sq_siw_solicitacao and
-                                                                               y.sq_acordo_parcela  is not null
-                                                                              )
-                                              inner join siw_solicitacao z on (y.sq_siw_solicitacao = z.sq_siw_solicitacao)
-                                      where x.sq_acordo_nota is not null
-                                    )              f on (e.sq_acordo_nota     = f.sq_acordo_nota)
+                    left      join (select w.sq_acordo_nota, w.valor_inicial, w.valor_excedente, w.valor_reajuste,
+                                           x.sq_acordo_parcela, x.sq_siw_solicitacao, y.valor,
+                                           x.codigo_interno, x.vencimento, 
+                                           z.sigla sg_tramite, x.processo
+                                       from fn_lancamento_doc              w
+                                            inner     join fn_lancamento   x on (w.sq_siw_solicitacao = x.sq_siw_solicitacao and
+                                                                                 x.sq_acordo_parcela  is not null
+                                                                                )
+                                              inner   join siw_solicitacao y on (x.sq_siw_solicitacao = y.sq_siw_solicitacao)
+                                                inner join siw_tramite     z on (y.sq_siw_tramite     = z.sq_siw_tramite and
+                                                                                 nvl(z.sigla,'-')     <> 'CA'
+                                                                                )
+                                      where w.sq_acordo_nota is not null
+                                    )              f on (a.sq_acordo_parcela  = f.sq_acordo_parcela and 
+                                                         e.sq_acordo_nota     = f.sq_acordo_nota
+                                                        )
           where (p_chave     is null or (p_chave     is not null and a.sq_siw_solicitacao = p_chave))
             and (p_chave_aux is null or (p_chave_aux is not null and a.sq_acordo_parcela  = p_chave_aux))
             and (p_aditivo   is null or (p_aditivo   is not null and c.sq_acordo_aditivo  = p_aditivo))

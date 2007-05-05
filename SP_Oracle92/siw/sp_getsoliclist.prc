@@ -616,6 +616,7 @@ begin
                 d6.sq_banco,          d6.codigo cd_banco,            d6.nome nm_banco,
                 d7.sq_forma_pagamento,d7.nome nm_forma_pagamento,    d7.sigla sg_forma_pagamento, 
                 d7.ativo st_forma_pagamento,
+                Nvl(d9.valor,0) valor_nota,
                 b.fim-d.dias_aviso aviso,
                 e.sq_tipo_unidade,    e.nome nm_unidade_resp,        e.informal informal_resp,
                 e.vinculada vinc_resp,e.adm_central adm_resp,        e.sigla sg_unidade_resp,
@@ -648,8 +649,9 @@ begin
                         inner        join co_forma_pagamento   d7 on (d.sq_forma_pagamento       = d7.sq_forma_pagamento)
                         inner        join fn_tipo_lancamento   d1 on (d.sq_tipo_lancamento       = d1.sq_tipo_lancamento)
                         left         join co_pessoa            d2 on (d.pessoa                   = d2.sq_pessoa)
-                        left         join (select x.sq_siw_solicitacao, sum(Nvl(x.valor,0)) valor
+                        left         join (select x.sq_siw_solicitacao, sum(x.valor) valor
                                              from fn_lancamento_doc x
+                                            where x.sq_acordo_nota is null
                                            group by x.sq_siw_solicitacao
                                           )                    d3 on (d.sq_siw_solicitacao       = d3.sq_siw_solicitacao)
                         left         join co_pessoa_conta      d4 on (d.pessoa                   = d4.sq_pessoa and
@@ -662,6 +664,11 @@ begin
                           left       join co_banco             d6 on (d5.sq_banco                = d6.sq_banco and
                                                                       d6.ativo                   = 'S'
                                                                      )
+                          left         join (select sq_siw_solicitacao, sum(valor) valor
+                                               from fn_lancamento_doc x
+                                              where x.sq_acordo_nota is not null
+                                             group by sq_siw_solicitacao
+                                            )                  d9 on (d.sq_siw_solicitacao       = d9.sq_siw_solicitacao)
                       inner          join eo_unidade           e  on (b.sq_unidade               = e.sq_unidade)
                         left         join eo_unidade_resp      e1 on (e.sq_unidade               = e1.sq_unidade and
                                                                       e1.tipo_respons            = 'T'           and

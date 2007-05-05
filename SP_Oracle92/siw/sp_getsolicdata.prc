@@ -422,14 +422,15 @@ begin
                 case d.tipo when 1 then 'Dotação incial' when 2 then 'Transferência entre rubricas' when 3 then 'Atualização de aplicação' when 4 then 'Entradas' when 5 then 'Saídas' end nm_tipo_rubrica,
                 d1.receita,           d1.despesa,                    d1.nome nm_tipo_lancamento,
                 d2.nome nm_pessoa, d2.nome_resumido nm_pessoa_resumido,
-                Nvl(d3.valor,0) valor_doc,
+                coalesce(d3.valor,0) valor_doc,
                 d4.nome nm_forma_pagamento, d4.sigla sg_forma_pagamento, d4.ativo st_forma_pagamento,
                 d5.codigo cd_agencia, d5.nome nm_agencia,
                 d6.sq_banco,          d6.codigo cd_banco,            d6.nome nm_banco,
                 d6.exige_operacao,
                 d7.nome nm_pais,
                 d8.nome nm_tipo_pessoa,
-                Nvl(d9.valor_total,0) valor_total,
+                coalesce(d9.valor,0) valor_nota,
+                coalesce(da.qtd,0) qtd_nota,
                 b.fim-d.dias_aviso aviso,
                 e.sq_tipo_unidade,    e.nome nm_unidade_resp,        e.informal informal_resp,
                 e.vinculada vinc_resp,e.adm_central adm_resp,        e.sigla sg_unidade_resp,
@@ -460,18 +461,25 @@ begin
                      inner        join fn_tipo_lancamento   d1 on (d.sq_tipo_lancamento       = d1.sq_tipo_lancamento)
                      inner        join co_forma_pagamento   d4 on (d.sq_forma_pagamento       = d4.sq_forma_pagamento)
                      inner        join co_tipo_pessoa       d8 on (d.sq_tipo_pessoa           = d8.sq_tipo_pessoa)
-                     left         join (select x.sq_siw_solicitacao, sum(Nvl(x.valor,0)) valor
+                     left         join (select x.sq_siw_solicitacao, sum(x.valor) valor
                                           from fn_lancamento_doc x
+                                         where x.sq_acordo_nota is null
                                         group by x.sq_siw_solicitacao
                                        )                    d3 on (d.sq_siw_solicitacao       = d3.sq_siw_solicitacao)
                      left         join co_pessoa            d2 on (d.pessoa                   = d2.sq_pessoa)
                      left         join co_agencia           d5 on (d.sq_agencia               = d5.sq_agencia)
                        left       join co_banco             d6 on (d5.sq_banco                = d6.sq_banco)
                      left         join co_pais              d7 on (d.sq_pais_estrang          = d7.sq_pais)
-                     left         join (select sq_siw_solicitacao, Nvl(sum(distinct(valor)),0) valor_total
-                                          from fn_lancamento_doc
+                     left         join (select sq_siw_solicitacao, sum(valor) valor
+                                          from fn_lancamento_doc x
+                                         where x.sq_acordo_nota is not null
                                         group by sq_siw_solicitacao
                                        )                    d9 on (d.sq_siw_solicitacao       = d9.sq_siw_solicitacao)
+                     left         join (select sq_siw_solicitacao, count(x.sq_lancamento_doc) as qtd
+                                          from fn_lancamento_doc x
+                                         where x.sq_acordo_nota is not null
+                                        group by sq_siw_solicitacao
+                                       )                    da on (d.sq_siw_solicitacao       = da.sq_siw_solicitacao)
                    inner          join eo_unidade           e  on (b.sq_unidade               = e.sq_unidade)
                      left         join eo_unidade_resp      e1 on (e.sq_unidade               = e1.sq_unidade and
                                                                    e1.tipo_respons            = 'T'           and
