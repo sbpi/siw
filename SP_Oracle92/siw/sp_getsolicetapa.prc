@@ -31,7 +31,8 @@ begin
                 d.nome_resumido||' ('||f.sigla||')' nm_resp, g.sigla sg_setor,
                 nvl(h.qt_ativ,0) qt_ativ, h.sq_menu p2,
                 m.vincula_contrato pj_vincula_contrato, nvl(n.qt_contr,0) , n.sq_menu p3,
-                SolicRestricao(a.sq_siw_solicitacao, a.sq_projeto_etapa) as restricao
+                SolicRestricao(a.sq_siw_solicitacao, a.sq_projeto_etapa) as restricao,
+                e.email
            from pj_projeto_etapa                a
                 inner          join siw_solicitacao i on (a.sq_siw_solicitacao = i.sq_siw_solicitacao)
                   inner        join pj_projeto      m on (a.sq_siw_solicitacao = m.sq_siw_solicitacao)
@@ -128,19 +129,19 @@ begin
               SolicRestricao(a.sq_siw_solicitacao, a.sq_projeto_etapa) as restricao
          from pj_projeto_etapa                  a
               inner    join siw_restricao_etapa b  on (a.sq_projeto_etapa = b.sq_projeto_etapa)
-                inner join siw_restricao        b1 on (b.sq_siw_restricao = b1.sq_siw_restricao 
+                inner  join siw_restricao       b1 on (b.sq_siw_restricao = b1.sq_siw_restricao 
                                                       -- and b1.fase_atual      <> 'C'
                                                       )
-              inner  join co_pessoa             c  on (a.sq_pessoa        = c.sq_pessoa)
-              inner  join eo_unidade            d  on (a.sq_unidade       = d.sq_unidade)
-              left   join (select x.sq_projeto_etapa, y.sq_menu, count(*) qt_ativ
-                            from pj_etapa_demanda             x
-                                 inner   join siw_solicitacao y on (x.sq_siw_solicitacao = y.sq_siw_solicitacao)
-                                   inner join siw_tramite     z on (y.sq_siw_tramite     = z.sq_siw_tramite and
-                                                                    Nvl(z.sigla,'-')     <> 'CA'
-                                                                   )
-                           group by x.sq_projeto_etapa, y.sq_menu
-                          )                     e  on (a.sq_projeto_etapa = e.sq_projeto_etapa)
+              inner    join co_pessoa           c  on (a.sq_pessoa        = c.sq_pessoa)
+              inner    join eo_unidade          d  on (a.sq_unidade       = d.sq_unidade)
+              left     join (select x.sq_projeto_etapa, y.sq_menu, count(*) qt_ativ
+                               from pj_etapa_demanda             x
+                                    inner   join siw_solicitacao y on (x.sq_siw_solicitacao = y.sq_siw_solicitacao)
+                                      inner join siw_tramite     z on (y.sq_siw_tramite     = z.sq_siw_tramite and
+                                                                       Nvl(z.sigla,'-')     <> 'CA'
+                                                                      )
+                              group by x.sq_projeto_etapa, y.sq_menu
+                            )                   e  on (a.sq_projeto_etapa = e.sq_projeto_etapa)
         where b.sq_siw_restricao = p_chave
           and (p_restricao = 'ETAPA' or (p_restricao = 'PACOTES' and a.pacote_trabalho = 'S'));
    ElsIf p_restricao = 'LSTNIVEL' Then

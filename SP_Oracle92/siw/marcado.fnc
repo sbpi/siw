@@ -28,15 +28,21 @@ create or replace function MARCADO
   w_sq_modulo           number(18);
   w_gestor_seguranca    varchar2(10);
   w_gestor_sistema      varchar2(10);
-  w_acesso_geral        varchar2(10);
+  w_acesso_geral        number(18);
   w_vinculo             number(10);
   w_existe              number(10);
   Result                number := 0;
 begin
 
  -- Recupera as informações da opção
- select a.tramite,     c.sq_modulo, c.sigla,     gestor_seguranca,   gestor_sistema,   a.acesso_geral, d.sq_tipo_vinculo
-   into w_sq_servico,  w_sq_modulo, w_sg_modulo, w_gestor_seguranca, w_gestor_sistema, w_acesso_geral, w_vinculo
+ select a.tramite,     c.sq_modulo, c.sigla,     gestor_seguranca,   gestor_sistema,   d.sq_tipo_vinculo,
+       (select count(x.sq_menu)
+          from siw_menu x
+         where x.acesso_geral = 'S'
+         connect by prior x.sq_menu = x.sq_menu_pai
+        start with x.sq_menu = a.sq_menu
+       ) as geral
+   into w_sq_servico,  w_sq_modulo, w_sg_modulo, w_gestor_seguranca, w_gestor_sistema, w_vinculo, w_acesso_geral
    from siw_menu        a,
         sg_autenticacao b,
         siw_modulo      c,
@@ -46,7 +52,10 @@ begin
     and a.sq_menu   = p_menu
     and b.sq_pessoa = p_pessoa;
   
- If w_sq_servico = 'N' Then -- Se a opção não for vinculada a serviço
+ 
+ If w_acesso_geral > 0 Then -- Se a opção, ou alguma opção a ela subordinada, é de acesso geral
+    Result := 3;
+ Elsif w_sq_servico = 'N' Then -- Se a opção não for vinculada a serviço
     -- Verifica se o usuário é gestor do módulo
     If (w_gestor_sistema = 'S'   and w_sg_modulo <> 'SG') or
        (w_gestor_seguranca = 'S' and w_sg_modulo = 'SG') 
@@ -151,4 +160,3 @@ begin
  return(Result);
 end MARCADO;
 /
-

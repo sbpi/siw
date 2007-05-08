@@ -40,17 +40,20 @@ begin
                            group by c.sq_menu
                          )          x on (v.sq_menu = x.sq_menu)
               inner join (select /*+ ordered */ c.sq_menu, count(d.sq_siw_solicitacao) qtd 
-                            FROM siw_tramite                    e
-                                 inner     join siw_solicitacao d on (e.sq_siw_tramite = d.sq_siw_tramite and d.conclusao is null)
-                                   inner   join (select sq_siw_solicitacao, acesso(sq_siw_solicitacao, p_usuario) acesso
+                            FROM siw_tramite                      e
+                                 inner     join siw_menu          c on (e.sq_menu        = c.sq_menu) 
+                                   inner   join siw_modulo        b on (c.sq_modulo      = b.sq_modulo)
+                                   inner   join siw_solicitacao   d on (e.sq_siw_tramite = d.sq_siw_tramite and
+                                                                        (('N'            = c.consulta_opiniao and d.conclusao is null) or
+                                                                         ('S'            = c.consulta_opiniao and d.opiniao is null)
+                                                                        )
+                                                                       )
+                                     inner join (select sq_siw_solicitacao, acesso(sq_siw_solicitacao, p_usuario) acesso
                                                    from siw_solicitacao
-                                                )               f on (d.sq_siw_solicitacao = f.sq_siw_solicitacao)
-                                   inner   join siw_menu        c on (d.sq_menu        = c.sq_menu) 
-                                     inner join siw_modulo      b on (c.sq_modulo      = b.sq_modulo)
+                                                )                 f on (d.sq_siw_solicitacao = f.sq_siw_solicitacao)
                            where c.tramite       = 'S' 
-                             and c.ativo         = 'S' 
+                             and (e.ativo = 'S' or (e.sigla = 'AT' and d.solicitante = p_usuario and c.consulta_opiniao = 'S' and d.opiniao is null))
                              and c.sq_pessoa     = p_cliente
-                             and e.ativo         = 'S'
                              and f.acesso        > 0
                              and (c.controla_ano = 'N' or (c.controla_ano = 'S' and d.ano = p_ano))
                            group by c.sq_menu
