@@ -46,7 +46,7 @@ begin
  End If;
  
  -- Recupera os dados do usuário e do recurso
- select p.gestor_sistema,     
+ select /*+ ordered */ p.gestor_sistema,     
         a.unidade_gestora,    b.sq_pessoa_endereco,  b1.sq_pessoa,        b2.sq_pessoa
    into w_gestor_sistema,     
         w_sq_unidade_gestora, w_sq_endereco_unidade, w_sq_pessoa_titular, w_sq_pessoa_substituto
@@ -80,7 +80,7 @@ begin
  End If;
  
  -- Verifica se o usuário é titular ou substituto de alguma unidade acima da unidade gestora do recurso
- select count(a.sq_unidade_resp) into w_existe
+ select /*+ ordered */ count(a.sq_unidade_resp) into w_existe
    from eo_unidade_resp a
   where a.sq_pessoa  = p_usuario
     and a.fim        is null

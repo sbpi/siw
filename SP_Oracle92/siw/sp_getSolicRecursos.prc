@@ -33,7 +33,7 @@ begin
                 a4.ativo st_tramite,
                 a5.nome_resumido as nm_solic,                          a5.nome_resumido_ind as nm_solic_ind,
                 b.nome as nm_recurso,  b.codigo as cd_recurso,         b.unidade_gestora,
-                b.disponibilidade_tipo,
+                b.disponibilidade_tipo,b.descricao as ds_recurso,
                 case b.disponibilidade_tipo when 1 then 'Prazo indefinido, controle apenas do limite diário de unidades'
                                             when 2 then 'Prazo definido, com controle do limite de unidades no período e no dia'
                                             when 3 then 'Prazo definido, controle apenas do limite diário de unidades'

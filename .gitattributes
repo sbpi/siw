@@ -3168,6 +3168,7 @@ SP_Oracle92/siw/sp_getDocumentoInter.prc -text
 SP_Oracle92/siw/sp_getGrupoVeiculo.prc -text
 SP_Oracle92/siw/sp_getIndicador.prc -text
 SP_Oracle92/siw/sp_getIndicador_Aferidor.prc -text
+SP_Oracle92/siw/sp_getNotaAcordoCancel.prc -text
 SP_Oracle92/siw/sp_getPrograma.prc -text
 SP_Oracle92/siw/sp_getProtocolo.prc -text
 SP_Oracle92/siw/sp_getRecurso.prc -text
@@ -3450,6 +3451,7 @@ SP_Oracle92/siw/sp_putacordodadosadicionais.prc -text
 SP_Oracle92/siw/sp_putacordoenvio.prc -text
 SP_Oracle92/siw/sp_putacordogeral.prc -text
 SP_Oracle92/siw/sp_putacordonota.prc -text
+SP_Oracle92/siw/sp_putacordonotacancel.prc -text
 SP_Oracle92/siw/sp_putacordooutra.prc -text
 SP_Oracle92/siw/sp_putacordoparc.prc -text
 SP_Oracle92/siw/sp_putacordopreposto.prc -text

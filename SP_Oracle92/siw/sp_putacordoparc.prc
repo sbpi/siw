@@ -176,9 +176,10 @@ begin
          End If;
          
          If p_valor_parcela = 'I' or p_valor_parcela = 'C' Then
-            If p_valor_parcela = 'I' 
-               Then w_valor   := round(w_total / w_meses_parc,2);
-               Else w_valor   := round(w_total / w_meses,2);
+            If p_valor_parcela = 'I' Then 
+               w_valor   := round(w_total / w_meses_parc,2);
+            Else 
+               w_valor   := round(w_total / w_meses,2);
             End If;
             w_valor_1     := w_valor;
             w_valor_n     := w_valor;
@@ -258,7 +259,7 @@ begin
                If w_vencimento < w_inicio Then w_vencimento := w_inicio; End If;
 
                -- Calcula o valor total da parcela
-               w_valor_1 := round(coalesce(w_inicial_1,w_valor_1),2) + round(w_excedente_1,2) + round(w_reajuste_1,2);
+               w_valor_1 := round(coalesce(w_inicial_1,w_valor_1),2) + round(coalesce(w_excedente_1,0),2) + round(coalesce(w_reajuste_1,0),2);
 
                -- insere a primeira parcela
                insert into ac_acordo_parcela
@@ -266,7 +267,7 @@ begin
                   inicio,                    fim,                sq_acordo_aditivo,  valor_inicial,        valor_excedente,        valor_reajuste)
                values
                  (sq_acordo_parcela.nextval, p_chave,            w_cont+w_ordem,     sysdate,              w_vencimento,           p_observacao,  round(w_valor_1,2),
-                  w_per_ini,                 w_per_fim,          p_aditivo,          round(coalesce(w_inicial_1,w_valor_1),2), round(w_excedente_1,2), round(w_reajuste_1,2));
+                  w_per_ini,                 w_per_fim,          p_aditivo,          round(coalesce(w_inicial_1,w_valor_1),2), round(coalesce(w_excedente_1,0),2), round(coalesce(w_reajuste_1,0),2));
             Elsif w_cont = w_meses_parc Then
                -- Define o período de realização da ultima parcela
                w_per_ini := to_date('01'||to_char(w_fim,'mmyyyy'),'ddmmyyyy'); 
@@ -279,7 +280,7 @@ begin
                If w_vencimento < w_inicio Then w_vencimento := w_inicio; End If;
                
                -- Calcula o valor total da parcela
-               w_valor_n := round(coalesce(w_inicial_n,w_valor_n),2) + round(w_excedente_n,2) + round(w_reajuste_n,2);
+               w_valor_n := round(coalesce(w_inicial_n,w_valor_n),2) + round(coalesce(w_excedente_n,0),2) + round(coalesce(w_reajuste_n,0),2);
 
                -- Insere a última parcela
                insert into ac_acordo_parcela
@@ -287,7 +288,7 @@ begin
                   inicio,                    fim,                sq_acordo_aditivo,  valor_inicial,        valor_excedente,        valor_reajuste)
                values
                  (sq_acordo_parcela.nextval, p_chave,            w_cont+w_ordem,     sysdate,              w_vencimento,           p_observacao,  round(w_valor_n,2),
-                  w_per_ini,                 w_per_fim,          p_aditivo,          round(coalesce(w_inicial_n,w_valor_n),2), round(w_excedente_n,2), round(w_reajuste_n,2));
+                  w_per_ini,                 w_per_fim,          p_aditivo,          round(coalesce(w_inicial_n,w_valor_n),2), round(coalesce(w_excedente_n,0),2), round(coalesce(w_reajuste_n,0),2));
             Else
                -- Calcula a data de vencimento das parcelas intermediárias
                w_vencimento := add_months(w_vencimento,1);
@@ -305,14 +306,14 @@ begin
                If w_vencimento < w_inicio Then w_vencimento := w_inicio; End If;
                
                -- Calcula o valor total da parcela
-               w_valor := round(coalesce(w_inicial,w_valor),2) + round(w_excedente,2) + round(w_reajuste,2);
+               w_valor := round(coalesce(w_inicial,w_valor),2) + round(coalesce(w_excedente,0),2) + round(coalesce(w_reajuste,0),2);
                
                insert into ac_acordo_parcela
                  (sq_acordo_parcela,         sq_siw_solicitacao, ordem,              emissao,            vencimento,           observacao,    valor, 
                   inicio,                    fim,                sq_acordo_aditivo,  valor_inicial,      valor_excedente,      valor_reajuste)
                values
                  (sq_acordo_parcela.nextval, p_chave,            w_cont+w_ordem,     sysdate,            w_vencimento,         p_observacao,  round(w_valor,2),
-                  w_per_ini,                 w_per_fim,          p_aditivo,          round(coalesce(w_inicial,w_valor),2), round(w_excedente,2), round(w_reajuste,2));
+                  w_per_ini,                 w_per_fim,          p_aditivo,          round(coalesce(w_inicial,w_valor),2), round(coalesce(w_excedente,0),2), round(coalesce(w_reajuste,0),2));
             End If;
          end loop;
       End If;

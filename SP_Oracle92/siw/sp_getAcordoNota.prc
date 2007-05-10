@@ -44,7 +44,8 @@ begin
                                when 'NNS' then h.vl_reajuste
                                when 'NSN' then h.vl_excedente
                           end
-                end as vl_pago
+                end as vl_pago,
+                i.vl_cancelamento
            from ac_acordo_nota                     a  
                 inner   join ac_acordo             b on (a.sq_siw_solicitacao    = b.sq_siw_solicitacao)
                   inner join siw_solicitacao       g on (b.sq_siw_solicitacao    = g.sq_siw_solicitacao)
@@ -64,6 +65,10 @@ begin
                                 where x.sq_acordo_nota is not null
                                group by x.sq_acordo_nota, y.quitacao
                               )                    h on (a.sq_acordo_nota     = h.sq_acordo_nota)
+                left    join (select x.sq_acordo_nota, sum(x.valor) vl_cancelamento
+                                from ac_nota_cancelamento x
+                               group by x.sq_acordo_nota
+                              )                    i on (a.sq_acordo_nota     = i.sq_acordo_nota)
           where b.cliente = p_cliente
             and ((p_chave             is null) or (p_chave             is not null and a.sq_acordo_nota     = p_chave))
             and ((p_chave_aux         is null) or (p_chave_aux         is not null and a.sq_siw_solicitacao = p_chave_aux))
