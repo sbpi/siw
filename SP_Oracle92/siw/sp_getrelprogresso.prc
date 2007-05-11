@@ -1,6 +1,9 @@
 create or replace procedure SP_GetRelProgresso
    (p_cliente              in number,
-    p_chave                in number,
+    p_plano                in number default null,
+    p_objetivo             in number default null,
+    p_programa             in number default null,
+    p_chave                in number default null,
     p_inicio               in date,
     p_fim                  in date,
     p_restricao            in varchar2 default null,
@@ -79,36 +82,50 @@ begin
                 );
   ElsIf p_restricao = 'RELATORIO' Then
       open p_result for 
-         select a.sq_projeto_etapa, a.ordem, a.titulo nm_etapa, a.sq_pessoa, h.nome_resumido nm_resp_etapa, a.fim_previsto, a.situacao_atual,
-                a.perc_conclusao, a.fim_real, 
+         select a.sq_projeto_etapa, a.ordem, a.titulo nm_etapa, a.sq_pessoa, a.fim_previsto, a.situacao_atual, a.perc_conclusao, a.fim_real, 
                 montaOrdem(a.sq_projeto_etapa) as cd_ordem,
-                b.sq_siw_solicitacao as sq_projeto, b.titulo nm_projeto, 
-                c.inicio inicio_projeto, c.fim fim_projeto, c.sq_siw_solicitacao sq_projeto,
-                c1.sq_pessoa resp_projeto, c1.nome_resumido nm_resp_projeto, c2.titulo nm_programa, c3.nome nm_cc, c4.nome nm_objetivo,
-                e.sq_siw_solicitacao, f.assunto nm_tarefa, g.solicitante, i.nome_resumido nm_resp_tarefa, i.g.inicio, f.fim_real, i.nome_resumido,
-                k.titulo nm_plano, m1.sq_unidade, m1.nome nm_unidade,
-                calculaIGE(c.sq_siw_solicitacao) as ige, 
-                calculaIDE(c.sq_siw_solicitacao, w_fim, w_inicio) as ide                
-           from pj_projeto_etapa                  a
-                left        join co_pessoa        h  on (a.sq_pessoa          = h.sq_pessoa)
-                left        join pj_projeto       b  on (a.sq_siw_solicitacao = b.sq_siw_solicitacao)
-                left        join siw_solicitacao  c  on (a.sq_siw_solicitacao = c.sq_siw_solicitacao)
-                  left      join co_pessoa        c1 on (c.solicitante        = c1.sq_pessoa)
-                    inner   join sg_autenticacao  m  on (c1.sq_pessoa         = m.sq_pessoa)
-                      inner join eo_unidade       m1 on (m.sq_unidade         = m1.sq_unidade) 
-                left        join pe_programa      c2 on (c.sq_solic_pai       = c2.sq_siw_solicitacao)
-                  left      join pe_plano         k  on (c2.sq_pehorizonte    = k.sq_plano)                
-                left        join ct_cc            c3 on (c.sq_cc              = c3.sq_cc)
-                left        join pe_objetivo      c4 on (c.sq_peobjetivo      = c4.sq_peobjetivo)   
-                  left      join siw_menu         d  on (c.sq_menu            = d.sq_menu)
-                  left      join siw_tramite      j  on (c.sq_siw_tramite     = j.sq_siw_tramite)
-                left        join pj_etapa_demanda e  on (a.sq_projeto_etapa   = e.sq_projeto_etapa)
-                  left      join gd_demanda       f  on (e.sq_siw_solicitacao = f.sq_siw_solicitacao)
-                  left      join siw_solicitacao  g  on (e.sq_siw_solicitacao = g.sq_siw_solicitacao)
-                    left    join co_pessoa        i  on (g.solicitante        = i.sq_pessoa)
+                b.sq_siw_solicitacao as sq_projeto, b.titulo as nm_projeto, 
+                c.inicio as inicio_projeto, c.fim as fim_projeto, c.sq_siw_solicitacao as sq_projeto,
+                c1.sq_pessoa as resp_projeto, c1.nome_resumido as nm_resp_projeto, 
+                c2.titulo as nm_programa,
+                c7.nome as nm_cc, 
+                case when c4.sq_peobjetivo is not null then c4.nome else c5.nome end as nm_objetivo,
+                e.sq_siw_solicitacao, 
+                f.assunto as nm_tarefa, f.fim_real, 
+                g.solicitante, 
+                i.nome_resumido as nm_resp_tarefa, i.nome_resumido,
+                g.inicio, 
+                h.nome_resumido as nm_resp_etapa, 
+                case when k.sq_plano is not null then k.titulo else c6.titulo end as nm_plano, 
+                m1.sq_unidade, m1.nome as nm_unidade,
+                calculaIGE(c.sq_siw_solicitacao) as ige, calculaIDE(c.sq_siw_solicitacao, w_fim, w_inicio) as ide                
+           from pj_projeto_etapa                    a
+                inner         join co_pessoa        h  on (a.sq_pessoa           = h.sq_pessoa)
+                inner         join pj_projeto       b  on (a.sq_siw_solicitacao  = b.sq_siw_solicitacao)
+                inner         join siw_solicitacao  c  on (a.sq_siw_solicitacao  = c.sq_siw_solicitacao)
+                  inner       join co_pessoa        c1 on (c.solicitante         = c1.sq_pessoa)
+                    inner     join sg_autenticacao  m  on (c1.sq_pessoa          = m.sq_pessoa)
+                      inner   join eo_unidade       m1 on (m.sq_unidade          = m1.sq_unidade) 
+                  inner       join siw_tramite      j  on (c.sq_siw_tramite      = j.sq_siw_tramite and 
+                                                           'CA'                  <> coalesce(j.sigla,'-')
+                                                          )
+                  inner       join siw_menu         d  on (c.sq_menu             = d.sq_menu)
+                  left        join pe_programa      c2 on (c.sq_solic_pai        = c2.sq_siw_solicitacao)
+                    left      join siw_solicitacao  c3 on (c2.sq_siw_solicitacao = c3.sq_siw_solicitacao)
+                      left    join pe_objetivo      c4 on (c3.sq_peobjetivo      = c4.sq_peobjetivo)
+                        left  join pe_plano         k  on (c4.sq_plano           = k.sq_plano)
+                  left        join pe_objetivo      c5 on (c.sq_peobjetivo       = c5.sq_peobjetivo)
+                    left      join pe_plano         c6 on (c5.sq_plano           = c6.sq_plano)
+                  left        join ct_cc            c7 on (c.sq_cc               = c7.sq_cc)
+                left          join pj_etapa_demanda e  on (a.sq_projeto_etapa    = e.sq_projeto_etapa)
+                  left        join gd_demanda       f  on (e.sq_siw_solicitacao  = f.sq_siw_solicitacao)
+                  left        join siw_solicitacao  g  on (e.sq_siw_solicitacao  = g.sq_siw_solicitacao)
+                    left      join co_pessoa        i  on (g.solicitante         = i.sq_pessoa)
           where d.sq_pessoa      = p_cliente
-            and j.sigla          <> 'CA'
             and (p_chave         is null or (p_chave       is not null and a.sq_siw_solicitacao = p_chave))
+            and (p_programa      is null or (p_programa    is not null and c.sq_solic_pai       = p_programa))
+            and (p_objetivo      is null or (p_objetivo    is not null and (c.sq_peobjetivo     = p_objetivo or c3.sq_peobjetivo = p_objetivo)))
+            and (p_plano         is null or (p_plano       is not null and (c4.sq_plano         = p_plano    or c5.sq_plano      = p_plano)))
             and (p_chave         is not null or 
                  (p_chave        is null and
                   (c.inicio      between w_inicio      and w_fim or
@@ -122,6 +139,25 @@ begin
                   )
                  )
                 );            
+  ElsIf p_restricao = 'REL_DET' Then
+      open p_result for 
+         select distinct a.sq_siw_solicitacao as sq_projeto
+           from siw_solicitacao  a
+                inner       join siw_menu         d on (a.sq_menu             = d.sq_menu)
+                inner       join pj_projeto       e on (a.sq_siw_solicitacao  = e.sq_siw_solicitacao)
+                inner       join siw_tramite      f on (a.sq_siw_tramite      = f.sq_siw_tramite)
+                left        join pe_programa      b  on (a.sq_solic_pai       = b.sq_siw_solicitacao)
+                  left      join siw_solicitacao  b1 on (b.sq_siw_solicitacao = b1.sq_siw_solicitacao)
+                  left      join pe_objetivo      b2 on (b1.sq_peobjetivo      = b2.sq_peobjetivo)
+                  left      join pe_plano         b3 on (b2.sq_plano          = b3.sq_plano)
+                left        join pe_objetivo      c  on (a.sq_peobjetivo      = c.sq_peobjetivo)
+                  left      join pe_plano         c1 on (c.sq_plano           = c1.sq_plano)
+          where d.sq_pessoa      = p_cliente
+            and 'CA'             <> coalesce(f.sigla,'-')
+            and (p_chave         is null or (p_chave       is not null and a.sq_siw_solicitacao = p_chave))
+            and (p_programa      is null or (p_programa    is not null and a.sq_solic_pai       = p_programa))
+            and (p_objetivo      is null or (p_objetivo    is not null and (a.sq_peobjetivo      = p_objetivo or b1.sq_peobjetivo = p_objetivo)))
+            and (p_plano         is null or (p_plano       is not null and (b2.sq_plano          = p_plano    or c.sq_plano = p_plano)));
   End If;
 end SP_GetRelProgresso;
 /

@@ -1183,10 +1183,16 @@ begin
       -- Recupera as demandas que o usuário pode ver
       open p_result for 
          select b.sq_siw_solicitacao, d.titulo
-           from siw_solicitacao               b
-                   inner   join siw_tramite   b1 on (b.sq_siw_tramite     = b1.sq_siw_tramite)
-                   inner   join pj_projeto    d  on (b.sq_siw_solicitacao = d.sq_siw_solicitacao)
+           from siw_solicitacao                b
+                inner     join siw_tramite     b1 on (b.sq_siw_tramite     = b1.sq_siw_tramite)
+                inner     join pj_projeto      d  on (b.sq_siw_solicitacao = d.sq_siw_solicitacao)
+                left      join pe_objetivo     e  on (b.sq_peobjetivo      = e.sq_peobjetivo)
+                left      join siw_solicitacao f  on (b.sq_solic_pai       = f.sq_siw_solicitacao)
+                  left    join pe_objetivo     f1 on (f.sq_peobjetivo      = f1.sq_peobjetivo)
           where b.sq_menu         = p_menu
+            and (p_projeto        is null or (p_projeto     is not null and b.sq_solic_pai       = p_projeto))
+            and (p_sq_acao_ppa    is null or (p_sq_acao_ppa is not null and (e.sq_peobjetivo     = p_sq_acao_ppa or f1.sq_peobjetivo = p_sq_acao_ppa)))
+            and (p_sq_orprior     is null or (p_sq_orprior  is not null and (e.sq_plano          = p_sq_orprior  or f1.sq_plano = p_sq_orprior)))
             and Nvl(b1.sigla,'-') <> 'CA' 
             and (acesso(b.sq_siw_solicitacao,p_pessoa) > 0 or
                  InStr(l_resp_unid,''''||b.sq_unidade||'''') > 0
