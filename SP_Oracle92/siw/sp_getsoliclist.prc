@@ -202,7 +202,7 @@ begin
                   ((p_restricao = 'GRDMETAPA'    and MontaOrdem(q.sq_projeto_etapa)  is not null) or
                    (p_restricao = 'GRDMPROP'     and d.proponente                    is not null) or
                    (p_restricao = 'GRDMRESPATU'  and b.executor                      is not null) or
-                   (p_restricao = 'GDPCADET'     and q.sq_projeto_etapa              is null)
+                   (p_restricao = 'GDPCADET'     and q.sq_projeto_etapa              is null and d.sq_siw_restricao is null)
                   )
                  );
    Elsif substr(p_restricao,1,5) = 'PJCAD' or p_restricao = 'PJACOMP' or Substr(p_restricao,1,4) = 'GRPR' or 
