@@ -106,6 +106,7 @@ begin
       -- Atualiza a tabela de solicitações
       Update siw_solicitacao set
           sq_solic_pai     = p_solic_pai,
+          sq_peobjetivo    = p_objetivo,
           solicitante      = p_solicitante,
           inicio           = p_inicio,
           fim              = p_fim,

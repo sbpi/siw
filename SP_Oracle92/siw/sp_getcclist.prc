@@ -18,8 +18,10 @@ begin
       open p_result for 
          select a.sq_cc, b.nome||' - '||a.nome nome
            from ct_cc            a
-                inner join ct_cc b on (a.sq_cc_pai = b.sq_cc)
-                inner join tt_cc c on (a.sq_cc     = c.sq_cc)
+                inner join ct_cc b on (a.sq_cc_pai   = b.sq_cc)
+                inner join tt_cc c on (a.sq_cc       = c.sq_cc and
+                                       c.desativacao is null
+                                      )
           where a.ativo                 = 'S'
             and a.cliente               = p_cliente
             and c.sq_central_fone       = p_chave
@@ -68,4 +70,3 @@ begin
    End If;
 end SP_GetCCList;
 /
-
