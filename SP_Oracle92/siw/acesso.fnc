@@ -288,7 +288,7 @@ begin
                    and (b.sq_unidade_resp   is not null or
                         c.sq_unidade_resp   is not null
                        );
-                If w_existe > 0 Then Result := +4; End If;
+                If w_existe > 0 Then Result := Result + 4; End If;
              End If;
           End If;
        End If;
@@ -354,7 +354,7 @@ begin
                    and (b.sq_unidade_resp   is not null or
                         c.sq_unidade_resp   is not null
                        );
-                If w_existe > 0 Then Result := +4; End If;
+                If w_existe > 0 Then Result := Result + 4; End If;
              End If;
           End If;
        End If;
