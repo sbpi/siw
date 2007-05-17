@@ -16,9 +16,8 @@ create or replace function Acesso
 *    4: Se o usuário é o responsável pela unidade de lotação do solicitante da solicitação
 *       Obs: somente se o trâmite for cumprido pela chefia imediata
 *       Outra possibilidade é se o usuário cumprir algum trâmite no serviço
-*       Outra possibilidade é se o serviço for de interesse de toda a unidade e o usuário for lotado nela
 *    2: Se o usuário é o solicitante da solicitacao ou se é um interessado na sua execução
-*    1: Se o usuário é o cadastrador da solicitação
+*    1: Se o usuário é o cadastrador da solicitação ou é está lotado na unidade de cadastramento
 *    0: Se o usuário não tem acesso à solicitação
 *    Se o usuário enquadrar-se em mais de uma das situações acima, o retorno será a
 *    soma das situações. Assim,
@@ -236,9 +235,10 @@ begin
  If w_vinculacao = 'U' Then
     -- Verifica se o usuário está lotado ou se é titular/substituto 
     -- da unidade de CADASTRAMENTO da solicitação
-    If w_sq_unidade_lotacao   = w_unidade_solicitante or
-       w_sq_pessoa_titular    = p_usuario             or
-       w_sq_pessoa_substituto = p_usuario
+    If w_sq_unidade_lotacao   = w_unidade_solicitante Then
+       If w_interno = 'S' Then Result := Result + 1; End If;
+    Elsif w_sq_pessoa_titular    = p_usuario or
+          w_sq_pessoa_substituto = p_usuario
     Then
        If w_interno = 'S' Then Result := Result + 4; End If;
     Else
