@@ -3157,6 +3157,7 @@ SP_Oracle92/siw/sp_get10percentdays.prc -text
 SP_Oracle92/siw/sp_getAbastecimento.prc -text
 SP_Oracle92/siw/sp_getAcordoAditivo.prc -text
 SP_Oracle92/siw/sp_getAcordoNota.prc -text
+SP_Oracle92/siw/sp_getAlerta.prc -text
 SP_Oracle92/siw/sp_getAssunto_PA.prc -text
 SP_Oracle92/siw/sp_getConvOutraParte.prc -text
 SP_Oracle92/siw/sp_getConvOutroRep.prc -text

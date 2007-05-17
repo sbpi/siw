@@ -6,6 +6,7 @@ create or replace procedure SP_GetUserList
     p_nome        in varchar2 default null,
     p_modulo      in number   default null,
     p_uf          in varchar2 default null,
+    p_interno     in varchar2 default null,
     p_ativo       in varchar2 default null,
     p_contratado  in varchar2 default null,
     p_result      out sys_refcursor
@@ -33,6 +34,7 @@ begin
         and (p_gestor      is null or (p_gestor      is not null and (a.gestor_sistema   = p_gestor or 
                                                                       a.gestor_seguranca = p_gestor)))
         and (p_nome        is null or (p_nome        is not null and acentos(b.nome)     like '%'||acentos(p_nome)||'%'))
-        and (p_uf          is null or (p_uf          is not null and g.co_uf             = p_uf));
+        and (p_uf          is null or (p_uf          is not null and g.co_uf             = p_uf))
+        and (p_interno     is null or (p_interno     is not null and e.interno           = p_interno));
 end SP_GetUserList;
 /
