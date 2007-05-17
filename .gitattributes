@@ -3596,6 +3596,7 @@ SP_Oracle92/siw/sp_puttipoveiculo.prc -text
 SP_Oracle92/siw/sp_puttrigevento.prc -text
 SP_Oracle92/siw/sp_puttrigger.prc -text
 SP_Oracle92/siw/sp_putttcentral.prc -text
+SP_Oracle92/siw/sp_putttclassificacao.prc -text
 SP_Oracle92/siw/sp_putttprefixo.prc -text
 SP_Oracle92/siw/sp_putttramal.prc -text
 SP_Oracle92/siw/sp_putttramalusuario.prc -text
