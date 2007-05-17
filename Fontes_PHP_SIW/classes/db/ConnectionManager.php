@@ -5,7 +5,7 @@ include_once('db_constants.php');
 * class ConnectionManager
 *
 * { Description :-
-*	Class to establish connection and select database with a database server. This is the Base Class
+*  Class to establish connection and select database with a database server. This is the Base Class
 * }
 */
 
@@ -20,7 +20,7 @@ class ConnectionManager {
    * Method ConnectionManager::getConnectionHandle()
    *
    * { Description :-
-   *	This method returns the connection handle.
+   *  This method returns the connection handle.
    * }
    */
 
@@ -34,7 +34,7 @@ class ConnectionManager {
 * class ConnectionManager
 *
 * { Description :-
-*	Class to establish connection and select database with a database server. This is the sub class of ConnectionManager class
+*  Class to establish connection and select database with a database server. This is the sub class of ConnectionManager class
 * }
 */
 

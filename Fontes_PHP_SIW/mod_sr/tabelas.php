@@ -128,6 +128,7 @@ function Abastecimento() {
     modulo();
     CheckBranco();    
     FormataData();
+    SaltaCampo();
     FormataValor();  
     ValidateOpen('Validacao');
     if (!(strpos('IA',$O)===false)) {
@@ -229,7 +230,7 @@ function Abastecimento() {
     ShowHTML('    <table width="97%" border="0">');
     ShowHTML('         <tr><td colspan=2><table width="100%" border="0">');
     SelecaoVeiculo('<u>V</u>eículo:','V','Selecione o veículo',$w_cliente,$w_chave_aux,null,'w_chave_aux',null);
-    ShowHTML('      <td><b><u>D</u>ata:</b><br><input '.$w_Disabled.' accesskey="D" type="text" name="w_data" class="STI" SIZE="10" MAXLENGTH="10" VALUE="'.$w_data.'"onKeyDown="FormataData(this,event);" title="Data do abastecimento.">'.ExibeCalendario('Form','w_data').'</td>');
+    ShowHTML('      <td><b><u>D</u>ata:</b><br><input '.$w_Disabled.' accesskey="D" type="text" name="w_data" class="STI" SIZE="10" MAXLENGTH="10" VALUE="'.$w_data.'"onKeyDown="FormataData(this,event);" onKeyUp="SaltaCampo(this.form.name,this,10,event);" title="Data do abastecimento.">'.ExibeCalendario('Form','w_data').'</td>');
     ShowHTML('      <td><b><u>H</u>odômetro:</b><br><input '.$w_Disabled.' accesskey="H" type="text" name="w_hodometro" class="STI" SIZE="7" MAXLENGTH="7" VALUE="'.$w_hodometro.'"></td>');
     ShowHTML('      <tr><td ><b><u>L</u>itros:</b><br><input '.$w_Disabled.' accesskey="L" type="text" name="w_litros" class="STI" SIZE="18" MAXLENGTH="18" VALUE="'.number_format($w_litros,2,',','.').'"onKeyDown="FormataValor(this,18,2,event);" title="Informe a quantidade de litro do abastecimento do veículo."></td>');
     ShowHTML('      <td><b><u>V</u>alor:</b><br><input '.$w_Disabled.' accesskey="V" type="text" name="w_valor" class="STI" SIZE="18" MAXLENGTH="18" VALUE="'.number_format($w_valor,2,',','.').'"onKeyDown="FormataValor(this,18,2,event);" title="Informe o valor do abastecimento do veículo."></td>');
@@ -829,6 +830,7 @@ function Veiculo() {
     modulo();
     FormataValor();
     FormataData();
+    SaltaCampo();
     FormataDataHora();
     ValidateOpen('Validacao');
     if (!(strpos('IA',$O)===false)) {

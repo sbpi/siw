@@ -120,6 +120,7 @@ function Inicial() {
       ScriptOpen('JavaScript');
       CheckBranco();
       FormataData();
+      SaltaCampo();
       ValidateOpen('Validacao');
       ShowHTML('  if (theForm.Botao.value == "Procurar") {');
       Validate('p_nome','Nome','','1','4','20','1','');
@@ -365,7 +366,7 @@ function Inicial() {
     ShowHTML('<INPUT type="hidden" name="w_troca" value="">');
     ShowHTML('<tr bgcolor="'.$conTrBgColor.'"><td>');
     ShowHTML('    <table border="0">');
-    ShowHTML('      <tr><td valign="top"><b><u>V</u>encimento entre:</b><br><input '.$w_Disabled.' accesskey="V" type="text" name="p_dt_ini" class="sti" SIZE="10" MAXLENGTH="10" VALUE="'.Nvl($p_dt_ini,FormataDataEdicao(First_Day(time()))).'" onKeyDown="FormataData(this,event);">'.ExibeCalendario('Form','p_dt_ini').' e <input '.$w_Disabled.' type="text" name="p_dt_fim" class="sti" SIZE="10" MAXLENGTH="10" VALUE="'.Nvl($p_dt_fim,FormataDataEdicao(Last_Day(time()))).'" onKeyDown="FormataData(this,event);">'.ExibeCalendario('Form','p_dt_fim').'</td>');
+    ShowHTML('      <tr><td valign="top"><b><u>V</u>encimento entre:</b><br><input '.$w_Disabled.' accesskey="V" type="text" name="p_dt_ini" class="sti" SIZE="10" MAXLENGTH="10" VALUE="'.Nvl($p_dt_ini,FormataDataEdicao(First_Day(time()))).'" onKeyDown="FormataData(this,event);" onKeyUp="SaltaCampo(this.form.name,this,10,event);">'.ExibeCalendario('Form','p_dt_ini').' e <input '.$w_Disabled.' type="text" name="p_dt_fim" class="sti" SIZE="10" MAXLENGTH="10" VALUE="'.Nvl($p_dt_fim,FormataDataEdicao(Last_Day(time()))).'" onKeyDown="FormataData(this,event);" onKeyUp="SaltaCampo(this.form.name,this,10,event);">'.ExibeCalendario('Form','p_dt_fim').'</td>');
     ShowHTML('      <tr><td valign="top"><b><u>P</u>rocurar pelo nome:</b> (Informe qualquer parte do nome SEM ACENTOS)<br><INPUT ACCESSKEY="P" TYPE="text" class="sti" NAME="p_nome" VALUE="'.$p_nome.'" SIZE="20" MaxLength="20">');
     ShowHTML('              <INPUT class="stb" TYPE="button" NAME="Botao" VALUE="Procurar" onClick="Botao.value=this.value; document.Form.O.value=\'P\'; document.Form.target=\'\'; if (Validacao(document.Form)) {document.Form.submit();}">');
     if ($p_nome>'') {

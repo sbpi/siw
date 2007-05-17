@@ -117,6 +117,7 @@ function Benef() {
   CheckBranco();
   FormataValor();
   FormataData();
+  SaltaCampo();
   FormataDataHora();
   ShowHTML('function Validacao1(w_cpf) {');
   ShowHTML('  if (w_cpf == "") {');
@@ -276,11 +277,11 @@ function Benef() {
     ShowHTML('     <tr><td><table border="0" width="70%">');
     if(!$w_Disabled) ShowHTML('     <tr><td valign="top" title="Informe apenas os números do seu CPF." ><b><u>C</u>PF:<br><INPUT ACCESSKEY="C" TYPE="text" Class="sti" name="w_cpf" value="'.$w_cpf.'" SIZE="14" MaxLength="14" onKeyDown="FormataCPF(this, event);" onBlur="if (Validacao1(document.Form.w_cpf.value)) {document.Form.action=\''.$w_dir.$w_pagina.$par.'\'; document.Form.w_troca.value=\'w_nome\'; document.Form.Botao[0].disabled=true; document.Form.Botao[1].disabled=true; document.Form.submit();}">');
     else             ShowHTML('     <tr><td valign="top"><b><u>C</u>PF:<br><INPUT READONLY ACCESSKEY="C" TYPE="text" Class="sti" name="w_cpf" value="'.$w_cpf.'" SIZE="14" MaxLength="14">');
-    ShowHTML('	   <tr><td valign="top" title="Informe seu nome completo, se possível sem abreviações."><b><u>N</u>ome completo:</b><br><input accesskey="N" type="text" name="w_nome" class="sti" SIZE="45" MAXLENGTH="60" VALUE="'.$w_nome.'"></td>');
+    ShowHTML('     <tr><td valign="top" title="Informe seu nome completo, se possível sem abreviações."><b><u>N</u>ome completo:</b><br><input accesskey="N" type="text" name="w_nome" class="sti" SIZE="45" MAXLENGTH="60" VALUE="'.$w_nome.'"></td>');
     ShowHTML('     <td valign="top" title="Informe o nome pelo qual você prefere ser chamado ou pelo qual é mais conhecido."><b><u>N</u>ome resumido:</b><br><input accesskey="N" type="text" name="w_nome_resumido" class="sti" SIZE="15" MAXLENGTH="15" VALUE="'.$w_nome_resumido.'"></td>');
     ShowHTML('     <tr>');
     selecaoSexo('<u>S</u>exo:','S',null,$w_sexo,null,'w_sexo',null,null);
-    ShowHTML('		<tr><td valign="top" title="Informe seu e-mail do IBICT."><b><u>E</u>mail:</b><br><input accesskey="N" type="text" name="w_email" class="sti" SIZE="45" MAXLENGTH="60" VALUE="'.$w_email.'"></td>');
+    ShowHTML('    <tr><td valign="top" title="Informe seu e-mail do IBICT."><b><u>E</u>mail:</b><br><input accesskey="N" type="text" name="w_email" class="sti" SIZE="45" MAXLENGTH="60" VALUE="'.$w_email.'"></td>');
     ShowHTML('      <tr>');
     ShowHTML('          <td valign="top" title="Selecione na lista abaixo o seu tipo de vínculo."><b><u>T</u>ipo de vinculo:</b><br><SELECT accesskey="T "  class="sts" name="w_vinculo" VALUE="'.$w_vinculo.'">'); 
     ShowHTML('          <option value="">---');

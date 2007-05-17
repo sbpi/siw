@@ -228,6 +228,7 @@ function Gerencial() {
       ScriptOpen('Javascript');
       CheckBranco();
       FormataData();
+      SaltaCampo();
       ValidateOpen('Validacao');
       Validate('p_chave','Número da demanda','','','1','18','','0123456789');
       Validate('p_prazo','Dias para a data limite','','','1','2','','0123456789');
@@ -692,7 +693,7 @@ function Gerencial() {
     ShowHTML('      <tr><td valign="top" colspan="2"><table border=0 width="100%" cellspacing=0>');
     ShowHTML('      <tr>');
     $RS = db_getLinkData::getInstanceOf($dbms,$w_cliente,'ORCAD');
-    SelecaoProjeto('Açã<u>o</u>:','O','Selecione a ação da tarefa na relação.',$p_projeto,$w_usuario,f($RS,'sq_menu'),'p_projeto','PJLIST',null);
+    SelecaoProjeto('Açã<u>o</u>:','O','Selecione a ação da tarefa na relação.',$p_projeto,$w_usuario,f($RS,'sq_menu'),null,null,null,'p_projeto','PJLIST',null);
     ShowHTML('</table>');
     if (f($RS_Menu,'solicita_cc')=='S') {
       ShowHTML('      <tr><td colspan=2><table border=0 width="90%" cellspacing=0><tr valign="top">');
@@ -715,8 +716,8 @@ function Gerencial() {
     ShowHTML('          <td valign="top"><b>Detalha<U>m</U>ento:<br><INPUT ACCESSKEY="M" '.$w_Disabled.' class="STI" type="text" name="p_assunto" size="25" maxlength="90" value="'.$p_assunto.'"></td>');
     ShowHTML('          <td valign="top" colspan=2><b>R<U>e</U>sponsável:<br><INPUT ACCESSKEY="E" '.$w_Disabled.' class="STI" type="text" name="p_palavra" size="25" maxlength="90" value="'.$p_palavra.'"></td>');
     ShowHTML('      <tr>');
-    ShowHTML('          <td valign="top"><b>Data de re<u>c</u>ebimento entre:</b><br><input '.$w_Disabled.' accesskey="C" type="text" name="p_ini_i" class="STI" SIZE="10" MAXLENGTH="10" VALUE="'.$p_ini_i.'" onKeyDown="FormataData(this,event);"> e <input '.$w_Disabled.' accesskey="C" type="text" name="p_ini_f" class="STI" SIZE="10" MAXLENGTH="10" VALUE="'.$p_ini_f.'" onKeyDown="FormataData(this,event);"></td>');
-    ShowHTML('          <td valign="top"><b>Lim<u>i</u>te para conclusão entre:</b><br><input '.$w_Disabled.' accesskey="I" type="text" name="p_fim_i" class="STI" SIZE="10" MAXLENGTH="10" VALUE="'.$p_fim_i.'" onKeyDown="FormataData(this,event);"> e <input '.$w_Disabled.' accesskey="I" type="text" name="p_fim_f" class="STI" SIZE="10" MAXLENGTH="10" VALUE="'.$p_fim_f.'" onKeyDown="FormataData(this,event);"></td>');
+    ShowHTML('          <td valign="top"><b>Data de re<u>c</u>ebimento entre:</b><br><input '.$w_Disabled.' accesskey="C" type="text" name="p_ini_i" class="STI" SIZE="10" MAXLENGTH="10" VALUE="'.$p_ini_i.'" onKeyDown="FormataData(this,event);" onKeyUp="SaltaCampo(this.form.name,this,10,event);"> e <input '.$w_Disabled.' accesskey="C" type="text" name="p_ini_f" class="STI" SIZE="10" MAXLENGTH="10" VALUE="'.$p_ini_f.'" onKeyDown="FormataData(this,event);" onKeyUp="SaltaCampo(this.form.name,this,10,event);"></td>');
+    ShowHTML('          <td valign="top"><b>Lim<u>i</u>te para conclusão entre:</b><br><input '.$w_Disabled.' accesskey="I" type="text" name="p_fim_i" class="STI" SIZE="10" MAXLENGTH="10" VALUE="'.$p_fim_i.'" onKeyDown="FormataData(this,event);" onKeyUp="SaltaCampo(this.form.name,this,10,event);"> e <input '.$w_Disabled.' accesskey="I" type="text" name="p_fim_f" class="STI" SIZE="10" MAXLENGTH="10" VALUE="'.$p_fim_f.'" onKeyDown="FormataData(this,event);" onKeyUp="SaltaCampo(this.form.name,this,10,event);"></td>');
     ShowHTML('      <tr>');
     ShowHTML('          <td valign="top"><b>Exibe somente tarefas em atraso?</b><br>');
     if ($p_atraso=='S')    ShowHTML('              <input '.$w_Disabled.' class="STR" type="radio" name="p_atraso" value="S" checked> Sim <br><input '.$w_Disabled.' class="STR" class="STR" type="radio" name="p_atraso" value="N"> Não');

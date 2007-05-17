@@ -11,7 +11,7 @@ extract($GLOBALS); include_once($w_dir_volta.'classes/db/DatabaseQueriesFactory.
 class dml_putProjetoGeral {
    function getInstanceOf($dbms, $operacao, $p_chave, $p_menu, $p_unidade, $p_solicitante, $p_proponente, $p_cadastrador, 
         $p_executor, $p_objetivo, $p_sqcc, $p_solic_pai, $p_descricao, $p_justificativa, $p_inicio, $p_fim, $p_valor, $p_data_hora, 
-        $p_unid_resp, $p_assunto, $p_prioridade, $p_aviso, $p_dias, $p_cidade, $p_palavra_chave, $p_vincula_contrato, 
+        $p_unid_resp, $p_assunto, $p_prioridade, $p_aviso, $p_dias, $p_aviso_pacote, $p_dias_pacote, $p_cidade, $p_palavra_chave, $p_vincula_contrato, 
         $p_vincula_viagem, $p_sq_acao_ppa, $p_sq_orprioridade, $p_selecionada_mpog, $p_selecionada_relev, $p_sq_tipo_pessoa, 
         $p_chave_nova, $p_copia) {
      extract($GLOBALS,EXTR_PREFIX_SAME,'strchema'); 
@@ -39,6 +39,8 @@ class dml_putProjetoGeral {
                    'p_prioridade'                =>array(tvl($p_prioridade),                               B_INTEGER,        32),
                    'p_aviso'                     =>array(tvl($p_aviso),                                    B_VARCHAR,         1),
                    'p_dias'                      =>array(nvl($p_dias,0),                                   B_INTEGER,        32),
+                   'p_aviso_pacote'              =>array(tvl($p_aviso_pacote),                             B_VARCHAR,         1),
+                   'p_dias_pacote'               =>array(nvl($p_dias_pacote,0),                            B_INTEGER,        32),
                    'p_cidade'                    =>array(tvl($p_cidade),                                   B_INTEGER,        32),
                    'p_palavra_chave'             =>array(tvl($p_palavra_chave),                            B_VARCHAR,        90),
                    'p_vincula_contrato'          =>array(tvl($p_vincula_contrato),                         B_VARCHAR,         1),

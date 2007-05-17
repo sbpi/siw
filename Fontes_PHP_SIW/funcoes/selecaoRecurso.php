@@ -16,9 +16,9 @@ function selecaoRecurso($label,$accesskey,$hint,$chave,$chaveAux,$chaveAux2,$cam
   ShowHTML('          <option value="">---');
   foreach($RS as $row) {
     if (nvl(f($row,'chave'),0)==nvl($chave,0)) {
-       ShowHTML('          <option value="'.f($row,'chave').'" SELECTED>'.f($row,'nome').((nvl(f($row,'codigo'),'nulo')=='nulo') ? '' : ' ('.f($row,'codigo').')'));
+       ShowHTML('          <option value="'.f($row,'chave').'" SELECTED>'.f($row,'nome').((nvl(f($row,'codigo'),'nulo')=='nulo' || $restricao=='VINCULACAO') ? '' : ' ('.f($row,'codigo').')'));
     } else {
-       ShowHTML('          <option value="'.f($row,'chave').'">'.f($row,'nome').((nvl(f($row,'codigo'),'nulo')=='nulo') ? '' : ' ('.f($row,'codigo').')'));
+       ShowHTML('          <option value="'.f($row,'chave').'">'.f($row,'nome').((nvl(f($row,'codigo'),'nulo')=='nulo' || $restricao=='VINCULACAO') ? '' : ' ('.f($row,'codigo').')'));
     }
   }
   ShowHTML('          </select>');

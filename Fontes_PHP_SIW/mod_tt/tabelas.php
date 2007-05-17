@@ -23,6 +23,7 @@ include_once($w_dir_volta.'classes/sp/dml_putTTRamal.php');
 include_once($w_dir_volta.'classes/sp/dml_putTTRamalUsuario.php');
 include_once($w_dir_volta.'classes/sp/dml_putTTTronco.php');
 include_once($w_dir_volta.'classes/sp/dml_putTTUsuarioCentral.php');
+include_once($w_dir_volta.'classes/sp/dml_putTTClassificacao.php');
 include_once($w_dir_volta.'funcoes/selecaoEndereco.php');
 include_once($w_dir_volta.'funcoes/selecaoPessoaTT.php');
 include_once($w_dir_volta.'funcoes/selecaoCidadeCentral.php');
@@ -35,7 +36,7 @@ include_once($w_dir_volta.'funcoes/selecaoPessoa.php');
 //  tabelas.PHP
 // ------------------------------------------------------------------------
 // Nome     : Alexandre Vinhadelli Papadópolis
-// Descricao: Gerenciar tabelas básicas do módulo	
+// Descricao: Gerenciar tabelas básicas do módulo  
 // Mail     : Beto@sbpi.com.br
 // Criacao  : 13/06/2006 10:40
 // Versao   : 1.0.0.0
@@ -250,6 +251,7 @@ function centralTel() {
         ShowHTML('          <A class="HL" HREF="'.$w_dir.$w_pagina.$par.'&R='.$w_pagina.$par.'&O=E&w_chave='.f($row,'chave').'&w_sq_pessoa_endereco='.f($row,'sq_pessoa_endereco').'&w_arquivo_bilhetes='.f($row,'arquivo').'&w_recupera_bilhetes='.f($row,'recupera').'&P1='.$P1.'&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP='.$TP.'&SG='.$SG.'">EX</A>&nbsp');
         ShowHTML('          <A class="HL" HREF="'.$w_dir.$w_pagina.'TRONCOS&R='.$w_pagina.$par.'&O=L&w_sq_central_fone='.f($row,'chave').'&P1='.$P1.'&P2='.$P2.'&P3=1&P4='.$P4.'&TP='.$TP.' - Parâmetros&SG='.$SG.MontaFiltro('GET').'" Target="_blank" Title="Visualizar e manipular os trocos desta central  ">Troncos</A>&nbsp');
         ShowHTML('          <A class="HL" HREF="'.$w_dir.$w_pagina.'USUARIOCENTRAL&R='.$w_pagina.$par.'&O=L&w_sq_central_fone='.f($row,'chave').'&P1='.$P1.'&P2='.$P2.'&P3=1&P4='.$P4.'&TP='.$TP.' - Parâmetros&SG='.$SG.MontaFiltro('GET').'" Target="_blank" Title="Visualizar e manipular os usuários desta central">Usuários</A>&nbsp');
+        ShowHTML('          <A class="HL" HREF="'.$w_dir.$w_pagina.'CLASSIFICACAO&R='.$w_pagina.$par.'&O=L&w_sq_central_fone='.f($row,'chave').'&P1='.$P1.'&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP='.$TP.'&SG=TTCLASSIF">Classificações</A>&nbsp');
         ShowHTML('        </td>');
         ShowHTML('      </tr>');
       } 
@@ -812,6 +814,7 @@ function RamalUsr() {
     CheckBranco();
     Modulo();
     FormataData();
+    SaltaCampo();
     ValidateOpen('Validacao');
     if ($O=='I') {
       Validate('w_chaveAux','Usuário','SELECT','1','1','18','1','1');
@@ -933,28 +936,28 @@ function RamalUsr() {
     ShowHTML('    <table width="97%" border="0">');
     if ($O=='I') {
       SelecaoPessoa('Usua<u>r</u>io:','R',null,null,$w_chave,'w_chaveAux','TTUSURAMAL');
-      ShowHTML('      <td title="Informe a data de início de uso deste ramal."><font size="1"><b><u>I</u>nício:</b><br><input '.$w_Disabled.' accesskey="I" type="text" name="w_inicio" class="sti" SIZE="10" MAXLENGTH="10" VALUE="'.$w_inicio.'" onKeyDown="FormataData(this,event);"></td>');
+      ShowHTML('      <td title="Informe a data de início de uso deste ramal."><font size="1"><b><u>I</u>nício:</b><br><input '.$w_Disabled.' accesskey="I" type="text" name="w_inicio" class="sti" SIZE="10" MAXLENGTH="10" VALUE="'.$w_inicio.'" onKeyDown="FormataData(this,event);" onKeyUp="SaltaCampo(this.form.name,this,10,event);"></td>');
     } elseif ($O=='A') {
       $RS = db_getPersonData::getInstanceOf($dbms,$w_cliente,$w_chaveAux,null,null);
       ShowHTML('      <td><font size="1">Usuário:<br><b>'.f($RS,'nome'));
       ShowHTML('<INPUT type="hidden" name="w_chaveAux" value="'.$w_chaveAux.'">');
-      ShowHTML('      <td title="Informe a data de início de uso deste ramal."><font size="1"><b><u>I</u>nício:</b><br><input '.$w_Disabled.' accesskey="I" type="text" name="w_inicio" class="sti" SIZE="10" MAXLENGTH="10" VALUE="'.$w_inicio.'" onKeyDown="FormataData(this,event);"></td>');
+      ShowHTML('      <td title="Informe a data de início de uso deste ramal."><font size="1"><b><u>I</u>nício:</b><br><input '.$w_Disabled.' accesskey="I" type="text" name="w_inicio" class="sti" SIZE="10" MAXLENGTH="10" VALUE="'.$w_inicio.'" onKeyDown="FormataData(this,event);" onKeyUp="SaltaCampo(this.form.name,this,10,event);"></td>');
       if ($w_fim!='') {
-        ShowHTML('      <td title="Informe a data de fim de uso deste ramal."><font size="1"><b><u>F</u>im:   </b><br><input '.$w_Disabled.' accesskey="F" type="text" name="w_fim" class="sti" SIZE="10" MAXLENGTH="10" VALUE="'.$w_fim.'" onKeyDown="FormataData(this,event);"></td>');
+        ShowHTML('      <td title="Informe a data de fim de uso deste ramal."><font size="1"><b><u>F</u>im:   </b><br><input '.$w_Disabled.' accesskey="F" type="text" name="w_fim" class="sti" SIZE="10" MAXLENGTH="10" VALUE="'.$w_fim.'" onKeyDown="FormataData(this,event);" onKeyUp="SaltaCampo(this.form.name,this,10,event);"></td>');
       }
     } elseif ($O=='F') {
       $RS = db_getPersonData::getInstanceOf($dbms,$w_cliente,$w_chaveAux,null,null);
       ShowHTML('      <td><font size="1">Usuário:<br><b>'.f($RS,'nome'));
       ShowHTML('<INPUT type="hidden" name="w_chaveAux" value="'.$w_chaveAux.'">');
-      ShowHTML('      <td title="Informe a data de início de uso deste ramal."><font size="1"><b><u>I</u>nício:</b><br><input '.$w_Disabled.' accesskey="I" type="text" name="w_inicio" class="sti" SIZE="10" MAXLENGTH="10" VALUE="'.$w_inicio.'" onKeyDown="FormataData(this,event);"></td>');
-      ShowHTML('      <td title="Informe a data de fim de uso deste ramal."><font size="1"><b><u>F</u>im:   </b><br><input accesskey="F" type="text" name="w_fim" class="sti" SIZE="10" MAXLENGTH="10" VALUE="'.$w_fim.'" onKeyDown="FormataData(this,event);"></td>');
+      ShowHTML('      <td title="Informe a data de início de uso deste ramal."><font size="1"><b><u>I</u>nício:</b><br><input '.$w_Disabled.' accesskey="I" type="text" name="w_inicio" class="sti" SIZE="10" MAXLENGTH="10" VALUE="'.$w_inicio.'" onKeyDown="FormataData(this,event);" onKeyUp="SaltaCampo(this.form.name,this,10,event);"></td>');
+      ShowHTML('      <td title="Informe a data de fim de uso deste ramal."><font size="1"><b><u>F</u>im:   </b><br><input accesskey="F" type="text" name="w_fim" class="sti" SIZE="10" MAXLENGTH="10" VALUE="'.$w_fim.'" onKeyDown="FormataData(this,event);" onKeyUp="SaltaCampo(this.form.name,this,10,event);"></td>');
     } else {
       $RS = db_getPersonData::getInstanceOf($dbms,$w_cliente,$w_chaveAux,null,null);
       ShowHTML('      <td><font size="1">Usuário:<br><b>'.f($RS,'nome'));
       ShowHTML('<INPUT type="hidden" name="w_chaveAux" value="'.$w_chaveAux.'">');
-      ShowHTML('      <td title="Informe a data de início de uso deste ramal."><font size="1"><b><u>I</u>nício:</b><br><input '.$w_Disabled.' accesskey="I" type="text" name="w_inicio" class="sti" SIZE="10" MAXLENGTH="10" VALUE="'.$w_inicio.'" onKeyDown="FormataData(this,event);"></td>');
+      ShowHTML('      <td title="Informe a data de início de uso deste ramal."><font size="1"><b><u>I</u>nício:</b><br><input '.$w_Disabled.' accesskey="I" type="text" name="w_inicio" class="sti" SIZE="10" MAXLENGTH="10" VALUE="'.$w_inicio.'" onKeyDown="FormataData(this,event);" onKeyUp="SaltaCampo(this.form.name,this,10,event);"></td>');
       if (Nvl($w_fim,'')!='') {
-        ShowHTML('      <td title="Informe a data de fim de uso deste ramal."><font size="1"><b><u>F</u>im:   </b><br><input '.$w_Disabled.' accesskey="F" type="text" name="w_fim" class="sti" SIZE="10" MAXLENGTH="10" VALUE="'.$w_fim.'" onKeyDown="FormataData(this,event);"></td>');
+        ShowHTML('      <td title="Informe a data de fim de uso deste ramal."><font size="1"><b><u>F</u>im:   </b><br><input '.$w_Disabled.' accesskey="F" type="text" name="w_fim" class="sti" SIZE="10" MAXLENGTH="10" VALUE="'.$w_fim.'" onKeyDown="FormataData(this,event);" onKeyUp="SaltaCampo(this.form.name,this,10,event);"></td>');
       } 
     } 
     ShowHTML('      <tr><td align="LEFT" colspan=2><font size="1"><b><U>A</U>ssinatura Eletrônica:<BR> <INPUT ACCESSKEY="A" class="sti" type="PASSWORD" name="w_assinatura" size="30" maxlength="30" value=""></td></tr>');
@@ -1221,6 +1224,83 @@ function prefixo() {
   ShowHTML('</table>');
   ShowHTML('</center>');
   Rodape();
+}
+
+// =========================================================================
+// Rotina de vinculacao da central telefonica com as pessoas.
+// -------------------------------------------------------------------------
+function Classificacao() {
+  extract($GLOBALS);
+  global $w_Disabled;
+
+  $w_sq_cc           = $_REQUEST['w_sq_cc'];
+  $w_sq_central_fone = $_REQUEST['w_sq_central_fone'];
+
+  Cabecalho();
+  ShowHTML('<HEAD>');
+  Estrutura_CSS($w_cliente);
+  ShowHTML('<BASE HREF="'.$conRootSIW.'">');
+  ScriptOpen('JavaScript');
+  ValidateOpen('Validacao');
+  ShowHTML('  var i; ');
+  ShowHTML('  var w_erro=true; ');
+  ShowHTML('  for (i=0; i < theForm["w_sq_cc[]"].length; i++) {');
+  ShowHTML('    if (theForm["w_sq_cc[]"][i].checked) w_erro=false;');
+  ShowHTML('  }');
+  ShowHTML('  if (w_erro) {');
+  ShowHTML('    alert(\'Você deve informar pelo menos uma classificação!\'); ');
+  ShowHTML('    return false;');
+  ShowHTML('  }');
+  Validate('w_assinatura','Assinatura Eletrônica','1','1','6','30','1','1');
+  ShowHTML('  theForm.Botao[0].disabled=true;');
+  ShowHTML('  theForm.Botao[1].disabled=true;');
+  ValidateClose();
+  ScriptClose();
+  ShowHTML('<style> ');
+  ShowHTML(' .lh{text-decoration:none;font=Arial;color="#FF0000"} ');
+  ShowHTML(' .lh:HOVER{text-decoration: underline;} ');
+  ShowHTML('</style> ');
+  ShowHTML('</HEAD>');
+  BodyOpen(null);
+  Estrutura_Topo_Limpo();
+  Estrutura_Menu();
+  Estrutura_Corpo_Abre();
+  Estrutura_Texto_Abre();
+  ShowHTML('<table border="0" cellpadding="0" cellspacing="0" width="100%">');
+  ShowHTML('<tr bgcolor="'.$conTrBgColor.'"><td>');
+  AbreForm('Form',$w_dir.$w_pagina.'Grava','POST','return(Validacao(this));',null,$P1,$P2,$P3,$P4,$TP,$SG,$w_pagina.$par,$O);
+  ShowHTML('<INPUT type="hidden" name="w_cliente" value="'.$w_cliente.'">');
+  ShowHTML('<INPUT type="hidden" name="w_sq_central_fone" value="'.$w_sq_central_fone.'">');
+  ShowHTML('<INPUT type="hidden" name="w_sq_cc[]" value="'.$w_sq_cc.'">');
+  ShowHTML('    <table width="99%" border="0">');
+  ShowHTML('      <tr valign="top">');
+  ShowHTML('        <td colspan=2><b>Classificações:');  
+  $RS = db_getCentralTel::getInstanceOf($dbms,$w_sq_central_fone,$w_cliente,null,null,'CLASSIF');
+  $RS = SortArray($RS,'nm_pai','asc','nome','asc');
+  $w_checked = '';
+  foreach($RS as $row) {
+    if(f($row,'marcado')>0) {
+      $w_checked = 'CHECKED';
+    } else {
+      $w_checked = '';
+    }
+    ShowHTML('      <tr valign="top">');
+    ShowHTML('        <td colspan=2><input type="checkbox" name="w_sq_cc[]" value="'.f($row,'sq_cc').'" '.$w_checked.'> '.f($row,'nm_cc'));    
+  }
+  ShowHTML('      <tr><td align="center" colspan=2>&nbsp;');
+  ShowHTML('      <tr><td align="LEFT" colspan=2><font size="1"><b><U>A</U>ssinatura Eletrônica:<BR> <INPUT ACCESSKEY="A" class="sti" type="PASSWORD" name="w_assinatura" size="30" maxlength="30" value=""></td></tr>');
+  ShowHTML('      <tr><td align="center" colspan=2><hr>');
+  ShowHTML('            <input class="STB" type="submit" name="Botao" value="Atualizar">');
+  ShowHTML('            <input class="STB" type="button" onClick="history.back(1);" name="Botao" value="Cancelar">');
+  ShowHTML('          </td>');
+  ShowHTML('      </tr>');
+  ShowHTML('    </table>');
+  ShowHTML('</FORM>');
+  ShowHTML('  </table>');
+  Estrutura_Fecha();
+  Estrutura_Fecha();
+  Estrutura_Fecha();
+  Rodape();
 } 
 
 // =========================================================================
@@ -1323,6 +1403,27 @@ function Grava() {
         ScriptClose();
       } 
       break;
+    case 'TTCLASSIF':
+      // Verifica se a Assinatura Eletrônica é válida
+      if (verificaAssinaturaEletronica($_SESSION['USERNAME'],strtoupper($_REQUEST['w_assinatura'])) || $w_assinatura=='') {
+        $w_sq_cc = '';
+        $w_sq_cc = $_REQUEST['w_sq_cc'][1];
+        for ($i=2; $i<=count($_POST['w_sq_cc'])-1; $i=$i+1) {
+          if (Nvl($_REQUEST['w_sq_cc'][$i],'')>'') {
+            $w_sq_cc .= ','.$_REQUEST['w_sq_cc'][$i];
+          }
+        }
+        dml_putTTClassificacao::getInstanceOf($dbms,$w_sq_cc,$_REQUEST['w_sq_central_fone'],$w_cliente);
+        ScriptOpen('JavaScript');
+        ShowHTML('  location.href=\''.montaURL_JS($w_dir,$w_pagina.'Central&O=L&P1='.$P1.'&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP='.$TP.'&SG='.$SG.MontaFiltro('GET')).'\';');
+        ScriptClose();
+      } else {
+        ScriptOpen('JavaScript');
+        ShowHTML('  alert("Assinatura Eletrônica inválida!");');
+        ShowHTML('  history.back(1);');
+        ScriptClose();
+      } 
+      break;      
     default:
       ScriptOpen('JavaScript');
       ShowHTML('  alert("Bloco de dados não encontrado: '.$SG.'");');
@@ -1345,6 +1446,7 @@ function Main() {
   case 'USUARIOCENTRAL':    UsuarioCentral();   break;
   case 'RAMALUSR':          RamalUsr();         break;
   case 'PREFIXO':           Prefixo();          break;
+  case 'CLASSIFICACAO':     Classificacao();    break;
   case 'GRAVA':             Grava();            break;
   default:
     Cabecalho();

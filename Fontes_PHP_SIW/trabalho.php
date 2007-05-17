@@ -13,10 +13,12 @@ include_once($w_dir_volta.'classes/sp/db_getPersonData.php');
 include_once($w_dir_volta.'classes/sp/db_getDeskTop_TT.php');
 include_once($w_dir_volta.'classes/sp/db_getDeskTop_Recurso.php');
 include_once($w_dir_volta.'classes/sp/db_getDeskTop.php');
+include_once($w_dir_volta.'classes/sp/db_getAlerta.php');
 include_once($w_dir_volta.'classes/sp/db_getIndicador.php');
 include_once($w_dir_volta.'classes/sp/db_getSolicList.php');
 include_once($w_dir_volta.'classes/sp/db_getAfastamento.php');
 include_once($w_dir_volta.'classes/sp/db_getLinkData.php');
+include_once($w_dir_volta.'visualalerta.php');
 // =========================================================================
 //  trabalho.php
 // ------------------------------------------------------------------------
@@ -131,9 +133,31 @@ function Mesa() {
   ShowHTML('<meta http-equiv="Refresh" content="300;">');
   ShowHTML('</HEAD>');
   BodyOpen('onLoad=this.focus();');
-  ShowHTML('<B><FONT COLOR="#000000">'.$w_TP.'</font></B>');
-  ShowHTML('<HR>');
-  ShowHTML('<div align=center><center>');
+  ShowHTML('<table border="0" width="100%">');
+  ShowHTML('<tr><td><b><FONT COLOR="#000000"><font size=2>'.$w_TP.'</font></b>');
+
+  // Exibe, se necessário, sinalizador para alerta
+  $RS = db_getAlerta::getInstanceOf($dbms, $w_cliente, $w_usuario, 'SOLICGERAL', 'N');
+  if (count($RS)>0) {
+    $w_sinal = $conImgAlLow;
+    $w_msg   = 'Clique para ver alertas de atraso e proximidade da data de conclusão.';
+    foreach($RS as $row) {
+      if ($w_usuario==f($row,'solicitante')) {
+        $w_sinal = $conImgAlMed;
+        $w_msg   = 'Há alertas nos quais sua você é o responsável ou o solicitante. Clique para vê-los.';
+      }
+      if ($w_usuario==nvl(f($row,'sq_exec'),f($row,'solicitante')))  {
+        $w_sinal = $conImgAlHigh;
+        $w_msg   = 'Há alertas nos quais sua intervenção é necessária. Clique para vê-los.';
+        break;
+      }
+    }
+    ShowHTML('    <td align="right"><a href="'.$w_pagina.'alerta&O=L&TP='.$TP.' - Alertas" title="'.$w_msg.'"><img src="'.$w_sinal.'" border=0></a></font></b>');
+  }
+
+  ShowHTML('<tr><td colspan=2><hr>');
+  ShowHTML('</table>');
+  ShowHTML('<center>');
   ShowHTML('<table border="0" width="100%">');
   if ($O=="L") {
     ShowHTML('<tr><td align="center" colspan=3>');
@@ -460,13 +484,46 @@ function Mesa() {
 }
 
 // =========================================================================
+// Exibe alertas de atraso e proximidade da data de conclusao
+// -------------------------------------------------------------------------
+function Alerta() {
+  extract($GLOBALS);
+  
+  Cabecalho();
+  ShowHTML('<HEAD>');
+  ShowHTML('<meta http-equiv="Refresh" content="300;">');
+  ShowHTML('</HEAD>');
+  BodyOpen('onLoad=this.focus();');
+  ShowHTML('<table border="0" width="100%">');
+  ShowHTML('<tr><td><b><FONT COLOR="#000000"><font size=2>'.$w_TP.'</font></b>');
+  $RS_Volta = db_getLinkData::getInstanceOf($dbms,$w_cliente,'MESA');
+  ShowHTML('  <td align="right"><a class="SS" href="'.$conRootSIW.f($RS_Volta,'link').'&P1='.f($RS_Volta,'p1').'&P2='.f($RS_Volta,'p2').'&P3='.f($RS_Volta,'p3').'&P4='.f($RS_Volta,'p4').'&TP=<img src='.f($RS_Volta,'imagem').' BORDER=0>'.f($RS_Volta,'nome').'&SG='.f($RS_Volta,'sigla').'" target="content">Voltar para '.f($RS_Volta,'nome').'</a>');
+  ShowHTML('<tr><td colspan=2><hr>');
+  ShowHTML('</table>');
+  ShowHTML('<center>');
+  ShowHTML('<table border="0" width="100%">');
+  if ($O=='L') {
+    ShowHTML(VisualAlerta($w_cliente, $w_usuario, 'TELA'));
+  } else {
+    ScriptOpen("JavaScript");
+    ShowHTML(' alert(\'Opção não disponível\');');
+    ShowHTML(' history.back(1);');
+    ScriptClose();
+  }
+  ShowHTML('</table>');
+  ShowHTML('</center>');
+  Rodape();
+}
+
+// =========================================================================
 // Rotina principal
 // -------------------------------------------------------------------------
 function Main() {
   extract($GLOBALS);
 
   switch ($par) {
-  case 'MESA': Mesa(); break;
+  case 'MESA':    Mesa();   break;
+  case 'ALERTA':  Alerta(); break;
   default:
     Cabecalho();
     BodyOpen('onLoad=this.focus();');
@@ -474,7 +531,7 @@ function Main() {
     Estrutura_Menu();
     Estrutura_Corpo_Abre();
     Estrutura_Texto_Abre();
-    ShowHTML('<div align=center><center><br><br><br><br><br><br><br><br><br><br><img src="images/icone/underc.gif" align="center"> <b>Esta opção está sendo desenvolvida.</b><br><br><br><br><br><br><br><br><br><br></center></div>');
+    ShowHTML('<center><br><br><br><br><br><br><br><br><br><br><img src="images/icone/underc.gif" align="center"> <b>Esta opção está sendo desenvolvida.</b><br><br><br><br><br><br><br><br><br><br></center>');
     Estrutura_Texto_Fecha();
     Estrutura_Fecha();
     Estrutura_Fecha();

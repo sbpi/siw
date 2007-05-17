@@ -177,7 +177,7 @@ function Valida() {
       $w_resultado=EnviaMail('Aviso de reinicialização de senha',$w_html,$_SESSION['EMAIL']);
 
       ScriptOpen('JavaScript');
-	  // Se ocorreu algum erro, avisa da impossibilidade de envio do e-mail,
+    // Se ocorreu algum erro, avisa da impossibilidade de envio do e-mail,
       // caso contrário, avisa que o e-mail foi enviado para o usuário.
       if (nvl($w_resultado,'')!='') { 
          ShowHTML('  alert(\'ATENÇÃO: sua senha NÃO FOI recriada pois não foi possível proceder o envio do e-mail\n'.$w_resultado.'\');'); 

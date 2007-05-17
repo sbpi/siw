@@ -250,8 +250,9 @@ function Gerencial() {
       ScriptOpen('Javascript');
       CheckBranco();
       FormataData();
+      SaltaCampo();
       ValidateOpen('Validacao');
-      //Validate 'p_chave', 'Número do projeto', '', '', '1', '18', '', '0123456789'
+      //Validate 'p_chave', 'Chave', '', '', '1', '18', '', '0123456789'
       Validate('p_prazo','Dias para a data limite','','','1','2','','0123456789');
       Validate('p_proponente','Proponente externo','','','2','90','1','');
       //Validate 'p_assunto', 'Assunto', '', '', '2', '90', '1', '1'
@@ -706,7 +707,7 @@ function Gerencial() {
     SelecaoOrPrioridade('<u>I</u>niciativa prioritária:','I',null,$p_sq_orprioridade,null,'p_sq_orprioridade',null,null);
     ShowHTML('          </table>');
     ShowHTML('      <tr valign="top">');
-    //ShowHTML '          <td valign=''top''><b>Número da <U>a</U>ção:<br><INPUT ACCESSKEY=''A'' ' & w_Disabled & ' class=''STI'' type=''text'' name=''p_chave'' size=''18'' maxlength=''18'' value=''' & p_chave & '''></td>'
+    //ShowHTML '          <td valign=''top''><b>C<u>h</u>ave:<br><INPUT ACCESSKEY=''H'' ' & w_Disabled & ' class=''STI'' type=''text'' name=''p_chave'' size=''18'' maxlength=''18'' value=''' & p_chave & '''></td>'
     //ShowHTML '          <td valign=''top''>'
     ShowHTML('          <td valign="top"><b>Dias para a data limi<U>t</U>e:<br><INPUT ACCESSKEY="T" '.$w_Disabled.' class="STI" type="text" name="p_prazo" size="2" maxlength="2" value="'.$p_prazo.'"></td>');
     ShowHTML('      <tr valign="top">');
@@ -725,8 +726,8 @@ function Gerencial() {
     //ShowHTML '      <tr>'
     //ShowHTML '          <td valign=''top''><b>Açã<U>o</U>:<br><INPUT ACCESSKEY=''O'' ' & w_Disabled & ' class=''STI'' type=''text'' name=''p_assunto'' size=''25'' maxlength=''90'' value=''' & p_assunto & '''></td>'
     ShowHTML('      <tr>');
-    ShowHTML('          <td valign="top"><b>Data de re<u>c</u>ebimento entre:</b><br><input '.$w_Disabled.' accesskey="C" type="text" name="p_ini_i" class="STI" SIZE="10" MAXLENGTH="10" VALUE="'.$p_ini_i.'" onKeyDown="FormataData(this,event);"> e <input '.$w_Disabled.' accesskey="C" type="text" name="p_ini_f" class="STI" SIZE="10" MAXLENGTH="10" VALUE="'.$p_ini_f.'" onKeyDown="FormataData(this,event);"></td>');
-    ShowHTML('          <td valign="top"><b>Limi<u>t</u>e para conclusão entre:</b><br><input '.$w_Disabled.' accesskey="T" type="text" name="p_fim_i" class="STI" SIZE="10" MAXLENGTH="10" VALUE="'.$p_fim_i.'" onKeyDown="FormataData(this,event);"> e <input '.$w_Disabled.' accesskey="T" type="text" name="p_fim_f" class="STI" SIZE="10" MAXLENGTH="10" VALUE="'.$p_fim_f.'" onKeyDown="FormataData(this,event);"></td>');
+    ShowHTML('          <td valign="top"><b>Data de re<u>c</u>ebimento entre:</b><br><input '.$w_Disabled.' accesskey="C" type="text" name="p_ini_i" class="STI" SIZE="10" MAXLENGTH="10" VALUE="'.$p_ini_i.'" onKeyDown="FormataData(this,event);" onKeyUp="SaltaCampo(this.form.name,this,10,event);"> e <input '.$w_Disabled.' accesskey="C" type="text" name="p_ini_f" class="STI" SIZE="10" MAXLENGTH="10" VALUE="'.$p_ini_f.'" onKeyDown="FormataData(this,event);" onKeyUp="SaltaCampo(this.form.name,this,10,event);"></td>');
+    ShowHTML('          <td valign="top"><b>Limi<u>t</u>e para conclusão entre:</b><br><input '.$w_Disabled.' accesskey="T" type="text" name="p_fim_i" class="STI" SIZE="10" MAXLENGTH="10" VALUE="'.$p_fim_i.'" onKeyDown="FormataData(this,event);" onKeyUp="SaltaCampo(this.form.name,this,10,event);"> e <input '.$w_Disabled.' accesskey="T" type="text" name="p_fim_f" class="STI" SIZE="10" MAXLENGTH="10" VALUE="'.$p_fim_f.'" onKeyDown="FormataData(this,event);" onKeyUp="SaltaCampo(this.form.name,this,10,event);"></td>');
     ShowHTML('      <tr>');
     ShowHTML('          <td valign="top"><b>Exibe somente ações em atraso?</b><br>');
     if ($p_atraso=='S')  {

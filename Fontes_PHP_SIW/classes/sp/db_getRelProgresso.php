@@ -10,9 +10,12 @@ include_once($w_dir_volta.'classes/db/DatabaseQueriesFactory.php');
 */
 
 class db_getRelProgresso {
-   function getInstanceOf($dbms, $p_cliente, $p_chave, $p_inicio, $p_fim, $p_restricao) {
+   function getInstanceOf($dbms, $p_cliente, $p_plano, $p_objetivo, $p_programa, $p_chave, $p_inicio, $p_fim, $p_restricao) {
      extract($GLOBALS,EXTR_PREFIX_SAME,'strchema'); $sql=$strschema.'SP_GETRELPROGRESSO';
      $params=array('p_cliente'                   =>array($p_cliente,                                       B_INTEGER,        32),
+                   'p_plano'                     =>array(tvl($p_plano),                                    B_INTEGER,        32),
+                   'p_objetivo'                  =>array(tvl($p_objetivo),                                 B_INTEGER,        32),
+                   'p_programa'                  =>array(tvl($p_programa),                                 B_INTEGER,        32),
                    'p_chave'                     =>array(tvl($p_chave),                                    B_INTEGER,        32),
                    'p_inicio'                    =>array(tvl($p_inicio),                                   B_DATE,           32),
                    'p_fim'                       =>array(tvl($p_fim),                                      B_DATE,           32),

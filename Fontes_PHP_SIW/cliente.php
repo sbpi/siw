@@ -369,6 +369,7 @@ function Geral() {
   FormataCNPJ();
   CheckBranco();
   FormataData();
+  SaltaCampo();
   ValidateOpen('Validacao');
   if ($w_cgccpf=='' || (!(strpos($_REQUEST['botao'],'Procurar')===false))) {
     // Se o beneficiário ainda não foi selecionado
@@ -468,7 +469,7 @@ function Geral() {
       ShowHTML('          </table>');
       ShowHTML('      <tr><td valign="top" colspan="2"><table border=0 width="100%" cellspacing=0>');
       ShowHTML('          <tr><td valign="top"><b><u>I</u>nscrição estadual:</b><br><input '.$w_Disabled.' accesskey="I" type="text" name="w_inscricao_estadual" class="sti" SIZE="20" MAXLENGTH="20" VALUE="'.$w_inscricao_estadual.'" title="Inscrição estadual do cliente."></td>');
-      ShowHTML('              <td valign="top"><b>Início da a<u>t</u>ividade:</b><br><input '.$w_Disabled.' accesskey="T" type="text" name="w_inicio_atividade" class="sti" SIZE="10" MAXLENGTH="10" VALUE="'.$w_inicio_atividade.'" onKeyDown="FormataData(this,event);" title="Data de início das atividades do cliente, conforme contrato social."></td>');
+      ShowHTML('              <td valign="top"><b>Início da a<u>t</u>ividade:</b><br><input '.$w_Disabled.' accesskey="T" type="text" name="w_inicio_atividade" class="sti" SIZE="10" MAXLENGTH="10" VALUE="'.$w_inicio_atividade.'" onKeyDown="FormataData(this,event);" onKeyUp="SaltaCampo(this.form.name,this,10,event);" title="Data de início das atividades do cliente, conforme contrato social."></td>');
       ShowHTML('              <td valign="top" title="Marcar "Sim" se o CNPJ for o principal do cliente."><b>Sede?</b><br>');
       if ($w_sede=='S' || $w_sede=='') {
         ShowHTML('              <input class="str" type="RADIO" name="w_sede" value="S" CHECKED> Sim <input class="str" type="RADIO" name="w_sede" value="N"> Não ');
@@ -606,6 +607,7 @@ function Enderecos() {
     modulo();
     checkbranco();
     formatadata();
+    SaltaCampo();
     FormataCEP();
     FormataValor();
     ValidateOpen('Validacao');
@@ -812,6 +814,7 @@ function Telefones() {
     modulo();
     checkbranco();
     formatadata();
+    SaltaCampo();
     FormataValor();
     ValidateOpen('Validacao');
     if (!(strpos('IA',$O)===false)) {
@@ -1022,6 +1025,7 @@ function ContasBancarias() {
     CheckBranco();
     FormataValor();
     FormataData();
+    SaltaCampo();
     FormataDataHora();
     ValidateOpen('Validacao');
     if ($O=='I') {
@@ -1217,6 +1221,7 @@ function Modulos() {
     modulo();
     checkbranco();
     formatadata();
+    SaltaCampo();
     FormataValor();
     ValidateOpen('Validacao');
     if (!(strpos('IA',$O)===false)) {
@@ -1394,6 +1399,7 @@ function Configuracao() {
   FormataCNPJ();
   CheckBranco();
   FormataData();
+  SaltaCampo();
   ValidateOpen('Validacao');
   Validate('w_smtp_server','Servidor SMTP','1',1,3,60,'1','1');
   Validate('w_siw_email_nome','Nome','1',1,3,60,'1','1');

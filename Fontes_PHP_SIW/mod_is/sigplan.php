@@ -213,6 +213,7 @@ function Inicial() {
     ScriptOpen('JavaScript');
     CheckBranco();
     FormataData();
+    SaltaCampo();
     ValidateOpen('Validacao');
     if (!(strpos('IAE',$O)===false)) {
       if (!(strpos('IA',$O)===false)) {
@@ -426,6 +427,7 @@ function Tabela() {
     } 
     CheckBranco();
     FormataData();
+    SaltaCampo();
     ValidateOpen('Validacao');
     if (!(strpos('IAP',$O)===false)) {
       if (!(strpos('P',$O)===false)) {
@@ -728,6 +730,7 @@ function Mapeamento() {
     ShowHTML('  }');
     CheckBranco();
     FormataData();
+    SaltaCampo();
     ValidateOpen('Validacao');
     ShowHTML('  var i; ');
     ShowHTML('  var w_erro=true; ');
@@ -884,6 +887,7 @@ function Importacao() {
     CheckBranco();
     FormataDataHora();
     FormataData();
+    SaltaCampo();
     ValidateOpen('Validacao');
     if (!(strpos('I',$O)===false)) {
       Validate('w_data_arquivo','Data e hora','DATAHORA','1','17','17','','0123456789 /:,');
@@ -957,7 +961,7 @@ function Importacao() {
     if (f($RS,'formato')=='A') {
       ShowHTML('      <tr><td align="center" bgcolor="#D0D0D0" style="border: 2px solid rgb(0,0,0);"><font size="2"><b><font color="#BC3131">ATENÇÃO</font>: o tamanho máximo aceito para o arquivo é de '.($w_upload_maximo/1024).' KBytes</b>.</font></td>');
       ShowHTML('<INPUT type="hidden" name="w_upload_maximo" value="'.$w_upload_maximo.'">');
-      ShowHTML('      <tr><td><font size="1"><b><u>D</u>ata/hora extração:</b><br><input '.$w_disabled.' accesskey="D" type="text" name="w_data_arquivo" class="sti" SIZE="17" MAXLENGTH="17" VALUE="'.$w_data_arquivo.'"  onKeyDown="FormataDataHora(this, event);" title="OBRIGATÓRIO. Informe a data e hora da extração do aquivo. Digite apenas números. O sistema colocará os separadores automaticamente."></td>');
+      ShowHTML('      <tr><td><font size="1"><b><u>D</u>ata/hora extração:</b><br><input '.$w_disabled.' accesskey="D" type="text" name="w_data_arquivo" class="sti" SIZE="17" MAXLENGTH="17" VALUE="'.$w_data_arquivo.'"  onKeyDown="FormataDataHora(this, event);" onKeyUp="SaltaCampo(this.form.name,this,10,event);" title="OBRIGATÓRIO. Informe a data e hora da extração do aquivo. Digite apenas números. O sistema colocará os separadores automaticamente."></td>');
       ShowHTML('      <tr><td><font size="1"><b>A<u>r</u>quivo:</b><br><input accesskey="R" type="file" name="w_caminho" class="STI" SIZE="80" MAXLENGTH="100" VALUE="" title="OBRIGATÓRIO. Clique no botão ao lado para localizar o arquivo. Ele será transferido automaticamente para o servidor.">');
     } 
     ShowHTML('      <tr><td align="LEFT"><font size="1"><b><U>A</U>ssinatura Eletrônica:<BR> <INPUT ACCESSKEY="A" class="sti" type="PASSWORD" name="w_assinatura" size="30" maxlength="30" value=""></td></tr>');

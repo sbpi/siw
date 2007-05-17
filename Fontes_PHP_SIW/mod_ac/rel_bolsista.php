@@ -973,7 +973,7 @@ function Rel_Bolsista() {
     ShowHTML('    <table width="97%" border="0">');
     ShowHTML('      <tr bgcolor="'.$conTrBgColor.'">');
     $RS = db_getLinkData::getInstanceOf($dbms,$w_cliente,'PJCADBOLSA');
-    SelecaoProjeto('Pr<u>o</u>jeto:','O','Selecione o projeto na relação.',$p_chave,$w_usuario,f($RS,'sq_menu'),'p_chave','PJCADBOLSA',null,2);
+    SelecaoProjeto('Pr<u>o</u>jeto:','O','Selecione o projeto na relação.',$p_chave,$w_usuario,f($RS,'sq_menu'),null,null,null,'p_chave','PJCADBOLSA',null,2);
     ShowHTML('      <tr bgcolor="'.$conTrBgColor.'">');    
     ShowHTML('        <td valign="top" title="Selecione o tipo de relatório"><b>Tipo do relatório</b><br><SELECT ACCESSKEY="T" CLASS="sts" NAME="p_tipo" '.$w_Disabled.'>');
     ShowHTML('          <option value="">---');

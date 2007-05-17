@@ -185,6 +185,7 @@ function Informar(){
     ScriptOpen('JavaScript');
     CheckBranco();
     FormataData();
+    SaltaCampo();
     ValidateOpen('Validacao');
     if ($O=='I') {
       ShowHTML('  if (theForm.w_trabalho[0].checked) {');
@@ -503,8 +504,8 @@ function Informar(){
     ShowHTML('      </tr></table></td></tr>');
     ShowHTML('      <tr align="left"><td><table cellpadding=0 cellspacing=0><tr valign="center">');
     ShowHTML('          <td><b>Período</b>(formato DD/MM/AAAA):&nbsp;&nbsp;</td>');
-    ShowHTML('          <td><b><U>D</U>e: <INPUT ACCESSKEY="D" '.$w_Disabled.' class="sti" type="text" name="p_inicio" size="10" maxlength="10" value="'.$p_inicio.'" onKeyDown="FormataData(this,event)">'.ExibeCalendario('Form','p_inicio').'&nbsp;</td>');
-    ShowHTML('          <td><b>A<U>t</U>é: <INPUT ACCESSKEY="T" '.$w_Disabled.' class="sti" type="text" name="p_fim" size="10" maxlength="10" value="'.$p_fim.'" onKeyDown="FormataData(this,event)">'.ExibeCalendario('Form','p_fim').'</td>');
+    ShowHTML('          <td><b><U>D</U>e: <INPUT ACCESSKEY="D" '.$w_Disabled.' class="sti" type="text" name="p_inicio" size="10" maxlength="10" value="'.$p_inicio.'" onKeyDown="FormataData(this,event)" onKeyUp="SaltaCampo(this.form.name,this,10,event);">'.ExibeCalendario('Form','p_inicio').'&nbsp;</td>');
+    ShowHTML('          <td><b>A<U>t</U>é: <INPUT ACCESSKEY="T" '.$w_Disabled.' class="sti" type="text" name="p_fim" size="10" maxlength="10" value="'.$p_fim.'" onKeyDown="FormataData(this,event)" onKeyUp="SaltaCampo(this.form.name,this,10,event);">'.ExibeCalendario('Form','p_fim').'</td>');
     ShowHTML('      </table>');
     ShowHTML('      <tr><td valign="top"><b>Ligações:</b><br>');
     if ($p_ativo=='S'){                      
@@ -571,11 +572,11 @@ function Informar(){
     ShowHTML('      <tr align="left"><td><table cellpadding=0 cellspacing=0><tr valign="center">');
     ShowHTML('          <td><b>Período</b>(formato DD/MM/AAAA):&nbsp;&nbsp;</td>');
     if ($p_inicio==''){
-      ShowHTML('          <td><b><U>D</U>e: <INPUT ACCESSKEY="D" '.$w_Disabled.' class="sti" type="text" name="p_inicio" size="10" maxlength="10" value="01/'.Date('m/Y', Time()).'" onKeyDown="FormataData(this,event)">'.ExibeCalendario('Form','p_inicio').'&nbsp;</td>');
-      ShowHTML('          <td><b>A<U>t</U>é: <INPUT ACCESSKEY="T" '.$w_Disabled.' class="sti" type="text" name="p_fim" size="10" maxlength="10" value="'.FormataDataEdicao(time()).'" onKeyDown="FormataData(this,event)">'.ExibeCalendario('Form','p_fim').'</td>');
+      ShowHTML('          <td><b><U>D</U>e: <INPUT ACCESSKEY="D" '.$w_Disabled.' class="sti" type="text" name="p_inicio" size="10" maxlength="10" value="01/'.Date('m/Y', Time()).'" onKeyDown="FormataData(this,event)" onKeyUp="SaltaCampo(this.form.name,this,10,event);">'.ExibeCalendario('Form','p_inicio').'&nbsp;</td>');
+      ShowHTML('          <td><b>A<U>t</U>é: <INPUT ACCESSKEY="T" '.$w_Disabled.' class="sti" type="text" name="p_fim" size="10" maxlength="10" value="'.FormataDataEdicao(time()).'" onKeyDown="FormataData(this,event)" onKeyUp="SaltaCampo(this.form.name,this,10,event);">'.ExibeCalendario('Form','p_fim').'</td>');
     } else {
-      ShowHTML('          <td><b><U>D</U>e: <INPUT ACCESSKEY="D" '.$w_Disabled.' class="sti" type="text" name="p_inicio" size="10" maxlength="10" value="'.$p_inicio.'" onKeyDown="FormataData(this,event)">'.ExibeCalendario('Form','p_inicio').'&nbsp;</td>');
-      ShowHTML('          <td><b>A<U>t</U>é: <INPUT ACCESSKEY="T" '.$w_Disabled.' class="sti" type="text" name="p_fim" size="10" maxlength="10" value="'.$p_fim.'" onKeyDown="FormataData(this,event)">'.ExibeCalendario('Form','p_fim').'</td>');
+      ShowHTML('          <td><b><U>D</U>e: <INPUT ACCESSKEY="D" '.$w_Disabled.' class="sti" type="text" name="p_inicio" size="10" maxlength="10" value="'.$p_inicio.'" onKeyDown="FormataData(this,event)" onKeyUp="SaltaCampo(this.form.name,this,10,event);">'.ExibeCalendario('Form','p_inicio').'&nbsp;</td>');
+      ShowHTML('          <td><b>A<U>t</U>é: <INPUT ACCESSKEY="T" '.$w_Disabled.' class="sti" type="text" name="p_fim" size="10" maxlength="10" value="'.$p_fim.'" onKeyDown="FormataData(this,event)" onKeyUp="SaltaCampo(this.form.name,this,10,event);">'.ExibeCalendario('Form','p_fim').'</td>');
     } 
     ShowHTML('      </table>');
     if ($P1==3){

@@ -36,7 +36,7 @@ include_once($w_dir_volta.'funcoes/selecaoOpcaoEstrat.php');
 //  /is_tabelas.php
 // ------------------------------------------------------------------------
 // Nome     : Billy Jones Leal dos Santos
-// Descricao: Gerenciar tabelas básicas do módulo	
+// Descricao: Gerenciar tabelas básicas do módulo  
 // Mail     : billy@sbpi.com.br
 // Criacao  : 26/07/2006 14:00
 // Versao   : 1.0.0.0

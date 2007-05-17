@@ -157,9 +157,9 @@ function VisualDemanda($l_chave,$operacao,$w_usuario) {
         $l_html.=chr(13).'          <td align="center">&nbsp;'.Nvl(FormataDataEdicao(f($row,'fim')),'-').'</td>';
         $l_html.=chr(13).'          <td>'.f($row,'nm_tramite').'</td>';
         $l_html.=chr(13).'        </tr>';
-        $l_html.=chr(13).'          </table>';
-        $l_html.=chr(13).'      </table>';
       } 
+      $l_html.=chr(13).'          </table>';
+      $l_html.=chr(13).'      </table>';
     }
 
     if ($w_tipo_visao==0 || $w_tipo_visao==1) {
@@ -173,7 +173,7 @@ function VisualDemanda($l_chave,$operacao,$w_usuario) {
         if ($w_tipo_visao==0 && Nvl(f($RS,'justificativa'),'')>'') {
           // Se for visão completa
           $l_html.=chr(13).'      <tr valign="top"><td><b>Observações:</b></td>';
-          $l_html.=chr(13).'            <td>'.CRLF2BR(f($RS,'justificativa')).' </td></tr>';
+          $l_html.=chr(13).'            <td>'.CRLF2BR(Nvl(f($RS,'justificativa'),'---')).' </td></tr>';
         } 
       } 
     } 

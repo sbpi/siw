@@ -604,6 +604,7 @@ Fontes_PHP_SIW/classes/sp/db_getAcaoPPA_IS.php -text
 Fontes_PHP_SIW/classes/sp/db_getAcao_IS.php -text
 Fontes_PHP_SIW/classes/sp/db_getAcordoAditivo.php -text
 Fontes_PHP_SIW/classes/sp/db_getAcordoNota.php -text
+Fontes_PHP_SIW/classes/sp/db_getAcordoNotaCancel.php -text
 Fontes_PHP_SIW/classes/sp/db_getAcordoParcela.php -text
 Fontes_PHP_SIW/classes/sp/db_getAcordoRep.php -text
 Fontes_PHP_SIW/classes/sp/db_getAddressData.php -text
@@ -614,6 +615,7 @@ Fontes_PHP_SIW/classes/sp/db_getAdressTypeList.php -text
 Fontes_PHP_SIW/classes/sp/db_getAfastamento.php -text
 Fontes_PHP_SIW/classes/sp/db_getAgree.php -text
 Fontes_PHP_SIW/classes/sp/db_getAgreeType.php -text
+Fontes_PHP_SIW/classes/sp/db_getAlerta.php -text
 Fontes_PHP_SIW/classes/sp/db_getArquivo.php -text
 Fontes_PHP_SIW/classes/sp/db_getAssunto_PA.php -text
 Fontes_PHP_SIW/classes/sp/db_getBankData.php -text
@@ -735,6 +737,7 @@ Fontes_PHP_SIW/classes/sp/db_getLinkDataUser.php -text
 Fontes_PHP_SIW/classes/sp/db_getLinkSubMenu.php -text
 Fontes_PHP_SIW/classes/sp/db_getLocalList.php -text
 Fontes_PHP_SIW/classes/sp/db_getMacroObjetivo_IS.php -text
+Fontes_PHP_SIW/classes/sp/db_getMarcado.php -text
 Fontes_PHP_SIW/classes/sp/db_getMenuCode.php -text
 Fontes_PHP_SIW/classes/sp/db_getMenuData.php -text
 Fontes_PHP_SIW/classes/sp/db_getMenuFormaPag.php -text
@@ -936,6 +939,7 @@ Fontes_PHP_SIW/classes/sp/dml_putAcordoDadosAdicionais.php -text
 Fontes_PHP_SIW/classes/sp/dml_putAcordoEnvio.php -text
 Fontes_PHP_SIW/classes/sp/dml_putAcordoGeral.php -text
 Fontes_PHP_SIW/classes/sp/dml_putAcordoNota.php -text
+Fontes_PHP_SIW/classes/sp/dml_putAcordoNotaCancel.php -text
 Fontes_PHP_SIW/classes/sp/dml_putAcordoOutra[!!-~].php -text
 Fontes_PHP_SIW/classes/sp/dml_putAcordoOutra.php -text
 Fontes_PHP_SIW/classes/sp/dml_putAcordoParc.php -text
@@ -1117,6 +1121,7 @@ Fontes_PHP_SIW/classes/sp/dml_putSolicTransp.php -text
 Fontes_PHP_SIW/classes/sp/dml_putStoredProcedure[!!-~].php -text
 Fontes_PHP_SIW/classes/sp/dml_putStoredProcedure.php -text
 Fontes_PHP_SIW/classes/sp/dml_putTTCentral.php -text
+Fontes_PHP_SIW/classes/sp/dml_putTTClassificacao.php -text
 Fontes_PHP_SIW/classes/sp/dml_putTTPrefixo.php -text
 Fontes_PHP_SIW/classes/sp/dml_putTTRamal.php -text
 Fontes_PHP_SIW/classes/sp/dml_putTTRamalUsuario.php -text
@@ -1464,12 +1469,14 @@ Fontes_PHP_SIW/mod_pd/tabelas.php -text
 Fontes_PHP_SIW/mod_pd/validaviagem.php -text
 Fontes_PHP_SIW/mod_pd/viagem.php -text
 Fontes_PHP_SIW/mod_pd/visualviagem.php -text
+Fontes_PHP_SIW/mod_pe/exibeprograma.php -text
 Fontes_PHP_SIW/mod_pe/indicador.php -text
 Fontes_PHP_SIW/mod_pe/programa.php -text
 Fontes_PHP_SIW/mod_pe/recurso.php -text
 Fontes_PHP_SIW/mod_pe/relatorios.php -text
 Fontes_PHP_SIW/mod_pe/tabelas.php -text
 Fontes_PHP_SIW/mod_pe/visualprograma.php -text
+Fontes_PHP_SIW/mod_pr/exibeprojeto.php -text
 Fontes_PHP_SIW/mod_pr/graficos.php -text
 Fontes_PHP_SIW/mod_pr/relatorios.php -text
 Fontes_PHP_SIW/mod_pr/restricao.php -text
@@ -1517,6 +1524,7 @@ Fontes_PHP_SIW/tarifacao.php -text
 Fontes_PHP_SIW/test.php -text
 Fontes_PHP_SIW/trabalho.php -text
 Fontes_PHP_SIW/visualCliente.php -text
+Fontes_PHP_SIW/visualalerta.php -text
 Fontes_PHP_SIW/visualdemanda.php -text
 Fontes_PHP_SIW/visualprojeto.php -text
 SP_MSSQL2000/SIW/SIW.ACENTOS.UDF -text

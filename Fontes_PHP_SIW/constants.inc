@@ -26,7 +26,7 @@ $conTrBgColor			= '#EFEFEF';
 $conTrTotalBgColor		= '#55BBFF';
 $conTrAlternateBgColor		= '#E0E0E0';
 $conTrRelatorioBgColor		= '#E1F2FF';
-$conTrBgColorLightBlue1		= '#77AAFF';
+$conTrBgColorLightBlue1		= '#BBBBFF';
 $conTrBgColorLightRed1		= '#FF9999';
 $conTrBgColorLightBlue2		= '#AADDFF';
 $conTrBgColorLightRed2		= '#FFCCCC';
@@ -41,6 +41,9 @@ $conTituloFontFace	= 'Arial';
 $conTituloFontColor	= '#008000';
 
 //---------------------------Definições de imagens
+$conImgAlHigh	= 'images/icone/alert_animated.gif';
+$conImgAlMed	= 'images/icone/alert_red.gif';
+$conImgAlLow	= 'images/icone/alert_yellow.gif';
 
 $conImgOkAcima	= 'images/tickazul.gif';
 $conImgOkNormal	= 'images/tickverde.gif';
@@ -60,10 +63,13 @@ $conImgRiskLow  ='images/icone/risk_low.gif';
 $conImgRiskMed  ='images/icone/risk_low.gif';
 $conImgRiskHig  ='images/icone/risk_medium.gif';
 
-$conImgSmNormal = 'images/icone/smile_approve.gif';
-$conImgSmAviso  = 'images/icone/smile_sleepy.gif';
-$conImgSmAtraso = 'images/icone/smile_dissapprove.gif';
+//$conImgSmNormal = 'images/icone/smile_approve.gif';
+//$conImgSmAviso  = 'images/icone/smile_sleepy.gif';
+//$conImgSmAtraso = 'images/icone/smile_dissapprove.gif';
 
+$conImgSmNormal = 'images/BallGreen.png';
+$conImgSmAviso  = 'images/BallYellow.png';
+$conImgSmAtraso = 'images/BallRed.png';
 
 
 //---------------------------Definições de banco

@@ -118,6 +118,7 @@ function Inicial(){
       ScriptOpen('JavaScript');
       CheckBranco();
       FormataData();
+      SaltaCampo();
       ValidateOpen('Validacao');
       Validate('p_ano_fluxo','Ano','1','1','4','4','','0123456789');
       CompValor('p_ano_fluxo','Ano','>','1754','1754');

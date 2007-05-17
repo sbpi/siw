@@ -188,7 +188,7 @@ function visualCliente($w_sq_cliente,$O) {
     ShowHTML('         </table></td></tr>');
 
     //Usuários cadastrados
-    $RS = db_getUserList::getInstanceOf($dbms,$w_sq_cliente,null,null,null,null,null,null,'S',null);
+    $RS = db_getUserList::getInstanceOf($dbms,$w_sq_cliente,null,null,null,null,null,null,null,'S',null);
     $RS = SortArray($RS,'nome_resumido_ind','asc');
     ShowHTML('      <tr><td valign="top" colspan="2" align="center" bgcolor="#D0D0D0" style="border: 2px solid rgb(0,0,0);"><b>Usuários Cadastrados ('.count($RS).')</td>');
     ShowHTML('      <tr><td align="center" colspan="2">');

@@ -20,7 +20,7 @@ include_once($w_dir_volta.'funcoes/selecaoServico.php');
 //  /tabelas.php
 // ------------------------------------------------------------------------
 // Nome     : Billy Jones Leal dos Santos
-// Descricao: Gerenciar tabelas básicas do módulo	
+// Descricao: Gerenciar tabelas básicas do módulo  
 // Mail     : billy@sbpi.com.br
 // Criacao  : 21/03/2007, 09:17
 // Versao   : 1.0.0.0

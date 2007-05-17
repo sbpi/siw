@@ -28,6 +28,7 @@
   ScriptOpen('JavaScript');
   CheckBranco();
   FormataData();
+  SaltaCampo();
   FormataDataHora();
   FormataValor();
   ValidateOpen('Validacao');
@@ -84,10 +85,10 @@
   SelecaoPessoa('<u>M</u>otorista:','M','Selecione o motorista responsável pelo atendimento.',$w_executor,null,'w_executor','USUARIOS');
   SelecaoVeiculo('<u>P</u>laca:','P','Selecione o veículo',$w_cliente,$w_sq_veiculo,null,'w_sq_veiculo',null);
   ShowHTML('          <tr valign="top">');
-  ShowHTML('              <td valign="top"><b>Da<u>t</u>a / hora de saída:</b><br><input '.$w_Disabled.' accesskey="T" type="text" name="w_horario_saida" class="STI" SIZE="17" MAXLENGTH="17" VALUE="'.$w_horario_saida.'" onKeyDown="FormataDataHora(this,event);" title="Informe a data/hora de término da solicitação."></td>');
+  ShowHTML('              <td valign="top"><b>Da<u>t</u>a / hora de saída:</b><br><input '.$w_Disabled.' accesskey="T" type="text" name="w_horario_saida" class="STI" SIZE="17" MAXLENGTH="17" VALUE="'.$w_horario_saida.'" onKeyDown="FormataDataHora(this,event);" onKeyUp="SaltaCampo(this.form.name,this,10,event);" title="Informe a data/hora de término da solicitação."></td>');
   ShowHTML('              <td valign="top"><b><u>H</u>odômetro da saída:</b><br><input '.$w_Disabled.' accesskey="H" type="text" name="w_hodometro_saida" class="STI" SIZE="17" MAXLENGTH="7" VALUE="'.$w_hodometro_saida.'" title="Informe a data/hora de término da solicitação."></td>');
   ShowHTML('          <tr valign="top">');
-  ShowHTML('              <td valign="top"><b>Dat<u>a</u> / hora de retorno:</b><br><input '.$w_Disabled.' accesskey="A" type="text" name="w_horario_chegada" class="STI" SIZE="17" MAXLENGTH="17" VALUE="'.$w_horario_chegada.'" onKeyDown="FormataDataHora(this,event);" title="Informe a data/hora de término da solicitação."></td>');
+  ShowHTML('              <td valign="top"><b>Dat<u>a</u> / hora de retorno:</b><br><input '.$w_Disabled.' accesskey="A" type="text" name="w_horario_chegada" class="STI" SIZE="17" MAXLENGTH="17" VALUE="'.$w_horario_chegada.'" onKeyDown="FormataDataHora(this,event);" onKeyUp="SaltaCampo(this.form.name,this,10,event);" title="Informe a data/hora de término da solicitação."></td>');
   ShowHTML('              <td valign="top"><b>H<u>o</u>dômentro na chegada:</b><br><input '.$w_Disabled.' accesskey="O" type="text" name="w_hodometro_chegada" class="STI" SIZE="17" MAXLENGTH="7" VALUE="'.$w_hodometro_chegada.'" title="Informe a data/hora de término da solicitação."></td>');
   ShowHTML('          <tr valign="top">');  
   MontaRadioSN('<b>Parcial?</b>',$w_parcial,'w_parcial');

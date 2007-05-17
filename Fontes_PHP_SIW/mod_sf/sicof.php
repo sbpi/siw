@@ -101,6 +101,7 @@ function ConsultaDoc() {
     FormataCNPJ();
     FormataCPF();
     FormataData();
+    SaltaCampo();
     CheckBranco();
     ShowHTML('function procura() {');
     ShowHTML('  if (document.Form.p_beneficiario.value.length < 3) {');
@@ -446,13 +447,13 @@ function ConsultaDoc() {
     ShowHTML('          </table>');
     ShowHTML('      <tr><td><table border=0 width="100%" cellpadding=0 cellspacing=0><tr valign="top">');
     ShowHTML('          <td><b>SA/SP/SP<U>D</U>:</b> (identificação completa)<br> <INPUT TYPE="TEXT" ACCESSKEY="D" class="STI" name="p_documento" size=15 maxlength=15 value="'.$_POST['p_documento'].'"></td>');
-    ShowHTML('          <td>Período: <b>D<U>e</U>: <INPUT TYPE="TEXT" ACCESSKEY="E" class="STI" name="p_inicio" size=10 maxlength=10 onKeyDown="FormataData(this,event);" value="'.nvl($_POST['p_inicio'],str_replace('/'.date(Y,time()),'/'.(date(Y,time())-1),formataDataEdicao(time()))).'">');
-    ShowHTML('                                <U>a</U>té: <INPUT TYPE="TEXT" ACCESSKEY="A" class="STI" name="p_fim" size=10 maxlength=10 onKeyDown="FormataData(this,event);" value="'.nvl($_POST['p_fim'],formataDataEdicao(time())).'"></td>');
+    ShowHTML('          <td>Período: <b>D<U>e</U>: <INPUT TYPE="TEXT" ACCESSKEY="E" class="STI" name="p_inicio" size=10 maxlength=10 onKeyDown="FormataData(this,event);" onKeyUp="SaltaCampo(this.form.name,this,10,event);" value="'.nvl($_POST['p_inicio'],str_replace('/'.date(Y,time()),'/'.(date(Y,time())-1),formataDataEdicao(time()))).'">');
+    ShowHTML('                                <U>a</U>té: <INPUT TYPE="TEXT" ACCESSKEY="A" class="STI" name="p_fim" size=10 maxlength=10 onKeyDown="FormataData(this,event);" onKeyUp="SaltaCampo(this.form.name,this,10,event);" value="'.nvl($_POST['p_fim'],formataDataEdicao(time())).'"></td>');
     ShowHTML('          </table>');
     ShowHTML('      <tr><td><table border=0 width="100%" cellpadding=0 cellspacing=0><tr valign="top">');
     ShowHTML('          <td><b>Co<U>m</U>provante (NF/Fatura/Recibo):<br><INPUT TYPE="TEXT" ACCESSKEY="M" class="STI" name="p_comprovante" size=10 maxlength=10 value="'.$_POST['p_comprovante'].'">');
-    ShowHTML('          <td>Período: <b>D<U>e</U>: <INPUT TYPE="TEXT" ACCESSKEY="E" class="STI" name="p_inicio_nf" size=10 maxlength=10 onKeyDown="FormataData(this,event);" value="'.$_POST['p_inicio_nf'].'">');
-    ShowHTML('                                <b><U>a</U>té: <INPUT TYPE="TEXT" ACCESSKEY="A" class="STI" name="p_fim_nf" size=10 maxlength=10 onKeyDown="FormataData(this,event);" value="'.$_POST['p_fim_nf'].'"></td>');
+    ShowHTML('          <td>Período: <b>D<U>e</U>: <INPUT TYPE="TEXT" ACCESSKEY="E" class="STI" name="p_inicio_nf" size=10 maxlength=10 onKeyDown="FormataData(this,event);" onKeyUp="SaltaCampo(this.form.name,this,10,event);" value="'.$_POST['p_inicio_nf'].'">');
+    ShowHTML('                                <b><U>a</U>té: <INPUT TYPE="TEXT" ACCESSKEY="A" class="STI" name="p_fim_nf" size=10 maxlength=10 onKeyDown="FormataData(this,event);" onKeyUp="SaltaCampo(this.form.name,this,10,event);" value="'.$_POST['p_fim_nf'].'"></td>');
     ShowHTML('          </table>');
     ShowHTML('      <tr><td align="center" colspan="3" height="1" bgcolor="#000000">');
     ShowHTML('      <tr><td align="center" colspan="3">');

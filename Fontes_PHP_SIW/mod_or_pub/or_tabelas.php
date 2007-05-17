@@ -30,7 +30,7 @@ include_once($w_dir_volta.'funcoes/cabecalhoWordOR.php');
 //  /or_tabelas.php
 // ------------------------------------------------------------------------
 // Nome     : Billy Jones Leal dos Santos
-// Descricao: Gerenciar tabelas básicas do módulo	
+// Descricao: Gerenciar tabelas básicas do módulo  
 // Mail     : billy@sbpi.com.br
 // Criacao  : 18/08/2006 14:20
 // Versao   : 1.0.0.0

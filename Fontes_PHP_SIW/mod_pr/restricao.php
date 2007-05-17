@@ -196,6 +196,7 @@ function Restricao() {
     ScriptOpen('JavaScript');
     CheckBranco();
     FormataData();
+    SaltaCampo();
     FormataValor();
     ValidateOpen('Validacao');
     if (!(strpos('IA',$O)===false)) {
@@ -260,7 +261,11 @@ function Restricao() {
       ShowHTML('<tr><td>');
       ShowHTML('  <a accesskey="I" class="SS" href="'.$w_dir.$w_pagina.$par.'&R='.$w_pagina.$par.'&O=I&w_chave='.$w_chave.'&w_problema='.$w_problema.'&P1='.$P1.'&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP='.$TP.'&SG='.$SG.'"><u>I</u>ncluir</a>&nbsp;');
       $RS_Tarefa = db_getLinkData::getInstanceOf($dbms,$w_cliente,'GDPCAD');
-      ShowHTML('        <a class="SS" HREF="javascript:location.href=this.location.href;" onClick="window.open(\''.montaURL_JS(null,$conRootSIW.'projetoativ.php?par=Inicial&R=projetoativ.php?par=Inicial&O=L&p_projeto='.$w_chave.'&p_volta=Lista&P1=1&P2='.f($RS_Tarefa,'sq_menu').'&P3='.$P3.'&P4='.$P4.'&TP='.$TP.'- Tarefas').'&SG='.f($RS_Tarefa,'sigla').'\',\'Tarefa\',\'toolbar=no,width=780,height=530,top=30,left=10,scrollbars=yes\');">Tarefas</a>&nbsp');
+      $RS_Tramite = db_getLinkData::getInstanceOf($dbms,f($RS_Tarefa,'sq_menu'),null,'S');
+      foreach($RS_Tramite as $row){$RS_Tramite=$row; break;}
+      if(RetornaMarcado(f($RS_Tarefa,'sq_menu'),$w_usuario,null,f($RS_Tarefa,'sq_siw_tramite'))>0) {
+        ShowHTML('        <a class="SS" HREF="javascript:location.href=this.location.href;" onClick="window.open(\''.montaURL_JS(null,$conRootSIW.'projetoativ.php?par=Inicial&R=projetoativ.php?par=Inicial&O=L&p_projeto='.$w_chave.'&p_volta=Lista&P1=1&P2='.f($RS_Tarefa,'sq_menu').'&P3='.$P3.'&P4='.$P4.'&TP='.$TP.'- Tarefas').'&SG='.f($RS_Tarefa,'sigla').'\',\'Tarefa\',\'toolbar=no,width=780,height=530,top=30,left=10,scrollbars=yes\');">Tarefas</a>&nbsp');
+      }
     } else {
       if ($w_problema=='N') {
         ShowHTML('    <li>A listagem abaixo apresenta os riscos associados ao projeto.');
@@ -376,7 +381,7 @@ function Restricao() {
     ShowHTML('      <tr><td colspan="3"><b><u>A</u>ção de resposta:</b><br><textarea '.$w_Disabled.' accesskey="A" name="w_acao_resposta" class="STI" ROWS=5 cols=75 title="Ação resposta.">'.$w_acao_resposta.'</TEXTAREA></td>'); 
     if ($P1==2) { 
       ShowHTML('      <tr valign="top">');
-      ShowHTML('              <td><b>Data sit<u>u</u>ação:</b><br><input '.$w_Disabled.' accesskey="C" type="text" name="w_data_situacao" class="STI" SIZE="10" MAXLENGTH="10" VALUE="'.FormataDataEdicao(Nvl($w_data_situacao,time())).'" onKeyDown="FormataData(this,event);" title="Data prevista para início da etapa.">'.ExibeCalendario('Form','w_data_situacao').'</td>');
+      ShowHTML('              <td><b>Data sit<u>u</u>ação:</b><br><input '.$w_Disabled.' accesskey="C" type="text" name="w_data_situacao" class="STI" SIZE="10" MAXLENGTH="10" VALUE="'.FormataDataEdicao(Nvl($w_data_situacao,time())).'" onKeyDown="FormataData(this,event);" onKeyUp="SaltaCampo(this.form.name,this,10,event);" title="Data prevista para início da etapa.">'.ExibeCalendario('Form','w_data_situacao').'</td>');
       SelecaoFaseAtual('<U>F</U>ase atual:','F','Selecione fase atual.',$w_fase_atual,'w_fase_atual',null,null);
       ShowHTML('      <tr><td colspan="3"><b><u>S</u>ituação atual:</b><br><textarea '.$w_Disabled.' accesskey="S" name="w_situacao_atual" class="STI" ROWS=5 cols=75 title="Situação atual.">'.$w_situacao_atual.'</TEXTAREA></td>');
     }

@@ -133,6 +133,7 @@ function Inicial() {
   modulo();
   CheckBranco();
   FormataData();
+  SaltaCampo();
   FormataCPF();
   ValidateOpen('Validacao');
   if (!(strpos('P',$O)===false)) {
@@ -300,7 +301,7 @@ function Inicial() {
       } 
     } 
     ShowHTML('       </table></td></tr>');
-    ShowHTML('      <tr><td><b><u>P</u>eríodo de busca:</b><br> De: <input accesskey="P" type="text" name="p_dt_ini" class="STI" SIZE="10" MAXLENGTH="10" VALUE="'.$p_dt_ini.'" onKeyDown="FormataData(this,event);">'.ExibeCalendario('Form','p_dt_ini').' a <input accesskey="P" type="text" name="p_dt_fim" class="STI" SIZE="10" MAXLENGTH="10" VALUE="'.$p_dt_fim.'" onKeyDown="FormataData(this,event);">'.ExibeCalendario('Form','p_dt_fim').'</td>');
+    ShowHTML('      <tr><td><b><u>P</u>eríodo de busca:</b><br> De: <input accesskey="P" type="text" name="p_dt_ini" class="STI" SIZE="10" MAXLENGTH="10" VALUE="'.$p_dt_ini.'" onKeyDown="FormataData(this,event);" onKeyUp="SaltaCampo(this.form.name,this,10,event);">'.ExibeCalendario('Form','p_dt_ini').' a <input accesskey="P" type="text" name="p_dt_fim" class="STI" SIZE="10" MAXLENGTH="10" VALUE="'.$p_dt_fim.'" onKeyDown="FormataData(this,event);" onKeyUp="SaltaCampo(this.form.name,this,10,event);">'.ExibeCalendario('Form','p_dt_fim').'</td>');
     ShowHTML('      <tr><td align="center" colspan="3" height="1" bgcolor="#000000">');
     ShowHTML('      <tr><td align="center" colspan="3">');
     ShowHTML('            <input class="stb" type="submit" name="Botao" value="Aplicar filtro">');
@@ -511,6 +512,7 @@ function Documentacao() {
   CheckBranco();
   Modulo();
   FormataData();
+  SaltaCampo();
   ValidateOpen('Validacao');
   ShowHTML('if ((theForm.w_ctps_numero.value != \'\') && (theForm.w_ctps_serie.value == \'\' || theForm.w_ctps_emissor.value == \'\' || theForm.w_ctps_emissao.value == \'\')) {');
   ShowHTML('  alert (\'Se o número da CTPS for informado, todos os campos relativos a CTPS são obrigatórios!\');');
@@ -574,7 +576,7 @@ function Documentacao() {
   ShowHTML('       <td valign="top"><b><u>N</u>úmero CTPS:</b><br><input '.$w_Disabled.' accesskey="N" type="text" name="w_ctps_numero" class="sti" SIZE="20" MAXLENGTH="20" VALUE="'.$w_ctps_numero.'"></td>');
   ShowHTML('       <td valign="top"><b><u>S</u>érie:</b><br><input '.$w_Disabled.' accesskey="S" type="text" name="w_ctps_serie" class="sti" SIZE="5" MAXLENGTH="5" VALUE="'.$w_ctps_serie.'"></td>');
   ShowHTML('       <td valign="top"><b><u>E</u>missor:</b><br><input '.$w_Disabled.' accesskey="E" type="text" name="w_ctps_emissor" class="sti" SIZE="30" MAXLENGTH="30" VALUE="'.$w_ctps_emissor.'"></td>');
-  ShowHTML('       <td valign="top"><b>E<u>m</u>issão CTPS:</b><br><input '.$w_Disabled.' accesskey="M" type="text" name="w_ctps_emissao" class="sti" SIZE="10" MAXLENGTH="10" VALUE="'.$w_ctps_emissao.'" onKeyDown="FormataData(this,event);"></td>');
+  ShowHTML('       <td valign="top"><b>E<u>m</u>issão CTPS:</b><br><input '.$w_Disabled.' accesskey="M" type="text" name="w_ctps_emissao" class="sti" SIZE="10" MAXLENGTH="10" VALUE="'.$w_ctps_emissao.'" onKeyDown="FormataData(this,event);" onKeyUp="SaltaCampo(this.form.name,this,10,event);"></td>');
   ShowHTML('     </tr>');
   ShowHTML('     <tr valign="top">');
   ShowHTML('       <td valign="top" colspan="2"><b>Optante pelo:</b><br>');
@@ -584,7 +586,7 @@ function Documentacao() {
     ShowHTML('              <input '.$w_Disabled.' type="radio" name="w_pis_pasep" value="I" checked> PIS <input '.$w_Disabled.' type="radio" name="w_pis_pasep" value="A"> PASEP');
   } 
   ShowHTML('       <td valign="top"><b>N<u>ú</u>mero PIS/PASEP:</b><br><input '.$w_Disabled.' accesskey="U" type="text" name="w_pispasep_numero" class="sti" SIZE="20" MAXLENGTH="20" VALUE="'.$w_pispasep_numero.'"></td>');
-  ShowHTML('       <td valign="top"><b>Em<u>i</u>ssão PIS/PASEP:</b><br><input '.$w_Disabled.' accesskey="I" type="text" name="w_pispasep_cadastr" class="sti" SIZE="10" MAXLENGTH="10" VALUE="'.$w_pispasep_cadastr.'" onKeyDown="FormataData(this,event);"></td>');
+  ShowHTML('       <td valign="top"><b>Em<u>i</u>ssão PIS/PASEP:</b><br><input '.$w_Disabled.' accesskey="I" type="text" name="w_pispasep_cadastr" class="sti" SIZE="10" MAXLENGTH="10" VALUE="'.$w_pispasep_cadastr.'" onKeyDown="FormataData(this,event);" onKeyUp="SaltaCampo(this.form.name,this,10,event);"></td>');
   ShowHTML('     </tr>');
   ShowHTML('     <tr valign="top">');
   ShowHTML('       <td valign="top"><b>Número <u>t</u>ítulo eleitor:</b><br><input '.$w_Disabled.' accesskey="T" type="text" name="w_te_numero" class="sti" SIZE="20" MAXLENGTH="20" VALUE="'.$w_te_numero.'"></td>');
@@ -664,6 +666,7 @@ function Contrato() {
     modulo();
     checkbranco();
     formatadata();
+    SaltaCampo();
     ValidateOpen('Validacao');
     if (!(strpos('IA',$O)===false)) {
       Validate('w_posto_trabalho','Cargo','SELECT',1,1,18,'','0123456789');
@@ -824,9 +827,9 @@ function Contrato() {
     ShowHTML('        <tr valign="top">');
     ShowHTML('        <td colspan="3" valign="top"><table border="0" width="100%" cellpadding=0 cellspacing=0>');
     ShowHTML('          <tr><td valign="top"><b><u>M</u>atrícula:</b><br><input '.$w_Disabled.' accesskey="M" type="text" name="w_matricula" class="sti" SIZE="20" MAXLENGTH="20" VALUE="'.$w_matricula.'"></td>');
-    ShowHTML('              <td><b><u>I</u>nício da vigência:</b><br><input accesskey="I" type="text" name="w_dt_ini" class="STI" SIZE="10" MAXLENGTH="10" VALUE="'.$w_dt_ini.'" onKeyDown="FormataData(this,event);">');
+    ShowHTML('              <td><b><u>I</u>nício da vigência:</b><br><input accesskey="I" type="text" name="w_dt_ini" class="STI" SIZE="10" MAXLENGTH="10" VALUE="'.$w_dt_ini.'" onKeyDown="FormataData(this,event);" onKeyUp="SaltaCampo(this.form.name,this,10,event);">');
     if (!($O=='A' && Nvl($w_dt_fim,'')=='')) {
-      ShowHTML('              <td><b><u>F</u>im da vigência:</b><br><input accesskey="F" type="text" name="w_dt_fim" class="STI" SIZE="10" MAXLENGTH="10" VALUE="'.$w_dt_fim.'" onKeyDown="FormataData(this,event);">');
+      ShowHTML('              <td><b><u>F</u>im da vigência:</b><br><input accesskey="F" type="text" name="w_dt_fim" class="STI" SIZE="10" MAXLENGTH="10" VALUE="'.$w_dt_fim.'" onKeyDown="FormataData(this,event);" onKeyUp="SaltaCampo(this.form.name,this,10,event);">');
     } 
     ShowHTML('        </table></td></tr>');
     if ($w_username_pessoa=='S') {
@@ -857,7 +860,7 @@ function Contrato() {
     ShowHTML('<tr bgcolor="'.$conTrBgColor.'"><td>');
     ShowHTML('    <table width="97%" border="0"><tr>');
     ShowHTML('      <tr valign="top">');
-    ShowHTML('        <td><b><u>F</u>im da vigência:</b><br><input accesskey="F" type="text" name="w_dt_fim" class="STI" SIZE="10" MAXLENGTH="10" VALUE="'.$w_dt_fim.'" onKeyDown="FormataData(this,event);"></td></tr>');
+    ShowHTML('        <td><b><u>F</u>im da vigência:</b><br><input accesskey="F" type="text" name="w_dt_fim" class="STI" SIZE="10" MAXLENGTH="10" VALUE="'.$w_dt_fim.'" onKeyDown="FormataData(this,event);" onKeyUp="SaltaCampo(this.form.name,this,10,event);"></td></tr>');
     ShowHTML('      <tr valign="top">');
     ShowHTML('        <td><input type="checkbox" name="w_envio_email" value="S"><b>Enviar e-mail comunicando o encerramento do contrato.</b></td>');
     ShowHTML('      <tr valign="top"><td><b><U>A</U>ssinatura Eletrônica:<BR> <INPUT ACCESSKEY="A" class="sti" type="PASSWORD" name="w_assinatura" size="30" maxlength="30" value=""></td></tr>');

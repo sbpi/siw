@@ -25,7 +25,7 @@ include_once($w_dir_volta.'funcoes/selecaoCalculo.php');
 //  /Tabelas.asp
 // ------------------------------------------------------------------------
 // Nome     : Celso Miguel Lago Filho
-// Descricao: Gerenciar tabelas básicas do módulo	
+// Descricao: Gerenciar tabelas básicas do módulo  
 // Mail     : celso@sbpi.com.br
 // Criacao  : 21/07/2006 10:00
 // Versao   : 1.0.0.0

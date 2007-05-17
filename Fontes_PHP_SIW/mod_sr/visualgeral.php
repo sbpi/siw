@@ -41,6 +41,22 @@ function VisualGeral($l_chave,$O,$l_usuario,$l_sg,$P4) {
     $l_html.=chr(13).'   <tr><td><b>Solicitante:</b></font></td>';
     $l_html.=chr(13).'       <td>'.ExibePessoa('../',$w_cliente,f($RS1,'solicitante'),$TP,f($RS1,'nm_sol')).' ('.ExibeUnidade('../',$w_cliente,f($RS1,'sg_unidade_solic'),f($RS1,'sq_unidade'),$TP).')</font></td></tr>';
   }
+
+  // Verifica se é necessário mostrar o recurso
+  $RS_Recursos = db_getRecurso::getInstanceOf($dbms,$w_cliente,$w_usuario,$w_menu,null,null,null,null,null,'SERVICO');
+  if (count($RS_Recursos)) $w_exibe_recurso = true; else $w_exibe_recurso = false;
+  if ($w_exibe_recurso) {
+    $RS_Recurso = db_getSolicRecursos::getInstanceOf($dbms,$w_cliente,$w_usuario,$l_chave,null,null,null,null,null,null,null,null,null,null,null);
+    foreach ($RS_Recurso as $row) {$RS_Recurso = $row; break;}
+    $l_html.=chr(13).'   <tr valign="top">';
+    $l_html.=chr(13).'       <td width="20%"><b>Recurso:</b></font></td>';
+    if (count($RS_Recurso)) {
+      $l_html.=chr(13).'       <td>'.ExibeRecurso($w_dir_volta,$w_cliente,f($RS_Recurso,'nm_recurso'),f($RS_Recurso,'sq_recurso'),$TP,null).'<br>'.f($RS_Recurso,'ds_recurso').'</font></td></tr>';
+    } else {
+      $l_html.=chr(13).'       <td>Não informado</font></td></tr>';
+    }
+  }
+
   if (Nvl(f($RS1,'descricao'),'')!='') {
     $l_html.=chr(13).'   <tr valign="top">';
     $l_html.=chr(13).'       <td width="20%"><b>Detalhamento:</b></font></td>';
@@ -61,6 +77,12 @@ function VisualGeral($l_chave,$O,$l_usuario,$l_sg,$P4) {
     $l_html.=chr(13).'   <tr valign="top">';
     $l_html.=chr(13).'       <td width="20%"><b>Justificativa:</b></font></td>';
     $l_html.=chr(13).'       <td>'.Nvl(f($RS1,'justificativa'),'-').'</font></td></tr>';
+  }
+  if (nvl(f($RS1,'nm_opiniao'),'')!='') {
+    $l_html.=chr(13).'   <tr valign="top"><td><b>Opinião:</b></font></td><td>'.nvl(f($RS1,'nm_opiniao'),'---').'</font></td></tr>';
+  }
+  if (nvl(f($RS1,'motivo_insatisfacao'),'')!='') {
+    $l_html.=chr(13).'   <tr valign="top"><td><b>Motivo(s) da insatisfação:</b></font></td><td>'.crlf2br(nvl(f($RS1,'motivo_insatisfacao'),'---')).'</font></td></tr>';
   }
   // Dados da conclusão da solicitação, se ela estiver nessa situação
   if (nvl(f($RS1,'conclusao'),'')!='') {
@@ -101,12 +123,7 @@ function VisualGeral($l_chave,$O,$l_usuario,$l_sg,$P4) {
       $l_html.=chr(13).'   <tr><td><b>Passageiro:</b></font></td>';
       $l_html.=chr(13).'       <td>'.ExibePessoa('../',$w_cliente,f($RS1,'recebedor'),$TP,f($RS1,'nm_recebedor')).'</font></td></tr>';
     }
-    if (nvl(f($RS1,'nm_opiniao'),'')!='') {
-      $l_html.=chr(13).'   <tr valign="top"><td><b>Opinião:</b></font></td><td>'.nvl(f($RS1,'nm_opiniao'),'---').'</font></td></tr>';
-    }
-    if (nvl(f($RS1,'motivo_insatisfacao'),'')!='') {
-      $l_html.=chr(13).'   <tr valign="top"><td><b>Motivo(s) da insatisfação:</b></font></td><td>'.crlf2br(nvl(f($RS1,'motivo_insatisfacao'),'---')).'</font></td></tr>';
-    }
+    if (nvl(f($RS1,'observacao'),'')!='') $l_html.=chr(13).'   <tr valign="top"><td><b>Observações:</b></font></td><td>'.crlf2br(f($RS1,'observacao')).'</font></td></tr>';
   } 
   // Encaminhamentos
   $l_html.=chr(13).'      <tr><td colspan="2"><br><font size="2"><b>OCORRÊNCIAS E ANOTAÇÕES<hr NOSHADE color=#000000 SIZE=1></b></td></tr>';

@@ -243,7 +243,7 @@ function Demonstrativo() {
                       if ($k > f($row3,'inicio') && $k < f($row3,'fim')) {
                         foreach($v as $k1 => $v1) {
                           $w_linha[$i][0] = '<img src="'.$conImgCancel.'" border=0 width=10 heigth=15 align="center" title="Cancelamento de valor de nota!">';
-                          $w_linha[$i][1] = 'Cancelamento de valor';
+                          $w_linha[$i][1] = 'NCE';
                           $w_linha[$i][2] = formataDataEdicao($k,5);
                           $w_linha[$i][3] = '&nbsp;';
                           $w_linha[$i][4] = '&nbsp;';
@@ -314,7 +314,7 @@ function Demonstrativo() {
                 $i += 1;
                 foreach($v as $k1 => $v1) {
                   $w_linha[$i][0] = '<img src="'.$conImgCancel.'" border=0 width=10 heigth=15 align="center" title="Cancelamento de valor de nota!">';
-                  $w_linha[$i][1] = 'Cancelamento de valor';
+                  $w_linha[$i][1] = 'NCE';
                   $w_linha[$i][2] = formataDataEdicao($k,5);
                   $w_linha[$i][3] = '&nbsp;';
                   $w_linha[$i][4] = '&nbsp;';
@@ -332,20 +332,20 @@ function Demonstrativo() {
             ShowHTML('          <tr align="center" bgColor="#f0f0f0">');
             ShowHTML('            <td rowspan=2 colspan=4><b>Parcelas</b></td>');
             ShowHTML('            <td rowspan=2 colspan=2><b>Liquidação</b></td>');
-            ShowHTML('            <td rowspan=2 colspan=2><b>Pagamento</b></td>');
+            ShowHTML('            <td rowspan=2 colspan=2><b>Datas de Pagamento</b></td>');
             if (count($w_cab)>0) ShowHTML('            <td colspan="'.count($w_cab).'"><b>Notas</b></td>');
             ShowHTML('          <tr align="center" bgColor="#f0f0f0">');
             for ($k=0; $k<count($w_cab); $k++) ShowHTML('            <td><b>'.$w_cab[$k].'</b></td>');
             ShowHTML('          </tr>');
             ShowHTML('          <tr align="center" bgColor="#f0f0f0">');
             ShowHTML('            <td><b>Nº</b></td>');
-            ShowHTML('            <td><b>Referência</b></td>');
+            ShowHTML('            <td><b>Período</b></td>');
             ShowHTML('            <td><b>Vencimento</b></td>');
             ShowHTML('            <td><b>Valor</b></td>');
             ShowHTML('            <td><b>Lançamento</b></td>');
             ShowHTML('            <td><b>Valor</b></td>');
-            ShowHTML('            <td><b>Previsto</b></td>');
-            ShowHTML('            <td><b>Realizado</b></td>');
+            ShowHTML('            <td><b>Prevista</b></td>');
+            ShowHTML('            <td><b>Realizada</b></td>');
             for ($k=0; $k<count($w_cab1); $k++) ShowHTML('            <td align="right" nowrap><b>'.$w_cab1[$k].'</b></td>');
             ShowHTML('          </tr>');
             for ($k=0; $k<=$i; $k++) {
@@ -396,6 +396,7 @@ function Demonstrativo() {
     ScriptOpen('JavaScript');
     CheckBranco();
     FormataData();
+    SaltaCampo();
     ValidateOpen('Validacao');
     Validate('w_acordo','Acordo','SELECT','','1','18','1','1');
     Validate('w_ano','Ano','SELECT','1','1','4','1','1');
@@ -420,8 +421,8 @@ function Demonstrativo() {
     ShowHTML('    <table width="97%" border="0">');
     ShowHTML('      <tr valign="top">');
     SelecaoAno('<u>A</u>no:','A','Selecione o ano para o relatório de resumo geral.',$w_ano,null,'w_ano',null,null,'5');
-    //ShowHTML('        <td><b><u>V</u>igência:</b><br><input '.$w_Disabled.' accesskey="V" type="text" name="p_inicio" class="sti" SIZE="10" MAXLENGTH="10" VALUE="'.$p_inicio.'" onKeyDown="FormataData(this,event);">'.ExibeCalendario('Form','p_inicio').' a ');
-    //ShowHTML('                                                 <input '.$w_Disabled.' accesskey="V" type="text" name="p_fim" class="sti" SIZE="10" MAXLENGTH="10" VALUE="'.$p_fim.'" onKeyDown="FormataData(this,event);">'.ExibeCalendario('Form','p_fim').'</td>');
+    //ShowHTML('        <td><b><u>V</u>igência:</b><br><input '.$w_Disabled.' accesskey="V" type="text" name="p_inicio" class="sti" SIZE="10" MAXLENGTH="10" VALUE="'.$p_inicio.'" onKeyDown="FormataData(this,event);" onKeyUp="SaltaCampo(this.form.name,this,10,event);">'.ExibeCalendario('Form','p_inicio').' a ');
+    //ShowHTML('                                                 <input '.$w_Disabled.' accesskey="V" type="text" name="p_fim" class="sti" SIZE="10" MAXLENGTH="10" VALUE="'.$p_fim.'" onKeyDown="FormataData(this,event);" onKeyUp="SaltaCampo(this.form.name,this,10,event);">'.ExibeCalendario('Form','p_fim').'</td>');
     ShowHTML('          </table>');
     ShowHTML('    <table width="90%" border="0">');
     ShowHTML('      <tr><td align="center"><hr>');

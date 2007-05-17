@@ -4,7 +4,7 @@ include_once($w_dir_volta.'classes/sp/db_getMenuRelac.php');
 // =========================================================================
 // Montagem da seleção de projetos
 // -------------------------------------------------------------------------
-function selecaoProjeto($label,$accesskey,$hint,$chave,$chaveAux,$chaveAux2,$campo,$restricao,$atributo,$formato=1) {
+function selecaoProjeto($label,$accesskey,$hint,$chave,$chaveAux,$chaveAux2,$chaveAux3,$chaveAux4,$chaveAux5,$campo,$restricao,$atributo,$formato=1) {
   extract($GLOBALS);
 
   if (is_numeric($restricao)) {
@@ -13,7 +13,7 @@ function selecaoProjeto($label,$accesskey,$hint,$chave,$chaveAux,$chaveAux2,$cam
    $RS1 = array(0);
   }
   if (count($RS1)>0) {
-    $RS = db_getSolicList::getInstanceOf($dbms, $chaveAux2, $chaveAux, $restricao, 4, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null);
+    $RS = db_getSolicList::getInstanceOf($dbms, $chaveAux2, $chaveAux, $restricao, 4, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, $chaveAux3, null, $chaveAux4, $chaveAux5);
     $RS = SortArray($RS,'titulo','asc');
 
     if (!isset($hint)) {

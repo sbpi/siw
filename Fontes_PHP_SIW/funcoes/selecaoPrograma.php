@@ -14,7 +14,7 @@ function selecaoPrograma($label,$accesskey,$hint,$chave,$chaveAux,$chaveAux2,$ca
   }
   if (count($RS1)>0) {
     $RS = db_getLinkData::getInstanceOf($dbms,$w_cliente,'PEPROCAD');
-    $RS = db_getSolicList::getInstanceOf($dbms, f($RS,'sq_menu'), $w_usuario, f($RS,'sigla'), 4, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, $chaveAux);
+    $RS = db_getSolicList::getInstanceOf($dbms, f($RS,'sq_menu'), $w_usuario, f($RS,'sigla'), 4, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, $chaveAux2, $chaveAux);
     $RS = SortArray($RS,'titulo','asc');
 
     if (!isset($hint)) {

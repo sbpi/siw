@@ -599,6 +599,7 @@ function DataEspecial() {
       CheckBranco();
       FormataDataMA();
       FormataData();
+      SaltaCampo();
       ValidateOpen('Validacao');
       if (!(strpos('IA',$O)===false)) {
         Validate('w_tipo','Tipo','SELECT','1','1','1','1','');
@@ -728,9 +729,9 @@ function DataEspecial() {
       ShowHTML('      <tr>');
       SelecaoTipoData('<u>T</u>ipo:','T',null,$w_tipo,null,'w_tipo',null,'onchange="document.Form.action=\''.$w_dir.$w_pagina.$par.'\'; document.Form.w_troca.value=\'w_data_especial\'; document.Form.submit();"');
       if ($w_tipo=='I') {
-        ShowHTML('          <td><b>Da<u>t</u>a:</b><br><input '.$w_Disabled.' accesskey="T" type="text" name="w_data_especial" class="sti" SIZE="5" MAXLENGTH="5" VALUE="'.$w_data_especial.'" onKeyDown="FormataDataMA(this,event);"></td>');
+        ShowHTML('          <td><b>Da<u>t</u>a:</b><br><input '.$w_Disabled.' accesskey="T" type="text" name="w_data_especial" class="sti" SIZE="5" MAXLENGTH="5" VALUE="'.$w_data_especial.'" onKeyDown="FormataDataMA(this,event);" onKeyUp="SaltaCampo(this.form.name,this,10,event);"></td>');
       } elseif ($w_tipo=='E') {
-        ShowHTML('          <td><b>Da<u>t</u>a:</b><br><input '.$w_Disabled.' accesskey="T" type="text" name="w_data_especial" class="sti" SIZE="10" MAXLENGTH="10" VALUE="'.$w_data_especial.'" onKeyDown="FormataData(this,event);"></td>');
+        ShowHTML('          <td><b>Da<u>t</u>a:</b><br><input '.$w_Disabled.' accesskey="T" type="text" name="w_data_especial" class="sti" SIZE="10" MAXLENGTH="10" VALUE="'.$w_data_especial.'" onKeyDown="FormataData(this,event);" onKeyUp="SaltaCampo(this.form.name,this,10,event);"></td>');
       } else {
         ShowHTML('          <td><b>Da<u>t</u>a:</b><br><input Disabled accesskey="T" type="text" name="w_data_especial" class="sti" SIZE="10" MAXLENGTH="10" VALUE="'.$w_data_especial.'"></td>');
       } 

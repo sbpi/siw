@@ -153,6 +153,7 @@ function Inicial() {
   ScriptOpen('Javascript');
   CheckBranco();
   FormataData();
+  SaltaCampo();
   ValidateOpen('Validacao');
   if ((strpos('P',$O) ? strpos('P',$O)+1 : 0)>0) {
     Validate('p_nome','Nome','1','','3','40','1','1');
@@ -315,6 +316,7 @@ function Identificacao() {
   CheckBranco();
   Modulo();
   FormataData();
+  SaltaCampo();
   FormataCPF();
   ValidateOpen('Validacao');
   if ($O=='I' || $O=='A') {
@@ -406,7 +408,7 @@ function Identificacao() {
   ShowHTML('        <tr valign="top">');
   ShowHTML('          <td title="Informe seu nome completo, sem abreviações."><b><u>N</u>ome:</b><br><input '.$w_Disabled.' accesskey="N" type="text" name="w_nome" class="sti" SIZE="40" MAXLENGTH="60" VALUE="'.Nvl($w_nome,$nome_session).'"></td>');
   ShowHTML('          <td title="Informe o nome pelo qual você prefere ser chamado ou pelo qual é mais conhecido."><b>Nome <u>r</u>esumido:</b><br><input '.$w_Disabled.' accesskey="R" type="text" name="w_nome_resumido" class="sti" SIZE="15" MAXLENGTH="15" VALUE="'.Nvl($w_nome_resumido,$nome_resumido_session).'"></td>');
-  ShowHTML('          <td title="Informe a data do seu nascimento, conforme consta da carteira de identidade."><b>Data <u>n</u>ascimento:</b><br><input '.$w_Disabled.' accesskey="N" type="text" name="w_nascimento" class="sti" SIZE="10" MAXLENGTH="10" VALUE="'.$w_nascimento.'" onKeyDown="FormataData(this,event);"></td>');
+  ShowHTML('          <td title="Informe a data do seu nascimento, conforme consta da carteira de identidade."><b>Data <u>n</u>ascimento:</b><br><input '.$w_Disabled.' accesskey="N" type="text" name="w_nascimento" class="sti" SIZE="10" MAXLENGTH="10" VALUE="'.$w_nascimento.'" onKeyDown="FormataData(this,event);" onKeyUp="SaltaCampo(this.form.name,this,10,event);"></td>');
   ShowHTML('        <tr valign="top">');
   SelecaoSexo('<u>S</u>exo:','S',null,$w_sexo,null,'w_sexo',null,null);
   ShowHTML('          <td colspan=2><table border="0" width="100%" cellpadding=0 cellspacing=0><tr>');
@@ -437,7 +439,7 @@ function Identificacao() {
   ShowHTML('        <tr valign="top">');
   ShowHTML('          <td title="Informe o número da sua carteira de identidade (registro geral)."><b><u>I</u>dentidade:</b><br><input '.$w_Disabled.' accesskey="I" type="text" name="w_rg_numero" class="sti" SIZE="15" MAXLENGTH="30" VALUE="'.$w_rg_numero.'"></td>');
   ShowHTML('          <td title="Informe o nome do órgão expedidor de sua carteira de identidade."><b><u>E</u>missor:</b><br><input '.$w_Disabled.' accesskey="E" type="text" name="w_rg_emissor" class="sti" SIZE="10" MAXLENGTH="15" VALUE="'.$w_rg_emissor.'"></td>');
-  ShowHTML('          <td title="Informe a data de emissão de sua carteira de identidade."><b><u>D</u>ata emissão:</b><br><input '.$w_Disabled.' accesskey="D" type="text" name="w_rg_emissao" class="sti" SIZE="10" MAXLENGTH="10" VALUE="'.$w_rg_emissao.'" onKeyDown="FormataData(this,event);"></td>');
+  ShowHTML('          <td title="Informe a data de emissão de sua carteira de identidade."><b><u>D</u>ata emissão:</b><br><input '.$w_Disabled.' accesskey="D" type="text" name="w_rg_emissao" class="sti" SIZE="10" MAXLENGTH="10" VALUE="'.$w_rg_emissao.'" onKeyDown="FormataData(this,event);" onKeyUp="SaltaCampo(this.form.name,this,10,event);"></td>');
   ShowHTML('        <tr valign="top">');
   if ($O=='I') {
     ShowHTML('          <td title="Informe seu número no Cadastro de Pessoas Físicas - CPF."><b>CP<u>F</u>:</b><br><input '.$w_Disabled.' accesskey="F" type="text" name="w_cpf" class="sti" SIZE="14" MAXLENGTH="14" VALUE="'.$w_cpf.'" onKeyDown="FormataCPF(this,event);"></td>');
@@ -681,6 +683,7 @@ function Experiencia() {
     modulo();
     checkbranco();
     formatadata();
+    SaltaCampo();
     FormataValor();
     ValidateOpen('Validacao');
     if (!(strpos('IA',$O)===false)) {
@@ -803,8 +806,8 @@ function Experiencia() {
       ShowHTML('              [<u onMouseOver="this.style.cursor='Hand'" onMouseOut="this.style.cursor='Pointer'" onClick="window.open(''.montaURL_JS($w_dir,$w_pagina.'BuscaAreaConhecimento&TP='.$TP.'&SG='.$SG.'&P1=1','AreaConhecimento','top=70,left=100,width=600,height=400,toolbar=yes,status=yes,resizable=yes,scrollbars=yes');"><b><font color="#0000FF">Procurar</font></b></u>]');
     } 
     ShowHTML('      <tr><td valign="top" colspan="2"><table border=0 width="100%" cellspacing=0>');
-    ShowHTML('          <tr><td valign="top"><b>E<U>n</U>trada:</b></br><INPUT ACCESSKEY="n" '.$w_Disabled.' class="sti" type="text" name="w_entrada" size="10" maxlength="10" value="'.$w_entrada.'" onKeyDown="FormataData(this, event)">');
-    ShowHTML('              <td valign="top"><b><U>S</U>aída:</b></br><INPUT ACCESSKEY="S" '.$w_Disabled.' class="sti" type="text" name="w_saida" size="10" maxlength="10" value="'.$w_saida.'" onKeyDown="FormataData(this, event)">');
+    ShowHTML('          <tr><td valign="top"><b>E<U>n</U>trada:</b></br><INPUT ACCESSKEY="n" '.$w_Disabled.' class="sti" type="text" name="w_entrada" size="10" maxlength="10" value="'.$w_entrada.'" onKeyDown="FormataData(this, event)" onKeyUp="SaltaCampo(this.form.name,this,10,event);">');
+    ShowHTML('              <td valign="top"><b><U>S</U>aída:</b></br><INPUT ACCESSKEY="S" '.$w_Disabled.' class="sti" type="text" name="w_saida" size="10" maxlength="10" value="'.$w_saida.'" onKeyDown="FormataData(this, event)" onKeyUp="SaltaCampo(this.form.name,this,10,event);">');
     ShowHTML('          </table>');
     ShowHTML('      <tr><td valign="top"><b>Mo<u>t</u>ivo saída:</b><br><textarea '.$w_Disabled.' accesskey="t"  name="w_motivo_saida" class="sti" cols="80" rows="4">'.$w_motivo_saida.'</textarea></td>');
     ShowHTML('      <tr valign="top"><td colspan="2">');
@@ -880,6 +883,7 @@ function Cargos() {
     modulo();
     checkbranco();
     formataData();
+    SaltaCampo();
     FormataValor();
     ValidateOpen('Validacao');
     if (!(strpos('IA',$O)===false)) {
@@ -969,8 +973,8 @@ function Cargos() {
       ShowHTML('      <tr><td valign="top">Empregador:<br><b>'.$w_nome_empregador.'</b></td>');
       ShowHTML('      <tr><td><b><u>E</u>specialidades(Digite apenas palavras maisculas não acentuadas e separados por ponto-virgula.):</b><br><textarea '.$w_Disabled.' accesskey="N" name="w_especialidades" class="sti" SIZE="255" MAXLENGTH="255" COLS = "90" ROWS="5">'.$w_especialidades.'</TEXTAREA></td>');
       ShowHTML('      <tr><td colspan="2"><table border=0 width="100%" cellspacing=0><tr valign="top">');
-      ShowHTML('            <td valign="top"><b><u>I</u>nício:</b><br><input '.$w_Disabled.' accesskey="D" type="text" name="w_inicio" class="sti" SIZE="10" MAXLENGTH="10" VALUE="'.$w_inicio.'" onKeyDown="FormataData(this,event);"></td>');
-      ShowHTML('            <td valign="top"><b><u>F</u>im:</b><br><input '.$w_Disabled.' accesskey="F" type="text" name="w_fim" class="sti" SIZE="10" MAXLENGTH="10" VALUE="'.$w_fim.'" onKeyDown="FormataData(this,event);"></td>');
+      ShowHTML('            <td valign="top"><b><u>I</u>nício:</b><br><input '.$w_Disabled.' accesskey="D" type="text" name="w_inicio" class="sti" SIZE="10" MAXLENGTH="10" VALUE="'.$w_inicio.'" onKeyDown="FormataData(this,event);" onKeyUp="SaltaCampo(this.form.name,this,10,event);"></td>');
+      ShowHTML('            <td valign="top"><b><u>F</u>im:</b><br><input '.$w_Disabled.' accesskey="F" type="text" name="w_fim" class="sti" SIZE="10" MAXLENGTH="10" VALUE="'.$w_fim.'" onKeyDown="FormataData(this,event);" onKeyUp="SaltaCampo(this.form.name,this,10,event);"></td>');
       ShowHTML('          </table>');
       ShowHTML('      <tr><td valign="top"><b>Cargo desempenhado:</b><br>');
       ShowHTML('          <input READONLY type="text" name="w_nm_area" class="sti" SIZE="50" VALUE="'.$w_nm_area.'">');
@@ -1153,8 +1157,8 @@ function Escolaridade() {
     ShowHTML('      <tr><td valign="top"><b><u>N</u>ome curso:</b><br><input '.$w_Disabled.' accesskey="N" type="text" name="w_nome" class="sti" SIZE="80" MAXLENGTH="80" VALUE="'.$w_nome.'"></td>');
     ShowHTML('      <tr><td valign="top"><b><u>I</u>nstituição:</b><br><input '.$w_Disabled.' accesskey="I" type="text" name="w_instituicao" class="sti" SIZE="80" MAXLENGTH="100" VALUE="'.$w_instituicao.'"></td>');
     ShowHTML('      <tr><td valign="top" colspan="2"><table border=0 width="100%" cellspacing=0>');
-    ShowHTML('          <tr><td valign="top"><b>Íni<u>c</u>io: (mm/aaaa)</b><br><input '.$w_Disabled.' accesskey="c" type="text" name="w_inicio" class="sti" SIZE="7" MAXLENGTH="7" VALUE="'.$w_inicio.'" onKeyDown="FormataDataMA(this,event);"></td>');
-    ShowHTML('              <td valign="top"><b>Fi<u>m</u>: (mm/aaaa)</b><br><input '.$w_Disabled.' accesskey="M" type="text" name="w_fim" class="sti" SIZE="7" MAXLENGTH="7" VALUE="'.$w_fim.'" onKeyDown="FormataDataMA(this,event);"></td>');
+    ShowHTML('          <tr><td valign="top"><b>Íni<u>c</u>io: (mm/aaaa)</b><br><input '.$w_Disabled.' accesskey="c" type="text" name="w_inicio" class="sti" SIZE="7" MAXLENGTH="7" VALUE="'.$w_inicio.'" onKeyDown="FormataDataMA(this,event);" onKeyUp="SaltaCampo(this.form.name,this,10,event);"></td>');
+    ShowHTML('              <td valign="top"><b>Fi<u>m</u>: (mm/aaaa)</b><br><input '.$w_Disabled.' accesskey="M" type="text" name="w_fim" class="sti" SIZE="7" MAXLENGTH="7" VALUE="'.$w_fim.'" onKeyDown="FormataDataMA(this,event);" onKeyUp="SaltaCampo(this.form.name,this,10,event);"></td>');
     SelecaoPais('<u>P</u>aís de conclusão:','P','Selecione o país onde concluiu esta formação.',Nvl($w_sq_pais,2),null,'w_sq_pais',null,null);
     ShowHTML('          </table>');
     if ($_SESSION['PORTAL']=='') {
@@ -1226,6 +1230,7 @@ function Extensao() {
     ScriptOpen('JavaScript');
     checkbranco();
     formatadata();
+    SaltaCampo();
     ValidateOpen('Validacao');
     if (!(strpos('IA',$O)===false)) {
       Validate('w_sq_formacao','Tipo de extensão','SELECT','1','1','10','','1');
@@ -1325,7 +1330,7 @@ function Extensao() {
     ShowHTML('      <tr><td valign="top"><b><u>I</u>nstituição:</b><br><input '.$w_Disabled.' accesskey="I" type="text" name="w_instituicao" class="sti" SIZE="80" MAXLENGTH="100" VALUE="'.$w_instituicao.'"></td>');
     ShowHTML('      <tr><td valign="top" colspan="2"><table border=0 width="100%" cellspacing=0>');
     ShowHTML('          <tr><td valign="top"><b><u>C</u>arga horária:</b><br><input '.$w_Disabled.' accesskey="c" type="text" name="w_carga_horaria" class="sti" SIZE="7" MAXLENGTH="7" VALUE="'.$w_carga_horaria.'"></td>');
-    ShowHTML('              <td valign="top"><b>C<u>o</u>nclusão: (dd/mm/aaaa)</b><br><input '.$w_Disabled.' accesskey="O" type="text" name="w_conclusao" class="sti" SIZE="10" MAXLENGTH="10" VALUE="'.$w_conclusao.'" onKeyDown="FormataData(this,event);"></td>');
+    ShowHTML('              <td valign="top"><b>C<u>o</u>nclusão: (dd/mm/aaaa)</b><br><input '.$w_Disabled.' accesskey="O" type="text" name="w_conclusao" class="sti" SIZE="10" MAXLENGTH="10" VALUE="'.$w_conclusao.'" onKeyDown="FormataData(this,event);" onKeyUp="SaltaCampo(this.form.name,this,10,event);"></td>');
     ShowHTML('          </table>');
     if ($_SESSION['PORTAL']=='') {
       ShowHTML('      <tr><td align="LEFT"><b><U>A</U>ssinatura Eletrônica:<BR> <INPUT ACCESSKEY="A" class="sti" type="PASSWORD" name="w_assinatura" size="30" maxlength="30" value=""></td></tr>');
@@ -1392,6 +1397,7 @@ function Producao(){
     ScriptOpen('JavaScript');
     checkbranco();
     formatadata();
+    SaltaCampo();
     ValidateOpen('Validacao');
     if (!(strpos('IA',$O)===false)) {
       Validate('w_sq_formacao','Tipo da produção','SELECT','1','1','10','','1');
@@ -1488,7 +1494,7 @@ function Producao(){
           ShowHTML('      <tr><td valign="top"><b><u>N</u>ome:</b><br><input '.$w_Disabled.' accesskey="N" type="text" name="w_nome" class="sti" SIZE="80" MAXLENGTH="80" VALUE="'.$w_nome.'"></td>');
           ShowHTML('      <tr><td valign="top" colspan="2"><table border=0 width="100%" cellspacing=0>');
           ShowHTML('          <tr><td valign="top"><b><u>M</u>eio de divulgação:</b><br><input '.$w_Disabled.' accesskey="M" type="text" name="w_meio" class="sti" SIZE="50" MAXLENGTH="80" VALUE="'.$w_meio.'"></td>');
-          ShowHTML('              <td valign="top"><b><u>D</u>ata de publicação: (dd/mm/aaaa)</b><br><input '.$w_Disabled.' accesskey="D" type="text" name="w_data" class="sti" SIZE="10" MAXLENGTH="10" VALUE="'.$w_data.'" onKeyDown="FormataData(this,event);"></td>');
+          ShowHTML('              <td valign="top"><b><u>D</u>ata de publicação: (dd/mm/aaaa)</b><br><input '.$w_Disabled.' accesskey="D" type="text" name="w_data" class="sti" SIZE="10" MAXLENGTH="10" VALUE="'.$w_data.'" onKeyDown="FormataData(this,event);" onKeyUp="SaltaCampo(this.form.name,this,10,event);"></td>');
           ShowHTML('          </table>');
           if ($_SESSION['PORTAL']=='') {
             ShowHTML('      <tr><td align="LEFT"><b><U>A</U>ssinatura Eletrônica:<BR> <INPUT ACCESSKEY="A" class="sti" type="PASSWORD" name="w_assinatura" size="30" maxlength="30" value=""></td></tr>');} 

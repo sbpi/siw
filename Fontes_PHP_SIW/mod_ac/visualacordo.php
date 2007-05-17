@@ -18,6 +18,7 @@ function VisualAcordo($l_chave,$l_O,$l_usuario,$l_P1,$l_P4) {
   $w_fim            = f($RS,'fim_real');
   $w_sg_tramite     = f($RS,'sg_tramite');
   $w_sigla          = f($RS,'sigla');
+  $w_aditivo        = f($RS,'aditivo');
 
   // Recupera o tipo de visão do usuário
   if ($_SESSION['INTERNO']=='N') {
@@ -191,13 +192,11 @@ function VisualAcordo($l_chave,$l_O,$l_usuario,$l_P1,$l_P4) {
       $w_html.=chr(13).'          <td rowspan=2><b>Aditivo</td>';
       $w_html.=chr(13).'          <td rowspan=2><b>Número</td>';
       $w_html.=chr(13).'          <td rowspan=2><b>Outra parte</td>';
-      $w_html.=chr(13).'          <td colspan=2><b>Datas</td>';
+      $w_html.=chr(13).'          <td rowspan=2><b>Data</td>';
       $w_html.=chr(13).'          <td colspan=5><b>Valores</td>';
       $w_html.=chr(13).'          <td colspan=2><b>Saldos</td>';
       $w_html.=chr(13).'        </tr>';
       $w_html.=chr(13).'        <tr bgcolor="'.$conTrBgColor.'" align="center">';
-      $w_html.=chr(13).'          <td><b>Emissão</td>';
-      $w_html.=chr(13).'          <td><b>Canc.</td>';      
       $w_html.=chr(13).'          <td><b>Emissão</td>';
       $w_html.=chr(13).'          <td><b>Canc.</td>';
       $w_html.=chr(13).'          <td><b>Total</td>';
@@ -227,25 +226,24 @@ function VisualAcordo($l_chave,$l_O,$l_usuario,$l_P1,$l_P4) {
           if (f($row,'abrange_reajuste')=='S')  { $w_html.= '('.f($row,'sg_reajuste').')';  $w_legenda_rea = ' ('.f($row,'sg_reajuste').') Reajuste'; }
           $w_html.=chr(13).'        <td>'.nvl(f($row,'nm_outra_parte'),'---').'</td>';
           $w_html.=chr(13).'        <td align="center">'.Nvl(FormataDataEdicao(f($row,'data'),5),'---').'</td>';
-          $w_html.=chr(13).'        <td align="center">'.Nvl(FormataDataEdicao(f($row,'data_cancelamento'),5),'---').'</td>';
           $w_html.=chr(13).'        <td align="right">'.formatNumber(Nvl(f($row,'valor'),0)).'</td>';
-          $w_html.=chr(13).'        <td align="right">'.formatNumber(Nvl(f($row,'valor_cancelamento'),0)).'</td>';
-          $w_html.=chr(13).'        <td align="right">'.formatNumber(Nvl(f($row,'valor'),0) - Nvl(f($row,'valor_cancelamento'),0)).'</td>';
+          $w_html.=chr(13).'        <td align="right">'.formatNumber(Nvl(f($row,'vl_cancelamento'),0)).'</td>';
+          $w_html.=chr(13).'        <td align="right">'.formatNumber(Nvl(f($row,'valor'),0) - Nvl(f($row,'vl_cancelamento'),0)).'</td>';
           $w_html.=chr(13).'        <td align="right">'.formatNumber(Nvl(f($row,'vl_liquidado'),0)).'</td>';
           $w_html.=chr(13).'        <td align="right">'.formatNumber(Nvl(f($row,'vl_pago'),0)).'</td>';
-          $w_html.=chr(13).'        <td align="right">'.formatNumber(Nvl(f($row,'valor'),0) - Nvl(f($row,'valor_cancelamento'),0) - Nvl(f($row,'vl_liquidado'),0)).'</td>';
-          $w_html.=chr(13).'        <td align="right">'.formatNumber(Nvl(f($row,'valor'),0) - Nvl(f($row,'valor_cancelamento'),0) - Nvl(f($row,'vl_pago'),0)).'</td>';
+          $w_html.=chr(13).'        <td align="right">'.formatNumber(Nvl(f($row,'valor'),0) - Nvl(f($row,'vl_cancelamento'),0) - Nvl(f($row,'vl_liquidado'),0)).'</td>';
+          $w_html.=chr(13).'        <td align="right">'.formatNumber(Nvl(f($row,'valor'),0) - Nvl(f($row,'vl_cancelamento'),0) - Nvl(f($row,'vl_pago'),0)).'</td>';
           $w_html.=chr(13).'      </tr>';
-          $w_total  += (nvl(f($row,'valor'),0) - nvl(f($row,'valor_cancelamento'),0));
+          $w_total  += (nvl(f($row,'valor'),0) - nvl(f($row,'vl_cancelamento'),0));
           $w_nota   += nvl(f($row,'valor'),0);
-          $w_cancel += nvl(f($row,'valor_cancelamento'),0);
+          $w_cancel += nvl(f($row,'vl_cancelamento'),0);
           $w_liq    += nvl(f($row,'vl_liquidado'),0);
           $w_pago   += nvl(f($row,'vl_pago'),0);
-          $w_aliq   += ((nvl(f($row,'valor'),0) - nvl(f($row,'valor_cancelamento'),0)) - nvl(f($row,'vl_liquidado'),0));
-          $w_apag   += ((nvl(f($row,'valor'),0) - nvl(f($row,'valor_cancelamento'),0)) - nvl(f($row,'vl_pago'),0));
+          $w_aliq   += ((nvl(f($row,'valor'),0) - nvl(f($row,'vl_cancelamento'),0)) - nvl(f($row,'vl_liquidado'),0));
+          $w_apag   += ((nvl(f($row,'valor'),0) - nvl(f($row,'vl_cancelamento'),0)) - nvl(f($row,'vl_pago'),0));
         } 
         $w_html.=chr(13).'      <trvalign="top">';
-        $w_html.=chr(13).'        <td align="right" colspan=5>Totais</td>';
+        $w_html.=chr(13).'        <td align="right" colspan=4>Totais</td>';
         $w_html.=chr(13).'        <td align="right">'.Nvl(formatNumber($w_nota),0).'</td>';
         $w_html.=chr(13).'        <td align="right">'.Nvl(formatNumber($w_cancel),0).'</td>';
         $w_html.=chr(13).'        <td align="right">'.Nvl(formatNumber($w_total),0).'</td>';
@@ -591,26 +589,39 @@ function VisualAcordo($l_chave,$l_O,$l_usuario,$l_P1,$l_P4) {
   $RS = db_getAcordoParcela::getInstanceOf($dbms,$l_chave,null,null,null,null,null,null,null,null,null);
   $RS = SortArray($RS,'ordem','asc');
   if (count($RS)>0) {
-//  $w_html.=chr(13).'      <tr><td valign="top" colspan="2" align="center" bgcolor="#D0D0D0" style="border: 2px solid rgb(0,0,0);"><b>Parcelas</td>';
+    //$w_html.=chr(13).'      <tr><td valign="top" colspan="2" align="center" bgcolor="#D0D0D0" style="border: 2px solid rgb(0,0,0);"><b>Parcelas</td>';
     $w_html.=chr(13).'      <tr><td colspan="2"><br><font size="2"><b>PARCELAS<hr NOSHADE color=#000000 SIZE=1></b></font></td></tr>';
     $w_html.=chr(13).'      <tr><td colspan="2"><div align="center">';
     $w_html.=chr(13).'        <table width=100%  border="1" bordercolor="#00000">';
     $w_html.=chr(13).'          <tr align="center">';
     $w_html.=chr(13).'            <td rowspan=2 bgColor="#f0f0f0"><div><b>Ordem</b></div></td>';
-    $w_html.=chr(13).'            <td rowspan=2 bgColor="#f0f0f0"><div><b>Referência</b></div></td>';
+    $w_html.=chr(13).'            <td rowspan=2 bgColor="#f0f0f0"><div><b>Período</b></div></td>';
     $w_html.=chr(13).'            <td rowspan=2 bgColor="#f0f0f0"><div><b>Vencimento</b></div></td>';
-    $w_html.=chr(13).'            <td rowspan=2 bgColor="#f0f0f0"><div><b>Valor</b></div></td>';
+    if($w_aditivo>0) {
+      $w_html.=chr(13).'            <td colspan=4 bgColor="#f0f0f0"><div><b>Valor</b></div></td>';
+    } else {
+      $w_html.=chr(13).'            <td rowspan=2 bgColor="#f0f0f0"><div><b>Valor</b></div></td>';
+    }
     $w_html.=chr(13).'            <td rowspan=2 bgColor="#f0f0f0"><div><b>Observações</b></div></td>';
     $w_html.=chr(13).'            <td colspan=4 bgColor="#f0f0f0"><div><b>Financeiro</b></div></td>';
     $w_html.=chr(13).'          </tr>';
     $w_html.=chr(13).'          <tr align="center">';
+    if($w_aditivo>0) {
+      $w_html.=chr(13).'            <td bgColor="#f0f0f0"><div><b>Inicial</b></div></td>';
+      $w_html.=chr(13).'            <td bgColor="#f0f0f0"><div><b>Excedente</b></div></td>';
+      $w_html.=chr(13).'            <td bgColor="#f0f0f0"><div><b>Reajuste</b></div></td>';
+      $w_html.=chr(13).'            <td bgColor="#f0f0f0"><div><b>Total</b></div></td>';
+    }
     $w_html.=chr(13).'            <td bgColor="#f0f0f0"><div><b>Lançamento</b></div></td>';
     $w_html.=chr(13).'            <td bgColor="#f0f0f0"><div><b>Vencimento</b></div></td>';
     $w_html.=chr(13).'            <td bgColor="#f0f0f0"><div><b>Valor</b></div></td>';
     $w_html.=chr(13).'            <td bgColor="#f0f0f0"><div><b>Quitação</b></div></td>';
     $w_html.=chr(13).'          </tr>';
     $w_cor=$w_TrBgColor;
-    $w_total=0;
+    $w_total   = 0;
+    $w_total_i = 0;
+    $w_total_e = 0;
+    $w_total_r = 0;
     foreach($RS as $row) {
       $w_html.=chr(13).'        <tr valign="top">';
       $w_html.=chr(13).'          <td align="center">';
@@ -635,6 +646,11 @@ function VisualAcordo($l_chave,$l_O,$l_usuario,$l_P1,$l_P4) {
       if(nvl(f($row,'inicio'),'')!='') $w_html.=chr(13).'        <td align="center">'.FormataDataEdicao(f($row,'inicio'),5).' a '.FormataDataEdicao(f($row,'fim'),5).'</td>';
       else                             $w_html.=chr(13).'        <td align="center">---</td>';
       $w_html.=chr(13).'        <td align="center">'.FormataDataEdicao(f($row,'vencimento'),5).'</td>';
+      if($w_aditivo>0) {
+        $w_html.=chr(13).'        <td align="right">'.formatNumber(f($row,'valor_inicial')).'</td>';
+        $w_html.=chr(13).'        <td align="right">'.formatNumber(f($row,'valor_excedente')).'</td>';
+        $w_html.=chr(13).'        <td align="right">'.formatNumber(f($row,'valor_reajuste')).'</td>';
+      }
       $w_html.=chr(13).'        <td align="right">'.formatNumber(f($row,'valor')).'</td>';
       $w_html.=chr(13).'        <td>'.crlf2br(Nvl(f($row,'observacao'),'---')).'</td>';
       if (Nvl(f($row,'cd_lancamento'),'')>'') {
@@ -649,16 +665,25 @@ function VisualAcordo($l_chave,$l_O,$l_usuario,$l_P1,$l_P4) {
       } 
       $w_html.=chr(13).'        <td align="center">'.Nvl(FormataDataEdicao(f($row,'quitacao'),5),'---').'</td>';
       $w_html.=chr(13).'      </tr>';
-      $w_total += f($row,'valor');
+      $w_total   += f($row,'valor');
+      $w_total_i += f($row,'valor_inicial');
+      $w_total_e += f($row,'valor_excedente');
+      $w_total_r += f($row,'valor_reajuste');
     } 
     if ($w_total>0 || $w_real>0) {     
       $w_html.=chr(13).'      <tr valign="top">';
       $w_html.=chr(13).'        <td align="right" colspan=3><b>Previsto</b></td>';
+      if($w_aditivo>0) {
+        $w_html.=chr(13).'        <td align="right"><b>'.formatNumber($w_total_i).'</b></td>';
+        $w_html.=chr(13).'        <td align="right"><b>'.formatNumber($w_total_e).'</b></td>';
+        $w_html.=chr(13).'        <td align="right"><b>'.formatNumber($w_total_r).'</b></td>';
+      }
       $w_html.=chr(13).'        <td align="right"><b>'.formatNumber($w_total).'</b></td>';
+      $w_html.=chr(13).'        <td colspan=2>';
       if (round($w_valor_inicial-$w_total,2)!=0) {
-        $w_html.=chr(13).'        <td colspan=2><font size=1><b>O valor das parcelas difere do valor contratado ('.formatNumber($w_valor_inicial-$w_total).')</b></td>';
+        $w_html.=chr(13).'        <font size=1><b>O valor das parcelas difere do valor contratado ('.formatNumber($w_valor_inicial-$w_total).')</b></td>';
       } else {
-        $w_html.=chr(13).'        <td colspan=2>&nbsp;</td>';
+        $w_html.=chr(13).'        &nbsp;</td>';
       } 
       $w_html.=chr(13).'        <td align="right"><b>Liquidado</b></td>';
       $w_html.=chr(13).'        <td align="right"><b>'.formatNumber($w_real).'</b></td>';

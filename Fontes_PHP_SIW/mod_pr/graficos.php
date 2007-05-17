@@ -255,7 +255,7 @@ function Gera_Gantt() {
   $definitions['today']['color']=array(0, 0, 0); //color of today line
   $definitions['status_report']['color']=array(255, 50, 0); //color of last status report line
   $definitions['real']['hachured_color']=array(204,0, 0);// color of hachured of real. to not have hachured, set to same color of real
-  $definitions['workday_color'] = array(255, 255, 255	); //white -> default color of the grid to workdays
+  $definitions['workday_color'] = array(255, 255, 255  ); //white -> default color of the grid to workdays
   $definitions['grid_color'] = array(218, 218, 218); //default color of weekend days in the grid
   $definitions['groups']['color'] = array(80, 80, 80);// set color of groups
   $definitions['groups']['bg_color'] = array(180,180, 180);// set color of background to groups title

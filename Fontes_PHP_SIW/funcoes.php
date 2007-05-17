@@ -650,26 +650,33 @@ function ExibeEtapa($O,$p_chave,$p_chave_aux,$p_tipo,$p_P1,$p_etapa,$p_tp,$p_sg)
 // =========================================================================
 // Exibe imagem da restrição conforme tipo e criticidade
 // -------------------------------------------------------------------------
-function ExibeImagemRestricao($l_tipo,$l_imagem=null) {
+function ExibeImagemRestricao($l_tipo,$l_imagem=null,$l_legenda=0) {
   extract($GLOBALS);
   $l_string = '';
-  if ($l_imagem=='P') {
-    if (Nvl($l_tipo,'N')!='N') {
-      switch ($l_tipo) {
-        case 'S1': $l_string .= '<img title="Problema de baixa criticidade" src="'.$conRootSIW.$conImgProblem.'" border=0 align="center">';   break;
-        case 'S2': $l_string .= '<img title="Problema de moderada criticidade" src="'.$conRootSIW.$conImgProblem.'" border=0 align="center">';   break;
-        case 'S3': $l_string .= '<img title="Problema de alta criticidade" src="'.$conRootSIW.$conImgProblem.'" border=0 align="center">';    break;
-      }
-    }
+  if ($l_legenda) {
+    $l_string .= '<tr valign="top">';
+    $l_string .= '<td width="1%" nowrap><img src="'.$conRootSIW.$conImgProblem.'" border=0 width=10 height=10 align="center"><td>Problema.';
+    $l_string .= '<td width="1%" nowrap><img src="'.$conRootSIW.$conImgRiskHig.'" border=0 width=10 height=10 align="center"><td>Risco de alta criticidade.';
+    $l_string .= '<td width="1%" nowrap><img src="'.$conRootSIW.$conImgRiskMed.'" border=0 width=10 height=10 align="center"><td>Risco de moderada ou baixa criticidade. ';
   } else {
-    if (Nvl($l_tipo,'N')!='N') {
-      switch ($l_tipo) {
-        case 'S1': $l_string .= '<img title="Problema de baixa criticidade" src="'.$conRootSIW.$conImgProblem.'" border=0 align="center">';   break;
-        case 'S2': $l_string .= '<img title="Problema de moderada criticidade" src="'.$conRootSIW.$conImgProblem.'" border=0 align="center">';   break;
-        case 'S3': $l_string .= '<img title="Problema de alta criticidade" src="'.$conRootSIW.$conImgProblem.'" border=0 align="center">';    break;
-        case 'N1': $l_string .= '<img title="Risco de baixa criticidade" src="'.$conRootSIW.$conImgRiskLow.'" border=0 align="center">';   break;
-        case 'N2': $l_string .= '<img title="Risco de moderada criticidade" src="'.$conRootSIW.$conImgRiskMed.'" border=0 align="center">';   break;
-        case 'N3': $l_string .= '<img title="Risco de alta criticidade" src="'.$conRootSIW.$conImgRiskHig.'" border=0 align="center">';    break;
+    if ($l_imagem=='P') {
+      if (Nvl($l_tipo,'N')!='N') {
+        switch ($l_tipo) {
+          case 'S1': $l_string .= '<img title="Problema de baixa criticidade" src="'.$conRootSIW.$conImgProblem.'" width=10 height=10 border=0 align="center">';   break;
+          case 'S2': $l_string .= '<img title="Problema de moderada criticidade" src="'.$conRootSIW.$conImgProblem.'" width=10 height=10 border=0 align="center">';   break;
+          case 'S3': $l_string .= '<img title="Problema de alta criticidade" src="'.$conRootSIW.$conImgProblem.'" width=10 height=10 border=0 align="center">';    break;
+        }
+      }
+    } else {
+      if (Nvl($l_tipo,'N')!='N') {
+        switch ($l_tipo) {
+          case 'S1': $l_string .= '<img title="Problema de baixa criticidade" src="'.$conRootSIW.$conImgProblem.'" width=10 height=10 border=0 align="center">';   break;
+          case 'S2': $l_string .= '<img title="Problema de moderada criticidade" src="'.$conRootSIW.$conImgProblem.'" width=10 height=10 border=0 align="center">';   break;
+          case 'S3': $l_string .= '<img title="Problema de alta criticidade" src="'.$conRootSIW.$conImgProblem.'" width=10 height=10 border=0 align="center">';    break;
+          case 'N1': $l_string .= '<img title="Risco de baixa criticidade" src="'.$conRootSIW.$conImgRiskLow.'" width=10 height=10 border=0 align="center">';   break;
+          case 'N2': $l_string .= '<img title="Risco de moderada criticidade" src="'.$conRootSIW.$conImgRiskMed.'" width=10 height=10 border=0 align="center">';   break;
+          case 'N3': $l_string .= '<img title="Risco de alta criticidade" src="'.$conRootSIW.$conImgRiskHig.'" width=10 height=10 border=0 align="center">';    break;
+        }
       }
     }
   }
@@ -686,24 +693,24 @@ function ExibeSmile($l_tipo,$l_andamento,$l_legenda=0) {
   if ($l_legenda) {
     if ($l_tipo=='IDE') {
       $l_string .= '<tr valign="top">';
-      $l_string .= '<td width="1%" nowrap><img src="'.$conRootSIW.$conImgSmAtraso.'" border=0 width=15 align="center"><td>Fora da faixa desejável (abaixo de 80% ou acima de 110%).';
-      $l_string .= '<td width="1%" nowrap><img src="'.$conRootSIW.$conImgSmAviso.'" border=0 width=15 align="center"><td>Próximo da faixa desejável (de 80% a 89,99%).';
-      $l_string .= '<td width="1%" nowrap><img src="'.$conRootSIW.$conImgSmNormal.'" border=0 width=15 align="center"><td>Na faixa desejável (de 90% a 110%). ';
+      $l_string .= '<td width="1%" nowrap><img src="'.$conRootSIW.$conImgSmAtraso.'" border=0 width=10 height=10 align="center"><td>Fora da faixa desejável (abaixo de 80% ou acima de 110%).';
+      $l_string .= '<td width="1%" nowrap><img src="'.$conRootSIW.$conImgSmAviso.'" border=0 width=10 height=10 align="center"><td>Próximo da faixa desejável (de 80% a 89,99%).';
+      $l_string .= '<td width="1%" nowrap><img src="'.$conRootSIW.$conImgSmNormal.'" border=0 width=10 height=10 align="center"><td>Na faixa desejável (de 90% a 110%). ';
     } elseif ($l_tipo=='IDC') {
       $l_string .= '<tr valign="top">';
-      $l_string .= '<td width="1%" nowrap><img src="'.$conRootSIW.$conImgSmAtraso.'" border=0 width=15 align="center"><td>Fora da faixa desejável (abaixo de 80% ou acima de 110%).';
-      $l_string .= '<td width="1%" nowrap><img src="'.$conRootSIW.$conImgSmAviso.'" border=0 width=15 align="center"><td>Próximo da faixa desejável (de 100,01% a 109,99%).';
-      $l_string .= '<td width="1%" nowrap><img src="'.$conRootSIW.$conImgSmNormal.'" border=0 width=15 align="center"><td>Na faixa desejável (até 100%). ';
+      $l_string .= '<td width="1%" nowrap><img src="'.$conRootSIW.$conImgSmAtraso.'" border=0 width=10 height=10 align="center"><td>Fora da faixa desejável (abaixo de 80% ou acima de 110%).';
+      $l_string .= '<td width="1%" nowrap><img src="'.$conRootSIW.$conImgSmAviso.'" border=0 width=10 height=10 align="center"><td>Próximo da faixa desejável (de 100,01% a 109,99%).';
+      $l_string .= '<td width="1%" nowrap><img src="'.$conRootSIW.$conImgSmNormal.'" border=0 width=10 height=10 align="center"><td>Na faixa desejável (até 100%). ';
     }
   } else {
     if ($l_tipo=='IDE') {
-      if ($l_andamento < 80 || $l_andamento > 110) $l_string .= '<img title="IDE fora da faixa desejável." src="'.$conRootSIW.$conImgSmAtraso.'" border=0 width="15" height="15" align="center">';
-      elseif ($l_andamento < 90)                   $l_string .= '<img title="IDE próximo da faixa desejável." src="'.$conRootSIW.$conImgSmAviso.'" border=0 width="15" height="15" align="center">';
-      else                                         $l_string .= '<img title="IDE na faixa desejável." src="'.$conRootSIW.$conImgSmNormal.'" border=0 width="15" height="15" align="center">';
+      if ($l_andamento < 80 || $l_andamento > 110) $l_string .= '<img title="IDE fora da faixa desejável." src="'.$conRootSIW.$conImgSmAtraso.'" border=0 width="10" height="10" align="center">';
+      elseif ($l_andamento < 90)                   $l_string .= '<img title="IDE próximo da faixa desejável." src="'.$conRootSIW.$conImgSmAviso.'" border=0 width="10" height="10" align="center">';
+      else                                         $l_string .= '<img title="IDE na faixa desejável." src="'.$conRootSIW.$conImgSmNormal.'" border=0 width="10" height="10" align="center">';
     } elseif ($l_tipo=='IDC') {
-      if ($l_andamento < 80 || $l_andamento > 110) $l_string .= '<img title="IDC fora da faixa desejável." src="'.$conRootSIW.$conImgSmAtraso.'" border=0 width="15" height="15" align="center">';
-      elseif ($l_andamento > 100)                  $l_string .= '<img title="IDC próximo da faixa desejável." src="'.$conRootSIW.$conImgSmAviso.'" border=0 width="15" height="15" align="center">';
-      else                                         $l_string .= '<img title="IDC na faixa desejável." src="'.$conRootSIW.$conImgSmNormal.'" border=0 width="15" height="15" align="center">';
+      if ($l_andamento < 80 || $l_andamento > 110) $l_string .= '<img title="IDC fora da faixa desejável." src="'.$conRootSIW.$conImgSmAtraso.'" border=0 width="10" height="10" align="center">';
+      elseif ($l_andamento > 100)                  $l_string .= '<img title="IDC próximo da faixa desejável." src="'.$conRootSIW.$conImgSmAviso.'" border=0 width="10" height="10" align="center">';
+      else                                         $l_string .= '<img title="IDC na faixa desejável." src="'.$conRootSIW.$conImgSmNormal.'" border=0 width="10" height="10" align="center">';
     }
   }
   return $l_string;
@@ -722,33 +729,33 @@ function ExibeImagemSolic($l_tipo,$l_inicio,$l_fim,$l_inicio_real,$l_fim_real,$l
     if ($l_tipo=='ETAPA') {
       // Etapas de projeto
       $l_string .= '<tr valign="top">';
-      $l_string .= '<td width="1%" nowrap><img src="'.$conImgAtraso.'" border=0 width=15 heigth=15 align="center"><td>Execução não iniciada. Fim previsto superado.';
-      $l_string .= '<td width="1%" nowrap><img src="'.$conImgAviso.'" border=0 width=15 heigth=15 align="center"><td>Execução não iniciada. Percentual de conclusão incompatível com os dias transcorridos.';
-      $l_string .= '<td width="1%" nowrap><img src="'.$conImgNormal.'" border=0 width=15 heigth=15 align="center"><td>Execução não iniciada. Prazo final dentro do previsto.';
+      $l_string .= '<td width="1%" nowrap><img src="'.$conImgAtraso.'" border=0 width=10 heigth=10 align="center"><td>Execução não iniciada. Fim previsto superado.';
+      $l_string .= '<td width="1%" nowrap><img src="'.$conImgAviso.'" border=0 width=10 heigth=10 align="center"><td>Execução não iniciada. Percentual de conclusão incompatível com os dias transcorridos.';
+      $l_string .= '<td width="1%" nowrap><img src="'.$conImgNormal.'" border=0 width=10 heigth=10 align="center"><td>Execução não iniciada. Prazo final dentro do previsto.';
       $l_string .= '<tr valign="top">';
-      $l_string .= '<td width="1%" nowrap><img src="'.$conImgStAtraso.'" border=0 width=15 heigth=15 align="center"><td>Em execução. Fim previsto superado.';
-      $l_string .= '<td width="1%" nowrap><img src="'.$conImgStAviso.'" border=0 width=15 heigth=15 align="center"><td>Em execução. Percentual de conclusão incompatível com os dias transcorridos.';
-      $l_string .= '<td width="1%" nowrap><img src="'.$conImgStNormal.'" border=0 width=15 heigth=15 align="center"><td>Em execução. Prazo final dentro do previsto.';
+      $l_string .= '<td width="1%" nowrap><img src="'.$conImgStAtraso.'" border=0 width=10 heigth=10 align="center"><td>Em execução. Fim previsto superado.';
+      $l_string .= '<td width="1%" nowrap><img src="'.$conImgStAviso.'" border=0 width=10 heigth=10 align="center"><td>Em execução. Percentual de conclusão incompatível com os dias transcorridos.';
+      $l_string .= '<td width="1%" nowrap><img src="'.$conImgStNormal.'" border=0 width=10 heigth=10 align="center"><td>Em execução. Prazo final dentro do previsto.';
       $l_string .= '<tr valign="top">';
-      $l_string .= '<td width="1%" nowrap><img src="'.$conImgOkAtraso.'" border=0 width=15 heigth=15 align="center"><td>Execução concluída após a data prevista.';
-      $l_string .= '<td width="1%" nowrap><img src="'.$conImgOkAcima.'" border=0 width=15 heigth=15 align="center"><td>Execução concluída antes da data prevista.';
-      $l_string .= '<td width="1%" nowrap><img src="'.$conImgOkNormal.'" border=0 width=15 heigth=15 align="center"><td>Execução concluída na data prevista.';
+      $l_string .= '<td width="1%" nowrap><img src="'.$conImgOkAtraso.'" border=0 width=10 heigth=10 align="center"><td>Execução concluída após a data prevista.';
+      $l_string .= '<td width="1%" nowrap><img src="'.$conImgOkAcima.'" border=0 width=10 heigth=10 align="center"><td>Execução concluída antes da data prevista.';
+      $l_string .= '<td width="1%" nowrap><img src="'.$conImgOkNormal.'" border=0 width=10 heigth=10 align="center"><td>Execução concluída na data prevista.';
     } elseif (substr($l_tipo,0,2)=='GD' || substr($l_tipo,0,2)=='SR' || substr($l_tipo,0,2)=='PJ') {
       // Tarefas e demandas eventuais
       $l_string .= '<tr valign="top">';
-      $l_string .= '<td width="1%" nowrap><img src="'.$conImgCancel.'" border=0 width=15 heigth=15 align="center"><td>Registro cancelado.';
+      $l_string .= '<td width="1%" nowrap><img src="'.$conImgCancel.'" border=0 width=10 heigth=10 align="center"><td>Registro cancelado.';
       $l_string .= '<tr valign="top">';
-      $l_string .= '<td width="1%" nowrap><img src="'.$conImgAtraso.'" border=0 width=15 heigth=15 align="center"><td>Execução não iniciada. Fim previsto superado.';
-      $l_string .= '<td width="1%" nowrap><img src="'.$conImgAviso.'" border=0 width=15 heigth=15 align="center"><td>Execução não iniciada. Fim previsto próximo.';
-      $l_string .= '<td width="1%" nowrap><img src="'.$conImgNormal.'" border=0 width=15 heigth=15 align="center"><td>Execução não iniciada. Prazo final dentro do previsto.';
+      $l_string .= '<td width="1%" nowrap><img src="'.$conImgAtraso.'" border=0 width=10 heigth=10 align="center"><td>Execução não iniciada. Fim previsto superado.';
+      $l_string .= '<td width="1%" nowrap><img src="'.$conImgAviso.'" border=0 width=10 heigth=10 align="center"><td>Execução não iniciada. Fim previsto próximo.';
+      $l_string .= '<td width="1%" nowrap><img src="'.$conImgNormal.'" border=0 width=10 heigth=10 align="center"><td>Execução não iniciada. Prazo final dentro do previsto.';
       $l_string .= '<tr valign="top">';
-      $l_string .= '<td width="1%" nowrap><img src="'.$conImgStAtraso.'" border=0 width=15 heigth=15 align="center"><td>Em execução. Fim previsto superado.';
-      $l_string .= '<td width="1%" nowrap><img src="'.$conImgStAviso.'" border=0 width=15 heigth=15 align="center"><td>Em execução. Fim previsto próximo.';
-      $l_string .= '<td width="1%" nowrap><img src="'.$conImgStNormal.'" border=0 width=15 heigth=15 align="center"><td>Em execução. Prazo final dentro do previsto.';
+      $l_string .= '<td width="1%" nowrap><img src="'.$conImgStAtraso.'" border=0 width=10 heigth=10 align="center"><td>Em execução. Fim previsto superado.';
+      $l_string .= '<td width="1%" nowrap><img src="'.$conImgStAviso.'" border=0 width=10 heigth=10 align="center"><td>Em execução. Fim previsto próximo.';
+      $l_string .= '<td width="1%" nowrap><img src="'.$conImgStNormal.'" border=0 width=10 heigth=10 align="center"><td>Em execução. Prazo final dentro do previsto.';
       $l_string .= '<tr valign="top">';
-      $l_string .= '<td width="1%" nowrap><img src="'.$conImgOkAtraso.'" border=0 width=15 heigth=15 align="center"><td>Execução concluída após a data prevista.';
-      $l_string .= '<td width="1%" nowrap><img src="'.$conImgOkAcima.'" border=0 width=15 heigth=15 align="center"><td>Execução concluída antes da data prevista.';
-      $l_string .= '<td width="1%" nowrap><img src="'.$conImgOkNormal.'" border=0 width=15 heigth=15 align="center"><td>Execução concluída na data prevista.';
+      $l_string .= '<td width="1%" nowrap><img src="'.$conImgOkAtraso.'" border=0 width=10 heigth=10 align="center"><td>Execução concluída após a data prevista.';
+      $l_string .= '<td width="1%" nowrap><img src="'.$conImgOkAcima.'" border=0 width=10 heigth=10 align="center"><td>Execução concluída antes da data prevista.';
+      $l_string .= '<td width="1%" nowrap><img src="'.$conImgOkNormal.'" border=0 width=10 heigth=10 align="center"><td>Execução concluída na data prevista.';
     }
   } else {
     if ($l_tipo=='ETAPA') {
@@ -799,7 +806,7 @@ function ExibeImagemSolic($l_tipo,$l_inicio,$l_fim,$l_inicio_real,$l_fim_real,$l
           if ($l_fim<addDays(time(),-1)) {
             $l_imagem = $conImgAtraso;
             $l_title  = 'Execução não iniciada. Vigência prevista ultrapassada.';
-          } elseif ($l_aviso=='S' && ($l_dias_aviso<=addDays(time(),-1))) {
+          } elseif ($l_aviso=='S' && $l_dias_aviso<=time()) {
             $l_imagem = $conImgAviso;
             $l_title  = 'Execução não iniciada. Vigência prevista próxima do término.';
           } else {
@@ -813,7 +820,7 @@ function ExibeImagemSolic($l_tipo,$l_inicio,$l_fim,$l_inicio_real,$l_fim_real,$l
           if ($l_fim<addDays(time(),-1)) {
             $l_imagem = $conImgStAtraso;
             $l_title  = 'Em execução. Vigência prevista ultrapassada.';
-          } elseif ($l_aviso=='S' && ($l_dias_aviso<=addDays(time(),-1))) {
+          } elseif ($l_aviso=='S' && $l_dias_aviso<=time()) {
             $l_imagem = $conImgStAviso;
             $l_title  = 'Em execução. Vigência prevista próxima do término.';
           } else {
@@ -843,6 +850,47 @@ function ExibeImagemSolic($l_tipo,$l_inicio,$l_fim,$l_inicio_real,$l_fim_real,$l
           if ($l_fim<addDays(time(),-1)) {
             $l_imagem = $conImgAtraso;
             $l_title  = 'Execução não iniciada. Fim previsto superado.';
+          } elseif ($l_aviso=='S' && $l_dias_aviso<=time()) {
+            $l_imagem = $conImgAviso;
+            $l_title  = 'Execução não iniciada. Fim previsto próximo.';
+          } else {
+            $l_imagem = $conImgNormal;
+            $l_title  = 'Execução não iniciada. Prazo final dentro do previsto.';
+          } 
+        } else {
+          if ($l_fim<addDays(time(),-1)) {
+            $l_imagem = $conImgStAtraso;
+            $l_title  = 'Em execução. Fim previsto superado.';
+          } elseif ($l_aviso=='S' && $l_dias_aviso<=time()) {
+            $l_imagem = $conImgStAviso;
+            $l_title  = 'Em execução. Fim previsto próximo.';
+          } else {
+            $l_imagem = $conImgStNormal;
+            $l_title  = 'Em execução. Prazo final dentro do previsto.';
+          } 
+        }
+      } else {
+        if ($l_fim<Nvl($l_fim_real,$l_fim)) {
+          $l_imagem = $conImgOkAtraso;
+          $l_title  = 'Execução concluída após a data prevista.';
+        } elseif ($l_fim>Nvl($l_fim_real,$l_fim)) {
+          $l_imagem = $conImgOkAcima;
+          $l_title  = 'Execução concluída antes da data prevista.';
+        } else {
+          $l_imagem = $conImgOkNormal;
+          $l_title  = 'Execução concluída na data prevista.';
+        } 
+      } 
+    } elseif (substr($l_tipo,0,2)=='FN') {
+      // Tarefas e demandas eventuais
+      if ($l_tramite!='AT') {
+        if ($l_tramite=='CA') {
+          $l_imagem = $conImgCancel;
+          $l_title  = 'Registro cancelado.';
+        } elseif ($l_tramite=='CI') {
+          if ($l_fim<addDays(time(),-1)) {
+            $l_imagem = $conImgAtraso;
+            $l_title  = 'Execução não iniciada. Fim previsto superado.';
           } elseif ($l_aviso=='S' && ($l_dias_aviso<=addDays(time(),-1))) {
             $l_imagem = $conImgAviso;
             $l_title  = 'Execução não iniciada. Fim previsto próximo.';
@@ -854,7 +902,7 @@ function ExibeImagemSolic($l_tipo,$l_inicio,$l_fim,$l_inicio_real,$l_fim_real,$l
           if ($l_fim<addDays(time(),-1)) {
             $l_imagem = $conImgStAtraso;
             $l_title  = 'Em execução. Fim previsto superado.';
-          } elseif ($l_aviso=='S' && ($l_dias_aviso<=addDays(time(),-1))) {
+          } elseif ($l_aviso=='S' && $l_dias_aviso<=time()) {
             $l_imagem = $conImgStAviso;
             $l_title  = 'Em execução. Fim previsto próximo.';
           } else {
@@ -884,7 +932,7 @@ function ExibeImagemSolic($l_tipo,$l_inicio,$l_fim,$l_inicio_real,$l_fim_real,$l
           if ($l_fim<time()) {
             $l_imagem = $conImgAtraso;
             $l_title  = 'Execução não iniciada. Fim previsto superado.';
-          } elseif ($l_aviso=='S' && ($l_dias_aviso<=time())) {
+          } elseif ($l_aviso=='S' && $l_dias_aviso<=time()) {
             $l_imagem = $conImgAviso;
             $l_title  = 'Execução não iniciada. Fim previsto próximo.';
           } else {
@@ -895,7 +943,7 @@ function ExibeImagemSolic($l_tipo,$l_inicio,$l_fim,$l_inicio_real,$l_fim_real,$l
           if ($l_fim<time()) {
             $l_imagem = $conImgStAtraso;
             $l_title  = 'Em execução. Fim previsto superado.';
-          } elseif ($l_aviso=='S' && ($l_dias_aviso<=time())) {
+          } elseif ($l_aviso=='S' && $l_dias_aviso<=time()) {
             $l_imagem = $conImgStAviso;
             $l_title  = 'Em execução. Fim previsto próximo.';
           } else {
@@ -1000,7 +1048,7 @@ function ExibeImagemSolic($l_tipo,$l_inicio,$l_fim,$l_inicio_real,$l_fim_real,$l
     }
  
     if ($l_imagem!='') {
-      $l_string = '           <img src="'.$l_imagem.'" title="'.$l_title.'" border=0 width=15 heigth=15 align="center">';
+      $l_string = '           <img src="'.$l_imagem.'" title="'.$l_title.'" border=0 width=10 heigth=10 align="center">';
     }
   }
 
@@ -1311,9 +1359,20 @@ function RetornaCliente() {
 // ou do módulo ao qual a solicitação pertence
 // -------------------------------------------------------------------------
 function RetornaGestor($p_solicitacao,$p_usuario) {
-  include_once($w_dir_volta.'classes/sp/db_getGestor.php');
   extract($GLOBALS);
+  include_once($w_dir_volta.'classes/sp/db_getGestor.php');
   $l_acesso = db_getGestor::getInstanceOf($dbms,$p_solicitacao, $p_usuario);
+  return $l_acesso;
+}
+
+// =========================================================================
+// Função que retorna valor maior que 0 se o usuário informado tem acesso à
+// opção e trâmite indicados
+// -------------------------------------------------------------------------
+function RetornaMarcado($p_menu,$p_usuario,$p_endereco,$p_tramite) {
+  extract($GLOBALS);
+  include_once($w_dir_volta.'classes/sp/db_getMarcado.php');
+  $l_acesso = db_getMarcado::getInstanceOf($dbms,$p_menu, $p_usuario,$p_endereco,$p_tramite);
   return $l_acesso;
 }
 
@@ -1434,10 +1493,11 @@ function MascaraBeneficiario($cgccpf) {
 function EnviaMail($w_subject,$w_mensagem,$w_recipients,$w_attachments = null) {
   extract($GLOBALS);
   
-  include_once($conDiretorio.'classes/mail/email_message.php');
-  include_once($conDiretorio.'classes/mail/smtp_message.php');
-  include_once($conDiretorio.'classes/mail/smtp.php');
-  include_once($conDiretorio.'classes/sp/db_getCustomerData.php');
+  include_once($w_dir_volta.'classes/mail/email_message.php');
+  include_once($w_dir_volta.'classes/mail/smtp_message.php');
+  include_once($w_dir_volta.'classes/mail/smtp.php');
+  include_once($w_dir_volta.'classes/sp/db_getCustomerData.php');
+
 
   $RS_Cliente = db_getCustomerData::getInstanceOf($dbms, $_SESSION['P_CLIENTE']);
 

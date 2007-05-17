@@ -11,8 +11,8 @@ include_once($w_dir_volta.'classes/db/DatabaseQueriesFactory.php');
 
 class dml_putDcOcorrencia {
    function getInstanceOf($dbms, $operacao, $p_sq_esquema, $p_cliente, $p_sq_pessoa, $p_data_arquivo, $p_arquivo_recebido, $p_caminho_recebido,
-   		$p_tamanho_recebido, $p_tipo_recebido, $p_arquivo_registro, $p_caminho_registro, $p_tamanho_registro, $p_tipo_registro,
-   		$p_processados, $p_rejeitados, $p_nome_recebido, $p_nome_registro) {
+       $p_tamanho_recebido, $p_tipo_recebido, $p_arquivo_registro, $p_caminho_registro, $p_tamanho_registro, $p_tipo_registro,
+       $p_processados, $p_rejeitados, $p_nome_recebido, $p_nome_registro) {
      extract($GLOBALS,EXTR_PREFIX_SAME,'strchema'); $sql=$strschema.'SP_PUTDCOCORRENCIA';
      $params=array('p_operacao'                  =>array($operacao,                                        B_VARCHAR,         1),
                    'p_sq_esquema'                =>array(tvl($p_sq_esquema),                               B_INTEGER,        32),

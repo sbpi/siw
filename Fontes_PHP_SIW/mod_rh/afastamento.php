@@ -133,6 +133,7 @@ function Afastamento() {
     modulo();
     CheckBranco();
     FormataData();
+    SaltaCampo();
     ValidateOpen('Validacao');
     if (!(strpos('IA',$O)===false)) {
       Validate('w_sq_tipo_afastamento','Tipo de afastamento','SELECT','1','1','18','','0123456789');
@@ -346,7 +347,7 @@ function Afastamento() {
     ShowHTML('      <tr>');
     SelecaoColaborador('<u>C</u>olaborador:','C',null,$w_sq_contrato_colaborador,$w_sq_tipo_afastamento,'w_sq_contrato_colaborador','SELAFAST',null);
     ShowHTML('      <tr><td><table width="100%" border="0">');
-    ShowHTML('      <tr><td width="10%" valign="top"><b><u>I</u>nício:</b><br><input '.$w_Disabled.' accesskey="I" type="text" name="w_inicio_data" class="STI" SIZE="10" MAXLENGTH="10" VALUE="'.FormataDataEdicao($w_inicio_data).'" onKeyDown="FormataData(this,event);"></td>');
+    ShowHTML('      <tr><td width="10%" valign="top"><b><u>I</u>nício:</b><br><input '.$w_Disabled.' accesskey="I" type="text" name="w_inicio_data" class="STI" SIZE="10" MAXLENGTH="10" VALUE="'.FormataDataEdicao($w_inicio_data).'" onKeyDown="FormataData(this,event);" onKeyUp="SaltaCampo(this.form.name,this,10,event);"></td>');
     ShowHTML('          <td valign="top"><b>Período?</b><br>');
     if ($w_inicio_periodo=='T') {
       ShowHTML('              <input '.$w_Disabled.' type="radio" name="w_inicio_periodo" value="M"> Manhã <input '.$w_Disabled.' type="radio" name="w_inicio_periodo" value="T" checked> Tarde');
@@ -357,7 +358,7 @@ function Afastamento() {
     if (Nvl($w_sq_tipo_afastamento,'')>'' && $O!='E') {
       if (f($RS1,'periodo')=='A') {
         ShowHTML('      <tr><td><table width="100%" border="0">');
-        ShowHTML('      <tr><td width="10%" valign="top"><b>Té<u>r</u>mino:</b><br><input '.$w_Disabled.' accesskey="R" type="text" name="w_fim_data" class="STI" SIZE="10" MAXLENGTH="10" VALUE="'.FormataDataEdicao($w_fim_data).'" onKeyDown="FormataData(this,event);"></td>');
+        ShowHTML('      <tr><td width="10%" valign="top"><b>Té<u>r</u>mino:</b><br><input '.$w_Disabled.' accesskey="R" type="text" name="w_fim_data" class="STI" SIZE="10" MAXLENGTH="10" VALUE="'.FormataDataEdicao($w_fim_data).'" onKeyDown="FormataData(this,event);" onKeyUp="SaltaCampo(this.form.name,this,10,event);"></td>');
         ShowHTML('          <td valign="top"><b>Período?</b><br>');
         if ($w_fim_periodo=='M') {
           ShowHTML('              <input '.$w_Disabled.' type="radio" name="w_fim_periodo" value="M" checked> Manhã <input '.$w_Disabled.' type="radio" name="w_fim_periodo" value="T"> Tarde');
@@ -401,7 +402,7 @@ function Afastamento() {
     SelecaoTipoAfastamento('<u>T</u>ipo do afastamento:','T',null,$p_sq_tipo_afastamento,null,'p_sq_tipo_afastamento','AFASTAMENTO',null);
     ShowHTML('      <tr>');
     SelecaoColaborador('<u>C</u>olaborador:','C',null,$p_sq_contrato_colaborador,null,'p_sq_contrato_colaborador','AFASTAMENTO',null);
-    ShowHTML('      <tr><td><b><u>P</u>eríodo de busca:</b><br> De: <input accesskey="P" type="text" name="p_inicio_data" class="STI" SIZE="10" MAXLENGTH="10" VALUE="'.$p_inicio_data.'" onKeyDown="FormataData(this,event);">'.ExibeCalendario('Form','p_inicio_data').' a <input accesskey="P" type="text" name="p_fim_data" class="STI" SIZE="10" MAXLENGTH="10" VALUE="'.$p_fim_data.'" onKeyDown="FormataData(this,event);">'.ExibeCalendario('Form','p_fim_data').'</td>');
+    ShowHTML('      <tr><td><b><u>P</u>eríodo de busca:</b><br> De: <input accesskey="P" type="text" name="p_inicio_data" class="STI" SIZE="10" MAXLENGTH="10" VALUE="'.$p_inicio_data.'" onKeyDown="FormataData(this,event);" onKeyUp="SaltaCampo(this.form.name,this,10,event);">'.ExibeCalendario('Form','p_inicio_data').' a <input accesskey="P" type="text" name="p_fim_data" class="STI" SIZE="10" MAXLENGTH="10" VALUE="'.$p_fim_data.'" onKeyDown="FormataData(this,event);" onKeyUp="SaltaCampo(this.form.name,this,10,event);">'.ExibeCalendario('Form','p_fim_data').'</td>');
     ShowHTML('      <tr><td align="center" colspan=5><hr>');
     ShowHTML('            <input class="stb" type="submit" name="Botao" value="Aplicar filtro">');
     ShowHTML('            <input class="stb" type="button" onClick="location.href=\''.montaURL_JS($w_dir,$w_pagina.$par.'&P1='.$P1.'&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP='.$TP.'&O=I&SG='.$SG).'\';" name="Botao" value="Incluir">');

@@ -34,7 +34,7 @@ include_once($w_dir_volta.'funcoes/selecaoAssunto.php');
 //  /tabelas.php
 // ------------------------------------------------------------------------
 // Nome     : Celso Miguel Lago Filho
-// Descricao: Gerenciar tabelas básicas do módulo	
+// Descricao: Gerenciar tabelas básicas do módulo  
 // Mail     : celso@sbpi.com.br
 // Criacao  : 08/02/2007, 16:30
 // Versao   : 1.0.0.0

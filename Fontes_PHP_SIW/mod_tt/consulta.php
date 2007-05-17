@@ -21,7 +21,7 @@ include_once('visualresumoligacaoparticular.php');
 //  /Tabelas.php
 // ------------------------------------------------------------------------
 // Nome     : Alexandre Vinhadelli Papadópolis
-// Descricao: Gerenciar tabelas básicas do módulo	
+// Descricao: Gerenciar tabelas básicas do módulo  
 // Mail     : alex@sbpi.com.br
 // Criacao  : 01/06/2006 10:40
 // Versao   : 1.0.0.0
@@ -163,6 +163,7 @@ function LigacaoParticular(){
     ScriptOpen('JavaScript');
     CheckBranco();
     FormataData();
+    SaltaCampo();
     ValidateOpen('Validacao');
     if ($O=='R'){
       ShowHTML('  if (theForm.p_fim.value.length > 0 && theForm.p_inicio.value.length == 0) {');
@@ -236,11 +237,11 @@ function LigacaoParticular(){
       ShowHTML('      <tr align="left"><td><table cellpadding=0 cellspacing=0><tr valign="center">');
       ShowHTML('          <td><font size="1"><b>Período</b>(formato DD/MM/AAAA):&nbsp;&nbsp;</td>');
       if ($p_inicio==''){                                                                                                                                                                        
-        ShowHTML('          <td><font size="1"><b><U>D</U>e: <INPUT ACCESSKEY="D" '.$w_Disabled.' class="STI" type="text" name="p_inicio" size="10" maxlength="10" value="01/'.date('m/Y',time()).'" onKeyDown="FormataData(this,event)">&nbsp;</td>');
-        ShowHTML('          <td><font size="1"><b>A<U>t</U>é: <INPUT ACCESSKEY="T" '.$w_Disabled.' class="STI" type="text" name="p_fim" size="10" maxlength="10" value="'.FormataDataEdicao(time()).'" onKeyDown="FormataData(this,event)">&nbsp;</td>');
+        ShowHTML('          <td><font size="1"><b><U>D</U>e: <INPUT ACCESSKEY="D" '.$w_Disabled.' class="STI" type="text" name="p_inicio" size="10" maxlength="10" value="01/'.date('m/Y',time()).'" onKeyDown="FormataData(this,event)" onKeyUp="SaltaCampo(this.form.name,this,10,event);">&nbsp;</td>');
+        ShowHTML('          <td><font size="1"><b>A<U>t</U>é: <INPUT ACCESSKEY="T" '.$w_Disabled.' class="STI" type="text" name="p_fim" size="10" maxlength="10" value="'.FormataDataEdicao(time()).'" onKeyDown="FormataData(this,event)" onKeyUp="SaltaCampo(this.form.name,this,10,event);">&nbsp;</td>');
       } else {
-        ShowHTML('          <td><font size="1"><b><U>D</U>e: <INPUT ACCESSKEY="D" '.$w_Disabled.' class="STI" type="text" name="p_inicio" size="10" maxlength="10" value="'.$p_inicio.'" onKeyDown="FormataData(this,event)">&nbsp;</td>');
-        ShowHTML('          <td><font size="1"><b>A<U>t</U>é: <INPUT ACCESSKEY="T" '.$w_Disabled.' class="STI" type="text" name="p_fim" size="10" maxlength="10" value="'.$p_fim.'" onKeyDown="FormataData(this,event)"></td>');
+        ShowHTML('          <td><font size="1"><b><U>D</U>e: <INPUT ACCESSKEY="D" '.$w_Disabled.' class="STI" type="text" name="p_inicio" size="10" maxlength="10" value="'.$p_inicio.'" onKeyDown="FormataData(this,event)" onKeyUp="SaltaCampo(this.form.name,this,10,event);">&nbsp;</td>');
+        ShowHTML('          <td><font size="1"><b>A<U>t</U>é: <INPUT ACCESSKEY="T" '.$w_Disabled.' class="STI" type="text" name="p_fim" size="10" maxlength="10" value="'.$p_fim.'" onKeyDown="FormataData(this,event)" onKeyUp="SaltaCampo(this.form.name,this,10,event);"></td>');
       } 
       ShowHTML('      </table>');
       ShowHTML('      <tr><td align="center" colspan="3" height="1" bgcolor="#000000">');

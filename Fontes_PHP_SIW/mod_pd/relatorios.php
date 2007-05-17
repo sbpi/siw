@@ -484,7 +484,7 @@ function Rel_Limite() {
     SelecaoUnidade('Á<U>r</U>ea planejamento:','R',null,$p_sq_unidade,null,'p_sq_unidade','VIAGEM','onchange="document.Form.action=\''.$w_dir.$w_pagina.$par.'\'; document.Form.w_troca.value=\'p_sq_unidade\'; document.Form.target=\'\'; document.Form.O.value=\'P\'; document.Form.submit();"');
     ShowHTML('      <tr bgcolor="'.$conTrBgColor.'">');
     $RS = db_getLinkData::getInstanceOf($dbms,$w_cliente,'PJCAD');
-    SelecaoProjeto('Pr<u>o</u>jeto:','O','Selecione o projeto desejado na relação.',$p_projeto,$w_usuario,f($RS,'sq_menu'),'p_projeto','PJLIST','onChange="document.Form.action=\''.$w_dir.$w_pagina.$par.'\'; document.Form.target=\'\'; document.Form.O.value=\''.$O.'\'; document.Form.w_troca.value=\'p_atividade\'; document.Form.submit();"');
+    SelecaoProjeto('Pr<u>o</u>jeto:','O','Selecione o projeto desejado na relação.',$p_projeto,$w_usuario,f($RS,'sq_menu'),null,null,null,'p_projeto','PJLIST','onChange="document.Form.action=\''.$w_dir.$w_pagina.$par.'\'; document.Form.target=\'\'; document.Form.O.value=\''.$O.'\'; document.Form.w_troca.value=\'p_atividade\'; document.Form.submit();"');
     ShowHTML('      <tr bgcolor="'.$conTrBgColor.'">');
     SelecaoEtapa('Eta<u>p</u>a:','P','Selecione a etapa desejada na relação.',$p_atividade,$p_projeto,null,'p_atividade',null,null);
     ShowHTML('      </tr>');
