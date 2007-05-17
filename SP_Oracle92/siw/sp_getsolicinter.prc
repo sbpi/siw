@@ -10,7 +10,7 @@ begin
       select null as sq_solicitacao_interessado, a.sq_siw_solicitacao, a.sq_pessoa, null as sq_tipo_interessado,
              a.tipo_visao, a.envia_email,
              b.nome, b.nome_resumido, b.nome_indice, b.nome_resumido_ind,
-             c.email,
+             c.email, c.ativo,
              d.sigla lotacao,
              '*** ALTERAR ***' nm_tipo_interessado, 0 or_tipo_interessado,
              1 ordena
@@ -24,7 +24,7 @@ begin
       select null as sq_solicitacao_interessado, a.sq_siw_solicitacao, a.sq_pessoa, null as sq_tipo_interessado,
              a.tipo_visao, a.envia_email,
              b.nome, b.nome_resumido, b.nome_indice, b.nome_resumido_ind,
-             c.email,
+             c.email, c.ativo,
              d.sigla lotacao,
              '*** ALTERAR ***' nm_tipo_interessado, 0 or_tipo_interessado,
              1 ordena
@@ -38,7 +38,7 @@ begin
       select a.sq_solicitacao_interessado, a.sq_siw_solicitacao, a.sq_pessoa, a.sq_tipo_interessado,
              null as tipo_visao, null as envia_mail,
              b.nome, b.nome_resumido, b.nome_indice, b.nome_resumido_ind,
-             c.email,
+             c.email, c.ativo,
              d.sigla lotacao,
              e.nome nm_tipo_interessado, e.ordem or_tipo_interessado,
              0 ordena

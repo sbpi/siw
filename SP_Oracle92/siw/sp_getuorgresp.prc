@@ -12,8 +12,8 @@ begin
             c.nome nm_titular, c.nome_resumido nm_resumido_titular,
             d.sq_pessoa substituto2, d.inicio inicio_substituto,
             e.nome nm_substituto, e.nome_resumido no_resumido_substituto,
-            k.email email_substituto,
-            j.email email_titular,
+            k.email email_substituto, k.ativo st_substituto,
+            j.email email_titular,    j.ativo st_titular,
             n.nome tit_sala, n.telefone tit_tel1, n.telefone2 tit_tel2, n.ramal tit_ramal, n.fax tit_fax,
             h.nome sub_sala, h.telefone sub_tel1, h.telefone2 sub_tel2, h.ramal sub_ramal, h.fax sub_fax,
             o.logradouro tit_logradouro, i.logradouro sub_logradouro
@@ -38,4 +38,3 @@ begin
       where a.sq_unidade  = p_chave;
 end SP_GetUorgResp;
 /
-

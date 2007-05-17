@@ -5,7 +5,7 @@ create or replace procedure SP_GetCustomerData
 begin
    open p_result for 
       select a.*,
-             b.co_uf, b.sq_pais, b.sq_regiao, b.nome as cidade,
+             b.co_uf, b.sq_pais, b.sq_regiao, b.nome as cidade, a.envia_mail_tramite, a.envia_mail_alerta,
              c.codigo, c.nome as agencia,
              d.nome, d.nome_resumido, d.sq_tipo_vinculo,
              e.cnpj, e.inscricao_estadual, e.inicio_atividade, e.sede,

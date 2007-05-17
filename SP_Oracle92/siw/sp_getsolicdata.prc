@@ -51,6 +51,7 @@ begin
                 e.vinculada vinc_resp,e.adm_central adm_resp,
                 e1.sq_pessoa titular, e2.sq_pessoa substituto,
                 f.nome_resumido nm_sol,
+                coalesce(f1.ativo,'N') as st_sol,
                 g.sq_cc,              g.nome cc_nome,                g.sigla cc_sigla,
                 h.sq_pais,            h.sq_regiao,                   h.co_uf,
                 h.nome nm_cidade,
@@ -82,6 +83,7 @@ begin
                                                                     e2.fim               is null
                                                                    )
                   inner      join co_pessoa                 f  on (b.solicitante         = f.sq_pessoa)
+                    left     join sg_autenticacao           f1 on (f.sq_pessoa           = f1.sq_pessoa)
                   inner      join co_cidade                 h  on (b.sq_cidade_origem    = h.sq_cidade)
                   left       join ct_cc                     g  on (b.sq_cc               = g.sq_cc)
                   left       join siw_restricao             l  on (d.sq_siw_restricao    = l.sq_siw_restricao)
@@ -126,6 +128,7 @@ begin
                 c.vinculada,          c.adm_central,
                 d.sq_unidade_resp,    d.titulo,                      d.prioridade,
                 d.aviso_prox_conc,    d.dias_aviso,                  d.inicio_real,
+                d.aviso_prox_conc_pacote, d.perc_dias_aviso_pacote,
                 d.fim_real,           d.concluida,                   d.data_conclusao,
                 d.nota_conclusao,     d.custo_real,                  d.proponente,
                 d.vincula_contrato,   d.vincula_viagem,              d.sq_tipo_pessoa,
@@ -143,6 +146,7 @@ begin
                 e.vinculada vinc_resp,e.adm_central adm_resp,        e.sq_unidade,
                 e1.sq_pessoa titular, e2.sq_pessoa substituto,
                 f.nome_resumido nm_sol,
+                coalesce(f1.ativo,'N') as st_sol,
                 g.sq_cc,              g.nome cc_nome,                g.sigla cc_sigla,
                 h.sq_pais,            h.sq_regiao,                   h.co_uf,
                 h.nome nm_cidade,
@@ -209,6 +213,7 @@ begin
                         left       join or_acao_ppa          k  on (j.sq_acao_ppa_pai     = k.sq_acao_ppa)
                       left         join or_prioridade        l  on (i.sq_orprioridade     = l.sq_orprioridade)
                   inner            join co_pessoa            f  on (b.solicitante         = f.sq_pessoa)
+                    left           join sg_autenticacao      f1 on (f.sq_pessoa           = f1.sq_pessoa)
                   inner            join co_cidade            h  on (b.sq_cidade_origem    = h.sq_cidade)
                     inner          join co_uf                h1 on (h.co_uf               = h1.co_uf and
                                                                     h.sq_pais             = h1.sq_pais
@@ -662,6 +667,7 @@ begin
                 e.vinculada vinc_solic,e.adm_central adm_solic,       e.sigla as sg_unidade_solic,
                 e1.sq_pessoa titular, e2.sq_pessoa substituto,
                 f.nome_resumido nm_sol,
+                coalesce(f1.ativo,'N') as st_sol,
                 g.sq_cc,              g.nome cc_nome,                g.sigla cc_sigla,
                 h.sq_pais,            h.sq_regiao,                   h.co_uf,
                 h.nome nm_cidade,
@@ -694,6 +700,7 @@ begin
                                                                    e2.fim                is null
                                                                   )
                   inner      join co_pessoa                 f  on (b.solicitante         = f.sq_pessoa)
+                    left     join sg_autenticacao           f1 on (f.sq_pessoa           = f1.sq_pessoa)
                     left     join co_pessoa                 i  on (b.executor            = i.sq_pessoa)
                     left     join co_pessoa                 j  on (b.recebedor           = j.sq_pessoa)                  
                   inner      join co_cidade                 h  on (b.sq_cidade_origem    = h.sq_cidade)

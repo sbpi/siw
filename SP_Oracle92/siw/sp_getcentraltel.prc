@@ -30,7 +30,7 @@ begin
        and ((p_sq_pessoa_endereco is null) or (p_sq_pessoa_endereco is not null and a.sq_pessoa_endereco = p_sq_pessoa_endereco))
        and ((p_sq_pessoa_telefone is null) or (p_sq_pessoa_telefone is not null and f.sq_pessoa_telefone = p_sq_pessoa_telefone));
        
-   else if p_restricao = 'USER' then
+   elsif p_restricao = 'USER' then
      open p_result for 
      select a.sq_central_fone, a.arquivo_bilhetes arquivo, a.recupera_bilhetes recupera, a.cliente, a.sq_pessoa_endereco,
             b.sq_usuario_central, b.cliente, b.usuario, b.codigo,
@@ -41,6 +41,27 @@ begin
      where ((p_chave              is null) or (p_chave              is not null and a.sq_central_fone    = p_chave))
        and ((p_cliente            is null) or (p_cliente            is not null and a.cliente            = p_cliente))
        and ((p_sq_pessoa_endereco is null) or (p_sq_pessoa_endereco is not null and a.sq_pessoa_endereco = p_sq_pessoa_endereco));
+   elsif p_restricao = 'CLASSIF' Then
+      open p_result for 
+      select a.sq_cc, a.sigla, a.nome, e.nome nm_pai,
+             e.nome||' - '||a.nome as nm_cc,
+             coalesce(b.sq_central_fone,0) as existe, 
+             coalesce(d.sq_central_fone,0) as marcado
+        from ct_cc            a
+             inner join ct_cc e on (a.sq_cc_pai = e.sq_cc)
+             left  join tt_cc b on (a.sq_cc     = b.sq_cc)
+             left  join tt_cc d on (a.sq_cc     = d.sq_cc and
+                                    d.desativacao is null
+                                   )
+             left  join (select x.sq_cc, count(y.sq_cc) as filhos
+                           from ct_cc           x
+                                left join ct_cc y on (x.sq_cc = y.sq_cc_pai)
+                          group by x.sq_cc
+                        )     c on (a.sq_cc     = c.sq_cc)
+       where a.cliente = p_cliente
+         and a.ativo   = 'S'
+         and c.filhos  = 0
+         and b.tt_cc   = p_chave;
    else  
      open p_result for 
      select a.sq_central_fone chave, a.arquivo_bilhetes arquivo, a.recupera_bilhetes recupera, a.cliente, a.sq_pessoa_endereco,
@@ -55,7 +76,6 @@ begin
      where ((p_chave              is null) or (p_chave              is not null and a.sq_central_fone    = p_chave))
        and ((p_cliente            is null) or (p_cliente            is not null and a.cliente            = p_cliente))
        and ((p_sq_pessoa_endereco is null) or (p_sq_pessoa_endereco is not null and a.sq_pessoa_endereco = p_sq_pessoa_endereco));
-    End If;
     End If;
 end SP_getCentralTel;
 /

@@ -22,6 +22,8 @@ create or replace procedure SP_PutProjetoGeral
     p_prioridade          in number    default null,
     p_aviso               in varchar2  default null,
     p_dias                in number    default null,
+    p_aviso_pacote        in varchar2  default null,
+    p_dias_pacote         in number    default null,
     p_cidade              in number    default null,
     p_palavra_chave       in varchar2  default null,
     p_vincula_contrato    in varchar2  default null,
@@ -114,13 +116,15 @@ begin
          ( sq_siw_solicitacao,  sq_unidade_resp, titulo,            prioridade,
            aviso_prox_conc,     dias_aviso,      inicio_real,       fim_real,
            concluida,           data_conclusao,  nota_conclusao,    custo_real,
-           proponente,          sq_tipo_pessoa,  vincula_contrato,   vincula_viagem
+           proponente,          sq_tipo_pessoa,  vincula_contrato,   vincula_viagem,
+           aviso_prox_conc_pacote, perc_dias_aviso_pacote
          )
       (select
            w_chave,             p_unid_resp,     p_titulo,          p_prioridade,
            p_aviso,             p_dias,          null,              null,
            'N',                 null,            null,              0,
-           p_proponente,        p_sq_tipo_pessoa,Nvl(p_vincula_contrato,'N'), Nvl(p_vincula_viagem,'N')
+           p_proponente,        p_sq_tipo_pessoa,Nvl(p_vincula_contrato,'N'), Nvl(p_vincula_viagem,'N'),
+           p_aviso_pacote,      p_dias_pacote
         from dual
       );
 
@@ -319,6 +323,8 @@ begin
           prioridade       = p_prioridade,
           aviso_prox_conc  = p_aviso,
           dias_aviso       = p_dias,
+          aviso_prox_conc_pacote = p_aviso_pacote,
+          perc_dias_aviso_pacote = p_dias_pacote,
           sq_tipo_pessoa   = p_sq_tipo_pessoa,
           vincula_contrato = Nvl(p_vincula_contrato,'N'),
           vincula_viagem   = Nvl(p_vincula_viagem,'N')

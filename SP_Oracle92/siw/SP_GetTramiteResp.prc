@@ -86,7 +86,9 @@ begin
             eo_unidade                   c
             inner join (select y.sq_pessoa, y.nome, y.nome_resumido, z.sq_unidade, z.username, z.email
                           from co_pessoa                    y
-                               inner join sg_autenticacao   z on (y.sq_pessoa = z.sq_pessoa)
+                               inner join sg_autenticacao   z on (y.sq_pessoa = z.sq_pessoa and
+                                                                  z.ativo     = 'S'
+                                                                 )
                          where y.sq_pessoa = l_cadastrador
                        )                 d on (c.sq_unidade = d.sq_unidade)
       where b.sq_menu  = l_menu
@@ -103,8 +105,10 @@ begin
             eo_unidade                   c 
             inner join (select y.sq_pessoa, y.nome, y.nome_resumido, z.sq_unidade, z.username, z.email
                           from co_pessoa                    y
-                               inner join sg_autenticacao   z on (y.sq_pessoa    = z.sq_pessoa)
-                         where y.sq_pessoa    = l_chefe1 
+                               inner join sg_autenticacao   z on (y.sq_pessoa    = z.sq_pessoa and
+                                                                  z.ativo     = 'S'
+                                                                 )
+                         where y.sq_pessoa = l_chefe1 
                             or y.sq_pessoa = l_chefe2
                        )                 d on (c.sq_unidade         = d.sq_unidade)
       where b.sq_menu            = l_menu
