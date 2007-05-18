@@ -4424,18 +4424,18 @@ function SolicMail($p_solic,$p_tipo) {
     $RS = db_getTramiteResp::getInstanceOf($dbms,$p_solic,null,null);
     if (!count($RS)<=0) {
       foreach($RS as $row) {
-        if (strpos($w_destinatarios,f($row,'email').'; ')===false) $w_destinatarios .= f($row,'email').'; ';
+        $w_destinatarios .= f($row,'email').'|'.f($row,'nome').'; ';
      } 
     } 
     if(f($RSM,'st_sol')=='S') {
       // Recupera o e-mail do responsável
       $RS = db_getPersonData::getInstanceOf($dbms,$w_cliente,f($RSM,'solicitante'),null,null);
-      if (strpos($w_destinatarios,f($RS,'email').'; ')===false) $w_destinatarios .= f($RS,'email').'; ';
+      $w_destinatarios .= f($RS,'email').'|'.f($RS,'nome').'; ';
     }
     if(f($RSM,'st_prop')=='S') {
       // Recupera o e-mail do proposto
       $RS = db_getPersonData::getInstanceOf($dbms,$w_cliente,f($RSM,'sq_prop'),null,null);
-      if (strpos($w_destinatarios,f($RS,'email').'; ')===false) $w_destinatarios .= f($RS,'email').'; '  ; 
+      $w_destinatarios .= f($RS,'email').'|'.f($RS,'nome').'; ';
     }
     // Executa o envio do e-mail
     if ($w_destinatarios>'') $w_resultado = EnviaMail($w_assunto,$w_html,$w_destinatarios,$w_anexos);

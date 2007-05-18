@@ -1318,14 +1318,14 @@ function SolicMail($p_solic,$p_tipo) {
       $RS = db_getTramiteResp::getInstanceOf($dbms,$p_solic,null,null);
       if (count($RS)>0) {
         foreach($RS as $row) {
-          if (strpos($w_destinatarios,f($row,'email').'; ')===false) $w_destinatarios .= f($row,'email').'; ';
+          $w_destinatarios .= f($row,'email').'|'.f($row,'nome').'; ';
         } 
       } 
     } elseif ($p_tipo==3) {
       if(f($RSM,'st_sol')=='S') {
         // Se for conclusão, envia e-mail ao solicitante comunicando a necessidade de informar sua opinião
         $RS = db_getPersonData::getInstanceOf($dbms,$w_cliente,f($RSM,'solicitante'),null,null);
-        if (strpos($w_destinatarios,f($RS,'email').'; ')===false) $w_destinatarios .= f($RS,'email').'; ';
+        $w_destinatarios .= f($RS,'email').'|'.f($RS,'nome').'; ';
       }
     } elseif ($p_tipo==4) {
       // Se for comunicado de insatisfação, envia e-mail para os responsáveis pelo cumprimento do trâmite "Em execução".
@@ -1334,12 +1334,10 @@ function SolicMail($p_solic,$p_tipo) {
       $RS = db_getTramiteResp::getInstanceOf($dbms,$p_solic,f($RS,'sq_siw_tramite'),null);
       if (count($RS)>0) {
         foreach($RS as $row) {
-          if (strpos($w_destinatarios,f($row,'email').'; ')===false) $w_destinatarios .= f($row,'email').'; ';
+          $w_destinatarios .= f($row,'email').'|'.f($row,'nome').'; ';
         } 
       } 
     }
-
-
     // Prepara os dados necessários ao envio
     if ($p_tipo==1 || $p_tipo==3) {
       // Inclusão ou Conclusão

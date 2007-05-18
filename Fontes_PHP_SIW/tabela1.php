@@ -105,6 +105,8 @@ function TipoVinculo() {
     $w_contratado       = $_REQUEST['w_contratado'];
     $w_ativo            = $_REQUEST['w_ativo'];
     $w_padrao           = $_REQUEST['w_padrao'];
+    $w_mail_tramite     = $_REQUEST['w_mail_tramite'];
+    $w_mail_alerta      = $_REQUEST['w_mail_alerta'];
   } elseif (!(strpos('LP',$O)===false)) {
     $RS = db_getVincKindList::getInstanceOf($dbms,$w_cliente,$p_ativo,null,$p_nome,null);
     $RS = SortArray($RS,'sq_tipo_pessoa','asc','padrao','desc','nome','asc');
@@ -116,6 +118,8 @@ function TipoVinculo() {
     $w_contratado       = f($RS,'contratado');
     $w_ativo            = f($RS,'ativo');
     $w_padrao           = f($RS,'padrao');
+    $w_mail_tramite     = f($RS,'envia_mail_tramite');
+    $w_mail_alerta      = f($RS,'envia_mail_alerta');
   } 
 
   Cabecalho();
@@ -179,20 +183,24 @@ function TipoVinculo() {
     ShowHTML('<tr><td colspan=3>');
     ShowHTML('    <TABLE WIDTH="100%" bgcolor="'.$conTableBgColor.'" BORDER="'.$conTableBorder.'" CELLSPACING="'.$conTableCellSpacing.'" CELLPADDING="'.$conTableCellPadding.'" BorderColorDark="'.$conTableBorderColorDark.'" BorderColorLight="'.$conTableBorderColorLight.'">');
     ShowHTML('        <tr bgcolor="'.$conTrBgColor.'" align="center">');
-    ShowHTML('          <td><font size="1"><b>Chave</font></td>');
-    ShowHTML('          <td><font size="1"><b>Aplicação</font></td>');
-    ShowHTML('          <td><font size="1"><b>Nome</font></td>');
-    ShowHTML('          <td><font size="1"><b>Interno</font></td>');
-    ShowHTML('          <td><font size="1"><b>Contratado</font></td>');
-    ShowHTML('          <td><font size="1"><b>Ativo</font></td>');
-    ShowHTML('          <td><font size="1"><b>Padrão</font></td>');
+    ShowHTML('          <td rowspan="2"><font size="1"><b>Chave</font></td>');
+    ShowHTML('          <td rowspan="2"><font size="1"><b>Aplicação</font></td>');
+    ShowHTML('          <td rowspan="2"><font size="1"><b>Nome</font></td>');
+    ShowHTML('          <td rowspan="2"><font size="1"><b>Interno</font></td>');
+    ShowHTML('          <td rowspan="2"><font size="1"><b>Contratado</font></td>');
+    ShowHTML('          <td rowspan="2"><font size="1"><b>Ativo</font></td>');
+    ShowHTML('          <td rowspan="2"><font size="1"><b>Padrão</font></td>');
+    ShowHTML('          <td colspan="2"><font size="1"><b>E-mail</font></td>');
     if ($w_libera_edicao=='S') {
-      ShowHTML('          <td><font size="1"><b>Operações</font></td>');
+      ShowHTML('          <td rowspan=2><font size="1"><b>Operações</font></td>');
     } 
-
+    ShowHTML('        </tr>');
+    ShowHTML('        <tr bgcolor="'.$conTrBgColor.'" align="center">');
+    ShowHTML('          <td><font size="1"><b>Tramitação</font></td>');
+    ShowHTML('          <td><font size="1"><b>Alerta</font></td>');
     ShowHTML('        </tr>');
     if (count($RS) <= 0) {
-      ShowHTML('      <tr bgcolor="'.$conTrBgColor.'"><td colspan=8 align="center"><font size="2"><b>Não foram encontrados registros.</b></td></tr>');
+      ShowHTML('      <tr bgcolor="'.$conTrBgColor.'"><td colspan=10 align="center"><font size="2"><b>Não foram encontrados registros.</b></td></tr>');
     } else {
       foreach($RS as $row) {
         $w_cor = ($w_cor==$conTrBgColor || $w_cor=='') ? $w_cor=$conTrAlternateBgColor : $w_cor=$conTrBgColor;
@@ -219,7 +227,9 @@ function TipoVinculo() {
           ShowHTML('        <td align="center"><font size="1">Sim</td>');
         } else {
           ShowHTML('        <td align="center"><font size="1">Não</td>');
-        } 
+        }
+        ShowHTML('        <td align="center"><font size="1">'.RetornaSimNao(f($row,'envia_mail_tramite')).'</td>');
+        ShowHTML('        <td align="center"><font size="1">'.RetornaSimNao(f($row,'envia_mail_alerta')).'</td>');
         if ($w_libera_edicao=='S') {
           ShowHTML('        <td align="top" nowrap><font size="1">');
           ShowHTML('          <A class="HL" HREF="'.$w_pagina.$par.'&R='.$w_pagina.$par.'&O=A&w_sq_tipo_vinculo='.f($row,'sq_tipo_vinculo').'&p_nome='.$p_nome.'&p_ativo='.$p_ativo.'&P1='.$P1.'&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP='.$TP.'&SG='.$SG.'"title="Alterar">AL</A>&nbsp');
@@ -251,6 +261,9 @@ function TipoVinculo() {
     MontaRadioNS('<b>Contratado?</b>',$w_contratado,'w_contratado');
     MontaRadioNS('<b>Padrão?</b>',$w_padrao,'w_padrao');
     MontaRadioSN('<b>Ativo?</b>',$w_ativo,'w_ativo');
+    ShowHTML('      <tr>');
+    MontaRadioSN('<b>Envia e-mail na tramitação?</b>',$w_mail_tramite,'w_mail_tramite');
+    MontaRadioSN('<b>Envia e-mail no alerta?</b>',$w_mail_alerta,'w_mail_alerta');
     ShowHTML('      </tr></table></td></tr>');
     ShowHTML('      <tr><td valign="top"><font size="1"><b><U>A</U>ssinatura Eletrônica:<br><INPUT ACCESSKEY="A" class="sti" type="PASSWORD" name="w_assinatura" size="30" maxlength="30" value=""></td>');
     ShowHTML('      <tr><td align="center" colspan="3" height="1" bgcolor="#000000">');
@@ -592,7 +605,7 @@ function Grava() {
         dml_CoTipoVinc::getInstanceOf($dbms, $O,
             $_REQUEST['w_sq_tipo_vinculo'],$_REQUEST['w_sq_tipo_pessoa'],$w_cliente,
             $_REQUEST['w_nome'],$_REQUEST['w_interno'],$_REQUEST['w_contratado'],$_REQUEST['w_padrao'],
-            $_REQUEST['w_ativo']);
+            $_REQUEST['w_ativo'],$_REQUEST['w_mail_tramite'],$_REQUEST['w_mail_alerta']);
         ScriptOpen('JavaScript');
         ShowHTML('  location.href=\''.$R.'&O=L&P1='.$P1.'&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP='.$TP.'&SG='.$SG.'\';');
         ScriptClose();

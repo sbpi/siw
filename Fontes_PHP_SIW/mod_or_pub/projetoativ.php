@@ -1807,7 +1807,7 @@ function SolicMail($p_solic,$p_tipo) {
       $w_html.=$crlf.'     <td>'.CRLF2BR(Nvl(f($RS,'despacho'),'---')).' </td></tr>'; 
       // Configura o destinatário da tramitação como destinatário da mensagem
       $RS1 = db_getPersonData::getInstanceOf($dbms,$w_cliente,f($RS,'sq_pessoa_destinatario'),null,null);
-        $w_destinatarios = f($RS1,'email').'; ';
+        $w_destinatarios = f($RS1,'email').'|'.f($RS1,'nome').'; ';
     } 
     $w_html.=$crlf.'     <tr><td colspan="2"><br><font size="2"><b>OUTRAS INFORMAÇÕES<hr NOSHADE color=#000000 SIZE=1></b></font></td></tr>';  
     $RS = db_getCustomerSite::getInstanceOf($dbms,$w_cliente);
@@ -1831,38 +1831,27 @@ function SolicMail($p_solic,$p_tipo) {
     if(f($RSM,'st_sol')=='S') {
       // Recupera o e-mail do responsável
       $RS = db_getPersonData::getInstanceOf($dbms,$w_cliente,f($RSM,'solicitante'),null,null);
-      if ((strpos($w_destinatarios,f($RS,'email').'; ')===false)) $w_destinatarios=$w_destinatarios.f($RS,'email').'; '; 
+      $w_destinatarios .= f($RS,'email').'|'.f($RS,'nome').'; ';
     }
     // Recupera o e-mail do titular e do substituto pelo setor responsável
     $RS = db_getUorgResp::getInstanceOf($dbms,f($RSM,'sq_unidade'));
     foreach($RS as $row){$RS=$row; break;}
-    if (f($RS,'st_titular')=='S') {
-      if ((strpos($w_destinatarios,f($RS,'email_titular').'; ')===false) && Nvl(f($RS,'email_titular'),'nulo')!='nulo')       $w_destinatarios=$w_destinatarios.f($RS,'email_titular').'; ';
-    }
-    if (f($RS,'st_substituto')=='S') {
-      if ((strpos($w_destinatarios,f($RS,'email_substituto').'; ')===false) && Nvl(f($RS,'email_substituto'),'nulo')!='nulo') $w_destinatarios=$w_destinatarios.f($RS,'email_substituto').'; ';
-    }
+    if(f($RS,'st_titular')=='S')    $w_destinatarios .= f($RS,'email_titular').'|'.f($RS,'nm_titular').'; ';
+    if(f($RS,'st_substituto')=='S') $w_destinatarios .= f($RS,'email_substituto').'|'.f($RS,'nm_substituto').'; ';
     // Recuperar o e-mail dos interessados
     $RS = db_getSolicInter::getInstanceOf($dbms,$p_solic,null,'LISTA');
     foreach($RS as $row) {
-      if (f($row,'ativo')=='S') {
-        if ((strpos($w_destinatarios,f($row,'email').'; ')===false)    && Nvl(f($row,'email'),'nulo')!='nulo' && f($row,'envia_email') =='S')    $w_destinatarios=$w_destinatarios.f($row,'email').'; ';
-      }
+      if(f($row,'ativo')=='S' && f($row,'envia_email') =='S') $w_destinatarios .= f($row,'email').'|'.f($row,'nome').'; ';
     }
     // Recuperar o e-mail do titular e substituto das áreas envolvidas
     $RS = db_getSolicAreas::getInstanceOf($dbms,$p_solic,null,'LISTA');
     foreach($RS as $row) {
       $RS1 = db_getUorgResp::getInstanceOf($dbms,f($row,'sq_unidade'));
       foreach($RS1 as $row1){$RS1=$row1; break;}
-      if (f($RS,'st_titular')=='S') {
-        if ((strpos($w_destinatarios,f($RS1,'email_titular').'; ')===false)    && Nvl(f($RS1,'email_titular'),'nulo')!='nulo')    $w_destinatarios=$w_destinatarios.f($RS1,'email_titular').'; ';
-      }
-      if (f($RS,'st_substituto')=='S') {
-        if ((strpos($w_destinatarios,f($RS1,'email_substituto').'; ')===false) && Nvl(f($RS1,'email_substituto'),'nulo')!='nulo') $w_destinatarios=$w_destinatarios.f($RS1,'email_substituto').'; ';    
-      }
+      if(f($RS1,'st_titular')=='S')    $w_destinatarios .= f($RS1,'email_titular').'|'.f($RS1,'nm_titular').'; ';
+      if(f($RS1,'st_substituto')=='S') $w_destinatarios .= f($RS1,'email_substituto').'|'.f($RS1,'nm_substituto').'; ';    
     }    
     // Prepara os dados necessários ao envio
-    $RS = db_getCustomerData::getInstanceOf($dbms,$_SESSION['w_cliente']);
     if ($p_tipo==1 || $p_tipo==3) {
       // Inclusão ou Conclusão
       if ($p_tipo==1) $w_assunto = 'Inclusão - '.$w_nome;  else $w_assunto = 'Conclusão - '.$w_nome;

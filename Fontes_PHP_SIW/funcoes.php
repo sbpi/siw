@@ -1498,9 +1498,8 @@ function EnviaMail($w_subject,$w_mensagem,$w_recipients,$w_attachments = null) {
   include_once($w_dir_volta.'classes/mail/smtp.php');
   include_once($w_dir_volta.'classes/sp/db_getCustomerData.php');
 
-
+  // Recupera informações para configurar o remetente da mensagem e o serviço de entrega
   $RS_Cliente = db_getCustomerData::getInstanceOf($dbms, $_SESSION['P_CLIENTE']);
-
 
   $subject                  = $w_subject;
   $from_name                = $conSgSistema;
@@ -1545,22 +1544,41 @@ function EnviaMail($w_subject,$w_mensagem,$w_recipients,$w_attachments = null) {
 
   if (strpos($w_recipients,';')===false) $w_recipients .= ';';
   $l_recipients = explode(';',$w_recipients);
-  $l_cont = -1;
+  $l_cont = 0;
   foreach($l_recipients as $k => $v) { 
     if (nvl($v,'')!='') {
-      if ($l_cont<0) {
-        $email_message->SetEncodedEmailHeader("To",trim($v),trim($v));
-        $l_cont = 1;
+      if (strpos($v,'|')!==false) {
+        $rec = explode('|',$v);
+        $rec_address = trim($rec[0]);
+        $rec_name    = trim($rec[1]);
       } else {
-        $l_dest[trim($v)] = trim($v); 
+        $rec_address = trim($v);
+        $rec_name    = trim($v);
+      }
+      // Efvita a repetição de nomes
+      if (count($l_dest[$rec_address])==0) {
+        $l_dest[$rec_address] = $rec_name; 
+        $l_cont++;
       }
     }
   }
+  $i = 0;
   if (is_array($l_dest)) {
-    if (count($l_dest)==1) {
-      $email_message->SetEncodedEmailHeader("Cc",trim($l_dest[0]),trim($l_dest[0]));
-    } else {
-      $email_message->SetMultipleEncodedEmailHeader("Cc",$l_dest);
+    foreach($l_dest as $k => $v) { 
+      if ($i==0) {
+        // O primeiro destinatário será colocado como "To"
+        $email_message->SetEncodedEmailHeader("To",$k,$v);
+        unset($l_dest[$k]);
+      } elseif ($i==1 && $l_cont==2) {
+        // Se só tiver mais um destinatário, coloca header único
+        $email_message->SetEncodedEmailHeader("Cc",$k,$v);
+        break;
+      } else {
+        // Se tiver mais um destinatário, além do principal, coloca headers múltiplos
+        $email_message->SetMultipleEncodedEmailHeader("Cc",$l_dest);
+        break;
+      }
+      $i++;
     }
   }
   $email_message->SetEncodedEmailHeader('From',$from_address,$from_name);

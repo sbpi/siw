@@ -416,7 +416,7 @@ function Inicial() {
                   ShowHTML('          <A class="hl" HREF="'.$w_dir.$w_pagina.'Excluir&R='.$w_pagina.$par.'&O=E&w_chave='.f($row,'sq_siw_solicitacao').'&w_tipo=Volta&P1='.$P1.'&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP='.$TP.'&SG='.$SG.MontaFiltro('GET').'" title="Exclusão do lançamento.">EX</A>&nbsp');
                   ShowHTML('          <A class="hl" HREF="javascript:location.href=this.location.href;" onClick="window.open(\''.montaURL_JS(null,$conRootSIW.$w_dir.$w_pagina.'OutraParte&R='.$w_pagina.$par.'&O=A&w_menu='.$w_menu.'&w_chave='.f($row,'sq_siw_solicitacao').'&P1='.$P1.'&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP='.$TP.' - Pessoa'.'&SG='.substr($SG,0,3).'OUTRAP').'\',\'Pessoa\',\'toolbar=no,width=780,height=530,top=30,left=10,scrollbars=yes\');" title="Informa dados da pessoa associada ao lançamento.">Pessoa</A>&nbsp');
                   if (!(strpos($SG,'FNR')===false)) {
-                    $l_rs_rubrica = db_getsolicRubrica::getInstanceOf($dbms,f($row,'sq_solic_pai'),null,null,null,null,null);
+                    $l_rs_rubrica = db_getsolicRubrica::getInstanceOf($dbms,f($row,'sq_solic_pai'),null,null,null,null,null,null);
                     if (count($l_rs_rubrica)>0) ShowHTML('          <A class="hl" HREF="javascript:location.href=this.location.href;" onClick="window.open(\''.montaURL_JS(null,$conRootSIW.$w_dir.$w_pagina.'RubricaDoc&R='.$w_pagina.$par.'&O=L&w_menu='.$w_menu.'&w_chave='.f($row,'sq_siw_solicitacao').'&P1='.$P1.'&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP='.$TP.' - Docs'.'&SG=RUBRICADOC').'\',\'Pessoa\',\'toolbar=no,width=780,height=530,top=30,left=10,scrollbars=yes\');" title="Informa documentos e comprovantes associados ao lançamento.">Docs</A>&nbsp');
                     else              ShowHTML('          <A class="hl" HREF="javascript:location.href=this.location.href;" onClick="window.open(\''.montaURL_JS(null,$conRootSIW.$w_dir.$w_pagina.'Documento&R='.$w_pagina.$par.'&O=L&w_menu='.$w_menu.'&w_chave='.f($row,'sq_siw_solicitacao').'&P1='.$P1.'&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP='.$TP.' - Docs'.'&SG=DOCUMENTO').'\',\'Pessoa\',\'toolbar=no,width=780,height=530,top=30,left=10,scrollbars=yes\');" title="Informa documentos e comprovantes associados ao lançamento.">Docs</A>&nbsp');
                   } else {
@@ -433,7 +433,7 @@ function Inicial() {
                   if (Nvl(f($l_rs_tramite,'sigla'),'---')=='EE') {
                     ShowHTML('          <A class="hl" HREF="javascript:location.href=this.location.href;" onClick="window.open(\''.montaURL_JS(null,$conRootSIW.$w_dir.$w_pagina.'OutraParte&R='.$w_pagina.$par.'&O=A&w_menu='.$w_menu.'&w_chave='.f($row,'sq_siw_solicitacao').'&P1='.$P1.'&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP='.$TP.' - Pessoa'.'&SG='.substr($SG,0,3).'OUTRAP').'\',\'Pessoa\',\'toolbar=no,width=780,height=530,top=30,left=10,scrollbars=yes\');" title="Informa dados da pessoa associada ao lançamento.">Pessoa</A>&nbsp');
                     if (!(strpos($SG,'FNR')===false)) {
-                      $l_rs_rubrica = db_getsolicRubrica::getInstanceOf($dbms,f($row,'sq_solic_pai'),null,null,null,null,null);
+                      $l_rs_rubrica = db_getsolicRubrica::getInstanceOf($dbms,f($row,'sq_solic_pai'),null,null,null,null,null,null);
                       if (count($l_rs_rubrica)>0) ShowHTML('          <A class="hl" HREF="javascript:location.href=this.location.href;" onClick="window.open(\''.montaURL_JS(null,$conRootSIW.$w_dir.$w_pagina.'RubricaDoc&R='.$w_pagina.$par.'&O=L&w_menu='.$w_menu.'&w_chave='.f($row,'sq_siw_solicitacao').'&P1='.$P1.'&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP='.$TP.' - Docs'.'&SG=RUBRICADOC').'\',\'Pessoa\',\'toolbar=no,width=780,height=530,top=30,left=10,scrollbars=yes\');" title="Informa documentos e comprovantes associados ao lançamento.">Docs</A>&nbsp');
                       else              ShowHTML('          <A class="hl" HREF="javascript:location.href=this.location.href;" onClick="window.open(\''.montaURL_JS(null,$conRootSIW.$w_dir.$w_pagina.'Documento&R='.$w_pagina.$par.'&O=L&w_menu='.$w_menu.'&w_chave='.f($row,'sq_siw_solicitacao').'&P1='.$P1.'&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP='.$TP.' - Docs'.'&SG=DOCUMENTO').'\',\'Pessoa\',\'toolbar=no,width=780,height=530,top=30,left=10,scrollbars=yes\');" title="Informa documentos e comprovantes associados ao lançamento.">Docs</A>&nbsp');
                     } else {
@@ -848,7 +848,7 @@ function Geral() {
         $RS = db_getLinkData::getInstanceOf($dbms,$w_cliente,'PJCAD');
         SelecaoProjeto('Pr<u>o</u>jeto:','P','Selecione o projeto ao qual o lançamento está vinculado.',$w_chave_pai,$w_usuario,f($RS,'sq_menu'),null,null,null,'w_chave_pai','PJLISTCAD','onChange="document.Form.action=\''.$w_dir.$w_pagina.$par.'\'; document.Form.O.value=\''.$O.'\'; document.Form.w_troca.value=\'w_chave_pai\'; document.Form.submit();"');
         if ($w_chave_pai >'') {
-          $RS = db_getSolicRubrica::getInstanceOf($dbms,$w_chave_pai,null,null,null,null,null);
+          $RS = db_getSolicRubrica::getInstanceOf($dbms,$w_chave_pai,null,null,null,null,null,null);
           if (count($RS)>0) {
             if (substr($SG,0,3)=='FNR') {
               $RS2 = db_getLancamentoDoc::getInstanceOf($dbms,nvl($w_chave,0),null,'DOCS');
@@ -1826,10 +1826,10 @@ function RubricaDoc() {
     ShowHTML('</tr>');
   } elseif (!(strpos('IAEV',$O)===false)) {
     if (!(strpos('EV',$O)===false)) $w_Disabled=' DISABLED ';
-    if((f($RS1,'tipo_rubrica')==1) || (f($RS1,'tipo_rubrica')==4))  $RS = db_getsolicRubrica::getInstanceOf($dbms,f($RS1,'sq_solic_pai'),null,'S',null,'N',null);
-    elseif(f($RS1,'tipo_rubrica')==2)   $RS = db_getsolicRubrica::getInstanceOf($dbms,f($RS1,'sq_solic_pai'),null,'S',null,null,null);
-    elseif(f($RS1,'tipo_rubrica')==3)   $RS = db_getsolicRubrica::getInstanceOf($dbms,f($RS1,'sq_solic_pai'),null,'S',null,'S',null);  
-    else                                $RS = db_getsolicRubrica::getInstanceOf($dbms,f($RS1,'sq_solic_pai'),null,'S',null,null,null);
+    if((f($RS1,'tipo_rubrica')==1) || (f($RS1,'tipo_rubrica')==4))  $RS = db_getsolicRubrica::getInstanceOf($dbms,f($RS1,'sq_solic_pai'),null,'S',null,null,'N',null);
+    elseif(f($RS1,'tipo_rubrica')==2)   $RS = db_getsolicRubrica::getInstanceOf($dbms,f($RS1,'sq_solic_pai'),null,'S',null,null,null,null);
+    elseif(f($RS1,'tipo_rubrica')==3)   $RS = db_getsolicRubrica::getInstanceOf($dbms,f($RS1,'sq_solic_pai'),null,'S',null,null,'S',null);  
+    else                                $RS = db_getsolicRubrica::getInstanceOf($dbms,f($RS1,'sq_solic_pai'),null,'S',null,null,null,null);
     $RS = SortArray($RS,'codigo','asc');
     //Rotina de escolha e gravação das parcelas para o lançamento
     AbreForm('Form',$w_dir.$w_pagina.'Grava','POST','return(Validacao(this));',null,$P1,$P2,$P3,$P4,$TP,$SG,$R,$O);
@@ -3043,7 +3043,7 @@ function FichaRubrica() {
   extract($GLOBALS);
   $w_sq_projeto_rubrica  = $_REQUEST['w_sq_projeto_rubrica'];
   // Recupera os dados do lançamento
-  $RS = db_getSolicRubrica::getInstanceOf($dbms,null,$w_sq_projeto_rubrica,null,null,null,'FICHA');
+  $RS = db_getSolicRubrica::getInstanceOf($dbms,null,$w_sq_projeto_rubrica,null,null,null,null,'FICHA');
   foreach($RS as $row){$RS=$row; break;}
   Cabecalho();
   ShowHTML('<HEAD>');
@@ -3066,7 +3066,7 @@ function FichaRubrica() {
     ShowHTML('  <tr><td colspan="2"><font size="2">Rubrica: <b>'.f($RS,'codigo_rubrica').' - '.f($RS,'nm_rubrica').'</b></font></td>');
     ShowHTML('  <tr><td colspan="2"><font size="2">Classificação: <b>'.f($RS,'nm_cc').'</b></font></td>');
     ShowHTML('  <tr><td colspan="2">&nbsp</td></tr>');
-    $RS = db_getSolicRubrica::getInstanceOf($dbms,null,$w_sq_projeto_rubrica,null,null,null,'FICHA');
+    $RS = db_getSolicRubrica::getInstanceOf($dbms,null,$w_sq_projeto_rubrica,null,null,null,null,'FICHA');
     $RS = SortArray($RS,'phpdt_vencimento','desc','sq_lancamento','desc');
     ShowHTML('  <tr><td><a accesskey="F" class="ss" href="javascript:window.close(); opener.location.reload(); opener.focus();"><u>F</u>echar</a>&nbsp;');
     ShowHTML('      <td align="right"><b>Registros existentes: '.count($RS));
@@ -3216,22 +3216,14 @@ function SolicMail($p_solic,$p_tipo) {
           if (f($row,'sq_pessoa_destinatario')>'') {
             // Configura os destinatários da mensagem
             $RS1 = db_getPersonData::getInstanceOf($dbms,$w_cliente,f($row,'sq_pessoa_destinatario'),null,null);
-            if (!(strpos($w_destinatarios,f($RS1,'email').'; ')===false) && Nvl(f($RS1,'email'),'nulo')!='nulo')
-              $w_destinatarios .= f($RS1,'email').'; ';
-          } 
+            $w_destinatarios .= f($RS1,'email').'|'.f($RS1,'nome').'; ';          } 
         } 
       } else {
         // Caso contrário envia para o responsável pelo projeto 
         $RS = db_getUorgResp::getInstanceOf($dbms,f($RSM,'sq_unidade'));
         foreach($RS as $row){$RS=$row; break;}
-        if(f($RS,'st_titular')=='S') {
-          if (!(strpos($w_destinatarios,f($RS,'email_titular').'; ')===false) && Nvl(f($RS,'email_titular'),'nulo')!='nulo')
-            $w_destinatarios .= f($RS,'email_titular').';    ';
-        }
-        if(f($RS,'st_substituto')=='S') {
-          if (!(strpos($w_destinatarios,f($RS,'email_substituto').'; ')===false) && Nvl(f($RS,'email_substituto'),'nulo')!='nulo')
-            $w_destinatarios .= f($RS,'email_substituto').'; ';
-        }
+        if(f($RS,'st_titular')=='S')    $w_destinatarios .= f($RS,'email_titular').'|'.f($RS,'nm_titular').'; ';
+        if(f($RS,'st_substituto')=='S') $w_destinatarios .= f($RS,'email_substituto').'|'.f($RS,'nm_substituto').'; ';
       }
     }
     //Recupera o último log
@@ -3247,11 +3239,9 @@ function SolicMail($p_solic,$p_tipo) {
       $w_html.=$crlf.'          <td>Para:<br><b>'.f($RS,'destinatario').'</b></td>';
       $w_html.=$crlf.'          <tr valign="top"><td colspan=2>Despacho:<br><b>'.CRLF2BR(Nvl(f($RS,'despacho'),'---')).' </b></td>';
       $w_html.=$crlf.'          </table>';
-      if(f($RS,'st_sol')=='S') {
-        // Configura o destinatário da tramitação como destinatário da mensagem
-        $RS = db_getPersonData::getInstanceOf($dbms,$w_cliente,f($RS,'sq_pessoa_destinatario'),null,null);
-        $w_destinatarios = f($RS,'email').'; ';      
-      }
+      // Configura o destinatário da tramitação como destinatário da mensagem
+      $RS = db_getPersonData::getInstanceOf($dbms,$w_cliente,f($RS,'sq_pessoa_destinatario'),null,null);
+      $w_destinatarios .= f($RS,'email').'|'.f($RS,'nome').'; ';
     } 
     $w_html.=$crlf.'      <tr><td align="center" bgcolor="#D0D0D0" style="border: 2px solid rgb(0,0,0);"><b>OUTRAS INFORMAÇÕES</td>';
     $RS = db_getCustomerSite::getInstanceOf($dbms,$w_cliente);
@@ -3273,7 +3263,6 @@ function SolicMail($p_solic,$p_tipo) {
     $w_html.='</BODY>'.$crlf;
     $w_html.='</HTML>'.$crlf;
     // Prepara os dados necessários ao envio
-    $RS = db_getCustomerData::getInstanceOf($dbms,$w_cliente);
     if ($p_tipo==1 || $p_tipo==3) {
       // Inclusão ou Conclusão
       if ($p_tipo==1) {

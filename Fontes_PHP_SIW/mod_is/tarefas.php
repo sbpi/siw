@@ -1671,7 +1671,7 @@ function SolicMail($p_solic,$p_tipo) {
       $w_html.=$crlf.'          </table>';
       // Configura o destinatário da tramitação como destinatário da mensagem
       $RS = db_getPersonData::getInstanceof($dbms,$w_cliente,f($RS,'sq_pessoa_destinatario'),null,null);
-      $w_destinatarios=f($RS,'email').'; ';
+      $w_destinatarios = f($RS,'email').'|'.f($RS,'nome').'; ';
     } 
     $w_html.=$crlf.'      <tr><td valign="top" colspan="2" align="center" bgcolor="#D0D0D0" style="border: 2px solid rgb(0,0,0);"><font size="1"><b>OUTRAS INFORMAÇÕES</td>';
     $RS = db_getCustomerSite::getInstanceOf($dbms,$w_cliente);
@@ -1694,17 +1694,13 @@ function SolicMail($p_solic,$p_tipo) {
     // Recupera o e-mail do responsável
     if(f($RSM,'st_sol')=='S') {
       $RS = db_getPersonData::getInstanceof($dbms,$w_cliente,f($RSM,'solicitante'),null,null);
-      if ((strpos($w_destinatarios,f($RS,'email').'; ') ? strpos($w_destinatarios,f($RS,'email').'; ')+1 : 0)==0) $w_destinatarios=$w_destinatarios.f($RS,'email').'; ';
+      $w_destinatarios .= f($RS,'email').'|'.f($RS,'nome').'; ';
     }
     // Recupera o e-mail do titular e do substituto pelo setor responsável
     $RS = db_getUorgResp::getInstanceof($dbms,f($RSM,'sq_unidade'));
     foreach ($RS as $row){$RS=$row; break;}
-    if(f($RSM,'st_titular')=='S') {
-      if ((strpos($w_destinatarios,f($RS,'email_titular').'; ') ? strpos($w_destinatarios,f($RS,'email_titular').'; ')+1 : 0)==0 && Nvl(f($RS,'email_titular'),'nulo')!='nulo') $w_destinatarios=$w_destinatarios.f($RS,'email_titular').'; ';
-    }
-    if(f($RSM,'st_substituto')=='S') {
-      if ((strpos($w_destinatarios,f($RS,'email_substituto').'; ') ? strpos($w_destinatarios,f($RS,'email_substituto').'; ')+1 : 0)==0 && Nvl(f($RS,'email_substituto'),'nulo')!='nulo') $w_destinatarios=$w_destinatarios.f($RS,'email_substituto').'; ';
-    }
+    if(f($RS,'st_titular')=='S')    $w_destinatarios .= f($RS,'email_titular').'|'.f($RS,'nm_titular').'; ';
+    if(f($RS,'st_substituto')=='S') $w_destinatarios .= f($RS,'email_substituto').'|'.f($RS,'nm_substituto').'; ';
     // Prepara os dados necessários ao envio
     if ($p_tipo==1 || $p_tipo==3) {
       // Inclusão ou Conclusão

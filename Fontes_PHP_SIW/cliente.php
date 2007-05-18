@@ -1785,6 +1785,7 @@ function Grava() {
               if (!(file_exists(DiretorioCliente($_REQUEST['w_sq_pessoa'])))) {
                 mkdir(DiretorioCliente($_REQUEST['w_sq_pessoa']));
                 mkdir(DiretorioCliente($_REQUEST['w_sq_pessoa']).'/img');
+                mkdir(DiretorioCliente($_REQUEST['w_sq_pessoa']).'/mail_log');
               } 
 
               // Verifica se o tamanho das fotos está compatível com  o limite de 100KB. 

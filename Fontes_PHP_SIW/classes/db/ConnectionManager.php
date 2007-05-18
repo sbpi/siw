@@ -97,12 +97,12 @@ class Ora9ConnectionManager extends ConnectionManager {
 
    function doConnection() {
       $l_error_reporting = error_reporting(); //error_reporting(0);
-      if(!($this->conHandle = oci_new_connect($this->userName, $this->passWord, $this->hostName))) { 
 //echo 'LD_LIBRARY_PATH ==>'.getenv("LD_LIBRARY_PATH");
 //echo '<br>ORACLE_HOME ==>'.getenv("ORACLE_HOME");
 //echo '<BR>ORACLE_BASE ==>'.getenv("ORACLE_BASE");
 //echo '<BR>ORACLE_SID ==>'.getenv("ORACLE_SID");
 //echo '<BR>NLS_LANG==>'.getenv("NLS_LANG");
+      if(!($this->conHandle = oci_new_connect($this->userName, $this->passWord, $this->hostName))) { 
          error_reporting($l_error_reporting); TrataErro($sql, oci_error(), $params, __FILE__, __LINE__, __CLASS__); 
       } else {
         error_reporting($l_error_reporting); 

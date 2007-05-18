@@ -1406,6 +1406,7 @@ Fontes_PHP_SIW/gr_projeto.php -text
 Fontes_PHP_SIW/help.php -text
 Fontes_PHP_SIW/inputsql.html -text
 Fontes_PHP_SIW/jscript.php -text
+Fontes_PHP_SIW/mail_envio.php -text
 Fontes_PHP_SIW/menu.php -text
 Fontes_PHP_SIW/mod_ac/contratos.php -text
 Fontes_PHP_SIW/mod_ac/convenios.php -text
@@ -1513,6 +1514,7 @@ Fontes_PHP_SIW/pessoa.php -text
 Fontes_PHP_SIW/projeto.php -text
 Fontes_PHP_SIW/projetoativ.php -text
 Fontes_PHP_SIW/results.php -text
+Fontes_PHP_SIW/scripts/mail.sh -text
 Fontes_PHP_SIW/seguranca.php -text
 Fontes_PHP_SIW/seguranca1.php -text
 Fontes_PHP_SIW/tabela1.php -text

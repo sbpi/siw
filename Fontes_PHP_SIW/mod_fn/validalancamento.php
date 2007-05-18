@@ -104,7 +104,7 @@ function ValidaLancamento($p_cliente,$l_chave,$p_sg1,$p_sg2,$p_sg3,$p_sg4,$p_tra
   }
 
   if (nvl(f($l_rs_solic,'sq_projeto'),'')>'' && nvl(f($l_rs_solic,'tipo_rubrica'),'')<>1) {
-    $l_rs_rubrica = db_getSolicRubrica::getInstanceOf($dbms,f($l_rs_solic,'sq_projeto'),null,null,null,null,null);
+    $l_rs_rubrica = db_getSolicRubrica::getInstanceOf($dbms,f($l_rs_solic,'sq_projeto'),null,null,null,null,null,null);
     if (count($l_rs_rubrica)>0) {
       $l_rs_menu = db_getLinkData::getInstanceOf($dbms,$w_cliente,'FNREVENT');
       $l_rs_tipo = db_getLancamentoProjeto::getInstanceOf($dbms,f($l_rs_solic,'sq_projeto'),f($l_rs_menu,'sq_menu'),null);
