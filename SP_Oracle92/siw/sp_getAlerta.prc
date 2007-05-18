@@ -9,12 +9,16 @@ begin
    If p_restricao = 'SOLICGERAL' Then
       -- Verifica se o vínculo do usuário com a organização é interno ou externo
       open p_result for
-         select a.sq_pessoa, 
-                a1.nome_resumido as nm_usuario, a1.sq_pessoa as usuario,
+         select a.sq_pessoa as cliente, 
+                a1.nome as nm_usuario, a1.sq_pessoa as usuario,
                 a2.email,
+                a3.sq_tipo_vinculo, a3.interno as vinc_interno, a3.contratado as vinc_contratado, 
+                a3.envia_mail_tramite vinc_mail_tramite, a3.envia_mail_alerta as vinc_mail_alerta,
                 c.sq_modulo, c.sigla as sg_modulo, c.nome as nm_modulo,
                 d.sq_menu, d.nome as nm_servico, d.sigla as sg_servico,
                 d1.nome as nm_unid_executora,
+                coalesce(d2.link, replace(d.link,'inicial','visual')) as link, coalesce(d2.sigla, d.sigla) as sigla, 
+                coalesce(d2.p1, d.p1) as p1, coalesce(d2.p2, d.p2) as p1, coalesce(d2.p3, d.p3) as p1, coalesce(d2.p4, d.p4) as p4,
                 e.sigla as sg_tramite, case when (c.sigla = 'SR' and e.sigla='AT') then 'Aguardando opinião' else e.nome end as nm_tramite, 
                 f.sq_siw_solicitacao, f.inicio, f.fim, f.solicitante,
                 f1.acesso, 
@@ -77,10 +81,14 @@ begin
                 left            join pd_parametro       w  on (a.sq_pessoa          = w.cliente)
                 inner           join co_pessoa          a1 on (a.sq_pessoa          = a1.sq_pessoa_pai and a1.nome_resumido_ind <> 'SBPI SUPORTE')
                   inner         join sg_autenticacao    a2 on (a1.sq_pessoa         = a2.sq_pessoa and a2.ativo = 'S')
+                  inner         join co_tipo_vinculo    a3 on (a1.sq_tipo_vinculo   = a3.sq_tipo_vinculo)
                 inner           join siw_menu           d  on (a.sq_pessoa          = d.sq_pessoa and
                                                                d.tramite            = 'S'
                                                               )
                   inner         join eo_unidade         d1 on (d.sq_unid_executora  = d1.sq_unidade)
+                  left          join siw_menu           d2 on (d.sq_menu            = d2.sq_menu_pai and
+                                                               d2.sigla             like '%VISUAL'
+                                                              )
                   inner         join siw_modulo         c  on (d.sq_modulo          = c.sq_modulo)
                     inner       join siw_cliente_modulo c1 on (c.sq_modulo          = c1.sq_modulo and
                                                                a.sq_pessoa          = c1.sq_pessoa
@@ -121,27 +129,31 @@ begin
                         left    join co_pessoa          l1 on (l.sq_pessoa          = l1.sq_pessoa)
                         left    join sg_autenticacao    l2 on (l1.sq_pessoa         = l2.sq_pessoa)
                           left  join eo_unidade         l3 on (l2.sq_unidade        = l3.sq_unidade)
-          where ((p_cliente         is null and a.envia_mail_alerta = coalesce(p_mail,'S')) or (p_cliente is not null and a.sq_pessoa = p_cliente))
-            and (p_usuario          is null or (p_usuario is not null and a1.sq_pessoa = p_usuario))
-            and f1.acesso           > 1
-            and ((c.sigla           = 'PR' and g.sq_siw_solicitacao is not null and (f.fim < trunc(sysdate) or (g.aviso_prox_conc = 'S' and ((f.fim-g.dias_aviso)<=sysdate)))) or
-                 (c.sigla           = 'PR' and h.sq_siw_solicitacao is not null and (f.fim < trunc(sysdate) or (h.aviso_prox_conc = 'S' and ((f.fim-h.dias_aviso)<=sysdate)))) or
-                 (c.sigla           = 'DM' and h.sq_siw_solicitacao is not null and (f.fim < trunc(sysdate) or (h.aviso_prox_conc = 'S' and ((f.fim-h.dias_aviso)<=sysdate)))) or
-                 (c.sigla           = 'AC' and i.sq_siw_solicitacao is not null and (f.fim < trunc(sysdate) or (i.aviso_prox_conc = 'S' and ((f.fim-i.dias_aviso)<=sysdate)))) or
-                 (c.sigla           = 'FN' and j.sq_siw_solicitacao is not null and (f.fim < trunc(sysdate) or (j.aviso_prox_conc = 'S' and ((f.fim-j.dias_aviso)<=sysdate)))) or
-                 (c.sigla           = 'PE' and k.sq_siw_solicitacao is not null and (f.fim < trunc(sysdate) or (k.aviso_prox_conc = 'S' and ((f.fim-k.dias_aviso)<=sysdate)))) or
-                 (c.sigla           = 'PD' and l.sq_siw_solicitacao is not null and l.prestou_contas  = 'N' and (f.fim+coalesce(w.dias_prestacao_contas,0))<=sysdate) or
-                 (c.sigla           = 'SR' and f.fim < trunc(sysdate))
+          where ((p_cliente  is null and a.envia_mail_alerta = coalesce(p_mail,'S')) or (p_cliente is not null and a.sq_pessoa = p_cliente))
+            and (p_usuario   is null or (p_usuario is not null and a1.sq_pessoa = p_usuario))
+            and f1.acesso    > 1
+            and ((c.sigla    = 'PR' and g.sq_siw_solicitacao is not null and (f.fim < trunc(sysdate) or (g.aviso_prox_conc = 'S' and ((f.fim-g.dias_aviso)<=sysdate)))) or
+                 (c.sigla    = 'PR' and h.sq_siw_solicitacao is not null and (f.fim < trunc(sysdate) or (h.aviso_prox_conc = 'S' and ((f.fim-h.dias_aviso)<=sysdate)))) or
+                 (c.sigla    = 'DM' and h.sq_siw_solicitacao is not null and (f.fim < trunc(sysdate) or (h.aviso_prox_conc = 'S' and ((f.fim-h.dias_aviso)<=sysdate)))) or
+                 (c.sigla    = 'AC' and i.sq_siw_solicitacao is not null and (f.fim < trunc(sysdate) or (i.aviso_prox_conc = 'S' and ((f.fim-i.dias_aviso)<=sysdate)))) or
+                 (c.sigla    = 'FN' and j.sq_siw_solicitacao is not null and (f.fim < trunc(sysdate) or (j.aviso_prox_conc = 'S' and ((f.fim-j.dias_aviso)<=sysdate)))) or
+                 (c.sigla    = 'PE' and k.sq_siw_solicitacao is not null and (f.fim < trunc(sysdate) or (k.aviso_prox_conc = 'S' and ((f.fim-k.dias_aviso)<=sysdate)))) or
+                 (c.sigla    = 'PD' and l.sq_siw_solicitacao is not null and l.prestou_contas  = 'N' and (f.fim+coalesce(w.dias_prestacao_contas,0))<=sysdate) or
+                 (c.sigla    = 'SR' and f.fim < trunc(sysdate))
                 );
    Elsif p_restricao = 'PACOTE' Then
       -- Recupera a lista de solicitações da mesa de trabalho do usuário
       open p_result for
-         select a.sq_pessoa, 
+         select a.sq_pessoa as cliente, 
                 a1.nome as nm_usuario, a1.sq_pessoa as usuario,
                 a2.email,
+                a3.sq_tipo_vinculo, a3.interno as vinc_interno, a3.contratado as vinc_contratado, 
+                a3.envia_mail_tramite vinc_mail_tramite, a3.envia_mail_alerta as vinc_mail_alerta,
                 c.sigla as sg_modulo, c.nome as nm_modulo,
                 d.nome as nm_servico, 
                 d1.nome as nm_unid_executora,
+                coalesce(d2.link, replace(d.link,'inicial','visual')) as link, coalesce(d2.sigla, d.sigla) as sigla, 
+                coalesce(d2.p1, d.p1) as p1, coalesce(d2.p2, d.p2) as p1, coalesce(d2.p3, d.p3) as p1, coalesce(d2.p4, d.p4) as p4,
                 e.nome as nm_tramite,
                 f.sq_siw_solicitacao, f.fim, f.solicitante, f.executor,
                 g.titulo as nm_projeto,
@@ -160,10 +172,14 @@ begin
                 left                  join pd_parametro       w  on (a.sq_pessoa          = w.cliente)
                 inner                 join co_pessoa          a1 on (a.sq_pessoa          = a1.sq_pessoa_pai and a1.nome_resumido_ind <> 'SBPI SUPORTE')
                   inner               join sg_autenticacao    a2 on (a1.sq_pessoa         = a2.sq_pessoa and a2.ativo = 'S')
+                  inner         join co_tipo_vinculo          a3 on (a1.sq_tipo_vinculo   = a3.sq_tipo_vinculo)
                 inner                 join siw_menu           d  on (a.sq_pessoa          = d.sq_pessoa and
                                                                      d.tramite            = 'S'
                                                                     )
                   inner               join eo_unidade         d1 on (d.sq_unid_executora  = d1.sq_unidade)
+                  left                join siw_menu           d2 on (d.sq_menu            = d2.sq_menu_pai and
+                                                                     d2.sigla             like '%VISUAL'
+                                                                    )
                   inner               join siw_modulo         c  on (d.sq_modulo          = c.sq_modulo)
                     inner             join siw_cliente_modulo c1 on (c.sq_modulo          = c1.sq_modulo and
                                                                      a.sq_pessoa          = c1.sq_pessoa
