@@ -32,7 +32,7 @@ begin
                 nvl(h.qt_ativ,0) qt_ativ, h.sq_menu p2,
                 m.vincula_contrato pj_vincula_contrato, nvl(n.qt_contr,0) , n.sq_menu p3,
                 SolicRestricao(a.sq_siw_solicitacao, a.sq_projeto_etapa) as restricao,
-                e.email, e.ativo st_resp
+                e.email, e.ativo st_resp, d.nome nm_resp
            from pj_projeto_etapa                a
                 inner          join siw_solicitacao i on (a.sq_siw_solicitacao = i.sq_siw_solicitacao)
                   inner        join pj_projeto      m on (a.sq_siw_solicitacao = m.sq_siw_solicitacao)

@@ -42,6 +42,7 @@ begin
                 e.vinculada vinc_resp,e.adm_central adm_resp,        e.sq_unidade,
                 e1.sq_pessoa titular, e2.sq_pessoa substituto,
                 f.nome_resumido nm_sol, f.nome nm_sol_comp,
+                coalesce(f1.ativo,'N') st_sol,
                 g.sq_cc,              g.nome cc_nome,                g.sigla cc_sigla,
                 h.sq_pais,            h.sq_regiao,                   h.co_uf,
                 h.nome nm_cidade,
@@ -124,6 +125,7 @@ begin
                       left outer   join is_projeto           l  on (i.sq_isprojeto        = l.sq_isprojeto         and
                                                                     i.cliente             = l.cliente)
                   inner            join siw.co_pessoa        f  on (b.solicitante         = f.sq_pessoa)
+                    left           join siw.sg_autenticacao  f1 on (f.sq_pessoa           = f1.sq_pessoa)
                   inner            join siw.co_cidade        h  on (b.sq_cidade_origem    = h.sq_cidade)
                   left outer       join siw.ct_cc            g  on (b.sq_cc               = g.sq_cc)
                 left outer         join siw.eo_unidade       c  on (a.sq_unid_executora   = c.sq_unidade)
@@ -166,6 +168,7 @@ begin
                 e.vinculada vinc_resp,e.adm_central adm_resp,        e.sq_unidade,
                 e1.sq_pessoa titular, e2.sq_pessoa substituto,
                 f.nome_resumido nm_sol, f.nome nm_sol_comp,
+                coalesce(f1.ativo,'N') st_sol,
                 h.sq_pais,            h.sq_regiao,                   h.co_uf,
                 h.nome nm_cidade,     i.sq_unidade sq_unidade_adm,   i.potencialidades,
                 i.contribuicao_objetivo, i.diretriz,                 i.estrategia_monit,
@@ -229,6 +232,7 @@ begin
                                                                         i.cliente             = k.cliente
                                                                        )
                   inner            join siw.co_pessoa            f  on (b.solicitante         = f.sq_pessoa)
+                    left           join siw.sg_autenticacao      f1 on (f.sq_pessoa           = f1.sq_pessoa)
                   inner            join siw.co_cidade            h  on (b.sq_cidade_origem    = h.sq_cidade)
                 left outer         join siw.eo_unidade           c  on (a.sq_unid_executora   = c.sq_unidade)
           where b.sq_siw_solicitacao       = p_chave;
@@ -271,6 +275,7 @@ begin
                 e.vinculada vinc_resp,e.adm_central adm_resp,
                 e1.sq_pessoa titular, e2.sq_pessoa substituto,
                 f.nome_resumido nm_sol, f.nome nm_sol_comp,
+                coalesce(f1.ativo,'N') st_sol,
                 h.sq_pais,            h.sq_regiao,                   h.co_uf,
                 h.nome nm_cidade,
                 k.titulo nm_projeto,
@@ -307,6 +312,7 @@ begin
                                                                    e2.fim                     is null
                                                                   )
                   inner      join siw.co_pessoa             f  on (b.solicitante         = f.sq_pessoa)
+                    left     join siw.sg_autenticacao       f1 on (f.sq_pessoa           = f1.sq_pessoa)
                   inner      join siw.co_cidade             h  on (b.sq_cidade_origem    = h.sq_cidade)
                 left outer   join siw.eo_unidade            c  on (a.sq_unid_executora   = c.sq_unidade)
                 left outer   join siw.pj_etapa_demanda      i  on (b.sq_siw_solicitacao  = i.sq_siw_solicitacao)

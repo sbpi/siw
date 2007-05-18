@@ -307,6 +307,7 @@ begin
                 m.titulo nm_projeto,
                 n.sq_cc,              n.nome nm_cc,                  n.sigla sg_cc,
                 o.nome_resumido nm_solic, o.nome_resumido||' ('||o2.sigla||')' nm_resp,
+                coalesce(o1.ativo,'N') as st_sol,
                 p.nome_resumido nm_exec,
                 i.sq_projeto_etapa,   i1.titulo nm_etapa,
                 nvl(m1.qtd_rubrica,0) qtd_rubrica
@@ -568,6 +569,7 @@ begin
                 d1.numero_conta,      d1.operacao_conta,
                 d1.valor_passagem,
                 d2.nome nm_prop,      d2.nome_resumido nm_prop_res,
+                coalesce(d21.ativo,'N') st_prop,
                 d3.sq_tipo_vinculo,   d3.nome nm_tipo_vinculo,
                 d4.sexo,              d4.cpf,
                 d6.sq_agencia,        d6.codigo cd_agencia,          d6.nome nm_agencia,
@@ -581,6 +583,7 @@ begin
                 e1.sq_pessoa titular, e2.sq_pessoa substituto,       e12.nome nm_titular,
                 f.sq_pais,            f.sq_regiao,                   f.co_uf,
                 o.nome_resumido nm_solic, o.nome_resumido||' ('||o2.sigla||')' nm_resp,
+                coalesce(o1.ativo,'N') st_sol,
                 p.nome_resumido nm_exec
            from siw_menu                                               a
                   inner                join eo_unidade                 a2 on (a.sq_unid_executora        = a2.sq_unidade)
@@ -597,6 +600,7 @@ begin
                     inner              join gd_demanda                 d  on (b.sq_siw_solicitacao       = d.sq_siw_solicitacao)
                       inner            join pd_missao                  d1 on (d.sq_siw_solicitacao       = d1.sq_siw_solicitacao)
                         inner          join co_pessoa                  d2 on (d1.sq_pessoa               = d2.sq_pessoa)
+                          left         join sg_autenticacao           d21 on (d2.sq_pessoa               = d21.sq_pessoa)
                           inner        join co_tipo_vinculo            d3 on (d2.sq_tipo_vinculo         = d3.sq_tipo_vinculo)
                           inner        join co_pessoa_fisica           d4 on (d2.sq_pessoa               = d4.sq_pessoa)
                             left       join gp_contrato_colaborador    d8 on (d4.cliente                 = d8.cliente      and
@@ -758,6 +762,7 @@ begin
                 f.sq_pais,            f.sq_regiao,                   f.co_uf,
                 n.sq_cc,              n.nome nm_cc,                  n.sigla sg_cc,
                 o.nome_resumido nm_solic, o.nome_resumido||' ('||o2.sigla||')' nm_resp,
+                coalesce(o1.ativo,'N') st_sol,
                 p.nome_resumido nm_exec
            from siw_menu                                       a 
                    inner        join eo_unidade                a2 on (a.sq_unid_executora        = a2.sq_unidade)
@@ -868,6 +873,7 @@ begin
                 f.sq_pais,            f.sq_regiao,                   f.co_uf,
                 n.sq_cc,              n.nome nm_cc,                  n.sigla sg_cc,
                 o.nome_resumido nm_solic, o.nome_resumido||' ('||o2.sigla||')' nm_resp,
+                coalesce(o1.ativo,'N') st_sol,
                 p.nome_resumido nm_exec,
                 q.nome as nm_unidade_posse,                          q.sigla as sg_unidade_posse,
                 q1.sq_pessoa titular,                                q2.sq_pessoa substituto,

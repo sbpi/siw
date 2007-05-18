@@ -9,7 +9,7 @@ begin
    -- Recupera os tipos de vinculos existentes
    open p_result for 
       select a.sq_tipo_vinculo, a.nome, a.padrao,
-             a.interno, a.contratado, 
+             a.interno, a.contratado, a.envia_mail_tramite, a.envia_mail_alerta,
              a.ativo, b.nome sq_tipo_pessoa
         from co_tipo_vinculo a, 
              co_tipo_pessoa  b
