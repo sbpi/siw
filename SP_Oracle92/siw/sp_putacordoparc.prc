@@ -63,11 +63,11 @@ begin
       End If;
       
       insert into ac_acordo_parcela
-        (sq_acordo_parcela,         sq_siw_solicitacao, ordem,              emissao,       vencimento,      observacao,        valor, 
-         inicio,                    fim,                sq_acordo_aditivo,  valor_inicial, valor_excedente, valor_reajuste)
+        (sq_acordo_parcela,         sq_siw_solicitacao, ordem,              emissao,               vencimento,              observacao,        valor, 
+         inicio,                    fim,                sq_acordo_aditivo,  valor_inicial,         valor_excedente,         valor_reajuste)
       values
-        (sq_acordo_parcela.nextval, p_chave,            p_ordem,            sysdate,       p_data,          p_observacao,      w_valor,
-         p_per_ini,                 p_per_fim,          p_aditivo,          w_inicial,     w_excedente,     w_reajuste);
+        (sq_acordo_parcela.nextval, p_chave,            p_ordem,            sysdate,               p_data,                  p_observacao,      w_valor,
+         p_per_ini,                 p_per_fim,          p_aditivo,          coalesce(w_inicial,0), coalesce(w_excedente,0), coalesce(w_reajuste,0));
    Elsif p_operacao = 'A' Then -- Alteração
       -- O valor de uma parcela de aditivo depende da soma do valor inicial mais reajuste mais excedentes
       If p_aditivo is not null Then
@@ -84,9 +84,9 @@ begin
          valor           = w_valor,
          inicio          = p_per_ini,
          fim             = p_per_fim,
-         valor_inicial   = w_inicial,
-         valor_excedente = w_excedente,
-         valor_reajuste  = w_reajuste
+         valor_inicial   = coalesce(w_inicial, valor_inicial),
+         valor_excedente = coalesce(w_excedente, valor_excedente),
+         valor_reajuste  = coalesce(w_reajuste, valor_reajuste)
       where sq_acordo_parcela = p_chave_aux;
    Elsif p_operacao = 'E' Then -- Exclusão
       If p_aditivo is not null Then
