@@ -278,7 +278,7 @@ begin
                 d.publicacao,         d.titulo,                      d.sq_lcmodalidade,
                 d.numero_certame,     d.numero_ata,                  d.tipo_reajuste,
                 d.indice_base,        d.sq_eoindicador,              d.limite_variacao,
-                d.sq_lcfonte_recurso, d.sq_especificacao_despesa,
+                d.sq_lcfonte_recurso, d.sq_especificacao_despesa,    d.financeiro_unico,
                 retornaAfericaoIndicador(d.sq_eoindicador,d.indice_base) as vl_indice_base,
                 retornaExcedenteContrato(d.sq_siw_solicitacao,b.fim) as limite_usado,
                 case d.tipo_reajuste when 0 then 'Não permite' when 1 then 'Com índice' else 'Sem índice' end nm_tipo_reajuste,
@@ -437,6 +437,7 @@ begin
                 d8.nome nm_tipo_pessoa,
                 coalesce(d9.valor,0) valor_nota,
                 coalesce(da.qtd,0) qtd_nota,
+                coalesce(db.existe,0) as notas_parcela,
                 b.fim-d.dias_aviso aviso,
                 e.sq_tipo_unidade,    e.nome nm_unidade_resp,        e.informal informal_resp,
                 e.vinculada vinc_resp,e.adm_central adm_resp,        e.sigla sg_unidade_resp,
@@ -444,6 +445,7 @@ begin
                 f.sq_pais,            f.sq_regiao,                   f.co_uf,
                 f.nome nm_cidade,
                 m.codigo_interno cd_acordo,
+                coalesce(m4.existe,0) as notas_acordo,
                 n.sq_cc,              n.nome nm_cc,                  n.sigla sg_cc,
                 o.nome_resumido nm_solic, o.nome_resumido||' ('||o2.sigla||')' nm_resp,
                 p.nome_resumido nm_exec,
@@ -486,6 +488,10 @@ begin
                                          where x.sq_acordo_nota is not null
                                         group by sq_siw_solicitacao
                                        )                    da on (d.sq_siw_solicitacao       = da.sq_siw_solicitacao)
+                     left outer   join (select x.sq_acordo_parcela, count(*) as existe
+                                          from ac_parcela_nota x
+                                        group by x.sq_acordo_parcela
+                                       )                    db on (d.sq_acordo_parcela        = db.sq_acordo_parcela)
                    inner          join eo_unidade           e  on (b.sq_unidade               = e.sq_unidade)
                      left         join eo_unidade_resp      e1 on (e.sq_unidade               = e1.sq_unidade and
                                                                    e1.tipo_respons            = 'T'           and
@@ -503,6 +509,10 @@ begin
                                           from pj_rubrica
                                         group by sq_siw_solicitacao
                                        )                    m3 on (m2.sq_siw_solicitacao      = m3.sq_siw_solicitacao)
+                     left outer   join (select x.sq_siw_solicitacao, count(*) as existe
+                                          from ac_acordo_nota x
+                                        group by x.sq_siw_solicitacao
+                                       )                    m4 on (m.sq_siw_solicitacao       = m4.sq_siw_solicitacao)
                    left           join pj_projeto           q  on (b.sq_solic_pai             = q.sq_siw_solicitacao)
                      left         join (select sq_siw_solicitacao, count(sq_projeto_rubrica) qtd_rubrica
                                           from pj_rubrica

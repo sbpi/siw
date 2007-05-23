@@ -12,7 +12,7 @@ begin
      End If;
   End If;
   
-  :new.valor_aditivo   := :new.valor_inicial   + :new.valor_reajuste     + :new.valor_acrescimo;
-  :new.parcela_aditivo := :new.parcela_inicial + :new.parcela_reajustada + :new.parcela_acrescida;
+  :new.valor_aditivo   := coalesce(:new.valor_inicial,0)   + coalesce(:new.valor_reajuste,0)     + coalesce(:new.valor_acrescimo,0);
+  :new.parcela_aditivo := coalesce(:new.parcela_inicial,0) + coalesce(:new.parcela_reajustada,0) + coalesce(:new.parcela_acrescida,0);
 end TG_AC_ACORDO_ADITIVO_IN_UP;
 /
