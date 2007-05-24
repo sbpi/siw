@@ -349,12 +349,12 @@ begin
                                          where x.acrescimo   = 'S'
                                             or x.supressao   = 'S'
                                         group by x.sq_siw_solicitacao
-                                       )                    d13 on (d.sq_siw_solicitacao       = d12.sq_siw_solicitacao)                                       
+                                       )                    d13 on (d.sq_siw_solicitacao       = d13.sq_siw_solicitacao)                                       
                      left         join (select x.sq_siw_solicitacao, count(x.sq_acordo_aditivo) as aditivo
                                           from ac_acordo_aditivo x
                                          where x.prorrogacao = 'S'
                                         group by x.sq_siw_solicitacao
-                                       )                    d14 on (d.sq_siw_solicitacao       = d12.sq_siw_solicitacao)
+                                       )                    d14 on (d.sq_siw_solicitacao       = d14.sq_siw_solicitacao)
                    inner          join eo_unidade           e  on (b.sq_unidade               = e.sq_unidade)
                      left         join eo_unidade_resp      e1 on (e.sq_unidade               = e1.sq_unidade and
                                                                    e1.tipo_respons            = 'T'           and
