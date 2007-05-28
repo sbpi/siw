@@ -106,7 +106,7 @@ begin
             left outer join sg_autenticacao     n on (a.sq_pessoa = n.sq_pessoa)
               left outer join eo_unidade        p on (n.sq_unidade = p.sq_unidade)
                 left outer join eo_unidade      q on (p.sq_unidade_pai = q.sq_unidade)
-      where (a.sq_pessoa_pai      = p_cliente or (a.sq_pessoa = p_cliente and Nvl(a.sq_pessoa_pai,1) = 1))
+      where (a.sq_pessoa_pai      = p_cliente or (a.sq_pessoa = p_cliente and a.sq_pessoa_pai is null))
         and (p_sq_pessoa          is null     or (p_sq_pessoa          is not null and a.sq_pessoa          = p_sq_pessoa))
         and (p_tipo_pessoa        is null     or (p_tipo_pessoa        is not null and a.sq_tipo_pessoa     = p_tipo_pessoa))
         and (p_nome               is null     or (p_nome               is not null and (a.nome_indice       like '%'||upper(acentos(p_nome))||'%' or 
