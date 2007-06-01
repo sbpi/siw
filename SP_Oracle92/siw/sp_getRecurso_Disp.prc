@@ -28,9 +28,9 @@ begin
                                                                           )
                             where x.cliente = p_cliente
                            group by x.sq_recurso
-                          )           c on (a.sq_recurso = b.sq_recurso)
+                          )           c on (a.sq_recurso = c.sq_recurso)
           where b.cliente            = p_cliente
-            and a.sq_recurso       = p_chave_pai
+            and a.sq_recurso         = p_chave_pai
             and (p_chave             is null or (p_chave is not null and a.sq_recurso_disponivel = p_chave))
             and (p_inicio            is null or (p_inicio is not null and (a.inicio    between p_inicio and p_fim or
                                                                            a.fim       between p_inicio and p_fim or

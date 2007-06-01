@@ -117,7 +117,7 @@ begin
       delete siw_menu_endereco where sq_menu = p_chave;
       
       -- Remove os atributos do serviço
-      delete siw_tramite_atrib where sq_siw_tramite = (select sq_siw_tramite from siw_tramite where sq_menu = p_chave);
+      delete siw_tramite_atrib where sq_siw_tramite in (select sq_siw_tramite from siw_tramite where sq_menu = p_chave);
       
       -- Remove os trâmites do serviço
       delete siw_tramite where sq_menu = p_chave;

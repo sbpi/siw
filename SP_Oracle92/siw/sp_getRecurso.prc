@@ -31,6 +31,8 @@ begin
                 coalesce(f.disponivel,0) disponivel,
                 acesso_recurso(a.sq_recurso, p_usuario) acesso
            from eo_recurso                        a
+                left      join co_pessoa          a1 on (a.sq_recurso          = a1.sq_recurso)
+                left      join sr_veiculo         a2 on (a.sq_recurso          = a2.sq_recurso)
                 inner     join eo_unidade         b  on (a.unidade_gestora     = b.sq_unidade)
                   inner   join co_pessoa_endereco b1 on (b.sq_pessoa_endereco  = b1.sq_pessoa_endereco)
                     inner join co_cidade          b2 on (b1.sq_cidade          = b2.sq_cidade)
@@ -67,6 +69,8 @@ begin
                                 group by y.sq_recurso
                                )                  g on (a.sq_recurso           = g.sq_recurso)
           where a.cliente        = p_cliente
+            and a1.sq_pessoa     is null
+            and a2.sq_veiculo    is null
             and ((p_chave        is null) or (p_chave        is not null and a.sq_recurso      = p_chave))
             and ((p_tipo_recurso is null) or (p_tipo_recurso is not null and a.sq_tipo_recurso = p_tipo_recurso))
             and ((p_codigo       is null) or (p_codigo       is not null and a.codigo            = p_codigo))
