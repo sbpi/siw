@@ -114,13 +114,14 @@ exit;
 // -------------------------------------------------------------------------
 function Rel_Executivo() {
   extract($GLOBALS);
-  $p_plano     = $_REQUEST['p_plano'];
-  $p_programa  = $_REQUEST['p_programa'];
-  $p_objetivo  = $_REQUEST['p_objetivo'];
-  $p_legenda   = $_REQUEST['p_legenda'];
-  $p_projeto   = $_REQUEST['p_projeto'];
-  $p_tipo      = $_REQUEST['p_tipo'];
-  $p_resumo    = $_REQUEST['p_resumo'];
+  $p_plano       = $_REQUEST['p_plano'];
+  $p_programa    = $_REQUEST['p_programa'];
+  $p_objetivo    = $_REQUEST['p_objetivo'];
+  $p_legenda     = $_REQUEST['p_legenda'];
+  $p_projeto     = $_REQUEST['p_projeto'];
+  $p_tipo        = $_REQUEST['p_tipo'];
+  $p_resumo      = $_REQUEST['p_resumo'];
+  $w_marca_bloco = $_REQUEST['w_marca_bloco'];
   if ($O=='L') {
     // Recupera o logo do cliente a ser usado nas listagens
     $RS = db_getCustomerData::getInstanceOf($dbms,$w_cliente);
@@ -323,6 +324,15 @@ function Rel_Executivo() {
     ShowHTML('<HEAD>');
     ShowHTML('<TITLE>Relatório executivo de programas</TITLE>');
     ScriptOpen('JavaScript');
+    ShowHTML('  function MarcaTodosBloco() {');
+    ShowHTML('    for (var i=0;i < document.Form.elements.length;i++) { ');
+    ShowHTML('      tipo = document.Form.elements[i].type.toLowerCase();');
+    ShowHTML('      if (tipo==\'checkbox\') {');
+    ShowHTML('        if (document.Form.w_marca_bloco.checked==true) document.Form.elements[i].checked=true; ');
+    ShowHTML('        else document.Form.elements[i].checked=false; ');
+    ShowHTML('      } ');
+    ShowHTML('    } ');
+    ShowHTML('  }');
     CheckBranco();
     FormataData();
     ValidateOpen('Validacao');
@@ -351,9 +361,10 @@ function Rel_Executivo() {
     ShowHTML('      <tr>');
     selecaoPrograma('P<u>r</u>ograma:', 'R', 'Se desejar, selecione um dos programas.', $p_programa, $p_plano, $p_objetivo, 'p_programa', null, null);
     ShowHTML('      <tr><td><b>Informações a serem exibidas:');
-    if ($p_legenda) ShowHTML('          <tr><td><INPUT type="CHECKBOX" name="p_legenda" value="S" checked> Legenda dos sinalizadores </td>'); else ShowHTML('          <tr><td><INPUT type="CHECKBOX" name="p_legenda" value="S"> Legenda dos sinalizadores </td>');
-    if ($p_projeto) ShowHTML('          <tr><td><INPUT type="CHECKBOX" name="p_projeto" value="S" checked> Relação de projetos </td>'); else ShowHTML('          <tr><td><INPUT type="CHECKBOX" name="p_projeto" value="S"> Relação de projetos </td>');
-    if ($p_resumo)  ShowHTML('          <tr><td><INPUT type="CHECKBOX" name="p_resumo" value="S" checked> Quadro resumo orçamentário</td>'); else ShowHTML('          <tr><td><INPUT type="CHECKBOX" name="p_resumo" value="S"> Quadro resumo orçamentário</td>');
+    if ($w_marca_bloco) ShowHTML('          <tr><td><INPUT type="CHECKBOX" name="w_marca_bloco" value="S" onClick="javascript:MarcaTodosBloco();" TITLE="Marca todos os itens da relação" checked> Todos</td>'); else ShowHTML('          <tr><td><INPUT type="CHECKBOX" name="w_marca_bloco" value="S" onClick="javascript:MarcaTodosBloco();" TITLE="Marca todos os itens da relação"> Todos</td>');
+    if ($p_legenda)     ShowHTML('          <tr><td><INPUT type="CHECKBOX" name="p_legenda" value="S" checked> Legenda dos sinalizadores </td>'); else ShowHTML('          <tr><td><INPUT type="CHECKBOX" name="p_legenda" value="S"> Legenda dos sinalizadores </td>');
+    if ($p_projeto)     ShowHTML('          <tr><td><INPUT type="CHECKBOX" name="p_projeto" value="S" checked> Relação de projetos </td>'); else ShowHTML('          <tr><td><INPUT type="CHECKBOX" name="p_projeto" value="S"> Relação de projetos </td>');
+    if ($p_resumo)      ShowHTML('          <tr><td><INPUT type="CHECKBOX" name="p_resumo" value="S" checked> Quadro resumo orçamentário</td>'); else ShowHTML('          <tr><td><INPUT type="CHECKBOX" name="p_resumo" value="S"> Quadro resumo orçamentário</td>');
     ShowHTML('    </table>');
     ShowHTML('    <table width="90%" border="0">');
     ShowHTML('      <tr><td align="center"><hr>');
@@ -379,14 +390,15 @@ function Rel_Executivo() {
 // -------------------------------------------------------------------------
 function Rel_Programas() {
   extract($GLOBALS);
-  $p_plano     = $_REQUEST['p_plano'];
-  $p_objetivo  = $_REQUEST['p_objetivo'];
-  $p_programa  = $_REQUEST['p_programa'];
-  $p_projeto   = $_REQUEST['p_projeto'];
-  $p_inicio    = $_REQUEST['p_inicio'];
-  $p_fim       = $_REQUEST['p_fim'];
-  $p_tipo      = $_REQUEST['p_tipo'];
-  $p_legenda   = $_REQUEST['p_legenda'];
+  $p_plano        = $_REQUEST['p_plano'];
+  $p_objetivo     = $_REQUEST['p_objetivo'];
+  $p_programa     = $_REQUEST['p_programa'];
+  $p_projeto      = $_REQUEST['p_projeto'];
+  $p_inicio       = $_REQUEST['p_inicio'];
+  $p_fim          = $_REQUEST['p_fim'];
+  $p_tipo         = $_REQUEST['p_tipo'];
+  $p_legenda      = $_REQUEST['p_legenda'];
+  $w_marca_bloco  = $_REQUEST['w_marca_bloco'];
 
   if ($O=='L') {
     // Recupera o logo do cliente a ser usado nas listagens
@@ -473,6 +485,15 @@ function Rel_Programas() {
     ShowHTML('<HEAD>');
     ShowHTML('<TITLE>Relatório de detalhamento de programas</TITLE>');
     ScriptOpen('JavaScript');
+    ShowHTML('  function MarcaTodosBloco() {');
+    ShowHTML('    for (var i=0;i < document.Form.elements.length;i++) { ');
+    ShowHTML('      tipo = document.Form.elements[i].type.toLowerCase();');
+    ShowHTML('      if (tipo==\'checkbox\' && document.Form.elements[i].name!=\'p_geral1\') {');
+    ShowHTML('        if (document.Form.w_marca_bloco.checked==true) document.Form.elements[i].checked=true; ');
+    ShowHTML('        else document.Form.elements[i].checked=false; ');
+    ShowHTML('      } ');
+    ShowHTML('    } ');
+    ShowHTML('  }');
     ShowHTML('  function marcaEtapa() {');
     ShowHTML('    if (document.Form.p_etapa.checked) {');
     ShowHTML('      document.Form.p_tr.disabled=false;');
@@ -557,6 +578,7 @@ function Rel_Programas() {
     selecaoPrograma('P<u>r</u>ograma:', 'R', 'Se desejar, selecione um dos programas.', $p_programa, $p_plano, $p_objetivo, 'p_programa', null, null);
     ShowHTML('      </table>');
     ShowHTML('      <tr><td colspan=2><b>Informações a serem exibidas:');
+    if ($w_marca_bloco) ShowHTML('          <tr><td colspan=2><INPUT type="CHECKBOX" name="w_marca_bloco" value="S" onClick="javascript:MarcaTodosBloco();" TITLE="Marca todos os itens da relação" checked> Todos</td>'); else ShowHTML('          <tr><td colspan=2><INPUT type="CHECKBOX" name="w_marca_bloco" value="S" onClick="javascript:MarcaTodosBloco();" TITLE="Marca todos os itens da relação"> Todos</td>');    
     //Recupera as informações do sub-menu
     $RS = db_getLinkSubMenu::getInstanceOf($dbms, $w_cliente, 'PEPROCAD');
     $RS = SortArray($RS,'ordem','asc'); 

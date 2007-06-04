@@ -91,7 +91,18 @@ function ValidaLancamento($p_cliente,$l_chave,$p_sg1,$p_sg2,$p_sg3,$p_sg4,$p_tra
     }
   }
 
-  // 3 - Se o lançamento tem notas, verifica se o valor do lançamento é igual à soma dos valores das notas
+  // 3 - Se o lançamento está ligado a acordo com nota, ele deve ter pelo menos uma nota e a parcela ao qual está ligado também.
+  if (f($l_rs_solic,'notas_acordo')>0 && f($l_rs_solic,'qtd_nota')==0) {
+    $l_erro=$l_erro.'<li>Este lançamento deve ter pelo menos uma nota.';
+    $l_tipo=0;
+  }
+
+  if (f($l_rs_solic,'notas_acordo')>0 && f($l_rs_solic,'notas_parcela')==0) {
+    $l_erro=$l_erro.'<li>A parcela deste lançamento deve ter pelo menos uma nota.';
+    $l_tipo=0;
+  }
+
+  // 4 - Se o lançamento tem notas, verifica se o valor do lançamento é igual à soma dos valores das notas
   $l_rs3 = db_getLancamentoDoc::getInstanceOf($dbms,$l_chave,null,'NOTA');
   if (count($l_rs3)<=0) {
     $l_existe_rs3=0;
@@ -104,7 +115,7 @@ function ValidaLancamento($p_cliente,$l_chave,$p_sg1,$p_sg2,$p_sg3,$p_sg4,$p_tra
   }
 
   if (nvl(f($l_rs_solic,'sq_projeto'),'')>'' && nvl(f($l_rs_solic,'tipo_rubrica'),'')<>1) {
-    $l_rs_rubrica = db_getSolicRubrica::getInstanceOf($dbms,f($l_rs_solic,'sq_projeto'),null,null,null,null,null,null);
+    $l_rs_rubrica = db_getSolicRubrica::getInstanceOf($dbms,f($l_rs_solic,'sq_projeto'),null,null,null,null,null,null,null,null);
     if (count($l_rs_rubrica)>0) {
       $l_rs_menu = db_getLinkData::getInstanceOf($dbms,$w_cliente,'FNREVENT');
       $l_rs_tipo = db_getLancamentoProjeto::getInstanceOf($dbms,f($l_rs_solic,'sq_projeto'),f($l_rs_menu,'sq_menu'),null);

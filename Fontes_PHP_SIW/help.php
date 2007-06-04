@@ -202,33 +202,30 @@ function Help() {
                 } 
   
                 ShowHTML('             <DD>Finalidade: '.ExibeTexto(f($row2,'finalidade')));
-                if (f($row2,'tramite') == 'S') {
-                  $w_submenu='S';
+                if (f($row2,'tramite')=='S') {
                   ShowHTML('        <DD><BR>Como funciona: '.ExibeTexto(f($row2,'como_funciona')));
-                  if (f($row2,'ultimo_nivel')=='S' && $w_submenu=='N') {
   
-                    // Verifica se têm trâmites e exibe
-                    $RS_Tramite = db_getTramiteList::getInstanceOf($dbms, f($row2,'sq_menu'), null, null);
-                    if (count($RS_Tramite) > 0) {
-                      ShowHTML('    <DD><BR>Fases:');
-                      ShowHTML('    <DD><TABLE WIDTH="70%" bgcolor="'.$conTableBgColor.'" BORDER="'.$conTableBorder.'" CELLSPACING="'.$conTableCellSpacing.'" CELLPADDING="'.$conTableCellPadding.'" BorderColorDark="'.$conTableBorderColorDark.'" BorderColorLight="'.$conTableBorderColorLight.'">');
-                      ShowHTML('        <tr align="center" valign="top">');
-                      ShowHTML('          <td><b>Ordem</td>');
-                      ShowHTML('          <td><b>Nome</td>');
-                      ShowHTML('          <td><b>Descricao</td>');
-                      ShowHTML('          <td><b>Quem cumpre</td>');
-                      ShowHTML('        </tr>');
-                      foreach ($RS_Tramite as $row_tramite) {
-                        ShowHTML('      <tr valign="top">');
-                        ShowHTML('        <td align="center">'.f($row_tramite,'ordem').'</td>');
-                        ShowHTML('        <td>'.f($row_tramite,'nome').'</td>');
-                        ShowHTML('        <td>'.Nvl(f($row_tramite,'descricao'),"---").'</td>');
-                        ShowHTML('        <td>'.Nvl(f($row_tramite,'nm_chefia'),"---").'</td>');
-                        ShowHTML('        </td>');
-                        ShowHTML('      </tr>');
-                      } 
-                      ShowHTML('    </table><br>');
+                  // Verifica se têm trâmites e exibe
+                  $RS_Tramite = db_getTramiteList::getInstanceOf($dbms, f($row2,'sq_menu'), null, null);
+                  if (count($RS_Tramite) > 0) {
+                    ShowHTML('    <DD><BR>Fases:');
+                    ShowHTML('    <DD><TABLE bgcolor="'.$conTableBgColor.'" BORDER="'.$conTableBorder.'" CELLSPACING="'.$conTableCellSpacing.'" CELLPADDING="'.$conTableCellPadding.'" BorderColorDark="'.$conTableBorderColorDark.'" BorderColorLight="'.$conTableBorderColorLight.'">');
+                    ShowHTML('        <tr align="center" valign="top">');
+                    ShowHTML('          <td><b>Ordem</td>');
+                    ShowHTML('          <td><b>Nome</td>');
+                    ShowHTML('          <td><b>Descricao</td>');
+                    ShowHTML('          <td><b>Quem cumpre</td>');
+                    ShowHTML('        </tr>');
+                    foreach ($RS_Tramite as $row_tramite) {
+                      ShowHTML('      <tr valign="top">');
+                      ShowHTML('        <td align="center">'.f($row_tramite,'ordem').'</td>');
+                      ShowHTML('        <td>'.f($row_tramite,'nome').'</td>');
+                      ShowHTML('        <td>'.Nvl(f($row_tramite,'descricao'),"---").'</td>');
+                      ShowHTML('        <td>'.Nvl(f($row_tramite,'nm_chefia'),"---").'</td>');
+                      ShowHTML('        </td>');
+                      ShowHTML('      </tr>');
                     } 
+                    ShowHTML('    </table><br>');
                   } 
                 } 
   
@@ -244,13 +241,14 @@ function Help() {
                     ShowHTML('             <DT><BR><b>'.$w_cont1.'.'.$w_cont2.'.'.$w_cont3.'.'.$w_cont4.'. '.f($row3,'nome').'</b>');
                     ShowHTML('             <DD>Finalidade: '.ExibeTexto(f($row3,'finalidade')));
 
-                    if (f($row3,'tramite') == 'S') ShowHTML('        <DD><BR>Como funciona: '.ExibeTexto(f($row3,'como_funciona')));
-                    if (f($row3,'ultimo_nivel')=='S' && $w_submenu=='N') {
+                    if (f($row3,'tramite') == 'S') {
+                      ShowHTML('        <DD><BR>Como funciona: '.ExibeTexto(f($row3,'como_funciona')));
+
                       // Verifica se têm trâmites e exibe
                       $RS_Tramite = db_getTramiteList::getInstanceOf($dbms, f($row3,'sq_menu'), null, null);
                       if (count($RS_Tramite) > 0) {
                         ShowHTML('    <DD><BR>Fases:');
-                        ShowHTML('    <DD><TABLE WIDTH="70%" bgcolor="'.$conTableBgColor.'" BORDER="'.$conTableBorder.'" CELLSPACING="'.$conTableCellSpacing.'" CELLPADDING="'.$conTableCellPadding.'" BorderColorDark="'.$conTableBorderColorDark.'" BorderColorLight="'.$conTableBorderColorLight.'">');
+                        ShowHTML('    <DD><TABLE bgcolor="'.$conTableBgColor.'" BORDER="'.$conTableBorder.'" CELLSPACING="'.$conTableCellSpacing.'" CELLPADDING="'.$conTableCellPadding.'" BorderColorDark="'.$conTableBorderColorDark.'" BorderColorLight="'.$conTableBorderColorLight.'">');
                         ShowHTML('        <tr align="center" valign="top">');
                         ShowHTML('          <td><b>Ordem</td>');
                         ShowHTML('          <td><b>Nome</td>');

@@ -413,7 +413,7 @@ function VisualConvenio($l_chave,$l_O,$l_usuario,$l_P1,$l_P4) {
       $w_html.=chr(13).'      <tr><td colspan="2"><div align="center">';
       $w_html.=chr(13).'        <table width=100%  border="1" bordercolor="#00000">';
     foreach ($RS2 as $row2){
-      $RS = db_getSolicRubrica::getInstanceOf($dbms,f($row2,'sq_siw_solicitacao'),null,null,null,null,null,null);
+      $RS = db_getSolicRubrica::getInstanceOf($dbms,f($row2,'sq_siw_solicitacao'),null,null,null,null,null,null,null,null);
       $RS = SortArray($RS,'codigo','asc');
       if (count($RS)>0) {
         $w_html .= chr(13).'          <tr><td colspan=9><font size=1>Projeto: <b><A class="hl" HREF="projeto.php?par=Visual&O=L&w_chave='.f($row2,'sq_siw_solicitacao').'&w_tipo=Volta&P1=2&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP='.$TP.'&SG='.$SG.'" title="Exibe as informações do projeto." target="blank">'.f($row2,'titulo').' ('.f($row2,'sq_siw_solicitacao').')</a></b></font></td>';   

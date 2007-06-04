@@ -29,9 +29,9 @@ class dml_putAcordoParc {
                    'p_valor_diferente'          =>array(toNumber(tvl($p_valor_diferente)),          B_NUMERIC,      18,2),
                    'p_per_ini'                  =>array(tvl($p_per_ini),                            B_DATE,           32),
                    'p_per_fim'                  =>array(tvl($p_per_fim),                            B_DATE,           32),
-                   'p_valor_inicial'            =>array(toNumber(tvl($p_valor_inicial)),          B_NUMERIC,      18,2),
-                   'p_valor_excedente'          =>array(toNumber(tvl($p_valor_excedente)),        B_NUMERIC,      18,2),
-                   'p_valor_reajuste'           =>array(toNumber(tvl($p_valor_reajuste)),         B_NUMERIC,      18,2)
+                   'p_valor_inicial'            =>array(toNumber(tvl($p_valor_inicial)),            B_NUMERIC,      18,2),
+                   'p_valor_excedente'          =>array(toNumber(tvl($p_valor_excedente)),          B_NUMERIC,      18,2),
+                   'p_valor_reajuste'           =>array(toNumber(tvl($p_valor_reajuste)),           B_NUMERIC,      18,2)
                   );
      $l_rs = DatabaseQueriesFactory::getInstanceOf($sql, $dbms, $params, DB_TYPE);
      $l_error_reporting = error_reporting(); 

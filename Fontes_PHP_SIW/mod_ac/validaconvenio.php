@@ -74,7 +74,8 @@ function ValidaConvenio($l_cliente,$l_chave,$l_sg1,$l_sg2,$l_sg3,$l_sg4,$l_trami
   } else {
     $l_existe_rs3=count($l_rs3);
   }
-     
+  
+  $l_cont = 0;
   // Recupera os dados da outra parte
   $l_rs_conv = db_getConvOutraParte::getInstanceOf($dbms,null,$l_chave,null,null);
   if (($l_rs_conv==0)) {
@@ -91,6 +92,9 @@ function ValidaConvenio($l_cliente,$l_chave,$l_sg1,$l_sg2,$l_sg3,$l_sg4,$l_trami
       } else {
         $l_existe_rs_conv2=count($l_rs_conv2);
       }
+      $l_benef = db_getBenef::getInstanceOf($dbms,1,$_SESSION['P_CLIENTE'],null,null,null,null,null,null); 
+      foreach($l_benef as $l_row) {$l_benef=$l_row; break;}
+      if(f($l_benef,'cnpj')!=f($row,'cnpj')) $l_cont += 1;
     }
   }
   //-----------------------------------------------------------------------------------
@@ -106,8 +110,8 @@ function ValidaConvenio($l_cliente,$l_chave,$l_sg1,$l_sg2,$l_sg3,$l_sg4,$l_trami
   // Validações para a outra parte e preposto
   // Verifica se foi indicada a outra parte
       // Verifica se foi indicada a outra parte
-      if ($l_existe_rs1==0) {
-        $l_erro.='<li>A outra parte do tipo convente não foi informada';
+      if ($l_cont==0) {
+        $l_erro.='<li>Deve ser informada pelo menos uma das partes envolvidas.';
         $l_tipo=0;
       } 
   // Verifica as parcelas

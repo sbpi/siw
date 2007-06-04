@@ -646,12 +646,16 @@ function Responsavel() {
     if (strpos('IA',$O)!==false) {
       Validate('w_sq_pessoa','Pessoa titular','SELECT','1','1','10','','1');
       Validate('w_inicio_titular','Início titular','DATA','1','10','10','','0123456789/');
-      Validate('w_fim_titular','Início titular','DATA','','10','10','','0123456789/');
+      Validate('w_fim_titular','Término titular','DATA','','10','10','','0123456789/');
       CompData('w_inicio_titular','Início titular','<=','w_fim_titular','Início titular');
       Validate('w_sq_pessoa_substituto','Pessoa substituto','SELECT','','1','10','','1');
       Validate('w_inicio_substituto','Início substituto','DATA','','10','10','','0123456789/');
-      Validate('w_fim_substituto','Início substituto','DATA','','10','10','','0123456789/');
+      Validate('w_fim_substituto','Término substituto','DATA','','10','10','','0123456789/');
       CompData('w_inicio_substituto','Início substituto','<=','w_fim_substituto','Início substituto');
+      CompData('w_inicio_titular','Início titular','<=',FormataDataEdicao(time()),'Data atual');
+      CompData('w_inicio_substituto','Início substituto','<=',FormataDataEdicao(time()),'Data atual');
+      CompData('w_fim_titular','Término titular','<=',FormataDataEdicao(time()),'Data atual');
+      CompData('w_fim_substituto','Término substituto','<=',FormataDataEdicao(time()),'Data atual');
       ShowHTML('  if (theForm.w_sq_pessoa_substituto.selectedIndex > 0 && theForm.w_inicio_substituto.value == \'\') {');
       ShowHTML('     alert(\'Informe a data de início do substituto!\');');
       ShowHTML('     theForm.w_inicio_substituto.focus();');
@@ -663,7 +667,7 @@ function Responsavel() {
       ShowHTML('        theForm.w_fim_substituto.value = \'\';');
       ShowHTML('     }');
       ShowHTML('  }');
-      ShowHTML('  if (theForm.w_sq_pessoa(theForm.w_sq_pessoa.selectedIndex).value == theForm.w_sq_pessoa_substituto(theForm.w_sq_pessoa_substituto.selectedIndex).value) { ');
+      ShowHTML('  if (theForm.w_sq_pessoa[theForm.w_sq_pessoa.selectedIndex].value == theForm.w_sq_pessoa_substituto[theForm.w_sq_pessoa_substituto.selectedIndex].value) { ');
       ShowHTML('     alert(\'A mesma pessoa não pode ser indicada para titular e substituto de uma unidade!\');');
       ShowHTML('     theForm.w_sq_pessoa_substituto.focus();');
       ShowHTML('     return false;');

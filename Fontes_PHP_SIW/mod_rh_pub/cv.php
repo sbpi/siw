@@ -1051,12 +1051,13 @@ function Escolaridade() {
     } 
     Cabecalho();
     ShowHTML('<HEAD>');
-    if (!(strpos('IAEP',$O)===false)) {
+    if (strpos('IAEP',$O)!==false) {
       ScriptOpen('JavaScript');
       checkbranco();
+      SaltaCampo();
       formatadatama();
       ValidateOpen('Validacao');
-      if (!(strpos('IA',$O)===false)) {
+      if (strpos('IA',$O)!==false) {
         Validate('w_sq_formacao','Formação','SELECT','1','1','10','','1');
         Validate('w_nm_area','Área do conhecimento','','','1','80','1','1');
         ShowHTML('  if (theForm.w_sq_formacao.selectedIndex > 3 && (theForm.w_sq_area_conhecimento.value=='' || theForm.w_nome.value=='')) { ');
@@ -1157,8 +1158,8 @@ function Escolaridade() {
     ShowHTML('      <tr><td valign="top"><b><u>N</u>ome curso:</b><br><input '.$w_Disabled.' accesskey="N" type="text" name="w_nome" class="sti" SIZE="80" MAXLENGTH="80" VALUE="'.$w_nome.'"></td>');
     ShowHTML('      <tr><td valign="top"><b><u>I</u>nstituição:</b><br><input '.$w_Disabled.' accesskey="I" type="text" name="w_instituicao" class="sti" SIZE="80" MAXLENGTH="100" VALUE="'.$w_instituicao.'"></td>');
     ShowHTML('      <tr><td valign="top" colspan="2"><table border=0 width="100%" cellspacing=0>');
-    ShowHTML('          <tr><td valign="top"><b>Íni<u>c</u>io: (mm/aaaa)</b><br><input '.$w_Disabled.' accesskey="c" type="text" name="w_inicio" class="sti" SIZE="7" MAXLENGTH="7" VALUE="'.$w_inicio.'" onKeyDown="FormataDataMA(this,event);" onKeyUp="SaltaCampo(this.form.name,this,10,event);"></td>');
-    ShowHTML('              <td valign="top"><b>Fi<u>m</u>: (mm/aaaa)</b><br><input '.$w_Disabled.' accesskey="M" type="text" name="w_fim" class="sti" SIZE="7" MAXLENGTH="7" VALUE="'.$w_fim.'" onKeyDown="FormataDataMA(this,event);" onKeyUp="SaltaCampo(this.form.name,this,10,event);"></td>');
+    ShowHTML('          <tr><td valign="top"><b>Íni<u>c</u>io: (mm/aaaa)</b><br><input '.$w_Disabled.' accesskey="c" type="text" name="w_inicio" class="sti" SIZE="7" MAXLENGTH="7" VALUE="'.$w_inicio.'" onKeyDown="FormataDataMA(this,event);" onKeyUp="SaltaCampo(this.form.name,this,7,event);"></td>');
+    ShowHTML('              <td valign="top"><b>Fi<u>m</u>: (mm/aaaa)</b><br><input '.$w_Disabled.' accesskey="M" type="text" name="w_fim" class="sti" SIZE="7" MAXLENGTH="7" VALUE="'.$w_fim.'" onKeyDown="FormataDataMA(this,event);" onKeyUp="SaltaCampo(this.form.name,this,7,event);"></td>');
     SelecaoPais('<u>P</u>aís de conclusão:','P','Selecione o país onde concluiu esta formação.',Nvl($w_sq_pais,2),null,'w_sq_pais',null,null);
     ShowHTML('          </table>');
     if ($_SESSION['PORTAL']=='') {

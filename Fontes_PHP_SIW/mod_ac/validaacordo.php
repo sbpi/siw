@@ -86,7 +86,7 @@ function ValidaAcordo($l_cliente,$l_chave,$l_sg1,$l_sg2,$l_sg3,$l_sg4,$l_tramite
   }
 
   // Recupera os dados das parcelas
-  $l_rs3 = db_getAcordoParcela::getInstanceOf($dbms,$l_chave,null,null,null,null,null,null,null,null,null);
+  $l_rs3 = db_getAcordoParcela::getInstanceOf($dbms,$l_chave,null,'VALIDA',null,null,null,null,null,null,null);
   if (count($l_rs3)==0) {
     $l_existe_rs3=0; 
   } else {

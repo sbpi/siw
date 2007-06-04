@@ -5,8 +5,8 @@ include_once($w_dir_volta.'classes/sp/db_getSolicRubrica.php');
 // -------------------------------------------------------------------------
 function selecaoRubrica($label,$accesskey,$hint,$chave,$chaveAux,$sq_rubrica_destino,$campo,$restricao,$atributo) {
   extract($GLOBALS);
-  if ($restricao=='RUBRICAS')   $RS = db_getSolicRubrica::getInstanceOf($dbms,$chaveAux,null,'S',$sq_rubrica_destino,null,'N',null);
-  else                          $RS = db_getSolicRubrica::getInstanceOf($dbms,$chaveAux,null,'S',$sq_rubrica_destino,null,null,$restricao);
+  if ($restricao=='RUBRICAS')   $RS = db_getSolicRubrica::getInstanceOf($dbms,$chaveAux,null,'S',$sq_rubrica_destino,null,'N',null,null,null);
+  else                          $RS = db_getSolicRubrica::getInstanceOf($dbms,$chaveAux,null,'S',$sq_rubrica_destino,null,null,null,null,$restricao);
   $RS = SortArray($RS,'codigo','asc','nome','asc');
   if (nvl($label,'')=='') $l_label = ''; else $l_label = '<b>'.$label.'</b><br>';
   if (Nvl($hint,'')>'') {

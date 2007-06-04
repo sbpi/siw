@@ -289,7 +289,7 @@ function Usuarios() {
     } 
 
     ShowHTML('          <td><b>Contratado pela organização?</b><br>');
-    if ($p_contratado=='S') {
+    if (nvl($p_contratado,'S')=='S') {
       ShowHTML('              <input '.$w_Disabled.' class="str" type="radio" name="p_contratado" value="S" checked> Sim<br><input '.$w_Disabled.' class="str" type="radio" name="p_contratado" value="N"> Não<br><input '.$w_Disabled.' class="str" type="radio" name="p_contratado" value=""> Tanto faz');
     } elseif ($p_contratado=='N') {
       ShowHTML('              <input '.$w_Disabled.' class="str" type="radio" name="p_contratado" value="S"> Sim<br><input '.$w_Disabled.' class="str" type="radio" name="p_contratado" value="N" checked> Não<br><input '.$w_Disabled.' class="str" type="radio" name="p_contratado" value=""> Tanto faz');

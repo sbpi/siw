@@ -2017,7 +2017,7 @@ function SolicMail($p_solic,$p_tipo) {
     $RS = db_getUorgResp::getInstanceOf($dbms,f($RSM,'sq_unidade'));
     foreach($RS as $row){$RS=$row; break;}
     if(f($RS,'st_titular')=='S')   $w_destinatarios .= f($RS,'email_titular').'|'.f($RS,'nm_titular').'; ';
-    if(f($RS,'st_subtituto')=='S') $w_destinatarios .= f($RS,'email_substituto').'|'.f($RS,'nm_substituto').'; ';
+    if(f($RS,'st_substituto')=='S') $w_destinatarios .= f($RS,'email_substituto').'|'.f($RS,'nm_substituto').'; ';
     // Recuperar o e-mail dos interessados
     $RS = db_getSolicInter::getInstanceOf($dbms,$p_solic,null,'LISTA');
     foreach($RS as $row) {
@@ -2029,7 +2029,7 @@ function SolicMail($p_solic,$p_tipo) {
       $RS1 = db_getUorgResp::getInstanceOf($dbms,f($row,'sq_unidade'));
       foreach($RS1 as $row1){$RS1=$row1; break;}
       if(f($RS1,'st_titular')=='S')  $w_destinatarios .= f($RS1,'email_titular').'|'.f($RS1,'nm_titular').'; ';
-      if(f($RS1,'st_subtituto')=='S') $w_destinatarios .= f($RS1,'email_substituto').'|'.f($RS1,'nm_substituto').'; ';    
+      if(f($RS1,'st_substituto')=='S') $w_destinatarios .= f($RS1,'email_substituto').'|'.f($RS1,'nm_substituto').'; ';    
     }  
     // Prepara os dados necessários ao envio
     if ($p_tipo==1 || $p_tipo==3) {

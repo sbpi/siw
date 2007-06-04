@@ -216,7 +216,7 @@ function Inicial() {
   }
   
   // Se a disponibilidade do recurso não controlar períodos, recupera o registro de disponibilidade
-  if ($w_disponibilidade==1 && nvl($w_troca,'')=='') {
+  if ($w_disponibilidade==1 && nvl($w_chave,'')!='' && nvl($w_troca,'')=='') {
     $RS1 = db_getRecurso_Disp::getInstanceOf($dbms,$w_cliente,$w_chave,$w_chave_aux,null,null,'REGISTROS');
     foreach ($RS1 as $row) { $RS1 = $row; break; }
     $w_disp          = f($RS1,'chave');

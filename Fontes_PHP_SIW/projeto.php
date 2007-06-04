@@ -211,59 +211,58 @@ function Inicial() {
   if ($O=='L') {
     if ((strpos(strtoupper($R),'GR_')!==false) || ($w_tipo=='WORD')) {
       $w_filtro='';
-      if ($p_projeto>'') {
-        $RS = db_getSolicData::getInstanceOf($dbms,$p_projeto,'PJGERAL');
-        $w_filtro=$w_filtro.'<tr valign="top"><td align="right">Projeto <td>[<b>'.f($RS,'titulo').'</b>]';
+      if ($p_projeto>'' || nvl($p_chave,'')!='') {
+        $RS = db_getSolicData::getInstanceOf($dbms,nvl($p_projeto,$p_chave),'PJGERAL');
+        $w_filtro.='<tr valign="top"><td align="right">Projeto <td>[<b>'.f($RS,'titulo').'</b>]';
       } 
       if ($p_atividade>'') {
         $RS = db_getSolicEtapa::getInstanceOf($dbms,$p_projeto,$p_atividade,'REGISTRO',null);
-        $w_filtro=$w_filtro.'<tr valign="top"><td align="right">Etapa <td>[<b>'.f($RS,'titulo').'</b>]';
+        $w_filtro.='<tr valign="top"><td align="right">Etapa <td>[<b>'.f($RS,'titulo').'</b>]';
       } 
       if ($p_sqcc>'') {
         $RS = db_getCCData::getInstanceOf($dbms,$p_sqcc);
-        $w_filtro=$w_filtro.'<tr valign="top"><td align="right">Classificação <td>[<b>'.f($RS,'nome').'</b>]';
+        $w_filtro.='<tr valign="top"><td align="right">Classificação <td>[<b>'.f($RS,'nome').'</b>]';
       } 
-      if ($p_chave>'') $w_filtro=$w_filtro.'<tr valign="top"><td align="right">Projeto nº <td>[<b>'.$p_chave.'</b>]';
-      if ($p_prazo>'') $w_filtro=$w_filtro.' <tr valign="top"><td align="right">Prazo para conclusão até<td>[<b>'.FormataDataEdicao(addDays(time(),$p_prazo)).'</b>]';
+      if ($p_prazo>'') $w_filtro.=' <tr valign="top"><td align="right">Prazo para conclusão até<td>[<b>'.FormataDataEdicao(addDays(time(),$p_prazo)).'</b>]';
       if ($p_solicitante>'') {
         $RS = db_getPersonData::getInstanceOf($dbms,$w_cliente,$p_solicitante,null,null);
-        $w_filtro=$w_filtro.'<tr valign="top"><td align="right">Responsável <td>[<b>'.f($RS,'nome_resumido').'</b>]';
+        $w_filtro.='<tr valign="top"><td align="right">Responsável <td>[<b>'.f($RS,'nome_resumido').'</b>]';
       } 
       if ($p_unidade>'') {
         $RS = db_getUorgData::getInstanceOf($dbms,$p_unidade);
-        $w_filtro=$w_filtro.'<tr valign="top"><td align="right">Unidade responsável <td>[<b>'.f($RS,'nome').'</b>]';
+        $w_filtro.='<tr valign="top"><td align="right">Unidade responsável <td>[<b>'.f($RS,'nome').'</b>]';
       } 
       if ($p_usu_resp>'') {
         $RS = db_getPersonData::getInstanceOf($dbms,$w_cliente,$p_usu_resp,null,null);
-        $w_filtro=$w_filtro.'<tr valign="top"><td align="right">Executor <td>[<b>'.f($RS,'nome_resumido').'</b>]';
+        $w_filtro.='<tr valign="top"><td align="right">Executor <td>[<b>'.f($RS,'nome_resumido').'</b>]';
       } 
       if ($p_uorg_resp>'') {
         $RS = db_getUorgData::getInstanceOf($dbms,$p_uorg_resp);
-        $w_filtro=$w_filtro.'<tr valign="top"><td align="right">Unidade atual <td>[<b>'.f($RS,'nome').'</b>]';
+        $w_filtro.='<tr valign="top"><td align="right">Unidade atual <td>[<b>'.f($RS,'nome').'</b>]';
       } 
       if ($p_pais>'') {
         $RS = db_getCountryData::getInstanceOf($dbms,$p_pais);
-        $w_filtro=$w_filtro.'<tr valign="top"><td align="right">País <td>[<b>'.f($RS,'nome').'</b>]';
+        $w_filtro.='<tr valign="top"><td align="right">País <td>[<b>'.f($RS,'nome').'</b>]';
       } 
       if ($p_regiao>'') {
         $RS = db_getRegionData::getInstanceOf($dbms,$p_regiao);
-        $w_filtro=$w_filtro.'<tr valign="top"><td align="right">Região <td>[<b>'.f($RS,'nome').'</b>]';
+        $w_filtro.='<tr valign="top"><td align="right">Região <td>[<b>'.f($RS,'nome').'</b>]';
       } 
       if ($p_uf>'') {
         $RS = db_getStateData::getInstanceOf($dbms,$p_pais,$p_uf);
-        $w_filtro=$w_filtro.'<tr valign="top"><td align="right">Estado <td>[<b>'.f($RS,'nome').'</b>]';
+        $w_filtro.='<tr valign="top"><td align="right">Estado <td>[<b>'.f($RS,'nome').'</b>]';
       } 
       if ($p_cidade>'') {
         $RS = db_getCityData::getInstanceOf($dbms,$p_cidade);
-        $w_filtro=$w_filtro.'<tr valign="top"><td align="right">Cidade <td>[<b>'.f($RS,'nome').'</b>]';
+        $w_filtro.='<tr valign="top"><td align="right">Cidade <td>[<b>'.f($RS,'nome').'</b>]';
       } 
-      if ($p_prioridade>'') $w_filtro=$w_filtro.'<tr valign="top"><td align="right">Prioridade <td>[<b>'.RetornaPrioridade($p_prioridade).'</b>]';
-      if ($p_proponente>'') $w_filtro=$w_filtro.'<tr valign="top"><td align="right">Proponente <td>[<b>'.$p_proponente.'</b>]';
-      if ($p_assunto>'')    $w_filtro=$w_filtro.'<tr valign="top"><td align="right">Assunto <td>[<b>'.$p_assunto.'</b>]';
-      if ($p_palavra>'')    $w_filtro=$w_filtro.'<tr valign="top"><td align="right">Palavras-chave <td>[<b>'.$p_palavra.'</b>]';
-      if ($p_ini_i>'')      $w_filtro=$w_filtro.'<tr valign="top"><td align="right">Recebimento <td>[<b>'.$p_ini_i.'-'.$p_ini_f.'</b>]';
-      if ($p_fim_i>'')      $w_filtro=$w_filtro.'<tr valign="top"><td align="right">Conclusão <td>[<b>'.$p_fim_i.'-'.$p_fim_f.'</b>]';
-      if ($p_atraso=='S')   $w_filtro=$w_filtro.'<tr valign="top"><td align="right">Situação <td>[<b>Apenas atrasadas</b>]';
+      if ($p_prioridade>'') $w_filtro.='<tr valign="top"><td align="right">Prioridade <td>[<b>'.RetornaPrioridade($p_prioridade).'</b>]';
+      if ($p_proponente>'') $w_filtro.='<tr valign="top"><td align="right">Proponente <td>[<b>'.$p_proponente.'</b>]';
+      if ($p_assunto>'')    $w_filtro.='<tr valign="top"><td align="right">Assunto <td>[<b>'.$p_assunto.'</b>]';
+      if ($p_palavra>'')    $w_filtro.='<tr valign="top"><td align="right">Palavras-chave <td>[<b>'.$p_palavra.'</b>]';
+      if ($p_ini_i>'')      $w_filtro.='<tr valign="top"><td align="right">Recebimento <td>[<b>'.$p_ini_i.'-'.$p_ini_f.'</b>]';
+      if ($p_fim_i>'')      $w_filtro.='<tr valign="top"><td align="right">Conclusão <td>[<b>'.$p_fim_i.'-'.$p_fim_f.'</b>]';
+      if ($p_atraso=='S')   $w_filtro.='<tr valign="top"><td align="right">Situação <td>[<b>Apenas atrasadas</b>]';
       if ($w_filtro>'')     $w_filtro='<div align="left"><table border=0><tr valign="top"><td><b>Filtro:</b><td nowrap><ul>'.$w_filtro.'</ul></tr></table></div>';
     } 
     $RS = db_getLinkData::getInstanceOf($dbms,$w_cliente,$SG);
@@ -855,7 +854,7 @@ function Geral() {
               Validate('w_fim','Término previsto','DATAHORA',1,17,17,'','0123456789/,: ');
               CompData('w_inicio','Início previsto','<=','w_fim','Término previsto'); break;
     } 
-    if (nvl($w_inicio_etapa,'')!='') {
+    if (nvl($w_inicio_etapa,'')!='' && nvl($w_copia,'')=='') {
       CompData('w_inicio','Início previsto','<=','w_inicio_etapa','Início da primeira etapa da estrutura analítica ('.$w_inicio_etapa.')');
       CompData('w_fim','Término previsto','>=','w_fim_etapa','Término da primeira etapa da estrutura analítica ('.$w_fim_etapa.')');
     }
@@ -954,11 +953,11 @@ function Geral() {
     ShowHTML('          <tr valign="top">');
     switch (f($RS_Menu,'data_hora')) {
       case 1: ShowHTML('              <td valign="top"><b><u>T</u>érmino previsto:</b><br><input '.$w_Disabled.' accesskey="T" type="text" name="w_fim" class="STI" SIZE="10" MAXLENGTH="10" VALUE="'.$w_fim.'" onKeyDown="FormataData(this,event);" onKeyUp="SaltaCampo(this.form.name,this,10,event);" title="Data limite para que a execução do projeto esteja concluído.">'.ExibeCalendario('Form','w_fim').'</td>'); break;
-      case 2: ShowHTML('              <td valign="top"><b><u>T</u>érmino previsto:</b><br><input '.$w_Disabled.' accesskey="T" type="text" name="w_fim" class="STI" SIZE="17" MAXLENGTH="17" VALUE="'.$w_fim.'" onKeyDown="FormataDataHora(this,event);" onKeyUp="SaltaCampo(this.form.name,this,10,event);" title="Data/hora limite para que a execução do projeto esteja concluído."></td>'); break;
+      case 2: ShowHTML('              <td valign="top"><b><u>T</u>érmino previsto:</b><br><input '.$w_Disabled.' accesskey="T" type="text" name="w_fim" class="STI" SIZE="17" MAXLENGTH="17" VALUE="'.$w_fim.'" onKeyDown="FormataDataHora(this,event);" onKeyUp="SaltaCampo(this.form.name,this,17,event);" title="Data/hora limite para que a execução do projeto esteja concluído."></td>'); break;
       case 3: ShowHTML('              <td valign="top"><b>Iní<u>c</u>io previsto:</b><br><input '.$w_Disabled.' accesskey="C" type="text" name="w_inicio" class="STI" SIZE="10" MAXLENGTH="10" VALUE="'.Nvl($w_inicio,FormataDataEdicao(time())).'" onKeyDown="FormataData(this,event);" onKeyUp="SaltaCampo(this.form.name,this,10,event);" title="Início previsto da solicitação.">'.ExibeCalendario('Form','w_inicio').'</td>');
               ShowHTML('              <td valign="top"><b><u>T</u>érmino previsto:</b><br><input '.$w_Disabled.' accesskey="T" type="text" name="w_fim" class="STI" SIZE="10" MAXLENGTH="10" VALUE="'.$w_fim.'" onKeyDown="FormataData(this,event);" onKeyUp="SaltaCampo(this.form.name,this,10,event);" title="Data limite para que a execução do projeto esteja concluído.">'.ExibeCalendario('Form','w_fim').'</td>'); break;
-      case 4: ShowHTML('              <td valign="top"><b>Iní<u>c</u>io previsto:</b><br><input '.$w_Disabled.' accesskey="C" type="text" name="w_inicio" class="STI" SIZE="17" MAXLENGTH="17" VALUE="'.$w_inicio.'" onKeyDown="FormataDataHora(this,event);" onKeyUp="SaltaCampo(this.form.name,this,10,event);" title="Data/hora de início previsto do projeto."></td>');
-              ShowHTML('              <td valign="top"><b><u>T</u>érmino previsto:</b><br><input '.$w_Disabled.' accesskey="T" type="text" name="w_fim" class="STI" SIZE="17" MAXLENGTH="17" VALUE="'.$w_fim.'" onKeyDown="FormataDataHora(this,event);" onKeyUp="SaltaCampo(this.form.name,this,10,event);" title="Data/hora limite para que a execução do projeto esteja concluído."></td>'); break;
+      case 4: ShowHTML('              <td valign="top"><b>Iní<u>c</u>io previsto:</b><br><input '.$w_Disabled.' accesskey="C" type="text" name="w_inicio" class="STI" SIZE="17" MAXLENGTH="17" VALUE="'.$w_inicio.'" onKeyDown="FormataDataHora(this,event);" onKeyUp="SaltaCampo(this.form.name,this,17,event);" title="Data/hora de início previsto do projeto."></td>');
+              ShowHTML('              <td valign="top"><b><u>T</u>érmino previsto:</b><br><input '.$w_Disabled.' accesskey="T" type="text" name="w_fim" class="STI" SIZE="17" MAXLENGTH="17" VALUE="'.$w_fim.'" onKeyDown="FormataDataHora(this,event);" onKeyUp="SaltaCampo(this.form.name,this,17,event);" title="Data/hora limite para que a execução do projeto esteja concluído."></td>'); break;
     } 
     ShowHTML('              <td><b>O<u>r</u>çamento disponível:</b><br><input '.$w_Disabled.' accesskey="O" type="text" name="w_valor" class="STI" SIZE="18" MAXLENGTH="18" VALUE="'.$w_valor.'" onKeyDown="FormataValor(this,18,2,event);" title="Informe o orçamento disponível para execução do projeto, ou zero se não for o caso."></td>');
     ShowHTML('          </table>');
@@ -1316,6 +1315,10 @@ function Rubrica() {
   $w_copia      = $_REQUEST['w_copia'];
   $w_chave_pai  = $_REQUEST['w_chave_pai'];
   $w_chave_aux  = $_REQUEST['w_chave_aux'];
+  
+  $RS = db_getSiwCliModLis::getInstanceOf($dbms,$w_cliente,null,'FN');
+  if (count($RS)>0) $w_financeiro='S'; else $w_financeiro='N';
+  
   if ($w_troca > '' && $O!='E') {
     // Se for recarga da página
     $w_sq_cc                = $_REQUEST['w_sq_cc'];
@@ -1327,7 +1330,7 @@ function Rubrica() {
 
   } elseif ($O == 'L') {
     // Recupera todos os registros para a listagem
-    $RS = db_getSolicRubrica::getInstanceOf($dbms,$w_chave,null,null,null,null,null,null);
+    $RS = db_getSolicRubrica::getInstanceOf($dbms,$w_chave,null,null,null,null,null,null,null,null);
     if (Nvl($p_ordena,'') > '') {
       $lista = explode(',',str_replace(' ',',',$p_ordena));
       $RS = SortArray($RS,$lista[0],$lista[1],'risco','asc','descricao','asc');
@@ -1336,11 +1339,13 @@ function Rubrica() {
     }
   } elseif (strpos('AEV',$O)!==false || nvl($w_copia,'')!='') {
     // Recupera os dados do endereço informado
-    $RS = db_getsolicRubrica::getInstanceOf($dbms,$w_chave,$w_chave_aux,null,null,null,null,null);
+    $RS = db_getsolicRubrica::getInstanceOf($dbms,$w_chave,$w_chave_aux,null,null,null,null,null,null,null);
     foreach ($RS as $row) { $RS = $row; break; }
     $w_sq_cc                = f($RS,'sq_cc');
     $w_codigo               = f($RS,'codigo');
+    $w_codigo_ant           = f($RS,'codigo');
     $w_nome                 = f($RS,'nome');
+    $w_nome_ant             = f($RS,'nome');
     $w_descricao            = f($RS,'descricao');
     $w_ativo                = f($RS,'ativo');
     $w_aplicacao_financeira = f($RS,'aplicacao_financeira');
@@ -1363,7 +1368,15 @@ function Rubrica() {
     if (strpos('IA',$O)!==false) {
       Validate('w_sq_cc','Classificação','SELECT',1,1,18,'','0123456789');
       Validate('w_codigo','Código','','1','2','20','1','1');
-      Validate('w_nome','Nome','','1','2','60','1','1');      
+      Validate('w_nome','Nome','','1','2','60','1','1');
+      if (nvl($w_copia,'')!='') {
+        ShowHTML('  if (theForm.w_codigo.value==theForm.w_codigo_ant.value || theForm.w_nome.value==theForm.w_nome_ant.value) {');
+        ShowHTML('    alert(\'Antes de incluir esta rubrica, altere o código e o nome da rubrica de origem!\');');
+        ShowHTML('    if (theForm.w_codigo.value==theForm.w_codigo_ant.value) theForm.w_codigo.focus();');
+        ShowHTML('    else if (theForm.w_nome.value==theForm.w_nome_ant.value) theForm.w_nome.focus();');
+        ShowHTML('    return false;');
+        ShowHTML('  }');
+      }
       Validate('w_descricao','Descricao','','1','2','500','1','1');     
       //CompData('w_inicio','Início previsto','<=','w_fim','Fim previsto');     
     } 
@@ -1466,6 +1479,10 @@ function Rubrica() {
     ShowHTML('<INPUT type="hidden" name="w_chave" value="'.$w_chave.'">');
     ShowHTML('<INPUT type="hidden" name="w_chave_aux" value="'.$w_chave_aux.'">');
     ShowHTML('<INPUT type="hidden" name="w_troca" value="">');
+    if (nvl($w_copia,'')!='') {
+      ShowHTML('<INPUT type="hidden" name="w_codigo_ant" value="'.$w_codigo_ant.'">');
+      ShowHTML('<INPUT type="hidden" name="w_nome_ant" value="'.$w_nome_ant.'">');
+    }
     ShowHTML('<tr bgcolor="'.$conTrBgColor.'"><td align="center">');
     ShowHTML('    <table width="97%" border="0">');
     SelecaoCC('C<u>l</u>assificação:','L','Selecione a classificação desejada.',$w_sq_cc,null,'w_sq_cc','SIWSOLIC');
@@ -1525,7 +1542,7 @@ function AtualizaRubrica() {
 
   } elseif ($O == 'L') {
     // Recupera todos os registros para a listagem
-    $RS = db_getSolicRubrica::getInstanceOf($dbms,$w_chave,null,null,null,null,null,null);
+    $RS = db_getSolicRubrica::getInstanceOf($dbms,$w_chave,null,null,null,null,null,null,null,null);
     if (Nvl($p_ordena,'') > '') {
       $lista = explode(',',str_replace(' ',',',$p_ordena));
       $RS = SortArray($RS,$lista[0],$lista[1],'risco','asc','descricao','asc');
@@ -1537,7 +1554,7 @@ function AtualizaRubrica() {
     $RS_Cronograma = db_getCronograma::getInstanceOf($dbms,$w_chave_rub,null,null,null);
 
     // Recupera todos os dados do projeto e rubrica
-    $RS = db_getsolicRubrica::getInstanceOf($dbms,$w_chave,$w_chave_rub,null,null,null,null,null);
+    $RS = db_getsolicRubrica::getInstanceOf($dbms,$w_chave,$w_chave_rub,null,null,null,null,null,null,null);
     foreach ($RS as $row) {
       $w_nome           = f($row,'nome');
       $w_rubrica        = f($row,'nome');
@@ -1898,14 +1915,12 @@ function Etapas() {
     ShowHTML('          <td rowspan=2><b>Etapa</td>');
     ShowHTML('          <td rowspan=2><b>Título</td>');
     ShowHTML('          <td rowspan=2><b>Responsável</td>');
-    ShowHTML('          <td rowspan=2><b>Setor</td>');
     ShowHTML('          <td colspan=2><b>Execução prevista</td>');
     ShowHTML('          <td colspan=2><b>Execução real</td>');
     ShowHTML('          <td rowspan=2><b>Orçamento</td>');
     ShowHTML('          <td rowspan=2><b>Conc.</td>');
     ShowHTML('          <td rowspan=2><b>Peso</td>');
     ShowHTML('          <td rowspan=2><b>Tar.</td>');
-    if(f($RS1,'vincula_contrato')=='S') ShowHTML('          <td rowspan=2><b>Contr.</td>');
     ShowHTML('          <td rowspan=2><b>Operações</td>');
     ShowHTML('        </tr>');
     ShowHTML('        <tr bgcolor="'.$conTrBgColor.'" align="center">');
@@ -1939,7 +1954,7 @@ function Etapas() {
         ShowHTML('  function lista (projeto, etapa) {');
         ShowHTML('    document.Form.p_projeto.value=projeto;');
         ShowHTML('    document.Form.p_atividade.value=etapa;');
-        $RS1 = db_getMenuData::getInstanceOf($dbms,$w_p3);
+        $RS1 = db_getMenuData::getInstanceOf($dbms,$w_p2);
         ShowHTML('    document.Form.action=\''.f($RS1,'link').'\';');
         ShowHTML('    document.Form.P2.value=\''.w_p2.'\';');
         ShowHTML('    document.Form.SG.value=\''.f($RS1,'sigla').'\';');
@@ -1989,6 +2004,7 @@ function Etapas() {
       foreach($RS as $row) {
         ShowHtml(EtapaLinha($w_chave,f($row,'sq_projeto_etapa'),f($row,'titulo'),f($row,'nm_resp'),f($row,'sg_setor'),f($row,'inicio_previsto'),f($row,'fim_previsto'),f($row,'inicio_real'),f($row,'fim_real'),f($row,'perc_conclusao'),f($row,'qt_ativ'),((f($row,'pacote_trabalho')=='S') ? '<b>' : ''),'S','PROJETO',f($row,'sq_pessoa'),f($row,'sq_unidade'),f($row,'pj_vincula_contrato'),f($row,'qt_contr'),f($row,'orcamento'),(f($row,'level')-1),f($row,'restricao'),f($row,'peso')));
       } 
+      ShowHTML('</FORM>');
     } 
     ShowHTML('      </center>');
     ShowHTML('    </table>');
@@ -2124,10 +2140,10 @@ function Cronograma() {
   $w_projeto  = f($RS,'titulo').' ('.$w_chave_pai.')';  
 
   // Recupera todos os dados do projeto e rubrica
-  $RS = db_getsolicRubrica::getInstanceOf($dbms,$w_chave_pai,$w_chave,null,null,null,null,null);
+  $RS = db_getsolicRubrica::getInstanceOf($dbms,$w_chave_pai,$w_chave,null,null,null,null,null,null,null);
   foreach ($RS as $row) {
-    $w_nome           = f($row,'nome');
-    $w_rubrica        = f($row,'nome');
+    $w_rubrica        = f($row,'codigo').' - '.f($row,'nome');
+    break;
   }
 
   if ($w_troca>'' && $O!='E') {
@@ -2246,10 +2262,9 @@ function Cronograma() {
         $w_realizado += f($row,'valor_real');
       } 
       ShowHTML('      <tr bgcolor="'.$w_cor.'" valign="top">');
-      ShowHTML('        <td align="right" colspan="2"><b>Totais da rubrica:&nbsp;</b></td>');
+      ShowHTML('        <td align="right" colspan="2"><b>Totais&nbsp;</b></td>');
       ShowHTML('        <td align="right"><b>'.formatNumber($w_previsto).'</b></td>');
       ShowHTML('        <td align="right"><b>'.formatNumber($w_realizado).'</b></td>');
-      ShowHTML('        <td>&nbsp;</td>');
       ShowHTML('      </tr>');
     } 
     ShowHTML('      </center>');
@@ -2449,15 +2464,12 @@ function AtualizaEtapa() {
     ShowHTML('          <td rowspan=2><b>Etapa</td>');
     ShowHTML('          <td rowspan=2><b>Título</td>');
     ShowHTML('          <td rowspan=2><b>Responsável</td>');
-    ShowHTML('          <td rowspan=2><b>Setor</td>');
     ShowHTML('          <td colspan=2><b>Execução Prevista</td>');
     ShowHTML('          <td colspan=2><b>Execução Real</td>');
     ShowHTML('          <td rowspan=2><b>Orçamento</td>');
     ShowHTML('          <td rowspan=2><b>Conc.</td>');
     ShowHTML('          <td rowspan=2><b>Peso</td>');
     ShowHTML('          <td rowspan=2><b>Tar.</td>');   
-    $RS = db_getSolicData::getInstanceOf($dbms,$w_chave,'PJGERAL');
-    if (f($RS,'vincula_contrato')==S)  ShowHTML('          <td rowspan=2><b>Contr.</td>');    
     ShowHTML('          <td rowspan=2><b>Operações</td>');
     ShowHTML('        </tr>');
     ShowHTML('        <tr bgcolor="'.$conTrBgColor.'" align="center">');
@@ -2556,14 +2568,14 @@ function AtualizaEtapa() {
     ShowHTML('    <table width="100%" border="0">');
     if ($O=='V') {
       ShowHTML('      <tr valign="top">');
-      ShowHTML('        <td>Percentual de conlusão:<br><b>'.nvl($w_perc_conclusao,0).'%</b></td>');
+      ShowHTML('        <td>Percentual de conclusão:<br><b>'.nvl($w_perc_conclusao,0).'%</b></td>');
       ShowHTML('        <td>Início real:<br><b>'.nvl(formataDataEdicao($w_inicio_real),'---').'</b></td>');
       ShowHTML('        <td>Término real:<br><b>'.nvl(formataDataEdicao($w_fim_real),'---').'</b></td>'); 
       ShowHTML('      <tr><td colspan=3>Situação atual da etapa:<b><br>'.crlf2br(Nvl($w_situacao_atual,'---')).'</td>');
     } else {
       if ($w_pacote=='N') {
         ShowHTML('      <tr valign="top">');
-        ShowHTML('        <td>Percentual de conlusão:<br><b>'.nvl($w_perc_conclusao,0).'%</b></td>');
+        ShowHTML('        <td>Percentual de conclusão:<br><b>'.nvl($w_perc_conclusao,0).'%</b></td>');
         ShowHTML('        <td>Início real:<br><b>'.nvl(formataDataEdicao($w_inicio_real),'---').'</b></td>');
         ShowHTML('        <td>Término real:<br><b>'.nvl(formataDataEdicao($w_fim_real),'---').'</b></td>');
       } else {
@@ -3749,11 +3761,11 @@ function Concluir() {
   ShowHTML('<INPUT type="hidden" name="w_tramite" value="'.f($RS,'sq_siw_tramite').'">');
   switch (f($RS_Menu,'data_hora')) {
     case 1: ShowHTML('              <td valign="top"><b><u>T</u>érmino real:</b><br><input '.$w_Disabled.' accesskey="T" type="text" name="w_fim_real" class="STI" SIZE="10" MAXLENGTH="10" VALUE="'.$w_fim_real.'" onKeyDown="FormataData(this,event);" onKeyUp="SaltaCampo(this.form.name,this,10,event);" title="Informe a data de término previsto do projeto.">'.ExibeCalendario('Form','w_fim_real').'</td>'); break;
-    case 2: ShowHTML('              <td valign="top"><b><u>T</u>érmino real:</b><br><input '.$w_Disabled.' accesskey="T" type="text" name="w_fim_real" class="STI" SIZE="17" MAXLENGTH="17" VALUE="'.$w_fim_real.'" onKeyDown="FormataDataHora(this,event);" onKeyUp="SaltaCampo(this.form.name,this,10,event);" title="Informe a data/hora de término previsto do projeto."></td>'); break;
+    case 2: ShowHTML('              <td valign="top"><b><u>T</u>érmino real:</b><br><input '.$w_Disabled.' accesskey="T" type="text" name="w_fim_real" class="STI" SIZE="17" MAXLENGTH="17" VALUE="'.$w_fim_real.'" onKeyDown="FormataDataHora(this,event);" onKeyUp="SaltaCampo(this.form.name,this,17,event);" title="Informe a data/hora de término previsto do projeto."></td>'); break;
     case 3: ShowHTML('              <td valign="top"><b>Iní<u>c</u>io real:</b><br><input '.$w_Disabled.' accesskey="C" type="text" name="w_inicio_real" class="STI" SIZE="10" MAXLENGTH="10" VALUE="'.$w_inicio_real.'" onKeyDown="FormataData(this,event);" onKeyUp="SaltaCampo(this.form.name,this,10,event);" title="Informe a data/hora de início previsto do projeto.">'.ExibeCalendario('Form','w_inicio_real').'</td>');
             ShowHTML('              <td valign="top"><b><u>T</u>érmino real:</b><br><input '.$w_Disabled.' accesskey="T" type="text" name="w_fim_real" class="STI" SIZE="10" MAXLENGTH="10" VALUE="'.$w_fim_real.'" onKeyDown="FormataData(this,event);" onKeyUp="SaltaCampo(this.form.name,this,10,event);" title="Informe a data de término previsto do projeto.">'.ExibeCalendario('Form','w_fim_real').'</td>'); break;
-    case 4: ShowHTML('              <td valign="top"><b>Iní<u>c</u>io real:</b><br><input '.$w_Disabled.' accesskey="C" type="text" name="w_inicio_real" class="STI" SIZE="17" MAXLENGTH="17" VALUE="'.$w_inicio_real.'" onKeyDown="FormataDataHora(this,event);" onKeyUp="SaltaCampo(this.form.name,this,10,event);" title="Informe a data/hora de início previsto do projeto."></td>');
-            ShowHTML('              <td valign="top"><b><u>T</u>érmino real:</b><br><input '.$w_Disabled.' accesskey="T" type="text" name="w_fim_real" class="STI" SIZE="17" MAXLENGTH="17" VALUE="'.$w_fim_real.'" onKeyDown="FormataDataHora(this,event);" onKeyUp="SaltaCampo(this.form.name,this,10,event);" title="Informe a data de término previsto do projeto."></td>'); break;
+    case 4: ShowHTML('              <td valign="top"><b>Iní<u>c</u>io real:</b><br><input '.$w_Disabled.' accesskey="C" type="text" name="w_inicio_real" class="STI" SIZE="17" MAXLENGTH="17" VALUE="'.$w_inicio_real.'" onKeyDown="FormataDataHora(this,event);" onKeyUp="SaltaCampo(this.form.name,this,17,event);" title="Informe a data/hora de início previsto do projeto."></td>');
+            ShowHTML('              <td valign="top"><b><u>T</u>érmino real:</b><br><input '.$w_Disabled.' accesskey="T" type="text" name="w_fim_real" class="STI" SIZE="17" MAXLENGTH="17" VALUE="'.$w_fim_real.'" onKeyDown="FormataDataHora(this,event);" onKeyUp="SaltaCampo(this.form.name,this,17,event);" title="Informe a data de término previsto do projeto."></td>'); break;
   } 
   ShowHTML('              <td valign="top"><b>Custo <u>r</u>eal:</b><br><input '.$w_Disabled.' accesskey="O" type="text" name="w_custo_real" class="STI" SIZE="18" MAXLENGTH="18" VALUE="'.$w_custo_real.'" onKeyDown="FormataValor(this,18,2,event);" title="Informe o orçamento disponível para execução do projeto, ou zero se não for o caso."></td>');
   ShowHTML('          </table>');
@@ -4339,8 +4351,9 @@ function Grava() {
   } elseif($SG=='PJRUBRICA'){  
     // Verifica se a Assinatura Eletrônica é válida
     if (verificaAssinaturaEletronica($_SESSION['USERNAME'],strtoupper($_REQUEST['w_assinatura'])) || $w_assinatura=='') {
+      // Garante que há apenas uma rubrica de aplicação financeira para o projeto.
       if($_REQUEST['w_aplicacao_financeira']=='S') {
-        $RS = db_getsolicRubrica::getInstanceOf($dbms,$_REQUEST['w_chave'],null,'S',$_REQUEST['w_chave_aux'],null,'S',null);
+        $RS = db_getsolicRubrica::getInstanceOf($dbms,$_REQUEST['w_chave'],null,'S',$_REQUEST['w_chave_aux'],null,'S',null,null,null);
         if(count($RS)>0) {
           ScriptOpen('JavaScript');
           ShowHTML('  alert(\'Cada projeto não pode ter mais de uma rubrica de aplicação financeira!\');');
@@ -4349,6 +4362,29 @@ function Grava() {
           exit();
         }
       }
+
+      // Evita duplicação de nome e de código nas rubricas do projeto.
+      $RS = db_getsolicRubrica::getInstanceOf($dbms,$_REQUEST['w_chave'],null,null,null,null,null,null,null,null);
+      if(count($RS)>0) {
+        foreach($RS as $row) {
+          if (f($row,'sq_projeto_rubrica')!=nvl($_REQUEST['w_chave_aux'],0)) {
+            if (f($row,'codigo')==$_REQUEST['w_codigo']) {
+              ScriptOpen('JavaScript');
+              ShowHTML('  alert(\'Já existe rubrica com este código!\');');
+              ScriptClose();
+              retornaFormulario('w_codigo');
+              exit();
+            } elseif (f($row,'nome')==$_REQUEST['w_nome']) {
+              ScriptOpen('JavaScript');
+              ShowHTML('  alert(\'Já existe rubrica com este nome!\');');
+              ScriptClose();
+              retornaFormulario('w_nome');
+              exit();
+            }
+          }
+        }
+      }
+
       dml_putProjetoRubrica::getInstanceOf($dbms,$O,$_REQUEST['w_chave'],$_REQUEST['w_chave_aux'],
           $_REQUEST['w_sq_cc'], $_REQUEST['w_codigo'],$_REQUEST['w_nome'],$_REQUEST['w_descricao'],
           $_REQUEST['w_ativo'],$_REQUEST['w_aplicacao_financeira'], $_REQUEST['w_copia']);

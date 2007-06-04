@@ -90,6 +90,7 @@ switch ($O) {
   case 'V': $w_TP=$TP.' - Envio';       break;
   case 'H': $w_TP=$TP.' - Herança';     break;
   case 'T': $w_TP=$TP.' - Vinculação';  break;  
+  case 'T': $w_TP=$TP.' - Gerar ano';  break;
   default : $w_TP=$TP.' - Listagem'; 
 }
 // Se receber o código do cliente do SIW, o cliente será determinado por parâmetro;
@@ -1084,7 +1085,7 @@ function EspecDespesa() {
     CheckBranco();
     FormataValor();
     ValidateOpen('Validacao');
-    if ($O!='P' && $O!='H') {
+    if ($O!='P' && $O!='H' && $O!='G') {
       if ($w_heranca>'' || ($O!='I' && $w_troca=='')) {
         // Se for herança, atribui a chave da opção selecionada para w_sq_tipo_acordo
         if ($w_heranca>'') $w_sq_tipo_acordo=$w_heranca;
@@ -1377,20 +1378,20 @@ function EspecDespesa() {
     ShowHTML('</tr>');
     ShowHTML('</FORM>');
   } elseif ($O=='G') {
-    AbreForm('Form',$w_dir.$w_pagina.'Grava','POST','return(Validacao(this));',null,$P1,$P2,$P3,$P4,$TP,$SG,$w_pagina.$par,$O);
+		AbreForm('Form',$w_dir.$w_pagina.'Grava','POST','return(Validacao(this));',null,$P1,$P2,$P3,$P4,$TP,$SG,$w_pagina.$par,$O);
     ShowHTML('<INPUT type="hidden" name="w_cliente" value="'.$w_cliente.'">');
     ShowHTML('<INPUT type="hidden" name="w_sq_tipo_acordo" value="'.$w_sq_tipo_acordo.'">');
     ShowHTML('<tr bgcolor="'.$conTrBgColor.'"><td width="100%" align="center">');
     ShowHTML('    <table align="center" border="0" width="100%" >');
     ShowHTML('      <tr>');
-    SelecaoAno('<U>A</U>no de origem:','A',null,$w_ano,null,'w_ano_origem','ESPEC',null);
+    SelecaoAno('<U>A</U>no de origem:','A',null,$w_ano,null,'w_ano_origem','ESPEC2',null);
     SelecaoAno('<U>A</U>no da geração:','A',null,$w_ano,null,'w_ano_geracao','ESPEC',null);
     ShowHTML('      </tr>');
     ShowHTML('      <tr><td align="center" colspan="2">&nbsp;');
     ShowHTML('      <tr><td align="center" colspan="2" height="1" bgcolor="#000000">');
     ShowHTML('      <tr><td align="center" colspan="2">');
     ShowHTML('            <input class="stb" type="submit" name="Botao" value="Gerar">');
-    ShowHTML('            <input class="stb" type="button" onClick="window.close(); opener.focus();" name="Botao" value="Cancelar">');
+    ShowHTML('            <input class="stb" type="button" onClick="location.href=\''.montaURL_JS($w_dir,$R.'&O=L&w_cliente='.$w_cliente.'&P1='.$P1.'&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP='.$TP.'&SG='.$SG).'\';" name="Botao" value="Cancelar">');
     ShowHTML('          </td>');
     ShowHTML('      </tr>');
     ShowHTML('    </table>');

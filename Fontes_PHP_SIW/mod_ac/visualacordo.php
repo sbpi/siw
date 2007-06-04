@@ -162,6 +162,8 @@ function VisualAcordo($l_chave,$l_O,$l_usuario,$l_P1,$l_P4) {
           $w_html.=chr(13).'          <td><b>Número do empenho (modalidade/nível/mensalidade):</b></td>';
           $w_html.=chr(13).'          <td>'.Nvl(f($RS,'processo'),'---').'</td></tr>';
         }
+        $w_html.=chr(13).'      <tr><td ><b>Parcelas pagas em uma única liquidação?</b></td>';
+        $w_html.=chr(13).'        <td>'.RetornaSimNao(f($RS,'financeiro_unico')).'</td></tr>';
       }
     } 
     // Dados da conclusão da demanda, se ela estiver nessa situação
@@ -622,37 +624,54 @@ function VisualAcordo($l_chave,$l_O,$l_usuario,$l_P1,$l_P4) {
     $w_total_i = 0;
     $w_total_e = 0;
     $w_total_r = 0;
+    $w_atual   = 0;
     foreach($RS as $row) {
       $w_html.=chr(13).'        <tr valign="top">';
-      $w_html.=chr(13).'          <td align="center">';
-      if (Nvl($w_sg_tramite,'-')=='CR' && $w_fim-f($row,'vencimento')<0) {
-        $w_html.=chr(13).'           <img src="'.$conImgCancel.'" border=0 width=10 heigth=10 align="center" title="Parcela cancelada!">';
-      } elseif (Nvl(f($row,'quitacao'),'nulo')=='nulo') {
-        if (f($row,'vencimento')<addDays(time(),-1))  {
-          $w_html.=chr(13).'           <img src="'.$conImgAtraso.'" border=0 width=10 heigth=10 align="center">';
-        } elseif (f($row,'vencimento')-addDays(time(),-1)<=5) {
-          $w_html.=chr(13).'           <img src="'.$conImgAviso.'" border=0 width=10 height=10 align="center">';
+      if ($w_atual!=f($row,'sq_acordo_parcela')) {
+        $w_atual = f($row,'sq_acordo_parcela');
+        $w_html.=chr(13).'          <td align="center">';
+        if (Nvl($w_sg_tramite,'-')=='CR' && $w_fim-f($row,'vencimento')<0) {
+          $w_html.=chr(13).'           <img src="'.$conImgCancel.'" border=0 width=10 heigth=10 align="center" title="Parcela cancelada!">';
+        } elseif (Nvl(f($row,'quitacao'),'nulo')=='nulo') {
+          if (f($row,'vencimento')<addDays(time(),-1))  {
+            $w_html.=chr(13).'           <img src="'.$conImgAtraso.'" border=0 width=10 heigth=10 align="center">';
+          } elseif (f($row,'vencimento')-addDays(time(),-1)<=5) {
+            $w_html.=chr(13).'           <img src="'.$conImgAviso.'" border=0 width=10 height=10 align="center">';
+          } else {
+            $w_html.=chr(13).'           <img src="'.$conImgNormal.'" border=0 width=10 height=10 align="center">';
+          } 
         } else {
-          $w_html.=chr(13).'           <img src="'.$conImgNormal.'" border=0 width=10 height=10 align="center">';
+          if (f($row,'quitacao')>f($row,'vencimento')) {
+            $w_html.=chr(13).'           <img src="'.$conImgOkAtraso.'" border=0 width=10 heigth=10 align="center">';
+          } else {
+            $w_html.=chr(13).'           <img src="'.$conImgOkNormal.'" border=0 width=10 height=10 align="center">';
+          } 
         } 
+        $w_html.=chr(13).'        '.f($row,'ordem').'</td>';
+        if(nvl(f($row,'inicio'),'')!='') $w_html.=chr(13).'        <td align="center">'.FormataDataEdicao(f($row,'inicio'),5).' a '.FormataDataEdicao(f($row,'fim'),5).'</td>';
+        else                             $w_html.=chr(13).'        <td align="center">---</td>';
+        $w_html.=chr(13).'        <td align="center">'.FormataDataEdicao(f($row,'vencimento'),5).'</td>';
+        if($w_aditivo>0) {
+          $w_html.=chr(13).'        <td align="right">'.formatNumber(f($row,'valor_inicial')).'</td>';
+          $w_html.=chr(13).'        <td align="right">'.formatNumber(f($row,'valor_excedente')).'</td>';
+          $w_html.=chr(13).'        <td align="right">'.formatNumber(f($row,'valor_reajuste')).'</td>';
+        }
+        $w_html.=chr(13).'        <td align="right">'.formatNumber(f($row,'valor')).'</td>';
+        $w_html.=chr(13).'        <td>'.crlf2br(Nvl(f($row,'observacao'),'---')).'</td>';
+        $w_total   += f($row,'valor');
+        $w_total_i += f($row,'valor_inicial');
+        $w_total_e += f($row,'valor_excedente');
+        $w_total_r += f($row,'valor_reajuste');
       } else {
-        if (f($row,'quitacao')>f($row,'vencimento')) {
-          $w_html.=chr(13).'           <img src="'.$conImgOkAtraso.'" border=0 width=10 heigth=10 align="center">';
-        } else {
-          $w_html.=chr(13).'           <img src="'.$conImgOkNormal.'" border=0 width=10 height=10 align="center">';
-        } 
-      } 
-      $w_html.=chr(13).'        '.f($row,'ordem').'</td>';
-      if(nvl(f($row,'inicio'),'')!='') $w_html.=chr(13).'        <td align="center">'.FormataDataEdicao(f($row,'inicio'),5).' a '.FormataDataEdicao(f($row,'fim'),5).'</td>';
-      else                             $w_html.=chr(13).'        <td align="center">---</td>';
-      $w_html.=chr(13).'        <td align="center">'.FormataDataEdicao(f($row,'vencimento'),5).'</td>';
-      if($w_aditivo>0) {
-        $w_html.=chr(13).'        <td align="right">'.formatNumber(f($row,'valor_inicial')).'</td>';
-        $w_html.=chr(13).'        <td align="right">'.formatNumber(f($row,'valor_excedente')).'</td>';
-        $w_html.=chr(13).'        <td align="right">'.formatNumber(f($row,'valor_reajuste')).'</td>';
+        $w_html.=chr(13).'          <td>&nbsp;</td>';
+        $w_html.=chr(13).'          <td>&nbsp;</td>';
+        $w_html.=chr(13).'          <td>&nbsp;</td>';
+        $w_html.=chr(13).'          <td>&nbsp;</td>';
+        $w_html.=chr(13).'          <td>&nbsp;</td>';
+        $w_html.=chr(13).'          <td>&nbsp;</td>';
+        $w_html.=chr(13).'          <td>&nbsp;</td>';
+        $w_html.=chr(13).'          <td>&nbsp;</td>';
       }
-      $w_html.=chr(13).'        <td align="right">'.formatNumber(f($row,'valor')).'</td>';
-      $w_html.=chr(13).'        <td>'.crlf2br(Nvl(f($row,'observacao'),'---')).'</td>';
       if (Nvl(f($row,'cd_lancamento'),'')>'') {
         $w_html.=chr(13).'        <td align="center" nowrap><A class="hl" HREF="mod_fn/lancamento.php?par=Visual&O=L&w_chave='.f($row,'sq_lancamento').'&w_tipo=&P1=2&P2='.$P2.'&P3='.$P3.'&P4='.$l_P4.'&TP='.$TP.'&SG=FN'.substr($SG,2,1).'CONT" title="Exibe as informações do lançamento." target="Lancamento">'.f($row,'cd_lancamento').'</a></td>';
         $w_html.=chr(13).'        <td align="center">'.FormataDataEdicao(f($row,'dt_lancamento'),5).'</td>';
@@ -665,10 +684,6 @@ function VisualAcordo($l_chave,$l_O,$l_usuario,$l_P1,$l_P4) {
       } 
       $w_html.=chr(13).'        <td align="center">'.Nvl(FormataDataEdicao(f($row,'quitacao'),5),'---').'</td>';
       $w_html.=chr(13).'      </tr>';
-      $w_total   += f($row,'valor');
-      $w_total_i += f($row,'valor_inicial');
-      $w_total_e += f($row,'valor_excedente');
-      $w_total_r += f($row,'valor_reajuste');
     } 
     if ($w_total>0 || $w_real>0) {     
       $w_html.=chr(13).'      <tr valign="top">';

@@ -693,9 +693,9 @@ function ExibeSmile($l_tipo,$l_andamento,$l_legenda=0) {
   if ($l_legenda) {
     if ($l_tipo=='IDE') {
       $l_string .= '<tr valign="top">';
-      $l_string .= '<td width="1%" nowrap><img src="'.$conRootSIW.$conImgSmAtraso.'" border=0 width=10 height=10 align="center"><td>Fora da faixa desejável (abaixo de 80% ou acima de 110%).';
-      $l_string .= '<td width="1%" nowrap><img src="'.$conRootSIW.$conImgSmAviso.'" border=0 width=10 height=10 align="center"><td>Próximo da faixa desejável (de 80% a 89,99%).';
-      $l_string .= '<td width="1%" nowrap><img src="'.$conRootSIW.$conImgSmNormal.'" border=0 width=10 height=10 align="center"><td>Na faixa desejável (de 90% a 110%). ';
+      $l_string .= '<td width="1%" nowrap><img src="'.$conRootSIW.$conImgSmAtraso.'" border=0 width=10 height=10 align="center"><td>Fora da faixa desejável (abaixo de 70%).';
+      $l_string .= '<td width="1%" nowrap><img src="'.$conRootSIW.$conImgSmAviso.'" border=0 width=10 height=10 align="center"><td>Próximo da faixa desejável (de 70% a 89,99% ou acima de 120%).';
+      $l_string .= '<td width="1%" nowrap><img src="'.$conRootSIW.$conImgSmNormal.'" border=0 width=10 height=10 align="center"><td>Na faixa desejável (de 90% a 120%). ';
     } elseif ($l_tipo=='IDC') {
       $l_string .= '<tr valign="top">';
       $l_string .= '<td width="1%" nowrap><img src="'.$conRootSIW.$conImgSmAtraso.'" border=0 width=10 height=10 align="center"><td>Fora da faixa desejável (abaixo de 80% ou acima de 110%).';
@@ -704,9 +704,9 @@ function ExibeSmile($l_tipo,$l_andamento,$l_legenda=0) {
     }
   } else {
     if ($l_tipo=='IDE') {
-      if ($l_andamento < 80 || $l_andamento > 110) $l_string .= '<img title="IDE fora da faixa desejável." src="'.$conRootSIW.$conImgSmAtraso.'" border=0 width="10" height="10" align="center">';
-      elseif ($l_andamento < 90)                   $l_string .= '<img title="IDE próximo da faixa desejável." src="'.$conRootSIW.$conImgSmAviso.'" border=0 width="10" height="10" align="center">';
-      else                                         $l_string .= '<img title="IDE na faixa desejável." src="'.$conRootSIW.$conImgSmNormal.'" border=0 width="10" height="10" align="center">';
+      if ($l_andamento < 70)                           $l_string .= '<img title="IDE fora da faixa desejável." src="'.$conRootSIW.$conImgSmAtraso.'" border=0 width="10" height="10" align="center">';
+      elseif ($l_andamento < 90 || $l_andamento > 120) $l_string .= '<img title="IDE próximo da faixa desejável." src="'.$conRootSIW.$conImgSmAviso.'" border=0 width="10" height="10" align="center">';
+      else                                             $l_string .= '<img title="IDE na faixa desejável." src="'.$conRootSIW.$conImgSmNormal.'" border=0 width="10" height="10" align="center">';
     } elseif ($l_tipo=='IDC') {
       if ($l_andamento < 80 || $l_andamento > 110) $l_string .= '<img title="IDC fora da faixa desejável." src="'.$conRootSIW.$conImgSmAtraso.'" border=0 width="10" height="10" align="center">';
       elseif ($l_andamento > 100)                  $l_string .= '<img title="IDC próximo da faixa desejável." src="'.$conRootSIW.$conImgSmAviso.'" border=0 width="10" height="10" align="center">';

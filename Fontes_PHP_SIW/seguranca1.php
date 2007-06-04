@@ -126,7 +126,7 @@ function AcessoTramite() {
   $RS1 = db_getTramiteData::getInstanceOf($dbms,$w_sq_siw_tramite);
   $w_texto = $w_texto.'<font color="#FF0000">'.f($RS1,'nome').'</font>';
 
-  if (!(strpos('L',$O)===false)) {
+  if ($O=='L') {
     $RS = db_getTramiteUser::getInstanceOf($dbms,$w_cliente,$w_sq_menu,$w_sq_siw_tramite,'USUARIO',null,null,null);
   } 
 
@@ -134,7 +134,7 @@ function AcessoTramite() {
   ShowHTML('<HEAD>');
   Estrutura_CSS($w_cliente);
   ShowHTML('<TITLE>'.$conSgSistema.' - Acessos</TITLE>');
-  if (!(strpos('IAE',$O)===false)) {
+  if (strpos('IAE',$O)!==false) {
     ScriptOpen('JavaScript');
     if ($O=='I') {
       if (($p_nome.$p_sq_unidade.$p_sq_menu)>'') {
@@ -162,7 +162,7 @@ function AcessoTramite() {
     ValidateClose();
     if (($p_nome.$p_sq_unidade.$p_sq_menu)>'') {
       ValidateOpen('Validacao1');
-      if (!(strpos('I',$O)===false)) {
+      if ($O=='I') {
         ShowHTML('  var i; ');
         ShowHTML('  var w_erro=true; ');
         ShowHTML('  if (theForm["w_sq_pessoa[]"].value==undefined) {');
@@ -332,16 +332,27 @@ function Tramite() {
   extract($GLOBALS);
   global $w_Disabled;
 
-  $w_sq_menu = $_REQUEST['w_sq_menu'];
+  $w_troca          = $_REQUEST['w_troca'];
+  $w_sq_menu        = $_REQUEST['w_sq_menu'];
+  $w_sq_siw_tramite = $_REQUEST['w_sq_siw_tramite'];
 
   // Monta uma string para indicar a opção selecionada
   $w_texto = opcaoMenu($w_sq_menu);
-  if ($O=='L') {
+  
+  if (nvl($w_troca,'')!='') {
+    $w_nome             = $_REQUEST['w_nome'];
+    $w_envia_mail       = $_REQUEST['w_envia_mail'];
+    $w_solicita_cc      = $_REQUEST['w_solicita_cc'];
+    $w_ordem            = $_REQUEST['w_ordem'];
+    $w_sigla            = $_REQUEST['w_sigla'];
+    $w_ativo            = $_REQUEST['w_ativo'];
+    $w_descricao        = $_REQUEST['w_descricao'];
+    $w_chefia_imediata  = $_REQUEST['w_chefia_imediata'];
+    $w_acesso_geral     = $_REQUEST['w_acesso_geral'];
+  } elseif ($O=='L') {
     $RS = db_getTramiteList::getInstanceOf($dbms,$w_sq_menu,null,null);
     $RS = SortArray($RS,'ordem','asc');
   } elseif ($O=='A' || $O=='E') {
-
-    $w_sq_siw_tramite = $_REQUEST['w_sq_siw_tramite'];
     $RS = db_getTramiteData::getInstanceOf($dbms,$w_sq_siw_tramite);
     $w_nome             = f($RS,'nome');
     $w_envia_mail       = f($RS,'envia_mail');
@@ -362,10 +373,10 @@ function Tramite() {
   ShowHTML('<HEAD>');
   ShowHTML('<TITLE>'.$conSgSistema.' - Configuração dos trâmites</TITLE>');
   Estrutura_CSS($w_cliente);
-  if (!(strpos('IAEP',$O)===false)) {
+  if (strpos('IAEP',$O)!==false) {
     ScriptOpen('JavaScript');
     ValidateOpen('Validacao');
-    if (!(strpos('IA',$O)===false)) {
+    if (strpos('IA',$O)!==false) {
       Validate('w_nome','Nome','1','1','3','50','1','1');
       Validate('w_ordem','Ordem','1','1','1','2','','0123456789');
       Validate('w_sigla','Sigla','1','','2','2','1','1');
@@ -388,7 +399,9 @@ function Tramite() {
   ShowHTML(' .lh:HOVER{text-decoration: underline;} ');
   ShowHTML('</style> ');
   ShowHTML('</HEAD>');
-  if (!(strpos('IAE',$O)===false)) {
+  if (nvl($w_troca,'')!='') {
+    BodyOpenClean('onLoad=\'document.Form.'.$w_troca.'.focus()\';');
+  } elseif (strpos('IAE',$O)!==false) {
     if ($O=='E')                BodyOpen('onLoad=\'document.Form.w_assinatura.focus()\';');
     elseif ($O=='A' || $O=='I') BodyOpen('onLoad=\'document.Form.w_nome.focus()\';');
   }  else {
@@ -446,11 +459,12 @@ function Tramite() {
     ShowHTML('    </table>');
     ShowHTML('  </td>');
     ShowHTML('</tr>');
-  } elseif (!(strpos('IAE',$O)===false)) {
+  } elseif (strpos('IAE',$O)!==false) {
     if ($O=='E') $w_Disabled='DISABLED';
     AbreForm('Form',$w_pagina.'Grava','POST','return(Validacao(this));',null,$P1,$P2,$P3,$P4,$TP,$SG,$R,$O);
     ShowHTML('<INPUT type="hidden" name="w_sq_menu" value="'.$w_sq_menu.'">');
     ShowHTML('<INPUT type="hidden" name="w_sq_siw_tramite" value="'.$w_sq_siw_tramite.'">');
+    ShowHTML('<INPUT type="hidden" name="w_troca" value="">');
     ShowHTML('<tr bgcolor="'.$conTrBgColor.'"><td>');
     ShowHTML('    <table width="100%" border="0">');
     ShowHTML('      <tr><td valign="top" colspan=3><font  size="1"><b><U>N</U>ome:<br><INPUT ACCESSKEY="N" '.$w_Disabled.' class="sti" type="text" name="w_nome" size="50" maxlength="50" value="'.$w_nome.'"></td></tr>');
@@ -502,7 +516,8 @@ function Tramite() {
     } else {
       ShowHTML('            <input class="stb" type="submit" name="Botao" value="Gravar">');
     } 
-    ShowHTML('            <input class="stb" type="button" onClick="history.back()" name="Botao" value="Cancelar">');
+    ShowHTML('            <input class="stb" type="button" onClick="location.href=\''.montaURL_JS($w_dir,$w_pagina.$par.'&O=L&w_sq_menu='.$w_sq_menu.'&P1='.$P1.'&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP='.$TP.'&SG='.$SG.'&O=L').'\';" name="Botao" value="Cancelar">');
+    //ShowHTML('            <input class="stb" type="button" onClick="history.back()" name="Botao" value="Cancelar">');
     ShowHTML('            <input class="stb" type="button" onClick="window.close(); opener.focus();" name="Botao" value="Fechar">');
     ShowHTML('          </td>');
     ShowHTML('      </tr>');
@@ -541,7 +556,7 @@ function AcessoMenu() {
   // Monta uma string para indicar a opção selecionada
   $w_texto = opcaoMenu($w_sq_menu);
 
-  if (!(strpos('L',$O)===false)) {
+  if ($O=='L') {
     $RS  = db_getMenuUser::getInstanceOf($dbms,$w_cliente,$w_sq_menu,null,'USUARIO',null,null,null);
     $RS1 = db_getMenuUser::getInstanceOf($dbms,$w_cliente,$w_sq_menu,null,'VINCULO',null,null,null);
   } 
@@ -549,7 +564,7 @@ function AcessoMenu() {
   ShowHTML('<HEAD>');
   Estrutura_CSS($w_cliente);
   ShowHTML('<TITLE>'.$conSgSistema.' - Acessos</TITLE>');
-  if (!(strpos('IAE',$O)===false)) {
+  if (strpos('IAE',$O)!==false) {
     ScriptOpen('JavaScript');
     if ($O=='I') {
       if (($p_nome.$p_sq_unidade.$p_sq_menu)>'') {
@@ -577,7 +592,7 @@ function AcessoMenu() {
     ValidateClose();
     if (($p_nome.$p_sq_unidade.$p_sq_menu)>'') {
       ValidateOpen('Validacao1');
-      if (!(strpos('I',$O)===false)) {
+      if ($O=='I') {
         ShowHTML('  var i; ');
         ShowHTML('  var w_erro=true; ');
         ShowHTML('  if (theForm["w_sq_pessoa[]"].value==undefined) {');
@@ -696,7 +711,7 @@ function AcessoMenu() {
     ShowHTML('    </table>');
     ShowHTML('  </td>');
     ShowHTML('</tr>');
-  } elseif (!(strpos('I',$O)===false)) {
+  } elseif ($O=='I') {
     ShowHTML('<tr bgcolor="'.$conTrBgColor.'"><td>');
     ShowHTML('    <table width="100%" border="0">');
     AbreForm('Form',$R,'POST','return(Validacao(this));',null,$P1,$P2,$P3,$P4,$TP,$SG,$R,$O);
@@ -788,7 +803,7 @@ function AcessoMenuPerfil() {
   Estrutura_CSS($w_cliente);
   ShowHTML('<HEAD>');
   ShowHTML('<TITLE>'.$conSgSistema.' - Acessos</TITLE>');
-  if (!(strpos('IAE',$O)===false)) {
+  if (strpos('IAE',$O)!==false) {
     ScriptOpen('JavaScript');
     ValidateOpen('Validacao');
     if ($O=='I') {
@@ -838,7 +853,7 @@ function AcessoMenuPerfil() {
   ShowHTML('          <td><font size="1">Opção:<br><b><font size=1 class="hl">'.substr($w_texto,0,strlen($w_texto)-4).'</font></b></td>');
   ShowHTML('    </TABLE>');
   ShowHTML('</TABLE>');
-  if (!(strpos('I',$O)===false)) {
+  if ($O=='I') {
     ShowHTML('<tr bgcolor="'.$conTrBgColor.'"><td>');
     ShowHTML('    <table width="100%" border="0">');
     AbreForm('Form',$w_pagina.'Grava','POST','return(Validacao(this));',null,$P1,$P2,$P3,$P4,$TP,$SG,$R,$O);
@@ -999,13 +1014,25 @@ function Grava() {
       } else {
         ScriptOpen('JavaScript');
         ShowHTML('  alert(\'Assinatura Eletrônica inválida!\');');
-        ShowHTML('  history.back(1);');
         ScriptClose();
+        retornaFormulario('w_assinatura');
       } 
       break;
     case 'SIWTRAMITE':
       // Verifica se a Assinatura Eletrônica é válida
       if (verificaAssinaturaEletronica($_SESSION['USERNAME'],strtoupper($_REQUEST['w_assinatura'])) || $w_assinatura=='') {
+        $RS = db_getTramiteList::getInstanceOf($dbms,$_REQUEST['w_sq_menu'],null,null);
+        if(count($RS)>0) {
+          foreach ($RS as $row) {
+            if (f($row,'ordem')==$_REQUEST['w_ordem'] && f($row,'sq_siw_tramite')!=nvl($_REQUEST['w_sq_siw_tramite'],0)) {
+              ScriptOpen('JavaScript');
+              ShowHTML('  alert(\'ATENÇÃO: Já existe trâmite com este número de ordem!\');');
+              ScriptClose();
+              RetornaFormulario('w_ordem');
+              exit;
+            }
+          }  
+        }
         dml_SiwTramite::getInstanceOf($dbms,$O,$_REQUEST['w_sq_siw_tramite'],$_REQUEST['w_sq_menu'],
             $_REQUEST['w_nome'],$_REQUEST['w_ordem'],$_REQUEST['w_sigla'],$_REQUEST['w_descricao'],
             $_REQUEST['w_chefia_imediata'],$_REQUEST['w_ativo'],$_REQUEST['w_solicita_cc'],$_REQUEST['w_envia_mail']);
@@ -1015,8 +1042,8 @@ function Grava() {
       } else {
         ScriptOpen('JavaScript');
         ShowHTML('  alert(\'Assinatura Eletrônica inválida!\');');
-        ShowHTML('  history.back(1);');
         ScriptClose();
+        retornaFormulario('w_assinatura');
       } 
       break;
     case 'ACESSOMENU':
@@ -1037,8 +1064,8 @@ function Grava() {
       } else {
         ScriptOpen('JavaScript');
         ShowHTML('  alert(\'Assinatura Eletrônica inválida!\');');
-        ShowHTML('  history.back(1);');
         ScriptClose();
+        retornaFormulario('w_assinatura');
       } 
       break;
     case 'ACESSOMENUPERFIL':
@@ -1061,8 +1088,8 @@ function Grava() {
       } else {
         ScriptOpen('JavaScript');
         ShowHTML('  alert(\'Assinatura Eletrônica inválida!\');');
-        ShowHTML('  history.back(1);');
         ScriptClose();
+        retornaFormulario('w_assinatura');
       } 
       break;
     case 'ENDERECO':
@@ -1085,12 +1112,11 @@ function Grava() {
       } else {
         ScriptOpen('JavaScript');
         ShowHTML('  alert(\'Assinatura Eletrônica inválida!\');');
-        ShowHTML('  history.back(1);');
         ScriptClose();
+        retornaFormulario('w_assinatura');
       } 
       break;
   } 
-  return $function_ret;
 } 
 
 // =========================================================================

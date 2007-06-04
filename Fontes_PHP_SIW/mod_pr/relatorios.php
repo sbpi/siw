@@ -125,23 +125,24 @@ exit;
 // -------------------------------------------------------------------------
 function Rel_Progresso() {
   extract($GLOBALS);
-  $p_plano     = $_REQUEST['p_plano'];
-  $p_programa  = $_REQUEST['p_programa'];
-  $p_objetivo  = $_REQUEST['p_objetivo'];
-  $p_projeto   = $_REQUEST['p_projeto'];
-  $p_inicio    = $_REQUEST['p_inicio'];
-  $p_fim       = $_REQUEST['p_fim'];
-  $p_tipo      = $_REQUEST['p_tipo'];
+  $p_plano      = $_REQUEST['p_plano'];
+  $p_programa   = $_REQUEST['p_programa'];
+  $p_objetivo   = $_REQUEST['p_objetivo'];
+  $p_projeto    = $_REQUEST['p_projeto'];
+  $p_inicio     = $_REQUEST['p_inicio'];
+  $p_fim        = $_REQUEST['p_fim'];
+  $p_tipo       = $_REQUEST['p_tipo'];
 
-  $p_legenda   = $_REQUEST['p_legenda'];
-  $p_indicador = $_REQUEST['p_indicador'];
-  $p_prevista  = $_REQUEST['p_prevista'];
-  $p_realizada = $_REQUEST['p_realizada'];
-  $p_pendente  = $_REQUEST['p_pendente'];
-  $p_proximo   = $_REQUEST['p_proximo'];
-  $p_questoes  = $_REQUEST['p_questoes'];
-  $p_tarefas   = $_REQUEST['p_tarefas'];
-  $p_pacotes   = $_REQUEST['p_pacotes'];
+  $p_legenda    = $_REQUEST['p_legenda'];
+  $p_indicador  = $_REQUEST['p_indicador'];
+  $p_prevista   = $_REQUEST['p_prevista'];
+  $p_realizada  = $_REQUEST['p_realizada'];
+  $p_pendente   = $_REQUEST['p_pendente'];
+  $p_proximo    = $_REQUEST['p_proximo'];
+  $p_questoes   = $_REQUEST['p_questoes'];
+  $p_tarefas    = $_REQUEST['p_tarefas'];
+  $p_pacotes    = $_REQUEST['p_pacotes'];
+  $p_orcamento  = $_REQUEST['p_orcamento'];
 
   if ($O=='L') {
     // Recupera o logo do cliente a ser usado nas listagens
@@ -271,7 +272,6 @@ function Rel_Progresso() {
             }
             ShowHTML('       <td align="right">'.ExibeSmile('IDE',f($row,'ide')).'&nbsp;');
             ShowHTML('       <td align="right"><b>'.formatNumber(f($row,'ide')).'%</b></td>');
-            ShowHTML('       <td>&nbsp;&nbsp;<b>(O cálculo do IDE leva em conta apenas as etapas previstas e entregues no período, desprezando as tarefas).</b></td>');
             ShowHTML('          </table>');
           }
 
@@ -368,6 +368,88 @@ function Rel_Progresso() {
             ShowHTML('        </table></td></tr>');
           }
 
+          // Plano orçamentário do projeto no ano corrente
+          if ($p_orcamento=='S') {
+            ShowHTML('      <tr><td colspan="2"><br><font size="2"><b>Plano orçamentário<hr NOSHADE color=#000000 SIZE=1></b></td></tr>');
+
+            // Configura o período de recuperação das rubricas
+            if (toDate($p_inicio) < time()) {
+              if (date(Y,toDate($p_inicio)) < date(Y,time())) $w_fim = '31/12/'.date(Y,toDate($p_inicio)); else $w_fim = formataDataEdicao(time()); 
+            } else {
+              $w_fim = $p_fim;
+            }
+
+            // Recupera o plano orçamentário do período
+            $RS1 = db_getSolicRubrica::getInstanceOf($dbms,f($row,'sq_projeto'),null,'S',null,null,null,$p_inicio,$w_fim,null);
+            $RS1 = SortArray($RS1,'codigo','asc');
+            if (count($RS1)==0) {
+              ShowHTML('      <tr><td align="center" colspan="2"><b>Não há cronograma desembolso cadastrado para o período informado.');
+            } else {
+              // Cronograma desembolso
+              ShowHTML('      <tr><td align="center" colspan="2">');
+              ShowHTML('          <table width=100%  border="1" bordercolor="#00000">');
+              ShowHTML('          <tr align="center">');
+              ShowHTML('            <td rowspan=2 bgColor="#f0f0f0" width="1%" nowrap><b>Código</td>');
+              ShowHTML('            <td rowspan=2 bgColor="#f0f0f0"><b>Nome</td>');
+              ShowHTML('            <td rowspan=2 bgColor="#f0f0f0"><b>Período</td>');
+              ShowHTML('            <td colspan=2 bgColor="#f0f0f0"><b>Orçamento</td>');
+              ShowHTML('            <td rowspan=2 bgColor="#f0f0f0"><b>% Realização</td>');
+              ShowHTML('          </tr>');
+              ShowHTML('          <tr align="center">');
+              ShowHTML('            <td bgColor="#f0f0f0"><b>Previsto</td>');
+              ShowHTML('            <td bgColor="#f0f0f0"><b>Realizado</td>');
+              ShowHTML('          </tr>');
+              $w_cor=$conTrBgColor;
+              $w_total_previsto  = 0;
+              $w_total_executado = 0;
+              foreach ($RS1 as $row1) {
+                $RS_Cronograma = db_getCronograma::getInstanceOf($dbms,f($row1,'sq_projeto_rubrica'),null,$p_inicio,$w_fim);
+                $RS_Cronograma = SortArray($RS_Cronograma,'inicio', 'asc', 'fim', 'asc');
+                if (count($RS_Cronograma)>0) $w_rowspan = 'rowspan="'.(count($RS_Cronograma)+1).'"'; else $w_rowspan = '';
+                ShowHTML('      <tr valign="top">');
+                ShowHTML('        <td '.$w_rowspan.'><A class="hl" HREF="javascript:this.status.value;" onClick="window.open(\''.montaURL_JS(null,$conRootSIW.'projeto.php?par=Cronograma&w_edita=N&O=L&w_chave='.f($row1,'sq_projeto_rubrica').'&w_chave_pai='.f($row,'sq_projeto').'&w_tipo=&P1='.$P1.'&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP='.$TP.' - Extrato Rubrica'.'&SG=PJCRONOGRAMA'.MontaFiltro('GET')).'\',\'Ficha3\',\'toolbar=no,width=780,height=530,top=30,left=10,scrollbars=yes\');" title="Exibe as informações desta rubrica.">'.f($row1,'codigo').'</A>&nbsp');
+                ShowHTML('        <td '.$w_rowspan.'>'.f($row1,'nome').' </td>');
+                if (count($RS_Cronograma)>0) {
+                  $w_rubrica_previsto = 0;
+                  $w_rubrica_real     = 0;
+                  foreach ($RS_Cronograma as $row2) {
+                    $w_cor = ($w_cor==$conTrBgColor || $w_cor=='') ? $w_cor=$conTrAlternateBgColor : $w_cor=$conTrBgColor;
+                    ShowHTML('        <td align="center" bgcolor="'.$w_cor.'">'.FormataDataEdicao(f($row2,'inicio'),5).' a '.FormataDataEdicao(f($row2,'fim'),5).'</td>');
+                    ShowHTML('        <td align="right" bgcolor="'.$w_cor.'">'.formatNumber(f($row2,'valor_previsto')).'</td>');
+                    ShowHTML('        <td align="right" bgcolor="'.$w_cor.'">'.formatNumber(f($row2,'valor_real')).'</td>');
+                    $w_perc = 0;
+                    if (f($row2,'valor_previsto') > 0) $w_perc = (f($row2,'valor_real')/f($row2,'valor_previsto')*100);
+                    ShowHTML('        <td align="right" bgcolor="'.$w_cor.'">'.formatNumber($w_perc).' %</td>');
+                    ShowHTML('      </tr>');
+                    $w_rubrica_previsto += f($row2,'valor_previsto');
+                    $w_rubrica_real     += f($row2,'valor_real');
+                  } 
+                  ShowHTML('      <tr>');
+                  ShowHTML('          <td align="right"><b>Totais da rubrica&nbsp;</td>');
+                  ShowHTML('          <td align="right"><b>'.formatNumber($w_rubrica_previsto).' </b></td>');
+                  ShowHTML('          <td align="right"><b>'.formatNumber($w_rubrica_real).' </b></td>');
+                  $w_perc = 0;
+                  if ($w_rubrica_previsto > 0) $w_perc = ($w_rubrica_real/$w_rubrica_previsto*100);
+                  ShowHTML('        <td align="right"><b>'.formatNumber($w_perc).' %</td>');
+                  ShowHTML('      </tr>');
+                } else {
+                  ShowHTML('        <td colspan=4>*** Cronograma desembolso da rubrica não informado');
+                }
+                $w_total_previsto += f($row1,'total_previsto');
+                $w_total_real     += f($row1,'total_real');
+              } 
+              ShowHTML('      <tr>');
+              ShowHTML('          <td align="right" colspan="3" bgColor="#f0f0f0"><b>Totais do projeto&nbsp;</td>');
+              ShowHTML('          <td align="right" bgColor="#f0f0f0"><b>'.formatNumber($w_total_previsto).' </b></td>');
+              ShowHTML('          <td align="right" bgColor="#f0f0f0"><b>'.formatNumber($w_total_real).' </b></td>');
+              $w_perc = 0;
+              if ($w_total_previsto > 0) $w_perc = ($w_total_real/$w_total_previsto*100);
+              ShowHTML('        <td align="right" bgColor="#f0f0f0"><b>'.formatNumber($w_perc).' %</td>');
+              ShowHTML('      </tr>');
+              ShowHTML('         </table></td></tr>');
+            }
+          }
+
           // Riscos
           if ($p_questoes=='S') {
             $RS1 = db_getSolicRestricao::getInstanceOf($dbms,f($row,'sq_projeto'), null, null, null,null,null,null);
@@ -404,6 +486,15 @@ function Rel_Progresso() {
     ShowHTML('<HEAD>');
     ShowHTML('<TITLE>Relatório de progresso do projeto</TITLE>');
     ScriptOpen('JavaScript');
+    ShowHTML('  function MarcaTodosBloco() {');
+    ShowHTML('    for (var i=0;i < document.Form.elements.length;i++) { ');
+    ShowHTML('      tipo = document.Form.elements[i].type.toLowerCase();');
+    ShowHTML('      if (tipo==\'checkbox\') {');
+    ShowHTML('        if (document.Form.w_marca_bloco.checked==true) document.Form.elements[i].checked=true; ');
+    ShowHTML('        else document.Form.elements[i].checked=false; ');
+    ShowHTML('      } ');
+    ShowHTML('    } ');
+    ShowHTML('  }');
     ShowHTML('  function marcaQuestao() {');
     ShowHTML('    if (document.Form.p_questoes.checked) {');
     ShowHTML('      document.Form.p_tarefas.disabled=false;');
@@ -460,6 +551,7 @@ function Rel_Progresso() {
     ShowHTML('        <td colspan=2><b><u>P</u>eríodo de reporte:</b><br><input '.$w_Disabled.' accesskey="P" type="text" name="p_inicio" class="sti" SIZE="10" MAXLENGTH="10" VALUE="'.$p_inicio.'" onKeyDown="FormataData(this,event);" onKeyUp="SaltaCampo(this.form.name,this,10,event);">'.ExibeCalendario('Form','p_inicio').' a ');
     ShowHTML('                                                 <input '.$w_Disabled.' accesskey="P" type="text" name="p_fim" class="sti" SIZE="10" MAXLENGTH="10" VALUE="'.$p_fim.'" onKeyDown="FormataData(this,event);" onKeyUp="SaltaCampo(this.form.name,this,10,event);">'.ExibeCalendario('Form','p_fim').'</td>');
     ShowHTML('      <tr><td colspan=2><b>Informações a serem exibidas:');
+    if ($w_marca_bloco) ShowHTML('          <tr><td colspan=2><INPUT type="CHECKBOX" name="w_marca_bloco" value="S" onClick="javascript:MarcaTodosBloco();" TITLE="Marca todos os itens da relação" checked> Todos</td>'); else ShowHTML('          <tr><td colspan=2><INPUT type="CHECKBOX" name="w_marca_bloco" value="S" onClick="javascript:MarcaTodosBloco();" TITLE="Marca todos os itens da relação"> Todos</td>');
     if ($p_legenda)     ShowHTML('          <tr><td colspan=2><INPUT checked type="CHECKBOX" name="p_legenda" value="S"> Legenda dos sinalizadores </td>');                             else ShowHTML('          <tr><td colspan=2><INPUT type="CHECKBOX" name="p_legenda" value="S"> Legenda dos sinalizadores </td>');
     if ($p_indicador)   ShowHTML('          <tr><td colspan=2><INPUT checked type="CHECKBOX" name="p_indicador" value="S"> Indicadores de performance do projeto </td>');               else ShowHTML('          <tr><td colspan=2><INPUT type="CHECKBOX" name="p_indicador" value="S"> Indicadores de performance do projeto </td>');
     if ($p_prevista)    ShowHTML('          <tr><td colspan=2><INPUT checked type="CHECKBOX" name="p_prevista" value="S"> Entregas previstas para o período de reporte</td>');          else ShowHTML('          <tr><td colspan=2><INPUT type="CHECKBOX" name="p_prevista" value="S"> Entregas previstas para o período de reporte</td>');
@@ -475,6 +567,7 @@ function Rel_Progresso() {
     }
     if ($p_tarefas)     ShowHTML('          <tr><td width="3%"><td><INPUT '.$w_Disabled.' checked type="CHECKBOX" name="p_tarefas" value="S"> Tarefas vinculadas à questão</td>');                      else ShowHTML('          <tr><td width="3%"><td><INPUT '.$w_Disabled.' type="CHECKBOX" name="p_tarefas" value="S"> Tarefas vinculadas à questão</td>');
     if ($p_pacotes)     ShowHTML('          <tr><td width="3%"><td><INPUT '.$w_Disabled.' checked type="CHECKBOX" name="p_pacotes" value="S"> Pacotes impactados pela questão</td>');                   else ShowHTML('          <tr><td width="3%"><td><INPUT '.$w_Disabled.' type="CHECKBOX" name="p_pacotes" value="S"> Pacotes impactados pela questão</td>');
+    if ($p_orcamento)   ShowHTML('          <tr><td colspan=2><INPUT checked type="CHECKBOX" name="p_orcamento" value="S"> Plano orçamentário do ano corrente</td>');                                   else ShowHTML('          <tr><td colspan=2><INPUT type="CHECKBOX" name="p_orcamento" value="S"> Plano orçamentário do ano corrente</td>');
     ShowHTML('      <tr><td align="center" colspan=2><hr>');
     ShowHTML('            <input class="STB" type="submit" name="Botao" value="Exibir">');
     ShowHTML('          </td>');
@@ -517,7 +610,7 @@ function Rel_Projeto() {
     if ($p_tipo=='WORD') {
       HeaderWord(null);
       ShowHTML('<BASE HREF="'.$conRootSIW.'">');
-      CabecalhoWord($w_cliente,'RELATÓRIO DE DETALHAMENTO DE PROJETOS',$w_pag);
+      CabecalhoWord($w_cliente,'RELATÓRIO DETALHADO DE PROJETOS',$w_pag);
       $w_embed = 'WORD';
     } else {
       Cabecalho();
@@ -528,7 +621,7 @@ function Rel_Projeto() {
       ShowHTML('<BASE HREF="'.$conRootSIW.'">');
       BodyOpenClean('onLoad=\'this.focus()\'; ');
       ShowHTML('<TABLE WIDTH="100%" BORDER=0><TR><TD ROWSPAN=2><IMG ALIGN="LEFT" SRC="'.LinkArquivo(null,$w_cliente,$w_logo,null,null,null,$w_embed).'"><TD ALIGN="RIGHT"><B><FONT SIZE=4 COLOR="#000000">');
-      ShowHTML('RELATÓRIO DE DETALHADAMENTO DE PROJETOS');
+      ShowHTML('RELATÓRIO DETALHADO DE PROJETOS');
       ShowHTML('</FONT><TR><TD ALIGN="RIGHT"><B><font COLOR="#000000">'.DataHora().'</B>');
       if ($p_tipo!='WORD') {
         ShowHTML('&nbsp;&nbsp;<IMG ALIGN="CENTER" TITLE="Imprimir" SRC="images/impressora.jpg" onClick="window.print();">');
@@ -581,6 +674,15 @@ function Rel_Projeto() {
     ShowHTML('<HEAD>');
     ShowHTML('<TITLE>Relatório de detalhamento de projetos</TITLE>');
     ScriptOpen('JavaScript');
+    ShowHTML('  function MarcaTodosBloco() {');
+    ShowHTML('    for (var i=0;i < document.Form.elements.length;i++) { ');
+    ShowHTML('      tipo = document.Form.elements[i].type.toLowerCase();');
+    ShowHTML('      if (tipo==\'checkbox\' && document.Form.elements[i].name!=\'p_geral1\') {');
+    ShowHTML('        if (document.Form.w_marca_bloco.checked==true) document.Form.elements[i].checked=true; ');
+    ShowHTML('        else document.Form.elements[i].checked=false; ');
+    ShowHTML('      } ');
+    ShowHTML('    } ');
+    ShowHTML('  }');
     ShowHTML('  function marcaEtapa() {');
     ShowHTML('    if (document.Form.p_etapa.checked) {');
     ShowHTML('      document.Form.p_tr.disabled=false;');
@@ -689,6 +791,7 @@ function Rel_Projeto() {
     ShowHTML('                                                 <input '.$w_Disabled.' accesskey="P" type="text" name="p_fim" class="sti" SIZE="10" MAXLENGTH="10" VALUE="'.$p_fim.'" onKeyDown="FormataData(this,event);" onKeyUp="SaltaCampo(this.form.name,this,10,event);">'.ExibeCalendario('Form','p_fim').'</td>');
     */
     ShowHTML('      <tr><td colspan=2><b>Informações a serem exibidas:');
+    if ($w_marca_bloco) ShowHTML('          <tr><td colspan=2><INPUT type="CHECKBOX" name="w_marca_bloco" value="S" onClick="javascript:MarcaTodosBloco();" TITLE="Marca todos os itens da relação" checked> Todos</td>'); else ShowHTML('          <tr><td colspan=2><INPUT type="CHECKBOX" name="w_marca_bloco" value="S" onClick="javascript:MarcaTodosBloco();" TITLE="Marca todos os itens da relação"> Todos</td>');
     //Recupera as informações do sub-menu
     $RS = db_getLinkSubMenu::getInstanceOf($dbms, $w_cliente, 'PJCAD');
     $RS = SortArray($RS,'ordem','asc'); 

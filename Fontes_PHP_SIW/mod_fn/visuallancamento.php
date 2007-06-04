@@ -317,7 +317,7 @@ function VisualLancamento($v_chave,$l_O,$w_usuario,$l_P1,$l_P4) {
     $w_html.=chr(13).'          <td bgColor="#f0f0f0"><div><b>Data</b></div></td>';
     $w_html.=chr(13).'          <td bgColor="#f0f0f0"><div><b>Série</b></div></td>';
     $w_html.=chr(13).'          <td bgColor="#f0f0f0"><div><b>Valor</b></div></td>';
-    if((Nvl($w_tipo_rubrica,'')>'') && (Nvl($w_tipo_rubrica,0)==5))
+    if((Nvl($w_tipo_rubrica,'')=='')||((Nvl($w_tipo_rubrica,'')>'') && (Nvl($w_tipo_rubrica,0)==5)))
       $w_html.=chr(13).'          <td bgColor="#f0f0f0"><div><b>Patrimônio</b></div></td>';
     $w_html.=chr(13).'          </tr>';
     $w_cor=$w_TrBgColor;
@@ -340,7 +340,7 @@ function VisualLancamento($v_chave,$l_O,$w_usuario,$l_P1,$l_P4) {
         $w_html.=chr(13).'            <td>'.FormataDataEdicao(f($row,'data')).'</td>';
         $w_html.=chr(13).'            <td>'.Nvl(f($row,'serie'),'---').'</td>';
         $w_html.=chr(13).'            <td align="right">'.formatNumber(f($row,'valor')).'&nbsp;&nbsp;</td>';
-        if(Nvl($w_tipo_rubrica,'')>'' && Nvl($w_tipo_rubrica,0)==5)
+        if((Nvl($w_tipo_rubrica,'')=='')||((Nvl($w_tipo_rubrica,'')>'') && (Nvl($w_tipo_rubrica,0)==5)))
           $w_html.=chr(13).'            <td>'.f($row,'nm_patrimonio').'</td>';
         $w_html.=chr(13).'          </tr>';
         if (count($RS3)>0)   {
