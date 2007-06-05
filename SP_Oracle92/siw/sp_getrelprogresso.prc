@@ -98,7 +98,8 @@ begin
                 h.nome_resumido as nm_resp_etapa, 
                 case when k.sq_plano is not null then k.titulo else c6.titulo end as nm_plano, 
                 m1.sq_unidade, m1.nome as nm_unidade,
-                calculaIGE(c.sq_siw_solicitacao) as ige, calculaIDE(c.sq_siw_solicitacao) as ide                
+                calculaIGE(c.sq_siw_solicitacao) as ige, calculaIDE(c.sq_siw_solicitacao, w_fim) as ide,
+                calculaIGC(c.sq_siw_solicitacao) as igc, calculaIDC(c.sq_siw_solicitacao, w_fim) as idc
            from pj_projeto_etapa                    a
                 inner         join co_pessoa        h  on (a.sq_pessoa           = h.sq_pessoa)
                 inner         join pj_projeto       b  on (a.sq_siw_solicitacao  = b.sq_siw_solicitacao)

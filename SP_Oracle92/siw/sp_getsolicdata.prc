@@ -170,8 +170,8 @@ begin
                 n.sq_menu sq_menu_pai,
                 o.sq_siw_solicitacao sq_programa, o.codigo_interno cd_programa, o.titulo nm_programa,
                 acentos(d.titulo,1) as ac_titulo,
-                calculaIGE(d.sq_siw_solicitacao) as ige,
-                calculaIde(d.sq_siw_solicitacao) as ide
+                calculaIGE(d.sq_siw_solicitacao) as ige, calculaIDE(d.sq_siw_solicitacao) as ide,
+                calculaIGC(d.sq_siw_solicitacao) as igc, calculaIDC(d.sq_siw_solicitacao) as idc
            from siw_menu                                     a 
                 inner        join eo_unidade                 a2 on (a.sq_unid_executora   = a2.sq_unidade)
                   left       join eo_unidade_resp            a3 on (a2.sq_unidade         = a3.sq_unidade and
