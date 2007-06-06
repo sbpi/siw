@@ -359,44 +359,59 @@ begin
       If p_restricao = 'LISTA' Then
          -- Recupera os encaminhamentos de um programa
          open p_result for 
-            select h.sq_documento_log, a.sq_siw_solic_log, a.sq_siw_tramite,a.data,
-                   case when h.sq_documento_log is null then a.observacao else a.observacao||chr(13)||chr(10)||'DESPACHO: '||chr(13)||chr(10)||h.resumo end despacho,
-                   'TRAMITACAO' origem,
-                   c.nome nm_registro, null nm_origem,
-                   c.sq_pessoa,
-                   i.nome_resumido destinatario,
-                   i.sq_pessoa sq_pessoa_destinatario,
-                   f.nome fase,
+            select h.sq_documento_log, a.sq_siw_solic_log, a.sq_siw_tramite,a.data, 
+                   coalesce(m.nome,a.observacao) as despacho,
+                   case when h.sq_documento_log is null then a1.sq_pessoa else n.sq_pessoa end as sq_pessoa_resp,
+                   case when h.sq_documento_log is null then a1.nome_resumido else n.nome_resumido end as nm_pessoa_resp,
+                   case when h.sq_documento_log is null 
+                        then case when instr(upper(a.observacao),'AUTUA')>0 then 'AUTUAÇÃO DE PROCESSO' else 'REGISTRO' end
+                        else 'TRAMITE ORIGINAL' 
+                   end as origem,
+                   c.sq_unidade as sq_registro, c.sigla nm_registro, l.sq_unidade as sq_origem, l.sigla as nm_origem,
+                   case when i.sq_pessoa is not null then 'PESSOA'        else 'UNIDADE'    end as tipo_destinatario,
+                   case when i.sq_pessoa is not null then i.sq_pessoa     else l.sq_unidade end as sq_destinatario,
+                   case when i.sq_pessoa is not null then i.nome_resumido else l.sigla      end as nm_destinatario,
                    e.nome tramite,
+                   f.nome fase,
+                   h.interno, h.pessoa_externa,h.unidade_externa,
                    k.sq_siw_arquivo, k.caminho, k.tipo, k.tamanho, 
                    to_char(a.data, 'DD/MM/YYYY, HH24:MI:SS') phpdt_data
-              from siw_solic_log                     a
-                     inner    join siw_tramite       e on (a.sq_siw_tramite     = e.sq_siw_tramite)
-                     inner    join siw_solicitacao   g on (a.sq_siw_solicitacao = g.sq_siw_solicitacao)
-                       inner  join eo_unidade        c on (g.sq_unidade         = c.sq_unidade)
-                       inner  join siw_tramite       f on (g.sq_siw_tramite     = f.sq_siw_tramite)
-                     left     join pa_documento_log    h on (a.sq_siw_solic_log   = h.sq_siw_solic_log)
-                       left   join co_pessoa         i on (h.pessoa_destino       = i.sq_pessoa)
-                     left     join siw_solic_log_arq j on (a.sq_siw_solic_log   = j.sq_siw_solic_log)
-                       left   join siw_arquivo       k on (j.sq_siw_arquivo     = k.sq_siw_arquivo)
+              from siw_solic_log                    a
+                   inner     join co_pessoa         a1 on (a.sq_pessoa          = a1.sq_pessoa)
+                   inner     join siw_tramite       e  on (a.sq_siw_tramite     = e.sq_siw_tramite)
+                   inner     join siw_solicitacao   g  on (a.sq_siw_solicitacao = g.sq_siw_solicitacao)
+                     inner   join eo_unidade        c  on (g.sq_unidade         = c.sq_unidade)
+                     inner   join siw_tramite       f  on (g.sq_siw_tramite     = f.sq_siw_tramite)
+                   left      join pa_documento_log  h  on (a.sq_siw_solic_log   = h.sq_siw_solic_log)
+                     left    join eo_unidade        l  on (h.unidade_destino    = l.sq_unidade)
+                     left    join pa_tipo_despacho  m  on (h.sq_tipo_despacho   = m.sq_tipo_despacho)
+                     left    join co_pessoa         i  on (h.pessoa_destino     = i.sq_pessoa)
+                     left    join co_pessoa         n  on (h.cadastrador        = n.sq_pessoa)
+                   left      join siw_solic_log_arq j  on (a.sq_siw_solic_log   = j.sq_siw_solic_log)
+                     left    join siw_arquivo       k  on (j.sq_siw_arquivo     = k.sq_siw_arquivo)
              where a.sq_siw_solicitacao = p_chave
             UNION
-            select b.sq_documento_log, b.sq_siw_solic_log, 0, b.data_inclusao,  b.resumo as despacho,
-                   'ANOTACAO' origem,
-                   e.nome nm_registro, e.nome as nm_origem,
-                   c.sq_pessoa,
-                   coalesce(d.nome, h.nome) destinatario,
-                   d.sq_pessoa sq_pessoa_destinatario,
-                   f.nome fase, f.nome tramite,
+            select b.sq_documento_log, b.sq_siw_solic_log, 0, b.data_inclusao, 
+                   b1.nome as despacho,
+                   b2.sq_pessoa as sq_pessoa_resp, b2.nome_resumido as nm_pessoa_resp,
+                   'TRAMITACAO' origem,
+                   e.sq_unidade as sq_registro, e.sigla as nm_registro, e.sq_unidade as sq_origem, e.sigla as nm_origem,
+                   case when d.sq_pessoa is not null then 'PESSOA'        else 'UNIDADE'    end as tipo_destinatario,
+                   case when d.sq_pessoa is not null then d.sq_pessoa     else h.sq_unidade end as sq_destinatario,
+                   case when d.sq_pessoa is not null then d.nome_resumido else h.sigla      end as nm_destinatario,
+                   f.nome tramite, f.nome fase,
+                   b.interno, b.pessoa_externa, b.unidade_externa,
                    null as sq_siw_arquivo, null as caminho, null as tipo, null as tamanho, 
                    to_char(coalesce(b.recebimento, b.envio), 'DD/MM/YYYY, HH24:MI:SS') phpdt_data
-              from pa_documento_log                     b
-                     left     join co_pessoa            d on (b.pessoa_destino     = d.sq_pessoa)
-                     left     join eo_unidade           e on (b.unidade_origem     = e.sq_unidade)
-                     left     join eo_unidade           h on (b.unidade_destino    = h.sq_unidade)
-                     inner    join co_pessoa            c on (b.cadastrador        = c.sq_pessoa)
-                     inner    join siw_solicitacao      g on (b.sq_siw_solicitacao = g.sq_siw_solicitacao)
-                       inner  join siw_tramite          f on (g.sq_siw_tramite     = f.sq_siw_tramite)
+              from pa_documento_log                   b
+                   inner    join pa_tipo_despacho     b1 on (b.sq_tipo_despacho   = b1.sq_tipo_despacho)
+                   inner    join co_pessoa            b2 on (b.cadastrador        = b2.sq_pessoa)
+                   left     join co_pessoa            d  on (b.pessoa_destino     = d.sq_pessoa)
+                   left     join eo_unidade           e  on (b.unidade_origem     = e.sq_unidade)
+                   left     join eo_unidade           h  on (b.unidade_destino    = h.sq_unidade)
+                   inner    join co_pessoa            c  on (b.cadastrador        = c.sq_pessoa)
+                   inner    join siw_solicitacao      g  on (b.sq_siw_solicitacao = g.sq_siw_solicitacao)
+                     inner  join siw_tramite          f  on (g.sq_siw_tramite     = f.sq_siw_tramite)
              where b.sq_siw_solic_log   is null
                and b.sq_siw_solicitacao = p_chave;
       End If;

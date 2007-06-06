@@ -3421,6 +3421,7 @@ SP_Oracle92/siw/sp_putConvOutroRep.prc -text
 SP_Oracle92/siw/sp_putConvPreposto.prc -text
 SP_Oracle92/siw/sp_putCronograma.prc -text
 SP_Oracle92/siw/sp_putDocumentoAssunto.prc -text
+SP_Oracle92/siw/sp_putDocumentoAutua.prc -text
 SP_Oracle92/siw/sp_putDocumentoEnvio.prc -text
 SP_Oracle92/siw/sp_putDocumentoGeral.prc -text
 SP_Oracle92/siw/sp_putDocumentoInter.prc -text

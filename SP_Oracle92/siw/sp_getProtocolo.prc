@@ -16,10 +16,10 @@ create or replace procedure sp_getProtocolo
     p_tipo         in number   default null,
     p_result       out sys_refcursor) is
 begin
-   If p_restricao = 'RELPATRAM' Then
+   If p_restricao = 'RELPATRAM' or p_restricao = 'RELPAETIQ' Then
       -- Recupera guias de tramitação
       open p_result for
-      select b.inicio, b.fim,
+      select b.inicio, b.fim, b.sq_siw_solicitacao,
              c.numero_original,
              c.prefixo||'.'||substr(1000000+c.numero_documento,2,6)||'/'||c.ano||'-'||substr(100+c.digito,2,2) as protocolo,
              c1.sigla sg_unidade,
@@ -49,7 +49,9 @@ begin
                                   group by sq_siw_solicitacao
                                 )                    c4 on (c.sq_siw_solicitacao   = c4.sq_siw_solicitacao)
                  inner     join pa_documento_log     d  on (c4.sq_documento_log    = d.sq_documento_log and
-                                                            d.recebimento          is null
+                                                            ((p_restricao          = 'RELPAETIQ' and c.processo = 'S' and c.data_autuacao is not null) or 
+                                                             (p_restricao          = 'RELPATRAM' and d.recebimento is null)
+                                                            )
                                                            )
                    inner   join pa_tipo_despacho     d1 on (d.sq_tipo_despacho     = d1.sq_tipo_despacho)
                    inner   join eo_unidade           d2 on (d.unidade_origem       = d2.sq_unidade)
@@ -99,9 +101,13 @@ begin
                  inner     join pa_documento_log     d  on (c.sq_siw_solicitacao   = d.sq_siw_solicitacao and
                                                             d.recebimento          is not null
                                                            )
-                   inner   join pa_tipo_despacho     d1 on (d.sq_tipo_despacho     = d1.sq_tipo_despacho)
+                   inner   join (select sq_siw_solicitacao, max(sq_documento_log) chave 
+                                   from pa_documento_log
+                                 group by sq_siw_solicitacao
+                                )                    dc on (d.sq_documento_log     = dc.chave)
                    inner   join eo_unidade           d2 on (d.unidade_origem       = d2.sq_unidade)
                    inner   join eo_unidade           d3 on (d.unidade_destino      = d3.sq_unidade)
+                   inner   join pa_tipo_despacho     d1 on (d.sq_tipo_despacho     = d1.sq_tipo_despacho)
                      left  join pa_parametro         d4 on (d1.sq_tipo_despacho    = d4.despacho_arqcentral)
                      left  join pa_parametro         d5 on (d1.sq_tipo_despacho    = d5.despacho_arqsetorial)
                      left  join pa_parametro         d6 on (d1.sq_tipo_despacho    = d6.despacho_emprestimo)
@@ -123,7 +129,7 @@ begin
          and (p_unid_posse is null or (p_unid_posse  is not null and c.unidade_int_posse  = p_unid_posse))
          and (p_ini        is null or (p_ini         is not null and d.envio              between p_ini and p_fim+1))
          and (p_tipo       = 1 or (p_tipo      = 2 and b1.acesso > 0))
-         and ((p_restricao = 'PADAUTUA'   and db.cliente is not null) or
+         and ((p_restricao = 'PADAUTUA'   and db.cliente is not null and c.data_autuacao is null) or
               (p_restricao = 'PADANEXA'   and c.processo = 'N' and d8.cliente is not null) or
               (p_restricao = 'PADJUNTA'   and c.processo = 'S' and (d9.cliente is not null or d8.cliente is not null)) or
               (p_restricao = 'PADTRANSF'  and (d4.cliente is not null) or (d5.cliente is not null)) or
@@ -185,7 +191,7 @@ begin
    Elsif p_restricao = 'PADRECEB' Then
       -- Recupera guias de tramitação
       open p_result for
-      select b.inicio, b.fim,
+      select b.inicio, b.fim, b.sq_siw_solicitacao, 
              c.numero_original,
              c.prefixo||'.'||substr(1000000+c.numero_documento,2,6)||'/'||c.ano||'-'||substr(100+c.digito,2,2) as protocolo,
              c1.sigla sg_unidade,
