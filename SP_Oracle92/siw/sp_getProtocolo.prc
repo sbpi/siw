@@ -75,7 +75,7 @@ begin
    Elsif instr('PADAUTUA,PADANEXA,PADJUNTA,PADTRANSF,PADELIM,PADEMPREST', p_restricao) > 0 Then
       -- Recupera guias de tramitação
       open p_result for
-      select b.inicio, b.fim, b.sq_siw_solicitacao,
+      select b.inicio, b.fim, b.sq_siw_solicitacao, b.sq_solic_pai,
              c.numero_original,
              c.prefixo||'.'||substr(1000000+c.numero_documento,2,6)||'/'||c.ano||'-'||substr(100+c.digito,2,2) as protocolo,
              c1.sigla sg_unidade,
@@ -130,9 +130,9 @@ begin
          and (p_ini        is null or (p_ini         is not null and d.envio              between p_ini and p_fim+1))
          and (p_tipo       = 1 or (p_tipo      = 2 and b1.acesso > 0))
          and ((p_restricao = 'PADAUTUA'   and db.cliente is not null and c.data_autuacao is null) or
-              (p_restricao = 'PADANEXA'   and c.processo = 'N' and d8.cliente is not null) or
-              (p_restricao = 'PADJUNTA'   and c.processo = 'S' and (d9.cliente is not null or d8.cliente is not null)) or
-              (p_restricao = 'PADTRANSF'  and (d4.cliente is not null) or (d5.cliente is not null)) or
+              (p_restricao = 'PADANEXA'   and d8.cliente is not null) or
+              (p_restricao = 'PADJUNTA'   and c.processo = 'S' and d9.cliente is not null) or
+              (p_restricao = 'PADTRANSF'  and (d4.cliente is not null or d5.cliente is not null)) or
               (p_restricao = 'PADELIM'    and da.cliente is not null) or
               (p_restricao = 'PADEMPREST' and d6.cliente is not null)
              );

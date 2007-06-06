@@ -858,6 +858,7 @@ begin
                 d.data_autuacao,      d.pessoa_origem,               d.processo,
                 d.circular,           d.copias,                      d.volumes,
                 d.data_recebimento,   d.unidade_int_posse,           d.pessoa_ext_posse,
+                case d.processo when 'S' then 'Processo' else 'Documento' end as nm_tipo,
                 case when d.pessoa_origem is null then b3.nome else d2.nome end as nm_origem,
                 coalesce(d1.nome,'Irrestrito') as nm_natureza,       d1.sigla sg_natureza,
                 d1.descricao ds_natureza,                            d1.ativo st_natureza,
