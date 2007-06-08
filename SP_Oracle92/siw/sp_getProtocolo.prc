@@ -61,7 +61,7 @@ begin
                left        join sg_pessoa_modulo     x on (w.sq_pessoa             = x.sq_pessoa)
        where a.sq_menu     = p_menu
          and w.sq_pessoa   = p_pessoa
-         and (b1.acesso    >= 8 or c.unidade_int_posse = w.sq_unidade)
+         and (b1.acesso    >= 8 or c.unidade_int_posse = w.sq_unidade or b.cadastrador = p_pessoa)
          and (p_chave      is null or (p_chave       is not null and b.sq_siw_solicitacao = p_chave))
          and (p_chave_aux  is null or (p_chave_aux   is not null and d.sq_documento_log   = p_chave_aux))
          and (p_numero     is null or (p_numero      is not null and c.prefixo            = p_prefixo and c.numero_documento = p_numero and c.ano = p_ano))

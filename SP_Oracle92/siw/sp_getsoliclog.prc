@@ -367,7 +367,7 @@ begin
                         then case when instr(upper(a.observacao),'AUTUA')>0 then 'AUTUAÇÃO DE PROCESSO' else 'REGISTRO' end
                         else 'TRAMITE ORIGINAL' 
                    end as origem,
-                   c.sq_unidade as sq_registro, c.sigla nm_registro, l.sq_unidade as sq_origem, l.sigla as nm_origem,
+                   c.sq_unidade as sq_registro, c.sigla nm_registro, l1.sq_unidade as sq_origem, l1.sigla as nm_origem,
                    case when i.sq_pessoa is not null then 'PESSOA'        else 'UNIDADE'    end as tipo_destinatario,
                    case when i.sq_pessoa is not null then i.sq_pessoa     else l.sq_unidade end as sq_destinatario,
                    case when i.sq_pessoa is not null then i.nome_resumido else l.sigla      end as nm_destinatario,
@@ -384,6 +384,7 @@ begin
                      inner   join siw_tramite       f  on (g.sq_siw_tramite     = f.sq_siw_tramite)
                    left      join pa_documento_log  h  on (a.sq_siw_solic_log   = h.sq_siw_solic_log)
                      left    join eo_unidade        l  on (h.unidade_destino    = l.sq_unidade)
+                     left    join eo_unidade        l1 on (h.unidade_origem     = l1.sq_unidade)
                      left    join pa_tipo_despacho  m  on (h.sq_tipo_despacho   = m.sq_tipo_despacho)
                      left    join co_pessoa         i  on (h.pessoa_destino     = i.sq_pessoa)
                      left    join co_pessoa         n  on (h.cadastrador        = n.sq_pessoa)
