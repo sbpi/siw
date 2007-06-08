@@ -1693,8 +1693,8 @@ function TelaUsuario() {
     ShowHTML('  </td>');
     ShowHTML('</tr>');
     ShowHTML('</table>');
-  } elseif (nvl(f($RS,'nome_vinculo'),'nulo')=='nulo') {
-    ShowHTML('<TITLE>Pessoa sem vínculo</TITLE>');
+  } elseif (strpos("Cliente,Fornecedor",f($RS,'nome_vinculo'))!==false) {
+    ShowHTML('<TITLE>Pessoa externa</TITLE>');
     ShowHTML('</HEAD>');
     BodyOpen('onLoad=this.focus();');
     $TP='Dados pessoa externa';
@@ -1709,9 +1709,9 @@ function TelaUsuario() {
     } else {
       foreach ($RS1 as $row1) {
         ShowHTML('      <tr><td align="center" colspan="2" height="1" bgcolor="#000000"></td>');
-        ShowHTML('      <tr><td colspan="2" align="center" bgcolor="#D0D0D0"><b>ATENÇÃO: Vínculo não informado</td>');
+        ShowHTML('      <tr><td colspan="2" bgcolor="#D0D0D0"><font size=2><b>'.f($RS,'nome_vinculo').'</td>');
         ShowHTML('      <tr><td align="center" colspan="2" height="1" bgcolor="#000000"></td>');
-        ShowHTML('      <tr><td>Nome:<br><font size=2><b>'.f($row1,'nm_pessoa').' ('.$l_sq_pessoa.')');
+        ShowHTML('      <tr><td>Nome:<br><font size=2><b>'.f($row1,'nm_pessoa'));
         ShowHTML('          <td>Nome resumido:<br><font size=2><b>'.f($row1,'nome_resumido'));
         if (nvl(f($row1,'email'),'nulo')!='nulo') {
           ShowHTML('      <tr><td>e-Mail:<b><br><a class="hl" href="mailto:'.f($row1,'email').'">'.f($row1,'email').'</a></td>');
@@ -1763,8 +1763,10 @@ function TelaUsuario() {
     ShowHTML('  </td>');
     ShowHTML('</tr>');
     ShowHTML('</table>');
-  } elseif (!(strpos("Cliente,Fornecedor",f($RS,'nome_vinculo'))===false)) {
-    ShowHTML('<TITLE>Pessoa externa</TITLE>');
+  } else {
+    // Outra parte
+    $RS1 = db_getBenef::getInstanceOf($dbms, $w_cliente, $l_sq_pessoa, null, null, null, null, null, null);
+    ShowHTML('<TITLE>Pessoa sem vínculo</TITLE>');
     ShowHTML('</HEAD>');
     BodyOpen('onLoad=this.focus();');
     $TP='Dados pessoa externa';
@@ -1772,16 +1774,14 @@ function TelaUsuario() {
     ShowHTML('<table border="0" width="100%">');
     ShowHTML('<tr bgcolor="'.$conTrBgColor.'"><td>');
     ShowHTML('    <table width="99%" border="0">');
-    // Outra parte
-    $RS1 = db_getBenef::getInstanceOf($dbms, $w_cliente, $l_sq_pessoa, null, null, null, null, null, null);
     if (count($RS1)<=0) {
       ShowHTML('      <tr><td colspan=2><font size=2><b>Outra parte não informada');
     } else {
       foreach ($RS1 as $row1) {
         ShowHTML('      <tr><td align="center" colspan="2" height="1" bgcolor="#000000"></td>');
-        ShowHTML('      <tr><td colspan="2" bgcolor="#D0D0D0"><font size=2><b>'.f($RS,'nome_vinculo').'</td>');
+        ShowHTML('      <tr><td colspan="2" align="center" bgcolor="#D0D0D0"><b>ATENÇÃO: Vínculo não informado</td>');
         ShowHTML('      <tr><td align="center" colspan="2" height="1" bgcolor="#000000"></td>');
-        ShowHTML('      <tr><td>Nome:<br><font size=2><b>'.f($row1,'nm_pessoa'));
+        ShowHTML('      <tr><td>Nome:<br><font size=2><b>'.f($row1,'nm_pessoa').' ('.$l_sq_pessoa.')');
         ShowHTML('          <td>Nome resumido:<br><font size=2><b>'.f($row1,'nome_resumido'));
         if (nvl(f($row1,'email'),'nulo')!='nulo') {
           ShowHTML('      <tr><td>e-Mail:<b><br><a class="hl" href="mailto:'.f($row1,'email').'">'.f($row1,'email').'</a></td>');

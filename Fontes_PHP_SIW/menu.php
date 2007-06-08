@@ -109,7 +109,7 @@ function ExibeDocs() {
   $j    = 1;
   $k    = 1;
   $l    = 1;
-  if ($SG=='' || ($SG > '' && $O == 'L')) {
+  if ($SG=='' || ($SG > '' && ($O=='L'||$O=='P'))) {
 
     $RS = db_getLinkDataUser::getInstanceOf($dbms, $p_cliente, $sq_pessoa, 'IS NULL');
     foreach ($RS as $row) {
@@ -291,7 +291,7 @@ function ExibeDocs() {
       ShowHTML('>');
     }
   } else {
-    if ($O=='L') {
+    if ($O=='L'||$O=='P') {
       $RS = db_getLinkData::getInstanceOf($dbms, $p_cliente, $SG);
       ShowHTML('onLoad=\'javascript:top.content.location="'.f($RS,'LINK').'&R='.$_REQUEST['R'].'&P1='.f($RS,'P1').'&P2='.f($RS,'P2').'&P3='.f($RS,'P3').'&P4='.f($RS,'P4').'&TP='.$_REQUEST['TP'].' - '.f($RS,'nome').'&SG='.f($RS,'SIGLA').'&O='.$_REQUEST['O'].MontaFiltro('GET').'";\'>');
     } else {

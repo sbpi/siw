@@ -158,7 +158,7 @@ function Inicial() {
   Cabecalho();
   ShowHTML('<HEAD>');
   if ($P1==2) {
-    ShowHTML('<meta http-equiv="Refresh" content="300; URL='.MontaURL('MESA').'">');
+    ShowHTML('<meta http-equiv="Refresh" content="'.$conRefreshSec.'; URL='.MontaURL('MESA').'">');
   } 
   ShowHTML('<TITLE>'.$conSgSistema.' - Listagem de atividades</TITLE>');
   ScriptOpen('Javascript');

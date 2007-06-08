@@ -93,7 +93,7 @@ function Abastecimento() {
   ShowHTML('<HEAD>');
   ShowHTML('<TITLE>'.$conSgSistema.' - Listagem de tipos de opinião</TITLE>');
   if ($P1==2) {
-    ShowHTML('<meta http-equiv="Refresh" content="300; URL='.str_replace($w_dir,'',MontaURL('MESA')).'">');
+    ShowHTML('<meta http-equiv="Refresh" content="'.$conRefreshSec.'; URL='.str_replace($w_dir,'',MontaURL('MESA')).'">');
   }
   Estrutura_CSS($w_cliente);
   if ($O=='') $O='L';
@@ -277,7 +277,7 @@ function Grupo() {
   ShowHTML('<HEAD>');
   ShowHTML('<TITLE>'.$conSgSistema.' - Listagem de tipos de opinião</TITLE>');
   if ($P1==2) {
-    ShowHTML('<meta http-equiv="Refresh" content="300; URL='.str_replace($w_dir,'',MontaURL('MESA')).'">');
+    ShowHTML('<meta http-equiv="Refresh" content="'.$conRefreshSec.'; URL='.str_replace($w_dir,'',MontaURL('MESA')).'">');
   }
   Estrutura_CSS($w_cliente);
   if ($O=='') $O='L';
@@ -440,7 +440,7 @@ function Opiniao() {
   ShowHTML('<HEAD>');
   ShowHTML('<TITLE>'.$conSgSistema.' - Listagem de tipos de opinião</TITLE>');
   if ($P1==2) {
-    ShowHTML('<meta http-equiv="Refresh" content="300; URL='.str_replace($w_dir,'',MontaURL('MESA')).'">');
+    ShowHTML('<meta http-equiv="Refresh" content="'.$conRefreshSec.'; URL='.str_replace($w_dir,'',MontaURL('MESA')).'">');
   }
   Estrutura_CSS($w_cliente);
   if ($O=='') $O='L';
@@ -611,7 +611,7 @@ function TipoVeiculo() {
   ShowHTML('<HEAD>');
   ShowHTML('<TITLE>'.$conSgSistema.' - Listagem de tipos de opinião</TITLE>');
   if ($P1==2) {
-    ShowHTML('<meta http-equiv="Refresh" content="300; URL='.str_replace($w_dir,'',MontaURL('MESA')).'">');
+    ShowHTML('<meta http-equiv="Refresh" content="'.$conRefreshSec.'; URL='.str_replace($w_dir,'',MontaURL('MESA')).'">');
   }
   Estrutura_CSS($w_cliente);
   if ($O=='') $O='L';
@@ -780,7 +780,7 @@ function Veiculo() {
   ShowHTML('<HEAD>');
   ShowHTML('<TITLE>'.$conSgSistema.' - Listagem de tipos de opinião</TITLE>');
   if ($P1==2) {
-    ShowHTML('<meta http-equiv="Refresh" content="300; URL='.str_replace($w_dir,'',MontaURL('MESA')).'">');
+    ShowHTML('<meta http-equiv="Refresh" content="'.$conRefreshSec.'; URL='.str_replace($w_dir,'',MontaURL('MESA')).'">');
   }
   Estrutura_CSS($w_cliente);
   if ($O=='') $O='L';

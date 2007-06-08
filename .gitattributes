@@ -987,6 +987,7 @@ Fontes_PHP_SIW/classes/sp/dml_putDemandaGeral.php -text
 Fontes_PHP_SIW/classes/sp/dml_putDemandaInter.php -text
 Fontes_PHP_SIW/classes/sp/dml_putDicionario.php -text
 Fontes_PHP_SIW/classes/sp/dml_putDocumentoAssunto.php -text
+Fontes_PHP_SIW/classes/sp/dml_putDocumentoAutua.php -text
 Fontes_PHP_SIW/classes/sp/dml_putDocumentoEnvio.php -text
 Fontes_PHP_SIW/classes/sp/dml_putDocumentoGeral.php -text
 Fontes_PHP_SIW/classes/sp/dml_putDocumentoInter.php -text

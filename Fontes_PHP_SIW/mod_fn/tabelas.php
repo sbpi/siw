@@ -113,7 +113,7 @@ function Imposto() {
   Cabecalho();
   ShowHTML('<HEAD>');
   ShowHTML('<TITLE>'.$conSgSistema.' - Listagem de impostos</TITLE>');
-  if ($P1==2) ShowHTML('<meta http-equiv="Refresh" content="300; URL='.str_replace($w_dir,'',MontaURL('MESA')).'">');
+  if ($P1==2) ShowHTML('<meta http-equiv="Refresh" content="'.$conRefreshSec.'; URL='.str_replace($w_dir,'',MontaURL('MESA')).'">');
   Estrutura_CSS($w_cliente);
   if (!(strpos('IAE',$O)===false)) {
     ScriptOpen('JavaScript');
@@ -260,7 +260,7 @@ function Documento(){
   Cabecalho();
   ShowHTML('<HEAD>');
   ShowHTML('<TITLE>'.$conSgSistema.' - Listagem de tipos de documentos</TITLE>');
-  if ($P1==2) ShowHTML('<meta http-equiv="Refresh" content="300; URL='.str_replace($w_dir,'',MontaURL('MESA')).'">');
+  if ($P1==2) ShowHTML('<meta http-equiv="Refresh" content="'.$conRefreshSec.'; URL='.str_replace($w_dir,'',MontaURL('MESA')).'">');
   Estrutura_CSS($w_cliente);
   if ($O=='') $O='L';
   if ($w_troca>'' && $O!='E')  {
@@ -415,7 +415,7 @@ function Lancamento() {
   Cabecalho();
   ShowHTML('<HEAD>');
   ShowHTML('<TITLE>'.$conSgSistema.' - Listagem de tipos de lançamento</TITLE>');
-  if ($P1==2) ShowHTML('<meta http-equiv="Refresh" content="300; URL='.str_replace($w_dir,'',MontaURL('MESA')).'">');
+  if ($P1==2) ShowHTML('<meta http-equiv="Refresh" content="'.$conRefreshSec.'; URL='.str_replace($w_dir,'',MontaURL('MESA')).'">');
   Estrutura_CSS($w_cliente);
   if ($O=='') $O='L';
   if ($w_troca>'' && $O!='E')  {

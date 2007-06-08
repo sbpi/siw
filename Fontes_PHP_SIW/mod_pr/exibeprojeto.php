@@ -152,14 +152,12 @@ function ExibeProjeto($l_chave,$operacao,$l_usuario,$l_tipo) {
     // Dados da conclusão do projeto, se ela estiver nessa situação
     if (f($RS,'concluida')=='S' && Nvl(f($RS,'data_conclusao'),'') > '') {
       $l_html .= chr(13).'      <tr><td colspan="2"><br><font size="2"><b>DADOS DA CONCLUSÃO<hr NOSHADE color=#000000 SIZE=1></b></font></td></tr>';
-      $l_html .= chr(13).'      <tr><td valign="top" colspan="2"><table border=0 width="100%" cellspacing=0>';
-      $l_html .= chr(13).'      <tr><td width="30%"><b>Início previsto:</b></td>';
+      $l_html .= chr(13).'      <tr><td><b>Início previsto:</b></td>';
       $l_html .= chr(13).'        <td>'.FormataDataEdicao(f($RS,'inicio_real')).' </td></tr>';
       $l_html .= chr(13).'      <tr><td><b>Término previsto:</b></td>';
       $l_html .= chr(13).'        <td>'.FormataDataEdicao(f($RS,'fim_real')).' </td></tr>';
       $l_html .= chr(13).'    <tr><td><b>Custo real:</b></td>';
       $l_html .= chr(13).'      <td>'.formatNumber(f($RS,'custo_real')).' </td></tr>';
-      $l_html .= chr(13).'          </table>';
       $l_html .= chr(13).'    <tr><td valign="top"><b>Nota de conclusão:</b></td>';
       $l_html .= chr(13).'      <td>'.CRLF2BR(f($RS,'nota_conclusao')).' </td></tr>';
     }
@@ -310,8 +308,6 @@ function ExibeProjeto($l_chave,$operacao,$l_usuario,$l_tipo) {
         $l_html .= chr(13).'        <td '.$w_rowspan.'><A class="hl" HREF="javascript:this.status.value;" onClick="window.open(\''.montaURL_JS(null,$conRootSIW.'projeto.php?par=Cronograma&w_edita=N&O=L&w_chave='.f($row,'sq_projeto_rubrica').'&w_chave_pai='.$l_chave.'&w_tipo=&P1='.$P1.'&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP='.$TP.' - Extrato Rubrica'.'&SG=PJCRONOGRAMA'.MontaFiltro('GET')).'\',\'Ficha3\',\'toolbar=no,width=780,height=530,top=30,left=10,scrollbars=yes\');" title="Exibe as informações desta rubrica.">'.f($row,'codigo').'</A>&nbsp';
         $l_html .= chr(13).'        <td '.$w_rowspan.'>'.f($row,'nome').' </td>';
         if (count($RS_Cronograma)>0) {
-          $w_rubrica_previsto = 0;
-          $w_rubrica_real     = 0;
           foreach ($RS_Cronograma as $row1) {
             $w_cor = ($w_cor==$conTrBgColor || $w_cor=='') ? $w_cor=$conTrAlternateBgColor : $w_cor=$conTrBgColor;
             $l_html .= chr(13).'        <td align="center" bgcolor="'.$w_cor.'">'.FormataDataEdicao(f($row1,'inicio'),5).' a '.FormataDataEdicao(f($row1,'fim'),5).'</td>';
@@ -335,8 +331,6 @@ function ExibeProjeto($l_chave,$operacao,$l_usuario,$l_tipo) {
         } else {
           $l_html .= chr(13).'        <td colspan=4>*** Cronograma desembolso da rubrica não informado';
         }
-        $w_total_previsto += f($row,'total_previsto');
-        $w_total_real     += f($row,'total_real');
       } 
       $l_html .= chr(13).'      <tr>';
       $l_html .= chr(13).'          <td align="right" colspan="3" bgColor="#f0f0f0"><b>Totais do projeto&nbsp;</td>';

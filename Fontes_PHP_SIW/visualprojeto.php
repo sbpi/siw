@@ -191,8 +191,7 @@ function VisualProjeto($l_chave,$operacao,$l_usuario) {
     // Dados da conclusão do projeto, se ela estiver nessa situação
     if (f($RS,'concluida')=='S' && Nvl(f($RS,'data_conclusao'),'') > '') {
       $l_html .= chr(13).'      <tr><td colspan="2"><br><font size="2"><b>DADOS DA CONCLUSÃO<hr NOSHADE color=#000000 SIZE=1></b></font></td></tr>';
-      $l_html .= chr(13).'      <tr><td valign="top" colspan="2"><table border=0 width="100%" cellspacing=0>';
-      $l_html .= chr(13).'      <tr><td width="30%"><b>Início previsto:</b></td>';
+      $l_html .= chr(13).'      <tr><td><b>Início previsto:</b></td>';
       $l_html .= chr(13).'        <td>'.FormataDataEdicao(f($RS,'inicio_real')).' </td></tr>';
       $l_html .= chr(13).'      <tr><td><b>Término previsto:</b></td>';
       $l_html .= chr(13).'        <td>'.FormataDataEdicao(f($RS,'fim_real')).' </td></tr>';
@@ -200,7 +199,6 @@ function VisualProjeto($l_chave,$operacao,$l_usuario) {
         $l_html .= chr(13).'    <tr><td><b>Custo real:</b></td>';
         $l_html .= chr(13).'      <td>'.formatNumber(f($RS,'custo_real')).' </td></tr>';
       }
-      $l_html .= chr(13).'          </table>';
       if ($w_tipo_visao==0) { 
         $l_html .= chr(13).'    <tr><td valign="top"><b>Nota de conclusão:</b></td>';
         $l_html .= chr(13).'      <td>'.CRLF2BR(f($RS,'nota_conclusao')).' </td></tr>';
@@ -212,17 +210,15 @@ function VisualProjeto($l_chave,$operacao,$l_usuario) {
     if (f($RS,'aviso_prox_conc')=='S' || f($RS,'aviso_prox_conc_pacote')=='S') {
       // Configuração dos alertas de proximidade da data limite para conclusão da demanda
       $l_html.=chr(13).'        <tr><td colspan="2"><br><font size="2"><b>ALERTAS DE PROXIMIDADE DA DATA PREVISTA DE TÉRMINO<hr NOSHADE color=#000000 SIZE=1></b></font></td></tr>';
-      $l_html .= chr(13).'      <tr><td valign="top" colspan="2"><table border=0 width="100%" cellspacing=0>';
       if (f($RS,'aviso_prox_conc')=='S') {
-        $l_html .= chr(13).'      <tr><td width="30%"><b>Projeto:</b></td>';
+        $l_html .= chr(13).'      <tr><td><b>Projeto:</b></td>';
         $l_html .= chr(13).'        <td>A partir de '.formataDataEdicao(f($RS,'aviso')).'.</td></tr>';
       }
       if (f($RS,'aviso_prox_conc_pacote')=='S') {
-        $l_html .= chr(13).'      <tr><td width="30%"><b>Pacotes de trabalho:</b></td>';
+        $l_html .= chr(13).'      <tr><td><b>Pacotes de trabalho:</b></td>';
         $l_html .= chr(13).'        <td>Faltando '.f($RS,'perc_dias_aviso_pacote').'% do período previsto para cada pacote de trabalho.</td></tr>';
       } 
     }
-    $l_html .= chr(13).'          </table>';
   }
 
   // Rubricas do projeto
@@ -356,8 +352,6 @@ function VisualProjeto($l_chave,$operacao,$l_usuario) {
       $l_html .= chr(13).'            <td bgColor="#f0f0f0"><b>Realizado</td>';
       $l_html .= chr(13).'          </tr>';      
       $w_cor=$conTrBgColor;
-      $w_total_previsto  = 0;
-      $w_total_executado = 0;
       foreach ($RS as $row) {
         $RS_Cronograma = db_getCronograma::getInstanceOf($dbms,f($row,'sq_projeto_rubrica'),null,null,null);
         $RS_Cronograma = SortArray($RS_Cronograma,'inicio', 'asc', 'fim', 'asc');
@@ -391,8 +385,6 @@ function VisualProjeto($l_chave,$operacao,$l_usuario) {
         } else {
           $l_html .= chr(13).'        <td colspan=4>*** Cronograma desembolso da rubrica não informado';
         }
-        $w_total_previsto += f($row,'total_previsto');
-        $w_total_real     += f($row,'total_real');
       } 
       $l_html .= chr(13).'      <tr>';
       $l_html .= chr(13).'          <td align="right" colspan="3" bgColor="#f0f0f0"><b>Totais do projeto&nbsp;</td>';

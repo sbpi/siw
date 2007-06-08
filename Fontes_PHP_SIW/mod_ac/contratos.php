@@ -328,7 +328,7 @@ function Inicial() {
     Cabecalho();
     ShowHTML('<HEAD>');
     Estrutura_CSS($w_cliente);
-    if ($P1==2) ShowHTML('<meta http-equiv="Refresh" content="300; URL='.$w_dir_volta.MontaURL('MESA').'">');
+    if ($P1==2) ShowHTML('<meta http-equiv="Refresh" content="'.$conRefreshSec.'; URL='.$w_dir_volta.MontaURL('MESA').'">');
     ShowHTML('<TITLE>'.$conSgSistema.' - Listagem</TITLE>');
     ScriptOpen('Javascript');
     CheckBranco();
@@ -3221,7 +3221,7 @@ function Excluir() {
   Cabecalho();
   ShowHTML('<HEAD>');
   Estrutura_CSS($w_cliente);
-  ShowHTML('<meta http-equiv="Refresh" content="300; URL='.$w_dir_volta.MontaURL('MESA').'">');
+  ShowHTML('<meta http-equiv="Refresh" content="'.$conRefreshSec.'; URL='.$w_dir_volta.MontaURL('MESA').'">');
   if ($O='E') {
     ScriptOpen('JavaScript');
     ValidateOpen('Validacao');
@@ -3321,7 +3321,7 @@ function Encaminhamento() {
   Cabecalho();
   ShowHTML('<HEAD>');
   Estrutura_CSS($w_cliente);
-  ShowHTML('<meta http-equiv="Refresh" content="300; URL='.$w_dir_volta.MontaURL('MESA').'">');
+  ShowHTML('<meta http-equiv="Refresh" content="'.$conRefreshSec.'; URL='.$w_dir_volta.MontaURL('MESA').'">');
   if ($O=='V') {
     ScriptOpen('JavaScript');
     ValidateOpen('Validacao');
@@ -3429,7 +3429,7 @@ function Anotar() {
   Cabecalho();
   ShowHTML('<HEAD>');
   Estrutura_CSS($w_cliente);
-  ShowHTML('<meta http-equiv="Refresh" content="300; URL='.$w_dir_volta.MontaURL('MESA').'">');
+  ShowHTML('<meta http-equiv="Refresh" content="'.$conRefreshSec.'; URL='.$w_dir_volta.MontaURL('MESA').'">');
   if ($O=='V') {
     ScriptOpen('JavaScript');
     ValidateOpen('Validacao');
@@ -3538,7 +3538,7 @@ function Concluir() {
   Cabecalho();
   ShowHTML('<HEAD>');
   Estrutura_CSS($w_cliente);
-  ShowHTML('<meta http-equiv="Refresh" content="300; URL='.$w_dir_volta.MontaURL('MESA').'">');
+  ShowHTML('<meta http-equiv="Refresh" content="'.$conRefreshSec.'; URL='.$w_dir_volta.MontaURL('MESA').'">');
   if ($O=='V') {
     ScriptOpen('JavaScript');
     CheckBranco();

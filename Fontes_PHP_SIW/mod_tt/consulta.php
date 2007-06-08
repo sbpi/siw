@@ -158,7 +158,7 @@ function LigacaoParticular(){
   
   Cabecalho();
   ShowHTML('<HEAD>');
-  ShowHTML('<meta http-equiv="Refresh" content="300; URL='.$w_dir_volta.MontaURL('MESA').'">');
+  ShowHTML('<meta http-equiv="Refresh" content="'.$conRefreshSec.'; URL='.$w_dir_volta.MontaURL('MESA').'">');
   if (!(strpos('R',$O)===false)){
     ScriptOpen('JavaScript');
     CheckBranco();
@@ -330,7 +330,7 @@ function listaTelefonica(){
     cabecalho();
   } 
   ShowHTML('<HEAD>');
-  ShowHTML('<meta http-equiv="Refresh" content="300; URL='.$w_dir_volta.MontaURL('MESA').'">');
+  ShowHTML('<meta http-equiv="Refresh" content="'.$conRefreshSec.'; URL='.$w_dir_volta.MontaURL('MESA').'">');
   ShowHTML('<TITLE>Lista Telefônica</TITLE>');
   ShowHTML('</HEAD>');
   ShowHTML('<BASE HREF="'.$conRootSIW.'">');

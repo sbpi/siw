@@ -130,7 +130,7 @@ function Mesa() {
 
   Cabecalho();
   ShowHTML('<HEAD>');
-  ShowHTML('<meta http-equiv="Refresh" content="300;">');
+  ShowHTML('<meta http-equiv="Refresh" content="'.$conRefreshSec.';">');
   ShowHTML('</HEAD>');
   BodyOpen('onLoad=this.focus();');
   ShowHTML('<table border="0" width="100%">');
@@ -491,7 +491,7 @@ function Alerta() {
   
   Cabecalho();
   ShowHTML('<HEAD>');
-  ShowHTML('<meta http-equiv="Refresh" content="300;">');
+  ShowHTML('<meta http-equiv="Refresh" content="'.$conRefreshSec.';">');
   ShowHTML('</HEAD>');
   BodyOpen('onLoad=this.focus();');
   ShowHTML('<table border="0" width="100%">');

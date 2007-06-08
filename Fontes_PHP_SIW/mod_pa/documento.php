@@ -238,7 +238,7 @@ function Inicial() {
   } else {
     cabecalho();
     ShowHTML('<HEAD>');
-    if ($P1==2) ShowHTML('<meta http-equiv="Refresh" content="300; URL=../'.MontaURL('MESA').'">');
+    if ($P1==2) ShowHTML('<meta http-equiv="Refresh" content="'.$conRefreshSec.'; URL=../'.MontaURL('MESA').'">');
     ShowHTML('<BASE HREF="'.$conRootSIW.'">');
     ShowHTML('<TITLE>'.$conSgSistema.' - Listagem de processos e documentos</TITLE>');
     ScriptOpen('Javascript');
@@ -714,7 +714,7 @@ function Geral() {
       ShowHTML('           </table>');
     } else {
       ShowHTML('      <tr><td colspan=4><table border=0 cellpadding=0 cellspacing=0 width="100%"><tr valign="top">');
-      SelecaoUnidade('<U>U</U>nidade de origem:','U','Selecione a unidade de origem.',$w_sq_unidade,null,'w_sq_unidade','MOD_PA',null);
+      SelecaoUnidade('<U>U</U>nidade de origem:','U','Selecione a unidade de origem.',nvl($w_sq_unidade,$_SESSION['LOTACAO']),null,'w_sq_unidade','MOD_PA',null);
       ShowHTML('           </table>');
     }
     ShowHTML('      <tr><td colspan=4>&nbsp;</td></tr>');
@@ -1234,7 +1234,7 @@ function Visual($w_chave=null,$w_o=null,$w_usuario=null,$w_p1=null,$w_tipo=null,
     $w_interessado      = strtoupper(nvl($w_interessado,'N'));
     $w_anexo            = strtoupper(nvl($w_anexo,'N'));
     $w_meta             = strtoupper(nvl($w_meta,'N'));
-    $w_ocorrencia       = strtoupper(nvl($w_ocorrencia,'N'));
+    $w_ocorrencia       = strtoupper(nvl($w_ocorrencia,'S'));
     $w_consulta         = strtoupper(nvl($w_consulta,'N'));
   }
   // Recupera o logo do cliente a ser usado nas listagens
@@ -1281,7 +1281,7 @@ function Excluir() {
   } 
   Cabecalho();
   ShowHTML('<HEAD>');
-  ShowHTML('<meta http-equiv="Refresh" content="300; URL=../'.MontaURL('MESA').'">');
+  ShowHTML('<meta http-equiv="Refresh" content="'.$conRefreshSec.'; URL=../'.MontaURL('MESA').'">');
   if (!(strpos('E',$O)===false)) {
     ScriptOpen('JavaScript');
     ValidateOpen('Validacao');
@@ -1381,7 +1381,7 @@ function Encaminhamento() {
   
   Cabecalho();
   ShowHTML('<HEAD>');
-  ShowHTML('<meta http-equiv="Refresh" content="300; URL=../'.MontaURL('MESA').'">');
+  ShowHTML('<meta http-equiv="Refresh" content="'.$conRefreshSec.'; URL=../'.MontaURL('MESA').'">');
   if (strpos('V',$O)!==false) {
     ScriptOpen('JavaScript');
     CheckBranco();
@@ -1500,7 +1500,7 @@ function Anotar() {
   } 
   Cabecalho();
   ShowHTML('<HEAD>');
-  ShowHTML('<meta http-equiv="Refresh" content="300; URL=../'.MontaURL('MESA').'">');
+  ShowHTML('<meta http-equiv="Refresh" content="'.$conRefreshSec.'; URL=../'.MontaURL('MESA').'">');
   if (!(strpos('V',$O)===false)) {
     ScriptOpen('JavaScript');
     ValidateOpen('Validacao');
@@ -1577,7 +1577,7 @@ function Concluir() {
   } 
   Cabecalho();
   ShowHTML('<HEAD>');
-  ShowHTML('<meta http-equiv="Refresh" content="300; URL=../'.MontaURL('MESA').'">');
+  ShowHTML('<meta http-equiv="Refresh" content="'.$conRefreshSec.'; URL=../'.MontaURL('MESA').'">');
   if (!(strpos('V',$O)===false)) {
     ScriptOpen('JavaScript');
     checkbranco();
@@ -2107,7 +2107,7 @@ function Tramitacao() {
         ShowHTML('          <input type="CHECKBOX" name="w_chave[]" value="'.f($row,'sq_siw_solicitacao').'" ></td>'); 
         ShowHTML('        </td>');
         ShowHTML('        <td align="center">'.f($row,'nm_tipo').'</td>');
-        ShowHTML('        <td align="center">'.f($row,'protocolo').'</td>');
+        ShowHTML('        <td align="center"><A class="HL" HREF="'.$w_dir.$w_pagina.'Visual&R='.$w_pagina.$par.'&O=L&w_chave='.f($row,'sq_siw_solicitacao').'&P1=2&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP='.$TP.'&SG='.$SG.MontaFiltro('GET').'" target="visualdoc" title="Exibe as informações deste registro.">'.f($row,'protocolo').'&nbsp;</a>');
         ShowHTML('        <td>'.f($row,'nm_especie').'</td>');
         ShowHTML('        <td>'.f($row,'numero_original').'</td>');
         ShowHTML('        <td align="center">'.date(d.'/'.m.'/'.y,f($row,'inicio')).'</td>');
@@ -2263,7 +2263,7 @@ function Recebimento() {
           ShowHTML('        <td>'.f($row,'guia_tramite').'</td>');
           ShowHTML('        <td>'.f($row,'nm_unid_origem').'</td>');
           ShowHTML('        <td>'.f($row,'nm_despacho').'</td>');
-          ShowHTML('        <td align="center">'.f($row,'protocolo').'</td>');
+          ShowHTML('        <td align="center"><A class="HL" HREF="'.$w_dir.$w_pagina.'Visual&R='.$w_pagina.$par.'&O=L&w_chave='.f($row,'sq_siw_solicitacao').'&P1=2&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP='.$TP.'&SG='.$SG.MontaFiltro('GET').'" target="visualdoc" title="Exibe as informações deste registro.">'.f($row,'protocolo').'&nbsp;</a>');
           ShowHTML('        <td align="center">'.formataDataEdicao(f($row,'phpdt_envio'),3).'</td>');
           ShowHTML('        <td align="top" nowrap>');
           ShowHTML('          <A class="HL" HREF="'.$w_dir.$w_pagina.$par.'&R='.$w_pagina.$par.'&O=R&w_unid_autua='.f($row,'unidade_autuacao').'&w_nu_guia='.f($row,'nu_guia').'&w_ano_guia='.f($row,'ano_guia').'&P1='.$P1.'&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP='.$TP.'&SG='.$SG.'">Receber</A>&nbsp');
@@ -2275,7 +2275,7 @@ function Recebimento() {
           ShowHTML('        <td>&nbsp;</td>');
           ShowHTML('        <td>&nbsp;</td>');
           ShowHTML('        <td>&nbsp;</td>');
-          ShowHTML('        <td align="center">'.f($row,'protocolo').'</td>');
+          ShowHTML('        <td align="center"><A class="HL" HREF="'.$w_dir.$w_pagina.'Visual&R='.$w_pagina.$par.'&O=L&w_chave='.f($row,'sq_siw_solicitacao').'&P1=2&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP='.$TP.'&SG='.$SG.MontaFiltro('GET').'" target="visualdoc" title="Exibe as informações deste registro.">'.f($row,'protocolo').'&nbsp;</a>');
           ShowHTML('        <td align="center">'.formataDataEdicao(f($row,'phpdt_envio'),3).'</td>');
           ShowHTML('        <td>&nbsp;</td>');
           ShowHTML('      </tr>');

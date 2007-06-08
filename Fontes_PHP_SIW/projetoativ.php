@@ -284,7 +284,7 @@ function Inicial() {
     Cabecalho();
     ShowHTML('<HEAD>');
     Estrutura_CSS($w_cliente);
-    if ($P1==2) ShowHTML("<meta http-equiv=\"Refresh\" content=\"300; URL=".MontaURL("MESA")."\">");
+    if ($P1==2) ShowHTML("<meta http-equiv=\"Refresh\" content=\"'.$conRefreshSec.'; URL=".MontaURL("MESA")."\">");
     ShowHTML('<TITLE>'.$conSgSistema.' - Listagem de '.f($RS_Menu,'nome').'</TITLE>');
     ScriptOpen('Javascript');
     CheckBranco();
@@ -1524,7 +1524,7 @@ function Excluir() {
   } 
   Cabecalho();
   ShowHTML('<HEAD>');
-  ShowHTML('<meta http-equiv="Refresh" content="300; URL='.MontaURL('MESA').'">');
+  ShowHTML('<meta http-equiv="Refresh" content="'.$conRefreshSec.'; URL='.MontaURL('MESA').'">');
   if (!(strpos('E',$O)===false)) {
     ScriptOpen('JavaScript');
     ValidateOpen('Validacao');
@@ -1612,7 +1612,7 @@ function Encaminhamento() {
   }
   Cabecalho();
   ShowHTML('<HEAD>');
-  ShowHTML('<meta http-equiv="Refresh" content="300; URL='.MontaURL('MESA').'">');
+  ShowHTML('<meta http-equiv="Refresh" content="'.$conRefreshSec.'; URL='.MontaURL('MESA').'">');
   if ($O=='V') {
     ScriptOpen('JavaScript');
     ValidateOpen('Validacao');
@@ -1699,7 +1699,7 @@ function Anotar() {
   } 
   Cabecalho();
   ShowHTML('<HEAD>');
-  ShowHTML('<meta http-equiv="Refresh" content="300; URL='.MontaURL('MESA').'">');
+  ShowHTML('<meta http-equiv="Refresh" content="'.$conRefreshSec.'; URL='.MontaURL('MESA').'">');
   if ($O=='V') {
     ScriptOpen('JavaScript');
     ValidateOpen('Validacao');
@@ -1786,7 +1786,7 @@ function Concluir() {
   } 
   Cabecalho();
   ShowHTML('<HEAD>');
-  ShowHTML('<meta http-equiv="Refresh" content="300; URL='.MontaURL('MESA').'">');
+  ShowHTML('<meta http-equiv="Refresh" content="'.$conRefreshSec.'; URL='.MontaURL('MESA').'">');
   if ($O=='V') {
     ScriptOpen('JavaScript');
     CheckBranco();

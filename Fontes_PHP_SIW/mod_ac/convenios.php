@@ -284,7 +284,7 @@ function Inicial() {
     Cabecalho();
     ShowHTML('<HEAD>');
     Estrutura_CSS($w_cliente);
-    if ($P1==2) ShowHTML('<meta http-equiv="Refresh" content="300; URL='.$w_dir_volta.MontaURL('MESA').'">');
+    if ($P1==2) ShowHTML('<meta http-equiv="Refresh" content="'.$conRefreshSec.'; URL='.$w_dir_volta.MontaURL('MESA').'">');
     ShowHTML('<TITLE>'.$conSgSistema.' - Listagem</TITLE>');
     ScriptOpen('Javascript');
     CheckBranco();
@@ -1431,8 +1431,7 @@ function OutraParte() {
       Validate('w_cep','CEP','1',1,5,9,'','0123456789');
     } 
     Validate('w_email','E-Mail','1','',4,60,'1','1');
-    ShowHTML('  theForm.Botao[0].disabled=true;');
-    ShowHTML('  theForm.Botao[1].disabled=true;');
+    ShowHTML('  theForm.Botao.disabled=true;');
   } 
   ValidateClose();
   ScriptClose();
@@ -1804,7 +1803,7 @@ function Representante() {
       Validate('w_nome','Nome','1',1,5,60,'1','1');
       Validate('w_nome_resumido','Nome resumido','1',1,2,15,'1','1');
       Validate('w_sexo','Sexo','SELECT',1,1,1,'MF','');
-      ShowHTML('  if (!(theForm.w_rg_numero.value == \'\' && && theForm.w_rg_emissor.value == \'\')) {');
+      ShowHTML('  if (!(theForm.w_rg_numero.value == \'\' && theForm.w_rg_emissor.value == \'\')) {');
       ShowHTML('    if (theForm.w_rg_numero.value == \'\' || theForm.w_rg_emissor.value == \'\') {');
       ShowHTML('      alert(\'Para informar a identidade, informe o orgão emissor ou vice-versa!\');');
       ShowHTML('        document.Form.w_rg_numero.focus();');
@@ -2973,7 +2972,7 @@ function Excluir() {
   Cabecalho();
   ShowHTML('<HEAD>');
   Estrutura_CSS($w_cliente);
-  ShowHTML('<meta http-equiv="Refresh" content="300; URL='.$w_dir_volta.MontaURL('MESA').'">');
+  ShowHTML('<meta http-equiv="Refresh" content="'.$conRefreshSec.'; URL='.$w_dir_volta.MontaURL('MESA').'">');
   if ($O='E') {
     ScriptOpen('JavaScript');
     ValidateOpen('Validacao');
@@ -3066,7 +3065,7 @@ function Encaminhamento() {
   Cabecalho();
   ShowHTML('<HEAD>');
   Estrutura_CSS($w_cliente);
-  ShowHTML('<meta http-equiv="Refresh" content="300; URL='.$w_dir_volta.MontaURL('MESA').'">');
+  ShowHTML('<meta http-equiv="Refresh" content="'.$conRefreshSec.'; URL='.$w_dir_volta.MontaURL('MESA').'">');
   if ($O=='V') {
     ScriptOpen('JavaScript');
     ValidateOpen('Validacao');
@@ -3167,7 +3166,7 @@ function Anotar() {
   Cabecalho();
   ShowHTML('<HEAD>');
   Estrutura_CSS($w_cliente);
-  ShowHTML('<meta http-equiv="Refresh" content="300; URL='.$w_dir_volta.MontaURL('MESA').'">');
+  ShowHTML('<meta http-equiv="Refresh" content="'.$conRefreshSec.'; URL='.$w_dir_volta.MontaURL('MESA').'">');
   if ($O=='V') {
     ScriptOpen('JavaScript');
     ValidateOpen('Validacao');
@@ -3266,7 +3265,7 @@ function Concluir() {
   Cabecalho();
   ShowHTML('<HEAD>');
   Estrutura_CSS($w_cliente);
-  ShowHTML('<meta http-equiv="Refresh" content="300; URL='.$w_dir_volta.MontaURL('MESA').'">');
+  ShowHTML('<meta http-equiv="Refresh" content="'.$conRefreshSec.'; URL='.$w_dir_volta.MontaURL('MESA').'">');
   if ($O=='V') {
     ScriptOpen('JavaScript');
     CheckBranco();
@@ -3619,14 +3618,15 @@ function Grava() {
     if (verificaAssinaturaEletronica($_SESSION['USERNAME'],strtoupper($_REQUEST['w_assinatura'])) || $w_assinatura=='') {
       if ($O=='I'){
         $RS = db_getConvOutraParte::getInstanceOf($dbms,null,$_REQUEST['w_chave'],$_REQUEST['w_sq_pessoa'],null);
-        foreach ($RS as $row) {$RS=$row; break;}
-        if (f($RS,'outra_parte')==$_REQUEST['w_sq_pessoa']) {  
-          ScriptOpen('JavaScript');
-          ShowHTML('  alert(\'ATENÇÃO: Outra parte já cadastrada no convênio!\');');
-          ShowHTML('  location.href=\''.montaURL_JS($w_dir,$R.'&O=L&w_chave='.$_REQUEST['w_chave'].'&P1='.$P1.'&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP='.$TP.'&SG='.$SG.MontaFiltro('GET')).'\';');
-          ScriptClose();
-          exit();
-        }  
+        foreach ($RS as $row) {
+          if (f($row,'outra_parte')==Nvl($_REQUEST['w_sq_pessoa'],'-1')) {
+            ScriptOpen('JavaScript');
+            ShowHTML('  alert(\'ATENÇÃO: Outra parte já cadastrada no convênio!\');');
+            ShowHTML('  location.href=\''.montaURL_JS($w_dir,$R.'&O=L&w_chave='.$_REQUEST['w_chave'].'&P1='.$P1.'&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP='.$TP.'&SG='.$SG.MontaFiltro('GET')).'\';');
+            ScriptClose();
+            exit();
+          }  
+        }
       } else { 
         $RS = db_getConvPreposto::getInstanceOf($dbms,$_REQUEST['w_chave'],$_REQUEST['w_sq_acordo_outra_parte'],null);
         if (count($RS)>0) {

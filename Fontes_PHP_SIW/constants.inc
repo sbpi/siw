@@ -77,6 +77,7 @@ $conImgSmAtraso = 'images/BallRed.png';
 $strschema	= 'siw.';
 $strschema_is	= 'siw_is.';
 $conPageSize	= 30;
+$conRefreshSec  = 1800;
 
 //---------------------------Configuração do ambiente do sistema
 
