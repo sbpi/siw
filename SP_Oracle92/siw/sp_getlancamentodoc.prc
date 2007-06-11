@@ -43,7 +43,7 @@ begin
                                                       )
           where (p_chave     is null or (p_chave     is not null and a.sq_siw_solicitacao = p_chave))
             and (p_chave_aux is null or (p_chave_aux is not null and a.sq_lancamento_doc  = p_chave_aux))
-            and (p_restricao is null or ((p_restricao <> 'DOCS' and p_restricao <> 'NOTA') or
+            and (p_restricao is null or ((p_restricao <> 'DOCS' and p_restricao <> 'NOTA')    or
                                          ((p_restricao = 'DOCS' and a.sq_acordo_nota is null) or
                                           (p_restricao = 'NOTA' and a.sq_acordo_nota is not null)
                                          )
