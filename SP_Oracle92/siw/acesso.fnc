@@ -13,9 +13,13 @@ create or replace function Acesso
 * Retorno: campo do tipo bit
 *   16: Se a solicitação deve aparecer na mesa de trabalho do usuário
 *    8: Se o usuário é gestor do módulo à qual a solicitação pertence
+*       Outra possibilidade é:
+*          o usuário ser responsável por uma etapa de um projeto
+*          o usuário ser titular ou substituto da unidade responsável por uma etapa de um projeto
+*          o usuário ser responsável por alguma questão de um projeto (risco ou problema)
 *    4: Se o usuário é o responsável pela unidade de lotação do solicitante da solicitação
 *       Obs: somente se o trâmite for cumprido pela chefia imediata
-*       Outra possibilidade é se o usuário cumprir algum trâmite no serviço
+*       Outra possibilidade é usuário cumprir algum trâmite no serviço
 *    2: Se o usuário é o solicitante da solicitacao ou se é um interessado na sua execução
 *    1: Se o usuário é o cadastrador da solicitação ou é está lotado na unidade de cadastramento
 *    0: Se o usuário não tem acesso à solicitação
@@ -193,9 +197,6 @@ begin
       -- Verifica se já participou em algum momento no projeto
       select 1 from pj_projeto_log a where a.sq_siw_solicitacao = p_solicitacao and a.destinatario = p_usuario
       UNION
-      -- Verifica se é responsável por alguma etapa do projeto
-      select 1 from pj_projeto_etapa a where a.sq_siw_solicitacao = p_solicitacao and a.sq_pessoa = p_usuario
-      UNION
       -- Verifica se é outra parte no acordo
       select 1 from ac_acordo a where a.sq_siw_solicitacao = p_solicitacao and a.outra_parte= p_usuario
       UNION
@@ -262,33 +263,27 @@ begin
           If w_existe > 0 Then 
              Result := Result + 4; 
           Else
-          
              -- Verifica se a unidade do usuário é uma das envolvidas na execução do projeto
              select count(*) into w_existe
                from pj_projeto_envolv a
               where a.sq_siw_solicitacao = p_solicitacao
                 and a.sq_unidade         = w_sq_unidade_lotacao;
              If w_existe > 0 Then 
-                Result := Result + 4;
+                Result := Result + 4; 
              Else
-                select count(*) into w_existe
-                  from pj_projeto_etapa a
-                       left outer join eo_unidade_resp b on (a.sq_unidade   = b.sq_unidade and
-                                                             b.sq_pessoa    = p_usuario    and
-                                                             b.tipo_respons = 'T'          and
-                                                             b.fim          is null
-                                                            )
-                       left outer join eo_unidade_resp c on (a.sq_unidade   = c.sq_unidade and
-                                                             c.sq_pessoa    = p_usuario    and
-                                                             c.tipo_respons = 'S'          and
-                                                             c.fim          is null
-                                                            )
-                 where a.sq_siw_solicitacao = p_solicitacao
-                   and a.sq_unidade         = w_sq_unidade_lotacao
-                   and (b.sq_unidade_resp   is not null or
-                        c.sq_unidade_resp   is not null
-                       );
-                If w_existe > 0 Then Result := Result + 4; End If;
+                -- Verifica se o usuário tem visão geral no centro de custos ao qual a solicitação está vinculada
+                select count(*)
+                  into w_existe
+                  from siw_pessoa_cc a
+                 where a.sq_pessoa = p_usuario
+                   and a.sq_menu   = w_sq_servico
+                   and a.sq_cc     = w_sq_cc;
+                If w_existe > 0 Then
+                   If w_interno = 'S' 
+                      Then Result := Result + 4;
+                      Else Result := Result + 2;
+                   End If;
+                End If;
              End If;
           End If;
        End If;
@@ -335,26 +330,21 @@ begin
                where a.sq_siw_solicitacao = p_solicitacao
                  and a.sq_unidade         = w_unidade_beneficiario;
              If w_existe > 0 Then 
-                Result := Result + 4;
+                Result := Result + 4; 
              Else
-                select count(*) into w_existe
-                  from pj_projeto_etapa a
-                       left outer join eo_unidade_resp b on (a.sq_unidade   = b.sq_unidade and
-                                                             b.sq_pessoa    = p_usuario    and
-                                                             b.tipo_respons = 'T'          and
-                                                             b.fim          is null
-                                                            )
-                       left outer join eo_unidade_resp c on (a.sq_unidade   = c.sq_unidade and
-                                                             c.sq_pessoa    = p_usuario    and
-                                                             c.tipo_respons = 'S'          and
-                                                             c.fim          is null
-                                                            )
-                 where a.sq_siw_solicitacao = p_solicitacao
-                   and a.sq_unidade         = w_unidade_beneficiario
-                   and (b.sq_unidade_resp   is not null or
-                        c.sq_unidade_resp   is not null
-                       );
-                If w_existe > 0 Then Result := Result + 4; End If;
+                -- Verifica se o usuário tem visão geral no centro de custos ao qual a solicitação está vinculada
+                select count(*)
+                  into w_existe
+                  from siw_pessoa_cc a
+                 where a.sq_pessoa = p_usuario
+                   and a.sq_menu   = w_sq_servico
+                   and a.sq_cc     = w_sq_cc;
+                If w_existe > 0 Then
+                   If w_interno = 'S' 
+                      Then Result := Result + 4;
+                      Else Result := Result + 2;
+                   End If;
+                End If;
              End If;
           End If;
        End If;
@@ -370,18 +360,36 @@ begin
  If w_existe > 0 or w_gestor_sistema = 'S' Then
     Result := Result + 8;
  Else
-    -- Verifica se o usuário tem visão geral no centro de custos ao qual a solicitação está vinculada
-    select count(*)
-      into w_existe
-      from siw_pessoa_cc a
-     where a.sq_pessoa = p_usuario
-       and a.sq_menu   = w_sq_servico
-       and a.sq_cc     = w_sq_cc;
-    If w_existe > 0 Then
-       If w_interno = 'S' 
-          Then Result := Result + 8;
-          Else Result := Result + 4;
-       End If;
+    -- Verifica se é titular ou substituto de alguma unidade responsável por etapa
+    select count(*) into w_existe
+      from pj_projeto_etapa a
+           left outer join eo_unidade_resp b on (a.sq_unidade   = b.sq_unidade and
+                                                 b.sq_pessoa    = p_usuario    and
+                                                 b.tipo_respons = 'T'          and
+                                                 b.fim          is null
+                                                )
+           left outer join eo_unidade_resp c on (a.sq_unidade   = c.sq_unidade and
+                                                 c.sq_pessoa    = p_usuario    and
+                                                 c.tipo_respons = 'S'          and
+                                                 c.fim          is null
+                                                )
+     where a.sq_siw_solicitacao = p_solicitacao
+       and a.sq_unidade         = w_unidade_beneficiario
+       and (b.sq_unidade_resp   is not null or
+            c.sq_unidade_resp   is not null
+           );
+    If w_existe > 0 Then 
+       Result := Result + 8; 
+    Else
+       -- Verifica se é responsável por alguma etapa do projeto ou por alguma questão
+       select count(*) into w_existe from (
+         -- Verifica se o usuário é responsável por alguma questão
+         select 1 from siw_restricao a where a.sq_siw_solicitacao = p_solicitacao and a.sq_pessoa = p_usuario
+         UNION
+         -- Verifica se o usuário é responsável por alguma etapa
+         select 1 from pj_projeto_etapa a where a.sq_siw_solicitacao = p_solicitacao and a.sq_pessoa = p_usuario
+       );
+       If w_existe > 0 Then Result := Result + 8; End If;
     End If;
  End If;
 
@@ -540,30 +548,6 @@ begin
                       and a.fim                is null;
                    If w_existe > 0 Then 
                       Result := Result + 16;
-/*
-                   Else 
-                      -- Verifica se o usuário é responsável por etapa ou questão
-                      select count(*) into w_existe from (
-                        -- Verifica se o usuário é responsável por alguma questão
-                        select 1 from siw_restricao a where a.sq_siw_solicitacao = p_solicitacao and a.sq_pessoa = p_usuario
-                        UNION
-                        -- Verifica se o usuário é responsável por alguma etapa
-                        select 1 from pj_projeto_etapa a where a.sq_siw_solicitacao = p_solicitacao and a.sq_pessoa = p_usuario
-                        UNION
-                        -- Verifica se o usuário é titular ou substituto do setor responsável pela etapa
-                        select 1 
-                          from pj_projeto_etapa             a
-                               inner   join eo_unidade      b on (a.sq_unidade = b.sq_unidade)
-                                 inner join eo_unidade_resp c on (b.sq_unidade = c.sq_unidade and
-                                                                  c.sq_pessoa  = p_usuario and
-                                                                  c.fim        is null
-                                                                 )
-                         where a.sq_siw_solicitacao = p_solicitacao
-                      );
-                      If w_existe > 0 Then
-                         Result := Result + 16;
-                      End If;
-*/
                    End If;
                 End If;
              End If;

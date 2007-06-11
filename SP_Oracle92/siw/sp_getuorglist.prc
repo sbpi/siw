@@ -60,12 +60,26 @@ begin
       If upper(p_restricao) = 'IS NULL' Then
          open p_result for
             select a.sq_unidade,a.sq_unidade_pai, a.nome, a.sigla, a.informal, a.adm_central, a.vinculada, 
-                   a.codigo, a.sq_unidade_pai, a.ordem, a.ativo, Nvl(d.nome,'Informar') responsavel
-              from eo_unidade             a  left outer join eo_unidade_resp c on (a.sq_unidade = c.sq_unidade
-                                                                               and c.tipo_respons = 'T'
-                                                                               and c.fim is null)
-                                             left outer join co_pessoa d on (c.sq_pessoa = d.sq_pessoa),                                   
-                   co_pessoa_endereco     b
+                   a.codigo, a.sq_unidade_pai, a.ordem, a.ativo, Nvl(d.nome,'Informar') responsavel,
+                   coalesce(e.qtd,0) as qtd_resp,
+                   coalesce(f.qtd,0) as qtd_local
+              from eo_unidade                        a
+                   left   outer join eo_unidade_resp c on (a.sq_unidade = c.sq_unidade
+                                                           and c.tipo_respons = 'T'
+                                                           and c.fim is null
+                                                          )
+                     left outer join co_pessoa       d on (c.sq_pessoa = d.sq_pessoa)
+                   left   outer join (select sq_unidade, count(sq_unidade_resp) as qtd
+                                        from eo_unidade_resp x
+                                       where x.fim is null
+                                      group by sq_unidade
+                                     )               e on (a.sq_unidade = e.sq_unidade)
+                   left   outer join (select sq_unidade, count(sq_localizacao) as qtd
+                                        from eo_localizacao x
+                                       where ativo = 'S'
+                                      group by sq_unidade
+                                     )               f on (a.sq_unidade = f.sq_unidade),
+                   co_pessoa_endereco                b
              where a.sq_pessoa_endereco   = b.sq_pessoa_endereco
                and a.sq_unidade_pai       is null
                and b.sq_pessoa            = p_cliente
@@ -210,12 +224,26 @@ begin
       Else
          open p_result for
             select a.sq_unidade,a.sq_unidade_pai, a.nome, a.sigla, a.informal, a.adm_central, a.vinculada, 
-                   a.codigo, a.sq_unidade_pai, a.ordem, a.ativo, Nvl(d.nome,'Informar') responsavel
-              from eo_unidade             a left outer join eo_unidade_resp c on (a.sq_unidade = c.sq_unidade
-                                                                              and c.tipo_respons = 'T'
-                                                                              and c.fim is null)
-                                            left outer join co_pessoa d on (c.sq_pessoa = d.sq_pessoa),                                   
-                   co_pessoa_endereco     b
+                   a.codigo, a.sq_unidade_pai, a.ordem, a.ativo, Nvl(d.nome,'Informar') responsavel,
+                   coalesce(e.qtd,0) as qtd_resp,
+                   coalesce(f.qtd,0) as qtd_local
+              from eo_unidade                        a
+                   left   outer join eo_unidade_resp c on (a.sq_unidade = c.sq_unidade
+                                                           and c.tipo_respons = 'T'
+                                                           and c.fim is null
+                                                          )
+                     left outer join co_pessoa       d on (c.sq_pessoa = d.sq_pessoa)
+                   left   outer join (select sq_unidade, count(sq_unidade_resp) as qtd
+                                        from eo_unidade_resp x
+                                       where x.fim is null
+                                      group by sq_unidade
+                                     )               e on (a.sq_unidade = e.sq_unidade)
+                   left   outer join (select sq_unidade, count(sq_localizacao) as qtd
+                                        from eo_localizacao x
+                                       where ativo = 'S'
+                                      group by sq_unidade
+                                     )               f on (a.sq_unidade = f.sq_unidade),
+                   co_pessoa_endereco                b
              where a.sq_pessoa_endereco   = b.sq_pessoa_endereco
                and a.sq_unidade_pai       = p_chave
                and b.sq_pessoa            = p_cliente

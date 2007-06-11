@@ -231,6 +231,7 @@ begin
                 b.palavra_chave,
                 b1.sq_siw_tramite,    b1.nome nm_tramite,            b1.ordem or_tramite,
                 b1.sigla sg_tramite,  b1.ativo,
+                b2.acesso,
                 c.sq_tipo_unidade,    c.nome nm_unidade_exec,        c.informal,
                 c.vinculada,          c.adm_central,
                 d.sq_unidade_resp,    d.titulo,                      d.prioridade,
@@ -250,7 +251,9 @@ begin
                 n.sq_cc,              n.nome nm_cc,                  n.sigla sg_cc,
                 o.nome_resumido nm_solic, o.nome_resumido_ind nm_solic_ind,
                 p.nome_resumido nm_exec,  p.nome_resumido_ind nm_exec_ind,
-                Nvl(q.existe,0) resp_etapa,
+                coalesce(q.existe,0)  as resp_etapa,
+                coalesce(q1.existe,0) as resp_risco,
+                coalesce(q2.existe,0) as resp_problema,
                 r.sq_acao_ppa, r.sq_orprioridade,
                 SolicRestricao(b.sq_siw_solicitacao) as restricao,
                 calculaIGE(d.sq_siw_solicitacao) as ige, calculaIDE(d.sq_siw_solicitacao)  as ide,
@@ -303,7 +306,7 @@ begin
                       left           join ct_cc                n  on (b.sq_cc                    = n.sq_cc)
                       left           join co_pessoa            o  on (b.solicitante              = o.sq_pessoa)
                       left           join co_pessoa            p  on (b.executor                 = p.sq_pessoa)
-                      left           join (select sq_siw_solicitacao, count(*) existe
+                      left           join (select sq_siw_solicitacao, count(a.sq_projeto_etapa) existe
                                              from pj_projeto_etapa                a
                                                   left       join eo_unidade_resp b on (a.sq_unidade = b.sq_unidade and
                                                                                         b.fim        is null        and
@@ -312,8 +315,20 @@ begin
                                             where (a.sq_pessoa         = p_pessoa or
                                                    b.sq_unidade_resp   is not null)
                                            group  by a.sq_siw_solicitacao
-                                          )                    q on (b.sq_siw_solicitacao = q.sq_siw_solicitacao)
-                   left              join eo_unidade           c  on (a.sq_unid_executora        = c.sq_unidade)
+                                          )                    q  on (b.sq_siw_solicitacao       = q.sq_siw_solicitacao)
+                      left           join (select sq_siw_solicitacao, count(a.sq_siw_restricao) existe
+                                             from siw_restricao a
+                                            where a.sq_pessoa = p_pessoa
+                                              and a.risco     = 'S'
+                                           group  by a.sq_siw_solicitacao
+                                          )                    q1 on (b.sq_siw_solicitacao       = q1.sq_siw_solicitacao)
+                      left           join (select sq_siw_solicitacao, count(a.sq_siw_restricao) existe
+                                             from siw_restricao a
+                                            where a.sq_pessoa = p_pessoa
+                                              and a.problema  = 'S'
+                                           group  by a.sq_siw_solicitacao
+                                          )                    q2 on (b.sq_siw_solicitacao       = q2.sq_siw_solicitacao)
+                   left              join eo_unidade           c   on (a.sq_unid_executora       = c.sq_unidade)
                    inner             join (select sq_siw_solicitacao, max(sq_siw_solic_log) chave 
                                              from siw_solic_log
                                            group by sq_siw_solicitacao
@@ -359,7 +374,10 @@ begin
             and (p_prioridade     is null or (p_prioridade  is not null and d.prioridade         = p_prioridade))
             and (p_solicitante    is null or (p_solicitante is not null and b.solicitante        = p_solicitante))
             and ((p_tipo         = 1     and Nvl(b1.sigla,'-') = 'CI'   and b.cadastrador        = p_pessoa) or
-                 (p_tipo         = 2     and Nvl(b1.sigla,'-') <> 'CI'  and b.executor           = p_pessoa and d.concluida = 'N') or
+                 (p_tipo         = 2     and Nvl(b1.sigla,'-') <> 'CI'  and d.concluida          = 'N' and ((a.sigla <> 'PJCAD' and b.executor = p_pessoa) or
+                                                                                                            (a.sigla =  'PJCAD' and b2.acesso  >= 8)
+                                                                                                           )
+                 ) or
                  --(p_tipo         = 2     and b1.ativo = 'S' and Nvl(b1.sigla,'-') <> 'CI' and b2.acesso > 15) or
                  (p_tipo         = 3     and b2.acesso > 0) or
                  (p_tipo         = 3     and InStr(l_resp_unid,''''||b.sq_unidade||'''') > 0) or
