@@ -26,53 +26,58 @@ begin
                 a.ultima_atualizacao, a.situacao_atual, a.unidade_medida, a.quantidade, a.cumulativa, a.programada, a.exequivel, 
                 a.justificativa_inexequivel, a.outras_medidas, a.vincula_contrato, a.peso, a.pacote_trabalho,
                 montaOrdem(a.sq_projeto_etapa) as cd_ordem,
-                b.sq_pessoa titular, c.sq_pessoa substituto, 
+                b.sq_pessoa titular, b1.nome nm_tit_resp, b2.ativo st_tit_resp, b2.email em_tit_resp,
+                c.sq_pessoa substituto, c1.nome nm_sub_resp, c2.ativo st_sub_resp, c2.email em_sub_resp,
                 k.sq_pessoa tit_exec, l.sq_pessoa sub_exec,
                 d.nome_resumido||' ('||f.sigla||')' nm_resp, g.sigla sg_setor,
                 nvl(h.qt_ativ,0) qt_ativ, h.sq_menu p2,
                 m.vincula_contrato pj_vincula_contrato, nvl(n.qt_contr,0) , n.sq_menu p3,
                 SolicRestricao(a.sq_siw_solicitacao, a.sq_projeto_etapa) as restricao,
                 e.email, e.ativo st_resp, d.nome nm_resp
-           from pj_projeto_etapa                a
-                inner          join siw_solicitacao i on (a.sq_siw_solicitacao = i.sq_siw_solicitacao)
-                  inner        join pj_projeto      m on (a.sq_siw_solicitacao = m.sq_siw_solicitacao)
-                  inner        join siw_menu        j on (i.sq_menu            = j.sq_menu)
-                    left outer join eo_unidade_resp k on (j.sq_unid_executora  = k.sq_unidade and
-                                                          k.tipo_respons       = 'T'          and
-                                                          k.fim                is null
-                                                         )
-                    left outer join eo_unidade_resp l on (j.sq_unid_executora = l.sq_unidade and
-                                                          l.tipo_respons       = 'S'          and
-                                                          l.fim                is null
-                                                         )
-                left outer     join eo_unidade_resp b on (a.sq_unidade         = b.sq_unidade and
-                                                          b.tipo_respons       = 'T'          and
-                                                          b.fim                is null
-                                                         )
-                left outer     join eo_unidade_resp c on (a.sq_unidade         = c.sq_unidade and
-                                                          c.tipo_respons       = 'S'          and
-                                                          c.fim                is null
-                                                         )
-                inner          join co_pessoa       d on (a.sq_pessoa          = d.sq_pessoa)
-                  inner        join sg_autenticacao e on (d.sq_pessoa          = e.sq_pessoa)
-                    inner      join eo_unidade      f on (e.sq_unidade         = f.sq_unidade)
-                inner          join eo_unidade      g on (a.sq_unidade         = g.sq_unidade)
-                left outer     join (select x.sq_projeto_etapa, y.sq_menu, count(*) qt_ativ
+           from pj_projeto_etapa                    a
+                inner          join siw_solicitacao i  on (a.sq_siw_solicitacao = i.sq_siw_solicitacao)
+                  inner        join pj_projeto      m  on (a.sq_siw_solicitacao = m.sq_siw_solicitacao)
+                  inner        join siw_menu        j  on (i.sq_menu            = j.sq_menu)
+                    left       join eo_unidade_resp k  on (j.sq_unid_executora  = k.sq_unidade and
+                                                           k.tipo_respons       = 'T'          and
+                                                           k.fim                is null
+                                                          )
+                    left       join eo_unidade_resp l  on (j.sq_unid_executora = l.sq_unidade and
+                                                           l.tipo_respons       = 'S'          and
+                                                           l.fim                is null
+                                                          )
+                left           join eo_unidade_resp b  on (a.sq_unidade         = b.sq_unidade and
+                                                           b.tipo_respons       = 'T'          and
+                                                           b.fim                is null
+                                                          )
+                  left         join co_pessoa       b1 on (b.sq_pessoa          = b1.sq_pessoa)
+                    left       join sg_autenticacao b2 on (b1.sq_pessoa         = b2.sq_pessoa)
+                left           join eo_unidade_resp c  on (a.sq_unidade         = c.sq_unidade and
+                                                           c.tipo_respons       = 'S'          and
+                                                           c.fim                is null
+                                                          )
+                  left         join co_pessoa       c1 on (c.sq_pessoa          = c1.sq_pessoa)
+                    left       join sg_autenticacao c2 on (c1.sq_pessoa         = c2.sq_pessoa)
+                inner          join co_pessoa       d  on (a.sq_pessoa          = d.sq_pessoa)
+                  inner        join sg_autenticacao e  on (d.sq_pessoa          = e.sq_pessoa)
+                    inner      join eo_unidade      f  on (e.sq_unidade         = f.sq_unidade)
+                inner          join eo_unidade      g  on (a.sq_unidade         = g.sq_unidade)
+                left           join (select x.sq_projeto_etapa, y.sq_menu, count(*) qt_ativ
                                        from pj_etapa_demanda             x
                                             inner   join siw_solicitacao y on (x.sq_siw_solicitacao = y.sq_siw_solicitacao)
                                               inner join siw_tramite     z on (y.sq_siw_tramite     = z.sq_siw_tramite and
                                                                                Nvl(z.sigla,'-')     <> 'CA'
                                                                               )
                                      group by x.sq_projeto_etapa, y.sq_menu
-                                )                   h on (h.sq_projeto_etapa = a.sq_projeto_etapa)
-                left outer     join (select x.sq_projeto_etapa, y.sq_menu, count(*) qt_contr
+                                )                   h  on (h.sq_projeto_etapa = a.sq_projeto_etapa)
+                left           join (select x.sq_projeto_etapa, y.sq_menu, count(*) qt_contr
                                        from pj_etapa_contrato            x
                                             inner   join siw_solicitacao y on (x.sq_siw_solicitacao = y.sq_siw_solicitacao)
                                               inner join siw_tramite     z on (y.sq_siw_tramite     = z.sq_siw_tramite and
                                                                                Nvl(z.sigla,'-')     <> 'CA'
                                                                               )
                                      group by x.sq_projeto_etapa, y.sq_menu
-                                )                   n on (n.sq_projeto_etapa = a.sq_projeto_etapa)
+                                )                   n  on (n.sq_projeto_etapa = a.sq_projeto_etapa)
           where a.sq_siw_solicitacao = p_chave
             and (p_chave_aux2 is null or (p_chave_aux2 is not null and a.pacote_trabalho = 'S' and a.sq_projeto_etapa in (select sq_projeto_etapa from pj_projeto_etapa connect by prior sq_projeto_etapa = sq_etapa_pai start with sq_projeto_etapa = p_chave_aux2)));
    ElsIf p_restricao = 'QUESTAO' Then
@@ -163,19 +168,19 @@ begin
                 inner          join siw_solicitacao i on (a.sq_siw_solicitacao = i.sq_siw_solicitacao)
                 inner          join pj_projeto      m on (a.sq_siw_solicitacao = m.sq_siw_solicitacao)                
                   inner        join siw_menu        j on (i.sq_menu            = j.sq_menu)
-                    left outer join eo_unidade_resp k on (j.sq_unid_executora  = k.sq_unidade and
+                    left       join eo_unidade_resp k on (j.sq_unid_executora  = k.sq_unidade and
                                                           k.tipo_respons       = 'T'          and
                                                           k.fim                is null
                                                          )
-                    left outer join eo_unidade_resp l on (j.sq_unid_executora = l.sq_unidade and
+                    left       join eo_unidade_resp l on (j.sq_unid_executora = l.sq_unidade and
                                                           l.tipo_respons       = 'S'          and
                                                           l.fim                is null
                                                          )
-                left outer     join eo_unidade_resp b on (a.sq_unidade         = b.sq_unidade and
+                left           join eo_unidade_resp b on (a.sq_unidade         = b.sq_unidade and
                                                           b.tipo_respons       = 'T'          and
                                                           b.fim                is null
                                                          )
-                left outer     join eo_unidade_resp c on (a.sq_unidade         = c.sq_unidade and
+                left           join eo_unidade_resp c on (a.sq_unidade         = c.sq_unidade and
                                                           c.tipo_respons       = 'S'          and
                                                           c.fim                is null
                                                          )
@@ -183,7 +188,7 @@ begin
                   inner        join sg_autenticacao e on (d.sq_pessoa          = e.sq_pessoa)
                     inner      join eo_unidade      f on (e.sq_unidade         = f.sq_unidade)
                 inner          join eo_unidade      g on (a.sq_unidade         = g.sq_unidade)
-                left outer     join (select x.sq_projeto_etapa, y.sq_menu, count(*) qt_ativ
+                left           join (select x.sq_projeto_etapa, y.sq_menu, count(*) qt_ativ
                                        from pj_etapa_demanda             x
                                             inner   join siw_solicitacao y on (x.sq_siw_solicitacao = y.sq_siw_solicitacao)
                                               inner join siw_tramite     z on (y.sq_siw_tramite     = z.sq_siw_tramite and
@@ -191,7 +196,7 @@ begin
                                                                               )
                                      group by x.sq_projeto_etapa, y.sq_menu
                                 )                   h on (h.sq_projeto_etapa = a.sq_projeto_etapa)
-                left outer     join (select x.sq_projeto_etapa, y.sq_menu, count(*) qt_contr
+                left           join (select x.sq_projeto_etapa, y.sq_menu, count(*) qt_contr
                                        from pj_etapa_contrato            x
                                             inner   join siw_solicitacao y on (x.sq_siw_solicitacao = y.sq_siw_solicitacao)
                                               inner join siw_tramite     z on (y.sq_siw_tramite     = z.sq_siw_tramite and
@@ -230,11 +235,11 @@ begin
                 q.co_uf,
                 r.sq_cidade, r.nome as nm_cidade
            from pj_projeto_etapa                a
-                left outer join eo_unidade_resp b on (a.sq_unidade       = b.sq_unidade and
+                left       join eo_unidade_resp b on (a.sq_unidade       = b.sq_unidade and
                                                       b.tipo_respons     = 'T'          and
                                                       b.fim              is null
                                                      )
-                left outer join eo_unidade_resp c on (a.sq_unidade       = c.sq_unidade and
+                left       join eo_unidade_resp c on (a.sq_unidade       = c.sq_unidade and
                                                       c.tipo_respons     = 'S'          and
                                                       c.fim              is null
                                                      )
@@ -242,7 +247,7 @@ begin
                   inner    join sg_autenticacao e on (d.sq_pessoa        = e.sq_pessoa)
                     inner  join eo_unidade      f on (e.sq_unidade       = f.sq_unidade)
                 inner      join eo_unidade      g on (a.sq_unidade       = g.sq_unidade)
-                left outer     join (select x.sq_projeto_etapa, y.sq_menu, count(*) qt_ativ
+                left           join (select x.sq_projeto_etapa, y.sq_menu, count(*) qt_ativ
                                        from pj_etapa_demanda             x
                                             inner   join siw_solicitacao y on (x.sq_siw_solicitacao = y.sq_siw_solicitacao)
                                               inner join siw_tramite     z on (y.sq_siw_tramite     = z.sq_siw_tramite and
@@ -250,12 +255,12 @@ begin
                                                                               )
                                      group by x.sq_projeto_etapa, y.sq_menu
                                 )               h on (h.sq_projeto_etapa = a.sq_projeto_etapa)
-                left outer     join (select x.sq_projeto_etapa, count(y.sq_projeto_etapa) qt_filhos
+                left           join (select x.sq_projeto_etapa, count(y.sq_projeto_etapa) qt_filhos
                                        from pj_projeto_etapa            x
                                             inner join pj_projeto_etapa y on (x.sq_projeto_etapa = y.sq_etapa_pai)
                                      group by x.sq_projeto_etapa
                                 )               i on (i.sq_projeto_etapa = a.sq_projeto_etapa)
-                left outer     join (select x.sq_projeto_etapa, y.sq_menu, count(*) qt_contr
+                left           join (select x.sq_projeto_etapa, y.sq_menu, count(*) qt_contr
                                        from pj_etapa_contrato            x
                                             inner   join siw_solicitacao y on (x.sq_siw_solicitacao = y.sq_siw_solicitacao)
                                               inner join siw_tramite     z on (y.sq_siw_tramite     = z.sq_siw_tramite and
@@ -292,19 +297,19 @@ begin
                 inner          join siw_solicitacao i on (a.sq_siw_solicitacao = i.sq_siw_solicitacao)
                 inner          join pj_projeto      m on (a.sq_siw_solicitacao = m.sq_siw_solicitacao)                
                   inner        join siw_menu        j on (i.sq_menu            = j.sq_menu)
-                    left outer join eo_unidade_resp k on (j.sq_unid_executora  = k.sq_unidade and
+                    left       join eo_unidade_resp k on (j.sq_unid_executora  = k.sq_unidade and
                                                           k.tipo_respons       = 'T'          and
                                                           k.fim                is null
                                                          )
-                    left outer join eo_unidade_resp l on (j.sq_unid_executora = l.sq_unidade and
+                    left       join eo_unidade_resp l on (j.sq_unid_executora = l.sq_unidade and
                                                           l.tipo_respons       = 'S'          and
                                                           l.fim                is null
                                                          )
-                left outer     join eo_unidade_resp b on (a.sq_unidade         = b.sq_unidade and
+                left           join eo_unidade_resp b on (a.sq_unidade         = b.sq_unidade and
                                                           b.tipo_respons       = 'T'          and
                                                           b.fim                is null
                                                          )
-                left outer     join eo_unidade_resp c on (a.sq_unidade         = c.sq_unidade and
+                left           join eo_unidade_resp c on (a.sq_unidade         = c.sq_unidade and
                                                           c.tipo_respons       = 'S'          and
                                                           c.fim                is null
                                                          )
@@ -312,7 +317,7 @@ begin
                   inner        join sg_autenticacao e on (d.sq_pessoa          = e.sq_pessoa)
                     inner      join eo_unidade      f on (e.sq_unidade         = f.sq_unidade)
                 inner          join eo_unidade      g on (a.sq_unidade         = g.sq_unidade)
-                left outer     join (select x.sq_projeto_etapa, y.sq_menu, count(*) qt_ativ
+                left           join (select x.sq_projeto_etapa, y.sq_menu, count(*) qt_ativ
                                        from pj_etapa_demanda             x
                                             inner   join siw_solicitacao y on (x.sq_siw_solicitacao = y.sq_siw_solicitacao)
                                               inner join siw_tramite     z on (y.sq_siw_tramite     = z.sq_siw_tramite and
@@ -320,7 +325,7 @@ begin
                                                                               )
                                      group by x.sq_projeto_etapa, y.sq_menu
                                 )                   h on (h.sq_projeto_etapa = a.sq_projeto_etapa)
-                left outer     join (select x.sq_projeto_etapa, y.sq_menu, count(*) qt_contr
+                left           join (select x.sq_projeto_etapa, y.sq_menu, count(*) qt_contr
                                        from pj_etapa_contrato            x
                                             inner   join siw_solicitacao y on (x.sq_siw_solicitacao = y.sq_siw_solicitacao)
                                               inner join siw_tramite     z on (y.sq_siw_tramite     = z.sq_siw_tramite and
