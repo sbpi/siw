@@ -193,7 +193,7 @@ function Mesa() {
     }
 
     // Verifica se é necessário colocar as ligações telefônicas
-    if ($w_telefonia>'') {
+    if ($w_telefonia>'' && $_SESSION['INTERNO']=='S') {
       $RS = db_getDeskTop_TT::getInstanceOf($dbms, $w_usuario);
       foreach ($RS as $row) $w_telefonia_qtd=f($row,'existe');
       $w_cor = ($w_cor==$conTrBgColor || $w_cor=='') ? $w_cor=$conTrAlternateBgColor : $w_cor=$conTrBgColor;

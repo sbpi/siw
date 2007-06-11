@@ -261,7 +261,7 @@ function Inicial() {
     Cabecalho();
     ShowHTML('<HEAD>');
     Estrutura_CSS($w_cliente);
-    if ($P1==2) ShowHTML("<meta http-equiv=\"Refresh\" content=\"'.$conRefreshSec.'; URL=../".MontaURL("MESA")."\">");
+    if ($P1==2) ShowHTML ('<meta http-equiv="Refresh" content="'.$conRefreshSec.'; URL='.MontaURL('MESA').'">');
     ShowHTML("<TITLE>".$conSgSistema." - Listagem de solicitações</TITLE>");
     ScriptOpen('Javascript');
     CheckBranco();

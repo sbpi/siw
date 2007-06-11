@@ -1,7 +1,7 @@
 <?
 include_once($w_dir_volta.'classes/sp/db_getLancamentoProjeto.php');
 // =========================================================================
-// Montagem da seleção de tipo de conclusão
+// Montagem da seleção de tipo de rubrica
 // -------------------------------------------------------------------------
 function SelecaoTipoRubrica ($label,$accesskey,$hint,$chave,$chaveAux,$campo,$restricao,$atributo) {
   extract($GLOBALS);
@@ -14,7 +14,7 @@ function SelecaoTipoRubrica ($label,$accesskey,$hint,$chave,$chaveAux,$campo,$re
   } 
   ShowHTML('          <option value="">---'); 
   // Se não existir outro lançamento financeiro, trata o atual como sendo dotação inicial
-  if(count($l_RS1)<2) {
+  if(count($l_RS1)==0) {
     if (nvl($chave,0)==1) ShowHTML('          <option value="1" SELECTED>Dotação Inicial');                else ShowHTML('          <option value="1">Dotação inicial');
   } else {
     if (nvl($chave,0)==2) ShowHTML('          <option value="2" SELECTED>Transferências entre rubricas');  else ShowHTML('          <option value="2">Transferências entre rubricas');

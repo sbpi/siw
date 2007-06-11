@@ -191,7 +191,7 @@ function Unidade() {
   Estrutura_Texto_Abre();
   ShowHTML('<table border="0" cellpadding="0" cellspacing="0" width="100%">');
   if (strpos('L',$O)!==false) {
-    $w_imagem=$conRootSIW.'images/ballw.gif';
+    ShowHTML('      <tr><td bgcolor="#D0D0D0" style="border: 2px solid rgb(0,0,0);"><b><font color="#BC3131">ATENÇÃO:</font> Unidades com marcadores piscantes não têm responsáveis ou locais indicados.</b></td>');
     ShowHTML('<tr><td>');
     if ($w_libera_edicao=='S') {
       ShowHTML('<a accesskey="I" class="ss" href="'.$w_pagina.$par.'&TP='.$TP.'&R='.$w_pagina.$par.'&O=I&P1='.$P1.'&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&SG='.$SG.'"><u>I</u>ncluir</a>&nbsp;');
@@ -211,6 +211,7 @@ function Unidade() {
       foreach($RS as $row) {
         $w_ContImg += 1;
         $w_ContOut += 1;
+        if (f($row,'qtd_resp')>0 && f($row,'qtd_local')>0) $w_imagem=$conRootSIW.'images/ballw.gif'; else $w_imagem=$conRootSIW.'images/ballc.gif'; 
         ShowHTML('<li id="Xnode" class="Xnode" nowrap><span onClick="xSwapImg(document.getElementById(\'Ximg'.$w_ContImg.'\'),\''.$w_imagem.'\',\''.$w_imagem.'\');xMenuShowHide(document.getElementById(\'Xtree'.$w_ContOut.'\'));"><img id="Ximg'.$w_ContImg.'" src="'.$w_imagem.'" border="0">&nbsp;'.f($row,'NOME').'</span> ');
         if ($w_libera_edicao=='S') {
           ShowHTML('<A class="Xlink" HREF="'.$w_pagina.$par.'&R='.$w_pagina.$par.'&O=A&w_sq_unidade='.f($row,'sq_unidade').'&P1='.$P1.'&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP='.$TP.'&SG='.$SG.'" title="Alterar">AL</A>&nbsp');
@@ -225,6 +226,7 @@ function Unidade() {
         foreach($RS1 as $row1) {
           $w_ContImg += 1;
           $w_ContOut += 1;
+          if (f($row1,'qtd_resp')>0 && f($row1,'qtd_local')>0) $w_imagem=$conRootSIW.'images/ballw.gif'; else $w_imagem=$conRootSIW.'images/ballc.gif'; 
           ShowHTML('   <li id="Xnode" class="Xnode"><span onClick="xSwapImg(document.getElementById(\'Ximg'.$w_ContImg.'\'),\''.$w_imagem.'\',\''.$w_imagem.'\');xMenuShowHide(document.getElementById(\'Xtree'.$w_ContOut.'\'));"><img id="Ximg'.$w_ContImg.'" src="'.$w_imagem.'" border="0">&nbsp;'.f($row1,'NOME').'</span> ');
           if ($w_libera_edicao=='S') {
             ShowHTML(' <A class="Xlink" HREF="'.$w_pagina.$par.'&R='.$w_pagina.$par.'&O=A&w_sq_unidade='.f($row1,'sq_unidade').'&P1='.$P1.'&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP='.$TP.'&SG='.$SG.'" title="Alterar">AL</A>&nbsp');
@@ -239,6 +241,7 @@ function Unidade() {
           foreach($RS2 as $row2) {
             $w_ContImg += 1;
             $w_ContOut += 1;
+            if (f($row2,'qtd_resp')>0 && f($row2,'qtd_local')>0) $w_imagem=$conRootSIW.'images/ballw.gif'; else $w_imagem=$conRootSIW.'images/ballc.gif'; 
             ShowHTML('         <li id="Xnode" class="Xnode"><span onClick="xSwapImg(document.getElementById(\'Ximg'.$w_ContImg.'\'),\''.$w_imagem.'\',\''.$w_imagem.'\');xMenuShowHide(document.getElementById(\'Xtree'.$w_ContOut.'\'));"><img id="Ximg'.$w_ContImg.'" src="'.$w_imagem.'" border="0">&nbsp;'.f($row2,'NOME').'</span> ');
             if ($w_libera_edicao=='S') {
               ShowHTML(' <A class="Xlink" HREF="'.$w_pagina.$par.'&R='.$w_pagina.$par.'&O=A&w_sq_unidade='.f($row2,'sq_unidade').'&P1='.$P1.'&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP='.$TP.'&SG='.$SG.'" title="Alterar">AL</A>&nbsp');
@@ -253,6 +256,7 @@ function Unidade() {
             foreach($RS3 as $row3) {
               $w_ContImg += 1;
               $w_ContOut += 1;
+              if (f($row3,'qtd_resp')>0 && f($row3,'qtd_local')>0) $w_imagem=$conRootSIW.'images/ballw.gif'; else $w_imagem=$conRootSIW.'images/ballc.gif'; 
               ShowHTML('            <li id="Xnode" class="Xnode"><span onClick="xSwapImg(document.getElementById(\'Ximg'.$w_ContImg.'\'),\''.$w_imagem.'\',\''.$w_imagem.'\');xMenuShowHide(document.getElementById(\'Xtree'.$w_ContOut.'\'));"><img id="Ximg'.$w_ContImg.'" src="'.$w_imagem.'" border="0">&nbsp;'.f($row3,'NOME').'</span> ');
               if ($w_libera_edicao=='S') {
                 ShowHTML(' <A class="Xlink" HREF="'.$w_pagina.$par.'&R='.$w_pagina.$par.'&O=A&w_sq_unidade='.f($row3,'sq_unidade').'&P1='.$P1.'&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP='.$TP.'&SG='.$SG.'" title="Alterar">AL</A>&nbsp');
@@ -267,6 +271,7 @@ function Unidade() {
               foreach($RS4 as $row4) {
                 $w_ContImg += 1;
                 $w_ContOut += 1;
+                if (f($row4,'qtd_resp')>0 && f($row4,'qtd_local')>0) $w_imagem=$conRootSIW.'images/ballw.gif'; else $w_imagem=$conRootSIW.'images/ballc.gif'; 
                 ShowHTML('               <li id="Xnode" class="Xnode"><span onClick="xSwapImg(document.getElementById(\'Ximg'.$w_ContImg.'\'),\''.$w_imagem.'\',\''.$w_imagem.'\');xMenuShowHide(document.getElementById(\'Xtree'.$w_ContOut.'\'));"><img id="Ximg'.$w_ContImg.'" src="'.$w_imagem.'" border="0">&nbsp;'.f($row4,'NOME').'</span> ');
                 if ($w_libera_edicao=='S') {
                   ShowHTML(' <A class="Xlink" HREF="'.$w_pagina.$par.'&R='.$w_pagina.$par.'&O=A&w_sq_unidade='.f($row4,'sq_unidade').'&P1='.$P1.'&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP='.$TP.'&SG='.$SG.'" title="Alterar">AL</A>&nbsp');
@@ -281,6 +286,7 @@ function Unidade() {
                 foreach($RS5 as $row5) {
                   $w_ContImg += 1;
                   $w_ContOut += 1;
+                  if (f($row5,'qtd_resp')>0 && f($row5,'qtd_local')>0) $w_imagem=$conRootSIW.'images/ballw.gif'; else $w_imagem=$conRootSIW.'images/ballc.gif'; 
                   ShowHTML('                  <li id="Xnode" class="Xnode"><span onClick="xSwapImg(document.getElementById(\'Ximg'.$w_ContImg.'\'),\''.$w_imagem.'\',\''.$w_imagem.'\');xMenuShowHide(document.getElementById(\'Xtree'.$w_ContOut.'\'));"><img id="Ximg'.$w_ContImg.'" src="'.$w_imagem.'" border="0">&nbsp;'.f($row5,'NOME').'</span> ');
                   if ($w_libera_edicao=='S') {
                     ShowHTML(' <A class="Xlink" HREF="'.$w_pagina.$par.'&R='.$w_pagina.$par.'&O=A&w_sq_unidade='.f($row5,'sq_unidade').'&P1='.$P1.'&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP='.$TP.'&SG='.$SG.'" title="Alterar">AL</A>&nbsp');
@@ -295,6 +301,7 @@ function Unidade() {
                   foreach($RS6 as $row6) {
                     $w_ContImg += 1;
                     $w_ContOut += 1;
+                    if (f($row6,'qtd_resp')>0 && f($row6,'qtd_local')>0) $w_imagem=$conRootSIW.'images/ballw.gif'; else $w_imagem=$conRootSIW.'images/ballc.gif'; 
                     ShowHTML('                     <li id="Xnode" class="Xnode"><span onClick="xSwapImg(document.getElementById(\'Ximg'.$w_ContImg.'\'),\''.$w_imagem.'\',\''.$w_imagem.'\');xMenuShowHide(document.getElementById(\'Xtree'.$w_ContOut.'\'));"><img id="Ximg'.$w_ContImg.'" src="'.$w_imagem.'" border="0">&nbsp;'.f($row6,'NOME').'</span> ');
                     if ($w_libera_edicao=='S') {
                       ShowHTML(' <A class="Xlink" HREF="'.$w_pagina.$par.'&R='.$w_pagina.$par.'&O=A&w_sq_unidade='.f($row6,'sq_unidade').'&P1='.$P1.'&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP='.$TP.'&SG='.$SG.'" title="Alterar">AL</A>&nbsp');
@@ -309,6 +316,7 @@ function Unidade() {
                     foreach($RS7 as $row7) {
                       $w_ContImg += 1;
                       $w_ContOut += 1;
+                      if (f($row7,'qtd_resp')>0 && f($row7,'qtd_local')>0) $w_imagem=$conRootSIW.'images/ballw.gif'; else $w_imagem=$conRootSIW.'images/ballc.gif'; 
                       ShowHTML('                        <li id="Xnode" class="Xnode"><span onClick="xSwapImg(document.getElementById(\'Ximg'.$w_ContImg.'\'),\''.$w_imagem.'\',\''.$w_imagem.'\');xMenuShowHide(document.getElementById(\'Xtree'.$w_ContOut.'\'));"><img id="Ximg'.$w_ContImg.'" src="'.$w_imagem.'" border="0">&nbsp;'.f($row7,'NOME').'</span> ');
                       if ($w_libera_edicao=='S') {
                         ShowHTML(' <A class="Xlink" HREF="'.$w_pagina.$par.'&R='.$w_pagina.$par.'&O=A&w_sq_unidade='.f($row7,'sq_unidade').'&P1='.$P1.'&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP='.$TP.'&SG='.$SG.'" title="Alterar">AL</A>&nbsp');
@@ -323,6 +331,7 @@ function Unidade() {
                       foreach($RS8 as $row8) {
                         $w_ContImg += 1;
                         $w_ContOut += 1;
+                        if (f($row8,'qtd_resp')>0 && f($row8,'qtd_local')>0) $w_imagem=$conRootSIW.'images/ballw.gif'; else $w_imagem=$conRootSIW.'images/ballc.gif'; 
                         ShowHTML('                           <li id="Xnode" class="Xnode"><span onClick="xSwapImg(document.getElementById(\'Ximg'.$w_ContImg.'\'),\''.$w_imagem.'\',\''.$w_imagem.'\');xMenuShowHide(document.getElementById(\'Xtree'.$w_ContOut.'\'));"><img id="Ximg'.$w_ContImg.'" src="'.$w_imagem.'" border="0">&nbsp;'.f($row8,'NOME').'</span> ');
                         if ($w_libera_edicao=='S') {
                           ShowHTML(' <A class="Xlink" HREF="'.$w_pagina.$par.'&R='.$w_pagina.$par.'&O=A&w_sq_unidade='.f($row8,'sq_unidade').'&P1='.$P1.'&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP='.$TP.'&SG='.$SG.'" title="Alterar">AL</A>&nbsp');
@@ -337,6 +346,7 @@ function Unidade() {
                         foreach($RS9 as $row9) {
                           $w_ContImg += 1;
                           $w_ContOut += 1;
+                          if (f($row9,'qtd_resp')>0 && f($row9,'qtd_local')>0) $w_imagem=$conRootSIW.'images/ballw.gif'; else $w_imagem=$conRootSIW.'images/ballc.gif'; 
                           ShowHTML('                              <li id="Xnode" class="Xnode"><span onClick="xSwapImg(document.getElementById(\'Ximg'.$w_ContImg.'\'),\''.$w_imagem.'\',\''.$w_imagem.'\');xMenuShowHide(document.getElementById(\'Xtree'.$w_ContOut.'\'));"><img id="Ximg'.$w_ContImg.'" src="'.$w_imagem.'" border="0">&nbsp;'.f($row9,'NOME').'</span> ');
                           if ($w_libera_edicao=='S') {
                             ShowHTML(' <A class="Xlink" HREF="'.$w_pagina.$par.'&R='.$w_pagina.$par.'&O=A&w_sq_unidade='.f($row9,'sq_unidade').'&P1='.$P1.'&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP='.$TP.'&SG='.$SG.'" title="Alterar">AL</A>&nbsp');

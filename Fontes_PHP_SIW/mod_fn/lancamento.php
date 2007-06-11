@@ -851,7 +851,7 @@ function Geral() {
           $RS = db_getSolicRubrica::getInstanceOf($dbms,$w_chave_pai,null,null,null,null,null,null,null,null);
           if (count($RS)>0) {
             if (substr($SG,0,3)=='FNR') {
-              $RS2 = db_getLancamentoDoc::getInstanceOf($dbms,nvl($w_chave,0),null,'DOCS');
+              $RS2 = db_getLancamentoDoc::getInstanceOf($dbms,nvl($w_chave,0),null,null);
               if(count($RS2)>0) {
                 ShowHTML('<INPUT type="hidden" name="w_tipo_rubrica" value="'.$w_tipo_rubrica.'">');
                 ShowHTML('      <td><b>Tipo de movimentação: </b><br>'.$w_nm_tipo_rubrica.'</td>');
@@ -3394,7 +3394,7 @@ function Grava() {
     // Verifica se a Assinatura Eletrônica é válida
     if (verificaAssinaturaEletronica($_SESSION['USERNAME'],strtoupper($_REQUEST['w_assinatura'])) || $w_assinatura=='') {
      dml_putLancamentoDoc::getInstanceOf($dbms,$O,$_REQUEST['w_chave'],$_REQUEST['w_chave_aux'],$_REQUEST['w_sq_tipo_documento'],
-        $_REQUEST['w_numero'],$_REQUEST['w_data'],$_REQUEST['w_serie'],$_REQUEST['w_valor_doc'],'N','N','N',null,null,null,null&$w_chave_nova);
+        $_REQUEST['w_numero'],$_REQUEST['w_data'],$_REQUEST['w_serie'],$_REQUEST['w_valor_doc'],'N','N','N',null,null,null,null,&$w_chave_nova);
       dml_putLancamentoRubrica::getInstanceOf($dbms,'E',$w_chave_nova,null,null,null);
       for ($i=0; $i<=count($_POST['w_sq_projeto_rubrica'])-1; $i=$i+1) {
         if (Nvl($_REQUEST['w_sq_projeto_rubrica'][$i],'')>'') {

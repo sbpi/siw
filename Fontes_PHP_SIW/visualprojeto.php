@@ -531,20 +531,53 @@ function VisualProjeto($l_chave,$operacao,$l_usuario) {
     $l_html .= chr(13).'            <td bgColor="#f0f0f0"><div align="center"><b>Até</b></div></td>';
     $l_html .= chr(13).'          </tr>';
     //Se for visualização normal, irá visualizar somente as etapas
+    $w_previsto_menor  = '';
+    $w_previsto_maior  = '';
+    $w_real_menor      = '';
+    $w_real_maior      = '';
+    $w_total_orcamento = 0;
+    $w_total_peso      = 0;
+    $w_total_tarefa    = 0;
     if ($operacao=='L' || $operacao=='V') {
-      foreach($RS as $row) {
-        $l_html .= chr(13).EtapaLinha($l_chave,f($row,'sq_projeto_etapa'),f($row,'titulo'),f($row,'nm_resp'),f($row,'sg_setor'),f($row,'inicio_previsto'),f($row,'fim_previsto'),f($row,'inicio_real'),f($row,'fim_real'),f($row,'perc_conclusao'),f($row,'qt_ativ'),((f($row,'pacote_trabalho')=='S') ? '<b>' : ''),null,'PROJETO',f($row,'sq_pessoa'),f($row,'sq_unidade'),f($row,'pj_vincula_contrato'),f($row,'qt_contr'),f($row,'orcamento'),(f($row,'level')-1),f($row,'restricao'),f($row,'peso'));
-      } 
+      if (count($RS)>0) {
+        foreach($RS as $row) {
+          $l_html .= chr(13).EtapaLinha($l_chave,f($row,'sq_projeto_etapa'),f($row,'titulo'),f($row,'nm_resp'),f($row,'sg_setor'),f($row,'inicio_previsto'),f($row,'fim_previsto'),f($row,'inicio_real'),f($row,'fim_real'),f($row,'perc_conclusao'),f($row,'qt_ativ'),((f($row,'pacote_trabalho')=='S') ? '<b>' : ''),null,'PROJETO',f($row,'sq_pessoa'),f($row,'sq_unidade'),f($row,'pj_vincula_contrato'),f($row,'qt_contr'),f($row,'orcamento'),(f($row,'level')-1),f($row,'restricao'),f($row,'peso'));
+          if ($w_previsto_menor=='' || $w_previsto_menor > f($row,'inicio_previsto')) $w_previsto_menor = f($row,'inicio_previsto');
+          if ($w_previsto_maior=='' || $w_previsto_maior < f($row,'fim_previsto'))    $w_previsto_maior = f($row,'fim_previsto');
+          if (nvl(f($row,'inicio_real'),'')!='' && ($w_real_menor=='' || $w_real_menor > f($row,'inicio_real'))) $w_real_menor = f($row,'inicio_real');
+          if (nvl(f($row,'fim_real'),'')!=''    && ($w_real_maior=='' || $w_real_maior < f($row,'fim_real')))    $w_real_maior = f($row,'fim_real');
+          if (f($row,'pacote_trabalho')=='S') {
+            $w_total_orcamento += nvl(f($row,'orcamento'),0);
+            $w_total_peso      += nvl(f($row,'peso'),0);
+          }
+          $w_total_tarefa      += nvl(f($row,'qt_ativ'),0);
+        } 
+        $l_html .= chr(13).EtapaLinha($l_chave,null,null,null,null,$w_previsto_menor,$w_previsto_maior,$w_real_menor,$w_real_maior,null,$w_total_tarefa,'',null,'PROJETO',null,null,'N',null,$w_total_orcamento,0,null,$w_total_peso);
+      }
     } elseif ($w_tipo_visao!=2 && ($operacao=='T')){
       //Se for visualização total, ira visualizar as etapas e as tarefas correspondentes
-      foreach($RS as $row) {
-        $l_html .= chr(13).EtapaLinhaAtiv($l_chave,f($row,'sq_projeto_etapa'),f($row,'titulo'),f($row,'nm_resp'),f($row,'sg_setor'),f($row,'inicio_previsto'),f($row,'fim_previsto'),f($row,'inicio_real'),f($row,'fim_real'),f($row,'perc_conclusao'),f($row,'qt_ativ'),((f($row,'pacote_trabalho')=='S') ? '<b>' : ''),null,'PROJETO','RESUMIDO',f($row,'sq_pessoa'),f($row,'sq_unidade'),f($row,'pj_vincula_contrato'),f($row,'qt_contr'),f($row,'orcamento'),(f($row,'level')-1),f($row,'restricao'),f($row,'peso'));
+      if (count($RS)>0) {
+        foreach($RS as $row) {
+          $l_html .= chr(13).EtapaLinhaAtiv($l_chave,f($row,'sq_projeto_etapa'),f($row,'titulo'),f($row,'nm_resp'),f($row,'sg_setor'),f($row,'inicio_previsto'),f($row,'fim_previsto'),f($row,'inicio_real'),f($row,'fim_real'),f($row,'perc_conclusao'),f($row,'qt_ativ'),((f($row,'pacote_trabalho')=='S') ? '<b>' : ''),null,'PROJETO','RESUMIDO',f($row,'sq_pessoa'),f($row,'sq_unidade'),f($row,'pj_vincula_contrato'),f($row,'qt_contr'),f($row,'orcamento'),(f($row,'level')-1),f($row,'restricao'),f($row,'peso'));
+          if ($w_previsto_menor=='' || $w_previsto_menor > f($row,'inicio_previsto')) $w_previsto_menor = f($row,'inicio_previsto');
+          if ($w_previsto_maior=='' || $w_previsto_maior < f($row,'fim_previsto'))    $w_previsto_maior = f($row,'fim_previsto');
+          if ($w_real_menor==''     || $w_real_menor > f($row,'inicio_real'))         $w_real_menor     = f($row,'inicio_real');
+          if ($w_real_maior==''     || $w_real_maior < f($row,'fim_real'))            $w_real_maior     = f($row,'fim_real');
+          if (f($row,'pacote_trabalho')=='S') {
+            $w_total_orcamento += nvl(f($row,'orcamento'),0);
+            $w_total_peso      += nvl(f($row,'peso'),0);
+          }
+          $w_total_tarefa      += nvl(f($row,'qt_ativ'),0);
+        } 
+        $l_html .= chr(13).EtapaLinha($l_chave,null,null,null,null,$w_previsto_menor,$w_previsto_maior,$w_real_menor,$w_real_maior,null,$w_total_tarefa,'',null,'PROJETO',null,null,'N',null,$w_total_orcamento,0,null,$w_total_peso);
       } 
     } 
     $l_html .= chr(13).'      </form>';
-    $l_html .= chr(13).'      </center>';
     $l_html .= chr(13).'         </table></td></tr>';
-    $l_html .= chr(13).'<tr><td colspan=13><b>Observação: Pacotes de trabalho destacados em negrito.';
+    $l_html .= chr(13).'<tr><td colspan=13><b>Observações:<ul>';
+    $l_html .= chr(13).'  <li>Pacotes de trabalho destacados em negrito.';
+    $l_html .= chr(13).'  <li>NA última linha, o total orçado e a soma dos pesos considera apenas os pacotes de trabalho.';
+    $l_html .= chr(13).'  </ul>';
     if ($w_tipo=='WORD') {
       $l_html .= chr(13).'<tr><td colspan=13><table border=0>';
       $l_html .= chr(13).'  <tr valign="top"><td colspan=3><b>Legenda dos sinalizadores da EAP:</b>'.ExibeImagemSolic('ETAPA',null,null,null,null,null,null,null, null,true);

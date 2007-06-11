@@ -629,6 +629,7 @@ function Menu() {
   ShowHTML('    <table width="99%" border="0">');
 
   if ($O=='L') {
+    ShowHTML('      <tr><td bgcolor="#D0D0D0" style="border: 2px solid rgb(0,0,0);"><b><font color="#BC3131">ATENÇÃO:</font> Opções com marcadores piscantes devem ser verificadas: não têm trâmites, não tem unidade executora ou a unidade executora não tem responsáveis indicados.</b></td>');
     ShowHTML('      <tr><td><font size="2"><a accesskey="I" class="ss" href="'.$w_pagina.$par.'&R='.$w_pagina.$par.'&O=I&w_cliente='.$w_cliente.'&P1='.$P1.'&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP='.$TP.'&SG=MENU'.MontaFiltro('GET').'"><u>I</u>ncluir</a>&nbsp;');
     // Trata a cor e o texto da string Filtrar, dependendo do filtro estar ativo ou não
     if ($p_sq_endereco_unidade.$p_modulo.$p_menu>'') {
@@ -649,7 +650,9 @@ function Menu() {
       if (f($row,'Filho')>0) {
 
         ShowHTML('<A HREF="#'.f($row,'sq_menu').'"></A>');
-        ShowHTML('<span><div align="left"><img src="images/Folder/FolderClose.gif" border=0 align="center"> '.f($row,'nome').'');
+        $w_Imagem='images/Folder/FolderClose.gif';
+        if (f($row,'tramite')=='S' && (nvl(f($row,'sq_unid_executora'),'')=='' || f($row,'qtd_tramite')==0 || f($row,'qtd_resp')==0)) $w_Imagem=$conRootSIW.'images/ballc.gif'; 
+        ShowHTML('<span><div align="left"><img src="'.$w_Imagem.'" border=0 align="center"> '.f($row,'nome').'');
         if (f($row,'ativo')=='S') $w_classe='hl'; else $w_classe='lh';
         ShowHTML('       <A class="'.$w_classe.'" HREF="'.$w_pagina.$par.'&R='.$w_pagina.$par.'&O=A&w_sq_menu='.f($row,'sq_menu').'&w_cliente='.$w_cliente.'&P1='.$P1.'&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP='.$TP.'&SG=MENU'.MontaFiltro('GET').'" title="Altera as informações desta opção do menu">AL</A>&nbsp');
         ShowHTML('       <A class="'.$w_classe.'" HREF="'.$w_pagina.$par.'&R='.$w_pagina.$par.'&O=E&w_sq_menu='.f($row,'sq_menu').'&w_cliente='.$w_cliente.'&P1='.$P1.'&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP='.$TP.'&SG=MENU'.MontaFiltro('GET').'" title="Exclui o link do menu">EX</A>&nbsp');
@@ -677,7 +680,9 @@ function Menu() {
           if (f($row1,'Filho')>0) {
             $w_ContOut=$w_ContOut+1;
             ShowHTML('<A HREF=#"'.f($row1,'sq_menu').'"></A>');
-            ShowHTML('<span><div align="left"><img src="images/Folder/FolderClose.gif" border=0 align="center"> '.f($row1,'nome'));
+            $w_Imagem='images/Folder/FolderClose.gif';
+            if (f($row1,'tramite')=='S' && (nvl(f($row1,'sq_unid_executora'),'')=='' || f($row1,'qtd_tramite')==0 || f($row1,'qtd_resp')==0)) $w_Imagem=$conRootSIW.'images/ballc.gif'; 
+            ShowHTML('<span><div align="left"><img src="'.$w_Imagem.'" border=0 align="center"> '.f($row1,'nome'));
             if (f($row1,'ativo')=='S') $w_classe='hl'; else $w_classe='lh';
             ShowHTML('       <A class="'.$w_classe.'" HREF="'.$w_pagina.$par.'&R='.$w_pagina.$par.'&O=A&w_sq_menu='.f($row1,'sq_menu').'&w_cliente='.$w_cliente.'&P1='.$P1.'&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP='.$TP.'&SG=MENU'.MontaFiltro('GET').'" title="Altera as informações desta opção do menu">AL</A>&nbsp');
             ShowHTML('       <A class="'.$w_classe.'" HREF="'.$w_pagina.$par.'&R='.$w_pagina.$par.'&O=E&w_sq_menu='.f($row1,'sq_menu').'&w_cliente='.$w_cliente.'&P1='.$P1.'&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP='.$TP.'&SG=MENU'.MontaFiltro('GET').'" title="Exclui o link do menu">EX</A>&nbsp');            
@@ -708,7 +713,9 @@ function Menu() {
  
                 $w_ContOut=$w_ContOut+1;
                 ShowHTML('<A HREF=#"'.f($row2,'sq_menu').'"></A>');
-                ShowHTML('<span><div align="left"><img src="images/Folder/FolderClose.gif" border=0 align="center"> '.f($row2,'nome'));
+                $w_Imagem='images/Folder/FolderClose.gif';
+                if (f($row2,'tramite')=='S' && (nvl(f($row2,'sq_unid_executora'),'')=='' || f($row2,'qtd_tramite')==0 || f($row2,'qtd_resp')==0)) $w_Imagem=$conRootSIW.'images/ballc.gif'; 
+                ShowHTML('<span><div align="left"><img src="'.$w_Imagem.'" border=0 align="center"> '.f($row2,'nome'));
                 if (f($row2,'ativo')=='S') $w_classe='hl'; else $w_classe='lh';
                 ShowHTML('       <A class="'.$w_classe.'" HREF="'.$w_pagina.$par.'&R='.$w_pagina.$par.'&O=A&w_sq_menu='.f($row2,'sq_menu').'&w_cliente='.$w_cliente.'&P1='.$P1.'&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP='.$TP.'&SG=MENU'.MontaFiltro('GET').'" title="Altera as informações desta opção do menu">AL</A>&nbsp');
                 ShowHTML('       <A class="'.$w_classe.'" HREF="'.$w_pagina.$par.'&R='.$w_pagina.$par.'&O=E&w_sq_menu='.f($row2,'sq_menu').'&w_cliente='.$w_cliente.'&P1='.$P1.'&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP='.$TP.'&SG=MENU'.MontaFiltro('GET').'" title="Exclui o link do menu">EX</A>&nbsp');                
@@ -735,6 +742,7 @@ function Menu() {
                 foreach($RS3 as $row3) {
                   $w_Titulo=$w_Titulo.' - '.f($row3,'nome');
                   if (f($row3,'IMAGEM')>'') $w_Imagem=f($row3,'IMAGEM'); else $w_Imagem=$w_ImagemPadrao;
+                  if (f($row3,'tramite')=='S' && (nvl(f($row3,'sq_unid_executora'),'')=='' || f($row3,'qtd_tramite')==0 || f($row3,'qtd_resp')==0)) $w_Imagem=$conRootSIW.'images/ballc.gif'; 
   
                   ShowHTML('<A HREF=#"'.f($row3,'sq_menu').'"></A>');
                   ShowHTML('    <img src="'.$w_Imagem.'" border=0 align="center"> '.f($row3,'nome'));
@@ -766,6 +774,7 @@ function Menu() {
                 ShowHTML('   </div>');
               } else {
                 if (f($row2,'IMAGEM')>'') $w_Imagem=f($row2,'IMAGEM'); else $w_Imagem=$w_ImagemPadrao;
+                if (f($row2,'tramite')=='S' && (nvl(f($row2,'sq_unid_executora'),'')=='' || f($row2,'qtd_tramite')==0 || f($row2,'qtd_resp')==0)) $w_Imagem=$conRootSIW.'images/ballc.gif'; 
                 ShowHTML('    <img src="'.$w_Imagem.'" border=0 align="center"> '.f($row2,'nome'));
                 if (f($row2,'ativo')=='S') $w_classe='hl'; else $w_classe='lh';
                 ShowHTML('       <A class="'.$w_classe.'" HREF="'.$w_pagina.$par.'&R='.$w_pagina.$par.'&O=A&w_sq_menu='.f($row2,'sq_menu').'&w_cliente='.$w_cliente.'&P1='.$P1.'&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP='.$TP.'&SG=MENU'.MontaFiltro('GET').'" title="Altera as informações desta opção do menu">AL</A>&nbsp');
@@ -793,6 +802,7 @@ function Menu() {
             ShowHTML('   </div>');
           } else {
             if (f($row1,'IMAGEM')>'') $w_Imagem=f($row1,'IMAGEM'); else $w_Imagem=$w_ImagemPadrao;
+            if (f($row1,'tramite')=='S' && (nvl(f($row1,'sq_unid_executora'),'')=='' || f($row1,'qtd_tramite')==0 || f($row1,'qtd_resp')==0)) $w_Imagem=$conRootSIW.'images/ballc.gif'; 
             ShowHTML('    <img src="'.$w_Imagem.'" border=0 align="center"> '.f($row1,'nome'));
             if (f($row1,'ativo')=='S') $w_classe='hl'; else $w_classe='lh';
             ShowHTML('       <A class="'.$w_classe.'" HREF="'.$w_pagina.$par.'&R='.$w_pagina.$par.'&O=A&w_sq_menu='.f($row1,'sq_menu').'&w_cliente='.$w_cliente.'&P1='.$P1.'&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP='.$TP.'&SG=MENU'.MontaFiltro('GET').'" title="Altera as informações desta opção do menu">AL</A>&nbsp');
@@ -819,6 +829,7 @@ function Menu() {
         ShowHTML('   </div>');
       } else {
         if (f($row,'IMAGEM')>'') $w_Imagem=f($row,'IMAGEM'); else $w_Imagem=$w_ImagemPadrao;
+        if (f($row,'tramite')=='S' && (nvl(f($row,'sq_unid_executora'),'')=='' || f($row,'qtd_tramite')==0 || f($row,'qtd_resp')==0)) $w_Imagem=$conRootSIW.'images/ballc.gif'; 
         ShowHTML('    <img src="'.$w_Imagem.'" border=0 align="center"> '.f($row,'nome').'');
         if (f($row,'ativo')=='S') $w_classe='hl'; else $w_classe='lh';
         ShowHTML('       <A class="'.$w_classe.'" HREF="'.$w_pagina.$par.'&R='.$w_pagina.$par.'&O=A&w_sq_menu='.f($row,'sq_menu').'&w_cliente='.$w_cliente.'&P1='.$P1.'&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP='.$TP.'&SG=MENU'.MontaFiltro('GET').'" title="Altera as informações desta opção do menu">AL</A>&nbsp');
