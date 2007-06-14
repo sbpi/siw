@@ -40,9 +40,9 @@ create or replace procedure SP_PutAcordoParc
    w_fim         date;
    w_total       number(18,4);
    w_ordem       number(18) := 0;
-   w_inicial     number(18,4) := coalesce(p_valor_inicial,p_valor);
-   w_reajuste    number(18,4) := p_valor_reajuste;
-   w_excedente   number(18,4) := p_valor_excedente;
+   w_inicial     number(18,4) := coalesce(p_valor_inicial,p_valor,0);
+   w_reajuste    number(18,4) := coalesce(p_valor_reajuste,0);
+   w_excedente   number(18,4) := coalesce(p_valor_excedente,0);
    w_inicial_1   number(18,4);
    w_reajuste_1  number(18,4);
    w_excedente_1 number(18,4);

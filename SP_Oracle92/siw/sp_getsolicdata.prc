@@ -223,11 +223,11 @@ begin
                 left               join (select x.sq_siw_solicitacao sq_acordo, x.codigo_interno cd_acordo,
                                                 w.nome_resumido||' - '||z.nome||' ('||to_char(x.inicio,'dd/mm/yyyy')||'-'||to_char(x.fim,'dd/mm/yyyy')||')' as nm_acordo,
                                                 v.sigla
-                                           from ac_acordo              x
-                                                join   co_pessoa       w on (x.outra_parte        = w.sq_pessoa)
-                                                join   siw_solicitacao y on (x.sq_siw_solicitacao = y.sq_siw_solicitacao)
-                                                  join ct_cc           z on (y.sq_cc              = z.sq_cc)
-                                                  join siw_menu        v on (y.sq_menu            = v.sq_menu)
+                                           from ac_acordo                      x
+                                                inner   join   co_pessoa       w on (x.outra_parte        = w.sq_pessoa)
+                                                inner   join   siw_solicitacao y on (x.sq_siw_solicitacao = y.sq_siw_solicitacao)
+                                                  left  join ct_cc             z on (y.sq_cc              = z.sq_cc)
+                                                  inner join siw_menu          v on (y.sq_menu            = v.sq_menu)
                                         )                    m  on (b.sq_solic_pai        = m.sq_acordo)
                 left               join siw_solicitacao      n  on (b.sq_solic_pai        = n.sq_siw_solicitacao)
                 left               join pe_programa          o  on (b.sq_solic_pai        = o.sq_siw_solicitacao)
