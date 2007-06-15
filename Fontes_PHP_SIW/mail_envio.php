@@ -1,12 +1,11 @@
 <?
 session_start();
+error_reporting(E_ALL ^ E_NOTICE);
+echo phpinfo(INFO_GENERAL);
+echo phpinfo(INFO_ENVIRONMENT);
+print_r(get_loaded_extensions());
 include_once('constants.inc');
 $w_dir_volta = $conDiretorio.'/';
-include_once($w_dir_volta.'funcoes.php');
-include_once($w_dir_volta.'classes/db/abreSessao.php');
-include_once($w_dir_volta.'visualalerta.php');
-include_once($w_dir_volta.'classes/sp/db_getAlerta.php');
-//include_once($w_dir_volta.'classes/sp/dml_putMail.php');
 
 // =========================================================================
 //  mail_envio.php
@@ -41,22 +40,28 @@ $w_opcao   = $argv[4];
 $w_usuario = $_SESSION['SQ_PESSOA'];
 
 // Verifica se os parâmetros de chamada estão corretos
-if (nvl($w_cliente,'')=='') {
+if (!isset($w_cliente)) {
   echo 'ERRO: é necessário informar o código do cliente como primeiro parâmetro de chamada.'.$crlf;
   exit();
 };
-if (nvl($w_dbms,'')=='') {
+if (!isset($w_dbms)) {
   echo 'ERRO: é necessário informar o banco de dados como segundo parâmetro de chamada.'.$crlf;
   exit();
 };
 
 // Se foi disparado da interface Web, guarda os dados para uso futuro
-if (nvl($_SESSION['P_CLIENTE'],'')!='') $w_cliente_old  = $_SESSION['P_CLIENTE'];
-if (nvl($_SESSION['DBMS'],'')!='')      $w_dbms_old     = $_SESSION['DBMS'];
+if (!isset($_SESSION['P_CLIENTE'])) $w_cliente_old  = $_SESSION['P_CLIENTE'];
+if (!isset($_SESSION['DBMS']))      $w_dbms_old     = $_SESSION['DBMS'];
 
 // Configura parâmetros de funcionamento
 $_SESSION['P_CLIENTE'] = $w_cliente;
 $_SESSION['DBMS']      = $w_dbms;
+
+include_once($w_dir_volta.'funcoes.php');
+include_once($w_dir_volta.'classes/db/abreSessao.php');
+include_once($w_dir_volta.'visualalerta.php');
+include_once($w_dir_volta.'classes/sp/db_getAlerta.php');
+//include_once($w_dir_volta.'classes/sp/dml_putMail.php');
 
 // Abre conexão como banco de dados
 $dbms = abreSessao::getInstanceOf($_SESSION['DBMS']);

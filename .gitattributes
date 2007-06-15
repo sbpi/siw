@@ -593,6 +593,9 @@ Fontes_PHP_SIW/classes/menu/xPandMenu.css -text
 Fontes_PHP_SIW/classes/menu/xPandMenu.js -text
 Fontes_PHP_SIW/classes/menu/xPandMenu.php -text
 Fontes_PHP_SIW/classes/menu/xPandPrint.css -text
+Fontes_PHP_SIW/classes/serverstatus/blank.gif -text
+Fontes_PHP_SIW/classes/serverstatus/class.parse_server_status.php -text
+Fontes_PHP_SIW/classes/serverstatus/inc.config.php -text
 Fontes_PHP_SIW/classes/sp/DatabaseQueries.php -text
 Fontes_PHP_SIW/classes/sp/db_VerificaDataEspecial.php -text
 Fontes_PHP_SIW/classes/sp/db_get10PercentDays.php -text
@@ -1427,6 +1430,9 @@ Fontes_PHP_SIW/mod_dc/dc_dicionario.php -text
 Fontes_PHP_SIW/mod_dc/dc_tabelas.php -text
 Fontes_PHP_SIW/mod_dc/etl.php -text
 Fontes_PHP_SIW/mod_dc/etl_txt.php -text
+Fontes_PHP_SIW/mod_dc/exec.php -text
+Fontes_PHP_SIW/mod_dc/serverstatus.php -text
+Fontes_PHP_SIW/mod_dc/serverstatus2.php -text
 Fontes_PHP_SIW/mod_fn/gr_lancamento.php -text
 Fontes_PHP_SIW/mod_fn/lancamento.php -text
 Fontes_PHP_SIW/mod_fn/rel_contas.php -text

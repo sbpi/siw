@@ -3,9 +3,16 @@
     <title>PHP 5</title> 
   </head>
   <body>
-    <!--<IMG SRC="http://io/siw/geragrafico.php?p_genero=M&p_objeto=Novo projeto&p_tipo=&p_grafico=Barra&p_tot=13&p_cad=2&p_tram=6&p_conc=5&p_atraso=4&p_aviso=0&p_acima=0">-->
+<table border=0><tr><td>
+<pre>
+<?
+echo 'Sistema operacional: '.PHP_OS;
+echo '<br>Módulos instalados: ';
+print_r(get_loaded_extensions());
+?>
+</pre>
+</table>
     <? 
-    echo PHP_OS;
     phpinfo(); 
     ?>
   </body>

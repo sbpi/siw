@@ -366,7 +366,7 @@ function Restricao() {
     }
     ShowHTML('<tr bgcolor="'.$conTrBgColor.'"><td align="center">');
     ShowHTML('    <table width="97%" border="0">');
-    SelecaoPessoa('<u>R</u>esponsável:','N','Selecione o responsável pelo acompanhamento da questão.',$w_pessoa,$w_chave,'w_pessoa','INTERNOS');
+    SelecaoPessoa('<u>R</u>esponsável:','N','Selecione o responsável pelo acompanhamento da questão.',$w_pessoa,$w_chave,'w_pessoa','USUARIOS');
     SelecaoTipoRestricao('<U>C</U>lassificação:','C','Selecione o tipo de classifição.',$w_tipo_restricao,$w_cliente,'w_tipo_restricao',null,null);
     ShowHTML('      <tr><td colspan="3"><b><u>D</u>escrição:</b><br><textarea '.$w_Disabled.' accesskey="D" name="w_descricao" class="STI" ROWS=5 cols=75 title="Descrição da questão.">'.$w_descricao.'</TEXTAREA></td>');
     ShowHTML('      <tr valign="top">');

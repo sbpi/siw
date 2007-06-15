@@ -1367,7 +1367,7 @@ function Rubrica() {
     ValidateOpen('Validacao');
     if (strpos('IA',$O)!==false) {
       Validate('w_sq_cc','Classificação','SELECT',1,1,18,'','0123456789');
-      Validate('w_codigo','Código','','1','2','20','1','1');
+      Validate('w_codigo','Código','','1','1','20','1','1');
       Validate('w_nome','Nome','','1','2','60','1','1');
       if (nvl($w_copia,'')!='') {
         ShowHTML('  if (theForm.w_codigo.value==theForm.w_codigo_ant.value || theForm.w_nome.value==theForm.w_nome_ant.value) {');
@@ -2459,7 +2459,7 @@ function AtualizaEtapa() {
       }
       Validate('w_situacao_atual','Situação atual','','','5','4000','1','1');
     }
-    if ($P1==2) {
+    if ($P1==2 || $P1==6) {
       Validate('w_assinatura','Assinatura Eletrônica','1','1','6','30','1','1');
     }     
     ShowHTML('  theForm.Botao[0].disabled=true;');

@@ -345,11 +345,10 @@ function Inicial() {
   if ($w_filtro>'') ShowHTML($w_filtro);
   ShowHTML('<table border="0" cellpadding="0" cellspacing="0" width="100%">');
   if ($O=='L') {
-    ShowHTML('<tr>');
+    ShowHTML('<tr><td>');
     if ($P1==1 && $w_copia=='') {
       // Se for cadastramento e não for resultado de busca para cópia
       if ($w_tipo!='WORD') { 
-        ShowHTML('<tr><td>');
         ShowHTML('<tr><td>');    
         if ($w_submenu>'') {
           $RS1 = db_getLinkSubMenu::getInstanceOf($dbms,$w_cliente,$_REQUEST['SG']);
@@ -871,7 +870,7 @@ function Geral() {
     Validate('w_solicitante','Responsável','',1,1,18,'','0123456789');
     Validate('w_sq_unidade_resp','Setor responsável','HIDDEN',1,1,18,'','0123456789');
     if (f($RS_Menu,'solicita_cc')=='S') {
-      if ($w_cd_modalidade!='F' && $w_cd_modalidade!='I') {
+      if ($w_cd_modalidade!='F') {
         Validate('w_sqcc','Classificação','SELECT','',1,18,'','0123456789');
       } else {
         Validate('w_sqcc','Classificação','SELECT','1',1,18,'','0123456789');
@@ -987,7 +986,7 @@ function Geral() {
     ShowHTML('      <tr><td align="center" height="1" bgcolor="#000000"></td></tr>');
     ShowHTML('      <tr><td align="center" bgcolor="#D0D0D0"><b>Vinculação</td></td></tr>');
     ShowHTML('      <tr><td align="center" height="1" bgcolor="#000000"></td></tr>');
-    if (Nvl($w_cd_modalidade,'F')!='F' && Nvl($w_cd_modalidade,'F')!='I') {
+    if (Nvl($w_cd_modalidade,'F')!='F') {
       ShowHTML('      <tr><td>Selecione uma forma de vinculação.</td></tr>');
       ShowHTML('      <tr><td align="center" height="1" bgcolor="#000000"></td></tr>');
       // Recupera dados da opção Projetos

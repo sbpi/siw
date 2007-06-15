@@ -132,9 +132,9 @@ function VisualConvenio($l_chave,$l_O,$l_usuario,$l_P1,$l_P4) {
     if ($l_P1==4) {
       // Termo de referência
       $w_html.=chr(13).'      <tr><td colspan="2"><br><font size="2"><b>TERMO DE REFERÊNCIA<hr NOSHADE color=#000000 SIZE=1></b></font></td></tr>';
-      $w_html.=chr(13).'      <tr><td><font size="1"><b>Atividades a serem desenvolvidas:</b></td>';
+      $w_html.=chr(13).'      <tr valign="top"><td><font size="1"><b>Atividades a serem desenvolvidas:</b></td>';
       $w_html.=chr(13).'          <td>'.nvl(CRLF2BR(f($RS,'atividades')),'---').'</td>';
-      $w_html.=chr(13).'      <tr><td><font size="1"><b>Produtos a serem entregues:</b></td>';
+      $w_html.=chr(13).'      <tr valign="top"><td><font size="1"><b>Produtos a serem entregues:</b></td>';
       $w_html.=chr(13).'          <td>'.nvl(CRLF2BR(f($RS,'produtos')),'---').'</td>';
       $w_html.=chr(13).'      <tr><td><font size="1"><b>Código para a outra parte:</b></td>';
       $w_html.=chr(13).'          <td>'.Nvl(f($RS,'codigo_externo'),'---').'</td></tr>';
