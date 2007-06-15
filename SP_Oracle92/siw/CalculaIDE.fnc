@@ -10,16 +10,18 @@ create or replace function CalculaIDE(p_chave in number, p_data in date default 
        from siw_solicitacao a
             left join (select a.sq_siw_solicitacao, sum(a.peso) as valor
                          from pj_projeto_etapa           a
+                              inner join siw_solicitacao b on (a.sq_siw_solicitacao = b.sq_siw_solicitacao)
                         where a.sq_siw_solicitacao = p_chave
                           and a.pacote_trabalho    = 'S'
-                          and a.fim_previsto       between coalesce(p_inicio,a.inicio_previsto) and coalesce(p_data,sysdate)
+                          and a.fim_previsto       between coalesce(p_inicio,b.inicio) and coalesce(p_data,sysdate)
                        group by a.sq_siw_solicitacao
                       ) previsto on (a.sq_siw_solicitacao = previsto.sq_siw_solicitacao)
             left join (select a.sq_siw_solicitacao, sum(a.peso) as valor
                          from pj_projeto_etapa a
+                              inner join siw_solicitacao b on (a.sq_siw_solicitacao = b.sq_siw_solicitacao)
                         where a.sq_siw_solicitacao = p_chave
                           and a.pacote_trabalho    = 'S'
-                          and a.fim_real           between coalesce(p_inicio,a.inicio_previsto) and coalesce(p_data,sysdate)
+                          and a.fim_real           between coalesce(p_inicio,b.inicio) and coalesce(p_data,sysdate)
                        group by a.sq_siw_solicitacao
                       ) realizado on (a.sq_siw_solicitacao = realizado.sq_siw_solicitacao)
       where a.sq_siw_solicitacao = p_chave;

@@ -1283,7 +1283,8 @@ begin
                  (a1.sigla = 'FN' and b3.sigla = 'AC') or
                  (a1.sigla = 'PR' and b3.sigla = 'PE')
                 )
-            and (acesso(b.sq_siw_solicitacao,p_pessoa) > 0 or
+            and (b3.sigla = 'PE' or 
+                 acesso(b.sq_siw_solicitacao,p_pessoa) > 0 or
                  InStr(l_resp_unid,''''||b.sq_unidade||'''') > 0
                 )
          order by titulo;
