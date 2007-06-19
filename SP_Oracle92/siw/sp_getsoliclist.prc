@@ -242,7 +242,7 @@ begin
                 d.sq_tipo_pessoa,
                 case d.prioridade when 0 then 'Alta' when 1 then 'Média' else 'Normal' end nm_prioridade,
                 d1.nome nm_prop,      d1.nome_resumido nm_prop_res,
-                coalesce(d2.orc_previsto,0) as orc_previsto, coalesce(d2.orc_real,0) as orc_real, 
+                d2.orc_previsto as orc_previsto, d2.orc_real as orc_real, 
                 b.fim-d.dias_aviso aviso,
                 e.sq_tipo_unidade,    e.nome nm_unidade_resp,        e.informal informal_resp,
                 e.vinculada vinc_resp,e.adm_central adm_resp,
