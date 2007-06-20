@@ -313,7 +313,7 @@ function Inicial() {
   Estrutura_Corpo_Abre();
   Estrutura_Texto_Abre();
   if ($w_filtro>'') ShowHTML($w_filtro);
-  if ($P1==1) ShowHTML('<div align="left"><table border=0><tr valign="top"><td><b>Finalidade:</b><td nowrap>'.f($RS_Menu,'finalidade').'</tr></table></div>');
+  if ($P1==1) ShowHTML('<div align="left"><table border=0><tr valign="top"><td><b>Finalidade:</b><td>'.f($RS_Menu,'finalidade').'</tr></table></div>');
   ShowHTML('<table border="0" cellpadding="0" cellspacing="0" width="100%">');
   if ($O=='L') {
     ShowHTML('<tr><td>');

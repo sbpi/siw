@@ -1325,8 +1325,11 @@ function RetornaMenu($p_cliente,$p_sigla) {
     return $_REQUEST['w_menu'];
   } else {
      include_once($w_dir_volta.'classes/sp/db_getMenuCode.php');
-     $RS = db_getMenuCode::getInstanceOf($dbms, $p_cliente, $p_sigla);
-     return f($RS,'SQ_MENU');
+     $l_rs = db_getMenuCode::getInstanceOf($dbms, $p_cliente, $p_sigla);
+     foreach($l_rs as $l_row) {
+       if (f($l_row,'ativo')=='S') { return f($l_row,'sq_menu'); break; }
+     }
+     return null;
   }
 }
 
@@ -2511,13 +2514,20 @@ function LimpaMascara($Campo) {
 // Cria a tag Body
 function BodyOpen($cProperties) {
    extract($GLOBALS);
+   Required();
+   $wProperties = $cProperties;
+   if (nvl($wProperties,'')!='') {
+     $wProperties = str_replace('document', 'required(); document', $wProperties);
+   } else {
+     $wProperties = ' alert (required()); onLoad=\'required();\' ';
+   }
    ShowHTML('<link rel="stylesheet" type="text/css" href="'.$conRootSIW.'classes/menu/xPandMenu.css">');
-   if ($_SESSION['P_CLIENTE']=='6761') { ShowHTML('<body Text="'.$conBodyText.'" '.$cProperties.'> '); }
+   if ($_SESSION['P_CLIENTE']=='6761') { ShowHTML('<body Text="'.$conBodyText.'" '.$wProperties.'> '); }
    else {
       ShowHTML('<body Text="'.$conBodyText.'" Link="'.$conBodyLink.'" Alink="'.$conBodyALink.'" '.
             'Vlink="'.$conBodyVLink.'" Bgcolor="'.$conBodyBgColor.'" Background="'.$conBodyBackground.'" ' .
             'Bgproperties="'.$conBodyBgproperties.'" Topmargin="'.$conBodyTopmargin .'" ' .
-            'Leftmargin="'.$conBodyLeftmargin.'" '.$cProperties.'> ');
+            'Leftmargin="'.$conBodyLeftmargin.'" '.$wProperties.'> ');
    }
 }
 
@@ -2539,11 +2549,18 @@ function ShowHtml($Line) { print $Line.chr(13).chr(10); }
 // Cria a tag Body
 function BodyOpenClean($cProperties) {
   extract($GLOBALS);
+  Required();
+  $wProperties = $cProperties;
+  if (nvl($wProperties,'')!='') {
+    $wProperties = str_replace('document', 'required(); document', $wProperties);
+  } else {
+    $wProperties = ' onLoad=\'required();\' ';
+  }
   ShowHTML('<link rel="stylesheet" type="text/css" href="'.$conRootSIW.'classes/menu/xPandMenu.css">');
   ShowHTML('<body Text="'.$conBodyText.'" Link="'.$conBodyLink.'" Alink="'.$conBodyALink.'" '.
   'Vlink="'.$conBodyVLink.'" Background="'.$conBodyBackground.'" '.
   'Bgproperties="'.$conBodyBgproperties.'" Topmargin="'.$conBodyTopmargin.'" '.
-  'Leftmargin="'.$conBodyLeftmargin.'" '.$cProperties.'> ');
+  'Leftmargin="'.$conBodyLeftmargin.'" '.$wProperties.'> ');
 }
 
 // Cria a tag Body
