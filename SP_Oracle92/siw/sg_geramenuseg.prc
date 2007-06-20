@@ -22,7 +22,7 @@ create or replace procedure SG_GeraMenuSeg(p_cliente_base in number, p_modulo in
        from co_segmento              a
             inner   join siw_mod_seg b on (a.sq_segmento = b.sq_segmento)
               inner join siw_modulo  c on (b.sq_modulo   = c.sq_modulo)
-      where c.sigla in p_modulo
+      where 0           < instr(p_modulo,c.sigla)
         and (p_segmento is null or (p_segmento is not null and a.sq_segmento = p_segmento))
      order by sq_segmento;
      
@@ -31,7 +31,7 @@ create or replace procedure SG_GeraMenuSeg(p_cliente_base in number, p_modulo in
      select a.*
        from siw_menu             a
             inner join siw_modulo b on (a.sq_modulo = b.sq_modulo)
-      where b.sigla in p_modulo
+      where 0             < instr(p_modulo, b.sigla)
         and a.ativo       = 'S'
         and a.sq_pessoa   = p_cliente_base
      order by Nvl(a.sq_menu_pai,0),a.ordem;
@@ -63,7 +63,7 @@ for crec in c_Segmento loop
             envia_dia_util,     descricao,                  justificativa,     controla_ano,
             libera_edicao
            )
-    values (
+    (select 
             w_chave,            drec.sq_modulo,             crec.sq_segmento,  drec.ativo,
             drec.nome,          drec.finalidade,            drec.link,         null,
             drec.tramite,       drec.ordem,                 drec.ultimo_nivel, drec.p1,
@@ -73,7 +73,10 @@ for crec in c_Segmento loop
             drec.como_funciona, drec.arquivo_proced,        drec.vinculacao,   drec.data_hora,
             drec.envia_dia_util,drec.descricao,             drec.justificativa,drec.controla_ano,
             drec.libera_edicao
-           );
+       from siw_mod_seg a
+      where a.sq_modulo   = drec.sq_modulo
+        and a.sq_segmento = crec.sq_segmento
+    );
            
   end loop;
   

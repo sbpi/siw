@@ -28,6 +28,15 @@ begin
                              and w.sq_modulo = p_modulo
                          );
 
+      -- Exclui as vinculações entre serviços ligados ao módulo
+      delete siw_menu_relac a
+      where a.sq_siw_tramite in (select x.sq_siw_tramite
+                                   from siw_menu w, siw_tramite x
+                                  where w.sq_menu   = x.sq_menu
+                                    and w.sq_pessoa = p_pessoa
+                                    and w.sq_modulo = p_modulo
+                                 );
+
       -- Exclui as permissões a trâmites dos serviços ligados ao módulo
       delete sg_tramite_pessoa a
       where a.sq_siw_tramite in (select x.sq_siw_tramite
@@ -65,4 +74,3 @@ begin
    End If;
 end SP_PutSiwCliMod;
 /
-

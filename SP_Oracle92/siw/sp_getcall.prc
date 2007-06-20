@@ -1,5 +1,6 @@
 create or replace procedure SP_GetCall
-   (p_chave     in number default null,
+   (p_cliente   in number,
+    p_chave     in number default null,
     p_pessoa    in number,
     p_tipo      in number,
     p_restricao in varchar2 default null,
@@ -23,15 +24,16 @@ begin
                 case a.entrante when 'S' then case a.recebida when 'N' then 'NAT' else 'REC' end else 'ORI' end tipo,
                 i.nome_resumido responsavel, i.nome responsavel_nome,
                 to_char(a.data, 'DD/MM/YYYY, HH24:MI:SS') phpdt_ordem
-           from tt_ligacao         a 
-                   inner      join tt_usuario         b on (a.sq_usuario_central = b.sq_usuario_central) 
-                      inner   join co_pessoa          i on (b.usuario            = i.sq_pessoa)
-                   inner      join tt_ramal           c on (a.sq_ramal           = c.sq_ramal) 
-                   inner      join tt_tronco          d on (a.sq_tronco          = d.sq_tronco) 
-                      inner   join co_pessoa_telefone e on (d.sq_pessoa_telefone = e.sq_pessoa_telefone) 
-                   left outer join ct_cc              g on (a.sq_cc              = g.sq_cc) 
-                   left outer join tt_prefixos        h on (a.sq_prefixo         = h.sq_prefixo) 
-          where ((p_tipo           = 1 and b.usuario = p_pessoa) or p_tipo         <> 1)
+           from tt_ligacao                         a 
+                inner      join tt_usuario         b on (a.sq_usuario_central = b.sq_usuario_central) 
+                   inner   join co_pessoa          i on (b.usuario            = i.sq_pessoa)
+                inner      join tt_ramal           c on (a.sq_ramal           = c.sq_ramal) 
+                inner      join tt_tronco          d on (a.sq_tronco          = d.sq_tronco) 
+                   inner   join co_pessoa_telefone e on (d.sq_pessoa_telefone = e.sq_pessoa_telefone) 
+                left join ct_cc                    g on (a.sq_cc              = g.sq_cc) 
+                left join tt_prefixos              h on (a.sq_prefixo         = h.sq_prefixo) 
+          where a.cliente          = p_cliente
+            and ((p_tipo           = 1 and b.usuario = p_pessoa) or p_tipo         <> 1)
             and (p_sq_cc           is null or (p_sq_cc   is not null and a.sq_cc   = p_sq_cc))
             and (p_contato         is null or (p_contato is not null and acentos(upper(a.outra_parte_cont)) like acentos(upper('%'||p_contato||'%'))))
             and (p_numero          is null or (p_numero  is not null and a.numero like '%'||p_numero||'%'))
@@ -53,15 +55,16 @@ begin
                 case a.entrante when 'S' then case a.recebida when 'N' then 'NAT' else 'REC' end else 'ORI' end tipo,
                 null, null, 
                 to_char(a.data, 'DD/MM/YYYY, HH24:MI:SS') phpdt_ordem
-           from tt_ligacao         a 
-                   inner      join tt_ramal_usuario   c on (a.sq_ramal           = c.sq_ramal) 
-                      inner   join tt_usuario         b on (c.sq_usuario_central = b.sq_usuario_central) 
-                   inner      join tt_ramal           d on (a.sq_ramal           = d.sq_ramal) 
-                   inner      join tt_tronco          e on (a.sq_tronco          = e.sq_tronco) 
-                      inner   join co_pessoa_telefone f on (e.sq_pessoa_telefone = f.sq_pessoa_telefone) 
-                   left outer join ct_cc              g on (a.sq_cc              = g.sq_cc) 
-                   left outer join tt_prefixos        h on (a.sq_prefixo         = h.sq_prefixo) 
-          where a.sq_usuario_central is null 
+           from tt_ligacao                         a 
+                inner      join tt_ramal_usuario   c on (a.sq_ramal           = c.sq_ramal) 
+                   inner   join tt_usuario         b on (c.sq_usuario_central = b.sq_usuario_central) 
+                inner      join tt_ramal           d on (a.sq_ramal           = d.sq_ramal) 
+                inner      join tt_tronco          e on (a.sq_tronco          = e.sq_tronco) 
+                   inner   join co_pessoa_telefone f on (e.sq_pessoa_telefone = f.sq_pessoa_telefone) 
+                left join ct_cc                    g on (a.sq_cc              = g.sq_cc) 
+                left join tt_prefixos              h on (a.sq_prefixo         = h.sq_prefixo) 
+          where a.cliente            = p_cliente
+            and a.sq_usuario_central is null 
             and a.trabalho           is null
             and trunc(a.data)        between c.inicio and Nvl(c.fim,sysdate)
             and ((nvl(p_tipo,1)      = 3) or (nvl(p_tipo,1)      <> 3 and b.usuario          = p_pessoa))
@@ -80,9 +83,9 @@ begin
                    a.valor, a.duracao, a.recebida, a.entrante, a.fax, a.numero, a.inclusao, a.trabalho, a.assunto, a.outra_parte_cont, a.imagem,
                    c.nome_resumido responsavel, 
                    to_char(a.data, 'DD/MM/YYYY, HH24:MI:SS') phpdt_data
-              from tt_ligacao a
-                     left outer   join tt_usuario b on (a.sq_usuario_central = b.sq_usuario_central)
-                       left outer join co_pessoa  c on (b.usuario            = c.sq_pessoa)
+              from tt_ligacao             a
+                   left   join tt_usuario b on (a.sq_usuario_central = b.sq_usuario_central)
+                     left join co_pessoa  c on (b.usuario            = c.sq_pessoa)
              where a.sq_ligacao = p_chave;
       Elsif p_restricao = 'DADOS' Then
          -- Recupera todos os dados de uma ligação
@@ -109,7 +112,8 @@ begin
          open p_result for
             select sq_cc, assunto, imagem, fax, trabalho, outra_parte_cont 
               from tt_ligacao 
-             where sq_ligacao = (select max(sq_ligacao) sq_ligacao 
+             where cliente    = p_cliente
+               and sq_ligacao = (select max(sq_ligacao) sq_ligacao 
                                    from tt_ligacao a inner join tt_usuario b on (a.sq_usuario_central = b.sq_usuario_central)
                                   where a.trabalho           is not null 
                                     and b.usuario            = p_pessoa
@@ -121,11 +125,11 @@ begin
             select a.data, a.observacao, 
                    d.nome_resumido origem, e.nome_resumido destino, 
                    to_char(a.data, 'DD/MM/YYYY, HH24:MI:SS') phpdt_ordem 
-              from tt_ligacao_log a
-                      inner    join tt_usuario     b on (a.usuario_origem  = b.sq_usuario_central)
-                         inner join co_pessoa      d on (b.usuario         = d.sq_pessoa)
-                      inner    join tt_usuario     c on (a.usuario_destino = c.sq_usuario_central)
-                         inner join co_pessoa      e on (c.usuario         = e.sq_pessoa)
+              from tt_ligacao_log               a
+                   inner    join tt_usuario     b on (a.usuario_origem  = b.sq_usuario_central)
+                      inner join co_pessoa      d on (b.usuario         = d.sq_pessoa)
+                   inner    join tt_usuario     c on (a.usuario_destino = c.sq_usuario_central)
+                      inner join co_pessoa      e on (c.usuario         = e.sq_pessoa)
              where a.sq_ligacao      = p_chave;
       Elsif p_restricao = 'PESSOAS' Then
          -- Recupera o resumo de ligações particulares por pessoa
@@ -137,11 +141,12 @@ begin
                   (Nvl(tt_ori.qtd,0)+Nvl(tt_rec.qtd,0)+Nvl(tt_nat.qtd,0)) qtd_tot, 
                   (Nvl(tt_ori.dura,0)+Nvl(tt_rec.dura,0)+Nvl(tt_nat.dura,0)) dura_tot 
               from tt_usuario x
-                   inner      join co_pessoa y on (x.usuario = y.sq_pessoa)
-                   left outer join (select sq_usuario_central, count(*) qtd,Nvl(sum(duracao),0) dura from tt_ligacao a where trabalho = 'N' and trunc(data) between p_inicio and p_fim and trabalho='S' and entrante='N' group by sq_usuario_central)                  tt_ori on (x.sq_usuario_central     = tt_ori.sq_usuario_central) 
-                   left outer join (select sq_usuario_central, count(*) qtd,Nvl(sum(duracao),0) dura from tt_ligacao a where trabalho = 'N' and trunc(data) between p_inicio and p_fim and trabalho='S' and entrante='S' and recebida='S' group by sq_usuario_central) tt_rec on (x.sq_usuario_central     = tt_rec.sq_usuario_central)
-                   left outer join (select sq_usuario_central, count(*) qtd,Nvl(sum(duracao),0) dura from tt_ligacao a where trabalho = 'N' and trunc(data) between p_inicio and p_fim and trabalho='S' and entrante='S' and recebida='N' group by sq_usuario_central) tt_nat on (x.sq_usuario_central     = tt_nat.sq_usuario_central)
-             where 0 < (Nvl(tt_ori.qtd,0) + Nvl(tt_rec.qtd,0) + Nvl(tt_nat.qtd,0)) 
+                   inner join co_pessoa y on (x.usuario = y.sq_pessoa)
+                   left  join (select sq_usuario_central, count(*) qtd,Nvl(sum(duracao),0) dura from tt_ligacao a where trabalho = 'N' and trunc(data) between p_inicio and p_fim and trabalho='S' and entrante='N' group by sq_usuario_central)                  tt_ori on (x.sq_usuario_central     = tt_ori.sq_usuario_central) 
+                   left  join (select sq_usuario_central, count(*) qtd,Nvl(sum(duracao),0) dura from tt_ligacao a where trabalho = 'N' and trunc(data) between p_inicio and p_fim and trabalho='S' and entrante='S' and recebida='S' group by sq_usuario_central) tt_rec on (x.sq_usuario_central     = tt_rec.sq_usuario_central)
+                   left  join (select sq_usuario_central, count(*) qtd,Nvl(sum(duracao),0) dura from tt_ligacao a where trabalho = 'N' and trunc(data) between p_inicio and p_fim and trabalho='S' and entrante='S' and recebida='N' group by sq_usuario_central) tt_nat on (x.sq_usuario_central     = tt_nat.sq_usuario_central)
+             where x.cliente = p_cliente
+               and 0         < (Nvl(tt_ori.qtd,0) + Nvl(tt_rec.qtd,0) + Nvl(tt_nat.qtd,0)) 
             UNION 
             select x.sq_usuario_central, x.usuario, y.nome nm_completo, y.nome_resumido, 'Particular' trabalho,  
                    Nvl(tt_ori.qtd,0) ori_qtd, Nvl(tt_ori.dura,0) ori_dura, 
@@ -150,11 +155,12 @@ begin
                   (Nvl(tt_ori.qtd,0)+Nvl(tt_rec.qtd,0)+Nvl(tt_nat.qtd,0)) qtd_tot, 
                   (Nvl(tt_ori.dura,0)+Nvl(tt_rec.dura,0)+Nvl(tt_nat.dura,0)) dura_tot 
               from tt_usuario x
-                   inner      join co_pessoa y on (x.usuario = y.sq_pessoa)
-                   left outer join (select sq_usuario_central, count(*) qtd,Nvl(sum(duracao),0) dura from tt_ligacao a where trabalho = 'N' and trunc(data) between p_inicio and p_fim and trabalho='N' and entrante='N' group by sq_usuario_central)                  tt_ori on (x.sq_usuario_central     = tt_ori.sq_usuario_central)
-                   left outer join (select sq_usuario_central, count(*) qtd,Nvl(sum(duracao),0) dura from tt_ligacao a where trabalho = 'N' and trunc(data) between p_inicio and p_fim and trabalho='N' and entrante='S' and recebida='S' group by sq_usuario_central) tt_rec on (x.sq_usuario_central     = tt_rec.sq_usuario_central) 
-                   left outer join (select sq_usuario_central, count(*) qtd,Nvl(sum(duracao),0) dura from tt_ligacao a where trabalho = 'N' and trunc(data) between p_inicio and p_fim and trabalho='N' and entrante='S' and recebida='N' group by sq_usuario_central) tt_nat on (x.sq_usuario_central     = tt_nat.sq_usuario_central)
-             where 0 < (Nvl(tt_ori.qtd,0) + Nvl(tt_rec.qtd,0) + Nvl(tt_nat.qtd,0)) 
+                   inner join co_pessoa y on (x.usuario = y.sq_pessoa)
+                   left  join (select sq_usuario_central, count(*) qtd,Nvl(sum(duracao),0) dura from tt_ligacao a where trabalho = 'N' and trunc(data) between p_inicio and p_fim and trabalho='N' and entrante='N' group by sq_usuario_central)                  tt_ori on (x.sq_usuario_central     = tt_ori.sq_usuario_central)
+                   left  join (select sq_usuario_central, count(*) qtd,Nvl(sum(duracao),0) dura from tt_ligacao a where trabalho = 'N' and trunc(data) between p_inicio and p_fim and trabalho='N' and entrante='S' and recebida='S' group by sq_usuario_central) tt_rec on (x.sq_usuario_central     = tt_rec.sq_usuario_central) 
+                   left  join (select sq_usuario_central, count(*) qtd,Nvl(sum(duracao),0) dura from tt_ligacao a where trabalho = 'N' and trunc(data) between p_inicio and p_fim and trabalho='N' and entrante='S' and recebida='N' group by sq_usuario_central) tt_nat on (x.sq_usuario_central     = tt_nat.sq_usuario_central)
+             where x.cliente = p_cliente
+               and 0         < (Nvl(tt_ori.qtd,0) + Nvl(tt_rec.qtd,0) + Nvl(tt_nat.qtd,0)) 
             UNION 
             select x.sq_usuario_central, x.usuario, y.nome nm_completo, y.nome_resumido, 'Total' trabalho, 
                    Nvl(tt_ori.qtd,0) ori_qtd, Nvl(tt_ori.dura,0) ori_dura, 
@@ -163,11 +169,12 @@ begin
                   (Nvl(tt_ori.qtd,0)+Nvl(tt_rec.qtd,0)+Nvl(tt_nat.qtd,0)) qtd_tot, 
                   (Nvl(tt_ori.dura,0)+Nvl(tt_rec.dura,0)+Nvl(tt_nat.dura,0)) dura_tot 
               from tt_usuario x
-                   inner      join co_pessoa y on (x.usuario = y.sq_pessoa)
-                   left outer join (select sq_usuario_central, count(*) qtd,Nvl(sum(duracao),0) dura from tt_ligacao a where trabalho = 'N' and trunc(data) between p_inicio and p_fim and trabalho is not null and entrante='N' group by sq_usuario_central)                  tt_ori on (x.sq_usuario_central     = tt_ori.sq_usuario_central)
-                   left outer join (select sq_usuario_central, count(*) qtd,Nvl(sum(duracao),0) dura from tt_ligacao a where trabalho = 'N' and trunc(data) between p_inicio and p_fim and trabalho is not null and entrante='S' and recebida='S' group by sq_usuario_central) tt_rec on (x.sq_usuario_central     = tt_rec.sq_usuario_central)
-                   left outer join (select sq_usuario_central, count(*) qtd,Nvl(sum(duracao),0) dura from tt_ligacao a where trabalho = 'N' and trunc(data) between p_inicio and p_fim and trabalho is not null and entrante='S' and recebida='N' group by sq_usuario_central) tt_nat on (x.sq_usuario_central     = tt_nat.sq_usuario_central)
-             where 0 < (Nvl(tt_ori.qtd,0) + Nvl(tt_rec.qtd,0) + Nvl(tt_nat.qtd,0)) 
+                   inner join co_pessoa y on (x.usuario = y.sq_pessoa)
+                   left  join (select sq_usuario_central, count(*) qtd,Nvl(sum(duracao),0) dura from tt_ligacao a where trabalho = 'N' and trunc(data) between p_inicio and p_fim and trabalho is not null and entrante='N' group by sq_usuario_central)                  tt_ori on (x.sq_usuario_central     = tt_ori.sq_usuario_central)
+                   left  join (select sq_usuario_central, count(*) qtd,Nvl(sum(duracao),0) dura from tt_ligacao a where trabalho = 'N' and trunc(data) between p_inicio and p_fim and trabalho is not null and entrante='S' and recebida='S' group by sq_usuario_central) tt_rec on (x.sq_usuario_central     = tt_rec.sq_usuario_central)
+                   left  join (select sq_usuario_central, count(*) qtd,Nvl(sum(duracao),0) dura from tt_ligacao a where trabalho = 'N' and trunc(data) between p_inicio and p_fim and trabalho is not null and entrante='S' and recebida='N' group by sq_usuario_central) tt_nat on (x.sq_usuario_central     = tt_nat.sq_usuario_central)
+             where x.cliente = p_cliente
+               and 0         < (Nvl(tt_ori.qtd,0) + Nvl(tt_rec.qtd,0) + Nvl(tt_nat.qtd,0)) 
             order by qtd_tot desc, dura_tot desc, nome_resumido, trabalho;
       Elsif p_restricao = 'GERAL' Then
          -- Recupera o resumo total de ligações da pessoa informada
@@ -179,19 +186,22 @@ begin
                   (tt_ori.qtd+tt_rec.qtd+tt_nat.qtd) qtd_tot, 
                   (tt_ori.dura+tt_rec.dura+tt_nat.dura) dura_tot       
               from (select count(*) qtd,Nvl(sum(duracao),0) dura from tt_ligacao a 
-                     where ((p_tipo=1 and sq_usuario_central = p_pessoa) or p_tipo <> 1) and trunc(data) between p_inicio and p_fim and trabalho='S' and entrante='N'
+                     where a.cliente = p_cliente
+                       and ((p_tipo=1 and sq_usuario_central = p_pessoa) or p_tipo <> 1) and trunc(data) between p_inicio and p_fim and trabalho='S' and entrante='N'
                        and (p_sq_cc   is null or (p_sq_cc   is not null and sq_cc   = p_sq_cc))
                        and (p_numero  is null or (p_numero  is not null and numero like '%'||p_numero||'%'))
                        and (p_contato is null or (p_contato is not null and acentos(upper(outra_parte_cont)) like acentos(upper('%'||p_contato||'%'))))
                    ) tt_ori, 
                    (select count(*) qtd,Nvl(sum(duracao),0) dura from tt_ligacao a 
-                     where ((p_tipo=1 and sq_usuario_central = p_pessoa) or p_tipo <> 1) and trunc(data) between p_inicio and p_fim and trabalho='S' and entrante='S' and recebida='S'
+                     where a.cliente = p_cliente
+                       and ((p_tipo=1 and sq_usuario_central = p_pessoa) or p_tipo <> 1) and trunc(data) between p_inicio and p_fim and trabalho='S' and entrante='S' and recebida='S'
                        and (p_sq_cc   is null or (p_sq_cc   is not null and sq_cc   = p_sq_cc))
                        and (p_numero  is null or (p_numero  is not null and numero like '%'||p_numero||'%'))
                        and (p_contato is null or (p_contato is not null and acentos(upper(outra_parte_cont)) like acentos(upper('%'||p_contato||'%'))))
                    ) tt_rec,
                    (select count(*) qtd,Nvl(sum(duracao),0) dura from tt_ligacao a
-                     where ((p_tipo=1 and sq_usuario_central = p_pessoa) or p_tipo <> 1) and trunc(data) between p_inicio and p_fim and trabalho='S' and entrante='S' and recebida='N'
+                     where a.cliente = p_cliente
+                       and ((p_tipo=1 and sq_usuario_central = p_pessoa) or p_tipo <> 1) and trunc(data) between p_inicio and p_fim and trabalho='S' and entrante='S' and recebida='N'
                        and (p_sq_cc   is null or (p_sq_cc   is not null and sq_cc   = p_sq_cc))
                        and (p_numero  is null or (p_numero  is not null and numero like '%'||p_numero||'%'))
                        and (p_contato is null or (p_contato is not null and acentos(upper(outra_parte_cont)) like acentos(upper('%'||p_contato||'%'))))
@@ -204,19 +214,22 @@ begin
                    (tt_ori.qtd+tt_rec.qtd+tt_nat.qtd) qtd_tot, 
                    (tt_ori.dura+tt_rec.dura+tt_nat.dura) dura_tot 
               from (select count(*) qtd,Nvl(sum(duracao),0) dura from tt_ligacao a
-                     where ((p_tipo=1 and sq_usuario_central = p_pessoa) or p_tipo <> 1) and trunc(data) between p_inicio and p_fim and trabalho='N' and entrante='N'
+                     where a.cliente = p_cliente
+                       and ((p_tipo=1 and sq_usuario_central = p_pessoa) or p_tipo <> 1) and trunc(data) between p_inicio and p_fim and trabalho='N' and entrante='N'
                        and (p_sq_cc   is null or (p_sq_cc   is not null and sq_cc   = p_sq_cc))
                        and (p_numero  is null or (p_numero  is not null and numero like '%'||p_numero||'%'))
                        and (p_contato is null or (p_contato is not null and acentos(upper(outra_parte_cont)) like acentos(upper('%'||p_contato||'%'))))
                    ) tt_ori, 
                    (select count(*) qtd,Nvl(sum(duracao),0) dura from tt_ligacao a
-                     where ((p_tipo=1 and sq_usuario_central = p_pessoa) or p_tipo <> 1) and trunc(data) between p_inicio and p_fim and trabalho='N' and entrante='S' and recebida='S'
+                     where a.cliente = p_cliente
+                       and ((p_tipo=1 and sq_usuario_central = p_pessoa) or p_tipo <> 1) and trunc(data) between p_inicio and p_fim and trabalho='N' and entrante='S' and recebida='S'
                        and (p_sq_cc   is null or (p_sq_cc   is not null and sq_cc   = p_sq_cc))
                        and (p_numero  is null or (p_numero  is not null and numero like '%'||p_numero||'%'))
                        and (p_contato is null or (p_contato is not null and acentos(upper(outra_parte_cont)) like acentos(upper('%'||p_contato||'%'))))
                    ) tt_rec, 
                    (select count(*) qtd,Nvl(sum(duracao),0) dura from tt_ligacao a
-                     where ((p_tipo=1 and sq_usuario_central = p_pessoa) or p_tipo <> 1) and trunc(data) between p_inicio and p_fim and trabalho='N' and entrante='S' and recebida='N'
+                     where a.cliente = p_cliente
+                       and ((p_tipo=1 and sq_usuario_central = p_pessoa) or p_tipo <> 1) and trunc(data) between p_inicio and p_fim and trabalho='N' and entrante='S' and recebida='N'
                        and (p_sq_cc   is null or (p_sq_cc   is not null and sq_cc   = p_sq_cc))
                        and (p_numero  is null or (p_numero  is not null and numero like '%'||p_numero||'%'))
                        and (p_contato is null or (p_contato is not null and acentos(upper(outra_parte_cont)) like acentos(upper('%'||p_contato||'%'))))
@@ -229,19 +242,22 @@ begin
                   (tt_ori.qtd+tt_rec.qtd+tt_nat.qtd) qtd_tot, 
                   (tt_ori.dura+tt_rec.dura+tt_nat.dura) dura_tot 
               from (select count(*) qtd,Nvl(sum(duracao),0) dura from tt_ligacao a
-                     where ((p_tipo=1 and sq_usuario_central = p_pessoa) or p_tipo <> 1) and trunc(data) between p_inicio and p_fim and trabalho is not null and entrante='N'
+                     where a.cliente = p_cliente
+                       and ((p_tipo=1 and sq_usuario_central = p_pessoa) or p_tipo <> 1) and trunc(data) between p_inicio and p_fim and trabalho is not null and entrante='N'
                        and (p_sq_cc   is null or (p_sq_cc   is not null and sq_cc   = p_sq_cc))
                        and (p_numero  is null or (p_numero  is not null and numero like '%'||p_numero||'%'))
                        and (p_contato is null or (p_contato is not null and acentos(upper(outra_parte_cont)) like acentos(upper('%'||p_contato||'%'))))
                    ) tt_ori, 
                    (select count(*) qtd,Nvl(sum(duracao),0) dura from tt_ligacao a
-                     where ((p_tipo=1 and sq_usuario_central = p_pessoa) or p_tipo <> 1) and trunc(data) between p_inicio and p_fim and trabalho is not null and entrante='S' and recebida='S'
+                     where a.cliente = p_cliente
+                       and ((p_tipo=1 and sq_usuario_central = p_pessoa) or p_tipo <> 1) and trunc(data) between p_inicio and p_fim and trabalho is not null and entrante='S' and recebida='S'
                        and (p_sq_cc   is null or (p_sq_cc   is not null and sq_cc   = p_sq_cc))
                        and (p_numero  is null or (p_numero  is not null and numero like '%'||p_numero||'%'))
                        and (p_contato is null or (p_contato is not null and acentos(upper(outra_parte_cont)) like acentos(upper('%'||p_contato||'%'))))
                    ) tt_rec, 
                    (select count(*) qtd,Nvl(sum(duracao),0) dura from tt_ligacao a 
-                     where ((p_tipo=1 and sq_usuario_central = p_pessoa) or p_tipo <> 1) and trunc(data) between p_inicio and p_fim and trabalho is not null and entrante='S' and recebida='N'
+                     where a.cliente = p_cliente
+                       and ((p_tipo=1 and sq_usuario_central = p_pessoa) or p_tipo <> 1) and trunc(data) between p_inicio and p_fim and trabalho is not null and entrante='S' and recebida='N'
                        and (p_sq_cc   is null or (p_sq_cc   is not null and sq_cc   = p_sq_cc))
                        and (p_numero  is null or (p_numero  is not null and numero like '%'||p_numero||'%'))
                        and (p_contato is null or (p_contato is not null and acentos(upper(outra_parte_cont)) like acentos(upper('%'||p_contato||'%'))))
@@ -257,27 +273,30 @@ begin
                    (Nvl(tt_ori.qtd,0)+Nvl(tt_rec.qtd,0)+Nvl(tt_nat.qtd,0)) qtd_tot,
                    (Nvl(tt_ori.dura,0)+Nvl(tt_rec.dura,0)+Nvl(tt_nat.dura,0)) dura_tot
               from ct_cc x
-                      left outer join (select sq_cc, count(*) qtd,Nvl(sum(duracao),0) dura from tt_ligacao a 
-                                        where ((p_tipo=1 and sq_usuario_central = p_pessoa) or p_tipo <> 1) and trunc(data) between p_inicio and p_fim and trabalho='S' and entrante='N'
-                                          and (p_sq_cc   is null or (p_sq_cc   is not null and sq_cc   = p_sq_cc))
-                                          and (p_numero  is null or (p_numero  is not null and numero like '%'||p_numero||'%'))
-                                          and (p_contato is null or (p_contato is not null and acentos(upper(outra_parte_cont)) like acentos(upper('%'||p_contato||'%'))))
-                                       group by sq_cc
-                                      ) tt_ori on (x.sq_cc = tt_ori.sq_cc) 
-                      left outer join (select sq_cc, count(*) qtd,Nvl(sum(duracao),0) dura from tt_ligacao a 
-                                        where ((p_tipo=1 and sq_usuario_central = p_pessoa) or p_tipo <> 1) and trunc(data) between p_inicio and p_fim and trabalho='S' and entrante='S' and recebida='S'
-                                          and (p_sq_cc   is null or (p_sq_cc   is not null and sq_cc   = p_sq_cc))
-                                          and (p_numero  is null or (p_numero  is not null and numero like '%'||p_numero||'%'))
-                                          and (p_contato is null or (p_contato is not null and acentos(upper(outra_parte_cont)) like acentos(upper('%'||p_contato||'%'))))
-                                       group by sq_cc
-                                      ) tt_rec on (x.sq_cc = tt_rec.sq_cc) 
-                      left outer join (select sq_cc, count(*) qtd,Nvl(sum(duracao),0) dura from tt_ligacao a
-                                        where ((p_tipo=1 and sq_usuario_central = p_pessoa) or p_tipo <> 1) and trunc(data) between p_inicio and p_fim and trabalho='S' and entrante='S' and recebida='N'
-                                          and (p_sq_cc   is null or (p_sq_cc   is not null and sq_cc   = p_sq_cc))
-                                          and (p_numero  is null or (p_numero  is not null and numero like '%'||p_numero||'%'))
-                                          and (p_contato is null or (p_contato is not null and acentos(upper(outra_parte_cont)) like acentos(upper('%'||p_contato||'%'))))
-                                       group by sq_cc
-                                      ) tt_nat on (x.sq_cc = tt_nat.sq_cc)
+                   left join (select sq_cc, count(*) qtd,Nvl(sum(duracao),0) dura from tt_ligacao a 
+                               where a.cliente = p_cliente
+                                 and ((p_tipo=1 and sq_usuario_central = p_pessoa) or p_tipo <> 1) and trunc(data) between p_inicio and p_fim and trabalho='S' and entrante='N'
+                                 and (p_sq_cc   is null or (p_sq_cc   is not null and sq_cc   = p_sq_cc))
+                                 and (p_numero  is null or (p_numero  is not null and numero like '%'||p_numero||'%'))
+                                 and (p_contato is null or (p_contato is not null and acentos(upper(outra_parte_cont)) like acentos(upper('%'||p_contato||'%'))))
+                              group by sq_cc
+                             ) tt_ori on (x.sq_cc = tt_ori.sq_cc) 
+                   left join (select sq_cc, count(*) qtd,Nvl(sum(duracao),0) dura from tt_ligacao a 
+                               where a.cliente = p_cliente
+                                 and ((p_tipo=1 and sq_usuario_central = p_pessoa) or p_tipo <> 1) and trunc(data) between p_inicio and p_fim and trabalho='S' and entrante='S' and recebida='S'
+                                 and (p_sq_cc   is null or (p_sq_cc   is not null and sq_cc   = p_sq_cc))
+                                 and (p_numero  is null or (p_numero  is not null and numero like '%'||p_numero||'%'))
+                                 and (p_contato is null or (p_contato is not null and acentos(upper(outra_parte_cont)) like acentos(upper('%'||p_contato||'%'))))
+                              group by sq_cc
+                             ) tt_rec on (x.sq_cc = tt_rec.sq_cc) 
+                   left join (select sq_cc, count(*) qtd,Nvl(sum(duracao),0) dura from tt_ligacao a
+                               where a.cliente = p_cliente
+                                 and ((p_tipo=1 and sq_usuario_central = p_pessoa) or p_tipo <> 1) and trunc(data) between p_inicio and p_fim and trabalho='S' and entrante='S' and recebida='N'
+                                 and (p_sq_cc   is null or (p_sq_cc   is not null and sq_cc   = p_sq_cc))
+                                 and (p_numero  is null or (p_numero  is not null and numero like '%'||p_numero||'%'))
+                                 and (p_contato is null or (p_contato is not null and acentos(upper(outra_parte_cont)) like acentos(upper('%'||p_contato||'%'))))
+                              group by sq_cc
+                             ) tt_nat on (x.sq_cc = tt_nat.sq_cc)
               where x.sq_cc_pai is not null
                 and 0 < (Nvl(tt_ori.qtd,0) + Nvl(tt_rec.qtd,0) + Nvl(tt_nat.qtd,0))
             UNION 
@@ -288,27 +307,30 @@ begin
                    (Nvl(tt_ori.qtd,0)+Nvl(tt_rec.qtd,0)+Nvl(tt_nat.qtd,0)) qtd_tot,
                    (Nvl(tt_ori.dura,0)+Nvl(tt_rec.dura,0)+Nvl(tt_nat.dura,0)) dura_tot
               from ct_cc x
-                      left outer join (select sq_cc, count(*) qtd,Nvl(sum(duracao),0) dura from tt_ligacao a 
-                                        where ((p_tipo=1 and sq_usuario_central = p_pessoa) or p_tipo <> 1) and trunc(data) between p_inicio and p_fim and trabalho='N' and entrante='N'
-                                          and (p_sq_cc   is null or (p_sq_cc   is not null and sq_cc   = p_sq_cc))
-                                          and (p_numero  is null or (p_numero  is not null and numero like '%'||p_numero||'%'))
-                                          and (p_contato is null or (p_contato is not null and acentos(upper(outra_parte_cont)) like acentos(upper('%'||p_contato||'%'))))
-                                       group by sq_cc
-                                      ) tt_ori on (x.sq_cc = tt_ori.sq_cc) 
-                      left outer join (select sq_cc, count(*) qtd,Nvl(sum(duracao),0) dura from tt_ligacao a 
-                                        where ((p_tipo=1 and sq_usuario_central = p_pessoa) or p_tipo <> 1) and trunc(data) between p_inicio and p_fim and trabalho='N' and entrante='S' and recebida='S'
-                                          and (p_sq_cc   is null or (p_sq_cc   is not null and sq_cc   = p_sq_cc))
-                                          and (p_numero  is null or (p_numero  is not null and numero like '%'||p_numero||'%'))
-                                          and (p_contato is null or (p_contato is not null and acentos(upper(outra_parte_cont)) like acentos(upper('%'||p_contato||'%'))))
-                                       group by sq_cc
-                                      ) tt_rec on (x.sq_cc = tt_rec.sq_cc) 
-                      left outer join (select sq_cc, count(*) qtd,Nvl(sum(duracao),0) dura from tt_ligacao a
-                                        where ((p_tipo=1 and sq_usuario_central = p_pessoa) or p_tipo <> 1) and trunc(data) between p_inicio and p_fim and trabalho='N' and entrante='S' and recebida='N'
-                                          and (p_sq_cc   is null or (p_sq_cc   is not null and sq_cc   = p_sq_cc))
-                                          and (p_numero  is null or (p_numero  is not null and numero like '%'||p_numero||'%'))
-                                          and (p_contato is null or (p_contato is not null and acentos(upper(outra_parte_cont)) like acentos(upper('%'||p_contato||'%'))))
-                                       group by sq_cc
-                                      ) tt_nat on (x.sq_cc = tt_nat.sq_cc)
+                   left join (select sq_cc, count(*) qtd,Nvl(sum(duracao),0) dura from tt_ligacao a 
+                               where a.cliente = p_cliente
+                                 and ((p_tipo=1 and sq_usuario_central = p_pessoa) or p_tipo <> 1) and trunc(data) between p_inicio and p_fim and trabalho='N' and entrante='N'
+                                 and (p_sq_cc   is null or (p_sq_cc   is not null and sq_cc   = p_sq_cc))
+                                 and (p_numero  is null or (p_numero  is not null and numero like '%'||p_numero||'%'))
+                                 and (p_contato is null or (p_contato is not null and acentos(upper(outra_parte_cont)) like acentos(upper('%'||p_contato||'%'))))
+                              group by sq_cc
+                             ) tt_ori on (x.sq_cc = tt_ori.sq_cc) 
+                   left join (select sq_cc, count(*) qtd,Nvl(sum(duracao),0) dura from tt_ligacao a 
+                               where a.cliente = p_cliente
+                                 and ((p_tipo=1 and sq_usuario_central = p_pessoa) or p_tipo <> 1) and trunc(data) between p_inicio and p_fim and trabalho='N' and entrante='S' and recebida='S'
+                                 and (p_sq_cc   is null or (p_sq_cc   is not null and sq_cc   = p_sq_cc))
+                                 and (p_numero  is null or (p_numero  is not null and numero like '%'||p_numero||'%'))
+                                 and (p_contato is null or (p_contato is not null and acentos(upper(outra_parte_cont)) like acentos(upper('%'||p_contato||'%'))))
+                              group by sq_cc
+                             ) tt_rec on (x.sq_cc = tt_rec.sq_cc) 
+                   left join (select sq_cc, count(*) qtd,Nvl(sum(duracao),0) dura from tt_ligacao a
+                               where a.cliente = p_cliente
+                                 and ((p_tipo=1 and sq_usuario_central = p_pessoa) or p_tipo <> 1) and trunc(data) between p_inicio and p_fim and trabalho='N' and entrante='S' and recebida='N'
+                                 and (p_sq_cc   is null or (p_sq_cc   is not null and sq_cc   = p_sq_cc))
+                                 and (p_numero  is null or (p_numero  is not null and numero like '%'||p_numero||'%'))
+                                 and (p_contato is null or (p_contato is not null and acentos(upper(outra_parte_cont)) like acentos(upper('%'||p_contato||'%'))))
+                              group by sq_cc
+                             ) tt_nat on (x.sq_cc = tt_nat.sq_cc)
               where x.sq_cc_pai is not null
                 and 0 < (Nvl(tt_ori.qtd,0) + Nvl(tt_rec.qtd,0) + Nvl(tt_nat.qtd,0))
             UNION 
@@ -319,27 +341,30 @@ begin
                    (Nvl(tt_ori.qtd,0)+Nvl(tt_rec.qtd,0)+Nvl(tt_nat.qtd,0)) qtd_tot,
                    (Nvl(tt_ori.dura,0)+Nvl(tt_rec.dura,0)+Nvl(tt_nat.dura,0)) dura_tot
               from ct_cc x
-                      left outer join (select sq_cc, count(*) qtd,Nvl(sum(duracao),0) dura from tt_ligacao a 
-                                        where ((p_tipo=1 and sq_usuario_central = p_pessoa) or p_tipo <> 1) and trunc(data) between p_inicio and p_fim and trabalho is not null and entrante='N'
-                                          and (p_sq_cc   is null or (p_sq_cc   is not null and sq_cc   = p_sq_cc))
-                                          and (p_numero  is null or (p_numero  is not null and numero like '%'||p_numero||'%'))
-                                          and (p_contato is null or (p_contato is not null and acentos(upper(outra_parte_cont)) like acentos(upper('%'||p_contato||'%'))))
-                                       group by sq_cc
-                                      ) tt_ori on (x.sq_cc = tt_ori.sq_cc) 
-                      left outer join (select sq_cc, count(*) qtd,Nvl(sum(duracao),0) dura from tt_ligacao a 
-                                        where ((p_tipo=1 and sq_usuario_central = p_pessoa) or p_tipo <> 1) and trunc(data) between p_inicio and p_fim and trabalho is not null and entrante='S' and recebida='S'
-                                          and (p_sq_cc   is null or (p_sq_cc   is not null and sq_cc   = p_sq_cc))
-                                          and (p_numero  is null or (p_numero  is not null and numero like '%'||p_numero||'%'))
-                                          and (p_contato is null or (p_contato is not null and acentos(upper(outra_parte_cont)) like acentos(upper('%'||p_contato||'%'))))
-                                       group by sq_cc
-                                      ) tt_rec on (x.sq_cc = tt_rec.sq_cc) 
-                      left outer join (select sq_cc, count(*) qtd,Nvl(sum(duracao),0) dura from tt_ligacao a
-                                        where ((p_tipo=1 and sq_usuario_central = p_pessoa) or p_tipo <> 1) and trunc(data) between p_inicio and p_fim and trabalho is not null and entrante='S' and recebida='N'
-                                          and (p_sq_cc   is null or (p_sq_cc   is not null and sq_cc   = p_sq_cc))
-                                          and (p_numero  is null or (p_numero  is not null and numero like '%'||p_numero||'%'))
-                                          and (p_contato is null or (p_contato is not null and acentos(upper(outra_parte_cont)) like acentos(upper('%'||p_contato||'%'))))
-                                       group by sq_cc
-                                      ) tt_nat on (x.sq_cc = tt_nat.sq_cc)
+                   left join (select sq_cc, count(*) qtd,Nvl(sum(duracao),0) dura from tt_ligacao a 
+                               where a.cliente = p_cliente
+                                 and ((p_tipo=1 and sq_usuario_central = p_pessoa) or p_tipo <> 1) and trunc(data) between p_inicio and p_fim and trabalho is not null and entrante='N'
+                                 and (p_sq_cc   is null or (p_sq_cc   is not null and sq_cc   = p_sq_cc))
+                                 and (p_numero  is null or (p_numero  is not null and numero like '%'||p_numero||'%'))
+                                 and (p_contato is null or (p_contato is not null and acentos(upper(outra_parte_cont)) like acentos(upper('%'||p_contato||'%'))))
+                              group by sq_cc
+                             ) tt_ori on (x.sq_cc = tt_ori.sq_cc) 
+                   left join (select sq_cc, count(*) qtd,Nvl(sum(duracao),0) dura from tt_ligacao a 
+                               where a.cliente = p_cliente
+                                 and ((p_tipo=1 and sq_usuario_central = p_pessoa) or p_tipo <> 1) and trunc(data) between p_inicio and p_fim and trabalho is not null and entrante='S' and recebida='S'
+                                 and (p_sq_cc   is null or (p_sq_cc   is not null and sq_cc   = p_sq_cc))
+                                 and (p_numero  is null or (p_numero  is not null and numero like '%'||p_numero||'%'))
+                                 and (p_contato is null or (p_contato is not null and acentos(upper(outra_parte_cont)) like acentos(upper('%'||p_contato||'%'))))
+                              group by sq_cc
+                             ) tt_rec on (x.sq_cc = tt_rec.sq_cc) 
+                   left join (select sq_cc, count(*) qtd,Nvl(sum(duracao),0) dura from tt_ligacao a
+                               where a.cliente = p_cliente
+                                 and ((p_tipo=1 and sq_usuario_central = p_pessoa) or p_tipo <> 1) and trunc(data) between p_inicio and p_fim and trabalho is not null and entrante='S' and recebida='N'
+                                 and (p_sq_cc   is null or (p_sq_cc   is not null and sq_cc   = p_sq_cc))
+                                 and (p_numero  is null or (p_numero  is not null and numero like '%'||p_numero||'%'))
+                                 and (p_contato is null or (p_contato is not null and acentos(upper(outra_parte_cont)) like acentos(upper('%'||p_contato||'%'))))
+                              group by sq_cc
+                             ) tt_nat on (x.sq_cc = tt_nat.sq_cc)
               where x.sq_cc_pai is not null
                 and 0 < (Nvl(tt_ori.qtd,0) + Nvl(tt_rec.qtd,0) + Nvl(tt_nat.qtd,0))
             order by sigla, trabalho;
@@ -353,24 +378,27 @@ begin
                   (Nvl(tt_ori.qtd,0)+Nvl(tt_rec.qtd,0)+Nvl(tt_nat.qtd,0)) qtd_tot, 
                   (Nvl(tt_ori.dura,0)+Nvl(tt_rec.dura,0)+Nvl(tt_nat.dura,0)) dura_tot 
               from (select distinct to_char(data,'yyyymm') mes from tt_ligacao) x
-                      left outer join (select to_char(data,'yyyymm') mes, count(*) qtd,Nvl(sum(duracao),0) dura from tt_ligacao a
-                                        where ((p_tipo=1 and sq_usuario_central = p_pessoa) or p_tipo <> 1) and trunc(data) between p_inicio and p_fim  and trabalho='S' and entrante='N' 
-                                          and (p_sq_cc   is null or (p_sq_cc   is not null and sq_cc   = p_sq_cc))
-                                          and (p_numero  is null or (p_numero  is not null and numero like '%'||p_numero||'%'))
-                                          and (p_contato is null or (p_contato is not null and acentos(upper(outra_parte_cont)) like acentos(upper('%'||p_contato||'%'))))
-                                       group by to_char(data,'yyyymm')) tt_ori on (x.mes = tt_ori.mes)
-                      left outer join (select to_char(data,'yyyymm') mes, count(*) qtd,Nvl(sum(duracao),0) dura from tt_ligacao a
-                                        where ((p_tipo=1 and sq_usuario_central = p_pessoa) or p_tipo <> 1) and trunc(data) between p_inicio and p_fim  and trabalho='S' and entrante='S' and recebida='S'
-                                          and (p_sq_cc   is null or (p_sq_cc   is not null and sq_cc   = p_sq_cc))
-                                          and (p_numero  is null or (p_numero  is not null and numero like '%'||p_numero||'%'))
-                                          and (p_contato is null or (p_contato is not null and acentos(upper(outra_parte_cont)) like acentos(upper('%'||p_contato||'%'))))
-                                       group by to_char(data,'yyyymm')) tt_rec on (x.mes = tt_rec.mes)
-                      left outer join (select to_char(data,'yyyymm') mes, count(*) qtd,Nvl(sum(duracao),0) dura from tt_ligacao a
-                                        where ((p_tipo=1 and sq_usuario_central = p_pessoa) or p_tipo <> 1) and trunc(data) between p_inicio and p_fim  and trabalho='S' and entrante='S' and recebida='N' 
-                                          and (p_sq_cc   is null or (p_sq_cc   is not null and sq_cc   = p_sq_cc))
-                                          and (p_numero  is null or (p_numero  is not null and numero like '%'||p_numero||'%'))
-                                          and (p_contato is null or (p_contato is not null and acentos(upper(outra_parte_cont)) like acentos(upper('%'||p_contato||'%'))))
-                                       group by to_char(data,'yyyymm')) tt_nat on (x.mes = tt_nat.mes)
+                   left join (select to_char(data,'yyyymm') mes, count(*) qtd,Nvl(sum(duracao),0) dura from tt_ligacao a
+                               where a.cliente = p_cliente
+                                 and ((p_tipo=1 and sq_usuario_central = p_pessoa) or p_tipo <> 1) and trunc(data) between p_inicio and p_fim  and trabalho='S' and entrante='N' 
+                                 and (p_sq_cc   is null or (p_sq_cc   is not null and sq_cc   = p_sq_cc))
+                                 and (p_numero  is null or (p_numero  is not null and numero like '%'||p_numero||'%'))
+                                 and (p_contato is null or (p_contato is not null and acentos(upper(outra_parte_cont)) like acentos(upper('%'||p_contato||'%'))))
+                              group by to_char(data,'yyyymm')) tt_ori on (x.mes = tt_ori.mes)
+                   left join (select to_char(data,'yyyymm') mes, count(*) qtd,Nvl(sum(duracao),0) dura from tt_ligacao a
+                               where a.cliente = p_cliente
+                                 and ((p_tipo=1 and sq_usuario_central = p_pessoa) or p_tipo <> 1) and trunc(data) between p_inicio and p_fim  and trabalho='S' and entrante='S' and recebida='S'
+                                 and (p_sq_cc   is null or (p_sq_cc   is not null and sq_cc   = p_sq_cc))
+                                 and (p_numero  is null or (p_numero  is not null and numero like '%'||p_numero||'%'))
+                                 and (p_contato is null or (p_contato is not null and acentos(upper(outra_parte_cont)) like acentos(upper('%'||p_contato||'%'))))
+                              group by to_char(data,'yyyymm')) tt_rec on (x.mes = tt_rec.mes)
+                   left join (select to_char(data,'yyyymm') mes, count(*) qtd,Nvl(sum(duracao),0) dura from tt_ligacao a
+                               where a.cliente = p_cliente
+                                 and ((p_tipo=1 and sq_usuario_central = p_pessoa) or p_tipo <> 1) and trunc(data) between p_inicio and p_fim  and trabalho='S' and entrante='S' and recebida='N' 
+                                 and (p_sq_cc   is null or (p_sq_cc   is not null and sq_cc   = p_sq_cc))
+                                 and (p_numero  is null or (p_numero  is not null and numero like '%'||p_numero||'%'))
+                                 and (p_contato is null or (p_contato is not null and acentos(upper(outra_parte_cont)) like acentos(upper('%'||p_contato||'%'))))
+                              group by to_char(data,'yyyymm')) tt_nat on (x.mes = tt_nat.mes)
              where 0 < (Nvl(tt_ori.qtd,0) + Nvl(tt_rec.qtd,0) + Nvl(tt_nat.qtd,0)) 
             UNION 
             select x.mes, 'Particular' trabalho,  
@@ -380,24 +408,27 @@ begin
                   (Nvl(tt_ori.qtd,0)+Nvl(tt_rec.qtd,0)+Nvl(tt_nat.qtd,0)) qtd_tot, 
                   (Nvl(tt_ori.dura,0)+Nvl(tt_rec.dura,0)+Nvl(tt_nat.dura,0)) dura_tot 
               from (select distinct to_char(data,'yyyymm') mes from tt_ligacao) x
-                      left outer join (select to_char(data,'yyyymm') mes, count(*) qtd,Nvl(sum(duracao),0) dura from tt_ligacao a
-                                        where ((p_tipo=1 and sq_usuario_central = p_pessoa) or p_tipo <> 1) and trunc(data) between p_inicio and p_fim  and trabalho='N' and entrante='N' 
-                                          and (p_sq_cc   is null or (p_sq_cc   is not null and sq_cc   = p_sq_cc))
-                                          and (p_numero  is null or (p_numero  is not null and numero like '%'||p_numero||'%'))
-                                          and (p_contato is null or (p_contato is not null and acentos(upper(outra_parte_cont)) like acentos(upper('%'||p_contato||'%'))))
-                                       group by to_char(data,'yyyymm')) tt_ori on (x.mes = tt_ori.mes)
-                      left outer join (select to_char(data,'yyyymm') mes, count(*) qtd,Nvl(sum(duracao),0) dura from tt_ligacao a
-                                        where ((p_tipo=1 and sq_usuario_central = p_pessoa) or p_tipo <> 1) and trunc(data) between p_inicio and p_fim  and trabalho='N' and entrante='S' and recebida='S'
-                                          and (p_sq_cc   is null or (p_sq_cc   is not null and sq_cc   = p_sq_cc))
-                                          and (p_numero  is null or (p_numero  is not null and numero like '%'||p_numero||'%'))
-                                          and (p_contato is null or (p_contato is not null and acentos(upper(outra_parte_cont)) like acentos(upper('%'||p_contato||'%'))))
-                                       group by to_char(data,'yyyymm')) tt_rec on (x.mes = tt_rec.mes)
-                      left outer join (select to_char(data,'yyyymm') mes, count(*) qtd,Nvl(sum(duracao),0) dura from tt_ligacao a
-                                        where ((p_tipo=1 and sq_usuario_central = p_pessoa) or p_tipo <> 1) and trunc(data) between p_inicio and p_fim  and trabalho='N' and entrante='S' and recebida='N' 
-                                          and (p_sq_cc   is null or (p_sq_cc   is not null and sq_cc   = p_sq_cc))
-                                          and (p_numero  is null or (p_numero  is not null and numero like '%'||p_numero||'%'))
-                                          and (p_contato is null or (p_contato is not null and acentos(upper(outra_parte_cont)) like acentos(upper('%'||p_contato||'%'))))
-                                       group by to_char(data,'yyyymm')) tt_nat on (x.mes = tt_nat.mes)
+                   left join (select to_char(data,'yyyymm') mes, count(*) qtd,Nvl(sum(duracao),0) dura from tt_ligacao a
+                               where a.cliente = p_cliente
+                                 and ((p_tipo=1 and sq_usuario_central = p_pessoa) or p_tipo <> 1) and trunc(data) between p_inicio and p_fim  and trabalho='N' and entrante='N' 
+                                 and (p_sq_cc   is null or (p_sq_cc   is not null and sq_cc   = p_sq_cc))
+                                 and (p_numero  is null or (p_numero  is not null and numero like '%'||p_numero||'%'))
+                                 and (p_contato is null or (p_contato is not null and acentos(upper(outra_parte_cont)) like acentos(upper('%'||p_contato||'%'))))
+                              group by to_char(data,'yyyymm')) tt_ori on (x.mes = tt_ori.mes)
+                   left join (select to_char(data,'yyyymm') mes, count(*) qtd,Nvl(sum(duracao),0) dura from tt_ligacao a
+                               where a.cliente = p_cliente
+                                 and ((p_tipo=1 and sq_usuario_central = p_pessoa) or p_tipo <> 1) and trunc(data) between p_inicio and p_fim  and trabalho='N' and entrante='S' and recebida='S'
+                                 and (p_sq_cc   is null or (p_sq_cc   is not null and sq_cc   = p_sq_cc))
+                                 and (p_numero  is null or (p_numero  is not null and numero like '%'||p_numero||'%'))
+                                 and (p_contato is null or (p_contato is not null and acentos(upper(outra_parte_cont)) like acentos(upper('%'||p_contato||'%'))))
+                              group by to_char(data,'yyyymm')) tt_rec on (x.mes = tt_rec.mes)
+                   left join (select to_char(data,'yyyymm') mes, count(*) qtd,Nvl(sum(duracao),0) dura from tt_ligacao a
+                               where a.cliente = p_cliente
+                                 and ((p_tipo=1 and sq_usuario_central = p_pessoa) or p_tipo <> 1) and trunc(data) between p_inicio and p_fim  and trabalho='N' and entrante='S' and recebida='N' 
+                                 and (p_sq_cc   is null or (p_sq_cc   is not null and sq_cc   = p_sq_cc))
+                                 and (p_numero  is null or (p_numero  is not null and numero like '%'||p_numero||'%'))
+                                 and (p_contato is null or (p_contato is not null and acentos(upper(outra_parte_cont)) like acentos(upper('%'||p_contato||'%'))))
+                              group by to_char(data,'yyyymm')) tt_nat on (x.mes = tt_nat.mes)
              where 0 < (Nvl(tt_ori.qtd,0) + Nvl(tt_rec.qtd,0) + Nvl(tt_nat.qtd,0)) 
             UNION 
             select x.mes, 'Total' trabalho,  
@@ -407,24 +438,27 @@ begin
                   (Nvl(tt_ori.qtd,0)+Nvl(tt_rec.qtd,0)+Nvl(tt_nat.qtd,0)) qtd_tot, 
                   (Nvl(tt_ori.dura,0)+Nvl(tt_rec.dura,0)+Nvl(tt_nat.dura,0)) dura_tot 
               from (select distinct to_char(data,'yyyymm') mes from tt_ligacao) x
-                      left outer join (select to_char(data,'yyyymm') mes, count(*) qtd,Nvl(sum(duracao),0) dura from tt_ligacao a
-                                        where ((p_tipo=1 and sq_usuario_central = p_pessoa) or p_tipo <> 1) and trunc(data) between p_inicio and p_fim  and trabalho is not null and entrante='N' 
-                                          and (p_sq_cc   is null or (p_sq_cc   is not null and sq_cc   = p_sq_cc))
-                                          and (p_numero  is null or (p_numero  is not null and numero like '%'||p_numero||'%'))
-                                          and (p_contato is null or (p_contato is not null and acentos(upper(outra_parte_cont)) like acentos(upper('%'||p_contato||'%'))))
-                                       group by to_char(data,'yyyymm')) tt_ori on (x.mes = tt_ori.mes)
-                      left outer join (select to_char(data,'yyyymm') mes, count(*) qtd,Nvl(sum(duracao),0) dura from tt_ligacao a
-                                        where ((p_tipo=1 and sq_usuario_central = p_pessoa) or p_tipo <> 1) and trunc(data) between p_inicio and p_fim  and trabalho is not null and entrante='S' and recebida='S'
-                                          and (p_sq_cc   is null or (p_sq_cc   is not null and sq_cc   = p_sq_cc))
-                                          and (p_numero  is null or (p_numero  is not null and numero like '%'||p_numero||'%'))
-                                          and (p_contato is null or (p_contato is not null and acentos(upper(outra_parte_cont)) like acentos(upper('%'||p_contato||'%'))))
-                                       group by to_char(data,'yyyymm')) tt_rec on (x.mes = tt_rec.mes)
-                      left outer join (select to_char(data,'yyyymm') mes, count(*) qtd,Nvl(sum(duracao),0) dura from tt_ligacao a
-                                        where ((p_tipo=1 and sq_usuario_central = p_pessoa) or p_tipo <> 1) and trunc(data) between p_inicio and p_fim  and trabalho is not null and entrante='S' and recebida='N' 
-                                          and (p_sq_cc   is null or (p_sq_cc   is not null and sq_cc   = p_sq_cc))
-                                          and (p_numero  is null or (p_numero  is not null and numero like '%'||p_numero||'%'))
-                                          and (p_contato is null or (p_contato is not null and acentos(upper(outra_parte_cont)) like acentos(upper('%'||p_contato||'%'))))
-                                       group by to_char(data,'yyyymm')) tt_nat on (x.mes = tt_nat.mes)
+                   left join (select to_char(data,'yyyymm') mes, count(*) qtd,Nvl(sum(duracao),0) dura from tt_ligacao a
+                               where a.cliente = p_cliente
+                                 and ((p_tipo=1 and sq_usuario_central = p_pessoa) or p_tipo <> 1) and trunc(data) between p_inicio and p_fim  and trabalho is not null and entrante='N' 
+                                 and (p_sq_cc   is null or (p_sq_cc   is not null and sq_cc   = p_sq_cc))
+                                 and (p_numero  is null or (p_numero  is not null and numero like '%'||p_numero||'%'))
+                                 and (p_contato is null or (p_contato is not null and acentos(upper(outra_parte_cont)) like acentos(upper('%'||p_contato||'%'))))
+                              group by to_char(data,'yyyymm')) tt_ori on (x.mes = tt_ori.mes)
+                   left join (select to_char(data,'yyyymm') mes, count(*) qtd,Nvl(sum(duracao),0) dura from tt_ligacao a
+                               where a.cliente = p_cliente
+                                 and ((p_tipo=1 and sq_usuario_central = p_pessoa) or p_tipo <> 1) and trunc(data) between p_inicio and p_fim  and trabalho is not null and entrante='S' and recebida='S'
+                                 and (p_sq_cc   is null or (p_sq_cc   is not null and sq_cc   = p_sq_cc))
+                                 and (p_numero  is null or (p_numero  is not null and numero like '%'||p_numero||'%'))
+                                 and (p_contato is null or (p_contato is not null and acentos(upper(outra_parte_cont)) like acentos(upper('%'||p_contato||'%'))))
+                              group by to_char(data,'yyyymm')) tt_rec on (x.mes = tt_rec.mes)
+                   left join (select to_char(data,'yyyymm') mes, count(*) qtd,Nvl(sum(duracao),0) dura from tt_ligacao a
+                               where a.cliente = p_cliente
+                                 and ((p_tipo=1 and sq_usuario_central = p_pessoa) or p_tipo <> 1) and trunc(data) between p_inicio and p_fim  and trabalho is not null and entrante='S' and recebida='N' 
+                                 and (p_sq_cc   is null or (p_sq_cc   is not null and sq_cc   = p_sq_cc))
+                                 and (p_numero  is null or (p_numero  is not null and numero like '%'||p_numero||'%'))
+                                 and (p_contato is null or (p_contato is not null and acentos(upper(outra_parte_cont)) like acentos(upper('%'||p_contato||'%'))))
+                              group by to_char(data,'yyyymm')) tt_nat on (x.mes = tt_nat.mes)
              where 0 < (Nvl(tt_ori.qtd,0) + Nvl(tt_rec.qtd,0) + Nvl(tt_nat.qtd,0)) 
             order by mes, trabalho;
       Elsif p_restricao = 'DIASEMANA' Then
@@ -437,24 +471,27 @@ begin
                   (Nvl(tt_ori.qtd,0)+Nvl(tt_rec.qtd,0)+Nvl(tt_nat.qtd,0)) qtd_tot, 
                   (Nvl(tt_ori.dura,0)+Nvl(tt_rec.dura,0)+Nvl(tt_nat.dura,0)) dura_tot 
               from (select distinct to_char(data,'d') mes from tt_ligacao) x
-                      left outer join (select to_char(data,'d') mes, count(*) qtd,Nvl(sum(duracao),0) dura from tt_ligacao a
-                                        where ((p_tipo=1 and sq_usuario_central = p_pessoa) or p_tipo <> 1) and trunc(data) between p_inicio and p_fim  and trabalho='S' and entrante='N' 
-                                          and (p_sq_cc   is null or (p_sq_cc   is not null and sq_cc   = p_sq_cc))
-                                          and (p_numero  is null or (p_numero  is not null and numero like '%'||p_numero||'%'))
-                                          and (p_contato is null or (p_contato is not null and acentos(upper(outra_parte_cont)) like acentos(upper('%'||p_contato||'%'))))
-                                       group by to_char(data,'d')) tt_ori on (x.mes = tt_ori.mes)
-                      left outer join (select to_char(data,'d') mes, count(*) qtd,Nvl(sum(duracao),0) dura from tt_ligacao a
-                                        where ((p_tipo=1 and sq_usuario_central = p_pessoa) or p_tipo <> 1) and trunc(data) between p_inicio and p_fim  and trabalho='S' and entrante='S' and recebida='S'
-                                          and (p_sq_cc   is null or (p_sq_cc   is not null and sq_cc   = p_sq_cc))
-                                          and (p_numero  is null or (p_numero  is not null and numero like '%'||p_numero||'%'))
-                                          and (p_contato is null or (p_contato is not null and acentos(upper(outra_parte_cont)) like acentos(upper('%'||p_contato||'%'))))
-                                       group by to_char(data,'d')) tt_rec on (x.mes = tt_rec.mes)
-                      left outer join (select to_char(data,'d') mes, count(*) qtd,Nvl(sum(duracao),0) dura from tt_ligacao a
-                                        where ((p_tipo=1 and sq_usuario_central = p_pessoa) or p_tipo <> 1) and trunc(data) between p_inicio and p_fim  and trabalho='S' and entrante='S' and recebida='N' 
-                                          and (p_sq_cc   is null or (p_sq_cc   is not null and sq_cc   = p_sq_cc))
-                                          and (p_numero  is null or (p_numero  is not null and numero like '%'||p_numero||'%'))
-                                          and (p_contato is null or (p_contato is not null and acentos(upper(outra_parte_cont)) like acentos(upper('%'||p_contato||'%'))))
-                                       group by to_char(data,'d')) tt_nat on (x.mes = tt_nat.mes)
+                   left join (select to_char(data,'d') mes, count(*) qtd,Nvl(sum(duracao),0) dura from tt_ligacao a
+                               where a.cliente = p_cliente
+                                 and ((p_tipo=1 and sq_usuario_central = p_pessoa) or p_tipo <> 1) and trunc(data) between p_inicio and p_fim  and trabalho='S' and entrante='N' 
+                                 and (p_sq_cc   is null or (p_sq_cc   is not null and sq_cc   = p_sq_cc))
+                                 and (p_numero  is null or (p_numero  is not null and numero like '%'||p_numero||'%'))
+                                 and (p_contato is null or (p_contato is not null and acentos(upper(outra_parte_cont)) like acentos(upper('%'||p_contato||'%'))))
+                              group by to_char(data,'d')) tt_ori on (x.mes = tt_ori.mes)
+                   left join (select to_char(data,'d') mes, count(*) qtd,Nvl(sum(duracao),0) dura from tt_ligacao a
+                               where a.cliente = p_cliente
+                                 and ((p_tipo=1 and sq_usuario_central = p_pessoa) or p_tipo <> 1) and trunc(data) between p_inicio and p_fim  and trabalho='S' and entrante='S' and recebida='S'
+                                 and (p_sq_cc   is null or (p_sq_cc   is not null and sq_cc   = p_sq_cc))
+                                 and (p_numero  is null or (p_numero  is not null and numero like '%'||p_numero||'%'))
+                                 and (p_contato is null or (p_contato is not null and acentos(upper(outra_parte_cont)) like acentos(upper('%'||p_contato||'%'))))
+                              group by to_char(data,'d')) tt_rec on (x.mes = tt_rec.mes)
+                   left join (select to_char(data,'d') mes, count(*) qtd,Nvl(sum(duracao),0) dura from tt_ligacao a
+                               where a.cliente = p_cliente
+                                 and ((p_tipo=1 and sq_usuario_central = p_pessoa) or p_tipo <> 1) and trunc(data) between p_inicio and p_fim  and trabalho='S' and entrante='S' and recebida='N' 
+                                 and (p_sq_cc   is null or (p_sq_cc   is not null and sq_cc   = p_sq_cc))
+                                 and (p_numero  is null or (p_numero  is not null and numero like '%'||p_numero||'%'))
+                                 and (p_contato is null or (p_contato is not null and acentos(upper(outra_parte_cont)) like acentos(upper('%'||p_contato||'%'))))
+                              group by to_char(data,'d')) tt_nat on (x.mes = tt_nat.mes)
              where 0 < (Nvl(tt_ori.qtd,0) + Nvl(tt_rec.qtd,0) + Nvl(tt_nat.qtd,0)) 
             UNION 
             select x.mes,case x.mes when '1' then 'DOM' when '2' then 'SEG' when '3' then 'TER' when '4' then 'QUA' when '5' then 'QUI' when '6' then 'SEX' else 'SAB' end dia, 'Particular' trabalho,
@@ -464,24 +501,27 @@ begin
                   (Nvl(tt_ori.qtd,0)+Nvl(tt_rec.qtd,0)+Nvl(tt_nat.qtd,0)) qtd_tot, 
                   (Nvl(tt_ori.dura,0)+Nvl(tt_rec.dura,0)+Nvl(tt_nat.dura,0)) dura_tot 
               from (select distinct to_char(data,'d') mes from tt_ligacao) x
-                      left outer join (select to_char(data,'d') mes, count(*) qtd,Nvl(sum(duracao),0) dura from tt_ligacao a
-                                        where ((p_tipo=1 and sq_usuario_central = p_pessoa) or p_tipo <> 1) and trunc(data) between p_inicio and p_fim  and trabalho='N' and entrante='N' 
-                                          and (p_sq_cc   is null or (p_sq_cc   is not null and sq_cc   = p_sq_cc))
-                                          and (p_numero  is null or (p_numero  is not null and numero like '%'||p_numero||'%'))
-                                          and (p_contato is null or (p_contato is not null and acentos(upper(outra_parte_cont)) like acentos(upper('%'||p_contato||'%'))))
-                                       group by to_char(data,'d')) tt_ori on (x.mes = tt_ori.mes)
-                      left outer join (select to_char(data,'d') mes, count(*) qtd,Nvl(sum(duracao),0) dura from tt_ligacao a
-                                        where ((p_tipo=1 and sq_usuario_central = p_pessoa) or p_tipo <> 1) and trunc(data) between p_inicio and p_fim  and trabalho='N' and entrante='S' and recebida='S'
-                                          and (p_sq_cc   is null or (p_sq_cc   is not null and sq_cc   = p_sq_cc))
-                                          and (p_numero  is null or (p_numero  is not null and numero like '%'||p_numero||'%'))
-                                          and (p_contato is null or (p_contato is not null and acentos(upper(outra_parte_cont)) like acentos(upper('%'||p_contato||'%'))))
-                                       group by to_char(data,'d')) tt_rec on (x.mes = tt_rec.mes)
-                      left outer join (select to_char(data,'d') mes, count(*) qtd,Nvl(sum(duracao),0) dura from tt_ligacao a
-                                        where ((p_tipo=1 and sq_usuario_central = p_pessoa) or p_tipo <> 1) and trunc(data) between p_inicio and p_fim  and trabalho='N' and entrante='S' and recebida='N' 
-                                          and (p_sq_cc   is null or (p_sq_cc   is not null and sq_cc   = p_sq_cc))
-                                          and (p_numero  is null or (p_numero  is not null and numero like '%'||p_numero||'%'))
-                                          and (p_contato is null or (p_contato is not null and acentos(upper(outra_parte_cont)) like acentos(upper('%'||p_contato||'%'))))
-                                       group by to_char(data,'d')) tt_nat on (x.mes = tt_nat.mes)
+                   left join (select to_char(data,'d') mes, count(*) qtd,Nvl(sum(duracao),0) dura from tt_ligacao a
+                               where a.cliente = p_cliente
+                                 and ((p_tipo=1 and sq_usuario_central = p_pessoa) or p_tipo <> 1) and trunc(data) between p_inicio and p_fim  and trabalho='N' and entrante='N' 
+                                 and (p_sq_cc   is null or (p_sq_cc   is not null and sq_cc   = p_sq_cc))
+                                 and (p_numero  is null or (p_numero  is not null and numero like '%'||p_numero||'%'))
+                                 and (p_contato is null or (p_contato is not null and acentos(upper(outra_parte_cont)) like acentos(upper('%'||p_contato||'%'))))
+                              group by to_char(data,'d')) tt_ori on (x.mes = tt_ori.mes)
+                   left join (select to_char(data,'d') mes, count(*) qtd,Nvl(sum(duracao),0) dura from tt_ligacao a
+                               where a.cliente = p_cliente
+                                 and ((p_tipo=1 and sq_usuario_central = p_pessoa) or p_tipo <> 1) and trunc(data) between p_inicio and p_fim  and trabalho='N' and entrante='S' and recebida='S'
+                                 and (p_sq_cc   is null or (p_sq_cc   is not null and sq_cc   = p_sq_cc))
+                                 and (p_numero  is null or (p_numero  is not null and numero like '%'||p_numero||'%'))
+                                 and (p_contato is null or (p_contato is not null and acentos(upper(outra_parte_cont)) like acentos(upper('%'||p_contato||'%'))))
+                              group by to_char(data,'d')) tt_rec on (x.mes = tt_rec.mes)
+                   left join (select to_char(data,'d') mes, count(*) qtd,Nvl(sum(duracao),0) dura from tt_ligacao a
+                               where a.cliente = p_cliente
+                                 and ((p_tipo=1 and sq_usuario_central = p_pessoa) or p_tipo <> 1) and trunc(data) between p_inicio and p_fim  and trabalho='N' and entrante='S' and recebida='N' 
+                                 and (p_sq_cc   is null or (p_sq_cc   is not null and sq_cc   = p_sq_cc))
+                                 and (p_numero  is null or (p_numero  is not null and numero like '%'||p_numero||'%'))
+                                 and (p_contato is null or (p_contato is not null and acentos(upper(outra_parte_cont)) like acentos(upper('%'||p_contato||'%'))))
+                              group by to_char(data,'d')) tt_nat on (x.mes = tt_nat.mes)
              where 0 < (Nvl(tt_ori.qtd,0) + Nvl(tt_rec.qtd,0) + Nvl(tt_nat.qtd,0)) 
             UNION 
             select x.mes,case x.mes when '1' then 'DOM' when '2' then 'SEG' when '3' then 'TER' when '4' then 'QUA' when '5' then 'QUI' when '6' then 'SEX' else 'SAB' end dia, 'Total' trabalho,
@@ -491,24 +531,27 @@ begin
                   (Nvl(tt_ori.qtd,0)+Nvl(tt_rec.qtd,0)+Nvl(tt_nat.qtd,0)) qtd_tot, 
                   (Nvl(tt_ori.dura,0)+Nvl(tt_rec.dura,0)+Nvl(tt_nat.dura,0)) dura_tot 
               from (select distinct to_char(data,'d') mes from tt_ligacao) x
-                      left outer join (select to_char(data,'d') mes, count(*) qtd,Nvl(sum(duracao),0) dura from tt_ligacao a
-                                        where ((p_tipo=1 and sq_usuario_central = p_pessoa) or p_tipo <> 1) and trunc(data) between p_inicio and p_fim  and trabalho is not null and entrante='N' 
-                                          and (p_sq_cc   is null or (p_sq_cc   is not null and sq_cc   = p_sq_cc))
-                                          and (p_numero  is null or (p_numero  is not null and numero like '%'||p_numero||'%'))
-                                          and (p_contato is null or (p_contato is not null and acentos(upper(outra_parte_cont)) like acentos(upper('%'||p_contato||'%'))))
-                                       group by to_char(data,'d')) tt_ori on (x.mes = tt_ori.mes)
-                      left outer join (select to_char(data,'d') mes, count(*) qtd,Nvl(sum(duracao),0) dura from tt_ligacao a
-                                        where ((p_tipo=1 and sq_usuario_central = p_pessoa) or p_tipo <> 1) and trunc(data) between p_inicio and p_fim  and trabalho is not null and entrante='S' and recebida='S'
-                                          and (p_sq_cc   is null or (p_sq_cc   is not null and sq_cc   = p_sq_cc))
-                                          and (p_numero  is null or (p_numero  is not null and numero like '%'||p_numero||'%'))
-                                          and (p_contato is null or (p_contato is not null and acentos(upper(outra_parte_cont)) like acentos(upper('%'||p_contato||'%'))))
-                                       group by to_char(data,'d')) tt_rec on (x.mes = tt_rec.mes)
-                      left outer join (select to_char(data,'d') mes, count(*) qtd,Nvl(sum(duracao),0) dura from tt_ligacao a
-                                        where ((p_tipo=1 and sq_usuario_central = p_pessoa) or p_tipo <> 1) and trunc(data) between p_inicio and p_fim  and trabalho is not null and entrante='S' and recebida='N' 
-                                          and (p_sq_cc   is null or (p_sq_cc   is not null and sq_cc   = p_sq_cc))
-                                          and (p_numero  is null or (p_numero  is not null and numero like '%'||p_numero||'%'))
-                                          and (p_contato is null or (p_contato is not null and acentos(upper(outra_parte_cont)) like acentos(upper('%'||p_contato||'%'))))
-                                       group by to_char(data,'d')) tt_nat on (x.mes = tt_nat.mes)
+                   left join (select to_char(data,'d') mes, count(*) qtd,Nvl(sum(duracao),0) dura from tt_ligacao a
+                               where a.cliente = p_cliente
+                                 and ((p_tipo=1 and sq_usuario_central = p_pessoa) or p_tipo <> 1) and trunc(data) between p_inicio and p_fim  and trabalho is not null and entrante='N' 
+                                 and (p_sq_cc   is null or (p_sq_cc   is not null and sq_cc   = p_sq_cc))
+                                 and (p_numero  is null or (p_numero  is not null and numero like '%'||p_numero||'%'))
+                                 and (p_contato is null or (p_contato is not null and acentos(upper(outra_parte_cont)) like acentos(upper('%'||p_contato||'%'))))
+                              group by to_char(data,'d')) tt_ori on (x.mes = tt_ori.mes)
+                   left join (select to_char(data,'d') mes, count(*) qtd,Nvl(sum(duracao),0) dura from tt_ligacao a
+                               where a.cliente = p_cliente
+                                 and ((p_tipo=1 and sq_usuario_central = p_pessoa) or p_tipo <> 1) and trunc(data) between p_inicio and p_fim  and trabalho is not null and entrante='S' and recebida='S'
+                                 and (p_sq_cc   is null or (p_sq_cc   is not null and sq_cc   = p_sq_cc))
+                                 and (p_numero  is null or (p_numero  is not null and numero like '%'||p_numero||'%'))
+                                 and (p_contato is null or (p_contato is not null and acentos(upper(outra_parte_cont)) like acentos(upper('%'||p_contato||'%'))))
+                              group by to_char(data,'d')) tt_rec on (x.mes = tt_rec.mes)
+                   left join (select to_char(data,'d') mes, count(*) qtd,Nvl(sum(duracao),0) dura from tt_ligacao a
+                               where a.cliente = p_cliente
+                                 and ((p_tipo=1 and sq_usuario_central = p_pessoa) or p_tipo <> 1) and trunc(data) between p_inicio and p_fim  and trabalho is not null and entrante='S' and recebida='N' 
+                                 and (p_sq_cc   is null or (p_sq_cc   is not null and sq_cc   = p_sq_cc))
+                                 and (p_numero  is null or (p_numero  is not null and numero like '%'||p_numero||'%'))
+                                 and (p_contato is null or (p_contato is not null and acentos(upper(outra_parte_cont)) like acentos(upper('%'||p_contato||'%'))))
+                              group by to_char(data,'d')) tt_nat on (x.mes = tt_nat.mes)
              where 0 < (Nvl(tt_ori.qtd,0) + Nvl(tt_rec.qtd,0) + Nvl(tt_nat.qtd,0)) 
             order by mes, trabalho;
       Elsif p_restricao = 'DIAMES' Then
@@ -521,24 +564,27 @@ begin
                   (Nvl(tt_ori.qtd,0)+Nvl(tt_rec.qtd,0)+Nvl(tt_nat.qtd,0)) qtd_tot, 
                   (Nvl(tt_ori.dura,0)+Nvl(tt_rec.dura,0)+Nvl(tt_nat.dura,0)) dura_tot 
               from (select distinct to_char(data,'dd') mes from tt_ligacao) x
-                      left outer join (select to_char(data,'dd') mes, count(*) qtd,Nvl(sum(duracao),0) dura from tt_ligacao a
-                                        where ((p_tipo=1 and sq_usuario_central = p_pessoa) or p_tipo <> 1) and trunc(data) between p_inicio and p_fim  and trabalho='S' and entrante='N' 
-                                          and (p_sq_cc   is null or (p_sq_cc   is not null and sq_cc   = p_sq_cc))
-                                          and (p_numero  is null or (p_numero  is not null and numero like '%'||p_numero||'%'))
-                                          and (p_contato is null or (p_contato is not null and acentos(upper(outra_parte_cont)) like acentos(upper('%'||p_contato||'%'))))
-                                       group by to_char(data,'dd')) tt_ori on (x.mes = tt_ori.mes)
-                      left outer join (select to_char(data,'dd') mes, count(*) qtd,Nvl(sum(duracao),0) dura from tt_ligacao a
-                                        where ((p_tipo=1 and sq_usuario_central = p_pessoa) or p_tipo <> 1) and trunc(data) between p_inicio and p_fim  and trabalho='S' and entrante='S' and recebida='S'
-                                          and (p_sq_cc   is null or (p_sq_cc   is not null and sq_cc   = p_sq_cc))
-                                          and (p_numero  is null or (p_numero  is not null and numero like '%'||p_numero||'%'))
-                                          and (p_contato is null or (p_contato is not null and acentos(upper(outra_parte_cont)) like acentos(upper('%'||p_contato||'%'))))
-                                       group by to_char(data,'dd')) tt_rec on (x.mes = tt_rec.mes)
-                      left outer join (select to_char(data,'dd') mes, count(*) qtd,Nvl(sum(duracao),0) dura from tt_ligacao a
-                                        where ((p_tipo=1 and sq_usuario_central = p_pessoa) or p_tipo <> 1) and trunc(data) between p_inicio and p_fim  and trabalho='S' and entrante='S' and recebida='N' 
-                                          and (p_sq_cc   is null or (p_sq_cc   is not null and sq_cc   = p_sq_cc))
-                                          and (p_numero  is null or (p_numero  is not null and numero like '%'||p_numero||'%'))
-                                          and (p_contato is null or (p_contato is not null and acentos(upper(outra_parte_cont)) like acentos(upper('%'||p_contato||'%'))))
-                                       group by to_char(data,'dd')) tt_nat on (x.mes = tt_nat.mes)
+                   left join (select to_char(data,'dd') mes, count(*) qtd,Nvl(sum(duracao),0) dura from tt_ligacao a
+                               where a.cliente = p_cliente
+                                 and ((p_tipo=1 and sq_usuario_central = p_pessoa) or p_tipo <> 1) and trunc(data) between p_inicio and p_fim  and trabalho='S' and entrante='N' 
+                                 and (p_sq_cc   is null or (p_sq_cc   is not null and sq_cc   = p_sq_cc))
+                                 and (p_numero  is null or (p_numero  is not null and numero like '%'||p_numero||'%'))
+                                 and (p_contato is null or (p_contato is not null and acentos(upper(outra_parte_cont)) like acentos(upper('%'||p_contato||'%'))))
+                              group by to_char(data,'dd')) tt_ori on (x.mes = tt_ori.mes)
+                   left join (select to_char(data,'dd') mes, count(*) qtd,Nvl(sum(duracao),0) dura from tt_ligacao a
+                               where a.cliente = p_cliente
+                                 and ((p_tipo=1 and sq_usuario_central = p_pessoa) or p_tipo <> 1) and trunc(data) between p_inicio and p_fim  and trabalho='S' and entrante='S' and recebida='S'
+                                 and (p_sq_cc   is null or (p_sq_cc   is not null and sq_cc   = p_sq_cc))
+                                 and (p_numero  is null or (p_numero  is not null and numero like '%'||p_numero||'%'))
+                                 and (p_contato is null or (p_contato is not null and acentos(upper(outra_parte_cont)) like acentos(upper('%'||p_contato||'%'))))
+                              group by to_char(data,'dd')) tt_rec on (x.mes = tt_rec.mes)
+                   left join (select to_char(data,'dd') mes, count(*) qtd,Nvl(sum(duracao),0) dura from tt_ligacao a
+                               where a.cliente = p_cliente
+                                 and ((p_tipo=1 and sq_usuario_central = p_pessoa) or p_tipo <> 1) and trunc(data) between p_inicio and p_fim  and trabalho='S' and entrante='S' and recebida='N' 
+                                 and (p_sq_cc   is null or (p_sq_cc   is not null and sq_cc   = p_sq_cc))
+                                 and (p_numero  is null or (p_numero  is not null and numero like '%'||p_numero||'%'))
+                                 and (p_contato is null or (p_contato is not null and acentos(upper(outra_parte_cont)) like acentos(upper('%'||p_contato||'%'))))
+                              group by to_char(data,'dd')) tt_nat on (x.mes = tt_nat.mes)
              where 0 < (Nvl(tt_ori.qtd,0) + Nvl(tt_rec.qtd,0) + Nvl(tt_nat.qtd,0)) 
             UNION 
             select x.mes, 'Particular' trabalho,
@@ -548,24 +594,27 @@ begin
                   (Nvl(tt_ori.qtd,0)+Nvl(tt_rec.qtd,0)+Nvl(tt_nat.qtd,0)) qtd_tot, 
                   (Nvl(tt_ori.dura,0)+Nvl(tt_rec.dura,0)+Nvl(tt_nat.dura,0)) dura_tot 
               from (select distinct to_char(data,'dd') mes from tt_ligacao) x
-                      left outer join (select to_char(data,'dd') mes, count(*) qtd,Nvl(sum(duracao),0) dura from tt_ligacao a
-                                        where ((p_tipo=1 and sq_usuario_central = p_pessoa) or p_tipo <> 1) and trunc(data) between p_inicio and p_fim  and trabalho='N' and entrante='N' 
-                                          and (p_sq_cc   is null or (p_sq_cc   is not null and sq_cc   = p_sq_cc))
-                                          and (p_numero  is null or (p_numero  is not null and numero like '%'||p_numero||'%'))
-                                          and (p_contato is null or (p_contato is not null and acentos(upper(outra_parte_cont)) like acentos(upper('%'||p_contato||'%'))))
-                                       group by to_char(data,'dd')) tt_ori on (x.mes = tt_ori.mes)
-                      left outer join (select to_char(data,'dd') mes, count(*) qtd,Nvl(sum(duracao),0) dura from tt_ligacao a
-                                        where ((p_tipo=1 and sq_usuario_central = p_pessoa) or p_tipo <> 1) and trunc(data) between p_inicio and p_fim  and trabalho='N' and entrante='S' and recebida='S'
-                                          and (p_sq_cc   is null or (p_sq_cc   is not null and sq_cc   = p_sq_cc))
-                                          and (p_numero  is null or (p_numero  is not null and numero like '%'||p_numero||'%'))
-                                          and (p_contato is null or (p_contato is not null and acentos(upper(outra_parte_cont)) like acentos(upper('%'||p_contato||'%'))))
-                                       group by to_char(data,'dd')) tt_rec on (x.mes = tt_rec.mes)
-                      left outer join (select to_char(data,'dd') mes, count(*) qtd,Nvl(sum(duracao),0) dura from tt_ligacao a
-                                        where ((p_tipo=1 and sq_usuario_central = p_pessoa) or p_tipo <> 1) and trunc(data) between p_inicio and p_fim  and trabalho='N' and entrante='S' and recebida='N' 
-                                          and (p_sq_cc   is null or (p_sq_cc   is not null and sq_cc   = p_sq_cc))
-                                          and (p_numero  is null or (p_numero  is not null and numero like '%'||p_numero||'%'))
-                                          and (p_contato is null or (p_contato is not null and acentos(upper(outra_parte_cont)) like acentos(upper('%'||p_contato||'%'))))
-                                       group by to_char(data,'dd')) tt_nat on (x.mes = tt_nat.mes)
+                   left join (select to_char(data,'dd') mes, count(*) qtd,Nvl(sum(duracao),0) dura from tt_ligacao a
+                               where a.cliente = p_cliente
+                                 and ((p_tipo=1 and sq_usuario_central = p_pessoa) or p_tipo <> 1) and trunc(data) between p_inicio and p_fim  and trabalho='N' and entrante='N' 
+                                 and (p_sq_cc   is null or (p_sq_cc   is not null and sq_cc   = p_sq_cc))
+                                 and (p_numero  is null or (p_numero  is not null and numero like '%'||p_numero||'%'))
+                                 and (p_contato is null or (p_contato is not null and acentos(upper(outra_parte_cont)) like acentos(upper('%'||p_contato||'%'))))
+                              group by to_char(data,'dd')) tt_ori on (x.mes = tt_ori.mes)
+                   left join (select to_char(data,'dd') mes, count(*) qtd,Nvl(sum(duracao),0) dura from tt_ligacao a
+                               where a.cliente = p_cliente
+                                 and ((p_tipo=1 and sq_usuario_central = p_pessoa) or p_tipo <> 1) and trunc(data) between p_inicio and p_fim  and trabalho='N' and entrante='S' and recebida='S'
+                                 and (p_sq_cc   is null or (p_sq_cc   is not null and sq_cc   = p_sq_cc))
+                                 and (p_numero  is null or (p_numero  is not null and numero like '%'||p_numero||'%'))
+                                 and (p_contato is null or (p_contato is not null and acentos(upper(outra_parte_cont)) like acentos(upper('%'||p_contato||'%'))))
+                              group by to_char(data,'dd')) tt_rec on (x.mes = tt_rec.mes)
+                   left join (select to_char(data,'dd') mes, count(*) qtd,Nvl(sum(duracao),0) dura from tt_ligacao a
+                               where a.cliente = p_cliente
+                                 and ((p_tipo=1 and sq_usuario_central = p_pessoa) or p_tipo <> 1) and trunc(data) between p_inicio and p_fim  and trabalho='N' and entrante='S' and recebida='N' 
+                                 and (p_sq_cc   is null or (p_sq_cc   is not null and sq_cc   = p_sq_cc))
+                                 and (p_numero  is null or (p_numero  is not null and numero like '%'||p_numero||'%'))
+                                 and (p_contato is null or (p_contato is not null and acentos(upper(outra_parte_cont)) like acentos(upper('%'||p_contato||'%'))))
+                              group by to_char(data,'dd')) tt_nat on (x.mes = tt_nat.mes)
              where 0 < (Nvl(tt_ori.qtd,0) + Nvl(tt_rec.qtd,0) + Nvl(tt_nat.qtd,0)) 
             UNION 
             select x.mes, 'Total' trabalho,
@@ -575,24 +624,27 @@ begin
                   (Nvl(tt_ori.qtd,0)+Nvl(tt_rec.qtd,0)+Nvl(tt_nat.qtd,0)) qtd_tot, 
                   (Nvl(tt_ori.dura,0)+Nvl(tt_rec.dura,0)+Nvl(tt_nat.dura,0)) dura_tot 
               from (select distinct to_char(data,'dd') mes from tt_ligacao) x
-                      left outer join (select to_char(data,'dd') mes, count(*) qtd,Nvl(sum(duracao),0) dura from tt_ligacao a
-                                        where ((p_tipo=1 and sq_usuario_central = p_pessoa) or p_tipo <> 1) and trunc(data) between p_inicio and p_fim  and trabalho is not null and entrante='N' 
-                                          and (p_sq_cc   is null or (p_sq_cc   is not null and sq_cc   = p_sq_cc))
-                                          and (p_numero  is null or (p_numero  is not null and numero like '%'||p_numero||'%'))
-                                          and (p_contato is null or (p_contato is not null and acentos(upper(outra_parte_cont)) like acentos(upper('%'||p_contato||'%'))))
-                                       group by to_char(data,'dd')) tt_ori on (x.mes = tt_ori.mes)
-                      left outer join (select to_char(data,'dd') mes, count(*) qtd,Nvl(sum(duracao),0) dura from tt_ligacao a
-                                        where ((p_tipo=1 and sq_usuario_central = p_pessoa) or p_tipo <> 1) and trunc(data) between p_inicio and p_fim  and trabalho is not null and entrante='S' and recebida='S'
-                                          and (p_sq_cc   is null or (p_sq_cc   is not null and sq_cc   = p_sq_cc))
-                                          and (p_numero  is null or (p_numero  is not null and numero like '%'||p_numero||'%'))
-                                          and (p_contato is null or (p_contato is not null and acentos(upper(outra_parte_cont)) like acentos(upper('%'||p_contato||'%'))))
-                                       group by to_char(data,'dd')) tt_rec on (x.mes = tt_rec.mes)
-                      left outer join (select to_char(data,'dd') mes, count(*) qtd,Nvl(sum(duracao),0) dura from tt_ligacao a
-                                        where ((p_tipo=1 and sq_usuario_central = p_pessoa) or p_tipo <> 1) and trunc(data) between p_inicio and p_fim  and trabalho is not null and entrante='S' and recebida='N' 
-                                          and (p_sq_cc   is null or (p_sq_cc   is not null and sq_cc   = p_sq_cc))
-                                          and (p_numero  is null or (p_numero  is not null and numero like '%'||p_numero||'%'))
-                                          and (p_contato is null or (p_contato is not null and acentos(upper(outra_parte_cont)) like acentos(upper('%'||p_contato||'%'))))
-                                       group by to_char(data,'dd')) tt_nat on (x.mes = tt_nat.mes)
+                   left join (select to_char(data,'dd') mes, count(*) qtd,Nvl(sum(duracao),0) dura from tt_ligacao a
+                               where a.cliente = p_cliente
+                                 and ((p_tipo=1 and sq_usuario_central = p_pessoa) or p_tipo <> 1) and trunc(data) between p_inicio and p_fim  and trabalho is not null and entrante='N' 
+                                 and (p_sq_cc   is null or (p_sq_cc   is not null and sq_cc   = p_sq_cc))
+                                 and (p_numero  is null or (p_numero  is not null and numero like '%'||p_numero||'%'))
+                                 and (p_contato is null or (p_contato is not null and acentos(upper(outra_parte_cont)) like acentos(upper('%'||p_contato||'%'))))
+                              group by to_char(data,'dd')) tt_ori on (x.mes = tt_ori.mes)
+                   left join (select to_char(data,'dd') mes, count(*) qtd,Nvl(sum(duracao),0) dura from tt_ligacao a
+                               where a.cliente = p_cliente
+                                 and ((p_tipo=1 and sq_usuario_central = p_pessoa) or p_tipo <> 1) and trunc(data) between p_inicio and p_fim  and trabalho is not null and entrante='S' and recebida='S'
+                                 and (p_sq_cc   is null or (p_sq_cc   is not null and sq_cc   = p_sq_cc))
+                                 and (p_numero  is null or (p_numero  is not null and numero like '%'||p_numero||'%'))
+                                 and (p_contato is null or (p_contato is not null and acentos(upper(outra_parte_cont)) like acentos(upper('%'||p_contato||'%'))))
+                              group by to_char(data,'dd')) tt_rec on (x.mes = tt_rec.mes)
+                   left join (select to_char(data,'dd') mes, count(*) qtd,Nvl(sum(duracao),0) dura from tt_ligacao a
+                               where a.cliente = p_cliente
+                                 and ((p_tipo=1 and sq_usuario_central = p_pessoa) or p_tipo <> 1) and trunc(data) between p_inicio and p_fim  and trabalho is not null and entrante='S' and recebida='N' 
+                                 and (p_sq_cc   is null or (p_sq_cc   is not null and sq_cc   = p_sq_cc))
+                                 and (p_numero  is null or (p_numero  is not null and numero like '%'||p_numero||'%'))
+                                 and (p_contato is null or (p_contato is not null and acentos(upper(outra_parte_cont)) like acentos(upper('%'||p_contato||'%'))))
+                              group by to_char(data,'dd')) tt_nat on (x.mes = tt_nat.mes)
              where 0 < (Nvl(tt_ori.qtd,0) + Nvl(tt_rec.qtd,0) + Nvl(tt_nat.qtd,0)) 
             order by mes, trabalho;
       Elsif p_restricao = 'HINT' Then
@@ -602,10 +654,11 @@ begin
                    case a.entrante when 'S' then case a.recebida when 'N' then 'NAT' else 'REC' end else 'ORI' end tipo,
                    i.nome_resumido responsavel, 
                    to_char(a.data, 'DD/MM/YYYY, HH24:MI:SS') phpdt_ordem
-              from tt_ligacao         a 
-                      inner      join tt_usuario         b on (a.sq_usuario_central = b.sq_usuario_central) 
-                         inner   join co_pessoa          i on (b.usuario            = i.sq_pessoa)
-             where a.numero   = p_numero
+              from tt_ligacao                     a 
+                      inner      join tt_usuario  b on (a.sq_usuario_central = b.sq_usuario_central) 
+                         inner   join co_pessoa   i on (b.usuario            = i.sq_pessoa)
+             where a.cliente = p_cliente
+               and a.numero   = p_numero
                and a.trabalho is not null
                and a.data     > sysdate-365
            order by data desc;

@@ -25,8 +25,8 @@ begin
          inner join tt_tronco            f on (a.sq_central_fone    = f.sq_central_fone)
            inner join co_pessoa_telefone g on (f.sq_pessoa_telefone = g.sq_pessoa_telefone)
              inner join co_tipo_telefone h on (g.sq_tipo_telefone   = h.sq_tipo_telefone)
-     where ((p_chave              is null) or (p_chave              is not null and a.sq_central_fone    = p_chave))
-       and ((p_cliente            is null) or (p_cliente            is not null and a.cliente            = p_cliente))
+     where a.cliente              = p_cliente
+       and ((p_chave              is null) or (p_chave              is not null and a.sq_central_fone    = p_chave))
        and ((p_sq_pessoa_endereco is null) or (p_sq_pessoa_endereco is not null and a.sq_pessoa_endereco = p_sq_pessoa_endereco))
        and ((p_sq_pessoa_telefone is null) or (p_sq_pessoa_telefone is not null and f.sq_pessoa_telefone = p_sq_pessoa_telefone));
        
@@ -38,8 +38,8 @@ begin
        from tt_central        a
        inner join  tt_usuario b on (a.sq_central_fone = b.sq_central_fone)
          inner join co_pessoa c on (b.usuario         = c.sq_pessoa)
-     where ((p_chave              is null) or (p_chave              is not null and a.sq_central_fone    = p_chave))
-       and ((p_cliente            is null) or (p_cliente            is not null and a.cliente            = p_cliente))
+     where a.cliente              = p_cliente
+       and ((p_chave              is null) or (p_chave              is not null and a.sq_central_fone    = p_chave))
        and ((p_sq_pessoa_endereco is null) or (p_sq_pessoa_endereco is not null and a.sq_pessoa_endereco = p_sq_pessoa_endereco));
    elsif p_restricao = 'CLASSIF' Then
       open p_result for 
@@ -61,7 +61,7 @@ begin
        where a.cliente = p_cliente
          and a.ativo   = 'S'
          and c.filhos  = 0
-         and b.tt_cc   = p_chave;
+         and b.sq_cc   = p_chave;
    else  
      open p_result for 
      select a.sq_central_fone chave, a.arquivo_bilhetes arquivo, a.recupera_bilhetes recupera, a.cliente, a.sq_pessoa_endereco,
@@ -73,8 +73,8 @@ begin
             inner join co_pessoa_endereco c on (a.sq_pessoa_endereco = c.sq_pessoa_endereco)
               inner join co_cidade        d on (c.sq_cidade          = d.sq_cidade)
                 inner join co_uf          e on (d.co_uf              = e.co_uf)
-     where ((p_chave              is null) or (p_chave              is not null and a.sq_central_fone    = p_chave))
-       and ((p_cliente            is null) or (p_cliente            is not null and a.cliente            = p_cliente))
+     where a.cliente              = p_cliente
+       and ((p_chave              is null) or (p_chave              is not null and a.sq_central_fone    = p_chave))
        and ((p_sq_pessoa_endereco is null) or (p_sq_pessoa_endereco is not null and a.sq_pessoa_endereco = p_sq_pessoa_endereco));
     End If;
 end SP_getCentralTel;
