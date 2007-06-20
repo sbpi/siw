@@ -147,6 +147,9 @@ begin
          -- Remove o log da solicitação
          delete siw_solic_log where sq_siw_solicitacao = p_chave;
 
+         -- Remove o registro na tabela de solicitações de transporte
+         delete sr_solicitacao_transporte where sq_siw_solicitacao = p_chave;
+
          -- Remove o registro na tabela de solicitações
          delete siw_solicitacao where sq_siw_solicitacao = p_chave;
       End If;
