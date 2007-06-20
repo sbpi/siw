@@ -257,7 +257,7 @@ function LigacaoParticular(){
         ShowHTML('<tr bgcolor="'.$conTrBgColor.'"><td><hr>');
         if ($P1!=3) {
           // Se não for arquivo              
-          $RS = db_getCall::getinstanceOf($dbms,null,null,$P1,'PESSOAS', null, null, null, $p_inicio, $p_fim, $p_ativo);
+          $RS = db_getCall::getinstanceOf($dbms,$w_cliente,null,null,$P1,'PESSOAS', null, null, null, $p_inicio, $p_fim, $p_ativo);
           $RS = SortArray($RS,'dura_tot','desc');
           ShowHTML('<tr bgcolor="'.$conTrBgColor.'"><td><font size=2><b>Resumo comparativo por ligações particulares</b>&nbsp;&nbsp;&nbsp;');
           ShowHTML('<tr bgcolor="'.$conTrBgColor.'"><td align="center">');

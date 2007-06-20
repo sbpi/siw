@@ -26,7 +26,7 @@ class dml_putSolicTransp {
                    'p_fim'                       =>array(tvl($p_fim),                                      B_VARCHAR,        17),
                    'p_data_hora'                 =>array(tvl($p_data_hora),                                B_VARCHAR,         1),
                    'p_cidade'                    =>array(tvl($p_cidade),                                   B_INTEGER,        32),
-                   'p_destino'                   =>array(tvl($p_destino),                                  B_INTEGER,        32),
+                   'p_destino'                   =>array(tvl($p_destino),                                  B_VARCHAR,       200),
                    'p_sq_veiculo'                =>array(tvl($p_sq_veiculo),                               B_INTEGER,        32),
                    'p_qtd_pessoas'               =>array(tvl($p_qtd_pessoas),                              B_INTEGER,        32),
                    'p_carga'                     =>array(tvl($p_carga),                                    B_VARCHAR,         1),
@@ -34,7 +34,7 @@ class dml_putSolicTransp {
                   );
      $l_rs = DatabaseQueriesFactory::getInstanceOf($sql, $dbms, $params, DB_TYPE);
      $l_error_reporting = error_reporting(); 
-     error_reporting(0); 
+     //error_reporting(0); 
      if(!$l_rs->executeQuery()) { 
        error_reporting($l_error_reporting); 
        TrataErro($sql, $l_rs->getError(), $params, __FILE__, __LINE__, __CLASS__); 

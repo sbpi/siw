@@ -7,7 +7,7 @@ function ResumLigPart($l_sq_usuario,$p_inicio,$p_fim,$p_ativo,$O){
   global $l_Disabled;
   global $l_soma;
   if ($O=='L') {
-    $RS = db_getCall::getInstanceOf($dbms,null,$l_sq_usuario,"1",null,null,null,null,$p_inicio,$p_fim,'N');
+    $RS = db_getCall::getInstanceOf($dbms,$w_cliente,null,$l_sq_usuario,"1",null,null,null,null,$p_inicio,$p_fim,'N');
     $RS = SortArray($RS,'phpdt_ordem','asc');
     ShowHTML('<tr><td><font size="2">');
     ShowHTML('    <td align="right"><font size="1"><b>Registros: '.count($RS));

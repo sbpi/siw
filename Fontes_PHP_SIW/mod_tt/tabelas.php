@@ -154,7 +154,7 @@ function centralTel() {
     $w_arquivo_bilhetes   = $_REQUEST['w_arquivo_bilhetes'];
     $w_recupera_bilhetes  = $_REQUEST['w_recupera_bilhetes'];
   } elseif ($O=='L') {
-    $RS = db_getCentralTel::getInstanceOf($dbms,null,null,$p_sq_pessoa_endereco,null,null);
+    $RS = db_getCentralTel::getInstanceOf($dbms,null,$w_cliente,$p_sq_pessoa_endereco,null,null);
     $RS = SortArray($RS,strtolower($_REQUEST['p_ordena']),'asc');
   } elseif ((!(strpos('AEV',$O)===false)) && $w_Troca=='') {
     $RS = db_getCentralTel::getInstanceOf($dbms,$w_chave,$w_cliente,$w_sq_pessoa_endereco,null,null);
@@ -342,7 +342,7 @@ function Troncos() {
   $w_chaveAux           = $_REQUEST['w_chaveAux'];
 
   // Recupera sempre todos os registros
-  $RS = db_getCentralTel::getInstanceOf($dbms,$w_chave,null,null,null,null);
+  $RS = db_getCentralTel::getInstanceOf($dbms,$w_chave,$w_cliente,null,null,null);
   $RS = SortArray($RS,strtolower($_REQUEST['p_ordena']),'asc');
   Cabecalho();
   ShowHTML('<HEAD>');
@@ -509,9 +509,9 @@ function Ramais() {
     $w_sq_central_fone  = $_REQUEST['w_sq_central_fone'];
     $w_codigo           = $_REQUEST['w_codigo'];
   } elseif ($O=='L') {
-    $RS = db_getTTRamal::getInstanceOf($dbms,null,null,null,null);
+    $RS = db_getTTRamal::getInstanceOf($dbms,$w_cliente,null,null,null,null,null);
   } elseif ((!(strpos('AEV',$O)===false)) && $w_Troca=='') {
-    $RS = db_getTTRamal::getInstanceOf($dbms,$w_chave,$w_sq_central_fone,$w_codigo,null);
+    $RS = db_getTTRamal::getInstanceOf($dbms,$w_cliente,$w_chave,$w_sq_central_fone,$w_codigo,null);
     foreach ($RS as $row) {
       $w_chave            = f($row,'chave');
       $w_sq_central_fone  = f($row,'sq_central_fone');
@@ -684,7 +684,7 @@ function UsuarioCentral() {
   ShowHTML('          <td><br><b>Central Telefônica</td>');
   ShowHTML('<table border="0" cellpadding="0" cellspacing="0" width="100%">');
   // Recupera sempre todos os registros
-  $RS = db_getCentralTel::getInstanceOf($dbms,$w_chave,null,null,null,null);
+  $RS = db_getCentralTel::getInstanceOf($dbms,$w_chave,$w_cliente,null,null,null);
   foreach ($RS as $row) {
     ShowHTML('<tr><td align="center" bgcolor="#FAEBD7" colspan=3><table border=1 width="100%"><tr><td>');
     ShowHTML('    <TABLE WIDTH="100%" CELLSPACING="'.$conTableCellSpacing.'" CELLPADDING="'.$conTableCellPadding.'" BorderColorDark="'.$conTableBorderColorDark.'" BorderColorLight="'.$conTableBorderColorLight.'">');
@@ -858,7 +858,7 @@ function RamalUsr() {
   ShowHTML('<div align=center><center>');
   ShowHTML('          <td><br><b>Ramal</td>');
   ShowHTML('<table border="0" cellpadding="0" cellspacing="0" width="100%">');
-  $RS = db_getTTRamal::getInstanceOf($dbms,$w_chave,null,null,null);
+  $RS = db_getTTRamal::getInstanceOf($dbms,$w_cliente,$w_chave,null,null,null);
   foreach ($RS as $row) {
     ShowHTML('<tr><td align="center" bgcolor="#FAEBD7" colspan=3><table border=1 width="100%"><tr><td>');
     ShowHTML('    <TABLE WIDTH="100%" CELLSPACING="'.$conTableCellSpacing.'" CELLPADDING="'.$conTableCellPadding.'" BorderColorDark="'.$conTableBorderColorDark.'" BorderColorLight="'.$conTableBorderColorLight.'">');
@@ -871,7 +871,7 @@ function RamalUsr() {
   ShowHTML('</table>');
   ShowHTML('</table>');
   if ($O=='L') {
-    $RS = db_getTTRamal::getInstanceOf($dbms,$w_chave,null,null,'USER');
+    $RS = db_getTTRamal::getInstanceOf($dbms,$w_cliente,$w_chave,null,null,'USER');
     if (nvl($_REQUEST['p_ordena'],'')>'') {
       $lista = explode(',',str_replace(' ',',',strtolower($_REQUEST['p_ordena'])));
       $RS = SortArray($RS,$lista[0],$lista[1],'inicio','desc','dt_fim','desc');
