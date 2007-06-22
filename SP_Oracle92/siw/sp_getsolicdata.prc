@@ -90,9 +90,7 @@ begin
                   left       join pj_projeto_etapa          j  on (i.sq_projeto_etapa    = j.sq_projeto_etapa)
                 left         join pj_projeto                k  on (b.sq_solic_pai        = k.sq_siw_solicitacao)
           where b.sq_siw_solicitacao       = p_chave;
-   Elsif p_restricao = 'PJGERAL'  or p_restricao = 'ORGERAL'  or p_restricao = 'ORINFO'   or
-         p_restricao = 'ORRESP'   or p_restricao = 'OROUTRAS' or p_restricao = 'ORVISUAL' or
-         p_restricao = 'ORFINANC' or p_restricao = 'PJBGERAL' Then
+   Elsif substr(p_restricao,1,2) in ('PJ','OR') Then
       -- Recupera as demandas que o usuário pode ver
       open p_result for 
          select a.sq_menu,            a.sq_modulo,                   a.nome,
