@@ -3034,6 +3034,7 @@ SP_Oracle92/siw/cv_pessoa_exp.tab -text
 SP_Oracle92/siw/cv_pessoa_hist.tab -text
 SP_Oracle92/siw/cv_pessoa_idioma.tab -text
 SP_Oracle92/siw/cv_pessoa_prod.tab -text
+SP_Oracle92/siw/dados_solic.fnc -text
 SP_Oracle92/siw/dc_arquivo.tab -text
 SP_Oracle92/siw/dc_coluna.tab -text
 SP_Oracle92/siw/dc_dado_tipo.tab -text

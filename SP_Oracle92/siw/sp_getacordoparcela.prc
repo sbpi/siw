@@ -59,7 +59,7 @@ begin
             and (p_chave_aux         is null or (p_chave_aux         is not null and a.sq_acordo_parcela  = p_chave_aux))
             and (p_restricao         = 'VALIDA' or
                  (p_restricao        <> 'VALIDA' and
-                  ((p_aditivo is null     and a.inicio between d.inicio and d.fim) or
+                  ((p_aditivo is null     and coalesce(a.inicio,a.vencimento) between d.inicio and d.fim) or
                    (p_aditivo is not null and c.sq_acordo_aditivo = p_aditivo)
                   )
                  )

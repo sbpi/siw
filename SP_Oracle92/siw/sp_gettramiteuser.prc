@@ -38,15 +38,15 @@ begin
                sg_autenticacao b, 
                co_pessoa       b1,
                siw_menu        c 
-         where b.sq_pessoa                     = b1.sq_pessoa 
-           and a.sq_localizacao                = b.sq_localizacao 
-           and b.ativo                         = 'S' 
-           and b1.sq_pessoa_pai                = p_cliente
-           and c.sq_menu                       = p_sq_menu
+         where b.sq_pessoa      = b1.sq_pessoa 
+           and a.sq_localizacao = b.sq_localizacao 
+           and b.ativo          = 'S' 
+           and b1.sq_pessoa_pai = p_cliente
+           and c.sq_menu        = p_sq_menu
            and marcado(c.sq_menu, b.sq_pessoa,null,p_ChaveAux) = 0
            and ((p_nome       is null) or (p_nome       is not null and b1.nome_indice like '%'||acentos(p_nome)||'%'))
            and ((p_sq_unidade is null) or (p_sq_unidade is not null and a.sq_unidade   = p_sq_unidade))
-           and ((p_acesso     is null) or (p_acesso     is not null and(marcado(Nvl(p_ChaveAux,-1), b.sq_pessoa)) > 0))
+           and ((p_acesso     is null) or (p_acesso     is not null and(marcado(p_acesso, b.sq_pessoa, p_ChaveAux)) > 0))
          ORDER BY 3;
    End If;  
 end SP_GetTramiteUser;

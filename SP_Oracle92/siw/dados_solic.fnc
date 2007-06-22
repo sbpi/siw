@@ -1,0 +1,85 @@
+create or replace function dados_solic(p_chave in number) return varchar2 is
+/**********************************************************************************
+* Nome      : dados_solic
+* Finalidade: Recuperar informações de uma solicitação
+* Autor     : Alexandre Vinhadelli Papadópolis
+* Data      : 21/06/2007, 12:30
+* Parâmetros:
+*    p_chave : chave primária de SIW_SOLICITACAO
+* Retorno: se a solicitação não existir, retorna nulo
+*          se a solicitação existir, retorna string contendo informações sobre ela.
+*          A string contém vários pedaços separados por |@|
+*          1  - string para exibição em listagens, composta da sigla do módulo e do código da solicitação
+*          2  - codigo da solicitação
+*          3  - titulo da solicitação
+*          4  - siw_menu.sq_menu - chave do menu ao qual a solicitação está ligada ()
+*          5  - siw_menu.nome    - nome do menu
+*          6  - siw_menu.sigla   - sigla do menu
+*          7  - siw_menu.p1      - valor de p1
+*          8  - siw_menu.p2      - valor de p2
+*          9  - siw_menu.p3      - valor de p3
+*          10 - siw_menu.p4      - valor de p4
+*          11 - siw_menu.link    - link para a rotina de visualização
+*          12 - siw_modulo.sigla - sigla do módulo da solicitação
+***********************************************************************************/
+  Result varchar2(32767) := null;
+  w_reg  number(18);
+
+  cursor c_dados is
+     select a.sq_menu, a.nome, a.sigla, a.p1, a.p2, a.p3, a.p4,
+            coalesce(a1.link, replace(lower(a.link),'inicial','visual')) as link,
+            a2.sigla as sg_modulo,
+            b.sq_siw_solicitacao,
+            coalesce(p1.codigo_interno, to_char(p2.sq_siw_solicitacao), to_char(p3.sq_siw_solicitacao), 
+                     pv.codigo,         pw.codigo,                      to_char(px.sq_siw_solicitacao), 
+                     py.codigo,         pz.codigo,                      to_char(b.sq_siw_solicitacao)
+                    ) as codigo,
+            coalesce(p1.titulo,         p2.titulo,                      p3.destino,
+                     pv.titulo,         pw.titulo,                      px.assunto,
+                     py.titulo,         pz.titulo,                      coalesce(b.descricao,b.justificativa)
+                    ) as titulo
+       from siw_menu                             a
+            left  join siw_menu                  a1 on (a.sq_menu             = a1.sq_menu_pai and
+                                                        a1.sigla              like '%VISUAL%'
+                                                       )
+            inner join siw_modulo                a2 on (a.sq_modulo           = a2.sq_modulo)
+            inner join siw_solicitacao           b  on (a.sq_menu             = b.sq_menu)
+            left  join pe_programa               p1  on (b.sq_siw_solicitacao = p1.sq_siw_solicitacao)
+            left  join pj_projeto                p2  on (b.sq_siw_solicitacao = p2.sq_siw_solicitacao)
+            left  join sr_solicitacao_transporte p3  on (b.sq_siw_solicitacao = p3.sq_siw_solicitacao)
+            left  join (select x.sq_siw_solicitacao as chave, 
+                               x.prefixo||'.'||substr(1000000+x.numero_documento,2,6)||'/'||x.ano||'-'||substr(100+x.digito,2,2) as codigo,
+                               y.descricao as titulo
+                          from pa_documento           x
+                               join   siw_solicitacao y on (x.sq_siw_solicitacao = y.sq_siw_solicitacao)
+                       )                         pv  on (b.sq_siw_solicitacao = pv.chave)
+            left  join (select x.sq_siw_solicitacao as chave, x.codigo_interno as codigo, y.descricao as titulo
+                          from pd_missao              x
+                               join   siw_solicitacao y on (x.sq_siw_solicitacao = y.sq_siw_solicitacao)
+                       )                         pw  on (b.sq_siw_solicitacao = pw.chave)
+            left  join gd_demanda                px  on (b.sq_siw_solicitacao = px.sq_siw_solicitacao)
+            left  join (select x.sq_siw_solicitacao as chave, x.codigo_interno codigo, y.descricao as titulo
+                          from fn_lancamento          x
+                               join   siw_solicitacao y on (x.sq_siw_solicitacao = y.sq_siw_solicitacao)
+                       )                         py  on (b.sq_siw_solicitacao = py.chave)
+            left  join (select x.sq_siw_solicitacao as chave, x.codigo_interno as codigo,
+                               coalesce(x.titulo, w.nome_resumido||' - '||z.nome||' ('||to_char(x.inicio,'dd/mm/yyyy')||'-'||to_char(x.fim,'dd/mm/yyyy')||')') as titulo
+                          from ac_acordo                     x
+                               left   join   co_pessoa       w on (x.outra_parte        = w.sq_pessoa)
+                               inner  join   siw_solicitacao y on (x.sq_siw_solicitacao = y.sq_siw_solicitacao)
+                                 left join ct_cc             z on (y.sq_cc              = z.sq_cc)
+                       )                         pz  on (b.sq_siw_solicitacao = pz.chave)
+      where b.sq_siw_solicitacao = p_chave;
+begin
+  if p_chave is not null then
+     -- Verifica se a solicitação existe e, se existir, recupera seus dados
+     select count(sq_siw_solicitacao) into w_reg from siw_solicitacao where sq_siw_solicitacao = p_chave;
+     if w_reg > 0 then
+        for crec in c_dados loop
+            Result := crec.nome||': '||crec.codigo||'|@|'||crec.codigo||'|@|'||crec.titulo||'|@|'||crec.sq_menu||'|@|'||crec.nome||'|@|'||crec.sigla||'|@|'||crec.p1||'|@|'||crec.p2||'|@|'||crec.p3||'|@|'||crec.p4||'|@|'||crec.link||'|@|'||crec.sg_modulo;
+        end loop;
+     end if;
+  end if;
+  return(Result);
+end dados_solic;
+/

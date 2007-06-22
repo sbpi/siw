@@ -94,6 +94,16 @@ begin
                 b.valor,              b.opiniao,
                 b.sq_solic_pai,       b.sq_unidade,                  b.sq_cidade_origem,
                 b.palavra_chave,
+                case when b.sq_solic_pai is null 
+                     then case when b3.sq_peobjetivo is null
+                               then case when n.sq_cc is null
+                                         then '???'
+                                         else 'Classif: '||n.nome 
+                                    end
+                               else 'Plano: '||b4.titulo
+                          end
+                     else dados_solic(b.sq_solic_pai) 
+                end as dados_pai,
                 b1.sq_siw_tramite,    b1.nome nm_tramite,            b1.ordem or_tramite,
                 b1.sigla sg_tramite,  b1.ativo,
                 c.sq_tipo_unidade,    c.nome nm_unidade_exec,        c.informal,
@@ -102,9 +112,8 @@ begin
                 d.aviso_prox_conc,    d.dias_aviso,                  d.inicio_real,
                 d.fim_real,           d.concluida,                   d.data_conclusao,
                 d.nota_conclusao,     d.custo_real,                  d.proponente,
-                d.sq_siw_restricao,
+                d.sq_siw_restricao,   d.ordem,
                 case d.prioridade when 0 then 'Alta' when 1 then 'Média' else 'Normal' end nm_prioridade,
-                d.ordem,
                 b.fim-d.dias_aviso aviso,
                 e.sq_tipo_unidade,    e.nome nm_unidade_resp,        e.informal informal_resp,
                 e.vinculada vinc_resp,e.adm_central adm_resp,        e.sigla sg_unidade_resp,
@@ -135,6 +144,8 @@ begin
                       inner          join (select sq_siw_solicitacao, acesso(sq_siw_solicitacao, p_pessoa) acesso
                                              from siw_solicitacao
                                           )                    b2 on (b.sq_siw_solicitacao         = b2.sq_siw_solicitacao)
+                      left           join pe_objetivo          b3 on (b.sq_peobjetivo            = b3.sq_peobjetivo)
+                        left         join pe_plano             b4 on (b3.sq_plano                = b4.sq_plano)
                       inner          join gd_demanda           d  on (b.sq_siw_solicitacao         = d.sq_siw_solicitacao)
                         inner        join eo_unidade           e  on (d.sq_unidade_resp            = e.sq_unidade)
                           left       join eo_unidade_resp      e1 on (e.sq_unidade                 = e1.sq_unidade and
@@ -229,6 +240,16 @@ begin
                 b.valor,              b.opiniao,
                 b.sq_solic_pai,       b.sq_unidade,                  b.sq_cidade_origem,
                 b.palavra_chave,
+                case when b.sq_solic_pai is null 
+                     then case when b3.sq_peobjetivo is null
+                               then case when n.sq_cc is null
+                                         then '???'
+                                         else 'Classif: '||n.nome 
+                                    end
+                               else 'Plano: '||b4.titulo
+                          end
+                     else dados_solic(b.sq_solic_pai) 
+                end as dados_pai,
                 b1.sq_siw_tramite,    b1.nome nm_tramite,            b1.ordem or_tramite,
                 b1.sigla sg_tramite,  b1.ativo,
                 b2.acesso,
@@ -257,17 +278,7 @@ begin
                 r.sq_acao_ppa, r.sq_orprioridade,
                 SolicRestricao(b.sq_siw_solicitacao) as restricao,
                 calculaIGE(d.sq_siw_solicitacao) as ige, calculaIDE(d.sq_siw_solicitacao)  as ide,
-                calculaIGC(d.sq_siw_solicitacao) as igc, calculaIDC(d.sq_siw_solicitacao)  as idc,
-                case when b.sq_solic_pai is not null
-                     then case when s.sq_acordo is not null
-                               then 'AC: '||s.cd_acordo
-                               else case when u.sq_siw_solicitacao is not null
-                                         then 'PR: '||u.codigo_interno
-                                         else null
-                                    end
-                          end
-                     else null
-                end as cd_vinculacao
+                calculaIGC(d.sq_siw_solicitacao) as igc, calculaIDC(d.sq_siw_solicitacao)  as idc
            from siw_menu                                       a 
                    inner        join eo_unidade                a2 on (a.sq_unid_executora        = a2.sq_unidade)
                      left       join eo_unidade_resp           a3 on (a2.sq_unidade              = a3.sq_unidade and
@@ -284,6 +295,8 @@ begin
                       inner          join (select sq_siw_solicitacao, acesso(sq_siw_solicitacao, p_pessoa) acesso
                                              from siw_solicitacao
                                           )                    b2 on (b.sq_siw_solicitacao       = b2.sq_siw_solicitacao)
+                      left           join pe_objetivo          b3 on (b.sq_peobjetivo            = b3.sq_peobjetivo)
+                        left         join pe_plano             b4 on (b3.sq_plano                = b4.sq_plano)
                       inner          join pj_projeto           d  on (b.sq_siw_solicitacao       = d.sq_siw_solicitacao)
                         left         join co_pessoa            d1 on (d.outra_parte              = d1.sq_pessoa)
                         left         join (select y.sq_siw_solicitacao, sum(x.valor_previsto) as orc_previsto, sum(x.valor_real) as orc_real
@@ -335,17 +348,6 @@ begin
                                           )                    j  on (b.sq_siw_solicitacao       = j.sq_siw_solicitacao)
                      left            join pj_projeto_log       k  on (j.chave                    = k.sq_siw_solic_log)
                        left          join sg_autenticacao      l  on (k.destinatario             = l.sq_pessoa)
-                   left              join (select x.sq_siw_solicitacao sq_acordo, v.nome||': '||x.codigo_interno cd_acordo,
-                                                w.nome_resumido||' - '||z.nome||' ('||to_char(x.inicio,'dd/mm/yyyy')||'-'||to_char(x.fim,'dd/mm/yyyy')||')' as nm_acordo,
-                                                v.sigla
-                                           from ac_acordo              x
-                                                join   co_pessoa       w on (x.outra_parte        = w.sq_pessoa)
-                                                join   siw_solicitacao y on (x.sq_siw_solicitacao = y.sq_siw_solicitacao)
-                                                  join ct_cc           z on (y.sq_cc              = z.sq_cc)
-                                                  join siw_menu        v on (y.sq_menu            = v.sq_menu)
-                                        )                      s  on (b.sq_solic_pai             = s.sq_acordo)
-                   left              join siw_solicitacao      t  on (b.sq_solic_pai             = t.sq_siw_solicitacao)
-                   left              join pe_programa          u  on (b.sq_solic_pai             = u.sq_siw_solicitacao)
           where a.sq_menu        = p_menu
             and (p_chave          is null or (p_chave       is not null and b.sq_siw_solicitacao = p_chave))
             and (p_sq_acao_ppa    is null or (p_sq_acao_ppa is not null and (r.sq_acao_ppa       = p_sq_acao_ppa or b.sq_solic_pai = p_sq_acao_ppa)))
@@ -417,6 +419,16 @@ begin
                 b.sq_solic_pai,       b.sq_unidade,                  b.sq_cidade_origem,
                 b.palavra_chave,
                 round(months_between(b.fim,b.inicio)) meses_contrato,
+                case when b.sq_solic_pai is null 
+                     then case when b3.sq_peobjetivo is null
+                               then case when n.sq_cc is null
+                                         then '???'
+                                         else 'Classif: '||n.nome 
+                                    end
+                               else 'Plano: '||b4.titulo
+                          end
+                     else dados_solic(b.sq_solic_pai) 
+                end as dados_pai,
                 b1.sq_siw_tramite,    b1.nome nm_tramite,            b1.ordem or_tramite,
                 b1.sigla sg_tramite,  b1.ativo,
                 c.sq_tipo_unidade,    c.nome nm_unidade_exec,        c.informal,
@@ -480,6 +492,8 @@ begin
                       inner          join (select sq_siw_solicitacao, acesso(sq_siw_solicitacao, p_pessoa) acesso
                                              from siw_solicitacao
                                           )                    b2 on (b.sq_siw_solicitacao       = b2.sq_siw_solicitacao)
+                      left           join pe_objetivo          b3 on (b.sq_peobjetivo            = b3.sq_peobjetivo)
+                        left         join pe_plano             b4 on (b3.sq_plano                = b4.sq_plano)
                       inner          join ac_acordo            d  on (b.sq_siw_solicitacao       = d.sq_siw_solicitacao)
                         inner        join co_forma_pagamento   d7 on (d.sq_forma_pagamento       = d7.sq_forma_pagamento)
                         left         join (select x.sq_siw_solicitacao, sum(z.valor) valor
@@ -615,6 +629,16 @@ begin
                 b.opiniao,            b.sq_solic_pai,
                 b.sq_unidade,         b.sq_cidade_origem,            b.palavra_chave,
                 b.valor,
+                case when b.sq_solic_pai is null 
+                     then case when b3.sq_peobjetivo is null
+                               then case when n.sq_cc is null
+                                         then '???'
+                                         else 'Classif: '||n.nome 
+                                    end
+                               else 'Plano: '||b4.titulo
+                          end
+                     else dados_solic(b.sq_solic_pai) 
+                end as dados_pai,
                 case coalesce(b1.sigla,'--') when 'AT' then b.valor else 0 end valor_atual,
                 b1.sq_siw_tramite,    b1.nome nm_tramite,            b1.ordem or_tramite,
                 b1.sigla sg_tramite,  b1.ativo,
@@ -664,6 +688,8 @@ begin
                       inner          join (select sq_siw_solicitacao, acesso(sq_siw_solicitacao, p_pessoa) acesso
                                              from siw_solicitacao
                                           )                    b2 on (b.sq_siw_solicitacao       = b2.sq_siw_solicitacao)
+                      left           join pe_objetivo          b3 on (b.sq_peobjetivo            = b3.sq_peobjetivo)
+                        left         join pe_plano             b4 on (b3.sq_plano                = b4.sq_plano)
                       inner          join fn_lancamento        d  on (b.sq_siw_solicitacao       = d.sq_siw_solicitacao)
                         inner        join co_forma_pagamento   d7 on (d.sq_forma_pagamento       = d7.sq_forma_pagamento)
                         inner        join fn_tipo_lancamento   d1 on (d.sq_tipo_lancamento       = d1.sq_tipo_lancamento)
@@ -785,6 +811,16 @@ begin
                 b.opiniao,            b.sq_solic_pai,
                 b.sq_unidade,         b.sq_cidade_origem,            b.palavra_chave,
                 b.valor,              b.fim-d.dias_aviso aviso,
+                case when b.sq_solic_pai is null 
+                     then case when b3.sq_peobjetivo is null
+                               then case when n.sq_cc is null
+                                         then '???'
+                                         else 'Classif: '||n.nome 
+                                    end
+                               else 'Plano: '||b4.titulo
+                          end
+                     else dados_solic(b.sq_solic_pai) 
+                end as dados_pai,
                 b1.sq_siw_tramite,    b1.nome nm_tramite,            b1.ordem or_tramite,
                 b1.sigla sg_tramite,  b1.ativo,
                 c.sq_tipo_unidade,    c.nome nm_unidade_exec,        c.informal,
@@ -824,6 +860,8 @@ begin
                   inner       join (select sq_siw_solicitacao, acesso(sq_siw_solicitacao, p_pessoa) acesso
                                       from siw_solicitacao
                                    )                    b2 on (b.sq_siw_solicitacao       = b2.sq_siw_solicitacao)
+                  left        join pe_objetivo          b3 on (b.sq_peobjetivo            = b3.sq_peobjetivo)
+                    left      join pe_plano             b4 on (b3.sq_plano                = b4.sq_plano)
                   inner       join gd_demanda           d  on (b.sq_siw_solicitacao       = d.sq_siw_solicitacao)
                     inner     join pd_missao            d1 on (d.sq_siw_solicitacao       = d1.sq_siw_solicitacao)
                       inner   join co_pessoa            d2 on (d1.sq_pessoa               = d2.sq_pessoa)
@@ -844,6 +882,7 @@ begin
                         left  join eo_unidade_resp      e2 on (e.sq_unidade               = e2.sq_unidade and
                                                                e2.tipo_respons            = 'S'           and
                                                                e2.fim                     is null)
+                    left      join ct_cc                n  on (b.sq_cc                    = n.sq_cc)
                     inner     join co_pessoa            o  on (b.solicitante              = o.sq_pessoa)
                       inner   join sg_autenticacao      o1 on (o.sq_pessoa                = o1.sq_pessoa)
                         inner join eo_unidade           o2 on (o1.sq_unidade              = o2.sq_unidade)
@@ -930,6 +969,16 @@ begin
                 b.valor,              b.opiniao,
                 b.sq_solic_pai,       b.sq_unidade,                  b.sq_cidade_origem,
                 b.palavra_chave,
+                case when b.sq_solic_pai is null 
+                     then case when b2.sq_peobjetivo is null
+                               then case when n.sq_cc is null
+                                         then '???'
+                                         else 'Classif: '||n.nome 
+                                    end
+                               else 'Plano: '||b3.titulo
+                          end
+                     else dados_solic(b.sq_solic_pai) 
+                end as dados_pai,
                 b1.sq_siw_tramite,    b1.nome nm_tramite,            b1.ordem or_tramite,
                 b1.sigla sg_tramite,  b1.ativo,
                 b2.sq_peobjetivo,     b2.sq_plano,                   b2.nome nm_objetivo, 
@@ -941,7 +990,7 @@ begin
                 c.vinculada,          c.adm_central,
                 d.codigo_interno cd_programa, d.titulo,              d.ln_programa,
                 d.exequivel,          d.inicio_real,                 d.fim_real,
-                d.custo_real, 
+                d.custo_real,
                 d1.nome nm_horizonte, d1.ativo st_horizonte, 
                 d7.nome nm_natureza, d7.ativo st_natureza,
                 b.fim-d.dias_aviso aviso,
@@ -1061,6 +1110,16 @@ begin
                 b.valor,              b.opiniao,
                 b.sq_solic_pai,       b.sq_unidade,                  b.sq_cidade_origem,
                 b.palavra_chave,
+                case when b.sq_solic_pai is null 
+                     then case when b4.sq_peobjetivo is null
+                               then case when n.sq_cc is null
+                                         then '???'
+                                         else 'Classif: '||n.nome 
+                                    end
+                               else 'Plano: '||b5.titulo
+                          end
+                     else dados_solic(b.sq_solic_pai) 
+                end as dados_pai,
                 b1.sq_siw_tramite,    b1.nome nm_tramite,            b1.ordem or_tramite,
                 b1.sigla sg_tramite,  b1.ativo,
                 b3.nome as nm_unid_origem, b3.sigla sg_unid_origem,
@@ -1109,6 +1168,8 @@ begin
                                              from siw_solicitacao
                                           )                        b2 on (b.sq_siw_solicitacao       = b2.sq_siw_solicitacao)
                       inner          join eo_unidade               b3 on (b.sq_unidade               = b3.sq_unidade)
+                      left           join pe_objetivo              b4 on (b.sq_peobjetivo            = b4.sq_peobjetivo)
+                        left         join pe_plano                 b5 on (b4.sq_plano                = b5.sq_plano)
                       inner          join pa_documento             d on (b.sq_siw_solicitacao        = d.sq_siw_solicitacao)
                         left         join pa_natureza_documento    d1 on (d.sq_natureza_documento    = d1.sq_natureza_documento)
                         left         join co_pessoa                d2 on (d.pessoa_origem            = d2.sq_pessoa)
@@ -1281,10 +1342,9 @@ begin
                  (a1.sigla = 'AC' and b3.sigla = 'PR' and d.vincula_contrato = 'S') or
                  (a1.sigla = 'PD' and b3.sigla = 'PR' and d.vincula_viagem   = 'S') or
                  (a1.sigla = 'FN' and b3.sigla = 'AC') or
-                 (a1.sigla = 'PR' and b3.sigla = 'PE')
+                 (b3.sigla = 'PE')
                 )
-            and (b3.sigla = 'PE' or 
-                 acesso(b.sq_siw_solicitacao,p_pessoa) > 0 or
+            and (acesso(b.sq_siw_solicitacao,p_pessoa) > 0 or
                  InStr(l_resp_unid,''''||b.sq_unidade||'''') > 0
                 )
          order by titulo;

@@ -10,7 +10,7 @@ begin
       -- Verifica se o vínculo do usuário com a organização é interno ou externo
       open p_result for
          select a.sq_pessoa as cliente, 
-                a1.nome as nm_usuario, a1.sq_pessoa as usuario,
+                a1.sq_pessoa as sq_usuario, a1.nome as nm_usuario, a1.sq_pessoa as usuario,
                 a2.email,
                 a3.sq_tipo_vinculo, a3.interno as vinc_interno, a3.contratado as vinc_contratado, 
                 a3.envia_mail_tramite vinc_mail_tramite, a3.envia_mail_alerta as vinc_mail_alerta,
@@ -145,7 +145,7 @@ begin
       -- Recupera a lista de solicitações da mesa de trabalho do usuário
       open p_result for
          select a.sq_pessoa as cliente, 
-                a1.nome as nm_usuario, a1.sq_pessoa as usuario,
+                a1.sq_pessoa as sq_usuario, a1.nome as nm_usuario, a1.sq_pessoa as usuario,
                 a2.email,
                 a3.sq_tipo_vinculo, a3.interno as vinc_interno, a3.contratado as vinc_contratado, 
                 a3.envia_mail_tramite vinc_mail_tramite, a3.envia_mail_alerta as vinc_mail_alerta,
