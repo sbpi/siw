@@ -23,6 +23,7 @@ include_once($w_dir_volta.'classes/sp/db_getEtapaDataParents.php');
 include_once($w_dir_volta.'classes/sp/db_getSolicData.php');
 include_once($w_dir_volta.'classes/sp/db_getSolicEtapa.php');
 include_once($w_dir_volta.'classes/sp/db_getCustomerData.php');
+include_once($w_dir_volta.'classes/sp/db_getSiwCliModLis.php');
 include_once($w_dir_volta.'funcoes/selecaoCC.php');
 include_once($w_dir_volta.'funcoes/selecaoPessoa.php');
 include_once($w_dir_volta.'funcoes/selecaoUnidade.php');
@@ -33,6 +34,9 @@ include_once($w_dir_volta.'funcoes/selecaoCidade.php');
 include_once($w_dir_volta.'funcoes/selecaoFaseCheck.php');
 include_once($w_dir_volta.'funcoes/selecaoProjeto.php');
 include_once($w_dir_volta.'funcoes/selecaoEtapa.php');
+include_once($w_dir_volta.'funcoes/selecaoServico.php');
+include_once($w_dir_volta.'funcoes/selecaoSolic.php');
+
 // =========================================================================
 //  /gr_convenios.php
 // ------------------------------------------------------------------------
@@ -82,37 +86,39 @@ $w_cliente  = RetornaCliente();
 $w_usuario  = RetornaUsuario();
 $w_menu     = $P2;
 
-$w_troca        = $_REQUEST['w_troca'];
-$p_projeto      = strtoupper($_REQUEST['p_projeto']);
-$p_atividade    = strtoupper($_REQUEST['p_atividade']);
-$p_tipo         = strtoupper($_REQUEST['p_tipo']);
-$p_ativo        = strtoupper($_REQUEST['p_ativo']);
-$p_solicitante  = strtoupper($_REQUEST['p_solicitante']);
-$p_prioridade   = strtoupper($_REQUEST['p_prioridade']);
-$p_unidade      = strtoupper($_REQUEST['p_unidade']);
-$p_proponente   = strtoupper($_REQUEST['p_proponente']);
-$p_ordena       = strtoupper($_REQUEST['p_ordena']);
-$p_ini_i        = strtoupper($_REQUEST['p_ini_i']);
-$p_ini_f        = strtoupper($_REQUEST['p_ini_f']);
-$p_fim_i        = strtoupper($_REQUEST['p_fim_i']);
-$p_fim_f        = strtoupper($_REQUEST['p_fim_f']);
-$p_atraso       = strtoupper($_REQUEST['p_atraso']);
-$p_chave        = strtoupper($_REQUEST['p_chave']);
-$p_objeto       = strtoupper($_REQUEST['p_objeto']);
-$p_pais         = strtoupper($_REQUEST['p_pais']);
-$p_regiao       = strtoupper($_REQUEST['p_regiao']);
-$p_uf           = strtoupper($_REQUEST['p_uf']);
-$p_cidade       = strtoupper($_REQUEST['p_cidade']);
-$p_usu_resp     = strtoupper($_REQUEST['p_usu_resp']);
-$p_uorg_resp    = strtoupper($_REQUEST['p_uorg_resp']);
-$p_palavra      = strtoupper($_REQUEST['p_palavra']);
-$p_prazo        = strtoupper($_REQUEST['p_prazo']);
-$p_fase         = explodeArray($_REQUEST['p_fase']);
-$p_sqcc         = strtoupper($_REQUEST['p_sqcc']);
-$p_empenho      = strtoupper($_REQUEST['p_empenho']);
-$p_processo     = strtoupper($_REQUEST['p_processo']);
-$p_agrega       = strtoupper($_REQUEST['p_agrega']);
-$p_tamanho      = strtoupper($_REQUEST['p_tamanho']);
+$w_troca         = $_REQUEST['w_troca'];
+$p_projeto       = strtoupper($_REQUEST['p_projeto']);
+$p_atividade     = strtoupper($_REQUEST['p_atividade']);
+$p_tipo          = strtoupper($_REQUEST['p_tipo']);
+$p_ativo         = strtoupper($_REQUEST['p_ativo']);
+$p_solicitante   = strtoupper($_REQUEST['p_solicitante']);
+$p_prioridade    = strtoupper($_REQUEST['p_prioridade']);
+$p_unidade       = strtoupper($_REQUEST['p_unidade']);
+$p_proponente    = strtoupper($_REQUEST['p_proponente']);
+$p_ordena        = strtoupper($_REQUEST['p_ordena']);
+$p_ini_i         = strtoupper($_REQUEST['p_ini_i']);
+$p_ini_f         = strtoupper($_REQUEST['p_ini_f']);
+$p_fim_i         = strtoupper($_REQUEST['p_fim_i']);
+$p_fim_f         = strtoupper($_REQUEST['p_fim_f']);
+$p_atraso        = strtoupper($_REQUEST['p_atraso']);
+$p_chave         = strtoupper($_REQUEST['p_chave']);
+$p_objeto        = strtoupper($_REQUEST['p_objeto']);
+$p_pais          = strtoupper($_REQUEST['p_pais']);
+$p_regiao        = strtoupper($_REQUEST['p_regiao']);
+$p_uf            = strtoupper($_REQUEST['p_uf']);
+$p_cidade        = strtoupper($_REQUEST['p_cidade']);
+$p_usu_resp      = strtoupper($_REQUEST['p_usu_resp']);
+$p_uorg_resp     = strtoupper($_REQUEST['p_uorg_resp']);
+$p_palavra       = strtoupper($_REQUEST['p_palavra']);
+$p_prazo         = strtoupper($_REQUEST['p_prazo']);
+$p_fase          = explodeArray($_REQUEST['p_fase']);
+$p_sqcc          = strtoupper($_REQUEST['p_sqcc']);
+$p_empenho       = strtoupper($_REQUEST['p_empenho']);
+$p_processo      = strtoupper($_REQUEST['p_processo']);
+$p_agrega        = strtoupper($_REQUEST['p_agrega']);
+$p_tamanho       = strtoupper($_REQUEST['p_tamanho']);
+$p_sq_menu_relac = strtoupper($_REQUEST['p_sq_menu_relac']);
+$p_chave_pai     = strtoupper($_REQUEST['p_chave_pai']);
 // Recupera a configuração do serviço
 $RS_Menu = db_getMenuData::getInstanceOf($dbms,$w_menu);
 // Recupera a configuração do serviço de origem
@@ -128,12 +134,27 @@ exit;
 // -------------------------------------------------------------------------
 function Gerencial() {
   extract($GLOBALS);
+  
+  // Verifica se o cliente tem o módulo de acordos contratado
+  $RS = db_getSiwCliModLis::getInstanceOf($dbms,$w_cliente,null,'AC');
+  if (count($RS)>0) $w_acordo='S'; else $w_acordo='N'; 
+
+  // Verifica se o cliente tem o módulo viagens contratado
+  $RS = db_getSiwCliModLis::getInstanceOf($dbms,$w_cliente,null,'PD');
+  if (count($RS)>0) $w_viagem='S'; else $w_viagem='N'; 
+
+  $RS = db_getSiwCliModLis::getInstanceOf($dbms,$w_cliente,null,'IS');
+  if (count($RS)>0) $w_acao='S'; else $w_acao='N'; 
+
+  // Verifica se o cliente tem o módulo de planejamento estratégico
+  $RS = db_getSiwCliModLis::getInstanceOf($dbms,$w_cliente,null,'PE');
+  if (count($RS)>0) $w_pe='S'; else $w_pe='N'; 
+  
   if ($O=='L' || $O=='V' || $O=='W') {
     $w_filtro='';
-    if ($p_projeto>'') {
-      $RS = db_getSolicData::getInstanceOf($dbms,$p_projeto,'PJGERAL');
-      $w_filtro=$w_filtro.'<tr valign="top"><td align="right"><font size=1>Projeto <td><font size=1>[<b><A class="HL" HREF="projeto.php?par=Visual&O=L&w_chave='.$p_projeto.'&w_tipo=Volta&P1='.$P1.'&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP='.$TP.'&SG='.$SG.'" title="Exibe as informações do projeto.">'.f($RS,'titulo').'</a></b>]';
-    }
+    if (nvl($p_chave_pai,'')>'') {
+      $w_filtro.='<tr valign="top"><td align="right">Vinculação<td>['.exibeSolic($w_dir,$p_chave_pai,null,'S').']</td></tr>';
+    }    
     if ($p_atividade>'') {
       $RS = db_getSolicEtapa::getInstanceOf($dbms,$p_projeto,$p_atividade,'REGISTRO',null);
       $w_filtro = $w_filtro.'<tr valign="top"><td align="right">Etapa <td>[<b>'.f($RS,'titulo').'</b>]';
@@ -192,7 +213,7 @@ function Gerencial() {
         $p_ini_i,$p_ini_f,$p_fim_i,$p_fim_f,$p_atraso,$p_solicitante,
         $p_unidade,$p_prioridade,$p_ativo,$p_proponente, 
         $p_chave, $p_objeto, $p_pais, $p_regiao, $p_uf, $p_cidade, $p_usu_resp, 
-        $p_uorg_resp, $p_palavra, $p_prazo, $p_fase, $p_sqcc, $p_projeto, $p_atividade, 
+        $p_uorg_resp, $p_palavra, $p_prazo, $p_fase, $p_sqcc, $p_chave_pai, $p_atividade, 
         null, null, $p_empenho, $p_processo);
     switch ($p_agrega) {
       case substr(f($RS_Menu,'sigla'),0,3).'PROJ':
@@ -245,6 +266,21 @@ function Gerencial() {
       FormataData();
       SaltaCampo();
       ValidateOpen('Validacao');
+      if(nvl($p_sq_menu_relac,'')>'') {
+        if ($p_sq_menu_relac=='CLASSIF') {
+          ShowHTML('  if (theForm.p_sqcc.selectedIndex==0) {');
+          ShowHTML('    alert(\'Você deve indicar a classificação!\');');
+          ShowHTML('    theForm.p_sqcc.focus();');
+          ShowHTML('    return false;');
+          ShowHTML('  }');
+        } else {
+          ShowHTML('  if (theForm.p_chave_pai.selectedIndex==0) {');
+          ShowHTML('    alert(\'Você deve indicar a vinculação!\');');
+          ShowHTML('    theForm.p_chave_pai.focus();');
+          ShowHTML('    return false;');
+          ShowHTML('  }');
+        }
+      }      
       Validate('p_chave','Chave','','','1','18','','0123456789');
       Validate('p_proponente','Outra parte','','','2','90','1','');
       Validate('p_palavra','Código interno','','','3','90','1','1');
@@ -694,6 +730,7 @@ function Gerencial() {
     ShowHTML('<tr bgcolor="'.$conTrBgColor.'"><td><div align="justify"><font size=2>Informe nos campos abaixo os valores que deseja filtrar e clique sobre o botão <i>Aplicar filtro</i>. Clicando sobre o botão <i>Remover filtro</i>, o filtro existente será apagado.</div><hr>');
     ShowHTML('<tr bgcolor="'.$conTrBgColor.'"><td align="center">');
     AbreForm('Form',$w_dir.$w_pagina.$par,'POST','return(Validacao(this));',null,$P1,$P2,$P3,null,$TP,$SG,$R,'L');
+    ShowHTML('<INPUT type="hidden" name="w_troca" value="">');
     // Exibe parâmetros de apresentação
     ShowHTML('      <tr bgcolor="'.$conTrBgColor.'"><td align="center" valign="top"><table border=0 width="90%" cellspacing=0>');
     ShowHTML('         <tr><td valign="top" colspan="2" align="center" bgcolor="#D0D0D0" style="border: 2px solid rgb(0,0,0);"><font size="1"><b>Parâmetros de Apresentação</td>');
@@ -724,16 +761,18 @@ function Gerencial() {
     ShowHTML('         <tr><td valign="top" colspan="2" align="center" bgcolor="#D0D0D0" style="border: 2px solid rgb(0,0,0);"><font size="1"><b>Critérios de Busca</td>');
     // Se a opção for ligada ao módulo de projetos, permite a seleção do projeto  e da etapa
     ShowHTML('      <tr><td colspan=2><table border=0 width="90%" cellspacing=0><tr valign="top">');
-    $RS = db_getLinkData::getInstanceOf($dbms,$w_cliente,'PJCAD');
-    SelecaoProjeto('Pro<u>j</u>eto:','J','Selecione o projeto do contrato na relação.',$p_projeto,$w_usuario,f($RS,'sq_menu'),null,null,null,'p_projeto','PJLIST',$w_atributo);
-    ShowHTML('      </tr>');
-    ShowHTML('          </table>');
-    ShowHTML('<INPUT type="hidden" name="w_troca" value="">');
-    if (f($RS_Menu,'solicita_cc')=='S') {
-      ShowHTML('      <tr><td colspan=2><table border=0 width="90%" cellspacing=0><tr valign="top">');
-      SelecaoCC('C<u>l</u>assificação:','C','Selecione um dos itens relacionados.',$p_sqcc,null,'p_sqcc','SIWSOLIC');
-      ShowHTML('          </table>');
-    } 
+    ShowHTML('          <tr><td><table border=0 colspan=0 cellspan=0 width="100%">');
+    ShowHTML('          <tr valign="top">');
+    selecaoServico('<U>R</U>estringir a:', 'S', null, $p_sq_menu_relac, $P2, null, 'p_sq_menu_relac', 'MENURELAC', 'onChange="document.Form.action=\''.$w_dir.$w_pagina.$par.'\'; document.Form.O.value=\''.$O.'\'; document.Form.w_troca.value=\'p_sq_menu_relac\'; document.Form.submit();"', $w_acordo, $w_acao, $w_viagem);
+    if(Nvl($p_sq_menu_relac,'')!='') {
+      ShowHTML('          <tr valign="top">');
+      if ($p_sq_menu_relac=='CLASSIF') {
+        SelecaoSolic('Classificação',null,null,$w_cliente,$p_sqcc,$p_sq_menu_relac,null,'p_sqcc','SIWSOLIC',null);
+      } else {
+        SelecaoSolic('Vinculação',null,null,$w_cliente,$p_chave_pai,$p_sq_menu_relac,f($RS_Menu,'sq_menu'),'p_chave_pai',null,null);
+      }
+    }
+    ShowHTML('          </td></tr></table></td></tr>');    
     ShowHTML('      <tr valign="top">');
     ShowHTML('          <td><font size="1"><b>C<u>h</u>ave:<br><INPUT ACCESSKEY="H" '.$w_Disabled.' class="sti" type="text" name="p_chave" size="18" maxlength="18" value="'.$p_chave.'"></td>');
     ShowHTML('          <td><font size="1"><b>O<U>u</U>tra parte:<br><INPUT ACCESSKEY="U" '.$w_Disabled.' class="STI" type="text" name="p_proponente" size="25" maxlength="90" value="'.$p_proponente.'"></td>');

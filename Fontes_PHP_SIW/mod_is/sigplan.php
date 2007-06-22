@@ -598,8 +598,8 @@ function Tabela() {
     ShowHTML('<tr><td align="center" colspan=3>');
     ShowHTML('    <TABLE WIDTH="100%" bgcolor="'.$conTableBgColor.'" BORDER="'.$conTableBorder.'" CELLSPACING="'.$conTableCellSpacing.'" CELLPADDING="'.$conTableCellPadding.'" BorderColorDark="'.$conTableBorderColorDark.'" BorderColorLight="'.$conTableBorderColorLight.'">');
     ShowHTML('          <tr bgcolor="'.$conTrBgColor.'" align="center" valign="top">');
-    ShowHTML('            <td width="70"NOWRAP><font size="2"><U ID="INICIO" STYLE="cursor:hand;" CLASS="hl" onClick="javascript:MarcaTodos();" TITLE="Marca todos os itens da relação"><IMG SRC="images/NavButton/BookmarkAndPageActivecolor.gif" BORDER="1" width="15" height="15"></U>&nbsp;');
-    ShowHTML('                                      <U STYLE="cursor:hand;" CLASS="hl" onClick="javascript:DesmarcaTodos();" TITLE="Desmarca todos os itens da relação"><IMG SRC="images/NavButton/BookmarkAndPageInactive.gif" BORDER="1" width="15" height="15"></U>');
+    ShowHTML('            <td width="70"NOWRAP><font size="2"><U ID="INICIO" CLASS="hl" onClick="javascript:MarcaTodos();" TITLE="Marca todos os itens da relação"><IMG SRC="images/NavButton/BookmarkAndPageActivecolor.gif" BORDER="1" width="15" height="15"></U>&nbsp;');
+    ShowHTML('                                      <U CLASS="hl" onClick="javascript:DesmarcaTodos();" TITLE="Desmarca todos os itens da relação"><IMG SRC="images/NavButton/BookmarkAndPageInactive.gif" BORDER="1" width="15" height="15"></U>');
     ShowHTML('          <td><font size="1"><b>Sistema</b></font></td>');
     ShowHTML('          <td><font size="1"><b>Tabela</b></font></td>');
     ShowHTML('          <td><font size="1"><b>Descrição</b></font></td>');
@@ -806,8 +806,8 @@ function Mapeamento() {
     ShowHTML('<tr><td align="center" colspan=3>');
     ShowHTML('    <TABLE WIDTH="100%" bgcolor="'.$conTableBgColor.'" BORDER="'.$conTableBorder.'" CELLSPACING="'.$conTableCellSpacing.'" CELLPADDING="'.$conTableCellPadding.'" BorderColorDark="'.$conTableBorderColorDark.'" BorderColorLight="'.$conTableBorderColorLight.'">');
     ShowHTML('          <tr bgcolor="'.$conTrBgColor.'" align="center" valign="top">');
-    ShowHTML('            <td width="70"NOWRAP><font size="2"><U ID="INICIO" STYLE="cursor:hand;" CLASS="hl" onClick="javascript:MarcaTodos();" TITLE="Marca todos os itens da relação"><IMG SRC="images/NavButton/BookmarkAndPageActivecolor.gif" BORDER="1" width="15" height="15"></U>&nbsp;');
-    ShowHTML('                                      <U STYLE="cursor:hand;" CLASS="hl" onClick="javascript:DesmarcaTodos();" TITLE="Desmarca todos os itens da relação"><IMG SRC="images/NavButton/BookmarkAndPageInactive.gif" BORDER="1" width="15" height="15"></U>');
+    ShowHTML('            <td width="70"NOWRAP><font size="2"><U ID="INICIO" CLASS="hl" onClick="javascript:MarcaTodos();" TITLE="Marca todos os itens da relação"><IMG SRC="images/NavButton/BookmarkAndPageActivecolor.gif" BORDER="1" width="15" height="15"></U>&nbsp;');
+    ShowHTML('                                      <U CLASS="hl" onClick="javascript:DesmarcaTodos();" TITLE="Desmarca todos os itens da relação"><IMG SRC="images/NavButton/BookmarkAndPageInactive.gif" BORDER="1" width="15" height="15"></U>');
     ShowHTML('          <td><font size="1"><b>Coluna</b></font></td>');
     ShowHTML('          <td><font size="1"><b>Descricao</b></font></td>');
     ShowHTML('          <td><font size="1"><b>Tipo</b></font></td>');

@@ -97,8 +97,25 @@ function ValidateOpen($FunctionName) {
 
 // Encerra a função de validação de formulários
 function ValidateClose() {
+  extract($GLOBALS);
   print "  return (true); "."\r\n";
   print "} "."\r\n";
+  ShowHTML('');
+}
+
+// Cria função para indicação de campos obrigatórios
+function Required() {
+  extract($GLOBALS);
+  ScriptOpen('JavaScript');
+  ShowHTML('function required(){');
+  if (count($w_campo_obrigatorio)>0) {
+    foreach($w_campo_obrigatorio as $k => $v) ShowHTML('  document.Form.'.$k.'.className='.$v.';');
+  } else {
+    ShowHTML('  return true;');
+  }
+  ShowHTML('}');
+  ShowHTML('');
+  ScriptClose();
 }
 
 // Cálculo de módulo
@@ -590,13 +607,17 @@ function FormataDataMA() {
 
 // Abre a tag SCRIPT
 function Validate($VariableName,$DisplayName,$DataType,$ValueRequired,$MinimumLength,$MaximumLength,$AllowLetters,$AllowDigits) {
+  extract($GLOBALS);
+  global $w_campo_obrigatorio;
   if(strpos($VariableName,'[')===false) $Form = "  theForm."; else $Form = "theForm";
   if (strtoupper($DataType)!="SELECT" && strtoupper($DataType)!="HIDDEN") {
     print "  ".$Form.$VariableName.".value = Trim(".$Form.$VariableName.".value);"."\r\n"; 
   }
   if ($ValueRequired>"") {
-    if (strtoupper($DataType)=="SELECT") { print "  if (".$Form.$VariableName.".selectedIndex == 0)"."\r\n"; }
-    else { 
+    if(strpos($VariableName,'[')===false) $w_campo_obrigatorio[$VariableName]='"STIO"';
+    if (strtoupper($DataType)=="SELECT") { 
+      print "  if (".$Form.$VariableName.".selectedIndex == 0)"."\r\n"; 
+    } else { 
       print "  if (".$Form.$VariableName.".value == '')"."\r\n"; 
     }
 

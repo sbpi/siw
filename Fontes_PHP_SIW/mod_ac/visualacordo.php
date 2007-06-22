@@ -57,10 +57,11 @@ function VisualAcordo($l_chave,$l_O,$l_usuario,$l_P1,$l_P4) {
     $w_html.=chr(13).'      <tr><td colspan="2"><hr NOSHADE color=#000000 size=4></td></tr>';
     // Identificação do acordo
     $w_html.=chr(13).'      <tr><td colspan="2"><br><font size="2"><b>IDENTIFICAÇÃO<hr NOSHADE color=#000000 SIZE=1></b></font></td></tr>';  
-    if (nvl(f($RS,'nm_projeto'),'')>'') {
-      $w_html.=chr(13).'      <tr><td width="30%"><b>Projeto: </b></td>';
-      $w_html.=chr(13).'          <td><A class="hl" HREF="projeto.php?par=Visual&O=L&w_chave='.f($RS,'sq_solic_pai').'&w_tipo=Volta&P1=2&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP='.$TP.'&SG='.$SG.'" title="Exibe as informações do projeto." target="blank">'.f($RS,'nm_projeto').' ('.f($RS,'sq_solic_pai').')</a></b></font></td></tr>';
-    } 
+    
+    // Exibe a vinculação
+    $w_html.=chr(13).'      <tr><td valign="top"><b>Vinculação: </b></td>';
+    $w_html.=chr(13).'        <td>'.exibeSolic($w_dir,f($RS,'sq_solic_pai'),f($RS,'dados_pai'),'S').'</td></tr>';
+
     if (nvl(f($RS,'nm_etapa'),'')>'') {
       if (substr($w_sigla,0,3)=='GCB') {   
         $w_html.=chr(13).'      <tr valign="top"><td><b>Modalidade: </b></td>';
@@ -70,11 +71,13 @@ function VisualAcordo($l_chave,$l_O,$l_usuario,$l_P1,$l_P4) {
         $w_html.=chr(13).'          <td>      '.f($RS,'nm_etapa').'</td></tr>';
       }
     } 
+
     // Se a classificação foi informada, exibe.
-    if (nvl(f($RS,'sq_cc'),'')>'') {
-      $w_html.=chr(13).'      <tr valign="top"><td width="30%"><b>Classificação:</b></td>';
-      $w_html.=chr(13).'                       <td>'.f($RS,'nm_cc').'</td></tr>';
-    } 
+    if (Nvl(f($RS,'sq_cc'),'')>'') {
+      $w_html .= chr(13).'      <tr><td width="30%"><b>Classificação:<b></td>';
+      $w_html .= chr(13).'        <td>'.f($RS,'nm_cc').' </td></tr>';
+    }
+    
     if (substr($w_sigla,0,3)=='GCB'){ 
       $w_html.=chr(13).'      <tr valign="top">';
       $w_html.=chr(13).'        <td><b><font size=1>Plano de trabalho: </b></td>';

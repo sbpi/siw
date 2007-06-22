@@ -620,7 +620,7 @@ function VisualRestricao() {
   else                     ShowHTML('      <tr><td colspan="3">Problema:<b><br>'.$w_descricao.'</td>');
   ShowHTML('      </tr>');
   ShowHTML('      <tr valign="top">');
-  ShowHTML('              <td>Responsável pela risco:<b><br>'.$w_pessoa.'</td>');
+  ShowHTML('              <td>Responsável pelo risco:<b><br>'.$w_pessoa.'</td>');
   $RS = db_getTipoRestricao::getInstanceOf($dbms,$w_tipo_restricao, $w_cliente, null,'S');
   foreach ($RS as $row) {$RS = $row; break;}
   ShowHTML('              <td>classificaçao:<b><br>'.f($RS,'nome').'</td>');

@@ -19,4 +19,5 @@ umask 002
 # 2 - EXECUTA A ROTINA
 #     verificar parâmetros conforme orientaçãos contidas no arquivo mail_envio.php
 
-/usr/local/bin/php /var/www/html/siw/mail_envio.php 1 1 SIW GERA
+/usr/local/bin/php -c /usr/local/lib/php.ini /var/www/html/siw/mail_envio.php 1 1 SIW GERA
+/usr/local/bin/php -c /usr/local/lib/php.ini /var/www/html/siw/mail_envio.php 9634 1 SIW GERA

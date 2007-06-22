@@ -522,18 +522,30 @@ function consultaTelefone($p_cliente) {
 // =========================================================================
 // Montagem da URL para visualização de uma solicitação
 // -------------------------------------------------------------------------
-function ExibeSolic($l_dir,$l_chave,$l_texto) {
+function ExibeSolic($l_dir,$l_chave,$l_texto=null,$l_exibe_titulo=null,$l_word=null) {
   extract($GLOBALS,EXTR_PREFIX_SAME,'l_');
-  include_once($w_dir_volta.'classes/sp/db_getSolicData.php');
-  $RS = db_getSolicData::getInstanceOf($dbms,$l_chave);
-  $l_hint = 'Exibe as informações.';
-  if (substr($l_texto,0,2)=='PR') $l_hint = 'Exibe as informações do programa.';
-  elseif (substr($l_texto,0,2)=='PJ') $l_hint = 'Exibe as informações do projeto.';
-  elseif (substr(f($RS,'sigla'),0,3)=='GCD') $l_hint = 'Exibe as informações do contrato.';
-  elseif (substr(f($RS,'sigla'),0,3)=='GCB') $l_hint = 'Exibe as informações do contrato.';
-  elseif (substr(f($RS,'sigla'),0,3)=='GCC') $l_hint = 'Exibe as informações do convênio.';
-  elseif (substr(f($RS,'sigla'),0,3)=='GCA') $l_hint = 'Exibe as informações do acordo.';
-  $l_string = '<A class="hl" HREF="'.$conRootSIW.f($RS,'link').'&O=L&w_chave='.$l_chave.'&P1='.f($RS,'p1').'&P2='.f($RS,'p2').'&P3='.f($RS,'p3').'&P4='.f($RS,'p4').'&TP='.$TP.'&SG='.f($RS,'sigla').'" target="_blank" title="'.$l_hint.'">'.$l_texto.'</a>';
+  if (strpos($l_texto,'|@|')!==false) {
+    $l_array = explode('|@|', $l_texto);
+    if (nvl($l_word,'')=='') {
+      $l_hint = 'Exibe as informações deste registro.';
+      $l_string = '<A class="hl" HREF="'.$conRootSIW.$l_array[10].'&O=L&w_chave='.$l_chave.'&P1='.$l_array[6].'&P2='.$l_array[7].'&P3='.$l_array[8].'&P4='.$l_array[9].'&TP='.$TP.'&SG='.$l_array[5].'" target="_blank" title="'.$l_hint.'">'.$l_array[0].(($l_exibe_titulo=='S') ? ' - '.$l_array[2] : '').'</a>';
+    } else {
+      $l_string = $l_array[0].(($l_exibe_titulo=='S') ? ' - '.$l_array[2] : '');
+    }
+  } elseif (nvl($l_chave,'')!='') {
+    include_once($w_dir_volta.'classes/sp/db_getSolicData.php');
+    $RS = db_getSolicData::getInstanceOf($dbms,$l_chave);
+    $l_hint = 'Exibe as informações deste registro.';
+    $l_array = explode('|@|', f($RS,'dados_solic'));
+    if (nvl($l_word,'')=='') {
+      $l_hint = 'Exibe as informações deste registro.';
+      $l_string = '<A class="hl" HREF="'.$conRootSIW.$l_array[10].'&O=L&w_chave='.$l_chave.'&P1='.$l_array[6].'&P2='.$l_array[7].'&P3='.$l_array[8].'&P4='.$l_array[9].'&TP='.$TP.'&SG='.$l_array[5].'" target="_blank" title="'.$l_hint.'">'.$l_array[0].(($l_exibe_titulo=='S') ? ' - '.$l_array[2] : '').'</a>';
+    } else {
+      $l_string = $l_array[0].(($l_exibe_titulo=='S') ? ' - '.$l_array[2] : '');
+    }
+  } else {
+    $l_string = $l_texto;
+  }
   return $l_string;
 }
 
@@ -1325,8 +1337,8 @@ function RetornaMenu($p_cliente,$p_sigla) {
     return $_REQUEST['w_menu'];
   } else {
      include_once($w_dir_volta.'classes/sp/db_getMenuCode.php');
-     $l_rs = db_getMenuCode::getInstanceOf($dbms, $p_cliente, $p_sigla);
-     foreach($l_rs as $l_row) {
+     $l_RS = db_getMenuCode::getInstanceOf($dbms, $p_cliente, $p_sigla);
+     foreach($l_RS as $l_row) {
        if (f($l_row,'ativo')=='S') { return f($l_row,'sq_menu'); break; }
      }
      return null;
@@ -2517,9 +2529,9 @@ function BodyOpen($cProperties) {
    Required();
    $wProperties = $cProperties;
    if (nvl($wProperties,'')!='') {
-     $wProperties = str_replace('document', 'required(); document', $wProperties);
+     $wProperties = str_replace('document.', 'required(); document.', $wProperties);
    } else {
-     $wProperties = ' alert (required()); onLoad=\'required();\' ';
+     $wProperties = ' onLoad=\'required();\' ';
    }
    ShowHTML('<link rel="stylesheet" type="text/css" href="'.$conRootSIW.'classes/menu/xPandMenu.css">');
    if ($_SESSION['P_CLIENTE']=='6761') { ShowHTML('<body Text="'.$conBodyText.'" '.$wProperties.'> '); }
@@ -2552,7 +2564,7 @@ function BodyOpenClean($cProperties) {
   Required();
   $wProperties = $cProperties;
   if (nvl($wProperties,'')!='') {
-    $wProperties = str_replace('document', 'required(); document', $wProperties);
+    $wProperties = str_replace('document.', 'required(); document.', $wProperties);
   } else {
     $wProperties = ' onLoad=\'required();\' ';
   }

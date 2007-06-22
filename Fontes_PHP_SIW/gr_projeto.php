@@ -107,7 +107,7 @@ $p_uorg_resp     = strtoupper($_REQUEST['p_uorg_resp']);
 $p_palavra       = strtoupper($_REQUEST['p_palavra']);
 $p_prazo         = strtoupper($_REQUEST['p_prazo']);
 $p_fase          = explodeArray($_REQUEST['p_fase']);
-$p_agrega        = strtoupper($_REQUEST['p_agrega']);
+$p_agrega        = strtoupper(nvl($_REQUEST['p_agrega'],'GRPRRESP'));
 $p_tamanho       = strtoupper($_REQUEST['p_tamanho']);
 $p_sqcc          = strtoupper($_REQUEST['p_sqcc']);
 $p_projeto       = strtoupper($_REQUEST['p_projeto']);
@@ -212,37 +212,48 @@ function Gerencial() {
         $p_uorg_resp, $p_palavra, $p_prazo, $p_fase, $p_sqcc, $p_projeto, $p_atividade, $p_solic_pai, null);
 
     switch ($p_agrega) {
+      case 'GRPRVINC':
+        $w_TP .= ' - Por vinculação';
+        $RS1  = SortArray($RS1,'dados_pai','asc');
+        break;
       case 'GRPRPROJ':
-        $w_TP = $TP.' - Por projeto';
+        $w_TP .= ' - Por projeto';
         $RS1  = SortArray($RS1,'titulo','asc');
         break;
       case 'GRPRPROP':
-        $w_TP = $TP.' - Por proponente';
+        $w_TP .= ' - Por proponente';
         $RS1  = SortArray($RS1,'proponente','asc');
         break;
       case 'GRPRRESP':
-        $w_TP = $TP.' - Por responsável';
+        $w_TP .= ' - Por responsável';
         $RS1  = SortArray($RS1,'nm_solic_ind','asc');
         break;
       case 'GRPRRESPATU':
-        $w_TP = $TP.' - Por executor';
+        $w_TP .= ' - Por executor';
         $RS1  = SortArray($RS1,'nm_exec_ind','asc');
         break;
       case 'GRPRCC':
-        $w_TP = $TP.' - Por classificação';
+        $w_TP .= ' - Por classificação';
         $RS1  = SortArray($RS1,'sg_cc','asc');
         break;
       case 'GRPRSETOR':
-        $w_TP = $TP.' - Por setor responsável';
+        $w_TP .= ' - Por setor responsável';
         $RS1  = SortArray($RS1,'nm_unidade_resp','asc');
         break;
       case 'GRPRPRIO':
-        $w_TP = $TP.' - Por prioridade';
+        $w_TP .= ' - Por prioridade';
         $RS1  = SortArray($RS1,'nm_prioridade','asc');
         break;
       case 'GRPRLOCAL':
-        $w_TP = $TP.' - Por UF';
+        $w_TP .= ' - Por UF';
         $RS1  = SortArray($RS1,'nm_prioridade','asc');
+        break;
+      default:
+        $RS2 = db_getMenuData::getInstanceOf($dbms,substr($p_agrega,4));
+        $w_TP .= ' - Por '.f($RS2,'nome');
+
+        $RS1  = SortArray($RS1,'dados_pai','asc');
+        $w_nm_servico = f($RS2,'nome');
         break;
     } 
   } 
@@ -355,6 +366,7 @@ function Gerencial() {
         ShowHTML('  function lista (filtro, cad, exec, conc, atraso) {');
         ShowHTML('    if (filtro != -1) {');
         switch ($p_agrega) {
+          case 'GRPRVINC':      ShowHTML('      document.Form.p_servico.value=filtro;');        break;
           case 'GRPRPROJ':      ShowHTML('      document.Form.p_chave.value=filtro;');          break;
           case 'GRPRPROP':      ShowHTML('      document.Form.p_proponente.value=filtro;');     break;
           case 'GRPRRESP':      ShowHTML('      document.Form.p_solicitante.value=filtro;');    break;
@@ -363,9 +375,11 @@ function Gerencial() {
           case 'GRPRSETOR':     ShowHTML('      document.Form.p_unidade.value=filtro;');        break;
           case 'GRPRPRIO':      ShowHTML('      document.Form.p_prioridade.value=filtro;');     break;
           case 'GRPRLOCAL':     ShowHTML('      document.Form.p_uf.value=filtro;');             break;
+          default:              ShowHTML('      document.Form.p_projeto.value=filtro;');        break;
         } 
         ShowHTML('    }');
         switch ($p_agrega) {
+          case 'GRPRVINC':      ShowHTML('    else document.Form.p_servico.value=\''.$_REQUEST['p_servico'].'\';');         break;
           case 'GRPRPROJ':      ShowHTML('    else document.Form.p_chave.value=\''.$_REQUEST['p_projeto'].'\';');           break;
           case 'GRPRPROP':      ShowHTML('    else document.Form.p_proponente.value=\''.$_REQUEST['p_proponente'].'\';');   break;
           case 'GRPRRESP':      ShowHTML('    else document.Form.p_solicitante.value=\''.$_REQUEST['p_solicitante'].'\';'); break;
@@ -374,6 +388,7 @@ function Gerencial() {
           case 'GRPRSETOR':     ShowHTML('    else document.Form.p_unidade.value=\''.$_REQUEST['p_unidade'].'\';');         break;
           case 'GRPRPRIO':      ShowHTML('    else document.Form.p_prioridade.value=\''.$_REQUEST['p_prioridade'].'\';');   break;
           case 'GRPRLOCAL':     ShowHTML('    else document.Form.p_uf.value=\''.$_REQUEST['p_uf'].'\';');                   break;
+          default:              ShowHTML('    else document.Form.p_projeto.value=\''.$_REQUEST['p_projeto'].'\';');         break;
         } 
         $RS2 = db_getTramiteList::getInstanceOf($dbms,$P2,null,null);
         $RS2  = SortArray($RS2,'ordem','asc');
@@ -399,6 +414,7 @@ function Gerencial() {
         AbreForm('Form',f($RS2,'link'),'POST','return(Validacao(this));','Projeto',3,$P2,f($RS2,'P3'),null,$w_TP,f($RS2,'sigla'),$w_pagina.$par,'L');
         ShowHTML(MontaFiltro('POST'));
         switch ($p_agrega) {
+          case 'GRPRVINC':      if ($_REQUEST['p_servico']=='')     ShowHTML('<input type="Hidden" name="p_servico" value="">');      break;
           case 'GRPRPROJ':      if ($_REQUEST['p_chave']=='')       ShowHTML('<input type="Hidden" name="p_chave" value="">');        break;
           case 'GRPRPROP':      if ($_REQUEST['p_proponente']=='')  ShowHTML('<input type="Hidden" name="p_proponente" value="">');   break;
           case 'GRPRRESP':      if ($_REQUEST['p_solicitante']=='') ShowHTML('<input type="Hidden" name="p_solicitante" value="">');  break;
@@ -407,6 +423,9 @@ function Gerencial() {
           case 'GRPRSETOR':     if ($_REQUEST['p_unidade']=='')     ShowHTML('<input type="Hidden" name="p_unidade" value="">');      break;
           case 'GRPRPRIO':      if ($_REQUEST['p_prioridade']=='')  ShowHTML('<input type="Hidden" name="p_prioridade" value="">');   break;
           case 'GRPRLOCAL':     if ($_REQUEST['p_uf']=='')          ShowHTML('<input type="Hidden" name="p_uf" value="">');           break;
+          default:              
+            ShowHTML('<input type="Hidden" name="p_servico" value="'.substr($p_agrega,4).'">');
+            if ($_REQUEST['p_projeto']=='')     ShowHTML('<input type="Hidden" name="p_projeto" value="">');
         } 
       } 
 
@@ -432,11 +451,39 @@ function Gerencial() {
       $t_totacima=0.00;
       foreach($RS1 as $row) {
         switch ($p_agrega) {
+          case 'GRPRVINC':
+            $w_array = explode('|@|',f($row,'dados_pai'));
+            // Se a chave não existe, volta ao foreach
+            if (nvl($w_array[5],'')=='') continue 2;
+            if ($w_nm_quebra!=$w_array[5]) {
+              if ($w_qt_quebra>0) {
+                ImprimeLinha($t_solic,$t_cad,$t_tram,$t_conc,$t_atraso,$t_aviso,$t_valor,$t_custo,$t_acima,$w_chave);
+                $w_linha += 2;
+              } 
+              if ($O!='W' || ($O=='W' && $w_linha<=25)) {
+                // Se for geração de MS-Word, coloca a nova quebra somente se não estourou o limite
+                ShowHTML('      <tr bgcolor="'.$w_cor.'" valign="top"><td><b>'.$w_array[4]);
+              } 
+              $w_nm_quebra=$w_array[5];
+              $w_chave=f($row,'sq_menu_pai');
+              $w_qt_quebra=0.00;
+              $t_solic=0.00;
+              $t_cad=0.00;
+              $t_tram=0.00;
+              $t_conc=0.00;
+              $t_atraso=0.00;
+              $t_aviso=0.00;
+              $t_valor=0.00;
+              $t_acima=0.00;
+              $t_custo=0.00;
+              $w_linha += 1;
+            } 
+            break;
           case 'GRPRPROJ':
             if ($w_nm_quebra!=f($row,'titulo')) {
               if ($w_qt_quebra>0) {
                 ImprimeLinha($t_solic,$t_cad,$t_tram,$t_conc,$t_atraso,$t_aviso,$t_valor,$t_custo,$t_acima,$w_chave);
-                $w_linha = $w_linha + 2;
+                $w_linha += 2;
               } 
               if ($O!='W' || ($O=='W' && $w_linha<=25)) {
                 // Se for geração de MS-Word, coloca a nova quebra somente se não estourou o limite
@@ -454,7 +501,7 @@ function Gerencial() {
               $t_valor=0.00;
               $t_acima=0.00;
               $t_custo=0.00;
-              $w_linha=$w_linha+1;
+              $w_linha += 1;
             } 
             break;
           case 'GRPRPROP':
@@ -479,7 +526,7 @@ function Gerencial() {
               $t_valor=0.00;
               $t_acima=0.00;
               $t_custo=0.00;
-              $w_linha=$w_linha+1;
+              $w_linha += 1;
             } 
             break;
           case 'GRPRRESP':
@@ -504,7 +551,7 @@ function Gerencial() {
               $t_valor=0.00;
               $t_acima=0.00;
               $t_custo=0.00;
-              $w_linha=$w_linha+1;
+              $w_linha += 1;
             } 
             break;
           case 'GRPRRESPATU':
@@ -529,7 +576,7 @@ function Gerencial() {
               $t_valor=0.00;
               $t_acima=0.00;
               $t_custo=0.00;
-              $w_linha=$w_linha+1;
+              $w_linha += 1;
             } 
             break;
           case 'GRPRCC':
@@ -554,7 +601,7 @@ function Gerencial() {
               $t_valor=0.00;
               $t_acima=0.00;
               $t_custo=0.00;
-              $w_linha=$w_linha+1;
+              $w_linha += 1;
             } 
             break;
           case 'GRPRSETOR':
@@ -579,7 +626,7 @@ function Gerencial() {
               $t_valor=0.00;
               $t_acima=0.00;
               $t_custo=0.00;
-              $w_linha=$w_linha+1;
+              $w_linha += 1;
             } 
             break;
           case 'GRPRPRIO':
@@ -604,7 +651,7 @@ function Gerencial() {
               $t_valor=0.00;
               $t_acima=0.00;
               $t_custo=0.00;
-              $w_linha=$w_linha+1;
+              $w_linha += 1;
             } 
             break;
           case 'GRPRLOCAL':
@@ -629,7 +676,35 @@ function Gerencial() {
               $t_valor=0.00;
               $t_acima=0.00;
               $t_custo=0.00;
-              $w_linha=$w_linha+1;
+              $w_linha += 1;
+            } 
+            break;
+          default:
+            $w_array = explode('|@|',f($row,'dados_pai'));
+            // Se a chave não existe, volta ao foreach
+            if (nvl($w_array[0],'')=='' || $w_array[4]!=$w_nm_servico) continue 2;
+            if ($w_nm_quebra!=$w_array[0]) {
+              if ($w_qt_quebra>0) {
+                ImprimeLinha($t_solic,$t_cad,$t_tram,$t_conc,$t_atraso,$t_aviso,$t_valor,$t_custo,$t_acima,$w_chave);
+                $w_linha += 2;
+              } 
+              if ($O!='W' || ($O=='W' && $w_linha<=25)) {
+                // Se for geração de MS-Word, coloca a nova quebra somente se não estourou o limite
+                ShowHTML('      <tr bgcolor="'.$w_cor.'" valign="top"><td><b>'.$w_array[1].' - '.$w_array[2]);
+              } 
+              $w_nm_quebra=$w_array[0];
+              $w_chave=f($row,'sq_solic_pai');
+              $w_qt_quebra=0.00;
+              $t_solic=0.00;
+              $t_cad=0.00;
+              $t_tram=0.00;
+              $t_conc=0.00;
+              $t_atraso=0.00;
+              $t_aviso=0.00;
+              $t_valor=0.00;
+              $t_acima=0.00;
+              $t_custo=0.00;
+              $w_linha += 1;
             } 
             break;
         } 
@@ -648,17 +723,28 @@ function Gerencial() {
           ShowHTML('<div align=center><center>');
           ShowHTML('<table border="0" cellpadding="0" cellspacing="0" width="100%">');
           ImprimeCabecalho();
-          switch ($p_agrega) {
-            case 'GRPRPROJ':        ShowHTML('      <tr bgcolor="'.$w_cor.'" valign="top"><td><b>'.f($row,'titulo'));           break;
-            case 'GRPRPROP':        ShowHTML('      <tr bgcolor="'.$w_cor.'" valign="top"><td><b>'.f($row,'proponente'));       break;
-            case 'GRPRRESP':        ShowHTML('      <tr bgcolor="'.$w_cor.'" valign="top"><td><b>'.f($row,'nm_solic'));         break;
-            case 'GRPRRESPATU':     ShowHTML('      <tr bgcolor="'.$w_cor.'" valign="top"><td><b>'.f($row,'nm_exec'));          break;
-            case 'GRPRCC':          ShowHTML('      <tr bgcolor="'.$w_cor.'" valign="top"><td><b>'.f($row,'sg_cc'));            break;
-            case 'GRPRSETOR':       ShowHTML('      <tr bgcolor="'.$w_cor.'" valign="top"><td><b>'.f($row,'nm_unidade_resp'));  break;
-            case 'GRPRPRIO':        ShowHTML('      <tr bgcolor="'.$w_cor.'" valign="top"><td><b>'.f($row,'nm_prioridade'));    break;
-            case 'GRPRLOCAL':       ShowHTML('      <tr bgcolor="'.$w_cor.'" valign="top"><td><b>'.f($row,'co_uf'));            break;
+          if ($p_agrega=='GRPRVINC') { 
+            $w_array = explode('|@|',f($row,'dados_pai')); 
+            if (nvl($w_array[4],'')!='') {
+              ShowHTML('      <tr bgcolor="'.$w_cor.'" valign="top"><td><b>'.$w_array[4]);
+              $w_linha += 1;
+            }
           } 
-          $w_linha = $w_linha+1;
+          elseif ($p_agrega=='GRPRPROJ')    ShowHTML('      <tr bgcolor="'.$w_cor.'" valign="top"><td><b>'.f($row,'titulo'));
+          elseif ($p_agrega=='GRPRPROP')    ShowHTML('      <tr bgcolor="'.$w_cor.'" valign="top"><td><b>'.f($row,'proponente'));
+          elseif ($p_agrega=='GRPRRESP')    ShowHTML('      <tr bgcolor="'.$w_cor.'" valign="top"><td><b>'.f($row,'nm_solic'));
+          elseif ($p_agrega=='GRPRRESPATU') ShowHTML('      <tr bgcolor="'.$w_cor.'" valign="top"><td><b>'.f($row,'nm_exec'));
+          elseif ($p_agrega=='GRPRCC')      ShowHTML('      <tr bgcolor="'.$w_cor.'" valign="top"><td><b>'.f($row,'sg_cc'));
+          elseif ($p_agrega=='GRPRSETOR')   ShowHTML('      <tr bgcolor="'.$w_cor.'" valign="top"><td><b>'.f($row,'nm_unidade_resp'));
+          elseif ($p_agrega=='GRPRPRIO')    ShowHTML('      <tr bgcolor="'.$w_cor.'" valign="top"><td><b>'.f($row,'nm_prioridade'));
+          elseif ($p_agrega=='GRPRLOCAL')   ShowHTML('      <tr bgcolor="'.$w_cor.'" valign="top"><td><b>'.f($row,'co_uf'));
+          else { 
+            $w_array = explode('|@|',f($row,'dados_pai')); 
+            if (nvl($w_array[0],'')!='') {
+              ShowHTML('      <tr bgcolor="'.$w_cor.'" valign="top"><td><b>'.$w_array[1].' - '.$w_array[2]);
+              $w_linha += 1;
+            }
+          } 
         } 
         if (f($row,'concluida')=='N') {
           if (f($row,'fim') < addDays(time(),-1)) {
@@ -718,30 +804,25 @@ function Gerencial() {
     // Exibe parâmetros de apresentação
     ShowHTML('         <tr><td colspan="2" align="center" bgcolor="#D0D0D0" style="border: 2px solid rgb(0,0,0);"><b>Parâmetros de Apresentação</td>');
     ShowHTML('         <tr valign="top"><td colspan=2><table border=0 width="100%" cellpadding=0 cellspacing=0><tr valign="top">');
+
+    // Recupera os serviços fornecedores
+    $RS = db_getMenuRelac::getInstanceOf($dbms, $P2, null, null, null, 'SERVICO');
+
     ShowHTML('          <td><b><U>A</U>gregar por:<br><SELECT ACCESSKEY="A" '.$w_Disabled.' class="STS" name="p_agrega" size="1">');
     if (f($RS_Menu,'solicita_cc')=='S') {
-      switch ($p_agrega) {
-        case 'GRPRCC':      ShowHTML('          <option value="GRPRCC" selected>Classificação<option value="GRPRRESPATU">Executor<option value="GRPRPRIO">Prioridade<option value="GRPRPROJ">Projeto<option value="GRPRPROP">Proponente<option value="GRPRRESP">Responsável<option value="GRPRSETOR">Setor responsável<option value="GRPRLOCAL">UF');       break;
-        case 'GRPRPRIO':    ShowHTML('          <option value="GRPRCC">Classificação<option value="GRPRRESPATU">Executor<option value="GRPRPRIO" selected>Prioridade<option value="GRPRPROJ">Projeto<option value="GRPRPROP">Proponente<option value="GRPRRESP">Responsável<option value="GRPRSETOR">Setor responsável<option value="GRPRLOCAL">UF');       break;
-        case 'GRPRPROJ':    ShowHTML('          <option value="GRPRCC">Classificação<option value="GRPRRESPATU">Executor<option value="GRPRPRIO">Prioridade<option value="GRPRPROJ" selected>Projeto<option value="GRPRPROP">Proponente<option value="GRPRRESP">Responsável<option value="GRPRSETOR">Setor responsável<option value="GRPRLOCAL">UF');       break;
-        case 'GRPRPROP':    ShowHTML('          <option value="GRPRCC">Classificação<option value="GRPRRESPATU">Executor<option value="GRPRPRIO">Prioridade<option value="GRPRPROJ">Projeto<option value="GRPRPROP" selected>Proponente<option value="GRPRRESP">Responsável<option value="GRPRSETOR">Setor responsável<option value="GRPRLOCAL">UF');       break;
-        case 'GRPRRESPATU': ShowHTML('          <option value="GRPRCC">Classificação<option value="GRPRRESPATU" selected>Executor<option value="GRPRPRIO">Prioridade<option value="GRPRPROJ">Projeto<option value="GRPRPROP">Proponente<option value="GRPRRESP">Responsável<option value="GRPRSETOR">Setor responsável<option value="GRPRLOCAL">UF');       break;
-        case 'GRPRSETOR':   ShowHTML('          <option value="GRPRCC">Classificação<option value="GRPRRESPATU">Executor<option value="GRPRPRIO">Prioridade<option value="GRPRPROJ">Projeto<option value="GRPRPROP">Proponente<option value="GRPRRESP">Responsável<option value="GRPRSETOR" selected>Setor responsável<option value="GRPRLOCAL">UF');       break;
-        case 'GRPRLOCAL':   ShowHTML('          <option value="GRPRCC">Classificação<option value="GRPRRESPATU">Executor<option value="GRPRPRIO">Prioridade<option value="GRPRPROJ">Projeto<option value="GRPRPROP">Proponente<option value="GRPRRESP">Responsável<option value="GRPRSETOR">Setor responsável<option value="GRPRLOCAL" selected>UF');       break;
-        default:            ShowHTML('          <option value="GRPRCC">Classificação<option value="GRPRRESPATU">Executor<option value="GRPRPRIO">Prioridade<option value="GRPRPROJ">Projeto<option value="GRPRPROP">Proponente<option value="GRPRRESP" selected>Responsável<option value="GRPRSETOR">Setor responsável<option value="GRPRLOCAL">UF');       break;
-      } 
-    } else {
-      switch ($p_agrega) {
-        case 'GRPRCC':      ShowHTML('          <option value="GRPRRESPATU">Executor<option value="GRPRPRIO">Prioridade<option value="GRPRPROJ">Projeto<option value="GRPRPROP">Proponente<option value="GRPRRESP">Responsável<option value="GRPRSETOR">Setor responsável<option value="GRPRLOCAL">UF');            break;
-        case 'GRPRPRIO':    ShowHTML('          <option value="GRPRRESPATU">Executor<option value="GRPRPRIO" selected>Prioridade<option value="GRPRPROJ">Projeto<option value="GRPRPROP">Proponente<option value="GRPRRESP">Responsável<option value="GRPRSETOR">Setor responsável<option value="GRPRLOCAL">UF');   break;
-        case 'GRPRPROJ':    ShowHTML('          <option value="GRPRRESPATU">Executor<option value="GRPRPRIO">Prioridade<option value="GRPRPROJ" selected>Projeto<option value="GRPRPROP">Proponente<option value="GRPRRESP">Responsável<option value="GRPRSETOR">Setor responsável<option value="GRPRLOCAL">UF');   break;
-        case 'GRPRPROP':    ShowHTML('          <option value="GRPRRESPATU">Executor<option value="GRPRPRIO">Prioridade<option value="GRPRPROJ">Projeto<option value="GRPRPROP" selected>Proponente<option value="GRPRRESP">Responsável<option value="GRPRSETOR">Setor responsável<option value="GRPRLOCAL">UF');   break;
-        case 'GRPRRESPATU': ShowHTML('          <option value="GRPRRESPATU" selected>Executor<option value="GRPRPRIO">Prioridade<option value="GRPRPROJ">Projeto<option value="GRPRPROP">Proponente<option value="GRPRRESP">Responsável<option value="GRPRSETOR">Setor responsável<option value="GRPRLOCAL">UF');   break;
-        case 'GRPRSETOR':   ShowHTML('          <option value="GRPRRESPATU">Executor<option value="GRPRPRIO">Prioridade<option value="GRPRPROJ">Projeto<option value="GRPRPROP">Proponente<option value="GRPRRESP">Responsável<option value="GRPRSETOR" selected>Setor responsável<option value="GRPRLOCAL">UF');   break;
-        case 'GRPRLOCAL':   ShowHTML('          <option value="GRPRRESPATU">Executor<option value="GRPRPRIO">Prioridade<option value="GRPRPROJ">Projeto<option value="GRPRPROP">Proponente<option value="GRPRRESP">Responsável<option value="GRPRSETOR">Setor responsável<option value="GRPRLOCAL" selected>UF');   break;
-        default:            ShowHTML('          <option value="GRPRRESPATU">Executor<option value="GRPRPRIO">Prioridade<option value="GRPRPROJ">Projeto<option value="GRPRPROP">Proponente<option value="GRPRRESP" selected>Responsável<option value="GRPRSETOR">Setor responsável<option value="GRPRLOCAL">UF');   break;
-      } 
-    } 
+      if ($p_agrega=='GRPRCC') ShowHTML('          <option value="GRPRCC" selected>Classificação'); else ShowHTML('          <option value="GRPRCC">Classificação');
+    }
+    foreach ($RS as $row) {
+      if ($p_agrega=='GRPR'.f($row,'servico_fornecedor')) ShowHTML('          <option value="GRPR'.f($row,'servico_fornecedor').'" selected>'.f($row,'nm_servico_fornecedor')); else ShowHTML('          <option value="GRPR'.f($row,'servico_fornecedor').'">'.f($row,'nm_servico_fornecedor'));
+    }
+    if ($p_agrega=='GRPRPRIO')     ShowHTML('          <option value="GRPRPRIO" selected>Prioridade');         else ShowHTML('          <option value="GRPRPRIO">Prioridade');
+    if ($p_agrega=='GRPRPROJ')     ShowHTML('          <option value="GRPRPROJ" selected>Projeto');            else ShowHTML('          <option value="GRPRPROJ">Projeto');
+    if ($p_agrega=='GRPRPROP')     ShowHTML('          <option value="GRPRPROP" selected>Proponente');         else ShowHTML('          <option value="GRPRPROP">Proponente');
+    if ($p_agrega=='GRPRRESPATU')  ShowHTML('          <option value="GRPRRESPATU" selected>Executor');        else ShowHTML('          <option value="GRPRRESPATU">Executor');
+    if ($p_agrega=='GRPRSETOR')    ShowHTML('          <option value="GRPRSETOR" selected>Setor responsável'); else ShowHTML('          <option value="GRPRSETOR">Setor responsável');
+    if ($p_agrega=='GRPRLOCAL')    ShowHTML('          <option value="GRPRLOCAL" selected>UF');                else ShowHTML('          <option value="GRPRLOCAL">UF');
+    if ($p_agrega=='GRPRRESP')     ShowHTML('          <option value="GRPRRESP" selected>Responsável');        else ShowHTML('          <option value="GRPRRESP">Responsável');
+    if ($p_agrega=='GRPRVINC')     ShowHTML('          <option value="GRPRVINC" selected>Vinculação');         else ShowHTML('          <option value="GRPRVINC">Vinculação');
     ShowHTML('          </select></td>');
     MontaRadioNS('<b>Inibe exibição do gráfico?</b>',$p_tipo,'p_tipo');
     MontaRadioSN('<b>Limita tamanho do assunto?</b>',$p_tamanho,'p_tamanho');
@@ -824,6 +905,7 @@ function ImprimeCabecalho() {
   ShowHTML('    <TABLE WIDTH="100%" bgcolor="'.$conTableBgColor.'" BORDER="'.$conTableBorder.'" CELLSPACING="'.$conTableCellSpacing.'" CELLPADDING="'.$conTableCellPadding.'" BorderColorDark="'.$conTableBorderColorDark.'" BorderColorLight="'.$conTableBorderColorLight.'">');
   ShowHTML('        <tr bgcolor="#DCDCDC" align="center">');
   switch ($p_agrega) {
+    case 'GRPRVINC':    ShowHTML('          <td><b>Vinculação</td>');           break;
     case 'GRPRPROJ':    ShowHTML('          <td><b>Projeto</td>');              break;
     case 'GRPRPROP':    ShowHTML('          <td><b>Proponente</td>');           break;
     case 'GRPRRESP':    ShowHTML('          <td><b>Responsável</td>');          break;
@@ -832,6 +914,9 @@ function ImprimeCabecalho() {
     case 'GRPRSETOR':   ShowHTML('          <td><b>Setor responsável</td>');    break;
     case 'GRPRPRIO':    ShowHTML('          <td><b>Prioridade</td>');           break;
     case 'GRPRLOCAL':   ShowHTML('          <td><b>UF</td>');                   break;
+    default:
+      $RS2 = db_getMenuData::getInstanceOf($dbms,substr($p_agrega,4));
+      ShowHTML('          <td><b>'.f($RS2,'nome').'</td>');
   } 
   ShowHTML('          <td><b>Total</td>');
   ShowHTML('          <td><b>Cad.</td>');

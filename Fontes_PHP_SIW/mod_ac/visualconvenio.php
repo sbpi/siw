@@ -44,25 +44,30 @@ function VisualConvenio($l_chave,$l_O,$l_usuario,$l_P1,$l_P4) {
     $w_html.=chr(13).'      <tr><td colspan="2"  bgcolor="#f0f0f0"><div align=justify><font size="2"><b>CONVÊNIO: '.f($RS,'codigo_interno').' - '.f($RS,'titulo').' ('.$l_chave.')'.'</b></font></div></td></tr>';
     $w_html.=chr(13).'      <tr><td colspan="2"><hr NOSHADE color=#000000 size=4></td></tr>';
     $w_html.=chr(13).'      <tr><td colspan="2"><br><font size="2"><b>IDENTIFICAÇÃO<hr NOSHADE color=#000000 SIZE=1></b></font></td></tr>';
-    // Identificação do convenio
-    if (nvl(f($RS,'sq_cc'),'')>'') {
-      $w_html.=chr(13).'      <tr valign="top"><td width="30%"><font size="1"><b>Classificação:</b></td>';
-      $w_html.=chr(13).'        <td>'.f($RS,'nm_cc').'</b></font></td></tr>';
+    // Exibe a vinculação
+    $w_html.=chr(13).'      <tr><td valign="top"><b>Vinculação: </b></td>';
+    $w_html.=chr(13).'        <td>'.exibeSolic($w_dir,f($RS,'sq_solic_pai'),f($RS,'dados_pai'),'S').'</td></tr>';
+
+    if (nvl(f($RS,'nm_etapa'),'')>'') {
+      if (substr($w_sigla,0,3)=='GCB') {   
+        $w_html.=chr(13).'      <tr valign="top"><td><b>Modalidade: </b></td>';
+        $w_html.=chr(13).'          <td>      '.f($RS,'nm_etapa').'</td></tr>';
+      } else { 
+        $w_html.=chr(13).'      <tr valign="top"><td><b>Etapa: </b></td>';
+        $w_html.=chr(13).'          <td>      '.f($RS,'nm_etapa').'</td></tr>';
+      }
     } 
+
+    // Se a classificação foi informada, exibe.
+    if (Nvl(f($RS,'sq_cc'),'')>'') {
+      $w_html .= chr(13).'      <tr><td width="30%"><b>Classificação:<b></td>';
+      $w_html .= chr(13).'        <td>'.f($RS,'nm_cc').' </td></tr>';
+    }
+
     $w_html.=chr(13).'      <tr><td width="30%"><font size=1><b>Titulo:</b></td>';
-    $w_html.=chr(13).'          <td>'.CRLF2BR(f($RS,'titulo')).'</b></font></td></tr>';
+    $w_html.=chr(13).'          <td>'.CRLF2BR(Nvl(f($RS,'titulo'),'---')).'</b></font></td></tr>';
     $w_html.=chr(13).'      <tr><td width="30%"><font size=1><b>Objeto:</b></td>';
     $w_html.=chr(13).'          <td>'.CRLF2BR(f($RS,'objeto')).'</b></font></td></tr>';
-    $RS1 = db_getLinkData::getInstanceOf($dbms,$w_cliente,'PJCAD');
-    $RS2 = db_getSolicList::getInstanceOf($dbms,f($RS1,'sq_menu'),$l_usuario,'PJCAD',3,
-           null,null,null,null,null,null,null,null,null,null,null,null,null,null,
-           null,null,null,null,null,null,null,null,null,null,$l_chave,null);
-    if (count($RS2)>0) {
-      foreach ($RS2 as $row){
-        $w_html.=chr(13).'      <tr><td><font size=1><b>Projeto: </b></td>';
-        $w_html.=chr(13).'          <td><A class="hl" HREF="projeto.php?par=Visual&O=L&w_chave='.f($row,'sq_siw_solicitacao').'&w_tipo=Volta&P1=2&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP='.$TP.'&SG='.$SG.'" title="Exibe as informações do projeto." target="blank">'.f($row,'titulo').' ('.f($row,'sq_siw_solicitacao').')</a></b></font></td></tr>';
-      }
-    }
     $w_html.=chr(13).'      <tr><td valign="top" colspan="2"><table border=0 width="100%" cellspacing=0>';
     $w_html.=chr(13).'      <tr><td valign="top" width="30%"><font size="1"><b>Tipo:</b></td>';
     $w_html.=chr(13).'          <td>'.f($RS,'nm_tipo_acordo').' </b></td>';
@@ -387,21 +392,62 @@ function VisualConvenio($l_chave,$l_O,$l_usuario,$l_P1,$l_P4) {
       $w_html.=chr(13).'         </table></td></tr>';
     } 
   } 
-  // Se for envio, executa verificações nos dados da solicitação
-  $w_erro = ValidaConvenio($w_cliente,$l_chave,substr($SG,0,3).'GERAL',null,null,null,Nvl($w_tramite,0));
-  if ($w_erro>'') {
-    $w_html.=chr(13).'<tr><td colspan=6><font size=2>';
-    $w_html.=chr(13).'<HR>';
-    if (substr($w_erro,0,1)=='0') {
-      $w_html.=chr(13).'  <font color="#BC3131"><b>ATENÇÃO:</b></font> Foram identificados os erros listados abaixo, não sendo possível seu encaminhamento para fases posteriores à atual.';
-    } elseif (substr($w_erro,0,1)=='1') {
-      $w_html.=chr(13).'  <font color="#BC3131"><b>ATENÇÃO:</b></font> Foram identificados os erros listados abaixo. Seu encaminhamento para fases posteriores à atual só pode ser feito por um gestor do sistema ou do módulo de projetos.';
-    } else {
-      $w_html.=chr(13).'  <font color="#BC3131"><b>ATENÇÃO:</b></font> Foram identificados os alertas listados abaixo. Eles não impedem o encaminhamento para fases posteriores à atual, mas convém sua verificação.';
+
+  // Projetos vinculados ao programa
+  $RS = db_getLinkData::getInstanceOf($dbms,$w_cliente,'PJCAD');
+  $RS1 = db_getSolicList::getInstanceOf($dbms,f($RS,'sq_menu'),$w_usuario,f($RS,'sigla'),4,
+         null,null,null,null,null,null,null,null,null,null,
+         null,null,null,null,null,null,null,null,null,null,null,null,$l_chave,null,null,null);
+  $RS1 = SortArray($RS1,'titulo','asc','prioridade','asc');
+  if (count($RS1) > 0) {
+    $w_html.=chr(13).'      <tr><td colspan="2"><br><font size="2"><b>'.strtoupper(f($RS,'nome')).' ('.count($RS1).' )<hr NOSHADE color=#000000 SIZE=1></b></font></td></tr>';
+    $w_html.=chr(13).'   <tr><td colspan="2" align="center">';
+    $w_html.=chr(13).'     <table width=100%  border="1" bordercolor="#00000">';
+    $w_html.=chr(13).'       <tr align="center">';
+    $w_html.=chr(13).'         <td bgColor="#f0f0f0" rowspan=2><b>Nº</b></td>';
+    $w_html.=chr(13).'         <td bgColor="#f0f0f0" rowspan=2><b>Responsável</b></td>';
+    $w_html.=chr(13).'         <td bgColor="#f0f0f0" rowspan=2><b>Título</b></td>';
+    $w_html.=chr(13).'         <td bgColor="#f0f0f0" colspan=2><b>Execução</b></td>';
+    $w_html.=chr(13).'         <td bgColor="#f0f0f0" rowspan=2><b>Valor</b></td>';
+    $w_html.=chr(13).'         <td bgColor="#f0f0f0" rowspan=2 colspan=2><b>'.VisualIndicador($w_dir_volta,$w_cliente,'IDE',$TP,'IDE hoje').'</b></td>';
+    $w_html.=chr(13).'         <td bgColor="#f0f0f0" rowspan=2><b>'.VisualIndicador($w_dir_volta,$w_cliente,'IGE',$TP,'IGE').'</b></td>';
+    $w_html.=chr(13).'       </tr>';
+    $w_html.=chr(13).'       <tr align="center">';
+    $w_html.=chr(13).'         <td bgColor="#f0f0f0"><b>De</b></td>';
+    $w_html.=chr(13).'         <td bgColor="#f0f0f0"><b>De</b></td>';
+    $w_html.=chr(13).'       </tr>';
+    $w_cor=$conTrBgColor;
+    foreach ($RS1 as $row) {
+      $w_cor = ($w_cor==$conTrBgColor || $w_cor=='') ? $w_cor=$conTrAlternateBgColor : $w_cor=$conTrBgColor;
+      $w_html .=chr(13).'      <tr bgcolor="'.$w_cor.'" valign="top">';
+      $w_html .=chr(13).'        <td width="1%" nowrap>';
+      $w_html .=chr(13).ExibeImagemSolic(f($row,'sigla'),f($row,'inicio'),f($row,'fim'),f($row,'inicio_real'),f($row,'fim_real'),f($row,'aviso_prox_conc'),f($row,'aviso'),f($row,'sg_tramite'), null);
+      $w_html .=chr(13).'        <A class="HL" HREF="'.$conRootSIW.'projeto.php?par=Visual&R='.$w_pagina.$par.'&O=L&w_chave='.f($row,'sq_siw_solicitacao').'&w_tipo=Volta&P1='.$P1.'&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP='.$TP.'&SG='.f($row,'sigla').MontaFiltro('GET').'" title="Exibe as informações deste registro.">'.f($row,'sq_siw_solicitacao').'&nbsp;</a>'.exibeImagemRestricao(f($row,'restricao'),'P');
+      $w_html .=chr(13).'        <td>'.ExibePessoa($w_dir_volta,$w_cliente,f($row,'solicitante'),$TP,f($row,'nm_solic')).'</td>';
+      $w_html .=chr(13).'        <td>'.Nvl(f($row,'titulo'),'-').'</td>';
+      $w_html .=chr(13).'        <td align="center">&nbsp;'.FormataDataEdicao(f($row,'inicio'),5).'</td>';
+      $w_html .=chr(13).'        <td align="center">&nbsp;'.FormataDataEdicao(f($row,'fim'),5).'</td>';
+      if (f($row,'sg_tramite')=='AT') {
+        $w_html .=chr(13).'        <td align="right">'.number_format(f($row,'custo_real'),2,',','.').'&nbsp;</td>';
+        $w_parcial += f($row,'custo_real');
+      } else {
+        $w_html .=chr(13).'        <td align="right">'.number_format(f($row,'valor'),2,',','.').'&nbsp;</td>';
+        $w_parcial += f($row,'valor');
+      } 
+      $w_html .=chr(13).'        <td align="center">'.ExibeSmile('IDE',f($row,'ide')).'</td>';
+      $w_html .=chr(13).'        <td align="right">'.formatNumber(f($row,'ide')).'%</td>';
+      $w_html .=chr(13).'        <td align="right">'.formatNumber(f($row,'ige')).'%</td>';
     } 
-    $w_html.=chr(13).'  <ul>'.substr($w_erro,1,1000).'</ul>';
-    $w_html.=chr(13).'  </font></td></tr>';
-  } 
+    if ($w_parcial>0) {
+      $w_html .=chr(13).'        <tr bgcolor="'.$conTrBgColor.'">';
+      $w_html .=chr(13).'          <td colspan=5 align="right"><b>Total&nbsp;</td>';
+      $w_html .=chr(13).'          <td align="right"><b>'.number_format($w_parcial,2,',','.').'&nbsp;</td>';
+      $w_html .=chr(13).'          <td colspan=3>&nbsp;</td>';
+      $w_html .=chr(13).'        </tr>';
+    }
+    $w_html.=chr(13).'         </table></td></tr>';
+    $w_html.=chr(13).'      <tr><td colspan="2"><font size="1">Observação: a listagem exibe apenas os projetos nos quais você tenha alguma permissão.</font></td></tr>';
+  }    
   // Acompanhamento Financeiro
   $RS1 = db_getLinkData::getInstanceOf($dbms,$w_cliente,'PJCAD');
   $RS2 = db_getSolicList::getInstanceOf($dbms,f($RS1,'sq_menu'),$l_usuario,'PJCAD',3,
@@ -482,7 +528,24 @@ function VisualConvenio($l_chave,$l_O,$l_usuario,$l_P1,$l_P4) {
       }       
     }
     $w_html .= chr(13).'         </table></td></tr>';
-  }  
+  }
+  
+  // Se for envio, executa verificações nos dados da solicitação
+  $w_erro = ValidaConvenio($w_cliente,$l_chave,substr($SG,0,3).'GERAL',null,null,null,Nvl($w_tramite,0));
+  if ($w_erro>'') {
+    $w_html.=chr(13).'<tr><td colspan=6><font size=2>';
+    $w_html.=chr(13).'<HR>';
+    if (substr($w_erro,0,1)=='0') {
+      $w_html.=chr(13).'  <font color="#BC3131"><b>ATENÇÃO:</b></font> Foram identificados os erros listados abaixo, não sendo possível seu encaminhamento para fases posteriores à atual.';
+    } elseif (substr($w_erro,0,1)=='1') {
+      $w_html.=chr(13).'  <font color="#BC3131"><b>ATENÇÃO:</b></font> Foram identificados os erros listados abaixo. Seu encaminhamento para fases posteriores à atual só pode ser feito por um gestor do sistema ou do módulo de projetos.';
+    } else {
+      $w_html.=chr(13).'  <font color="#BC3131"><b>ATENÇÃO:</b></font> Foram identificados os alertas listados abaixo. Eles não impedem o encaminhamento para fases posteriores à atual, mas convém sua verificação.';
+    } 
+    $w_html.=chr(13).'  <ul>'.substr($w_erro,1,1000).'</ul>';
+    $w_html.=chr(13).'  </font></td></tr>';
+  }
+  
   if ($l_P1==4 && ($l_O=='L' || $l_O=='V' || $l_O=='T')) {
     // Encaminhamentos
     $RS = db_getSolicLog::getInstanceOf($dbms,$l_chave,null,'LISTA');

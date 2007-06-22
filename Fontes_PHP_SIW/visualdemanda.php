@@ -69,19 +69,14 @@ function VisualDemanda($l_chave,$operacao,$w_usuario) {
     $l_html.=chr(13).'      <tr><td colspan="2"><hr NOSHADE color=#000000 size=4></td></tr>';
     // Identificação da demanda
     $l_html.=chr(13).'      <tr><td colspan="2"><br><font size="2"><b>'.$l_nome_menu['GERAL'].'<hr NOSHADE color=#000000 SIZE=1></b></font></td></tr>';  
-    if (nvl(f($RS,'nm_projeto'),'')>'') {
-      $l_html.=chr(13).'      <tr><td width="30%"><b>Projeto: </b></td>';
-      $l_html.=chr(13).'        <td>'.f($RS,'nm_projeto').'  ('.f($RS,'sq_solic_pai').')</td></tr>';
-    } 
+
+    // Exibe a vinculação
+    $l_html.=chr(13).'      <tr><td valign="top" width="30%"><b>Vinculação: </b></td>';
+    $l_html.=chr(13).'        <td>'.exibeSolic($w_dir,f($RS,'sq_solic_pai'),f($RS,'dados_pai'),'S').'</td></tr>';
 
     if (nvl(f($RS,'nm_etapa'),'')>'') {
       $l_html.=chr(13).'      <tr><td valign="top"><b>Etapa: </b></td>';
       $l_html.=chr(13).'        <td>'.MontaOrdemEtapa(f($RS,'sq_projeto_etapa')).'. '.f($RS,'nm_etapa').'</td></tr>';
-    } 
-
-    if (nvl(f($RS,'ds_restricao'),'')>'') {
-      $l_html.=chr(13).'      <tr><td valign="top"><b>'.f($RS,'nm_tipo_restricao').': </b></td>';
-      $l_html.=chr(13).'        <td>'.f($RS,'ds_restricao').'</td></tr>';
     } 
 
     if (nvl(f($RS,'sq_demanda_pai'),'')>'') {
@@ -91,11 +86,17 @@ function VisualDemanda($l_chave,$operacao,$w_usuario) {
       $l_html.=chr(13).'        <td><A class="HL" HREF="'.$w_pagina.'Visual&R='.$w_pagina.$par.'&O=L&w_chave='.f($RS1,'sq_siw_solicitacao').'&P1='.$P1.'&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP='.$TP.'&SG='.$SG.MontaFiltro('GET').'" title="Exibe as informações deste registro." target="_blank">'.f($RS1,'sq_siw_solicitacao').'</a> - '.f($RS1,'assunto').' </td></tr>';
     } 
 
-    // Se a classificação foi informada, exibe.
-    if (nvl(f($RS,'sq_cc'),'')>'') {
-      $l_html.=chr(13).'      <tr valign="top"><td><b>Classificação:</b></td>';
-      $l_html.=chr(13).'        <td>'.f($RS,'cc_nome').' </td></tr>';
+    if (nvl(f($RS,'ds_restricao'),'')>'') {
+      $l_html.=chr(13).'      <tr><td valign="top"><b>'.f($RS,'nm_tipo_restricao').': </b></td>';
+      $l_html.=chr(13).'        <td>'.f($RS,'ds_restricao').'</td></tr>';
     } 
+
+    // Se a classificação foi informada, exibe.
+    if (Nvl(f($RS,'sq_cc'),'')>'') {
+      $l_html .= chr(13).'      <tr><td width="30%"><b>Classificação:<b></td>';
+      $l_html .= chr(13).'        <td>'.f($RS,'cc_nome').' </td></tr>';
+    }
+
     $l_html.=chr(13).'        <tr valign="top"><td><b>Local de execução:</b></td>';
       $l_html.=chr(13).'        <td>'.f($RS,'nm_cidade').' ('.f($RS,'co_uf').')</td></tr>';
     if (Nvl(f($RS,'proponente'),'')>'') {
@@ -123,6 +124,9 @@ function VisualDemanda($l_chave,$operacao,$w_usuario) {
     $l_html.=chr(13).'          <td>'.RetornaPrioridade(f($RS,'prioridade')).' </td></tr>';
     $l_html.=chr(13).'        <tr valign="top"><td><b>Palavras-chave:</b></td>';
     $l_html.=chr(13).'          <td>'.nvl(f($RS,'palavra_chave'),'---').' </td></tr>';
+    $l_html.=chr(13).'        <tr><td><b>Fase atual:</b></td>';
+    $l_html.=chr(13).'          <td>'.Nvl(f($RS,'nm_tramite'),'-').'</td></tr>';
+
     $RSQuery = db_getSolicList::getInstanceOf($dbms,f($RS,'sq_menu'),$w_usuario,f($RS,'sigla'),4,
             null,null,null,null,null,null,null,null,null,null,null, null, null, null, null, null, null,
             null, null, null, null,null, null, null, f($RS,'sq_siw_solicitacao'), null);

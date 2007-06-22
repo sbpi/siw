@@ -78,7 +78,7 @@ function Principal() {
 
   // Configura caminhos para recuperação de arquivos de configuração e arquivos de dados
   $w_caminho = $conFilePhysical.$w_cliente.'/mail_log';
-  $w_arquivo = $w_caminho.'/'.date(Ymd.'_'.Gis.'_'.time()).'.log';
+  $w_arquivo = $w_caminho.'/'.$w_cliente.'_'.date(Ymd.'_'.Gis.'_'.time()).'.log';
 
   if (!file_exists($w_caminho)) {
     mkdir($w_caminho);
@@ -94,6 +94,7 @@ function Principal() {
     $i = 0;
     foreach ($RS_Solic as $row) {
       if (nvl(f($row,'email'),'')!='' && f($row,'vinc_mail_alerta')=='S') {
+        $RS_Usuario[f($row,'cliente')][f($row,'usuario')]['chave'] = f($row,'sq_usuario');
         $RS_Usuario[f($row,'cliente')][f($row,'usuario')]['nome'] = f($row,'nm_usuario');
         $RS_Usuario[f($row,'cliente')][f($row,'usuario')]['mail'] = f($row,'email');
         $RS_Usuario[f($row,'cliente')][f($row,'usuario')]['solic'][$i] = $row;
@@ -107,6 +108,7 @@ function Principal() {
     $i = 0;
     foreach ($RS_Pacote as $row) {
       if (nvl(f($row,'email'),'')!='' && f($row,'vinc_mail_alerta')=='S') {
+        $RS_Usuario[f($row,'cliente')][f($row,'usuario')]['chave'] = f($row,'sq_usuario');
         $RS_Usuario[f($row,'cliente')][f($row,'usuario')]['nome'] = f($row,'nm_usuario');
         $RS_Usuario[f($row,'cliente')][f($row,'usuario')]['mail'] = f($row,'email');
         $RS_Usuario[f($row,'cliente')][f($row,'usuario')]['pacote'][$i] = $row;
@@ -114,30 +116,34 @@ function Principal() {
       }
     }
     
-    foreach($RS_Usuario as $Cliente => $Usuario) {
-      foreach($Usuario as $chave => $registros) {
-        $w_assunto       = 'Alertas - '.formataDataEdicao(time(),5);
-        $w_destinatarios = $registros['mail'].'|'.$registros['nome'].';';
+    if (count($RS_Usuario) > 0) {
+      foreach($RS_Usuario as $Cliente => $Usuario) {
+        foreach($Usuario as $chave => $registros) {
+          $w_assunto       = 'Alertas - '.formataDataEdicao(time(),5);
+          $w_destinatarios = $registros['mail'].'|'.$registros['nome'].';';
         
-        $w_msg='<HTML>'.$crlf;
-        $w_msg.='<base href="'.$conRootSIW.'">'.$crlf;
-        $w_msg.=BodyOpenMail(null).$crlf;
-        $w_msg.='<table border="0" cellpadding="0" cellspacing="0" width="100%">'.$crlf;
-        $w_msg.='<tr><td align="center">'.$crlf;
-        $w_msg.='  <table width="100%" border="0">'.$crlf;
-        $w_msg.=VisualAlerta($w_cliente, $w_usuario, 'MAIL', $registros['solic'], $registros['pacote']);
-        $w_msg.='  </table>'.$crlf;
-        $w_msg.='</table>'.$crlf;
-        $w_msg.='</BODY>'.$crlf;
-        $w_msg.='</HTML>'.$crlf;
+          $w_msg='<HTML>'.$crlf;
+          $w_msg.='<base href="'.$conRootSIW.'">'.$crlf;
+          $w_msg.=BodyOpenMail(null).$crlf;
+          $w_msg.='<table border="0" cellpadding="0" cellspacing="0" width="100%">'.$crlf;
+          $w_msg.='<tr><td align="center">'.$crlf;
+          $w_msg.='  <table width="100%" border="0">'.$crlf;
+          $w_msg.=VisualAlerta($w_cliente, $registros['chave'], 'MAIL', $registros['solic'], $registros['pacote']);
+          $w_msg.='  </table>'.$crlf;
+          $w_msg.='</table>'.$crlf;
+          $w_msg.='</BODY>'.$crlf;
+          $w_msg.='</HTML>'.$crlf;
 
-        $w_resultado = EnviaMail($w_assunto,$w_msg,$w_destinatarios,null);
-        if (nvl($w_resultado,'')=='') {
-          fwrite($w_log, '[OK]'.$registros['nome'].' ('.$registros['mail'].')'.$crlf);
-        } else {
-          fwrite($w_log, '[ER]'.$registros['nome'].' ('.$registros['mail'].'): '.$w_resultado.$crlf);
+          $w_resultado = EnviaMail($w_assunto,$w_msg,$w_destinatarios,null);
+          if (nvl($w_resultado,'')=='') {
+            fwrite($w_log, '[OK]'.$registros['nome'].' ('.$registros['mail'].')'.$crlf);
+          } else {
+            fwrite($w_log, '[ER]'.$registros['nome'].' ('.$registros['mail'].'): '.$w_resultado.$crlf);
+          }
         }
       }
+    } else {
+      fwrite($w_log, 'Nenhum e-mail enviado'.$crlf);
     }
   }
 

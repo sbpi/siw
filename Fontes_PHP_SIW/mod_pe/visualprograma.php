@@ -54,7 +54,7 @@ function VisualPrograma($l_chave,$l_o,$l_usuario,$l_p1,$l_formato,$l_identificac
     $l_html.=chr(13).'       <td>'.f($RS,'nm_horizonte').'</td></tr>';
     $l_html.=chr(13).'   <tr><td><b>Parcerias:</b></td>';
     $l_html.=chr(13).'       <td>'.CRLF2BR(Nvl(f($RS,'palavra_chave'),'-')).'</td></tr>';
-    $l_html.=chr(13).'   <tr><td><b>Fase Atual do Programa:</b></td>';
+    $l_html.=chr(13).'   <tr><td><b>Fase atual:</b></td>';
     $l_html.=chr(13).'       <td>'.Nvl(f($RS,'nm_tramite'),'-').'</td></tr>';
   } 
   if ($O=='T') {

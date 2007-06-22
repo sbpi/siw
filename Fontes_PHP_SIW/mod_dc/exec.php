@@ -319,6 +319,7 @@ function ExecCom() {
 // -------------------------------------------------------------------------
 function InputCom() {
   extract($GLOBALS);
+
   ShowHTML('<html>');
   ShowHTML('<HEAD>');
   ScriptOpen('JavaScript');

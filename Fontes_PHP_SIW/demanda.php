@@ -31,6 +31,8 @@ include_once('classes/sp/db_getTramiteList.php');
 include_once('classes/sp/db_getSiwCliModLis.php');
 include_once('classes/sp/db_getBenef.php');
 include_once('funcoes/selecaoCC.php');
+include_once($w_dir_volta.'funcoes/selecaoServico.php');
+include_once($w_dir_volta.'funcoes/selecaoSolic.php');
 include_once('funcoes/selecaoPessoa.php');
 include_once('funcoes/selecaoUnidade.php');
 include_once('funcoes/selecaoPais.php');
@@ -664,6 +666,22 @@ function Geral() {
   $w_chave      = $_REQUEST['w_chave'];
   $w_readonly   = '';
   $w_erro       = '';
+  
+  // Verifica se o cliente tem o módulo de acordos contratado
+  $RS = db_getSiwCliModLis::getInstanceOf($dbms,$w_cliente,null,'AC');
+  if (count($RS)>0) $w_acordo='S'; else $w_acordo='N'; 
+
+  // Verifica se o cliente tem o módulo viagens contratado
+  $RS = db_getSiwCliModLis::getInstanceOf($dbms,$w_cliente,null,'PD');
+  if (count($RS)>0) $w_viagem='S'; else $w_viagem='N'; 
+
+  $RS = db_getSiwCliModLis::getInstanceOf($dbms,$w_cliente,null,'IS');
+  if (count($RS)>0) $w_acao='S'; else $w_acao='N'; 
+
+  // Verifica se o cliente tem o módulo de planejamento estratégico
+  $RS = db_getSiwCliModLis::getInstanceOf($dbms,$w_cliente,null,'PE');
+  if (count($RS)>0) $w_pe='S'; else $w_pe='N'; 
+  
 
   // Verifica se há necessidade de recarregar os dados da tela a partir
   // da própria tela (se for recarga da tela) ou do banco de dados (se não for inclusão)
@@ -705,6 +723,7 @@ function Geral() {
     $w_cidade           = $_REQUEST['w_cidade'];
     $w_palavra_chave    = $_REQUEST['w_palavra_chave'];
     $w_sqcc             = $_REQUEST['w_sqcc'];
+    $w_sq_menu_relac    = $_REQUEST['w_sq_menu_relac'];
   } else {
     if (!(strpos('AEV',$O)===false) || $w_copia>'') {
       // Recupera os dados da demanda
@@ -749,9 +768,13 @@ function Geral() {
         $w_uf               = f($RS,'co_uf');
         $w_cidade           = f($RS,'sq_cidade_origem');
         $w_palavra_chave    = f($RS,'palavra_chave');
+        $w_dados_pai        = explode('|@|',f($RS,'dados_pai'));
+        $w_sq_menu_relac    = $w_dados_pai[3];
+        if (nvl($w_sqcc,'')!='') $w_sq_menu_relac='CLASSIF';
       } 
     } 
-  } 
+  }
+  if(nvl($w_sq_menu_relac,0)>0) $RS_Relac = db_getMenuData::getInstanceOf($dbms,$w_sq_menu_relac);
   Cabecalho();
   ShowHTML('<HEAD>');
   // Monta o código JavaScript necessário para validação de campos e preenchimento automático de máscara,
@@ -766,10 +789,17 @@ function Geral() {
   if ($O=='I' || $O=='A') {
     ShowHTML('  if (theForm.Botao.value == "Troca") { return true; }');
     Validate('w_assunto','Detalhamento','1',1,5,2000,'1','1');
-    if (f($RS_Menu,'solicita_cc')=='S') {
-      Validate('w_sqcc','Classificação','SELECT',1,1,18,'','0123456789');
-    } 
-    Validate('w_solicitante','Solicitante','HIDDEN',1,1,18,'','0123456789');
+    if(nvl($w_sq_menu_relac,'')>'') {
+      Validate('w_sq_menu_relac','Vincular a','SELECT',1,1,18,1,1);
+      if ($w_sq_menu_relac=='CLASSIF') {
+        Validate('w_sqcc','Classificação','SELECT',1,1,18,1,1);
+      } else {
+        Validate('w_chave_pai','Vinculação','SELECT',1,1,18,1,1);
+      }
+    } else {
+      Validate('w_sq_menu_relac','Vincular a','SELECT',1,1,18,1,1);
+    }
+    Validate('w_solicitante','Responsável','HIDDEN',1,1,18,'','0123456789');
     Validate('w_sq_unidade_resp','Setor responsável','HIDDEN',1,1,18,'','0123456789');
     Validate('w_prioridade','Prioridade','SELECT',1,1,1,'','0123456789');
     switch (f($RS_Menu,'data_hora')) {
@@ -853,11 +883,21 @@ function Geral() {
     ShowHTML('      <tr><td>Os dados deste bloco serão utilizados para identificação da demanda, bem como para o controle de sua execução.</td></tr>');
     ShowHTML('      <tr><td align="center" height="1" bgcolor="#000000"></td></tr>');
     ShowHTML('      <tr><td valign="top"><b>Detalh<u>a</u>mento:</b><br><textarea '.$w_Disabled.' accesskey="A" name="w_assunto" class="STI" ROWS=5 cols=75 title="Escreva um texto de detalhamento para esta demanda">'.$w_assunto.'</TEXTAREA></td>');
-    if (f($RS_Menu,'solicita_cc')=='S') {
-      ShowHTML('          <tr>');
-      SelecaoCC('C<u>l</u>assificação:','L','Selecione um dos itens relacionados.',$w_sqcc,null,'w_sqcc','SIWSOLIC');
-      ShowHTML('          </tr>');
-    } 
+    ShowHTML('          <tr valign="top">');
+    selecaoServico('<U>V</U>incular a:', 'S', null, $w_sq_menu_relac, $w_menu, null, 'w_sq_menu_relac', 'MENURELAC', 'onChange="document.Form.action=\''.$w_pagina.$par.'\'; document.Form.O.value=\''.$O.'\'; document.Form.w_troca.value=\'w_sq_menu_relac\'; document.Form.submit();"', $w_acordo, $w_acao, $w_viagem);
+    if(Nvl($w_sq_menu_relac,'')!='') {
+      ShowHTML('          <tr valign="top">');
+      if ($w_sq_menu_relac=='CLASSIF') {
+        SelecaoSolic('Classificação:',null,null,$w_cliente,$w_sqcc,$w_sq_menu_relac,null,'w_sqcc','SIWSOLIC',null);
+      } else {
+        SelecaoSolic('Vinculação:',null,null,$w_cliente,$w_chave_pai,$w_sq_menu_relac,f($RS_Menu,'sq_menu'),'w_chave_pai',f($RS_Relac,'sigla'),null);
+      }
+    }    
+    //if (f($RS_Menu,'solicita_cc')=='S') {
+    //  ShowHTML('          <tr>');
+    //  SelecaoCC('C<u>l</u>assificação:','L','Selecione um dos itens relacionados.',$w_sqcc,null,'w_sqcc','SIWSOLIC');
+    //  ShowHTML('          </tr>');
+    //} 
     ShowHTML('      <tr><td valign="top" colspan="2"><table border=0 width="100%" cellspacing=0>');
     if($O=='I') SelecaoPessoa('Respo<u>n</u>sável:','N','Selecione o solicitante da demanda na relação.',$w_solicitante,null,'w_solicitante','USUARIOS','onChange="document.Form.action=\''.$w_pagina.$par.'\'; document.Form.w_troca.value=\'w_solicitante\'; document.Form.submit();"');
     else        SelecaoPessoa('Respo<u>n</u>sável:','N','Selecione o solicitante da demanda na relação.',$w_solicitante,null,'w_solicitante','USUARIOS');
@@ -1977,7 +2017,7 @@ function Grava() {
             $_SESSION['SQ_PESSOA'],null,$_REQUEST['w_sqcc'],$_REQUEST['w_descricao'],$_REQUEST['w_justificativa'],'0',$_REQUEST['w_inicio'],$_REQUEST['w_fim'],$_REQUEST['w_valor'],
             $_REQUEST['w_data_hora'], $_REQUEST['w_sq_unidade_resp'], $_REQUEST['w_assunto'], $_REQUEST['w_prioridade'], $_REQUEST['w_aviso'], $_REQUEST['w_dias'],
             $_REQUEST['w_cidade'], $_REQUEST['w_palavra_chave'],null, null, null, null, null, null, null,
-            null, null, null, null, null, &$w_chave_nova, $w_copia);
+            $_REQUEST['w_chave_pai'], null, null, null, null, &$w_chave_nova, $w_copia);
         if ($O=='I') {
           // Recupera os dados para montagem correta do menu
           $RS1 = db_getMenuData::getInstanceOf($dbms,$w_menu);

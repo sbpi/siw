@@ -402,7 +402,7 @@ function Rel_Progresso() {
               ShowHTML('          </tr>');
               $w_cor=$conTrBgColor;
               $w_total_previsto  = 0;
-              $w_total_executado = 0;
+              $w_total_real      = 0;
               foreach ($RS1 as $row1) {
                 $RS_Cronograma = db_getCronograma::getInstanceOf($dbms,f($row1,'sq_projeto_rubrica'),null,$w_inicio,$w_fim);
                 $RS_Cronograma = SortArray($RS_Cronograma,'inicio', 'asc', 'fim', 'asc');

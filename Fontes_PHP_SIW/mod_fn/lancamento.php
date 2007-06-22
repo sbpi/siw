@@ -357,7 +357,7 @@ function Inicial() {
       ShowHTML('          <td><b>'.LinkOrdena('Código','codigo_interno').'</td>');
       ShowHTML('          <td><b>'.LinkOrdena('Pessoa','nm_pessoa_resumido').'</td>');
       if (!(strpos($SG,'CONT')===false))  ShowHTML('          <td><b>'.LinkOrdena('Contrato (Parcela)','cd_acordo').'</td>');
-      else                                ShowHTML('          <td><b>'.'Classif./Projeto'.'</td>');
+      else                                ShowHTML ('          <td><b>'.LinkOrdena('Vinculação','dados_pai').'</td>');
       ShowHTML('          <td><b>'.LinkOrdena('Data','vencimento').'</td>');
       ShowHTML('          <td><b>'.LinkOrdena('Valor','valor').'</td>');
       ShowHTML('          <td><b>'.LinkOrdena('Fase','nm_tramite').'</td>');
@@ -367,7 +367,7 @@ function Inicial() {
       ShowHTML('          <td><b>Código</td>');
       ShowHTML('          <td><b>Pessoa</td>');
       if (!(strpos($SG,'CONT')===false))  ShowHTML('          <td><b>Contrato (Parcela)</td>');
-      else                                ShowHTML('          <td><b>'.'Classif./Projeto'.'</td>');
+      else                                ShowHTML('          <td><b>Vinculação</td>');
       ShowHTML('          <td><b>Data</td>');
       ShowHTML('          <td><b>Valor</td>');
       ShowHTML('          <td><b>Fase</td>');
@@ -391,14 +391,14 @@ function Inicial() {
         } else {
           ShowHTML('        <td align="center">---</td>');
         }
-        if (!(strpos($SG,'CONT')===false)) {    
+        if (strpos($SG,'CONT')!==false) {
           if ($w_tipo!='WORD') ShowHTML('        <td><A class="hl" HREF="'.'mod_ac/contratos.php?par=Visual&O=L&w_chave='.f($row,'sq_solic_pai').'&w_tipo=&P1=2&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP='.$TP.'&SG=GC'.substr($SG,2,1).'CAD" title="Exibe as informações do acordo." target="_blank">'.f($row,'cd_acordo').' ('.f($row,'or_parcela').')</a></td>');
           else                 ShowHTML('        <td>'.f($row,'cd_acordo').' ('.f($row,'or_parcela').')</td>');
         } else {
-          if (Nvl(f($row,'sq_solic_pai'),0)==0) ShowHTML('        <td>'.f($row,'nm_cc').'</td>');
-          else {
-            if ($w_tipo!='WORD') ShowHTML('        <td><A class="hl" HREF="'.'projeto.php?par=Visual&O=L&w_chave='.f($row,'sq_solic_pai').'&w_tipo=Volta&P1=2&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP='.$TP.'&SG='.$SG.'" title="Exibe as informações do projeto." target="_blank">'.f($row,'nm_projeto').'</a></td>');
-            else                 ShowHTML('        <td>'.f($row,'nm_projeto').'</td>'); 
+          if (Nvl(f($row,'dados_pai'),'')!='') {
+            ShowHTML('        <td>'.exibeSolic($w_dir,f($row,'sq_solic_pai'),f($row,'dados_pai'),'S',$w_tipo).'</td>');
+          } else {
+            ShowHTML('        <td>---</td>');
           }
         } 
         ShowHTML('        <td align="center">&nbsp;'.Nvl(FormataDataEdicao(f($row,'vencimento')),'-').'</td>');
@@ -723,20 +723,22 @@ function Geral() {
     Validate('w_vencimento','Vencimento','DATA',1,10,10,'','0123456789/');
     Validate('w_tipo_pessoa','Lançamento para pessoa','SELECT',1,1,18,'','0123456789');   
     Validate('w_sq_forma_pagamento','Forma de recebimento','SELECT',1,1,18,'','0123456789');       
-    if ($w_qtd_nota>0) Validate('w_valor','Valor total do documento','VALOR','1',4,18,'','0123456789.,');
-    Validate('w_chave_pai','Projeto','SELECT','',1,18,'','0123456789');
-    Validate('w_sqcc','Classificação','SELECT','',1,18,'','0123456789');
-    if (!(($w_chave_pai >'') && (Nvl($w_tipo_rubrica,0)==1))) {
-      ShowHTML('  if (theForm.w_chave_pai.selectedIndex > 0 && theForm.w_sqcc.selectedIndex > 0) {');
-      ShowHTML('     alert(\'Informe um projeto ou uma classificação. Você não pode escolher ambos!\');');
-      ShowHTML('     theForm.w_chave_pai.focus();');
-      ShowHTML('     return false;');
-      ShowHTML('  }');
-      ShowHTML('  if (theForm.w_chave_pai.selectedIndex == 0 && theForm.w_sqcc.selectedIndex == 0) {');
-      ShowHTML('     alert(\'Informe um projeto ou uma classificação!\');');
-      ShowHTML('     theForm.w_chave_pai.focus();');
-      ShowHTML('     return false;');
-      ShowHTML('  }');
+    if ($w_qtd_nota==0) Validate('w_valor','Valor total do documento','VALOR','1',4,18,'','0123456789.,');
+    if (strpos('CONT',substr($SG,3))!==false) {
+      Validate('w_chave_pai','Projeto','SELECT','',1,18,'','0123456789');
+      Validate('w_sqcc','Classificação','SELECT','',1,18,'','0123456789');
+      if (!(nvl($w_chave_pai,'')!='' && Nvl($w_tipo_rubrica,0)==1)) {
+        ShowHTML('  if (theForm.w_chave_pai.selectedIndex > 0 && theForm.w_sqcc.selectedIndex > 0) {');
+        ShowHTML('     alert(\'Informe um projeto ou uma classificação. Você não pode escolher ambos!\');');
+        ShowHTML('     theForm.w_chave_pai.focus();');
+        ShowHTML('     return false;');
+        ShowHTML('  }');
+        ShowHTML('  if (theForm.w_chave_pai.selectedIndex == 0 && theForm.w_sqcc.selectedIndex == 0) {');
+        ShowHTML('     alert(\'Informe um projeto ou uma classificação!\');');
+        ShowHTML('     theForm.w_chave_pai.focus();');
+        ShowHTML('     return false;');
+        ShowHTML('  }');
+      }
     }
   } 
   ValidateClose();
@@ -795,7 +797,6 @@ function Geral() {
       ShowHTML('<INPUT type="hidden" name="w_chave_pai" value="'.$w_chave_pai.'">');
       ShowHTML('<INPUT type="hidden" name="w_sqcc" value="'.$w_sqcc.'">');
     } 
-    if (strpos('EVENT',substr($SG,3))!==false) ShowHTML('<INPUT type="hidden" name="w_sqcc" value="'.$w_sqcc.'">');
     ShowHTML('<tr bgcolor="'.$conTrBgColor.'"><td>');
     ShowHTML('    <table width="100%" border="0">');
     ShowHTML('      <tr><td align="center" height="2" bgcolor="#000000"></td></tr>');
@@ -820,11 +821,11 @@ function Geral() {
     }
     if (substr($SG,0,3)=='FNR')     SelecaoFormaPagamento('<u>F</u>orma de recebimento:','F','Selecione na lista a forma de recebimento para este lançamento.',$w_sq_forma_pagamento,$SG,'w_sq_forma_pagamento',null);
     elseif (substr($SG,0,3)=='FND') SelecaoFormaPagamento('<u>F</u>orma de pagamento:','F','Selecione na lista a forma de pagamento para este lançamento.',$w_sq_forma_pagamento,$SG,'w_sq_forma_pagamento',null);
-    if ($w_qtd_nota>0) {
+    if ($w_qtd_nota==0) {
+      ShowHTML('          <td><b><u>V</u>alor:</b><br><input '.$w_Disabled.' accesskey="V" type="text" name="w_valor" class="sti" SIZE="18" MAXLENGTH="18" VALUE="'.$w_valor.'" onKeyDown="FormataValor(this,18,2,event);" title="Informe o valor total do documento."></td>');
+    } else {
       ShowHTML('          <td>Valor:<br><b>'.$w_valor.'</b></td>');
       ShowHTML('          <INPUT type="hidden" name="w_valor" value="'.$w_valor.'">');
-    } else {
-      ShowHTML('          <td><b><u>V</u>alor:</b><br><input '.$w_Disabled.' accesskey="V" type="text" name="w_valor" class="sti" SIZE="18" MAXLENGTH="18" VALUE="'.$w_valor.'" onKeyDown="FormataValor(this,18,2,event);" title="Informe o valor total do documento."></td>');
     }
     ShowHTML('              <td><b><u>D</u>ata prevista:</b><br><input '.$w_Disabled.' accesskey="C" type="text" name="w_vencimento" class="sti" SIZE="10" MAXLENGTH="10" VALUE="'.Nvl($w_vencimento,FormataDataEdicao(time())).'" onKeyDown="FormataData(this,event);" onKeyUp="SaltaCampo(this.form.name,this,10,event);">'.ExibeCalendario('Form','w_vencimento').'</td>');
     ShowHTML('          </table>');
@@ -838,7 +839,7 @@ function Geral() {
       // Recupera dados da opção Projetos
       ShowHTML('      <tr>');
       ShowHTML('    <table width="100%" border="0">');
-      if (($w_chave_pai >'') && (Nvl($w_tipo_rubrica,0)==1)) {
+      if (nvl($w_chave_pai,'')!='' && Nvl($w_tipo_rubrica,0)==1) {
         $RS = db_getSolicData::getInstanceOf($dbms,$w_chave_pai,'PJGERAL');
         ShowHTML('<INPUT type="hidden" name="w_chave_pai" value="'.$w_chave_pai.'">');
         ShowHTML('  <tr><td><b>Projeto: </b><br>'.f($RS,'titulo').'</td>');
@@ -1858,8 +1859,8 @@ function RubricaDoc() {
     if(f($RS1,'tipo_rubrica')==1) {
       ShowHTML('            <td NOWRAP>&nbsp;');
     } else { 
-      ShowHTML('            <td NOWRAP><font size="2"><U ID="INICIO" STYLE="cursor:hand;" CLASS="hl" onClick="javascript:MarcaTodos();" TITLE="Marca todos os itens da relação"><IMG SRC="images/NavButton/BookmarkAndPageActivecolor.gif" BORDER="1" width="15" height="15"></U>&nbsp;');
-      ShowHTML('                                      <U STYLE="cursor:hand;" CLASS="hl" onClick="javascript:DesmarcaTodos();" TITLE="Desmarca todos os itens da relação"><IMG SRC="images/NavButton/BookmarkAndPageInactive.gif" BORDER="1" width="15" height="15"></U>');     
+      ShowHTML('            <td NOWRAP><font size="2"><U ID="INICIO" CLASS="hl" onClick="javascript:MarcaTodos();" TITLE="Marca todos os itens da relação"><IMG SRC="images/NavButton/BookmarkAndPageActivecolor.gif" BORDER="1" width="15" height="15"></U>&nbsp;');
+      ShowHTML('                                      <U CLASS="hl" onClick="javascript:DesmarcaTodos();" TITLE="Desmarca todos os itens da relação"><IMG SRC="images/NavButton/BookmarkAndPageInactive.gif" BORDER="1" width="15" height="15"></U>');     
     }
     ShowHTML('            <td><b>Código</b></td>');
     ShowHTML('            <td><b>Nome</b></td>');
@@ -2484,8 +2485,8 @@ function BuscaParcela() {
     ShowHTML('<tr><td align="center" colspan=3>');
     ShowHTML('    <TABLE WIDTH="100%" bgcolor="'.$conTableBgColor.'" BORDER="'.$conTableBorder.'" CELLSPACING="'.$conTableCellSpacing.'" CELLPADDING="'.$conTableCellPadding.'" BorderColorDark="'.$conTableBorderColorDark.'" BorderColorLight="'.$conTableBorderColorLight.'">');
     ShowHTML('          <tr bgcolor="'.$conTrBgColor.'" align="center" valign="top">');
-    ShowHTML('            <td NOWRAP rowspan="2"><font size="2"><U ID="INICIO" STYLE="cursor:hand;" CLASS="hl" onClick="javascript:MarcaTodos();" TITLE="Marca todos os itens da relação"><IMG SRC="images/NavButton/BookmarkAndPageActivecolor.gif" BORDER="1" width="15" height="15"></U>&nbsp;');
-    ShowHTML('                                      <U STYLE="cursor:hand;" CLASS="hl" onClick="javascript:DesmarcaTodos();" TITLE="Desmarca todos os itens da relação"><IMG SRC="images/NavButton/BookmarkAndPageInactive.gif" BORDER="1" width="15" height="15"></U>');
+    ShowHTML('            <td NOWRAP rowspan="2"><font size="2"><SPAM ID="INICIO" CLASS="hl" onClick="javascript:MarcaTodos();" TITLE="Marca todos os itens da relação"><IMG SRC="images/NavButton/BookmarkAndPageActivecolor.gif" BORDER="1" width="15" height="15"></SPAM>&nbsp;');
+    ShowHTML('                                      <SPAM CLASS="hl" onClick="javascript:DesmarcaTodos();" TITLE="Desmarca todos os itens da relação"><IMG SRC="images/NavButton/BookmarkAndPageInactive.gif" BORDER="1" width="15" height="15"></SPAM>');
     ShowHTML('            <td rowspan="2"><b>Acordo</b></td>');
     ShowHTML('            <td rowspan="2"><b>Outra parte</b></td>');
     ShowHTML('            <td rowspan="1" colspan="4"><b>Parcela</b></td>');

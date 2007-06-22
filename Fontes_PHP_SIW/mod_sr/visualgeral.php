@@ -12,6 +12,17 @@ function VisualGeral($l_chave,$O,$l_usuario,$l_sg,$P4) {
   $l_html.=chr(13).'      <tr><td colspan="2"><hr NOSHADE color=#000000 size=4></td></tr>';
   $l_html.=chr(13).'      <tr><td colspan="2"  bgcolor="#f0f0f0"><div align=justify><font size="2"><b>SERVIÇO: '.f($RS1,'nome').' ('.f($RS1,'sq_siw_solicitacao').')</b></font></td></tr>';
   $l_html.=chr(13).'      <tr><td colspan="2"><hr NOSHADE color=#000000 size=4></td></tr>';
+
+  // Exibe a vinculação
+  $l_html.=chr(13).'      <tr><td valign="top" width="20%"><b>Vinculação: </b></td>';
+  $l_html.=chr(13).'        <td>'.exibeSolic($w_dir,f($RS1,'sq_solic_pai'),f($RS1,'dados_pai'),'S').'</td></tr>';
+
+  // Se a classificação foi informada, exibe.
+  if (Nvl(f($RS1,'sq_cc'),'')>'') {
+    $l_html .= chr(13).'      <tr><td width="20%"><b>Classificação:<b></td>';
+    $l_html .= chr(13).'        <td>'.f($RS1,'cc_nome').' </td></tr>';
+  }
+
   switch (f($RS1,'data_hora')) {
   case 1 :
     $l_html.=chr(13).'   <tr><td width="20%"><b>Data programada:</b></font></td>';

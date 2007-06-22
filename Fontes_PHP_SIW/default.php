@@ -214,6 +214,7 @@ function LogOn() {
   ShowHTML('} ');
   FormataCPF();
   Modulo();
+  SaltaCampo(); 
   ValidateOpen('Validacao');
   Validate('Login1','CPF','CPF','1','14','14','','1');
   ShowHTML('  if (theForm.par.value == \'Senha\') {');
@@ -252,7 +253,7 @@ function LogOn() {
   ShowHTML('  <tr><td valign="middle" width="100%" height="100%">');
   ShowHTML('      <table width="100%" height="100%" border="0" cellpadding=0 cellspacing=0> ');
   ShowHTML('        <tr><td bgcolor="#003300" width="100%" height="100%" valign="middle"><font size="2" color="#FFFFFF">&nbsp;');
-  ShowHTML('            Usuário: <input class="cText" name="Login1" size="14" maxlength="14" value="'.$w_username.'" onkeyDown="FormataCPF(this,event)">');
+  ShowHTML('            Usuário: <input class="cText" name="Login1" size="14" maxlength="14" value="'.$w_username.'" onkeyDown="FormataCPF(this,event)" onKeyUp="SaltaCampo(this.form.name,this,14,event);">');
   ShowHTML('            Senha: <input class="cText" type="Password" name="Password1" size="19">');
   ShowHTML('            <input class="cButton" type="submit" value="OK" name="Botao" onClick="document.Form.par.value=\'Log\';"> ');
   ShowHTML('            <input class="cButton" type="submit" value="Lembrar senha" name="Botao" onClick="document.Form.par.value=\'Senha\';" title="Informe seu CPF e clique aqui para receber por e-mail sua senha e assinatura eletrônica!"> ');

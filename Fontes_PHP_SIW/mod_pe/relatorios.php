@@ -243,24 +243,25 @@ function Rel_Executivo() {
                   ShowHTML(ExibeImagemSolic(f($row3,'sigla'),f($row3,'inicio'),f($row3,'fim'),f($row3,'inicio_real'),f($row3,'fim_real'),f($row3,'aviso_prox_conc'),f($row3,'aviso'),f($row3,'sg_tramite'), null));
                   if ($p_tipo!='WORD') ShowHTML('            <A class="HL" HREF="projeto.php?par=Visual&O=L&w_chave='.f($row3,'sq_siw_solicitacao').'&P1='.$P1.'&P2='.f($row3,'sq_menu').'&P3='.$P3.'&P4='.$P4.'&TP='.$TP.'&SG='.$SG.MontaFiltro('GET').'" title="Exibe as informações deste registro." target="_blank">'.f($row3,'sq_siw_solicitacao').'&nbsp;</a>');
                   else                 ShowHTML('            '.f($row3,'sq_siw_solicitacao').''); 
+                  ShowHTML('        '.exibeImagemRestricao(f($row,'restricao'),'P'));
                   ShowHTML('            <td align="left">'.f($row3,'titulo').'</td>');
                   if ($p_tipo!='WORD') ShowHTML('            <td align="left">'.ExibePessoa(null,$w_cliente,f($row3,'solicitante'),$TP,f($row3,'nm_solic')).'</td>');
                   else                 ShowHTML('            <td align="left">'.f($row3,'nm_solic').'</td>'); 
                   ShowHTML('            <td>'.Nvl(FormataDataEdicao(f($row3,'inicio')),'-').'</td>');
                   ShowHTML('            <td>'.Nvl(FormataDataEdicao(f($row3,'fim')),'-').'</td>');
-                  ShowHTML('            <td align="right">'.formatNumber(f($row3,'orc_previsto')).'</td>');
+                  ShowHTML('            <td align="right">'.formatNumber(nvl(f($row3,'orc_previsto'),f($row3,'valor'))).'</td>');
                   ShowHTML('            <td>'.Nvl(FormataDataEdicao(f($row3,'inicio_real')),'---').'</td>');
                   ShowHTML('            <td>'.Nvl(FormataDataEdicao(f($row3,'fim_real')),'---').'</td>');
-                  ShowHTML('            <td align="right">'.formatNumber(f($row3,'orc_real')).'</td>');
+                  ShowHTML('            <td align="right">'.formatNumber(nvl(f($row3,'orc_real'),f($row3,'custo_real'))).'</td>');
                   ShowHTML('            <td>'.ExibeSmile('IDE',f($row3,'ide')).'</td>');
                   ShowHTML('            <td align="right">'.formatNumber(f($row3,'ide'),2).'%'.'</td>');
                   ShowHTML('            <td align="right">'.formatNumber(f($row3,'ige'),2).'%'.'</td>');
                   ShowHTML('            <td>'.ExibeSmile('IDC',f($row3,'idc')).'</td>');
-                  ShowHTML('            <td align="right">'.formatNumber(f($row3,'idc'),2).'%'.'</td>');
-                  ShowHTML('            <td align="right">'.formatNumber(f($row3,'igc'),2).'%'.'</td>');
+                  if (f($row3,'idc')<0) ShowHTML('            <td align="center">*</td>'); else ShowHTML('            <td align="right">'.formatNumber(f($row3,'idc'),2).'%'.'</td>');
+                  if (f($row3,'igc')<0) ShowHTML('            <td align="center">*</td>'); else ShowHTML('            <td align="right">'.formatNumber(f($row3,'igc'),2).'%'.'</td>');
                 }
-                $l_previsto[$w_proj] += f($row3,'orc_previsto');
-                $l_realizado[$w_proj] += f($row3,'orc_real');
+                $l_previsto[$w_proj] += nvl(f($row3,'orc_previsto'),f($row3,'valor'));
+                $l_realizado[$w_proj] += nvl(f($row3,'orc_real'),f($row3,'custo_real'));
               } 
               if ($p_projeto=='S') {
                 ShowHTML('<tr valign="top">');
@@ -271,10 +272,15 @@ function Rel_Executivo() {
                 ShowHTML('     <td colspan=6>&nbsp;');
                 ShowHTML('</tr>');
               }
-              $w_proj += 1;
             }
+            $w_proj += 1;
           }
-          if ($p_projeto=='S') ShowHTML('        </table></td></tr>');
+          if ($p_projeto=='S') {
+            ShowHTML('        </table></td></tr>');
+            ShowHTML('      <tr><td colspan="2">Observações:</td></tr>');
+            ShowHTML('      <tr><td colspan="2"><ul><li>A listagem exibe apenas os projetos nos quais você tenha alguma permissão.</li>');
+            ShowHTML('                              <li>(*) Projeto sem orçamento previsto</li></ul></td></tr>');
+          }
           if($p_resumo=='S') {
             ShowHTML('      <tr><td align="center" colspan="2"><br><font size=2><b>QUADRO RESUMO ORÇAMENTÁRIO</b></font></td></tr>');
             ShowHTML('      <tr><td align="center" colspan="2">');
@@ -300,7 +306,6 @@ function Rel_Executivo() {
               ShowHTML('          <tr valign="top">');
               ShowHTML('            <td>'.strtoupper(f($row1,'cd_programa')));
               ShowHTML('            <td>'.f($row1,'titulo').'</td>');
-              //ShowHTML('            <td>'.formatNumber($w_proj).'</td>');
               ShowHTML('            <td align="right">'.formatNumber(f($row1,'valor')).'</td>');
               ShowHTML('            <td align="right">'.formatNumber(nvl($l_previsto[$w_cont],0)).'</td>');
               ShowHTML('            <td align="right">'.formatNumber(nvl($l_realizado[$w_cont],0)).'</td>');
@@ -482,6 +487,7 @@ function Rel_Programas() {
     } else {
       ShowHTML('   <tr><td colspan="2"><table width="100%"><tr><td align="center" valign="top">');
       $w_prog_atual = 0;
+      $w_proj       = 0;
       foreach ($RS1 as $row) {
         if ($w_prog_atual) ShowHTML('<br style="page-break-after:always">');
         ShowHTML(ExibePrograma(f($row,'sq_siw_solicitacao'),'T',$w_usuario,$p_tipo));

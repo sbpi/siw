@@ -155,6 +155,7 @@ switch ($O) {
   default : $w_TP=$TP.' - Listagem';
 } 
 $p_projeto      = strtoupper($_REQUEST['p_projeto']);
+$p_servico      = strtoupper($_REQUEST['p_servico']);
 $p_atividade    = strtoupper($_REQUEST['p_atividade']);
 $p_ativo        = strtoupper($_REQUEST['p_ativo']);
 $p_solicitante  = strtoupper($_REQUEST['p_solicitante']);
@@ -211,8 +212,15 @@ function Inicial() {
   if ($O=='L') {
     if ((strpos(strtoupper($R),'GR_')!==false) || ($w_tipo=='WORD')) {
       $w_filtro='';
-      if ($p_projeto>'' || nvl($p_chave,'')!='') {
-        $RS = db_getSolicData::getInstanceOf($dbms,nvl($p_projeto,$p_chave),'PJGERAL');
+
+      if (nvl($p_projeto,'')!='') {
+        $RS = db_getSolicData::getInstanceOf($dbms,$p_projeto);
+        $w_filtro.='<tr valign="top"><td align="right">Vinculação <td>[<b>'.exibeSolic($w_dir,$p_projeto,f($RS,'dados_solic')).'</b>]';
+      } elseif (nvl($p_servico,'')!='') {
+        $RS = db_getMenuData::getInstanceOf($dbms,$p_servico);
+        $w_filtro.='<tr valign="top"><td align="right">Vinculação <td>[<b>'.f($RS,'nome').'</b>]';
+      } elseif (nvl($p_chave,'')!='') {
+        $RS = db_getSolicData::getInstanceOf($dbms,$p_chave,'PJGERAL');
         $w_filtro.='<tr valign="top"><td align="right">Projeto <td>[<b>'.f($RS,'titulo').'</b>]';
       } 
       if ($p_atividade>'') {
@@ -272,13 +280,13 @@ function Inicial() {
           $p_ini_i,$p_ini_f,$p_fim_i,$p_fim_f,$p_atraso,$p_solicitante,
           $p_unidade,$p_prioridade,$p_ativo,$p_proponente,
           $p_chave, $p_assunto, $p_pais, $p_regiao, $p_uf, $p_cidade, $p_usu_resp,
-          $p_uorg_resp, $p_palavra, $p_prazo, $p_fase, $p_sqcc, $p_projeto, $p_atividade, null, null);
+          $p_uorg_resp, $p_palavra, $p_prazo, $p_fase, $p_sqcc, $p_projeto, $p_atividade, null, null, null, $p_servico);
     } else {
       $RS = db_getSolicList::getInstanceOf($dbms,f($RS,'sq_menu'),$w_usuario,Nvl($_REQUEST['p_agrega'],$SG),$P1,
           $p_ini_i,$p_ini_f,$p_fim_i,$p_fim_f,$p_atraso,$p_solicitante,
           $p_unidade,$p_prioridade,$p_ativo,$p_proponente,
           $p_chave, $p_assunto, $p_pais, $p_regiao, $p_uf, $p_cidade, $p_usu_resp,
-          $p_uorg_resp, $p_palavra, $p_prazo, $p_fase, $p_sqcc, $p_projeto, $p_atividade, null, null);
+          $p_uorg_resp, $p_palavra, $p_prazo, $p_fase, $p_sqcc, $p_projeto, $p_atividade, null, null, null, $p_servico);
     } 
     if ($p_ordena>'') { 
       $lista = explode(',',str_replace(' ',',',$p_ordena));
@@ -393,7 +401,7 @@ function Inicial() {
     if ($w_tipo!='WORD') {
       ShowHTML('          <td rowspan=2><b>'.LinkOrdena('Nº','sq_siw_solicitacao').'</td>');
       ShowHTML('          <td rowspan=2><b>'.LinkOrdena('Projeto','titulo').'</td>');
-      if ($_SESSION['INTERNO']=='S') ShowHTML ('          <td rowspan=2><b>'.LinkOrdena('Vinculação','cd_vinculacao').'</td>');
+      if ($_SESSION['INTERNO']=='S') ShowHTML ('          <td rowspan=2><b>'.LinkOrdena('Vinculação','dados_pai').'</td>');
       ShowHTML('          <td rowspan=2><b>'.LinkOrdena('Responsável','nm_solic').'</td>');
       if ($P1==1 || $P1==2) {
         // Se for cadastramento ou mesa de trabalho
@@ -450,14 +458,14 @@ function Inicial() {
             else                            ShowHTML('        <td title="'.htmlspecialchars(f($row,'titulo')).'">'.htmlspecialchars($w_titulo).'</td>');
           } 
           if ($_SESSION['INTERNO']=='S') {
-            if (Nvl(f($row,'cd_vinculacao'),'')!='') ShowHTML('        <td>'.exibeSolic($w_dir,f($row,'sq_solic_pai'),f($row,'cd_vinculacao')).'</td>');
-            else                                     ShowHTML('        <td>---</td>');
+            if (Nvl(f($row,'dados_pai'),'')!='') ShowHTML('        <td>'.exibeSolic($w_dir,f($row,'sq_solic_pai'),f($row,'dados_pai')).'</td>');
+            else                                 ShowHTML('        <td>---</td>');
           } 
           ShowHTML('        <td>'.ExibePessoa(null,$w_cliente,f($row,'solicitante'),$TP,f($row,'nm_solic')).'</td>');
         } else {
           ShowHTML('        '.f($row,'sq_siw_solicitacao'));
           ShowHTML('        <td>'.Nvl(f($row,'titulo'),'-').'</td>');
-          if ($_SESSION['INTERNO']=='S') ShowHTML('        <td>'.f($row,'cd_vinculacao').'</td>');
+          if ($_SESSION['INTERNO']=='S') ShowHTML('        <td>'.substr(f($row,'dados_pai'),0,strpos(f($row,'dados_pai'),'|@|')).'</td>');
           ShowHTML('        <td>'.f($row,'nm_solic').'</td>');
         }      
         ShowHTML('        <td align="center">&nbsp;'.FormataDataEdicao(f($row,'inicio'),5).'</td>');
@@ -518,8 +526,8 @@ function Inicial() {
                 } 
               } else {
                 ShowHTML('          <A class="HL" HREF="'.$w_pagina.'AtualizaEtapa&R='.$w_pagina.$par.'&O=L&w_chave='.f($row,'sq_siw_solicitacao').'&w_tipo=Volta&P1='.$P1.'&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP='.$TP.'&SG='.$SG.MontaFiltro('GET').'" title="Consulta as etapas do projeto." target="Etapas">EA</A>&nbsp');
-                if (f($row,'resp_risco')=='S')    ShowHTML('          <A class="HL" HREF="mod_pr/restricao.php?par=Restricao&w_chave='.f($row,'sq_siw_solicitacao').'&R='.$w_pagina.$par.'&P1='.$P1.'&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&SG='.$SG.'&TP='.$TP.' - Riscos&SG=RESTSOLIC'.MontaFiltro('GET').'" title="Consulta os riscos do projeto." target="Restricao">RS</A>&nbsp');
-                if (f($row,'resp_problema')=='S') ShowHTML('          <A class="HL" HREF="mod_pr/restricao.php?par=Restricao&w_chave='.f($row,'sq_siw_solicitacao').'&R='.$w_pagina.$par.'&w_problema=S&P1='.$P1.'&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&SG='.$SG.'&TP='.$TP.' - Problema&SG=RESTSOLIC'.MontaFiltro('GET').'" title="Consulta os problemas do projeto." target="Restricao">PB</A>&nbsp');
+                if (f($row,'resp_risco')>0)    ShowHTML('          <A class="HL" HREF="mod_pr/restricao.php?par=Restricao&w_chave='.f($row,'sq_siw_solicitacao').'&R='.$w_pagina.$par.'&P1='.$P1.'&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&SG='.$SG.'&TP='.$TP.' - Riscos&SG=RESTSOLIC'.MontaFiltro('GET').'" title="Consulta os riscos do projeto." target="Restricao">RS</A>&nbsp');
+                if (f($row,'resp_problema')>0) ShowHTML('          <A class="HL" HREF="mod_pr/restricao.php?par=Restricao&w_chave='.f($row,'sq_siw_solicitacao').'&R='.$w_pagina.$par.'&w_problema=S&P1='.$P1.'&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&SG='.$SG.'&TP='.$TP.' - Problema&SG=RESTSOLIC'.MontaFiltro('GET').'" title="Consulta os problemas do projeto." target="Restricao">PB</A>&nbsp');
                 if (RetornaGestor(f($row,'sq_siw_solicitacao'),$w_usuario)=='S') {
                   ShowHTML('          <A class="HL" HREF="'.$w_pagina.'Envio&R='.$w_pagina.$par.'&O=V&w_chave='.f($row,'sq_siw_solicitacao').'&w_tipo=Volta&P1='.$P1.'&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP='.$TP.'&SG='.$SG.MontaFiltro('GET').'" title="Envia o projeto para outro responsável.">EN</A>&nbsp');
                 }
@@ -796,7 +804,8 @@ function Geral() {
         $w_uf                   = f($RS,'co_uf');
         $w_cidade               = f($RS,'sq_cidade_origem');
         $w_palavra_chave        = f($RS,'palavra_chave');
-        $w_sq_menu_relac        = f($RS,'sq_menu_pai');
+        $w_dados_pai            = explode('|@|',f($RS,'dados_pai'));
+        $w_sq_menu_relac        = $w_dados_pai[3];
         if (nvl($w_sqcc,'')!='') $w_sq_menu_relac='CLASSIF';
         $w_plano                = f($RS,'sq_plano');
         $w_objetivo             = f($RS,'sq_peobjetivo');
@@ -820,26 +829,27 @@ function Geral() {
     Validate('w_titulo','titulo','1',1,5,100,'1','1');
     // Trata as possíveis vinculações do projeto
     if($w_pe=='S') {
-      ShowHTML('  if (theForm.w_plano.selectedIndex>0 && theForm.w_objetivo.selectedIndex==0) {');
-      ShowHTML('    alert(\'Você deve indicar o objetivo!\');');
-      ShowHTML('    theForm.w_objetivo.focus();');
-      ShowHTML('    return false;');
-      ShowHTML('  }');
-    }
-    if(nvl($w_sq_menu_relac,'')>'') {
-      if ($w_sq_menu_relac=='CLASSIF') {
-        ShowHTML('  if (theForm.w_sqcc.selectedIndex==0) {');
-        ShowHTML('    alert(\'Você deve indicar a classificação!\');');
-        ShowHTML('    theForm.w_sqcc.focus();');
-        ShowHTML('    return false;');
-        ShowHTML('  }');
-      } else {
-        ShowHTML('  if (theForm.w_solic_pai.selectedIndex==0) {');
-        ShowHTML('    alert(\'Você deve indicar o documento!\');');
-        ShowHTML('    theForm.w_solic_pai.focus();');
-        ShowHTML('    return false;');
-        ShowHTML('  }');
+      if(nvl($w_plano,'')!='') {
+        Validate('w_plano','Plano estratégico','SELECT',1,1,18,1,1);
+        Validate('w_objetivo','Objetivo estratégico','SELECT',1,1,18,1,1);
       }
+    }
+    if(nvl($w_sq_menu_relac,'')!='') {
+      Validate('w_sq_menu_relac','Vincular a','SELECT',1,1,18,1,1);
+      if ($w_sq_menu_relac=='CLASSIF') {
+        Validate('w_sqcc','Classificação','SELECT',1,1,18,1,1);
+      } else {
+        Validate('w_solic_pai','Vinculação','SELECT',1,1,18,1,1);
+      }
+    }
+    if(nvl($w_sq_menu_relac,'')!='' && nvl($w_plano,'')!='') {
+      ShowHTML('    alert(\'Informe um plano estratégico ou uma vinculação. Você não pode escolher ambos!\');');
+      ShowHTML('    theForm.w_plano.focus();');
+      ShowHTML('    return false;');
+    } elseif(nvl($w_sq_menu_relac,'')=='' && nvl($w_plano,'')=='') {
+      ShowHTML('    alert(\'Informe um plano estratégico ou uma vinculação!\');');
+      ShowHTML('    theForm.w_plano.focus();');
+      ShowHTML('    return false;');    
     }
     Validate('w_solicitante','Responsável','HIDDEN',1,1,18,'','0123456789');
     Validate('w_sq_unidade_resp','Setor responsável','HIDDEN',1,1,18,'','0123456789');
@@ -930,10 +940,12 @@ function Geral() {
     // Verifica a que objetos o projeto pode ser vinculado
     ShowHTML('          <tr><td><table border=0 colspan=0 cellspan=0 width="100%">');
     if ($w_pe=='S') {
-      ShowHTML('      <tr>');
+      ShowHTML('          <tr valign="top">');
       selecaoPlanoEstrategico('<u>P</u>lano estratégico:', 'P', 'Selecione o plano ao qual o programa está vinculado.', $w_plano, $w_chave, 'w_plano', 'ULTIMO', 'onChange="document.Form.action=\''.$w_dir.$w_pagina.$par.'\'; document.Form.w_troca.value=\'w_objetivo\'; document.Form.submit();"');
-      ShowHTML('      <tr>');
-      selecaoObjetivoEstrategico('<u>O</u>bjetivo estratégico:', 'O', 'Selecione o objetivo estratégico ao qual o programa está vinculado.', $w_objetivo, $w_plano, 'w_objetivo', 'ULTIMO', null);
+      if(Nvl($w_plano,'')!='') {
+        ShowHTML('          <tr valign="top">');
+        selecaoObjetivoEstrategico('<u>O</u>bjetivo estratégico:', 'O', 'Selecione o objetivo estratégico ao qual o programa está vinculado.', $w_objetivo, $w_plano, 'w_objetivo', 'ULTIMO', null);
+      }
     }
     ShowHTML('          <tr valign="top">');
     selecaoServico('<U>V</U>incular a:', 'S', null, $w_sq_menu_relac, $w_menu, null, 'w_sq_menu_relac', 'MENURELAC', 'onChange="document.Form.action=\''.$w_pagina.$par.'\'; document.Form.O.value=\''.$O.'\'; document.Form.w_troca.value=\'w_sq_menu_relac\'; document.Form.submit();"', $w_acordo, $w_acao, $w_viagem);

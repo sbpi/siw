@@ -216,7 +216,7 @@ function AcessoTramite() {
     ShowHTML('<tr><td><font size="2">');
     ShowHTML('    <a accesskey="I" class="ss" href="'.$w_pagina.$par.'&R='.$w_pagina.$par.'&O=I&P1='.$P1.'&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP='.$TP.'&SG='.$SG.'&w_sq_menu='.$w_sq_menu.'&w_sq_siw_tramite='.$w_sq_siw_tramite.'"><u>I</u>ncluir</a>&nbsp;');
     ShowHTML('    <font size="2"><a accesskey="F" class="ss" href="#" onClick="window.close(); opener.focus();"><u>F</u>echar</a>&nbsp;');
-    ShowHTML('    <td align="right"><font size="1"><b>Registros: '.$RS->RecordCount);
+    ShowHTML('    <td align="right"><font size="1"><b>Registros: '.count($RS));
     ShowHTML('<tr><td colspan=2>');
     ShowHTML('    <TABLE WIDTH="100%" bgcolor="'.$conTableBgColor.'" BORDER="'.$conTableBorder.'" CELLSPACING="'.$conTableCellSpacing.'" CELLPADDING="'.$conTableCellPadding.'" BorderColorDark="'.$conTableBorderColorDark.'" BorderColorLight="'.$conTableBorderColorLight.'">');
     ShowHTML('        <tr bgcolor="'.$conTrBgColor.'" align="center" valign="top">');
@@ -276,21 +276,21 @@ function AcessoTramite() {
     ShowHTML('</tr>');
     ShowHTML('</form>');
     if (($p_nome.$p_sq_menu.$p_sq_unidade)>'') {
-      $RS = db_getTramiteUser::getInstanceOf($dbms,$w_cliente,$w_sq_menu,Nvl($p_sq_menu,$w_sq_siw_tramite),'PESQUISA',$p_nome,$p_sq_unidade,Nvl($p_sq_menu,''));
+      $RS = db_getTramiteUser::getInstanceOf($dbms,$w_cliente,$w_sq_menu,$w_sq_siw_tramite,'PESQUISA',$p_nome,$p_sq_unidade,$p_sq_menu);
       ShowHTML('<tr bgcolor="'.$conTrBgColor.'"><td colspan=2><font size=2><hr>');
       AbreForm('Form1',$w_pagina.'Grava','POST','return(Validacao1(this));',null,$P1,$P2,$P3,$P4,$TP,$SG,$R,$O);
       ShowHTML('<INPUT type="hidden" name="w_sq_menu" value="'.$w_sq_menu.'">');
       ShowHTML('<INPUT type="hidden" name="w_sq_siw_tramite" value="'.$w_sq_siw_tramite.'">');
       ShowHTML('  <tr><td valign="top"><font size=2><b>Usuários que ainda não têm acesso a esta opção</b>');
-      ShowHTML('      <td nowrap valign="bottom" align="right"><font size="1"><b>Registros: '.$RS->RecordCount);
+      ShowHTML('      <td nowrap valign="bottom" align="right"><font size="1"><b>Registros: '.count($RS));
       ShowHTML('  <tr><td align="center" colspan=2>');
       ShowHTML('      <TABLE WIDTH="100%" bgcolor="'.$conTableBgColor.'" BORDER="'.$conTableBorder.'" CELLSPACING="'.$conTableCellSpacing.'" CELLPADDING="'.$conTableCellPadding.'" BorderColorDark="'.$conTableBorderColorDark.'" BorderColorLight="'.$conTableBorderColorLight.'">');
       if (count($RS)<=0) {
         ShowHTML('        <tr bgcolor="'.$conTrBgColor.'"><td colspan=5 align="center"><font size="2"><b>Não foram encontrados registros.</b></td></tr>');
       } else {
         ShowHTML('          <tr bgcolor="'.$conTrBgColor.'" align="center" valign="top">');
-        ShowHTML('            <td width="70"NOWRAP><font size="2"><U ID="INICIO" STYLE="cursor:hand;" CLASS="hl" onClick="javascript:MarcaTodos();" TITLE="Marca todos os itens da relação"><IMG SRC="images/NavButton/BookmarkAndPageActivecolor.gif" BORDER="1" width="15" height="15"></U>&nbsp;');
-        ShowHTML('                                      <U STYLE="cursor:hand;" CLASS="hl" onClick="javascript:DesmarcaTodos();" TITLE="Desmarca todos os itens da relação"><IMG SRC="images/NavButton/BookmarkAndPageInactive.gif" BORDER="1" width="15" height="15"></U>');
+        ShowHTML('            <td width="70"NOWRAP><font size="2"><U ID="INICIO" CLASS="hl" onClick="javascript:MarcaTodos();" TITLE="Marca todos os itens da relação"><IMG SRC="images/NavButton/BookmarkAndPageActivecolor.gif" BORDER="1" width="15" height="15"></U>&nbsp;');
+        ShowHTML('                                      <U CLASS="hl" onClick="javascript:DesmarcaTodos();" TITLE="Desmarca todos os itens da relação"><IMG SRC="images/NavButton/BookmarkAndPageInactive.gif" BORDER="1" width="15" height="15"></U>');
         ShowHTML('            <td><font size="2"><b>Nome</font></td>');
         ShowHTML('          </tr>');
         foreach($RS as $row) {
@@ -419,7 +419,7 @@ function Tramite() {
   if ($O=='L') {
     ShowHTML('<tr><td><font size="2"><a accesskey="I" class="ss" href="'.$w_pagina.$par.'&R='.$w_pagina.$par.'&w_sq_menu='.$w_sq_menu.'&O=I&P1='.$P1.'&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP='.$TP.'&SG='.$SG.'"><u>I</u>ncluir</a>&nbsp;');
     ShowHTML('        <a accesskey="F" class="ss" href="#" onClick="window.close(); opener.focus();"><u>F</u>echar</a>&nbsp;');
-    ShowHTML('    <td align="right"><font size="1"><b>Registros: '.$RS->RecordCount);
+    ShowHTML('    <td align="right"><font size="1"><b>Registros: '.count($RS));
     ShowHTML('<tr><td colspan=3>');
     ShowHTML('    <TABLE WIDTH="100%" bgcolor="'.$conTableBgColor.'" BORDER="'.$conTableBorder.'" CELLSPACING="'.$conTableCellSpacing.'" CELLPADDING="'.$conTableCellPadding.'" BorderColorDark="'.$conTableBorderColorDark.'" BorderColorLight="'.$conTableBorderColorLight.'">');
     ShowHTML('        <tr bgcolor="'.$conTrBgColor.'" align="center">');
@@ -642,7 +642,7 @@ function AcessoMenu() {
     ShowHTML('<tr><td><font size="2">');
     ShowHTML('    <a accesskey="I" class="ss" href="'.$w_pagina.'AcessoMenuPerfil&R='.$w_pagina.$par.'&O=I&P1='.$P1.'&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP='.$TP.'&SG=ACESSOMENUPERFIL&w_sq_menu='.$w_sq_menu.'"><u>I</u>ncluir</a>&nbsp;');
     ShowHTML('    <font size="2"><a accesskey="F" class="ss" href="#" onClick="window.close(); opener.focus();"><u>F</u>echar</a>&nbsp;');
-    ShowHTML('    <td align="right"><font size="1"><b>Registros: '.$RS1->RecordCount);
+    ShowHTML('    <td align="right"><font size="1"><b>Registros: '.count($RS1));
     ShowHTML('<tr><td colspan=2>');
     ShowHTML('    <TABLE WIDTH="100%" bgcolor="'.$conTableBgColor.'" BORDER="'.$conTableBorder.'" CELLSPACING="'.$conTableCellSpacing.'" CELLPADDING="'.$conTableCellPadding.'" BorderColorDark="'.$conTableBorderColorDark.'" BorderColorLight="'.$conTableBorderColorLight.'">');
     ShowHTML('        <tr bgcolor="'.$conTrBgColor.'" align="center" valign="top">');
@@ -678,7 +678,7 @@ function AcessoMenu() {
     ShowHTML('<tr><td><font size="2">');
     ShowHTML('    <a accesskey="I" class="ss" href="'.$w_pagina.$par.'&R='.$w_pagina.$par.'&O=I&P1='.$P1.'&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP='.$TP.'&SG='.$SG.'&w_sq_menu='.$w_sq_menu.'"><u>I</u>ncluir</a>&nbsp;');
     ShowHTML('    <font size="2"><a accesskey="F" class="ss" href="#" onClick="window.close(); opener.focus();"><u>F</u>echar</a>&nbsp;');
-    ShowHTML('    <td align="right"><font size="1"><b>Registros: '.$RS->RecordCount);
+    ShowHTML('    <td align="right"><font size="1"><b>Registros: '.count($RS));
     ShowHTML('<tr><td colspan=2>');
     ShowHTML('    <TABLE WIDTH="100%" bgcolor="'.$conTableBgColor.'" BORDER="'.$conTableBorder.'" CELLSPACING="'.$conTableCellSpacing.'" CELLPADDING="'.$conTableCellPadding.'" BorderColorDark="'.$conTableBorderColorDark.'" BorderColorLight="'.$conTableBorderColorLight.'">');
     ShowHTML('        <tr bgcolor="'.$conTrBgColor.'" align="center" valign="top">');
@@ -740,15 +740,15 @@ function AcessoMenu() {
       AbreForm('Form1',$w_pagina.'Grava','POST','return(Validacao1(this));',null,$P1,$P2,$P3,$P4,$TP,$SG,$R,$O);
       ShowHTML('<INPUT type="hidden" name="w_sq_menu" value="'.$w_sq_menu.'">');
       ShowHTML('  <tr><td valign="top"><font size=2><b>Usuários que ainda não têm acesso a esta opção</b>');
-      ShowHTML('      <td nowrap valign="bottom" align="right"><font size="1"><b>Registros: '.$RS->RecordCount);
+      ShowHTML('      <td nowrap valign="bottom" align="right"><font size="1"><b>Registros: '.count($RS));
       ShowHTML('  <tr><td align="center" colspan=2>');
       ShowHTML('      <TABLE WIDTH="100%" bgcolor="'.$conTableBgColor.'" BORDER="'.$conTableBorder.'" CELLSPACING="'.$conTableCellSpacing.'" CELLPADDING="'.$conTableCellPadding.'" BorderColorDark="'.$conTableBorderColorDark.'" BorderColorLight="'.$conTableBorderColorLight.'">');
       if (count($RS)<=0) {
         ShowHTML('        <tr bgcolor="'.$conTrBgColor.'"><td colspan=5 align="center"><font size="2"><b>Não foram encontrados registros.</b></td></tr>');
       } else {
         ShowHTML('          <tr bgcolor="'.$conTrBgColor.'" align="center" valign="top">');
-        ShowHTML('            <td width="70"NOWRAP><font size="2"><U ID="INICIO" STYLE="cursor:hand;" CLASS="hl" onClick="javascript:MarcaTodos();" TITLE="Marca todos os itens da relação"><IMG SRC="images/NavButton/BookmarkAndPageActivecolor.gif" BORDER="1" width="15" height="15"></U>&nbsp;');
-        ShowHTML('                                      <U STYLE="cursor:hand;" CLASS="hl" onClick="javascript:DesmarcaTodos();" TITLE="Desmarca todos os itens da relação"><IMG SRC="images/NavButton/BookmarkAndPageInactive.gif" BORDER="1" width="15" height="15"></U>');
+        ShowHTML('            <td width="70"NOWRAP><font size="2"><U ID="INICIO" CLASS="hl" onClick="javascript:MarcaTodos();" TITLE="Marca todos os itens da relação"><IMG SRC="images/NavButton/BookmarkAndPageActivecolor.gif" BORDER="1" width="15" height="15"></U>&nbsp;');
+        ShowHTML('                                      <U CLASS="hl" onClick="javascript:DesmarcaTodos();" TITLE="Desmarca todos os itens da relação"><IMG SRC="images/NavButton/BookmarkAndPageInactive.gif" BORDER="1" width="15" height="15"></U>');
         ShowHTML('            <td><font size="2"><b>Nome</font></td>');
         ShowHTML('          </tr>');
         foreach($RS as $row) {
@@ -945,7 +945,7 @@ function Endereco() {
   ShowHTML('<tr><td><b><font size=1 class="hl">'.montaStringOpcao($w_sq_menu).'</font></b>');
   ShowHTML('<tr><td><p>&nbsp;</p>');
   ShowHTML('<tr><td><font size="1"><div align="justify"><ul><b>Informações:</b><li>Você pode indicar em quais endereços uma determinada opção do menu estará disponível.<li>A princípio, todas as opções estão disponíveis em todos os endereços.<li>Para remover a opção de um endereço específico, desmarque o quadrado ao lado do endereço.<li>A opção deve estar disponível em pelo menos um dos endereços.</ul></div></p>');
-  ShowHTML('<tr><td align="right"><font size="1"><b>Registros: '.$RS->RecordCount);
+  ShowHTML('<tr><td align="right"><font size="1"><b>Registros: '.count($RS));
   ShowHTML('<tr><td align="center" colspan=3>');
   ShowHTML('    <TABLE WIDTH="100%" bgcolor="'.$conTableBgColor.'" BORDER="'.$conTableBorder.'" CELLSPACING="'.$conTableCellSpacing.'" CELLPADDING="'.$conTableCellPadding.'" BorderColorDark="'.$conTableBorderColorDark.'" BorderColorLight="'.$conTableBorderColorLight.'">');
   ShowHTML('        <tr bgcolor="'.$conTrBgColor.'" align="center">');

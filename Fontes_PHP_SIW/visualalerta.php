@@ -32,8 +32,8 @@ function VisualAlerta($l_cliente,$l_usuario,$l_tipo, $l_rs_solic, $l_rs_pacote) 
       $w_cor = ($w_cor==$conTrBgColor || $w_cor=='') ? $w_cor=$conTrAlternateBgColor : $w_cor=$conTrBgColor;
   
       // Se o usuário for responsável ou executor, destaca em vermelho
-      if ($l_usuario==f($row,'solicitante')) $w_cor = $conTrBgColorLightBlue2; 
-      if ($l_usuario==f($row,'sq_exec'))     $w_cor = $conTrBgColorLightBlue1; 
+      if ($l_usuario==f($row,'solicitante'))    $w_cor = $conTrBgColorLightBlue2; 
+      if ($l_usuario==nvl(f($row,'sq_exec'),0)) $w_cor = $conTrBgColorLightBlue1; 
   
       if ($w_sq_modulo!=f($row,'sq_modulo') && $w_sq_modulo!='')  {
         $l_html .= '    <tr valign="top" bgcolor='.$conTrBgColor.'><td colspan=12><hr NOSHADE color=#000000 size=1></td></tr>'.chr(13).chr(10);
