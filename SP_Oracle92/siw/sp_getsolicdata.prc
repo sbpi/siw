@@ -3,7 +3,9 @@ create or replace procedure SP_GetSolicData
     p_restricao in varchar2 default null,
     p_result    out sys_refcursor) is
 begin
-   If p_restricao = 'GDGERAL' or p_restricao = 'GDPGERAL' or p_restricao = 'GDPCAD' or p_restricao = 'ORPGERAL' Then
+   If p_restricao is null Then
+      open p_result for select dados_solic(p_chave) as dados_solic from dual;
+   Elsif p_restricao = 'GDGERAL' or p_restricao = 'GDPGERAL' or p_restricao = 'GDPCAD' or p_restricao = 'ORPGERAL' Then
       -- Recupera as demandas que o usuário pode ver
       open p_result for 
          select a.sq_menu,            a.sq_modulo,                   a.nome,

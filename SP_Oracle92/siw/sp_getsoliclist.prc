@@ -269,6 +269,7 @@ begin
                 e.vinculada vinc_resp,e.adm_central adm_resp,
                 e1.sq_pessoa titular, e2.sq_pessoa substituto,
                 f.sq_pais,            f.sq_regiao,                   f.co_uf,
+                m1.sq_menu as sq_menu_pai,
                 n.sq_cc,              n.nome nm_cc,                  n.sigla sg_cc,
                 o.nome_resumido nm_solic, o.nome_resumido_ind nm_solic_ind,
                 p.nome_resumido nm_exec,  p.nome_resumido_ind nm_exec_ind,
@@ -316,6 +317,8 @@ begin
                                                                            )
                         left         join or_acao              r  on (d.sq_siw_solicitacao       = r.sq_siw_solicitacao)
                       inner          join co_cidade            f  on (b.sq_cidade_origem         = f.sq_cidade)
+                      left           join siw_solicitacao      m  on (b.sq_solic_pai             = m.sq_siw_solicitacao)
+                        left         join siw_menu             m1 on (m.sq_menu                  = m1.sq_menu)
                       left           join ct_cc                n  on (b.sq_cc                    = n.sq_cc)
                       left           join co_pessoa            o  on (b.solicitante              = o.sq_pessoa)
                       left           join co_pessoa            p  on (b.executor                 = p.sq_pessoa)
@@ -359,6 +362,7 @@ begin
             and (p_uorg_resp      is null or (p_uorg_resp   is not null and d.concluida          = 'N' and l.sq_unidade = p_uorg_resp))
             and (p_sqcc           is null or (p_sqcc        is not null and b.sq_cc              = p_sqcc))
             and (p_projeto        is null or (p_projeto     is not null and b.sq_solic_pai       = p_projeto))
+            and (p_processo       is null or (p_processo    is not null and m1.sq_menu           = to_number(p_processo)))
             and (p_uf             is null or (p_uf          is not null and f.co_uf              = p_uf))
             and (p_assunto        is null or (p_assunto     is not null and acentos(d.titulo,null) like '%'||acentos(p_assunto,null)||'%'))
             and (p_palavra        is null or (p_palavra     is not null and acentos(b.palavra_chave,null) like '%'||acentos(p_palavra,null)||'%'))
@@ -388,8 +392,9 @@ begin
                  (p_tipo         = 5     and Nvl(b1.sigla,'-') <> 'CA') or
                  (p_tipo         = 6     and b1.ativo          = 'S' and b2.acesso > 0)
                 )
-            and ((p_restricao <> 'GRPRPROP'    and p_restricao <> 'GRPRRESPATU') or 
-                 ((p_restricao = 'GRPRPROP'    and d.proponente  is not null)   or 
+            and ((p_restricao <> 'GRPRPROP'    and p_restricao <> 'GRPRRESPATU' and p_restricao <> 'GRPRCC') or 
+                 ((p_restricao = 'GRPRCC'      and b.sq_cc       is not null)   or 
+                  (p_restricao = 'GRPRPROP'    and d.proponente  is not null)   or 
                   (p_restricao = 'GRPRRESPATU' and b.executor    is not null)
                  )
                 );
