@@ -362,7 +362,7 @@ begin
             and (p_uorg_resp      is null or (p_uorg_resp   is not null and d.concluida          = 'N' and l.sq_unidade = p_uorg_resp))
             and (p_sqcc           is null or (p_sqcc        is not null and b.sq_cc              = p_sqcc))
             and (p_projeto        is null or (p_projeto     is not null and b.sq_solic_pai       = p_projeto))
-            and (p_processo       is null or (p_processo    is not null and m1.sq_menu           = to_number(p_processo)))
+            and (p_processo       is null or (p_processo    = 'CLASSIF' and b.sq_cc is not null) or (p_processo <> 'CLASSIF' and m1.sq_menu = to_number(p_processo)))
             and (p_uf             is null or (p_uf          is not null and f.co_uf              = p_uf))
             and (p_assunto        is null or (p_assunto     is not null and acentos(d.titulo,null) like '%'||acentos(p_assunto,null)||'%'))
             and (p_palavra        is null or (p_palavra     is not null and acentos(b.palavra_chave,null) like '%'||acentos(p_palavra,null)||'%'))
@@ -379,23 +379,24 @@ begin
             and (p_unidade        is null or (p_unidade     is not null and d.sq_unidade_resp    = p_unidade))
             and (p_prioridade     is null or (p_prioridade  is not null and d.prioridade         = p_prioridade))
             and (p_solicitante    is null or (p_solicitante is not null and b.solicitante        = p_solicitante))
-            and ((p_tipo         = 1     and Nvl(b1.sigla,'-') = 'CI'   and b.cadastrador        = p_pessoa) or
-                 (p_tipo         = 2     and Nvl(b1.sigla,'-') <> 'CI'  and d.concluida          = 'N' and ((a.sigla <> 'PJCAD' and b.executor = p_pessoa) or
-                                                                                                            (a.sigla =  'PJCAD' and b2.acesso  >= 8)
-                                                                                                           )
+            and ((p_tipo          = 1     and Nvl(b1.sigla,'-') = 'CI'   and b.cadastrador        = p_pessoa) or
+                 (p_tipo          = 2     and Nvl(b1.sigla,'-') <> 'CI'  and d.concluida          = 'N' and ((a.sigla <> 'PJCAD' and b.executor = p_pessoa) or
+                                                                                                             (a.sigla =  'PJCAD' and b2.acesso  >= 8)
+                                                                                                            )
                  ) or
                  --(p_tipo         = 2     and b1.ativo = 'S' and Nvl(b1.sigla,'-') <> 'CI' and b2.acesso > 15) or
-                 (p_tipo         = 3     and b2.acesso > 0) or
-                 (p_tipo         = 3     and InStr(l_resp_unid,''''||b.sq_unidade||'''') > 0) or
-                 (p_tipo         = 4     and Nvl(b1.sigla,'-') <> 'CA'  and b2.acesso > 0) or
-                 (p_tipo         = 4     and Nvl(b1.sigla,'-') <> 'CA'  and InStr(l_resp_unid,''''||b.sq_unidade||'''') > 0) or
-                 (p_tipo         = 5     and Nvl(b1.sigla,'-') <> 'CA') or
-                 (p_tipo         = 6     and b1.ativo          = 'S' and b2.acesso > 0)
+                 (p_tipo          = 3     and b2.acesso > 0) or
+                 (p_tipo          = 3     and InStr(l_resp_unid,''''||b.sq_unidade||'''') > 0) or
+                 (p_tipo          = 4     and Nvl(b1.sigla,'-') <> 'CA'  and b2.acesso > 0) or
+                 (p_tipo          = 4     and Nvl(b1.sigla,'-') <> 'CA'  and InStr(l_resp_unid,''''||b.sq_unidade||'''') > 0) or
+                 (p_tipo          = 5     and Nvl(b1.sigla,'-') <> 'CA') or
+                 (p_tipo          = 6     and b1.ativo          = 'S' and b2.acesso > 0)
                 )
-            and ((p_restricao <> 'GRPRPROP'    and p_restricao <> 'GRPRRESPATU' and p_restricao <> 'GRPRCC') or 
-                 ((p_restricao = 'GRPRCC'      and b.sq_cc       is not null)   or 
-                  (p_restricao = 'GRPRPROP'    and d.proponente  is not null)   or 
-                  (p_restricao = 'GRPRRESPATU' and b.executor    is not null)
+            and ((p_restricao <> 'GRPRPROP'    and p_restricao <> 'GRPRRESPATU' and p_restricao <> 'GRPRCC' and p_restricao <> 'GRPRVINC') or 
+                 ((p_restricao = 'GRPRCC'      and b.sq_cc        is not null)   or 
+                  (p_restricao = 'GRPRPROP'    and d.proponente   is not null)   or 
+                  (p_restricao = 'GRPRRESPATU' and b.executor     is not null)   or
+                  (p_restricao = 'GRPRVINC'    and b.sq_solic_pai is not null)
                  )
                 );
    Elsif substr(p_restricao,1,3) = 'GCR' or substr(p_restricao,1,3) = 'GCD' or 
