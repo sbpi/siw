@@ -128,7 +128,7 @@ $w_usuario  = RetornaUsuario();
 $w_menu     = RetornaMenu($w_cliente,$SG);
 
 $w_copia        = $_REQUEST['w_copia'];
-$p_projeto      = strtoupper($_REQUEST['p_projeto']);
+$p_chave_pai      = strtoupper($_REQUEST['p_chave_pai']);
 $p_atividade    = strtoupper($_REQUEST['p_atividade']);
 $p_ativo        = strtoupper($_REQUEST['p_ativo']);
 $p_solicitante  = strtoupper($_REQUEST['p_solicitante']);
@@ -192,16 +192,16 @@ function Inicial() {
   if ($O=='L') {
     if ((!(strpos(strtoupper($R),'GR_')===false)) || (!(strpos(strtoupper($R),'PROJETO')===false)) || ($w_tipo=='WORD')) {
       $w_filtro='';
-      if ($p_projeto>'') {
-        $RS = db_getSolicData::getInstanceOf($dbms,$p_projeto,'PJGERAL');
+      if ($p_chave_pai>'') {
+        $RS = db_getSolicData::getInstanceOf($dbms,$p_chave_pai,'PJGERAL');
         if ($w_tipo=='WORD') {
           $w_filtro = $w_filtro.'<tr valign="top"><td align="right">Projeto <td>[<b>'.f($RS,'titulo').'</b>]';
         } else {
-          $w_filtro = $w_filtro.'<tr valign="top"><td align="right">Projeto <td>[<b><A class="HL" HREF="projeto.php?par=Visual&O=L&w_chave='.$p_projeto.'&w_menu='.f($RS,'sq_menu').'&w_tipo=Volta&P1='.f($RS,'p1').'&P2='.f($RS,'p2').'&P3='.$P3.'&P4='.$P4.'&TP='.$TP.'&SG='.f($RS,'sigla').'" title="Exibe as informações do projeto.">'.f($RS,'titulo').'</a></b>]';
+          $w_filtro = $w_filtro.'<tr valign="top"><td align="right">Projeto <td>[<b><A class="HL" HREF="projeto.php?par=Visual&O=L&w_chave='.$p_chave_pai.'&w_menu='.f($RS,'sq_menu').'&w_tipo=Volta&P1='.f($RS,'p1').'&P2='.f($RS,'p2').'&P3='.$P3.'&P4='.$P4.'&TP='.$TP.'&SG='.f($RS,'sigla').'" title="Exibe as informações do projeto.">'.f($RS,'titulo').'</a></b>]';
         }
       } 
       if ($p_atividade>'') {
-        $RS = db_getSolicEtapa::getInstanceOf($dbms,$p_projeto,$p_atividade,'REGISTRO',null);
+        $RS = db_getSolicEtapa::getInstanceOf($dbms,$p_chave_pai,$p_atividade,'REGISTRO',null);
         foreach ($RS as $row) { 
           $w_filtro = $w_filtro.'<tr valign="top"><td align="right">Etapa <td>[<b>'.f($row,'titulo').'</b>]'; 
           break;
@@ -262,13 +262,13 @@ function Inicial() {
           $p_ini_i,$p_ini_f,$p_fim_i,$p_fim_f,$p_atraso,$p_solicitante,
           $p_unidade,$p_prioridade,$p_ativo,$p_proponente,
           $p_chave, $p_assunto, $p_pais, $p_regiao, $p_uf, $p_cidade, $p_usu_resp,
-          $p_uorg_resp, $p_palavra, $p_prazo, $p_fase, $p_sqcc, $p_projeto, $p_atividade, null, null);
+          $p_uorg_resp, $p_palavra, $p_prazo, $p_fase, $p_sqcc, $p_chave_pai, $p_atividade, null, null);
     } else {
       $RS = db_getSolicList::getInstanceOf($dbms,f($RS,'sq_menu'),$w_usuario,Nvl($_REQUEST['p_agrega'],$SG),$P1,
           $p_ini_i,$p_ini_f,$p_fim_i,$p_fim_f,$p_atraso,$p_solicitante,
           $p_unidade,$p_prioridade,$p_ativo,$p_proponente,
           $p_chave, $p_assunto, $p_pais, $p_regiao, $p_uf, $p_cidade, $p_usu_resp,
-          $p_uorg_resp, $p_palavra, $p_prazo, $p_fase, $p_sqcc, $p_projeto, $p_atividade, null, null);
+          $p_uorg_resp, $p_palavra, $p_prazo, $p_fase, $p_sqcc, $p_chave_pai, $p_atividade, null, null);
     } 
     if (nvl($p_ordena,'')>'') {
       $lista = explode(',',str_replace(' ',',',$p_ordena));
@@ -333,7 +333,7 @@ function Inicial() {
   } elseif ($O=='E') {
     BodyOpenClean('onLoad=\'document.Form.w_assinatura.focus()\';');
   } elseif (!(strpos('CP',$O)===false)) {
-    BodyOpenClean('onLoad=\'document.Form.p_projeto.focus()\';');
+    BodyOpenClean('onLoad=\'document.Form.p_chave_pai.focus()\';');
   } else {
     BodyOpenClean('onLoad=this.focus();');
   } 
@@ -390,12 +390,12 @@ function Inicial() {
 
     // Configura a posição dos valores. Alterar sempre que houver nova condição para exibir as colunas.
     $w_colspan = 8;
-    if (nvl($p_projeto,'')!='')     $w_colspan -= 1;
+    if (nvl($p_chave_pai,'')!='')     $w_colspan -= 1;
     if (nvl($p_atividade,'')!='')   $w_colspan -= 1;
 
     if ($w_tipo!='WORD') {
       ShowHTML('          <td><b>'.LinkOrdena('Nº','sq_siw_solicitacao').'</td>');
-      if (nvl($p_projeto,'')=='')   ShowHTML('          <td><b>'.LinkOrdena('Projeto','nm_projeto').'</td>');
+      if (nvl($p_chave_pai,'')=='')   ShowHTML('          <td><b>'.LinkOrdena('Projeto','nm_projeto').'</td>');
       if (nvl($p_atividade,'')=='') ShowHTML('          <td><b>'.LinkOrdena('Etapa','cd_ordem').'</td>');
       ShowHTML('          <td><b>'.LinkOrdena('Responsável','nm_solic').'</td>');
       if ($_SESSION['INTERNO']=='S') ShowHTML('          <td><b>'.LinkOrdena('Executor','nm_exec').'</td>');
@@ -413,7 +413,7 @@ function Inicial() {
       if ($_SESSION['INTERNO']=='S') ShowHTML('          <td><b>Operações</td>');
     } else {
       ShowHTML('          <td><b>Nº</td>');
-      if (nvl($p_projeto,'')=='')   ShowHTML('          <td><b>Projeto</td>');
+      if (nvl($p_chave_pai,'')=='')   ShowHTML('          <td><b>Projeto</td>');
       if (nvl($p_atividade,'')=='') ShowHTML('          <td><b>Etapa</td>');
       ShowHTML('          <td><b>Responsável</td>');
       if ($_SESSION['INTERNO']=='S') ShowHTML('          <td><b>Executor</td>');
@@ -442,7 +442,7 @@ function Inicial() {
         ShowHTML(ExibeImagemSolic(f($row,'sigla'),f($row,'inicio'),f($row,'fim'),f($row,'inicio_real'),f($row,'fim_real'),f($row,'aviso_prox_conc'),f($row,'aviso'),f($row,'sg_tramite'), null));
         if ($w_tipo!='WORD') {
           ShowHTML('        <A class="HL" HREF="'.$w_pagina.'Visual&R='.$w_pagina.$par.'&O=L&w_chave='.f($row,'sq_siw_solicitacao').'&w_tipo=Volta&P1='.$P1.'&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP='.$TP.'&SG='.$SG.MontaFiltro('GET').'" title="Exibe as informações deste registro.">'.f($row,'sq_siw_solicitacao').'&nbsp;</a>');
-          if (nvl($p_projeto,'')=='') {
+          if (nvl($p_chave_pai,'')=='') {
             ShowHTML('        <td><A class="HL" HREF="projeto.php?par=Visual&O=L&w_chave='.f($row,'sq_solic_pai').'&w_tipo=Volta&P1='.$P1.'&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP='.$TP.'&SG='.$SG.'" title="Exibe as informações do projeto.">'.f($row,'nm_projeto').'</a></td>');
             ShowHTML('        <td>'.ExibeEtapa('V',f($row,'sq_solic_pai'),f($row,'sq_projeto_etapa'),'Volta',10,f($row,'cd_ordem'),$TP,$SG).'</td>');
           } elseif (nvl($p_atividade,'')=='') {
@@ -462,7 +462,7 @@ function Inicial() {
           } 
         } else {
           ShowHTML('        '.f($row,'sq_siw_solicitacao'));
-          if (nvl($p_projeto,'')=='') {
+          if (nvl($p_chave_pai,'')=='') {
             ShowHTML('        <td>'.f($row,'nm_projeto').'</td>');
             ShowHTML('        <td>'.f($row,'cd_ordem').'</td>');
           } elseif (nvl($p_atividade,'')=='') {
@@ -617,10 +617,10 @@ function Inicial() {
     ShowHTML('      <tr><td valign="top" colspan="2"><table border=0 width="100%" cellspacing=0>');
     ShowHTML('      <tr>');
     $RS = db_getLinkData::getInstanceOf($dbms,$w_cliente,'PJCAD');
-    SelecaoProjeto('Pro<u>j</u>eto:','J','Selecione o projeto na relação.',$p_projeto,$w_usuario,f($RS,'sq_menu'),null,null,null,'p_projeto','PJLIST','onChange="document.Form.action=\''.$w_pagina.$par.'\'; document.Form.O.value=\''.$O.'\'; document.Form.w_troca.value=\'p_atividade\'; document.Form.submit();"');
+    SelecaoProjeto('Pro<u>j</u>eto:','J','Selecione o projeto na relação.',$p_chave_pai,$w_usuario,f($RS,'sq_menu'),null,null,null,'p_chave_pai','PJLIST','onChange="document.Form.action=\''.$w_pagina.$par.'\'; document.Form.O.value=\''.$O.'\'; document.Form.w_troca.value=\'p_atividade\'; document.Form.submit();"');
     ShowHTML('      </tr>');
     ShowHTML('      <tr>');
-    SelecaoEtapa('Eta<u>p</u>a:','P','Se necessário, indique a etapa do projeto.',$p_atividade,$p_projeto,null,'p_atividade',null,null);
+    SelecaoEtapa('Eta<u>p</u>a:','P','Se necessário, indique a etapa do projeto.',$p_atividade,$p_chave_pai,null,'p_atividade',null,null);
     ShowHTML('      </tr>');
     ShowHTML('          </table>');
     ShowHTML('      <tr><td valign="top" colspan="2"><table border=0 width="100%" cellspacing=0>');
@@ -945,10 +945,10 @@ function Geral() {
     // Recupera dados da opção Projetos
     ShowHTML('      <tr>');
     if($p_volta=='LISTA') {
-      $RS = db_getSolicData::getInstanceOf($dbms,$p_projeto,'PJGERAL');
+      $RS = db_getSolicData::getInstanceOf($dbms,$p_chave_pai,'PJGERAL');
       ShowHTML('        <td valign="top"><b>Projeto:</b><br>'.f($RS,'titulo').'</td>');
-      ShowHTML('<INPUT type="hidden" name="w_projeto" value="'.$p_projeto.'">');
-      $w_projeto = $p_projeto;
+      ShowHTML('<INPUT type="hidden" name="w_projeto" value="'.$p_chave_pai.'">');
+      $w_projeto = $p_chave_pai;
     } else {
       $RS = db_getLinkData::getInstanceOf($dbms,$w_cliente,'PJCAD');
       SelecaoProjeto('Pro<u>j</u>eto:','J','Selecione o projeto na relação.',$w_projeto,$w_usuario,f($RS,'sq_menu'),null,null,null,'w_projeto','PJLISTCAD','onChange="document.Form.action=\''.$w_pagina.$par.'\'; document.Form.w_troca.value=\'w_atividade\'; document.Form.submit();"');

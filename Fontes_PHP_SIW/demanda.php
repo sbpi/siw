@@ -126,30 +126,32 @@ $w_cliente  = RetornaCliente();
 $w_usuario  = RetornaUsuario();
 $w_menu     = RetornaMenu($w_cliente,$SG);
 
-$w_copia        = $_REQUEST['w_copia'];
-$p_ativo        = strtoupper($_REQUEST['p_ativo']);
-$p_solicitante  = strtoupper($_REQUEST['p_solicitante']);
-$p_prioridade   = strtoupper($_REQUEST['p_prioridade']);
-$p_unidade      = strtoupper($_REQUEST['p_unidade']);
-$p_proponente   = strtoupper($_REQUEST['p_proponente']);
-$p_ordena       = strtolower($_REQUEST['p_ordena']);
-$p_ini_i        = strtoupper($_REQUEST['p_ini_i']);
-$p_ini_f        = strtoupper($_REQUEST['p_ini_f']);
-$p_fim_i        = strtoupper($_REQUEST['p_fim_i']);
-$p_fim_f        = strtoupper($_REQUEST['p_fim_f']);
-$p_atraso       = strtoupper($_REQUEST['p_atraso']);
-$p_chave        = strtoupper($_REQUEST['p_chave']);
-$p_assunto      = strtoupper($_REQUEST['p_assunto']);
-$p_pais         = strtoupper($_REQUEST['p_pais']);
-$p_regiao       = strtoupper($_REQUEST['p_regiao']);
-$p_uf           = strtoupper($_REQUEST['p_uf']);
-$p_cidade       = strtoupper($_REQUEST['p_cidade']);
-$p_usu_resp     = strtoupper($_REQUEST['p_usu_resp']);
-$p_uorg_resp    = strtoupper($_REQUEST['p_uorg_resp']);
-$p_palavra      = strtoupper($_REQUEST['p_palavra']);
-$p_prazo        = strtoupper($_REQUEST['p_prazo']);
-$p_fase         = explodeArray($_REQUEST['p_fase']);
-$p_sqcc         = strtoupper($_REQUEST['p_sqcc']);
+$w_copia         = $_REQUEST['w_copia'];
+$p_ativo         = strtoupper($_REQUEST['p_ativo']);
+$p_solicitante   = strtoupper($_REQUEST['p_solicitante']);
+$p_prioridade    = strtoupper($_REQUEST['p_prioridade']);
+$p_unidade       = strtoupper($_REQUEST['p_unidade']);
+$p_proponente    = strtoupper($_REQUEST['p_proponente']);
+$p_ordena        = strtolower($_REQUEST['p_ordena']);
+$p_ini_i         = strtoupper($_REQUEST['p_ini_i']);
+$p_ini_f         = strtoupper($_REQUEST['p_ini_f']);
+$p_fim_i         = strtoupper($_REQUEST['p_fim_i']);
+$p_fim_f         = strtoupper($_REQUEST['p_fim_f']);
+$p_atraso        = strtoupper($_REQUEST['p_atraso']);
+$p_chave         = strtoupper($_REQUEST['p_chave']);
+$p_assunto       = strtoupper($_REQUEST['p_assunto']);
+$p_pais          = strtoupper($_REQUEST['p_pais']);
+$p_regiao        = strtoupper($_REQUEST['p_regiao']);
+$p_uf            = strtoupper($_REQUEST['p_uf']);
+$p_cidade        = strtoupper($_REQUEST['p_cidade']);
+$p_usu_resp      = strtoupper($_REQUEST['p_usu_resp']);
+$p_uorg_resp     = strtoupper($_REQUEST['p_uorg_resp']);
+$p_palavra       = strtoupper($_REQUEST['p_palavra']);
+$p_prazo         = strtoupper($_REQUEST['p_prazo']);
+$p_fase          = explodeArray($_REQUEST['p_fase']);
+$p_sqcc          = strtoupper($_REQUEST['p_sqcc']);
+$p_sq_menu_relac = strtoupper($_REQUEST['p_sq_menu_relac']);
+$p_chave_pai     = strtoupper($_REQUEST['p_chave_pai']);
 
 // Verifica se o documento tem sub-menu. Se tiver, agrega no HREF uma chamada para montagem do mesmo.
 $RS = db_getLinkSubMenu::getInstanceOf($dbms,$_SESSION['P_CLIENTE'],$SG);
@@ -187,6 +189,18 @@ function Inicial() {
   if ($O=='L') {
     if ((!(strpos(strtoupper($R),'GR_')===false)) || ($w_tipo=='WORD')) {
       $w_filtro='';
+      if (nvl($p_chave_pai,'')>'') {
+        if ($w_tipo=='WORD') {
+         $w_filtro.='<tr valign="top"><td align="right">Vinculação<td>['.exibeSolic($w_dir,$p_chave_pai,null,'S','S').']</td></tr>';
+         } else {
+          $w_filtro.='<tr valign="top"><td align="right">Vinculação<td>['.exibeSolic($w_dir,$p_chave_pai,null,'S').']</td></tr>';
+        }
+      }    
+      if ($p_atividade>'') {
+        $RS = db_getSolicEtapa::getInstanceOf($dbms,$p_chave_pai,$p_atividade,'REGISTRO',null);
+        foreach ($RS as $row) { $RS = $row; break; }
+        $w_filtro = $w_filtro.'<tr valign="top"><td align="right">Etapa <td>[<b>'.f($RS,'titulo').'</b>]';
+      } 
       if ($p_sqcc>'') {
         $RS = db_getCCData::getInstanceOf($dbms,$p_sqcc);
         $w_filtro.='<tr valign="top"><td align="right">Classificação <td>[<b>'.f($RS,'nome').'</b>]';
@@ -242,13 +256,13 @@ function Inicial() {
           $p_ini_i,$p_ini_f,$p_fim_i,$p_fim_f,$p_atraso,$p_solicitante,
           $p_unidade,$p_prioridade,$p_ativo,$p_proponente,
           $p_chave, $p_assunto, $p_pais, $p_regiao, $p_uf, $p_cidade, $p_usu_resp,
-          $p_uorg_resp, $p_palavra, $p_prazo, $p_fase, $p_sqcc, null, null, null, null);
+          $p_uorg_resp, $p_palavra, $p_prazo, $p_fase, $p_sqcc, $p_chave_pai, null, null, null);
     } else {
       $RS = db_getSolicList::getInstanceOf($dbms,f($RS,'sq_menu'),$w_usuario,Nvl($_REQUEST['p_agrega'],$SG),$P1,
           $p_ini_i,$p_ini_f,$p_fim_i,$p_fim_f,$p_atraso,$p_solicitante,
           $p_unidade,$p_prioridade,$p_ativo,$p_proponente,
           $p_chave, $p_assunto, $p_pais, $p_regiao, $p_uf, $p_cidade, $p_usu_resp,
-          $p_uorg_resp, $p_palavra, $p_prazo, $p_fase, $p_sqcc, null, null, null, null);
+          $p_uorg_resp, $p_palavra, $p_prazo, $p_fase, $p_sqcc, $p_chave_pai, null, null, null);
     } 
     if (nvl($p_ordena,'')>'') {
       $lista = explode(',',str_replace(' ',',',$p_ordena));
@@ -274,6 +288,21 @@ function Inicial() {
     if (!(strpos('CP',$O)===false)) {
       if ($P1!=1 || $O=='C') {
         // Se não for cadastramento ou se for cópia
+        if(nvl($p_sq_menu_relac,'')>'' && $SG!='PROJETO') {
+          if ($p_sq_menu_relac=='CLASSIF') {
+            ShowHTML('  if (theForm.p_sqcc.selectedIndex==0) {');
+            ShowHTML('    alert(\'Você deve indicar a classificação!\');');
+            ShowHTML('    theForm.p_sqcc.focus();');
+            ShowHTML('    return false;');
+            ShowHTML('  }');
+          } else {
+            ShowHTML('  if (theForm.p_chave_pai.selectedIndex==0) {');
+            ShowHTML('    alert(\'Você deve indicar a vinculação!\');');
+            ShowHTML('    theForm.p_chave_pai.focus();');
+            ShowHTML('    return false;');
+            ShowHTML('  }');
+          }
+        }      
         Validate('p_chave','Número da demanda','','','1','18','','0123456789');
         Validate('p_prazo','Dias para a data limite','','','1','2','','0123456789');
         Validate('p_proponente','Proponente externo','','','2','90','1','');
@@ -315,7 +344,7 @@ function Inicial() {
   } elseif (!(strpos('CP',$O)===false)) {
     if ($P1!=1 || $O=='C') {
       // Se for cadastramento
-      BodyOpenClean('onLoad=\'document.Form.p_chave.focus()\';');
+      BodyOpenClean('onLoad=\'document.Form.p_chave_pai.focus()\';');
     } else {
       BodyOpenClean('onLoad=\'document.Form.p_ordena.focus()\';');
     } 
@@ -568,11 +597,18 @@ function Inicial() {
     ShowHTML('      <tr><td valign="top" colspan="2"><table border=0 width="100%" cellspacing=0>');
     if ($P1!=1 || $O=='C') {
       // Se não for cadastramento ou se for cópia
-      if (f($RS_Menu,'solicita_cc')=='S') {
-        ShowHTML('      <tr>');
-        SelecaoCC('C<u>l</u>assificação:','L','Selecione a classificação desejada.',$p_sqcc,null,'p_sqcc','SIWSOLIC');
-        ShowHTML('      </tr>');
-      } 
+      ShowHTML('          <tr><td><table border=0 colspan=0 cellspan=0 width="100%">');
+      ShowHTML('          <tr valign="top">');
+      selecaoServico('<U>R</U>estringir a:', 'S', null, $p_sq_menu_relac, $P2, null, 'p_sq_menu_relac', 'MENURELAC', 'onChange="document.Form.action=\''.$w_dir.$w_pagina.$par.'\'; document.Form.O.value=\''.$O.'\'; document.Form.w_troca.value=\'p_sq_menu_relac\'; document.Form.submit();"', $w_acordo, $w_acao, $w_viagem);
+      if(Nvl($p_sq_menu_relac,'')!='') {
+        ShowHTML('          <tr valign="top">');
+        if ($p_sq_menu_relac=='CLASSIF') {
+          SelecaoSolic('Classificação',null,null,$w_cliente,$p_sqcc,$p_sq_menu_relac,null,'p_sqcc','SIWSOLIC',null);
+        } else {
+          SelecaoSolic('Vinculação',null,null,$w_cliente,$p_chave_pai,$p_sq_menu_relac,f($RS_Menu,'sq_menu'),'p_chave_pai',null,null);
+        }
+      }
+      ShowHTML('          </td></tr></table></td></tr>');    
       ShowHTML('      <tr valign="top">');
       ShowHTML('          <td valign="top"><b>Número da <U>d</U>emanda:<br><INPUT ACCESSKEY="D" '.$w_Disabled.' class="STI" type="text" name="p_chave" size="18" maxlength="18" value="'.$p_chave.'"></td>');
       ShowHTML('          <td valign="top"><b>Dias para a data limi<U>t</U>e:<br><INPUT ACCESSKEY="T" '.$w_Disabled.' class="STI" type="text" name="p_prazo" size="2" maxlength="2" value="'.$p_prazo.'"></td>');

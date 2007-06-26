@@ -215,10 +215,16 @@ function Inicial() {
 
       if (nvl($p_projeto,'')!='') {
         $RS = db_getSolicData::getInstanceOf($dbms,$p_projeto);
-        $w_filtro.='<tr valign="top"><td align="right">Vinculação <td>[<b>'.exibeSolic($w_dir,$p_projeto,f($RS,'dados_solic')).'</b>]';
+        $w_filtro.='<tr valign="top"><td align="right">Vinculação <td>[<b>'.exibeSolic($w_dir,$p_projeto,f($RS,'dados_solic'),'S').'</b>]';
       } elseif (nvl($p_servico,'')!='') {
-        $RS = db_getMenuData::getInstanceOf($dbms,$p_servico);
-        $w_filtro.='<tr valign="top"><td align="right">Vinculação <td>[<b>'.f($RS,'nome').'</b>]';
+        if ($p_servico=='CLASSIF') {
+          $w_filtro.='<tr valign="top"><td align="right">Vinculação <td>[<b>Apenas projetos com classificação</b>]';
+        } else {
+          $RS = db_getMenuData::getInstanceOf($dbms,$p_servico);
+          $w_filtro.='<tr valign="top"><td align="right">Vinculação <td>[<b>'.f($RS,'nome').'</b>]';
+        }
+      } elseif (nvl($_REQUEST['p_agrega'],'')=='GRPRVINC') {
+        $w_filtro.='<tr valign="top"><td align="right">Vinculação <td>[<b>Apenas projetos com vinculação</b>]';
       } elseif (nvl($p_chave,'')!='') {
         $RS = db_getSolicData::getInstanceOf($dbms,$p_chave,'PJGERAL');
         $w_filtro.='<tr valign="top"><td align="right">Projeto <td>[<b>'.f($RS,'titulo').'</b>]';

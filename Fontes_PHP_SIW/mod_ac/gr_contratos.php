@@ -162,7 +162,7 @@ function Gerencial() {
       $w_filtro.='<tr valign="top"><td align="right">Vinculação<td>['.exibeSolic($w_dir,$p_chave_pai,null,'S').']</td></tr>';
     }    
     if ($p_atividade>'') {
-      $RS = db_getSolicEtapa::getInstanceOf($dbms,$p_projeto,$p_atividade,'REGISTRO',null);
+      $RS = db_getSolicEtapa::getInstanceOf($dbms,$p_chave_pai,$p_atividade,'REGISTRO',null);
       $w_filtro = $w_filtro.'<tr valign="top"><td align="right">Etapa <td>[<b>'.f($RS,'titulo').'</b>]';
     }     
     if ($p_sqcc>'') {
@@ -345,9 +345,9 @@ function Gerencial() {
       ShowHTML('     return false;');
       ShowHTML('  }');
       CompData('p_fim_i','Conclusão inicial','<=','p_fim_f','Conclusão final');
-      ShowHTML('  if (theForm.p_agrega[theForm.p_agrega.selectedIndex].value==\''.substr(f($RS_Menu,'sigla'),0,3).'ETAPA\' && theForm.p_projeto.selectedIndex==0) {');
+      ShowHTML('  if (theForm.p_agrega[theForm.p_agrega.selectedIndex].value==\''.substr(f($RS_Menu,'sigla'),0,3).'ETAPA\' && theForm.p_chave_pai.selectedIndex==0) {');
       ShowHTML('     alert (\'A agregação por etapa exige a seleção de um projeto!\');');
-      ShowHTML('     theForm.p_projeto.focus();');
+      ShowHTML('     theForm.p_chave_pai.focus();');
       ShowHTML('     return false;');
       ShowHTML('  }');      
       ValidateClose();
@@ -400,7 +400,7 @@ function Gerencial() {
         switch ($p_agrega) {
           case substr(f($RS_Menu,'sigla'),0,3).'ETAPA':     ShowHTML('      document.Form.p_atividade.value=filtro;');      break;
           case substr(f($RS_Menu,'sigla'),0,3).'TIPO':      ShowHTML('      document.Form.p_sq_orprior.value=filtro;');     break;
-          case substr(f($RS_Menu,'sigla'),0,3).'PROJ':      ShowHTML('      document.Form.p_projeto.value=filtro;');        break;
+          case substr(f($RS_Menu,'sigla'),0,3).'PROJ':      ShowHTML('      document.Form.p_chave_pai.value=filtro;');        break;
           case substr(f($RS_Menu,'sigla'),0,3).'PROP':      ShowHTML('      document.Form.p_proponente.value=filtro;');     break;
           case substr(f($RS_Menu,'sigla'),0,3).'RESP':      ShowHTML('      document.Form.p_solicitante.value=filtro;');    break;
           case substr(f($RS_Menu,'sigla'),0,3).'RESPATU':   ShowHTML('      document.Form.p_usu_resp.value=filtro;');       break;
@@ -413,7 +413,7 @@ function Gerencial() {
         switch ($p_agrega) {
           case substr(f($RS_Menu,'sigla'),0,3).'ETAPA':     ShowHTML('    else document.Form.p_atividade.value=\''.$_REQUEST['p_atividade'].'\';');     break;
           case substr(f($RS_Menu,'sigla'),0,3).'TIPO':      ShowHTML('    else document.Form.p_sq_orprior.value=\''.$_REQUEST['p_sq_orprior'].'\';');   break;
-          case substr(f($RS_Menu,'sigla'),0,3).'PROJ':      ShowHTML('    else document.Form.p_projeto.value=\''.$_REQUEST['p_projeto'].'\';');         break;
+          case substr(f($RS_Menu,'sigla'),0,3).'PROJ':      ShowHTML('    else document.Form.p_chave_pai.value=\''.$_REQUEST['p_chave_pai'].'\';');         break;
           case substr(f($RS_Menu,'sigla'),0,3).'PROP':      ShowHTML('    else document.Form.p_proponente.value=\''.$_REQUEST['p_proponente'].'\';');   break;
           case substr(f($RS_Menu,'sigla'),0,3).'RESP':      ShowHTML('    else document.Form.p_solicitante.value=\''.$_REQUEST['p_solicitante'].'\';'); break;
           case substr(f($RS_Menu,'sigla'),0,3).'RESPATU':   ShowHTML('    else document.Form.p_usu_resp.value=\''.$_REQUEST['p_usu_resp'].'\';');       break;
@@ -447,7 +447,7 @@ function Gerencial() {
         switch ($p_agrega) {
           case substr(f($RS_Menu,'sigla'),0,3).'ETAPA':     if ($_REQUEST['p_atividade']=='')       ShowHTML('<input type="Hidden" name="p_atividade" value="">');  break;
           case substr(f($RS_Menu,'sigla'),0,3).'TIPO':      if ($_REQUEST['p_sq_orprior']=='')      ShowHTML('<input type="Hidden" name="p_sq_orprior" value="">'); break;
-          case substr(f($RS_Menu,'sigla'),0,3).'PROJ':      if ($_REQUEST['p_projeto']=='')         ShowHTML('<input type="Hidden" name="p_projeto" value="">');    break;
+          case substr(f($RS_Menu,'sigla'),0,3).'PROJ':      if ($_REQUEST['p_chave_pai']=='')       ShowHTML('<input type="Hidden" name="p_chave_pai" value="">');    break;
           case substr(f($RS_Menu,'sigla'),0,3).'PROP':      if ($_REQUEST['p_proponente']=='')      ShowHTML('<input type="Hidden" name="p_proponente" value="">'); break;
           case substr(f($RS_Menu,'sigla'),0,3).'RESP':      if ($_REQUEST['p_solicitante']=='')     ShowHTML('<input type="Hidden" name="p_solicitante" value="">');break;
           case substr(f($RS_Menu,'sigla'),0,3).'RESPATU':   if ($_REQUEST['p_usu_resp']=='')        ShowHTML('<input type="Hidden" name="p_usu_resp" value="">');   break;

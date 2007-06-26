@@ -19,6 +19,7 @@ include_once($w_dir_volta.'classes/sp/db_getStateData.php');
 include_once($w_dir_volta.'classes/sp/db_getCityData.php');
 include_once($w_dir_volta.'classes/sp/db_verificaAssinatura.php');
 include_once($w_dir_volta.'classes/sp/dml_putCargo.php');
+include_once($w_dir_volta.'classes/sp/dml_putGPParametro.php');
 include_once($w_dir_volta.'classes/sp/dml_putGPModalidade.php');
 include_once($w_dir_volta.'classes/sp/dml_putGPTipoAfast.php');
 include_once($w_dir_volta.'classes/sp/dml_putDataEspecial.php');

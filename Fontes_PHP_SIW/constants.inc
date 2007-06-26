@@ -1,6 +1,5 @@
 <?
 //---------------------------Definições do BODY
-
 $conBodyText		= '#000000';
 $conBodyLink		= '#0000FF';
 $conBodyALink		= '#0000FF';
@@ -12,7 +11,6 @@ $conBodyTopmargin	= '5';
 $conBodyLeftmargin	= '5';
 
 //---------------------------Definições de Tabela
-
 $conTableHeader			= '#CCCCCC';
 $conTableBgColor		= '#F7F7F7';
 $conTableAlternateBgColor	= '#E1F2FF';
@@ -32,7 +30,6 @@ $conTrBgColorLightBlue2		= '#AADDFF';
 $conTrBgColorLightRed2		= '#FFCCCC';
 
 //---------------------------Definições de fontes
-
 $conFontSize		= '2';
 $conFontFace		= 'Arial, Helvetica, sans-serif';
 $conFontColor		= '#000000';
@@ -77,7 +74,7 @@ $conImgSmAtraso = 'images/BallRed.png';
 $strschema	= 'siw.';
 $strschema_is	= 'siw_is.';
 $conPageSize	= 30;
-$conRefreshSec  = 1800;
+$conRefreshSec  = 1000;
 
 //---------------------------Configuração do ambiente do sistema
 
@@ -86,6 +83,7 @@ $conEnviaMail   = true;
 
 $crlf           = chr(13).chr(10);
 $conSgSistema   = 'SIW';
+$conApacheStat  = 'http://www2.sbpi.com.br/server-status-sbpi';
 $conDefaultPath = 'http://www.sbpi.com.br';
 $conNmSistema   = 'Solução Integrada Web';
 $conRootSIW     = 'http://www2.sbpi.com.br/siw/';

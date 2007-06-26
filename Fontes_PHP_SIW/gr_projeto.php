@@ -117,8 +117,7 @@ $p_regiao        = strtoupper($_REQUEST['p_regiao']);
 $p_uf            = strtoupper($_REQUEST['p_uf']);
 $p_cidade        = strtoupper($_REQUEST['p_cidade']);
 $p_prioridade    = strtoupper($_REQUEST['p_prioridade']);
-$p_sq_menu_relac = strtoupper($_REQUEST['p_sq_menu_relac']);
-$p_solic_pai     = strtoupper($_REQUEST['p_solic_pai']);
+$p_servico       = strtoupper($_REQUEST['p_servico']);
 
 // Verifica se o documento tem sub-menu. Se tiver, agrega no HREF uma chamada para montagem do mesmo.
 $RS = db_getLinkSubMenu::getInstanceOf($dbms,$_SESSION['P_CLIENTE'],$SG);
@@ -153,15 +152,26 @@ function Gerencial() {
   if ($O=='L' || $O=='V' || $O=='W') {
 
     $w_filtro='';
+    if (nvl($p_projeto,'')!='') {
+      $RS = db_getSolicData::getInstanceOf($dbms,$p_projeto);
+      $w_filtro.='<tr valign="top"><td align="right">Vinculação <td>[<b>'.exibeSolic($w_dir,$p_projeto,f($RS,'dados_solic'),'S').'</b>]';
+    } elseif (nvl($p_servico,'')!='') {
+      if ($p_servico=='CLASSIF') {
+        $w_filtro.='<tr valign="top"><td align="right">Vinculação <td>[<b>Apenas projetos com classificação</b>]';
+      } else {
+        $RS = db_getMenuData::getInstanceOf($dbms,$p_servico);
+        $w_filtro.='<tr valign="top"><td align="right">Vinculação <td>[<b>'.f($RS,'nome').'</b>]';
+      }
+    } elseif (nvl($_REQUEST['p_agrega'],'')=='GRPRVINC') {
+      $w_filtro.='<tr valign="top"><td align="right">Vinculação <td>[<b>Apenas projetos com vinculação</b>]';
+    } elseif (nvl($p_chave,'')!='') {
+      $RS = db_getSolicData::getInstanceOf($dbms,$p_chave,'PJGERAL');
+      $w_filtro.='<tr valign="top"><td align="right">Projeto <td>[<b>'.f($RS,'titulo').'</b>]';
+    } 
     if ($p_sqcc>'') {
       $RS = db_getCCData::getInstanceOf($dbms,$p_sqcc);
       $w_filtro.='<tr valign="top"><td align="right">Classificação <td>[<b>'.f($RS,'nome').'</b>]';
     } 
-    if ($p_solic_pai>'') {
-      $RS  = db_getMenuData::getInstanceOf($dbms,$p_sq_menu_relac);
-      $RS1 = db_getSolicData::getInstanceOf($dbms,$p_solic_pai,f($RS,'sigla'));
-      $w_filtro.='<tr valign="top"><td align="right">Documento<td>[<b>'.nvl(f($RS1,'titulo'),f($RS1,'objeto')).'</b>]';
-    }
     if ($p_chave>'')  $w_filtro.='<tr valign="top"><td align="right">Projeto nº <td>[<b>'.$p_chave.'</b>]';
     if ($p_prazo>'') $w_filtro.=' <tr valign="top"><td align="right">Prazo para conclusão até<td>[<b>'.FormataDataEdicao(addDays(time(),$p_prazo)).'</b>]';
     if ($p_solicitante>'') {
@@ -209,7 +219,8 @@ function Gerencial() {
         $p_ini_i,$p_ini_f,$p_fim_i,$p_fim_f,$p_atraso,$p_solicitante,
         $p_unidade,$p_prioridade,$p_ativo,$p_proponente, 
         $p_chave, $p_assunto, $p_pais, $p_regiao, $p_uf, $p_cidade, $p_usu_resp, 
-        $p_uorg_resp, $p_palavra, $p_prazo, $p_fase, $p_sqcc, $p_projeto, $p_atividade, $p_solic_pai, null);
+        $p_uorg_resp, $p_palavra, $p_prazo, $p_fase, $p_sqcc, $p_projeto, 
+        $p_atividade, null, null, null, $p_servico);
 
     switch ($p_agrega) {
       case 'GRPRVINC':
@@ -273,21 +284,6 @@ function Gerencial() {
       FormataData();
       SaltaCampo();
       ValidateOpen('Validacao');
-      if(nvl($p_sq_menu_relac,'')>'') {
-        if ($p_sq_menu_relac=='CLASSIF') {
-          ShowHTML('  if (theForm.p_sqcc.selectedIndex==0) {');
-          ShowHTML('    alert(\'Você deve indicar a classificação!\');');
-          ShowHTML('    theForm.p_sqcc.focus();');
-          ShowHTML('    return false;');
-          ShowHTML('  }');
-        } else {
-          ShowHTML('  if (theForm.p_solic_pai.selectedIndex==0) {');
-          ShowHTML('    alert(\'Você deve indicar o documento!\');');
-          ShowHTML('    theForm.p_solic_pai.focus();');
-          ShowHTML('    return false;');
-          ShowHTML('  }');
-        }
-      }
       Validate('p_chave','Chave','','','1','18','','0123456789');
       Validate('p_prazo','Dias para a data limite','','','1','2','','0123456789');
       Validate('p_proponente','Proponente externo','','','2','90','1','');
@@ -424,7 +420,7 @@ function Gerencial() {
           case 'GRPRPRIO':      if ($_REQUEST['p_prioridade']=='')  ShowHTML('<input type="Hidden" name="p_prioridade" value="">');   break;
           case 'GRPRLOCAL':     if ($_REQUEST['p_uf']=='')          ShowHTML('<input type="Hidden" name="p_uf" value="">');           break;
           default:              
-            ShowHTML('<input type="Hidden" name="p_servico" value="'.substr($p_agrega,4).'">');
+            ShowHTML('<input type="Hidden" name="p_servico" value="'.nvl($p_servico,substr($p_agrega,4)).'">');
             if ($_REQUEST['p_projeto']=='')     ShowHTML('<input type="Hidden" name="p_projeto" value="">');
         } 
       } 
@@ -831,13 +827,13 @@ function Gerencial() {
     ShowHTML('         <tr><td valign="top" colspan="2" align="center" bgcolor="#D0D0D0" style="border: 2px solid rgb(0,0,0);"><b>Critérios de Busca</td>');
     ShowHTML('          <tr><td><table border=0 colspan=0 cellspan=0 width="100%">');
     ShowHTML('          <tr valign="top">');
-    selecaoServico('<U>R</U>estringir a:', 'S', null, $p_sq_menu_relac, $P2, null, 'p_sq_menu_relac', 'MENURELAC', 'onChange="document.Form.action=\''.$w_pagina.$par.'\'; document.Form.O.value=\''.$O.'\'; document.Form.w_troca.value=\'p_sq_menu_relac\'; document.Form.submit();"', $w_acordo, $w_acao, $w_viagem);
-    if(Nvl($p_sq_menu_relac,'')!='') {
+    selecaoServico('<U>R</U>estringir a:', 'S', null, $p_servico, $P2, null, 'p_servico', 'MENURELAC', 'onChange="document.Form.action=\''.$w_pagina.$par.'\'; document.Form.O.value=\''.$O.'\'; document.Form.w_troca.value=\'p_servico\'; document.Form.submit();"', $w_acordo, $w_acao, $w_viagem);
+    if(Nvl($p_servico,'')!='') {
       ShowHTML('          <tr valign="top">');
-      if ($p_sq_menu_relac=='CLASSIF') {
-        SelecaoSolic('Classificação',null,null,$w_cliente,$p_sqcc,$p_sq_menu_relac,null,'p_sqcc','SIWSOLIC',null);
+      if ($p_servico=='CLASSIF') {
+        SelecaoSolic('Classificação',null,null,$w_cliente,$p_sqcc,$p_servico,null,'p_sqcc','SIWSOLIC',null);
       } else {
-        SelecaoSolic('Vinculação',null,null,$w_cliente,$p_solic_pai,$p_sq_menu_relac,f($RS_Menu,'sq_menu'),'p_solic_pai',f($RS_Relac,'sigla'),null);
+        SelecaoSolic('Vinculação',null,null,$w_cliente,$p_projeto,$p_servico,f($RS_Menu,'sq_menu'),'p_projeto',f($RS_Relac,'sigla'),null);
       }
     }
     ShowHTML('          </td></tr></table></td></tr>');    

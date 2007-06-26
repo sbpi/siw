@@ -92,7 +92,7 @@ $w_cliente  = RetornaCliente();
 $w_usuario  = RetornaUsuario();
 $w_menu     = $P2;
 
-$p_projeto       = strtoupper($_REQUEST['p_projeto']);
+$p_chave_pai       = strtoupper($_REQUEST['p_chave_pai']);
 $p_atividade     = strtoupper($_REQUEST['p_atividade']);
 $p_tipo          = strtoupper($_REQUEST['p_tipo']);
 $p_ativo         = strtoupper($_REQUEST['p_ativo']);
@@ -328,9 +328,9 @@ function Gerencial() {
       ShowHTML('  }');
       CompData('p_fim_i','Conclusão inicial','<=','p_fim_f','Conclusão final');
       if ($SG=='PROJETO') {
-        ShowHTML('  if (theForm.p_agrega[theForm.p_agrega.selectedIndex].value==\'GRDMETAPA\' && theForm.p_projeto.selectedIndex==0) {');
+        ShowHTML('  if (theForm.p_agrega[theForm.p_agrega.selectedIndex].value==\'GRDMETAPA\' && theForm.p_chave_pai.selectedIndex==0) {');
         ShowHTML('     alert (\'A agregação por etapa exige a seleção de um projeto!\');');
-        ShowHTML('     theForm.p_projeto.focus();');
+        ShowHTML('     theForm.p_chave_pai.focus();');
         ShowHTML('     return false;');
         ShowHTML('  }');
       }
@@ -382,7 +382,7 @@ function Gerencial() {
         ShowHTML('    if (filtro != -1) {');
         switch ($p_agrega) {
           case 'GRDMETAPA':     ShowHTML('      document.Form.p_atividade.value=filtro;');      break;
-          case 'GRDMPROJ':      ShowHTML('      document.Form.p_projeto.value=filtro;');        break;
+          case 'GRDMPROJ':      ShowHTML('      document.Form.p_chave_pai.value=filtro;');        break;
           case 'GRDMPROP':      ShowHTML('      document.Form.p_proponente.value=filtro;');     break;
           case 'GRDMRESP':      ShowHTML('      document.Form.p_solicitante.value=filtro;');    break;
           case 'GRDMRESPATU':   ShowHTML('      document.Form.p_usu_resp.value=filtro;');       break;
@@ -394,7 +394,7 @@ function Gerencial() {
         ShowHTML('    }');
         switch ($p_agrega) {
           case 'GRDMETAPA':     ShowHTML('    else document.Form.p_atividade.value=\''.$_REQUEST['p_atividade'].'\';');       break;
-          case 'GRDMPROJ':      ShowHTML('    else document.Form.p_projeto.value=\''.$_REQUEST['p_projeto'].'\';');           break;
+          case 'GRDMPROJ':      ShowHTML('    else document.Form.p_chave_pai.value=\''.$_REQUEST['p_chave_pai'].'\';');           break;
           case 'GRDMPROP':      ShowHTML('    else document.Form.p_proponente.value=\''.$_REQUEST['p_proponente'].'\';');     break;
           case 'GRDMRESP':      ShowHTML('    else document.Form.p_solicitante.value=\''.$_REQUEST['p_solicitante'].'\';');   break;
           case 'GRDMRESPATU':   ShowHTML('    else document.Form.p_usu_resp.value=\''.$_REQUEST['p_usu_resp'].'\';');         break;
@@ -428,7 +428,7 @@ function Gerencial() {
         ShowHTML(MontaFiltro('POST'));
         switch ($p_agrega) {
           case 'GRDMETAPA':     if ($_REQUEST['p_atividade']=='')   ShowHTML('<input type="Hidden" name="p_atividade" value="">');    break;
-          case 'GRDMPROJ':      if ($_REQUEST['p_projeto']=='')     ShowHTML('<input type="Hidden" name="p_projeto" value="">');      break;
+          case 'GRDMPROJ':      if ($_REQUEST['p_chave_pai']=='')     ShowHTML('<input type="Hidden" name="p_chave_pai" value="">');      break;
           case 'GRDMPROP':      if ($_REQUEST['p_proponente']=='')  ShowHTML('<input type="Hidden" name="p_proponente" value="">');   break;
           case 'GRDMRESP':      if ($_REQUEST['p_solicitante']=='') ShowHTML('<input type="Hidden" name="p_solicitante" value="">');  break;
           case 'GRDMRESPATU':   if ($_REQUEST['p_usu_resp']=='')    ShowHTML('<input type="Hidden" name="p_usu_resp" value="">');     break;
