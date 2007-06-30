@@ -161,12 +161,12 @@ function Usuarios() {
   ScriptClose();
   ShowHTML('</HEAD>');
 
-  if ($w_troca>'') BodyOpen('onLoad=\'document.Form.'.$w_troca.'.focus();\'');
-  elseif ($O=='I') BodyOpen('onLoad=\'document.Form.w_username.focus();\'');
-  elseif ($O=='A') BodyOpen('onLoad=\'document.Form.w_nome.focus();\'');
-  elseif ($O=='E') BodyOpen('onLoad=\'document.Form.w_assinatura.focus()\';');
-  elseif ($O=='P') BodyOpen('onLoad=\'document.Form.p_localizacao.focus()\';');
-  else    BodyOpen('onLoad=this.focus();');
+  if ($w_troca>'') BodyOpen('onLoad="document.Form.'.$w_troca.'.focus();"');
+  elseif ($O=='I') BodyOpen('onLoad="document.Form.w_username.focus();"');
+  elseif ($O=='A') BodyOpen('onLoad="document.Form.w_nome.focus();"');
+  elseif ($O=='E') BodyOpen('onLoad="document.Form.w_assinatura.focus()";');
+  elseif ($O=='P') BodyOpen('onLoad="document.Form.p_localizacao.focus()";');
+  else    BodyOpen('onLoad="this.focus();"');
 
   Estrutura_Topo_Limpo();
   Estrutura_Menu();
@@ -610,12 +610,12 @@ function Menu() {
   ShowHTML('</style> ');
   ShowHTML('</HEAD>');
 
-  if ($w_troca>'')            BodyOpen('onLoad=document.Form.'.$w_troca.'.focus();');
-  elseif ($O=='I' || $O=='A') BodyOpen('onLoad=document.Form.w_descricao.focus();');
-  elseif ($O=='H')            BodyOpen('onLoad=document.Form.w_heranca.focus();');
-  elseif ($O=='P')            BodyOpen('onLoad=document.Form.p_sq_endereco_unidade.focus();');
-  elseif ($O=='L')            BodyOpen('onLoad=this.focus();');
-  else                        BodyOpen('onLoad=document.Form.w_assinatura.focus();');
+  if ($w_troca>'')            BodyOpen('onLoad="document.Form.'.$w_troca.'.focus();"');
+  elseif ($O=='I' || $O=='A') BodyOpen('onLoad="document.Form.w_descricao.focus();"');
+  elseif ($O=='H')            BodyOpen('onLoad="document.Form.w_heranca.focus();"');
+  elseif ($O=='P')            BodyOpen('onLoad="document.Form.p_sq_endereco_unidade.focus();"');
+  elseif ($O=='L')            BodyOpen('onLoad="this.focus();"');
+  else                        BodyOpen('onLoad="document.Form.w_assinatura.focus();"');
 
   if ($O!='H') {
     Estrutura_Topo_Limpo();
@@ -1219,9 +1219,9 @@ function Acessos() {
   ValidateClose();
   ScriptClose();
   ShowHTML('</HEAD>');
-  if ($O=='I')      BodyOpen('onLoad=document.Form.w_sq_modulo.focus();');
-  elseif ($O=='E')  BodyOpen('onLoad=document.Form.w_assinatura.focus();');
-  else              BodyOpen('onLoad=this.focus();');
+  if ($O=='I')      BodyOpen('onLoad="document.Form.w_sq_modulo.focus();"');
+  elseif ($O=='E')  BodyOpen('onLoad="document.Form.w_assinatura.focus();"');
+  else              BodyOpen('onLoad="this.focus();"');
 
   Estrutura_Topo_Limpo();
   Estrutura_Menu();
@@ -1392,9 +1392,9 @@ function Visao() {
   ValidateClose();
   ScriptClose();
   ShowHTML('</HEAD>');
-  if ($O=='I')      BodyOpen('onLoad=document.Form.w_sq_menu.focus();');
-  elseif ($O=='E')  BodyOpen('onLoad=document.Form.w_assinatura.focus();');
-  else              BodyOpen('onLoad=this.focus();');
+  if ($O=='I')      BodyOpen('onLoad="document.Form.w_sq_menu.focus();"');
+  elseif ($O=='E')  BodyOpen('onLoad="document.Form.w_assinatura.focus();"');
+  else              BodyOpen('onLoad="this.focus();"');
 
   Estrutura_Topo_Limpo();
   Estrutura_Menu();
@@ -1664,7 +1664,7 @@ function TelaUsuario() {
   if (f($RS,'interno')=='S') {
     ShowHTML('<TITLE>Usuário</TITLE>');
     ShowHTML('</HEAD>');
-    BodyOpen('onLoad=this.focus();');
+    BodyOpen('onLoad="this.focus();"');
     $w_TP = 'Usuário - Visualização de dados';
     Estrutura_Texto_Abre();
     ShowHTML('<table border="0" width="100%">');
@@ -1707,7 +1707,7 @@ function TelaUsuario() {
   } elseif (strpos("Cliente,Fornecedor",f($RS,'nome_vinculo'))!==false) {
     ShowHTML('<TITLE>Pessoa externa</TITLE>');
     ShowHTML('</HEAD>');
-    BodyOpen('onLoad=this.focus();');
+    BodyOpen('onLoad="this.focus();"');
     $TP='Dados pessoa externa';
     Estrutura_Texto_Abre();
     ShowHTML('<table border="0" width="100%">');
@@ -1779,7 +1779,7 @@ function TelaUsuario() {
     $RS1 = db_getBenef::getInstanceOf($dbms, $w_cliente, $l_sq_pessoa, null, null, null, null, null, null);
     ShowHTML('<TITLE>Pessoa sem vínculo</TITLE>');
     ShowHTML('</HEAD>');
-    BodyOpen('onLoad=this.focus();');
+    BodyOpen('onLoad="this.focus();"');
     $TP='Dados pessoa externa';
     Estrutura_Texto_Abre();
     ShowHTML('<table border="0" width="100%">');
@@ -1868,7 +1868,7 @@ function TelaUnidade() {
   ValidateClose();
   ScriptClose();
   ShowHTML('</HEAD>');
-  BodyOpen('onLoad=this.focus();');
+  BodyOpen('onLoad="this.focus();"');
   $w_TP = 'Unidade - Visualização de dados';
   Estrutura_Texto_Abre();
   ShowHTML('<table border="0" width="100%">');
@@ -1980,7 +1980,7 @@ function Grava() {
   extract($GLOBALS);
   Cabecalho();
   ShowHTML('</HEAD>');
-  BodyOpen('onLoad=this.focus();');
+  BodyOpen('onLoad="this.focus();"');
   switch ($SG) {
     case "MENU":
       $p_sq_endereco_unidade = strtoupper($_REQUEST['p_sq_endereco_unidade']);
@@ -2061,7 +2061,7 @@ function Main() {
   case 'GRAVA':         Grava();        break;
   default:
     Cabecalho();
-    BodyOpen('onLoad=this.focus();');
+    BodyOpen('onLoad="this.focus();"');
     Estrutura_Topo_Limpo();
     Estrutura_Menu();
     Estrutura_Corpo_Abre();

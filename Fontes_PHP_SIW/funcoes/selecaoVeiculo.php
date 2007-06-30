@@ -5,7 +5,7 @@ include_once($w_dir_volta.'classes/sp/db_getVeiculo.php');
 // -------------------------------------------------------------------------
 function selecaoVeiculo($label,$accesskey,$hint,$cliente,$chave,$chaveAux,$campo,$restricao,$atributo=null) {
   extract($GLOBALS);
-  $RS = db_getVeiculo::getInstanceOf($dbms, null, null , $w_cliente, null, null, 'S');
+  $RS = db_getVeiculo::getInstanceOf($dbms, null, null , $w_cliente, null, null, 'S', null, null, null, null);
   $RS = SortArray($RS,'modelo','asc');
   if (!isset($hint))
     ShowHTML(' <td valign="top"><font size="1"><b>'.$label.'</b><br><SELECT ACCESSKEY="'.$accesskey.'" CLASS="STS" NAME="'.$campo.'" '.$w_Disabled.' '.$atributo.'>');

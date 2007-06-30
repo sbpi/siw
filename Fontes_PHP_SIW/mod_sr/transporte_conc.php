@@ -21,7 +21,13 @@
     $w_horario_chegada    = $_REQUEST['w_horario_chegada'];
     $w_solicitante        = $_REQUEST['w_solicitante'];
     $w_recebedor          = $_REQUEST['w_recebedor'];
-  } 
+  } else {
+    $RS = db_getSolicData::getInstanceOf($dbms,$w_chave,$SG);
+    $w_sq_veiculo         = f($RS,'sq_veiculo');
+    $w_executor           = f($RS,'executor');
+    $w_recebedor          = f($RS,'solicitante');
+  }
+
   Cabecalho();
   ShowHTML('<HEAD>');
   ShowHTML('<meta http-equiv="Refresh" content="'.$conRefreshSec.'; URL=../'.MontaURL('MESA').'">');

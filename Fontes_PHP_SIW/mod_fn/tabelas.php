@@ -98,7 +98,7 @@ function Imposto() {
     } else {
       $RS = SortArray($RS,'nome','asc');
     }
-  } elseif (!(strpos('AEV',$O)===false) && $w_troca=='') {
+  } elseif (strpos('AEV',$O)!==false) {
     $RS = db_getImposto::getInstanceOf($dbms,$w_chave,$w_cliente);
     foreach($RS as $row) {$RS = $row; break;}
     $w_chave        = f($RS,'chave');
@@ -433,7 +433,7 @@ function Lancamento() {
     } else {
       $RS = SortArray($RS,'receita','desc','nome','asc');
     }
-  } elseif (!(strpos('AEV',$O)===false) && $w_troca=='') {
+  } elseif (strpos('AEV',$O)!==false) {
     $RS = db_getTipoLancamento::getInstanceOf($dbms,$w_chave,$w_cliente,null);
     foreach ($RS as $row) {$RS=$row; break;}
     $w_chave        = f($RS,'chave');

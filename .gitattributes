@@ -724,8 +724,10 @@ Fontes_PHP_SIW/classes/sp/db_getIsUnidadeLimite_IS.php -text
 Fontes_PHP_SIW/classes/sp/db_getIsUnidade_IS.php -text
 Fontes_PHP_SIW/classes/sp/db_getKindPersonList.php -text
 Fontes_PHP_SIW/classes/sp/db_getKnowArea.php -text
+Fontes_PHP_SIW/classes/sp/db_getLCCriterio.php -text
 Fontes_PHP_SIW/classes/sp/db_getLCFonteRecurso.php -text
 Fontes_PHP_SIW/classes/sp/db_getLCModalidade.php -text
+Fontes_PHP_SIW/classes/sp/db_getLCSituacao.php -text
 Fontes_PHP_SIW/classes/sp/db_getLancamento.php -text
 Fontes_PHP_SIW/classes/sp/db_getLancamentoDoc.php -text
 Fontes_PHP_SIW/classes/sp/db_getLancamentoItem.php -text
@@ -1030,8 +1032,10 @@ Fontes_PHP_SIW/classes/sp/dml_putIndicador_Meta.php -text
 Fontes_PHP_SIW/classes/sp/dml_putIndice.php -text
 Fontes_PHP_SIW/classes/sp/dml_putIsUnidadeLimite_IS.php -text
 Fontes_PHP_SIW/classes/sp/dml_putIsUnidade_IS.php -text
+Fontes_PHP_SIW/classes/sp/dml_putLCCriterio.php -text
 Fontes_PHP_SIW/classes/sp/dml_putLCFonteRecurso.php -text
 Fontes_PHP_SIW/classes/sp/dml_putLCModalidade.php -text
+Fontes_PHP_SIW/classes/sp/dml_putLCSituacao.php -text
 Fontes_PHP_SIW/classes/sp/dml_putLancamentoDoc.php -text
 Fontes_PHP_SIW/classes/sp/dml_putLancamentoEnvio.php -text
 Fontes_PHP_SIW/classes/sp/dml_putLancamentoItem.php -text
@@ -1117,6 +1121,7 @@ Fontes_PHP_SIW/classes/sp/dml_putSolicEnvio.php -text
 Fontes_PHP_SIW/classes/sp/dml_putSolicEtpRec.php -text
 Fontes_PHP_SIW/classes/sp/dml_putSolicGeral.php -text
 Fontes_PHP_SIW/classes/sp/dml_putSolicIndicador.php -text
+Fontes_PHP_SIW/classes/sp/dml_putSolicInfTransp.php -text
 Fontes_PHP_SIW/classes/sp/dml_putSolicInter.php -text
 Fontes_PHP_SIW/classes/sp/dml_putSolicOpiniao.php -text
 Fontes_PHP_SIW/classes/sp/dml_putSolicRecAlocacao.php -text
@@ -1337,6 +1342,7 @@ Fontes_PHP_SIW/funcoes/selecaoPlanoEstrategico.php -text
 Fontes_PHP_SIW/funcoes/selecaoPlanoSubordination.php -text
 Fontes_PHP_SIW/funcoes/selecaoPrioridade.php -text
 Fontes_PHP_SIW/funcoes/selecaoProbabilidade.php -text
+Fontes_PHP_SIW/funcoes/selecaoProcedimentoTransp.php -text
 Fontes_PHP_SIW/funcoes/selecaoPrograma.php -text
 Fontes_PHP_SIW/funcoes/selecaoProgramaIS.php -text
 Fontes_PHP_SIW/funcoes/selecaoProgramaPPA.php -text
@@ -1427,6 +1433,7 @@ Fontes_PHP_SIW/mod_ac/validaacordo.php -text
 Fontes_PHP_SIW/mod_ac/validaconvenio.php -text
 Fontes_PHP_SIW/mod_ac/visualacordo.php -text
 Fontes_PHP_SIW/mod_ac/visualconvenio.php -text
+Fontes_PHP_SIW/mod_cl/tabelas.php -text
 Fontes_PHP_SIW/mod_dc/carga_arquivos.php -text
 Fontes_PHP_SIW/mod_dc/dc_consulta.php -text
 Fontes_PHP_SIW/mod_dc/dc_dicionario.php -text
@@ -1518,8 +1525,10 @@ Fontes_PHP_SIW/mod_sr/gr_solic.php -text
 Fontes_PHP_SIW/mod_sr/tabelas.php -text
 Fontes_PHP_SIW/mod_sr/transporte_conc.php -text
 Fontes_PHP_SIW/mod_sr/transporte_gerais.php -text
+Fontes_PHP_SIW/mod_sr/transporte_inf.php -text
 Fontes_PHP_SIW/mod_sr/validageral.php -text
 Fontes_PHP_SIW/mod_sr/visualgeral.php -text
+Fontes_PHP_SIW/mod_sr/visualmapaveiculo.php -text
 Fontes_PHP_SIW/mod_sr/visualos.php -text
 Fontes_PHP_SIW/mod_sr/visualos_transp.php -text
 Fontes_PHP_SIW/mod_tt/consulta.php -text

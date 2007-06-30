@@ -203,7 +203,7 @@ function Inicial() {
         break;
       case 'VEÍCULO':
         include_once($w_dir_volta.'classes/sp/db_getVeiculo.php');
-        $RS1 = db_getVeiculo::getInstanceOf($dbms,nvl($w_ch_vinculo,0), null , $w_cliente, null, null, 'S');
+        $RS1 = db_getVeiculo::getInstanceOf($dbms,nvl($w_ch_vinculo,0), null , $w_cliente, null, null, 'S', null, null, null, null);
         foreach($RS1 as $row) { $RS1 = $row; break; }
         $w_nome             = f($RS1,'nm_veiculo');
         $w_codigo           = substr(f($RS1,'nm_veiculo'),0,8);

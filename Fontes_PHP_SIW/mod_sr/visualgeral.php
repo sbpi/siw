@@ -14,8 +14,10 @@ function VisualGeral($l_chave,$O,$l_usuario,$l_sg,$P4) {
   $l_html.=chr(13).'      <tr><td colspan="2"><hr NOSHADE color=#000000 size=4></td></tr>';
 
   // Exibe a vinculação
-  $l_html.=chr(13).'      <tr><td valign="top" width="20%"><b>Vinculação: </b></td>';
-  $l_html.=chr(13).'        <td>'.exibeSolic($w_dir,f($RS1,'sq_solic_pai'),f($RS1,'dados_pai'),'S').'</td></tr>';
+  if (substr(f($RS1,'dados_pai'),0,3)!='---') {
+    $l_html.=chr(13).'      <tr><td valign="top" width="20%"><b>Vinculação: </b></td>';
+    $l_html.=chr(13).'        <td>'.exibeSolic($w_dir,f($RS1,'sq_solic_pai'),f($RS1,'dados_pai'),'S').'</td></tr>';
+  }
 
   // Se a classificação foi informada, exibe.
   if (Nvl(f($RS1,'sq_cc'),'')>'') {
@@ -23,34 +25,45 @@ function VisualGeral($l_chave,$O,$l_usuario,$l_sg,$P4) {
     $l_html .= chr(13).'        <td>'.f($RS1,'cc_nome').' </td></tr>';
   }
 
-  switch (f($RS1,'data_hora')) {
-  case 1 :
-    $l_html.=chr(13).'   <tr><td width="20%"><b>Data programada:</b></font></td>';
-    $l_html.=chr(13).'       <td>'.Nvl(FormataDataEdicao(f($RS1,'phpdt_fim')),'-').'</font></td></tr>';
-    break;
-  case 2 :
-    $l_html.=chr(13).'   <tr><td width="20%"><b>Data programada:</b></font></td>';
-    $l_html.=chr(13).'       <td>'.Nvl(substr(FormataDataEdicao(f($RS1,'phpdt_fim'),3),0,-3),'-').'</font></td></tr>';
-    break;
-  case 3 :
-    $l_html.=chr(13).'   <tr><td width="20%"><b>Início:</b></font></td>';
-    $l_html.=chr(13).'       <td>'.Nvl(FormataDataEdicao(f($RS1,'phpdt_inicio')),'-').'</font></td></tr>';
-    $l_html.=chr(13).'   <tr><td width="20%"><b>Término:</b></font></td>';
-    $l_html.=chr(13).'       <td>'.Nvl(FormataDataEdicao(f($RS1,'phpdt_fim')),'-').'</font></td></tr>';
-    break;
-  case 4 :
-    $l_html.=chr(13).'   <tr><td width="20%"><b>Início:</b></font></td>';
-    $l_html.=chr(13).'       <td>'.Nvl(substr(FormataDataEdicao(f($RS1,'phpdt_inicio'),0,-3),3),'-').'</font></td></tr>';
-    $l_html.=chr(13).'   <tr><td width="20%"><b>Término:</b></font></td>';
-    $l_html.=chr(13).'       <td>'.Nvl(substr(FormataDataEdicao(f($RS1,'phpdt_fim'),3),0,-3),'-').'</font></td></tr>';
-    break;
-  }
-  if ($P4==1) {
-    $l_html.=chr(13).'   <tr><td><b>Solicitante:</b></font></td>';
-    $l_html.=chr(13).'       <td>'.f($RS1,'nm_sol').' ('.f($RS1,'sg_unidade_solic').')</font></td></tr>';
+  if (Nvl(f($RS1,'sigla'),'')=='SRTRANSP') {
+    $l_html.=chr(13).'   <tr><td width="20%"><b>Procedimento:</b></td>';
+    $l_html.=chr(13).'       <td><b>'.f($RS1,'nm_procedimento').'</b></font></tr>';
+    $l_html.=chr(13).'   <tr><td width="20%"><b>Data e hora de saída:</b></td>';
+    $l_html.=chr(13).'       <td><b>'.Nvl(substr(FormataDataEdicao(f($RS1,'phpdt_inicio'),3),0,-3),'-').'</b></font></tr>';
+    if (f($RS1,'procedimento')==2) {
+      $l_html.=chr(13).'   <tr><td width="20%"><b>Previsão de retorno:</b></td>';
+      $l_html.=chr(13).'       <td><b><b>'.Nvl(substr(FormataDataEdicao(f($RS1,'phpdt_fim'),3),0,-3),'-').'</b></td></tr>';
+    }
   } else {
-    $l_html.=chr(13).'   <tr><td><b>Solicitante:</b></font></td>';
-    $l_html.=chr(13).'       <td>'.ExibePessoa('../',$w_cliente,f($RS1,'solicitante'),$TP,f($RS1,'nm_sol')).' ('.ExibeUnidade('../',$w_cliente,f($RS1,'sg_unidade_solic'),f($RS1,'sq_unidade'),$TP).')</font></td></tr>';
+    switch (f($RS1,'data_hora')) {
+    case 1 :
+      $l_html.=chr(13).'   <tr><td width="20%"><b>Data programada:</b></font></td>';
+      $l_html.=chr(13).'       <td>'.Nvl(FormataDataEdicao(f($RS1,'phpdt_fim')),'-').'</font></td></tr>';
+      break;
+    case 2 :
+      $l_html.=chr(13).'   <tr><td width="20%"><b>Data programada:</b></font></td>';
+      $l_html.=chr(13).'       <td>'.Nvl(substr(FormataDataEdicao(f($RS1,'phpdt_fim'),3),0,-3),'-').'</font></td></tr>';
+      break;
+    case 3 :
+      $l_html.=chr(13).'   <tr><td width="20%"><b>Início:</b></font></td>';
+      $l_html.=chr(13).'       <td>'.Nvl(FormataDataEdicao(f($RS1,'phpdt_inicio')),'-').'</font></td></tr>';
+      $l_html.=chr(13).'   <tr><td width="20%"><b>Término:</b></font></td>';
+      $l_html.=chr(13).'       <td>'.Nvl(FormataDataEdicao(f($RS1,'phpdt_fim')),'-').'</font></td></tr>';
+      break;
+    case 4 :
+      $l_html.=chr(13).'   <tr><td width="20%"><b>Início:</b></font></td>';
+      $l_html.=chr(13).'       <td>'.Nvl(substr(FormataDataEdicao(f($RS1,'phpdt_inicio'),0,-3),3),'-').'</font></td></tr>';
+      $l_html.=chr(13).'   <tr><td width="20%"><b>Término:</b></font></td>';
+      $l_html.=chr(13).'       <td>'.Nvl(substr(FormataDataEdicao(f($RS1,'phpdt_fim'),3),0,-3),'-').'</font></td></tr>';
+      break;
+    }
+    if ($P4==1) {
+      $l_html.=chr(13).'   <tr><td><b>Solicitante:</b></font></td>';
+      $l_html.=chr(13).'       <td>'.f($RS1,'nm_sol').' ('.f($RS1,'sg_unidade_solic').')</font></td></tr>';
+    } else {
+      $l_html.=chr(13).'   <tr><td><b>Solicitante:</b></font></td>';
+      $l_html.=chr(13).'       <td>'.ExibePessoa('../',$w_cliente,f($RS1,'solicitante'),$TP,f($RS1,'nm_sol')).' ('.ExibeUnidade('../',$w_cliente,f($RS1,'sg_unidade_solic'),f($RS1,'sq_unidade'),$TP).')</font></td></tr>';
+    }
   }
 
   // Verifica se é necessário mostrar o recurso

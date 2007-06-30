@@ -27,8 +27,9 @@
     $w_fim              = $_REQUEST['w_fim'];
     $w_destino          = $_REQUEST['w_destino'];
     $w_qtd_pessoas      = $_REQUEST['w_qtd_pessoas'];
-    $w_carga            = $_REQUEST['w_carga'];    
-    $w_fim              = $_REQUEST['w_fim'];    
+    $w_carga            = $_REQUEST['w_carga'];
+    $w_fim              = $_REQUEST['w_fim'];
+    $w_procedimento     = $_REQUEST['w_procedimento'];
         
   } else {
     if ((strpos('AEV',$O)!==false) || $w_copia>'') {
@@ -48,23 +49,10 @@
         $w_data_hora        = f($RS,'data_hora');
         $w_destino          = f($RS,'destino');
         $w_qtd_pessoas      = f($RS,'qtd_pessoas');
-        $w_carga            = f($RS,'carga');                        
-        switch ($w_data_hora) {
-          case 1: 
-            $w_fim              = FormataDataEdicao(f($RS,'fim'));
-            break;
-          case 2: 
-            $w_fim              = substr(f($RS,'phpdt_fim'),0,-3);
-            break;
-          case 3: 
-            $w_inicio           = FormataDataEdicao(f($RS,'inicio'));
-            $w_fim              = FormataDataEdicao(f($RS,'fim'));
-            break;
-        case 4:
-            $w_inicio           = substr(f($RS,'phpdt_inicio'),0,-3);
-            $w_fim              = substr(f($RS,'phpdt_fim'),0,-3);
-            break;
-        } 
+        $w_carga            = f($RS,'carga');
+        $w_procedimento     = f($RS,'procedimento');
+        $w_inicio           = substr(f($RS,'phpdt_inicio'),0,-3);
+        $w_fim              = substr(f($RS,'phpdt_fim'),0,-3);
       } 
     } 
   } 
@@ -82,29 +70,14 @@
   if ($O=='I' || $O=='A') {
     ShowHTML('  if (theForm.Botao.value == "Troca") { return true; }');
     Validate('w_destino','Destino','1',1,5,200,'1','1');
-    Validate('w_qtd_pessoas','Quantidade de pessos','1',1,1,2,'1','1');    
-    switch (f($RS_Menu,'data_hora')) {
-      case 1: 
-        Validate('w_fim','Data programada','DATA',1,10,10,'','0123456789/');
-        CompData('w_fim','Data programada','>=',date('d/m/Y'),'data atual');
-        break;
-      case 2: 
-        Validate('w_fim','Data programada','DATAHORA',1,17,17,'','0123456789/:, ');
-        CompData('w_fim','Data programada','>=',date('d/m/Y, H:i:s'),'data e hora atual');
-        break;
-      case 3: 
-        Validate('w_inicio','Início','DATA',1,10,10,'','0123456789/');       
-        Validate('w_fim','Término','DATA',1,10,10,'','0123456789/');
-        CompData('w_inicio','Início','<=','w_fim','Término');
-        CompData('w_inicio','Início','>=',date('d/m/Y'),'data atual');
-        break;
-      case 4:
-        Validate('w_inicio','Início','DATAHORA',1,17,17,'','0123456789/,: ');
-        Validate('w_fim','Término','DATAHORA',1,17,17,'','0123456789/,: ');
-        CompData('w_inicio','Início','<=','w_fim','Término');
-        CompData('w_inicio','Início','>=',date('d/m/Y, H:i:s'),'data e hora atual');
-        break;
-    } 
+    Validate('w_procedimento','Procedimento','SELECT',1,1,18,'1','1');
+    Validate('w_qtd_pessoas','Quantidade de pessoas','1',1,1,2,'1','1');    
+    Validate('w_inicio','Data desejada para saída','DATAHORA',1,17,17,'','0123456789/,: ');
+    if ($w_procedimento==2) {
+      Validate('w_fim','Data prevista para retorno','DATAHORA',1,17,17,'','0123456789/,: ');
+      CompData('w_inicio','Data desejada para saída','<=','w_fim','Data prevista para retorno');
+    }
+    CompData('w_inicio','Data desejada para saída','>=',date('d/m/Y, H:i:s'),'data e hora atual');
     if (f($RS_Menu,'justificativa')=='S') {
       Validate('w_justificativa','Justificativa','1',1,5,2000,'1','1');
     } 
@@ -114,9 +87,11 @@
   ShowHTML('</HEAD>');
   ShowHTML('<BASE HREF="'.$conRootSIW.'">');
   if ($w_troca>'') {
-    BodyOpenClean('onLoad=\'document.Form.'.$w_troca.'.focus()\';');
+    BodyOpenClean('onLoad="document.Form.'.$w_troca.'.focus()";');
+  } elseif (strpos('IA',$O)!==false) {
+    BodyOpenClean('onLoad="document.Form.w_destino.focus();"');
   } else {
-    BodyOpenClean('onLoad=\'this.focus()\';');
+    BodyOpenClean('onLoad="this.focus()";');
   } 
   ShowHTML('<B><FONT COLOR="#000000">'.$w_TP.'</font></B>');
   ShowHTML('<HR>');
@@ -154,24 +129,17 @@
     ShowHTML('      <tr><td><table width="100%" border=0 cellpadding=0 cellspacing=0><tr valign="top">');
     ShowHTML('        <td>Solicitante:<br><b>'.$_SESSION['NOME'].'</td>');
     ShowHTML('        <td>Unidade:<br><b>'.$w_nm_unidade.'</td>');
-    ShowHTML('      <tr><td colspan=2><b><u>D</u>estino:</b><br><input '.$w_Disabled.' accesskey="D" type="text" name="w_destino" class="STI" SIZE="60" MAXLENGTH="200" VALUE="'.$w_destino.'" title="Destino da solicitação de transporte."></td>');
-    ShowHTML('      <tr><td><b><u>Q</u>td de pessoas:</b><br><input '.$w_Disabled.' accesskey="Q" type="text" name="w_qtd_pessoas" class="STI" SIZE="3" MAXLENGTH="2" VALUE="'.$w_qtd_pessoas.'" title="Quantidade de pessoas tranportadas."></td>');
-    MontaRadioSN('<b>Carga?</b>',$w_carga,'w_carga');
-    ShowHTML('      </table>');
-    ShowHTML('      <tr><td valign="top" colspan="2"><table border=0 width="100%" cellspacing=0>');
-    ShowHTML('          <tr>');
-    switch (f($RS_Menu,'data_hora')) {
-      case 1: ShowHTML('              <td valign="top"><b>Da<u>t</u>a programada:</b><br><input '.$w_Disabled.' accesskey="T" type="text" name="w_fim" class="STI" SIZE="10" MAXLENGTH="10" VALUE="'.$w_fim.'" onKeyDown="FormataData(this,event);" onKeyUp="SaltaCampo(this.form.name,this,10,event);" title="Data limite para que a execução da solicitação esteja concluída."></td>');           break;
-      case 2: ShowHTML('              <td valign="top"><b>Da<u>t</u>a programada:</b><br><input '.$w_Disabled.' accesskey="T" type="text" name="w_fim" class="STI" SIZE="17" MAXLENGTH="17" VALUE="'.$w_fim.'" onKeyDown="FormataDataHora(this,event);" onKeyUp="SaltaCampo(this.form.name,this,17,event);" title="Data/hora limite para que a execução da solicitação esteja concluída."></td>');  break;
-      case 3: 
-        ShowHTML('              <td valign="top"><b>Iní<u>c</u>io:</b><br><input '.$w_Disabled.' accesskey="C" type="text" name="w_inicio" class="STI" SIZE="10" MAXLENGTH="10" VALUE="'.Nvl($w_inicio,FormataDataEdicao(time())).'" onKeyDown="FormataData(this,event);" onKeyUp="SaltaCampo(this.form.name,this,10,event);" title="Início desejado para a solicitação."></td>'); 
-        ShowHTML('              <td valign="top"><b><u>T</u>érmino:</b><br><input '.$w_Disabled.' accesskey="T" type="text" name="w_fim" class="STI" SIZE="10" MAXLENGTH="10" VALUE="'.$w_fim.'" onKeyDown="FormataData(this,event);" onKeyUp="SaltaCampo(this.form.name,this,10,event);" title="Data limite para que a execução da solicitação esteja concluída."></td>');
-        break;
-      case 4:
-        ShowHTML('              <td valign="top"><b>Iní<u>c</u>io:</b><br><input '.$w_Disabled.' accesskey="C" type="text" name="w_inicio" class="STI" SIZE="17" MAXLENGTH="17" VALUE="'.$w_inicio.'" onKeyDown="FormataDataHora(this,event);" onKeyUp="SaltaCampo(this.form.name,this,17,event);" title="Data/hora de início da solicitação."></td>');
-        ShowHTML('              <td valign="top"><b><u>T</u>érmino:</b><br><input '.$w_Disabled.' accesskey="T" type="text" name="w_fim" class="STI" SIZE="17" MAXLENGTH="17" VALUE="'.$w_fim.'" onKeyDown="FormataDataHora(this,event);" onKeyUp="SaltaCampo(this.form.name,this,17,event);" title="Data/hora limite para que a execução da solicitação esteja concluída."></td>');
-        break;
-    } 
+    ShowHTML('      <tr><td>&nbsp;</td>');
+    ShowHTML('      <tr><td><b><u>D</u>estino:</b><br><input '.$w_Disabled.' accesskey="D" type="text" name="w_destino" class="STI" SIZE="60" MAXLENGTH="200" VALUE="'.$w_destino.'" title="Destino da solicitação de transporte."></td>');
+    selecaoProcedimentoTransp('<U>P</U>rocedimento:', 'P', null, $w_procedimento, null, 'w_procedimento', null, 'onChange="document.Form.action=\''.$w_dir.$w_pagina.$par.'\'; document.Form.O.value=\''.$O.'\'; document.Form.w_troca.value=\'w_qtd_pessoas\'; document.Form.submit();"');
+    ShowHTML('      <tr><td><b><u>Q</u>td de pessoas:</b><br><input '.$w_Disabled.' accesskey="Q" type="text" name="w_qtd_pessoas" class="STI" SIZE="3" MAXLENGTH="2" VALUE="'.$w_qtd_pessoas.'" title="Quantidade de pessoas a serem tranportadas."></td>');
+    MontaRadioNS('<b>Necessita transporte de carga?</b>',$w_carga,'w_carga');
+    ShowHTML('      <tr><td colspan=2 align="center" bgcolor="#D0D0D0" style="border: 2px solid rgb(0,0,0);"><b><font color="#BC3131">ATENÇÃO: nas datas, digite apenas os números. O formato é colocado pelo sistema. O ano deve ter quatro números. Ex: 27/10/2009, 17:35</b>.</td>');
+    ShowHTML('      <tr valign="top">');
+    ShowHTML('        <td><b>Data e hora desejada de <u>s</u>aída:</b><br><input '.$w_Disabled.' accesskey="S" type="text" name="w_inicio" class="STI" SIZE="17" MAXLENGTH="17" VALUE="'.$w_inicio.'" onKeyDown="FormataDataHora(this,event);" onKeyUp="SaltaCampo(this.form.name,this,17,event);" title="Data/hora de início da solicitação."></td>');
+    if ($w_procedimento==2) {
+      ShowHTML('        <td><b>Data e hora prevista para <u>r</u>etorno:</b><br><input '.$w_Disabled.' accesskey="R" type="text" name="w_fim" class="STI" SIZE="17" MAXLENGTH="17" VALUE="'.$w_fim.'" onKeyDown="FormataDataHora(this,event);" onKeyUp="SaltaCampo(this.form.name,this,17,event);" title="Data/hora limite para que a execução da solicitação esteja concluída."></td>');
+    }
     ShowHTML('          </table>');
     if (f($RS_Menu,'descricao')=='S' || f($RS_Menu,'justificativa')=='S') {
       if (f($RS_Menu,'descricao')=='S') {

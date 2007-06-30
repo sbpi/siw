@@ -658,7 +658,7 @@ function Parametros() {
 
   // Verifica se há necessidade de recarregar os dados da tela a partir
   // da própria tela (se for recarga da tela) ou do banco de dados (se não for inclusão)
-  if ($w_troca>'') {
+  if ($w_troca>'' && $O=='E') {
     // Se for recarga da página
     $w_sequencial        = $_REQUEST['w_sequencial'];
     $w_sequencial_atual  = $_REQUEST['w_sequencial_atual'];
@@ -756,7 +756,7 @@ function Modalidades() {
   $w_chave           = $_REQUEST['w_chave'];
   $w_troca           = $_REQUEST['w_troca'];
   //Se for recarga da página
-  if ($w_troca > '') {   
+  if ($w_troca > '' && $O=='E') {   
     $w_nome                 = $_REQUEST['w_nome'];
     $w_sigla                = $_REQUEST['w_sigla'];
     $w_descricao            = $_REQUEST['w_descricao'];
@@ -772,7 +772,7 @@ function Modalidades() {
     } else {
       $RS = SortArray($RS,'nome','asc'); 
     }
-  } elseif (!(strpos('AEV',$O)===false)) {
+  } elseif (!(strpos('AEV',$O)===false) && $w_troca=='') {
     //Recupera os dados do endereço informado
     $RS = db_getLCModalidade::getInstanceOf($dbms, $w_chave, $w_cliente, null, null, null, null);
     foreach ($RS as $row) {
@@ -912,7 +912,7 @@ function FonteRecurso() {
   $w_chave           = $_REQUEST['w_chave'];
   $w_troca           = $_REQUEST['w_troca'];
   //Se for recarga da página
-  if ($w_troca > '') {   
+  if ($w_troca > '' && $O=='E') {   
     $w_codigo               = $_REQUEST['w_codigo'];
     $w_nome                 = $_REQUEST['w_nome'];
     $w_descricao            = $_REQUEST['w_descricao'];
@@ -923,7 +923,7 @@ function FonteRecurso() {
     // Recupera todos os registros para a listagem
     $RS = db_getLCFonteRecurso::getInstanceOf($dbms, null, $w_cliente, null, null, null, null, null, null);
     $RS = SortArray($RS,'nome','asc'); 
-  } elseif (!(strpos('AEV',$O)===false)) {
+  } elseif (!(strpos('AEV',$O)===false) && $w_troca=='') {
     //Recupera os dados do endereço informado
     $RS = db_getLCFonteRecurso::getInstanceOf($dbms, $w_chave, $w_cliente, null, null, null, null, null, null);
     foreach ($RS as $row) {

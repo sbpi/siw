@@ -1404,7 +1404,7 @@ function Documentos() {
   $w_chave_aux  = $_REQUEST['w_chave_aux'];
   // Recupera os dados do lançamento
   $RS1 = db_getSolicData::getInstanceOf($dbms,$w_chave,f($RS_Menu,'sigla'));
-  if ($w_troca>'') {
+  if ($w_troca>'' && $O!='E') {
     // Se for recarga da página
     $w_sq_tipo_documento    = $_REQUEST['w_sq_tipo_documento'];
     $w_numero               = $_REQUEST['w_numero'];
@@ -1417,7 +1417,7 @@ function Documentos() {
     // Recupera todos os registros para a listagem
     $RS = db_getLancamentoDoc::getInstanceOf($dbms,$w_chave,null,'DOCS');
     $RS = SortArray($RS,'data','asc');
-  } elseif (!(strpos('AEV',$O)===false) && $w_troca=='') {
+  } elseif (strpos('AEV',$O)!==false) {
     // Recupera os dados do endereço informado
     $RS = db_getLancamentoDoc::getInstanceOf($dbms,$w_chave,$w_chave_aux,null);
     foreach ($RS as $row) {$RS=$row; break;}
@@ -1620,7 +1620,7 @@ function RubricaDoc() {
   $w_chave_aux     = $_REQUEST['w_chave_aux'];
   // Recupera os dados do lançamento
   $RS1 = db_getSolicData::getInstanceOf($dbms,$w_chave,f($RS_Menu,'sigla'));
-  if ($w_troca>'') {
+  if ($w_troca>'' && $O!='E') {
     // Se for recarga da página
     $w_sq_tipo_documento    = $_REQUEST['w_sq_tipo_documento'];
     $w_numero               = $_REQUEST['w_numero'];
@@ -1633,7 +1633,7 @@ function RubricaDoc() {
     // Recupera todos os registros para a listagem
     $RS = db_getLancamentoDoc::getInstanceOf($dbms,$w_chave,null,'DOCS');
     $RS = SortArray($RS,'data','asc');
-  } elseif (!(strpos('AEV',$O)===false) && $w_troca=='') {
+  } elseif (strpos('AEV',$O)!==false) {
     // Recupera os dados do endereço informado
     $RS = db_getLancamentoDoc::getInstanceOf($dbms,$w_chave,$w_chave_aux,null);
     foreach ($RS as $row) {$RS=$row; break;}
@@ -1934,7 +1934,7 @@ function Itens() {
   $w_sq_documento_item  = $_REQUEST['w_sq_documento_item'];
   // Recupera os dados do lançamento/
   $RS1 = db_getSolicData::getInstanceOf($dbms,$w_chave,f($RS_Menu,'sigla'));
-  if ($w_troca>'') {
+  if ($w_troca>'' && $O!='E') {
     // Se for recarga da página
     $w_sq_projeto_rubrica  = $_REQUEST['w_sq_projeto_rubrica'];
     $w_descricao           = $_REQUEST['w_descricao'];
@@ -1945,7 +1945,7 @@ function Itens() {
     // Recupera todos os registros para a listagem
     $RS = db_getLancamentoItem::getInstanceOf($dbms,null,$w_sq_lancamento_doc,null,null,null);
     $RS = SortArray($RS,'ordem','asc');
-  } elseif (!(strpos('AEV',$O)===false) && $w_troca=='') {
+  } elseif (strpos('AEV',$O)!==false) {
     // Recupera os dados do endereço informado
     $RS = db_getLancamentoItem::getInstanceOf($dbms,$w_sq_documento_item,$w_sq_lancamento_doc,null,null,null);
     foreach ($RS as $row) {$RS=$row; break;}

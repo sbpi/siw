@@ -2530,6 +2530,7 @@ function BodyOpen($cProperties) {
    $wProperties = $cProperties;
    if (nvl($wProperties,'')!='') {
      $wProperties = str_replace('document.', 'required(); document.', $wProperties);
+     if (strpos($wProperties,'required()')===false) $wProperties = str_replace('this.focus', 'required(); this.focus', $wProperties);
    } else {
      $wProperties = ' onLoad=\'required();\' ';
    }
@@ -2565,6 +2566,7 @@ function BodyOpenClean($cProperties) {
   $wProperties = $cProperties;
   if (nvl($wProperties,'')!='') {
     $wProperties = str_replace('document.', 'required(); document.', $wProperties);
+    if (strpos($wProperties,'required()')===false) $wProperties = str_replace('this.focus', 'required(); this.focus', $wProperties);
   } else {
     $wProperties = ' onLoad=\'required();\' ';
   }

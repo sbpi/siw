@@ -800,7 +800,7 @@ function Veiculo() {
     $w_alugado            = $_REQUEST['w_alugado'];
     $w_ativo              = $_REQUEST['w_ativo'];    
   } elseif ($O=='L') {
-    $RS = db_getVeiculo::getInstanceOf($dbms, null, null, $w_cliente, null, null, null);
+    $RS = db_getVeiculo::getInstanceOf($dbms, null, null, $w_cliente, null, null, null, null, null, null, null);
     if (Nvl($p_ordena,'') > '') {
       $lista = explode(',',str_replace(' ',',',$p_ordena));
       $RS = SortArray($RS,$lista[0],$lista[1]);
@@ -808,7 +808,7 @@ function Veiculo() {
       $RS = SortArray($RS,'modelo','asc'); 
     }
   } elseif (strpos('AEV',$O)!==false) {
-    $RS = db_getVeiculo::getInstanceOf($dbms, $w_chave, null, $w_cliente, null, null, null);
+    $RS = db_getVeiculo::getInstanceOf($dbms, $w_chave, null, $w_cliente, null, null, null, null, null, null, null);
     foreach ($RS as $row) {$RS = $row; break;}
     $w_cliente            = f($RS,'cliente');
     $w_chave_aux          = f($RS,'sq_tipo_veiculo');    
@@ -1106,7 +1106,7 @@ function Grava() {
             }
           } 
         } elseif ($O=='E') {
-          $RS = db_getVeiculo::getInstanceOf($dbms, null, Nvl($_REQUEST['w_chave'],''), $w_cliente,  null, null, null);
+          $RS = db_getVeiculo::getInstanceOf($dbms, null, Nvl($_REQUEST['w_chave'],''), $w_cliente,  null, null, null, null, null, null, null);
           if (count($RS)>0) {
             ScriptOpen('JavaScript');
             ShowHTML('  alert(\'Existe veículo associado a este tipo de veículo, não sendo possível sua exclusão!\');');
@@ -1131,7 +1131,7 @@ function Grava() {
       if (verificaAssinaturaEletronica($_SESSION['USERNAME'],strtoupper($_REQUEST['w_assinatura'])) || $w_assinatura=='') {
         if ($O=='I' || $O=='A') {
           if (strtoupper($_REQUEST['w_placa'])!= $_REQUEST['w_placa_ant']) {           
-            $RS = db_getVeiculo::getInstanceOf($dbms, null, null, $w_cliente, strtoupper($_REQUEST['w_placa']), null, null);
+            $RS = db_getVeiculo::getInstanceOf($dbms, null, null, $w_cliente, strtoupper($_REQUEST['w_placa']), null, null, null, null, null, null);
             if (count($RS)>0) {
               ScriptOpen('JavaScript');
               ShowHTML('  alert(\'Já existe placa com este número!\');');

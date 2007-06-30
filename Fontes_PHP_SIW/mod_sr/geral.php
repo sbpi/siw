@@ -46,6 +46,7 @@ include_once($w_dir_volta.'funcoes/selecaoTipoVisao.php');
 include_once($w_dir_volta.'funcoes/selecaoSolicResp.php');
 include_once($w_dir_volta.'funcoes/selecaoServico.php');
 include_once($w_dir_volta.'funcoes/selecaoOpiniao.php');
+include_once($w_dir_volta.'funcoes/selecaoProcedimentoTransp.php');
 include_once($w_dir_volta.'classes/sp/db_verificaAssinatura.php');
 include_once($w_dir_volta.'classes/sp/dml_putSolicEnvio.php');
 include_once($w_dir_volta.'classes/sp/dml_putSolicRecurso.php');
@@ -110,6 +111,7 @@ switch ($O) {
   case 'C': $w_TP=$TP.' - Cópia';       break;
   case 'V': $w_TP=$TP.' - Envio';       break;
   case 'H': $w_TP=$TP.' - Herança';     break;
+  case 'F': $w_TP=$TP.' - Informações'; break;
   default:  $w_TP=$TP.' - Listagem';    break;
 } 
 
@@ -374,7 +376,7 @@ function Inicial() {
       ShowHTML('          <td rowspan=2><b>Operações</td>');
       ShowHTML('        <tr bgcolor="'.$conTrBgColor.'" align="center">');
       if (f($RS_Menu,'data_hora')==1 || f($RS_Menu,'data_hora')==2 || $P1==3) {
-        ShowHTML('          <td><b>'.LinkOrdena('Programada','phpdt_fim').'</td>');
+        ShowHTML('          <td><b>'.LinkOrdena('Programada','phpdt_programada').'</td>');
       } elseif (f($RS_Menu,'data_hora')>0) {
         ShowHTML('          <td><b>'.LinkOrdena('Início','phpdt_inicio').'</td>');
         ShowHTML('          <td><b>'.LinkOrdena('Término','phpdt_fim').'</td>');
@@ -431,10 +433,10 @@ function Inicial() {
           if ($P1==3) ShowHTML('        <td align="center">---</td>');
           break;
         case 1 :
-          ShowHTML('        <td align="center">'.Nvl(FormataDataEdicao(f($row,'phpdt_fim')),'-').'</td>');
+          ShowHTML('        <td align="center">'.Nvl(FormataDataEdicao(f($row,'phpdt_programada')),'-').'</td>');
           break;
         case 2 :
-          ShowHTML('        <td align="center">'.Nvl(substr(FormataDataEdicao(f($row,'phpdt_fim'),3),0,-3),'-').'</td>');
+          ShowHTML('        <td align="center">'.Nvl(substr(FormataDataEdicao(f($row,'phpdt_programada'),3),0,-3),'-').'</td>');
           break;
         case 3 :
           if ($P1!=3) ShowHTML('        <td align="center">'.Nvl(FormataDataEdicao(f($row,'phpdt_inicio')),'-').'</td>');
@@ -501,8 +503,21 @@ function Inicial() {
                 ShowHTML('          <A class="HL" HREF="'.$w_dir.$w_pagina.'envio&R='.$w_pagina.$par.'&O=V&w_chave='.f($row,'sq_siw_solicitacao').'&w_tipo=Volta&P1='.$P1.'&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP='.$TP.'&SG='.$SG.MontaFiltro('GET').'" title="Envia a solicitação para outro trâmite.">EN</A>&nbsp');
                 if (f($row,'sg_tramite')=='EE') {
                   ShowHTML('          <A class="hl" HREF="'.$w_dir.$w_pagina.'Anotacao&R='.$w_pagina.$par.'&O=V&w_chave='.f($row,'sq_siw_solicitacao').'&w_tipo=Volta&P1='.$P1.'&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP='.$TP.'&SG='.$SG.MontaFiltro('GET').'" title="Registra anotações para o lançamento, sem enviá-la.">AN</A>&nbsp');
+                  if ($SG=='SRTRANSP') {
+                    // link para informar o motorista e o carro
+                    ShowHTML('          <A class="hl" HREF="'.$w_dir.$w_pagina.'Informar&R='.$w_pagina.$par.'&O=F&w_chave='.f($row,'sq_siw_solicitacao').'&w_tipo=Volta&P1='.$P1.'&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP='.$TP.'&SG='.$SG.MontaFiltro('GET').'" title="Informar dados do atendimento.">IN</A>&nbsp');
+                  }
                   if (nvl(f($row,'emite_os'),'N')=='S') {
-                    ShowHTML('          <A class="HL" href="'.$w_dir.$w_pagina.'EmiteOS&R='.$w_pagina.$par.'&O=V&w_chave='.f($row,'sq_siw_solicitacao').'&w_tipo=Volta&P1='.$P1.'&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP='.$TP.'&SG='.$SG.MontaFiltro('GET').'" title="Emite Ordem de Serviço." target="OS">OS</A>&nbsp');
+                    if ($SG=='SRTRANSP') {
+                      // OS de transporte só pode ser emitida após informar veículo e motorista
+                      if (nvl(f($row,'sq_veiculo'),'')=='') {
+                        ShowHTML('          <A class="HL" onClick="alert(\'Antes de emitir a OS é necessário clicar na operação IN (informar)!\'); return false;" href="'.$w_dir.$w_pagina.'EmiteOS&R='.$w_pagina.$par.'&O=V&w_chave='.f($row,'sq_siw_solicitacao').'&w_tipo=Volta&P1='.$P1.'&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP='.$TP.'&SG='.$SG.MontaFiltro('GET').'" title="Emite Ordem de Serviço." target="OS">OS</A>&nbsp');
+                      } else {
+                        ShowHTML('          <A class="HL" href="'.$w_dir.$w_pagina.'EmiteOS&R='.$w_pagina.$par.'&O=V&w_chave='.f($row,'sq_siw_solicitacao').'&w_tipo=Volta&P1='.$P1.'&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP='.$TP.'&SG='.$SG.MontaFiltro('GET').'" title="Emite Ordem de Serviço." target="OS">OS</A>&nbsp');
+                      }
+                    } else {
+                      ShowHTML('          <A class="HL" href="'.$w_dir.$w_pagina.'EmiteOS&R='.$w_pagina.$par.'&O=V&w_chave='.f($row,'sq_siw_solicitacao').'&w_tipo=Volta&P1='.$P1.'&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP='.$TP.'&SG='.$SG.MontaFiltro('GET').'" title="Emite Ordem de Serviço." target="OS">OS</A>&nbsp');
+                    }
                   }
                   ShowHTML('          <A class="HL" href="'.$w_dir.$w_pagina.'Concluir&R='.$w_pagina.$par.'&O=C&w_chave='.f($row,'sq_siw_solicitacao').'&w_tipo=Volta&P1='.$P1.'&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP='.$TP.'&SG='.$SG.MontaFiltro('GET').'" title="Conclui a execução da solicitação.">CO</A>&nbsp');
                 }
@@ -814,6 +829,8 @@ function Encaminhamento() {
 
   if ($w_troca>'') {
     // Se for recarga da página
+    $w_inicio           = $_REQUEST['w_inicio'];
+    $w_fim              = $_REQUEST['w_fim'];
     $w_tramite          = $_REQUEST['w_tramite'];
     $w_sg_tramite       = $_REQUEST['w_sg_tramite'];
     $w_sg_novo_tramite  = $_REQUEST['w_tramite'];
@@ -824,6 +841,7 @@ function Encaminhamento() {
   } else {
     $RS = db_getSolicData::getInstanceOf($dbms,$w_chave,$SG);
     $w_inicio        = f($RS,'inicio');
+    $w_fim           = f($RS,'fim');
     $w_tramite       = f($RS,'sq_siw_tramite');
     $w_justificativa = f($RS,'justificativa');
   } 
@@ -880,11 +898,11 @@ function Encaminhamento() {
   ShowHTML('</HEAD>');
   ShowHTML('<BASE HREF="'.$conRootSIW.'">');
   if ($w_troca>'') {
-    BodyOpen('onLoad=\'document.Form.'.$w_troca.'.focus()\';');
+    BodyOpen('onLoad="document.Form.'.$w_troca.'.focus()";');
   } elseif ($P1==1) {
-    BodyOpen('onLoad=\'document.Form.w_assinatura.focus()\';');
+    BodyOpen('onLoad="document.Form.w_assinatura.focus()";');
   } else {
-    BodyOpen('onLoad=\'this.focus()\';');
+    BodyOpen('onLoad="this.focus()";');
   } 
   ShowHTML('<B><FONT COLOR="#000000">'.$w_TP.'</font></B>');
   ShowHTML('<HR>');
@@ -943,6 +961,13 @@ function Encaminhamento() {
     ShowHTML('      </td>');
     ShowHTML('    </tr>');
     ShowHTML('  </table>');
+    
+    // Exibe mapa de alocação de veículos
+    if ($SG=='SRTRANSP') {
+      include_once('visualmapaveiculo.php');
+      ShowHTML(visualMapaVeiculo(null,$SG,null,null,'S',$w_chave,formataDataEdicao(nvl($w_inicio,$w_fim)),formataDataEdicao($w_fim),'MAPAFUTURO'));
+    }
+
     ShowHTML('  </TD>');
     ShowHTML('</tr>');
     ShowHTML('</FORM>');
@@ -1129,6 +1154,16 @@ function Anotar() {
   ShowHTML('</table>');
   ShowHTML('</center>');
   Rodape();
+} 
+
+// =========================================================================
+// Rotina de informações complementares da solicitação
+// -------------------------------------------------------------------------
+function Informar() {
+  extract($GLOBALS);
+  if ($SG=='SRTRANSP') {
+    include_once('transporte_inf.php');
+  }
 } 
 
 // =========================================================================
@@ -1376,7 +1411,7 @@ function Grava() {
   ShowHTML('</HEAD>');
   ShowHTML('<BASE HREF="'.$conRootSIW.'">');
   BodyOpenClean('onLoad=this.focus();');
-  if (!(strpos('IAE',$O)===false)) {
+  if (strpos('IAE',$O)!==false) {
     // Verifica se a Assinatura Eletrônica é válida
     if (verificaAssinaturaEletronica($_SESSION['USERNAME'],strtoupper($_REQUEST['w_assinatura'])) || $w_assinatura=='') {
       // Se for operação de exclusão, verifica se é necessário excluir os arquivos físicos
@@ -1397,7 +1432,7 @@ function Grava() {
             $_REQUEST['w_chave'],$_REQUEST['w_menu'],$_SESSION['LOTACAO'],$_REQUEST['w_solicitante'],
             $_SESSION['SQ_PESSOA'],$_REQUEST['w_descricao'],$_REQUEST['w_justificativa'],$_REQUEST['w_inicio'],$_REQUEST['w_fim'],
             $_REQUEST['w_data_hora'], $_REQUEST['w_cidade'], $_REQUEST['w_destino'],$_REQUEST['w_sq_veiculo'],$_REQUEST['w_qtd_pessoas'],
-            $_REQUEST['w_carga'], &$w_chave_nova, $w_copia);
+            $_REQUEST['w_procedimento'], $_REQUEST['w_carga'], &$w_chave_nova, $w_copia);
       } else {
         include_once($w_dir_volta.'classes/sp/dml_putSolicGeral.php');
         if (nvl($_REQUEST['w_solic_recurso'],'')!='' && $O=='E') {
@@ -1416,6 +1451,23 @@ function Grava() {
                 '0',$_REQUEST['w_recurso'],nvl($_REQUEST['w_descricao'],$_REQUEST['w_justificativa']), null, null, null);
         }
       }
+
+      ScriptOpen('JavaScript');
+      ShowHTML('  location.href=\''.montaURL_JS($w_dir,f($RS_Menu,'link').'&O=L&w_chave='.$_REQUEST['w_chave'].'&P1='.$P1.'&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP='.$TP.'&SG='.f($RS_Menu,'sigla').MontaFiltro('GET')).'\';');
+      ScriptClose();
+    } else {
+      ScriptOpen('JavaScript');
+      ShowHTML('  alert(\'Assinatura Eletrônica inválida!\');');
+      ScriptClose();
+      retornaFormulario('w_assinatura');
+    } 
+  } elseif ($O=='F' && $SG=='SRTRANSP') {
+    // Verifica se a Assinatura Eletrônica é válida
+    if (verificaAssinaturaEletronica($_SESSION['USERNAME'],strtoupper($_REQUEST['w_assinatura'])) || $w_assinatura=='') {
+
+      include_once($w_dir_volta.'classes/sp/dml_putSolicInfTransp.php');
+      dml_putSolicInfTransp::getInstanceOf($dbms,$w_menu,$_REQUEST['w_chave'],$w_usuario,
+            $_REQUEST['w_executor'],$_REQUEST['w_sq_veiculo']);
 
       ScriptOpen('JavaScript');
       ShowHTML('  location.href=\''.montaURL_JS($w_dir,f($RS_Menu,'link').'&O=L&w_chave='.$_REQUEST['w_chave'].'&P1='.$P1.'&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP='.$TP.'&SG='.f($RS_Menu,'sigla').MontaFiltro('GET')).'\';');
@@ -1667,6 +1719,7 @@ function Main() {
   case 'ENVIO':         Encaminhamento(); break;
   case 'ANOTACAO':      Anotar();         break;
   case 'EMITEOS':       EmiteOS();        break;
+  case 'INFORMAR':      Informar();       break;
   case 'CONCLUIR':      Concluir();       break;
   case 'GRAVA':         Grava();          break;
   default:
