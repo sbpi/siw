@@ -68,7 +68,7 @@ $w_ano      = RetornaAno();
 $w_mes      = $_REQUEST['w_mes'];
 
 // Configura variáveis para montagem do calendário
-if (nvl($w_mes,'nulo')=='nulo') $w_mes = date('m',time());
+if (nvl($w_mes,'')=='') $w_mes = date('m',time());
 $w_inicio  = first_day(toDate('01/'.substr(100+(intVal($w_mes)-1),1,2).'/'.$w_ano));
 $w_fim     = last_day(toDate('01/'.substr(100+(intVal($w_mes)+1),1,2).'/'.$w_ano));
 $w_mes1    = substr(100+intVal($w_mes)-1,1,2);
@@ -261,7 +261,7 @@ function Mesa() {
     // Recupera os dados da unidade de lotação do usuário
     $RS_Cliente = db_getCustomerData::getInstanceOf($dbms,$w_cliente);
 
-    if (nvl($w_viagem,'nulo')!='nulo') {
+    if (nvl($w_viagem,'')!='') {
       $RSMenu_Viagem = db_getLinkData::getInstanceOf($dbms,$w_cliente,'PDINICIAL');
       $RS_Viagem = db_getSolicList::getInstanceOf($dbms,f($RSMenu_Viagem,'sq_menu'),$w_usuario,'PD',4,
           formataDataEdicao($w_inicio),formataDataEdicao($w_fim),null,null,null,null,null,null,null,null,null,
@@ -292,7 +292,7 @@ function Mesa() {
       }
     }
 
-    if (nvl($w_pessoal,'nulo')!='nulo') {
+    if (nvl($w_pessoal,'')!='') {
       $RS_Afast = db_getAfastamento::getInstanceOf($dbms,$w_cliente,$w_usuario,null,null,null,formataDataEdicao($w_inicio),formataDataEdicao($w_fim),null,null,null,null);
       $RS_Afast = SortArray($RS_Afast,'inicio_data','desc','inicio_periodo','asc','fim_data','desc','inicio_periodo','asc'); 
       // Cria arrays com cada dia do período, definindo o texto e a cor de fundo para exibição no calendário
@@ -302,7 +302,7 @@ function Mesa() {
 
     // Verifica a quantidade de colunas a serem exibidas
     $w_colunas = 1;
-    if ($w_indicador=='S' || nvl($w_viagem ,'nulo')!='nulo' || nvl($w_pessoal,'nulo')!='nulo') $w_colunas += 1;
+    if ($w_indicador=='S' || nvl($w_viagem ,'')!='' || nvl($w_pessoal,'')!='') $w_colunas += 1;
 
     // Configura a largura das colunas
     switch ($w_colunas) {
@@ -329,7 +329,7 @@ function Mesa() {
     ShowHTML('              <td align="center">'.montaCalendario($RS_Ano[$w_ano3],$w_mes3.$w_ano3,$w_datas,$w_cores).' </td>');
     
     ShowHTML('            <tr><td colspan=3 bgcolor="'.$conTrBgColor.'">');
-    if (nvl($w_viagem ,'nulo')!='nulo' || nvl($w_pessoal,'nulo')!='nulo') {
+    if ((count($RS_Viagem)>0 && nvl($w_viagem ,'')!='') || (count($RS_Afast)>0 && nvl($w_pessoal,'')!='')) {
       ShowHTML('              <b>Observações:<ul>');
       ShowHTML('              <li>Clique sobre o dia em destaque para ver detalhes.');
       ShowHTML('              <li>A cor vermelha indica ausências de '.$_SESSION['NOME_RESUMIDO'].'.');
@@ -362,7 +362,7 @@ function Mesa() {
     }
     ShowHTML('          </table>');
     // Final da exibição do calendário e suas ocorrências ==============
-    if ($w_indicador=='S' || nvl($w_viagem ,'nulo')!='nulo' || nvl($w_pessoal,'nulo')!='nulo') {
+    if ($w_indicador=='S' || nvl($w_viagem ,'')!='' || nvl($w_pessoal,'')!='') {
       ShowHTML('          <td width="'.$width.'" align="center">');
 
       // Exibição de indicadores que tenham alguma aferição ==============
@@ -376,7 +376,7 @@ function Mesa() {
       // Final da exibição de indicadores ================================
 
   
-      if (nvl($w_viagem ,'nulo')!='nulo' || nvl($w_pessoal,'nulo')!='nulo') {
+      if ((count($RS_Viagem)>0 && nvl($w_viagem ,'')!='') || (count($RS_Afast)>0 && nvl($w_pessoal,'')!='')) {
         ShowHTML('          <table border=1 cellpadding=0 cellspacing=0 width="100%">');
         ShowHTML('            <tr><td><table border=0 cellpadding=0 cellspacing=0 width="100%">');
         $w_nome_mes1 = strtoupper(mesAno(date('F',toDate('01/'.$w_mes1.'/'.$w_ano1)),'resumido'));
@@ -387,7 +387,7 @@ function Mesa() {
           ShowHTML('              <tr><td align="center"><b>AUSÊNCIAS ('.$w_nome_mes1.'-'.$w_nome_mes3.')</b><br>');
         }
         // Exibe as viagens a serviço do usuário logado
-        if (nvl($w_viagem,'nulo')!='nulo') {
+        if (count($RS_Viagem)>0 && nvl($w_viagem ,'')!='') {
           ShowHTML('              <tr><td>');
           ShowHTML('                <b>VIAGENS A SERVIÇO</b>');
           ShowHTML('                <table width="100%" border="1" cellspacing=0 bgcolor="'.$conTrBgColor.'">');
@@ -445,7 +445,7 @@ function Mesa() {
         }
 
         // Exibe afastamentos do usuário logado
-        if (nvl($w_pessoal,'nulo')!='nulo') {
+        if (count($RS_Afast)>0 && nvl($w_pessoal,'')!='') {
           ShowHTML('              <tr><td>');
           // Mostra os períodos de indisponibilidade
           ShowHTML('                <b>AFASTAMENTOS</b>');

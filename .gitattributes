@@ -850,6 +850,7 @@ Fontes_PHP_SIW/classes/sp/db_getTabela.php -text
 Fontes_PHP_SIW/classes/sp/db_getTipoAcao_IS.php -text
 Fontes_PHP_SIW/classes/sp/db_getTipoApoioList.php -text
 Fontes_PHP_SIW/classes/sp/db_getTipoDado.php -text
+Fontes_PHP_SIW/classes/sp/db_getTipoDemanda.php -text
 Fontes_PHP_SIW/classes/sp/db_getTipoDespacho_PA.php -text
 Fontes_PHP_SIW/classes/sp/db_getTipoDocumento.php -text
 Fontes_PHP_SIW/classes/sp/db_getTipoGuarda_PA.php -text
@@ -1135,6 +1136,7 @@ Fontes_PHP_SIW/classes/sp/dml_putTabela.php -text
 Fontes_PHP_SIW/classes/sp/dml_putTarefaGeral.php -text
 Fontes_PHP_SIW/classes/sp/dml_putTarefaLimite.php -text
 Fontes_PHP_SIW/classes/sp/dml_putTipoDado.php -text
+Fontes_PHP_SIW/classes/sp/dml_putTipoDemanda.php -text
 Fontes_PHP_SIW/classes/sp/dml_putTipoDespacho_PA.php -text
 Fontes_PHP_SIW/classes/sp/dml_putTipoDocumento.php -text
 Fontes_PHP_SIW/classes/sp/dml_putTipoGuarda_PA.php -text
@@ -1364,6 +1366,7 @@ Fontes_PHP_SIW/funcoes/selecaoTipoArquivo.php -text
 Fontes_PHP_SIW/funcoes/selecaoTipoConclusao.php -text
 Fontes_PHP_SIW/funcoes/selecaoTipoDado.php -text
 Fontes_PHP_SIW/funcoes/selecaoTipoData.php -text
+Fontes_PHP_SIW/funcoes/selecaoTipoDemanda.php -text
 Fontes_PHP_SIW/funcoes/selecaoTipoDespacho.php -text
 Fontes_PHP_SIW/funcoes/selecaoTipoDocumento.php -text
 Fontes_PHP_SIW/funcoes/selecaoTipoEndereco.php -text
@@ -1433,6 +1436,12 @@ Fontes_PHP_SIW/mod_dc/etl_txt.php -text
 Fontes_PHP_SIW/mod_dc/exec.php -text
 Fontes_PHP_SIW/mod_dc/serverstatus.php -text
 Fontes_PHP_SIW/mod_dc/serverstatus2.php -text
+Fontes_PHP_SIW/mod_dm/demanda.php -text
+Fontes_PHP_SIW/mod_dm/gr_demandaeventual.php -text
+Fontes_PHP_SIW/mod_dm/tabelas.php -text
+Fontes_PHP_SIW/mod_dm/triagem.php -text
+Fontes_PHP_SIW/mod_dm/visualdemanda.php -text
+Fontes_PHP_SIW/mod_dm/visualtriagem.php -text
 Fontes_PHP_SIW/mod_fn/gr_lancamento.php -text
 Fontes_PHP_SIW/mod_fn/lancamento.php -text
 Fontes_PHP_SIW/mod_fn/rel_contas.php -text

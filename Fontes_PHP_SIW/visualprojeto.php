@@ -207,12 +207,11 @@ function VisualProjeto($l_chave,$operacao,$l_usuario) {
       } 
     }
   }
-
   // Rubricas do projeto
   if ($l_nome_menu['RUBRICA']!='' && $w_tipo_visao!=2 && ($operacao=='T')) {
     $RS = db_getSolicRubrica::getInstanceOf($dbms,$l_chave,null,'S',null,null,null,null,null,null);
     $RS = SortArray($RS,'codigo','asc');
-    if (count($RS)>0 && $w_financeiro=='S' ) {
+    if (count($RS)>0 && $w_financeiro=='S' && $w_cliente!='10135') {
       $l_html.=chr(13).'        <tr><td colspan=2><br><font size="2"><b>'.$l_nome_menu['RUBRICA'].'<hr NOSHADE color=#000000 SIZE=1></b></font></td></tr>';
       $l_html .= chr(13).'      <tr><td align="center" colspan="2">';
       $l_html .= chr(13).'          <table width=100%  border="1" bordercolor="#00000">';

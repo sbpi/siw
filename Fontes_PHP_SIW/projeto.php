@@ -519,7 +519,7 @@ function Inicial() {
                 // Permite a visualização ou manutenção de riscos e problemas
                 ShowHTML('          <A class="HL" HREF="mod_pr/restricao.php?par=Restricao&w_chave='.f($row,'sq_siw_solicitacao').'&R='.$w_pagina.$par.'&P1='.$P1.'&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&SG='.$SG.'&TP='.$TP.' - Riscos&SG=RESTSOLIC'.MontaFiltro('GET').'" title="Riscos do projeto." target="Restricao">RS</A>&nbsp');
                 ShowHTML('          <A class="HL" HREF="mod_pr/restricao.php?par=Restricao&w_chave='.f($row,'sq_siw_solicitacao').'&R='.$w_pagina.$par.'&w_problema=S&P1='.$P1.'&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&SG='.$SG.'&TP='.$TP.' - Problema&SG=RESTSOLIC'.MontaFiltro('GET').'" title="Problemas do projeto." target="Restricao">PB</A>&nbsp');
-                if($w_financeiro=='N') {
+                if($w_financeiro=='N' || $w_cliente=='10135') {
                   ShowHTML('          <A class="HL" HREF="'.$w_pagina.'AtualizaRubrica&R='.$w_pagina.'AtualizaRubrica&O=L&w_chave='.f($row,'sq_siw_solicitacao').'&w_chave_pai='.$w_chave.'&w_tipo=Volta&P1='.$P1.'&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP='.$TP.'&SG=PJCRONOGRAMA'.MontaFiltro('GET').'" title="Atualizar o cronograma desembolso." target="Cronograma desembolso">CD</A>&nbsp');
                 }
                 // Coloca as operações dependendo do trâmite
@@ -1424,7 +1424,7 @@ function Rubrica() {
     ShowHTML('<tr><td align="center" colspan=3>');
     ShowHTML('    <TABLE WIDTH="100%" bgcolor="'.$conTableBgColor.'" BORDER="'.$conTableBorder.'" CELLSPACING="'.$conTableCellSpacing.'" CELLPADDING="'.$conTableCellPadding.'" BorderColorDark="'.$conTableBorderColorDark.'" BorderColorLight="'.$conTableBorderColorLight.'">');
     ShowHTML('        <tr bgcolor="'.$conTrBgColor.'" align="center">');
-    if($w_financeiro=='N') { 
+    if($w_financeiro=='N' || $w_cliente=='10135') { 
       ShowHTML('          <td rowspan="2"><b>'.LinkOrdena('Codigo','codigo').'</td>');
       ShowHTML('          <td rowspan="2"><b>'.LinkOrdena('Nome','nome').'</td>');
       ShowHTML('          <td rowspan="2"><b>'.LinkOrdena('Descrição','descricao').'</td>');
@@ -1464,7 +1464,7 @@ function Rubrica() {
         ShowHTML('        <td>'.f($row,'descricao').'</td>');
         ShowHTML('        <td align="center">'.f($row,'nm_aplicacao_financeira').'</td>');
         ShowHTML('        <td align="center">'.f($row,'nm_ativo').'</td>');
-        if($w_financeiro=='N') {
+        if($w_financeiro=='N' || $w_cliente=='10135') {
           ShowHTML('        <td align="right">'.formatNumber(f($row,'total_previsto')).'</td>');
           ShowHTML('        <td align="right">'.formatNumber(f($row,'total_real')).'</td>');
         }
@@ -1472,13 +1472,13 @@ function Rubrica() {
         ShowHTML('          <A class="HL" HREF="'.$w_pagina.$par.'&R='.$w_pagina.$par.'&O=A&w_chave='.$w_chave.'&w_chave_aux='.f($row,'sq_projeto_rubrica').'&P1='.$P1.'&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP='.$TP.'&SG='.$SG.'" title="Alterar os dados deste registro.">AL</A>&nbsp');
         ShowHTML('          <A class="HL" HREF="'.$w_pagina.'GRAVA&R='.$w_pagina.$par.'&O=E&w_chave='.$w_chave.'&w_chave_aux='.f($row,'sq_projeto_rubrica').'&P1='.$P1.'&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP='.$TP.'&SG='.$SG.'" title="Excluir este registro." onClick="return confirm(\'Confirma a exclusão do registro?\');">EX</A>&nbsp');
         ShowHTML('          <A class="HL" HREF="'.$w_pagina.$par.'&R='.$w_pagina.$par.'&O=I&w_chave='.$w_chave.'&w_copia='.f($row,'sq_projeto_rubrica').'&w_chave_aux='.f($row,'sq_projeto_rubrica').'&P1='.$P1.'&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP='.$TP.'&SG='.$SG.'" title="Inserir uma nova rubrica a partir dos dados deste registro.">CP</A>&nbsp');
-        if($w_financeiro=='N') {
+        if($w_financeiro=='N' || $w_cliente=='10135') {
           ShowHTML('          <A class="HL" HREF="'.$w_pagina.'Cronograma&R='.$w_pagina.'Cronograma&O=L&w_chave='.f($row,'sq_projeto_rubrica').'&w_chave_pai='.$w_chave.'&w_tipo=Volta&P1='.$P1.'&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP='.$TP.'&SG=PJCRONOGRAMA'.MontaFiltro('GET').'" title="Cadastrar o cronograma desembolso deste registro." target="Cronograma desembolso">CD</A>&nbsp');
         }
         ShowHTML('        </td>');
         ShowHTML('      </tr>');
       } 
-      if($w_financeiro=='N') {
+      if($w_financeiro=='N' || $w_cliente=='10135') {
         ShowHTML('      <tr>');
         ShowHTML('        <td colspan="5" align="right"><b>Totais</td>'); 
         ShowHTML('        <td align="right"><b>'.formatNumber($w_total_previsto).'</td>');
