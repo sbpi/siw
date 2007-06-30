@@ -67,11 +67,9 @@ begin
      l_resp_unid := l_resp_unid ||','''||crec.sq_unidade||'''';
    end loop;
    
-   If p_restricao = 'GDCAD'            or p_restricao = 'GDACOMP'           or
-      p_restricao = 'GDPCAD'           or p_restricao = 'GDPACOMP'          or
-      Substr(p_restricao,1,4) = 'GRDM' or p_restricao = 'ORPCAD'            or 
-      p_restricao = 'ORPACOMP'         or Substr(p_restricao,1,4) = 'GRORP' or
-      p_restricao = 'GDPCADET' Then
+   If substr(p_restricao,1,2) = 'GD'   or 
+      substr(p_restricao,1,4) = 'GRDM' or p_restricao = 'ORPCAD'            or 
+      p_restricao = 'ORPACOMP'         or substr(p_restricao,1,4) = 'GRORP' Then
       -- Recupera as demandas que o usuário pode ver
       open p_result for 
          select a.sq_menu,            a.sq_modulo,                   a.nome,
@@ -113,6 +111,7 @@ begin
                 d.fim_real,           d.concluida,                   d.data_conclusao,
                 d.nota_conclusao,     d.custo_real,                  d.proponente,
                 d.sq_siw_restricao,   d.ordem,
+                d.recebimento,        d.limite_conclusao,            d.responsavel,
                 case d.prioridade when 0 then 'Alta' when 1 then 'Média' else 'Normal' end nm_prioridade,
                 b.fim-d.dias_aviso aviso,
                 e.sq_tipo_unidade,    e.nome nm_unidade_resp,        e.informal informal_resp,
@@ -147,7 +146,7 @@ begin
                       left           join pe_objetivo          b3 on (b.sq_peobjetivo            = b3.sq_peobjetivo)
                         left         join pe_plano             b4 on (b3.sq_plano                = b4.sq_plano)
                       inner          join gd_demanda           d  on (b.sq_siw_solicitacao         = d.sq_siw_solicitacao)
-                        inner        join eo_unidade           e  on (d.sq_unidade_resp            = e.sq_unidade)
+                        left         join eo_unidade           e  on (d.sq_unidade_resp            = e.sq_unidade)
                           left       join eo_unidade_resp      e1 on (e.sq_unidade                 = e1.sq_unidade and
                                                                       e1.tipo_respons              = 'T'           and
                                                                       e1.fim                       is null

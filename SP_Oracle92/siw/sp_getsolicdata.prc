@@ -5,7 +5,7 @@ create or replace procedure SP_GetSolicData
 begin
    If p_restricao is null Then
       open p_result for select dados_solic(p_chave) as dados_solic from dual;
-   Elsif p_restricao = 'GDGERAL' or p_restricao = 'GDPGERAL' or p_restricao = 'GDPCAD' or p_restricao = 'ORPGERAL' Then
+   Elsif substr(p_restricao,1,2) = 'GD' or p_restricao = 'ORPGERAL' Then
       -- Recupera as demandas que o usuário pode ver
       open p_result for 
          select a.sq_menu,            a.sq_modulo,                   a.nome,
@@ -44,6 +44,7 @@ begin
                 d.fim_real,           d.concluida,                   d.data_conclusao,
                 d.nota_conclusao,     d.custo_real,                  d.proponente,
                 d.ordem,              d.sq_demanda_pai,
+                d.recebimento,        d.limite_conclusao,            d.responsavel,
                 b.fim-d.dias_aviso aviso,
                 e.sq_tipo_unidade,    e.nome nm_unidade_resp,        e.informal informal_resp,
                 e.vinculada vinc_resp,e.adm_central adm_resp,
@@ -57,7 +58,7 @@ begin
                 montaordem(j.sq_projeto_etapa) as cd_ordem,
                 l.sq_siw_restricao,   l.descricao as ds_restricao,
                 case l.risco when 'S' then 'Risco' else 'Problema' end as nm_tipo_restricao
-           from siw_menu             a
+           from siw_menu                                    a
                 inner        join eo_unidade                a2 on (a.sq_unid_executora   = a2.sq_unidade)
                   left       join eo_unidade_resp           a3 on (a2.sq_unidade         = a3.sq_unidade and
                                                                    a3.tipo_respons       = 'T'           and
@@ -73,15 +74,15 @@ begin
                   left       join pe_objetivo               b3 on (b.sq_peobjetivo       = b3.sq_peobjetivo)
                     left     join pe_plano                  b4 on (b3.sq_plano           = b4.sq_plano)
                   inner      join gd_demanda                d  on (b.sq_siw_solicitacao  = d.sq_siw_solicitacao)
-                    inner    join eo_unidade                e  on (d.sq_unidade_resp     = e.sq_unidade)
-                      left       join eo_unidade_resp       e1 on (e.sq_unidade          = e1.sq_unidade and
-                                                                    e1.tipo_respons      = 'T'           and
-                                                                    e1.fim               is null
-                                                                   )
-                      left       join eo_unidade_resp       e2 on (e.sq_unidade          = e2.sq_unidade and
-                                                                    e2.tipo_respons      = 'S'           and
-                                                                    e2.fim               is null
-                                                                   )
+                    left     join eo_unidade                e  on (d.sq_unidade_resp     = e.sq_unidade)
+                      left   join eo_unidade_resp           e1 on (e.sq_unidade          = e1.sq_unidade and
+                                                                   e1.tipo_respons      = 'T'           and
+                                                                   e1.fim               is null
+                                                                  )
+                      left   join eo_unidade_resp           e2 on (e.sq_unidade          = e2.sq_unidade and
+                                                                   e2.tipo_respons      = 'S'           and
+                                                                   e2.fim               is null
+                                                                  )
                   inner      join co_pessoa                 f  on (b.solicitante         = f.sq_pessoa)
                     left     join sg_autenticacao           f1 on (f.sq_pessoa           = f1.sq_pessoa)
                   inner      join co_cidade                 h  on (b.sq_cidade_origem    = h.sq_cidade)
