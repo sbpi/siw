@@ -15,6 +15,7 @@ create or replace procedure SP_PutSolicTransp
     p_destino             in  varchar2  default null,
     p_sq_veiculo          in  number    default null,
     p_qtd_pessoas         in  number    default null,
+    p_procedimento        in  number    default null,
     p_carga               in  varchar2  default null,    
     p_chave_nova          out number
    ) is
@@ -64,9 +65,9 @@ begin
       );
       -- Insere registro em SR_SOLICITACAO_TRANSPORTE
       insert into sr_solicitacao_transporte
-        (sq_siw_solicitacao,   sq_veiculo,          qtd_pessoas,         carga,       destino)
+        (sq_siw_solicitacao,   sq_veiculo,          qtd_pessoas,         procedimento,   carga,       destino)
       values (
-         w_Chave,              p_sq_veiculo,        p_qtd_pessoas,       p_carga,     p_destino);          
+         w_Chave,              p_sq_veiculo,        p_qtd_pessoas,       p_procedimento, p_carga,     p_destino);          
       
       -- Insere log da solicitação
       Insert Into siw_solic_log 
@@ -104,6 +105,7 @@ begin
           destino           = p_destino,
           sq_veiculo        = p_sq_veiculo, 
           qtd_pessoas       = p_qtd_pessoas,
+          procedimento      = p_procedimento,
           carga             = p_carga
       where sq_siw_solicitacao = p_chave;
       

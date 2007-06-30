@@ -715,9 +715,15 @@ begin
                 b2.nome  nm_opiniao,
                 b3.sq_veiculo,        b3.qtd_pessoas,                b3.carga,
                 b3.hodometro_saida,   b3.hodometro_chegada,          b3.destino,
-                b3.parcial,
+                b3.parcial,           b3.procedimento,
                 to_char(b3.horario_saida,'dd/mm/yyyy, hh24:mi:ss')   phpdt_horario_saida,
                 to_char(b3.horario_chegada,'dd/mm/yyyy, hh24:mi:ss') phpdt_horario_chegada,
+                case b3.procedimento when 0 then 'Não Informado' 
+                                     when 1 then 'Somente levar' 
+                                     when 2 then 'Levar e aguardar' 
+                                     when 3 then 'Somente buscar' 
+                                     when 4 then 'Abastecimento (uso exclusivo do setor de tráfego)'
+                end as nm_procedimento,
                 c.sq_tipo_unidade,    c.nome nm_unidade_exec,        c.informal,
                 c.vinculada,          c.adm_central,
                 e.sq_tipo_unidade,    e.nome nm_unidade_solic,        e.informal informal_solic,
@@ -730,7 +736,10 @@ begin
                 h.nome nm_cidade,
                 i.nome_resumido nm_exec,
                 j.nome_resumido nm_recebedor,
-                substr(l.placa,1,3)||'-'||substr(l.placa,4) ||' - '||l.marca||' '||l.modelo as nm_placa
+                case when l.placa is null 
+                     then null 
+                     else substr(l.placa,1,3)||'-'||substr(l.placa,4) ||' - '||l.marca||' '||l.modelo 
+                end as nm_placa
            from siw_menu                                    a
                 inner        join eo_unidade                a2 on (a.sq_unid_executora   = a2.sq_unidade)
                   left       join eo_unidade_resp           a3 on (a2.sq_unidade         = a3.sq_unidade and
@@ -746,7 +755,7 @@ begin
                   inner      join siw_tramite               b1 on (b.sq_siw_tramite      = b1.sq_siw_tramite)
                   left       join siw_opiniao               b2 on (b.opiniao             = b2.sq_siw_opiniao)
                   left       join sr_solicitacao_transporte b3 on (b.sq_siw_solicitacao  = b3.sq_siw_solicitacao)
-                    left     join sr_veiculo                l  on (b3.sq_veiculo         = l.sq_tipo_veiculo)
+                    left     join sr_veiculo                l  on (b3.sq_veiculo         = l.sq_veiculo)
                   left       join pe_objetivo               b4 on (b.sq_peobjetivo       = b4.sq_peobjetivo)
                     left     join pe_plano                  b5 on (b4.sq_plano           = b5.sq_plano)
                   inner      join eo_unidade                e  on (b.sq_unidade          = e.sq_unidade)

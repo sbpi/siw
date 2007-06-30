@@ -2980,6 +2980,7 @@ SP_Oracle92/siw/SP_PutSolicConc.prc -text
 SP_Oracle92/siw/SP_PutSolicConcTransp.prc -text
 SP_Oracle92/siw/SP_PutSolicEnvio.prc -text
 SP_Oracle92/siw/SP_PutSolicGeral.prc -text
+SP_Oracle92/siw/SP_PutSolicInfTransp.prc -text
 SP_Oracle92/siw/SP_PutSolicTransp.prc -text
 SP_Oracle92/siw/SP_PutUsuarioTemp.prc -text
 SP_Oracle92/siw/SP_PutViagemEnvio.prc -text
@@ -3321,6 +3322,7 @@ SP_Oracle92/siw/sp_getlccriterio.prc -text
 SP_Oracle92/siw/sp_getlcfinalidade.prc -text
 SP_Oracle92/siw/sp_getlcfonte.prc -text
 SP_Oracle92/siw/sp_getlcfonterecurso.prc -text
+SP_Oracle92/siw/sp_getlcjulgamento.prc -text
 SP_Oracle92/siw/sp_getlcmodalidade.prc -text
 SP_Oracle92/siw/sp_getlcportalcont.prc -text
 SP_Oracle92/siw/sp_getlcportalcontitem.prc -text
@@ -3458,6 +3460,7 @@ SP_Oracle92/siw/sp_putIndicador.prc -text
 SP_Oracle92/siw/sp_putIndicador_Afericao.prc -text
 SP_Oracle92/siw/sp_putIndicador_Aferidor.prc -text
 SP_Oracle92/siw/sp_putIndicador_Meta.prc -text
+SP_Oracle92/siw/sp_putLCJulgamento.prc -text
 SP_Oracle92/siw/sp_putPDUnidLimite.prc -text
 SP_Oracle92/siw/sp_putPessoa.prc -text
 SP_Oracle92/siw/sp_putPlanoEstrategico.prc -text
