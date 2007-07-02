@@ -743,6 +743,7 @@ Fontes_PHP_SIW/classes/sp/db_getLinkSubMenu.php -text
 Fontes_PHP_SIW/classes/sp/db_getLocalList.php -text
 Fontes_PHP_SIW/classes/sp/db_getMacroObjetivo_IS.php -text
 Fontes_PHP_SIW/classes/sp/db_getMarcado.php -text
+Fontes_PHP_SIW/classes/sp/db_getMatServ.php -text
 Fontes_PHP_SIW/classes/sp/db_getMenuCode.php -text
 Fontes_PHP_SIW/classes/sp/db_getMenuData.php -text
 Fontes_PHP_SIW/classes/sp/db_getMenuFormaPag.php -text
@@ -860,6 +861,7 @@ Fontes_PHP_SIW/classes/sp/db_getTipoIndicador.php -text
 Fontes_PHP_SIW/classes/sp/db_getTipoIndice.php -text
 Fontes_PHP_SIW/classes/sp/db_getTipoInteressado.php -text
 Fontes_PHP_SIW/classes/sp/db_getTipoLancamento.php -text
+Fontes_PHP_SIW/classes/sp/db_getTipoMatServ.php -text
 Fontes_PHP_SIW/classes/sp/db_getTipoPostoList.php -text
 Fontes_PHP_SIW/classes/sp/db_getTipoRecurso.php -text
 Fontes_PHP_SIW/classes/sp/db_getTipoRestricao.php -text
@@ -1043,6 +1045,7 @@ Fontes_PHP_SIW/classes/sp/dml_putLancamentoOutra[!!-~].php -text
 Fontes_PHP_SIW/classes/sp/dml_putLancamentoOutra.php -text
 Fontes_PHP_SIW/classes/sp/dml_putLancamentoRubrica.php -text
 Fontes_PHP_SIW/classes/sp/dml_putMacroObjetivo_IS.php -text
+Fontes_PHP_SIW/classes/sp/dml_putMatServ.php -text
 Fontes_PHP_SIW/classes/sp/dml_putMenuRelac.php -text
 Fontes_PHP_SIW/classes/sp/dml_putMetaMensalIni_IS.php -text
 Fontes_PHP_SIW/classes/sp/dml_putMetaMensal_IS.php -text
@@ -1149,6 +1152,7 @@ Fontes_PHP_SIW/classes/sp/dml_putTipoIndicador.php -text
 Fontes_PHP_SIW/classes/sp/dml_putTipoIndice.php -text
 Fontes_PHP_SIW/classes/sp/dml_putTipoInteressado.php -text
 Fontes_PHP_SIW/classes/sp/dml_putTipoLancamento.php -text
+Fontes_PHP_SIW/classes/sp/dml_putTipoMatServ.php -text
 Fontes_PHP_SIW/classes/sp/dml_putTipoRecurso.php -text
 Fontes_PHP_SIW/classes/sp/dml_putTipoRestricao.php -text
 Fontes_PHP_SIW/classes/sp/dml_putTipoSP.php -text
@@ -1281,6 +1285,7 @@ Fontes_PHP_SIW/funcoes/selecaoCentralFone.php -text
 Fontes_PHP_SIW/funcoes/selecaoCiaTrans.php -text
 Fontes_PHP_SIW/funcoes/selecaoCidade.php -text
 Fontes_PHP_SIW/funcoes/selecaoCidadeCentral.php -text
+Fontes_PHP_SIW/funcoes/selecaoClasseMatServ.php -text
 Fontes_PHP_SIW/funcoes/selecaoColaborador.php -text
 Fontes_PHP_SIW/funcoes/selecaoCriticidade.php -text
 Fontes_PHP_SIW/funcoes/selecaoDadoTipo.php -text
@@ -1317,6 +1322,7 @@ Fontes_PHP_SIW/funcoes/selecaoLCModalidade.php -text
 Fontes_PHP_SIW/funcoes/selecaoLocalizacao.php -text
 Fontes_PHP_SIW/funcoes/selecaoLocalizador_IS.php -text
 Fontes_PHP_SIW/funcoes/selecaoMacroObjetivo.php -text
+Fontes_PHP_SIW/funcoes/selecaoMatServ.php -text
 Fontes_PHP_SIW/funcoes/selecaoMenu.php -text
 Fontes_PHP_SIW/funcoes/selecaoMes.php -text
 Fontes_PHP_SIW/funcoes/selecaoModalidade.php -text
@@ -1382,6 +1388,8 @@ Fontes_PHP_SIW/funcoes/selecaoTipoIndicador.php -text
 Fontes_PHP_SIW/funcoes/selecaoTipoIndice.php -text
 Fontes_PHP_SIW/funcoes/selecaoTipoInteressado.php -text
 Fontes_PHP_SIW/funcoes/selecaoTipoLancamento.php -text
+Fontes_PHP_SIW/funcoes/selecaoTipoMatServ.php -text
+Fontes_PHP_SIW/funcoes/selecaoTipoMatServSubord.php -text
 Fontes_PHP_SIW/funcoes/selecaoTipoOutraParte.php -text
 Fontes_PHP_SIW/funcoes/selecaoTipoPCD.php -text
 Fontes_PHP_SIW/funcoes/selecaoTipoParam.php -text
@@ -1433,6 +1441,7 @@ Fontes_PHP_SIW/mod_ac/validaacordo.php -text
 Fontes_PHP_SIW/mod_ac/validaconvenio.php -text
 Fontes_PHP_SIW/mod_ac/visualacordo.php -text
 Fontes_PHP_SIW/mod_ac/visualconvenio.php -text
+Fontes_PHP_SIW/mod_cl/catalogo.php -text
 Fontes_PHP_SIW/mod_cl/tabelas.php -text
 Fontes_PHP_SIW/mod_dc/carga_arquivos.php -text
 Fontes_PHP_SIW/mod_dc/dc_consulta.php -text

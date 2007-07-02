@@ -190,13 +190,13 @@ function Plano() {
   ShowHTML('</HEAD>');
   ShowHTML('<BASE HREF="'.$conRootSIW.'">');
   if ($w_troca>'') {
-    BodyOpen('onLoad=document.Form.'.$w_troca.'.focus();');
+    BodyOpen('onLoad="document.Form.'.$w_troca.'.focus();"');
   } elseif ($O=='I' || $O=='A') {
-    BodyOpen('onLoad=document.Form.w_titulo.focus();');
+    BodyOpen('onLoad="document.Form.w_titulo.focus();"');
   } elseif ($O=='H') {
-    BodyOpen('onLoad=this.focus(); document.Form.w_heranca.focus();');
+    BodyOpen('onLoad="this.focus(); document.Form.w_heranca.focus();"');
   } elseif ($O=='L') {
-    BodyOpen('onLoad=this.focus();');
+    BodyOpen('onLoad="this.focus();"');
   } else {
     BodyOpen('onLoad=document.Form.w_assinatura.focus();');
   } 
@@ -562,13 +562,13 @@ function Natureza() {
   ShowHTML('</HEAD>');
   ShowHTML('<BASE HREF="'.$conRootSIW.'">');
   if ($w_troca>'') {
-    BodyOpen('onLoad=\'document.Form.'.$w_troca.'.focus()\';');
+    BodyOpen('onLoad="document.Form.'.$w_troca.'.focus()";');
   } elseif (!(strpos('IA',$O)===false)) {
-    BodyOpen('onLoad=\'document.Form.w_nome.focus()\';');
+    BodyOpen('onLoad="document.Form.w_nome.focus()";');
   } elseif ($O=='E') {
-    BodyOpen('onLoad=\'document.Form.w_assinatura.focus()\';');
+    BodyOpen('onLoad="document.Form.w_assinatura.focus()";');
   } else {
-    BodyOpen('onLoad=\'this.focus()\';');
+    BodyOpen('onLoad="this.focus()";');
   } 
   ShowHTML('<B><FONT COLOR="#000000">'.$w_TP.'</FONT></B>');
   ShowHTML('<HR>');
@@ -692,13 +692,13 @@ function Horizonte() {
   ShowHTML('</HEAD>');
   ShowHTML('<BASE HREF="'.$conRootSIW.'">');
   if ($w_troca>'') {
-    BodyOpen('onLoad=\'document.Form.'.$w_troca.'.focus()\';');
+    BodyOpen('onLoad="document.Form.'.$w_troca.'.focus()";');
   } elseif (!(strpos('IA',$O)===false)) {
-    BodyOpen('onLoad=\'document.Form.w_nome.focus()\';');
+    BodyOpen('onLoad="document.Form.w_nome.focus()";');
   } elseif ($O=='E') {
-    BodyOpen('onLoad=\'document.Form.w_assinatura.focus()\';');
+    BodyOpen('onLoad="document.Form.w_assinatura.focus()";');
   } else {
-    BodyOpen('onLoad=\'this.focus()\';');
+    BodyOpen('onLoad="this.focus()";');
   } 
   ShowHTML('<B><FONT COLOR="#000000">'.$w_TP.'</FONT></B>');
   ShowHTML('<HR>');
@@ -860,11 +860,11 @@ function Objetivo(){
   } 
   ShowHTML('</HEAD>');
   ShowHTML('<BASE HREF="'.$conRootSIW.'">');
-  if ($w_troca>'')                BodyOpen('onLoad=\'document.Form.'.$w_troca.'.focus();\'');
-  elseif ($O=='I' || $O=='A')     BodyOpen('onLoad=\'document.Form.w_nome.focus();\'');
-  elseif ($O=='T')                BodyOpen('onLoad=\'document.Form.w_plano.focus();\'');
-  elseif ($O=='L')                BodyOpen('onLoad=\'this.focus();\'');
-  else                            BodyOpen('onLoad=\'document.Form.w_assinatura.focus();\'');
+  if ($w_troca>'')                BodyOpen('onLoad="document.Form.'.$w_troca.'.focus();"');
+  elseif ($O=='I' || $O=='A')     BodyOpen('onLoad="document.Form.w_nome.focus();"');
+  elseif ($O=='T')                BodyOpen('onLoad="document.Form.w_plano.focus();"');
+  elseif ($O=='L')                BodyOpen('onLoad="this.focus();"');
+  else                            BodyOpen('onLoad="document.Form.w_assinatura.focus();"');
   Estrutura_Topo_Limpo();
   Estrutura_Menu();
   Estrutura_Corpo_Abre();
@@ -1044,13 +1044,13 @@ function Arquivo() {
   ShowHTML('</HEAD>');
   ShowHTML('<BASE HREF="'.$conRootSIW.'">');
   if ($w_troca>'') {
-    BodyOpenClean('onLoad=\'document.Form.'.$w_troca.'.focus()\';');
+    BodyOpenClean('onLoad="document.Form.'.$w_troca.'.focus()";');
   } elseif ($O=='I') {
-    BodyOpenClean('onLoad=\'document.Form.w_nome.focus()\';');
+    BodyOpenClean('onLoad="document.Form.w_nome.focus()";');
   } elseif ($O=='A') {
-    BodyOpenClean('onLoad=\'document.Form.w_descricao.focus()\';');
+    BodyOpenClean('onLoad="document.Form.w_descricao.focus()";');
   } else {
-    BodyOpenClean('onLoad=\'this.focus()\';');
+    BodyOpenClean('onLoad="this.focus()";');
   } 
   ShowHTML('<B><FONT COLOR="#000000">'.$w_TP.'</font></B>');
   ShowHTML('<HR>');
@@ -1220,13 +1220,13 @@ function TipoInter() {
   ShowHTML('</HEAD>');
   ShowHTML('<BASE HREF="'.$conRootSIW.'">');
   if ($w_troca>'') {
-    BodyOpen('onLoad=document.Form.'.$w_troca.'.focus();');
+    BodyOpen('onLoad="document.Form.'.$w_troca.'.focus();"');
   } elseif ($O=='I' || $O=='A') {
-    BodyOpen('onLoad=document.Form.w_servico.focus();');
+    BodyOpen('onLoad="document.Form.w_servico.focus();"');
   } elseif ($O=='L'){
-    BodyOpen('onLoad=this.focus();');
+    BodyOpen('onLoad="this.focus();"');
   } else {
-    BodyOpen('onLoad=document.Form.w_assinatura.focus();');
+    BodyOpen('onLoad="document.Form.w_assinatura.focus();"');
   } 
   Estrutura_Topo_Limpo();
   Estrutura_Menu();
@@ -1380,7 +1380,7 @@ function TipoRecurso() {
         Validate('w_sigla','Sigla','1','1','1','10','1','1');
         Validate('w_gestora','Unidade gestora','1','1','1','10','1','1');
         Validate('w_descricao','Descrição','1','1','5','2000','1','1');
-     } 
+      } 
       Validate('w_assinatura','Assinatura Eletrônica','1','1','6','30','1','1');
     } 
     ShowHTML('  theForm.Botao[0].disabled=true;');
@@ -1391,13 +1391,13 @@ function TipoRecurso() {
   ShowHTML('</HEAD>');
   ShowHTML('<BASE HREF="'.$conRootSIW.'">');
   if ($w_troca>'') {
-    BodyOpen('onLoad=document.Form.'.$w_troca.'.focus();');
+    BodyOpen('onLoad="document.Form.'.$w_troca.'.focus();"');
   } elseif ($O=='C' || $O=='I' || $O=='A') {
-    BodyOpen('onLoad=document.Form.w_chave_pai.focus();');
+    BodyOpen('onLoad="document.Form.w_chave_pai.focus();"');
   } elseif ($O=='L') {
-    BodyOpen('onLoad=this.focus();');
+    BodyOpen('onLoad="this.focus();"');
   } else {
-    BodyOpen('onLoad=document.Form.w_assinatura.focus();');
+    BodyOpen('onLoad="document.Form.w_assinatura.focus();"');
   } 
   Estrutura_Topo_Limpo();
   Estrutura_Menu();
@@ -1554,7 +1554,7 @@ function TipoRecurso() {
     } else {
       selecaoTipoSubordination('<u>S</u>ubordinação:','S','Se esta opção estiver subordinada a outra já existente, informe qual.',$w_chave,$w_chave_pai,'w_chave_pai','SUBTODOS',null);
     } 
-    ShowHTML('      <tr><td><table border=0 width="100%" cellpadding=0 cellspacing=0>');
+    ShowHTML('      <tr><td><table border=0 width="100%" cellpadding=0 cellspacing=0><tr valign="top">');
     ShowHTML('            <td><b><u>N</u>ome:<br><INPUT ACCESSKEY="N" TYPE="TEXT" CLASS="sti" NAME="w_nome" SIZE=30 MAXLENGTH=30 VALUE="'.$w_nome.'" '.$w_Disabled.' title="Nome do tipo."></td>');
     ShowHTML('            <td><b>S<u>i</u>gla:<br><INPUT ACCESSKEY="I" TYPE="TEXT" CLASS="sti" NAME="w_sigla" SIZE=10 MAXLENGTH=10 VALUE="'.$w_sigla.'" '.$w_Disabled.' title="Sigla do tipo."></td>');
     SelecaoUnidade('<U>U</U>nidade gestora:','U','Indique a unidade responsável pela gestão deste tipo de recurso',$w_gestora,null,'w_gestora',null,null);
@@ -1635,13 +1635,13 @@ function TipoIndicador() {
   ShowHTML('</HEAD>');
   ShowHTML('<BASE HREF="'.$conRootSIW.'">');
   if ($w_troca>'') {
-    BodyOpen('onLoad=\'document.Form.'.$w_troca.'.focus()\';');
+    BodyOpen('onLoad="document.Form.'.$w_troca.'.focus()";');
   } elseif (!(strpos('IA',$O)===false)) {
-    BodyOpen('onLoad=\'document.Form.w_nome.focus()\';');
+    BodyOpen('onLoad="document.Form.w_nome.focus()";');
   } elseif ($O=='E') {
-    BodyOpen('onLoad=\'document.Form.w_assinatura.focus()\';');
+    BodyOpen('onLoad="document.Form.w_assinatura.focus()";');
   } else {
-    BodyOpen('onLoad=\'this.focus()\';');
+    BodyOpen('onLoad="this.focus()";');
   } 
   ShowHTML('<B><FONT COLOR="#000000">'.$w_TP.'</FONT></B>');
   ShowHTML('<HR>');
@@ -1776,13 +1776,13 @@ function UnidadeMedida() {
   ShowHTML('</HEAD>');
   ShowHTML('<BASE HREF="'.$conRootSIW.'">');
   if ($w_troca>'') {
-    BodyOpen('onLoad=document.Form.'.$w_troca.'.focus();');
+    BodyOpen('onLoad="document.Form.'.$w_troca.'.focus();"');
   } elseif ($O=='I' || $O=='A') {
-    BodyOpen('onLoad=document.Form.w_sigla.focus();');
+    BodyOpen('onLoad="document.Form.w_sigla.focus();"');
   } elseif ($O=='L'){
-    BodyOpen('onLoad=this.focus();');
+    BodyOpen('onLoad="this.focus();"');
   } else {
-    BodyOpen('onLoad=document.Form.w_assinatura.focus();');
+    BodyOpen('onLoad="document.Form.w_assinatura.focus();"');
   } 
   Estrutura_Topo_Limpo();
   Estrutura_Menu();
@@ -1931,11 +1931,11 @@ function Unidade() {
   ShowHTML('</HEAD>');
   ShowHTML('<BASE HREF="'.$conRootSIW.'">');
   if ($w_troca>'') {
-    BodyOpen('onLoad=\'document.Form.'.$w_troca.'.focus()\';');
+    BodyOpen('onLoad="document.Form.'.$w_troca.'.focus()";');
   } elseif (!(strpos('A',$O)===false)) {
-    BodyOpen('onLoad=\'document.Form.w_descricao.focus()\';');
+    BodyOpen('onLoad="document.Form.w_descricao.focus()";');
   } elseif ($O=='E') {
-    BodyOpen('onLoad=\'document.Form.w_assinatura.focus()\';');
+    BodyOpen('onLoad="document.Form.w_assinatura.focus()";');
   } else {
     BodyOpenClean(null);
   } 
@@ -2051,7 +2051,7 @@ function Grava() {
   Cabecalho();
   ShowHTML('</HEAD>');
   ShowHTML('<BASE HREF="'.$conRootSIW.'">');
-  BodyOpen('onLoad=this.focus();');
+  BodyOpen('onLoad="this.focus();"');
   switch ($SG) {
     case 'PEPLANO':
       // Verifica se a Assinatura Eletrônica é válida

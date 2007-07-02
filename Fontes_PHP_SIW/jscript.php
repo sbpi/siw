@@ -652,7 +652,7 @@ function Validate($VariableName,$DisplayName,$DataType,$ValueRequired,$MinimumLe
   if ($AllowLetters>"" || $AllowDigits>"") {
     $checkOK="";
     if ($AllowLetters>"") {
-      if ($AllowLetters=='1') { $checkOK='ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyzÀÁÂÃÇÈÉÊÌÍÎÒÓÔÕÙÚÛÜÀÈÌÒÙÂÊÎÔÛàáâãçéêíîóôõúûüàèìòìâêîôû0123456789-–,.()-:;[]{}*&%$#@!/ºª?<>|+=_\\“”"\\\' '; }
+      if ($AllowLetters=='1') { $checkOK='ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyzÀÁÂÃÇÈÉÊÌÍÎÒÓÔÕÙÚÛÜÀÈÌÒÙÂÊÎÔÛàáâãçéêíîóôõúûüàèìòìâêîôû0123456789-–,.()-:;[]{}*&%$#@!/ºª²³?<>|+=_\\“”"\\\' '; }
       else { $checkOK=$checkOK.$AllowLetters; }
     }
 

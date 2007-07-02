@@ -619,6 +619,18 @@ function ExibeRecurso($p_dir,$p_cliente,$p_nome,$p_chave,$p_tp,$p_solic) {
   return $l_string;
 }
 
+// =========================================================================
+// Montagem da URL com os dados de um material ou serviço
+// -------------------------------------------------------------------------
+function ExibeMaterial($p_dir,$p_cliente,$p_nome,$p_chave,$p_tp,$p_solic) {
+  extract($GLOBALS,EXTR_PREFIX_SAME,'l_');
+  if (Nvl($p_chave,'')=='') {
+    $l_string='---';
+  } else {
+    $l_string .= '<A class="hl" HREF="#" onClick="window.open(\''.$conRootSIW.'mod_cl/catalogo.php?par=TELAMATERIAL&w_cliente='.$p_cliente.'&w_chave='.$p_chave.'&w_solic='.$p_solic.'&P1='.$P1.'&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP='.$p_tp.'&SG='.'\',\'Telarecurso\',\'width=785,height=570,top=10,left=10,toolbar=no,scrollbars=yes,resizable=yes,status=no\'); return false;" title="Clique para exibir os dados deste material ou serviço!">'.$p_nome.'</A>';
+  }
+  return $l_string;
+}
 
 // =========================================================================
 // Montagem da URL com os dados de uma restricao
