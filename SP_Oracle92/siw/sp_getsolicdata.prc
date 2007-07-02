@@ -28,6 +28,7 @@ begin
                 b.valor,              b.opiniao,
                 b.sq_solic_pai,       b.sq_unidade,                  b.sq_cidade_origem,
                 b.palavra_chave,
+                b.fim-d.dias_aviso aviso,
                 case when b.sq_solic_pai is null 
                      then case when b3.sq_peobjetivo is null
                                then '---'
@@ -43,9 +44,8 @@ begin
                 d.aviso_prox_conc,    d.dias_aviso,                  d.inicio_real,
                 d.fim_real,           d.concluida,                   d.data_conclusao,
                 d.nota_conclusao,     d.custo_real,                  d.proponente,
-                d.ordem,              d.sq_demanda_pai,
+                d.ordem,              d.sq_demanda_pai,              d.sq_demanda_tipo,
                 d.recebimento,        d.limite_conclusao,            d.responsavel,
-                b.fim-d.dias_aviso aviso,
                 e.sq_tipo_unidade,    e.nome nm_unidade_resp,        e.informal informal_resp,
                 e.vinculada vinc_resp,e.adm_central adm_resp,
                 e1.sq_pessoa titular, e2.sq_pessoa substituto,

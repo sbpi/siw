@@ -2,7 +2,7 @@ create or replace procedure SP_PutDemandaGeral
    (p_operacao            in  varchar2,
     p_chave               in  number   default null,
     p_copia               in  number   default null,
-    p_menu                in number,
+    p_menu                in number    default null,
     p_unidade             in number    default null,
     p_solicitante         in number    default null,
     p_proponente          in varchar2  default null,
@@ -250,8 +250,31 @@ begin
       Update siw_solicitacao set
           opiniao         = p_opiniao
       where sq_siw_solicitacao = p_chave;
+   Elsif p_operacao = 'F' Then -- Alteração
+      -- Atualiza a tabela de solicitações
+      Update siw_solicitacao set
+          sq_solic_pai     = p_projeto,
+          sq_cc            = p_sqcc,
+          ultima_alteracao = sysdate,
+          palavra_chave    = p_palavra_chave
+      where sq_siw_solicitacao = p_chave;
+      
+      -- Atualiza a tabela de demandas
+      Update gd_demanda set
+          sq_unidade_resp  = p_unid_resp,
+          prioridade       = p_prioridade,
+          sq_demanda_tipo  = p_demanda_tipo,
+          responsavel      = p_responsavel
+      where sq_siw_solicitacao = p_chave;
+   Elsif p_operacao = 'D' Then -- Alteração
+      -- Atualiza a tabela de solicitações
+      Update siw_solicitacao set
+          inicio           = p_inicio,
+          fim              = p_fim,
+          valor            = p_valor,          
+          ultima_alteracao = sysdate
+      where sq_siw_solicitacao = p_chave;
    End If;
-   
    -- Devolve a chave
    If p_chave is not null
       Then p_chave_nova := p_chave;
