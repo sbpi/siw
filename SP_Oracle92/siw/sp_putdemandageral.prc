@@ -35,6 +35,10 @@ create or replace procedure SP_PutDemandaGeral
     p_projeto_ant         in number    default null,
     p_atividade_ant       in number    default null,
     p_restricao           in number    default null,
+    p_demanda_tipo        in number    default null,
+    p_recebimento         in date      default null,
+    p_limite_conclusao    in date      default null,
+    p_responsavel         in number    default null,
     p_chave_nova          out number
    ) is
    w_arq     varchar2(4000) := ', ';
@@ -74,13 +78,15 @@ begin
          ( sq_siw_solicitacao,  sq_unidade_resp, assunto,           prioridade,
            aviso_prox_conc,     dias_aviso,      inicio_real,       fim_real,
            concluida,           data_conclusao,  nota_conclusao,    custo_real,
-           proponente,          ordem,           sq_demanda_pai,    sq_siw_restricao
+           proponente,          ordem,           sq_demanda_pai,    sq_siw_restricao,
+           sq_demanda_tipo,     recebimento,     limite_conclusao,  responsavel
          )
       (select
            w_chave,             p_unid_resp,     p_assunto,         p_prioridade,
            p_aviso,             p_dias,          null,              null,
            'N',                 null,            null,              0,
-           p_proponente,        p_ordem,         p_atividade_ant,   p_restricao
+           p_proponente,        p_ordem,         p_atividade_ant,   p_restricao,
+           p_demanda_tipo,      p_recebimento,   p_limite_conclusao, p_responsavel
         from dual
       );
 
@@ -153,7 +159,10 @@ begin
           aviso_prox_conc  = p_aviso,
           dias_aviso       = p_dias,
           inicio_real      = p_inicio_real,
-          ordem            = p_ordem
+          ordem            = p_ordem,
+          sq_demanda_tipo  = p_demanda_tipo,
+          recebimento      = p_recebimento,
+          limite_conclusao = p_limite_conclusao
       where sq_siw_solicitacao = p_chave;
 
       delete pj_etapa_demanda where sq_siw_solicitacao = p_chave;

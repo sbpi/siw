@@ -259,8 +259,11 @@ begin
                If w_vencimento < w_inicio Then w_vencimento := w_inicio; End If;
 
                -- Calcula o valor total da parcela
-               w_valor_1 := round(coalesce(w_inicial_1,w_valor_1),2) + round(coalesce(w_excedente_1,0),2) + round(coalesce(w_reajuste_1,0),2);
-
+               If(w_inicial_1=0) Then
+                  w_valor_1 := round(coalesce(w_valor_1,0),2) + round(coalesce(w_excedente_1,0),2) + round(coalesce(w_reajuste_1,0),2);
+               Else
+                  w_valor_1 :=  round(coalesce(w_inicial_1,0),2) + round(coalesce(w_excedente_1,0),2) + round(coalesce(w_reajuste_1,0),2);
+               End If;
                -- insere a primeira parcela
                insert into ac_acordo_parcela
                  (sq_acordo_parcela,         sq_siw_solicitacao, ordem,              emissao,              vencimento,             observacao,    valor, 
@@ -280,7 +283,11 @@ begin
                If w_vencimento < w_inicio Then w_vencimento := w_inicio; End If;
                
                -- Calcula o valor total da parcela
-               w_valor_n := round(coalesce(w_inicial_n,w_valor_n),2) + round(coalesce(w_excedente_n,0),2) + round(coalesce(w_reajuste_n,0),2);
+               If(w_inicial_n=0) Then
+                  w_valor_n := round(coalesce(w_valor_n,0),2) + round(coalesce(w_excedente_n,0),2) + round(coalesce(w_reajuste_n,0),2);
+               Else
+                  w_valor_n :=  round(coalesce(w_inicial_n,0),2) + round(coalesce(w_excedente_n,0),2) + round(coalesce(w_reajuste_n,0),2);
+               End If;
 
                -- Insere a última parcela
                insert into ac_acordo_parcela
@@ -306,7 +313,11 @@ begin
                If w_vencimento < w_inicio Then w_vencimento := w_inicio; End If;
                
                -- Calcula o valor total da parcela
-               w_valor := round(coalesce(w_inicial,w_valor),2) + round(coalesce(w_excedente,0),2) + round(coalesce(w_reajuste,0),2);
+               If(w_inicial=0) Then
+                  w_valor := round(coalesce(w_valor,0),2) + round(coalesce(w_excedente,0),2) + round(coalesce(w_reajuste,0),2);
+               Else
+                  w_valor :=  round(coalesce(w_inicial,0),2) + round(coalesce(w_excedente,0),2) + round(coalesce(w_reajuste,0),2);
+               End If;
                
                insert into ac_acordo_parcela
                  (sq_acordo_parcela,         sq_siw_solicitacao, ordem,              emissao,            vencimento,           observacao,    valor, 

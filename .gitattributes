@@ -3418,6 +3418,7 @@ SP_Oracle92/siw/sp_getstoredprocedure.prc -text
 SP_Oracle92/siw/sp_gettabela.prc -text
 SP_Oracle92/siw/sp_gettipoapoiolist.prc -text
 SP_Oracle92/siw/sp_gettipodado.prc -text
+SP_Oracle92/siw/sp_gettipodemanda.prc -text
 SP_Oracle92/siw/sp_gettipodespacho_pa.prc -text
 SP_Oracle92/siw/sp_gettipodocumento.prc -text
 SP_Oracle92/siw/sp_gettipoguarda_pa.prc -text
@@ -3643,6 +3644,7 @@ SP_Oracle92/siw/sp_putsptabs.prc -text
 SP_Oracle92/siw/sp_putstoredprocedure.prc -text
 SP_Oracle92/siw/sp_puttabela.prc -text
 SP_Oracle92/siw/sp_puttipodado.prc -text
+SP_Oracle92/siw/sp_puttipodemanda.prc -text
 SP_Oracle92/siw/sp_puttipodespacho_pa.prc -text
 SP_Oracle92/siw/sp_puttipodocumento.prc -text
 SP_Oracle92/siw/sp_puttipoguarda_pa.prc -text
