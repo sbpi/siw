@@ -136,17 +136,18 @@ begin
                  e3.sigla as sg_unidade_resp_tarefa,
                  f.sigla as sg_tramite, f.nome as nm_tramite
             from gd_demanda                       a
-                 inner       join siw_solicitacao a1 on (a.sq_siw_solicitacao = a1.sq_siw_solicitacao)
-                   inner     join siw_menu        a2 on (a1.sq_menu           = a2.sq_menu)
-                 inner       join siw_restricao   b  on (a.sq_siw_restricao   = b.sq_siw_restricao)
-                   inner     join co_pessoa       c  on (b.sq_pessoa          = c.sq_pessoa)
-                     inner   join sg_autenticacao c1 on (c.sq_pessoa          = c1.sq_pessoa)
-                       inner join eo_unidade      d  on (c1.sq_unidade        = d.sq_unidade)
-                 inner       join siw_solicitacao e  on (a.sq_siw_solicitacao = e.sq_siw_solicitacao)
-                   inner     join co_pessoa       e1 on (e.solicitante        = e1.sq_pessoa)
-                     inner   join sg_autenticacao e2 on (e1.sq_pessoa         = e2.sq_pessoa)
-                       inner join eo_unidade      e3 on (e2.sq_unidade        = e3.sq_unidade)
-                 inner       join siw_tramite     f  on (e.sq_siw_tramite     = f.sq_siw_tramite)             
+                 inner       join siw_solicitacao a1 on (a.sq_siw_solicitacao  = a1.sq_siw_solicitacao)
+                   inner     join siw_menu        a2 on (a1.sq_menu            = a2.sq_menu)
+                 inner       join siw_restricao   b  on (a.sq_siw_restricao    = b.sq_siw_restricao)
+                   inner     join co_pessoa       c  on (b.sq_pessoa           = c.sq_pessoa)
+                     inner   join sg_autenticacao c1 on (c.sq_pessoa           = c1.sq_pessoa)
+                       inner join eo_unidade      d  on (c1.sq_unidade         = d.sq_unidade)
+                 inner       join siw_solicitacao e  on (a.sq_siw_solicitacao  = e.sq_siw_solicitacao)
+                   inner     join co_pessoa       e1 on (e.solicitante         = e1.sq_pessoa)
+                     inner   join sg_autenticacao e2 on (e1.sq_pessoa          = e2.sq_pessoa)
+                       inner join eo_unidade      e3 on (e2.sq_unidade         = e3.sq_unidade)
+                 inner       join siw_tramite     f  on (e.sq_siw_tramite      = f.sq_siw_tramite and
+                                                         coalesce(f.sigla,'-') <> 'CA')
            where a.sq_siw_restricao = p_chave;
    End If;
 end sp_getSolicRestricao;

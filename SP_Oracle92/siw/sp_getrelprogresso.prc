@@ -122,6 +122,8 @@ begin
                   left        join gd_demanda       f  on (e.sq_siw_solicitacao  = f.sq_siw_solicitacao)
                   left        join siw_solicitacao  g  on (e.sq_siw_solicitacao  = g.sq_siw_solicitacao)
                     left      join co_pessoa        i  on (g.solicitante         = i.sq_pessoa)
+                    left      join siw_tramite      l  on (g.sq_siw_tramite      = l.sq_siw_tramite and
+                                                           'CA'                  <> coalesce(l.sigla,'-'))
           where d.sq_pessoa      = p_cliente
             and (p_chave         is null or (p_chave       is not null and a.sq_siw_solicitacao = p_chave))
             and (p_programa      is null or (p_programa    is not null and c.sq_solic_pai       = p_programa))

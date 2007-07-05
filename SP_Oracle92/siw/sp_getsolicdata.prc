@@ -38,6 +38,7 @@ begin
                 end as dados_pai,
                 b1.sq_siw_tramite,    b1.nome nm_tramite,            b1.ordem or_tramite,
                 b1.sigla sg_tramite,  b1.ativo,
+                b5.nome nm_unidade,
                 c.sq_tipo_unidade,    c.nome nm_unidade_exec,        c.informal,
                 c.vinculada,          c.adm_central,
                 d.sq_unidade_resp,    d.assunto,                     d.prioridade,
@@ -46,6 +47,8 @@ begin
                 d.nota_conclusao,     d.custo_real,                  d.proponente,
                 d.ordem,              d.sq_demanda_pai,              d.sq_demanda_tipo,
                 d.recebimento,        d.limite_conclusao,            d.responsavel,
+                d1.nome nm_demanda_tipo,
+                d2.nome_resumido nm_resp,
                 e.sq_tipo_unidade,    e.nome nm_unidade_resp,        e.informal informal_resp,
                 e.vinculada vinc_resp,e.adm_central adm_resp,
                 e1.sq_pessoa titular, e2.sq_pessoa substituto,
@@ -73,7 +76,10 @@ begin
                   inner      join siw_tramite               b1 on (b.sq_siw_tramite      = b1.sq_siw_tramite)
                   left       join pe_objetivo               b3 on (b.sq_peobjetivo       = b3.sq_peobjetivo)
                     left     join pe_plano                  b4 on (b3.sq_plano           = b4.sq_plano)
+                  left       join eo_unidade                b5 on (b.sq_unidade          = b5.sq_unidade)
                   inner      join gd_demanda                d  on (b.sq_siw_solicitacao  = d.sq_siw_solicitacao)
+                    left     join gd_demanda_tipo           d1 on (d.sq_demanda_tipo     = d1.sq_demanda_tipo)
+                    left     join co_pessoa                 d2 on (d.responsavel         = d2.sq_pessoa)
                     left     join eo_unidade                e  on (d.sq_unidade_resp     = e.sq_unidade)
                       left   join eo_unidade_resp           e1 on (e.sq_unidade          = e1.sq_unidade and
                                                                    e1.tipo_respons      = 'T'           and
