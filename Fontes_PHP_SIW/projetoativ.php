@@ -128,7 +128,7 @@ $w_usuario  = RetornaUsuario();
 $w_menu     = RetornaMenu($w_cliente,$SG);
 
 $w_copia        = $_REQUEST['w_copia'];
-$p_chave_pai      = strtoupper($_REQUEST['p_chave_pai']);
+$p_chave_pai    = strtoupper(nvl($_REQUEST['p_chave_pai'],$_REQUEST['p_projeto']));
 $p_atividade    = strtoupper($_REQUEST['p_atividade']);
 $p_ativo        = strtoupper($_REQUEST['p_ativo']);
 $p_solicitante  = strtoupper($_REQUEST['p_solicitante']);

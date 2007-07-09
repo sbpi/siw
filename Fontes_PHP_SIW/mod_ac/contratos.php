@@ -2613,8 +2613,10 @@ function Parcelas() {
     ShowHTML('     document.Form.w_dia_vencimento.value = \'\';');
     ShowHTML('     document.Form.w_valor_parcela[0].checked = false;');
     ShowHTML('     document.Form.w_valor_parcela[1].checked = false;');
-    ShowHTML('     document.Form.w_valor_parcela[2].checked = false;');
-    ShowHTML('     document.Form.w_valor_parcela[3].checked = false;');
+    if(nvl($w_sq_acordo_aditivo,'')=='') {
+      ShowHTML('     document.Form.w_valor_parcela[2].checked = false;');
+      ShowHTML('     document.Form.w_valor_parcela[3].checked = false;');
+    }
     ShowHTML('     document.Form.w_valor_diferente.value = \'\';');
     ShowHTML('   }');
     ShowHTML('}');
@@ -2794,7 +2796,7 @@ function Parcelas() {
     }
     if (count($RS)<=0) {
       // Se não foram selecionados registros, exibe mensagem
-      ShowHTML('      <tr bgcolor="'.$conTrBgColor.'"><td colspan=7 align="center"><b>Não foram encontrados registros.</b></td></tr>');
+      ShowHTML('      <tr bgcolor="'.$conTrBgColor.'"><td colspan=9 align="center"><b>Não foram encontrados registros.</b></td></tr>');
     } else {
       // Lista os registros selecionados para listagem
       $w_total   = 0;
@@ -2976,6 +2978,8 @@ function Parcelas() {
       ShowHTML('              <tr valign="top"><td><td><input '.$w_Disabled.' type="radio" name="w_valor_parcela" value="P" onClick="trataValor();"><td>A primeira parcela tem valor diferente das demais</td>');
       ShowHTML('              <tr valign="top"><td><td><input '.$w_Disabled.' type="radio" name="w_valor_parcela" value="U" onClick="trataValor();"><td>A última parcela tem valor diferente das demais</td>');
       ShowHTML('              <tr valign="top"><td colspan=2><td><b>Valor da parcela diferente das demais:</b> <input '.$w_Disabled.' type="text" name="w_valor_diferente" class="sti" SIZE="18" MAXLENGTH="18" onKeyDown="FormataValor(this, 18, 2, event); trataValorDiferente();" VALUE="" title="Informe o valor da primeira parcela. As demais terão valores iguais."></td>');
+    } else {
+      ShowHTML('<INPUT type="hidden" name="w_valor_diferente" value="0">');
     }
     ShowHTML('              </table>');
     ShowHTML('          </table>');
