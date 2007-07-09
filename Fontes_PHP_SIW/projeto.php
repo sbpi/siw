@@ -3961,7 +3961,7 @@ function EtapaLinhaAtiv($l_chave,$l_chave_aux,$l_titulo,$l_resp,$l_setor,$l_inic
   } 
   // Recupera os contratos que o usuário pode ver
   $l_rs = db_getLinkData::getInstanceOf($dbms, $w_cliente, 'GCBCAD');
-  $RS_Contr = db_getSolicList::getInstanceOf($dbms,f($l_rs,'sq_menu'),$w_usuario,f($l_rs,'sigla'),3,
+  $RS_Contr = db_getSolicList::getInstanceOf($dbms,f($l_rs,'sq_menu'),$w_usuario,f($l_rs,'sigla'),4,
               null,null,null,null,null,null,
               null,null,null,null,
               null,null,null,null,null,null,null,
@@ -3970,7 +3970,7 @@ function EtapaLinhaAtiv($l_chave,$l_chave_aux,$l_titulo,$l_resp,$l_setor,$l_inic
 
   // Recupera as tarefas que o usuário pode ver
   $l_rs = db_getLinkData::getInstanceOf($dbms, $w_cliente, 'GDPCAD');
-  $RS_Ativ = db_getSolicList::getInstanceOf($dbms,f($l_rs,'sq_menu'),$w_usuario,f($l_rs,'sigla'),3,
+  $RS_Ativ = db_getSolicList::getInstanceOf($dbms,f($l_rs,'sq_menu'),$w_usuario,f($l_rs,'sigla'),4,
               null,null,null,null,null,null,
               null,null,null,null,
               null,null,null,null,null,null,null,

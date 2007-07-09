@@ -963,7 +963,7 @@ function Encaminhamento() {
     ShowHTML('  </table>');
     
     // Exibe mapa de alocação de veículos
-    if ($SG=='SRTRANSP') {
+    if ($SG=='SRTRANSP' && $w_sg_tramite=='EA') {
       include_once('visualmapaveiculo.php');
       ShowHTML(visualMapaVeiculo(null,$SG,null,null,'S',$w_chave,formataDataEdicao(nvl($w_inicio,$w_fim)),formataDataEdicao($w_fim),'MAPAFUTURO'));
     }

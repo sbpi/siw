@@ -707,7 +707,7 @@ function Gerencial() {
           $w_linha = $w_linha + 1;
         } 
         if (f($row,'concluida')=='N') {
-          if (f($row,'fim') < addDays(time(),-1)) {
+          if (Nvl(f($row,'fim'),f($row,'limite_conclusao')) < addDays(time(),-1)) {
             $t_atraso    = $t_atraso + 1;
             $t_totatraso = $t_totatraso + 1;
           } elseif (f($row,'aviso_prox_conc') == 'S' && (f($row,'aviso') <= addDays(time(),-1))) {

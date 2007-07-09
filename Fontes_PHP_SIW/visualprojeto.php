@@ -387,7 +387,7 @@ function VisualProjeto($l_chave,$operacao,$l_usuario) {
   //Lista das tarefas que não são ligadas a nenhuma etapa
   if ($operacao=='T') {
     $RS = db_getLinkData::getInstanceOf($dbms,$_SESSION['P_CLIENTE'],'GDPCAD');
-    $RS = db_getSolicList::getInstanceOf($dbms,f($RS,'sq_menu'),$l_usuario,'GDPCADET',3,
+    $RS = db_getSolicList::getInstanceOf($dbms,f($RS,'sq_menu'),$l_usuario,'GDPCADET',4,
            null,null,null,null,null,null,null,null,null,null,null,null,null,null,
            null,null,null,null,null,null,null,null,$l_chave,null,null,null);
     if (count($RS)>0) {

@@ -491,8 +491,10 @@ function Rel_Progresso() {
     ShowHTML('    for (var i=0;i < document.Form.elements.length;i++) { ');
     ShowHTML('      tipo = document.Form.elements[i].type.toLowerCase();');
     ShowHTML('      if (tipo==\'checkbox\') {');
-    ShowHTML('        if (document.Form.w_marca_bloco.checked==true) document.Form.elements[i].checked=true; ');
-    ShowHTML('        else document.Form.elements[i].checked=false; ');
+    ShowHTML('        if (document.Form.w_marca_bloco.checked==true) {');
+    ShowHTML('          document.Form.elements[i].disabled=false; ');
+    ShowHTML('          document.Form.elements[i].checked=true; ');
+    ShowHTML('        } else { document.Form.elements[i].checked=false; } ');
     ShowHTML('      } ');
     ShowHTML('    } ');
     ShowHTML('  }');
@@ -679,8 +681,10 @@ function Rel_Projeto() {
     ShowHTML('    for (var i=0;i < document.Form.elements.length;i++) { ');
     ShowHTML('      tipo = document.Form.elements[i].type.toLowerCase();');
     ShowHTML('      if (tipo==\'checkbox\' && document.Form.elements[i].name!=\'p_geral1\') {');
-    ShowHTML('        if (document.Form.w_marca_bloco.checked==true) document.Form.elements[i].checked=true; ');
-    ShowHTML('        else document.Form.elements[i].checked=false; ');
+    ShowHTML('        if (document.Form.w_marca_bloco.checked==true) {');
+    ShowHTML('          document.Form.elements[i].disabled=false; ');
+    ShowHTML('          document.Form.elements[i].checked=true; ');
+    ShowHTML('        } else { document.Form.elements[i].checked=false; }');
     ShowHTML('      } ');
     ShowHTML('    } ');
     ShowHTML('  }');

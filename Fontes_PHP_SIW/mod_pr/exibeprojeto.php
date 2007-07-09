@@ -167,7 +167,7 @@ function ExibeProjeto($l_chave,$operacao,$l_usuario,$l_tipo) {
   if(nvl($_REQUEST['p_rubrica'],'')!='') {
     $RS = db_getSolicRubrica::getInstanceOf($dbms,$l_chave,null,'S',null,null,null,null,null,null);
     $RS = SortArray($RS,'codigo','asc');
-    if (count($RS)>0 && $l_nome_menu['RUBRICA']!='' && $w_financeiro=='S' ) {
+    if (count($RS)>0 && $l_nome_menu['RUBRICA']!='' && $w_financeiro=='S' && $w_cliente!='10135') {
       $l_html.=chr(13).'        <tr><td colspan=2><br><font size="2"><b>'.$l_nome_menu['RUBRICA'].'<hr NOSHADE color=#000000 SIZE=1></b></font></td></tr>';
       $l_html .= chr(13).'      <tr><td align="center" colspan="2">';
       $l_html .= chr(13).'          <table width=100%  border="1" bordercolor="#00000">';
@@ -347,7 +347,7 @@ function ExibeProjeto($l_chave,$operacao,$l_usuario,$l_tipo) {
   //Lista das tarefas que não são ligadas a nenhuma etapa
   if(nvl($_REQUEST['p_tarefa'],'')!='') {
     $RS = db_getLinkData::getInstanceOf($dbms,$_SESSION['P_CLIENTE'],'GDPCAD');
-    $RS = db_getSolicList::getInstanceOf($dbms,f($RS,'sq_menu'),$l_usuario,'GDPCADET',3,
+    $RS = db_getSolicList::getInstanceOf($dbms,f($RS,'sq_menu'),$l_usuario,'GDPCADET',4,
            null,null,null,null,null,null,null,null,null,null,null,null,null,null,
            null,null,null,null,null,null,null,null,$l_chave,null,null,null);
     if (count($RS)>0) {
@@ -1002,7 +1002,7 @@ function EtapaLinhaAtiv($l_chave,$l_chave_aux,$l_titulo,$l_resp,$l_setor,$l_inic
   } 
   // Recupera os contratos que o usuário pode ver
   $l_rs = db_getLinkData::getInstanceOf($dbms, $w_cliente, 'GCBCAD');
-  $RS_Contr = db_getSolicList::getInstanceOf($dbms,f($l_rs,'sq_menu'),$w_usuario,f($l_rs,'sigla'),3,
+  $RS_Contr = db_getSolicList::getInstanceOf($dbms,f($l_rs,'sq_menu'),$w_usuario,f($l_rs,'sigla'),4,
               null,null,null,null,null,null,
               null,null,null,null,
               null,null,null,null,null,null,null,
@@ -1011,7 +1011,7 @@ function EtapaLinhaAtiv($l_chave,$l_chave_aux,$l_titulo,$l_resp,$l_setor,$l_inic
 
   // Recupera as tarefas que o usuário pode ver
   $l_rs = db_getLinkData::getInstanceOf($dbms, $w_cliente, 'GDPCAD');
-  $RS_Ativ = db_getSolicList::getInstanceOf($dbms,f($l_rs,'sq_menu'),$w_usuario,f($l_rs,'sigla'),3,
+  $RS_Ativ = db_getSolicList::getInstanceOf($dbms,f($l_rs,'sq_menu'),$w_usuario,f($l_rs,'sigla'),4,
               null,null,null,null,null,null,
               null,null,null,null,
               null,null,null,null,null,null,null,

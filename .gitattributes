@@ -1240,7 +1240,6 @@ Fontes_PHP_SIW/cp_calendar/ccalexf4.htm -text
 Fontes_PHP_SIW/cp_calendar/cores.html -text
 Fontes_PHP_SIW/cp_calendar/preview.gif -text
 Fontes_PHP_SIW/default.php -text
-Fontes_PHP_SIW/demanda.php -text
 Fontes_PHP_SIW/env.php -text
 Fontes_PHP_SIW/eo.php -text
 Fontes_PHP_SIW/eo_tabelas.php -text
@@ -1422,7 +1421,6 @@ Fontes_PHP_SIW/funcoes/selecaoVinculo.php -text
 Fontes_PHP_SIW/funcoes/selecaoVinculoRecurso.php -text
 Fontes_PHP_SIW/funcoes_valida.php -text
 Fontes_PHP_SIW/geragrafico.php -text
-Fontes_PHP_SIW/gr_demandaeventual.php -text
 Fontes_PHP_SIW/gr_projeto.php -text
 Fontes_PHP_SIW/help.php -text
 Fontes_PHP_SIW/inputsql.html -text
@@ -1456,6 +1454,7 @@ Fontes_PHP_SIW/mod_dm/demanda.php -text
 Fontes_PHP_SIW/mod_dm/gr_demandaeventual.php -text
 Fontes_PHP_SIW/mod_dm/tabelas.php -text
 Fontes_PHP_SIW/mod_dm/triagem.php -text
+Fontes_PHP_SIW/mod_dm/validatriagem.php -text
 Fontes_PHP_SIW/mod_dm/visualdemanda.php -text
 Fontes_PHP_SIW/mod_dm/visualtriagem.php -text
 Fontes_PHP_SIW/mod_fn/gr_lancamento.php -text
@@ -1561,7 +1560,6 @@ Fontes_PHP_SIW/test.php -text
 Fontes_PHP_SIW/trabalho.php -text
 Fontes_PHP_SIW/visualCliente.php -text
 Fontes_PHP_SIW/visualalerta.php -text
-Fontes_PHP_SIW/visualdemanda.php -text
 Fontes_PHP_SIW/visualprojeto.php -text
 SP_MSSQL2000/SIW/SIW.ACENTOS.UDF -text
 SP_MSSQL2000/SIW/SIW.AC_CriaParametro.PRC -text

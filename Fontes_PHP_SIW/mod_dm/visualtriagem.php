@@ -1,6 +1,6 @@
 <?
 // =========================================================================
-// Rotina de visualização dos dados da demanda
+// Rotina de visualização dos dados da demanda de triagem
 // -------------------------------------------------------------------------
 function VisualTriagem($l_chave,$operacao,$w_usuario) {
   extract($GLOBALS);
@@ -24,7 +24,11 @@ function VisualTriagem($l_chave,$operacao,$w_usuario) {
 
   $l_html = '';
   // Recupera os dados da demanda
-  $RS = db_getSolicData::getInstanceOf($dbms,$l_chave,'GDGERAL');
+  $RS = db_getSolicData::getInstanceOf($dbms,$l_chave,'GDTGERAL');
+  $w_tramite        = f($RS,'sq_siw_tramite');
+  $w_sg_tramite     = f($RS,'sg_tramite');
+  $w_sigla          = f($RS,'sigla');
+
 
   // Recupera o tipo de visão do usuário
   if (Nvl(f($RS,'solicitante'),0)==$w_usuario || 
@@ -69,61 +73,50 @@ function VisualTriagem($l_chave,$operacao,$w_usuario) {
     $l_html.=chr(13).'      <tr><td colspan="2"><hr NOSHADE color=#000000 size=4></td></tr>';
     // Identificação da demanda
     $l_html.=chr(13).'      <tr><td colspan="2"><br><font size="2"><b>'.$l_nome_menu['GERAL'].'<hr NOSHADE color=#000000 SIZE=1></b></font></td></tr>';  
-
+    $l_html.=chr(13).'      <tr valign="top"><td><b>Tipo da demanda:</b></td>';
+    $l_html.=chr(13).'        <td>'.f($RS,'nm_demanda_tipo').'</td></tr>';    
+    $l_html.=chr(13).'      <tr><td><b>Data da solicitação:</b></td>';
+    $l_html.=chr(13).'          <td>'.FormataDataEdicao(f($RS,'recebimento')).' </td></tr>';
+    $l_html.=chr(13).'      <tr><td><b>Limite para conclusão:</b></td>';
+    $l_html.=chr(13).'          <td>'.FormataDataEdicao(f($RS,'limite_conclusao')).' </td></tr>';
+    $l_html.=chr(13).'      <tr><td><b>Solicitante:</b></td>';
+    $l_html.=chr(13).'          <td>'.ExibePessoa(null,$w_cliente,f($RS,'solicitante'),$TP,f($RS,'nm_sol')).'</td></tr>';
+    $l_html.=chr(13).'      <tr><td><b>Setor solicitante:</b></td>';
+    $l_html.=chr(13).'          <td>'.ExibeUnidade(null,$w_cliente,f($RS,'nm_unidade'),f($RS,'sq_unidade'),$TP).'</td></tr>';
+    $l_html.=chr(13).'      <tr valign="top"><td><b>Proponente externo:</b></td>';
+    $l_html.=chr(13).'        <td>'.Nvl(f($RS,'proponente'),'---').' </td></tr>';
+    $l_html.=chr(13).'      <tr valign="top"><td><b>Local de execução:</b></td>';
+    $l_html.=chr(13).'        <td>'.f($RS,'nm_cidade').' ('.f($RS,'co_uf').')</td></tr>';
+    $l_html.=chr(13).'        <tr><td><b>Prioridade:</b></td>';
+    $l_html.=chr(13).'          <td>'.RetornaPrioridade(f($RS,'prioridade')).' </td></tr>';
+    $l_html.=chr(13).'      <tr><td><b>Responsável:</b></td>';
+    $l_html.=chr(13).'          <td>'.ExibePessoa(null,$w_cliente,f($RS,'responsavel'),$TP,f($RS,'nm_resp')).'</td></tr>';
+    $l_html.=chr(13).'      <tr><td><b>Setor responsável:</b></td>';
+    $l_html.=chr(13).'          <td>'.ExibeUnidade(null,$w_cliente,f($RS,'nm_unidade_resp'),f($RS,'sq_unidade_resp'),$TP).'</td></tr>';
+    $l_html.=chr(13).'        <tr valign="top"><td><b>Palavras-chave:</b></td>';
+    $l_html.=chr(13).'          <td>'.nvl(f($RS,'palavra_chave'),'---').' </td></tr>';
     // Exibe a vinculação
     $l_html.=chr(13).'      <tr><td valign="top" width="30%"><b>Vinculação: </b></td>';
     $l_html.=chr(13).'        <td>'.exibeSolic($w_dir,f($RS,'sq_solic_pai'),f($RS,'dados_pai'),'S').'</td></tr>';
-
     if (nvl(f($RS,'nm_etapa'),'')>'') {
       $l_html.=chr(13).'      <tr><td valign="top"><b>Etapa: </b></td>';
       $l_html.=chr(13).'        <td>'.MontaOrdemEtapa(f($RS,'sq_projeto_etapa')).'. '.f($RS,'nm_etapa').'</td></tr>';
     } 
-
-    if (nvl(f($RS,'sq_demanda_pai'),'')>'') {
-      // Recupera os dados da demanda
-      $RS1 = db_getSolicData::getInstanceOf($dbms,f($RS,'sq_demanda_pai'),'GDGERAL');
-      $l_html.=chr(13).'      <tr><td valign="top"><b>Tarefa pai: </b></td>';
-      $l_html.=chr(13).'        <td><A class="HL" HREF="'.$w_dir.$w_pagina.'Visual&R='.$w_pagina.$par.'&O=L&w_chave='.f($RS1,'sq_siw_solicitacao').'&P1='.$P1.'&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP='.$TP.'&SG='.$SG.MontaFiltro('GET').'" title="Exibe as informações deste registro." target="_blank">'.f($RS1,'sq_siw_solicitacao').'</a> - '.f($RS1,'assunto').' </td></tr>';
-    } 
-
-    if (nvl(f($RS,'ds_restricao'),'')>'') {
-      $l_html.=chr(13).'      <tr><td valign="top"><b>'.f($RS,'nm_tipo_restricao').': </b></td>';
-      $l_html.=chr(13).'        <td>'.f($RS,'ds_restricao').'</td></tr>';
-    } 
-
     // Se a classificação foi informada, exibe.
     if (Nvl(f($RS,'sq_cc'),'')>'') {
       $l_html .= chr(13).'      <tr><td width="30%"><b>Classificação:<b></td>';
       $l_html .= chr(13).'        <td>'.f($RS,'cc_nome').' </td></tr>';
     }
-
-    $l_html.=chr(13).'        <tr valign="top"><td><b>Local de execução:</b></td>';
-      $l_html.=chr(13).'        <td>'.f($RS,'nm_cidade').' ('.f($RS,'co_uf').')</td></tr>';
-    if (Nvl(f($RS,'proponente'),'')>'') {
-      $l_html.=chr(13).'      <tr valign="top"><td><b>Proponente externo:</b></td>';
-      $l_html.=chr(13).'        <td>'.f($RS,'proponente').' </td></tr>';
-    } else {
-      $l_html.=chr(13).'      <tr valign="top"><td><b>Proponente externo:</b></td>';
-      $l_html.=chr(13).'        <td>--- </td></tr>';
-    } 
-    $l_html.=chr(13).'        <tr><td><b>Responsável:</b></td>';
-    $l_html.=chr(13).'          <td>'.ExibePessoa(null,$w_cliente,f($RS,'solicitante'),$TP,f($RS,'nm_sol')).'</td></tr>';
-    $l_html.=chr(13).'        <tr><td><b>Unidade responsável:</b></td>';
-    $l_html.=chr(13).'          <td>'.ExibeUnidade(null,$w_cliente,f($RS,'nm_unidade_resp'),f($RS,'sq_unidade_resp'),$TP).'</td></tr>';
-
+    $l_html.=chr(13).'        <tr><td><b>Início previsto:</b></td>';
+    $l_html.=chr(13).'          <td>'.Nvl(FormataDataEdicao(f($RS,'inicio')),'---').' </td></tr>';
+    $l_html.=chr(13).'        <tr><td><b>Término previsto:</b></td>';
+    $l_html.=chr(13).'          <td>'.Nvl(FormataDataEdicao(f($RS,'fim')),'---').' </td></tr>';
     if ($w_tipo_visao==0) {
       // Se for visão completa
       $l_html.=chr(13).'      <tr valign="top"><td><B>Orçamento disponível: </b></td>';
-      $l_html.=chr(13).'        <td>'.number_format(f($RS,'valor'),2,',','.').' </td></tr>';
+      if(Nvl(f($RS,'valor'),'')!='')  $l_html.=chr(13).'        <td>'.number_format(f($RS,'valor'),2,',','.').' </td></tr>';
+      else                            $l_html.=chr(13).'        <td>---</td></tr>';
     } 
-    $l_html.=chr(13).'        <tr><td><b>Início previsto:</b></td>';
-    $l_html.=chr(13).'          <td>'.FormataDataEdicao(f($RS,'inicio')).' </td></tr>';
-    $l_html.=chr(13).'        <tr><td><b>Término previsto:</b></td>';
-    $l_html.=chr(13).'          <td>'.FormataDataEdicao(f($RS,'fim')).' </td></tr>';
-    $l_html.=chr(13).'        <tr><td><b>Prioridade:</b></td>';
-    $l_html.=chr(13).'          <td>'.RetornaPrioridade(f($RS,'prioridade')).' </td></tr>';
-    $l_html.=chr(13).'        <tr valign="top"><td><b>Palavras-chave:</b></td>';
-    $l_html.=chr(13).'          <td>'.nvl(f($RS,'palavra_chave'),'---').' </td></tr>';
     $l_html.=chr(13).'        <tr><td><b>Fase atual:</b></td>';
     $l_html.=chr(13).'          <td>'.Nvl(f($RS,'nm_tramite'),'-').'</td></tr>';
 
@@ -185,8 +178,8 @@ function VisualTriagem($l_chave,$operacao,$w_usuario) {
     // Recursos
     $RS1 = db_getSolicRecursos::getInstanceOf($dbms,$w_cliente,$w_usuario,$l_chave,null,null,null,null,null,null,null,null,null,null,null);
     $RS1 = SortArray($RS1,'nm_tipo_recurso','asc','nm_recurso','asc'); 
-    if (count($RS1)>0 && $l_nome_menu['RECSOLIC']!='') {
-      $l_html .= chr(13).'      <tr><td colspan="2"><br><font size="2"><b>'.$l_nome_menu['RECSOLIC'].'<hr NOSHADE color=#000000 SIZE=1></b></font></td></tr>';
+    if (count($RS1)>0) {
+      $l_html .= chr(13).'      <tr><td colspan="2"><br><font size="2"><b>RECURSOS<hr NOSHADE color=#000000 SIZE=1></b></font></td></tr>';
       $l_html .= chr(13).'      <tr><td align="center" colspan="2">';
       $l_html .= chr(13).'          <table width=100%  border="1" bordercolor="#00000">';     
       $l_html .= chr(13).'          <tr align="center" valign="top" bgColor="#f0f0f0">';
@@ -364,6 +357,21 @@ function VisualTriagem($l_chave,$operacao,$w_usuario) {
         $l_html.=chr(13).'      </tr>';
       } 
       $l_html.=chr(13).'         </table></td></tr>';
+    } 
+    // Se for envio, executa verificações nos dados da solicitação
+    $w_erro = ValidaTriagem($w_cliente,$l_chave,$w_sigla,null,null,null,Nvl($w_sg_tramite,''));
+    if ($w_tipo_visao!=2 && $w_erro>'') {
+      $l_html.=chr(13).'<tr><td colspan=2><font size=2>';
+      $l_html.=chr(13).'<HR>';
+      if (substr($w_erro,0,1)=='0') {
+        $l_html.=chr(13).'  <font color="#BC3131"><b>ATENÇÃO:</b></font> Foram identificados os erros listados abaixo, não sendo possível seu encaminhamento para fases posteriores à atual.';
+      } elseif (substr($w_erro,0,1)=='1') {
+        $l_html.=chr(13).'  <font color="#BC3131"><b>ATENÇÃO:</b></font> Foram identificados os erros listados abaixo. Seu encaminhamento para fases posteriores à atual só pode ser feito por um gestor do sistema ou do módulo de demandas.';
+      } else {
+        $l_html.=chr(13).'  <font color="#BC3131"><b>ATENÇÃO:</b></font> Foram identificados os alertas listados abaixo. Eles não impedem o encaminhamento para fases posteriores à atual, mas convém sua verificação.';
+      } 
+      $l_html.=chr(13).'  <ul>'.substr($w_erro,1,1000).'</ul>';
+      $l_html.=chr(13).'  </font></td></tr>';
     } 
 
     // Encaminhamentos

@@ -743,7 +743,7 @@ function ExibeSmile($l_tipo,$l_andamento,$l_legenda=0) {
 // =========================================================================
 // Exibe imagem da solicitação informada
 // -------------------------------------------------------------------------
-function ExibeImagemSolic($l_tipo,$l_inicio,$l_fim,$l_inicio_real,$l_fim_real,$l_aviso,$l_dias_aviso,$l_tramite, $l_perc, $l_legenda=0) {
+function ExibeImagemSolic($l_tipo,$l_inicio,$l_fim,$l_inicio_real,$l_fim_real,$l_aviso,$l_dias_aviso,$l_tramite, $l_perc, $l_legenda=0, $l_restricao=null) {
   extract($GLOBALS);
   $l_string = '';
   $l_imagem = '';
@@ -865,12 +865,12 @@ function ExibeImagemSolic($l_tipo,$l_inicio,$l_fim,$l_inicio_real,$l_fim_real,$l
         } 
       } 
     } elseif (substr($l_tipo,0,2)=='GD') {
-      // Tarefas e demandas eventuais
+      // Tarefas, demandas eventuais e demandas de triagem
       if ($l_tramite!='AT') {
         if ($l_tramite=='CA') {
           $l_imagem = $conImgCancel;
           $l_title  = 'Registro cancelado.';
-        } elseif ($l_tramite=='CI') {
+        } elseif ($l_tramite=='CI' || $l_restricao=='SEMEXECUCAO') {
           if ($l_fim<addDays(time(),-1)) {
             $l_imagem = $conImgAtraso;
             $l_title  = 'Execução não iniciada. Fim previsto superado.';
