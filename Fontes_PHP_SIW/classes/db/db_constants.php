@@ -30,7 +30,7 @@ define("ORA10_DATABASE_NAME", "smssp_dados");
 define("ORA10_VERSION_TEXT", "Oracle Server 10g");
 
 // PGSQL 8.0 Database Constants
-define("PGSQL_SERVER_NAME", "localhost");
+define("PGSQL_SERVER_NAME", "io");
 define("PGSQL_DB_USERID", "siw");
 define("PGSQL_DB_PASSWORD", "siw");
 define("PGSQL_DATABASE_NAME", "siw");

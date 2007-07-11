@@ -454,32 +454,86 @@ function visualMatServ($l_chave,$l_navega=true,$l_solic) {
   $l_rs = db_getMatServ::getInstanceOf($dbms,$w_cliente,$w_usuario,$l_chave,null,null,null,null,null,null);
   foreach ($l_rs as $row) { $l_rs = $row; break; }
 
-  $l_html = '<TABLE WIDTH="100%" bgcolor='.$conTableBgColor.' BORDER=0 CELLSPACING=0 CELLPADDING=0 BorderColorDark='.$conTableBorderColorDark.' BorderColorLight='.$conTableBorderColorLight.'>';
-  $l_html .= chr(13).'<tr bgcolor="'.$conTrBgColor.'"><td>';
-  $l_html .= chr(13).'    <table width="100%" border="1" cellspacing=0>';
-  $l_html .= chr(13).'      <tr<td colspan=3><font size=2><b>'.f($l_rs,'nome').'</b></td>';
-  $l_html .= chr(13).'      <tr valign="top">';
-  $l_html .= chr(13).'          <td>Código:<br><font size=2><b>'.nvl(f($l_rs,'codigo_interno'),'---').' </b></td>';
-  $l_html .= chr(13).'          <td>Item ativo?<br><b>'.f($l_rs,'nm_ativo').' </b></td>';
-  $l_html .= chr(13).'          <td>Exibe no catálogo?<br><b>'.f($l_rs,'nm_exibe_catalogo').' </b></td>';
-  $l_html .= chr(13).'      <tr valign="top">';
-  if (f($l_rs,'classe')==4) {
-    $l_html .= chr(13).'          <td colspan=2>Tipo: <br><b>'.f($l_rs,'nm_tipo_material_completo').'</b></td>';
-    $l_html .= chr(13).'          <td>Vida útil (anos): <br><b>'.f($l_rs,'vida_util').'</b></td>';
-  } else {
-    $l_html .= chr(13).'          <td colspan=3>Tipo: <br><b>'.f($l_rs,'nm_tipo_material_completo').'</b></td>';
-  }
-  $l_html .= chr(13).'      <tr valign="top">';
-  $l_html .= chr(13).'          <td>Classificação:<br><b>'.f($l_rs,'nm_cc').'</b></td>';
-  $l_html .= chr(13).'          <td>Unidade de fornecimento: <br><b>'.f($l_rs,'sg_unidade_medida').' ('.f($l_rs,'nm_unidade_medida').')</b></td>';
-  $l_html .= chr(13).'          <td>Código externo: <br><b>'.nvl(f($l_rs,'codigo_externo'),'---').'</b></td>';
-  $l_html .= chr(13).'      <tr><td colspan=3>Descrição: <br><b>'.nvl(crlf2br(f($l_rs,'descricao')),'---').'</b></td>';
-  $l_html .= chr(13).'      <tr><td colspan=3>Apresentação: <br><b>'.nvl(crlf2br(f($l_rs,'apresentacao')),'---').'</b></td>';
-  if (f($l_rs,'classe')==1) $l_html .= chr(13).'      <tr><td colspan=3>Detalhamento: <br><b>'.nvl(crlf2br(f($l_rs,'detalhamento')),'---').'</b></td>';
-  $l_html .= chr(13).'        </table>';
-  $l_html .= chr(13).'</table>';
+  // Se for listagem dos dados
+  $l_html = '';
+  $l_html.=chr(13).'<table border="0" cellpadding="0" cellspacing="0" width="100%">';
+  $l_html.=chr(13).'<tr><td align="center">';
 
+  $l_html.=chr(13).'    <table width="99%" border="0">';
+  $l_html.=chr(13).'      <tr><td colspan="2"><hr NOSHADE color=#000000 size=4></td></tr>';
+  $l_html.=chr(13).'      <tr><td colspan="2"  bgcolor="#f0f0f0"><b>['.f($l_rs,'codigo_interno').'] '.f($l_rs,'nome').'</font></td></tr>';
+  $l_html.=chr(13).'      <tr><td colspan="2"><hr NOSHADE color=#000000 size=4></td></tr>';
+  $l_html .= chr(13).'    <tr><td width="30%"><b>Tipo:<b></td><td>'.f($l_rs,'nm_tipo_material_completo').' </td></tr>';
+  $l_html .= chr(13).'    <tr><td width="30%"><b>Classificação:<b></td><td>'.f($l_rs,'nm_cc').' </td></tr>';
+  $l_html .= chr(13).'    <tr><td width="30%"><b>Exibe no catálogo:<b></td><td>'.f($l_rs,'nm_exibe_catalogo').' </td></tr>';
+  $l_html .= chr(13).'    <tr><td width="30%"><b>Item ativo:<b></td><td>'.f($l_rs,'nm_ativo').' </td></tr>';
+  if (f($l_rs,'classe')==4) $l_html .= chr(13).'    <tr><td width="30%"><b>Vida útil:<b></td><td>'.nvl(f($l_rs,'vida_util'),'---').' </td></tr>';
+  $l_html.=chr(13).'      <tr valign="top"><td><b>Descrição:</b></td><td>'.CRLF2BR(nvl(f($l_rs,'descricao'),'---')).' </td></tr>';
+  $l_html.=chr(13).'      <tr valign="top"><td><b>Apresentação:</b></td><td>'.CRLF2BR(nvl(f($l_rs,'apresentacao'),'---')).' </td></tr>';
+  if (f($l_rs,'classe')==1) $l_html.=chr(13).'      <tr valign="top"><td><b>Detalhamento:</b></td><td>'.CRLF2BR(nvl(f($l_rs,'detalhamento'),'---')).' </td></tr>';
+
+  $l_html.=chr(13).'      <tr><td colspan="2" align="center"><br>';
+  $l_html.=chr(13).'        <table width=100%  border="1" bordercolor="#00000">';    
+  $l_html.=chr(13).'          <tr align="center">';
+  $l_html.=chr(13).'            <td bgColor="#f0f0f0" colspan=3><b>ÚLTIMA PESQUISA</b></td>';
+  $l_html.=chr(13).'            <td bgColor="#f0f0f0" colspan=3><b>PREÇOS</b></td>';
+  $l_html.=chr(13).'          </tr>';
+  $l_html.=chr(13).'          <tr align="center">';
+  $l_html.=chr(13).'            <td bgColor="#f0f0f0" colspan=2><b>Cotação</b></td>';
+  $l_html.=chr(13).'            <td bgColor="#f0f0f0"><b>Validade</b></td>';
+  $l_html.=chr(13).'            <td bgColor="#f0f0f0"><b>Menor</b></td>';
+  $l_html.=chr(13).'            <td bgColor="#f0f0f0"><b>Maior</b></td>';
+  $l_html.=chr(13).'            <td bgColor="#f0f0f0"><b>Médio</b></td>';
+  $l_html.=chr(13).'          </tr>';
+  $l_html.=chr(13).'          <tr align="center">';
+  if (nvl(f($l_rs,'pesquisa_data'),'')=='') {
+    $l_html.=chr(13).'            <td colspan=6 align="center">Nenhuma pesquisa encontrada</td>';
+  } else {
+    $l_html.=chr(13).'            <td align="center" width="1%" nowrap>'.ExibeSinalPesquisa(false,f($row,'pesquisa_data'),f($row,'pesquisa_validade'),f($row,'pesquisa_aviso')).'</td>';
+    $l_html.=chr(13).'            <td align="center"><b>'.nvl(formataDataEdicao(f($l_rs,'pesquisa_data')),'---').'</b></td>';
+    $l_html.=chr(13).'            <td align="center"><b>'.nvl(formataDataEdicao(f($l_rs,'pesquisa_validade')),'---').'</b></td>';
+    $l_html.=chr(13).'            <td align="center"><b>'.nvl(formatNumber(f($l_rs,'pesquisa_preco_menor'),4),'---').'</b></td>';
+    $l_html.=chr(13).'            <td align="center"><b>'.nvl(formatNumber(f($l_rs,'pesquisa_preco_maior'),4),'---').'</b></td>';
+    $l_html.=chr(13).'            <td align="center"><b>'.nvl(formatNumber(f($l_rs,'pesquisa_preco_medio'),4),'---').'</b></td>';
+  }
+  $l_html.=chr(13).'          </tr>';
+  $l_html.=chr(13).'         </table></td></tr>';
+
+
+  // Exibe pesquisas de preço
+  $l_html.=chr(13).'      <tr><td colspan="2"><br><font size="2"><b>PESQUISAS DE PREÇO<hr NOSHADE color=#000000 SIZE=1></b></font></td></tr>';  
+  $l_rs = db_getMatServ::getInstanceOf($dbms,$w_cliente,$w_usuario,$l_chave,null,null,null,null,null,'PESQMAT');
+  if (count($l_rs)==0) {
+    $l_html.=chr(13).'      <tr><td colspan="2" align="center">Nenhuma pesquisa encontrada</td></tr>';
+  } else {
+    $l_html.=chr(13).'      <tr><td colspan="2" align="center">';
+    $l_html.=chr(13).'        <table width=100%  border="1" bordercolor="#00000">';    
+    $l_html.=chr(13).'          <tr align="center">';
+    $l_html.=chr(13).'            <td></td>';
+    $l_html.=chr(13).'            <td bgColor="#f0f0f0"><b>Fornecedor</b></td>';
+    $l_html.=chr(13).'            <td bgColor="#f0f0f0"><b>Cotação</b></td>';
+    $l_html.=chr(13).'            <td bgColor="#f0f0f0"><b>Validade</b></td>';
+    $l_html.=chr(13).'            <td bgColor="#f0f0f0"><b>Preço</b></td>';
+    $l_html.=chr(13).'          </tr>';
+    $w_cor=$conTrBgColor;
+    foreach($l_rs as $row) {
+      $l_html.=chr(13).'      <tr valign="top">';
+      $l_html.=chr(13).'        <td width="1%" nowrap>'.ExibeSinalPesquisa(false,f($row,'phpdt_inicio'),f($row,'phpdt_fim'),f($row,'aviso')).'</td>';
+      $l_html.=chr(13).'        <td>'.ExibePessoa($w_dir_volta,$w_cliente,f($row,'fornecedor'),$TP,f($row,'nm_fornecedor')).'</td>';
+      $l_html.=chr(13).'        <td align="center">'.FormataDataEdicao(f($row,'phpdt_inicio'),6).'</td>';
+      $l_html.=chr(13).'        <td align="center">'.FormataDataEdicao(f($row,'phpdt_fim'),6).'</td>';
+      $l_html.=chr(13).'        <td align="right" nowrap>'.formatNumber(f($row,'valor_unidade'),4).'</td>';
+      $l_html.=chr(13).'      </tr>';
+    } 
+    $l_html.=chr(13).'         </table></td></tr>';
+    $l_html.=chr(13).'      <tr colspan=2><table border=0><tr><td colspan=3><b>Legenda:</b><tr><td>'.ExibeSinalPesquisa(true,null,null,null).'</td></tr></table>';
+    $l_html.=chr(13).'</table>';
+  }
+
+  $l_html.=chr(13).'    </table>';
+  $l_html.=chr(13).'</table>';
   return $l_html;
+
 } 
 
 // =========================================================================
@@ -499,26 +553,30 @@ function Grava() {
         if ($O=='C' || $O=='I' || $O=='A') {
           // Testa a existência do nome
           $RS = db_getMatServ::getInstanceOf($dbms,$w_cliente,$w_usuario,Nvl($_REQUEST['w_chave'],''),null,null,null,$_REQUEST['w_nome'],null,'EXISTE');
-          foreach ($RS as $row) { $RS = $row; break; }
-          if (f($RS,'existe')>0) {
-            ScriptOpen('JavaScript');
-            ShowHTML('  alert(\'Já existe material ou serviço com este nome!\');');
-            ScriptClose(); 
-            retornaFormulario('w_nome');
-            break;
-          } 
+          if (count($RS)>0) {
+            foreach ($RS as $row) { $RS = $row; break; }
+            if (f($RS,'existe')>0) {
+              ScriptOpen('JavaScript');
+              ShowHTML('  alert(\'Já existe material ou serviço com este nome!\');');
+              ScriptClose(); 
+              retornaFormulario('w_nome');
+              break;
+            } 
+          }
 
           if (nvl($_REQUEST['w_codigo_interno'],'nulo')!='nulo') {
             // Testa a existência do código
             $RS = db_getMatServ::getInstanceOf($dbms,$w_cliente,$w_usuario,nvl($_REQUEST['w_chave'],''),null,null,$_REQUEST['w_codigo_interno'],null,null,'EXISTE');
-            foreach ($RS as $row) { $RS = $row; break; }
-            if (f($RS,'existe')>0) {
-              ScriptOpen('JavaScript');
-              ShowHTML('  alert(\'Já existe material ou serviço com este código!\');');
-              ScriptClose(); 
-              retornaFormulario('w_codigo_interno');
-              break;
-            } 
+            if (count($RS)>0) {
+              foreach ($RS as $row) { $RS = $row; break; }
+              if (f($RS,'existe')>0) {
+                ScriptOpen('JavaScript');
+                ShowHTML('  alert(\'Já existe material ou serviço com este código!\');');
+                ScriptClose(); 
+                retornaFormulario('w_codigo_interno');
+                break;
+              } 
+            }
           }
         } elseif ($O=='E') {
           $RS = db_getMatServ::getInstanceOf($dbms,$w_cliente,$w_usuario,$_REQUEST['w_chave'],null,null,null,null,null,'EXISTE');

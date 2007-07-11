@@ -598,6 +598,7 @@ Fontes_PHP_SIW/classes/serverstatus/class.parse_server_status.php -text
 Fontes_PHP_SIW/classes/serverstatus/inc.config.php -text
 Fontes_PHP_SIW/classes/sp/DatabaseQueries.php -text
 Fontes_PHP_SIW/classes/sp/db_VerificaDataEspecial.php -text
+Fontes_PHP_SIW/classes/sp/db_exec.php -text
 Fontes_PHP_SIW/classes/sp/db_get10PercentDays.php -text
 Fontes_PHP_SIW/classes/sp/db_get10PercentDays_IS.php -text
 Fontes_PHP_SIW/classes/sp/db_getACParametro.php -text
@@ -628,6 +629,7 @@ Fontes_PHP_SIW/classes/sp/db_getBankList.php -text
 Fontes_PHP_SIW/classes/sp/db_getBaseGeografica_IS.php -text
 Fontes_PHP_SIW/classes/sp/db_getBenef.php -text
 Fontes_PHP_SIW/classes/sp/db_getCCTreeVision.php -text
+Fontes_PHP_SIW/classes/sp/db_getCLParametro.php -text
 Fontes_PHP_SIW/classes/sp/db_getCTEspecificacao.php -text
 Fontes_PHP_SIW/classes/sp/db_getCTEspecificacaoTree.php -text
 Fontes_PHP_SIW/classes/sp/db_getCV.php -text

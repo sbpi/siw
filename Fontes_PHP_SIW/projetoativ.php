@@ -431,7 +431,7 @@ function Inicial() {
     } 
     ShowHTML('        </tr>');
     if (count($RS)<=0) {
-      ShowHTML('      <tr bgcolor="'.$conTrBgColor.'"><td colspan=10 align="center"><b>Não foram encontrados registros.</b></td></tr>');
+      ShowHTML('      <tr bgcolor="'.$conTrBgColor.'"><td colspan=11 align="center"><b>Não foram encontrados registros.</b></td></tr>');
     } else {
       $w_parcial=0;
       $RS1 = array_slice($RS, (($P3-1)*$P4), $P4);

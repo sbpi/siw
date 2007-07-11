@@ -743,7 +743,7 @@ function ExibeSmile($l_tipo,$l_andamento,$l_legenda=0) {
 // =========================================================================
 // Exibe imagem da solicitação informada
 // -------------------------------------------------------------------------
-function ExibeImagemSolic($l_tipo,$l_inicio,$l_fim,$l_inicio_real,$l_fim_real,$l_aviso,$l_dias_aviso,$l_tramite, $l_perc, $l_legenda=0, $l_restricao=null) {
+function ExibeImagemSolic($l_tipo,$l_inicio,$l_fim,$l_inicio_real,$l_fim_real,$l_aviso,$l_dias_aviso,$l_tramite, $l_perc, $l_legenda=0) {
   extract($GLOBALS);
   $l_string = '';
   $l_imagem = '';
@@ -865,12 +865,12 @@ function ExibeImagemSolic($l_tipo,$l_inicio,$l_fim,$l_inicio_real,$l_fim_real,$l
         } 
       } 
     } elseif (substr($l_tipo,0,2)=='GD') {
-      // Tarefas, demandas eventuais e demandas de triagem
+      // Tarefas e demandas eventuais
       if ($l_tramite!='AT') {
         if ($l_tramite=='CA') {
           $l_imagem = $conImgCancel;
           $l_title  = 'Registro cancelado.';
-        } elseif ($l_tramite=='CI' || $l_restricao=='SEMEXECUCAO') {
+        } elseif ($l_tramite=='CI') {
           if ($l_fim<addDays(time(),-1)) {
             $l_imagem = $conImgAtraso;
             $l_title  = 'Execução não iniciada. Fim previsto superado.';
@@ -1755,7 +1755,7 @@ function TrataErro($sp, $Err, $params, $file, $line, $object) {
     $w_html .= chr(10).'<P ALIGN="JUSTIFY">Erro não previsto. <b>Uma cópia desta tela foi enviada por e-mail para os responsáveis pela correção. Favor tentar novamente mais tarde.</P>';
     $w_html .= chr(10).'<TABLE BORDER="2" BGCOLOR="#FFCCCC" CELLPADDING="5"><TR><TD><FONT COLOR="#000000">';
     $w_html .= chr(10).'<DL><DT>Data e hora da ocorrência: <FONT FACE="courier">'.date('d/m/Y, h:i:s').'<br><br></font></DT>';
-    $w_html .= chr(10).'<DT>Descrição:<DD><FONT FACE="courier">'.$Err['message'].'<br><br></font>';
+    $w_html .= chr(10).'<DT>Descrição:<DD><FONT FACE="courier">'.crlf2br($Err['message']).'<br><br></font>';
     $w_html .= chr(10).'<DT>Arquivo:<DD><FONT FACE="courier">'.$file.', linha: '.$line.'<br><br></font>';
     //$w_html .= chr(10).'<DT>Objeto:<DD><FONT FACE="courier">'.$object.'<br><br></font>';
 

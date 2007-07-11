@@ -17,8 +17,8 @@ class db_getMatServ {
                    'p_chave'                     =>array(tvl($p_chave),                                    B_INTEGER,        32),
                    'p_tipo_material'             =>array(tvl($p_tipo_material),                            B_INTEGER,        32),
                    'p_sq_cc'                     =>array(tvl($p_sq_cc),                                    B_INTEGER,        32),
-                   'p_codigo'                    =>array(tvl($p_codigo),                                   B_VARCHAR,        15),
-                   'p_nome'                      =>array(tvl($p_nome),                                     B_VARCHAR,        60),
+                   'p_codigo'                    =>array(tvl($p_codigo),                                   B_VARCHAR,        30),
+                   'p_nome'                      =>array(tvl($p_nome),                                     B_VARCHAR,       110),
                    'p_ativo'                     =>array(tvl($p_ativo),                                    B_VARCHAR,         1),
                    'p_restricao'                 =>array(tvl($p_restricao),                                B_VARCHAR,        15),
                    'p_result'                    =>array(null,                                             B_CURSOR,         -1)

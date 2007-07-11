@@ -11,6 +11,7 @@ include_once($w_dir_volta.'classes/sp/db_getLinkData.php');
 include_once($w_dir_volta.'classes/sp/db_getLinkSubMenu.php');
 include_once($w_dir_volta.'classes/sp/db_getCustomerData.php');
 include_once($w_dir_volta.'classes/sp/db_getCustomerSite.php');
+include_once($w_dir_volta.'classes/sp/db_exec.php');
 
 // =========================================================================
 //  /exec.php
@@ -102,18 +103,18 @@ function ExecSql() {
   ShowHTML('<HTML>');
   ShowHTML('<FRAMESET ROWS="200,*" FRAMEBORDER="yes" BORDER=1 framespacing=1>');
   ShowHTML('    <FRAME NAME="null"');
-  ShowHTML('    	SRC="'.$w_pagina.'inputSql&P1='.$P1.'&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP='.$TP.'&SG='.$SG.'"');
-  ShowHTML('    	MARGINWIDTH=0');
-  ShowHTML('    	MARGINHEIGHT=0');
-  ShowHTML('    	SCROLLING=no');
-  ShowHTML('    	BORDERCOLOR="#000000"');
-  ShowHTML('    	target="content">');
+  ShowHTML('      SRC="'.$w_pagina.'inputSql&P1='.$P1.'&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP='.$TP.'&SG='.$SG.'"');
+  ShowHTML('      MARGINWIDTH=0');
+  ShowHTML('      MARGINHEIGHT=0');
+  ShowHTML('      SCROLLING=no');
+  ShowHTML('      BORDERCOLOR="#000000"');
+  ShowHTML('      target="content">');
   ShowHTML('    <FRAME NAME="result"');
-  ShowHTML('    	SRC="'.$w_pagina.'resultSql&P1='.$P1.'&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP='.$TP.'&SG='.$SG.'"');
-  ShowHTML('    	MARGINWIDTH=0');
-  ShowHTML('    	MARGINHEIGHT=0');
-  ShowHTML('    	SCROLLING=auto');
-  ShowHTML('    	BORDERCOLOR="#000000">');
+  ShowHTML('      SRC="'.$w_pagina.'resultSql&P1='.$P1.'&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP='.$TP.'&SG='.$SG.'"');
+  ShowHTML('      MARGINWIDTH=0');
+  ShowHTML('      MARGINHEIGHT=0');
+  ShowHTML('      SCROLLING=auto');
+  ShowHTML('      BORDERCOLOR="#000000">');
   ShowHTML('</FRAMESET>');
   ShowHTML('</HTML>');
 } 
@@ -123,6 +124,33 @@ function ExecSql() {
 // -------------------------------------------------------------------------
 function InputSql() {
   extract($GLOBALS);
+  $dataBank     = nvl($_POST['dataBank'],4);
+  $dataBank_ant = $_POST['dataBank_ant'];
+  $serverName   = $_POST['serverName'];
+  $userName     = $_POST['userName'];
+  $password     = $_POST['password'];
+  $sqlStr       = $_POST['sqlStr'];
+  $databaseName = DATABASE_NAME;
+  if ($dataBank!=nvl($dataBank_ant,0)) {
+    switch ($dataBank) {
+      case 1: $serverName   = ORA9_SERVER_NAME;
+              $userName     = ORA9_DB_USERID;
+              $password     = ORA9_DB_PASSWORD;
+              break;
+      case 3: $serverName   = ORA8_SERVER_NAME;
+              $userName     = ORA8_DB_USERID;
+              $password     = ORA8_DB_PASSWORD;
+              break;
+      case 2: $serverName   = MSSQL_SERVER_NAME;
+              $userName     = MSSQL_DB_USERID;
+              $password     = MSSQL_DB_PASSWORD;
+              break;
+      case 4: $serverName   = PGSQL_SERVER_NAME;
+              $userName     = PGSQL_DB_USERID;
+              $password     = PGSQL_DB_PASSWORD;
+              break;
+    }
+  }
   ShowHTML('<html>');
   ShowHTML('<HEAD>');
   ScriptOpen('JavaScript');
@@ -145,35 +173,44 @@ function InputSql() {
   ShowHTML('<table border="0" cellpadding="0" cellspacing="0" width="100%">');
   ShowHTML('<tr bgcolor="'.$conTrBgColor.'"><td align="center">');
   AbreForm('Form',$w_dir.$w_pagina.'resultSql','POST','return(Validacao(this));','result',$P1,$P2,1,$P4,$TP,$SG,$R,$O);
-  ShowHTML('		<table width="100%">');
-  ShowHTML('		<tr><td valign="top"><table>');
-  ShowHTML('		<tr>');
-  ShowHTML('			<td align="right">Servidor</td>');
-  ShowHTML('			<td><input type=text name="serverName" CLASS="sti" value="'.ORA9_SERVER_NAME.'"></td>');
-  ShowHTML('		<tr>');
-  ShowHTML('			<td align="right">Database</td>');
-  ShowHTML('			<td><input type=text name="databaseName" CLASS="sti" value="'.DATABASE_NAME.'"></td>');
-  ShowHTML('		</tr>');
-  ShowHTML('		<tr>');
-  ShowHTML('			<td align="right">Usuário</td>');
-  ShowHTML('			<td><input type=text name="userName" CLASS="sti" value="'.ORA9_DB_USERID.'"></td>');
-  ShowHTML('		<tr>');
-  ShowHTML('			<td align="right">Senha</td>');
-  ShowHTML('			<td><input type=password name="password" CLASS="sti" value="'.ORA9_DB_PASSWORD.'"></td>');
-  ShowHTML('		</tr>');
-  ShowHTML('		<tr>');
-  ShowHTML('			<td colspan=2 align="center" valign="center"><br><br><input type="submit" name="exec" value="exec" CLASS="stb"></td>');
-  ShowHTML('		</tr>');
-  ShowHTML('		</table><td rowspan="2"><table>');
-  ShowHTML('		<tr>');
-  ShowHTML('			<td align=center>');
-  ShowHTML('				<input type="hidden" name="tivohidden" value="tivogold">');
-  ShowHTML('				<textarea name="sqlStr" rows=9 cols=70 wrap="soft" CLASS="sti"></textarea>');
-  ShowHTML('			</td>');
-  ShowHTML('		</tr>');
-  ShowHTML('		</table>');
-  ShowHTML('		</table>');
-  ShowHTML('	</form>');
+  ShowHTML('    <input type="hidden" name="dataBank_ant" value="'.$dataBank.'">');
+  ShowHTML('    <table width="100%">');
+  ShowHTML('    <tr><td valign="top"><table>');
+  ShowHTML('    <tr>');
+  ShowHTML('      <td align="right">RDBMS</td>');
+  ShowHTML('      <td><select name="dataBank" CLASS="sts" onchange="document.Form.target=\'\'; document.Form.action=\''.$w_dir.$w_pagina.$par.'\'; document.Form.submit();">');
+  if ($dataBank==2) ShowHTML('          <option value="2" selected>MS-SQL Server');          else ShowHTML('          <option value="2">MS-SQL Server');
+  if ($dataBank==1) ShowHTML('          <option value="1" selected>Oracle ANSI 92');         else ShowHTML('          <option value="1">Oracle ANSI 92');
+  if ($dataBank==3) ShowHTML('          <option value="3" selected>Oracle 8 e anteriores');  else ShowHTML('          <option value="3">Oracle 8 e anteriores');
+  if ($dataBank==4) ShowHTML('          <option value="4" selected>PostgreSQL');             else ShowHTML('          <option value="4">PostgreSQL');
+  ShowHTML('          </select>');
+  ShowHTML('    <tr>');
+  ShowHTML('      <td align="right">Servidor</td>');
+  ShowHTML('      <td><input type=text name="serverName" CLASS="sti" value="'.$serverName.'"></td>');
+  ShowHTML('    <tr>');
+  ShowHTML('      <td align="right">Database</td>');
+  ShowHTML('      <td><input type=text name="databaseName" CLASS="sti" value="'.$databaseName.'"></td>');
+  ShowHTML('    </tr>');
+  ShowHTML('    <tr>');
+  ShowHTML('      <td align="right">Usuário</td>');
+  ShowHTML('      <td><input type=text name="userName" CLASS="sti" value="'.$userName.'"></td>');
+  ShowHTML('    <tr>');
+  ShowHTML('      <td align="right">Senha</td>');
+  ShowHTML('      <td><input type=password name="password" CLASS="sti" value="'.$password.'"></td>');
+  ShowHTML('    </tr>');
+  ShowHTML('    <tr>');
+  ShowHTML('      <td colspan=2 align="center" valign="center"><br><br><input type="submit" name="exec" value="exec" CLASS="stb"></td>');
+  ShowHTML('    </tr>');
+  ShowHTML('    </table><td rowspan="2"><table>');
+  ShowHTML('    <tr>');
+  ShowHTML('      <td align=center>');
+  ShowHTML('        <input type="hidden" name="tivohidden" value="tivogold">');
+  ShowHTML('        <textarea name="sqlStr" rows=9 cols=70 wrap="soft" CLASS="sti">'.$sqlStr.'</textarea>');
+  ShowHTML('      </td>');
+  ShowHTML('    </tr>');
+  ShowHTML('    </table>');
+  ShowHTML('    </table>');
+  ShowHTML('  </form>');
   ShowHTML('</table>');
   ShowHTML('</body>');
   ShowHTML('</html>');
@@ -184,6 +221,7 @@ function InputSql() {
 // -------------------------------------------------------------------------
 function ResultSql() {
   extract($GLOBALS);
+  $dataBank = $_POST['dataBank'];
   $svrName  = $_POST['serverName'];
   $dbName   = $_POST['databaseName'];
   $pswd     = $_POST['password'];
@@ -198,6 +236,9 @@ function ResultSql() {
   if (nvl($_POST['sqlStr'],'')=='') {
     ShowHTML('<h4> Instrução SQL não informada </h4>');
   } else {
+    //Inicializa objeto de conexão e executa a query
+    $conObj = abreSessao::getInstanceOf($dataBank);
+
     //tira os brancos e substitui aspas duplas por aspas simples
     $mySql = str_replace('\\\'','\'',trim($_POST['sqlStr']));
     if (false!==strpos($mySql,';')) {
@@ -214,46 +255,49 @@ function ResultSql() {
       if (nvl($v,'')=='') continue;
       ShowHTML('<p><b>'.($k+1).'===>'.$v.'</b></p>');
     
-      //Inicializa objeto de conexão e executa a query
-      $conObj = oci_connect($login,$pswd,$svrName);
-
       $command = strtoupper(substr(trim($v),0,strpos(trim($v),' ')));
       if ($command=='SELECT') {
-        $stmt = oci_parse($conObj, $v);
-        oci_execute($stmt);
-        $nrows = oci_fetch_all($stmt, $results);
-        if ($nrows > 0) {
-           ShowHTML($nrows.' registros selecionados<br />');
+        $RS = db_exec::getInstanceOf($conObj, $v, &$numRows);
+        if (count($RS) > 0) {
+           ShowHTML($numRows.' registros selecionados<br />');
            ShowHTML('<table border="1">');
            ShowHTML('<tr valign="top">');
-           foreach ($results as $key => $val) {
-              ShowHTML('<td>'.strtolower($key).'</td>');
+           foreach ($RS as $row) {
+              foreach ($row as $key => $val) ShowHTML('<td>'.strtolower($key).'&nbsp;</td>'); 
+              break;
            }
            ShowHTML('</tr>');
      
-           for ($i = 0; $i < $nrows; $i++) {
-              ShowHTML('<tr valign="top">');
-              foreach ($results as $data) {
-                 ShowHTML('<td>'.nvl($data[$i],$dispnull).'</td>');
-              }  
-              ShowHTML('</tr>');
-           }
+           foreach($RS as $row) {
+             ShowHTML('<tr valign="top">');
+             foreach ($row as $key => $val) { 
+               ShowHTML('<td>'.nvl($val,$dispnull).'</td>');
+             }
+             ShowHTML('</tr>');
+           };
            ShowHTML('</table>');
         } else {
            ShowHTML('Nenhum registro encontrado<br />');
         }      
       } elseif (false!==strpos('INSERT,UPDATE,DELETE',$command)) {
-        $stmt = oci_parse($conObj, $v);
-        oci_execute($stmt);
-        ShowHTML('<p>'.oci_num_rows($stmt).' registros processados</p>');
+        $RS = db_exec::getInstanceOf($conObj, $v, &$numRows);
+        ShowHTML('<p>'.$numRows.' registros processados</p>');
       } elseif ($command=='EXEC') {
         $sp = substr($v,strpos($v,' ')+1);
-        $cursor = oci_new_cursor($conObj);
-        $stmt = oci_parse($conObj, "begin ".$sp."; end;");
-        oci_bind_by_name($stmt, "data", $cursor, -1, OCI_B_CURSOR);
-        oci_execute($stmt);
-        oci_execute($cursor);
-        $nrows = oci_fetch_all($cursor, $results, 0, -1,OCI_ASSOC+OCI_FETCHSTATEMENT_BY_ROW);
+        if (@oci_server_version($conObj)) {
+          $cursor = oci_new_cursor($conObj);
+          $stmt   = oci_parse($conObj, "begin ".$sp."; end;");
+          oci_bind_by_name($stmt, "data", $cursor, -1, OCI_B_CURSOR);
+          oci_execute($stmt);
+          oci_execute($cursor);
+          $nrows  = oci_fetch_all($cursor, $results, 0, -1,OCI_ASSOC+OCI_FETCHSTATEMENT_BY_ROW);
+        } elseif (is_array(pg_version($conObj))) {
+          $par      = 'rollback; begin; select '.str_replace(':data','\'p_result\'',$sp).'; fetch all in p_result;';
+          $results  = pg_query($conObj, $par);
+          $nrows    = pg_num_rows($results); 
+          $results  = pg_fetch_all($results);
+        } else {
+        }
         if ($nrows > 0) {
            ShowHTML($nrows.' registros selecionados<br />');
            ShowHTML('<table border="1">');
@@ -280,9 +324,12 @@ function ResultSql() {
       } else {
         ShowHTML('<p> comando executado</p>');
       }
-      oci_free_statement($stmt);  
+      if (@oci_server_version($conObj)) {
+        oci_close($conObj);
+      } elseif (is_array(pg_version($conObj))) {
+      } else {
+      }
     }
-    oci_close($conObj);
   }
   ShowHTML('</table>');
   ShowHTML('</body>');
@@ -298,18 +345,18 @@ function ExecCom() {
   ShowHTML('<HTML>');
   ShowHTML('<FRAMESET ROWS="200,*" FRAMEBORDER="yes" BORDER=1 framespacing=1>');
   ShowHTML('    <FRAME NAME="null"');
-  ShowHTML('    	SRC="'.$w_pagina.'inputCom&P1='.$P1.'&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP='.$TP.'&SG='.$SG.'"');
-  ShowHTML('    	MARGINWIDTH=0');
-  ShowHTML('    	MARGINHEIGHT=0');
-  ShowHTML('    	SCROLLING=no');
-  ShowHTML('    	BORDERCOLOR="#000000"');
-  ShowHTML('    	target="content">');
+  ShowHTML('      SRC="'.$w_pagina.'inputCom&P1='.$P1.'&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP='.$TP.'&SG='.$SG.'"');
+  ShowHTML('      MARGINWIDTH=0');
+  ShowHTML('      MARGINHEIGHT=0');
+  ShowHTML('      SCROLLING=no');
+  ShowHTML('      BORDERCOLOR="#000000"');
+  ShowHTML('      target="content">');
   ShowHTML('    <FRAME NAME="result"');
-  ShowHTML('    	SRC="'.$w_pagina.'resultCom&P1='.$P1.'&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP='.$TP.'&SG='.$SG.'"');
-  ShowHTML('    	MARGINWIDTH=0');
-  ShowHTML('    	MARGINHEIGHT=0');
-  ShowHTML('    	SCROLLING=auto');
-  ShowHTML('    	BORDERCOLOR="#000000">');
+  ShowHTML('      SRC="'.$w_pagina.'resultCom&P1='.$P1.'&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP='.$TP.'&SG='.$SG.'"');
+  ShowHTML('      MARGINWIDTH=0');
+  ShowHTML('      MARGINHEIGHT=0');
+  ShowHTML('      SCROLLING=auto');
+  ShowHTML('      BORDERCOLOR="#000000">');
   ShowHTML('</FRAMESET>');
   ShowHTML('</HTML>');
 } 
@@ -343,20 +390,20 @@ function InputCom() {
   ShowHTML('<INPUT type="hidden" name="P4" value="'.$P4.'">');
   ShowHTML('<INPUT type="hidden" name="TP" value="'.$TP.'">');
   ShowHTML('<INPUT type="hidden" name="R" value="'.$R.'">');
-  ShowHTML('		<table>');
-  ShowHTML('		<tr><td colspan=2><textarea name="sqlStr" rows=3 cols=70 wrap="soft" CLASS="sti"></textarea>');
-  ShowHTML('		<tr valign="bottom">');
-  ShowHTML('		  <td><table>');
-  ShowHTML('		  <tr><td align="right">Arquivo 1</td><td><input type="file" name="arquivo[]" CLASS="sti"></td>');
-  ShowHTML('  		    <td align="right">Arquivo 2</td><td><input type="file" name="arquivo[]" CLASS="sti"></td>');
-  ShowHTML('  		<tr><td align="right">Arquivo 3</td><td><input type="file" name="arquivo[]" CLASS="sti"></td>');
-  ShowHTML('  		    <td align="right">Arquivo 4</td><td><input type="file" name="arquivo[]" CLASS="sti"></td>');
-  ShowHTML('  		<tr><td align="right">Arquivo 5</td><td><input type="file" name="arquivo[]" CLASS="sti"></td>');
-  ShowHTML('  		    <td align="right">Arquivo 6</td><td><input type="file" name="arquivo[]" CLASS="sti"></td>');
-  ShowHTML('	  	</table>');
-  ShowHTML('	    <td><input type="submit" name="exec" value="exec" CLASS="stb"></td>');
-  ShowHTML('		</table>');
-  ShowHTML('	</form>');
+  ShowHTML('    <table>');
+  ShowHTML('    <tr><td colspan=2><textarea name="sqlStr" rows=3 cols=70 wrap="soft" CLASS="sti"></textarea>');
+  ShowHTML('    <tr valign="bottom">');
+  ShowHTML('      <td><table>');
+  ShowHTML('      <tr><td align="right">Arquivo 1</td><td><input type="file" name="arquivo[]" CLASS="sti"></td>');
+  ShowHTML('          <td align="right">Arquivo 2</td><td><input type="file" name="arquivo[]" CLASS="sti"></td>');
+  ShowHTML('      <tr><td align="right">Arquivo 3</td><td><input type="file" name="arquivo[]" CLASS="sti"></td>');
+  ShowHTML('          <td align="right">Arquivo 4</td><td><input type="file" name="arquivo[]" CLASS="sti"></td>');
+  ShowHTML('      <tr><td align="right">Arquivo 5</td><td><input type="file" name="arquivo[]" CLASS="sti"></td>');
+  ShowHTML('          <td align="right">Arquivo 6</td><td><input type="file" name="arquivo[]" CLASS="sti"></td>');
+  ShowHTML('      </table>');
+  ShowHTML('      <td><input type="submit" name="exec" value="exec" CLASS="stb"></td>');
+  ShowHTML('    </table>');
+  ShowHTML('  </form>');
   ShowHTML('</table>');
   ShowHTML('</body>');
   ShowHTML('</html>');

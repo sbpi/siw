@@ -231,37 +231,23 @@ class OraDatabaseQueries extends DatabaseQueries {
     */
     
     function executeQuery() {
-
-/*
-           $this->result = oci_parse($this->conHandle, $this->query);
-
-           if(!(oci_execute($this->result))) { 
-             $this->error = oci_error($this->result); 
-             return false; 
-           } else {
-              if(is_resource($this->result)) { 
-                 $this->num_rows = oci_fetch_all($this->result, $this->resultData, 0, -1,OCI_ASSOC+OCI_FETCHSTATEMENT_BY_ROW);
-                 array_key_case_change(&$this->resultData);
-           echo 'ok';
-              } else { 
-                $this->num_rows = -1; 
-                $this->error    = oci_error($this->result);
-              }
-           }
-*/
-
-        if(!($this->result = oci_parse($this->conHandle, $this->query))) { 
-         return false; 
+      if(!($this->result = oci_parse($this->conHandle, $this->query))) { 
+        return false; 
+      } else { 
+        if(is_resource($this->result)) { 
+          if (!oci_execute($this->result)) { die($this->query.'<br>'); }
+          $command = strtoupper(substr(trim($this->query),0,strpos(trim($this->query),' ')));
+          if (false!==strpos('INSERT,UPDATE,DELETE',strtoupper($command))) {
+            $this->num_rows = oci_num_rows($this->result);
+          } else {
+            $this->num_rows = oci_fetch_all($this->result, $this->resultData, 0, -1,OCI_ASSOC+OCI_FETCHSTATEMENT_BY_ROW);
+            oci_execute($this->result);
+          }
         } else { 
-           if(is_resource($this->result)) { 
-              if (!oci_execute($this->result)) { die($this->query.'<br>'); }
-              $this->num_rows = oci_fetch_all($this->result, $this->resultData, 0, -1,OCI_ASSOC+OCI_FETCHSTATEMENT_BY_ROW);
-              oci_execute($this->result);
-           }
-           else { $this->num_rows = -1; }
-
+          $this->num_rows = -1; 
         }
-        return true; 
+      }
+      return true; 
     }
     
     /**
@@ -481,12 +467,21 @@ class PgSqlDatabaseQueries extends DatabaseQueries {
     */
     
     function executeQuery() {
-        if(!($this->result = pg_query($this->conHandle, $this->query))) { return false; }
-        else { 
-           if(is_resource($this->result)) { $this->num_rows = pg_num_rows($this->result); }
-           else { $this->num_rows = -1; }
-           return true;     
+      if(!($this->result = pg_query($this->conHandle, $this->query))) { 
+        return false; 
+      } else { 
+        if(is_resource($this->result)) { 
+          $command = strtoupper(substr(trim($this->query),0,strpos(trim($this->query),' ')));
+          if (false!==strpos('INSERT,UPDATE,DELETE',strtoupper($command))) {
+            $this->num_rows = pg_affected_rows($this->result); 
+          } else {
+            $this->num_rows = pg_num_rows($this->result); 
+          }
+        } else { 
+          $this->num_rows = -1; 
         }
+        return true;     
+      }
     }
     
     /**
@@ -504,7 +499,7 @@ class PgSqlDatabaseQueries extends DatabaseQueries {
 
 
     function getResultData() {
-        if(is_resource($this->result)) { $this->resultData = pg_fetch_all($this->result); }
+        if(is_resource($this->result)) { $this->resultData = pg_fetch_all($this->result); return $this->resultData;}
         else { return null; }
     }
 }
@@ -605,7 +600,6 @@ class PgSqlDatabaseQueryProc extends PgSqlDatabaseQueries {
     }
 
     function getResultData() {
-
         if(is_resource($this->result)) { return $this->resultData = pg_fetch_all($this->result); }
         else { return null; }
     }
