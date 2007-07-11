@@ -51,7 +51,7 @@ switch ($_SESSION["DBMS"]) {
       define("DATABASE_VERSION", PGSQL_VERSION_TEXT);
       define("B_VARCHAR", 2);
       define("B_NUMERIC", 1);
-      define("B_CURSOR", 0);
+      define("B_CURSOR", -1);
       define("B_REQUIRED", true);
       define("B_OPTIONAL", false);
       break;

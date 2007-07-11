@@ -468,6 +468,7 @@ class PgSqlDatabaseQueries extends DatabaseQueries {
     
     function executeQuery() {
       if(!($this->result = pg_query($this->conHandle, $this->query))) { 
+        $this->error = pg_result_error($this->result);
         return false; 
       } else { 
         if(is_resource($this->result)) { 
@@ -480,7 +481,7 @@ class PgSqlDatabaseQueries extends DatabaseQueries {
         } else { 
           $this->num_rows = -1; 
         }
-        return true;     
+        return true;
       }
     }
     
@@ -563,9 +564,10 @@ class PgSqlDatabaseQueryProc extends PgSqlDatabaseQueries {
 
         foreach($this->params as $paramName=>$value) {
             foreach($value as $paramValue=>$paramType) {
-                if (!($value[1]==B_CURSOR)) { 
-                   if (!isset($value[0]) || $value[0]=='') { $par .= ", null"; }
+                if ($value[1]!=B_CURSOR) { 
+                   if (nvl($value[0],'')=='') { $par .= ", null"; }
                    elseif ($value[1]==B_VARCHAR) { $par .= ", '$value[0]'"; }
+                   elseif ($value[1]==B_DATE) { $par .= ", '".date('m/d/Y',toDate($value[0]))."'"; }
                    else { $par .= ", $value[0]"; }
                 } else {
                   $cursor = true;
@@ -580,28 +582,56 @@ class PgSqlDatabaseQueryProc extends PgSqlDatabaseQueries {
                 $par = "rollback; begin; select $this->query (".substr($par, 1).", 'p_result'); fetch all in p_result;";
           }
         } else {
-          if ($par=="") {
-                $par = "rollback; begin; select $this->query; commit;";
+          if (substr($this->query,0,8)=='FUNCTION') {
+            $par = "select ".substr($this->query,8)." (".substr($par, 1).");";
           } else {
-                $par = "rollback; begin; select $this->query (".substr($par, 1).'); commit;';
+            if ($par=="") {
+                  $par = "rollback; begin; select $this->query; commit;";
+            } else {
+                  $par = "rollback; begin; select $this->query (".substr($par, 1)."); commit;";
+            }
           }
         }
         //echo $par;
 
-        $this->result = pg_query($this->conHandle, $par);
-        if(is_resource($this->result)) { 
-           $this->num_rows = pg_num_rows($this->result); 
-           return true;
-        }
-        else { 
+        if (!($this->result = pg_query($this->conHandle, $par))) {
+           $this->error['message'] = pg_last_error($this->conHandle);
+           $this->error['sqltext'] = $par;
            $this->num_rows = -1; 
            return false;
+        } else { 
+           $this->num_rows = pg_num_rows($this->result); 
+           return true;
         }
     }
 
     function getResultData() {
-        if(is_resource($this->result)) { return $this->resultData = pg_fetch_all($this->result); }
-        else { return null; }
+
+        if(is_resource($this->result)) { 
+                 for ($i = 0; $i < pg_num_fields($this->result); $i++) {
+                   if (pg_field_type($this->result, $i)=='timestamp' || pg_field_type($this->result, $i)=='numeric') { $this->column_datatype[pg_field_name($this->result, $i)] = pg_field_type($this->result, $i); }
+                   elseif (substr(strtolower(pg_field_name($this->result, $i)),0,6)=='phpdt_') { $this->column_datatype[strtolower(pg_field_name($this->result, $i))] = 'timestamp'; }
+                 }
+                 $this->resultData  = pg_fetch_all($this->result);
+                 $this->num_rows    = pg_num_rows($this->result);
+                 if (isset($this->column_datatype)) {
+                   for ($i = 0; $i < $this->num_rows; $i++) {
+                     foreach ($this->column_datatype as $key => $val) {
+                       if (nvl($this->resultData[$i][$key],'')>'') { 
+                         if ($val=='timestamp') {
+                           $tmp = $this->resultData[$i][$key];
+                           $this->resultData[$i][$key] = mktime(substr($tmp,11,2),substr($tmp,14,2),substr($tmp,17,2),substr($tmp,5,2),substr($tmp,7,2),substr($tmp,0,4)); 
+                         } else {
+                           $this->resultData[$i][$key] = str_replace(',','.',$this->resultData[$i][$key]); 
+                         }
+                       }
+                     }
+                   }
+                 }
+          return $this->resultData; 
+        } else { 
+          return null; 
+        }
     }
 } 
 ?>
