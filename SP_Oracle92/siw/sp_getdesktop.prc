@@ -17,14 +17,14 @@ begin
    If w_interno = 'S' Then
       -- Recupera a lista de solicitações da mesa de trabalho do usuário
       open p_result for
-         select v.sq_menu, v.sq_pessoa, w.sq_modulo, w.nome nm_modulo, w.sigla sg_modulo, v.sq_menu, v.nome nm_servico, 
-                v.link, v.imagem, v.p1, v.p2, v.p3, v.p4, v.sigla sg_servico, x.qtd, y.qtd qtd_solic
+         select v.sq_menu, v.sq_pessoa, w.sq_modulo, w.nome as nm_modulo, w.sigla as sg_modulo, v.sq_menu, v.nome as nm_servico, 
+                v.link, v.imagem, v.p1, v.p2, v.p3, v.p4, v.sigla as sg_servico, x.qtd, y.qtd as qtd_solic
          from siw_menu              v
               inner join siw_modulo w on (v.sq_modulo = w.sq_modulo)
-              left  join (select /*+ ordered */ c.sq_menu, count(d.sq_siw_solicitacao) qtd 
+              left  join (select /*+ ordered */ c.sq_menu, count(d.sq_siw_solicitacao) as qtd 
                             FROM siw_tramite                    e
                                  inner     join siw_solicitacao d on (e.sq_siw_tramite = d.sq_siw_tramite)
-                                   inner   join (select sq_siw_solicitacao, acesso(sq_siw_solicitacao, p_usuario) acesso
+                                   inner   join (select sq_siw_solicitacao, acesso(sq_siw_solicitacao, p_usuario) as acesso
                                                    from siw_solicitacao
                                                 )               f on (d.sq_siw_solicitacao = f.sq_siw_solicitacao)
                                    inner   join siw_menu        c on (d.sq_menu        = c.sq_menu and
@@ -37,11 +37,11 @@ begin
                              and ((c.sigla <> 'PJCAD' and (c.destinatario = 'S' and d.executor = p_usuario) or (c.destinatario = 'N' and f.acesso > 15)) or
                                   (C.sigla =  'PJCAD' and coalesce(e.sigla,'---') <> 'CI' and f.acesso >= 8)
                                  )
-                             and 'CI'    <> Nvl(e.sigla,'nulo')
+                             and 'CI'    <> coalesce(e.sigla,'nulo')
                              and (c.controla_ano = 'N' or (c.controla_ano = 'S' and d.ano = p_ano))
                            group by c.sq_menu
                          )          x on (v.sq_menu = x.sq_menu)
-              inner join (select /*+ ordered */ c.sq_menu, count(d.sq_siw_solicitacao) qtd 
+              inner join (select /*+ ordered */ c.sq_menu, count(d.sq_siw_solicitacao) as qtd 
                             FROM siw_tramite                      e
                                  inner     join siw_menu          c on (e.sq_menu        = c.sq_menu) 
                                    inner   join siw_modulo        b on (c.sq_modulo      = b.sq_modulo)
@@ -50,7 +50,7 @@ begin
                                                                          ('S'            = c.consulta_opiniao and d.opiniao is null)
                                                                         )
                                                                        )
-                                     inner join (select sq_siw_solicitacao, acesso(sq_siw_solicitacao, p_usuario) acesso
+                                     inner join (select sq_siw_solicitacao, acesso(sq_siw_solicitacao, p_usuario) as acesso
                                                    from siw_solicitacao
                                                 )                 f on (d.sq_siw_solicitacao = f.sq_siw_solicitacao)
                            where c.tramite       = 'S' 
@@ -67,14 +67,14 @@ begin
    Else
       -- Recupera a lista de solicitações da mesa de trabalho do usuário
       open p_result for
-         select v.sq_menu, v.sq_pessoa, w.sq_modulo, w.nome nm_modulo, w.sigla sg_modulo, v.sq_menu, v.nome nm_servico, 
-                v.link, v.imagem, v.p1, v.p2, v.p3, v.p4, v.sigla sg_servico, x.qtd
+         select v.sq_menu, v.sq_pessoa, w.sq_modulo, w.nome as nm_modulo, w.sigla as sg_modulo, v.sq_menu, v.nome as nm_servico, 
+                v.link, v.imagem, v.p1, v.p2, v.p3, v.p4, v.sigla as sg_servico, x.qtd
          from siw_menu              v
               inner join siw_modulo w on (v.sq_modulo = w.sq_modulo)
-              inner join (select /*+ ordered */ c.sq_menu, count(d.sq_siw_solicitacao) qtd 
+              inner join (select /*+ ordered */ c.sq_menu, count(d.sq_siw_solicitacao) as qtd 
                             FROM siw_tramite                    e
                                  inner     join siw_solicitacao d on (e.sq_siw_tramite = d.sq_siw_tramite)
-                                   inner   join (select sq_siw_solicitacao, acesso(sq_siw_solicitacao, p_usuario) acesso
+                                   inner   join (select sq_siw_solicitacao, acesso(sq_siw_solicitacao, p_usuario) as acesso
                                                    from siw_solicitacao
                                                 )               f on (d.sq_siw_solicitacao = f.sq_siw_solicitacao)
                                    inner   join siw_menu        c on (d.sq_menu        = c.sq_menu and
@@ -85,7 +85,7 @@ begin
                                      inner join siw_modulo      b on (c.sq_modulo      = b.sq_modulo)
                            where e.ativo  = 'S'
                              and f.acesso > 0
-                             and 'CI'     <> Nvl(e.sigla,'nulo')
+                             and 'CI'     <> coalesce(e.sigla,'nulo')
                              and (c.controla_ano = 'N' or (c.controla_ano = 'S' and d.ano = p_ano))
                            group by c.sq_menu
                          )          x on (v.sq_menu = x.sq_menu)

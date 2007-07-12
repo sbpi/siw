@@ -1,3 +1,11 @@
+CREATE TABLE siw_menu_level (
+    nivel numeric
+)
+INHERITS (siw_menu);
+
+
+ALTER TABLE siw.siw_menu_level OWNER TO siw;
+
 CREATE OR REPLACE FUNCTION SP_fGetMenuList (p_chave numeric,p_level numeric,p_direction varchar) RETURNS SETOF siw_menu_level AS $$
 DECLARE
    temp RECORD;

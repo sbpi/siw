@@ -1,3 +1,11 @@
+CREATE TABLE ct_cc_level (
+    nivel numeric
+)
+INHERITS (ct_cc);
+
+
+ALTER TABLE siw.ct_cc_level OWNER TO siw;
+
 CREATE OR REPLACE FUNCTION SP_fGetCcList (p_chave numeric,p_level numeric,p_direction varchar) RETURNS SETOF ct_cc_level AS $$
 DECLARE
    temp RECORD;

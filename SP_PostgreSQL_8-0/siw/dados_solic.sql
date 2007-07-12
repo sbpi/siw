@@ -1,4 +1,4 @@
-create or replace function dados_solic(p_chave in number) return varchar2 is
+create or replace function dados_solic(p_chave in numeric) returns varchar as $$
 /**********************************************************************************
 * Nome      : dados_solic
 * Finalidade: Recuperar informações de uma solicitação
@@ -22,10 +22,23 @@ create or replace function dados_solic(p_chave in number) return varchar2 is
 *          11 - siw_menu.link    - link para a rotina de visualização
 *          12 - siw_modulo.sigla - sigla do módulo da solicitação
 ***********************************************************************************/
-  Result varchar2(32767) := null;
-  w_reg  number(18);
+declare
+  Result        varchar(32767) := null;
+  w_reg         numeric(18);
+  c_solic       siw_solicitacao.sq_siw_solicitacao%type;
+  c_nome        siw_menu.nome%type;
+  c_codigo      varchar(255);
+  c_titulo      varchar(4000);
+  c_sq_menu     siw_menu.sq_menu%type;
+  c_sigla       siw_menu.sigla%type;
+  c_p1          siw_menu.p1%type;
+  c_p2          siw_menu.p2%type;
+  c_p3          siw_menu.p3%type;
+  c_p4          siw_menu.p4%type;
+  c_link        siw_menu.link%type;
+  c_sg_modulo   siw_menu.sigla%type;
 
-  cursor c_dados is
+  c_dados cursor (l_chave numeric) for
      select a.sq_menu, a.nome, a.sigla, a.p1, a.p2, a.p3, a.p4,
             coalesce(a1.link, replace(lower(a.link),'inicial','visual')) as link,
             a2.sigla as sg_modulo,
@@ -48,7 +61,7 @@ create or replace function dados_solic(p_chave in number) return varchar2 is
             left  join pj_projeto                p2  on (b.sq_siw_solicitacao = p2.sq_siw_solicitacao)
             left  join sr_solicitacao_transporte p3  on (b.sq_siw_solicitacao = p3.sq_siw_solicitacao)
             left  join (select x.sq_siw_solicitacao as chave, 
-                               x.prefixo||'.'||substr(1000000+x.numero_documento,2,6)||'/'||x.ano||'-'||substr(100+x.digito,2,2) as codigo,
+                               x.prefixo||'.'||substr(1000000+x.numero_documento,2,6)||'/'||x.ano||'-'||substr(100+to_number(x.digito),2,2) as codigo,
                                y.descricao as titulo
                           from pa_documento           x
                                join   siw_solicitacao y on (x.sq_siw_solicitacao = y.sq_siw_solicitacao)
@@ -69,17 +82,20 @@ create or replace function dados_solic(p_chave in number) return varchar2 is
                                inner  join   siw_solicitacao y on (x.sq_siw_solicitacao = y.sq_siw_solicitacao)
                                  left join ct_cc             z on (y.sq_cc              = z.sq_cc)
                        )                         pz  on (b.sq_siw_solicitacao = pz.chave)
-      where b.sq_siw_solicitacao = p_chave;
+      where b.sq_siw_solicitacao = l_chave;
 begin
   if p_chave is not null then
      -- Verifica se a solicitação existe e, se existir, recupera seus dados
      select count(sq_siw_solicitacao) into w_reg from siw_solicitacao where sq_siw_solicitacao = p_chave;
      if w_reg > 0 then
-        for crec in c_dados loop
-            Result := crec.nome||': '||crec.codigo||'|@|'||crec.codigo||'|@|'||crec.titulo||'|@|'||crec.sq_menu||'|@|'||crec.nome||'|@|'||crec.sigla||'|@|'||crec.p1||'|@|'||crec.p2||'|@|'||crec.p3||'|@|'||crec.p4||'|@|'||crec.link||'|@|'||crec.sg_modulo;
+        open c_dados (p_chave);
+        loop
+          fetch c_dados into c_sq_menu, c_nome, c_sigla, c_p1, c_p2, c_p3, c_p4, c_link, c_sg_modulo, c_solic, c_codigo, c_titulo;
+          If Not Found Then Exit; End If;
+          Result := c_nome||': '||c_codigo||'|@|'||c_codigo||'|@|'||c_titulo||'|@|'||c_sq_menu||'|@|'||c_nome||'|@|'||c_sigla||'|@|'||c_p1||'|@|'||c_p2||'|@|'||c_p3||'|@|'||c_p4||'|@|'||c_link||'|@|'||c_sg_modulo;
         end loop;
+        close c_dados;
      end if;
   end if;
   return(Result);
-end dados_solic;
-/
+end; $$ language 'plpgsql' volatile;

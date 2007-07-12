@@ -2,7 +2,7 @@ create or replace function SP_PutCOEtnia
    (p_operacao        varchar,
     p_chave           numeric,
     p_nome            varchar,
-    p_codigo_siape    numeric,
+    p_codigo_siape    varchar,
     p_ativo           varchar
    ) returns void as $$
 begin

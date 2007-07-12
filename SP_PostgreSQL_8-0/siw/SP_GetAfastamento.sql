@@ -1,19 +1,20 @@
-create or replace procedure SP_GetAfastamento
-   (p_cliente                  in number,
-    p_pessoa                   in number    default null,
-    p_chave                    in number    default null,
-    p_sq_tipo_afastamento      in number    default null,
-    p_sq_contrato_colaborador  in number    default null,
-    p_inicio_data              in date      default null,
-    p_fim_data                 in date      default null,
-    p_periodo_inicio           in varchar2  default null,
-    p_periodo_fim              in varchar2  default null,
-    p_chave_aux                in number    default null,
-    p_restricao                in varchar2  default null,
-    p_result    out sys_refcursor) is
-    
-    w_inicio number(9);
-    w_fim    number(9);
+create or replace function SP_GetAfastamento
+   (p_cliente                  in numeric,
+    p_pessoa                   in numeric,
+    p_chave                    in numeric,
+    p_sq_tipo_afastamento      in numeric,
+    p_sq_contrato_colaborador  in numeric,
+    p_inicio_data              in date,
+    p_fim_data                 in date,
+    p_periodo_inicio           in varchar,
+    p_periodo_fim              in varchar,
+    p_chave_aux                in numeric,
+    p_restricao                in varchar,
+    p_result                   refcursor
+   ) returns refcursor as $$
+declare    
+    w_inicio numeric(9);
+    w_fim    numeric(9);
 begin
    If p_inicio_data is not null Then
       w_inicio := to_char(p_inicio_data,'yyyymmdd')||case coalesce(p_periodo_inicio,'M') when 'M' then 0 else 1 end;
@@ -57,5 +58,5 @@ begin
            from gp_afastamento_envio a
           where a.sq_afastamento = p_chave;
    End If;
-end SP_GetAfastamento;
-/
+   return p_result;
+end; $$ language 'plpgsql' volatile;

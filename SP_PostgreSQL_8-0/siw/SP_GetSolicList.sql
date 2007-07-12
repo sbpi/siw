@@ -1,53 +1,52 @@
-create or replace procedure SP_GetSolicList
-   (p_menu         in number,
-    p_pessoa       in number,
-    p_restricao    in varchar2 default null,
-    p_tipo         in number,
-    p_ini_i        in date     default null,
-    p_ini_f        in date     default null,
-    p_fim_i        in date     default null,
-    p_fim_f        in date     default null,
-    p_atraso       in varchar2 default null,
-    p_solicitante  in number   default null,
-    p_unidade      in number   default null,
-    p_prioridade   in number   default null,
-    p_ativo        in varchar2 default null,
-    p_proponente   in varchar2 default null,
-    p_chave        in number   default null,
-    p_assunto      in varchar2 default null,
-    p_pais         in number   default null,
-    p_regiao       in number   default null,
-    p_uf           in varchar2 default null,
-    p_cidade       in number   default null,
-    p_usu_resp     in number   default null,
-    p_uorg_resp    in number   default null,
-    p_palavra      in varchar2 default null,
-    p_prazo        in number   default null,
-    p_fase         in varchar2 default null,
-    p_sqcc         in number   default null,
-    p_projeto      in number   default null,
-    p_atividade    in number   default null,
-    p_sq_acao_ppa  in varchar2 default null,
-    p_sq_orprior   in number   default null,
-    p_empenho      in varchar2 default null,
-    p_processo     in varchar2 default null,
-    p_result       out sys_refcursor) is
+create or replace function SP_GetSolicList
+   (p_menu         in numeric,
+    p_pessoa       in numeric,
+    p_restricao    in varchar,
+    p_tipo         in numeric,
+    p_ini_i        in date,
+    p_ini_f        in date,
+    p_fim_i        in date,
+    p_fim_f        in date,
+    p_atraso       in varchar,
+    p_solicitante  in numeric,
+    p_unidade      in numeric,
+    p_prioridade   in numeric,
+    p_ativo        in varchar,
+    p_proponente   in varchar,
+    p_chave        in numeric,
+    p_assunto      in varchar,
+    p_pais         in numeric,
+    p_regiao       in numeric,
+    p_uf           in varchar,
+    p_cidade       in numeric,
+    p_usu_resp     in numeric,
+    p_uorg_resp    in numeric,
+    p_palavra      in varchar,
+    p_prazo        in numeric,
+    p_fase         in varchar,
+    p_sqcc         in numeric,
+    p_projeto      in numeric,
+    p_atividade    in numeric,
+    p_sq_acao_ppa  in varchar,
+    p_sq_orprior   in numeric,
+    p_empenho      in varchar,
+    p_processo     in varchar,
+    p_result       refcursor
+   ) returns refcursor as $$
+declare    
+    l_item       varchar(18);
+    l_fase       varchar(200) := p_fase ||',';
+    x_fase       varchar(200) := '';
     
-    l_item       varchar2(18);
-    l_fase       varchar2(200) := p_fase ||',';
-    x_fase       varchar2(200) := '';
-    
-    l_resp_unid  varchar2(10000) :='';
+    l_resp_unid  varchar(10000) :='';
+
+    c_sq_unidade numeric(18);
     
     -- cursor que recupera as unidades nas quais o usuário informado é titular ou substituto
-    cursor c_unidades_resp is
+    c_unidades_resp cursor (l_pessoa numeric) for
       select distinct sq_unidade
         from eo_unidade a
-      start with sq_unidade in (select sq_unidade
-                                  from eo_unidade_resp b
-                                 where b.sq_pessoa = p_pessoa
-                                   and b.fim       is null)
-      connect by prior sq_unidade = sq_unidade_pai;
+       where a.sq_unidade in (select sq_unidade from sp_fGetUorgList((select sq_unidade from eo_unidade_resp b where b.sq_pessoa = l_pessoa and b.fim is null),0,'DOWN'));
       
 begin
    If p_fase is not null Then
@@ -63,8 +62,11 @@ begin
    End If;
    
    -- Monta uma string com todas as unidades subordinadas à que o usuário é responsável
-   for crec in c_unidades_resp loop
-     l_resp_unid := l_resp_unid ||','''||crec.sq_unidade||'''';
+   open c_unidades_resp (p_pessoa);
+   loop
+     fetch c_unidades_resp into c_sq_unidade;
+     If Not Found Then Exit; End If;
+     l_resp_unid := l_resp_unid ||','''||c_sq_unidade||'''';
    end loop;
    
    If substr(p_restricao,1,2) = 'GD'   or 
@@ -185,11 +187,11 @@ begin
             and (p_assunto        is null or (p_assunto     is not null and acentos(d.assunto,null) like '%'||acentos(p_assunto,null)||'%'))
             and (p_palavra        is null or (p_palavra     is not null and acentos(b.palavra_chave,null) like '%'||acentos(p_palavra,null)||'%'))
             and (p_fase           is null or (p_fase        is not null and InStr(x_fase,b.sq_siw_tramite) > 0))
-            and (p_prazo          is null or (p_prazo       is not null and d.concluida            = 'N' and cast(cast(b.fim as date)-cast(sysdate as date) as integer)+1 <=p_prazo))
+            and (p_prazo          is null or (p_prazo       is not null and d.concluida            = 'N' and cast(cast(b.fim as date)-cast(now() as date) as integer)+1 <=p_prazo))
             and (p_prioridade     is null or (p_prioridade  is not null and d.prioridade           = p_prioridade))
             and (p_ini_i          is null or (p_ini_i       is not null and (coalesce(b1.sigla,'-')     <> 'AT' and b.inicio between p_ini_i and p_ini_f) or (coalesce(b1.sigla,'-') = 'AT' and d.inicio_real between p_ini_i and p_ini_f)))
-            and (p_fim_i          is null or (p_fim_i       is not null and (coalesce(b1.sigla,'-')     <> 'AT' and b.fim                between p_fim_i and p_fim_f) or (coalesce(b1.sigla,'-') = 'AT' and d.fim_real between p_fim_i and p_fim_f)))
-            and (coalesce(p_atraso,'N') = 'N'  or (p_atraso      = 'S'       and d.concluida            = 'N' and b.fim+1-sysdate<0))
+            and (p_fim_i          is null or (p_fim_i       is not null and (coalesce(b1.sigla,'-')     <> 'AT' and b.fim    between p_fim_i and p_fim_f) or (coalesce(b1.sigla,'-') = 'AT' and d.fim_real    between p_fim_i and p_fim_f)))
+            and (coalesce(p_atraso,'N') = 'N'  or (p_atraso      = 'S'       and d.concluida            = 'N' and cast(b.fim as date) + cast(1 as integer) - cast(now() as date)<0))
             and (p_proponente     is null or (p_proponente  is not null and acentos(d.proponente,null) like '%'||acentos(p_proponente,null)||'%'))
             and (p_unidade        is null or (p_unidade     is not null and d.sq_unidade_resp      = p_unidade))
             and (p_prioridade     is null or (p_prioridade  is not null and d.prioridade           = p_prioridade))
@@ -366,10 +368,10 @@ begin
             and (p_assunto        is null or (p_assunto     is not null and acentos(d.titulo,null) like '%'||acentos(p_assunto,null)||'%'))
             and (p_palavra        is null or (p_palavra     is not null and acentos(b.palavra_chave,null) like '%'||acentos(p_palavra,null)||'%'))
             and (p_fase           is null or (p_fase        is not null and InStr(x_fase,''''||b.sq_siw_tramite||'''') > 0))
-            and (p_prazo          is null or (p_prazo       is not null and d.concluida          = 'N' and cast(cast(b.fim as date)-cast(sysdate as date) as integer)+1 <=p_prazo))
+            and (p_prazo          is null or (p_prazo       is not null and d.concluida          = 'N' and cast(cast(b.fim as date)-cast(now() as date) as integer)+1 <=p_prazo))
             and (p_ini_i          is null or (p_ini_i       is not null and (coalesce(b1.sigla,'-')   <> 'AT' and b.inicio between p_ini_i and p_ini_f) or (coalesce(b1.sigla,'-') = 'AT' and d.inicio_real between p_ini_i and p_ini_f)))
             and (p_fim_i          is null or (p_fim_i       is not null and (coalesce(b1.sigla,'-')   <> 'AT' and b.fim                between p_fim_i and p_fim_f) or (coalesce(b1.sigla,'-') = 'AT' and d.fim_real between p_fim_i and p_fim_f)))
-            and (coalesce(p_atraso,'N') = 'N'  or (p_atraso      = 'S'       and d.concluida          = 'N' and b.fim+1-sysdate<0))
+            and (coalesce(p_atraso,'N') = 'N'  or (p_atraso      = 'S'       and d.concluida          = 'N' and cast(b.fim as date) - cast(now() as date) + cast(1 as integer)<0))
             and (p_proponente     is null or (p_proponente  is not null and (acentos(d.proponente,null)     like '%'||acentos(p_proponente,null)||'%') or 
                                                                             (acentos(d1.nome,null)          like '%'||acentos(p_proponente,null)||'%') or 
                                                                             (acentos(d1.nome_resumido,null) like '%'||acentos(p_proponente,null)||'%')
@@ -567,7 +569,7 @@ begin
             and (p_uf             is null or (p_uf          is not null and f.co_uf              = p_uf))
             and (p_assunto        is null or (p_assunto     is not null and acentos(d.objeto,null) like '%'||acentos(p_assunto,null)||'%'))
             and (p_fase           is null or (p_fase        is not null and InStr(x_fase,''''||b.sq_siw_tramite||'''') > 0))
-            and (p_prazo          is null or (p_prazo       is not null and b.conclusao          is null and cast(cast(b.fim as date)-cast(sysdate as date) as integer)+1 <=p_prazo))
+            and (p_prazo          is null or (p_prazo       is not null and b.conclusao          is null and cast(cast(b.fim as date)-cast(now() as date) as integer)+1 <=p_prazo))
             and (p_ini_i          is null or (p_ini_i       is not null and d.inicio             between p_ini_i and p_ini_f))
             and (p_fim_i          is null or (p_fim_i       is not null and d.fim                between p_fim_i and p_fim_f))
             and (p_unidade        is null or (p_unidade     is not null and b.sq_unidade         = p_unidade))
@@ -760,7 +762,7 @@ begin
             and (p_uf             is null or (p_uf          is not null and f.co_uf              = p_uf))
             and (p_assunto        is null or (p_assunto     is not null and acentos(b.descricao,null) like '%'||acentos(p_assunto,null)||'%'))
             and (p_fase           is null or (p_fase        is not null and InStr(x_fase,''''||b.sq_siw_tramite||'''') > 0))
-            and (p_prazo          is null or (p_prazo       is not null and b.conclusao          is null and cast(cast(b.fim as date)-cast(sysdate as date) as integer)+1 <=p_prazo))
+            and (p_prazo          is null or (p_prazo       is not null and b.conclusao          is null and cast(cast(b.fim as date)-cast(now() as date) as integer)+1 <=p_prazo))
             and (p_ini_i          is null or (p_ini_i       is not null and b.inicio             between p_ini_i and p_ini_f))
             and (p_fim_i          is null or (p_fim_i       is not null and b.fim                between p_fim_i and p_fim_f))
             and (p_unidade        is null or (p_unidade     is not null and b.sq_unidade         = p_unidade))
@@ -941,7 +943,7 @@ begin
                                              )
                 )
             and (p_fase           is null or (p_fase        is not null and InStr(x_fase,''''||b.sq_siw_tramite||'''') > 0))
-            and (coalesce(p_atraso,'N') = 'N'  or (p_atraso      = 'S'       and d.concluida          = 'N' and cast(b.fim as date) + cast(1 as integer) - cast(sysdate as date)<0))
+            and (coalesce(p_atraso,'N') = 'N'  or (p_atraso      = 'S'       and d.concluida          = 'N' and cast(b.fim as date) + cast(1 as integer) - cast(now() as date)<0))            
             and ((p_tipo         = 1     and coalesce(b1.sigla,'-') = 'CI'   and b.cadastrador        = p_pessoa) or
                  (p_tipo         = 2     and b1.ativo = 'S' and coalesce(b1.sigla,'-') <> 'CI' and b.executor = p_pessoa and b.conclusao is null) or
                  (p_tipo         = 2     and b1.ativo = 'S' and coalesce(b1.sigla,'-') <> 'CI' and b2.acesso > 15) or
@@ -1065,7 +1067,7 @@ begin
             and (p_uf             is null or (p_uf          is not null and f.co_uf              = p_uf))
             and (p_assunto        is null or (p_assunto     is not null and acentos(d.titulo,null) like '%'||acentos(p_assunto,null)||'%'))
             and (p_fase           is null or (p_fase        is not null and InStr(x_fase,''''||b.sq_siw_tramite||'''') > 0))
-            and (p_prazo          is null or (p_prazo       is not null and b.conclusao          is null and cast(cast(b.fim as date)-cast(sysdate as date) as integer)+1 <=p_prazo))
+            and (p_prazo          is null or (p_prazo       is not null and b.conclusao          is null and cast(cast(b.fim as date)-cast(now() as date) as integer)+1 <=p_prazo))
             and (p_ini_i          is null or (p_ini_i       is not null and b.inicio             between p_ini_i and p_ini_f))
             and (p_fim_i          is null or (p_fim_i       is not null and b.fim                between p_fim_i and p_fim_f))
             and (p_unidade        is null or (p_unidade     is not null and b.sq_unidade         = p_unidade))
@@ -1134,7 +1136,7 @@ begin
                 d.interno,            d.data_autuacao,               d.pessoa_origem,
                 d.processo,           d.circular,                    d.copias,
                 d.volumes,
-                d.prefixo||'.'||substr(1000000+d.numero_documento,2,6)||'/'||d.ano||'-'||substr(100+d.digito,2,2) as protocolo,
+                d.prefixo||'.'||substr(1000000+d.numero_documento,2,6)||'/'||d.ano||'-'||substr(100+to_number(d.digito),2,2) as protocolo,
                 case when d.pessoa_origem is null then b3.nome else d2.nome end as nm_origem,
                 coalesce(d1.nome,'Irrestrito') as nm_natureza,       d1.sigla as sg_natureza,
                 d1.descricao as ds_natureza,                         d1.ativo as st_natureza,
@@ -1228,7 +1230,7 @@ begin
             and (p_uf             is null or (p_uf          is not null and f.co_uf              = p_uf))
             --and (p_assunto        is null or (p_assunto     is not null and acentos(d.titulo,null) like '%'||acentos(p_assunto,null)||'%'))
             and (p_fase           is null or (p_fase        is not null and InStr(x_fase,''''||b.sq_siw_tramite||'''') > 0))
-            and (p_prazo          is null or (p_prazo       is not null and b.conclusao          is null and cast(cast(b.fim as date)-cast(sysdate as date) as integer)+1 <=p_prazo))
+            and (p_prazo          is null or (p_prazo       is not null and b.conclusao          is null and cast(cast(b.fim as date)-cast(now() as date) as integer)+1 <=p_prazo))
             and (p_ini_i          is null or (p_ini_i       is not null and b.inicio             between p_ini_i and p_ini_f))
             and (p_fim_i          is null or (p_fim_i       is not null and b.fim                between p_fim_i and p_fim_f))
             and (p_unidade        is null or (p_unidade     is not null and b.sq_unidade         = p_unidade))
@@ -1354,5 +1356,5 @@ begin
                 )
          order by titulo;
    End If;
-end SP_GetSolicList;
-/
+   return p_result;
+end; $$ language 'plpgsql' volatile;

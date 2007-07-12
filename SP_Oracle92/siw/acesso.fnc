@@ -82,10 +82,10 @@ create or replace function Acesso
   w_unidade_resp           number(18);
 
   cursor c_unidade (p_unidade in number) is
-     select pt.sq_unidade, a.sq_unidade_pai, Nvl(pt.sq_pessoa, -1) sq_pessoa_titular,
-            Nvl(ps.sq_pessoa, -1) sq_pessoa_substituto
+     select pt.sq_unidade, a.sq_unidade_pai, Nvl(pt.sq_pessoa, -1) as sq_pessoa_titular,
+            Nvl(ps.sq_pessoa, -1) as sq_pessoa_substituto
       from eo_unidade a
-           left join (select b.sq_unidade, a.sq_pessoa, a.nome_resumido nome
+           left join (select b.sq_unidade, a.sq_pessoa, a.nome_resumido as nome
                        from co_pessoa                  a
                             inner join eo_unidade_resp b on (a.sq_pessoa       = b.sq_pessoa and
                                                              b.tipo_respons    = 'T' and
@@ -93,7 +93,7 @@ create or replace function Acesso
                                                              b.sq_unidade      = p_unidade
                                                             )
                      ) pt on (a.sq_unidade  = pt.sq_unidade)
-           left join (select b.sq_unidade, a.sq_pessoa, nome_resumido nome
+           left join (select b.sq_unidade, a.sq_pessoa, nome_resumido as nome
                         from co_pessoa                  a
                              inner join eo_unidade_resp b on (a.sq_pessoa      = b.sq_pessoa and 
                                                               b.tipo_respons   = 'S' and 
@@ -120,7 +120,7 @@ begin
  -- Recupera as informações da opção à qual a solicitação pertence
  select a.acesso_geral, a.sq_menu, a.sq_modulo, a.sigla, a.destinatario,
         a1.sigla,
-        b.sq_pessoa, b.sq_unidade, b.gestor_seguranca, b.gestor_sistema, b.ativo usuario_ativo,
+        b.sq_pessoa, b.sq_unidade, b.gestor_seguranca, b.gestor_sistema, b.ativo as usuario_ativo,
         a.sq_unid_executora, a.consulta_opiniao, a.envia_email, a.exibe_relatorio, a.vinculacao, 
         d.sq_siw_tramite, d.solicitante, d.cadastrador, d.sq_unidade, d.executor, d.opiniao, 
         case when d.sq_cc is not null 
@@ -129,7 +129,7 @@ begin
                        then i.sq_cc
                        else j.sq_cc
                   end
-        end sq_cc,
+        end as sq_cc,
         e.ordem, e.sigla, e.ativo, e.chefia_imediata,
         Nvl(f.sq_pessoa,-1), Nvl(g.sq_pessoa,-1),
         h.sq_pessoa_endereco, d.executor,
@@ -223,7 +223,7 @@ begin
       UNION
       -- Verifica se é proposto de alguma viagem
       select 1 from pd_missao a where a.sq_siw_solicitacao = p_solicitacao and a.sq_pessoa = p_usuario
-    );
+    ) a;
     If w_existe > 0 Then
        Result := Result + 2;
     End If;
@@ -388,7 +388,7 @@ begin
          UNION
          -- Verifica se o usuário é responsável por alguma etapa
          select 1 from pj_projeto_etapa a where a.sq_siw_solicitacao = p_solicitacao and a.sq_pessoa = p_usuario
-       );
+       ) a;
        If w_existe > 0 Then Result := Result + 8; End If;
     End If;
  End If;

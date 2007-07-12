@@ -2,7 +2,7 @@ create or replace procedure SP_PutCOEtnia
    (p_operacao        in  varchar2,
     p_chave           in  number default null,
     p_nome            in  varchar2,
-    p_codigo_siape    in  number,
+    p_codigo_siape    in  varchar2,
     p_ativo           in  varchar2
    ) is
 begin
@@ -28,4 +28,3 @@ begin
    End If;
 end SP_PutCOEtnia;
 /
-
