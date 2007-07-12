@@ -91,4 +91,8 @@ $conDiretorio   = '/var/www/html/siw/';
 $conFileVirtual = '/siw_files/';
 $conFilePhysical= '/var/www/html/siw_files/'; // Formato Linux
 //$conFilePhysical= 'c:/inetpub/wwwroot/siw_Files/'; // Formato Windows (IIS)
+
+// Define se deve ser gravado arquivo de log e o seu caminho
+$conLog         = true;
+$conLogPath     = $conFilePhysical.'log/';
 ?>
