@@ -41,6 +41,7 @@ begin
                                                     )
                   inner join co_pais          d  on (b.sq_pais          = d.sq_pais)
           where a.sq_pessoa = p_cliente
+           and (p_chave is null or (p_chave is not null and a.sq_pessoa_endereco = p_chave))          
          order by acentos(a.logradouro);
    Elsif p_restricao = 'EMAIL' Then
       -- Recupera apenas os endereços de e-mail

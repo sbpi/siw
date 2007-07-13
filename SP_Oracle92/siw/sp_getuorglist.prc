@@ -15,13 +15,13 @@ begin
       -- Recupera as unidades organizacionais do cliente
       open p_result for 
          select a.sq_unidade,a.sq_unidade_pai, a.nome, a.sigla, a.informal, a.adm_central, a.vinculada, 
-                a.codigo, a.sq_unidade_pai, a.ordem, Nvl(d.nome,'Informar') responsavel, a.ativo,
+                a.codigo, a.sq_unidade_pai, a.ordem, coalesce(d.nome,'Informar') as responsavel, a.ativo,
                 a.externo,
                 a.sq_unidade_gestora, a.sq_unid_pagadora, a.unidade_gestora, a.unidade_pagadora,
                 b.sq_pessoa_endereco, b.logradouro,
-                e.sq_unidade lc_chave, e.cnpj lc_cnpj, e.padrao lc_padrao, 
-                e.licita lc_licita, e.contrata lc_contrata, e.ativo lc_ativo,
-                f.nome nm_cidade, f.co_uf
+                e.sq_unidade as lc_chave, e.cnpj as lc_cnpj, e.padrao as lc_padrao, 
+                e.licita as lc_licita, e.contrata as lc_contrata, e.ativo as lc_ativo,
+                f.nome as nm_cidade, f.co_uf
            from eo_unidade                         a
                 inner      join co_pessoa_endereco b on (a.sq_pessoa_endereco = b.sq_pessoa_endereco)
                   inner    join co_cidade          f on (b.sq_cidade          = f.sq_cidade)
@@ -60,7 +60,7 @@ begin
       If upper(p_restricao) = 'IS NULL' Then
          open p_result for
             select a.sq_unidade,a.sq_unidade_pai, a.nome, a.sigla, a.informal, a.adm_central, a.vinculada, 
-                   a.codigo, a.sq_unidade_pai, a.ordem, a.ativo, Nvl(d.nome,'Informar') responsavel,
+                   a.codigo, a.sq_unidade_pai, a.ordem, a.ativo, coalesce(d.nome,'Informar') as responsavel,
                    coalesce(e.qtd,0) as qtd_resp,
                    coalesce(f.qtd,0) as qtd_local
               from eo_unidade                        a
@@ -89,7 +89,7 @@ begin
       Elsif p_restricao = 'VIAGEM' Then
          open p_result for 
             select a.sq_unidade, a.ativo, 
-                   case a.ativo when 'S' then 'Sim' else 'Não' end nm_ativo,
+                   case a.ativo when 'S' then 'Sim' else 'Não' end as nm_ativo,
                    b.nome, b.sigla,
                    c.sq_pessoa_endereco, c.logradouro,
                    f.nome nm_cidade, f.co_uf
@@ -102,11 +102,11 @@ begin
       Elsif p_restricao = 'PDUNIDLIM' Then
          open p_result for 
             select a.sq_unidade, a.ativo, 
-                   case a.ativo when 'S' then 'Sim' else 'Não' end nm_ativo,
+                   case a.ativo when 'S' then 'Sim' else 'Não' end as nm_ativo,
                    b.nome, b.sigla,
                    c.sq_pessoa_endereco, c.logradouro,
-                   f.nome nm_cidade, f.co_uf,
-                   g.ano, coalesce(g.limite_passagem,0) limite_passagem, coalesce(g.limite_diaria,0) limite_diaria
+                   f.nome as nm_cidade, f.co_uf,
+                   g.ano, coalesce(g.limite_passagem,0) as limite_passagem, coalesce(g.limite_diaria,0) as limite_diaria
               from pd_unidade                        a
                    inner     join eo_unidade         b on (a.sq_unidade = b.sq_unidade)
                      inner   join co_pessoa_endereco c on (b.sq_pessoa_endereco = c.sq_pessoa_endereco)
@@ -120,7 +120,7 @@ begin
          open p_result for 
             select x.sq_unidade, y.nivel
               from pd_unidade x,
-                   (select sq_unidade, nome, level nivel
+                   (select sq_unidade, nome, level as nivel
                       from eo_unidade a
                     start with a.sq_unidade = p_chave
                     connect by prior a.sq_unidade_pai = a.sq_unidade
@@ -129,13 +129,13 @@ begin
             order by y.nivel;
       ElsIf p_restricao = 'LICITACAOEND' Then
          open p_result for       
-            select a.sq_unidade sq_unidade,a.sq_unidade_pai, a.nome, a.sigla, a.informal, a.adm_central, a.vinculada, 
-                   a.codigo, a.sq_unidade_pai, a.ordem, Nvl(d.nome,'Informar') responsavel, a.ativo,
+            select a.sq_unidade as sq_unidade,a.sq_unidade_pai, a.nome, a.sigla, a.informal, a.adm_central, a.vinculada, 
+                   a.codigo, a.sq_unidade_pai, a.ordem, coalesce(d.nome,'Informar') as responsavel, a.ativo,
                    a.sq_unidade_gestora, a.sq_unid_pagadora, a.unidade_gestora, a.unidade_pagadora,
                    b.sq_pessoa_endereco, b.logradouro,
-                   e.sq_unidade lc_chave, e.cnpj lc_cnpj, e.padrao lc_padrao, 
-                   e.licita lc_licita, e.contrata lc_contrata, e.ativo lc_ativo,
-                   f.nome nm_cidade, f.co_uf
+                   e.sq_unidade as lc_chave, e.cnpj as lc_cnpj, e.padrao as lc_padrao, 
+                   e.licita as lc_licita, e.contrata as lc_contrata, e.ativo as lc_ativo,
+                   f.nome as nm_cidade, f.co_uf
               from eo_unidade                         a
                    inner      join co_pessoa_endereco b on (a.sq_pessoa_endereco = b.sq_pessoa_endereco)
                      inner    join co_cidade          f on (b.sq_cidade          = f.sq_cidade)
@@ -154,13 +154,13 @@ begin
            order by a.nome;
       ElsIf p_restricao = 'GESTORA' Then
          open p_result for         
-            select a.sq_unidade sq_unidade,a.sq_unidade_pai, a.nome, a.sigla, a.informal, a.adm_central, a.vinculada, 
-                   a.codigo, a.sq_unidade_pai, a.ordem, Nvl(d.nome,'Informar') responsavel, a.ativo,
+            select a.sq_unidade as sq_unidade,a.sq_unidade_pai, a.nome, a.sigla, a.informal, a.adm_central, a.vinculada, 
+                   a.codigo, a.sq_unidade_pai, a.ordem, coalesce(d.nome,'Informar') as responsavel, a.ativo,
                    a.sq_unidade_gestora, a.sq_unid_pagadora, a.unidade_gestora, a.unidade_pagadora,
                    b.sq_pessoa_endereco, b.logradouro,
-                   e.sq_unidade lc_chave, e.cnpj lc_cnpj, e.padrao lc_padrao, 
-                   e.licita lc_licita, e.contrata lc_contrata, e.ativo lc_ativo,
-                   f.nome nm_cidade, f.co_uf
+                   e.sq_unidade as lc_chave, e.cnpj as lc_cnpj, e.padrao as lc_padrao, 
+                   e.licita as lc_licita, e.contrata as lc_contrata, e.ativo as lc_ativo,
+                   f.nome as nm_cidade, f.co_uf
               from eo_unidade                         a
                    inner      join co_pessoa_endereco b on (a.sq_pessoa_endereco = b.sq_pessoa_endereco)
                      inner    join co_cidade          f on (b.sq_cidade          = f.sq_cidade)
@@ -177,13 +177,13 @@ begin
            order by a.nome;
       ElsIf p_restricao = 'PAGADORA' Then
          open p_result for         
-            select a.sq_unidade sq_unidade,a.sq_unidade_pai, a.nome, a.sigla, a.informal, a.adm_central, a.vinculada, 
-                   a.codigo, a.sq_unidade_pai, a.ordem, Nvl(d.nome,'Informar') responsavel, a.ativo,
+            select a.sq_unidade as sq_unidade,a.sq_unidade_pai, a.nome, a.sigla, a.informal, a.adm_central, a.vinculada, 
+                   a.codigo, a.sq_unidade_pai, a.ordem, coalesce(d.nome,'Informar') as responsavel, a.ativo,
                    a.sq_unidade_gestora, a.sq_unid_pagadora, a.unidade_gestora, a.unidade_pagadora,
                    b.sq_pessoa_endereco, b.logradouro,
-                   e.sq_unidade lc_chave, e.cnpj lc_cnpj, e.padrao lc_padrao, 
-                   e.licita lc_licita, e.contrata lc_contrata, e.ativo lc_ativo,
-                   f.nome nm_cidade, f.co_uf
+                   e.sq_unidade as lc_chave, e.cnpj as lc_cnpj, e.padrao as lc_padrao, 
+                   e.licita as lc_licita, e.contrata as lc_contrata, e.ativo as lc_ativo,
+                   f.nome as nm_cidade, f.co_uf
               from eo_unidade                         a
                    inner      join co_pessoa_endereco b on (a.sq_pessoa_endereco = b.sq_pessoa_endereco)
                      inner    join co_cidade          f on (b.sq_cidade          = f.sq_cidade)
@@ -200,13 +200,13 @@ begin
            order by a.nome;
       ElsIf p_restricao = 'VALORCODIGO' Then
          open p_result for 
-            select a.sq_unidade sq_unidade,a.sq_unidade_pai, a.nome, a.sigla, a.informal, a.adm_central, a.vinculada, 
-                   a.codigo, a.sq_unidade_pai, a.ordem, Nvl(d.nome,'Informar') responsavel, a.ativo,
+            select a.sq_unidade as sq_unidade,a.sq_unidade_pai, a.nome, a.sigla, a.informal, a.adm_central, a.vinculada, 
+                   a.codigo, a.sq_unidade_pai, a.ordem, coalesce(d.nome,'Informar') as responsavel, a.ativo,
                    a.sq_unidade_gestora, a.sq_unid_pagadora, a.unidade_gestora, a.unidade_pagadora,
                    b.sq_pessoa_endereco, b.logradouro,
-                   e.sq_unidade lc_chave, e.cnpj lc_cnpj, e.padrao lc_padrao, 
-                   e.licita lc_licita, e.contrata lc_contrata, e.ativo lc_ativo,
-                   f.nome nm_cidade, f.co_uf
+                   e.sq_unidade as lc_chave, e.cnpj as lc_cnpj, e.padrao as lc_padrao, 
+                   e.licita as lc_licita, e.contrata as lc_contrata, e.ativo as lc_ativo,
+                   f.nome as nm_cidade, f.co_uf
               from eo_unidade                         a
                    inner      join co_pessoa_endereco b on (a.sq_pessoa_endereco = b.sq_pessoa_endereco)
                      inner    join co_cidade          f on (b.sq_cidade          = f.sq_cidade)
@@ -221,10 +221,41 @@ begin
                and a.informal             = 'N' 
                and a.codigo               = p_chave
             order by a.nome;      
+      Elsif p_restricao = 'RELATORIO' Then
+        open p_result for 
+            select a.sq_unidade,a.sq_unidade_pai, a.nome, a.sigla, a.informal, a.adm_central, a.vinculada, 
+                   a.codigo, a.sq_unidade_pai, a.ordem, a.ativo, a.externo,
+                   case a.ativo when 'S' then 'Sim' else 'Não' end as nm_ativo,
+                   case a.externo when 'S' then 'Sim' else 'Não' end as nm_externo,
+                   d.sq_pessoa as sq_titular, d.nome as titular,
+                   d1.sq_pessoa as sq_substituto,d1.nome as substituto,
+                   b.logradouro||' ('||b1.nome||'-'||b1.co_uf||')' as endereco,
+                   e.nome as nm_tipo_unidade,
+                   f.nome as nm_area_atuacao,
+                   case g.nome when null then '---' else g.nome||' ('||g.sigla||')' end as nm_unidade_pai
+              from eo_unidade                      a
+                   left    join eo_unidade_resp    c  on (a.sq_unidade = c.sq_unidade
+                                                          and c.tipo_respons = 'T'
+                                                          and c.fim is null
+                                                         )
+                     left  join co_pessoa          d  on (c.sq_pessoa = d.sq_pessoa)
+                   left    join eo_unidade_resp    c1 on (a.sq_unidade = c1.sq_unidade
+                                                          and c1.tipo_respons = 'S'
+                                                          and c1.fim is null
+                                                         )
+                     left  join co_pessoa          d1 on (c1.sq_pessoa = d1.sq_pessoa)
+                   inner   join co_pessoa_endereco b  on (a.sq_pessoa_endereco = b.sq_pessoa_endereco)
+                     inner join co_cidade          b1 on (b.sq_cidade          = b1.sq_cidade)
+                   inner   join eo_tipo_unidade    e  on (a.sq_tipo_unidade    = e.sq_tipo_unidade)
+                   inner   join eo_area_atuacao    f  on (a.sq_area_atuacao    = f.sq_area_atuacao)
+                   left    join eo_unidade         g  on (a.sq_unidade_pai     = g.sq_unidade)
+             where b.sq_pessoa = p_cliente
+                   and (p_chave is null or (p_chave is not null and a.sq_unidade         = p_chave))
+                   and (p_ano   is null or (p_ano   is not null and a.sq_pessoa_endereco = p_ano));
       Else
          open p_result for
             select a.sq_unidade,a.sq_unidade_pai, a.nome, a.sigla, a.informal, a.adm_central, a.vinculada, 
-                   a.codigo, a.sq_unidade_pai, a.ordem, a.ativo, Nvl(d.nome,'Informar') responsavel,
+                   a.codigo, a.sq_unidade_pai, a.ordem, a.ativo, coalesce(d.nome,'Informar') as responsavel,
                    coalesce(e.qtd,0) as qtd_resp,
                    coalesce(f.qtd,0) as qtd_local
               from eo_unidade                        a
