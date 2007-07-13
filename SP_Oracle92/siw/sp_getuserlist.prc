@@ -13,12 +13,12 @@ create or replace procedure SP_GetUserList
    ) is
 begin
    open p_result for 
-     select a.sq_pessoa sq_pessoa, a.username, a.gestor_seguranca, a.ativo,
-            b.nome_resumido, b.nome nome, b.nome_indice, b.nome_resumido_ind, 
-            c.sigla lotacao, c.sq_unidade, c.codigo, 
-            d.nome localizacao, d.sq_localizacao, d.ramal, 
-            e.nome vinculo, e.contratado,
-            f.logradouro, g.nome nm_cidade, g.co_uf
+     select a.sq_pessoa, a.username, a.gestor_seguranca, a.ativo,
+            b.nome_resumido, b.nome, b.nome_indice, b.nome_resumido_ind, 
+            c.sigla as lotacao, c.sq_unidade, c.codigo, 
+            d.nome as localizacao, d.sq_localizacao, d.ramal, 
+            e.nome as vinculo, e.contratado,
+            f.logradouro, g.nome as nm_cidade, g.co_uf
        from sg_autenticacao                        a 
             left outer     join eo_unidade         c on (a.sq_unidade         = c.sq_unidade)
               left outer   join co_pessoa_endereco f on (c.sq_pessoa_endereco = f.sq_pessoa_endereco)
