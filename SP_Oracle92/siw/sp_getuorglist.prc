@@ -232,7 +232,7 @@ begin
                    b.logradouro||' ('||b1.nome||'-'||b1.co_uf||')' as endereco,
                    e.nome as nm_tipo_unidade,
                    f.nome as nm_area_atuacao,
-                   case g.nome when null then '---' else g.nome||' ('||g.sigla||')' end as nm_unidade_pai
+                   g.nome as nm_unidade_pai, g.sigla as sg_unidade_pai
               from eo_unidade                      a
                    left    join eo_unidade_resp    c  on (a.sq_unidade = c.sq_unidade
                                                           and c.tipo_respons = 'T'
