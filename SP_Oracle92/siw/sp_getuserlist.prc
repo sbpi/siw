@@ -13,7 +13,7 @@ create or replace procedure SP_GetUserList
    ) is
 begin
    open p_result for 
-     select a.sq_pessoa, a.username, a.gestor_seguranca, a.ativo,
+     select a.sq_pessoa, a.username, a.gestor_seguranca, a.ativo, a.email,
             b.nome_resumido, b.nome, b.nome_indice, b.nome_resumido_ind, 
             c.sigla as lotacao, c.sq_unidade, c.codigo, 
             d.nome as localizacao, d.sq_localizacao, d.ramal, 

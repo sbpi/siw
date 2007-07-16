@@ -221,12 +221,13 @@ begin
                and a.informal             = 'N' 
                and a.codigo               = p_chave
             order by a.nome;      
-      Elsif p_restricao = 'RELATORIO' Then
+      Elsif substr(p_restricao,1,5) = 'RELAT'Then
         open p_result for 
             select a.sq_unidade,a.sq_unidade_pai, a.nome, a.sigla, a.informal, a.adm_central, a.vinculada, 
                    a.codigo, a.sq_unidade_pai, a.ordem, a.ativo, a.externo,
                    case a.ativo when 'S' then 'Sim' else 'Não' end as nm_ativo,
                    case a.externo when 'S' then 'Sim' else 'Não' end as nm_externo,
+                   c.inicio as ini_titular, c1.inicio as ini_substituto,
                    d.sq_pessoa as sq_titular, d.nome as titular,
                    d1.sq_pessoa as sq_substituto,d1.nome as substituto,
                    b.logradouro||' ('||b1.nome||'-'||b1.co_uf||')' as endereco,
@@ -250,8 +251,19 @@ begin
                    inner   join eo_area_atuacao    f  on (a.sq_area_atuacao    = f.sq_area_atuacao)
                    left    join eo_unidade         g  on (a.sq_unidade_pai     = g.sq_unidade)
              where b.sq_pessoa = p_cliente
-                   and (p_chave is null or (p_chave is not null and a.sq_unidade         = p_chave))
-                   and (p_ano   is null or (p_ano   is not null and a.sq_pessoa_endereco = p_ano));
+                   and (p_ano   is null or (p_ano   is not null and a.sq_pessoa_endereco = p_ano))
+                   and (p_chave is null or 
+                        (p_chave is not null and ((p_restricao <> 'RELATSUB' and a.sq_unidade        = p_chave) or
+                                                  (p_restricao = 'RELATSUB' and
+                                                   a.sq_unidade in (select sq_unidade
+                                                                      from eo_unidade
+                                                                    connect by prior sq_unidade = sq_unidade_pai
+                                                                    start with sq_unidade = p_chave
+                                                                   )
+                                                  )
+                                                 )
+                        )
+                       );
       Else
          open p_result for
             select a.sq_unidade,a.sq_unidade_pai, a.nome, a.sigla, a.informal, a.adm_central, a.vinculada, 
