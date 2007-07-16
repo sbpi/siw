@@ -1327,7 +1327,7 @@ begin
                                           then x.titulo
                                           else w.nome_resumido||' - '||case when z.sq_cc is not null then z.nome else k.titulo end||' ('||to_char(y.inicio,'dd/mm/yyyy')||'-'||to_char(y.fim,'dd/mm/yyyy')||')' end as titulo
                                 from ac_acordo                   x
-                                     join        co_pessoa       w on x.outra_parte        = w.sq_pessoa
+                                     left join   co_pessoa       w on x.outra_parte        = w.sq_pessoa
                                      join        siw_solicitacao y on x.sq_siw_solicitacao = y.sq_siw_solicitacao
                                        left join ct_cc           z on y.sq_cc              = z.sq_cc
                                        left join pj_projeto      k on y.sq_solic_pai       = k.sq_siw_solicitacao

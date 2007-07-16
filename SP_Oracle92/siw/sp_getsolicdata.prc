@@ -300,6 +300,8 @@ begin
                 d.numero_certame,     d.numero_ata,                  d.tipo_reajuste,
                 d.indice_base,        d.sq_eoindicador,              d.limite_variacao,
                 d.sq_lcfonte_recurso, d.sq_especificacao_despesa,    d.financeiro_unico,
+                d.prestacao_contas,
+                case d.prestacao_contas when 'S' then 'Sim' else 'Não' end as nm_prestacao_contas,
                 retornaAfericaoIndicador(d.sq_eoindicador,d.indice_base) as vl_indice_base,
                 retornaExcedenteContrato(d.sq_siw_solicitacao,b.fim) as limite_usado,
                 case d.tipo_reajuste when 0 then 'Não permite' when 1 then 'Com índice' else 'Sem índice' end nm_tipo_reajuste,
