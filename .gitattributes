@@ -2936,6 +2936,7 @@ SP_Oracle92/siw/CalculaIGE.fnc -text
 SP_Oracle92/siw/GetCodigo.fnc -text
 SP_Oracle92/siw/LIMPA_BASE.prc -text
 SP_Oracle92/siw/MontaNomeMenu.fnc -text
+SP_Oracle92/siw/MontaNomePrestacaoContas.fnc -text
 SP_Oracle92/siw/MontaNomeTipoMaterial.fnc -text
 SP_Oracle92/siw/MontaNomeTipoRecurso.fnc -text
 SP_Oracle92/siw/MontaOrdemMenu.fnc -text
@@ -3222,6 +3223,7 @@ SP_Oracle92/siw/sp_getIndicador.prc -text
 SP_Oracle92/siw/sp_getIndicador_Aferidor.prc -text
 SP_Oracle92/siw/sp_getMatServ.prc -text
 SP_Oracle92/siw/sp_getNotaAcordoCancel.prc -text
+SP_Oracle92/siw/sp_getPrestacaoContas.prc -text
 SP_Oracle92/siw/sp_getPrograma.prc -text
 SP_Oracle92/siw/sp_getProtocolo.prc -text
 SP_Oracle92/siw/sp_getRecurso.prc -text
@@ -3482,6 +3484,7 @@ SP_Oracle92/siw/sp_putPDUnidLimite.prc -text
 SP_Oracle92/siw/sp_putPessoa.prc -text
 SP_Oracle92/siw/sp_putPlanoEstrategico.prc -text
 SP_Oracle92/siw/sp_putPlano_Menu.prc -text
+SP_Oracle92/siw/sp_putPrestacaoContas.prc -text
 SP_Oracle92/siw/sp_putProgramaConc.prc -text
 SP_Oracle92/siw/sp_putProgramaDescritivo.prc -text
 SP_Oracle92/siw/sp_putProgramaEnvio.prc -text
