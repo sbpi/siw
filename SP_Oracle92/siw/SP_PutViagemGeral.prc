@@ -265,19 +265,6 @@ begin
             codigo_interno = p_codigo_interno
          where a.sq_siw_solicitacao = w_chave;
          
-      Else
-         
-         -- Se não for ano anterior, recupera o próximo sequencial e atualiza PD_PARAMETRO
-         w_sequencial := w_reg.sequencial + 1;
-         update pd_parametro set sequencial = w_sequencial where cliente = p_cliente;
-         
-         p_codigo_interno := Nvl(w_reg.prefixo,'')||w_sequencial||'/'||w_reg.ano_corrente||Nvl(w_reg.sufixo,'');
-
-         -- Atualiza o código interno do acordo para o sequencial encontrato
-         update pd_missao a set
-            codigo_interno = p_codigo_interno
-         where a.sq_siw_solicitacao = w_chave;
-         
       End If;
    End If;
 
